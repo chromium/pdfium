@@ -5,6 +5,12 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../../include/fpdfapi/fpdf_parser.h"
+
+// Indexed by 8-bit character code, contains either:
+//   'W' - for whitespace: NUL, TAB, CR, LF, FF, 0x80, 0xff
+//   'N' - for numeric: 0123456789+-.
+//   'D' - for delimiter: %()/<>[]{}
+//   'R' - otherwise.
 const char PDF_CharType[256] = {
     // NUL  SOH  STX  ETX  EOT  ENQ  ACK  BEL  BS   HT   LF   VT   FF   CR   SO
     // SI
@@ -72,45 +78,37 @@ void CPDF_SimpleParser::ParseWord(const uint8_t*& pStart,
   dwSize = 0;
   type = PDFWORD_EOF;
   uint8_t ch;
-  char chartype;
   while (1) {
-    if (m_dwSize <= m_dwCurPos) {
+    if (m_dwSize <= m_dwCurPos)
       return;
-    }
     ch = m_pData[m_dwCurPos++];
-    chartype = PDF_CharType[ch];
-    while (chartype == 'W') {
-      if (m_dwSize <= m_dwCurPos) {
+    while (PDFCharIsWhitespace(ch)) {
+      if (m_dwSize <= m_dwCurPos)
         return;
-      }
       ch = m_pData[m_dwCurPos++];
-      chartype = PDF_CharType[ch];
     }
-    if (ch != '%') {
+
+    if (ch != '%')
       break;
-    }
+
     while (1) {
-      if (m_dwSize <= m_dwCurPos) {
+      if (m_dwSize <= m_dwCurPos)
         return;
-      }
       ch = m_pData[m_dwCurPos++];
-      if (ch == '\r' || ch == '\n') {
+      if (ch == '\r' || ch == '\n')
         break;
-      }
     }
-    chartype = PDF_CharType[ch];
   }
+
   FX_DWORD start_pos = m_dwCurPos - 1;
   pStart = m_pData + start_pos;
-  if (chartype == 'D') {
+  if (PDFCharIsDelimiter(ch)) {
     if (ch == '/') {
       while (1) {
-        if (m_dwSize <= m_dwCurPos) {
+        if (m_dwSize <= m_dwCurPos)
           return;
-        }
         ch = m_pData[m_dwCurPos++];
-        chartype = PDF_CharType[ch];
-        if (chartype != 'R' && chartype != 'N') {
+        if (!PDFCharIsOther(ch) && !PDFCharIsNumeric(ch)) {
           m_dwCurPos--;
           dwSize = m_dwCurPos - start_pos;
           type = PDFWORD_NAME;
@@ -121,41 +119,36 @@ void CPDF_SimpleParser::ParseWord(const uint8_t*& pStart,
       type = PDFWORD_DELIMITER;
       dwSize = 1;
       if (ch == '<') {
-        if (m_dwSize <= m_dwCurPos) {
+        if (m_dwSize <= m_dwCurPos)
           return;
-        }
         ch = m_pData[m_dwCurPos++];
-        if (ch == '<') {
+        if (ch == '<')
           dwSize = 2;
-        } else {
+        else
           m_dwCurPos--;
-        }
       } else if (ch == '>') {
-        if (m_dwSize <= m_dwCurPos) {
+        if (m_dwSize <= m_dwCurPos)
           return;
-        }
         ch = m_pData[m_dwCurPos++];
-        if (ch == '>') {
+        if (ch == '>')
           dwSize = 2;
-        } else {
+        else
           m_dwCurPos--;
-        }
       }
     }
     return;
   }
+
   type = PDFWORD_NUMBER;
   dwSize = 1;
   while (1) {
-    if (chartype != 'N') {
+    if (!PDFCharIsNumeric(ch))
       type = PDFWORD_TEXT;
-    }
-    if (m_dwSize <= m_dwCurPos) {
+    if (m_dwSize <= m_dwCurPos)
       return;
-    }
     ch = m_pData[m_dwCurPos++];
-    chartype = PDF_CharType[ch];
-    if (chartype == 'D' || chartype == 'W') {
+
+    if (PDFCharIsDelimiter(ch) || PDFCharIsWhitespace(ch)) {
       m_dwCurPos--;
       break;
     }
@@ -331,23 +324,23 @@ CFX_ByteString PDF_NameEncode(const CFX_ByteString& orig) {
   int i;
   for (i = 0; i < src_len; i++) {
     uint8_t ch = src_buf[i];
-    if (ch >= 0x80 || PDF_CharType[ch] == 'W' || ch == '#' ||
-        PDF_CharType[ch] == 'D') {
+    if (ch >= 0x80 || PDFCharIsWhitespace(ch) || ch == '#' ||
+        PDFCharIsDelimiter(ch)) {
       dest_len += 3;
     } else {
       dest_len++;
     }
   }
-  if (dest_len == src_len) {
+  if (dest_len == src_len)
     return orig;
-  }
+
   CFX_ByteString res;
   FX_CHAR* dest_buf = res.GetBuffer(dest_len);
   dest_len = 0;
   for (i = 0; i < src_len; i++) {
     uint8_t ch = src_buf[i];
-    if (ch >= 0x80 || PDF_CharType[ch] == 'W' || ch == '#' ||
-        PDF_CharType[ch] == 'D') {
+    if (ch >= 0x80 || PDFCharIsWhitespace(ch) || ch == '#' ||
+        PDFCharIsDelimiter(ch)) {
       dest_buf[dest_len++] = '#';
       dest_buf[dest_len++] = "0123456789ABCDEF"[ch / 16];
       dest_buf[dest_len++] = "0123456789ABCDEF"[ch % 16];

@@ -326,14 +326,14 @@ CPDF_Stream* CPDF_StreamParser::ReadInlineStream(CPDF_Document* pDoc,
                                                  CPDF_Dictionary* pDict,
                                                  CPDF_Object* pCSObj,
                                                  FX_BOOL bDecode) {
-  if (m_Pos == m_Size) {
-    return NULL;
-  }
-  if (PDF_CharType[m_pBuf[m_Pos]] == 'W') {
+  if (m_Pos == m_Size)
+    return nullptr;
+
+  if (PDFCharIsWhitespace(m_pBuf[m_Pos]))
     m_Pos++;
-  }
+
   CFX_ByteString Decoder;
-  CPDF_Dictionary* pParam = NULL;
+  CPDF_Dictionary* pParam = nullptr;
   CPDF_Object* pFilter = pDict->GetElementValue(FX_BSTRC("Filter"));
   if (pFilter) {
     if (CPDF_Array* pArray = pFilter->AsArray()) {
@@ -453,66 +453,66 @@ CPDF_Stream* CPDF_StreamParser::ReadInlineStream(CPDF_Document* pDoc,
 CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {
   if (m_pLastObj) {
     m_pLastObj->Release();
-    m_pLastObj = NULL;
+    m_pLastObj = nullptr;
   }
+
   m_WordSize = 0;
   FX_BOOL bIsNumber = TRUE;
-  if (m_Pos >= m_Size) {
+  if (m_Pos >= m_Size)
     return EndOfData;
-  }
+
   int ch = m_pBuf[m_Pos++];
-  int type = PDF_CharType[ch];
   while (1) {
-    while (type == 'W') {
-      if (m_Size <= m_Pos) {
+    while (PDFCharIsWhitespace(ch)) {
+      if (m_Size <= m_Pos)
         return EndOfData;
-      }
+
       ch = m_pBuf[m_Pos++];
-      type = PDF_CharType[ch];
     }
-    if (ch != '%') {
+
+    if (ch != '%')
       break;
-    }
+
     while (1) {
-      if (m_Size <= m_Pos) {
+      if (m_Size <= m_Pos)
         return EndOfData;
-      }
+
       ch = m_pBuf[m_Pos++];
-      if (ch == '\r' || ch == '\n') {
+      if (ch == '\r' || ch == '\n')
         break;
-      }
     }
-    type = PDF_CharType[ch];
   }
-  if (type == 'D' && ch != '/') {
+
+  if (PDFCharIsDelimiter(ch) && ch != '/') {
     m_Pos--;
     m_pLastObj = ReadNextObject();
     return Others;
   }
+
   while (1) {
-    if (m_WordSize < MAX_WORD_BUFFER) {
+    if (m_WordSize < MAX_WORD_BUFFER)
       m_WordBuffer[m_WordSize++] = ch;
-    }
-    if (type != 'N') {
+
+    if (!PDFCharIsNumeric(ch))
       bIsNumber = FALSE;
-    }
-    if (m_Size <= m_Pos) {
+
+    if (m_Size <= m_Pos)
       break;
-    }
+
     ch = m_pBuf[m_Pos++];
-    type = PDF_CharType[ch];
-    if (type == 'D' || type == 'W') {
+
+    if (PDFCharIsDelimiter(ch) || PDFCharIsWhitespace(ch)) {
       m_Pos--;
       break;
     }
   }
+
   m_WordBuffer[m_WordSize] = 0;
-  if (bIsNumber) {
+  if (bIsNumber)
     return Number;
-  }
-  if (m_WordBuffer[0] == '/') {
+  if (m_WordBuffer[0] == '/')
     return Name;
-  }
+
   if (m_WordSize == 4) {
     if (*(FX_DWORD*)m_WordBuffer == FXDWORD_TRUE) {
       m_pLastObj = CPDF_Boolean::Create(TRUE);
@@ -532,51 +532,48 @@ CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {
 }
 void CPDF_StreamParser::SkipPathObject() {
   FX_DWORD command_startpos = m_Pos;
-  if (m_Pos >= m_Size) {
+  if (m_Pos >= m_Size)
     return;
-  }
+
   int ch = m_pBuf[m_Pos++];
-  int type = PDF_CharType[ch];
   while (1) {
-    while (type == 'W') {
-      if (m_Pos >= m_Size) {
+    while (PDFCharIsWhitespace(ch)) {
+      if (m_Pos >= m_Size)
         return;
-      }
       ch = m_pBuf[m_Pos++];
-      type = PDF_CharType[ch];
     }
-    if (type != 'N') {
+
+    if (!PDFCharIsNumeric(ch)) {
       m_Pos = command_startpos;
       return;
     }
+
     while (1) {
-      while (type != 'W') {
-        if (m_Pos >= m_Size) {
+      while (!PDFCharIsWhitespace(ch)) {
+        if (m_Pos >= m_Size)
           return;
-        }
         ch = m_pBuf[m_Pos++];
-        type = PDF_CharType[ch];
       }
-      while (type == 'W') {
-        if (m_Pos >= m_Size) {
+
+      while (PDFCharIsWhitespace(ch)) {
+        if (m_Pos >= m_Size)
           return;
-        }
         ch = m_pBuf[m_Pos++];
-        type = PDF_CharType[ch];
       }
-      if (type == 'N') {
+
+      if (PDFCharIsNumeric(ch))
         continue;
-      }
+
       FX_DWORD op_startpos = m_Pos - 1;
-      while (type != 'W' && type != 'D') {
-        if (m_Pos >= m_Size) {
+      while (!PDFCharIsWhitespace(ch) && !PDFCharIsDelimiter(ch)) {
+        if (m_Pos >= m_Size)
           return;
-        }
         ch = m_pBuf[m_Pos++];
-        type = PDF_CharType[ch];
       }
+
       if (m_Pos - op_startpos == 2) {
         int op = m_pBuf[op_startpos];
+        // TODO(dsinclair): Can these be turned into named constants?
         if (op == 'm' || op == 'l' || op == 'c' || op == 'v' || op == 'y') {
           command_startpos = m_Pos;
           break;
@@ -682,92 +679,82 @@ CPDF_Object* CPDF_StreamParser::ReadNextObject(FX_BOOL bAllowNestedArray,
 void CPDF_StreamParser::GetNextWord(FX_BOOL& bIsNumber) {
   m_WordSize = 0;
   bIsNumber = TRUE;
-  if (m_Size <= m_Pos) {
+  if (m_Size <= m_Pos)
     return;
-  }
+
   int ch = m_pBuf[m_Pos++];
-  int type = PDF_CharType[ch];
   while (1) {
-    while (type == 'W') {
+    while (PDFCharIsWhitespace(ch)) {
       if (m_Size <= m_Pos) {
         return;
       }
       ch = m_pBuf[m_Pos++];
-      type = PDF_CharType[ch];
     }
-    if (ch != '%') {
+
+    if (ch != '%')
       break;
-    }
+
     while (1) {
-      if (m_Size <= m_Pos) {
+      if (m_Size <= m_Pos)
         return;
-      }
       ch = m_pBuf[m_Pos++];
-      if (ch == '\r' || ch == '\n') {
+      if (ch == '\r' || ch == '\n')
         break;
-      }
     }
-    type = PDF_CharType[ch];
   }
-  if (type == 'D') {
+
+  if (PDFCharIsDelimiter(ch)) {
     bIsNumber = FALSE;
     m_WordBuffer[m_WordSize++] = ch;
     if (ch == '/') {
       while (1) {
-        if (m_Size <= m_Pos) {
+        if (m_Size <= m_Pos)
           return;
-        }
         ch = m_pBuf[m_Pos++];
-        type = PDF_CharType[ch];
-        if (type != 'R' && type != 'N') {
+        if (!PDFCharIsOther(ch) && !PDFCharIsNumeric(ch)) {
           m_Pos--;
           return;
         }
-        if (m_WordSize < MAX_WORD_BUFFER) {
+
+        if (m_WordSize < MAX_WORD_BUFFER)
           m_WordBuffer[m_WordSize++] = ch;
-        }
       }
     } else if (ch == '<') {
-      if (m_Size <= m_Pos) {
+      if (m_Size <= m_Pos)
         return;
-      }
       ch = m_pBuf[m_Pos++];
-      if (ch == '<') {
+      if (ch == '<')
         m_WordBuffer[m_WordSize++] = ch;
-      } else {
+      else
         m_Pos--;
-      }
     } else if (ch == '>') {
-      if (m_Size <= m_Pos) {
+      if (m_Size <= m_Pos)
         return;
-      }
       ch = m_pBuf[m_Pos++];
-      if (ch == '>') {
+      if (ch == '>')
         m_WordBuffer[m_WordSize++] = ch;
-      } else {
+      else
         m_Pos--;
-      }
     }
     return;
   }
+
   while (1) {
-    if (m_WordSize < MAX_WORD_BUFFER) {
+    if (m_WordSize < MAX_WORD_BUFFER)
       m_WordBuffer[m_WordSize++] = ch;
-    }
-    if (type != 'N') {
+    if (!PDFCharIsNumeric(ch))
       bIsNumber = FALSE;
-    }
-    if (m_Size <= m_Pos) {
+
+    if (m_Size <= m_Pos)
       return;
-    }
     ch = m_pBuf[m_Pos++];
-    type = PDF_CharType[ch];
-    if (type == 'D' || type == 'W') {
+    if (PDFCharIsDelimiter(ch) || PDFCharIsWhitespace(ch)) {
       m_Pos--;
       break;
     }
   }
 }
+
 CFX_ByteString CPDF_StreamParser::ReadString() {
   if (m_Size <= m_Pos) {
     return CFX_ByteString();
