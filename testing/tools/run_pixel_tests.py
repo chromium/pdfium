@@ -66,9 +66,16 @@ def main():
   test_suppressor = suppressor.Suppressor(finder)
   image_differ = pngdiffer.PNGDiffer(finder)
 
+  input_files = []
+  if len(args):
+    for file_name in args:
+      input_files.append(file_name.replace(".pdf", ".in"))
+  else:
+    input_files = os.listdir(source_dir)
+
   failures = []
   input_file_re = re.compile('^[a-zA-Z0-9_.]+[.]in$')
-  for input_filename in os.listdir(source_dir):
+  for input_filename in input_files:
     if input_file_re.match(input_filename):
       input_path = os.path.join(source_dir, input_filename)
       if os.path.isfile(input_path):

@@ -104,14 +104,25 @@ def main():
   walk_from_dir = finder.TestingDir('corpus');
   input_file_re = re.compile('^[a-zA-Z0-9_.]+[.]pdf$')
   test_cases = []
-  for source_dir, _, filename_list in os.walk(walk_from_dir):
-    for input_filename in filename_list:
-      if input_file_re.match(input_filename):
-        input_path = os.path.join(source_dir, input_filename)
-        if os.path.isfile(input_path):
-          test_cases.append((input_filename, source_dir))
 
-  if options.num_workers > 1:
+  if len(args):
+    for file_name in args:
+      input_path = os.path.join(walk_from_dir, file_name)
+      if not os.path.isfile(input_path):
+        print "Can't find test file '%s'" % file_name
+        return 1
+
+      test_cases.append((os.path.basename(input_path),
+                         os.path.dirname(input_path)))
+  else:
+    for source_dir, _, filename_list in os.walk(walk_from_dir):
+      for input_filename in filename_list:
+        if input_file_re.match(input_filename):
+          input_path = os.path.join(source_dir, input_filename)
+          if os.path.isfile(input_path):
+            test_cases.append((input_filename, source_dir))
+
+  if options.num_workers > 1 and len(test_cases) > 1:
     try:
       pool = multiprocessing.Pool(options.num_workers)
       worker_func = functools.partial(test_one_file_parallel, working_dir,
