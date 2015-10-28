@@ -80,9 +80,9 @@ FX_DWORD _A85Decode(const uint8_t* src_buf,
   pos = dest_size = 0;
   while (pos < src_size) {
     uint8_t ch = src_buf[pos++];
-    if (ch == '\n' || ch == '\r' || ch == ' ' || ch == '\t') {
+    if (PDFCharIsLineEnding(ch) || ch == ' ' || ch == '\t')
       continue;
-    }
+
     if (ch == 'z') {
       FXSYS_memset(dest_buf + dest_size, 0, 4);
       state = 0;
@@ -131,9 +131,9 @@ FX_DWORD _HexDecode(const uint8_t* src_buf,
   FX_BOOL bFirstDigit = TRUE;
   for (i = 0; i < src_size; i++) {
     uint8_t ch = src_buf[i];
-    if (ch == ' ' || ch == '\n' || ch == '\t' || ch == '\r') {
+    if (PDFCharIsLineEnding(ch) || ch == ' ' || ch == '\t')
       continue;
-    }
+
     int digit;
     if (ch <= '9' && ch >= '0') {
       digit = ch - '0';

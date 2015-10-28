@@ -61,6 +61,10 @@ inline bool PDFCharIsOther(uint8_t c) {
   return PDF_CharType[c] == 'R';
 }
 
+inline bool PDFCharIsLineEnding(uint8_t c) {
+  return c == '\r' || c == '\n';
+}
+
 // Indexed by 8-bit char code, contains unicode code points.
 extern const FX_WORD PDFDocEncoding[256];
 

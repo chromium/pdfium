@@ -490,7 +490,7 @@ CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {
         return EndOfData;
 
       ch = m_pBuf[m_Pos++];
-      if (ch == '\r' || ch == '\n')
+      if (PDFCharIsLineEnding(ch))
         break;
     }
   }
@@ -714,7 +714,7 @@ void CPDF_StreamParser::GetNextWord(FX_BOOL& bIsNumber) {
       if (!PositionIsInBounds())
         return;
       ch = m_pBuf[m_Pos++];
-      if (ch == '\r' || ch == '\n')
+      if (PDFCharIsLineEnding(ch))
         break;
     }
   }

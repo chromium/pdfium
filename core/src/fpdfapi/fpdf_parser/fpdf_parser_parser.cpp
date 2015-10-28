@@ -1780,7 +1780,7 @@ void CPDF_SyntaxParser::GetNextWord() {
     while (1) {
       if (!GetNextChar(ch))
         return;
-      if (ch == '\r' || ch == '\n')
+      if (PDFCharIsLineEnding(ch))
         break;
     }
   }
@@ -1999,7 +1999,7 @@ void CPDF_SyntaxParser::ToNextWord() {
     while (1) {
       if (!GetNextChar(ch))
         return;
-      if (ch == '\r' || ch == '\n')
+      if (PDFCharIsLineEnding(ch))
         break;
     }
   }
@@ -3767,7 +3767,7 @@ FX_BOOL CPDF_DataAvail::GetNextToken(CFX_ByteString& token) {
     while (1) {
       if (!GetNextChar(ch))
         return FALSE;
-      if (ch == '\r' || ch == '\n')
+      if (PDFCharIsLineEnding(ch))
         break;
     }
   }
