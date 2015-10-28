@@ -97,9 +97,8 @@ void EmbedderTest::TearDown() {
 
 bool EmbedderTest::OpenDocument(const std::string& filename) {
   file_contents_ = GetFileContents(filename.c_str(), &file_length_);
-  if (!file_contents_) {
+  if (!file_contents_)
     return false;
-  }
 
   loader_ = new TestLoader(file_contents_, file_length_);
   file_access_.m_FileLen = static_cast<unsigned long>(file_length_);
@@ -115,19 +114,20 @@ bool EmbedderTest::OpenDocument(const std::string& filename) {
   avail_ = FPDFAvail_Create(&file_avail_, &file_access_);
   (void)FPDFAvail_IsDocAvail(avail_, &hints_);
 
-  if (!FPDFAvail_IsLinearized(avail_)) {
+  if (!FPDFAvail_IsLinearized(avail_))
     document_ = FPDF_LoadCustomDocument(&file_access_, nullptr);
-  } else {
+  else
     document_ = FPDFAvail_GetDocument(avail_, nullptr);
-  }
-  if (!document_) {
+
+  if (!document_)
     return false;
-  }
+
   int docType = DOCTYPE_PDF;
   if (FPDF_HasXFAField(document_, &docType)) {
     if (docType != DOCTYPE_PDF)
       (void)FPDF_LoadXFA(document_);
   }
+
   (void)FPDF_GetDocPermissions(document_);
   (void)FPDFAvail_IsFormAvail(avail_, &hints_);
 

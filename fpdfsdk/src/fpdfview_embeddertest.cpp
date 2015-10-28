@@ -184,7 +184,7 @@ TEST_F(FPDFViewEmbeddertest, Crasher_113) {
 }
 
 TEST_F(FPDFViewEmbeddertest, Crasher_451830) {
-  // XFA branch detects this document as bad.
+  // Document is damaged and can't be opened.
   EXPECT_FALSE(OpenDocument("testing/resources/bug_451830.pdf"));
 }
 
@@ -196,6 +196,6 @@ TEST_F(FPDFViewEmbeddertest, Crasher_452455) {
 }
 
 TEST_F(FPDFViewEmbeddertest, Crasher_454695) {
-  // XFA branch detects this document as bad.
+  // Document is damanged and can't be opened.
   EXPECT_FALSE(OpenDocument("testing/resources/bug_454695.pdf"));
 }

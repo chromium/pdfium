@@ -9,7 +9,7 @@ class FPDFParserEmbeddertest : public EmbedderTest {};
 
 TEST_F(FPDFParserEmbeddertest, LoadError_454695) {
   // Test trailer dictionary with $$ze instead of Size.
-  EXPECT_TRUE(OpenDocument("testing/resources/bug_454695.pdf"));
+  EXPECT_FALSE(OpenDocument("testing/resources/bug_454695.pdf"));
 }
 
 TEST_F(FPDFParserEmbeddertest, Bug_481363) {
