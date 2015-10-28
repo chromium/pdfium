@@ -42,6 +42,7 @@ def main():
   parser.add_option('--build-dir', default=os.path.join('out', 'Debug'),
                     help='relative path from the base source directory')
   options, args = parser.parse_args()
+
   finder = common.DirectoryFinder(options.build_dir)
   fixup_path = finder.ScriptPath('fixup_pdf_template.py')
   text_diff_path = finder.ScriptPath('text_diff.py')
@@ -55,9 +56,16 @@ def main():
   if not os.path.exists(working_dir):
     os.makedirs(working_dir)
 
+  input_files = []
+  if len(args):
+    for file_name in args:
+      input_files.append(file_name.replace(".pdf", ".in"))
+  else:
+    input_files = os.listdir(source_dir)
+
   failures = []
   input_file_re = re.compile('^[a-zA-Z0-9_.]+[.]in$')
-  for input_filename in os.listdir(source_dir):
+  for input_filename in input_files:
     if input_file_re.match(input_filename):
       input_path = os.path.join(source_dir, input_filename)
       if os.path.isfile(input_path):
