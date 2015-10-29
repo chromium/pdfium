@@ -7,7 +7,6 @@
 #include "../../../include/fpdfapi/fpdf_page.h"
 #include "../../../include/fpdfapi/fpdf_module.h"
 #include "../../../include/fxcodec/fx_codec.h"
-#include "../../../include/fxcrt/fx_ext.h"
 #include "pageint.h"
 #include <limits.h>
 
@@ -876,20 +875,34 @@ CFX_ByteString CPDF_StreamParser::ReadHexString() {
   FX_BOOL bFirst = TRUE;
   int code = 0;
   while (1) {
-    if (ch == '>')
+    if (ch == '>') {
       break;
-
-    if (std::isxdigit(ch)) {
-      int val = HexCharToDigit(ch);
+    }
+    if (ch >= '0' && ch <= '9') {
       if (bFirst) {
-        code = val * 16;
+        code = (ch - '0') * 16;
       } else {
-        code += val;
-        buf.AppendByte((uint8_t)code);
+        code += ch - '0';
+        buf.AppendChar((char)code);
+      }
+      bFirst = !bFirst;
+    } else if (ch >= 'A' && ch <= 'F') {
+      if (bFirst) {
+        code = (ch - 'A' + 10) * 16;
+      } else {
+        code += ch - 'A' + 10;
+        buf.AppendChar((char)code);
+      }
+      bFirst = !bFirst;
+    } else if (ch >= 'a' && ch <= 'f') {
+      if (bFirst) {
+        code = (ch - 'a' + 10) * 16;
+      } else {
+        code += ch - 'a' + 10;
+        buf.AppendChar((char)code);
       }
       bFirst = !bFirst;
     }
-
     if (!PositionIsInBounds())
       break;
 

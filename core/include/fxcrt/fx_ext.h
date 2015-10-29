@@ -13,8 +13,6 @@
 extern "C" {
 #endif
 
-int HexCharToDigit(char c);
-
 FX_FLOAT FXSYS_tan(FX_FLOAT a);
 FX_FLOAT FXSYS_logb(FX_FLOAT b, FX_FLOAT x);
 FX_FLOAT FXSYS_strtof(const FX_CHAR* pcsStr,
@@ -47,6 +45,13 @@ FX_DWORD FX_HashCode_String_GetW(const FX_WCHAR* pStr,
                                  int32_t iLength,
                                  FX_BOOL bIgnoreCase = FALSE);
 
+#ifdef __cplusplus
+}
+#endif
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void* FX_Random_MT_Start(FX_DWORD dwSeed);
 
 FX_DWORD FX_Random_MT_Generate(void* pContext);
@@ -61,7 +66,6 @@ void FX_Random_GenerateCrypto(FX_DWORD* pBuffer, int32_t iCount);
 #ifdef __cplusplus
 }
 #endif
-
 template <class baseType>
 class CFX_SSortTemplate {
  public:

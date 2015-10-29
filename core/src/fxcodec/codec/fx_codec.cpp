@@ -157,13 +157,13 @@ extern "C" double FXstrtod(const char* nptr, char** endptr) {
     return 0.0;
   }
   for (;; ptr++) {
-    if (!e_number && !e_point && (*ptr == '\t' || *ptr == ' '))
+    if (!e_number && !e_point && (*ptr == '\t' || *ptr == ' ')) {
       continue;
-
-    if (std::isdigit(*ptr)) {
-      if (!e_number)
+    }
+    if (*ptr >= '0' && *ptr <= '9') {
+      if (!e_number) {
         e_number = 1;
-
+      }
       if (!e_point) {
         ret *= 10;
         ret += (*ptr - '0');
@@ -188,29 +188,29 @@ extern "C" double FXstrtod(const char* nptr, char** endptr) {
       }
     }
     if (e_number && (*ptr == 'e' || *ptr == 'E')) {
-#define EXPONENT_DETECT(ptr)   \
-  for (;; ptr++) {             \
-    if (!std::isdigit(*ptr)) { \
-      if (endptr)              \
-        *endptr = (char*)ptr;  \
-      break;                   \
-    } else {                   \
-      exp_ret *= 10;           \
-      exp_ret += (*ptr - '0'); \
-      continue;                \
-    }                          \
+#define EXPONENT_DETECT(ptr)        \
+  for (;; ptr++) {                  \
+    if (*ptr < '0' || *ptr > '9') { \
+      if (endptr)                   \
+        *endptr = (char*)ptr;       \
+      break;                        \
+    } else {                        \
+      exp_ret *= 10;                \
+      exp_ret += (*ptr - '0');      \
+      continue;                     \
+    }                               \
   }
       exp_ptr = ptr++;
       if (*ptr == '+' || *ptr == '-') {
         exp_sig = (*ptr++ == '+') ? 1 : -1;
-        if (!std::isdigit(*ptr)) {
+        if (*ptr < '0' || *ptr > '9') {
           if (endptr) {
             *endptr = (char*)exp_ptr;
           }
           break;
         }
         EXPONENT_DETECT(ptr);
-      } else if (std::isdigit(*ptr)) {
+      } else if (*ptr >= '0' && *ptr <= '9') {
         EXPONENT_DETECT(ptr);
       } else {
         if (endptr) {

@@ -12,20 +12,21 @@
 template <class T, class STR_T>
 T FXSYS_StrToInt(STR_T str) {
   FX_BOOL neg = FALSE;
-  if (!str)
+  if (str == NULL) {
     return 0;
-
+  }
   if (*str == '-') {
     neg = TRUE;
     str++;
   }
   T num = 0;
   while (*str) {
-    if (!std::isdigit(*str))
+    if ((*str) < '0' || (*str) > '9') {
       break;
-    if (num > (std::numeric_limits<T>::max() - 9) / 10)
+    }
+    if (num > (std::numeric_limits<T>::max() - 9) / 10) {
       break;
-
+    }
     num = num * 10 + (*str) - '0';
     str++;
   }

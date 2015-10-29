@@ -8,7 +8,6 @@
 #include "../../../include/fpdfapi/fpdf_page.h"
 #include "../../../include/fpdfapi/fpdf_pageobj.h"
 #include "../../../include/fpdfapi/fpdf_resource.h"
-#include "../../../include/fxcrt/fx_ext.h"
 #include "../../../include/fxge/fx_freetype.h"
 #include "../fpdf_page/pageint.h"
 #include "font_int.h"
@@ -512,25 +511,32 @@ FX_DWORD CPDF_ToUnicodeMap::ReverseLookup(FX_WCHAR unicode) {
 static FX_DWORD _StringToCode(const CFX_ByteStringC& str) {
   const FX_CHAR* buf = str.GetCStr();
   int len = str.GetLength();
-  if (len == 0)
+  if (len == 0) {
     return 0;
-
+  }
   int result = 0;
   if (buf[0] == '<') {
     for (int i = 1; i < len; i++) {
-      if (!std::isxdigit(buf[i]))
+      int digit;
+      if (buf[i] >= '0' && buf[i] <= '9') {
+        digit = buf[i] - '0';
+      } else if (buf[i] >= 'a' && buf[i] <= 'f') {
+        digit = buf[i] - 'a' + 10;
+      } else if (buf[i] >= 'A' && buf[i] <= 'F') {
+        digit = buf[i] - 'A' + 10;
+      } else {
         break;
-      result = result * 16 + HexCharToDigit(buf[i]);
+      }
+      result = result * 16 + digit;
     }
     return result;
   }
-
   for (int i = 0; i < len; i++) {
-    if (!std::isdigit(buf[i]))
+    if (buf[i] < '0' || buf[i] > '9') {
       break;
+    }
     result = result * 10 + buf[i] - '0';
   }
-
   return result;
 }
 static CFX_WideString _StringDataAdd(CFX_WideString str) {
@@ -554,18 +560,25 @@ static CFX_WideString _StringDataAdd(CFX_WideString str) {
 static CFX_WideString _StringToWideString(const CFX_ByteStringC& str) {
   const FX_CHAR* buf = str.GetCStr();
   int len = str.GetLength();
-  if (len == 0)
+  if (len == 0) {
     return CFX_WideString();
-
+  }
   CFX_WideString result;
   if (buf[0] == '<') {
     int byte_pos = 0;
     FX_WCHAR ch = 0;
     for (int i = 1; i < len; i++) {
-      if (!std::isxdigit(buf[i]))
+      int digit;
+      if (buf[i] >= '0' && buf[i] <= '9') {
+        digit = buf[i] - '0';
+      } else if (buf[i] >= 'a' && buf[i] <= 'f') {
+        digit = buf[i] - 'a' + 10;
+      } else if (buf[i] >= 'A' && buf[i] <= 'F') {
+        digit = buf[i] - 'A' + 10;
+      } else {
         break;
-
-      ch = ch * 16 + HexCharToDigit(buf[i]);
+      }
+      ch = ch * 16 + digit;
       byte_pos++;
       if (byte_pos == 4) {
         result += ch;
@@ -574,6 +587,8 @@ static CFX_WideString _StringToWideString(const CFX_ByteStringC& str) {
       }
     }
     return result;
+  }
+  if (buf[0] == '(') {
   }
   return result;
 }

@@ -7,7 +7,6 @@
 #include "../../../include/fpdfapi/fpdf_module.h"
 #include "../../../include/fpdfapi/fpdf_page.h"
 #include "../../../include/fpdfapi/fpdf_resource.h"
-#include "../../../include/fxcrt/fx_ext.h"
 #include "../../../include/fxge/fx_freetype.h"
 #include "../../../include/fxge/fx_ge.h"
 #include "../fpdf_cmaps/cmap_int.h"
@@ -191,15 +190,22 @@ FX_DWORD CMap_GetCode(const CFX_ByteStringC& word) {
   if (word.GetAt(0) == '<') {
     for (int i = 1; i < word.GetLength(); i++) {
       uint8_t digit = word.GetAt(i);
-      if (!std::isxdigit(digit))
+      if (digit >= '0' && digit <= '9') {
+        digit = digit - '0';
+      } else if (digit >= 'a' && digit <= 'f') {
+        digit = digit - 'a' + 10;
+      } else if (digit >= 'A' && digit <= 'F') {
+        digit = digit - 'A' + 10;
+      } else {
         return num;
-      num = num * 16 + HexCharToDigit(digit);
+      }
+      num = num * 16 + digit;
     }
   } else {
     for (int i = 0; i < word.GetLength(); i++) {
-      if (!std::isdigit(word.GetAt(i)))
+      if (word.GetAt(i) < '0' || word.GetAt(i) > '9') {
         return num;
-
+      }
       num = num * 10 + word.GetAt(i) - '0';
     }
   }
@@ -225,7 +231,13 @@ bool CMap_GetCodeRange(CMap_CodeRange& range,
   for (i = 0; i < range.m_CharSize; ++i) {
     uint8_t digit1 = first.GetAt(i * 2 + 1);
     uint8_t digit2 = first.GetAt(i * 2 + 2);
-    range.m_Lower[i] = HexCharToDigit(digit1) * 16 + HexCharToDigit(digit2);
+    uint8_t byte = (digit1 >= '0' && digit1 <= '9')
+                       ? (digit1 - '0')
+                       : ((digit1 & 0xdf) - 'A' + 10);
+    byte = byte * 16 + ((digit2 >= '0' && digit2 <= '9')
+                            ? (digit2 - '0')
+                            : ((digit2 & 0xdf) - 'A' + 10));
+    range.m_Lower[i] = byte;
   }
 
   FX_DWORD size = second.GetLength();
@@ -234,7 +246,13 @@ bool CMap_GetCodeRange(CMap_CodeRange& range,
         ((FX_DWORD)i * 2 + 1 < size) ? second.GetAt((FX_STRSIZE)i * 2 + 1) : 0;
     uint8_t digit2 =
         ((FX_DWORD)i * 2 + 2 < size) ? second.GetAt((FX_STRSIZE)i * 2 + 2) : 0;
-    range.m_Upper[i] = HexCharToDigit(digit1) * 16 + HexCharToDigit(digit2);
+    uint8_t byte = (digit1 >= '0' && digit1 <= '9')
+                       ? (digit1 - '0')
+                       : ((digit1 & 0xdf) - 'A' + 10);
+    byte = byte * 16 + ((digit2 >= '0' && digit2 <= '9')
+                            ? (digit2 - '0')
+                            : ((digit2 & 0xdf) - 'A' + 10));
+    range.m_Upper[i] = byte;
   }
   return true;
 }

@@ -13,15 +13,6 @@
 #include <ctime>
 #endif
 
-#include <cctype>
-
-int HexCharToDigit(char c) {
-  if (!std::isxdigit(c))
-    return 0;
-  char upchar = std::toupper(c);
-  return upchar > '9' ? upchar - 'A' + 10 : upchar - '0';
-}
-
 IFX_FileStream* FX_CreateFileStream(const FX_CHAR* filename, FX_DWORD dwModes) {
   IFXCRT_FileAccess* pFA = FXCRT_FileAccess_Create();
   if (!pFA) {

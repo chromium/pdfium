@@ -8,7 +8,6 @@
 #include "../../../include/fpdfapi/fpdf_parser.h"
 #include "../../../include/fpdfapi/fpdf_module.h"
 #include "../../../include/fxcodec/fx_codec.h"
-#include "../../../include/fxcrt/fx_ext.h"
 
 #define _STREAM_MAX_SIZE_ 20 * 1024 * 1024
 
@@ -136,20 +135,23 @@ FX_DWORD _HexDecode(const uint8_t* src_buf,
       continue;
 
     int digit;
-    if (std::isxdigit(ch)) {
-      digit = HexCharToDigit(ch);
+    if (ch <= '9' && ch >= '0') {
+      digit = ch - '0';
+    } else if (ch <= 'f' && ch >= 'a') {
+      digit = ch - 'a' + 10;
+    } else if (ch <= 'F' && ch >= 'A') {
+      digit = ch - 'A' + 10;
     } else if (ch == '>') {
       i++;
       break;
     } else {
       continue;
     }
-
-    if (bFirstDigit)
+    if (bFirstDigit) {
       dest_buf[dest_size] = digit * 16;
-    else
+    } else {
       dest_buf[dest_size++] += digit;
-
+    }
     bFirstDigit = !bFirstDigit;
   }
   if (!bFirstDigit) {

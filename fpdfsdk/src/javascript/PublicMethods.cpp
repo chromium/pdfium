@@ -116,7 +116,7 @@ FX_BOOL CJS_PublicMethods::IsDigit(wchar_t ch) {
 }
 
 FX_BOOL CJS_PublicMethods::IsDigit(char ch) {
-  return std::isdigit(ch);
+  return (ch >= '0' && ch <= '9');
 }
 
 FX_BOOL CJS_PublicMethods::IsAlphabetic(wchar_t ch) {
