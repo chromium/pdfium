@@ -7,7 +7,6 @@
 #include "../../../include/fpdfapi/fpdf_parser.h"
 #include "../../../include/fpdfapi/fpdf_module.h"
 
-
 CPDF_Document::CPDF_Document(CPDF_Parser* pParser)
     : CPDF_IndirectObjects(pParser) {
   ASSERT(pParser != NULL);
