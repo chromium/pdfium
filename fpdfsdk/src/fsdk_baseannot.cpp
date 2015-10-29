@@ -221,7 +221,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
     FX_CHAR ch;
     while (i < strLength) {
       ch = dtStr[i];
-      if (ch >= '0' && ch <= '9')
+      if (std::isdigit(ch))
         break;
       i++;
     }
@@ -234,7 +234,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
       ch = dtStr[i];
       k = k * 10 + ch - '0';
       j++;
-      if (ch < '0' || ch > '9')
+      if (!std::isdigit(ch))
         break;
       i++;
     }
@@ -248,7 +248,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
       ch = dtStr[i];
       k = k * 10 + ch - '0';
       j++;
-      if (ch < '0' || ch > '9')
+      if (!std::isdigit(ch))
         break;
       i++;
     }
@@ -262,7 +262,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
       ch = dtStr[i];
       k = k * 10 + ch - '0';
       j++;
-      if (ch < '0' || ch > '9')
+      if (!std::isdigit(ch))
         break;
       i++;
     }
@@ -276,7 +276,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
       ch = dtStr[i];
       k = k * 10 + ch - '0';
       j++;
-      if (ch < '0' || ch > '9')
+      if (!std::isdigit(ch))
         break;
       i++;
     }
@@ -290,7 +290,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
       ch = dtStr[i];
       k = k * 10 + ch - '0';
       j++;
-      if (ch < '0' || ch > '9')
+      if (!std::isdigit(ch))
         break;
       i++;
     }
@@ -304,7 +304,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
       ch = dtStr[i];
       k = k * 10 + ch - '0';
       j++;
-      if (ch < '0' || ch > '9')
+      if (!std::isdigit(ch))
         break;
       i++;
     }
@@ -325,7 +325,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
       ch = dtStr[i];
       k = k * 10 + ch - '0';
       j++;
-      if (ch < '0' || ch > '9')
+      if (!std::isdigit(ch))
         break;
       i++;
     }
@@ -342,7 +342,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
       ch = dtStr[i];
       k = k * 10 + ch - '0';
       j++;
-      if (ch < '0' || ch > '9')
+      if (!std::isdigit(ch))
         break;
       i++;
     }

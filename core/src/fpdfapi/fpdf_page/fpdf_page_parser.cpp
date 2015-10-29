@@ -1540,7 +1540,7 @@ CFX_ByteString _FPDF_ByteStringFromHex(CFX_BinaryBuf& src_buf) {
   FX_DWORD size = src_buf.GetSize();
   for (FX_DWORD i = 0; i < size; i++) {
     uint8_t ch = str[i];
-    if (ch >= '0' && ch <= '9') {
+    if (std::isdigit(ch)) {
       if (bFirst) {
         code = (ch - '0') * 16;
       } else {

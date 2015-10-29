@@ -493,7 +493,7 @@ void CFX_ByteString::FormatV(const FX_CHAR* lpszFormat, va_list argList) {
     }
     if (nWidth == 0) {
       nWidth = FXSYS_atoi(lpsz);
-      for (; (*lpsz) >= '0' && (*lpsz) <= '9'; lpsz++)
+      for (; std::isdigit(*lpsz); lpsz++)
         ;
     }
     if (nWidth < 0 || nWidth > 128 * 1024) {
@@ -509,7 +509,7 @@ void CFX_ByteString::FormatV(const FX_CHAR* lpszFormat, va_list argList) {
         lpsz++;
       } else {
         nPrecision = FXSYS_atoi(lpsz);
-        for (; (*lpsz) >= '0' && (*lpsz) <= '9'; lpsz++)
+        for (; std::isdigit(*lpsz); lpsz++)
           ;
       }
     }

@@ -13,6 +13,7 @@
 #include "../../../include/fpdfapi/fpdf_module.h"
 #include "../../../include/fpdfapi/fpdf_page.h"
 #include "../../../include/fpdfapi/fpdf_parser.h"
+#include "../../../include/fxcrt/fx_ext.h"
 #include "../../../include/fxcrt/fx_safe_types.h"
 #include "../fpdf_page/pageint.h"
 
@@ -162,85 +163,83 @@ FX_DWORD CPDF_Parser::StartParse(IFX_FileRead* pFileAccess,
   m_bXRefStream = FALSE;
   m_LastXRefOffset = 0;
   m_bOwnFileRead = bOwnFileRead;
+
   int32_t offset = GetHeaderOffset(pFileAccess);
   if (offset == -1) {
-    if (bOwnFileRead && pFileAccess) {
+    if (bOwnFileRead && pFileAccess)
       pFileAccess->Release();
-    }
     return PDFPARSE_ERROR_FORMAT;
   }
   m_Syntax.InitParser(pFileAccess, offset);
+
   uint8_t ch;
-  if (!m_Syntax.GetCharAt(5, ch)) {
+  if (!m_Syntax.GetCharAt(5, ch))
     return PDFPARSE_ERROR_FORMAT;
-  }
-  if (ch >= '0' && ch <= '9') {
+  if (std::isdigit(ch))
     m_FileVersion = (ch - '0') * 10;
-  }
-  if (!m_Syntax.GetCharAt(7, ch)) {
+
+  if (!m_Syntax.GetCharAt(7, ch))
     return PDFPARSE_ERROR_FORMAT;
-  }
-  if (ch >= '0' && ch <= '9') {
+  if (std::isdigit(ch))
     m_FileVersion += ch - '0';
-  }
-  if (m_Syntax.m_FileLen < m_Syntax.m_HeaderOffset + 9) {
+
+  if (m_Syntax.m_FileLen < m_Syntax.m_HeaderOffset + 9)
     return PDFPARSE_ERROR_FORMAT;
-  }
+
   m_Syntax.RestorePos(m_Syntax.m_FileLen - m_Syntax.m_HeaderOffset - 9);
-  if (!bReParse) {
+  if (!bReParse)
     m_pDocument = new CPDF_Document(this);
-  }
+
   FX_BOOL bXRefRebuilt = FALSE;
   if (m_Syntax.SearchWord(FX_BSTRC("startxref"), TRUE, FALSE, 4096)) {
     FX_FILESIZE startxref_offset = m_Syntax.SavePos();
     void* pResult = FXSYS_bsearch(&startxref_offset, m_SortedOffset.GetData(),
                                   m_SortedOffset.GetSize(), sizeof(FX_FILESIZE),
                                   CompareFileSize);
-    if (pResult == NULL) {
+    if (!pResult)
       m_SortedOffset.Add(startxref_offset);
-    }
+
     m_Syntax.GetKeyword();
     FX_BOOL bNumber;
     CFX_ByteString xrefpos_str = m_Syntax.GetNextWord(bNumber);
-    if (!bNumber) {
+    if (!bNumber)
       return PDFPARSE_ERROR_FORMAT;
-    }
+
     m_LastXRefOffset = (FX_FILESIZE)FXSYS_atoi64(xrefpos_str);
     if (!LoadAllCrossRefV4(m_LastXRefOffset) &&
         !LoadAllCrossRefV5(m_LastXRefOffset)) {
-      if (!RebuildCrossRef()) {
+      if (!RebuildCrossRef())
         return PDFPARSE_ERROR_FORMAT;
-      }
+
       bXRefRebuilt = TRUE;
       m_LastXRefOffset = 0;
     }
   } else {
-    if (!RebuildCrossRef()) {
+    if (!RebuildCrossRef())
       return PDFPARSE_ERROR_FORMAT;
-    }
+
     bXRefRebuilt = TRUE;
   }
   FX_DWORD dwRet = SetEncryptHandler();
-  if (dwRet != PDFPARSE_ERROR_SUCCESS) {
+  if (dwRet != PDFPARSE_ERROR_SUCCESS)
     return dwRet;
-  }
+
   m_pDocument->LoadDoc();
-  if (m_pDocument->GetRoot() == NULL || m_pDocument->GetPageCount() == 0) {
-    if (bXRefRebuilt) {
+  if (!m_pDocument->GetRoot() || m_pDocument->GetPageCount() == 0) {
+    if (bXRefRebuilt)
       return PDFPARSE_ERROR_FORMAT;
-    }
+
     ReleaseEncryptHandler();
-    if (!RebuildCrossRef()) {
+    if (!RebuildCrossRef())
       return PDFPARSE_ERROR_FORMAT;
-    }
+
     dwRet = SetEncryptHandler();
-    if (dwRet != PDFPARSE_ERROR_SUCCESS) {
+    if (dwRet != PDFPARSE_ERROR_SUCCESS)
       return dwRet;
-    }
+
     m_pDocument->LoadDoc();
-    if (m_pDocument->GetRoot() == NULL) {
+    if (!m_pDocument->GetRoot())
       return PDFPARSE_ERROR_FORMAT;
-    }
   }
   FXSYS_qsort(m_SortedOffset.GetData(), m_SortedOffset.GetSize(),
               sizeof(FX_FILESIZE), CompareFileSize);
@@ -249,13 +248,12 @@ FX_DWORD CPDF_Parser::StartParse(IFX_FileRead* pFileAccess,
     ReleaseEncryptHandler();
     RebuildCrossRef();
     RootObjNum = GetRootObjNum();
-    if (RootObjNum == 0) {
+    if (RootObjNum == 0)
       return PDFPARSE_ERROR_FORMAT;
-    }
+
     dwRet = SetEncryptHandler();
-    if (dwRet != PDFPARSE_ERROR_SUCCESS) {
+    if (dwRet != PDFPARSE_ERROR_SUCCESS)
       return dwRet;
-    }
   }
   if (m_pSecurityHandler && !m_pSecurityHandler->IsMetadataEncrypted()) {
     CPDF_Reference* pMetadata =
@@ -459,9 +457,8 @@ FX_BOOL CPDF_Parser::LoadLinearizedCrossRefV4(FX_FILESIZE pos,
         int32_t offset = FXSYS_atoi(pEntry);
         if (offset == 0) {
           for (int32_t c = 0; c < 10; c++) {
-            if (pEntry[c] < '0' || pEntry[c] > '9') {
+            if (!std::isdigit(pEntry[c]))
               return FALSE;
-            }
           }
         }
         m_CrossRef.SetAtGrow(objnum, offset);
@@ -560,9 +557,8 @@ bool CPDF_Parser::LoadCrossRefV4(FX_FILESIZE pos,
             FX_FILESIZE offset = (FX_FILESIZE)FXSYS_atoi64(pEntry);
             if (offset == 0) {
               for (int32_t c = 0; c < 10; c++) {
-                if (pEntry[c] < '0' || pEntry[c] > '9') {
+                if (!std::isdigit(pEntry[c]))
                   return false;
-                }
               }
             }
             m_CrossRef.SetAtGrow(objnum, offset);
@@ -630,28 +626,32 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
       uint8_t byte = buffer[i];
       switch (status) {
         case 0:
-          if (PDFCharIsWhitespace(byte)) {
+          if (PDFCharIsWhitespace(byte))
             status = 1;
-          }
-          if (byte <= '9' && byte >= '0') {
+
+          if (std::isdigit(byte)) {
             --i;
             status = 1;
           }
+
           if (byte == '%') {
             inside_index = 0;
             status = 9;
           }
+
           if (byte == '(') {
             status = 10;
             depth = 1;
           }
+
           if (byte == '<') {
             inside_index = 1;
             status = 11;
           }
-          if (byte == '\\') {
+
+          if (byte == '\\')
             status = 13;
-          }
+
           if (byte == 't') {
             status = 7;
             inside_index = 1;
@@ -660,7 +660,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
         case 1:
           if (PDFCharIsWhitespace(byte)) {
             break;
-          } else if (byte <= '9' && byte >= '0') {
+          } else if (std::isdigit(byte)) {
             start_pos = pos + i;
             status = 2;
             objnum = byte - '0';
@@ -676,7 +676,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
           }
           break;
         case 2:
-          if (byte <= '9' && byte >= '0') {
+          if (std::isdigit(byte)) {
             objnum = objnum * 10 + byte - '0';
             break;
           } else if (PDFCharIsWhitespace(byte)) {
@@ -688,7 +688,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
           }
           break;
         case 3:
-          if (byte <= '9' && byte >= '0') {
+          if (std::isdigit(byte)) {
             start_pos1 = pos + i;
             status = 4;
             gennum = byte - '0';
@@ -703,7 +703,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
           }
           break;
         case 4:
-          if (byte <= '9' && byte >= '0') {
+          if (std::isdigit(byte)) {
             gennum = gennum * 10 + byte - '0';
             break;
           } else if (PDFCharIsWhitespace(byte)) {
@@ -719,7 +719,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
             inside_index = 1;
           } else if (PDFCharIsWhitespace(byte)) {
             break;
-          } else if (byte <= '9' && byte >= '0') {
+          } else if (std::isdigit(byte)) {
             objnum = gennum;
             gennum = byte - '0';
             start_pos = start_pos1;
@@ -1922,48 +1922,33 @@ CFX_ByteString CPDF_SyntaxParser::ReadString() {
 }
 CFX_ByteString CPDF_SyntaxParser::ReadHexString() {
   uint8_t ch;
-  if (!GetNextChar(ch)) {
+  if (!GetNextChar(ch))
     return CFX_ByteString();
-  }
+
   CFX_BinaryBuf buf;
   FX_BOOL bFirst = TRUE;
   uint8_t code = 0;
   while (1) {
-    if (ch == '>') {
+    if (ch == '>')
       break;
-    }
-    if (ch >= '0' && ch <= '9') {
+
+    if (std::isxdigit(ch)) {
+      int val = HexCharToDigit(ch);
       if (bFirst) {
-        code = (ch - '0') * 16;
+        code = val * 16;
       } else {
-        code += ch - '0';
-        buf.AppendByte((uint8_t)code);
-      }
-      bFirst = !bFirst;
-    } else if (ch >= 'A' && ch <= 'F') {
-      if (bFirst) {
-        code = (ch - 'A' + 10) * 16;
-      } else {
-        code += ch - 'A' + 10;
-        buf.AppendByte((uint8_t)code);
-      }
-      bFirst = !bFirst;
-    } else if (ch >= 'a' && ch <= 'f') {
-      if (bFirst) {
-        code = (ch - 'a' + 10) * 16;
-      } else {
-        code += ch - 'a' + 10;
+        code += val;
         buf.AppendByte((uint8_t)code);
       }
       bFirst = !bFirst;
     }
-    if (!GetNextChar(ch)) {
+
+    if (!GetNextChar(ch))
       break;
-    }
   }
-  if (!bFirst) {
+  if (!bFirst)
     buf.AppendByte((uint8_t)code);
-  }
+
   return buf.GetByteString();
 }
 void CPDF_SyntaxParser::ToNextLine() {

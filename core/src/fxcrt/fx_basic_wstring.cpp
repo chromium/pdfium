@@ -765,7 +765,7 @@ void CFX_WideString::FormatV(const FX_WCHAR* lpszFormat, va_list argList) {
     }
     if (nWidth == 0) {
       nWidth = FXSYS_wtoi(lpsz);
-      for (; *lpsz != 0 && (*lpsz) <= '9' && (*lpsz) >= '0'; lpsz++)
+      for (; *lpsz != 0 && std::isdigit(*lpsz); lpsz++)
         ;
     }
     if (nWidth < 0 || nWidth > 128 * 1024) {
@@ -781,7 +781,7 @@ void CFX_WideString::FormatV(const FX_WCHAR* lpszFormat, va_list argList) {
         lpsz++;
       } else {
         nPrecision = FXSYS_wtoi(lpsz);
-        for (; *lpsz != 0 && (*lpsz) >= '0' && (*lpsz) <= '9'; lpsz++)
+        for (; *lpsz != 0 && std::isdigit(*lpsz); lpsz++)
           ;
       }
     }

@@ -101,13 +101,13 @@ void FX_atonum(const CFX_ByteStringC& strc, FX_BOOL& bInteger, void* pData) {
       cc++;
     }
     while (cc < len) {
-      if (str[cc] < '0' || str[cc] > '9') {
+      if (!std::isdigit(str[cc]))
         break;
-      }
+
       integer = integer * 10 + str[cc] - '0';
-      if (integer < 0) {
+      if (integer < 0)
         break;
-      }
+
       cc++;
     }
     if (bNegative) {
