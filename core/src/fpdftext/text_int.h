@@ -119,7 +119,7 @@ class CPDF_TextPage : public IPDF_TextPage {
                            CPDF_TextObject* pTextObj2);
   int GetCharWidth(FX_DWORD charCode, CPDF_Font* pFont) const;
   void CloseTempLine();
-  void OnPiece(IFX_BidiChar* pBidi, CFX_WideString& str);
+  void OnPiece(CFX_BidiChar* pBidi, CFX_WideString& str);
   int32_t PreMarkedContent(PDFTEXT_Obj pObj);
   void ProcessMarkedContent(PDFTEXT_Obj pObj);
   void CheckMarkedContentObject(int32_t& start, int32_t& nCount) const;

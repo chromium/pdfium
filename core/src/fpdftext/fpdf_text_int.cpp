@@ -13,7 +13,7 @@
 #include "../../include/fpdfapi/fpdf_pageobj.h"
 #include "../../include/fpdfapi/fpdf_resource.h"
 #include "../../include/fpdftext/fpdf_text.h"
-#include "../../include/fxcrt/fx_arb.h"
+#include "../../include/fxcrt/fx_bidi.h"
 #include "../../include/fxcrt/fx_ucd.h"
 #include "text_int.h"
 
@@ -1001,10 +1001,10 @@ int CPDF_TextPage::GetCharWidth(FX_DWORD charCode, CPDF_Font* pFont) const {
   }
   return w;
 }
-void CPDF_TextPage::OnPiece(IFX_BidiChar* pBidi, CFX_WideString& str) {
+void CPDF_TextPage::OnPiece(CFX_BidiChar* pBidi, CFX_WideString& str) {
   int32_t start, count;
-  int32_t ret = pBidi->GetBidiInfo(start, count);
-  if (ret == 2) {
+  CFX_BidiChar::Direction ret = pBidi->GetBidiInfo(&start, &count);
+  if (ret == CFX_BidiChar::RIGHT) {
     for (int i = start + count - 1; i >= start; i--) {
       m_TextBuf.AppendChar(str.GetAt(i));
       m_charList.Add(*(PAGECHAR_INFO*)m_TempCharList.GetAt(i));
@@ -1085,7 +1085,7 @@ void CPDF_TextPage::CloseTempLine() {
   if (count1 <= 0) {
     return;
   }
-  nonstd::unique_ptr<IFX_BidiChar> pBidiChar(IFX_BidiChar::Create());
+  nonstd::unique_ptr<CFX_BidiChar> pBidiChar(new CFX_BidiChar);
   CFX_WideString str = m_TempTextBuf.GetWideString();
   CFX_WordArray order;
   FX_BOOL bR2L = FALSE;
@@ -1107,28 +1107,28 @@ void CPDF_TextPage::CloseTempLine() {
       bPrevSpace = FALSE;
     }
     if (pBidiChar->AppendChar(str.GetAt(i))) {
-      int32_t ret = pBidiChar->GetBidiInfo(start, count);
+      CFX_BidiChar::Direction ret = pBidiChar->GetBidiInfo(&start, &count);
       order.Add(start);
       order.Add(count);
       order.Add(ret);
       if (!bR2L) {
-        if (ret == 2) {
+        if (ret == CFX_BidiChar::RIGHT) {
           nR2L++;
-        } else if (ret == 1) {
+        } else if (ret == CFX_BidiChar::LEFT) {
           nL2R++;
         }
       }
     }
   }
   if (pBidiChar->EndChar()) {
-    int32_t ret = pBidiChar->GetBidiInfo(start, count);
+    CFX_BidiChar::Direction ret = pBidiChar->GetBidiInfo(&start, &count);
     order.Add(start);
     order.Add(count);
     order.Add(ret);
     if (!bR2L) {
-      if (ret == 2) {
+      if (ret == CFX_BidiChar::RIGHT) {
         nR2L++;
-      } else if (ret == 1) {
+      } else if (ret == CFX_BidiChar::LEFT) {
         nL2R++;
       }
     }
@@ -1560,7 +1560,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
   FX_FLOAT baseSpace = _CalculateBaseSpace(pTextObj, matrix);
 
   FX_BOOL bIsBidiAndMirrosInverse = FALSE;
-  IFX_BidiChar* BidiChar = IFX_BidiChar::Create();
+  CFX_BidiChar* BidiChar = new CFX_BidiChar;
   int32_t nR2L = 0;
   int32_t nL2R = 0;
   int32_t start = 0, count = 0;
@@ -1579,19 +1579,19 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
       continue;
     }
     if (BidiChar && BidiChar->AppendChar(wChar)) {
-      int32_t ret = BidiChar->GetBidiInfo(start, count);
-      if (ret == 2) {
+      CFX_BidiChar::Direction ret = BidiChar->GetBidiInfo(&start, &count);
+      if (ret == CFX_BidiChar::RIGHT) {
         nR2L++;
-      } else if (ret == 1) {
+      } else if (ret == CFX_BidiChar::LEFT) {
         nL2R++;
       }
     }
   }
   if (BidiChar && BidiChar->EndChar()) {
-    int32_t ret = BidiChar->GetBidiInfo(start, count);
-    if (ret == 2) {
+    CFX_BidiChar::Direction ret = BidiChar->GetBidiInfo(&start, &count);
+    if (ret == CFX_BidiChar::RIGHT) {
       nR2L++;
-    } else if (ret == 1) {
+    } else if (ret == CFX_BidiChar::LEFT) {
       nL2R++;
     }
   }

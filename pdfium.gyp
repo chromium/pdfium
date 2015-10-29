@@ -419,6 +419,7 @@
       'sources': [
         'core/include/fxcrt/fx_arb.h',
         'core/include/fxcrt/fx_basic.h',
+        'core/include/fxcrt/fx_bidi.h',
         'core/include/fxcrt/fx_coordinates.h',
         'core/include/fxcrt/fx_ext.h',
         'core/include/fxcrt/fx_memory.h',
@@ -449,6 +450,7 @@
         'core/src/fxcrt/fx_basic_utf.cpp',
         'core/src/fxcrt/fx_basic_util.cpp',
         'core/src/fxcrt/fx_basic_wstring.cpp',
+        'core/src/fxcrt/fx_bidi.cpp',
         'core/src/fxcrt/fx_extension.cpp',
         'core/src/fxcrt/fx_ucddata.cpp',
         'core/src/fxcrt/fx_unicode.cpp',
@@ -766,6 +768,7 @@
         'core/src/fxcrt/fx_basic_bstring_unittest.cpp',
         'core/src/fxcrt/fx_basic_memmgr_unittest.cpp',
         'core/src/fxcrt/fx_basic_wstring_unittest.cpp',
+        'core/src/fxcrt/fx_bidi_unittest.cpp',
         'core/src/fxcrt/fx_system_unittest.cpp',
         'testing/fx_string_testhelpers.h',
         'testing/fx_string_testhelpers.cpp',

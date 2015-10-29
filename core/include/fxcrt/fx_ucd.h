@@ -101,25 +101,9 @@ enum FX_CHARTYPE {
   FX_CHARTYPE_ArabicForm = (11 << FX_CHARTYPEBITS),
   FX_CHARTYPE_Arabic = (12 << FX_CHARTYPEBITS),
 };
-typedef struct _FX_CHARPROPERTIES {
-  union FX_CHARPROPERTIES_UNION {
-    struct FX_CHARPROPERTIES_BIT {
-      FX_DWORD dwBreakType : 6;
-      FX_DWORD dwBidiClass : 5;
-      FX_DWORD dwCharType : 4;
-      FX_DWORD dwRotation : 1;
-      FX_DWORD dwCJKSpecial : 1;
-      FX_DWORD dwVertIndex : 6;
-      FX_DWORD dwBidiIndex : 9;
-    };
-    FX_DWORD dwCharProps;
-  };
-} FX_CHARPROPERTIES;
+
 FX_DWORD FX_GetUnicodeProperties(FX_WCHAR wch);
 FX_BOOL FX_IsCtrlCode(FX_WCHAR ch);
-FX_BOOL FX_IsRotationCode(FX_WCHAR ch);
-FX_BOOL FX_IsCombinationChar(FX_WCHAR wch);
-FX_BOOL FX_IsBidiChar(FX_WCHAR wch);
 FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch, FX_BOOL bRTL, FX_BOOL bVertical);
 FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch,
                           FX_DWORD dwProps,
