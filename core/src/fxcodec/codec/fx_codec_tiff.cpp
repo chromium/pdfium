@@ -256,42 +256,36 @@ void CCodec_TiffContext::GetFrames(int32_t& frames) {
     }                                        \
   }                                          \
   (key) = NULL;
+
+namespace {
+
 template <class T>
-static FX_BOOL Tiff_Exif_GetInfo(TIFF* tif_ctx,
-                                 ttag_t tag,
-                                 CFX_DIBAttributeExif* pExif) {
-  uint8_t* key = NULL;
-  T val = (T)0;
+FX_BOOL Tiff_Exif_GetInfo(TIFF* tif_ctx, ttag_t tag, CFX_DIBAttribute* pAttr) {
+  T val = 0;
   TIFFGetField(tif_ctx, tag, &val);
-  if (val) {
-    (key) = FX_Alloc(uint8_t, sizeof(T));
-    if ((key) == NULL) {
-      return FALSE;
-    }
-    T* ptr = (T*)(key);
-    *ptr = val;
-    pExif->m_TagVal.SetAt(tag, (key));
-    return TRUE;
-  }
-  return FALSE;
+  if (!val)
+    return FALSE;
+  T* ptr = FX_Alloc(T, 1);
+  *ptr = val;
+  pAttr->m_Exif[tag] = (void*)ptr;
+  return TRUE;
 }
-static void Tiff_Exif_GetStringInfo(TIFF* tif_ctx,
-                                    ttag_t tag,
-                                    CFX_DIBAttributeExif* pExif) {
-  FX_CHAR* buf = NULL;
-  uint8_t* key = NULL;
+void Tiff_Exif_GetStringInfo(TIFF* tif_ctx,
+                             ttag_t tag,
+                             CFX_DIBAttribute* pAttr) {
+  FX_CHAR* buf = nullptr;
   TIFFGetField(tif_ctx, tag, &buf);
-  if (buf) {
-    int32_t size = (int32_t)FXSYS_strlen(buf);
-    (key) = FX_Alloc(uint8_t, size + 1);
-    if ((key) == NULL) {
-      return;
-    }
-    FXSYS_memcpy((key), buf, size);
-    key[size] = 0;
-    pExif->m_TagVal.SetAt(tag, (key));
-  }
+  if (!buf)
+    return;
+  FX_STRSIZE size = FXSYS_strlen(buf);
+  uint8_t* ptr = FX_Alloc(uint8_t, size + 1);
+  FXSYS_memcpy(ptr, buf, size);
+  ptr[size] = 0;
+  pAttr->m_Exif[tag] = ptr;
 }
+
+}  // namespace
+
 FX_BOOL CCodec_TiffContext::LoadFrameInfo(int32_t frame,
                                           FX_DWORD& width,
                                           FX_DWORD& height,
@@ -322,22 +316,20 @@ FX_BOOL CCodec_TiffContext::LoadFrameInfo(int32_t frame,
                      &pAttribute->m_wDPIUnit)) {
       pAttribute->m_wDPIUnit -= 1;
     }
-    CFX_DIBAttributeExif* pExif = (CFX_DIBAttributeExif*)pAttribute->m_pExif;
-    pExif->clear();
-    Tiff_Exif_GetInfo<FX_WORD>(tif_ctx, TIFFTAG_ORIENTATION, pExif);
-    if (Tiff_Exif_GetInfo<FX_FLOAT>(tif_ctx, TIFFTAG_XRESOLUTION, pExif)) {
-      FX_FLOAT fDpi = 0;
-      pExif->GetInfo(TIFFTAG_XRESOLUTION, &fDpi);
+    Tiff_Exif_GetInfo<FX_WORD>(tif_ctx, TIFFTAG_ORIENTATION, pAttribute);
+    if (Tiff_Exif_GetInfo<FX_FLOAT>(tif_ctx, TIFFTAG_XRESOLUTION, pAttribute)) {
+      void* val = pAttribute->m_Exif[TIFFTAG_XRESOLUTION];
+      FX_FLOAT fDpi = val ? *reinterpret_cast<FX_FLOAT*>(val) : 0;
       pAttribute->m_nXDPI = (int32_t)(fDpi + 0.5f);
     }
-    if (Tiff_Exif_GetInfo<FX_FLOAT>(tif_ctx, TIFFTAG_YRESOLUTION, pExif)) {
-      FX_FLOAT fDpi = 0;
-      pExif->GetInfo(TIFFTAG_YRESOLUTION, &fDpi);
+    if (Tiff_Exif_GetInfo<FX_FLOAT>(tif_ctx, TIFFTAG_YRESOLUTION, pAttribute)) {
+      void* val = pAttribute->m_Exif[TIFFTAG_YRESOLUTION];
+      FX_FLOAT fDpi = val ? *reinterpret_cast<FX_FLOAT*>(val) : 0;
       pAttribute->m_nYDPI = (int32_t)(fDpi + 0.5f);
     }
-    Tiff_Exif_GetStringInfo(tif_ctx, TIFFTAG_IMAGEDESCRIPTION, pExif);
-    Tiff_Exif_GetStringInfo(tif_ctx, TIFFTAG_MAKE, pExif);
-    Tiff_Exif_GetStringInfo(tif_ctx, TIFFTAG_MODEL, pExif);
+    Tiff_Exif_GetStringInfo(tif_ctx, TIFFTAG_IMAGEDESCRIPTION, pAttribute);
+    Tiff_Exif_GetStringInfo(tif_ctx, TIFFTAG_MAKE, pAttribute);
+    Tiff_Exif_GetStringInfo(tif_ctx, TIFFTAG_MODEL, pAttribute);
   }
   bpc = tif_bpc;
   if (tif_rps > height) {
@@ -346,9 +338,8 @@ FX_BOOL CCodec_TiffContext::LoadFrameInfo(int32_t frame,
   return TRUE;
 }
 void _TiffBGRA2RGBA(uint8_t* pBuf, int32_t pixel, int32_t spp) {
-  register uint8_t tmp;
   for (int32_t n = 0; n < pixel; n++) {
-    tmp = pBuf[0];
+    uint8_t tmp = pBuf[0];
     pBuf[0] = pBuf[2];
     pBuf[2] = tmp;
     pBuf += spp;

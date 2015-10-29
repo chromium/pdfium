@@ -385,38 +385,6 @@ class CCodec_Jbig2Module : public ICodec_Jbig2Module {
                                 IFX_Pause* pPause) override;
   void DestroyJbig2Context(void* pJbig2Context) override;
 };
-class CFX_DIBAttributeExif : public IFX_DIBAttributeExif {
- public:
-  CFX_DIBAttributeExif();
-  ~CFX_DIBAttributeExif();
-  virtual FX_BOOL GetInfo(FX_WORD tag, void* val);
-
-  FX_BOOL ParseExif(CFX_MapPtrTemplate<FX_DWORD, uint8_t*>* pHead,
-                    uint8_t* data,
-                    FX_DWORD len,
-                    CFX_MapPtrTemplate<FX_DWORD, uint8_t*>* pVal);
-
-  typedef FX_WORD (*_Read2Bytes)(uint8_t* data);
-  typedef FX_DWORD (*_Read4Bytes)(uint8_t* data);
-  uint8_t* ParseExifIFH(uint8_t* data,
-                        FX_DWORD len,
-                        _Read2Bytes* pReadWord,
-                        _Read4Bytes* pReadDword);
-  FX_BOOL ParseExifIFD(CFX_MapPtrTemplate<FX_DWORD, uint8_t*>* pMap,
-                       uint8_t* data,
-                       FX_DWORD len);
-
-  uint8_t* m_pExifData;
-
-  FX_DWORD m_dwExifDataLen;
-
-  void clear();
-  _Read2Bytes m_readWord;
-  _Read4Bytes m_readDword;
-  CFX_MapPtrTemplate<FX_DWORD, uint8_t*> m_TagHead;
-  CFX_MapPtrTemplate<FX_DWORD, uint8_t*> m_TagVal;
-};
-
 struct DecodeData {
  public:
   DecodeData(unsigned char* src_data, OPJ_SIZE_T src_size)

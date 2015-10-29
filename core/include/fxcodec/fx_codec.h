@@ -7,6 +7,7 @@
 #ifndef CORE_INCLUDE_FXCODEC_FX_CODEC_H_
 #define CORE_INCLUDE_FXCODEC_FX_CODEC_H_
 
+#include <map>
 #include <vector>
 
 #include "../../../third_party/base/nonstd_unique_ptr.h"
@@ -502,37 +503,24 @@ void AdobeCMYK_to_sRGB1(uint8_t c,
                         uint8_t& G,
                         uint8_t& B);
 FX_BOOL MD5ComputeID(const void* buf, FX_DWORD dwSize, uint8_t ID[16]);
+
 class CFX_DIBAttribute {
  public:
   CFX_DIBAttribute();
   ~CFX_DIBAttribute();
 
   int32_t m_nXDPI;
-
   int32_t m_nYDPI;
-
   FX_FLOAT m_fAspectRatio;
-
   FX_WORD m_wDPIUnit;
-
   CFX_ByteString m_strAuthor;
-
   uint8_t m_strTime[20];
-
   int32_t m_nGifLeft;
   int32_t m_nGifTop;
-
   FX_DWORD* m_pGifLocalPalette;
-
   FX_DWORD m_nGifLocalPalNum;
-
   int32_t m_nBmpCompressType;
-  class IFX_DIBAttributeExif* m_pExif;
-};
-class IFX_DIBAttributeExif {
- public:
-  virtual ~IFX_DIBAttributeExif(){};
-  virtual FX_BOOL GetInfo(FX_WORD tag, void* val) = 0;
+  std::map<FX_DWORD, void*> m_Exif;
 };
 
 FX_BOOL FaxSkipEOL(const uint8_t* src_buf, int bitsize, int& bitpos);
