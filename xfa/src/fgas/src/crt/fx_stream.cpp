@@ -1175,12 +1175,12 @@ IFX_Stream* CFX_Stream::CreateSharedStream(FX_DWORD dwAccess,
       (dwAccess & FX_STREAMACCESS_Write) != 0) {
     return NULL;
   }
-  register int32_t iStart = m_iStart + iOffset;
-  register int32_t iTotal = m_iStart + m_iLength;
+  int32_t iStart = m_iStart + iOffset;
+  int32_t iTotal = m_iStart + m_iLength;
   if (iStart < m_iStart || iStart >= iTotal) {
     return NULL;
   }
-  register int32_t iEnd = iStart + iLength;
+  int32_t iEnd = iStart + iLength;
   if (iEnd < iStart || iEnd > iTotal) {
     return NULL;
   }
