@@ -381,13 +381,10 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
 
   (void)FPDFAvail_IsDocAvail(pdf_avail, &hints);
 
-  if (FPDFAvail_IsLinearized(pdf_avail)) {
-    fprintf(stderr, "Linearized path...\n");
+  if (FPDFAvail_IsLinearized(pdf_avail))
     doc = FPDFAvail_GetDocument(pdf_avail, nullptr);
-  } else {
-    fprintf(stderr, "Non-linearized path...\n");
+  else
     doc = FPDF_LoadCustomDocument(&file_access, nullptr);
-  }
 
   if (!doc) {
     unsigned long err = FPDF_GetLastError();
