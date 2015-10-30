@@ -528,6 +528,7 @@ class CPDFSDK_Document {
   CPDFDoc_Environment* m_pEnv;
   CPDF_OCContext* m_pOccontent;
   FX_BOOL m_bChangeMask;
+  FX_BOOL m_bBeingDestroyed;
 };
 class CPDFSDK_PageView final {
  public:
@@ -548,6 +549,7 @@ class CPDFSDK_PageView final {
   FX_BOOL KillFocusAnnot(FX_UINT nFlag = 0) {
     return m_pSDKDoc->KillFocusAnnot(nFlag);
   }
+  void KillFocusAnnotIfNeeded();
   FX_BOOL Annot_HasAppearance(CPDF_Annot* pAnnot);
 
   CPDFSDK_Annot* AddAnnot(CPDF_Dictionary* pDict);

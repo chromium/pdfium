@@ -413,9 +413,16 @@ CPDFSDK_Document::CPDFSDK_Document(CPDFXFA_Document* pDoc,
       m_pFocusAnnot(nullptr),
       m_pEnv(pEnv),
       m_pOccontent(nullptr),
-      m_bChangeMask(FALSE) {}
+      m_bChangeMask(FALSE),
+      m_bBeingDestroyed(FALSE) {
+}
 
 CPDFSDK_Document::~CPDFSDK_Document() {
+  m_bBeingDestroyed = TRUE;
+
+  for (auto& it : m_pageMap)
+    it.second->KillFocusAnnotIfNeeded();
+
   for (auto& it : m_pageMap)
     delete it.second;
   m_pageMap.clear();
@@ -514,6 +521,7 @@ void CPDFSDK_Document::ReMovePageView(CPDFXFA_Page* pPDFXFAPage) {
   if (pPageView->IsLocked())
     return;
 
+  pPageView->KillFocusAnnotIfNeeded();
   delete pPageView;
   m_pageMap.erase(it);
 }
@@ -546,6 +554,9 @@ CPDFSDK_Annot* CPDFSDK_Document::GetFocusAnnot() {
 }
 
 FX_BOOL CPDFSDK_Document::SetFocusAnnot(CPDFSDK_Annot* pAnnot, FX_UINT nFlag) {
+  if (m_bBeingDestroyed)
+    return FALSE;
+
   if (m_pFocusAnnot == pAnnot)
     return TRUE;
 
@@ -658,14 +669,6 @@ CPDFSDK_PageView::CPDFSDK_PageView(CPDFSDK_Document* pSDKDoc,
 }
 
 CPDFSDK_PageView::~CPDFSDK_PageView() {
-  // if there is a focused annot on the page, we should kill the focus first.
-  if (CPDFSDK_Annot* focusedAnnot = m_pSDKDoc->GetFocusAnnot()) {
-    auto it =
-        std::find(m_fxAnnotArray.begin(), m_fxAnnotArray.end(), focusedAnnot);
-    if (it != m_fxAnnotArray.end())
-      KillFocusAnnot();
-  }
-
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
   CPDFSDK_AnnotHandlerMgr* pAnnotHandlerMgr = pEnv->GetAnnotHandlerMgr();
   for (CPDFSDK_Annot* pAnnot : m_fxAnnotArray)
@@ -778,6 +781,16 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetFXWidgetAtPoint(FX_FLOAT pageX,
   }
 
   return nullptr;
+}
+
+void CPDFSDK_PageView::KillFocusAnnotIfNeeded() {
+  // if there is a focused annot on the page, we should kill the focus first.
+  if (CPDFSDK_Annot* focusedAnnot = m_pSDKDoc->GetFocusAnnot()) {
+    auto it =
+        std::find(m_fxAnnotArray.begin(), m_fxAnnotArray.end(), focusedAnnot);
+    if (it != m_fxAnnotArray.end())
+      KillFocusAnnot();
+  }
 }
 
 FX_BOOL CPDFSDK_PageView::Annot_HasAppearance(CPDF_Annot* pAnnot) {
