@@ -656,24 +656,21 @@ DLLEXPORT void STDCALL FORM_DoPageAAction(FPDF_PAGE page,
     return;
   CPDFSDK_Document* pSDKDoc = ((CPDFDoc_Environment*)hHandle)->GetSDKDocument();
   CPDFXFA_Page* pPage = (CPDFXFA_Page*)page;
-  CPDFSDK_PageView* pPageView = pSDKDoc->GetPageView(pPage, FALSE);
-  if (pPageView) {
+  CPDF_Page* pPDFPage = pPage->GetPDFPage();
+  if (!pPDFPage)
+    return;
+  if (pSDKDoc->GetPageView(pPage, FALSE)) {
     CPDFDoc_Environment* pEnv = pSDKDoc->GetEnv();
     CPDFSDK_ActionHandler* pActionHandler = pEnv->GetActionHander();
-    CPDF_Dictionary* pPageDict = pPage->GetPDFPage()->m_pFormDict;
+    CPDF_Dictionary* pPageDict = pPDFPage->m_pFormDict;
     CPDF_AAction aa = pPageDict->GetDict(FX_BSTRC("AA"));
-
-    FX_BOOL bExistOAAction = FALSE;
-    FX_BOOL bExistCAAction = FALSE;
     if (FPDFPAGE_AACTION_OPEN == aaType) {
-      bExistOAAction = aa.ActionExist(CPDF_AAction::OpenPage);
-      if (bExistOAAction) {
+      if (aa.ActionExist(CPDF_AAction::OpenPage)) {
         CPDF_Action action = aa.GetAction(CPDF_AAction::OpenPage);
         pActionHandler->DoAction_Page(action, CPDF_AAction::OpenPage, pSDKDoc);
       }
     } else {
-      bExistCAAction = aa.ActionExist(CPDF_AAction::ClosePage);
-      if (bExistCAAction) {
+      if (aa.ActionExist(CPDF_AAction::ClosePage)) {
         CPDF_Action action = aa.GetAction(CPDF_AAction::ClosePage);
         pActionHandler->DoAction_Page(action, CPDF_AAction::ClosePage, pSDKDoc);
       }
