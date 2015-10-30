@@ -211,31 +211,16 @@ FX_SYSTEMTIME CFX_SystemHandler::GetLocalTime() {
 
 CPDFDoc_Environment::CPDFDoc_Environment(CPDFXFA_Document* pDoc,
                                          FPDF_FORMFILLINFO* pFFinfo)
-    : m_pAnnotHandlerMgr(NULL),
-      m_pActionHandler(NULL),
-      m_pInfo(pFFinfo),
+    : m_pInfo(pFFinfo),
       m_pSDKDoc(NULL),
       m_pXFADoc(pDoc),
-      m_pIFormFiller(NULL) {
-  m_pSysHandler = new CFX_SystemHandler(this);
+      m_pSysHandler(new CFX_SystemHandler(this)) {
 }
 
 CPDFDoc_Environment::~CPDFDoc_Environment() {
-  delete m_pIFormFiller;
-  m_pIFormFiller = NULL;
-
   CPDFXFA_App* pProvider = CPDFXFA_App::GetInstance();
   if (pProvider->m_pEnvList.GetSize() == 0)
     pProvider->SetJavaScriptInitialized(FALSE);
-
-  delete m_pSysHandler;
-  m_pSysHandler = NULL;
-
-  delete m_pAnnotHandlerMgr;
-  m_pAnnotHandlerMgr = NULL;
-
-  delete m_pActionHandler;
-  m_pActionHandler = NULL;
 }
 
 int CPDFDoc_Environment::JS_appAlert(const FX_WCHAR* Msg,
@@ -390,29 +375,27 @@ IJS_Runtime* CPDFDoc_Environment::GetJSRuntime() {
 
 CPDFSDK_AnnotHandlerMgr* CPDFDoc_Environment::GetAnnotHandlerMgr() {
   if (!m_pAnnotHandlerMgr)
-    m_pAnnotHandlerMgr = new CPDFSDK_AnnotHandlerMgr(this);
-  return m_pAnnotHandlerMgr;
+    m_pAnnotHandlerMgr.reset(new CPDFSDK_AnnotHandlerMgr(this));
+  return m_pAnnotHandlerMgr.get();
 }
 
 CPDFSDK_ActionHandler* CPDFDoc_Environment::GetActionHander() {
   if (!m_pActionHandler)
-    m_pActionHandler = new CPDFSDK_ActionHandler();
-  return m_pActionHandler;
+    m_pActionHandler.reset(new CPDFSDK_ActionHandler());
+  return m_pActionHandler.get();
 }
 
 CFFL_IFormFiller* CPDFDoc_Environment::GetIFormFiller() {
   if (!m_pIFormFiller)
-    m_pIFormFiller = new CFFL_IFormFiller(this);
-  return m_pIFormFiller;
+    m_pIFormFiller.reset(new CFFL_IFormFiller(this));
+  return m_pIFormFiller.get();
 }
 
 CPDFSDK_Document::CPDFSDK_Document(CPDFXFA_Document* pDoc,
                                    CPDFDoc_Environment* pEnv)
     : m_pDoc(pDoc),
-      m_pInterForm(nullptr),
       m_pFocusAnnot(nullptr),
       m_pEnv(pEnv),
-      m_pOccontent(nullptr),
       m_bChangeMask(FALSE),
       m_bBeingDestroyed(FALSE) {
 }
@@ -426,12 +409,6 @@ CPDFSDK_Document::~CPDFSDK_Document() {
   for (auto& it : m_pageMap)
     delete it.second;
   m_pageMap.clear();
-
-  delete m_pInterForm;
-  m_pInterForm = nullptr;
-
-  delete m_pOccontent;
-  m_pOccontent = nullptr;
 }
 
 CPDFSDK_PageView* CPDFSDK_Document::GetPageView(CPDFXFA_Page* pPDFXFAPage,
@@ -508,8 +485,8 @@ FX_BOOL CPDFSDK_Document::ProcOpenAction() {
 
 CPDF_OCContext* CPDFSDK_Document::GetOCContext() {
   if (!m_pOccontent)
-    m_pOccontent = new CPDF_OCContext(m_pDoc->GetPDFDoc());
-  return m_pOccontent;
+    m_pOccontent.reset(new CPDF_OCContext(m_pDoc->GetPDFDoc()));
+  return m_pOccontent.get();
 }
 
 void CPDFSDK_Document::ReMovePageView(CPDFXFA_Page* pPDFXFAPage) {
@@ -535,8 +512,8 @@ CPDFXFA_Page* CPDFSDK_Document::GetPage(int nIndex) {
 
 CPDFSDK_InterForm* CPDFSDK_Document::GetInterForm() {
   if (!m_pInterForm)
-    m_pInterForm = new CPDFSDK_InterForm(this);
-  return m_pInterForm;
+    m_pInterForm.reset(new CPDFSDK_InterForm(this));
+  return m_pInterForm.get();
 }
 
 void CPDFSDK_Document::UpdateAllViews(CPDFSDK_PageView* pSender,
