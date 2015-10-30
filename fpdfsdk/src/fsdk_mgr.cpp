@@ -664,8 +664,7 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
 
 CPDF_Annot* CPDFSDK_PageView::GetPDFAnnotAtPoint(FX_FLOAT pageX,
                                                  FX_FLOAT pageY) {
-  int nCount = CountAnnots();
-  for (int i = 0; i < nCount; i++) {
+  for (size_t i = 0; i < CountAnnots(); ++i) {
     CPDF_Annot* pAnnot = m_pAnnotList->GetAt(i);
     CFX_FloatRect annotRect;
     pAnnot->GetRect(annotRect);
@@ -677,8 +676,7 @@ CPDF_Annot* CPDFSDK_PageView::GetPDFAnnotAtPoint(FX_FLOAT pageX,
 
 CPDF_Annot* CPDFSDK_PageView::GetPDFWidgetAtPoint(FX_FLOAT pageX,
                                                   FX_FLOAT pageY) {
-  int nCount = CountAnnots();
-  for (int i = 0; i < nCount; ++i) {
+  for (size_t i = 0; i < CountAnnots(); ++i) {
     CPDF_Annot* pAnnot = m_pAnnotList->GetAt(i);
     if (pAnnot->GetSubType() == "Widget") {
       CFX_FloatRect annotRect;
@@ -764,8 +762,8 @@ CPDF_Document* CPDFSDK_PageView::GetPDFDocument() {
   return NULL;
 }
 
-int CPDFSDK_PageView::CountAnnots() const {
-  return m_pAnnotList->Count();
+size_t CPDFSDK_PageView::CountAnnots() const {
+  return m_fxAnnotArray.size();
 }
 
 CPDFSDK_Annot* CPDFSDK_PageView::GetAnnot(size_t nIndex) {
@@ -899,9 +897,8 @@ void CPDFSDK_PageView::LoadFXAnnots() {
   CPDF_InterForm::EnableUpdateAP(FALSE);
   m_pAnnotList.reset(new CPDF_AnnotList(m_page));
   CPDF_InterForm::EnableUpdateAP(enableAPUpdate);
-  int nCount = CountAnnots();
   SetLock(TRUE);
-  for (int i = 0; i < nCount; ++i) {
+  for (size_t i = 0; i < CountAnnots(); ++i) {
     CPDF_Annot* pPDFAnnot = m_pAnnotList->GetAt(i);
     CPDF_Document* pDoc = GetPDFDocument();
 
@@ -952,8 +949,7 @@ FX_BOOL CPDFSDK_PageView::IsValidAnnot(CPDF_Annot* p) const {
   if (!p)
     return FALSE;
 
-  int nCount = CountAnnots();
-  for (int i = 0; i < nCount; ++i) {
+  for (size_t i = 0; i < CountAnnots(); ++i) {
     if (m_pAnnotList->GetAt(i) == p)
       return TRUE;
   }
