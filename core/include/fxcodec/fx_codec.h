@@ -12,7 +12,6 @@
 #include "../../../third_party/base/nonstd_unique_ptr.h"
 #include "../fxcrt/fx_basic.h"
 #include "fx_codec_def.h"
-#include "fx_codec_provider.h"
 
 class CFX_DIBSource;
 class CJPX_Decoder;
@@ -156,8 +155,6 @@ class ICodec_FaxModule {
 class ICodec_JpegModule {
  public:
   virtual ~ICodec_JpegModule() {}
-
-  virtual void SetPovider(IFX_JpegProvider* pJP) = 0;
 
   virtual ICodec_ScanlineDecoder* CreateDecoder(const uint8_t* src_buf,
                                                 FX_DWORD src_size,

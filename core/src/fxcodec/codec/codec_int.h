@@ -158,14 +158,13 @@ class CCodec_FlateModule : public ICodec_FlateModule {
 
 class CCodec_JpegModule : public ICodec_JpegModule {
  public:
-  CCodec_JpegModule() : m_pExtProvider(NULL) {}
-  void SetPovider(IFX_JpegProvider* pJP) { m_pExtProvider = pJP; }
+  CCodec_JpegModule() {}
   ICodec_ScanlineDecoder* CreateDecoder(const uint8_t* src_buf,
                                         FX_DWORD src_size,
                                         int width,
                                         int height,
                                         int nComps,
-                                        FX_BOOL ColorTransform);
+                                        FX_BOOL ColorTransform) override;
   FX_BOOL LoadInfo(const uint8_t* src_buf,
                    FX_DWORD src_size,
                    int& width,
@@ -174,23 +173,22 @@ class CCodec_JpegModule : public ICodec_JpegModule {
                    int& bits_per_components,
                    FX_BOOL& color_transform,
                    uint8_t** icc_buf_ptr,
-                   FX_DWORD* icc_length);
+                   FX_DWORD* icc_length) override;
   FX_BOOL Encode(const CFX_DIBSource* pSource,
                  uint8_t*& dest_buf,
                  FX_STRSIZE& dest_size,
                  int quality,
                  const uint8_t* icc_buf,
-                 FX_DWORD icc_length);
-  virtual void* Start();
-  virtual void Finish(void* pContext);
-  virtual void Input(void* pContext, const uint8_t* src_buf, FX_DWORD src_size);
-  virtual int ReadHeader(void* pContext, int* width, int* height, int* nComps);
-  virtual int StartScanline(void* pContext, int down_scale);
-  virtual FX_BOOL ReadScanline(void* pContext, uint8_t* dest_buf);
-  virtual FX_DWORD GetAvailInput(void* pContext, uint8_t** avail_buf_ptr);
-
- protected:
-  IFX_JpegProvider* m_pExtProvider;
+                 FX_DWORD icc_length) override;
+  void* Start() override;
+  void Finish(void* pContext) override;
+  void Input(void* pContext,
+             const uint8_t* src_buf,
+             FX_DWORD src_size) override;
+  int ReadHeader(void* pContext, int* width, int* height, int* nComps) override;
+  int StartScanline(void* pContext, int down_scale) override;
+  FX_BOOL ReadScanline(void* pContext, uint8_t* dest_buf) override;
+  FX_DWORD GetAvailInput(void* pContext, uint8_t** avail_buf_ptr) override;
 };
 class CCodec_IccModule : public ICodec_IccModule {
  public:
