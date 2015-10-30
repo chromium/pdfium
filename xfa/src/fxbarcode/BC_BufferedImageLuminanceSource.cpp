@@ -34,7 +34,7 @@ static CFX_DIBitmap* CreateDIBSource(IFX_FileRead* fileread) {
   pCodecMgr = new CCodec_ModuleMgr();
   pImageCodec = pCodecMgr->CreateProgressiveDecoder();
   FXCODEC_STATUS status = FXCODEC_STATUS_DECODE_FINISH;
-  status = pImageCodec->LoadImageInfo(fileread, FXCODEC_IMAGE_UNKNOWN);
+  status = pImageCodec->LoadImageInfo(fileread, FXCODEC_IMAGE_UNKNOWN, nullptr);
   if (status != FXCODEC_STATUS_FRAME_READY) {
     return NULL;
   }
@@ -181,11 +181,7 @@ CBC_LuminanceSource* CBC_BufferedImageLuminanceSource::Crop(int32_t left,
 }
 CBC_LuminanceSource* CBC_BufferedImageLuminanceSource::RotateCounterClockwise(
     int32_t& e) {
-  if (!IsRotateSupported()) {
+  if (!IsRotateSupported())
     e = BCExceptionRotateNotSupported;
-    return NULL;
-  }
-  int32_t sourceWidth = m_width;
-  int32_t sourceHeight = m_height;
   return NULL;
 }

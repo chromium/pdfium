@@ -86,47 +86,31 @@ enum FXCodec_Format {
 class CCodec_ProgressiveDecoder : public ICodec_ProgressiveDecoder {
  public:
   CCodec_ProgressiveDecoder(CCodec_ModuleMgr* pCodecMgr);
-  virtual ~CCodec_ProgressiveDecoder();
+  ~CCodec_ProgressiveDecoder() override;
 
- public:
-  virtual FXCODEC_STATUS LoadImageInfo(IFX_FileRead* pFile,
-                                       FXCODEC_IMAGE_TYPE imageType,
-                                       CFX_DIBAttribute* pAttribute);
+  FXCODEC_STATUS LoadImageInfo(IFX_FileRead* pFile,
+                               FXCODEC_IMAGE_TYPE imageType,
+                               CFX_DIBAttribute* pAttribute) override;
 
-  virtual FXCODEC_IMAGE_TYPE GetType() { return m_imagType; }
-  virtual int32_t GetWidth() { return m_SrcWidth; }
-  virtual int32_t GetHeight() { return m_SrcHeight; }
-  virtual int32_t GetNumComponents() { return m_SrcComponents; }
-  virtual int32_t GetBPC() { return m_SrcBPC; }
-  virtual void SetClipBox(FX_RECT* clip);
-  virtual FXCODEC_STATUS GetFrames(int32_t& frames, IFX_Pause* pPause);
+  FXCODEC_IMAGE_TYPE GetType() const override { return m_imagType; }
+  int32_t GetWidth() const override { return m_SrcWidth; }
+  int32_t GetHeight() const override { return m_SrcHeight; }
+  int32_t GetNumComponents() const override { return m_SrcComponents; }
+  int32_t GetBPC() const override { return m_SrcBPC; }
+  void SetClipBox(FX_RECT* clip) override;
 
-  virtual FXCODEC_STATUS StartDecode(CFX_DIBitmap* pDIBitmap,
-                                     int start_x,
-                                     int start_y,
-                                     int size_x,
-                                     int size_y,
-                                     int32_t frames,
-                                     FX_BOOL bInterpol);
+  FXCODEC_STATUS GetFrames(int32_t& frames, IFX_Pause* pPause) override;
+  FXCODEC_STATUS StartDecode(CFX_DIBitmap* pDIBitmap,
+                             int start_x,
+                             int start_y,
+                             int size_x,
+                             int size_y,
+                             int32_t frames,
+                             FX_BOOL bInterpol) override;
 
-  virtual FXCODEC_STATUS ContinueDecode(IFX_Pause* pPause);
+  FXCODEC_STATUS ContinueDecode(IFX_Pause* pPause) override;
 
  protected:
-  FX_BOOL DetectImageType(FXCODEC_IMAGE_TYPE imageType,
-                          CFX_DIBAttribute* pAttribute = NULL);
-  void GetDownScale(int& down_scale);
-  void GetTransMethod(FXDIB_Format des_format, FXCodec_Format src_format);
-  void ReSampleScanline(CFX_DIBitmap* pDeviceBitmap,
-                        int32_t des_line,
-                        uint8_t* src_scan,
-                        FXCodec_Format src_format);
-  void Resample(CFX_DIBitmap* pDeviceBitmap,
-                int32_t src_line,
-                uint8_t* src_scan,
-                FXCodec_Format src_format);
-  void ResampleVert(CFX_DIBitmap* pDeviceBitmap, double scale_y, int des_row);
-  FX_BOOL JpegReadMoreData(ICodec_JpegModule* pJpegModule,
-                           FXCODEC_STATUS& err_status);
   static FX_BOOL PngReadHeaderFunc(void* pModule,
                                    int width,
                                    int height,
@@ -140,13 +124,6 @@ class CCodec_ProgressiveDecoder : public ICodec_ProgressiveDecoder {
   static void PngFillScanlineBufCompletedFunc(void* pModule,
                                               int pass,
                                               int line);
-  void PngOneOneMapResampleHorz(CFX_DIBitmap* pDeviceBitmap,
-                                int32_t des_line,
-                                uint8_t* src_scan,
-                                FXCodec_Format src_format);
-
-  FX_BOOL GifReadMoreData(ICodec_GifModule* pGifModule,
-                          FXCODEC_STATUS& err_status);
   static void GifRecordCurrentPositionCallback(void* pModule,
                                                FX_DWORD& cur_pos);
   static uint8_t* GifAskLocalPaletteBufCallback(void* pModule,
@@ -165,16 +142,38 @@ class CCodec_ProgressiveDecoder : public ICodec_ProgressiveDecoder {
   static void GifReadScanlineCallback(void* pModule,
                                       int32_t row_num,
                                       uint8_t* row_buf);
-  void GifDoubleLineResampleVert(CFX_DIBitmap* pDeviceBitmap,
-                                 double scale_y,
-                                 int des_row);
-  FX_BOOL BmpReadMoreData(ICodec_BmpModule* pBmpModule,
-                          FXCODEC_STATUS& err_status);
   static FX_BOOL BmpInputImagePositionBufCallback(void* pModule,
                                                   FX_DWORD rcd_pos);
   static void BmpReadScanlineCallback(void* pModule,
                                       int32_t row_num,
                                       uint8_t* row_buf);
+
+  FX_BOOL DetectImageType(FXCODEC_IMAGE_TYPE imageType,
+                          CFX_DIBAttribute* pAttribute);
+  void GetDownScale(int& down_scale);
+  void GetTransMethod(FXDIB_Format des_format, FXCodec_Format src_format);
+  void ReSampleScanline(CFX_DIBitmap* pDeviceBitmap,
+                        int32_t des_line,
+                        uint8_t* src_scan,
+                        FXCodec_Format src_format);
+  void Resample(CFX_DIBitmap* pDeviceBitmap,
+                int32_t src_line,
+                uint8_t* src_scan,
+                FXCodec_Format src_format);
+  void ResampleVert(CFX_DIBitmap* pDeviceBitmap, double scale_y, int des_row);
+  FX_BOOL JpegReadMoreData(ICodec_JpegModule* pJpegModule,
+                           FXCODEC_STATUS& err_status);
+  void PngOneOneMapResampleHorz(CFX_DIBitmap* pDeviceBitmap,
+                                int32_t des_line,
+                                uint8_t* src_scan,
+                                FXCodec_Format src_format);
+  FX_BOOL GifReadMoreData(ICodec_GifModule* pGifModule,
+                          FXCODEC_STATUS& err_status);
+  void GifDoubleLineResampleVert(CFX_DIBitmap* pDeviceBitmap,
+                                 double scale_y,
+                                 int des_row);
+  FX_BOOL BmpReadMoreData(ICodec_BmpModule* pBmpModule,
+                          FXCODEC_STATUS& err_status);
   void ResampleVertBT(CFX_DIBitmap* pDeviceBitmap, double scale_y, int des_row);
 
  public:

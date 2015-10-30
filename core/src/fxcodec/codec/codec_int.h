@@ -159,13 +159,13 @@ class CCodec_FlateModule : public ICodec_FlateModule {
 class CCodec_JpegModule : public ICodec_JpegModule {
  public:
   CCodec_JpegModule() : m_pExtProvider(NULL) {}
-  void SetPovider(IFX_JpegProvider* pJP) { m_pExtProvider = pJP; }
+  void SetPovider(IFX_JpegProvider* pJP) override { m_pExtProvider = pJP; }
   ICodec_ScanlineDecoder* CreateDecoder(const uint8_t* src_buf,
                                         FX_DWORD src_size,
                                         int width,
                                         int height,
                                         int nComps,
-                                        FX_BOOL ColorTransform);
+                                        FX_BOOL ColorTransform) override;
   FX_BOOL LoadInfo(const uint8_t* src_buf,
                    FX_DWORD src_size,
                    int& width,
@@ -174,24 +174,26 @@ class CCodec_JpegModule : public ICodec_JpegModule {
                    int& bits_per_components,
                    FX_BOOL& color_transform,
                    uint8_t** icc_buf_ptr,
-                   FX_DWORD* icc_length);
+                   FX_DWORD* icc_length) override;
   FX_BOOL Encode(const CFX_DIBSource* pSource,
                  uint8_t*& dest_buf,
                  FX_STRSIZE& dest_size,
                  int quality,
                  const uint8_t* icc_buf,
-                 FX_DWORD icc_length);
-  virtual void* Start();
-  virtual void Finish(void* pContext);
-  virtual void Input(void* pContext, const uint8_t* src_buf, FX_DWORD src_size);
-  virtual int ReadHeader(void* pContext,
-                         int* width,
-                         int* height,
-                         int* nComps,
-                         CFX_DIBAttribute* pAttribute = NULL);
-  virtual int StartScanline(void* pContext, int down_scale);
-  virtual FX_BOOL ReadScanline(void* pContext, uint8_t* dest_buf);
-  virtual FX_DWORD GetAvailInput(void* pContext, uint8_t** avail_buf_ptr);
+                 FX_DWORD icc_length) override;
+  void* Start() override;
+  void Finish(void* pContext) override;
+  void Input(void* pContext,
+             const uint8_t* src_buf,
+             FX_DWORD src_size) override;
+  int ReadHeader(void* pContext,
+                 int* width,
+                 int* height,
+                 int* nComps,
+                 CFX_DIBAttribute* pAttribute) override;
+  int StartScanline(void* pContext, int down_scale) override;
+  FX_BOOL ReadScanline(void* pContext, uint8_t* dest_buf) override;
+  FX_DWORD GetAvailInput(void* pContext, uint8_t** avail_buf_ptr) override;
 
  protected:
   IFX_JpegProvider* m_pExtProvider;
@@ -238,20 +240,22 @@ class CCodec_GifModule : public ICodec_GifModule {
 };
 class CCodec_BmpModule : public ICodec_BmpModule {
  public:
-  CCodec_BmpModule() { FXSYS_memset(m_szLastError, '\0', 256); }
-  virtual void* Start(void* pModule);
-  virtual void Finish(void* pContext);
-  virtual FX_DWORD GetAvailInput(void* pContext, uint8_t** avail_buf_ptr);
-  virtual void Input(void* pContext, const uint8_t* src_buf, FX_DWORD src_size);
-  virtual int32_t ReadHeader(void* pContext,
-                             int32_t* width,
-                             int32_t* height,
-                             FX_BOOL* tb_flag,
-                             int32_t* components,
-                             int32_t* pal_num,
-                             FX_DWORD** pal_pp,
-                             CFX_DIBAttribute* pAttribute);
-  virtual int32_t LoadImage(void* pContext);
+  CCodec_BmpModule() { FXSYS_memset(m_szLastError, 0, sizeof(m_szLastError)); }
+  void* Start(void* pModule) override;
+  void Finish(void* pContext) override;
+  FX_DWORD GetAvailInput(void* pContext, uint8_t** avail_buf_ptr) override;
+  void Input(void* pContext,
+             const uint8_t* src_buf,
+             FX_DWORD src_size) override;
+  int32_t ReadHeader(void* pContext,
+                     int32_t* width,
+                     int32_t* height,
+                     FX_BOOL* tb_flag,
+                     int32_t* components,
+                     int32_t* pal_num,
+                     FX_DWORD** pal_pp,
+                     CFX_DIBAttribute* pAttribute) override;
+  int32_t LoadImage(void* pContext) override;
 
  protected:
   FX_CHAR m_szLastError[256];
@@ -342,7 +346,7 @@ class CCodec_TiffModule : public ICodec_TiffModule {
                         FX_DWORD& height,
                         FX_DWORD& comps,
                         FX_DWORD& bpc,
-                        CFX_DIBAttribute* pAttribute = NULL) override;
+                        CFX_DIBAttribute* pAttribute) override;
   FX_BOOL Decode(void* ctx, class CFX_DIBitmap* pDIBitmap) override;
   void DestroyDecoder(void* ctx) override;
 
