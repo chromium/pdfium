@@ -210,10 +210,8 @@ FX_SYSTEMTIME CFX_SystemHandler::GetLocalTime() {
 
 CPDFDoc_Environment::CPDFDoc_Environment(CPDF_Document* pDoc,
                                          FPDF_FORMFILLINFO* pFFinfo)
-    : m_pInfo(pFFinfo),
-      m_pSDKDoc(NULL),
-      m_pPDFDoc(pDoc),
-      m_pSysHandler(new CFX_SystemHandler(this)) {
+    : m_pInfo(pFFinfo), m_pSDKDoc(NULL), m_pPDFDoc(pDoc) {
+  m_pSysHandler.reset(new CFX_SystemHandler(this));
 }
 
 CPDFDoc_Environment::~CPDFDoc_Environment() {
