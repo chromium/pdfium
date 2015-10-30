@@ -83,6 +83,7 @@ CFXJSE_RuntimeData* CFXJSE_RuntimeData::Create(v8::Isolate* pIsolate) {
   return pRuntimeData;
 }
 CFXJSE_RuntimeData* CFXJSE_RuntimeData::Get(v8::Isolate* pIsolate) {
+  FXJS_PerIsolateData::SetUp(pIsolate);
   FXJS_PerIsolateData* pData = FXJS_PerIsolateData::Get(pIsolate);
   if (!pData->m_pFXJSERuntimeData)
     pData->m_pFXJSERuntimeData = CFXJSE_RuntimeData::Create(pIsolate);
