@@ -205,7 +205,7 @@ class CPDFDoc_Environment final {
   CPDFSDK_Document* GetSDKDocument() const { return m_pSDKDoc; }
   CPDF_Document* GetPDFDocument() const { return m_pPDFDoc; }
   CFX_ByteString GetAppName() const { return ""; }
-  IFX_SystemHandler* GetSysHandler() const { return m_pSysHandler; }
+  IFX_SystemHandler* GetSysHandler() const { return m_pSysHandler.get(); }
   FPDF_FORMFILLINFO* GetFormFillInfo() const { return m_pInfo; }
 
   CFFL_IFormFiller* GetIFormFiller();             // Creates if not present.
@@ -214,14 +214,14 @@ class CPDFDoc_Environment final {
   CPDFSDK_ActionHandler* GetActionHander();       // Creates if not present.
 
  private:
-  CPDFSDK_AnnotHandlerMgr* m_pAnnotHandlerMgr;
-  CPDFSDK_ActionHandler* m_pActionHandler;
+  nonstd::unique_ptr<CPDFSDK_AnnotHandlerMgr> m_pAnnotHandlerMgr;
+  nonstd::unique_ptr<CPDFSDK_ActionHandler> m_pActionHandler;
   nonstd::unique_ptr<IJS_Runtime> m_pJSRuntime;
   FPDF_FORMFILLINFO* const m_pInfo;
   CPDFSDK_Document* m_pSDKDoc;
   CPDF_Document* const m_pPDFDoc;
-  CFFL_IFormFiller* m_pIFormFiller;
-  IFX_SystemHandler* m_pSysHandler;
+  nonstd::unique_ptr<CFFL_IFormFiller> m_pIFormFiller;
+  nonstd::unique_ptr<IFX_SystemHandler> m_pSysHandler;
 };
 
 class CPDFSDK_Document {
@@ -278,10 +278,10 @@ class CPDFSDK_Document {
  private:
   std::map<CPDF_Page*, CPDFSDK_PageView*> m_pageMap;
   CPDF_Document* m_pDoc;
-  CPDFSDK_InterForm* m_pInterForm;
+  nonstd::unique_ptr<CPDFSDK_InterForm> m_pInterForm;
   CPDFSDK_Annot* m_pFocusAnnot;
   CPDFDoc_Environment* m_pEnv;
-  CPDF_OCContext* m_pOccontent;
+  nonstd::unique_ptr<CPDF_OCContext> m_pOccontent;
   FX_BOOL m_bChangeMask;
   FX_BOOL m_bBeingDestroyed;
 };
