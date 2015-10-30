@@ -158,8 +158,7 @@ class CCodec_FlateModule : public ICodec_FlateModule {
 
 class CCodec_JpegModule : public ICodec_JpegModule {
  public:
-  CCodec_JpegModule() : m_pExtProvider(NULL) {}
-  void SetPovider(IFX_JpegProvider* pJP) override { m_pExtProvider = pJP; }
+  CCodec_JpegModule() {}
   ICodec_ScanlineDecoder* CreateDecoder(const uint8_t* src_buf,
                                         FX_DWORD src_size,
                                         int width,
@@ -194,9 +193,6 @@ class CCodec_JpegModule : public ICodec_JpegModule {
   int StartScanline(void* pContext, int down_scale) override;
   FX_BOOL ReadScanline(void* pContext, uint8_t* dest_buf) override;
   FX_DWORD GetAvailInput(void* pContext, uint8_t** avail_buf_ptr) override;
-
- protected:
-  IFX_JpegProvider* m_pExtProvider;
 };
 #define PNG_ERROR_SIZE 256
 class CCodec_PngModule : public ICodec_PngModule {

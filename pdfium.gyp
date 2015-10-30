@@ -332,7 +332,6 @@
         'core/include/fxcodec/fx_codec.h',
         'core/include/fxcodec/fx_codec_def.h',
         'core/include/fxcodec/fx_codec_flate.h',
-        'core/include/fxcodec/fx_codec_provider.h',
         'core/src/fxcodec/codec/codec_int.h',
         'core/src/fxcodec/codec/fx_codec.cpp',
         'core/src/fxcodec/codec/fx_codec_bmp.cpp',
