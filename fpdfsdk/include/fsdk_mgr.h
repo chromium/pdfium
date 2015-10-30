@@ -557,7 +557,7 @@ class CPDFSDK_PageView final {
   CPDFSDK_Annot* AddAnnot(CPDF_Annot* pPDFAnnot);
   CPDFSDK_Annot* AddAnnot(IXFA_Widget* pPDFAnnot);
   FX_BOOL DeleteAnnot(CPDFSDK_Annot* pAnnot);
-  int CountAnnots() const;
+  size_t CountAnnots() const;
   CPDFSDK_Annot* GetAnnot(size_t nIndex);
   CPDFSDK_Annot* GetAnnotByDict(CPDF_Dictionary* pDict);
   CPDFSDK_Annot* GetAnnotByXFAWidget(IXFA_Widget* hWidget);

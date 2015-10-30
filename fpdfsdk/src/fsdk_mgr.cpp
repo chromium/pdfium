@@ -725,8 +725,8 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
 
 CPDF_Annot* CPDFSDK_PageView::GetPDFAnnotAtPoint(FX_FLOAT pageX,
                                                  FX_FLOAT pageY) {
-  int nCount = CountAnnots();
-  for (int i = 0; i < nCount; i++) {
+  const int nCount = m_pAnnotList->Count();
+  for (int i = 0; i < nCount; ++i) {
     CPDF_Annot* pAnnot = m_pAnnotList->GetAt(i);
     CFX_FloatRect annotRect;
     pAnnot->GetRect(annotRect);
@@ -738,7 +738,7 @@ CPDF_Annot* CPDFSDK_PageView::GetPDFAnnotAtPoint(FX_FLOAT pageX,
 
 CPDF_Annot* CPDFSDK_PageView::GetPDFWidgetAtPoint(FX_FLOAT pageX,
                                                   FX_FLOAT pageY) {
-  int nCount = CountAnnots();
+  const int nCount = m_pAnnotList->Count();
   for (int i = 0; i < nCount; ++i) {
     CPDF_Annot* pAnnot = m_pAnnotList->GetAt(i);
     if (pAnnot->GetSubType() == "Widget") {
@@ -877,8 +877,8 @@ CPDF_Page* CPDFSDK_PageView::GetPDFPage() {
   return NULL;
 }
 
-int CPDFSDK_PageView::CountAnnots() const {
-  return m_pAnnotList->Count();
+size_t CPDFSDK_PageView::CountAnnots() const {
+  return m_fxAnnotArray.size();
 }
 
 CPDFSDK_Annot* CPDFSDK_PageView::GetAnnot(size_t nIndex) {
@@ -1094,12 +1094,10 @@ void CPDFSDK_PageView::LoadFXAnnots() {
     m_pAnnotList.reset(new CPDF_AnnotList(pPage));
     CPDF_InterForm::EnableUpdateAP(enableAPUpdate);
 
-    int nCount = m_pAnnotList->Count();
+    const int nCount = m_pAnnotList->Count();
     for (int i = 0; i < nCount; i++) {
       CPDF_Annot* pPDFAnnot = m_pAnnotList->GetAt(i);
-      CPDF_Document* pDoc = GetPDFDocument();
-
-      CheckUnSupportAnnot(pDoc, pPDFAnnot);
+      CheckUnSupportAnnot(GetPDFDocument(), pPDFAnnot);
 
       CPDFSDK_Annot* pAnnot = pAnnotHandlerMgr->NewAnnot(pPDFAnnot, this);
       if (!pAnnot)
@@ -1143,7 +1141,7 @@ FX_BOOL CPDFSDK_PageView::IsValidAnnot(CPDF_Annot* p) const {
   if (!p)
     return FALSE;
 
-  int nCount = CountAnnots();
+  const int nCount = m_pAnnotList->Count();
   for (int i = 0; i < nCount; ++i) {
     if (m_pAnnotList->GetAt(i) == p)
       return TRUE;
