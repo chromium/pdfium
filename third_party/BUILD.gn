@@ -30,11 +30,22 @@ static_library("bigint") {
   ]
 }
 
+config("fx_freetype_warnings") {
+  visibility = [ ":*" ]
+  if (is_clang) {
+    # open_face_PS_from_sfnt_stream() and open_face_from_buffer() in
+    # ftbase.h are unused.
+    cflags = [ "-Wno-unused-function" ]
+  }
+}
+
 source_set("fx_freetype") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
     "//third_party/pdfium:pdfium_config",
+    # Must be after no_chromium_code for warning flags to be ordered correctly.
+    ":fx_freetype_warnings",
   ]
   defines = [ "FT2_BUILD_LIBRARY" ]
   sources = [
@@ -69,11 +80,21 @@ source_set("fx_freetype") {
   ]
 }
 
+config("fx_agg_warnings") {
+  visibility = [ ":*" ]
+  if (is_clang) {
+    # calc_butt_cap() in agg_vcgen_stroke.cpp is unused.
+    cflags = [ "-Wno-unused-function" ]
+  }
+}
+
 source_set("fx_agg") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
     "//third_party/pdfium:pdfium_config",
+    # Must be after no_chromium_code for warning flags to be ordered correctly.
+    ":fx_agg_warnings",
   ]
   sources = [
     "agg23/agg_basics.h",
@@ -107,6 +128,7 @@ source_set("fx_lcms2") {
   configs += [
     "//build/config/compiler:no_chromium_code",
     "//third_party/pdfium:pdfium_config",
+    # Must be after no_chromium_code for warning flags to be ordered correctly.
     ":fx_lcms2_warnings",
   ]
   sources = [
