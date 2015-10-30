@@ -25,13 +25,6 @@ using namespace Gdiplus::DllExports;
 #define GdiFillType2Gdip(fill_type) \
   (fill_type == ALTERNATE ? FillModeAlternate : FillModeWinding)
 
-static CombineMode GdiCombineMode2Gdip(int mode) {
-  switch (mode) {
-    case RGN_AND:
-      return CombineModeIntersect;
-  }
-  return CombineModeIntersect;
-}
 enum {
   FuncId_GdipCreatePath2,
   FuncId_GdipSetPenDashStyle,
