@@ -6,6 +6,10 @@
 
 #ifndef _FX_UTILS
 #define _FX_UTILS
+
+#include "fx_mem.h"
+#include "../../../../core/include/fxcrt/fx_coordinates.h"  // For CFX_Rect.
+
 class CFX_ThreadLock;
 class CFX_BaseArray;
 template <class baseType>
@@ -30,6 +34,8 @@ template <class baseType>
 class CFX_CPLTreeNode;
 template <class baseType>
 class CFX_CPLTree;
+class FX_BASEARRAYDATA;
+
 class CFX_ThreadLock {
  public:
   CFX_ThreadLock();
@@ -43,7 +49,6 @@ class CFX_ThreadLock {
 class CFX_BaseArray : public CFX_Target {
  protected:
   CFX_BaseArray(int32_t iGrowSize, int32_t iBlockSize);
-  ~CFX_BaseArray();
   int32_t GetSize() const;
   int32_t GetBlockSize() const;
   uint8_t* AddSpaceTo(int32_t index);
@@ -57,7 +62,8 @@ class CFX_BaseArray : public CFX_Target {
                int32_t iCount = -1);
   int32_t RemoveLast(int32_t iCount = -1);
   void RemoveAll(FX_BOOL bLeaveMemory = FALSE);
-  void* m_pData;
+
+  FX_BASEARRAYDATA* m_pData;
 };
 template <class baseType>
 class CFX_BaseArrayTemplate : public CFX_BaseArray {

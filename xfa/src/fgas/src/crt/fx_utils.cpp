@@ -4,77 +4,76 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "../../include/fx_utl.h"
 #include "../fgas_base.h"
 #include "fx_utils.h"
+
 CFX_ThreadLock::CFX_ThreadLock() : m_pData(NULL) {}
 CFX_ThreadLock::~CFX_ThreadLock() {}
 void CFX_ThreadLock::Lock() {}
 void CFX_ThreadLock::Unlock() {}
-typedef struct _FX_BASEARRAYDATA : public CFX_Target {
+class FX_BASEARRAYDATA : public CFX_Target {
+ public:
+  FX_BASEARRAYDATA(int32_t growsize, int32_t blocksize)
+      : iGrowSize(growsize),
+        iBlockSize(blocksize),
+        iTotalCount(0),
+        iBlockCount(0),
+        pBuffer(nullptr) {}
+
+  ~FX_BASEARRAYDATA() { FX_Free(pBuffer); }
+
   int32_t iGrowSize;
   int32_t iBlockSize;
   int32_t iTotalCount;
   int32_t iBlockCount;
   uint8_t* pBuffer;
-} FX_BASEARRAYDATA, *FX_LPBASEARRAYDATA;
-typedef FX_BASEARRAYDATA const* FX_LPCBASEARRAYDATA;
+};
 CFX_BaseArray::CFX_BaseArray(int32_t iGrowSize, int32_t iBlockSize) {
   FXSYS_assert(iGrowSize > 0 && iBlockSize > 0);
-  m_pData = new FX_BASEARRAYDATA;
-  FX_memset(m_pData, 0, sizeof(FX_BASEARRAYDATA));
-  ((FX_LPBASEARRAYDATA)m_pData)->iGrowSize = iGrowSize;
-  ((FX_LPBASEARRAYDATA)m_pData)->iBlockSize = iBlockSize;
-}
-CFX_BaseArray::~CFX_BaseArray() {
-  FX_LPBASEARRAYDATA pData = (FX_LPBASEARRAYDATA)m_pData;
-  if (pData->pBuffer != NULL) {
-    FX_Free(pData->pBuffer);
-  }
-  delete pData;
+  m_pData = new FX_BASEARRAYDATA(iGrowSize, iBlockSize);
 }
 int32_t CFX_BaseArray::GetSize() const {
-  return ((FX_LPBASEARRAYDATA)m_pData)->iBlockCount;
+  return m_pData->iBlockCount;
 }
 int32_t CFX_BaseArray::GetBlockSize() const {
-  return ((FX_LPBASEARRAYDATA)m_pData)->iBlockSize;
+  return m_pData->iBlockSize;
 }
 uint8_t* CFX_BaseArray::AddSpaceTo(int32_t index) {
   FXSYS_assert(index > -1);
-  uint8_t*& pBuffer = ((FX_LPBASEARRAYDATA)m_pData)->pBuffer;
-  int32_t& iTotalCount = ((FX_LPBASEARRAYDATA)m_pData)->iTotalCount;
-  int32_t iBlockSize = ((FX_LPBASEARRAYDATA)m_pData)->iBlockSize;
+  uint8_t*& pBuffer = m_pData->pBuffer;
+  int32_t& iTotalCount = m_pData->iTotalCount;
+  int32_t iBlockSize = m_pData->iBlockSize;
   if (index >= iTotalCount) {
-    int32_t iGrowSize = ((FX_LPBASEARRAYDATA)m_pData)->iGrowSize;
+    int32_t iGrowSize = m_pData->iGrowSize;
     iTotalCount = (index / iGrowSize + 1) * iGrowSize;
     int32_t iNewSize = iTotalCount * iBlockSize;
     if (pBuffer == NULL) {
-      pBuffer = (uint8_t*)FX_Alloc(uint8_t, iNewSize);
+      pBuffer = FX_Alloc(uint8_t, iNewSize);
     } else {
-      pBuffer = (uint8_t*)FX_Realloc(uint8_t, pBuffer, iNewSize);
+      pBuffer = FX_Realloc(uint8_t, pBuffer, iNewSize);
     }
   }
   FXSYS_assert(pBuffer != NULL);
-  int32_t& iBlockCount = ((FX_LPBASEARRAYDATA)m_pData)->iBlockCount;
+  int32_t& iBlockCount = m_pData->iBlockCount;
   if (index >= iBlockCount) {
     iBlockCount = index + 1;
   }
   return pBuffer + index * iBlockSize;
 }
 uint8_t* CFX_BaseArray::GetAt(int32_t index) const {
-  FXSYS_assert(index > -1 &&
-               index < ((FX_LPBASEARRAYDATA)m_pData)->iBlockCount);
-  return ((FX_LPBASEARRAYDATA)m_pData)->pBuffer +
-         index * ((FX_LPBASEARRAYDATA)m_pData)->iBlockSize;
+  FXSYS_assert(index > -1 && index < m_pData->iBlockCount);
+  return m_pData->pBuffer + index * m_pData->iBlockSize;
 }
 uint8_t* CFX_BaseArray::GetBuffer() const {
-  return ((FX_LPBASEARRAYDATA)m_pData)->pBuffer;
+  return m_pData->pBuffer;
 }
 int32_t CFX_BaseArray::Append(const CFX_BaseArray& src,
                               int32_t iStart,
                               int32_t iCount) {
-  int32_t iBlockSize = ((FX_LPBASEARRAYDATA)m_pData)->iBlockSize;
-  FXSYS_assert(iBlockSize == ((FX_LPBASEARRAYDATA)src.m_pData)->iBlockSize);
-  int32_t& iBlockCount = ((FX_LPBASEARRAYDATA)m_pData)->iBlockCount;
+  int32_t iBlockSize = m_pData->iBlockSize;
+  FXSYS_assert(iBlockSize == src.m_pData->iBlockSize);
+  int32_t& iBlockCount = m_pData->iBlockCount;
   int32_t iAdded = src.GetSize();
   FXSYS_assert(iStart > -1 && iStart < iAdded);
   if (iCount < 0) {
@@ -86,19 +85,17 @@ int32_t CFX_BaseArray::Append(const CFX_BaseArray& src,
   if (iCount < 1) {
     return 0;
   }
-  uint8_t* pDst =
-      ((FX_LPBASEARRAYDATA)m_pData)->pBuffer + iBlockCount * iBlockSize;
+  uint8_t* pDst = m_pData->pBuffer + iBlockCount * iBlockSize;
   AddSpaceTo(iBlockCount + iCount - 1);
-  FX_memcpy(pDst,
-            ((FX_LPBASEARRAYDATA)src.m_pData)->pBuffer + iStart * iBlockSize,
+  FX_memcpy(pDst, src.m_pData->pBuffer + iStart * iBlockSize,
             iCount * iBlockSize);
   return iCount;
 }
 int32_t CFX_BaseArray::Copy(const CFX_BaseArray& src,
                             int32_t iStart,
                             int32_t iCount) {
-  int32_t iBlockSize = ((FX_LPBASEARRAYDATA)m_pData)->iBlockSize;
-  FXSYS_assert(iBlockSize == ((FX_LPBASEARRAYDATA)src.m_pData)->iBlockSize);
+  int32_t iBlockSize = m_pData->iBlockSize;
+  FXSYS_assert(iBlockSize == src.m_pData->iBlockSize);
   int32_t iCopied = src.GetSize();
   FXSYS_assert(iStart > -1 && iStart < iCopied);
   if (iCount < 0) {
@@ -112,13 +109,12 @@ int32_t CFX_BaseArray::Copy(const CFX_BaseArray& src,
   }
   RemoveAll(TRUE);
   AddSpaceTo(iCount - 1);
-  FX_memcpy(((FX_LPBASEARRAYDATA)m_pData)->pBuffer,
-            ((FX_LPBASEARRAYDATA)src.m_pData)->pBuffer + iStart * iBlockSize,
+  FX_memcpy(m_pData->pBuffer, src.m_pData->pBuffer + iStart * iBlockSize,
             iCount * iBlockSize);
   return iCount;
 }
 int32_t CFX_BaseArray::RemoveLast(int32_t iCount) {
-  int32_t& iBlockCount = ((FX_LPBASEARRAYDATA)m_pData)->iBlockCount;
+  int32_t& iBlockCount = m_pData->iBlockCount;
   if (iCount < 0 || iCount > iBlockCount) {
     iCount = iBlockCount;
     iBlockCount = 0;
@@ -129,14 +125,14 @@ int32_t CFX_BaseArray::RemoveLast(int32_t iCount) {
 }
 void CFX_BaseArray::RemoveAll(FX_BOOL bLeaveMemory) {
   if (!bLeaveMemory) {
-    uint8_t*& pBuffer = ((FX_LPBASEARRAYDATA)m_pData)->pBuffer;
+    uint8_t*& pBuffer = m_pData->pBuffer;
     if (pBuffer != NULL) {
       FX_Free(pBuffer);
       pBuffer = NULL;
     }
-    ((FX_LPBASEARRAYDATA)m_pData)->iTotalCount = 0;
+    m_pData->iTotalCount = 0;
   }
-  ((FX_LPBASEARRAYDATA)m_pData)->iBlockCount = 0;
+  m_pData->iBlockCount = 0;
 }
 CFX_BaseMassArrayImp::CFX_BaseMassArrayImp(int32_t iChunkSize,
                                            int32_t iBlockSize)

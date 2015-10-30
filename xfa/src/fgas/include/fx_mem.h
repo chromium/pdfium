@@ -6,6 +6,9 @@
 
 #ifndef _FX_MEMORY
 #define _FX_MEMORY
+
+#include "../../../../core/include/fxcrt/fx_memory.h"  // For FX_Alloc().
+
 class IFX_MEMAllocator;
 class CFX_Target;
 enum FX_ALLOCTYPE {
