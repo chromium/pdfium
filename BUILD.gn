@@ -40,8 +40,10 @@ config("pdfium_config") {
       "/wd4345",
       # TODO(thestig): Fix all instances, remove this, pdfium:29
       "/wd4245",
+      "/wd4310",
       "/wd4389",
       "/wd4701",
+      "/wd4702",
       "/wd4706",
       "/wd4800",
     ]

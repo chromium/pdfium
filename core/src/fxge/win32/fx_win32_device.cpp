@@ -358,7 +358,7 @@ void* CFX_Win32FontInfo::MapFont(int weight,
                     OUT_TT_ONLY_PRECIS, 0, 0, subst_pitch_family, face);
   char facebuf[100];
   HFONT hOldFont = (HFONT)::SelectObject(m_hDC, hFont);
-  int ret = ::GetTextFaceA(m_hDC, 100, facebuf);
+  ::GetTextFaceA(m_hDC, 100, facebuf);
   ::SelectObject(m_hDC, hOldFont);
   if (face.EqualNoCase(facebuf)) {
     return hFont;
@@ -536,7 +536,6 @@ FX_BOOL CGdiDeviceDriver::GDI_SetDIBits(const CFX_DIBitmap* pBitmap1,
       return FALSE;
     }
     int width = pSrcRect->Width(), height = pSrcRect->Height();
-    int pitch = pBitmap->GetPitch();
     LPBYTE pBuffer = pBitmap->GetBuffer();
     CFX_ByteString info = CFX_WindowsDIB::GetBitmapInfo(pBitmap);
     ((BITMAPINFOHEADER*)info.c_str())->biHeight *= -1;
@@ -556,7 +555,6 @@ FX_BOOL CGdiDeviceDriver::GDI_SetDIBits(const CFX_DIBitmap* pBitmap1,
       return FALSE;
     }
     int width = pSrcRect->Width(), height = pSrcRect->Height();
-    int pitch = pBitmap->GetPitch();
     LPBYTE pBuffer = pBitmap->GetBuffer();
     CFX_ByteString info = CFX_WindowsDIB::GetBitmapInfo(pBitmap);
     ::SetDIBitsToDevice(m_hDC, left, top, width, height, pSrcRect->left,

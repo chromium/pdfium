@@ -138,8 +138,6 @@ static CFX_DIBitmap* Transform1bppBitmap(const CFX_DIBSource* pSrc,
          pSrc->GetFormat() == FXDIB_1bppCmyk);
   CFX_FloatRect unit_rect = pDestMatrix->GetUnitRect();
   FX_RECT full_rect = unit_rect.GetOutterRect();
-  int full_left = full_rect.left;
-  int full_top = full_rect.top;
   CFX_DIBExtractor src_bitmap(pSrc);
   CFX_DIBitmap* pSrcBitmap = src_bitmap;
   if (pSrcBitmap == NULL) {
@@ -297,7 +295,7 @@ void CPSOutput::OutputPS(const FX_CHAR* string, int len) {
     int send_len = len > 1024 ? 1024 : len;
     *(FX_WORD*)m_pBuf = send_len;
     FXSYS_memcpy(m_pBuf + 2, string + sent_len, send_len);
-    int ret = ExtEscape(m_hDC, PASSTHROUGH, send_len + 2, m_pBuf, 0, NULL);
+    ExtEscape(m_hDC, PASSTHROUGH, send_len + 2, m_pBuf, 0, NULL);
     sent_len += send_len;
     len -= send_len;
   }
