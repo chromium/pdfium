@@ -41,13 +41,17 @@
       }],
     ],
     'msvs_disabled_warnings': [
-      4005, 4018, 4146, 4333, 4345, 4267
+      4005, 4018, 4146, 4333, 4345, 4267,
+      # TODO(thestig): Fix all instances, remove this, pdfium:29
+      4245, 4389, 4701, 4706, 4800,
     ],
     'variables': {
       'clang_warning_flags': [
         # TODO(thestig): Fix all instances, remove this, pdfium:29
         '-Wno-sign-compare',
       ],
+      # Make sure Chromium's build/common.gypi doesn't re-add the flag on linux.
+      'cflags_cc!': [ '-Wsign-compare' ],
     },
   },
   'targets': [
