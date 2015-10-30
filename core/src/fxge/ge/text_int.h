@@ -28,7 +28,7 @@ class CTTFontDesc {
     m_RefCount = 0;
   }
   ~CTTFontDesc();
-  int32_t ReleaseFace(FXFT_Face face);
+  FX_BOOL ReleaseFace(FXFT_Face face);
   int m_Type;
   union {
     struct {

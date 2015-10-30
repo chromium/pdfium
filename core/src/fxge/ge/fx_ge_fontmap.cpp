@@ -58,10 +58,10 @@ CTTFontDesc::~CTTFontDesc() {
   }
   FX_Free(m_pFontData);
 }
-int32_t CTTFontDesc::ReleaseFace(FXFT_Face face) {
+FX_BOOL CTTFontDesc::ReleaseFace(FXFT_Face face) {
   if (m_Type == 1) {
     if (m_SingleFace.m_pFace != face) {
-      return -1;
+      return FALSE;
     }
   } else if (m_Type == 2) {
     int i;
@@ -70,15 +70,15 @@ int32_t CTTFontDesc::ReleaseFace(FXFT_Face face) {
         break;
       }
     if (i == 16) {
-      return -1;
+      return FALSE;
     }
   }
   m_RefCount--;
   if (m_RefCount) {
-    return m_RefCount;
+    return FALSE;
   }
   delete this;
-  return 0;
+  return TRUE;
 }
 
 CFX_FontMgr::CFX_FontMgr() : m_FTLibrary(nullptr) {
@@ -357,20 +357,12 @@ void CFX_FontMgr::ReleaseFace(FXFT_Face face) {
   if (!face) {
     return;
   }
-  FX_BOOL bNeedFaceDone = TRUE;
   auto it = m_FaceMap.begin();
   while (it != m_FaceMap.end()) {
     auto temp = it++;
-    int nRet = temp->second->ReleaseFace(face);
-    if (nRet == 0) {
+    if (temp->second->ReleaseFace(face)) {
       m_FaceMap.erase(temp);
-      bNeedFaceDone = FALSE;
-    } else if (nRet > 0) {
-      bNeedFaceDone = FALSE;
     }
-  }
-  if (bNeedFaceDone && !m_pBuiltinMapper->IsBuiltinFace(face)) {
-    FXFT_Done_Face(face);
   }
 }
 const FoxitFonts g_FoxitFonts[14] = {
@@ -421,10 +413,10 @@ CFX_FontMapper::CFX_FontMapper(CFX_FontMgr* mgr)
   FXSYS_memset(m_FoxitFaces, 0, sizeof(m_FoxitFaces));
 }
 CFX_FontMapper::~CFX_FontMapper() {
-  for (int i = 0; i < 14; i++)
-    if (m_FoxitFaces[i]) {
+  for (size_t i = 0; i < FX_ArraySize(m_FoxitFaces); ++i) {
+    if (m_FoxitFaces[i])
       FXFT_Done_Face(m_FoxitFaces[i]);
-    }
+  }
   if (m_MMFaces[0]) {
     FXFT_Done_Face(m_MMFaces[0]);
   }
