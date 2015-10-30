@@ -70,7 +70,6 @@
         'pdfwindow',
         'fpdfxfa',
       ],
-      'ldflags': [ '-L<(PRODUCT_DIR)',],
       'sources': [
         'fpdfsdk/include/fsdk_actionhandler.h',
         'fpdfsdk/include/fsdk_annothandler.h',
@@ -151,7 +150,6 @@
     {
       'target_name': 'fdrm',
       'type': 'static_library',
-      'ldflags': [ '-L<(PRODUCT_DIR)',],
       'sources': [
         'core/include/fdrm/fx_crypt.h',
         'core/src/fdrm/crypto/fx_crypt.cpp',
@@ -162,7 +160,6 @@
     {
       'target_name': 'fpdfdoc',
       'type': 'static_library',
-      'ldflags': [ '-L<(PRODUCT_DIR)',],
       'sources': [
         'core/include/fpdfdoc/fpdf_ap.h',
         'core/include/fpdfdoc/fpdf_doc.h',
@@ -192,7 +189,6 @@
     {
       'target_name': 'fpdfapi',
       'type': 'static_library',
-      'ldflags': [ '-L<(PRODUCT_DIR)',],
       'sources': [
         'core/include/fpdfapi/fpdfapi.h',
         'core/include/fpdfapi/fpdf_module.h',
@@ -309,7 +305,6 @@
     {
       'target_name': 'fpdftext',
       'type': 'static_library',
-      'ldflags': [ '-L<(PRODUCT_DIR)',],
       'sources': [
         'core/include/fpdftext/fpdf_text.h',
         'core/src/fpdftext/fpdf_text.cpp',
@@ -333,7 +328,6 @@
         'third_party/third_party.gyp:fx_tiff',
         'third_party/third_party.gyp:fx_zlib',
       ],
-      'ldflags': [ '-L<(PRODUCT_DIR)',],
       'sources': [
         'core/include/fxcodec/fx_codec.h',
         'core/include/fxcodec/fx_codec_def.h',
@@ -415,7 +409,6 @@
     {
       'target_name': 'fxcrt',
       'type': 'static_library',
-      'ldflags': [ '-L<(PRODUCT_DIR)',],
       'sources': [
         'core/include/fxcrt/fx_arb.h',
         'core/include/fxcrt/fx_basic.h',
@@ -463,9 +456,6 @@
     {
       'target_name': 'fxge',
       'type': 'static_library',
-      'ldflags': [
-        '-L<(PRODUCT_DIR)',
-      ],
       'dependencies': [
         'third_party/third_party.gyp:fx_agg',
       ],
@@ -572,7 +562,6 @@
     {
       'target_name': 'fxedit',
       'type': 'static_library',
-      'ldflags': [ '-L<(PRODUCT_DIR)',],
       'sources': [
         'fpdfsdk/include/fxedit/fx_edit.h',
         'fpdfsdk/include/fxedit/fxet_edit.h',
@@ -588,7 +577,6 @@
     {
       'target_name': 'pdfwindow',
       'type': 'static_library',
-      'ldflags': [ '-L<(PRODUCT_DIR)',],
       'sources': [
         'fpdfsdk/include/pdfwindow/IPDFWindow.h',
         'fpdfsdk/include/pdfwindow/PDFWindow.h',
@@ -644,7 +632,6 @@
         'fpdfsdk/include/fpdfxfa/fpdfxfa_page.h',
         'fpdfsdk/include/fpdfxfa/fpdfxfa_util.h',
       ],
-      'ldflags': [ '-L<(PRODUCT_DIR)',],
       'conditions': [
         [ "pdf_enable_xfa==1", {
           'dependencies': [
@@ -656,7 +643,6 @@
     {
       'target_name': 'javascript',
       'type': 'static_library',
-      'ldflags': [ '-L<(PRODUCT_DIR)',],
       'sources': [
         'fpdfsdk/include/javascript/IJavaScript.h',
         'fpdfsdk/src/javascript/JS_Runtime_Stub.cpp',
@@ -728,7 +714,6 @@
     {
       'target_name': 'formfiller',
       'type': 'static_library',
-      'ldflags': [ '-L<(PRODUCT_DIR)',],
       'sources': [
         'fpdfsdk/include/formfiller/FFL_CBA_Fontmap.h',
         'fpdfsdk/include/formfiller/FFL_CheckBox.h',
