@@ -40,6 +40,11 @@ config("pdfium_config") {
       "/wd4345",
     ]
   }
+
+  if (is_clang) {
+    # TODO(thestig): Fix all instances, remove this, pdfium:29
+    cflags += [ "-Wno-sign-compare" ]
+  }
 }
 
 static_library("pdfium") {
@@ -87,11 +92,7 @@ static_library("pdfium") {
   ]
 
   libs = []
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    ":pdfium_config",
-    "//build/config/compiler:no_chromium_code",
-  ]
+  configs += [ ":pdfium_config" ]
 
   deps = [
     "third_party:bigint",
@@ -157,11 +158,7 @@ source_set("test_support") {
       "//v8/include",
     ]
   }
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    ":pdfium_config",
-    "//build/config/compiler:no_chromium_code",
-  ]
+  configs += [ ":pdfium_config" ]
 }
 
 # Targets below this are only visible within this file (and to the
@@ -178,11 +175,7 @@ static_library("fdrm") {
     "core/src/fdrm/crypto/fx_crypt_aes.cpp",
     "core/src/fdrm/crypto/fx_crypt_sha.cpp",
   ]
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    ":pdfium_config",
-    "//build/config/compiler:no_chromium_code",
-  ]
+  configs += [ ":pdfium_config" ]
 }
 
 static_library("fpdfdoc") {
@@ -211,11 +204,7 @@ static_library("fpdfdoc") {
     "core/src/fpdfdoc/pdf_vt.h",
     "core/src/fpdfdoc/tagged_int.h",
   ]
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    ":pdfium_config",
-    "//build/config/compiler:no_chromium_code",
-  ]
+  configs += [ ":pdfium_config" ]
 }
 
 static_library("fpdfapi") {
@@ -331,11 +320,7 @@ static_library("fpdfapi") {
     "core/src/fpdfapi/fpdf_render/fpdf_render_text.cpp",
     "core/src/fpdfapi/fpdf_render/render_int.h",
   ]
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    ":pdfium_config",
-    "//build/config/compiler:no_chromium_code",
-  ]
+  configs += [ ":pdfium_config" ]
 }
 
 static_library("fpdftext") {
@@ -350,11 +335,7 @@ static_library("fpdftext") {
     "core/src/fpdftext/unicodenormalizationdata.cpp",
     "core/src/fpdftext/unicodenormalizationdata.h",
   ]
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    ":pdfium_config",
-    "//build/config/compiler:no_chromium_code",
-  ]
+  configs += [ ":pdfium_config" ]
 }
 
 static_library("fxcodec") {
@@ -417,17 +398,13 @@ static_library("fxcodec") {
     "core/src/fxcodec/jbig2/JBig2_TrdProc.cpp",
     "core/src/fxcodec/jbig2/JBig2_TrdProc.h",
   ]
-  configs -= [ "//build/config/compiler:chromium_code" ]
 
   if (is_posix) {
     # core/src/fxcodec/fx_libopenjpeg/src/fx_mct.c does an pointer-to-int
     # conversion to check that an address is 16-bit aligned (benign).
     cflags_c = [ "-Wno-pointer-to-int-cast" ]
   }
-  configs += [
-    ":pdfium_config",
-    "//build/config/compiler:no_chromium_code",
-  ]
+  configs += [ ":pdfium_config" ]
 }
 
 config("fxge_warnings") {
@@ -480,11 +457,7 @@ static_library("fxcrt") {
     "core/src/fxcrt/plex.h",
     "core/src/fxcrt/xml_int.h",
   ]
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    ":pdfium_config",
-    "//build/config/compiler:no_chromium_code",
-  ]
+  configs += [ ":pdfium_config" ]
 }
 
 static_library("fxge") {
@@ -550,12 +523,9 @@ static_library("fxge") {
     "core/src/fxge/ge/text_int.h",
   ]
 
-  configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
-    ":pdfium_config",
-    "//build/config/compiler:no_chromium_code",
-    # Must be after no_chromium_code for warning flags to be ordered correctly.
     ":fxge_warnings",
+    ":pdfium_config",
   ]
 
   if (pdf_use_skia) {
@@ -602,11 +572,7 @@ static_library("fxedit") {
     "fpdfsdk/src/fxedit/fxet_module.cpp",
     "fpdfsdk/src/fxedit/fxet_pageobjs.cpp",
   ]
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    ":pdfium_config",
-    "//build/config/compiler:no_chromium_code",
-  ]
+  configs += [ ":pdfium_config" ]
 }
 
 static_library("pdfwindow") {
@@ -648,11 +614,7 @@ static_library("pdfwindow") {
     "fpdfsdk/src/pdfwindow/PWL_Utils.cpp",
     "fpdfsdk/src/pdfwindow/PWL_Wnd.cpp",
   ]
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    ":pdfium_config",
-    "//build/config/compiler:no_chromium_code",
-  ]
+  configs += [ ":pdfium_config" ]
 }
 
 static_library("javascript") {
@@ -713,11 +675,7 @@ static_library("javascript") {
   } else {
     sources += [ "fpdfsdk/src/javascript/JS_Runtime_Stub.cpp" ]
   }
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    ":pdfium_config",
-    "//build/config/compiler:no_chromium_code",
-  ]
+  configs += [ ":pdfium_config" ]
 }
 
 static_library("formfiller") {
@@ -742,11 +700,7 @@ static_library("formfiller") {
     "fpdfsdk/src/formfiller/FFL_RadioButton.cpp",
     "fpdfsdk/src/formfiller/FFL_TextField.cpp",
   ]
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    ":pdfium_config",
-    "//build/config/compiler:no_chromium_code",
-  ]
+  configs += [ ":pdfium_config" ]
 }
 
 test("pdfium_unittests") {
@@ -766,11 +720,7 @@ test("pdfium_unittests") {
     ":test_support",
   ]
   include_dirs = [ "." ]
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    ":pdfium_config",
-    "//build/config/compiler:no_chromium_code",
-  ]
+  configs += [ ":pdfium_config" ]
 }
 
 test("pdfium_embeddertests") {
@@ -812,9 +762,5 @@ test("pdfium_embeddertests") {
       "//v8/include",
     ]
   }
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    ":pdfium_config",
-    "//build/config/compiler:no_chromium_code",
-  ]
+  configs += [ ":pdfium_config" ]
 }
