@@ -46,6 +46,7 @@ static_library("fx_freetype") {
   configs += [
     "//build/config/compiler:no_chromium_code",
     "//third_party/pdfium:pdfium_config",
+    # Must be after no_chromium_code for warning flags to be ordered correctly.
     ":fx_freetype_warnings",
   ]
   defines = [ "FT2_BUILD_LIBRARY" ]
@@ -95,6 +96,7 @@ source_set("fx_agg") {
   configs += [
     "//build/config/compiler:no_chromium_code",
     "//third_party/pdfium:pdfium_config",
+    # Must be after no_chromium_code for warning flags to be ordered correctly.
     ":fx_agg_warnings",
   ]
   sources = [
@@ -134,6 +136,7 @@ source_set("fx_lcms2") {
   configs += [
     "//build/config/compiler:no_chromium_code",
     "//third_party/pdfium:pdfium_config",
+    # Must be after no_chromium_code for warning flags to be ordered correctly.
     ":fx_lcms2_warnings",
   ]
   sources = [
