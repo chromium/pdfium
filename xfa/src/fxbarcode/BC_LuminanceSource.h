@@ -16,10 +16,6 @@ class CBC_LuminanceSource {
 
   virtual CFX_ByteArray* GetRow(int32_t y, CFX_ByteArray& row, int32_t& e) = 0;
   virtual CFX_ByteArray* GetMatrix() = 0;
-  virtual FX_BOOL IsCropSupported() { return FALSE; }
-  virtual FX_BOOL IsRotateSupported() { return FALSE; }
-
-  virtual CBC_LuminanceSource* RotateCounterClockwise(int32_t& e) = 0;
 
  protected:
   int32_t m_width;

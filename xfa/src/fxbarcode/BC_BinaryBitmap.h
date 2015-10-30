@@ -21,8 +21,6 @@ class CBC_BinaryBitmap {
                                   CBC_CommonBitArray* row,
                                   int32_t& e);
   CBC_CommonBitMatrix* GetBlackMatrix(int32_t& e);
-  FX_BOOL IsCropSupported();
-  FX_BOOL IsRotateSupported();
 
  private:
   CBC_Binarizer* m_binarizer;

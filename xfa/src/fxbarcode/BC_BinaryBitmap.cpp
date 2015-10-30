@@ -47,12 +47,6 @@ CBC_CommonBitMatrix* CBC_BinaryBitmap::GetMatrix(int32_t& e) {
   }
   return m_matrix;
 }
-FX_BOOL CBC_BinaryBitmap::IsCropSupported() {
-  return m_binarizer->GetLuminanceSource()->IsCropSupported();
-}
-FX_BOOL CBC_BinaryBitmap::IsRotateSupported() {
-  return m_binarizer->GetLuminanceSource()->IsRotateSupported();
-}
 CBC_CommonBitArray* CBC_BinaryBitmap::GetBlackRow(int32_t y,
                                                   CBC_CommonBitArray* row,
                                                   int32_t& e) {

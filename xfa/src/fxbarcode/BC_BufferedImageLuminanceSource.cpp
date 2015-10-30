@@ -167,21 +167,3 @@ CFX_ByteArray* CBC_BufferedImageLuminanceSource::GetMatrix() {
   }
   return matirx;
 }
-FX_BOOL CBC_BufferedImageLuminanceSource::IsCropSupported() {
-  return TRUE;
-}
-FX_BOOL CBC_BufferedImageLuminanceSource::IsRotateSupported() {
-  return TRUE;
-}
-CBC_LuminanceSource* CBC_BufferedImageLuminanceSource::Crop(int32_t left,
-                                                            int32_t top,
-                                                            int32_t width,
-                                                            int32_t height) {
-  return NULL;
-}
-CBC_LuminanceSource* CBC_BufferedImageLuminanceSource::RotateCounterClockwise(
-    int32_t& e) {
-  if (!IsRotateSupported())
-    e = BCExceptionRotateNotSupported;
-  return NULL;
-}
