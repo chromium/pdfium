@@ -2427,58 +2427,45 @@ int CBA_AnnotIterator::CompareByTop(CPDFSDK_Annot* p1, CPDFSDK_Annot* p2) {
 }
 
 void CBA_AnnotIterator::GenerateResults() {
-  ASSERT(m_pPageView != NULL);
-
   switch (m_nTabs) {
     case BAI_STRUCTURE: {
       for (size_t i = 0; i < m_pPageView->CountAnnots(); ++i) {
         CPDFSDK_Annot* pAnnot = m_pPageView->GetAnnot(i);
-        ASSERT(pAnnot != NULL);
-
         if (pAnnot->GetType() == m_sType && pAnnot->GetSubType() == m_sSubType)
           m_Annots.Add(pAnnot);
       }
-    } break;
+      break;
+    }
     case BAI_ROW: {
       CPDFSDK_SortAnnots sa;
-
-      {
-        for (size_t i = 0; i < m_pPageView->CountAnnots(); ++i) {
-          CPDFSDK_Annot* pAnnot = m_pPageView->GetAnnot(i);
-          ASSERT(pAnnot != NULL);
-
-          if (pAnnot->GetType() == m_sType &&
-              pAnnot->GetSubType() == m_sSubType)
-            sa.Add(pAnnot);
-        }
+      for (size_t i = 0; i < m_pPageView->CountAnnots(); ++i) {
+        CPDFSDK_Annot* pAnnot = m_pPageView->GetAnnot(i);
+        if (pAnnot->GetType() == m_sType && pAnnot->GetSubType() == m_sSubType)
+          sa.Add(pAnnot);
       }
 
-      if (sa.GetSize() > 0) {
+      if (sa.GetSize() > 0)
         sa.Sort(CBA_AnnotIterator::CompareByLeft);
-      }
 
       while (sa.GetSize() > 0) {
         int nLeftTopIndex = -1;
+        FX_FLOAT fTop = 0.0f;
 
-        {
-          FX_FLOAT fTop = 0.0f;
+        for (int i = sa.GetSize() - 1; i >= 0; i--) {
+          CPDFSDK_Annot* pAnnot = sa.GetAt(i);
+          ASSERT(pAnnot);
 
-          for (int i = sa.GetSize() - 1; i >= 0; i--) {
-            CPDFSDK_Annot* pAnnot = sa.GetAt(i);
-            ASSERT(pAnnot != NULL);
+          CPDF_Rect rcAnnot = GetAnnotRect(pAnnot);
 
-            CPDF_Rect rcAnnot = GetAnnotRect(pAnnot);
-
-            if (rcAnnot.top > fTop) {
-              nLeftTopIndex = i;
-              fTop = rcAnnot.top;
-            }
+          if (rcAnnot.top > fTop) {
+            nLeftTopIndex = i;
+            fTop = rcAnnot.top;
           }
         }
 
         if (nLeftTopIndex >= 0) {
           CPDFSDK_Annot* pLeftTopAnnot = sa.GetAt(nLeftTopIndex);
-          ASSERT(pLeftTopAnnot != NULL);
+          ASSERT(pLeftTopAnnot);
 
           CPDF_Rect rcLeftTop = GetAnnotRect(pLeftTopAnnot);
 
@@ -2487,80 +2474,61 @@ void CBA_AnnotIterator::GenerateResults() {
 
           CFX_ArrayTemplate<int> aSelect;
 
-          {
-            for (int i = 0, sz = sa.GetSize(); i < sz; i++) {
-              CPDFSDK_Annot* pAnnot = sa.GetAt(i);
-              ASSERT(pAnnot != NULL);
+          for (int i = 0, sz = sa.GetSize(); i < sz; ++i) {
+            CPDFSDK_Annot* pAnnot = sa.GetAt(i);
+            ASSERT(pAnnot);
 
-              CPDF_Rect rcAnnot = GetAnnotRect(pAnnot);
-
-              FX_FLOAT fCenterY = (rcAnnot.top + rcAnnot.bottom) / 2.0f;
-
-              if (fCenterY > rcLeftTop.bottom && fCenterY < rcLeftTop.top)
-                aSelect.Add(i);
-            }
+            CPDF_Rect rcAnnot = GetAnnotRect(pAnnot);
+            FX_FLOAT fCenterY = (rcAnnot.top + rcAnnot.bottom) / 2.0f;
+            if (fCenterY > rcLeftTop.bottom && fCenterY < rcLeftTop.top)
+              aSelect.Add(i);
           }
 
-          {
-            for (int i = 0, sz = aSelect.GetSize(); i < sz; i++) {
-              m_Annots.Add(sa[aSelect[i]]);
-            }
-          }
+          for (int i = 0, sz = aSelect.GetSize(); i < sz; ++i)
+            m_Annots.Add(sa[aSelect[i]]);
 
-          {
-            for (int i = aSelect.GetSize() - 1; i >= 0; i--) {
+          for (int i = aSelect.GetSize() - 1; i >= 0; --i)
               sa.RemoveAt(aSelect[i]);
-            }
-          }
 
           aSelect.RemoveAll();
         }
       }
       sa.RemoveAll();
-    } break;
+      break;
+    }
     case BAI_COLUMN: {
       CPDFSDK_SortAnnots sa;
-
-      {
-        for (size_t i = 0; i < m_pPageView->CountAnnots(); ++i) {
-          CPDFSDK_Annot* pAnnot = m_pPageView->GetAnnot(i);
-          ASSERT(pAnnot != NULL);
-
-          if (pAnnot->GetType() == m_sType &&
-              pAnnot->GetSubType() == m_sSubType)
-            sa.Add(pAnnot);
-        }
+      for (size_t i = 0; i < m_pPageView->CountAnnots(); ++i) {
+        CPDFSDK_Annot* pAnnot = m_pPageView->GetAnnot(i);
+        if (pAnnot->GetType() == m_sType && pAnnot->GetSubType() == m_sSubType)
+          sa.Add(pAnnot);
       }
 
-      if (sa.GetSize() > 0) {
+      if (sa.GetSize() > 0)
         sa.Sort(CBA_AnnotIterator::CompareByTop, FALSE);
-      }
 
       while (sa.GetSize() > 0) {
         int nLeftTopIndex = -1;
+        FX_FLOAT fLeft = -1.0f;
 
-        {
-          FX_FLOAT fLeft = -1.0f;
+        for (int i = sa.GetSize() - 1; i >= 0; --i) {
+          CPDFSDK_Annot* pAnnot = sa.GetAt(i);
+          ASSERT(pAnnot);
 
-          for (int i = sa.GetSize() - 1; i >= 0; i--) {
-            CPDFSDK_Annot* pAnnot = sa.GetAt(i);
-            ASSERT(pAnnot != NULL);
+          CPDF_Rect rcAnnot = GetAnnotRect(pAnnot);
 
-            CPDF_Rect rcAnnot = GetAnnotRect(pAnnot);
-
-            if (fLeft < 0) {
-              nLeftTopIndex = 0;
-              fLeft = rcAnnot.left;
-            } else if (rcAnnot.left < fLeft) {
-              nLeftTopIndex = i;
-              fLeft = rcAnnot.left;
-            }
+          if (fLeft < 0) {
+            nLeftTopIndex = 0;
+            fLeft = rcAnnot.left;
+          } else if (rcAnnot.left < fLeft) {
+            nLeftTopIndex = i;
+            fLeft = rcAnnot.left;
           }
         }
 
         if (nLeftTopIndex >= 0) {
           CPDFSDK_Annot* pLeftTopAnnot = sa.GetAt(nLeftTopIndex);
-          ASSERT(pLeftTopAnnot != NULL);
+          ASSERT(pLeftTopAnnot);
 
           CPDF_Rect rcLeftTop = GetAnnotRect(pLeftTopAnnot);
 
@@ -2568,49 +2536,33 @@ void CBA_AnnotIterator::GenerateResults() {
           sa.RemoveAt(nLeftTopIndex);
 
           CFX_ArrayTemplate<int> aSelect;
+          for (int i = 0, sz = sa.GetSize(); i < sz; ++i) {
+            CPDFSDK_Annot* pAnnot = sa.GetAt(i);
+            ASSERT(pAnnot);
 
-          {
-            for (int i = 0, sz = sa.GetSize(); i < sz; i++) {
-              CPDFSDK_Annot* pAnnot = sa.GetAt(i);
-              ASSERT(pAnnot != NULL);
-
-              CPDF_Rect rcAnnot = GetAnnotRect(pAnnot);
-
-              FX_FLOAT fCenterX = (rcAnnot.left + rcAnnot.right) / 2.0f;
-
-              if (fCenterX > rcLeftTop.left && fCenterX < rcLeftTop.right)
-                aSelect.Add(i);
-            }
+            CPDF_Rect rcAnnot = GetAnnotRect(pAnnot);
+            FX_FLOAT fCenterX = (rcAnnot.left + rcAnnot.right) / 2.0f;
+            if (fCenterX > rcLeftTop.left && fCenterX < rcLeftTop.right)
+              aSelect.Add(i);
           }
 
-          {
-            for (int i = 0, sz = aSelect.GetSize(); i < sz; i++) {
-              m_Annots.Add(sa[aSelect[i]]);
-            }
-          }
+          for (int i = 0, sz = aSelect.GetSize(); i < sz; ++i)
+            m_Annots.Add(sa[aSelect[i]]);
 
-          {
-            for (int i = aSelect.GetSize() - 1; i >= 0; i--) {
-              sa.RemoveAt(aSelect[i]);
-            }
-          }
+          for (int i = aSelect.GetSize() - 1; i >= 0; --i)
+            sa.RemoveAt(aSelect[i]);
 
           aSelect.RemoveAll();
         }
       }
       sa.RemoveAll();
-    } break;
+      break;
+    }
   }
 }
 
 CPDF_Rect CBA_AnnotIterator::GetAnnotRect(CPDFSDK_Annot* pAnnot) {
-  ASSERT(pAnnot != NULL);
-
-  CPDF_Annot* pPDFAnnot = pAnnot->GetPDFAnnot();
-  ASSERT(pPDFAnnot != NULL);
-
   CPDF_Rect rcAnnot;
-  pPDFAnnot->GetRect(rcAnnot);
-
+  pAnnot->GetPDFAnnot()->GetRect(rcAnnot);
   return rcAnnot;
 }
