@@ -818,7 +818,7 @@ CPDF_FormControl* CPDF_InterForm::GetControlAtPoint(CPDF_Page* pPage,
 }
 
 CPDF_FormControl* CPDF_InterForm::GetControlByDict(
-    CPDF_Dictionary* pWidgetDict) const {
+    const CPDF_Dictionary* pWidgetDict) const {
   const auto it = m_ControlMap.find(pWidgetDict);
   return it != m_ControlMap.end() ? it->second : nullptr;
 }

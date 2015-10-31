@@ -155,7 +155,7 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
   CPDF_FormField* GetFormField() const;
   CPDF_FormControl* GetFormControl() const;
   static CPDF_FormControl* GetFormControl(CPDF_InterForm* pInterForm,
-                                          CPDF_Dictionary* pAnnotDict);
+                                          const CPDF_Dictionary* pAnnotDict);
 
   void DrawShadow(CFX_RenderDevice* pDevice, CPDFSDK_PageView* pPageView);
 

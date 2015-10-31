@@ -538,9 +538,9 @@ class CPDFSDK_PageView final {
                        CPDF_Matrix* pUser2Device,
                        CPDF_RenderOptions* pOptions,
                        FX_RECT* pClip = NULL);
-  CPDF_Annot* GetPDFAnnotAtPoint(FX_FLOAT pageX, FX_FLOAT pageY);
+  const CPDF_Annot* GetPDFAnnotAtPoint(FX_FLOAT pageX, FX_FLOAT pageY);
   CPDFSDK_Annot* GetFXAnnotAtPoint(FX_FLOAT pageX, FX_FLOAT pageY);
-  CPDF_Annot* GetPDFWidgetAtPoint(FX_FLOAT pageX, FX_FLOAT pageY);
+  const CPDF_Annot* GetPDFWidgetAtPoint(FX_FLOAT pageX, FX_FLOAT pageY);
   CPDFSDK_Annot* GetFXWidgetAtPoint(FX_FLOAT pageX, FX_FLOAT pageY);
   CPDFSDK_Annot* GetFocusAnnot();
   void SetFocusAnnot(CPDFSDK_Annot* pSDKAnnot, FX_UINT nFlag = 0) {
@@ -578,7 +578,7 @@ class CPDFSDK_PageView final {
                        double deltaY,
                        const CPDF_Point& point,
                        int nFlag);
-  FX_BOOL IsValidAnnot(CPDF_Annot* p) const;
+  bool IsValidAnnot(const CPDF_Annot* p) const;
   void GetCurrentMatrix(CPDF_Matrix& matrix) { matrix = m_curMatrix; }
   void UpdateRects(CFX_RectArray& rects);
   void UpdateView(CPDFSDK_Annot* pAnnot);

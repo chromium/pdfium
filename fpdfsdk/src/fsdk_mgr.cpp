@@ -696,11 +696,9 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
   }
 }
 
-CPDF_Annot* CPDFSDK_PageView::GetPDFAnnotAtPoint(FX_FLOAT pageX,
-                                                 FX_FLOAT pageY) {
-  const int nCount = m_pAnnotList->Count();
-  for (int i = 0; i < nCount; ++i) {
-    CPDF_Annot* pAnnot = m_pAnnotList->GetAt(i);
+const CPDF_Annot* CPDFSDK_PageView::GetPDFAnnotAtPoint(FX_FLOAT pageX,
+                                                       FX_FLOAT pageY) {
+  for (const CPDF_Annot* pAnnot : m_pAnnotList->All()) {
     CFX_FloatRect annotRect;
     pAnnot->GetRect(annotRect);
     if (annotRect.Contains(pageX, pageY))
@@ -709,11 +707,9 @@ CPDF_Annot* CPDFSDK_PageView::GetPDFAnnotAtPoint(FX_FLOAT pageX,
   return nullptr;
 }
 
-CPDF_Annot* CPDFSDK_PageView::GetPDFWidgetAtPoint(FX_FLOAT pageX,
-                                                  FX_FLOAT pageY) {
-  const int nCount = m_pAnnotList->Count();
-  for (int i = 0; i < nCount; ++i) {
-    CPDF_Annot* pAnnot = m_pAnnotList->GetAt(i);
+const CPDF_Annot* CPDFSDK_PageView::GetPDFWidgetAtPoint(FX_FLOAT pageX,
+                                                        FX_FLOAT pageY) {
+  for (const CPDF_Annot* pAnnot : m_pAnnotList->All()) {
     if (pAnnot->GetSubType() == "Widget") {
       CFX_FloatRect annotRect;
       pAnnot->GetRect(annotRect);
@@ -1051,8 +1047,8 @@ void CPDFSDK_PageView::LoadFXAnnots() {
     m_pAnnotList.reset(new CPDF_AnnotList(pPage));
     CPDF_InterForm::EnableUpdateAP(enableAPUpdate);
 
-    const int nCount = m_pAnnotList->Count();
-    for (int i = 0; i < nCount; i++) {
+    const size_t nCount = m_pAnnotList->Count();
+    for (size_t i = 0; i < nCount; ++i) {
       CPDF_Annot* pPDFAnnot = m_pAnnotList->GetAt(i);
       CheckUnSupportAnnot(GetPDFDocument(), pPDFAnnot);
 
@@ -1094,16 +1090,12 @@ int CPDFSDK_PageView::GetPageIndex() {
   return -1;
 }
 
-FX_BOOL CPDFSDK_PageView::IsValidAnnot(CPDF_Annot* p) const {
+bool CPDFSDK_PageView::IsValidAnnot(const CPDF_Annot* p) const {
   if (!p)
-    return FALSE;
+    return false;
 
-  const int nCount = m_pAnnotList->Count();
-  for (int i = 0; i < nCount; ++i) {
-    if (m_pAnnotList->GetAt(i) == p)
-      return TRUE;
-  }
-  return FALSE;
+  const auto& annots = m_pAnnotList->All();
+  return std::find(annots.begin(), annots.end(), p) != annots.end();
 }
 
 CPDFSDK_Annot* CPDFSDK_PageView::GetFocusAnnot() {
