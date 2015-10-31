@@ -394,7 +394,8 @@ class CPDF_Annot : public CFX_PrivateData {
 
   void GetRect(CFX_FloatRect& rect) const;
 
-  CPDF_Dictionary* GetAnnotDict();
+  const CPDF_Dictionary* GetAnnotDict() const { return m_pAnnotDict; }
+  CPDF_Dictionary* GetAnnotDict() { return m_pAnnotDict; }
 
   FX_BOOL DrawAppearance(const CPDF_Page* pPage,
                          CFX_RenderDevice* pDevice,
@@ -427,23 +428,8 @@ class CPDF_Annot : public CFX_PrivateData {
 
 class CPDF_AnnotList {
  public:
-  CPDF_AnnotList(CPDF_Page* pPage);
-
+  explicit CPDF_AnnotList(CPDF_Page* pPage);
   ~CPDF_AnnotList();
-
-  void GetAnnotMatrix(const CPDF_Dictionary* pAnnotDict,
-                      const CFX_Matrix* pUser2Device,
-                      CFX_Matrix& matrix) const;
-
-  void GetAnnotRect(const CPDF_Dictionary* pAnnotDict,
-                    const CFX_Matrix* pUser2Device,
-                    CPDF_Rect& rtAnnot) const;
-
-  void DisplayAnnots(const CPDF_Page* pPage,
-                     CFX_RenderDevice* pDevice,
-                     CFX_AffineMatrix* pMatrix,
-                     FX_BOOL bShowWidget,
-                     CPDF_RenderOptions* pOptions);
 
   void DisplayAnnots(const CPDF_Page* pPage,
                      CPDF_RenderContext* pContext,
@@ -451,21 +437,9 @@ class CPDF_AnnotList {
                      CFX_AffineMatrix* pMatrix,
                      FX_BOOL bShowWidget,
                      CPDF_RenderOptions* pOptions) {
-    DisplayAnnots(pPage, NULL, pContext, bPrinting, pMatrix,
-                  bShowWidget ? 3 : 1, pOptions, NULL);
+    DisplayAnnots(pPage, nullptr, pContext, bPrinting, pMatrix,
+                  bShowWidget ? 3 : 1, pOptions, nullptr);
   }
-
-  void DisplayAnnots(const CPDF_Page* pPage,
-                     CPDF_RenderContext* pContext,
-                     FX_BOOL bPrinting,
-                     CFX_AffineMatrix* pMatrix,
-                     FX_BOOL bShowWidget,
-                     CPDF_RenderOptions* pOptions,
-                     FX_RECT* pClipRect) {
-    DisplayAnnots(pPage, NULL, pContext, bPrinting, pMatrix,
-                  bShowWidget ? 3 : 1, pOptions, pClipRect);
-  }
-
   void DisplayAnnots(const CPDF_Page* pPage,
                      CFX_RenderDevice* pDevice,
                      CPDF_RenderContext* pContext,
@@ -474,24 +448,12 @@ class CPDF_AnnotList {
                      FX_DWORD dwAnnotFlags,
                      CPDF_RenderOptions* pOptions,
                      FX_RECT* pClipRect);
-
-  CPDF_Annot* GetAt(int index) { return (CPDF_Annot*)m_AnnotList.GetAt(index); }
-
-  int Count() { return m_AnnotList.GetSize(); }
-
-  int GetIndex(CPDF_Annot* pAnnot);
-
+  size_t Count() const { return m_AnnotList.size(); }
+  CPDF_Annot* GetAt(size_t index) const { return m_AnnotList[index]; }
+  const std::vector<CPDF_Annot*>& All() const { return m_AnnotList; }
   CPDF_Document* GetDocument() const { return m_pDocument; }
 
  protected:
-  CFX_PtrArray m_AnnotList;
-
-  CPDF_Dictionary* m_pPageDict;
-
-  CPDF_Document* m_pDocument;
-
-  CFX_PtrArray m_Borders;
-
   void DisplayPass(const CPDF_Page* pPage,
                    CFX_RenderDevice* pDevice,
                    CPDF_RenderContext* pContext,
@@ -500,8 +462,11 @@ class CPDF_AnnotList {
                    FX_BOOL bWidget,
                    CPDF_RenderOptions* pOptions,
                    FX_RECT* clip_rect);
-  friend class CPDF_Annot;
+
+  CPDF_Document* const m_pDocument;
+  std::vector<CPDF_Annot*> m_AnnotList;
 };
+
 #define COLORTYPE_TRANSPARENT 0
 #define COLORTYPE_GRAY 1
 #define COLORTYPE_RGB 2
@@ -623,7 +588,7 @@ class CPDF_InterForm : public CFX_PrivateData {
                                       FX_FLOAT pdf_y,
                                       int* z_order) const;
 
-  CPDF_FormControl* GetControlByDict(CPDF_Dictionary* pWidgetDict) const;
+  CPDF_FormControl* GetControlByDict(const CPDF_Dictionary* pWidgetDict) const;
 
   CPDF_Document* GetDocument() const { return m_pDocument; }
 

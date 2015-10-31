@@ -277,7 +277,7 @@ DLLEXPORT void STDCALL FPDFPage_TransformAnnots(FPDF_PAGE page,
   if (!pPage)
     return;
   CPDF_AnnotList AnnotList(pPage);
-  for (int i = 0; i < AnnotList.Count(); i++) {
+  for (size_t i = 0; i < AnnotList.Count(); ++i) {
     CPDF_Annot* pAnnot = AnnotList.GetAt(i);
     // transformAnnots Rectangle
     CPDF_Rect rect;

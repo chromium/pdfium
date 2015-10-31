@@ -57,12 +57,12 @@ FSDK_SetUnSpObjProcessHandler(UNSUPPORT_INFO* unsp_info) {
   return TRUE;
 }
 
-void CheckUnSupportAnnot(CPDF_Document* pDoc, CPDF_Annot* pPDFAnnot) {
+void CheckUnSupportAnnot(CPDF_Document* pDoc, const CPDF_Annot* pPDFAnnot) {
   CFX_ByteString cbSubType = pPDFAnnot->GetSubType();
   if (cbSubType.Compare("3D") == 0) {
     FPDF_UnSupportError(FPDF_UNSP_ANNOT_3DANNOT);
   } else if (cbSubType.Compare("Screen") == 0) {
-    CPDF_Dictionary* pAnnotDict = pPDFAnnot->GetAnnotDict();
+    const CPDF_Dictionary* pAnnotDict = pPDFAnnot->GetAnnotDict();
     CFX_ByteString cbString;
     if (pAnnotDict->KeyExist("IT"))
       cbString = pAnnotDict->GetString("IT");
@@ -77,7 +77,7 @@ void CheckUnSupportAnnot(CPDF_Document* pDoc, CPDF_Annot* pPDFAnnot) {
   } else if (cbSubType.Compare("FileAttachment") == 0) {
     FPDF_UnSupportError(FPDF_UNSP_ANNOT_ATTACHMENT);
   } else if (cbSubType.Compare("Widget") == 0) {
-    CPDF_Dictionary* pAnnotDict = pPDFAnnot->GetAnnotDict();
+    const CPDF_Dictionary* pAnnotDict = pPDFAnnot->GetAnnotDict();
     CFX_ByteString cbString;
     if (pAnnotDict->KeyExist("FT")) {
       cbString = pAnnotDict->GetString("FT");

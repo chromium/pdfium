@@ -99,37 +99,23 @@ CFX_ByteString CPDFSDK_Widget::GetSubType() const {
 }
 
 CPDF_FormField* CPDFSDK_Widget::GetFormField() const {
-  ASSERT(m_pInterForm != NULL);
-
-  CPDF_FormControl* pCtrl = GetFormControl();
-  ASSERT(pCtrl != NULL);
-
-  return pCtrl->GetField();
+  return GetFormControl()->GetField();
 }
 
 CPDF_FormControl* CPDFSDK_Widget::GetFormControl() const {
-  ASSERT(m_pInterForm != NULL);
-
   CPDF_InterForm* pPDFInterForm = m_pInterForm->GetInterForm();
-  ASSERT(pPDFInterForm != NULL);
-
   return pPDFInterForm->GetControlByDict(GetAnnotDict());
 }
 
-CPDF_FormControl* CPDFSDK_Widget::GetFormControl(CPDF_InterForm* pInterForm,
-                                                 CPDF_Dictionary* pAnnotDict) {
-  ASSERT(pInterForm != NULL);
+CPDF_FormControl* CPDFSDK_Widget::GetFormControl(
+    CPDF_InterForm* pInterForm,
+    const CPDF_Dictionary* pAnnotDict) {
   ASSERT(pAnnotDict != NULL);
-
-  CPDF_FormControl* pControl = pInterForm->GetControlByDict(pAnnotDict);
-
-  return pControl;
+  return pInterForm->GetControlByDict(pAnnotDict);
 }
 
 int CPDFSDK_Widget::GetRotate() const {
   CPDF_FormControl* pCtrl = GetFormControl();
-  ASSERT(pCtrl != NULL);
-
   return pCtrl->GetRotation() % 360;
 }
 

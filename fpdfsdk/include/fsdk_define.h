@@ -73,7 +73,7 @@ void FPDF_RenderPage_Retail(CRenderContext* pContext,
                             IFSDK_PAUSE_Adapter* pause);
 
 void CheckUnSupportError(CPDF_Document* pDoc, FX_DWORD err_code);
-void CheckUnSupportAnnot(CPDF_Document* pDoc, CPDF_Annot* pPDFAnnot);
+void CheckUnSupportAnnot(CPDF_Document* pDoc, const CPDF_Annot* pPDFAnnot);
 void ProcessParseError(FX_DWORD err_code);
 
 #endif  // FPDFSDK_INCLUDE_FSDK_DEFINE_H_
