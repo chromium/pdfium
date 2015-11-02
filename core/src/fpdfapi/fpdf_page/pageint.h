@@ -10,7 +10,11 @@
 #include <map>
 
 #include "../../../../third_party/base/nonstd_unique_ptr.h"
+#include "../../../include/fpdfapi/fpdf_page.h"
 #include "../../../include/fpdfapi/fpdf_pageobj.h"
+
+class CPDF_AllStates;
+class CPDF_ParseOptions;
 
 #define PARSE_STEP_LIMIT 100
 
@@ -41,6 +45,8 @@ class CPDF_StreamParser {
   void SkipPathObject();
 
  protected:
+  friend class fpdf_page_parser_old_ReadHexString_Test;
+
   void GetNextWord(FX_BOOL& bIsNumber);
   CFX_ByteString ReadString();
   CFX_ByteString ReadHexString();
