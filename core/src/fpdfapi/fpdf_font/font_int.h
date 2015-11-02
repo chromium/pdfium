@@ -77,6 +77,14 @@ class CPDF_CMapParser {
   CFX_BinaryBuf m_AddMaps;
 
  private:
+  friend class fpdf_font_cid_CMap_GetCode_Test;
+  friend class fpdf_font_cid_CMap_GetCodeRange_Test;
+
+  static FX_DWORD CMap_GetCode(const CFX_ByteStringC& word);
+  static bool CMap_GetCodeRange(CMap_CodeRange& range,
+                                const CFX_ByteStringC& first,
+                                const CFX_ByteStringC& second);
+
   CPDF_CMap* m_pCMap;
   int m_Status;
   int m_CodeSeq;

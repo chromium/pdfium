@@ -748,6 +748,7 @@
         '<(DEPTH)'
       ],
       'sources': [
+        'core/src/fpdfapi/fpdf_font/fpdf_font_cid_unittest.cpp',
         'core/src/fpdfapi/fpdf_font/fpdf_font_unittest.cpp',
         'core/src/fpdfapi/fpdf_parser/fpdf_parser_decode_unittest.cpp',
         'core/src/fxcodec/codec/fx_codec_jpx_unittest.cpp',
