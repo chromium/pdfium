@@ -1510,8 +1510,10 @@ FX_DWORD CFX_FolderFontInfo::GetFontData(void* hFont,
     }
   }
   if (datasize && size >= datasize && pFile) {
-    FXSYS_fseek(pFile, offset, FXSYS_SEEK_SET);
-    FXSYS_fread(buffer, datasize, 1, pFile);
+    if (FXSYS_fseek(pFile, offset, FXSYS_SEEK_SET) < 0 ||
+        FXSYS_fread(buffer, datasize, 1, pFile) != 1) {
+      datasize = 0;
+    }
   }
   if (pFile) {
     FXSYS_fclose(pFile);
