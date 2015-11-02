@@ -42,10 +42,10 @@ const FX_WORD PDFDocEncoding[256] = {
     0x00f3, 0x00f4, 0x00f5, 0x00f6, 0x00f7, 0x00f8, 0x00f9, 0x00fa, 0x00fb,
     0x00fc, 0x00fd, 0x00fe, 0x00ff};
 
-FX_DWORD _A85Decode(const uint8_t* src_buf,
-                    FX_DWORD src_size,
-                    uint8_t*& dest_buf,
-                    FX_DWORD& dest_size) {
+FX_DWORD A85Decode(const uint8_t* src_buf,
+                   FX_DWORD src_size,
+                   uint8_t*& dest_buf,
+                   FX_DWORD& dest_size) {
   dest_size = 0;
   dest_buf = NULL;
   if (src_size == 0) {
@@ -117,10 +117,10 @@ FX_DWORD _A85Decode(const uint8_t* src_buf,
   }
   return pos;
 }
-FX_DWORD _HexDecode(const uint8_t* src_buf,
-                    FX_DWORD src_size,
-                    uint8_t*& dest_buf,
-                    FX_DWORD& dest_size) {
+FX_DWORD HexDecode(const uint8_t* src_buf,
+                   FX_DWORD src_size,
+                   uint8_t*& dest_buf,
+                   FX_DWORD& dest_size) {
   FX_DWORD i;
   for (i = 0; i < src_size; i++)
     if (src_buf[i] == '>') {
@@ -380,10 +380,10 @@ FX_BOOL PDF_DataDecode(const uint8_t* src_buf,
                                         estimated_size, new_buf, new_size);
     } else if (decoder == FX_BSTRC("ASCII85Decode") ||
                decoder == FX_BSTRC("A85")) {
-      offset = _A85Decode(last_buf, last_size, new_buf, new_size);
+      offset = A85Decode(last_buf, last_size, new_buf, new_size);
     } else if (decoder == FX_BSTRC("ASCIIHexDecode") ||
                decoder == FX_BSTRC("AHx")) {
-      offset = _HexDecode(last_buf, last_size, new_buf, new_size);
+      offset = HexDecode(last_buf, last_size, new_buf, new_size);
     } else if (decoder == FX_BSTRC("RunLengthDecode") ||
                decoder == FX_BSTRC("RL")) {
       if (bImageAcc && i == DecoderList.GetSize() - 1) {

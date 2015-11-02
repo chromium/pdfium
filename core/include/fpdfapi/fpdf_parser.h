@@ -944,6 +944,24 @@ enum PDF_DATAAVAIL_STATUS {
   PDF_DATAAVAIL_TRAILER_APPEND
 };
 
+// Public for testing.
+FX_DWORD A85Decode(const uint8_t* src_buf,
+                   FX_DWORD src_size,
+                   uint8_t*& dest_buf,
+                   FX_DWORD& dest_size);
+// Public for testing.
+FX_DWORD HexDecode(const uint8_t* src_buf,
+                   FX_DWORD src_size,
+                   uint8_t*& dest_buf,
+                   FX_DWORD& dest_size);
+// Public for testing.
+FX_DWORD FPDFAPI_FlateOrLZWDecode(FX_BOOL bLZW,
+                                  const uint8_t* src_buf,
+                                  FX_DWORD src_size,
+                                  CPDF_Dictionary* pParams,
+                                  FX_DWORD estimated_size,
+                                  uint8_t*& dest_buf,
+                                  FX_DWORD& dest_size);
 FX_BOOL PDF_DataDecode(const uint8_t* src_buf,
                        FX_DWORD src_size,
                        const CPDF_Dictionary* pDict,
