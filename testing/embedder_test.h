@@ -80,7 +80,8 @@ class EmbedderTest : public ::testing::Test,
 
   // Open the document specified by |filename|, and create its form fill
   // environment, or return false on failure.
-  virtual bool OpenDocument(const std::string& filename);
+  virtual bool OpenDocument(const std::string& filename,
+                            bool must_linearize = false);
 
   // Perform JavaScript actions that are to run at document open time.
   virtual void DoOpenActions();

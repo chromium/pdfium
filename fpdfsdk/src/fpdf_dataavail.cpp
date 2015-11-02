@@ -87,10 +87,10 @@ DLLEXPORT void STDCALL FPDFAvail_Destroy(FPDF_AVAIL avail) {
   delete (CFPDF_DataAvail*)avail;
 }
 
-DLLEXPORT int STDCALL FPDFAvail_IsDocAvail(FPDF_AVAIL avail,
-                                           FX_DOWNLOADHINTS* hints) {
-  if (avail == NULL || hints == NULL)
-    return 0;
+DLLEXPORT int STDCALL
+FPDFAvail_IsDocAvail(FPDF_AVAIL avail, FX_DOWNLOADHINTS* hints) {
+  if (!avail || !hints)
+    return PDF_DATA_ERROR;
   CFPDF_DownloadHintsWrap hints_wrap(hints);
   return ((CFPDF_DataAvail*)avail)->m_pDataAvail->IsDocAvail(&hints_wrap);
 }
@@ -124,8 +124,8 @@ DLLEXPORT int STDCALL FPDFAvail_GetFirstPageNum(FPDF_DOCUMENT doc) {
 DLLEXPORT int STDCALL FPDFAvail_IsPageAvail(FPDF_AVAIL avail,
                                             int page_index,
                                             FX_DOWNLOADHINTS* hints) {
-  if (avail == NULL || hints == NULL)
-    return 0;
+  if (!avail || !hints)
+    return PDF_DATA_ERROR;
   CFPDF_DownloadHintsWrap hints_wrap(hints);
   return ((CFPDF_DataAvail*)avail)
       ->m_pDataAvail->IsPageAvail(page_index, &hints_wrap);
@@ -133,14 +133,14 @@ DLLEXPORT int STDCALL FPDFAvail_IsPageAvail(FPDF_AVAIL avail,
 
 DLLEXPORT int STDCALL FPDFAvail_IsFormAvail(FPDF_AVAIL avail,
                                             FX_DOWNLOADHINTS* hints) {
-  if (avail == NULL || hints == NULL)
-    return -1;
+  if (!avail || !hints)
+    return PDF_FORM_ERROR;
   CFPDF_DownloadHintsWrap hints_wrap(hints);
   return ((CFPDF_DataAvail*)avail)->m_pDataAvail->IsFormAvail(&hints_wrap);
 }
 
-DLLEXPORT FPDF_BOOL STDCALL FPDFAvail_IsLinearized(FPDF_AVAIL avail) {
-  if (avail == NULL)
-    return -1;
+DLLEXPORT int STDCALL FPDFAvail_IsLinearized(FPDF_AVAIL avail) {
+  if (!avail)
+    return PDF_LINEARIZATION_UNKNOWN;
   return ((CFPDF_DataAvail*)avail)->m_pDataAvail->IsLinearizedPDF();
 }

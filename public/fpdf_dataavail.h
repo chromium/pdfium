@@ -11,10 +11,16 @@
 
 #include "fpdfview.h"
 
-/** The result of the process which check linearized PDF. */
-#define FSDK_IS_LINEARIZED 1
-#define FSDK_NOT_LINEARIZED 0
-#define FSDK_UNKNOW_LINEARIZED -1
+#define PDF_LINEARIZATION_UNKNOWN -1
+#define PDF_NOT_LINEARIZED 0
+#define PDF_LINEARIZED 1
+#define PDF_DATA_ERROR -1
+#define PDF_DATA_NOTAVAIL 0
+#define PDF_DATA_AVAIL 1
+#define PDF_FORM_ERROR -1
+#define PDF_FORM_NOTAVAIL 0
+#define PDF_FORM_AVAIL 1
+#define PDF_FORM_NOTEXIST 2
 
 #ifdef __cplusplus
 extern "C" {
@@ -130,17 +136,19 @@ typedef struct _FX_DOWNLOADHINTS {
 *           hints       -   Pointer to a download hints interface, receiving
 * generated hints
 * Return value:
-*           Non-zero for page is fully available, 0 for page not yet available.
+*           PDF_DATA_ERROR: A common error is returned. It can't tell
+*                           whehter data are availabe or not.
+*           PDF_DATA_NOTAVAIL: Data are not yet available.
+*           PDF_DATA_AVAIL: Data are available.
 * Comments:
-*           The application should call this function whenever new data arrived,
-* and process all the
-*           generated download hints if any, until the function returns non-zero
-* value. Then the
-*           application can call FPDFAvail_GetDocument() to get a document
-* handle.
+*           Applications should call this function whenever new data arrived,
+*           and process all the generated download hints if any, until the
+*           function returns PDF_DATA_ERROR or PDF_DATA_AVAIL. Then
+*           applications can call FPDFAvail_GetDocument() to get a document
+*           handle.
 */
-DLLEXPORT int STDCALL FPDFAvail_IsDocAvail(FPDF_AVAIL avail,
-                                           FX_DOWNLOADHINTS* hints);
+DLLEXPORT int STDCALL
+FPDFAvail_IsDocAvail(FPDF_AVAIL avail, FX_DOWNLOADHINTS* hints);
 
 /**
 * Function: FPDFAvail_GetDocument
@@ -189,15 +197,16 @@ DLLEXPORT int STDCALL FPDFAvail_GetFirstPageNum(FPDF_DOCUMENT doc);
 *           hints       -   Pointer to a download hints interface, receiving
 * generated hints
 * Return value:
-*           Non-zero for page is fully available, 0 for page not yet available.
+*           PDF_DATA_ERROR: A common error is returned. It can't tell
+*                           whehter data are availabe or not.
+*           PDF_DATA_NOTAVAIL: Data are not yet available.
+*           PDF_DATA_AVAIL: Data are available.
 * Comments:
-*           This function call be called only after FPDFAvail_GetDocument if
-* called.
-*           The application should call this function whenever new data arrived,
-* and process all the
-*           generated download hints if any, until the function returns non-zero
-* value. Then the
-*           application can perform page loading.
+*           This function can be called only after FPDFAvail_GetDocument is
+*           called. Applications should call this function whenever new data
+*           arrived and process all the generated download hints if any, until
+*           this function returns PDF_DATA_ERROR or PDF_DATA_AVAIL. Then
+*           applications can perform page loading.
 */
 DLLEXPORT int STDCALL FPDFAvail_IsPageAvail(FPDF_AVAIL avail,
                                             int page_index,
@@ -214,16 +223,14 @@ DLLEXPORT int STDCALL FPDFAvail_IsPageAvail(FPDF_AVAIL avail,
 *           hints       -   Pointer to a download hints interface, receiving
 * generated hints
 * Return value:
-*           Non-zero for Form data is fully available, 0 for Form data not yet
-* available.
-*           Details: -1 - error, the input parameter not correct, such as hints
-* is null.
-*                    0  - data not available
-*                    1  - data available
-*                    2  - no form data.
+*           PDF_FORM_ERROR    - A common eror, in general incorrect parameters,
+*                               like 'hints' is nullptr.
+*           PDF_FORM_NOTAVAIL - data not available
+*           PDF_FORM_AVAIL    - data available
+*           PDF_FORM_NOTEXIST - no form data
 * Comments:
-*           This function call be called only after FPDFAvail_GetDocument if
-* called.
+*           This function can be called only after FPDFAvail_GetDocument is
+*           called.
 *           The application should call this function whenever new data arrived,
 * and process all the
 *           generated download hints if any, until the function returns non-zero
@@ -243,18 +250,19 @@ DLLEXPORT int STDCALL FPDFAvail_IsFormAvail(FPDF_AVAIL avail,
 *           avail       -   Handle to document availability provider returned by
 * FPDFAvail_Create
 * Return value:
-*           return TRUE means the document is linearized PDF else not.
-*           FSDK_IS_LINEARIZED is a linearize file.
-*           FSDK_NOT_LINEARIZED is not a linearize file.
-*           FSDK_UNKNOW_LINEARIZED don't know whether the file is a linearize
-* file.
+*           PDF_LINEARIZED is a linearize file.
+*           PDF_NOT_LINEARIZED is not a linearize file.
+*           PDF_LINEARIZATION_UNKNOWN doesn't know whether the file is a
+*linearize file.
+*
 * Comments:
-*           It return TRUE/FALSE as soon as we have first 1K data.  If the
-* file's size less than
-*           1K,we don't known whether the PDF is a linearized file.
+*           It return PDF_LINEARIZED or PDF_NOT_LINEARIZED as soon as
+*           we have first 1K data.  If the file's size less than 1K, it returns
+*           PDF_LINEARIZATION_UNKNOWN because there is not enough information to
+*           tell whether a PDF file is a linearized file or not.
 *
 */
-DLLEXPORT FPDF_BOOL STDCALL FPDFAvail_IsLinearized(FPDF_AVAIL avail);
+DLLEXPORT int STDCALL FPDFAvail_IsLinearized(FPDF_AVAIL avail);
 
 #ifdef __cplusplus
 }

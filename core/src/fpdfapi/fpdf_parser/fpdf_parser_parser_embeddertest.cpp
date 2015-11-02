@@ -8,7 +8,8 @@
 class FPDFParserEmbeddertest : public EmbedderTest {};
 
 TEST_F(FPDFParserEmbeddertest, LoadError_454695) {
-  // Test trailer dictionary with $$ze instead of Size.
+  // Test a dictionary with hex string instead of correct content.
+  // Verify that the defective pdf shouldn't be opened correctly.
   EXPECT_FALSE(OpenDocument("testing/resources/bug_454695.pdf"));
 }
 
@@ -27,4 +28,9 @@ TEST_F(FPDFParserEmbeddertest, Bug_544880) {
   // the count from the "/Count 1" in the testcase (at the time of writing)
   // rather than the actual count (0).
   (void)GetPageCount();
+}
+
+TEST_F(FPDFParserEmbeddertest, Feature_Linearized_Loading) {
+  EXPECT_TRUE(
+      OpenDocument("testing/resources/feature_linearized_loading.pdf", true));
 }

@@ -7,34 +7,37 @@
 #ifndef CORE_INCLUDE_FPDFAPI_FPDF_PARSER_H_
 #define CORE_INCLUDE_FPDFAPI_FPDF_PARSER_H_
 
+#include "../../../public/fpdf_dataavail.h"
 #include "../../../third_party/base/nonstd_unique_ptr.h"
 #include "../fxcrt/fx_system.h"
 #include "fpdf_objects.h"
 
-class CPDF_Document;
-class CPDF_Parser;
-class CPDF_SecurityHandler;
-class CPDF_StandardSecurityHandler;
-class CPDF_CryptoHandler;
-class CPDF_Object;
-class IFX_FileRead;
 class CFDF_Document;
 class CFDF_Parser;
-class CFX_Font;
 class CFX_AffineMatrix;
+class CFX_DIBSource;
 class CFX_FloatRect;
-class CPDF_Point;
+class CFX_Font;
+class CFX_PrivateData;
+class CPDF_ColorSpace;
+class CPDF_CryptoHandler;
 class CPDF_DocPageData;
 class CPDF_DocRenderData;
-class CPDF_ModuleMgr;
-class CFX_DIBSource;
+class CPDF_Document;
 class CPDF_Font;
-class CPDF_Image;
-class CPDF_ColorSpace;
-class CPDF_Pattern;
 class CPDF_FontEncoding;
+class CPDF_HintTables;
 class CPDF_IccProfile;
-class CFX_PrivateData;
+class CPDF_Image;
+class CPDF_ModuleMgr;
+class CPDF_Object;
+class CPDF_Parser;
+class CPDF_Pattern;
+class CPDF_Point;
+class CPDF_SecurityHandler;
+class CPDF_StandardSecurityHandler;
+class IFX_FileRead;
+
 #define FPDFPERM_PRINT 0x0004
 #define FPDFPERM_MODIFY 0x0008
 #define FPDFPERM_EXTRACT 0x0010
@@ -863,12 +866,7 @@ class IFX_DownloadHints {
   virtual ~IFX_DownloadHints() {}
   virtual void AddSegment(FX_FILESIZE offset, FX_DWORD size) = 0;
 };
-#define PDF_IS_LINEARIZED 1
-#define PDF_NOT_LINEARIZED 0
-#define PDF_UNKNOW_LINEARIZED -1
-#define PDFFORM_NOTAVAIL 0
-#define PDFFORM_AVAIL 1
-#define PDFFORM_NOTEXIST 2
+
 class IPDF_DataAvail {
  public:
   static IPDF_DataAvail* Create(IFX_FileAvail* pFileAvail,
@@ -878,12 +876,12 @@ class IPDF_DataAvail {
   IFX_FileAvail* GetFileAvail() const { return m_pFileAvail; }
   IFX_FileRead* GetFileRead() const { return m_pFileRead; }
 
-  virtual FX_BOOL IsDocAvail(IFX_DownloadHints* pHints) = 0;
+  virtual int IsDocAvail(IFX_DownloadHints* pHints) = 0;
   virtual void SetDocument(CPDF_Document* pDoc) = 0;
-  virtual FX_BOOL IsPageAvail(int iPage, IFX_DownloadHints* pHints) = 0;
+  virtual int IsPageAvail(int iPage, IFX_DownloadHints* pHints) = 0;
   virtual FX_BOOL IsLinearized() = 0;
-  virtual int32_t IsFormAvail(IFX_DownloadHints* pHints) = 0;
-  virtual int32_t IsLinearizedPDF() = 0;
+  virtual int IsFormAvail(IFX_DownloadHints* pHints) = 0;
+  virtual int IsLinearizedPDF() = 0;
   virtual void GetLinearizedMainXRefInfo(FX_FILESIZE* pPos,
                                          FX_DWORD* pSize) = 0;
 
@@ -925,6 +923,7 @@ enum PDF_DATAAVAIL_STATUS {
   PDF_DATAAVAIL_HEADER = 0,
   PDF_DATAAVAIL_FIRSTPAGE,
   PDF_DATAAVAIL_FIRSTPAGE_PREPARE,
+  PDF_DATAAVAIL_HINTTABLE,
   PDF_DATAAVAIL_END,
   PDF_DATAAVAIL_CROSSREF,
   PDF_DATAAVAIL_CROSSREF_ITEM,
