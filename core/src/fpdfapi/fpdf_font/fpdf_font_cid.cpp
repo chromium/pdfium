@@ -185,78 +185,6 @@ CIDSet CharsetFromOrdering(const CFX_ByteString& ordering) {
   return CIDSET_UNKNOWN;
 }
 
-FX_DWORD CMap_GetCode(const CFX_ByteStringC& word) {
-  int num = 0;
-  if (word.GetAt(0) == '<') {
-    for (int i = 1; i < word.GetLength(); i++) {
-      uint8_t digit = word.GetAt(i);
-      if (digit >= '0' && digit <= '9') {
-        digit = digit - '0';
-      } else if (digit >= 'a' && digit <= 'f') {
-        digit = digit - 'a' + 10;
-      } else if (digit >= 'A' && digit <= 'F') {
-        digit = digit - 'A' + 10;
-      } else {
-        return num;
-      }
-      num = num * 16 + digit;
-    }
-  } else {
-    for (int i = 0; i < word.GetLength(); i++) {
-      if (word.GetAt(i) < '0' || word.GetAt(i) > '9') {
-        return num;
-      }
-      num = num * 10 + word.GetAt(i) - '0';
-    }
-  }
-  return num;
-}
-
-bool CMap_GetCodeRange(CMap_CodeRange& range,
-                       const CFX_ByteStringC& first,
-                       const CFX_ByteStringC& second) {
-  if (first.GetLength() == 0 || first.GetAt(0) != '<')
-    return false;
-
-  int i;
-  for (i = 1; i < first.GetLength(); ++i) {
-    if (first.GetAt(i) == '>') {
-      break;
-    }
-  }
-  range.m_CharSize = (i - 1) / 2;
-  if (range.m_CharSize > 4)
-    return false;
-
-  for (i = 0; i < range.m_CharSize; ++i) {
-    uint8_t digit1 = first.GetAt(i * 2 + 1);
-    uint8_t digit2 = first.GetAt(i * 2 + 2);
-    uint8_t byte = (digit1 >= '0' && digit1 <= '9')
-                       ? (digit1 - '0')
-                       : ((digit1 & 0xdf) - 'A' + 10);
-    byte = byte * 16 + ((digit2 >= '0' && digit2 <= '9')
-                            ? (digit2 - '0')
-                            : ((digit2 & 0xdf) - 'A' + 10));
-    range.m_Lower[i] = byte;
-  }
-
-  FX_DWORD size = second.GetLength();
-  for (i = 0; i < range.m_CharSize; ++i) {
-    uint8_t digit1 =
-        ((FX_DWORD)i * 2 + 1 < size) ? second.GetAt((FX_STRSIZE)i * 2 + 1) : 0;
-    uint8_t digit2 =
-        ((FX_DWORD)i * 2 + 2 < size) ? second.GetAt((FX_STRSIZE)i * 2 + 2) : 0;
-    uint8_t byte = (digit1 >= '0' && digit1 <= '9')
-                       ? (digit1 - '0')
-                       : ((digit1 & 0xdf) - 'A' + 10);
-    byte = byte * 16 + ((digit2 >= '0' && digit2 <= '9')
-                            ? (digit2 - '0')
-                            : ((digit2 & 0xdf) - 'A' + 10));
-    range.m_Upper[i] = byte;
-  }
-  return true;
-}
-
 CFX_ByteString CMap_GetString(const CFX_ByteStringC& word) {
   return word.Mid(1, word.GetLength() - 2);
 }
@@ -769,6 +697,82 @@ void CPDF_CMapParser::ParseWord(const CFX_ByteStringC& word) {
   }
   m_LastWord = word;
 }
+
+FX_DWORD CPDF_CMapParser::CMap_GetCode(const CFX_ByteStringC& word) {
+  int num = 0;
+  if (word.GetAt(0) == '<') {
+    for (int i = 1; i < word.GetLength(); i++) {
+      uint8_t digit = word.GetAt(i);
+      if (digit >= '0' && digit <= '9') {
+        digit = digit - '0';
+      } else if (digit >= 'a' && digit <= 'f') {
+        digit = digit - 'a' + 10;
+      } else if (digit >= 'A' && digit <= 'F') {
+        digit = digit - 'A' + 10;
+      } else {
+        return num;
+      }
+      num = num * 16 + digit;
+    }
+  } else {
+    for (int i = 0; i < word.GetLength(); i++) {
+      if (word.GetAt(i) < '0' || word.GetAt(i) > '9') {
+        return num;
+      }
+      num = num * 10 + word.GetAt(i) - '0';
+    }
+  }
+  return num;
+}
+
+// Static.
+bool CPDF_CMapParser::CMap_GetCodeRange(CMap_CodeRange& range,
+                                        const CFX_ByteStringC& first,
+                                        const CFX_ByteStringC& second) {
+  if (first.GetLength() == 0 || first.GetAt(0) != '<')
+    return false;
+
+  int i;
+  for (i = 1; i < first.GetLength(); ++i) {
+    if (first.GetAt(i) == '>') {
+      break;
+    }
+  }
+  range.m_CharSize = (i - 1) / 2;
+  if (range.m_CharSize > 4)
+    return false;
+
+  for (i = 0; i < range.m_CharSize; ++i) {
+    uint8_t digit1 = first.GetAt(i * 2 + 1);
+    uint8_t digit2 = first.GetAt(i * 2 + 2);
+    uint8_t byte = (digit1 >= '0' && digit1 <= '9')
+                       ? (digit1 - '0')
+                       : ((digit1 & 0xdf) - 'A' + 10);
+    byte = byte * 16 + ((digit2 >= '0' && digit2 <= '9')
+                            ? (digit2 - '0')
+                            : ((digit2 & 0xdf) - 'A' + 10));
+    range.m_Lower[i] = byte;
+  }
+
+  FX_DWORD size = second.GetLength();
+  for (i = 0; i < range.m_CharSize; ++i) {
+    uint8_t digit1 = ((FX_DWORD)i * 2 + 1 < size)
+                         ? second.GetAt((FX_STRSIZE)i * 2 + 1)
+                         : '0';
+    uint8_t digit2 = ((FX_DWORD)i * 2 + 2 < size)
+                         ? second.GetAt((FX_STRSIZE)i * 2 + 2)
+                         : '0';
+    uint8_t byte = (digit1 >= '0' && digit1 <= '9')
+                       ? (digit1 - '0')
+                       : ((digit1 & 0xdf) - 'A' + 10);
+    byte = byte * 16 + ((digit2 >= '0' && digit2 <= '9')
+                            ? (digit2 - '0')
+                            : ((digit2 & 0xdf) - 'A' + 10));
+    range.m_Upper[i] = byte;
+  }
+  return true;
+}
+
 CPDF_CMap::CPDF_CMap() {
   m_Charset = CIDSET_UNKNOWN;
   m_Coding = CIDCODING_UNKNOWN;
