@@ -508,7 +508,9 @@ FX_DWORD CPDF_ToUnicodeMap::ReverseLookup(FX_WCHAR unicode) {
   }
   return 0;
 }
-static FX_DWORD _StringToCode(const CFX_ByteStringC& str) {
+
+// Static.
+FX_DWORD CPDF_ToUnicodeMap::StringToCode(const CFX_ByteStringC& str) {
   const FX_CHAR* buf = str.GetCStr();
   int len = str.GetLength();
   if (len == 0) {
@@ -539,7 +541,7 @@ static FX_DWORD _StringToCode(const CFX_ByteStringC& str) {
   }
   return result;
 }
-static CFX_WideString _StringDataAdd(CFX_WideString str) {
+static CFX_WideString StringDataAdd(CFX_WideString str) {
   CFX_WideString ret;
   int len = str.GetLength();
   FX_WCHAR value = 1;
@@ -557,7 +559,10 @@ static CFX_WideString _StringDataAdd(CFX_WideString str) {
   }
   return ret;
 }
-static CFX_WideString _StringToWideString(const CFX_ByteStringC& str) {
+
+// Static.
+CFX_WideString CPDF_ToUnicodeMap::StringToWideString(
+    const CFX_ByteStringC& str) {
   const FX_CHAR* buf = str.GetCStr();
   int len = str.GetLength();
   if (len == 0) {
@@ -579,6 +584,7 @@ static CFX_WideString _StringToWideString(const CFX_ByteStringC& str) {
         break;
       }
       ch = ch * 16 + digit;
+
       byte_pos++;
       if (byte_pos == 4) {
         result += ch;
@@ -608,9 +614,9 @@ void CPDF_ToUnicodeMap::Load(CPDF_Stream* pStream) {
         if (word.IsEmpty() || word == FX_BSTRC("endbfchar")) {
           break;
         }
-        FX_DWORD srccode = _StringToCode(word);
+        FX_DWORD srccode = StringToCode(word);
         word = parser.GetWord();
-        CFX_WideString destcode = _StringToWideString(word);
+        CFX_WideString destcode = StringToWideString(word);
         int len = destcode.GetLength();
         if (len == 0) {
           continue;
@@ -631,9 +637,9 @@ void CPDF_ToUnicodeMap::Load(CPDF_Stream* pStream) {
           break;
         }
         high = parser.GetWord();
-        FX_DWORD lowcode = _StringToCode(low);
+        FX_DWORD lowcode = StringToCode(low);
         FX_DWORD highcode =
-            (lowcode & 0xffffff00) | (_StringToCode(high) & 0xff);
+            (lowcode & 0xffffff00) | (StringToCode(high) & 0xff);
         if (highcode == (FX_DWORD)-1) {
           break;
         }
@@ -641,7 +647,7 @@ void CPDF_ToUnicodeMap::Load(CPDF_Stream* pStream) {
         if (start == FX_BSTRC("[")) {
           for (FX_DWORD code = lowcode; code <= highcode; code++) {
             CFX_ByteString dest = parser.GetWord();
-            CFX_WideString destcode = _StringToWideString(dest);
+            CFX_WideString destcode = StringToWideString(dest);
             int len = destcode.GetLength();
             if (len == 0) {
               continue;
@@ -656,11 +662,11 @@ void CPDF_ToUnicodeMap::Load(CPDF_Stream* pStream) {
           }
           parser.GetWord();
         } else {
-          CFX_WideString destcode = _StringToWideString(start);
+          CFX_WideString destcode = StringToWideString(start);
           int len = destcode.GetLength();
           FX_DWORD value = 0;
           if (len == 1) {
-            value = _StringToCode(start);
+            value = StringToCode(start);
             for (FX_DWORD code = lowcode; code <= highcode; code++) {
               m_Map[code] = value++;
             }
@@ -670,7 +676,7 @@ void CPDF_ToUnicodeMap::Load(CPDF_Stream* pStream) {
               if (code == lowcode) {
                 retcode = destcode;
               } else {
-                retcode = _StringDataAdd(destcode);
+                retcode = StringDataAdd(destcode);
               }
               m_Map[code] = m_MultiCharBuf.GetLength() * 0x10000 + 0xffff;
               m_MultiCharBuf.AppendChar(retcode.GetLength());
