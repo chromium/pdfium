@@ -4690,7 +4690,7 @@ FX_BOOL CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
   // where in the page's content stream the object is first referenced.
   FX_DWORD dwSharedNumeratorBits = hStream->GetBits(16);
   // Item 13: Skip Item 13 which has 16 bits.
-  FX_DWORD dwSharedDenominator = hStream->GetBits(16);
+  hStream->SkipBits(16);
   CPDF_Object* pPageNum = m_pLinearizedDict->GetElementValue(FX_BSTRC("N"));
   int nPages = pPageNum ? pPageNum->GetInteger() : 0;
   if (nPages < 1)

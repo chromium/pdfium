@@ -13,7 +13,6 @@ class CPDF_HintTables {
  public:
   CPDF_HintTables(CPDF_DataAvail* pDataAvail, CPDF_Dictionary* pLinearized)
       : m_pLinearizedDict(pLinearized),
-        m_pHintStream(nullptr),
         m_pDataAvail(pDataAvail),
         m_nFirstPageSharedObjs(0),
         m_szFirstPageObjOffset(0) {}
@@ -35,7 +34,6 @@ class CPDF_HintTables {
   int ReadPrimaryHintStreamLength() const;
 
   CPDF_Dictionary* m_pLinearizedDict;
-  CPDF_Stream* m_pHintStream;
   CPDF_DataAvail* m_pDataAvail;
   FX_DWORD m_nFirstPageSharedObjs;
   FX_FILESIZE m_szFirstPageObjOffset;
