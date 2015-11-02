@@ -537,7 +537,7 @@ class CPDFSDK_PageView final {
   void PageView_OnDraw(CFX_RenderDevice* pDevice,
                        CPDF_Matrix* pUser2Device,
                        CPDF_RenderOptions* pOptions,
-                       FX_RECT* pClip = NULL);
+                       const FX_RECT& pClip);
   const CPDF_Annot* GetPDFAnnotAtPoint(FX_FLOAT pageX, FX_FLOAT pageY);
   CPDFSDK_Annot* GetFXAnnotAtPoint(FX_FLOAT pageX, FX_FLOAT pageY);
   const CPDF_Annot* GetPDFWidgetAtPoint(FX_FLOAT pageX, FX_FLOAT pageY);

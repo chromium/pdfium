@@ -654,7 +654,7 @@ CPDFSDK_PageView::~CPDFSDK_PageView() {
 void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
                                        CPDF_Matrix* pUser2Device,
                                        CPDF_RenderOptions* pOptions,
-                                       FX_RECT* pClip) {
+                                       const FX_RECT& pClip) {
   m_curMatrix = *pUser2Device;
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
   CPDFXFA_Page* pPage = GetPDFXFAPage();
@@ -666,14 +666,12 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
   if (pPage->GetDocument()->GetDocType() == DOCTYPE_DYNIMIC_XFA) {
     CFX_Graphics gs;
     gs.Create(pDevice);
-    if (pClip) {
-      CFX_RectF rectClip;
-      rectClip.Set(static_cast<FX_FLOAT>(pClip->left),
-                   static_cast<FX_FLOAT>(pClip->top),
-                   static_cast<FX_FLOAT>(pClip->Width()),
-                   static_cast<FX_FLOAT>(pClip->Height()));
-      gs.SetClipRect(rectClip);
-    }
+    CFX_RectF rectClip;
+    rectClip.Set(static_cast<FX_FLOAT>(pClip.left),
+                 static_cast<FX_FLOAT>(pClip.top),
+                 static_cast<FX_FLOAT>(pClip.Width()),
+                 static_cast<FX_FLOAT>(pClip.Height()));
+    gs.SetClipRect(rectClip);
     IXFA_RenderContext* pRenderContext = XFA_RenderContext_Create();
     if (!pRenderContext)
       return;

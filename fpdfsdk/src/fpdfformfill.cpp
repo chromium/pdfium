@@ -317,7 +317,7 @@ DLLEXPORT void STDCALL FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,
   options.m_pOCContext = new CPDF_OCContext(pPDFDoc);
 
   if (CPDFSDK_PageView* pPageView = pFXDoc->GetPageView((CPDFXFA_Page*)page))
-    pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options, &clip);
+    pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options, clip);
 
   pDevice->RestoreState();
   delete options.m_pOCContext;
