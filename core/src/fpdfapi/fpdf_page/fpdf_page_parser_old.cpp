@@ -278,21 +278,7 @@ ICodec_ScanlineDecoder* FPDFAPI_CreateFaxDecoder(
     int width,
     int height,
     const CPDF_Dictionary* pParams);
-FX_DWORD _A85Decode(const uint8_t* src_buf,
-                    FX_DWORD src_size,
-                    uint8_t*& dest_buf,
-                    FX_DWORD& dest_size);
-FX_DWORD _HexDecode(const uint8_t* src_buf,
-                    FX_DWORD src_size,
-                    uint8_t*& dest_buf,
-                    FX_DWORD& dest_size);
-FX_DWORD FPDFAPI_FlateOrLZWDecode(FX_BOOL bLZW,
-                                  const uint8_t* src_buf,
-                                  FX_DWORD src_size,
-                                  CPDF_Dictionary* pParams,
-                                  FX_DWORD estimated_size,
-                                  uint8_t*& dest_buf,
-                                  FX_DWORD& dest_size);
+
 FX_DWORD PDF_DecodeInlineStream(const uint8_t* src_buf,
                                 FX_DWORD limit,
                                 int width,
@@ -307,10 +293,10 @@ FX_DWORD PDF_DecodeInlineStream(const uint8_t* src_buf,
     return _DecodeAllScanlines(pDecoder, dest_buf, dest_size);
   }
   if (decoder == FX_BSTRC("ASCII85Decode") || decoder == FX_BSTRC("A85")) {
-    return _A85Decode(src_buf, limit, dest_buf, dest_size);
+    return A85Decode(src_buf, limit, dest_buf, dest_size);
   }
   if (decoder == FX_BSTRC("ASCIIHexDecode") || decoder == FX_BSTRC("AHx")) {
-    return _HexDecode(src_buf, limit, dest_buf, dest_size);
+    return HexDecode(src_buf, limit, dest_buf, dest_size);
   }
   if (decoder == FX_BSTRC("FlateDecode") || decoder == FX_BSTRC("Fl")) {
     return FPDFAPI_FlateOrLZWDecode(FALSE, src_buf, limit, pParam, dest_size,
