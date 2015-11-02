@@ -174,6 +174,13 @@ class CPDF_ToUnicodeMap {
   std::map<FX_DWORD, FX_DWORD> m_Map;
   CPDF_CID2UnicodeMap* m_pBaseMap;
   CFX_WideTextBuf m_MultiCharBuf;
+
+ private:
+  friend class fpdf_font_StringToCode_Test;
+  friend class fpdf_font_StringToWideString_Test;
+
+  static FX_DWORD StringToCode(const CFX_ByteStringC& str);
+  static CFX_WideString StringToWideString(const CFX_ByteStringC& str);
 };
 class CPDF_FontCharMap : public CFX_CharMap {
  public:
