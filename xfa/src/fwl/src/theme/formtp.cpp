@@ -427,7 +427,6 @@ void CFWL_FormTP::DrawCloseBox(CFX_Graphics* pGraphics,
                    FXFILL_WINDING, pMatrix);
   CFX_RectF rtX(*pRect);
   rtX.Inflate(-5, -5);
-  FX_FLOAT fR = rtX.right();
   path.Clear();
   FX_FLOAT frtXRight = rtX.right();
   FX_FLOAT frtXBottom = rtX.bottom();

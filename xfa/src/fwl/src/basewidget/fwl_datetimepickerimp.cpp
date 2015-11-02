@@ -405,28 +405,28 @@ void CFWL_DateTimeCalendarDelegate::DisForm_OnLButtonUpEx(CFWL_MsgMouse* pMsg) {
 }
 CFWL_DateTimePickerImp::CFWL_DateTimePickerImp(IFWL_Widget* pOuter)
     : CFWL_WidgetImp(pOuter),
-      m_bLBtnDown(FALSE),
       m_iBtnState(1),
       m_iYear(-1),
       m_iMonth(-1),
       m_iDay(-1),
-      m_pEdit(NULL),
-      m_pMonthCal(NULL),
-      m_pForm(FALSE) {
+      m_bLBtnDown(FALSE),
+      m_pEdit(nullptr),
+      m_pMonthCal(nullptr),
+      m_pForm(nullptr) {
   m_rtBtn.Set(0, 0, 0, 0);
 }
 CFWL_DateTimePickerImp::CFWL_DateTimePickerImp(
     const CFWL_WidgetImpProperties& properties,
     IFWL_Widget* pOuter)
     : CFWL_WidgetImp(properties, pOuter),
-      m_bLBtnDown(FALSE),
       m_iBtnState(1),
       m_iYear(-1),
       m_iMonth(-1),
       m_iDay(-1),
-      m_pEdit(NULL),
-      m_pMonthCal(NULL),
-      m_pForm(FALSE) {
+      m_bLBtnDown(FALSE),
+      m_pEdit(nullptr),
+      m_pMonthCal(nullptr),
+      m_pForm(nullptr) {
   m_rtBtn.Set(0, 0, 0, 0);
 }
 CFWL_DateTimePickerImp::~CFWL_DateTimePickerImp() {
@@ -879,8 +879,6 @@ void CFWL_DateTimePickerImp::DisForm_ShowMonthCalendar(FX_BOOL bActivate) {
   if (bActivate) {
     CFX_RectF rtMonthCal;
     m_pMonthCal->GetWidgetRect(rtMonthCal, TRUE);
-    FX_DWORD dwPos = 0;
-    FX_FLOAT fPopupHeight = 0.0f;
     FX_FLOAT fPopupMin = rtMonthCal.height;
     FX_FLOAT fPopupMax = rtMonthCal.height;
     CFX_RectF rtAnchor(m_pProperties->m_rtWidget);

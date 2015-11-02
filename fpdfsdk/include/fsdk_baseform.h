@@ -193,9 +193,8 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
   void DrawAppearance(CFX_RenderDevice* pDevice,
                       const CPDF_Matrix* pUser2Device,
                       CPDF_Annot::AppearanceMode mode,
-                      const CPDF_RenderOptions* pOptions);
+                      const CPDF_RenderOptions* pOptions) override;
 
- public:
   FX_BOOL HitTest(FX_FLOAT pageX, FX_FLOAT pageY);
 
   CPDFSDK_InterForm* m_pInterForm;
@@ -212,18 +211,14 @@ class CPDFSDK_XFAWidget : public CPDFSDK_Annot {
   CPDFSDK_XFAWidget(IXFA_Widget* pAnnot,
                     CPDFSDK_PageView* pPageView,
                     CPDFSDK_InterForm* pInterForm);
-  virtual ~CPDFSDK_XFAWidget() {}
+  ~CPDFSDK_XFAWidget() override {}
 
- public:
-  virtual FX_BOOL IsXFAField();
-  virtual IXFA_Widget* GetXFAWidget() { return m_hXFAWidget; }
+  FX_BOOL IsXFAField() override;
+  IXFA_Widget* GetXFAWidget() const override { return m_hXFAWidget; }
+  CFX_ByteString GetType() const override;
+  CFX_ByteString GetSubType() const override { return ""; }
+  CFX_FloatRect GetRect() const override;
 
-  virtual CFX_ByteString GetType() const;
-  virtual CFX_ByteString GetSubType() const { return ""; }
-
-  virtual CFX_FloatRect GetRect();
-
- public:
   CPDFSDK_InterForm* GetInterForm() { return m_pInterForm; }
 
  private:

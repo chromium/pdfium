@@ -87,7 +87,6 @@ class CFWL_ScrollBarImp : public CFWL_WidgetImp, public IFWL_Timer {
   FX_BOOL m_bMouseHover;
   FX_BOOL m_bMouseDown;
   FX_BOOL m_bRepaintThumb;
-
   FX_FLOAT m_fButtonLen;
   FX_BOOL m_bMinSize;
   CFX_RectF m_rtClient;

@@ -19,19 +19,22 @@ class CFWL_EditImp : public CFWL_WidgetImp, public IFDE_TxtEdtEventSink {
   CFWL_EditImp(IFWL_Widget* pOuter = NULL);
   CFWL_EditImp(const CFWL_WidgetImpProperties& properties,
                IFWL_Widget* pOuter = NULL);
-  ~CFWL_EditImp();
-  virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
-  virtual FX_DWORD GetClassID() const;
-  virtual FWL_ERR Initialize();
-  virtual FWL_ERR Finalize();
-  virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
-  virtual FWL_ERR SetWidgetRect(const CFX_RectF& rect);
-  virtual FWL_ERR Update();
-  virtual FX_DWORD HitTest(FX_FLOAT fx, FX_FLOAT fy);
-  virtual FWL_ERR SetStates(FX_DWORD dwStates, FX_BOOL bSet = TRUE);
-  virtual FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
-                             const CFX_Matrix* pMatrix = NULL);
-  virtual FWL_ERR SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
+  ~CFWL_EditImp() override;
+
+  // CFWL_WidgetImp:
+  FWL_ERR GetClassName(CFX_WideString& wsClass) const override;
+  FX_DWORD GetClassID() const override;
+  FWL_ERR Initialize() override;
+  FWL_ERR Finalize() override;
+  FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
+  FWL_ERR SetWidgetRect(const CFX_RectF& rect) override;
+  FWL_ERR Update() override;
+  FX_DWORD HitTest(FX_FLOAT fx, FX_FLOAT fy) override;
+  FWL_ERR SetStates(FX_DWORD dwStates, FX_BOOL bSet = TRUE) override;
+  FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
+                     const CFX_Matrix* pMatrix = NULL) override;
+  FWL_ERR SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) override;
+
   virtual FWL_ERR SetText(const CFX_WideString& wsText);
   virtual int32_t GetTextLength() const;
   virtual FWL_ERR GetText(CFX_WideString& wsText,

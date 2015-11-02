@@ -22,7 +22,7 @@ enum FDE_TXTEDT_CHARTYPE {
   FDE_TXTEDT_CHARTYPE_Char,
   FDE_TXTEDT_CHARTYPE_CJK,
 };
-static FDE_TXTEDT_CHARTYPE FDE_GetEditSelCharType(FX_WCHAR wChar) {
+inline FDE_TXTEDT_CHARTYPE FDE_GetEditSelCharType(FX_WCHAR wChar) {
   if (wChar == 0x9) {
     return FDE_TXTEDT_CHARTYPE_Tab;
   } else if (wChar == 0x20 || wChar == 0xA0) {

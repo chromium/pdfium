@@ -45,8 +45,8 @@ CFWL_SpinButtonImp::CFWL_SpinButtonImp(IFWL_Widget* pOuter)
     : CFWL_WidgetImp(pOuter),
       m_dwUpState(FWL_PARTSTATE_SPB_Normal),
       m_dwDnState(FWL_PARTSTATE_SPB_Normal),
-      m_bLButtonDwn(FALSE),
       m_iButtonIndex(0),
+      m_bLButtonDwn(FALSE),
       m_hTimer(NULL) {
   m_rtClient.Reset();
   m_rtUpButton.Reset();
@@ -59,8 +59,8 @@ CFWL_SpinButtonImp::CFWL_SpinButtonImp(
     : CFWL_WidgetImp(properties, pOuter),
       m_dwUpState(FWL_PARTSTATE_SPB_Normal),
       m_dwDnState(FWL_PARTSTATE_SPB_Normal),
-      m_bLButtonDwn(FALSE),
       m_iButtonIndex(0),
+      m_bLButtonDwn(FALSE),
       m_hTimer(NULL) {
   m_rtClient.Reset();
   m_rtUpButton.Reset();

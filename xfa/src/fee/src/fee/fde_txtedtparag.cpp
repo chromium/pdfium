@@ -12,9 +12,9 @@
 #include "fde_txtedtengine.h"
 #include "fde_txtedtbuf.h"
 CFDE_TxtEdtParag::CFDE_TxtEdtParag(CFDE_TxtEdtEngine* pEngine)
-    : m_nLineCount(0),
-      m_nCharStart(0),
+    : m_nCharStart(0),
       m_nCharCount(0),
+      m_nLineCount(0),
       m_lpData(NULL),
       m_pEngine(pEngine) {
   FXSYS_assert(m_pEngine);
@@ -43,7 +43,6 @@ void CFDE_TxtEdtParag::LoadParag() {
   CFX_ArrayTemplate<int32_t> LineBaseArr;
   FX_BOOL bReload = FALSE;
   FX_DWORD dwBreakStatus = FX_TXTBREAK_None;
-  int32_t nTextEnd = m_pEngine->GetTextBufLength();
   do {
     if (bReload) {
       dwBreakStatus = pTxtBreak->EndBreak(FX_TXTBREAK_ParagraphBreak);
@@ -108,7 +107,6 @@ void CFDE_TxtEdtParag::CalcLines() {
   int32_t nEndIndex = m_nCharStart + m_nCharCount;
   pIter->SetAt(m_nCharStart);
   FX_BOOL bReload = FALSE;
-  int32_t nTextEnd = m_pEngine->GetTextBufLength();
   do {
     if (bReload) {
       dwBreakStatus = pTxtBreak->EndBreak(FX_TXTBREAK_ParagraphBreak);

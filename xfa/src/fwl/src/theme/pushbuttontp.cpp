@@ -103,7 +103,6 @@ FWL_ERR CFWL_PushButtonTP::Finalize() {
   return CFWL_WidgetTP::Finalize();
 }
 void CFWL_PushButtonTP::SetThemeData(FX_DWORD dwID) {
-  FX_ARGB* pData = (FX_ARGB*)&*m_pThemeData;
   if (dwID) {
     m_pThemeData->clrBorder[0] = ArgbEncode(255, 55, 98, 6);
     m_pThemeData->clrBorder[1] = ArgbEncode(255, 55, 98, 6);

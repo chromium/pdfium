@@ -430,7 +430,7 @@ int32_t CFWL_ComboListDelegate::OnDropListKey(CFWL_MsgKey* pKey) {
       case FWL_VKEY_Up:
       case FWL_VKEY_Down: {
         OnDropListKeyDown(pKey);
-        IFWL_WidgetDelegate* pDelegate = pOuter->SetDelegate(NULL);
+        pOuter->SetDelegate(nullptr);
         pOuter->ProcessSelChanged(FALSE);
         return 1;
       }
@@ -946,7 +946,6 @@ void CFWL_ComboBoxImp::ShowDropList(FX_BOOL bActivate) {
     rtAnchor.Set(0, 0, m_pProperties->m_rtWidget.width,
                  m_pProperties->m_rtWidget.height);
     FX_FLOAT fMinHeight = 0;
-    FX_FLOAT fMaxHeight = m_rtList.height;
     if (m_rtList.width < m_rtClient.width) {
       m_rtList.width = m_rtClient.width;
     }
@@ -1224,8 +1223,6 @@ void CFWL_ComboBoxImp::DisForm_ShowDropList(FX_BOOL bActivate) {
     pComboList->ChangeSelected(m_iCurSel);
     FX_FLOAT fItemHeight = pComboList->GetItemHeigt();
     FX_FLOAT fBorder = GetBorderSize();
-    FX_DWORD nWhere = 0;
-    FX_FLOAT fPopupRet = 0.0f;
     FX_FLOAT fPopupMin = 0.0f;
     if (iItems > 3) {
       fPopupMin = fItemHeight * 3 + fBorder * 2;
@@ -1688,9 +1685,6 @@ void CFWL_ComboBoxImpDelegate::DisForm_OnLButtonDown(CFWL_MsgMouse* pMsg) {
 }
 void CFWL_ComboBoxImpDelegate::DisForm_OnFocusChanged(CFWL_Message* pMsg,
                                                       FX_BOOL bSet) {
-  IFWL_Target* pDstTarget = pMsg->m_pDstTarget;
-  IFWL_Target* pSrcTarget = pMsg->m_pSrcTarget;
-  FX_BOOL bDropDown = m_pOwner->IsDropDownStyle();
   if (bSet) {
     m_pOwner->m_pProperties->m_dwStates |= FWL_WGTSTATE_Focused;
     if ((m_pOwner->m_pEdit->GetStates() & FWL_WGTSTATE_Focused) == 0) {
@@ -1759,11 +1753,12 @@ void CFWL_ComboBoxImpDelegate::DisForm_OnKey(CFWL_MsgKey* pMsg) {
 CFWL_ComboProxyImpDelegate::CFWL_ComboProxyImpDelegate(
     IFWL_Form* pForm,
     CFWL_ComboBoxImp* pComboBox)
-    : m_pForm(pForm),
-      m_pComboBox(pComboBox),
-      m_bLButtonDown(FALSE),
+    : m_bLButtonDown(FALSE),
       m_bLButtonUpSelf(FALSE),
-      m_fStartPos(0) {}
+      m_fStartPos(0),
+      m_pForm(pForm),
+      m_pComboBox(pComboBox) {
+}
 int32_t CFWL_ComboProxyImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   _FWL_RETURN_VALUE_IF_FAIL(pMessage, 0);
   FX_DWORD dwMsgCode = pMessage->GetClassID();

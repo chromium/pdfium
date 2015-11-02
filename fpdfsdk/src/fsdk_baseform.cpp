@@ -2112,9 +2112,8 @@ FX_BOOL CPDFSDK_Widget::HitTest(FX_FLOAT pageX, FX_FLOAT pageY) {
 CPDFSDK_XFAWidget::CPDFSDK_XFAWidget(IXFA_Widget* pAnnot,
                                      CPDFSDK_PageView* pPageView,
                                      CPDFSDK_InterForm* pInterForm)
-    : CPDFSDK_Annot(pPageView),
-      m_hXFAWidget(pAnnot),
-      m_pInterForm(pInterForm) {}
+    : CPDFSDK_Annot(pPageView), m_pInterForm(pInterForm), m_hXFAWidget(pAnnot) {
+}
 
 FX_BOOL CPDFSDK_XFAWidget::IsXFAField() {
   return TRUE;
@@ -2124,21 +2123,12 @@ CFX_ByteString CPDFSDK_XFAWidget::GetType() const {
   return FSDK_XFAWIDGET_TYPENAME;
 }
 
-CFX_FloatRect CPDFSDK_XFAWidget::GetRect() {
+CFX_FloatRect CPDFSDK_XFAWidget::GetRect() const {
   CPDFSDK_PageView* pPageView = GetPageView();
-  ASSERT(pPageView != NULL);
-
   CPDFSDK_Document* pDocument = pPageView->GetSDKDocument();
-  ASSERT(pDocument != NULL);
-
   CPDFXFA_Document* pDoc = pDocument->GetDocument();
-  ASSERT(pDoc != NULL);
-
   IXFA_DocView* pDocView = pDoc->GetXFADocView();
-  ASSERT(pDocView != NULL);
-
   IXFA_WidgetHandler* pWidgetHandler = pDocView->GetWidgetHandler();
-  ASSERT(pWidgetHandler != NULL);
 
   CFX_RectF rcBBox;
   pWidgetHandler->GetRect(GetXFAWidget(), rcBBox);

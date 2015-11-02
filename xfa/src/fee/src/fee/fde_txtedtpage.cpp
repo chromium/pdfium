@@ -123,17 +123,17 @@ int32_t CFDE_TxtEdtTextSet::GetCharRects_Impl(FDE_HVISUALOBJ hText,
   return pEngine->GetTextBreak()->GetCharRects(&tr, rtArray, bBBox);
 }
 CFDE_TxtEdtPage::CFDE_TxtEdtPage(IFDE_TxtEdtEngine* pEngine, int32_t nPageIndex)
-    : m_pIter(NULL),
-      m_pTextSet(NULL),
+    : m_pIter(nullptr),
+      m_pTextSet(nullptr),
+      m_pBgnParag(nullptr),
+      m_pEndParag(nullptr),
       m_nRefCount(0),
       m_nPageStart(-1),
       m_nCharCount(0),
       m_nPageIndex(nPageIndex),
       m_bLoaded(FALSE),
       m_bLastPage(FALSE),
-      m_pCharWidth(NULL),
-      m_pBgnParag(NULL),
-      m_pEndParag(NULL) {
+      m_pCharWidth(nullptr) {
   FXSYS_memset(&m_rtPage, 0, sizeof(CFX_RectF));
   FXSYS_memset(&m_rtPageMargin, 0, sizeof(CFX_RectF));
   FXSYS_memset(&m_rtPageContents, 0, sizeof(CFX_RectF));
@@ -331,7 +331,6 @@ void CFDE_TxtEdtPage::CalcRangeRectArray(int32_t nStart,
         }
         CFX_RectFArray rcArr;
         m_pTextSet->GetCharRects((FDE_HVISUALOBJ)piece, rcArr);
-        int32_t nSize = rcArr.GetSize();
         CFX_RectF rectPiece = rcArr[nStart - piece->nStart];
         rectPiece.Union(rcArr[nRangeEnd]);
         RectFArr.Add(rectPiece);
@@ -396,9 +395,7 @@ int32_t CFDE_TxtEdtPage::LoadPage(FX_LPCRECTF pClipBox, IFX_Pause* pPause) {
   IFX_TxtBreak* pBreak = m_pEditEngine->GetTextBreak();
   pBreak->EndBreak(FX_TXTBREAK_ParagraphBreak);
   pBreak->ClearBreakPieces();
-  int32_t nLineCount = m_pEditEngine->GetLineCount();
   int32_t nPageLineCount = m_pEditEngine->GetPageLineCount();
-  int32_t nLength = pBuf->GetTextLength();
   int32_t nStartLine = nPageLineCount * m_nPageIndex;
   int32_t nEndLine = FX_MIN((nStartLine + nPageLineCount - 1),
                             (m_pEditEngine->GetLineCount() - 1));
@@ -429,7 +426,6 @@ int32_t CFDE_TxtEdtPage::LoadPage(FX_LPCRECTF pClipBox, IFX_Pause* pPause) {
   }
   m_PieceMassArr.RemoveAll(TRUE);
   FX_DWORD dwBreakStatus = FX_TXTBREAK_None;
-  int32_t nLineStart = nPageStart;
   int32_t nPieceStart = 0;
   if (m_pCharWidth != NULL) {
     delete[] m_pCharWidth;
@@ -444,7 +440,6 @@ int32_t CFDE_TxtEdtPage::LoadPage(FX_LPCRECTF pClipBox, IFX_Pause* pPause) {
   IFX_CharIter* pIter = m_pIter->Clone();
   pIter->SetAt(nPageStart);
   m_pIter->SetAt(nPageStart);
-  int32_t nTextEnd = m_pEditEngine->GetTextBufLength();
   FX_BOOL bFirstPiece = TRUE;
   do {
     if (bReload) {

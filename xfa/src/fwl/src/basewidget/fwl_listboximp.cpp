@@ -343,7 +343,6 @@ FWL_HLISTITEM CFWL_ListBoxImp::GetItem(FWL_HLISTITEM hItem,
       FX_BOOL bUp = dwKeyCode == FWL_VKEY_Up;
       FX_BOOL bDown = dwKeyCode == FWL_VKEY_Down;
       FX_BOOL bHome = dwKeyCode == FWL_VKEY_Home;
-      FX_BOOL bEnd = dwKeyCode == FWL_VKEY_End;
       IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
       int32_t iDstItem = -1;
       if (bUp || bDown) {
@@ -508,12 +507,8 @@ FX_BOOL CFWL_ListBoxImp::SetItemChecked(FWL_HLISTITEM hItem, FX_BOOL bChecked) {
     return FALSE;
   }
   IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
-  FX_DWORD dwCheckState = pData->GetItemCheckState(m_pInterface, hItem);
-  if (bChecked) {
-    pData->SetItemCheckState(m_pInterface, hItem, FWL_ITEMSTATE_LTB_Checked);
-  } else {
-    pData->SetItemCheckState(m_pInterface, hItem, 0);
-  }
+  pData->SetItemCheckState(m_pInterface, hItem,
+                           bChecked ? FWL_ITEMSTATE_LTB_Checked : 0);
   return TRUE;
 }
 FX_BOOL CFWL_ListBoxImp::ScrollToVisible(FWL_HLISTITEM hItem) {
@@ -1011,7 +1006,6 @@ int32_t CFWL_ListBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
 }
 FWL_ERR CFWL_ListBoxImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
   _FWL_RETURN_VALUE_IF_FAIL(pEvent, FWL_ERR_Indefinite);
-  FX_DWORD dwHashCode = pEvent->GetClassID();
   if (pEvent->GetClassID() != FWL_EVTHASH_Scroll) {
     return FWL_ERR_Succeeded;
   }

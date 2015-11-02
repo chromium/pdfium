@@ -66,32 +66,17 @@ void CFX_SAXFile::Reset() {
   }
   m_pFile = NULL;
 }
-#define FX_SAXCHARTYPE_Normal 0
-#define FX_SAXCHARTYPE_Space 1
-static uint8_t g_SAX_CharType[256] = {
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-};
 CFX_SAXReader::CFX_SAXReader()
     : m_File(),
-      m_pHandler(NULL),
+      m_pHandler(nullptr),
       m_iState(-1),
-      m_pRoot(NULL),
-      m_pCurItem(NULL),
+      m_pRoot(nullptr),
+      m_pCurItem(nullptr),
       m_dwItemID(0),
       m_iDataSize(256),
       m_iNameSize(256),
-      m_pCommentContext(NULL),
-      m_dwParseMode(0) {
+      m_dwParseMode(0),
+      m_pCommentContext(nullptr) {
   m_pszData = (uint8_t*)FX_Alloc(uint8_t, m_iDataSize);
   m_pszName = (uint8_t*)FX_Alloc(uint8_t, m_iNameSize);
 }

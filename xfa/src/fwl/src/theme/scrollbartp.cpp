@@ -39,7 +39,6 @@ FX_DWORD CFWL_ScrollBarTP::SetThemeID(IFWL_Widget* pWidget,
 FX_BOOL CFWL_ScrollBarTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   _FWL_RETURN_VALUE_IF_FAIL(pParams, FALSE);
   IFWL_Widget* pWidget = pParams->m_pWidget;
-  FX_DWORD dwStyleEx = pWidget->GetStylesEx();
   FWLTHEME_STATE eState = FWLTHEME_STATE_Normal;
   switch (pParams->m_dwStates & 0x03) {
     case FWL_PARTSTATE_SCB_Hovered: {

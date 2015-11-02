@@ -104,7 +104,7 @@ typedef CFX_MapPtrTemplate<void*, FX_DWORD> CFWL_EventSource;
 class CFWL_EventTarget {
  public:
   CFWL_EventTarget(CFWL_NoteDriver* pNoteDriver, IFWL_Widget* pListener)
-      : m_pNoteDriver(pNoteDriver), m_pListener(pListener), m_bInvalid(FALSE) {}
+      : m_pListener(pListener), m_pNoteDriver(pNoteDriver), m_bInvalid(FALSE) {}
   ~CFWL_EventTarget();
   int32_t SetEventSource(IFWL_Widget* pSource,
                          FX_DWORD dwFilter = FWL_EVENT_ALL_MASK);

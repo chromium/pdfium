@@ -64,26 +64,23 @@ FX_BOOL CPDFXFA_Page::LoadXFAPageView() {
   if (!m_pDocument)
     return FALSE;
   IXFA_Doc* pXFADoc = m_pDocument->GetXFADoc();
-  if (pXFADoc) {
-    IXFA_DocView* pXFADocView = m_pDocument->GetXFADocView();
-    if (!pXFADocView)
-      return FALSE;
+  if (!pXFADoc)
+    return FALSE;
 
-    IXFA_PageView* pPageView = pXFADocView->GetPageView(m_iPageIndex);
-    if (!pPageView)
-      return FALSE;
+  IXFA_DocView* pXFADocView = m_pDocument->GetXFADocView();
+  if (!pXFADocView)
+    return FALSE;
 
-    if (m_pXFAPageView)
-      if (m_pXFAPageView == pPageView)
-        return TRUE;
+  IXFA_PageView* pPageView = pXFADocView->GetPageView(m_iPageIndex);
+  if (!pPageView)
+    return FALSE;
 
-    m_pXFAPageView = pPageView;
-    int iStatus = m_pXFAPageView->LoadPageView(NULL);
-
+  if (m_pXFAPageView == pPageView)
     return TRUE;
-  }
 
-  return FALSE;
+  m_pXFAPageView = pPageView;
+  (void)m_pXFAPageView->LoadPageView(nullptr);
+  return TRUE;
 }
 
 FX_BOOL CPDFXFA_Page::LoadPage() {

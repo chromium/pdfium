@@ -11,9 +11,7 @@
 #include "include/fwl_appimp.h"
 CFWL_ControlThread::~CFWL_ControlThread() {}
 FWL_ERR CFWL_ControlThread::Run(FWL_HTHREAD hThread) {
-  static int count = 0;
-  while (TRUE) {
-  }
+  FXSYS_assert(false);
   return FWL_ERR_Succeeded;
 }
 IFWL_Thread* IFWL_Thread::Create() {

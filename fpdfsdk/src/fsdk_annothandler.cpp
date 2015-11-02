@@ -782,9 +782,6 @@ void CPDFSDK_XFAAnnotHandler::OnDraw(CPDFSDK_PageView* pPageView,
   CFX_Matrix mt;
   mt = *(CFX_Matrix*)pUser2Device;
 
-  IXFA_Widget* hWidget = pAnnot->GetXFAWidget();
-  ASSERT(hWidget != NULL);
-
   FX_BOOL bIsHighlight = FALSE;
   if (pSDKDoc->GetFocusAnnot() != pAnnot)
     bIsHighlight = TRUE;

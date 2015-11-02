@@ -240,7 +240,7 @@ FWL_ERR CFWL_FormImp::Update() {
   return FWL_ERR_Succeeded;
 }
 FX_DWORD CFWL_FormImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
-  IFWL_ThemeProvider* pTheme = GetAvailableTheme();
+  (void)GetAvailableTheme();
   if (m_pCloseBox && m_pCloseBox->m_rtBtn.Contains(fx, fy)) {
     return FWL_WGTHITTEST_CloseBox;
   }

@@ -58,14 +58,14 @@ FX_BOOL IFWL_MonthCalendar::SetSelect(int32_t iYear,
 }
 CFWL_MonthCalendarImp::CFWL_MonthCalendarImp(IFWL_Widget* pOuter)
     : CFWL_WidgetImp(pOuter),
-      m_iLBtnPartStates(FWL_PARTSTATE_MCD_Normal),
-      m_iRBtnPartStates(FWL_PARTSTATE_MCD_Normal),
-      m_iCurMonth(1),
       m_iCurYear(2011),
+      m_iCurMonth(1),
       m_iYear(2011),
       m_iMonth(1),
       m_iDay(1),
-      m_iHovered(-1) {
+      m_iHovered(-1),
+      m_iLBtnPartStates(FWL_PARTSTATE_MCD_Normal),
+      m_iRBtnPartStates(FWL_PARTSTATE_MCD_Normal) {
   m_rtHead.Reset();
   m_rtWeek.Reset();
   m_rtLBtn.Reset();
@@ -89,14 +89,14 @@ CFWL_MonthCalendarImp::CFWL_MonthCalendarImp(
     const CFWL_WidgetImpProperties& properties,
     IFWL_Widget* pOuter)
     : CFWL_WidgetImp(properties, pOuter),
-      m_iLBtnPartStates(FWL_PARTSTATE_MCD_Normal),
-      m_iRBtnPartStates(FWL_PARTSTATE_MCD_Normal),
-      m_iCurMonth(1),
       m_iCurYear(2011),
+      m_iCurMonth(1),
       m_iYear(2011),
       m_iMonth(1),
       m_iDay(1),
-      m_iHovered(-1) {
+      m_iHovered(-1),
+      m_iLBtnPartStates(FWL_PARTSTATE_MCD_Normal),
+      m_iRBtnPartStates(FWL_PARTSTATE_MCD_Normal) {
   m_rtHead.Reset();
   m_rtWeek.Reset();
   m_rtLBtn.Reset();
@@ -361,10 +361,6 @@ void CFWL_MonthCalendarImp::DrawWeek(CFX_Graphics* pGraphics,
   int32_t iWeek;
   iWeek = m_pDateTime->GetDayOfWeek();
   CFX_RectF rtDayOfWeek;
-  const FX_WCHAR* pWeekDay[] = {(FX_WCHAR*)L"Sun", (FX_WCHAR*)L"Mon",
-                                (FX_WCHAR*)L"Tue", (FX_WCHAR*)L"Wed",
-                                (FX_WCHAR*)L"Thu", (FX_WCHAR*)L"Fri",
-                                (FX_WCHAR*)L"Sat"};
   if (pMatrix) {
     params.m_matrix.Concat(*pMatrix);
   }

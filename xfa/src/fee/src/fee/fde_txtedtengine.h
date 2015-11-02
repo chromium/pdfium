@@ -199,6 +199,7 @@ class CFDE_TxtEdtEngine : public IFDE_TxtEdtEngine {
 
   FX_BOOL IsSelect();
   void DeleteSelect();
+
   IFDE_TxtEdtBuf* m_pTxtBuf;
   IFX_TxtBreak* m_pTextBreak;
   FDE_TXTEDTPARAMS m_Param;
@@ -215,14 +216,12 @@ class CFDE_TxtEdtEngine : public IFDE_TxtEdtEngine {
   int32_t m_nCaretPage;
   CFX_RectF m_rtCaret;
   FX_DWORD m_dwFindFlags;
-
   FX_BOOL m_bLock;
   int32_t m_nLimit;
   FX_WCHAR m_wcAliasChar;
   int32_t m_nFirstLineEnd;
   FX_BOOL m_bAutoLineEnd;
   FX_WCHAR m_wLineEnd;
-
   FDE_TXTEDT_TEXTCHANGE_INFO m_ChangeInfo;
 };
 class CFDE_TxtEdtDoRecord_Insert : public IFDE_TxtEdtDoRecord {

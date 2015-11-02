@@ -29,8 +29,8 @@ CFDE_TextOut::CFDE_TextOut()
       m_iEllipsisWidth(0),
       m_ttoLines(5),
       m_iCurLine(0),
-      m_iTotalLines(0),
       m_iCurPiece(0),
+      m_iTotalLines(0),
       m_pCharPos(NULL),
       m_iCharPosSize(0),
       m_pRenderDevice(NULL) {

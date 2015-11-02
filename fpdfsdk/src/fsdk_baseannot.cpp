@@ -518,7 +518,7 @@ CPDFSDK_BAAnnot::~CPDFSDK_BAAnnot() {
   m_pAnnot = NULL;
 }
 
-CPDF_Annot* CPDFSDK_BAAnnot::GetPDFAnnot() {
+CPDF_Annot* CPDFSDK_BAAnnot::GetPDFAnnot() const {
   return m_pAnnot;
 }
 
@@ -569,10 +569,6 @@ CFX_ByteString CPDFSDK_BAAnnot::GetType() const {
 
 CFX_ByteString CPDFSDK_BAAnnot::GetSubType() const {
   return "";
-}
-
-void CPDFSDK_BAAnnot::ResetAppearance() {
-  ASSERT(FALSE);
 }
 
 void CPDFSDK_BAAnnot::DrawAppearance(CFX_RenderDevice* pDevice,

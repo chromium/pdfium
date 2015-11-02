@@ -1446,7 +1446,6 @@ int32_t CFX_RTFBreak::GetCharRects(FX_LPCRTFTEXTOBJ pText,
   rtArray.SetSize(iLength);
   FX_DWORD dwStyles = pText->dwLayoutStyles;
   FX_BOOL bVertical = (dwStyles & FX_RTFLAYOUTSTYLE_VerticalLayout) != 0;
-  FX_BOOL bMBCSCode = (dwStyles & FX_RTFLAYOUTSTYLE_MBCSCode) != 0;
   FX_BOOL bSingleLine = (dwStyles & FX_RTFLAYOUTSTYLE_SingleLine) != 0;
   FX_BOOL bCombText = (dwStyles & FX_TXTLAYOUTSTYLE_CombText) != 0;
   FX_WCHAR wch, wLineBreakChar = pText->wLineBreakChar;

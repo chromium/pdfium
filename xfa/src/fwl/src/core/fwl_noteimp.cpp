@@ -93,10 +93,10 @@ CFWL_NoteDriver::CFWL_NoteDriver()
     : m_sendEventCalled(0),
       m_maxSize(500),
       m_bFullScreen(FALSE),
-      m_pFocus(NULL),
-      m_pHover(NULL),
-      m_pGrab(NULL),
-      m_hook(NULL) {
+      m_pHover(nullptr),
+      m_pFocus(nullptr),
+      m_pGrab(nullptr),
+      m_hook(nullptr) {
   m_pNoteLoop = new CFWL_NoteLoop;
   PushNoteLoop((IFWL_NoteLoop*)m_pNoteLoop);
 }
@@ -220,8 +220,6 @@ FX_BOOL CFWL_NoteDriver::SetFocus(IFWL_Widget* pFocus, FX_BOOL bNotify) {
   if (pPrev) {
     IFWL_Widget* pWidget =
         FWL_GetWidgetMgr()->GetWidget(m_pFocus, FWL_WGTRELATION_SystemForm);
-    CFWL_FormImp* pForm =
-        pWidget ? (CFWL_FormImp*)((IFWL_TargetData*)pWidget)->GetData() : NULL;
     CFWL_MsgKillFocus ms;
     ms.m_pDstTarget = pPrev;
     ms.m_pSrcTarget = pPrev;

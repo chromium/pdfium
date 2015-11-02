@@ -169,20 +169,20 @@ CFWL_EditImp::CFWL_EditImp(IFWL_Widget* pOuter)
       m_bLButtonDown(FALSE),
       m_nSelStart(0),
       m_nLimit(-1),
+      m_fSpaceAbove(0),
+      m_fSpaceBelow(0),
       m_fFontSize(0),
+      m_bSetRange(FALSE),
+      m_iMin(-1),
+      m_iMax(0xFFFFFFF),
       m_pVertScrollBar(NULL),
       m_pHorzScrollBar(NULL),
       m_pCaret(NULL),
-      m_iMin(-1),
-      m_iMax(0xFFFFFFF),
-      m_bSetRange(FALSE),
       m_pTextField(NULL),
       m_backColor(0),
       m_updateBackColor(FALSE),
       m_iCurRecord(-1),
-      m_iMaxRecord(128),
-      m_fSpaceAbove(0),
-      m_fSpaceBelow(0) {
+      m_iMaxRecord(128) {
   m_rtClient.Reset();
   m_rtEngine.Reset();
   m_rtStatic.Reset();
@@ -197,20 +197,20 @@ CFWL_EditImp::CFWL_EditImp(const CFWL_WidgetImpProperties& properties,
       m_bLButtonDown(FALSE),
       m_nSelStart(0),
       m_nLimit(-1),
+      m_fSpaceAbove(0),
+      m_fSpaceBelow(0),
       m_fFontSize(0),
+      m_bSetRange(FALSE),
+      m_iMin(-1),
+      m_iMax(0xFFFFFFF),
       m_pVertScrollBar(NULL),
       m_pHorzScrollBar(NULL),
       m_pCaret(NULL),
-      m_iMin(-1),
-      m_iMax(0xFFFFFFF),
-      m_bSetRange(FALSE),
       m_pTextField(NULL),
       m_backColor(0),
       m_updateBackColor(FALSE),
       m_iCurRecord(-1),
-      m_iMaxRecord(128),
-      m_fSpaceAbove(0),
-      m_fSpaceBelow(0) {
+      m_iMaxRecord(128) {
   m_rtClient.Reset();
   m_rtEngine.Reset();
   m_rtStatic.Reset();
@@ -464,7 +464,6 @@ void CFWL_EditImp::DrawSpellCheck(CFX_Graphics* pGraphics,
   }
   FX_ARGB cr = 0xFFFF0000;
   CFX_Color crLine(cr);
-  FX_FLOAT fWidth = 1.0f;
   CFWL_EvtEdtCheckWord checkWordEvent;
   checkWordEvent.m_pSrcTarget = m_pInterface;
   CFX_ByteString sLatinWord;
@@ -1019,7 +1018,6 @@ void CFWL_EditImp::DrawTextBk(CFX_Graphics* pGraphics,
   }
   CFX_RectF rtScorll;
   m_pHorzScrollBar->GetWidgetRect(rtScorll);
-  FX_FLOAT fStaticWidth = rtScorll.height;
   CFX_RectF rtStatic;
   rtStatic.Set(m_rtClient.right() - rtScorll.height,
                m_rtClient.bottom() - rtScorll.height, rtScorll.height,

@@ -55,7 +55,8 @@ class CFFL_ComboBox : public CFFL_FormFiller,
   // IPWL_Edit_Notify:
   void OnAddUndo(CPWL_Edit* pEdit) override;
 
-  virtual FX_BOOL IsFieldFull(CPDFSDK_PageView* pPageView);
+  // CFFL_FormFiller:
+  FX_BOOL IsFieldFull(CPDFSDK_PageView* pPageView) override;
 
  private:
   CFX_WideString GetSelectExportText();

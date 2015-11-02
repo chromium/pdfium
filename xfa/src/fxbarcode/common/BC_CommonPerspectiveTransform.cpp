@@ -32,14 +32,15 @@ CBC_CommonPerspectiveTransform::CBC_CommonPerspectiveTransform(FX_FLOAT a11,
                                                                FX_FLOAT a23,
                                                                FX_FLOAT a33)
     : m_a11(a11),
-      m_a21(a21),
-      m_a31(a31),
       m_a12(a12),
-      m_a22(a22),
-      m_a32(a32),
       m_a13(a13),
+      m_a21(a21),
+      m_a22(a22),
       m_a23(a23),
-      m_a33(a33) {}
+      m_a31(a31),
+      m_a32(a32),
+      m_a33(a33) {
+}
 CBC_CommonPerspectiveTransform::~CBC_CommonPerspectiveTransform() {}
 CBC_CommonPerspectiveTransform*
 CBC_CommonPerspectiveTransform::QuadrilateralToQuadrilateral(FX_FLOAT x0,

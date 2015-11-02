@@ -135,7 +135,6 @@ FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument,
     // Get form CPDF_Stream
     CPDF_Object* pFormPDFObj = pArray->GetElement(iFormIndex);
     if (pFormPDFObj->GetType() == PDFOBJ_REFERENCE) {
-      CPDF_Reference* pFormRefObj = (CPDF_Reference*)pFormPDFObj;
       CPDF_Object* pFormDircetObj = pFormPDFObj->GetDirect();
       if (NULL != pFormDircetObj &&
           pFormDircetObj->GetType() == PDFOBJ_STREAM) {
@@ -185,14 +184,10 @@ FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument,
       } else {
         CPDF_Stream* pData = new CPDF_Stream(NULL, 0, NULL);
         pData->InitStream(pDsfileWrite, pDataDict);
-        FX_DWORD AppStreamobjnum = pPDFDocument->AddIndirectObject(pData);
-        CPDF_Reference* pRef =
-            (CPDF_Reference*)pPDFDocument->GetIndirectObject(AppStreamobjnum);
-        {
-          iLast = pArray->GetCount() - 2;
-          pArray->InsertAt(iLast, CPDF_String::Create("datasets"));
-          pArray->InsertAt(iLast + 1, pData, pPDFDocument);
-        }
+        pPDFDocument->AddIndirectObject(pData);
+        iLast = pArray->GetCount() - 2;
+        pArray->InsertAt(iLast, CPDF_String::Create("datasets"));
+        pArray->InsertAt(iLast + 1, pData, pPDFDocument);
       }
       fileList.Add(pDsfileWrite);
     }
@@ -216,14 +211,10 @@ FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument,
       } else {
         CPDF_Stream* pData = new CPDF_Stream(NULL, 0, NULL);
         pData->InitStream(pfileWrite, pDataDict);
-        FX_DWORD AppStreamobjnum = pPDFDocument->AddIndirectObject(pData);
-        CPDF_Reference* pRef =
-            (CPDF_Reference*)pPDFDocument->GetIndirectObject(AppStreamobjnum);
-        {
-          iLast = pArray->GetCount() - 2;
-          pArray->InsertAt(iLast, CPDF_String::Create("form"));
-          pArray->InsertAt(iLast + 1, pData, pPDFDocument);
-        }
+        pPDFDocument->AddIndirectObject(pData);
+        iLast = pArray->GetCount() - 2;
+        pArray->InsertAt(iLast, CPDF_String::Create("form"));
+        pArray->InsertAt(iLast + 1, pData, pPDFDocument);
       }
       fileList.Add(pfileWrite);
     }

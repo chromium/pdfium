@@ -57,10 +57,11 @@ class CJS_Runtime : public IJS_Runtime {
   v8::Isolate* GetIsolate() const { return m_isolate; }
   v8::Local<v8::Context> NewJSContext();
 
-  virtual FX_BOOL GetHValueByName(const CFX_ByteStringC& utf8Name,
-                                  FXJSE_HVALUE hValue);
-  virtual FX_BOOL SetHValueByName(const CFX_ByteStringC& utf8Name,
-                                  FXJSE_HVALUE hValue);
+  // IJS_Runtime:
+  FX_BOOL GetHValueByName(const CFX_ByteStringC& utf8Name,
+                          FXJSE_HVALUE hValue) override;
+  FX_BOOL SetHValueByName(const CFX_ByteStringC& utf8Name,
+                          FXJSE_HVALUE hValue) override;
 
   void AddObserver(Observer* observer);
   void RemoveObserver(Observer* observer);

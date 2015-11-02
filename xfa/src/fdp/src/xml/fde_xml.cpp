@@ -506,7 +506,7 @@ IFDE_XMLInstruction* IFDE_XMLInstruction::Create(
   return (IFDE_XMLInstruction*)new CFDE_XMLInstruction(wsTarget);
 }
 CFDE_XMLInstruction::CFDE_XMLInstruction(const CFX_WideString& wsTarget)
-    : CFDE_XMLNode(), m_wsTarget(wsTarget), m_TargetData(), m_Attributes() {
+    : m_wsTarget(wsTarget) {
   FXSYS_assert(m_wsTarget.GetLength() > 0);
 }
 CFDE_XMLNode* CFDE_XMLInstruction::Clone(FX_BOOL bRecursive) {
@@ -1316,10 +1316,11 @@ inline void CFDE_XMLSAXParser::Pop() {
 }
 #ifdef _FDE_BLOCK_BUFFER
 CFDE_BlockBuffer::CFDE_BlockBuffer(int32_t iAllocStep)
-    : m_iAllocStep(iAllocStep),
-      m_iStartPosition(0),
+    : m_iDataLength(0),
       m_iBufferSize(0),
-      m_iDataLength(0) {}
+      m_iAllocStep(iAllocStep),
+      m_iStartPosition(0) {
+}
 CFDE_BlockBuffer::~CFDE_BlockBuffer() {
   ClearBuffer();
 }

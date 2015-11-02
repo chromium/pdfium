@@ -71,7 +71,6 @@ class CPDFSDK_Annot {
   CPDFSDK_Annot(CPDFSDK_PageView* pPageView);
   virtual ~CPDFSDK_Annot(){};
 
- public:
   virtual FX_BOOL IsXFAField() { return FALSE; }
 
   virtual FX_FLOAT GetMinWidth() const;
@@ -79,8 +78,8 @@ class CPDFSDK_Annot {
   // define layout order to 5.
   virtual int GetLayoutOrder() const { return 5; }
 
-  virtual CPDF_Annot* GetPDFAnnot() { return NULL; }
-  virtual IXFA_Widget* GetXFAWidget() { return NULL; }
+  virtual CPDF_Annot* GetPDFAnnot() const { return nullptr; }
+  virtual IXFA_Widget* GetXFAWidget() const { return nullptr; }
 
   virtual CFX_ByteString GetType() const { return ""; }
   virtual CFX_ByteString GetSubType() const { return ""; }
@@ -92,12 +91,11 @@ class CPDFSDK_Annot {
                             CPDF_Matrix* pUser2Device,
                             CPDF_RenderOptions* pOptions) {}
 
- public:
   CPDF_Page* GetPDFPage();
   CPDFXFA_Page* GetPDFXFAPage();
 
   void SetPage(CPDFSDK_PageView* pPageView) { m_pPageView = pPageView; }
-  CPDFSDK_PageView* GetPageView() { return m_pPageView; }
+  CPDFSDK_PageView* GetPageView() const { return m_pPageView; }
 
   // Tab Order
   int GetTabOrder();
@@ -128,7 +126,7 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
   virtual void SetRect(const CPDF_Rect& rect);
   virtual CPDF_Rect GetRect() const;
 
-  virtual CPDF_Annot* GetPDFAnnot();
+  virtual CPDF_Annot* GetPDFAnnot() const;
 
   virtual void Annot_OnDraw(CFX_RenderDevice* pDevice,
                             CPDF_Matrix* pUser2Device,
@@ -205,7 +203,6 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
 
   void ClearCachedAP();
 
-  virtual void ResetAppearance();
   void WriteAppearance(const CFX_ByteString& sAPType,
                        const CPDF_Rect& rcBBox,
                        const CPDF_Matrix& matrix,

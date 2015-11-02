@@ -79,13 +79,6 @@ class CFFL_IFormFiller : public IPWL_Filler_Notify {
   virtual FX_BOOL OnSetFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag);
   virtual FX_BOOL OnKillFocus(CPDFSDK_Annot* pAnnot, FX_UINT nFlag);
 
-  virtual void OnPopupPreOpen(void* pPrivateData,
-                              FX_BOOL& bExit,
-                              FX_DWORD nFlag);
-  virtual void OnPopupPostOpen(void* pPrivateData,
-                               FX_BOOL& bExit,
-                               FX_DWORD nFlag);
-
   CFFL_FormFiller* GetFormFiller(CPDFSDK_Annot* pAnnot, FX_BOOL bRegister);
   void RemoveFormFiller(CPDFSDK_Annot* pAnnot);
 
@@ -158,6 +151,12 @@ class CFFL_IFormFiller : public IPWL_Filler_Notify {
                          FX_BOOL& bRC,
                          FX_BOOL& bExit,
                          FX_DWORD nFlag) override;
+  void OnPopupPreOpen(void* pPrivateData,
+                      FX_BOOL& bExit,
+                      FX_DWORD nFlag) override;
+  void OnPopupPostOpen(void* pPrivateData,
+                       FX_BOOL& bExit,
+                       FX_DWORD nFlag) override;
 
   void UnRegisterFormFiller(CPDFSDK_Annot* pAnnot);
   void SetFocusAnnotTab(CPDFSDK_Annot* pWidget,

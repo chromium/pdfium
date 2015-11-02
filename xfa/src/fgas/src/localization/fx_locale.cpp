@@ -935,8 +935,7 @@ FX_BOOL CFX_FormatString::ParseText(const CFX_WideString& wsSrcText,
     return FALSE;
   }
   CFX_WideString wsTextFormat;
-  IFX_Locale* pLocale =
-      GetTextFormat(wsPattern, FX_WSTRC(L"text"), wsTextFormat);
+  GetTextFormat(wsPattern, FX_WSTRC(L"text"), wsTextFormat);
   if (wsTextFormat.IsEmpty()) {
     return FALSE;
   }
@@ -1018,7 +1017,6 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
   int32_t iExponent = 0;
   CFX_WideString wsDotSymbol;
   pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Decimal, wsDotSymbol);
-  int32_t iDotLen = wsDotSymbol.GetLength();
   CFX_WideString wsGroupSymbol;
   pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Grouping, wsGroupSymbol);
   int32_t iGroupLen = wsGroupSymbol.GetLength();
@@ -1785,7 +1783,6 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
   int32_t iExponent = 0;
   CFX_WideString wsDotSymbol;
   pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Decimal, wsDotSymbol);
-  int32_t iDotLen = wsDotSymbol.GetLength();
   CFX_WideString wsGroupSymbol;
   pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Grouping, wsGroupSymbol);
   int32_t iGroupLen = wsGroupSymbol.GetLength();
@@ -2864,8 +2861,7 @@ FX_BOOL CFX_FormatString::ParseDateTime(const CFX_WideString& wsSrcDateTime,
 FX_BOOL CFX_FormatString::ParseZero(const CFX_WideString& wsSrcText,
                                     const CFX_WideString& wsPattern) {
   CFX_WideString wsTextFormat;
-  IFX_Locale* pLocale =
-      GetTextFormat(wsPattern, FX_WSTRC(L"zero"), wsTextFormat);
+  GetTextFormat(wsPattern, FX_WSTRC(L"zero"), wsTextFormat);
   int32_t iText = 0, iPattern = 0;
   const FX_WCHAR* pStrText = (const FX_WCHAR*)wsSrcText;
   int32_t iLenText = wsSrcText.GetLength();
@@ -2896,8 +2892,7 @@ FX_BOOL CFX_FormatString::ParseZero(const CFX_WideString& wsSrcText,
 FX_BOOL CFX_FormatString::ParseNull(const CFX_WideString& wsSrcText,
                                     const CFX_WideString& wsPattern) {
   CFX_WideString wsTextFormat;
-  IFX_Locale* pLocale =
-      GetTextFormat(wsPattern, FX_WSTRC(L"null"), wsTextFormat);
+  GetTextFormat(wsPattern, FX_WSTRC(L"null"), wsTextFormat);
   int32_t iText = 0, iPattern = 0;
   const FX_WCHAR* pStrText = (const FX_WCHAR*)wsSrcText;
   int32_t iLenText = wsSrcText.GetLength();
@@ -2936,8 +2931,7 @@ FX_BOOL CFX_FormatString::FormatText(const CFX_WideString& wsSrcText,
     return FALSE;
   }
   CFX_WideString wsTextFormat;
-  IFX_Locale* pLocale =
-      GetTextFormat(wsPattern, FX_WSTRC(L"text"), wsTextFormat);
+  GetTextFormat(wsPattern, FX_WSTRC(L"text"), wsTextFormat);
   int32_t iText = 0, iPattern = 0;
   const FX_WCHAR* pStrText = (const FX_WCHAR*)wsSrcText;
   const FX_WCHAR* pStrPattern = (const FX_WCHAR*)wsTextFormat;
@@ -4441,8 +4435,7 @@ FX_BOOL CFX_FormatString::FormatZero(const CFX_WideString& wsPattern,
     return FALSE;
   }
   CFX_WideString wsTextFormat;
-  IFX_Locale* pLocale =
-      GetTextFormat(wsPattern, FX_WSTRC(L"zero"), wsTextFormat);
+  GetTextFormat(wsPattern, FX_WSTRC(L"zero"), wsTextFormat);
   int32_t iPattern = 0;
   const FX_WCHAR* pStrPattern = (const FX_WCHAR*)wsTextFormat;
   int32_t iLenPattern = wsTextFormat.GetLength();
@@ -4464,8 +4457,7 @@ FX_BOOL CFX_FormatString::FormatNull(const CFX_WideString& wsPattern,
     return FALSE;
   }
   CFX_WideString wsTextFormat;
-  IFX_Locale* pLocale =
-      GetTextFormat(wsPattern, FX_WSTRC(L"null"), wsTextFormat);
+  GetTextFormat(wsPattern, FX_WSTRC(L"null"), wsTextFormat);
   int32_t iPattern = 0;
   const FX_WCHAR* pStrPattern = (const FX_WCHAR*)wsTextFormat;
   int32_t iLenPattern = wsTextFormat.GetLength();

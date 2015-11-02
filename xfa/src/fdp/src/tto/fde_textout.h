@@ -137,7 +137,6 @@ class CFDE_TextOut : public IFDE_TextOut, public CFX_Target {
   FX_FLOAT m_fLineSpace;
   FX_FLOAT m_fLinePos;
   FX_FLOAT m_fTolerance;
-
   int32_t m_iAlignment;
   int32_t m_iTxtBkAlignment;
   int32_t* m_pCharWidths;

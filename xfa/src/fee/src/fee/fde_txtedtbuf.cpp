@@ -18,17 +18,15 @@ CFDE_TxtEdtBufIter::CFDE_TxtEdtBufIter(CFDE_TxtEdtBuf* pBuf,
 #else
 CFDE_TxtEdtBufIter::CFDE_TxtEdtBufIter(CFDE_TxtEdtBuf* pBuf, FX_WCHAR wcAlias)
 #endif
-    : m_nCurChunk(0),
+    : m_pBuf(pBuf),
+      m_nCurChunk(0),
       m_nCurIndex(0),
       m_nIndex(0),
-      m_pBuf(pBuf)
-#ifdef FDE_USEFORMATBLOCK
-      ,
-      m_bForDisplay(bForDisplay),
-      m_nAliasCount(0)
-#endif
-      ,
       m_bInField(FALSE),
+#ifdef FDE_USEFORMATBLOCK
+      m_bForDisplay(bForDisplay),
+      m_nAliasCount(0),
+#endif
       m_Alias(wcAlias) {
   FXSYS_assert(m_pBuf);
 }

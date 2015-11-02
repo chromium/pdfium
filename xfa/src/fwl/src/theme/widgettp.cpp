@@ -350,7 +350,6 @@ void CFWL_WidgetTP::Draw3DCircle(CFX_Graphics* pGraphics,
   _FWL_RETURN_IF_FAIL(pGraphics);
   _FWL_RETURN_IF_FAIL(pRect);
   pGraphics->SaveGraphState();
-  FX_FLOAT fRadius = pRect->width / 2;
   CFX_Path path;
   path.Create();
   path.AddArc(pRect->left, pRect->top, pRect->width, pRect->height,
@@ -450,8 +449,6 @@ void CFWL_WidgetTP::DrawAnnulusRect(CFX_Graphics* pGraphics,
   pGraphics->SetFillColor(&cr);
   CFX_Path path;
   path.Create();
-  FX_FLOAT fRight = pRect->right();
-  FX_FLOAT fBottom = pRect->bottom();
   CFX_RectF rtInner(*pRect);
   rtInner.Deflate(fRingWidth, fRingWidth);
   path.AddRectangle(rtInner.left, rtInner.top, rtInner.width, rtInner.height);
