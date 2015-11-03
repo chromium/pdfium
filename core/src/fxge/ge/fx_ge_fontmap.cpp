@@ -1272,22 +1272,6 @@ unsigned long _FTStreamRead(FXFT_Stream stream,
                             unsigned long count);
 void _FTStreamClose(FXFT_Stream stream);
 };
-CFontFileFaceInfo::CFontFileFaceInfo() {
-  m_pFile = NULL;
-  m_Face = NULL;
-  m_Charsets = 0;
-  m_FileSize = 0;
-  m_FontOffset = 0;
-  m_Weight = 0;
-  m_bItalic = FALSE;
-  m_PitchFamily = 0;
-}
-CFontFileFaceInfo::~CFontFileFaceInfo() {
-  if (m_Face) {
-    FXFT_Done_Face(m_Face);
-  }
-  m_Face = NULL;
-}
 #if _FX_OS_ == _FX_ANDROID_
 IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault(const char** pUnused) {
   return NULL;

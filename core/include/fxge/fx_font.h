@@ -22,7 +22,6 @@ class CFX_FontMapper;
 class CFX_PathData;
 class CFX_SizeGlyphCache;
 class CFX_SubstFont;
-class CFontFileFaceInfo;
 class CTTFontDesc;
 class IFX_FontEncoding;
 class IFX_SystemFontInfo;
