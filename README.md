@@ -41,6 +41,16 @@ on Linux, sln files on Windows, and xcodeproj files on Mac. To do so, set the
 GYP\_GENERATORS environment variable appropriately (e.g. "make", "msvs", or
 "xcode") before running the above command.
 
+### Using goma (Googlers only)
+
+If you would like to build using goma, pass `use_goma=1` to `gyp_pdfium`. If
+you installed goma in a non-standard location, you will also need to set
+`gomadir`. e.g.
+
+```
+build/gyp_pdfium -D use_goma=1 -D gomadir=path/to/goma
+```
+
 ## Building the code
 
 If you used Ninja, you can build the sample program by: `ninja -C out/Debug

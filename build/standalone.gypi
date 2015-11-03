@@ -10,6 +10,8 @@
     'clang%': 0,
     'asan%': 0,
     'sanitizer_coverage%': 0,
+    'use_goma%': 0,
+    'gomadir%': '',
     'msvs_multi_core_compile%': '1',
     'variables': {
       'variables': {
@@ -57,6 +59,12 @@
         'clang%': 1,
       }, {
         'clang%': 0,
+      }],
+      # Set default gomadir.
+      ['OS=="win"', {
+        'gomadir%': 'c:\\goma\\goma-win',
+      }, {
+        'gomadir%': '<!(/bin/echo -n ${HOME}/goma)',
       }],
     ],
   },
@@ -283,6 +291,17 @@
               '_HAS_EXCEPTIONS=0',
             ],
           }],
+          ['use_goma==1', {
+            # goma doesn't support PDB yet.
+            'msvs_settings': {
+              'VCLinkerTool': {
+                'GenerateDebugInformation': 'true',
+              },
+              'VCCLCompilerTool': {
+                'DebugInformationFormat': '1',
+              },
+            },
+          }],
         ],
       }],  # OS=="win"
       ['OS=="mac"', {
@@ -314,5 +333,11 @@
         }],
       ],
     }],  # OS=="linux" or OS=="mac"
+    ["use_goma==1", {
+      'make_global_settings': [
+        ['CC_wrapper', '<(gomadir)/gomacc'],
+        ['CXX_wrapper', '<(gomadir)/gomacc'],
+      ],
+    }],  # use_goma==1
   ],
 }
