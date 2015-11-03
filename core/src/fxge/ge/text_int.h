@@ -75,21 +75,4 @@ class CFX_FontFaceInfo {
   FX_DWORD m_Charsets;
 };
 
-class CFontFileFaceInfo {
- public:
-  CFontFileFaceInfo();
-  ~CFontFileFaceInfo();
-
-  IFX_FileStream* m_pFile;
-  FXFT_Face m_Face;
-  CFX_ByteString m_FaceName;
-  FX_DWORD m_Charsets;
-  FX_DWORD m_FileSize;
-  FX_DWORD m_FontOffset;
-  int m_Weight;
-  FX_BOOL m_bItalic;
-  int m_PitchFamily;
-  CFX_ByteString m_FontTables;
-};
-
 #endif  // CORE_SRC_FXGE_GE_TEXT_INT_H_
