@@ -7,6 +7,7 @@
 #include "../../../include/fpdfapi/fpdf_page.h"
 #include "../../../include/fpdfapi/fpdf_module.h"
 #include "../../../include/fpdfapi/fpdf_serial.h"
+#include "../../../include/fxcrt/fx_ext.h"
 #include "pageint.h"
 
 #define REQUIRE_PARAMS(count)  \

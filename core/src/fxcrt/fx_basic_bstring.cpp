@@ -5,6 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include <stddef.h>  // For offsetof().
+#include <cctype>
 
 #include "../../include/fxcrt/fx_basic.h"
 #include "../../../third_party/base/numerics/safe_math.h"
@@ -493,8 +494,8 @@ void CFX_ByteString::FormatV(const FX_CHAR* lpszFormat, va_list argList) {
     }
     if (nWidth == 0) {
       nWidth = FXSYS_atoi(lpsz);
-      for (; (*lpsz) >= '0' && (*lpsz) <= '9'; lpsz++)
-        ;
+      while (std::isdigit(*lpsz))
+        lpsz++;
     }
     if (nWidth < 0 || nWidth > 128 * 1024) {
       lpszFormat = "Bad width";
@@ -509,8 +510,8 @@ void CFX_ByteString::FormatV(const FX_CHAR* lpszFormat, va_list argList) {
         lpsz++;
       } else {
         nPrecision = FXSYS_atoi(lpsz);
-        for (; (*lpsz) >= '0' && (*lpsz) <= '9'; lpsz++)
-          ;
+        while (std::isdigit(*lpsz))
+          lpsz++;
       }
     }
     if (nPrecision < 0 || nPrecision > 128 * 1024) {

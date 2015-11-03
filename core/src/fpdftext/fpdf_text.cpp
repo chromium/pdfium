@@ -436,10 +436,8 @@ void NormalizeString(CFX_WideString& str) {
 static FX_BOOL IsNumber(CFX_WideString& str) {
   for (int i = 0; i < str.GetLength(); i++) {
     FX_WCHAR ch = str[i];
-    if ((ch < '0' || ch > '9') && ch != '-' && ch != '+' && ch != '.' &&
-        ch != ' ') {
+    if (!std::isdigit(ch) && ch != '-' && ch != '+' && ch != '.' && ch != ' ')
       return FALSE;
-    }
   }
   return TRUE;
 }
