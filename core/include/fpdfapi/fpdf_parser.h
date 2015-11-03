@@ -296,6 +296,10 @@ class CPDF_SyntaxParser {
   CFX_ByteString GetNextWord(FX_BOOL& bIsNumber);
 
  protected:
+  friend class CPDF_Parser;
+  friend class CPDF_DataAvail;
+  friend class fpdf_parser_parser_ReadHexString_Test;
+
   static const int kParserMaxRecursionDepth = 64;
   static int s_CurrentRecursionDepth;
 
@@ -349,8 +353,6 @@ class CPDF_SyntaxParser {
   FX_BOOL m_bIsNumber;
 
   FX_FILESIZE m_dwWordPos;
-  friend class CPDF_Parser;
-  friend class CPDF_DataAvail;
 };
 
 #define PDFPARSE_TYPEONLY 1
