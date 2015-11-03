@@ -105,7 +105,7 @@ TEST(fpdf_parser_parser, ReadHexString) {
     parser.RestorePos(-1);
     EXPECT_EQ("", parser.ReadHexString());
 
-    parser.RestorePos(0xfffffffffff);
+    parser.RestorePos(std::numeric_limits<FX_FILESIZE>::max());
     EXPECT_EQ("", parser.ReadHexString());
 
     // Check string still parses when set to 0.
