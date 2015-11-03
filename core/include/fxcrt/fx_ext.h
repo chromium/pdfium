@@ -7,9 +7,11 @@
 #ifndef CORE_INCLUDE_FXCRT_FX_EXT_H_
 #define CORE_INCLUDE_FXCRT_FX_EXT_H_
 
-#include <cctype>
-
 #include "fx_system.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 FX_FLOAT FXSYS_tan(FX_FLOAT a);
 FX_FLOAT FXSYS_logb(FX_FLOAT b, FX_FLOAT x);
@@ -36,25 +38,19 @@ inline int32_t FXSYS_toupper(int32_t ch) {
   return ch < 'a' || ch > 'z' ? ch : (ch - 0x20);
 }
 
-inline int FXSYS_toHexDigit(char c) {
-  if (!std::isxdigit(c))
-    return 0;
-  char upchar = std::toupper(c);
-  return upchar > '9' ? upchar - 'A' + 10 : upchar - '0';
-}
-
-inline int FXSYS_toDecimalDigit(char c) {
-  if (!std::isdigit(c))
-    return 0;
-  return c - '0';
-}
-
 FX_DWORD FX_HashCode_String_GetA(const FX_CHAR* pStr,
                                  int32_t iLength,
                                  FX_BOOL bIgnoreCase = FALSE);
 FX_DWORD FX_HashCode_String_GetW(const FX_WCHAR* pStr,
                                  int32_t iLength,
                                  FX_BOOL bIgnoreCase = FALSE);
+
+#ifdef __cplusplus
+}
+#endif
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 void* FX_Random_MT_Start(FX_DWORD dwSeed);
 
@@ -67,7 +63,9 @@ void FX_Random_GenerateBase(FX_DWORD* pBuffer, int32_t iCount);
 void FX_Random_GenerateMT(FX_DWORD* pBuffer, int32_t iCount);
 
 void FX_Random_GenerateCrypto(FX_DWORD* pBuffer, int32_t iCount);
-
+#ifdef __cplusplus
+}
+#endif
 template <class baseType>
 class CFX_SSortTemplate {
  public:

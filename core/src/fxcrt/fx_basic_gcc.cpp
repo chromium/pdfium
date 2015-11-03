@@ -5,7 +5,6 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include <limits>
-#include <cctype>
 
 #include "../../include/fxcrt/fx_ext.h"
 #include "../../include/fxcrt/fx_string.h"
@@ -13,19 +12,22 @@
 template <class T, class STR_T>
 T FXSYS_StrToInt(STR_T str) {
   FX_BOOL neg = FALSE;
-  if (!str)
+  if (str == NULL) {
     return 0;
-
+  }
   if (*str == '-') {
     neg = TRUE;
     str++;
   }
   T num = 0;
-  while (*str && std::isdigit(*str)) {
-    if (num > (std::numeric_limits<T>::max() - 9) / 10)
+  while (*str) {
+    if ((*str) < '0' || (*str) > '9') {
       break;
-
-    num = num * 10 + FXSYS_toDecimalDigit(*str);
+    }
+    if (num > (std::numeric_limits<T>::max() - 9) / 10) {
+      break;
+    }
+    num = num * 10 + (*str) - '0';
     str++;
   }
   return neg ? -num : num;

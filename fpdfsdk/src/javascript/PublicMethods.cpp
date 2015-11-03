@@ -6,7 +6,6 @@
 
 #include "PublicMethods.h"
 
-#include "../../../core/include/fxcrt/fx_ext.h"
 #include "../../include/fsdk_mgr.h"  // For CPDFDoc_Environment.
 #include "../../include/javascript/IJavaScript.h"
 #include "Field.h"
@@ -117,7 +116,7 @@ FX_BOOL CJS_PublicMethods::IsDigit(wchar_t ch) {
 }
 
 FX_BOOL CJS_PublicMethods::IsDigit(char ch) {
-  return std::isdigit(ch);
+  return (ch >= '0' && ch <= '9');
 }
 
 FX_BOOL CJS_PublicMethods::IsAlphabetic(wchar_t ch) {
@@ -397,7 +396,7 @@ int CJS_PublicMethods::ParseStringInteger(const CFX_WideString& string,
 
     FX_WCHAR c = string.GetAt(i);
     if (IsDigit((wchar_t)c)) {
-      nRet = nRet * 10 + FXSYS_toDecimalDigit(c);
+      nRet = nRet * 10 + (c - '0');
       nSkip = i - nStart + 1;
       if (nSkip >= nMaxStep)
         break;

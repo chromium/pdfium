@@ -9,7 +9,6 @@
 #include <cmath>
 
 #include "../../../../third_party/base/logging.h"
-#include "../../../include/fxcrt/fx_ext.h"
 #include "../../../include/fxcrt/fx_safe_types.h"
 #include "codec_int.h"
 
@@ -148,20 +147,6 @@ FX_BOOL CCodec_BasicModule::RunLengthEncode(const uint8_t* src_buf,
                                             FX_DWORD& dest_size) {
   return FALSE;
 }
-
-#define EXPONENT_DETECT(ptr)                 \
-  for (;; ptr++) {                           \
-    if (!std::isdigit(*ptr)) {               \
-      if (endptr)                            \
-        *endptr = (char*)ptr;                \
-      break;                                 \
-    } else {                                 \
-      exp_ret *= 10;                         \
-      exp_ret += FXSYS_toDecimalDigit(*ptr); \
-      continue;                              \
-    }                                        \
-  }
-
 extern "C" double FXstrtod(const char* nptr, char** endptr) {
   double ret = 0.0;
   const char* ptr = nptr;
@@ -172,20 +157,20 @@ extern "C" double FXstrtod(const char* nptr, char** endptr) {
     return 0.0;
   }
   for (;; ptr++) {
-    if (!e_number && !e_point && (*ptr == '\t' || *ptr == ' '))
+    if (!e_number && !e_point && (*ptr == '\t' || *ptr == ' ')) {
       continue;
-
-    if (std::isdigit(*ptr)) {
-      if (!e_number)
+    }
+    if (*ptr >= '0' && *ptr <= '9') {
+      if (!e_number) {
         e_number = 1;
-
+      }
       if (!e_point) {
         ret *= 10;
-        ret += FXSYS_toDecimalDigit(*ptr);
+        ret += (*ptr - '0');
       } else {
         fra_count++;
         fra_ret *= 10;
-        fra_ret += FXSYS_toDecimalDigit(*ptr);
+        fra_ret += (*ptr - '0');
       }
       continue;
     }
@@ -203,17 +188,29 @@ extern "C" double FXstrtod(const char* nptr, char** endptr) {
       }
     }
     if (e_number && (*ptr == 'e' || *ptr == 'E')) {
+#define EXPONENT_DETECT(ptr)        \
+  for (;; ptr++) {                  \
+    if (*ptr < '0' || *ptr > '9') { \
+      if (endptr)                   \
+        *endptr = (char*)ptr;       \
+      break;                        \
+    } else {                        \
+      exp_ret *= 10;                \
+      exp_ret += (*ptr - '0');      \
+      continue;                     \
+    }                               \
+  }
       exp_ptr = ptr++;
       if (*ptr == '+' || *ptr == '-') {
         exp_sig = (*ptr++ == '+') ? 1 : -1;
-        if (!std::isdigit(*ptr)) {
+        if (*ptr < '0' || *ptr > '9') {
           if (endptr) {
             *endptr = (char*)exp_ptr;
           }
           break;
         }
         EXPONENT_DETECT(ptr);
-      } else if (std::isdigit(*ptr)) {
+      } else if (*ptr >= '0' && *ptr <= '9') {
         EXPONENT_DETECT(ptr);
       } else {
         if (endptr) {
@@ -221,6 +218,7 @@ extern "C" double FXstrtod(const char* nptr, char** endptr) {
         }
         break;
       }
+#undef EXPONENT_DETECT
       break;
     }
     if (ptr != nptr && !e_number) {
@@ -249,8 +247,6 @@ extern "C" double FXstrtod(const char* nptr, char** endptr) {
   }
   return is_negative ? -ret : ret;
 }
-#undef EXPONENT_DETECT
-
 FX_BOOL CCodec_BasicModule::A85Encode(const uint8_t* src_buf,
                                       FX_DWORD src_size,
                                       uint8_t*& dest_buf,
