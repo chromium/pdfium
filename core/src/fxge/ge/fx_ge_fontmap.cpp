@@ -1089,7 +1089,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
           }
           const uint8_t* pFontData = NULL;
           FX_DWORD size = 0;
-          m_pFontMgr->GetStandardFont(pFontData, size, 12);
+          m_pFontMgr->GetBuiltinFont(12, &pFontData, &size);
           m_FoxitFaces[12] = m_pFontMgr->GetFixedFace(pFontData, size, 0);
           return m_FoxitFaces[12];
         }
