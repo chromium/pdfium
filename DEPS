@@ -20,7 +20,7 @@ deps = {
     "https://chromium.googlesource.com/chromium/src/tools/clang",
 
   "v8":
-    "https://chromium.googlesource.com/v8/v8.git@2607e2b06b0be40a4c3f762c1a666a389dc28a99",
+    "https://chromium.googlesource.com/v8/v8.git@88b764d7f74008fe5f30d59e3881e374d538b72e",
 
   "v8/third_party/icu":
     "https://chromium.googlesource.com/chromium/deps/icu46",
