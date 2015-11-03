@@ -603,3 +603,79 @@ TEST(fxcrt, ByteStringCOperatorNE) {
   EXPECT_TRUE(c_string2 != byte_string_c);
   EXPECT_TRUE(c_string3 != byte_string_c);
 }
+
+TEST(fxcrt, ByteStringFormatWidth) {
+  {
+    CFX_ByteString str;
+    str.Format("%5d", 1);
+    EXPECT_EQ("    1", str);
+  }
+
+  {
+    CFX_ByteString str;
+    str.Format("%d", 1);
+    EXPECT_EQ("1", str);
+  }
+
+  {
+    CFX_ByteString str;
+    str.Format("%*d", 5, 1);
+    EXPECT_EQ("    1", str);
+  }
+
+  {
+    CFX_ByteString str;
+    str.Format("%-1d", 1);
+    EXPECT_EQ("1", str);
+  }
+
+  {
+    CFX_ByteString str;
+    str.Format("%0d", 1);
+    EXPECT_EQ("1", str);
+  }
+
+  {
+    CFX_ByteString str;
+    str.Format("%1048576d", 1);
+    EXPECT_EQ("Bad width", str);
+  }
+}
+
+TEST(fxcrt, ByteStringFormatPrecision) {
+  {
+    CFX_ByteString str;
+    str.Format("%.2f", 1.12345);
+    EXPECT_EQ("1.12", str);
+  }
+
+  {
+    CFX_ByteString str;
+    str.Format("%.*f", 3, 1.12345);
+    EXPECT_EQ("1.123", str);
+  }
+
+  {
+    CFX_ByteString str;
+    str.Format("%f", 1.12345);
+    EXPECT_EQ("1.123450", str);
+  }
+
+  {
+    CFX_ByteString str;
+    str.Format("%-1f", 1.12345);
+    EXPECT_EQ("1.123450", str);
+  }
+
+  {
+    CFX_ByteString str;
+    str.Format("%0f", 1.12345);
+    EXPECT_EQ("1.123450", str);
+  }
+
+  {
+    CFX_ByteString str;
+    str.Format("%.1048576f", 1.2);
+    EXPECT_EQ("Bad precision", str);
+  }
+}

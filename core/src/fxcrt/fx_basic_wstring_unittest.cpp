@@ -440,3 +440,79 @@ TEST(fxcrt, WideStringCOperatorNE) {
   EXPECT_TRUE(c_string2 != wide_string_c);
   EXPECT_TRUE(c_string3 != wide_string_c);
 }
+
+TEST(fxcrt, WideStringFormatWidth) {
+  {
+    CFX_WideString str;
+    str.Format(L"%5d", 1);
+    EXPECT_EQ(L"    1", str);
+  }
+
+  {
+    CFX_WideString str;
+    str.Format(L"%d", 1);
+    EXPECT_EQ(L"1", str);
+  }
+
+  {
+    CFX_WideString str;
+    str.Format(L"%*d", 5, 1);
+    EXPECT_EQ(L"    1", str);
+  }
+
+  {
+    CFX_WideString str;
+    str.Format(L"%-1d", 1);
+    EXPECT_EQ(L"1", str);
+  }
+
+  {
+    CFX_WideString str;
+    str.Format(L"%0d", 1);
+    EXPECT_EQ(L"1", str);
+  }
+
+  {
+    CFX_WideString str;
+    str.Format(L"%1048576d", 1);
+    EXPECT_EQ(L"Bad width", str);
+  }
+}
+
+TEST(fxcrt, WideStringFormatPrecision) {
+  {
+    CFX_WideString str;
+    str.Format(L"%.2f", 1.12345);
+    EXPECT_EQ(L"1.12", str);
+  }
+
+  {
+    CFX_WideString str;
+    str.Format(L"%.*f", 3, 1.12345);
+    EXPECT_EQ(L"1.123", str);
+  }
+
+  {
+    CFX_WideString str;
+    str.Format(L"%f", 1.12345);
+    EXPECT_EQ(L"1.123450", str);
+  }
+
+  {
+    CFX_WideString str;
+    str.Format(L"%-1f", 1.12345);
+    EXPECT_EQ(L"1.123450", str);
+  }
+
+  {
+    CFX_WideString str;
+    str.Format(L"%0f", 1.12345);
+    EXPECT_EQ(L"1.123450", str);
+  }
+
+  {
+    CFX_WideString str;
+    str.Format(L"%.1048576f", 1.2);
+    EXPECT_EQ(L"Bad precision", str);
+  }
+}
