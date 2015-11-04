@@ -435,10 +435,8 @@ void JSSpecialPropDel(const char* class_name,
   }
 }
 
-template <FX_BOOL (*F)(IJS_Context* cc,
-                       const CJS_Parameters& params,
-                       CJS_Value& vRet,
-                       CFX_WideString& sError)>
+template <FX_BOOL (
+    *F)(IJS_Context*, const CJS_Parameters&, CJS_Value&, CFX_WideString&)>
 void JSGlobalFunc(const char* func_name_string,
                   const v8::FunctionCallbackInfo<v8::Value>& info) {
   CJS_Runtime* pRuntime =
