@@ -926,16 +926,9 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
           }
           break;
         case 11:
-          if (byte == '<' && inside_index == 1) {
-            status = 12;
-          } else if (byte == '>') {
+          if (byte == '>' || (byte == '<' && inside_index == 1))
             status = 0;
-          }
           inside_index = 0;
-          break;
-        case 12:
-          --i;
-          status = 0;
           break;
         case 13:
           if (PDFCharIsDelimiter(byte) || PDFCharIsWhitespace(byte)) {
