@@ -6,10 +6,12 @@
 #define TESTING_EMBEDDER_TEST_TIMER_HANDLING_DELEGATE_H_
 
 #include <map>
+#include <string>
 #include <utility>
 #include <vector>
 
 #include "embedder_test.h"
+#include "test_support.h"
 
 class EmbedderTestTimerHandlingDelegate : public EmbedderTest::Delegate {
  public:
@@ -18,10 +20,13 @@ class EmbedderTestTimerHandlingDelegate : public EmbedderTest::Delegate {
                   FPDF_WIDESTRING title_in,
                   int type_in,
                   int icon_in)
-        : message(message_in), title(title_in), type(type_in), icon(icon_in) {}
+        : type(type_in), icon(icon_in) {
+      message = GetWideString(message_in);
+      title = GetWideString(title_in);
+    }
 
-    FPDF_WIDESTRING message;
-    FPDF_WIDESTRING title;
+    std::wstring message;
+    std::wstring title;
     int type;
     int icon;
   };

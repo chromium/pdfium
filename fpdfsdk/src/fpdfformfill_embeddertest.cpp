@@ -6,7 +6,6 @@
 #include "../../testing/embedder_test.h"
 #include "../../testing/embedder_test_mock_delegate.h"
 #include "../../testing/embedder_test_timer_handling_delegate.h"
-#include "../../testing/test_support.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
@@ -79,10 +78,8 @@ TEST_F(FPDFFormFillEmbeddertest, BUG_551248) {
   const auto& alerts = delegate.GetAlerts();
   ASSERT_EQ(1U, alerts.size());
 
-  std::wstring message = GetWideString(alerts[0].message);
-  std::wstring title = GetWideString(alerts[0].title);
-  EXPECT_STREQ(L"hello world", message.c_str());
-  EXPECT_STREQ(L"Alert", title.c_str());
+  EXPECT_STREQ(L"hello world", alerts[0].message.c_str());
+  EXPECT_STREQ(L"Alert", alerts[0].title.c_str());
   EXPECT_EQ(0, alerts[0].type);
   EXPECT_EQ(0, alerts[0].icon);
 }
