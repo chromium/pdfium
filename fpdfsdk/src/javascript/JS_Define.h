@@ -370,7 +370,7 @@ void JSSpecialPropGet(const char* class_name,
       static_cast<CJS_Runtime*>(FXJS_GetRuntimeFromIsolate(isolate));
   if (!pRuntime)
     return;
-  IJS_Context* pRuntimeContext = pRuntime->GetCurrentContext();
+  IJS_Context* pContext = pRuntime->GetCurrentContext();
   CJS_Object* pJSObj =
       reinterpret_cast<CJS_Object*>(FXJS_GetPrivate(isolate, info.Holder()));
   Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
@@ -380,7 +380,7 @@ void JSSpecialPropGet(const char* class_name,
   CFX_WideString sError;
   CJS_PropValue value(pRuntime);
   value.StartGetting();
-  if (!pObj->DoProperty(pRuntimeContext, propname.c_str(), value, sError)) {
+  if (!pObj->DoProperty(pContext, propname.c_str(), value, sError)) {
     FXJS_Error(isolate, JSFormatErrorString(class_name, "GetProperty", sError));
     return;
   }
@@ -397,7 +397,7 @@ void JSSpecialPropPut(const char* class_name,
       static_cast<CJS_Runtime*>(FXJS_GetRuntimeFromIsolate(isolate));
   if (!pRuntime)
     return;
-  IJS_Context* pRuntimeContext = pRuntime->GetCurrentContext();
+  IJS_Context* pContext = pRuntime->GetCurrentContext();
   CJS_Object* pJSObj =
       reinterpret_cast<CJS_Object*>(FXJS_GetPrivate(isolate, info.Holder()));
   Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
@@ -407,7 +407,7 @@ void JSSpecialPropPut(const char* class_name,
   CFX_WideString sError;
   CJS_PropValue PropValue(CJS_Value(pRuntime, value, CJS_Value::VT_unknown));
   PropValue.StartSetting();
-  if (!pObj->DoProperty(pRuntimeContext, propname.c_str(), PropValue, sError)) {
+  if (!pObj->DoProperty(pContext, propname.c_str(), PropValue, sError)) {
     FXJS_Error(isolate, JSFormatErrorString(class_name, "PutProperty", sError));
   }
 }
@@ -420,7 +420,7 @@ void JSSpecialPropDel(const char* class_name,
   IJS_Runtime* pRuntime = FXJS_GetRuntimeFromIsolate(isolate);
   if (!pRuntime)
     return;
-  IJS_Context* pRuntimeContext = pRuntime->GetCurrentContext();
+  IJS_Context* pContext = pRuntime->GetCurrentContext();
   CJS_Object* pJSObj =
       reinterpret_cast<CJS_Object*>(FXJS_GetPrivate(isolate, info.Holder()));
   Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
@@ -428,7 +428,7 @@ void JSSpecialPropDel(const char* class_name,
   CFX_WideString propname =
       CFX_WideString::FromUTF8(*utf8_value, utf8_value.length());
   CFX_WideString sError;
-  if (!pObj->DelProperty(pRuntimeContext, propname.c_str(), sError)) {
+  if (!pObj->DelProperty(pContext, propname.c_str(), sError)) {
     CFX_ByteString cbName;
     cbName.Format("%s.%s", class_name, "DelProperty");
     // Probably a missing call to JSFX_Error().
