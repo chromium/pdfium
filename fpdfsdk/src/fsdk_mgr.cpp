@@ -387,7 +387,11 @@ CFFL_IFormFiller* CPDFDoc_Environment::GetIFormFiller() {
 
 CPDFSDK_Document::CPDFSDK_Document(CPDF_Document* pDoc,
                                    CPDFDoc_Environment* pEnv)
-    : m_pDoc(pDoc), m_pFocusAnnot(nullptr), m_pEnv(pEnv), m_bChangeMask(FALSE) {
+    : m_pDoc(pDoc),
+      m_pFocusAnnot(nullptr),
+      m_pEnv(pEnv),
+      m_bChangeMask(FALSE),
+      m_bBeingDestroyed(FALSE) {
 }
 
 CPDFSDK_Document::~CPDFSDK_Document() {
