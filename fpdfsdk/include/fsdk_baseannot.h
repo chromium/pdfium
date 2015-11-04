@@ -68,8 +68,8 @@ class CPDFSDK_DateTime {
 
 class CPDFSDK_Annot {
  public:
-  CPDFSDK_Annot(CPDFSDK_PageView* pPageView);
-  virtual ~CPDFSDK_Annot(){};
+  explicit CPDFSDK_Annot(CPDFSDK_PageView* pPageView);
+  virtual ~CPDFSDK_Annot() {}
 
   virtual FX_BOOL IsXFAField() { return FALSE; }
 
@@ -106,7 +106,6 @@ class CPDFSDK_Annot {
   void SetSelected(FX_BOOL bSelected);
 
  protected:
-  CPDF_Annot* m_pAnnot;
   CPDFSDK_PageView* m_pPageView;
   FX_BOOL m_bSelected;
   int m_nTabOrder;
@@ -115,9 +114,8 @@ class CPDFSDK_Annot {
 class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
  public:
   CPDFSDK_BAAnnot(CPDF_Annot* pAnnot, CPDFSDK_PageView* pPageView);
-  virtual ~CPDFSDK_BAAnnot();
+  virtual ~CPDFSDK_BAAnnot() {}
 
- public:
   virtual FX_BOOL IsXFAField();
 
   virtual CFX_ByteString GetType() const;
@@ -132,7 +130,6 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
                             CPDF_Matrix* pUser2Device,
                             CPDF_RenderOptions* pOptions);
 
- public:
   CPDF_Dictionary* GetAnnotDict() const;
 
   void SetContents(const CFX_WideString& sContents);
@@ -190,7 +187,6 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
 
   virtual CPDF_Action GetAAction(CPDF_AAction::AActionType eAAT);
 
- public:
   virtual FX_BOOL IsAppearanceValid();
   virtual FX_BOOL IsAppearanceValid(CPDF_Annot::AppearanceMode mode);
   virtual void DrawAppearance(CFX_RenderDevice* pDevice,
@@ -209,11 +205,11 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
                        const CFX_ByteString& sContents,
                        const CFX_ByteString& sAPState = "");
 
- private:
-  FX_BOOL CreateFormFiller();
-
  protected:
   CPDF_Annot* m_pAnnot;
+
+ private:
+  FX_BOOL CreateFormFiller();
 };
 
 #endif  // FPDFSDK_INCLUDE_FSDK_BASEANNOT_H_
