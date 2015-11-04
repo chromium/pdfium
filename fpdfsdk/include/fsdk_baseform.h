@@ -57,7 +57,7 @@ typedef struct _PDFSDK_FieldAction {
   FX_BOOL bRC;               // in[out]
 } PDFSDK_FieldAction;
 
-class CPDFSDK_Widget : public CPDFSDK_Annot {
+class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
  public:
   CPDFSDK_Widget(CPDF_Annot* pAnnot,
                  CPDFSDK_PageView* pPageView,
@@ -67,6 +67,7 @@ class CPDFSDK_Widget : public CPDFSDK_Annot {
   // CPDFSDK_Annot
   CFX_ByteString GetSubType() const override;
   CPDF_Action GetAAction(CPDF_AAction::AActionType eAAT) override;
+  FX_BOOL IsAppearanceValid() override;
 
   int GetLayoutOrder() const override { return 2; }
 
@@ -161,9 +162,8 @@ class CPDFSDK_Widget : public CPDFSDK_Annot {
   void DrawAppearance(CFX_RenderDevice* pDevice,
                       const CPDF_Matrix* pUser2Device,
                       CPDF_Annot::AppearanceMode mode,
-                      const CPDF_RenderOptions* pOptions);
+                      const CPDF_RenderOptions* pOptions) override;
 
- public:
   FX_BOOL HitTest(FX_FLOAT pageX, FX_FLOAT pageY);
 
  private:

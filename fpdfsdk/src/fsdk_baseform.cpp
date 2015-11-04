@@ -26,7 +26,7 @@
 CPDFSDK_Widget::CPDFSDK_Widget(CPDF_Annot* pAnnot,
                                CPDFSDK_PageView* pPageView,
                                CPDFSDK_InterForm* pInterForm)
-    : CPDFSDK_Annot(pAnnot, pPageView),
+    : CPDFSDK_BAAnnot(pAnnot, pPageView),
       m_pInterForm(pInterForm),
       m_nAppAge(0),
       m_nValueAge(0) {
@@ -78,6 +78,12 @@ int CPDFSDK_Widget::GetFieldType() const {
   ASSERT(pField != NULL);
 
   return pField->GetFieldType();
+}
+
+FX_BOOL CPDFSDK_Widget::IsAppearanceValid() {
+  ASSERT(m_pPageView != NULL);
+
+  return CPDFSDK_BAAnnot::IsAppearanceValid();
 }
 
 int CPDFSDK_Widget::GetFieldFlags() const {
@@ -356,7 +362,7 @@ void CPDFSDK_Widget::DrawAppearance(CFX_RenderDevice* pDevice,
     pDevice->DrawPath(&pathData, pUser2Device, &gsd, 0, 0xFFAAAAAA,
                       FXFILL_ALTERNATE);
   } else {
-    CPDFSDK_Annot::DrawAppearance(pDevice, pUser2Device, mode, pOptions);
+    CPDFSDK_BAAnnot::DrawAppearance(pDevice, pUser2Device, mode, pOptions);
   }
 }
 
@@ -1462,7 +1468,7 @@ CPDF_Action CPDFSDK_Widget::GetAAction(CPDF_AAction::AActionType eAAT) {
     case CPDF_AAction::PageClose:
     case CPDF_AAction::PageVisible:
     case CPDF_AAction::PageInvisible:
-      return CPDFSDK_Annot::GetAAction(eAAT);
+      return CPDFSDK_BAAnnot::GetAAction(eAAT);
 
     case CPDF_AAction::KeyStroke:
     case CPDF_AAction::Format:
@@ -1471,8 +1477,7 @@ CPDF_Action CPDFSDK_Widget::GetAAction(CPDF_AAction::AActionType eAAT) {
       CPDF_FormField* pField = GetFormField();
       if (CPDF_AAction aa = pField->GetAdditionalAction())
         return aa.GetAction(eAAT);
-
-      return CPDFSDK_Annot::GetAAction(eAAT);
+      return CPDFSDK_BAAnnot::GetAAction(eAAT);
     }
     default:
       break;
