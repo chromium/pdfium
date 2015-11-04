@@ -136,8 +136,6 @@ static CFX_DIBitmap* Transform1bppBitmap(const CFX_DIBSource* pSrc,
   ASSERT(pSrc->GetFormat() == FXDIB_1bppRgb ||
          pSrc->GetFormat() == FXDIB_1bppMask ||
          pSrc->GetFormat() == FXDIB_1bppCmyk);
-  CFX_FloatRect unit_rect = pDestMatrix->GetUnitRect();
-  FX_RECT full_rect = unit_rect.GetOutterRect();
   CFX_DIBExtractor src_bitmap(pSrc);
   CFX_DIBitmap* pSrcBitmap = src_bitmap;
   if (pSrcBitmap == NULL) {
