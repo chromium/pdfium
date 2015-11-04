@@ -195,7 +195,7 @@ TEST_F(FPDFViewEmbeddertest, Crasher_452455) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFViewEmbeddertest, Crasher3) {
+TEST_F(FPDFViewEmbeddertest, Crasher_454695) {
   // Document is damanged and can't be opened.
   EXPECT_FALSE(OpenDocument("testing/resources/bug_454695.pdf"));
 }
