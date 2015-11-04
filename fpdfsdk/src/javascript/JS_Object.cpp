@@ -108,6 +108,7 @@ CJS_Timer::CJS_Timer(CJS_EmbedObj* pObj,
       m_bValid(true),
       m_nType(nType),
       m_dwTimeOut(dwTimeOut),
+      m_swJScript(script),
       m_pRuntime(pRuntime),
       m_pApp(pApp) {
   IFX_SystemHandler* pHandler = m_pApp->GetSysHandler();

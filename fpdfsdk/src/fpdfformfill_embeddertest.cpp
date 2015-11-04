@@ -6,6 +6,7 @@
 #include "../../testing/embedder_test.h"
 #include "../../testing/embedder_test_mock_delegate.h"
 #include "../../testing/embedder_test_timer_handling_delegate.h"
+#include "../../testing/test_support.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
@@ -62,4 +63,26 @@ TEST_F(FPDFFormFillEmbeddertest, BUG_514690) {
   FORM_OnMouseMove(form_handle(), nullptr, 0, 10.0, 10.0);
 
   UnloadPage(page);
+}
+
+TEST_F(FPDFFormFillEmbeddertest, BUG_551248) {
+  EmbedderTestTimerHandlingDelegate delegate;
+  SetDelegate(&delegate);
+
+  EXPECT_TRUE(OpenDocument("testing/resources/bug_551248.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_NE(nullptr, page);
+  DoOpenActions();
+  delegate.AdvanceTime(5000);
+  UnloadPage(page);
+
+  const auto& alerts = delegate.GetAlerts();
+  ASSERT_EQ(1U, alerts.size());
+
+  std::wstring message = GetWideString(alerts[0].message);
+  std::wstring title = GetWideString(alerts[0].title);
+  EXPECT_STREQ(L"hello world", message.c_str());
+  EXPECT_STREQ(L"Alert", title.c_str());
+  EXPECT_EQ(0, alerts[0].type);
+  EXPECT_EQ(0, alerts[0].icon);
 }

@@ -8,6 +8,8 @@
 #include <stdlib.h>
 #include <string>
 
+#include "../public/fpdfview.h"
+
 #ifdef PDF_ENABLE_V8
 #include "v8/include/libplatform/libplatform.h"
 #include "v8/include/v8.h"
@@ -15,6 +17,10 @@
 
 // Reads the entire contents of a file into a newly malloc'd buffer.
 char* GetFileContents(const char* filename, size_t* retlen);
+
+// Converts a FPDF_WIDESTRING to a std::wstring.
+// Deals with differences between UTF16LE and wchar_t.
+std::wstring GetWideString(FPDF_WIDESTRING wstr);
 
 #ifdef PDF_ENABLE_V8
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
