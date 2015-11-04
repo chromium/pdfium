@@ -8,9 +8,6 @@
 #include "../include/fsdk_mgr.h"
 #include "../include/fsdk_baseannot.h"
 
-//---------------------------------------------------------------------------
-//                              CPDFSDK_DateTime
-//---------------------------------------------------------------------------
 int _gAfxGetTimeZoneInSeconds(FX_CHAR tzhour, uint8_t tzminute) {
   return (int)tzhour * 3600 + (int)tzminute * (tzhour >= 0 ? 60 : -60);
 }
@@ -502,21 +499,13 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::AddSeconds(int seconds) {
   return *this;
 }
 
-//---------------------------------------------------------------------------
-//                              CPDFSDK_Annot
-//---------------------------------------------------------------------------
 CPDFSDK_Annot::CPDFSDK_Annot(CPDFSDK_PageView* pPageView)
     : m_pPageView(pPageView), m_bSelected(FALSE), m_nTabOrder(-1) {
 }
 
-// CPDFSDK_BAAnnot
 CPDFSDK_BAAnnot::CPDFSDK_BAAnnot(CPDF_Annot* pAnnot,
                                  CPDFSDK_PageView* pPageView)
     : CPDFSDK_Annot(pPageView), m_pAnnot(pAnnot) {
-}
-
-CPDFSDK_BAAnnot::~CPDFSDK_BAAnnot() {
-  m_pAnnot = NULL;
 }
 
 CPDF_Annot* CPDFSDK_BAAnnot::GetPDFAnnot() const {
@@ -868,8 +857,8 @@ void CPDFSDK_BAAnnot::WriteAppearance(const CFX_ByteString& sAPType,
     m_pAnnot->GetAnnotDict()->SetAt("AP", pAPDict);
   }
 
-  CPDF_Stream* pStream = NULL;
-  CPDF_Dictionary* pParentDict = NULL;
+  CPDF_Stream* pStream = nullptr;
+  CPDF_Dictionary* pParentDict = nullptr;
 
   if (sAPState.IsEmpty()) {
     pParentDict = pAPDict;
@@ -886,23 +875,20 @@ void CPDFSDK_BAAnnot::WriteAppearance(const CFX_ByteString& sAPType,
   }
 
   if (!pStream) {
-    ASSERT(m_pPageView != NULL);
-    CPDF_Document* pDoc = m_pPageView->GetPDFDocument();
-    ASSERT(pDoc != NULL);
+    pStream = new CPDF_Stream(nullptr, 0, nullptr);
 
-    pStream = new CPDF_Stream(NULL, 0, NULL);
+    CPDF_Document* pDoc = m_pPageView->GetPDFDocument();
     int32_t objnum = pDoc->AddIndirectObject(pStream);
     pParentDict->SetAtReference(sAPType, pDoc, objnum);
   }
 
   CPDF_Dictionary* pStreamDict = pStream->GetDict();
-
   if (!pStreamDict) {
     pStreamDict = new CPDF_Dictionary;
     pStreamDict->SetAtName("Type", "XObject");
     pStreamDict->SetAtName("Subtype", "Form");
     pStreamDict->SetAtInteger("FormType", 1);
-    pStream->InitStream(NULL, 0, pStreamDict);
+    pStream->InitStream(nullptr, 0, pStreamDict);
   }
 
   if (pStreamDict) {

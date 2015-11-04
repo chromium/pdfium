@@ -116,13 +116,13 @@ void CPDFSDK_AnnotHandlerMgr::Annot_OnDraw(CPDFSDK_PageView* pPageView,
                                            CFX_RenderDevice* pDevice,
                                            CPDF_Matrix* pUser2Device,
                                            FX_DWORD dwFlags) {
-  ASSERT(pAnnot != NULL);
+  ASSERT(pAnnot);
 
   if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot)) {
     pAnnotHandler->OnDraw(pPageView, pAnnot, pDevice, pUser2Device, dwFlags);
   } else {
-    ((CPDFSDK_BAAnnot*)pAnnot)
-        ->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Normal, NULL);
+    static_cast<CPDFSDK_BAAnnot*>(pAnnot)
+        ->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Normal, nullptr);
   }
 }
 
@@ -381,12 +381,11 @@ void CPDFSDK_BFAnnotHandler::OnDraw(CPDFSDK_PageView* pPageView,
                                     CFX_RenderDevice* pDevice,
                                     CPDF_Matrix* pUser2Device,
                                     FX_DWORD dwFlags) {
-  ASSERT(pAnnot != NULL);
   CFX_ByteString sSubType = pAnnot->GetSubType();
 
   if (sSubType == BFFT_SIGNATURE) {
-    ((CPDFSDK_BAAnnot*)pAnnot)
-        ->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Normal, NULL);
+    static_cast<CPDFSDK_BAAnnot*>(pAnnot)
+        ->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Normal, nullptr);
   } else {
     if (m_pFormFiller) {
       m_pFormFiller->OnDraw(pPageView, pAnnot, pDevice, pUser2Device, dwFlags);
