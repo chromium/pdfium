@@ -2678,19 +2678,15 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
                  FX_BOOL bSupportHintTable);
   ~CPDF_DataAvail() override;
 
-  int IsDocAvail(IFX_DownloadHints* pHints) override;
-
+  // IPDF_DataAvail:
+  DocAvailStatus IsDocAvail(IFX_DownloadHints* pHints) override;
   void SetDocument(CPDF_Document* pDoc) override;
-
   int IsPageAvail(int iPage, IFX_DownloadHints* pHints) override;
-
-  int IsFormAvail(IFX_DownloadHints* pHints) override;
-
-  int IsLinearizedPDF() override;
-
+  DocFormStatus IsFormAvail(IFX_DownloadHints* pHints) override;
+  DocLinearizationStatus IsLinearizedPDF() override;
   FX_BOOL IsLinearized() override { return m_bLinearized; }
-
   void GetLinearizedMainXRefInfo(FX_FILESIZE* pPos, FX_DWORD* pSize) override;
+
   int GetPageCount() const;
   CPDF_Dictionary* GetPage(int index);
 
@@ -3080,20 +3076,23 @@ FX_BOOL CPDF_DataAvail::IsObjectsAvail(CFX_PtrArray& obj_array,
   obj_array.Append(new_obj_array);
   return IsObjectsAvail(obj_array, FALSE, pHints, ret_array);
 }
-int CPDF_DataAvail::IsDocAvail(IFX_DownloadHints* pHints) {
+
+IPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsDocAvail(
+    IFX_DownloadHints* pHints) {
   if (!m_dwFileLen && m_pFileRead) {
     m_dwFileLen = (FX_DWORD)m_pFileRead->GetSize();
     if (!m_dwFileLen) {
-      return PDF_DATA_ERROR;
+      return DataError;
     }
   }
   while (!m_bDocAvail) {
     if (!CheckDocStatus(pHints)) {
-      return PDF_DATA_NOTAVAIL;
+      return DataNotAvailable;
     }
   }
-  return PDF_DATA_AVAIL;
+  return DataAvailable;
 }
+
 FX_BOOL CPDF_DataAvail::CheckAcroFormSubObject(IFX_DownloadHints* pHints) {
   if (!m_objs_array.GetSize()) {
     m_objs_array.RemoveAll();
@@ -3644,24 +3643,24 @@ CPDF_Object* CPDF_DataAvail::ParseIndirectObjectAt(
   m_syntaxParser.RestorePos(SavedPos);
   return pObj;
 }
-int CPDF_DataAvail::IsLinearizedPDF() {
+IPDF_DataAvail::DocLinearizationStatus CPDF_DataAvail::IsLinearizedPDF() {
   FX_DWORD req_size = 1024;
   if (!m_pFileAvail->IsDataAvail(0, req_size)) {
-    return PDF_LINEARIZATION_UNKNOWN;
+    return LinearizationUnknown;
   }
   if (!m_pFileRead) {
-    return PDF_NOT_LINEARIZED;
+    return NotLinearized;
   }
   FX_FILESIZE dwSize = m_pFileRead->GetSize();
   if (dwSize < (FX_FILESIZE)req_size) {
-    return PDF_LINEARIZATION_UNKNOWN;
+    return LinearizationUnknown;
   }
   uint8_t buffer[1024];
   m_pFileRead->ReadBlock(buffer, 0, req_size);
   if (IsLinearizedFile(buffer, req_size)) {
-    return PDF_LINEARIZED;
+    return Linearized;
   }
-  return PDF_NOT_LINEARIZED;
+  return NotLinearized;
 }
 FX_BOOL CPDF_DataAvail::IsLinearizedFile(uint8_t* pData, FX_DWORD dwLen) {
   ScopedFileStream file(FX_CreateMemoryStream(pData, (size_t)dwLen, FALSE));
@@ -4278,33 +4277,33 @@ FX_BOOL CPDF_DataAvail::LoadPages(IFX_DownloadHints* pHints) {
 }
 int CPDF_DataAvail::CheckLinearizedData(IFX_DownloadHints* pHints) {
   if (m_bLinearedDataOK) {
-    return PDF_DATA_AVAIL;
+    return DataAvailable;
   }
 
   if (!m_bMainXRefLoadTried) {
     FX_SAFE_DWORD data_size = m_dwFileLen;
     data_size -= m_dwLastXRefOffset;
     if (!data_size.IsValid()) {
-      return PDF_DATA_ERROR;
+      return DataError;
     }
     if (!m_pFileAvail->IsDataAvail(m_dwLastXRefOffset,
                                    data_size.ValueOrDie())) {
       pHints->AddSegment(m_dwLastXRefOffset, data_size.ValueOrDie());
-      return PDF_DATA_NOTAVAIL;
+      return DataNotAvailable;
     }
     FX_DWORD dwRet = (m_pDocument->GetParser())->LoadLinearizedMainXRefTable();
     m_bMainXRefLoadTried = TRUE;
     if (dwRet != PDFPARSE_ERROR_SUCCESS) {
-      return PDF_DATA_ERROR;
+      return DataError;
     }
     if (!PreparePageItem()) {
-      return PDF_DATA_NOTAVAIL;
+      return DataNotAvailable;
     }
     m_bMainXRefLoadedOK = TRUE;
     m_bLinearedDataOK = TRUE;
   }
 
-  return m_bLinearedDataOK ? PDF_DATA_AVAIL : PDF_DATA_NOTAVAIL;
+  return m_bLinearedDataOK ? DataAvailable : DataNotAvailable;
 }
 FX_BOOL CPDF_DataAvail::CheckPageAnnots(int32_t iPage,
                                         IFX_DownloadHints* pHints) {
@@ -4372,7 +4371,7 @@ FX_BOOL CPDF_DataAvail::HaveResourceAncestor(CPDF_Dictionary* pDict) {
 }
 int CPDF_DataAvail::IsPageAvail(int32_t iPage, IFX_DownloadHints* pHints) {
   if (!m_pDocument) {
-    return PDF_DATA_ERROR;
+    return DataError;
   }
   if (IsFirstCheck(iPage)) {
     m_bCurPageDictLoadOK = FALSE;
@@ -4383,52 +4382,52 @@ int CPDF_DataAvail::IsPageAvail(int32_t iPage, IFX_DownloadHints* pHints) {
     m_objnum_array.RemoveAll();
   }
   if (m_pagesLoadState.find(iPage) != m_pagesLoadState.end()) {
-    return PDF_DATA_AVAIL;
+    return DataAvailable;
   }
   if (m_bLinearized) {
     if ((FX_DWORD)iPage == m_dwFirstPageNo) {
       m_pagesLoadState.insert(iPage);
-      return PDF_DATA_AVAIL;
+      return DataAvailable;
     }
     int32_t nResult = CheckLinearizedData(pHints);
-    if (nResult != PDF_DATA_AVAIL) {
+    if (nResult != DataAvailable) {
       return nResult;
     }
     if (m_pHintTables) {
       nResult = m_pHintTables->CheckPage(iPage, pHints);
-      if (nResult != PDF_DATA_AVAIL)
+      if (nResult != DataAvailable)
         return nResult;
       m_pagesLoadState.insert(iPage);
-      return PDF_DATA_AVAIL;
+      return DataAvailable;
     }
     if (m_bMainXRefLoadedOK) {
       if (m_bTotalLoadPageTree) {
         if (!LoadPages(pHints)) {
-          return PDF_DATA_NOTAVAIL;
+          return DataNotAvailable;
         }
       } else {
         if (!m_bCurPageDictLoadOK && !CheckPage(iPage, pHints)) {
-          return PDF_DATA_NOTAVAIL;
+          return DataNotAvailable;
         }
       }
     } else {
       if (!LoadAllFile(pHints)) {
-        return PDF_DATA_NOTAVAIL;
+        return DataNotAvailable;
       }
       ((CPDF_Parser*)m_pDocument->GetParser())->RebuildCrossRef();
       ResetFirstCheck(iPage);
-      return PDF_DATA_AVAIL;
+      return DataAvailable;
     }
   } else {
     if (!m_bTotalLoadPageTree) {
       if (!m_bCurPageDictLoadOK && !CheckPage(iPage, pHints)) {
-        return PDF_DATA_NOTAVAIL;
+        return DataNotAvailable;
       }
     }
   }
   if (m_bHaveAcroForm && !m_bAcroFormLoad) {
     if (!CheckAcroFormSubObject(pHints)) {
-      return PDF_DATA_NOTAVAIL;
+      return DataNotAvailable;
     }
     m_bAcroFormLoad = TRUE;
   }
@@ -4439,7 +4438,7 @@ int CPDF_DataAvail::IsPageAvail(int32_t iPage, IFX_DownloadHints* pHints) {
       m_pPageDict = m_pDocument->GetPage(iPage);
       if (!m_pPageDict) {
         ResetFirstCheck(iPage);
-        return PDF_DATA_AVAIL;
+        return DataAvailable;
       }
       CFX_PtrArray obj_array;
       obj_array.Add(m_pPageDict);
@@ -4459,14 +4458,14 @@ int CPDF_DataAvail::IsPageAvail(int32_t iPage, IFX_DownloadHints* pHints) {
         m_bPageLoadedOK = TRUE;
       } else {
         m_objs_array.Append(new_objs_array);
-        return PDF_DATA_NOTAVAIL;
+        return DataNotAvailable;
       }
     }
   }
   if (m_bPageLoadedOK) {
     if (!m_bAnnotsLoad) {
       if (!CheckPageAnnots(iPage, pHints)) {
-        return PDF_DATA_NOTAVAIL;
+        return DataNotAvailable;
       }
       m_bAnnotsLoad = TRUE;
     }
@@ -4482,7 +4481,7 @@ int CPDF_DataAvail::IsPageAvail(int32_t iPage, IFX_DownloadHints* pHints) {
   if (m_bNeedDownLoadResource) {
     FX_BOOL bRet = CheckResources(pHints);
     if (!bRet) {
-      return PDF_DATA_NOTAVAIL;
+      return DataNotAvailable;
     }
     m_bNeedDownLoadResource = FALSE;
   }
@@ -4491,7 +4490,7 @@ int CPDF_DataAvail::IsPageAvail(int32_t iPage, IFX_DownloadHints* pHints) {
   m_bCurPageDictLoadOK = FALSE;
   ResetFirstCheck(iPage);
   m_pagesLoadState.insert(iPage);
-  return PDF_DATA_AVAIL;
+  return DataAvailable;
 }
 FX_BOOL CPDF_DataAvail::CheckResources(IFX_DownloadHints* pHints) {
   if (!m_objs_array.GetSize()) {
@@ -4557,21 +4556,22 @@ CPDF_Dictionary* CPDF_DataAvail::GetPage(int index) {
   }
   return m_pDocument->GetPage(index);
 }
-int CPDF_DataAvail::IsFormAvail(IFX_DownloadHints* pHints) {
+IPDF_DataAvail::DocFormStatus CPDF_DataAvail::IsFormAvail(
+    IFX_DownloadHints* pHints) {
   if (!m_pDocument) {
-    return PDF_FORM_AVAIL;
+    return FormAvailable;
   }
   if (!m_bLinearizedFormParamLoad) {
     CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
     if (!pRoot) {
-      return PDF_FORM_AVAIL;
+      return FormAvailable;
     }
     CPDF_Object* pAcroForm = pRoot->GetElement(FX_BSTRC("AcroForm"));
     if (!pAcroForm) {
-      return PDF_FORM_NOTEXIST;
+      return FormNotExist;
     }
     if (!CheckLinearizedData(pHints)) {
-      return PDF_FORM_NOTAVAIL;
+      return FormNotAvailable;
     }
     if (!m_objs_array.GetSize()) {
       m_objs_array.Add(pAcroForm->GetDict());
@@ -4583,9 +4583,9 @@ int CPDF_DataAvail::IsFormAvail(IFX_DownloadHints* pHints) {
   m_objs_array.RemoveAll();
   if (!bRet) {
     m_objs_array.Append(new_objs_array);
-    return PDF_FORM_NOTAVAIL;
+    return FormNotAvailable;
   }
-  return PDF_FORM_AVAIL;
+  return FormAvailable;
 }
 void CPDF_SortObjNumArray::AddObjNum(FX_DWORD dwObjNum) {
   int32_t iNext = 0;
@@ -4869,17 +4869,17 @@ FX_BOOL CPDF_HintTables::GetPagePos(int index,
 }
 int32_t CPDF_HintTables::CheckPage(int index, IFX_DownloadHints* pHints) {
   if (!m_pLinearizedDict || !pHints)
-    return PDF_DATA_ERROR;
+    return IPDF_DataAvail::DataError;
   CPDF_Object* pFirstAvailPage =
       m_pLinearizedDict->GetElementValue(FX_BSTRC("P"));
   int nFirstAvailPage = pFirstAvailPage ? pFirstAvailPage->GetInteger() : 0;
   if (index == nFirstAvailPage)
-    return PDF_DATA_AVAIL;
+    return IPDF_DataAvail::DataAvailable;
   FX_DWORD dwLength = GetItemLength(index, m_szPageOffsetArray);
   if (!dwLength ||
       !m_pDataAvail->IsDataAvail(m_szPageOffsetArray[index], dwLength,
                                  pHints)) {
-    return PDF_DATA_NOTAVAIL;
+    return IPDF_DataAvail::DataNotAvailable;
   }
   // Download data of shared objects in the page.
   FX_DWORD offset = 0;
@@ -4890,7 +4890,7 @@ int32_t CPDF_HintTables::CheckPage(int index, IFX_DownloadHints* pHints) {
       m_pLinearizedDict->GetElementValue(FX_BSTRC("O"));
   int nFirstPageObjNum = pFirstPageObj ? pFirstPageObj->GetInteger() : -1;
   if (nFirstPageObjNum < 0)
-    return FALSE;
+    return FALSE;  // TODO(thestig): Fix this and the return type.
   FX_DWORD dwIndex = 0;
   FX_DWORD dwObjNum = 0;
   for (int j = 0; j < m_dwNSharedObjsArray[index]; ++j) {
@@ -4904,10 +4904,10 @@ int32_t CPDF_HintTables::CheckPage(int index, IFX_DownloadHints* pHints) {
     if (!dwLength ||
         !m_pDataAvail->IsDataAvail(m_szSharedObjOffsetArray[dwIndex], dwLength,
                                    pHints)) {
-      return PDF_DATA_NOTAVAIL;
+      return IPDF_DataAvail::DataNotAvailable;
     }
   }
-  return PDF_DATA_AVAIL;
+  return IPDF_DataAvail::DataAvailable;
 }
 FX_BOOL CPDF_HintTables::LoadHintStream(CPDF_Stream* pHintStream) {
   if (!pHintStream || !m_pLinearizedDict)

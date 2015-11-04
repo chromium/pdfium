@@ -9,6 +9,17 @@
 #include "../include/fsdk_define.h"
 #include "../include/fsdk_rendercontext.h"
 
+// These checks are here because core/ and public/ cannot depend on each other.
+static_assert(CPDF_ProgressiveRenderer::Ready == FPDF_RENDER_READER,
+              "CPDF_ProgressiveRenderer::Ready value mismatch");
+static_assert(CPDF_ProgressiveRenderer::ToBeContinued ==
+                  FPDF_RENDER_TOBECOUNTINUED,
+              "CPDF_ProgressiveRenderer::ToBeContinued value mismatch");
+static_assert(CPDF_ProgressiveRenderer::Done == FPDF_RENDER_DONE,
+              "CPDF_ProgressiveRenderer::Done value mismatch");
+static_assert(CPDF_ProgressiveRenderer::Failed == FPDF_RENDER_FAILED,
+              "CPDF_ProgressiveRenderer::Failed value mismatch");
+
 DLLEXPORT int STDCALL FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
                                                   FPDF_PAGE page,
                                                   int start_x,
