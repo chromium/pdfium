@@ -1572,7 +1572,7 @@ FX_BOOL CXFA_TextLayout::LoadRichText(IFDE_XMLNode* pXMLNode,
       }
       if (wsName == FX_WSTRC(L"a")) {
         if (pLinkData != NULL) {
-          FX_DWORD dwRefCount = pLinkData->Release();
+          pLinkData->Release();
           pLinkData = NULL;
         }
       }

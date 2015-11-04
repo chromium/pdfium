@@ -32,7 +32,6 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_Ready(
   if (!pNotify) {
     return;
   }
-  IXFA_Doc* hDoc = pNotify->GetHDOC();
   if (bSetting) {
     ThrowScriptErrorMessage(XFA_IDS_UNABLE_SET_READY);
     return;

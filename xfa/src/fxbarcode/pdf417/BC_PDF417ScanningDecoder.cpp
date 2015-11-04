@@ -641,7 +641,6 @@ int32_t CBC_PDF417ScanningDecoder::adjustCodewordStartColumn(
   int32_t correctedStartColumn = codewordStartColumn;
   int32_t increment = leftToRight ? -1 : 1;
   for (int32_t i = 0; i < 2; i++) {
-    FX_BOOL l = image->Get(correctedStartColumn, imageRow);
     while (((leftToRight && correctedStartColumn >= minColumn) ||
             (!leftToRight && correctedStartColumn < maxColumn)) &&
            leftToRight == image->Get(correctedStartColumn, imageRow)) {
@@ -672,8 +671,7 @@ CBC_CommonDecoderResult* CBC_PDF417ScanningDecoder::decodeCodewords(
     return NULL;
   }
   int32_t numECCodewords = 1 << (ecLevel + 1);
-  int32_t correctedErrorsCount =
-      correctErrors(codewords, erasures, numECCodewords, e);
+  correctErrors(codewords, erasures, numECCodewords, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   verifyCodewordCount(codewords, numECCodewords, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);

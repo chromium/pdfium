@@ -87,7 +87,7 @@ CFX_ByteString CBC_OneDimReader::DecodeRow(int32_t rowNumber,
                                            int32_t hints,
                                            int32_t& e) {
   CFX_ByteString result;
-  int32_t endStart = DecodeMiddle(row, startGuardRange, result, e);
+  DecodeMiddle(row, startGuardRange, result, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, "");
   FX_BOOL b = CheckChecksum(result, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, "");

@@ -59,7 +59,6 @@ class CXFA_NodeIteratorTemplate {
   }
   NodeType* GetRoot() { return m_pRoot; }
   NodeType* MoveToPrev() {
-    NodeType* pCurrent = GetCurrent();
     int32_t nStackLength = m_NodeStack.GetSize();
     if (nStackLength == 1) {
       return NULL;

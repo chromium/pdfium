@@ -709,7 +709,6 @@ int32_t CXFA_FFField::CalculateOverride() {
   if (!pAcc) {
     return CalculateWidgetAcc(m_pDataAcc);
   }
-  int32_t iOverride = 0;
   if (CalculateWidgetAcc(pAcc) == 0) {
     return 0;
   }

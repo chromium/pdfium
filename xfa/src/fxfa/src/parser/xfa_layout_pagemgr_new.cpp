@@ -185,7 +185,6 @@ static void XFA_LayoutItemMgr_ReorderLayoutItemToTail(
   if (!pParentLayoutItem) {
     return;
   }
-  CXFA_LayoutItemImpl* pNext = pLayoutItem->m_pNextSibling;
   pParentLayoutItem->RemoveChild(pLayoutItem);
   pParentLayoutItem->AddChild(pLayoutItem);
 }
@@ -196,7 +195,6 @@ static void XFA_LayoutItemMgr_RemoveLayoutItem(
   if (!pParentLayoutItem) {
     return;
   }
-  CXFA_LayoutItemImpl* pNext = pLayoutItem->m_pNextSibling;
   pParentLayoutItem->RemoveChild(pLayoutItem);
 }
 void CXFA_LayoutPageMgr::RemoveLayoutRecord(CXFA_ContainerRecord* pNewRecord,
@@ -989,7 +987,6 @@ FX_BOOL CXFA_LayoutPageMgr::FindPageAreaFromPageSet(
   if (pPageSet == NULL && pStartChild == NULL) {
     return FALSE;
   }
-  int32_t iPageSetCount = 0;
   if (IsPageSetRootOrderedOccurrence()) {
     return FindPageAreaFromPageSet_Ordered(pPageSet, pStartChild,
                                            pTargetPageArea, pTargetContentArea,
@@ -1080,9 +1077,6 @@ FX_BOOL CXFA_LayoutPageMgr::FindPageAreaFromPageSet_SimplexDuplex(
     FX_BOOL bNewPage,
     FX_BOOL bQuery,
     XFA_ATTRIBUTEENUM ePreferredPosition) {
-  XFA_ATTRIBUTEENUM eAdvisedPagePosition =
-      pTargetPageArea ? pTargetPageArea->GetEnum(XFA_ATTRIBUTE_PagePosition)
-                      : (XFA_ATTRIBUTEENUM)-1;
   const XFA_ATTRIBUTEENUM eFallbackPosition = XFA_ATTRIBUTEENUM_Any;
   CXFA_Node *pPreferredPageArea = NULL, *pFallbackPageArea = NULL;
   CXFA_Node* pCurrentNode = NULL;

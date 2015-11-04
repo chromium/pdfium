@@ -91,7 +91,6 @@ FX_WCHAR CBC_ASCIIEncoder::encodeASCIIDigits(FX_WCHAR digit1,
   if (CBC_HighLevelEncoder::isDigit(digit1) &&
       CBC_HighLevelEncoder::isDigit(digit2)) {
     int32_t num = (digit1 - 48) * 10 + (digit2 - 48);
-    FX_WCHAR a = (FX_WCHAR)(num + 130);
     return (FX_WCHAR)(num + 130);
   }
   e = BCExceptionIllegalArgumentNotGigits;

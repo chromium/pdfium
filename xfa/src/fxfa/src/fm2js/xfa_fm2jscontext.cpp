@@ -325,7 +325,6 @@ void CXFA_FM2JSContext::Ceil(FXJSE_HOBJECT hThis,
                              CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
   if (args.GetLength() == 1) {
     FXJSE_HVALUE argValue = GetSimpleHValue(hThis, args, 0);
     if (HValueIsNull(hThis, argValue)) {
@@ -409,7 +408,6 @@ void CXFA_FM2JSContext::Floor(FXJSE_HOBJECT hThis,
                               CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
   if (args.GetLength() == 1) {
     FXJSE_HVALUE argValue = GetSimpleHValue(hThis, args, 0);
     if (HValueIsNull(hThis, argValue)) {
@@ -1347,8 +1345,8 @@ void CXFA_FM2JSContext::Num2Date(FXJSE_HOBJECT hThis,
       CFX_ByteString szIsoDateString;
       szIsoDateString.Format("%d%02d%02d", iYear + i, iMonth, iDay);
       CFX_ByteString szLocalDateString;
-      FX_BOOL bRet = IsoDate2Local(hThis, szIsoDateString, formatString,
-                                   localString, szLocalDateString);
+      IsoDate2Local(hThis, szIsoDateString, formatString,
+                    localString, szLocalDateString);
       if (szLocalDateString.IsEmpty()) {
         szLocalDateString = FX_BSTRC("");
       }
@@ -3197,7 +3195,6 @@ void CXFA_FM2JSContext::Within(FXJSE_HOBJECT hThis,
 void CXFA_FM2JSContext::If(FXJSE_HOBJECT hThis,
                            const CFX_ByteStringC& szFuncName,
                            CFXJSE_Arguments& args) {
-  int32_t argc = args.GetLength();
   if (args.GetLength() == 3) {
     FXJSE_HVALUE argCondition = GetSimpleHValue(hThis, args, 0);
     FXJSE_HVALUE argFirstValue = GetSimpleHValue(hThis, args, 1);
@@ -3463,10 +3460,8 @@ void CXFA_FM2JSContext::UnitValue(FXJSE_HOBJECT hThis,
         while (*(pData + u) == 0x20 || *(pData + u) == 0x09 ||
                *(pData + u) == 0x0B || *(pData + u) == 0x0C ||
                *(pData + u) == 0x0A || *(pData + u) == 0x0D) {
-          FX_CHAR ch = *(pData + u);
           ++u;
         }
-        int32_t uStart = u;
         while (u < unitspanString.GetLength()) {
           if ((*(pData + u) > '9' || *(pData + u) < '0') &&
               *(pData + u) != '.' && *(pData + u) != '-') {
@@ -3611,7 +3606,6 @@ void CXFA_FM2JSContext::At(FXJSE_HOBJECT hThis,
                            CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
   if (args.GetLength() == 2) {
     FXJSE_HVALUE argOne = GetSimpleHValue(hThis, args, 0);
     FXJSE_HVALUE argTwo = GetSimpleHValue(hThis, args, 1);
@@ -3641,7 +3635,6 @@ void CXFA_FM2JSContext::Concat(FXJSE_HOBJECT hThis,
                                CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
   int32_t argc = args.GetLength();
   if (argc >= 1) {
     CFX_ByteString resultString;
@@ -3675,7 +3668,6 @@ void CXFA_FM2JSContext::Decode(FXJSE_HOBJECT hThis,
                                CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
   int32_t argc = args.GetLength();
   if (argc == 1) {
     FXJSE_HVALUE argOne = GetSimpleHValue(hThis, args, 0);
@@ -3946,7 +3938,6 @@ void CXFA_FM2JSContext::Encode(FXJSE_HOBJECT hThis,
                                CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
   int32_t argc = args.GetLength();
   if (argc == 1) {
     FXJSE_HVALUE argOne = GetSimpleHValue(hThis, args, 0);
@@ -4447,7 +4438,6 @@ void CXFA_FM2JSContext::Left(FXJSE_HOBJECT hThis,
                              CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
   if (args.GetLength() == 2) {
     FXJSE_HVALUE argOne = GetSimpleHValue(hThis, args, 0);
     FXJSE_HVALUE argTwo = GetSimpleHValue(hThis, args, 1);
@@ -4479,7 +4469,6 @@ void CXFA_FM2JSContext::Len(FXJSE_HOBJECT hThis,
                             CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
   if (args.GetLength() == 1) {
     FXJSE_HVALUE argOne = GetSimpleHValue(hThis, args, 0);
     if (HValueIsNull(hThis, argOne)) {
@@ -4550,7 +4539,6 @@ void CXFA_FM2JSContext::Ltrim(FXJSE_HOBJECT hThis,
                               CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
   if (args.GetLength() == 1) {
     FXJSE_HVALUE argOne = GetSimpleHValue(hThis, args, 0);
     if (HValueIsNull(hThis, argOne)) {
@@ -4779,7 +4767,6 @@ void CXFA_FM2JSContext::Right(FXJSE_HOBJECT hThis,
                               CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
   if (args.GetLength() == 2) {
     FXJSE_HVALUE argOne = GetSimpleHValue(hThis, args, 0);
     FXJSE_HVALUE argTwo = GetSimpleHValue(hThis, args, 1);
@@ -4811,7 +4798,6 @@ void CXFA_FM2JSContext::Rtrim(FXJSE_HOBJECT hThis,
                               CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
   if (args.GetLength() == 1) {
     FXJSE_HVALUE argOne = GetSimpleHValue(hThis, args, 0);
     if (HValueIsNull(hThis, argOne)) {
@@ -4833,7 +4819,6 @@ void CXFA_FM2JSContext::Space(FXJSE_HOBJECT hThis,
                               CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
   if (args.GetLength() == 1) {
     FXJSE_HVALUE argOne = GetSimpleHValue(hThis, args, 0);
     if (FXJSE_Value_IsNull(argOne)) {
@@ -6360,7 +6345,6 @@ void CXFA_FM2JSContext::eval_translation(FXJSE_HOBJECT hThis,
                                          CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
   int32_t argc = args.GetLength();
   if (argc == 1) {
     FXJSE_HVALUE argOne = GetSimpleHValue(hThis, args, 0);

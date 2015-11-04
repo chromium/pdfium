@@ -145,7 +145,6 @@ FX_BOOL CBC_OnedCode128Writer::IsDigits(const CFX_ByteString& contents,
 uint8_t* CBC_OnedCode128Writer::Encode(const CFX_ByteString& contents,
                                        int32_t& outLength,
                                        int32_t& e) {
-  int32_t length = contents.GetLength();
   if (contents.GetLength() < 1 || contents.GetLength() > 80) {
     e = BCExceptionContentsLengthShouldBetween1and80;
     return NULL;

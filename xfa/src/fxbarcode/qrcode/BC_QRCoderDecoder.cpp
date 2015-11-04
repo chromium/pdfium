@@ -83,7 +83,6 @@ CBC_CommonDecoderResult* CBC_QRCoderDecoder::Decode(CBC_CommonBitMatrix* bits,
     totalBytes += ((CBC_QRDataBlock*)((*dataBlocks)[i]))->GetNumDataCodewords();
   }
   CFX_ByteArray resultBytes;
-  int32_t resultOffset = 0;
   for (int32_t j = 0; j < dataBlocks->GetSize(); j++) {
     CBC_QRDataBlock* dataBlock = (CBC_QRDataBlock*)((*dataBlocks)[j]);
     CFX_ByteArray* codewordBytes = dataBlock->GetCodewords();

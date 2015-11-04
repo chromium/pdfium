@@ -693,8 +693,8 @@ void CXFA_Node::Script_Som_ResolveNodeList(FXJSE_HVALUE hValue,
   if (refNode == NULL) {
     refNode = this;
   }
-  int32_t iRet = pScriptContext->ResolveObjects(refNode, wsExpression,
-                                                resoveNodeRS, dwFlag);
+  pScriptContext->ResolveObjects(refNode, wsExpression,
+                                 resoveNodeRS, dwFlag);
   CXFA_ArrayNodeList* pNodeList = new CXFA_ArrayNodeList(m_pDocument);
   if (resoveNodeRS.dwFlags == XFA_RESOVENODE_RSTYPE_Nodes) {
     for (int32_t i = 0; i < resoveNodeRS.nodes.GetSize(); i++) {
@@ -2762,9 +2762,7 @@ void CXFA_Node::Script_Template_CreateNode(CFXJSE_Arguments* pArguments) {
   }
 }
 void CXFA_Node::Script_Template_Recalculate(CFXJSE_Arguments* pArguments) {
-  int32_t argc = pArguments->GetLength();
-  if (argc == 1) {
-    FX_BOOL bScriptFlags = pArguments->GetInt32(0) == 0 ? FALSE : TRUE;
+  if (pArguments->GetLength() == 1) {
     FXJSE_Value_SetBoolean(pArguments->GetReturnValue(), TRUE);
   } else {
     ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"recalculate");
@@ -3336,8 +3334,6 @@ int32_t CXFA_Node::InstanceManager_SetInstances(int32_t iDesired) {
       }
     }
   } else if (iDesired > iCount) {
-    CXFA_Node* pTemplateNode = GetTemplateNode();
-    CXFA_Node* pFormNode = GetNodeItem(XFA_NODEITEM_NextSibling);
     while (iCount < iDesired) {
       CXFA_Node* pNewInstance =
           XFA_ScriptInstanceManager_CreateInstance(this, TRUE);
@@ -3416,7 +3412,6 @@ void CXFA_Node::Script_Form_FormNodes(CFXJSE_Arguments* pArguments) {
     CXFA_Node* pDataNode = (CXFA_Node*)pArguments->GetObject(0);
     if (pDataNode) {
       CXFA_NodeArray formItems;
-      int32_t iSize = pDataNode->GetBindItems(formItems);
       CXFA_ArrayNodeList* pFormNodes = new CXFA_ArrayNodeList(m_pDocument);
       pFormNodes->SetArrayNodeList(formItems);
       FXJSE_Value_SetObject(

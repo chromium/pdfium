@@ -1053,8 +1053,7 @@ CFX_DIBitmap* XFA_LoadImageFromBuffer(IFX_FileRead* pImageFileRead,
   CFX_DIBitmap* pBitmap = NULL;
   ICodec_ProgressiveDecoder* pProgressiveDecoder =
       pCodecMgr->CreateProgressiveDecoder();
-  FXCODEC_STATUS status =
-      pProgressiveDecoder->LoadImageInfo(pImageFileRead, type, &dibAttr);
+  pProgressiveDecoder->LoadImageInfo(pImageFileRead, type, &dibAttr);
   switch (dibAttr.m_wDPIUnit) {
     case FXCODEC_RESUNIT_CENTIMETER:
       dibAttr.m_nXDPI = (int32_t)(dibAttr.m_nXDPI * 2.54f);

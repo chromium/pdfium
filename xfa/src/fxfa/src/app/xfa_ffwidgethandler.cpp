@@ -227,7 +227,7 @@ FX_BOOL CXFA_FFWidgetHandler::HasEvent(CXFA_WidgetAcc* pWidgetAcc,
       if (!calc) {
         return FALSE;
       }
-      if (CXFA_Script script = calc.GetScript()) {
+      if (calc.GetScript()) {
         return TRUE;
       }
       return FALSE;
@@ -452,8 +452,7 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateField(XFA_ELEMENT eElement,
                                              CXFA_Node* pParent,
                                              CXFA_Node* pBefore) const {
   CXFA_Node* pField = CreateFormItem(XFA_ELEMENT_Field, pParent, pBefore);
-  CXFA_Node* pUi = CreateCopyNode(XFA_ELEMENT_Ui, pField);
-  CXFA_Node* pCheckButton = CreateCopyNode(eElement, pUi);
+  CreateCopyNode(eElement, CreateCopyNode(XFA_ELEMENT_Ui, pField));
   CreateFontNode(pField);
   return pField;
 }
@@ -470,8 +469,7 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateRectangle(CXFA_Node* pParent,
 CXFA_Node* CXFA_FFWidgetHandler::CreateImage(CXFA_Node* pParent,
                                              CXFA_Node* pBefore) const {
   CXFA_Node* pField = CreateDraw(XFA_ELEMENT_Image, pParent, pBefore);
-  CXFA_Node* pUi = CreateCopyNode(XFA_ELEMENT_Ui, pField);
-  CXFA_Node* pImage = CreateCopyNode(XFA_ELEMENT_ImageEdit, pUi);
+  CreateCopyNode(XFA_ELEMENT_ImageEdit, CreateCopyNode(XFA_ELEMENT_Ui, pField));
   return pField;
 }
 CXFA_Node* CXFA_FFWidgetHandler::CreateLine(CXFA_Node* pParent,
@@ -482,8 +480,7 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateLine(CXFA_Node* pParent,
 CXFA_Node* CXFA_FFWidgetHandler::CreateText(CXFA_Node* pParent,
                                             CXFA_Node* pBefore) const {
   CXFA_Node* pField = CreateDraw(XFA_ELEMENT_Text, pParent, pBefore);
-  CXFA_Node* pUi = CreateCopyNode(XFA_ELEMENT_Ui, pField);
-  CXFA_Node* pTextEdit = CreateCopyNode(XFA_ELEMENT_TextEdit, pUi);
+  CreateCopyNode(XFA_ELEMENT_TextEdit, CreateCopyNode(XFA_ELEMENT_Ui, pField));
   CreateFontNode(pField);
   return pField;
 }
@@ -565,7 +562,7 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateMarginNode(CXFA_Node* pParent,
 CXFA_Node* CXFA_FFWidgetHandler::CreateValueNode(XFA_ELEMENT eValue,
                                                  CXFA_Node* pParent) const {
   CXFA_Node* pValue = CreateCopyNode(XFA_ELEMENT_Value, pParent);
-  CXFA_Node* pDate = CreateCopyNode(eValue, pValue);
+  CreateCopyNode(eValue, pValue);
   return pValue;
 }
 IXFA_ObjFactory* CXFA_FFWidgetHandler::GetObjFactory() const {

@@ -151,16 +151,9 @@ CFX_WideString CBC_ErrorCorrection::createECCBlock(CFX_WideString codewords,
   FX_WORD* ecc = FX_Alloc(FX_WORD, numECWords);
   FXSYS_memset(ecc, 0, numECWords * sizeof(FX_WORD));
   for (int32_t l = start; l < start + len; l++) {
-    uint8_t A = (uint8_t)codewords.GetAt(l);
-    FX_WORD B = ecc[numECWords - 1];
     FX_WORD m = ecc[numECWords - 1] ^ codewords.GetAt(l);
     for (int32_t k = numECWords - 1; k > 0; k--) {
       if (m != 0 && FACTORS[table][k] != 0) {
-        int32_t a = LOG[FACTORS[table][k]];
-        int32_t b = ALOG[(LOG[m] + LOG[FACTORS[table][k]]) % 255];
-        FX_WORD c = ecc[k - 1];
-        FX_WORD D =
-            (ecc[k - 1] ^ ALOG[(LOG[m] + LOG[FACTORS[table][k]]) % 255]);
         ecc[k] = (FX_WORD)(ecc[k - 1] ^
                            ALOG[(LOG[m] + LOG[FACTORS[table][k]]) % 255]);
       } else {

@@ -284,7 +284,6 @@ CFX_PtrArray* CBC_PDF417ECErrorCorrection::runEuclideanAlgorithm(
     ttemp = t;
     j++;
   }
-  int32_t aa = t->getCoefficient(1);
   int32_t sigmaTildeAtZero = t->getCoefficient(0);
   if (sigmaTildeAtZero == 0) {
     e = BCExceptionChecksumException;

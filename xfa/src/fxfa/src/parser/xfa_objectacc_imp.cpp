@@ -2179,7 +2179,6 @@ int32_t CXFA_WidgetData::CountSelectedItems() {
 int32_t CXFA_WidgetData::GetSelectedItem(int32_t nIndex) {
   CFX_WideStringArray wsValueArray;
   GetSelectedItemsValue(wsValueArray);
-  int32_t iSelected = 0;
   CFX_WideStringArray wsSaveTextArray;
   GetChoiceListItems(wsSaveTextArray, TRUE);
   int32_t iSaves = wsSaveTextArray.GetSize();
@@ -2822,7 +2821,6 @@ static CFX_WideString XFA_NumericNormalize(const CFX_WideString& wsValue,
   int32_t iIndex = 0;
   CFX_WideString wsRet;
   FX_WCHAR* pRetBuffer = wsRet.GetBuffer(iCount);
-  int32_t iDestCount = 0;
   int32_t i = 0;
   if (wsNewValue[i] == L'-') {
     pRetBuffer[iIndex++] = '-';

@@ -409,7 +409,6 @@ FWL_ERR CXFA_FFTextEdit::OnProcessEvent(CFWL_Event* pEvent) {
     }
     case FWL_EVTHASH_EDT_CheckWord: {
       CFX_WideString wstr(L"FWL_EVENT_DTP_SelectChanged");
-      FX_DWORD hashcode = FX_HashCode_String_GetW(wstr, wstr.GetLength());
       CFWL_EvtEdtCheckWord* event = (CFWL_EvtEdtCheckWord*)pEvent;
       event->bCheckWord = CheckWord(event->bsWord);
       break;

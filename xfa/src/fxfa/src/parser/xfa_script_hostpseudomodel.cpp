@@ -506,7 +506,6 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_SetFocus(
   if (!pNotify) {
     return;
   }
-  IXFA_Doc* hDoc = pNotify->GetHDOC();
   CXFA_Node* pNode = NULL;
   if (iLength >= 1) {
     FXJSE_HVALUE hValue = pArguments->GetValue(0);

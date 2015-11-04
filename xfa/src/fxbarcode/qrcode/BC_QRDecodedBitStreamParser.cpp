@@ -114,7 +114,6 @@ void CBC_QRDecodedBitStreamParser::DecodeGBKSegment(CBC_CommonBitSource* bits,
                                                     int32_t count,
                                                     int32_t& e) {
   CFX_ByteString buffer;
-  int32_t offset = 0;
   while (count > 0) {
     int32_t twoBytes = bits->ReadBits(13, e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);

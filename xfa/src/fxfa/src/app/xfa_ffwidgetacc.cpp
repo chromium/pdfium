@@ -968,7 +968,6 @@ FX_BOOL CXFA_WidgetAcc::CalculateImageAutoSize(CFX_SizeF& size) {
   }
   size.Set(0, 0);
   if (CFX_DIBitmap* pBitmap = GetImageImage()) {
-    CXFA_Image imageObj = GetFormValue().GetImage();
     CFX_RectF rtImage, rtFit;
     rtImage.Set(0, 0, 0, 0);
     rtFit.Set(0, 0, 0, 0);

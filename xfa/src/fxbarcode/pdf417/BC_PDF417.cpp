@@ -506,7 +506,6 @@ void CBC_PDF417::encodeLowLevel(CFX_WideString fullCodewords,
   for (int32_t y = 0; y < r; y++) {
     int32_t cluster = y % 3;
     logic->startRow();
-    int32_t a = START_PATTERN;
     encodeChar(START_PATTERN, 17, logic->getCurrentRow());
     int32_t left;
     int32_t right;

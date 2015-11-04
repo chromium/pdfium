@@ -421,8 +421,7 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_XDP(
                                           pPacketInfo->eFlags)) {
         continue;
       }
-      if (CXFA_Node* pChildNode =
-              pXFARootNode->GetFirstChildByName(pPacketInfo->uHash)) {
+      if (pXFARootNode->GetFirstChildByName(pPacketInfo->uHash)) {
         return nullptr;
       }
       pXMLConfigDOMRoot = pChildItem;
@@ -1266,7 +1265,6 @@ void CXFA_SimpleParser::ParseDataValue(CXFA_Node* pXFANode,
       continue;
     }
     CFX_WideString wsText;
-    FX_BOOL bBreak = FALSE;
     if (eNodeType == FDE_XMLNODE_Text) {
       ((IFDE_XMLText*)pXMLChild)->GetText(wsText);
       if (!pXMLCurValueNode) {
@@ -1356,7 +1354,6 @@ void CXFA_SimpleParser::ParseInstruction(CXFA_Node* pXFANode,
   }
   CFX_WideString wsTargetName;
   pXMLInstruction->GetTargetName(wsTargetName);
-  int32_t iDataCount = pXMLInstruction->CountData();
   if (wsTargetName == FX_WSTRC(L"originalXFAVersion")) {
     CFX_WideString wsData;
     if (pXMLInstruction->GetData(0, wsData) &&

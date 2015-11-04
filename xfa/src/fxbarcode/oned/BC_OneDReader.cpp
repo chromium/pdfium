@@ -44,7 +44,6 @@ CFX_ByteString CBC_OneDReader::Decode(CBC_BinaryBitmap* image,
 CFX_ByteString CBC_OneDReader::DeDecode(CBC_BinaryBitmap* image,
                                         int32_t hints,
                                         int32_t& e) {
-  int32_t width = image->GetWidth();
   int32_t height = image->GetHeight();
   CBC_CommonBitArray* row = NULL;
   int32_t middle = height >> 1;

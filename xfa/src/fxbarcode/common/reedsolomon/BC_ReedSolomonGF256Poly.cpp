@@ -226,7 +226,6 @@ CFX_PtrArray* CBC_ReedSolomonGF256Poly::Divide(CBC_ReedSolomonGF256Poly* other,
   int32_t inverseDenominatorLeadingTeam =
       m_field->Inverse(denominatorLeadingTerm, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-  FX_BOOL bFirst = TRUE;
   while (remainder->GetDegree() >= other->GetDegree() && !remainder->IsZero()) {
     int32_t degreeDifference = remainder->GetDegree() - other->GetDegree();
     int32_t scale =

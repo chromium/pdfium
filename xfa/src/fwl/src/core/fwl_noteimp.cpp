@@ -218,8 +218,6 @@ FX_BOOL CFWL_NoteDriver::SetFocus(IFWL_Widget* pFocus, FX_BOOL bNotify) {
   IFWL_Widget* pPrev = m_pFocus;
   m_pFocus = pFocus;
   if (pPrev) {
-    IFWL_Widget* pWidget =
-        FWL_GetWidgetMgr()->GetWidget(m_pFocus, FWL_WGTRELATION_SystemForm);
     CFWL_MsgKillFocus ms;
     ms.m_pDstTarget = pPrev;
     ms.m_pSrcTarget = pPrev;

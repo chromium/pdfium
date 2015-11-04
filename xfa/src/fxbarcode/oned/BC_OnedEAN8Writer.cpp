@@ -229,7 +229,7 @@ void CBC_OnedEAN8Writer::ShowChars(const CFX_WideStringC& contents,
         1.0, 0.0, 0.0, -1.0, (FX_FLOAT)leftPosition * m_outputHScale,
         (FX_FLOAT)(m_Height - iTextHeight + iFontSize));
     affine_matrix1.Concat(*matrix);
-    FX_BOOL ret = device->DrawNormalText(
+    device->DrawNormalText(
         iLen, pCharPos, m_pFont, CFX_GEModule::Get()->GetFontCache(),
         (FX_FLOAT)iFontSize, (CFX_AffineMatrix*)&affine_matrix1, m_fontColor,
         FXTEXT_CLEARTYPE);
@@ -257,7 +257,7 @@ void CBC_OnedEAN8Writer::ShowChars(const CFX_WideStringC& contents,
     if (matrix != NULL) {
       affine_matrix1.Concat(*matrix);
     }
-    FX_BOOL ret = device->DrawNormalText(
+    device->DrawNormalText(
         iLen, pCharPos + 4, m_pFont, CFX_GEModule::Get()->GetFontCache(),
         (FX_FLOAT)iFontSize, (CFX_AffineMatrix*)&affine_matrix1, m_fontColor,
         FXTEXT_CLEARTYPE);

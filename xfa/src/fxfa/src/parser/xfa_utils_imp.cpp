@@ -315,7 +315,6 @@ FX_DOUBLE XFA_WideStringToDouble(const CFX_WideString& wsStringVal) {
   CFX_WideString wsValue = wsStringVal;
   wsValue.TrimLeft();
   wsValue.TrimRight();
-  FX_BOOL bValid = TRUE;
   int64_t nIntegral = 0;
   FX_DWORD dwFractional = 0;
   int32_t nExponent = 0;

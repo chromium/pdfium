@@ -785,7 +785,6 @@ void CBC_PDF417I::SetTruncated(FX_BOOL truncated) {
 FX_BOOL CBC_PDF417I::Encode(const CFX_WideStringC& contents,
                             FX_BOOL isDevice,
                             int32_t& e) {
-  BCFORMAT format = BCFORMAT_PDF_417;
   int32_t outWidth = 0;
   int32_t outHeight = 0;
   uint8_t* data = ((CBC_PDF417Writer*)m_pBCWriter)

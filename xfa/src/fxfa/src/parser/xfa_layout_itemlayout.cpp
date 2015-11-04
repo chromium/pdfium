@@ -1562,9 +1562,6 @@ static void XFA_ItemLayoutProcessor_AddTrailerBeforeSplit(
     fBottomInset =
         pMarginNode->GetMeasure(XFA_ATTRIBUTE_BottomInset).ToUnit(XFA_UNIT_Pt);
   }
-  FX_FLOAT fWidth = pTrailerLayoutItem->m_sSize.x;
-  XFA_ATTRIBUTEENUM eLayout =
-      pProcessor->m_pFormNode->GetEnum(XFA_ATTRIBUTE_Layout);
   if (!pProcessor->IsAddNewRowForTrailer(pTrailerLayoutItem)) {
     pTrailerLayoutItem->m_sPos.y = pProcessor->m_fLastRowY;
     pTrailerLayoutItem->m_sPos.x = pProcessor->m_fLastRowWidth;

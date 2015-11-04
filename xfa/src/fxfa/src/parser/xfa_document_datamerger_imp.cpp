@@ -51,7 +51,7 @@ static void XFA_DataMerge_FormValueNode_MatchNoneCreateChild(
     CXFA_Node* pFormNode) {
   CXFA_WidgetData* pWidgetData = pFormNode->GetWidgetData();
   FXSYS_assert(pWidgetData);
-  XFA_ELEMENT eUIType = pWidgetData->GetUIType();
+  pWidgetData->GetUIType();
 }
 static FX_BOOL XFA_DataMerge_FormValueNode_SetChildContent(
     CXFA_Node* pValueNode,
@@ -840,7 +840,7 @@ static CXFA_Node* XFA_DataMerge_CopyContainer_SubformSet(
         subformMapArray.SetAt(pSubformNode, pDataNode);
         subformArray.Add(pSubformNode);
       }
-      FX_POSITION position = subformMapArray.GetStartPosition();
+      subformMapArray.GetStartPosition();
       for (int32_t iIndex = 0; iIndex < subformArray.GetSize(); iIndex++) {
         CXFA_Node* pSubform = subformArray[iIndex];
         CXFA_Node* pDataNode = (CXFA_Node*)subformMapArray.GetValueAt(pSubform);
@@ -862,7 +862,6 @@ static CXFA_Node* XFA_DataMerge_CopyContainer_SubformSet(
     }
     for (; iMax < 0 || iCurRepeatIndex < iMax; iCurRepeatIndex++) {
       FX_BOOL bSelfMatch = FALSE;
-      CXFA_Node* pOldNode = sNodeIterator.GetCurrent();
       XFA_ATTRIBUTEENUM eBindMatch = XFA_ATTRIBUTEENUM_None;
       if (!XFA_DataMerge_FindMatchingDataNode(
               pDocument, pTemplateNode, pDataScope, bAccessedDataDOM, FALSE,

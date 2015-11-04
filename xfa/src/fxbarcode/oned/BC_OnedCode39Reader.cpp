@@ -92,7 +92,6 @@ CFX_ByteString CBC_OnedCode39Reader::DecodeRow(int32_t rowNumber,
   for (int32_t j = 0; j < counters.GetSize(); j++) {
     lastPatternSize += counters[j];
   }
-  int32_t whiteSpaceAfterEnd = nextStart - lastStart - lastPatternSize;
   if (m_usingCheckDigit) {
     int32_t max = result.GetLength() - 1;
     int32_t total = 0;

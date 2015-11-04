@@ -203,8 +203,6 @@ int32_t CBC_PDF417HighLevelEncoder::encodeText(CFX_WideString msg,
         break;
       case SUBMODE_MIXED:
         if (isMixed(ch)) {
-          FX_WCHAR a = MIXED[ch];
-          int32_t b = (int32_t)a;
           tmp += MIXED[ch];
         } else {
           if (isAlphaUpper(ch)) {

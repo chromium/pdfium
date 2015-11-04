@@ -131,7 +131,6 @@ FX_FLOAT CBC_QRAlignmentPatternFinder::CrossCheckVertical(
     int32_t centerJ,
     int32_t maxCount,
     int32_t originalStateCountTotal) {
-  CBC_CommonBitMatrix* image = m_image;
   int32_t maxI = m_image->GetHeight();
   CFX_Int32Array stateCount;
   stateCount.Copy(m_crossCheckStateCount);

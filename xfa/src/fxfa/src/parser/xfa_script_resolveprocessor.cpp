@@ -164,7 +164,6 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Excalmatory(
 }
 int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_NumberSign(
     CXFA_ResolveNodesData& rnd) {
-  FX_DWORD dwStyles = rnd.m_dwStyles;
   CFX_WideString wsName = rnd.m_wsName.Right(rnd.m_wsName.GetLength() - 1);
   CFX_WideString wsCondition = rnd.m_wsCondition;
   CXFA_Node* curNode = (CXFA_Node*)rnd.m_CurNode;
@@ -336,12 +335,10 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
     }
   }
   if (dwStyles & XFA_RESOLVENODE_Properties) {
-    FX_BOOL bSetFlag = FALSE;
     for (int32_t i = 0; i < properties.GetSize(); i++) {
       CXFA_Node* childProperty = properties[i];
       if (childProperty->IsUnnamed()) {
         uint32_t uPropHash = childProperty->GetClassHashCode();
-        XFA_ELEMENT eName = childProperty->GetClassID();
         if (uPropHash == uNameHash) {
           nodes.Add(childProperty);
         }
@@ -535,7 +532,6 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_GetFilter(
   CFX_WideString& wsCondition = rnd.m_wsCondition;
   FX_WCHAR* pNameBuf = wsName.GetBuffer(iLength - nStart);
   FX_WCHAR* pConditionBuf = wsCondition.GetBuffer(iLength - nStart);
-  int32_t nCount = 0;
   int32_t nNameCount = 0;
   int32_t nConditionCount = 0;
   CFX_Int32Array stack;

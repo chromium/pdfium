@@ -776,7 +776,7 @@ void CBC_QRCoderEncoder::AppendKanjiBytes(const CFX_ByteString& content,
                                           CBC_QRCoderBitVector* bits,
                                           int32_t& e) {
   CFX_ByteArray bytes;
-  FX_DWORD value = 0, h = 0;
+  FX_DWORD value = 0;
   for (int32_t i = 0; i < bytes.GetSize(); i += 2) {
     value = (FX_DWORD)((uint8_t)(content[i] << 8) | (uint8_t)content[i + 1]);
     if (value <= 0x9ffc && value >= 0x8140) {

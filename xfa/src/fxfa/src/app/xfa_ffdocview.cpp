@@ -792,8 +792,6 @@ void CXFA_FFDocView::RunBindItems() {
     CFX_WideString wsValue, wsLabel;
     FX_DWORD uValueHash = FX_HashCode_String_GetW(CFX_WideString(wsValueRef),
                                                   wsValueRef.GetLength());
-    FX_DWORD uLableHash = FX_HashCode_String_GetW(CFX_WideString(wsLabelRef),
-                                                  wsLabelRef.GetLength());
     for (int32_t i = 0; i < iCount; i++) {
       CXFA_Object* refObj = rs.nodes[i];
       if (!refObj->IsNode()) {
