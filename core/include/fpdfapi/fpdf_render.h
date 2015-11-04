@@ -8,7 +8,6 @@
 #define CORE_INCLUDE_FPDFAPI_FPDF_RENDER_H_
 
 #include "../../../third_party/base/nonstd_unique_ptr.h"
-#include "../../../public/fpdf_progressive.h"
 #include "../fxge/fx_ge.h"
 #include "fpdf_page.h"
 
@@ -134,12 +133,14 @@ class CPDF_RenderContext {
 
 class CPDF_ProgressiveRenderer {
  public:
-  // Must match FDF_RENDER_* definitions in fpdf_progressive.h.
+  // Must match FDF_RENDER_* definitions in public/fpdf_progressive.h, but
+  // cannot #include that header. fpdfsdk/src/fpdf_progressive.cpp has
+  // static_asserts to make sure the two sets of values match.
   enum Status {
-    Ready = FPDF_RENDER_READER,
-    ToBeContinued = FPDF_RENDER_TOBECOUNTINUED,
-    Done = FPDF_RENDER_DONE,
-    Failed = FPDF_RENDER_FAILED
+    Ready,          // FPDF_RENDER_READER,
+    ToBeContinued,  // FPDF_RENDER_TOBECOUNTINUED,
+    Done,           // FPDF_RENDER_DONE,
+    Failed,         // FPDF_RENDER_FAILED
   };
   static int ToFPDFStatus(Status status) { return static_cast<int>(status); }
 

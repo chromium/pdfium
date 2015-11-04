@@ -46,7 +46,6 @@
 // All other code is very different from the original.
 //
 //----------------------------------------------------------------------------
-#include "../../core/include/fxcrt/fx_ext.h"
 #include <limits.h>
 #include "agg_rasterizer_scanline_aa.h"
 namespace agg

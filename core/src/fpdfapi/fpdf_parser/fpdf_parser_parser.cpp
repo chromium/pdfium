@@ -2675,18 +2675,13 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
   CPDF_DataAvail(IFX_FileAvail* pFileAvail, IFX_FileRead* pFileRead);
   ~CPDF_DataAvail() override;
 
+  // IPDF_DataAvail:
   FX_BOOL IsDocAvail(IFX_DownloadHints* pHints) override;
-
   void SetDocument(CPDF_Document* pDoc) override;
-
   FX_BOOL IsPageAvail(int iPage, IFX_DownloadHints* pHints) override;
-
   int32_t IsFormAvail(IFX_DownloadHints* pHints) override;
-
   int32_t IsLinearizedPDF() override;
-
   FX_BOOL IsLinearized() override { return m_bLinearized; }
-
   void GetLinearizedMainXRefInfo(FX_FILESIZE* pPos, FX_DWORD* pSize) override;
 
  protected:
