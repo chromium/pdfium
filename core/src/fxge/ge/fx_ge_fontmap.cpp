@@ -17,6 +17,33 @@
 
 namespace {
 
+struct BuiltinFont {
+  const uint8_t* m_pFontData;
+  FX_DWORD m_dwSize;
+};
+
+const BuiltinFont g_FoxitFonts[14] = {
+    {g_FoxitFixedFontData, 17597},
+    {g_FoxitFixedBoldFontData, 18055},
+    {g_FoxitFixedBoldItalicFontData, 19151},
+    {g_FoxitFixedItalicFontData, 18746},
+    {g_FoxitSansFontData, 15025},
+    {g_FoxitSansBoldFontData, 16344},
+    {g_FoxitSansBoldItalicFontData, 16418},
+    {g_FoxitSansItalicFontData, 16339},
+    {g_FoxitSerifFontData, 19469},
+    {g_FoxitSerifBoldFontData, 19395},
+    {g_FoxitSerifBoldItalicFontData, 20733},
+    {g_FoxitSerifItalicFontData, 21227},
+    {g_FoxitSymbolFontData, 16729},
+    {g_FoxitDingbatsFontData, 29513},
+};
+
+const BuiltinFont g_MMFonts[2] = {
+    {g_FoxitSerifMMFontData, 113417},
+    {g_FoxitSansMMFontData, 66919},
+};
+
 CFX_ByteString KeyNameFromFace(const CFX_ByteString& face_name,
                                int weight,
                                FX_BOOL bItalic) {
@@ -365,44 +392,24 @@ void CFX_FontMgr::ReleaseFace(FXFT_Face face) {
     }
   }
 }
-const FoxitFonts g_FoxitFonts[14] = {
-    {g_FoxitFixedFontData, 17597},
-    {g_FoxitFixedBoldFontData, 18055},
-    {g_FoxitFixedBoldItalicFontData, 19151},
-    {g_FoxitFixedItalicFontData, 18746},
-    {g_FoxitSansFontData, 15025},
-    {g_FoxitSansBoldFontData, 16344},
-    {g_FoxitSansBoldItalicFontData, 16418},
-    {g_FoxitSansItalicFontData, 16339},
-    {g_FoxitSerifFontData, 19469},
-    {g_FoxitSerifBoldFontData, 19395},
-    {g_FoxitSerifBoldItalicFontData, 20733},
-    {g_FoxitSerifItalicFontData, 21227},
-    {g_FoxitSymbolFontData, 16729},
-    {g_FoxitDingbatsFontData, 29513},
-};
-FX_BOOL CFX_FontMgr::GetStandardFont(const uint8_t*& pFontData,
-                                     FX_DWORD& size,
-                                     int index) {
-  if (index > 15 || index < 0) {
-    return FALSE;
+
+bool CFX_FontMgr::GetBuiltinFont(size_t index,
+                                 const uint8_t** pFontData,
+                                 FX_DWORD* size) {
+  if (index < FX_ArraySize(g_FoxitFonts)) {
+    *pFontData = g_FoxitFonts[index].m_pFontData;
+    *size = g_FoxitFonts[index].m_dwSize;
+    return true;
   }
-  {
-    if (index >= 14) {
-      if (index == 14) {
-        pFontData = g_FoxitSerifMMFontData;
-        size = 113417;
-      } else {
-        pFontData = g_FoxitSansMMFontData;
-        size = 66919;
-      }
-    } else {
-      pFontData = g_FoxitFonts[index].m_pFontData;
-      size = g_FoxitFonts[index].m_dwSize;
-    }
+  index -= FX_ArraySize(g_FoxitFonts);
+  if (index < FX_ArraySize(g_MMFonts)) {
+    *pFontData = g_MMFonts[index].m_pFontData;
+    *size = g_MMFonts[index].m_dwSize;
+    return true;
   }
-  return TRUE;
+  return false;
 }
+
 CFX_FontMapper::CFX_FontMapper(CFX_FontMgr* mgr)
     : m_bListLoaded(FALSE),
       m_pFontInfo(nullptr),
@@ -672,7 +679,7 @@ FXFT_Face CFX_FontMapper::UseInternalSubst(CFX_SubstFont* pSubstFont,
     }
     const uint8_t* pFontData = NULL;
     FX_DWORD size = 0;
-    if (m_pFontMgr->GetStandardFont(pFontData, size, iBaseFont)) {
+    if (m_pFontMgr->GetBuiltinFont(iBaseFont, &pFontData, &size)) {
       m_FoxitFaces[iBaseFont] = m_pFontMgr->GetFixedFace(pFontData, size, 0);
       return m_FoxitFaces[iBaseFont];
     }
@@ -689,8 +696,8 @@ FXFT_Face CFX_FontMapper::UseInternalSubst(CFX_SubstFont* pSubstFont,
       return m_MMFaces[1];
     }
     const uint8_t* pFontData = NULL;
-    FX_DWORD size;
-    m_pFontMgr->GetStandardFont(pFontData, size, 14);
+    FX_DWORD size = 0;
+    m_pFontMgr->GetBuiltinFont(14, &pFontData, &size);
     m_MMFaces[1] = m_pFontMgr->GetFixedFace(pFontData, size, 0);
     return m_MMFaces[1];
   }
@@ -700,7 +707,7 @@ FXFT_Face CFX_FontMapper::UseInternalSubst(CFX_SubstFont* pSubstFont,
   }
   const uint8_t* pFontData = NULL;
   FX_DWORD size = 0;
-  m_pFontMgr->GetStandardFont(pFontData, size, 15);
+  m_pFontMgr->GetBuiltinFont(15, &pFontData, &size);
   m_MMFaces[0] = m_pFontMgr->GetFixedFace(pFontData, size, 0);
   return m_MMFaces[0];
 }
@@ -828,7 +835,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
     }
     const uint8_t* pFontData = NULL;
     FX_DWORD size = 0;
-    m_pFontMgr->GetStandardFont(pFontData, size, 12);
+    m_pFontMgr->GetBuiltinFont(12, &pFontData, &size);
     m_FoxitFaces[12] = m_pFontMgr->GetFixedFace(pFontData, size, 0);
     return m_FoxitFaces[12];
   }
@@ -841,7 +848,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
     }
     const uint8_t* pFontData = NULL;
     FX_DWORD size = 0;
-    m_pFontMgr->GetStandardFont(pFontData, size, 13);
+    m_pFontMgr->GetBuiltinFont(13, &pFontData, &size);
     m_FoxitFaces[13] = m_pFontMgr->GetFixedFace(pFontData, size, 0);
     return m_FoxitFaces[13];
   }
@@ -1085,7 +1092,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
           }
           const uint8_t* pFontData = NULL;
           FX_DWORD size = 0;
-          m_pFontMgr->GetStandardFont(pFontData, size, 12);
+          m_pFontMgr->GetBuiltinFont(12, &pFontData, &size);
           m_FoxitFaces[12] = m_pFontMgr->GetFixedFace(pFontData, size, 0);
           return m_FoxitFaces[12];
         }
