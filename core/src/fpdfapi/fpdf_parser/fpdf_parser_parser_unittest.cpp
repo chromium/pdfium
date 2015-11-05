@@ -5,6 +5,28 @@
 #include "testing/gtest/include/gtest/gtest.h"
 
 #include "../../../include/fpdfapi/fpdf_parser.h"
+#include "../../../include/fxcrt/fx_stream.h"
+
+class CPDF_TestParser : public CPDF_Parser {
+ public:
+  CPDF_TestParser() {}
+  ~CPDF_TestParser() {}
+
+  bool InitTest(const FX_CHAR* path) {
+    IFX_FileRead* pFileAccess = FX_CreateFileRead(path);
+    if (!pFileAccess)
+      return false;
+
+    // For the test file, the header is set at the beginning.
+    m_Syntax.InitParser(pFileAccess, 0);
+    return true;
+  }
+
+ private:
+  // Add test case as private friend so that RebuildCrossRef in CPDF_Parser
+  // can be accessed.
+  FRIEND_TEST(fpdf_parser_parser, RebuildCrossRefCorrectly);
+};
 
 // TODO(thestig) Using unique_ptr with ReleaseDeleter is still not ideal.
 // Come up or wait for something better.
@@ -166,5 +188,24 @@ TEST(fpdf_parser_parser, ReadHexString) {
     parser.InitParser(stream.get(), 0);
     EXPECT_EQ("", parser.ReadHexString());
     EXPECT_EQ(1, parser.SavePos());
+  }
+}
+
+TEST(fpdf_parser_parser, RebuildCrossRefCorrectly) {
+  CPDF_TestParser parser;
+  ASSERT_TRUE(
+      parser.InitTest("testing/resources/parser_rebuildxref_correct.pdf"));
+
+  ASSERT_TRUE(parser.RebuildCrossRef());
+  const FX_FILESIZE offsets[] = {0, 15, 61, 154, 296, 374, 450};
+  const FX_WORD versions[] = {0, 0, 2, 4, 6, 8, 0};
+  static_assert(FX_ArraySize(offsets) == FX_ArraySize(versions),
+                "numbers of offsets and versions should be same.");
+  ASSERT_EQ(FX_ArraySize(offsets), parser.m_CrossRef.GetSize());
+  ASSERT_EQ(FX_ArraySize(versions), parser.m_ObjVersion.GetSize());
+
+  for (int i = 0; i < FX_ArraySize(offsets); ++i) {
+    EXPECT_EQ(offsets[i], parser.m_CrossRef.GetAt(i));
+    EXPECT_EQ(versions[i], parser.m_ObjVersion.GetAt(i));
   }
 }
