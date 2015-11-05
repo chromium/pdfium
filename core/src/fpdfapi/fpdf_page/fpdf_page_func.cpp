@@ -5,7 +5,9 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include <limits.h>
+#include <vector>
 
+#include "../../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../../../third_party/base/numerics/safe_conversions_impl.h"
 #include "../../../include/fpdfapi/fpdf_module.h"
 #include "../../../include/fpdfapi/fpdf_page.h"
@@ -724,78 +726,88 @@ class CPDF_StitchFunc : public CPDF_Function {
   FX_BOOL v_Init(CPDF_Object* pObj) override;
   FX_BOOL v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const override;
 
-  int m_nSubs;
-  CPDF_Function** m_pSubFunctions;
+  std::vector<CPDF_Function*> m_pSubFunctions;
   FX_FLOAT* m_pBounds;
   FX_FLOAT* m_pEncode;
+
+  static const int kRequiredNumInputs = 1;
 };
 
 CPDF_StitchFunc::CPDF_StitchFunc() {
-  m_nSubs = 0;
-  m_pSubFunctions = NULL;
   m_pBounds = NULL;
   m_pEncode = NULL;
 }
 CPDF_StitchFunc::~CPDF_StitchFunc() {
-  for (int i = 0; i < m_nSubs; i++)
-    delete m_pSubFunctions[i];
-  FX_Free(m_pSubFunctions);
+  for (auto& sub : m_pSubFunctions) {
+    delete sub;
+  }
   FX_Free(m_pBounds);
   FX_Free(m_pEncode);
 }
 FX_BOOL CPDF_StitchFunc::v_Init(CPDF_Object* pObj) {
   CPDF_Dictionary* pDict = pObj->GetDict();
-  if (pDict == NULL) {
+  if (!pDict) {
+    return FALSE;
+  }
+  if (m_nInputs != kRequiredNumInputs) {
     return FALSE;
   }
   CPDF_Array* pArray = pDict->GetArray(FX_BSTRC("Functions"));
-  if (pArray == NULL) {
+  if (!pArray) {
     return FALSE;
   }
-  m_nSubs = pArray->GetCount();
-  if (m_nSubs == 0) {
+  FX_DWORD nSubs = pArray->GetCount();
+  if (nSubs == 0) {
     return FALSE;
   }
-  m_pSubFunctions = FX_Alloc(CPDF_Function*, m_nSubs);
   m_nOutputs = 0;
-  int i;
-  for (i = 0; i < m_nSubs; i++) {
+  for (FX_DWORD i = 0; i < nSubs; i++) {
     CPDF_Object* pSub = pArray->GetElementValue(i);
     if (pSub == pObj) {
       return FALSE;
     }
-    m_pSubFunctions[i] = CPDF_Function::Load(pSub);
-    if (m_pSubFunctions[i] == NULL) {
+    nonstd::unique_ptr<CPDF_Function> pFunc(CPDF_Function::Load(pSub));
+    if (!pFunc) {
       return FALSE;
     }
-    if (m_pSubFunctions[i]->CountOutputs() > m_nOutputs) {
-      m_nOutputs = m_pSubFunctions[i]->CountOutputs();
+    // Check that the input dimensionality is 1, and that all output
+    // dimensionalities are the same.
+    if (pFunc->CountInputs() != kRequiredNumInputs) {
+      return FALSE;
     }
+    if (pFunc->CountOutputs() != m_nOutputs) {
+      if (m_nOutputs)
+        return FALSE;
+
+      m_nOutputs = pFunc->CountOutputs();
+    }
+
+    m_pSubFunctions.push_back(pFunc.release());
   }
-  m_pBounds = FX_Alloc(FX_FLOAT, m_nSubs + 1);
+  m_pBounds = FX_Alloc(FX_FLOAT, nSubs + 1);
   m_pBounds[0] = m_pDomains[0];
   pArray = pDict->GetArray(FX_BSTRC("Bounds"));
-  if (pArray == NULL) {
+  if (!pArray) {
     return FALSE;
   }
-  for (i = 0; i < m_nSubs - 1; i++) {
+  for (FX_DWORD i = 0; i < nSubs - 1; i++) {
     m_pBounds[i + 1] = pArray->GetFloat(i);
   }
-  m_pBounds[m_nSubs] = m_pDomains[1];
-  m_pEncode = FX_Alloc2D(FX_FLOAT, m_nSubs, 2);
+  m_pBounds[nSubs] = m_pDomains[1];
+  m_pEncode = FX_Alloc2D(FX_FLOAT, nSubs, 2);
   pArray = pDict->GetArray(FX_BSTRC("Encode"));
-  if (pArray == NULL) {
+  if (!pArray) {
     return FALSE;
   }
-  for (i = 0; i < m_nSubs * 2; i++) {
+  for (FX_DWORD i = 0; i < nSubs * 2; i++) {
     m_pEncode[i] = pArray->GetFloat(i);
   }
   return TRUE;
 }
 FX_BOOL CPDF_StitchFunc::v_Call(FX_FLOAT* inputs, FX_FLOAT* outputs) const {
   FX_FLOAT input = inputs[0];
-  int i;
-  for (i = 0; i < m_nSubs - 1; i++)
+  size_t i;
+  for (i = 0; i < m_pSubFunctions.size() - 1; i++)
     if (input < m_pBounds[i + 1]) {
       break;
     }
@@ -805,7 +817,7 @@ FX_BOOL CPDF_StitchFunc::v_Call(FX_FLOAT* inputs, FX_FLOAT* outputs) const {
   input = PDF_Interpolate(input, m_pBounds[i], m_pBounds[i + 1],
                           m_pEncode[i * 2], m_pEncode[i * 2 + 1]);
   int nresults;
-  m_pSubFunctions[i]->Call(&input, m_nInputs, outputs, nresults);
+  m_pSubFunctions[i]->Call(&input, kRequiredNumInputs, outputs, nresults);
   return TRUE;
 }
 CPDF_Function* CPDF_Function::Load(CPDF_Object* pFuncObj) {
