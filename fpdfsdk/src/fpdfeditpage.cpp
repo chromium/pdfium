@@ -96,37 +96,21 @@ DLLEXPORT int STDCALL FPDFPage_GetRotation(FPDF_PAGE page) {
     return -1;
   }
   CPDF_Dictionary* pDict = pPage->m_pFormDict;
-
-  int rotate = 0;
-  if (pDict != NULL) {
-    if (pDict->KeyExist("Rotate"))
-      rotate = pDict->GetElement("Rotate")->GetDirect()
-                   ? pDict->GetElement("Rotate")->GetDirect()->GetInteger() / 90
-                   : 0;
-    else {
-      if (pDict->KeyExist("Parent")) {
-        CPDF_Dictionary* pPages =
-            ToDictionary(pDict->GetElement("Parent")->GetDirect());
-        while (pPages) {
-          if (pPages->KeyExist("Rotate")) {
-            rotate =
-                pPages->GetElement("Rotate")->GetDirect()
-                    ? pPages->GetElement("Rotate")->GetDirect()->GetInteger() /
-                          90
-                    : 0;
-            break;
-          } else if (pPages->KeyExist("Parent"))
-            pPages = ToDictionary(pPages->GetElement("Parent")->GetDirect());
-          else
-            break;
-        }
-      }
-    }
-  } else {
+  if (!pDict)
     return -1;
+
+  while (pDict) {
+    if (pDict->KeyExist("Rotate")) {
+      CPDF_Object* pRotateObj = pDict->GetElement("Rotate")->GetDirect();
+      return pRotateObj ? pRotateObj->GetInteger() / 90 : 0;
+    }
+    if (!pDict->KeyExist("Parent"))
+      break;
+
+    pDict = ToDictionary(pDict->GetElement("Parent")->GetDirect());
   }
 
-  return rotate;
+  return 0;
 }
 
 DLLEXPORT void STDCALL FPDFPage_InsertObject(FPDF_PAGE page,
@@ -139,7 +123,7 @@ DLLEXPORT void STDCALL FPDFPage_InsertObject(FPDF_PAGE page,
     return;
   }
   CPDF_PageObject* pPageObj = (CPDF_PageObject*)page_obj;
-  if (pPageObj == NULL)
+  if (!pPageObj)
     return;
   FX_POSITION LastPersition = pPage->GetLastObjectPosition();
 
@@ -262,7 +246,7 @@ DLLEXPORT void STDCALL FPDFPageObj_Transform(FPDF_PAGEOBJECT page_object,
                                              double e,
                                              double f) {
   CPDF_PageObject* pPageObj = (CPDF_PageObject*)page_object;
-  if (pPageObj == NULL)
+  if (!pPageObj)
     return;
 
   CFX_AffineMatrix matrix((FX_FLOAT)a, (FX_FLOAT)b, (FX_FLOAT)c, (FX_FLOAT)d,
