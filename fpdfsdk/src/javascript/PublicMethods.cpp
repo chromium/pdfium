@@ -366,20 +366,20 @@ CJS_Array CJS_PublicMethods::AF_MakeArrayFromList(CJS_Runtime* pRuntime,
 
   while (*p) {
     const char* pTemp = strchr(p, ch);
-    if (pTemp == NULL) {
+    if (!pTemp) {
       StrArray.SetElement(nIndex, CJS_Value(pRuntime, StrTrim(p).c_str()));
       break;
-    } else {
-      char* pSub = new char[pTemp - p + 1];
-      strncpy(pSub, p, pTemp - p);
-      *(pSub + (pTemp - p)) = '\0';
-
-      StrArray.SetElement(nIndex, CJS_Value(pRuntime, StrTrim(pSub).c_str()));
-      delete[] pSub;
-
-      nIndex++;
-      p = ++pTemp;
     }
+
+    char* pSub = new char[pTemp - p + 1];
+    strncpy(pSub, p, pTemp - p);
+    *(pSub + (pTemp - p)) = '\0';
+
+    StrArray.SetElement(nIndex, CJS_Value(pRuntime, StrTrim(pSub).c_str()));
+    delete[] pSub;
+
+    nIndex++;
+    p = ++pTemp;
   }
   return StrArray;
 }
@@ -1804,7 +1804,7 @@ FX_BOOL CJS_PublicMethods::AFMergeChange(IJS_Context* cc,
   }
 
   CFX_WideString swValue;
-  if (pEventHandler->m_pValue != NULL)
+  if (pEventHandler->m_pValue)
     swValue = pEventHandler->Value();
 
   if (pEventHandler->WillCommit()) {

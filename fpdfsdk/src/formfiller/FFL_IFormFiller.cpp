@@ -565,7 +565,7 @@ CFFL_FormFiller* CFFL_IFormFiller::GetFormFiller(CPDFSDK_Annot* pAnnot,
 }
 
 void CFFL_IFormFiller::RemoveFormFiller(CPDFSDK_Annot* pAnnot) {
-  if (pAnnot != NULL) {
+  if (pAnnot) {
     UnRegisterFormFiller(pAnnot);
   }
 }
