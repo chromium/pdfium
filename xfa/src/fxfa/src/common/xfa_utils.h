@@ -54,10 +54,10 @@ class CXFA_NodeIteratorTemplate {
     }
     return TRUE;
   }
-  NodeType* GetCurrent() {
+  NodeType* GetCurrent() const {
     return m_NodeStack.GetSize() ? *m_NodeStack.GetTopElement() : NULL;
   }
-  NodeType* GetRoot() { return m_pRoot; }
+  NodeType* GetRoot() const { return m_pRoot; }
   NodeType* MoveToPrev() {
     int32_t nStackLength = m_NodeStack.GetSize();
     if (nStackLength == 1) {

@@ -7155,7 +7155,8 @@ static FXJSE_FUNCTION formcalc_fm2js_functions[] = {
     {"get_fm_jsobj", CXFA_FM2JSContext::get_fm_jsobj},
     {"fm_var_filter", CXFA_FM2JSContext::fm_var_filter},
 };
-CXFA_FM2JSContext::CXFA_FM2JSContext() : m_pDocument(NULL), m_hFMClass(NULL) {
+CXFA_FM2JSContext::CXFA_FM2JSContext()
+    : m_hFMClass(nullptr), m_pDocument(nullptr) {
   FX_memset(&m_fmClass, 0, sizeof(FXJSE_CLASS));
 }
 CXFA_FM2JSContext::~CXFA_FM2JSContext() {

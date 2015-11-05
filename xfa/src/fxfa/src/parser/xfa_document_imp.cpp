@@ -26,24 +26,22 @@
 #include "xfa_script_signaturepseudomodel.h"
 CXFA_Document::CXFA_Document(IXFA_DocParser* pParser)
     : m_pParser(pParser),
-      m_pLayoutProcessor(NULL),
-      m_pRootNode(NULL),
-      m_pScriptContext(NULL),
-      m_pLocalMgr(NULL),
-      m_pScriptDataWindow(NULL),
-      m_pScriptEvent(NULL),
-      m_pScriptHost(NULL),
-      m_pScriptLog(NULL),
-      m_pScriptLayout(NULL),
-      m_pScriptSignature(NULL),
-      m_dwDocFlags(0),
-      m_eCurVersionMode(XFA_VERSION_DEFAULT) {
+      m_pScriptContext(nullptr),
+      m_pLayoutProcessor(nullptr),
+      m_pRootNode(nullptr),
+      m_pLocalMgr(nullptr),
+      m_pScriptDataWindow(nullptr),
+      m_pScriptEvent(nullptr),
+      m_pScriptHost(nullptr),
+      m_pScriptLog(nullptr),
+      m_pScriptLayout(nullptr),
+      m_pScriptSignature(nullptr),
+      m_eCurVersionMode(XFA_VERSION_DEFAULT),
+      m_dwDocFlags(0) {
   ASSERT(m_pParser);
 }
 CXFA_Document::~CXFA_Document() {
-  if (m_pRootNode) {
-    delete m_pRootNode;
-  }
+  delete m_pRootNode;
   PurgeNodes();
 }
 void CXFA_Document::ClearLayoutData() {

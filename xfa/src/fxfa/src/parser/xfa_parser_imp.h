@@ -64,9 +64,8 @@ class CXFA_SimpleParser : public IXFA_Parser {
   void ParseInstruction(CXFA_Node* pXFANode,
                         IFDE_XMLInstruction* pXMLInstruction,
                         XFA_XDPPACKET ePacketID);
-
- protected:
   void SetFactory(IXFA_ObjFactory* pFactory);
+
   CXFA_XMLParser* m_pXMLParser;
   IFDE_XMLDoc* m_pXMLDoc;
   IFX_Stream* m_pStream;
@@ -112,6 +111,14 @@ class CXFA_XMLParser : public IFDE_XMLParser {
   virtual void Release() { delete this; }
   virtual int32_t DoParser(IFX_Pause* pPause);
 
+#ifdef _XFA_VERIFY_Checksum_
+  FX_FILESIZE m_nStart[2];
+  size_t m_nSize[2];
+  FX_FILESIZE m_nElementStart;
+  FX_WORD m_dwCheckStatus;
+  FX_WORD m_dwCurrentCheckStatus;
+#endif
+
  protected:
   IFDE_XMLNode* m_pRoot;
   IFX_Stream* m_pStream;
@@ -123,13 +130,5 @@ class CXFA_XMLParser : public IFDE_XMLParser {
   CFX_WideString m_ws1;
   CFX_WideString m_ws2;
   FX_DWORD m_dwStatus;
-#ifdef _XFA_VERIFY_Checksum_
- public:
-  FX_FILESIZE m_nStart[2];
-  size_t m_nSize[2];
-  FX_FILESIZE m_nElementStart;
-  FX_WORD m_dwCheckStatus;
-  FX_WORD m_dwCurrentCheckStatus;
-#endif
 };
 #endif

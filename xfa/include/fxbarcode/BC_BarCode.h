@@ -132,9 +132,6 @@ class CBC_Codabar : public CBC_OneCode {
   CFX_WideString m_renderContents;
 };
 class CBC_Code128 : public CBC_OneCode {
- private:
-  BC_TYPE m_type;
-
  public:
   CBC_Code128(BC_TYPE type);
   virtual ~CBC_Code128();

@@ -29,22 +29,26 @@ class CXFA_FFApp : public IXFA_App, public IFWL_AdapterNative {
   CXFA_FFApp(IXFA_AppProvider* pProvider);
   ~CXFA_FFApp() override;
 
-  virtual IXFA_DocHandler* GetDocHandler();
-  virtual IXFA_Doc* CreateDoc(IXFA_DocProvider* pProvider,
-                              IFX_FileRead* pStream,
-                              FX_BOOL bTakeOverFile);
-  virtual IXFA_Doc* CreateDoc(IXFA_DocProvider* pProvider,
-                              CPDF_Document* pPDFDoc);
-  virtual IXFA_AppProvider* GetAppProvider() { return m_pProvider; }
-  virtual void SetDefaultFontMgr(IXFA_FontMgr* pFontMgr);
-  virtual IXFA_MenuHandler* GetMenuHandler();
-  virtual IFWL_AdapterWidgetMgr* GetWidgetMgr(
-      IFWL_WidgetMgrDelegate* pDelegate);
-  virtual IFWL_AdapterThreadMgr* GetThreadMgr();
-  virtual IFWL_AdapterTimerMgr* GetTimerMgr();
-  virtual IFWL_AdapterCursorMgr* GetCursorMgr();
-  virtual IFWL_AdapterMonitorMgr* GetMonitorMgr();
-  virtual IFWL_AdapterClipboardMgr* GetClipboardMgr();
+  // IFXFA_App:
+  IXFA_DocHandler* GetDocHandler() override;
+  IXFA_Doc* CreateDoc(IXFA_DocProvider* pProvider,
+                      IFX_FileRead* pStream,
+                      FX_BOOL bTakeOverFile) override;
+  IXFA_Doc* CreateDoc(IXFA_DocProvider* pProvider,
+                      CPDF_Document* pPDFDoc) override;
+  IXFA_AppProvider* GetAppProvider() override { return m_pProvider; }
+  void SetDefaultFontMgr(IXFA_FontMgr* pFontMgr) override;
+  IXFA_MenuHandler* GetMenuHandler() override;
+
+  // IFWL_AdapterNative:
+  IFWL_AdapterWidgetMgr* GetWidgetMgr(
+      IFWL_WidgetMgrDelegate* pDelegate) override;
+  IFWL_AdapterThreadMgr* GetThreadMgr() override;
+  IFWL_AdapterTimerMgr* GetTimerMgr() override;
+  IFWL_AdapterCursorMgr* GetCursorMgr() override;
+  IFWL_AdapterMonitorMgr* GetMonitorMgr() override;
+  IFWL_AdapterClipboardMgr* GetClipboardMgr() override;
+
   CXFA_FontMgr* GetXFAFontMgr();
   IFX_FontMgr* GetFDEFontMgr();
   CXFA_FWLTheme* GetFWLTheme();

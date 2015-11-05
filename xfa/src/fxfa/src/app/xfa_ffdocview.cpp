@@ -46,17 +46,18 @@ extern const XFA_ATTRIBUTEENUM gs_EventActivity[] = {
     XFA_ATTRIBUTEENUM_Unknown,
 };
 CXFA_FFDocView::CXFA_FFDocView(CXFA_FFDoc* pDoc)
-    : m_pDoc(pDoc),
-      m_pWidgetHandler(NULL),
-      m_pXFADocLayout(NULL),
+    : m_bLayoutEvent(FALSE),
+      m_pListFocusWidget(nullptr),
+      m_bInLayoutStatus(FALSE),
+      m_pDoc(pDoc),
+      m_pWidgetHandler(nullptr),
+      m_pXFADocLayout(nullptr),
+      m_pFocusAcc(nullptr),
+      m_pFocusWidget(nullptr),
+      m_pOldFocusWidget(nullptr),
       m_iStatus(XFA_DOCVIEW_LAYOUTSTATUS_None),
-      m_iLock(0),
-      m_bLayoutEvent(FALSE),
-      m_pFocusAcc(NULL),
-      m_pFocusWidget(NULL),
-      m_pListFocusWidget(NULL),
-      m_pOldFocusWidget(NULL),
-      m_bInLayoutStatus(FALSE) {}
+      m_iLock(0) {
+}
 CXFA_FFDocView::~CXFA_FFDocView() {
   DestroyDocView();
   if (m_pWidgetHandler) {

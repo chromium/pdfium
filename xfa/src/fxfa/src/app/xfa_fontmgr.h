@@ -17,14 +17,16 @@ class CXFA_DefFontMgr : public IXFA_FontMgr {
  public:
   CXFA_DefFontMgr() {}
   ~CXFA_DefFontMgr() override;
-  virtual IFX_Font* GetFont(IXFA_Doc* hDoc,
-                            const CFX_WideStringC& wsFontFamily,
-                            FX_DWORD dwFontStyles,
-                            FX_WORD wCodePage = 0xFFFF);
-  virtual IFX_Font* GetDefaultFont(IXFA_Doc* hDoc,
-                                   const CFX_WideStringC& wsFontFamily,
-                                   FX_DWORD dwFontStyles,
-                                   FX_WORD wCodePage = 0xFFFF);
+
+  // IXFA_FontMgr:
+  IFX_Font* GetFont(IXFA_Doc* hDoc,
+                    const CFX_WideStringC& wsFontFamily,
+                    FX_DWORD dwFontStyles,
+                    FX_WORD wCodePage = 0xFFFF) override;
+  IFX_Font* GetDefaultFont(IXFA_Doc* hDoc,
+                           const CFX_WideStringC& wsFontFamily,
+                           FX_DWORD dwFontStyles,
+                           FX_WORD wCodePage = 0xFFFF) override;
 
  protected:
   CFX_PtrArray m_CacheFonts;

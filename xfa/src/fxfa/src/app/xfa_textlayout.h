@@ -45,10 +45,10 @@ class CXFA_CSSTagProvider : public IFDE_CSSTagProvider {
 class CXFA_TextParseContext : public CFX_Target {
  public:
   CXFA_TextParseContext()
-      : m_ppMatchedDecls(NULL),
+      : m_pParentStyle(nullptr),
+        m_ppMatchedDecls(nullptr),
         m_dwMatchedDecls(0),
-        m_eDisplay(FDE_CSSDISPLAY_None),
-        m_pParentStyle(NULL) {}
+        m_eDisplay(FDE_CSSDISPLAY_None) {}
   ~CXFA_TextParseContext() {
     if (m_ppMatchedDecls != NULL) {
       FDE_Free(m_ppMatchedDecls);
@@ -184,33 +184,29 @@ class CXFA_TextUserData : public IFX_Unknown, public CFX_Target {
  public:
   CXFA_TextUserData(IFX_MEMAllocator* pAllocator, IFDE_CSSComputedStyle* pStyle)
       : m_pStyle(pStyle),
+        m_pLinkData(nullptr),
         m_pAllocator(pAllocator),
-        m_dwRefCount(0),
-        m_pLinkData(NULL) {
-    FXSYS_assert(m_pAllocator != NULL);
-    if (m_pStyle != NULL) {
+        m_dwRefCount(0) {
+    FXSYS_assert(m_pAllocator);
+    if (m_pStyle)
       m_pStyle->AddRef();
-    }
   }
   CXFA_TextUserData(IFX_MEMAllocator* pAllocator,
                     IFDE_CSSComputedStyle* pStyle,
                     CXFA_LinkUserData* pLinkData)
       : m_pStyle(pStyle),
+        m_pLinkData(pLinkData),
         m_pAllocator(pAllocator),
-        m_dwRefCount(0),
-        m_pLinkData(pLinkData) {
-    FXSYS_assert(m_pAllocator != NULL);
-    if (m_pStyle != NULL) {
+        m_dwRefCount(0) {
+    FXSYS_assert(m_pAllocator);
+    if (m_pStyle)
       m_pStyle->AddRef();
-    }
   }
   ~CXFA_TextUserData() {
-    if (m_pStyle != NULL) {
+    if (m_pStyle)
       m_pStyle->Release();
-    }
-    if (m_pLinkData != NULL) {
+    if (m_pLinkData)
       m_pLinkData->Release();
-    }
   }
   virtual FX_DWORD Release() {
     FX_DWORD dwRefCount = --m_dwRefCount;
@@ -329,10 +325,12 @@ class CXFA_TextLayout {
                      const CFX_Matrix& tmDoc2Device,
                      const CFX_RectF& rtClip,
                      int32_t iBlock = 0);
-
   FX_BOOL IsLoaded() const { return m_pieceLines.GetSize() > 0; }
   void Unload();
   const CXFA_PieceLineArray* GetPieceLines();
+
+  FX_BOOL m_bHasBlock;
+  CFX_Int32Array m_Blocks;
 
  private:
   void GetTextDataNode();
@@ -347,7 +345,6 @@ class CXFA_TextLayout {
   FX_BOOL Loader(const CFX_SizeF& szText,
                  FX_FLOAT& fLinePos,
                  FX_BOOL bSavePieces = TRUE);
-
   void LoadText(CXFA_Node* pNode,
                 const CFX_SizeF& szText,
                 FX_FLOAT& fLinePos,
@@ -361,22 +358,18 @@ class CXFA_TextLayout {
                        FX_BOOL bEndBreak = TRUE,
                        FX_BOOL bIsOl = FALSE,
                        int32_t iLiCount = 0);
-
   FX_BOOL AppendChar(const CFX_WideString& wsText,
                      FX_FLOAT& fLinePos,
                      FX_FLOAT fSpaceAbove,
                      FX_BOOL bSavePieces);
-
   void AppendTextLine(FX_DWORD dwStatus,
                       FX_FLOAT& fLinePos,
                       FX_BOOL bSavePieces,
                       FX_BOOL bEndBreak = FALSE);
   void EndBreak(FX_DWORD dwStatus, FX_FLOAT& fLinePos, FX_BOOL bDefault);
   FX_BOOL IsEnd(FX_BOOL bSavePieces);
-
   void ProcessText(CFX_WideString& wsText);
   void UpdateAlign(FX_FLOAT fHeight, FX_FLOAT fBottom);
-
   void RenderString(IFDE_RenderDevice* pDevice,
                     IFDE_SolidBrush* pBrush,
                     CXFA_PieceLine* pPieceLine,
@@ -389,33 +382,25 @@ class CXFA_TextLayout {
                   int32_t iPiece,
                   FXTEXT_CHARPOS* pCharPos,
                   const CFX_Matrix& tmDoc2Device);
-
   int32_t GetDisplayPos(XFA_LPCTEXTPIECE pPiece,
                         FXTEXT_CHARPOS* pCharPos,
                         FX_BOOL bCharCode = FALSE);
   FX_BOOL ToRun(XFA_LPCTEXTPIECE pPiece, FX_RTFTEXTOBJ& tr);
-
   void DoTabstops(IFDE_CSSComputedStyle* pStyle, CXFA_PieceLine* pPieceLine);
   FX_BOOL Layout(int32_t iBlock);
   int32_t CountBlocks() const;
+
   IXFA_TextProvider* m_pTextProvider;
   CXFA_Node* m_pTextDataNode;
   FX_BOOL m_bRichText;
   IFX_MEMAllocator* m_pAllocator;
   IFX_RTFBreak* m_pBreak;
-  FX_DWORD m_dwTextData;
-
   CXFA_LoaderContext* m_pLoader;
   int32_t m_iLines;
   FX_FLOAT m_fMaxWidth;
-
   CXFA_TextParser m_textParser;
   CXFA_PieceLineArray m_pieceLines;
   CXFA_TextTabstopsContext* m_pTabstopContext;
   FX_BOOL m_bBlockContinue;
-
- public:
-  FX_BOOL m_bHasBlock;
-  CFX_Int32Array m_Blocks;
 };
 #endif

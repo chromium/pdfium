@@ -66,19 +66,18 @@ IXFA_App* IXFA_App::Create(IXFA_AppProvider* pProvider) {
 // virtual
 IXFA_App::~IXFA_App() {}
 CXFA_FFApp::CXFA_FFApp(IXFA_AppProvider* pProvider)
-    : m_pDocHandler(NULL),
-      m_pFWLTheme(NULL),
+    : m_pDocHandler(nullptr),
+      m_pFWLTheme(nullptr),
       m_pProvider(pProvider),
-      m_pFontMgr(NULL),
-      m_pAdapterWidgetMgr(NULL),
-      m_pFDEFontMgr(NULL),
-      m_pMenuHandler(NULL),
-      m_pAdapterThreadMgr(NULL)
+      m_pFontMgr(nullptr),
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-      ,
-      m_pFontSource(NULL)
+      m_pFontSource(nullptr),
 #endif
-{
+      m_pAdapterWidgetMgr(nullptr),
+      m_pWidgetMgrDelegate(nullptr),
+      m_pFDEFontMgr(nullptr),
+      m_pMenuHandler(nullptr),
+      m_pAdapterThreadMgr(nullptr) {
   m_pFWLApp = IFWL_App::Create(this);
   FWL_SetApp(m_pFWLApp);
   m_pFWLApp->Initialize();

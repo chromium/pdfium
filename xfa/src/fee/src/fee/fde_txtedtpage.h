@@ -145,7 +145,6 @@ class CFDE_TxtEdtPage : public IFDE_TxtEdtPage {
   int32_t m_nCharCount;
   int32_t m_nPageIndex;
   FX_BOOL m_bLoaded;
-  FX_BOOL m_bLastPage;
   CFX_RectF m_rtPage;
   CFX_RectF m_rtPageMargin;
   CFX_RectF m_rtPageContents;

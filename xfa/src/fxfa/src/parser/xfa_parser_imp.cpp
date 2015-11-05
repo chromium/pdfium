@@ -24,13 +24,15 @@ IXFA_Parser* IXFA_Parser::Create(IXFA_ObjFactory* pFactory,
 }
 CXFA_SimpleParser::CXFA_SimpleParser(IXFA_ObjFactory* pFactory,
                                      FX_BOOL bDocumentParser)
-    : m_pXMLParser(NULL),
-      m_pXMLDoc(NULL),
-      m_pStream(NULL),
+    : m_pXMLParser(nullptr),
+      m_pXMLDoc(nullptr),
+      m_pStream(nullptr),
+      m_pFileRead(nullptr),
       m_pFactory(pFactory),
+      m_pRootNode(nullptr),
       m_ePacketID(XFA_XDPPACKET_UNKNOWN),
-      m_pRootNode(NULL),
-      m_bDocumentParser(bDocumentParser) {}
+      m_bDocumentParser(bDocumentParser) {
+}
 CXFA_SimpleParser::~CXFA_SimpleParser() {
   CloseParser();
 }
@@ -1390,7 +1392,8 @@ IXFA_DocParser* IXFA_DocParser::Create(IXFA_Notify* pNotify) {
   return new CXFA_DocumentParser(pNotify);
 }
 CXFA_DocumentParser::CXFA_DocumentParser(IXFA_Notify* pNotify)
-    : m_pNotify(pNotify), m_nodeParser(NULL, TRUE), m_pDocument(NULL) {}
+    : m_nodeParser(NULL, TRUE), m_pNotify(pNotify), m_pDocument(NULL) {
+}
 CXFA_DocumentParser::~CXFA_DocumentParser() {
   CloseParser();
 }
@@ -1442,22 +1445,19 @@ void CXFA_DocumentParser::CloseParser() {
   m_nodeParser.CloseParser();
 }
 CXFA_XMLParser::CXFA_XMLParser(IFDE_XMLNode* pRoot, IFX_Stream* pStream)
-    : m_pRoot(pRoot),
-      m_pStream(pStream),
-      m_pParser(NULL),
-      m_dwStatus(FDE_XMLSYNTAXSTATUS_None),
-      m_pParent(pRoot),
-      m_pChild(NULL),
-      m_NodeStack(16),
-      m_ws1(),
-      m_ws2()
+    :
 #ifdef _XFA_VERIFY_Checksum_
-      ,
       m_nElementStart(0),
       m_dwCheckStatus(0),
-      m_dwCurrentCheckStatus(0)
+      m_dwCurrentCheckStatus(0),
 #endif
-{
+      m_pRoot(pRoot),
+      m_pStream(pStream),
+      m_pParser(nullptr),
+      m_pParent(pRoot),
+      m_pChild(nullptr),
+      m_NodeStack(16),
+      m_dwStatus(FDE_XMLSYNTAXSTATUS_None) {
   ASSERT(m_pParent && m_pStream);
   m_NodeStack.Push(m_pParent);
   m_pParser = IFDE_XMLSyntaxParser::Create();

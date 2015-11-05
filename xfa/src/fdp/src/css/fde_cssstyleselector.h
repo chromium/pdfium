@@ -21,10 +21,10 @@ typedef CFX_ArrayTemplate<FDE_LPCSSRULEDATA> CFDE_CSSRuleDataArray;
 class CFDE_CSSRuleCollection : public CFX_Target {
  public:
   CFDE_CSSRuleCollection()
-      : m_pStaticStore(NULL),
-        m_pUniversalRules(NULL),
-        m_iSelectors(0),
-        m_pPersudoRules(NULL) {}
+      : m_pStaticStore(nullptr),
+        m_pUniversalRules(nullptr),
+        m_pPersudoRules(nullptr),
+        m_iSelectors(0) {}
   ~CFDE_CSSRuleCollection() { Clear(); }
   void AddRulesFrom(const CFDE_CSSStyleSheetArray& sheets,
                     FX_DWORD dwMediaList,

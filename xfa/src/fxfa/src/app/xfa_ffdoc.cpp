@@ -14,13 +14,14 @@
 #include "xfa_fontmgr.h"
 CXFA_FFDoc::CXFA_FFDoc(CXFA_FFApp* pApp, IXFA_DocProvider* pDocProvider)
     : m_pDocProvider(pDocProvider),
-      m_dwDocType(XFA_DOCTYPE_Static),
-      m_pDocument(NULL),
-      m_pStream(NULL),
+      m_pDocument(nullptr),
+      m_pStream(nullptr),
       m_pApp(pApp),
-      m_pNotify(NULL),
-      m_pPDFDoc(NULL),
-      m_bOwnStream(TRUE) {}
+      m_pNotify(nullptr),
+      m_pPDFDoc(nullptr),
+      m_dwDocType(XFA_DOCTYPE_Static),
+      m_bOwnStream(TRUE) {
+}
 CXFA_FFDoc::~CXFA_FFDoc() {
   CloseDoc();
 }

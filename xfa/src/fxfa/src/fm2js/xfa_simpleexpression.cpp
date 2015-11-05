@@ -428,8 +428,9 @@ CXFA_FMCallExpression::CXFA_FMCallExpression(FX_DWORD line,
                                              CFX_PtrArray* pArguments,
                                              FX_BOOL bIsSomMethod)
     : CXFA_FMUnaryExpression(line, TOKcall, pExp),
-      m_pArguments(pArguments),
-      m_bIsSomMethod(bIsSomMethod) {}
+      m_bIsSomMethod(bIsSomMethod),
+      m_pArguments(pArguments) {
+}
 CXFA_FMCallExpression::~CXFA_FMCallExpression() {
   if (m_pArguments) {
     int32_t argc = m_pArguments->GetSize();

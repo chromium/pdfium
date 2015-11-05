@@ -111,6 +111,7 @@ class CXFA_FFDocView : public IXFA_DocView {
   void ShowNullTestMsg();
   FX_BOOL ResetSingleWidgetAccData(CXFA_WidgetAcc* pWidgetAcc);
   CXFA_Node* GetRootSubform();
+
   CXFA_FFDoc* m_pDoc;
   CXFA_FFWidgetHandler* m_pWidgetHandler;
   IXFA_DocLayout* m_pXFADocLayout;

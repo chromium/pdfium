@@ -671,28 +671,23 @@ FX_BOOL CXFA_TextParser::GetTabstops(
   return TRUE;
 }
 CXFA_TextLayout::CXFA_TextLayout(IXFA_TextProvider* pTextProvider)
-    : m_pTextProvider(pTextProvider),
-      m_pTextDataNode(NULL),
-      m_pAllocator(NULL),
-      m_pBreak(NULL),
-      m_dwTextData(0),
-      m_pLoader(NULL),
+    : m_bHasBlock(FALSE),
+      m_pTextProvider(pTextProvider),
+      m_pTextDataNode(nullptr),
+      m_bRichText(FALSE),
+      m_pAllocator(nullptr),
+      m_pBreak(nullptr),
+      m_pLoader(nullptr),
       m_iLines(0),
       m_fMaxWidth(0),
-      m_pTabstopContext(NULL),
-      m_bBlockContinue(TRUE),
-      m_bRichText(FALSE),
-      m_bHasBlock(FALSE) {
-  FXSYS_assert(m_pTextProvider != NULL);
+      m_pTabstopContext(nullptr),
+      m_bBlockContinue(TRUE) {
+  FXSYS_assert(m_pTextProvider);
 }
 CXFA_TextLayout::~CXFA_TextLayout() {
   m_textParser.Reset();
-  if (m_pLoader != NULL) {
-    delete m_pLoader;
-  }
-  if (m_pTabstopContext != NULL) {
-    delete m_pTabstopContext;
-  }
+  delete m_pLoader;
+  delete m_pTabstopContext;
   Unload();
 }
 void CXFA_TextLayout::Unload() {
@@ -1571,9 +1566,9 @@ FX_BOOL CXFA_TextLayout::LoadRichText(IFDE_XMLNode* pXMLNode,
         }
       }
       if (wsName == FX_WSTRC(L"a")) {
-        if (pLinkData != NULL) {
+        if (pLinkData) {
           pLinkData->Release();
-          pLinkData = NULL;
+          pLinkData = nullptr;
         }
       }
       if (IsEnd(bSavePieces)) {

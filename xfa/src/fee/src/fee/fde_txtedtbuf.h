@@ -33,7 +33,6 @@ class CFDE_TxtEdtBufIter : public IFX_CharIter {
   int32_t m_nCurChunk;
   int32_t m_nCurIndex;
   int32_t m_nIndex;
-  FX_BOOL m_bInField;
 #ifdef FDE_USEFORMATBLOCK
   FX_BOOL m_bForDisplay;
   int32_t m_nAliasCount;

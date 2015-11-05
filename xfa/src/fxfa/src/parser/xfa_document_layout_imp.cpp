@@ -169,10 +169,11 @@ FX_BOOL CXFA_LayoutProcessor::IsNeedLayout() {
 CXFA_LayoutItemImpl::CXFA_LayoutItemImpl(CXFA_Node* pNode,
                                          FX_BOOL bIsContentLayoutItem)
     : m_pFormNode(pNode),
-      m_bIsContentLayoutItem(bIsContentLayoutItem),
       m_pParent(NULL),
       m_pNextSibling(NULL),
-      m_pFirstChild(NULL) {}
+      m_pFirstChild(NULL),
+      m_bIsContentLayoutItem(bIsContentLayoutItem) {
+}
 CXFA_LayoutItemImpl::~CXFA_LayoutItemImpl() {}
 CXFA_ContainerLayoutItemImpl::CXFA_ContainerLayoutItemImpl(CXFA_Node* pNode)
     : CXFA_LayoutItemImpl(pNode, FALSE), m_pOldSubform(NULL) {}

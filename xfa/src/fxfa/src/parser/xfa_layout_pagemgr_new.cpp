@@ -23,15 +23,16 @@
 #include "xfa_layout_appadapter.h"
 CXFA_LayoutPageMgr::CXFA_LayoutPageMgr(CXFA_LayoutProcessor* pLayoutProcessor)
     : m_pLayoutProcessor(pLayoutProcessor),
-      m_pTemplatePageSetRoot(NULL),
-      m_pPageSetLayoutItemRoot(NULL),
-      m_pCurrentContainerRecord(NULL),
-      m_nCurPageCount(0),
-      m_pCurPageArea(NULL),
-      m_ePageSetMode(XFA_ATTRIBUTEENUM_OrderedOccurrence),
+      m_pTemplatePageSetRoot(nullptr),
+      m_pPageSetLayoutItemRoot(nullptr),
+      m_pPageSetCurRoot(nullptr),
+      m_pCurrentContainerRecord(nullptr),
+      m_pCurPageArea(nullptr),
       m_nAvailPages(0),
-      m_pPageSetCurRoot(NULL),
-      m_bCreateOverFlowPage(FALSE) {}
+      m_nCurPageCount(0),
+      m_ePageSetMode(XFA_ATTRIBUTEENUM_OrderedOccurrence),
+      m_bCreateOverFlowPage(FALSE) {
+}
 CXFA_LayoutPageMgr::~CXFA_LayoutPageMgr() {
   ClearData();
   CXFA_LayoutItemImpl* pLayoutItem = GetRootLayoutItem();

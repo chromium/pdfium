@@ -62,11 +62,11 @@ class CFWL_ScrollBarImp : public CFWL_WidgetImp, public IFWL_Timer {
   void CalcThumbButtonRect(CFX_RectF& rect);
   void CalcMinTrackRect(CFX_RectF& rect);
   void CalcMaxTrackRect(CFX_RectF& rect);
-
   FX_FLOAT GetTrackPointPos(FX_FLOAT fx, FX_FLOAT fy);
   void GetTrackRect(CFX_RectF& rect, FX_BOOL bLower = TRUE);
   FX_BOOL SendEvent();
   FX_BOOL OnScroll(FX_DWORD dwCode, FX_FLOAT fPos);
+
   FWL_HTIMER m_hTimer;
   FX_FLOAT m_fRangeMin;
   FX_FLOAT m_fRangeMax;

@@ -458,13 +458,11 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateField(XFA_ELEMENT eElement,
 }
 CXFA_Node* CXFA_FFWidgetHandler::CreateArc(CXFA_Node* pParent,
                                            CXFA_Node* pBefore) const {
-  CXFA_Node* pField = CreateDraw(XFA_ELEMENT_Arc, pParent, pBefore);
-  return pField;
+  return CreateDraw(XFA_ELEMENT_Arc, pParent, pBefore);
 }
 CXFA_Node* CXFA_FFWidgetHandler::CreateRectangle(CXFA_Node* pParent,
                                                  CXFA_Node* pBefore) const {
-  CXFA_Node* pField = CreateDraw(XFA_ELEMENT_Rectangle, pParent, pBefore);
-  return pField;
+  return CreateDraw(XFA_ELEMENT_Rectangle, pParent, pBefore);
 }
 CXFA_Node* CXFA_FFWidgetHandler::CreateImage(CXFA_Node* pParent,
                                              CXFA_Node* pBefore) const {

@@ -192,7 +192,6 @@ class CFDE_XMLDOMParser : public IFDE_XMLParser, public CFX_Target {
   virtual int32_t DoParser(IFX_Pause* pPause);
 
  private:
-  CFDE_XMLNode* m_pRoot;
   IFDE_XMLSyntaxParser* m_pParser;
   CFDE_XMLNode* m_pParent;
   CFDE_XMLNode* m_pChild;

@@ -28,14 +28,23 @@
 #include "BC_QRCoderMatrixUtil.h"
 #include "BC_QRCoderBitVector.h"
 const int32_t CBC_QRCoderMatrixUtil::POSITION_DETECTION_PATTERN[7][7] = {
-    1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1,
-    1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1};
+    {1, 1, 1, 1, 1, 1, 1},
+    {1, 0, 0, 0, 0, 0, 1},
+    {1, 0, 1, 1, 1, 0, 1},
+    {1, 0, 1, 1, 1, 0, 1},
+    {1, 0, 1, 1, 1, 0, 1},
+    {1, 0, 0, 0, 0, 0, 1},
+    {1, 1, 1, 1, 1, 1, 1}};
 const int32_t CBC_QRCoderMatrixUtil::HORIZONTAL_SEPARATION_PATTERN[1][8] = {
-    0, 0, 0, 0, 0, 0, 0, 0};
-const int32_t CBC_QRCoderMatrixUtil::VERTICAL_SEPARATION_PATTERN[7][1] = {
-    0, 0, 0, 0, 0, 0, 0};
+    {0, 0, 0, 0, 0, 0, 0, 0}};
+const int32_t CBC_QRCoderMatrixUtil::VERTICAL_SEPARATION_PATTERN[7][1] =
+    {{0}, {0}, {0}, {0}, {0}, {0}, {0}};
 const int32_t CBC_QRCoderMatrixUtil::POSITION_ADJUSTMENT_PATTERN[5][5] = {
-    1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1};
+    {1, 1, 1, 1, 1},
+    {1, 0, 0, 0, 1},
+    {1, 0, 1, 0, 1},
+    {1, 0, 0, 0, 1},
+    {1, 1, 1, 1, 1}};
 const int32_t
     CBC_QRCoderMatrixUtil::POSITION_ADJUSTMENT_PATTERN_COORDINATE_TABLE[40][7] =
         {

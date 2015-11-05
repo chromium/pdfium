@@ -1084,8 +1084,7 @@ void CFDE_XMLDoc::SaveXML(IFX_Stream* pXMLStream, FX_BOOL bSaveBOM) {
 }
 CFDE_XMLDOMParser::CFDE_XMLDOMParser(CFDE_XMLNode* pRoot,
                                      IFDE_XMLSyntaxParser* pParser)
-    : m_pRoot(pRoot),
-      m_pParser(pParser),
+    : m_pParser(pParser),
       m_pParent(pRoot),
       m_pChild(NULL),
       m_NodeStack(16),
@@ -1469,28 +1468,27 @@ IFDE_XMLSyntaxParser* IFDE_XMLSyntaxParser::Create() {
 }
 #ifdef _FDE_BLOCK_BUFFER
 CFDE_XMLSyntaxParser::CFDE_XMLSyntaxParser()
-    : m_pStream(NULL),
+    : m_pStream(nullptr),
       m_iXMLPlaneSize(-1),
       m_iCurrentPos(0),
       m_iCurrentNodeNum(-1),
       m_iLastNodeNum(-1),
       m_iParsedChars(0),
       m_iParsedBytes(0),
-      m_pBuffer(NULL),
+      m_pBuffer(nullptr),
       m_iBufferChars(0),
       m_bEOS(FALSE),
-      m_pStart(NULL),
-      m_pEnd(NULL),
+      m_pStart(nullptr),
+      m_pEnd(nullptr),
       m_XMLNodeStack(16),
+      m_iAllocStep(m_BlockBuffer.GetAllocStep()),
+      m_iDataLength(m_BlockBuffer.GetDataLengthRef()),
+      m_pCurrentBlock(nullptr),
+      m_iIndexInBlock(0),
+      m_iTextDataLength(0),
       m_dwStatus(FDE_XMLSYNTAXSTATUS_None),
       m_dwMode(FDE_XMLSYNTAXMODE_Text),
       m_wQuotationMark(0),
-      m_BlockBuffer(),
-      m_pCurrentBlock(NULL),
-      m_iIndexInBlock(0),
-      m_iDataLength(m_BlockBuffer.GetDataLengthRef()),
-      m_iAllocStep(m_BlockBuffer.GetAllocStep()),
-      m_iTextDataLength(0),
       m_iEntityStart(-1),
       m_SkipStack(16) {
   m_CurNode.iNodeNum = -1;

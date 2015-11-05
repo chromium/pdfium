@@ -561,8 +561,6 @@ FX_BOOL CXFA_DataExporter::Export(IFX_Stream* pStream,
   }
   return TRUE;
 }
-static void XFA_DataExporter_GenerateChecksum(CXFA_Document* pDocument,
-                                              CFX_WideString& wsChecksum) {}
 void XFA_DataExporter_DealWithDataGroupNode(CXFA_Node* pDataNode) {
   if (!pDataNode || pDataNode->GetClassID() == XFA_ELEMENT_DataValue) {
     return;

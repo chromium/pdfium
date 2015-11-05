@@ -22,7 +22,6 @@ CFDE_TxtEdtBufIter::CFDE_TxtEdtBufIter(CFDE_TxtEdtBuf* pBuf, FX_WCHAR wcAlias)
       m_nCurChunk(0),
       m_nCurIndex(0),
       m_nIndex(0),
-      m_bInField(FALSE),
 #ifdef FDE_USEFORMATBLOCK
       m_bForDisplay(bForDisplay),
       m_nAliasCount(0),

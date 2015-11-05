@@ -21,15 +21,15 @@
 #include "xfa_script_nodehelper.h"
 CXFA_ScriptContext::CXFA_ScriptContext(CXFA_Document* pDocument)
     : m_pDocument(pDocument),
-      m_hJsRuntime(NULL),
-      m_hJsContext(NULL),
-      m_hJsClass(NULL),
-      m_pEventParam(NULL),
-      m_pResolveProcessor(NULL),
+      m_hJsContext(nullptr),
+      m_hJsRuntime(nullptr),
+      m_hJsClass(nullptr),
       m_eScriptType(XFA_SCRIPTLANGTYPE_Unkown),
-      m_hFM2JSContext(NULL),
-      m_pThisObject(NULL),
-      m_pScriptNodeArray(NULL),
+      m_pEventParam(nullptr),
+      m_pScriptNodeArray(nullptr),
+      m_pResolveProcessor(nullptr),
+      m_hFM2JSContext(nullptr),
+      m_pThisObject(nullptr),
       m_dwBuiltInInFlags(0),
       m_eRunAtType(XFA_ATTRIBUTEENUM_Client) {
   FX_memset(&m_JsGlobalClass, 0, sizeof(FXJSE_CLASS));

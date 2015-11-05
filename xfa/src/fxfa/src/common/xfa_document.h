@@ -154,7 +154,6 @@ class CXFA_Document : public IXFA_ObjFactory {
                                 XFA_ELEMENT eElement);
   void DoProtoMerge();
   CXFA_Node* GetNodeByID(CXFA_Node* pRoot, const CFX_WideStringC& wsID);
-
   void DoDataMerge();
   void DoDataRemerge(FX_BOOL bDoDataMerge);
   CXFA_Node* DataMerge_CopyContainer(CXFA_Node* pTemplateNode,
@@ -171,7 +170,6 @@ class CXFA_Document : public IXFA_ObjFactory {
   IXFA_ScriptContext* GetScriptContext();
   void ClearLayoutData();
 
- public:
   CFX_MapPtrTemplate<FX_DWORD, CXFA_Node*> m_rgGlobalBinding;
   CXFA_NodeArray m_pPendingPageSet;
 
@@ -180,7 +178,6 @@ class CXFA_Document : public IXFA_ObjFactory {
   IXFA_ScriptContext* m_pScriptContext;
   CXFA_LayoutProcessor* m_pLayoutProcessor;
   CXFA_Node* m_pRootNode;
-
   CXFA_LocaleMgr* m_pLocalMgr;
   CScript_DataWindow* m_pScriptDataWindow;
   CScript_EventPseudoModel* m_pScriptEvent;

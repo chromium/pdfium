@@ -10,9 +10,11 @@ static CFX_WideStringC RUNTIMEBLOCKTEMPARRAY =
 static CFX_WideStringC RUNTIMEBLOCKTEMPARRAYINDEX =
     FX_WSTRC(L"foxit_xfa_formcalc_runtime_block_temp_array_index");
 CXFA_FMExpression::CXFA_FMExpression(FX_DWORD line)
-    : m_line(line), m_type(XFA_FM_EXPTYPE_UNKNOWN) {}
+    : m_type(XFA_FM_EXPTYPE_UNKNOWN), m_line(line) {
+}
 CXFA_FMExpression::CXFA_FMExpression(FX_DWORD line, XFA_FM_EXPTYPE type)
-    : m_line(line), m_type(type) {}
+    : m_type(type), m_line(line) {
+}
 void CXFA_FMExpression::ToJavaScript(CFX_WideTextBuf& javascript) {}
 void CXFA_FMExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {}
 CXFA_FMFunctionDefinition::CXFA_FMFunctionDefinition(
@@ -22,10 +24,11 @@ CXFA_FMFunctionDefinition::CXFA_FMFunctionDefinition(
     CFX_WideStringCArray* pArguments,
     CFX_PtrArray* pExpressions)
     : CXFA_FMExpression(line, XFA_FM_EXPTYPE_FUNC),
-      m_isGlobal(isGlobal),
       m_wsName(wsName),
       m_pArguments(pArguments),
-      m_pExpressions(pExpressions) {}
+      m_pExpressions(pExpressions),
+      m_isGlobal(isGlobal) {
+}
 CXFA_FMFunctionDefinition::~CXFA_FMFunctionDefinition() {
   if (m_pArguments) {
     m_pArguments->RemoveAll();
@@ -383,7 +386,8 @@ void CXFA_FMWhileExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
   m_pExpression->ToImpliedReturnJS(javascript);
 }
 CXFA_FMBreakExpression::CXFA_FMBreakExpression(FX_DWORD line)
-    : CXFA_FMExpression(line, XFA_FM_EXPTYPE_BREAK), m_pExpression(0) {}
+    : CXFA_FMExpression(line, XFA_FM_EXPTYPE_BREAK) {
+}
 CXFA_FMBreakExpression::~CXFA_FMBreakExpression() {}
 void CXFA_FMBreakExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << RUNTIMEFUNCTIONRETURNVALUE;
@@ -396,7 +400,8 @@ void CXFA_FMBreakExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
   javascript << FX_WSTRC(L"break;\n");
 }
 CXFA_FMContinueExpression::CXFA_FMContinueExpression(FX_DWORD line)
-    : CXFA_FMExpression(line, XFA_FM_EXPTYPE_CONTINUE), m_pExpression(0) {}
+    : CXFA_FMExpression(line, XFA_FM_EXPTYPE_CONTINUE) {
+}
 CXFA_FMContinueExpression::~CXFA_FMContinueExpression() {}
 void CXFA_FMContinueExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << RUNTIMEFUNCTIONRETURNVALUE;

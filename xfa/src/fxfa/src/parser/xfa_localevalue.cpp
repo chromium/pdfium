@@ -32,9 +32,6 @@ static const FX_DOUBLE fraction_scales[] = {0.1,
                                             0.00000000000001,
                                             0.000000000000001,
                                             0.0000000000000001};
-static FX_BOOL IsAlpha(FX_WCHAR c) {
-  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
-}
 CXFA_LocaleValue::CXFA_LocaleValue() {
   m_dwType = XFA_VT_NULL;
   m_bValid = TRUE;

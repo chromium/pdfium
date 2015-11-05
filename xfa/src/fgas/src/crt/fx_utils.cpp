@@ -8,7 +8,8 @@
 #include "../fgas_base.h"
 #include "fx_utils.h"
 
-CFX_ThreadLock::CFX_ThreadLock() : m_pData(NULL) {}
+CFX_ThreadLock::CFX_ThreadLock() {
+}
 CFX_ThreadLock::~CFX_ThreadLock() {}
 void CFX_ThreadLock::Lock() {}
 void CFX_ThreadLock::Unlock() {}

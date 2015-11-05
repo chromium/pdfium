@@ -2801,65 +2801,6 @@ FX_BOOL CXFA_WidgetData::GetLeadDigits(int32_t& iLeadDigits) {
   iLeadDigits = -1;
   return FALSE;
 }
-static CFX_WideString XFA_NumericNormalize(const CFX_WideString& wsValue,
-                                           IFX_Locale* pLocale) {
-  CFX_WideString wsDecimalSymbol;
-  if (pLocale) {
-    pLocale->GetNumbericSymbol(FX_LOCALENUMSYMBOL_Decimal, wsDecimalSymbol);
-  }
-  if (wsDecimalSymbol.IsEmpty()) {
-    wsDecimalSymbol = '.';
-  }
-  CFX_WideString wsNewValue(wsValue);
-  wsNewValue.TrimLeft(L" ");
-  wsNewValue.TrimLeft(L"0");
-  wsNewValue.TrimRight(L" ");
-  int32_t iCount = wsNewValue.GetLength();
-  if (iCount == 0) {
-    return FX_WSTRC(L"0");
-  }
-  int32_t iIndex = 0;
-  CFX_WideString wsRet;
-  FX_WCHAR* pRetBuffer = wsRet.GetBuffer(iCount);
-  int32_t i = 0;
-  if (wsNewValue[i] == L'-') {
-    pRetBuffer[iIndex++] = '-';
-  } else if (wsNewValue[i] == L'+') {
-    i++;
-  }
-  FX_BOOL bHasPoint = FALSE;
-  int32_t nCharStart = -1;
-  for (; i < iCount; i++) {
-    FX_WCHAR wc = wsNewValue[i];
-    if (XFA_IsDigit(wc)) {
-      if (nCharStart != -1) {
-        CFX_WideStringC wsChar((const FX_WCHAR*)wsNewValue + nCharStart,
-                               i - nCharStart);
-        if (wsChar == '.' || wsChar == wsDecimalSymbol) {
-          bHasPoint = TRUE;
-          nCharStart = -1;
-        } else {
-          pRetBuffer[0] = '0';
-          iCount = 1;
-          break;
-        }
-      }
-      pRetBuffer[iIndex++] = wc;
-      continue;
-    }
-    if (bHasPoint) {
-      pRetBuffer[0] = '0';
-      iCount = 1;
-      break;
-    }
-    if (nCharStart == -1) {
-      nCharStart = i;
-      pRetBuffer[iIndex++] = wc;
-    }
-  }
-  wsRet.ReleaseBuffer(iCount);
-  return wsRet;
-}
 CFX_WideString XFA_NumericLimit(const CFX_WideString& wsValue,
                                 int32_t iLead,
                                 int32_t iTread) {

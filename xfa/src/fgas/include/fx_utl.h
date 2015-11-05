@@ -42,9 +42,6 @@ class CFX_ThreadLock {
   virtual ~CFX_ThreadLock();
   void Lock();
   void Unlock();
-
- private:
-  void* m_pData;
 };
 class CFX_BaseArray : public CFX_Target {
  protected:

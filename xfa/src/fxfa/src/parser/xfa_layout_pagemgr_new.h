@@ -129,6 +129,9 @@ class CXFA_LayoutPageMgr {
   void MergePageSetContents();
   void LayoutPageSetContents();
   void PrepareLayout();
+#if defined(_XFA_LAYOUTITEM_MAPCACHE_) || defined(_XFA_LAYOUTITEM_ProcessCACHE_)
+  void SaveLayoutItem(CXFA_LayoutItemImpl* pParentLayoutItem);
+#endif
   CXFA_LayoutProcessor* m_pLayoutProcessor;
   CXFA_Node* m_pTemplatePageSetRoot;
   CXFA_ContainerLayoutItemImpl* m_pPageSetLayoutItemRoot;
@@ -141,12 +144,9 @@ class CXFA_LayoutPageMgr {
   XFA_ATTRIBUTEENUM m_ePageSetMode;
   FX_BOOL m_bCreateOverFlowPage;
   CFX_MapPtrTemplate<CXFA_Node*, int32_t> m_pPageSetMap;
-#ifdef _XFA_LAYOUTITEM_MAPCACHE_
-  void SaveLayoutItem(CXFA_LayoutItemImpl* pParentLayoutItem);
-  CFX_MapPtrToPtr m_NodeToContent;
-#elif defined(_XFA_LAYOUTITEM_ProcessCACHE_)
-  void SaveLayoutItem(CXFA_LayoutItemImpl* pParentLayoutItem);
-#endif
   CFX_ArrayTemplate<CXFA_ContainerLayoutItemImpl*> m_PageArray;
+#ifdef _XFA_LAYOUTITEM_MAPCACHE_
+  CFX_MapPtrToPtr m_NodeToContent;
+#endif
 };
 #endif

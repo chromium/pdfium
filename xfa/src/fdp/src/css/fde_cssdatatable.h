@@ -9,7 +9,7 @@
 class CFDE_CSSFunction : public CFX_Target {
  public:
   CFDE_CSSFunction(const FX_WCHAR* pszFuncName, IFDE_CSSValueList* pArgList)
-      : m_pszFuncName(pszFuncName), m_pArgList(pArgList) {
+      : m_pArgList(pArgList), m_pszFuncName(pszFuncName) {
     FXSYS_assert(pArgList != NULL);
   }
   int32_t CountArgs() const { return m_pArgList->CountValues(); }

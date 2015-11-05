@@ -131,9 +131,6 @@ class CXFA_FMBreakExpression : public CXFA_FMExpression {
   virtual ~CXFA_FMBreakExpression();
   virtual void ToJavaScript(CFX_WideTextBuf& javascript);
   virtual void ToImpliedReturnJS(CFX_WideTextBuf&);
-
- private:
-  CXFA_FMLoopExpression* m_pExpression;
 };
 class CXFA_FMContinueExpression : public CXFA_FMExpression {
  public:
@@ -141,9 +138,6 @@ class CXFA_FMContinueExpression : public CXFA_FMExpression {
   virtual ~CXFA_FMContinueExpression();
   virtual void ToJavaScript(CFX_WideTextBuf& javascript);
   virtual void ToImpliedReturnJS(CFX_WideTextBuf&);
-
- private:
-  CXFA_FMLoopExpression* m_pExpression;
 };
 class CXFA_FMForExpression : public CXFA_FMLoopExpression {
  public:

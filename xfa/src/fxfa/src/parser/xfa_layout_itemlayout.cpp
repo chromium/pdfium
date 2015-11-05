@@ -22,32 +22,29 @@
 #include "xfa_layout_appadapter.h"
 CXFA_ItemLayoutProcessor::CXFA_ItemLayoutProcessor(CXFA_Node* pNode,
                                                    CXFA_LayoutPageMgr* pPageMgr)
-    : m_pFormNode(pNode),
-      m_pLayoutItem(NULL),
+    : m_bKeepBreakFinish(FALSE),
+      m_bIsProcessKeep(FALSE),
+      m_pKeepHeadNode(nullptr),
+      m_pKeepTailNode(nullptr),
+      m_pFormNode(pNode),
+      m_pLayoutItem(nullptr),
+#ifdef _XFA_LAYOUTITEM_ProcessCACHE_
+      m_pOldLayoutItem(nullptr),
+#else
+      m_pPageMgrCreateItem(nullptr),
+#endif
       m_pCurChildNode(XFA_LAYOUT_INVALIDNODE),
+      m_pCurChildPreprocessor(nullptr),
       m_nCurChildNodeStage(XFA_ItemLayoutProcessorStages_None),
-      m_pCurChildPreprocessor(NULL),
       m_fUsedSize(0),
       m_pPageMgr(pPageMgr),
-      m_bHasAvailHeight(TRUE)
-#ifdef _XFA_LAYOUTITEM_ProcessCACHE_
-      ,
-      m_pOldLayoutItem(NULL)
-#else
-      ,
-      m_pPageMgrCreateItem(NULL)
-#endif
-      ,
-      m_bKeepBreakFinish(FALSE),
-      m_pKeepHeadNode(NULL),
-      m_pKeepTailNode(NULL),
-      m_bIsProcessKeep(FALSE),
       m_bBreakPending(TRUE),
       m_fLastRowWidth(0),
       m_fLastRowY(0),
-      m_bUseInheriated(FALSE),
       m_fWidthLimite(0),
-      m_ePreProcessRs(XFA_ItemLayoutProcessorResult_Done) {
+      m_bUseInheriated(FALSE),
+      m_ePreProcessRs(XFA_ItemLayoutProcessorResult_Done),
+      m_bHasAvailHeight(TRUE) {
   FXSYS_assert(m_pFormNode && (m_pFormNode->IsContainerNode() ||
                                m_pFormNode->GetClassID() == XFA_ELEMENT_Form));
 #ifdef _XFA_LAYOUTITEM_ProcessCACHE_
@@ -896,18 +893,6 @@ void CXFA_ItemLayoutProcessor::CalculatePositionedContainerPos(
     default:
       break;
   }
-}
-static FX_BOOL XFA_ItemLayoutProcessor_FloatAlmostEqual(FX_FLOAT f1,
-                                                        FX_FLOAT f2) {
-  return f1 >= f2 - XFA_LAYOUT_FLOAT_PERCISION &&
-         f1 <= f2 + XFA_LAYOUT_FLOAT_PERCISION;
-}
-static FX_BOOL XFA_ItemLayoutProcessor_FloatGreaterThan(FX_FLOAT f1,
-                                                        FX_FLOAT f2) {
-  return f1 > f2 + XFA_LAYOUT_FLOAT_PERCISION;
-}
-static FX_BOOL XFA_ItemLayoutProcessor_FloatLessThan(FX_FLOAT f1, FX_FLOAT f2) {
-  return f1 < f2 - XFA_LAYOUT_FLOAT_PERCISION;
 }
 FX_BOOL CXFA_ItemLayoutProcessor::IncrementRelayoutNode(
     CXFA_LayoutProcessor* pLayoutProcessor,

@@ -620,7 +620,6 @@ class CXFA_Node : public CXFA_Object {
                          void* pKey,
                          FX_BOOL bRecursive = FALSE);
 
- protected:
   CXFA_Node* m_pNext;
   CXFA_Node* m_pChild;
   CXFA_Node* m_pLastChild;

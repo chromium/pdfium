@@ -590,16 +590,16 @@ void CFDE_CSSStyleSelector::AppendInlineStyle(CFDE_CSSDeclaration* pDecl,
   }
   pSyntax->Release();
 }
+#define FDE_CSSNONINHERITS (pComputedStyle->m_NonInheritedData)
+#define FDE_CSSINHERITS (pComputedStyle->m_InheritedData)
+#define FDE_CSSFONTSIZE (FDE_CSSINHERITS.m_fFontSize)
 void CFDE_CSSStyleSelector::ApplyProperty(
     FDE_CSSPROPERTY eProperty,
     IFDE_CSSValue* pValue,
     CFDE_CSSComputedStyle* pComputedStyle) {
-#define FDE_CSSNONINHERITS (pComputedStyle->m_NonInheritedData)
-#define FDE_CSSINHERITS (pComputedStyle->m_InheritedData)
-#define FDE_CSSFONTSIZE (FDE_CSSINHERITS.m_fFontSize)
   if (pComputedStyle->m_InheritedData.m_pFontFamily &&
       *(FX_DWORD*)pComputedStyle->m_InheritedData.m_pFontFamily == 0xcdcdcdcd) {
-    pComputedStyle = pComputedStyle;
+    pComputedStyle = pComputedStyle;  // FIXME: likely a real bug.
   }
   if (pValue->GetType() == FDE_CSSVALUETYPE_Primitive) {
     IFDE_CSSPrimitiveValue* pPrimitive = (IFDE_CSSPrimitiveValue*)pValue;

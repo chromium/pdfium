@@ -88,17 +88,17 @@ static XFA_OBJECTTYPE XFA_GetElementObjectType(XFA_ELEMENT eElement) {
 }
 CXFA_Node::CXFA_Node(CXFA_Document* pDoc, FX_WORD ePacket, XFA_ELEMENT eElement)
     : CXFA_Object(pDoc, XFA_GetElementObjectType(eElement)),
-      m_pParent(NULL),
-      m_pNext(NULL),
-      m_pChild(NULL),
-      m_pLastChild(NULL),
-      m_pXMLNode(NULL),
-      m_ePacket(ePacket),
+      m_pNext(nullptr),
+      m_pChild(nullptr),
+      m_pLastChild(nullptr),
+      m_pParent(nullptr),
+      m_pXMLNode(nullptr),
       m_eNodeClass(eElement),
+      m_ePacket(ePacket),
       m_dwNameHash(0),
-      m_pAuxNode(NULL),
-      m_pMapModuleData(NULL) {
-  ASSERT(m_pDocument != NULL);
+      m_pAuxNode(nullptr),
+      m_pMapModuleData(nullptr) {
+  ASSERT(m_pDocument);
 }
 CXFA_Node::~CXFA_Node() {
   FXSYS_assert(m_pParent == NULL);

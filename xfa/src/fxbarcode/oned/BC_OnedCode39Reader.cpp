@@ -37,15 +37,14 @@ const int32_t CBC_OnedCode39Reader::CHARACTER_ENCODINGS[44] = {
     0x085, 0x184, 0x0C4, 0x094, 0x0A8, 0x0A2, 0x08A, 0x02A};
 const int32_t CBC_OnedCode39Reader::ASTERISK_ENCODING = 0x094;
 CBC_OnedCode39Reader::CBC_OnedCode39Reader()
-    : m_extendedMode(FALSE), m_usingCheckDigit(FALSE) {}
-CBC_OnedCode39Reader::CBC_OnedCode39Reader(FX_BOOL usingCheckDigit) {
-  m_usingCheckDigit = usingCheckDigit;
-  m_extendedMode = FALSE;
+    : m_usingCheckDigit(FALSE), m_extendedMode(FALSE) {
+}
+CBC_OnedCode39Reader::CBC_OnedCode39Reader(FX_BOOL usingCheckDigit)
+    : m_usingCheckDigit(usingCheckDigit), m_extendedMode(FALSE) {
 }
 CBC_OnedCode39Reader::CBC_OnedCode39Reader(FX_BOOL usingCheckDigit,
-                                           FX_BOOL extendedMode) {
-  m_extendedMode = extendedMode;
-  m_usingCheckDigit = usingCheckDigit;
+                                           FX_BOOL extendedMode)
+    : m_usingCheckDigit(usingCheckDigit), m_extendedMode(extendedMode) {
 }
 CBC_OnedCode39Reader::~CBC_OnedCode39Reader() {}
 CFX_ByteString CBC_OnedCode39Reader::DecodeRow(int32_t rowNumber,

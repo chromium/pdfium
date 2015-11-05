@@ -95,8 +95,8 @@ class CXFA_ScriptContext : public IXFA_ScriptContext {
   void DefineJsContext();
   FXJSE_HCONTEXT CreateVariablesContext(CXFA_Node* pScriptNode,
                                         CXFA_Node* pSubform);
-
   void DefineJsClass();
+
   CXFA_Document* m_pDocument;
   FXJSE_HCONTEXT m_hJsContext;
   FXJSE_HRUNTIME m_hJsRuntime;
@@ -105,7 +105,6 @@ class CXFA_ScriptContext : public IXFA_ScriptContext {
   FXJSE_CLASS m_JsGlobalClass;
   FXJSE_CLASS m_JsNormalClass;
   CFX_MapPtrTemplate<CXFA_Object*, FXJSE_HVALUE> m_mapXFAToHValue;
-
   FXJSE_CLASS m_JsGlobalVariablesClass;
   CFX_MapPtrTemplate<CXFA_Object*, FXJSE_HCONTEXT> m_mapVariableToHValue;
   CXFA_EventParam* m_pEventParam;
