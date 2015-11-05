@@ -138,7 +138,11 @@ bool EmbedderTest::OpenDocument(const std::string& filename) {
 
   FPDF_FORMFILLINFO* formfillinfo = static_cast<FPDF_FORMFILLINFO*>(this);
   memset(formfillinfo, 0, sizeof(FPDF_FORMFILLINFO));
+#ifdef PDF_ENABLE_XFA
+  formfillinfo->version = 2;
+#else
   formfillinfo->version = 1;
+#endif
   formfillinfo->FFI_SetTimer = SetTimerTrampoline;
   formfillinfo->FFI_KillTimer = KillTimerTrampoline;
   formfillinfo->FFI_GetPage = GetPageTrampoline;
