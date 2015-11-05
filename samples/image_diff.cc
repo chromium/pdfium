@@ -24,7 +24,7 @@
 #include "image_diff_png.h"
 
 #if defined(OS_WIN)
-#include "windows.h"
+#include <windows.h>
 #endif
 
 // Return codes used by this utility.
@@ -71,10 +71,10 @@ class Image {
       return false;
 
     std::vector<unsigned char> compressed;
-    const int buf_size = 1024;
-    unsigned char buf[buf_size];
+    const size_t kBufSize = 1024;
+    unsigned char buf[kBufSize];
     size_t num_read = 0;
-    while ((num_read = fread(buf, 1, buf_size, f)) > 0) {
+    while ((num_read = fread(buf, 1, kBufSize, f)) > 0) {
       compressed.insert(compressed.end(), buf, buf + num_read);
     }
 
@@ -95,24 +95,59 @@ class Image {
 
   // Returns the RGBA value of the pixel at the given location
   uint32_t pixel_at(int x, int y) const {
-    if (x >= 0 && x < w_ && y >= 0 && y < h_)
-      return *reinterpret_cast<const uint32_t*>(&(data_[(y * w_ + x) * 4]));
-    return 0;
+    if (!pixel_in_bounds(x, y))
+      return 0;
+    return *reinterpret_cast<const uint32_t*>(&(data_[pixel_address(x, y)]));
   }
 
-  void set_pixel_at(int x, int y, uint32_t color) const {
-    if (x >= 0 && x < w_ && y >= 0 && y < h_) {
-      void* addr = &const_cast<unsigned char*>(&data_.front())[(y * w_ + x) * 4];
-      *reinterpret_cast<uint32_t*>(addr) = color;
-    }
+  void set_pixel_at(int x, int y, uint32_t color) {
+    if (!pixel_in_bounds(x, y))
+      return;
+
+    void* addr = &data_[pixel_address(x, y)];
+    *reinterpret_cast<uint32_t*>(addr) = color;
   }
 
  private:
-  // pixel dimensions of the image
-  int w_, h_;
+  bool pixel_in_bounds(int x, int y) const {
+    return x >= 0 && x < w_ && y >= 0 && y < h_;
+  }
+
+  size_t pixel_address(int x, int y) const { return (y * w_ + x) * 4; }
+
+  // Pixel dimensions of the image.
+  int w_;
+  int h_;
 
   std::vector<unsigned char> data_;
 };
+
+float CalculateDifferencePercentage(const Image& actual, int pixels_different) {
+  // Like the WebKit ImageDiff tool, we define percentage different in terms
+  // of the size of the 'actual' bitmap.
+  float total_pixels =
+      static_cast<float>(actual.w()) * static_cast<float>(actual.h());
+  if (total_pixels == 0) {
+    // When the bitmap is empty, they are 100% different.
+    return 100.0f;
+  }
+  return 100.0f * pixels_different / total_pixels;
+}
+
+void CountImageSizeMismatchAsPixelDifference(const Image& baseline,
+                                             const Image& actual,
+                                             int* pixels_different) {
+  int w = std::min(baseline.w(), actual.w());
+  int h = std::min(baseline.h(), actual.h());
+
+  // Count pixels that are a difference in size as also being different.
+  int max_w = std::max(baseline.w(), actual.w());
+  int max_h = std::max(baseline.h(), actual.h());
+  // These pixels are off the right side, not including the lower right corner.
+  *pixels_different += (max_w - w) * h;
+  // These pixels are along the bottom, including the lower right corner.
+  *pixels_different += (max_h - h) * max_w;
+}
 
 float PercentageDifferent(const Image& baseline, const Image& actual) {
   int w = std::min(baseline.w(), actual.w());
@@ -120,30 +155,15 @@ float PercentageDifferent(const Image& baseline, const Image& actual) {
 
   // Compute pixels different in the overlap.
   int pixels_different = 0;
-  for (int y = 0; y < h; y++) {
-    for (int x = 0; x < w; x++) {
+  for (int y = 0; y < h; ++y) {
+    for (int x = 0; x < w; ++x) {
       if (baseline.pixel_at(x, y) != actual.pixel_at(x, y))
-        pixels_different++;
+        ++pixels_different;
     }
   }
 
-  // Count pixels that are a difference in size as also being different.
-  int max_w = std::max(baseline.w(), actual.w());
-  int max_h = std::max(baseline.h(), actual.h());
-  // These pixels are off the right side, not including the lower right corner.
-  pixels_different += (max_w - w) * h;
-  // These pixels are along the bottom, including the lower right corner.
-  pixels_different += (max_h - h) * max_w;
-
-  // Like the WebKit ImageDiff tool, we define percentage different in terms
-  // of the size of the 'actual' bitmap.
-  float total_pixels = static_cast<float>(actual.w()) *
-                       static_cast<float>(actual.h());
-  if (total_pixels == 0) {
-    // When the bitmap is empty, they are 100% different.
-    return 100.0f;
-  }
-  return 100.0f * pixels_different / total_pixels;
+  CountImageSizeMismatchAsPixelDifference(baseline, actual, &pixels_different);
+  return CalculateDifferencePercentage(actual, pixels_different);
 }
 
 // FIXME: Replace with unordered_map when available.
@@ -159,43 +179,28 @@ float HistogramPercentageDifferent(const Image& baseline, const Image& actual) {
 
   // Count occurences of each RGBA pixel value of baseline in the overlap.
   RgbaToCountMap baseline_histogram;
-  for (int y = 0; y < h; y++) {
-    for (int x = 0; x < w; x++) {
+  for (int y = 0; y < h; ++y) {
+    for (int x = 0; x < w; ++x) {
       // hash_map operator[] inserts a 0 (default constructor) if key not found.
-      baseline_histogram[baseline.pixel_at(x, y)]++;
+      ++baseline_histogram[baseline.pixel_at(x, y)];
     }
   }
 
   // Compute pixels different in the histogram of the overlap.
   int pixels_different = 0;
-  for (int y = 0; y < h; y++) {
-    for (int x = 0; x < w; x++) {
+  for (int y = 0; y < h; ++y) {
+    for (int x = 0; x < w; ++x) {
       uint32_t actual_rgba = actual.pixel_at(x, y);
       RgbaToCountMap::iterator it = baseline_histogram.find(actual_rgba);
       if (it != baseline_histogram.end() && it->second > 0)
-        it->second--;
+        --it->second;
       else
-        pixels_different++;
+        ++pixels_different;
     }
   }
 
-  // Count pixels that are a difference in size as also being different.
-  int max_w = std::max(baseline.w(), actual.w());
-  int max_h = std::max(baseline.h(), actual.h());
-  // These pixels are off the right side, not including the lower right corner.
-  pixels_different += (max_w - w) * h;
-  // These pixels are along the bottom, including the lower right corner.
-  pixels_different += (max_h - h) * max_w;
-
-  // Like the WebKit ImageDiff tool, we define percentage different in terms
-  // of the size of the 'actual' bitmap.
-  float total_pixels = static_cast<float>(actual.w()) *
-                       static_cast<float>(actual.h());
-  if (total_pixels == 0) {
-    // When the bitmap is empty, they are 100% different.
-    return 100.0f;
-  }
-  return 100.0f * pixels_different / total_pixels;
+  CountImageSizeMismatchAsPixelDifference(baseline, actual, &pixels_different);
+  return CalculateDifferencePercentage(actual, pixels_different);
 }
 
 void PrintHelp() {
@@ -231,10 +236,11 @@ int CompareImages(const std::string& file1,
     printf("histogram diff: %01.2f%% %s\n", percent, passed);
   }
 
-  const char* diff_name = compare_histograms ? "exact diff" : "diff";
+  const char* const diff_name = compare_histograms ? "exact diff" : "diff";
   float percent = PercentageDifferent(actual_image, baseline_image);
-  const char* passed = percent > 0.0 ? "failed" : "passed";
+  const char* const passed = percent > 0.0 ? "failed" : "passed";
   printf("%s: %01.2f%% %s\n", diff_name, percent, passed);
+
   if (percent > 0.0) {
     // failure: The WebKit version also writes the difference image to
     // stdout, which seems excessive for our needs.
@@ -242,52 +248,6 @@ int CompareImages(const std::string& file1,
   }
   // success
   return kStatusSame;
-
-/* Untested mode that acts like WebKit's image comparator. I wrote this but
-   decided it's too complicated. We may use it in the future if it looks useful
-
-  char buffer[2048];
-  while (fgets(buffer, sizeof(buffer), stdin)) {
-
-    if (strncmp("Content-length: ", buffer, 16) == 0) {
-      char* context;
-      strtok_s(buffer, " ", &context);
-      int image_size = strtol(strtok_s(NULL, " ", &context), NULL, 10);
-
-      bool success = false;
-      if (image_size > 0 && actual_image.has_image() == 0) {
-        if (!actual_image.CreateFromStdin(image_size)) {
-          fputs("Error, input image can't be decoded.\n", stderr);
-          return 1;
-        }
-      } else if (image_size > 0 && baseline_image.has_image() == 0) {
-        if (!baseline_image.CreateFromStdin(image_size)) {
-          fputs("Error, baseline image can't be decoded.\n", stderr);
-          return 1;
-        }
-      } else {
-        fputs("Error, image size must be specified.\n", stderr);
-        return 1;
-      }
-    }
-
-    if (actual_image.has_image() && baseline_image.has_image()) {
-      float percent = PercentageDifferent(actual_image, baseline_image);
-      if (percent > 0.0) {
-        // failure: The WebKit version also writes the difference image to
-        // stdout, which seems excessive for our needs.
-        printf("diff: %01.2f%% failed\n", percent);
-      } else {
-        // success
-        printf("diff: %01.2f%% passed\n", percent);
-      }
-      actual_image.Clear();
-      baseline_image.Clear();
-    }
-
-    fflush(stdout);
-  }
-*/
 }
 
 bool CreateImageDiff(const Image& image1, const Image& image2, Image* out) {
@@ -298,8 +258,8 @@ bool CreateImageDiff(const Image& image1, const Image& image2, Image* out) {
 
   // TODO(estade): do something with the extra pixels if the image sizes
   // are different.
-  for (int y = 0; y < h; y++) {
-    for (int x = 0; x < w; x++) {
+  for (int y = 0; y < h; ++y) {
+    for (int x = 0; x < w; ++x) {
       uint32_t base_pixel = image1.pixel_at(x, y);
       if (base_pixel != image2.pixel_at(x, y)) {
         // Set differing pixels red.
@@ -342,12 +302,12 @@ int DiffImages(const std::string& file1,
       diff_image.data(), diff_image.w(), diff_image.h(),
       diff_image.w() * 4, &png_encoding);
 
-  FILE *f = fopen(out_file.c_str(), "wb");
+  FILE* f = fopen(out_file.c_str(), "wb");
   if (!f)
     return kStatusError;
 
   size_t size = png_encoding.size();
-  char *ptr = reinterpret_cast<char*>(&png_encoding.front());
+  char* ptr = reinterpret_cast<char*>(&png_encoding.front());
   if (fwrite(ptr, 1, size, f) != size)
     return kStatusError;
 
@@ -372,18 +332,12 @@ int main(int argc, const char* argv[]) {
       produce_diff_image = true;
     }
   }
-  if (i < argc) {
-    filename1 = argv[i];
-    ++i;
-  }
-  if (i < argc) {
-    filename2 = argv[i];
-    ++i;
-  }
-  if (i < argc) {
-    diff_filename = argv[i];
-    ++i;
-  }
+  if (i < argc)
+    filename1 = argv[i++];
+  if (i < argc)
+    filename2 = argv[i++];
+  if (i < argc)
+    diff_filename = argv[i++];
 
   if (produce_diff_image) {
     if (!diff_filename.empty()) {
