@@ -21,6 +21,7 @@
     ],
     'include_dirs': [
       'third_party/freetype/include',
+      'third_party/freetype/include/freetype',
     ],
     'conditions': [
       ['pdf_use_skia==1', {
