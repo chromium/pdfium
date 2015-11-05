@@ -6,12 +6,39 @@
 #define TESTING_EMBEDDER_TEST_TIMER_HANDLING_DELEGATE_H_
 
 #include <map>
+#include <string>
 #include <utility>
+#include <vector>
 
 #include "embedder_test.h"
+#include "test_support.h"
 
 class EmbedderTestTimerHandlingDelegate : public EmbedderTest::Delegate {
  public:
+  struct ReceivedAlert {
+    ReceivedAlert(FPDF_WIDESTRING message_in,
+                  FPDF_WIDESTRING title_in,
+                  int type_in,
+                  int icon_in)
+        : type(type_in), icon(icon_in) {
+      message = GetWideString(message_in);
+      title = GetWideString(title_in);
+    }
+
+    std::wstring message;
+    std::wstring title;
+    int type;
+    int icon;
+  };
+
+  int Alert(FPDF_WIDESTRING message,
+            FPDF_WIDESTRING title,
+            int type,
+            int icon) override {
+    alerts_.push_back(ReceivedAlert(message, title, type, icon));
+    return 0;
+  }
+
   int SetTimer(int msecs, TimerCallback fn) override {
     expiry_to_timer_map_.insert(std::pair<int, Timer>(
         msecs + imaginary_elapsed_msecs_, Timer(++next_timer_id_, fn)));
@@ -44,11 +71,14 @@ class EmbedderTestTimerHandlingDelegate : public EmbedderTest::Delegate {
     }
   }
 
+  const std::vector<ReceivedAlert>& GetAlerts() const { return alerts_; }
+
  protected:
   using Timer = std::pair<int, TimerCallback>;     // ID, callback pair.
   std::multimap<int, Timer> expiry_to_timer_map_;  // Keyed by timeout.
   int next_timer_id_ = 0;
   int imaginary_elapsed_msecs_ = 0;
+  std::vector<ReceivedAlert> alerts_;
 };
 
 #endif  // TESTING_EMBEDDER_TEST_TIMER_HANDLING_DELEGATE_H_

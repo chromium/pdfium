@@ -98,6 +98,22 @@ char* GetFileContents(const char* filename, size_t* retlen) {
   return buffer;
 }
 
+std::wstring GetWideString(FPDF_WIDESTRING wstr) {
+  if (!wstr)
+    return nullptr;
+
+  size_t characters = 0;
+  while (wstr[characters])
+    ++characters;
+
+  std::wstring platform_string(characters, L'\0');
+  for (size_t i = 0; i < characters + 1; ++i) {
+    const unsigned char* ptr = reinterpret_cast<const unsigned char*>(&wstr[i]);
+    platform_string[i] = ptr[0] + 256 * ptr[1];
+  }
+  return platform_string;
+}
+
 #ifdef PDF_ENABLE_V8
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
 bool InitializeV8ForPDFium(const std::string& exe_path,

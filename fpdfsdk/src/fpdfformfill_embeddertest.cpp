@@ -63,3 +63,23 @@ TEST_F(FPDFFormFillEmbeddertest, BUG_514690) {
 
   UnloadPage(page);
 }
+
+TEST_F(FPDFFormFillEmbeddertest, BUG_551248) {
+  EmbedderTestTimerHandlingDelegate delegate;
+  SetDelegate(&delegate);
+
+  EXPECT_TRUE(OpenDocument("testing/resources/bug_551248.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_NE(nullptr, page);
+  DoOpenActions();
+  delegate.AdvanceTime(5000);
+  UnloadPage(page);
+
+  const auto& alerts = delegate.GetAlerts();
+  ASSERT_EQ(1U, alerts.size());
+
+  EXPECT_STREQ(L"hello world", alerts[0].message.c_str());
+  EXPECT_STREQ(L"Alert", alerts[0].title.c_str());
+  EXPECT_EQ(0, alerts[0].type);
+  EXPECT_EQ(0, alerts[0].icon);
+}
