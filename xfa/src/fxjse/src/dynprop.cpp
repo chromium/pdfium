@@ -29,9 +29,9 @@ static void FXJSE_DynPropGetterAdapter_MethodCallback(
     info.GetReturnValue().Set(lpRetValue->DirectGetValue());
   }
   delete lpRetValue;
-  lpRetValue = NULL;
+  lpRetValue = nullptr;
   delete lpThisValue;
-  lpThisValue = NULL;
+  lpThisValue = nullptr;
 }
 static void FXJSE_DynPropGetterAdapter(const FXJSE_CLASS* lpClass,
                                        FXJSE_HOBJECT hObject,
@@ -39,7 +39,7 @@ static void FXJSE_DynPropGetterAdapter(const FXJSE_CLASS* lpClass,
                                        FXJSE_HVALUE hValue) {
   ASSERT(lpClass);
   int32_t nPropType =
-      lpClass->dynPropTypeGetter == NULL
+      lpClass->dynPropTypeGetter == nullptr
           ? FXJSE_ClassPropType_Property
           : lpClass->dynPropTypeGetter(hObject, szPropName, FALSE);
   if (nPropType == FXJSE_ClassPropType_Property) {
@@ -74,7 +74,7 @@ static void FXJSE_DynPropSetterAdapter(const FXJSE_CLASS* lpClass,
                                        FXJSE_HVALUE hValue) {
   ASSERT(lpClass);
   int32_t nPropType =
-      lpClass->dynPropTypeGetter == NULL
+      lpClass->dynPropTypeGetter == nullptr
           ? FXJSE_ClassPropType_Property
           : lpClass->dynPropTypeGetter(hObject, szPropName, FALSE);
   if (nPropType != FXJSE_ClassPropType_Method) {
@@ -88,7 +88,7 @@ static FX_BOOL FXJSE_DynPropQueryAdapter(const FXJSE_CLASS* lpClass,
                                          const CFX_ByteStringC& szPropName) {
   ASSERT(lpClass);
   int32_t nPropType =
-      lpClass->dynPropTypeGetter == NULL
+      lpClass->dynPropTypeGetter == nullptr
           ? FXJSE_ClassPropType_Property
           : lpClass->dynPropTypeGetter(hObject, szPropName, TRUE);
   return nPropType != FXJSE_ClassPropType_None;
@@ -98,7 +98,7 @@ static FX_BOOL FXJSE_DynPropDeleterAdapter(const FXJSE_CLASS* lpClass,
                                            const CFX_ByteStringC& szPropName) {
   ASSERT(lpClass);
   int32_t nPropType =
-      lpClass->dynPropTypeGetter == NULL
+      lpClass->dynPropTypeGetter == nullptr
           ? FXJSE_ClassPropType_Property
           : lpClass->dynPropTypeGetter(hObject, szPropName, FALSE);
   if (nPropType != FXJSE_ClassPropType_Method) {
@@ -128,9 +128,9 @@ static void FXJSE_V8ProxyCallback_getOwnPropertyDescriptor_getter(
       reinterpret_cast<FXJSE_HVALUE>(lpNewValue));
   info.GetReturnValue().Set(lpNewValue->DirectGetValue());
   delete lpThisValue;
-  lpThisValue = NULL;
+  lpThisValue = nullptr;
   delete lpNewValue;
-  lpNewValue = NULL;
+  lpNewValue = nullptr;
 }
 static void FXJSE_V8ProxyCallback_getOwnPropertyDescriptor_setter(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
@@ -150,9 +150,9 @@ static void FXJSE_V8ProxyCallback_getOwnPropertyDescriptor_setter(
       lpClass, reinterpret_cast<FXJSE_HOBJECT>(lpThisValue), szFxPropName,
       reinterpret_cast<FXJSE_HVALUE>(lpNewValue));
   delete lpThisValue;
-  lpThisValue = NULL;
+  lpThisValue = nullptr;
   delete lpNewValue;
-  lpNewValue = NULL;
+  lpNewValue = nullptr;
 }
 static void FXJSE_V8ProxyCallback_getOwnPropertyDescriptor(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
@@ -248,9 +248,9 @@ static void FXJSE_V8ProxyCallback_defineProperty(
       lpClass, reinterpret_cast<FXJSE_HOBJECT>(lpThisValue), szFxPropName,
       reinterpret_cast<FXJSE_HVALUE>(lpPropValue));
   delete lpThisValue;
-  lpThisValue = NULL;
+  lpThisValue = nullptr;
   delete lpPropValue;
-  lpPropValue = NULL;
+  lpPropValue = nullptr;
 }
 static void FXJSE_V8ProxyCallback_delete(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
@@ -273,19 +273,16 @@ static void FXJSE_V8ProxyCallback_delete(
           ? true
           : false);
   delete lpThisValue;
-  lpThisValue = NULL;
+  lpThisValue = nullptr;
 }
 static void FXJSE_V8ProxyCallback_fix(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
   info.GetReturnValue().SetUndefined();
 }
-static void FXJSE_V8_NamedPropertyQueryCallback(
-    v8::Local<v8::String> property,
+static void FXJSE_V8_GenericNamedPropertyQueryCallback(
+    v8::Local<v8::Name> property,
     const v8::PropertyCallbackInfo<v8::Integer>& info) {
   v8::Local<v8::Object> thisObject = info.This();
-  if (thisObject->HasRealNamedProperty(property)) {
-    return;
-  }
   const FXJSE_CLASS* lpClass =
       static_cast<FXJSE_CLASS*>(info.Data().As<v8::External>()->Value());
   v8::Isolate* pIsolate = info.GetIsolate();
@@ -303,15 +300,12 @@ static void FXJSE_V8_NamedPropertyQueryCallback(
     info.GetReturnValue().Set(iV8Absent);
   }
   delete lpThisValue;
-  lpThisValue = NULL;
+  lpThisValue = nullptr;
 }
-static void FXJSE_V8_NamedPropertyDeleterCallback(
-    v8::Local<v8::String> property,
+static void FXJSE_V8_GenericNamedPropertyDeleterCallback(
+    v8::Local<v8::Name> property,
     const v8::PropertyCallbackInfo<v8::Boolean>& info) {
   v8::Local<v8::Object> thisObject = info.This();
-  if (thisObject->HasRealNamedProperty(property)) {
-    return;
-  }
   const FXJSE_CLASS* lpClass =
       static_cast<FXJSE_CLASS*>(info.Data().As<v8::External>()->Value());
   v8::Isolate* pIsolate = info.GetIsolate();
@@ -326,8 +320,61 @@ static void FXJSE_V8_NamedPropertyDeleterCallback(
           ? true
           : false);
   delete lpThisValue;
-  lpThisValue = NULL;
+  lpThisValue = nullptr;
 }
+static void FXJSE_V8_GenericNamedPropertyGetterCallback(
+    v8::Local<v8::Name> property,
+    const v8::PropertyCallbackInfo<v8::Value>& info) {
+  v8::Local<v8::Object> thisObject = info.This();
+  const FXJSE_CLASS* lpClass =
+      static_cast<FXJSE_CLASS*>(info.Data().As<v8::External>()->Value());
+  v8::String::Utf8Value szPropName(property);
+  CFX_ByteStringC szFxPropName(*szPropName, szPropName.length());
+  CFXJSE_Value* lpThisValue = CFXJSE_Value::Create(info.GetIsolate());
+  lpThisValue->ForceSetValue(thisObject);
+  CFXJSE_Value* lpNewValue = CFXJSE_Value::Create(info.GetIsolate());
+  FXJSE_DynPropGetterAdapter(
+      lpClass, reinterpret_cast<FXJSE_HOBJECT>(lpThisValue), szFxPropName,
+      reinterpret_cast<FXJSE_HVALUE>(lpNewValue));
+  info.GetReturnValue().Set(lpNewValue->DirectGetValue());
+  delete lpThisValue;
+  lpThisValue = nullptr;
+}
+static void FXJSE_V8_GenericNamedPropertySetterCallback(
+    v8::Local<v8::Name> property,
+    v8::Local<v8::Value> value,
+    const v8::PropertyCallbackInfo<v8::Value>& info) {
+  v8::Local<v8::Object> thisObject = info.This();
+  const FXJSE_CLASS* lpClass =
+      static_cast<FXJSE_CLASS*>(info.Data().As<v8::External>()->Value());
+  v8::Isolate* pIsolate = info.GetIsolate();
+  v8::String::Utf8Value szPropName(property);
+  CFX_ByteStringC szFxPropName(*szPropName, szPropName.length());
+  CFXJSE_Value* lpThisValue = CFXJSE_Value::Create(info.GetIsolate());
+  lpThisValue->ForceSetValue(thisObject);
+  CFXJSE_Value* lpNewValue = CFXJSE_Value::Create(info.GetIsolate());
+  lpNewValue->ForceSetValue(value);
+  FXJSE_DynPropSetterAdapter(
+      lpClass, reinterpret_cast<FXJSE_HOBJECT>(lpThisValue), szFxPropName,
+      reinterpret_cast<FXJSE_HVALUE>(lpNewValue));
+  info.GetReturnValue().Set(value);
+  delete lpThisValue;
+  lpThisValue = nullptr;
+}
+static void FXJSE_V8_GenericNamedPropertyEnumeratorCallback(
+    const v8::PropertyCallbackInfo<v8::Array>& info) {
+  v8::Local<v8::Object> thisObject = info.This();
+  const FXJSE_CLASS* lpClass =
+      static_cast<FXJSE_CLASS*>(info.Data().As<v8::External>()->Value());
+  v8::Isolate* pIsolate = info.GetIsolate();
+  v8::Local<v8::Array> newArray = v8::Array::New(pIsolate, lpClass->propNum);
+  for (int i = 0; i < lpClass->propNum; i++) {
+    newArray->Set(
+        i, v8::String::NewFromUtf8(pIsolate, lpClass->properties[i].name));
+  }
+  info.GetReturnValue().Set(newArray);
+}
+
 void CFXJSE_Class::SetUpDynPropHandler(CFXJSE_Context* pContext,
                                        CFXJSE_Value* pValue,
                                        const FXJSE_CLASS* lpClassDefinition) {
@@ -392,12 +439,21 @@ void CFXJSE_Class::SetUpNamedPropHandler(
     v8::Isolate* pIsolate,
     v8::Local<v8::ObjectTemplate>& hObjectTemplate,
     const FXJSE_CLASS* lpClassDefinition) {
-  hObjectTemplate->SetNamedPropertyHandler(
-      0, 0,
-      lpClassDefinition->dynPropTypeGetter ? FXJSE_V8_NamedPropertyQueryCallback
-                                           : 0,
-      lpClassDefinition->dynPropDeleter ? FXJSE_V8_NamedPropertyDeleterCallback
-                                        : 0,
-      0,
-      v8::External::New(pIsolate, const_cast<FXJSE_CLASS*>(lpClassDefinition)));
+  v8::NamedPropertyHandlerConfiguration configuration(
+      lpClassDefinition->dynPropGetter
+          ? FXJSE_V8_GenericNamedPropertyGetterCallback
+          : 0,
+      lpClassDefinition->dynPropSetter
+          ? FXJSE_V8_GenericNamedPropertySetterCallback
+          : 0,
+      lpClassDefinition->dynPropTypeGetter
+          ? FXJSE_V8_GenericNamedPropertyQueryCallback
+          : 0,
+      lpClassDefinition->dynPropDeleter
+          ? FXJSE_V8_GenericNamedPropertyDeleterCallback
+          : 0,
+      FXJSE_V8_GenericNamedPropertyEnumeratorCallback,
+      v8::External::New(pIsolate, const_cast<FXJSE_CLASS*>(lpClassDefinition)),
+      v8::PropertyHandlerFlags::kNonMasking);
+  hObjectTemplate->SetHandler(configuration);
 }

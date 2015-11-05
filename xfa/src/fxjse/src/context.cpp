@@ -169,16 +169,6 @@ CFXJSE_Context* CFXJSE_Context::Create(v8::Isolate* pIsolate,
       FXJSE_GetGlobalObjectFromContext(hNewContext);
   FXJSE_UpdateObjectBinding(hGlobalObject, lpGlobalObject);
   pContext->m_hContext.Reset(pIsolate, hNewContext);
-  if (lpGlobalClass) {
-    if (lpGlobalClass->dynMethodCall || lpGlobalClass->dynPropGetter ||
-        lpGlobalClass->dynPropSetter || lpGlobalClass->dynPropTypeGetter) {
-      CFXJSE_Value* lpThisValue = CFXJSE_Value::Create(pIsolate);
-      lpThisValue->ForceSetValue(hGlobalObject);
-      CFXJSE_Class::SetUpDynPropHandler(pContext, lpThisValue, lpGlobalClass);
-      delete lpThisValue;
-      lpThisValue = NULL;
-    }
-  }
   return pContext;
 }
 CFXJSE_Context::~CFXJSE_Context() {

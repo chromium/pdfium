@@ -151,15 +151,6 @@ static void FXJSE_V8ConstructorCallback_Wrapper(
   }
   FXSYS_assert(info.This()->InternalFieldCount());
   info.This()->SetAlignedPointerInInternalField(0, NULL);
-  CFXJSE_Value* lpThisValue = CFXJSE_Value::Create(info.GetIsolate());
-  lpThisValue->ForceSetValue(info.This());
-  if (lpClassDefinition->dynMethodCall || lpClassDefinition->dynPropGetter ||
-      lpClassDefinition->dynPropSetter ||
-      lpClassDefinition->dynPropTypeGetter) {
-    CFXJSE_Class::SetUpDynPropHandler(NULL, lpThisValue, lpClassDefinition);
-  }
-  delete lpThisValue;
-  lpThisValue = NULL;
 }
 FXJSE_HRUNTIME CFXJSE_Arguments::GetRuntime() const {
   const CFXJSE_ArgumentsImpl* lpArguments =
@@ -249,6 +240,7 @@ CFXJSE_Class* CFXJSE_Class::Create(CFXJSE_Context* lpContext,
   v8::Isolate* pIsolate = lpContext->m_pIsolate;
   pClass = new CFXJSE_Class(lpContext);
   pClass->m_szClassName = lpClassDefinition->name;
+  pClass->m_lpClassDefinition = lpClassDefinition;
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(pIsolate);
   v8::Local<v8::FunctionTemplate> hFunctionTemplate = v8::FunctionTemplate::New(
       pIsolate, bIsJSGlobal ? 0 : FXJSE_V8ConstructorCallback_Wrapper,
@@ -258,10 +250,8 @@ CFXJSE_Class* CFXJSE_Class::Create(CFXJSE_Context* lpContext,
   hFunctionTemplate->InstanceTemplate()->SetInternalFieldCount(1);
   v8::Local<v8::ObjectTemplate> hObjectTemplate =
       hFunctionTemplate->InstanceTemplate();
-  if (lpClassDefinition->dynPropDeleter ||
-      lpClassDefinition->dynPropTypeGetter) {
-    SetUpNamedPropHandler(pIsolate, hObjectTemplate, lpClassDefinition);
-  }
+  SetUpNamedPropHandler(pIsolate, hObjectTemplate, lpClassDefinition);
+
   if (lpClassDefinition->propNum) {
     for (int32_t i = 0; i < lpClassDefinition->propNum; i++) {
       hObjectTemplate->SetNativeDataProperty(

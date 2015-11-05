@@ -10,7 +10,8 @@ class CFXJSE_Context;
 class CFXJSE_Value;
 class CFXJSE_Class {
  protected:
-  CFXJSE_Class(CFXJSE_Context* lpContext) : m_pContext(lpContext) {}
+  CFXJSE_Class(CFXJSE_Context* lpContext)
+      : m_pContext(lpContext), m_lpClassDefinition(nullptr) {}
 
  public:
   inline CFXJSE_Context* GetContext() { return m_pContext; }
@@ -32,6 +33,7 @@ class CFXJSE_Class {
 
  protected:
   CFX_ByteString m_szClassName;
+  const FXJSE_CLASS* m_lpClassDefinition;
   CFXJSE_Context* m_pContext;
   v8::Global<v8::FunctionTemplate> m_hTemplate;
   friend class CFXJSE_Context;
