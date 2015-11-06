@@ -61,7 +61,7 @@ void DisposeObject(const v8::WeakCallbackInfo<CJS_Object>& data) {
 }
 
 CJS_Object::CJS_Object(v8::Local<v8::Object> pObject) {
-  m_pIsolate = pObject->CreationContext()->GetIsolate();
+  m_pIsolate = pObject->GetIsolate();
   m_pV8Object.Reset(m_pIsolate, pObject);
 }
 
