@@ -447,15 +447,6 @@ int FXJS_GetObjDefnID(v8::Local<v8::Object> pObj) {
   return -1;
 }
 
-v8::Isolate* FXJS_GetRuntime(v8::Local<v8::Object> pObj) {
-  if (pObj.IsEmpty())
-    return NULL;
-  v8::Local<v8::Context> context = pObj->CreationContext();
-  if (context.IsEmpty())
-    return NULL;
-  return context->GetIsolate();
-}
-
 void FXJS_Error(v8::Isolate* pIsolate, const CFX_WideString& message) {
   // Conversion from pdfium's wchar_t wide-strings to v8's uint16_t
   // wide-strings isn't handled by v8, so use UTF8 as a common

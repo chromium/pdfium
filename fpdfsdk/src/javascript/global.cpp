@@ -259,7 +259,7 @@ void JSGlobalAlternate::UpdateGlobalPersistentVariables() {
                              pData->data.sData.UTF8Decode().c_str());
         break;
       case JS_GLOBALDATA_TYPE_OBJECT: {
-        v8::Isolate* pRuntime = FXJS_GetRuntime(m_pJSObject->ToV8Object());
+        v8::Isolate* pRuntime = m_pJSObject->ToV8Object()->GetIsolate();
         v8::Local<v8::Object> pObj = FXJS_NewFxDynamicObj(pRuntime, NULL, -1);
 
         PutObjectProperty(pObj, &pData->data);
@@ -324,8 +324,7 @@ void JSGlobalAlternate::CommitGlobalPersisitentVariables(IJS_Context* cc) {
 void JSGlobalAlternate::ObjectToArray(IJS_Context* cc,
                                       v8::Local<v8::Object> pObj,
                                       CJS_GlobalVariableArray& array) {
-  v8::Local<v8::Context> context = pObj->CreationContext();
-  v8::Isolate* isolate = context->GetIsolate();
+  v8::Isolate* isolate = pObj->GetIsolate();
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
 
   v8::Local<v8::Array> pKeyList = FXJS_GetObjectElementNames(isolate, pObj);
@@ -401,7 +400,7 @@ void JSGlobalAlternate::PutObjectProperty(v8::Local<v8::Object> pObj,
                              pObjData->sData.UTF8Decode().c_str());
         break;
       case JS_GLOBALDATA_TYPE_OBJECT: {
-        v8::Isolate* pRuntime = FXJS_GetRuntime(m_pJSObject->ToV8Object());
+        v8::Isolate* pRuntime = m_pJSObject->ToV8Object()->GetIsolate();
         v8::Local<v8::Object> pNewObj =
             FXJS_NewFxDynamicObj(pRuntime, NULL, -1);
         PutObjectProperty(pNewObj, pObjData);
@@ -454,7 +453,7 @@ FX_BOOL JSGlobalAlternate::SetGlobalVariables(const FX_CHAR* propname,
         pTemp->sData = sData;
       } break;
       case JS_GLOBALDATA_TYPE_OBJECT: {
-        pTemp->pData.Reset(FXJS_GetRuntime(pData), pData);
+        pTemp->pData.Reset(pData->GetIsolate(), pData);
       } break;
       case JS_GLOBALDATA_TYPE_NULL:
         break;
@@ -488,7 +487,7 @@ FX_BOOL JSGlobalAlternate::SetGlobalVariables(const FX_CHAR* propname,
     case JS_GLOBALDATA_TYPE_OBJECT: {
       pNewData = new JSGlobalData;
       pNewData->nType = JS_GLOBALDATA_TYPE_OBJECT;
-      pNewData->pData.Reset(FXJS_GetRuntime(pData), pData);
+      pNewData->pData.Reset(pData->GetIsolate(), pData);
       pNewData->bPersistent = bDefaultPersistent;
     } break;
     case JS_GLOBALDATA_TYPE_NULL: {
