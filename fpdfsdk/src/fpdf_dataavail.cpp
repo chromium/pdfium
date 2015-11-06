@@ -4,11 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../public/fpdf_dataavail.h"
-#include "../../public/fpdf_formfill.h"
+#include "public/fpdf_dataavail.h"
+
 #include "../include/fsdk_define.h"
 #include "../include/fpdfxfa/fpdfxfa_doc.h"
 #include "../include/fpdfxfa/fpdfxfa_app.h"
+#include "public/fpdf_formfill.h"
 
 class CFPDF_FileAvailWrap : public IFX_FileAvail {
  public:

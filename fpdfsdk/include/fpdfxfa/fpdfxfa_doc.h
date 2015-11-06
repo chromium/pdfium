@@ -8,6 +8,7 @@
 #define FPDFXFA_DOC_H_
 
 #include "../../../xfa/include/fxfa/fxfa.h"
+#include "public/fpdfview.h"
 
 class CPDFXFA_App;
 class CPDFXFA_Document;

@@ -4,7 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../public/fpdf_formfill.h"
 #include "../../include/fsdk_define.h"
 #include "../../include/fpdfxfa/fpdfxfa_doc.h"
 #include "../../include/fsdk_mgr.h"
@@ -12,6 +11,7 @@
 #include "../../include/fpdfxfa/fpdfxfa_util.h"
 #include "../../include/fpdfxfa/fpdfxfa_page.h"
 #include "../../include/javascript/IJavaScript.h"
+#include "public/fpdf_formfill.h"
 
 #define IDS_XFA_Validate_Input                                          \
   "At least one required field was empty. Please fill in the required " \

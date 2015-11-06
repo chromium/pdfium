@@ -4,8 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FPDFXFA_UTIL_H_
-#define _FPDFXFA_UTIL_H_
+#ifndef FPDFSDK_INCLUDE_FPDFXFA_FPDFXFA_UTIL_H_
+#define FPDFSDK_INCLUDE_FPDFXFA_FPDFXFA_UTIL_H_
+
+#include "xfa/include/fwl/adapter/fwl_adaptertimermgr.h"
 
 #define JS_STR_VIEWERTYPE_STANDARD L"Exchange"
 #define JS_STR_LANGUANGE L"ENU"
@@ -30,9 +32,9 @@ class CXFA_FWLAdapterTimerMgr : public IFWL_AdapterTimerMgr {
 
 class CFWL_TimerInfo {
  public:
-  CFWL_TimerInfo() : pTimer(NULL) {}
+  CFWL_TimerInfo() : pTimer(nullptr) {}
   uint32_t uIDEvent;
   IFWL_Timer* pTimer;
 };
 
-#endif
+#endif  // FPDFSDK_INCLUDE_FPDFXFA_FPDFXFA_UTIL_H_

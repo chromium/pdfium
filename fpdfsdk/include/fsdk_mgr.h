@@ -10,8 +10,6 @@
 #include <map>
 
 #include "../../core/include/fpdftext/fpdf_text.h"
-#include "../../public/fpdf_formfill.h"
-#include "../../public/fpdf_fwlevent.h"  // cross platform keycode and events define.
 #include "fpdfxfa/fpdfxfa_doc.h"
 #include "fpdfxfa/fpdfxfa_page.h"
 #include "fsdk_actionhandler.h"
@@ -22,6 +20,8 @@
 #include "fsdk_define.h"
 #include "fx_systemhandler.h"
 #include "javascript/IJavaScript.h"
+#include "public/fpdf_formfill.h"
+#include "public/fpdf_fwlevent.h"  // cross platform keycode and events define.
 #include "third_party/base/nonstd_unique_ptr.h"
 
 class CFFL_IFormFiller;

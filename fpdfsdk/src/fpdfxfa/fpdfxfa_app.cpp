@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../public/fpdf_formfill.h"
 #include "../../include/fsdk_define.h"
 #include "../../include/fsdk_mgr.h"
 #include "../../include/fpdfxfa/fpdfxfa_doc.h"
 #include "../../include/fpdfxfa/fpdfxfa_util.h"
 #include "../../include/javascript/IJavaScript.h"
 #include "../../include/fpdfxfa/fpdfxfa_app.h"
+#include "public/fpdf_formfill.h"
 
 CPDFXFA_App* CPDFXFA_App::g_pApp = NULL;
 

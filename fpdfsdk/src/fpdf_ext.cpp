@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "public/fpdf_ext.h"
+
 #include "../../core/include/fxcrt/fx_xml.h"
-#include "../../public/fpdf_ext.h"
 #include "../include/fsdk_define.h"
 #include "../include/fpdfxfa/fpdfxfa_doc.h"
 

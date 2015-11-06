@@ -10,8 +10,8 @@
 #include "../../../core/include/fpdfapi/fpdf_module.h"
 #include "../../../core/include/fpdfdoc/fpdf_doc.h"
 #include "../../../core/include/fpdfdoc/fpdf_vt.h"
-#include "../../../public/fpdf_fwlevent.h"
 #include "../fx_systemhandler.h"
 #include "../fxedit/fx_edit.h"
+#include "public/fpdf_fwlevent.h"
 
 #endif  // FPDFSDK_INCLUDE_PDFWINDOW_PDFWINDOW_H_

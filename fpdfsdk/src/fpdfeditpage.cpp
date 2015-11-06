@@ -4,12 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../public/fpdf_edit.h"
-#include "../../public/fpdf_formfill.h"
+#include "public/fpdf_edit.h"
+
 #include "../include/fsdk_define.h"
 #include "../include/fpdfxfa/fpdfxfa_doc.h"
 #include "../include/fpdfxfa/fpdfxfa_app.h"
 #include "../include/fpdfxfa/fpdfxfa_page.h"
+#include "public/fpdf_formfill.h"
 
 #if _FX_OS_ == _FX_ANDROID_
 #include "time.h"

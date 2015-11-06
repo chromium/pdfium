@@ -7,22 +7,22 @@
 #ifndef FPDFSDK_INCLUDE_FSDK_DEFINE_H_
 #define FPDFSDK_INCLUDE_FSDK_DEFINE_H_
 
+#include "../../core/include/fpdfapi/fpdfapi.h"
 #include "../../core/include/fpdfapi/fpdf_module.h"
 #include "../../core/include/fpdfapi/fpdf_pageobj.h"
 #include "../../core/include/fpdfapi/fpdf_parser.h"
 #include "../../core/include/fpdfapi/fpdf_render.h"
 #include "../../core/include/fpdfapi/fpdf_serial.h"
-#include "../../core/include/fpdfapi/fpdfapi.h"
 #include "../../core/include/fpdfdoc/fpdf_doc.h"
 #include "../../core/include/fpdfdoc/fpdf_vt.h"
 #include "../../core/include/fxge/fx_ge.h"
 #include "../../core/include/fxge/fx_ge_win32.h"
-#include "../../public/fpdfview.h"
 #include "../../xfa/include/fwl/adapter/fwl_adaptertimermgr.h"
 #include "../../xfa/include/fxbarcode/BC_BarCode.h"
 #include "../../xfa/include/fxfa/fxfa.h"
 #include "../../xfa/include/fxgraphics/fx_graphics.h"
 #include "../../xfa/include/fxjse/fxjse.h"
+#include "public/fpdfview.h"
 
 #ifdef _WIN32
 #include <tchar.h>

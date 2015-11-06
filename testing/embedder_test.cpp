@@ -11,8 +11,9 @@
 #include <utility>
 #include <vector>
 
-#include "../public/fpdf_text.h"
-#include "../public/fpdfview.h"
+#include "public/fpdf_dataavail.h"
+#include "public/fpdf_text.h"
+#include "public/fpdfview.h"
 #include "test_support.h"
 #include "testing/gmock/include/gmock/gmock.h"
 

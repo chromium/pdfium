@@ -8,10 +8,10 @@
 #include <map>
 #include <string>
 
-#include "../public/fpdf_dataavail.h"
-#include "../public/fpdf_ext.h"
-#include "../public/fpdf_formfill.h"
-#include "../public/fpdfview.h"
+#include "public/fpdf_dataavail.h"
+#include "public/fpdf_ext.h"
+#include "public/fpdf_formfill.h"
+#include "public/fpdfview.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/nonstd_unique_ptr.h"
 

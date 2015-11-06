@@ -6,11 +6,12 @@
 
 #include <algorithm>
 
-#include "../../public/fpdf_ext.h"
+#include "../include/fsdk_mgr.h"
+
 #include "../include/formfiller/FFL_FormFiller.h"
 #include "../include/fsdk_define.h"
-#include "../include/fsdk_mgr.h"
 #include "../include/javascript/IJavaScript.h"
+#include "public/fpdf_ext.h"
 #include "third_party/base/nonstd_unique_ptr.h"
 
 #include "../include/fpdfxfa/fpdfxfa_app.h"

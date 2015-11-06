@@ -5,9 +5,9 @@
 #include <limits>
 #include <string>
 
-#include "../../public/fpdfview.h"
 #include "../../testing/embedder_test.h"
 #include "fpdfview_c_api_test.h"
+#include "public/fpdfview.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(fpdf, CApiTest) {

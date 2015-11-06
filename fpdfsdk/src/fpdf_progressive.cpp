@@ -4,10 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../public/fpdf_progressive.h"
-#include "../../public/fpdfview.h"
+#include "public/fpdf_progressive.h"
+
 #include "../include/fsdk_define.h"
 #include "../include/fsdk_rendercontext.h"
+#include "public/fpdfview.h"
 
 // These checks are here because core/ and public/ cannot depend on each other.
 static_assert(CPDF_ProgressiveRenderer::Ready == FPDF_RENDER_READER,

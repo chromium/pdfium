@@ -4,7 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../public/fpdf_sysfontinfo.h"
+#include "public/fpdf_sysfontinfo.h"
+
 #include "../include/fsdk_define.h"
 #include "../include/pdfwindow/PWL_FontMap.h"
 
