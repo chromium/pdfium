@@ -33,7 +33,7 @@
       ],
     },
     {
-      'target_name': 'freetype',
+      'target_name': 'fx_freetype',
       'type': 'static_library',
       'defines': [
         'FT2_BUILD_LIBRARY',

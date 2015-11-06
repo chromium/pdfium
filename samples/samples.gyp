@@ -7,17 +7,14 @@
     'pdf_enable_v8%': 1,
   },
   'target_defaults': {
-    'type': 'executable',
-    'dependencies': [
-      '../pdfium.gyp:pdfium',
-    ],
-    'include_dirs': [
-      '<(DEPTH)',
-    ],
     'defines' : [
       'PNG_PREFIX',
       'PNGPREFIX_H',
       'PNG_USE_READ_MACROS',
+    ],
+    'include_dirs': [
+      # This is implicit in GN.
+      '<(DEPTH)',
     ],
     'conditions': [
       ['pdf_enable_v8==1', {
@@ -38,11 +35,20 @@
       'dependencies': [
         '../pdfium.gyp:pdfium',
         '../pdfium.gyp:test_support',
+        # Regardless of whether the library ships against system freetype,
+        # always link this binary against the bundled one for consistency
+        # of results across platforms.
+        '../third_party/third_party.gyp:fx_freetype',
       ],
       'sources': [
         'pdfium_test.cc',
         'image_diff_png.cc',
       ],
+      'link_settings': {
+        'libraries!': [
+          '-lfreetype',
+        ],
+      },
       'conditions': [
         ['pdf_enable_v8==1', {
           'dependencies': [
@@ -56,11 +62,8 @@
       'type': 'executable',
       'variables': { 'enable_wexit_time_destructors': 1, },
       'dependencies': [
-        '../pdfium.gyp:fxcodec',
+        '../pdfium.gyp:pdfium',
         '../third_party/third_party.gyp:pdfium_base',
-      ],
-      'include_dirs': [
-        '../../',
       ],
       'sources': [
         'image_diff.cc',
