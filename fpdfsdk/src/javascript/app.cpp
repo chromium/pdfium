@@ -6,7 +6,6 @@
 
 #include "app.h"
 
-#include "../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../include/fsdk_mgr.h"  // For CPDFDoc_Environment.
 #include "../../include/javascript/IJavaScript.h"
 #include "Document.h"
@@ -17,6 +16,7 @@
 #include "JS_Runtime.h"
 #include "JS_Value.h"
 #include "resource.h"
+#include "third_party/base/nonstd_unique_ptr.h"
 
 BEGIN_JS_STATIC_CONST(CJS_TimerObj)
 END_JS_STATIC_CONST()

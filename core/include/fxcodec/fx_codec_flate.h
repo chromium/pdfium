@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../third_party/zlib_v128/zlib.h"
+#include "third_party/zlib_v128/zlib.h"
 
 #ifdef __cplusplus
 extern "C" {

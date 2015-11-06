@@ -4,8 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXJSE_H_
-#define _FXJSE_H_
+#ifndef XFA_INCLUDE_FXJSE_FXJSE_H_
+#define XFA_INCLUDE_FXJSE_FXJSE_H_
+
+#include "../../../core/include/fpdfapi/fpdf_parser.h"
+#include "../../../core/include/fxcrt/fx_string.h"
+#include "../../../core/include/fxcrt/fx_system.h"
+
+class CPDFDoc_Environment;
+class CPDF_Page;
 
 typedef struct FXJSE_HRUNTIME_ { void* pData; } * FXJSE_HRUNTIME;
 typedef struct FXJSE_HCONTEXT_ { void* pData; } * FXJSE_HCONTEXT;
@@ -20,8 +27,8 @@ FXJSE_HRUNTIME FXJSE_Runtime_Create();
 void FXJSE_Runtime_Release(FXJSE_HRUNTIME hRuntime);
 typedef struct _FXJSE_CLASS FXJSE_CLASS;
 FXJSE_HCONTEXT FXJSE_Context_Create(FXJSE_HRUNTIME hRuntime,
-                                    const FXJSE_CLASS* lpGlobalClass = NULL,
-                                    void* lpGlobalObject = NULL);
+                                    const FXJSE_CLASS* lpGlobalClass = nullptr,
+                                    void* lpGlobalObject = nullptr);
 void FXJSE_Context_Release(FXJSE_HCONTEXT hContext);
 FXJSE_HVALUE FXJSE_Context_GetGlobalObject(FXJSE_HCONTEXT hContext);
 FXJSE_HRUNTIME FXJSE_Context_GetRuntime(FXJSE_HCONTEXT hContext);
@@ -40,7 +47,7 @@ class CFXJSE_Arguments {
   int32_t GetInt32(int32_t index) const;
   FX_FLOAT GetFloat(int32_t index) const;
   CFX_ByteString GetUTF8String(int32_t index) const;
-  void* GetObject(int32_t index, FXJSE_HCLASS hClass = NULL) const;
+  void* GetObject(int32_t index, FXJSE_HCLASS hClass = nullptr) const;
   FXJSE_HVALUE GetReturnValue();
 };
 typedef void (*FXJSE_FuncCallback)(FXJSE_HOBJECT hThis,
@@ -156,7 +163,7 @@ FX_BOOL FXJSE_Value_SetFunctionBind(FXJSE_HVALUE hValue,
 FX_BOOL FXJSE_ExecuteScript(FXJSE_HCONTEXT hContext,
                             const FX_CHAR* szScript,
                             FXJSE_HVALUE hRetValue,
-                            FXJSE_HVALUE hNewThisObject = NULL);
+                            FXJSE_HVALUE hNewThisObject = nullptr);
 void FXJSE_ThrowMessage(const CFX_ByteStringC& utf8Name,
                         const CFX_ByteStringC& utf8Message);
 FX_BOOL FXJSE_ReturnValue_GetMessage(FXJSE_HVALUE hRetValue,
@@ -165,4 +172,5 @@ FX_BOOL FXJSE_ReturnValue_GetMessage(FXJSE_HVALUE hRetValue,
 FX_BOOL FXJSE_ReturnValue_GetLineInfo(FXJSE_HVALUE hRetValue,
                                       int32_t& nLine,
                                       int32_t& nCol);
-#endif
+
+#endif  // XFA_INCLUDE_FXJSE_FXJSE_H_

@@ -25,7 +25,7 @@
 #ifdef PDF_ENABLE_V8
 #include "v8/include/libplatform/libplatform.h"
 #include "v8/include/v8.h"
-#endif
+#endif  // PDF_ENABLE_V8
 
 #ifdef _WIN32
 #define snprintf _snprintf

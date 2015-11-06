@@ -15,6 +15,7 @@
     'include_dirs': [
       # This is implicit in GN.
       '<(DEPTH)',
+      '..',
     ],
     'conditions': [
       ['pdf_enable_v8==1', {

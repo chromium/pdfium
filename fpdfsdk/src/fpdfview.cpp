@@ -11,8 +11,6 @@
 #include "../../public/fpdf_formfill.h"
 #include "../../public/fpdf_progressive.h"
 #include "../../public/fpdfview.h"
-#include "../../third_party/base/nonstd_unique_ptr.h"
-#include "../../third_party/base/numerics/safe_conversions_impl.h"
 #include "../include/fsdk_define.h"
 #include "../include/fsdk_mgr.h"
 #include "../include/fsdk_rendercontext.h"
@@ -21,6 +19,8 @@
 #include "../include/fpdfxfa/fpdfxfa_page.h"
 #include "../include/fpdfxfa/fpdfxfa_util.h"
 #include "../include/javascript/IJavaScript.h"
+#include "third_party/base/nonstd_unique_ptr.h"
+#include "third_party/base/numerics/safe_conversions_impl.h"
 
 CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc) {
   return doc ? static_cast<CPDFXFA_Document*>(doc)->GetPDFDoc() : nullptr;

@@ -6,10 +6,10 @@
 
 #include "JBig2_GrrdProc.h"
 
-#include "../../../../third_party/base/nonstd_unique_ptr.h"
 #include "JBig2_ArithDecoder.h"
 #include "JBig2_BitStream.h"
 #include "JBig2_Image.h"
+#include "third_party/base/nonstd_unique_ptr.h"
 
 CJBig2_Image* CJBig2_GRRDProc::decode(CJBig2_ArithDecoder* pArithDecoder,
                                       JBig2ArithCtx* grContext) {

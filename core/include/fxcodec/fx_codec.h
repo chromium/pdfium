@@ -10,9 +10,9 @@
 #include <map>
 #include <vector>
 
-#include "../../../third_party/base/nonstd_unique_ptr.h"
 #include "../fxcrt/fx_basic.h"
 #include "fx_codec_def.h"
+#include "third_party/base/nonstd_unique_ptr.h"
 
 #include "../fxcrt/fx_coordinates.h"  // For FX_RECT.
 

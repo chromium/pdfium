@@ -8,9 +8,9 @@
 
 #include <cmath>
 
-#include "../../../../third_party/base/logging.h"
 #include "../../../include/fxcrt/fx_safe_types.h"
 #include "codec_int.h"
+#include "third_party/base/logging.h"
 
 CCodec_ModuleMgr::CCodec_ModuleMgr()
     : m_pBasicModule(new CCodec_BasicModule),

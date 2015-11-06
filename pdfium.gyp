@@ -1,3 +1,7 @@
+# Copyright 2015 PDFium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
 {
   'variables': {
     # TODO(thakis): Enable this, pdfium:29
@@ -24,6 +28,9 @@
       '_CRT_SECURE_NO_WARNINGS',
     ],
     'include_dirs': [
+      # This is implicit in GN.
+      '<(DEPTH)',
+      '.',
       'third_party/freetype/include',
       'third_party/freetype/include/freetype',
     ],
@@ -334,8 +341,8 @@
       'target_name': 'fxcodec',
       'type': 'static_library',
       'dependencies': [
+        '<(libjpeg_gyp_path):libjpeg',
         'third_party/third_party.gyp:fx_lcms2',
-        'third_party/third_party.gyp:fx_libjpeg',
         'third_party/third_party.gyp:fx_libopenjpeg',
         'third_party/third_party.gyp:fx_lpng',
         'third_party/third_party.gyp:fx_tiff',
@@ -757,9 +764,6 @@
         'pdfium',
         'test_support',
       ],
-      'include_dirs': [
-        '<(DEPTH)'
-      ],
       'sources': [
         'core/src/fpdfapi/fpdf_font/fpdf_font_cid_unittest.cpp',
         'core/src/fpdfapi/fpdf_font/fpdf_font_unittest.cpp',
@@ -793,9 +797,6 @@
         '<(DEPTH)/testing/gtest.gyp:gtest',
         'pdfium',
         'test_support',
-      ],
-      'include_dirs': [
-        '<(DEPTH)',
       ],
       'sources': [
         'core/src/fpdfapi/fpdf_page/fpdf_page_func_embeddertest.cpp',
@@ -837,9 +838,6 @@
       'dependencies': [
         '<(DEPTH)/testing/gmock.gyp:gmock',
         '<(DEPTH)/testing/gtest.gyp:gtest',
-      ],
-      'include_dirs': [
-        '<(DEPTH)',
       ],
       'sources': [
         'testing/fx_string_testhelpers.cpp',

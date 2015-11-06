@@ -11,15 +11,10 @@
     {
       "target_name":"xfa",
       "type":"static_library",
-      'dependencies': [
-        '<(DEPTH)/v8/tools/gyp/v8.gyp:v8',
-      ],
-      'export_dependent_settings': [
-        '<(DEPTH)/v8/tools/gyp/v8.gyp:v8',
-      ],
       'include_dirs': [
-        '<(DEPTH)/v8',
-        '<(DEPTH)/v8/include',
+        # This is implicit in GN.
+        '<(DEPTH)',
+        '.',
         'third_party/freetype/include',
         'third_party/freetype/include/freetype',
       ],

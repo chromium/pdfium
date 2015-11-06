@@ -6,11 +6,11 @@
 
 #include "JBig2_TrdProc.h"
 
-#include "../../../../third_party/base/nonstd_unique_ptr.h"
 #include "JBig2_ArithDecoder.h"
 #include "JBig2_ArithIntDecoder.h"
-#include "JBig2_HuffmanDecoder.h"
 #include "JBig2_GrrdProc.h"
+#include "JBig2_HuffmanDecoder.h"
+#include "third_party/base/nonstd_unique_ptr.h"
 
 CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
                                              JBig2ArithCtx* grContext) {

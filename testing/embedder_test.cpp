@@ -17,8 +17,8 @@
 #include "testing/gmock/include/gmock/gmock.h"
 
 #ifdef PDF_ENABLE_V8
-#include "v8/include/libplatform/libplatform.h"
 #include "v8/include/v8.h"
+#include "v8/include/v8-platform.h"
 #endif  // PDF_ENABLE_V8
 
 namespace {

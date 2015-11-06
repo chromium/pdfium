@@ -6,7 +6,6 @@
 
 #include "Document.h"
 
-#include "../../../third_party/base/numerics/safe_math.h"
 #include "../../include/fsdk_mgr.h"  // For CPDFDoc_Environment.
 #include "../../include/javascript/IJavaScript.h"
 #include "Field.h"
@@ -19,6 +18,7 @@
 #include "JS_Value.h"
 #include "app.h"
 #include "resource.h"
+#include "third_party/base/numerics/safe_math.h"
 
 static v8::Isolate* GetIsolate(IJS_Context* cc) {
   CJS_Context* pContext = (CJS_Context*)cc;

@@ -6,11 +6,11 @@
 
 #include "JBig2_GrdProc.h"
 
-#include "../../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../../include/fxcodec/fx_codec.h"
 #include "JBig2_ArithDecoder.h"
 #include "JBig2_BitStream.h"
 #include "JBig2_Image.h"
+#include "third_party/base/nonstd_unique_ptr.h"
 
 CJBig2_GRDProc::CJBig2_GRDProc()
     : m_loopIndex(0),

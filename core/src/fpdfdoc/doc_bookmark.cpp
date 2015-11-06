@@ -6,8 +6,8 @@
 
 #include <vector>
 
-#include "../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../include/fpdfdoc/fpdf_doc.h"
+#include "third_party/base/nonstd_unique_ptr.h"
 
 CPDF_Bookmark CPDF_BookmarkTree::GetFirstChild(
     const CPDF_Bookmark& parent) const {

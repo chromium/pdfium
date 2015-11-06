@@ -6,7 +6,6 @@
 
 #include <vector>
 
-#include "../../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../../include/fpdfapi/fpdf_module.h"
 #include "../../../include/fpdfapi/fpdf_pageobj.h"
 #include "../../../include/fpdfapi/fpdf_render.h"
@@ -15,6 +14,7 @@
 #include "../../../include/fxge/fx_ge.h"
 #include "../fpdf_page/pageint.h"
 #include "render_int.h"
+#include "third_party/base/nonstd_unique_ptr.h"
 
 namespace {
 

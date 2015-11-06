@@ -4,19 +4,20 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "../../../../include/fxcodec/fx_codec.h"
 #include "../../../../include/fxge/fx_ge.h"
 #include "../../dib/dib_int.h"
 #include "../../ge/text_int.h"
-#include "../../../../include/fxcodec/fx_codec.h"
-#include "../../../../../third_party/agg23/agg_pixfmt_gray.h"
-#include "../../../../../third_party/agg23/agg_path_storage.h"
-#include "../../../../../third_party/agg23/agg_scanline_u.h"
-#include "../../../../../third_party/agg23/agg_rasterizer_scanline_aa.h"
-#include "../../../../../third_party/agg23/agg_renderer_scanline.h"
-#include "../../../../../third_party/agg23/agg_curves.h"
-#include "../../../../../third_party/agg23/agg_conv_stroke.h"
-#include "../../../../../third_party/agg23/agg_conv_dash.h"
 #include "../include/fx_agg_driver.h"
+#include "third_party/agg23/agg_conv_dash.h"
+#include "third_party/agg23/agg_conv_stroke.h"
+#include "third_party/agg23/agg_curves.h"
+#include "third_party/agg23/agg_path_storage.h"
+#include "third_party/agg23/agg_pixfmt_gray.h"
+#include "third_party/agg23/agg_rasterizer_scanline_aa.h"
+#include "third_party/agg23/agg_renderer_scanline.h"
+#include "third_party/agg23/agg_scanline_u.h"
+
 void _HardClip(FX_FLOAT& x, FX_FLOAT& y) {
   if (x > 50000) {
     x = 50000;

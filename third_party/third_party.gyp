@@ -11,6 +11,11 @@
       'PNG_USE_READ_MACROS',
       '_CRT_SECURE_NO_WARNINGS',
     ],
+    'include_dirs': [
+      # This is implicit in GN.
+      '<(DEPTH)',
+      '..',
+    ],
     'msvs_disabled_warnings': [
       4005, 4018, 4146, 4333, 4345, 4267
     ],
@@ -148,7 +153,7 @@
       },
     },
     {
-      'target_name': 'fx_libjpeg',
+      'target_name': 'libjpeg',
       'type': 'static_library',
       'sources': [
         'libjpeg/cderror.h',

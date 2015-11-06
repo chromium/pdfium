@@ -160,7 +160,7 @@ FXSYS_FILE* FXSYS_wfopen(const FX_WCHAR* filename, const FX_WCHAR* mode);
 
 #ifdef __cplusplus
 }  // extern "C"
-#include "../../../third_party/base/numerics/safe_conversions.h"
+#include "third_party/base/numerics/safe_conversions.h"
 #define FXSYS_strlen(ptr) pdfium::base::checked_cast<FX_STRSIZE>(strlen(ptr))
 #define FXSYS_wcslen(ptr) pdfium::base::checked_cast<FX_STRSIZE>(wcslen(ptr))
 extern "C" {

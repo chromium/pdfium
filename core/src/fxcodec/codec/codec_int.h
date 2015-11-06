@@ -11,10 +11,10 @@
 #include <list>
 #include <map>
 
-#include "../../../../third_party/base/nonstd_unique_ptr.h"
-#include "../../../../third_party/libopenjpeg20/openjpeg.h"  // For OPJ_SIZE_T.
 #include "../../../include/fxcodec/fx_codec.h"
 #include "../jbig2/JBig2_Context.h"
+#include "third_party/base/nonstd_unique_ptr.h"
+#include "third_party/libopenjpeg20/openjpeg.h"  // For OPJ_SIZE_T.
 
 class CFX_IccProfileCache;
 class CFX_IccTransformCache;

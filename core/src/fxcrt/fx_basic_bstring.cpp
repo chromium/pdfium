@@ -7,7 +7,7 @@
 #include <stddef.h>  // For offsetof().
 
 #include "../../include/fxcrt/fx_basic.h"
-#include "../../../third_party/base/numerics/safe_math.h"
+#include "third_party/base/numerics/safe_math.h"
 
 static int _Buffer_itoa(char* buf, int i, FX_DWORD flags) {
   if (i == 0) {
