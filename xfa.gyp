@@ -21,6 +21,7 @@
         '<(DEPTH)/v8',
         '<(DEPTH)/v8/include',
         'third_party/freetype/include',
+        'third_party/freetype/include/freetype',
       ],
       'defines' : [
         'FT2_BUILD_LIBRARY',
