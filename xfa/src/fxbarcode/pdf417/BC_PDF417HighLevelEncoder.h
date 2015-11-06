@@ -4,10 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_PDF417HIGHLEVELENCODER_H_
-#define _BC_PDF417HIGHLEVELENCODER_H_
+#ifndef XFA_SRC_FXBARCODE_PDF417_BC_PDF417HIGHLEVELENCODER_H_
+#define XFA_SRC_FXBARCODE_PDF417_BC_PDF417HIGHLEVELENCODER_H_
 
-#include "BC_PDF417Compaction.h"
+#include "core/include/fxcrt/fx_basic.h"
+#include "core/include/fxcrt/fx_string.h"
+#include "xfa/src/fxbarcode/pdf417/BC_PDF417Compaction.h"
 
 class CBC_PDF417HighLevelEncoder {
  public:
@@ -69,4 +71,4 @@ class CBC_PDF417HighLevelEncoder {
   friend class PDF417HighLevelEncoder_ConsecutiveBinaryCount_Test;
 };
 
-#endif
+#endif  // XFA_SRC_FXBARCODE_PDF417_BC_PDF417HIGHLEVELENCODER_H_

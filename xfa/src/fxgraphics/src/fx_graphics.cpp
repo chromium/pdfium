@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../../third_party/base/nonstd_unique_ptr.h"
 #include "fx_path_generator.h"
 #include "pre.h"
+#include "third_party/base/nonstd_unique_ptr.h"
 
 class CAGG_Graphics {
  public:

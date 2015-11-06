@@ -4,11 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_ONEDIMWRITER_H_
-#define _BC_ONEDIMWRITER_H_
-class CBC_Writer;
+#ifndef XFA_SRC_FXBARCODE_ONED_BC_ONEDIMWRITER_H_
+#define XFA_SRC_FXBARCODE_ONED_BC_ONEDIMWRITER_H_
+
+#include "core/include/fxge/fx_ge.h"
+#include "xfa/include/fxbarcode/BC_BarCode.h"
+#include "xfa/src/fxbarcode/BC_Writer.h"
+
 class CBC_CommonBitMatrix;
-class CBC_OneDimWriter;
+class CFX_Font;
+class CFX_RenderDevice;
+
 class CBC_OneDimWriter : public CBC_Writer {
  public:
   CBC_OneDimWriter();
@@ -110,4 +116,5 @@ class CBC_OneDimWriter : public CBC_Writer {
                         int32_t& e);
   FX_WCHAR Upper(FX_WCHAR ch);
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_ONED_BC_ONEDIMWRITER_H_

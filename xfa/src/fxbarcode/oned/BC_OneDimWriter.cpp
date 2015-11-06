@@ -20,11 +20,13 @@
  * limitations under the License.
  */
 
-#include "../../../../third_party/base/nonstd_unique_ptr.h"
-#include "../barcode.h"
-#include "../BC_Writer.h"
-#include "../common/BC_CommonBitMatrix.h"
 #include "BC_OneDimWriter.h"
+
+#include "../BC_Writer.h"
+#include "../barcode.h"
+#include "../common/BC_CommonBitMatrix.h"
+#include "third_party/base/nonstd_unique_ptr.h"
+
 CBC_OneDimWriter::CBC_OneDimWriter() {
   m_locTextLoc = BC_TEXT_LOC_BELOWEMBED;
   m_bPrintChecksum = TRUE;

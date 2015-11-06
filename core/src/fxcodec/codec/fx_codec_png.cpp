@@ -7,10 +7,12 @@
 #include "../../../include/fxcodec/fx_codec.h"
 #include "../../../include/fxge/fx_dib.h"
 #include "codec_int.h"
+
 extern "C" {
 #undef FAR
-#include "../../../../third_party/lpng_v163/png.h"
+#include "third_party/lpng_v163/png.h"
 }
+
 static void _png_error_data(png_structp png_ptr, png_const_charp error_msg) {
   if (png_get_error_ptr(png_ptr)) {
     FXSYS_strncpy((char*)png_get_error_ptr(png_ptr), error_msg,

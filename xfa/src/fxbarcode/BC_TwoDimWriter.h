@@ -4,12 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_TWODIMWRITER_H_
-#define _BC_TWODIMWRITER_H_
-#include "BC_Writer.h"
-class CBC_Writer;
+#ifndef XFA_SRC_FXBARCODE_BC_TWODIMWRITER_H_
+#define XFA_SRC_FXBARCODE_BC_TWODIMWRITER_H_
+
+#include "xfa/src/fxbarcode/BC_Writer.h"
+
 class CBC_CommonBitMatrix;
-class CBC_TwoDimWriter;
+
 class CBC_TwoDimWriter : public CBC_Writer {
  public:
   CBC_TwoDimWriter();
@@ -19,7 +20,7 @@ class CBC_TwoDimWriter : public CBC_Writer {
                           int32_t& outWidth,
                           int32_t& outHeight,
                           int32_t& e) {
-    return NULL;
+    return nullptr;
   };
   virtual uint8_t* Encode(const CFX_ByteString& contents,
                           BCFORMAT format,
@@ -27,14 +28,14 @@ class CBC_TwoDimWriter : public CBC_Writer {
                           int32_t& outHeight,
                           int32_t hints,
                           int32_t& e) {
-    return NULL;
+    return nullptr;
   };
   virtual uint8_t* Encode(const CFX_ByteString& contents,
                           BCFORMAT format,
                           int32_t& outWidth,
                           int32_t& outHeight,
                           int32_t& e) {
-    return NULL;
+    return nullptr;
   };
   virtual void RenderResult(uint8_t* code,
                             int32_t codeWidth,
@@ -51,4 +52,5 @@ class CBC_TwoDimWriter : public CBC_Writer {
   FX_BOOL m_bFixedSize;
   CBC_CommonBitMatrix* m_output;
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_BC_TWODIMWRITER_H_

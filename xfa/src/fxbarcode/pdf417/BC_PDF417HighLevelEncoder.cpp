@@ -20,11 +20,13 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
-#include "../BC_UtilCodingConvert.h"
-#include "../../../../third_party/bigint/BigIntegerLibrary.hh"
-#include "BC_PDF417Compaction.h"
 #include "BC_PDF417HighLevelEncoder.h"
+
+#include "../BC_UtilCodingConvert.h"
+#include "../barcode.h"
+#include "BC_PDF417Compaction.h"
+#include "third_party/bigint/BigIntegerLibrary.hh"
+
 #define SUBMODE_ALPHA 0
 #define SUBMODE_LOWER 1
 #define SUBMODE_MIXED 2

@@ -4,9 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_WRITER_H_
-#define _BC_WRITER_H_
-class CBC_Writer;
+#ifndef XFA_SRC_FXBARCODE_BC_WRITER_H_
+#define XFA_SRC_FXBARCODE_BC_WRITER_H_
+
+#include "core/include/fxcrt/fx_string.h"
+#include "core/include/fxge/fx_dib.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 class CBC_Writer {
  public:
   CBC_Writer();
@@ -41,4 +45,5 @@ class CBC_Writer {
   FX_ARGB m_barColor;
   FX_ARGB m_backgroundColor;
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_BC_WRITER_H_

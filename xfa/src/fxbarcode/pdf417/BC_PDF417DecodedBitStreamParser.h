@@ -4,10 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_DECODEDBITSTREAMPARSER_H_
-#define _BC_DECODEDBITSTREAMPARSER_H_
+#ifndef XFA_SRC_FXBARCODE_PDF417_BC_PDF417DECODEDBITSTREAMPARSER_H_
+#define XFA_SRC_FXBARCODE_PDF417_BC_PDF417DECODEDBITSTREAMPARSER_H_
+
+#include "core/include/fxcrt/fx_basic.h"
+#include "core/include/fxcrt/fx_string.h"
+
 class CBC_CommonDecoderResult;
 class CBC_PDF417ResultMetadata;
+
 class CBC_DecodedBitStreamPaser {
  public:
   CBC_DecodedBitStreamPaser();
@@ -54,4 +59,4 @@ class CBC_DecodedBitStreamPaser {
                                               int32_t count,
                                               int32_t& e);
 };
-#endif
+#endif  // XFA_SRC_FXBARCODE_PDF417_BC_PDF417DECODEDBITSTREAMPARSER_H_

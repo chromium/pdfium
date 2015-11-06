@@ -4,13 +4,18 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_CODEBASE_H_
-#define _BC_CODEBASE_H_
-void BC_Library_Init();
-void BC_Library_Destory();
-class CBC_CodeBase;
-class CBC_Writer;
+#ifndef XFA_INCLUDE_FXBARCODE_BC_BARCODE_H_
+#define XFA_INCLUDE_FXBARCODE_BC_BARCODE_H_
+
+#include "core/include/fxcrt/fx_string.h"
+#include "core/include/fxcrt/fx_system.h"
+#include "core/include/fxge/fx_dib.h"
+
 class CBC_Reader;
+class CBC_Writer;
+class CFX_Font;
+class CFX_RenderDevice;
+
 enum BC_TEXT_LOC {
   BC_TEXT_LOC_NONE = 0,
   BC_TEXT_LOC_ABOVE,
@@ -18,7 +23,9 @@ enum BC_TEXT_LOC {
   BC_TEXT_LOC_ABOVEEMBED,
   BC_TEXT_LOC_BELOWEMBED
 };
+
 enum BC_CHAR_ENCODING { CHAR_ENCODING_UTF8 = 0, CHAR_ENCODING_UNICODE };
+
 enum BC_TYPE {
   BC_UNKNOWN = -1,
   BC_CODE39 = 0,
@@ -33,6 +40,10 @@ enum BC_TYPE {
   BC_PDF417,
   BC_DATAMATRIX
 };
+
+void BC_Library_Init();
+void BC_Library_Destory();
+
 class CBC_CodeBase {
  public:
   CBC_CodeBase();
@@ -242,4 +253,5 @@ class CBC_DataMatrix : public CBC_CodeBase {
   CFX_WideString Decode(CFX_DIBitmap* pBitmap, int32_t& e);
   BC_TYPE GetType() { return BC_DATAMATRIX; }
 };
-#endif
+
+#endif  // XFA_INCLUDE_FXBARCODE_BC_BARCODE_H_

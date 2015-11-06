@@ -4,15 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_DATAMATRIXWRITER_H_
-#define _BC_DATAMATRIXWRITER_H_
+#ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXWRITER_H_
+#define XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXWRITER_H_
+
+#include "xfa/src/fxbarcode/BC_TwoDimWriter.h"
+
 class CBC_CommonByteMatrix;
-class CBC_CommonBitMatrix;
 class CBC_DefaultPlacement;
-class CBC_SymbolShapeHint;
 class CBC_SymbolInfo;
-class CBC_TwoDimWriter;
-class CBC_DataMatrixWriter;
+
 class CBC_DataMatrixWriter : public CBC_TwoDimWriter {
  public:
   CBC_DataMatrixWriter();
@@ -40,4 +40,5 @@ class CBC_DataMatrixWriter : public CBC_TwoDimWriter {
                                               int32_t& e);
   int32_t m_iCorrectLevel;
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXWRITER_H_
