@@ -12,8 +12,8 @@
 #include "../public/fpdf_ext.h"
 #include "../public/fpdf_formfill.h"
 #include "../public/fpdfview.h"
-#include "../third_party/base/nonstd_unique_ptr.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/base/nonstd_unique_ptr.h"
 
 #ifdef PDF_ENABLE_V8
 #include "v8/include/v8.h"

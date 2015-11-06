@@ -6,9 +6,9 @@
 
 #include "JBig2_HtrdProc.h"
 
-#include "../../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../../include/fxcrt/fx_basic.h"
 #include "JBig2_GsidProc.h"
+#include "third_party/base/nonstd_unique_ptr.h"
 
 CJBig2_Image* CJBig2_HTRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
                                             JBig2ArithCtx* gbContext,

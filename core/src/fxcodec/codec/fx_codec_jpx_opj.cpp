@@ -8,11 +8,11 @@
 #include <limits>
 #include <vector>
 
-#include "../../../../third_party/lcms2-2.6/include/lcms2.h"
-#include "../../../../third_party/libopenjpeg20/openjpeg.h"
 #include "../../../include/fxcodec/fx_codec.h"
 #include "../../../include/fxcrt/fx_safe_types.h"
 #include "codec_int.h"
+#include "third_party/lcms2-2.6/include/lcms2.h"
+#include "third_party/libopenjpeg20/openjpeg.h"
 
 static void fx_error_callback(const char* msg, void* client_data) {
   (void)client_data;

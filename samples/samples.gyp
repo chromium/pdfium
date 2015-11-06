@@ -13,7 +13,9 @@
       'PNG_USE_READ_MACROS',
     ],
     'include_dirs': [
+      # This is implicit in GN.
       '<(DEPTH)',
+      '..',
     ],
     'conditions': [
       ['pdf_enable_v8==1', {
@@ -65,9 +67,6 @@
         'fx_lpng',
         '../pdfium.gyp:pdfium',
         '../third_party/third_party.gyp:pdfium_base',
-      ],
-      'include_dirs': [
-        '../../',
       ],
       'sources': [
         'image_diff.cc',

@@ -9,9 +9,9 @@
 
 #include <map>
 
-#include "../../../third_party/base/nonstd_unique_ptr.h"
 #include "../fxcrt/fx_system.h"
 #include "fx_dib.h"
+#include "third_party/base/nonstd_unique_ptr.h"
 
 typedef struct FT_FaceRec_* FXFT_Face;
 typedef void* FXFT_Library;

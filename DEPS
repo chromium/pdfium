@@ -5,7 +5,7 @@ deps = {
     "https://chromium.googlesource.com/external/gyp",
 
   "buildtools":
-    "https://chromium.googlesource.com/chromium/buildtools.git@46ce8cb60364e9e0b21a81136c7debdddfd063a8",
+    "https://chromium.googlesource.com/chromium/buildtools.git@c2f259809d5ede3275df5ea0842f0431990c4f98",
 
   "testing/corpus":
      "https://pdfium.googlesource.com/pdfium_tests@45f88c6914fcac26ad930bb0ebbfa468c21db0a5",

@@ -7,7 +7,7 @@
 #include <stddef.h>  // For offsetof().
 
 #include "../../include/fxcrt/fx_basic.h"
-#include "../../../third_party/base/numerics/safe_math.h"
+#include "third_party/base/numerics/safe_math.h"
 
 // static
 CFX_WideString::StringData* CFX_WideString::StringData::Create(int nLen) {

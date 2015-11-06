@@ -6,8 +6,6 @@
 
 #include "JBig2_SddProc.h"
 
-#include "../../../../third_party/base/nonstd_unique_ptr.h"
-#include "../../../../third_party/base/stl_util.h"
 #include "../../../include/fxcrt/fx_basic.h"
 #include "JBig2_ArithIntDecoder.h"
 #include "JBig2_GrdProc.h"
@@ -16,6 +14,8 @@
 #include "JBig2_HuffmanTable.h"
 #include "JBig2_SymbolDict.h"
 #include "JBig2_TrdProc.h"
+#include "third_party/base/nonstd_unique_ptr.h"
+#include "third_party/base/stl_util.h"
 
 using pdfium::vector_as_array;
 

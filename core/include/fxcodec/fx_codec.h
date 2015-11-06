@@ -9,9 +9,9 @@
 
 #include <vector>
 
-#include "../../../third_party/base/nonstd_unique_ptr.h"
 #include "../fxcrt/fx_basic.h"
 #include "fx_codec_def.h"
+#include "third_party/base/nonstd_unique_ptr.h"
 
 class CFX_DIBSource;
 class CJPX_Decoder;

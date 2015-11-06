@@ -5,8 +5,8 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "../../public/fpdf_ppo.h"
-#include "../../third_party/base/nonstd_unique_ptr.h"
 #include "../include/fsdk_define.h"
+#include "third_party/base/nonstd_unique_ptr.h"
 
 class CPDF_PageOrganizer {
  public:

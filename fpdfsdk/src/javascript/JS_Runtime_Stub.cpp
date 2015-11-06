@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../include/fsdk_mgr.h"  // For CPDFDoc_Environment.
 #include "../../include/javascript/IJavaScript.h"
+#include "third_party/base/nonstd_unique_ptr.h"
 
 class CJS_ContextStub final : public IJS_Context {
  public:

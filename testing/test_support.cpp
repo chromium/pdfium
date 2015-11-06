@@ -13,6 +13,10 @@
 #define PATH_SEPARATOR '/'
 #endif
 
+#ifdef PDF_ENABLE_V8
+#include "v8/include/libplatform/libplatform.h"
+#endif
+
 namespace {
 
 #ifdef PDF_ENABLE_V8

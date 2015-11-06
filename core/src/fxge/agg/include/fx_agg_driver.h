@@ -7,9 +7,9 @@
 #ifndef FX_AGG_DRIVER_H_
 #define FX_AGG_DRIVER_H_
 
-#include "../../../../../third_party/agg23/agg_clip_liang_barsky.h"
-#include "../../../../../third_party/agg23/agg_path_storage.h"
-#include "../../../../../third_party/agg23/agg_rasterizer_scanline_aa.h"
+#include "third_party/agg23/agg_clip_liang_barsky.h"
+#include "third_party/agg23/agg_path_storage.h"
+#include "third_party/agg23/agg_rasterizer_scanline_aa.h"
 
 class CAgg_PathData {
  public:

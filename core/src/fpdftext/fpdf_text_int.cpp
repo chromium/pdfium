@@ -7,7 +7,6 @@
 #include <ctype.h>
 #include <algorithm>
 
-#include "../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../include/fpdfapi/fpdf_module.h"
 #include "../../include/fpdfapi/fpdf_page.h"
 #include "../../include/fpdfapi/fpdf_pageobj.h"
@@ -16,6 +15,7 @@
 #include "../../include/fxcrt/fx_bidi.h"
 #include "../../include/fxcrt/fx_ucd.h"
 #include "text_int.h"
+#include "third_party/base/nonstd_unique_ptr.h"
 
 namespace {
 

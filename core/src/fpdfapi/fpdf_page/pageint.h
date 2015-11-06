@@ -9,9 +9,9 @@
 
 #include <map>
 
-#include "../../../../third_party/base/nonstd_unique_ptr.h"
 #include "../../../include/fpdfapi/fpdf_page.h"
 #include "../../../include/fpdfapi/fpdf_pageobj.h"
+#include "third_party/base/nonstd_unique_ptr.h"
 
 class CPDF_AllStates;
 class CPDF_ParseOptions;

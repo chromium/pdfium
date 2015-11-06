@@ -6,10 +6,10 @@
 
 #include "JBig2_PddProc.h"
 
-#include "../../../../third_party/base/nonstd_unique_ptr.h"
 #include "JBig2_GrdProc.h"
 #include "JBig2_Image.h"
 #include "JBig2_PatternDict.h"
+#include "third_party/base/nonstd_unique_ptr.h"
 
 CJBig2_PatternDict* CJBig2_PDDProc::decode_Arith(
     CJBig2_ArithDecoder* pArithDecoder,

@@ -8,6 +8,7 @@ import("pdfium.gni")
 config("pdfium_config") {
   cflags = []
   include_dirs = [
+    ".",
     "third_party/freetype/include",
     "third_party/freetype/include/freetype",
   ]
@@ -42,6 +43,7 @@ config("pdfium_config") {
       "/wd4333",
       "/wd4345",
       "/wd4267",
+
       # TODO(thestig): Fix all instances, remove this, pdfium:29
       "/wd4245",
       "/wd4310",
@@ -157,9 +159,7 @@ source_set("test_support") {
     "//testing/gtest",
     ":pdfium",
   ]
-  include_dirs = [
-    "."
-  ]
+  include_dirs = []
   if (pdf_enable_v8) {
     deps += [
       "//v8",
@@ -354,9 +354,11 @@ static_library("fpdftext") {
 static_library("fxcodec") {
   deps = [
     "third_party:fx_lcms2",
-    "third_party:fx_libjpeg",
     "third_party:fx_libopenjpeg",
     "third_party:fx_zlib",
+
+    # This is a generic JPEG library dependency.
+    "//third_party:jpeg",
   ]
   sources = [
     "core/include/fxcodec/fx_codec.h",
@@ -410,6 +412,7 @@ static_library("fxcodec") {
     "core/src/fxcodec/jbig2/JBig2_TrdProc.cpp",
     "core/src/fxcodec/jbig2/JBig2_TrdProc.h",
   ]
+  include_dirs = []
 
   if (is_posix) {
     # core/src/fxcodec/fx_libopenjpeg/src/fx_mct.c does an pointer-to-int
@@ -506,7 +509,6 @@ static_library("fxge") {
     "core/src/fxge/dib/fx_dib_engine.cpp",
     "core/src/fxge/dib/fx_dib_main.cpp",
     "core/src/fxge/dib/fx_dib_transform.cpp",
-    "core/src/fxge/fontdata/chromefontdata/chromefontdata.h",
     "core/src/fxge/fontdata/chromefontdata/FoxitDingbats.c",
     "core/src/fxge/fontdata/chromefontdata/FoxitFixed.c",
     "core/src/fxge/fontdata/chromefontdata/FoxitFixedBold.c",
@@ -523,6 +525,7 @@ static_library("fxge") {
     "core/src/fxge/fontdata/chromefontdata/FoxitSerifItalic.c",
     "core/src/fxge/fontdata/chromefontdata/FoxitSerifMM.c",
     "core/src/fxge/fontdata/chromefontdata/FoxitSymbol.c",
+    "core/src/fxge/fontdata/chromefontdata/chromefontdata.h",
     "core/src/fxge/freetype/fx_freetype.c",
     "core/src/fxge/ge/fx_ge.cpp",
     "core/src/fxge/ge/fx_ge_device.cpp",
@@ -555,7 +558,9 @@ static_library("fxge") {
       "//third_party/skia/include/utils",
       "//third_party/skia/src/core",
     ]
-    deps = [ "//skia" ]
+    deps = [
+      "//skia",
+    ]
   }
 
   if (is_win) {
@@ -635,6 +640,7 @@ static_library("javascript") {
   ]
   if (pdf_enable_v8) {
     sources += [
+      "fpdfsdk/include/jsapi/fxjs_v8.h",
       "fpdfsdk/src/javascript/Consts.cpp",
       "fpdfsdk/src/javascript/Consts.h",
       "fpdfsdk/src/javascript/Document.cpp",
@@ -674,7 +680,6 @@ static_library("javascript") {
       "fpdfsdk/src/javascript/resource.h",
       "fpdfsdk/src/javascript/util.cpp",
       "fpdfsdk/src/javascript/util.h",
-      "fpdfsdk/include/jsapi/fxjs_v8.h",
       "fpdfsdk/src/jsapi/fxjs_v8.cpp",
     ]
     include_dirs = [
@@ -736,7 +741,6 @@ test("pdfium_unittests") {
     ":pdfium",
     ":test_support",
   ]
-  include_dirs = [ "." ]
   configs += [ ":pdfium_config" ]
 }
 
@@ -764,13 +768,9 @@ test("pdfium_embeddertests") {
     ":pdfium",
     ":test_support",
   ]
-  include_dirs = [
-    "."
-  ]
+  include_dirs = []
   if (pdf_enable_v8) {
-    sources += [
-     "fpdfsdk/src/jsapi/fxjs_v8_embeddertest.cpp"
-    ]
+    sources += [ "fpdfsdk/src/jsapi/fxjs_v8_embeddertest.cpp" ]
     deps += [
       "//v8",
       "//v8:v8_libplatform",

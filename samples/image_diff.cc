@@ -19,9 +19,9 @@
 #include <string>
 #include <vector>
 
-#include "../third_party/base/logging.h"
-#include "../third_party/base/numerics/safe_conversions.h"
 #include "image_diff_png.h"
+#include "third_party/base/logging.h"
+#include "third_party/base/numerics/safe_conversions.h"
 
 #if defined(OS_WIN)
 #include <windows.h>

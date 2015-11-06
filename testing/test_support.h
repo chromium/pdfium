@@ -11,9 +11,8 @@
 #include "../public/fpdfview.h"
 
 #ifdef PDF_ENABLE_V8
-#include "v8/include/libplatform/libplatform.h"
 #include "v8/include/v8.h"
-#endif
+#endif  // PDF_ENABLE_V8
 
 // Reads the entire contents of a file into a newly malloc'd buffer.
 char* GetFileContents(const char* filename, size_t* retlen);

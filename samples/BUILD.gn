@@ -18,10 +18,9 @@ config("pdfium_samples_config") {
     "PNGPREFIX_H",
     "PNG_USE_READ_MACROS",
   ]
+  include_dirs = [ ".." ]
   if (pdf_enable_v8) {
-    defines += [
-      "PDF_ENABLE_V8",
-    ]
+    defines += [ "PDF_ENABLE_V8" ]
   }
 }
 
@@ -34,6 +33,7 @@ executable("pdfium_test") {
   deps = [
     "//third_party/pdfium:pdfium",
     "//third_party/pdfium:test_support",
+
     # Regardless of whether the library ships against system freetype,
     # always link this binary against the bundled one for consistency
     # of results across platforms.
@@ -41,9 +41,7 @@ executable("pdfium_test") {
     ":fx_lpng",
   ]
   if (pdf_enable_v8) {
-    deps += [
-      "//v8:v8_libplatform",
-    ]
+    deps += [ "//v8:v8_libplatform" ]
     include_dirs = [
       "//v8",
       "//v8/include",
@@ -90,8 +88,6 @@ static_library("fx_lpng") {
     "fx_lpng/src/fx_pngwtran.c",
     "fx_lpng/src/fx_pngwutil.c",
   ]
-  include_dirs = [
-    "../core/src/fxcodec/fx_zlib/include/",
-  ]
+  include_dirs = [ "../core/src/fxcodec/fx_zlib/include/" ]
   configs += [ ":pdfium_samples_config" ]
 }

@@ -46,6 +46,7 @@ static_library("fx_freetype") {
   configs += [
     "//build/config/compiler:no_chromium_code",
     "//third_party/pdfium:pdfium_config",
+
     # Must be after no_chromium_code for warning flags to be ordered correctly.
     ":fx_freetype_warnings",
   ]
@@ -96,6 +97,7 @@ source_set("fx_agg") {
   configs += [
     "//build/config/compiler:no_chromium_code",
     "//third_party/pdfium:pdfium_config",
+
     # Must be after no_chromium_code for warning flags to be ordered correctly.
     ":fx_agg_warnings",
   ]
@@ -125,6 +127,7 @@ config("fx_lcms2_warnings") {
       # cmslut.cc is sloppy with aggregate initialization. Version 2.7 of this
       # library doesn't appear to have this problem.
       "-Wno-missing-braces",
+
       # FindPrev() in cmsplugin.c is unused.
       "-Wno-unused-function",
     ]
@@ -136,6 +139,7 @@ source_set("fx_lcms2") {
   configs += [
     "//build/config/compiler:no_chromium_code",
     "//third_party/pdfium:pdfium_config",
+
     # Must be after no_chromium_code for warning flags to be ordered correctly.
     ":fx_lcms2_warnings",
   ]
@@ -170,7 +174,8 @@ source_set("fx_lcms2") {
   ]
 }
 
-source_set("fx_libjpeg") {
+# This is only used for standalone builds.
+source_set("jpeg") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
