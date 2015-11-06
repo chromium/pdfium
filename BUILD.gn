@@ -14,7 +14,10 @@ declare_args() {
 
 config("pdfium_config") {
   cflags = []
-  include_dirs = [ "third_party/freetype/include" ]
+  include_dirs = [
+    "third_party/freetype/include",
+    "third_party/freetype/include/freetype",
+  ]
   defines = [
     "OPJ_STATIC",
     "V8_DEPRECATION_WARNINGS",
