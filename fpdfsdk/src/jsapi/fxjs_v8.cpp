@@ -28,12 +28,13 @@ static size_t g_isolate_ref_count = 0;
 static FXJS_ArrayBufferAllocator* g_arrayBufferAllocator = nullptr;
 static v8::Global<v8::ObjectTemplate>* g_DefaultGlobalObjectTemplate = nullptr;
 
-class CFXJS_PrivateData {
+class CFXJS_PerObjectData {
  public:
-  CFXJS_PrivateData(int nObjDefID) : ObjDefID(nObjDefID), pPrivate(NULL) {}
+  CFXJS_PerObjectData(int nObjDefID)
+      : m_ObjDefID(nObjDefID), m_pPrivate(nullptr) {}
 
-  int ObjDefID;
-  void* pPrivate;
+  int m_ObjDefID;
+  void* m_pPrivate;
 };
 
 class CFXJS_ObjDefinition {
@@ -301,7 +302,7 @@ void FXJS_InitializeRuntime(v8::Isolate* pIsolate,
           ->GetPrototype()
           ->ToObject(v8Context)
           .ToLocalChecked()
-          ->SetAlignedPointerInInternalField(0, new CFXJS_PrivateData(i));
+          ->SetAlignedPointerInInternalField(0, new CFXJS_PerObjectData(i));
 
       if (pObjDef->m_pConstructor)
         pObjDef->m_pConstructor(pIRuntime, v8Context->Global()
@@ -415,7 +416,7 @@ v8::Local<v8::Object> FXJS_NewFxDynamicObj(v8::Isolate* pIsolate,
   if (!pObjDef->GetInstanceTemplate()->NewInstance(context).ToLocal(&obj))
     return v8::Local<v8::Object>();
 
-  obj->SetAlignedPointerInInternalField(0, new CFXJS_PrivateData(nObjDefnID));
+  obj->SetAlignedPointerInInternalField(0, new CFXJS_PerObjectData(nObjDefnID));
   if (pObjDef->m_pConstructor)
     pObjDef->m_pConstructor(pIRuntime, obj);
 
@@ -435,10 +436,10 @@ v8::Local<v8::Object> FXJS_GetThisObj(v8::Isolate* pIsolate) {
 int FXJS_GetObjDefnID(v8::Local<v8::Object> pObj) {
   if (pObj.IsEmpty() || !pObj->InternalFieldCount())
     return -1;
-  CFXJS_PrivateData* pPrivateData =
-      (CFXJS_PrivateData*)pObj->GetAlignedPointerFromInternalField(0);
-  if (pPrivateData)
-    return pPrivateData->ObjDefID;
+  CFXJS_PerObjectData* pPerObjectData = static_cast<CFXJS_PerObjectData*>(
+      pObj->GetAlignedPointerFromInternalField(0));
+  if (pPerObjectData)
+    return pPerObjectData->m_ObjDefID;
   return -1;
 }
 
@@ -477,35 +478,36 @@ void FXJS_SetPrivate(v8::Isolate* pIsolate,
                      void* p) {
   if (pObj.IsEmpty() || !pObj->InternalFieldCount())
     return;
-  CFXJS_PrivateData* pPrivateData =
-      (CFXJS_PrivateData*)pObj->GetAlignedPointerFromInternalField(0);
-  if (!pPrivateData)
+  CFXJS_PerObjectData* pPerObjectData = static_cast<CFXJS_PerObjectData*>(
+      pObj->GetAlignedPointerFromInternalField(0));
+  if (!pPerObjectData)
     return;
-  pPrivateData->pPrivate = p;
+  pPerObjectData->m_pPrivate = p;
 }
 
 void* FXJS_GetPrivate(v8::Isolate* pIsolate, v8::Local<v8::Object> pObj) {
   if (pObj.IsEmpty())
     return nullptr;
-  CFXJS_PrivateData* pPrivateData = nullptr;
+  CFXJS_PerObjectData* pPerObjectData = nullptr;
   if (pObj->InternalFieldCount()) {
-    pPrivateData =
-        (CFXJS_PrivateData*)pObj->GetAlignedPointerFromInternalField(0);
+    pPerObjectData = static_cast<CFXJS_PerObjectData*>(
+        pObj->GetAlignedPointerFromInternalField(0));
   } else {
     // It could be a global proxy object.
     v8::Local<v8::Value> v = pObj->GetPrototype();
     v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
     if (v->IsObject()) {
-      pPrivateData = (CFXJS_PrivateData*)v->ToObject(context)
-                         .ToLocalChecked()
-                         ->GetAlignedPointerFromInternalField(0);
+      pPerObjectData = static_cast<CFXJS_PerObjectData*>(
+          v->ToObject(context)
+              .ToLocalChecked()
+              ->GetAlignedPointerFromInternalField(0));
     }
   }
-  return pPrivateData ? pPrivateData->pPrivate : nullptr;
+  return pPerObjectData ? pPerObjectData->m_pPrivate : nullptr;
 }
 
-void FXJS_FreePrivate(void* pPrivateData) {
-  delete (CFXJS_PrivateData*)pPrivateData;
+void FXJS_FreePrivate(void* pPerObjectData) {
+  delete static_cast<CFXJS_PerObjectData*>(pPerObjectData);
 }
 
 void FXJS_FreePrivate(v8::Local<v8::Object> pObj) {
