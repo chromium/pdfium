@@ -13,7 +13,7 @@
 #ifndef ZUTIL_H
 #define ZUTIL_H
 
-#include "../../core/include/fxcrt/fx_system.h"		/* XYQ 2007-5-22 */
+#include "core/include/fxcrt/fx_system.h"
 
 #ifdef HAVE_HIDDEN
 #  define ZLIB_INTERNAL __attribute__((visibility ("hidden")))

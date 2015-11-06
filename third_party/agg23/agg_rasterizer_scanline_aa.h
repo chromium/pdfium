@@ -29,13 +29,15 @@
 //----------------------------------------------------------------------------
 #ifndef AGG_RASTERIZER_SCANLINE_AA_INCLUDED
 #define AGG_RASTERIZER_SCANLINE_AA_INCLUDED
-#include "../../core/include/fxcrt/fx_coordinates.h"
-#include "../../core/include/fxcrt/fx_memory.h"
-#include "agg_basics.h"
-#include "agg_math.h"
+
 #include "agg_array.h"
+#include "agg_basics.h"
 #include "agg_clip_liang_barsky.h"
+#include "agg_math.h"
 #include "agg_render_scanlines.h"
+#include "core/include/fxcrt/fx_coordinates.h"
+#include "core/include/fxcrt/fx_memory.h"
+
 namespace agg
 {
 enum poly_base_scale_e {

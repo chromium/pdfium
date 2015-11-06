@@ -6,7 +6,6 @@
 
 #include "global.h"
 
-#include "../../../core/include/fxcrt/fx_ext.h"
 #include "../../include/javascript/IJavaScript.h"
 #include "JS_Context.h"
 #include "JS_Define.h"
@@ -14,6 +13,7 @@
 #include "JS_GlobalData.h"
 #include "JS_Object.h"
 #include "JS_Value.h"
+#include "core/include/fxcrt/fx_ext.h"
 #include "resource.h"
 
 /* ---------------------------- global ---------------------------- */

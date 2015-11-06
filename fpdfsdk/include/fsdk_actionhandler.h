@@ -7,8 +7,8 @@
 #ifndef FPDFSDK_INCLUDE_FSDK_ACTIONHANDLER_H_
 #define FPDFSDK_INCLUDE_FSDK_ACTIONHANDLER_H_
 
-#include "../../core/include/fpdfdoc/fpdf_doc.h"
-#include "../../core/include/fxcrt/fx_string.h"
+#include "core/include/fpdfdoc/fpdf_doc.h"
+#include "core/include/fxcrt/fx_string.h"
 #include "fsdk_baseform.h"
 #include "third_party/base/nonstd_unique_ptr.h"
 

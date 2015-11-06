@@ -7,7 +7,7 @@
 #ifndef FPDFSDK_SRC_JAVASCRIPT_JS_GLOBALDATA_H_
 #define FPDFSDK_SRC_JAVASCRIPT_JS_GLOBALDATA_H_
 
-#include "../../../core/include/fxcrt/fx_basic.h"
+#include "core/include/fxcrt/fx_basic.h"
 
 #define JS_GLOBALDATA_TYPE_NUMBER 0
 #define JS_GLOBALDATA_TYPE_BOOLEAN 1

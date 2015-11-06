@@ -15,11 +15,14 @@
 //----------------------------------------------------------------------------
 #ifndef AGG_ARRAY_INCLUDED
 #define AGG_ARRAY_INCLUDED
+
 #include "agg_basics.h"
+#include "core/include/fxcrt/fx_memory.h"  // For FXSYS_* macros.
+
 namespace agg
 {
-template<class T> class pod_array 
-{
+template <class T>
+class pod_array {
 public:
     typedef T value_type;
     ~pod_array()

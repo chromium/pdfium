@@ -7,10 +7,10 @@
 #ifndef FPDFSDK_INCLUDE_FXEDIT_FXET_STUB_H_
 #define FPDFSDK_INCLUDE_FXEDIT_FXET_STUB_H_
 
-#include "../../../core/include/fpdfapi/fpdf_module.h"
-#include "../../../core/include/fpdfapi/fpdf_render.h"
-#include "../../../core/include/fpdfapi/fpdf_pageobj.h"
-#include "../../../core/include/fpdfdoc/fpdf_vt.h"
 #include "../fx_systemhandler.h"
+#include "core/include/fpdfapi/fpdf_module.h"
+#include "core/include/fpdfapi/fpdf_pageobj.h"
+#include "core/include/fpdfapi/fpdf_render.h"
+#include "core/include/fpdfdoc/fpdf_vt.h"
 
 #endif  // FPDFSDK_INCLUDE_FXEDIT_FXET_STUB_H_

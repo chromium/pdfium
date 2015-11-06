@@ -13,8 +13,8 @@
 #include <ctime>
 #endif
 
-#include "../../core/include/fpdfdoc/fpdf_doc.h"
-#include "../../core/include/fxcrt/fx_basic.h"
+#include "core/include/fpdfdoc/fpdf_doc.h"
+#include "core/include/fxcrt/fx_basic.h"
 #include "fx_systemhandler.h"
 
 class CPDFSDK_PageView;

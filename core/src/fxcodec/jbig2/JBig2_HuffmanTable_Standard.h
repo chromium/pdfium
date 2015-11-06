@@ -7,7 +7,7 @@
 #ifndef _JBIG2_HUFFMAN_TABLE_STANDARD_H_
 #define _JBIG2_HUFFMAN_TABLE_STANDARD_H_
 
-#include "../../../../core/include/fxcrt/fx_system.h"
+#include "core/include/fxcrt/fx_system.h"
 
 struct JBig2TableLine {
   int PREFLEN;

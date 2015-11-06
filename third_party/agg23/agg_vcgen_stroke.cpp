@@ -22,8 +22,10 @@
 // Stroke generator
 //
 //----------------------------------------------------------------------------
-#include "../../core/include/fxcrt/fx_basic.h"
+
 #include "agg_vcgen_stroke.h"
+#include "core/include/fxcrt/fx_basic.h"
+
 namespace agg
 {
 

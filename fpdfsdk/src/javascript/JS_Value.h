@@ -7,8 +7,8 @@
 #ifndef FPDFSDK_SRC_JAVASCRIPT_JS_VALUE_H_
 #define FPDFSDK_SRC_JAVASCRIPT_JS_VALUE_H_
 
-#include "../../../core/include/fxcrt/fx_basic.h"
 #include "../../include/jsapi/fxjs_v8.h"
+#include "core/include/fxcrt/fx_basic.h"
 
 class CJS_Array;
 class CJS_Date;

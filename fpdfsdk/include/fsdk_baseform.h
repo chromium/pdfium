@@ -15,10 +15,10 @@
 
 #include <map>
 
-#include "../../core/include/fpdfapi/fpdf_parser.h"
-#include "../../core/include/fpdfdoc/fpdf_doc.h"
-#include "../../core/include/fxcrt/fx_basic.h"
-#include "../../core/include/fxge/fx_dib.h"
+#include "core/include/fpdfapi/fpdf_parser.h"
+#include "core/include/fpdfdoc/fpdf_doc.h"
+#include "core/include/fxcrt/fx_basic.h"
+#include "core/include/fxge/fx_dib.h"
 #include "fsdk_baseannot.h"
 
 class CFFL_FormFiller;

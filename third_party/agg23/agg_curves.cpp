@@ -18,9 +18,11 @@
 //          mcseemagg@yahoo.com
 //          http://www.antigrain.com
 //----------------------------------------------------------------------------
-#include "../../core/include/fxcrt/fx_basic.h"
+
 #include "agg_curves.h"
 #include "agg_math.h"
+#include "core/include/fxcrt/fx_basic.h"
+
 namespace agg
 {
 const FX_FLOAT curve_collinearity_epsilon              = 1e-30f;

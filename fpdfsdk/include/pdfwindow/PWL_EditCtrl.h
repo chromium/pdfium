@@ -7,9 +7,9 @@
 #ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_EDITCTRL_H_
 #define FPDFSDK_INCLUDE_PDFWINDOW_PWL_EDITCTRL_H_
 
-#include "../../../core/include/fxcrt/fx_string.h"
 #include "../fxedit/fx_edit.h"
 #include "PWL_Wnd.h"
+#include "core/include/fxcrt/fx_string.h"
 
 class CPWL_Caret;
 class CPWL_Edit;

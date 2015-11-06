@@ -10,7 +10,7 @@
 #include <map>
 #include <vector>
 
-#include "../../core/include/fxcrt/fx_basic.h"
+#include "core/include/fxcrt/fx_basic.h"
 
 class CFFL_IFormFiller;
 class CFX_RenderDevice;

@@ -6,7 +6,7 @@
 
 #include "../../include/jsapi/fxjs_v8.h"
 
-#include "../../../core/include/fxcrt/fx_basic.h"
+#include "core/include/fxcrt/fx_basic.h"
 
 const wchar_t kFXJSValueNameString[] = L"string";
 const wchar_t kFXJSValueNameNumber[] = L"number";
