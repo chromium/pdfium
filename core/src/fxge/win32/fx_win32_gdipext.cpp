@@ -482,9 +482,6 @@ static CFX_DIBitmap* _StretchMonoToGray(int dest_width,
   LPBYTE dest_buf = pStretched->GetBuffer();
   int src_width = pSource->GetWidth();
   int src_height = pSource->GetHeight();
-  int src_count = src_width * src_height;
-  int dest_count = dest_width * dest_height;
-  int ratio = 255 * dest_count / src_count;
   int y_unit = src_height / dest_height;
   int x_unit = src_width / dest_width;
   int area_unit = y_unit * x_unit;
