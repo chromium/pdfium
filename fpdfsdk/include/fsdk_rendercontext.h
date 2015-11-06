@@ -7,8 +7,8 @@
 #ifndef FPDFSDK_INCLUDE_FSDK_RENDERCONTEXT_H_
 #define FPDFSDK_INCLUDE_FSDK_RENDERCONTEXT_H_
 
-#include "../../public/fpdf_progressive.h"
 #include "fsdk_define.h"
+#include "public/fpdf_progressive.h"
 
 // Everything about rendering is put here: for OOM recovery
 class CRenderContext {

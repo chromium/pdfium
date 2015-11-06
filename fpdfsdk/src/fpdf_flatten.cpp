@@ -4,7 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../public/fpdf_flatten.h"
+#include "public/fpdf_flatten.h"
+
 #include "../include/fsdk_define.h"
 
 typedef CFX_ArrayTemplate<CPDF_Dictionary*> CPDF_ObjectArray;

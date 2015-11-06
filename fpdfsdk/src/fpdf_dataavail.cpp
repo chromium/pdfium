@@ -4,9 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../public/fpdf_dataavail.h"
-#include "../../public/fpdf_formfill.h"
+#include "public/fpdf_dataavail.h"
+
 #include "../include/fsdk_define.h"
+#include "public/fpdf_formfill.h"
 
 // These checks are here because core/ and public/ cannot depend on each other.
 static_assert(IPDF_DataAvail::DataError == PDF_DATA_ERROR,

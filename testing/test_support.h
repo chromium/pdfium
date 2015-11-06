@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string>
 
-#include "../public/fpdfview.h"
+#include "public/fpdfview.h"
 
 #ifdef PDF_ENABLE_V8
 #include "v8/include/v8.h"

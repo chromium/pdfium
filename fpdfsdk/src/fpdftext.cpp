@@ -4,9 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "public/fpdf_text.h"
+
 #include "../../core/include/fpdfdoc/fpdf_doc.h"
 #include "../../core/include/fpdftext/fpdf_text.h"
-#include "../../public/fpdf_text.h"
 #include "../include/fsdk_define.h"
 
 #ifdef _WIN32
