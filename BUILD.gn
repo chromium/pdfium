@@ -386,7 +386,6 @@ static_library("fxcodec") {
     "core/src/fxcodec/codec/fx_codec_gif.cpp",
     "core/src/fxcodec/codec/fx_codec_icc.cpp",
     "core/src/fxcodec/codec/fx_codec_jbig.cpp",
-    "core/src/fxcodec/codec/fx_codec_jbig_enc.cpp",
     "core/src/fxcodec/codec/fx_codec_jpeg.cpp",
     "core/src/fxcodec/codec/fx_codec_jpx_opj.cpp",
     "core/src/fxcodec/codec/fx_codec_png.cpp",

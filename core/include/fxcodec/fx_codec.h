@@ -58,7 +58,7 @@ class CFX_DIBAttribute {
 class CCodec_ModuleMgr {
  public:
   CCodec_ModuleMgr();
-  ICodec_Jbig2Encoder* CreateJbig2Encoder();
+
   ICodec_BasicModule* GetBasicModule() const { return m_pBasicModule.get(); }
   ICodec_FaxModule* GetFaxModule() const { return m_pFaxModule.get(); }
   ICodec_JpegModule* GetJpegModule() const { return m_pJpegModule.get(); }
