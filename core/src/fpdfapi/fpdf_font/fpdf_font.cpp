@@ -1643,27 +1643,20 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
     m_GlyphIndex[charcode] = charcode;
   }
 }
-CPDF_Type3Font::CPDF_Type3Font() : CPDF_SimpleFont(PDFFONT_TYPE3) {
-  m_pPageResources = NULL;
-  FXSYS_memset(m_CharWidthL, 0, sizeof m_CharWidthL);
+
+CPDF_Type3Font::CPDF_Type3Font()
+    : CPDF_SimpleFont(PDFFONT_TYPE3),
+      m_pCharProcs(nullptr),
+      m_pPageResources(nullptr),
+      m_pFontResources(nullptr) {
+  FXSYS_memset(m_CharWidthL, 0, sizeof(m_CharWidthL));
 }
+
 CPDF_Type3Font::~CPDF_Type3Font() {
-  FX_POSITION pos = m_CacheMap.GetStartPosition();
-  while (pos) {
-    void* key;
-    void* value;
-    m_CacheMap.GetNextAssoc(pos, key, value);
-    delete (CPDF_Type3Char*)value;
-  }
-  m_CacheMap.RemoveAll();
-  pos = m_DeletedMap.GetStartPosition();
-  while (pos) {
-    void* key;
-    void* value;
-    m_DeletedMap.GetNextAssoc(pos, key, value);
-    delete (CPDF_Type3Char*)key;
-  }
+  for (auto it : m_CacheMap)
+    delete it.second;
 }
+
 FX_BOOL CPDF_Type3Font::_Load() {
   m_pFontResources = m_pFontDict->GetDict(FX_BSTRC("Resources"));
   CPDF_Array* pMatrix = m_pFontDict->GetArray(FX_BSTRC("FontMatrix"));
@@ -1714,19 +1707,15 @@ FX_BOOL CPDF_Type3Font::_Load() {
 void CPDF_Type3Font::CheckType3FontMetrics() {
   CheckFontMetrics();
 }
+
 CPDF_Type3Char* CPDF_Type3Font::LoadChar(FX_DWORD charcode, int level) {
   if (level >= _FPDF_MAX_TYPE3_FORM_LEVEL_)
     return nullptr;
 
-  CPDF_Type3Char* pChar = nullptr;
-  if (m_CacheMap.Lookup((void*)(uintptr_t)charcode, (void*&)pChar)) {
-    if (pChar->m_bPageRequired && m_pPageResources) {
-      delete pChar;
-      m_CacheMap.RemoveKey((void*)(uintptr_t)charcode);
-      return LoadChar(charcode, level + 1);
-    }
-    return pChar;
-  }
+  auto it = m_CacheMap.find(charcode);
+  if (it != m_CacheMap.end())
+    return it->second;
+
   const FX_CHAR* name =
       GetAdobeCharName(m_BaseEncoding, m_pCharNames, charcode);
   if (!name)
@@ -1737,59 +1726,70 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(FX_DWORD charcode, int level) {
   if (!pStream)
     return nullptr;
 
-  pChar = new CPDF_Type3Char;
-  pChar->m_pForm = new CPDF_Form(
+  nonstd::unique_ptr<CPDF_Type3Char> pNewChar(new CPDF_Type3Char(new CPDF_Form(
       m_pDocument, m_pFontResources ? m_pFontResources : m_pPageResources,
-      pStream, nullptr);
-  pChar->m_pForm->ParseContent(nullptr, nullptr, pChar, nullptr, level + 1);
+      pStream, nullptr)));
+
+  // This can trigger recursion into this method. The content of |m_CacheMap|
+  // can change as a result. Thus after it returns, check the cache again for
+  // a cache hit.
+  pNewChar->m_pForm->ParseContent(nullptr, nullptr, pNewChar.get(), nullptr,
+                                  level + 1);
+  it = m_CacheMap.find(charcode);
+  if (it != m_CacheMap.end())
+    return it->second;
+
   FX_FLOAT scale = m_FontMatrix.GetXUnit();
-  pChar->m_Width = (int32_t)(pChar->m_Width * scale + 0.5f);
-  FX_RECT& rcBBox = pChar->m_BBox;
+  pNewChar->m_Width = (int32_t)(pNewChar->m_Width * scale + 0.5f);
+  FX_RECT& rcBBox = pNewChar->m_BBox;
   CFX_FloatRect char_rect(
       (FX_FLOAT)rcBBox.left / 1000.0f, (FX_FLOAT)rcBBox.bottom / 1000.0f,
       (FX_FLOAT)rcBBox.right / 1000.0f, (FX_FLOAT)rcBBox.top / 1000.0f);
-  if (rcBBox.right <= rcBBox.left || rcBBox.bottom >= rcBBox.top) {
-    char_rect = pChar->m_pForm->CalcBoundingBox();
-  }
+  if (rcBBox.right <= rcBBox.left || rcBBox.bottom >= rcBBox.top)
+    char_rect = pNewChar->m_pForm->CalcBoundingBox();
+
   char_rect.Transform(&m_FontMatrix);
   rcBBox.left = FXSYS_round(char_rect.left * 1000);
   rcBBox.right = FXSYS_round(char_rect.right * 1000);
   rcBBox.top = FXSYS_round(char_rect.top * 1000);
   rcBBox.bottom = FXSYS_round(char_rect.bottom * 1000);
-  m_CacheMap.SetAt((void*)(uintptr_t)charcode, pChar);
-  if (pChar->m_pForm->CountObjects() == 0) {
-    delete pChar->m_pForm;
-    pChar->m_pForm = nullptr;
+
+  FXSYS_assert(m_CacheMap.find(charcode) == m_CacheMap.end());
+  CPDF_Type3Char* pCachedChar = pNewChar.release();
+  m_CacheMap[charcode] = pCachedChar;
+  if (pCachedChar->m_pForm->CountObjects() == 0) {
+    delete pCachedChar->m_pForm;
+    pCachedChar->m_pForm = nullptr;
   }
-  return pChar;
+  return pCachedChar;
 }
+
 int CPDF_Type3Font::GetCharWidthF(FX_DWORD charcode, int level) {
-  if (charcode > 0xff) {
+  if (charcode >= FX_ArraySize(m_CharWidthL))
     charcode = 0;
-  }
-  if (m_CharWidthL[charcode]) {
+
+  if (m_CharWidthL[charcode])
     return m_CharWidthL[charcode];
-  }
-  CPDF_Type3Char* pChar = LoadChar(charcode, level);
-  if (pChar == NULL) {
-    return 0;
-  }
-  return pChar->m_Width;
+
+  const CPDF_Type3Char* pChar = LoadChar(charcode, level);
+  return pChar ? pChar->m_Width : 0;
 }
+
 void CPDF_Type3Font::GetCharBBox(FX_DWORD charcode, FX_RECT& rect, int level) {
-  CPDF_Type3Char* pChar = LoadChar(charcode, level);
-  if (pChar == NULL) {
-    rect.left = rect.right = rect.top = rect.bottom = 0;
+  const CPDF_Type3Char* pChar = LoadChar(charcode, level);
+  if (!pChar) {
+    rect.left = 0;
+    rect.right = 0;
+    rect.top = 0;
+    rect.bottom = 0;
     return;
   }
   rect = pChar->m_BBox;
 }
-CPDF_Type3Char::CPDF_Type3Char() {
-  m_pForm = NULL;
-  m_pBitmap = NULL;
-  m_bPageRequired = FALSE;
-  m_bColored = FALSE;
-}
+
+CPDF_Type3Char::CPDF_Type3Char(CPDF_Form* pForm)
+    : m_pForm(pForm), m_pBitmap(nullptr), m_bColored(FALSE) {}
+
 CPDF_Type3Char::~CPDF_Type3Char() {
   delete m_pForm;
   delete m_pBitmap;

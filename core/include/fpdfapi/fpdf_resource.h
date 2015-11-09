@@ -7,6 +7,8 @@
 #ifndef CORE_INCLUDE_FPDFAPI_FPDF_RESOURCE_H_
 #define CORE_INCLUDE_FPDFAPI_FPDF_RESOURCE_H_
 
+#include <map>
+
 #include "../fxcrt/fx_system.h"
 #include "../fxge/fx_font.h"
 #include "fpdf_parser.h"
@@ -360,28 +362,23 @@ class CPDF_TrueTypeFont : public CPDF_SimpleFont {
   virtual FX_BOOL _Load();
   virtual void LoadGlyphMap();
 };
+
 class CPDF_Type3Char {
  public:
-  CPDF_Type3Char();
-
+  // Takes ownership of |pForm|.
+  explicit CPDF_Type3Char(CPDF_Form* pForm);
   ~CPDF_Type3Char();
 
   FX_BOOL LoadBitmap(CPDF_RenderContext* pContext);
 
-  FX_BOOL m_bColored;
-
-  FX_BOOL m_bPageRequired;
-
   CPDF_Form* m_pForm;
-
-  CFX_AffineMatrix m_ImageMatrix;
-
   CFX_DIBitmap* m_pBitmap;
-
+  FX_BOOL m_bColored;
   int m_Width;
-
+  CFX_AffineMatrix m_ImageMatrix;
   FX_RECT m_BBox;
 };
+
 class CPDF_Type3Font : public CPDF_SimpleFont {
  public:
   CPDF_Type3Font();
@@ -410,8 +407,7 @@ class CPDF_Type3Font : public CPDF_SimpleFont {
   CPDF_Dictionary* m_pCharProcs;
   CPDF_Dictionary* m_pPageResources;
   CPDF_Dictionary* m_pFontResources;
-  CFX_MapPtrToPtr m_CacheMap;
-  CFX_MapPtrToPtr m_DeletedMap;
+  std::map<FX_DWORD, CPDF_Type3Char*> m_CacheMap;
 };
 
 enum CIDSet {
