@@ -844,6 +844,7 @@
         'testing/fx_string_testhelpers.h',
         'testing/test_support.cpp',
         'testing/test_support.h',
+        'testing/utils/path_service.cpp',
       ],
       'conditions': [
         ['pdf_enable_v8==1', {

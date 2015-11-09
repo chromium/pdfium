@@ -5,9 +5,9 @@
 #include <limits>
 #include <string>
 
-#include "../../testing/embedder_test.h"
-#include "fpdfview_c_api_test.h"
+#include "fpdfsdk/src/fpdfview_c_api_test.h"
 #include "public/fpdfview.h"
+#include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(fpdf, CApiTest) {
@@ -17,7 +17,7 @@ TEST(fpdf, CApiTest) {
 class FPDFViewEmbeddertest : public EmbedderTest {};
 
 TEST_F(FPDFViewEmbeddertest, Document) {
-  EXPECT_TRUE(OpenDocument("testing/resources/about_blank.pdf"));
+  EXPECT_TRUE(OpenDocument("about_blank.pdf"));
   EXPECT_EQ(1, GetPageCount());
   EXPECT_EQ(0, GetFirstPageNum());
 
@@ -30,7 +30,7 @@ TEST_F(FPDFViewEmbeddertest, Document) {
 }
 
 TEST_F(FPDFViewEmbeddertest, Page) {
-  EXPECT_TRUE(OpenDocument("testing/resources/about_blank.pdf"));
+  EXPECT_TRUE(OpenDocument("about_blank.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
   EXPECT_EQ(612.0, FPDF_GetPageWidth(page));
@@ -40,14 +40,14 @@ TEST_F(FPDFViewEmbeddertest, Page) {
 }
 
 TEST_F(FPDFViewEmbeddertest, ViewerRef) {
-  EXPECT_TRUE(OpenDocument("testing/resources/about_blank.pdf"));
+  EXPECT_TRUE(OpenDocument("about_blank.pdf"));
   EXPECT_TRUE(FPDF_VIEWERREF_GetPrintScaling(document()));
   EXPECT_EQ(1, FPDF_VIEWERREF_GetNumCopies(document()));
   EXPECT_EQ(DuplexUndefined, FPDF_VIEWERREF_GetDuplex(document()));
 }
 
 TEST_F(FPDFViewEmbeddertest, NamedDests) {
-  EXPECT_TRUE(OpenDocument("testing/resources/named_dests.pdf"));
+  EXPECT_TRUE(OpenDocument("named_dests.pdf"));
   long buffer_size;
   char fixed_buffer[512];
   FPDF_DEST dest;
@@ -142,7 +142,7 @@ TEST_F(FPDFViewEmbeddertest, NamedDests) {
 }
 
 TEST_F(FPDFViewEmbeddertest, NamedDestsByName) {
-  EXPECT_TRUE(OpenDocument("testing/resources/named_dests.pdf"));
+  EXPECT_TRUE(OpenDocument("named_dests.pdf"));
 
   // Null pointer returns NULL.
   FPDF_DEST dest = FPDF_GetNamedDestByName(document(), nullptr);
@@ -180,16 +180,16 @@ TEST_F(FPDFViewEmbeddertest, NamedDestsByName) {
 
 // The following tests pass if the document opens without crashing.
 TEST_F(FPDFViewEmbeddertest, Crasher_113) {
-  EXPECT_TRUE(OpenDocument("testing/resources/bug_113.pdf"));
+  EXPECT_TRUE(OpenDocument("bug_113.pdf"));
 }
 
 TEST_F(FPDFViewEmbeddertest, Crasher_451830) {
   // Document is damaged and can't be opened.
-  EXPECT_FALSE(OpenDocument("testing/resources/bug_451830.pdf"));
+  EXPECT_FALSE(OpenDocument("bug_451830.pdf"));
 }
 
 TEST_F(FPDFViewEmbeddertest, Crasher_452455) {
-  EXPECT_TRUE(OpenDocument("testing/resources/bug_452455.pdf"));
+  EXPECT_TRUE(OpenDocument("bug_452455.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
   UnloadPage(page);
@@ -197,5 +197,5 @@ TEST_F(FPDFViewEmbeddertest, Crasher_452455) {
 
 TEST_F(FPDFViewEmbeddertest, Crasher_454695) {
   // Document is damanged and can't be opened.
-  EXPECT_FALSE(OpenDocument("testing/resources/bug_454695.pdf"));
+  EXPECT_FALSE(OpenDocument("bug_454695.pdf"));
 }

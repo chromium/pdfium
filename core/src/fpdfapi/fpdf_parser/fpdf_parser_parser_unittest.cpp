@@ -6,6 +6,7 @@
 
 #include "../../../include/fpdfapi/fpdf_parser.h"
 #include "../../../include/fxcrt/fx_stream.h"
+#include "testing/utils/path_service.h"
 
 class CPDF_TestParser : public CPDF_Parser {
  public:
@@ -193,8 +194,10 @@ TEST(fpdf_parser_parser, ReadHexString) {
 
 TEST(fpdf_parser_parser, RebuildCrossRefCorrectly) {
   CPDF_TestParser parser;
-  ASSERT_TRUE(
-      parser.InitTest("testing/resources/parser_rebuildxref_correct.pdf"));
+  std::string test_file;
+  ASSERT_TRUE(PathService::GetTestFilePath("parser_rebuildxref_correct.pdf",
+                                           &test_file));
+  ASSERT_TRUE(parser.InitTest(test_file.c_str())) << test_file;
 
   ASSERT_TRUE(parser.RebuildCrossRef());
   const FX_FILESIZE offsets[] = {0, 15, 61, 154, 296, 374, 450};
