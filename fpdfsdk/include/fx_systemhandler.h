@@ -7,6 +7,13 @@
 #ifndef FPDFSDK_INCLUDE_FX_SYSTEMHANDLER_H_
 #define FPDFSDK_INCLUDE_FX_SYSTEMHANDLER_H_
 
+#include "core/include/fpdfapi/fpdf_parser.h"
+#include "core/include/fxcrt/fx_coordinates.h"
+#include "core/include/fxcrt/fx_system.h"
+
+class CPDF_Document;
+class CPDF_Font;
+
 typedef void* FX_HWND;
 typedef void* FX_HMENU;
 typedef void (*TimerCallback)(int32_t idEvent);

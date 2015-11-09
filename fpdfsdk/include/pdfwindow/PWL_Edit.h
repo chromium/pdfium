@@ -7,9 +7,9 @@
 #ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_EDIT_H_
 #define FPDFSDK_INCLUDE_PDFWINDOW_PWL_EDIT_H_
 
-#include "../../../core/include/fxcrt/fx_basic.h"
 #include "PWL_EditCtrl.h"
 #include "PWL_Wnd.h"
+#include "core/include/fxcrt/fx_basic.h"
 
 class CPWL_Edit;
 class IPWL_Filler_Notify;

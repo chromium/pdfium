@@ -10,7 +10,7 @@
 #include <map>
 #include <vector>
 
-#include "../../core/include/fxcrt/fx_basic.h"
+#include "core/include/fxcrt/fx_basic.h"
 
 #define FSDK_XFAWIDGET_TYPENAME "XFAWidget"
 

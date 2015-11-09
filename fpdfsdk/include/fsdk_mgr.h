@@ -9,7 +9,7 @@
 
 #include <map>
 
-#include "../../core/include/fpdftext/fpdf_text.h"
+#include "core/include/fpdftext/fpdf_text.h"
 #include "fpdfxfa/fpdfxfa_doc.h"
 #include "fpdfxfa/fpdfxfa_page.h"
 #include "fsdk_actionhandler.h"

@@ -7,9 +7,9 @@
 #ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_WND_H_
 #define FPDFSDK_INCLUDE_PDFWINDOW_PWL_WND_H_
 
-#include "../../../core/include/fxcrt/fx_basic.h"
-#include "../../../core/include/fpdfdoc/fpdf_doc.h"
 #include "../fx_systemhandler.h"
+#include "core/include/fpdfdoc/fpdf_doc.h"
+#include "core/include/fxcrt/fx_basic.h"
 
 class CPWL_MsgControl;
 class CPWL_ScrollBar;

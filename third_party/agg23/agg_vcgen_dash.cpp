@@ -17,9 +17,11 @@
 // Line dash generator
 //
 //----------------------------------------------------------------------------
-#include "../../core/include/fxcrt/fx_basic.h"
-#include "agg_vcgen_dash.h"
+
 #include "agg_shorten_path.h"
+#include "agg_vcgen_dash.h"
+#include "core/include/fxcrt/fx_basic.h"
+
 namespace agg
 {
 vcgen_dash::vcgen_dash() :

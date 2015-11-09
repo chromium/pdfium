@@ -4,8 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef __H_FX_GRAPHICS__
-#define __H_FX_GRAPHICS__
+#ifndef XFA_INCLUDE_FXGRAPHICS_FX_GRAPHICS_H_
+#define XFA_INCLUDE_FXGRAPHICS_FX_GRAPHICS_H_
+
+#include "core/include/fpdfapi/fpdf_pageobj.h"
 
 typedef int FX_ERR;
 #define FX_ERR_Succeeded 0
@@ -496,4 +498,5 @@ class CFX_Shading {
   FX_ARGB _argbArray[FX_SHADING_Steps];
   friend class CFX_Graphics;
 };
-#endif
+
+#endif  // XFA_INCLUDE_FXGRAPHICS_FX_GRAPHICS_H_

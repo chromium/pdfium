@@ -7,9 +7,9 @@
 #ifndef FPDFSDK_INCLUDE_JAVASCRIPT_IJAVASCRIPT_H_
 #define FPDFSDK_INCLUDE_JAVASCRIPT_IJAVASCRIPT_H_
 
-#include "../../../core/include/fxcrt/fx_string.h"
-#include "../../../core/include/fxcrt/fx_system.h"
 #include "../../../xfa/include/fxjse/fxjse.h"
+#include "core/include/fxcrt/fx_string.h"
+#include "core/include/fxcrt/fx_system.h"
 
 class CPDFDoc_Environment;
 class CPDFSDK_Annot;

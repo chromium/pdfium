@@ -4,10 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_TIMER_H
-#define _FWL_TIMER_H
-class IFWL_Timer;
+#ifndef XFA_INCLUDE_FWL_CORE_FWL_TIMER_H_
+#define XFA_INCLUDE_FWL_CORE_FWL_TIMER_H_
+
+#include "core/include/fxcrt/fx_system.h"
+
 typedef struct _FWL_HTIMER { void* pData; } * FWL_HTIMER;
+
 class IFWL_Timer {
  public:
   virtual ~IFWL_Timer() {}
@@ -17,4 +20,5 @@ FWL_HTIMER FWL_StartTimer(IFWL_Timer* pTimer,
                           FX_DWORD dwElapse,
                           FX_BOOL bImmediately = TRUE);
 int32_t FWL_StopTimer(FWL_HTIMER hTimer);
-#endif
+
+#endif  // XFA_INCLUDE_FWL_CORE_FWL_TIMER_H_

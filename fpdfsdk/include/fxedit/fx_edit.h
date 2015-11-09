@@ -7,15 +7,15 @@
 #ifndef FPDFSDK_INCLUDE_FXEDIT_FX_EDIT_H_
 #define FPDFSDK_INCLUDE_FXEDIT_FX_EDIT_H_
 
-#include "../../../core/include/fxcrt/fx_basic.h"
-#include "../../../core/include/fxge/fx_dib.h"
+#include "core/include/fpdfapi/fpdf_parser.h"
+#include "core/include/fxcrt/fx_basic.h"
+#include "core/include/fxge/fx_dib.h"
 
 class CFX_RenderDevice;
 class CPDF_Font;
 class CPDF_Matrix;
 class CPDF_PageObjects;
 class CPDF_Point;
-class CPDF_Rect;
 class CPDF_TextObject;
 class IFX_Edit;
 class IFX_Edit_FontMap;

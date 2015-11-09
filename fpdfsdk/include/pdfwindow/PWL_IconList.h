@@ -7,9 +7,9 @@
 #ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_ICONLIST_H_
 #define FPDFSDK_INCLUDE_PDFWINDOW_PWL_ICONLIST_H_
 
-#include "../../../core/include/fxcrt/fx_string.h"
 #include "PWL_ListCtrl.h"
 #include "PWL_Wnd.h"
+#include "core/include/fxcrt/fx_string.h"
 
 class IPWL_IconList_Notify;
 class CPWL_IconList_Item;

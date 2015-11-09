@@ -15,7 +15,8 @@
 #define FPDFSDK_INCLUDE_JSAPI_FXJS_V8_H_
 
 #include <v8.h>
-#include "../../../core/include/fxcrt/fx_basic.h"
+
+#include "core/include/fxcrt/fx_basic.h"
 
 // FXJS_V8 places no restrictions on these two classes; it merely passes them
 // on to caller-provided methods.

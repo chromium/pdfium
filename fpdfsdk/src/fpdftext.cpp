@@ -6,10 +6,10 @@
 
 #include "public/fpdf_text.h"
 
-#include "../../core/include/fpdfdoc/fpdf_doc.h"
-#include "../../core/include/fpdftext/fpdf_text.h"
 #include "../include/fpdfxfa/fpdfxfa_doc.h"
 #include "../include/fpdfxfa/fpdfxfa_page.h"
+#include "core/include/fpdfdoc/fpdf_doc.h"
+#include "core/include/fpdftext/fpdf_text.h"
 
 #ifdef _WIN32
 #include <tchar.h>

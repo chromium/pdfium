@@ -251,8 +251,8 @@ cmsBool  _cmsRegisterMemHandlerPlugin(cmsContext ContextID, cmsPluginBase *Data)
     return TRUE;
 }
 #else
-#include "../../../core/include/fxcrt/fx_memory.h"
-#include "../../../core/include/fxcrt/fx_system.h"
+#include "core/include/fxcrt/fx_memory.h"
+#include "core/include/fxcrt/fx_system.h"
 
 cmsBool  _cmsRegisterMemHandlerPlugin(cmsContext ContextID, cmsPluginBase* Plugin)
 {
