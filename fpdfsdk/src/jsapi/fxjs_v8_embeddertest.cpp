@@ -61,8 +61,6 @@ TEST_F(FXJSV8Embeddertest, Getters) {
   v8::Context::Scope context_scope(GetV8Context());
 
   FXJSErr error;
-  CFX_WideString wsInfo;
-  CFX_WideString wsScript(kScript);
   int sts = FXJS_Execute(isolate(), nullptr, kScript, &error);
   EXPECT_EQ(0, sts);
 
