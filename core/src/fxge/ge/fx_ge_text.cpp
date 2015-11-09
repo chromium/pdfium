@@ -37,7 +37,8 @@ class ScopedFontTransform {
  private:
   FT_Face m_Face;
 };
-}
+
+}  // namespace
 
 FX_RECT FXGE_GetGlyphsBBox(FXTEXT_GLYPHPOS* pGlyphAndPos,
                            int nChars,
@@ -295,10 +296,11 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
       glyph.m_pGlyph = pFaceCache->LoadGlyphBitmap(
           pFont, charpos.m_GlyphIndex, charpos.m_bFontStyle, &new_matrix,
           charpos.m_FontCharWidth, anti_alias, nativetext_flags);
-    } else
+    } else {
       glyph.m_pGlyph = pFaceCache->LoadGlyphBitmap(
           pFont, charpos.m_GlyphIndex, charpos.m_bFontStyle, &deviceCtm,
           charpos.m_FontCharWidth, anti_alias, nativetext_flags);
+    }
   }
   if (anti_alias < FXFT_RENDER_MODE_LCD && nChars > 1) {
     _AdjustGlyphSpace(pGlyphAndPos, nChars);
@@ -1228,9 +1230,8 @@ void CFX_FontCache::FreeCache(FX_BOOL bRelease) {
   }
 }
 
-CFX_FaceCache::CFX_FaceCache(FXFT_Face face) {
-  m_Face = face;
-}
+CFX_FaceCache::CFX_FaceCache(FXFT_Face face) : m_Face(face) {}
+
 CFX_FaceCache::~CFX_FaceCache() {
   for (const auto& pair : m_SizeMap) {
     delete pair.second;
@@ -1656,12 +1657,12 @@ const CFX_PathData* CFX_FaceCache::LoadGlyphPath(CFX_Font* pFont,
   }
   CFX_PathData* pGlyphPath = NULL;
   void* key;
-  if (pFont->GetSubstFont())
+  if (pFont->GetSubstFont()) {
     key = (void*)(uintptr_t)(
         glyph_index + ((pFont->GetSubstFont()->m_Weight / 16) << 15) +
         ((pFont->GetSubstFont()->m_ItalicAngle / 2) << 21) +
         ((dest_width / 16) << 25) + (pFont->IsVertical() << 31));
-  else {
+  } else {
     key = (void*)(uintptr_t)glyph_index;
   }
   if (m_PathMap.Lookup(key, (void*&)pGlyphPath)) {

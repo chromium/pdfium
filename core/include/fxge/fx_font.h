@@ -139,6 +139,7 @@ class CFX_UnicodeEncoding {
 #define FXFONT_SUBST_NONSYMBOL 0x20
 #define FXFONT_SUBST_EXACT 0x40
 #define FXFONT_SUBST_STANDARD 0x80
+
 class CFX_SubstFont {
  public:
   CFX_SubstFont();
@@ -385,6 +386,7 @@ class CFX_GlyphBitmap {
 };
 class CFX_FaceCache {
  public:
+  explicit CFX_FaceCache(FXFT_Face face);
   ~CFX_FaceCache();
   const CFX_GlyphBitmap* LoadGlyphBitmap(CFX_Font* pFont,
                                          FX_DWORD glyph_index,
@@ -397,10 +399,7 @@ class CFX_FaceCache {
                                     FX_DWORD glyph_index,
                                     int dest_width);
 
-  CFX_FaceCache(FXFT_Face face);
-
  private:
-  FXFT_Face m_Face;
   CFX_GlyphBitmap* RenderGlyph(CFX_Font* pFont,
                                FX_DWORD glyph_index,
                                FX_BOOL bFontStyle,
@@ -419,18 +418,23 @@ class CFX_FaceCache {
                                      FX_BOOL bFontStyle,
                                      int dest_width,
                                      int anti_alias);
+  void InitPlatform();
+  void DestroyPlatform();
+
+  FXFT_Face const m_Face;
   std::map<CFX_ByteString, CFX_SizeGlyphCache*> m_SizeMap;
   CFX_MapPtrToPtr m_PathMap;
   CFX_DIBitmap* m_pBitmap;
-
-  void InitPlatform();
-  void DestroyPlatform();
 };
-typedef struct {
+
+struct FXTEXT_GLYPHPOS {
   const CFX_GlyphBitmap* m_pGlyph;
-  int m_OriginX, m_OriginY;
-  FX_FLOAT m_fOriginX, m_fOriginY;
-} FXTEXT_GLYPHPOS;
+  int m_OriginX;
+  int m_OriginY;
+  FX_FLOAT m_fOriginX;
+  FX_FLOAT m_fOriginY;
+};
+
 FX_RECT FXGE_GetGlyphsBBox(FXTEXT_GLYPHPOS* pGlyphAndPos,
                            int nChars,
                            int anti_alias,
