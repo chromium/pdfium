@@ -2400,6 +2400,7 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
       }
       if (endStreamOffset < 0 && endObjOffset < 0) {
         // Can't find "endstream" or "endobj".
+        pDict->Release();
         return nullptr;
       }
       if (endStreamOffset < 0 && endObjOffset >= 0) {
@@ -2422,6 +2423,7 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
         }
       }
       if (len < 0) {
+        pDict->Release();
         return nullptr;
       }
       pDict->SetAtInteger(FX_BSTRC("Length"), len);
@@ -2429,6 +2431,7 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
     m_Pos = streamStartPos;
   }
   if (len < 0) {
+    pDict->Release();
     return nullptr;
   }
   uint8_t* pData = nullptr;
