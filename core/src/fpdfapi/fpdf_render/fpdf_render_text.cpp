@@ -128,10 +128,10 @@ CFX_GlyphBitmap* CPDF_Type3Cache::RenderGlyph(CPDF_Type3Glyphs* pSize,
                                               const CFX_AffineMatrix* pMatrix,
                                               FX_FLOAT retinaScaleX,
                                               FX_FLOAT retinaScaleY) {
-  CPDF_Type3Char* pChar = m_pFont->LoadChar(charcode);
-  if (pChar == NULL || pChar->m_pBitmap == NULL) {
-    return NULL;
-  }
+  const CPDF_Type3Char* pChar = m_pFont->LoadChar(charcode);
+  if (!pChar || !pChar->m_pBitmap)
+    return nullptr;
+
   CFX_DIBitmap* pBitmap = pChar->m_pBitmap;
   CFX_AffineMatrix image_matrix, text_matrix;
   image_matrix = pChar->m_ImageMatrix;
