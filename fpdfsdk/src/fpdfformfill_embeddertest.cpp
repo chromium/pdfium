@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "../../testing/embedder_test.h"
-#include "../../testing/embedder_test_mock_delegate.h"
-#include "../../testing/embedder_test_timer_handling_delegate.h"
 #include "public/fpdf_formfill.h"
+#include "testing/embedder_test.h"
+#include "testing/embedder_test_mock_delegate.h"
+#include "testing/embedder_test_timer_handling_delegate.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
@@ -22,7 +22,7 @@ TEST_F(FPDFFormFillEmbeddertest, FirstTest) {
   EXPECT_CALL(mock, KillTimer(_)).Times(0);
   SetDelegate(&mock);
 
-  EXPECT_TRUE(OpenDocument("testing/resources/hello_world.pdf"));
+  EXPECT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
   UnloadPage(page);
@@ -32,7 +32,7 @@ TEST_F(FPDFFormFillEmbeddertest, BUG_487928) {
   EmbedderTestTimerHandlingDelegate delegate;
   SetDelegate(&delegate);
 
-  EXPECT_TRUE(OpenDocument("testing/resources/bug_487928.pdf"));
+  EXPECT_TRUE(OpenDocument("bug_487928.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
   DoOpenActions();
@@ -44,7 +44,7 @@ TEST_F(FPDFFormFillEmbeddertest, BUG_507316) {
   EmbedderTestTimerHandlingDelegate delegate;
   SetDelegate(&delegate);
 
-  EXPECT_TRUE(OpenDocument("testing/resources/bug_507316.pdf"));
+  EXPECT_TRUE(OpenDocument("bug_507316.pdf"));
   FPDF_PAGE page = LoadAndCachePage(2);
   EXPECT_NE(nullptr, page);
   DoOpenActions();
@@ -53,7 +53,7 @@ TEST_F(FPDFFormFillEmbeddertest, BUG_507316) {
 }
 
 TEST_F(FPDFFormFillEmbeddertest, BUG_514690) {
-  EXPECT_TRUE(OpenDocument("testing/resources/hello_world.pdf"));
+  EXPECT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
 
@@ -68,7 +68,7 @@ TEST_F(FPDFFormFillEmbeddertest, BUG_551248) {
   EmbedderTestTimerHandlingDelegate delegate;
   SetDelegate(&delegate);
 
-  EXPECT_TRUE(OpenDocument("testing/resources/bug_551248.pdf"));
+  EXPECT_TRUE(OpenDocument("bug_551248.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
   DoOpenActions();

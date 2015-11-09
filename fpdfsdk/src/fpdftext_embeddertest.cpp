@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "../../testing/embedder_test.h"
 #include "public/fpdf_text.h"
 #include "public/fpdfview.h"
+#include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {
@@ -28,7 +28,7 @@ static bool check_unsigned_shorts(const char* expected,
 class FPDFTextEmbeddertest : public EmbedderTest {};
 
 TEST_F(FPDFTextEmbeddertest, Text) {
-  EXPECT_TRUE(OpenDocument("testing/resources/hello_world.pdf"));
+  EXPECT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
 
@@ -136,7 +136,7 @@ TEST_F(FPDFTextEmbeddertest, Text) {
 }
 
 TEST_F(FPDFTextEmbeddertest, TextSearch) {
-  EXPECT_TRUE(OpenDocument("testing/resources/hello_world.pdf"));
+  EXPECT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
 
@@ -243,7 +243,7 @@ TEST_F(FPDFTextEmbeddertest, TextSearch) {
 
 // Test that the page has characters despite a bad stream length.
 TEST_F(FPDFTextEmbeddertest, StreamLengthPastEndOfFile) {
-  EXPECT_TRUE(OpenDocument("testing/resources/bug_57.pdf"));
+  EXPECT_TRUE(OpenDocument("bug_57.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
 
@@ -256,7 +256,7 @@ TEST_F(FPDFTextEmbeddertest, StreamLengthPastEndOfFile) {
 }
 
 TEST_F(FPDFTextEmbeddertest, WebLinks) {
-  EXPECT_TRUE(OpenDocument("testing/resources/weblinks.pdf"));
+  EXPECT_TRUE(OpenDocument("weblinks.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_NE(nullptr, page);
 

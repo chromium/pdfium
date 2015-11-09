@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "embedder_test.h"
+#include "testing/embedder_test.h"
 
 #include <limits.h>
 
@@ -14,8 +14,9 @@
 #include "public/fpdf_dataavail.h"
 #include "public/fpdf_text.h"
 #include "public/fpdfview.h"
-#include "test_support.h"
 #include "testing/gmock/include/gmock/gmock.h"
+#include "testing/test_support.h"
+#include "testing/utils/path_service.h"
 
 #ifdef PDF_ENABLE_V8
 #include "v8/include/v8.h"
@@ -94,7 +95,10 @@ void EmbedderTest::TearDown() {
 
 bool EmbedderTest::OpenDocument(const std::string& filename,
                                 bool must_linearize) {
-  file_contents_ = GetFileContents(filename.c_str(), &file_length_);
+  std::string file_path;
+  if (!PathService::GetTestFilePath(filename, &file_path))
+    return false;
+  file_contents_ = GetFileContents(file_path.c_str(), &file_length_);
   if (!file_contents_)
     return false;
 

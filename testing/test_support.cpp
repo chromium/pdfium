@@ -2,16 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "test_support.h"
+#include "testing/test_support.h"
 
 #include <stdio.h>
 #include <string.h>
 
-#ifdef _WIN32
-#define PATH_SEPARATOR '\\'
-#else
-#define PATH_SEPARATOR '/'
-#endif
+#include "testing/utils/path_service.h"
 
 #ifdef PDF_ENABLE_V8
 #include "v8/include/libplatform/libplatform.h"
