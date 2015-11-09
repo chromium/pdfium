@@ -92,7 +92,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
     nonstd::unique_ptr<CPDF_Object, ReleaseDeleter<CPDF_Object>> pObj(
         m_pSyntax->ReadNextObject());
     if (!key.IsEmpty()) {
-      FX_DWORD dwObjNum = pObj->GetObjNum();
+      FX_DWORD dwObjNum = pObj ? pObj->GetObjNum() : 0;
       if (dwObjNum)
         pDict->SetAtReference(key, m_pDocument, dwObjNum);
       else
