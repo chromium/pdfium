@@ -9,6 +9,7 @@
 
 #include <set>
 #include <utility>
+#include <vector>
 
 #include "../../include/javascript/IJavaScript.h"
 #include "../../include/jsapi/fxjs_v8.h"
@@ -77,6 +78,7 @@ class CJS_Runtime : public IJS_Runtime {
   v8::Isolate* m_isolate;
   bool m_isolateManaged;
   v8::Global<v8::Context> m_context;
+  std::vector<v8::Global<v8::Object>*> m_StaticObjects;
   std::set<Observer*> m_observers;
 };
 

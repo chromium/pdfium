@@ -77,7 +77,7 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
   v8::HandleScope handle_scope(isolate);
   if (CPDFXFA_App::GetInstance()->IsJavaScriptInitialized()) {
     CJS_Context* pContext = (CJS_Context*)NewContext();
-    FXJS_InitializeRuntime(GetIsolate(), this, m_context);
+    FXJS_InitializeRuntime(GetIsolate(), this, &m_context, &m_StaticObjects);
     ReleaseContext(pContext);
     return;
   }
@@ -88,7 +88,7 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
   CPDFXFA_App::GetInstance()->SetJavaScriptInitialized(TRUE);
 
   CJS_Context* pContext = (CJS_Context*)NewContext();
-  FXJS_InitializeRuntime(GetIsolate(), this, m_context);
+  FXJS_InitializeRuntime(GetIsolate(), this, &m_context, &m_StaticObjects);
   ReleaseContext(pContext);
 }
 

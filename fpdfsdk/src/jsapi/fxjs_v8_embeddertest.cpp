@@ -33,11 +33,12 @@ class FXJSV8Embeddertest : public EmbedderTest {
     v8::Locker locker(m_pIsolate);
     v8::HandleScope handle_scope(m_pIsolate);
     FXJS_PerIsolateData::SetUp(m_pIsolate);
-    FXJS_InitializeRuntime(m_pIsolate, nullptr, m_pPersistentContext);
+    FXJS_InitializeRuntime(m_pIsolate, nullptr, &m_pPersistentContext,
+                           &m_StaticObjects);
   }
 
   void TearDown() override {
-    FXJS_ReleaseRuntime(m_pIsolate, m_pPersistentContext);
+    FXJS_ReleaseRuntime(m_pIsolate, &m_pPersistentContext, &m_StaticObjects);
     m_pPersistentContext.Reset();
     FXJS_Release();
     EmbedderTest::TearDown();
@@ -52,6 +53,7 @@ class FXJSV8Embeddertest : public EmbedderTest {
   nonstd::unique_ptr<FXJS_ArrayBufferAllocator> m_pArrayBufferAllocator;
   v8::Isolate* m_pIsolate;
   v8::Global<v8::Context> m_pPersistentContext;
+  std::vector<v8::Global<v8::Object>*> m_StaticObjects;
 };
 
 TEST_F(FXJSV8Embeddertest, Getters) {
