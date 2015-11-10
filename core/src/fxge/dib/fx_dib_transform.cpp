@@ -8,7 +8,111 @@
 
 #include "core/include/fxge/fx_dib.h"
 
-const int SDP_Table[513] = {
+namespace {
+
+uint8_t bilinear_interpol(const uint8_t* buf,
+                          int row_offset_l,
+                          int row_offset_r,
+                          int src_col_l,
+                          int src_col_r,
+                          int res_x,
+                          int res_y,
+                          int bpp,
+                          int c_offset) {
+  int i_resx = 255 - res_x;
+  int col_bpp_l = src_col_l * bpp;
+  int col_bpp_r = src_col_r * bpp;
+  const uint8_t* buf_u = buf + row_offset_l + c_offset;
+  const uint8_t* buf_d = buf + row_offset_r + c_offset;
+  const uint8_t* src_pos0 = buf_u + col_bpp_l;
+  const uint8_t* src_pos1 = buf_u + col_bpp_r;
+  const uint8_t* src_pos2 = buf_d + col_bpp_l;
+  const uint8_t* src_pos3 = buf_d + col_bpp_r;
+  uint8_t r_pos_0 = (*src_pos0 * i_resx + *src_pos1 * res_x) >> 8;
+  uint8_t r_pos_1 = (*src_pos2 * i_resx + *src_pos3 * res_x) >> 8;
+  return (r_pos_0 * (255 - res_y) + r_pos_1 * res_y) >> 8;
+}
+
+uint8_t bicubic_interpol(const uint8_t* buf,
+                         int pitch,
+                         int pos_pixel[],
+                         int u_w[],
+                         int v_w[],
+                         int res_x,
+                         int res_y,
+                         int bpp,
+                         int c_offset) {
+  int s_result = 0;
+  for (int i = 0; i < 4; i++) {
+    int a_result = 0;
+    for (int j = 0; j < 4; j++) {
+      a_result += u_w[j] * (*(uint8_t*)(buf + pos_pixel[i + 4] * pitch +
+                                        pos_pixel[j] * bpp + c_offset));
+    }
+    s_result += a_result * v_w[i];
+  }
+  s_result >>= 16;
+  return (uint8_t)(s_result < 0 ? 0 : s_result > 255 ? 255 : s_result);
+}
+
+void bicubic_get_pos_weight(int pos_pixel[],
+                            int u_w[],
+                            int v_w[],
+                            int src_col_l,
+                            int src_row_l,
+                            int res_x,
+                            int res_y,
+                            int stretch_width,
+                            int stretch_height) {
+  pos_pixel[0] = src_col_l - 1;
+  pos_pixel[1] = src_col_l;
+  pos_pixel[2] = src_col_l + 1;
+  pos_pixel[3] = src_col_l + 2;
+  pos_pixel[4] = src_row_l - 1;
+  pos_pixel[5] = src_row_l;
+  pos_pixel[6] = src_row_l + 1;
+  pos_pixel[7] = src_row_l + 2;
+  for (int i = 0; i < 4; i++) {
+    if (pos_pixel[i] < 0) {
+      pos_pixel[i] = 0;
+    }
+    if (pos_pixel[i] >= stretch_width) {
+      pos_pixel[i] = stretch_width - 1;
+    }
+    if (pos_pixel[i + 4] < 0) {
+      pos_pixel[i + 4] = 0;
+    }
+    if (pos_pixel[i + 4] >= stretch_height) {
+      pos_pixel[i + 4] = stretch_height - 1;
+    }
+  }
+  u_w[0] = SDP_Table[256 + res_x];
+  u_w[1] = SDP_Table[res_x];
+  u_w[2] = SDP_Table[256 - res_x];
+  u_w[3] = SDP_Table[512 - res_x];
+  v_w[0] = SDP_Table[256 + res_y];
+  v_w[1] = SDP_Table[res_y];
+  v_w[2] = SDP_Table[256 - res_y];
+  v_w[3] = SDP_Table[512 - res_y];
+}
+
+FXDIB_Format GetTransformedFormat(const CFX_DIBSource* pDrc) {
+  FXDIB_Format format = pDrc->GetFormat();
+  if (pDrc->IsAlphaMask()) {
+    format = FXDIB_8bppMask;
+  } else if (format >= 1025) {
+    format = FXDIB_Cmyka;
+  } else if (format <= 32 || format == FXDIB_Argb) {
+    format = FXDIB_Argb;
+  } else {
+    format = FXDIB_Rgba;
+  }
+  return format;
+}
+
+}  // namespace
+
+const int16_t SDP_Table[513] = {
     256, 256, 256, 256, 256, 256, 256, 256, 256, 255, 255, 255, 255, 255, 255,
     254, 254, 254, 254, 253, 253, 253, 252, 252, 252, 251, 251, 251, 250, 250,
     249, 249, 249, 248, 248, 247, 247, 246, 246, 245, 244, 244, 243, 243, 242,
@@ -45,6 +149,7 @@ const int SDP_Table[513] = {
     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
     0,   0,   0,
 };
+
 class CFX_BilinearMatrix : public CPDF_FixedMatrix {
  public:
   CFX_BilinearMatrix(const CFX_AffineMatrix& src, int bits)
@@ -131,18 +236,19 @@ CFX_DIBitmap* CFX_DIBSource::SwapXY(FX_BOOL bXFlip,
         }
       } else {
         const uint8_t* src_scan = GetScanline(row) + col_start * nBytes;
-        if (nBytes == 1)
+        if (nBytes == 1) {
           for (int col = col_start; col < col_end; col++) {
             *dest_scan = *src_scan++;
             dest_scan += dest_step;
           }
-        else
+        } else {
           for (int col = col_start; col < col_end; col++) {
             *dest_scan++ = *src_scan++;
             *dest_scan++ = *src_scan++;
             *dest_scan = *src_scan++;
             dest_scan += dest_step;
           }
+        }
       }
     }
   }
@@ -294,102 +400,7 @@ FX_BOOL CFX_ImageTransformer::Start(const CFX_DIBSource* pSrc,
   m_Status = 3;
   return TRUE;
 }
-uint8_t _bilinear_interpol(const uint8_t* buf,
-                           int row_offset_l,
-                           int row_offset_r,
-                           int src_col_l,
-                           int src_col_r,
-                           int res_x,
-                           int res_y,
-                           int bpp,
-                           int c_offset) {
-  int i_resx = 255 - res_x;
-  int col_bpp_l = src_col_l * bpp;
-  int col_bpp_r = src_col_r * bpp;
-  const uint8_t* buf_u = buf + row_offset_l + c_offset;
-  const uint8_t* buf_d = buf + row_offset_r + c_offset;
-  const uint8_t* src_pos0 = buf_u + col_bpp_l;
-  const uint8_t* src_pos1 = buf_u + col_bpp_r;
-  const uint8_t* src_pos2 = buf_d + col_bpp_l;
-  const uint8_t* src_pos3 = buf_d + col_bpp_r;
-  uint8_t r_pos_0 = (*src_pos0 * i_resx + *src_pos1 * res_x) >> 8;
-  uint8_t r_pos_1 = (*src_pos2 * i_resx + *src_pos3 * res_x) >> 8;
-  return (r_pos_0 * (255 - res_y) + r_pos_1 * res_y) >> 8;
-}
-uint8_t _bicubic_interpol(const uint8_t* buf,
-                          int pitch,
-                          int pos_pixel[],
-                          int u_w[],
-                          int v_w[],
-                          int res_x,
-                          int res_y,
-                          int bpp,
-                          int c_offset) {
-  int s_result = 0;
-  for (int i = 0; i < 4; i++) {
-    int a_result = 0;
-    for (int j = 0; j < 4; j++) {
-      a_result += u_w[j] * (*(uint8_t*)(buf + pos_pixel[i + 4] * pitch +
-                                        pos_pixel[j] * bpp + c_offset));
-    }
-    s_result += a_result * v_w[i];
-  }
-  s_result >>= 16;
-  return (uint8_t)(s_result < 0 ? 0 : s_result > 255 ? 255 : s_result);
-}
-void _bicubic_get_pos_weight(int pos_pixel[],
-                             int u_w[],
-                             int v_w[],
-                             int src_col_l,
-                             int src_row_l,
-                             int res_x,
-                             int res_y,
-                             int stretch_width,
-                             int stretch_height) {
-  pos_pixel[0] = src_col_l - 1;
-  pos_pixel[1] = src_col_l;
-  pos_pixel[2] = src_col_l + 1;
-  pos_pixel[3] = src_col_l + 2;
-  pos_pixel[4] = src_row_l - 1;
-  pos_pixel[5] = src_row_l;
-  pos_pixel[6] = src_row_l + 1;
-  pos_pixel[7] = src_row_l + 2;
-  for (int i = 0; i < 4; i++) {
-    if (pos_pixel[i] < 0) {
-      pos_pixel[i] = 0;
-    }
-    if (pos_pixel[i] >= stretch_width) {
-      pos_pixel[i] = stretch_width - 1;
-    }
-    if (pos_pixel[i + 4] < 0) {
-      pos_pixel[i + 4] = 0;
-    }
-    if (pos_pixel[i + 4] >= stretch_height) {
-      pos_pixel[i + 4] = stretch_height - 1;
-    }
-  }
-  u_w[0] = SDP_Table[256 + res_x];
-  u_w[1] = SDP_Table[res_x];
-  u_w[2] = SDP_Table[256 - res_x];
-  u_w[3] = SDP_Table[512 - res_x];
-  v_w[0] = SDP_Table[256 + res_y];
-  v_w[1] = SDP_Table[res_y];
-  v_w[2] = SDP_Table[256 - res_y];
-  v_w[3] = SDP_Table[512 - res_y];
-}
-FXDIB_Format _GetTransformedFormat(const CFX_DIBSource* pDrc) {
-  FXDIB_Format format = pDrc->GetFormat();
-  if (pDrc->IsAlphaMask()) {
-    format = FXDIB_8bppMask;
-  } else if (format >= 1025) {
-    format = FXDIB_Cmyka;
-  } else if (format <= 32 || format == FXDIB_Argb) {
-    format = FXDIB_Argb;
-  } else {
-    format = FXDIB_Rgba;
-  }
-  return format;
-}
+
 FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
   if (m_Status == 1) {
     if (m_Stretcher.Continue(pPause)) {
@@ -422,7 +433,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
   }
   int stretch_pitch = m_Storer.GetBitmap()->GetPitch();
   CFX_DIBitmap* pTransformed = new CFX_DIBitmap;
-  FXDIB_Format transformF = _GetTransformedFormat(m_Stretcher.m_pSource);
+  FXDIB_Format transformF = GetTransformedFormat(m_Stretcher.m_pSource);
   if (!pTransformed->Create(m_ResultWidth, m_ResultHeight, transformF)) {
     delete pTransformed;
     return FALSE;
@@ -468,8 +479,8 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
             int row_offset_l = src_row_l * stretch_pitch_mask;
             int row_offset_r = src_row_r * stretch_pitch_mask;
             *dest_pos_mask =
-                _bilinear_interpol(stretch_buf_mask, row_offset_l, row_offset_r,
-                                   src_col_l, src_col_r, res_x, res_y, 1, 0);
+                bilinear_interpol(stretch_buf_mask, row_offset_l, row_offset_r,
+                                  src_col_l, src_col_r, res_x, res_y, 1, 0);
           }
           dest_pos_mask++;
         }
@@ -493,12 +504,11 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
             if (src_row_l == stretch_height) {
               src_row_l--;
             }
-            _bicubic_get_pos_weight(pos_pixel, u_w, v_w, src_col_l, src_row_l,
-                                    res_x, res_y, stretch_width,
-                                    stretch_height);
+            bicubic_get_pos_weight(pos_pixel, u_w, v_w, src_col_l, src_row_l,
+                                   res_x, res_y, stretch_width, stretch_height);
             *dest_pos_mask =
-                _bicubic_interpol(stretch_buf_mask, stretch_pitch_mask,
-                                  pos_pixel, u_w, v_w, res_x, res_y, 1, 0);
+                bicubic_interpol(stretch_buf_mask, stretch_pitch_mask,
+                                 pos_pixel, u_w, v_w, res_x, res_y, 1, 0);
           }
           dest_pos_mask++;
         }
@@ -555,8 +565,8 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
             int row_offset_l = src_row_l * stretch_pitch;
             int row_offset_r = src_row_r * stretch_pitch;
             *dest_scan =
-                _bilinear_interpol(stretch_buf, row_offset_l, row_offset_r,
-                                   src_col_l, src_col_r, res_x, res_y, 1, 0);
+                bilinear_interpol(stretch_buf, row_offset_l, row_offset_r,
+                                  src_col_l, src_col_r, res_x, res_y, 1, 0);
           }
           dest_scan++;
         }
@@ -579,12 +589,10 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
             if (src_row_l == stretch_height) {
               src_row_l--;
             }
-            _bicubic_get_pos_weight(pos_pixel, u_w, v_w, src_col_l, src_row_l,
-                                    res_x, res_y, stretch_width,
-                                    stretch_height);
-            *dest_scan =
-                _bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel, u_w,
-                                  v_w, res_x, res_y, 1, 0);
+            bicubic_get_pos_weight(pos_pixel, u_w, v_w, src_col_l, src_row_l,
+                                   res_x, res_y, stretch_width, stretch_height);
+            *dest_scan = bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel,
+                                          u_w, v_w, res_x, res_y, 1, 0);
           }
           dest_scan++;
         }
@@ -623,14 +631,15 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
           argb[i] = pPal[i];
         }
       } else {
-        if (m_Storer.GetBitmap()->IsCmykImage())
+        if (m_Storer.GetBitmap()->IsCmykImage()) {
           for (int i = 0; i < 256; i++) {
             argb[i] = 255 - i;
           }
-        else
+        } else {
           for (int i = 0; i < 256; i++) {
             argb[i] = 0xff000000 | (i * 0x010101);
           }
+        }
       }
       if (!(m_Flags & FXDIB_DOWNSAMPLE) &&
           !(m_Flags & FXDIB_BICUBIC_INTERPOL)) {
@@ -659,7 +668,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
               }
               int row_offset_l = src_row_l * stretch_pitch;
               int row_offset_r = src_row_r * stretch_pitch;
-              FX_DWORD r_bgra_cmyk = argb[_bilinear_interpol(
+              FX_DWORD r_bgra_cmyk = argb[bilinear_interpol(
                   stretch_buf, row_offset_l, row_offset_r, src_col_l, src_col_r,
                   res_x, res_y, 1, 0)];
               if (transformF == FXDIB_Rgba) {
@@ -691,12 +700,12 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
               if (src_row_l == stretch_height) {
                 src_row_l--;
               }
-              _bicubic_get_pos_weight(pos_pixel, u_w, v_w, src_col_l, src_row_l,
-                                      res_x, res_y, stretch_width,
-                                      stretch_height);
+              bicubic_get_pos_weight(pos_pixel, u_w, v_w, src_col_l, src_row_l,
+                                     res_x, res_y, stretch_width,
+                                     stretch_height);
               FX_DWORD r_bgra_cmyk =
-                  argb[_bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel,
-                                         u_w, v_w, res_x, res_y, 1, 0)];
+                  argb[bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel,
+                                        u_w, v_w, res_x, res_y, 1, 0)];
               if (transformF == FXDIB_Rgba) {
                 dest_pos[0] = (uint8_t)(r_bgra_cmyk >> 24);
                 dest_pos[1] = (uint8_t)(r_bgra_cmyk >> 16);
@@ -767,15 +776,15 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
               }
               int row_offset_l = src_row_l * stretch_pitch;
               int row_offset_r = src_row_r * stretch_pitch;
-              uint8_t r_pos_red_y_r = _bilinear_interpol(
-                  stretch_buf, row_offset_l, row_offset_r, src_col_l, src_col_r,
-                  res_x, res_y, Bpp, 2);
-              uint8_t r_pos_green_m_r = _bilinear_interpol(
-                  stretch_buf, row_offset_l, row_offset_r, src_col_l, src_col_r,
-                  res_x, res_y, Bpp, 1);
-              uint8_t r_pos_blue_c_r = _bilinear_interpol(
-                  stretch_buf, row_offset_l, row_offset_r, src_col_l, src_col_r,
-                  res_x, res_y, Bpp, 0);
+              uint8_t r_pos_red_y_r =
+                  bilinear_interpol(stretch_buf, row_offset_l, row_offset_r,
+                                    src_col_l, src_col_r, res_x, res_y, Bpp, 2);
+              uint8_t r_pos_green_m_r =
+                  bilinear_interpol(stretch_buf, row_offset_l, row_offset_r,
+                                    src_col_l, src_col_r, res_x, res_y, Bpp, 1);
+              uint8_t r_pos_blue_c_r =
+                  bilinear_interpol(stretch_buf, row_offset_l, row_offset_r,
+                                    src_col_l, src_col_r, res_x, res_y, Bpp, 0);
               if (bHasAlpha) {
                 if (transformF != FXDIB_Argb) {
                   if (transformF == FXDIB_Rgba) {
@@ -783,7 +792,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
                     dest_pos[1] = r_pos_green_m_r;
                     dest_pos[2] = r_pos_red_y_r;
                   } else {
-                    r_pos_k_r = _bilinear_interpol(
+                    r_pos_k_r = bilinear_interpol(
                         stretch_buf, row_offset_l, row_offset_r, src_col_l,
                         src_col_r, res_x, res_y, Bpp, 3);
                     *(FX_DWORD*)dest_pos =
@@ -791,7 +800,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
                                                 r_pos_red_y_r, r_pos_k_r));
                   }
                 } else {
-                  uint8_t r_pos_a_r = _bilinear_interpol(
+                  uint8_t r_pos_a_r = bilinear_interpol(
                       stretch_buf, row_offset_l, row_offset_r, src_col_l,
                       src_col_r, res_x, res_y, Bpp, 3);
                   *(FX_DWORD*)dest_pos = FXARGB_TODIB(
@@ -801,7 +810,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
               } else {
                 r_pos_k_r = 0xff;
                 if (transformF == FXDIB_Cmyka) {
-                  r_pos_k_r = _bilinear_interpol(
+                  r_pos_k_r = bilinear_interpol(
                       stretch_buf, row_offset_l, row_offset_r, src_col_l,
                       src_col_r, res_x, res_y, Bpp, 3);
                   *(FX_DWORD*)dest_pos =
@@ -835,18 +844,18 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
               if (src_row_l == stretch_height) {
                 src_row_l--;
               }
-              _bicubic_get_pos_weight(pos_pixel, u_w, v_w, src_col_l, src_row_l,
-                                      res_x, res_y, stretch_width,
-                                      stretch_height);
+              bicubic_get_pos_weight(pos_pixel, u_w, v_w, src_col_l, src_row_l,
+                                     res_x, res_y, stretch_width,
+                                     stretch_height);
               uint8_t r_pos_red_y_r =
-                  _bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel, u_w,
-                                    v_w, res_x, res_y, Bpp, 2);
+                  bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel, u_w,
+                                   v_w, res_x, res_y, Bpp, 2);
               uint8_t r_pos_green_m_r =
-                  _bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel, u_w,
-                                    v_w, res_x, res_y, Bpp, 1);
+                  bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel, u_w,
+                                   v_w, res_x, res_y, Bpp, 1);
               uint8_t r_pos_blue_c_r =
-                  _bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel, u_w,
-                                    v_w, res_x, res_y, Bpp, 0);
+                  bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel, u_w,
+                                   v_w, res_x, res_y, Bpp, 0);
               if (bHasAlpha) {
                 if (transformF != FXDIB_Argb) {
                   if (transformF == FXDIB_Rgba) {
@@ -855,16 +864,16 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
                     dest_pos[2] = r_pos_red_y_r;
                   } else {
                     r_pos_k_r =
-                        _bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel,
-                                          u_w, v_w, res_x, res_y, Bpp, 3);
+                        bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel,
+                                         u_w, v_w, res_x, res_y, Bpp, 3);
                     *(FX_DWORD*)dest_pos =
                         FXCMYK_TODIB(CmykEncode(r_pos_blue_c_r, r_pos_green_m_r,
                                                 r_pos_red_y_r, r_pos_k_r));
                   }
                 } else {
                   uint8_t r_pos_a_r =
-                      _bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel,
-                                        u_w, v_w, res_x, res_y, Bpp, 3);
+                      bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel,
+                                       u_w, v_w, res_x, res_y, Bpp, 3);
                   *(FX_DWORD*)dest_pos = FXARGB_TODIB(
                       FXARGB_MAKE(r_pos_a_r, r_pos_red_y_r, r_pos_green_m_r,
                                   r_pos_blue_c_r));
@@ -873,8 +882,8 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
                 r_pos_k_r = 0xff;
                 if (transformF == FXDIB_Cmyka) {
                   r_pos_k_r =
-                      _bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel,
-                                        u_w, v_w, res_x, res_y, Bpp, 3);
+                      bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel,
+                                       u_w, v_w, res_x, res_y, Bpp, 3);
                   *(FX_DWORD*)dest_pos =
                       FXCMYK_TODIB(CmykEncode(r_pos_blue_c_r, r_pos_green_m_r,
                                               r_pos_red_y_r, r_pos_k_r));
