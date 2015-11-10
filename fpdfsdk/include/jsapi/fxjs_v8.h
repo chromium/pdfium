@@ -133,7 +133,13 @@ void FXJS_InitializeRuntime(v8::Isolate* pIsolate,
                             v8::Global<v8::Context>& v8PersistentContext);
 void FXJS_ReleaseRuntime(v8::Isolate* pIsolate,
                          v8::Global<v8::Context>& v8PersistentContext);
-IJS_Runtime* FXJS_GetRuntimeFromIsolate(v8::Isolate* pIsolate);
+
+// Called as part of FXJS_InitializeRuntime, exposed so PDF can make its
+// own contexts compatible with XFA or vice versa.
+void FXJS_SetRuntimeForV8Context(v8::Local<v8::Context> v8Context,
+                                 IJS_Runtime* pIRuntime);
+
+IJS_Runtime* FXJS_GetRuntimeFromV8Context(v8::Local<v8::Context> v8Context);
 
 // Called after FXJS_InitializeRuntime call made.
 int FXJS_Execute(v8::Isolate* pIsolate,

@@ -245,12 +245,20 @@ FX_BOOL CJS_Runtime::GetHValueByName(const CFX_ByteStringC& utf8Name,
   v8::Locker lock(GetIsolate());
   v8::Isolate::Scope isolate_scope(GetIsolate());
   v8::HandleScope handle_scope(GetIsolate());
+  v8::Local<v8::Context> old_context = GetIsolate()->GetCurrentContext();
   v8::Local<v8::Context> context =
       v8::Local<v8::Context>::New(GetIsolate(), m_context);
   v8::Context::Scope context_scope(context);
 
-  // v8::Local<v8::Context> tmpCotext =
-  // v8::Local<v8::Context>::New(GetIsolate(), m_context);
+  // Caution: We're about to hand to XFA an object that in order to invoke
+  // methods will require that the current v8::Context always has a pointer
+  // to a CJS_Runtime in its embedder data slot. Unfortunately, XFA creates
+  // its own v8::Context which has not initialized the embedder data slot.
+  // Do so now.
+  // TODO(tsepez): redesign PDF-side objects to not rely on v8::Context's
+  // embedder data slots, and/or to always use the right context.
+  FXJS_SetRuntimeForV8Context(old_context, this);
+
   v8::Local<v8::Value> propvalue =
       context->Global()->Get(v8::String::NewFromUtf8(
           GetIsolate(), name, v8::String::kNormalString, utf8Name.GetLength()));
