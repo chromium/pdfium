@@ -54,15 +54,18 @@ class CPDF_Type3Cache {
   CPDF_Type3Font* const m_pFont;
   std::map<CFX_ByteString, CPDF_Type3Glyphs*> m_SizeMap;
 };
+
 class CPDF_TransferFunc {
  public:
-  CPDF_Document* m_pPDFDoc;
-  uint8_t m_Samples[256 * 3];
-  FX_BOOL m_bIdentity;
+  explicit CPDF_TransferFunc(CPDF_Document* pDoc);
 
+  FX_COLORREF TranslateColor(FX_COLORREF src) const;
   CFX_DIBSource* TranslateImage(const CFX_DIBSource* pSrc,
                                 FX_BOOL bAutoDropSrc);
-  FX_COLORREF TranslateColor(FX_COLORREF src);
+
+  CPDF_Document* const m_pPDFDoc;
+  FX_BOOL m_bIdentity;
+  uint8_t m_Samples[256 * 3];
 };
 
 class CPDF_DocRenderData {
@@ -253,7 +256,7 @@ class CPDF_RenderStatus {
   const CPDF_PageObject* m_pStopObj;
   CPDF_GraphicStates m_InitialStates;
   int m_HalftoneLimit;
-  IPDF_ObjectRenderer* m_pObjectRenderer;
+  nonstd::unique_ptr<IPDF_ObjectRenderer> m_pObjectRenderer;
   FX_BOOL m_bPrint;
   int m_Transparency;
   int m_DitherBits;
@@ -382,6 +385,7 @@ class CPDF_ScaledRenderBuffer {
  public:
   CPDF_ScaledRenderBuffer();
   ~CPDF_ScaledRenderBuffer();
+
   FX_BOOL Initialize(CPDF_RenderContext* pContext,
                      CFX_RenderDevice* pDevice,
                      FX_RECT* pRect,
@@ -389,7 +393,7 @@ class CPDF_ScaledRenderBuffer {
                      const CPDF_RenderOptions* pOptions = NULL,
                      int max_dpi = 0);
   CFX_RenderDevice* GetDevice() {
-    return m_pBitmapDevice ? m_pBitmapDevice : m_pDevice;
+    return m_pBitmapDevice ? m_pBitmapDevice.get() : m_pDevice;
   }
   CFX_AffineMatrix* GetMatrix() { return &m_Matrix; }
   void OutputToDevice();
@@ -399,9 +403,10 @@ class CPDF_ScaledRenderBuffer {
   CPDF_RenderContext* m_pContext;
   FX_RECT m_Rect;
   const CPDF_PageObject* m_pObject;
-  CFX_FxgeDevice* m_pBitmapDevice;
+  nonstd::unique_ptr<CFX_FxgeDevice> m_pBitmapDevice;
   CFX_AffineMatrix m_Matrix;
 };
+
 class ICodec_ScanlineDecoder;
 class CPDF_QuickStretcher {
  public:
@@ -421,6 +426,7 @@ class CPDF_QuickStretcher {
   CPDF_StreamAcc m_StreamAcc;
   int m_LineIndex;
 };
+
 class CPDF_DeviceBuffer {
  public:
   CPDF_DeviceBuffer();
@@ -431,7 +437,7 @@ class CPDF_DeviceBuffer {
                      const CPDF_PageObject* pObj,
                      int max_dpi = 0);
   void OutputToDevice();
-  CFX_DIBitmap* GetBitmap() const { return m_pBitmap; }
+  CFX_DIBitmap* GetBitmap() const { return m_pBitmap.get(); }
   const CFX_AffineMatrix* GetMatrix() const { return &m_Matrix; }
 
  private:
@@ -439,9 +445,10 @@ class CPDF_DeviceBuffer {
   CPDF_RenderContext* m_pContext;
   FX_RECT m_Rect;
   const CPDF_PageObject* m_pObject;
-  CFX_DIBitmap* m_pBitmap;
+  nonstd::unique_ptr<CFX_DIBitmap> m_pBitmap;
   CFX_AffineMatrix m_Matrix;
 };
+
 class CPDF_ImageCache {
  public:
   CPDF_ImageCache(CPDF_Document* pDoc, CPDF_Stream* pStream);
