@@ -59,7 +59,6 @@ extern const wchar_t kFXJSValueNameFxobj[];
 extern const wchar_t kFXJSValueNameNull[];
 extern const wchar_t kFXJSValueNameUndefined[];
 
-
 class FXJS_ArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
   void* Allocate(size_t length) override;
   void* AllocateUninitialized(size_t length) override;
@@ -123,11 +122,14 @@ void FXJS_DefineGlobalConst(v8::Isolate* pIsolate,
                             v8::Local<v8::Value> pDefault);
 
 // Called after FXJS_Define* calls made.
-void FXJS_InitializeRuntime(v8::Isolate* pIsolate,
-                            IJS_Runtime* pIRuntime,
-                            v8::Global<v8::Context>& v8PersistentContext);
+void FXJS_InitializeRuntime(
+    v8::Isolate* pIsolate,
+    IJS_Runtime* pIRuntime,
+    v8::Global<v8::Context>* pV8PersistentContext,
+    std::vector<v8::Global<v8::Object>*>* pStaticObjects);
 void FXJS_ReleaseRuntime(v8::Isolate* pIsolate,
-                         v8::Global<v8::Context>& v8PersistentContext);
+                         v8::Global<v8::Context>* pV8PersistentContext,
+                         std::vector<v8::Global<v8::Object>*>* pStaticObjects);
 IJS_Runtime* FXJS_GetRuntimeFromIsolate(v8::Isolate* pIsolate);
 
 // Called after FXJS_InitializeRuntime call made.

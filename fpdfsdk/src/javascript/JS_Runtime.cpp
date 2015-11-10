@@ -64,7 +64,7 @@ CJS_Runtime::CJS_Runtime(CPDFDoc_Environment* pApp)
     DefineJSObjects();
 
   CJS_Context* pContext = (CJS_Context*)NewContext();
-  FXJS_InitializeRuntime(GetIsolate(), this, m_context);
+  FXJS_InitializeRuntime(GetIsolate(), this, &m_context, &m_StaticObjects);
   ReleaseContext(pContext);
 }
 
@@ -76,7 +76,7 @@ CJS_Runtime::~CJS_Runtime() {
     delete m_ContextArray.GetAt(i);
 
   m_ContextArray.RemoveAll();
-  FXJS_ReleaseRuntime(GetIsolate(), m_context);
+  FXJS_ReleaseRuntime(GetIsolate(), &m_context, &m_StaticObjects);
 
   m_pApp = NULL;
   m_pDocument = NULL;

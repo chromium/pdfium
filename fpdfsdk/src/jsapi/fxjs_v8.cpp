@@ -95,7 +95,6 @@ class CFXJS_ObjDefinition {
   v8::Isolate* m_pIsolate;
   v8::Global<v8::FunctionTemplate> m_FunctionTemplate;
   v8::Global<v8::Signature> m_Signature;
-  v8::Global<v8::Object> m_StaticObj;
 };
 
 static v8::Local<v8::ObjectTemplate> GetGlobalObjectTemplate(
@@ -273,9 +272,11 @@ void FXJS_DefineGlobalConst(v8::Isolate* pIsolate,
       pDefault, v8::ReadOnly);
 }
 
-void FXJS_InitializeRuntime(v8::Isolate* pIsolate,
-                            IJS_Runtime* pIRuntime,
-                            v8::Global<v8::Context>& v8PersistentContext) {
+void FXJS_InitializeRuntime(
+    v8::Isolate* pIsolate,
+    IJS_Runtime* pIRuntime,
+    v8::Global<v8::Context>* pV8PersistentContext,
+    std::vector<v8::Global<v8::Object>*>* pStaticObjects) {
   if (pIsolate == g_isolate)
     ++g_isolate_ref_count;
 
@@ -289,14 +290,9 @@ void FXJS_InitializeRuntime(v8::Isolate* pIsolate,
   v8Context->SetAlignedPointerInEmbedderData(kPerContextDataIndex, pIRuntime);
 
   int maxID = CFXJS_ObjDefinition::MaxID(pIsolate);
+  pStaticObjects->resize(maxID + 1);
   for (int i = 0; i < maxID; ++i) {
     CFXJS_ObjDefinition* pObjDef = CFXJS_ObjDefinition::ForID(pIsolate, i);
-    CFX_ByteString bs = CFX_WideString(pObjDef->m_ObjName).UTF8Encode();
-    v8::Local<v8::String> m_ObjName =
-        v8::String::NewFromUtf8(pIsolate, bs.c_str(),
-                                v8::NewStringType::kNormal,
-                                bs.GetLength()).ToLocalChecked();
-
     if (pObjDef->m_ObjType == FXJSOBJTYPE_GLOBAL) {
       v8Context->Global()
           ->GetPrototype()
@@ -310,23 +306,27 @@ void FXJS_InitializeRuntime(v8::Isolate* pIsolate,
                                                ->ToObject(v8Context)
                                                .ToLocalChecked());
     } else if (pObjDef->m_ObjType == FXJSOBJTYPE_STATIC) {
+      CFX_ByteString bs = CFX_WideString(pObjDef->m_ObjName).UTF8Encode();
+      v8::Local<v8::String> m_ObjName =
+          v8::String::NewFromUtf8(pIsolate, bs.c_str(),
+                                  v8::NewStringType::kNormal,
+                                  bs.GetLength()).ToLocalChecked();
+
       v8::Local<v8::Object> obj = FXJS_NewFxDynamicObj(pIsolate, pIRuntime, i);
       v8Context->Global()->Set(v8Context, m_ObjName, obj).FromJust();
-      pObjDef->m_StaticObj.Reset(pIsolate, obj);
+      pStaticObjects->at(i) = new v8::Global<v8::Object>(pIsolate, obj);
     }
   }
-  v8PersistentContext.Reset(pIsolate, v8Context);
+  pV8PersistentContext->Reset(pIsolate, v8Context);
 }
 
 void FXJS_ReleaseRuntime(v8::Isolate* pIsolate,
-                         v8::Global<v8::Context>& v8PersistentContext) {
-  if (pIsolate == g_isolate && --g_isolate_ref_count > 0)
-    return;
-
+                         v8::Global<v8::Context>* pV8PersistentContext,
+                         std::vector<v8::Global<v8::Object>*>* pStaticObjects) {
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::HandleScope handle_scope(pIsolate);
   v8::Local<v8::Context> context =
-      v8::Local<v8::Context>::New(pIsolate, v8PersistentContext);
+      v8::Local<v8::Context>::New(pIsolate, *pV8PersistentContext);
   v8::Context::Scope context_scope(context);
 
   FXJS_PerIsolateData* pData = FXJS_PerIsolateData::Get(pIsolate);
@@ -340,8 +340,10 @@ void FXJS_ReleaseRuntime(v8::Isolate* pIsolate,
     if (pObjDef->m_ObjType == FXJSOBJTYPE_GLOBAL) {
       pObj =
           context->Global()->GetPrototype()->ToObject(context).ToLocalChecked();
-    } else if (!pObjDef->m_StaticObj.IsEmpty()) {
-      pObj = v8::Local<v8::Object>::New(pIsolate, pObjDef->m_StaticObj);
+    } else if (pStaticObjects->at(i) && !pStaticObjects->at(i)->IsEmpty()) {
+      pObj = v8::Local<v8::Object>::New(pIsolate, *pStaticObjects->at(i));
+      delete pStaticObjects->at(i);
+      pStaticObjects->at(i) = nullptr;
     }
 
     if (!pObj.IsEmpty()) {
@@ -351,6 +353,9 @@ void FXJS_ReleaseRuntime(v8::Isolate* pIsolate,
     }
     delete pObjDef;
   }
+
+  if (pIsolate == g_isolate && --g_isolate_ref_count > 0)
+    return;
 
   pIsolate->SetData(g_embedderDataSlot, nullptr);
   delete pData;
