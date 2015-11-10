@@ -7,9 +7,10 @@
 #ifndef CORE_SRC_FPDFAPI_FPDF_FONT_TTGSUBTABLE_H_
 #define CORE_SRC_FPDFAPI_FPDF_FONT_TTGSUBTABLE_H_
 
+#include <stdint.h>
+
 #include <map>
 
-#include "common.h"
 #include "core/include/fxcrt/fx_basic.h"
 #include "core/include/fxge/fx_font.h"
 #include "core/include/fxge/fx_freetype.h"
@@ -33,20 +34,20 @@ class CFX_CTTGSUBTable {
   virtual ~CFX_CTTGSUBTable() {}
   bool IsOk(void) const { return loaded; }
   bool LoadGSUBTable(FT_Bytes gsub);
-  bool GetVerticalGlyph(TT_uint32_t glyphnum, TT_uint32_t* vglyphnum);
+  bool GetVerticalGlyph(uint32_t glyphnum, uint32_t* vglyphnum);
 
  private:
   struct tt_gsub_header {
-    TT_uint32_t Version;
-    TT_uint16_t ScriptList;
-    TT_uint16_t FeatureList;
-    TT_uint16_t LookupList;
+    uint32_t Version;
+    uint16_t ScriptList;
+    uint16_t FeatureList;
+    uint16_t LookupList;
   };
   struct TLangSys {
-    TT_uint16_t LookupOrder;
-    TT_uint16_t ReqFeatureIndex;
-    TT_uint16_t FeatureCount;
-    TT_uint16_t* FeatureIndex;
+    uint16_t LookupOrder;
+    uint16_t ReqFeatureIndex;
+    uint16_t FeatureCount;
+    uint16_t* FeatureIndex;
     TLangSys()
         : LookupOrder(0),
           ReqFeatureIndex(0),
@@ -59,7 +60,7 @@ class CFX_CTTGSUBTable {
     TLangSys& operator=(const TLangSys&);
   };
   struct TLangSysRecord {
-    TT_uint32_t LangSysTag;
+    uint32_t LangSysTag;
     struct TLangSys LangSys;
     TLangSysRecord() : LangSysTag(0) {}
 
@@ -68,8 +69,8 @@ class CFX_CTTGSUBTable {
     TLangSysRecord& operator=(const TLangSysRecord&);
   };
   struct TScript {
-    TT_uint16_t DefaultLangSys;
-    TT_uint16_t LangSysCount;
+    uint16_t DefaultLangSys;
+    uint16_t LangSysCount;
     struct TLangSysRecord* LangSysRecord;
     TScript() : DefaultLangSys(0), LangSysCount(0), LangSysRecord(NULL) {}
     ~TScript() { delete[] LangSysRecord; }
@@ -79,7 +80,7 @@ class CFX_CTTGSUBTable {
     TScript& operator=(const TScript&);
   };
   struct TScriptRecord {
-    TT_uint32_t ScriptTag;
+    uint32_t ScriptTag;
     struct TScript Script;
     TScriptRecord() : ScriptTag(0) {}
 
@@ -88,7 +89,7 @@ class CFX_CTTGSUBTable {
     TScriptRecord& operator=(const TScriptRecord&);
   };
   struct TScriptList {
-    TT_uint16_t ScriptCount;
+    uint16_t ScriptCount;
     struct TScriptRecord* ScriptRecord;
     TScriptList() : ScriptCount(0), ScriptRecord(NULL) {}
     ~TScriptList() { delete[] ScriptRecord; }
@@ -98,9 +99,9 @@ class CFX_CTTGSUBTable {
     TScriptList& operator=(const TScriptList&);
   };
   struct TFeature {
-    TT_uint16_t FeatureParams;
+    uint16_t FeatureParams;
     int LookupCount;
-    TT_uint16_t* LookupListIndex;
+    uint16_t* LookupListIndex;
     TFeature() : FeatureParams(0), LookupCount(0), LookupListIndex(NULL) {}
     ~TFeature() { delete[] LookupListIndex; }
 
@@ -109,7 +110,7 @@ class CFX_CTTGSUBTable {
     TFeature& operator=(const TFeature&);
   };
   struct TFeatureRecord {
-    TT_uint32_t FeatureTag;
+    uint32_t FeatureTag;
     struct TFeature Feature;
     TFeatureRecord() : FeatureTag(0) {}
 
@@ -136,7 +137,7 @@ class CFX_CTTGSUBTable {
     LOOKUPFLAG_MarkAttachmentType = 0xFF00,
   };
   struct TCoverageFormatBase {
-    TT_uint16_t CoverageFormat;
+    uint16_t CoverageFormat;
     CFX_GlyphMap m_glyphMap;
     TCoverageFormatBase() : CoverageFormat(0) {}
     virtual ~TCoverageFormatBase() {}
@@ -146,8 +147,8 @@ class CFX_CTTGSUBTable {
     TCoverageFormatBase& operator=(const TCoverageFormatBase&);
   };
   struct TCoverageFormat1 : public TCoverageFormatBase {
-    TT_uint16_t GlyphCount;
-    TT_uint16_t* GlyphArray;
+    uint16_t GlyphCount;
+    uint16_t* GlyphArray;
     TCoverageFormat1() : GlyphCount(0), GlyphArray(NULL) { CoverageFormat = 1; }
     ~TCoverageFormat1() override { delete[] GlyphArray; }
 
@@ -156,9 +157,9 @@ class CFX_CTTGSUBTable {
     TCoverageFormat1& operator=(const TCoverageFormat1&);
   };
   struct TRangeRecord {
-    TT_uint16_t Start;
-    TT_uint16_t End;
-    TT_uint16_t StartCoverageIndex;
+    uint16_t Start;
+    uint16_t End;
+    uint16_t StartCoverageIndex;
     TRangeRecord() : Start(0), End(0), StartCoverageIndex(0) {}
     friend bool operator>(const TRangeRecord& r1, const TRangeRecord& r2) {
       return r1.Start > r2.Start;
@@ -168,7 +169,7 @@ class CFX_CTTGSUBTable {
     TRangeRecord(const TRangeRecord&);
   };
   struct TCoverageFormat2 : public TCoverageFormatBase {
-    TT_uint16_t RangeCount;
+    uint16_t RangeCount;
     struct TRangeRecord* RangeRecord;
     TCoverageFormat2() : RangeCount(0), RangeRecord(NULL) {
       CoverageFormat = 2;
@@ -180,7 +181,7 @@ class CFX_CTTGSUBTable {
     TCoverageFormat2& operator=(const TCoverageFormat2&);
   };
   struct TClassDefFormatBase {
-    TT_uint16_t ClassFormat;
+    uint16_t ClassFormat;
     TClassDefFormatBase() : ClassFormat(0) {}
     virtual ~TClassDefFormatBase() {}
 
@@ -189,9 +190,9 @@ class CFX_CTTGSUBTable {
     TClassDefFormatBase& operator=(const TClassDefFormatBase&);
   };
   struct TClassDefFormat1 : public TClassDefFormatBase {
-    TT_uint16_t StartGlyph;
-    TT_uint16_t GlyphCount;
-    TT_uint16_t* ClassValueArray;
+    uint16_t StartGlyph;
+    uint16_t GlyphCount;
+    uint16_t* ClassValueArray;
     TClassDefFormat1() : StartGlyph(0), GlyphCount(0), ClassValueArray(NULL) {
       ClassFormat = 1;
     }
@@ -202,9 +203,9 @@ class CFX_CTTGSUBTable {
     TClassDefFormat1& operator=(const TClassDefFormat1&);
   };
   struct TClassRangeRecord {
-    TT_uint16_t Start;
-    TT_uint16_t End;
-    TT_uint16_t Class;
+    uint16_t Start;
+    uint16_t End;
+    uint16_t Class;
     TClassRangeRecord() : Start(0), End(0), Class(0) {}
 
    private:
@@ -212,7 +213,7 @@ class CFX_CTTGSUBTable {
     TClassRangeRecord& operator=(const TClassRangeRecord&);
   };
   struct TClassDefFormat2 : public TClassDefFormatBase {
-    TT_uint16_t ClassRangeCount;
+    uint16_t ClassRangeCount;
     struct TClassRangeRecord* ClassRangeRecord;
     TClassDefFormat2() : ClassRangeCount(0), ClassRangeRecord(NULL) {
       ClassFormat = 2;
@@ -224,9 +225,9 @@ class CFX_CTTGSUBTable {
     TClassDefFormat2& operator=(const TClassDefFormat2&);
   };
   struct TDevice {
-    TT_uint16_t StartSize;
-    TT_uint16_t EndSize;
-    TT_uint16_t DeltaFormat;
+    uint16_t StartSize;
+    uint16_t EndSize;
+    uint16_t DeltaFormat;
     TDevice() : StartSize(0), EndSize(0), DeltaFormat(0) {}
 
    private:
@@ -234,7 +235,7 @@ class CFX_CTTGSUBTable {
     TDevice& operator=(const TDevice&);
   };
   struct TSubTableBase {
-    TT_uint16_t SubstFormat;
+    uint16_t SubstFormat;
     TSubTableBase() : SubstFormat(0) {}
     virtual ~TSubTableBase() {}
 
@@ -244,7 +245,7 @@ class CFX_CTTGSUBTable {
   };
   struct TSingleSubstFormat1 : public TSubTableBase {
     TCoverageFormatBase* Coverage;
-    TT_int16_t DeltaGlyphID;
+    int16_t DeltaGlyphID;
     TSingleSubstFormat1() : Coverage(NULL), DeltaGlyphID(0) { SubstFormat = 1; }
     ~TSingleSubstFormat1() override { delete Coverage; }
 
@@ -254,8 +255,8 @@ class CFX_CTTGSUBTable {
   };
   struct TSingleSubstFormat2 : public TSubTableBase {
     TCoverageFormatBase* Coverage;
-    TT_uint16_t GlyphCount;
-    TT_uint16_t* Substitute;
+    uint16_t GlyphCount;
+    uint16_t* Substitute;
     TSingleSubstFormat2() : Coverage(NULL), GlyphCount(0), Substitute(NULL) {
       SubstFormat = 2;
     }
@@ -269,9 +270,9 @@ class CFX_CTTGSUBTable {
     TSingleSubstFormat2& operator=(const TSingleSubstFormat2&);
   };
   struct TLookup {
-    TT_uint16_t LookupType;
-    TT_uint16_t LookupFlag;
-    TT_uint16_t SubTableCount;
+    uint16_t LookupType;
+    uint16_t LookupFlag;
+    uint16_t SubTableCount;
     struct TSubTableBase** SubTable;
     TLookup()
         : LookupType(0), LookupFlag(0), SubTableCount(0), SubTable(NULL) {}
@@ -312,35 +313,35 @@ class CFX_CTTGSUBTable {
   void ParseSingleSubst(FT_Bytes raw, TSubTableBase** rec);
   void ParseSingleSubstFormat1(FT_Bytes raw, TSingleSubstFormat1* rec);
   void ParseSingleSubstFormat2(FT_Bytes raw, TSingleSubstFormat2* rec);
-  bool GetVerticalGlyphSub(TT_uint32_t glyphnum,
-                           TT_uint32_t* vglyphnum,
+  bool GetVerticalGlyphSub(uint32_t glyphnum,
+                           uint32_t* vglyphnum,
                            struct TFeature* Feature);
-  bool GetVerticalGlyphSub2(TT_uint32_t glyphnum,
-                            TT_uint32_t* vglyphnum,
+  bool GetVerticalGlyphSub2(uint32_t glyphnum,
+                            uint32_t* vglyphnum,
                             struct TLookup* Lookup);
-  int GetCoverageIndex(struct TCoverageFormatBase* Coverage, TT_uint32_t g);
-  TT_uint8_t GetUInt8(FT_Bytes& p) const {
-    TT_uint8_t ret = p[0];
+  int GetCoverageIndex(struct TCoverageFormatBase* Coverage, uint32_t g);
+  uint8_t GetUInt8(FT_Bytes& p) const {
+    uint8_t ret = p[0];
     p += 1;
     return ret;
   }
-  TT_int16_t GetInt16(FT_Bytes& p) const {
-    TT_uint16_t ret = p[0] << 8 | p[1];
+  int16_t GetInt16(FT_Bytes& p) const {
+    uint16_t ret = p[0] << 8 | p[1];
     p += 2;
-    return *(TT_int16_t*)&ret;
+    return *(int16_t*)&ret;
   }
-  TT_uint16_t GetUInt16(FT_Bytes& p) const {
-    TT_uint16_t ret = p[0] << 8 | p[1];
+  uint16_t GetUInt16(FT_Bytes& p) const {
+    uint16_t ret = p[0] << 8 | p[1];
     p += 2;
     return ret;
   }
-  TT_int32_t GetInt32(FT_Bytes& p) const {
-    TT_uint32_t ret = p[0] << 24 | p[1] << 16 | p[2] << 8 | p[3];
+  int32_t GetInt32(FT_Bytes& p) const {
+    uint32_t ret = p[0] << 24 | p[1] << 16 | p[2] << 8 | p[3];
     p += 4;
-    return *(TT_int32_t*)&ret;
+    return *(int32_t*)&ret;
   }
-  TT_uint32_t GetUInt32(FT_Bytes& p) const {
-    TT_uint32_t ret = p[0] << 24 | p[1] << 16 | p[2] << 8 | p[3];
+  uint32_t GetUInt32(FT_Bytes& p) const {
+    uint32_t ret = p[0] << 24 | p[1] << 16 | p[2] << 8 | p[3];
     p += 4;
     return ret;
   }

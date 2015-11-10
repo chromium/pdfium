@@ -280,7 +280,6 @@
         'core/src/fpdfapi/fpdf_edit/fpdf_edit_create.cpp',
         'core/src/fpdfapi/fpdf_edit/fpdf_edit_doc.cpp',
         'core/src/fpdfapi/fpdf_edit/fpdf_edit_image.cpp',
-        'core/src/fpdfapi/fpdf_font/common.h',
         'core/src/fpdfapi/fpdf_font/font_int.h',
         'core/src/fpdfapi/fpdf_font/fpdf_font.cpp',
         'core/src/fpdfapi/fpdf_font/fpdf_font_charset.cpp',
