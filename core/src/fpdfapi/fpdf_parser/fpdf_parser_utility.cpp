@@ -5,6 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "core/include/fpdfapi/fpdf_parser.h"
+#include "core/include/fxcrt/fx_ext.h"
 
 // Indexed by 8-bit character code, contains either:
 //   'W' - for whitespace: NUL, TAB, CR, LF, FF, 0x80, 0xff
@@ -279,18 +280,7 @@ FX_BOOL CPDF_SimpleParser::FindTagParam(const CFX_ByteStringC& token,
   }
   return FALSE;
 }
-static int _hex2dec(char ch) {
-  if (ch >= '0' && ch <= '9') {
-    return ch - '0';
-  }
-  if (ch >= 'a' && ch <= 'f') {
-    return ch - 'a' + 10;
-  }
-  if (ch >= 'A' && ch <= 'F') {
-    return ch - 'A' + 10;
-  }
-  return 0;
-}
+
 CFX_ByteString PDF_NameDecode(const CFX_ByteStringC& bstr) {
   int size = bstr.GetLength();
   const FX_CHAR* pSrc = bstr.GetCStr();
@@ -302,7 +292,8 @@ CFX_ByteString PDF_NameDecode(const CFX_ByteStringC& bstr) {
   FX_CHAR* pDest = pDestStart;
   for (int i = 0; i < size; i++) {
     if (pSrc[i] == '#' && i < size - 2) {
-      *pDest++ = _hex2dec(pSrc[i + 1]) * 16 + _hex2dec(pSrc[i + 2]);
+      *pDest++ =
+          FXSYS_toHexDigit(pSrc[i + 1]) * 16 + FXSYS_toHexDigit(pSrc[i + 2]);
       i += 2;
     } else {
       *pDest++ = pSrc[i];

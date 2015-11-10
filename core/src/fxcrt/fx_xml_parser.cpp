@@ -6,6 +6,7 @@
 
 #include "xml_int.h"
 
+#include "core/include/fxcrt/fx_ext.h"
 #include "core/include/fxcrt/fx_xml.h"
 
 CXML_Parser::~CXML_Parser() {
@@ -228,9 +229,8 @@ FX_DWORD CXML_Parser::GetCharRef() {
             iState = 10;
             break;
           }
-          if (g_FXCRT_XML_IsDigital(ch)) {
-            code = code * 10 + ch - '0';
-          }
+          if (g_FXCRT_XML_IsDigital(ch))
+            code = code * 10 + FXSYS_toDecimalDigit(ch);
           break;
         case 4:
           m_dwIndex++;
@@ -242,7 +242,7 @@ FX_DWORD CXML_Parser::GetCharRef() {
               g_FXCRT_XML_ByteTypes[ch] & FXCRTM_XML_CHARTYPE_HexChar;
           if (nHex) {
             if (nHex == FXCRTM_XML_CHARTYPE_HexDigital) {
-              code = (code << 4) + ch - '0';
+              code = (code << 4) + FXSYS_toDecimalDigit(ch);
             } else if (nHex == FXCRTM_XML_CHARTYPE_HexLowerLetter) {
               code = (code << 4) + ch - 87;
             } else {

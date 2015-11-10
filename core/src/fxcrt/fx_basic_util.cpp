@@ -5,6 +5,9 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "core/include/fxcrt/fx_basic.h"
+#include "core/include/fxcrt/fx_ext.h"
+
+#include <cctype>
 
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
 #include <sys/types.h>
@@ -102,14 +105,11 @@ void FX_atonum(const CFX_ByteStringC& strc, FX_BOOL& bInteger, void* pData) {
       bNegative = TRUE;
       cc++;
     }
-    while (cc < len) {
-      if (str[cc] < '0' || str[cc] > '9') {
+    while (cc < len && std::isdigit(str[cc])) {
+      // TODO(dsinclair): This is not the right way to handle overflow.
+      integer = integer * 10 + FXSYS_toDecimalDigit(str[cc]);
+      if (integer < 0)
         break;
-      }
-      integer = integer * 10 + str[cc] - '0';
-      if (integer < 0) {
-        break;
-      }
       cc++;
     }
     if (bNegative) {
@@ -146,7 +146,7 @@ FX_FLOAT FX_atof(const CFX_ByteStringC& strc) {
     if (str[cc] == '.') {
       break;
     }
-    value = value * 10 + str[cc] - '0';
+    value = value * 10 + FXSYS_toDecimalDigit(str[cc]);
     cc++;
   }
   static const FX_FLOAT fraction_scales[] = {
@@ -157,7 +157,7 @@ FX_FLOAT FX_atof(const CFX_ByteStringC& strc) {
   if (cc < len && str[cc] == '.') {
     cc++;
     while (cc < len) {
-      value += fraction_scales[scale] * (str[cc] - '0');
+      value += fraction_scales[scale] * FXSYS_toDecimalDigit(str[cc]);
       scale++;
       if (scale == sizeof fraction_scales / sizeof(FX_FLOAT)) {
         break;
