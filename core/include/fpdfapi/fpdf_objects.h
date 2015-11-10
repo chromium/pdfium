@@ -466,12 +466,6 @@ inline const CPDF_Dictionary* ToDictionary(const CPDF_Object* obj) {
 
 class CPDF_Stream : public CPDF_Object {
  public:
-  static CPDF_Stream* Create(uint8_t* pData,
-                             FX_DWORD size,
-                             CPDF_Dictionary* pDict) {
-    return new CPDF_Stream(pData, size, pDict);
-  }
-
   CPDF_Stream(uint8_t* pData, FX_DWORD size, CPDF_Dictionary* pDict);
 
   CPDF_Dictionary* GetDict() const { return m_pDict; }
@@ -483,7 +477,7 @@ class CPDF_Stream : public CPDF_Object {
 
   void InitStream(uint8_t* pData, FX_DWORD size, CPDF_Dictionary* pDict);
 
-  void InitStream(IFX_FileRead* pFile, CPDF_Dictionary* pDict);
+  void InitStreamFromFile(IFX_FileRead* pFile, CPDF_Dictionary* pDict);
 
   FX_BOOL Identical(CPDF_Stream* pOther) const;
 
@@ -493,10 +487,16 @@ class CPDF_Stream : public CPDF_Object {
                       uint8_t* pBuf,
                       FX_DWORD buf_size) const;
 
-  FX_BOOL IsMemoryBased() const { return m_GenNum == (FX_DWORD)-1; }
+  FX_BOOL IsMemoryBased() const { return m_GenNum == kMemoryBasedGenNum; }
 
  protected:
+  friend class CPDF_Object;
+  friend class CPDF_StreamAcc;
+
+  static const FX_DWORD kMemoryBasedGenNum = (FX_DWORD)-1;
   ~CPDF_Stream();
+
+  void InitStreamInternal(CPDF_Dictionary* pDict);
 
   CPDF_Dictionary* m_pDict;
 
@@ -509,15 +509,6 @@ class CPDF_Stream : public CPDF_Object {
 
     IFX_FileRead* m_pFile;
   };
-
-  FX_FILESIZE m_FileOffset;
-
-  CPDF_CryptoHandler* m_pCryptoHandler;
-
-  void InitStream(CPDF_Dictionary* pDict);
-  friend class CPDF_Object;
-  friend class CPDF_StreamAcc;
-  friend class CPDF_AttachmentAcc;
 };
 inline CPDF_Stream* ToStream(CPDF_Object* obj) {
   return obj ? obj->AsStream() : nullptr;
@@ -540,7 +531,7 @@ class CPDF_StreamAcc {
   const CPDF_Stream* GetStream() const { return m_pStream; }
 
   CPDF_Dictionary* GetDict() const {
-    return m_pStream ? m_pStream->GetDict() : NULL;
+    return m_pStream ? m_pStream->GetDict() : nullptr;
   }
 
   const uint8_t* GetData() const;

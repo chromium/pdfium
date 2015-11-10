@@ -181,10 +181,10 @@ FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument,
       CPDF_Dictionary* pDataDict = new CPDF_Dictionary;
       if (iDataSetsIndex != -1) {
         if (pDataSetsStream)
-          pDataSetsStream->InitStream(pDsfileWrite, pDataDict);
+          pDataSetsStream->InitStreamFromFile(pDsfileWrite, pDataDict);
       } else {
         CPDF_Stream* pData = new CPDF_Stream(NULL, 0, NULL);
-        pData->InitStream(pDsfileWrite, pDataDict);
+        pData->InitStreamFromFile(pDsfileWrite, pDataDict);
         pPDFDocument->AddIndirectObject(pData);
         iLast = pArray->GetCount() - 2;
         pArray->InsertAt(iLast, CPDF_String::Create("datasets"));
@@ -208,10 +208,10 @@ FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument,
       CPDF_Dictionary* pDataDict = new CPDF_Dictionary;
       if (iFormIndex != -1) {
         if (pFormStream)
-          pFormStream->InitStream(pfileWrite, pDataDict);
+          pFormStream->InitStreamFromFile(pfileWrite, pDataDict);
       } else {
         CPDF_Stream* pData = new CPDF_Stream(NULL, 0, NULL);
-        pData->InitStream(pfileWrite, pDataDict);
+        pData->InitStreamFromFile(pfileWrite, pDataDict);
         pPDFDocument->AddIndirectObject(pData);
         iLast = pArray->GetCount() - 2;
         pArray->InsertAt(iLast, CPDF_String::Create("form"));
