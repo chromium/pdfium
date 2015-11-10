@@ -5,10 +5,8 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include <stddef.h>  // For offsetof().
-#include <cctype>
 
 #include "core/include/fxcrt/fx_basic.h"
-#include "core/include/fxcrt/fx_ext.h"
 #include "third_party/base/numerics/safe_math.h"
 
 // static
@@ -767,8 +765,8 @@ void CFX_WideString::FormatV(const FX_WCHAR* lpszFormat, va_list argList) {
     }
     if (nWidth == 0) {
       nWidth = FXSYS_wtoi(lpsz);
-      while (std::iswdigit(*lpsz))
-        ++lpsz;
+      for (; *lpsz != 0 && (*lpsz) <= '9' && (*lpsz) >= '0'; lpsz++)
+        ;
     }
     if (nWidth < 0 || nWidth > 128 * 1024) {
       lpszFormat = L"Bad width";
@@ -783,8 +781,8 @@ void CFX_WideString::FormatV(const FX_WCHAR* lpszFormat, va_list argList) {
         lpsz++;
       } else {
         nPrecision = FXSYS_wtoi(lpsz);
-        while (std::iswdigit(*lpsz))
-          ++lpsz;
+        for (; *lpsz != 0 && (*lpsz) >= '0' && (*lpsz) <= '9'; lpsz++)
+          ;
       }
     }
     if (nPrecision < 0 || nPrecision > 128 * 1024) {
@@ -970,7 +968,7 @@ FX_FLOAT FX_wtof(const FX_WCHAR* str, int len) {
     if (str[cc] == '.') {
       break;
     }
-    integer = integer * 10 + FXSYS_toDecimalDigitWide(str[cc]);
+    integer = integer * 10 + str[cc] - '0';
     cc++;
   }
   FX_FLOAT fraction = 0;
@@ -978,7 +976,7 @@ FX_FLOAT FX_wtof(const FX_WCHAR* str, int len) {
     cc++;
     FX_FLOAT scale = 0.1f;
     while (cc < len) {
-      fraction += scale * FXSYS_toDecimalDigitWide(str[cc]);
+      fraction += scale * (str[cc] - '0');
       scale *= 0.1f;
       cc++;
     }

@@ -11,7 +11,6 @@
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fxcodec/fx_codec.h"
-#include "core/include/fxcrt/fx_ext.h"
 
 namespace {
 
@@ -792,7 +791,7 @@ CFX_ByteString CPDF_StreamParser::ReadString() {
         break;
       case 1:
         if (ch >= '0' && ch <= '7') {
-          iEscCode = FXSYS_toDecimalDigit(ch);
+          iEscCode = ch - '0';
           status = 2;
           break;
         }
@@ -817,7 +816,7 @@ CFX_ByteString CPDF_StreamParser::ReadString() {
         break;
       case 2:
         if (ch >= '0' && ch <= '7') {
-          iEscCode = iEscCode * 8 + FXSYS_toDecimalDigit(ch);
+          iEscCode = iEscCode * 8 + ch - '0';
           status = 3;
         } else {
           buf.AppendChar(iEscCode);
@@ -827,7 +826,7 @@ CFX_ByteString CPDF_StreamParser::ReadString() {
         break;
       case 3:
         if (ch >= '0' && ch <= '7') {
-          iEscCode = iEscCode * 8 + FXSYS_toDecimalDigit(ch);
+          iEscCode = iEscCode * 8 + ch - '0';
           buf.AppendChar(iEscCode);
           status = 0;
         } else {
@@ -860,33 +859,50 @@ CFX_ByteString CPDF_StreamParser::ReadHexString() {
   if (!PositionIsInBounds())
     return CFX_ByteString();
 
+  int ch = m_pBuf[m_Pos++];
   CFX_ByteTextBuf buf;
-  bool bFirst = true;
+  FX_BOOL bFirst = TRUE;
   int code = 0;
-  while (PositionIsInBounds()) {
-    int ch = m_pBuf[m_Pos++];
-
-    if (ch == '>')
+  while (1) {
+    if (ch == '>') {
+      break;
+    }
+    if (ch >= '0' && ch <= '9') {
+      if (bFirst) {
+        code = (ch - '0') * 16;
+      } else {
+        code += ch - '0';
+        buf.AppendChar((char)code);
+      }
+      bFirst = !bFirst;
+    } else if (ch >= 'A' && ch <= 'F') {
+      if (bFirst) {
+        code = (ch - 'A' + 10) * 16;
+      } else {
+        code += ch - 'A' + 10;
+        buf.AppendChar((char)code);
+      }
+      bFirst = !bFirst;
+    } else if (ch >= 'a' && ch <= 'f') {
+      if (bFirst) {
+        code = (ch - 'a' + 10) * 16;
+      } else {
+        code += ch - 'a' + 10;
+        buf.AppendChar((char)code);
+      }
+      bFirst = !bFirst;
+    }
+    if (!PositionIsInBounds())
       break;
 
-    if (!std::isxdigit(ch))
-      continue;
-
-    int val = FXSYS_toHexDigit(ch);
-    if (bFirst) {
-      code = val * 16;
-    } else {
-      code += val;
-      buf.AppendByte((uint8_t)code);
-    }
-    bFirst = !bFirst;
+    ch = m_pBuf[m_Pos++];
   }
-  if (!bFirst)
+  if (!bFirst) {
     buf.AppendChar((char)code);
-
-  if (buf.GetLength() > MAX_STRING_LENGTH)
+  }
+  if (buf.GetLength() > MAX_STRING_LENGTH) {
     return CFX_ByteString(buf.GetBuffer(), MAX_STRING_LENGTH);
-
+  }
   return buf.GetByteString();
 }
 

@@ -5,49 +5,29 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include <limits>
-#include <cctype>
-#include <cwctype>
 
 #include "core/include/fxcrt/fx_ext.h"
 #include "core/include/fxcrt/fx_string.h"
 
-template <class T>
-T FXSYS_StrToInt(const FX_CHAR* str) {
+template <class T, class STR_T>
+T FXSYS_StrToInt(STR_T str) {
   FX_BOOL neg = FALSE;
-  if (!str)
+  if (str == NULL) {
     return 0;
-
+  }
   if (*str == '-') {
     neg = TRUE;
     str++;
   }
   T num = 0;
-  while (*str && std::isdigit(*str)) {
-    if (num > (std::numeric_limits<T>::max() - 9) / 10)
+  while (*str) {
+    if ((*str) < '0' || (*str) > '9') {
       break;
-
-    num = num * 10 + FXSYS_toDecimalDigit(*str);
-    str++;
-  }
-  return neg ? -num : num;
-}
-
-template <class T>
-T FXSYS_StrToInt(const FX_WCHAR* str) {
-  FX_BOOL neg = FALSE;
-  if (!str)
-    return 0;
-
-  if (*str == '-') {
-    neg = TRUE;
-    str++;
-  }
-  T num = 0;
-  while (*str && std::iswdigit(*str)) {
-    if (num > (std::numeric_limits<T>::max() - 9) / 10)
+    }
+    if (num > (std::numeric_limits<T>::max() - 9) / 10) {
       break;
-
-    num = num * 10 + FXSYS_toDecimalDigitWide(*str);
+    }
+    num = num * 10 + (*str) - '0';
     str++;
   }
   return neg ? -num : num;
@@ -91,16 +71,16 @@ STR_T FXSYS_IntToStr(T value, STR_T string, int radix) {
 extern "C" {
 #endif
 int32_t FXSYS_atoi(const FX_CHAR* str) {
-  return FXSYS_StrToInt<int32_t>(str);
+  return FXSYS_StrToInt<int32_t, const FX_CHAR*>(str);
 }
 int32_t FXSYS_wtoi(const FX_WCHAR* str) {
-  return FXSYS_StrToInt<int32_t>(str);
+  return FXSYS_StrToInt<int32_t, const FX_WCHAR*>(str);
 }
 int64_t FXSYS_atoi64(const FX_CHAR* str) {
-  return FXSYS_StrToInt<int64_t>(str);
+  return FXSYS_StrToInt<int64_t, const FX_CHAR*>(str);
 }
 int64_t FXSYS_wtoi64(const FX_WCHAR* str) {
-  return FXSYS_StrToInt<int64_t>(str);
+  return FXSYS_StrToInt<int64_t, const FX_WCHAR*>(str);
 }
 const FX_CHAR* FXSYS_i64toa(int64_t value, FX_CHAR* str, int radix) {
   return FXSYS_IntToStr<int64_t, uint64_t, FX_CHAR*>(value, str, radix);
