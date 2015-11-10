@@ -605,7 +605,8 @@ void CXFA_FFNotify::OnLayoutItemRemoving(CXFA_FFDocView* pDocView,
                                          CXFA_LayoutItem* pSender,
                                          void* pParam,
                                          void* pParam2) {
-  CXFA_FFWidget* pWidget = (CXFA_FFWidget*)pSender;
+  CXFA_FFWidget* pWidget = static_cast<CXFA_FFWidget*>(
+      reinterpret_cast<CXFA_ContentLayoutItemImpl*>(pSender));
   pDocView->DeleteLayoutItem(pWidget);
   if (pDocView->GetLayoutStatus() < XFA_DOCVIEW_LAYOUTSTATUS_End) {
     return;
