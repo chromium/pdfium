@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jdcoefct.c
  *
@@ -735,5 +734,3 @@ jinit_d_coef_controller (j_decompress_ptr cinfo, boolean need_full_buffer)
     coef->pub.coef_arrays = NULL; /* flag for no virtual arrays */
   }
 }
-
-#endif //_FX_JPEG_TURBO_

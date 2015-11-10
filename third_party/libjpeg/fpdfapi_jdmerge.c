@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jdmerge.c
  *
@@ -402,5 +401,3 @@ jinit_merged_upsampler (j_decompress_ptr cinfo)
 }
 
 #endif /* UPSAMPLE_MERGING_SUPPORTED */
-
-#endif //_FX_JPEG_TURBO_

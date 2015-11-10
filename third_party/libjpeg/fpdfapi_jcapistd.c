@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jcapistd.c
  *
@@ -160,5 +159,3 @@ jpeg_write_raw_data (j_compress_ptr cinfo, JSAMPIMAGE data,
   cinfo->next_scanline += lines_per_iMCU_row;
   return lines_per_iMCU_row;
 }
-
-#endif //_FX_JPEG_TURBO_

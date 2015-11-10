@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jmemnobs.c
  *
@@ -122,5 +121,3 @@ jpeg_mem_term (j_common_ptr cinfo)
 {
   /* no work */
 }
-
-#endif //_FX_JPEG_TURBO_

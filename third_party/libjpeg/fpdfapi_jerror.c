@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jerror.c
  *
@@ -238,5 +237,3 @@ jpeg_std_error (struct jpeg_error_mgr * err)
 
   return err;
 }
-
-#endif //_FX_JPEG_TURBO_

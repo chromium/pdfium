@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jdapistd.c
  *
@@ -275,5 +274,3 @@ jpeg_finish_output (j_decompress_ptr cinfo)
 }
 
 #endif /* D_MULTISCAN_FILES_SUPPORTED */
-
-#endif //_FX_JPEG_TURBO_

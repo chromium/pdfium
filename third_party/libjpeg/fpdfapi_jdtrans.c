@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jdtrans.c
  *
@@ -142,5 +141,3 @@ transdecode_master_selection (j_decompress_ptr cinfo)
     cinfo->progress->total_passes = 1;
   }
 }
-
-#endif //_FX_JPEG_TURBO_

@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jcapimin.c
  *
@@ -279,5 +278,3 @@ jpeg_write_tables (j_compress_ptr cinfo)
    * each call to jpeg_write_tables().
    */
 }
-
-#endif //_FX_JPEG_TURBO_

@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jcinit.c
  *
@@ -71,5 +70,3 @@ jinit_compress_master (j_compress_ptr cinfo)
    */
   (*cinfo->marker->write_file_header) (cinfo);
 }
-
-#endif //_FX_JPEG_TURBO_

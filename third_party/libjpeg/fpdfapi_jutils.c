@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jutils.c
  *
@@ -178,5 +177,3 @@ jzero_far (void FAR * target, size_t bytestozero)
   }
 #endif
 }
-
-#endif //_FX_JPEG_TURBO_

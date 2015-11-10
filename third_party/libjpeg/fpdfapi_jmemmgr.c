@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jmemmgr.c
  *
@@ -1119,5 +1118,3 @@ jinit_memory_mgr (j_common_ptr cinfo)
 #endif
 
 }
-
-#endif //_FX_JPEG_TURBO_

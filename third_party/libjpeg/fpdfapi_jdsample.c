@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jdsample.c
  *
@@ -477,5 +476,3 @@ jinit_upsampler (j_decompress_ptr cinfo)
     }
   }
 }
-
-#endif //_FX_JPEG_TURBO_

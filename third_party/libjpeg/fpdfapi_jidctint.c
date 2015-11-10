@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jidctint.c
  *
@@ -388,5 +387,3 @@ jpeg_idct_islow (j_decompress_ptr cinfo, jpeg_component_info * compptr,
 }
 
 #endif /* DCT_ISLOW_SUPPORTED */
-
-#endif //_FX_JPEG_TURBO_

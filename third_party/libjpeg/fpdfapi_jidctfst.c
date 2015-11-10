@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jidctfst.c
  *
@@ -367,5 +366,3 @@ jpeg_idct_ifast (j_decompress_ptr cinfo, jpeg_component_info * compptr,
 }
 
 #endif /* DCT_IFAST_SUPPORTED */
-
-#endif //_FX_JPEG_TURBO_

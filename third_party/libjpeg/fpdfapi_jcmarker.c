@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jcmarker.c
  *
@@ -663,5 +662,3 @@ jinit_marker_writer (j_compress_ptr cinfo)
   /* Initialize private state */
   marker->last_restart_interval = 0;
 }
-
-#endif //_FX_JPEG_TURBO_

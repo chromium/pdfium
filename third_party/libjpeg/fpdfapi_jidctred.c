@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jidctred.c
  *
@@ -397,5 +396,3 @@ jpeg_idct_1x1 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
 }
 
 #endif /* IDCT_SCALING_SUPPORTED */
-
-#endif //_FX_JPEG_TURBO_

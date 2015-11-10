@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jddctmgr.c
  *
@@ -268,5 +267,3 @@ jinit_inverse_dct (j_decompress_ptr cinfo)
     idct->cur_method[ci] = -1;
   }
 }
-
-#endif //_FX_JPEG_TURBO_
