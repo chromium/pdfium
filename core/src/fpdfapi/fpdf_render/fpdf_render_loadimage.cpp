@@ -39,16 +39,12 @@ unsigned int _GetBits8(const uint8_t* pData, int bitpos, int nbits) {
   return 0;
 }
 
-FX_SAFE_DWORD CalculatePitch8(FX_DWORD bpc,
-                              FX_DWORD components,
-                              int width,
-                              int height) {
+FX_SAFE_DWORD CalculatePitch8(FX_DWORD bpc, FX_DWORD components, int width) {
   FX_SAFE_DWORD pitch = bpc;
   pitch *= components;
   pitch *= width;
   pitch += 7;
   pitch /= 8;
-  pitch *= height;
   return pitch;
 }
 
@@ -56,7 +52,8 @@ FX_SAFE_DWORD CalculatePitch32(int bpp, int width) {
   FX_SAFE_DWORD pitch = bpp;
   pitch *= width;
   pitch += 31;
-  pitch /= 8;
+  pitch /= 32;  // quantized to number of 32-bit words.
+  pitch *= 4;   // and then back to bytes, (not just /8 in one step).
   return pitch;
 }
 
@@ -233,13 +230,13 @@ FX_BOOL CPDF_DIBSource::Load(CPDF_Document* pDoc,
   if (m_bDoBpcCheck && (m_bpc == 0 || m_nComponents == 0)) {
     return FALSE;
   }
-  FX_SAFE_DWORD src_pitch =
-      CalculatePitch8(m_bpc, m_nComponents, m_Width, m_Height);
-  if (!src_pitch.IsValid()) {
+  FX_SAFE_DWORD src_size =
+      CalculatePitch8(m_bpc, m_nComponents, m_Width) * m_Height;
+  if (!src_size.IsValid()) {
     return FALSE;
   }
   m_pStreamAcc = new CPDF_StreamAcc;
-  m_pStreamAcc->LoadAllData(pStream, FALSE, src_pitch.ValueOrDie(), TRUE);
+  m_pStreamAcc->LoadAllData(pStream, FALSE, src_size.ValueOrDie(), TRUE);
   if (m_pStreamAcc->GetSize() == 0 || m_pStreamAcc->GetData() == NULL) {
     return FALSE;
   }
@@ -353,13 +350,13 @@ int CPDF_DIBSource::StartLoadDIBSource(CPDF_Document* pDoc,
   if (m_bDoBpcCheck && (m_bpc == 0 || m_nComponents == 0)) {
     return 0;
   }
-  FX_SAFE_DWORD src_pitch =
-      CalculatePitch8(m_bpc, m_nComponents, m_Width, m_Height);
-  if (!src_pitch.IsValid()) {
+  FX_SAFE_DWORD src_size =
+      CalculatePitch8(m_bpc, m_nComponents, m_Width) * m_Height;
+  if (!src_size.IsValid()) {
     return 0;
   }
   m_pStreamAcc = new CPDF_StreamAcc;
-  m_pStreamAcc->LoadAllData(pStream, FALSE, src_pitch.ValueOrDie(), TRUE);
+  m_pStreamAcc->LoadAllData(pStream, FALSE, src_size.ValueOrDie(), TRUE);
   if (m_pStreamAcc->GetSize() == 0 || m_pStreamAcc->GetData() == NULL) {
     return 0;
   }
@@ -665,13 +662,12 @@ int CPDF_DIBSource::CreateDecoder() {
     return 0;
 
   FX_SAFE_DWORD requested_pitch =
-      CalculatePitch8(m_bpc, m_nComponents, m_Width, 1);
+      CalculatePitch8(m_bpc, m_nComponents, m_Width);
   if (!requested_pitch.IsValid()) {
     return 0;
   }
-  FX_SAFE_DWORD provided_pitch =
-      CalculatePitch8(m_pDecoder->GetBPC(), m_pDecoder->CountComps(),
-                      m_pDecoder->GetWidth(), 1);
+  FX_SAFE_DWORD provided_pitch = CalculatePitch8(
+      m_pDecoder->GetBPC(), m_pDecoder->CountComps(), m_pDecoder->GetWidth());
   if (!provided_pitch.IsValid()) {
     return 0;
   }
@@ -1088,7 +1084,7 @@ const uint8_t* CPDF_DIBSource::GetScanline(int line) const {
   if (m_bpc == 0) {
     return NULL;
   }
-  FX_SAFE_DWORD src_pitch = CalculatePitch8(m_bpc, m_nComponents, m_Width, 1);
+  FX_SAFE_DWORD src_pitch = CalculatePitch8(m_bpc, m_nComponents, m_Width);
   if (!src_pitch.IsValid())
     return NULL;
   FX_DWORD src_pitch_value = src_pitch.ValueOrDie();
@@ -1234,7 +1230,7 @@ void CPDF_DIBSource::DownSampleScanline(int line,
   }
 
   FX_DWORD src_width = m_Width;
-  FX_SAFE_DWORD pitch = CalculatePitch8(m_bpc, m_nComponents, m_Width, 1);
+  FX_SAFE_DWORD pitch = CalculatePitch8(m_bpc, m_nComponents, m_Width);
   if (!pitch.IsValid())
     return;
 
