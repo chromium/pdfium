@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jdmarker.c
  *
@@ -1392,5 +1391,3 @@ jpeg_set_marker_processor (j_decompress_ptr cinfo, int marker_code,
   else
     ERREXIT1(cinfo, JERR_UNKNOWN_MARKER, marker_code);
 }
-
-#endif //_FX_JPEG_TURBO_

@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jfdctfst.c
  *
@@ -223,5 +222,3 @@ jpeg_fdct_ifast (DCTELEM * data)
 }
 
 #endif /* DCT_IFAST_SUPPORTED */
-
-#endif //_FX_JPEG_TURBO_

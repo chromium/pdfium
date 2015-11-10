@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jcsample.c
  *
@@ -518,5 +517,3 @@ jinit_downsampler (j_compress_ptr cinfo)
     TRACEMS(cinfo, 0, JTRC_SMOOTH_NOTIMPL);
 #endif
 }
-
-#endif //_FX_JPEG_TURBO_

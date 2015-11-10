@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jcmaster.c
  *
@@ -589,5 +588,3 @@ jinit_c_master_control (j_compress_ptr cinfo, boolean transcode_only)
   else
     master->total_passes = cinfo->num_scans;
 }
-
-#endif //_FX_JPEG_TURBO_

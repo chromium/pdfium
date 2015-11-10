@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jcmainct.c
  *
@@ -292,5 +291,3 @@ jinit_c_main_controller (j_compress_ptr cinfo, boolean need_full_buffer)
     }
   }
 }
-
-#endif //_FX_JPEG_TURBO_

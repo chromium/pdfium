@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jdcolor.c
  *
@@ -395,5 +394,3 @@ jinit_color_deconverter (j_decompress_ptr cinfo)
   else
     cinfo->output_components = cinfo->out_color_components;
 }
-
-#endif //_FX_JPEG_TURBO_

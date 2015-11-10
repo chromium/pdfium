@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jdinput.c
  *
@@ -380,5 +379,3 @@ jinit_input_controller (j_decompress_ptr cinfo)
   inputctl->pub.eoi_reached = FALSE;
   inputctl->inheaders = TRUE;
 }
-
-#endif //_FX_JPEG_TURBO_

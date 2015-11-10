@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jdhuff.c
  *
@@ -653,5 +652,3 @@ jinit_huff_decoder (j_decompress_ptr cinfo)
     entropy->dc_derived_tbls[i] = entropy->ac_derived_tbls[i] = NULL;
   }
 }
-
-#endif //_FX_JPEG_TURBO_

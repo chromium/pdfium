@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jdmainct.c
  *
@@ -511,5 +510,3 @@ jinit_d_main_controller (j_decompress_ptr cinfo, boolean need_full_buffer)
 			 (JDIMENSION) (rgroup * ngroups));
   }
 }
-
-#endif //_FX_JPEG_TURBO_

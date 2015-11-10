@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jcomapi.c
  *
@@ -105,5 +104,3 @@ jpeg_alloc_huff_table (j_common_ptr cinfo)
   tbl->sent_table = FALSE;	/* make sure this is false in any new table */
   return tbl;
 }
-
-#endif //_FX_JPEG_TURBO_

@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jfdctint.c
  *
@@ -282,5 +281,3 @@ jpeg_fdct_islow (DCTELEM * data)
 }
 
 #endif /* DCT_ISLOW_SUPPORTED */
-
-#endif //_FX_JPEG_TURBO_

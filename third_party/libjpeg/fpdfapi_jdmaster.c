@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jdmaster.c
  *
@@ -556,5 +555,3 @@ jinit_master_decompress (j_decompress_ptr cinfo)
 
   master_selection(cinfo);
 }
-
-#endif //_FX_JPEG_TURBO_

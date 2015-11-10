@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jcdctmgr.c
  *
@@ -386,5 +385,3 @@ jinit_forward_dct (j_compress_ptr cinfo)
 #endif
   }
 }
-
-#endif //_FX_JPEG_TURBO_

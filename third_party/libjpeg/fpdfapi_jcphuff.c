@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jcphuff.c
  *
@@ -832,5 +831,3 @@ jinit_phuff_encoder (j_compress_ptr cinfo)
 }
 
 #endif /* C_PROGRESSIVE_SUPPORTED */
-
-#endif //_FX_JPEG_TURBO_

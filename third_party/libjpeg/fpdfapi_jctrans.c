@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jctrans.c
  *
@@ -387,5 +386,3 @@ transencode_coef_controller (j_compress_ptr cinfo,
     coef->dummy_buffer[i] = buffer + i;
   }
 }
-
-#endif //_FX_JPEG_TURBO_

@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jccolor.c
  *
@@ -458,5 +457,3 @@ jinit_color_converter (j_compress_ptr cinfo)
     break;
   }
 }
-
-#endif //_FX_JPEG_TURBO_

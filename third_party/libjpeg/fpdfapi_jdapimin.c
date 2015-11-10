@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jdapimin.c
  *
@@ -394,5 +393,3 @@ jpeg_finish_decompress (j_decompress_ptr cinfo)
   jpeg_abort((j_common_ptr) cinfo);
   return TRUE;
 }
-
-#endif //_FX_JPEG_TURBO_

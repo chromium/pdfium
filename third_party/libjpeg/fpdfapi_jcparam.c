@@ -1,4 +1,3 @@
-#if !defined(_FX_JPEG_TURBO_)
 /*
  * jcparam.c
  *
@@ -609,5 +608,3 @@ jpeg_simple_progression (j_compress_ptr cinfo)
 }
 
 #endif /* C_PROGRESSIVE_SUPPORTED */
-
-#endif //_FX_JPEG_TURBO_
