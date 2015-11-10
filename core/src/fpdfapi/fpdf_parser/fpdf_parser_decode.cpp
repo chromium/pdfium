@@ -5,9 +5,10 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include <limits.h>
-#include "../../../include/fpdfapi/fpdf_parser.h"
-#include "../../../include/fpdfapi/fpdf_module.h"
-#include "../../../include/fxcodec/fx_codec.h"
+
+#include "core/include/fpdfapi/fpdf_module.h"
+#include "core/include/fpdfapi/fpdf_parser.h"
+#include "core/include/fxcodec/fx_codec.h"
 
 #define _STREAM_MAX_SIZE_ 20 * 1024 * 1024
 

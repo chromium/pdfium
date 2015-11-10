@@ -4,17 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fxge/fx_ge.h"
+#include "core/include/fxge/fx_ge.h"
 
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_DESKTOP_
 #include <crtdbg.h>
 
-#include "../../../include/fxcodec/fx_codec.h"
-#include "../../../include/fxge/fx_freetype.h"
-#include "../../../include/fxge/fx_ge_win32.h"
-#include "../agg/include/fx_agg_driver.h"
 #include "../dib/dib_int.h"
 #include "../ge/text_int.h"
+#include "core/include/fxcodec/fx_codec.h"
+#include "core/include/fxge/fx_freetype.h"
+#include "core/include/fxge/fx_ge_win32.h"
+#include "core/src/fxge/agg/include/fx_agg_driver.h"
 #include "dwrite_int.h"
 #include "win32_int.h"
 

@@ -4,12 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../../include/fpdfapi/fpdf_resource.h"
-#include "../../../../include/fpdfapi/fpdf_module.h"
-#include "../../../../include/fxcrt/fx_basic.h"  // For FX_ArraySize().
+#include "cmaps_japan1.h"
+
 #include "../../fpdf_font/font_int.h"
 #include "../cmap_int.h"
-#include "cmaps_japan1.h"
+#include "core/include/fpdfapi/fpdf_module.h"
+#include "core/include/fpdfapi/fpdf_resource.h"
+#include "core/include/fxcrt/fx_basic.h"  // For FX_ArraySize().
 
 static const FXCMAP_CMap g_FXCMAP_Japan1_cmaps[] = {
     {"83pv-RKSJ-H", FXCMAP_CMap::Range, g_FXCMAP_83pv_RKSJ_H_1, 222,

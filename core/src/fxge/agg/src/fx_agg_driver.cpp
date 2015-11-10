@@ -4,11 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../../include/fxcodec/fx_codec.h"
-#include "../../../../include/fxge/fx_ge.h"
+#include "core/src/fxge/agg/include/fx_agg_driver.h"
+
 #include "../../dib/dib_int.h"
 #include "../../ge/text_int.h"
-#include "../include/fx_agg_driver.h"
+#include "core/include/fxcodec/fx_codec.h"
+#include "core/include/fxge/fx_ge.h"
 #include "third_party/agg23/agg_conv_dash.h"
 #include "third_party/agg23/agg_conv_stroke.h"
 #include "third_party/agg23/agg_curves.h"

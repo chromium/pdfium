@@ -4,10 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fxge/fx_freetype.h"
-#include "../../../include/fxge/fx_ge.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 #include "ttgsubtable.h"
+
+#include "core/include/fxge/fx_freetype.h"
+#include "core/include/fxge/fx_ge.h"
+#include "third_party/base/nonstd_unique_ptr.h"
 
 CFX_GlyphMap::CFX_GlyphMap() {}
 CFX_GlyphMap::~CFX_GlyphMap() {}

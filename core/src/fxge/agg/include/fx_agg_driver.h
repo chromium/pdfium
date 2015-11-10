@@ -4,12 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FX_AGG_DRIVER_H_
-#define FX_AGG_DRIVER_H_
+#ifndef CORE_SRC_FXGE_AGG_INCLUDE_FX_AGG_DRIVER_H_
+#define CORE_SRC_FXGE_AGG_INCLUDE_FX_AGG_DRIVER_H_
 
+#include "core/include/fxge/fx_ge.h"
 #include "third_party/agg23/agg_clip_liang_barsky.h"
 #include "third_party/agg23/agg_path_storage.h"
 #include "third_party/agg23/agg_rasterizer_scanline_aa.h"
+
+class CFX_AffineMatrix;
+class CFX_PathData;
 
 class CAgg_PathData {
  public:
@@ -144,4 +148,4 @@ class CFX_AggDeviceDriver : public IFX_RenderDeviceDriver {
   FX_BOOL m_bGroupKnockout;
 };
 
-#endif  // FX_AGG_DRIVER_H_
+#endif  // CORE_SRC_FXGE_AGG_INCLUDE_FX_AGG_DRIVER_H_

@@ -6,9 +6,9 @@
 
 #include <limits>
 
-#include "../../../include/fxge/fx_ge.h"
-#include "../../../include/fxge/fx_freetype.h"
 #include "../fontdata/chromefontdata/chromefontdata.h"
+#include "core/include/fxge/fx_freetype.h"
+#include "core/include/fxge/fx_ge.h"
 #include "text_int.h"
 
 #define GET_TT_SHORT(w) (FX_WORD)(((w)[0] << 8) | (w)[1])

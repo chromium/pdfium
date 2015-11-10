@@ -4,11 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fpdfapi/fpdf_page.h"
-#include "../../../include/fpdfapi/fpdf_module.h"
-#include "../../../include/fdrm/fx_crypt.h"
-#include "../fpdf_font/font_int.h"
 #include "pageint.h"
+
+#include "../fpdf_font/font_int.h"
+#include "core/include/fdrm/fx_crypt.h"
+#include "core/include/fpdfapi/fpdf_module.h"
+#include "core/include/fpdfapi/fpdf_page.h"
 
 class CPDF_PageModule : public IPDF_PageModule {
  public:

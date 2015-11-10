@@ -7,7 +7,7 @@
 #ifndef _JBIG2_PAGE_H_
 #define _JBIG2_PAGE_H_
 
-#include "../../../include/fxcrt/fx_system.h"
+#include "core/include/fxcrt/fx_system.h"
 
 struct JBig2PageInfo {
   FX_DWORD m_dwWidth;

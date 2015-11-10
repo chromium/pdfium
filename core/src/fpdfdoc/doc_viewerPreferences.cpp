@@ -4,7 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fpdfdoc/fpdf_doc.h"
+#include "core/include/fpdfdoc/fpdf_doc.h"
+
 CPDF_ViewerPreferences::CPDF_ViewerPreferences(CPDF_Document* pDoc)
     : m_pDoc(pDoc) {}
 CPDF_ViewerPreferences::~CPDF_ViewerPreferences() {}

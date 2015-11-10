@@ -7,9 +7,12 @@
 #ifndef CORE_SRC_FPDFAPI_FPDF_FONT_TTGSUBTABLE_H_
 #define CORE_SRC_FPDFAPI_FPDF_FONT_TTGSUBTABLE_H_
 
-#include "../../../include/fxge/fx_freetype.h"
-#include "../../../include/fxcrt/fx_basic.h"
+#include <map>
+
 #include "common.h"
+#include "core/include/fxcrt/fx_basic.h"
+#include "core/include/fxge/fx_font.h"
+#include "core/include/fxge/fx_freetype.h"
 
 class CFX_GlyphMap {
  public:

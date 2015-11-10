@@ -6,9 +6,9 @@
 #include <string>
 
 #include "../../../../testing/fx_string_testhelpers.h"
-#include "../../../include/fpdfapi/fpdf_parser.h"
-#include "../../../include/fxcrt/fx_basic.h"
 #include "../../../testing/embedder_test.h"
+#include "core/include/fpdfapi/fpdf_parser.h"
+#include "core/include/fxcrt/fx_basic.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 class FPDFParserDecodeEmbeddertest : public EmbedderTest {};

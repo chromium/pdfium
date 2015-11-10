@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fpdfapi/fpdf_pageobj.h"
-#include "../../include/fpdfapi/fpdf_page.h"
+#include "core/include/fpdfapi/fpdf_page.h"
+#include "core/include/fpdfapi/fpdf_pageobj.h"
 #include "text_int.h"
 
 class CPDF_TextStream {

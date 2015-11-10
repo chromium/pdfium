@@ -4,9 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fxcrt/fx_basic.h"
-#include "../../include/fxcrt/fx_ext.h"
+#include "core/include/fxcrt/fx_basic.h"
+#include "core/include/fxcrt/fx_ext.h"
 #include "extension.h"
+
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 #include <wincrypt.h>
 #else

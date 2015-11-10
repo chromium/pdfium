@@ -7,6 +7,13 @@
 #ifndef CORE_SRC_FPDFAPI_FPDF_EDIT_EDITINT_H_
 #define CORE_SRC_FPDFAPI_FPDF_EDIT_EDITINT_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+#include "core/include/fxcrt/fx_stream.h"
+#include "core/include/fxcrt/fx_system.h"
+
+class CPDF_Creator;
+class CPDF_Object;
+
 class CPDF_ObjectStream {
  public:
   CPDF_ObjectStream();

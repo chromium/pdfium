@@ -6,8 +6,8 @@
 
 #include "JBig2_ArithDecoder.h"
 
-#include "../../../include/fxcrt/fx_basic.h"
 #include "JBig2_BitStream.h"
+#include "core/include/fxcrt/fx_basic.h"
 
 namespace {
 

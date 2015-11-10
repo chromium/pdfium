@@ -9,7 +9,7 @@
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
 
-#include "../../../include/fxge/fx_ge.h"
+#include "core/include/fxge/fx_ge.h"
 
 #if _FX_OS_ == _FX_MACOSX_
 #include <Carbon/Carbon.h>

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fxge/fx_ge.h"
+#include "core/include/fxge/fx_ge.h"
 #include "apple_int.h"
+
 #if _FX_OS_ == _FX_MACOSX_
 static const struct {
   const FX_CHAR* m_pName;

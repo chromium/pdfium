@@ -4,7 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fxcrt/fx_basic.h"
+#include "core/include/fxcrt/fx_basic.h"
+
 void CFX_UTF8Decoder::Clear() {
   m_Buffer.Clear();
   m_PendingBytes = 0;

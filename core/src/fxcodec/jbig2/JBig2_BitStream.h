@@ -7,7 +7,7 @@
 #ifndef CORE_SRC_FXCODEC_JBIG2_JBIG2_BITSTREAM_H_
 #define CORE_SRC_FXCODEC_JBIG2_JBIG2_BITSTREAM_H_
 
-#include "../../../include/fxcrt/fx_basic.h"
+#include "core/include/fxcrt/fx_basic.h"
 
 class CPDF_StreamAcc;
 

@@ -4,7 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fxcrt/fx_basic.h"
+#include "core/include/fxcrt/fx_basic.h"
+
 FX_STRSIZE FX_ftoa(FX_FLOAT f, FX_CHAR* buf);
 CFX_BinaryBuf::CFX_BinaryBuf()
     : m_AllocStep(0), m_pBuffer(NULL), m_DataSize(0), m_AllocSize(0) {}

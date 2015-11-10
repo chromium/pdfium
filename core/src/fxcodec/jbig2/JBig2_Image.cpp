@@ -6,9 +6,9 @@
 
 #include <limits.h>
 
-#include "../../../include/fxcrt/fx_coordinates.h"
-#include "../../../include/fxcrt/fx_safe_types.h"
 #include "JBig2_Image.h"
+#include "core/include/fxcrt/fx_coordinates.h"
+#include "core/include/fxcrt/fx_safe_types.h"
 
 CJBig2_Image::CJBig2_Image(int32_t w, int32_t h) {
   m_nWidth = w;

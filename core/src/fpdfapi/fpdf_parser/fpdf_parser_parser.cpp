@@ -4,16 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "parser_int.h"
+
 #include <set>
 #include <utility>
 #include <vector>
 
-#include "../../../include/fpdfapi/fpdf_module.h"
-#include "../../../include/fpdfapi/fpdf_page.h"
-#include "../../../include/fpdfapi/fpdf_parser.h"
-#include "../../../include/fxcrt/fx_safe_types.h"
 #include "../fpdf_page/pageint.h"
-#include "parser_int.h"
+#include "core/include/fpdfapi/fpdf_module.h"
+#include "core/include/fpdfapi/fpdf_page.h"
+#include "core/include/fpdfapi/fpdf_parser.h"
+#include "core/include/fxcrt/fx_safe_types.h"
 #include "third_party/base/nonstd_unique_ptr.h"
 #include "third_party/base/stl_util.h"
 

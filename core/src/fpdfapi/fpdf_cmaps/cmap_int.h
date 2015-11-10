@@ -7,7 +7,7 @@
 #ifndef CORE_SRC_FPDFAPI_FPDF_CMAPS_CMAP_INT_H_
 #define CORE_SRC_FPDFAPI_FPDF_CMAPS_CMAP_INT_H_
 
-#include "../../../include/fxcrt/fx_system.h"  // For FX_WORD.
+#include "core/include/fxcrt/fx_system.h"  // For FX_WORD.
 
 struct FXCMAP_CMap {
   enum MapType { None, Single, Range, Reverse };

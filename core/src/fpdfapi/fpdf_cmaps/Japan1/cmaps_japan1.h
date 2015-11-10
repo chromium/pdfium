@@ -7,7 +7,7 @@
 #ifndef CORE_SRC_FPDFAPI_FPDF_CMAPS_JAPAN1_CMAPS_JAPAN1_H_
 #define CORE_SRC_FPDFAPI_FPDF_CMAPS_JAPAN1_CMAPS_JAPAN1_H_
 
-#include "../../../../include/fxcrt/fx_system.h"  // For FX_WORD.
+#include "core/include/fxcrt/fx_system.h"  // For FX_WORD.
 
 extern const FX_WORD g_FXCMAP_83pv_RKSJ_H_1[];
 extern const FX_WORD g_FXCMAP_90ms_RKSJ_H_2[];

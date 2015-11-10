@@ -10,9 +10,9 @@
 
 #include <vector>
 
-#include "../../../include/fxcrt/fx_memory.h"
 #include "JBig2_BitStream.h"
 #include "JBig2_Define.h"
+#include "core/include/fxcrt/fx_memory.h"
 
 CJBig2_HuffmanTable::CJBig2_HuffmanTable(const JBig2TableLine* pTable,
                                          int nLines,

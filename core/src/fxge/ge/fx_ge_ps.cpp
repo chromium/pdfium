@@ -4,9 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fxge/fx_ge.h"
-#include "../../../include/fxcodec/fx_codec.h"
+#include "core/include/fxge/fx_ge.h"
+#include "core/include/fxcodec/fx_codec.h"
 #include "text_int.h"
+
 struct PSGlyph {
   CFX_Font* m_pFont;
   FX_DWORD m_GlyphIndex;

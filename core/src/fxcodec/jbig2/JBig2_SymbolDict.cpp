@@ -6,8 +6,8 @@
 
 #include "JBig2_SymbolDict.h"
 
-#include "../../../include/fxcrt/fx_memory.h"
 #include "JBig2_Image.h"
+#include "core/include/fxcrt/fx_memory.h"
 
 CJBig2_SymbolDict::CJBig2_SymbolDict() {
 }

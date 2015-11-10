@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fxcrt/fx_bidi.h"
-#include "../../include/fxcrt/fx_ucd.h"
+#include "core/include/fxcrt/fx_bidi.h"
+#include "core/include/fxcrt/fx_ucd.h"
 
 CFX_BidiChar::CFX_BidiChar()
     : m_iCurStart(0),

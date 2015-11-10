@@ -7,7 +7,7 @@
 #ifndef CORE_SRC_FPDFTEXT_UNICODENORMALIZATIONDATA_H_
 #define CORE_SRC_FPDFTEXT_UNICODENORMALIZATIONDATA_H_
 
-#include "../../include/fxcrt/fx_system.h"
+#include "core/include/fxcrt/fx_system.h"
 
 extern const FX_WCHAR g_UnicodeData_Normalization[];
 extern const FX_WCHAR g_UnicodeData_Normalization_Map1[];

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fxcrt/fx_basic.h"
+#include "core/include/fxcrt/fx_basic.h"
 #include "plex.h"
+
 CFX_PtrList::CFX_PtrList(int nBlockSize)
     : m_pNodeHead(NULL),
       m_pNodeTail(NULL),

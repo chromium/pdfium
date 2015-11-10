@@ -7,7 +7,14 @@
 #ifndef CORE_SRC_FPDFAPI_FPDF_PARSER_PARSER_INT_H_
 #define CORE_SRC_FPDFAPI_FPDF_PARSER_PARSER_INT_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+#include "core/include/fxcrt/fx_stream.h"
+
+class CFX_BitStream;
 class CPDF_DataAvail;
+class CPDF_Dictionary;
+class CPDF_Stream;
+class IFX_DownloadHints;
 
 class CPDF_HintTables {
  public:
@@ -17,6 +24,7 @@ class CPDF_HintTables {
         m_nFirstPageSharedObjs(0),
         m_szFirstPageObjOffset(0) {}
   ~CPDF_HintTables();
+
   FX_BOOL GetPagePos(int index,
                      FX_FILESIZE& szPageStartPos,
                      FX_FILESIZE& szPageLength,
@@ -44,4 +52,5 @@ class CPDF_HintTables {
   CFX_FileSizeArray m_szPageOffsetArray;
   CFX_FileSizeArray m_szSharedObjOffsetArray;
 };
+
 #endif  // CORE_SRC_FPDFAPI_FPDF_PARSER_PARSER_INT_H_

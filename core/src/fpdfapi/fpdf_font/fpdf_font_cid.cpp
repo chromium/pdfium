@@ -4,13 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fpdfapi/fpdf_module.h"
-#include "../../../include/fpdfapi/fpdf_page.h"
-#include "../../../include/fpdfapi/fpdf_resource.h"
-#include "../../../include/fxge/fx_freetype.h"
-#include "../../../include/fxge/fx_ge.h"
-#include "../fpdf_cmaps/cmap_int.h"
 #include "font_int.h"
+
+#include "../fpdf_cmaps/cmap_int.h"
+#include "core/include/fpdfapi/fpdf_module.h"
+#include "core/include/fpdfapi/fpdf_page.h"
+#include "core/include/fpdfapi/fpdf_resource.h"
+#include "core/include/fxge/fx_freetype.h"
+#include "core/include/fxge/fx_ge.h"
 
 namespace {
 

@@ -4,10 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fpdfapi/fpdf_parser.h"
-#include "../../include/fpdfapi/fpdf_page.h"
-#include "../../include/fpdfdoc/fpdf_tagged.h"
+#include "core/include/fpdfapi/fpdf_page.h"
+#include "core/include/fpdfapi/fpdf_parser.h"
+#include "core/include/fpdfdoc/fpdf_tagged.h"
 #include "tagged_int.h"
+
 const int nMaxRecursion = 32;
 static FX_BOOL IsTagged(const CPDF_Document* pDoc) {
   CPDF_Dictionary* pCatalog = pDoc->GetRoot();

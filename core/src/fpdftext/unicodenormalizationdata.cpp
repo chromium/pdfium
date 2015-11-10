@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fxcrt/fx_system.h"
+#include "core/include/fxcrt/fx_system.h"
 #include "unicodenormalizationdata.h"
 
 const FX_WCHAR g_UnicodeData_Normalization[65536] = {

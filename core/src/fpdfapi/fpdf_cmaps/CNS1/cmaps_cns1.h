@@ -7,7 +7,7 @@
 #ifndef CORE_SRC_FPDFAPI_FPDF_CMAPS_CNS1_CMAPS_CNS1_H_
 #define CORE_SRC_FPDFAPI_FPDF_CMAPS_CNS1_CMAPS_CNS1_H_
 
-#include "../../../../include/fxcrt/fx_system.h"  // For FX_WORD.
+#include "core/include/fxcrt/fx_system.h"  // For FX_WORD.
 
 extern const FX_WORD g_FXCMAP_B5pc_H_0[];
 extern const FX_WORD g_FXCMAP_B5pc_V_0[];

@@ -4,7 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fpdfapi/fpdf_serial.h"
+#include "core/include/fpdfapi/fpdf_serial.h"
+
 CFDF_Document::CFDF_Document() : CPDF_IndirectObjects(NULL) {
   m_pRootDict = NULL;
   m_pFile = NULL;

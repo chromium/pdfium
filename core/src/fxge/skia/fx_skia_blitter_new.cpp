@@ -2,12 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "../../../include/fxge/fx_ge.h"
+#include "core/include/fxge/fx_ge.h"
+
 //#define _SKIA_SUPPORT_
 #if defined(_SKIA_SUPPORT_)
-#include "../../../include/fxcodec/fx_codec.h"
 #include "SkBlitter.h"
+#include "core/include/fxcodec/fx_codec.h"
 #include "fx_skia_blitter_new.h"
+
 // We use our own renderer here to make it simple
 void CFX_SkiaRenderer::blitAntiH(int x,
                                  int y,

@@ -4,11 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fxge/fx_ge.h"
-#include "../../../include/fpdfapi/fpdf_render.h"
-#include "../../../include/fpdfapi/fpdf_pageobj.h"
-#include "../fpdf_page/pageint.h"
 #include "render_int.h"
+
+#include "../fpdf_page/pageint.h"
+#include "core/include/fpdfapi/fpdf_pageobj.h"
+#include "core/include/fpdfapi/fpdf_render.h"
+#include "core/include/fxge/fx_ge.h"
 
 CPDF_Type3Cache::~CPDF_Type3Cache() {
   for (const auto& pair : m_SizeMap) {

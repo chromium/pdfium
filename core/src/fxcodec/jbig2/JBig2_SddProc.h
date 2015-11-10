@@ -9,8 +9,8 @@
 
 #include <vector>
 
-#include "../../../include/fxcrt/fx_system.h"
 #include "JBig2_ArithDecoder.h"
+#include "core/include/fxcrt/fx_system.h"
 
 class CJBig2_BitStream;
 class CJBig2_HuffmanTable;

@@ -7,6 +7,8 @@
 #ifndef CORE_SRC_FXCODEC_JBIG2_JBIG2_LIST_H_
 #define CORE_SRC_FXCODEC_JBIG2_JBIG2_LIST_H_
 
+#include <stdlib.h>
+
 #include <vector>
 
 // A poor man's ScopedVector for pointers of TYPE.

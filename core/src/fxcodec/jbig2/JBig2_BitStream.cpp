@@ -4,10 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fpdfapi/fpdf_objects.h"
 #include "JBig2_BitStream.h"
 
 #include <algorithm>
+
+#include "core/include/fpdfapi/fpdf_objects.h"
 
 CJBig2_BitStream::CJBig2_BitStream(CPDF_StreamAcc* pSrcStream)
     : m_pBuf(pSrcStream->GetData()),

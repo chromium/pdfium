@@ -9,8 +9,8 @@
 
 #include <map>
 
-#include "../../../include/fxcrt/fx_basic.h"
-#include "../../../include/fpdfapi/fpdf_resource.h"
+#include "core/include/fpdfapi/fpdf_resource.h"
+#include "core/include/fxcrt/fx_basic.h"
 
 class CPDF_CID2UnicodeMap;
 class CPDF_CMap;

@@ -10,11 +10,11 @@
 #include <list>
 #include <utility>
 
-#include "../../../include/fpdfapi/fpdf_objects.h"
-#include "../../../include/fxcodec/fx_codec_def.h"
 #include "JBig2_List.h"
 #include "JBig2_Page.h"
 #include "JBig2_Segment.h"
+#include "core/include/fpdfapi/fpdf_objects.h"
+#include "core/include/fxcodec/fx_codec_def.h"
 #include "third_party/base/nonstd_unique_ptr.h"
 
 class CJBig2_ArithDecoder;

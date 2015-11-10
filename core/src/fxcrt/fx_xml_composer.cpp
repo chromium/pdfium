@@ -4,8 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fxcrt/fx_xml.h"
 #include "xml_int.h"
+
+#include "core/include/fxcrt/fx_xml.h"
+
 void FX_XML_SplitQualifiedName(const CFX_ByteStringC& bsFullName,
                                CFX_ByteStringC& bsSpace,
                                CFX_ByteStringC& bsName) {

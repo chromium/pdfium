@@ -4,10 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fxcrt/fx_ext.h"
-#include "../../../include/fpdfapi/fpdf_serial.h"
-#include "../../../include/fpdfapi/fpdf_parser.h"
 #include "editint.h"
+
+#include "core/include/fxcrt/fx_ext.h"
+#include "core/include/fpdfapi/fpdf_serial.h"
+#include "core/include/fpdfapi/fpdf_parser.h"
 
 #define PDF_OBJECTSTREAM_MAXLENGTH (256 * 1024)
 #define PDF_XREFSTREAM_MAXSIZE 10000
