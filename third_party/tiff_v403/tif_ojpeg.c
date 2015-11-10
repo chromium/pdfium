@@ -215,13 +215,13 @@ static const TIFFField ojpegFields[] = {
 # define HAVE_BOOLEAN            /* prevent jmorecfg.h from redefining it */
 #endif
 
-#ifndef _FX_JPEG_TURBO_
-	#include "../libjpeg/jpeglib.h"
-	#include "../libjpeg/jerror.h"
+#if defined(USE_SYSTEM_LIBJPEG)
+#include <jpeglib.h>
+#elif defined(USE_LIBJPEG_TURBO)
+#include "third_party/libjpeg_turbo/jpeglib.h"
 #else
-	#include "../libjpeg-turbo/jpeglib.h"
-	#include "../libjpeg-turbo/jerror.h"
-#endif//_FX_JPEG_TURBO_
+#include "third_party/libjpeg/jpeglib.h"
+#endif
 
 typedef struct jpeg_error_mgr jpeg_error_mgr;
 typedef struct jpeg_common_struct jpeg_common_struct;

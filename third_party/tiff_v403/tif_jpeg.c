@@ -84,13 +84,16 @@ int TIFFReInitJPEG_12( TIFF *tif, int scheme, int is_encode );
 # define HAVE_BOOLEAN            /* prevent jmorecfg.h from redefining it */
 #endif
 
-#ifndef _FX_JPEG_TURBO_
-	#include "../libjpeg/jpeglib.h"
-	#include "../libjpeg/jerror.h"
+#if defined(USE_SYSTEM_LIBJPEG)
+#include <jerror.h>
+#include <jpeglib.h>
+#elif defined(USE_LIBJPEG_TURBO)
+#include "third_party/libjpeg_turbo/jerror.h"
+#include "third_party/libjpeg_turbo/jpeglib.h"
 #else
-	#include "../libjpeg-turbo/jpeglib.h"
-	#include "../libjpeg-turbo/jerror.h"
-#endif//_FX_JPEG_TURBO_
+#include "third_party/libjpeg/jerror.h"
+#include "third_party/libjpeg/jpeglib.h"
+#endif
 
 /* 
  * Do we want to do special processing suitable for when JSAMPLE is a
