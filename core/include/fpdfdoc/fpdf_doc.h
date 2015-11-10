@@ -44,7 +44,7 @@ class CXML_Element;
 
 class CPDF_NameTree {
  public:
-  CPDF_NameTree(CPDF_Dictionary* pRoot) { m_pRoot = pRoot; }
+  explicit CPDF_NameTree(CPDF_Dictionary* pRoot) { m_pRoot = pRoot; }
 
   CPDF_NameTree(CPDF_Document* pDoc, const CFX_ByteStringC& category);
 
@@ -66,7 +66,7 @@ class CPDF_NameTree {
 };
 class CPDF_BookmarkTree {
  public:
-  CPDF_BookmarkTree(CPDF_Document* pDoc) : m_pDocument(pDoc) {}
+  explicit CPDF_BookmarkTree(CPDF_Document* pDoc) : m_pDocument(pDoc) {}
 
   CPDF_Bookmark GetFirstChild(const CPDF_Bookmark& parent) const;
 
@@ -130,7 +130,7 @@ class CPDF_OCContext : public IPDF_OCContext {
  public:
   enum UsageType { View = 0, Design, Print, Export };
 
-  CPDF_OCContext(CPDF_Document* pDoc, UsageType eUsageType = View);
+  explicit CPDF_OCContext(CPDF_Document* pDoc, UsageType eUsageType = View);
   ~CPDF_OCContext() override;
 
   CPDF_Document* GetDocument() const { return m_pDocument; }
@@ -165,15 +165,17 @@ class CPDF_OCContext : public IPDF_OCContext {
 
 class CPDF_ActionFields {
  public:
+  // TODO(thestig): Examine why this cannot be explicit.
   CPDF_ActionFields(const CPDF_Action* pAction) {
     m_pAction = (CPDF_Action*)pAction;
   }
 
+  // TODO(thestig): Replace this.
   operator CPDF_Action*() const { return m_pAction; }
 
   FX_DWORD GetFieldsCount() const;
 
-  void GetAllFields(CFX_PtrArray& fieldObjects) const;
+  std::vector<CPDF_Object*> GetAllFields() const;
 
   CPDF_Object* GetField(FX_DWORD iIndex) const;
 
@@ -263,6 +265,7 @@ class CPDF_Action {
 };
 class CPDF_AAction {
  public:
+  // TODO(thestig): Examine why this cannot be explicit.
   CPDF_AAction(CPDF_Dictionary* pDict = NULL) { m_pDict = pDict; }
 
   operator CPDF_Dictionary*() const { return m_pDict; }
@@ -303,7 +306,7 @@ class CPDF_AAction {
 };
 class CPDF_DocJSActions {
  public:
-  CPDF_DocJSActions(CPDF_Document* pDoc);
+  explicit CPDF_DocJSActions(CPDF_Document* pDoc);
 
   int CountJSActions() const;
 
@@ -316,13 +319,13 @@ class CPDF_DocJSActions {
   CPDF_Document* GetDocument() const { return m_pDocument; }
 
  protected:
-  CPDF_Document* m_pDocument;
+  CPDF_Document* const m_pDocument;
 };
 class CPDF_FileSpec {
  public:
   CPDF_FileSpec();
 
-  CPDF_FileSpec(CPDF_Object* pObj) { m_pObj = pObj; }
+  explicit CPDF_FileSpec(CPDF_Object* pObj) { m_pObj = pObj; }
 
   operator CPDF_Object*() const { return m_pObj; }
 
@@ -473,6 +476,7 @@ class CPDF_AnnotList {
 #define COLORTYPE_CMYK 3
 class CPDF_DefaultAppearance {
  public:
+  // TODO(thestig): Examine why this cannot be explicit.
   CPDF_DefaultAppearance(const CFX_ByteString& csDA = "") { m_csDA = csDA; }
 
   CPDF_DefaultAppearance(const CPDF_DefaultAppearance& cDA) {
@@ -579,8 +583,6 @@ class CPDF_InterForm : public CFX_PrivateData {
 
   void GetAllFieldNames(CFX_WideStringArray& allFieldNames);
 
-  FX_BOOL IsValidFormField(const void* pField);
-
   CPDF_FormField* GetFieldByDict(CPDF_Dictionary* pFieldDict) const;
 
   CPDF_FormControl* GetControlAtPoint(CPDF_Page* pPage,
@@ -644,24 +646,25 @@ class CPDF_InterForm : public CFX_PrivateData {
 
   int GetFormAlignment();
 
-  CPDF_FormField* CheckRequiredFields(const CFX_PtrArray* fields = NULL,
-                                      FX_BOOL bIncludeOrExclude = TRUE) const;
+  CPDF_FormField* CheckRequiredFields(
+      const std::vector<CPDF_FormField*>* fields,
+      bool bIncludeOrExclude) const;
 
   CFDF_Document* ExportToFDF(const CFX_WideStringC& pdf_path,
-                             FX_BOOL bSimpleFileSpec = FALSE) const;
+                             bool bSimpleFileSpec = false) const;
 
   CFDF_Document* ExportToFDF(const CFX_WideStringC& pdf_path,
-                             CFX_PtrArray& fields,
-                             FX_BOOL bIncludeOrExclude = TRUE,
-                             FX_BOOL bSimpleFileSpec = FALSE) const;
+                             const std::vector<CPDF_FormField*>& fields,
+                             bool bIncludeOrExclude = true,
+                             bool bSimpleFileSpec = false) const;
 
   FX_BOOL ImportFromFDF(const CFDF_Document* pFDFDoc, FX_BOOL bNotify = FALSE);
 
-  FX_BOOL ResetForm(const CFX_PtrArray& fields,
-                    FX_BOOL bIncludeOrExclude = TRUE,
-                    FX_BOOL bNotify = FALSE);
+  bool ResetForm(const std::vector<CPDF_FormField*>& fields,
+                 bool bIncludeOrExclude = true,
+                 bool bNotify = false);
 
-  FX_BOOL ResetForm(FX_BOOL bNotify = FALSE);
+  bool ResetForm(bool bNotify = false);
 
   CPDF_FormNotify* GetFormNotify() const { return m_pFormNotify; }
 
@@ -885,6 +888,7 @@ CPDF_Object* FPDF_GetFieldAttr(CPDF_Dictionary* pFieldDict,
                                int nLevel = 0);
 class CPDF_IconFit {
  public:
+  // TODO(thestig): Examine why this cannot be explicit.
   CPDF_IconFit(CPDF_Dictionary* pDict = NULL) { m_pDict = pDict; }
 
   operator CPDF_Dictionary*() const { return m_pDict; }
@@ -1058,7 +1062,7 @@ class CPDF_FormNotify {
 FX_BOOL FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
 class CPDF_PageLabel {
  public:
-  CPDF_PageLabel(CPDF_Document* pDocument) { m_pDocument = pDocument; }
+  explicit CPDF_PageLabel(CPDF_Document* pDocument) { m_pDocument = pDocument; }
 
   CFX_WideString GetLabel(int nPage) const;
 
@@ -1083,7 +1087,7 @@ class CPDF_Metadata {
 
 class CPDF_ViewerPreferences {
  public:
-  CPDF_ViewerPreferences(CPDF_Document* pDoc);
+  explicit CPDF_ViewerPreferences(CPDF_Document* pDoc);
 
   ~CPDF_ViewerPreferences();
 
@@ -1098,10 +1102,12 @@ class CPDF_ViewerPreferences {
   CFX_ByteString Duplex() const;
 
  protected:
-  CPDF_Document* m_pDoc;
+  CPDF_Document* const m_pDoc;
 };
+
 class CPDF_ApSettings {
  public:
+  // TODO(thestig): Examine why this cannot be explicit.
   CPDF_ApSettings(CPDF_Dictionary* pDict = NULL) { m_pDict = pDict; }
 
   operator CPDF_Dictionary*() const { return m_pDict; }

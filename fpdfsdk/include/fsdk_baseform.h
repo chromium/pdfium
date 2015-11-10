@@ -185,8 +185,10 @@ class CPDFSDK_InterForm : public CPDF_FormNotify {
 
   CPDFSDK_Widget* GetSibling(CPDFSDK_Widget* pWidget, FX_BOOL bNext) const;
   CPDFSDK_Widget* GetWidget(CPDF_FormControl* pControl) const;
-  void GetWidgets(const CFX_WideString& sFieldName, CFX_PtrArray& widgets);
-  void GetWidgets(CPDF_FormField* pField, CFX_PtrArray& widgets);
+  void GetWidgets(const CFX_WideString& sFieldName,
+                  std::vector<CPDFSDK_Widget*>* widgets) const;
+  void GetWidgets(CPDF_FormField* pField,
+                  std::vector<CPDFSDK_Widget*>* widgets) const;
 
   void AddMap(CPDF_FormControl* pControl, CPDFSDK_Widget* pWidget);
   void RemoveMap(CPDF_FormControl* pControl);
@@ -217,15 +219,16 @@ class CPDFSDK_InterForm : public CPDF_FormNotify {
   FX_BOOL DoAction_ResetForm(const CPDF_Action& action);
   FX_BOOL DoAction_ImportData(const CPDF_Action& action);
 
-  void GetFieldFromObjects(const CFX_PtrArray& objects, CFX_PtrArray& fields);
+  std::vector<CPDF_FormField*> GetFieldFromObjects(
+      const std::vector<CPDF_Object*>& objects) const;
   FX_BOOL IsValidField(CPDF_Dictionary* pFieldDict);
   FX_BOOL SubmitFields(const CFX_WideString& csDestination,
-                       const CFX_PtrArray& fields,
+                       const std::vector<CPDF_FormField*>& fields,
                        FX_BOOL bIncludeOrExclude,
                        FX_BOOL bUrlEncoded);
   FX_BOOL SubmitForm(const CFX_WideString& sDestination, FX_BOOL bUrlEncoded);
   FX_BOOL ExportFormToFDFTextBuf(CFX_ByteTextBuf& textBuf);
-  FX_BOOL ExportFieldsToFDFTextBuf(const CFX_PtrArray& fields,
+  FX_BOOL ExportFieldsToFDFTextBuf(const std::vector<CPDF_FormField*>& fields,
                                    FX_BOOL bIncludeOrExclude,
                                    CFX_ByteTextBuf& textBuf);
   CFX_WideString GetTemporaryFileName(const CFX_WideString& sFileExt);

@@ -16,7 +16,11 @@
 
 #include <v8.h>
 
-#include "core/include/fxcrt/fx_basic.h"
+#include <vector>
+
+#include "core/include/fxcrt/fx_string.h"
+
+class CFXJS_ObjDefinition;
 
 // FXJS_V8 places no restrictions on these two classes; it merely passes them
 // on to caller-provided methods.
@@ -40,7 +44,7 @@ class FXJS_PerIsolateData {
   static void SetUp(v8::Isolate* pIsolate);
   static FXJS_PerIsolateData* Get(v8::Isolate* pIsolate);
 
-  CFX_PtrArray m_ObjectDefnArray;
+  std::vector<CFXJS_ObjDefinition*> m_ObjectDefnArray;
 
  protected:
   FXJS_PerIsolateData() {}

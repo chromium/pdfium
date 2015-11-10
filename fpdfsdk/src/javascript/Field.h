@@ -89,7 +89,7 @@ struct CJS_DelayData {
 
 class Field : public CJS_EmbedObj {
  public:
-  Field(CJS_Object* pJSObject);
+  explicit Field(CJS_Object* pJSObject);
   ~Field() override;
 
   FX_BOOL alignment(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
@@ -292,7 +292,6 @@ class Field : public CJS_EmbedObj {
                             CJS_Value& vRet,
                             CFX_WideString& sError);
 
- public:
   static void SetAlignment(CPDFSDK_Document* pDocument,
                            const CFX_WideString& swFieldName,
                            int nControlIndex,
@@ -432,14 +431,12 @@ class Field : public CJS_EmbedObj {
                        int nControlIndex,
                        const CJS_WideStringArray& strArray);
 
- public:
   static void AddField(CPDFSDK_Document* pDocument,
                        int nPageIndex,
                        int nFieldType,
                        const CFX_WideString& sName,
                        const CPDF_Rect& rcCoords);
 
- public:
   static void UpdateFormField(CPDFSDK_Document* pDocument,
                               CPDF_FormField* pFormField,
                               FX_BOOL bChangeMark,
@@ -453,13 +450,12 @@ class Field : public CJS_EmbedObj {
 
   static CPDFSDK_Widget* GetWidget(CPDFSDK_Document* pDocument,
                                    CPDF_FormControl* pFormControl);
-  static void GetFormFields(CPDFSDK_Document* pDocument,
-                            const CFX_WideString& csFieldName,
-                            CFX_PtrArray& FieldsArray);
+  static std::vector<CPDF_FormField*> GetFormFields(
+      CPDFSDK_Document* pDocument,
+      const CFX_WideString& csFieldName);
 
   static void DoDelay(CPDFSDK_Document* pDocument, CJS_DelayData* pData);
 
- public:
   FX_BOOL AttachField(Document* pDocument, const CFX_WideString& csFieldName);
   void SetDelay(FX_BOOL bDelay);
   void SetIsolate(v8::Isolate* isolate) { m_isolate = isolate; }
@@ -468,8 +464,8 @@ class Field : public CJS_EmbedObj {
   void ParseFieldName(const std::wstring& strFieldNameParsed,
                       std::wstring& strFieldName,
                       int& iControlNo);
-  void GetFormFields(const CFX_WideString& csFieldName,
-                     CFX_PtrArray& FieldsArray);
+  std::vector<CPDF_FormField*> GetFormFields(
+      const CFX_WideString& csFieldName) const;
   CPDF_FormControl* GetSmartFieldControl(CPDF_FormField* pFormField);
   FX_BOOL ValueIsOccur(CPDF_FormField* pFormField, CFX_WideString csOptLabel);
 
@@ -498,7 +494,7 @@ class Field : public CJS_EmbedObj {
 
 class CJS_Field : public CJS_Object {
  public:
-  CJS_Field(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
+  explicit CJS_Field(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
   ~CJS_Field(void) override {}
 
   void InitInstance(IJS_Runtime* pIRuntime) override;

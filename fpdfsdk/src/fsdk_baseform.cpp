@@ -14,10 +14,6 @@
 
 #include "../include/javascript/IJavaScript.h"
 
-//------------------------------------------------------------------------------------
-//*                                     CPDFSDK_Widget
-//------------------------------------------------------------------------------------
-
 #define IsFloatZero(f) ((f) < 0.01 && (f) > -0.01)
 #define IsFloatBigger(fa, fb) ((fa) > (fb) && !IsFloatZero((fa) - (fb)))
 #define IsFloatSmaller(fa, fb) ((fa) < (fb) && !IsFloatZero((fa) - (fb)))
@@ -960,9 +956,9 @@ void CPDFSDK_Widget::ResetAppearance_ComboBox(const FX_WCHAR* sValue) {
 
     pEdit->Initialize();
 
-    if (sValue)
+    if (sValue) {
       pEdit->SetText(sValue);
-    else {
+    } else {
       int32_t nCurSel = pField->GetSelectedIndex(0);
 
       if (nCurSel < 0)
@@ -1589,30 +1585,25 @@ CPDFSDK_Widget* CPDFSDK_InterForm::GetWidget(CPDF_FormControl* pControl) const {
   return (CPDFSDK_Widget*)pPage->GetAnnotByDict(pControlDict);
 }
 
-void CPDFSDK_InterForm::GetWidgets(const CFX_WideString& sFieldName,
-                                   CFX_PtrArray& widgets) {
-  ASSERT(m_pInterForm != NULL);
-
-  for (int i = 0, sz = m_pInterForm->CountFields(sFieldName); i < sz; i++) {
+void CPDFSDK_InterForm::GetWidgets(
+    const CFX_WideString& sFieldName,
+    std::vector<CPDFSDK_Widget*>* widgets) const {
+  for (int i = 0, sz = m_pInterForm->CountFields(sFieldName); i < sz; ++i) {
     CPDF_FormField* pFormField = m_pInterForm->GetField(i, sFieldName);
-    ASSERT(pFormField != NULL);
-
+    ASSERT(pFormField);
     GetWidgets(pFormField, widgets);
   }
 }
 
-void CPDFSDK_InterForm::GetWidgets(CPDF_FormField* pField,
-                                   CFX_PtrArray& widgets) {
-  ASSERT(pField != NULL);
-
-  for (int i = 0, isz = pField->CountControls(); i < isz; i++) {
+void CPDFSDK_InterForm::GetWidgets(
+    CPDF_FormField* pField,
+    std::vector<CPDFSDK_Widget*>* widgets) const {
+  for (int i = 0, sz = pField->CountControls(); i < sz; ++i) {
     CPDF_FormControl* pFormCtrl = pField->GetControl(i);
-    ASSERT(pFormCtrl != NULL);
-
+    ASSERT(pFormCtrl);
     CPDFSDK_Widget* pWidget = GetWidget(pFormCtrl);
-
     if (pWidget)
-      widgets.Add(pWidget);
+      widgets->push_back(pWidget);
   }
 }
 
@@ -1932,42 +1923,27 @@ FX_BOOL CPDFSDK_InterForm::DoAction_Hide(const CPDF_Action& action) {
   ASSERT(action);
 
   CPDF_ActionFields af = action.GetWidgets();
-  CFX_PtrArray fieldObjects;
-  af.GetAllFields(fieldObjects);
-  CFX_PtrArray widgetArray;
-  CFX_PtrArray fields;
-  GetFieldFromObjects(fieldObjects, fields);
+  std::vector<CPDF_Object*> fieldObjects = af.GetAllFields();
+  std::vector<CPDF_FormField*> fields = GetFieldFromObjects(fieldObjects);
 
   FX_BOOL bHide = action.GetHideStatus();
-
   FX_BOOL bChanged = FALSE;
 
-  for (int i = 0, sz = fields.GetSize(); i < sz; i++) {
-    CPDF_FormField* pField = (CPDF_FormField*)fields[i];
-    ASSERT(pField != NULL);
-
-    for (int j = 0, jsz = pField->CountControls(); j < jsz; j++) {
-      CPDF_FormControl* pControl = pField->GetControl(j);
-      ASSERT(pControl != NULL);
+  for (CPDF_FormField* pField : fields) {
+    for (int i = 0, sz = pField->CountControls(); i < sz; ++i) {
+      CPDF_FormControl* pControl = pField->GetControl(i);
+      ASSERT(pControl);
 
       if (CPDFSDK_Widget* pWidget = GetWidget(pControl)) {
         int nFlags = pWidget->GetFlags();
-        if (bHide) {
-          nFlags &= (~ANNOTFLAG_INVISIBLE);
-          nFlags &= (~ANNOTFLAG_NOVIEW);
-          nFlags |= (ANNOTFLAG_HIDDEN);
-        } else {
-          nFlags &= (~ANNOTFLAG_INVISIBLE);
-          nFlags &= (~ANNOTFLAG_HIDDEN);
-          nFlags &= (~ANNOTFLAG_NOVIEW);
-        }
+        nFlags &= ~ANNOTFLAG_INVISIBLE;
+        nFlags &= ~ANNOTFLAG_NOVIEW;
+        if (bHide)
+          nFlags |= ANNOTFLAG_HIDDEN;
+        else
+          nFlags &= ~ANNOTFLAG_HIDDEN;
         pWidget->SetFlags(nFlags);
-
-        CPDFSDK_PageView* pPageView = pWidget->GetPageView();
-        ASSERT(pPageView != NULL);
-
-        pPageView->UpdateView(pWidget);
-
+        pWidget->GetPageView()->UpdateView(pWidget);
         bChanged = TRUE;
       }
     }
@@ -1986,31 +1962,28 @@ FX_BOOL CPDFSDK_InterForm::DoAction_SubmitForm(const CPDF_Action& action) {
   if (pActionDict->KeyExist("Fields")) {
     CPDF_ActionFields af = action.GetWidgets();
     FX_DWORD dwFlags = action.GetFlags();
-    CFX_PtrArray fieldObjects;
-    af.GetAllFields(fieldObjects);
-
-    CFX_PtrArray fields;
-    GetFieldFromObjects(fieldObjects, fields);
-    if (fields.GetSize() != 0) {
-      FX_BOOL bIncludeOrExclude = !(dwFlags & 0x01);
+    std::vector<CPDF_Object*> fieldObjects = af.GetAllFields();
+    std::vector<CPDF_FormField*> fields = GetFieldFromObjects(fieldObjects);
+    if (!fields.empty()) {
+      bool bIncludeOrExclude = !(dwFlags & 0x01);
       if (m_pInterForm->CheckRequiredFields(&fields, bIncludeOrExclude))
         return FALSE;
 
       return SubmitFields(sDestination, fields, bIncludeOrExclude, FALSE);
     }
   }
-  if (m_pInterForm->CheckRequiredFields())
+  if (m_pInterForm->CheckRequiredFields(nullptr, true))
     return FALSE;
 
   return SubmitForm(sDestination, FALSE);
 }
 
-FX_BOOL CPDFSDK_InterForm::SubmitFields(const CFX_WideString& csDestination,
-                                        const CFX_PtrArray& fields,
-                                        FX_BOOL bIncludeOrExclude,
-                                        FX_BOOL bUrlEncoded) {
+FX_BOOL CPDFSDK_InterForm::SubmitFields(
+    const CFX_WideString& csDestination,
+    const std::vector<CPDF_FormField*>& fields,
+    FX_BOOL bIncludeOrExclude,
+    FX_BOOL bUrlEncoded) {
   CPDFDoc_Environment* pEnv = m_pDocument->GetEnv();
-  ASSERT(pEnv != NULL);
 
   CFX_ByteTextBuf textBuf;
   ExportFieldsToFDFTextBuf(fields, bIncludeOrExclude, textBuf);
@@ -2018,13 +1991,10 @@ FX_BOOL CPDFSDK_InterForm::SubmitFields(const CFX_WideString& csDestination,
   uint8_t* pBuffer = textBuf.GetBuffer();
   FX_STRSIZE nBufSize = textBuf.GetLength();
 
-  if (bUrlEncoded) {
-    if (!FDFToURLEncodedData(pBuffer, nBufSize))
-      return FALSE;
-  }
+  if (bUrlEncoded && !FDFToURLEncodedData(pBuffer, nBufSize))
+    return FALSE;
 
   pEnv->JS_docSubmitForm(pBuffer, nBufSize, csDestination.c_str());
-
   return TRUE;
 }
 
@@ -2076,20 +2046,13 @@ FX_BOOL CPDFSDK_InterForm::FDFToURLEncodedData(uint8_t*& pBuf,
   return TRUE;
 }
 
-FX_BOOL CPDFSDK_InterForm::ExportFieldsToFDFTextBuf(const CFX_PtrArray& fields,
-                                                    FX_BOOL bIncludeOrExclude,
-                                                    CFX_ByteTextBuf& textBuf) {
-  ASSERT(m_pDocument != NULL);
-  ASSERT(m_pInterForm != NULL);
-
-  CFDF_Document* pFDF = m_pInterForm->ExportToFDF(
-      m_pDocument->GetPath(), (CFX_PtrArray&)fields, bIncludeOrExclude);
-  if (!pFDF)
-    return FALSE;
-  FX_BOOL bRet = pFDF->WriteBuf(textBuf);
-  delete pFDF;
-
-  return bRet;
+FX_BOOL CPDFSDK_InterForm::ExportFieldsToFDFTextBuf(
+    const std::vector<CPDF_FormField*>& fields,
+    FX_BOOL bIncludeOrExclude,
+    CFX_ByteTextBuf& textBuf) {
+  nonstd::unique_ptr<CFDF_Document> pFDF(m_pInterForm->ExportToFDF(
+      m_pDocument->GetPath(), fields, bIncludeOrExclude));
+  return pFDF ? pFDF->WriteBuf(textBuf) : FALSE;
 }
 
 CFX_WideString CPDFSDK_InterForm::GetTemporaryFileName(
@@ -2158,44 +2121,33 @@ FX_BOOL CPDFSDK_InterForm::DoAction_ResetForm(const CPDF_Action& action) {
   ASSERT(action);
 
   CPDF_Dictionary* pActionDict = action.GetDict();
-  if (pActionDict->KeyExist("Fields")) {
-    CPDF_ActionFields af = action.GetWidgets();
-    FX_DWORD dwFlags = action.GetFlags();
+  if (!pActionDict->KeyExist("Fields"))
+    return m_pInterForm->ResetForm(true);
 
-    CFX_PtrArray fieldObjects;
-    af.GetAllFields(fieldObjects);
-    CFX_PtrArray fields;
-    GetFieldFromObjects(fieldObjects, fields);
-    return m_pInterForm->ResetForm(fields, !(dwFlags & 0x01), TRUE);
-  }
+  CPDF_ActionFields af = action.GetWidgets();
+  FX_DWORD dwFlags = action.GetFlags();
 
-  return m_pInterForm->ResetForm(TRUE);
+  std::vector<CPDF_Object*> fieldObjects = af.GetAllFields();
+  std::vector<CPDF_FormField*> fields = GetFieldFromObjects(fieldObjects);
+  return m_pInterForm->ResetForm(fields, !(dwFlags & 0x01), true);
 }
 
 FX_BOOL CPDFSDK_InterForm::DoAction_ImportData(const CPDF_Action& action) {
   return FALSE;
 }
 
-void CPDFSDK_InterForm::GetFieldFromObjects(const CFX_PtrArray& objects,
-                                            CFX_PtrArray& fields) {
-  ASSERT(m_pInterForm != NULL);
-
-  int iCount = objects.GetSize();
-  for (int i = 0; i < iCount; i++) {
-    CPDF_Object* pObject = static_cast<CPDF_Object*>(objects[i]);
-    if (!pObject)
-      continue;
-
-    if (pObject->IsString()) {
+std::vector<CPDF_FormField*> CPDFSDK_InterForm::GetFieldFromObjects(
+    const std::vector<CPDF_Object*>& objects) const {
+  std::vector<CPDF_FormField*> fields;
+  for (CPDF_Object* pObject : objects) {
+    if (pObject && pObject->IsString()) {
       CFX_WideString csName = pObject->GetUnicodeText();
       CPDF_FormField* pField = m_pInterForm->GetField(0, csName);
       if (pField)
-        fields.Add(pField);
-    } else if (pObject->IsDictionary()) {
-      if (m_pInterForm->IsValidFormField(pObject))
-        fields.Add(pObject);
+        fields.push_back(pField);
     }
   }
+  return fields;
 }
 
 /* ----------------------------- CPDF_FormNotify -----------------------------
