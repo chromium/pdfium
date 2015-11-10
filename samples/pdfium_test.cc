@@ -332,6 +332,70 @@ FPDF_BOOL Is_Data_Avail(FX_FILEAVAIL* pThis, size_t offset, size_t size) {
 void Add_Segment(FX_DOWNLOADHINTS* pThis, size_t offset, size_t size) {
 }
 
+FPDF_BOOL RenderPage(const std::string& name,
+                     const FPDF_DOCUMENT& doc,
+                     const FPDF_FORMHANDLE& form,
+                     const int page_index,
+                     const Options& options) {
+  FPDF_PAGE page = FPDF_LoadPage(doc, page_index);
+  if (!page) {
+    return FALSE;
+  }
+  FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page);
+  FORM_OnAfterLoadPage(page, form);
+  FORM_DoPageAAction(page, form, FPDFPAGE_AACTION_OPEN);
+
+  double scale = 1.0;
+  if (!options.scale_factor_as_string.empty()) {
+    std::stringstream(options.scale_factor_as_string) >> scale;
+  }
+  int width = static_cast<int>(FPDF_GetPageWidth(page) * scale);
+  int height = static_cast<int>(FPDF_GetPageHeight(page) * scale);
+
+  FPDF_BITMAP bitmap = FPDFBitmap_Create(width, height, 0);
+  if (!bitmap) {
+    fprintf(stderr, "Page was too large to be rendered.\n");
+    return FALSE;
+  }
+
+  FPDFBitmap_FillRect(bitmap, 0, 0, width, height, 0xFFFFFFFF);
+  FPDF_RenderPageBitmap(bitmap, page, 0, 0, width, height, 0, 0);
+
+  FPDF_FFLDraw(form, bitmap, page, 0, 0, width, height, 0, 0);
+  int stride = FPDFBitmap_GetStride(bitmap);
+  const char* buffer =
+      reinterpret_cast<const char*>(FPDFBitmap_GetBuffer(bitmap));
+
+  switch (options.output_format) {
+#ifdef _WIN32
+    case OUTPUT_BMP:
+      WriteBmp(name.c_str(), page_index, buffer, stride, width, height);
+      break;
+
+    case OUTPUT_EMF:
+      WriteEmf(page, name.c_str(), page_index);
+      break;
+#endif
+    case OUTPUT_PNG:
+      WritePng(name.c_str(), page_index, buffer, stride, width, height);
+      break;
+
+    case OUTPUT_PPM:
+      WritePpm(name.c_str(), page_index, buffer, stride, width, height);
+      break;
+
+    default:
+      break;
+  }
+
+  FPDFBitmap_Destroy(bitmap);
+  FORM_DoPageAAction(page, form, FPDFPAGE_AACTION_CLOSE);
+  FORM_OnBeforeClosePage(page, form);
+  FPDFText_ClosePage(text_page);
+  FPDF_ClosePage(page);
+  return TRUE;
+}
+
 void RenderPdf(const std::string& name, const char* pBuf, size_t len,
                const Options& options) {
   fprintf(stderr, "Rendering PDF file %s.\n", name.c_str());
@@ -365,14 +429,33 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
   hints.AddSegment = Add_Segment;
 
   FPDF_DOCUMENT doc;
+  int nRet = PDF_DATA_NOTAVAIL;
+  FPDF_BOOL bIsLinearized = FALSE;
   FPDF_AVAIL pdf_avail = FPDFAvail_Create(&file_avail, &file_access);
-
-  (void)FPDFAvail_IsDocAvail(pdf_avail, &hints);
-
-  if (FPDFAvail_IsLinearized(pdf_avail))
+  if (FPDFAvail_IsLinearized(pdf_avail) == PDF_LINEARIZED) {
+    fprintf(stderr, "Linearized path...\n");
     doc = FPDFAvail_GetDocument(pdf_avail, nullptr);
-  else
+    if (doc) {
+      while (nRet == PDF_DATA_NOTAVAIL) {
+        nRet = FPDFAvail_IsDocAvail(pdf_avail, &hints);
+      }
+      if (nRet == PDF_DATA_ERROR) {
+        fprintf(stderr, "Unknown error in checking if doc was available.\n");
+        return;
+      }
+      nRet = FPDFAvail_IsFormAvail(pdf_avail, &hints);
+      if (nRet == PDF_FORM_ERROR || nRet == PDF_FORM_NOTAVAIL) {
+        fprintf(stderr,
+                "Error %d was returned in checking if form was available.\n",
+                nRet);
+        return;
+      }
+      bIsLinearized = TRUE;
+    }
+  } else {
+    fprintf(stderr, "Non-linearized path...\n");
     doc = FPDF_LoadCustomDocument(&file_access, nullptr);
+  }
 
   if (!doc) {
     unsigned long err = FPDF_GetLastError();
@@ -409,7 +492,6 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
   }
 
   (void)FPDF_GetDocPermissions(doc);
-  (void)FPDFAvail_IsFormAvail(pdf_avail, &hints);
 
   FPDF_FORMHANDLE form = FPDFDOC_InitFormFillEnvironment(doc, &form_callbacks);
   int docType = DOCTYPE_PDF;
@@ -420,80 +502,29 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
   FPDF_SetFormFieldHighlightColor(form, 0, 0xFFE4DD);
   FPDF_SetFormFieldHighlightAlpha(form, 100);
 
-  int first_page = FPDFAvail_GetFirstPageNum(doc);
-  (void)FPDFAvail_IsPageAvail(pdf_avail, first_page, &hints);
-
-  int page_count = FPDF_GetPageCount(doc);
-  for (int i = 0; i < page_count; ++i) {
-    (void)FPDFAvail_IsPageAvail(pdf_avail, i, &hints);
-  }
-
   FORM_DoDocumentJSAction(form);
   FORM_DoDocumentOpenAction(form);
 
+  int page_count = FPDF_GetPageCount(doc);
   int rendered_pages = 0;
   int bad_pages = 0;
   for (int i = 0; i < page_count; ++i) {
-    FPDF_PAGE page = FPDF_LoadPage(doc, i);
-    if (!page) {
+    if (bIsLinearized) {
+      nRet = PDF_DATA_NOTAVAIL;
+      while (nRet == PDF_DATA_NOTAVAIL) {
+        nRet = FPDFAvail_IsPageAvail(pdf_avail, i, &hints);
+      }
+      if (nRet == PDF_DATA_ERROR) {
+        fprintf(stderr, "Unknown error in checking if page %d is available.\n",
+                i);
+        return;
+      }
+    }
+    if (RenderPage(name, doc, form, i, options)) {
+      ++rendered_pages;
+    } else {
       ++bad_pages;
-      continue;
     }
-    FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page);
-    FORM_OnAfterLoadPage(page, form);
-    FORM_DoPageAAction(page, form, FPDFPAGE_AACTION_OPEN);
-
-    double scale = 1.0;
-    if (!options.scale_factor_as_string.empty()) {
-      std::stringstream(options.scale_factor_as_string) >> scale;
-    }
-    int width = static_cast<int>(FPDF_GetPageWidth(page) * scale);
-    int height = static_cast<int>(FPDF_GetPageHeight(page) * scale);
-
-    FPDF_BITMAP bitmap = FPDFBitmap_Create(width, height, 0);
-    if (!bitmap) {
-      fprintf(stderr, "Page was too large to be rendered.\n");
-      bad_pages++;
-      continue;
-    }
-
-    FPDFBitmap_FillRect(bitmap, 0, 0, width, height, 0xFFFFFFFF);
-    FPDF_RenderPageBitmap(bitmap, page, 0, 0, width, height, 0, 0);
-    ++rendered_pages;
-
-    FPDF_FFLDraw(form, bitmap, page, 0, 0, width, height, 0, 0);
-    int stride = FPDFBitmap_GetStride(bitmap);
-    const char* buffer =
-        reinterpret_cast<const char*>(FPDFBitmap_GetBuffer(bitmap));
-
-    switch (options.output_format) {
-#ifdef _WIN32
-      case OUTPUT_BMP:
-        WriteBmp(name.c_str(), i, buffer, stride, width, height);
-        break;
-
-      case OUTPUT_EMF:
-        WriteEmf(page, name.c_str(), i);
-        break;
-#endif
-      case OUTPUT_PPM:
-        WritePpm(name.c_str(), i, buffer, stride, width, height);
-        break;
-
-      case OUTPUT_PNG:
-        WritePng(name.c_str(), i, buffer, stride, width, height);
-        break;
-
-      default:
-        break;
-    }
-
-    FPDFBitmap_Destroy(bitmap);
-
-    FORM_DoPageAAction(page, form, FPDFPAGE_AACTION_CLOSE);
-    FORM_OnBeforeClosePage(page, form);
-    FPDFText_ClosePage(text_page);
-    FPDF_ClosePage(page);
   }
 
   FORM_DoDocumentAAction(form, FPDFDOC_AACTION_WC);

@@ -97,7 +97,8 @@ void EmbedderTest::TearDown() {
   free(file_contents_);
 }
 
-bool EmbedderTest::OpenDocument(const std::string& filename) {
+bool EmbedderTest::OpenDocument(const std::string& filename,
+                                bool must_linearize) {
   std::string file_path;
   if (!PathService::GetTestFilePath(filename, &file_path))
     return false;
@@ -117,15 +118,42 @@ bool EmbedderTest::OpenDocument(const std::string& filename) {
   hints_.AddSegment = Add_Segment;
 
   avail_ = FPDFAvail_Create(&file_avail_, &file_access_);
-  (void)FPDFAvail_IsDocAvail(avail_, &hints_);
 
-  if (!FPDFAvail_IsLinearized(avail_))
-    document_ = FPDF_LoadCustomDocument(&file_access_, nullptr);
-  else
+  if (FPDFAvail_IsLinearized(avail_) == PDF_LINEARIZED) {
     document_ = FPDFAvail_GetDocument(avail_, nullptr);
-
-  if (!document_)
-    return false;
+    if (!document_) {
+      return false;
+    }
+    int32_t nRet = PDF_DATA_NOTAVAIL;
+    while (nRet == PDF_DATA_NOTAVAIL) {
+      nRet = FPDFAvail_IsDocAvail(avail_, &hints_);
+    }
+    if (nRet == PDF_DATA_ERROR) {
+      return false;
+    }
+    nRet = FPDFAvail_IsFormAvail(avail_, &hints_);
+    if (nRet == PDF_FORM_ERROR || nRet == PDF_FORM_NOTAVAIL) {
+      return false;
+    }
+    int page_count = FPDF_GetPageCount(document_);
+    for (int i = 0; i < page_count; ++i) {
+      nRet = PDF_DATA_NOTAVAIL;
+      while (nRet == PDF_DATA_NOTAVAIL) {
+        nRet = FPDFAvail_IsPageAvail(avail_, i, &hints_);
+      }
+      if (nRet == PDF_DATA_ERROR) {
+        return false;
+      }
+    }
+  } else {
+    if (must_linearize) {
+      return false;
+    }
+    document_ = FPDF_LoadCustomDocument(&file_access_, nullptr);
+    if (!document_) {
+      return false;
+    }
+  }
 
   int docType = DOCTYPE_PDF;
   if (FPDF_HasXFAField(document_, &docType)) {
@@ -134,7 +162,6 @@ bool EmbedderTest::OpenDocument(const std::string& filename) {
   }
 
   (void)FPDF_GetDocPermissions(document_);
-  (void)FPDFAvail_IsFormAvail(avail_, &hints_);
 
   IPDF_JSPLATFORM* platform = static_cast<IPDF_JSPLATFORM*>(this);
   memset(platform, 0, sizeof(IPDF_JSPLATFORM));

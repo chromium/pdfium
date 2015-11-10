@@ -13,6 +13,7 @@
 #include "../../../include/fpdfapi/fpdf_parser.h"
 #include "../../../include/fxcrt/fx_safe_types.h"
 #include "../fpdf_page/pageint.h"
+#include "parser_int.h"
 #include "third_party/base/nonstd_unique_ptr.h"
 #include "third_party/base/stl_util.h"
 
@@ -2676,17 +2677,23 @@ void CPDF_SyntaxParser::GetBinary(uint8_t* buffer, FX_DWORD size) {
 
 class CPDF_DataAvail final : public IPDF_DataAvail {
  public:
-  CPDF_DataAvail(IFX_FileAvail* pFileAvail, IFX_FileRead* pFileRead);
+  CPDF_DataAvail(IFX_FileAvail* pFileAvail,
+                 IFX_FileRead* pFileRead,
+                 FX_BOOL bSupportHintTable);
   ~CPDF_DataAvail() override;
 
   // IPDF_DataAvail:
-  FX_BOOL IsDocAvail(IFX_DownloadHints* pHints) override;
+  int IsDocAvail(IFX_DownloadHints* pHints) override;
   void SetDocument(CPDF_Document* pDoc) override;
-  FX_BOOL IsPageAvail(int iPage, IFX_DownloadHints* pHints) override;
-  int32_t IsFormAvail(IFX_DownloadHints* pHints) override;
-  int32_t IsLinearizedPDF() override;
+  int IsPageAvail(int iPage, IFX_DownloadHints* pHints) override;
+  int IsFormAvail(IFX_DownloadHints* pHints) override;
+  int IsLinearizedPDF() override;
   FX_BOOL IsLinearized() override { return m_bLinearized; }
   void GetLinearizedMainXRefInfo(FX_FILESIZE* pPos, FX_DWORD* pSize) override;
+  int GetPageCount() const;
+  CPDF_Dictionary* GetPage(int index);
+
+  friend class CPDF_HintTables;
 
  protected:
   static const int kMaxDataAvailRecursionDepth = 64;
@@ -2701,6 +2708,7 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
   FX_BOOL CheckDocStatus(IFX_DownloadHints* pHints);
   FX_BOOL CheckHeader(IFX_DownloadHints* pHints);
   FX_BOOL CheckFirstPage(IFX_DownloadHints* pHints);
+  FX_BOOL CheckHintTables(IFX_DownloadHints* pHints);
   FX_BOOL CheckEnd(IFX_DownloadHints* pHints);
   FX_BOOL CheckCrossRef(IFX_DownloadHints* pHints);
   FX_BOOL CheckCrossRefItem(IFX_DownloadHints* pHints);
@@ -2723,7 +2731,9 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
   void SetStartOffset(FX_FILESIZE dwOffset);
   FX_BOOL GetNextToken(CFX_ByteString& token);
   FX_BOOL GetNextChar(uint8_t& ch);
-  CPDF_Object* ParseIndirectObjectAt(FX_FILESIZE pos, FX_DWORD objnum);
+  CPDF_Object* ParseIndirectObjectAt(FX_FILESIZE pos,
+                                     FX_DWORD objnum,
+                                     CPDF_IndirectObjects* pObjList = NULL);
   CPDF_Object* GetObject(FX_DWORD objnum,
                          IFX_DownloadHints* pHints,
                          FX_BOOL* pExistInFile);
@@ -2732,7 +2742,7 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
   FX_BOOL LoadPages(IFX_DownloadHints* pHints);
   FX_BOOL LoadAllXref(IFX_DownloadHints* pHints);
   FX_BOOL LoadAllFile(IFX_DownloadHints* pHints);
-  FX_BOOL CheckLinearizedData(IFX_DownloadHints* pHints);
+  int32_t CheckLinearizedData(IFX_DownloadHints* pHints);
   FX_BOOL CheckFileResources(IFX_DownloadHints* pHints);
   FX_BOOL CheckPageAnnots(int iPage, IFX_DownloadHints* pHints);
 
@@ -2755,6 +2765,9 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
   FX_BOOL CheckPageCount(IFX_DownloadHints* pHints);
   FX_BOOL IsFirstCheck(int iPage);
   void ResetFirstCheck(int iPage);
+  FX_BOOL IsDataAvail(FX_FILESIZE offset,
+                      FX_DWORD size,
+                      IFX_DownloadHints* pHints);
 
   CPDF_Parser m_parser;
 
@@ -2868,6 +2881,9 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
 
   std::set<FX_DWORD> m_pageMapCheckState;
   std::set<FX_DWORD> m_pagesLoadState;
+
+  nonstd::unique_ptr<CPDF_HintTables> m_pHintTables;
+  FX_BOOL m_bSupportHintTable;
 };
 
 IPDF_DataAvail::IPDF_DataAvail(IFX_FileAvail* pFileAvail,
@@ -2877,14 +2893,15 @@ IPDF_DataAvail::IPDF_DataAvail(IFX_FileAvail* pFileAvail,
 // static
 IPDF_DataAvail* IPDF_DataAvail::Create(IFX_FileAvail* pFileAvail,
                                        IFX_FileRead* pFileRead) {
-  return new CPDF_DataAvail(pFileAvail, pFileRead);
+  return new CPDF_DataAvail(pFileAvail, pFileRead, TRUE);
 }
 
 // static
 int CPDF_DataAvail::s_CurrentDataAvailRecursionDepth = 0;
 
 CPDF_DataAvail::CPDF_DataAvail(IFX_FileAvail* pFileAvail,
-                               IFX_FileRead* pFileRead)
+                               IFX_FileRead* pFileRead,
+                               FX_BOOL bSupportHintTable)
     : IPDF_DataAvail(pFileAvail, pFileRead) {
   m_Pos = 0;
   m_dwFileLen = 0;
@@ -2930,6 +2947,7 @@ CPDF_DataAvail::CPDF_DataAvail(IFX_FileAvail* pFileAvail,
   m_bTotalLoadPageTree = FALSE;
   m_bCurPageDictLoadOK = FALSE;
   m_bLinearedDataOK = FALSE;
+  m_bSupportHintTable = bSupportHintTable;
 }
 CPDF_DataAvail::~CPDF_DataAvail() {
   if (m_pLinearized) {
@@ -2941,9 +2959,9 @@ CPDF_DataAvail::~CPDF_DataAvail() {
   if (m_pTrailer) {
     m_pTrailer->Release();
   }
-  int32_t i = 0;
-  int32_t iSize = m_arrayAcroforms.GetSize();
-  for (i = 0; i < iSize; ++i) {
+
+  int iSize = m_arrayAcroforms.GetSize();
+  for (int i = 0; i < iSize; ++i) {
     static_cast<CPDF_Object*>(m_arrayAcroforms.GetAt(i))->Release();
   }
 }
@@ -3025,28 +3043,11 @@ FX_BOOL CPDF_DataAvail::IsObjectsAvail(CFX_PtrArray& obj_array,
         CPDF_Reference* pRef = pObj->AsReference();
         FX_DWORD dwNum = pRef->GetRefObjNum();
         FX_FILESIZE offset;
-        FX_DWORD original_size = GetObjectSize(dwNum, offset);
-        pdfium::base::CheckedNumeric<FX_DWORD> size = original_size;
-        if (size.ValueOrDefault(0) == 0 || offset < 0 ||
-            offset >= m_dwFileLen) {
+        FX_DWORD size = GetObjectSize(dwNum, offset);
+        if (size == 0 || offset < 0 || offset >= m_dwFileLen) {
           break;
         }
-
-        size += offset;
-        size += 512;
-        if (!size.IsValid()) {
-          break;
-        }
-        if (size.ValueOrDie() > m_dwFileLen) {
-          size = m_dwFileLen - offset;
-        } else {
-          size = original_size + 512;
-        }
-        if (!size.IsValid()) {
-          break;
-        }
-        if (!m_pFileAvail->IsDataAvail(offset, size.ValueOrDie())) {
-          pHints->AddSegment(offset, size.ValueOrDie());
+        if (!IsDataAvail(offset, size, pHints)) {
           ret_array.Add(pObj);
           count++;
         } else if (!m_objnum_array.Find(dwNum)) {
@@ -3078,19 +3079,19 @@ FX_BOOL CPDF_DataAvail::IsObjectsAvail(CFX_PtrArray& obj_array,
   obj_array.Append(new_obj_array);
   return IsObjectsAvail(obj_array, FALSE, pHints, ret_array);
 }
-FX_BOOL CPDF_DataAvail::IsDocAvail(IFX_DownloadHints* pHints) {
+int CPDF_DataAvail::IsDocAvail(IFX_DownloadHints* pHints) {
   if (!m_dwFileLen && m_pFileRead) {
     m_dwFileLen = (FX_DWORD)m_pFileRead->GetSize();
     if (!m_dwFileLen) {
-      return TRUE;
+      return PDF_DATA_ERROR;
     }
   }
   while (!m_bDocAvail) {
     if (!CheckDocStatus(pHints)) {
-      return FALSE;
+      return PDF_DATA_NOTAVAIL;
     }
   }
-  return TRUE;
+  return PDF_DATA_AVAIL;
 }
 FX_BOOL CPDF_DataAvail::CheckAcroFormSubObject(IFX_DownloadHints* pHints) {
   if (!m_objs_array.GetSize()) {
@@ -3143,6 +3144,8 @@ FX_BOOL CPDF_DataAvail::CheckDocStatus(IFX_DownloadHints* pHints) {
     case PDF_DATAAVAIL_FIRSTPAGE:
     case PDF_DATAAVAIL_FIRSTPAGE_PREPARE:
       return CheckFirstPage(pHints);
+    case PDF_DATAAVAIL_HINTTABLE:
+      return CheckHintTables(pHints);
     case PDF_DATAAVAIL_END:
       return CheckEnd(pHints);
     case PDF_DATAAVAIL_CROSSREF:
@@ -3227,53 +3230,24 @@ FX_BOOL CPDF_DataAvail::LoadAllXref(IFX_DownloadHints* pHints) {
 CPDF_Object* CPDF_DataAvail::GetObject(FX_DWORD objnum,
                                        IFX_DownloadHints* pHints,
                                        FX_BOOL* pExistInFile) {
-  CPDF_Object* pRet = NULL;
-  FX_DWORD original_size = 0;
+  CPDF_Object* pRet = nullptr;
+  FX_DWORD size = 0;
   FX_FILESIZE offset = 0;
-  CPDF_Parser* pParser = NULL;
-
-  if (pExistInFile) {
+  CPDF_Parser* pParser = nullptr;
+  if (pExistInFile)
     *pExistInFile = TRUE;
-  }
 
   if (m_pDocument == NULL) {
-    original_size = (FX_DWORD)m_parser.GetObjectSize(objnum);
+    size = (FX_DWORD)m_parser.GetObjectSize(objnum);
     offset = m_parser.GetObjectOffset(objnum);
     pParser = &m_parser;
   } else {
-    original_size = GetObjectSize(objnum, offset);
+    size = GetObjectSize(objnum, offset);
     pParser = (CPDF_Parser*)(m_pDocument->GetParser());
   }
-
-  pdfium::base::CheckedNumeric<FX_DWORD> size = original_size;
-  if (size.ValueOrDefault(0) == 0 || offset < 0 || offset >= m_dwFileLen) {
-    if (pExistInFile)
-      *pExistInFile = FALSE;
-
-    return NULL;
+  if (!IsDataAvail(offset, size, pHints)) {
+    return nullptr;
   }
-
-  size += offset;
-  size += 512;
-  if (!size.IsValid()) {
-    return NULL;
-  }
-
-  if (size.ValueOrDie() > m_dwFileLen) {
-    size = m_dwFileLen - offset;
-  } else {
-    size = original_size + 512;
-  }
-
-  if (!size.IsValid()) {
-    return NULL;
-  }
-
-  if (!m_pFileAvail->IsDataAvail(offset, size.ValueOrDie())) {
-    pHints->AddSegment(offset, size.ValueOrDie());
-    return NULL;
-  }
-
   if (pParser) {
     pRet = pParser->ParseIndirectObject(NULL, objnum, NULL);
   }
@@ -3568,15 +3542,82 @@ FX_BOOL CPDF_DataAvail::CheckFirstPage(IFX_DownloadHints* pHints) {
   } else {
     m_docStatus = PDF_DATAAVAIL_FIRSTPAGE_PREPARE;
   }
-  if (!bNeedDownLoad && m_docStatus == PDF_DATAAVAIL_FIRSTPAGE_PREPARE) {
+  if (bNeedDownLoad || m_docStatus != PDF_DATAAVAIL_FIRSTPAGE_PREPARE) {
+    m_docStatus = PDF_DATAAVAIL_FIRSTPAGE_PREPARE;
+    return FALSE;
+  }
+  m_docStatus =
+      m_bSupportHintTable ? PDF_DATAAVAIL_HINTTABLE : PDF_DATAAVAIL_DONE;
+  return TRUE;
+}
+FX_BOOL CPDF_DataAvail::IsDataAvail(FX_FILESIZE offset,
+                                    FX_DWORD size,
+                                    IFX_DownloadHints* pHints) {
+  if (offset > m_dwFileLen)
+    return TRUE;
+  FX_SAFE_DWORD safeSize = pdfium::base::checked_cast<FX_DWORD>(offset);
+  safeSize += size;
+  safeSize += 512;
+  if (!safeSize.IsValid() || safeSize.ValueOrDie() > m_dwFileLen)
+    size = m_dwFileLen - offset;
+  else
+    size += 512;
+  if (!m_pFileAvail->IsDataAvail(offset, size)) {
+    pHints->AddSegment(offset, size);
+    return FALSE;
+  }
+  return TRUE;
+}
+FX_BOOL CPDF_DataAvail::CheckHintTables(IFX_DownloadHints* pHints) {
+  CPDF_Dictionary* pDict = m_pLinearized->GetDict();
+  if (!pDict) {
+    m_docStatus = PDF_DATAAVAIL_ERROR;
+    return FALSE;
+  }
+  if (!pDict->KeyExist(FX_BSTRC("H")) || !pDict->KeyExist(FX_BSTRC("O")) ||
+      !pDict->KeyExist(FX_BSTRC("N"))) {
+    m_docStatus = PDF_DATAAVAIL_ERROR;
+    return FALSE;
+  }
+  int nPageCount = pDict->GetElementValue(FX_BSTRC("N"))->GetInteger();
+  if (nPageCount <= 1) {
     m_docStatus = PDF_DATAAVAIL_DONE;
     return TRUE;
   }
-  m_docStatus = PDF_DATAAVAIL_FIRSTPAGE_PREPARE;
-  return FALSE;
+  CPDF_Array* pHintStreamRange = pDict->GetArray(FX_BSTRC("H"));
+  FX_FILESIZE szHSStart =
+      pHintStreamRange->GetElementValue(0)
+          ? pHintStreamRange->GetElementValue(0)->GetInteger()
+          : 0;
+  FX_FILESIZE szHSLength =
+      pHintStreamRange->GetElementValue(1)
+          ? pHintStreamRange->GetElementValue(1)->GetInteger()
+          : 0;
+  if (szHSStart < 0 || szHSLength <= 0) {
+    m_docStatus = PDF_DATAAVAIL_ERROR;
+    return FALSE;
+  }
+  if (!IsDataAvail(szHSStart, szHSLength, pHints)) {
+    return FALSE;
+  }
+  m_syntaxParser.InitParser(m_pFileRead, m_dwHeaderOffset);
+  nonstd::unique_ptr<CPDF_HintTables> pHintTables(
+      new CPDF_HintTables(this, pDict));
+  CPDF_Stream* pHintStream = (CPDF_Stream*)ParseIndirectObjectAt(szHSStart, 0);
+  FX_BOOL bLoaded = FALSE;
+  if (pHintTables && pHintStream && pHintStream->GetType() == PDFOBJ_STREAM) {
+    bLoaded = pHintTables->LoadHintStream(pHintStream);
+  }
+  if (!bLoaded) {
+    m_pHintTables.reset(pHintTables.release());
+  }
+  m_docStatus = PDF_DATAAVAIL_DONE;
+  return TRUE;
 }
-CPDF_Object* CPDF_DataAvail::ParseIndirectObjectAt(FX_FILESIZE pos,
-                                                   FX_DWORD objnum) {
+CPDF_Object* CPDF_DataAvail::ParseIndirectObjectAt(
+    FX_FILESIZE pos,
+    FX_DWORD objnum,
+    CPDF_IndirectObjects* pObjList) {
   FX_FILESIZE SavedPos = m_syntaxParser.SavePos();
   m_syntaxParser.RestorePos(pos);
   FX_BOOL bIsNumber;
@@ -3597,26 +3638,27 @@ CPDF_Object* CPDF_DataAvail::ParseIndirectObjectAt(FX_FILESIZE pos,
     m_syntaxParser.RestorePos(SavedPos);
     return NULL;
   }
-  CPDF_Object* pObj = m_syntaxParser.GetObject(NULL, objnum, gennum, 0);
+  CPDF_Object* pObj =
+      m_syntaxParser.GetObject(pObjList, parser_objnum, gennum, 0);
   m_syntaxParser.RestorePos(SavedPos);
   return pObj;
 }
-int32_t CPDF_DataAvail::IsLinearizedPDF() {
+int CPDF_DataAvail::IsLinearizedPDF() {
   FX_DWORD req_size = 1024;
   if (!m_pFileAvail->IsDataAvail(0, req_size)) {
-    return PDF_UNKNOW_LINEARIZED;
+    return PDF_LINEARIZATION_UNKNOWN;
   }
   if (!m_pFileRead) {
     return PDF_NOT_LINEARIZED;
   }
   FX_FILESIZE dwSize = m_pFileRead->GetSize();
   if (dwSize < (FX_FILESIZE)req_size) {
-    return PDF_UNKNOW_LINEARIZED;
+    return PDF_LINEARIZATION_UNKNOWN;
   }
   uint8_t buffer[1024];
   m_pFileRead->ReadBlock(buffer, 0, req_size);
   if (IsLinearizedFile(buffer, req_size)) {
-    return PDF_IS_LINEARIZED;
+    return PDF_LINEARIZED;
   }
   return PDF_NOT_LINEARIZED;
 }
@@ -4233,36 +4275,35 @@ FX_BOOL CPDF_DataAvail::LoadPages(IFX_DownloadHints* pHints) {
   m_pDocument->LoadPages();
   return FALSE;
 }
-FX_BOOL CPDF_DataAvail::CheckLinearizedData(IFX_DownloadHints* pHints) {
+int CPDF_DataAvail::CheckLinearizedData(IFX_DownloadHints* pHints) {
   if (m_bLinearedDataOK) {
-    return TRUE;
+    return PDF_DATA_AVAIL;
   }
 
   if (!m_bMainXRefLoadTried) {
     FX_SAFE_DWORD data_size = m_dwFileLen;
     data_size -= m_dwLastXRefOffset;
     if (!data_size.IsValid()) {
-      return FALSE;
+      return PDF_DATA_ERROR;
     }
     if (!m_pFileAvail->IsDataAvail(m_dwLastXRefOffset,
                                    data_size.ValueOrDie())) {
       pHints->AddSegment(m_dwLastXRefOffset, data_size.ValueOrDie());
-      return FALSE;
+      return PDF_DATA_NOTAVAIL;
     }
-    FX_DWORD dwRet =
-        ((CPDF_Parser*)m_pDocument->GetParser())->LoadLinearizedMainXRefTable();
+    FX_DWORD dwRet = (m_pDocument->GetParser())->LoadLinearizedMainXRefTable();
     m_bMainXRefLoadTried = TRUE;
     if (dwRet != PDFPARSE_ERROR_SUCCESS) {
-      return FALSE;
+      return PDF_DATA_ERROR;
     }
     if (!PreparePageItem()) {
-      return FALSE;
+      return PDF_DATA_NOTAVAIL;
     }
     m_bMainXRefLoadedOK = TRUE;
     m_bLinearedDataOK = TRUE;
   }
 
-  return m_bLinearedDataOK;
+  return m_bLinearedDataOK ? PDF_DATA_AVAIL : PDF_DATA_NOTAVAIL;
 }
 FX_BOOL CPDF_DataAvail::CheckPageAnnots(int32_t iPage,
                                         IFX_DownloadHints* pHints) {
@@ -4328,9 +4369,9 @@ FX_BOOL CPDF_DataAvail::HaveResourceAncestor(CPDF_Dictionary* pDict) {
   }
   return HaveResourceAncestor(pParentDict);
 }
-FX_BOOL CPDF_DataAvail::IsPageAvail(int32_t iPage, IFX_DownloadHints* pHints) {
+int CPDF_DataAvail::IsPageAvail(int32_t iPage, IFX_DownloadHints* pHints) {
   if (!m_pDocument) {
-    return FALSE;
+    return PDF_DATA_ERROR;
   }
   if (IsFirstCheck(iPage)) {
     m_bCurPageDictLoadOK = FALSE;
@@ -4341,44 +4382,52 @@ FX_BOOL CPDF_DataAvail::IsPageAvail(int32_t iPage, IFX_DownloadHints* pHints) {
     m_objnum_array.RemoveAll();
   }
   if (m_pagesLoadState.find(iPage) != m_pagesLoadState.end()) {
-    return TRUE;
+    return PDF_DATA_AVAIL;
   }
   if (m_bLinearized) {
     if ((FX_DWORD)iPage == m_dwFirstPageNo) {
       m_pagesLoadState.insert(iPage);
-      return TRUE;
+      return PDF_DATA_AVAIL;
     }
-    if (!CheckLinearizedData(pHints)) {
-      return FALSE;
+    int32_t nResult = CheckLinearizedData(pHints);
+    if (nResult != PDF_DATA_AVAIL) {
+      return nResult;
+    }
+    if (m_pHintTables) {
+      nResult = m_pHintTables->CheckPage(iPage, pHints);
+      if (nResult != PDF_DATA_AVAIL)
+        return nResult;
+      m_pagesLoadState.insert(iPage);
+      return PDF_DATA_AVAIL;
     }
     if (m_bMainXRefLoadedOK) {
       if (m_bTotalLoadPageTree) {
         if (!LoadPages(pHints)) {
-          return FALSE;
+          return PDF_DATA_NOTAVAIL;
         }
       } else {
         if (!m_bCurPageDictLoadOK && !CheckPage(iPage, pHints)) {
-          return FALSE;
+          return PDF_DATA_NOTAVAIL;
         }
       }
     } else {
       if (!LoadAllFile(pHints)) {
-        return FALSE;
+        return PDF_DATA_NOTAVAIL;
       }
       ((CPDF_Parser*)m_pDocument->GetParser())->RebuildCrossRef();
       ResetFirstCheck(iPage);
-      return TRUE;
+      return PDF_DATA_AVAIL;
     }
   } else {
     if (!m_bTotalLoadPageTree) {
       if (!m_bCurPageDictLoadOK && !CheckPage(iPage, pHints)) {
-        return FALSE;
+        return PDF_DATA_NOTAVAIL;
       }
     }
   }
   if (m_bHaveAcroForm && !m_bAcroFormLoad) {
     if (!CheckAcroFormSubObject(pHints)) {
-      return FALSE;
+      return PDF_DATA_NOTAVAIL;
     }
     m_bAcroFormLoad = TRUE;
   }
@@ -4389,7 +4438,7 @@ FX_BOOL CPDF_DataAvail::IsPageAvail(int32_t iPage, IFX_DownloadHints* pHints) {
       m_pPageDict = m_pDocument->GetPage(iPage);
       if (!m_pPageDict) {
         ResetFirstCheck(iPage);
-        return TRUE;
+        return PDF_DATA_AVAIL;
       }
       CFX_PtrArray obj_array;
       obj_array.Add(m_pPageDict);
@@ -4409,14 +4458,14 @@ FX_BOOL CPDF_DataAvail::IsPageAvail(int32_t iPage, IFX_DownloadHints* pHints) {
         m_bPageLoadedOK = TRUE;
       } else {
         m_objs_array.Append(new_objs_array);
-        return bRet;
+        return PDF_DATA_NOTAVAIL;
       }
     }
   }
   if (m_bPageLoadedOK) {
     if (!m_bAnnotsLoad) {
       if (!CheckPageAnnots(iPage, pHints)) {
-        return FALSE;
+        return PDF_DATA_NOTAVAIL;
       }
       m_bAnnotsLoad = TRUE;
     }
@@ -4432,7 +4481,7 @@ FX_BOOL CPDF_DataAvail::IsPageAvail(int32_t iPage, IFX_DownloadHints* pHints) {
   if (m_bNeedDownLoadResource) {
     FX_BOOL bRet = CheckResources(pHints);
     if (!bRet) {
-      return FALSE;
+      return PDF_DATA_NOTAVAIL;
     }
     m_bNeedDownLoadResource = FALSE;
   }
@@ -4441,7 +4490,7 @@ FX_BOOL CPDF_DataAvail::IsPageAvail(int32_t iPage, IFX_DownloadHints* pHints) {
   m_bCurPageDictLoadOK = FALSE;
   ResetFirstCheck(iPage);
   m_pagesLoadState.insert(iPage);
-  return TRUE;
+  return PDF_DATA_AVAIL;
 }
 FX_BOOL CPDF_DataAvail::CheckResources(IFX_DownloadHints* pHints) {
   if (!m_objs_array.GetSize()) {
@@ -4471,21 +4520,57 @@ void CPDF_DataAvail::GetLinearizedMainXRefInfo(FX_FILESIZE* pPos,
     *pSize = (FX_DWORD)(m_dwFileLen - m_dwLastXRefOffset);
   }
 }
-int32_t CPDF_DataAvail::IsFormAvail(IFX_DownloadHints* pHints) {
+int CPDF_DataAvail::GetPageCount() const {
+  if (m_pLinearized) {
+    CPDF_Dictionary* pDict = m_pLinearized->GetDict();
+    CPDF_Object* pObj = pDict ? pDict->GetElementValue(FX_BSTRC("N")) : nullptr;
+    return pObj ? pObj->GetInteger() : 0;
+  }
+  return m_pDocument ? m_pDocument->GetPageCount() : 0;
+}
+CPDF_Dictionary* CPDF_DataAvail::GetPage(int index) {
+  if (!m_pDocument || index < 0 || index >= this->GetPageCount()) {
+    return nullptr;
+  }
+  if (m_pLinearized) {
+    CPDF_Dictionary* pDict = m_pLinearized->GetDict();
+    CPDF_Object* pObj = pDict ? pDict->GetElementValue(FX_BSTRC("P")) : nullptr;
+    int pageNum = pObj ? pObj->GetInteger() : 0;
+    if (m_pHintTables && index != pageNum) {
+      FX_FILESIZE szPageStartPos = 0;
+      FX_FILESIZE szPageLength = 0;
+      FX_DWORD dwObjNum = 0;
+      FX_BOOL bPagePosGot = m_pHintTables->GetPagePos(index, szPageStartPos,
+                                                      szPageLength, dwObjNum);
+      if (!bPagePosGot) {
+        return nullptr;
+      }
+      m_syntaxParser.InitParser(m_pFileRead, (FX_DWORD)szPageStartPos);
+      CPDF_Object* pPageDict = ParseIndirectObjectAt(0, dwObjNum, m_pDocument);
+      if (!pPageDict) {
+        return nullptr;
+      }
+      m_pDocument->InsertIndirectObject(dwObjNum, pPageDict);
+      return pPageDict->GetDict();
+    }
+  }
+  return m_pDocument->GetPage(index);
+}
+int CPDF_DataAvail::IsFormAvail(IFX_DownloadHints* pHints) {
   if (!m_pDocument) {
-    return PDFFORM_AVAIL;
+    return PDF_FORM_AVAIL;
   }
   if (!m_bLinearizedFormParamLoad) {
     CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
     if (!pRoot) {
-      return PDFFORM_AVAIL;
+      return PDF_FORM_AVAIL;
     }
     CPDF_Object* pAcroForm = pRoot->GetElement(FX_BSTRC("AcroForm"));
     if (!pAcroForm) {
-      return PDFFORM_NOTEXIST;
+      return PDF_FORM_NOTEXIST;
     }
     if (!CheckLinearizedData(pHints)) {
-      return PDFFORM_NOTAVAIL;
+      return PDF_FORM_NOTAVAIL;
     }
     if (!m_objs_array.GetSize()) {
       m_objs_array.Add(pAcroForm->GetDict());
@@ -4497,9 +4582,9 @@ int32_t CPDF_DataAvail::IsFormAvail(IFX_DownloadHints* pHints) {
   m_objs_array.RemoveAll();
   if (!bRet) {
     m_objs_array.Append(new_objs_array);
-    return PDFFORM_NOTAVAIL;
+    return PDF_FORM_NOTAVAIL;
   }
-  return PDFFORM_AVAIL;
+  return PDF_FORM_AVAIL;
 }
 void CPDF_SortObjNumArray::AddObjNum(FX_DWORD dwObjNum) {
   int32_t iNext = 0;
@@ -4537,4 +4622,333 @@ CPDF_PageNode::~CPDF_PageNode() {
     delete pNode;
   }
   m_childNode.RemoveAll();
+}
+CPDF_HintTables::~CPDF_HintTables() {
+  m_dwDeltaNObjsArray.RemoveAll();
+  m_dwNSharedObjsArray.RemoveAll();
+  m_dwSharedObjNumArray.RemoveAll();
+  m_dwIdentifierArray.RemoveAll();
+  m_szPageOffsetArray.RemoveAll();
+  m_szSharedObjOffsetArray.RemoveAll();
+}
+FX_DWORD CPDF_HintTables::GetItemLength(int index,
+                                        const CFX_FileSizeArray& szArray) {
+  if (index < 0 || szArray.GetSize() < 2 || index > szArray.GetSize() - 2 ||
+      szArray[index] > szArray[index + 1])
+    return 0;
+  return szArray[index + 1] - szArray[index];
+}
+FX_BOOL CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
+  if (!hStream)
+    return FALSE;
+  int nStreamOffset = ReadPrimaryHintStreamOffset();
+  int nStreamLen = ReadPrimaryHintStreamLength();
+  if (nStreamOffset < 0 || nStreamLen < 1)
+    return FALSE;
+  // Item 1: The least number of objects in a page.
+  FX_DWORD dwObjLeastNum = hStream->GetBits(32);
+  // Item 2: The location of the first page's page object.
+  FX_DWORD dwFirstObjLoc = hStream->GetBits(32);
+  if (dwFirstObjLoc > nStreamOffset) {
+    FX_SAFE_DWORD safeLoc = pdfium::base::checked_cast<FX_DWORD>(nStreamLen);
+    safeLoc += dwFirstObjLoc;
+    if (!safeLoc.IsValid())
+      return FALSE;
+    m_szFirstPageObjOffset =
+        pdfium::base::checked_cast<FX_FILESIZE>(safeLoc.ValueOrDie());
+  } else {
+    m_szFirstPageObjOffset =
+        pdfium::base::checked_cast<FX_FILESIZE>(dwFirstObjLoc);
+  }
+  // Item 3: The number of bits needed to represent the difference
+  // between the greatest and least number of objects in a page.
+  FX_DWORD dwDeltaObjectsBits = hStream->GetBits(16);
+  // Item 4: The least length of a page in bytes.
+  FX_DWORD dwPageLeastLen = hStream->GetBits(32);
+  // Item 5: The number of bits needed to represent the difference
+  // between the greatest and least length of a page, in bytes.
+  FX_DWORD dwDeltaPageLenBits = hStream->GetBits(16);
+  // Skip Item 6, 7, 8, 9 total 96 bits.
+  hStream->SkipBits(96);
+  // Item 10: The number of bits needed to represent the greatest
+  // number of shared object references.
+  FX_DWORD dwSharedObjBits = hStream->GetBits(16);
+  // Item 11: The number of bits needed to represent the numerically
+  // greatest shared object identifier used by the pages.
+  FX_DWORD dwSharedIdBits = hStream->GetBits(16);
+  // Item 12: The number of bits needed to represent the numerator of
+  // the fractional position for each shared object reference. For each
+  // shared object referenced from a page, there is an indication of
+  // where in the page's content stream the object is first referenced.
+  FX_DWORD dwSharedNumeratorBits = hStream->GetBits(16);
+  // Item 13: Skip Item 13 which has 16 bits.
+  FX_DWORD dwSharedDenominator = hStream->GetBits(16);
+  CPDF_Object* pPageNum = m_pLinearizedDict->GetElementValue(FX_BSTRC("N"));
+  int nPages = pPageNum ? pPageNum->GetInteger() : 0;
+  if (nPages < 1)
+    return FALSE;
+  for (int i = 0; i < nPages; ++i) {
+    FX_SAFE_DWORD safeDeltaObj = hStream->GetBits(dwDeltaObjectsBits);
+    safeDeltaObj += dwObjLeastNum;
+    if (!safeDeltaObj.IsValid())
+      return FALSE;
+    m_dwDeltaNObjsArray.Add(safeDeltaObj.ValueOrDie());
+  }
+  hStream->ByteAlign();
+  CFX_DWordArray dwPageLenArray;
+  for (int i = 0; i < nPages; ++i) {
+    FX_SAFE_DWORD safePageLen = hStream->GetBits(dwDeltaPageLenBits);
+    safePageLen += dwPageLeastLen;
+    if (!safePageLen.IsValid())
+      return FALSE;
+    dwPageLenArray.Add(safePageLen.ValueOrDie());
+  }
+  CPDF_Object* pOffsetE = m_pLinearizedDict->GetElementValue(FX_BSTRC("E"));
+  int nOffsetE = pOffsetE ? pOffsetE->GetInteger() : -1;
+  if (nOffsetE < 0)
+    return FALSE;
+  CPDF_Object* pFirstPageNum =
+      m_pLinearizedDict->GetElementValue(FX_BSTRC("P"));
+  int nFirstPageNum = pFirstPageNum ? pFirstPageNum->GetInteger() : 0;
+  for (int i = 0; i < nPages; ++i) {
+    if (i == nFirstPageNum) {
+      m_szPageOffsetArray.Add(m_szFirstPageObjOffset);
+    } else if (i == nFirstPageNum + 1) {
+      if (i == 1) {
+        m_szPageOffsetArray.Add(nOffsetE);
+      } else {
+        m_szPageOffsetArray.Add(m_szPageOffsetArray[i - 2] +
+                                dwPageLenArray[i - 2]);
+      }
+    } else {
+      if (i == 0) {
+        m_szPageOffsetArray.Add(nOffsetE);
+      } else {
+        m_szPageOffsetArray.Add(m_szPageOffsetArray[i - 1] +
+                                dwPageLenArray[i - 1]);
+      }
+    }
+  }
+  if (nPages > 0) {
+    m_szPageOffsetArray.Add(m_szPageOffsetArray[nPages - 1] +
+                            dwPageLenArray[nPages - 1]);
+  }
+  hStream->ByteAlign();
+  // number of shared objects
+  for (int i = 0; i < nPages; i++) {
+    m_dwNSharedObjsArray.Add(hStream->GetBits(dwSharedObjBits));
+  }
+  hStream->ByteAlign();
+  // array of identifier, sizes = nshared_objects
+  for (int i = 0; i < nPages; i++) {
+    for (int j = 0; j < m_dwNSharedObjsArray[i]; j++) {
+      m_dwIdentifierArray.Add(hStream->GetBits(dwSharedIdBits));
+    }
+  }
+  hStream->ByteAlign();
+  for (int i = 0; i < nPages; i++) {
+    FX_SAFE_DWORD safeSize = m_dwNSharedObjsArray[i];
+    safeSize *= dwSharedNumeratorBits;
+    if (!safeSize.IsValid())
+      return FALSE;
+    hStream->SkipBits(safeSize.ValueOrDie());
+  }
+  hStream->ByteAlign();
+  FX_SAFE_DWORD safeTotalPageLen = pdfium::base::checked_cast<FX_DWORD>(nPages);
+  safeTotalPageLen *= dwDeltaPageLenBits;
+  if (!safeTotalPageLen.IsValid())
+    return FALSE;
+  hStream->SkipBits(safeTotalPageLen.ValueOrDie());
+  hStream->ByteAlign();
+  return TRUE;
+}
+FX_BOOL CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream) {
+  if (!hStream)
+    return FALSE;
+  int nStreamOffset = ReadPrimaryHintStreamOffset();
+  int nStreamLen = ReadPrimaryHintStreamLength();
+  if (nStreamOffset < 0 || nStreamLen < 1)
+    return FALSE;
+  // Item 1: The object number of the first object in the shared objects
+  // section.
+  FX_DWORD dwFirstSharedObjNum = hStream->GetBits(32);
+  // Item 2: The location of the first object in the shared objects section.
+  FX_DWORD dwFirstSharedObjLoc = hStream->GetBits(32);
+  if (dwFirstSharedObjLoc > nStreamOffset)
+    dwFirstSharedObjLoc += nStreamLen;
+  // Item 3: The number of shared object entries for the first page.
+  m_nFirstPageSharedObjs = hStream->GetBits(32);
+  // Item 4: The number of shared object entries for the shared objects
+  // section, including the number of shared object entries for the first page.
+  FX_DWORD dwSharedObjTotal = hStream->GetBits(32);
+  // Item 5: The number of bits needed to represent the greatest number of
+  // objects in a shared object group. Skipped.
+  hStream->SkipBits(16);
+  // Item 6: The least length of a shared object group in bytes.
+  FX_DWORD dwGroupLeastLen = hStream->GetBits(32);
+  // Item 7: The number of bits needed to represent the difference between the
+  // greatest and least length of a shared object group, in bytes.
+  FX_DWORD dwDeltaGroupLen = hStream->GetBits(16);
+  CPDF_Object* pFirstPageObj =
+      m_pLinearizedDict->GetElementValue(FX_BSTRC("O"));
+  int nFirstPageObjNum = pFirstPageObj ? pFirstPageObj->GetInteger() : -1;
+  if (nFirstPageObjNum < 0)
+    return FALSE;
+  FX_DWORD dwPrevObjLen = 0;
+  FX_DWORD dwCurObjLen = 0;
+  for (int i = 0; i < dwSharedObjTotal; ++i) {
+    dwPrevObjLen = dwCurObjLen;
+    FX_SAFE_DWORD safeObjLen = hStream->GetBits(dwDeltaGroupLen);
+    safeObjLen += dwGroupLeastLen;
+    if (!safeObjLen.IsValid())
+      return FALSE;
+    dwCurObjLen = safeObjLen.ValueOrDie();
+    if (i < m_nFirstPageSharedObjs) {
+      m_dwSharedObjNumArray.Add(nFirstPageObjNum + i);
+      if (i == 0)
+        m_szSharedObjOffsetArray.Add(m_szFirstPageObjOffset);
+    } else {
+      FX_SAFE_DWORD safeObjNum = dwFirstSharedObjNum;
+      safeObjNum += i - m_nFirstPageSharedObjs;
+      if (!safeObjNum.IsValid())
+        return FALSE;
+      m_dwSharedObjNumArray.Add(safeObjNum.ValueOrDie());
+      if (i == m_nFirstPageSharedObjs)
+        m_szSharedObjOffsetArray.Add(
+            pdfium::base::checked_cast<int32_t>(dwFirstSharedObjLoc));
+    }
+    if (i != 0 && i != m_nFirstPageSharedObjs) {
+      FX_SAFE_INT32 safeLoc = pdfium::base::checked_cast<int32_t>(dwPrevObjLen);
+      safeLoc += m_szSharedObjOffsetArray[i - 1];
+      if (!safeLoc.IsValid())
+        return FALSE;
+      m_szSharedObjOffsetArray.Add(safeLoc.ValueOrDie());
+    }
+  }
+  if (dwSharedObjTotal > 0) {
+    FX_SAFE_INT32 safeLoc = pdfium::base::checked_cast<int32_t>(dwCurObjLen);
+    safeLoc += m_szSharedObjOffsetArray[dwSharedObjTotal - 1];
+    if (!safeLoc.IsValid())
+      return FALSE;
+    m_szSharedObjOffsetArray.Add(safeLoc.ValueOrDie());
+  }
+  hStream->ByteAlign();
+  hStream->SkipBits(dwSharedObjTotal);
+  hStream->ByteAlign();
+  return TRUE;
+}
+FX_BOOL CPDF_HintTables::GetPagePos(int index,
+                                    FX_FILESIZE& szPageStartPos,
+                                    FX_FILESIZE& szPageLength,
+                                    FX_DWORD& dwObjNum) {
+  if (!m_pLinearizedDict)
+    return FALSE;
+  szPageStartPos = m_szPageOffsetArray[index];
+  szPageLength = GetItemLength(index, m_szPageOffsetArray);
+  CPDF_Object* pFirstPageNum =
+      m_pLinearizedDict->GetElementValue(FX_BSTRC("P"));
+  int nFirstPageNum = pFirstPageNum ? pFirstPageNum->GetInteger() : 0;
+  CPDF_Object* pFirstPageObjNum =
+      m_pLinearizedDict->GetElementValue(FX_BSTRC("O"));
+  if (!pFirstPageObjNum)
+    return FALSE;
+  int nFirstPageObjNum = pFirstPageObjNum->GetInteger();
+  if (index == nFirstPageNum) {
+    dwObjNum = nFirstPageObjNum;
+    return TRUE;
+  }
+  // The object number of remaining pages starts from 1.
+  dwObjNum = 1;
+  for (int i = 0; i < index; ++i) {
+    if (i == nFirstPageNum)
+      continue;
+    dwObjNum += m_dwDeltaNObjsArray[i];
+  }
+  return TRUE;
+}
+int32_t CPDF_HintTables::CheckPage(int index, IFX_DownloadHints* pHints) {
+  if (!m_pLinearizedDict || !pHints)
+    return PDF_DATA_ERROR;
+  CPDF_Object* pFirstAvailPage =
+      m_pLinearizedDict->GetElementValue(FX_BSTRC("P"));
+  int nFirstAvailPage = pFirstAvailPage ? pFirstAvailPage->GetInteger() : 0;
+  if (index == nFirstAvailPage)
+    return PDF_DATA_AVAIL;
+  FX_DWORD dwLength = GetItemLength(index, m_szPageOffsetArray);
+  if (!dwLength ||
+      !m_pDataAvail->IsDataAvail(m_szPageOffsetArray[index], dwLength,
+                                 pHints)) {
+    return PDF_DATA_NOTAVAIL;
+  }
+  // Download data of shared objects in the page.
+  FX_DWORD offset = 0;
+  for (int i = 0; i < index; ++i) {
+    offset += m_dwNSharedObjsArray[i];
+  }
+  CPDF_Object* pFirstPageObj =
+      m_pLinearizedDict->GetElementValue(FX_BSTRC("O"));
+  int nFirstPageObjNum = pFirstPageObj ? pFirstPageObj->GetInteger() : -1;
+  if (nFirstPageObjNum < 0)
+    return FALSE;
+  FX_DWORD dwIndex = 0;
+  FX_DWORD dwObjNum = 0;
+  for (int j = 0; j < m_dwNSharedObjsArray[index]; ++j) {
+    dwIndex = m_dwIdentifierArray[offset + j];
+    dwObjNum = m_dwSharedObjNumArray[dwIndex];
+    if (dwObjNum >= nFirstPageObjNum &&
+        dwObjNum < nFirstPageObjNum + m_nFirstPageSharedObjs) {
+      continue;
+    }
+    dwLength = GetItemLength(dwIndex, m_szSharedObjOffsetArray);
+    if (!dwLength ||
+        !m_pDataAvail->IsDataAvail(m_szSharedObjOffsetArray[dwIndex], dwLength,
+                                   pHints)) {
+      return PDF_DATA_NOTAVAIL;
+    }
+  }
+  return PDF_DATA_AVAIL;
+}
+FX_BOOL CPDF_HintTables::LoadHintStream(CPDF_Stream* pHintStream) {
+  if (!pHintStream || !m_pLinearizedDict)
+    return FALSE;
+  CPDF_Dictionary* pDict = pHintStream->GetDict();
+  CPDF_Object* pOffset = pDict ? pDict->GetElement(FX_BSTRC("S")) : nullptr;
+  if (!pOffset || pOffset->GetType() != PDFOBJ_NUMBER)
+    return FALSE;
+  CPDF_StreamAcc acc;
+  acc.LoadAllData(pHintStream);
+  FX_DWORD size = acc.GetSize();
+  // The header section of page offset hint table is 36 bytes.
+  // The header section of shared object hint table is 24 bytes.
+  // Hint table has at least 60 bytes.
+  const FX_DWORD MIN_STREAM_LEN = 60;
+  if (size < MIN_STREAM_LEN || size < pOffset->GetInteger() ||
+      !pOffset->GetInteger()) {
+    return FALSE;
+  }
+  CFX_BitStream bs;
+  bs.Init(acc.GetData(), size);
+  return ReadPageHintTable(&bs) && ReadSharedObjHintTable(&bs);
+}
+int CPDF_HintTables::ReadPrimaryHintStreamOffset() const {
+  if (!m_pLinearizedDict)
+    return -1;
+  CPDF_Array* pRange = m_pLinearizedDict->GetArray(FX_BSTRC("H"));
+  if (!pRange)
+    return -1;
+  CPDF_Object* pStreamOffset = pRange->GetElementValue(0);
+  if (!pStreamOffset)
+    return -1;
+  return pStreamOffset->GetInteger();
+}
+int CPDF_HintTables::ReadPrimaryHintStreamLength() const {
+  if (!m_pLinearizedDict)
+    return -1;
+  CPDF_Array* pRange = m_pLinearizedDict->GetArray(FX_BSTRC("H"));
+  if (!pRange)
+    return -1;
+  CPDF_Object* pStreamLen = pRange->GetElementValue(1);
+  if (!pStreamLen)
+    return -1;
+  return pStreamLen->GetInteger();
 }
