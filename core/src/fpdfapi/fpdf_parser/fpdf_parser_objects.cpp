@@ -8,6 +8,12 @@
 
 #include "core/include/fxcrt/fx_string.h"
 
+namespace {
+
+const FX_DWORD kBlockSize = 1024;
+
+}  // namespace
+
 // static
 int CPDF_Object::s_nCurRefDepth = 0;
 
@@ -816,41 +822,38 @@ void CPDF_Dictionary::SetAtMatrix(const CFX_ByteStringC& key,
   SetAt(key, pArray);
 }
 CPDF_Stream::CPDF_Stream(uint8_t* pData, FX_DWORD size, CPDF_Dictionary* pDict)
-    : CPDF_Object(PDFOBJ_STREAM) {
-  m_pDict = pDict;
-  m_dwSize = size;
-  m_GenNum = (FX_DWORD)-1;
-  m_pDataBuf = pData;
-  m_pCryptoHandler = NULL;
-}
+    : CPDF_Object(PDFOBJ_STREAM),
+      m_pDict(pDict),
+      m_dwSize(size),
+      m_GenNum(kMemoryBasedGenNum),
+      m_pDataBuf(pData) {}
+
 CPDF_Stream::~CPDF_Stream() {
-  if (m_GenNum == (FX_DWORD)-1) {
+  if (IsMemoryBased())
     FX_Free(m_pDataBuf);
-  }
-  if (m_pDict) {
+
+  if (m_pDict)
     m_pDict->Release();
-  }
 }
-void CPDF_Stream::InitStream(CPDF_Dictionary* pDict) {
+
+void CPDF_Stream::InitStreamInternal(CPDF_Dictionary* pDict) {
   if (pDict) {
-    if (m_pDict) {
+    if (m_pDict)
       m_pDict->Release();
-    }
     m_pDict = pDict;
   }
-  if (m_GenNum == (FX_DWORD)-1) {
+  if (IsMemoryBased())
     FX_Free(m_pDataBuf);
-  }
+
   m_GenNum = 0;
-  m_pFile = NULL;
-  m_pCryptoHandler = NULL;
-  m_FileOffset = 0;
+  m_pFile = nullptr;
 }
+
 void CPDF_Stream::InitStream(uint8_t* pData,
                              FX_DWORD size,
                              CPDF_Dictionary* pDict) {
-  InitStream(pDict);
-  m_GenNum = (FX_DWORD)-1;
+  InitStreamInternal(pDict);
+  m_GenNum = kMemoryBasedGenNum;
   m_pDataBuf = FX_Alloc(uint8_t, size);
   if (pData) {
     FXSYS_memcpy(m_pDataBuf, pData, size);
@@ -864,12 +867,10 @@ void CPDF_Stream::SetData(const uint8_t* pData,
                           FX_DWORD size,
                           FX_BOOL bCompressed,
                           FX_BOOL bKeepBuf) {
-  if (m_GenNum == (FX_DWORD)-1) {
+  if (IsMemoryBased())
     FX_Free(m_pDataBuf);
-  } else {
-    m_GenNum = (FX_DWORD)-1;
-    m_pCryptoHandler = NULL;
-  }
+  m_GenNum = kMemoryBasedGenNum;
+
   if (bKeepBuf) {
     m_pDataBuf = (uint8_t*)pData;
   } else {
@@ -879,9 +880,8 @@ void CPDF_Stream::SetData(const uint8_t* pData,
     }
   }
   m_dwSize = size;
-  if (m_pDict == NULL) {
+  if (!m_pDict)
     m_pDict = new CPDF_Dictionary;
-  }
   m_pDict->SetAtInteger(FX_BSTRC("Length"), size);
   if (!bCompressed) {
     m_pDict->RemoveAt(FX_BSTRC("Filter"));
@@ -891,16 +891,16 @@ void CPDF_Stream::SetData(const uint8_t* pData,
 FX_BOOL CPDF_Stream::ReadRawData(FX_FILESIZE offset,
                                  uint8_t* buf,
                                  FX_DWORD size) const {
-  if ((m_GenNum != (FX_DWORD)-1) && m_pFile) {
-    return m_pFile->ReadBlock(buf, m_FileOffset + offset, size);
-  }
-  if (m_pDataBuf) {
+  if (!IsMemoryBased() && m_pFile)
+    return m_pFile->ReadBlock(buf, offset, size);
+
+  if (m_pDataBuf)
     FXSYS_memcpy(buf, m_pDataBuf + offset, size);
-  }
   return TRUE;
 }
-void CPDF_Stream::InitStream(IFX_FileRead* pFile, CPDF_Dictionary* pDict) {
-  InitStream(pDict);
+void CPDF_Stream::InitStreamFromFile(IFX_FileRead* pFile,
+                                     CPDF_Dictionary* pDict) {
+  InitStreamInternal(pDict);
   m_pFile = pFile;
   m_dwSize = (FX_DWORD)pFile->GetSize();
   if (m_pDict) {
@@ -910,66 +910,63 @@ void CPDF_Stream::InitStream(IFX_FileRead* pFile, CPDF_Dictionary* pDict) {
 
 FX_BOOL CPDF_Stream::Identical(CPDF_Stream* pOther) const {
   if (!m_pDict)
-    return pOther->m_pDict ? FALSE : TRUE;
+    return !pOther->m_pDict;
 
-  if (!m_pDict->Identical(pOther->m_pDict)) {
+  if (!m_pDict->Identical(pOther->m_pDict))
     return FALSE;
-  }
-  if (m_dwSize != pOther->m_dwSize) {
+
+  if (m_dwSize != pOther->m_dwSize)
     return FALSE;
-  }
-  if (m_GenNum != (FX_DWORD)-1 && pOther->m_GenNum != (FX_DWORD)-1) {
-    if (m_pFile == pOther->m_pFile && m_pFile == NULL) {
+
+  if (!IsMemoryBased() && !pOther->IsMemoryBased()) {
+    if (m_pFile == pOther->m_pFile && !m_pFile)
       return TRUE;
-    }
-    if (!m_pFile || !pOther->m_pFile) {
+
+    if (!m_pFile || !pOther->m_pFile)
       return FALSE;
-    }
-    uint8_t srcBuf[1024];
-    uint8_t destBuf[1024];
+
+    uint8_t srcBuf[kBlockSize];
+    uint8_t destBuf[kBlockSize];
     FX_DWORD size = m_dwSize;
-    FX_DWORD srcOffset = m_FileOffset;
-    FX_DWORD destOffset = pOther->m_FileOffset;
-    if (m_pFile == pOther->m_pFile && srcOffset == destOffset) {
+    if (m_pFile == pOther->m_pFile)
       return TRUE;
-    }
+
+    FX_DWORD offset = 0;
     while (size > 0) {
-      FX_DWORD actualSize = size > 1024 ? 1024 : size;
-      m_pFile->ReadBlock(srcBuf, srcOffset, actualSize);
-      pOther->m_pFile->ReadBlock(destBuf, destOffset, actualSize);
-      if (FXSYS_memcmp(srcBuf, destBuf, actualSize) != 0) {
+      FX_DWORD actualSize = std::min(size, kBlockSize);
+      m_pFile->ReadBlock(srcBuf, offset, actualSize);
+      pOther->m_pFile->ReadBlock(destBuf, offset, actualSize);
+      if (FXSYS_memcmp(srcBuf, destBuf, actualSize) != 0)
         return FALSE;
-      }
+
       size -= actualSize;
-      srcOffset += actualSize;
-      destOffset += actualSize;
+      offset += actualSize;
     }
     return TRUE;
   }
-  if (m_GenNum != (FX_DWORD)-1 || pOther->m_GenNum != (FX_DWORD)-1) {
-    IFX_FileRead* pFile = NULL;
-    uint8_t* pBuf = NULL;
-    FX_DWORD offset = 0;
-    if (pOther->m_GenNum != (FX_DWORD)-1) {
+
+  if (!IsMemoryBased() || !pOther->IsMemoryBased()) {
+    IFX_FileRead* pFile = nullptr;
+    uint8_t* pBuf = nullptr;
+    if (!pOther->IsMemoryBased()) {
       pFile = pOther->m_pFile;
       pBuf = m_pDataBuf;
-      offset = pOther->m_FileOffset;
-    } else if (m_GenNum != (FX_DWORD)-1) {
+    } else if (!IsMemoryBased()) {
       pFile = m_pFile;
       pBuf = pOther->m_pDataBuf;
-      offset = m_FileOffset;
     }
-    if (NULL == pBuf) {
+    if (!pBuf)
       return FALSE;
-    }
-    uint8_t srcBuf[1024];
+
+    uint8_t srcBuf[kBlockSize];
     FX_DWORD size = m_dwSize;
+    FX_DWORD offset = 0;
     while (size > 0) {
-      FX_DWORD actualSize = std::min(size, 1024U);
+      FX_DWORD actualSize = std::min(size, kBlockSize);
       pFile->ReadBlock(srcBuf, offset, actualSize);
-      if (FXSYS_memcmp(srcBuf, pBuf, actualSize) != 0) {
+      if (FXSYS_memcmp(srcBuf, pBuf, actualSize) != 0)
         return FALSE;
-      }
+
       pBuf += actualSize;
       size -= actualSize;
       offset += actualSize;
@@ -1013,23 +1010,8 @@ void CPDF_StreamAcc::LoadAllData(const CPDF_Stream* pStream,
   } else {
     pSrcData = pStream->m_pDataBuf;
   }
-  uint8_t* pDecryptedData;
-  FX_DWORD dwDecryptedSize;
-  if (pStream->m_pCryptoHandler) {
-    CFX_BinaryBuf dest_buf;
-    dest_buf.EstimateSize(pStream->m_pCryptoHandler->DecryptGetSize(dwSrcSize));
-    void* context = pStream->m_pCryptoHandler->DecryptStart(
-        pStream->GetObjNum(), pStream->m_GenNum);
-    pStream->m_pCryptoHandler->DecryptStream(context, pSrcData, dwSrcSize,
-                                             dest_buf);
-    pStream->m_pCryptoHandler->DecryptFinish(context, dest_buf);
-    pDecryptedData = dest_buf.GetBuffer();
-    dwDecryptedSize = dest_buf.GetSize();
-    dest_buf.DetachBuffer();
-  } else {
-    pDecryptedData = pSrcData;
-    dwDecryptedSize = dwSrcSize;
-  }
+  uint8_t* pDecryptedData = pSrcData;
+  FX_DWORD dwDecryptedSize = dwSrcSize;
   if (!pStream->GetDict()->KeyExist(FX_BSTRC("Filter")) || bRawAccess) {
     m_pData = pDecryptedData;
     m_dwSize = dwDecryptedSize;

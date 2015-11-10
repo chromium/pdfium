@@ -444,8 +444,9 @@ CPDF_Stream* CPDF_StreamParser::ReadInlineStream(CPDF_Document* pDoc,
     }
   }
   pDict->SetAtInteger(FX_BSTRC("Length"), (int)dwStreamSize);
-  return CPDF_Stream::Create(pData, dwStreamSize, pDict);
+  return new CPDF_Stream(pData, dwStreamSize, pDict);
 }
+
 #define MAX_WORD_BUFFER 256
 #define MAX_STRING_LENGTH 32767
 #define FXDWORD_TRUE FXDWORD_FROM_LSBFIRST(0x65757274)

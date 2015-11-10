@@ -427,11 +427,8 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
     pAnnotDict->SetAt("AP", pAPDict);
   }
   CPDF_Stream* pNormalStream = pAPDict->GetStream("N");
-  if (pNormalStream == NULL) {
-    pNormalStream = CPDF_Stream::Create(NULL, 0, NULL);
-    if (pNormalStream == NULL) {
-      return FALSE;
-    }
+  if (!pNormalStream) {
+    pNormalStream = new CPDF_Stream(nullptr, 0, nullptr);
     int32_t objnum = pDoc->AddIndirectObject(pNormalStream);
     pAnnotDict->GetDict("AP")->SetAtReference("N", pDoc, objnum);
   }
