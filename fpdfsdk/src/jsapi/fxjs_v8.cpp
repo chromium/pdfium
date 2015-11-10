@@ -30,24 +30,24 @@ static v8::Global<v8::ObjectTemplate>* g_DefaultGlobalObjectTemplate = nullptr;
 
 class CFXJS_PerObjectData {
  public:
-  CFXJS_PerObjectData(int nObjDefID)
+  explicit CFXJS_PerObjectData(int nObjDefID)
       : m_ObjDefID(nObjDefID), m_pPrivate(nullptr) {}
 
-  int m_ObjDefID;
+  const int m_ObjDefID;
   void* m_pPrivate;
 };
 
 class CFXJS_ObjDefinition {
  public:
   static int MaxID(v8::Isolate* pIsolate) {
-    return static_cast<int>(
-        FXJS_PerIsolateData::Get(pIsolate)->m_ObjectDefnArray.GetSize());
+    return FXJS_PerIsolateData::Get(pIsolate)->m_ObjectDefnArray.size();
   }
+
   static CFXJS_ObjDefinition* ForID(v8::Isolate* pIsolate, int id) {
     // Note: GetAt() halts if out-of-range even in release builds.
-    return static_cast<CFXJS_ObjDefinition*>(
-        FXJS_PerIsolateData::Get(pIsolate)->m_ObjectDefnArray.GetAt(id));
+    return FXJS_PerIsolateData::Get(pIsolate)->m_ObjectDefnArray[id];
   }
+
   CFXJS_ObjDefinition(v8::Isolate* isolate,
                       const wchar_t* sObjName,
                       FXJSOBJTYPE eObjType,
@@ -71,8 +71,8 @@ class CFXJS_ObjDefinition {
 
   int AssignID() {
     FXJS_PerIsolateData* pData = FXJS_PerIsolateData::Get(m_pIsolate);
-    pData->m_ObjectDefnArray.Add(this);
-    return pData->m_ObjectDefnArray.GetSize() - 1;
+    pData->m_ObjectDefnArray.push_back(this);
+    return pData->m_ObjectDefnArray.size() - 1;
   }
 
   v8::Local<v8::ObjectTemplate> GetInstanceTemplate() {
@@ -558,8 +558,7 @@ v8::Local<v8::Array> FXJS_GetObjectElementNames(v8::Isolate* pIsolate,
 void FXJS_PutObjectString(v8::Isolate* pIsolate,
                           v8::Local<v8::Object> pObj,
                           const wchar_t* PropertyName,
-                          const wchar_t* sValue)  // VT_string
-{
+                          const wchar_t* sValue) {
   if (pObj.IsEmpty())
     return;
   pObj->Set(pIsolate->GetCurrentContext(),

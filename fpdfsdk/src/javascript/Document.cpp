@@ -520,35 +520,30 @@ FX_BOOL Document::removeField(IJS_Context* cc,
       (CPDFSDK_InterForm*)m_pDocument->GetInterForm();
   ASSERT(pInterForm != NULL);
 
-  CFX_PtrArray widgets;
-  pInterForm->GetWidgets(sFieldName, widgets);
+  std::vector<CPDFSDK_Widget*> widgets;
+  pInterForm->GetWidgets(sFieldName, &widgets);
 
-  int nSize = widgets.GetSize();
+  if (widgets.empty())
+    return TRUE;
 
-  if (nSize > 0) {
-    for (int i = 0; i < nSize; i++) {
-      CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)widgets[i];
-      ASSERT(pWidget != NULL);
+  for (CPDFSDK_Widget* pWidget : widgets) {
+    CPDF_Rect rcAnnot = pWidget->GetRect();
+    --rcAnnot.left;
+    --rcAnnot.bottom;
+    ++rcAnnot.right;
+    ++rcAnnot.top;
 
-      CPDF_Rect rcAnnot = pWidget->GetRect();
-      rcAnnot.left -= 1;
-      rcAnnot.bottom -= 1;
-      rcAnnot.right += 1;
-      rcAnnot.top += 1;
+    CFX_RectArray aRefresh;
+    aRefresh.Add(rcAnnot);
 
-      CFX_RectArray aRefresh;
-      aRefresh.Add(rcAnnot);
+    CPDFXFA_Page* pPage = pWidget->GetPDFXFAPage();
+    ASSERT(pPage);
 
-      CPDFXFA_Page* pPage = pWidget->GetPDFXFAPage();
-      ASSERT(pPage != NULL);
-
-      CPDFSDK_PageView* pPageView = m_pDocument->GetPageView(pPage);
-      pPageView->DeleteAnnot(pWidget);
-
-      pPageView->UpdateRects(aRefresh);
-    }
-    m_pDocument->SetChangeMark();
+    CPDFSDK_PageView* pPageView = m_pDocument->GetPageView(pPage);
+    pPageView->DeleteAnnot(pWidget);
+    pPageView->UpdateRects(aRefresh);
   }
+  m_pDocument->SetChangeMark();
 
   return TRUE;
 }
@@ -572,33 +567,33 @@ FX_BOOL Document::resetForm(IJS_Context* cc,
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
   CJS_Array aName(pRuntime);
 
-  if (params.size() > 0) {
-    switch (params[0].GetType()) {
-      default:
-        aName.Attach(params[0].ToV8Array());
-        break;
-      case CJS_Value::VT_string:
-        aName.SetElement(0, params[0]);
-        break;
-    }
-
-    CFX_PtrArray aFields;
-
-    for (int i = 0, isz = aName.GetLength(); i < isz; i++) {
-      CJS_Value valElement(pRuntime);
-      aName.GetElement(i, valElement);
-      CFX_WideString swVal = valElement.ToCFXWideString();
-      for (int j = 0, jsz = pPDFForm->CountFields(swVal); j < jsz; j++) {
-        aFields.Add((void*)pPDFForm->GetField(j, swVal));
-      }
-    }
-
-    if (aFields.GetSize() > 0) {
-      pPDFForm->ResetForm(aFields, TRUE, TRUE);
-      m_pDocument->SetChangeMark();
-    }
-  } else {
+  // TODO(thestig) Convert CJS_Parameters to a std::vector and use .empty().
+  if (params.size() <= 0) {
     pPDFForm->ResetForm(TRUE);
+    m_pDocument->SetChangeMark();
+    return TRUE;
+  }
+
+  switch (params[0].GetType()) {
+    default:
+      aName.Attach(params[0].ToV8Array());
+      break;
+    case CJS_Value::VT_string:
+      aName.SetElement(0, params[0]);
+      break;
+  }
+
+  std::vector<CPDF_FormField*> aFields;
+  for (int i = 0, isz = aName.GetLength(); i < isz; ++i) {
+    CJS_Value valElement(pRuntime);
+    aName.GetElement(i, valElement);
+    CFX_WideString swVal = valElement.ToCFXWideString();
+    for (int j = 0, jsz = pPDFForm->CountFields(swVal); j < jsz; ++j)
+      aFields.push_back(pPDFForm->GetField(j, swVal));
+  }
+
+  if (!aFields.empty()) {
+    pPDFForm->ResetForm(aFields, TRUE, TRUE);
     m_pDocument->SetChangeMark();
   }
 
@@ -663,7 +658,7 @@ FX_BOOL Document::submitForm(IJS_Context* cc,
   CPDF_InterForm* pPDFInterForm = pInterForm->GetInterForm();
   FX_BOOL bAll = (aFields.GetLength() == 0);
   if (bAll && bEmpty) {
-    if (pPDFInterForm->CheckRequiredFields()) {
+    if (pPDFInterForm->CheckRequiredFields(nullptr, true)) {
       pRuntime->BeginBlock();
       pInterForm->SubmitForm(strURL, FALSE);
       pRuntime->EndBlock();
@@ -671,8 +666,8 @@ FX_BOOL Document::submitForm(IJS_Context* cc,
     return TRUE;
   }
 
-  CFX_PtrArray fieldObjects;
-  for (int i = 0, sz = aFields.GetLength(); i < sz; i++) {
+  std::vector<CPDF_FormField*> fieldObjects;
+  for (int i = 0, sz = aFields.GetLength(); i < sz; ++i) {
     CJS_Value valName(pRuntime);
     aFields.GetElement(i, valName);
 
@@ -683,11 +678,11 @@ FX_BOOL Document::submitForm(IJS_Context* cc,
       if (!bEmpty && pField->GetValue().IsEmpty())
         continue;
 
-      fieldObjects.Add(pField);
+      fieldObjects.push_back(pField);
     }
   }
 
-  if (pPDFInterForm->CheckRequiredFields(&fieldObjects, TRUE)) {
+  if (pPDFInterForm->CheckRequiredFields(&fieldObjects, true)) {
     pRuntime->BeginBlock();
     pInterForm->SubmitFields(strURL, fieldObjects, TRUE, !bFDF);
     pRuntime->EndBlock();

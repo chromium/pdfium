@@ -111,37 +111,39 @@ FX_DWORD CPDF_ActionFields::GetFieldsCount() const {
     return pArray->GetCount();
   return 0;
 }
-void CPDF_ActionFields::GetAllFields(CFX_PtrArray& fieldObjects) const {
-  fieldObjects.RemoveAll();
-  if (m_pAction == NULL) {
-    return;
-  }
+
+std::vector<CPDF_Object*> CPDF_ActionFields::GetAllFields() const {
+  std::vector<CPDF_Object*> fields;
+  if (!m_pAction)
+    return fields;
+
   CPDF_Dictionary* pDict = m_pAction->GetDict();
-  if (pDict == NULL) {
-    return;
-  }
+  if (!pDict)
+    return fields;
+
   CFX_ByteString csType = pDict->GetString("S");
-  CPDF_Object* pFields = NULL;
-  if (csType == "Hide") {
+  CPDF_Object* pFields;
+  if (csType == "Hide")
     pFields = pDict->GetElementValue("T");
-  } else {
+  else
     pFields = pDict->GetArray("Fields");
-  }
   if (!pFields)
-    return;
+    return fields;
 
   if (pFields->IsDictionary() || pFields->IsString()) {
-    fieldObjects.Add(pFields);
+    fields.push_back(pFields);
   } else if (CPDF_Array* pArray = pFields->AsArray()) {
     FX_DWORD iCount = pArray->GetCount();
-    for (FX_DWORD i = 0; i < iCount; i++) {
+    for (FX_DWORD i = 0; i < iCount; ++i) {
       CPDF_Object* pObj = pArray->GetElementValue(i);
-      if (pObj != NULL) {
-        fieldObjects.Add(pObj);
+      if (pObj) {
+        fields.push_back(pObj);
       }
     }
   }
+  return fields;
 }
+
 CPDF_Object* CPDF_ActionFields::GetField(FX_DWORD iIndex) const {
   if (m_pAction == NULL) {
     return NULL;
@@ -291,9 +293,9 @@ CPDF_Action CPDF_AAction::GetNextAction(FX_POSITION& pos,
   eType = (AActionType)i;
   return CPDF_Action(pDict);
 }
-CPDF_DocJSActions::CPDF_DocJSActions(CPDF_Document* pDoc) {
-  m_pDocument = pDoc;
-}
+
+CPDF_DocJSActions::CPDF_DocJSActions(CPDF_Document* pDoc) : m_pDocument(pDoc) {}
+
 int CPDF_DocJSActions::CountJSActions() const {
   ASSERT(m_pDocument != NULL);
   CPDF_NameTree name_tree(m_pDocument, FX_BSTRC("JavaScript"));
