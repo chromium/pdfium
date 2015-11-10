@@ -1445,7 +1445,7 @@ int CPDF_CIDFont::GetGlyphIndex(FX_DWORD unicode, FX_BOOL* pVertGlyph) {
   }
   if (index && IsVertWriting()) {
     if (m_pTTGSUBTable) {
-      TT_uint32_t vindex = 0;
+      uint32_t vindex = 0;
       m_pTTGSUBTable->GetVerticalGlyph(index, &vindex);
       if (vindex) {
         index = vindex;
@@ -1468,7 +1468,7 @@ int CPDF_CIDFont::GetGlyphIndex(FX_DWORD unicode, FX_BOOL* pVertGlyph) {
     if (!error && m_Font.GetSubData()) {
       m_pTTGSUBTable = new CFX_CTTGSUBTable;
       m_pTTGSUBTable->LoadGSUBTable((FT_Bytes)m_Font.GetSubData());
-      TT_uint32_t vindex = 0;
+      uint32_t vindex = 0;
       m_pTTGSUBTable->GetVerticalGlyph(index, &vindex);
       if (vindex) {
         index = vindex;
