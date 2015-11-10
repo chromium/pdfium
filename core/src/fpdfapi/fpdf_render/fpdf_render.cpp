@@ -156,30 +156,27 @@ FX_ARGB CPDF_RenderOptions::TranslateColor(FX_ARGB argb) const {
 // static
 int CPDF_RenderStatus::s_CurrentRecursionDepth = 0;
 
-CPDF_RenderStatus::CPDF_RenderStatus() {
-  m_pContext = NULL;
-  m_bStopped = FALSE;
-  m_pDevice = NULL;
-  m_pCurObj = NULL;
-  m_pStopObj = NULL;
-  m_HalftoneLimit = 0;
-  m_pObjectRenderer = NULL;
-  m_bPrint = FALSE;
-  m_Transparency = 0;
-  m_DitherBits = 0;
-  m_bDropObjects = FALSE;
-  m_bStdCS = FALSE;
-  m_GroupFamily = 0;
-  m_bLoadMask = FALSE;
-  m_pType3Char = NULL;
-  m_T3FillColor = 0;
-  m_pFormResource = NULL;
-  m_pPageResource = NULL;
-  m_curBlend = FXDIB_BLEND_NORMAL;
-}
+CPDF_RenderStatus::CPDF_RenderStatus()
+    : m_pFormResource(nullptr),
+      m_pPageResource(nullptr),
+      m_pContext(nullptr),
+      m_bStopped(FALSE),
+      m_pDevice(nullptr),
+      m_pCurObj(nullptr),
+      m_pStopObj(nullptr),
+      m_HalftoneLimit(0),
+      m_bPrint(FALSE),
+      m_Transparency(0),
+      m_DitherBits(0),
+      m_bDropObjects(FALSE),
+      m_bStdCS(FALSE),
+      m_GroupFamily(0),
+      m_bLoadMask(FALSE),
+      m_pType3Char(nullptr),
+      m_T3FillColor(0),
+      m_curBlend(FXDIB_BLEND_NORMAL) {}
 
 CPDF_RenderStatus::~CPDF_RenderStatus() {
-  delete m_pObjectRenderer;
 }
 
 FX_BOOL CPDF_RenderStatus::Initialize(CPDF_RenderContext* pContext,
@@ -239,7 +236,7 @@ FX_BOOL CPDF_RenderStatus::Initialize(CPDF_RenderContext* pContext,
   } else {
     m_InitialStates.DefaultStates();
   }
-  m_pObjectRenderer = NULL;
+  m_pObjectRenderer.reset();
   m_Transparency = transparency;
   return TRUE;
 }
@@ -292,45 +289,46 @@ void CPDF_RenderStatus::RenderSingleObject(
   }
   ProcessObjectNoClip(pObj, pObj2Device);
 }
+
 FX_BOOL CPDF_RenderStatus::ContinueSingleObject(
     const CPDF_PageObject* pObj,
     const CFX_AffineMatrix* pObj2Device,
     IFX_Pause* pPause) {
   if (m_pObjectRenderer) {
-    if (m_pObjectRenderer->Continue(pPause)) {
+    if (m_pObjectRenderer->Continue(pPause))
       return TRUE;
-    }
-    if (!m_pObjectRenderer->m_Result) {
+
+    if (!m_pObjectRenderer->m_Result)
       DrawObjWithBackground(pObj, pObj2Device);
-    }
-    delete m_pObjectRenderer;
-    m_pObjectRenderer = NULL;
+    m_pObjectRenderer.reset();
     return FALSE;
   }
+
   m_pCurObj = pObj;
-  if (m_Options.m_pOCContext && pObj->m_ContentMark.NotNull())
-    if (!m_Options.m_pOCContext->CheckObjectVisible(pObj)) {
-      return FALSE;
-    }
-  ProcessClipPath(pObj->m_ClipPath, pObj2Device);
-  if (ProcessTransparency(pObj, pObj2Device)) {
+  if (m_Options.m_pOCContext && pObj->m_ContentMark.NotNull() &&
+      !m_Options.m_pOCContext->CheckObjectVisible(pObj)) {
     return FALSE;
   }
+
+  ProcessClipPath(pObj->m_ClipPath, pObj2Device);
+  if (ProcessTransparency(pObj, pObj2Device))
+    return FALSE;
+
   if (pObj->m_Type == PDFPAGE_IMAGE) {
-    m_pObjectRenderer = IPDF_ObjectRenderer::Create(pObj->m_Type);
+    m_pObjectRenderer.reset(IPDF_ObjectRenderer::Create(pObj->m_Type));
     if (!m_pObjectRenderer->Start(this, pObj, pObj2Device, FALSE)) {
-      if (!m_pObjectRenderer->m_Result) {
+      if (!m_pObjectRenderer->m_Result)
         DrawObjWithBackground(pObj, pObj2Device);
-      }
-      delete m_pObjectRenderer;
-      m_pObjectRenderer = NULL;
+      m_pObjectRenderer.reset();
       return FALSE;
     }
     return ContinueSingleObject(pObj, pObj2Device, pPause);
   }
+
   ProcessObjectNoClip(pObj, pObj2Device);
   return FALSE;
 }
+
 IPDF_ObjectRenderer* IPDF_ObjectRenderer::Create(int type) {
   if (type != PDFPAGE_IMAGE) {
     return NULL;
@@ -627,65 +625,63 @@ FX_ARGB CPDF_RenderStatus::GetStrokeArgb(const CPDF_PageObject* pObj) const {
 void CPDF_RenderStatus::ProcessClipPath(CPDF_ClipPath ClipPath,
                                         const CFX_AffineMatrix* pObj2Device) {
   if (ClipPath.IsNull()) {
-    if (m_LastClipPath.IsNull()) {
-      return;
+    if (!m_LastClipPath.IsNull()) {
+      m_pDevice->RestoreState(TRUE);
+      m_LastClipPath.SetNull();
     }
-    m_pDevice->RestoreState(TRUE);
-    m_LastClipPath.SetNull();
     return;
   }
-  if (m_LastClipPath == ClipPath) {
+  if (m_LastClipPath == ClipPath)
     return;
-  }
+
   m_LastClipPath = ClipPath;
   m_pDevice->RestoreState(TRUE);
   int nClipPath = ClipPath.GetPathCount();
-  int i;
-  for (i = 0; i < nClipPath; i++) {
+  for (int i = 0; i < nClipPath; ++i) {
     const CFX_PathData* pPathData = ClipPath.GetPath(i);
-    if (pPathData == NULL) {
+    if (!pPathData)
       continue;
-    }
+
     if (pPathData->GetPointCount() == 0) {
       CFX_PathData EmptyPath;
       EmptyPath.AppendRect(-1, -1, 0, 0);
       int fill_mode = FXFILL_WINDING;
-      m_pDevice->SetClip_PathFill(&EmptyPath, NULL, fill_mode);
+      m_pDevice->SetClip_PathFill(&EmptyPath, nullptr, fill_mode);
     } else {
       int ClipType = ClipPath.GetClipType(i);
       m_pDevice->SetClip_PathFill(pPathData, pObj2Device, ClipType);
     }
   }
   int textcount = ClipPath.GetTextCount();
-  if (textcount == 0) {
+  if (textcount == 0)
     return;
-  }
+
   if (m_pDevice->GetDeviceClass() == FXDC_DISPLAY &&
       !(m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_SOFT_CLIP)) {
     return;
   }
-  CFX_PathData* pTextClippingPath = NULL;
-  for (i = 0; i < textcount; i++) {
+
+  nonstd::unique_ptr<CFX_PathData> pTextClippingPath;
+  for (int i = 0; i < textcount; ++i) {
     CPDF_TextObject* pText = ClipPath.GetText(i);
-    if (pText == NULL) {
-      if (pTextClippingPath) {
-        int fill_mode = FXFILL_WINDING;
-        if (m_Options.m_Flags & RENDER_NOTEXTSMOOTH) {
-          fill_mode |= FXFILL_NOPATHSMOOTH;
-        }
-        m_pDevice->SetClip_PathFill(pTextClippingPath, NULL, fill_mode);
-        delete pTextClippingPath;
-        pTextClippingPath = NULL;
-      }
-    } else {
-      if (pTextClippingPath == NULL) {
-        pTextClippingPath = new CFX_PathData;
-      }
-      ProcessText(pText, pObj2Device, pTextClippingPath);
+    if (pText) {
+      if (!pTextClippingPath)
+        pTextClippingPath.reset(new CFX_PathData);
+      ProcessText(pText, pObj2Device, pTextClippingPath.get());
+      continue;
     }
+
+    if (!pTextClippingPath)
+      continue;
+
+    int fill_mode = FXFILL_WINDING;
+    if (m_Options.m_Flags & RENDER_NOTEXTSMOOTH)
+      fill_mode |= FXFILL_NOPATHSMOOTH;
+    m_pDevice->SetClip_PathFill(pTextClippingPath.get(), nullptr, fill_mode);
+    pTextClippingPath.reset();
   }
-  delete pTextClippingPath;
 }
+
 void CPDF_RenderStatus::DrawClipPath(CPDF_ClipPath ClipPath,
                                      const CFX_AffineMatrix* pObj2Device) {
   if (ClipPath.IsNull()) {
@@ -829,32 +825,31 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(
   int width = FXSYS_round((FX_FLOAT)rect.Width() * scaleX);
   int height = FXSYS_round((FX_FLOAT)rect.Height() * scaleY);
   CFX_FxgeDevice bitmap_device;
-  CFX_DIBitmap* oriDevice = NULL;
+  nonstd::unique_ptr<CFX_DIBitmap> oriDevice;
   if (!isolated && (m_pDevice->GetRenderCaps() & FXRC_GET_BITS)) {
-    oriDevice = new CFX_DIBitmap;
-    if (!m_pDevice->CreateCompatibleBitmap(oriDevice, width, height)) {
+    oriDevice.reset(new CFX_DIBitmap);
+    if (!m_pDevice->CreateCompatibleBitmap(oriDevice.get(), width, height))
       return TRUE;
-    }
-    m_pDevice->GetDIBits(oriDevice, rect.left, rect.top);
+
+    m_pDevice->GetDIBits(oriDevice.get(), rect.left, rect.top);
   }
-  if (!bitmap_device.Create(width, height, FXDIB_Argb, 0, oriDevice)) {
+  if (!bitmap_device.Create(width, height, FXDIB_Argb, 0, oriDevice.get()))
     return TRUE;
-  }
+
   CFX_DIBitmap* bitmap = bitmap_device.GetBitmap();
   bitmap->Clear(0);
   CFX_AffineMatrix new_matrix = *pObj2Device;
   new_matrix.TranslateI(-rect.left, -rect.top);
   new_matrix.Scale(scaleX, scaleY);
-  CFX_DIBitmap* pTextMask = NULL;
+  nonstd::unique_ptr<CFX_DIBitmap> pTextMask;
   if (bTextClip) {
-    pTextMask = new CFX_DIBitmap;
-    if (!pTextMask->Create(width, height, FXDIB_8bppMask)) {
-      delete pTextMask;
+    pTextMask.reset(new CFX_DIBitmap);
+    if (!pTextMask->Create(width, height, FXDIB_8bppMask))
       return TRUE;
-    }
+
     pTextMask->Clear(0);
     CFX_FxgeDevice text_device;
-    text_device.Attach(pTextMask);
+    text_device.Attach(pTextMask.get());
     for (FX_DWORD i = 0; i < pPageObj->m_ClipPath.GetTextCount(); i++) {
       CPDF_TextObject* textobj = pPageObj->m_ClipPath.GetText(i);
       if (textobj == NULL) {
@@ -880,16 +875,14 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(
     FXSYS_memcpy(&smask_matrix, pGeneralState->m_SMaskMatrix,
                  sizeof smask_matrix);
     smask_matrix.Concat(*pObj2Device);
-    CFX_DIBSource* pSMaskSource = LoadSMask(pSMaskDict, &rect, &smask_matrix);
-    if (pSMaskSource) {
-      bitmap->MultiplyAlpha(pSMaskSource);
-      delete pSMaskSource;
-    }
+    nonstd::unique_ptr<CFX_DIBSource> pSMaskSource(
+        LoadSMask(pSMaskDict, &rect, &smask_matrix));
+    if (pSMaskSource)
+      bitmap->MultiplyAlpha(pSMaskSource.get());
   }
   if (pTextMask) {
-    bitmap->MultiplyAlpha(pTextMask);
-    delete pTextMask;
-    pTextMask = NULL;
+    bitmap->MultiplyAlpha(pTextMask.get());
+    pTextMask.reset();
   }
   if (Transparency & PDFTRANS_GROUP && group_alpha != 1.0f) {
     bitmap->MultiplyAlpha((int32_t)(group_alpha * 255));
@@ -900,9 +893,9 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(
   }
   CompositeDIBitmap(bitmap, rect.left, rect.top, 0, 255, blend_type,
                     Transparency);
-  delete oriDevice;
   return TRUE;
 }
+
 CFX_DIBitmap* CPDF_RenderStatus::GetBackdrop(const CPDF_PageObject* pObj,
                                              const FX_RECT& rect,
                                              int& left,
@@ -917,35 +910,36 @@ CFX_DIBitmap* CPDF_RenderStatus::GetBackdrop(const CPDF_PageObject* pObj,
   FX_FLOAT scaleY = FXSYS_fabs(deviceCTM.d);
   int width = FXSYS_round(bbox.Width() * scaleX);
   int height = FXSYS_round(bbox.Height() * scaleY);
-  CFX_DIBitmap* pBackdrop = new CFX_DIBitmap;
-  if (bBackAlphaRequired && !m_bDropObjects) {
+  nonstd::unique_ptr<CFX_DIBitmap> pBackdrop(new CFX_DIBitmap);
+  if (bBackAlphaRequired && !m_bDropObjects)
     pBackdrop->Create(width, height, FXDIB_Argb);
-  } else {
-    m_pDevice->CreateCompatibleBitmap(pBackdrop, width, height);
-  }
-  if (pBackdrop->GetBuffer() == NULL) {
-    delete pBackdrop;
-    return NULL;
-  }
+  else
+    m_pDevice->CreateCompatibleBitmap(pBackdrop.get(), width, height);
+
+  if (!pBackdrop->GetBuffer())
+    return nullptr;
+
   FX_BOOL bNeedDraw;
-  if (pBackdrop->HasAlpha()) {
+  if (pBackdrop->HasAlpha())
     bNeedDraw = !(m_pDevice->GetRenderCaps() & FXRC_ALPHA_OUTPUT);
-  } else {
+  else
     bNeedDraw = !(m_pDevice->GetRenderCaps() & FXRC_GET_BITS);
-  }
+
   if (!bNeedDraw) {
-    m_pDevice->GetDIBits(pBackdrop, left, top);
-    return pBackdrop;
+    m_pDevice->GetDIBits(pBackdrop.get(), left, top);
+    return pBackdrop.release();
   }
+
   CFX_AffineMatrix FinalMatrix = m_DeviceMatrix;
   FinalMatrix.TranslateI(-left, -top);
   FinalMatrix.Scale(scaleX, scaleY);
   pBackdrop->Clear(pBackdrop->HasAlpha() ? 0 : 0xffffffff);
   CFX_FxgeDevice device;
-  device.Attach(pBackdrop);
+  device.Attach(pBackdrop.get());
   m_pContext->Render(&device, pObj, &m_Options, &FinalMatrix);
-  return pBackdrop;
+  return pBackdrop.release();
 }
+
 void CPDF_RenderContext::GetBackground(CFX_DIBitmap* pBuffer,
                                        const CPDF_PageObject* pObj,
                                        const CPDF_RenderOptions* pOptions,
@@ -1223,7 +1217,7 @@ CPDF_TransferFunc* CPDF_DocRenderData::GetTransferFunc(CPDF_Object* pObj) {
     return pTransferCounter->AddRef();
   }
 
-  CPDF_Function* pFuncs[3] = {nullptr, nullptr, nullptr};
+  nonstd::unique_ptr<CPDF_Function> pFuncs[3];
   FX_BOOL bUniTransfer = TRUE;
   FX_BOOL bIdentity = TRUE;
   if (CPDF_Array* pArray = pObj->AsArray()) {
@@ -1232,19 +1226,16 @@ CPDF_TransferFunc* CPDF_DocRenderData::GetTransferFunc(CPDF_Object* pObj) {
       return nullptr;
 
     for (FX_DWORD i = 0; i < 3; ++i) {
-      pFuncs[2 - i] = CPDF_Function::Load(pArray->GetElementValue(i));
-      if (!pFuncs[2 - i]) {
+      pFuncs[2 - i].reset(CPDF_Function::Load(pArray->GetElementValue(i)));
+      if (!pFuncs[2 - i])
         return nullptr;
-      }
     }
   } else {
-    pFuncs[0] = CPDF_Function::Load(pObj);
-    if (!pFuncs[0]) {
+    pFuncs[0].reset(CPDF_Function::Load(pObj));
+    if (!pFuncs[0])
       return nullptr;
-    }
   }
-  CPDF_TransferFunc* pTransfer = new CPDF_TransferFunc;
-  pTransfer->m_pPDFDoc = m_pPDFDoc;
+  CPDF_TransferFunc* pTransfer = new CPDF_TransferFunc(m_pPDFDoc);
   CPDF_CountedObject<CPDF_TransferFunc>* pTransferCounter =
       new CPDF_CountedObject<CPDF_TransferFunc>(pTransfer);
   m_TransferFuncMap[pObj] = pTransferCounter;
@@ -1278,8 +1269,6 @@ CPDF_TransferFunc* CPDF_DocRenderData::GetTransferFunc(CPDF_Object* pObj) {
       }
     }
   }
-  for (int i = 0; i < 3; ++i)
-    delete pFuncs[i];
 
   pTransfer->m_bIdentity = bIdentity;
   return pTransferCounter->AddRef();
@@ -1295,15 +1284,13 @@ CPDF_RenderConfig::CPDF_RenderConfig() {
   m_RenderStepLimit = 100;
 }
 CPDF_RenderConfig::~CPDF_RenderConfig() {}
-CPDF_DeviceBuffer::CPDF_DeviceBuffer() {
-  m_pBitmap = NULL;
-  m_pDevice = NULL;
-  m_pContext = NULL;
-  m_pObject = NULL;
-}
+
+CPDF_DeviceBuffer::CPDF_DeviceBuffer()
+    : m_pDevice(nullptr), m_pContext(nullptr), m_pObject(nullptr) {}
+
 CPDF_DeviceBuffer::~CPDF_DeviceBuffer() {
-  delete m_pBitmap;
 }
+
 FX_BOOL CPDF_DeviceBuffer::Initialize(CPDF_RenderContext* pContext,
                                       CFX_RenderDevice* pDevice,
                                       FX_RECT* pRect,
@@ -1337,16 +1324,16 @@ FX_BOOL CPDF_DeviceBuffer::Initialize(CPDF_RenderContext* pContext,
   CFX_FloatRect rect(*pRect);
   m_Matrix.TransformRect(rect);
   FX_RECT bitmap_rect = rect.GetOutterRect();
-  m_pBitmap = new CFX_DIBitmap;
+  m_pBitmap.reset(new CFX_DIBitmap);
   m_pBitmap->Create(bitmap_rect.Width(), bitmap_rect.Height(), FXDIB_Argb);
   return TRUE;
 }
 void CPDF_DeviceBuffer::OutputToDevice() {
   if (m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_GET_BITS) {
     if (m_Matrix.a == 1.0f && m_Matrix.d == 1.0f) {
-      m_pDevice->SetDIBits(m_pBitmap, m_Rect.left, m_Rect.top);
+      m_pDevice->SetDIBits(m_pBitmap.get(), m_Rect.left, m_Rect.top);
     } else {
-      m_pDevice->StretchDIBits(m_pBitmap, m_Rect.left, m_Rect.top,
+      m_pDevice->StretchDIBits(m_pBitmap.get(), m_Rect.left, m_Rect.top,
                                m_Rect.Width(), m_Rect.Height());
     }
   } else {
@@ -1355,17 +1342,16 @@ void CPDF_DeviceBuffer::OutputToDevice() {
                                       m_pBitmap->GetHeight());
     m_pContext->GetBackground(&buffer, m_pObject, NULL, &m_Matrix);
     buffer.CompositeBitmap(0, 0, buffer.GetWidth(), buffer.GetHeight(),
-                           m_pBitmap, 0, 0);
+                           m_pBitmap.get(), 0, 0);
     m_pDevice->StretchDIBits(&buffer, m_Rect.left, m_Rect.top, m_Rect.Width(),
                              m_Rect.Height());
   }
 }
-CPDF_ScaledRenderBuffer::CPDF_ScaledRenderBuffer() {
-  m_pBitmapDevice = NULL;
-}
-CPDF_ScaledRenderBuffer::~CPDF_ScaledRenderBuffer() {
-  delete m_pBitmapDevice;
-}
+
+CPDF_ScaledRenderBuffer::CPDF_ScaledRenderBuffer() {}
+
+CPDF_ScaledRenderBuffer::~CPDF_ScaledRenderBuffer() {}
+
 #define _FPDFAPI_IMAGESIZE_LIMIT_ (30 * 1024 * 1024)
 FX_BOOL CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext,
                                             CFX_RenderDevice* pDevice,
@@ -1396,7 +1382,7 @@ FX_BOOL CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext,
       m_Matrix.Scale(1.0f, (FX_FLOAT)(max_dpi) / (FX_FLOAT)dpiv);
     }
   }
-  m_pBitmapDevice = new CFX_FxgeDevice;
+  m_pBitmapDevice.reset(new CFX_FxgeDevice);
   FXDIB_Format dibFormat = FXDIB_Rgb;
   int32_t bpp = 24;
   if (m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_ALPHA_OUTPUT) {

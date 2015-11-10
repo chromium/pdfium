@@ -104,36 +104,40 @@ void CPDF_RenderStatus::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
   int back_left, back_top;
   FX_RECT rect(left, top, left + pDIBitmap->GetWidth(),
                top + pDIBitmap->GetHeight());
-  CFX_DIBitmap* pBackdrop =
+  nonstd::unique_ptr<CFX_DIBitmap> pBackdrop(
       GetBackdrop(m_pCurObj, rect, back_left, back_top,
-                  blend_mode > FXDIB_BLEND_NORMAL && bIsolated);
-  if (!pBackdrop) {
+                  blend_mode > FXDIB_BLEND_NORMAL && bIsolated));
+  if (!pBackdrop)
     return;
-  }
-  if (!pDIBitmap->IsAlphaMask())
+
+  if (!pDIBitmap->IsAlphaMask()) {
     pBackdrop->CompositeBitmap(left - back_left, top - back_top,
                                pDIBitmap->GetWidth(), pDIBitmap->GetHeight(),
                                pDIBitmap, 0, 0, blend_mode);
-  else
+  } else {
     pBackdrop->CompositeMask(left - back_left, top - back_top,
                              pDIBitmap->GetWidth(), pDIBitmap->GetHeight(),
                              pDIBitmap, mask_argb, 0, 0, blend_mode);
-  CFX_DIBitmap* pBackdrop1 = new CFX_DIBitmap;
+  }
+
+  nonstd::unique_ptr<CFX_DIBitmap> pBackdrop1(new CFX_DIBitmap);
   pBackdrop1->Create(pBackdrop->GetWidth(), pBackdrop->GetHeight(),
                      FXDIB_Rgb32);
   pBackdrop1->Clear((FX_DWORD)-1);
   pBackdrop1->CompositeBitmap(0, 0, pBackdrop->GetWidth(),
-                              pBackdrop->GetHeight(), pBackdrop, 0, 0);
-  delete pBackdrop;
-  pBackdrop = pBackdrop1;
-  m_pDevice->SetDIBits(pBackdrop, back_left, back_top);
-  delete pBackdrop;
+                              pBackdrop->GetHeight(), pBackdrop.get(), 0, 0);
+  pBackdrop = nonstd::move(pBackdrop1);
+  m_pDevice->SetDIBits(pBackdrop.get(), back_left, back_top);
 }
-FX_COLORREF CPDF_TransferFunc::TranslateColor(FX_COLORREF rgb) {
+
+CPDF_TransferFunc::CPDF_TransferFunc(CPDF_Document* pDoc) : m_pPDFDoc(pDoc) {}
+
+FX_COLORREF CPDF_TransferFunc::TranslateColor(FX_COLORREF rgb) const {
   return FXSYS_RGB(m_Samples[FXSYS_GetRValue(rgb)],
                    m_Samples[256 + FXSYS_GetGValue(rgb)],
                    m_Samples[512 + FXSYS_GetBValue(rgb)]);
 }
+
 CFX_DIBSource* CPDF_TransferFunc::TranslateImage(const CFX_DIBSource* pSrc,
                                                  FX_BOOL bAutoDropSrc) {
   CPDF_DIBTransferFunc* pDest = new CPDF_DIBTransferFunc(this);
@@ -770,14 +774,12 @@ FX_BOOL CPDF_ImageRenderer::StartDIBSource() {
   FX_RECT dest_clip(
       dest_rect.left - image_rect.left, dest_rect.top - image_rect.top,
       dest_rect.right - image_rect.left, dest_rect.bottom - image_rect.top);
-  CFX_DIBitmap* pStretched =
-      m_pDIBSource->StretchTo(dest_width, dest_height, m_Flags, &dest_clip);
+  nonstd::unique_ptr<CFX_DIBitmap> pStretched(
+      m_pDIBSource->StretchTo(dest_width, dest_height, m_Flags, &dest_clip));
   if (pStretched) {
-    m_pRenderStatus->CompositeDIBitmap(pStretched, dest_rect.left,
+    m_pRenderStatus->CompositeDIBitmap(pStretched.get(), dest_rect.left,
                                        dest_rect.top, m_FillArgb, m_BitmapAlpha,
                                        m_BlendType, FALSE);
-    delete pStretched;
-    pStretched = NULL;
   }
   return FALSE;
 }
@@ -797,15 +799,14 @@ FX_BOOL CPDF_ImageRenderer::StartBitmapAlpha() {
     if (FXSYS_fabs(m_ImageMatrix.b) >= 0.5f ||
         FXSYS_fabs(m_ImageMatrix.c) >= 0.5f) {
       int left, top;
-      CFX_DIBitmap* pTransformed =
-          pAlphaMask->TransformTo(&m_ImageMatrix, left, top);
-      if (pTransformed == NULL) {
+      nonstd::unique_ptr<CFX_DIBitmap> pTransformed(
+          pAlphaMask->TransformTo(&m_ImageMatrix, left, top));
+      if (!pTransformed)
         return TRUE;
-      }
+
       m_pRenderStatus->m_pDevice->SetBitMask(
-          pTransformed, left, top,
+          pTransformed.get(), left, top,
           ArgbEncode(0xff, m_BitmapAlpha, m_BitmapAlpha, m_BitmapAlpha));
-      delete pTransformed;
     } else {
       CFX_FloatRect image_rect_f = m_ImageMatrix.GetUnitRect();
       FX_RECT image_rect = image_rect_f.GetOutterRect();
@@ -1045,7 +1046,6 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
   if (pSMaskDict == NULL) {
     return NULL;
   }
-  CFX_DIBitmap* pMask = NULL;
   int width = pClipRect->right - pClipRect->left;
   int height = pClipRect->bottom - pClipRect->top;
   FX_BOOL bLuminosity = FALSE;
@@ -1054,10 +1054,10 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
   if (pGroup == NULL) {
     return NULL;
   }
-  CPDF_Function* pFunc = NULL;
+  nonstd::unique_ptr<CPDF_Function> pFunc;
   CPDF_Object* pFuncObj = pSMaskDict->GetElementValue(FX_BSTRC("TR"));
   if (pFuncObj && (pFuncObj->IsDictionary() || pFuncObj->IsStream()))
-    pFunc = CPDF_Function::Load(pFuncObj);
+    pFunc.reset(CPDF_Function::Load(pFuncObj));
 
   CFX_AffineMatrix matrix = *pMatrix;
   matrix.TranslateI(-pClipRect->left, -pClipRect->top);
@@ -1128,27 +1128,26 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
                     &options, 0, m_bDropObjects, pFormResource, TRUE, NULL, 0,
                     pCS ? pCS->GetFamily() : 0, bLuminosity);
   status.RenderObjectList(&form, &matrix);
-  pMask = new CFX_DIBitmap;
-  if (!pMask->Create(width, height, FXDIB_8bppMask)) {
-    delete pMask;
-    return NULL;
-  }
+  nonstd::unique_ptr<CFX_DIBitmap> pMask(new CFX_DIBitmap);
+  if (!pMask->Create(width, height, FXDIB_8bppMask))
+    return nullptr;
+
   uint8_t* dest_buf = pMask->GetBuffer();
   int dest_pitch = pMask->GetPitch();
   uint8_t* src_buf = bitmap.GetBuffer();
   int src_pitch = bitmap.GetPitch();
-  uint8_t* pTransfer = FX_Alloc(uint8_t, 256);
+  std::vector<uint8_t> transfers(256);
   if (pFunc) {
     CFX_FixedBufGrow<FX_FLOAT, 16> results(pFunc->CountOutputs());
     for (int i = 0; i < 256; i++) {
       FX_FLOAT input = (FX_FLOAT)i / 255.0f;
       int nresult;
       pFunc->Call(&input, 1, results, nresult);
-      pTransfer[i] = FXSYS_round(results[0] * 255);
+      transfers[i] = FXSYS_round(results[0] * 255);
     }
   } else {
     for (int i = 0; i < 256; i++) {
-      pTransfer[i] = i;
+      transfers[i] = i;
     }
   }
   if (bLuminosity) {
@@ -1157,19 +1156,17 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
       uint8_t* dest_pos = dest_buf + row * dest_pitch;
       uint8_t* src_pos = src_buf + row * src_pitch;
       for (int col = 0; col < width; col++) {
-        *dest_pos++ = pTransfer[FXRGB2GRAY(src_pos[2], src_pos[1], *src_pos)];
+        *dest_pos++ = transfers[FXRGB2GRAY(src_pos[2], src_pos[1], *src_pos)];
         src_pos += Bpp;
       }
     }
   } else if (pFunc) {
     int size = dest_pitch * height;
     for (int i = 0; i < size; i++) {
-      dest_buf[i] = pTransfer[src_buf[i]];
+      dest_buf[i] = transfers[src_buf[i]];
     }
   } else {
     FXSYS_memcpy(dest_buf, src_buf, dest_pitch * height);
   }
-  delete pFunc;
-  FX_Free(pTransfer);
-  return pMask;
+  return pMask.release();
 }

@@ -10,25 +10,27 @@
 #include "../fxge/fx_ge.h"
 #include "fpdf_resource.h"
 
-class CPDF_Path;
-class CPDF_ClipPathData;
 class CPDF_ClipPath;
-class CPDF_ColorStateData;
+class CPDF_ClipPathData;
 class CPDF_ColorState;
-class CPDF_GraphState;
-class CPDF_TextStateData;
-class CPDF_TextState;
-class CPDF_GeneralStateData;
-class CPDF_GeneralState;
-class CPDF_ContentMarkItem;
+class CPDF_ColorStateData;
 class CPDF_ContentMark;
-class CPDF_GraphicStates;
-class CPDF_PageObject;
-class CPDF_TextObject;
-class CPDF_PathObject;
-class CPDF_ImageObject;
-class CPDF_ShadingObject;
+class CPDF_ContentMarkItem;
 class CPDF_FormObject;
+class CPDF_GeneralState;
+class CPDF_GeneralStateData;
+class CPDF_GraphicStates;
+class CPDF_GraphState;
+class CPDF_ImageObject;
+class CPDF_PageObject;
+class CPDF_Path;
+class CPDF_PathObject;
+class CPDF_ShadingObject;
+class CPDF_TextObject;
+class CPDF_TextState;
+class CPDF_TextStateData;
+class CPDF_TransferFunc;
+
 typedef CFX_PathData CPDF_PathData;
 
 class CPDF_Path : public CFX_CountRef<CFX_PathData> {
@@ -196,7 +198,7 @@ class CPDF_TextState : public CFX_CountRef<CPDF_TextStateData> {
 
   FX_FLOAT GetShearAngle() const;
 };
-class CPDF_TransferFunc;
+
 class CPDF_GeneralStateData {
  public:
   CPDF_GeneralStateData();
