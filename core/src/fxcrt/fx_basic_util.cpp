@@ -4,13 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fxcrt/fx_basic.h"
+#include "core/include/fxcrt/fx_basic.h"
+
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
 #include <sys/types.h>
 #include <dirent.h>
 #else
 #include <direct.h>
 #endif
+
 CFX_PrivateData::~CFX_PrivateData() {
   ClearAll();
 }

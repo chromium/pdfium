@@ -4,8 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fxge/fx_ge.h"
+#include "core/include/fxge/fx_ge.h"
+
 #include "text_int.h"
+
 static CFX_GEModule* g_pGEModule = NULL;
 CFX_GEModule::CFX_GEModule(const char** pUserFontPaths) {
   m_pFontCache = NULL;

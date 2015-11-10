@@ -9,7 +9,7 @@
 
 #if _FX_OS_ == _FX_ANDROID_
 
-#include "../../../include/fxge/fpf.h"
+#include "core/include/fxge/fpf.h"
 
 #define FPF_SKIAFONTTYPE_Unknown 0
 #define FPF_SKIAFONTTYPE_Path 1

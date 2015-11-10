@@ -4,17 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fxcrt/fx_system.h"
-#include "../../../include/fxge/fx_ge.h"
+#include "core/include/fxcrt/fx_system.h"
+#include "core/include/fxge/fx_ge.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
 
-#include "../../../include/fxge/fx_freetype.h"
-#include "../../../include/fxge/fx_ge_apple.h"
-#include "../agg/include/fx_agg_driver.h"
 #include "../dib/dib_int.h"
 #include "../ge/text_int.h"
 #include "apple_int.h"
+#include "core/include/fxge/fx_freetype.h"
+#include "core/include/fxge/fx_ge_apple.h"
+#include "core/src/fxge/agg/include/fx_agg_driver.h"
 
 void CFX_AggDeviceDriver::InitPlatform() {
   CQuartz2D& quartz2d =

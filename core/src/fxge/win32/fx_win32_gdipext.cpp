@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fxge/fx_ge.h"
+#include "core/include/fxge/fx_ge.h"
 
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_DESKTOP_
 #include <windows.h>
@@ -16,7 +16,7 @@ using std::max;
 }  // namespace Gdiplus
 
 #include <gdiplus.h>
-#include "../../../include/fxge/fx_ge_win32.h"
+#include "core/include/fxge/fx_ge_win32.h"
 #include "win32_int.h"
 
 using namespace Gdiplus;

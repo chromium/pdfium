@@ -4,7 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fpdfdoc/fpdf_doc.h"
+#include "core/include/fpdfdoc/fpdf_doc.h"
+
 static int32_t FPDFDOC_OCG_FindGroup(const CPDF_Object* pObject,
                                      const CPDF_Dictionary* pGroupDict) {
   if (!pObject || !pGroupDict)

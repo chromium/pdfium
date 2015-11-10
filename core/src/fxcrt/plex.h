@@ -3,10 +3,11 @@
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
+
 #ifndef CORE_SRC_FXCRT_PLEX_H_
 #define CORE_SRC_FXCRT_PLEX_H_
 
-#include "../../include/fxcrt/fx_system.h"
+#include "core/include/fxcrt/fx_system.h"
 
 struct CFX_Plex {
   CFX_Plex* pNext;

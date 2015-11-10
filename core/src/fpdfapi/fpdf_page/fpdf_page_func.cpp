@@ -4,13 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "pageint.h"
+
 #include <limits.h>
+
 #include <vector>
 
-#include "../../../include/fpdfapi/fpdf_module.h"
-#include "../../../include/fpdfapi/fpdf_page.h"
-#include "../../../include/fxcrt/fx_safe_types.h"
-#include "pageint.h"
+#include "core/include/fpdfapi/fpdf_module.h"
+#include "core/include/fpdfapi/fpdf_page.h"
+#include "core/include/fxcrt/fx_safe_types.h"
 #include "third_party/base/nonstd_unique_ptr.h"
 #include "third_party/base/numerics/safe_conversions_impl.h"
 

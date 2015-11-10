@@ -6,7 +6,7 @@
 
 #include "JBig2_PatternDict.h"
 
-#include "../../../include/fxcrt/fx_memory.h"
+#include "core/include/fxcrt/fx_memory.h"
 
 CJBig2_PatternDict::CJBig2_PatternDict() {
   NUMPATS = 0;

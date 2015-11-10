@@ -7,7 +7,7 @@
 #ifndef CORE_SRC_FPDFDOC_TAGGED_INT_H_
 #define CORE_SRC_FPDFDOC_TAGGED_INT_H_
 
-#include "../../include/fpdfdoc/fpdf_tagged.h"
+#include "core/include/fpdfdoc/fpdf_tagged.h"
 
 class CPDF_StructElementImpl;
 

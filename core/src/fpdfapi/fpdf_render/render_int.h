@@ -9,10 +9,12 @@
 
 #include <map>
 
-#include "../../../include/fpdfapi/fpdf_pageobj.h"
+#include "core/include/fpdfapi/fpdf_pageobj.h"
+#include "core/include/fpdfapi/fpdf_render.h"
 #include "third_party/base/nonstd_unique_ptr.h"
 
 class CFX_GlyphBitmap;
+class CPDF_ImageCache;
 class CPDF_QuickStretcher;
 
 #define TYPE3_MAX_BLUES 16

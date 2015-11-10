@@ -2,10 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include "core/include/fpdfapi/fpdf_parser.h"
+#include "core/include/fxcrt/fx_stream.h"
 #include "testing/gtest/include/gtest/gtest.h"
-
-#include "../../../include/fpdfapi/fpdf_parser.h"
-#include "../../../include/fxcrt/fx_stream.h"
 #include "testing/utils/path_service.h"
 
 class CPDF_TestParser : public CPDF_Parser {

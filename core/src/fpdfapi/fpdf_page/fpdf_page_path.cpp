@@ -4,10 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fpdfapi/fpdf_page.h"
-#include "../../../include/fpdfapi/fpdf_pageobj.h"
-#include "../../../include/fpdfapi/fpdf_module.h"
 #include "pageint.h"
+
+#include "core/include/fpdfapi/fpdf_module.h"
+#include "core/include/fpdfapi/fpdf_page.h"
+#include "core/include/fpdfapi/fpdf_pageobj.h"
+
 void CPDF_PathObject::CopyData(const CPDF_PageObject* pSrc) {
   const CPDF_PathObject* pSrcObj = (const CPDF_PathObject*)pSrc;
   m_Path = pSrcObj->m_Path;

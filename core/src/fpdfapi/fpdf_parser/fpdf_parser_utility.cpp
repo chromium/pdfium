@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fpdfapi/fpdf_parser.h"
+#include "core/include/fpdfapi/fpdf_parser.h"
 
 // Indexed by 8-bit character code, contains either:
 //   'W' - for whitespace: NUL, TAB, CR, LF, FF, 0x80, 0xff

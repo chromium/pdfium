@@ -4,10 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fpdfapi/fpdf_page.h"
-#include "../../../include/fpdfapi/fpdf_module.h"
-#include "../fpdf_page/pageint.h"
 #include <limits.h>
+
+#include "../fpdf_page/pageint.h"
+#include "core/include/fpdfapi/fpdf_module.h"
+#include "core/include/fpdfapi/fpdf_page.h"
+
 CPDF_Document::CPDF_Document() : CPDF_IndirectObjects(NULL) {
   m_pRootDict = NULL;
   m_pInfoDict = NULL;

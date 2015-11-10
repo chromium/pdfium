@@ -6,7 +6,7 @@
 
 #include "JBig2_Segment.h"
 
-#include "../../../include/fxcrt/fx_memory.h"
+#include "core/include/fxcrt/fx_memory.h"
 
 CJBig2_Segment::CJBig2_Segment() {
   m_dwNumber = 0;

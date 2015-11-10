@@ -4,9 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fpdfdoc/fpdf_doc.h"
-#include "../../include/fpdfdoc/fpdf_vt.h"
+#include "core/include/fpdfdoc/fpdf_doc.h"
+#include "core/include/fpdfdoc/fpdf_vt.h"
 #include "pdf_vt.h"
+
 const uint8_t gFontSizeSteps[] = {4,  6,  8,   9,   10,  12,  14, 18, 20,
                                   25, 30, 35,  40,  45,  50,  55, 60, 70,
                                   80, 90, 100, 110, 120, 130, 144};

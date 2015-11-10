@@ -4,7 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fxge/fx_ge.h"
+#include "core/include/fxge/fx_ge.h"
+
 CFX_RenderDevice::CFX_RenderDevice() {
   m_pDeviceDriver = NULL;
   m_pBitmap = NULL;

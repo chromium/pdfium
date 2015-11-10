@@ -6,11 +6,11 @@
 
 #include "JBig2_GsidProc.h"
 
-#include "../../../include/fxcrt/fx_basic.h"
 #include "JBig2_BitStream.h"
 #include "JBig2_GrdProc.h"
 #include "JBig2_Image.h"
 #include "JBig2_List.h"
+#include "core/include/fxcrt/fx_basic.h"
 #include "third_party/base/nonstd_unique_ptr.h"
 
 FX_DWORD* CJBig2_GSIDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,

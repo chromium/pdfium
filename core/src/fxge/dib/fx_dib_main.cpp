@@ -4,11 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fxge/fx_dib.h"
-#include "../../../include/fxge/fx_ge.h"
-#include "../../../include/fxcodec/fx_codec.h"
-#include "dib_int.h"
+#include "core/include/fxge/fx_dib.h"
+
 #include <limits.h>
+
+#include "core/include/fxge/fx_ge.h"
+#include "core/include/fxcodec/fx_codec.h"
+#include "dib_int.h"
+
 FX_BOOL ConvertBuffer(FXDIB_Format dest_format,
                       uint8_t* dest_buf,
                       int dest_pitch,

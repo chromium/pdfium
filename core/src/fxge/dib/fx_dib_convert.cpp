@@ -4,9 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fxge/fx_dib.h"
-#include "../../../include/fxge/fx_ge.h"
-#include "../../../include/fxcodec/fx_codec.h"
+#include "core/include/fxcodec/fx_codec.h"
+#include "core/include/fxge/fx_dib.h"
+#include "core/include/fxge/fx_ge.h"
+
 const FX_DWORD g_dwWinPalette[256] = {
     0xff000000, 0xff800000, 0xff008000, 0xff808000, 0xff000080, 0xff800080,
     0xff008080, 0xff808080, 0xffC0DCC0, 0xffA6CAF0, 0xff2A3FAA, 0xff2A3FFF,

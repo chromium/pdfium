@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fpdfapi/fpdf_page.h"
-#include "../../include/fpdfapi/fpdf_pageobj.h"
-#include "../../include/fpdfapi/fpdf_resource.h"
-#include "../../include/fpdftext/fpdf_text.h"
-#include "../../include/fxcrt/fx_bidi.h"
-#include "../../include/fxcrt/fx_ucd.h"
+#include "core/include/fpdfapi/fpdf_page.h"
+#include "core/include/fpdfapi/fpdf_pageobj.h"
+#include "core/include/fpdfapi/fpdf_resource.h"
+#include "core/include/fpdftext/fpdf_text.h"
+#include "core/include/fxcrt/fx_bidi.h"
+#include "core/include/fxcrt/fx_ucd.h"
 #include "text_int.h"
 #include "third_party/base/nonstd_unique_ptr.h"
 #include "txtproc.h"

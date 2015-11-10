@@ -6,10 +6,10 @@
 
 #include <setjmp.h>
 
-#include "../../../include/fxcodec/fx_codec.h"
-#include "../../../include/fxcrt/fx_safe_types.h"
-#include "../../../include/fxge/fx_dib.h"
 #include "codec_int.h"
+#include "core/include/fxcodec/fx_codec.h"
+#include "core/include/fxcrt/fx_safe_types.h"
+#include "core/include/fxge/fx_dib.h"
 
 extern "C" {
 #undef FAR

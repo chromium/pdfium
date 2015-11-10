@@ -4,7 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fpdfdoc/fpdf_doc.h"
+#include "core/include/fpdfdoc/fpdf_doc.h"
+
 const int nMaxRecursion = 32;
 int CPDF_Dest::GetPageIndex(CPDF_Document* pDoc) {
   CPDF_Array* pArray = ToArray(m_pObj);

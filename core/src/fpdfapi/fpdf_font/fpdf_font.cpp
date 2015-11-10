@@ -4,13 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fpdfapi/fpdf_module.h"
-#include "../../../include/fpdfapi/fpdf_page.h"
-#include "../../../include/fpdfapi/fpdf_pageobj.h"
-#include "../../../include/fpdfapi/fpdf_resource.h"
-#include "../../../include/fxge/fx_freetype.h"
-#include "../fpdf_page/pageint.h"
 #include "font_int.h"
+
+#include "../fpdf_page/pageint.h"
+#include "core/include/fpdfapi/fpdf_module.h"
+#include "core/include/fpdfapi/fpdf_page.h"
+#include "core/include/fpdfapi/fpdf_pageobj.h"
+#include "core/include/fpdfapi/fpdf_resource.h"
+#include "core/include/fxge/fx_freetype.h"
 
 FX_BOOL FT_UseTTCharmap(FXFT_Face face, int platform_id, int encoding_id) {
   for (int i = 0; i < FXFT_Get_Face_CharmapCount(face); i++) {

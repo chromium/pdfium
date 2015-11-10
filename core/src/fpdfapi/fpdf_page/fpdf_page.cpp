@@ -4,9 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fpdfapi/fpdf_page.h"
-#include "../../../include/fpdfapi/fpdf_module.h"
 #include "pageint.h"
+
+#include "core/include/fpdfapi/fpdf_module.h"
+#include "core/include/fpdfapi/fpdf_page.h"
+
 CPDF_PageObject* CPDF_PageObject::Create(int type) {
   switch (type) {
     case PDFPAGE_TEXT:

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fxcrt/fx_basic.h"
 #include "fxcrt_posix.h"
+
+#include "core/include/fxcrt/fx_basic.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_ || \
     _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_ || \

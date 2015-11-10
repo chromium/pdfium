@@ -4,9 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fpdfapi/fpdf_page.h"
-#include "../../../include/fpdfapi/fpdf_pageobj.h"
 #include "pageint.h"
+
+#include "core/include/fpdfapi/fpdf_page.h"
+#include "core/include/fpdfapi/fpdf_pageobj.h"
+
 CPDF_ImageObject::CPDF_ImageObject() {
   m_pImage = NULL;
   m_Type = PDFPAGE_IMAGE;

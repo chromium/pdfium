@@ -9,9 +9,9 @@
 
 #include <vector>
 
-#include "../../../include/fxcrt/fx_basic.h"
 #include "JBig2_ArithDecoder.h"
 #include "JBig2_List.h"
+#include "core/include/fxcrt/fx_basic.h"
 #include "third_party/base/nonstd_unique_ptr.h"
 
 class CJBig2_Image;

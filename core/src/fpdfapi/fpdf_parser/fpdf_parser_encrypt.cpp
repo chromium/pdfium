@@ -4,9 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/include/fpdfapi/fpdf_parser.h"
+
 #include <time.h>
-#include "../../../include/fpdfapi/fpdf_parser.h"
-#include "../../../include/fdrm/fx_crypt.h"
+
+#include "core/include/fdrm/fx_crypt.h"
+
 const uint8_t defpasscode[32] = {
     0x28, 0xbf, 0x4e, 0x5e, 0x4e, 0x75, 0x8a, 0x41, 0x64, 0x00, 0x4e,
     0x56, 0xff, 0xfa, 0x01, 0x08, 0x2e, 0x2e, 0x00, 0xb6, 0xd0, 0x68,

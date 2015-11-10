@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fpdfdoc/fpdf_doc.h"
-#include "../../include/fxcrt/fx_xml.h"
+#include "core/include/fpdfdoc/fpdf_doc.h"
+#include "core/include/fxcrt/fx_xml.h"
 
 CPDF_Metadata::CPDF_Metadata(CPDF_Document* pDoc) {
   CPDF_Dictionary* pRoot = pDoc->GetRoot();

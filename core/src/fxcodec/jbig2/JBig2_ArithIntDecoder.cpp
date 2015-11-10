@@ -6,7 +6,7 @@
 
 #include "JBig2_ArithIntDecoder.h"
 
-#include "../../../include/fxcrt/fx_basic.h"
+#include "core/include/fxcrt/fx_basic.h"
 
 namespace {
 

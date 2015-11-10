@@ -4,11 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fpdfapi/fpdf_module.h"
-#include "../../../include/fpdfapi/fpdf_render.h"
-#include "../../../include/fxge/fx_ge.h"
-#include "../fpdf_page/pageint.h"
 #include "render_int.h"
+
+#include "../fpdf_page/pageint.h"
+#include "core/include/fpdfapi/fpdf_module.h"
+#include "core/include/fpdfapi/fpdf_render.h"
+#include "core/include/fxge/fx_ge.h"
 
 CPDF_DocRenderData::CPDF_DocRenderData(CPDF_Document* pPDFDoc)
     : m_pPDFDoc(pPDFDoc), m_pFontCache(new CFX_FontCache) {}

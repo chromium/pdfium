@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fpdfapi/fpdf_pageobj.h"
-#include "../../include/fpdfdoc/fpdf_doc.h"
+#include "core/include/fpdfapi/fpdf_pageobj.h"
+#include "core/include/fpdfdoc/fpdf_doc.h"
 #include "third_party/base/nonstd_unique_ptr.h"
 
 CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)

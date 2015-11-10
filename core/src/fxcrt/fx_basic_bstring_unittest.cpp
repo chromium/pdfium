@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 #include "../../../testing/fx_string_testhelpers.h"
-#include "../../include/fxcrt/fx_string.h"
+#include "core/include/fxcrt/fx_string.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(fxcrt, ByteStringOperatorSubscript) {

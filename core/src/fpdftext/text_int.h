@@ -7,8 +7,8 @@
 #ifndef CORE_SRC_FPDFTEXT_TEXT_INT_H_
 #define CORE_SRC_FPDFTEXT_TEXT_INT_H_
 
-#include "../../include/fpdftext/fpdf_text.h"
-#include "../../include/fxcrt/fx_basic.h"
+#include "core/include/fpdftext/fpdf_text.h"
+#include "core/include/fxcrt/fx_basic.h"
 
 class CFX_BidiChar;
 class CPDF_DocProgressiveSearch;

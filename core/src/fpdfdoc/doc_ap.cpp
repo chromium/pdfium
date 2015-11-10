@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fpdfdoc/fpdf_ap.h"
-#include "../../include/fpdfdoc/fpdf_doc.h"
-#include "../../include/fpdfdoc/fpdf_vt.h"
+#include "core/include/fpdfdoc/fpdf_ap.h"
+#include "core/include/fpdfdoc/fpdf_doc.h"
+#include "core/include/fpdfdoc/fpdf_vt.h"
 #include "doc_utils.h"
 #include "pdf_vt.h"
 

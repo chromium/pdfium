@@ -7,6 +7,11 @@
 #ifndef CORE_SRC_FXGE_DIB_DIB_INT_H_
 #define CORE_SRC_FXGE_DIB_DIB_INT_H_
 
+#include "core/include/fxcrt/fx_coordinates.h"
+#include "core/include/fxge/fx_dib.h"
+
+class IFX_ScanlineComposer;
+
 extern const int SDP_Table[513];
 
 class CPDF_FixedMatrix {

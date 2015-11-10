@@ -1,10 +1,11 @@
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
- 
+
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fxge/fx_freetype.h"
+#include "core/include/fxge/fx_freetype.h"
+
 #include "third_party/freetype/src/psnames/pstables.h"
 
 static int xyq_search_node(char* glyph_name, int name_offset, int table_offset, wchar_t unicode)

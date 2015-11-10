@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fpdfapi/fpdf_parser.h"
-#include "../../../include/fxcrt/fx_string.h"
+#include "core/include/fpdfapi/fpdf_parser.h"
+
+#include "core/include/fxcrt/fx_string.h"
 
 // static
 int CPDF_Object::s_nCurRefDepth = 0;

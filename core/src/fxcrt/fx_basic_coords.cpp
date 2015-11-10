@@ -6,8 +6,8 @@
 
 #include <limits.h>
 
-#include "../../include/fxcrt/fx_coordinates.h"
-#include "../../include/fxcrt/fx_ext.h"
+#include "core/include/fxcrt/fx_coordinates.h"
+#include "core/include/fxcrt/fx_ext.h"
 
 void FX_RECT::Normalize() {
   if (left > right) {

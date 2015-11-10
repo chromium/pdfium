@@ -4,7 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fdrm/fx_crypt.h"
+#include "core/include/fdrm/fx_crypt.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif

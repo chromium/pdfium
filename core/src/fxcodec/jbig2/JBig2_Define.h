@@ -7,7 +7,8 @@
 #ifndef _JBIG2_DEFINE_H_
 #define _JBIG2_DEFINE_H_
 
-#include "../../../include/fxcrt/fx_system.h"
+#include "core/include/fxcrt/fx_system.h"
+
 #define JBIG2_memset FXSYS_memset
 #define JBIG2_memcmp FXSYS_memcmp
 #define JBIG2_memcpy FXSYS_memcpy

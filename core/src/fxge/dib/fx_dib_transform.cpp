@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fxge/fx_dib.h"
 #include "dib_int.h"
+
+#include "core/include/fxge/fx_dib.h"
 
 const int SDP_Table[513] = {
     256, 256, 256, 256, 256, 256, 256, 256, 256, 255, 255, 255, 255, 255, 255,

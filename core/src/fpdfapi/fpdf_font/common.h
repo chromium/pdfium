@@ -7,6 +7,8 @@
 #ifndef CORE_SRC_FPDFAPI_FPDF_FONT_COMMON_H_
 #define CORE_SRC_FPDFAPI_FPDF_FONT_COMMON_H_
 
+#include "core/include/fxcrt/fx_system.h"
+
 typedef signed char TT_int8_t;
 typedef unsigned char TT_uint8_t;
 typedef signed short TT_int16_t;

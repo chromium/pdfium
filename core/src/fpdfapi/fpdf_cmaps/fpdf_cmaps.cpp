@@ -4,10 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fpdfapi/fpdf_resource.h"
-#include "../../../include/fpdfapi/fpdf_module.h"
-#include "../fpdf_font/font_int.h"
 #include "cmap_int.h"
+
+#include "../fpdf_font/font_int.h"
+#include "core/include/fpdfapi/fpdf_module.h"
+#include "core/include/fpdfapi/fpdf_resource.h"
 
 void FPDFAPI_FindEmbeddedCMap(const char* name,
                               int charset,

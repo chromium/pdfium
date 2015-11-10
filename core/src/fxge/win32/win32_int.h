@@ -3,10 +3,11 @@
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
+
 #ifndef CORE_SRC_FXGE_WIN32_WIN32_INT_H_
 #define CORE_SRC_FXGE_WIN32_WIN32_INT_H_
 
-#include "../../../include/fxge/fx_ge.h"
+#include "core/include/fxge/fx_ge.h"
 
 struct WINDIB_Open_Args_;
 class CGdiplusExt {

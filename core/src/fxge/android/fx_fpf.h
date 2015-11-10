@@ -7,9 +7,9 @@
 #ifndef CORE_SRC_FXGE_ANDROID_FX_FPF_H_
 #define CORE_SRC_FXGE_ANDROID_FX_FPF_H_
 
-#include "../../../include/fxge/fpf.h"
-#include "../../../include/fxge/fx_freetype.h"
-#include "../../../include/fxge/fx_ge.h"
+#include "core/include/fxge/fpf.h"
+#include "core/include/fxge/fx_freetype.h"
+#include "core/include/fxge/fx_ge.h"
 #include "fx_android_font.h"
 
 #endif  // CORE_SRC_FXGE_ANDROID_FX_FPF_H_

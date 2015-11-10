@@ -4,8 +4,8 @@
 
 #include <limits>
 
+#include "core/include/fxcrt/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "../../include/fxcrt/fx_memory.h"
 
 namespace {
 

@@ -5,7 +5,8 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include <stdlib.h>  // For abort().
-#include "../../include/fxcrt/fx_memory.h"
+
+#include "core/include/fxcrt/fx_memory.h"
 
 void* FXMEM_DefaultAlloc(size_t byte_size, int flags) {
   return (void*)malloc(byte_size);

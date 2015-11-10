@@ -2,13 +2,20 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "../../../include/fxge/fx_ge.h"
-//#define _SKIA_SUPPORT_
-#if defined(_SKIA_SUPPORT_)
-#include "../../../include/fxcodec/fx_codec.h"
+#include "core/include/fxge/fx_ge.h"
 
-//#define _FOXIT_DEBUG_
-//#define _FOXIT_BENCHMARK_
+#if defined(_SKIA_SUPPORT_)
+#include "core/include/fxcodec/fx_codec.h"
+
+#include "SkDashPathEffect.h"
+#include "SkTLazy.h"
+#include "SkScan.h"
+#include "SkRasterClip.h"
+#include "SkStroke.h"
+
+#include "core/src/fxge/agg/include/fx_agg_driver.h"
+#include "fx_skia_blitter_new.h"
+#include "fx_skia_device.h"
 
 extern "C" {
 extern void FX_OUTPUT_LOG_FUNC(const char*, ...);
@@ -31,15 +38,6 @@ extern int FX_GET_TICK_FUNC();
 #define FOXIT_DEBUG5(msg, para1, para2, para3, param4)
 #endif
 
-#include "SkDashPathEffect.h"
-#include "SkTLazy.h"
-#include "SkScan.h"
-#include "SkRasterClip.h"
-#include "SkStroke.h"
-
-#include "fx_skia_blitter_new.h"
-#include "../agg/fx_agg_driver.h"
-#include "fx_skia_device.h"
 /// Run-length-encoded supersampling antialiased blitter.
 class SuperBlitter_skia {
  public:
