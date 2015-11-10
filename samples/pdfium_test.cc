@@ -332,14 +332,14 @@ FPDF_BOOL Is_Data_Avail(FX_FILEAVAIL* pThis, size_t offset, size_t size) {
 void Add_Segment(FX_DOWNLOADHINTS* pThis, size_t offset, size_t size) {
 }
 
-FPDF_BOOL RenderPage(const std::string& name,
-                     const FPDF_DOCUMENT& doc,
-                     const FPDF_FORMHANDLE& form,
-                     const int page_index,
-                     const Options& options) {
+bool RenderPage(const std::string& name,
+                const FPDF_DOCUMENT& doc,
+                const FPDF_FORMHANDLE& form,
+                const int page_index,
+                const Options& options) {
   FPDF_PAGE page = FPDF_LoadPage(doc, page_index);
   if (!page) {
-    return FALSE;
+    return false;
   }
   FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page);
   FORM_OnAfterLoadPage(page, form);
@@ -355,7 +355,7 @@ FPDF_BOOL RenderPage(const std::string& name,
   FPDF_BITMAP bitmap = FPDFBitmap_Create(width, height, 0);
   if (!bitmap) {
     fprintf(stderr, "Page was too large to be rendered.\n");
-    return FALSE;
+    return false;
   }
 
   FPDFBitmap_FillRect(bitmap, 0, 0, width, height, 0xFFFFFFFF);
@@ -393,7 +393,7 @@ FPDF_BOOL RenderPage(const std::string& name,
   FORM_OnBeforeClosePage(page, form);
   FPDFText_ClosePage(text_page);
   FPDF_ClosePage(page);
-  return TRUE;
+  return true;
 }
 
 void RenderPdf(const std::string& name, const char* pBuf, size_t len,
@@ -430,7 +430,7 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
 
   FPDF_DOCUMENT doc;
   int nRet = PDF_DATA_NOTAVAIL;
-  FPDF_BOOL bIsLinearized = FALSE;
+  bool bIsLinearized = false;
   FPDF_AVAIL pdf_avail = FPDFAvail_Create(&file_avail, &file_access);
   if (FPDFAvail_IsLinearized(pdf_avail) == PDF_LINEARIZED) {
     fprintf(stderr, "Linearized path...\n");
@@ -450,7 +450,7 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
                 nRet);
         return;
       }
-      bIsLinearized = TRUE;
+      bIsLinearized = true;
     }
   } else {
     fprintf(stderr, "Non-linearized path...\n");
