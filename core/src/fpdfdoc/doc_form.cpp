@@ -1145,9 +1145,6 @@ CFDF_Document* CPDF_InterForm::ExportToFDF(const CFX_WideStringC& pdf_path,
   return ExportToFDF(pdf_path, fields, true, bSimpleFileSpec);
 }
 
-// TODO(thestig): Fix this.
-CFX_WideString FILESPEC_EncodeFileName(const CFX_WideStringC& filepath);
-
 CFDF_Document* CPDF_InterForm::ExportToFDF(
     const CFX_WideStringC& pdf_path,
     const std::vector<CPDF_FormField*>& fields,
