@@ -165,7 +165,7 @@ source_set("test_support") {
     "testing/fx_string_testhelpers.h",
     "testing/test_support.cpp",
     "testing/test_support.h",
-    'testing/utils/path_service.cpp',
+    "testing/utils/path_service.cpp",
   ]
   deps = [
     "//testing/gmock",
