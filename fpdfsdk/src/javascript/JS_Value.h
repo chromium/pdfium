@@ -88,13 +88,7 @@ class CJS_Value {
   CJS_Runtime* m_pJSRuntime;
 };
 
-class CJS_Parameters : public CFX_ArrayTemplate<CJS_Value> {
- public:
-  void push_back(const CJS_Value& newElement) {
-    CFX_ArrayTemplate<CJS_Value>::Add(newElement);
-  }
-  int size() const { return CFX_ArrayTemplate<CJS_Value>::GetSize(); }
-};
+using CJS_Parameters = std::vector<CJS_Value>;
 
 class CJS_PropValue : public CJS_Value {
  public:

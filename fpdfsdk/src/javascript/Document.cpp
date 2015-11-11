@@ -567,8 +567,7 @@ FX_BOOL Document::resetForm(IJS_Context* cc,
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
   CJS_Array aName(pRuntime);
 
-  // TODO(thestig) Convert CJS_Parameters to a std::vector and use .empty().
-  if (params.size() <= 0) {
+  if (params.empty()) {
     pPDFForm->ResetForm(TRUE);
     m_pDocument->SetChangeMark();
     return TRUE;
@@ -1509,9 +1508,9 @@ FX_BOOL Document::getPageNthWord(IJS_Context* cc,
   if (!m_pDocument->GetPermissions(FPDFPERM_EXTRACT_ACCESS))
     return FALSE;
 
-  int nPageNo = params.GetSize() > 0 ? params[0].ToInt() : 0;
-  int nWordNo = params.GetSize() > 1 ? params[1].ToInt() : 0;
-  bool bStrip = params.GetSize() > 2 ? params[2].ToBool() : true;
+  int nPageNo = params.size() > 0 ? params[0].ToInt() : 0;
+  int nWordNo = params.size() > 1 ? params[1].ToInt() : 0;
+  bool bStrip = params.size() > 2 ? params[2].ToBool() : true;
 
   CPDF_Document* pDocument = m_pDocument->GetPDFDocument();
   if (!pDocument)
@@ -1583,7 +1582,7 @@ FX_BOOL Document::getPageNumWords(IJS_Context* cc,
   if (!m_pDocument->GetPermissions(FPDFPERM_EXTRACT_ACCESS))
     return FALSE;
 
-  int nPageNo = params.GetSize() > 0 ? params[0].ToInt() : 0;
+  int nPageNo = params.size() > 0 ? params[0].ToInt() : 0;
 
   CPDF_Document* pDocument = m_pDocument->GetPDFDocument();
   ASSERT(pDocument != NULL);

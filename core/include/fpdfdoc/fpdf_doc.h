@@ -943,7 +943,7 @@ class CPDF_FormControl {
 
   HighlightingMode GetHighlightingMode();
 
-  FX_BOOL HasMKEntry(CFX_ByteString csEntry);
+  bool HasMKEntry(CFX_ByteString csEntry) const;
 
   int GetRotation();
 
@@ -951,37 +951,37 @@ class CPDF_FormControl {
     return GetColor(iColorType, "BC");
   }
 
-  inline FX_FLOAT GetOriginalBorderColor(int index) {
+  FX_FLOAT GetOriginalBorderColor(int index) {
     return GetOriginalColor(index, "BC");
   }
 
-  inline void GetOriginalBorderColor(int& iColorType, FX_FLOAT fc[4]) {
+  void GetOriginalBorderColor(int& iColorType, FX_FLOAT fc[4]) {
     GetOriginalColor(iColorType, fc, "BC");
   }
 
-  inline FX_ARGB GetBackgroundColor(int& iColorType) {
+  FX_ARGB GetBackgroundColor(int& iColorType) {
     return GetColor(iColorType, "BG");
   }
 
-  inline FX_FLOAT GetOriginalBackgroundColor(int index) {
+  FX_FLOAT GetOriginalBackgroundColor(int index) {
     return GetOriginalColor(index, "BG");
   }
 
-  inline void GetOriginalBackgroundColor(int& iColorType, FX_FLOAT fc[4]) {
+  void GetOriginalBackgroundColor(int& iColorType, FX_FLOAT fc[4]) {
     GetOriginalColor(iColorType, fc, "BG");
   }
 
-  inline CFX_WideString GetNormalCaption() { return GetCaption("CA"); }
+  CFX_WideString GetNormalCaption() { return GetCaption("CA"); }
 
-  inline CFX_WideString GetRolloverCaption() { return GetCaption("RC"); }
+  CFX_WideString GetRolloverCaption() { return GetCaption("RC"); }
 
-  inline CFX_WideString GetDownCaption() { return GetCaption("AC"); }
+  CFX_WideString GetDownCaption() { return GetCaption("AC"); }
 
-  inline CPDF_Stream* GetNormalIcon() { return GetIcon("I"); }
+  CPDF_Stream* GetNormalIcon() { return GetIcon("I"); }
 
-  inline CPDF_Stream* GetRolloverIcon() { return GetIcon("RI"); }
+  CPDF_Stream* GetRolloverIcon() { return GetIcon("RI"); }
 
-  inline CPDF_Stream* GetDownIcon() { return GetIcon("IX"); }
+  CPDF_Stream* GetDownIcon() { return GetIcon("IX"); }
 
   CPDF_IconFit GetIconFit();
 
@@ -1018,7 +1018,7 @@ class CPDF_FormControl {
 
   CPDF_Stream* GetIcon(CFX_ByteString csEntry);
 
-  CPDF_ApSettings GetMK(FX_BOOL bCreate);
+  CPDF_ApSettings GetMK() const;
 
   CPDF_InterForm* m_pForm;
 
@@ -1107,74 +1107,71 @@ class CPDF_ViewerPreferences {
 
 class CPDF_ApSettings {
  public:
-  // TODO(thestig): Examine why this cannot be explicit.
-  CPDF_ApSettings(CPDF_Dictionary* pDict = NULL) { m_pDict = pDict; }
+  explicit CPDF_ApSettings(CPDF_Dictionary* pDict);
 
-  operator CPDF_Dictionary*() const { return m_pDict; }
+  bool HasMKEntry(const CFX_ByteStringC& csEntry) const;
+  int GetRotation() const;
 
-  FX_BOOL HasMKEntry(const CFX_ByteStringC& csEntry);
-
-  int GetRotation();
-
-  inline FX_ARGB GetBorderColor(int& iColorType) {
+  FX_ARGB GetBorderColor(int& iColorType) const {
     return GetColor(iColorType, FX_BSTRC("BC"));
   }
 
-  inline FX_FLOAT GetOriginalBorderColor(int index) {
+  FX_FLOAT GetOriginalBorderColor(int index) const {
     return GetOriginalColor(index, FX_BSTRC("BC"));
   }
 
-  inline void GetOriginalBorderColor(int& iColorType, FX_FLOAT fc[4]) {
+  void GetOriginalBorderColor(int& iColorType, FX_FLOAT fc[4]) const {
     GetOriginalColor(iColorType, fc, FX_BSTRC("BC"));
   }
 
-  inline FX_ARGB GetBackgroundColor(int& iColorType) {
+  FX_ARGB GetBackgroundColor(int& iColorType) const {
     return GetColor(iColorType, FX_BSTRC("BG"));
   }
 
-  inline FX_FLOAT GetOriginalBackgroundColor(int index) {
+  FX_FLOAT GetOriginalBackgroundColor(int index) const {
     return GetOriginalColor(index, FX_BSTRC("BG"));
   }
 
-  inline void GetOriginalBackgroundColor(int& iColorType, FX_FLOAT fc[4]) {
+  void GetOriginalBackgroundColor(int& iColorType, FX_FLOAT fc[4]) const {
     GetOriginalColor(iColorType, fc, FX_BSTRC("BG"));
   }
 
-  inline CFX_WideString GetNormalCaption() {
-    return GetCaption(FX_BSTRC("CA"));
-  }
+  CFX_WideString GetNormalCaption() const { return GetCaption(FX_BSTRC("CA")); }
 
-  inline CFX_WideString GetRolloverCaption() {
+  CFX_WideString GetRolloverCaption() const {
     return GetCaption(FX_BSTRC("RC"));
   }
 
-  inline CFX_WideString GetDownCaption() { return GetCaption(FX_BSTRC("AC")); }
+  CFX_WideString GetDownCaption() const { return GetCaption(FX_BSTRC("AC")); }
 
-  inline CPDF_Stream* GetNormalIcon() { return GetIcon(FX_BSTRC("I")); }
+  CPDF_Stream* GetNormalIcon() const { return GetIcon(FX_BSTRC("I")); }
 
-  inline CPDF_Stream* GetRolloverIcon() { return GetIcon(FX_BSTRC("RI")); }
+  CPDF_Stream* GetRolloverIcon() const { return GetIcon(FX_BSTRC("RI")); }
 
-  inline CPDF_Stream* GetDownIcon() { return GetIcon(FX_BSTRC("IX")); }
+  CPDF_Stream* GetDownIcon() const { return GetIcon(FX_BSTRC("IX")); }
 
-  CPDF_IconFit GetIconFit();
+  CPDF_IconFit GetIconFit() const;
 
-  int GetTextPosition();
-
-  CPDF_Dictionary* m_pDict;
+  int GetTextPosition() const;
 
  protected:
-  FX_ARGB GetColor(int& iColorType, const CFX_ByteStringC& csEntry);
+  friend class CPDF_FormControl;
 
-  FX_FLOAT GetOriginalColor(int index, const CFX_ByteStringC& csEntry);
+  FX_ARGB GetColor(int& iColorType, const CFX_ByteStringC& csEntry) const;
+
+  FX_FLOAT GetOriginalColor(int index, const CFX_ByteStringC& csEntry) const;
 
   void GetOriginalColor(int& iColorType,
                         FX_FLOAT fc[4],
-                        const CFX_ByteStringC& csEntry);
+                        const CFX_ByteStringC& csEntry) const;
 
-  CFX_WideString GetCaption(const CFX_ByteStringC& csEntry);
+  CFX_WideString GetCaption(const CFX_ByteStringC& csEntry) const;
 
-  CPDF_Stream* GetIcon(const CFX_ByteStringC& csEntry);
-  friend class CPDF_FormControl;
+  CPDF_Stream* GetIcon(const CFX_ByteStringC& csEntry) const;
+
+  CPDF_Dictionary* const m_pDict;
 };
+
+CFX_WideString FILESPEC_EncodeFileName(const CFX_WideStringC& filepath);
 
 #endif  // CORE_INCLUDE_FPDFDOC_FPDF_DOC_H_
