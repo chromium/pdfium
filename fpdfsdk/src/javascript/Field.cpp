@@ -2989,7 +2989,7 @@ FX_BOOL Field::valueAsString(IJS_Context* cc,
  */
 
 FX_BOOL Field::browseForFileToSubmit(IJS_Context* cc,
-                                     const CJS_Parameters& params,
+                                     const std::vector<CJS_Value>& params,
                                      CJS_Value& vRet,
                                      CFX_WideString& sError) {
   ASSERT(m_pDocument != NULL);
@@ -3013,7 +3013,7 @@ FX_BOOL Field::browseForFileToSubmit(IJS_Context* cc,
 }
 
 FX_BOOL Field::buttonGetCaption(IJS_Context* cc,
-                                const CJS_Parameters& params,
+                                const std::vector<CJS_Value>& params,
                                 CJS_Value& vRet,
                                 CFX_WideString& sError) {
   ASSERT(m_pDocument != NULL);
@@ -3048,7 +3048,7 @@ FX_BOOL Field::buttonGetCaption(IJS_Context* cc,
 }
 
 FX_BOOL Field::buttonGetIcon(IJS_Context* cc,
-                             const CJS_Parameters& params,
+                             const std::vector<CJS_Value>& params,
                              CJS_Value& vRet,
                              CFX_WideString& sError) {
   ASSERT(m_pDocument != NULL);
@@ -3096,28 +3096,28 @@ FX_BOOL Field::buttonGetIcon(IJS_Context* cc,
 }
 
 FX_BOOL Field::buttonImportIcon(IJS_Context* cc,
-                                const CJS_Parameters& params,
+                                const std::vector<CJS_Value>& params,
                                 CJS_Value& vRet,
                                 CFX_WideString& sError) {
   return TRUE;
 }
 
 FX_BOOL Field::buttonSetCaption(IJS_Context* cc,
-                                const CJS_Parameters& params,
+                                const std::vector<CJS_Value>& params,
                                 CJS_Value& vRet,
                                 CFX_WideString& sError) {
   return FALSE;
 }
 
 FX_BOOL Field::buttonSetIcon(IJS_Context* cc,
-                             const CJS_Parameters& params,
+                             const std::vector<CJS_Value>& params,
                              CJS_Value& vRet,
                              CFX_WideString& sError) {
   return FALSE;
 }
 
 FX_BOOL Field::checkThisBox(IJS_Context* cc,
-                            const CJS_Parameters& params,
+                            const std::vector<CJS_Value>& params,
                             CJS_Value& vRet,
                             CFX_WideString& sError) {
   ASSERT(m_pDocument != NULL);
@@ -3155,14 +3155,14 @@ FX_BOOL Field::checkThisBox(IJS_Context* cc,
 }
 
 FX_BOOL Field::clearItems(IJS_Context* cc,
-                          const CJS_Parameters& params,
+                          const std::vector<CJS_Value>& params,
                           CJS_Value& vRet,
                           CFX_WideString& sError) {
   return TRUE;
 }
 
 FX_BOOL Field::defaultIsChecked(IJS_Context* cc,
-                                const CJS_Parameters& params,
+                                const std::vector<CJS_Value>& params,
                                 CJS_Value& vRet,
                                 CFX_WideString& sError) {
   ASSERT(m_pDocument != NULL);
@@ -3192,7 +3192,7 @@ FX_BOOL Field::defaultIsChecked(IJS_Context* cc,
 }
 
 FX_BOOL Field::deleteItemAt(IJS_Context* cc,
-                            const CJS_Parameters& params,
+                            const std::vector<CJS_Value>& params,
                             CJS_Value& vRet,
                             CFX_WideString& sError) {
   return TRUE;
@@ -3206,7 +3206,7 @@ int JS_COMPARESTRING(CFX_WideString* ps1, CFX_WideString* ps2) {
 }
 
 FX_BOOL Field::getArray(IJS_Context* cc,
-                        const CJS_Parameters& params,
+                        const std::vector<CJS_Value>& params,
                         CJS_Value& vRet,
                         CFX_WideString& sError) {
   ASSERT(m_pDocument != NULL);
@@ -3248,7 +3248,7 @@ FX_BOOL Field::getArray(IJS_Context* cc,
 }
 
 FX_BOOL Field::getItemAt(IJS_Context* cc,
-                         const CJS_Parameters& params,
+                         const std::vector<CJS_Value>& params,
                          CJS_Value& vRet,
                          CFX_WideString& sError) {
   ASSERT(m_pDocument != NULL);
@@ -3288,21 +3288,21 @@ FX_BOOL Field::getItemAt(IJS_Context* cc,
 }
 
 FX_BOOL Field::getLock(IJS_Context* cc,
-                       const CJS_Parameters& params,
+                       const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError) {
   return FALSE;
 }
 
 FX_BOOL Field::insertItemAt(IJS_Context* cc,
-                            const CJS_Parameters& params,
+                            const std::vector<CJS_Value>& params,
                             CJS_Value& vRet,
                             CFX_WideString& sError) {
   return TRUE;
 }
 
 FX_BOOL Field::isBoxChecked(IJS_Context* cc,
-                            const CJS_Parameters& params,
+                            const std::vector<CJS_Value>& params,
                             CJS_Value& vRet,
                             CFX_WideString& sError) {
   ASSERT(m_pDocument != NULL);
@@ -3335,7 +3335,7 @@ FX_BOOL Field::isBoxChecked(IJS_Context* cc,
 }
 
 FX_BOOL Field::isDefaultChecked(IJS_Context* cc,
-                                const CJS_Parameters& params,
+                                const std::vector<CJS_Value>& params,
                                 CJS_Value& vRet,
                                 CFX_WideString& sError) {
   ASSERT(m_pDocument != NULL);
@@ -3367,14 +3367,14 @@ FX_BOOL Field::isDefaultChecked(IJS_Context* cc,
 }
 
 FX_BOOL Field::setAction(IJS_Context* cc,
-                         const CJS_Parameters& params,
+                         const std::vector<CJS_Value>& params,
                          CJS_Value& vRet,
                          CFX_WideString& sError) {
   return TRUE;
 }
 
 FX_BOOL Field::setFocus(IJS_Context* cc,
-                        const CJS_Parameters& params,
+                        const std::vector<CJS_Value>& params,
                         CJS_Value& vRet,
                         CFX_WideString& sError) {
   ASSERT(m_pDocument != NULL);
@@ -3423,56 +3423,56 @@ FX_BOOL Field::setFocus(IJS_Context* cc,
 }
 
 FX_BOOL Field::setItems(IJS_Context* cc,
-                        const CJS_Parameters& params,
+                        const std::vector<CJS_Value>& params,
                         CJS_Value& vRet,
                         CFX_WideString& sError) {
   return TRUE;
 }
 
 FX_BOOL Field::setLock(IJS_Context* cc,
-                       const CJS_Parameters& params,
+                       const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError) {
   return FALSE;
 }
 
 FX_BOOL Field::signatureGetModifications(IJS_Context* cc,
-                                         const CJS_Parameters& params,
+                                         const std::vector<CJS_Value>& params,
                                          CJS_Value& vRet,
                                          CFX_WideString& sError) {
   return FALSE;
 }
 
 FX_BOOL Field::signatureGetSeedValue(IJS_Context* cc,
-                                     const CJS_Parameters& params,
+                                     const std::vector<CJS_Value>& params,
                                      CJS_Value& vRet,
                                      CFX_WideString& sError) {
   return FALSE;
 }
 
 FX_BOOL Field::signatureInfo(IJS_Context* cc,
-                             const CJS_Parameters& params,
+                             const std::vector<CJS_Value>& params,
                              CJS_Value& vRet,
                              CFX_WideString& sError) {
   return FALSE;
 }
 
 FX_BOOL Field::signatureSetSeedValue(IJS_Context* cc,
-                                     const CJS_Parameters& params,
+                                     const std::vector<CJS_Value>& params,
                                      CJS_Value& vRet,
                                      CFX_WideString& sError) {
   return FALSE;
 }
 
 FX_BOOL Field::signatureSign(IJS_Context* cc,
-                             const CJS_Parameters& params,
+                             const std::vector<CJS_Value>& params,
                              CJS_Value& vRet,
                              CFX_WideString& sError) {
   return FALSE;
 }
 
 FX_BOOL Field::signatureValidate(IJS_Context* cc,
-                                 const CJS_Parameters& params,
+                                 const std::vector<CJS_Value>& params,
                                  CJS_Value& vRet,
                                  CFX_WideString& sError) {
   return FALSE;

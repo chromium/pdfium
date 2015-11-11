@@ -903,7 +903,7 @@ CFX_WideString CJS_PublicMethods::MakeFormatDate(double dDate,
 // function AFNumber_Format(nDec, sepStyle, negStyle, currStyle, strCurrency,
 // bCurrencyPrepend)
 FX_BOOL CJS_PublicMethods::AFNumber_Format(IJS_Context* cc,
-                                           const CJS_Parameters& params,
+                                           const std::vector<CJS_Value>& params,
                                            CJS_Value& vRet,
                                            CFX_WideString& sError) {
 #if _FX_OS_ != _FX_ANDROID_
@@ -1081,10 +1081,11 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IJS_Context* cc,
 
 // function AFNumber_Keystroke(nDec, sepStyle, negStyle, currStyle, strCurrency,
 // bCurrencyPrepend)
-FX_BOOL CJS_PublicMethods::AFNumber_Keystroke(IJS_Context* cc,
-                                              const CJS_Parameters& params,
-                                              CJS_Value& vRet,
-                                              CFX_WideString& sError) {
+FX_BOOL CJS_PublicMethods::AFNumber_Keystroke(
+    IJS_Context* cc,
+    const std::vector<CJS_Value>& params,
+    CJS_Value& vRet,
+    CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
   ASSERT(pContext != NULL);
   CJS_EventHandler* pEvent = pContext->GetEventHandler();
@@ -1200,10 +1201,11 @@ FX_BOOL CJS_PublicMethods::AFNumber_Keystroke(IJS_Context* cc,
 }
 
 // function AFPercent_Format(nDec, sepStyle)
-FX_BOOL CJS_PublicMethods::AFPercent_Format(IJS_Context* cc,
-                                            const CJS_Parameters& params,
-                                            CJS_Value& vRet,
-                                            CFX_WideString& sError) {
+FX_BOOL CJS_PublicMethods::AFPercent_Format(
+    IJS_Context* cc,
+    const std::vector<CJS_Value>& params,
+    CJS_Value& vRet,
+    CFX_WideString& sError) {
 #if _FX_OS_ != _FX_ANDROID_
   CJS_Context* pContext = (CJS_Context*)cc;
   ASSERT(pContext != NULL);
@@ -1294,16 +1296,17 @@ FX_BOOL CJS_PublicMethods::AFPercent_Format(IJS_Context* cc,
   return TRUE;
 }
 // AFPercent_Keystroke(nDec, sepStyle)
-FX_BOOL CJS_PublicMethods::AFPercent_Keystroke(IJS_Context* cc,
-                                               const CJS_Parameters& params,
-                                               CJS_Value& vRet,
-                                               CFX_WideString& sError) {
+FX_BOOL CJS_PublicMethods::AFPercent_Keystroke(
+    IJS_Context* cc,
+    const std::vector<CJS_Value>& params,
+    CJS_Value& vRet,
+    CFX_WideString& sError) {
   return AFNumber_Keystroke(cc, params, vRet, sError);
 }
 
 // function AFDate_FormatEx(cFormat)
 FX_BOOL CJS_PublicMethods::AFDate_FormatEx(IJS_Context* cc,
-                                           const CJS_Parameters& params,
+                                           const std::vector<CJS_Value>& params,
                                            CJS_Value& vRet,
                                            CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
@@ -1418,10 +1421,11 @@ double CJS_PublicMethods::MakeInterDate(CFX_WideString strValue) {
 }
 
 // AFDate_KeystrokeEx(cFormat)
-FX_BOOL CJS_PublicMethods::AFDate_KeystrokeEx(IJS_Context* cc,
-                                              const CJS_Parameters& params,
-                                              CJS_Value& vRet,
-                                              CFX_WideString& sError) {
+FX_BOOL CJS_PublicMethods::AFDate_KeystrokeEx(
+    IJS_Context* cc,
+    const std::vector<CJS_Value>& params,
+    CJS_Value& vRet,
+    CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
   ASSERT(pContext != NULL);
   CJS_EventHandler* pEvent = pContext->GetEventHandler();
@@ -1455,7 +1459,7 @@ FX_BOOL CJS_PublicMethods::AFDate_KeystrokeEx(IJS_Context* cc,
 }
 
 FX_BOOL CJS_PublicMethods::AFDate_Format(IJS_Context* cc,
-                                         const CJS_Parameters& params,
+                                         const std::vector<CJS_Value>& params,
                                          CJS_Value& vRet,
                                          CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
@@ -1483,17 +1487,18 @@ FX_BOOL CJS_PublicMethods::AFDate_Format(IJS_Context* cc,
   if (iIndex < 0 || (static_cast<size_t>(iIndex) >= FX_ArraySize(cFormats)))
     iIndex = 0;
 
-  CJS_Parameters newParams;
+  std::vector<CJS_Value> newParams;
   newParams.push_back(
       CJS_Value(CJS_Runtime::FromContext(cc), cFormats[iIndex]));
   return AFDate_FormatEx(cc, newParams, vRet, sError);
 }
 
 // AFDate_KeystrokeEx(cFormat)
-FX_BOOL CJS_PublicMethods::AFDate_Keystroke(IJS_Context* cc,
-                                            const CJS_Parameters& params,
-                                            CJS_Value& vRet,
-                                            CFX_WideString& sError) {
+FX_BOOL CJS_PublicMethods::AFDate_Keystroke(
+    IJS_Context* cc,
+    const std::vector<CJS_Value>& params,
+    CJS_Value& vRet,
+    CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
   if (params.size() != 1) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
@@ -1519,7 +1524,7 @@ FX_BOOL CJS_PublicMethods::AFDate_Keystroke(IJS_Context* cc,
   if (iIndex < 0 || (static_cast<size_t>(iIndex) >= FX_ArraySize(cFormats)))
     iIndex = 0;
 
-  CJS_Parameters newParams;
+  std::vector<CJS_Value> newParams;
   newParams.push_back(
       CJS_Value(CJS_Runtime::FromContext(cc), cFormats[iIndex]));
   return AFDate_KeystrokeEx(cc, newParams, vRet, sError);
@@ -1527,7 +1532,7 @@ FX_BOOL CJS_PublicMethods::AFDate_Keystroke(IJS_Context* cc,
 
 // function AFTime_Format(ptf)
 FX_BOOL CJS_PublicMethods::AFTime_Format(IJS_Context* cc,
-                                         const CJS_Parameters& params,
+                                         const std::vector<CJS_Value>& params,
                                          CJS_Value& vRet,
                                          CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
@@ -1543,16 +1548,17 @@ FX_BOOL CJS_PublicMethods::AFTime_Format(IJS_Context* cc,
   if (iIndex < 0 || (static_cast<size_t>(iIndex) >= FX_ArraySize(cFormats)))
     iIndex = 0;
 
-  CJS_Parameters newParams;
+  std::vector<CJS_Value> newParams;
   newParams.push_back(
       CJS_Value(CJS_Runtime::FromContext(cc), cFormats[iIndex]));
   return AFDate_FormatEx(cc, newParams, vRet, sError);
 }
 
-FX_BOOL CJS_PublicMethods::AFTime_Keystroke(IJS_Context* cc,
-                                            const CJS_Parameters& params,
-                                            CJS_Value& vRet,
-                                            CFX_WideString& sError) {
+FX_BOOL CJS_PublicMethods::AFTime_Keystroke(
+    IJS_Context* cc,
+    const std::vector<CJS_Value>& params,
+    CJS_Value& vRet,
+    CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
   if (params.size() != 1) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
@@ -1566,31 +1572,33 @@ FX_BOOL CJS_PublicMethods::AFTime_Keystroke(IJS_Context* cc,
   if (iIndex < 0 || (static_cast<size_t>(iIndex) >= FX_ArraySize(cFormats)))
     iIndex = 0;
 
-  CJS_Parameters newParams;
+  std::vector<CJS_Value> newParams;
   newParams.push_back(
       CJS_Value(CJS_Runtime::FromContext(cc), cFormats[iIndex]));
   return AFDate_KeystrokeEx(cc, newParams, vRet, sError);
 }
 
 FX_BOOL CJS_PublicMethods::AFTime_FormatEx(IJS_Context* cc,
-                                           const CJS_Parameters& params,
+                                           const std::vector<CJS_Value>& params,
                                            CJS_Value& vRet,
                                            CFX_WideString& sError) {
   return AFDate_FormatEx(cc, params, vRet, sError);
 }
 
-FX_BOOL CJS_PublicMethods::AFTime_KeystrokeEx(IJS_Context* cc,
-                                              const CJS_Parameters& params,
-                                              CJS_Value& vRet,
-                                              CFX_WideString& sError) {
+FX_BOOL CJS_PublicMethods::AFTime_KeystrokeEx(
+    IJS_Context* cc,
+    const std::vector<CJS_Value>& params,
+    CJS_Value& vRet,
+    CFX_WideString& sError) {
   return AFDate_KeystrokeEx(cc, params, vRet, sError);
 }
 
 // function AFSpecial_Format(psf)
-FX_BOOL CJS_PublicMethods::AFSpecial_Format(IJS_Context* cc,
-                                            const CJS_Parameters& params,
-                                            CJS_Value& vRet,
-                                            CFX_WideString& sError) {
+FX_BOOL CJS_PublicMethods::AFSpecial_Format(
+    IJS_Context* cc,
+    const std::vector<CJS_Value>& params,
+    CJS_Value& vRet,
+    CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
   ASSERT(pContext != NULL);
 
@@ -1638,10 +1646,11 @@ FX_BOOL CJS_PublicMethods::AFSpecial_Format(IJS_Context* cc,
 }
 
 // function AFSpecial_KeystrokeEx(mask)
-FX_BOOL CJS_PublicMethods::AFSpecial_KeystrokeEx(IJS_Context* cc,
-                                                 const CJS_Parameters& params,
-                                                 CJS_Value& vRet,
-                                                 CFX_WideString& sError) {
+FX_BOOL CJS_PublicMethods::AFSpecial_KeystrokeEx(
+    IJS_Context* cc,
+    const std::vector<CJS_Value>& params,
+    CJS_Value& vRet,
+    CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
   ASSERT(pContext != NULL);
   CJS_EventHandler* pEvent = pContext->GetEventHandler();
@@ -1731,10 +1740,11 @@ FX_BOOL CJS_PublicMethods::AFSpecial_KeystrokeEx(IJS_Context* cc,
 }
 
 // function AFSpecial_Keystroke(psf)
-FX_BOOL CJS_PublicMethods::AFSpecial_Keystroke(IJS_Context* cc,
-                                               const CJS_Parameters& params,
-                                               CJS_Value& vRet,
-                                               CFX_WideString& sError) {
+FX_BOOL CJS_PublicMethods::AFSpecial_Keystroke(
+    IJS_Context* cc,
+    const std::vector<CJS_Value>& params,
+    CJS_Value& vRet,
+    CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
   if (params.size() != 1) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
@@ -1776,13 +1786,13 @@ FX_BOOL CJS_PublicMethods::AFSpecial_Keystroke(IJS_Context* cc,
       break;
   }
 
-  CJS_Parameters params2;
+  std::vector<CJS_Value> params2;
   params2.push_back(CJS_Value(CJS_Runtime::FromContext(cc), cFormat.c_str()));
   return AFSpecial_KeystrokeEx(cc, params2, vRet, sError);
 }
 
 FX_BOOL CJS_PublicMethods::AFMergeChange(IJS_Context* cc,
-                                         const CJS_Parameters& params,
+                                         const std::vector<CJS_Value>& params,
                                          CJS_Value& vRet,
                                          CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
@@ -1824,7 +1834,7 @@ FX_BOOL CJS_PublicMethods::AFMergeChange(IJS_Context* cc,
 }
 
 FX_BOOL CJS_PublicMethods::AFParseDateEx(IJS_Context* cc,
-                                         const CJS_Parameters& params,
+                                         const std::vector<CJS_Value>& params,
                                          CJS_Value& vRet,
                                          CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
@@ -1854,7 +1864,7 @@ FX_BOOL CJS_PublicMethods::AFParseDateEx(IJS_Context* cc,
 }
 
 FX_BOOL CJS_PublicMethods::AFSimple(IJS_Context* cc,
-                                    const CJS_Parameters& params,
+                                    const std::vector<CJS_Value>& params,
                                     CJS_Value& vRet,
                                     CFX_WideString& sError) {
   if (params.size() != 3) {
@@ -1871,7 +1881,7 @@ FX_BOOL CJS_PublicMethods::AFSimple(IJS_Context* cc,
 }
 
 FX_BOOL CJS_PublicMethods::AFMakeNumber(IJS_Context* cc,
-                                        const CJS_Parameters& params,
+                                        const std::vector<CJS_Value>& params,
                                         CJS_Value& vRet,
                                         CFX_WideString& sError) {
   if (params.size() != 1) {
@@ -1885,10 +1895,11 @@ FX_BOOL CJS_PublicMethods::AFMakeNumber(IJS_Context* cc,
   return TRUE;
 }
 
-FX_BOOL CJS_PublicMethods::AFSimple_Calculate(IJS_Context* cc,
-                                              const CJS_Parameters& params,
-                                              CJS_Value& vRet,
-                                              CFX_WideString& sError) {
+FX_BOOL CJS_PublicMethods::AFSimple_Calculate(
+    IJS_Context* cc,
+    const std::vector<CJS_Value>& params,
+    CJS_Value& vRet,
+    CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
   if (params.size() != 2) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
@@ -1985,10 +1996,11 @@ FX_BOOL CJS_PublicMethods::AFSimple_Calculate(IJS_Context* cc,
 /* This function validates the current event to ensure that its value is
 ** within the specified range. */
 
-FX_BOOL CJS_PublicMethods::AFRange_Validate(IJS_Context* cc,
-                                            const CJS_Parameters& params,
-                                            CJS_Value& vRet,
-                                            CFX_WideString& sError) {
+FX_BOOL CJS_PublicMethods::AFRange_Validate(
+    IJS_Context* cc,
+    const std::vector<CJS_Value>& params,
+    CJS_Value& vRet,
+    CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
   ASSERT(pContext != NULL);
   CJS_EventHandler* pEvent = pContext->GetEventHandler();
@@ -2033,7 +2045,7 @@ FX_BOOL CJS_PublicMethods::AFRange_Validate(IJS_Context* cc,
 }
 
 FX_BOOL CJS_PublicMethods::AFExtractNums(IJS_Context* cc,
-                                         const CJS_Parameters& params,
+                                         const std::vector<CJS_Value>& params,
                                          CJS_Value& vRet,
                                          CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;

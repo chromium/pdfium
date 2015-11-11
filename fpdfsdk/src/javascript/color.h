@@ -31,11 +31,11 @@ class color : public CJS_EmbedObj {
   FX_BOOL yellow(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
 
   FX_BOOL convert(IJS_Context* cc,
-                  const CJS_Parameters& params,
+                  const std::vector<CJS_Value>& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError);
   FX_BOOL equal(IJS_Context* cc,
-                const CJS_Parameters& params,
+                const std::vector<CJS_Value>& params,
                 CJS_Value& vRet,
                 CFX_WideString& sError);
 

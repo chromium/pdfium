@@ -70,87 +70,87 @@ class app : public CJS_EmbedObj {
                         CFX_WideString& sError);
 
   FX_BOOL alert(IJS_Context* cc,
-                const CJS_Parameters& params,
+                const std::vector<CJS_Value>& params,
                 CJS_Value& vRet,
                 CFX_WideString& sError);
   FX_BOOL beep(IJS_Context* cc,
-               const CJS_Parameters& params,
+               const std::vector<CJS_Value>& params,
                CJS_Value& vRet,
                CFX_WideString& sError);
   FX_BOOL browseForDoc(IJS_Context* cc,
-                       const CJS_Parameters& params,
+                       const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError);
   FX_BOOL clearInterval(IJS_Context* cc,
-                        const CJS_Parameters& params,
+                        const std::vector<CJS_Value>& params,
                         CJS_Value& vRet,
                         CFX_WideString& sError);
   FX_BOOL clearTimeOut(IJS_Context* cc,
-                       const CJS_Parameters& params,
+                       const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError);
   FX_BOOL execDialog(IJS_Context* cc,
-                     const CJS_Parameters& params,
+                     const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError);
   FX_BOOL execMenuItem(IJS_Context* cc,
-                       const CJS_Parameters& params,
+                       const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError);
   FX_BOOL findComponent(IJS_Context* cc,
-                        const CJS_Parameters& params,
+                        const std::vector<CJS_Value>& params,
                         CJS_Value& vRet,
                         CFX_WideString& sError);
   FX_BOOL goBack(IJS_Context* cc,
-                 const CJS_Parameters& params,
+                 const std::vector<CJS_Value>& params,
                  CJS_Value& vRet,
                  CFX_WideString& sError);
   FX_BOOL goForward(IJS_Context* cc,
-                    const CJS_Parameters& params,
+                    const std::vector<CJS_Value>& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError);
   FX_BOOL launchURL(IJS_Context* cc,
-                    const CJS_Parameters& params,
+                    const std::vector<CJS_Value>& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError);
   FX_BOOL mailMsg(IJS_Context* cc,
-                  const CJS_Parameters& params,
+                  const std::vector<CJS_Value>& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError);
   FX_BOOL newFDF(IJS_Context* cc,
-                 const CJS_Parameters& params,
+                 const std::vector<CJS_Value>& params,
                  CJS_Value& vRet,
                  CFX_WideString& sError);
   FX_BOOL newDoc(IJS_Context* cc,
-                 const CJS_Parameters& params,
+                 const std::vector<CJS_Value>& params,
                  CJS_Value& vRet,
                  CFX_WideString& sError);
   FX_BOOL openDoc(IJS_Context* cc,
-                  const CJS_Parameters& params,
+                  const std::vector<CJS_Value>& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError);
   FX_BOOL openFDF(IJS_Context* cc,
-                  const CJS_Parameters& params,
+                  const std::vector<CJS_Value>& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError);
   FX_BOOL popUpMenuEx(IJS_Context* cc,
-                      const CJS_Parameters& params,
+                      const std::vector<CJS_Value>& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError);
   FX_BOOL popUpMenu(IJS_Context* cc,
-                    const CJS_Parameters& params,
+                    const std::vector<CJS_Value>& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError);
   FX_BOOL response(IJS_Context* cc,
-                   const CJS_Parameters& params,
+                   const std::vector<CJS_Value>& params,
                    CJS_Value& vRet,
                    CFX_WideString& sError);
   FX_BOOL setInterval(IJS_Context* cc,
-                      const CJS_Parameters& params,
+                      const std::vector<CJS_Value>& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError);
   FX_BOOL setTimeOut(IJS_Context* cc,
-                     const CJS_Parameters& params,
+                     const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError);
 

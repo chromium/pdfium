@@ -204,7 +204,7 @@ FX_BOOL JSGlobalAlternate::DoProperty(IJS_Context* cc,
 }
 
 FX_BOOL JSGlobalAlternate::setPersistent(IJS_Context* cc,
-                                         const CJS_Parameters& params,
+                                         const std::vector<CJS_Value>& params,
                                          CJS_Value& vRet,
                                          CFX_WideString& sError) {
   CJS_Context* pContext = static_cast<CJS_Context*>(cc);

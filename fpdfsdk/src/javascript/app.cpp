@@ -237,7 +237,7 @@ FX_BOOL app::language(IJS_Context* cc,
 // note:
 // CFDF_Document * CPDFDoc_Environment::NewFDF();
 FX_BOOL app::newFDF(IJS_Context* cc,
-                    const CJS_Parameters& params,
+                    const std::vector<CJS_Value>& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError) {
   return TRUE;
@@ -249,14 +249,14 @@ FX_BOOL app::newFDF(IJS_Context* cc,
 // CFDF_Document * CPDFDoc_Environment::OpenFDF(string strPath,bool bUserConv);
 
 FX_BOOL app::openFDF(IJS_Context* cc,
-                     const CJS_Parameters& params,
+                     const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError) {
   return TRUE;
 }
 
 FX_BOOL app::alert(IJS_Context* cc,
-                   const CJS_Parameters& params,
+                   const std::vector<CJS_Value>& params,
                    CJS_Value& vRet,
                    CFX_WideString& sError) {
   int iSize = params.size();
@@ -351,7 +351,7 @@ FX_BOOL app::alert(IJS_Context* cc,
 }
 
 FX_BOOL app::beep(IJS_Context* cc,
-                  const CJS_Parameters& params,
+                  const std::vector<CJS_Value>& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError) {
   if (params.size() == 1) {
@@ -367,14 +367,14 @@ FX_BOOL app::beep(IJS_Context* cc,
 }
 
 FX_BOOL app::findComponent(IJS_Context* cc,
-                           const CJS_Parameters& params,
+                           const std::vector<CJS_Value>& params,
                            CJS_Value& vRet,
                            CFX_WideString& sError) {
   return TRUE;
 }
 
 FX_BOOL app::popUpMenuEx(IJS_Context* cc,
-                         const CJS_Parameters& params,
+                         const std::vector<CJS_Value>& params,
                          CJS_Value& vRet,
                          CFX_WideString& sError) {
   return FALSE;
@@ -385,7 +385,7 @@ FX_BOOL app::fs(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError) {
 }
 
 FX_BOOL app::setInterval(IJS_Context* cc,
-                         const CJS_Parameters& params,
+                         const std::vector<CJS_Value>& params,
                          CJS_Value& vRet,
                          CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
@@ -421,7 +421,7 @@ FX_BOOL app::setInterval(IJS_Context* cc,
 }
 
 FX_BOOL app::setTimeOut(IJS_Context* cc,
-                        const CJS_Parameters& params,
+                        const std::vector<CJS_Value>& params,
                         CJS_Value& vRet,
                         CFX_WideString& sError) {
   if (params.size() > 2 || params.size() == 0) {
@@ -462,7 +462,7 @@ FX_BOOL app::setTimeOut(IJS_Context* cc,
 }
 
 FX_BOOL app::clearTimeOut(IJS_Context* cc,
-                          const CJS_Parameters& params,
+                          const std::vector<CJS_Value>& params,
                           CJS_Value& vRet,
                           CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
@@ -498,7 +498,7 @@ FX_BOOL app::clearTimeOut(IJS_Context* cc,
 }
 
 FX_BOOL app::clearInterval(IJS_Context* cc,
-                           const CJS_Parameters& params,
+                           const std::vector<CJS_Value>& params,
                            CJS_Value& vRet,
                            CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
@@ -534,7 +534,7 @@ FX_BOOL app::clearInterval(IJS_Context* cc,
 }
 
 FX_BOOL app::execMenuItem(IJS_Context* cc,
-                          const CJS_Parameters& params,
+                          const std::vector<CJS_Value>& params,
                           CJS_Value& vRet,
                           CFX_WideString& sError) {
   return FALSE;
@@ -571,7 +571,7 @@ void app::RunJsScript(CJS_Runtime* pRuntime, const CFX_WideString& wsScript) {
 }
 
 FX_BOOL app::goBack(IJS_Context* cc,
-                    const CJS_Parameters& params,
+                    const std::vector<CJS_Value>& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError) {
   // Not supported.
@@ -579,7 +579,7 @@ FX_BOOL app::goBack(IJS_Context* cc,
 }
 
 FX_BOOL app::goForward(IJS_Context* cc,
-                       const CJS_Parameters& params,
+                       const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError) {
   // Not supported.
@@ -587,7 +587,7 @@ FX_BOOL app::goForward(IJS_Context* cc,
 }
 
 FX_BOOL app::mailMsg(IJS_Context* cc,
-                     const CJS_Parameters& params,
+                     const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError) {
   if (params.size() < 1)
@@ -654,7 +654,7 @@ FX_BOOL app::mailMsg(IJS_Context* cc,
 }
 
 FX_BOOL app::launchURL(IJS_Context* cc,
-                       const CJS_Parameters& params,
+                       const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError) {
   // Unsafe, not supported.
@@ -680,14 +680,14 @@ FX_BOOL app::fullscreen(IJS_Context* cc,
 }
 
 FX_BOOL app::popUpMenu(IJS_Context* cc,
-                       const CJS_Parameters& params,
+                       const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError) {
   return FALSE;
 }
 
 FX_BOOL app::browseForDoc(IJS_Context* cc,
-                          const CJS_Parameters& params,
+                          const std::vector<CJS_Value>& params,
                           CJS_Value& vRet,
                           CFX_WideString& sError) {
   // Unsafe, not supported.
@@ -713,21 +713,21 @@ CFX_WideString app::SysPathToPDFPath(const CFX_WideString& sOldPath) {
 }
 
 FX_BOOL app::newDoc(IJS_Context* cc,
-                    const CJS_Parameters& params,
+                    const std::vector<CJS_Value>& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError) {
   return FALSE;
 }
 
 FX_BOOL app::openDoc(IJS_Context* cc,
-                     const CJS_Parameters& params,
+                     const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError) {
   return FALSE;
 }
 
 FX_BOOL app::response(IJS_Context* cc,
-                      const CJS_Parameters& params,
+                      const std::vector<CJS_Value>& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError) {
   CFX_WideString swQuestion = L"";
@@ -812,7 +812,7 @@ FX_BOOL app::media(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError) {
 }
 
 FX_BOOL app::execDialog(IJS_Context* cc,
-                        const CJS_Parameters& params,
+                        const std::vector<CJS_Value>& params,
                         CJS_Value& vRet,
                         CFX_WideString& sError) {
   return TRUE;

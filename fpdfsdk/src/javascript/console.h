@@ -16,19 +16,19 @@ class console : public CJS_EmbedObj {
 
  public:
   FX_BOOL clear(IJS_Context* cc,
-                const CJS_Parameters& params,
+                const std::vector<CJS_Value>& params,
                 CJS_Value& vRet,
                 CFX_WideString& sError);
   FX_BOOL hide(IJS_Context* cc,
-               const CJS_Parameters& params,
+               const std::vector<CJS_Value>& params,
                CJS_Value& vRet,
                CFX_WideString& sError);
   FX_BOOL println(IJS_Context* cc,
-                  const CJS_Parameters& params,
+                  const std::vector<CJS_Value>& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError);
   FX_BOOL show(IJS_Context* cc,
-               const CJS_Parameters& params,
+               const std::vector<CJS_Value>& params,
                CJS_Value& vRet,
                CFX_WideString& sError);
 };

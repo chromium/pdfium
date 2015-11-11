@@ -160,7 +160,7 @@ JS_IMPLEMENT_COLORPROP(gray, m_crGray)
 JS_IMPLEMENT_COLORPROP(ltGray, m_crLTGray)
 
 FX_BOOL color::convert(IJS_Context* cc,
-                       const CJS_Parameters& params,
+                       const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError) {
   int iSize = params.size();
@@ -198,7 +198,7 @@ FX_BOOL color::convert(IJS_Context* cc,
 }
 
 FX_BOOL color::equal(IJS_Context* cc,
-                     const CJS_Parameters& params,
+                     const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError) {
   if (params.size() < 2)

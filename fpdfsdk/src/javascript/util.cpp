@@ -115,7 +115,7 @@ int util::ParstDataType(std::wstring* sFormat) {
 }
 
 FX_BOOL util::printf(IJS_Context* cc,
-                     const CJS_Parameters& params,
+                     const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError) {
   int iSize = params.size();
@@ -178,7 +178,7 @@ FX_BOOL util::printf(IJS_Context* cc,
 }
 
 FX_BOOL util::printd(IJS_Context* cc,
-                     const CJS_Parameters& params,
+                     const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError) {
   int iSize = params.size();
@@ -390,7 +390,7 @@ void util::printd(const std::wstring& cFormat2,
 }
 
 FX_BOOL util::printx(IJS_Context* cc,
-                     const CJS_Parameters& params,
+                     const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError) {
   int iSize = params.size();
@@ -490,7 +490,7 @@ void util::printx(const std::string& cFormat,
 }
 
 FX_BOOL util::scand(IJS_Context* cc,
-                    const CJS_Parameters& params,
+                    const std::vector<CJS_Value>& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError) {
   int iSize = params.size();
@@ -539,7 +539,7 @@ int64_t FX_atoi64(const char* nptr) {
 }
 
 FX_BOOL util::byteToChar(IJS_Context* cc,
-                         const CJS_Parameters& params,
+                         const std::vector<CJS_Value>& params,
                          CJS_Value& vRet,
                          CFX_WideString& sError) {
   int iSize = params.size();

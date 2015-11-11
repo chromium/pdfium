@@ -35,21 +35,21 @@ console::console(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
 console::~console() {}
 
 FX_BOOL console::clear(IJS_Context* cc,
-                       const CJS_Parameters& params,
+                       const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError) {
   return TRUE;
 }
 
 FX_BOOL console::hide(IJS_Context* cc,
-                      const CJS_Parameters& params,
+                      const std::vector<CJS_Value>& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError) {
   return TRUE;
 }
 
 FX_BOOL console::println(IJS_Context* cc,
-                         const CJS_Parameters& params,
+                         const std::vector<CJS_Value>& params,
                          CJS_Value& vRet,
                          CFX_WideString& sError) {
   if (params.size() < 1) {
@@ -59,7 +59,7 @@ FX_BOOL console::println(IJS_Context* cc,
 }
 
 FX_BOOL console::show(IJS_Context* cc,
-                      const CJS_Parameters& params,
+                      const std::vector<CJS_Value>& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError) {
   return TRUE;

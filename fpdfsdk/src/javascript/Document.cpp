@@ -256,7 +256,7 @@ FX_BOOL Document::pageNum(IJS_Context* cc,
 }
 
 FX_BOOL Document::addAnnot(IJS_Context* cc,
-                           const CJS_Parameters& params,
+                           const std::vector<CJS_Value>& params,
                            CJS_Value& vRet,
                            CFX_WideString& sError) {
   // Not supported.
@@ -264,7 +264,7 @@ FX_BOOL Document::addAnnot(IJS_Context* cc,
 }
 
 FX_BOOL Document::addField(IJS_Context* cc,
-                           const CJS_Parameters& params,
+                           const std::vector<CJS_Value>& params,
                            CJS_Value& vRet,
                            CFX_WideString& sError) {
   // Not supported.
@@ -272,7 +272,7 @@ FX_BOOL Document::addField(IJS_Context* cc,
 }
 
 FX_BOOL Document::exportAsText(IJS_Context* cc,
-                               const CJS_Parameters& params,
+                               const std::vector<CJS_Value>& params,
                                CJS_Value& vRet,
                                CFX_WideString& sError) {
   // Unsafe, not supported.
@@ -280,7 +280,7 @@ FX_BOOL Document::exportAsText(IJS_Context* cc,
 }
 
 FX_BOOL Document::exportAsFDF(IJS_Context* cc,
-                              const CJS_Parameters& params,
+                              const std::vector<CJS_Value>& params,
                               CJS_Value& vRet,
                               CFX_WideString& sError) {
   // Unsafe, not supported.
@@ -288,7 +288,7 @@ FX_BOOL Document::exportAsFDF(IJS_Context* cc,
 }
 
 FX_BOOL Document::exportAsXFDF(IJS_Context* cc,
-                               const CJS_Parameters& params,
+                               const std::vector<CJS_Value>& params,
                                CJS_Value& vRet,
                                CFX_WideString& sError) {
   // Unsafe, not supported.
@@ -301,7 +301,7 @@ FX_BOOL Document::exportAsXFDF(IJS_Context* cc,
 // valiable filed name in this document
 
 FX_BOOL Document::getField(IJS_Context* cc,
-                           const CJS_Parameters& params,
+                           const std::vector<CJS_Value>& params,
                            CJS_Value& vRet,
                            CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
@@ -334,7 +334,7 @@ FX_BOOL Document::getField(IJS_Context* cc,
 
 // Gets the name of the nth field in the document
 FX_BOOL Document::getNthFieldName(IJS_Context* cc,
-                                  const CJS_Parameters& params,
+                                  const std::vector<CJS_Value>& params,
                                   CJS_Value& vRet,
                                   CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
@@ -360,7 +360,7 @@ FX_BOOL Document::getNthFieldName(IJS_Context* cc,
 }
 
 FX_BOOL Document::importAnFDF(IJS_Context* cc,
-                              const CJS_Parameters& params,
+                              const std::vector<CJS_Value>& params,
                               CJS_Value& vRet,
                               CFX_WideString& sError) {
   // Unsafe, not supported.
@@ -368,7 +368,7 @@ FX_BOOL Document::importAnFDF(IJS_Context* cc,
 }
 
 FX_BOOL Document::importAnXFDF(IJS_Context* cc,
-                               const CJS_Parameters& params,
+                               const std::vector<CJS_Value>& params,
                                CJS_Value& vRet,
                                CFX_WideString& sError) {
   // Unsafe, not supported.
@@ -376,7 +376,7 @@ FX_BOOL Document::importAnXFDF(IJS_Context* cc,
 }
 
 FX_BOOL Document::importTextData(IJS_Context* cc,
-                                 const CJS_Parameters& params,
+                                 const std::vector<CJS_Value>& params,
                                  CJS_Value& vRet,
                                  CFX_WideString& sError) {
   // Unsafe, not supported.
@@ -391,7 +391,7 @@ FX_BOOL Document::importTextData(IJS_Context* cc,
 // cbcc,string cSubject,string cms);
 
 FX_BOOL Document::mailForm(IJS_Context* cc,
-                           const CJS_Parameters& params,
+                           const std::vector<CJS_Value>& params,
                            CJS_Value& vRet,
                            CFX_WideString& sError) {
   ASSERT(m_pDocument != NULL);
@@ -432,7 +432,7 @@ FX_BOOL Document::mailForm(IJS_Context* cc,
 }
 
 FX_BOOL Document::print(IJS_Context* cc,
-                        const CJS_Parameters& params,
+                        const std::vector<CJS_Value>& params,
                         CJS_Value& vRet,
                         CFX_WideString& sError) {
   FX_BOOL bUI = TRUE;
@@ -500,7 +500,7 @@ FX_BOOL Document::print(IJS_Context* cc,
 // note: if the filed name is not retional, adobe is dumb for it.
 
 FX_BOOL Document::removeField(IJS_Context* cc,
-                              const CJS_Parameters& params,
+                              const std::vector<CJS_Value>& params,
                               CJS_Value& vRet,
                               CFX_WideString& sError) {
   ASSERT(m_pDocument != NULL);
@@ -553,7 +553,7 @@ FX_BOOL Document::removeField(IJS_Context* cc,
 // note: if the fields names r not rational, aodbe is dumb for it.
 
 FX_BOOL Document::resetForm(IJS_Context* cc,
-                            const CJS_Parameters& params,
+                            const std::vector<CJS_Value>& params,
                             CJS_Value& vRet,
                             CFX_WideString& sError) {
   if (!(m_pDocument->GetPermissions(FPDFPERM_MODIFY) ||
@@ -600,7 +600,7 @@ FX_BOOL Document::resetForm(IJS_Context* cc,
 }
 
 FX_BOOL Document::saveAs(IJS_Context* cc,
-                         const CJS_Parameters& params,
+                         const std::vector<CJS_Value>& params,
                          CJS_Value& vRet,
                          CFX_WideString& sError) {
   // Unsafe, not supported.
@@ -608,7 +608,7 @@ FX_BOOL Document::saveAs(IJS_Context* cc,
 }
 
 FX_BOOL Document::submitForm(IJS_Context* cc,
-                             const CJS_Parameters& params,
+                             const std::vector<CJS_Value>& params,
                              CJS_Value& vRet,
                              CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
@@ -716,7 +716,7 @@ FX_BOOL Document::bookmarkRoot(IJS_Context* cc,
 }
 
 FX_BOOL Document::mailDoc(IJS_Context* cc,
-                          const CJS_Parameters& params,
+                          const std::vector<CJS_Value>& params,
                           CJS_Value& vRet,
                           CFX_WideString& sError) {
   FX_BOOL bUI = TRUE;
@@ -1223,14 +1223,14 @@ FX_BOOL Document::layout(IJS_Context* cc,
 }
 
 FX_BOOL Document::addLink(IJS_Context* cc,
-                          const CJS_Parameters& params,
+                          const std::vector<CJS_Value>& params,
                           CJS_Value& vRet,
                           CFX_WideString& sError) {
   return TRUE;
 }
 
 FX_BOOL Document::closeDoc(IJS_Context* cc,
-                           const CJS_Parameters& params,
+                           const std::vector<CJS_Value>& params,
                            CJS_Value& vRet,
                            CFX_WideString& sError) {
   ASSERT(m_pDocument != NULL);
@@ -1238,21 +1238,21 @@ FX_BOOL Document::closeDoc(IJS_Context* cc,
 }
 
 FX_BOOL Document::getPageBox(IJS_Context* cc,
-                             const CJS_Parameters& params,
+                             const std::vector<CJS_Value>& params,
                              CJS_Value& vRet,
                              CFX_WideString& sError) {
   return TRUE;
 }
 
 FX_BOOL Document::getAnnot(IJS_Context* cc,
-                           const CJS_Parameters& params,
+                           const std::vector<CJS_Value>& params,
                            CJS_Value& vRet,
                            CFX_WideString& sError) {
   return TRUE;
 }
 
 FX_BOOL Document::getAnnots(IJS_Context* cc,
-                            const CJS_Parameters& params,
+                            const std::vector<CJS_Value>& params,
                             CJS_Value& vRet,
                             CFX_WideString& sError) {
   vRet.SetNull();
@@ -1260,7 +1260,7 @@ FX_BOOL Document::getAnnots(IJS_Context* cc,
 }
 
 FX_BOOL Document::getAnnot3D(IJS_Context* cc,
-                             const CJS_Parameters& params,
+                             const std::vector<CJS_Value>& params,
                              CJS_Value& vRet,
                              CFX_WideString& sError) {
   vRet.SetNull();
@@ -1268,7 +1268,7 @@ FX_BOOL Document::getAnnot3D(IJS_Context* cc,
 }
 
 FX_BOOL Document::getAnnots3D(IJS_Context* cc,
-                              const CJS_Parameters& params,
+                              const std::vector<CJS_Value>& params,
                               CJS_Value& vRet,
                               CFX_WideString& sError) {
   vRet = CJS_Value::VT_undefined;
@@ -1276,14 +1276,14 @@ FX_BOOL Document::getAnnots3D(IJS_Context* cc,
 }
 
 FX_BOOL Document::getOCGs(IJS_Context* cc,
-                          const CJS_Parameters& params,
+                          const std::vector<CJS_Value>& params,
                           CJS_Value& vRet,
                           CFX_WideString& sError) {
   return TRUE;
 }
 
 FX_BOOL Document::getLinks(IJS_Context* cc,
-                           const CJS_Parameters& params,
+                           const std::vector<CJS_Value>& params,
                            CJS_Value& vRet,
                            CFX_WideString& sError) {
   return TRUE;
@@ -1340,7 +1340,7 @@ IconElement* IconTree::operator[](int iIndex) {
 }
 
 FX_BOOL Document::addIcon(IJS_Context* cc,
-                          const CJS_Parameters& params,
+                          const std::vector<CJS_Value>& params,
                           CJS_Value& vRet,
                           CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
@@ -1423,7 +1423,7 @@ FX_BOOL Document::icons(IJS_Context* cc,
 }
 
 FX_BOOL Document::getIcon(IJS_Context* cc,
-                          const CJS_Parameters& params,
+                          const std::vector<CJS_Value>& params,
                           CJS_Value& vRet,
                           CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
@@ -1467,7 +1467,7 @@ FX_BOOL Document::getIcon(IJS_Context* cc,
 }
 
 FX_BOOL Document::removeIcon(IJS_Context* cc,
-                             const CJS_Parameters& params,
+                             const std::vector<CJS_Value>& params,
                              CJS_Value& vRet,
                              CFX_WideString& sError) {
   // Unsafe, no supported.
@@ -1475,7 +1475,7 @@ FX_BOOL Document::removeIcon(IJS_Context* cc,
 }
 
 FX_BOOL Document::createDataObject(IJS_Context* cc,
-                                   const CJS_Parameters& params,
+                                   const std::vector<CJS_Value>& params,
                                    CJS_Value& vRet,
                                    CFX_WideString& sError) {
   // Unsafe, not implemented.
@@ -1489,7 +1489,7 @@ FX_BOOL Document::media(IJS_Context* cc,
 }
 
 FX_BOOL Document::calculateNow(IJS_Context* cc,
-                               const CJS_Parameters& params,
+                               const std::vector<CJS_Value>& params,
                                CJS_Value& vRet,
                                CFX_WideString& sError) {
   ASSERT(m_pDocument != NULL);
@@ -1513,7 +1513,7 @@ FX_BOOL Document::Collab(IJS_Context* cc,
 }
 
 FX_BOOL Document::getPageNthWord(IJS_Context* cc,
-                                 const CJS_Parameters& params,
+                                 const std::vector<CJS_Value>& params,
                                  CJS_Value& vRet,
                                  CFX_WideString& sError) {
   ASSERT(m_pDocument != NULL);
@@ -1575,7 +1575,7 @@ FX_BOOL Document::getPageNthWord(IJS_Context* cc,
 }
 
 FX_BOOL Document::getPageNthWordQuads(IJS_Context* cc,
-                                      const CJS_Parameters& params,
+                                      const std::vector<CJS_Value>& params,
                                       CJS_Value& vRet,
                                       CFX_WideString& sError) {
   ASSERT(m_pDocument != NULL);
@@ -1587,7 +1587,7 @@ FX_BOOL Document::getPageNthWordQuads(IJS_Context* cc,
 }
 
 FX_BOOL Document::getPageNumWords(IJS_Context* cc,
-                                  const CJS_Parameters& params,
+                                  const std::vector<CJS_Value>& params,
                                   CJS_Value& vRet,
                                   CFX_WideString& sError) {
   ASSERT(m_pDocument != NULL);
@@ -1634,7 +1634,7 @@ FX_BOOL Document::getPageNumWords(IJS_Context* cc,
 }
 
 FX_BOOL Document::getPrintParams(IJS_Context* cc,
-                                 const CJS_Parameters& params,
+                                 const std::vector<CJS_Value>& params,
                                  CJS_Value& vRet,
                                  CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
@@ -1745,7 +1745,7 @@ FX_BOOL Document::zoomType(IJS_Context* cc,
 }
 
 FX_BOOL Document::deletePages(IJS_Context* cc,
-                              const CJS_Parameters& params,
+                              const std::vector<CJS_Value>& params,
                               CJS_Value& vRet,
                               CFX_WideString& sError) {
   // Unsafe, no supported.
@@ -1753,7 +1753,7 @@ FX_BOOL Document::deletePages(IJS_Context* cc,
 }
 
 FX_BOOL Document::extractPages(IJS_Context* cc,
-                               const CJS_Parameters& params,
+                               const std::vector<CJS_Value>& params,
                                CJS_Value& vRet,
                                CFX_WideString& sError) {
   // Unsafe, not supported.
@@ -1761,7 +1761,7 @@ FX_BOOL Document::extractPages(IJS_Context* cc,
 }
 
 FX_BOOL Document::insertPages(IJS_Context* cc,
-                              const CJS_Parameters& params,
+                              const std::vector<CJS_Value>& params,
                               CJS_Value& vRet,
                               CFX_WideString& sError) {
   // Unsafe, not supported.
@@ -1769,7 +1769,7 @@ FX_BOOL Document::insertPages(IJS_Context* cc,
 }
 
 FX_BOOL Document::replacePages(IJS_Context* cc,
-                               const CJS_Parameters& params,
+                               const std::vector<CJS_Value>& params,
                                CJS_Value& vRet,
                                CFX_WideString& sError) {
   // Unsafe, not supported.
@@ -1777,7 +1777,7 @@ FX_BOOL Document::replacePages(IJS_Context* cc,
 }
 
 FX_BOOL Document::getURL(IJS_Context* cc,
-                         const CJS_Parameters& params,
+                         const std::vector<CJS_Value>& params,
                          CJS_Value& vRet,
                          CFX_WideString& sError) {
   // Unsafe, not supported.

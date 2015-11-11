@@ -113,163 +113,163 @@ class Document : public CJS_EmbedObj {
   FX_BOOL zoomType(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
 
   FX_BOOL addAnnot(IJS_Context* cc,
-                   const CJS_Parameters& params,
+                   const std::vector<CJS_Value>& params,
                    CJS_Value& vRet,
                    CFX_WideString& sError);
   FX_BOOL addField(IJS_Context* cc,
-                   const CJS_Parameters& params,
+                   const std::vector<CJS_Value>& params,
                    CJS_Value& vRet,
                    CFX_WideString& sError);
   FX_BOOL addLink(IJS_Context* cc,
-                  const CJS_Parameters& params,
+                  const std::vector<CJS_Value>& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError);
   FX_BOOL addIcon(IJS_Context* cc,
-                  const CJS_Parameters& params,
+                  const std::vector<CJS_Value>& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError);
   FX_BOOL calculateNow(IJS_Context* cc,
-                       const CJS_Parameters& params,
+                       const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError);
   FX_BOOL closeDoc(IJS_Context* cc,
-                   const CJS_Parameters& params,
+                   const std::vector<CJS_Value>& params,
                    CJS_Value& vRet,
                    CFX_WideString& sError);
   FX_BOOL createDataObject(IJS_Context* cc,
-                           const CJS_Parameters& params,
+                           const std::vector<CJS_Value>& params,
                            CJS_Value& vRet,
                            CFX_WideString& sError);
   FX_BOOL deletePages(IJS_Context* cc,
-                      const CJS_Parameters& params,
+                      const std::vector<CJS_Value>& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError);
   FX_BOOL exportAsText(IJS_Context* cc,
-                       const CJS_Parameters& params,
+                       const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError);
   FX_BOOL exportAsFDF(IJS_Context* cc,
-                      const CJS_Parameters& params,
+                      const std::vector<CJS_Value>& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError);
   FX_BOOL exportAsXFDF(IJS_Context* cc,
-                       const CJS_Parameters& params,
+                       const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError);
   FX_BOOL extractPages(IJS_Context* cc,
-                       const CJS_Parameters& params,
+                       const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError);
   FX_BOOL getAnnot(IJS_Context* cc,
-                   const CJS_Parameters& params,
+                   const std::vector<CJS_Value>& params,
                    CJS_Value& vRet,
                    CFX_WideString& sError);
   FX_BOOL getAnnots(IJS_Context* cc,
-                    const CJS_Parameters& params,
+                    const std::vector<CJS_Value>& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError);
   FX_BOOL getAnnot3D(IJS_Context* cc,
-                     const CJS_Parameters& params,
+                     const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError);
   FX_BOOL getAnnots3D(IJS_Context* cc,
-                      const CJS_Parameters& params,
+                      const std::vector<CJS_Value>& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError);
   FX_BOOL getField(IJS_Context* cc,
-                   const CJS_Parameters& params,
+                   const std::vector<CJS_Value>& params,
                    CJS_Value& vRet,
                    CFX_WideString& sError);
   FX_BOOL getIcon(IJS_Context* cc,
-                  const CJS_Parameters& params,
+                  const std::vector<CJS_Value>& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError);
   FX_BOOL getLinks(IJS_Context* cc,
-                   const CJS_Parameters& params,
+                   const std::vector<CJS_Value>& params,
                    CJS_Value& vRet,
                    CFX_WideString& sError);
   FX_BOOL getNthFieldName(IJS_Context* cc,
-                          const CJS_Parameters& params,
+                          const std::vector<CJS_Value>& params,
                           CJS_Value& vRet,
                           CFX_WideString& sError);
   FX_BOOL getOCGs(IJS_Context* cc,
-                  const CJS_Parameters& params,
+                  const std::vector<CJS_Value>& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError);
   FX_BOOL getPageBox(IJS_Context* cc,
-                     const CJS_Parameters& params,
+                     const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError);
   FX_BOOL getPageNthWord(IJS_Context* cc,
-                         const CJS_Parameters& params,
+                         const std::vector<CJS_Value>& params,
                          CJS_Value& vRet,
                          CFX_WideString& sError);
   FX_BOOL getPageNthWordQuads(IJS_Context* cc,
-                              const CJS_Parameters& params,
+                              const std::vector<CJS_Value>& params,
                               CJS_Value& vRet,
                               CFX_WideString& sError);
   FX_BOOL getPageNumWords(IJS_Context* cc,
-                          const CJS_Parameters& params,
+                          const std::vector<CJS_Value>& params,
                           CJS_Value& vRet,
                           CFX_WideString& sError);
   FX_BOOL getPrintParams(IJS_Context* cc,
-                         const CJS_Parameters& params,
+                         const std::vector<CJS_Value>& params,
                          CJS_Value& vRet,
                          CFX_WideString& sError);
   FX_BOOL getURL(IJS_Context* cc,
-                 const CJS_Parameters& params,
+                 const std::vector<CJS_Value>& params,
                  CJS_Value& vRet,
                  CFX_WideString& sError);
   FX_BOOL importAnFDF(IJS_Context* cc,
-                      const CJS_Parameters& params,
+                      const std::vector<CJS_Value>& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError);
   FX_BOOL importAnXFDF(IJS_Context* cc,
-                       const CJS_Parameters& params,
+                       const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError);
   FX_BOOL importTextData(IJS_Context* cc,
-                         const CJS_Parameters& params,
+                         const std::vector<CJS_Value>& params,
                          CJS_Value& vRet,
                          CFX_WideString& sError);
   FX_BOOL insertPages(IJS_Context* cc,
-                      const CJS_Parameters& params,
+                      const std::vector<CJS_Value>& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError);
   FX_BOOL mailForm(IJS_Context* cc,
-                   const CJS_Parameters& params,
+                   const std::vector<CJS_Value>& params,
                    CJS_Value& vRet,
                    CFX_WideString& sError);
   FX_BOOL print(IJS_Context* cc,
-                const CJS_Parameters& params,
+                const std::vector<CJS_Value>& params,
                 CJS_Value& vRet,
                 CFX_WideString& sError);
   FX_BOOL removeField(IJS_Context* cc,
-                      const CJS_Parameters& params,
+                      const std::vector<CJS_Value>& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError);
   FX_BOOL replacePages(IJS_Context* cc,
-                       const CJS_Parameters& params,
+                       const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError);
   FX_BOOL resetForm(IJS_Context* cc,
-                    const CJS_Parameters& params,
+                    const std::vector<CJS_Value>& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError);
   FX_BOOL saveAs(IJS_Context* cc,
-                 const CJS_Parameters& params,
+                 const std::vector<CJS_Value>& params,
                  CJS_Value& vRet,
                  CFX_WideString& sError);
   FX_BOOL submitForm(IJS_Context* cc,
-                     const CJS_Parameters& params,
+                     const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError);
   FX_BOOL mailDoc(IJS_Context* cc,
-                  const CJS_Parameters& params,
+                  const std::vector<CJS_Value>& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError);
   FX_BOOL removeIcon(IJS_Context* cc,
-                     const CJS_Parameters& params,
+                     const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError);
 
