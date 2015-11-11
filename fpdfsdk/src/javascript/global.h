@@ -41,7 +41,7 @@ class JSGlobalAlternate : public CJS_EmbedObj {
   ~JSGlobalAlternate() override;
 
   FX_BOOL setPersistent(IJS_Context* cc,
-                        const CJS_Parameters& params,
+                        const std::vector<CJS_Value>& params,
                         CJS_Value& vRet,
                         CFX_WideString& sError);
   FX_BOOL QueryProperty(const FX_WCHAR* propname);

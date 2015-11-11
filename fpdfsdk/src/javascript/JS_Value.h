@@ -88,8 +88,6 @@ class CJS_Value {
   CJS_Runtime* m_pJSRuntime;
 };
 
-using CJS_Parameters = std::vector<CJS_Value>;
-
 class CJS_PropValue : public CJS_Value {
  public:
   CJS_PropValue(const CJS_Value&);

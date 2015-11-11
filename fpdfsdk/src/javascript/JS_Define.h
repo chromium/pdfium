@@ -136,7 +136,7 @@ void JSPropSetter(const char* prop_name_string,
 
 template <class C,
           FX_BOOL (C::*M)(IJS_Context*,
-                          const CJS_Parameters&,
+                          const std::vector<CJS_Value>&,
                           CJS_Value&,
                           CFX_WideString&)>
 void JSMethod(const char* method_name_string,
@@ -148,7 +148,7 @@ void JSMethod(const char* method_name_string,
   if (!pRuntime)
     return;
   IJS_Context* pContext = pRuntime->GetCurrentContext();
-  CJS_Parameters parameters;
+  std::vector<CJS_Value> parameters;
   for (unsigned int i = 0; i < (unsigned int)info.Length(); i++) {
     parameters.push_back(CJS_Value(pRuntime, info[i], CJS_Value::VT_unknown));
   }
@@ -435,8 +435,10 @@ void JSSpecialPropDel(const char* class_name,
   }
 }
 
-template <FX_BOOL (
-    *F)(IJS_Context*, const CJS_Parameters&, CJS_Value&, CFX_WideString&)>
+template <FX_BOOL (*F)(IJS_Context*,
+                       const std::vector<CJS_Value>&,
+                       CJS_Value&,
+                       CFX_WideString&)>
 void JSGlobalFunc(const char* func_name_string,
                   const v8::FunctionCallbackInfo<v8::Value>& info) {
   CJS_Runtime* pRuntime =
@@ -444,7 +446,7 @@ void JSGlobalFunc(const char* func_name_string,
   if (!pRuntime)
     return;
   IJS_Context* pContext = pRuntime->GetCurrentContext();
-  CJS_Parameters parameters;
+  std::vector<CJS_Value> parameters;
   for (unsigned int i = 0; i < (unsigned int)info.Length(); i++) {
     parameters.push_back(CJS_Value(pRuntime, info[i], CJS_Value::VT_unknown));
   }

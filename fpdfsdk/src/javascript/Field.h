@@ -188,107 +188,107 @@ class Field : public CJS_EmbedObj {
   FX_BOOL source(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
 
   FX_BOOL browseForFileToSubmit(IJS_Context* cc,
-                                const CJS_Parameters& params,
+                                const std::vector<CJS_Value>& params,
                                 CJS_Value& vRet,
                                 CFX_WideString& sError);
   FX_BOOL buttonGetCaption(IJS_Context* cc,
-                           const CJS_Parameters& params,
+                           const std::vector<CJS_Value>& params,
                            CJS_Value& vRet,
                            CFX_WideString& sError);
   FX_BOOL buttonGetIcon(IJS_Context* cc,
-                        const CJS_Parameters& params,
+                        const std::vector<CJS_Value>& params,
                         CJS_Value& vRet,
                         CFX_WideString& sError);
   FX_BOOL buttonImportIcon(IJS_Context* cc,
-                           const CJS_Parameters& params,
+                           const std::vector<CJS_Value>& params,
                            CJS_Value& vRet,
                            CFX_WideString& sError);
   FX_BOOL buttonSetCaption(IJS_Context* cc,
-                           const CJS_Parameters& params,
+                           const std::vector<CJS_Value>& params,
                            CJS_Value& vRet,
                            CFX_WideString& sError);
   FX_BOOL buttonSetIcon(IJS_Context* cc,
-                        const CJS_Parameters& params,
+                        const std::vector<CJS_Value>& params,
                         CJS_Value& vRet,
                         CFX_WideString& sError);
   FX_BOOL checkThisBox(IJS_Context* cc,
-                       const CJS_Parameters& params,
+                       const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError);
   FX_BOOL clearItems(IJS_Context* cc,
-                     const CJS_Parameters& params,
+                     const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError);
   FX_BOOL defaultIsChecked(IJS_Context* cc,
-                           const CJS_Parameters& params,
+                           const std::vector<CJS_Value>& params,
                            CJS_Value& vRet,
                            CFX_WideString& sError);
   FX_BOOL deleteItemAt(IJS_Context* cc,
-                       const CJS_Parameters& params,
+                       const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError);
   FX_BOOL getArray(IJS_Context* cc,
-                   const CJS_Parameters& params,
+                   const std::vector<CJS_Value>& params,
                    CJS_Value& vRet,
                    CFX_WideString& sError);
   FX_BOOL getItemAt(IJS_Context* cc,
-                    const CJS_Parameters& params,
+                    const std::vector<CJS_Value>& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError);
   FX_BOOL getLock(IJS_Context* cc,
-                  const CJS_Parameters& params,
+                  const std::vector<CJS_Value>& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError);
   FX_BOOL insertItemAt(IJS_Context* cc,
-                       const CJS_Parameters& params,
+                       const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError);
   FX_BOOL isBoxChecked(IJS_Context* cc,
-                       const CJS_Parameters& params,
+                       const std::vector<CJS_Value>& params,
                        CJS_Value& vRet,
                        CFX_WideString& sError);
   FX_BOOL isDefaultChecked(IJS_Context* cc,
-                           const CJS_Parameters& params,
+                           const std::vector<CJS_Value>& params,
                            CJS_Value& vRet,
                            CFX_WideString& sError);
   FX_BOOL setAction(IJS_Context* cc,
-                    const CJS_Parameters& params,
+                    const std::vector<CJS_Value>& params,
                     CJS_Value& vRet,
                     CFX_WideString& sError);
   FX_BOOL setFocus(IJS_Context* cc,
-                   const CJS_Parameters& params,
+                   const std::vector<CJS_Value>& params,
                    CJS_Value& vRet,
                    CFX_WideString& sError);
   FX_BOOL setItems(IJS_Context* cc,
-                   const CJS_Parameters& params,
+                   const std::vector<CJS_Value>& params,
                    CJS_Value& vRet,
                    CFX_WideString& sError);
   FX_BOOL setLock(IJS_Context* cc,
-                  const CJS_Parameters& params,
+                  const std::vector<CJS_Value>& params,
                   CJS_Value& vRet,
                   CFX_WideString& sError);
   FX_BOOL signatureGetModifications(IJS_Context* cc,
-                                    const CJS_Parameters& params,
+                                    const std::vector<CJS_Value>& params,
                                     CJS_Value& vRet,
                                     CFX_WideString& sError);
   FX_BOOL signatureGetSeedValue(IJS_Context* cc,
-                                const CJS_Parameters& params,
+                                const std::vector<CJS_Value>& params,
                                 CJS_Value& vRet,
                                 CFX_WideString& sError);
   FX_BOOL signatureInfo(IJS_Context* cc,
-                        const CJS_Parameters& params,
+                        const std::vector<CJS_Value>& params,
                         CJS_Value& vRet,
                         CFX_WideString& sError);
   FX_BOOL signatureSetSeedValue(IJS_Context* cc,
-                                const CJS_Parameters& params,
+                                const std::vector<CJS_Value>& params,
                                 CJS_Value& vRet,
                                 CFX_WideString& sError);
   FX_BOOL signatureSign(IJS_Context* cc,
-                        const CJS_Parameters& params,
+                        const std::vector<CJS_Value>& params,
                         CJS_Value& vRet,
                         CFX_WideString& sError);
   FX_BOOL signatureValidate(IJS_Context* cc,
-                            const CJS_Parameters& params,
+                            const std::vector<CJS_Value>& params,
                             CJS_Value& vRet,
                             CFX_WideString& sError);
 

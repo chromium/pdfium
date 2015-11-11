@@ -31,7 +31,7 @@ Report::Report(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
 Report::~Report() {}
 
 FX_BOOL Report::writeText(IJS_Context* cc,
-                          const CJS_Parameters& params,
+                          const std::vector<CJS_Value>& params,
                           CJS_Value& vRet,
                           CFX_WideString& sError) {
   // Unsafe, not supported.
@@ -39,7 +39,7 @@ FX_BOOL Report::writeText(IJS_Context* cc,
 }
 
 FX_BOOL Report::save(IJS_Context* cc,
-                     const CJS_Parameters& params,
+                     const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError) {
   // Unsafe, not supported.
