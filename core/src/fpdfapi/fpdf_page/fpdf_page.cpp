@@ -407,11 +407,11 @@ void CPDF_TextObject::CalcPositionData(FX_FLOAT* pTextAdvanceX,
   for (int i = 0; i < m_nChars; ++i) {
     FX_DWORD charcode =
         m_nChars == 1 ? (FX_DWORD)(uintptr_t)m_pCharCodes : m_pCharCodes[i];
-    if (charcode == (FX_DWORD)-1) {
-      curpos -= FXSYS_Mul(m_pCharPos[i - 1], fontsize) / 1000;
-      continue;
-    }
-    if (i) {
+    if (i > 0) {
+      if (charcode == (FX_DWORD)-1) {
+        curpos -= FXSYS_Mul(m_pCharPos[i - 1], fontsize) / 1000;
+        continue;
+      }
       m_pCharPos[i - 1] = curpos;
     }
     FX_RECT char_rect;
