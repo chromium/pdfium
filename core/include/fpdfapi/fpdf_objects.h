@@ -323,7 +323,7 @@ class CPDF_Array : public CPDF_Object {
                 CPDF_Object* pObj,
                 CPDF_IndirectObjects* pObjs = NULL);
 
-  void RemoveAt(FX_DWORD index);
+  void RemoveAt(FX_DWORD index, int nCount = 1);
 
   void Add(CPDF_Object* pObj, CPDF_IndirectObjects* pObjs = NULL);
 
