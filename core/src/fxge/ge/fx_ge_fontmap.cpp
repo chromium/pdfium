@@ -10,6 +10,7 @@
 #include "core/include/fxge/fx_freetype.h"
 #include "core/include/fxge/fx_ge.h"
 #include "text_int.h"
+#include "third_party/base/stl_util.h"
 
 #define GET_TT_SHORT(w) (FX_WORD)(((w)[0] << 8) | (w)[1])
 #define GET_TT_LONG(w) \
@@ -207,6 +208,9 @@ const struct CHARSET_MAP {
     {84, 10004}, {85, 10006}, {86, 10081}, {87, 10021}, {88, 10029},
     {89, 10007},
 };
+
+const FX_DWORD kTableNAME = FXDWORD_GET_MSBFIRST("name");
+const FX_DWORD kTableTTCF = FXDWORD_GET_MSBFIRST("ttcf");
 
 int CompareFontFamilyString(const void* key, const void* element) {
   CFX_ByteString str_key((const FX_CHAR*)key);
@@ -695,19 +699,20 @@ CFX_ByteString GetNameFromTT(const uint8_t* name_table, FX_DWORD name_id) {
 }
 
 CFX_ByteString CFX_FontMapper::GetPSNameFromTT(void* hFont) {
-  if (m_pFontInfo == NULL) {
+  if (!m_pFontInfo)
     return CFX_ByteString();
-  }
-  CFX_ByteString result;
-  FX_DWORD size = m_pFontInfo->GetFontData(hFont, 0x6e616d65, NULL, 0);
-  if (size) {
-    uint8_t* buffer = FX_Alloc(uint8_t, size);
-    m_pFontInfo->GetFontData(hFont, 0x6e616d65, buffer, size);
-    result = GetNameFromTT(buffer, 6);
-    FX_Free(buffer);
-  }
-  return result;
+
+  FX_DWORD size = m_pFontInfo->GetFontData(hFont, kTableNAME, nullptr, 0);
+  if (!size)
+    return CFX_ByteString();
+
+  std::vector<uint8_t> buffer(size);
+  uint8_t* buffer_ptr = pdfium::vector_as_array(&buffer);
+  FX_DWORD bytes_read =
+      m_pFontInfo->GetFontData(hFont, kTableNAME, buffer_ptr, size);
+  return (bytes_read == size) ? GetNameFromTT(buffer_ptr, 6) : CFX_ByteString();
 }
+
 void CFX_FontMapper::AddInstalledFont(const CFX_ByteString& name, int charset) {
   if (m_pFontInfo == NULL) {
     return;
@@ -1128,23 +1133,23 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
     }
   }
   pSubstFont->m_ExtHandle = m_pFontInfo->RetainFont(hFont);
-  if (hFont == NULL) {
-    return NULL;
-  }
+  if (!hFont)
+    return nullptr;
+
   m_pFontInfo->GetFaceName(hFont, SubstName);
   if (Charset == FXFONT_DEFAULT_CHARSET) {
     m_pFontInfo->GetFontCharset(hFont, Charset);
   }
-  FX_DWORD ttc_size = m_pFontInfo->GetFontData(hFont, 0x74746366, NULL, 0);
-  FX_DWORD font_size = m_pFontInfo->GetFontData(hFont, 0, NULL, 0);
+  FX_DWORD ttc_size = m_pFontInfo->GetFontData(hFont, kTableTTCF, nullptr, 0);
+  FX_DWORD font_size = m_pFontInfo->GetFontData(hFont, 0, nullptr, 0);
   if (font_size == 0 && ttc_size == 0) {
     m_pFontInfo->DeleteFont(hFont);
-    return NULL;
+    return nullptr;
   }
-  FXFT_Face face = NULL;
+  FXFT_Face face = nullptr;
   if (ttc_size) {
     uint8_t temp[1024];
-    m_pFontInfo->GetFontData(hFont, 0x74746366, temp, 1024);
+    m_pFontInfo->GetFontData(hFont, kTableTTCF, temp, 1024);
     FX_DWORD checksum = 0;
     for (int i = 0; i < 256; i++) {
       checksum += ((FX_DWORD*)temp)[i];
@@ -1154,7 +1159,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
                                         ttc_size - font_size, pFontData);
     if (face == NULL) {
       pFontData = FX_Alloc(uint8_t, ttc_size);
-      m_pFontInfo->GetFontData(hFont, 0x74746366, pFontData, ttc_size);
+      m_pFontInfo->GetFontData(hFont, kTableTTCF, pFontData, ttc_size);
       face = m_pFontMgr->AddCachedTTCFace(ttc_size, checksum, pFontData,
                                           ttc_size, ttc_size - font_size);
     }
@@ -1283,7 +1288,7 @@ void CFX_FolderFontInfo::ScanFile(CFX_ByteString& path) {
     return;
   }
 
-  if (GET_TT_LONG(buffer) == 0x74746366) {
+  if (GET_TT_LONG(buffer) == kTableTTCF) {
     FX_DWORD nFaces = GET_TT_LONG(buffer + 8);
     if (nFaces > std::numeric_limits<FX_DWORD>::max() / 4) {
       FXSYS_fclose(pFile);
@@ -1428,48 +1433,48 @@ void* CFX_FolderFontInfo::GetFont(const FX_CHAR* face) {
   auto it = m_FontList.find(face);
   return it != m_FontList.end() ? it->second : nullptr;
 }
+
 FX_DWORD CFX_FolderFontInfo::GetFontData(void* hFont,
                                          FX_DWORD table,
                                          uint8_t* buffer,
                                          FX_DWORD size) {
-  if (hFont == NULL) {
+  if (!hFont)
     return 0;
-  }
-  CFX_FontFaceInfo* pFont = (CFX_FontFaceInfo*)hFont;
-  FXSYS_FILE* pFile = NULL;
-  if (size > 0) {
-    pFile = FXSYS_fopen(pFont->m_FilePath, "rb");
-    if (pFile == NULL) {
-      return 0;
-    }
-  }
+
+  const CFX_FontFaceInfo* pFont = static_cast<CFX_FontFaceInfo*>(hFont);
   FX_DWORD datasize = 0;
   FX_DWORD offset = 0;
   if (table == 0) {
     datasize = pFont->m_FontOffset ? 0 : pFont->m_FileSize;
-  } else if (table == 0x74746366) {
+  } else if (table == kTableTTCF) {
     datasize = pFont->m_FontOffset ? pFont->m_FileSize : 0;
   } else {
     FX_DWORD nTables = pFont->m_FontTables.GetLength() / 16;
     for (FX_DWORD i = 0; i < nTables; i++) {
-      const uint8_t* p = (const uint8_t*)pFont->m_FontTables + i * 16;
+      const uint8_t* p =
+          static_cast<const uint8_t*>(pFont->m_FontTables) + i * 16;
       if (GET_TT_LONG(p) == table) {
         offset = GET_TT_LONG(p + 8);
         datasize = GET_TT_LONG(p + 12);
       }
     }
   }
-  if (datasize && size >= datasize && pFile) {
-    if (FXSYS_fseek(pFile, offset, FXSYS_SEEK_SET) < 0 ||
-        FXSYS_fread(buffer, datasize, 1, pFile) != 1) {
-      datasize = 0;
-    }
+
+  if (!datasize || size < datasize)
+    return datasize;
+
+  FXSYS_FILE* pFile = FXSYS_fopen(pFont->m_FilePath, "rb");
+  if (!pFile)
+    return 0;
+
+  if (FXSYS_fseek(pFile, offset, FXSYS_SEEK_SET) < 0 ||
+      FXSYS_fread(buffer, datasize, 1, pFile) != 1) {
+    datasize = 0;
   }
-  if (pFile) {
-    FXSYS_fclose(pFile);
-  }
+  FXSYS_fclose(pFile);
   return datasize;
 }
+
 void CFX_FolderFontInfo::DeleteFont(void* hFont) {}
 FX_BOOL CFX_FolderFontInfo::GetFaceName(void* hFont, CFX_ByteString& name) {
   if (hFont == NULL) {
