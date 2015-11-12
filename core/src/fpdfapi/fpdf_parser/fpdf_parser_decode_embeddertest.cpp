@@ -95,4 +95,14 @@ TEST_F(FPDFParserDecodeEmbeddertest, FlateDecode) {
   }
 }
 
+TEST_F(FPDFParserDecodeEmbeddertest, Bug_552046) {
+  // Tests specifying multiple image filters for a stream. Should not cause a
+  // crash when rendered.
+  EXPECT_TRUE(OpenDocument("bug_552046.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  FPDF_BITMAP bitmap = RenderPage(page);
+  FPDFBitmap_Destroy(bitmap);
+  UnloadPage(page);
+}
+
 #undef TEST_CASE

@@ -496,13 +496,18 @@ CPDF_Stream* CPDF_Array::GetStream(FX_DWORD i) const {
 CPDF_Array* CPDF_Array::GetArray(FX_DWORD i) const {
   return ToArray(GetElementValue(i));
 }
-void CPDF_Array::RemoveAt(FX_DWORD i) {
-  ASSERT(IsArray());
+void CPDF_Array::RemoveAt(FX_DWORD i, int nCount) {
   if (i >= (FX_DWORD)m_Objects.GetSize())
     return;
-  if (CPDF_Object* p = static_cast<CPDF_Object*>(m_Objects.GetAt(i)))
-    p->Release();
-  m_Objects.RemoveAt(i);
+
+  if (nCount <= 0 || nCount > m_Objects.GetSize() - i)
+    return;
+
+  for (int j = 0; j < nCount; ++j) {
+    if (CPDF_Object* p = static_cast<CPDF_Object*>(m_Objects.GetAt(i + j)))
+      p->Release();
+  }
+  m_Objects.RemoveAt(i, nCount);
 }
 void CPDF_Array::SetAt(FX_DWORD i,
                        CPDF_Object* pObj,

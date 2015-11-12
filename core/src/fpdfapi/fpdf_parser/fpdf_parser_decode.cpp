@@ -363,7 +363,7 @@ FX_BOOL PDF_DataDecode(const uint8_t* src_buf,
     // Use ToDictionary here because we can push NULL into the ParamList.
     CPDF_Dictionary* pParam =
         ToDictionary(static_cast<CPDF_Object*>(ParamList[i]));
-    uint8_t* new_buf = NULL;
+    uint8_t* new_buf = nullptr;
     FX_DWORD new_size = (FX_DWORD)-1;
     int offset = -1;
     if (decoder == FX_BSTRC("FlateDecode") || decoder == FX_BSTRC("Fl")) {
@@ -395,18 +395,21 @@ FX_BOOL PDF_DataDecode(const uint8_t* src_buf,
         return TRUE;
       }
       offset = RunLengthDecode(last_buf, last_size, new_buf, new_size);
+    } else if (decoder == FX_BSTRC("Crypt")) {
+      continue;
     } else {
+      // If we get here, assume it's an image decoder.
       if (decoder == FX_BSTRC("DCT")) {
         decoder = "DCTDecode";
       } else if (decoder == FX_BSTRC("CCF")) {
         decoder = "CCITTFaxDecode";
-      } else if (decoder == FX_BSTRC("Crypt")) {
-        continue;
       }
       ImageEncoding = decoder;
       pImageParms = pParam;
       dest_buf = (uint8_t*)last_buf;
       dest_size = last_size;
+      if (CPDF_Array* pDecoders = pDecoder->AsArray())
+        pDecoders->RemoveAt(i + 1, pDecoders->GetCount() - i - 1);
       return TRUE;
     }
     if (last_buf != src_buf) {
@@ -420,7 +423,7 @@ FX_BOOL PDF_DataDecode(const uint8_t* src_buf,
     last_size = new_size;
   }
   ImageEncoding = "";
-  pImageParms = NULL;
+  pImageParms = nullptr;
   dest_buf = last_buf;
   dest_size = last_size;
   return TRUE;
