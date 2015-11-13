@@ -6,8 +6,8 @@
 
 #include "public/fpdf_ext.h"
 
-#include "../include/fsdk_define.h"
 #include "core/include/fxcrt/fx_xml.h"
+#include "fpdfsdk/include/fsdk_define.h"
 
 #define FPDFSDK_UNSUPPORT_CALL 100
 

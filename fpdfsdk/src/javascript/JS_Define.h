@@ -7,10 +7,10 @@
 #ifndef FPDFSDK_SRC_JAVASCRIPT_JS_DEFINE_H_
 #define FPDFSDK_SRC_JAVASCRIPT_JS_DEFINE_H_
 
-#include "../../include/jsapi/fxjs_v8.h"
-#include "resource.h"
 #include "JS_Object.h"
 #include "JS_Value.h"
+#include "fpdfsdk/include/jsapi/fxjs_v8.h"
+#include "resource.h"
 
 struct JSConstSpec {
   const wchar_t* pName;

@@ -6,10 +6,10 @@
 
 #include <algorithm>
 
-#include "../include/fsdk_define.h"
-#include "../include/fsdk_mgr.h"
-#include "../include/formfiller/FFL_FormFiller.h"
-#include "../include/fsdk_annothandler.h"
+#include "fpdfsdk/include/formfiller/FFL_FormFiller.h"
+#include "fpdfsdk/include/fsdk_annothandler.h"
+#include "fpdfsdk/include/fsdk_define.h"
+#include "fpdfsdk/include/fsdk_mgr.h"
 
 CPDFSDK_AnnotHandlerMgr::CPDFSDK_AnnotHandlerMgr(CPDFDoc_Environment* pApp) {
   m_pApp = pApp;

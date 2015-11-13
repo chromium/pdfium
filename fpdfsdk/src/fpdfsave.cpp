@@ -6,7 +6,7 @@
 
 #include "public/fpdf_save.h"
 
-#include "../include/fsdk_define.h"
+#include "fpdfsdk/include/fsdk_define.h"
 #include "public/fpdf_edit.h"
 
 #if _FX_OS_ == _FX_ANDROID_

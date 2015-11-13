@@ -7,8 +7,8 @@
 #ifndef CORE_INCLUDE_FPDFAPI_FPDF_MODULE_H_
 #define CORE_INCLUDE_FPDFAPI_FPDF_MODULE_H_
 
-#include "../fxcrt/fx_coordinates.h"
-#include "../fxcrt/fx_system.h"
+#include "core/include/fxcrt/fx_coordinates.h"
+#include "core/include/fxcrt/fx_system.h"
 #include "third_party/base/nonstd_unique_ptr.h"
 
 class CCodec_ModuleMgr;

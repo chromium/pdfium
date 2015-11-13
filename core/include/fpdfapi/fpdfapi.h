@@ -7,7 +7,7 @@
 #ifndef CORE_INCLUDE_FPDFAPI_FPDFAPI_H_
 #define CORE_INCLUDE_FPDFAPI_FPDFAPI_H_
 
-#include "../fxge/fx_ge.h"
+#include "core/include/fxge/fx_ge.h"
 #include "fpdf_module.h"
 #include "fpdf_pageobj.h"
 #include "fpdf_render.h"

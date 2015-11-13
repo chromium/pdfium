@@ -6,8 +6,8 @@
 
 #include "public/fpdf_progressive.h"
 
-#include "../include/fsdk_define.h"
-#include "../include/fsdk_rendercontext.h"
+#include "fpdfsdk/include/fsdk_define.h"
+#include "fpdfsdk/include/fsdk_rendercontext.h"
 #include "public/fpdfview.h"
 
 // These checks are here because core/ and public/ cannot depend on each other.

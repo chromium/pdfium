@@ -6,9 +6,9 @@
 
 #include "JS_Context.h"
 
-#include "../../include/javascript/IJavaScript.h"
 #include "JS_EventHandler.h"
 #include "JS_Runtime.h"
+#include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "resource.h"
 
 /* -------------------------- CJS_Context -------------------------- */

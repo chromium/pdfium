@@ -6,7 +6,7 @@
 
 #include "public/fpdf_dataavail.h"
 
-#include "../include/fsdk_define.h"
+#include "fpdfsdk/include/fsdk_define.h"
 #include "public/fpdf_formfill.h"
 
 // These checks are here because core/ and public/ cannot depend on each other.

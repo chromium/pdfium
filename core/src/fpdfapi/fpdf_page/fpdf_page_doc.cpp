@@ -6,10 +6,10 @@
 
 #include "pageint.h"
 
-#include "../fpdf_font/font_int.h"
 #include "core/include/fdrm/fx_crypt.h"
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_page.h"
+#include "core/src/fpdfapi/fpdf_font/font_int.h"
 
 class CPDF_PageModule : public IPDF_PageModule {
  public:

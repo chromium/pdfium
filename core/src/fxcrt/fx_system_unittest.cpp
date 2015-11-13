@@ -4,8 +4,8 @@
 
 #include <string>
 
-#include "../../../testing/fx_string_testhelpers.h"
 #include "core/include/fxcrt/fx_system.h"
+#include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 // Unit test covering cases where PDFium replaces well-known library

@@ -6,12 +6,12 @@
 
 #include "public/fpdfview.h"
 
-#include "../include/fsdk_define.h"
-#include "../include/fsdk_mgr.h"
-#include "../include/fsdk_rendercontext.h"
-#include "../include/javascript/IJavaScript.h"
 #include "core/include/fxcodec/fx_codec.h"
 #include "core/include/fxcrt/fx_safe_types.h"
+#include "fpdfsdk/include/fsdk_define.h"
+#include "fpdfsdk/include/fsdk_mgr.h"
+#include "fpdfsdk/include/fsdk_rendercontext.h"
+#include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "public/fpdf_ext.h"
 #include "public/fpdf_progressive.h"
 #include "third_party/base/nonstd_unique_ptr.h"

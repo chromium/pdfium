@@ -6,9 +6,9 @@
 
 #include <limits.h>
 
-#include "../fpdf_page/pageint.h"
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_page.h"
+#include "core/src/fpdfapi/fpdf_page/pageint.h"
 
 CPDF_Document::CPDF_Document() : CPDF_IndirectObjects(NULL) {
   m_pRootDict = NULL;

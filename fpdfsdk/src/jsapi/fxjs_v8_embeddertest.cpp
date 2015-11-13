@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "../../../testing/embedder_test.h"
-#include "../../include/jsapi/fxjs_v8.h"
 #include "core/include/fpdfapi/fpdf_parser.h"
+#include "fpdfsdk/include/jsapi/fxjs_v8.h"
+#include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/nonstd_unique_ptr.h"
 

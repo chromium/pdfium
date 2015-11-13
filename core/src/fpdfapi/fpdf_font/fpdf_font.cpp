@@ -6,12 +6,16 @@
 
 #include "font_int.h"
 
-#include "../fpdf_page/pageint.h"
+#include "core/src/fpdfapi/fpdf_page/pageint.h"
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fpdfapi/fpdf_pageobj.h"
 #include "core/include/fpdfapi/fpdf_resource.h"
 #include "core/include/fxge/fx_freetype.h"
+
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+#include "core/src/fxge/apple/apple_int.h"
+#endif
 
 FX_BOOL FT_UseTTCharmap(FXFT_Face face, int platform_id, int encoding_id) {
   for (int i = 0; i < FXFT_Get_Face_CharmapCount(face); i++) {
@@ -1049,9 +1053,6 @@ static FX_BOOL FT_UseType1Charmap(FXFT_Face face) {
   }
   return TRUE;
 }
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-#include "../../fxge/apple/apple_int.h"
-#endif
 int CPDF_Type1Font::GlyphFromCharCodeExt(FX_DWORD charcode) {
   if (charcode > 0xff) {
     return -1;

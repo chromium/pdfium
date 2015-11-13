@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../include/fsdk_rendercontext.h"
+#include "fpdfsdk/include/fsdk_rendercontext.h"
 
 void CRenderContext::Clear() {
   m_pDevice = NULL;

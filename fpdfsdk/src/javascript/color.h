@@ -7,8 +7,8 @@
 #ifndef FPDFSDK_SRC_JAVASCRIPT_COLOR_H_
 #define FPDFSDK_SRC_JAVASCRIPT_COLOR_H_
 
-#include "../../include/pdfwindow/PWL_Wnd.h"  // For CPWL_Color.
 #include "JS_Define.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"  // For CPWL_Color.
 
 class color : public CJS_EmbedObj {
  public:

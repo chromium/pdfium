@@ -6,12 +6,12 @@
 
 #include "console.h"
 
-#include "../../include/javascript/IJavaScript.h"
+#include "JS_Context.h"
 #include "JS_Define.h"
+#include "JS_EventHandler.h"
 #include "JS_Object.h"
 #include "JS_Value.h"
-#include "JS_EventHandler.h"
-#include "JS_Context.h"
+#include "fpdfsdk/include/javascript/IJavaScript.h"
 
 /* ------------------------ console ------------------------ */
 

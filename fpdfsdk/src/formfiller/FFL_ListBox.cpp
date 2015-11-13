@@ -4,13 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/formfiller/FormFiller.h"
-#include "../../include/formfiller/FFL_FormFiller.h"
-#include "../../include/formfiller/FFL_ListBox.h"
-//#include "../../include/formfiller/FFL_Module.h"
-#include "../../include/formfiller/FFL_IFormFiller.h"
-//#include "../../include/formfiller/FFL_Undo.h"
-#include "../../include/formfiller/FFL_CBA_Fontmap.h"
+#include "fpdfsdk/include/formfiller/FFL_CBA_Fontmap.h"
+#include "fpdfsdk/include/formfiller/FFL_FormFiller.h"
+#include "fpdfsdk/include/formfiller/FFL_IFormFiller.h"
+#include "fpdfsdk/include/formfiller/FFL_ListBox.h"
+#include "fpdfsdk/include/formfiller/FormFiller.h"
 
 #define FFL_DEFAULTLISTBOXFONTSIZE 12.0f
 

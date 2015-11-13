@@ -7,7 +7,7 @@
 #ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_FONTMAP_H_
 #define FPDFSDK_INCLUDE_PDFWINDOW_PWL_FONTMAP_H_
 
-#include "../fxedit/fx_edit.h"
+#include "fpdfsdk/include/fxedit/fx_edit.h"
 #include "public/fpdf_sysfontinfo.h"
 
 class CPDF_Document;

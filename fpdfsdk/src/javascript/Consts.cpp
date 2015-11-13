@@ -6,10 +6,10 @@
 
 #include "Consts.h"
 
-#include "../../include/javascript/IJavaScript.h"
 #include "JS_Define.h"
 #include "JS_Object.h"
 #include "JS_Value.h"
+#include "fpdfsdk/include/javascript/IJavaScript.h"
 
 /* ------------------------------ border ------------------------------ */
 

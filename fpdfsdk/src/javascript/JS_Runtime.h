@@ -11,10 +11,10 @@
 #include <utility>
 #include <vector>
 
-#include "../../include/javascript/IJavaScript.h"
-#include "../../include/jsapi/fxjs_v8.h"
 #include "JS_EventHandler.h"
 #include "core/include/fxcrt/fx_basic.h"
+#include "fpdfsdk/include/javascript/IJavaScript.h"
+#include "fpdfsdk/include/jsapi/fxjs_v8.h"
 
 class CJS_Context;
 

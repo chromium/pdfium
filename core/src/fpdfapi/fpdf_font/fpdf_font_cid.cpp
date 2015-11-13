@@ -6,12 +6,12 @@
 
 #include "font_int.h"
 
-#include "../fpdf_cmaps/cmap_int.h"
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fpdfapi/fpdf_resource.h"
 #include "core/include/fxge/fx_freetype.h"
 #include "core/include/fxge/fx_ge.h"
+#include "core/src/fpdfapi/fpdf_cmaps/cmap_int.h"
 
 namespace {
 

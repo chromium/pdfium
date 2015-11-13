@@ -6,9 +6,9 @@
 
 #include "public/fpdf_text.h"
 
-#include "../include/fsdk_define.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
 #include "core/include/fpdftext/fpdf_text.h"
+#include "fpdfsdk/include/fsdk_define.h"
 
 #ifdef _WIN32
 #include <tchar.h>

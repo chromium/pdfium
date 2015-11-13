@@ -7,7 +7,7 @@
 #ifndef CORE_INCLUDE_FPDFAPI_FPDF_PAGE_H_
 #define CORE_INCLUDE_FPDFAPI_FPDF_PAGE_H_
 
-#include "../fxge/fx_dib.h"
+#include "core/include/fxge/fx_dib.h"
 #include "fpdf_parser.h"
 #include "fpdf_resource.h"
 

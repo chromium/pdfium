@@ -7,8 +7,8 @@
 #include <limits>
 
 #include "codec_int.h"
+#include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "../../../testing/fx_string_testhelpers.h"
 
 static const OPJ_OFF_T kSkipError = static_cast<OPJ_OFF_T>(-1);
 static const OPJ_SIZE_T kReadError = static_cast<OPJ_SIZE_T>(-1);

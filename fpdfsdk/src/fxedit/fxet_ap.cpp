@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fxedit/fxet_stub.h"
-#include "../../include/fxedit/fx_edit.h"
-#include "../../include/fxedit/fxet_edit.h"
+#include "fpdfsdk/include/fxedit/fx_edit.h"
+#include "fpdfsdk/include/fxedit/fxet_edit.h"
+#include "fpdfsdk/include/fxedit/fxet_stub.h"
 
 CFX_ByteString GetPDFWordString(IFX_Edit_FontMap* pFontMap,
                                 int32_t nFontIndex,
