@@ -41,10 +41,8 @@ FWL_ERR CFWL_AppImp::Initialize() {
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_AppImp::Finalize() {
-  if (m_pWidgetMgr) {
-    delete m_pWidgetMgr;
-    m_pWidgetMgr = NULL;
-  }
+  delete m_pWidgetMgr;
+  m_pWidgetMgr = NULL;
   return FWL_ERR_Succeeded;
 }
 IFWL_AdapterNative* CFWL_AppImp::GetAdapterNative() {
@@ -54,7 +52,7 @@ IFWL_AdapterWidgetMgr* FWL_GetAdapterWidgetMgr() {
   return ((CFWL_WidgetMgr*)FWL_GetWidgetMgr())->GetAdapterWidgetMgr();
 }
 IFWL_WidgetMgr* CFWL_AppImp::GetWidgetMgr() {
-  return (IFWL_WidgetMgr*)m_pWidgetMgr;
+  return m_pWidgetMgr;
 }
 FWL_ERR CFWL_AppImp::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
   m_pThemeProvider = pThemeProvider;

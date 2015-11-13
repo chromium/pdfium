@@ -26,8 +26,7 @@ IFWL_WidgetMgr* FWL_GetWidgetMgr() {
 CFWL_WidgetMgr::CFWL_WidgetMgr(IFWL_AdapterNative* pAdapterNative)
     : m_dwCapability(0) {
   m_pDelegate = new CFWL_WidgetMgrDelegate(this);
-  m_pAdapter =
-      pAdapterNative->GetWidgetMgr((IFWL_WidgetMgrDelegate*)m_pDelegate);
+  m_pAdapter = pAdapterNative->GetWidgetMgr(m_pDelegate);
   FXSYS_assert(m_pAdapter);
   CFWL_WidgetMgrItem* pRoot = new CFWL_WidgetMgrItem;
   m_mapWidgetItem.SetAt(NULL, pRoot);

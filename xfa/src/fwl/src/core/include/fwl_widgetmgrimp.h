@@ -49,20 +49,23 @@ class CFWL_WidgetMgrItem {
 #endif
 };
 
-class CFWL_WidgetMgr {
+class CFWL_WidgetMgr : public IFWL_WidgetMgr {
  public:
   CFWL_WidgetMgr(IFWL_AdapterNative* pAdapterNative);
-  virtual ~CFWL_WidgetMgr();
-  virtual int32_t CountWidgets(IFWL_Widget* pParent = NULL);
-  virtual IFWL_Widget* GetWidget(int32_t nIndex, IFWL_Widget* pParent = NULL);
-  virtual IFWL_Widget* GetWidget(IFWL_Widget* pWidget,
-                                 FWL_WGTRELATION eRelation);
-  virtual int32_t GetWidgetIndex(IFWL_Widget* pWidget);
-  virtual FX_BOOL SetWidgetIndex(IFWL_Widget* pWidget, int32_t nIndex);
-  virtual FX_BOOL IsWidget(void* pObj);
-  virtual FWL_ERR RepaintWidget(IFWL_Widget* pWidget,
-                                const CFX_RectF* pRect = NULL);
-  virtual FX_DWORD GetCapability() { return m_dwCapability; }
+  ~CFWL_WidgetMgr() override;
+
+  // IFWL_WidgetMgr:
+  int32_t CountWidgets(IFWL_Widget* pParent = NULL) override;
+  IFWL_Widget* GetWidget(int32_t nIndex, IFWL_Widget* pParent = NULL) override;
+  IFWL_Widget* GetWidget(IFWL_Widget* pWidget,
+                         FWL_WGTRELATION eRelation) override;
+  int32_t GetWidgetIndex(IFWL_Widget* pWidget) override;
+  FX_BOOL SetWidgetIndex(IFWL_Widget* pWidget, int32_t nIndex) override;
+  FX_BOOL IsWidget(void* pObj) override;
+  FWL_ERR RepaintWidget(IFWL_Widget* pWidget,
+                        const CFX_RectF* pRect = NULL) override;
+  FX_DWORD GetCapability() override { return m_dwCapability; }
+
   void AddWidget(IFWL_Widget* pWidget);
   void InsertWidget(IFWL_Widget* pParent,
                     IFWL_Widget* pChild,
@@ -130,16 +133,19 @@ class CFWL_WidgetMgr {
   CFX_RectF m_rtScreen;
 #endif
 };
-class CFWL_WidgetMgrDelegate {
+
+class CFWL_WidgetMgrDelegate : public IFWL_WidgetMgrDelegate {
  public:
   CFWL_WidgetMgrDelegate(CFWL_WidgetMgr* pWidgetMgr);
-  virtual ~CFWL_WidgetMgrDelegate() {}
-  virtual FWL_ERR OnSetCapability(
-      FX_DWORD dwCapability = FWL_WGTMGR_DisableThread);
-  virtual int32_t OnProcessMessageToForm(CFWL_Message* pMessage);
-  virtual FWL_ERR OnDrawWidget(IFWL_Widget* pWidget,
-                               CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix);
+  ~CFWL_WidgetMgrDelegate() override {}
+
+  // IFWL_WidgetMgrDelegate:
+  FWL_ERR OnSetCapability(
+      FX_DWORD dwCapability = FWL_WGTMGR_DisableThread) override;
+  int32_t OnProcessMessageToForm(CFWL_Message* pMessage) override;
+  FWL_ERR OnDrawWidget(IFWL_Widget* pWidget,
+                       CFX_Graphics* pGraphics,
+                       const CFX_Matrix* pMatrix) override;
 
  protected:
   void DrawChild(IFWL_Widget* pParent,
