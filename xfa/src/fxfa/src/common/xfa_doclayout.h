@@ -7,25 +7,27 @@
 #ifndef _XFA_DOCLAYOUT_H_
 #define _XFA_DOCLAYOUT_H_
 #define _XFA_LAYOUTITEM_ProcessCACHE_
-class CXFA_LayoutItem;
+
 class IXFA_LayoutPage;
-class CXFA_LayoutItem {
+
+class CXFA_LayoutItemImpl {
  public:
+  CXFA_LayoutItemImpl(CXFA_Node* pNode, FX_BOOL bIsContentLayoutItem);
+  virtual ~CXFA_LayoutItemImpl();
+
   IXFA_LayoutPage* GetPage() const;
   CXFA_Node* GetFormNode() const;
   void GetRect(CFX_RectF& rtLayout, FX_BOOL bRelative = FALSE) const;
   int32_t GetIndex() const;
   int32_t GetCount() const;
-  CXFA_LayoutItem* GetParent() const;
-  CXFA_LayoutItem* GetFirst() const;
-  CXFA_LayoutItem* GetPrev() const;
-  CXFA_LayoutItem* GetNext() const;
-  CXFA_LayoutItem* GetLast() const;
-};
-class CXFA_LayoutItemImpl {
- public:
-  CXFA_LayoutItemImpl(CXFA_Node* pNode, FX_BOOL bIsContentLayoutItem);
-  virtual ~CXFA_LayoutItemImpl();
+  CXFA_LayoutItemImpl* GetParent() const;
+  const CXFA_LayoutItemImpl* GetFirst() const;
+  CXFA_LayoutItemImpl* GetFirst();
+  const CXFA_LayoutItemImpl* GetLast() const;
+  CXFA_LayoutItemImpl* GetLast();
+  CXFA_LayoutItemImpl* GetPrev() const;
+  CXFA_LayoutItemImpl* GetNext() const;
+
   FX_BOOL IsContentLayoutItem() { return m_bIsContentLayoutItem; }
   void AddChild(CXFA_LayoutItemImpl* pChildItem);
   void AddHeadChild(CXFA_LayoutItemImpl* pChildItem);
@@ -67,15 +69,17 @@ class CXFA_ContentLayoutItemImpl : public CXFA_LayoutItemImpl {
 };
 class CXFA_TraverseStrategy_LayoutItem {
  public:
-  static inline CXFA_LayoutItem* GetFirstChild(CXFA_LayoutItem* pLayoutItem) {
-    return (CXFA_LayoutItem*)((CXFA_LayoutItemImpl*)pLayoutItem)->m_pFirstChild;
+  static inline CXFA_LayoutItemImpl* GetFirstChild(
+      CXFA_LayoutItemImpl* pLayoutItem) {
+    return pLayoutItem->m_pFirstChild;
   }
-  static inline CXFA_LayoutItem* GetNextSibling(CXFA_LayoutItem* pLayoutItem) {
-    return (CXFA_LayoutItem*)((CXFA_LayoutItemImpl*)pLayoutItem)
-        ->m_pNextSibling;
+  static inline CXFA_LayoutItemImpl* GetNextSibling(
+      CXFA_LayoutItemImpl* pLayoutItem) {
+    return pLayoutItem->m_pNextSibling;
   }
-  static inline CXFA_LayoutItem* GetParent(CXFA_LayoutItem* pLayoutItem) {
-    return (CXFA_LayoutItem*)((CXFA_LayoutItemImpl*)pLayoutItem)->m_pParent;
+  static inline CXFA_LayoutItemImpl* GetParent(
+      CXFA_LayoutItemImpl* pLayoutItem) {
+    return pLayoutItem->m_pParent;
   }
 };
 class IXFA_LayoutPage {
@@ -94,7 +98,6 @@ class IXFA_DocLayout {
   virtual FX_BOOL IncrementLayout() = 0;
   virtual int32_t CountPages() const = 0;
   virtual IXFA_LayoutPage* GetPage(int32_t index) const = 0;
-
-  virtual CXFA_LayoutItem* GetLayoutItem(CXFA_Node* pFormItem) = 0;
+  virtual CXFA_LayoutItemImpl* GetLayoutItem(CXFA_Node* pFormItem) = 0;
 };
 #endif

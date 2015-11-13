@@ -13,7 +13,6 @@ class CXFA_FFPageView;
 class CXFA_FFDocView;
 class CXFA_FFDoc;
 class CXFA_FFApp;
-class CXFA_LayoutItem;
 
 #define XFA_GOTO_POSITION_IF_FAIL(arg, pos) \
   {                                         \
@@ -119,9 +118,6 @@ class CXFA_FFWidget : public IXFA_Widget,
   void AddInvalidateRect(const CFX_RectF* pRect = NULL);
   FX_BOOL GetCaptionText(CFX_WideString& wsCap);
   FX_BOOL IsFocused();
-  CXFA_LayoutItem* GetLayoutItem() {
-    return (CXFA_LayoutItem*)(CXFA_ContentLayoutItemImpl*)this;
-  }
   void Rotate2Normal(FX_FLOAT& fx, FX_FLOAT& fy);
   void GetRotateMatrix(CFX_Matrix& mt);
   FX_BOOL IsLayoutRectEmpty();
@@ -178,7 +174,7 @@ void XFA_RectWidthoutMargin(CFX_RectF& rt,
 FX_FLOAT XFA_GetEdgeThickness(const CXFA_StrokeArray& strokes,
                               FX_BOOL b3DStyle,
                               int32_t nIndex);
-CXFA_FFWidget* XFA_GetWidgetFromLayoutItem(CXFA_LayoutItem* pLayoutItem);
+CXFA_FFWidget* XFA_GetWidgetFromLayoutItem(CXFA_LayoutItemImpl* pLayoutItem);
 FX_BOOL XFA_IsCreateWidget(XFA_ELEMENT iType);
 #define XFA_DRAWBOX_ForceRound 1
 #define XFA_DRAWBOX_Lowered3D 2

@@ -141,8 +141,9 @@ int32_t CXFA_LayoutProcessor::CountPages() const {
 IXFA_LayoutPage* CXFA_LayoutProcessor::GetPage(int32_t index) const {
   return m_pLayoutPageMgr ? m_pLayoutPageMgr->GetPage(index) : NULL;
 }
-CXFA_LayoutItem* CXFA_LayoutProcessor::GetLayoutItem(CXFA_Node* pFormItem) {
-  return (CXFA_LayoutItem*)pFormItem->GetUserData(XFA_LAYOUTITEMKEY);
+CXFA_LayoutItemImpl* CXFA_LayoutProcessor::GetLayoutItem(CXFA_Node* pFormItem) {
+  return static_cast<CXFA_LayoutItemImpl*>(
+      pFormItem->GetUserData(XFA_LAYOUTITEMKEY));
 }
 void CXFA_LayoutProcessor::AddChangedContainer(CXFA_Node* pContainer) {
   if (m_rgChangedContainers.Find(pContainer) < 0) {

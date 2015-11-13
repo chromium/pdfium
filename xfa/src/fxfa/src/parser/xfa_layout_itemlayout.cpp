@@ -115,9 +115,8 @@ FX_BOOL CXFA_ItemLayoutProcessor::FindLayoutItemSplitPos(
           bChanged = FALSE;
           {
             FX_FLOAT fRelSplitPos = fProposedSplitPos - fCurVerticalOffset;
-            if (pNotify->FindSplitPos(
-                    pFormNode, ((CXFA_LayoutItem*)pLayoutItem)->GetIndex(),
-                    fRelSplitPos)) {
+            if (pNotify->FindSplitPos(pFormNode, pLayoutItem->GetIndex(),
+                                      fRelSplitPos)) {
               bAnyChanged = TRUE;
               bChanged = TRUE;
               fProposedSplitPos = fCurVerticalOffset + fRelSplitPos;
@@ -363,6 +362,135 @@ void CXFA_ItemLayoutProcessor::SplitLayoutItem(FX_FLOAT fSplitPos) {
   SplitLayoutItem(m_pLayoutItem, NULL, fSplitPos);
   return;
 }
+
+IXFA_LayoutPage* CXFA_LayoutItemImpl::GetPage() const {
+  for (const CXFA_LayoutItemImpl* pCurNode = this; pCurNode;
+       pCurNode = pCurNode->m_pParent) {
+    if (pCurNode->m_pFormNode->GetClassID() == XFA_ELEMENT_PageArea)
+      return (IXFA_LayoutPage*)pCurNode;
+  }
+  return nullptr;
+}
+
+CXFA_Node* CXFA_LayoutItemImpl::GetFormNode() const {
+  return m_pFormNode;
+}
+
+void CXFA_LayoutItemImpl::GetRect(CFX_RectF& rtLayout,
+                                  FX_BOOL bRelative) const {
+  ASSERT(m_bIsContentLayoutItem);
+  const CXFA_ContentLayoutItemImpl* pThis =
+      static_cast<const CXFA_ContentLayoutItemImpl*>(this);
+  CFX_PointF sPos = pThis->m_sPos;
+  CFX_SizeF sSize = pThis->m_sSize;
+  if (!bRelative) {
+    for (CXFA_LayoutItemImpl* pLayoutItem = pThis->m_pParent; pLayoutItem;
+         pLayoutItem = pLayoutItem->m_pParent) {
+      if (pLayoutItem->IsContentLayoutItem()) {
+        sPos += static_cast<CXFA_ContentLayoutItemImpl*>(pLayoutItem)->m_sPos;
+        if (CXFA_Node* pMarginNode =
+                pLayoutItem->m_pFormNode->GetFirstChildByClass(
+                    XFA_ELEMENT_Margin)) {
+          sPos.Add(pMarginNode->GetMeasure(XFA_ATTRIBUTE_LeftInset)
+                       .ToUnit(XFA_UNIT_Pt),
+                   pMarginNode->GetMeasure(XFA_ATTRIBUTE_TopInset)
+                       .ToUnit(XFA_UNIT_Pt));
+        }
+      } else {
+        if (pLayoutItem->m_pFormNode->GetClassID() == XFA_ELEMENT_ContentArea) {
+          sPos.Add(pLayoutItem->m_pFormNode->GetMeasure(XFA_ATTRIBUTE_X)
+                       .ToUnit(XFA_UNIT_Pt),
+                   pLayoutItem->m_pFormNode->GetMeasure(XFA_ATTRIBUTE_Y)
+                       .ToUnit(XFA_UNIT_Pt));
+          break;
+        } else if (pLayoutItem->m_pFormNode->GetClassID() ==
+                   XFA_ELEMENT_PageArea) {
+          break;
+        }
+      }
+    }
+  }
+  rtLayout.Set(sPos.x, sPos.y, sSize.x, sSize.y);
+}
+
+CXFA_LayoutItemImpl* CXFA_LayoutItemImpl::GetParent() const {
+  return m_pParent;
+}
+
+const CXFA_LayoutItemImpl* CXFA_LayoutItemImpl::GetFirst() const {
+  ASSERT(m_bIsContentLayoutItem);
+  const CXFA_ContentLayoutItemImpl* pCurNode =
+      static_cast<const CXFA_ContentLayoutItemImpl*>(this);
+  while (pCurNode->m_pPrev) {
+    pCurNode = pCurNode->m_pPrev;
+  }
+  return pCurNode;
+}
+
+CXFA_LayoutItemImpl* CXFA_LayoutItemImpl::GetFirst() {
+  ASSERT(m_bIsContentLayoutItem);
+  CXFA_ContentLayoutItemImpl* pCurNode =
+      static_cast<CXFA_ContentLayoutItemImpl*>(this);
+  while (pCurNode->m_pPrev) {
+    pCurNode = pCurNode->m_pPrev;
+  }
+  return pCurNode;
+}
+
+CXFA_LayoutItemImpl* CXFA_LayoutItemImpl::GetLast() {
+  ASSERT(m_bIsContentLayoutItem);
+  CXFA_ContentLayoutItemImpl* pCurNode =
+      static_cast<CXFA_ContentLayoutItemImpl*>(this);
+  while (pCurNode->m_pNext) {
+    pCurNode = pCurNode->m_pNext;
+  }
+  return pCurNode;
+}
+
+const CXFA_LayoutItemImpl* CXFA_LayoutItemImpl::GetLast() const {
+  ASSERT(m_bIsContentLayoutItem);
+  const CXFA_ContentLayoutItemImpl* pCurNode =
+      static_cast<const CXFA_ContentLayoutItemImpl*>(this);
+  while (pCurNode->m_pNext) {
+    pCurNode = pCurNode->m_pNext;
+  }
+  return pCurNode;
+}
+
+CXFA_LayoutItemImpl* CXFA_LayoutItemImpl::GetPrev() const {
+  ASSERT(m_bIsContentLayoutItem);
+  return static_cast<const CXFA_ContentLayoutItemImpl*>(this)->m_pPrev;
+}
+
+CXFA_LayoutItemImpl* CXFA_LayoutItemImpl::GetNext() const {
+  ASSERT(m_bIsContentLayoutItem);
+  return static_cast<const CXFA_ContentLayoutItemImpl*>(this)->m_pNext;
+}
+
+int32_t CXFA_LayoutItemImpl::GetIndex() const {
+  ASSERT(m_bIsContentLayoutItem);
+  int32_t iIndex = 0;
+  const CXFA_ContentLayoutItemImpl* pCurNode =
+      static_cast<const CXFA_ContentLayoutItemImpl*>(this);
+  while (pCurNode->m_pPrev) {
+    pCurNode = pCurNode->m_pPrev;
+    ++iIndex;
+  }
+  return iIndex;
+}
+
+int32_t CXFA_LayoutItemImpl::GetCount() const {
+  ASSERT(m_bIsContentLayoutItem);
+  int32_t iCount = GetIndex() + 1;
+  const CXFA_ContentLayoutItemImpl* pCurNode =
+      static_cast<const CXFA_ContentLayoutItemImpl*>(this);
+  while (pCurNode->m_pNext) {
+    pCurNode = pCurNode->m_pNext;
+    iCount++;
+  }
+  return iCount;
+}
+
 void CXFA_LayoutItemImpl::AddChild(CXFA_LayoutItemImpl* pChildItem) {
   if (pChildItem->m_pParent) {
     pChildItem->m_pParent->RemoveChild(pChildItem);
@@ -442,7 +570,7 @@ CXFA_ContentLayoutItemImpl* CXFA_ItemLayoutProcessor::ExtractLayoutItem() {
     CXFA_ContentLayoutItemImpl* pOldLayoutItem = m_pOldLayoutItem;
     while (pOldLayoutItem) {
       CXFA_ContentLayoutItemImpl* pNextOldLayoutItem = pOldLayoutItem->m_pNext;
-      pNotify->OnLayoutEvent(pDocLayout, (CXFA_LayoutItem*)pOldLayoutItem,
+      pNotify->OnLayoutEvent(pDocLayout, pOldLayoutItem,
                              XFA_LAYOUTEVENT_ItemRemoving);
       delete pOldLayoutItem;
       pOldLayoutItem = pNextOldLayoutItem;
@@ -511,7 +639,7 @@ static void XFA_DeleteLayoutGeneratedNode(CXFA_Node* pGenerateNode) {
     CXFA_ContentLayoutItemImpl* pNextLayoutItem = NULL;
     while (pCurLayoutItem) {
       pNextLayoutItem = pCurLayoutItem->m_pNext;
-      pNotify->OnLayoutEvent(pDocLayout, (CXFA_LayoutItem*)pCurLayoutItem,
+      pNotify->OnLayoutEvent(pDocLayout, pCurLayoutItem,
                              XFA_LAYOUTEVENT_ItemRemoving);
       delete pCurLayoutItem;
       pCurLayoutItem = pNextLayoutItem;

@@ -711,13 +711,13 @@ int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
   return iRet;
 }
 CXFA_FFWidget* CXFA_WidgetAcc::GetNextWidget(CXFA_FFWidget* pWidget) {
-  CXFA_LayoutItem* pLayout = NULL;
+  CXFA_LayoutItemImpl* pLayout = nullptr;
   if (pWidget) {
-    pLayout = pWidget->GetLayoutItem()->GetNext();
+    pLayout = pWidget->GetNext();
   } else {
     pLayout = m_pDocView->GetXFALayout()->GetLayoutItem(m_pNode);
   }
-  return (CXFA_FFWidget*)(CXFA_ContentLayoutItemImpl*)pLayout;
+  return static_cast<CXFA_FFWidget*>(pLayout);
 }
 void CXFA_WidgetAcc::UpdateUIDisplay(CXFA_FFWidget* pExcept) {
   CXFA_FFWidget* pWidget = NULL;

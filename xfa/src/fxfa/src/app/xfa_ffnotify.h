@@ -26,9 +26,9 @@ class CXFA_FFNotify : public IXFA_Notify {
                                  void* pParam = NULL,
                                  void* pAdditional = NULL,
                                  void* pAdditional2 = NULL);
-  virtual CXFA_LayoutItem* OnCreateLayoutItem(CXFA_Node* pNode);
+  virtual CXFA_LayoutItemImpl* OnCreateLayoutItem(CXFA_Node* pNode);
   virtual void OnLayoutEvent(IXFA_DocLayout* pLayout,
-                             CXFA_LayoutItem* pSender,
+                             CXFA_LayoutItemImpl* pSender,
                              XFA_LAYOUTEVENT eEvent,
                              void* pParam = NULL,
                              void* pParam2 = NULL);
@@ -50,7 +50,7 @@ class CXFA_FFNotify : public IXFA_Notify {
   virtual IXFA_DocProvider* GetDocProvider();
   virtual IXFA_AppProvider* GetAppProvider();
   virtual IXFA_WidgetHandler* GetWidgetHandler();
-  virtual IXFA_Widget* GetHWidget(CXFA_LayoutItem* pLayoutItem);
+  virtual IXFA_Widget* GetHWidget(CXFA_LayoutItemImpl* pLayoutItem);
   virtual void OpenDropDownList(IXFA_Widget* hWidget);
   virtual CFX_WideString GetCurrentDateTime();
   virtual void ResetData(CXFA_WidgetData* pWidgetData = NULL);
@@ -72,22 +72,22 @@ class CXFA_FFNotify : public IXFA_Notify {
   void OnChildRemoved(CXFA_Node* pSender, void* pParam, void* pParam2);
   void OnLayoutItemAdd(CXFA_FFDocView* pDocView,
                        IXFA_DocLayout* pLayout,
-                       CXFA_LayoutItem* pSender,
+                       CXFA_LayoutItemImpl* pSender,
                        void* pParam,
                        void* pParam2);
   void OnLayoutItemRemoving(CXFA_FFDocView* pDocView,
                             IXFA_DocLayout* pLayout,
-                            CXFA_LayoutItem* pSender,
+                            CXFA_LayoutItemImpl* pSender,
                             void* pParam,
                             void* pParam2);
   void OnLayoutItemRectChanged(CXFA_FFDocView* pDocView,
                                IXFA_DocLayout* pLayout,
-                               CXFA_LayoutItem* pSender,
+                               CXFA_LayoutItemImpl* pSender,
                                void* pParam,
                                void* pParam2);
   void OnLayoutItemStatustChanged(CXFA_FFDocView* pDocView,
                                   IXFA_DocLayout* pLayout,
-                                  CXFA_LayoutItem* pSender,
+                                  CXFA_LayoutItemImpl* pSender,
                                   void* pParam,
                                   void* pParam2);
   CXFA_FFDoc* m_pDoc;

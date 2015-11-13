@@ -29,13 +29,13 @@ void CXFA_FFWidget::SetPageView(IXFA_PageView* pPageView) {
 void CXFA_FFWidget::GetWidgetRect(CFX_RectF& rtWidget) {
   if ((m_dwStatus & XFA_WIDGETSTATUS_RectCached) == 0) {
     m_dwStatus |= XFA_WIDGETSTATUS_RectCached;
-    this->GetLayoutItem()->GetRect(m_rtWidget);
+    GetRect(m_rtWidget);
   }
   rtWidget = m_rtWidget;
 }
 CFX_RectF CXFA_FFWidget::ReCacheWidgetRect() {
   m_dwStatus |= XFA_WIDGETSTATUS_RectCached;
-  this->GetLayoutItem()->GetRect(m_rtWidget);
+  GetRect(m_rtWidget);
   return m_rtWidget;
 }
 void CXFA_FFWidget::GetRectWithoutRotate(CFX_RectF& rtWidget) {
@@ -1102,12 +1102,12 @@ void XFA_RectWidthoutMargin(CFX_RectF& rt, const CXFA_Margin& mg, FX_BOOL bUI) {
   mg.GetBottomInset(fBottomInset);
   rt.Deflate(fLeftInset, fTopInset, fRightInset, fBottomInset);
 }
-CXFA_FFWidget* XFA_GetWidgetFromLayoutItem(CXFA_LayoutItem* pLayoutItem) {
+CXFA_FFWidget* XFA_GetWidgetFromLayoutItem(CXFA_LayoutItemImpl* pLayoutItem) {
   XFA_ELEMENT iType = pLayoutItem->GetFormNode()->GetClassID();
   if (XFA_IsCreateWidget(iType)) {
-    return (CXFA_FFWidget*)(CXFA_ContentLayoutItemImpl*)pLayoutItem;
+    return static_cast<CXFA_FFWidget*>(pLayoutItem);
   }
-  return NULL;
+  return nullptr;
 }
 FX_BOOL XFA_IsCreateWidget(XFA_ELEMENT iType) {
   return iType == XFA_ELEMENT_Field || iType == XFA_ELEMENT_Draw ||

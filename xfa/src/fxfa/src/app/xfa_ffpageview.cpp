@@ -119,7 +119,7 @@ CXFA_FFPageWidgetIterator::CXFA_FFPageWidgetIterator(CXFA_FFPageView* pPageView,
                                                      FX_DWORD dwFilter) {
   m_pPageView = pPageView;
   m_dwFilter = dwFilter;
-  m_sIterator.Init((CXFA_LayoutItem*)pPageView->GetLayoutPage());
+  m_sIterator.Init((CXFA_LayoutItemImpl*)pPageView->GetLayoutPage());
   m_bIgnorerelevant = ((CXFA_FFDoc*)m_pPageView->GetDocView()->GetDoc())
                           ->GetXFADoc()
                           ->GetCurVersionMode() < XFA_VERSION_205;
@@ -130,7 +130,7 @@ void CXFA_FFPageWidgetIterator::Reset() {
 }
 IXFA_Widget* CXFA_FFPageWidgetIterator::MoveToFirst() {
   m_sIterator.Reset();
-  for (CXFA_LayoutItem* pLayoutItem = m_sIterator.GetCurrent(); pLayoutItem;
+  for (CXFA_LayoutItemImpl* pLayoutItem = m_sIterator.GetCurrent(); pLayoutItem;
        pLayoutItem = m_sIterator.MoveToNext()) {
     if (IXFA_Widget* hWidget = GetWidget(pLayoutItem)) {
       return hWidget;
@@ -143,7 +143,7 @@ IXFA_Widget* CXFA_FFPageWidgetIterator::MoveToLast() {
   return MoveToPrevious();
 }
 IXFA_Widget* CXFA_FFPageWidgetIterator::MoveToNext() {
-  for (CXFA_LayoutItem* pLayoutItem = m_sIterator.MoveToNext(); pLayoutItem;
+  for (CXFA_LayoutItemImpl* pLayoutItem = m_sIterator.MoveToNext(); pLayoutItem;
        pLayoutItem = m_sIterator.MoveToNext()) {
     if (IXFA_Widget* hWidget = GetWidget(pLayoutItem)) {
       return hWidget;
@@ -152,7 +152,7 @@ IXFA_Widget* CXFA_FFPageWidgetIterator::MoveToNext() {
   return NULL;
 }
 IXFA_Widget* CXFA_FFPageWidgetIterator::MoveToPrevious() {
-  for (CXFA_LayoutItem* pLayoutItem = m_sIterator.MoveToPrev(); pLayoutItem;
+  for (CXFA_LayoutItemImpl* pLayoutItem = m_sIterator.MoveToPrev(); pLayoutItem;
        pLayoutItem = m_sIterator.MoveToPrev()) {
     if (IXFA_Widget* hWidget = GetWidget(pLayoutItem)) {
       return hWidget;
@@ -161,18 +161,15 @@ IXFA_Widget* CXFA_FFPageWidgetIterator::MoveToPrevious() {
   return NULL;
 }
 IXFA_Widget* CXFA_FFPageWidgetIterator::GetCurrentWidget() {
-  CXFA_LayoutItem* pLayoutItem = m_sIterator.GetCurrent();
+  CXFA_LayoutItemImpl* pLayoutItem = m_sIterator.GetCurrent();
   return pLayoutItem ? XFA_GetWidgetFromLayoutItem(pLayoutItem) : NULL;
 }
 FX_BOOL CXFA_FFPageWidgetIterator::SetCurrentWidget(IXFA_Widget* hWidget) {
-  if (hWidget &&
-      m_sIterator.SetCurrent(((CXFA_FFWidget*)hWidget)->GetLayoutItem())) {
-    return TRUE;
-  }
-  return FALSE;
+  CXFA_FFWidget* pWidget = static_cast<CXFA_FFWidget*>(hWidget);
+  return pWidget && m_sIterator.SetCurrent(pWidget);
 }
 IXFA_Widget* CXFA_FFPageWidgetIterator::GetWidget(
-    CXFA_LayoutItem* pLayoutItem) {
+    CXFA_LayoutItemImpl* pLayoutItem) {
   if (CXFA_FFWidget* pWidget = XFA_GetWidgetFromLayoutItem(pLayoutItem)) {
     if (!XFA_PageWidgetFilter(pWidget, m_dwFilter, FALSE, m_bIgnorerelevant)) {
       return NULL;
@@ -335,13 +332,13 @@ static int32_t XFA_TabOrderWidgetComparator(const void* phWidget1,
 }
 void CXFA_FFTabOrderPageWidgetIterator::OrderContainer(
     CXFA_LayoutItemIterator* sIterator,
-    CXFA_LayoutItem* pContainerItem,
+    CXFA_LayoutItemImpl* pContainerItem,
     CXFA_TabParam* pContainer,
     FX_BOOL& bCurrentItem,
     FX_BOOL& bContentArea,
     FX_BOOL bMarsterPage) {
   CFX_PtrArray tabParams;
-  CXFA_LayoutItem* pSearchItem = sIterator->MoveToNext();
+  CXFA_LayoutItemImpl* pSearchItem = sIterator->MoveToNext();
   while (pSearchItem) {
     FX_BOOL bIsContentLayoutItem =
         ((CXFA_LayoutItemImpl*)pSearchItem)->IsContentLayoutItem();
@@ -396,7 +393,7 @@ void CXFA_FFTabOrderPageWidgetIterator::OrderContainer(
 void CXFA_FFTabOrderPageWidgetIterator::CreateSpaceOrderWidgetArray(
     CXFA_WidgetArray& WidgetArray) {
   CXFA_LayoutItemIterator sIterator;
-  sIterator.Init((CXFA_LayoutItem*)m_pPageView->GetLayoutPage());
+  sIterator.Init((CXFA_LayoutItemImpl*)m_pPageView->GetLayoutPage());
   CXFA_TabParam* pParam = new CXFA_TabParam;
   FX_BOOL bCurrentItem = FALSE;
   FX_BOOL bContentArea = FALSE;
@@ -415,7 +412,7 @@ void CXFA_FFTabOrderPageWidgetIterator::CreateSpaceOrderWidgetArray(
   delete pParam;
 }
 CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::GetWidget(
-    CXFA_LayoutItem* pLayoutItem) {
+    CXFA_LayoutItemImpl* pLayoutItem) {
   if (CXFA_FFWidget* pWidget = XFA_GetWidgetFromLayoutItem(pLayoutItem)) {
     if (!pWidget->IsLoaded() &&
         (pWidget->GetStatus() & XFA_WIDGETSTATUS_Visible)) {

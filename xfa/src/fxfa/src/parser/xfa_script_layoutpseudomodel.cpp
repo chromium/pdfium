@@ -86,7 +86,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_HWXY(
   }
   CFX_RectF rtRect;
   CXFA_Measurement measure;
-  CXFA_LayoutItem* pLayoutItem = pDocLayout->GetLayoutItem(pNode);
+  CXFA_LayoutItemImpl* pLayoutItem = pDocLayout->GetLayoutItem(pNode);
   if (!pLayoutItem) {
     return;
   }
@@ -188,7 +188,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_PageSpan(
     return;
   }
   FXJSE_HVALUE hValue = pArguments->GetReturnValue();
-  CXFA_LayoutItem* pLayoutItem = pDocLayout->GetLayoutItem(pNode);
+  CXFA_LayoutItemImpl* pLayoutItem = pDocLayout->GetLayoutItem(pNode);
   if (!pLayoutItem) {
     FXJSE_Value_SetInteger(hValue, -1);
     return;
@@ -541,7 +541,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_PageImp(
   if (!pDocLayout) {
     return;
   }
-  CXFA_LayoutItem* pLayoutItem = pDocLayout->GetLayoutItem(pNode);
+  CXFA_LayoutItemImpl* pLayoutItem = pDocLayout->GetLayoutItem(pNode);
   if (!pLayoutItem) {
     FXJSE_Value_SetInteger(hValue, -1);
     return;

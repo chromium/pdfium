@@ -137,7 +137,7 @@ void CXFA_FFField::SetEditScrollOffset() {
   if (eType == XFA_ELEMENT_TextEdit || eType == XFA_ELEMENT_NumericEdit ||
       eType == XFA_ELEMENT_PasswordEdit) {
     FX_FLOAT fScrollOffset = 0;
-    CXFA_FFField* pPrev = (CXFA_FFField*)GetLayoutItem()->GetPrev();
+    CXFA_FFField* pPrev = static_cast<CXFA_FFField*>(GetPrev());
     if (pPrev) {
       CFX_RectF rtMargin;
       m_pDataAcc->GetUIMargin(rtMargin);
@@ -145,7 +145,7 @@ void CXFA_FFField::SetEditScrollOffset() {
     }
     while (pPrev) {
       fScrollOffset += pPrev->m_rtUI.height;
-      pPrev = (CXFA_FFField*)pPrev->GetLayoutItem()->GetPrev();
+      pPrev = static_cast<CXFA_FFField*>(pPrev->GetPrev());
     }
     ((CFWL_Edit*)m_pNormalWidget)->SetScrollOffset(fScrollOffset);
   }
@@ -166,10 +166,7 @@ void CXFA_FFField::CapPlacement() {
   GetRectWithoutRotate(rtWidget);
   CXFA_Margin mgWidget = m_pDataAcc->GetMargin();
   if (mgWidget) {
-    CXFA_LayoutItem* pItem = this->GetLayoutItem();
-    if (!pItem) {
-      return;
-    }
+    CXFA_LayoutItemImpl* pItem = this;
     FX_FLOAT fLeftInset = 0, fRightInset = 0, fTopInset = 0, fBottomInset = 0;
     mgWidget.GetLeftInset(fLeftInset);
     mgWidget.GetRightInset(fRightInset);
@@ -193,15 +190,13 @@ void CXFA_FFField::CapPlacement() {
   if (caption.IsExistInXML() &&
       caption.GetPresence() != XFA_ATTRIBUTEENUM_Hidden) {
     iCapPlacement = (XFA_ATTRIBUTEENUM)caption.GetPlacementType();
-    if (iCapPlacement == XFA_ATTRIBUTEENUM_Top &&
-        (GetLayoutItem()->GetPrev())) {
+    if (iCapPlacement == XFA_ATTRIBUTEENUM_Top && GetPrev()) {
       m_rtCaption.Set(0, 0, 0, 0);
-    } else if (iCapPlacement == XFA_ATTRIBUTEENUM_Bottom &&
-               (GetLayoutItem()->GetNext())) {
+    } else if (iCapPlacement == XFA_ATTRIBUTEENUM_Bottom && GetNext()) {
       m_rtCaption.Set(0, 0, 0, 0);
     } else {
       fCapReserve = caption.GetReserve();
-      CXFA_LayoutItem* pItem = this->GetLayoutItem();
+      CXFA_LayoutItemImpl* pItem = this;
       if (pItem->GetPrev() == NULL && pItem->GetNext() == NULL) {
         m_rtCaption.Set(rtWidget.left, rtWidget.top, rtWidget.width,
                         rtWidget.height);

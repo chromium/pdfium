@@ -6,17 +6,19 @@
 
 #ifndef _XFA_DOCUMENT_H
 #define _XFA_DOCUMENT_H
-class IXFA_DocParser;
+
+class CXFA_Document;
+class CXFA_LayoutItemImpl;
 class CXFA_LayoutProcessor;
-class IXFA_DocLayout;
-class IXFA_LayoutPage;
-class CXFA_LayoutItem;
-class IXFA_PageContent;
-class IXFA_ScriptContext;
 class CXFA_Node;
+class IXFA_DocLayout;
+class IXFA_DocParser;
+class IXFA_LayoutPage;
 class IXFA_Notify;
 class IXFA_ObjFactory;
-class CXFA_Document;
+class IXFA_PageContent;
+class IXFA_ScriptContext;
+
 enum XFA_VERSION {
   XFA_VERSION_UNKNOWN = 0,
   XFA_VERSION_200 = 200,
@@ -34,6 +36,7 @@ enum XFA_VERSION {
   XFA_VERSION_MIN = 200,
   XFA_VERSION_MAX = 400,
 };
+
 #define XFA_LAYOUTSTATUS_Visible 0x0001
 #define XFA_LAYOUTSTATUS_Viewable 0x0010
 #define XFA_LAYOUTSTATUS_Printable 0x0020
@@ -80,9 +83,9 @@ class IXFA_Notify {
                                  void* pAdditional = NULL,
                                  void* pAdditional2 = NULL) = 0;
 
-  virtual CXFA_LayoutItem* OnCreateLayoutItem(CXFA_Node* pNode) = 0;
+  virtual CXFA_LayoutItemImpl* OnCreateLayoutItem(CXFA_Node* pNode) = 0;
   virtual void OnLayoutEvent(IXFA_DocLayout* pLayout,
-                             CXFA_LayoutItem* pSender,
+                             CXFA_LayoutItemImpl* pSender,
                              XFA_LAYOUTEVENT eEvent,
                              void* pParam = NULL,
                              void* pParam2 = NULL) = 0;
@@ -103,7 +106,7 @@ class IXFA_Notify {
   virtual IXFA_DocProvider* GetDocProvider() = 0;
   virtual IXFA_AppProvider* GetAppProvider() = 0;
   virtual IXFA_WidgetHandler* GetWidgetHandler() = 0;
-  virtual IXFA_Widget* GetHWidget(CXFA_LayoutItem* pLayoutItem) = 0;
+  virtual IXFA_Widget* GetHWidget(CXFA_LayoutItemImpl* pLayoutItem) = 0;
   virtual void OpenDropDownList(IXFA_Widget* hWidget) = 0;
   virtual CFX_WideString GetCurrentDateTime() = 0;
   virtual void ResetData(CXFA_WidgetData* pWidgetData = NULL) = 0;

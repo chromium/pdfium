@@ -20,7 +20,7 @@ class CXFA_LayoutProcessor : public IXFA_DocLayout {
   virtual FX_BOOL IncrementLayout();
   virtual int32_t CountPages() const;
   virtual IXFA_LayoutPage* GetPage(int32_t index) const;
-  virtual CXFA_LayoutItem* GetLayoutItem(CXFA_Node* pFormItem);
+  virtual CXFA_LayoutItemImpl* GetLayoutItem(CXFA_Node* pFormItem);
 
   void AddChangedContainer(CXFA_Node* pContainer);
   void SetForceReLayout(FX_BOOL bForceRestart) { m_bNeeLayout = bForceRestart; }
