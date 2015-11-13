@@ -8,12 +8,18 @@
 #define _XFA_DOCLAYOUT_H_
 #define _XFA_LAYOUTITEM_ProcessCACHE_
 
+class CXFA_ContainerLayoutItem;
+class CXFA_ContentLayoutItem;
 class IXFA_LayoutPage;
 
 class CXFA_LayoutItem {
  public:
-  CXFA_LayoutItem(CXFA_Node* pNode, FX_BOOL bIsContentLayoutItem);
   virtual ~CXFA_LayoutItem();
+
+  FX_BOOL IsContainerLayoutItem() const { return !m_bIsContentLayoutItem; }
+  FX_BOOL IsContentLayoutItem() const { return m_bIsContentLayoutItem; }
+  inline CXFA_ContainerLayoutItem* AsContainerLayoutItem();
+  inline CXFA_ContentLayoutItem* AsContentLayoutItem();
 
   IXFA_LayoutPage* GetPage() const;
   CXFA_Node* GetFormNode() const;
@@ -28,44 +34,63 @@ class CXFA_LayoutItem {
   CXFA_LayoutItem* GetPrev() const;
   CXFA_LayoutItem* GetNext() const;
 
-  FX_BOOL IsContentLayoutItem() { return m_bIsContentLayoutItem; }
   void AddChild(CXFA_LayoutItem* pChildItem);
   void AddHeadChild(CXFA_LayoutItem* pChildItem);
   void RemoveChild(CXFA_LayoutItem* pChildItem);
   void InsertChild(CXFA_LayoutItem* pBeforeItem, CXFA_LayoutItem* pChildItem);
 
- public:
   CXFA_Node* m_pFormNode;
   CXFA_LayoutItem* m_pParent;
   CXFA_LayoutItem* m_pNextSibling;
   CXFA_LayoutItem* m_pFirstChild;
+
+ protected:
+  CXFA_LayoutItem(CXFA_Node* pNode, FX_BOOL bIsContentLayoutItem);
+
   FX_BOOL m_bIsContentLayoutItem;
 };
+
 class CXFA_ContainerLayoutItem : public CXFA_LayoutItem {
  public:
   CXFA_ContainerLayoutItem(CXFA_Node* pNode);
 
- public:
   CXFA_Node* m_pOldSubform;
 };
+
 #define XFA_WIDGETSTATUS_Access 0x80000000
 #define XFA_WIDGETSTATUS_Disabled 0x40000000
 #define XFA_WIDGETSTATUS_RectCached 0x20000000
 #define XFA_WIDGETSTATUS_ButtonDown 0x10000000
 #define XFA_WIDGETSTATUS_Highlight 0x08000000
 #define XFA_WIDGETSTATUS_TextEditValueChanged 0x04000000
+
 class CXFA_ContentLayoutItem : public CXFA_LayoutItem {
  public:
   CXFA_ContentLayoutItem(CXFA_Node* pNode);
   virtual ~CXFA_ContentLayoutItem();
 
- public:
   CXFA_ContentLayoutItem* m_pPrev;
   CXFA_ContentLayoutItem* m_pNext;
   CFX_PointF m_sPos;
   CFX_SizeF m_sSize;
   FX_DWORD m_dwStatus;
 };
+
+CXFA_ContainerLayoutItem* CXFA_LayoutItem::AsContainerLayoutItem() {
+  return IsContainerLayoutItem() ? static_cast<CXFA_ContainerLayoutItem*>(this)
+                                 : nullptr;
+}
+CXFA_ContentLayoutItem* CXFA_LayoutItem::AsContentLayoutItem() {
+  return IsContentLayoutItem() ? static_cast<CXFA_ContentLayoutItem*>(this)
+                               : nullptr;
+}
+inline CXFA_ContainerLayoutItem* ToContainerLayoutItem(CXFA_LayoutItem* pItem) {
+  return pItem ? pItem->AsContainerLayoutItem() : nullptr;
+}
+inline CXFA_ContentLayoutItem* ToContentLayoutItem(CXFA_LayoutItem* pItem) {
+  return pItem ? pItem->AsContentLayoutItem() : nullptr;
+}
+
 class CXFA_TraverseStrategy_LayoutItem {
  public:
   static inline CXFA_LayoutItem* GetFirstChild(CXFA_LayoutItem* pLayoutItem) {
@@ -78,6 +103,7 @@ class CXFA_TraverseStrategy_LayoutItem {
     return pLayoutItem->m_pParent;
   }
 };
+
 class IXFA_LayoutPage {
  public:
   IXFA_DocLayout* GetLayout() const;

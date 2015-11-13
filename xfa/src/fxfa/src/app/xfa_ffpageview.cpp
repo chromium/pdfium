@@ -341,9 +341,7 @@ void CXFA_FFTabOrderPageWidgetIterator::OrderContainer(
   CFX_PtrArray tabParams;
   CXFA_LayoutItem* pSearchItem = sIterator->MoveToNext();
   while (pSearchItem) {
-    FX_BOOL bIsContentLayoutItem =
-        ((CXFA_LayoutItem*)pSearchItem)->IsContentLayoutItem();
-    if (!bIsContentLayoutItem) {
+    if (!pSearchItem->IsContentLayoutItem()) {
       bContentArea = TRUE;
       pSearchItem = sIterator->MoveToNext();
       continue;

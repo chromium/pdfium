@@ -385,8 +385,9 @@ void CXFA_LayoutItem::GetRect(CFX_RectF& rtLayout, FX_BOOL bRelative) const {
   if (!bRelative) {
     for (CXFA_LayoutItem* pLayoutItem = pThis->m_pParent; pLayoutItem;
          pLayoutItem = pLayoutItem->m_pParent) {
-      if (pLayoutItem->IsContentLayoutItem()) {
-        sPos += static_cast<CXFA_ContentLayoutItem*>(pLayoutItem)->m_sPos;
+      if (CXFA_ContentLayoutItem* pContent =
+              pLayoutItem->AsContentLayoutItem()) {
+        sPos += pContent->m_sPos;
         if (CXFA_Node* pMarginNode =
                 pLayoutItem->m_pFormNode->GetFirstChildByClass(
                     XFA_ELEMENT_Margin)) {
@@ -556,7 +557,7 @@ CXFA_ContentLayoutItem* CXFA_ItemLayoutProcessor::ExtractLayoutItem() {
   }
 #ifdef _XFA_LAYOUTITEM_ProcessCACHE_
   if (m_nCurChildNodeStage == XFA_ItemLayoutProcessorStages_Done &&
-      m_pOldLayoutItem && m_pOldLayoutItem->IsContentLayoutItem()) {
+      ToContentLayoutItem(m_pOldLayoutItem)) {
     if (m_pOldLayoutItem->m_pPrev) {
       m_pOldLayoutItem->m_pPrev->m_pNext = NULL;
     }

@@ -30,23 +30,23 @@ class CXFA_TraverseStrategy_ContentAreaContainerLayoutItem {
       CXFA_ContainerLayoutItem* pLayoutItem) {
     for (CXFA_LayoutItem* pChildItem = pLayoutItem->m_pFirstChild; pChildItem;
          pChildItem = pChildItem->m_pNextSibling) {
-      if (pChildItem->IsContentLayoutItem()) {
-        continue;
+      if (CXFA_ContainerLayoutItem* pContainer =
+              pChildItem->AsContainerLayoutItem()) {
+        return pContainer;
       }
-      return (CXFA_ContainerLayoutItem*)pChildItem;
     }
-    return NULL;
+    return nullptr;
   }
   static inline CXFA_ContainerLayoutItem* GetNextSibling(
       CXFA_ContainerLayoutItem* pLayoutItem) {
     for (CXFA_LayoutItem* pChildItem = pLayoutItem->m_pNextSibling; pChildItem;
          pChildItem = pChildItem->m_pNextSibling) {
-      if (pChildItem->IsContentLayoutItem()) {
-        continue;
+      if (CXFA_ContainerLayoutItem* pContainer =
+              pChildItem->AsContainerLayoutItem()) {
+        return pContainer;
       }
-      return (CXFA_ContainerLayoutItem*)pChildItem;
     }
-    return NULL;
+    return nullptr;
   }
   static inline CXFA_ContainerLayoutItem* GetParent(
       CXFA_ContainerLayoutItem* pLayoutItem) {

@@ -543,11 +543,10 @@ void CXFA_LayoutPageMgr::FinishPaginatedPageSets() {
                  pContentChildLayoutItem;
                  pContentChildLayoutItem =
                      pContentChildLayoutItem->m_pNextSibling) {
-              if (!pContentChildLayoutItem->IsContentLayoutItem()) {
-                continue;
+              if (CXFA_ContentLayoutItem* pContent =
+                      pContentChildLayoutItem->AsContentLayoutItem()) {
+                fUsedHeight += pContent->m_sSize.y;
               }
-              fUsedHeight +=
-                  ((CXFA_ContentLayoutItem*)pContentChildLayoutItem)->m_sSize.y;
             }
             rgUsedHeights.Add(fUsedHeight);
           }
@@ -1865,15 +1864,12 @@ void XFA_SyncContainer(IXFA_Notify* pNotify,
   pNotify->OnLayoutEvent(pDocLayout, pContainerItem, XFA_LAYOUTEVENT_ItemAdded,
                          (void*)(uintptr_t)nPageIndex,
                          (void*)(uintptr_t)dwStatus);
-  CXFA_LayoutItem* pChild = pContainerItem->m_pFirstChild;
-  while (pChild) {
-    if (!pChild->IsContentLayoutItem()) {
-      pChild = pChild->m_pNextSibling;
-      continue;
+  for (CXFA_LayoutItem* pChild = pContainerItem->m_pFirstChild; pChild;
+       pChild = pChild->m_pNextSibling) {
+    if (pChild->IsContentLayoutItem()) {
+      XFA_SyncContainer(pNotify, pDocLayout, pChild, dwRelevantContainer,
+                        bVisibleItem, nPageIndex);
     }
-    XFA_SyncContainer(pNotify, pDocLayout, pChild, dwRelevantContainer,
-                      bVisibleItem, nPageIndex);
-    pChild = pChild->m_pNextSibling;
   }
 }
 void CXFA_LayoutPageMgr::SyncLayoutData() {
@@ -1900,14 +1896,14 @@ void CXFA_LayoutPageMgr::SyncLayoutData() {
           CXFA_NodeIteratorTemplate<CXFA_LayoutItem,
                                     CXFA_TraverseStrategy_LayoutItem>
               iterator(pContainerItem);
-          for (CXFA_LayoutItem* pChildLayoutItem = iterator.GetCurrent();
-               pChildLayoutItem;) {
-            if (!pChildLayoutItem->IsContentLayoutItem()) {
+          CXFA_LayoutItem* pChildLayoutItem = iterator.GetCurrent();
+          while (pChildLayoutItem) {
+            CXFA_ContentLayoutItem* pContentItem =
+                pChildLayoutItem->AsContentLayoutItem();
+            if (!pContentItem) {
               pChildLayoutItem = iterator.MoveToNext();
               continue;
             }
-            CXFA_ContentLayoutItem* pContentItem =
-                (CXFA_ContentLayoutItem*)pChildLayoutItem;
             FX_BOOL bVisible =
                 (pContentItem->m_pFormNode->GetEnum(XFA_ATTRIBUTE_Presence) ==
                  XFA_ATTRIBUTEENUM_Visible);
