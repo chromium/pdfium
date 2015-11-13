@@ -32,10 +32,4 @@ class IXFA_DocParser : public IXFA_Parser {
   virtual CXFA_Document* GetDocument() const = 0;
   virtual IXFA_Notify* GetNotify() const = 0;
 };
-class IXFA_DataLoaderOptionsProvider {
- public:
-  static IXFA_DataLoaderOptionsProvider* Create(CXFA_Node* pConfigurationDOM);
-  virtual ~IXFA_DataLoaderOptionsProvider() {}
-  virtual void Release() = 0;
-};
 #endif
