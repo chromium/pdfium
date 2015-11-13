@@ -12,8 +12,8 @@
 #define XFA_LAYOUT_FLOAT_MAX FLT_MAX
 class CXFA_ItemLayoutProcessor;
 class CXFA_LayoutPageMgr;
-class CXFA_ContainerLayoutItemImpl;
-class CXFA_ContentLayoutItemImpl;
+class CXFA_ContainerLayoutItem;
+class CXFA_ContentLayoutItem;
 enum XFA_ItemLayoutProcessorResult {
   XFA_ItemLayoutProcessorResult_Done,
   XFA_ItemLayoutProcessorResult_PageFullBreak,
@@ -66,7 +66,7 @@ class CXFA_ItemLayoutProcessor {
   void SetCurrentComponentSize(FX_FLOAT fWidth, FX_FLOAT fHeight);
   inline CXFA_Node* GetFormNode() { return m_pFormNode; }
   inline FX_BOOL HasLayoutItem() { return m_pLayoutItem != NULL; }
-  CXFA_ContentLayoutItemImpl* ExtractLayoutItem();
+  CXFA_ContentLayoutItem* ExtractLayoutItem();
 
   static FX_BOOL IncrementRelayoutNode(CXFA_LayoutProcessor* pLayoutProcessor,
                                        CXFA_Node* pNode,
@@ -76,25 +76,25 @@ class CXFA_ItemLayoutProcessor {
                                               FX_FLOAT fHeight,
                                               FX_FLOAT& fAbsoluteX,
                                               FX_FLOAT& fAbsoluteY);
-  static FX_BOOL FindLayoutItemSplitPos(CXFA_ContentLayoutItemImpl* pLayoutItem,
+  static FX_BOOL FindLayoutItemSplitPos(CXFA_ContentLayoutItem* pLayoutItem,
                                         FX_FLOAT fCurVerticalOffset,
                                         FX_FLOAT& fProposedSplitPos,
                                         FX_BOOL& bAppChange,
                                         FX_BOOL bCalculateMargin = TRUE);
   FX_FLOAT FindSplitPos(FX_FLOAT fProposedSplitPos);
-  void SplitLayoutItem(CXFA_ContentLayoutItemImpl* pLayoutItem,
-                       CXFA_ContentLayoutItemImpl* pSecondParent,
+  void SplitLayoutItem(CXFA_ContentLayoutItem* pLayoutItem,
+                       CXFA_ContentLayoutItem* pSecondParent,
                        FX_FLOAT fSplitPos);
   void SplitLayoutItem(FX_FLOAT fSplitPos);
   FX_BOOL JudgePutNextPage(
-      CXFA_ContentLayoutItemImpl* pParentLayoutItem,
+      CXFA_ContentLayoutItem* pParentLayoutItem,
       FX_FLOAT fChildHeight,
-      CFX_ArrayTemplate<CXFA_ContentLayoutItemImpl*>& pKeepItems);
+      CFX_ArrayTemplate<CXFA_ContentLayoutItem*>& pKeepItems);
   FX_BOOL ProcessKeepForSplite(
       CXFA_ItemLayoutProcessor* pParentProcessor,
       CXFA_ItemLayoutProcessor* pChildProcessor,
       XFA_ItemLayoutProcessorResult eRetValue,
-      CFX_ArrayTemplate<CXFA_ContentLayoutItemImpl*>& rgCurLineLayoutItem,
+      CFX_ArrayTemplate<CXFA_ContentLayoutItem*>& rgCurLineLayoutItem,
       FX_FLOAT& fContentCurRowAvailWidth,
       FX_FLOAT& fContentCurRowHeight,
       FX_FLOAT& fContentCurRowY,
@@ -102,9 +102,9 @@ class CXFA_ItemLayoutProcessor {
       FX_BOOL& bForceEndPage,
       XFA_ItemLayoutProcessorResult& result);
   FX_FLOAT InsertKeepLayoutItems();
-  void DoLayoutPageArea(CXFA_ContainerLayoutItemImpl* pPageAreaLayoutItem);
+  void DoLayoutPageArea(CXFA_ContainerLayoutItem* pPageAreaLayoutItem);
   FX_BOOL CalculateRowChildPosition(
-      CFX_ArrayTemplate<CXFA_ContentLayoutItemImpl*>(&rgCurLineLayoutItems)[3],
+      CFX_ArrayTemplate<CXFA_ContentLayoutItem*>(&rgCurLineLayoutItems)[3],
       XFA_ATTRIBUTEENUM eFlowStrategy,
       FX_BOOL bContainerHeightAutoSize,
       FX_BOOL bContainerWidthAutoSize,
@@ -117,12 +117,12 @@ class CXFA_ItemLayoutProcessor {
 
   void ProcessUnUseOverFlow(CXFA_Node* pLeaderNode,
                             CXFA_Node* pTrailerNode,
-                            CXFA_ContentLayoutItemImpl* pTrailerItem,
+                            CXFA_ContentLayoutItem* pTrailerItem,
                             CXFA_Node* pFormNode);
   void ProcessUnUseBinds(CXFA_Node* pFormNode);
-  FX_BOOL IsAddNewRowForTrailer(CXFA_ContentLayoutItemImpl* pTrailerItem);
+  FX_BOOL IsAddNewRowForTrailer(CXFA_ContentLayoutItem* pTrailerItem);
   FX_BOOL JudgeLeaderOrTrailerForOccur(CXFA_Node* pFormNode);
-  CXFA_ContentLayoutItemImpl* CreateContentLayoutItem(CXFA_Node* pFormNode);
+  CXFA_ContentLayoutItem* CreateContentLayoutItem(CXFA_Node* pFormNode);
 
  protected:
   void DoLayoutPositionedContainer(CXFA_LayoutContext* pContext = NULL);
@@ -159,9 +159,9 @@ class CXFA_ItemLayoutProcessor {
   CXFA_Node* m_pKeepHeadNode;
   CXFA_Node* m_pKeepTailNode;
   CXFA_Node* m_pFormNode;
-  CXFA_ContentLayoutItemImpl* m_pLayoutItem;
+  CXFA_ContentLayoutItem* m_pLayoutItem;
 #ifdef _XFA_LAYOUTITEM_ProcessCACHE_
-  CXFA_ContentLayoutItemImpl* m_pOldLayoutItem;
+  CXFA_ContentLayoutItem* m_pOldLayoutItem;
 #else
   CXFA_LayoutPageMgr* m_pPageMgrCreateItem;
 #endif
@@ -173,7 +173,7 @@ class CXFA_ItemLayoutProcessor {
   CFX_PtrList m_rgPendingNodes;
   FX_BOOL m_bBreakPending;
   CFX_ArrayTemplate<FX_FLOAT> m_rgSpecifiedColumnWidths;
-  CFX_ArrayTemplate<CXFA_ContentLayoutItemImpl*> m_arrayKeepItems;
+  CFX_ArrayTemplate<CXFA_ContentLayoutItem*> m_arrayKeepItems;
   CFX_MapPtrToPtr m_PendingNodesCount;
   FX_FLOAT m_fLastRowWidth;
   FX_FLOAT m_fLastRowY;

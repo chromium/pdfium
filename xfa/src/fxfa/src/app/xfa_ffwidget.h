@@ -38,7 +38,7 @@ class CXFA_CalcData {
 };
 class CXFA_FFWidget : public IXFA_Widget,
                       public CFX_PrivateData,
-                      public CXFA_ContentLayoutItemImpl {
+                      public CXFA_ContentLayoutItem {
  public:
   CXFA_FFWidget(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
   virtual ~CXFA_FFWidget();
@@ -174,7 +174,7 @@ void XFA_RectWidthoutMargin(CFX_RectF& rt,
 FX_FLOAT XFA_GetEdgeThickness(const CXFA_StrokeArray& strokes,
                               FX_BOOL b3DStyle,
                               int32_t nIndex);
-CXFA_FFWidget* XFA_GetWidgetFromLayoutItem(CXFA_LayoutItemImpl* pLayoutItem);
+CXFA_FFWidget* XFA_GetWidgetFromLayoutItem(CXFA_LayoutItem* pLayoutItem);
 FX_BOOL XFA_IsCreateWidget(XFA_ELEMENT iType);
 #define XFA_DRAWBOX_ForceRound 1
 #define XFA_DRAWBOX_Lowered3D 2

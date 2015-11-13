@@ -166,7 +166,7 @@ void CXFA_FFField::CapPlacement() {
   GetRectWithoutRotate(rtWidget);
   CXFA_Margin mgWidget = m_pDataAcc->GetMargin();
   if (mgWidget) {
-    CXFA_LayoutItemImpl* pItem = this;
+    CXFA_LayoutItem* pItem = this;
     FX_FLOAT fLeftInset = 0, fRightInset = 0, fTopInset = 0, fBottomInset = 0;
     mgWidget.GetLeftInset(fLeftInset);
     mgWidget.GetRightInset(fRightInset);
@@ -196,7 +196,7 @@ void CXFA_FFField::CapPlacement() {
       m_rtCaption.Set(0, 0, 0, 0);
     } else {
       fCapReserve = caption.GetReserve();
-      CXFA_LayoutItemImpl* pItem = this;
+      CXFA_LayoutItem* pItem = this;
       if (pItem->GetPrev() == NULL && pItem->GetNext() == NULL) {
         m_rtCaption.Set(rtWidget.left, rtWidget.top, rtWidget.width,
                         rtWidget.height);

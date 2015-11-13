@@ -8,8 +8,7 @@
 #define _FXFA_FORMFILLER_PAGEVIEW_IMP_H
 class CXFA_FFWidget;
 class CXFA_FFDocView;
-class CXFA_FFPageView : public CXFA_ContainerLayoutItemImpl,
-                        public IXFA_PageView {
+class CXFA_FFPageView : public CXFA_ContainerLayoutItem, public IXFA_PageView {
  public:
   CXFA_FFPageView(CXFA_FFDocView* pDocView, CXFA_Node* pPageArea);
   ~CXFA_FFPageView();
@@ -35,7 +34,7 @@ class CXFA_FFPageView : public CXFA_ContainerLayoutItemImpl,
   CXFA_FFDocView* m_pDocView;
   FX_BOOL m_bLoaded;
 };
-typedef CXFA_NodeIteratorTemplate<CXFA_LayoutItemImpl,
+typedef CXFA_NodeIteratorTemplate<CXFA_LayoutItem,
                                   CXFA_TraverseStrategy_LayoutItem>
     CXFA_LayoutItemIterator;
 class CXFA_FFPageWidgetIterator : public IXFA_WidgetIterator {
@@ -53,7 +52,7 @@ class CXFA_FFPageWidgetIterator : public IXFA_WidgetIterator {
   virtual FX_BOOL SetCurrentWidget(IXFA_Widget* hWidget);
 
  protected:
-  IXFA_Widget* GetWidget(CXFA_LayoutItemImpl* pLayoutItem);
+  IXFA_Widget* GetWidget(CXFA_LayoutItem* pLayoutItem);
   CXFA_FFPageView* m_pPageView;
   IXFA_Widget* m_hCurWidget;
   FX_DWORD m_dwFilter;
@@ -96,9 +95,9 @@ class CXFA_FFTabOrderPageWidgetIterator : public IXFA_WidgetIterator {
                                   CXFA_FFWidget* pRefWidget);
   void CreateTabOrderWidgetArray();
   void CreateSpaceOrderWidgetArray(CXFA_WidgetArray& WidgetArray);
-  CXFA_FFWidget* GetWidget(CXFA_LayoutItemImpl* pLayoutItem);
+  CXFA_FFWidget* GetWidget(CXFA_LayoutItem* pLayoutItem);
   void OrderContainer(CXFA_LayoutItemIterator* sIterator,
-                      CXFA_LayoutItemImpl* pContainerItem,
+                      CXFA_LayoutItem* pContainerItem,
                       CXFA_TabParam* pContainer,
                       FX_BOOL& bCurrentItem,
                       FX_BOOL& bContentArea,

@@ -9,7 +9,7 @@
 class CXFA_ItemLayoutProcessor;
 class CXFA_LayoutPageMgr;
 class CXFA_LayoutAppAdapter;
-class CXFA_ContainerLayoutItemImpl;
+class CXFA_ContainerLayoutItem;
 class CXFA_LayoutProcessor : public IXFA_DocLayout {
  public:
   CXFA_LayoutProcessor(CXFA_Document* pDocument);
@@ -20,11 +20,11 @@ class CXFA_LayoutProcessor : public IXFA_DocLayout {
   virtual FX_BOOL IncrementLayout();
   virtual int32_t CountPages() const;
   virtual IXFA_LayoutPage* GetPage(int32_t index) const;
-  virtual CXFA_LayoutItemImpl* GetLayoutItem(CXFA_Node* pFormItem);
+  virtual CXFA_LayoutItem* GetLayoutItem(CXFA_Node* pFormItem);
 
   void AddChangedContainer(CXFA_Node* pContainer);
   void SetForceReLayout(FX_BOOL bForceRestart) { m_bNeeLayout = bForceRestart; }
-  CXFA_ContainerLayoutItemImpl* GetRootLayoutItem() const;
+  CXFA_ContainerLayoutItem* GetRootLayoutItem() const;
   CXFA_ItemLayoutProcessor* GetRootRootItemLayoutProcessor() {
     return m_pRootItemLayoutProcessor;
   }

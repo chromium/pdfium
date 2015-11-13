@@ -302,7 +302,7 @@ IXFA_Widget* CXFA_FFWidgetHandler::CreateWidget(IXFA_Widget* hParent,
   pNewFormItem->GetTemplateNode()->SetFlag(XFA_NODEFLAG_Initialized);
   pNewFormItem->SetFlag(XFA_NODEFLAG_Initialized);
   m_pDocView->RunLayout();
-  CXFA_LayoutItemImpl* pLayout =
+  CXFA_LayoutItem* pLayout =
       m_pDocView->GetXFALayout()->GetLayoutItem(pNewFormItem);
   return (IXFA_Widget*)pLayout;
 }

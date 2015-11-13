@@ -96,7 +96,7 @@ int32_t CXFA_LayoutProcessor::DoLayout(IFX_Pause* pPause) {
     if (eStatus != XFA_ItemLayoutProcessorResult_Done) {
       m_nProgressCounter++;
     }
-    CXFA_ContentLayoutItemImpl* pLayoutItem =
+    CXFA_ContentLayoutItem* pLayoutItem =
         m_pRootItemLayoutProcessor->ExtractLayoutItem();
     if (pLayoutItem) {
       pLayoutItem->m_sPos.Set(fPosX, fPosY);
@@ -141,8 +141,8 @@ int32_t CXFA_LayoutProcessor::CountPages() const {
 IXFA_LayoutPage* CXFA_LayoutProcessor::GetPage(int32_t index) const {
   return m_pLayoutPageMgr ? m_pLayoutPageMgr->GetPage(index) : NULL;
 }
-CXFA_LayoutItemImpl* CXFA_LayoutProcessor::GetLayoutItem(CXFA_Node* pFormItem) {
-  return static_cast<CXFA_LayoutItemImpl*>(
+CXFA_LayoutItem* CXFA_LayoutProcessor::GetLayoutItem(CXFA_Node* pFormItem) {
+  return static_cast<CXFA_LayoutItem*>(
       pFormItem->GetUserData(XFA_LAYOUTITEMKEY));
 }
 void CXFA_LayoutProcessor::AddChangedContainer(CXFA_Node* pContainer) {
@@ -150,7 +150,7 @@ void CXFA_LayoutProcessor::AddChangedContainer(CXFA_Node* pContainer) {
     m_rgChangedContainers.Add(pContainer);
   }
 }
-CXFA_ContainerLayoutItemImpl* CXFA_LayoutProcessor::GetRootLayoutItem() const {
+CXFA_ContainerLayoutItem* CXFA_LayoutProcessor::GetRootLayoutItem() const {
   return m_pLayoutPageMgr ? m_pLayoutPageMgr->GetRootLayoutItem() : NULL;
 }
 void CXFA_LayoutProcessor::ClearLayoutData() {
@@ -167,23 +167,25 @@ void CXFA_LayoutProcessor::ClearLayoutData() {
 FX_BOOL CXFA_LayoutProcessor::IsNeedLayout() {
   return m_bNeeLayout || m_rgChangedContainers.GetSize() > 0;
 }
-CXFA_LayoutItemImpl::CXFA_LayoutItemImpl(CXFA_Node* pNode,
-                                         FX_BOOL bIsContentLayoutItem)
+CXFA_LayoutItem::CXFA_LayoutItem(CXFA_Node* pNode, FX_BOOL bIsContentLayoutItem)
     : m_pFormNode(pNode),
       m_pParent(NULL),
       m_pNextSibling(NULL),
       m_pFirstChild(NULL),
       m_bIsContentLayoutItem(bIsContentLayoutItem) {
 }
-CXFA_LayoutItemImpl::~CXFA_LayoutItemImpl() {}
-CXFA_ContainerLayoutItemImpl::CXFA_ContainerLayoutItemImpl(CXFA_Node* pNode)
-    : CXFA_LayoutItemImpl(pNode, FALSE), m_pOldSubform(NULL) {}
-CXFA_ContentLayoutItemImpl::CXFA_ContentLayoutItemImpl(CXFA_Node* pNode)
-    : CXFA_LayoutItemImpl(pNode, TRUE),
+CXFA_LayoutItem::~CXFA_LayoutItem() {
+}
+CXFA_ContainerLayoutItem::CXFA_ContainerLayoutItem(CXFA_Node* pNode)
+    : CXFA_LayoutItem(pNode, FALSE), m_pOldSubform(NULL) {
+}
+CXFA_ContentLayoutItem::CXFA_ContentLayoutItem(CXFA_Node* pNode)
+    : CXFA_LayoutItem(pNode, TRUE),
       m_pPrev(NULL),
       m_pNext(NULL),
-      m_dwStatus(0) {}
-CXFA_ContentLayoutItemImpl::~CXFA_ContentLayoutItemImpl() {
+      m_dwStatus(0) {
+}
+CXFA_ContentLayoutItem::~CXFA_ContentLayoutItem() {
   if (m_pFormNode->GetUserData(XFA_LAYOUTITEMKEY) == this) {
     m_pFormNode->SetUserData(XFA_LAYOUTITEMKEY, NULL);
   }

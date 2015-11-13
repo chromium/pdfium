@@ -8,15 +8,15 @@
 #define _XFA_LAYOUT_PAGEMGR_H_
 class CXFA_ContainerRecord {
  public:
-  CXFA_ContainerRecord(CXFA_ContainerLayoutItemImpl* pPageSet = NULL,
-                       CXFA_ContainerLayoutItemImpl* pPageArea = NULL,
-                       CXFA_ContainerLayoutItemImpl* pContentArea = NULL)
+  CXFA_ContainerRecord(CXFA_ContainerLayoutItem* pPageSet = NULL,
+                       CXFA_ContainerLayoutItem* pPageArea = NULL,
+                       CXFA_ContainerLayoutItem* pContentArea = NULL)
       : pCurPageSet(pPageSet),
         pCurPageArea(pPageArea),
         pCurContentArea(pContentArea) {}
-  CXFA_ContainerLayoutItemImpl* pCurPageSet;
-  CXFA_ContainerLayoutItemImpl* pCurPageArea;
-  CXFA_ContainerLayoutItemImpl* pCurContentArea;
+  CXFA_ContainerLayoutItem* pCurPageSet;
+  CXFA_ContainerLayoutItem* pCurPageArea;
+  CXFA_ContainerLayoutItem* pCurContentArea;
 };
 class CXFA_LayoutPageMgr {
  public:
@@ -26,14 +26,14 @@ class CXFA_LayoutPageMgr {
   FX_BOOL PrepareFirstPage(CXFA_Node* pRootSubform);
   FX_FLOAT GetAvailHeight();
   FX_BOOL GetNextAvailContentHeight(FX_FLOAT fChildHeight);
-  void SubmitContentItem(CXFA_ContentLayoutItemImpl* pContentLayoutItem,
+  void SubmitContentItem(CXFA_ContentLayoutItem* pContentLayoutItem,
                          XFA_ItemLayoutProcessorResult eStatus);
   void FinishPaginatedPageSets();
   void SyncLayoutData();
   int32_t GetPageCount() const;
   IXFA_LayoutPage* GetPage(int32_t index) const;
   int32_t GetPageIndex(IXFA_LayoutPage* pPage) const;
-  inline CXFA_ContainerLayoutItemImpl* GetRootLayoutItem() const {
+  inline CXFA_ContainerLayoutItem* GetRootLayoutItem() const {
     return m_pPageSetLayoutItemRoot;
   }
   FX_BOOL ProcessBreakBeforeOrAfter(CXFA_Node* pBreakNode,
@@ -51,7 +51,7 @@ class CXFA_LayoutPageMgr {
   FX_BOOL ProcessBookendLeaderOrTrailer(CXFA_Node* pBookendNode,
                                         FX_BOOL bLeader,
                                         CXFA_Node*& pBookendAppendNode);
-  CXFA_LayoutItemImpl* FindOrCreateLayoutItem(CXFA_Node* pFormNode);
+  CXFA_LayoutItem* FindOrCreateLayoutItem(CXFA_Node* pFormNode);
 
  protected:
   FX_BOOL AppendNewPage(FX_BOOL bFirstTemPage = FALSE);
@@ -130,12 +130,12 @@ class CXFA_LayoutPageMgr {
   void LayoutPageSetContents();
   void PrepareLayout();
 #if defined(_XFA_LAYOUTITEM_MAPCACHE_) || defined(_XFA_LAYOUTITEM_ProcessCACHE_)
-  void SaveLayoutItem(CXFA_LayoutItemImpl* pParentLayoutItem);
+  void SaveLayoutItem(CXFA_LayoutItem* pParentLayoutItem);
 #endif
   CXFA_LayoutProcessor* m_pLayoutProcessor;
   CXFA_Node* m_pTemplatePageSetRoot;
-  CXFA_ContainerLayoutItemImpl* m_pPageSetLayoutItemRoot;
-  CXFA_ContainerLayoutItemImpl* m_pPageSetCurRoot;
+  CXFA_ContainerLayoutItem* m_pPageSetLayoutItemRoot;
+  CXFA_ContainerLayoutItem* m_pPageSetCurRoot;
   FX_POSITION m_pCurrentContainerRecord;
   CFX_PtrList m_rgProposedContainerRecord;
   CXFA_Node* m_pCurPageArea;
@@ -144,7 +144,7 @@ class CXFA_LayoutPageMgr {
   XFA_ATTRIBUTEENUM m_ePageSetMode;
   FX_BOOL m_bCreateOverFlowPage;
   CFX_MapPtrTemplate<CXFA_Node*, int32_t> m_pPageSetMap;
-  CFX_ArrayTemplate<CXFA_ContainerLayoutItemImpl*> m_PageArray;
+  CFX_ArrayTemplate<CXFA_ContainerLayoutItem*> m_PageArray;
 #ifdef _XFA_LAYOUTITEM_MAPCACHE_
   CFX_MapPtrToPtr m_NodeToContent;
 #endif

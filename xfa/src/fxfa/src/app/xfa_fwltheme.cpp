@@ -204,7 +204,7 @@ void* CXFA_FWLTheme::GetCapacity(CFWL_ThemePart* pThemePart,
     case FWL_WGTCAPACITY_UIMargin: {
       CXFA_FFWidget* pWidget = XFA_ThemeGetOuterWidget(pThemePart->m_pWidget);
       if (pWidget) {
-        CXFA_LayoutItemImpl* pItem = pWidget;
+        CXFA_LayoutItem* pItem = pWidget;
         CXFA_WidgetAcc* pWidgetAcc = pWidget->GetDataAcc();
         pWidgetAcc->GetUIMargin(m_Rect);
         if (CXFA_Para para = pWidgetAcc->GetPara()) {

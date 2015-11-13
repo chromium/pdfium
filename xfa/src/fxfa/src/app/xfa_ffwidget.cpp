@@ -14,7 +14,7 @@
 #include "xfa_textlayout.h"
 CXFA_FFWidget::CXFA_FFWidget(CXFA_FFPageView* pPageView,
                              CXFA_WidgetAcc* pDataAcc)
-    : CXFA_ContentLayoutItemImpl(pDataAcc->GetNode()),
+    : CXFA_ContentLayoutItem(pDataAcc->GetNode()),
       m_pPageView(pPageView),
       m_pDataAcc(pDataAcc) {
   m_rtWidget.Set(0, 0, 0, 0);
@@ -1102,7 +1102,7 @@ void XFA_RectWidthoutMargin(CFX_RectF& rt, const CXFA_Margin& mg, FX_BOOL bUI) {
   mg.GetBottomInset(fBottomInset);
   rt.Deflate(fLeftInset, fTopInset, fRightInset, fBottomInset);
 }
-CXFA_FFWidget* XFA_GetWidgetFromLayoutItem(CXFA_LayoutItemImpl* pLayoutItem) {
+CXFA_FFWidget* XFA_GetWidgetFromLayoutItem(CXFA_LayoutItem* pLayoutItem) {
   XFA_ELEMENT iType = pLayoutItem->GetFormNode()->GetClassID();
   if (XFA_IsCreateWidget(iType)) {
     return static_cast<CXFA_FFWidget*>(pLayoutItem);

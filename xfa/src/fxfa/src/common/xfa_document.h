@@ -8,7 +8,7 @@
 #define _XFA_DOCUMENT_H
 
 class CXFA_Document;
-class CXFA_LayoutItemImpl;
+class CXFA_LayoutItem;
 class CXFA_LayoutProcessor;
 class CXFA_Node;
 class IXFA_DocLayout;
@@ -83,9 +83,9 @@ class IXFA_Notify {
                                  void* pAdditional = NULL,
                                  void* pAdditional2 = NULL) = 0;
 
-  virtual CXFA_LayoutItemImpl* OnCreateLayoutItem(CXFA_Node* pNode) = 0;
+  virtual CXFA_LayoutItem* OnCreateLayoutItem(CXFA_Node* pNode) = 0;
   virtual void OnLayoutEvent(IXFA_DocLayout* pLayout,
-                             CXFA_LayoutItemImpl* pSender,
+                             CXFA_LayoutItem* pSender,
                              XFA_LAYOUTEVENT eEvent,
                              void* pParam = NULL,
                              void* pParam2 = NULL) = 0;
@@ -106,7 +106,7 @@ class IXFA_Notify {
   virtual IXFA_DocProvider* GetDocProvider() = 0;
   virtual IXFA_AppProvider* GetAppProvider() = 0;
   virtual IXFA_WidgetHandler* GetWidgetHandler() = 0;
-  virtual IXFA_Widget* GetHWidget(CXFA_LayoutItemImpl* pLayoutItem) = 0;
+  virtual IXFA_Widget* GetHWidget(CXFA_LayoutItem* pLayoutItem) = 0;
   virtual void OpenDropDownList(IXFA_Widget* hWidget) = 0;
   virtual CFX_WideString GetCurrentDateTime() = 0;
   virtual void ResetData(CXFA_WidgetData* pWidgetData = NULL) = 0;

@@ -711,7 +711,7 @@ int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
   return iRet;
 }
 CXFA_FFWidget* CXFA_WidgetAcc::GetNextWidget(CXFA_FFWidget* pWidget) {
-  CXFA_LayoutItemImpl* pLayout = nullptr;
+  CXFA_LayoutItem* pLayout = nullptr;
   if (pWidget) {
     pLayout = pWidget->GetNext();
   } else {

@@ -10,41 +10,40 @@
 
 class IXFA_LayoutPage;
 
-class CXFA_LayoutItemImpl {
+class CXFA_LayoutItem {
  public:
-  CXFA_LayoutItemImpl(CXFA_Node* pNode, FX_BOOL bIsContentLayoutItem);
-  virtual ~CXFA_LayoutItemImpl();
+  CXFA_LayoutItem(CXFA_Node* pNode, FX_BOOL bIsContentLayoutItem);
+  virtual ~CXFA_LayoutItem();
 
   IXFA_LayoutPage* GetPage() const;
   CXFA_Node* GetFormNode() const;
   void GetRect(CFX_RectF& rtLayout, FX_BOOL bRelative = FALSE) const;
   int32_t GetIndex() const;
   int32_t GetCount() const;
-  CXFA_LayoutItemImpl* GetParent() const;
-  const CXFA_LayoutItemImpl* GetFirst() const;
-  CXFA_LayoutItemImpl* GetFirst();
-  const CXFA_LayoutItemImpl* GetLast() const;
-  CXFA_LayoutItemImpl* GetLast();
-  CXFA_LayoutItemImpl* GetPrev() const;
-  CXFA_LayoutItemImpl* GetNext() const;
+  CXFA_LayoutItem* GetParent() const;
+  const CXFA_LayoutItem* GetFirst() const;
+  CXFA_LayoutItem* GetFirst();
+  const CXFA_LayoutItem* GetLast() const;
+  CXFA_LayoutItem* GetLast();
+  CXFA_LayoutItem* GetPrev() const;
+  CXFA_LayoutItem* GetNext() const;
 
   FX_BOOL IsContentLayoutItem() { return m_bIsContentLayoutItem; }
-  void AddChild(CXFA_LayoutItemImpl* pChildItem);
-  void AddHeadChild(CXFA_LayoutItemImpl* pChildItem);
-  void RemoveChild(CXFA_LayoutItemImpl* pChildItem);
-  void InsertChild(CXFA_LayoutItemImpl* pBeforeItem,
-                   CXFA_LayoutItemImpl* pChildItem);
+  void AddChild(CXFA_LayoutItem* pChildItem);
+  void AddHeadChild(CXFA_LayoutItem* pChildItem);
+  void RemoveChild(CXFA_LayoutItem* pChildItem);
+  void InsertChild(CXFA_LayoutItem* pBeforeItem, CXFA_LayoutItem* pChildItem);
 
  public:
   CXFA_Node* m_pFormNode;
-  CXFA_LayoutItemImpl* m_pParent;
-  CXFA_LayoutItemImpl* m_pNextSibling;
-  CXFA_LayoutItemImpl* m_pFirstChild;
+  CXFA_LayoutItem* m_pParent;
+  CXFA_LayoutItem* m_pNextSibling;
+  CXFA_LayoutItem* m_pFirstChild;
   FX_BOOL m_bIsContentLayoutItem;
 };
-class CXFA_ContainerLayoutItemImpl : public CXFA_LayoutItemImpl {
+class CXFA_ContainerLayoutItem : public CXFA_LayoutItem {
  public:
-  CXFA_ContainerLayoutItemImpl(CXFA_Node* pNode);
+  CXFA_ContainerLayoutItem(CXFA_Node* pNode);
 
  public:
   CXFA_Node* m_pOldSubform;
@@ -55,30 +54,27 @@ class CXFA_ContainerLayoutItemImpl : public CXFA_LayoutItemImpl {
 #define XFA_WIDGETSTATUS_ButtonDown 0x10000000
 #define XFA_WIDGETSTATUS_Highlight 0x08000000
 #define XFA_WIDGETSTATUS_TextEditValueChanged 0x04000000
-class CXFA_ContentLayoutItemImpl : public CXFA_LayoutItemImpl {
+class CXFA_ContentLayoutItem : public CXFA_LayoutItem {
  public:
-  CXFA_ContentLayoutItemImpl(CXFA_Node* pNode);
-  virtual ~CXFA_ContentLayoutItemImpl();
+  CXFA_ContentLayoutItem(CXFA_Node* pNode);
+  virtual ~CXFA_ContentLayoutItem();
 
  public:
-  CXFA_ContentLayoutItemImpl* m_pPrev;
-  CXFA_ContentLayoutItemImpl* m_pNext;
+  CXFA_ContentLayoutItem* m_pPrev;
+  CXFA_ContentLayoutItem* m_pNext;
   CFX_PointF m_sPos;
   CFX_SizeF m_sSize;
   FX_DWORD m_dwStatus;
 };
 class CXFA_TraverseStrategy_LayoutItem {
  public:
-  static inline CXFA_LayoutItemImpl* GetFirstChild(
-      CXFA_LayoutItemImpl* pLayoutItem) {
+  static inline CXFA_LayoutItem* GetFirstChild(CXFA_LayoutItem* pLayoutItem) {
     return pLayoutItem->m_pFirstChild;
   }
-  static inline CXFA_LayoutItemImpl* GetNextSibling(
-      CXFA_LayoutItemImpl* pLayoutItem) {
+  static inline CXFA_LayoutItem* GetNextSibling(CXFA_LayoutItem* pLayoutItem) {
     return pLayoutItem->m_pNextSibling;
   }
-  static inline CXFA_LayoutItemImpl* GetParent(
-      CXFA_LayoutItemImpl* pLayoutItem) {
+  static inline CXFA_LayoutItem* GetParent(CXFA_LayoutItem* pLayoutItem) {
     return pLayoutItem->m_pParent;
   }
 };
@@ -98,6 +94,6 @@ class IXFA_DocLayout {
   virtual FX_BOOL IncrementLayout() = 0;
   virtual int32_t CountPages() const = 0;
   virtual IXFA_LayoutPage* GetPage(int32_t index) const = 0;
-  virtual CXFA_LayoutItemImpl* GetLayoutItem(CXFA_Node* pFormItem) = 0;
+  virtual CXFA_LayoutItem* GetLayoutItem(CXFA_Node* pFormItem) = 0;
 };
 #endif

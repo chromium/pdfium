@@ -86,7 +86,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_HWXY(
   }
   CFX_RectF rtRect;
   CXFA_Measurement measure;
-  CXFA_LayoutItemImpl* pLayoutItem = pDocLayout->GetLayoutItem(pNode);
+  CXFA_LayoutItem* pLayoutItem = pDocLayout->GetLayoutItem(pNode);
   if (!pLayoutItem) {
     return;
   }
@@ -188,7 +188,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_PageSpan(
     return;
   }
   FXJSE_HVALUE hValue = pArguments->GetReturnValue();
-  CXFA_LayoutItemImpl* pLayoutItem = pDocLayout->GetLayoutItem(pNode);
+  CXFA_LayoutItem* pLayoutItem = pDocLayout->GetLayoutItem(pNode);
   if (!pLayoutItem) {
     FXJSE_Value_SetInteger(hValue, -1);
     return;
@@ -210,8 +210,8 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
     const CFX_WideString& wsType,
     FX_BOOL bOnPageArea,
     CXFA_NodeArray& retArray) {
-  CXFA_ContainerLayoutItemImpl* pLayoutPage =
-      (CXFA_ContainerLayoutItemImpl*)pDocLayout->GetPage(iPageNo);
+  CXFA_ContainerLayoutItem* pLayoutPage =
+      (CXFA_ContainerLayoutItem*)pDocLayout->GetPage(iPageNo);
   if (!pLayoutPage) {
     return;
   }
@@ -222,7 +222,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
     return;
   }
   if (wsType == FX_WSTRC(L"contentArea")) {
-    for (CXFA_LayoutItemImpl* pItem = pLayoutPage->m_pFirstChild; pItem;
+    for (CXFA_LayoutItem* pItem = pLayoutPage->m_pFirstChild; pItem;
          pItem = pItem->m_pNextSibling) {
       if (pItem->m_pFormNode->GetClassID() == XFA_ELEMENT_ContentArea) {
         retArray.Add(pItem->m_pFormNode);
@@ -236,15 +236,15 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
     if (CXFA_Node* pMasterPage = pLayoutPage->m_pFormNode) {
       retArray.Add(pMasterPage);
     }
-    for (CXFA_LayoutItemImpl* pItem = pLayoutPage->m_pFirstChild; pItem;
+    for (CXFA_LayoutItem* pItem = pLayoutPage->m_pFirstChild; pItem;
          pItem = pItem->m_pNextSibling) {
       if (pItem->m_pFormNode->GetClassID() == XFA_ELEMENT_ContentArea) {
         retArray.Add(pItem->m_pFormNode);
         if (!bOnPageArea) {
-          CXFA_NodeIteratorTemplate<CXFA_ContentLayoutItemImpl,
+          CXFA_NodeIteratorTemplate<CXFA_ContentLayoutItem,
                                     CXFA_TraverseStrategy_ContentLayoutItem>
-          iterator((CXFA_ContentLayoutItemImpl*)pItem->m_pFirstChild);
-          for (CXFA_ContentLayoutItemImpl* pItemChild = iterator.GetCurrent();
+          iterator((CXFA_ContentLayoutItem*)pItem->m_pFirstChild);
+          for (CXFA_ContentLayoutItem* pItemChild = iterator.GetCurrent();
                pItemChild; pItemChild = iterator.MoveToNext()) {
             if (!pItemChild->IsContentLayoutItem()) {
               continue;
@@ -265,10 +265,10 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
         }
       } else {
         if (bOnPageArea) {
-          CXFA_NodeIteratorTemplate<CXFA_ContentLayoutItemImpl,
+          CXFA_NodeIteratorTemplate<CXFA_ContentLayoutItem,
                                     CXFA_TraverseStrategy_ContentLayoutItem>
-          iterator((CXFA_ContentLayoutItemImpl*)pItem);
-          for (CXFA_ContentLayoutItemImpl* pItemChild = iterator.GetCurrent();
+          iterator((CXFA_ContentLayoutItem*)pItem);
+          for (CXFA_ContentLayoutItem* pItemChild = iterator.GetCurrent();
                pItemChild; pItemChild = iterator.MoveToNext()) {
             if (!pItemChild->IsContentLayoutItem()) {
               continue;
@@ -302,14 +302,14 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
     eType = XFA_ELEMENT_Area;
   }
   if (eType != XFA_ELEMENT_UNKNOWN) {
-    for (CXFA_LayoutItemImpl* pItem = pLayoutPage->m_pFirstChild; pItem;
+    for (CXFA_LayoutItem* pItem = pLayoutPage->m_pFirstChild; pItem;
          pItem = pItem->m_pNextSibling) {
       if (pItem->m_pFormNode->GetClassID() == XFA_ELEMENT_ContentArea) {
         if (!bOnPageArea) {
-          CXFA_NodeIteratorTemplate<CXFA_ContentLayoutItemImpl,
+          CXFA_NodeIteratorTemplate<CXFA_ContentLayoutItem,
                                     CXFA_TraverseStrategy_ContentLayoutItem>
-          iterator((CXFA_ContentLayoutItemImpl*)pItem->m_pFirstChild);
-          for (CXFA_ContentLayoutItemImpl* pItemChild = iterator.GetCurrent();
+          iterator((CXFA_ContentLayoutItem*)pItem->m_pFirstChild);
+          for (CXFA_ContentLayoutItem* pItemChild = iterator.GetCurrent();
                pItemChild; pItemChild = iterator.MoveToNext()) {
             if (!pItemChild->IsContentLayoutItem()) {
               continue;
@@ -326,10 +326,10 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
         }
       } else {
         if (bOnPageArea) {
-          CXFA_NodeIteratorTemplate<CXFA_ContentLayoutItemImpl,
+          CXFA_NodeIteratorTemplate<CXFA_ContentLayoutItem,
                                     CXFA_TraverseStrategy_ContentLayoutItem>
-          iterator((CXFA_ContentLayoutItemImpl*)pItem);
-          for (CXFA_ContentLayoutItemImpl* pItemChild = iterator.GetCurrent();
+          iterator((CXFA_ContentLayoutItem*)pItem);
+          for (CXFA_ContentLayoutItem* pItemChild = iterator.GetCurrent();
                pItemChild; pItemChild = iterator.MoveToNext()) {
             if (!pItemChild->IsContentLayoutItem()) {
               continue;
@@ -541,7 +541,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_PageImp(
   if (!pDocLayout) {
     return;
   }
-  CXFA_LayoutItemImpl* pLayoutItem = pDocLayout->GetLayoutItem(pNode);
+  CXFA_LayoutItem* pLayoutItem = pDocLayout->GetLayoutItem(pNode);
   if (!pLayoutItem) {
     FXJSE_Value_SetInteger(hValue, -1);
     return;

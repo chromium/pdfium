@@ -36,7 +36,7 @@ void CXFA_FFText::RenderWidget(CFX_Graphics* pGS,
       CFX_RectF rtText;
       GetRectWithoutRotate(rtText);
       if (CXFA_Margin mgWidget = m_pDataAcc->GetMargin()) {
-        CXFA_LayoutItemImpl* pItem = this;
+        CXFA_LayoutItem* pItem = this;
         if (pItem->GetPrev() == NULL && pItem->GetNext() == NULL) {
           XFA_RectWidthoutMargin(rtText, mgWidget);
         } else {
@@ -74,7 +74,7 @@ FX_BOOL CXFA_FFText::LayoutWidget() {
     return TRUE;
   }
   pTextLayout->m_Blocks.RemoveAll();
-  CXFA_LayoutItemImpl* pItem = this;
+  CXFA_LayoutItem* pItem = this;
   if (pItem->GetPrev() == NULL && pItem->GetNext() == NULL) {
     return TRUE;
   }
