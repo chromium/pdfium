@@ -7,7 +7,7 @@
 #ifndef CORE_INCLUDE_FPDFDOC_FPDF_AP_H_
 #define CORE_INCLUDE_FPDFDOC_FPDF_AP_H_
 
-#include "../fpdfapi/fpdf_parser.h"
+#include "core/include/fpdfapi/fpdf_parser.h"
 #include "fpdf_vt.h"
 
 class IPVT_FontMap {

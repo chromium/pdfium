@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../fpdf_page/pageint.h"
-#include "../fpdf_render/render_int.h"
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fpdfapi/fpdf_render.h"
 #include "core/include/fxcodec/fx_codec.h"
+#include "core/src/fpdfapi/fpdf_page/pageint.h"
+#include "core/src/fpdfapi/fpdf_render/render_int.h"
 
 CPDF_Dictionary* CPDF_Image::InitJPEG(uint8_t* pData, FX_DWORD size) {
   int32_t width;

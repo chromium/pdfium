@@ -6,10 +6,10 @@
 
 #include <map>
 
-#include "../../include/pdfwindow/PDFWindow.h"
-#include "../../include/pdfwindow/PWL_Wnd.h"
-#include "../../include/pdfwindow/PWL_Utils.h"
-#include "../../include/pdfwindow/PWL_ScrollBar.h"
+#include "fpdfsdk/include/pdfwindow/PDFWindow.h"
+#include "fpdfsdk/include/pdfwindow/PWL_ScrollBar.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Utils.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
 
 /* -------------------------- CPWL_Timer -------------------------- */
 

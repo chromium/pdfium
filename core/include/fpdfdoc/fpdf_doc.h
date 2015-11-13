@@ -10,8 +10,8 @@
 #include <map>
 #include <vector>
 
-#include "../fpdfapi/fpdf_parser.h"
-#include "../fpdfapi/fpdf_render.h"
+#include "core/include/fpdfapi/fpdf_parser.h"
+#include "core/include/fpdfapi/fpdf_render.h"
 #include "third_party/base/nonstd_unique_ptr.h"
 
 class CFieldTree;

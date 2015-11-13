@@ -7,8 +7,8 @@
 #ifndef FPDFSDK_SRC_JAVASCRIPT_RESOURCE_H_
 #define FPDFSDK_SRC_JAVASCRIPT_RESOURCE_H_
 
-#include "../../include/fsdk_define.h"     // For FX_UINT.
 #include "core/include/fxcrt/fx_string.h"  // For CFX_WideString.
+#include "fpdfsdk/include/fsdk_define.h"   // For FX_UINT.
 
 class CJS_Context;
 

@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../include/fsdk_define.h"
 #include "../include/fpdfxfa/fpdfxfa_doc.h"
-#include "../include/fsdk_mgr.h"
-#include "../include/fsdk_baseannot.h"
+#include "fpdfsdk/include/fsdk_baseannot.h"
+#include "fpdfsdk/include/fsdk_define.h"
+#include "fpdfsdk/include/fsdk_mgr.h"
 
 int _gAfxGetTimeZoneInSeconds(FX_CHAR tzhour, uint8_t tzminute) {
   return (int)tzhour * 3600 + (int)tzminute * (tzhour >= 0 ? 60 : -60);

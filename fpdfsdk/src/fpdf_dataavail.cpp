@@ -6,9 +6,9 @@
 
 #include "public/fpdf_dataavail.h"
 
-#include "../include/fsdk_define.h"
-#include "../include/fpdfxfa/fpdfxfa_doc.h"
 #include "../include/fpdfxfa/fpdfxfa_app.h"
+#include "../include/fpdfxfa/fpdfxfa_doc.h"
+#include "fpdfsdk/include/fsdk_define.h"
 #include "public/fpdf_formfill.h"
 
 class CFPDF_FileAvailWrap : public IFX_FileAvail {

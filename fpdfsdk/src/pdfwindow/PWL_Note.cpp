@@ -4,19 +4,19 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/pdfwindow/PDFWindow.h"
-#include "../../include/pdfwindow/PWL_Wnd.h"
-#include "../../include/pdfwindow/PWL_Button.h"
-#include "../../include/pdfwindow/PWL_EditCtrl.h"
-#include "../../include/pdfwindow/PWL_Edit.h"
-#include "../../include/pdfwindow/PWL_ListCtrl.h"
-#include "../../include/pdfwindow/PWL_ScrollBar.h"
-#include "../../include/pdfwindow/PWL_Note.h"
-#include "../../include/pdfwindow/PWL_Label.h"
-#include "../../include/pdfwindow/PWL_Edit.h"
-#include "../../include/pdfwindow/PWL_ScrollBar.h"
-#include "../../include/pdfwindow/PWL_Utils.h"
-#include "../../include/pdfwindow/PWL_Caret.h"
+#include "fpdfsdk/include/pdfwindow/PDFWindow.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Button.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Caret.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Edit.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Edit.h"
+#include "fpdfsdk/include/pdfwindow/PWL_EditCtrl.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Label.h"
+#include "fpdfsdk/include/pdfwindow/PWL_ListCtrl.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Note.h"
+#include "fpdfsdk/include/pdfwindow/PWL_ScrollBar.h"
+#include "fpdfsdk/include/pdfwindow/PWL_ScrollBar.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Utils.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
 
 #define POPUP_ITEM_HEAD_BOTTOM 3.0f
 #define POPUP_ITEM_BOTTOMWIDTH 1.0f

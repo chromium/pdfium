@@ -6,10 +6,10 @@
 
 #include "render_int.h"
 
-#include "../fpdf_page/pageint.h"
 #include "core/include/fpdfapi/fpdf_pageobj.h"
 #include "core/include/fpdfapi/fpdf_render.h"
 #include "core/include/fxge/fx_ge.h"
+#include "core/src/fpdfapi/fpdf_page/pageint.h"
 
 struct CACHEINFO {
   FX_DWORD time;

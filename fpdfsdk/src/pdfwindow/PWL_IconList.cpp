@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/pdfwindow/PDFWindow.h"
-#include "../../include/pdfwindow/PWL_Wnd.h"
-#include "../../include/pdfwindow/PWL_ListCtrl.h"
-#include "../../include/pdfwindow/PWL_IconList.h"
-#include "../../include/pdfwindow/PWL_Utils.h"
-#include "../../include/pdfwindow/PWL_ScrollBar.h"
-#include "../../include/pdfwindow/PWL_Label.h"
+#include "fpdfsdk/include/pdfwindow/PDFWindow.h"
+#include "fpdfsdk/include/pdfwindow/PWL_IconList.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Label.h"
+#include "fpdfsdk/include/pdfwindow/PWL_ListCtrl.h"
+#include "fpdfsdk/include/pdfwindow/PWL_ScrollBar.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Utils.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
 
 #define PWL_IconList_ITEM_ICON_LEFTMARGIN 10.0f
 #define PWL_IconList_ITEM_WIDTH 20.0f

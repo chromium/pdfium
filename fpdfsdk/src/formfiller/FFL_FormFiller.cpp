@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/formfiller/FFL_FormFiller.h"
-#include "../../include/formfiller/FFL_CBA_Fontmap.h"
+#include "fpdfsdk/include/formfiller/FFL_CBA_Fontmap.h"
+#include "fpdfsdk/include/formfiller/FFL_FormFiller.h"
 
 #define GetRed(rgb) ((uint8_t)(rgb))
 #define GetGreen(rgb) ((uint8_t)(((FX_WORD)(rgb)) >> 8))

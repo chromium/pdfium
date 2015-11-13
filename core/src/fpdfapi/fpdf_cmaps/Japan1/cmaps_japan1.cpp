@@ -6,11 +6,11 @@
 
 #include "cmaps_japan1.h"
 
-#include "../../fpdf_font/font_int.h"
-#include "../cmap_int.h"
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_resource.h"
 #include "core/include/fxcrt/fx_basic.h"  // For FX_ArraySize().
+#include "core/src/fpdfapi/fpdf_cmaps/cmap_int.h"
+#include "core/src/fpdfapi/fpdf_font/font_int.h"
 
 static const FXCMAP_CMap g_FXCMAP_Japan1_cmaps[] = {
     {"83pv-RKSJ-H", FXCMAP_CMap::Range, g_FXCMAP_83pv_RKSJ_H_1, 222,

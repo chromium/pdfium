@@ -11,8 +11,8 @@
 #include <list>
 #include <map>
 
-#include "../jbig2/JBig2_Context.h"
 #include "core/include/fxcodec/fx_codec.h"
+#include "core/src/fxcodec/jbig2/JBig2_Context.h"
 #include "third_party/base/nonstd_unique_ptr.h"
 #include "third_party/libopenjpeg20/openjpeg.h"  // For OPJ_SIZE_T.
 

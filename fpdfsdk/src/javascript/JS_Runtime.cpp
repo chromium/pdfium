@@ -8,8 +8,6 @@
 
 #include "../../../xfa/src/fxjse/src/value.h"
 #include "../../include/fpdfxfa/fpdfxfa_app.h"
-#include "../../include/fsdk_mgr.h"  // For CPDFDoc_Environment.
-#include "../../include/javascript/IJavaScript.h"
 #include "Consts.h"
 #include "Document.h"
 #include "Field.h"
@@ -25,6 +23,8 @@
 #include "color.h"
 #include "console.h"
 #include "event.h"
+#include "fpdfsdk/include/fsdk_mgr.h"  // For CPDFDoc_Environment.
+#include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "global.h"
 #include "report.h"
 #include "util.h"

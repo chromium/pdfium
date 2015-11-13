@@ -9,7 +9,7 @@
 #include "../include/fpdfxfa/fpdfxfa_app.h"
 #include "../include/fpdfxfa/fpdfxfa_doc.h"
 #include "../include/fpdfxfa/fpdfxfa_util.h"
-#include "../include/fsdk_define.h"
+#include "fpdfsdk/include/fsdk_define.h"
 #include "public/fpdf_edit.h"
 #include "public/fpdf_formfill.h"
 

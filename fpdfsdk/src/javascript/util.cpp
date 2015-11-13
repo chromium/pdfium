@@ -6,7 +6,6 @@
 
 #include "util.h"
 
-#include "../../include/javascript/IJavaScript.h"
 #include "JS_Context.h"
 #include "JS_Define.h"
 #include "JS_EventHandler.h"
@@ -14,6 +13,7 @@
 #include "JS_Runtime.h"
 #include "JS_Value.h"
 #include "PublicMethods.h"
+#include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "resource.h"
 
 #if _FX_OS_ == _FX_ANDROID_

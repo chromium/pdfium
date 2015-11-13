@@ -6,10 +6,10 @@
 
 #include "core/src/fxge/agg/include/fx_agg_driver.h"
 
-#include "../../dib/dib_int.h"
-#include "../../ge/text_int.h"
 #include "core/include/fxcodec/fx_codec.h"
 #include "core/include/fxge/fx_ge.h"
+#include "core/src/fxge/dib/dib_int.h"
+#include "core/src/fxge/ge/text_int.h"
 #include "third_party/agg23/agg_conv_dash.h"
 #include "third_party/agg23/agg_conv_stroke.h"
 #include "third_party/agg23/agg_curves.h"

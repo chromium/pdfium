@@ -7,7 +7,7 @@
 #ifndef CORE_INCLUDE_FPDFTEXT_FPDF_TEXT_H_
 #define CORE_INCLUDE_FPDFTEXT_FPDF_TEXT_H_
 
-#include "../fpdfapi/fpdf_parser.h"
+#include "core/include/fpdfapi/fpdf_parser.h"
 
 class CPDF_Page;
 class CPDF_PageObjects;

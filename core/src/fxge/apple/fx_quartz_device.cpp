@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../dib/dib_int.h"
-#include "../ge/text_int.h"
 #include "core/include/fxcrt/fx_ext.h"
 #include "core/include/fxge/fx_freetype.h"
 #include "core/include/fxge/fx_ge.h"
 #include "core/src/fxge/agg/include/fx_agg_driver.h"
+#include "core/src/fxge/dib/dib_int.h"
+#include "core/src/fxge/ge/text_int.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
 #include "apple_int.h"

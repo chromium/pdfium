@@ -9,7 +9,7 @@
 
 #include <map>
 
-#include "../fxcrt/fx_system.h"
+#include "core/include/fxcrt/fx_system.h"
 #include "fx_dib.h"
 #include "third_party/base/nonstd_unique_ptr.h"
 

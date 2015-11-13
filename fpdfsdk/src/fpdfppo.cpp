@@ -7,7 +7,7 @@
 #include "public/fpdf_ppo.h"
 
 #include "../include/fpdfxfa/fpdfxfa_doc.h"
-#include "../include/fsdk_define.h"
+#include "fpdfsdk/include/fsdk_define.h"
 
 class CPDF_PageOrganizer {
  public:

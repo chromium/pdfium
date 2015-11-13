@@ -7,11 +7,11 @@
 #ifndef FPDFSDK_INCLUDE_FORMFILLER_FORMFILLER_H_
 #define FPDFSDK_INCLUDE_FORMFILLER_FORMFILLER_H_
 
-#include "../fsdk_mgr.h"
-#include "../fxedit/fx_edit.h"
-#include "../pdfwindow/IPDFWindow.h"
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
 #include "core/include/fpdfdoc/fpdf_vt.h"
+#include "fpdfsdk/include/fsdk_mgr.h"
+#include "fpdfsdk/include/fxedit/fx_edit.h"
+#include "fpdfsdk/include/pdfwindow/IPDFWindow.h"
 
 #endif  // FPDFSDK_INCLUDE_FORMFILLER_FORMFILLER_H_

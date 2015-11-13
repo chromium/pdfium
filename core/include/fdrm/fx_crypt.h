@@ -7,7 +7,7 @@
 #ifndef CORE_INCLUDE_FDRM_FX_CRYPT_H_
 #define CORE_INCLUDE_FDRM_FX_CRYPT_H_
 
-#include "../fxcrt/fx_system.h"
+#include "core/include/fxcrt/fx_system.h"
 
 #ifdef __cplusplus
 extern "C" {

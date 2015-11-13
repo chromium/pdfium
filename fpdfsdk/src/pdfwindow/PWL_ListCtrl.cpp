@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/pdfwindow/PDFWindow.h"
-#include "../../include/pdfwindow/PWL_Wnd.h"
-#include "../../include/pdfwindow/PWL_ListCtrl.h"
+#include "fpdfsdk/include/pdfwindow/PDFWindow.h"
+#include "fpdfsdk/include/pdfwindow/PWL_ListCtrl.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
 
 /* ---------------------------- CPWL_ListCtrl ---------------------------- */
 

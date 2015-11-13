@@ -7,7 +7,7 @@
 #ifndef CORE_INCLUDE_FPDFAPI_FPDF_PARSER_H_
 #define CORE_INCLUDE_FPDFAPI_FPDF_PARSER_H_
 
-#include "../fxcrt/fx_system.h"
+#include "core/include/fxcrt/fx_system.h"
 #include "fpdf_objects.h"
 #include "public/fpdf_dataavail.h"
 #include "third_party/base/nonstd_unique_ptr.h"

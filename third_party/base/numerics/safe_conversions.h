@@ -7,8 +7,8 @@
 
 #include <limits>
 
-#include "../logging.h"
 #include "safe_conversions_impl.h"
+#include "third_party/base/logging.h"
 
 namespace pdfium {
 namespace base {

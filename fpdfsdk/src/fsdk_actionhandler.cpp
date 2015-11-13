@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../include/fsdk_define.h"
 #include "../include/fpdfxfa/fpdfxfa_doc.h"
-#include "../include/fsdk_mgr.h"
-#include "../include/fsdk_actionhandler.h"
-#include "../include/javascript/IJavaScript.h"
+#include "fpdfsdk/include/fsdk_actionhandler.h"
+#include "fpdfsdk/include/fsdk_define.h"
+#include "fpdfsdk/include/fsdk_mgr.h"
+#include "fpdfsdk/include/javascript/IJavaScript.h"
 
 CPDFSDK_ActionHandler::CPDFSDK_ActionHandler()
     : m_pFormActionHandler(new CPDFSDK_FormActionHandler) {

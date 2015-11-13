@@ -6,10 +6,10 @@
 
 #include "JS_Object.h"
 
-#include "../../include/fsdk_mgr.h"  // For CPDFDoc_Environment.
-#include "../../include/javascript/IJavaScript.h"
 #include "JS_Context.h"
 #include "JS_Define.h"
+#include "fpdfsdk/include/fsdk_mgr.h"  // For CPDFDoc_Environment.
+#include "fpdfsdk/include/javascript/IJavaScript.h"
 
 namespace {
 

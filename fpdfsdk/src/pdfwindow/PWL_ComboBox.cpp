@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/pdfwindow/PDFWindow.h"
-#include "../../include/pdfwindow/PWL_Wnd.h"
-#include "../../include/pdfwindow/PWL_EditCtrl.h"
-#include "../../include/pdfwindow/PWL_Edit.h"
-#include "../../include/pdfwindow/PWL_ListBox.h"
-#include "../../include/pdfwindow/PWL_ComboBox.h"
-#include "../../include/pdfwindow/PWL_Utils.h"
+#include "fpdfsdk/include/pdfwindow/PDFWindow.h"
+#include "fpdfsdk/include/pdfwindow/PWL_ComboBox.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Edit.h"
+#include "fpdfsdk/include/pdfwindow/PWL_EditCtrl.h"
+#include "fpdfsdk/include/pdfwindow/PWL_ListBox.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Utils.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
 
 #define PWLCB_DEFAULTFONTSIZE 12.0f
 

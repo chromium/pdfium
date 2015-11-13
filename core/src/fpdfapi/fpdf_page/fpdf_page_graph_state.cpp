@@ -6,11 +6,11 @@
 
 #include "pageint.h"
 
-#include "../fpdf_render/render_int.h"
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fpdfapi/fpdf_pageobj.h"
 #include "core/include/fpdfapi/fpdf_render.h"
+#include "core/src/fpdfapi/fpdf_render/render_int.h"
 
 void CPDF_GraphicStates::DefaultStates() {
   m_ColorState.New()->Default();

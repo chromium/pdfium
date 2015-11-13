@@ -6,7 +6,6 @@
 
 #include "JS_EventHandler.h"
 
-#include "../../include/javascript/IJavaScript.h"
 #include "Document.h"
 #include "Field.h"
 #include "JS_Context.h"
@@ -14,6 +13,7 @@
 #include "JS_Object.h"
 #include "JS_Runtime.h"
 #include "JS_Value.h"
+#include "fpdfsdk/include/javascript/IJavaScript.h"
 
 /* ---------------------------- CJS_EventHandler ---------------------------- */
 

@@ -4,15 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../include/formfiller/FFL_FormFiller.h"
 #include "../include/fpdfxfa/fpdfxfa_doc.h"
 #include "../include/fpdfxfa/fpdfxfa_util.h"
-#include "../include/fsdk_actionhandler.h"
-#include "../include/fsdk_baseannot.h"
-#include "../include/fsdk_baseform.h"
-#include "../include/fsdk_define.h"
-#include "../include/fsdk_mgr.h"
-#include "../include/javascript/IJavaScript.h"
+#include "fpdfsdk/include/formfiller/FFL_FormFiller.h"
+#include "fpdfsdk/include/fsdk_actionhandler.h"
+#include "fpdfsdk/include/fsdk_baseannot.h"
+#include "fpdfsdk/include/fsdk_baseform.h"
+#include "fpdfsdk/include/fsdk_define.h"
+#include "fpdfsdk/include/fsdk_mgr.h"
+#include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "third_party/base/nonstd_unique_ptr.h"
 
 #define IsFloatZero(f) ((f) < 0.01 && (f) > -0.01)

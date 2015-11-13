@@ -9,8 +9,8 @@
 #include "../include/fpdfxfa/fpdfxfa_app.h"
 #include "../include/fpdfxfa/fpdfxfa_doc.h"
 #include "../include/fpdfxfa/fpdfxfa_page.h"
-#include "../include/fsdk_define.h"
-#include "../include/fsdk_mgr.h"
+#include "fpdfsdk/include/fsdk_define.h"
+#include "fpdfsdk/include/fsdk_mgr.h"
 #include "public/fpdfview.h"
 #include "third_party/base/nonstd_unique_ptr.h"
 

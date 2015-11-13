@@ -8,13 +8,13 @@
 
 #include <vector>
 
-#include "../fpdf_page/pageint.h"
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_pageobj.h"
 #include "core/include/fpdfapi/fpdf_render.h"
 #include "core/include/fxcodec/fx_codec.h"
 #include "core/include/fxcrt/fx_safe_types.h"
 #include "core/include/fxge/fx_ge.h"
+#include "core/src/fpdfapi/fpdf_page/pageint.h"
 #include "third_party/base/nonstd_unique_ptr.h"
 
 namespace {

@@ -9,9 +9,9 @@
 
 #include <map>
 
-#include "../../include/fsdk_define.h"  // For FX_UINT
-#include "../../include/jsapi/fxjs_v8.h"
 #include "JS_Runtime.h"
+#include "fpdfsdk/include/fsdk_define.h"  // For FX_UINT
+#include "fpdfsdk/include/jsapi/fxjs_v8.h"
 #include "third_party/base/nonstd_unique_ptr.h"
 
 class CJS_Context;

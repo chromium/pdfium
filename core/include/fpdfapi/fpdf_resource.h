@@ -9,8 +9,8 @@
 
 #include <map>
 
-#include "../fxcrt/fx_system.h"
-#include "../fxge/fx_font.h"
+#include "core/include/fxcrt/fx_system.h"
+#include "core/include/fxge/fx_font.h"
 #include "fpdf_parser.h"
 
 class CFX_CTTGSUBTable;

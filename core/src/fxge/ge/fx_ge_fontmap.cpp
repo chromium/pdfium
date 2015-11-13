@@ -6,9 +6,9 @@
 
 #include <limits>
 
-#include "../fontdata/chromefontdata/chromefontdata.h"
 #include "core/include/fxge/fx_freetype.h"
 #include "core/include/fxge/fx_ge.h"
+#include "core/src/fxge/fontdata/chromefontdata/chromefontdata.h"
 #include "text_int.h"
 #include "third_party/base/stl_util.h"
 

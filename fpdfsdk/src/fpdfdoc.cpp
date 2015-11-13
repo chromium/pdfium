@@ -6,7 +6,7 @@
 
 #include "public/fpdf_doc.h"
 
-#include "../include/fsdk_define.h"
+#include "fpdfsdk/include/fsdk_define.h"
 
 namespace {
 

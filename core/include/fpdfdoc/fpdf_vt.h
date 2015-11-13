@@ -7,8 +7,8 @@
 #ifndef CORE_INCLUDE_FPDFDOC_FPDF_VT_H_
 #define CORE_INCLUDE_FPDFDOC_FPDF_VT_H_
 
-#include "../fpdfapi/fpdf_parser.h"
-#include "../fxge/fx_dib.h"
+#include "core/include/fpdfapi/fpdf_parser.h"
+#include "core/include/fxge/fx_dib.h"
 
 class IPDF_VariableText;
 class IPDF_VariableText_Iterator;

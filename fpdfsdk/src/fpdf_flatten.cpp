@@ -6,7 +6,7 @@
 
 #include "public/fpdf_flatten.h"
 
-#include "../include/fsdk_define.h"
+#include "fpdfsdk/include/fsdk_define.h"
 
 typedef CFX_ArrayTemplate<CPDF_Dictionary*> CPDF_ObjectArray;
 typedef CFX_ArrayTemplate<CPDF_Rect> CPDF_RectArray;

@@ -6,8 +6,8 @@
 
 #include "JS_GlobalData.h"
 
-#include "../../include/javascript/IJavaScript.h"
 #include "core/include/fdrm/fx_crypt.h"
+#include "fpdfsdk/include/javascript/IJavaScript.h"
 
 #define JS_MAXGLOBALDATA (1024 * 4 - 8)
 

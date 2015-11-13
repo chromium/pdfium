@@ -11,9 +11,9 @@
 #include <cstdlib>
 #include <limits>
 
-#include "../macros.h"
-#include "../template_util.h"
 #include "safe_conversions.h"
+#include "third_party/base/macros.h"
+#include "third_party/base/template_util.h"
 
 namespace pdfium {
 namespace base {
