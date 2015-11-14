@@ -1098,14 +1098,14 @@ uint8_t* CPDF_DIBSource::GetBuffer() const {
 }
 const uint8_t* CPDF_DIBSource::GetScanline(int line) const {
   if (m_bpc == 0) {
-    return NULL;
+    return nullptr;
   }
   FX_SAFE_DWORD src_pitch = CalculatePitch8(m_bpc, m_nComponents, m_Width, 1);
   if (!src_pitch.IsValid())
-    return NULL;
+    return nullptr;
   FX_DWORD src_pitch_value = src_pitch.ValueOrDie();
-  const uint8_t* pSrcLine = NULL;
-  if (m_pCachedBitmap) {
+  const uint8_t* pSrcLine = nullptr;
+  if (m_pCachedBitmap && src_pitch_value <= m_pCachedBitmap->GetPitch()) {
     if (line >= m_pCachedBitmap->GetHeight()) {
       line = m_pCachedBitmap->GetHeight() - 1;
     }
@@ -1117,7 +1117,7 @@ const uint8_t* CPDF_DIBSource::GetScanline(int line) const {
       pSrcLine = m_pStreamAcc->GetData() + line * src_pitch_value;
     }
   }
-  if (pSrcLine == NULL) {
+  if (!pSrcLine) {
     uint8_t* pLineBuf = m_pMaskedLine ? m_pMaskedLine : m_pLineBuf;
     FXSYS_memset(pLineBuf, 0xFF, m_Pitch);
     return pLineBuf;

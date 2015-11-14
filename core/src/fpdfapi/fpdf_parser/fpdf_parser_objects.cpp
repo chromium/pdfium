@@ -464,15 +464,18 @@ CPDF_Array* CPDF_Array::GetArray(FX_DWORD i) const {
   }
   return (CPDF_Array*)p;
 }
-void CPDF_Array::RemoveAt(FX_DWORD i) {
-  ASSERT(m_Type == PDFOBJ_ARRAY);
-  if (i >= (FX_DWORD)m_Objects.GetSize()) {
+void CPDF_Array::RemoveAt(FX_DWORD i, int nCount) {
+  if (i >= (FX_DWORD)m_Objects.GetSize())
     return;
+
+  if (nCount <= 0 || nCount > m_Objects.GetSize() - i)
+    return;
+
+  for (int j = 0; j < nCount; ++j) {
+    if (CPDF_Object* p = static_cast<CPDF_Object*>(m_Objects.GetAt(i + j)))
+      p->Release();
   }
-  CPDF_Object* p = (CPDF_Object*)m_Objects.GetAt(i);
-  if (p)
-    p->Release();
-  m_Objects.RemoveAt(i);
+  m_Objects.RemoveAt(i, nCount);
 }
 void CPDF_Array::SetAt(FX_DWORD i,
                        CPDF_Object* pObj,
