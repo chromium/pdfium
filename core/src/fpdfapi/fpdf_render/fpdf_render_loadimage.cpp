@@ -18,7 +18,9 @@
 
 namespace {
 
-unsigned int _GetBits8(const uint8_t* pData, int bitpos, int nbits) {
+unsigned int GetBits8(const uint8_t* pData, uint64_t bitpos, size_t nbits) {
+  ASSERT(nbits == 1 || nbits == 2 || nbits == 4 || nbits == 8 || nbits == 16);
+  ASSERT((bitpos & (nbits - 1)) == 0);
   unsigned int byte = pData[bitpos / 8];
   if (nbits == 8) {
     return byte;
@@ -1009,11 +1011,11 @@ void CPDF_DIBSource::TranslateScanline24bpp(uint8_t* dest_scan,
           int src_bit_pos = 0;
           int dest_byte_pos = 0;
           for (int column = 0; column < m_Width; column++) {
-            int R = _GetBits8(src_scan, src_bit_pos, m_bpc);
+            int R = GetBits8(src_scan, src_bit_pos, m_bpc);
             src_bit_pos += m_bpc;
-            int G = _GetBits8(src_scan, src_bit_pos, m_bpc);
+            int G = GetBits8(src_scan, src_bit_pos, m_bpc);
             src_bit_pos += m_bpc;
-            int B = _GetBits8(src_scan, src_bit_pos, m_bpc);
+            int B = GetBits8(src_scan, src_bit_pos, m_bpc);
             src_bit_pos += m_bpc;
             R = NORMALCOLOR_MAX(R, max_data);
             G = NORMALCOLOR_MAX(G, max_data);
@@ -1067,7 +1069,7 @@ void CPDF_DIBSource::TranslateScanline24bpp(uint8_t* dest_scan,
     int dest_byte_pos = 0;
     for (int column = 0; column < m_Width; column++) {
       for (FX_DWORD color = 0; color < m_nComponents; color++) {
-        int data = _GetBits8(src_scan, src_bit_pos, m_bpc);
+        int data = GetBits8(src_scan, src_bit_pos, m_bpc);
         color_values[color] = m_pCompData[color].m_DecodeMin +
                               m_pCompData[color].m_DecodeStep * data;
         src_bit_pos += m_bpc;
@@ -1162,7 +1164,7 @@ const uint8_t* CPDF_DIBSource::GetScanline(int line) const {
       for (int col = 0; col < m_Width; col++) {
         int color_index = 0;
         for (FX_DWORD color = 0; color < m_nComponents; color++) {
-          int data = _GetBits8(pSrcLine, src_bit_pos, m_bpc);
+          int data = GetBits8(pSrcLine, src_bit_pos, m_bpc);
           color_index |= data << (color * m_bpc);
           src_bit_pos += m_bpc;
         }
@@ -1384,7 +1386,7 @@ void CPDF_DIBSource::DownSampleScanline8Bit(int orig_Bpp,
     for (FX_DWORD col = 0; col < src_width; col++) {
       int color_index = 0;
       for (FX_DWORD color = 0; color < m_nComponents; color++) {
-        int data = _GetBits8(pSrcLine, src_bit_pos, m_bpc);
+        int data = GetBits8(pSrcLine, src_bit_pos, m_bpc);
         color_index |= data << (color * m_bpc);
         src_bit_pos += m_bpc;
       }
@@ -1447,59 +1449,66 @@ void CPDF_DIBSource::DownSampleScanline32Bit(int orig_Bpp,
                                              int clip_width) const {
   int last_src_x = -1;
   FX_ARGB last_argb = FXARGB_MAKE(0xFF, 0xFF, 0xFF, 0xFF);
-  FX_FLOAT orig_Not8Bpp = (FX_FLOAT)m_bpc * (FX_FLOAT)m_nComponents / 8.0f;
   FX_FLOAT unit_To8Bpc = 255.0f / ((1 << m_bpc) - 1);
   for (int i = 0; i < clip_width; i++) {
     int dest_x = clip_left + i;
     FX_DWORD src_x = (bFlipX ? (dest_width - dest_x - 1) : dest_x) *
                      (int64_t)src_width / dest_width;
     src_x %= src_width;
+
+    // No need to check for 32-bit overflow, as |src_x| is bounded by
+    // |src_width| and DownSampleScanline already checked for overflow with the
+    // pitch calculation.
     const uint8_t* pSrcPixel = nullptr;
+    size_t bit_offset = 0;
     if (m_bpc % 8 == 0) {
       pSrcPixel = pSrcLine + src_x * orig_Bpp;
     } else {
-      pSrcPixel = pSrcLine + (int)(src_x * orig_Not8Bpp);
+      size_t num_bits = src_x * m_bpc * m_nComponents;
+      pSrcPixel = pSrcLine + num_bits / 8;
+      bit_offset = num_bits % 8;
     }
+
     uint8_t* pDestPixel = dest_scan + i * dest_Bpp;
     FX_ARGB argb;
     if (src_x == last_src_x) {
       argb = last_argb;
     } else {
+      CFX_FixedBufGrow<uint8_t, 128> extracted_components(m_nComponents);
+      if (m_bpc % 8 != 0) {
+        uint64_t src_bit_pos = bit_offset;
+        for (FX_DWORD j = 0; j < m_nComponents; ++j) {
+          extracted_components[j] = static_cast<uint8_t>(
+              GetBits8(pSrcPixel, src_bit_pos, m_bpc) * unit_To8Bpc);
+          src_bit_pos += m_bpc;
+        }
+        pSrcPixel = extracted_components;
+      }
+
       if (m_pColorSpace) {
-        CFX_FixedBufGrow<uint8_t, 128> temp(orig_Bpp);
         uint8_t color[4];
         const FX_BOOL bTransMask = TransMask();
         if (m_bDefaultDecode) {
-          if (m_bpc < 8) {
-            int src_bit_pos = 0;
-            if (src_x % 2) {
-              src_bit_pos = 4;
-            }
-            for (FX_DWORD j = 0; j < m_nComponents; ++j) {
-              temp[j] = (uint8_t)(_GetBits8(pSrcPixel, src_bit_pos, m_bpc) *
-                                  unit_To8Bpc);
-              src_bit_pos += m_bpc;
-            }
-            m_pColorSpace->TranslateImageLine(color, temp, 1, 0, 0, bTransMask);
-          } else {
-            m_pColorSpace->TranslateImageLine(color, pSrcPixel, 1, 0, 0,
-                                              bTransMask);
-          }
+          m_pColorSpace->TranslateImageLine(color, pSrcPixel, 1, 0, 0,
+                                            bTransMask);
         } else {
-          for (int j = 0; j < m_nComponents; ++j) {
+          for (FX_DWORD j = 0; j < m_nComponents; ++j) {
+            FX_FLOAT component_value =
+                static_cast<FX_FLOAT>(extracted_components[j]);
             int color_value =
                 (int)((m_pCompData[j].m_DecodeMin +
-                       m_pCompData[j].m_DecodeStep * (FX_FLOAT)pSrcPixel[j]) *
+                       m_pCompData[j].m_DecodeStep * component_value) *
                           255.0f +
                       0.5f);
-            temp[j] =
+            extracted_components[j] =
                 color_value > 255 ? 255 : (color_value < 0 ? 0 : color_value);
           }
-          m_pColorSpace->TranslateImageLine(color, temp, 1, 0, 0, bTransMask);
+          m_pColorSpace->TranslateImageLine(color, extracted_components, 1, 0,
+                                            0, bTransMask);
         }
         argb = FXARGB_MAKE(0xFF, color[2], color[1], color[0]);
       } else {
-        argb = FXARGB_MAKE(0xFf, pSrcPixel[2], pSrcPixel[1], pSrcPixel[0]);
+        argb = FXARGB_MAKE(0xFF, pSrcPixel[2], pSrcPixel[1], pSrcPixel[0]);
       }
       if (m_bColorKey) {
         int alpha = 0xFF;
