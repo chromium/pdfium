@@ -4,7 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../include/fpdfxfa/fpdfxfa_doc.h"
+#include "core/include/fxcrt/fx_ext.h"
+#include "fpdfsdk/include/fpdfxfa/fpdfxfa_doc.h"
 #include "fpdfsdk/include/fsdk_baseannot.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
@@ -217,12 +218,9 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
     int i = 0;
     int j, k;
     FX_CHAR ch;
-    while (i < strLength) {
-      ch = dtStr[i];
-      if (ch >= '0' && ch <= '9')
-        break;
-      i++;
-    }
+    while (i < strLength && !std::isdigit(dtStr[i]))
+      ++i;
+
     if (i >= strLength)
       return *this;
 
@@ -230,9 +228,9 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
     k = 0;
     while (i < strLength && j < 4) {
       ch = dtStr[i];
-      k = k * 10 + ch - '0';
+      k = k * 10 + FXSYS_toDecimalDigit(ch);
       j++;
-      if (ch < '0' || ch > '9')
+      if (!std::isdigit(ch))
         break;
       i++;
     }
@@ -244,9 +242,9 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
     k = 0;
     while (i < strLength && j < 2) {
       ch = dtStr[i];
-      k = k * 10 + ch - '0';
+      k = k * 10 + FXSYS_toDecimalDigit(ch);
       j++;
-      if (ch < '0' || ch > '9')
+      if (!std::isdigit(ch))
         break;
       i++;
     }
@@ -258,9 +256,9 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
     k = 0;
     while (i < strLength && j < 2) {
       ch = dtStr[i];
-      k = k * 10 + ch - '0';
+      k = k * 10 + FXSYS_toDecimalDigit(ch);
       j++;
-      if (ch < '0' || ch > '9')
+      if (!std::isdigit(ch))
         break;
       i++;
     }
@@ -272,9 +270,9 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
     k = 0;
     while (i < strLength && j < 2) {
       ch = dtStr[i];
-      k = k * 10 + ch - '0';
+      k = k * 10 + FXSYS_toDecimalDigit(ch);
       j++;
-      if (ch < '0' || ch > '9')
+      if (!std::isdigit(ch))
         break;
       i++;
     }
@@ -286,9 +284,9 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
     k = 0;
     while (i < strLength && j < 2) {
       ch = dtStr[i];
-      k = k * 10 + ch - '0';
+      k = k * 10 + FXSYS_toDecimalDigit(ch);
       j++;
-      if (ch < '0' || ch > '9')
+      if (!std::isdigit(ch))
         break;
       i++;
     }
@@ -300,9 +298,9 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
     k = 0;
     while (i < strLength && j < 2) {
       ch = dtStr[i];
-      k = k * 10 + ch - '0';
+      k = k * 10 + FXSYS_toDecimalDigit(ch);
       j++;
-      if (ch < '0' || ch > '9')
+      if (!std::isdigit(ch))
         break;
       i++;
     }
@@ -321,9 +319,9 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
     k = 0;
     while (i < strLength && j < 2) {
       ch = dtStr[i];
-      k = k * 10 + ch - '0';
+      k = k * 10 + FXSYS_toDecimalDigit(ch);
       j++;
-      if (ch < '0' || ch > '9')
+      if (!std::isdigit(ch))
         break;
       i++;
     }
@@ -338,9 +336,9 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::FromPDFDateTimeString(
     k = 0;
     while (i < strLength && j < 2) {
       ch = dtStr[i];
-      k = k * 10 + ch - '0';
+      k = k * 10 + FXSYS_toDecimalDigit(ch);
       j++;
-      if (ch < '0' || ch > '9')
+      if (!std::isdigit(ch))
         break;
       i++;
     }

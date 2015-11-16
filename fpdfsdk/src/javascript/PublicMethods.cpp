@@ -14,6 +14,7 @@
 #include "JS_Runtime.h"
 #include "JS_Value.h"
 #include "color.h"
+#include "core/include/fxcrt/fx_ext.h"
 #include "fpdfsdk/include/fsdk_mgr.h"  // For CPDFDoc_Environment.
 #include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "resource.h"
@@ -108,7 +109,7 @@ FX_BOOL CJS_PublicMethods::IsDigit(wchar_t ch) {
 }
 
 FX_BOOL CJS_PublicMethods::IsDigit(char ch) {
-  return (ch >= '0' && ch <= '9');
+  return std::isdigit(ch);
 }
 
 FX_BOOL CJS_PublicMethods::IsAlphabetic(wchar_t ch) {
@@ -388,7 +389,7 @@ int CJS_PublicMethods::ParseStringInteger(const CFX_WideString& string,
 
     FX_WCHAR c = string.GetAt(i);
     if (IsDigit((wchar_t)c)) {
-      nRet = nRet * 10 + (c - '0');
+      nRet = nRet * 10 + FXSYS_toDecimalDigitWide(c);
       nSkip = i - nStart + 1;
       if (nSkip >= nMaxStep)
         break;

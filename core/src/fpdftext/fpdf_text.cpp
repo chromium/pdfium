@@ -14,6 +14,9 @@
 #include "third_party/base/nonstd_unique_ptr.h"
 #include "txtproc.h"
 
+#include <cctype>
+#include <cwctype>
+
 CFX_ByteString CharFromUnicodeAlt(FX_WCHAR unicode,
                                   int destcp,
                                   const FX_CHAR* defchar) {
@@ -436,10 +439,9 @@ void NormalizeString(CFX_WideString& str) {
 static FX_BOOL IsNumber(CFX_WideString& str) {
   for (int i = 0; i < str.GetLength(); i++) {
     FX_WCHAR ch = str[i];
-    if ((ch < '0' || ch > '9') && ch != '-' && ch != '+' && ch != '.' &&
-        ch != ' ') {
+    // TODO(dsinclair): --.+ +.-- should probably not be a number.
+    if (!std::iswdigit(ch) && ch != '-' && ch != '+' && ch != '.' && ch != ' ')
       return FALSE;
-    }
   }
   return TRUE;
 }

@@ -9,6 +9,7 @@
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_parser.h"
 #include "core/include/fxcodec/fx_codec.h"
+#include "core/include/fxcrt/fx_ext.h"
 
 #define _STREAM_MAX_SIZE_ 20 * 1024 * 1024
 
@@ -129,37 +130,32 @@ FX_DWORD HexDecode(const uint8_t* src_buf,
     }
   dest_buf = FX_Alloc(uint8_t, i / 2 + 1);
   dest_size = 0;
-  FX_BOOL bFirstDigit = TRUE;
+  bool bFirst = true;
   for (i = 0; i < src_size; i++) {
     uint8_t ch = src_buf[i];
     if (PDFCharIsLineEnding(ch) || ch == ' ' || ch == '\t')
       continue;
 
-    int digit;
-    if (ch <= '9' && ch >= '0') {
-      digit = ch - '0';
-    } else if (ch <= 'f' && ch >= 'a') {
-      digit = ch - 'a' + 10;
-    } else if (ch <= 'F' && ch >= 'A') {
-      digit = ch - 'A' + 10;
-    } else if (ch == '>') {
-      i++;
+    if (ch == '>') {
+      ++i;
       break;
-    } else {
+    }
+    if (!std::isxdigit(ch))
       continue;
-    }
-    if (bFirstDigit) {
+
+    int digit = FXSYS_toHexDigit(ch);
+    if (bFirst)
       dest_buf[dest_size] = digit * 16;
-    } else {
+    else
       dest_buf[dest_size++] += digit;
-    }
-    bFirstDigit = !bFirstDigit;
+
+    bFirst = !bFirst;
   }
-  if (!bFirstDigit) {
+  if (!bFirst)
     dest_size++;
-  }
   return i;
 }
+
 FX_DWORD RunLengthDecode(const uint8_t* src_buf,
                          FX_DWORD src_size,
                          uint8_t*& dest_buf,
