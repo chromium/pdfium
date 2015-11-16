@@ -13,6 +13,7 @@
 #include "JS_Runtime.h"
 #include "JS_Value.h"
 #include "PublicMethods.h"
+#include "core/include/fxcrt/fx_ext.h"
 #include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "resource.h"
 
@@ -425,7 +426,7 @@ void util::printx(const std::string& cFormat,
         break;
       case 'X': {
         while (itSource < iSize) {
-          if ((cSource[itSource] >= '0' && cSource[itSource] <= '9') ||
+          if (std::isdigit(cSource[itSource]) ||
               (cSource[itSource] >= 'a' && cSource[itSource] <= 'z') ||
               (cSource[itSource] >= 'A' && cSource[itSource] <= 'Z')) {
             cPurpose += cSource[itSource];
@@ -450,7 +451,7 @@ void util::printx(const std::string& cFormat,
       } break;
       case '9': {
         while (itSource < iSize) {
-          if (cSource[itSource] >= '0' && cSource[itSource] <= '9') {
+          if (std::isdigit(cSource[itSource])) {
             cPurpose += cSource[itSource];
             itSource++;
             break;
@@ -531,7 +532,7 @@ int64_t FX_atoi64(const char* nptr) {
   total = 0;
 
   while (isdigit(c)) {
-    total = 10 * total + (c - '0');  /* accumulate digit */
+    total = 10 * total + FXSYS_toDecimalDigit(c); /* accumulate digit */
     c = (int)(unsigned char)*nptr++; /* get next char */
   }
 

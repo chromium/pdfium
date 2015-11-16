@@ -51,9 +51,7 @@ IFX_MemoryStream* FX_CreateMemoryStream(uint8_t* pBuffer,
 IFX_MemoryStream* FX_CreateMemoryStream(FX_BOOL bConsecutive) {
   return new CFX_MemoryStream(bConsecutive);
 }
-#ifdef __cplusplus
-extern "C" {
-#endif
+
 FX_FLOAT FXSYS_tan(FX_FLOAT a) {
   return (FX_FLOAT)tan(a);
 }
@@ -190,12 +188,7 @@ FX_DWORD FX_HashCode_String_GetW(const FX_WCHAR* pStr,
   }
   return dwHashCode;
 }
-#ifdef __cplusplus
-}
-#endif
-#ifdef __cplusplus
-extern "C" {
-#endif
+
 void* FX_Random_MT_Start(FX_DWORD dwSeed) {
   FX_LPMTRANDOMCONTEXT pContext = FX_Alloc(FX_MTRANDOMCONTEXT, 1);
   pContext->mt[0] = dwSeed;
@@ -298,6 +291,3 @@ void FX_Random_GenerateCrypto(FX_DWORD* pBuffer, int32_t iCount) {
   FX_Random_GenerateBase(pBuffer, iCount);
 #endif
 }
-#ifdef __cplusplus
-}
-#endif

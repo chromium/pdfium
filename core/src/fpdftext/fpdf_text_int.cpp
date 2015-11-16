@@ -4,7 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include <ctype.h>
+#include <cctype>
+#include <cwctype>
 #include <algorithm>
 
 #include "core/include/fpdfapi/fpdf_module.h"
@@ -2416,8 +2417,8 @@ void CPDF_TextPageFind::ExtractFindWhat(const CFX_WideString& findwhat) {
 FX_BOOL CPDF_TextPageFind::IsMatchWholeWord(const CFX_WideString& csPageText,
                                             int startPos,
                                             int endPos) {
-  int char_left = 0;
-  int char_right = 0;
+  FX_WCHAR char_left = 0;
+  FX_WCHAR char_right = 0;
   int char_count = endPos - startPos + 1;
   if (char_count < 1) {
     return FALSE;
@@ -2433,12 +2434,11 @@ FX_BOOL CPDF_TextPageFind::IsMatchWholeWord(const CFX_WideString& csPageText,
   }
   if ((char_left > 'A' && char_left < 'a') ||
       (char_left > 'a' && char_left < 'z') ||
-      (char_left > 0xfb00 && char_left < 0xfb06) ||
-      (char_left >= '0' && char_left <= '9') ||
+      (char_left > 0xfb00 && char_left < 0xfb06) || std::iswdigit(char_left) ||
       (char_right > 'A' && char_right < 'a') ||
       (char_right > 'a' && char_right < 'z') ||
       (char_right > 0xfb00 && char_right < 0xfb06) ||
-      (char_right >= '0' && char_right <= '9')) {
+      std::iswdigit(char_right)) {
     return FALSE;
   }
   if (!(('A' > char_left || char_left > 'Z') &&
