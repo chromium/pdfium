@@ -145,21 +145,23 @@ CFWL_DateTimeEdit::CFWL_DateTimeEdit(const CFWL_WidgetImpProperties& properties,
                                      IFWL_Widget* pOuter)
     : CFWL_EditImp(properties, pOuter) {}
 FWL_ERR CFWL_DateTimeEdit::Initialize() {
-  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_DateTimeEditDelegate(this);
+  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_DateTimeEditImpDelegate(this);
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_EditImp::Initialize(),
                                       FWL_ERR_Indefinite);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_DateTimeEdit::Finalize() {
   if (m_pDelegate) {
-    delete (CFWL_DateTimeEditDelegate*)m_pDelegate;
+    delete (CFWL_DateTimeEditImpDelegate*)m_pDelegate;
     m_pDelegate = NULL;
   }
   return CFWL_EditImp::Finalize();
 }
-CFWL_DateTimeEditDelegate::CFWL_DateTimeEditDelegate(CFWL_DateTimeEdit* pOwner)
-    : CFWL_EditImpDelegate(pOwner), m_pOwner(pOwner) {}
-int32_t CFWL_DateTimeEditDelegate::OnProcessMessage(CFWL_Message* pMessage) {
+CFWL_DateTimeEditImpDelegate::CFWL_DateTimeEditImpDelegate(
+    CFWL_DateTimeEdit* pOwner)
+    : CFWL_EditImpDelegate(pOwner), m_pOwner(pOwner) {
+}
+int32_t CFWL_DateTimeEditImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   if (m_pOwner->m_pWidgetMgr->IsFormDisabled()) {
     return DisForm_OnProcessMessage(pMessage);
   }
@@ -172,7 +174,7 @@ int32_t CFWL_DateTimeEditDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   }
   return 1;
 }
-int32_t CFWL_DateTimeEditDelegate::DisForm_OnProcessMessage(
+int32_t CFWL_DateTimeEditImpDelegate::DisForm_OnProcessMessage(
     CFWL_Message* pMessage) {
   FX_DWORD dwHashCode = pMessage->GetClassID();
   if (m_pOwner->m_pWidgetMgr->IsFormDisabled()) {
@@ -210,22 +212,23 @@ FWL_ERR CFWL_DateTimeCalendar::Initialize() {
   if (m_pDelegate) {
     delete (CFWL_MonthCalendarImpDelegate*)m_pDelegate;
   }
-  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_DateTimeCalendarDelegate(this);
+  m_pDelegate =
+      (IFWL_WidgetDelegate*)new CFWL_DateTimeCalendarImpDelegate(this);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_DateTimeCalendar::Finalize() {
   if (m_pDelegate) {
-    delete (CFWL_DateTimeCalendarDelegate*)m_pDelegate;
+    delete (CFWL_DateTimeCalendarImpDelegate*)m_pDelegate;
     m_pDelegate = NULL;
   }
   return CFWL_MonthCalendarImp::Finalize();
 }
-CFWL_DateTimeCalendarDelegate::CFWL_DateTimeCalendarDelegate(
+CFWL_DateTimeCalendarImpDelegate::CFWL_DateTimeCalendarImpDelegate(
     CFWL_DateTimeCalendar* pOwner)
     : CFWL_MonthCalendarImpDelegate(pOwner), m_pOwner(pOwner) {
   m_bFlag = FALSE;
 }
-int32_t CFWL_DateTimeCalendarDelegate::OnProcessMessage(
+int32_t CFWL_DateTimeCalendarImpDelegate::OnProcessMessage(
     CFWL_Message* pMessage) {
   FX_DWORD dwCode = pMessage->GetClassID();
   if (dwCode == FWL_MSGHASH_SetFocus || dwCode == FWL_MSGHASH_KillFocus) {
@@ -244,7 +247,7 @@ int32_t CFWL_DateTimeCalendarDelegate::OnProcessMessage(
   }
   return CFWL_MonthCalendarImpDelegate::OnProcessMessage(pMessage);
 }
-void CFWL_DateTimeCalendarDelegate::OnLButtonDownEx(CFWL_MsgMouse* pMsg) {
+void CFWL_DateTimeCalendarImpDelegate::OnLButtonDownEx(CFWL_MsgMouse* pMsg) {
   if (m_pOwner->m_rtLBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
     m_pOwner->m_iLBtnPartStates = FWL_PARTSTATE_MCD_Pressed;
     m_pOwner->PrevMonth();
@@ -268,7 +271,7 @@ void CFWL_DateTimeCalendarDelegate::OnLButtonDownEx(CFWL_MsgMouse* pMsg) {
     }
   }
 }
-void CFWL_DateTimeCalendarDelegate::OnLButtonUpEx(CFWL_MsgMouse* pMsg) {
+void CFWL_DateTimeCalendarImpDelegate::OnLButtonUpEx(CFWL_MsgMouse* pMsg) {
   if (m_pOwner->m_pWidgetMgr->IsFormDisabled()) {
     return DisForm_OnLButtonUpEx(pMsg);
   }
@@ -317,7 +320,7 @@ void CFWL_DateTimeCalendarDelegate::OnLButtonUpEx(CFWL_MsgMouse* pMsg) {
   }
   m_bFlag = 0;
 }
-void CFWL_DateTimeCalendarDelegate::OnMouseMoveEx(CFWL_MsgMouse* pMsg) {
+void CFWL_DateTimeCalendarImpDelegate::OnMouseMoveEx(CFWL_MsgMouse* pMsg) {
   if (m_pOwner->m_pProperties->m_dwStyleExes & FWL_STYLEEXT_MCD_MultiSelect) {
     return;
   }
@@ -356,7 +359,7 @@ void CFWL_DateTimeCalendarDelegate::OnMouseMoveEx(CFWL_MsgMouse* pMsg) {
     m_pOwner->Repaint(&rtInvalidate);
   }
 }
-int32_t CFWL_DateTimeCalendarDelegate::DisForm_OnProcessMessage(
+int32_t CFWL_DateTimeCalendarImpDelegate::DisForm_OnProcessMessage(
     CFWL_Message* pMessage) {
   if (pMessage->GetClassID() == FWL_MSGHASH_Mouse) {
     CFWL_MsgMouse* pMsg = (CFWL_MsgMouse*)pMessage;
@@ -367,7 +370,8 @@ int32_t CFWL_DateTimeCalendarDelegate::DisForm_OnProcessMessage(
   }
   return CFWL_MonthCalendarImpDelegate::OnProcessMessage(pMessage);
 }
-void CFWL_DateTimeCalendarDelegate::DisForm_OnLButtonUpEx(CFWL_MsgMouse* pMsg) {
+void CFWL_DateTimeCalendarImpDelegate::DisForm_OnLButtonUpEx(
+    CFWL_MsgMouse* pMsg) {
   if (m_pOwner->m_rtLBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
     m_pOwner->m_iLBtnPartStates = 0;
     m_pOwner->Repaint(&(m_pOwner->m_rtLBtn));

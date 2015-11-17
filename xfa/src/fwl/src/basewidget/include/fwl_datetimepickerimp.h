@@ -15,9 +15,9 @@ class CFWL_MonthCalendarImp;
 class CFWL_MonthCalendarImpDelegate;
 class CFWL_FormProxyImp;
 class CFWL_DateTimeEdit;
-class CFWL_DateTimeEditDelegate;
+class CFWL_DateTimeEditImpDelegate;
 class CFWL_DateTimeCalendar;
-class CFWL_DateTimeCalendarDelegate;
+class CFWL_DateTimeCalendarImpDelegate;
 class CFWL_DateTimePickerImp;
 class CFWL_DateTimePickerImpDelegate;
 class IFWL_DateTimeForm : public IFWL_Form {
@@ -43,11 +43,11 @@ class CFWL_DateTimeEdit : public CFWL_EditImp {
   virtual FWL_ERR Finalize();
 
  protected:
-  friend class CFWL_DateTimeEditDelegate;
+  friend class CFWL_DateTimeEditImpDelegate;
 };
-class CFWL_DateTimeEditDelegate : public CFWL_EditImpDelegate {
+class CFWL_DateTimeEditImpDelegate : public CFWL_EditImpDelegate {
  public:
-  CFWL_DateTimeEditDelegate(CFWL_DateTimeEdit* pOwner);
+  CFWL_DateTimeEditImpDelegate(CFWL_DateTimeEdit* pOwner);
   virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
 
  private:
@@ -64,11 +64,11 @@ class CFWL_DateTimeCalendar : public CFWL_MonthCalendarImp {
   virtual FWL_ERR Finalize();
 
  protected:
-  friend class CFWL_DateTimeCalendarDelegate;
+  friend class CFWL_DateTimeCalendarImpDelegate;
 };
-class CFWL_DateTimeCalendarDelegate : public CFWL_MonthCalendarImpDelegate {
+class CFWL_DateTimeCalendarImpDelegate : public CFWL_MonthCalendarImpDelegate {
  public:
-  CFWL_DateTimeCalendarDelegate(CFWL_DateTimeCalendar* pOwner);
+  CFWL_DateTimeCalendarImpDelegate(CFWL_DateTimeCalendar* pOwner);
   virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
   void OnLButtonDownEx(CFWL_MsgMouse* pMsg);
   void OnLButtonUpEx(CFWL_MsgMouse* pMsg);
@@ -187,9 +187,9 @@ class CFWL_DateTimePickerImp : public CFWL_WidgetImp {
   };
 
   CFWL_MonthCalendarImpDP m_MonthCalendarDP;
-  friend class CFWL_DateTimeEditDelegate;
+  friend class CFWL_DateTimeEditImpDelegate;
   friend class CFWL_DateTimeCalendar;
-  friend class CFWL_DateTimeCalendarDelegate;
+  friend class CFWL_DateTimeCalendarImpDelegate;
   friend class CFWL_DateTimePickerImpDelegate;
 };
 class CFWL_DateTimePickerImpDelegate : public CFWL_WidgetImpDelegate {

@@ -15,18 +15,18 @@ class CFWL_ListBoxImp;
 class CFWL_ListBoxImpDelegate;
 class CFWL_FormProxyImp;
 class IFWL_Widget;
-class CFWL_ComboEdit;
-class CFWL_ComboEditDelegate;
-class CFWL_ComboList;
-class CFWL_ComboListDelegate;
+class CFWL_ComboEditImp;
+class CFWL_ComboEditImpDelegate;
+class CFWL_ComboListImp;
+class CFWL_ComboListImpDelegate;
 class CFWL_ComboBoxImp;
 class CFWL_ComboBoxImpDelegate;
 class CFWL_ComboProxyImpDelegate;
-class CFWL_ComboEdit : public CFWL_EditImp {
+class CFWL_ComboEditImp : public CFWL_EditImp {
  public:
-  CFWL_ComboEdit(IFWL_Widget* pOuter);
-  CFWL_ComboEdit(const CFWL_WidgetImpProperties& properties,
-                 IFWL_Widget* pOuter = NULL);
+  CFWL_ComboEditImp(IFWL_Widget* pOuter);
+  CFWL_ComboEditImp(const CFWL_WidgetImpProperties& properties,
+                    IFWL_Widget* pOuter = NULL);
 
   void ClearSelected();
   void SetSelected();
@@ -36,21 +36,21 @@ class CFWL_ComboEdit : public CFWL_EditImp {
  protected:
   void SetComboBoxFocus(FX_BOOL bSet);
   CFWL_ComboBoxImp* m_pOuter;
-  friend class CFWL_ComboEditDelegate;
+  friend class CFWL_ComboEditImpDelegate;
 };
-class CFWL_ComboEditDelegate : public CFWL_EditImpDelegate {
+class CFWL_ComboEditImpDelegate : public CFWL_EditImpDelegate {
  public:
-  CFWL_ComboEditDelegate(CFWL_ComboEdit* pOwner);
+  CFWL_ComboEditImpDelegate(CFWL_ComboEditImp* pOwner);
   virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
 
  protected:
-  CFWL_ComboEdit* m_pOwner;
+  CFWL_ComboEditImp* m_pOwner;
 };
-class CFWL_ComboList : public CFWL_ListBoxImp {
+class CFWL_ComboListImp : public CFWL_ListBoxImp {
  public:
-  CFWL_ComboList(IFWL_Widget* pOuter);
-  CFWL_ComboList(const CFWL_WidgetImpProperties& properties,
-                 IFWL_Widget* pOuter);
+  CFWL_ComboListImp(IFWL_Widget* pOuter);
+  CFWL_ComboListImp(const CFWL_WidgetImpProperties& properties,
+                    IFWL_Widget* pOuter);
   virtual FWL_ERR Initialize();
   virtual FWL_ERR Finalize();
   int32_t MatchItem(const CFX_WideString& wsMatch);
@@ -60,12 +60,12 @@ class CFWL_ComboList : public CFWL_ListBoxImp {
   void ClientToOuter(FX_FLOAT& fx, FX_FLOAT& fy);
   void SetFocus(FX_BOOL bSet);
   FX_BOOL m_bNotifyOwner;
-  friend class CFWL_ComboListDelegate;
+  friend class CFWL_ComboListImpDelegate;
   friend class CFWL_ComboBoxImp;
 };
-class CFWL_ComboListDelegate : public CFWL_ListBoxImpDelegate {
+class CFWL_ComboListImpDelegate : public CFWL_ListBoxImpDelegate {
  public:
-  CFWL_ComboListDelegate(CFWL_ComboList* pOwner);
+  CFWL_ComboListImpDelegate(CFWL_ComboListImp* pOwner);
   virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
 
  protected:
@@ -75,7 +75,7 @@ class CFWL_ComboListDelegate : public CFWL_ListBoxImpDelegate {
   int32_t OnDropListLButtonUp(CFWL_MsgMouse* pMsg);
   int32_t OnDropListKey(CFWL_MsgKey* pKey);
   void OnDropListKeyDown(CFWL_MsgKey* pKey);
-  CFWL_ComboList* m_pOwner;
+  CFWL_ComboListImp* m_pOwner;
 };
 class CFWL_ComboBoxImp : public CFWL_WidgetImp {
  public:
@@ -180,10 +180,10 @@ class CFWL_ComboBoxImp : public CFWL_WidgetImp {
   CFWL_FormProxyImp* m_pProxy;
   CFWL_ComboProxyImpDelegate* m_pListProxyDelegate;
 
-  friend class CFWL_ComboList;
-  friend class CFWL_ComboEdit;
-  friend class CFWL_ComboEditDelegate;
-  friend class CFWL_ComboListDelegate;
+  friend class CFWL_ComboListImp;
+  friend class CFWL_ComboEditImp;
+  friend class CFWL_ComboEditImpDelegate;
+  friend class CFWL_ComboListImpDelegate;
   friend class CFWL_ComboBoxImpDelegate;
   friend class CFWL_ComboProxyImpDelegate;
 };
@@ -212,8 +212,8 @@ class CFWL_ComboBoxImpDelegate : public CFWL_WidgetImpDelegate {
 
  protected:
   CFWL_ComboBoxImp* m_pOwner;
-  friend class CFWL_ComboEditDelegate;
-  friend class CFWL_ComboListDelegate;
+  friend class CFWL_ComboEditImpDelegate;
+  friend class CFWL_ComboListImpDelegate;
 };
 class CFWL_ComboProxyImpDelegate : public CFWL_WidgetImpDelegate {
  public:

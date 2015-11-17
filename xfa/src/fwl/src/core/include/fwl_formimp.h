@@ -15,7 +15,7 @@ class IFWL_Widget;
 class IFWL_ThemeProvider;
 class CFWL_SysBtn;
 class CFWL_FormImp;
-class CFWL_FormDelegate;
+class CFWL_FormImpDelegate;
 #define FWL_SYSBUTTONSTATE_Hover 0x0001
 #define FWL_SYSBUTTONSTATE_Pressed 0x0002
 #define FWL_SYSBUTTONSTATE_Disabled 0x0010
@@ -166,11 +166,11 @@ class CFWL_FormImp : public CFWL_PanelImp {
   CFX_DIBitmap* m_pBigIcon;
   CFX_DIBitmap* m_pSmallIcon;
   FX_BOOL m_bMouseIn;
-  friend class CFWL_FormDelegate;
+  friend class CFWL_FormImpDelegate;
 };
-class CFWL_FormDelegate : public CFWL_WidgetImpDelegate {
+class CFWL_FormImpDelegate : public CFWL_WidgetImpDelegate {
  public:
-  CFWL_FormDelegate(CFWL_FormImp* pOwner);
+  CFWL_FormImpDelegate(CFWL_FormImp* pOwner);
   virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
   virtual FWL_ERR OnProcessEvent(CFWL_Event* pEvent);
   virtual FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,

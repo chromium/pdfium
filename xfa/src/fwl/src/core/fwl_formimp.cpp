@@ -152,12 +152,12 @@ FWL_ERR CFWL_FormImp::Initialize() {
                                       FWL_ERR_Indefinite);
   RegisterForm();
   RegisterEventTarget();
-  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_FormDelegate(this);
+  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_FormImpDelegate(this);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_FormImp::Finalize() {
   if (m_pDelegate) {
-    delete (CFWL_FormDelegate*)m_pDelegate;
+    delete (CFWL_FormImpDelegate*)m_pDelegate;
     m_pDelegate = NULL;
   }
   UnregisterEventTarget();
@@ -960,8 +960,10 @@ void CFWL_FormImp::DoHeightLimit(FX_FLOAT& fTop,
     }
   }
 }
-CFWL_FormDelegate::CFWL_FormDelegate(CFWL_FormImp* pOwner) : m_pOwner(pOwner) {}
-int32_t CFWL_FormDelegate::OnProcessMessage(CFWL_Message* pMessage) {
+CFWL_FormImpDelegate::CFWL_FormImpDelegate(CFWL_FormImp* pOwner)
+    : m_pOwner(pOwner) {
+}
+int32_t CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
 #ifdef FWL_UseMacSystemBorder
   _FWL_RETURN_VALUE_IF_FAIL(pMessage, 0);
   FX_DWORD dwMsgCode = pMessage->GetClassID();
@@ -1079,18 +1081,18 @@ int32_t CFWL_FormDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   return iRet;
 #endif
 }
-FWL_ERR CFWL_FormDelegate::OnProcessEvent(CFWL_Event* pEvent) {
+FWL_ERR CFWL_FormImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
   _FWL_RETURN_VALUE_IF_FAIL(pEvent, FWL_ERR_Indefinite);
   if (pEvent->GetClassID() == FWL_EVTHASH_Close &&
       pEvent->m_pSrcTarget == m_pOwner->m_pInterface) {
   }
   return FWL_ERR_Succeeded;
 }
-FWL_ERR CFWL_FormDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
-                                        const CFX_Matrix* pMatrix) {
+FWL_ERR CFWL_FormImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
+                                           const CFX_Matrix* pMatrix) {
   return m_pOwner->DrawWidget(pGraphics, pMatrix);
 }
-void CFWL_FormDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
+void CFWL_FormImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
   m_pOwner->SetGrab(TRUE);
   m_pOwner->m_bLButtonDown = TRUE;
   m_pOwner->m_eResizeType = FORM_RESIZETYPE_None;
@@ -1118,7 +1120,7 @@ void CFWL_FormDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
       m_pOwner->m_pProperties->m_rtWidget.width,
       m_pOwner->m_pProperties->m_rtWidget.height);
 }
-void CFWL_FormDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
+void CFWL_FormImpDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
   m_pOwner->SetGrab(FALSE);
   m_pOwner->m_bLButtonDown = FALSE;
   CFWL_SysBtn* pPointBtn = m_pOwner->GetSysBtnAtPoint(pMsg->m_fx, pMsg->m_fy);
@@ -1150,7 +1152,7 @@ void CFWL_FormDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
     m_pOwner->DispatchEvent(&eClose);
   }
 }
-void CFWL_FormDelegate::OnMouseMove(CFWL_MsgMouse* pMsg) {
+void CFWL_FormImpDelegate::OnMouseMove(CFWL_MsgMouse* pMsg) {
   CFWL_WidgetMgr* pWidgetMgr = (CFWL_WidgetMgr*)FWL_GetWidgetMgr();
   if (m_pOwner->m_bLButtonDown) {
     IFWL_AdapterNative* pNative = FWL_GetAdapterNative();
@@ -1400,10 +1402,10 @@ void CFWL_FormDelegate::OnMouseMove(CFWL_MsgMouse* pMsg) {
     m_pOwner->Repaint(&rtInvalidate);
   }
 }
-void CFWL_FormDelegate::OnMouseHover(CFWL_MsgMouse* pMsg) {
+void CFWL_FormImpDelegate::OnMouseHover(CFWL_MsgMouse* pMsg) {
   m_pOwner->SetCursor(pMsg->m_fx, pMsg->m_fy);
 }
-void CFWL_FormDelegate::OnMouseLeave(CFWL_MsgMouse* pMsg) {
+void CFWL_FormImpDelegate::OnMouseLeave(CFWL_MsgMouse* pMsg) {
   CFWL_SysBtn* pHover = m_pOwner->GetSysBtnByState(FWL_SYSBUTTONSTATE_Hover);
   if (pHover) {
     pHover->SetNormal();
@@ -1414,7 +1416,7 @@ void CFWL_FormDelegate::OnMouseLeave(CFWL_MsgMouse* pMsg) {
     m_pOwner->SetCursor(pMsg->m_fx, pMsg->m_fy);
   }
 }
-void CFWL_FormDelegate::OnLButtonDblClk(CFWL_MsgMouse* pMsg) {
+void CFWL_FormImpDelegate::OnLButtonDblClk(CFWL_MsgMouse* pMsg) {
   if ((m_pOwner->m_pProperties->m_dwStyleExes & FWL_STYLEEXT_FRM_Resize) &&
       m_pOwner->HitTest(pMsg->m_fx, pMsg->m_fy) == FWL_WGTHITTEST_Titlebar) {
     if (m_pOwner->m_bMaximized) {
@@ -1426,11 +1428,11 @@ void CFWL_FormDelegate::OnLButtonDblClk(CFWL_MsgMouse* pMsg) {
     m_pOwner->m_bMaximized = !m_pOwner->m_bMaximized;
   }
 }
-void CFWL_FormDelegate::OnWindowMove(CFWL_MsgWindowMove* pMsg) {
+void CFWL_FormImpDelegate::OnWindowMove(CFWL_MsgWindowMove* pMsg) {
   m_pOwner->m_pProperties->m_rtWidget.left = pMsg->m_fx;
   m_pOwner->m_pProperties->m_rtWidget.top = pMsg->m_fy;
 }
-void CFWL_FormDelegate::OnClose(CFWL_MsgClose* pMsg) {
+void CFWL_FormImpDelegate::OnClose(CFWL_MsgClose* pMsg) {
   CFWL_EvtClose eClose;
   eClose.m_pSrcTarget = m_pOwner->m_pInterface;
   m_pOwner->DispatchEvent(&eClose);

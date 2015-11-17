@@ -173,7 +173,7 @@ CFWL_GridImp::~CFWL_GridImp() {
   }
   m_mapWidgetInfo.RemoveAll();
   if (m_pDelegate) {
-    delete (CFWL_GridDelegate*)m_pDelegate;
+    delete (CFWL_GridImpDelegate*)m_pDelegate;
     m_pDelegate = NULL;
   }
 }
@@ -187,14 +187,14 @@ FX_DWORD CFWL_GridImp::GetClassID() const {
 FWL_ERR CFWL_GridImp::Initialize() {
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_ContentImp::Initialize(),
                                       FWL_ERR_Indefinite);
-  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_GridDelegate(this);
+  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_GridImpDelegate(this);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_GridImp::Finalize() {
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_ContentImp::Finalize(),
                                       FWL_ERR_Indefinite);
   if (m_pDelegate) {
-    delete (CFWL_GridDelegate*)m_pDelegate;
+    delete (CFWL_GridImpDelegate*)m_pDelegate;
     m_pDelegate = NULL;
   }
   return FWL_ERR_Succeeded;
@@ -1359,8 +1359,10 @@ void CFWL_GridImp::SetScaledColRowsSize(const CFX_PtrArray& spanScaleds,
   } else {
   }
 }
-CFWL_GridDelegate::CFWL_GridDelegate(CFWL_GridImp* pOwner) : m_pOwner(pOwner) {}
-int32_t CFWL_GridDelegate::OnProcessMessage(CFWL_Message* pMessage) {
+CFWL_GridImpDelegate::CFWL_GridImpDelegate(CFWL_GridImp* pOwner)
+    : m_pOwner(pOwner) {
+}
+int32_t CFWL_GridImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   if (pMessage->GetClassID() != FWL_MSGHASH_Mouse) {
     return 0;
   }
@@ -1370,7 +1372,7 @@ int32_t CFWL_GridDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   }
   return 1;
 }
-FWL_ERR CFWL_GridDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
-                                        const CFX_Matrix* pMatrix) {
+FWL_ERR CFWL_GridImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
+                                           const CFX_Matrix* pMatrix) {
   return m_pOwner->DrawWidget(pGraphics, pMatrix);
 }

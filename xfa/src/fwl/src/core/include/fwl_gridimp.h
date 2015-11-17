@@ -178,11 +178,11 @@ class CFWL_GridImp : public CFWL_ContentImp {
   CFX_PtrArray m_Widgets;
   CFX_MapPtrToPtr m_mapWidgetInfo;
   CFWL_GridLength m_Size[6];
-  friend class CFWL_GridDelegate;
+  friend class CFWL_GridImpDelegate;
 };
-class CFWL_GridDelegate : public CFWL_WidgetImpDelegate {
+class CFWL_GridImpDelegate : public CFWL_WidgetImpDelegate {
  public:
-  CFWL_GridDelegate(CFWL_GridImp* pOwner);
+  CFWL_GridImpDelegate(CFWL_GridImp* pOwner);
   virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
   virtual FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
                                const CFX_Matrix* pMatrix = NULL);
