@@ -13,36 +13,36 @@ IFWL_Caret* IFWL_Caret::Create() {
   return new IFWL_Caret;
 }
 IFWL_Caret::IFWL_Caret() {
-  m_pData = NULL;
+  m_pImpl = NULL;
 }
 IFWL_Caret::~IFWL_Caret() {
-  if (m_pData) {
-    delete (CFWL_CaretImp*)m_pData;
-    m_pData = NULL;
+  if (m_pImpl) {
+    delete (CFWL_CaretImp*)m_pImpl;
+    m_pImpl = NULL;
   }
 }
 FWL_ERR IFWL_Caret::Initialize(IFWL_Widget* pOuter) {
-  m_pData = new CFWL_CaretImp(pOuter);
-  ((CFWL_CaretImp*)m_pData)->SetInterface(this);
-  return ((CFWL_CaretImp*)m_pData)->Initialize();
+  m_pImpl = new CFWL_CaretImp(pOuter);
+  ((CFWL_CaretImp*)m_pImpl)->SetInterface(this);
+  return ((CFWL_CaretImp*)m_pImpl)->Initialize();
 }
 FWL_ERR IFWL_Caret::Initialize(const CFWL_WidgetImpProperties& properties,
                                IFWL_Widget* pOuter) {
-  m_pData = new CFWL_CaretImp(properties, pOuter);
-  ((CFWL_CaretImp*)m_pData)->SetInterface(this);
-  return ((CFWL_CaretImp*)m_pData)->Initialize();
+  m_pImpl = new CFWL_CaretImp(properties, pOuter);
+  ((CFWL_CaretImp*)m_pImpl)->SetInterface(this);
+  return ((CFWL_CaretImp*)m_pImpl)->Initialize();
 }
 FWL_ERR IFWL_Caret::ShowCaret(FX_BOOL bFlag) {
-  return ((CFWL_CaretImp*)m_pData)->ShowCaret(bFlag);
+  return ((CFWL_CaretImp*)m_pImpl)->ShowCaret(bFlag);
 }
 FWL_ERR IFWL_Caret::GetFrequency(FX_DWORD& elapse) {
-  return ((CFWL_CaretImp*)m_pData)->GetFrequency(elapse);
+  return ((CFWL_CaretImp*)m_pImpl)->GetFrequency(elapse);
 }
 FWL_ERR IFWL_Caret::SetFrequency(FX_DWORD elapse) {
-  return ((CFWL_CaretImp*)m_pData)->SetFrequency(elapse);
+  return ((CFWL_CaretImp*)m_pImpl)->SetFrequency(elapse);
 }
 FWL_ERR IFWL_Caret::SetColor(CFX_Color crFill) {
-  return ((CFWL_CaretImp*)m_pData)->SetColor(crFill);
+  return ((CFWL_CaretImp*)m_pImpl)->SetColor(crFill);
 }
 CFWL_CaretImp::CFWL_CaretImp(IFWL_Widget* pOuter) : m_hTimer(NULL) {
   m_dwElapse = 400;

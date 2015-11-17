@@ -13,23 +13,23 @@ IFWL_PushButton* IFWL_PushButton::Create() {
   return new IFWL_PushButton;
 }
 FWL_ERR IFWL_PushButton::Initialize(IFWL_Widget* pOuter) {
-  m_pData = new CFWL_PushButtonImp(pOuter);
-  ((CFWL_PushButtonImp*)m_pData)->SetInterface(this);
-  return ((CFWL_PushButtonImp*)m_pData)->Initialize();
+  m_pImpl = new CFWL_PushButtonImp(pOuter);
+  ((CFWL_PushButtonImp*)m_pImpl)->SetInterface(this);
+  return ((CFWL_PushButtonImp*)m_pImpl)->Initialize();
 }
 FWL_ERR IFWL_PushButton::Initialize(const CFWL_WidgetImpProperties& properties,
                                     IFWL_Widget* pOuter) {
-  m_pData = new CFWL_PushButtonImp(properties, pOuter);
-  ((CFWL_PushButtonImp*)m_pData)->SetInterface(this);
-  return ((CFWL_PushButtonImp*)m_pData)->Initialize();
+  m_pImpl = new CFWL_PushButtonImp(properties, pOuter);
+  ((CFWL_PushButtonImp*)m_pImpl)->SetInterface(this);
+  return ((CFWL_PushButtonImp*)m_pImpl)->Initialize();
 }
 IFWL_PushButton::IFWL_PushButton() {
-  m_pData = NULL;
+  m_pImpl = NULL;
 }
 IFWL_PushButton::~IFWL_PushButton() {
-  if (m_pData) {
-    delete (CFWL_PushButtonImp*)m_pData;
-    m_pData = NULL;
+  if (m_pImpl) {
+    delete (CFWL_PushButtonImp*)m_pImpl;
+    m_pImpl = NULL;
   }
 }
 CFWL_PushButtonImp::CFWL_PushButtonImp(IFWL_Widget* pOuter)

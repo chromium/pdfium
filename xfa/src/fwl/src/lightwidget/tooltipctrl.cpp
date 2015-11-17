@@ -15,7 +15,7 @@ CFWL_ToolTip* CFWL_ToolTip::Create() {
   return new CFWL_ToolTip;
 }
 FWL_ERR CFWL_ToolTip::Initialize(const CFWL_WidgetProperties* pProperties) {
-  _FWL_RETURN_VALUE_IF_FAIL(!m_pImp, FWL_ERR_Indefinite);
+  _FWL_RETURN_VALUE_IF_FAIL(!m_pIface, FWL_ERR_Indefinite);
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
@@ -32,8 +32,8 @@ FWL_ERR CFWL_ToolTip::Initialize(const CFWL_WidgetProperties* pProperties) {
     prop.m_pOwner = m_pProperties->m_pOwner->GetWidget();
   }
   prop.m_rtWidget = m_pProperties->m_rtWidget;
-  m_pImp = IFWL_ToolTip::Create();
-  FWL_ERR ret = ((IFWL_ToolTip*)m_pImp)->Initialize(prop);
+  m_pIface = IFWL_ToolTip::Create();
+  FWL_ERR ret = ((IFWL_ToolTip*)m_pIface)->Initialize(prop);
   if (ret == FWL_ERR_Succeeded) {
     CFWL_Widget::Initialize();
   }
@@ -76,13 +76,13 @@ FWL_ERR CFWL_ToolTip::SetToolTipIconSize(CFX_SizeF fSize) {
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_ToolTip::SetAnchor(const CFX_RectF& rtAnchor) {
-  return ((IFWL_ToolTip*)m_pImp)->SetAnchor(rtAnchor);
+  return ((IFWL_ToolTip*)m_pIface)->SetAnchor(rtAnchor);
 }
 FWL_ERR CFWL_ToolTip::Show() {
-  return ((IFWL_ToolTip*)m_pImp)->Show();
+  return ((IFWL_ToolTip*)m_pIface)->Show();
 }
 FWL_ERR CFWL_ToolTip::Hide() {
-  return ((IFWL_ToolTip*)m_pImp)->Hide();
+  return ((IFWL_ToolTip*)m_pIface)->Hide();
 }
 CFWL_ToolTip::CFWL_ToolTip() {}
 CFWL_ToolTip::~CFWL_ToolTip() {}

@@ -9,7 +9,7 @@ CFWL_Caret* CFWL_Caret::Create() {
   return new CFWL_Caret;
 }
 FWL_ERR CFWL_Caret::Initialize(const CFWL_WidgetProperties* pProperties) {
-  _FWL_RETURN_VALUE_IF_FAIL(!m_pImp, FWL_ERR_Indefinite);
+  _FWL_RETURN_VALUE_IF_FAIL(!m_pIface, FWL_ERR_Indefinite);
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
@@ -25,24 +25,24 @@ FWL_ERR CFWL_Caret::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (m_pProperties->m_pOwner) {
     prop.m_pOwner = m_pProperties->m_pOwner->GetWidget();
   }
-  m_pImp = IFWL_Caret::Create();
-  FWL_ERR ret = ((IFWL_Caret*)m_pImp)->Initialize(prop);
+  m_pIface = IFWL_Caret::Create();
+  FWL_ERR ret = ((IFWL_Caret*)m_pIface)->Initialize(prop);
   if (ret == FWL_ERR_Succeeded) {
     CFWL_Widget::Initialize();
   }
   return ret;
 }
 FWL_ERR CFWL_Caret::ShowCaret(FX_BOOL bFlag) {
-  return ((IFWL_Caret*)m_pImp)->ShowCaret(bFlag);
+  return ((IFWL_Caret*)m_pIface)->ShowCaret(bFlag);
 }
 FWL_ERR CFWL_Caret::GetFrequency(FX_DWORD& elapse) {
-  return ((IFWL_Caret*)m_pImp)->GetFrequency(elapse);
+  return ((IFWL_Caret*)m_pIface)->GetFrequency(elapse);
 }
 FWL_ERR CFWL_Caret::SetFrequency(FX_DWORD elapse) {
-  return ((IFWL_Caret*)m_pImp)->SetFrequency(elapse);
+  return ((IFWL_Caret*)m_pIface)->SetFrequency(elapse);
 }
 FWL_ERR CFWL_Caret::SetColor(CFX_Color crFill) {
-  return ((IFWL_Caret*)m_pImp)->SetColor(crFill);
+  return ((IFWL_Caret*)m_pIface)->SetColor(crFill);
 }
 CFWL_Caret::CFWL_Caret() {}
 CFWL_Caret::~CFWL_Caret() {}

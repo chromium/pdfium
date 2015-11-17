@@ -6,7 +6,7 @@
 
 #ifndef _FWL_WIDGETMGR_IMP_H
 #define _FWL_WIDGETMGR_IMP_H
-class CFWL_Target;
+class CFWL_TargetImp;
 class IFWL_Widget;
 class IFWL_AdapterWidgetMgr;
 class CFWL_WidgetMgrItem;

@@ -15,7 +15,7 @@ class IFWL_ThemeProvider;
 class IFWL_DataProvider;
 class IFWL_WidgetDelegate;
 class CFWL_WidgetImp;
-class CFWL_WidgetImp : public CFWL_Target {
+class CFWL_WidgetImp : public CFWL_TargetImp {
  public:
   virtual FWL_ERR Initialize();
   virtual FWL_ERR Finalize();

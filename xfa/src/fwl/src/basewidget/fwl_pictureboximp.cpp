@@ -13,24 +13,24 @@ IFWL_PictureBox* IFWL_PictureBox::Create() {
   return new IFWL_PictureBox;
 }
 IFWL_PictureBox::IFWL_PictureBox() {
-  m_pData = NULL;
+  m_pImpl = NULL;
 }
 IFWL_PictureBox::~IFWL_PictureBox() {
-  if (m_pData) {
-    delete (CFWL_PictureBoxImp*)m_pData;
-    m_pData = NULL;
+  if (m_pImpl) {
+    delete (CFWL_PictureBoxImp*)m_pImpl;
+    m_pImpl = NULL;
   }
 }
 FWL_ERR IFWL_PictureBox::Initialize(IFWL_Widget* pOuter) {
-  m_pData = new CFWL_PictureBoxImp(pOuter);
-  ((CFWL_PictureBoxImp*)m_pData)->SetInterface(this);
-  return ((CFWL_PictureBoxImp*)m_pData)->Initialize();
+  m_pImpl = new CFWL_PictureBoxImp(pOuter);
+  ((CFWL_PictureBoxImp*)m_pImpl)->SetInterface(this);
+  return ((CFWL_PictureBoxImp*)m_pImpl)->Initialize();
 }
 FWL_ERR IFWL_PictureBox::Initialize(const CFWL_WidgetImpProperties& properties,
                                     IFWL_Widget* pOuter) {
-  m_pData = new CFWL_PictureBoxImp(properties, pOuter);
-  ((CFWL_PictureBoxImp*)m_pData)->SetInterface(this);
-  return ((CFWL_PictureBoxImp*)m_pData)->Initialize();
+  m_pImpl = new CFWL_PictureBoxImp(properties, pOuter);
+  ((CFWL_PictureBoxImp*)m_pImpl)->SetInterface(this);
+  return ((CFWL_PictureBoxImp*)m_pImpl)->Initialize();
 }
 CFWL_PictureBoxImp::CFWL_PictureBoxImp(IFWL_Widget* pOuter)
     : CFWL_WidgetImp(pOuter),

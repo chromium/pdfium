@@ -9,7 +9,7 @@ CFWL_ListBox* CFWL_ListBox::Create() {
   return new CFWL_ListBox;
 }
 FWL_ERR CFWL_ListBox::Initialize(const CFWL_WidgetProperties* pProperties) {
-  _FWL_RETURN_VALUE_IF_FAIL(!m_pImp, FWL_ERR_Indefinite);
+  _FWL_RETURN_VALUE_IF_FAIL(!m_pIface, FWL_ERR_Indefinite);
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
@@ -26,8 +26,8 @@ FWL_ERR CFWL_ListBox::Initialize(const CFWL_WidgetProperties* pProperties) {
     prop.m_pOwner = m_pProperties->m_pOwner->GetWidget();
   }
   prop.m_rtWidget = m_pProperties->m_rtWidget;
-  m_pImp = IFWL_ListBox::Create();
-  FWL_ERR ret = ((IFWL_ListBox*)m_pImp)->Initialize(prop);
+  m_pIface = IFWL_ListBox::Create();
+  FWL_ERR ret = ((IFWL_ListBox*)m_pIface)->Initialize(prop);
   if (ret == FWL_ERR_Succeeded) {
     CFWL_Widget::Initialize();
   }
@@ -81,28 +81,28 @@ FX_BOOL CFWL_ListBox::DeleteAll() {
   return TRUE;
 }
 int32_t CFWL_ListBox::CountSelItems() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pImp, 0);
-  return ((IFWL_ListBox*)m_pImp)->CountSelItems();
+  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, 0);
+  return ((IFWL_ListBox*)m_pIface)->CountSelItems();
 }
 FWL_HLISTITEM CFWL_ListBox::GetSelItem(int32_t nIndexSel) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pImp, NULL);
-  return ((IFWL_ListBox*)m_pImp)->GetSelItem(nIndexSel);
+  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, NULL);
+  return ((IFWL_ListBox*)m_pIface)->GetSelItem(nIndexSel);
 }
 int32_t CFWL_ListBox::GetSelIndex(int32_t nIndex) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pImp, 0);
-  return ((IFWL_ListBox*)m_pImp)->GetSelIndex(nIndex);
+  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, 0);
+  return ((IFWL_ListBox*)m_pIface)->GetSelIndex(nIndex);
 }
 FWL_ERR CFWL_ListBox::SetSelItem(FWL_HLISTITEM hItem, FX_BOOL bSelect) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FWL_ERR_Indefinite);
-  return ((IFWL_ListBox*)m_pImp)->SetSelItem(hItem, bSelect);
+  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  return ((IFWL_ListBox*)m_pIface)->SetSelItem(hItem, bSelect);
 }
 FWL_ERR CFWL_ListBox::GetItemText(FWL_HLISTITEM hItem, CFX_WideString& wsText) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FWL_ERR_Indefinite);
-  return ((IFWL_ListBox*)m_pImp)->GetItemText(hItem, wsText);
+  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  return ((IFWL_ListBox*)m_pIface)->GetItemText(hItem, wsText);
 }
 FWL_ERR CFWL_ListBox::GetScrollPos(FX_FLOAT& fPos, FX_BOOL bVert) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FWL_ERR_Indefinite);
-  return ((IFWL_ListBox*)m_pImp)->GetScrollPos(fPos, bVert);
+  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  return ((IFWL_ListBox*)m_pIface)->GetScrollPos(fPos, bVert);
 }
 FWL_ERR CFWL_ListBox::SetItemHeight(FX_FLOAT fItemHeight) {
   m_ListBoxDP.m_fItemHeight = fItemHeight;
@@ -124,7 +124,7 @@ FWL_ERR CFWL_ListBox::SetFocusItem(FWL_HLISTITEM hItem) {
   return FWL_ERR_Succeeded;
 }
 FWL_ERR* CFWL_ListBox::Sort(IFWL_ListBoxCompare* pCom) {
-  return ((IFWL_ListBox*)m_pImp)->Sort(pCom);
+  return ((IFWL_ListBox*)m_pIface)->Sort(pCom);
 }
 int32_t CFWL_ListBox::CountItems() {
   return m_ListBoxDP.m_arrItem.GetSize();
@@ -163,13 +163,13 @@ void* CFWL_ListBox::GetItemData(FWL_HLISTITEM hItem) {
 }
 FWL_HLISTITEM CFWL_ListBox::GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
   CFX_RectF rtClient;
-  m_pImp->GetClientRect(rtClient);
+  m_pIface->GetClientRect(rtClient);
   fx -= rtClient.left;
   fy -= rtClient.top;
   FX_FLOAT fPosX = 0;
   FX_FLOAT fPosY = 0;
-  ((IFWL_ListBox*)m_pImp)->GetScrollPos(fx);
-  ((IFWL_ListBox*)m_pImp)->GetScrollPos(fy, FALSE);
+  ((IFWL_ListBox*)m_pIface)->GetScrollPos(fx);
+  ((IFWL_ListBox*)m_pIface)->GetScrollPos(fy, FALSE);
   int32_t nCount = m_ListBoxDP.CountItems(NULL);
   for (int32_t i = 0; i < nCount; i++) {
     FWL_HLISTITEM hItem = m_ListBoxDP.GetItem(NULL, i);

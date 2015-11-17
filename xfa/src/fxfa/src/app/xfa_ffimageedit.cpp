@@ -93,7 +93,7 @@ FX_BOOL CXFA_FFImageEdit::OnLButtonDown(FX_DWORD dwFlags,
   ms.m_dwFlags = dwFlags;
   ms.m_fx = fx;
   ms.m_fy = fy;
-  ms.m_pDstTarget = m_pNormalWidget->m_pImp;
+  ms.m_pDstTarget = m_pNormalWidget->m_pIface;
   FWLToClient(ms.m_fx, ms.m_fy);
   TranslateFWLMessage(&ms);
   IXFA_AppProvider* pAppProvider = GetAppProvider();

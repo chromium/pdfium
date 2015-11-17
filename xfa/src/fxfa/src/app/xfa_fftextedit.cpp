@@ -102,7 +102,7 @@ FX_BOOL CXFA_FFTextEdit::OnLButtonDown(FX_DWORD dwFlags,
   ms.m_dwFlags = dwFlags;
   ms.m_fx = fx;
   ms.m_fy = fy;
-  ms.m_pDstTarget = m_pNormalWidget->m_pImp;
+  ms.m_pDstTarget = m_pNormalWidget->m_pIface;
   FWLToClient(ms.m_fx, ms.m_fy);
   TranslateFWLMessage(&ms);
   return TRUE;
@@ -151,14 +151,14 @@ FX_BOOL CXFA_FFTextEdit::OnSetFocus(CXFA_FFWidget* pOldWidget) {
   }
   CXFA_FFWidget::OnSetFocus(pOldWidget);
   CFWL_MsgSetFocus ms;
-  ms.m_pDstTarget = m_pNormalWidget->m_pImp;
+  ms.m_pDstTarget = m_pNormalWidget->m_pIface;
   ms.m_pSrcTarget = NULL;
   TranslateFWLMessage(&ms);
   return TRUE;
 }
 FX_BOOL CXFA_FFTextEdit::OnKillFocus(CXFA_FFWidget* pNewWidget) {
   CFWL_MsgKillFocus ms;
-  ms.m_pDstTarget = m_pNormalWidget->m_pImp;
+  ms.m_pDstTarget = m_pNormalWidget->m_pIface;
   ms.m_pSrcTarget = NULL;
   TranslateFWLMessage(&ms);
   m_dwStatus &= ~XFA_WIDGETSTATUS_Focused;

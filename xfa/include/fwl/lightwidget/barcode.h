@@ -35,7 +35,7 @@ class CFWL_Barcode : public CFWL_Edit {
   void SetDataLength(int32_t dataLength) {
     m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_DATALENGTH;
     m_barcodeData.m_nDataLength = dataLength;
-    ((IFWL_Barcode*)m_pImp)->SetLimit(dataLength);
+    ((IFWL_Barcode*)m_pIface)->SetLimit(dataLength);
   }
   void SetCalChecksum(int32_t calChecksum) {
     m_barcodeData.m_dwAttributeMask |= FWL_BCDATTRIBUTE_CALCHECKSUM;

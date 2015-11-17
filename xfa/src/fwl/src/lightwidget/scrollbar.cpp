@@ -9,7 +9,7 @@ CFWL_ScrollBar* CFWL_ScrollBar::Create() {
   return new CFWL_ScrollBar;
 }
 FWL_ERR CFWL_ScrollBar::Initialize(const CFWL_WidgetProperties* pProperties) {
-  _FWL_RETURN_VALUE_IF_FAIL(!m_pImp, FWL_ERR_Indefinite);
+  _FWL_RETURN_VALUE_IF_FAIL(!m_pIface, FWL_ERR_Indefinite);
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
@@ -25,60 +25,60 @@ FWL_ERR CFWL_ScrollBar::Initialize(const CFWL_WidgetProperties* pProperties) {
     prop.m_pOwner = m_pProperties->m_pOwner->GetWidget();
   }
   prop.m_rtWidget = m_pProperties->m_rtWidget;
-  m_pImp = IFWL_ScrollBar::Create();
-  FWL_ERR ret = ((IFWL_ScrollBar*)m_pImp)->Initialize(prop);
+  m_pIface = IFWL_ScrollBar::Create();
+  FWL_ERR ret = ((IFWL_ScrollBar*)m_pIface)->Initialize(prop);
   if (ret == FWL_ERR_Succeeded) {
     CFWL_Widget::Initialize();
   }
   return ret;
 }
 FX_BOOL CFWL_ScrollBar::IsVertical() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FALSE);
-  return ((IFWL_ScrollBar*)m_pImp)->IsVertical();
+  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FALSE);
+  return ((IFWL_ScrollBar*)m_pIface)->IsVertical();
 }
 FWL_ERR CFWL_ScrollBar::GetRange(FX_FLOAT& fMin, FX_FLOAT& fMax) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FWL_ERR_Indefinite);
-  return ((IFWL_ScrollBar*)m_pImp)->GetRange(fMin, fMax);
+  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  return ((IFWL_ScrollBar*)m_pIface)->GetRange(fMin, fMax);
 }
 FWL_ERR CFWL_ScrollBar::SetRange(FX_FLOAT fMin, FX_FLOAT fMax) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FWL_ERR_Indefinite);
-  return ((IFWL_ScrollBar*)m_pImp)->SetRange(fMin, fMax);
+  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  return ((IFWL_ScrollBar*)m_pIface)->SetRange(fMin, fMax);
 }
 FX_FLOAT CFWL_ScrollBar::GetPageSize() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pImp, 0);
-  return ((IFWL_ScrollBar*)m_pImp)->GetPageSize();
+  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, 0);
+  return ((IFWL_ScrollBar*)m_pIface)->GetPageSize();
 }
 FWL_ERR CFWL_ScrollBar::SetPageSize(FX_FLOAT fPageSize) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FWL_ERR_Indefinite);
-  return ((IFWL_ScrollBar*)m_pImp)->SetPageSize(fPageSize);
+  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  return ((IFWL_ScrollBar*)m_pIface)->SetPageSize(fPageSize);
 }
 FX_FLOAT CFWL_ScrollBar::GetStepSize() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pImp, 0);
-  return ((IFWL_ScrollBar*)m_pImp)->GetStepSize();
+  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, 0);
+  return ((IFWL_ScrollBar*)m_pIface)->GetStepSize();
 }
 FWL_ERR CFWL_ScrollBar::SetStepSize(FX_FLOAT fStepSize) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FWL_ERR_Indefinite);
-  return ((IFWL_ScrollBar*)m_pImp)->SetStepSize(fStepSize);
+  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  return ((IFWL_ScrollBar*)m_pIface)->SetStepSize(fStepSize);
 }
 FX_FLOAT CFWL_ScrollBar::GetPos() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pImp, -1);
-  return ((IFWL_ScrollBar*)m_pImp)->GetPos();
+  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, -1);
+  return ((IFWL_ScrollBar*)m_pIface)->GetPos();
 }
 FWL_ERR CFWL_ScrollBar::SetPos(FX_FLOAT fPos) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FWL_ERR_Indefinite);
-  return ((IFWL_ScrollBar*)m_pImp)->SetPos(fPos);
+  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  return ((IFWL_ScrollBar*)m_pIface)->SetPos(fPos);
 }
 FX_FLOAT CFWL_ScrollBar::GetTrackPos() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pImp, -1);
-  return ((IFWL_ScrollBar*)m_pImp)->GetTrackPos();
+  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, -1);
+  return ((IFWL_ScrollBar*)m_pIface)->GetTrackPos();
 }
 FWL_ERR CFWL_ScrollBar::SetTrackPos(FX_FLOAT fTrackPos) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FWL_ERR_Indefinite);
-  return ((IFWL_ScrollBar*)m_pImp)->SetTrackPos(fTrackPos);
+  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  return ((IFWL_ScrollBar*)m_pIface)->SetTrackPos(fTrackPos);
 }
 FX_BOOL CFWL_ScrollBar::DoScroll(FX_DWORD dwCode, FX_FLOAT fPos) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pImp, FALSE);
-  return ((IFWL_ScrollBar*)m_pImp)->DoScroll(dwCode, fPos);
+  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FALSE);
+  return ((IFWL_ScrollBar*)m_pIface)->DoScroll(dwCode, fPos);
 }
 CFWL_ScrollBar::CFWL_ScrollBar() {}
 CFWL_ScrollBar::~CFWL_ScrollBar() {}

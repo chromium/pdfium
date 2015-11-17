@@ -4,10 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_TARGET_IMP_H
-#define _FWL_TARGET_IMP_H
-class IFWL_Target;
-class CFWL_Target {
+#ifndef FWL_TARGETIMP_H_
+#define FWL_TARGETIMP_H_
+
+#include "core/include/fxcrt/fx_basic.h"
+#include "xfa/include/fwl/core/fwl_target.h"
+
+class CFWL_TargetImp {
  public:
   virtual FX_DWORD Release();
   virtual IFWL_Target* Retain();
@@ -19,13 +22,15 @@ class CFWL_Target {
   virtual FWL_ERR Finalize();
 
  protected:
-  CFWL_Target();
-  virtual ~CFWL_Target();
+  CFWL_TargetImp();
+  virtual ~CFWL_TargetImp();
   FX_DWORD m_dwRefCount;
 };
+
 class IFWL_TargetData : public IFWL_Target {
  public:
-  void* GetData();
-  void SetData(void* pData);
+  CFWL_TargetImp* GetData() const { return m_pImpl; }
+  void SetData(CFWL_TargetImp* pImpl) { m_pImpl = pImpl; }
 };
-#endif
+
+#endif  // FWL_TARGETIMP_H_

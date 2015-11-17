@@ -15,113 +15,113 @@ IFWL_Grid* IFWL_Grid::Create() {
   return new IFWL_Grid;
 }
 FWL_ERR IFWL_Grid::Initialize() {
-  m_pData = new CFWL_GridImp;
-  ((CFWL_GridImp*)m_pData)->SetInterface(this);
-  return ((CFWL_GridImp*)m_pData)->Initialize();
+  m_pImpl = new CFWL_GridImp;
+  ((CFWL_GridImp*)m_pImpl)->SetInterface(this);
+  return ((CFWL_GridImp*)m_pImpl)->Initialize();
 }
 FWL_ERR IFWL_Grid::Initialize(CFWL_WidgetImpProperties& properties) {
-  m_pData = new CFWL_GridImp(properties);
-  ((CFWL_GridImp*)m_pData)->SetInterface(this);
-  return ((CFWL_GridImp*)m_pData)->Initialize();
+  m_pImpl = new CFWL_GridImp(properties);
+  ((CFWL_GridImp*)m_pImpl)->SetInterface(this);
+  return ((CFWL_GridImp*)m_pImpl)->Initialize();
 }
 FWL_HGRIDCOLROW IFWL_Grid::InsertColRow(FX_BOOL bColumn, int32_t nIndex) {
-  return ((CFWL_GridImp*)m_pData)->InsertColRow(bColumn, nIndex);
+  return ((CFWL_GridImp*)m_pImpl)->InsertColRow(bColumn, nIndex);
 }
 int32_t IFWL_Grid::CountColRows(FX_BOOL bColumn) {
-  return ((CFWL_GridImp*)m_pData)->CountColRows(bColumn);
+  return ((CFWL_GridImp*)m_pImpl)->CountColRows(bColumn);
 }
 FWL_HGRIDCOLROW IFWL_Grid::GetColRow(FX_BOOL bColumn, int32_t nIndex) {
-  return ((CFWL_GridImp*)m_pData)->GetColRow(bColumn, nIndex);
+  return ((CFWL_GridImp*)m_pImpl)->GetColRow(bColumn, nIndex);
 }
 int32_t IFWL_Grid::GetIndex(FWL_HGRIDCOLROW hColRow) {
-  return ((CFWL_GridImp*)m_pData)->GetIndex(hColRow);
+  return ((CFWL_GridImp*)m_pImpl)->GetIndex(hColRow);
 }
 FX_FLOAT IFWL_Grid::GetSize(FWL_HGRIDCOLROW hColRow, FWL_GRIDUNIT& eUnit) {
-  return ((CFWL_GridImp*)m_pData)->GetSize(hColRow, eUnit);
+  return ((CFWL_GridImp*)m_pImpl)->GetSize(hColRow, eUnit);
 }
 FWL_ERR IFWL_Grid::SetSize(FWL_HGRIDCOLROW hColRow,
                            FX_FLOAT fSize,
                            FWL_GRIDUNIT eUnit) {
-  return ((CFWL_GridImp*)m_pData)->SetSize(hColRow, fSize, eUnit);
+  return ((CFWL_GridImp*)m_pImpl)->SetSize(hColRow, fSize, eUnit);
 }
 FX_FLOAT IFWL_Grid::GetMinSize(FWL_HGRIDCOLROW hColRow, FWL_GRIDUNIT& eUnit) {
-  return ((CFWL_GridImp*)m_pData)->GetMinSize(hColRow, eUnit);
+  return ((CFWL_GridImp*)m_pImpl)->GetMinSize(hColRow, eUnit);
 }
 FWL_ERR IFWL_Grid::SetMinSize(FWL_HGRIDCOLROW hColRow,
                               FX_FLOAT fSize,
                               FWL_GRIDUNIT eUnit) {
-  return ((CFWL_GridImp*)m_pData)->SetMinSize(hColRow, fSize, eUnit);
+  return ((CFWL_GridImp*)m_pImpl)->SetMinSize(hColRow, fSize, eUnit);
 }
 FX_FLOAT IFWL_Grid::GetMaxSize(FWL_HGRIDCOLROW hColRow, FWL_GRIDUNIT& eUnit) {
-  return ((CFWL_GridImp*)m_pData)->GetMaxSize(hColRow, eUnit);
+  return ((CFWL_GridImp*)m_pImpl)->GetMaxSize(hColRow, eUnit);
 }
 FWL_ERR IFWL_Grid::SetMaxSize(FWL_HGRIDCOLROW hColRow,
                               FX_FLOAT fSize,
                               FWL_GRIDUNIT eUnit) {
-  return ((CFWL_GridImp*)m_pData)->SetMaxSize(hColRow, fSize, eUnit);
+  return ((CFWL_GridImp*)m_pImpl)->SetMaxSize(hColRow, fSize, eUnit);
 }
 FX_BOOL IFWL_Grid::DeleteColRow(FWL_HGRIDCOLROW hColRow) {
-  return ((CFWL_GridImp*)m_pData)->DeleteColRow(hColRow);
+  return ((CFWL_GridImp*)m_pImpl)->DeleteColRow(hColRow);
 }
 FX_BOOL IFWL_Grid::IsColumn(FWL_HGRIDCOLROW hColRow) {
-  return ((CFWL_GridImp*)m_pData)->IsColumn(hColRow);
+  return ((CFWL_GridImp*)m_pImpl)->IsColumn(hColRow);
 }
 int32_t IFWL_Grid::GetWidgetPos(IFWL_Widget* pWidget, FX_BOOL bColumn) {
-  return ((CFWL_GridImp*)m_pData)->GetWidgetPos(pWidget, bColumn);
+  return ((CFWL_GridImp*)m_pImpl)->GetWidgetPos(pWidget, bColumn);
 }
 FWL_ERR IFWL_Grid::SetWidgetPos(IFWL_Widget* pWidget,
                                 int32_t iPos,
                                 FX_BOOL bColumn) {
-  return ((CFWL_GridImp*)m_pData)->SetWidgetPos(pWidget, iPos, bColumn);
+  return ((CFWL_GridImp*)m_pImpl)->SetWidgetPos(pWidget, iPos, bColumn);
 }
 int32_t IFWL_Grid::GetWidgetSpan(IFWL_Widget* pWidget, FX_BOOL bColumn) {
-  return ((CFWL_GridImp*)m_pData)->GetWidgetSpan(pWidget, bColumn);
+  return ((CFWL_GridImp*)m_pImpl)->GetWidgetSpan(pWidget, bColumn);
 }
 FWL_ERR IFWL_Grid::SetWidgetSpan(IFWL_Widget* pWidget,
                                  int32_t iSpan,
                                  FX_BOOL bColumn) {
-  return ((CFWL_GridImp*)m_pData)->SetWidgetSpan(pWidget, iSpan, bColumn);
+  return ((CFWL_GridImp*)m_pImpl)->SetWidgetSpan(pWidget, iSpan, bColumn);
 }
 FX_FLOAT IFWL_Grid::GetWidgetSize(IFWL_Widget* pWidget,
                                   FWL_GRIDSIZE eSize,
                                   FWL_GRIDUNIT& eUnit) {
-  return ((CFWL_GridImp*)m_pData)->GetWidgetSize(pWidget, eSize, eUnit);
+  return ((CFWL_GridImp*)m_pImpl)->GetWidgetSize(pWidget, eSize, eUnit);
 }
 FWL_ERR IFWL_Grid::SetWidgetSize(IFWL_Widget* pWidget,
                                  FWL_GRIDSIZE eSize,
                                  FX_FLOAT fSize,
                                  FWL_GRIDUNIT eUit) {
-  return ((CFWL_GridImp*)m_pData)->SetWidgetSize(pWidget, eSize, fSize, eUit);
+  return ((CFWL_GridImp*)m_pImpl)->SetWidgetSize(pWidget, eSize, fSize, eUit);
 }
 FX_BOOL IFWL_Grid::GetWidgetMargin(IFWL_Widget* pWidget,
                                    FWL_GRIDMARGIN eMargin,
                                    FX_FLOAT& fMargin) {
-  return ((CFWL_GridImp*)m_pData)->GetWidgetMargin(pWidget, eMargin, fMargin);
+  return ((CFWL_GridImp*)m_pImpl)->GetWidgetMargin(pWidget, eMargin, fMargin);
 }
 FWL_ERR IFWL_Grid::SetWidgetMargin(IFWL_Widget* pWidget,
                                    FWL_GRIDMARGIN eMargin,
                                    FX_FLOAT fMargin) {
-  return ((CFWL_GridImp*)m_pData)->SetWidgetMargin(pWidget, eMargin, fMargin);
+  return ((CFWL_GridImp*)m_pImpl)->SetWidgetMargin(pWidget, eMargin, fMargin);
 }
 FWL_ERR IFWL_Grid::RemoveWidgetMargin(IFWL_Widget* pWidget,
                                       FWL_GRIDMARGIN eMargin) {
-  return ((CFWL_GridImp*)m_pData)->RemoveWidgetMargin(pWidget, eMargin);
+  return ((CFWL_GridImp*)m_pImpl)->RemoveWidgetMargin(pWidget, eMargin);
 }
 FX_FLOAT IFWL_Grid::GetGridSize(FWL_GRIDSIZE eSize, FWL_GRIDUNIT& eUnit) {
-  return ((CFWL_GridImp*)m_pData)->GetGridSize(eSize, eUnit);
+  return ((CFWL_GridImp*)m_pImpl)->GetGridSize(eSize, eUnit);
 }
 FWL_ERR IFWL_Grid::SetGridSize(FWL_GRIDSIZE eSize,
                                FX_FLOAT fSize,
                                FWL_GRIDUNIT eUit) {
-  return ((CFWL_GridImp*)m_pData)->SetGridSize(eSize, fSize, eUit);
+  return ((CFWL_GridImp*)m_pImpl)->SetGridSize(eSize, fSize, eUit);
 }
 IFWL_Grid::IFWL_Grid() {
-  m_pData = NULL;
+  m_pImpl = NULL;
 }
 IFWL_Grid::~IFWL_Grid() {
-  if (m_pData) {
-    delete (CFWL_GridImp*)m_pData;
-    m_pData = NULL;
+  if (m_pImpl) {
+    delete (CFWL_GridImp*)m_pImpl;
+    m_pImpl = NULL;
   }
 }
 CFWL_GridImp::CFWL_GridImp() {

@@ -14,30 +14,30 @@ IFWL_Barcode* IFWL_Barcode::Create() {
   return new IFWL_Barcode;
 }
 IFWL_Barcode::IFWL_Barcode() {
-  m_pData = NULL;
+  m_pImpl = NULL;
 }
 IFWL_Barcode::~IFWL_Barcode() {
-  if (m_pData) {
-    delete (CFWL_BarcodeImp*)m_pData;
-    m_pData = NULL;
+  if (m_pImpl) {
+    delete (CFWL_BarcodeImp*)m_pImpl;
+    m_pImpl = NULL;
   }
 }
 FWL_ERR IFWL_Barcode::Initialize(IFWL_Widget* pOuter) {
-  m_pData = new CFWL_BarcodeImp(pOuter);
-  ((CFWL_BarcodeImp*)m_pData)->SetInterface(this);
-  return ((CFWL_BarcodeImp*)m_pData)->Initialize();
+  m_pImpl = new CFWL_BarcodeImp(pOuter);
+  ((CFWL_BarcodeImp*)m_pImpl)->SetInterface(this);
+  return ((CFWL_BarcodeImp*)m_pImpl)->Initialize();
 }
 FWL_ERR IFWL_Barcode::Initialize(const CFWL_WidgetImpProperties& properties,
                                  IFWL_Widget* pOuter) {
-  m_pData = new CFWL_BarcodeImp(properties, pOuter);
-  ((CFWL_BarcodeImp*)m_pData)->SetInterface(this);
-  return ((CFWL_BarcodeImp*)m_pData)->Initialize();
+  m_pImpl = new CFWL_BarcodeImp(properties, pOuter);
+  ((CFWL_BarcodeImp*)m_pImpl)->SetInterface(this);
+  return ((CFWL_BarcodeImp*)m_pImpl)->Initialize();
 }
 void IFWL_Barcode::SetType(BC_TYPE type) {
-  ((CFWL_BarcodeImp*)m_pData)->SetType(type);
+  ((CFWL_BarcodeImp*)m_pImpl)->SetType(type);
 }
 FX_BOOL IFWL_Barcode::IsProtectedType() {
-  return ((CFWL_BarcodeImp*)m_pData)->IsProtectedType();
+  return ((CFWL_BarcodeImp*)m_pImpl)->IsProtectedType();
 }
 CFWL_BarcodeImp::CFWL_BarcodeImp(IFWL_Widget* pOuter)
     : CFWL_EditImp(pOuter),

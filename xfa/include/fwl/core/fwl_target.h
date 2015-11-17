@@ -4,9 +4,28 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_TARGET_H
-#define _FWL_TARGET_H
-class IFWL_Target;
+#ifndef FWL_TARGET_H_
+#define FWL_TARGET_H_
+
+#include "core/include/fxcrt/fx_basic.h"
+
+// FWL contains three parallel inheritance hierarchies, which reference each
+// other via pointers as follows:
+//
+//                                           m_pImpl
+//      (nonesuch)              IFWL_Target ----------> CFWL_TargetImp
+//                                   |                       |
+//                                   A                       A
+//                   m_pIface         |                       |
+//      CFWL_Widget ----------> IFWL_Widget             CFWL_WidgetImp
+//           |                       |                       |
+//           A                       A                       A
+//           |                       |                       |
+//      CFWL_...                IFWL_...                CFWL_...Imp
+//
+
+class CFWL_TargetImp;
+
 class IFWL_Target {
  public:
   FX_DWORD Release();
@@ -20,6 +39,7 @@ class IFWL_Target {
 
  protected:
   virtual ~IFWL_Target();
-  void* m_pData;
+  CFWL_TargetImp* m_pImpl;
 };
-#endif
+
+#endif  // FWL_TARGET_H_

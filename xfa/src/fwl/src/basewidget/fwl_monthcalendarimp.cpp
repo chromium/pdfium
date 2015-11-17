@@ -21,40 +21,40 @@ IFWL_MonthCalendar* IFWL_MonthCalendar::Create() {
   return new IFWL_MonthCalendar;
 }
 IFWL_MonthCalendar::IFWL_MonthCalendar() {
-  m_pData = NULL;
+  m_pImpl = NULL;
 }
 IFWL_MonthCalendar::~IFWL_MonthCalendar() {
-  if (m_pData) {
-    delete (CFWL_MonthCalendarImp*)m_pData;
-    m_pData = NULL;
+  if (m_pImpl) {
+    delete (CFWL_MonthCalendarImp*)m_pImpl;
+    m_pImpl = NULL;
   }
 }
 FWL_ERR IFWL_MonthCalendar::Initialize(IFWL_Widget* pOuter) {
-  m_pData = new CFWL_MonthCalendarImp(pOuter);
-  ((CFWL_MonthCalendarImp*)m_pData)->SetInterface(this);
-  return ((CFWL_MonthCalendarImp*)m_pData)->Initialize();
+  m_pImpl = new CFWL_MonthCalendarImp(pOuter);
+  ((CFWL_MonthCalendarImp*)m_pImpl)->SetInterface(this);
+  return ((CFWL_MonthCalendarImp*)m_pImpl)->Initialize();
 }
 FWL_ERR IFWL_MonthCalendar::Initialize(
     const CFWL_WidgetImpProperties& properties,
     IFWL_Widget* pOuter) {
-  m_pData = new CFWL_MonthCalendarImp(properties, pOuter);
-  ((CFWL_MonthCalendarImp*)m_pData)->SetInterface(this);
-  return ((CFWL_MonthCalendarImp*)m_pData)->Initialize();
+  m_pImpl = new CFWL_MonthCalendarImp(properties, pOuter);
+  ((CFWL_MonthCalendarImp*)m_pImpl)->SetInterface(this);
+  return ((CFWL_MonthCalendarImp*)m_pImpl)->Initialize();
 }
 int32_t IFWL_MonthCalendar::CountSelect() {
-  return ((CFWL_MonthCalendarImp*)m_pData)->CountSelect();
+  return ((CFWL_MonthCalendarImp*)m_pImpl)->CountSelect();
 }
 FX_BOOL IFWL_MonthCalendar::GetSelect(int32_t& iYear,
                                       int32_t& iMonth,
                                       int32_t& iDay,
                                       int32_t nIndex) {
-  return ((CFWL_MonthCalendarImp*)m_pData)
+  return ((CFWL_MonthCalendarImp*)m_pImpl)
       ->GetSelect(iYear, iMonth, iDay, nIndex);
 }
 FX_BOOL IFWL_MonthCalendar::SetSelect(int32_t iYear,
                                       int32_t iMonth,
                                       int32_t iDay) {
-  return ((CFWL_MonthCalendarImp*)m_pData)->SetSelect(iYear, iMonth, iDay);
+  return ((CFWL_MonthCalendarImp*)m_pImpl)->SetSelect(iYear, iMonth, iDay);
 }
 CFWL_MonthCalendarImp::CFWL_MonthCalendarImp(IFWL_Widget* pOuter)
     : CFWL_WidgetImp(pOuter),

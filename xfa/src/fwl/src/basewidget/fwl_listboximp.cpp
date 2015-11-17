@@ -15,45 +15,45 @@ IFWL_ListBox* IFWL_ListBox::Create() {
   return new IFWL_ListBox;
 }
 IFWL_ListBox::IFWL_ListBox() {
-  m_pData = NULL;
+  m_pImpl = NULL;
 }
 IFWL_ListBox::~IFWL_ListBox() {
-  if (m_pData) {
-    delete (CFWL_ListBoxImp*)m_pData;
-    m_pData = NULL;
+  if (m_pImpl) {
+    delete (CFWL_ListBoxImp*)m_pImpl;
+    m_pImpl = NULL;
   }
 }
 FWL_ERR IFWL_ListBox::Initialize(IFWL_Widget* pOuter) {
-  m_pData = new CFWL_ListBoxImp(pOuter);
-  ((CFWL_ListBoxImp*)m_pData)->SetInterface(this);
-  return ((CFWL_ListBoxImp*)m_pData)->Initialize();
+  m_pImpl = new CFWL_ListBoxImp(pOuter);
+  ((CFWL_ListBoxImp*)m_pImpl)->SetInterface(this);
+  return ((CFWL_ListBoxImp*)m_pImpl)->Initialize();
 }
 FWL_ERR IFWL_ListBox::Initialize(const CFWL_WidgetImpProperties& properties,
                                  IFWL_Widget* pOuter) {
-  m_pData = new CFWL_ListBoxImp(properties, pOuter);
-  ((CFWL_ListBoxImp*)m_pData)->SetInterface(this);
-  return ((CFWL_ListBoxImp*)m_pData)->Initialize();
+  m_pImpl = new CFWL_ListBoxImp(properties, pOuter);
+  ((CFWL_ListBoxImp*)m_pImpl)->SetInterface(this);
+  return ((CFWL_ListBoxImp*)m_pImpl)->Initialize();
 }
 int32_t IFWL_ListBox::CountSelItems() {
-  return ((CFWL_ListBoxImp*)m_pData)->CountSelItems();
+  return ((CFWL_ListBoxImp*)m_pImpl)->CountSelItems();
 }
 FWL_HLISTITEM IFWL_ListBox::GetSelItem(int32_t nIndexSel) {
-  return ((CFWL_ListBoxImp*)m_pData)->GetSelItem(nIndexSel);
+  return ((CFWL_ListBoxImp*)m_pImpl)->GetSelItem(nIndexSel);
 }
 int32_t IFWL_ListBox::GetSelIndex(int32_t nIndex) {
-  return ((CFWL_ListBoxImp*)m_pData)->GetSelIndex(nIndex);
+  return ((CFWL_ListBoxImp*)m_pImpl)->GetSelIndex(nIndex);
 }
 FWL_ERR IFWL_ListBox::SetSelItem(FWL_HLISTITEM hItem, FX_BOOL bSelect) {
-  return ((CFWL_ListBoxImp*)m_pData)->SetSelItem(hItem, bSelect);
+  return ((CFWL_ListBoxImp*)m_pImpl)->SetSelItem(hItem, bSelect);
 }
 FWL_ERR IFWL_ListBox::GetItemText(FWL_HLISTITEM hItem, CFX_WideString& wsText) {
-  return ((CFWL_ListBoxImp*)m_pData)->GetItemText(hItem, wsText);
+  return ((CFWL_ListBoxImp*)m_pImpl)->GetItemText(hItem, wsText);
 }
 FWL_ERR IFWL_ListBox::GetScrollPos(FX_FLOAT& fPos, FX_BOOL bVert) {
-  return ((CFWL_ListBoxImp*)m_pData)->GetScrollPos(fPos, bVert);
+  return ((CFWL_ListBoxImp*)m_pImpl)->GetScrollPos(fPos, bVert);
 }
 FWL_ERR* IFWL_ListBox::Sort(IFWL_ListBoxCompare* pCom) {
-  return ((CFWL_ListBoxImp*)m_pData)->Sort(pCom);
+  return ((CFWL_ListBoxImp*)m_pImpl)->Sort(pCom);
 }
 CFWL_ListBoxImp::CFWL_ListBoxImp(IFWL_Widget* pOuter)
     : CFWL_WidgetImp(pOuter),

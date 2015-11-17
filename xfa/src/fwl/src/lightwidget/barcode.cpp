@@ -9,7 +9,7 @@ CFWL_Barcode* CFWL_Barcode::Create() {
   return new CFWL_Barcode;
 }
 FWL_ERR CFWL_Barcode::Initialize(const CFWL_WidgetProperties* pProperties) {
-  _FWL_RETURN_VALUE_IF_FAIL(!m_pImp, FWL_ERR_Indefinite);
+  _FWL_RETURN_VALUE_IF_FAIL(!m_pIface, FWL_ERR_Indefinite);
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
@@ -26,8 +26,8 @@ FWL_ERR CFWL_Barcode::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (m_pProperties->m_pOwner) {
     prop.m_pOwner = m_pProperties->m_pOwner->GetWidget();
   }
-  m_pImp = IFWL_Barcode::Create();
-  FWL_ERR ret = ((IFWL_Barcode*)m_pImp)->Initialize(prop);
+  m_pIface = IFWL_Barcode::Create();
+  FWL_ERR ret = ((IFWL_Barcode*)m_pIface)->Initialize(prop);
   if (ret == FWL_ERR_Succeeded) {
     CFWL_Widget::Initialize();
   }
@@ -36,12 +36,12 @@ FWL_ERR CFWL_Barcode::Initialize(const CFWL_WidgetProperties* pProperties) {
 CFWL_Barcode::CFWL_Barcode() {}
 CFWL_Barcode::~CFWL_Barcode() {}
 void CFWL_Barcode::SetType(BC_TYPE type) {
-  _FWL_RETURN_IF_FAIL(m_pImp);
-  ((IFWL_Barcode*)m_pImp)->SetType(type);
+  _FWL_RETURN_IF_FAIL(m_pIface);
+  ((IFWL_Barcode*)m_pIface)->SetType(type);
 }
 FX_BOOL CFWL_Barcode::IsProtectedType() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pImp, 0);
-  return ((IFWL_Barcode*)m_pImp)->IsProtectedType();
+  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, 0);
+  return ((IFWL_Barcode*)m_pIface)->IsProtectedType();
 }
 FWL_ERR CFWL_Barcode::CFWL_BarcodeDP::GetCaption(IFWL_Widget* pWidget,
                                                  CFX_WideString& wsCaption) {

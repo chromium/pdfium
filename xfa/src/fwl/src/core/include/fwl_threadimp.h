@@ -6,7 +6,7 @@
 
 #ifndef _FWL_THREAD_IMP_H
 #define _FWL_THREAD_IMP_H
-class CFWL_Target;
+class CFWL_TargetImp;
 class CFWL_NoteDriver;
 class IFWL_NoteThread;
 class IFWL_NoteDriver;

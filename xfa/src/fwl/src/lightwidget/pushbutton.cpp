@@ -9,7 +9,7 @@ CFWL_PushButton* CFWL_PushButton::Create() {
   return new CFWL_PushButton;
 }
 FWL_ERR CFWL_PushButton::Initialize(const CFWL_WidgetProperties* pProperties) {
-  _FWL_RETURN_VALUE_IF_FAIL(!m_pImp, FWL_ERR_Indefinite);
+  _FWL_RETURN_VALUE_IF_FAIL(!m_pIface, FWL_ERR_Indefinite);
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
@@ -26,8 +26,8 @@ FWL_ERR CFWL_PushButton::Initialize(const CFWL_WidgetProperties* pProperties) {
     prop.m_pOwner = m_pProperties->m_pOwner->GetWidget();
   }
   prop.m_rtWidget = m_pProperties->m_rtWidget;
-  m_pImp = IFWL_PushButton::Create();
-  FWL_ERR ret = ((IFWL_PushButton*)m_pImp)->Initialize(prop);
+  m_pIface = IFWL_PushButton::Create();
+  FWL_ERR ret = ((IFWL_PushButton*)m_pIface)->Initialize(prop);
   if (ret == FWL_ERR_Succeeded) {
     CFWL_Widget::Initialize();
   }

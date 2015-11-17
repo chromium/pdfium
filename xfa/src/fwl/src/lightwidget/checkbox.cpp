@@ -9,7 +9,7 @@ CFWL_CheckBox* CFWL_CheckBox::Create() {
   return new CFWL_CheckBox;
 }
 FWL_ERR CFWL_CheckBox::Initialize(const CFWL_WidgetProperties* pProperties) {
-  _FWL_RETURN_VALUE_IF_FAIL(!m_pImp, FWL_ERR_Indefinite);
+  _FWL_RETURN_VALUE_IF_FAIL(!m_pIface, FWL_ERR_Indefinite);
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
@@ -26,8 +26,8 @@ FWL_ERR CFWL_CheckBox::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (m_pProperties->m_pOwner) {
     prop.m_pOwner = m_pProperties->m_pOwner->GetWidget();
   }
-  m_pImp = IFWL_CheckBox::Create();
-  FWL_ERR ret = ((IFWL_CheckBox*)m_pImp)->Initialize(prop);
+  m_pIface = IFWL_CheckBox::Create();
+  FWL_ERR ret = ((IFWL_CheckBox*)m_pIface)->Initialize(prop);
   if (ret == FWL_ERR_Succeeded) {
     CFWL_Widget::Initialize();
   }
@@ -42,10 +42,10 @@ FWL_ERR CFWL_CheckBox::SetBoxSize(FX_FLOAT fHeight) {
   return FWL_ERR_Succeeded;
 }
 int32_t CFWL_CheckBox::GetCheckState() {
-  return ((IFWL_CheckBox*)m_pImp)->GetCheckState();
+  return ((IFWL_CheckBox*)m_pIface)->GetCheckState();
 }
 FWL_ERR CFWL_CheckBox::SetCheckState(int32_t iCheck) {
-  return ((IFWL_CheckBox*)m_pImp)->SetCheckState(iCheck);
+  return ((IFWL_CheckBox*)m_pIface)->SetCheckState(iCheck);
 }
 CFWL_CheckBox::CFWL_CheckBox() {}
 CFWL_CheckBox::~CFWL_CheckBox() {}

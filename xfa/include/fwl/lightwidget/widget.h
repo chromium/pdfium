@@ -88,7 +88,7 @@ class CFWL_Widget {
   CFX_SizeF CalcTextSize(const CFX_WideString& wsText,
                          FX_BOOL bMultiLine = FALSE,
                          int32_t iLineWidth = -1);
-  IFWL_Widget* m_pImp;
+  IFWL_Widget* m_pIface;
   IFWL_WidgetDelegate* m_pDelegate;
   CFWL_WidgetMgr* m_pWidgetMgr;
   CFWL_WidgetProperties* m_pProperties;

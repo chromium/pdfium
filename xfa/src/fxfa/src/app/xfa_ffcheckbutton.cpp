@@ -251,7 +251,7 @@ FX_BOOL CXFA_FFCheckButton::OnLButtonUp(FX_DWORD dwFlags,
   ms.m_fx = fx;
   ms.m_fy = fy;
   FWLToClient(ms.m_fx, ms.m_fy);
-  ms.m_pDstTarget = m_pNormalWidget->m_pImp;
+  ms.m_pDstTarget = m_pNormalWidget->m_pIface;
   TranslateFWLMessage(&ms);
   return TRUE;
 }
