@@ -2,6 +2,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import("//build/config/sanitizers/sanitizers.gni")
 import("../pdfium.gni")
 
 group("samples") {
@@ -31,6 +32,7 @@ executable("pdfium_test") {
     "pdfium_test.cc",
   ]
   deps = [
+    "//build/config/sanitizers:deps",
     "//third_party/pdfium:pdfium",
     "//third_party/pdfium:test_support",
 
@@ -58,6 +60,7 @@ executable("pdfium_diff") {
     "image_diff_png.h",
   ]
   deps = [
+    "//build/config/sanitizers:deps",
     "//third_party/pdfium",
     ":fx_lpng",
   ]
