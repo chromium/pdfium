@@ -97,14 +97,13 @@ class ChromeTests:
     # tools/valgrind/TOOL/suppressions[_PLATFORM].txt
     # and list them with --suppressions= prefix.
     script_dir = path_utils.ScriptDir()
-    tool_name = tool.ToolName();
-    suppression_file = os.path.join(script_dir, tool_name, "suppressions.txt")
+    suppression_file = os.path.join(script_dir, "..", "suppressions.txt")
     if os.path.exists(suppression_file):
       cmd.append("--suppressions=%s" % suppression_file)
     # Platform-specific suppression
     for platform in common.PlatformNames():
       platform_suppression_file = \
-          os.path.join(script_dir, tool_name, 'suppressions_%s.txt' % platform)
+          os.path.join(script_dir, "..", 'suppressions_%s.txt' % platform)
       if os.path.exists(platform_suppression_file):
         cmd.append("--suppressions=%s" % platform_suppression_file)
 
@@ -120,22 +119,6 @@ class ChromeTests:
       exe_path = os.path.join(self._options.build_dir, exe)
       if not os.path.exists(exe_path):
         raise ExecutableNotFound("Couldn't find '%s'" % exe_path)
-
-      # Make sure we don't try to test ASan-built binaries
-      # with other dynamic instrumentation-based tools.
-      # TODO(timurrrr): also check TSan and MSan?
-      # `nm` might not be available, so use try-except.
-      try:
-        # Do not perform this check on OS X, as 'nm' on 10.6 can't handle
-        # binaries built with Clang 3.5+.
-        if not common.IsMac():
-          nm_output = subprocess.check_output(["nm", exe_path])
-          if nm_output.find("__asan_init") != -1:
-            raise BadBinary("You're trying to run an executable instrumented "
-                            "with AddressSanitizer under %s. Please provide "
-                            "an uninstrumented executable." % tool_name)
-      except OSError:
-        pass
 
       cmd.append(exe_path)
       # Valgrind runs tests slowly, so slow tests hurt more; show elapased time
