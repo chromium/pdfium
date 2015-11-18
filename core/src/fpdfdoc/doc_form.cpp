@@ -517,7 +517,7 @@ CPDF_Font* CPDF_InterForm::AddNativeFont(uint8_t charSet,
   CFX_ByteString csFontName = GetNativeFont(charSet, &lf);
   if (!csFontName.IsEmpty()) {
     if (csFontName == "Helvetica")
-      return pFont = AddStandardFont(pDocument, csFontName);
+      return AddStandardFont(pDocument, csFontName);
     return pDocument->AddWindowsFont(&lf, FALSE, TRUE);
   }
 #endif
