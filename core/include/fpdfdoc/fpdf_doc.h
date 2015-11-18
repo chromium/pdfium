@@ -544,17 +544,7 @@ class CPDF_InterForm : public CFX_PrivateData {
                                                 int iMinLen = 2,
                                                 const FX_CHAR* csPrefix = "");
 
-  static CPDF_Font* AddSystemDefaultFont(const CPDF_Document* pDocument);
-
-  static CPDF_Font* AddSystemFont(const CPDF_Document* pDocument,
-                                  CFX_ByteString csFontName,
-                                  uint8_t iCharSet = 1);
-
-  static CPDF_Font* AddSystemFont(const CPDF_Document* pDocument,
-                                  CFX_WideString csFontName,
-                                  uint8_t iCharSet = 1);
-
-  static CPDF_Font* AddStandardFont(const CPDF_Document* pDocument,
+  static CPDF_Font* AddStandardFont(CPDF_Document* pDocument,
                                     CFX_ByteString csFontName);
 
   static CFX_ByteString GetNativeFont(uint8_t iCharSet, void* pLogFont = NULL);
