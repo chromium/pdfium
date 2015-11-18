@@ -28,6 +28,8 @@ class CFWL_TargetImp;
 
 class IFWL_Target {
  public:
+  IFWL_Target() : m_pImpl(nullptr) {}
+
   FX_DWORD Release();
   IFWL_Target* Retain();
   FX_DWORD GetRefCount() const;
@@ -36,6 +38,9 @@ class IFWL_Target {
   FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const;
   FWL_ERR Initialize();
   FWL_ERR Finalize();
+
+  CFWL_TargetImp* GetImpl() const { return m_pImpl; }
+  void SetImpl(CFWL_TargetImp* pImpl) { m_pImpl = pImpl; }
 
  protected:
   virtual ~IFWL_Target();

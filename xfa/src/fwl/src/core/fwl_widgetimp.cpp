@@ -1010,7 +1010,7 @@ CFWL_WidgetImpDelegate::CFWL_WidgetImpDelegate() {}
 int32_t CFWL_WidgetImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   _FWL_RETURN_VALUE_IF_FAIL(pMessage->m_pDstTarget, 0);
   CFWL_WidgetImp* pWidget =
-      (CFWL_WidgetImp*)((IFWL_TargetData*)pMessage->m_pDstTarget)->GetData();
+      static_cast<CFWL_WidgetImp*>(pMessage->m_pDstTarget->GetImpl());
   FX_DWORD dwMsgCode = pMessage->GetClassID();
   switch (dwMsgCode) {
     case FWL_MSGHASH_Mouse: {
@@ -1138,16 +1138,16 @@ FWL_ERR IFWL_Custom::SetProxy(IFWL_Proxy* pProxy) {
   return ((CFWL_Custom*)m_pImpl)->SetProxy(pProxy);
 }
 void FWL_SetWidgetRect(IFWL_Widget* widget, const CFX_RectF& rect) {
-  ((CFWL_WidgetImp*)((IFWL_TargetData*)widget)->GetData())
-      ->m_pProperties->m_rtWidget = rect;
+  static_cast<CFWL_WidgetImp*>(widget->GetImpl())->m_pProperties->m_rtWidget =
+      rect;
 }
 void FWL_SetWidgetStates(IFWL_Widget* widget, FX_DWORD dwStates) {
-  ((CFWL_WidgetImp*)((IFWL_TargetData*)widget)->GetData())
-      ->m_pProperties->m_dwStates = dwStates;
+  static_cast<CFWL_WidgetImp*>(widget->GetImpl())->m_pProperties->m_dwStates =
+      dwStates;
 }
 void FWL_SetWidgetStyles(IFWL_Widget* widget, FX_DWORD dwStyles) {
-  ((CFWL_WidgetImp*)((IFWL_TargetData*)widget)->GetData())
-      ->m_pProperties->m_dwStyles = dwStyles;
+  static_cast<CFWL_WidgetImp*>(widget->GetImpl())->m_pProperties->m_dwStyles =
+      dwStyles;
 }
 FWL_ERR FWL_EnabelWidget(IFWL_Widget* widget, FX_BOOL bEnable) {
   widget->SetStates(FWL_WGTSTATE_Disabled, !bEnable);

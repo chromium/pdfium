@@ -233,10 +233,10 @@ FX_BOOL CFWL_NoteDriver::SetFocus(IFWL_Widget* pFocus, FX_BOOL bNotify) {
     IFWL_Widget* pWidget =
         FWL_GetWidgetMgr()->GetWidget(pFocus, FWL_WGTRELATION_SystemForm);
     CFWL_FormImp* pForm =
-        pWidget ? (CFWL_FormImp*)((IFWL_TargetData*)pWidget)->GetData() : NULL;
+        pWidget ? static_cast<CFWL_FormImp*>(pWidget->GetImpl()) : nullptr;
     if (pForm) {
       CFWL_WidgetImp* pNewFocus =
-          (CFWL_WidgetImp*)((IFWL_TargetData*)pFocus)->GetData();
+          static_cast<CFWL_WidgetImp*>(pFocus->GetImpl());
       pForm->SetSubFocus(pNewFocus);
     }
     CFWL_MsgSetFocus ms;
@@ -549,7 +549,7 @@ FX_BOOL CFWL_NoteDriver::DoSetFocus(CFWL_MsgSetFocus* pMsg,
   } else {
     IFWL_Widget* pWidget = pMsg->m_pDstTarget;
     CFWL_FormImp* pForm =
-        pWidget ? (CFWL_FormImp*)((IFWL_TargetData*)pWidget)->GetData() : NULL;
+        pWidget ? static_cast<CFWL_FormImp*>(pWidget->GetImpl()) : nullptr;
     if (pForm) {
       CFWL_WidgetImp* pSubFocus = pForm->GetSubFocus();
       if (pSubFocus && ((pSubFocus->GetStates() & FWL_WGTSTATE_Focused) == 0)) {
@@ -574,7 +574,7 @@ FX_BOOL CFWL_NoteDriver::DoKillFocus(CFWL_MsgKillFocus* pMsg,
   } else {
     IFWL_Widget* pWidget = pMsg->m_pDstTarget;
     CFWL_FormImp* pForm =
-        pWidget ? (CFWL_FormImp*)((IFWL_TargetData*)pWidget)->GetData() : NULL;
+        pWidget ? static_cast<CFWL_FormImp*>(pWidget->GetImpl()) : nullptr;
     if (pForm) {
       CFWL_WidgetImp* pSubFocus = pForm->GetSubFocus();
       if (pSubFocus && (pSubFocus->GetStates() & FWL_WGTSTATE_Focused)) {
@@ -977,7 +977,7 @@ FX_BOOL CFWL_ToolTipContainer::ProcessEnter(CFWL_EvtMouse* pEvt,
       m_pToolTipImp = new CFWL_ToolTipImp(prop);
       IFWL_ToolTip* pToolTip = IFWL_ToolTip::Create();
       m_pToolTipImp->SetInterface(pToolTip);
-      ((IFWL_TargetData*)pToolTip)->SetData(m_pToolTipImp);
+      pToolTip->SetImpl(m_pToolTipImp);
       m_pToolTipImp->Initialize();
       m_pToolTipImp->ModifyStylesEx(FWL_STYLEEXT_TTP_Multiline, 0);
       m_pToolTipImp->SetStates(FWL_WGTSTATE_Invisible, TRUE);

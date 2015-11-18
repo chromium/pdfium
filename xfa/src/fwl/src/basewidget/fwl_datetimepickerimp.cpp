@@ -186,8 +186,7 @@ int32_t CFWL_DateTimeEditImpDelegate::DisForm_OnProcessMessage(
           m_pOwner->m_pProperties->m_dwStates |= FWL_WGTSTATE_Focused;
         }
         CFWL_DateTimePickerImp* pDateTime =
-            (CFWL_DateTimePickerImp*)((IFWL_TargetData*)m_pOwner->m_pOuter)
-                ->GetData();
+            static_cast<CFWL_DateTimePickerImp*>(m_pOwner->m_pOuter->GetImpl());
         if (pDateTime->IsMonthCalendarShowed()) {
           CFX_RectF rtInvalidate;
           pDateTime->GetWidgetRect(rtInvalidate);
@@ -263,9 +262,10 @@ void CFWL_DateTimeCalendarImpDelegate::OnLButtonDownEx(CFWL_MsgMouse* pMsg) {
       m_pOwner->Repaint(&m_pOwner->m_rtClient);
     }
   } else {
-    IFWL_DateTimePicker* pIPicker = (IFWL_DateTimePicker*)m_pOwner->m_pOuter;
+    IFWL_DateTimePicker* pIPicker =
+        static_cast<IFWL_DateTimePicker*>(m_pOwner->m_pOuter);
     CFWL_DateTimePickerImp* pPicker =
-        (CFWL_DateTimePickerImp*)((IFWL_TargetData*)pIPicker)->GetData();
+        static_cast<CFWL_DateTimePickerImp*>(pIPicker->GetImpl());
     if (pPicker->IsMonthCalendarShowed()) {
       m_bFlag = 1;
     }
@@ -294,9 +294,10 @@ void CFWL_DateTimeCalendarImpDelegate::OnLButtonUpEx(CFWL_MsgMouse* pMsg) {
   }
   int32_t iCurSel = m_pOwner->GetDayAtPoint(pMsg->m_fx, pMsg->m_fy);
   CFX_RectF rt;
-  IFWL_DateTimePicker* pIPicker = (IFWL_DateTimePicker*)m_pOwner->m_pOuter;
+  IFWL_DateTimePicker* pIPicker =
+      static_cast<IFWL_DateTimePicker*>(m_pOwner->m_pOuter);
   CFWL_DateTimePickerImp* pPicker =
-      (CFWL_DateTimePickerImp*)((IFWL_TargetData*)pIPicker)->GetData();
+      static_cast<CFWL_DateTimePickerImp*>(pIPicker->GetImpl());
   pPicker->m_pForm->GetWidgetRect(rt);
   rt.Set(0, 0, rt.width, rt.height);
   if (iCurSel > 0) {
@@ -313,9 +314,10 @@ void CFWL_DateTimeCalendarImpDelegate::OnLButtonUpEx(CFWL_MsgMouse* pMsg) {
                                iCurSel);
     pPicker->ShowMonthCalendar(FALSE);
   } else if (m_bFlag && (!rt.Contains(pMsg->m_fx, pMsg->m_fy))) {
-    IFWL_DateTimePicker* pIPicker = (IFWL_DateTimePicker*)m_pOwner->m_pOuter;
+    IFWL_DateTimePicker* pIPicker =
+        static_cast<IFWL_DateTimePicker*>(m_pOwner->m_pOuter);
     CFWL_DateTimePickerImp* pPicker =
-        (CFWL_DateTimePickerImp*)((IFWL_TargetData*)pIPicker)->GetData();
+        static_cast<CFWL_DateTimePickerImp*>(pIPicker->GetImpl());
     pPicker->ShowMonthCalendar(FALSE);
   }
   m_bFlag = 0;
@@ -400,8 +402,7 @@ void CFWL_DateTimeCalendarImpDelegate::DisForm_OnLButtonUpEx(
     }
     m_pOwner->AddSelDay(iCurSel);
     CFWL_DateTimePickerImp* pDateTime =
-        (CFWL_DateTimePickerImp*)((IFWL_TargetData*)m_pOwner->m_pOuter)
-            ->GetData();
+        static_cast<CFWL_DateTimePickerImp*>(m_pOwner->m_pOuter->GetImpl());
     pDateTime->ProcessSelChanged(m_pOwner->m_iCurYear, m_pOwner->m_iCurMonth,
                                  iCurSel);
     pDateTime->ShowMonthCalendar(FALSE);

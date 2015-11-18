@@ -1439,7 +1439,7 @@ void CFWL_FormImpDelegate::OnClose(CFWL_MsgClose* pMsg) {
 }
 FWL_ERR FWL_Accelerator_SetForm(IFWL_Form* pFrom,
                                 CFX_MapAccelerators* pMapAccel) {
-  CFWL_FormImp* pImp = (CFWL_FormImp*)((IFWL_TargetData*)pFrom)->GetData();
+  CFWL_FormImp* pImp = static_cast<CFWL_FormImp*>(pFrom->GetImpl());
   _FWL_RETURN_VALUE_IF_FAIL(pImp, FWL_ERR_Indefinite);
   return FWL_ERR_Succeeded;
 }

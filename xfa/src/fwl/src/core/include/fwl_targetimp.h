@@ -27,10 +27,4 @@ class CFWL_TargetImp {
   FX_DWORD m_dwRefCount;
 };
 
-class IFWL_TargetData : public IFWL_Target {
- public:
-  CFWL_TargetImp* GetData() const { return m_pImpl; }
-  void SetData(CFWL_TargetImp* pImpl) { m_pImpl = pImpl; }
-};
-
 #endif  // FWL_TARGETIMP_H_
