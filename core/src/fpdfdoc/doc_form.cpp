@@ -506,34 +506,28 @@ uint8_t CPDF_InterForm::GetNativeCharSet() {
   return 0;
 #endif
 }
+
 CPDF_Font* CPDF_InterForm::AddNativeFont(uint8_t charSet,
-                                         const CPDF_Document* pDocument) {
-  if (pDocument == NULL) {
-    return NULL;
-  }
-  CPDF_Font* pFont = NULL;
+                                         CPDF_Document* pDocument) {
+  if (!pDocument)
+    return nullptr;
+
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
   LOGFONTA lf;
   CFX_ByteString csFontName = GetNativeFont(charSet, &lf);
   if (!csFontName.IsEmpty()) {
-    if (csFontName == "Helvetica") {
-      pFont = AddStandardFont(pDocument, csFontName);
-    } else {
-      pFont = ((CPDF_Document*)pDocument)->AddWindowsFont(&lf, FALSE, TRUE);
-    }
+    if (csFontName == "Helvetica")
+      return pFont = AddStandardFont(pDocument, csFontName);
+    return pDocument->AddWindowsFont(&lf, FALSE, TRUE);
   }
 #endif
-  return pFont;
+  return nullptr;
 }
-CPDF_Font* CPDF_InterForm::AddNativeFont(const CPDF_Document* pDocument) {
-  if (pDocument == NULL) {
-    return NULL;
-  }
-  CPDF_Font* pFont = NULL;
-  uint8_t charSet = GetNativeCharSet();
-  pFont = AddNativeFont(charSet, pDocument);
-  return pFont;
+
+CPDF_Font* CPDF_InterForm::AddNativeFont(CPDF_Document* pDocument) {
+  return pDocument ? AddNativeFont(GetNativeCharSet(), pDocument) : nullptr;
 }
+
 FX_BOOL CPDF_InterForm::ValidateFieldName(
     CFX_WideString& csNewFieldName,
     int iType,
