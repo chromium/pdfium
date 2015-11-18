@@ -679,3 +679,11 @@ TEST(fxcrt, ByteStringFormatPrecision) {
     EXPECT_EQ("Bad precision", str);
   }
 }
+
+TEST(fxcrt, EmptyByteString) {
+  CFX_ByteString empty_str;
+  EXPECT_TRUE(empty_str.IsEmpty());
+  EXPECT_EQ(0, empty_str.GetLength());
+  const FX_CHAR* cstr = empty_str.c_str();
+  EXPECT_EQ(0, FXSYS_strlen(cstr));
+}
