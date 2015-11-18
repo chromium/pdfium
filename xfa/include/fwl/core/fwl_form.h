@@ -81,6 +81,5 @@ class IFWL_Form : public IFWL_Panel {
 
  protected:
   IFWL_Form();
-  virtual ~IFWL_Form();
 };
 #endif

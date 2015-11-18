@@ -15,53 +15,43 @@ IFWL_CheckBox* IFWL_CheckBox::Create() {
   return new IFWL_CheckBox;
 }
 IFWL_CheckBox::IFWL_CheckBox() {
-  m_pImpl = NULL;
-}
-IFWL_CheckBox::~IFWL_CheckBox() {
-  if (m_pImpl) {
-    delete (CFWL_CheckBoxImp*)m_pImpl;
-    m_pImpl = NULL;
-  }
 }
 FWL_ERR IFWL_CheckBox::Initialize(IFWL_Widget* pOuter) {
-  m_pImpl = new CFWL_CheckBoxImp(pOuter);
-  ((CFWL_CheckBoxImp*)m_pImpl)->SetInterface(this);
-  return ((CFWL_CheckBoxImp*)m_pImpl)->Initialize();
+  CFWL_CheckBoxImp* pCheckBoxImpl = new CFWL_CheckBoxImp(pOuter);
+  SetImpl(pCheckBoxImpl);
+  pCheckBoxImpl->SetInterface(this);
+  return pCheckBoxImpl->Initialize();
 }
 FWL_ERR IFWL_CheckBox::Initialize(const CFWL_WidgetImpProperties& properties,
                                   IFWL_Widget* pOuter) {
-  m_pImpl = new CFWL_CheckBoxImp(properties, pOuter);
-  ((CFWL_CheckBoxImp*)m_pImpl)->SetInterface(this);
-  return ((CFWL_CheckBoxImp*)m_pImpl)->Initialize();
+  CFWL_CheckBoxImp* pCheckBoxImpl = new CFWL_CheckBoxImp(properties, pOuter);
+  SetImpl(pCheckBoxImpl);
+  pCheckBoxImpl->SetInterface(this);
+  return pCheckBoxImpl->Initialize();
 }
 int32_t IFWL_CheckBox::GetCheckState() {
-  return ((CFWL_CheckBoxImp*)m_pImpl)->GetCheckState();
+  return static_cast<CFWL_CheckBoxImp*>(GetImpl())->GetCheckState();
 }
 FWL_ERR IFWL_CheckBox::SetCheckState(int32_t iCheck) {
-  return ((CFWL_CheckBoxImp*)m_pImpl)->SetCheckState(iCheck);
+  return static_cast<CFWL_CheckBoxImp*>(GetImpl())->SetCheckState(iCheck);
 }
 IFWL_RadioButton* IFWL_RadioButton::Create() {
   return new IFWL_RadioButton;
 }
 IFWL_RadioButton::IFWL_RadioButton() {
-  m_pImpl = NULL;
-}
-IFWL_RadioButton::~IFWL_RadioButton() {
-  if (m_pImpl) {
-    delete (CFWL_CheckBoxImp*)m_pImpl;
-    m_pImpl = NULL;
-  }
 }
 FWL_ERR IFWL_RadioButton::Initialize(IFWL_Widget* pOuter) {
-  m_pImpl = new CFWL_CheckBoxImp(pOuter);
-  ((CFWL_CheckBoxImp*)m_pImpl)->SetInterface(this);
-  return ((CFWL_CheckBoxImp*)m_pImpl)->Initialize();
+  CFWL_CheckBoxImp* pCheckBoxImpl = new CFWL_CheckBoxImp(pOuter);
+  SetImpl(pCheckBoxImpl);
+  pCheckBoxImpl->SetInterface(this);
+  return pCheckBoxImpl->Initialize();
 }
 FWL_ERR IFWL_RadioButton::Initialize(const CFWL_WidgetImpProperties& properties,
                                      IFWL_Widget* pOuter) {
-  m_pImpl = new CFWL_CheckBoxImp(properties, pOuter);
-  ((CFWL_CheckBoxImp*)m_pImpl)->SetInterface(this);
-  return ((CFWL_CheckBoxImp*)m_pImpl)->Initialize();
+  CFWL_CheckBoxImp* pCheckBoxImpl = new CFWL_CheckBoxImp(properties, pOuter);
+  SetImpl(pCheckBoxImpl);
+  pCheckBoxImpl->SetInterface(this);
+  return pCheckBoxImpl->Initialize();
 }
 CFWL_CheckBoxImp::CFWL_CheckBoxImp(IFWL_Widget* pOuter)
     : CFWL_WidgetImp(pOuter),

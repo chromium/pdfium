@@ -15,39 +15,33 @@ IFWL_Content* IFWL_Content::Create() {
   return new IFWL_Content;
 }
 FWL_ERR IFWL_Content::Initialize() {
-  m_pImpl = new CFWL_ContentImp;
-  ((CFWL_ContentImp*)m_pImpl)->SetInterface(this);
-  return ((CFWL_ContentImp*)m_pImpl)->Initialize();
+  CFWL_ContentImp* pContentImpl = new CFWL_ContentImp;
+  SetImpl(pContentImpl);
+  pContentImpl->SetInterface(this);
+  return pContentImpl->Initialize();
 }
 FWL_ERR IFWL_Content::InsertWidget(IFWL_Widget* pChild, int32_t nIndex) {
-  return ((CFWL_ContentImp*)m_pImpl)->InsertWidget(pChild, nIndex);
+  return static_cast<CFWL_ContentImp*>(GetImpl())->InsertWidget(pChild, nIndex);
 }
 FWL_ERR IFWL_Content::RemoveWidget(IFWL_Widget* pWidget) {
-  return ((CFWL_ContentImp*)m_pImpl)->RemoveWidget(pWidget);
+  return static_cast<CFWL_ContentImp*>(GetImpl())->RemoveWidget(pWidget);
 }
 FWL_ERR IFWL_Content::RemoveAllWidgets() {
-  return ((CFWL_ContentImp*)m_pImpl)->RemoveAllWidgets();
+  return static_cast<CFWL_ContentImp*>(GetImpl())->RemoveAllWidgets();
 }
 FWL_ERR IFWL_Content::GetMinSize(FX_FLOAT& fWidth, FX_FLOAT& fHeight) {
-  return ((CFWL_ContentImp*)m_pImpl)->GetMinSize(fWidth, fHeight);
+  return static_cast<CFWL_ContentImp*>(GetImpl())->GetMinSize(fWidth, fHeight);
 }
 FWL_ERR IFWL_Content::SetMinSize(FX_FLOAT fWidth, FX_FLOAT fHeight) {
-  return ((CFWL_ContentImp*)m_pImpl)->SetMinSize(fWidth, fHeight);
+  return static_cast<CFWL_ContentImp*>(GetImpl())->SetMinSize(fWidth, fHeight);
 }
 FWL_ERR IFWL_Content::GetMaxSize(FX_FLOAT& fWidth, FX_FLOAT& fHeight) {
-  return ((CFWL_ContentImp*)m_pImpl)->GetMaxSize(fWidth, fHeight);
+  return static_cast<CFWL_ContentImp*>(GetImpl())->GetMaxSize(fWidth, fHeight);
 }
 FWL_ERR IFWL_Content::SetMaxSize(FX_FLOAT fWidth, FX_FLOAT fHeight) {
-  return ((CFWL_ContentImp*)m_pImpl)->SetMaxSize(fWidth, fHeight);
+  return static_cast<CFWL_ContentImp*>(GetImpl())->SetMaxSize(fWidth, fHeight);
 }
 IFWL_Content::IFWL_Content() {
-  m_pImpl = NULL;
-}
-IFWL_Content::~IFWL_Content() {
-  if (m_pImpl) {
-    delete (CFWL_ContentImp*)m_pImpl;
-    m_pImpl = NULL;
-  }
 }
 CFWL_ContentImp::CFWL_ContentImp() {
   m_fWidthMin = 0;

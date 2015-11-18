@@ -79,7 +79,6 @@ class IFWL_CheckBox : public IFWL_Widget {
 
  protected:
   IFWL_CheckBox();
-  virtual ~IFWL_CheckBox();
 };
 class IFWL_RadioButton : public IFWL_Widget {
  public:
@@ -92,6 +91,5 @@ class IFWL_RadioButton : public IFWL_Widget {
 
  protected:
   IFWL_RadioButton();
-  virtual ~IFWL_RadioButton();
 };
 #endif

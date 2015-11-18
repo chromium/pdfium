@@ -22,6 +22,5 @@ class IFWL_Content : public IFWL_Widget {
 
  protected:
   IFWL_Content();
-  virtual ~IFWL_Content();
 };
 #endif

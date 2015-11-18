@@ -58,6 +58,5 @@ class IFWL_Barcode : public IFWL_Edit {
 
  protected:
   IFWL_Barcode();
-  virtual ~IFWL_Barcode();
 };
 #endif

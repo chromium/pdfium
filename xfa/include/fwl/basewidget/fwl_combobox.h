@@ -137,6 +137,5 @@ class IFWL_ComboBox : public IFWL_Widget {
 
  protected:
   IFWL_ComboBox();
-  virtual ~IFWL_ComboBox();
 };
 #endif

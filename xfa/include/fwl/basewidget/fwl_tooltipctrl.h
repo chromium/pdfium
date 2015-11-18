@@ -41,6 +41,5 @@ class IFWL_ToolTip : public IFWL_Form {
 
  protected:
   IFWL_ToolTip();
-  virtual ~IFWL_ToolTip();
 };
 #endif

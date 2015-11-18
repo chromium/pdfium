@@ -22,117 +22,115 @@ IFWL_ComboBox* IFWL_ComboBox::Create() {
   return new IFWL_ComboBox;
 }
 IFWL_ComboBox::IFWL_ComboBox() {
-  m_pImpl = NULL;
-}
-IFWL_ComboBox::~IFWL_ComboBox() {
-  if (m_pImpl) {
-    delete (CFWL_ComboBoxImp*)m_pImpl;
-    m_pImpl = NULL;
-  }
 }
 FWL_ERR IFWL_ComboBox::Initialize(IFWL_Widget* pOuter) {
-  m_pImpl = new CFWL_ComboBoxImp(pOuter);
-  ((CFWL_ComboBoxImp*)m_pImpl)->SetInterface(this);
-  return ((CFWL_ComboBoxImp*)m_pImpl)->Initialize();
+  CFWL_ComboBoxImp* pComboBoxImpl = new CFWL_ComboBoxImp(pOuter);
+  SetImpl(pComboBoxImpl);
+  pComboBoxImpl->SetInterface(this);
+  return pComboBoxImpl->Initialize();
 }
 FWL_ERR IFWL_ComboBox::Initialize(const CFWL_WidgetImpProperties& properties,
                                   IFWL_Widget* pOuter) {
-  m_pImpl = new CFWL_ComboBoxImp(properties, pOuter);
-  ((CFWL_ComboBoxImp*)m_pImpl)->SetInterface(this);
-  return ((CFWL_ComboBoxImp*)m_pImpl)->Initialize();
+  CFWL_ComboBoxImp* pComboBoxImpl = new CFWL_ComboBoxImp(properties, pOuter);
+  SetImpl(pComboBoxImpl);
+  pComboBoxImpl->SetInterface(this);
+  return pComboBoxImpl->Initialize();
 }
 int32_t IFWL_ComboBox::GetCurSel() {
-  return ((CFWL_ComboBoxImp*)m_pImpl)->GetCurSel();
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())->GetCurSel();
 }
 FWL_ERR IFWL_ComboBox::SetCurSel(int32_t iSel) {
-  return ((CFWL_ComboBoxImp*)m_pImpl)->SetCurSel(iSel);
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())->SetCurSel(iSel);
 }
 FWL_ERR IFWL_ComboBox::SetEditText(const CFX_WideString& wsText) {
-  return ((CFWL_ComboBoxImp*)m_pImpl)->SetEditText(wsText);
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())->SetEditText(wsText);
 }
 int32_t IFWL_ComboBox::GetEditTextLength() const {
-  return ((CFWL_ComboBoxImp*)m_pImpl)->GetEditTextLength();
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())->GetEditTextLength();
 }
 FWL_ERR IFWL_ComboBox::GetEditText(CFX_WideString& wsText,
                                    int32_t nStart,
                                    int32_t nCount) const {
-  return ((CFWL_ComboBoxImp*)m_pImpl)->GetEditText(wsText, nStart, nCount);
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())
+      ->GetEditText(wsText, nStart, nCount);
 }
 FWL_ERR IFWL_ComboBox::SetEditSelRange(int32_t nStart, int32_t nCount) {
-  return ((CFWL_ComboBoxImp*)m_pImpl)->SetEditSelRange(nStart, nCount);
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())
+      ->SetEditSelRange(nStart, nCount);
 }
 int32_t IFWL_ComboBox::GetEditSelRange(int32_t nIndex, int32_t& nStart) {
-  return ((CFWL_ComboBoxImp*)m_pImpl)->GetEditSelRange(nIndex, nStart);
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())
+      ->GetEditSelRange(nIndex, nStart);
 }
 int32_t IFWL_ComboBox::GetEditLimit() {
-  return ((CFWL_ComboBoxImp*)m_pImpl)->GetEditLimit();
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())->GetEditLimit();
 }
 FWL_ERR IFWL_ComboBox::SetEditLimit(int32_t nLimit) {
-  return ((CFWL_ComboBoxImp*)m_pImpl)->SetEditLimit(nLimit);
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())->SetEditLimit(nLimit);
 }
 FWL_ERR IFWL_ComboBox::EditDoClipboard(int32_t iCmd) {
-  return ((CFWL_ComboBoxImp*)m_pImpl)->EditDoClipboard(iCmd);
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())->EditDoClipboard(iCmd);
 }
 FX_BOOL IFWL_ComboBox::EditRedo(const CFX_ByteStringC& bsRecord) {
-  return ((CFWL_ComboBoxImp*)m_pImpl)->EditRedo(bsRecord);
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())->EditRedo(bsRecord);
 }
 FX_BOOL IFWL_ComboBox::EditUndo(const CFX_ByteStringC& bsRecord) {
-  return ((CFWL_ComboBoxImp*)m_pImpl)->EditUndo(bsRecord);
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())->EditUndo(bsRecord);
 }
 IFWL_ListBox* IFWL_ComboBox::GetListBoxt() {
-  return ((CFWL_ComboBoxImp*)m_pImpl)->GetListBoxt();
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())->GetListBoxt();
 }
 FX_BOOL IFWL_ComboBox::AfterFocusShowDropList() {
-  return ((CFWL_ComboBoxImp*)m_pImpl)->AfterFocusShowDropList();
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())->AfterFocusShowDropList();
 }
 FX_ERR IFWL_ComboBox::OpenDropDownList(FX_BOOL bActivate) {
-  return ((CFWL_ComboBoxImp*)m_pImpl)->OpenDropDownList(bActivate);
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())->OpenDropDownList(bActivate);
 }
 FX_BOOL IFWL_ComboBox::EditCanUndo() {
-  return ((CFWL_ComboBoxImp*)m_pImpl)->EditCanUndo();
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())->EditCanUndo();
 }
 FX_BOOL IFWL_ComboBox::EditCanRedo() {
-  return ((CFWL_ComboBoxImp*)m_pImpl)->EditCanRedo();
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())->EditCanRedo();
 }
 FX_BOOL IFWL_ComboBox::EditUndo() {
-  return ((CFWL_ComboBoxImp*)m_pImpl)->EditUndo();
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())->EditUndo();
 }
 FX_BOOL IFWL_ComboBox::EditRedo() {
-  return ((CFWL_ComboBoxImp*)m_pImpl)->EditRedo();
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())->EditRedo();
 }
 FX_BOOL IFWL_ComboBox::EditCanCopy() {
-  return ((CFWL_ComboBoxImp*)m_pImpl)->EditCanCopy();
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())->EditCanCopy();
 }
 FX_BOOL IFWL_ComboBox::EditCanCut() {
-  return ((CFWL_ComboBoxImp*)m_pImpl)->EditCanCut();
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())->EditCanCut();
 }
 FX_BOOL IFWL_ComboBox::EditCanSelectAll() {
-  return ((CFWL_ComboBoxImp*)m_pImpl)->EditCanSelectAll();
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())->EditCanSelectAll();
 }
 FX_BOOL IFWL_ComboBox::EditCopy(CFX_WideString& wsCopy) {
-  return ((CFWL_ComboBoxImp*)m_pImpl)->EditCopy(wsCopy);
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())->EditCopy(wsCopy);
 }
 FX_BOOL IFWL_ComboBox::EditCut(CFX_WideString& wsCut) {
-  return ((CFWL_ComboBoxImp*)m_pImpl)->EditCut(wsCut);
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())->EditCut(wsCut);
 }
 FX_BOOL IFWL_ComboBox::EditPaste(const CFX_WideString& wsPaste) {
-  return ((CFWL_ComboBoxImp*)m_pImpl)->EditPaste(wsPaste);
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())->EditPaste(wsPaste);
 }
 FX_BOOL IFWL_ComboBox::EditSelectAll() {
-  return ((CFWL_ComboBoxImp*)m_pImpl)->EditSelectAll();
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())->EditSelectAll();
 }
 FX_BOOL IFWL_ComboBox::EditDelete() {
-  return ((CFWL_ComboBoxImp*)m_pImpl)->EditDelete();
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())->EditDelete();
 }
 FX_BOOL IFWL_ComboBox::EditDeSelect() {
-  return ((CFWL_ComboBoxImp*)m_pImpl)->EditDeSelect();
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())->EditDeSelect();
 }
 FWL_ERR IFWL_ComboBox::GetBBox(CFX_RectF& rect) {
-  return ((CFWL_ComboBoxImp*)m_pImpl)->GetBBox(rect);
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())->GetBBox(rect);
 }
 FWL_ERR IFWL_ComboBox::EditModifyStylesEx(FX_DWORD dwStylesExAdded,
                                           FX_DWORD dwStylesExRemoved) {
-  return ((CFWL_ComboBoxImp*)m_pImpl)
+  return static_cast<CFWL_ComboBoxImp*>(GetImpl())
       ->EditModifyStylesEx(dwStylesExAdded, dwStylesExRemoved);
 }
 CFWL_ComboEditImp::CFWL_ComboEditImp(IFWL_Widget* pOuter)

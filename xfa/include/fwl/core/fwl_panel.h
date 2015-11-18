@@ -23,7 +23,6 @@ class IFWL_Panel : public IFWL_Widget {
 
  protected:
   IFWL_Panel();
-  virtual ~IFWL_Panel();
 };
 class IFWL_CustomPanel : public IFWL_Widget {
  public:
@@ -37,6 +36,5 @@ class IFWL_CustomPanel : public IFWL_Widget {
 
  protected:
   IFWL_CustomPanel();
-  virtual ~IFWL_CustomPanel();
 };
 #endif

@@ -67,6 +67,5 @@ class IFWL_ScrollBar : public IFWL_Widget {
 
  protected:
   IFWL_ScrollBar();
-  virtual ~IFWL_ScrollBar();
 };
 #endif

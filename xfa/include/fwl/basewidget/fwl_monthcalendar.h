@@ -128,6 +128,5 @@ class IFWL_MonthCalendar : public IFWL_Widget {
 
  protected:
   IFWL_MonthCalendar();
-  virtual ~IFWL_MonthCalendar();
 };
 #endif

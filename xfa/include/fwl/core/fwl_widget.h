@@ -101,7 +101,6 @@ class IFWL_Custom : public IFWL_Widget {
 
  protected:
   IFWL_Custom();
-  virtual ~IFWL_Custom();
 };
 class IFWL_Proxy {
  public:

@@ -102,6 +102,5 @@ class IFWL_DateTimePicker : public IFWL_Widget {
 
  protected:
   IFWL_DateTimePicker();
-  virtual ~IFWL_DateTimePicker();
 };
 #endif

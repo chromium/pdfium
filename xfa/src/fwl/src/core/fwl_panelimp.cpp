@@ -13,30 +13,25 @@ IFWL_Panel* IFWL_Panel::Create() {
   return new IFWL_Panel;
 }
 FWL_ERR IFWL_Panel::Initialize(IFWL_Widget* pOuter) {
-  m_pImpl = new CFWL_PanelImp(pOuter);
-  ((CFWL_PanelImp*)m_pImpl)->SetInterface(this);
-  return ((CFWL_PanelImp*)m_pImpl)->Initialize();
+  CFWL_PanelImp* pPanelImpl = new CFWL_PanelImp(pOuter);
+  SetImpl(pPanelImpl);
+  pPanelImpl->SetInterface(this);
+  return pPanelImpl->Initialize();
 }
 FWL_ERR IFWL_Panel::Initialize(CFWL_WidgetImpProperties& properties,
                                IFWL_Widget* pOuter) {
-  m_pImpl = new CFWL_PanelImp(properties, pOuter);
-  ((CFWL_PanelImp*)m_pImpl)->SetInterface(this);
-  return ((CFWL_PanelImp*)m_pImpl)->Initialize();
+  CFWL_PanelImp* pPanelImpl = new CFWL_PanelImp(properties, pOuter);
+  SetImpl(pPanelImpl);
+  pPanelImpl->SetInterface(this);
+  return pPanelImpl->Initialize();
 }
 IFWL_Content* IFWL_Panel::GetContent() {
-  return ((CFWL_PanelImp*)m_pImpl)->GetContent();
+  return static_cast<CFWL_PanelImp*>(GetImpl())->GetContent();
 }
 FWL_ERR IFWL_Panel::SetContent(IFWL_Content* pContent) {
-  return ((CFWL_PanelImp*)m_pImpl)->SetContent(pContent);
+  return static_cast<CFWL_PanelImp*>(GetImpl())->SetContent(pContent);
 }
 IFWL_Panel::IFWL_Panel() {
-  m_pImpl = NULL;
-}
-IFWL_Panel::~IFWL_Panel() {
-  if (m_pImpl) {
-    delete (CFWL_PanelImp*)m_pImpl;
-    m_pImpl = NULL;
-  }
 }
 CFWL_PanelImp::CFWL_PanelImp(IFWL_Widget* pOuter)
     : CFWL_WidgetImp(pOuter), m_pContent(NULL) {}
@@ -142,31 +137,27 @@ IFWL_CustomPanel* IFWL_CustomPanel::Create() {
   return new IFWL_CustomPanel;
 }
 FWL_ERR IFWL_CustomPanel::Initialize(IFWL_Widget* pOuter) {
-  m_pImpl = new CFWL_CustomPanelImp(pOuter);
-  ((CFWL_CustomPanelImp*)m_pImpl)->SetInterface(this);
-  return ((CFWL_CustomPanelImp*)m_pImpl)->Initialize();
+  CFWL_CustomPanelImp* pCustomPanelImpl = new CFWL_CustomPanelImp(pOuter);
+  SetImpl(pCustomPanelImpl);
+  pCustomPanelImpl->SetInterface(this);
+  return pCustomPanelImpl->Initialize();
 }
 FWL_ERR IFWL_CustomPanel::Initialize(CFWL_WidgetImpProperties& properties,
                                      IFWL_Widget* pOuter) {
-  m_pImpl = new CFWL_CustomPanelImp(properties, pOuter);
-  ((CFWL_CustomPanelImp*)m_pImpl)->SetInterface(this);
-  return ((CFWL_CustomPanelImp*)m_pImpl)->Initialize();
+  CFWL_CustomPanelImp* pCustomPanelImpl =
+      new CFWL_CustomPanelImp(properties, pOuter);
+  SetImpl(pCustomPanelImpl);
+  pCustomPanelImpl->SetInterface(this);
+  return pCustomPanelImpl->Initialize();
 }
 IFWL_Content* IFWL_CustomPanel::GetContent() {
-  return ((CFWL_CustomPanelImp*)m_pImpl)->GetContent();
+  return static_cast<CFWL_CustomPanelImp*>(GetImpl())->GetContent();
 }
 FWL_ERR IFWL_CustomPanel::SetContent(IFWL_Content* pContent) {
-  return ((CFWL_CustomPanelImp*)m_pImpl)->SetContent(pContent);
+  return static_cast<CFWL_CustomPanelImp*>(GetImpl())->SetContent(pContent);
 }
 FWL_ERR IFWL_CustomPanel::SetProxy(IFWL_Proxy* pProxy) {
-  return ((CFWL_CustomPanelImp*)m_pImpl)->SetProxy(pProxy);
+  return static_cast<CFWL_CustomPanelImp*>(GetImpl())->SetProxy(pProxy);
 }
 IFWL_CustomPanel::IFWL_CustomPanel() {
-  m_pImpl = NULL;
-}
-IFWL_CustomPanel::~IFWL_CustomPanel() {
-  if (m_pImpl) {
-    delete (CFWL_CustomPanelImp*)m_pImpl;
-    m_pImpl = NULL;
-  }
 }

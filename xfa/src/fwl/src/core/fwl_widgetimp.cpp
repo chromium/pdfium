@@ -12,109 +12,114 @@
 #include "include/fwl_widgetmgrimp.h"
 #include "include/fwl_widgetimp.h"
 FWL_ERR IFWL_Widget::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
-  return ((CFWL_WidgetImp*)m_pImpl)->GetWidgetRect(rect, bAutoSize);
+  return static_cast<CFWL_WidgetImp*>(GetImpl())
+      ->GetWidgetRect(rect, bAutoSize);
 }
 FWL_ERR IFWL_Widget::GetGlobalRect(CFX_RectF& rect) {
-  return ((CFWL_WidgetImp*)m_pImpl)->GetGlobalRect(rect);
+  return static_cast<CFWL_WidgetImp*>(GetImpl())->GetGlobalRect(rect);
 }
 FWL_ERR IFWL_Widget::SetWidgetRect(const CFX_RectF& rect) {
-  return ((CFWL_WidgetImp*)m_pImpl)->SetWidgetRect(rect);
+  return static_cast<CFWL_WidgetImp*>(GetImpl())->SetWidgetRect(rect);
 }
 FWL_ERR IFWL_Widget::GetClientRect(CFX_RectF& rect) {
-  return ((CFWL_WidgetImp*)m_pImpl)->GetClientRect(rect);
+  return static_cast<CFWL_WidgetImp*>(GetImpl())->GetClientRect(rect);
 }
 IFWL_Widget* IFWL_Widget::GetParent() {
-  return ((CFWL_WidgetImp*)m_pImpl)->GetParent();
+  return static_cast<CFWL_WidgetImp*>(GetImpl())->GetParent();
 }
 FWL_ERR IFWL_Widget::SetParent(IFWL_Widget* pParent) {
-  return ((CFWL_WidgetImp*)m_pImpl)->SetParent(pParent);
+  return static_cast<CFWL_WidgetImp*>(GetImpl())->SetParent(pParent);
 }
 IFWL_Widget* IFWL_Widget::GetOwner() {
-  return ((CFWL_WidgetImp*)m_pImpl)->GetOwner();
+  return static_cast<CFWL_WidgetImp*>(GetImpl())->GetOwner();
 }
 FWL_ERR IFWL_Widget::SetOwner(IFWL_Widget* pOwner) {
-  return ((CFWL_WidgetImp*)m_pImpl)->SetOwner(pOwner);
+  return static_cast<CFWL_WidgetImp*>(GetImpl())->SetOwner(pOwner);
 }
 IFWL_Widget* IFWL_Widget::GetOuter() {
-  return ((CFWL_WidgetImp*)m_pImpl)->GetOuter();
+  return static_cast<CFWL_WidgetImp*>(GetImpl())->GetOuter();
 }
 FX_DWORD IFWL_Widget::GetStyles() {
-  return ((CFWL_WidgetImp*)m_pImpl)->GetStyles();
+  return static_cast<CFWL_WidgetImp*>(GetImpl())->GetStyles();
 }
 FWL_ERR IFWL_Widget::ModifyStyles(FX_DWORD dwStylesAdded,
                                   FX_DWORD dwStylesRemoved) {
-  return ((CFWL_WidgetImp*)m_pImpl)
+  return static_cast<CFWL_WidgetImp*>(GetImpl())
       ->ModifyStyles(dwStylesAdded, dwStylesRemoved);
 }
 FX_DWORD IFWL_Widget::GetStylesEx() {
-  return ((CFWL_WidgetImp*)m_pImpl)->GetStylesEx();
+  return static_cast<CFWL_WidgetImp*>(GetImpl())->GetStylesEx();
 }
 FWL_ERR IFWL_Widget::ModifyStylesEx(FX_DWORD dwStylesExAdded,
                                     FX_DWORD dwStylesExRemoved) {
-  return ((CFWL_WidgetImp*)m_pImpl)
+  return static_cast<CFWL_WidgetImp*>(GetImpl())
       ->ModifyStylesEx(dwStylesExAdded, dwStylesExRemoved);
 }
 FX_DWORD IFWL_Widget::GetStates() {
-  return ((CFWL_WidgetImp*)m_pImpl)->GetStates();
+  return static_cast<CFWL_WidgetImp*>(GetImpl())->GetStates();
 }
 FWL_ERR IFWL_Widget::SetStates(FX_DWORD dwStates, FX_BOOL bSet) {
-  return ((CFWL_WidgetImp*)m_pImpl)->SetStates(dwStates, bSet);
+  return static_cast<CFWL_WidgetImp*>(GetImpl())->SetStates(dwStates, bSet);
 }
 FWL_ERR IFWL_Widget::SetPrivateData(void* module_id,
                                     void* pData,
                                     PD_CALLBACK_FREEDATA callback) {
-  return ((CFWL_WidgetImp*)m_pImpl)->SetPrivateData(module_id, pData, callback);
+  return static_cast<CFWL_WidgetImp*>(GetImpl())
+      ->SetPrivateData(module_id, pData, callback);
 }
 void* IFWL_Widget::GetPrivateData(void* module_id) {
-  return ((CFWL_WidgetImp*)m_pImpl)->GetPrivateData(module_id);
+  return static_cast<CFWL_WidgetImp*>(GetImpl())->GetPrivateData(module_id);
 }
 FWL_ERR IFWL_Widget::Update() {
-  return ((CFWL_WidgetImp*)m_pImpl)->Update();
+  return static_cast<CFWL_WidgetImp*>(GetImpl())->Update();
 }
 FWL_ERR IFWL_Widget::LockUpdate() {
-  return ((CFWL_WidgetImp*)m_pImpl)->LockUpdate();
+  return static_cast<CFWL_WidgetImp*>(GetImpl())->LockUpdate();
 }
 FWL_ERR IFWL_Widget::UnlockUpdate() {
-  return ((CFWL_WidgetImp*)m_pImpl)->UnlockUpdate();
+  return static_cast<CFWL_WidgetImp*>(GetImpl())->UnlockUpdate();
 }
 FX_DWORD IFWL_Widget::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
-  return ((CFWL_WidgetImp*)m_pImpl)->HitTest(fx, fy);
+  return static_cast<CFWL_WidgetImp*>(GetImpl())->HitTest(fx, fy);
 }
 FWL_ERR IFWL_Widget::TransformTo(IFWL_Widget* pWidget,
                                  FX_FLOAT& fx,
                                  FX_FLOAT& fy) {
-  return ((CFWL_WidgetImp*)m_pImpl)->TransformTo(pWidget, fx, fy);
+  return static_cast<CFWL_WidgetImp*>(GetImpl())->TransformTo(pWidget, fx, fy);
 }
 FWL_ERR IFWL_Widget::TransformTo(IFWL_Widget* pWidget, CFX_RectF& rt) {
-  return ((CFWL_WidgetImp*)m_pImpl)->TransformTo(pWidget, rt);
+  return static_cast<CFWL_WidgetImp*>(GetImpl())->TransformTo(pWidget, rt);
 }
 FWL_ERR IFWL_Widget::GetMatrix(CFX_Matrix& matrix, FX_BOOL bGlobal) {
-  return ((CFWL_WidgetImp*)m_pImpl)->GetMatrix(matrix, bGlobal);
+  return static_cast<CFWL_WidgetImp*>(GetImpl())->GetMatrix(matrix, bGlobal);
 }
 FWL_ERR IFWL_Widget::SetMatrix(const CFX_Matrix& matrix) {
-  return ((CFWL_WidgetImp*)m_pImpl)->SetMatrix(matrix);
+  return static_cast<CFWL_WidgetImp*>(GetImpl())->SetMatrix(matrix);
 }
 FWL_ERR IFWL_Widget::DrawWidget(CFX_Graphics* pGraphics,
                                 const CFX_Matrix* pMatrix) {
-  return ((CFWL_WidgetImp*)m_pImpl)->DrawWidget(pGraphics, pMatrix);
+  return static_cast<CFWL_WidgetImp*>(GetImpl())
+      ->DrawWidget(pGraphics, pMatrix);
 }
 IFWL_ThemeProvider* IFWL_Widget::GetThemeProvider() {
-  return ((CFWL_WidgetImp*)m_pImpl)->GetThemeProvider();
+  return static_cast<CFWL_WidgetImp*>(GetImpl())->GetThemeProvider();
 }
 FWL_ERR IFWL_Widget::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
-  return ((CFWL_WidgetImp*)m_pImpl)->SetThemeProvider(pThemeProvider);
+  return static_cast<CFWL_WidgetImp*>(GetImpl())
+      ->SetThemeProvider(pThemeProvider);
 }
 FWL_ERR IFWL_Widget::SetDataProvider(IFWL_DataProvider* pDataProvider) {
-  return ((CFWL_WidgetImp*)m_pImpl)->SetDataProvider(pDataProvider);
+  return static_cast<CFWL_WidgetImp*>(GetImpl())
+      ->SetDataProvider(pDataProvider);
 }
 IFWL_WidgetDelegate* IFWL_Widget::SetDelegate(IFWL_WidgetDelegate* pDelegate) {
-  return ((CFWL_WidgetImp*)m_pImpl)->SetDelegate(pDelegate);
+  return static_cast<CFWL_WidgetImp*>(GetImpl())->SetDelegate(pDelegate);
 }
 IFWL_NoteThread* IFWL_Widget::GetOwnerThread() const {
-  return ((CFWL_WidgetImp*)m_pImpl)->GetOwnerThread();
+  return static_cast<CFWL_WidgetImp*>(GetImpl())->GetOwnerThread();
 }
 CFX_SizeF IFWL_Widget::GetOffsetFromParent(IFWL_Widget* pParent) {
-  return ((CFWL_WidgetImp*)m_pImpl)->GetOffsetFromParent(pParent);
+  return static_cast<CFWL_WidgetImp*>(GetImpl())->GetOffsetFromParent(pParent);
 }
 FWL_ERR CFWL_WidgetImp::Initialize() {
   IFWL_App* pApp = FWL_GetApp();
@@ -1115,27 +1120,22 @@ IFWL_Custom* IFWL_Custom::Create() {
   return new IFWL_Custom;
 }
 IFWL_Custom::IFWL_Custom() {
-  m_pImpl = NULL;
-}
-IFWL_Custom::~IFWL_Custom() {
-  if (m_pImpl) {
-    delete (CFWL_Custom*)m_pImpl;
-    m_pImpl = NULL;
-  }
 }
 FWL_ERR IFWL_Custom::Initialize(IFWL_Widget* pOuter) {
-  m_pImpl = new CFWL_Custom(pOuter);
-  ((CFWL_Custom*)m_pImpl)->SetInterface(this);
-  return ((CFWL_Custom*)m_pImpl)->Initialize();
+  CFWL_Custom* pCustomImpl = new CFWL_Custom(pOuter);
+  SetImpl(pCustomImpl);
+  pCustomImpl->SetInterface(this);
+  return pCustomImpl->Initialize();
 }
 FWL_ERR IFWL_Custom::Initialize(const CFWL_WidgetImpProperties& properties,
                                 IFWL_Widget* pOuter) {
-  m_pImpl = new CFWL_Custom(properties, pOuter);
-  ((CFWL_Custom*)m_pImpl)->SetInterface(this);
-  return ((CFWL_Custom*)m_pImpl)->Initialize();
+  CFWL_Custom* pCustomImpl = new CFWL_Custom(properties, pOuter);
+  SetImpl(pCustomImpl);
+  pCustomImpl->SetInterface(this);
+  return pCustomImpl->Initialize();
 }
 FWL_ERR IFWL_Custom::SetProxy(IFWL_Proxy* pProxy) {
-  return ((CFWL_Custom*)m_pImpl)->SetProxy(pProxy);
+  return static_cast<CFWL_Custom*>(GetImpl())->SetProxy(pProxy);
 }
 void FWL_SetWidgetRect(IFWL_Widget* widget, const CFX_RectF& rect) {
   static_cast<CFWL_WidgetImp*>(widget->GetImpl())->m_pProperties->m_rtWidget =

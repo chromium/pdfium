@@ -44,6 +44,8 @@ class IFWL_Target {
 
  protected:
   virtual ~IFWL_Target();
+
+ private:
   CFWL_TargetImp* m_pImpl;
 };
 

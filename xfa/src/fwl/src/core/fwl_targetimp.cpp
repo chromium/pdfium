@@ -7,35 +7,37 @@
 #include "../../../foxitlib.h"
 #include "include/fwl_targetimp.h"
 FX_DWORD IFWL_Target::Release() {
-  FX_DWORD dwRef = ((CFWL_TargetImp*)m_pImpl)->Release();
+  FX_DWORD dwRef = m_pImpl->Release();
   if (!dwRef) {
-    m_pImpl = NULL;
+    m_pImpl = nullptr;
     delete this;
   }
   return dwRef;
 }
 IFWL_Target* IFWL_Target::Retain() {
-  return ((CFWL_TargetImp*)m_pImpl)->Retain();
+  return m_pImpl->Retain();
 }
 FX_DWORD IFWL_Target::GetRefCount() const {
-  return ((CFWL_TargetImp*)m_pImpl)->GetRefCount();
+  return m_pImpl->GetRefCount();
 }
 FWL_ERR IFWL_Target::GetClassName(CFX_WideString& wsClass) const {
-  return ((CFWL_TargetImp*)m_pImpl)->GetClassName(wsClass);
+  return m_pImpl->GetClassName(wsClass);
 }
 FX_DWORD IFWL_Target::GetClassID() const {
-  return ((CFWL_TargetImp*)m_pImpl)->GetClassID();
+  return m_pImpl->GetClassID();
 }
 FX_BOOL IFWL_Target::IsInstance(const CFX_WideStringC& wsClass) const {
-  return ((CFWL_TargetImp*)m_pImpl)->IsInstance(wsClass);
+  return m_pImpl->IsInstance(wsClass);
 }
 FWL_ERR IFWL_Target::Initialize() {
-  return ((CFWL_TargetImp*)m_pImpl)->Initialize();
+  return m_pImpl->Initialize();
 }
 FWL_ERR IFWL_Target::Finalize() {
-  return ((CFWL_TargetImp*)m_pImpl)->Finalize();
+  return m_pImpl->Finalize();
 }
-IFWL_Target::~IFWL_Target() {}
+IFWL_Target::~IFWL_Target() {
+  delete m_pImpl;
+}
 CFWL_TargetImp::CFWL_TargetImp() : m_dwRefCount(1) {
 }
 CFWL_TargetImp::~CFWL_TargetImp() {

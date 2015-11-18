@@ -18,146 +18,145 @@ IFWL_Edit* IFWL_Edit::Create() {
   return new IFWL_Edit;
 }
 IFWL_Edit::IFWL_Edit() {
-  m_pImpl = NULL;
-}
-IFWL_Edit::~IFWL_Edit() {
-  if (m_pImpl) {
-    delete (CFWL_EditImp*)m_pImpl;
-    m_pImpl = NULL;
-  }
 }
 FWL_ERR IFWL_Edit::Initialize(IFWL_Widget* pOuter) {
-  m_pImpl = new CFWL_EditImp(pOuter);
-  ((CFWL_EditImp*)m_pImpl)->SetInterface(this);
-  return ((CFWL_EditImp*)m_pImpl)->Initialize();
+  CFWL_EditImp* pEditImpl = new CFWL_EditImp(pOuter);
+  SetImpl(pEditImpl);
+  pEditImpl->SetInterface(this);
+  return pEditImpl->Initialize();
 }
 FWL_ERR IFWL_Edit::Initialize(const CFWL_WidgetImpProperties& properties,
                               IFWL_Widget* pOuter) {
-  m_pImpl = new CFWL_EditImp(properties, pOuter);
-  ((CFWL_EditImp*)m_pImpl)->SetInterface(this);
-  return ((CFWL_EditImp*)m_pImpl)->Initialize();
+  CFWL_EditImp* pEditImpl = new CFWL_EditImp(properties, pOuter);
+  SetImpl(pEditImpl);
+  pEditImpl->SetInterface(this);
+  return pEditImpl->Initialize();
 }
 FWL_ERR IFWL_Edit::SetText(const CFX_WideString& wsText) {
-  return ((CFWL_EditImp*)m_pImpl)->SetText(wsText);
+  return static_cast<CFWL_EditImp*>(GetImpl())->SetText(wsText);
 }
 int32_t IFWL_Edit::GetTextLength() const {
-  return ((CFWL_EditImp*)m_pImpl)->GetTextLength();
+  return static_cast<CFWL_EditImp*>(GetImpl())->GetTextLength();
 }
 FWL_ERR IFWL_Edit::GetText(CFX_WideString& wsText,
                            int32_t nStart,
                            int32_t nCount) const {
-  return ((CFWL_EditImp*)m_pImpl)->GetText(wsText, nStart, nCount);
+  return static_cast<CFWL_EditImp*>(GetImpl())->GetText(wsText, nStart, nCount);
 }
 FWL_ERR IFWL_Edit::ClearText() {
-  return ((CFWL_EditImp*)m_pImpl)->ClearText();
+  return static_cast<CFWL_EditImp*>(GetImpl())->ClearText();
 }
 int32_t IFWL_Edit::GetCaretPos() const {
-  return ((CFWL_EditImp*)m_pImpl)->GetCaretPos();
+  return static_cast<CFWL_EditImp*>(GetImpl())->GetCaretPos();
 }
 int32_t IFWL_Edit::SetCaretPos(int32_t nIndex, FX_BOOL bBefore) {
-  return ((CFWL_EditImp*)m_pImpl)->SetCaretPos(nIndex, bBefore);
+  return static_cast<CFWL_EditImp*>(GetImpl())->SetCaretPos(nIndex, bBefore);
 }
 FWL_ERR IFWL_Edit::AddSelRange(int32_t nStart, int32_t nCount) {
-  return ((CFWL_EditImp*)m_pImpl)->AddSelRange(nStart, nCount);
+  return static_cast<CFWL_EditImp*>(GetImpl())->AddSelRange(nStart, nCount);
 }
 int32_t IFWL_Edit::CountSelRanges() {
-  return ((CFWL_EditImp*)m_pImpl)->CountSelRanges();
+  return static_cast<CFWL_EditImp*>(GetImpl())->CountSelRanges();
 }
 int32_t IFWL_Edit::GetSelRange(int32_t nIndex, int32_t& nStart) {
-  return ((CFWL_EditImp*)m_pImpl)->GetSelRange(nIndex, nStart);
+  return static_cast<CFWL_EditImp*>(GetImpl())->GetSelRange(nIndex, nStart);
 }
 FWL_ERR IFWL_Edit::ClearSelections() {
-  return ((CFWL_EditImp*)m_pImpl)->ClearSelections();
+  return static_cast<CFWL_EditImp*>(GetImpl())->ClearSelections();
 }
 int32_t IFWL_Edit::GetLimit() {
-  return ((CFWL_EditImp*)m_pImpl)->GetLimit();
+  return static_cast<CFWL_EditImp*>(GetImpl())->GetLimit();
 }
 FWL_ERR IFWL_Edit::SetLimit(int32_t nLimit) {
-  return ((CFWL_EditImp*)m_pImpl)->SetLimit(nLimit);
+  return static_cast<CFWL_EditImp*>(GetImpl())->SetLimit(nLimit);
 }
 FWL_ERR IFWL_Edit::SetAliasChar(FX_WCHAR wAlias) {
-  return ((CFWL_EditImp*)m_pImpl)->SetAliasChar(wAlias);
+  return static_cast<CFWL_EditImp*>(GetImpl())->SetAliasChar(wAlias);
 }
 FWL_ERR IFWL_Edit::SetFormatString(const CFX_WideString& wsFormat) {
-  return ((CFWL_EditImp*)m_pImpl)->SetFormatString(wsFormat);
+  return static_cast<CFWL_EditImp*>(GetImpl())->SetFormatString(wsFormat);
 }
 FWL_ERR IFWL_Edit::Insert(int32_t nStart,
                           const FX_WCHAR* lpText,
                           int32_t nLen) {
-  return ((CFWL_EditImp*)m_pImpl)->Insert(nStart, lpText, nLen);
+  return static_cast<CFWL_EditImp*>(GetImpl())->Insert(nStart, lpText, nLen);
 }
 FWL_ERR IFWL_Edit::DeleteSelections() {
-  return ((CFWL_EditImp*)m_pImpl)->DeleteSelections();
+  return static_cast<CFWL_EditImp*>(GetImpl())->DeleteSelections();
 }
 FWL_ERR IFWL_Edit::DeleteRange(int32_t nStart, int32_t nCount) {
-  return ((CFWL_EditImp*)m_pImpl)->DeleteRange(nStart, nCount);
+  return static_cast<CFWL_EditImp*>(GetImpl())->DeleteRange(nStart, nCount);
 }
 FWL_ERR IFWL_Edit::ReplaceSelections(const CFX_WideStringC& wsReplace) {
-  return ((CFWL_EditImp*)m_pImpl)->ReplaceSelections(wsReplace);
+  return static_cast<CFWL_EditImp*>(GetImpl())->ReplaceSelections(wsReplace);
 }
 FWL_ERR IFWL_Edit::Replace(int32_t nStart,
                            int32_t nLen,
                            const CFX_WideStringC& wsReplace) {
-  return ((CFWL_EditImp*)m_pImpl)->Replace(nStart, nLen, wsReplace);
+  return static_cast<CFWL_EditImp*>(GetImpl())
+      ->Replace(nStart, nLen, wsReplace);
 }
 FWL_ERR IFWL_Edit::DoClipboard(int32_t iCmd) {
-  return ((CFWL_EditImp*)m_pImpl)->DoClipboard(iCmd);
+  return static_cast<CFWL_EditImp*>(GetImpl())->DoClipboard(iCmd);
 }
 FX_BOOL IFWL_Edit::Copy(CFX_WideString& wsCopy) {
-  return ((CFWL_EditImp*)m_pImpl)->Copy(wsCopy);
+  return static_cast<CFWL_EditImp*>(GetImpl())->Copy(wsCopy);
 }
 FX_BOOL IFWL_Edit::Cut(CFX_WideString& wsCut) {
-  return ((CFWL_EditImp*)m_pImpl)->Cut(wsCut);
+  return static_cast<CFWL_EditImp*>(GetImpl())->Cut(wsCut);
 }
 FX_BOOL IFWL_Edit::Paste(const CFX_WideString& wsPaste) {
-  return ((CFWL_EditImp*)m_pImpl)->Paste(wsPaste);
+  return static_cast<CFWL_EditImp*>(GetImpl())->Paste(wsPaste);
 }
 FX_BOOL IFWL_Edit::Delete() {
-  return ((CFWL_EditImp*)m_pImpl)->Delete();
+  return static_cast<CFWL_EditImp*>(GetImpl())->Delete();
 }
 FX_BOOL IFWL_Edit::Redo(const CFX_ByteStringC& bsRecord) {
-  return ((CFWL_EditImp*)m_pImpl)->Redo(bsRecord);
+  return static_cast<CFWL_EditImp*>(GetImpl())->Redo(bsRecord);
 }
 FX_BOOL IFWL_Edit::Undo(const CFX_ByteStringC& bsRecord) {
-  return ((CFWL_EditImp*)m_pImpl)->Undo(bsRecord);
+  return static_cast<CFWL_EditImp*>(GetImpl())->Undo(bsRecord);
 }
 FX_BOOL IFWL_Edit::Undo() {
-  return ((CFWL_EditImp*)m_pImpl)->Undo();
+  return static_cast<CFWL_EditImp*>(GetImpl())->Undo();
 }
 FX_BOOL IFWL_Edit::Redo() {
-  return ((CFWL_EditImp*)m_pImpl)->Redo();
+  return static_cast<CFWL_EditImp*>(GetImpl())->Redo();
 }
 FX_BOOL IFWL_Edit::CanUndo() {
-  return ((CFWL_EditImp*)m_pImpl)->CanUndo();
+  return static_cast<CFWL_EditImp*>(GetImpl())->CanUndo();
 }
 FX_BOOL IFWL_Edit::CanRedo() {
-  return ((CFWL_EditImp*)m_pImpl)->CanRedo();
+  return static_cast<CFWL_EditImp*>(GetImpl())->CanRedo();
 }
 FWL_ERR IFWL_Edit::SetTabWidth(FX_FLOAT fTabWidth, FX_BOOL bEquidistant) {
-  return ((CFWL_EditImp*)m_pImpl)->SetTabWidth(fTabWidth, bEquidistant);
+  return static_cast<CFWL_EditImp*>(GetImpl())
+      ->SetTabWidth(fTabWidth, bEquidistant);
 }
 FWL_ERR IFWL_Edit::SetOuter(IFWL_Widget* pOuter) {
-  return ((CFWL_EditImp*)m_pImpl)->SetOuter(pOuter);
+  return static_cast<CFWL_EditImp*>(GetImpl())->SetOuter(pOuter);
 }
 FWL_ERR IFWL_Edit::SetNumberRange(int32_t iMin, int32_t iMax) {
-  return ((CFWL_EditImp*)m_pImpl)->SetNumberRange(iMin, iMax);
+  return static_cast<CFWL_EditImp*>(GetImpl())->SetNumberRange(iMin, iMax);
 }
 FWL_ERR IFWL_Edit::SetBackColor(FX_DWORD dwColor) {
-  return ((CFWL_EditImp*)m_pImpl)->SetBackgroundColor(dwColor);
+  return static_cast<CFWL_EditImp*>(GetImpl())->SetBackgroundColor(dwColor);
 }
 FWL_ERR IFWL_Edit::SetFont(const CFX_WideString& wsFont, FX_FLOAT fSize) {
-  return ((CFWL_EditImp*)m_pImpl)->SetFont(wsFont, fSize);
+  return static_cast<CFWL_EditImp*>(GetImpl())->SetFont(wsFont, fSize);
 }
 void IFWL_Edit::SetScrollOffset(FX_FLOAT fScrollOffset) {
-  return ((CFWL_EditImp*)m_pImpl)->SetScrollOffset(fScrollOffset);
+  return static_cast<CFWL_EditImp*>(GetImpl())->SetScrollOffset(fScrollOffset);
 }
 FX_BOOL IFWL_Edit::GetSuggestWords(CFX_PointF pointf,
                                    CFX_ByteStringArray& sSuggest) {
-  return ((CFWL_EditImp*)m_pImpl)->GetSuggestWords(pointf, sSuggest);
+  return static_cast<CFWL_EditImp*>(GetImpl())
+      ->GetSuggestWords(pointf, sSuggest);
 }
 FX_BOOL IFWL_Edit::ReplaceSpellCheckWord(CFX_PointF pointf,
                                          const CFX_ByteStringC& bsReplace) {
-  return ((CFWL_EditImp*)m_pImpl)->ReplaceSpellCheckWord(pointf, bsReplace);
+  return static_cast<CFWL_EditImp*>(GetImpl())
+      ->ReplaceSpellCheckWord(pointf, bsReplace);
 }
 #define FWL_EDIT_Margin 3
 CFWL_EditImp::CFWL_EditImp(IFWL_Widget* pOuter)

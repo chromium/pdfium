@@ -123,6 +123,5 @@ class IFWL_ListBox : public IFWL_Widget {
 
  protected:
   IFWL_ListBox();
-  virtual ~IFWL_ListBox();
 };
 #endif

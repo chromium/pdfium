@@ -50,6 +50,5 @@ class IFWL_PictureBox : public IFWL_Widget {
 
  protected:
   IFWL_PictureBox();
-  virtual ~IFWL_PictureBox();
 };
 #endif

@@ -52,6 +52,5 @@ class IFWL_PushButton : public IFWL_Widget {
 
  protected:
   IFWL_PushButton();
-  virtual ~IFWL_PushButton();
 };
 #endif

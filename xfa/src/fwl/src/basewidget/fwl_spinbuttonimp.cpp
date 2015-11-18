@@ -16,30 +16,26 @@ IFWL_SpinButton* IFWL_SpinButton::Create() {
   return new IFWL_SpinButton;
 }
 IFWL_SpinButton::IFWL_SpinButton() {
-  m_pImpl = NULL;
-}
-IFWL_SpinButton::~IFWL_SpinButton() {
-  if (m_pImpl) {
-    delete (CFWL_SpinButtonImp*)m_pImpl;
-    m_pImpl = NULL;
-  }
 }
 FWL_ERR IFWL_SpinButton::Initialize(IFWL_Widget* pOuter) {
-  m_pImpl = new CFWL_SpinButtonImp;
-  ((CFWL_SpinButtonImp*)m_pImpl)->SetInterface(this);
-  return ((CFWL_SpinButtonImp*)m_pImpl)->Initialize();
+  CFWL_SpinButtonImp* pSpinButtonImpl = new CFWL_SpinButtonImp;
+  SetImpl(pSpinButtonImpl);
+  pSpinButtonImpl->SetInterface(this);
+  return pSpinButtonImpl->Initialize();
 }
 FWL_ERR IFWL_SpinButton::Initialize(const CFWL_WidgetImpProperties& properties,
                                     IFWL_Widget* pOuter) {
-  m_pImpl = new CFWL_SpinButtonImp(properties);
-  ((CFWL_SpinButtonImp*)m_pImpl)->SetInterface(this);
-  return ((CFWL_SpinButtonImp*)m_pImpl)->Initialize();
+  CFWL_SpinButtonImp* pSpinButtonImpl = new CFWL_SpinButtonImp(properties);
+  SetImpl(pSpinButtonImpl);
+  pSpinButtonImpl->SetInterface(this);
+  return pSpinButtonImpl->Initialize();
 }
 FWL_ERR IFWL_SpinButton::EnableButton(FX_BOOL bEnable, FX_BOOL bUp) {
-  return ((CFWL_SpinButtonImp*)m_pImpl)->EnableButton(bEnable, bUp);
+  return static_cast<CFWL_SpinButtonImp*>(GetImpl())
+      ->EnableButton(bEnable, bUp);
 }
 FX_BOOL IFWL_SpinButton::IsButtonEnable(FX_BOOL bUp) {
-  return ((CFWL_SpinButtonImp*)m_pImpl)->IsButtonEnable(bUp);
+  return static_cast<CFWL_SpinButtonImp*>(GetImpl())->IsButtonEnable(bUp);
 }
 CFWL_SpinButtonImp::CFWL_SpinButtonImp(IFWL_Widget* pOuter)
     : CFWL_WidgetImp(pOuter),

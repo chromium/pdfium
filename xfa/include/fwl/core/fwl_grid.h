@@ -82,6 +82,5 @@ class IFWL_Grid : public IFWL_Content {
 
  protected:
   IFWL_Grid();
-  virtual ~IFWL_Grid();
 };
 #endif

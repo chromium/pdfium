@@ -15,33 +15,28 @@ IFWL_ToolTip* IFWL_ToolTip::Create() {
   return new IFWL_ToolTip;
 }
 FWL_ERR IFWL_ToolTip::Initialize(IFWL_Widget* pOuter) {
-  m_pImpl = new CFWL_ToolTipImp(pOuter);
-  ((CFWL_ToolTipImp*)m_pImpl)->SetInterface(this);
-  return ((CFWL_ToolTipImp*)m_pImpl)->Initialize();
+  CFWL_ToolTipImp* pToolTipImpl = new CFWL_ToolTipImp(pOuter);
+  SetImpl(pToolTipImpl);
+  pToolTipImpl->SetInterface(this);
+  return pToolTipImpl->Initialize();
 }
 FWL_ERR IFWL_ToolTip::Initialize(const CFWL_WidgetImpProperties& properties,
                                  IFWL_Widget* pOuter) {
-  m_pImpl = new CFWL_ToolTipImp(properties, pOuter);
-  ((CFWL_ToolTipImp*)m_pImpl)->SetInterface(this);
-  return ((CFWL_ToolTipImp*)m_pImpl)->Initialize();
+  CFWL_ToolTipImp* pToolTipImpl = new CFWL_ToolTipImp(properties, pOuter);
+  SetImpl(pToolTipImpl);
+  pToolTipImpl->SetInterface(this);
+  return pToolTipImpl->Initialize();
 }
 FWL_ERR IFWL_ToolTip::SetAnchor(const CFX_RectF& rtAnchor) {
-  return ((CFWL_ToolTipImp*)m_pImpl)->SetAnchor(rtAnchor);
+  return static_cast<CFWL_ToolTipImp*>(GetImpl())->SetAnchor(rtAnchor);
 }
 FWL_ERR IFWL_ToolTip::Show() {
-  return ((CFWL_ToolTipImp*)m_pImpl)->Show();
+  return static_cast<CFWL_ToolTipImp*>(GetImpl())->Show();
 }
 FWL_ERR IFWL_ToolTip::Hide() {
-  return ((CFWL_ToolTipImp*)m_pImpl)->Hide();
+  return static_cast<CFWL_ToolTipImp*>(GetImpl())->Hide();
 }
 IFWL_ToolTip::IFWL_ToolTip() {
-  m_pImpl = NULL;
-}
-IFWL_ToolTip::~IFWL_ToolTip() {
-  if (m_pImpl) {
-    delete (CFWL_ToolTipImp*)m_pImpl;
-    m_pImpl = NULL;
-  }
 }
 CFWL_ToolTipImp::CFWL_ToolTipImp(IFWL_Widget* pOuter)
     : CFWL_FormImp(pOuter),

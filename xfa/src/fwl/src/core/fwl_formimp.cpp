@@ -21,50 +21,46 @@ IFWL_Form* IFWL_Form::Create() {
   return new IFWL_Form;
 }
 FWL_ERR IFWL_Form::Initialize(IFWL_Widget* pOuter) {
-  m_pImpl = new CFWL_FormImp(pOuter);
-  ((CFWL_FormImp*)m_pImpl)->SetInterface(this);
-  return ((CFWL_FormImp*)m_pImpl)->Initialize();
+  CFWL_FormImp* pFormImpl = new CFWL_FormImp(pOuter);
+  SetImpl(pFormImpl);
+  pFormImpl->SetInterface(this);
+  return pFormImpl->Initialize();
 }
 FWL_ERR IFWL_Form::Initialize(CFWL_WidgetImpProperties& properties,
                               IFWL_Widget* pOuter) {
-  m_pImpl = new CFWL_FormImp(properties, pOuter);
-  ((CFWL_FormImp*)m_pImpl)->SetInterface(this);
-  return ((CFWL_FormImp*)m_pImpl)->Initialize();
+  CFWL_FormImp* pFormImpl = new CFWL_FormImp(properties, pOuter);
+  SetImpl(pFormImpl);
+  pFormImpl->SetInterface(this);
+  return pFormImpl->Initialize();
 }
 FWL_ERR IFWL_Form::Initialize(CFWL_WidgetImpProperties& properties,
                               CFX_WideString* classname,
                               IFWL_Widget* pOuter) {
-  m_pImpl = new CFWL_FormImp(properties, pOuter);
-  ((CFWL_FormImp*)m_pImpl)->SetInterface(this);
-  ((CFWL_FormImp*)m_pImpl)->SetPrivateData(this, classname, NULL);
-  return ((CFWL_FormImp*)m_pImpl)->Initialize();
+  CFWL_FormImp* pFormImpl = new CFWL_FormImp(properties, pOuter);
+  SetImpl(pFormImpl);
+  pFormImpl->SetInterface(this);
+  pFormImpl->SetPrivateData(this, classname, NULL);
+  return pFormImpl->Initialize();
 }
 FWL_FORMSIZE IFWL_Form::GetFormSize() {
-  return ((CFWL_FormImp*)m_pImpl)->GetFormSize();
+  return static_cast<CFWL_FormImp*>(GetImpl())->GetFormSize();
 }
 FWL_ERR IFWL_Form::SetFormSize(FWL_FORMSIZE eFormSize) {
-  return ((CFWL_FormImp*)m_pImpl)->SetFormSize(eFormSize);
+  return static_cast<CFWL_FormImp*>(GetImpl())->SetFormSize(eFormSize);
 }
 IFWL_Widget* IFWL_Form::DoModal() {
-  return ((CFWL_FormImp*)m_pImpl)->DoModal();
+  return static_cast<CFWL_FormImp*>(GetImpl())->DoModal();
 }
 IFWL_Widget* IFWL_Form::DoModal(FX_DWORD& dwCommandID) {
-  return ((CFWL_FormImp*)m_pImpl)->DoModal(dwCommandID);
+  return static_cast<CFWL_FormImp*>(GetImpl())->DoModal(dwCommandID);
 }
 FWL_ERR IFWL_Form::EndDoModal() {
-  return ((CFWL_FormImp*)m_pImpl)->EndDoModal();
+  return static_cast<CFWL_FormImp*>(GetImpl())->EndDoModal();
 }
 FWL_ERR IFWL_Form::SetBorderRegion(CFX_Path* pPath) {
-  return ((CFWL_FormImp*)m_pImpl)->SetBorderRegion(pPath);
+  return static_cast<CFWL_FormImp*>(GetImpl())->SetBorderRegion(pPath);
 }
 IFWL_Form::IFWL_Form() {
-  m_pImpl = NULL;
-}
-IFWL_Form::~IFWL_Form() {
-  if (m_pImpl) {
-    delete (CFWL_FormImp*)m_pImpl;
-    m_pImpl = NULL;
-  }
 }
 CFWL_FormImp::CFWL_FormImp(IFWL_Widget* pOuter)
     : CFWL_PanelImp(pOuter),

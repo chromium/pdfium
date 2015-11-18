@@ -28,6 +28,5 @@ class IFWL_Caret : public IFWL_Widget {
 
  protected:
   IFWL_Caret();
-  virtual ~IFWL_Caret();
 };
 #endif

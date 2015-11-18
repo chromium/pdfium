@@ -15,60 +15,55 @@ IFWL_ScrollBar* IFWL_ScrollBar::Create() {
   return new IFWL_ScrollBar;
 }
 IFWL_ScrollBar::IFWL_ScrollBar() {
-  m_pImpl = NULL;
-}
-IFWL_ScrollBar::~IFWL_ScrollBar() {
-  if (m_pImpl) {
-    delete (CFWL_ScrollBarImp*)m_pImpl;
-    m_pImpl = NULL;
-  }
 }
 FWL_ERR IFWL_ScrollBar::Initialize(IFWL_Widget* pOuter) {
-  m_pImpl = new CFWL_ScrollBarImp(pOuter);
-  ((CFWL_ScrollBarImp*)m_pImpl)->SetInterface(this);
-  return ((CFWL_ScrollBarImp*)m_pImpl)->Initialize();
+  CFWL_ScrollBarImp* pScrollBarImpl = new CFWL_ScrollBarImp(pOuter);
+  SetImpl(pScrollBarImpl);
+  pScrollBarImpl->SetInterface(this);
+  return pScrollBarImpl->Initialize();
 }
 FWL_ERR IFWL_ScrollBar::Initialize(const CFWL_WidgetImpProperties& properties,
                                    IFWL_Widget* pOuter) {
-  m_pImpl = new CFWL_ScrollBarImp(properties, pOuter);
-  ((CFWL_ScrollBarImp*)m_pImpl)->SetInterface(this);
-  return ((CFWL_ScrollBarImp*)m_pImpl)->Initialize();
+  CFWL_ScrollBarImp* pScrollBarImpl = new CFWL_ScrollBarImp(properties, pOuter);
+  SetImpl(pScrollBarImpl);
+  pScrollBarImpl->SetInterface(this);
+  return pScrollBarImpl->Initialize();
 }
 FX_BOOL IFWL_ScrollBar::IsVertical() {
-  return ((CFWL_ScrollBarImp*)m_pImpl)->IsVertical();
+  return static_cast<CFWL_ScrollBarImp*>(GetImpl())->IsVertical();
 }
 FWL_ERR IFWL_ScrollBar::GetRange(FX_FLOAT& fMin, FX_FLOAT& fMax) {
-  return ((CFWL_ScrollBarImp*)m_pImpl)->GetRange(fMin, fMax);
+  return static_cast<CFWL_ScrollBarImp*>(GetImpl())->GetRange(fMin, fMax);
 }
 FWL_ERR IFWL_ScrollBar::SetRange(FX_FLOAT fMin, FX_FLOAT fMax) {
-  return ((CFWL_ScrollBarImp*)m_pImpl)->SetRange(fMin, fMax);
+  return static_cast<CFWL_ScrollBarImp*>(GetImpl())->SetRange(fMin, fMax);
 }
 FX_FLOAT IFWL_ScrollBar::GetPageSize() {
-  return ((CFWL_ScrollBarImp*)m_pImpl)->GetPageSize();
+  return static_cast<CFWL_ScrollBarImp*>(GetImpl())->GetPageSize();
 }
 FWL_ERR IFWL_ScrollBar::SetPageSize(FX_FLOAT fPageSize) {
-  return ((CFWL_ScrollBarImp*)m_pImpl)->SetPageSize(fPageSize);
+  return static_cast<CFWL_ScrollBarImp*>(GetImpl())->SetPageSize(fPageSize);
 }
 FX_FLOAT IFWL_ScrollBar::GetStepSize() {
-  return ((CFWL_ScrollBarImp*)m_pImpl)->GetStepSize();
+  return static_cast<CFWL_ScrollBarImp*>(GetImpl())->GetStepSize();
 }
 FWL_ERR IFWL_ScrollBar::SetStepSize(FX_FLOAT fStepSize) {
-  return ((CFWL_ScrollBarImp*)m_pImpl)->SetStepSize(fStepSize);
+  return static_cast<CFWL_ScrollBarImp*>(GetImpl())->SetStepSize(fStepSize);
 }
 FX_FLOAT IFWL_ScrollBar::GetPos() {
-  return ((CFWL_ScrollBarImp*)m_pImpl)->GetPos();
+  return static_cast<CFWL_ScrollBarImp*>(GetImpl())->GetPos();
 }
 FWL_ERR IFWL_ScrollBar::SetPos(FX_FLOAT fPos) {
-  return ((CFWL_ScrollBarImp*)m_pImpl)->SetPos(fPos);
+  return static_cast<CFWL_ScrollBarImp*>(GetImpl())->SetPos(fPos);
 }
 FX_FLOAT IFWL_ScrollBar::GetTrackPos() {
-  return ((CFWL_ScrollBarImp*)m_pImpl)->GetTrackPos();
+  return static_cast<CFWL_ScrollBarImp*>(GetImpl())->GetTrackPos();
 }
 FWL_ERR IFWL_ScrollBar::SetTrackPos(FX_FLOAT fTrackPos) {
-  return ((CFWL_ScrollBarImp*)m_pImpl)->SetTrackPos(fTrackPos);
+  return static_cast<CFWL_ScrollBarImp*>(GetImpl())->SetTrackPos(fTrackPos);
 }
 FX_BOOL IFWL_ScrollBar::DoScroll(FX_DWORD dwCode, FX_FLOAT fPos) {
-  return ((CFWL_ScrollBarImp*)m_pImpl)->DoScroll(dwCode, fPos);
+  return static_cast<CFWL_ScrollBarImp*>(GetImpl())->DoScroll(dwCode, fPos);
 }
 CFWL_ScrollBarImp::CFWL_ScrollBarImp(IFWL_Widget* pOuter)
     : CFWL_WidgetImp(pOuter),

@@ -162,6 +162,5 @@ class IFWL_Edit : public IFWL_Widget {
 
  protected:
   IFWL_Edit();
-  virtual ~IFWL_Edit();
 };
 #endif

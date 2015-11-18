@@ -39,6 +39,5 @@ class IFWL_SpinButton : public IFWL_Widget {
 
  protected:
   IFWL_SpinButton();
-  virtual ~IFWL_SpinButton();
 };
 #endif
