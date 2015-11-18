@@ -516,3 +516,11 @@ TEST(fxcrt, WideStringFormatPrecision) {
     EXPECT_EQ(L"Bad precision", str);
   }
 }
+
+TEST(fxcrt, EmptyWideString) {
+  CFX_WideString empty_str;
+  EXPECT_TRUE(empty_str.IsEmpty());
+  EXPECT_EQ(0, empty_str.GetLength());
+  const FX_WCHAR* cstr = empty_str.c_str();
+  EXPECT_EQ(0, FXSYS_wcslen(cstr));
+}
