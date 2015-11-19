@@ -20,19 +20,6 @@
 IFWL_Form* IFWL_Form::Create() {
   return new IFWL_Form;
 }
-FWL_ERR IFWL_Form::Initialize(IFWL_Widget* pOuter) {
-  CFWL_FormImp* pFormImpl = new CFWL_FormImp(pOuter);
-  SetImpl(pFormImpl);
-  pFormImpl->SetInterface(this);
-  return pFormImpl->Initialize();
-}
-FWL_ERR IFWL_Form::Initialize(CFWL_WidgetImpProperties& properties,
-                              IFWL_Widget* pOuter) {
-  CFWL_FormImp* pFormImpl = new CFWL_FormImp(properties, pOuter);
-  SetImpl(pFormImpl);
-  pFormImpl->SetInterface(this);
-  return pFormImpl->Initialize();
-}
 FWL_ERR IFWL_Form::Initialize(CFWL_WidgetImpProperties& properties,
                               CFX_WideString* classname,
                               IFWL_Widget* pOuter) {

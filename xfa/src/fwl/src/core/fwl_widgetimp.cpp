@@ -1121,12 +1121,6 @@ IFWL_Custom* IFWL_Custom::Create() {
 }
 IFWL_Custom::IFWL_Custom() {
 }
-FWL_ERR IFWL_Custom::Initialize(IFWL_Widget* pOuter) {
-  CFWL_Custom* pCustomImpl = new CFWL_Custom(pOuter);
-  SetImpl(pCustomImpl);
-  pCustomImpl->SetInterface(this);
-  return pCustomImpl->Initialize();
-}
 FWL_ERR IFWL_Custom::Initialize(const CFWL_WidgetImpProperties& properties,
                                 IFWL_Widget* pOuter) {
   CFWL_Custom* pCustomImpl = new CFWL_Custom(properties, pOuter);

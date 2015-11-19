@@ -32,9 +32,8 @@ class IFWL_ToolTipDP : public IFWL_DataProvider {
 class IFWL_ToolTip : public IFWL_Form {
  public:
   static IFWL_ToolTip* Create();
-  FWL_ERR Initialize(IFWL_Widget* pOuter = NULL);
   FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
-                     IFWL_Widget* pOuter = NULL);
+                     IFWL_Widget* pOuter);
   FWL_ERR SetAnchor(const CFX_RectF& rtAnchor);
   FWL_ERR Show();
   FWL_ERR Hide();

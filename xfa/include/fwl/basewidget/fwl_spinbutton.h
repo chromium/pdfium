@@ -31,9 +31,8 @@ class IFWL_SpinButton : public IFWL_Widget {
  public:
   static IFWL_SpinButton* Create();
 
-  FWL_ERR Initialize(IFWL_Widget* pOuter = NULL);
   FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
-                     IFWL_Widget* pOuter = NULL);
+                     IFWL_Widget* pOuter);
   FWL_ERR EnableButton(FX_BOOL bEnable, FX_BOOL bUp = TRUE);
   FX_BOOL IsButtonEnable(FX_BOOL bUp = TRUE);
 

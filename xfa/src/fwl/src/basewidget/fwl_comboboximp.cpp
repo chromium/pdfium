@@ -23,12 +23,6 @@ IFWL_ComboBox* IFWL_ComboBox::Create() {
 }
 IFWL_ComboBox::IFWL_ComboBox() {
 }
-FWL_ERR IFWL_ComboBox::Initialize(IFWL_Widget* pOuter) {
-  CFWL_ComboBoxImp* pComboBoxImpl = new CFWL_ComboBoxImp(pOuter);
-  SetImpl(pComboBoxImpl);
-  pComboBoxImpl->SetInterface(this);
-  return pComboBoxImpl->Initialize();
-}
 FWL_ERR IFWL_ComboBox::Initialize(const CFWL_WidgetImpProperties& properties,
                                   IFWL_Widget* pOuter) {
   CFWL_ComboBoxImp* pComboBoxImpl = new CFWL_ComboBoxImp(properties, pOuter);

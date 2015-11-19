@@ -27,7 +27,7 @@ FWL_ERR CFWL_Barcode::Initialize(const CFWL_WidgetProperties* pProperties) {
     prop.m_pOwner = m_pProperties->m_pOwner->GetWidget();
   }
   m_pIface = IFWL_Barcode::Create();
-  FWL_ERR ret = ((IFWL_Barcode*)m_pIface)->Initialize(prop);
+  FWL_ERR ret = ((IFWL_Barcode*)m_pIface)->Initialize(prop, nullptr);
   if (ret == FWL_ERR_Succeeded) {
     CFWL_Widget::Initialize();
   }

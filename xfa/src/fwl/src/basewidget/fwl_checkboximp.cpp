@@ -16,12 +16,6 @@ IFWL_CheckBox* IFWL_CheckBox::Create() {
 }
 IFWL_CheckBox::IFWL_CheckBox() {
 }
-FWL_ERR IFWL_CheckBox::Initialize(IFWL_Widget* pOuter) {
-  CFWL_CheckBoxImp* pCheckBoxImpl = new CFWL_CheckBoxImp(pOuter);
-  SetImpl(pCheckBoxImpl);
-  pCheckBoxImpl->SetInterface(this);
-  return pCheckBoxImpl->Initialize();
-}
 FWL_ERR IFWL_CheckBox::Initialize(const CFWL_WidgetImpProperties& properties,
                                   IFWL_Widget* pOuter) {
   CFWL_CheckBoxImp* pCheckBoxImpl = new CFWL_CheckBoxImp(properties, pOuter);
@@ -39,12 +33,6 @@ IFWL_RadioButton* IFWL_RadioButton::Create() {
   return new IFWL_RadioButton;
 }
 IFWL_RadioButton::IFWL_RadioButton() {
-}
-FWL_ERR IFWL_RadioButton::Initialize(IFWL_Widget* pOuter) {
-  CFWL_CheckBoxImp* pCheckBoxImpl = new CFWL_CheckBoxImp(pOuter);
-  SetImpl(pCheckBoxImpl);
-  pCheckBoxImpl->SetInterface(this);
-  return pCheckBoxImpl->Initialize();
 }
 FWL_ERR IFWL_RadioButton::Initialize(const CFWL_WidgetImpProperties& properties,
                                      IFWL_Widget* pOuter) {

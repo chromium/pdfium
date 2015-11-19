@@ -14,12 +14,6 @@
 IFWL_Content* IFWL_Content::Create() {
   return new IFWL_Content;
 }
-FWL_ERR IFWL_Content::Initialize() {
-  CFWL_ContentImp* pContentImpl = new CFWL_ContentImp;
-  SetImpl(pContentImpl);
-  pContentImpl->SetInterface(this);
-  return pContentImpl->Initialize();
-}
 FWL_ERR IFWL_Content::InsertWidget(IFWL_Widget* pChild, int32_t nIndex) {
   return static_cast<CFWL_ContentImp*>(GetImpl())->InsertWidget(pChild, nIndex);
 }

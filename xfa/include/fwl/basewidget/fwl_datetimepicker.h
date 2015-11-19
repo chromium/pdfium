@@ -71,9 +71,8 @@ class IFWL_DateTimePickerDP : public IFWL_DataProvider {
 class IFWL_DateTimePicker : public IFWL_Widget {
  public:
   static IFWL_DateTimePicker* Create();
-  FWL_ERR Initialize(IFWL_Widget* pOuter = NULL);
   FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
-                     IFWL_Widget* pOuter = NULL);
+                     IFWL_Widget* pOuter);
   FWL_ERR GetCurSel(int32_t& iYear, int32_t& iMonth, int32_t& iDay);
   FWL_ERR SetCurSel(int32_t iYear, int32_t iMonth, int32_t iDay);
   FWL_ERR SetEditText(const CFX_WideString& wsText);

@@ -66,12 +66,9 @@ enum FWL_COMMANDID {
 class IFWL_Form : public IFWL_Panel {
  public:
   static IFWL_Form* Create();
-  FWL_ERR Initialize(IFWL_Widget* pOuter = NULL);
-  FWL_ERR Initialize(CFWL_WidgetImpProperties& properties,
-                     IFWL_Widget* pOuter = NULL);
   FWL_ERR Initialize(CFWL_WidgetImpProperties& properties,
                      CFX_WideString* classname,
-                     IFWL_Widget* pOuter = NULL);
+                     IFWL_Widget* pOuter);
   FWL_FORMSIZE GetFormSize();
   FWL_ERR SetFormSize(FWL_FORMSIZE eFormSize);
   IFWL_Widget* DoModal();

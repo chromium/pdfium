@@ -16,12 +16,6 @@ IFWL_ScrollBar* IFWL_ScrollBar::Create() {
 }
 IFWL_ScrollBar::IFWL_ScrollBar() {
 }
-FWL_ERR IFWL_ScrollBar::Initialize(IFWL_Widget* pOuter) {
-  CFWL_ScrollBarImp* pScrollBarImpl = new CFWL_ScrollBarImp(pOuter);
-  SetImpl(pScrollBarImpl);
-  pScrollBarImpl->SetInterface(this);
-  return pScrollBarImpl->Initialize();
-}
 FWL_ERR IFWL_ScrollBar::Initialize(const CFWL_WidgetImpProperties& properties,
                                    IFWL_Widget* pOuter) {
   CFWL_ScrollBarImp* pScrollBarImpl = new CFWL_ScrollBarImp(properties, pOuter);

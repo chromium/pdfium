@@ -19,12 +19,6 @@ IFWL_Edit* IFWL_Edit::Create() {
 }
 IFWL_Edit::IFWL_Edit() {
 }
-FWL_ERR IFWL_Edit::Initialize(IFWL_Widget* pOuter) {
-  CFWL_EditImp* pEditImpl = new CFWL_EditImp(pOuter);
-  SetImpl(pEditImpl);
-  pEditImpl->SetInterface(this);
-  return pEditImpl->Initialize();
-}
 FWL_ERR IFWL_Edit::Initialize(const CFWL_WidgetImpProperties& properties,
                               IFWL_Widget* pOuter) {
   CFWL_EditImp* pEditImpl = new CFWL_EditImp(properties, pOuter);

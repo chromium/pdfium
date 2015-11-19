@@ -17,9 +17,10 @@ class IFWL_Caret;
 class IFWL_Caret : public IFWL_Widget {
  public:
   static IFWL_Caret* Create();
+
   FWL_ERR Initialize(IFWL_Widget* pOuter = NULL);
   FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
-                     IFWL_Widget* pOuter = NULL);
+                     IFWL_Widget* pOuter);
 
   FWL_ERR ShowCaret(FX_BOOL bFlag = TRUE);
   FWL_ERR GetFrequency(FX_DWORD& elapse);

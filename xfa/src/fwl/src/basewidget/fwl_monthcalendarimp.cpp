@@ -22,12 +22,6 @@ IFWL_MonthCalendar* IFWL_MonthCalendar::Create() {
 }
 IFWL_MonthCalendar::IFWL_MonthCalendar() {
 }
-FWL_ERR IFWL_MonthCalendar::Initialize(IFWL_Widget* pOuter) {
-  CFWL_MonthCalendarImp* pMonthCalendarImpl = new CFWL_MonthCalendarImp(pOuter);
-  SetImpl(pMonthCalendarImpl);
-  pMonthCalendarImpl->SetInterface(this);
-  return pMonthCalendarImpl->Initialize();
-}
 FWL_ERR IFWL_MonthCalendar::Initialize(
     const CFWL_WidgetImpProperties& properties,
     IFWL_Widget* pOuter) {

@@ -15,12 +15,6 @@ IFWL_Barcode* IFWL_Barcode::Create() {
 }
 IFWL_Barcode::IFWL_Barcode() {
 }
-FWL_ERR IFWL_Barcode::Initialize(IFWL_Widget* pOuter) {
-  CFWL_BarcodeImp* pBarcodeImpl = new CFWL_BarcodeImp(pOuter);
-  SetImpl(pBarcodeImpl);
-  pBarcodeImpl->SetInterface(this);
-  return pBarcodeImpl->Initialize();
-}
 FWL_ERR IFWL_Barcode::Initialize(const CFWL_WidgetImpProperties& properties,
                                  IFWL_Widget* pOuter) {
   CFWL_BarcodeImp* pBarcodeImpl = new CFWL_BarcodeImp(properties, pOuter);

@@ -50,9 +50,8 @@ class IFWL_BarcodeDP : public IFWL_EditDP {
 class IFWL_Barcode : public IFWL_Edit {
  public:
   static IFWL_Barcode* Create();
-  FWL_ERR Initialize(IFWL_Widget* pOuter = NULL);
   FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
-                     IFWL_Widget* pOuter = NULL);
+                     IFWL_Widget* pOuter);
   void SetType(BC_TYPE type);
   FX_BOOL IsProtectedType();
 

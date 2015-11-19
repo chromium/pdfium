@@ -14,12 +14,6 @@
 IFWL_Grid* IFWL_Grid::Create() {
   return new IFWL_Grid;
 }
-FWL_ERR IFWL_Grid::Initialize() {
-  CFWL_GridImp* pGridImpl = new CFWL_GridImp;
-  SetImpl(pGridImpl);
-  pGridImpl->SetInterface(this);
-  return pGridImpl->Initialize();
-}
 FWL_ERR IFWL_Grid::Initialize(CFWL_WidgetImpProperties& properties) {
   CFWL_GridImp* pGridImpl = new CFWL_GridImp(properties);
   SetImpl(pGridImpl);

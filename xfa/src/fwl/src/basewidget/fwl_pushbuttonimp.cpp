@@ -12,12 +12,6 @@
 IFWL_PushButton* IFWL_PushButton::Create() {
   return new IFWL_PushButton;
 }
-FWL_ERR IFWL_PushButton::Initialize(IFWL_Widget* pOuter) {
-  CFWL_PushButtonImp* pPushButtonImpl = new CFWL_PushButtonImp(pOuter);
-  SetImpl(pPushButtonImpl);
-  pPushButtonImpl->SetInterface(this);
-  return pPushButtonImpl->Initialize();
-}
 FWL_ERR IFWL_PushButton::Initialize(const CFWL_WidgetImpProperties& properties,
                                     IFWL_Widget* pOuter) {
   CFWL_PushButtonImp* pPushButtonImpl =

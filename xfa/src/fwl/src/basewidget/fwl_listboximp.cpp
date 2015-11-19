@@ -16,12 +16,6 @@ IFWL_ListBox* IFWL_ListBox::Create() {
 }
 IFWL_ListBox::IFWL_ListBox() {
 }
-FWL_ERR IFWL_ListBox::Initialize(IFWL_Widget* pOuter) {
-  CFWL_ListBoxImp* pListBoxImpl = new CFWL_ListBoxImp(pOuter);
-  SetImpl(pListBoxImpl);
-  pListBoxImpl->SetInterface(this);
-  return pListBoxImpl->Initialize();
-}
 FWL_ERR IFWL_ListBox::Initialize(const CFWL_WidgetImpProperties& properties,
                                  IFWL_Widget* pOuter) {
   CFWL_ListBoxImp* pListBoxImpl = new CFWL_ListBoxImp(properties, pOuter);

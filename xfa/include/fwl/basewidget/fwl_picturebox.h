@@ -44,9 +44,8 @@ class IFWL_PictureBox : public IFWL_Widget {
  public:
   static IFWL_PictureBox* Create();
 
-  FWL_ERR Initialize(IFWL_Widget* pOuter = NULL);
   FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
-                     IFWL_Widget* pOuter = NULL);
+                     IFWL_Widget* pOuter);
 
  protected:
   IFWL_PictureBox();

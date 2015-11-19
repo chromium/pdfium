@@ -14,12 +14,6 @@
 IFWL_ToolTip* IFWL_ToolTip::Create() {
   return new IFWL_ToolTip;
 }
-FWL_ERR IFWL_ToolTip::Initialize(IFWL_Widget* pOuter) {
-  CFWL_ToolTipImp* pToolTipImpl = new CFWL_ToolTipImp(pOuter);
-  SetImpl(pToolTipImpl);
-  pToolTipImpl->SetInterface(this);
-  return pToolTipImpl->Initialize();
-}
 FWL_ERR IFWL_ToolTip::Initialize(const CFWL_WidgetImpProperties& properties,
                                  IFWL_Widget* pOuter) {
   CFWL_ToolTipImp* pToolTipImpl = new CFWL_ToolTipImp(properties, pOuter);

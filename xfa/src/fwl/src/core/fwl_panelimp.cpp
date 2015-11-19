@@ -12,12 +12,6 @@
 IFWL_Panel* IFWL_Panel::Create() {
   return new IFWL_Panel;
 }
-FWL_ERR IFWL_Panel::Initialize(IFWL_Widget* pOuter) {
-  CFWL_PanelImp* pPanelImpl = new CFWL_PanelImp(pOuter);
-  SetImpl(pPanelImpl);
-  pPanelImpl->SetInterface(this);
-  return pPanelImpl->Initialize();
-}
 FWL_ERR IFWL_Panel::Initialize(CFWL_WidgetImpProperties& properties,
                                IFWL_Widget* pOuter) {
   CFWL_PanelImp* pPanelImpl = new CFWL_PanelImp(properties, pOuter);
@@ -135,12 +129,6 @@ FWL_ERR CFWL_CustomPanelImp::SetProxy(IFWL_Proxy* pProxy) {
 }
 IFWL_CustomPanel* IFWL_CustomPanel::Create() {
   return new IFWL_CustomPanel;
-}
-FWL_ERR IFWL_CustomPanel::Initialize(IFWL_Widget* pOuter) {
-  CFWL_CustomPanelImp* pCustomPanelImpl = new CFWL_CustomPanelImp(pOuter);
-  SetImpl(pCustomPanelImpl);
-  pCustomPanelImpl->SetInterface(this);
-  return pCustomPanelImpl->Initialize();
 }
 FWL_ERR IFWL_CustomPanel::Initialize(CFWL_WidgetImpProperties& properties,
                                      IFWL_Widget* pOuter) {

@@ -15,9 +15,7 @@ class IFWL_CustomPanel;
 class IFWL_Panel : public IFWL_Widget {
  public:
   static IFWL_Panel* Create();
-  FWL_ERR Initialize(IFWL_Widget* pOuter = NULL);
-  FWL_ERR Initialize(CFWL_WidgetImpProperties& properties,
-                     IFWL_Widget* pOuter = NULL);
+  FWL_ERR Initialize(CFWL_WidgetImpProperties& properties, IFWL_Widget* pOuter);
   IFWL_Content* GetContent();
   FWL_ERR SetContent(IFWL_Content* pContent);
 
@@ -27,9 +25,7 @@ class IFWL_Panel : public IFWL_Widget {
 class IFWL_CustomPanel : public IFWL_Widget {
  public:
   static IFWL_CustomPanel* Create();
-  FWL_ERR Initialize(IFWL_Widget* pOuter = NULL);
-  FWL_ERR Initialize(CFWL_WidgetImpProperties& properties,
-                     IFWL_Widget* pOuter = NULL);
+  FWL_ERR Initialize(CFWL_WidgetImpProperties& properties, IFWL_Widget* pOuter);
   IFWL_Content* GetContent();
   FWL_ERR SetContent(IFWL_Content* pContent);
   FWL_ERR SetProxy(IFWL_Proxy* pProxy);

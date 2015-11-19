@@ -28,7 +28,7 @@ FWL_ERR CFWL_DateTimePicker::Initialize(
   }
   prop.m_rtWidget = m_pProperties->m_rtWidget;
   m_pIface = IFWL_DateTimePicker::Create();
-  FWL_ERR ret = ((IFWL_DateTimePicker*)m_pIface)->Initialize(prop);
+  FWL_ERR ret = ((IFWL_DateTimePicker*)m_pIface)->Initialize(prop, nullptr);
   if (ret == FWL_ERR_Succeeded) {
     CFWL_Widget::Initialize();
   }

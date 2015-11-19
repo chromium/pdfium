@@ -71,9 +71,8 @@ class IFWL_CheckBoxDP : public IFWL_DataProvider {
 class IFWL_CheckBox : public IFWL_Widget {
  public:
   static IFWL_CheckBox* Create();
-  FWL_ERR Initialize(IFWL_Widget* pOuter = NULL);
   FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
-                     IFWL_Widget* pOuter = NULL);
+                     IFWL_Widget* pOuter);
   int32_t GetCheckState();
   FWL_ERR SetCheckState(int32_t iCheck);
 
@@ -83,9 +82,8 @@ class IFWL_CheckBox : public IFWL_Widget {
 class IFWL_RadioButton : public IFWL_Widget {
  public:
   static IFWL_RadioButton* Create();
-  FWL_ERR Initialize(IFWL_Widget* pOuter = NULL);
   FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
-                     IFWL_Widget* pOuter = NULL);
+                     IFWL_Widget* pOuter);
   int32_t GetCheckState();
   FWL_ERR SetCheckState(int32_t iCheck);
 

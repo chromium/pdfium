@@ -40,7 +40,6 @@ typedef struct _FWL_HGRIDCOLROW { void* pData; } * FWL_HGRIDCOLROW;
 class IFWL_Grid : public IFWL_Content {
  public:
   static IFWL_Grid* Create();
-  FWL_ERR Initialize();
   FWL_ERR Initialize(CFWL_WidgetImpProperties& properties);
 
   FWL_HGRIDCOLROW InsertColRow(FX_BOOL bColumn, int32_t nIndex = -1);

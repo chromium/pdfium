@@ -48,13 +48,6 @@ FWL_ERR IFWL_DateTimeEdit::Initialize(
 }
 IFWL_DateTimePicker::IFWL_DateTimePicker() {
 }
-FWL_ERR IFWL_DateTimePicker::Initialize(IFWL_Widget* pOuter) {
-  CFWL_DateTimePickerImp* pDateTimePickerImpl =
-      new CFWL_DateTimePickerImp(pOuter);
-  SetImpl(pDateTimePickerImpl);
-  pDateTimePickerImpl->SetInterface(this);
-  return pDateTimePickerImpl->Initialize();
-}
 FWL_ERR IFWL_DateTimePicker::Initialize(
     const CFWL_WidgetImpProperties& properties,
     IFWL_Widget* pOuter) {

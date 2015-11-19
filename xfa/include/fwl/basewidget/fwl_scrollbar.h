@@ -48,10 +48,8 @@ class IFWL_ScrollBarDP : public IFWL_DataProvider {};
 class IFWL_ScrollBar : public IFWL_Widget {
  public:
   static IFWL_ScrollBar* Create();
-
-  FWL_ERR Initialize(IFWL_Widget* pOuter = NULL);
   FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
-                     IFWL_Widget* pOuter = NULL);
+                     IFWL_Widget* pOuter);
   FX_BOOL IsVertical();
   FWL_ERR GetRange(FX_FLOAT& fMin, FX_FLOAT& fMax);
   FWL_ERR SetRange(FX_FLOAT fMin, FX_FLOAT fMax);

@@ -26,7 +26,7 @@ FWL_ERR CFWL_Caret::Initialize(const CFWL_WidgetProperties* pProperties) {
     prop.m_pOwner = m_pProperties->m_pOwner->GetWidget();
   }
   m_pIface = IFWL_Caret::Create();
-  FWL_ERR ret = ((IFWL_Caret*)m_pIface)->Initialize(prop);
+  FWL_ERR ret = ((IFWL_Caret*)m_pIface)->Initialize(prop, nullptr);
   if (ret == FWL_ERR_Succeeded) {
     CFWL_Widget::Initialize();
   }

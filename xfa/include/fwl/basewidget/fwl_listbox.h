@@ -110,9 +110,8 @@ class IFWL_ListBoxCompare {
 class IFWL_ListBox : public IFWL_Widget {
  public:
   static IFWL_ListBox* Create();
-  FWL_ERR Initialize(IFWL_Widget* pOuter = NULL);
   FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
-                     IFWL_Widget* pOuter = NULL);
+                     IFWL_Widget* pOuter);
   int32_t CountSelItems();
   FWL_HLISTITEM GetSelItem(int32_t nIndexSel);
   int32_t GetSelIndex(int32_t nIndex);

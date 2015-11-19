@@ -116,9 +116,8 @@ class IFWL_MonthCalendar : public IFWL_Widget {
  public:
   static IFWL_MonthCalendar* Create();
 
-  FWL_ERR Initialize(IFWL_Widget* pOuter = NULL);
   FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
-                     IFWL_Widget* pOuter = NULL);
+                     IFWL_Widget* pOuter);
   int32_t CountSelect();
   FX_BOOL GetSelect(int32_t& iYear,
                     int32_t& iMonth,

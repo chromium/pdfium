@@ -113,9 +113,8 @@ typedef struct _FWL_HEDTFIND { void* pData; } * FWL_HEDTFIND;
 class IFWL_Edit : public IFWL_Widget {
  public:
   static IFWL_Edit* Create();
-  FWL_ERR Initialize(IFWL_Widget* pOuter = NULL);
   FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
-                     IFWL_Widget* pOuter = NULL);
+                     IFWL_Widget* pOuter);
   FWL_ERR SetText(const CFX_WideString& wsText);
   int32_t GetTextLength() const;
   FWL_ERR GetText(CFX_WideString& wsText,

@@ -14,12 +14,6 @@ IFWL_PictureBox* IFWL_PictureBox::Create() {
 }
 IFWL_PictureBox::IFWL_PictureBox() {
 }
-FWL_ERR IFWL_PictureBox::Initialize(IFWL_Widget* pOuter) {
-  CFWL_PictureBoxImp* pPictureBoxImpl = new CFWL_PictureBoxImp(pOuter);
-  SetImpl(pPictureBoxImpl);
-  pPictureBoxImpl->SetInterface(this);
-  return pPictureBoxImpl->Initialize();
-}
 FWL_ERR IFWL_PictureBox::Initialize(const CFWL_WidgetImpProperties& properties,
                                     IFWL_Widget* pOuter) {
   CFWL_PictureBoxImp* pPictureBoxImpl =

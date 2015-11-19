@@ -26,7 +26,7 @@ FWL_ERR CFWL_Edit::Initialize(const CFWL_WidgetProperties* pProperties) {
   }
   prop.m_rtWidget = m_pProperties->m_rtWidget;
   m_pIface = IFWL_Edit::Create();
-  FWL_ERR ret = ((IFWL_Edit*)m_pIface)->Initialize(prop);
+  FWL_ERR ret = ((IFWL_Edit*)m_pIface)->Initialize(prop, nullptr);
   if (ret == FWL_ERR_Succeeded) {
     CFWL_Widget::Initialize();
   }

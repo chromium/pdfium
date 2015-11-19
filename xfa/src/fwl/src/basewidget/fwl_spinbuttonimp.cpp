@@ -17,12 +17,6 @@ IFWL_SpinButton* IFWL_SpinButton::Create() {
 }
 IFWL_SpinButton::IFWL_SpinButton() {
 }
-FWL_ERR IFWL_SpinButton::Initialize(IFWL_Widget* pOuter) {
-  CFWL_SpinButtonImp* pSpinButtonImpl = new CFWL_SpinButtonImp;
-  SetImpl(pSpinButtonImpl);
-  pSpinButtonImpl->SetInterface(this);
-  return pSpinButtonImpl->Initialize();
-}
 FWL_ERR IFWL_SpinButton::Initialize(const CFWL_WidgetImpProperties& properties,
                                     IFWL_Widget* pOuter) {
   CFWL_SpinButtonImp* pSpinButtonImpl = new CFWL_SpinButtonImp(properties);
