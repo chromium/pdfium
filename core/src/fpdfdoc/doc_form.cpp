@@ -371,19 +371,6 @@ static FX_BOOL RetrieveSpecificFont(uint8_t charSet,
   }
   return RetrieveSpecificFont(lf);
 }
-static FX_BOOL RetrieveStockFont(int iFontObject,
-                                 uint8_t charSet,
-                                 LOGFONTA& lf) {
-  HFONT hFont = (HFONT)::GetStockObject(iFontObject);
-  if (hFont != NULL) {
-    memset(&lf, 0, sizeof(LOGFONTA));
-    int iRet = ::GetObject(hFont, sizeof(LOGFONTA), &lf);
-    if (iRet > 0 && (lf.lfCharSet == charSet || charSet == 255)) {
-      return RetrieveSpecificFont(lf);
-    }
-  }
-  return FALSE;
-}
 #endif
 
 CPDF_Font* CPDF_InterForm::AddStandardFont(CPDF_Document* pDocument,
