@@ -60,7 +60,6 @@ class IFX_StreamWrite {
  public:
   virtual ~IFX_StreamWrite() {}
   virtual void Release() = 0;
-
   virtual FX_BOOL WriteBlock(const void* pData, size_t size) = 0;
 };
 class IFX_FileWrite : public IFX_StreamWrite {

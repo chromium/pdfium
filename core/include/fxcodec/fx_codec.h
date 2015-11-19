@@ -317,6 +317,7 @@ class ICodec_IccModule {
                                  int pixels) = 0;
   virtual void SetComponents(FX_DWORD nComponents) = 0;
 };
+
 void AdobeCMYK_to_sRGB(FX_FLOAT c,
                        FX_FLOAT m,
                        FX_FLOAT y,
@@ -332,7 +333,6 @@ void AdobeCMYK_to_sRGB1(uint8_t c,
                         uint8_t& G,
                         uint8_t& B);
 FX_BOOL MD5ComputeID(const void* buf, FX_DWORD dwSize, uint8_t ID[16]);
-
 void FaxG4Decode(const uint8_t* src_buf,
                  FX_DWORD src_size,
                  int* pbitpos,
