@@ -390,6 +390,7 @@ class CCodec_Jbig2Module : public ICodec_Jbig2Module {
                                 IFX_Pause* pPause) override;
   void DestroyJbig2Context(void* pJbig2Context) override;
 };
+
 struct DecodeData {
  public:
   DecodeData(unsigned char* src_data, OPJ_SIZE_T src_size)

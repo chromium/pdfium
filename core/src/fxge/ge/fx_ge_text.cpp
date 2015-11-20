@@ -14,6 +14,33 @@
 #define FX_GAMMA(value) (value)
 #define FX_GAMMA_INVERSE(value) (value)
 
+namespace {
+
+void ResetTransform(FT_Face face) {
+  FXFT_Matrix matrix;
+  matrix.xx = 0x10000L;
+  matrix.xy = 0;
+  matrix.yx = 0;
+  matrix.yy = 0x10000L;
+  FXFT_Set_Transform(face, &matrix, 0);
+}
+
+// Sets the given transform on the font, and resets it to the identity when it
+// goes out of scope.
+class ScopedFontTransform {
+ public:
+  ScopedFontTransform(FT_Face face, FXFT_Matrix* matrix) : m_Face(face) {
+    FXFT_Set_Transform(m_Face, matrix, 0);
+  }
+
+  ~ScopedFontTransform() { ResetTransform(m_Face); }
+
+ private:
+  FT_Face m_Face;
+};
+
+}  // namespace
+
 FX_RECT FXGE_GetGlyphsBBox(FXTEXT_GLYPHPOS* pGlyphAndPos,
                            int nChars,
                            int anti_alias,
@@ -1156,6 +1183,7 @@ CFX_FaceCache* CFX_FontCache::GetCachedFace(CFX_Font* pFont) {
     counted_face_cache->m_nCount++;
     return counted_face_cache->m_Obj;
   }
+
   CFX_FaceCache* face_cache = new CFX_FaceCache(bExternal ? nullptr : face);
   CFX_CountedFaceCache* counted_face_cache = new CFX_CountedFaceCache;
   counted_face_cache->m_nCount = 2;
@@ -1524,7 +1552,7 @@ CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(CFX_Font* pFont,
                             pFont->GetSubstFont()->m_Weight);
     }
   }
-  FXFT_Set_Transform(m_Face, &ft_matrix, 0);
+  ScopedFontTransform scoped_transform(m_Face, &ft_matrix);
   int load_flags = (m_Face->face_flags & FT_FACE_FLAG_SFNT)
                        ? FXFT_LOAD_NO_BITMAP
                        : (FXFT_LOAD_NO_BITMAP | FT_LOAD_NO_HINTING);
@@ -1791,7 +1819,7 @@ CFX_PathData* CFX_Font::LoadGlyphPath(FX_DWORD glyph_index, int dest_width) {
       AdjustMMParams(glyph_index, dest_width, m_pSubstFont->m_Weight);
     }
   }
-  FXFT_Set_Transform(m_Face, &ft_matrix, 0);
+  ScopedFontTransform scoped_transform(m_Face, &ft_matrix);
   int load_flags = FXFT_LOAD_NO_BITMAP;
   if (!(m_Face->face_flags & FT_FACE_FLAG_SFNT) || !FT_IS_TRICKY(m_Face)) {
     load_flags |= FT_LOAD_NO_HINTING;

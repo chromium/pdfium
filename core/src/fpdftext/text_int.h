@@ -195,6 +195,7 @@ class CPDF_TextPageFind : public IPDF_TextPageFind {
   CFX_RectArray m_resArray;
   FX_BOOL m_IsFind;
 };
+
 class CPDF_LinkExt {
  public:
   CPDF_LinkExt() {}

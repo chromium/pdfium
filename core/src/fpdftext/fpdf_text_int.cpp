@@ -82,26 +82,32 @@ CPDFText_ParseOptions::CPDFText_ParseOptions()
     : m_bGetCharCodeOnly(FALSE),
       m_bNormalizeObjs(TRUE),
       m_bOutputHyphen(FALSE) {}
+
 IPDF_TextPage* IPDF_TextPage::CreateTextPage(
     const CPDF_Page* pPage,
     CPDFText_ParseOptions ParserOptions) {
   return new CPDF_TextPage(pPage, ParserOptions);
 }
+
 IPDF_TextPage* IPDF_TextPage::CreateTextPage(const CPDF_Page* pPage,
                                              int flags) {
   return new CPDF_TextPage(pPage, flags);
 }
+
 IPDF_TextPage* IPDF_TextPage::CreateTextPage(const CPDF_PageObjects* pObjs,
                                              int flags) {
   return new CPDF_TextPage(pObjs, flags);
 }
+
 IPDF_TextPageFind* IPDF_TextPageFind::CreatePageFind(
     const IPDF_TextPage* pTextPage) {
   return pTextPage ? new CPDF_TextPageFind(pTextPage) : nullptr;
 }
+
 IPDF_LinkExtract* IPDF_LinkExtract::CreateLinkExtract() {
   return new CPDF_LinkExtract();
 }
+
 #define TEXT_BLANK_CHAR L' '
 #define TEXT_LINEFEED_CHAR L'\n'
 #define TEXT_RETURN_CHAR L'\r'
@@ -1391,7 +1397,6 @@ void CPDF_TextPage::ProcessMarkedContent(PDFTEXT_Obj Obj) {
   for (n = 0; n < nContentMark; n++) {
     CPDF_ContentMarkItem& item = pMarkData->GetItem(n);
     CFX_ByteString tagStr = (CFX_ByteString)item.GetName();
-
     pDict = ToDictionary(static_cast<CPDF_Object*>(item.GetParam()));
     CPDF_String* temp =
         ToString(pDict ? pDict->GetElement(FX_BSTRC("ActualText")) : nullptr);

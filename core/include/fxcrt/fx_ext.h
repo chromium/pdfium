@@ -7,11 +7,11 @@
 #ifndef CORE_INCLUDE_FXCRT_FX_EXT_H_
 #define CORE_INCLUDE_FXCRT_FX_EXT_H_
 
-#include "fx_string.h"
-#include "fx_system.h"
-
 #include <cctype>
 #include <cwctype>
+
+#include "fx_string.h"
+#include "fx_system.h"
 
 FX_FLOAT FXSYS_tan(FX_FLOAT a);
 FX_FLOAT FXSYS_logb(FX_FLOAT b, FX_FLOAT x);
