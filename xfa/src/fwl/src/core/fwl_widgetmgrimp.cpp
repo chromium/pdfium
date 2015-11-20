@@ -740,7 +740,7 @@ FWL_ERR CFWL_WidgetMgrDelegate::OnDrawWidget(IFWL_Widget* pWidget,
     clipCopy = clipBounds;
   } else {
     clipBounds.Set(pMatrix->a, pMatrix->b, pMatrix->c, pMatrix->d);
-    ((CFX_Matrix*)pMatrix)->Reset();
+    ((CFX_Matrix*)pMatrix)->SetIdentity();  // FIXME: const cast.
 #ifdef FWL_UseMacSystemBorder
 #else
 #endif
