@@ -207,15 +207,11 @@ FX_BOOL CPDFSDK_Widget::IsOptionSelected(int nIndex) const {
 
 int CPDFSDK_Widget::GetTopVisibleIndex() const {
   CPDF_FormField* pFormField = GetFormField();
-  ASSERT(pFormField != NULL);
-
   return pFormField->GetTopVisibleIndex();
 }
 
 FX_BOOL CPDFSDK_Widget::IsChecked() const {
   CPDF_FormControl* pFormCtrl = GetFormControl();
-  ASSERT(pFormCtrl != NULL);
-
   return pFormCtrl->IsChecked();
 }
 

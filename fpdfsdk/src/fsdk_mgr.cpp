@@ -106,10 +106,6 @@ void CFX_SystemHandler::InvalidateRect(FX_HWND hWnd, FX_RECT rect) {
   device2page.Transform((FX_FLOAT)rect.left, (FX_FLOAT)rect.top, left, top);
   device2page.Transform((FX_FLOAT)rect.right, (FX_FLOAT)rect.bottom, right,
                         bottom);
-  //  m_pEnv->FFI_DeviceToPage(pPage, rect.left, rect.top, (double*)&left,
-  //  (double*)&top);
-  //  m_pEnv->FFI_DeviceToPage(pPage, rect.right, rect.bottom, (double*)&right,
-  //  (double*)&bottom);
   CPDF_Rect rcPDF(left, bottom, right, top);
   rcPDF.Normalize();
 

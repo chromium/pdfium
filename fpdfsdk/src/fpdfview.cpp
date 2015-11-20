@@ -255,8 +255,7 @@ DLLEXPORT unsigned long STDCALL FPDF_GetDocPermissions(FPDF_DOCUMENT document) {
   if (!pDoc)
     return 0;
 
-  CPDF_Parser* pParser = (CPDF_Parser*)pDoc->GetParser();
-  CPDF_Dictionary* pDict = pParser->GetEncryptDict();
+  CPDF_Dictionary* pDict = pDoc->GetParser()->GetEncryptDict();
   return pDict ? pDict->GetInteger("P") : (FX_DWORD)-1;
 }
 
@@ -265,8 +264,7 @@ DLLEXPORT int STDCALL FPDF_GetSecurityHandlerRevision(FPDF_DOCUMENT document) {
   if (!pDoc)
     return -1;
 
-  CPDF_Parser* pParser = (CPDF_Parser*)pDoc->GetParser();
-  CPDF_Dictionary* pDict = pParser->GetEncryptDict();
+  CPDF_Dictionary* pDict = pDoc->GetParser()->GetEncryptDict();
   return pDict ? pDict->GetInteger("R") : -1;
 }
 

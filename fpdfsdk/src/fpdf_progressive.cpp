@@ -59,10 +59,10 @@ DLLEXPORT int STDCALL FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
   FPDF_RenderPage_Retail(pContext, page, start_x, start_y, size_x, size_y,
                          rotate, flags, FALSE, &IPauseAdapter);
 
-  if (pContext->m_pRenderer)
+  if (pContext->m_pRenderer) {
     return CPDF_ProgressiveRenderer::ToFPDFStatus(
         pContext->m_pRenderer->GetStatus());
-
+  }
   return FPDF_RENDER_FAILED;
 }
 

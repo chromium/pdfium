@@ -141,9 +141,7 @@ FPDFAvail_GetDocument(FPDF_AVAIL avail, FPDF_BYTESTRING password) {
 
 DLLEXPORT int STDCALL FPDFAvail_GetFirstPageNum(FPDF_DOCUMENT doc) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(doc);
-  if (!doc)
-    return 0;
-  return ((CPDF_Parser*)pDoc->GetParser())->GetFirstPageNo();
+  return pDoc ? pDoc->GetParser()->GetFirstPageNo() : 0;
 }
 
 DLLEXPORT int STDCALL FPDFAvail_IsPageAvail(FPDF_AVAIL avail,

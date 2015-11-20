@@ -192,12 +192,10 @@ CPDF_Object* CPDF_PageOrganizer::PageDictGetInheritableTag(
     return pDict->GetElement((const char*)nSrctag);
 
   while (pp) {
-    if (pp->KeyExist((const char*)nSrctag)) {
+    if (pp->KeyExist((const char*)nSrctag))
       return pp->GetElement((const char*)nSrctag);
-    }
-    if (!pp->KeyExist("Parent")) {
+    if (!pp->KeyExist("Parent"))
       break;
-    }
     pp = ToDictionary(pp->GetElement("Parent")->GetDirect());
   }
   return nullptr;
