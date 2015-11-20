@@ -58,7 +58,7 @@ class CCodec_ScanlineDecoder : public ICodec_ScanlineDecoder {
  protected:
   class ImageDataCache {
    public:
-    ImageDataCache(int width, int height, int pitch);
+    ImageDataCache(int width, int height, FX_DWORD pitch);
     ~ImageDataCache();
 
     bool AllocateCache();
@@ -75,7 +75,7 @@ class CCodec_ScanlineDecoder : public ICodec_ScanlineDecoder {
 
     const int m_Width;
     const int m_Height;
-    const int m_Pitch;
+    const FX_DWORD m_Pitch;
     int m_nCachedLines;
     nonstd::unique_ptr<uint8_t, FxFreeDeleter> m_Data;
   };
@@ -93,7 +93,7 @@ class CCodec_ScanlineDecoder : public ICodec_ScanlineDecoder {
   int m_OutputHeight;
   int m_nComps;
   int m_bpc;
-  int m_Pitch;
+  FX_DWORD m_Pitch;
   FX_BOOL m_bColorTransformed;
   int m_NextLine;
   uint8_t* m_pLastScanline;

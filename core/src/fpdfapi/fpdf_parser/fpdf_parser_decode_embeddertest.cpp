@@ -105,4 +105,14 @@ TEST_F(FPDFParserDecodeEmbeddertest, Bug_552046) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFParserDecodeEmbeddertest, Bug_555784) {
+  // Tests bad input to the run length decoder that caused a heap overflow.
+  // Should not cause a crash when rendered.
+  EXPECT_TRUE(OpenDocument("bug_555784.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  FPDF_BITMAP bitmap = RenderPage(page);
+  FPDFBitmap_Destroy(bitmap);
+  UnloadPage(page);
+}
+
 #undef TEST_CASE
