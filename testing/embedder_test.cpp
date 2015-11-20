@@ -46,12 +46,7 @@ EmbedderTest::EmbedderTest()
   memset(&file_access_, 0, sizeof(file_access_));
   memset(&file_avail_, 0, sizeof(file_avail_));
   delegate_ = default_delegate_.get();
-}
 
-EmbedderTest::~EmbedderTest() {
-}
-
-void EmbedderTest::SetUp() {
 #ifdef PDF_ENABLE_V8
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
   InitializeV8ForPDFium(g_exe_path_, std::string(), &natives_, &snapshot_,
@@ -60,7 +55,11 @@ void EmbedderTest::SetUp() {
   InitializeV8ForPDFium(&platform_);
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
 #endif  // FPDF_ENABLE_V8
+}
 
+EmbedderTest::~EmbedderTest() {}
+
+void EmbedderTest::SetUp() {
   FPDF_LIBRARY_CONFIG config;
   config.version = 2;
   config.m_pUserFontPaths = nullptr;
