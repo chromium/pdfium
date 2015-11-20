@@ -83,20 +83,9 @@ CPDFText_ParseOptions::CPDFText_ParseOptions()
       m_bNormalizeObjs(TRUE),
       m_bOutputHyphen(FALSE) {}
 
-IPDF_TextPage* IPDF_TextPage::CreateTextPage(
-    const CPDF_Page* pPage,
-    CPDFText_ParseOptions ParserOptions) {
-  return new CPDF_TextPage(pPage, ParserOptions);
-}
-
 IPDF_TextPage* IPDF_TextPage::CreateTextPage(const CPDF_Page* pPage,
                                              int flags) {
   return new CPDF_TextPage(pPage, flags);
-}
-
-IPDF_TextPage* IPDF_TextPage::CreateTextPage(const CPDF_PageObjects* pObjs,
-                                             int flags) {
-  return new CPDF_TextPage(pObjs, flags);
 }
 
 IPDF_TextPageFind* IPDF_TextPageFind::CreatePageFind(
@@ -131,35 +120,6 @@ CPDF_TextPage::CPDF_TextPage(const CPDF_Page* pPage, int flags)
                           (int)pPage->GetPageHeight(), 0);
 }
 
-CPDF_TextPage::CPDF_TextPage(const CPDF_Page* pPage,
-                             CPDFText_ParseOptions ParserOptions)
-    : m_ParseOptions(ParserOptions),
-      m_pPage(pPage),
-      m_charList(512),
-      m_TempCharList(50),
-      m_parserflag(0),
-      m_pPreTextObj(nullptr),
-      m_bIsParsed(false),
-      m_TextlineDir(-1),
-      m_CurlineRect(0, 0, 0, 0) {
-  m_TextBuf.EstimateSize(0, 10240);
-  pPage->GetDisplayMatrix(m_DisplayMatrix, 0, 0, (int)pPage->GetPageWidth(),
-                          (int)pPage->GetPageHeight(), 0);
-}
-
-CPDF_TextPage::CPDF_TextPage(const CPDF_PageObjects* pPage, int flags)
-    : m_pPage(pPage),
-      m_charList(512),
-      m_TempCharList(50),
-      m_parserflag(flags),
-      m_pPreTextObj(nullptr),
-      m_bIsParsed(false),
-      m_TextlineDir(-1),
-      m_CurlineRect(0, 0, 0, 0) {
-  m_TextBuf.EstimateSize(0, 10240);
-  CFX_FloatRect pageRect = pPage->CalcBoundingBox();
-  m_DisplayMatrix = CFX_AffineMatrix(1, 0, 0, -1, pageRect.right, pageRect.top);
-}
 void CPDF_TextPage::NormalizeObjects(FX_BOOL bNormalize) {
   m_ParseOptions.m_bNormalizeObjs = bNormalize;
 }

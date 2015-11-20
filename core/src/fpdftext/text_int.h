@@ -8,7 +8,6 @@
 #define CORE_SRC_FPDFTEXT_TEXT_INT_H_
 
 #include "core/include/fpdftext/fpdf_text.h"
-#include "core/include/fxcrt/fx_arb.h"
 #include "core/include/fxcrt/fx_basic.h"
 
 class CFX_BidiChar;
@@ -52,9 +51,7 @@ typedef CFX_ArrayTemplate<PDFTEXT_Obj> LINEOBJ;
 
 class CPDF_TextPage : public IPDF_TextPage {
  public:
-  CPDF_TextPage(const CPDF_Page* pPage, int flags = 0);
-  CPDF_TextPage(const CPDF_PageObjects* pPage, int flags = 0);
-  CPDF_TextPage(const CPDF_Page* pPage, CPDFText_ParseOptions ParserOptions);
+  CPDF_TextPage(const CPDF_Page* pPage, int flags);
   ~CPDF_TextPage() override {}
 
   // IPDF_TextPage

@@ -11,7 +11,6 @@
 
 #include "core/include/fxcrt/fx_system.h"
 #include "fpdf_objects.h"
-#include "public/fpdf_dataavail.h"
 #include "third_party/base/nonstd_unique_ptr.h"
 
 class CFDF_Document;
@@ -912,19 +911,19 @@ class IPDF_DataAvail {
     FormNotExist = 2,      // PDF_FORM_NOTEXIST
   };
 
-static IPDF_DataAvail* Create(IFX_FileAvail* pFileAvail,
+  static IPDF_DataAvail* Create(IFX_FileAvail* pFileAvail,
                                 IFX_FileRead* pFileRead);
   virtual ~IPDF_DataAvail() {}
 
   IFX_FileAvail* GetFileAvail() const { return m_pFileAvail; }
   IFX_FileRead* GetFileRead() const { return m_pFileRead; }
 
-  virtual int IsDocAvail(IFX_DownloadHints* pHints) = 0;
+  virtual DocAvailStatus IsDocAvail(IFX_DownloadHints* pHints) = 0;
   virtual void SetDocument(CPDF_Document* pDoc) = 0;
   virtual int IsPageAvail(int iPage, IFX_DownloadHints* pHints) = 0;
   virtual FX_BOOL IsLinearized() = 0;
-  virtual int IsFormAvail(IFX_DownloadHints* pHints) = 0;
-  virtual int IsLinearizedPDF() = 0;
+  virtual DocFormStatus IsFormAvail(IFX_DownloadHints* pHints) = 0;
+  virtual DocLinearizationStatus IsLinearizedPDF() = 0;
   virtual void GetLinearizedMainXRefInfo(FX_FILESIZE* pPos,
                                          FX_DWORD* pSize) = 0;
 

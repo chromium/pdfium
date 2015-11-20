@@ -373,7 +373,6 @@ class CFX_FolderFontInfo : public IFX_SystemFontInfo {
  public:
   CFX_FolderFontInfo();
   ~CFX_FolderFontInfo() override;
-
   void AddPath(const CFX_ByteStringC& path);
 
   // IFX_SytemFontInfo:

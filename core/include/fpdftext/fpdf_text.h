@@ -76,10 +76,6 @@ class CPDFText_ParseOptions {
 class IPDF_TextPage {
  public:
   static IPDF_TextPage* CreateTextPage(const CPDF_Page* pPage, int flags = 0);
-  static IPDF_TextPage* CreateTextPage(const CPDF_Page* pPage,
-                                       CPDFText_ParseOptions ParserOptions);
-  static IPDF_TextPage* CreateTextPage(const CPDF_PageObjects* pObjs,
-                                       int flags = 0);
   static IPDF_TextPage* CreateReflowTextPage(IPDF_ReflowedPage* pRefPage);
 
   virtual ~IPDF_TextPage() {}
