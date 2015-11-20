@@ -288,7 +288,7 @@ void FXJS_InitializeRuntime(
   v8::Context::Scope context_scope(v8Context);
 
   FXJS_PerIsolateData::SetUp(pIsolate);
-  FXJS_SetRuntimeForV8Context(v8Context, pIRuntime);
+  v8Context->SetAlignedPointerInEmbedderData(kPerContextDataIndex, pIRuntime);
 
   int maxID = CFXJS_ObjDefinition::MaxID(pIsolate);
   pStaticObjects->resize(maxID + 1);
@@ -366,14 +366,15 @@ void FXJS_ReleaseRuntime(v8::Isolate* pIsolate,
   delete pData;
 }
 
+IJS_Runtime* FXJS_GetRuntimeFromIsolate(v8::Isolate* pIsolate) {
+  v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
+  return static_cast<IJS_Runtime*>(
+      context->GetAlignedPointerFromEmbedderData(kPerContextDataIndex));
+}
+
 void FXJS_SetRuntimeForV8Context(v8::Local<v8::Context> v8Context,
                                  IJS_Runtime* pIRuntime) {
   v8Context->SetAlignedPointerInEmbedderData(kPerContextDataIndex, pIRuntime);
-}
-
-IJS_Runtime* FXJS_GetRuntimeFromV8Context(v8::Local<v8::Context> v8Context) {
-  return static_cast<IJS_Runtime*>(
-      v8Context->GetAlignedPointerFromEmbedderData(kPerContextDataIndex));
 }
 
 int FXJS_Execute(v8::Isolate* pIsolate,
