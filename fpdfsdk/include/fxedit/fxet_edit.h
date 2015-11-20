@@ -814,16 +814,21 @@ class CFX_Edit_Iterator : public IFX_Edit_Iterator {
 class CFX_Edit_Provider : public IPDF_VariableText_Provider {
  public:
   CFX_Edit_Provider(IFX_Edit_FontMap* pFontMap);
-  virtual ~CFX_Edit_Provider();
+  ~CFX_Edit_Provider() override;
 
   IFX_Edit_FontMap* GetFontMap();
 
-  int32_t GetCharWidth(int32_t nFontIndex, FX_WORD word, int32_t nWordStyle);
-  int32_t GetTypeAscent(int32_t nFontIndex);
-  int32_t GetTypeDescent(int32_t nFontIndex);
-  int32_t GetWordFontIndex(FX_WORD word, int32_t charset, int32_t nFontIndex);
-  int32_t GetDefaultFontIndex();
-  FX_BOOL IsLatinWord(FX_WORD word);
+  // IPDF_VariableText_Provider:
+  int32_t GetCharWidth(int32_t nFontIndex,
+                       FX_WORD word,
+                       int32_t nWordStyle) override;
+  int32_t GetTypeAscent(int32_t nFontIndex) override;
+  int32_t GetTypeDescent(int32_t nFontIndex) override;
+  int32_t GetWordFontIndex(FX_WORD word,
+                           int32_t charset,
+                           int32_t nFontIndex) override;
+  int32_t GetDefaultFontIndex() override;
+  FX_BOOL IsLatinWord(FX_WORD word) override;
 
  private:
   IFX_Edit_FontMap* m_pFontMap;

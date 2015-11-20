@@ -136,23 +136,23 @@ class CFX_MemoryStream final : public IFX_MemoryStream {
     }
     m_Blocks.RemoveAll();
   }
-  virtual IFX_FileStream* Retain() override {
+
+  // IFX_MemoryStream:
+  IFX_FileStream* Retain() override {
     m_dwCount++;
     return this;
   }
-  virtual void Release() override {
+  void Release() override {
     FX_DWORD nCount = --m_dwCount;
     if (nCount) {
       return;
     }
     delete this;
   }
-  virtual FX_FILESIZE GetSize() override { return (FX_FILESIZE)m_nCurSize; }
-  virtual FX_BOOL IsEOF() override { return m_nCurPos >= (size_t)GetSize(); }
-  virtual FX_FILESIZE GetPosition() override { return (FX_FILESIZE)m_nCurPos; }
-  virtual FX_BOOL ReadBlock(void* buffer,
-                            FX_FILESIZE offset,
-                            size_t size) override {
+  FX_FILESIZE GetSize() override { return (FX_FILESIZE)m_nCurSize; }
+  FX_BOOL IsEOF() override { return m_nCurPos >= (size_t)GetSize(); }
+  FX_FILESIZE GetPosition() override { return (FX_FILESIZE)m_nCurPos; }
+  FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override {
     if (!buffer || !size) {
       return FALSE;
     }
@@ -185,7 +185,7 @@ class CFX_MemoryStream final : public IFX_MemoryStream {
     }
     return TRUE;
   }
-  virtual size_t ReadBlock(void* buffer, size_t size) override {
+  size_t ReadBlock(void* buffer, size_t size) override {
     if (m_nCurPos >= m_nCurSize) {
       return 0;
     }
@@ -195,9 +195,9 @@ class CFX_MemoryStream final : public IFX_MemoryStream {
     }
     return nRead;
   }
-  virtual FX_BOOL WriteBlock(const void* buffer,
-                             FX_FILESIZE offset,
-                             size_t size) override {
+  FX_BOOL WriteBlock(const void* buffer,
+                     FX_FILESIZE offset,
+                     size_t size) override {
     if (!buffer || !size) {
       return FALSE;
     }
@@ -255,11 +255,11 @@ class CFX_MemoryStream final : public IFX_MemoryStream {
     }
     return TRUE;
   }
-  virtual FX_BOOL Flush() override { return TRUE; }
-  virtual FX_BOOL IsConsecutive() const override {
+  FX_BOOL Flush() override { return TRUE; }
+  FX_BOOL IsConsecutive() const override {
     return m_dwFlags & FX_MEMSTREAM_Consecutive;
   }
-  virtual void EstimateSize(size_t nInitSize, size_t nGrowSize) override {
+  void EstimateSize(size_t nInitSize, size_t nGrowSize) override {
     if (m_dwFlags & FX_MEMSTREAM_Consecutive) {
       if (m_Blocks.GetSize() < 1) {
         uint8_t* pBlock = FX_Alloc(uint8_t, FX_MAX(nInitSize, 4096));
@@ -270,12 +270,12 @@ class CFX_MemoryStream final : public IFX_MemoryStream {
       m_nGrowSize = FX_MAX(nGrowSize, 4096);
     }
   }
-  virtual uint8_t* GetBuffer() const override {
+  uint8_t* GetBuffer() const override {
     return m_Blocks.GetSize() ? (uint8_t*)m_Blocks[0] : NULL;
   }
-  virtual void AttachBuffer(uint8_t* pBuffer,
-                            size_t nSize,
-                            FX_BOOL bTakeOver = FALSE) override {
+  void AttachBuffer(uint8_t* pBuffer,
+                    size_t nSize,
+                    FX_BOOL bTakeOver = FALSE) override {
     if (!(m_dwFlags & FX_MEMSTREAM_Consecutive)) {
       return;
     }
@@ -286,7 +286,7 @@ class CFX_MemoryStream final : public IFX_MemoryStream {
     m_dwFlags =
         FX_MEMSTREAM_Consecutive | (bTakeOver ? FX_MEMSTREAM_TakeOver : 0);
   }
-  virtual void DetachBuffer() override {
+  void DetachBuffer() override {
     if (!(m_dwFlags & FX_MEMSTREAM_Consecutive)) {
       return;
     }

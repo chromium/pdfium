@@ -14,7 +14,7 @@ class JBig2DocumentContext : public CFX_DestructObject {
     return &m_SymbolDictCache;
   }
 
-  ~JBig2DocumentContext() {
+  ~JBig2DocumentContext() override {
     for (auto it : m_SymbolDictCache) {
       delete it.second;
     }

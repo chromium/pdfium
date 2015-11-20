@@ -21,20 +21,21 @@ class CFX_IccTransformCache;
 
 class CCodec_BasicModule : public ICodec_BasicModule {
  public:
-  virtual FX_BOOL RunLengthEncode(const uint8_t* src_buf,
-                                  FX_DWORD src_size,
-                                  uint8_t*& dest_buf,
-                                  FX_DWORD& dest_size);
-  virtual FX_BOOL A85Encode(const uint8_t* src_buf,
-                            FX_DWORD src_size,
-                            uint8_t*& dest_buf,
-                            FX_DWORD& dest_size);
-  virtual ICodec_ScanlineDecoder* CreateRunLengthDecoder(const uint8_t* src_buf,
-                                                         FX_DWORD src_size,
-                                                         int width,
-                                                         int height,
-                                                         int nComps,
-                                                         int bpc);
+  // ICodec_BasicModule:
+  FX_BOOL RunLengthEncode(const uint8_t* src_buf,
+                          FX_DWORD src_size,
+                          uint8_t*& dest_buf,
+                          FX_DWORD& dest_size) override;
+  FX_BOOL A85Encode(const uint8_t* src_buf,
+                    FX_DWORD src_size,
+                    uint8_t*& dest_buf,
+                    FX_DWORD& dest_size) override;
+  ICodec_ScanlineDecoder* CreateRunLengthDecoder(const uint8_t* src_buf,
+                                                 FX_DWORD src_size,
+                                                 int width,
+                                                 int height,
+                                                 int nComps,
+                                                 int bpc) override;
 };
 
 class CCodec_ScanlineDecoder : public ICodec_ScanlineDecoder {
@@ -101,22 +102,23 @@ class CCodec_ScanlineDecoder : public ICodec_ScanlineDecoder {
 
 class CCodec_FaxModule : public ICodec_FaxModule {
  public:
-  virtual ICodec_ScanlineDecoder* CreateDecoder(const uint8_t* src_buf,
-                                                FX_DWORD src_size,
-                                                int width,
-                                                int height,
-                                                int K,
-                                                FX_BOOL EndOfLine,
-                                                FX_BOOL EncodedByteAlign,
-                                                FX_BOOL BlackIs1,
-                                                int Columns,
-                                                int Rows);
+  // ICodec_FaxModule:
+  ICodec_ScanlineDecoder* CreateDecoder(const uint8_t* src_buf,
+                                        FX_DWORD src_size,
+                                        int width,
+                                        int height,
+                                        int K,
+                                        FX_BOOL EndOfLine,
+                                        FX_BOOL EncodedByteAlign,
+                                        FX_BOOL BlackIs1,
+                                        int Columns,
+                                        int Rows) override;
   FX_BOOL Encode(const uint8_t* src_buf,
                  int width,
                  int height,
                  int pitch,
                  uint8_t*& dest_buf,
-                 FX_DWORD& dest_size);
+                 FX_DWORD& dest_size) override;
 };
 
 class CCodec_FlateModule : public ICodec_FlateModule {
@@ -258,42 +260,45 @@ class CCodec_BmpModule : public ICodec_BmpModule {
 };
 class CCodec_IccModule : public ICodec_IccModule {
  public:
-  virtual IccCS GetProfileCS(const uint8_t* pProfileData,
-                             unsigned int dwProfileSize);
-  virtual IccCS GetProfileCS(IFX_FileRead* pFile);
-  virtual void* CreateTransform(
-      ICodec_IccModule::IccParam* pInputParam,
-      ICodec_IccModule::IccParam* pOutputParam,
-      ICodec_IccModule::IccParam* pProofParam = NULL,
-      FX_DWORD dwIntent = Icc_INTENT_PERCEPTUAL,
-      FX_DWORD dwFlag = Icc_FLAGS_DEFAULT,
-      FX_DWORD dwPrfIntent = Icc_INTENT_ABSOLUTE_COLORIMETRIC,
-      FX_DWORD dwPrfFlag = Icc_FLAGS_SOFTPROOFING);
-  virtual void* CreateTransform_sRGB(const uint8_t* pProfileData,
-                                     FX_DWORD dwProfileSize,
-                                     int32_t& nComponents,
-                                     int32_t intent = 0,
-                                     FX_DWORD dwSrcFormat = Icc_FORMAT_DEFAULT);
-  virtual void* CreateTransform_CMYK(const uint8_t* pSrcProfileData,
-                                     FX_DWORD dwSrcProfileSize,
-                                     int32_t& nSrcComponents,
-                                     const uint8_t* pDstProfileData,
-                                     FX_DWORD dwDstProfileSize,
-                                     int32_t intent = 0,
-                                     FX_DWORD dwSrcFormat = Icc_FORMAT_DEFAULT,
-                                     FX_DWORD dwDstFormat = Icc_FORMAT_DEFAULT);
-  virtual void DestroyTransform(void* pTransform);
-  virtual void Translate(void* pTransform,
-                         FX_FLOAT* pSrcValues,
-                         FX_FLOAT* pDestValues);
-  virtual void TranslateScanline(void* pTransform,
-                                 uint8_t* pDest,
-                                 const uint8_t* pSrc,
-                                 int pixels);
-  virtual void SetComponents(FX_DWORD nComponents) {
+  ~CCodec_IccModule() override;
+
+  // ICodec_IccModule:
+  IccCS GetProfileCS(const uint8_t* pProfileData,
+                     unsigned int dwProfileSize) override;
+  IccCS GetProfileCS(IFX_FileRead* pFile) override;
+  void* CreateTransform(ICodec_IccModule::IccParam* pInputParam,
+                        ICodec_IccModule::IccParam* pOutputParam,
+                        ICodec_IccModule::IccParam* pProofParam = NULL,
+                        FX_DWORD dwIntent = Icc_INTENT_PERCEPTUAL,
+                        FX_DWORD dwFlag = Icc_FLAGS_DEFAULT,
+                        FX_DWORD dwPrfIntent = Icc_INTENT_ABSOLUTE_COLORIMETRIC,
+                        FX_DWORD dwPrfFlag = Icc_FLAGS_SOFTPROOFING) override;
+  void* CreateTransform_sRGB(
+      const uint8_t* pProfileData,
+      FX_DWORD dwProfileSize,
+      int32_t& nComponents,
+      int32_t intent = 0,
+      FX_DWORD dwSrcFormat = Icc_FORMAT_DEFAULT) override;
+  void* CreateTransform_CMYK(
+      const uint8_t* pSrcProfileData,
+      FX_DWORD dwSrcProfileSize,
+      int32_t& nSrcComponents,
+      const uint8_t* pDstProfileData,
+      FX_DWORD dwDstProfileSize,
+      int32_t intent = 0,
+      FX_DWORD dwSrcFormat = Icc_FORMAT_DEFAULT,
+      FX_DWORD dwDstFormat = Icc_FORMAT_DEFAULT) override;
+  void DestroyTransform(void* pTransform) override;
+  void Translate(void* pTransform,
+                 FX_FLOAT* pSrcValues,
+                 FX_FLOAT* pDestValues) override;
+  void TranslateScanline(void* pTransform,
+                         uint8_t* pDest,
+                         const uint8_t* pSrc,
+                         int pixels) override;
+  void SetComponents(FX_DWORD nComponents) override {
     m_nComponents = nComponents;
   }
-  virtual ~CCodec_IccModule();
 
  protected:
   enum Icc_CLASS {

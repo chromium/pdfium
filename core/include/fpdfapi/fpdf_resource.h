@@ -346,21 +346,23 @@ class CPDF_Type1Font : public CPDF_SimpleFont {
   CPDF_Type1Font();
 
   int GetBase14Font() { return m_Base14Font; }
-  virtual int GlyphFromCharCodeExt(FX_DWORD charcode);
 
  protected:
-  virtual FX_BOOL _Load();
+  // CPDF_SimpleFont:
+  int GlyphFromCharCodeExt(FX_DWORD charcode) override;
+  FX_BOOL _Load() override;
+  void LoadGlyphMap() override;
 
   int m_Base14Font;
-  virtual void LoadGlyphMap();
 };
 class CPDF_TrueTypeFont : public CPDF_SimpleFont {
  public:
   CPDF_TrueTypeFont();
 
  protected:
-  virtual FX_BOOL _Load();
-  virtual void LoadGlyphMap();
+  // CPDF_SimpleFont:
+  FX_BOOL _Load() override;
+  void LoadGlyphMap() override;
 };
 
 class CPDF_Type3Char {
@@ -428,33 +430,33 @@ class CPDF_CIDFont : public CPDF_Font {
 
   static FX_FLOAT CIDTransformToFloat(uint8_t ch);
 
-  FX_BOOL LoadGB2312();
+  // CPDF_Font:
   int GlyphFromCharCode(FX_DWORD charcode, FX_BOOL* pVertGlyph = NULL) override;
   int GetCharWidthF(FX_DWORD charcode, int level = 0) override;
   void GetCharBBox(FX_DWORD charcode, FX_RECT& rect, int level = 0) override;
-  FX_WORD CIDFromCharCode(FX_DWORD charcode) const;
-
-  FX_BOOL IsTrueType() const { return !m_bType1; }
-
-  virtual FX_DWORD GetNextChar(const FX_CHAR* pString,
-                               int nStrLen,
-                               int& offset) const override;
+  FX_DWORD GetNextChar(const FX_CHAR* pString,
+                       int nStrLen,
+                       int& offset) const override;
   int CountChar(const FX_CHAR* pString, int size) const override;
   int AppendChar(FX_CHAR* str, FX_DWORD charcode) const override;
   int GetCharSize(FX_DWORD charcode) const override;
-  const uint8_t* GetCIDTransform(FX_WORD CID) const;
   FX_BOOL IsVertWriting() const override;
+  FX_BOOL IsUnicodeCompatible() const override;
+  FX_BOOL _Load() override;
+  FX_WCHAR _UnicodeFromCharCode(FX_DWORD charcode) const override;
+  FX_DWORD _CharCodeFromUnicode(FX_WCHAR Unicode) const override;
+
+  FX_BOOL LoadGB2312();
+  FX_WORD CIDFromCharCode(FX_DWORD charcode) const;
+  FX_BOOL IsTrueType() const { return !m_bType1; }
+  const uint8_t* GetCIDTransform(FX_WORD CID) const;
   short GetVertWidth(FX_WORD CID) const;
   void GetVertOrigin(FX_WORD CID, short& vx, short& vy) const;
-  FX_BOOL IsUnicodeCompatible() const override;
   virtual FX_BOOL IsFontStyleFromCharCode(FX_DWORD charcode) const;
 
  protected:
   friend class CPDF_Font;
 
-  FX_BOOL _Load() override;
-  FX_WCHAR _UnicodeFromCharCode(FX_DWORD charcode) const override;
-  FX_DWORD _CharCodeFromUnicode(FX_WCHAR Unicode) const override;
   int GetGlyphIndex(FX_DWORD unicodeb, FX_BOOL* pVertGlyph);
   void LoadMetricsArray(CPDF_Array* pArray,
                         CFX_DWordArray& result,
