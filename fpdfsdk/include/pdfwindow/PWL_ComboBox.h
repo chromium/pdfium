@@ -47,11 +47,11 @@ class CPWL_CBButton : public CPWL_Wnd {
 class CPWL_ComboBox : public CPWL_Wnd {
  public:
   CPWL_ComboBox();
-  ~CPWL_ComboBox() {}
+  ~CPWL_ComboBox() override {}
 
   operator CPWL_Edit*() { return m_pEdit; }
 
-  // CPWL_Wnd
+  // CPWL_Wnd:
   CFX_ByteString GetClassName() const override;
   void OnCreate(PWL_CREATEPARAM& cp) override;
   FX_BOOL OnKeyDown(FX_WORD nChar, FX_DWORD nFlag) override;

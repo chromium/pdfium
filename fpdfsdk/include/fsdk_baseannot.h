@@ -110,19 +110,16 @@ class CPDFSDK_Annot {
 class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
  public:
   CPDFSDK_BAAnnot(CPDF_Annot* pAnnot, CPDFSDK_PageView* pPageView);
-  virtual ~CPDFSDK_BAAnnot() {}
+  ~CPDFSDK_BAAnnot() override {}
 
-  virtual CFX_ByteString GetType() const;
-  virtual CFX_ByteString GetSubType() const;
-
-  virtual void SetRect(const CPDF_Rect& rect);
-  virtual CPDF_Rect GetRect() const;
-
-  virtual CPDF_Annot* GetPDFAnnot() const;
-
-  virtual void Annot_OnDraw(CFX_RenderDevice* pDevice,
-                            CPDF_Matrix* pUser2Device,
-                            CPDF_RenderOptions* pOptions);
+  CFX_ByteString GetType() const override;
+  CFX_ByteString GetSubType() const override;
+  void SetRect(const CPDF_Rect& rect) override;
+  CPDF_Rect GetRect() const override;
+  CPDF_Annot* GetPDFAnnot() const override;
+  void Annot_OnDraw(CFX_RenderDevice* pDevice,
+                    CPDF_Matrix* pUser2Device,
+                    CPDF_RenderOptions* pOptions) override;
 
   CPDF_Dictionary* GetAnnotDict() const;
 

@@ -208,40 +208,33 @@ class CLST_ArrayTemplate : public CFX_ArrayTemplate<TYPE> {
 class CFX_List : protected CFX_ListContainer, public IFX_List {
  public:
   CFX_List();
-  virtual ~CFX_List();
+  ~CFX_List() override;
 
- public:
-  virtual void SetFontMap(IFX_Edit_FontMap* pFontMap);
-  virtual void SetFontSize(FX_FLOAT fFontSize);
-
-  virtual CPDF_Rect GetPlateRect() const;
-  virtual CPDF_Rect GetContentRect() const;
-
-  virtual FX_FLOAT GetFontSize() const;
-  virtual IFX_Edit* GetItemEdit(int32_t nIndex) const;
-  virtual int32_t GetCount() const;
-  virtual FX_BOOL IsItemSelected(int32_t nIndex) const;
-  virtual FX_FLOAT GetFirstHeight() const;
-
-  virtual void SetMultipleSel(FX_BOOL bMultiple);
-  virtual FX_BOOL IsMultipleSel() const;
-  virtual FX_BOOL IsValid(int32_t nItemIndex) const;
-  virtual int32_t FindNext(int32_t nIndex, FX_WCHAR nChar) const;
+  // IFX_List:
+  void SetFontMap(IFX_Edit_FontMap* pFontMap) override;
+  void SetFontSize(FX_FLOAT fFontSize) override;
+  CPDF_Rect GetPlateRect() const override;
+  CPDF_Rect GetContentRect() const override;
+  FX_FLOAT GetFontSize() const override;
+  IFX_Edit* GetItemEdit(int32_t nIndex) const override;
+  int32_t GetCount() const override;
+  FX_BOOL IsItemSelected(int32_t nIndex) const override;
+  FX_FLOAT GetFirstHeight() const override;
+  void SetMultipleSel(FX_BOOL bMultiple) override;
+  FX_BOOL IsMultipleSel() const override;
+  FX_BOOL IsValid(int32_t nItemIndex) const override;
+  int32_t FindNext(int32_t nIndex, FX_WCHAR nChar) const override;
+  void Empty() override;
+  CPDF_Rect GetItemRect(int32_t nIndex) const override;
+  int32_t GetItemIndex(const CPDF_Point& point) const override;
+  int32_t GetFirstSelected() const override;
 
  protected:
-  virtual void Empty();
-
   void AddItem(const FX_WCHAR* str);
   virtual void ReArrange(int32_t nItemIndex);
-
-  virtual CPDF_Rect GetItemRect(int32_t nIndex) const;
   CFX_WideString GetItemText(int32_t nIndex) const;
-
   void SetItemSelect(int32_t nItemIndex, FX_BOOL bSelected);
   void SetItemCaret(int32_t nItemIndex, FX_BOOL bCaret);
-
-  virtual int32_t GetItemIndex(const CPDF_Point& point) const;
-  int32_t GetFirstSelected() const;
   int32_t GetLastSelected() const;
   FX_WCHAR Toupper(FX_WCHAR c) const;
 
