@@ -271,9 +271,10 @@ class CPDFSDK_InterForm : public CPDF_FormNotify {
   FX_COLORREF GetHighlightColor(int nFieldType);
 
  private:
-  FX_COLORREF m_aHighlightColor[6];
+  static const int kNumFieldTypes = 6;
+  FX_COLORREF m_aHighlightColor[kNumFieldTypes];
   uint8_t m_iHighlightAlpha;
-  FX_BOOL m_bNeedHightlight[6];
+  FX_BOOL m_bNeedHightlight[kNumFieldTypes];
 };
 
 #define BAI_STRUCTURE 0
