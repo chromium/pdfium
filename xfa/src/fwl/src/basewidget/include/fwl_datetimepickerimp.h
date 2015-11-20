@@ -48,7 +48,7 @@ class CFWL_DateTimeEdit : public CFWL_EditImp {
 class CFWL_DateTimeEditImpDelegate : public CFWL_EditImpDelegate {
  public:
   CFWL_DateTimeEditImpDelegate(CFWL_DateTimeEdit* pOwner);
-  virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
+  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
 
  private:
   int32_t DisForm_OnProcessMessage(CFWL_Message* pMessage);
@@ -69,7 +69,8 @@ class CFWL_DateTimeCalendar : public CFWL_MonthCalendarImp {
 class CFWL_DateTimeCalendarImpDelegate : public CFWL_MonthCalendarImpDelegate {
  public:
   CFWL_DateTimeCalendarImpDelegate(CFWL_DateTimeCalendar* pOwner);
-  virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
+  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
+
   void OnLButtonDownEx(CFWL_MsgMouse* pMsg);
   void OnLButtonUpEx(CFWL_MsgMouse* pMsg);
   void OnMouseMoveEx(CFWL_MsgMouse* pMsg);
@@ -195,9 +196,9 @@ class CFWL_DateTimePickerImp : public CFWL_WidgetImp {
 class CFWL_DateTimePickerImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_DateTimePickerImpDelegate(CFWL_DateTimePickerImp* pOwner);
-  virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
-  virtual FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = NULL);
+  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
+  FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
+                       const CFX_Matrix* pMatrix = NULL) override;
 
  protected:
   void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet = TRUE);

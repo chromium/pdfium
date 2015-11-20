@@ -51,14 +51,12 @@ FX_DWORD CFWL_PushButtonImp::GetClassID() const {
 FWL_ERR CFWL_PushButtonImp::Initialize() {
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
                                       FWL_ERR_Indefinite);
-  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_PushButtonImpDelegate(this);
+  m_pDelegate = new CFWL_PushButtonImpDelegate(this);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_PushButtonImp::Finalize() {
-  if (m_pDelegate) {
-    delete (CFWL_PushButtonImpDelegate*)m_pDelegate;
-    m_pDelegate = NULL;
-  }
+  delete m_pDelegate;
+  m_pDelegate = nullptr;
   return CFWL_WidgetImp::Finalize();
 }
 FWL_ERR CFWL_PushButtonImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {

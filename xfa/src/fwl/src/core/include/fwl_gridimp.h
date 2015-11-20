@@ -183,9 +183,9 @@ class CFWL_GridImp : public CFWL_ContentImp {
 class CFWL_GridImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_GridImpDelegate(CFWL_GridImp* pOwner);
-  virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
-  virtual FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = NULL);
+  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
+  FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
+                       const CFX_Matrix* pMatrix = NULL) override;
 
  protected:
   CFWL_GridImp* m_pOwner;

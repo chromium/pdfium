@@ -102,9 +102,9 @@ class CFWL_ScrollBarImp : public CFWL_WidgetImp, public IFWL_Timer {
 class CFWL_ScrollBarImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_ScrollBarImpDelegate(CFWL_ScrollBarImp* pOwner);
-  virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
-  virtual FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = NULL);
+  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
+  FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
+                       const CFX_Matrix* pMatrix = NULL) override;
 
  protected:
   void OnLButtonDown(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);

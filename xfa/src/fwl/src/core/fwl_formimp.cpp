@@ -135,14 +135,12 @@ FWL_ERR CFWL_FormImp::Initialize() {
                                       FWL_ERR_Indefinite);
   RegisterForm();
   RegisterEventTarget();
-  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_FormImpDelegate(this);
+  m_pDelegate = new CFWL_FormImpDelegate(this);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_FormImp::Finalize() {
-  if (m_pDelegate) {
-    delete (CFWL_FormImpDelegate*)m_pDelegate;
-    m_pDelegate = NULL;
-  }
+  delete m_pDelegate;
+  m_pDelegate = nullptr;
   UnregisterEventTarget();
   UnRegisterForm();
   return CFWL_WidgetImp::Finalize();

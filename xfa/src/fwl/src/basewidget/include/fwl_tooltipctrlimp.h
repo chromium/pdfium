@@ -67,10 +67,10 @@ class CFWL_ToolTipImp : public CFWL_FormImp {
 class CFWL_ToolTipImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_ToolTipImpDelegate(CFWL_ToolTipImp* pOwner);
-  virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
-  virtual FWL_ERR OnProcessEvent(CFWL_Event* pEvent);
-  virtual FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = NULL);
+  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
+  FWL_ERR OnProcessEvent(CFWL_Event* pEvent) override;
+  FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
+                       const CFX_Matrix* pMatrix = NULL) override;
 
  protected:
   void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet = TRUE);

@@ -180,10 +180,10 @@ class CFWL_EditImp : public CFWL_WidgetImp, public IFDE_TxtEdtEventSink {
 class CFWL_EditImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_EditImpDelegate(CFWL_EditImp* pOwner);
-  virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
-  virtual FWL_ERR OnProcessEvent(CFWL_Event* pEvent);
-  virtual FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = NULL);
+  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
+  FWL_ERR OnProcessEvent(CFWL_Event* pEvent) override;
+  FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
+                       const CFX_Matrix* pMatrix = NULL) override;
 
  protected:
   void DoActivate(CFWL_MsgActivate* pMsg);

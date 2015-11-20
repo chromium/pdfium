@@ -170,10 +170,8 @@ CFWL_GridImp::~CFWL_GridImp() {
     delete pInfo;
   }
   m_mapWidgetInfo.RemoveAll();
-  if (m_pDelegate) {
-    delete (CFWL_GridImpDelegate*)m_pDelegate;
-    m_pDelegate = NULL;
-  }
+  delete m_pDelegate;
+  m_pDelegate = nullptr;
 }
 FWL_ERR CFWL_GridImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_Grid;
@@ -185,16 +183,14 @@ FX_DWORD CFWL_GridImp::GetClassID() const {
 FWL_ERR CFWL_GridImp::Initialize() {
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_ContentImp::Initialize(),
                                       FWL_ERR_Indefinite);
-  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_GridImpDelegate(this);
+  m_pDelegate = new CFWL_GridImpDelegate(this);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_GridImp::Finalize() {
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_ContentImp::Finalize(),
                                       FWL_ERR_Indefinite);
-  if (m_pDelegate) {
-    delete (CFWL_GridImpDelegate*)m_pDelegate;
-    m_pDelegate = NULL;
-  }
+  delete m_pDelegate;
+  m_pDelegate = nullptr;
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_GridImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {

@@ -98,10 +98,10 @@ class CFWL_ListBoxImp : public CFWL_WidgetImp {
 class CFWL_ListBoxImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_ListBoxImpDelegate(CFWL_ListBoxImp* pOwner);
-  virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
-  virtual FWL_ERR OnProcessEvent(CFWL_Event* pEvent);
-  virtual FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = NULL);
+  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
+  FWL_ERR OnProcessEvent(CFWL_Event* pEvent) override;
+  FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
+                       const CFX_Matrix* pMatrix = NULL) override;
 
  protected:
   void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet = TRUE);

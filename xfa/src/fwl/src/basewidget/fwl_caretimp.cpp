@@ -69,7 +69,7 @@ FX_DWORD CFWL_CaretImp::GetClassID() const {
 FWL_ERR CFWL_CaretImp::Initialize() {
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
                                       FWL_ERR_Indefinite);
-  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_CaretImpDelegate(this);
+  m_pDelegate = new CFWL_CaretImpDelegate(this);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_CaretImp::Finalize() {
@@ -77,10 +77,8 @@ FWL_ERR CFWL_CaretImp::Finalize() {
     FWL_StopTimer(m_hTimer);
     m_hTimer = NULL;
   }
-  if (m_pDelegate) {
-    delete (CFWL_CaretImpDelegate*)m_pDelegate;
-    m_pDelegate = NULL;
-  }
+  delete m_pDelegate;
+  m_pDelegate = nullptr;
   return CFWL_WidgetImp::Finalize();
 }
 FWL_ERR CFWL_CaretImp::DrawWidget(CFX_Graphics* pGraphics,

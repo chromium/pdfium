@@ -233,9 +233,9 @@ typedef struct _DATEINFO {
 class CFWL_MonthCalendarImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_MonthCalendarImpDelegate(CFWL_MonthCalendarImp* pOwner);
-  virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
-  virtual FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = NULL);
+  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
+  FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
+                       const CFX_Matrix* pMatrix = NULL) override;
 
  protected:
   void OnActivate(CFWL_Message* pMsg);

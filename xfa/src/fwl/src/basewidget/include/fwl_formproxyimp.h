@@ -33,7 +33,7 @@ class CFWL_FormProxyImp : public CFWL_FormImp {
 class CFWL_FormProxyImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_FormProxyImpDelegate(CFWL_FormProxyImp* pOwner);
-  virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
+  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
 
  protected:
   CFWL_FormProxyImp* m_pOwner;

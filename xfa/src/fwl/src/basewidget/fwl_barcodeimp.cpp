@@ -51,17 +51,15 @@ FX_DWORD CFWL_BarcodeImp::GetClassID() const {
 }
 FWL_ERR CFWL_BarcodeImp::Initialize() {
   if (!m_pDelegate) {
-    m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_BarcodeImpDelegate(this);
+    m_pDelegate = new CFWL_BarcodeImpDelegate(this);
   }
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_EditImp::Initialize(),
                                       FWL_ERR_Indefinite);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_BarcodeImp::Finalize() {
-  if (m_pDelegate) {
-    delete (CFWL_BarcodeImpDelegate*)m_pDelegate;
-    m_pDelegate = NULL;
-  }
+  delete m_pDelegate;
+  m_pDelegate = nullptr;
   ReleaseBarcodeEngine();
   return CFWL_EditImp::Finalize();
 }

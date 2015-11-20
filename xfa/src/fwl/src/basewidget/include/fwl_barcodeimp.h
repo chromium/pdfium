@@ -47,6 +47,6 @@ class CFWL_BarcodeImp : public CFWL_EditImp {
 class CFWL_BarcodeImpDelegate : public CFWL_EditImpDelegate {
  public:
   CFWL_BarcodeImpDelegate(CFWL_BarcodeImp* pOwner);
-  virtual FWL_ERR OnProcessEvent(CFWL_Event* pEvent);
+  FWL_ERR OnProcessEvent(CFWL_Event* pEvent) override;
 };
 #endif

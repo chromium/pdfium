@@ -53,14 +53,12 @@ FX_DWORD CFWL_PictureBoxImp::GetClassID() const {
 FWL_ERR CFWL_PictureBoxImp::Initialize() {
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
                                       FWL_ERR_Indefinite);
-  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_PictureBoxImpDelegate(this);
+  m_pDelegate = new CFWL_PictureBoxImpDelegate(this);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_PictureBoxImp::Finalize() {
-  if (m_pDelegate) {
-    delete (CFWL_PictureBoxImpDelegate*)m_pDelegate;
-    m_pDelegate = NULL;
-  }
+  delete m_pDelegate;
+  m_pDelegate = nullptr;
   return CFWL_WidgetImp::Finalize();
 }
 FWL_ERR CFWL_PictureBoxImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {

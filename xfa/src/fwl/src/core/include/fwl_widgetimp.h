@@ -4,17 +4,21 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_WIDGET_IMP_H
-#define _FWL_WIDGET_IMP_H
+#ifndef FWL_WIDGETIMP_H_
+#define FWL_WIDGETIMP_H_
+
+#include "xfa/include/fwl/core/fwl_widget.h"
+#include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
+
 class CFWL_NoteTarget;
 class CFWL_NoteThread;
 class CFWL_WidgetImpProperties;
 class CFWL_WidgetMgr;
-class IFWL_Widget;
-class IFWL_ThemeProvider;
 class IFWL_DataProvider;
+class IFWL_ThemeProvider;
+class IFWL_Widget;
 class IFWL_WidgetDelegate;
-class CFWL_WidgetImp;
+
 class CFWL_WidgetImp : public CFWL_TargetImp {
  public:
   virtual FWL_ERR Initialize();
@@ -152,13 +156,15 @@ class CFWL_WidgetImp : public CFWL_TargetImp {
   friend void FWL_SetWidgetStates(IFWL_Widget* widget, FX_DWORD dwStates);
   friend void FWL_SetWidgetStyles(IFWL_Widget* widget, FX_DWORD dwStyles);
 };
-class CFWL_WidgetImpDelegate {
+
+class CFWL_WidgetImpDelegate : public IFWL_WidgetDelegate {
  public:
   CFWL_WidgetImpDelegate();
-  virtual ~CFWL_WidgetImpDelegate() {}
-  virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
-  virtual FWL_ERR OnProcessEvent(CFWL_Event* pEvent);
-  virtual FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = NULL);
+  ~CFWL_WidgetImpDelegate() override {}
+  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
+  FWL_ERR OnProcessEvent(CFWL_Event* pEvent) override;
+  FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
+                       const CFX_Matrix* pMatrix = NULL) override;
 };
-#endif
+
+#endif  // FWL_WIDGETIMP_H_

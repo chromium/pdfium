@@ -41,7 +41,7 @@ class CFWL_ComboEditImp : public CFWL_EditImp {
 class CFWL_ComboEditImpDelegate : public CFWL_EditImpDelegate {
  public:
   CFWL_ComboEditImpDelegate(CFWL_ComboEditImp* pOwner);
-  virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
+  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
 
  protected:
   CFWL_ComboEditImp* m_pOwner;
@@ -66,7 +66,7 @@ class CFWL_ComboListImp : public CFWL_ListBoxImp {
 class CFWL_ComboListImpDelegate : public CFWL_ListBoxImpDelegate {
  public:
   CFWL_ComboListImpDelegate(CFWL_ComboListImp* pOwner);
-  virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
+  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
 
  protected:
   void OnDropListFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet = TRUE);
@@ -190,10 +190,10 @@ class CFWL_ComboBoxImp : public CFWL_WidgetImp {
 class CFWL_ComboBoxImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_ComboBoxImpDelegate(CFWL_ComboBoxImp* pOwner);
-  virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
-  virtual FWL_ERR OnProcessEvent(CFWL_Event* pEvent);
-  virtual FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = NULL);
+  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
+  FWL_ERR OnProcessEvent(CFWL_Event* pEvent) override;
+  FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
+                       const CFX_Matrix* pMatrix = NULL) override;
 
  protected:
   void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet = TRUE);
@@ -218,9 +218,9 @@ class CFWL_ComboBoxImpDelegate : public CFWL_WidgetImpDelegate {
 class CFWL_ComboProxyImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_ComboProxyImpDelegate(IFWL_Form* pForm, CFWL_ComboBoxImp* pComboBox);
-  virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
-  virtual FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = NULL);
+  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
+  FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
+                       const CFX_Matrix* pMatrix = NULL) override;
   void Reset() { m_bLButtonUpSelf = FALSE; }
 
  protected:

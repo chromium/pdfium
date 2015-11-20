@@ -206,18 +206,13 @@ CFWL_ComboListImp::CFWL_ComboListImp(const CFWL_WidgetImpProperties& properties,
 FWL_ERR CFWL_ComboListImp::Initialize() {
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_ListBoxImp::Initialize(),
                                       FWL_ERR_Indefinite);
-  if (m_pDelegate) {
-    delete (CFWL_ComboListImpDelegate*)m_pDelegate;
-    m_pDelegate = NULL;
-  }
-  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_ComboListImpDelegate(this);
+  delete m_pDelegate;
+  m_pDelegate = new CFWL_ComboListImpDelegate(this);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_ComboListImp::Finalize() {
-  if (m_pDelegate) {
-    delete (CFWL_ComboListImpDelegate*)m_pDelegate;
-    m_pDelegate = NULL;
-  }
+  delete m_pDelegate;
+  m_pDelegate = nullptr;
   return CFWL_ListBoxImp::Finalize();
 }
 int32_t CFWL_ComboListImp::MatchItem(const CFX_WideString& wsMatch) {
@@ -519,7 +514,7 @@ FWL_ERR CFWL_ComboBoxImp::Initialize() {
   }
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
                                       FWL_WGTSTATE_Invisible);
-  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_ComboBoxImpDelegate(this);
+  m_pDelegate = new CFWL_ComboBoxImpDelegate(this);
   CFWL_WidgetImpProperties prop;
   prop.m_pThemeProvider = m_pProperties->m_pThemeProvider;
   prop.m_dwStyles |= FWL_WGTSTYLE_Border | FWL_WGTSTYLE_VScroll;
@@ -551,10 +546,8 @@ FWL_ERR CFWL_ComboBoxImp::Finalize() {
     m_pEdit->Finalize();
   }
   m_pListBox->Finalize();
-  if (m_pDelegate) {
-    delete (CFWL_ComboBoxImpDelegate*)m_pDelegate;
-    m_pDelegate = NULL;
-  }
+  delete m_pDelegate;
+  m_pDelegate = nullptr;
   return CFWL_WidgetImp::Finalize();
 }
 FWL_ERR CFWL_ComboBoxImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
@@ -1151,12 +1144,12 @@ void CFWL_ComboBoxImp::InitProxyForm() {
   m_pProxy->Initialize();
   m_pListBox->SetParent((IFWL_Widget*)m_pForm);
   m_pListProxyDelegate = new CFWL_ComboProxyImpDelegate(m_pForm, this);
-  m_pProxy->SetDelegate((IFWL_WidgetDelegate*)m_pListProxyDelegate);
+  m_pProxy->SetDelegate(m_pListProxyDelegate);
 }
 FWL_ERR CFWL_ComboBoxImp::DisForm_Initialize() {
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
                                       FWL_WGTSTATE_Invisible);
-  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_ComboBoxImpDelegate(this);
+  m_pDelegate = new CFWL_ComboBoxImpDelegate(this);
   DisForm_InitComboList();
   DisForm_InitComboEdit();
   return FWL_ERR_Succeeded;

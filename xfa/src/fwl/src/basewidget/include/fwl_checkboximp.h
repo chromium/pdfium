@@ -46,9 +46,9 @@ class CFWL_CheckBoxImp : public CFWL_WidgetImp {
 class CFWL_CheckBoxImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_CheckBoxImpDelegate(CFWL_CheckBoxImp* pOwner);
-  virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
-  virtual FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = NULL);
+  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
+  FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
+                       const CFX_Matrix* pMatrix = NULL) override;
 
  protected:
   void OnActivate(CFWL_Message* pMsg);

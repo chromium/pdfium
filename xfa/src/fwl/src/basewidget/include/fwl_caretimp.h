@@ -55,9 +55,9 @@ class CFWL_CaretImp : public CFWL_WidgetImp {
 class CFWL_CaretImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_CaretImpDelegate(CFWL_CaretImp* pOwner);
-  virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
-  virtual FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = NULL);
+  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
+  FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
+                       const CFX_Matrix* pMatrix = NULL) override;
 
  protected:
   CFWL_CaretImp* m_pOwner;

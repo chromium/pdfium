@@ -142,16 +142,14 @@ CFWL_DateTimeEdit::CFWL_DateTimeEdit(const CFWL_WidgetImpProperties& properties,
                                      IFWL_Widget* pOuter)
     : CFWL_EditImp(properties, pOuter) {}
 FWL_ERR CFWL_DateTimeEdit::Initialize() {
-  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_DateTimeEditImpDelegate(this);
+  m_pDelegate = new CFWL_DateTimeEditImpDelegate(this);
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_EditImp::Initialize(),
                                       FWL_ERR_Indefinite);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_DateTimeEdit::Finalize() {
-  if (m_pDelegate) {
-    delete (CFWL_DateTimeEditImpDelegate*)m_pDelegate;
-    m_pDelegate = NULL;
-  }
+  delete m_pDelegate;
+  m_pDelegate = nullptr;
   return CFWL_EditImp::Finalize();
 }
 CFWL_DateTimeEditImpDelegate::CFWL_DateTimeEditImpDelegate(
@@ -205,18 +203,13 @@ CFWL_DateTimeCalendar::CFWL_DateTimeCalendar(
 FWL_ERR CFWL_DateTimeCalendar::Initialize() {
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_MonthCalendarImp::Initialize(),
                                       FWL_ERR_Indefinite);
-  if (m_pDelegate) {
-    delete (CFWL_MonthCalendarImpDelegate*)m_pDelegate;
-  }
-  m_pDelegate =
-      (IFWL_WidgetDelegate*)new CFWL_DateTimeCalendarImpDelegate(this);
+  delete m_pDelegate;
+  m_pDelegate = new CFWL_DateTimeCalendarImpDelegate(this);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_DateTimeCalendar::Finalize() {
-  if (m_pDelegate) {
-    delete (CFWL_DateTimeCalendarImpDelegate*)m_pDelegate;
-    m_pDelegate = NULL;
-  }
+  delete m_pDelegate;
+  m_pDelegate = nullptr;
   return CFWL_MonthCalendarImp::Finalize();
 }
 CFWL_DateTimeCalendarImpDelegate::CFWL_DateTimeCalendarImpDelegate(
@@ -455,7 +448,7 @@ FX_DWORD CFWL_DateTimePickerImp::GetClassID() const {
 FWL_ERR CFWL_DateTimePickerImp::Initialize() {
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
                                       FWL_ERR_Indefinite);
-  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_DateTimePickerImpDelegate(this);
+  m_pDelegate = new CFWL_DateTimePickerImpDelegate(this);
   m_pProperties->m_dwStyleExes = FWL_STYLEEXT_DTP_ShortDateFormat;
   CFWL_WidgetImpProperties propMonth;
   propMonth.m_dwStyles = FWL_WGTSTYLE_Popup | FWL_WGTSTYLE_Border;
@@ -489,10 +482,8 @@ FWL_ERR CFWL_DateTimePickerImp::Finalize() {
     m_pForm->Finalize();
   }
   UnregisterEventTarget();
-  if (m_pDelegate) {
-    delete (CFWL_DateTimePickerImpDelegate*)m_pDelegate;
-    m_pDelegate = NULL;
-  }
+  delete m_pDelegate;
+  m_pDelegate = nullptr;
   return CFWL_WidgetImp::Finalize();
 }
 FWL_ERR CFWL_DateTimePickerImp::GetWidgetRect(CFX_RectF& rect,

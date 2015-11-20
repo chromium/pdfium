@@ -93,7 +93,7 @@ FX_DWORD CFWL_ListBoxImp::GetClassID() const {
 FWL_ERR CFWL_ListBoxImp::Initialize() {
   _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
                                       FWL_ERR_Indefinite);
-  m_pDelegate = (IFWL_WidgetDelegate*)new CFWL_ListBoxImpDelegate(this);
+  m_pDelegate = new CFWL_ListBoxImpDelegate(this);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_ListBoxImp::Finalize() {
@@ -103,10 +103,8 @@ FWL_ERR CFWL_ListBoxImp::Finalize() {
   if (m_pHorzScrollBar) {
     m_pHorzScrollBar->Finalize();
   }
-  if (m_pDelegate) {
-    delete (CFWL_ListBoxImpDelegate*)m_pDelegate;
-    m_pDelegate = NULL;
-  }
+  delete m_pDelegate;
+  m_pDelegate = nullptr;
   return CFWL_WidgetImp::Finalize();
 }
 FWL_ERR CFWL_ListBoxImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {

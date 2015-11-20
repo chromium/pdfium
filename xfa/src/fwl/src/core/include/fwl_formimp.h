@@ -171,10 +171,10 @@ class CFWL_FormImp : public CFWL_PanelImp {
 class CFWL_FormImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_FormImpDelegate(CFWL_FormImp* pOwner);
-  virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
-  virtual FWL_ERR OnProcessEvent(CFWL_Event* pEvent);
-  virtual FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = NULL);
+  int32_t OnProcessMessage(CFWL_Message* pMessage) override;
+  FWL_ERR OnProcessEvent(CFWL_Event* pEvent) override;
+  FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
+                       const CFX_Matrix* pMatrix = NULL) override;
 
  protected:
   void OnLButtonDown(CFWL_MsgMouse* pMsg);

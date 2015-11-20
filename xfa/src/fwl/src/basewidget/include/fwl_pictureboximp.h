@@ -43,8 +43,8 @@ class CFWL_PictureBoxImp : public CFWL_WidgetImp {
 class CFWL_PictureBoxImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_PictureBoxImpDelegate(CFWL_PictureBoxImp* pOwner);
-  virtual FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = NULL);
+  FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
+                       const CFX_Matrix* pMatrix = NULL) override;
 
  protected:
   CFWL_PictureBoxImp* m_pOwner;
