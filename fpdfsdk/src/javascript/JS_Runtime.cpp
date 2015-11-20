@@ -29,9 +29,6 @@
 #include "report.h"
 #include "util.h"
 
-/* ------------------------------ CJS_Runtime ------------------------------ */
-v8::Global<v8::ObjectTemplate>& _getGlobalObjectTemplate(v8::Isolate* pIsolate);
-
 // static
 void IJS_Runtime::Initialize(unsigned int slot, void* isolate) {
   FXJS_Initialize(slot, reinterpret_cast<v8::Isolate*>(isolate));
@@ -96,8 +93,7 @@ CJS_Runtime::~CJS_Runtime() {
   for (auto* obs : m_observers)
     obs->OnDestroyed();
 
-  int size = m_ContextArray.GetSize();
-  for (int i = 0; i < size; i++)
+  for (int i = 0; i < m_ContextArray.GetSize(); i++)
     delete m_ContextArray.GetAt(i);
 
   m_ContextArray.RemoveAll();
@@ -108,7 +104,6 @@ CJS_Runtime::~CJS_Runtime() {
 
   if (m_isolateManaged)
     m_isolate->Dispose();
-  m_isolate = NULL;
 }
 
 void CJS_Runtime::DefineJSObjects() {

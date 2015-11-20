@@ -878,8 +878,6 @@ void CPDFSDK_BAAnnot::WriteAppearance(const CFX_ByteString& sAPType,
 
     CPDF_Document* pDoc = m_pPageView->GetPDFDocument();
     int32_t objnum = pDoc->AddIndirectObject(pStream);
-    // pAPDict->SetAtReference(sAPType, pDoc, objnum);
-    ASSERT(pParentDict != NULL);
     pParentDict->SetAtReference(sAPType, pDoc, objnum);
   }
 

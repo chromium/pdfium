@@ -121,9 +121,9 @@ IPDFSDK_AnnotHandler* CPDFSDK_AnnotHandlerMgr::GetAnnotHandler(
   CPDF_Annot* pPDFAnnot = pAnnot->GetPDFAnnot();
   if (pPDFAnnot)
     return GetAnnotHandler(pPDFAnnot->GetSubType());
-  else if (pAnnot->GetXFAWidget())
+  if (pAnnot->GetXFAWidget())
     return GetAnnotHandler(FSDK_XFAWIDGET_TYPENAME);
-  return NULL;
+  return nullptr;
 }
 
 IPDFSDK_AnnotHandler* CPDFSDK_AnnotHandlerMgr::GetAnnotHandler(

@@ -62,10 +62,18 @@ static const FX_WCHAR* const months[] = {L"Jan",
                                          L"Nov",
                                          L"Dec"};
 
-static const FX_WCHAR* const fullmonths[] = {
-    L"January",   L"February", L"March",    L"April",
-    L"May",       L"June",     L"July",     L"August",
-    L"September", L"October",  L"November", L"December"};
+static const FX_WCHAR* const fullmonths[] = {L"January",
+                                             L"February",
+                                             L"March",
+                                             L"April",
+                                             L"May",
+                                             L"June",
+                                             L"July",
+                                             L"August",
+                                             L"September",
+                                             L"October",
+                                             L"November",
+                                             L"December"};
 
 FX_BOOL CJS_PublicMethods::IsNumber(const FX_WCHAR* string) {
   CFX_WideString sTrim = StrTrim(string);

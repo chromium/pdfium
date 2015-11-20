@@ -192,8 +192,8 @@ DLLEXPORT void STDCALL FPDF_InitLibrary() {
   FPDF_InitLibraryWithConfig(nullptr);
 }
 
-DLLEXPORT void STDCALL
-FPDF_InitLibraryWithConfig(const FPDF_LIBRARY_CONFIG* cfg) {
+DLLEXPORT void STDCALL FPDF_InitLibraryWithConfig(
+    const FPDF_LIBRARY_CONFIG* cfg) {
   g_pCodecModule = new CCodec_ModuleMgr();
 
   CFX_GEModule::Create(cfg ? cfg->m_pUserFontPaths : nullptr);
@@ -852,9 +852,8 @@ void FPDF_RenderPage_Retail(CRenderContext* pContext,
   pContext->m_pRenderer = new CPDF_ProgressiveRenderer(
       pContext->m_pContext, pContext->m_pDevice, pContext->m_pOptions);
   pContext->m_pRenderer->Start(pause);
-  if (bNeedToRestore) {
+  if (bNeedToRestore)
     pContext->m_pDevice->RestoreState();
-  }
 }
 
 DLLEXPORT int STDCALL FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,

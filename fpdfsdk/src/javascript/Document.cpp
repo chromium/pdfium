@@ -779,8 +779,6 @@ FX_BOOL Document::mailDoc(IJS_Context* cc,
 FX_BOOL Document::author(IJS_Context* cc,
                          CJS_PropValue& vp,
                          CFX_WideString& sError) {
-  ASSERT(m_pDocument != NULL);
-
   CPDF_Dictionary* pDictionary =
       m_pDocument->GetDocument()->GetPDFDoc()->GetInfo();
   if (!pDictionary)
@@ -804,8 +802,6 @@ FX_BOOL Document::author(IJS_Context* cc,
 FX_BOOL Document::info(IJS_Context* cc,
                        CJS_PropValue& vp,
                        CFX_WideString& sError) {
-  ASSERT(m_pDocument != NULL);
-
   CPDF_Dictionary* pDictionary =
       m_pDocument->GetDocument()->GetPDFDoc()->GetInfo();
   if (!pDictionary)
