@@ -49,7 +49,7 @@ class CPWL_ComboBox : public CPWL_Wnd {
   CPWL_ComboBox();
   ~CPWL_ComboBox() override {}
 
-  operator CPWL_Edit*() { return m_pEdit; }
+  CPWL_Edit* GetEdit() const { return m_pEdit; }
 
   // CPWL_Wnd:
   CFX_ByteString GetClassName() const override;
