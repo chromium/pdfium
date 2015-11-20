@@ -141,6 +141,8 @@ void CPDF_Parser::CloseParser(FX_BOOL bReParse) {
     delete pStream;
   }
   m_ObjectStreamMap.RemoveAll();
+  m_ObjCache.clear();
+
   m_SortedOffset.RemoveAll();
   m_CrossRef.RemoveAll();
   m_V5Type.RemoveAll();
@@ -1200,16 +1202,23 @@ CPDF_Object* CPDF_Parser::ParseIndirectObject(CPDF_IndirectObjects* pObjList,
       (uint8_t*)pObjStream->GetData(), (size_t)pObjStream->GetSize(), FALSE));
   CPDF_SyntaxParser syntax;
   syntax.InitParser(file.get(), 0);
-  int32_t offset = GetStreamFirst(pObjStream);
-  for (int32_t i = GetStreamNCount(pObjStream); i > 0; --i) {
-    FX_DWORD thisnum = syntax.GetDirectNum();
-    FX_DWORD thisoff = syntax.GetDirectNum();
-    if (thisnum == objnum) {
-      syntax.RestorePos(offset + thisoff);
-      return syntax.GetObject(pObjList, 0, 0, pContext);
+  const int32_t offset = GetStreamFirst(pObjStream);
+
+  // Read object numbers from |pObjStream| into a cache.
+  if (m_ObjCache.find(pObjStream) == m_ObjCache.end()) {
+    for (int32_t i = GetStreamNCount(pObjStream); i > 0; --i) {
+      FX_DWORD thisnum = syntax.GetDirectNum();
+      FX_DWORD thisoff = syntax.GetDirectNum();
+      m_ObjCache[pObjStream][thisnum] = thisoff;
     }
   }
-  return nullptr;
+
+  const auto it = m_ObjCache[pObjStream].find(objnum);
+  if (it == m_ObjCache[pObjStream].end())
+    return nullptr;
+
+  syntax.RestorePos(offset + it->second);
+  return syntax.GetObject(pObjList, 0, 0, pContext);
 }
 
 CPDF_StreamAcc* CPDF_Parser::GetObjectStream(FX_DWORD objnum) {
@@ -1659,6 +1668,8 @@ FX_DWORD CPDF_Parser::LoadLinearizedMainXRefTable() {
     delete pStream;
   }
   m_ObjectStreamMap.RemoveAll();
+  m_ObjCache.clear();
+
   if (!LoadLinearizedAllCrossRefV4(m_LastXRefOffset, m_dwXrefStartObjNum) &&
       !LoadLinearizedAllCrossRefV5(m_LastXRefOffset)) {
     m_LastXRefOffset = 0;

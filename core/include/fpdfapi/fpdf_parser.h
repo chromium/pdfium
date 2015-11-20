@@ -7,6 +7,8 @@
 #ifndef CORE_INCLUDE_FPDFAPI_FPDF_PARSER_H_
 #define CORE_INCLUDE_FPDFAPI_FPDF_PARSER_H_
 
+#include <map>
+
 #include "core/include/fxcrt/fx_system.h"
 #include "fpdf_objects.h"
 #include "public/fpdf_dataavail.h"
@@ -499,8 +501,6 @@ class CPDF_Parser {
 
   FX_DWORD LoadLinearizedMainXRefTable();
 
-  CFX_MapPtrToPtr m_ObjectStreamMap;
-
   CPDF_StreamAcc* GetObjectStream(FX_DWORD number);
 
   FX_BOOL IsLinearizedFile(IFX_FileRead* pFileAccess, FX_DWORD offset);
@@ -544,9 +544,22 @@ class CPDF_Parser {
   FX_DWORD m_dwFirstPageNo;
 
   FX_DWORD m_dwXrefStartObjNum;
+
+  // A map of object numbers to indirect streams. Map owns the streams.
+  CFX_MapPtrToPtr m_ObjectStreamMap;
+
+  // Mapping of object numbers to offsets. The offsets are relative to the first
+  // object in the stream.
+  using StreamObjectCache = std::map<FX_DWORD, FX_DWORD>;
+
+  // Mapping of streams to their object caches. This is valid as long as the
+  // streams in |m_ObjectStreamMap| are valid.
+  std::map<CPDF_StreamAcc*, StreamObjectCache> m_ObjCache;
+
   friend class CPDF_Creator;
   friend class CPDF_DataAvail;
 };
+
 #define FXCIPHER_NONE 0
 #define FXCIPHER_RC4 1
 #define FXCIPHER_AES 2
