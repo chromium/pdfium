@@ -25,9 +25,6 @@ extern "C" {
 // Comments:
 //          Application must call FPDFText_ClosePage to release the text page
 //          information.
-// Notes:
-//          The method can not support to load out FPDF_TEXTPAGE for the
-//          document consists of dynamic fields.
 //
 DLLEXPORT FPDF_TEXTPAGE STDCALL FPDFText_LoadPage(FPDF_PAGE page);
 

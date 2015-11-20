@@ -35,8 +35,7 @@ extern "C" {
 // Comments:
 //          Currently, all failures return FLATTEN_FAIL, with no indication for
 //          the reason
-//          for the failure. The method does not support flattening any dynamic
-//          XFA fields.
+//          for the failure.
 DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag);
 
 #ifdef __cplusplus

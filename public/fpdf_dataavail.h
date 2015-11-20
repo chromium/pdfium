@@ -14,9 +14,11 @@
 #define PDF_LINEARIZATION_UNKNOWN -1
 #define PDF_NOT_LINEARIZED 0
 #define PDF_LINEARIZED 1
+
 #define PDF_DATA_ERROR -1
 #define PDF_DATA_NOTAVAIL 0
 #define PDF_DATA_AVAIL 1
+
 #define PDF_FORM_ERROR -1
 #define PDF_FORM_NOTAVAIL 0
 #define PDF_FORM_AVAIL 1
@@ -72,9 +74,6 @@ typedef void* FPDF_AVAIL;
 * Comments:
 *           Application must call FPDFAvail_Destroy when done with the
 * availability provider.
-* Notes:
-*           The method can not support to load a document which consists of
-* dynamic XFA fields now.
 */
 DLLEXPORT FPDF_AVAIL STDCALL FPDFAvail_Create(FX_FILEAVAIL* file_avail,
                                               FPDF_FILEACCESS* file);

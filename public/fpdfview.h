@@ -180,8 +180,8 @@ typedef struct FPDF_LIBRARY_CONFIG_ {
 // Comments:
 //          You have to call this function before you can call any PDF
 //          processing functions.
-DLLEXPORT void STDCALL
-FPDF_InitLibraryWithConfig(const FPDF_LIBRARY_CONFIG* config);
+DLLEXPORT void STDCALL FPDF_InitLibraryWithConfig(
+    const FPDF_LIBRARY_CONFIG* config);
 
 // Function: FPDF_DestroyLibary
 //          Release all resources allocated by the FPDFSDK library.
@@ -222,9 +222,9 @@ DLLEXPORT void STDCALL FPDF_SetSandBoxPolicy(FPDF_DWORD policy,
 //          Loaded document can be closed by FPDF_CloseDocument().
 //          If this function fails, you can use FPDF_GetLastError() to retrieve
 //          the reason why it failed.
-//          The application should call ::FPDF_LoadXFA function after PDF
-//          document loaded
-//          to support XFA fields in fpdfformfill.h file.
+// Notes:
+//          The application should call FPDF_LoadXFA function after PDF
+//          document loaded to support XFA fields in fpdfformfill.h file.
 DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadDocument(FPDF_STRING file_path,
                                                   FPDF_BYTESTRING password);
 
@@ -529,9 +529,6 @@ DLLEXPORT int STDCALL FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
 //                          defined above.
 // Return value:
 //          None.
-// Notes:
-//          FPDF_RenderPage can not be used if the document contains dynamic
-//          form fields.
 DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
                                        FPDF_PAGE page,
                                        int start_x,
@@ -564,9 +561,6 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
 //                          defined above.
 // Return value:
 //          None.
-// Notes:
-//          FPDF_RenderPageBitmap can not be used if the document contains
-//          dynamic form fields.
 DLLEXPORT void STDCALL FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
                                              FPDF_PAGE page,
                                              int start_x,
