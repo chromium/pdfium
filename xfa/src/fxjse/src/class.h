@@ -11,7 +11,7 @@ class CFXJSE_Value;
 class CFXJSE_Class {
  protected:
   CFXJSE_Class(CFXJSE_Context* lpContext)
-      : m_pContext(lpContext), m_lpClassDefinition(nullptr) {}
+      : m_lpClassDefinition(nullptr), m_pContext(lpContext) {}
 
  public:
   inline CFXJSE_Context* GetContext() { return m_pContext; }

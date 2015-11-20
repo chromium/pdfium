@@ -347,7 +347,6 @@ static void FXJSE_V8_GenericNamedPropertySetterCallback(
   v8::Local<v8::Object> thisObject = info.This();
   const FXJSE_CLASS* lpClass =
       static_cast<FXJSE_CLASS*>(info.Data().As<v8::External>()->Value());
-  v8::Isolate* pIsolate = info.GetIsolate();
   v8::String::Utf8Value szPropName(property);
   CFX_ByteStringC szFxPropName(*szPropName, szPropName.length());
   CFXJSE_Value* lpThisValue = CFXJSE_Value::Create(info.GetIsolate());
@@ -363,7 +362,6 @@ static void FXJSE_V8_GenericNamedPropertySetterCallback(
 }
 static void FXJSE_V8_GenericNamedPropertyEnumeratorCallback(
     const v8::PropertyCallbackInfo<v8::Array>& info) {
-  v8::Local<v8::Object> thisObject = info.This();
   const FXJSE_CLASS* lpClass =
       static_cast<FXJSE_CLASS*>(info.Data().As<v8::External>()->Value());
   v8::Isolate* pIsolate = info.GetIsolate();
