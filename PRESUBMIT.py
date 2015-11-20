@@ -19,8 +19,18 @@ def _CheckUnwantedDependencies(input_api, output_api):
   # eval-ed and thus doesn't have __file__.
   original_sys_path = sys.path
   try:
-    sys.path = sys.path + [input_api.os_path.join(
-        input_api.PresubmitLocalPath(), 'buildtools', 'checkdeps')]
+    checkdeps_relpath = input_api.os_path.join('buildtools', 'checkdeps')
+    checkdeps_basepath = input_api.PresubmitLocalPath()
+    checkdeps_path = input_api.os_path.join(checkdeps_basepath,
+                                            checkdeps_relpath)
+    while not input_api.os_path.exists(checkdeps_path):
+      if checkdeps_basepath == input_api.os_path.dirname(checkdeps_basepath):
+        raise ImportError('Cannot find checkdeps')
+      checkdeps_basepath = input_api.os_path.dirname(checkdeps_basepath)
+      checkdeps_path = input_api.os_path.join(checkdeps_basepath,
+                                              checkdeps_relpath)
+
+    sys.path.append(checkdeps_path)
     import checkdeps
     from cpp_checker import CppChecker
     from rules import Rule
