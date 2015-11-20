@@ -401,7 +401,7 @@ FWL_ERR CFWL_WidgetImp::TransformTo(IFWL_Widget* pWidget,
   if (parent) {
     pWidget->GetMatrix(m, TRUE);
     CFX_Matrix m1;
-    m1.Reset();
+    m1.SetIdentity();
     m1.SetReverse(m);
     m1.TransformPoint(fx, fy);
     pWidget->GetWidgetRect(r);
@@ -422,7 +422,7 @@ FWL_ERR CFWL_WidgetImp::GetMatrix(CFX_Matrix& matrix, FX_BOOL bGlobal) {
       parents.Add(parent);
       parent = parent->GetParent();
     }
-    matrix.Reset();
+    matrix.SetIdentity();
     CFX_Matrix ctmOnParent;
     CFX_RectF rect;
     int32_t count = parents.GetSize();

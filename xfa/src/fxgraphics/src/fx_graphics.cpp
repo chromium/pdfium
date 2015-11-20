@@ -25,7 +25,7 @@ CFX_Graphics::CFX_Graphics() {
   _info._graphState.SetDashCount(0);
   _info._isAntialiasing = TRUE;
   _info._strokeAlignment = FX_STROKEALIGNMENT_Center;
-  _info._CTM.Reset();
+  _info._CTM.SetIdentity();
   _info._isActOnDash = FALSE;
   _info._strokeColor = NULL;
   _info._fillColor = NULL;
@@ -1343,7 +1343,7 @@ FX_ERR CFX_Color::Set(CFX_Shading* shading) {
 }
 CFX_Pattern::CFX_Pattern() {
   _type = FX_PATTERN_None;
-  _matrix.Reset();
+  _matrix.SetIdentity();
 }
 FX_ERR CFX_Pattern::Create(CFX_DIBitmap* bitmap,
                            const FX_FLOAT xStep,

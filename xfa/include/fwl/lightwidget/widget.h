@@ -16,7 +16,7 @@ class CFWL_WidgetDelegate;
 class CFWL_WidgetProperties {
  public:
   CFWL_WidgetProperties() {
-    m_ctmOnParent.Reset();
+    m_ctmOnParent.SetIdentity();
     m_rtWidget.Set(0, 0, 0, 0);
     m_dwStyles = FWL_WGTSTYLE_Child;
     m_dwStyleExes = 0;

@@ -66,7 +66,7 @@ CFDE_RenderContext::CFDE_RenderContext()
       m_pCharPos(NULL),
       m_iCharPosCount(0),
       m_pIterator(NULL) {
-  m_Transform.Reset();
+  m_Transform.SetIdentity();
 }
 CFDE_RenderContext::~CFDE_RenderContext() {
   StopRender();
@@ -159,7 +159,7 @@ void CFDE_RenderContext::StopRender() {
   Lock();
   m_eStatus = FDE_RENDERSTATUS_Reset;
   m_pRenderDevice = NULL;
-  m_Transform.Reset();
+  m_Transform.SetIdentity();
   if (m_pIterator != NULL) {
     m_pIterator->Release();
     m_pIterator = NULL;

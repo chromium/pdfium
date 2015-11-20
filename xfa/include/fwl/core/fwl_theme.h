@@ -31,7 +31,7 @@ class CFWL_ThemePart {
   CFWL_ThemePart()
       : m_pWidget(NULL), m_iPart(0), m_dwStates(0), m_dwData(0), m_pData(NULL) {
     m_rtPart.Reset();
-    m_matrix.Reset();
+    m_matrix.SetIdentity();
   }
   CFX_Matrix m_matrix;
   CFX_RectF m_rtPart;

@@ -70,7 +70,7 @@ class IFWL_WidgetDelegate {
 class CFWL_WidgetImpProperties {
  public:
   CFWL_WidgetImpProperties() {
-    m_ctmOnParent.Reset();
+    m_ctmOnParent.SetIdentity();
     m_rtWidget.Set(0, 0, 0, 0);
     m_dwStyles = FWL_WGTSTYLE_Child;
     m_dwStyleExes = 0;

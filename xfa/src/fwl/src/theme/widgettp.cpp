@@ -144,7 +144,7 @@ FX_BOOL CFWL_WidgetTP::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
 }
 FWL_ERR CFWL_WidgetTP::Initialize() {
   m_dwThemeID = 0;
-  _ctm.Reset();
+  _ctm.SetIdentity();
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_WidgetTP::Finalize() {

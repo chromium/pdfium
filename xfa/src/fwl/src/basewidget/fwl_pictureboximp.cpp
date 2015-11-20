@@ -29,7 +29,7 @@ CFWL_PictureBoxImp::CFWL_PictureBoxImp(IFWL_Widget* pOuter)
       m_bButton(FALSE) {
   m_rtClient.Reset();
   m_rtImage.Reset();
-  m_matrix.Reset();
+  m_matrix.SetIdentity();
 }
 CFWL_PictureBoxImp::CFWL_PictureBoxImp(
     const CFWL_WidgetImpProperties& properties,
@@ -40,7 +40,7 @@ CFWL_PictureBoxImp::CFWL_PictureBoxImp(
       m_bButton(FALSE) {
   m_rtClient.Reset();
   m_rtImage.Reset();
-  m_matrix.Reset();
+  m_matrix.SetIdentity();
 }
 CFWL_PictureBoxImp::~CFWL_PictureBoxImp() {}
 FWL_ERR CFWL_PictureBoxImp::GetClassName(CFX_WideString& wsClass) const {

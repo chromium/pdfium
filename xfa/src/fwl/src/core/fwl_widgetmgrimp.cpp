@@ -463,7 +463,7 @@ IFWL_Widget* CFWL_WidgetMgr::GetWidgetAtPoint(IFWL_Widget* parent,
       CFX_Matrix matrixOnParent;
       child->GetMatrix(matrixOnParent);
       CFX_Matrix m;
-      m.Reset();
+      m.SetIdentity();
       m.SetReverse(matrixOnParent);
       m.TransformPoint(x1, y1);
       CFX_RectF bounds;

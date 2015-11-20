@@ -247,7 +247,7 @@ void CFWL_CheckBoxTP::DrawSignCheck(CFX_Graphics* pGraphics,
     initCheckPath(pRtSign->width);
   }
   CFX_Matrix mt;
-  mt.Reset();
+  mt.SetIdentity();
   mt.Translate(pRtSign->left, pRtSign->top);
   mt.Concat(*pMatrix);
   CFX_Color crFill(argbFill);

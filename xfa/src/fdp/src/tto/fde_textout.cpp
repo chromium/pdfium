@@ -36,7 +36,7 @@ CFDE_TextOut::CFDE_TextOut()
       m_pRenderDevice(NULL) {
   m_pTxtBreak = IFX_TxtBreak::Create(FX_TXTBREAKPOLICY_None);
   FXSYS_assert(m_pTxtBreak != NULL);
-  m_Matrix.Reset();
+  m_Matrix.SetIdentity();
   m_rtClip.Reset();
   m_rtLogicClip.Reset();
 }

@@ -114,7 +114,7 @@ FX_BOOL CFDE_FxgeDevice::DrawImage(CFX_DIBSource* pDib,
   if (pImgMatrix) {
     dib2fxdev = *pImgMatrix;
   } else {
-    dib2fxdev.Reset();
+    dib2fxdev.SetIdentity();
   }
   dib2fxdev.a = dstRect.width;
   dib2fxdev.d = -dstRect.height;

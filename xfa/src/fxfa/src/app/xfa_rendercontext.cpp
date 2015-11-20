@@ -18,7 +18,7 @@ CXFA_RenderContext::CXFA_RenderContext() {
   m_pPageView = NULL;
   m_pGS = NULL;
   m_dwStatus = 0;
-  m_matrix.Reset();
+  m_matrix.SetIdentity();
   m_rtClipRect.Reset();
 }
 CXFA_RenderContext::~CXFA_RenderContext() {

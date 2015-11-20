@@ -84,12 +84,12 @@ class CFDE_Pen : public IFDE_Pen, public CFX_Target {
 };
 class CFDE_SolidBrush : public IFDE_SolidBrush, public CFX_Target {
  public:
-  CFDE_SolidBrush() : m_Color(0xFF000000) { m_Matrix.Reset(); }
+  CFDE_SolidBrush() : m_Color(0xFF000000) { m_Matrix.SetIdentity(); }
 
   virtual void Release() { delete this; }
   virtual int32_t GetType() const { return FDE_BRUSHTYPE_Solid; }
   virtual const CFX_Matrix& GetMatrix() const { return m_Matrix; }
-  virtual void ResetMatrix() { m_Matrix.Reset(); }
+  virtual void ResetMatrix() { m_Matrix.SetIdentity(); }
   virtual void TranslateMatrix(FX_FLOAT dx, FX_FLOAT dy) {
     m_Matrix.Translate(dx, dy);
   }
@@ -108,13 +108,13 @@ class CFDE_SolidBrush : public IFDE_SolidBrush, public CFX_Target {
 class CFDE_HatchBrush : public IFDE_HatchBrush, public CFX_Target {
  public:
   CFDE_HatchBrush() : m_iStyle(-1), m_BackColor(0), m_ForeColor(0) {
-    m_Matrix.Reset();
+    m_Matrix.SetIdentity();
   }
 
   virtual void Release() { delete this; }
   virtual int32_t GetType() const { return FDE_BRUSHTYPE_Hatch; }
   virtual const CFX_Matrix& GetMatrix() const { return m_Matrix; }
-  virtual void ResetMatrix() { m_Matrix.Reset(); }
+  virtual void ResetMatrix() { m_Matrix.SetIdentity(); }
   virtual void TranslateMatrix(FX_FLOAT dx, FX_FLOAT dy) {
     m_Matrix.Translate(dx, dy);
   }
@@ -148,13 +148,13 @@ class CFDE_HatchBrush : public IFDE_HatchBrush, public CFX_Target {
 class CFDE_TextureBrush : public IFDE_TextureBrush, public CFX_Target {
  public:
   CFDE_TextureBrush() : m_iWrap(0), m_pImage(NULL), m_bAutoRelease(FALSE) {
-    m_Matrix.Reset();
+    m_Matrix.SetIdentity();
   }
 
   virtual void Release() { delete this; }
   virtual int32_t GetType() const { return FDE_BRUSHTYPE_Texture; }
   virtual const CFX_Matrix& GetMatrix() const { return m_Matrix; }
-  virtual void ResetMatrix() { m_Matrix.Reset(); }
+  virtual void ResetMatrix() { m_Matrix.SetIdentity(); }
   virtual void TranslateMatrix(FX_FLOAT dx, FX_FLOAT dy) {
     m_Matrix.Translate(dx, dy);
   }
@@ -180,13 +180,13 @@ class CFDE_LinearBrush : public IFDE_LinearGradientBrush, public CFX_Target {
  public:
   CFDE_LinearBrush() : m_EndColor(0), m_StartColor(0), m_iWrapMode(0) {
     m_StartPoint.x = m_StartPoint.y = m_EndPoint.x = m_EndPoint.y = 0;
-    m_Matrix.Reset();
+    m_Matrix.SetIdentity();
   }
 
   virtual void Release() { delete this; }
   virtual int32_t GetType() const { return FDE_BRUSHTYPE_LinearGradient; }
   virtual const CFX_Matrix& GetMatrix() const { return m_Matrix; }
-  virtual void ResetMatrix() { m_Matrix.Reset(); }
+  virtual void ResetMatrix() { m_Matrix.SetIdentity(); }
   virtual void TranslateMatrix(FX_FLOAT dx, FX_FLOAT dy) {
     m_Matrix.Translate(dx, dy);
   }

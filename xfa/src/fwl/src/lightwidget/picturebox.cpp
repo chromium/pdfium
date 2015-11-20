@@ -112,7 +112,7 @@ FWL_ERR CFWL_PictureBox::CFWL_PictureBoxDP::GetMatrix(IFWL_Widget* pWidget,
   pWidget->GetClientRect(rect);
   FX_FLOAT fLen = rect.width / 2;
   FX_FLOAT fWid = rect.height / 2;
-  matrix.Reset();
+  matrix.SetIdentity();
   matrix.Translate(-fLen, -fWid);
   matrix.Rotate(m_fRotation);
   matrix.Translate(fLen, fWid);

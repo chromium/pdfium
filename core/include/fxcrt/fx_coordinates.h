@@ -607,10 +607,7 @@ class CFX_FloatRect {
 };
 class CFX_Matrix {
  public:
-  CFX_Matrix() {
-    a = d = 1;
-    b = c = e = f = 0;
-  }
+  CFX_Matrix() { SetIdentity(); }
 
   CFX_Matrix(FX_FLOAT a1,
              FX_FLOAT b1,
@@ -648,11 +645,8 @@ class CFX_Matrix {
               FX_FLOAT e,
               FX_FLOAT f,
               FX_BOOL bPrepended = FALSE);
-
   void Concat(const CFX_Matrix& m, FX_BOOL bPrepended = FALSE);
-
   void ConcatInverse(const CFX_Matrix& m, FX_BOOL bPrepended = FALSE);
-  void Reset() { SetIdentity(); }
 
   void Copy(const CFX_Matrix& m) { *this = m; }
 
