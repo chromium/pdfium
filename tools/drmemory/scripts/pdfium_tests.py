@@ -50,10 +50,10 @@ class ChromeTests:
     self._options = options
     self._args = args
 
-    script_dir = path_utils.ScriptDir()
-    # Compute the top of the tree (the "source dir") from the script dir (where
-    # this script lives).  We assume that the script dir is in tools/valgrind/
-    # relative to the top of the tree.
+    # Compute the top of the tree (the "source dir") from the script dir
+    # (where this script lives).  We assume that the script dir is in
+    # tools/drmemory/scripts relative to the top of the tree.
+    script_dir = os.path.dirname(path_utils.ScriptDir())
     self._source_dir = os.path.dirname(os.path.dirname(script_dir))
     # since this path is used for string matching, make sure it's always
     # an absolute Unix-style path
@@ -269,11 +269,53 @@ class ChromeTests:
   def TestPDFiumEmbedderTests(self):
     return self.SimpleTest("pdfium_embeddertests", "pdfium_embeddertests")
 
+  def TestPDFiumTest(self, script_name):
+    # Build the command line in 'cmd'.
+    # It's going to be roughly
+    #  python valgrind_test.py ...
+    # but we'll use the --indirect_pdfium_test flag to valgrind_test.py
+    # to avoid valgrinding python.
+
+    # Start by building the valgrind_test.py commandline.
+    tool = valgrind_test.CreateTool(self._options.valgrind_tool)
+    cmd = self._DefaultCommand(tool)
+    cmd.append("--trace_children")
+    cmd.append("--indirect_pdfium_test")
+    cmd.append("--ignore_exit_code")
+    # Now build script_cmd, the run_corpus_tests commandline.
+    script = os.path.join(self._source_dir, "testing", "tools", script_name)
+    script_cmd = ["python", script]
+    if self._options.build_dir:
+      script_cmd.extend(["--build-dir", self._options.build_dir])
+    # TODO(zhaoqin): it only runs in single process mode now,
+    # need figure out why it does not work with test_one_file_parallel
+    # in run_corpus_tests.py.
+    if script_name == "run_corpus_tests.py":
+        script_cmd.extend(["-j", "1"])
+    # Now run script_cmd with the wrapper in cmd
+    cmd.append("--")
+    cmd.extend(script_cmd)
+
+    ret = tool.Run(cmd, "layout", min_runtime_in_seconds=0)
+    return ret
+
+  def TestPDFiumJavascript(self):
+    return self.TestPDFiumTest("run_javascript_tests.py")
+
+  def TestPDFiumPixel(self):
+    return self.TestPDFiumTest("run_pixel_tests.py")
+
+  def TestPDFiumCorpus(self):
+    return self.TestPDFiumTest("run_corpus_tests.py")
+
   # The known list of tests.
   _test_list = {
-    "cmdline" : RunCmdLine,
-    "pdfium_unittests": TestPDFiumUnitTests,
+    "cmdline" :             RunCmdLine,
+    "pdfium_corpus":        TestPDFiumCorpus,
     "pdfium_embeddertests": TestPDFiumEmbedderTests,
+    "pdfium_javascript":    TestPDFiumJavascript,
+    "pdfium_pixel":         TestPDFiumPixel,
+    "pdfium_unittests":     TestPDFiumUnitTests,
   }
 
 

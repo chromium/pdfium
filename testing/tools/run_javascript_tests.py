@@ -18,7 +18,8 @@ import common
 #   c_dir - "path/to/a/b/c"
 
 def generate_and_test(input_filename, source_dir, working_dir,
-                      fixup_path, pdfium_test_path, text_diff_path):
+                      fixup_path, pdfium_test_path, text_diff_path,
+                      drmem_wrapper):
   input_root, _ = os.path.splitext(input_filename)
   input_path = os.path.join(source_dir, input_root + '.in')
   pdf_path = os.path.join(working_dir, input_root + '.pdf')
@@ -29,7 +30,11 @@ def generate_and_test(input_filename, source_dir, working_dir,
     subprocess.check_call(
         [sys.executable, fixup_path, '--output-dir=' + working_dir, input_path])
     with open(txt_path, 'w') as outfile:
-      subprocess.check_call([pdfium_test_path, pdf_path], stdout=outfile)
+      # add Dr. Memory wrapper if exist
+      cmd_to_run = common.DrMemoryWrapper(drmem_wrapper, input_root)
+      cmd_to_run.extend([pdfium_test_path, pdf_path])
+      # run test
+      subprocess.check_call(cmd_to_run, stdout=outfile)
     subprocess.check_call(
         [sys.executable, text_diff_path, expected_path, txt_path])
   except subprocess.CalledProcessError as e:
@@ -41,6 +46,8 @@ def main():
   parser = optparse.OptionParser()
   parser.add_option('--build-dir', default=os.path.join('out', 'Debug'),
                     help='relative path from the base source directory')
+  parser.add_option('--wrapper', default='', dest="wrapper",
+                    help='Dr. Memory wrapper for running test under Dr. Memory')
   options, args = parser.parse_args()
 
   finder = common.DirectoryFinder(options.build_dir)
@@ -70,7 +77,8 @@ def main():
       input_path = os.path.join(source_dir, input_filename)
       if os.path.isfile(input_path):
         if not generate_and_test(input_filename, source_dir, working_dir,
-                                 fixup_path, pdfium_test_path, text_diff_path):
+                                 fixup_path, pdfium_test_path, text_diff_path,
+                                 options.wrapper):
           failures.append(input_path)
 
   if failures:
