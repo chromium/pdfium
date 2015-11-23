@@ -2145,7 +2145,7 @@ CPDFSDK_InterForm::CPDFSDK_InterForm(CPDFSDK_Document* pDocument)
       new CPDF_InterForm(m_pDocument->GetDocument()->GetPDFDoc(), FALSE);
   m_pInterForm->SetFormNotify(this);
 
-  for (int i = 0; i < 6; i++)
+  for (int i = 0; i < kNumFieldTypes; ++i)
     m_bNeedHightlight[i] = FALSE;
   m_iHighlightAlpha = 0;
 }
@@ -2917,20 +2917,22 @@ int CPDFSDK_InterForm::AfterFormImportData(const CPDF_InterForm* pForm) {
 }
 
 FX_BOOL CPDFSDK_InterForm::IsNeedHighLight(int nFieldType) {
-  if (nFieldType < 1 || nFieldType > 7)
+  if (nFieldType < 1 || nFieldType > kNumFieldTypes)
     return FALSE;
   return m_bNeedHightlight[nFieldType - 1];
 }
 
 void CPDFSDK_InterForm::RemoveAllHighLight() {
-  memset((void*)m_bNeedHightlight, 0, 7 * sizeof(FX_BOOL));
+  for (int i = 0; i < kNumFieldTypes; ++i)
+    m_bNeedHightlight[i] = FALSE;
 }
+
 void CPDFSDK_InterForm::SetHighlightColor(FX_COLORREF clr, int nFieldType) {
-  if (nFieldType < 0 || nFieldType > 7)
+  if (nFieldType < 0 || nFieldType > kNumFieldTypes)
     return;
   switch (nFieldType) {
     case 0: {
-      for (int i = 0; i < 7; i++) {
+      for (int i = 0; i < kNumFieldTypes; ++i) {
         m_aHighlightColor[i] = clr;
         m_bNeedHightlight[i] = TRUE;
       }
@@ -2945,7 +2947,7 @@ void CPDFSDK_InterForm::SetHighlightColor(FX_COLORREF clr, int nFieldType) {
 }
 
 FX_COLORREF CPDFSDK_InterForm::GetHighlightColor(int nFieldType) {
-  if (nFieldType < 0 || nFieldType > 7)
+  if (nFieldType < 0 || nFieldType > kNumFieldTypes)
     return FXSYS_RGB(255, 255, 255);
   if (nFieldType == 0)
     return m_aHighlightColor[0];
