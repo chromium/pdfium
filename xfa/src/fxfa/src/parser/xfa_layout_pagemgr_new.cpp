@@ -414,8 +414,7 @@ void CXFA_LayoutPageMgr::AddPageAreaLayoutItem(CXFA_ContainerRecord* pNewRecord,
         (CXFA_ContainerLayoutItem*)pNotify->OnCreateLayoutItem(pNewPageArea);
     m_PageArray.Add(pContainerItem);
     m_nAvailPages++;
-    pNotify->OnPageEvent((IXFA_LayoutPage*)pContainerItem,
-                         XFA_PAGEEVENT_PageAdded,
+    pNotify->OnPageEvent(pContainerItem, XFA_PAGEEVENT_PageAdded,
                          (void*)(uintptr_t)m_nAvailPages);
     pNewPageAreaLayoutItem = pContainerItem;
   }
@@ -605,12 +604,14 @@ int32_t CXFA_LayoutPageMgr::GetPageCount() const {
 }
 IXFA_LayoutPage* CXFA_LayoutPageMgr::GetPage(int32_t index) const {
   if (m_PageArray.GetSize() > index) {
-    return (IXFA_LayoutPage*)m_PageArray[index];
+    return m_PageArray[index];
   }
   return NULL;
 }
-int32_t CXFA_LayoutPageMgr::GetPageIndex(IXFA_LayoutPage* pPage) const {
-  return m_PageArray.Find((CXFA_ContainerLayoutItem*)pPage);
+int32_t CXFA_LayoutPageMgr::GetPageIndex(const IXFA_LayoutPage* pPage) const {
+  // FIXME: Find() method should take const.
+  return m_PageArray.Find(static_cast<CXFA_ContainerLayoutItem*>(
+      const_cast<IXFA_LayoutPage*>(pPage)));
 }
 FX_BOOL CXFA_LayoutPageMgr::RunBreak(XFA_ELEMENT eBreakType,
                                      XFA_ATTRIBUTEENUM eTargetType,
@@ -1923,7 +1924,7 @@ void CXFA_LayoutPageMgr::SyncLayoutData() {
   for (int32_t i = nPage - 1; i >= m_nAvailPages; i--) {
     CXFA_ContainerLayoutItem* pPage = m_PageArray[i];
     m_PageArray.RemoveAt(i);
-    pNotify->OnPageEvent((IXFA_LayoutPage*)pPage, XFA_PAGEEVENT_PageRemoved);
+    pNotify->OnPageEvent(pPage, XFA_PAGEEVENT_PageRemoved);
     delete pPage;
   }
   ClearRecordList();
@@ -2005,8 +2006,7 @@ void CXFA_LayoutPageMgr::PrepareLayout() {
         pNotify->OnLayoutEvent(m_pLayoutProcessor, pLayoutItem,
                                XFA_LAYOUTEVENT_ItemRemoving);
       }
-      pNotify->OnPageEvent((IXFA_LayoutPage*)pContainerItem,
-                           XFA_PAGEEVENT_PageRemoved);
+      pNotify->OnPageEvent(pContainerItem, XFA_PAGEEVENT_PageRemoved);
     }
   }
   pRootLayoutItem = m_pPageSetLayoutItemRoot;

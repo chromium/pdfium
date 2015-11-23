@@ -27,18 +27,18 @@ IXFA_DocView* CXFA_FFPageView::GetDocView() {
   return m_pDocView;
 }
 int32_t CXFA_FFPageView::GetPageViewIndex() {
-  return GetLayoutPage()->GetPageIndex();
+  return GetPageIndex();
 }
 void CXFA_FFPageView::GetPageViewRect(CFX_RectF& rtPage) {
   CFX_SizeF sz;
-  GetLayoutPage()->GetPageSize(sz);
+  GetPageSize(sz);
   rtPage.Set(0, 0, sz);
 }
 void CXFA_FFPageView::GetDisplayMatrix(CFX_Matrix& mt,
                                        const CFX_Rect& rtDisp,
                                        int32_t iRotate) {
   CFX_SizeF sz;
-  GetLayoutPage()->GetPageSize(sz);
+  GetPageSize(sz);
   CFX_RectF fdePage;
   fdePage.Set(0, 0, sz.x, sz.y);
   FDE_GetPageMatrix(mt, fdePage, rtDisp, iRotate, 0);
@@ -120,7 +120,7 @@ CXFA_FFPageWidgetIterator::CXFA_FFPageWidgetIterator(CXFA_FFPageView* pPageView,
                                                      FX_DWORD dwFilter) {
   m_pPageView = pPageView;
   m_dwFilter = dwFilter;
-  m_sIterator.Init((CXFA_LayoutItem*)pPageView->GetLayoutPage());
+  m_sIterator.Init(pPageView);
   m_bIgnorerelevant = ((CXFA_FFDoc*)m_pPageView->GetDocView()->GetDoc())
                           ->GetXFADoc()
                           ->GetCurVersionMode() < XFA_VERSION_205;
@@ -392,7 +392,7 @@ void CXFA_FFTabOrderPageWidgetIterator::OrderContainer(
 void CXFA_FFTabOrderPageWidgetIterator::CreateSpaceOrderWidgetArray(
     CXFA_WidgetArray& WidgetArray) {
   CXFA_LayoutItemIterator sIterator;
-  sIterator.Init((CXFA_LayoutItem*)m_pPageView->GetLayoutPage());
+  sIterator.Init(m_pPageView);
   CXFA_TabParam* pParam = new CXFA_TabParam;
   FX_BOOL bCurrentItem = FALSE;
   FX_BOOL bContentArea = FALSE;

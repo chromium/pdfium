@@ -179,6 +179,30 @@ CXFA_LayoutItem::~CXFA_LayoutItem() {
 CXFA_ContainerLayoutItem::CXFA_ContainerLayoutItem(CXFA_Node* pNode)
     : CXFA_LayoutItem(pNode, FALSE), m_pOldSubform(NULL) {
 }
+IXFA_DocLayout* CXFA_ContainerLayoutItem::GetLayout() const {
+  return m_pFormNode->GetDocument()->GetLayoutProcessor();
+}
+int32_t CXFA_ContainerLayoutItem::GetPageIndex() const {
+  return m_pFormNode->GetDocument()
+      ->GetLayoutProcessor()
+      ->GetLayoutPageMgr()
+      ->GetPageIndex(this);
+}
+void CXFA_ContainerLayoutItem::GetPageSize(CFX_SizeF& size) {
+  size.Set(0, 0);
+  CXFA_Node* pMedium = m_pFormNode->GetFirstChildByClass(XFA_ELEMENT_Medium);
+  if (pMedium) {
+    size.x = pMedium->GetMeasure(XFA_ATTRIBUTE_Short).ToUnit(XFA_UNIT_Pt);
+    size.y = pMedium->GetMeasure(XFA_ATTRIBUTE_Long).ToUnit(XFA_UNIT_Pt);
+    if (pMedium->GetEnum(XFA_ATTRIBUTE_Orientation) ==
+        XFA_ATTRIBUTEENUM_Landscape) {
+      size.Set(size.y, size.x);
+    }
+  }
+}
+CXFA_Node* CXFA_ContainerLayoutItem::GetMasterPage() const {
+  return m_pFormNode;
+}
 CXFA_ContentLayoutItem::CXFA_ContentLayoutItem(CXFA_Node* pNode)
     : CXFA_LayoutItem(pNode, TRUE),
       m_pPrev(NULL),

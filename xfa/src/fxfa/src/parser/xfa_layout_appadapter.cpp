@@ -20,35 +20,6 @@
 #include "xfa_layout_itemlayout.h"
 #include "xfa_layout_pagemgr_new.h"
 #include "xfa_layout_appadapter.h"
-IXFA_DocLayout* IXFA_LayoutPage::GetLayout() const {
-  CXFA_ContainerLayoutItem* pThis = (CXFA_ContainerLayoutItem*)this;
-  return pThis->m_pFormNode->GetDocument()->GetLayoutProcessor();
-}
-int32_t IXFA_LayoutPage::GetPageIndex() const {
-  CXFA_ContainerLayoutItem* pThis = (CXFA_ContainerLayoutItem*)this;
-  return pThis->m_pFormNode->GetDocument()
-      ->GetLayoutProcessor()
-      ->GetLayoutPageMgr()
-      ->GetPageIndex((IXFA_LayoutPage*)this);
-}
-void IXFA_LayoutPage::GetPageSize(CFX_SizeF& size) {
-  CXFA_ContainerLayoutItem* pThis = (CXFA_ContainerLayoutItem*)this;
-  size.Set(0, 0);
-  CXFA_Node* pMedium =
-      pThis->m_pFormNode->GetFirstChildByClass(XFA_ELEMENT_Medium);
-  if (pMedium) {
-    size.x = pMedium->GetMeasure(XFA_ATTRIBUTE_Short).ToUnit(XFA_UNIT_Pt);
-    size.y = pMedium->GetMeasure(XFA_ATTRIBUTE_Long).ToUnit(XFA_UNIT_Pt);
-    if (pMedium->GetEnum(XFA_ATTRIBUTE_Orientation) ==
-        XFA_ATTRIBUTEENUM_Landscape) {
-      size.Set(size.y, size.x);
-    }
-  }
-}
-CXFA_Node* IXFA_LayoutPage::GetMasterPage() const {
-  CXFA_ContainerLayoutItem* pThis = (CXFA_ContainerLayoutItem*)this;
-  return pThis->m_pFormNode;
-}
 FX_DWORD XFA_GetRelevant(CXFA_Node* pFormItem, FX_DWORD dwParentRelvant) {
   FX_DWORD dwRelevant = XFA_LAYOUTSTATUS_Viewable | XFA_LAYOUTSTATUS_Printable;
   CFX_WideStringC wsRelevant;

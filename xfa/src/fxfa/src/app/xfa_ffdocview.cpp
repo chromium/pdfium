@@ -199,7 +199,7 @@ IXFA_PageView* CXFA_FFDocView::GetPageView(int32_t nIndex) {
   if (!m_pXFADocLayout) {
     return NULL;
   }
-  return (CXFA_FFPageView*)m_pXFADocLayout->GetPage(nIndex);
+  return static_cast<CXFA_FFPageView*>(m_pXFADocLayout->GetPage(nIndex));
 }
 IXFA_Widget* CXFA_FFDocView::GetWidgetByName(const CFX_WideStringC& wsName) {
   return GetWidgetByName(wsName, NULL);
@@ -536,16 +536,17 @@ void CXFA_FFDocView::OnPageEvent(IXFA_LayoutPage* pSender,
                                  XFA_PAGEEVENT eEvent,
                                  int32_t iPageIndex) {
   FX_BOOL bNofify = m_iStatus >= XFA_DOCVIEW_LAYOUTSTATUS_End;
+  CXFA_FFPageView* pFFPageView = static_cast<CXFA_FFPageView*>(pSender);
   if (eEvent == XFA_PAGEEVENT_PageRemoved) {
     if (bNofify) {
-      m_pDoc->GetDocProvider()->PageViewEvent((CXFA_FFPageView*)pSender,
+      m_pDoc->GetDocProvider()->PageViewEvent(pFFPageView,
                                               XFA_PAGEVIEWEVENT_PostRemoved);
     }
   } else if (eEvent == XFA_PAGEEVENT_PageAdded) {
     if (bNofify) {
-      m_pDoc->GetDocProvider()->PageViewEvent((CXFA_FFPageView*)pSender,
+      m_pDoc->GetDocProvider()->PageViewEvent(pFFPageView,
                                               XFA_PAGEVIEWEVENT_PostAdded);
-      ((CXFA_FFPageView*)pSender)->LoadPageView();
+      pFFPageView->LoadPageView();
     }
   }
 }

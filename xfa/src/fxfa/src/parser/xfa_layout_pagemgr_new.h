@@ -32,7 +32,7 @@ class CXFA_LayoutPageMgr {
   void SyncLayoutData();
   int32_t GetPageCount() const;
   IXFA_LayoutPage* GetPage(int32_t index) const;
-  int32_t GetPageIndex(IXFA_LayoutPage* pPage) const;
+  int32_t GetPageIndex(const IXFA_LayoutPage* pPage) const;
   inline CXFA_ContainerLayoutItem* GetRootLayoutItem() const {
     return m_pPageSetLayoutItemRoot;
   }

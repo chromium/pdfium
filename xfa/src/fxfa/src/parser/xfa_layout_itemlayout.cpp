@@ -364,10 +364,10 @@ void CXFA_ItemLayoutProcessor::SplitLayoutItem(FX_FLOAT fSplitPos) {
 }
 
 IXFA_LayoutPage* CXFA_LayoutItem::GetPage() const {
-  for (const CXFA_LayoutItem* pCurNode = this; pCurNode;
+  for (CXFA_LayoutItem* pCurNode = const_cast<CXFA_LayoutItem*>(this); pCurNode;
        pCurNode = pCurNode->m_pParent) {
     if (pCurNode->m_pFormNode->GetClassID() == XFA_ELEMENT_PageArea)
-      return (IXFA_LayoutPage*)pCurNode;
+      return static_cast<CXFA_ContainerLayoutItem*>(pCurNode);
   }
   return nullptr;
 }

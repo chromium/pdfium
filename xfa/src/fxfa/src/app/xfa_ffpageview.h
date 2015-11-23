@@ -11,24 +11,25 @@ class CXFA_FFDocView;
 class CXFA_FFPageView : public CXFA_ContainerLayoutItem, public IXFA_PageView {
  public:
   CXFA_FFPageView(CXFA_FFDocView* pDocView, CXFA_Node* pPageArea);
-  ~CXFA_FFPageView();
-  virtual IXFA_DocView* GetDocView();
-  virtual int32_t GetPageViewIndex();
-  virtual void GetPageViewRect(CFX_RectF& rtPage);
-  virtual void GetDisplayMatrix(CFX_Matrix& mt,
-                                const CFX_Rect& rtDisp,
-                                int32_t iRotate);
-  virtual int32_t LoadPageView(IFX_Pause* pPause = NULL);
-  virtual void UnloadPageView();
-  FX_BOOL IsPageViewLoaded();
+  ~CXFA_FFPageView() override;
 
-  virtual IXFA_Widget* GetWidgetByPos(FX_FLOAT fx, FX_FLOAT fy);
-  virtual IXFA_WidgetIterator* CreateWidgetIterator(
+  // IFXA_PageView:
+  IXFA_DocView* GetDocView() override;
+  int32_t GetPageViewIndex() override;
+  void GetPageViewRect(CFX_RectF& rtPage) override;
+  void GetDisplayMatrix(CFX_Matrix& mt,
+                        const CFX_Rect& rtDisp,
+                        int32_t iRotate) override;
+  int32_t LoadPageView(IFX_Pause* pPause = NULL) override;
+  void UnloadPageView() override;
+  IXFA_Widget* GetWidgetByPos(FX_FLOAT fx, FX_FLOAT fy) override;
+  IXFA_WidgetIterator* CreateWidgetIterator(
       FX_DWORD dwTraverseWay = XFA_TRAVERSEWAY_Form,
       FX_DWORD dwWidgetFilter = XFA_WIDGETFILTER_Visible |
                                 XFA_WIDGETFILTER_Viewable |
-                                XFA_WIDGETFILTER_AllType);
-  IXFA_LayoutPage* GetLayoutPage() { return (IXFA_LayoutPage*)this; }
+                                XFA_WIDGETFILTER_AllType) override;
+
+  FX_BOOL IsPageViewLoaded();
 
  protected:
   CXFA_FFDocView* m_pDocView;

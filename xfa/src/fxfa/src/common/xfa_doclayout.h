@@ -10,7 +10,15 @@
 
 class CXFA_ContainerLayoutItem;
 class CXFA_ContentLayoutItem;
-class IXFA_LayoutPage;
+
+class IXFA_LayoutPage {
+ public:
+  virtual ~IXFA_LayoutPage() {}
+  virtual IXFA_DocLayout* GetLayout() const = 0;
+  virtual int32_t GetPageIndex() const = 0;
+  virtual void GetPageSize(CFX_SizeF& size) = 0;
+  virtual CXFA_Node* GetMasterPage() const = 0;
+};
 
 class CXFA_LayoutItem {
  public:
@@ -50,9 +58,16 @@ class CXFA_LayoutItem {
   FX_BOOL m_bIsContentLayoutItem;
 };
 
-class CXFA_ContainerLayoutItem : public CXFA_LayoutItem {
+class CXFA_ContainerLayoutItem : public CXFA_LayoutItem,
+                                 public IXFA_LayoutPage {
  public:
   CXFA_ContainerLayoutItem(CXFA_Node* pNode);
+
+  // IXFA_LayoutPage:
+  IXFA_DocLayout* GetLayout() const override;
+  int32_t GetPageIndex() const override;
+  void GetPageSize(CFX_SizeF& size) override;
+  CXFA_Node* GetMasterPage() const override;
 
   CXFA_Node* m_pOldSubform;
 };
@@ -104,13 +119,6 @@ class CXFA_TraverseStrategy_LayoutItem {
   }
 };
 
-class IXFA_LayoutPage {
- public:
-  IXFA_DocLayout* GetLayout() const;
-  int32_t GetPageIndex() const;
-  void GetPageSize(CFX_SizeF& size);
-  CXFA_Node* GetMasterPage() const;
-};
 class IXFA_DocLayout {
  public:
   virtual ~IXFA_DocLayout() {}

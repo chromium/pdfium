@@ -24,7 +24,7 @@ IXFA_PageView* CXFA_FFWidget::GetPageView() {
   return m_pPageView;
 }
 void CXFA_FFWidget::SetPageView(IXFA_PageView* pPageView) {
-  m_pPageView = (CXFA_FFPageView*)pPageView;
+  m_pPageView = static_cast<CXFA_FFPageView*>(pPageView);
 }
 void CXFA_FFWidget::GetWidgetRect(CFX_RectF& rtWidget) {
   if ((m_dwStatus & XFA_WIDGETSTATUS_RectCached) == 0) {
