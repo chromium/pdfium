@@ -20,8 +20,3 @@ name=embeddertests:DrM-i#471
 *!v8::internal::Deoptimizer::ComputeOutputFrames
 *!v8::internal::`anonymous namespace'::Invoke
 *!v8::internal::Execution::Call
-*!v8::internal::Bootstrapper::CompileNative
-*!v8::internal::Bootstrapper::CompileExperimentalBuiltin
-*!v8::internal::Genesis::InstallExperimentalNatives
-*!v8::internal::Genesis::Genesis
-*!v8::internal::Bootstrapper::CreateEnvironment
