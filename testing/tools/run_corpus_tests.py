@@ -26,10 +26,10 @@ class KeyboardInterruptError(Exception): pass
 #   c_dir - "path/to/a/b/c"
 
 def test_one_file(input_filename, source_dir, working_dir,
-                  pdfium_test_path, image_differ, redirect_output=False):
+                  pdfium_test_path, image_differ, drmem_wrapper,
+                  redirect_output=False):
   input_path = os.path.join(source_dir, input_filename)
   pdf_path = os.path.join(working_dir, input_filename)
-
   # Remove any existing generated images from previous runs.
   actual_images = image_differ.GetActualFiles(
       input_filename, source_dir, working_dir)
@@ -39,8 +39,13 @@ def test_one_file(input_filename, source_dir, working_dir,
 
   shutil.copyfile(input_path, pdf_path)
   sys.stdout.flush()
-  error = common.RunCommand([pdfium_test_path, '--png', pdf_path],
-                            redirect_output)
+  # add Dr. Memory wrapper if exist
+  # remove .pdf suffix
+  cmd_to_run = common.DrMemoryWrapper(drmem_wrapper,
+                                      os.path.splitext(input_filename)[0])
+  cmd_to_run.extend([pdfium_test_path, '--png', pdf_path])
+  # run test
+  error = common.RunCommand(cmd_to_run, redirect_output)
   if error:
     print "FAILURE: " + input_filename + "; " + str(error)
     return False
@@ -58,7 +63,7 @@ def test_one_file_parallel(working_dir, pdfium_test_path, image_differ,
     sys.stderr = sys.stdout
     input_filename, source_dir = test_case
     result = test_one_file(input_filename, source_dir, working_dir,
-                           pdfium_test_path, image_differ, True);
+                           pdfium_test_path, image_differ, "", True);
     output = sys.stdout
     sys.stdout = old_stdout
     sys.stderr = old_stderr
@@ -84,6 +89,8 @@ def main():
   parser.add_option('-j', default=multiprocessing.cpu_count(),
                     dest='num_workers', type='int',
                     help='run NUM_WORKERS jobs in parallel')
+  parser.add_option('--wrapper', default='', dest="wrapper",
+                    help='Dr. Memory wrapper for running test under Dr. Memory')
   options, args = parser.parse_args()
   finder = common.DirectoryFinder(options.build_dir)
   pdfium_test_path = finder.ExecutablePath('pdfium_test')
@@ -143,7 +150,8 @@ def main():
     for test_case in test_cases:
       input_filename, source_dir = test_case
       result = test_one_file(input_filename, source_dir, working_dir,
-                             pdfium_test_path, image_differ)
+                             pdfium_test_path, image_differ,
+                             options.wrapper)
       handle_result(test_suppressor, input_filename, input_path, result,
                     surprises, failures)
 

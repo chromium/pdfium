@@ -20,7 +20,8 @@ import suppressor
 #   c_dir - "path/to/a/b/c"
 
 def generate_and_test(input_filename, source_dir, working_dir,
-                      fixup_path, pdfium_test_path, image_differ):
+                      fixup_path, pdfium_test_path, image_differ,
+                      drmem_wrapper):
   input_root, _ = os.path.splitext(input_filename)
   input_path = os.path.join(source_dir, input_root + '.in')
   pdf_path = os.path.join(working_dir, input_root + '.pdf')
@@ -36,7 +37,11 @@ def generate_and_test(input_filename, source_dir, working_dir,
     sys.stdout.flush()
     subprocess.check_call(
         [sys.executable, fixup_path, '--output-dir=' + working_dir, input_path])
-    subprocess.check_call([pdfium_test_path, '--png', pdf_path])
+    # add Dr. Memory wrapper if exist
+    cmd_to_run = common.DrMemoryWrapper(drmem_wrapper, input_root)
+    cmd_to_run.extend([pdfium_test_path, '--png', pdf_path])
+    # run test
+    subprocess.check_call(cmd_to_run)
   except subprocess.CalledProcessError as e:
     print "FAILURE: " + input_filename + "; " + str(e)
     return False
@@ -50,6 +55,8 @@ def main():
   parser = optparse.OptionParser()
   parser.add_option('--build-dir', default=os.path.join('out', 'Debug'),
                     help='relative path from the base source directory')
+  parser.add_option('--wrapper', default='', dest="wrapper",
+                    help='Dr. Memory wrapper for running test under Dr. Memory')
   options, args = parser.parse_args()
   finder = common.DirectoryFinder(options.build_dir)
   fixup_path = finder.ScriptPath('fixup_pdf_template.py')
@@ -82,7 +89,8 @@ def main():
         if test_suppressor.IsSuppressed(input_filename):
           continue
         if not generate_and_test(input_filename, source_dir, working_dir,
-                                 fixup_path, pdfium_test_path, image_differ):
+                                 fixup_path, pdfium_test_path, image_differ,
+                                 options.wrapper):
           failures.append(input_path)
 
   if failures:
