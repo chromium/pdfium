@@ -646,42 +646,32 @@ void CPDFSDK_BFAnnotHandler::OnCreate(CPDFSDK_Annot* pAnnot) {
 }
 
 void CPDFSDK_BFAnnotHandler::OnLoad(CPDFSDK_Annot* pAnnot) {
-  ASSERT(pAnnot != NULL);
+  if (pAnnot->GetSubType() == BFFT_SIGNATURE)
+    return;
+
+  CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
+  if (!pWidget->IsAppearanceValid())
+    pWidget->ResetAppearance(NULL, FALSE);
+
+  int nFieldType = pWidget->GetFieldType();
+  if (nFieldType == FIELDTYPE_TEXTFIELD || nFieldType == FIELDTYPE_COMBOBOX) {
+    FX_BOOL bFormated = FALSE;
+    CFX_WideString sValue = pWidget->OnFormat(bFormated);
+    if (bFormated && nFieldType == FIELDTYPE_COMBOBOX) {
+      pWidget->ResetAppearance(sValue.c_str(), FALSE);
+    }
+  }
 
   CPDFSDK_PageView* pPageView = pAnnot->GetPageView();
-  ASSERT(pPageView != NULL);
-
   CPDFSDK_Document* pSDKDoc = pPageView->GetSDKDocument();
-  ASSERT(pSDKDoc != NULL);
-
-  CPDFXFA_Document* pDoc = pSDKDoc->GetDocument();
-  ASSERT(pDoc != NULL);
-
-  CFX_ByteString sSubType = pAnnot->GetSubType();
-
-  if (sSubType == BFFT_SIGNATURE) {
-  } else {
-    CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
-    if (!pWidget->IsAppearanceValid())
-      pWidget->ResetAppearance(NULL, FALSE);
-
-    int nFieldType = pWidget->GetFieldType();
-    if (nFieldType == FIELDTYPE_TEXTFIELD || nFieldType == FIELDTYPE_COMBOBOX) {
-      FX_BOOL bFormated = FALSE;
-      CFX_WideString sValue = pWidget->OnFormat(bFormated);
-      if (bFormated && nFieldType == FIELDTYPE_COMBOBOX) {
-        pWidget->ResetAppearance(sValue.c_str(), FALSE);
-      }
-    }
-
-    if (pDoc->GetDocType() == DOCTYPE_STATIC_XFA) {
-      if (!pWidget->IsAppearanceValid() && !pWidget->GetValue().IsEmpty())
-        pWidget->ResetAppearance(FALSE);
-    }
-
-    if (m_pFormFiller)
-      m_pFormFiller->OnLoad(pAnnot);
+  CPDFXFA_Document* pDoc = pSDKDoc->GetXFADocument();
+  if (pDoc->GetDocType() == DOCTYPE_STATIC_XFA) {
+    if (!pWidget->IsAppearanceValid() && !pWidget->GetValue().IsEmpty())
+      pWidget->ResetAppearance(FALSE);
   }
+
+  if (m_pFormFiller)
+    m_pFormFiller->OnLoad(pAnnot);
 }
 
 FX_BOOL CPDFSDK_BFAnnotHandler::OnSetFocus(CPDFSDK_Annot* pAnnot,
@@ -842,7 +832,7 @@ FX_BOOL CPDFSDK_XFAAnnotHandler::HitTest(CPDFSDK_PageView* pPageView,
   if (!pSDKDoc)
     return FALSE;
 
-  CPDFXFA_Document* pDoc = pSDKDoc->GetDocument();
+  CPDFXFA_Document* pDoc = pSDKDoc->GetXFADocument();
   if (!pDoc)
     return FALSE;
 
@@ -1116,7 +1106,7 @@ IXFA_WidgetHandler* CPDFSDK_XFAAnnotHandler::GetXFAWidgetHandler(
   if (!pSDKDoc)
     return NULL;
 
-  CPDFXFA_Document* pDoc = pSDKDoc->GetDocument();
+  CPDFXFA_Document* pDoc = pSDKDoc->GetXFADocument();
   if (!pDoc)
     return NULL;
 

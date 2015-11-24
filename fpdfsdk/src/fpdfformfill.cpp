@@ -611,8 +611,8 @@ DLLEXPORT void STDCALL FORM_OnBeforeClosePage(FPDF_PAGE page,
   CPDFSDK_PageView* pPageView = pSDKDoc->GetPageView(pPage, FALSE);
   if (pPageView) {
     pPageView->SetValid(FALSE);
-    // ReMovePageView() takes care of the delete for us.
-    pSDKDoc->ReMovePageView(pPage);
+    // RemovePageView() takes care of the delete for us.
+    pSDKDoc->RemovePageView(pPage);
   }
 }
 
@@ -634,7 +634,7 @@ DLLEXPORT void STDCALL FORM_DoDocumentAAction(FPDF_FORMHANDLE hHandle,
   if (!pSDKDoc)
     return;
 
-  CPDF_Document* pDoc = pSDKDoc->GetDocument()->GetPDFDoc();
+  CPDF_Document* pDoc = pSDKDoc->GetPDFDocument();
   CPDF_Dictionary* pDic = pDoc->GetRoot();
   if (!pDic)
     return;

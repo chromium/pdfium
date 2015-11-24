@@ -536,7 +536,7 @@ FX_BOOL Document::removeField(IJS_Context* cc,
     CFX_RectArray aRefresh;
     aRefresh.Add(rcAnnot);
 
-    CPDFXFA_Page* pPage = pWidget->GetPDFXFAPage();
+    UnderlyingPageType* pPage = pWidget->GetUnderlyingPage();
     ASSERT(pPage);
 
     CPDFSDK_PageView* pPageView = m_pDocument->GetPageView(pPage);
@@ -779,8 +779,7 @@ FX_BOOL Document::mailDoc(IJS_Context* cc,
 FX_BOOL Document::author(IJS_Context* cc,
                          CJS_PropValue& vp,
                          CFX_WideString& sError) {
-  CPDF_Dictionary* pDictionary =
-      m_pDocument->GetDocument()->GetPDFDoc()->GetInfo();
+  CPDF_Dictionary* pDictionary = m_pDocument->GetPDFDocument()->GetInfo();
   if (!pDictionary)
     return FALSE;
 
@@ -802,8 +801,7 @@ FX_BOOL Document::author(IJS_Context* cc,
 FX_BOOL Document::info(IJS_Context* cc,
                        CJS_PropValue& vp,
                        CFX_WideString& sError) {
-  CPDF_Dictionary* pDictionary =
-      m_pDocument->GetDocument()->GetPDFDoc()->GetInfo();
+  CPDF_Dictionary* pDictionary = m_pDocument->GetPDFDocument()->GetInfo();
   if (!pDictionary)
     return FALSE;
 
@@ -860,8 +858,7 @@ FX_BOOL Document::info(IJS_Context* cc,
 FX_BOOL Document::creationDate(IJS_Context* cc,
                                CJS_PropValue& vp,
                                CFX_WideString& sError) {
-  CPDF_Dictionary* pDictionary =
-      m_pDocument->GetDocument()->GetPDFDoc()->GetInfo();
+  CPDF_Dictionary* pDictionary = m_pDocument->GetPDFDocument()->GetInfo();
   if (!pDictionary)
     return FALSE;
 
@@ -882,8 +879,7 @@ FX_BOOL Document::creationDate(IJS_Context* cc,
 FX_BOOL Document::creator(IJS_Context* cc,
                           CJS_PropValue& vp,
                           CFX_WideString& sError) {
-  CPDF_Dictionary* pDictionary =
-      m_pDocument->GetDocument()->GetPDFDoc()->GetInfo();
+  CPDF_Dictionary* pDictionary = m_pDocument->GetPDFDocument()->GetInfo();
   if (!pDictionary)
     return FALSE;
 
@@ -939,8 +935,7 @@ FX_BOOL Document::delay(IJS_Context* cc,
 FX_BOOL Document::keywords(IJS_Context* cc,
                            CJS_PropValue& vp,
                            CFX_WideString& sError) {
-  CPDF_Dictionary* pDictionary =
-      m_pDocument->GetDocument()->GetPDFDoc()->GetInfo();
+  CPDF_Dictionary* pDictionary = m_pDocument->GetPDFDocument()->GetInfo();
   if (!pDictionary)
     return FALSE;
 
@@ -961,8 +956,7 @@ FX_BOOL Document::keywords(IJS_Context* cc,
 FX_BOOL Document::modDate(IJS_Context* cc,
                           CJS_PropValue& vp,
                           CFX_WideString& sError) {
-  CPDF_Dictionary* pDictionary =
-      m_pDocument->GetDocument()->GetPDFDoc()->GetInfo();
+  CPDF_Dictionary* pDictionary = m_pDocument->GetPDFDocument()->GetInfo();
   if (!pDictionary)
     return FALSE;
 
@@ -983,8 +977,7 @@ FX_BOOL Document::modDate(IJS_Context* cc,
 FX_BOOL Document::producer(IJS_Context* cc,
                            CJS_PropValue& vp,
                            CFX_WideString& sError) {
-  CPDF_Dictionary* pDictionary =
-      m_pDocument->GetDocument()->GetPDFDoc()->GetInfo();
+  CPDF_Dictionary* pDictionary = m_pDocument->GetPDFDocument()->GetInfo();
   if (!pDictionary)
     return FALSE;
 
@@ -1005,8 +998,7 @@ FX_BOOL Document::producer(IJS_Context* cc,
 FX_BOOL Document::subject(IJS_Context* cc,
                           CJS_PropValue& vp,
                           CFX_WideString& sError) {
-  CPDF_Dictionary* pDictionary =
-      m_pDocument->GetDocument()->GetPDFDoc()->GetInfo();
+  CPDF_Dictionary* pDictionary = m_pDocument->GetPDFDocument()->GetInfo();
   if (!pDictionary)
     return FALSE;
 
@@ -1027,11 +1019,10 @@ FX_BOOL Document::subject(IJS_Context* cc,
 FX_BOOL Document::title(IJS_Context* cc,
                         CJS_PropValue& vp,
                         CFX_WideString& sError) {
-  if (m_pDocument == NULL || m_pDocument->GetDocument() == NULL)
+  if (!m_pDocument || !m_pDocument->GetUnderlyingDocument())
     return FALSE;
 
-  CPDF_Dictionary* pDictionary =
-      m_pDocument->GetDocument()->GetPDFDoc()->GetInfo();
+  CPDF_Dictionary* pDictionary = m_pDocument->GetPDFDocument()->GetInfo();
   if (!pDictionary)
     return FALSE;
 
@@ -1521,7 +1512,7 @@ FX_BOOL Document::getPageNthWord(IJS_Context* cc,
   int nWordNo = params.size() > 1 ? params[1].ToInt() : 0;
   bool bStrip = params.size() > 2 ? params[2].ToBool() : true;
 
-  CPDF_Document* pDocument = m_pDocument->GetDocument()->GetPDFDoc();
+  CPDF_Document* pDocument = m_pDocument->GetPDFDocument();
   if (!pDocument)
     return FALSE;
 
@@ -1593,7 +1584,7 @@ FX_BOOL Document::getPageNumWords(IJS_Context* cc,
 
   int nPageNo = params.size() > 0 ? params[0].ToInt() : 0;
 
-  CPDF_Document* pDocument = m_pDocument->GetDocument()->GetPDFDoc();
+  CPDF_Document* pDocument = m_pDocument->GetPDFDocument();
   ASSERT(pDocument != NULL);
 
   CJS_Context* pContext = static_cast<CJS_Context*>(cc);

@@ -981,6 +981,10 @@ void CPDFSDK_BAAnnot::Annot_OnDraw(CFX_RenderDevice* pDevice,
   return;
 }
 
+UnderlyingPageType* CPDFSDK_Annot::GetUnderlyingPage() {
+  return GetPDFXFAPage();
+}
+
 CPDF_Page* CPDFSDK_Annot::GetPDFPage() {
   if (m_pPageView)
     return m_pPageView->GetPDFPage();

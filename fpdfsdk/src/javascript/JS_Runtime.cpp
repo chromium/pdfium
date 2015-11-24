@@ -93,7 +93,7 @@ CJS_Runtime::~CJS_Runtime() {
   for (auto* obs : m_observers)
     obs->OnDestroyed();
 
-  for (int i = 0; i < m_ContextArray.GetSize(); i++)
+  for (int i = 0, sz = m_ContextArray.GetSize(); i < sz; i++)
     delete m_ContextArray.GetAt(i);
 
   m_ContextArray.RemoveAll();

@@ -35,7 +35,7 @@ class IFX_SystemHandler;
 
 class CPDFDoc_Environment final {
  public:
-  CPDFDoc_Environment(CPDFXFA_Document* pDoc, FPDF_FORMFILLINFO* pFFinfo);
+  CPDFDoc_Environment(UnderlyingDocumentType* pDoc, FPDF_FORMFILLINFO* pFFinfo);
   ~CPDFDoc_Environment();
 
   void Release() {
@@ -449,7 +449,9 @@ class CPDFDoc_Environment final {
   FX_BOOL IsJSInitiated() const { return m_pInfo && m_pInfo->m_pJsPlatform; }
   void SetSDKDocument(CPDFSDK_Document* pFXDoc) { m_pSDKDoc = pFXDoc; }
   CPDFSDK_Document* GetSDKDocument() const { return m_pSDKDoc; }
-  CPDFXFA_Document* GetPDFXFADocument() const { return m_pXFADoc; }
+  UnderlyingDocumentType* GetUnderlyingDocument() const {
+    return m_pUnderlyingDoc;
+  }
   CFX_ByteString GetAppName() const { return ""; }
   IFX_SystemHandler* GetSysHandler() const { return m_pSysHandler.get(); }
   FPDF_FORMFILLINFO* GetFormFillInfo() const { return m_pInfo; }
@@ -465,28 +467,32 @@ class CPDFDoc_Environment final {
   nonstd::unique_ptr<IJS_Runtime> m_pJSRuntime;
   FPDF_FORMFILLINFO* const m_pInfo;
   CPDFSDK_Document* m_pSDKDoc;
-  CPDFXFA_Document* const m_pXFADoc;
+  UnderlyingDocumentType* const m_pUnderlyingDoc;
   nonstd::unique_ptr<CFFL_IFormFiller> m_pIFormFiller;
   nonstd::unique_ptr<IFX_SystemHandler> m_pSysHandler;
 };
 
 class CPDFSDK_Document {
  public:
-  CPDFSDK_Document(CPDFXFA_Document* pDoc, CPDFDoc_Environment* pEnv);
+  CPDFSDK_Document(UnderlyingDocumentType* pDoc, CPDFDoc_Environment* pEnv);
   ~CPDFSDK_Document();
 
   CPDFSDK_InterForm* GetInterForm();
-  CPDFXFA_Document* GetDocument() const { return m_pDoc; }
+
+  UnderlyingDocumentType* GetUnderlyingDocument() const {
+    return GetXFADocument();
+  }
   CPDF_Document* GetPDFDocument() const {
     return m_pDoc ? m_pDoc->GetPDFDoc() : nullptr;
   }
+  CPDFXFA_Document* GetXFADocument() const { return m_pDoc; }
 
   int GetPageViewCount() const { return m_pageMap.size(); }
-  CPDFSDK_PageView* GetPageView(CPDFXFA_Page* pPDFXFAPage,
+  CPDFSDK_PageView* GetPageView(UnderlyingPageType* pPDFXFAPage,
                                 FX_BOOL ReNew = TRUE);
   CPDFSDK_PageView* GetPageView(int nIndex);
   CPDFSDK_PageView* GetCurrentView();
-  void ReMovePageView(CPDFXFA_Page* pPDFPage);
+  void RemovePageView(UnderlyingPageType* pPDFPage);
   void UpdateAllViews(CPDFSDK_PageView* pSender, CPDFSDK_Annot* pAnnot);
 
   CPDFSDK_Annot* GetFocusAnnot();
@@ -501,7 +507,6 @@ class CPDFSDK_Document {
   FX_BOOL InsertPages(int nInsertAt,
                       const CPDF_Document* pSrcDoc,
                       const CFX_WordArray& arrSrcPages);
-  FX_BOOL DeletePages(int nStart, int nCount);
   FX_BOOL ReplacePages(int nPage,
                        const CPDF_Document* pSrcDoc,
                        const CFX_WordArray& arrSrcPages);
@@ -522,7 +527,7 @@ class CPDFSDK_Document {
 
  private:
   std::map<CPDFXFA_Page*, CPDFSDK_PageView*> m_pageMap;
-  CPDFXFA_Document* m_pDoc;
+  UnderlyingDocumentType* m_pDoc;
   nonstd::unique_ptr<CPDFSDK_InterForm> m_pInterForm;
   CPDFSDK_Annot* m_pFocusAnnot;
   CPDFDoc_Environment* m_pEnv;

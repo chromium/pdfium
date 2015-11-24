@@ -200,7 +200,7 @@ FX_BOOL app::viewerVersion(IJS_Context* cc,
 
   CJS_Context* pContext = (CJS_Context*)cc;
   CPDFSDK_Document* pCurDoc = pContext->GetReaderDocument();
-  CPDFXFA_Document* pDoc = pCurDoc->GetDocument();
+  CPDFXFA_Document* pDoc = pCurDoc->GetXFADocument();
   if (pDoc->GetDocType() == 1 || pDoc->GetDocType() == 2) {
     vp << JS_NUM_VIEWERVERSION_XFA;
     return TRUE;

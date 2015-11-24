@@ -23,16 +23,30 @@
 #include "third_party/base/nonstd_unique_ptr.h"
 #include "third_party/base/numerics/safe_conversions_impl.h"
 
+UnderlyingDocumentType* UnderlyingFromFPDFDocument(FPDF_DOCUMENT doc) {
+  return static_cast<UnderlyingDocumentType*>(doc);
+}
+
+FPDF_DOCUMENT FPDFDocumentFromUnderlying(UnderlyingDocumentType* doc) {
+  return static_cast<FPDF_DOCUMENT>(doc);
+}
+
+UnderlyingPageType* UnderlyingFromFPDFPage(FPDF_PAGE page) {
+  return static_cast<UnderlyingPageType*>(page);
+}
+
 CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc) {
-  return doc ? static_cast<CPDFXFA_Document*>(doc)->GetPDFDoc() : nullptr;
+  return doc ? UnderlyingFromFPDFDocument(doc)->GetPDFDoc() : nullptr;
 }
 
 FPDF_DOCUMENT FPDFDocumentFromCPDFDocument(CPDF_Document* doc) {
-  return doc ? new CPDFXFA_Document(doc, CPDFXFA_App::GetInstance()) : nullptr;
+  return doc ? FPDFDocumentFromUnderlying(
+                   new CPDFXFA_Document(doc, CPDFXFA_App::GetInstance()))
+             : nullptr;
 }
 
 CPDF_Page* CPDFPageFromFPDFPage(FPDF_PAGE page) {
-  return page ? static_cast<CPDFXFA_Page*>(page)->GetPDFPage() : nullptr;
+  return page ? UnderlyingFromFPDFPage(page)->GetPDFPage() : nullptr;
 }
 
 CFPDF_FileStream::CFPDF_FileStream(FPDF_FILEHANDLER* pFS) {
@@ -416,15 +430,15 @@ DLLEXPORT int STDCALL FPDF_GetSecurityHandlerRevision(FPDF_DOCUMENT document) {
 }
 
 DLLEXPORT int STDCALL FPDF_GetPageCount(FPDF_DOCUMENT document) {
-  CPDFXFA_Document* pDoc = static_cast<CPDFXFA_Document*>(document);
+  UnderlyingDocumentType* pDoc = UnderlyingFromFPDFDocument(document);
   return pDoc ? pDoc->GetPageCount() : 0;
 }
 
 DLLEXPORT FPDF_PAGE STDCALL FPDF_LoadPage(FPDF_DOCUMENT document,
                                           int page_index) {
-  if (!document)
+  UnderlyingDocumentType* pDoc = UnderlyingFromFPDFDocument(document);
+  if (!pDoc)
     return nullptr;
-  CPDFXFA_Document* pDoc = static_cast<CPDFXFA_Document*>(document);
   if (page_index < 0 || page_index >= pDoc->GetPageCount())
     return nullptr;
 
@@ -432,12 +446,12 @@ DLLEXPORT FPDF_PAGE STDCALL FPDF_LoadPage(FPDF_DOCUMENT document,
 }
 
 DLLEXPORT double STDCALL FPDF_GetPageWidth(FPDF_PAGE page) {
-  CPDFXFA_Page* pPage = static_cast<CPDFXFA_Page*>(page);
+  UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
   return pPage ? pPage->GetPageWidth() : 0.0;
 }
 
 DLLEXPORT double STDCALL FPDF_GetPageHeight(FPDF_PAGE page) {
-  CPDFXFA_Page* pPage = static_cast<CPDFXFA_Page*>(page);
+  UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
   return pPage ? pPage->GetPageHeight() : 0.0;
 }
 
@@ -678,8 +692,7 @@ DLLEXPORT void STDCALL FPDF_DeviceToPage(FPDF_PAGE page,
                                          double* page_y) {
   if (page == NULL || page_x == NULL || page_y == NULL)
     return;
-  CPDFXFA_Page* pPage = (CPDFXFA_Page*)page;
-
+  UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
   pPage->DeviceToPage(start_x, start_y, size_x, size_y, rotate, device_x,
                       device_y, page_x, page_y);
 }
@@ -696,7 +709,7 @@ DLLEXPORT void STDCALL FPDF_PageToDevice(FPDF_PAGE page,
                                          int* device_y) {
   if (!device_x || !device_y)
     return;
-  CPDFXFA_Page* pPage = (CPDFXFA_Page*)page;
+  UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
   if (!pPage)
     return;
   pPage->PageToDevice(start_x, start_y, size_x, size_y, rotate, page_x, page_y,

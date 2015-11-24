@@ -22,6 +22,8 @@
 #include "core/include/fpdfdoc/fpdf_vt.h"
 #include "core/include/fxge/fx_ge.h"
 #include "core/include/fxge/fx_ge_win32.h"
+#include "fpdfsdk/include/fpdfxfa/fpdfxfa_doc.h"
+#include "fpdfsdk/include/fpdfxfa/fpdfxfa_page.h"
 #include "public/fpdfview.h"
 
 #ifdef _WIN32
@@ -86,6 +88,18 @@ class CFPDF_FileStream : public IFX_FileStream {
   FPDF_FILEHANDLER* m_pFS;
   FX_FILESIZE m_nCurPos;
 };
+
+// Object types for public FPDF_ types; these correspond to next layer down
+// from fpdfsdk. For master, these are CPDF_ types, but for XFA, these are
+// CPDFXFA_ types.
+using UnderlyingDocumentType = CPDFXFA_Document;
+using UnderlyingPageType = CPDFXFA_Page;
+
+// Conversions to/from underlying types.
+UnderlyingDocumentType* UnderlyingFromFPDFDocument(FPDF_DOCUMENT doc);
+FPDF_DOCUMENT FPDFDocumentFromUnderlying(UnderlyingDocumentType* doc);
+
+UnderlyingPageType* UnderlyingFromFPDFPage(FPDF_PAGE page);
 
 // Conversions to/from FPDF_ types.
 CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc);
