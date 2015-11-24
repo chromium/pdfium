@@ -123,11 +123,11 @@ class CFX_Font {
 class CFX_UnicodeEncoding {
  public:
   explicit CFX_UnicodeEncoding(CFX_Font* pFont);
-  ~CFX_UnicodeEncoding();
+  virtual ~CFX_UnicodeEncoding();
 
-  FX_DWORD GlyphFromCharCode(FX_DWORD charcode);
+  virtual FX_DWORD GlyphFromCharCode(FX_DWORD charcode);
 
- private:
+ protected:
   // Unowned, not nullptr.
   CFX_Font* m_pFont;
 };
@@ -175,6 +175,8 @@ class CFX_FontMgr {
   CFX_FontMgr();
   ~CFX_FontMgr();
 
+  void InitFTLibrary();
+
   FXFT_Face GetCachedFace(const CFX_ByteString& face_name,
                           int weight,
                           FX_BOOL bItalic,
@@ -210,8 +212,6 @@ class CFX_FontMgr {
   FXFT_Library GetFTLibrary() const { return m_FTLibrary; }
 
  private:
-  void InitFTLibrary();
-
   nonstd::unique_ptr<CFX_FontMapper> m_pBuiltinMapper;
   std::map<CFX_ByteString, CTTFontDesc*> m_FaceMap;
   FXFT_Library m_FTLibrary;
