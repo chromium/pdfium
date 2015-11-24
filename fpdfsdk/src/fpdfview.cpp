@@ -873,8 +873,8 @@ DLLEXPORT int STDCALL FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
                                               int page_index,
                                               double* width,
                                               double* height) {
-  CPDFXFA_Document* pDoc = (CPDFXFA_Document*)document;
-  if (pDoc == NULL)
+  UnderlyingDocumentType* pDoc = UnderlyingFromFPDFDocument(document);
+  if (!pDoc)
     return FALSE;
 
   int count = pDoc->GetPageCount();
@@ -1021,13 +1021,17 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document,
                                               long* buflen) {
   if (!buffer)
     *buflen = 0;
-  if (!document || index < 0)
-    return NULL;
+
+  if (index < 0)
+    return nullptr;
 
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  if (!pDoc)
+    return nullptr;
+
   CPDF_Dictionary* pRoot = pDoc->GetRoot();
   if (!pRoot)
-    return NULL;
+    return nullptr;
 
   CPDF_Object* pDestObj = NULL;
   CFX_ByteString bsName;

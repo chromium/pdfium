@@ -530,16 +530,17 @@ FX_BOOL CPDFSDK_Document::SetFocusAnnot(CPDFSDK_Annot* pAnnot, FX_UINT nFlag) {
   if (m_pFocusAnnot == pAnnot)
     return TRUE;
 
-  CPDFSDK_Annot* pLastFocusAnnot = m_pFocusAnnot;
-
   if (m_pFocusAnnot) {
     if (!KillFocusAnnot(nFlag))
       return FALSE;
   }
-  CPDFSDK_PageView* pPageView = NULL;
-  if (pAnnot)
-    pPageView = pAnnot->GetPageView();
-  if (pAnnot && pPageView->IsValid()) {
+
+  if (!pAnnot)
+    return FALSE;
+
+  CPDFSDK_Annot* pLastFocusAnnot = m_pFocusAnnot;
+  CPDFSDK_PageView* pPageView = pAnnot->GetPageView();
+  if (pPageView && pPageView->IsValid()) {
     CPDFSDK_AnnotHandlerMgr* pAnnotHandler = m_pEnv->GetAnnotHandlerMgr();
     if (!m_pFocusAnnot) {
       if (!pAnnotHandler->Annot_OnChangeFocus(pAnnot, pLastFocusAnnot))
@@ -589,8 +590,7 @@ void CPDFSDK_Document::OnCloseDocument() {
 }
 
 FX_BOOL CPDFSDK_Document::GetPermissions(int nFlag) {
-  FX_DWORD dwPermissions = m_pDoc->GetPDFDoc()->GetUserPermissions();
-  return dwPermissions & nFlag;
+  return GetPDFDocument()->GetUserPermissions() & nFlag;
 }
 
 IJS_Runtime* CPDFSDK_Document::GetJsRuntime() {
@@ -604,7 +604,7 @@ CFX_WideString CPDFSDK_Document::GetPath() {
 }
 
 CPDFSDK_PageView::CPDFSDK_PageView(CPDFSDK_Document* pSDKDoc,
-                                   CPDFXFA_Page* page)
+                                   UnderlyingPageType* page)
     : m_page(page),
       m_pSDKDoc(pSDKDoc),
       m_CaptureWidget(nullptr),

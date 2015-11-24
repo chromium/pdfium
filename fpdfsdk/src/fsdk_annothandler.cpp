@@ -142,10 +142,10 @@ void CPDFSDK_AnnotHandlerMgr::Annot_OnDraw(CPDFSDK_PageView* pPageView,
   if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot)) {
     pAnnotHandler->OnDraw(pPageView, pAnnot, pDevice, pUser2Device, dwFlags);
   } else {
-    if (!pAnnot->IsXFAField()) {
-      static_cast<CPDFSDK_BAAnnot*>(pAnnot)
-          ->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Normal, nullptr);
-    }
+    if (pAnnot->IsXFAField())
+      return;
+    static_cast<CPDFSDK_BAAnnot*>(pAnnot)
+        ->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Normal, nullptr);
   }
 }
 

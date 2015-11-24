@@ -28,11 +28,12 @@ CPDFSDK_InterForm* FormHandleToInterForm(FPDF_FORMHANDLE hHandle) {
 
 CPDFSDK_PageView* FormHandleToPageView(FPDF_FORMHANDLE hHandle,
                                        FPDF_PAGE page) {
-  if (!page)
+  UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
+  if (!pPage)
     return nullptr;
 
   CPDFSDK_Document* pSDKDoc = FormHandleToSDKDoc(hHandle);
-  return pSDKDoc ? pSDKDoc->GetPageView((CPDFXFA_Page*)page, TRUE) : nullptr;
+  return pSDKDoc ? pSDKDoc->GetPageView(pPage, TRUE) : nullptr;
 }
 
 }  // namespace
@@ -128,16 +129,19 @@ DLLEXPORT int STDCALL FPDFPage_FormFieldZOrderAtPoint(FPDF_FORMHANDLE hHandle,
 DLLEXPORT FPDF_FORMHANDLE STDCALL
 FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
                                 FPDF_FORMFILLINFO* formInfo) {
-  if (!document || !formInfo || formInfo->version != 2)
+  const int kRequiredVersion = 2;
+  if (!formInfo || formInfo->version != kRequiredVersion)
     return nullptr;
 
-  CPDFXFA_Document* pDocument = (CPDFXFA_Document*)document;
+  UnderlyingDocumentType* pDocument = UnderlyingFromFPDFDocument(document);
+  if (!pDocument)
+    return nullptr;
+
   CPDFDoc_Environment* pEnv = new CPDFDoc_Environment(pDocument, formInfo);
   pEnv->SetSDKDocument(pDocument->GetSDKDocument(pEnv));
 
   CPDFXFA_App* pApp = CPDFXFA_App::GetInstance();
   pApp->AddFormFillEnv(pEnv);
-
   return pEnv;
 }
 
@@ -600,14 +604,17 @@ DLLEXPORT void STDCALL FORM_OnAfterLoadPage(FPDF_PAGE page,
 
 DLLEXPORT void STDCALL FORM_OnBeforeClosePage(FPDF_PAGE page,
                                               FPDF_FORMHANDLE hHandle) {
-  if (!hHandle || !page)
+  if (!hHandle)
     return;
 
   CPDFSDK_Document* pSDKDoc = ((CPDFDoc_Environment*)hHandle)->GetSDKDocument();
   if (!pSDKDoc)
     return;
 
-  CPDFXFA_Page* pPage = (CPDFXFA_Page*)page;
+  UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
+  if (!pPage)
+    return;
+
   CPDFSDK_PageView* pPageView = pSDKDoc->GetPageView(pPage, FALSE);
   if (pPageView) {
     pPageView->SetValid(FALSE);
@@ -653,11 +660,11 @@ DLLEXPORT void STDCALL FORM_DoDocumentAAction(FPDF_FORMHANDLE hHandle,
 DLLEXPORT void STDCALL FORM_DoPageAAction(FPDF_PAGE page,
                                           FPDF_FORMHANDLE hHandle,
                                           int aaType) {
-  if (!hHandle || !page)
+  if (!hHandle)
     return;
   CPDFSDK_Document* pSDKDoc = ((CPDFDoc_Environment*)hHandle)->GetSDKDocument();
-  CPDFXFA_Page* pPage = (CPDFXFA_Page*)page;
-  CPDF_Page* pPDFPage = pPage->GetPDFPage();
+  UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
+  CPDF_Page* pPDFPage = CPDFPageFromFPDFPage(page);
   if (!pPDFPage)
     return;
   if (pSDKDoc->GetPageView(pPage, FALSE)) {

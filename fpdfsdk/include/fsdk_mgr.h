@@ -495,11 +495,11 @@ class CPDFSDK_Document {
   CPDFXFA_Document* GetXFADocument() const { return m_pDoc; }
 
   int GetPageViewCount() const { return m_pageMap.size(); }
-  CPDFSDK_PageView* GetPageView(UnderlyingPageType* pPDFXFAPage,
+  CPDFSDK_PageView* GetPageView(UnderlyingPageType* pPage,
                                 FX_BOOL ReNew = TRUE);
   CPDFSDK_PageView* GetPageView(int nIndex);
   CPDFSDK_PageView* GetCurrentView();
-  void RemovePageView(UnderlyingPageType* pPDFPage);
+  void RemovePageView(UnderlyingPageType* pPage);
   void UpdateAllViews(CPDFSDK_PageView* pSender, CPDFSDK_Annot* pAnnot);
 
   CPDFSDK_Annot* GetFocusAnnot();
@@ -526,14 +526,14 @@ class CPDFSDK_Document {
   void SetChangeMark() { m_bChangeMask = TRUE; }
   void ClearChangeMark() { m_bChangeMask = FALSE; }
   CFX_WideString GetPath();
-  CPDFXFA_Page* GetPage(int nIndex);
+  UnderlyingPageType* GetPage(int nIndex);
   CPDFDoc_Environment* GetEnv() { return m_pEnv; }
   void ProcJavascriptFun();
   FX_BOOL ProcOpenAction();
   CPDF_OCContext* GetOCContext();
 
  private:
-  std::map<CPDFXFA_Page*, CPDFSDK_PageView*> m_pageMap;
+  std::map<UnderlyingPageType*, CPDFSDK_PageView*> m_pageMap;
   UnderlyingDocumentType* m_pDoc;
   nonstd::unique_ptr<CPDFSDK_InterForm> m_pInterForm;
   CPDFSDK_Annot* m_pFocusAnnot;
@@ -544,7 +544,7 @@ class CPDFSDK_Document {
 };
 class CPDFSDK_PageView final {
  public:
-  CPDFSDK_PageView(CPDFSDK_Document* pSDKDoc, CPDFXFA_Page* page);
+  CPDFSDK_PageView(CPDFSDK_Document* pSDKDoc, UnderlyingPageType* page);
   ~CPDFSDK_PageView();
   void PageView_OnDraw(CFX_RenderDevice* pDevice,
                        CPDF_Matrix* pUser2Device,
@@ -610,7 +610,7 @@ class CPDFSDK_PageView final {
                                       CPDFSDK_Widget* pWidget);
 
   CPDF_Matrix m_curMatrix;
-  CPDFXFA_Page* m_page;
+  UnderlyingPageType* m_page;
   nonstd::unique_ptr<CPDF_AnnotList> m_pAnnotList;
   std::vector<CPDFSDK_Annot*> m_fxAnnotArray;
   CPDFSDK_Document* m_pSDKDoc;

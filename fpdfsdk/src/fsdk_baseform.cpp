@@ -505,10 +505,10 @@ FX_BOOL CPDFSDK_Widget::IsAppearanceValid() {
   CPDFSDK_Document* pSDKDoc = m_pPageView->GetSDKDocument();
   CPDFXFA_Document* pDoc = pSDKDoc->GetXFADocument();
   int nDocType = pDoc->GetDocType();
-  if (nDocType == DOCTYPE_PDF || nDocType == DOCTYPE_STATIC_XFA)
-    return CPDFSDK_BAAnnot::IsAppearanceValid();
+  if (nDocType != DOCTYPE_PDF && nDocType != DOCTYPE_STATIC_XFA)
+    return TRUE;
 
-  return TRUE;
+  return CPDFSDK_BAAnnot::IsAppearanceValid();
 }
 
 int CPDFSDK_Widget::GetFieldFlags() const {
@@ -1955,14 +1955,14 @@ FX_BOOL CPDFSDK_Widget::OnAAction(CPDF_AAction::AActionType type,
                                   PDFSDK_FieldAction& data,
                                   CPDFSDK_PageView* pPageView) {
   CPDFSDK_Document* pDocument = pPageView->GetSDKDocument();
-  CPDFXFA_Document* pDoc = pDocument->GetXFADocument();
   CPDFDoc_Environment* pEnv = pDocument->GetEnv();
 
-  if (IXFA_Widget* hWidget = this->GetMixXFAWidget()) {
+  CPDFXFA_Document* pDoc = pDocument->GetXFADocument();
+  if (IXFA_Widget* hWidget = GetMixXFAWidget()) {
     XFA_EVENTTYPE eEventType = GetXFAEventType(type, data.bWillCommit);
 
     if (eEventType != XFA_EVENT_Unknown) {
-      if (IXFA_WidgetHandler* pXFAWidgetHandler = this->GetXFAWidgetHandler()) {
+      if (IXFA_WidgetHandler* pXFAWidgetHandler = GetXFAWidgetHandler()) {
         CXFA_EventParam param;
         param.m_eType = eEventType;
         param.m_wsChange = data.sChange;
@@ -2067,7 +2067,6 @@ FX_BOOL CPDFSDK_Widget::HitTest(FX_FLOAT pageX, FX_FLOAT pageY) {
   return FALSE;
 }
 
-// CPDFSDK_XFAWidget
 CPDFSDK_XFAWidget::CPDFSDK_XFAWidget(IXFA_Widget* pAnnot,
                                      CPDFSDK_PageView* pPageView,
                                      CPDFSDK_InterForm* pInterForm)
@@ -2096,7 +2095,6 @@ CFX_FloatRect CPDFSDK_XFAWidget::GetRect() const {
                        rcBBox.top + rcBBox.height);
 }
 
-// CPDFSDK_InterForm
 CPDFSDK_InterForm::CPDFSDK_InterForm(CPDFSDK_Document* pDocument)
     : m_pDocument(pDocument),
       m_pInterForm(NULL),
@@ -2104,7 +2102,6 @@ CPDFSDK_InterForm::CPDFSDK_InterForm(CPDFSDK_Document* pDocument)
       m_bXfaCalculate(TRUE),
       m_bXfaValidationsEnabled(TRUE),
       m_bBusy(FALSE) {
-  ASSERT(m_pDocument != NULL);
   m_pInterForm = new CPDF_InterForm(m_pDocument->GetPDFDocument(), FALSE);
   m_pInterForm->SetFormNotify(this);
 
@@ -2452,8 +2449,6 @@ void CPDFSDK_InterForm::ResetFieldAppearance(CPDF_FormField* pFormField,
 }
 
 void CPDFSDK_InterForm::UpdateField(CPDF_FormField* pFormField) {
-  ASSERT(pFormField != NULL);
-
   for (int i = 0, sz = pFormField->CountControls(); i < sz; i++) {
     CPDF_FormControl* pFormCtrl = pFormField->GetControl(i);
     ASSERT(pFormCtrl != NULL);
@@ -2461,10 +2456,8 @@ void CPDFSDK_InterForm::UpdateField(CPDF_FormField* pFormField) {
     if (CPDFSDK_Widget* pWidget = GetWidget(pFormCtrl)) {
       CPDFDoc_Environment* pEnv = m_pDocument->GetEnv();
       CFFL_IFormFiller* pIFormFiller = pEnv->GetIFormFiller();
-
-      CPDFXFA_Page* pPage = pWidget->GetPDFXFAPage();
+      UnderlyingPageType* pPage = pWidget->GetUnderlyingPage();
       CPDFSDK_PageView* pPageView = m_pDocument->GetPageView(pPage, FALSE);
-
       FX_RECT rcBBox = pIFormFiller->GetViewBBox(pPageView, pWidget);
 
       pEnv->FFI_Invalidate(pPage, rcBBox.left, rcBBox.top, rcBBox.right,
