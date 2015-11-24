@@ -2263,10 +2263,7 @@ void CPDFSDK_InterForm::XfaSetValidationsEnabled(FX_BOOL bEnabled) {
 
 #ifdef _WIN32
 CPDF_Stream* CPDFSDK_InterForm::LoadImageFromFile(const CFX_WideString& sFile) {
-  ASSERT(m_pDocument != NULL);
-  CPDF_Document* pDocument = m_pDocument->GetDocument()->GetPDFDoc();
-  ASSERT(pDocument != NULL);
-
+  CPDF_Document* pDocument = m_pDocument->GetPDFDocument();
   CPDF_Stream* pRetStream = NULL;
 
   if (CFX_DIBitmap* pBmp = CFX_WindowsDIB::LoadFromFile(sFile.c_str())) {
