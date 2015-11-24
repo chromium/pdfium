@@ -64,7 +64,7 @@ FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument,
 #ifdef PDF_ENABLE_XFA
   if (!pDocument)
     return FALSE;
-  if (pDocument->GetDocType() != DOCTYPE_DYNIMIC_XFA &&
+  if (pDocument->GetDocType() != DOCTYPE_DYNAMIC_XFA &&
       pDocument->GetDocType() != DOCTYPE_STATIC_XFA)
     return TRUE;
   if (!CPDFXFA_App::GetInstance()->GetXFAApp())
@@ -230,7 +230,7 @@ FX_BOOL _SendPostSaveToXFADoc(CPDFXFA_Document* pDocument) {
   if (!pDocument)
     return FALSE;
 
-  if (pDocument->GetDocType() != DOCTYPE_DYNIMIC_XFA &&
+  if (pDocument->GetDocType() != DOCTYPE_DYNAMIC_XFA &&
       pDocument->GetDocType() != DOCTYPE_STATIC_XFA)
     return TRUE;
 
@@ -257,7 +257,7 @@ FX_BOOL _SendPostSaveToXFADoc(CPDFXFA_Document* pDocument) {
 
 FX_BOOL _SendPreSaveToXFADoc(CPDFXFA_Document* pDocument,
                              CFX_PtrArray& fileList) {
-  if (pDocument->GetDocType() != DOCTYPE_DYNIMIC_XFA &&
+  if (pDocument->GetDocType() != DOCTYPE_DYNAMIC_XFA &&
       pDocument->GetDocType() != DOCTYPE_STATIC_XFA)
     return TRUE;
   IXFA_DocView* pXFADocView = pDocument->GetXFADocView();

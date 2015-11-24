@@ -12,7 +12,7 @@
 typedef void* FPDF_FORMHANDLE;
 
 #define DOCTYPE_PDF 0          // Normal pdf Document
-#define DOCTYPE_DYNIMIC_XFA 1  // Dynimic xfa Document Type
+#define DOCTYPE_DYNAMIC_XFA 1  // Dynamic xfa Document Type
 #define DOCTYPE_STATIC_XFA 2   // Static xfa Document Type
 
 // Exported Functions

@@ -93,7 +93,7 @@ FX_BOOL CPDFXFA_Page::LoadPage() {
     case DOCTYPE_STATIC_XFA: {
       return LoadPDFPage();
     }
-    case DOCTYPE_DYNIMIC_XFA: {
+    case DOCTYPE_DYNAMIC_XFA: {
       return LoadXFAPageView();
     }
     default:
@@ -125,7 +125,7 @@ FX_FLOAT CPDFXFA_Page::GetPageWidth() {
 
   int nDocType = m_pDocument->GetDocType();
   switch (nDocType) {
-    case DOCTYPE_DYNIMIC_XFA: {
+    case DOCTYPE_DYNAMIC_XFA: {
       if (m_pXFAPageView) {
         CFX_RectF rect;
         m_pXFAPageView->GetPageViewRect(rect);
@@ -157,7 +157,7 @@ FX_FLOAT CPDFXFA_Page::GetPageHeight() {
       if (m_pPDFPage)
         return m_pPDFPage->GetPageHeight();
     } break;
-    case DOCTYPE_DYNIMIC_XFA: {
+    case DOCTYPE_DYNAMIC_XFA: {
       if (m_pXFAPageView) {
         CFX_RectF rect;
         m_pXFAPageView->GetPageViewRect(rect);
@@ -236,7 +236,7 @@ void CPDFXFA_Page::GetDisplayMatrix(CFX_AffineMatrix& matrix,
 
   int nDocType = m_pDocument->GetDocType();
   switch (nDocType) {
-    case DOCTYPE_DYNIMIC_XFA: {
+    case DOCTYPE_DYNAMIC_XFA: {
       if (m_pXFAPageView) {
         CFX_Rect rect;
         rect.Set(xPos, yPos, xSize, ySize);

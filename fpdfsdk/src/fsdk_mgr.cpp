@@ -643,7 +643,7 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
     return;
 
 #ifdef PDF_ENABLE_XFA
-  if (pPage->GetDocument()->GetDocType() == DOCTYPE_DYNIMIC_XFA) {
+  if (pPage->GetDocument()->GetDocType() == DOCTYPE_DYNAMIC_XFA) {
     CFX_Graphics gs;
     gs.Create(pDevice);
     CFX_RectF rectClip;
@@ -792,7 +792,7 @@ FX_BOOL CPDFSDK_PageView::DeleteAnnot(CPDFSDK_Annot* pAnnot) {
     return FALSE;
   CPDFXFA_Page* pPage = pAnnot->GetPDFXFAPage();
   if (!pPage || (pPage->GetDocument()->GetDocType() != DOCTYPE_STATIC_XFA &&
-                 pPage->GetDocument()->GetDocType() != DOCTYPE_DYNIMIC_XFA))
+                 pPage->GetDocument()->GetDocType() != DOCTYPE_DYNAMIC_XFA))
     return FALSE;
 
   auto it = std::find(m_fxAnnotArray.begin(), m_fxAnnotArray.end(), pAnnot);
@@ -990,7 +990,7 @@ void CPDFSDK_PageView::LoadFXAnnots() {
 
   SetLock(TRUE);
   m_page->AddRef();
-  if (m_pSDKDoc->GetXFADocument()->GetDocType() == DOCTYPE_DYNIMIC_XFA) {
+  if (m_pSDKDoc->GetXFADocument()->GetDocType() == DOCTYPE_DYNAMIC_XFA) {
     IXFA_PageView* pageView = NULL;
     pageView = m_page->GetXFAPageView();
     ASSERT(pageView != NULL);

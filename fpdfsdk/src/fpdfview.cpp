@@ -317,7 +317,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_HasXFAField(FPDF_DOCUMENT document,
   FX_BOOL bDynamicXFA = pRoot->GetBoolean("NeedsRendering", FALSE);
 
   if (bDynamicXFA)
-    *docType = DOCTYPE_DYNIMIC_XFA;
+    *docType = DOCTYPE_DYNAMIC_XFA;
   else
     *docType = DOCTYPE_STATIC_XFA;
 

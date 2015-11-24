@@ -109,7 +109,7 @@ FX_BOOL CPDFXFA_Document::LoadXFADoc() {
   pDocHandler->SetJSERuntime(m_pXFADoc, m_pApp->GetJSERuntime());
 
   if (pDocHandler->GetDocType(m_pXFADoc) == XFA_DOCTYPE_Dynamic)
-    m_iDocType = DOCTYPE_DYNIMIC_XFA;
+    m_iDocType = DOCTYPE_DYNAMIC_XFA;
   else
     m_iDocType = DOCTYPE_STATIC_XFA;
 
@@ -134,7 +134,7 @@ int CPDFXFA_Document::GetPageCount() {
     case DOCTYPE_STATIC_XFA:
       if (m_pPDFDoc)
         return m_pPDFDoc->GetPageCount();
-    case DOCTYPE_DYNIMIC_XFA:
+    case DOCTYPE_DYNAMIC_XFA:
       if (m_pXFADoc)
         return m_pXFADocView->CountPageViews();
     default:
@@ -178,7 +178,7 @@ CPDFXFA_Page* CPDFXFA_Document::GetPage(IXFA_PageView* pPage) {
   if (!m_pXFADoc)
     return NULL;
 
-  if (m_iDocType != DOCTYPE_DYNIMIC_XFA)
+  if (m_iDocType != DOCTYPE_DYNAMIC_XFA)
     return NULL;
 
   int nSize = m_XFAPageList.GetSize();
@@ -238,7 +238,7 @@ void CPDFXFA_Document::InvalidateRect(IXFA_PageView* pPageView,
   if (!m_pXFADoc || !m_pSDKDoc)
     return;
 
-  if (m_iDocType != DOCTYPE_DYNIMIC_XFA)
+  if (m_iDocType != DOCTYPE_DYNAMIC_XFA)
     return;
 
   CPDF_Rect rcPage;
@@ -265,7 +265,7 @@ void CPDFXFA_Document::InvalidateRect(IXFA_Widget* hWidget,
   if (!m_pXFADoc || !m_pSDKDoc || !m_pXFADocView)
     return;
 
-  if (m_iDocType != DOCTYPE_DYNIMIC_XFA)
+  if (m_iDocType != DOCTYPE_DYNAMIC_XFA)
     return;
 
   IXFA_WidgetHandler* pWidgetHandler = m_pXFADocView->GetWidgetHandler();
@@ -290,7 +290,7 @@ void CPDFXFA_Document::DisplayCaret(IXFA_Widget* hWidget,
   if (!m_pXFADoc || !m_pSDKDoc || !m_pXFADocView)
     return;
 
-  if (m_iDocType != DOCTYPE_DYNIMIC_XFA)
+  if (m_iDocType != DOCTYPE_DYNAMIC_XFA)
     return;
 
   IXFA_WidgetHandler* pWidgetHandler = m_pXFADocView->GetWidgetHandler();
@@ -498,7 +498,7 @@ void CPDFXFA_Document::WidgetEvent(IXFA_Widget* hWidget,
                                    FX_DWORD dwEvent,
                                    void* pParam,
                                    void* pAdditional) {
-  if (m_iDocType != DOCTYPE_DYNIMIC_XFA || !hWidget)
+  if (m_iDocType != DOCTYPE_DYNAMIC_XFA || !hWidget)
     return;
 
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
@@ -535,7 +535,7 @@ int32_t CPDFXFA_Document::CountPages(IXFA_Doc* hDoc) {
 int32_t CPDFXFA_Document::GetCurrentPage(IXFA_Doc* hDoc) {
   if (hDoc != m_pXFADoc || !m_pSDKDoc)
     return -1;
-  if (m_iDocType != DOCTYPE_DYNIMIC_XFA)
+  if (m_iDocType != DOCTYPE_DYNAMIC_XFA)
     return -1;
 
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
@@ -547,7 +547,7 @@ int32_t CPDFXFA_Document::GetCurrentPage(IXFA_Doc* hDoc) {
 void CPDFXFA_Document::SetCurrentPage(IXFA_Doc* hDoc, int32_t iCurPage) {
   if (hDoc != m_pXFADoc || !m_pSDKDoc)
     return;
-  if (m_iDocType != DOCTYPE_DYNIMIC_XFA)
+  if (m_iDocType != DOCTYPE_DYNAMIC_XFA)
     return;
 
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
@@ -603,7 +603,7 @@ void CPDFXFA_Document::ExportData(IXFA_Doc* hDoc,
                                   FX_BOOL bXDP) {
   if (hDoc != m_pXFADoc)
     return;
-  if (m_iDocType != DOCTYPE_DYNIMIC_XFA && m_iDocType != DOCTYPE_STATIC_XFA)
+  if (m_iDocType != DOCTYPE_DYNAMIC_XFA && m_iDocType != DOCTYPE_STATIC_XFA)
     return;
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
   if (pEnv == NULL)
@@ -711,7 +711,7 @@ void CPDFXFA_Document::GotoURL(IXFA_Doc* hDoc,
   if (hDoc != m_pXFADoc)
     return;
 
-  if (m_iDocType != DOCTYPE_DYNIMIC_XFA)
+  if (m_iDocType != DOCTYPE_DYNAMIC_XFA)
     return;
 
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
@@ -825,7 +825,7 @@ FX_BOOL CPDFXFA_Document::_NotifySubmit(FX_BOOL bPrevOrPost) {
 
 FX_BOOL CPDFXFA_Document::_OnBeforeNotifySumbit() {
 #ifdef PDF_ENABLE_XFA
-  if (m_iDocType != DOCTYPE_DYNIMIC_XFA && m_iDocType != DOCTYPE_STATIC_XFA)
+  if (m_iDocType != DOCTYPE_DYNAMIC_XFA && m_iDocType != DOCTYPE_STATIC_XFA)
     return TRUE;
   if (m_pXFADocView == NULL)
     return TRUE;
@@ -874,7 +874,7 @@ FX_BOOL CPDFXFA_Document::_OnBeforeNotifySumbit() {
   return TRUE;
 }
 void CPDFXFA_Document::_OnAfterNotifySumbit() {
-  if (m_iDocType != DOCTYPE_DYNIMIC_XFA && m_iDocType != DOCTYPE_STATIC_XFA)
+  if (m_iDocType != DOCTYPE_DYNAMIC_XFA && m_iDocType != DOCTYPE_STATIC_XFA)
     return;
   if (m_pXFADocView == NULL)
     return;
