@@ -416,7 +416,7 @@ DLLEXPORT int STDCALL FPDF_GetSecurityHandlerRevision(FPDF_DOCUMENT document) {
 }
 
 DLLEXPORT int STDCALL FPDF_GetPageCount(FPDF_DOCUMENT document) {
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  CPDFXFA_Document* pDoc = static_cast<CPDFXFA_Document*>(document);
   return pDoc ? pDoc->GetPageCount() : 0;
 }
 
