@@ -55,10 +55,19 @@ class ChromeTests:
     # tools/drmemory/scripts relative to the top of the tree.
     script_dir = os.path.dirname(path_utils.ScriptDir())
     self._source_dir = os.path.dirname(os.path.dirname(script_dir))
+    # Setup Dr. Memory if it's not set up yet.
+    drmem_cmd = os.getenv("DRMEMORY_COMMAND")
+    if not drmem_cmd:
+      drmem_sfx = os.path.join(script_dir, "drmemory-windows-sfx.exe")
+      if not os.path.isfile(drmem_sfx):
+        raise RuntimeError, "Cannot find drmemory-windows-sfx.exe"
+      drmem_dir = os.path.join(script_dir, "unpacked")
+      subprocess.call([drmem_sfx, "-o" + drmem_dir, "-y"], 0)
+      drmem_cmd = os.path.join(drmem_dir, "bin", "drmemory.exe")
+      os.environ["DRMEMORY_COMMAND"] = drmem_cmd
     # since this path is used for string matching, make sure it's always
     # an absolute Unix-style path
     self._source_dir = os.path.abspath(self._source_dir).replace('\\', '/')
-    valgrind_test_script = os.path.join(script_dir, "valgrind_test.py")
     self._command_preamble = ["--source-dir=%s" % (self._source_dir)]
 
     if not self._options.build_dir:
