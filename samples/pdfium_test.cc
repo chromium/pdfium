@@ -6,7 +6,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <wchar.h>
 
 #include <list>
 #include <sstream>
@@ -432,6 +431,7 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
   int nRet = PDF_DATA_NOTAVAIL;
   bool bIsLinearized = false;
   FPDF_AVAIL pdf_avail = FPDFAvail_Create(&file_avail, &file_access);
+
   if (FPDFAvail_IsLinearized(pdf_avail) == PDF_LINEARIZED) {
     fprintf(stderr, "Linearized path...\n");
     doc = FPDFAvail_GetDocument(pdf_avail, nullptr);
