@@ -558,7 +558,7 @@ FX_BOOL TIFF_PredictorEncode(uint8_t*& data_buf,
 }
 
 void TIFF_PredictLine(uint8_t* dest_buf,
-                      int row_size,
+                      FX_DWORD row_size,
                       int BitsPerComponent,
                       int Colors,
                       int Columns) {
@@ -582,7 +582,7 @@ void TIFF_PredictLine(uint8_t* dest_buf,
   }
   int BytesPerPixel = BitsPerComponent * Colors / 8;
   if (BitsPerComponent == 16) {
-    for (int i = BytesPerPixel; i < row_size; i += 2) {
+    for (FX_DWORD i = BytesPerPixel; i < row_size; i += 2) {
       FX_WORD pixel =
           (dest_buf[i - BytesPerPixel] << 8) | dest_buf[i - BytesPerPixel + 1];
       pixel += (dest_buf[i] << 8) | dest_buf[i + 1];
@@ -590,7 +590,7 @@ void TIFF_PredictLine(uint8_t* dest_buf,
       dest_buf[i + 1] = (uint8_t)pixel;
     }
   } else {
-    for (int i = BytesPerPixel; i < row_size; i++) {
+    for (FX_DWORD i = BytesPerPixel; i < row_size; i++) {
       dest_buf[i] += dest_buf[i - BytesPerPixel];
     }
   }
@@ -761,7 +761,11 @@ class CCodec_FlateScanlineDecoder : public CCodec_ScanlineDecoder {
   uint8_t* m_pPredictBuffer;
   uint8_t* m_pPredictRaw;
   int m_Predictor;
-  int m_Colors, m_BitsPerComponent, m_Columns, m_PredictPitch, m_LeftOver;
+  int m_Colors;
+  int m_BitsPerComponent;
+  int m_Columns;
+  FX_DWORD m_PredictPitch;
+  size_t m_LeftOver;
 };
 
 CCodec_FlateScanlineDecoder::CCodec_FlateScanlineDecoder() {
@@ -798,7 +802,7 @@ void CCodec_FlateScanlineDecoder::Create(const uint8_t* src_buf,
   m_nComps = nComps;
   m_bpc = bpc;
   m_bColorTransformed = FALSE;
-  m_Pitch = (width * nComps * bpc + 7) / 8;
+  m_Pitch = (static_cast<FX_DWORD>(width) * nComps * bpc + 7) / 8;
   m_pScanline = FX_Alloc(uint8_t, m_Pitch);
   m_Predictor = 0;
   if (predictor) {
@@ -816,7 +820,10 @@ void CCodec_FlateScanlineDecoder::Create(const uint8_t* src_buf,
       m_Colors = Colors;
       m_BitsPerComponent = BitsPerComponent;
       m_Columns = Columns;
-      m_PredictPitch = (m_BitsPerComponent * m_Colors * m_Columns + 7) / 8;
+      m_PredictPitch =
+          (static_cast<FX_DWORD>(m_BitsPerComponent) * m_Colors * m_Columns +
+           7) /
+          8;
       m_pLastLine = FX_Alloc(uint8_t, m_PredictPitch);
       m_pPredictRaw = FX_Alloc(uint8_t, m_PredictPitch + 1);
       m_pPredictBuffer = FX_Alloc(uint8_t, m_PredictPitch);
@@ -849,8 +856,9 @@ uint8_t* CCodec_FlateScanlineDecoder::v_GetNextLine() {
                          m_OutputWidth);
       }
     } else {
-      int bytes_to_go = m_Pitch;
-      int read_leftover = m_LeftOver > bytes_to_go ? bytes_to_go : m_LeftOver;
+      size_t bytes_to_go = m_Pitch;
+      size_t read_leftover =
+          m_LeftOver > bytes_to_go ? bytes_to_go : m_LeftOver;
       if (read_leftover) {
         FXSYS_memcpy(m_pScanline,
                      m_pPredictBuffer + m_PredictPitch - m_LeftOver,
@@ -869,7 +877,7 @@ uint8_t* CCodec_FlateScanlineDecoder::v_GetNextLine() {
           TIFF_PredictLine(m_pPredictBuffer, m_PredictPitch, m_BitsPerComponent,
                            m_Colors, m_Columns);
         }
-        int read_bytes =
+        size_t read_bytes =
             m_PredictPitch > bytes_to_go ? bytes_to_go : m_PredictPitch;
         FXSYS_memcpy(m_pScanline + m_Pitch - bytes_to_go, m_pPredictBuffer,
                      read_bytes);

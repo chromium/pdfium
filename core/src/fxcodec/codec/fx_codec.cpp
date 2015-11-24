@@ -23,7 +23,7 @@ CCodec_ModuleMgr::CCodec_ModuleMgr()
 
 CCodec_ScanlineDecoder::ImageDataCache::ImageDataCache(int width,
                                                        int height,
-                                                       int pitch)
+                                                       FX_DWORD pitch)
     : m_Width(width), m_Height(height), m_Pitch(pitch), m_nCachedLines(0) {
 }
 
@@ -31,7 +31,7 @@ CCodec_ScanlineDecoder::ImageDataCache::~ImageDataCache() {
 }
 
 bool CCodec_ScanlineDecoder::ImageDataCache::AllocateCache() {
-  if (m_Pitch <= 0 || m_Height < 0)
+  if (m_Pitch == 0 || m_Height < 0)
     return false;
 
   FX_SAFE_SIZE_T size = m_Pitch;
@@ -45,7 +45,7 @@ bool CCodec_ScanlineDecoder::ImageDataCache::AllocateCache() {
 
 void CCodec_ScanlineDecoder::ImageDataCache::AppendLine(const uint8_t* line) {
   // If the callers adds more lines than there is room, fail.
-  if (m_Pitch <= 0 || m_nCachedLines >= m_Height) {
+  if (m_Pitch == 0 || m_nCachedLines >= m_Height) {
     NOTREACHED();
     return;
   }
@@ -56,7 +56,7 @@ void CCodec_ScanlineDecoder::ImageDataCache::AppendLine(const uint8_t* line) {
 }
 
 const uint8_t* CCodec_ScanlineDecoder::ImageDataCache::GetLine(int line) const {
-  if (m_Pitch <= 0 || line < 0 || line >= m_nCachedLines)
+  if (m_Pitch == 0 || line < 0 || line >= m_nCachedLines)
     return nullptr;
 
   size_t offset = m_Pitch;
@@ -338,8 +338,19 @@ FX_BOOL CCodec_RLScanlineDecoder::Create(const uint8_t* src_buf,
   m_bpc = bpc;
   m_bColorTransformed = FALSE;
   m_DownScale = 1;
-  m_Pitch = (width * nComps * bpc + 31) / 32 * 4;
-  m_dwLineBytes = (width * nComps * bpc + 7) / 8;
+  // Aligning the pitch to 4 bytes requires an integer overflow check.
+  FX_SAFE_DWORD pitch = width;
+  pitch *= nComps;
+  pitch *= bpc;
+  pitch += 31;
+  pitch /= 32;
+  pitch *= 4;
+  if (!pitch.IsValid()) {
+    return FALSE;
+  }
+  m_Pitch = pitch.ValueOrDie();
+  // Overflow should already have been checked before this is called.
+  m_dwLineBytes = (static_cast<FX_DWORD>(width) * nComps * bpc + 7) / 8;
   m_pScanline = FX_Alloc(uint8_t, m_Pitch);
   return CheckDestSize();
 }

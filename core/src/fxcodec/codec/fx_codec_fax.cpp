@@ -656,7 +656,8 @@ FX_BOOL CCodec_FaxDecoder::Create(const uint8_t* src_buf,
   if (m_OrigHeight == 0) {
     m_OrigHeight = height;
   }
-  m_Pitch = (m_OrigWidth + 31) / 32 * 4;
+  // Should not overflow. Checked by FPDFAPI_CreateFaxDecoder.
+  m_Pitch = (static_cast<FX_DWORD>(m_OrigWidth) + 31) / 32 * 4;
   m_OutputWidth = m_OrigWidth;
   m_OutputHeight = m_OrigHeight;
   m_pScanlineBuf = FX_Alloc(uint8_t, m_Pitch);
@@ -716,7 +717,7 @@ uint8_t* CCodec_FaxDecoder::v_GetNextLine() {
     }
   }
   if (m_bBlack) {
-    for (int i = 0; i < m_Pitch; i++) {
+    for (FX_DWORD i = 0; i < m_Pitch; i++) {
       m_pScanlineBuf[i] = ~m_pScanlineBuf[i];
     }
   }
