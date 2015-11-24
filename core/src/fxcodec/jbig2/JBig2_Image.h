@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _JBIG2_IMAGE_H_
-#define _JBIG2_IMAGE_H_
+#ifndef CORE_SRC_FXCODEC_JBIG2_JBIG2_IMAGE_H_
+#define CORE_SRC_FXCODEC_JBIG2_JBIG2_IMAGE_H_
 
 #include "JBig2_Define.h"
 
@@ -24,7 +24,7 @@ class CJBig2_Image {
 
   CJBig2_Image(int32_t w, int32_t h, int32_t stride, uint8_t* pBuf);
 
-  CJBig2_Image(CJBig2_Image& im);
+  CJBig2_Image(const CJBig2_Image& im);
 
   ~CJBig2_Image();
 
@@ -81,4 +81,5 @@ class CJBig2_Image {
 
   FX_BOOL m_bNeedFree;
 };
-#endif
+
+#endif  // CORE_SRC_FXCODEC_JBIG2_JBIG2_IMAGE_H_
