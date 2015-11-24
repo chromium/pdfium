@@ -479,12 +479,19 @@ class CPDFSDK_Document {
 
   CPDFSDK_InterForm* GetInterForm();
 
+  // Gets the document object for the next layer down; for master this is
+  // a CPDF_Document, but for XFA it is a CPDFXFA_Document.
   UnderlyingDocumentType* GetUnderlyingDocument() const {
     return GetXFADocument();
   }
+
+  // Gets the CPDF_Document, either directly in master, or from the
+  // CPDFXFA_Document for XFA.
   CPDF_Document* GetPDFDocument() const {
     return m_pDoc ? m_pDoc->GetPDFDoc() : nullptr;
   }
+
+  // Gets the XFA document directly (XFA-only).
   CPDFXFA_Document* GetXFADocument() const { return m_pDoc; }
 
   int GetPageViewCount() const { return m_pageMap.size(); }
