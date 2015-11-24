@@ -266,7 +266,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
   for (I = 0; I < SDNUMINSYMS + SDNUMNEWSYMS; I++) {
     if (EXFLAGS[I] && J < SDNUMEXSYMS) {
       if (I < SDNUMINSYMS) {
-        pDict->AddImage(new CJBig2_Image(*SDINSYMS[I]));
+        pDict->AddImage(SDINSYMS[I] ? new CJBig2_Image(*SDINSYMS[I]) : nullptr);
       } else {
         pDict->AddImage(SDNEWSYMS[I - SDNUMINSYMS]);
       }
@@ -604,7 +604,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
   for (I = 0; I < SDNUMINSYMS + SDNUMNEWSYMS; I++) {
     if (EXFLAGS[I] && J < SDNUMEXSYMS) {
       if (I < SDNUMINSYMS) {
-        pDict->AddImage(new CJBig2_Image(*SDINSYMS[I]));
+        pDict->AddImage(SDINSYMS[I] ? new CJBig2_Image(*SDINSYMS[I]) : nullptr);
       } else {
         pDict->AddImage(SDNEWSYMS[I - SDNUMINSYMS]);
       }

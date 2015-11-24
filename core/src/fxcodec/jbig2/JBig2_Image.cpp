@@ -36,7 +36,7 @@ CJBig2_Image::CJBig2_Image(int32_t w,
   m_pData = pBuf;
   m_bNeedFree = FALSE;
 }
-CJBig2_Image::CJBig2_Image(CJBig2_Image& im) {
+CJBig2_Image::CJBig2_Image(const CJBig2_Image& im) {
   m_nWidth = im.m_nWidth;
   m_nHeight = im.m_nHeight;
   m_nStride = im.m_nStride;
