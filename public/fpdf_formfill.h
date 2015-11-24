@@ -654,6 +654,7 @@ typedef struct _FPDF_FORMFILLINFO {
                            int zoomMode,
                            float* fPosArray,
                            int sizeofArray);
+
   /**
   *   pointer to IPDF_JSPLATFORM interface
   **/

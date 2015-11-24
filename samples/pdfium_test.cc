@@ -135,10 +135,9 @@ static void WritePng(const char* pdf_name, int num, const void* buffer_void,
 #ifdef _WIN32
 static void WriteBmp(const char* pdf_name, int num, const void* buffer,
                      int stride, int width, int height) {
-  if (stride < 0 || width < 0 || height < 0)
+  if (!CheckDimensions(stride, width, height))
     return;
-  if (height > 0 && width > INT_MAX / height)
-    return;
+
   int out_len = stride * height;
   if (out_len > INT_MAX / 3)
     return;
@@ -278,7 +277,6 @@ bool ParseCommandLine(const std::vector<std::string>& args,
       }
       options->font_directory = cur_arg.substr(11);
     }
-
 #ifdef _WIN32
     else if (cur_arg == "--emf") {
       if (options->output_format != OUTPUT_NONE) {
