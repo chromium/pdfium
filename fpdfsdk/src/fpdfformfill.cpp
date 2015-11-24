@@ -25,7 +25,7 @@ CPDFSDK_InterForm* FormHandleToInterForm(FPDF_FORMHANDLE hHandle) {
 
 CPDFSDK_PageView* FormHandleToPageView(FPDF_FORMHANDLE hHandle,
                                        FPDF_PAGE page) {
-  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
   if (!pPage)
     return nullptr;
 
@@ -80,12 +80,14 @@ DLLEXPORT int STDCALL FPDFPage_FormFieldZOrderAtPoint(FPDF_FORMHANDLE hHandle,
 DLLEXPORT FPDF_FORMHANDLE STDCALL
 FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
                                 FPDF_FORMFILLINFO* formInfo) {
-  if (!formInfo || formInfo->version != 1)
+  const int kRequiredVersion = 1;
+  if (!formInfo || formInfo->version != kRequiredVersion)
     return nullptr;
 
-  CPDF_Document* pDocument = CPDFDocumentFromFPDFDocument(document);
+  UnderlyingDocumentType* pDocument = UnderlyingFromFPDFDocument(document);
   if (!pDocument)
     return nullptr;
+
   CPDFDoc_Environment* pEnv = new CPDFDoc_Environment(pDocument, formInfo);
   pEnv->SetSDKDocument(new CPDFSDK_Document(pDocument, pEnv));
   return pEnv;
@@ -274,15 +276,15 @@ DLLEXPORT void STDCALL FORM_OnBeforeClosePage(FPDF_PAGE page,
   if (!pSDKDoc)
     return;
 
-  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
   if (!pPage)
     return;
 
   CPDFSDK_PageView* pPageView = pSDKDoc->GetPageView(pPage, FALSE);
   if (pPageView) {
     pPageView->SetValid(FALSE);
-    // ReMovePageView() takes care of the delete for us.
-    pSDKDoc->ReMovePageView(pPage);
+    // RemovePageView() takes care of the delete for us.
+    pSDKDoc->RemovePageView(pPage);
   }
 }
 
@@ -304,7 +306,7 @@ DLLEXPORT void STDCALL FORM_DoDocumentAAction(FPDF_FORMHANDLE hHandle,
   if (!pSDKDoc)
     return;
 
-  CPDF_Document* pDoc = pSDKDoc->GetDocument();
+  CPDF_Document* pDoc = pSDKDoc->GetPDFDocument();
   CPDF_Dictionary* pDic = pDoc->GetRoot();
   if (!pDic)
     return;
@@ -326,13 +328,14 @@ DLLEXPORT void STDCALL FORM_DoPageAAction(FPDF_PAGE page,
   if (!hHandle)
     return;
   CPDFSDK_Document* pSDKDoc = ((CPDFDoc_Environment*)hHandle)->GetSDKDocument();
-  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
-  if (!pPage)
+  UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
+  CPDF_Page* pPDFPage = CPDFPageFromFPDFPage(page);
+  if (!pPDFPage)
     return;
   if (pSDKDoc->GetPageView(pPage, FALSE)) {
     CPDFDoc_Environment* pEnv = pSDKDoc->GetEnv();
     CPDFSDK_ActionHandler* pActionHandler = pEnv->GetActionHander();
-    CPDF_Dictionary* pPageDict = pPage->m_pFormDict;
+    CPDF_Dictionary* pPageDict = pPDFPage->m_pFormDict;
     CPDF_AAction aa = pPageDict->GetDict(FX_BSTRC("AA"));
     if (FPDFPAGE_AACTION_OPEN == aaType) {
       if (aa.ActionExist(CPDF_AAction::OpenPage)) {

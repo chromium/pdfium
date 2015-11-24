@@ -577,28 +577,24 @@ void CPDFSDK_BFAnnotHandler::OnCreate(CPDFSDK_Annot* pAnnot) {
 }
 
 void CPDFSDK_BFAnnotHandler::OnLoad(CPDFSDK_Annot* pAnnot) {
-  ASSERT(pAnnot != NULL);
+  if (pAnnot->GetSubType() == BFFT_SIGNATURE)
+    return;
 
-  CFX_ByteString sSubType = pAnnot->GetSubType();
+  CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
+  if (!pWidget->IsAppearanceValid())
+    pWidget->ResetAppearance(NULL, FALSE);
 
-  if (sSubType == BFFT_SIGNATURE) {
-  } else {
-    CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
-    if (!pWidget->IsAppearanceValid())
-      pWidget->ResetAppearance(NULL, FALSE);
-
-    int nFieldType = pWidget->GetFieldType();
-    if (nFieldType == FIELDTYPE_TEXTFIELD || nFieldType == FIELDTYPE_COMBOBOX) {
-      FX_BOOL bFormated = FALSE;
-      CFX_WideString sValue = pWidget->OnFormat(bFormated);
-      if (bFormated && nFieldType == FIELDTYPE_COMBOBOX) {
-        pWidget->ResetAppearance(sValue.c_str(), FALSE);
-      }
+  int nFieldType = pWidget->GetFieldType();
+  if (nFieldType == FIELDTYPE_TEXTFIELD || nFieldType == FIELDTYPE_COMBOBOX) {
+    FX_BOOL bFormated = FALSE;
+    CFX_WideString sValue = pWidget->OnFormat(bFormated);
+    if (bFormated && nFieldType == FIELDTYPE_COMBOBOX) {
+      pWidget->ResetAppearance(sValue.c_str(), FALSE);
     }
-
-    if (m_pFormFiller)
-      m_pFormFiller->OnLoad(pAnnot);
   }
+
+  if (m_pFormFiller)
+    m_pFormFiller->OnLoad(pAnnot);
 }
 
 FX_BOOL CPDFSDK_BFAnnotHandler::OnSetFocus(CPDFSDK_Annot* pAnnot,

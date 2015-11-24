@@ -433,7 +433,7 @@ void CPDFSDK_ActionHandler::DoAction_GoTo(CPDFSDK_Document* pDocument,
                                           const CPDF_Action& action) {
   ASSERT(action);
 
-  CPDF_Document* pPDFDocument = pDocument->GetDocument();
+  CPDF_Document* pPDFDocument = pDocument->GetPDFDocument();
   ASSERT(pPDFDocument);
 
   CPDF_Dest MyDest = action.GetDest(pPDFDocument);
@@ -469,7 +469,7 @@ void CPDFSDK_ActionHandler::DoAction_URI(CPDFSDK_Document* pDocument,
   CPDFDoc_Environment* pApp = pDocument->GetEnv();
   ASSERT(pApp != NULL);
 
-  CFX_ByteString sURI = action.GetURI(pDocument->GetDocument());
+  CFX_ByteString sURI = action.GetURI(pDocument->GetPDFDocument());
   pApp->FFI_DoURIAction(sURI.c_str());
 }
 

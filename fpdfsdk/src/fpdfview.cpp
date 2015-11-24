@@ -17,21 +17,32 @@
 #include "third_party/base/nonstd_unique_ptr.h"
 #include "third_party/base/numerics/safe_conversions_impl.h"
 
-CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc) {
-  return static_cast<CPDF_Document*>(doc);
+UnderlyingDocumentType* UnderlyingFromFPDFDocument(FPDF_DOCUMENT doc) {
+  return static_cast<UnderlyingDocumentType*>(doc);
 }
 
-FPDF_DOCUMENT FPDFDocumentFromCPDFDocument(CPDF_Document* doc) {
+FPDF_DOCUMENT FPDFDocumentFromUnderlying(UnderlyingDocumentType* doc) {
   return static_cast<FPDF_DOCUMENT>(doc);
 }
 
+UnderlyingPageType* UnderlyingFromFPDFPage(FPDF_PAGE page) {
+  return static_cast<UnderlyingPageType*>(page);
+}
+
+CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc) {
+  return UnderlyingFromFPDFDocument(doc);
+}
+
+FPDF_DOCUMENT FPDFDocumentFromCPDFDocument(CPDF_Document* doc) {
+  return FPDFDocumentFromUnderlying(doc);
+}
+
 CPDF_Page* CPDFPageFromFPDFPage(FPDF_PAGE page) {
-  return static_cast<CPDF_Page*>(page);
+  return UnderlyingFromFPDFPage(page);
 }
 
 CPDF_CustomAccess::CPDF_CustomAccess(FPDF_FILEACCESS* pFileAccess) {
-  if (pFileAccess)
-    m_FileAccess = *pFileAccess;
+  m_FileAccess = *pFileAccess;
 }
 
 FX_BOOL CPDF_CustomAccess::ReadBlock(void* buffer,
@@ -240,7 +251,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_GetFileVersion(FPDF_DOCUMENT doc,
   if (!pDoc)
     return FALSE;
 
-  CPDF_Parser* pParser = (CPDF_Parser*)pDoc->GetParser();
+  CPDF_Parser* pParser = pDoc->GetParser();
   if (!pParser)
     return FALSE;
 
@@ -269,17 +280,17 @@ DLLEXPORT int STDCALL FPDF_GetSecurityHandlerRevision(FPDF_DOCUMENT document) {
 }
 
 DLLEXPORT int STDCALL FPDF_GetPageCount(FPDF_DOCUMENT document) {
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  UnderlyingDocumentType* pDoc = UnderlyingFromFPDFDocument(document);
   return pDoc ? pDoc->GetPageCount() : 0;
 }
 
 DLLEXPORT FPDF_PAGE STDCALL FPDF_LoadPage(FPDF_DOCUMENT document,
                                           int page_index) {
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  UnderlyingDocumentType* pDoc = UnderlyingFromFPDFDocument(document);
   if (!pDoc)
     return nullptr;
 
-  if (page_index < 0 || page_index >= FPDF_GetPageCount(document))
+  if (page_index < 0 || page_index >= pDoc->GetPageCount())
     return nullptr;
 
   CPDF_Dictionary* pDict = pDoc->GetPage(page_index);
@@ -292,12 +303,12 @@ DLLEXPORT FPDF_PAGE STDCALL FPDF_LoadPage(FPDF_DOCUMENT document,
 }
 
 DLLEXPORT double STDCALL FPDF_GetPageWidth(FPDF_PAGE page) {
-  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
   return pPage ? pPage->GetPageWidth() : 0.0;
 }
 
 DLLEXPORT double STDCALL FPDF_GetPageHeight(FPDF_PAGE page) {
-  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
   return pPage ? pPage->GetPageHeight() : 0.0;
 }
 
@@ -551,7 +562,7 @@ DLLEXPORT void STDCALL FPDF_DeviceToPage(FPDF_PAGE page,
                                          double* page_y) {
   if (page == NULL || page_x == NULL || page_y == NULL)
     return;
-  CPDF_Page* pPage = (CPDF_Page*)page;
+  UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
 
   CPDF_Matrix page2device;
   pPage->GetDisplayMatrix(page2device, start_x, start_y, size_x, size_y,
@@ -579,7 +590,7 @@ DLLEXPORT void STDCALL FPDF_PageToDevice(FPDF_PAGE page,
                                          int* device_y) {
   if (!device_x || !device_y)
     return;
-  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
   if (!pPage)
     return;
   CPDF_Matrix page2device;
@@ -757,7 +768,7 @@ DLLEXPORT int STDCALL FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
                                               int page_index,
                                               double* width,
                                               double* height) {
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  UnderlyingDocumentType* pDoc = UnderlyingFromFPDFDocument(document);
   if (!pDoc)
     return FALSE;
 
@@ -851,13 +862,17 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document,
                                               long* buflen) {
   if (!buffer)
     *buflen = 0;
-  if (!document || index < 0)
-    return NULL;
-  CPDF_Document* pDoc = (CPDF_Document*)document;
+
+  if (index < 0)
+    return nullptr;
+
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  if (!pDoc)
+    return nullptr;
 
   CPDF_Dictionary* pRoot = pDoc->GetRoot();
   if (!pRoot)
-    return NULL;
+    return nullptr;
 
   CPDF_Object* pDestObj = NULL;
   CFX_ByteString bsName;

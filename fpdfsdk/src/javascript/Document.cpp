@@ -536,7 +536,7 @@ FX_BOOL Document::removeField(IJS_Context* cc,
     CFX_RectArray aRefresh;
     aRefresh.Add(rcAnnot);
 
-    CPDF_Page* pPage = pWidget->GetPDFPage();
+    UnderlyingPageType* pPage = pWidget->GetUnderlyingPage();
     ASSERT(pPage);
 
     CPDFSDK_PageView* pPageView = m_pDocument->GetPageView(pPage);
@@ -1019,7 +1019,7 @@ FX_BOOL Document::subject(IJS_Context* cc,
 FX_BOOL Document::title(IJS_Context* cc,
                         CJS_PropValue& vp,
                         CFX_WideString& sError) {
-  if (m_pDocument == NULL || m_pDocument->GetPDFDocument() == NULL)
+  if (!m_pDocument || !m_pDocument->GetUnderlyingDocument())
     return FALSE;
 
   CPDF_Dictionary* pDictionary = m_pDocument->GetPDFDocument()->GetInfo();

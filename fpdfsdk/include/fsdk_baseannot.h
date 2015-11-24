@@ -15,6 +15,7 @@
 
 #include "core/include/fpdfdoc/fpdf_doc.h"
 #include "core/include/fxcrt/fx_basic.h"
+#include "fpdfsdk/include/fsdk_define.h"
 #include "fx_systemhandler.h"
 
 class CPDFSDK_PageView;
@@ -88,6 +89,7 @@ class CPDFSDK_Annot {
                             CPDF_Matrix* pUser2Device,
                             CPDF_RenderOptions* pOptions) {}
 
+  UnderlyingPageType* GetUnderlyingPage();
   CPDF_Page* GetPDFPage();
 
   void SetPage(CPDFSDK_PageView* pPageView) { m_pPageView = pPageView; }

@@ -52,6 +52,18 @@ class CPDF_CustomAccess final : public IFX_FileRead {
   FPDF_FILEACCESS m_FileAccess;
 };
 
+// Object types for public FPDF_ types; these correspond to next layer down
+// from fpdfsdk. For master, these are CPDF_ types, but for XFA, these are
+// CPDFXFA_ types.
+using UnderlyingDocumentType = CPDF_Document;
+using UnderlyingPageType = CPDF_Page;
+
+// Conversions to/from underlying types.
+UnderlyingDocumentType* UnderlyingFromFPDFDocument(FPDF_DOCUMENT doc);
+FPDF_DOCUMENT FPDFDocumentFromUnderlying(UnderlyingDocumentType* doc);
+
+UnderlyingPageType* UnderlyingFromFPDFPage(FPDF_PAGE page);
+
 // Conversions to/from FPDF_ types.
 CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc);
 FPDF_DOCUMENT FPDFDocumentFromCPDFDocument(CPDF_Document* doc);

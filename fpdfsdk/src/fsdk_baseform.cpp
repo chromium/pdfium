@@ -76,8 +76,6 @@ int CPDFSDK_Widget::GetFieldType() const {
 }
 
 FX_BOOL CPDFSDK_Widget::IsAppearanceValid() {
-  ASSERT(m_pPageView != NULL);
-
   return CPDFSDK_BAAnnot::IsAppearanceValid();
 }
 
@@ -1435,11 +1433,11 @@ void CPDFSDK_Widget::RemoveAppearance(const CFX_ByteString& sAPType) {
 FX_BOOL CPDFSDK_Widget::OnAAction(CPDF_AAction::AActionType type,
                                   PDFSDK_FieldAction& data,
                                   CPDFSDK_PageView* pPageView) {
+  CPDFSDK_Document* pDocument = pPageView->GetSDKDocument();
+  CPDFDoc_Environment* pEnv = pDocument->GetEnv();
   CPDF_Action action = GetAAction(type);
 
   if (action && action.GetType() != CPDF_Action::Unknown) {
-    CPDFSDK_Document* pDocument = pPageView->GetSDKDocument();
-    CPDFDoc_Environment* pEnv = pDocument->GetEnv();
     CPDFSDK_ActionHandler* pActionHandler = pEnv->GetActionHander();
     return pActionHandler->DoAction_Field(action, type, pDocument,
                                           GetFormField(), data);
@@ -1514,9 +1512,7 @@ CPDFSDK_InterForm::CPDFSDK_InterForm(CPDFSDK_Document* pDocument)
       m_pInterForm(NULL),
       m_bCalculate(TRUE),
       m_bBusy(FALSE) {
-  ASSERT(m_pDocument != NULL);
-  m_pInterForm = new CPDF_InterForm(m_pDocument->GetDocument(), FALSE);
-  ASSERT(m_pInterForm != NULL);
+  m_pInterForm = new CPDF_InterForm(m_pDocument->GetPDFDocument(), FALSE);
   m_pInterForm->SetFormNotify(this);
 
   for (int i = 0; i < kNumFieldTypes; ++i)
@@ -1558,7 +1554,7 @@ CPDFSDK_Widget* CPDFSDK_InterForm::GetWidget(CPDF_FormControl* pControl) const {
     return pWidget;
 
   CPDF_Dictionary* pControlDict = pControl->GetWidget();
-  CPDF_Document* pDocument = m_pDocument->GetDocument();
+  CPDF_Document* pDocument = m_pDocument->GetPDFDocument();
   CPDFSDK_PageView* pPage = nullptr;
 
   if (CPDF_Dictionary* pPageDict = pControlDict->GetDict("P")) {
@@ -1643,10 +1639,7 @@ FX_BOOL CPDFSDK_InterForm::IsCalculateEnabled() const {
 
 #ifdef _WIN32
 CPDF_Stream* CPDFSDK_InterForm::LoadImageFromFile(const CFX_WideString& sFile) {
-  ASSERT(m_pDocument != NULL);
-  CPDF_Document* pDocument = m_pDocument->GetDocument();
-  ASSERT(pDocument != NULL);
-
+  CPDF_Document* pDocument = m_pDocument->GetPDFDocument();
   CPDF_Stream* pRetStream = NULL;
 
   if (CFX_DIBitmap* pBmp = CFX_WindowsDIB::LoadFromFile(sFile.c_str())) {
@@ -1835,8 +1828,6 @@ void CPDFSDK_InterForm::ResetFieldAppearance(CPDF_FormField* pFormField,
 }
 
 void CPDFSDK_InterForm::UpdateField(CPDF_FormField* pFormField) {
-  ASSERT(pFormField != NULL);
-
   for (int i = 0, sz = pFormField->CountControls(); i < sz; i++) {
     CPDF_FormControl* pFormCtrl = pFormField->GetControl(i);
     ASSERT(pFormCtrl != NULL);
@@ -1844,10 +1835,8 @@ void CPDFSDK_InterForm::UpdateField(CPDF_FormField* pFormField) {
     if (CPDFSDK_Widget* pWidget = GetWidget(pFormCtrl)) {
       CPDFDoc_Environment* pEnv = m_pDocument->GetEnv();
       CFFL_IFormFiller* pIFormFiller = pEnv->GetIFormFiller();
-
-      CPDF_Page* pPage = pWidget->GetPDFPage();
+      UnderlyingPageType* pPage = pWidget->GetUnderlyingPage();
       CPDFSDK_PageView* pPageView = m_pDocument->GetPageView(pPage, FALSE);
-
       FX_RECT rcBBox = pIFormFiller->GetViewBBox(pPageView, pWidget);
 
       pEnv->FFI_Invalidate(pPage, rcBBox.left, rcBBox.top, rcBBox.right,
