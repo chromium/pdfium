@@ -20,3 +20,9 @@ name=embeddertests:DrM-i#471
 *!v8::internal::Deoptimizer::ComputeOutputFrames
 *!v8::internal::`anonymous namespace'::Invoke
 *!v8::internal::Execution::Call
+
+# PDFium-i#287: new/delete[] mismatch
+INVALID HEAP ARGUMENT
+name=i#287:new-delete-array-mismatch
+drmemorylib.dll!replace_operator_delete_array
+*!NumberlikeArray<>::~NumberlikeArray<>
