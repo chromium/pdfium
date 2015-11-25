@@ -1826,10 +1826,13 @@ void CXFA_TextLayout::AppendTextLine(FX_DWORD dwStatus,
       m_pLoader->m_lineHeights.Add(fHeight);
     }
   }
+  if (pStyle) {
+    pStyle->AddRef();
+  }
   m_pBreak->ClearBreakPieces();
   if (dwStatus == FX_RTFBREAK_ParagraphBreak) {
     m_pBreak->Reset();
-    if (pStyle == NULL && bEndBreak) {
+    if (!pStyle && bEndBreak) {
       CXFA_Para para = m_pTextProvider->GetParaNode();
       if (para.IsExistInXML()) {
         FX_FLOAT fStartPos = para.GetMarginLeft();
@@ -1846,7 +1849,7 @@ void CXFA_TextLayout::AppendTextLine(FX_DWORD dwStatus,
       }
     }
   }
-  if (pStyle != NULL) {
+  if (pStyle) {
     FX_FLOAT fStart = 0;
     const FDE_CSSRECT* pRect = pStyle->GetBoundaryStyles()->GetMarginWidth();
     if (pRect) {
@@ -1858,6 +1861,7 @@ void CXFA_TextLayout::AppendTextLine(FX_DWORD dwStatus,
       fStart -= fTextIndent;
     }
     m_pBreak->SetLinePos(fStart);
+    pStyle->Release();
   }
   m_iLines++;
 }
