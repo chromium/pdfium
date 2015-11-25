@@ -220,15 +220,15 @@ class CPDFDoc_Environment final {
   }
 
   int FFI_GetCurrentPageIndex(FPDF_DOCUMENT document) {
-    if (m_pInfo && m_pInfo->FFI_GetCurrentPageIndex)
-      m_pInfo->FFI_GetCurrentPageIndex(m_pInfo, document);
-    return -1;
+    if (!m_pInfo || !m_pInfo->FFI_GetCurrentPageIndex) {
+      return -1;
+    }
+    return m_pInfo->FFI_GetCurrentPageIndex(m_pInfo, document);
   }
 
-  int FFI_SetCurrentPage(FPDF_DOCUMENT document, int iCurPage) {
+  void FFI_SetCurrentPage(FPDF_DOCUMENT document, int iCurPage) {
     if (m_pInfo && m_pInfo->FFI_SetCurrentPage)
       m_pInfo->FFI_SetCurrentPage(m_pInfo, document, iCurPage);
-    return -1;
   }
 
   CFX_WideString FFI_GetAppName() const { return CFX_WideString(L"Acrobat"); }
