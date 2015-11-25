@@ -14,6 +14,7 @@ TEST(fpdf_parser_decode, HexDecode) {
     EXPECT_EQ(0, HexDecode(src, 0, dest, dest_size));
     EXPECT_EQ(0, dest_size);
     EXPECT_EQ('\0', dest[0]);
+    FX_Free(dest);
   }
 
   {
@@ -25,6 +26,7 @@ TEST(fpdf_parser_decode, HexDecode) {
     EXPECT_EQ(2, dest_size);
     EXPECT_EQ(18, dest[0]);
     EXPECT_EQ(172, dest[1]);
+    FX_Free(dest);
   }
 
   {
@@ -36,6 +38,7 @@ TEST(fpdf_parser_decode, HexDecode) {
     EXPECT_EQ(2, dest_size);
     EXPECT_EQ(18, dest[0]);
     EXPECT_EQ(160, dest[1]);
+    FX_Free(dest);
   }
 
   {
@@ -47,5 +50,6 @@ TEST(fpdf_parser_decode, HexDecode) {
     EXPECT_EQ(2, dest_size);
     EXPECT_EQ(18, dest[0]);
     EXPECT_EQ(172, dest[1]);
+    FX_Free(dest);
   }
 }
