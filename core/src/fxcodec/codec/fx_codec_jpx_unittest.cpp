@@ -474,8 +474,6 @@ TEST(fxcodec, YUV420ToRGB) {
   u.h = 16;
   u.prec = 8;
   u.bpp = 8;
-  u.data = FX_Alloc(OPJ_INT32, u.w * u.h);
-  memset(u.data, 0, u.w * u.h * sizeof(OPJ_INT32));
   opj_image_comp_t v;
   memset(&v, 0, sizeof(v));
   v.dx = 1;
@@ -484,8 +482,6 @@ TEST(fxcodec, YUV420ToRGB) {
   v.h = 16;
   v.prec = 8;
   v.bpp = 8;
-  v.data = FX_Alloc(OPJ_INT32, v.w * v.h);
-  memset(v.data, 0, v.w * v.h * sizeof(OPJ_INT32));
   opj_image_comp_t y;
   memset(&y, 0, sizeof(y));
   y.dx = 1;
