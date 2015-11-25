@@ -318,8 +318,9 @@ CFX_ArchiveLoader& CFX_ArchiveLoader::operator>>(CFX_ByteString& str) {
 CFX_ArchiveLoader& CFX_ArchiveLoader::operator>>(CFX_WideString& str) {
   CFX_ByteString encoded;
   operator>>(encoded);
-  str = CFX_WideString::FromUTF16LE((const unsigned short*)encoded.c_str(),
-                                    encoded.GetLength());
+  str = CFX_WideString::FromUTF16LE(
+      reinterpret_cast<const unsigned short*>(encoded.c_str()),
+      encoded.GetLength() / sizeof(unsigned short));
   return *this;
 }
 FX_BOOL CFX_ArchiveLoader::Read(void* pBuf, FX_DWORD dwSize) {

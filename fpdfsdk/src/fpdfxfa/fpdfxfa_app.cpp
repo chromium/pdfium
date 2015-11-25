@@ -207,7 +207,9 @@ void CPDFXFA_App::Response(CFX_WideString& wsAnswer,
       nLength = nLength > 2046 ? 2046 : nLength;
       pBuff[nLength] = 0;
       pBuff[nLength + 1] = 0;
-      wsAnswer = CFX_WideString::FromUTF16LE((unsigned short*)pBuff, nLength);
+      wsAnswer = CFX_WideString::FromUTF16LE(
+          reinterpret_cast<const unsigned short*>(pBuff),
+          nLength / sizeof(unsigned short));
     }
     delete[] pBuff;
   }
