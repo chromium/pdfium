@@ -6,7 +6,6 @@
 
 #include "public/fpdf_ppo.h"
 
-#include "../include/fpdfxfa/fpdfxfa_doc.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "third_party/base/nonstd_unique_ptr.h"
 
