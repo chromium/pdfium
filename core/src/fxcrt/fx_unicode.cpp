@@ -13,11 +13,13 @@ FX_DWORD FX_GetUnicodeProperties(FX_WCHAR wch) {
   return 0;
 }
 
+#ifdef PDF_ENABLE_XFA
 FX_BOOL FX_IsCtrlCode(FX_WCHAR ch) {
   FX_DWORD dwRet = (FX_GetUnicodeProperties(ch) & FX_CHARTYPEBITSMASK);
   return dwRet == FX_CHARTYPE_Tab || dwRet == FX_CHARTYPE_Control;
 }
 
+#endif
 FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch, FX_BOOL bRTL, FX_BOOL bVertical) {
   FX_DWORD dwProps = FX_GetUnicodeProperties(wch);
   FX_DWORD dwTemp = (dwProps & 0xFF800000);
@@ -38,6 +40,7 @@ FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch, FX_BOOL bRTL, FX_BOOL bVertical) {
   }
   return wch;
 }
+#ifdef PDF_ENABLE_XFA
 
 FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch,
                           FX_DWORD dwProps,
@@ -61,3 +64,4 @@ FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch,
   }
   return wch;
 }
+#endif

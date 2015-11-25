@@ -130,6 +130,7 @@ class CFX_WideTextBuf : public CFX_BinaryBuf {
 
   CFX_WideStringC GetWideString() const;
 };
+#ifdef PDF_ENABLE_XFA
 class CFX_ArchiveSaver {
  public:
   CFX_ArchiveSaver() : m_pStream(NULL) {}
@@ -192,6 +193,7 @@ class CFX_ArchiveLoader {
 
   FX_DWORD m_LoadingSize;
 };
+#endif
 
 class IFX_BufferArchive {
  public:
@@ -436,8 +438,10 @@ typedef CFX_ArrayTemplate<FX_WORD> CFX_WordArray;
 typedef CFX_ArrayTemplate<FX_DWORD> CFX_DWordArray;
 typedef CFX_ArrayTemplate<void*> CFX_PtrArray;
 typedef CFX_ArrayTemplate<FX_FILESIZE> CFX_FileSizeArray;
+#ifdef PDF_ENABLE_XFA
 typedef CFX_ArrayTemplate<FX_FLOAT> CFX_FloatArray;
 typedef CFX_ArrayTemplate<int32_t> CFX_Int32Array;
+#endif
 
 template <class ObjectClass>
 class CFX_ObjectArray : public CFX_BasicArray {
@@ -698,6 +702,7 @@ class CFX_MapPtrToPtr {
 
   CAssoc* GetAssocAt(void* key, FX_DWORD& hash) const;
 };
+#ifdef PDF_ENABLE_XFA
 template <class KeyType, class ValueType>
 class CFX_MapPtrTemplate : public CFX_MapPtrToPtr {
  public:
@@ -723,7 +728,9 @@ class CFX_MapPtrTemplate : public CFX_MapPtrToPtr {
   FX_BOOL RemoveKey(KeyType key) {
     return CFX_MapPtrToPtr::RemoveKey((void*)(uintptr_t)key);
   }
+#endif
 
+#ifdef PDF_ENABLE_XFA
   void GetNextAssoc(FX_POSITION& rNextPosition,
                     KeyType& rKey,
                     ValueType& rValue) const {
@@ -734,6 +741,7 @@ class CFX_MapPtrTemplate : public CFX_MapPtrToPtr {
     rValue = (ValueType)(uintptr_t)pValue;
   }
 };
+#endif
 class CFX_CMapByteStringToPtr {
  public:
   CFX_CMapByteStringToPtr();
@@ -1187,6 +1195,7 @@ typedef enum {
 } FX_ProgressiveStatus;
 #define ProgressiveStatus FX_ProgressiveStatus
 #define FX_NAMESPACE_DECLARE(namespace, type) namespace ::type
+#ifdef PDF_ENABLE_XFA
 class IFX_Unknown {
  public:
   virtual ~IFX_Unknown() {}
@@ -1194,6 +1203,7 @@ class IFX_Unknown {
   virtual FX_DWORD AddRef() = 0;
 };
 #define FX_IsOdd(a) ((a)&1)
+#endif
 
 class CFX_Vector_3by1 {
  public:

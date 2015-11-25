@@ -1083,9 +1083,11 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
     pSubstFont->m_SubstFlags |= FXFONT_SUBST_EXACT;
   }
   if (hFont == NULL) {
+#ifdef PDF_ENABLE_XFA
     if (flags & FXFONT_EXACTMATCH) {
       return NULL;
     }
+#endif
     if (bCJK) {
       if (italic_angle != 0) {
         bItalic = TRUE;
@@ -1211,6 +1213,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
   m_pFontInfo->DeleteFont(hFont);
   return face;
 }
+#ifdef PDF_ENABLE_XFA
 FXFT_Face CFX_FontMapper::FindSubstFontByUnicode(FX_DWORD dwUnicode,
                                                  FX_DWORD flags,
                                                  int weight,
@@ -1293,6 +1296,7 @@ FX_BOOL CFX_FontMapper::IsBuiltinFace(const FXFT_Face face) const {
   }
   return FALSE;
 }
+#endif
 extern "C" {
 unsigned long _FTStreamRead(FXFT_Stream stream,
                             unsigned long offset,
@@ -1514,12 +1518,14 @@ void* CFX_FolderFontInfo::MapFont(int weight,
                                   int& iExact) {
   return NULL;
 }
+#ifdef PDF_ENABLE_XFA
 void* CFX_FolderFontInfo::MapFontByUnicode(FX_DWORD dwUnicode,
                                            int weight,
                                            FX_BOOL bItalic,
                                            int pitch_family) {
   return NULL;
 }
+#endif
 void* CFX_FolderFontInfo::GetFont(const FX_CHAR* face) {
   auto it = m_FontList.find(face);
   return it != m_FontList.end() ? it->second : nullptr;

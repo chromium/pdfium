@@ -825,12 +825,14 @@ class CPDF_FormField {
 
   FX_BOOL ClearSelectedOptions(FX_BOOL bNotify = FALSE);
 
+#ifdef PDF_ENABLE_XFA
   FX_BOOL ClearOptions(FX_BOOL bNotify = FALSE);
 
   int InsertOption(CFX_WideString csOptLabel,
                    int index = -1,
                    FX_BOOL bNotify = FALSE);
 
+#endif
   FX_FLOAT GetFontSize() { return m_FontSize; }
 
   CPDF_Font* GetFont() { return m_pFont; }

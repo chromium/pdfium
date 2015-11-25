@@ -10,7 +10,9 @@
 #include <cctype>
 #include <cwctype>
 
+#ifdef PDF_ENABLE_XFA
 #include "fx_string.h"
+#endif
 #include "fx_system.h"
 
 FX_FLOAT FXSYS_tan(FX_FLOAT a);
@@ -76,6 +78,7 @@ void FX_Random_GenerateMT(FX_DWORD* pBuffer, int32_t iCount);
 
 void FX_Random_GenerateCrypto(FX_DWORD* pBuffer, int32_t iCount);
 
+#ifdef PDF_ENABLE_XFA
 typedef struct FX_GUID {
   FX_DWORD data1;
   FX_WORD data2;
@@ -90,6 +93,7 @@ void FX_GUID_ToString(FX_LPCGUID pGUID,
                       CFX_ByteString& bsStr,
                       FX_BOOL bSeparator = TRUE);
 
+#endif
 template <class baseType>
 class CFX_SSortTemplate {
  public:

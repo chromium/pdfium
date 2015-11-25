@@ -187,15 +187,20 @@ class CCodec_JpegModule : public ICodec_JpegModule {
   void Input(void* pContext,
              const uint8_t* src_buf,
              FX_DWORD src_size) override;
+#ifndef PDF_ENABLE_XFA
+  int ReadHeader(void* pContext, int* width, int* height, int* nComps) override;
+#else
   int ReadHeader(void* pContext,
                  int* width,
                  int* height,
                  int* nComps,
                  CFX_DIBAttribute* pAttribute) override;
+#endif
   int StartScanline(void* pContext, int down_scale) override;
   FX_BOOL ReadScanline(void* pContext, uint8_t* dest_buf) override;
   FX_DWORD GetAvailInput(void* pContext, uint8_t** avail_buf_ptr) override;
 };
+#ifdef PDF_ENABLE_XFA
 #define PNG_ERROR_SIZE 256
 class CCodec_PngModule : public ICodec_PngModule {
  public:
@@ -258,6 +263,7 @@ class CCodec_BmpModule : public ICodec_BmpModule {
  protected:
   FX_CHAR m_szLastError[256];
 };
+#endif
 class CCodec_IccModule : public ICodec_IccModule {
  public:
   ~CCodec_IccModule() override;
@@ -336,6 +342,7 @@ class CCodec_JpxModule : public ICodec_JpxModule {
   void DestroyDecoder(CJPX_Decoder* pDecoder) override;
 };
 
+#ifdef PDF_ENABLE_XFA
 class CCodec_TiffModule : public ICodec_TiffModule {
  public:
   // ICodec_TiffModule
@@ -355,6 +362,7 @@ class CCodec_TiffModule : public ICodec_TiffModule {
   ~CCodec_TiffModule() override {}
 };
 
+#endif
 class CCodec_Jbig2Context {
  public:
   CCodec_Jbig2Context();

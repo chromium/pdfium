@@ -31,6 +31,7 @@ class IFXCRT_FileAccess {
 };
 IFXCRT_FileAccess* FXCRT_FileAccess_Create();
 
+#ifdef PDF_ENABLE_XFA
 class CFX_CRTFileAccess : public IFX_FileAccess {
  public:
   CFX_CRTFileAccess() : m_RefCount(0) {}
@@ -63,6 +64,7 @@ class CFX_CRTFileAccess : public IFX_FileAccess {
   FX_DWORD m_RefCount;
 };
 
+#endif
 class CFX_CRTFileStream final : public IFX_FileStream {
  public:
   CFX_CRTFileStream(IFXCRT_FileAccess* pFA) : m_pFile(pFA), m_dwCount(1) {}

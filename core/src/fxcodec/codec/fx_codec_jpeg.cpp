@@ -230,6 +230,7 @@ static void _JpegEncode(const CFX_DIBSource* pSource,
   FX_Free(line_buf);
   dest_size = dest_buf_length - (FX_STRSIZE)dest.free_in_buffer;
 }
+#ifdef PDF_ENABLE_XFA
 static void _JpegLoadAttribute(struct jpeg_decompress_struct* pInfo,
                                CFX_DIBAttribute* pAttribute) {
   if (pInfo == NULL || pAttribute == NULL) {
@@ -241,6 +242,7 @@ static void _JpegLoadAttribute(struct jpeg_decompress_struct* pInfo,
     pAttribute->m_wDPIUnit = pInfo->density_unit;
   }
 }
+#endif
 static FX_BOOL _JpegLoadInfo(const uint8_t* src_buf,
                              FX_DWORD src_size,
                              int& width,
@@ -630,8 +632,12 @@ void CCodec_JpegModule::Input(void* pContext,
 int CCodec_JpegModule::ReadHeader(void* pContext,
                                   int* width,
                                   int* height,
+#ifndef PDF_ENABLE_XFA
+                                  int* nComps) {
+#else
                                   int* nComps,
                                   CFX_DIBAttribute* pAttribute) {
+#endif
   FXJPEG_Context* p = (FXJPEG_Context*)pContext;
   if (setjmp(p->m_JumpMark) == -1) {
     return 1;
@@ -646,7 +652,9 @@ int CCodec_JpegModule::ReadHeader(void* pContext,
   *width = p->m_Info.image_width;
   *height = p->m_Info.image_height;
   *nComps = p->m_Info.num_components;
+#ifdef PDF_ENABLE_XFA
   _JpegLoadAttribute(&p->m_Info, pAttribute);
+#endif
   return 0;
 }
 int CCodec_JpegModule::StartScanline(void* pContext, int down_scale) {

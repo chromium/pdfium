@@ -207,6 +207,7 @@ CFX_WideStringC CFX_WideTextBuf::GetWideString() const {
   return CFX_WideStringC((const FX_WCHAR*)m_pBuffer,
                          m_DataSize / sizeof(FX_WCHAR));
 }
+#ifdef PDF_ENABLE_XFA
 CFX_ArchiveSaver& CFX_ArchiveSaver::operator<<(uint8_t i) {
   if (m_pStream) {
     m_pStream->WriteBlock(&i, 1);
@@ -331,6 +332,7 @@ FX_BOOL CFX_ArchiveLoader::Read(void* pBuf, FX_DWORD dwSize) {
   m_LoadingPos += dwSize;
   return TRUE;
 }
+#endif
 void CFX_BitStream::Init(const uint8_t* pData, FX_DWORD dwSize) {
   m_pData = pData;
   m_BitSize = dwSize * 8;

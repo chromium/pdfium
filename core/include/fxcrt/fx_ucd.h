@@ -7,8 +7,13 @@
 #ifndef CORE_INCLUDE_FXCRT_FX_UCD_H_
 #define CORE_INCLUDE_FXCRT_FX_UCD_H_
 
+#ifndef PDF_ENABLE_XFA
+#include "fx_system.h"
+#else
 #include "fx_basic.h"
+#endif
 
+#ifdef PDF_ENABLE_XFA
 enum FX_CHARBREAKPROP {
   FX_CBP_OP = 0,
   FX_CBP_CL = 1,
@@ -50,6 +55,7 @@ enum FX_CHARBREAKPROP {
   FX_CBP_TB = 37,
   FX_CBP_NONE = 36,
 };
+#endif
 #define FX_BIDICLASSBITS 6
 #define FX_BIDICLASSBITSMASK (31 << FX_BIDICLASSBITS)
 enum FX_BIDICLASS {
@@ -84,6 +90,7 @@ extern const size_t kFXTextLayoutVerticalMirrorSize;
 extern const FX_WCHAR kFXTextLayoutBidiMirror[];
 extern const size_t kFXTextLayoutBidiMirrorSize;
 
+#ifdef PDF_ENABLE_XFA
 #define FX_CHARTYPEBITS 11
 #define FX_CHARTYPEBITSMASK (15 << FX_CHARTYPEBITS)
 enum FX_CHARTYPE {
@@ -102,9 +109,13 @@ enum FX_CHARTYPE {
   FX_CHARTYPE_Arabic = (12 << FX_CHARTYPEBITS),
 };
 
+#endif
 FX_DWORD FX_GetUnicodeProperties(FX_WCHAR wch);
+#ifdef PDF_ENABLE_XFA
 FX_BOOL FX_IsCtrlCode(FX_WCHAR ch);
+#endif
 FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch, FX_BOOL bRTL, FX_BOOL bVertical);
+#ifdef PDF_ENABLE_XFA
 FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch,
                           FX_DWORD dwProps,
                           FX_BOOL bRTL,
@@ -183,5 +194,6 @@ class CFX_RTFChar : public CFX_Char {
   IFX_Unknown* m_pUserData;
 };
 typedef CFX_ArrayTemplate<CFX_RTFChar> CFX_RTFCharArray;
+#endif
 
 #endif  // CORE_INCLUDE_FXCRT_FX_UCD_H_

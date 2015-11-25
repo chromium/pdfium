@@ -21,11 +21,17 @@ CCodec_ModuleMgr::CCodec_ModuleMgr()
       m_pJpxModule(new CCodec_JpxModule),
       m_pJbig2Module(new CCodec_Jbig2Module),
       m_pIccModule(new CCodec_IccModule),
+#ifndef PDF_ENABLE_XFA
+      m_pFlateModule(new CCodec_FlateModule) {
+}
+#else
       m_pFlateModule(new CCodec_FlateModule),
       m_pPngModule(new CCodec_PngModule),
       m_pGifModule(new CCodec_GifModule),
       m_pBmpModule(new CCodec_BmpModule),
-      m_pTiffModule(new CCodec_TiffModule) {}
+      m_pTiffModule(new CCodec_TiffModule) {
+}
+#endif
 
 CCodec_ScanlineDecoder::ImageDataCache::ImageDataCache(int width,
                                                        int height,
@@ -261,6 +267,7 @@ FX_BOOL CCodec_BasicModule::A85Encode(const uint8_t* src_buf,
                                       FX_DWORD& dest_size) {
   return FALSE;
 }
+#ifdef PDF_ENABLE_XFA
 CFX_DIBAttribute::CFX_DIBAttribute()
     : m_nXDPI(-1),
       m_nYDPI(-1),
@@ -278,6 +285,7 @@ CFX_DIBAttribute::~CFX_DIBAttribute() {
     FX_Free(pair.second);
 }
 
+#endif
 class CCodec_RLScanlineDecoder : public CCodec_ScanlineDecoder {
  public:
   CCodec_RLScanlineDecoder();

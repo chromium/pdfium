@@ -14,6 +14,7 @@
 #include <ctime>
 #endif
 
+#ifdef PDF_ENABLE_XFA
 IFX_FileAccess* FX_CreateDefaultFileAccess(const CFX_WideStringC& wsPath) {
   if (wsPath.GetLength() == 0)
     return NULL;
@@ -26,6 +27,7 @@ IFX_FileAccess* FX_CreateDefaultFileAccess(const CFX_WideStringC& wsPath) {
   pFA->Init(wsPath);
   return pFA;
 }
+#endif
 IFX_FileStream* FX_CreateFileStream(const FX_CHAR* filename, FX_DWORD dwModes) {
   IFXCRT_FileAccess* pFA = FXCRT_FileAccess_Create();
   if (!pFA) {
@@ -303,6 +305,7 @@ void FX_Random_GenerateCrypto(FX_DWORD* pBuffer, int32_t iCount) {
   FX_Random_GenerateBase(pBuffer, iCount);
 #endif
 }
+#ifdef PDF_ENABLE_XFA
 
 void FX_GUID_CreateV4(FX_LPGUID pGUID) {
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN32_MOBILE_ || \
@@ -336,3 +339,4 @@ void FX_GUID_ToString(FX_LPCGUID pGUID,
   }
   bsStr.ReleaseBuffer(bSeparator ? 36 : 32);
 }
+#endif

@@ -10,12 +10,15 @@
 
 #define EM_ADJUST(em, a) (em == 0 ? (a) : (a)*1000 / em)
 
+#ifdef PDF_ENABLE_XFA
 extern void _FPDFAPI_GetInternalFontData(int id1,
                                          const uint8_t*& data,
                                          FX_DWORD& size);
 
+#endif
 namespace {
 
+#ifdef PDF_ENABLE_XFA
 const FX_DWORD g_EncodingID[] = {
   FXFM_ENCODING_MS_SYMBOL,
   FXFM_ENCODING_UNICODE,
@@ -39,6 +42,7 @@ CFX_UnicodeEncodingEx* _FXFM_CreateFontEncoding(CFX_Font* pFont,
   return new CFX_UnicodeEncodingEx(pFont, nEncodingID);
 }
 
+#endif
 FXFT_Face FT_LoadFont(const uint8_t* pData, int size) {
   return CFX_GEModule::Get()->GetFontMgr()->GetFixedFace(pData, size, 0);
 }
@@ -53,13 +57,16 @@ CFX_Font::CFX_Font() {
   m_pFontData = NULL;
   m_pFontDataAllocation = NULL;
   m_dwSize = 0;
+#ifdef PDF_ENABLE_XFA
   m_pOwnedStream = NULL;
+#endif
   m_pGsubData = NULL;
   m_pPlatformFont = NULL;
   m_pPlatformFontCollection = NULL;
   m_pDwFont = NULL;
   m_hHandle = NULL;
   m_bDwLoaded = FALSE;
+#ifdef PDF_ENABLE_XFA
   m_bLogic = FALSE;
 }
 FX_BOOL CFX_Font::LoadClone(const CFX_Font* pFont) {
@@ -93,23 +100,36 @@ FX_BOOL CFX_Font::LoadClone(const CFX_Font* pFont) {
   m_bDwLoaded = pFont->m_bDwLoaded;
   m_pOwnedStream = pFont->m_pOwnedStream;
   return TRUE;
+#endif
 }
 CFX_Font::~CFX_Font() {
   delete m_pSubstFont;
   m_pSubstFont = NULL;
+#ifndef PDF_ENABLE_XFA
+  FX_Free(m_pFontDataAllocation);
+  m_pFontDataAllocation = NULL;
+#else
   if (m_bLogic) {
     m_OtfFontData.DetachBuffer();
     return;
   }
+#endif
   if (m_Face) {
+#ifndef PDF_ENABLE_XFA
+    if (FXFT_Get_Face_External_Stream(m_Face)) {
+      FXFT_Clear_Face_External_Stream(m_Face);
+    }
+#endif
     if (m_bEmbedded) {
       DeleteFace();
     } else {
       CFX_GEModule::Get()->GetFontMgr()->ReleaseFace(m_Face);
     }
   }
+#ifdef PDF_ENABLE_XFA
   FX_Free(m_pOwnedStream);
   m_pOwnedStream = NULL;
+#endif
   FX_Free(m_pGsubData);
   m_pGsubData = NULL;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
@@ -144,6 +164,7 @@ void CFX_Font::LoadSubst(const CFX_ByteString& face_name,
     m_dwSize = FXFT_Get_Face_Stream_Size(m_Face);
   }
 }
+#ifdef PDF_ENABLE_XFA
 extern "C" {
 unsigned long _FTStreamRead(FXFT_Stream stream,
                             unsigned long offset,
@@ -205,6 +226,7 @@ FX_BOOL CFX_Font::LoadFile(IFX_FileRead* pFile,
   FXFT_Set_Pixel_Sizes(m_Face, 0, 64);
   return TRUE;
 }
+#endif
 
 int CFX_Font::GetGlyphWidth(FX_DWORD glyph_index) {
   if (!m_Face) {
@@ -460,6 +482,7 @@ FX_DWORD CFX_UnicodeEncoding::GlyphFromCharCode(FX_DWORD charcode) {
   }
   return charcode;
 }
+#ifdef PDF_ENABLE_XFA
 
 CFX_UnicodeEncodingEx::CFX_UnicodeEncodingEx(CFX_Font* pFont,
                                              FX_DWORD EncodingID)
@@ -532,3 +555,4 @@ CFX_UnicodeEncodingEx* FX_CreateFontEncodingEx(CFX_Font* pFont,
   }
   return NULL;
 }
+#endif

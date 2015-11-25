@@ -617,10 +617,12 @@ FX_BOOL _ConvertBuffer_Rgb2PltRgb8(uint8_t* dest_buf,
                                    int src_top,
                                    FX_DWORD* dst_plt,
                                    void* pIccTransform) {
+#ifdef PDF_ENABLE_XFA
   ICodec_IccModule* pIccModule = NULL;
   if (pIccTransform) {
     pIccModule = CFX_GEModule::Get()->GetCodecModule()->GetIccModule();
   }
+#endif
   FX_BOOL ret = _ConvertBuffer_Rgb2PltRgb8_NoTransform(
       dest_buf, dest_pitch, width, height, pSrcBitmap, src_left, src_top,
       dst_plt);

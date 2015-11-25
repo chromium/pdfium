@@ -125,6 +125,12 @@ class CPDF_TextPage : public IPDF_TextPage {
   void AddCharInfoByRLDirection(CFX_WideString& str, int i);
   int32_t GetTextObjectWritingMode(const CPDF_TextObject* pTextObj);
   int32_t FindTextlineFlowDirection();
+#ifndef PDF_ENABLE_XFA
+  void SwapTempTextBuf(int32_t iCharListStartAppend, int32_t iBufStartAppend);
+  FX_BOOL IsRightToLeft(const CPDF_TextObject* pTextObj,
+                        const CPDF_Font* pFont,
+                        int nItems) const;
+#endif
 
   CPDFText_ParseOptions m_ParseOptions;
   CFX_WordArray m_CharIndex;

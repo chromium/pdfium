@@ -739,6 +739,7 @@ int CPDF_FormField::FindOptionValue(const CFX_WideString& csOptValue,
   }
   return -1;
 }
+#ifdef PDF_ENABLE_XFA
 int CPDF_FormField::InsertOption(CFX_WideString csOptLabel,
                                  int index,
                                  FX_BOOL bNotify) {
@@ -816,6 +817,7 @@ FX_BOOL CPDF_FormField::ClearOptions(FX_BOOL bNotify) {
   m_pForm->m_bUpdated = TRUE;
   return TRUE;
 }
+#endif
 FX_BOOL CPDF_FormField::CheckControl(int iControlIndex,
                                      FX_BOOL bChecked,
                                      FX_BOOL bNotify) {
