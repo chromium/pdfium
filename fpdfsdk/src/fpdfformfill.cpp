@@ -198,7 +198,7 @@ DLLEXPORT void STDCALL FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,
   if (!hHandle)
     return;
 
-  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
   if (!pPage)
     return;
 

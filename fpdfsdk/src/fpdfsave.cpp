@@ -57,21 +57,22 @@ FPDF_BOOL _FPDF_Doc_Save(FPDF_DOCUMENT document,
                          FPDF_DWORD flags,
                          FPDF_BOOL bSetVersion,
                          int fileVerion) {
-  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc)
+  CPDF_Document* pPDFDoc = CPDFDocumentFromFPDFDocument(document);
+  if (!pPDFDoc)
     return 0;
 
   if (flags < FPDF_INCREMENTAL || flags > FPDF_REMOVE_SECURITY) {
     flags = 0;
   }
 
-  CPDF_Creator FileMaker(pDoc);
+  CPDF_Creator FileMaker(pPDFDoc);
   if (bSetVersion)
     FileMaker.SetFileVersion(fileVerion);
   if (flags == FPDF_REMOVE_SECURITY) {
     flags = 0;
     FileMaker.RemoveSecurity();
   }
+
   CFX_IFileWrite* pStreamWrite = NULL;
   FX_BOOL bRet;
   pStreamWrite = new CFX_IFileWrite;

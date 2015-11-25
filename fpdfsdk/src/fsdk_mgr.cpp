@@ -625,7 +625,6 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
                                        CPDF_Matrix* pUser2Device,
                                        CPDF_RenderOptions* pOptions) {
   m_curMatrix = *pUser2Device;
-
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
   CPDFSDK_AnnotIterator annotIterator(this, true);
   while (CPDFSDK_Annot* pSDKAnnot = annotIterator.Next()) {

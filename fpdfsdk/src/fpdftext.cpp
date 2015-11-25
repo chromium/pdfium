@@ -15,12 +15,12 @@
 #endif
 
 DLLEXPORT FPDF_TEXTPAGE STDCALL FPDFText_LoadPage(FPDF_PAGE page) {
-  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
-  if (!pPage)
+  CPDF_Page* pPDFPage = CPDFPageFromFPDFPage(page);
+  if (!pPDFPage)
     return nullptr;
-  CPDF_ViewerPreferences viewRef(pPage->m_pDocument);
+  CPDF_ViewerPreferences viewRef(pPDFPage->m_pDocument);
   IPDF_TextPage* textpage =
-      IPDF_TextPage::CreateTextPage(pPage, viewRef.IsDirectionR2L());
+      IPDF_TextPage::CreateTextPage(pPDFPage, viewRef.IsDirectionR2L());
   textpage->ParseTextPage();
   return textpage;
 }

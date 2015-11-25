@@ -300,7 +300,6 @@ FX_DWORD CPDF_PageOrganizer::GetNewObjId(CPDF_Document* pDoc,
   }
   dwNewObjNum = pDoc->AddIndirectObject(pClone);
   (*pObjNumberMap)[dwObjnum] = dwNewObjNum;
-
   if (!UpdateReference(pClone, pDoc, pObjNumberMap)) {
     pClone->Release();
     return 0;

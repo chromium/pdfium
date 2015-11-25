@@ -100,16 +100,14 @@ DLLEXPORT void STDCALL FPDF_InitLibraryWithConfig(
   CFX_GEModule::Get()->SetCodecModule(g_pCodecModule);
 
   CPDF_ModuleMgr::Create();
-  CPDF_ModuleMgr::Get()->SetCodecModule(g_pCodecModule);
-  CPDF_ModuleMgr::Get()->InitPageModule();
-  CPDF_ModuleMgr::Get()->InitRenderModule();
   CPDF_ModuleMgr* pModuleMgr = CPDF_ModuleMgr::Get();
-  if (pModuleMgr) {
-    pModuleMgr->LoadEmbeddedGB1CMaps();
-    pModuleMgr->LoadEmbeddedJapan1CMaps();
-    pModuleMgr->LoadEmbeddedCNS1CMaps();
-    pModuleMgr->LoadEmbeddedKorea1CMaps();
-  }
+  pModuleMgr->SetCodecModule(g_pCodecModule);
+  pModuleMgr->InitPageModule();
+  pModuleMgr->InitRenderModule();
+  pModuleMgr->LoadEmbeddedGB1CMaps();
+  pModuleMgr->LoadEmbeddedJapan1CMaps();
+  pModuleMgr->LoadEmbeddedCNS1CMaps();
+  pModuleMgr->LoadEmbeddedKorea1CMaps();
   if (cfg && cfg->version >= 2)
     IJS_Runtime::Initialize(cfg->m_v8EmbedderSlot, cfg->m_pIsolate);
 }
