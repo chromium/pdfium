@@ -269,13 +269,17 @@ DLLEXPORT void STDCALL FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,
                                     int size_y,
                                     int rotate,
                                     int flags) {
-  if (!hHandle || !page)
+  if (!hHandle)
     return;
 
-  CPDFXFA_Page* pPage = (CPDFXFA_Page*)page;
+  UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
+  if (!pPage)
+    return;
+
   CPDFXFA_Document* pDocument = pPage->GetDocument();
   if (!pDocument)
     return;
+
   CPDF_Document* pPDFDoc = pDocument->GetPDFDoc();
   if (!pPDFDoc)
     return;
@@ -321,7 +325,7 @@ DLLEXPORT void STDCALL FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,
   options.m_AddFlags = flags >> 8;
   options.m_pOCContext = new CPDF_OCContext(pPDFDoc);
 
-  if (CPDFSDK_PageView* pPageView = pFXDoc->GetPageView((CPDFXFA_Page*)page))
+  if (CPDFSDK_PageView* pPageView = pFXDoc->GetPageView(pPage))
     pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options, clip);
 
   pDevice->RestoreState();

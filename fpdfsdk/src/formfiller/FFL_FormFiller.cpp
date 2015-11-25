@@ -243,7 +243,7 @@ FX_BOOL CFFL_FormFiller::OnChar(CPDFSDK_Annot* pAnnot,
 
 void CFFL_FormFiller::SetFocusForAnnot(CPDFSDK_Annot* pAnnot, FX_UINT nFlag) {
   CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
-  CPDFXFA_Page* pPage = pWidget->GetPDFXFAPage();
+  UnderlyingPageType* pPage = pWidget->GetUnderlyingPage();
   CPDFSDK_Document* pDoc = m_pApp->GetSDKDocument();
   CPDFSDK_PageView* pPageView = pDoc->GetPageView(pPage);
   if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, TRUE))
@@ -461,7 +461,7 @@ CPDF_Rect CFFL_FormFiller::GetPDFWindowRect() const {
 }
 
 CPDFSDK_PageView* CFFL_FormFiller::GetCurPageView() {
-  CPDFXFA_Page* pPage = m_pAnnot->GetPDFXFAPage();
+  UnderlyingPageType* pPage = m_pAnnot->GetUnderlyingPage();
   CPDFSDK_Document* pSDKDoc = m_pApp->GetSDKDocument();
   return pSDKDoc ? pSDKDoc->GetPageView(pPage) : nullptr;
 }
@@ -616,7 +616,7 @@ void CFFL_FormFiller::InvalidateRect(double left,
                                      double top,
                                      double right,
                                      double bottom) {
-  CPDFXFA_Page* pPage = m_pWidget->GetPDFXFAPage();
+  UnderlyingPageType* pPage = m_pWidget->GetUnderlyingPage();
   m_pApp->FFI_Invalidate(pPage, left, top, right, bottom);
 }
 

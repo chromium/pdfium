@@ -284,15 +284,13 @@ FPDF_BOOL _FPDF_Doc_Save(FPDF_DOCUMENT document,
                          FPDF_DWORD flags,
                          FPDF_BOOL bSetVersion,
                          int fileVerion) {
-  CPDFXFA_Document* pDoc = (CPDFXFA_Document*)document;
-
-  CFX_PtrArray fileList;
-
-  _SendPreSaveToXFADoc(pDoc, fileList);
-
-  CPDF_Document* pPDFDoc = pDoc->GetPDFDoc();
+  CPDF_Document* pPDFDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pPDFDoc)
     return 0;
+
+  CPDFXFA_Document* pDoc = (CPDFXFA_Document*)document;
+  CFX_PtrArray fileList;
+  _SendPreSaveToXFADoc(pDoc, fileList);
 
   if (flags < FPDF_INCREMENTAL || flags > FPDF_REMOVE_SECURITY) {
     flags = 0;
@@ -305,20 +303,18 @@ FPDF_BOOL _FPDF_Doc_Save(FPDF_DOCUMENT document,
     flags = 0;
     FileMaker.RemoveSecurity();
   }
+
   CFX_IFileWrite* pStreamWrite = NULL;
   FX_BOOL bRet;
   pStreamWrite = new CFX_IFileWrite;
   pStreamWrite->Init(pFileWrite);
   bRet = FileMaker.Create(pStreamWrite, flags);
-
   _SendPostSaveToXFADoc(pDoc);
-
   for (int i = 0; i < fileList.GetSize(); i++) {
     IFX_FileStream* pFile = (IFX_FileStream*)fileList.GetAt(i);
     pFile->Release();
   }
   fileList.RemoveAll();
-
   pStreamWrite->Release();
   return bRet;
 }

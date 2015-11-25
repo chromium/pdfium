@@ -10,22 +10,21 @@
 #include "../include/fpdfxfa/fpdfxfa_page.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
 #include "core/include/fpdftext/fpdf_text.h"
+#include "fpdfsdk/include/fsdk_define.h"
 
 #ifdef _WIN32
 #include <tchar.h>
 #endif
 
 DLLEXPORT FPDF_TEXTPAGE STDCALL FPDFText_LoadPage(FPDF_PAGE page) {
-  if (!page)
-    return NULL;
-  IPDF_TextPage* textpage = NULL;
+  CPDF_Page* pPDFPage = CPDFPageFromFPDFPage(page);
+  if (!pPDFPage)
+    return nullptr;
   CPDFXFA_Page* pPage = (CPDFXFA_Page*)page;
-  if (!pPage->GetPDFPage())
-    return NULL;
   CPDFXFA_Document* pDoc = pPage->GetDocument();
   CPDF_ViewerPreferences viewRef(pDoc->GetPDFDoc());
-  textpage = IPDF_TextPage::CreateTextPage((CPDF_Page*)pPage->GetPDFPage(),
-                                           viewRef.IsDirectionR2L());
+  IPDF_TextPage* textpage =
+      IPDF_TextPage::CreateTextPage(pPDFPage, viewRef.IsDirectionR2L());
   textpage->ParseTextPage();
   return textpage;
 }

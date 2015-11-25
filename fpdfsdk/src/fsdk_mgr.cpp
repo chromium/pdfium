@@ -638,7 +638,6 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
   m_curMatrix = *pUser2Device;
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
   CPDFXFA_Page* pPage = GetPDFXFAPage();
-
   if (pPage == NULL)
     return;
 
@@ -718,8 +717,9 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetFXWidgetAtPoint(FX_FLOAT pageX,
   CPDFSDK_AnnotHandlerMgr* pAnnotMgr = pEnv->GetAnnotHandlerMgr();
   CPDFSDK_AnnotIterator annotIterator(this, false);
   while (CPDFSDK_Annot* pSDKAnnot = annotIterator.Next()) {
-    if (pSDKAnnot->GetType() == "Widget" ||
-        pSDKAnnot->GetType() == FSDK_XFAWIDGET_TYPENAME) {
+    bool bHitTest = pSDKAnnot->GetType() == "Widget";
+    bHitTest = bHitTest || pSDKAnnot->GetType() == FSDK_XFAWIDGET_TYPENAME;
+    if (bHitTest) {
       pAnnotMgr->Annot_OnGetViewBBox(this, pSDKAnnot);
       CPDF_Point point(pageX, pageY);
       if (pAnnotMgr->Annot_OnHitTest(this, pSDKAnnot, point))
@@ -815,7 +815,6 @@ CPDF_Page* CPDFSDK_PageView::GetPDFPage() {
   if (m_page) {
     return m_page->GetPDFPage();
   }
-
   return NULL;
 }
 

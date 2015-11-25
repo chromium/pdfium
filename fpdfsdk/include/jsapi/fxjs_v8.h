@@ -135,7 +135,6 @@ void FXJS_InitializeRuntime(
 void FXJS_ReleaseRuntime(v8::Isolate* pIsolate,
                          v8::Global<v8::Context>* pV8PersistentContext,
                          std::vector<v8::Global<v8::Object>*>* pStaticObjects);
-
 IJS_Runtime* FXJS_GetRuntimeFromIsolate(v8::Isolate* pIsolate);
 
 // Called as part of FXJS_InitializeRuntime, exposed so PDF can make its

@@ -214,9 +214,10 @@ DLLEXPORT void STDCALL FPDF_InitLibraryWithConfig(
   CFX_GEModule::Get()->SetCodecModule(g_pCodecModule);
 
   CPDF_ModuleMgr::Create();
-  CPDF_ModuleMgr::Get()->SetCodecModule(g_pCodecModule);
-  CPDF_ModuleMgr::Get()->InitPageModule();
-  CPDF_ModuleMgr::Get()->InitRenderModule();
+  CPDF_ModuleMgr* pModuleMgr = CPDF_ModuleMgr::Get();
+  pModuleMgr->SetCodecModule(g_pCodecModule);
+  pModuleMgr->InitPageModule();
+  pModuleMgr->InitRenderModule();
   CPDFXFA_App::GetInstance()->Initialize();
   if (cfg && cfg->version >= 2)
     IJS_Runtime::Initialize(cfg->m_v8EmbedderSlot, cfg->m_pIsolate);
@@ -439,6 +440,7 @@ DLLEXPORT FPDF_PAGE STDCALL FPDF_LoadPage(FPDF_DOCUMENT document,
   UnderlyingDocumentType* pDoc = UnderlyingFromFPDFDocument(document);
   if (!pDoc)
     return nullptr;
+
   if (page_index < 0 || page_index >= pDoc->GetPageCount())
     return nullptr;
 

@@ -119,7 +119,7 @@ FX_BOOL CFFL_TextField::OnChar(CPDFSDK_Annot* pAnnot,
         ASSERT(pPageView != NULL);
         m_bValid = !m_bValid;
         CPDF_Rect rcAnnot = pAnnot->GetRect();
-        m_pApp->FFI_Invalidate(pAnnot->GetPDFXFAPage(), rcAnnot.left,
+        m_pApp->FFI_Invalidate(pAnnot->GetUnderlyingPage(), rcAnnot.left,
                                rcAnnot.top, rcAnnot.right, rcAnnot.bottom);
 
         if (m_bValid) {
