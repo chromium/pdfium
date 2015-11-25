@@ -20,8 +20,7 @@
 CXFA_FFPageView::CXFA_FFPageView(CXFA_FFDocView* pDocView, CXFA_Node* pPageArea)
     : CXFA_ContainerLayoutItem(pPageArea),
       m_pDocView(pDocView),
-      m_bLoaded(FALSE) {
-}
+      m_bLoaded(FALSE) {}
 CXFA_FFPageView::~CXFA_FFPageView() {}
 IXFA_DocView* CXFA_FFPageView::GetDocView() {
   return m_pDocView;
@@ -60,10 +59,11 @@ FX_BOOL CXFA_FFPageView::IsPageViewLoaded() {
 }
 IXFA_Widget* CXFA_FFPageView::GetWidgetByPos(FX_FLOAT fx, FX_FLOAT fy) {
   if (!m_bLoaded) {
-    return NULL;
+    return nullptr;
   }
   IXFA_WidgetIterator* pIterator = CreateWidgetIterator();
-  while (CXFA_FFWidget* pWidget = (CXFA_FFWidget*)pIterator->MoveToNext()) {
+  CXFA_FFWidget* pWidget = nullptr;
+  while (pWidget = static_cast<CXFA_FFWidget*>(pIterator->MoveToNext())) {
     if (!(pWidget->GetStatus() & XFA_WIDGETSTATUS_Visible)) {
       continue;
     }
@@ -72,17 +72,17 @@ IXFA_Widget* CXFA_FFPageView::GetWidgetByPos(FX_FLOAT fx, FX_FLOAT fy) {
     if (type != XFA_ELEMENT_Field && type != XFA_ELEMENT_Draw) {
       continue;
     }
-    FX_FLOAT fWidgetx = fx, fWidgety = fy;
+    FX_FLOAT fWidgetx = fx;
+    FX_FLOAT fWidgety = fy;
     pWidget->Rotate2Normal(fWidgetx, fWidgety);
     FX_DWORD dwFlag = pWidget->OnHitTest(fWidgetx, fWidgety);
     if ((FWL_WGTHITTEST_Client == dwFlag ||
-         FWL_WGTHITTEST_Transparent == dwFlag)) {
-      pIterator->Release();
-      return pWidget;
+         FWL_WGTHITTEST_HyperLink == dwFlag)) {
+      break;
     }
   }
   pIterator->Release();
-  return NULL;
+  return pWidget;
 }
 IXFA_WidgetIterator* CXFA_FFPageView::CreateWidgetIterator(
     FX_DWORD dwTraverseWay,

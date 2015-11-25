@@ -143,11 +143,10 @@ FX_DWORD CXFA_FFText::OnHitTest(FX_FLOAT fx, FX_FLOAT fy) {
   if (!rtBox.Contains(fx, fy)) {
     return FWL_WGTHITTEST_Unknown;
   }
-  const FX_WCHAR* wsURLContent = GetLinkURLAtPoint(fx, fy);
-  if (NULL == wsURLContent) {
+  if (!GetLinkURLAtPoint(fx, fy)) {
     return FWL_WGTHITTEST_Unknown;
   }
-  return FWL_WGTHITTEST_Transparent;
+  return FWL_WGTHITTEST_HyperLink;
 }
 const FX_WCHAR* CXFA_FFText::GetLinkURLAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
   CXFA_TextLayout* pTextLayout = m_pDataAcc->GetTextLayout();

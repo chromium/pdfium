@@ -69,7 +69,7 @@
 #define FWL_WGTHITTEST_Border 17
 #define FWL_WGTHITTEST_Edge 18
 #define FWL_WGTHITTEST_Edit 19
-#define FWL_WGTHITTEST_Transparent 20
+#define FWL_WGTHITTEST_HyperLink 20
 #define FWL_WGTHITTEST_MAX 21
 #define FWL_VKEY_LButton 0x01
 #define FWL_VKEY_RButton 0x02
