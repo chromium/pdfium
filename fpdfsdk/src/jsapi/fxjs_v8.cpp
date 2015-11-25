@@ -356,11 +356,13 @@ void FXJS_ReleaseRuntime(v8::Isolate* pIsolate,
         pObjDef->m_pDestructor(pObj);
       FXJS_FreePrivate(pObj);
     }
-    delete pObjDef;
   }
 
   if (pIsolate == g_isolate && --g_isolate_ref_count > 0)
     return;
+
+  for (int i = 0; i < maxID; ++i)
+    delete CFXJS_ObjDefinition::ForID(pIsolate, i);
 
   pIsolate->SetData(g_embedderDataSlot, nullptr);
   delete pData;
