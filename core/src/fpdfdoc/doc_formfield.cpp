@@ -817,7 +817,7 @@ FX_BOOL CPDF_FormField::ClearOptions(FX_BOOL bNotify) {
   m_pForm->m_bUpdated = TRUE;
   return TRUE;
 }
-#endif
+#endif  // PDF_ENABLE_XFA
 FX_BOOL CPDF_FormField::CheckControl(int iControlIndex,
                                      FX_BOOL bChecked,
                                      FX_BOOL bNotify) {

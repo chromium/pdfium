@@ -385,8 +385,8 @@ static FX_BOOL RetrieveStockFont(int iFontObject,
   }
   return FALSE;
 }
-#endif
-#endif
+#endif  // PDF_ENABLE_XFA
+#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
 CPDF_Font* CPDF_InterForm::AddStandardFont(CPDF_Document* pDocument,
                                            CFX_ByteString csFontName) {

@@ -193,7 +193,7 @@ class CFX_ArchiveLoader {
 
   FX_DWORD m_LoadingSize;
 };
-#endif
+#endif  // PDF_ENABLE_XFA
 
 class IFX_BufferArchive {
  public:
@@ -441,7 +441,7 @@ typedef CFX_ArrayTemplate<FX_FILESIZE> CFX_FileSizeArray;
 #ifdef PDF_ENABLE_XFA
 typedef CFX_ArrayTemplate<FX_FLOAT> CFX_FloatArray;
 typedef CFX_ArrayTemplate<int32_t> CFX_Int32Array;
-#endif
+#endif  // PDF_ENABLE_XFA
 
 template <class ObjectClass>
 class CFX_ObjectArray : public CFX_BasicArray {
@@ -728,9 +728,7 @@ class CFX_MapPtrTemplate : public CFX_MapPtrToPtr {
   FX_BOOL RemoveKey(KeyType key) {
     return CFX_MapPtrToPtr::RemoveKey((void*)(uintptr_t)key);
   }
-#endif
 
-#ifdef PDF_ENABLE_XFA
   void GetNextAssoc(FX_POSITION& rNextPosition,
                     KeyType& rKey,
                     ValueType& rValue) const {
@@ -741,7 +739,7 @@ class CFX_MapPtrTemplate : public CFX_MapPtrToPtr {
     rValue = (ValueType)(uintptr_t)pValue;
   }
 };
-#endif
+#endif  // PDF_ENABLE_XFA
 class CFX_CMapByteStringToPtr {
  public:
   CFX_CMapByteStringToPtr();
@@ -1203,7 +1201,7 @@ class IFX_Unknown {
   virtual FX_DWORD AddRef() = 0;
 };
 #define FX_IsOdd(a) ((a)&1)
-#endif
+#endif  // PDF_ENABLE_XFA
 
 class CFX_Vector_3by1 {
  public:

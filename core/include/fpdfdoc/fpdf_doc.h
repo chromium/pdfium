@@ -831,8 +831,8 @@ class CPDF_FormField {
   int InsertOption(CFX_WideString csOptLabel,
                    int index = -1,
                    FX_BOOL bNotify = FALSE);
+#endif  // PDF_ENABLE_XFA
 
-#endif
   FX_FLOAT GetFontSize() { return m_FontSize; }
 
   CPDF_Font* GetFont() { return m_pFont; }

@@ -63,8 +63,8 @@ class CFX_CRTFileAccess : public IFX_FileAccess {
   CFX_WideString m_path;
   FX_DWORD m_RefCount;
 };
+#endif  // PDF_ENABLE_XFA
 
-#endif
 class CFX_CRTFileStream final : public IFX_FileStream {
  public:
   CFX_CRTFileStream(IFXCRT_FileAccess* pFA) : m_pFile(pFA), m_dwCount(1) {}

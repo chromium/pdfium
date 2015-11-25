@@ -137,8 +137,8 @@ class IFX_FileAccess {
   virtual IFX_FileStream* CreateFileStream(FX_DWORD dwModes) = 0;
 };
 IFX_FileAccess* FX_CreateDefaultFileAccess(const CFX_WideStringC& wsPath);
+#endif  // PDF_ENABLE_XFA
 
-#endif
 class IFX_MemoryStream : public IFX_FileStream {
  public:
   virtual FX_BOOL IsConsecutive() const = 0;

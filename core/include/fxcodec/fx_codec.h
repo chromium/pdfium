@@ -7,42 +7,26 @@
 #ifndef CORE_INCLUDE_FXCODEC_FX_CODEC_H_
 #define CORE_INCLUDE_FXCODEC_FX_CODEC_H_
 
-#ifdef PDF_ENABLE_XFA
 #include <map>
-#endif
 #include <vector>
 
+#include "core/include/fxcodec/fx_codec_def.h"
 #include "core/include/fxcrt/fx_basic.h"
-#include "fx_codec_def.h"
+#include "core/include/fxcrt/fx_coordinates.h"  // For FX_RECT.
 #include "third_party/base/nonstd_unique_ptr.h"
 
-#ifdef PDF_ENABLE_XFA
-#include "../fxcrt/fx_coordinates.h"  // For FX_RECT.
-
-#endif
 class CFX_DIBSource;
 class CJPX_Decoder;
 class CPDF_PrivateData;
 class CPDF_StreamAcc;
-#ifndef PDF_ENABLE_XFA
-class ICodec_ScanlineDecoder;
-#endif
 class ICodec_BasicModule;
 class ICodec_FaxModule;
-#ifdef PDF_ENABLE_XFA
 class ICodec_FlateModule;
 class ICodec_IccModule;
 class ICodec_Jbig2Encoder;
 class ICodec_Jbig2Module;
-#endif
 class ICodec_JpegModule;
 class ICodec_JpxModule;
-#ifndef PDF_ENABLE_XFA
-class ICodec_Jbig2Module;
-class ICodec_IccModule;
-class ICodec_FlateModule;
-class ICodec_Jbig2Encoder;
-#endif
 class ICodec_ScanlineDecoder;
 
 #ifdef PDF_ENABLE_XFA
@@ -51,7 +35,9 @@ class ICodec_GifModule;
 class ICodec_PngModule;
 class ICodec_ProgressiveDecoder;
 class ICodec_TiffModule;
+#endif  // PDF_ENABLE_XFA
 
+#ifdef PDF_ENABLE_XFA
 class CFX_DIBAttribute {
  public:
   CFX_DIBAttribute();
@@ -70,8 +56,8 @@ class CFX_DIBAttribute {
   int32_t m_nBmpCompressType;
   std::map<FX_DWORD, void*> m_Exif;
 };
+#endif  // PDF_ENABLE_XFA
 
-#endif
 class CCodec_ModuleMgr {
  public:
   CCodec_ModuleMgr();
@@ -90,8 +76,8 @@ class CCodec_ModuleMgr {
   ICodec_GifModule* GetGifModule() const { return m_pGifModule.get(); }
   ICodec_BmpModule* GetBmpModule() const { return m_pBmpModule.get(); }
   ICodec_TiffModule* GetTiffModule() const { return m_pTiffModule.get(); }
+#endif  // PDF_ENABLE_XFA
 
-#endif
  protected:
   nonstd::unique_ptr<ICodec_BasicModule> m_pBasicModule;
   nonstd::unique_ptr<ICodec_FaxModule> m_pFaxModule;
@@ -99,14 +85,13 @@ class CCodec_ModuleMgr {
   nonstd::unique_ptr<ICodec_JpxModule> m_pJpxModule;
   nonstd::unique_ptr<ICodec_Jbig2Module> m_pJbig2Module;
   nonstd::unique_ptr<ICodec_IccModule> m_pIccModule;
-  nonstd::unique_ptr<ICodec_FlateModule> m_pFlateModule;
 #ifdef PDF_ENABLE_XFA
-
   nonstd::unique_ptr<ICodec_PngModule> m_pPngModule;
   nonstd::unique_ptr<ICodec_GifModule> m_pGifModule;
   nonstd::unique_ptr<ICodec_BmpModule> m_pBmpModule;
   nonstd::unique_ptr<ICodec_TiffModule> m_pTiffModule;
-#endif
+#endif  // PDF_ENABLE_XFA
+  nonstd::unique_ptr<ICodec_FlateModule> m_pFlateModule;
 };
 class ICodec_BasicModule {
  public:
@@ -247,15 +232,18 @@ class ICodec_JpegModule {
                      const uint8_t* src_buf,
                      FX_DWORD src_size) = 0;
 
+#ifdef PDF_ENABLE_XFA
   virtual int ReadHeader(void* pContext,
                          int* width,
                          int* height,
-#ifndef PDF_ENABLE_XFA
-                         int* nComps) = 0;
-#else
                          int* nComps,
                          CFX_DIBAttribute* pAttribute) = 0;
-#endif
+#else   // PDF_ENABLE_XFA
+  virtual int ReadHeader(void* pContext,
+                         int* width,
+                         int* height,
+                         int* nComps) = 0;
+#endif  // PDF_ENABLE_XFA
 
   virtual int StartScanline(void* pContext, int down_scale) = 0;
 
@@ -465,7 +453,7 @@ class ICodec_ProgressiveDecoder {
 
   virtual FXCODEC_STATUS ContinueDecode(IFX_Pause* pPause = NULL) = 0;
 };
-#endif
+#endif  // PDF_ENABLE_XFA
 class ICodec_Jbig2Encoder {
  public:
   virtual ~ICodec_Jbig2Encoder() {}

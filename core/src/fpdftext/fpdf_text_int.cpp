@@ -1421,6 +1421,62 @@ void CPDF_TextPage::FindPreviousTextObject(void) {
     m_pPreTextObj = preChar.m_pTextObj;
   }
 }
+void CPDF_TextPage::SwapTempTextBuf(int32_t iCharListStartAppend,
+                                    int32_t iBufStartAppend) {
+  int32_t i, j;
+  i = iCharListStartAppend;
+  j = m_TempCharList.GetSize() - 1;
+  for (; i < j; i++, j--) {
+    std::swap(m_TempCharList[i], m_TempCharList[j]);
+    std::swap(m_TempCharList[i].m_Index, m_TempCharList[j].m_Index);
+  }
+  FX_WCHAR* pTempBuffer = m_TempTextBuf.GetBuffer();
+  i = iBufStartAppend;
+  j = m_TempTextBuf.GetLength() - 1;
+  for (; i < j; i++, j--) {
+    std::swap(pTempBuffer[i], pTempBuffer[j]);
+  }
+}
+FX_BOOL CPDF_TextPage::IsRightToLeft(const CPDF_TextObject* pTextObj,
+                                     const CPDF_Font* pFont,
+                                     int nItems) const {
+  nonstd::unique_ptr<CFX_BidiChar> pBidiChar(new CFX_BidiChar);
+  int32_t nR2L = 0;
+  int32_t nL2R = 0;
+  int32_t start = 0, count = 0;
+  CPDF_TextObjectItem item;
+  for (int32_t i = 0; i < nItems; i++) {
+    pTextObj->GetItemInfo(i, &item);
+    if (item.m_CharCode == (FX_DWORD)-1) {
+      continue;
+    }
+    CFX_WideString wstrItem = pFont->UnicodeFromCharCode(item.m_CharCode);
+    FX_WCHAR wChar = wstrItem.GetAt(0);
+    if ((wstrItem.IsEmpty() || wChar == 0) && item.m_CharCode) {
+      wChar = (FX_WCHAR)item.m_CharCode;
+    }
+    if (!wChar) {
+      continue;
+    }
+    if (pBidiChar->AppendChar(wChar)) {
+      CFX_BidiChar::Direction ret = pBidiChar->GetBidiInfo(&start, &count);
+      if (ret == CFX_BidiChar::RIGHT) {
+        nR2L++;
+      } else if (ret == CFX_BidiChar::LEFT) {
+        nL2R++;
+      }
+    }
+  }
+  if (pBidiChar->EndChar()) {
+    CFX_BidiChar::Direction ret = pBidiChar->GetBidiInfo(&start, &count);
+    if (ret == CFX_BidiChar::RIGHT) {
+      nR2L++;
+    } else if (ret == CFX_BidiChar::LEFT) {
+      nL2R++;
+    }
+  }
+  return (nR2L > 0 && nR2L >= nL2R);
+}
 void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
   CPDF_TextObject* pTextObj = Obj.m_pTextObj;
   if (FXSYS_fabs(pTextObj->m_Right - pTextObj->m_Left) < 0.01f) {
@@ -1525,52 +1581,8 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
   int nItems = pTextObj->CountItems();
   FX_FLOAT baseSpace = _CalculateBaseSpace(pTextObj, matrix);
 
-#ifndef PDF_ENABLE_XFA
   const FX_BOOL bR2L = IsRightToLeft(pTextObj, pFont, nItems);
   const FX_BOOL bIsBidiAndMirrorInverse =
-#else
-  FX_BOOL bIsBidiAndMirrosInverse = FALSE;
-  CFX_BidiChar* BidiChar = new CFX_BidiChar;
-  int32_t nR2L = 0;
-  int32_t nL2R = 0;
-  int32_t start = 0, count = 0;
-  CPDF_TextObjectItem item;
-  for (int32_t i = 0; i < nItems; i++) {
-    pTextObj->GetItemInfo(i, &item);
-    if (item.m_CharCode == (FX_DWORD)-1) {
-      continue;
-    }
-    CFX_WideString wstrItem = pFont->UnicodeFromCharCode(item.m_CharCode);
-    FX_WCHAR wChar = wstrItem.GetAt(0);
-    if ((wstrItem.IsEmpty() || wChar == 0) && item.m_CharCode) {
-      wChar = (FX_WCHAR)item.m_CharCode;
-    }
-    if (!wChar) {
-      continue;
-    }
-    if (BidiChar && BidiChar->AppendChar(wChar)) {
-      CFX_BidiChar::Direction ret = BidiChar->GetBidiInfo(&start, &count);
-      if (ret == CFX_BidiChar::RIGHT) {
-        nR2L++;
-      } else if (ret == CFX_BidiChar::LEFT) {
-        nL2R++;
-      }
-    }
-  }
-  if (BidiChar && BidiChar->EndChar()) {
-    CFX_BidiChar::Direction ret = BidiChar->GetBidiInfo(&start, &count);
-    if (ret == CFX_BidiChar::RIGHT) {
-      nR2L++;
-    } else if (ret == CFX_BidiChar::LEFT) {
-      nL2R++;
-    }
-  }
-  FX_BOOL bR2L = FALSE;
-  if (nR2L > 0 && nR2L >= nL2R) {
-    bR2L = TRUE;
-  }
-  bIsBidiAndMirrosInverse =
-#endif
       bR2L && (matrix.a * matrix.d - matrix.b * matrix.c) < 0;
   int32_t iBufStartAppend = m_TempTextBuf.GetLength();
   int32_t iCharListStartAppend = m_TempCharList.GetSize();
@@ -1729,85 +1741,9 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
       }
     }
   }
-#ifndef PDF_ENABLE_XFA
   if (bIsBidiAndMirrorInverse) {
     SwapTempTextBuf(iCharListStartAppend, iBufStartAppend);
   }
-}
-void CPDF_TextPage::SwapTempTextBuf(int32_t iCharListStartAppend,
-                                    int32_t iBufStartAppend) {
-  int32_t i, j;
-  i = iCharListStartAppend;
-  j = m_TempCharList.GetSize() - 1;
-  for (; i < j; i++, j--) {
-    std::swap(m_TempCharList[i], m_TempCharList[j]);
-    std::swap(m_TempCharList[i].m_Index, m_TempCharList[j].m_Index);
-  }
-  FX_WCHAR* pTempBuffer = m_TempTextBuf.GetBuffer();
-  i = iBufStartAppend;
-  j = m_TempTextBuf.GetLength() - 1;
-  for (; i < j; i++, j--) {
-    std::swap(pTempBuffer[i], pTempBuffer[j]);
-  }
-}
-FX_BOOL CPDF_TextPage::IsRightToLeft(const CPDF_TextObject* pTextObj,
-                                     const CPDF_Font* pFont,
-                                     int nItems) const {
-  nonstd::unique_ptr<CFX_BidiChar> pBidiChar(new CFX_BidiChar);
-  int32_t nR2L = 0;
-  int32_t nL2R = 0;
-  int32_t start = 0, count = 0;
-  CPDF_TextObjectItem item;
-  for (int32_t i = 0; i < nItems; i++) {
-    pTextObj->GetItemInfo(i, &item);
-    if (item.m_CharCode == (FX_DWORD)-1) {
-      continue;
-    }
-    CFX_WideString wstrItem = pFont->UnicodeFromCharCode(item.m_CharCode);
-    FX_WCHAR wChar = wstrItem.GetAt(0);
-    if ((wstrItem.IsEmpty() || wChar == 0) && item.m_CharCode) {
-      wChar = (FX_WCHAR)item.m_CharCode;
-#else
-  if (bIsBidiAndMirrosInverse) {
-    int32_t i, j;
-    i = iCharListStartAppend;
-    j = m_TempCharList.GetSize() - 1;
-    for (; i < j; i++, j--) {
-      std::swap(m_TempCharList[i], m_TempCharList[j]);
-      std::swap(m_TempCharList[i].m_Index, m_TempCharList[j].m_Index);
-#endif
-    }
-#ifndef PDF_ENABLE_XFA
-    if (!wChar) {
-      continue;
-    }
-    if (pBidiChar->AppendChar(wChar)) {
-      CFX_BidiChar::Direction ret = pBidiChar->GetBidiInfo(&start, &count);
-      if (ret == CFX_BidiChar::RIGHT) {
-        nR2L++;
-      } else if (ret == CFX_BidiChar::LEFT) {
-        nL2R++;
-      }
-    }
-  }
-  if (pBidiChar->EndChar()) {
-    CFX_BidiChar::Direction ret = pBidiChar->GetBidiInfo(&start, &count);
-    if (ret == CFX_BidiChar::RIGHT) {
-      nR2L++;
-    } else if (ret == CFX_BidiChar::LEFT) {
-      nL2R++;
-#else
-    FX_WCHAR* pTempBuffer = m_TempTextBuf.GetBuffer();
-    i = iBufStartAppend;
-    j = m_TempTextBuf.GetLength() - 1;
-    for (; i < j; i++, j--) {
-      std::swap(pTempBuffer[i], pTempBuffer[j]);
-#endif
-    }
-  }
-#ifndef PDF_ENABLE_XFA
-  return (nR2L > 0 && nR2L >= nL2R);
-#endif
 }
 int32_t CPDF_TextPage::GetTextObjectWritingMode(
     const CPDF_TextObject* pTextObj) {

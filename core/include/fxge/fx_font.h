@@ -36,7 +36,7 @@ class IFX_SystemFontInfo;
 #define FXFONT_CIDFONT 0x100000
 #ifdef PDF_ENABLE_XFA
 #define FXFONT_EXACTMATCH 0x80000000
-#endif
+#endif  // PDF_ENABLE_XFA
 #define FXFONT_ANSI_CHARSET 0
 #define FXFONT_DEFAULT_CHARSET 1
 #define FXFONT_SYMBOL_CHARSET 2
@@ -71,23 +71,21 @@ class CFX_Font {
                  int CharsetCP,
                  FX_BOOL bVertical = FALSE);
   FX_BOOL LoadEmbedded(const uint8_t* data, FX_DWORD size);
-#ifdef PDF_ENABLE_XFA
+  FXFT_Face GetFace() const { return m_Face; }
 
+#ifdef PDF_ENABLE_XFA
   FX_BOOL LoadFile(IFX_FileRead* pFile,
                    int nFaceIndex = 0,
                    int* pFaceCount = NULL);
 
   FX_BOOL LoadClone(const CFX_Font* pFont);
-
-#endif
-  FXFT_Face GetFace() const { return m_Face; }
-#ifndef PDF_ENABLE_XFA
-  const CFX_SubstFont* GetSubstFont() const { return m_pSubstFont; }
-#else
   CFX_SubstFont* GetSubstFont() const { return m_pSubstFont; }
   void SetFace(FXFT_Face face) { m_Face = face; }
   void SetSubstFont(CFX_SubstFont* subst) { m_pSubstFont = subst; }
-#endif
+#else   // PDF_ENABLE_XFA
+  const CFX_SubstFont* GetSubstFont() const { return m_pSubstFont; }
+#endif  // PDF_ENABLE_XFA
+
   CFX_PathData* LoadGlyphPath(FX_DWORD glyph_index, int dest_width = 0);
   int GetGlyphWidth(FX_DWORD glyph_index);
   int GetAscent() const;
@@ -133,12 +131,12 @@ class CFX_Font {
   FX_BOOL m_bDwLoaded;
   FX_BOOL m_bEmbedded;
   FX_BOOL m_bVertical;
-#ifdef PDF_ENABLE_XFA
 
+#ifdef PDF_ENABLE_XFA
  protected:
   FX_BOOL m_bLogic;
   void* m_pOwnedStream;
-#endif
+#endif  // PDF_ENABLE_XFA
 };
 
 #define ENCODING_INTERNAL 0
@@ -162,8 +160,8 @@ class CFX_Font {
 #define FXFM_ENCODING_ADOBE_LATIN_1 FXFM_ENC_TAG('l', 'a', 't', '1')
 #define FXFM_ENCODING_OLD_LATIN_2 FXFM_ENC_TAG('l', 'a', 't', '2')
 #define FXFM_ENCODING_APPLE_ROMAN FXFM_ENC_TAG('a', 'r', 'm', 'n')
+#endif  // PDF_ENABLE_XFA
 
-#endif
 class CFX_UnicodeEncoding {
  public:
   explicit CFX_UnicodeEncoding(CFX_Font* pFont);
@@ -190,12 +188,11 @@ class CFX_UnicodeEncodingEx : public CFX_UnicodeEncoding {
  private:
   FX_DWORD m_nEncodingID;
 };
-
 CFX_UnicodeEncodingEx* FX_CreateFontEncodingEx(
     CFX_Font* pFont,
     FX_DWORD nEncodingID = FXFM_ENCODING_NONE);
+#endif  // PDF_ENABLE_XFA
 
-#endif
 #define FXFONT_SUBST_MM 0x01
 #define FXFONT_SUBST_GLYPHPATH 0x04
 #define FXFONT_SUBST_CLEARTYPE 0x08
@@ -327,7 +324,7 @@ class CFX_FontMapper {
                                    int weight,
                                    int italic_angle);
   FX_BOOL IsBuiltinFace(const FXFT_Face face) const;
-#endif
+#endif  // PDF_ENABLE_XFA
 
  private:
   static const size_t MM_FACE_COUNT = 2;
@@ -371,7 +368,7 @@ class IFX_SystemFontInfo {
                                  int pitch_family) {
     return NULL;
   }
-#endif
+#endif  // PDF_ENABLE_XFA
   virtual void* GetFont(const FX_CHAR* face) = 0;
   virtual FX_DWORD GetFontData(void* hFont,
                                FX_DWORD table,
@@ -407,7 +404,7 @@ class CFX_FolderFontInfo : public IFX_SystemFontInfo {
                          int weight,
                          FX_BOOL bItalic,
                          int pitch_family) override;
-#endif
+#endif  // PDF_ENABLE_XFA
   void* GetFont(const FX_CHAR* face) override;
   FX_DWORD GetFontData(void* hFont,
                        FX_DWORD table,

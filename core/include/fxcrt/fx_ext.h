@@ -10,10 +10,7 @@
 #include <cctype>
 #include <cwctype>
 
-#ifdef PDF_ENABLE_XFA
-#include "fx_string.h"
-#endif
-#include "fx_system.h"
+#include "core/include/fxcrt/fx_basic.h"
 
 FX_FLOAT FXSYS_tan(FX_FLOAT a);
 FX_FLOAT FXSYS_logb(FX_FLOAT b, FX_FLOAT x);
@@ -86,14 +83,12 @@ typedef struct FX_GUID {
   uint8_t data4[8];
 } FX_GUID, *FX_LPGUID;
 typedef FX_GUID const* FX_LPCGUID;
-
 void FX_GUID_CreateV4(FX_LPGUID pGUID);
-
 void FX_GUID_ToString(FX_LPCGUID pGUID,
                       CFX_ByteString& bsStr,
                       FX_BOOL bSeparator = TRUE);
+#endif  // PDF_ENABLE_XFA
 
-#endif
 template <class baseType>
 class CFX_SSortTemplate {
  public:
