@@ -6,9 +6,11 @@
 
 #include "public/fpdf_edit.h"
 
+#ifdef PDF_ENABLE_XFA
 #include "../include/fpdfxfa/fpdfxfa_app.h"
 #include "../include/fpdfxfa/fpdfxfa_doc.h"
 #include "../include/fpdfxfa/fpdfxfa_page.h"
+#endif
 #include "fpdfsdk/include/fsdk_define.h"
 #include "public/fpdf_formfill.h"
 
@@ -81,9 +83,15 @@ DLLEXPORT FPDF_PAGE STDCALL FPDFPage_New(FPDF_DOCUMENT document,
   pPageDict->SetAt("Rotate", new CPDF_Number(0));
   pPageDict->SetAt("Resources", new CPDF_Dictionary);
 
+#ifndef PDF_ENABLE_XFA
+  CPDF_Page* pPage = new CPDF_Page;
+  pPage->Load(pDoc, pPageDict);
+  pPage->ParseContent();
+#else
   CPDFXFA_Page* pPage =
       new CPDFXFA_Page((CPDFXFA_Document*)document, page_index);
   pPage->LoadPDFPage(pPageDict);
+#endif
 
   return pPage;
 }

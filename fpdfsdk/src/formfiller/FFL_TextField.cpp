@@ -268,6 +268,7 @@ CPWL_Wnd* CFFL_TextField::ResetPDFWindow(CPDFSDK_PageView* pPageView,
   return pRet;
 }
 
+#ifdef PDF_ENABLE_XFA
 FX_BOOL CFFL_TextField::IsFieldFull(CPDFSDK_PageView* pPageView) {
   if (CPWL_Edit* pWnd = (CPWL_Edit*)GetPDFWindow(pPageView, FALSE)) {
     return pWnd->IsTextFull();
@@ -276,6 +277,7 @@ FX_BOOL CFFL_TextField::IsFieldFull(CPDFSDK_PageView* pPageView) {
   return FALSE;
 }
 
+#endif
 void CFFL_TextField::OnSetFocus(CPWL_Wnd* pWnd) {
   ASSERT(m_pApp != NULL);
 

@@ -471,11 +471,13 @@ void CPWL_ComboBox::SetPopup(FX_BOOL bPopup) {
 
   if (bPopup) {
     if (m_pFillerNotify) {
+#ifdef PDF_ENABLE_XFA
       FX_BOOL bExit = FALSE;
       m_pFillerNotify->OnPopupPreOpen(GetAttachedData(), bExit, 0);
       if (bExit)
         return;
 
+#endif
       int32_t nWhere = 0;
       FX_FLOAT fPopupRet = 0.0f;
       FX_FLOAT fPopupMin = 0.0f;
@@ -503,11 +505,13 @@ void CPWL_ComboBox::SetPopup(FX_BOOL bPopup) {
 
         m_nPopupWhere = nWhere;
         Move(rcWindow, TRUE, TRUE);
+#ifdef PDF_ENABLE_XFA
 
         bExit = FALSE;
         m_pFillerNotify->OnPopupPostOpen(GetAttachedData(), bExit, 0);
         if (bExit)
           return;
+#endif
       }
     }
   } else {
@@ -528,6 +532,7 @@ FX_BOOL CPWL_ComboBox::OnKeyDown(FX_WORD nChar, FX_DWORD nFlag) {
     case FWL_VKEY_Up:
       if (m_pList->GetCurSel() > 0) {
         FX_BOOL bExit = FALSE;
+#ifdef PDF_ENABLE_XFA
 
         if (m_pFillerNotify) {
           m_pFillerNotify->OnPopupPreOpen(GetAttachedData(), bExit, nFlag);
@@ -538,6 +543,7 @@ FX_BOOL CPWL_ComboBox::OnKeyDown(FX_WORD nChar, FX_DWORD nFlag) {
           if (bExit)
             return FALSE;
         }
+#endif
         if (m_pList->OnKeyDownWithExit(nChar, bExit, nFlag)) {
           if (bExit)
             return FALSE;
@@ -548,6 +554,7 @@ FX_BOOL CPWL_ComboBox::OnKeyDown(FX_WORD nChar, FX_DWORD nFlag) {
     case FWL_VKEY_Down:
       if (m_pList->GetCurSel() < m_pList->GetCount() - 1) {
         FX_BOOL bExit = FALSE;
+#ifdef PDF_ENABLE_XFA
 
         if (m_pFillerNotify) {
           m_pFillerNotify->OnPopupPreOpen(GetAttachedData(), bExit, nFlag);
@@ -558,6 +565,7 @@ FX_BOOL CPWL_ComboBox::OnKeyDown(FX_WORD nChar, FX_DWORD nFlag) {
           if (bExit)
             return FALSE;
         }
+#endif
         if (m_pList->OnKeyDownWithExit(nChar, bExit, nFlag)) {
           if (bExit)
             return FALSE;
@@ -585,6 +593,7 @@ FX_BOOL CPWL_ComboBox::OnChar(FX_WORD nChar, FX_DWORD nFlag) {
     return m_pEdit->OnChar(nChar, nFlag);
 
   FX_BOOL bExit = FALSE;
+#ifdef PDF_ENABLE_XFA
   if (m_pFillerNotify) {
     m_pFillerNotify->OnPopupPreOpen(GetAttachedData(), bExit, nFlag);
     if (bExit)
@@ -594,6 +603,7 @@ FX_BOOL CPWL_ComboBox::OnChar(FX_WORD nChar, FX_DWORD nFlag) {
     if (bExit)
       return FALSE;
   }
+#endif
   return m_pList->OnCharWithExit(nChar, bExit, nFlag) ? bExit : FALSE;
 }
 

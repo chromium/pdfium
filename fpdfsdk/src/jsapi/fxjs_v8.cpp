@@ -281,7 +281,9 @@ void FXJS_InitializeRuntime(
     ++g_isolate_ref_count;
 
   v8::Isolate::Scope isolate_scope(pIsolate);
+#ifdef PDF_ENABLE_XFA
   v8::Locker locker(pIsolate);
+#endif
   v8::HandleScope handle_scope(pIsolate);
   v8::Local<v8::Context> v8Context =
       v8::Context::New(pIsolate, NULL, GetGlobalObjectTemplate(pIsolate));
@@ -325,7 +327,9 @@ void FXJS_ReleaseRuntime(v8::Isolate* pIsolate,
                          v8::Global<v8::Context>* pV8PersistentContext,
                          std::vector<v8::Global<v8::Object>*>* pStaticObjects) {
   v8::Isolate::Scope isolate_scope(pIsolate);
+#ifdef PDF_ENABLE_XFA
   v8::Locker locker(pIsolate);
+#endif
   v8::HandleScope handle_scope(pIsolate);
   v8::Local<v8::Context> context =
       v8::Local<v8::Context>::New(pIsolate, *pV8PersistentContext);
@@ -335,9 +339,11 @@ void FXJS_ReleaseRuntime(v8::Isolate* pIsolate,
   if (!pData)
     return;
 
+#ifdef PDF_ENABLE_XFA
   // XFA, if present, should have already cleaned itself up.
   FXSYS_assert(!pData->m_pFXJSERuntimeData);
 
+#endif
   int maxID = CFXJS_ObjDefinition::MaxID(pIsolate);
   for (int i = 0; i < maxID; ++i) {
     CFXJS_ObjDefinition* pObjDef = CFXJS_ObjDefinition::ForID(pIsolate, i);
@@ -374,11 +380,13 @@ IJS_Runtime* FXJS_GetRuntimeFromIsolate(v8::Isolate* pIsolate) {
       context->GetAlignedPointerFromEmbedderData(kPerContextDataIndex));
 }
 
+#ifdef PDF_ENABLE_XFA
 void FXJS_SetRuntimeForV8Context(v8::Local<v8::Context> v8Context,
                                  IJS_Runtime* pIRuntime) {
   v8Context->SetAlignedPointerInEmbedderData(kPerContextDataIndex, pIRuntime);
 }
 
+#endif
 int FXJS_Execute(v8::Isolate* pIsolate,
                  IJS_Context* pJSContext,
                  const wchar_t* script,

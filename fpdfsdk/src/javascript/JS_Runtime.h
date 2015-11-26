@@ -58,12 +58,14 @@ class CJS_Runtime : public IJS_Runtime {
   v8::Isolate* GetIsolate() const { return m_isolate; }
   v8::Local<v8::Context> NewJSContext();
 
+#ifdef PDF_ENABLE_XFA
   // IJS_Runtime:
   FX_BOOL GetHValueByName(const CFX_ByteStringC& utf8Name,
                           FXJSE_HVALUE hValue) override;
   FX_BOOL SetHValueByName(const CFX_ByteStringC& utf8Name,
                           FXJSE_HVALUE hValue) override;
 
+#endif
   void AddObserver(Observer* observer);
   void RemoveObserver(Observer* observer);
 

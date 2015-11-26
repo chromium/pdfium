@@ -6,7 +6,9 @@
 
 #include "public/fpdf_ext.h"
 
+#ifdef PDF_ENABLE_XFA
 #include "../include/fpdfxfa/fpdfxfa_doc.h"
+#endif
 #include "core/include/fxcrt/fx_xml.h"
 #include "fpdfsdk/include/fsdk_define.h"
 
@@ -175,6 +177,15 @@ void CheckUnSupportError(CPDF_Document* pDoc, FX_DWORD err_code) {
   const CXML_Element* pElement = metaData.GetRoot();
   if (pElement)
     CheckSharedForm(pElement, "workflowType");
+#ifndef PDF_ENABLE_XFA
+
+  // XFA Forms
+  CPDF_InterForm* pInterForm = new CPDF_InterForm(pDoc, FALSE);
+  if (pInterForm->HasXFAForm()) {
+    FPDF_UnSupportError(FPDF_UNSP_DOC_XFAFORM);
+  }
+  delete pInterForm;
+#endif
 }
 
 DLLEXPORT int FPDFDoc_GetPageMode(FPDF_DOCUMENT document) {

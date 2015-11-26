@@ -56,9 +56,11 @@ class CFFL_TextField : public CFFL_FormFiller,
   // IPWL_Edit_Notify:
   void OnAddUndo(CPWL_Edit* pEdit) override;
 
+#ifdef PDF_ENABLE_XFA
   // CFFL_FormFiller:
   FX_BOOL IsFieldFull(CPDFSDK_PageView* pPageView) override;
 
+#endif
  private:
   CBA_FontMap* m_pFontMap;
   FFL_TextFieldState m_State;

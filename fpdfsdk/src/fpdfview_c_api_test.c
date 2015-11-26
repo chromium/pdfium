@@ -104,8 +104,10 @@ int CheckPDFiumCApi() {
     CHK(FORM_OnMouseMove);
     CHK(FORM_OnLButtonDown);
     CHK(FORM_OnLButtonUp);
+#ifdef PDF_ENABLE_XFA
     CHK(FORM_OnRButtonDown);
     CHK(FORM_OnRButtonUp);
+#endif
     CHK(FORM_OnKeyDown);
     CHK(FORM_OnKeyUp);
     CHK(FORM_OnChar);
@@ -117,6 +119,7 @@ int CheckPDFiumCApi() {
     CHK(FPDF_SetFormFieldHighlightAlpha);
     CHK(FPDF_RemoveFormFieldHighlight);
     CHK(FPDF_FFLDraw);
+#ifdef PDF_ENABLE_XFA
     CHK(FPDF_HasXFAField);
     CHK(FPDF_LoadXFA);
     CHK(FPDF_Widget_Undo);
@@ -131,6 +134,7 @@ int CheckPDFiumCApi() {
     CHK(FPDF_StringHandleGetStringByIndex);
     CHK(FPDF_StringHandleRelease);
     CHK(FPDF_StringHandleAddString);
+#endif
 
     // fpdf_ppo.h
     CHK(FPDF_ImportPages);
@@ -227,9 +231,11 @@ int CheckPDFiumCApi() {
     CHK(FPDF_CountNamedDests);
     CHK(FPDF_GetNamedDestByName);
     CHK(FPDF_GetNamedDest);
+#ifdef PDF_ENABLE_XFA
     CHK(FPDF_BStr_Init);
     CHK(FPDF_BStr_Set);
     CHK(FPDF_BStr_Clear);
+#endif
 
     return 1;
 }

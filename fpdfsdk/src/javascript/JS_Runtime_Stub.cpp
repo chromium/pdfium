@@ -136,6 +136,7 @@ class CJS_RuntimeStub final : public IJS_Runtime {
   }
   CPDFSDK_Document* GetReaderDocument() override { return m_pDoc; }
 
+#ifdef PDF_ENABLE_XFA
   virtual FX_BOOL GetHValueByName(const CFX_ByteStringC&,
                                   FXJSE_HVALUE) override {
     return FALSE;
@@ -146,6 +147,7 @@ class CJS_RuntimeStub final : public IJS_Runtime {
     return FALSE;
   }
 
+#endif
   int Execute(IJS_Context* cc,
               const wchar_t* script,
               CFX_WideString* info) override {

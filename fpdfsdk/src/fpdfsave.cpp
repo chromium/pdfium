@@ -6,12 +6,16 @@
 
 #include "public/fpdf_save.h"
 
+#ifdef PDF_ENABLE_XFA
 #include "../include/fpdfxfa/fpdfxfa_app.h"
 #include "../include/fpdfxfa/fpdfxfa_doc.h"
 #include "../include/fpdfxfa/fpdfxfa_util.h"
+#endif
 #include "fpdfsdk/include/fsdk_define.h"
 #include "public/fpdf_edit.h"
+#ifdef PDF_ENABLE_XFA
 #include "public/fpdf_formfill.h"
+#endif
 
 #if _FX_OS_ == _FX_ANDROID_
 #include "time.h"
@@ -56,6 +60,7 @@ void CFX_IFileWrite::Release() {
   delete this;
 }
 
+#ifdef PDF_ENABLE_XFA
 #define XFA_DATASETS 0
 #define XFA_FORMS 1
 
@@ -279,6 +284,7 @@ FX_BOOL _SendPreSaveToXFADoc(CPDFXFA_Document* pDocument,
   return _SaveXFADocumentData(pDocument, fileList);
 }
 
+#endif
 FPDF_BOOL _FPDF_Doc_Save(FPDF_DOCUMENT document,
                          FPDF_FILEWRITE* pFileWrite,
                          FPDF_DWORD flags,
@@ -288,10 +294,12 @@ FPDF_BOOL _FPDF_Doc_Save(FPDF_DOCUMENT document,
   if (!pPDFDoc)
     return 0;
 
+#ifdef PDF_ENABLE_XFA
   CPDFXFA_Document* pDoc = (CPDFXFA_Document*)document;
   CFX_PtrArray fileList;
   _SendPreSaveToXFADoc(pDoc, fileList);
 
+#endif
   if (flags < FPDF_INCREMENTAL || flags > FPDF_REMOVE_SECURITY) {
     flags = 0;
   }
@@ -309,12 +317,14 @@ FPDF_BOOL _FPDF_Doc_Save(FPDF_DOCUMENT document,
   pStreamWrite = new CFX_IFileWrite;
   pStreamWrite->Init(pFileWrite);
   bRet = FileMaker.Create(pStreamWrite, flags);
+#ifdef PDF_ENABLE_XFA
   _SendPostSaveToXFADoc(pDoc);
   for (int i = 0; i < fileList.GetSize(); i++) {
     IFX_FileStream* pFile = (IFX_FileStream*)fileList.GetAt(i);
     pFile->Release();
   }
   fileList.RemoveAll();
+#endif
   pStreamWrite->Release();
   return bRet;
 }

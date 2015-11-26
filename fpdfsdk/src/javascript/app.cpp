@@ -47,7 +47,9 @@ CJS_Timer* TimerObj::GetTimer() const {
 #define JS_STR_PLATFORM L"WIN"
 #define JS_STR_LANGUANGE L"ENU"
 #define JS_NUM_VIEWERVERSION 8
+#ifdef PDF_ENABLE_XFA
 #define JS_NUM_VIEWERVERSION_XFA 11
+#endif
 #define JS_NUM_FORMSVERSION 7
 
 BEGIN_JS_STATIC_CONST(CJS_App)
@@ -198,6 +200,7 @@ FX_BOOL app::viewerVersion(IJS_Context* cc,
   if (!vp.IsGetting())
     return FALSE;
 
+#ifdef PDF_ENABLE_XFA
   CJS_Context* pContext = (CJS_Context*)cc;
   CPDFSDK_Document* pCurDoc = pContext->GetReaderDocument();
   CPDFXFA_Document* pDoc = pCurDoc->GetXFADocument();
@@ -206,6 +209,7 @@ FX_BOOL app::viewerVersion(IJS_Context* cc,
     return TRUE;
   }
 
+#endif
   vp << JS_NUM_VIEWERVERSION;
   return TRUE;
 }

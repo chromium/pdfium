@@ -7,23 +7,31 @@
 #ifndef FPDFSDK_INCLUDE_FSDK_DEFINE_H_
 #define FPDFSDK_INCLUDE_FSDK_DEFINE_H_
 
+#ifndef PDF_ENABLE_XFA
+#include "core/include/fpdfapi/fpdfapi.h"
+#else
 #include "../../xfa/include/fwl/adapter/fwl_adaptertimermgr.h"
 #include "../../xfa/include/fxbarcode/BC_BarCode.h"
 #include "../../xfa/include/fxfa/fxfa.h"
 #include "../../xfa/include/fxgraphics/fx_graphics.h"
 #include "../../xfa/include/fxjse/fxjse.h"
+#endif
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_pageobj.h"
 #include "core/include/fpdfapi/fpdf_parser.h"
 #include "core/include/fpdfapi/fpdf_render.h"
 #include "core/include/fpdfapi/fpdf_serial.h"
+#ifdef PDF_ENABLE_XFA
 #include "core/include/fpdfapi/fpdfapi.h"
+#endif
 #include "core/include/fpdfdoc/fpdf_doc.h"
 #include "core/include/fpdfdoc/fpdf_vt.h"
 #include "core/include/fxge/fx_ge.h"
 #include "core/include/fxge/fx_ge_win32.h"
+#ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/include/fpdfxfa/fpdfxfa_doc.h"
 #include "fpdfsdk/include/fpdfxfa/fpdfxfa_page.h"
+#endif
 #include "public/fpdfview.h"
 
 #ifdef _WIN32
@@ -55,12 +63,15 @@ class CPDF_CustomAccess final : public IFX_FileRead {
   void Release() override { delete this; }
   FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
 
+#ifdef PDF_ENABLE_XFA
   virtual CFX_ByteString GetFullPath() { return ""; }
   virtual FX_BOOL GetByte(FX_DWORD pos, uint8_t& ch);
   virtual FX_BOOL GetBlock(FX_DWORD pos, uint8_t* pBuf, FX_DWORD size);
 
+#endif
  private:
   FPDF_FILEACCESS m_FileAccess;
+#ifdef PDF_ENABLE_XFA
   uint8_t m_Buffer[512];
   FX_DWORD m_BufferOffset;
 };
@@ -87,13 +98,19 @@ class CFPDF_FileStream : public IFX_FileStream {
  protected:
   FPDF_FILEHANDLER* m_pFS;
   FX_FILESIZE m_nCurPos;
+#endif
 };
 
 // Object types for public FPDF_ types; these correspond to next layer down
 // from fpdfsdk. For master, these are CPDF_ types, but for XFA, these are
 // CPDFXFA_ types.
+#ifndef PDF_ENABLE_XFA
+using UnderlyingDocumentType = CPDF_Document;
+using UnderlyingPageType = CPDF_Page;
+#else
 using UnderlyingDocumentType = CPDFXFA_Document;
 using UnderlyingPageType = CPDFXFA_Page;
+#endif
 
 // Conversions to/from underlying types.
 UnderlyingDocumentType* UnderlyingFromFPDFDocument(FPDF_DOCUMENT doc);

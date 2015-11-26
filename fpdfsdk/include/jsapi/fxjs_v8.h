@@ -27,10 +27,12 @@ class CFXJS_ObjDefinition;
 class IJS_Context;  // A description of the event that caused JS execution.
 class IJS_Runtime;  // A native runtime, typically owns the v8::Context.
 
+#ifdef PDF_ENABLE_XFA
 // FXJS_V8 places no interpreation on this calass; it merely passes it
 // along to XFA.
 class CFXJSE_RuntimeData;
 
+#endif
 enum FXJSOBJTYPE {
   FXJSOBJTYPE_DYNAMIC = 0,  // Created by native method and returned to JS.
   FXJSOBJTYPE_STATIC,       // Created by init and hung off of global object.
@@ -49,10 +51,16 @@ class FXJS_PerIsolateData {
   static FXJS_PerIsolateData* Get(v8::Isolate* pIsolate);
 
   std::vector<CFXJS_ObjDefinition*> m_ObjectDefnArray;
+#ifdef PDF_ENABLE_XFA
   CFXJSE_RuntimeData* m_pFXJSERuntimeData;
+#endif
 
  protected:
+#ifndef PDF_ENABLE_XFA
+  FXJS_PerIsolateData() {}
+#else
   FXJS_PerIsolateData() : m_pFXJSERuntimeData(nullptr) {}
+#endif
 };
 
 extern const wchar_t kFXJSValueNameString[];
@@ -137,11 +145,13 @@ void FXJS_ReleaseRuntime(v8::Isolate* pIsolate,
                          std::vector<v8::Global<v8::Object>*>* pStaticObjects);
 IJS_Runtime* FXJS_GetRuntimeFromIsolate(v8::Isolate* pIsolate);
 
+#ifdef PDF_ENABLE_XFA
 // Called as part of FXJS_InitializeRuntime, exposed so PDF can make its
 // own contexts compatible with XFA or vice versa.
 void FXJS_SetRuntimeForV8Context(v8::Local<v8::Context> v8Context,
                                  IJS_Runtime* pIRuntime);
 
+#endif
 // Called after FXJS_InitializeRuntime call made.
 int FXJS_Execute(v8::Isolate* pIsolate,
                  IJS_Context* pJSContext,

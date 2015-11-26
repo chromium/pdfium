@@ -120,8 +120,10 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
   virtual FX_BOOL IsDataChanged(CPDFSDK_PageView* pPageView);
   virtual void SaveData(CPDFSDK_PageView* pPageView);
 
+#ifdef PDF_ENABLE_XFA
   virtual FX_BOOL IsFieldFull(CPDFSDK_PageView* pPageView);
 
+#endif
   CPWL_Wnd* GetPDFWindow(CPDFSDK_PageView* pPageView, FX_BOOL bNew);
   void DestroyPDFWindow(CPDFSDK_PageView* pPageView);
   void EscapeFiller(CPDFSDK_PageView* pPageView, FX_BOOL bDestroyPDFWindow);

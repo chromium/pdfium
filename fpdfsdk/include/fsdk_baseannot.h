@@ -16,7 +16,11 @@
 #include "core/include/fpdfdoc/fpdf_doc.h"
 #include "core/include/fxcrt/fx_basic.h"
 #include "fpdfsdk/include/fsdk_define.h"
+#ifndef PDF_ENABLE_XFA
+#include "fx_systemhandler.h"
+#else
 #include "fpdfsdk/include/fx_systemhandler.h"
+#endif
 
 class CPDFSDK_PageView;
 class CPDF_Annot;
@@ -72,15 +76,19 @@ class CPDFSDK_Annot {
   explicit CPDFSDK_Annot(CPDFSDK_PageView* pPageView);
   virtual ~CPDFSDK_Annot() {}
 
+#ifdef PDF_ENABLE_XFA
   virtual FX_BOOL IsXFAField() { return FALSE; }
 
+#endif
   virtual FX_FLOAT GetMinWidth() const;
   virtual FX_FLOAT GetMinHeight() const;
   // define layout order to 5.
   virtual int GetLayoutOrder() const { return 5; }
 
   virtual CPDF_Annot* GetPDFAnnot() const { return nullptr; }
+#ifdef PDF_ENABLE_XFA
   virtual IXFA_Widget* GetXFAWidget() const { return nullptr; }
+#endif
 
   virtual CFX_ByteString GetType() const { return ""; }
   virtual CFX_ByteString GetSubType() const { return ""; }
@@ -94,7 +102,9 @@ class CPDFSDK_Annot {
 
   UnderlyingPageType* GetUnderlyingPage();
   CPDF_Page* GetPDFPage();
+#ifdef PDF_ENABLE_XFA
   CPDFXFA_Page* GetPDFXFAPage();
+#endif
 
   void SetPage(CPDFSDK_PageView* pPageView) { m_pPageView = pPageView; }
   CPDFSDK_PageView* GetPageView() const { return m_pPageView; }
@@ -118,7 +128,9 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
   CPDFSDK_BAAnnot(CPDF_Annot* pAnnot, CPDFSDK_PageView* pPageView);
   ~CPDFSDK_BAAnnot() override {}
 
+#ifdef PDF_ENABLE_XFA
   FX_BOOL IsXFAField() override;
+#endif
   CFX_ByteString GetType() const override;
   CFX_ByteString GetSubType() const override;
   void SetRect(const CPDF_Rect& rect) override;

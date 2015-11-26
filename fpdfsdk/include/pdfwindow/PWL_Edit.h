@@ -33,6 +33,7 @@ class IPWL_Filler_Notify {
                                  FX_BOOL& bRC,
                                  FX_BOOL& bExit,
                                  FX_DWORD nFlag) = 0;
+#ifdef PDF_ENABLE_XFA
 
   virtual void OnPopupPreOpen(void* pPrivateData,
                               FX_BOOL& bExit,
@@ -40,6 +41,7 @@ class IPWL_Filler_Notify {
   virtual void OnPopupPostOpen(void* pPrivateData,
                                FX_BOOL& bExit,
                                FX_DWORD nFlag) = 0;
+#endif
 };
 
 class CPWL_Edit : public CPWL_EditCtrl, public IFX_Edit_OprNotify {

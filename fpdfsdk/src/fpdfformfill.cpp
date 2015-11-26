@@ -6,9 +6,11 @@
 
 #include "public/fpdf_formfill.h"
 
+#ifdef PDF_ENABLE_XFA
 #include "../include/fpdfxfa/fpdfxfa_app.h"
 #include "../include/fpdfxfa/fpdfxfa_doc.h"
 #include "../include/fpdfxfa/fpdfxfa_page.h"
+#endif
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
 #include "public/fpdfview.h"
@@ -45,6 +47,15 @@ DLLEXPORT int STDCALL FPDFPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
   if (!hHandle)
     return -1;
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+#ifndef PDF_ENABLE_XFA
+  if (!pPage)
+    return -1;
+  CPDF_InterForm interform(pPage->m_pDocument, FALSE);
+  CPDF_FormControl* pFormCtrl = interform.GetControlAtPoint(
+      pPage, (FX_FLOAT)page_x, (FX_FLOAT)page_y, nullptr);
+  if (!pFormCtrl)
+    return -1;
+#else
   if (pPage) {
     CPDF_InterForm interform(pPage->m_pDocument, FALSE);
     CPDF_FormControl* pFormCtrl = interform.GetControlAtPoint(
@@ -99,8 +110,14 @@ DLLEXPORT int STDCALL FPDFPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
 
     pWidgetIterator->Release();
   }
+#endif
 
+#ifndef PDF_ENABLE_XFA
+  CPDF_FormField* pFormField = pFormCtrl->GetField();
+  return pFormField ? pFormField->GetFieldType() : -1;
+#else
   return -1;
+#endif
 }
 
 DLLEXPORT int STDCALL FPDPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
@@ -129,7 +146,11 @@ DLLEXPORT int STDCALL FPDFPage_FormFieldZOrderAtPoint(FPDF_FORMHANDLE hHandle,
 DLLEXPORT FPDF_FORMHANDLE STDCALL
 FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
                                 FPDF_FORMFILLINFO* formInfo) {
+#ifndef PDF_ENABLE_XFA
+  const int kRequiredVersion = 1;
+#else
   const int kRequiredVersion = 2;
+#endif
   if (!formInfo || formInfo->version != kRequiredVersion)
     return nullptr;
 
@@ -138,10 +159,14 @@ FPDFDOC_InitFormFillEnvironment(FPDF_DOCUMENT document,
     return nullptr;
 
   CPDFDoc_Environment* pEnv = new CPDFDoc_Environment(pDocument, formInfo);
+#ifndef PDF_ENABLE_XFA
+  pEnv->SetSDKDocument(new CPDFSDK_Document(pDocument, pEnv));
+#else
   pEnv->SetSDKDocument(pDocument->GetSDKDocument(pEnv));
 
   CPDFXFA_App* pApp = CPDFXFA_App::GetInstance();
   pApp->AddFormFillEnv(pEnv);
+#endif
   return pEnv;
 }
 
@@ -149,9 +174,19 @@ DLLEXPORT void STDCALL
 FPDFDOC_ExitFormFillEnvironment(FPDF_FORMHANDLE hHandle) {
   if (!hHandle)
     return;
+#ifndef PDF_ENABLE_XFA
+
+  CPDFDoc_Environment* pEnv = (CPDFDoc_Environment*)hHandle;
+  if (CPDFSDK_Document* pSDKDoc = pEnv->GetSDKDocument()) {
+    pEnv->SetSDKDocument(NULL);
+    delete pSDKDoc;
+  }
+  delete pEnv;
+#else
   CPDFXFA_App* pApp = CPDFXFA_App::GetInstance();
   pApp->RemoveFormFillEnv((CPDFDoc_Environment*)hHandle);
   delete (CPDFDoc_Environment*)hHandle;
+#endif
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FORM_OnMouseMove(FPDF_FORMHANDLE hHandle,
@@ -193,6 +228,7 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_OnLButtonUp(FPDF_FORMHANDLE hHandle,
   return pPageView->OnLButtonUp(pt, modifier);
 }
 
+#ifdef PDF_ENABLE_XFA
 DLLEXPORT FPDF_BOOL STDCALL FORM_OnRButtonDown(FPDF_FORMHANDLE hHandle,
                                                FPDF_PAGE page,
                                                int modifier,
@@ -219,6 +255,7 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_OnRButtonUp(FPDF_FORMHANDLE hHandle,
   return pPageView->OnRButtonUp(pt, modifier);
 }
 
+#endif
 DLLEXPORT FPDF_BOOL STDCALL FORM_OnKeyDown(FPDF_FORMHANDLE hHandle,
                                            FPDF_PAGE page,
                                            int nKeyCode,
@@ -276,18 +313,40 @@ DLLEXPORT void STDCALL FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,
   if (!pPage)
     return;
 
+#ifndef PDF_ENABLE_XFA
+  CPDF_RenderOptions options;
+  if (flags & FPDF_LCD_TEXT)
+    options.m_Flags |= RENDER_CLEARTYPE;
+  else
+    options.m_Flags &= ~RENDER_CLEARTYPE;
+#else
   CPDFXFA_Document* pDocument = pPage->GetDocument();
   if (!pDocument)
     return;
+#endif
 
+#ifndef PDF_ENABLE_XFA
+  // Grayscale output
+  if (flags & FPDF_GRAYSCALE) {
+    options.m_ColorMode = RENDER_COLOR_GRAY;
+    options.m_ForeColor = 0;
+    options.m_BackColor = 0xffffff;
+  }
+#else
   CPDF_Document* pPDFDoc = pDocument->GetPDFDoc();
   if (!pPDFDoc)
     return;
+#endif
 
+#ifndef PDF_ENABLE_XFA
+  options.m_AddFlags = flags >> 8;
+  options.m_pOCContext = new CPDF_OCContext(pPage->m_pDocument);
+#else
   CPDFDoc_Environment* pEnv = (CPDFDoc_Environment*)hHandle;
   CPDFSDK_Document* pFXDoc = pEnv->GetSDKDocument();
   if (!pFXDoc)
     return;
+#endif
 
   CFX_AffineMatrix matrix;
   pPage->GetDisplayMatrix(matrix, start_x, start_y, size_x, size_y, rotate);
@@ -303,13 +362,19 @@ DLLEXPORT void STDCALL FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,
 #else
   nonstd::unique_ptr<CFX_FxgeDevice> pDevice(new CFX_FxgeDevice);
 #endif
+#ifdef PDF_ENABLE_XFA
 
   if (!pDevice)
     return;
+#endif
   pDevice->Attach((CFX_DIBitmap*)bitmap);
   pDevice->SaveState();
   pDevice->SetClip_Rect(&clip);
 
+#ifndef PDF_ENABLE_XFA
+  if (CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, pPage))
+    pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options);
+#else
   CPDF_RenderOptions options;
   if (flags & FPDF_LCD_TEXT)
     options.m_Flags |= RENDER_CLEARTYPE;
@@ -327,9 +392,11 @@ DLLEXPORT void STDCALL FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,
 
   if (CPDFSDK_PageView* pPageView = pFXDoc->GetPageView(pPage))
     pPageView->PageView_OnDraw(pDevice.get(), &matrix, &options, clip);
+#endif
 
   pDevice->RestoreState();
   delete options.m_pOCContext;
+#ifdef PDF_ENABLE_XFA
   options.m_pOCContext = NULL;
 }
 DLLEXPORT void STDCALL FPDF_Widget_Undo(FPDF_DOCUMENT document,
@@ -580,6 +647,7 @@ FPDF_StringHandleAddString(FPDF_STRINGHANDLE stringHandle,
 
   stringArr->Add(bsStr);
   return TRUE;
+#endif
 }
 
 DLLEXPORT void STDCALL FPDF_SetFormFieldHighlightColor(FPDF_FORMHANDLE hHandle,

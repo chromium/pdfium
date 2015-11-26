@@ -256,6 +256,7 @@ CPWL_Wnd* CFFL_ComboBox::ResetPDFWindow(CPDFSDK_PageView* pPageView,
   return pRet;
 }
 
+#ifdef PDF_ENABLE_XFA
 FX_BOOL CFFL_ComboBox::IsFieldFull(CPDFSDK_PageView* pPageView) {
   if (CPWL_ComboBox* pComboBox =
           static_cast<CPWL_ComboBox*>(GetPDFWindow(pPageView, FALSE))) {
@@ -265,6 +266,7 @@ FX_BOOL CFFL_ComboBox::IsFieldFull(CPDFSDK_PageView* pPageView) {
   return FALSE;
 }
 
+#endif
 void CFFL_ComboBox::OnSetFocus(CPWL_Wnd* pWnd) {
   ASSERT(m_pApp != NULL);
 

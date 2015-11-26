@@ -6,11 +6,13 @@
 
 #include "public/fpdfview.h"
 
+#ifdef PDF_ENABLE_XFA
 #include "../include/fpdfxfa/fpdfxfa_app.h"
 #include "../include/fpdfxfa/fpdfxfa_doc.h"
 #include "../include/fpdfxfa/fpdfxfa_page.h"
 #include "../include/fpdfxfa/fpdfxfa_util.h"
 #include "core/include/fpdfapi/fpdf_module.h"
+#endif
 #include "core/include/fxcodec/fx_codec.h"
 #include "core/include/fxcrt/fx_safe_types.h"
 #include "fpdfsdk/include/fsdk_define.h"
@@ -18,7 +20,9 @@
 #include "fpdfsdk/include/fsdk_rendercontext.h"
 #include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "public/fpdf_ext.h"
+#ifdef PDF_ENABLE_XFA
 #include "public/fpdf_formfill.h"
+#endif
 #include "public/fpdf_progressive.h"
 #include "third_party/base/nonstd_unique_ptr.h"
 #include "third_party/base/numerics/safe_conversions_impl.h"
@@ -36,16 +40,27 @@ UnderlyingPageType* UnderlyingFromFPDFPage(FPDF_PAGE page) {
 }
 
 CPDF_Document* CPDFDocumentFromFPDFDocument(FPDF_DOCUMENT doc) {
+#ifndef PDF_ENABLE_XFA
+  return UnderlyingFromFPDFDocument(doc);
+#else
   return doc ? UnderlyingFromFPDFDocument(doc)->GetPDFDoc() : nullptr;
+#endif
 }
 
 FPDF_DOCUMENT FPDFDocumentFromCPDFDocument(CPDF_Document* doc) {
+#ifndef PDF_ENABLE_XFA
+  return FPDFDocumentFromUnderlying(doc);
+#else
   return doc ? FPDFDocumentFromUnderlying(
                    new CPDFXFA_Document(doc, CPDFXFA_App::GetInstance()))
              : nullptr;
+#endif
 }
 
 CPDF_Page* CPDFPageFromFPDFPage(FPDF_PAGE page) {
+#ifndef PDF_ENABLE_XFA
+  return UnderlyingFromFPDFPage(page);
+#else
   return page ? UnderlyingFromFPDFPage(page)->GetPDFPage() : nullptr;
 }
 
@@ -126,10 +141,12 @@ FX_BOOL CFPDF_FileStream::Flush() {
     return TRUE;
 
   return m_pFS->Flush(m_pFS->clientData) == 0;
+#endif
 }
 
 CPDF_CustomAccess::CPDF_CustomAccess(FPDF_FILEACCESS* pFileAccess) {
   m_FileAccess = *pFileAccess;
+#ifdef PDF_ENABLE_XFA
   m_BufferOffset = (FX_DWORD)-1;
 }
 
@@ -157,6 +174,7 @@ FX_BOOL CPDF_CustomAccess::GetBlock(FX_DWORD pos,
   if (pos + size > m_FileAccess.m_FileLen)
     return FALSE;
   return m_FileAccess.m_GetBlock(m_FileAccess.m_Param, pos, pBuf, size);
+#endif
 }
 
 FX_BOOL CPDF_CustomAccess::ReadBlock(void* buffer,
@@ -218,13 +236,22 @@ DLLEXPORT void STDCALL FPDF_InitLibraryWithConfig(
   pModuleMgr->SetCodecModule(g_pCodecModule);
   pModuleMgr->InitPageModule();
   pModuleMgr->InitRenderModule();
+#ifndef PDF_ENABLE_XFA
+  pModuleMgr->LoadEmbeddedGB1CMaps();
+  pModuleMgr->LoadEmbeddedJapan1CMaps();
+  pModuleMgr->LoadEmbeddedCNS1CMaps();
+  pModuleMgr->LoadEmbeddedKorea1CMaps();
+#else
   CPDFXFA_App::GetInstance()->Initialize();
+#endif
   if (cfg && cfg->version >= 2)
     IJS_Runtime::Initialize(cfg->m_v8EmbedderSlot, cfg->m_pIsolate);
 }
 
 DLLEXPORT void STDCALL FPDF_DestroyLibrary() {
+#ifdef PDF_ENABLE_XFA
   CPDFXFA_App::ReleaseInstance();
+#endif
   CPDF_ModuleMgr::Destroy();
   CFX_GEModule::Destroy();
 
@@ -285,6 +312,9 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadDocument(FPDF_STRING file_path,
     ProcessParseError(err_code);
     return NULL;
   }
+#ifndef PDF_ENABLE_XFA
+  return pParser->GetDocument();
+#else
   CPDF_Document* pPDFDoc = pParser->GetDocument();
   if (!pPDFDoc)
     return NULL;
@@ -327,6 +357,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_HasXFAField(FPDF_DOCUMENT document,
 
 DLLEXPORT FPDF_BOOL STDCALL FPDF_LoadXFA(FPDF_DOCUMENT document) {
   return document && (static_cast<CPDFXFA_Document*>(document))->LoadXFADoc();
+#endif
 }
 
 class CMemFile final : public IFX_FileRead {
@@ -415,7 +446,11 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_GetFileVersion(FPDF_DOCUMENT doc,
 DLLEXPORT unsigned long STDCALL FPDF_GetDocPermissions(FPDF_DOCUMENT document) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
+#ifndef PDF_ENABLE_XFA
+    return 0;
+#else
     return (FX_DWORD)-1;
+#endif
 
   CPDF_Dictionary* pDict = pDoc->GetParser()->GetEncryptDict();
   return pDict ? pDict->GetInteger("P") : (FX_DWORD)-1;
@@ -444,7 +479,17 @@ DLLEXPORT FPDF_PAGE STDCALL FPDF_LoadPage(FPDF_DOCUMENT document,
   if (page_index < 0 || page_index >= pDoc->GetPageCount())
     return nullptr;
 
+#ifndef PDF_ENABLE_XFA
+  CPDF_Dictionary* pDict = pDoc->GetPage(page_index);
+  if (pDict == NULL)
+    return NULL;
+  CPDF_Page* pPage = new CPDF_Page;
+  pPage->Load(pDoc, pDict);
+  pPage->ParseContent();
+  return pPage;
+#else
   return pDoc->GetPage(page_index);
+#endif
 }
 
 DLLEXPORT double STDCALL FPDF_GetPageWidth(FPDF_PAGE page) {
@@ -669,13 +714,36 @@ DLLEXPORT void STDCALL FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
 DLLEXPORT void STDCALL FPDF_ClosePage(FPDF_PAGE page) {
   if (!page)
     return;
+#ifndef PDF_ENABLE_XFA
+  CPDFSDK_PageView* pPageView =
+      (CPDFSDK_PageView*)(((CPDF_Page*)page))->GetPrivateData((void*)page);
+  if (pPageView && pPageView->IsLocked()) {
+    pPageView->TakeOverPage();
+    return;
+  }
+  delete (CPDF_Page*)page;
+#else
 
   CPDFXFA_Page* pPage = (CPDFXFA_Page*)page;
   pPage->Release();
+#endif
 }
 
 DLLEXPORT void STDCALL FPDF_CloseDocument(FPDF_DOCUMENT document) {
+#ifndef PDF_ENABLE_XFA
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  if (!pDoc)
+    return;
+
+  CPDF_Parser* pParser = (CPDF_Parser*)pDoc->GetParser();
+  if (!pParser) {
+    delete pDoc;
+    return;
+  }
+  delete pParser;
+#else
   delete CPDFDocumentFromFPDFDocument(document);
+#endif
 }
 
 DLLEXPORT unsigned long STDCALL FPDF_GetLastError() {
@@ -695,8 +763,24 @@ DLLEXPORT void STDCALL FPDF_DeviceToPage(FPDF_PAGE page,
   if (page == NULL || page_x == NULL || page_y == NULL)
     return;
   UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
+#ifndef PDF_ENABLE_XFA
+
+  CPDF_Matrix page2device;
+  pPage->GetDisplayMatrix(page2device, start_x, start_y, size_x, size_y,
+                          rotate);
+  CPDF_Matrix device2page;
+  device2page.SetReverse(page2device);
+
+  FX_FLOAT page_x_f, page_y_f;
+  device2page.Transform((FX_FLOAT)(device_x), (FX_FLOAT)(device_y), page_x_f,
+                        page_y_f);
+
+  *page_x = (page_x_f);
+  *page_y = (page_y_f);
+#else
   pPage->DeviceToPage(start_x, start_y, size_x, size_y, rotate, device_x,
                       device_y, page_x, page_y);
+#endif
 }
 
 DLLEXPORT void STDCALL FPDF_PageToDevice(FPDF_PAGE page,
@@ -714,8 +798,21 @@ DLLEXPORT void STDCALL FPDF_PageToDevice(FPDF_PAGE page,
   UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
   if (!pPage)
     return;
+#ifndef PDF_ENABLE_XFA
+  CPDF_Matrix page2device;
+  pPage->GetDisplayMatrix(page2device, start_x, start_y, size_x, size_y,
+                          rotate);
+
+  FX_FLOAT device_x_f, device_y_f;
+  page2device.Transform(((FX_FLOAT)page_x), ((FX_FLOAT)page_y), device_x_f,
+                        device_y_f);
+
+  *device_x = FXSYS_round(device_x_f);
+  *device_y = FXSYS_round(device_y_f);
+#else
   pPage->PageToDevice(start_x, start_y, size_x, size_y, rotate, page_x, page_y,
                       device_x, device_y);
+#endif
 }
 
 DLLEXPORT FPDF_BITMAP STDCALL FPDFBitmap_Create(int width,
@@ -830,6 +927,14 @@ void FPDF_RenderPage_Retail(CRenderContext* pContext,
     pContext->m_pOptions->m_Flags |= RENDER_LIMITEDIMAGECACHE;
   if (flags & FPDF_RENDER_FORCEHALFTONE)
     pContext->m_pOptions->m_Flags |= RENDER_FORCE_HALFTONE;
+#ifndef PDF_ENABLE_XFA
+  if (flags & FPDF_RENDER_NO_SMOOTHTEXT)
+    pContext->m_pOptions->m_Flags |= RENDER_NOTEXTSMOOTH;
+  if (flags & FPDF_RENDER_NO_SMOOTHIMAGE)
+    pContext->m_pOptions->m_Flags |= RENDER_NOIMAGESMOOTH;
+  if (flags & FPDF_RENDER_NO_SMOOTHPATH)
+    pContext->m_pOptions->m_Flags |= RENDER_NOPATHSMOOTH;
+#endif
   // Grayscale output
   if (flags & FPDF_GRAYSCALE) {
     pContext->m_pOptions->m_ColorMode = RENDER_COLOR_GRAY;
@@ -879,16 +984,28 @@ DLLEXPORT int STDCALL FPDF_GetPageSizeByIndex(FPDF_DOCUMENT document,
   if (!pDoc)
     return FALSE;
 
+#ifndef PDF_ENABLE_XFA
+  CPDF_Dictionary* pDict = pDoc->GetPage(page_index);
+  if (!pDict)
+#else
   int count = pDoc->GetPageCount();
   if (page_index < 0 || page_index >= count)
     return FALSE;
 
   CPDFXFA_Page* pPage = pDoc->GetPage(page_index);
   if (!pPage)
+#endif
     return FALSE;
 
+#ifndef PDF_ENABLE_XFA
+  CPDF_Page page;
+  page.Load(pDoc, pDict);
+  *width = page.GetPageWidth();
+  *height = page.GetPageHeight();
+#else
   *width = pPage->GetPageWidth();
   *height = pPage->GetPageHeight();
+#endif
 
   return TRUE;
 }
@@ -965,6 +1082,7 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDestByName(FPDF_DOCUMENT document,
   return name_tree.LookupNamedDest(pDoc, name);
 }
 
+#ifdef PDF_ENABLE_XFA
 FPDF_RESULT FPDF_BStr_Init(FPDF_BSTR* str) {
   if (!str)
     return -1;
@@ -1017,6 +1135,7 @@ FPDF_RESULT FPDF_BStr_Clear(FPDF_BSTR* str) {
   return 0;
 }
 
+#endif
 DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document,
                                               int index,
                                               void* buffer,

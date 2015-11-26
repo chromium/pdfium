@@ -562,10 +562,12 @@ FX_BOOL CFFL_FormFiller::IsDataChanged(CPDFSDK_PageView* pPageView) {
 
 void CFFL_FormFiller::SaveData(CPDFSDK_PageView* pPageView) {}
 
+#ifdef PDF_ENABLE_XFA
 FX_BOOL CFFL_FormFiller::IsFieldFull(CPDFSDK_PageView* pPageView) {
   return FALSE;
 }
 
+#endif
 void CFFL_FormFiller::SetChangeMark() {
   m_pApp->FFI_OnChange();
 }

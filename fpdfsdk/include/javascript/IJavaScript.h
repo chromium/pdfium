@@ -7,7 +7,9 @@
 #ifndef FPDFSDK_INCLUDE_JAVASCRIPT_IJAVASCRIPT_H_
 #define FPDFSDK_INCLUDE_JAVASCRIPT_IJAVASCRIPT_H_
 
+#ifdef PDF_ENABLE_XFA
 #include "../../../xfa/include/fxjse/fxjse.h"
+#endif
 #include "core/include/fxcrt/fx_string.h"
 #include "core/include/fxcrt/fx_system.h"
 
@@ -149,11 +151,13 @@ class IJS_Runtime {
                       const wchar_t* script,
                       CFX_WideString* info) = 0;
 
+#ifdef PDF_ENABLE_XFA
   virtual FX_BOOL GetHValueByName(const CFX_ByteStringC& utf8Name,
                                   FXJSE_HVALUE hValue) = 0;
   virtual FX_BOOL SetHValueByName(const CFX_ByteStringC& utf8Name,
                                   FXJSE_HVALUE hValue) = 0;
 
+#endif
  protected:
   IJS_Runtime() {}
 };

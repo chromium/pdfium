@@ -12,8 +12,10 @@
 
 #include "core/include/fxcrt/fx_basic.h"
 
+#ifdef PDF_ENABLE_XFA
 #define FSDK_XFAWIDGET_TYPENAME "XFAWidget"
 
+#endif
 class CFFL_IFormFiller;
 class CFX_RenderDevice;
 class CPDFDoc_Environment;
@@ -37,9 +39,11 @@ class IPDFSDK_AnnotHandler {
   virtual CPDFSDK_Annot* NewAnnot(CPDF_Annot* pAnnot,
                                   CPDFSDK_PageView* pPage) = 0;
 
+#ifdef PDF_ENABLE_XFA
   virtual CPDFSDK_Annot* NewAnnot(IXFA_Widget* hWidget,
                                   CPDFSDK_PageView* pPage) = 0;
 
+#endif
   virtual void ReleaseAnnot(CPDFSDK_Annot* pAnnot) = 0;
 
   virtual void DeleteAnnot(CPDFSDK_Annot* pAnnot) = 0;
@@ -124,8 +128,10 @@ class IPDFSDK_AnnotHandler {
 
   virtual FX_BOOL OnSetFocus(CPDFSDK_Annot* pAnnot, FX_DWORD nFlag) = 0;
   virtual FX_BOOL OnKillFocus(CPDFSDK_Annot* pAnnot, FX_DWORD nFlag) = 0;
+#ifdef PDF_ENABLE_XFA
   virtual FX_BOOL OnXFAChangedFocus(CPDFSDK_Annot* pOldAnnot,
                                     CPDFSDK_Annot* pNewAnnot) = 0;
+#endif
 };
 
 class CPDFSDK_BFAnnotHandler : public IPDFSDK_AnnotHandler {
@@ -139,8 +145,10 @@ class CPDFSDK_BFAnnotHandler : public IPDFSDK_AnnotHandler {
   CFX_ByteString GetName() override { return CFX_ByteString("WidgetHandler"); }
   FX_BOOL CanAnswer(CPDFSDK_Annot* pAnnot) override;
   CPDFSDK_Annot* NewAnnot(CPDF_Annot* pAnnot, CPDFSDK_PageView* pPage) override;
+#ifdef PDF_ENABLE_XFA
   CPDFSDK_Annot* NewAnnot(IXFA_Widget* hWidget,
                           CPDFSDK_PageView* pPage) override;
+#endif
   void ReleaseAnnot(CPDFSDK_Annot* pAnnot) override;
   void DeleteAnnot(CPDFSDK_Annot* pAnnot) override {}
   CPDF_Rect GetViewBBox(CPDFSDK_PageView* pPageView,
@@ -213,10 +221,12 @@ class CPDFSDK_BFAnnotHandler : public IPDFSDK_AnnotHandler {
   void OnSelected(CPDFSDK_Annot* pAnnot) override {}
   FX_BOOL OnSetFocus(CPDFSDK_Annot* pAnnot, FX_DWORD nFlag) override;
   FX_BOOL OnKillFocus(CPDFSDK_Annot* pAnnot, FX_DWORD nFlag) override;
+#ifdef PDF_ENABLE_XFA
   FX_BOOL OnXFAChangedFocus(CPDFSDK_Annot* pOldAnnot,
                             CPDFSDK_Annot* pNewAnnot) override {
     return TRUE;
   }
+#endif
 
   void SetFormFiller(CFFL_IFormFiller* pFiller) { m_pFormFiller = pFiller; }
   CFFL_IFormFiller* GetFormFiller() { return m_pFormFiller; }
@@ -226,6 +236,7 @@ class CPDFSDK_BFAnnotHandler : public IPDFSDK_AnnotHandler {
   CFFL_IFormFiller* m_pFormFiller;
 };
 
+#ifdef PDF_ENABLE_XFA
 class CPDFSDK_XFAAnnotHandler : public IPDFSDK_AnnotHandler {
  public:
   explicit CPDFSDK_XFAAnnotHandler(CPDFDoc_Environment* pApp);
@@ -339,6 +350,7 @@ class CPDFSDK_XFAAnnotHandler : public IPDFSDK_AnnotHandler {
   CPDFDoc_Environment* m_pApp;
 };
 
+#endif
 #define CBA_AnnotHandlerArray CFX_ArrayTemplate<IPDFSDK_AnnotHandler*>
 class CPDFSDK_AnnotHandlerMgr {
  public:
@@ -352,8 +364,10 @@ class CPDFSDK_AnnotHandlerMgr {
 
   virtual CPDFSDK_Annot* NewAnnot(CPDF_Annot* pAnnot,
                                   CPDFSDK_PageView* pPageView);
+#ifdef PDF_ENABLE_XFA
   virtual CPDFSDK_Annot* NewAnnot(IXFA_Widget* pAnnot,
                                   CPDFSDK_PageView* pPageView);
+#endif
   virtual void ReleaseAnnot(CPDFSDK_Annot* pAnnot);
 
   virtual void Annot_OnCreate(CPDFSDK_Annot* pAnnot);
@@ -415,8 +429,10 @@ class CPDFSDK_AnnotHandlerMgr {
 
   virtual FX_BOOL Annot_OnSetFocus(CPDFSDK_Annot* pAnnot, FX_DWORD nFlag);
   virtual FX_BOOL Annot_OnKillFocus(CPDFSDK_Annot* pAnnot, FX_DWORD nFlag);
+#ifdef PDF_ENABLE_XFA
   virtual FX_BOOL Annot_OnChangeFocus(CPDFSDK_Annot* pSetAnnot,
                                       CPDFSDK_Annot* pKillAnnot);
+#endif
 
   virtual CPDF_Rect Annot_OnGetViewBBox(CPDFSDK_PageView* pPageView,
                                         CPDFSDK_Annot* pAnnot);

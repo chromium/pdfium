@@ -10,8 +10,10 @@
 #include <map>
 
 #include "core/include/fpdftext/fpdf_text.h"
+#ifdef PDF_ENABLE_XFA
 #include "fpdfxfa/fpdfxfa_doc.h"
 #include "fpdfxfa/fpdfxfa_page.h"
+#endif
 #include "fsdk_actionhandler.h"
 #include "fsdk_annothandler.h"
 #include "fsdk_baseannot.h"
@@ -38,12 +40,14 @@ class CPDFDoc_Environment final {
   CPDFDoc_Environment(UnderlyingDocumentType* pDoc, FPDF_FORMFILLINFO* pFFinfo);
   ~CPDFDoc_Environment();
 
+#ifdef PDF_ENABLE_XFA
   void Release() {
     if (m_pInfo && m_pInfo->Release)
       m_pInfo->Release(m_pInfo);
     delete this;
   }
 
+#endif
   void FFI_Invalidate(FPDF_PAGE page,
                       double left,
                       double top,
@@ -208,6 +212,7 @@ class CPDFDoc_Environment final {
                                 sizeOfArray);
   }
 
+#ifdef PDF_ENABLE_XFA
   void FFI_DisplayCaret(FPDF_PAGE page,
                         FPDF_BOOL bVisible,
                         double left,
@@ -446,6 +451,7 @@ class CPDFDoc_Environment final {
     return L"";
   }
 
+#endif
   FX_BOOL IsJSInitiated() const { return m_pInfo && m_pInfo->m_pJsPlatform; }
   void SetSDKDocument(CPDFSDK_Document* pFXDoc) { m_pSDKDoc = pFXDoc; }
   CPDFSDK_Document* GetSDKDocument() const { return m_pSDKDoc; }
@@ -482,19 +488,29 @@ class CPDFSDK_Document {
   // Gets the document object for the next layer down; for master this is
   // a CPDF_Document, but for XFA it is a CPDFXFA_Document.
   UnderlyingDocumentType* GetUnderlyingDocument() const {
+#ifndef PDF_ENABLE_XFA
+    return GetPDFDocument();
+#else
     return GetXFADocument();
+#endif
   }
 
   // Gets the CPDF_Document, either directly in master, or from the
   // CPDFXFA_Document for XFA.
+#ifndef PDF_ENABLE_XFA
+  CPDF_Document* GetPDFDocument() const { return m_pDoc; }
+#else
   CPDF_Document* GetPDFDocument() const {
     return m_pDoc ? m_pDoc->GetPDFDoc() : nullptr;
   }
 
   // Gets the XFA document directly (XFA-only).
   CPDFXFA_Document* GetXFADocument() const { return m_pDoc; }
+#endif
 
+#ifdef PDF_ENABLE_XFA
   int GetPageViewCount() const { return m_pageMap.size(); }
+#endif
   CPDFSDK_PageView* GetPageView(UnderlyingPageType* pPage,
                                 FX_BOOL ReNew = TRUE);
   CPDFSDK_PageView* GetPageView(int nIndex);
@@ -548,8 +564,12 @@ class CPDFSDK_PageView final {
   ~CPDFSDK_PageView();
   void PageView_OnDraw(CFX_RenderDevice* pDevice,
                        CPDF_Matrix* pUser2Device,
+#ifndef PDF_ENABLE_XFA
+                       CPDF_RenderOptions* pOptions);
+#else
                        CPDF_RenderOptions* pOptions,
                        const FX_RECT& pClip);
+#endif
   const CPDF_Annot* GetPDFAnnotAtPoint(FX_FLOAT pageX, FX_FLOAT pageY);
   CPDFSDK_Annot* GetFXAnnotAtPoint(FX_FLOAT pageX, FX_FLOAT pageY);
   const CPDF_Annot* GetPDFWidgetAtPoint(FX_FLOAT pageX, FX_FLOAT pageY);
@@ -567,20 +587,28 @@ class CPDFSDK_PageView final {
   CPDFSDK_Annot* AddAnnot(CPDF_Dictionary* pDict);
   CPDFSDK_Annot* AddAnnot(const FX_CHAR* lpSubType, CPDF_Dictionary* pDict);
   CPDFSDK_Annot* AddAnnot(CPDF_Annot* pPDFAnnot);
+#ifdef PDF_ENABLE_XFA
   CPDFSDK_Annot* AddAnnot(IXFA_Widget* pPDFAnnot);
+#endif
   FX_BOOL DeleteAnnot(CPDFSDK_Annot* pAnnot);
   size_t CountAnnots() const;
   CPDFSDK_Annot* GetAnnot(size_t nIndex);
   CPDFSDK_Annot* GetAnnotByDict(CPDF_Dictionary* pDict);
+#ifndef PDF_ENABLE_XFA
+  CPDF_Page* GetPDFPage() { return m_page; }
+#else
   CPDFSDK_Annot* GetAnnotByXFAWidget(IXFA_Widget* hWidget);
   CPDFXFA_Page* GetPDFXFAPage() { return m_page; }
   CPDF_Page* GetPDFPage();
+#endif
   CPDF_Document* GetPDFDocument();
   CPDFSDK_Document* GetSDKDocument() { return m_pSDKDoc; }
   FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_UINT nFlag);
   FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_UINT nFlag);
+#ifdef PDF_ENABLE_XFA
   FX_BOOL OnRButtonDown(const CPDF_Point& point, FX_UINT nFlag);
   FX_BOOL OnRButtonUp(const CPDF_Point& point, FX_UINT nFlag);
+#endif
   FX_BOOL OnChar(int nChar, FX_UINT nFlag);
   FX_BOOL OnKeyDown(int nKeyCode, int nFlag);
   FX_BOOL OnKeyUp(int nKeyCode, int nFlag);
@@ -604,6 +632,9 @@ class CPDFSDK_PageView final {
   FX_BOOL IsValid() { return m_bValid; }
   void SetLock(FX_BOOL bLocked) { m_bLocked = bLocked; }
   FX_BOOL IsLocked() { return m_bLocked; }
+#ifndef PDF_ENABLE_XFA
+  void TakeOverPage() { m_bTakeOverPage = TRUE; }
+#endif
 
  private:
   void PageView_OnHighlightFormFields(CFX_RenderDevice* pDevice,
@@ -614,12 +645,19 @@ class CPDFSDK_PageView final {
   nonstd::unique_ptr<CPDF_AnnotList> m_pAnnotList;
   std::vector<CPDFSDK_Annot*> m_fxAnnotArray;
   CPDFSDK_Document* m_pSDKDoc;
+#ifndef PDF_ENABLE_XFA
+  CPDFSDK_Widget* m_CaptureWidget;
+#else
   CPDFSDK_Annot* m_CaptureWidget;
+#endif
   FX_BOOL m_bEnterWidget;
   FX_BOOL m_bExitWidget;
   FX_BOOL m_bOnWidget;
   FX_BOOL m_bValid;
   FX_BOOL m_bLocked;
+#ifndef PDF_ENABLE_XFA
+  FX_BOOL m_bTakeOverPage;
+#endif
 };
 
 template <class TYPE>

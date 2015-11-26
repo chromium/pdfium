@@ -277,10 +277,12 @@ FX_BOOL CFFL_IFormFiller::OnLButtonUp(CPDFSDK_PageView* pPageView,
     OnButtonUp(pWidget, pPageView, bReset, bExit, nFlags);
     if (bExit)
       return TRUE;
+#ifdef PDF_ENABLE_XFA
 
     OnClick(pWidget, pPageView, bReset, bExit, nFlags);
     if (bExit)
       return TRUE;
+#endif
   }
   return bRet;
 }
@@ -796,6 +798,7 @@ void CFFL_IFormFiller::OnFormat(CPDFSDK_Widget* pWidget,
   }
 }
 
+#ifdef PDF_ENABLE_XFA
 void CFFL_IFormFiller::OnClick(CPDFSDK_Widget* pWidget,
                                CPDFSDK_PageView* pPageView,
                                FX_BOOL& bReset,
@@ -978,6 +981,7 @@ void CFFL_IFormFiller::OnPostOpen(CPDFSDK_Widget* pWidget,
   }
 }
 
+#endif
 FX_BOOL CFFL_IFormFiller::IsValidAnnot(CPDFSDK_PageView* pPageView,
                                        CPDFSDK_Annot* pAnnot) {
   if (pPageView)
@@ -1002,6 +1006,7 @@ void CFFL_IFormFiller::OnBeforeKeyStroke(void* pPrivateData,
   CFFL_FormFiller* pFormFiller = GetFormFiller(pData->pWidget, FALSE);
   ASSERT(pFormFiller != NULL);
 
+#ifdef PDF_ENABLE_XFA
   if (pFormFiller->IsFieldFull(pData->pPageView)) {
     FX_BOOL bFullExit = FALSE;
     FX_BOOL bFullReset = FALSE;
@@ -1013,6 +1018,7 @@ void CFFL_IFormFiller::OnBeforeKeyStroke(void* pPrivateData,
     }
   }
 
+#endif
   if (!m_bNotifying) {
     if (pData->pWidget->GetAAction(CPDF_AAction::KeyStroke)) {
       m_bNotifying = TRUE;
