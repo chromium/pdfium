@@ -422,7 +422,8 @@ void CFPF_SkiaFontMgr::ScanPath(const CFX_ByteStringC& path) {
     } else {
       CFX_ByteString ext = filename.Right(4);
       ext.MakeLower();
-      if (ext != FX_BSTRC(".ttf") && ext != FX_BSTRC(".ttc")) {
+      if (ext != FX_BSTRC(".ttf") && ext != FX_BSTRC(".ttc") &&
+          ext != FX_BSTRC(".otf")) {
         continue;
       }
     }
