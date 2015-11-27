@@ -72,7 +72,7 @@ class CFX_GEFont : public IFX_Font, public CFX_ThreadLock {
   FX_WORD m_wCharSet;
   CFX_PtrArray m_SubstFonts;
   CFX_MapPtrToPtr m_FontMapper;
-  void InitFont();
+  FX_BOOL InitFont();
   FX_BOOL GetCharBBox(FX_WCHAR wUnicode,
                       CFX_Rect& bbox,
                       FX_BOOL bRecursive,

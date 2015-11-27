@@ -189,7 +189,7 @@ IFX_Font* CFX_GEFont::Retain() {
 FX_BOOL CFX_GEFont::LoadFont(const FX_WCHAR* pszFontFamily,
                              FX_DWORD dwFontStyles,
                              FX_WORD wCodePage) {
-  if (m_pFont != NULL) {
+  if (m_pFont) {
     return FALSE;
   }
   Lock();
@@ -237,33 +237,27 @@ FX_BOOL CFX_GEFont::LoadFont(const FX_WCHAR* pszFontFamily,
   m_pFont->LoadSubst(csFontFamily, TRUE, dwFlags, iWeight, 0, wCodePage);
   FX_BOOL bRet = m_pFont->GetFace() != nullptr;
   if (bRet) {
-    InitFont();
+    bRet = InitFont();
   }
   Unlock();
   return bRet;
 }
 FX_BOOL CFX_GEFont::LoadFont(const uint8_t* pBuffer, int32_t length) {
-  if (m_pFont != NULL) {
+  if (m_pFont) {
     return FALSE;
   }
   Lock();
   m_pFont = new CFX_Font;
   FX_BOOL bRet = m_pFont->LoadEmbedded(pBuffer, length);
   if (bRet) {
-    InitFont();
+    bRet = InitFont();
   }
   m_wCharSet = 0xFFFF;
   Unlock();
   return bRet;
 }
 FX_BOOL CFX_GEFont::LoadFont(const FX_WCHAR* pszFileName) {
-  if (m_pFont != NULL) {
-    return FALSE;
-  }
-  if (m_pStream != NULL) {
-    return FALSE;
-  }
-  if (m_pFileRead != NULL) {
+  if (m_pFont || m_pStream || m_pFileRead) {
     return FALSE;
   }
   Lock();
@@ -271,14 +265,14 @@ FX_BOOL CFX_GEFont::LoadFont(const FX_WCHAR* pszFileName) {
       pszFileName, FX_STREAMACCESS_Binary | FX_STREAMACCESS_Read);
   m_pFileRead = FX_CreateFileRead(m_pStream);
   FX_BOOL bRet = FALSE;
-  if (m_pStream != NULL && m_pFileRead != NULL) {
+  if (m_pStream && m_pFileRead) {
     m_pFont = new CFX_Font;
     bRet = m_pFont->LoadFile(m_pFileRead);
-    if (!bRet) {
-      m_pFileRead->Release();
-      m_pFileRead = NULL;
+    if (bRet) {
+      bRet = InitFont();
     } else {
-      InitFont();
+      m_pFileRead->Release();
+      m_pFileRead = nullptr;
     }
   }
   m_wCharSet = 0xFFFF;
@@ -286,13 +280,7 @@ FX_BOOL CFX_GEFont::LoadFont(const FX_WCHAR* pszFileName) {
   return bRet;
 }
 FX_BOOL CFX_GEFont::LoadFont(IFX_Stream* pFontStream, FX_BOOL bSaveStream) {
-  if (m_pFont != NULL) {
-    return FALSE;
-  }
-  if (pFontStream == NULL || pFontStream->GetLength() < 1) {
-    return FALSE;
-  }
-  if (m_pFileRead != NULL) {
+  if (m_pFont || m_pFileRead || !pFontStream || pFontStream->GetLength() < 1) {
     return FALSE;
   }
   Lock();
@@ -302,50 +290,53 @@ FX_BOOL CFX_GEFont::LoadFont(IFX_Stream* pFontStream, FX_BOOL bSaveStream) {
   m_pFileRead = FX_CreateFileRead(pFontStream);
   m_pFont = new CFX_Font;
   FX_BOOL bRet = m_pFont->LoadFile(m_pFileRead);
-  if (!bRet) {
-    m_pFileRead->Release();
-    m_pFileRead = NULL;
+  if (bRet) {
+    bRet = InitFont();
   } else {
-    InitFont();
+    m_pFileRead->Release();
+    m_pFileRead = nullptr;
   }
   m_wCharSet = 0xFFFF;
   Unlock();
   return bRet;
 }
 FX_BOOL CFX_GEFont::LoadFont(CFX_Font* pExtFont, FX_BOOL bTakeOver) {
-  if (m_pFont != NULL) {
-    return FALSE;
-  }
-  if (pExtFont == NULL) {
+  if (m_pFont || !pExtFont) {
     return FALSE;
   }
   Lock();
-  if ((m_pFont = pExtFont) != NULL) {
+  m_pFont = pExtFont;
+  FX_BOOL bRet = !!m_pFont;
+  if (bRet) {
     m_bExtFont = !bTakeOver;
-    InitFont();
+    bRet = InitFont();
   } else {
     m_bExtFont = TRUE;
   }
   m_wCharSet = 0xFFFF;
   Unlock();
-  return m_pFont != NULL;
+  return bRet;
 }
-void CFX_GEFont::InitFont() {
-  if (m_pFont == NULL) {
-    return;
+FX_BOOL CFX_GEFont::InitFont() {
+  if (!m_pFont) {
+    return FALSE;
   }
-  if (m_pFontEncoding == NULL) {
+  if (!m_pFontEncoding) {
     m_pFontEncoding = FX_CreateFontEncodingEx(m_pFont);
+    if (!m_pFontEncoding) {
+      return FALSE;
+    }
   }
-  if (m_pCharWidthMap == NULL) {
+  if (!m_pCharWidthMap) {
     m_pCharWidthMap = new CFX_WordDiscreteArray(1024);
   }
-  if (m_pRectArray == NULL) {
+  if (!m_pRectArray) {
     m_pRectArray = new CFX_RectMassArray(16);
   }
-  if (m_pBBoxMap == NULL) {
+  if (!m_pBBoxMap) {
     m_pBBoxMap = new CFX_MapPtrToPtr(16);
   }
+  return TRUE;
 }
 IFX_Font* CFX_GEFont::Derive(FX_DWORD dwFontStyles, FX_WORD wCodePage) {
   if (GetFontStyles() == dwFontStyles) {
