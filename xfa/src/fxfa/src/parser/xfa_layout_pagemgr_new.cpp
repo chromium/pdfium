@@ -603,10 +603,9 @@ int32_t CXFA_LayoutPageMgr::GetPageCount() const {
   return m_PageArray.GetSize();
 }
 IXFA_LayoutPage* CXFA_LayoutPageMgr::GetPage(int32_t index) const {
-  if (m_PageArray.GetSize() > index) {
-    return m_PageArray[index];
-  }
-  return NULL;
+  if (index < 0 || index >= m_PageArray.GetSize())
+    return nullptr;
+  return m_PageArray[index];
 }
 int32_t CXFA_LayoutPageMgr::GetPageIndex(const IXFA_LayoutPage* pPage) const {
   // FIXME: Find() method should take const.
