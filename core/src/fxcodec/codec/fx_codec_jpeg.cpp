@@ -480,9 +480,12 @@ FX_BOOL CCodec_JpegDecoder::v_Rewind() {
   return TRUE;
 }
 uint8_t* CCodec_JpegDecoder::v_GetNextLine() {
+  if (setjmp(m_JmpBuf) == -1)
+    return nullptr;
+
   int nlines = jpeg_read_scanlines(&cinfo, &m_pScanlineBuf, 1);
   if (nlines < 1) {
-    return NULL;
+    return nullptr;
   }
   return m_pScanlineBuf;
 }
