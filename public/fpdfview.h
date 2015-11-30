@@ -14,41 +14,48 @@
 #include <windows.h>
 #endif
 
+#ifdef PDF_ENABLE_XFA
 //  TODO: remove the #define when XFA is officially in pdfium
 #define PDF_USE_XFA
-
-// Data types
-typedef void* FPDF_MODULEMGR;
+#endif  // PDF_ENABLE_XFA
 
 // PDF types
-typedef void* FPDF_DOCUMENT;
-typedef void* FPDF_PAGE;
-typedef void* FPDF_WIDGET;
-typedef void* FPDF_STRINGHANDLE;
-typedef void* FPDF_PAGEOBJECT;  // Page object(text, path, etc)
-typedef void* FPDF_PATH;
-typedef void* FPDF_CLIPPATH;
-typedef void* FPDF_BITMAP;
-typedef void* FPDF_FONT;
-typedef void* FPDF_TEXTPAGE;
-typedef void* FPDF_SCHHANDLE;
-typedef void* FPDF_PAGELINK;
-typedef void* FPDF_HMODULE;
-typedef void* FPDF_DOCSCHHANDLE;
-typedef void* FPDF_BOOKMARK;
-typedef void* FPDF_DEST;
 typedef void* FPDF_ACTION;
+typedef void* FPDF_BITMAP;
+typedef void* FPDF_BOOKMARK;
+typedef void* FPDF_CLIPPATH;
+typedef void* FPDF_DEST;
+typedef void* FPDF_DOCSCHHANDLE;
+typedef void* FPDF_DOCUMENT;
+typedef void* FPDF_FONT;
+typedef void* FPDF_HMODULE;
 typedef void* FPDF_LINK;
+typedef void* FPDF_MODULEMGR;
+typedef void* FPDF_PAGE;
+typedef void* FPDF_PAGELINK;
+typedef void* FPDF_PAGEOBJECT;  // Page object(text, path, etc)
 typedef void* FPDF_PAGERANGE;
+typedef void* FPDF_PATH;
+typedef void* FPDF_SCHHANDLE;
+typedef void* FPDF_TEXTPAGE;
+
+#ifdef PDF_ENABLE_XFA
+typedef void* FPDF_STRINGHANDLE;
+typedef void* FPDF_WIDGET;
+#endif  // PDF_ENABLE_XFA
 
 // Basic data types
-typedef void* FPDF_LPVOID;
-typedef void const* FPDF_LPCVOID;
-typedef int FPDF_RESULT;
 typedef int FPDF_BOOL;
 typedef int FPDF_ERROR;
 typedef unsigned long FPDF_DWORD;
 typedef float FS_FLOAT;
+
+#ifdef PDF_ENABLE_XFA
+typedef void* FPDF_LPVOID;
+typedef void const* FPDF_LPCVOID;
+typedef char const* FPDF_LPCSTR;
+typedef int FPDF_RESULT;
+#endif
 
 // Duplex types
 typedef enum _FPDF_DUPLEXTYPE_ {
@@ -61,7 +68,6 @@ typedef enum _FPDF_DUPLEXTYPE_ {
 // String types
 typedef unsigned short FPDF_WCHAR;
 typedef unsigned char const* FPDF_LPCBYTE;
-typedef char const* FPDF_LPCSTR;
 
 // FPDFSDK may use three types of strings: byte string, wide string (UTF-16LE
 // encoded), and platform dependent string
@@ -71,8 +77,7 @@ typedef const char* FPDF_BYTESTRING;
 // bytes (except surrogation), with the low byte first.
 typedef const unsigned short* FPDF_WIDESTRING;
 
-#ifndef _FPDF_DEF_STR_
-#define _FPDF_DEF_STR_
+#ifdef PDF_ENABLE_XFA
 // Structure for a byte string.
 // Note, a byte string commonly means a UTF-16LE formated string.
 typedef struct _FPDF_BSTR {
@@ -81,8 +86,7 @@ typedef struct _FPDF_BSTR {
   // Length of the string, in bytes.
   int len;
 } FPDF_BSTR;
-
-#endif
+#endif  // PDF_ENABLE_XFA
 
 // For Windows programmers: In most cases it's OK to treat FPDF_WIDESTRING as a
 // Windows unicode string, however, special care needs to be taken if you
@@ -91,7 +95,6 @@ typedef struct _FPDF_BSTR {
 // For Linux/Unix programmers: most compiler/library environments use 4 bytes
 // for a Unicode character, and you have to convert between FPDF_WIDESTRING and
 // system wide string by yourself.
-
 #ifdef _WIN32_WCE
 typedef const unsigned short* FPDF_STRING;
 #else
@@ -222,9 +225,6 @@ DLLEXPORT void STDCALL FPDF_SetSandBoxPolicy(FPDF_DWORD policy,
 //          Loaded document can be closed by FPDF_CloseDocument().
 //          If this function fails, you can use FPDF_GetLastError() to retrieve
 //          the reason why it failed.
-// Notes:
-//          The application should call FPDF_LoadXFA function after PDF
-//          document loaded to support XFA fields in fpdfformfill.h file.
 DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadDocument(FPDF_STRING file_path,
                                                   FPDF_BYTESTRING password);
 
@@ -243,8 +243,9 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadDocument(FPDF_STRING file_path,
 //          If this function fails, you can use FPDF_GetLastError() to retrieve
 //          the reason why it failed.
 // Notes:
-//          The application should call FPDF_LoadXFA function after the
-//          document is loaded to support form fields.
+//          If PDFium is built with the XFA module, the application should call
+//          FPDF_LoadXFA() function after the PDF document loaded to support XFA
+//          fields defined in the fpdfformfill.h file.
 DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadMemDocument(const void* data_buf,
                                                      int size,
                                                      FPDF_BYTESTRING password);
@@ -270,6 +271,7 @@ typedef struct {
   void* m_Param;
 } FPDF_FILEACCESS;
 
+#ifdef PDF_ENABLE_XFA
 /**
  * @brief Structure for file reading or writing (I/O).
  *
@@ -349,6 +351,7 @@ typedef struct _FPDF_FILEHANDLER {
 
 } FPDF_FILEHANDLER, *FPDF_LPFILEHANDLER;
 
+#endif
 // Function: FPDF_LoadCustomDocument
 //          Load PDF document from a custom access descriptor.
 // Parameters:
@@ -362,8 +365,9 @@ typedef struct _FPDF_FILEHANDLER {
 //
 //          The loaded document can be closed with FPDF_CloseDocument.
 // Notes:
-//          The application should call the FPDF_LoadXFA function after the
-//          document is loaded to support form fields.
+//          If PDFium is built with the XFA module, the application should call
+//          FPDF_LoadXFA() function after the PDF document loaded to support XFA
+//          fields defined in the fpdfformfill.h file.
 DLLEXPORT FPDF_DOCUMENT STDCALL
 FPDF_LoadCustomDocument(FPDF_FILEACCESS* pFileAccess, FPDF_BYTESTRING password);
 
@@ -388,8 +392,10 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_GetFileVersion(FPDF_DOCUMENT doc,
 #define FPDF_ERR_PASSWORD 4   // Password required or incorrect password.
 #define FPDF_ERR_SECURITY 5   // Unsupported security scheme.
 #define FPDF_ERR_PAGE 6       // Page not found or content error.
+#ifdef PDF_ENABLE_XFA
 #define FPDF_ERR_XFALOAD 7    // Load XFA error.
 #define FPDF_ERR_XFALAYOUT 8  // Layout XFA error.
+#endif  // PDF_ENABLE_XFA
 
 // Function: FPDF_GetLastError
 //          Get last error code when a function fails.
@@ -912,6 +918,7 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document,
                                               void* buffer,
                                               long* buflen);
 
+#ifdef PDF_ENABLE_XFA
 // Function: FPDF_BStr_Init
 //          Helper function to initialize a byte string.
 DLLEXPORT FPDF_RESULT STDCALL FPDF_BStr_Init(FPDF_BSTR* str);
@@ -925,6 +932,7 @@ DLLEXPORT FPDF_RESULT STDCALL FPDF_BStr_Set(FPDF_BSTR* str,
 // Function: FPDF_BStr_Clear
 //          Helper function to clear a byte string.
 DLLEXPORT FPDF_RESULT STDCALL FPDF_BStr_Clear(FPDF_BSTR* str);
+#endif  // PDF_ENABLE_XFA
 
 #ifdef __cplusplus
 }

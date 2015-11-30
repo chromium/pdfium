@@ -5,6 +5,7 @@
 {
   'variables': {
     'pdf_enable_v8%': 1,
+    'pdf_enable_xfa%': 1,
   },
   'target_defaults': {
     'defines' : [
@@ -25,6 +26,11 @@
         'include_dirs': [
           '<(DEPTH)/v8',
           '<(DEPTH)/v8/include',
+        ],
+      }],
+      ['pdf_enable_xfa==1', {
+        'defines': [
+          'PDF_ENABLE_XFA',
         ],
       }],
     ],
@@ -51,6 +57,11 @@
         ],
       },
       'conditions': [
+        ['pdf_enable_xfa==0', {
+          'dependencies': [
+            '../third_party/third_party.gyp:fx_lpng',
+          ],
+        }],
         ['pdf_enable_v8==1', {
           'dependencies': [
             '<(DEPTH)/v8/tools/gyp/v8.gyp:v8_libplatform',
@@ -70,6 +81,13 @@
         'image_diff.cc',
         'image_diff_png.h',
         'image_diff_png.cc',
+      ],
+      'conditions': [
+        ['pdf_enable_xfa==0', {
+          'dependencies': [
+            '../third_party/third_party.gyp:fx_lpng',
+          ],
+        }],
       ],
     },
   ],

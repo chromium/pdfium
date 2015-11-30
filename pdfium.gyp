@@ -88,7 +88,6 @@
         'fxge',
         'javascript',
         'pdfwindow',
-        'fpdfxfa',
       ],
       'sources': [
         'fpdfsdk/include/fsdk_actionhandler.h',
@@ -133,6 +132,11 @@
         'public/fpdfview.h',
       ],
       'conditions': [
+        ['pdf_enable_xfa==1', {
+          'dependencies': [
+            'fpdfxfa',
+           ],
+        }],
         ['bundle_freetype==1', {
           'dependencies': [
             'third_party/third_party.gyp:fx_freetype',
@@ -344,8 +348,6 @@
         '<(libjpeg_gyp_path):libjpeg',
         'third_party/third_party.gyp:fx_lcms2',
         'third_party/third_party.gyp:fx_libopenjpeg',
-        'third_party/third_party.gyp:fx_lpng',
-        'third_party/third_party.gyp:fx_tiff',
         'third_party/third_party.gyp:fx_zlib',
       ],
       'sources': [
@@ -354,18 +356,12 @@
         'core/include/fxcodec/fx_codec_flate.h',
         'core/src/fxcodec/codec/codec_int.h',
         'core/src/fxcodec/codec/fx_codec.cpp',
-        'core/src/fxcodec/codec/fx_codec_bmp.cpp',
         'core/src/fxcodec/codec/fx_codec_fax.cpp',
         'core/src/fxcodec/codec/fx_codec_flate.cpp',
-        'core/src/fxcodec/codec/fx_codec_gif.cpp',
         'core/src/fxcodec/codec/fx_codec_icc.cpp',
         'core/src/fxcodec/codec/fx_codec_jbig.cpp',
         'core/src/fxcodec/codec/fx_codec_jpeg.cpp',
         'core/src/fxcodec/codec/fx_codec_jpx_opj.cpp',
-        'core/src/fxcodec/codec/fx_codec_png.cpp',
-        'core/src/fxcodec/codec/fx_codec_progress.cpp',
-        'core/src/fxcodec/codec/fx_codec_progress.h',
-        'core/src/fxcodec/codec/fx_codec_tiff.cpp',
         'core/src/fxcodec/jbig2/JBig2_ArithDecoder.cpp',
         'core/src/fxcodec/jbig2/JBig2_ArithDecoder.h',
         'core/src/fxcodec/jbig2/JBig2_ArithIntDecoder.cpp',
@@ -404,10 +400,6 @@
         'core/src/fxcodec/jbig2/JBig2_SymbolDict.h',
         'core/src/fxcodec/jbig2/JBig2_TrdProc.cpp',
         'core/src/fxcodec/jbig2/JBig2_TrdProc.h',
-        'core/src/fxcodec/lbmp/fx_bmp.cpp',
-        'core/src/fxcodec/lbmp/fx_bmp.h',
-        'core/src/fxcodec/lgif/fx_gif.cpp',
-        'core/src/fxcodec/lgif/fx_gif.h',
       ],
       'msvs_settings': {
         'VCCLCompilerTool': {
@@ -417,6 +409,24 @@
         },
       },
       'conditions': [
+        ['pdf_enable_xfa==1', {
+          'dependencies': [
+            'third_party/third_party.gyp:fx_lpng',
+            'third_party/third_party.gyp:fx_tiff',
+          ],
+          'sources': [
+            'core/src/fxcodec/codec/fx_codec_bmp.cpp',
+            'core/src/fxcodec/codec/fx_codec_gif.cpp',
+            'core/src/fxcodec/codec/fx_codec_png.cpp',
+            'core/src/fxcodec/codec/fx_codec_progress.cpp',
+            'core/src/fxcodec/codec/fx_codec_progress.h',
+            'core/src/fxcodec/codec/fx_codec_tiff.cpp',
+            'core/src/fxcodec/lbmp/fx_bmp.cpp',
+            'core/src/fxcodec/lbmp/fx_bmp.h',
+            'core/src/fxcodec/lgif/fx_gif.cpp',
+            'core/src/fxcodec/lgif/fx_gif.h',
+          ],
+        }],
         ['os_posix==1', {
           # core/src/fxcodec/fx_libopenjpeg/src/fx_mct.c does an pointer-to-int
           # conversion to check that an address is 16-bit aligned (benign).
@@ -428,7 +438,6 @@
       'target_name': 'fxcrt',
       'type': 'static_library',
       'sources': [
-        'core/include/fxcrt/fx_arb.h',
         'core/include/fxcrt/fx_basic.h',
         'core/include/fxcrt/fx_bidi.h',
         'core/include/fxcrt/fx_coordinates.h',
@@ -447,8 +456,6 @@
         'core/src/fxcrt/fxcrt_posix.h',
         'core/src/fxcrt/fxcrt_windows.cpp',
         'core/src/fxcrt/fxcrt_windows.h',
-        'core/src/fxcrt/fx_arabic.cpp',
-        'core/src/fxcrt/fx_arabic.h',
         'core/src/fxcrt/fx_basic_array.cpp',
         'core/src/fxcrt/fx_basic_bstring.cpp',
         'core/src/fxcrt/fx_basic_buffer.cpp',
@@ -469,6 +476,15 @@
         'core/src/fxcrt/fx_xml_parser.cpp',
         'core/src/fxcrt/plex.h',
         'core/src/fxcrt/xml_int.h',
+      ],
+      'conditions': [
+        ['pdf_enable_xfa==1', {
+          'sources': [
+            'core/include/fxcrt/fx_arb.h',
+            'core/src/fxcrt/fx_arabic.cpp',
+            'core/src/fxcrt/fx_arabic.h',
+          ],
+        }],
       ],
     },
     {
@@ -638,7 +654,8 @@
       'target_name': 'fpdfxfa',
       'type': 'static_library',
       'dependencies': [
-        'javascript'
+        'javascript',
+        'xfa.gyp:xfa',
       ],
       'sources': [
         'fpdfsdk/src/fpdfxfa/fpdfxfa_app.cpp',
@@ -649,13 +666,6 @@
         'fpdfsdk/include/fpdfxfa/fpdfxfa_doc.h',
         'fpdfsdk/include/fpdfxfa/fpdfxfa_page.h',
         'fpdfsdk/include/fpdfxfa/fpdfxfa_util.h',
-      ],
-      'conditions': [
-        [ "pdf_enable_xfa==1", {
-          'dependencies': [
-            'xfa.gyp:xfa',
-          ],
-        }],
       ],
     },
     {
@@ -815,9 +825,13 @@
         'testing/embedder_test.h',
         'testing/embedder_test_mock_delegate.h',
         'testing/embedder_test_timer_handling_delegate.h',
-        'xfa/src/fxfa/src/parser/xfa_parser_imp_embeddertest.cpp',
       ],
       'conditions': [
+        ['pdf_enable_xfa==1', {
+          'sources': [
+            'xfa/src/fxfa/src/parser/xfa_parser_imp_embeddertest.cpp',
+          ],
+        }],
         ['pdf_enable_v8==1', {
           'include_dirs': [
             '<(DEPTH)/v8',

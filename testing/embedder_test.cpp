@@ -77,13 +77,18 @@ void EmbedderTest::SetUp() {
 void EmbedderTest::TearDown() {
   if (document_) {
     FORM_DoDocumentAAction(form_handle_, FPDFDOC_AACTION_WC);
-
+#ifdef PDF_ENABLE_XFA
     // Note: The shut down order here is the reverse of the non-XFA branch
     // order. Need to work out if this is required, and if it is, the lifetimes
     // of objects owned by |doc| that |form| reference.
     FPDF_CloseDocument(document_);
     FPDFDOC_ExitFormFillEnvironment(form_handle_);
+#else   // PDF_ENABLE_XFA
+    FPDFDOC_ExitFormFillEnvironment(form_handle_);
+    FPDF_CloseDocument(document_);
+#endif  // PDF_ENABLE_XFA
   }
+
   FPDFAvail_Destroy(avail_);
   FPDF_DestroyLibrary();
 
@@ -154,11 +159,13 @@ bool EmbedderTest::OpenDocument(const std::string& filename,
     }
   }
 
+#ifdef PDF_ENABLE_XFA
   int docType = DOCTYPE_PDF;
   if (FPDF_HasXFAField(document_, &docType)) {
     if (docType != DOCTYPE_PDF)
       (void)FPDF_LoadXFA(document_);
   }
+#endif  // PDF_ENABLE_XFA
 
   (void)FPDF_GetDocPermissions(document_);
 
@@ -171,9 +178,9 @@ bool EmbedderTest::OpenDocument(const std::string& filename,
   memset(formfillinfo, 0, sizeof(FPDF_FORMFILLINFO));
 #ifdef PDF_ENABLE_XFA
   formfillinfo->version = 2;
-#else
+#else   // PDF_ENABLE_XFA
   formfillinfo->version = 1;
-#endif
+#endif  // PDF_ENABLE_XFA
   formfillinfo->FFI_SetTimer = SetTimerTrampoline;
   formfillinfo->FFI_KillTimer = KillTimerTrampoline;
   formfillinfo->FFI_GetPage = GetPageTrampoline;

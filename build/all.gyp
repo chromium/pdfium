@@ -8,7 +8,9 @@
       'target_name': 'All',
       'type': 'none',
       'dependencies': [
-        '../pdfium.gyp:*',
+        '../pdfium.gyp:pdfium',
+        '../pdfium.gyp:pdfium_embeddertests',
+        '../pdfium.gyp:pdfium_unittests',
         '../samples/samples.gyp:*',
       ],
     }

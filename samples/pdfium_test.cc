@@ -407,7 +407,11 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
 
   FPDF_FORMFILLINFO form_callbacks;
   memset(&form_callbacks, '\0', sizeof(form_callbacks));
+#ifdef PDF_ENABLE_XFA
   form_callbacks.version = 2;
+#else   // PDF_ENABLE_XFA
+  form_callbacks.version = 1;
+#endif  // PDF_ENABLE_XFA
   form_callbacks.m_pJsPlatform = &platform_callbacks;
 
   TestLoader loader(pBuf, len);
@@ -494,11 +498,13 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
   (void)FPDF_GetDocPermissions(doc);
 
   FPDF_FORMHANDLE form = FPDFDOC_InitFormFillEnvironment(doc, &form_callbacks);
+#ifdef PDF_ENABLE_XFA
   int docType = DOCTYPE_PDF;
   if (FPDF_HasXFAField(doc, &docType) && docType != DOCTYPE_PDF &&
       !FPDF_LoadXFA(doc)) {
     fprintf(stderr, "LoadXFA unsuccessful, continuing anyway.\n");
   }
+#endif  // PDF_ENABLE_XFA
   FPDF_SetFormFieldHighlightColor(form, 0, 0xFFE4DD);
   FPDF_SetFormFieldHighlightAlpha(form, 100);
 
@@ -529,11 +535,16 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
 
   FORM_DoDocumentAAction(form, FPDFDOC_AACTION_WC);
 
+#ifdef PDF_ENABLE_XFA
   // Note: The shut down order here is the reverse of the non-XFA branch order.
   // Need to work out if this is required, and if it is, the lifetimes of
   // objects owned by |doc| that |form| reference.
   FPDF_CloseDocument(doc);
   FPDFDOC_ExitFormFillEnvironment(form);
+#else  // PDF_ENABLE_XFA
+  FPDFDOC_ExitFormFillEnvironment(form);
+  FPDF_CloseDocument(doc);
+#endif  // PDF_ENABLE_XFA
 
   FPDFAvail_Destroy(pdf_avail);
 
@@ -549,7 +560,7 @@ static const char usage_string[] =
 #ifdef _WIN32
     "  --bmp - write page images <pdf-name>.<page-number>.bmp\n"
     "  --emf - write page meta files <pdf-name>.<page-number>.emf\n"
-#endif
+#endif  // _WIN32
     "  --png - write page images <pdf-name>.<page-number>.png\n"
     "  --ppm - write page images <pdf-name>.<page-number>.ppm\n";
 

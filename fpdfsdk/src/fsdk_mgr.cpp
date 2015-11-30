@@ -617,16 +617,14 @@ CPDFSDK_PageView::CPDFSDK_PageView(CPDFSDK_Document* pSDKDoc,
     : m_page(page),
       m_pSDKDoc(pSDKDoc),
       m_CaptureWidget(nullptr),
+#ifndef PDF_ENABLE_XFA
+      m_bTakeOverPage(FALSE),
+#endif  // PDF_ENABLE_XFA
       m_bEnterWidget(FALSE),
       m_bExitWidget(FALSE),
       m_bOnWidget(FALSE),
       m_bValid(FALSE),
-#ifdef PDF_ENABLE_XFA
       m_bLocked(FALSE) {
-#else   // PDF_ENABLE_XFA
-      m_bLocked(FALSE),
-      m_bTakeOverPage(FALSE) {
-#endif  // PDF_ENABLE_XFA
   CPDFSDK_InterForm* pInterForm = pSDKDoc->GetInterForm();
   if (pInterForm) {
     CPDF_InterForm* pPDFInterForm = pInterForm->GetInterForm();

@@ -101,8 +101,9 @@ FX_BOOL CFX_Font::LoadClone(const CFX_Font* pFont) {
   m_bDwLoaded = pFont->m_bDwLoaded;
   m_pOwnedStream = pFont->m_pOwnedStream;
   return TRUE;
-#endif  // PDF_ENABLE_XFA
 }
+#endif  // PDF_ENABLE_XFA
+
 CFX_Font::~CFX_Font() {
   delete m_pSubstFont;
   m_pSubstFont = NULL;
