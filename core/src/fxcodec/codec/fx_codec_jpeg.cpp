@@ -416,7 +416,9 @@ FX_BOOL CCodec_JpegDecoder::Create(const uint8_t* src_buf,
   if ((int)cinfo.image_width < width) {
     return FALSE;
   }
-  m_Pitch = (cinfo.image_width * cinfo.num_components + 3) / 4 * 4;
+  m_Pitch =
+      (static_cast<FX_DWORD>(cinfo.image_width) * cinfo.num_components + 3) /
+      4 * 4;
   m_pScanlineBuf = FX_Alloc(uint8_t, m_Pitch);
   m_nComps = cinfo.num_components;
   m_bpc = 8;
@@ -450,7 +452,7 @@ void CCodec_JpegDecoder::v_DownScale(int dest_width, int dest_height) {
       FX_GetDownsampleRatio(m_OrigWidth, m_OrigHeight, dest_width, dest_height);
   m_OutputWidth = (m_OrigWidth + m_DownScale - 1) / m_DownScale;
   m_OutputHeight = (m_OrigHeight + m_DownScale - 1) / m_DownScale;
-  m_Pitch = (m_OutputWidth * m_nComps + 3) / 4 * 4;
+  m_Pitch = (static_cast<FX_DWORD>(m_OutputWidth) * m_nComps + 3) / 4 * 4;
   if (old_scale != m_DownScale) {
     m_NextLine = -1;
   }
