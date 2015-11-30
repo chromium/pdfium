@@ -58,8 +58,8 @@ class CFFL_ComboBox : public CFFL_FormFiller,
 #ifdef PDF_ENABLE_XFA
   // CFFL_FormFiller:
   FX_BOOL IsFieldFull(CPDFSDK_PageView* pPageView) override;
+#endif  // PDF_ENABLE_XFA
 
-#endif
  private:
   CFX_WideString GetSelectExportText();
 

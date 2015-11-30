@@ -133,7 +133,7 @@ class CFFL_IFormFiller : public IPWL_Filler_Notify {
                   FX_BOOL& bReset,
                   FX_BOOL& bExit,
                   FX_UINT nFlag);
-#endif
+#endif  // PDF_ENABLE_XFA
 
  private:
   using CFFL_Widget2Filler = std::map<CPDFSDK_Annot*, CFFL_FormFiller*>;
@@ -160,14 +160,11 @@ class CFFL_IFormFiller : public IPWL_Filler_Notify {
   void OnPopupPostOpen(void* pPrivateData,
                        FX_BOOL& bExit,
                        FX_DWORD nFlag) override;
-#endif
-
-  void UnRegisterFormFiller(CPDFSDK_Annot* pAnnot);
-#ifdef PDF_ENABLE_XFA
   void SetFocusAnnotTab(CPDFSDK_Annot* pWidget,
                         FX_BOOL bSameField,
                         FX_BOOL bNext);
-#endif
+#endif  // PDF_ENABLE_XFA
+  void UnRegisterFormFiller(CPDFSDK_Annot* pAnnot);
 
   CPDFDoc_Environment* m_pApp;
   CFFL_Widget2Filler m_Maps;

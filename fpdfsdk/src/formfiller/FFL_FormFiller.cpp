@@ -566,8 +566,8 @@ void CFFL_FormFiller::SaveData(CPDFSDK_PageView* pPageView) {}
 FX_BOOL CFFL_FormFiller::IsFieldFull(CPDFSDK_PageView* pPageView) {
   return FALSE;
 }
+#endif  // PDF_ENABLE_XFA
 
-#endif
 void CFFL_FormFiller::SetChangeMark() {
   m_pApp->FFI_OnChange();
 }

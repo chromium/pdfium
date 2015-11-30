@@ -146,8 +146,8 @@ class CJS_RuntimeStub final : public IJS_Runtime {
                                   FXJSE_HVALUE) override {
     return FALSE;
   }
+#endif  // PDF_ENABLE_XFA
 
-#endif
   int Execute(IJS_Context* cc,
               const wchar_t* script,
               CFX_WideString* info) override {

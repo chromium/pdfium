@@ -6,14 +6,13 @@
 
 #include "public/fpdf_save.h"
 
+#include "fpdfsdk/include/fsdk_define.h"
+#include "public/fpdf_edit.h"
+
 #ifdef PDF_ENABLE_XFA
 #include "../include/fpdfxfa/fpdfxfa_app.h"
 #include "../include/fpdfxfa/fpdfxfa_doc.h"
 #include "../include/fpdfxfa/fpdfxfa_util.h"
-#endif
-#include "fpdfsdk/include/fsdk_define.h"
-#include "public/fpdf_edit.h"
-#ifdef PDF_ENABLE_XFA
 #include "public/fpdf_formfill.h"
 #endif
 
@@ -66,7 +65,6 @@ void CFX_IFileWrite::Release() {
 
 FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument,
                              CFX_PtrArray& fileList) {
-#ifdef PDF_ENABLE_XFA
   if (!pDocument)
     return FALSE;
   if (pDocument->GetDocType() != DOCTYPE_DYNAMIC_XFA &&
@@ -116,8 +114,6 @@ FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument,
       iTemplate = i + 1;
   }
   IXFA_ChecksumContext* pContext = NULL;
-#define XFA_USECKSUM
-#ifdef XFA_USECKSUM
   // Checksum
   pContext = XFA_Checksum_Create();
   FXSYS_assert(pContext);
@@ -134,7 +130,6 @@ FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument,
     pContext->UpdateChecksum((IFX_FileRead*)pTemplate);
     pTemplate->Release();
   }
-#endif
   CPDF_Stream* pFormStream = NULL;
   CPDF_Stream* pDataSetsStream = NULL;
   if (iFormIndex != -1) {
@@ -178,11 +173,9 @@ FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument,
                                     CFX_WideStringC(L"datasets"),
                                     pDsfileWrite) &&
         pDsfileWrite->GetSize() > 0) {
-#ifdef XFA_USECKSUM
       // Datasets
       pContext->UpdateChecksum((IFX_FileRead*)pDsfileWrite);
       pContext->FinishChecksum();
-#endif
       CPDF_Dictionary* pDataDict = new CPDF_Dictionary;
       if (iDataSetsIndex != -1) {
         if (pDataSetsStream)
@@ -226,8 +219,6 @@ FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument,
     }
   }
   pContext->Release();
-#endif  // PDF_ENABLE_XFA
-
   return TRUE;
 }
 
@@ -283,8 +274,8 @@ FX_BOOL _SendPreSaveToXFADoc(CPDFXFA_Document* pDocument,
   pXFADocView->UpdateDocView();
   return _SaveXFADocumentData(pDocument, fileList);
 }
+#endif  // PDF_ENABLE_XFA
 
-#endif
 FPDF_BOOL _FPDF_Doc_Save(FPDF_DOCUMENT document,
                          FPDF_FILEWRITE* pFileWrite,
                          FPDF_DWORD flags,
@@ -298,8 +289,8 @@ FPDF_BOOL _FPDF_Doc_Save(FPDF_DOCUMENT document,
   CPDFXFA_Document* pDoc = (CPDFXFA_Document*)document;
   CFX_PtrArray fileList;
   _SendPreSaveToXFADoc(pDoc, fileList);
+#endif  // PDF_ENABLE_XFA
 
-#endif
   if (flags < FPDF_INCREMENTAL || flags > FPDF_REMOVE_SECURITY) {
     flags = 0;
   }
@@ -324,7 +315,7 @@ FPDF_BOOL _FPDF_Doc_Save(FPDF_DOCUMENT document,
     pFile->Release();
   }
   fileList.RemoveAll();
-#endif
+#endif  // PDF_ENABLE_XFA
   pStreamWrite->Release();
   return bRet;
 }

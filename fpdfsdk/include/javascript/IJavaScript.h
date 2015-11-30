@@ -7,11 +7,12 @@
 #ifndef FPDFSDK_INCLUDE_JAVASCRIPT_IJAVASCRIPT_H_
 #define FPDFSDK_INCLUDE_JAVASCRIPT_IJAVASCRIPT_H_
 
-#ifdef PDF_ENABLE_XFA
-#include "../../../xfa/include/fxjse/fxjse.h"
-#endif
 #include "core/include/fxcrt/fx_string.h"
 #include "core/include/fxcrt/fx_system.h"
+
+#ifdef PDF_ENABLE_XFA
+#include "../../../xfa/include/fxjse/fxjse.h"
+#endif  // PDF_ENABLE_XFA
 
 class CPDFDoc_Environment;
 class CPDFSDK_Annot;
@@ -156,8 +157,8 @@ class IJS_Runtime {
                                   FXJSE_HVALUE hValue) = 0;
   virtual FX_BOOL SetHValueByName(const CFX_ByteStringC& utf8Name,
                                   FXJSE_HVALUE hValue) = 0;
+#endif  // PDF_ENABLE_XFA
 
-#endif
  protected:
   IJS_Runtime() {}
 };

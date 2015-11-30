@@ -49,7 +49,7 @@ CJS_Timer* TimerObj::GetTimer() const {
 #define JS_NUM_VIEWERVERSION 8
 #ifdef PDF_ENABLE_XFA
 #define JS_NUM_VIEWERVERSION_XFA 11
-#endif
+#endif  // PDF_ENABLE_XFA
 #define JS_NUM_FORMSVERSION 7
 
 BEGIN_JS_STATIC_CONST(CJS_App)
@@ -208,8 +208,8 @@ FX_BOOL app::viewerVersion(IJS_Context* cc,
     vp << JS_NUM_VIEWERVERSION_XFA;
     return TRUE;
   }
+#endif  // PDF_ENABLE_XFA
 
-#endif
   vp << JS_NUM_VIEWERVERSION;
   return TRUE;
 }

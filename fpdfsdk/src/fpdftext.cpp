@@ -6,13 +6,14 @@
 
 #include "public/fpdf_text.h"
 
-#ifdef PDF_ENABLE_XFA
-#include "../include/fpdfxfa/fpdfxfa_doc.h"
-#include "../include/fpdfxfa/fpdfxfa_page.h"
-#endif
 #include "core/include/fpdfdoc/fpdf_doc.h"
 #include "core/include/fpdftext/fpdf_text.h"
 #include "fpdfsdk/include/fsdk_define.h"
+
+#ifdef PDF_ENABLE_XFA
+#include "../include/fpdfxfa/fpdfxfa_doc.h"
+#include "../include/fpdfxfa/fpdfxfa_page.h"
+#endif  // PDF_ENABLE_XFA
 
 #ifdef _WIN32
 #include <tchar.h>
@@ -22,13 +23,13 @@ DLLEXPORT FPDF_TEXTPAGE STDCALL FPDFText_LoadPage(FPDF_PAGE page) {
   CPDF_Page* pPDFPage = CPDFPageFromFPDFPage(page);
   if (!pPDFPage)
     return nullptr;
-#ifndef PDF_ENABLE_XFA
-  CPDF_ViewerPreferences viewRef(pPDFPage->m_pDocument);
-#else
+#ifdef PDF_ENABLE_XFA
   CPDFXFA_Page* pPage = (CPDFXFA_Page*)page;
   CPDFXFA_Document* pDoc = pPage->GetDocument();
   CPDF_ViewerPreferences viewRef(pDoc->GetPDFDoc());
-#endif
+#else  // PDF_ENABLE_XFA
+  CPDF_ViewerPreferences viewRef(pPDFPage->m_pDocument);
+#endif  // PDF_ENABLE_XFA
   IPDF_TextPage* textpage =
       IPDF_TextPage::CreateTextPage(pPDFPage, viewRef.IsDirectionR2L());
   textpage->ParseTextPage();

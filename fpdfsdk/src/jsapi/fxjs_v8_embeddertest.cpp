@@ -32,7 +32,7 @@ class FXJSV8Embeddertest : public EmbedderTest {
     v8::Isolate::Scope isolate_scope(m_pIsolate);
 #ifdef PDF_ENABLE_XFA
     v8::Locker locker(m_pIsolate);
-#endif
+#endif  // PDF_ENABLE_XFA
     v8::HandleScope handle_scope(m_pIsolate);
     FXJS_PerIsolateData::SetUp(m_pIsolate);
     FXJS_InitializeRuntime(m_pIsolate, nullptr, &m_pPersistentContext,
@@ -62,7 +62,7 @@ TEST_F(FXJSV8Embeddertest, Getters) {
   v8::Isolate::Scope isolate_scope(isolate());
 #ifdef PDF_ENABLE_XFA
   v8::Locker locker(isolate());
-#endif
+#endif  // PDF_ENABLE_XFA
   v8::HandleScope handle_scope(isolate());
   v8::Context::Scope context_scope(GetV8Context());
 

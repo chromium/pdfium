@@ -5,12 +5,13 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "core/include/fxcrt/fx_ext.h"
-#ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/include/fpdfxfa/fpdfxfa_doc.h"
-#endif
 #include "fpdfsdk/include/fsdk_baseannot.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
+
+#ifdef PDF_ENABLE_XFA
+#include "fpdfsdk/include/fpdfxfa/fpdfxfa_doc.h"
+#endif  // PDF_ENABLE_XFA
 
 int _gAfxGetTimeZoneInSeconds(FX_CHAR tzhour, uint8_t tzminute) {
   return (int)tzhour * 3600 + (int)tzminute * (tzhour >= 0 ? 60 : -60);
@@ -973,24 +974,22 @@ CPDF_Action CPDFSDK_BAAnnot::GetAAction(CPDF_AAction::AActionType eAAT) {
 FX_BOOL CPDFSDK_BAAnnot::IsXFAField() {
   return FALSE;
 }
+#endif  // PDF_ENABLE_XFA
 
-#endif
 void CPDFSDK_BAAnnot::Annot_OnDraw(CFX_RenderDevice* pDevice,
                                    CPDF_Matrix* pUser2Device,
                                    CPDF_RenderOptions* pOptions) {
   m_pAnnot->GetAPForm(m_pPageView->GetPDFPage(), CPDF_Annot::Normal);
   m_pAnnot->DrawAppearance(m_pPageView->GetPDFPage(), pDevice, pUser2Device,
                            CPDF_Annot::Normal, NULL);
-
-  return;
 }
 
 UnderlyingPageType* CPDFSDK_Annot::GetUnderlyingPage() {
-#ifndef PDF_ENABLE_XFA
-  return GetPDFPage();
-#else
+#ifdef PDF_ENABLE_XFA
   return GetPDFXFAPage();
-#endif
+#else   // PDF_ENABLE_XFA
+  return GetPDFPage();
+#endif  // PDF_ENABLE_XFA
 }
 
 CPDF_Page* CPDFSDK_Annot::GetPDFPage() {
@@ -998,11 +997,11 @@ CPDF_Page* CPDFSDK_Annot::GetPDFPage() {
     return m_pPageView->GetPDFPage();
   return NULL;
 }
-#ifdef PDF_ENABLE_XFA
 
+#ifdef PDF_ENABLE_XFA
 CPDFXFA_Page* CPDFSDK_Annot::GetPDFXFAPage() {
   if (m_pPageView)
     return m_pPageView->GetPDFXFAPage();
   return NULL;
 }
-#endif
+#endif  // PDF_ENABLE_XFA

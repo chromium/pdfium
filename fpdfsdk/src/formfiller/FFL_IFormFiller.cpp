@@ -278,11 +278,10 @@ FX_BOOL CFFL_IFormFiller::OnLButtonUp(CPDFSDK_PageView* pPageView,
     if (bExit)
       return TRUE;
 #ifdef PDF_ENABLE_XFA
-
     OnClick(pWidget, pPageView, bReset, bExit, nFlags);
     if (bExit)
       return TRUE;
-#endif
+#endif  // PDF_ENABLE_XFA
   }
   return bRet;
 }
@@ -980,8 +979,8 @@ void CFFL_IFormFiller::OnPostOpen(CPDFSDK_Widget* pWidget,
     }
   }
 }
+#endif  // PDF_ENABLE_XFA
 
-#endif
 FX_BOOL CFFL_IFormFiller::IsValidAnnot(CPDFSDK_PageView* pPageView,
                                        CPDFSDK_Annot* pAnnot) {
   if (pPageView)
@@ -1017,8 +1016,8 @@ void CFFL_IFormFiller::OnBeforeKeyStroke(void* pPrivateData,
       return;
     }
   }
+#endif  // PDF_ENABLE_XFA
 
-#endif
   if (!m_bNotifying) {
     if (pData->pWidget->GetAAction(CPDF_AAction::KeyStroke)) {
       m_bNotifying = TRUE;

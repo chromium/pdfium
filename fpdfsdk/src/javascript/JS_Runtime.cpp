@@ -6,10 +6,6 @@
 
 #include "JS_Runtime.h"
 
-#ifdef PDF_ENABLE_XFA
-#include "../../../xfa/src/fxjse/src/value.h"
-#include "../../include/fpdfxfa/fpdfxfa_app.h"
-#endif
 #include "Consts.h"
 #include "Document.h"
 #include "Field.h"
@@ -30,6 +26,11 @@
 #include "global.h"
 #include "report.h"
 #include "util.h"
+
+#ifdef PDF_ENABLE_XFA
+#include "../../../xfa/src/fxjse/src/value.h"
+#include "../../include/fpdfxfa/fpdfxfa_app.h"
+#endif  // PDF_ENABLE_XFA
 
 // static
 void IJS_Runtime::Initialize(unsigned int slot, void* isolate) {

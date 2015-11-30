@@ -276,8 +276,8 @@ FX_BOOL CFFL_TextField::IsFieldFull(CPDFSDK_PageView* pPageView) {
 
   return FALSE;
 }
+#endif  // PDF_ENABLE_XFA
 
-#endif
 void CFFL_TextField::OnSetFocus(CPWL_Wnd* pWnd) {
   ASSERT(m_pApp != NULL);
 

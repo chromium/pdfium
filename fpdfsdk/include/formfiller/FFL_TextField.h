@@ -59,8 +59,8 @@ class CFFL_TextField : public CFFL_FormFiller,
 #ifdef PDF_ENABLE_XFA
   // CFFL_FormFiller:
   FX_BOOL IsFieldFull(CPDFSDK_PageView* pPageView) override;
+#endif  // PDF_ENABLE_XFA
 
-#endif
  private:
   CBA_FontMap* m_pFontMap;
   FFL_TextFieldState m_State;
