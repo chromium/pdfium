@@ -289,13 +289,9 @@ void Field::UpdateFormControl(CPDFSDK_Document* pDocument,
 
 CPDFSDK_Widget* Field::GetWidget(CPDFSDK_Document* pDocument,
                                  CPDF_FormControl* pFormControl) {
-  ASSERT(pDocument != NULL);
-  ASSERT(pFormControl != NULL);
-
-  CPDFSDK_InterForm* pInterForm = (CPDFSDK_InterForm*)pDocument->GetInterForm();
-  ASSERT(pInterForm != NULL);
-
-  return pInterForm->GetWidget(pFormControl);
+  CPDFSDK_InterForm* pInterForm =
+      static_cast<CPDFSDK_InterForm*>(pDocument->GetInterForm());
+  return pInterForm ? pInterForm->GetWidget(pFormControl) : nullptr;
 }
 
 FX_BOOL Field::ValueIsOccur(CPDF_FormField* pFormField,
