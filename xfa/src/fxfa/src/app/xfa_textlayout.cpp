@@ -398,16 +398,15 @@ FX_FLOAT CXFA_TextParser::GetFontSize(IXFA_TextProvider* pTextProvider,
 int32_t CXFA_TextParser::GetHorScale(IXFA_TextProvider* pTextProvider,
                                      IFDE_CSSComputedStyle* pStyle,
                                      IFDE_XMLNode* pXMLNode) const {
-  if (pStyle != NULL) {
+  if (pStyle) {
     CFX_WideString wsValue;
     if (pStyle->GetCustomStyle(FX_WSTRC(L"xfa-font-horizontal-scale"),
                                wsValue)) {
       return wsValue.GetInteger();
     }
     while (pXMLNode) {
-      CXFA_TextParseContext* pContext =
-          (CXFA_TextParseContext*)m_mapXMLNodeToParseContext.GetValueAt(
-              pXMLNode);
+      CXFA_TextParseContext* pContext = static_cast<CXFA_TextParseContext*>(
+          m_mapXMLNodeToParseContext.GetValueAt(pXMLNode));
       if (pContext && pContext->m_pParentStyle &&
           pContext->m_pParentStyle->GetCustomStyle(
               FX_WSTRC(L"xfa-font-horizontal-scale"), wsValue)) {
@@ -417,7 +416,7 @@ int32_t CXFA_TextParser::GetHorScale(IXFA_TextProvider* pTextProvider,
     }
   }
   if (CXFA_Font font = pTextProvider->GetFontNode()) {
-    return (int32_t)font.GetHorizontalScale();
+    return static_cast<int32_t>(font.GetHorizontalScale());
   }
   return 100;
 }
