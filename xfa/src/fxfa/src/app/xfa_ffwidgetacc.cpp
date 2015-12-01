@@ -175,7 +175,10 @@ class CXFA_ImageEditData : public CXFA_FieldLayoutData {
   int32_t m_iImageYDpi;
 };
 CXFA_WidgetAcc::CXFA_WidgetAcc(CXFA_FFDocView* pDocView, CXFA_Node* pNode)
-    : CXFA_WidgetData(pNode), m_pDocView(pDocView), m_pLayoutData(NULL) {}
+    : CXFA_WidgetData(pNode),
+      m_pDocView(pDocView),
+      m_pLayoutData(NULL),
+      m_nRecursionDepth(0) {}
 CXFA_WidgetAcc::~CXFA_WidgetAcc() {
   if (m_pLayoutData) {
     m_pLayoutData->Release();
@@ -630,6 +633,9 @@ int32_t CXFA_WidgetAcc::ProcessValidate(int32_t iFlags) {
 int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
                                       CXFA_EventParam* pEventParam,
                                       FXJSE_HVALUE* pRetValue) {
+  static const uint32_t MAX_RECURSION_DEPTH = 2;
+  if (m_nRecursionDepth > MAX_RECURSION_DEPTH)
+    return XFA_EVENTERROR_Sucess;
   FXSYS_assert(pEventParam);
   if (!script) {
     return XFA_EVENTERROR_NotExist;
@@ -656,9 +662,10 @@ int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
     pContext->SetNodesOfRunScript(&refNodes);
   }
   FXJSE_HVALUE hRetValue = FXJSE_Value_Create(pContext->GetRuntime());
-  FX_BOOL bRet = FALSE;
-  bRet = pContext->RunScript((XFA_SCRIPTLANGTYPE)eScriptType, wsExpression,
-                             hRetValue, m_pNode);
+  ++m_nRecursionDepth;
+  FX_BOOL bRet = pContext->RunScript((XFA_SCRIPTLANGTYPE)eScriptType,
+                                     wsExpression, hRetValue, m_pNode);
+  --m_nRecursionDepth;
   int32_t iRet = XFA_EVENTERROR_Error;
   if (bRet) {
     iRet = XFA_EVENTERROR_Sucess;
