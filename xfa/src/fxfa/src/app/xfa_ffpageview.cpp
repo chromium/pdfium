@@ -63,7 +63,7 @@ IXFA_Widget* CXFA_FFPageView::GetWidgetByPos(FX_FLOAT fx, FX_FLOAT fy) {
   }
   IXFA_WidgetIterator* pIterator = CreateWidgetIterator();
   CXFA_FFWidget* pWidget = nullptr;
-  while (pWidget = static_cast<CXFA_FFWidget*>(pIterator->MoveToNext())) {
+  while ((pWidget = static_cast<CXFA_FFWidget*>(pIterator->MoveToNext()))) {
     if (!(pWidget->GetStatus() & XFA_WIDGETSTATUS_Visible)) {
       continue;
     }
