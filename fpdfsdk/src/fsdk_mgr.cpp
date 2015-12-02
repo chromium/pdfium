@@ -669,7 +669,7 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
 
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_Page* pPage = GetPDFXFAPage();
-  if (pPage == NULL)
+  if (!pPage)
     return;
 
   if (pPage->GetDocument()->GetDocType() == DOCTYPE_DYNAMIC_XFA) {
@@ -686,11 +686,20 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
       return;
     CXFA_RenderOptions renderOptions;
     renderOptions.m_bHighlight = TRUE;
-    pRenderContext->StartRender(pPage->GetXFAPageView(), &gs, *pUser2Device,
-                                renderOptions);
+    IXFA_PageView* xfaView = pPage->GetXFAPageView();
+    pRenderContext->StartRender(xfaView, &gs, *pUser2Device, renderOptions);
     pRenderContext->DoRender();
     pRenderContext->StopRender();
     pRenderContext->Release();
+    IXFA_DocView* docView = xfaView->GetDocView();
+    if (!docView)
+      return;
+    CPDFSDK_Annot* annot = GetFocusAnnot();
+    if (!annot)
+      return;
+    // Render the focus widget
+    docView->GetWidgetHandler()->RenderWidget(annot->GetXFAWidget(), &gs,
+                                              pUser2Device, FALSE);
     return;
   }
 #endif  // PDF_ENABLE_XFA
