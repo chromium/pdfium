@@ -247,12 +247,9 @@ FX_DWORD CPDF_Parser::StartParse(IFX_FileRead* pFileAccess,
   }
   FXSYS_qsort(m_SortedOffset.GetData(), m_SortedOffset.GetSize(),
               sizeof(FX_FILESIZE), CompareFileSize);
-  FX_DWORD RootObjNum = GetRootObjNum();
-  if (RootObjNum == 0) {
+  if (GetRootObjNum() == 0) {
     ReleaseEncryptHandler();
-    RebuildCrossRef();
-    RootObjNum = GetRootObjNum();
-    if (RootObjNum == 0)
+    if (!RebuildCrossRef() || GetRootObjNum() == 0)
       return PDFPARSE_ERROR_FORMAT;
 
     dwRet = SetEncryptHandler();
@@ -975,7 +972,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
     m_SortedOffset.Add(offset);
   }
   FX_Free(buffer);
-  return TRUE;
+  return m_pTrailer && m_CrossRef.GetSize() > 0;
 }
 
 FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE pos,
@@ -1608,14 +1605,11 @@ FX_DWORD CPDF_Parser::StartAsynParse(IFX_FileRead* pFileAccess,
   }
   FXSYS_qsort(m_SortedOffset.GetData(), m_SortedOffset.GetSize(),
               sizeof(FX_FILESIZE), CompareFileSize);
-  FX_DWORD RootObjNum = GetRootObjNum();
-  if (RootObjNum == 0) {
+  if (GetRootObjNum() == 0) {
     ReleaseEncryptHandler();
-    RebuildCrossRef();
-    RootObjNum = GetRootObjNum();
-    if (RootObjNum == 0) {
+    if (!RebuildCrossRef() || GetRootObjNum() == 0)
       return PDFPARSE_ERROR_FORMAT;
-    }
+
     dwRet = SetEncryptHandler();
     if (dwRet != PDFPARSE_ERROR_SUCCESS) {
       return dwRet;
