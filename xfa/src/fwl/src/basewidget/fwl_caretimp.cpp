@@ -67,8 +67,8 @@ FX_DWORD CFWL_CaretImp::GetClassID() const {
   return FWL_CLASSHASH_Caret;
 }
 FWL_ERR CFWL_CaretImp::Initialize() {
-  _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
-                                      FWL_ERR_Indefinite);
+  if (CFWL_WidgetImp::Initialize() != FWL_ERR_Succeeded)
+    return FWL_ERR_Indefinite;
   m_pDelegate = new CFWL_CaretImpDelegate(this);
   return FWL_ERR_Succeeded;
 }
@@ -83,12 +83,12 @@ FWL_ERR CFWL_CaretImp::Finalize() {
 }
 FWL_ERR CFWL_CaretImp::DrawWidget(CFX_Graphics* pGraphics,
                                   const CFX_Matrix* pMatrix) {
-  _FWL_RETURN_VALUE_IF_FAIL(pGraphics, FWL_ERR_Indefinite);
-  if (!m_pProperties->m_pThemeProvider) {
+  if (!pGraphics)
+    return FWL_ERR_Indefinite;
+  if (!m_pProperties->m_pThemeProvider)
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
-  }
-  _FWL_RETURN_VALUE_IF_FAIL(m_pProperties->m_pThemeProvider,
-                            FWL_ERR_Indefinite);
+  if (!m_pProperties->m_pThemeProvider)
+    return FWL_ERR_Indefinite;
   DrawCaretBK(pGraphics, m_pProperties->m_pThemeProvider, pMatrix);
   return FWL_ERR_Succeeded;
 }

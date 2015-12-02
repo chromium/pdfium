@@ -29,7 +29,8 @@ CFWL_CheckBoxTP::~CFWL_CheckBoxTP() {
   }
 }
 FX_BOOL CFWL_CheckBoxTP::IsValidWidget(IFWL_Widget* pWidget) {
-  _FWL_RETURN_VALUE_IF_FAIL(pWidget, FALSE);
+  if (!pWidget)
+    return FALSE;
   FX_DWORD dwHash = pWidget->GetClassID();
   return dwHash == FWL_CLASSHASH_CheckBox ||
          dwHash == FWL_CLASSHASH_RadioButton;
@@ -43,7 +44,8 @@ FX_DWORD CFWL_CheckBoxTP::SetThemeID(IFWL_Widget* pWidget,
   return CFWL_WidgetTP::SetThemeID(pWidget, dwThemeID, bChildren);
 }
 FX_BOOL CFWL_CheckBoxTP::DrawText(CFWL_ThemeText* pParams) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pTextOut, FALSE);
+  if (!m_pTextOut)
+    return FALSE;
   FX_BOOL bDisable = (pParams->m_dwStates & FWL_PARTSTATE_CKB_Mask1) ==
                      FWL_PARTSTATE_CKB_Disabled;
   FX_ARGB argText =
@@ -52,7 +54,8 @@ FX_BOOL CFWL_CheckBoxTP::DrawText(CFWL_ThemeText* pParams) {
   return CFWL_WidgetTP::DrawText(pParams);
 }
 FX_BOOL CFWL_CheckBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
-  _FWL_RETURN_VALUE_IF_FAIL(pParams, FALSE);
+  if (!pParams)
+    return FALSE;
   switch (pParams->m_iPart) {
     case FWL_PART_CKB_Border: {
       DrawBorder(pParams->m_pGraphics, &pParams->m_rtPart, &pParams->m_matrix);

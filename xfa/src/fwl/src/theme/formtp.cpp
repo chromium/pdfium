@@ -48,7 +48,8 @@ FWL_ERR CFWL_FormTP::Finalize() {
   return CFWL_WidgetTP::Finalize();
 }
 FX_BOOL CFWL_FormTP::IsValidWidget(IFWL_Widget* pWidget) {
-  _FWL_RETURN_VALUE_IF_FAIL(pWidget, FALSE);
+  if (!pWidget)
+    return FALSE;
   FX_DWORD dwHash = pWidget->GetClassID();
   return dwHash == FWL_CLASSHASH_Form;
 }
@@ -63,7 +64,8 @@ FX_DWORD CFWL_FormTP::SetThemeID(IFWL_Widget* pWidget,
   return CFWL_WidgetTP::SetThemeID(pWidget, dwThemeID, bChildren);
 }
 FX_BOOL CFWL_FormTP::DrawBackground(CFWL_ThemeBackground* pParams) {
-  _FWL_RETURN_VALUE_IF_FAIL(pParams, FALSE);
+  if (!pParams)
+    return FALSE;
   int32_t iActive = 0;
   if (pParams->m_dwStates & FWL_PARTSTATE_FRM_Inactive) {
     iActive = 1;
@@ -135,7 +137,8 @@ FX_BOOL CFWL_FormTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   return TRUE;
 }
 FX_BOOL CFWL_FormTP::DrawText(CFWL_ThemeText* pParams) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pTextOut, FALSE);
+  if (!m_pTextOut)
+    return FALSE;
   if (pParams->m_iPart == FWL_PART_FRM_Caption) {
     m_pTextOut->SetTextColor(0xFFFFFFFF);
   } else {

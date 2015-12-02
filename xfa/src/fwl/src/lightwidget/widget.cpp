@@ -30,7 +30,8 @@ IFWL_Widget* CFWL_Widget::GetWidget() {
   return m_pIface;
 }
 FX_DWORD CFWL_Widget::Release() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, 0);
+  if (!m_pIface)
+    return 0;
   FX_DWORD dwRef = m_pIface->GetRefCount();
   if (dwRef == 1) {
     m_pIface->Finalize();
@@ -43,49 +44,60 @@ FX_DWORD CFWL_Widget::Release() {
   return dwRef - 1;
 }
 CFWL_Widget* CFWL_Widget::Retain() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, NULL);
+  if (!m_pIface)
+    return NULL;
   m_pIface->Retain();
   return this;
 }
 FX_DWORD CFWL_Widget::GetRefCount() const {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, 1);
+  if (!m_pIface)
+    return 1;
   return m_pIface->GetRefCount();
 }
 FWL_ERR CFWL_Widget::GetClassName(CFX_WideString& wsClass) const {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return m_pIface->GetClassName(wsClass);
 }
 FX_DWORD CFWL_Widget::GetClassID() const {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, 0);
+  if (!m_pIface)
+    return 0;
   return m_pIface->GetClassID();
 }
 FX_BOOL CFWL_Widget::IsInstance(const CFX_WideStringC& wsClass) const {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FALSE);
+  if (!m_pIface)
+    return FALSE;
   return m_pIface->IsInstance(wsClass);
 }
 static void* gs_pFWLWidget = (void*)FXBSTR_ID('l', 'i', 'g', 't');
 FWL_ERR CFWL_Widget::Initialize(const CFWL_WidgetProperties* pProperties) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return m_pIface->SetPrivateData(gs_pFWLWidget, this, NULL);
 }
 FWL_ERR CFWL_Widget::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return m_pIface->GetWidgetRect(rect, bAutoSize);
 }
 FWL_ERR CFWL_Widget::GetGlobalRect(CFX_RectF& rect) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return m_pIface->GetGlobalRect(rect);
 }
 FWL_ERR CFWL_Widget::SetWidgetRect(const CFX_RectF& rect) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return m_pIface->SetWidgetRect(rect);
 }
 FWL_ERR CFWL_Widget::GetClientRect(CFX_RectF& rect) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return m_pIface->GetClientRect(rect);
 }
 CFWL_Widget* CFWL_Widget::GetParent() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, NULL);
+  if (!m_pIface)
+    return NULL;
   IFWL_Widget* parent = m_pIface->GetParent();
   if (parent) {
     return (CFWL_Widget*)parent->GetPrivateData(gs_pFWLWidget);
@@ -93,28 +105,34 @@ CFWL_Widget* CFWL_Widget::GetParent() {
   return NULL;
 }
 FWL_ERR CFWL_Widget::SetParent(CFWL_Widget* pParent) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return m_pIface->SetParent(pParent ? pParent->GetWidget() : NULL);
 }
 CFWL_Widget* CFWL_Widget::GetOwner() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, NULL);
+  if (!m_pIface)
+    return NULL;
   return NULL;
 }
 FWL_ERR CFWL_Widget::SetOwner(CFWL_Widget* pOwner) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return FWL_ERR_Succeeded;
 }
 FX_DWORD CFWL_Widget::GetStyles() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, 0);
+  if (!m_pIface)
+    return 0;
   return m_pIface->GetStyles();
 }
 FWL_ERR CFWL_Widget::ModifyStyles(FX_DWORD dwStylesAdded,
                                   FX_DWORD dwStylesRemoved) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return m_pIface->ModifyStyles(dwStylesAdded, dwStylesRemoved);
 }
 FX_DWORD CFWL_Widget::GetStylesEx() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, 0);
+  if (!m_pIface)
+    return 0;
   return m_pIface->GetStylesEx();
 }
 FWL_ERR CFWL_Widget::ModifyStylesEx(FX_DWORD dwStylesExAdded,
@@ -122,60 +140,73 @@ FWL_ERR CFWL_Widget::ModifyStylesEx(FX_DWORD dwStylesExAdded,
   return m_pIface->ModifyStylesEx(dwStylesExAdded, dwStylesExRemoved);
 }
 FX_DWORD CFWL_Widget::GetStates() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return m_pIface->GetStates();
 }
 FWL_ERR CFWL_Widget::SetStates(FX_DWORD dwStates, FX_BOOL bSet) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return m_pIface->SetStates(dwStates, bSet);
 }
 FWL_ERR CFWL_Widget::SetPrivateData(void* module_id,
                                     void* pData,
                                     PD_CALLBACK_FREEDATA callback) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return m_pIface->SetPrivateData(module_id, pData, callback);
 }
 void* CFWL_Widget::GetPrivateData(void* module_id) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, NULL);
+  if (!m_pIface)
+    return NULL;
   return m_pIface->GetPrivateData(module_id);
 }
 FWL_ERR CFWL_Widget::Update() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return m_pIface->Update();
 }
 FWL_ERR CFWL_Widget::LockUpdate() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return m_pIface->LockUpdate();
 }
 FWL_ERR CFWL_Widget::UnlockUpdate() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return m_pIface->UnlockUpdate();
 }
 FX_DWORD CFWL_Widget::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, 0);
+  if (!m_pIface)
+    return 0;
   return m_pIface->HitTest(fx, fy);
 }
 FWL_ERR CFWL_Widget::TransformTo(CFWL_Widget* pWidget,
                                  FX_FLOAT& fx,
                                  FX_FLOAT& fy) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return m_pIface->TransformTo(pWidget ? pWidget->GetWidget() : NULL, fx, fy);
 }
 FWL_ERR CFWL_Widget::TransformTo(CFWL_Widget* pWidget, CFX_RectF& rt) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return m_pIface->TransformTo(pWidget ? pWidget->GetWidget() : NULL, rt);
 }
 FWL_ERR CFWL_Widget::GetMatrix(CFX_Matrix& matrix, FX_BOOL bGlobal) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return m_pIface->GetMatrix(matrix, bGlobal);
 }
 FWL_ERR CFWL_Widget::SetMatrix(const CFX_Matrix& matrix) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return m_pIface->SetMatrix(matrix);
 }
 FWL_ERR CFWL_Widget::DrawWidget(CFX_Graphics* pGraphics,
                                 const CFX_Matrix* pMatrix) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return m_pIface->DrawWidget(pGraphics, pMatrix);
 }
 FWL_ERR CFWL_Widget::GetProperties(CFWL_WidgetProperties& properties) {
@@ -201,7 +232,8 @@ FWL_ERR CFWL_Widget::SetProperties(const CFWL_WidgetProperties& properties) {
   return FWL_ERR_Succeeded;
 }
 IFWL_WidgetDelegate* CFWL_Widget::SetDelegate(IFWL_WidgetDelegate* pDelegate) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, NULL);
+  if (!m_pIface)
+    return NULL;
   m_pDelegate = m_pIface->SetDelegate(pDelegate);
   return m_pDelegate;
 }
@@ -223,7 +255,8 @@ CFWL_Widget::~CFWL_Widget() {
   }
 }
 FWL_ERR CFWL_Widget::Repaint(const CFX_RectF* pRect) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   CFX_RectF rect;
   if (pRect) {
     rect = *pRect;
@@ -234,11 +267,14 @@ FWL_ERR CFWL_Widget::Repaint(const CFX_RectF* pRect) {
   return m_pWidgetMgr->RepaintWidget(m_pIface, &rect);
 }
 FWL_ERR CFWL_Widget::SetFocus(FX_BOOL bFocus) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   IFWL_NoteThread* pThread = m_pIface->GetOwnerThread();
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   IFWL_NoteDriver* pDriver = pThread->GetNoteDriver();
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   if (bFocus) {
     pDriver->SetFocus(m_pIface);
   } else {
@@ -249,34 +285,43 @@ FWL_ERR CFWL_Widget::SetFocus(FX_BOOL bFocus) {
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_Widget::SetGrab(FX_BOOL bSet) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   IFWL_NoteThread* pThread = m_pIface->GetOwnerThread();
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   CFWL_NoteDriver* pDriver = (CFWL_NoteDriver*)pThread->GetNoteDriver();
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   pDriver->SetGrab(m_pIface, bSet);
   return FWL_ERR_Succeeded;
 }
 void CFWL_Widget::RegisterEventTarget(CFWL_Widget* pEventSource,
                                       FX_DWORD dwFilter) {
-  _FWL_RETURN_IF_FAIL(m_pIface);
+  if (!m_pIface)
+    return;
   IFWL_NoteThread* pThread = m_pIface->GetOwnerThread();
-  _FWL_RETURN_IF_FAIL(pThread);
+  if (!pThread)
+    return;
   IFWL_NoteDriver* pNoteDriver = pThread->GetNoteDriver();
-  _FWL_RETURN_IF_FAIL(pNoteDriver);
+  if (!pNoteDriver)
+    return;
   IFWL_Widget* pEventSourceImp =
       !pEventSource ? NULL : pEventSource->GetWidget();
   pNoteDriver->RegisterEventTarget(GetWidget(), pEventSourceImp, dwFilter);
 }
 void CFWL_Widget::DispatchEvent(CFWL_Event* pEvent) {
-  _FWL_RETURN_IF_FAIL(m_pIface);
+  if (!m_pIface)
+    return;
   if (m_pIface->GetOuter()) {
     return;
   }
   IFWL_NoteThread* pThread = m_pIface->GetOwnerThread();
-  _FWL_RETURN_IF_FAIL(pThread);
+  if (!pThread)
+    return;
   IFWL_NoteDriver* pNoteDriver = pThread->GetNoteDriver();
-  _FWL_RETURN_IF_FAIL(pNoteDriver);
+  if (!pNoteDriver)
+    return;
   pNoteDriver->SendNote(pEvent);
 }
 #define FWL_WGT_CalcHeight 2048
@@ -287,9 +332,11 @@ CFX_SizeF CFWL_Widget::CalcTextSize(const CFX_WideString& wsText,
                                     int32_t iLineWidth) {
   CFX_SizeF sz;
   sz.Set(0, 0);
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, sz);
+  if (!m_pIface)
+    return sz;
   IFWL_ThemeProvider* pTheme = m_pIface->GetThemeProvider();
-  _FWL_RETURN_VALUE_IF_FAIL(pTheme, sz);
+  if (!pTheme)
+    return sz;
   CFWL_ThemeText calPart;
   calPart.m_pWidget = m_pIface;
   calPart.m_wsText = wsText;

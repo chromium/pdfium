@@ -9,7 +9,8 @@ CFWL_Caret* CFWL_Caret::Create() {
   return new CFWL_Caret;
 }
 FWL_ERR CFWL_Caret::Initialize(const CFWL_WidgetProperties* pProperties) {
-  _FWL_RETURN_VALUE_IF_FAIL(!m_pIface, FWL_ERR_Indefinite);
+  if (m_pIface)
+    return FWL_ERR_Indefinite;
   if (pProperties) {
     *m_pProperties = *pProperties;
   }

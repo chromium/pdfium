@@ -20,7 +20,8 @@ FX_BOOL FWL_UseOffscreen(IFWL_Widget* pWidget) {
 }
 IFWL_WidgetMgr* FWL_GetWidgetMgr() {
   IFWL_App* pApp = FWL_GetApp();
-  _FWL_RETURN_VALUE_IF_FAIL(pApp, NULL);
+  if (!pApp)
+    return NULL;
   return pApp->GetWidgetMgr();
 }
 CFWL_WidgetMgr::CFWL_WidgetMgr(IFWL_AdapterNative* pAdapterNative)
@@ -133,13 +134,16 @@ IFWL_Widget* CFWL_WidgetMgr::GetWidget(IFWL_Widget* pWidget,
 }
 int32_t CFWL_WidgetMgr::GetWidgetIndex(IFWL_Widget* pWidget) {
   CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
-  _FWL_RETURN_VALUE_IF_FAIL(pItem, -1);
+  if (!pItem)
+    return -1;
   return TravelWidgetMgr(pItem->pParent, NULL, pItem);
 }
 FX_BOOL CFWL_WidgetMgr::SetWidgetIndex(IFWL_Widget* pWidget, int32_t nIndex) {
   CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pWidget);
-  _FWL_RETURN_VALUE_IF_FAIL(pItem, FALSE);
-  _FWL_RETURN_VALUE_IF_FAIL(pItem->pParent, FALSE);
+  if (!pItem)
+    return FALSE;
+  if (!pItem->pParent)
+    return FALSE;
   CFWL_WidgetMgrItem* pChild = pItem->pParent->pChild;
   int32_t i = 0;
   while (pChild) {
@@ -205,12 +209,14 @@ FX_BOOL CFWL_WidgetMgr::SetWidgetIndex(IFWL_Widget* pWidget, int32_t nIndex) {
   return TRUE;
 }
 FX_BOOL CFWL_WidgetMgr::IsWidget(void* pObj) {
-  _FWL_RETURN_VALUE_IF_FAIL(pObj, FALSE);
+  if (!pObj)
+    return FALSE;
   return GetWidgetMgrItem((IFWL_Widget*)pObj) != NULL;
 }
 FWL_ERR CFWL_WidgetMgr::RepaintWidget(IFWL_Widget* pWidget,
                                       const CFX_RectF* pRect) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pAdapter, FWL_ERR_Indefinite);
+  if (!m_pAdapter)
+    return FWL_ERR_Indefinite;
   IFWL_Widget* pNative = pWidget;
   CFX_RectF rect(*pRect);
   if (IsFormDisabled()) {
@@ -225,7 +231,8 @@ FWL_ERR CFWL_WidgetMgr::RepaintWidget(IFWL_Widget* pWidget,
     }
   } else if (!IsAbleNative(pWidget)) {
     pNative = GetWidget(pWidget, FWL_WGTRELATION_SystemForm);
-    _FWL_RETURN_VALUE_IF_FAIL(pNative, FWL_ERR_Indefinite);
+    if (!pNative)
+      return FWL_ERR_Indefinite;
     pWidget->TransformTo(pNative, rect.left, rect.top);
   }
   AddRedrawCounts(pNative);
@@ -329,7 +336,8 @@ void CFWL_WidgetMgr::SetOwner(IFWL_Widget* pOwner, IFWL_Widget* pOwned) {
 void CFWL_WidgetMgr::SetParent(IFWL_Widget* pParent, IFWL_Widget* pChild) {
   CFWL_WidgetMgrItem* pParentItem = GetWidgetMgrItem(pParent);
   CFWL_WidgetMgrItem* pItem = GetWidgetMgrItem(pChild);
-  _FWL_RETURN_IF_FAIL(pItem);
+  if (!pItem)
+    return;
   if (pItem->pParent && pItem->pParent != pParentItem) {
     if (pItem->pPrevious) {
       pItem->pPrevious->pNext = pItem->pNext;
@@ -345,7 +353,8 @@ void CFWL_WidgetMgr::SetParent(IFWL_Widget* pParent, IFWL_Widget* pChild) {
   }
   pItem->pParent = pParentItem;
   SetWidgetIndex(pChild, -1);
-  _FWL_RETURN_IF_FAIL(m_pAdapter);
+  if (!m_pAdapter)
+    return;
   m_pAdapter->SetParentWidget(pChild, pParent);
 }
 FX_BOOL CFWL_WidgetMgr::IsChild(IFWL_Widget* pChild, IFWL_Widget* pParent) {
@@ -452,7 +461,8 @@ FWL_ERR CFWL_WidgetMgr::CreateWidgetWithNativeId_Native(IFWL_Widget* pWidget,
 IFWL_Widget* CFWL_WidgetMgr::GetWidgetAtPoint(IFWL_Widget* parent,
                                               FX_FLOAT x,
                                               FX_FLOAT y) {
-  _FWL_RETURN_VALUE_IF_FAIL(parent, NULL);
+  if (!parent)
+    return NULL;
   FX_FLOAT x1;
   FX_FLOAT y1;
   IFWL_Widget* child = GetWidget(parent, FWL_WGTRELATION_LastChild);
@@ -655,7 +665,8 @@ int32_t CFWL_WidgetMgr::TravelWidgetMgr(CFWL_WidgetMgrItem* pParent,
   return iCount - 1;
 }
 FX_BOOL CFWL_WidgetMgr::IsAbleNative(IFWL_Widget* pWidget) {
-  _FWL_RETURN_VALUE_IF_FAIL(pWidget, FALSE);
+  if (!pWidget)
+    return FALSE;
   if (!pWidget->IsInstance(FX_WSTRC(FWL_CLASS_Form))) {
     return FALSE;
   }
@@ -686,13 +697,17 @@ FWL_ERR CFWL_WidgetMgrDelegate::OnSetCapability(FX_DWORD dwCapability) {
   return FWL_ERR_Succeeded;
 }
 int32_t CFWL_WidgetMgrDelegate::OnProcessMessageToForm(CFWL_Message* pMessage) {
-  _FWL_RETURN_VALUE_IF_FAIL(pMessage, 0);
-  _FWL_RETURN_VALUE_IF_FAIL(pMessage->m_pDstTarget, 0);
+  if (!pMessage)
+    return 0;
+  if (!pMessage->m_pDstTarget)
+    return 0;
   IFWL_Widget* pDstWidget = (IFWL_Widget*)pMessage->m_pDstTarget;
   IFWL_NoteThread* pNoteThread = pDstWidget->GetOwnerThread();
-  _FWL_RETURN_VALUE_IF_FAIL(pNoteThread, 0);
+  if (!pNoteThread)
+    return 0;
   CFWL_NoteDriver* pNoteDriver = (CFWL_NoteDriver*)pNoteThread->GetNoteDriver();
-  _FWL_RETURN_VALUE_IF_FAIL(pNoteDriver, 0);
+  if (!pNoteDriver)
+    return 0;
   if (m_pWidgetMgr->IsThreadEnabled()) {
     pMessage = (CFWL_Message*)pMessage->Clone();
   }
@@ -715,8 +730,10 @@ int32_t CFWL_WidgetMgrDelegate::OnProcessMessageToForm(CFWL_Message* pMessage) {
 FWL_ERR CFWL_WidgetMgrDelegate::OnDrawWidget(IFWL_Widget* pWidget,
                                              CFX_Graphics* pGraphics,
                                              const CFX_Matrix* pMatrix) {
-  _FWL_RETURN_VALUE_IF_FAIL(pWidget, FWL_ERR_Indefinite);
-  _FWL_RETURN_VALUE_IF_FAIL(pGraphics, FWL_ERR_Indefinite);
+  if (!pWidget)
+    return FWL_ERR_Indefinite;
+  if (!pGraphics)
+    return FWL_ERR_Indefinite;
   CFX_Graphics* pTemp = DrawWidgetBefore(pWidget, pGraphics, pMatrix);
   CFX_RectF clipCopy;
   pWidget->GetWidgetRect(clipCopy);
@@ -766,7 +783,8 @@ void CFWL_WidgetMgrDelegate::DrawChild(IFWL_Widget* parent,
                                        const CFX_RectF& rtClip,
                                        CFX_Graphics* pGraphics,
                                        const CFX_Matrix* pMatrix) {
-  _FWL_RETURN_IF_FAIL(parent);
+  if (!parent)
+    return;
   FX_BOOL bFormDisable = m_pWidgetMgr->IsFormDisabled();
   IFWL_Widget* pNextChild =
       m_pWidgetMgr->GetWidget(parent, FWL_WGTRELATION_FirstChild);

@@ -66,8 +66,8 @@ FX_DWORD CFWL_SpinButtonImp::GetClassID() const {
   return FWL_CLASSHASH_SpinButton;
 }
 FWL_ERR CFWL_SpinButtonImp::Initialize() {
-  _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
-                                      FWL_ERR_Indefinite);
+  if (CFWL_WidgetImp::Initialize() != FWL_ERR_Succeeded)
+    return FWL_ERR_Indefinite;
   m_pDelegate = new CFWL_SpinButtonImpDelegate(this);
   return FWL_ERR_Succeeded;
 }
@@ -127,7 +127,8 @@ FX_DWORD CFWL_SpinButtonImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
 }
 FWL_ERR CFWL_SpinButtonImp::DrawWidget(CFX_Graphics* pGraphics,
                                        const CFX_Matrix* pMatrix) {
-  _FWL_RETURN_VALUE_IF_FAIL(pGraphics, FWL_ERR_Indefinite);
+  if (!pGraphics)
+    return FWL_ERR_Indefinite;
   CFX_RectF rtClip(m_rtClient);
   if (pMatrix != NULL) {
     pMatrix->TransformRect(rtClip);
@@ -206,7 +207,8 @@ CFWL_SpinButtonImpDelegate::CFWL_SpinButtonImpDelegate(
     CFWL_SpinButtonImp* pOwner)
     : m_pOwner(pOwner) {}
 int32_t CFWL_SpinButtonImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
-  _FWL_RETURN_VALUE_IF_FAIL(pMessage, 0);
+  if (!pMessage)
+    return 0;
   int32_t iRet = 1;
   FX_DWORD dwMsgCode = pMessage->GetClassID();
   switch (dwMsgCode) {
@@ -274,7 +276,8 @@ void CFWL_SpinButtonImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
   m_pOwner->m_bLButtonDwn = TRUE;
   m_pOwner->SetGrab(TRUE);
   m_pOwner->SetFocus(TRUE);
-  _FWL_RETURN_IF_FAIL(m_pOwner->m_pProperties->m_pDataProvider);
+  if (!m_pOwner->m_pProperties->m_pDataProvider)
+    return;
   FX_BOOL bUpPress = (m_pOwner->m_rtUpButton.Contains(pMsg->m_fx, pMsg->m_fy) &&
                       m_pOwner->IsButtonEnable(TRUE));
   FX_BOOL bDnPress = (m_pOwner->m_rtDnButton.Contains(pMsg->m_fx, pMsg->m_fy) &&
@@ -327,7 +330,8 @@ void CFWL_SpinButtonImpDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
   }
 }
 void CFWL_SpinButtonImpDelegate::OnMouseMove(CFWL_MsgMouse* pMsg) {
-  _FWL_RETURN_IF_FAIL(m_pOwner->m_pProperties->m_pDataProvider);
+  if (!m_pOwner->m_pProperties->m_pDataProvider)
+    return;
   if (m_pOwner->m_bLButtonDwn) {
     return;
   }
@@ -395,7 +399,8 @@ void CFWL_SpinButtonImpDelegate::OnMouseMove(CFWL_MsgMouse* pMsg) {
   }
 }
 void CFWL_SpinButtonImpDelegate::OnMouseLeave(CFWL_MsgMouse* pMsg) {
-  _FWL_RETURN_IF_FAIL(pMsg);
+  if (!pMsg)
+    return;
   if (m_pOwner->m_dwUpState != FWL_PARTSTATE_SPB_Normal &&
       m_pOwner->IsButtonEnable(TRUE)) {
     m_pOwner->m_dwUpState = FWL_PARTSTATE_SPB_Normal;
@@ -407,7 +412,8 @@ void CFWL_SpinButtonImpDelegate::OnMouseLeave(CFWL_MsgMouse* pMsg) {
   m_pOwner->Repaint(&m_pOwner->m_rtClient);
 }
 void CFWL_SpinButtonImpDelegate::OnKeyDown(CFWL_MsgKey* pMsg) {
-  _FWL_RETURN_IF_FAIL(m_pOwner->m_pProperties->m_pDataProvider);
+  if (!m_pOwner->m_pProperties->m_pDataProvider)
+    return;
   FX_BOOL bUp =
       pMsg->m_dwKeyCode == FWL_VKEY_Up || pMsg->m_dwKeyCode == FWL_VKEY_Left;
   FX_BOOL bDown =

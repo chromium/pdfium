@@ -52,24 +52,28 @@ CFWL_ContentImp::CFWL_ContentImp(const CFWL_WidgetImpProperties& properties)
 }
 CFWL_ContentImp::~CFWL_ContentImp() {}
 FWL_ERR CFWL_ContentImp::InsertWidget(IFWL_Widget* pChild, int32_t nIndex) {
-  _FWL_RETURN_VALUE_IF_FAIL(pChild, FWL_ERR_Indefinite);
+  if (!pChild)
+    return FWL_ERR_Indefinite;
   pChild->SetParent(m_pInterface);
   if (nIndex == -1) {
     return FWL_ERR_Succeeded;
   }
   CFWL_WidgetMgr* pMgr = (CFWL_WidgetMgr*)FWL_GetWidgetMgr();
-  _FWL_RETURN_VALUE_IF_FAIL(pMgr, FWL_ERR_Indefinite);
+  if (!pMgr)
+    return FWL_ERR_Indefinite;
   pMgr->SetWidgetIndex(pChild, nIndex);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_ContentImp::RemoveWidget(IFWL_Widget* pWidget) {
-  _FWL_RETURN_VALUE_IF_FAIL(pWidget, FWL_ERR_Indefinite);
+  if (!pWidget)
+    return FWL_ERR_Indefinite;
   pWidget->SetParent(NULL);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_ContentImp::RemoveAllWidgets() {
   CFWL_WidgetMgr* pMgr = (CFWL_WidgetMgr*)FWL_GetWidgetMgr();
-  _FWL_RETURN_VALUE_IF_FAIL(pMgr, FWL_ERR_Indefinite);
+  if (!pMgr)
+    return FWL_ERR_Indefinite;
   while (IFWL_Widget* widget =
              pMgr->GetWidget(m_pInterface, FWL_WGTRELATION_FirstChild)) {
     pMgr->SetParent(NULL, widget);

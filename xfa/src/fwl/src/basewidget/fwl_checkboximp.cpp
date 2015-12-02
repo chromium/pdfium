@@ -75,8 +75,8 @@ FX_DWORD CFWL_CheckBoxImp::GetClassID() const {
              : FWL_CLASSHASH_CheckBox;
 }
 FWL_ERR CFWL_CheckBoxImp::Initialize() {
-  _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
-                                      FWL_ERR_Indefinite);
+  if (CFWL_WidgetImp::Initialize() != FWL_ERR_Succeeded)
+    return FWL_ERR_Indefinite;
   m_pDelegate = new CFWL_CheckBoxImpDelegate(this);
   return FWL_ERR_Succeeded;
 }
@@ -88,13 +88,12 @@ FWL_ERR CFWL_CheckBoxImp::Finalize() {
 FWL_ERR CFWL_CheckBoxImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
   if (bAutoSize) {
     rect.Set(0, 0, 0, 0);
-    if (!m_pProperties->m_pThemeProvider) {
+    if (!m_pProperties->m_pThemeProvider)
       m_pProperties->m_pThemeProvider = GetAvailableTheme();
-    }
-    _FWL_RETURN_VALUE_IF_FAIL(m_pProperties->m_pThemeProvider,
-                              FWL_ERR_Indefinite);
-    _FWL_RETURN_VALUE_IF_FAIL(m_pProperties->m_pDataProvider,
-                              FWL_ERR_Indefinite);
+    if (!m_pProperties->m_pThemeProvider)
+      return FWL_ERR_Indefinite;
+    if (!m_pProperties->m_pDataProvider)
+      return FWL_ERR_Indefinite;
     CFX_WideString wsCaption;
     m_pProperties->m_pDataProvider->GetCaption(m_pInterface, wsCaption);
     if (wsCaption.GetLength() > 0) {
@@ -129,9 +128,10 @@ FWL_ERR CFWL_CheckBoxImp::Update() {
 }
 FWL_ERR CFWL_CheckBoxImp::DrawWidget(CFX_Graphics* pGraphics,
                                      const CFX_Matrix* pMatrix) {
-  _FWL_RETURN_VALUE_IF_FAIL(pGraphics, FWL_ERR_Indefinite);
-  _FWL_RETURN_VALUE_IF_FAIL(m_pProperties->m_pThemeProvider,
-                            FWL_ERR_Indefinite);
+  if (!pGraphics)
+    return FWL_ERR_Indefinite;
+  if (!m_pProperties->m_pThemeProvider)
+    return FWL_ERR_Indefinite;
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   if (HasBorder()) {
     DrawBorder(pGraphics, FWL_PART_CKB_Border, m_pProperties->m_pThemeProvider,
@@ -159,12 +159,14 @@ FWL_ERR CFWL_CheckBoxImp::DrawWidget(CFX_Graphics* pGraphics,
     param.m_rtPart = m_rtBox;
     pTheme->DrawBackground(&param);
   }
-  _FWL_RETURN_VALUE_IF_FAIL(m_pProperties->m_pDataProvider, FWL_ERR_Indefinite);
+  if (!m_pProperties->m_pDataProvider)
+    return FWL_ERR_Indefinite;
   {
     CFX_WideString wsCaption;
     m_pProperties->m_pDataProvider->GetCaption(m_pInterface, wsCaption);
     int32_t iLen = wsCaption.GetLength();
-    _FWL_RETURN_VALUE_IF_FAIL(iLen > 0, FWL_ERR_Indefinite);
+    if (iLen <= 0)
+      return FWL_ERR_Indefinite;
     CFWL_ThemeText textParam;
     textParam.m_pWidget = m_pInterface;
     textParam.m_iPart = FWL_PART_CKB_Caption;
@@ -225,7 +227,8 @@ void CFWL_CheckBoxImp::Layout() {
   FX_FLOAT fTextLeft = 0.0, fTextRight = 0.0;
   FX_FLOAT fClientRight = m_rtClient.right();
   FX_FLOAT fClientBottom = m_rtClient.bottom();
-  _FWL_RETURN_IF_FAIL(m_pProperties->m_pDataProvider);
+  if (!m_pProperties->m_pDataProvider)
+    return;
   IFWL_CheckBoxDP* pData = (IFWL_CheckBoxDP*)m_pProperties->m_pDataProvider;
   FX_FLOAT fCheckBox = pData->GetBoxSize(m_pInterface);
   switch (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_VLayoutMask) {
@@ -422,7 +425,8 @@ void CFWL_CheckBoxImp::NextStates() {
 CFWL_CheckBoxImpDelegate::CFWL_CheckBoxImpDelegate(CFWL_CheckBoxImp* pOwner)
     : m_pOwner(pOwner) {}
 int32_t CFWL_CheckBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
-  _FWL_RETURN_VALUE_IF_FAIL(pMessage, 0);
+  if (!pMessage)
+    return 0;
   FX_DWORD dwMsgCode = pMessage->GetClassID();
   int32_t iRet = 1;
   switch (dwMsgCode) {

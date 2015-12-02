@@ -42,9 +42,11 @@ FX_BOOL FWL_ShowCaret(IFWL_Widget* pWidget,
 }
 FWL_ERR CXFA_FWLAdapterWidgetMgr::RepaintWidget(IFWL_Widget* pWidget,
                                                 const CFX_RectF* pRect) {
-  _FWL_RETURN_VALUE_IF_FAIL(pWidget, FWL_ERR_Indefinite);
+  if (!pWidget)
+    return FWL_ERR_Indefinite;
   CXFA_FFField* pField = (CXFA_FFField*)pWidget->GetPrivateData(pWidget);
-  _FWL_RETURN_VALUE_IF_FAIL(pField, FWL_ERR_Indefinite);
+  if (!pField)
+    return FWL_ERR_Indefinite;
 #ifdef _XFA_EMB
   CFX_RectF rtInvalidate;
   pWidget->GetWidgetRect(rtInvalidate);

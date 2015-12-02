@@ -131,7 +131,8 @@ FX_BOOL CXFA_FWLTheme::DrawText(CFWL_ThemeText* pParams) {
     }
     CFX_Graphics* pGraphics = pParams->m_pGraphics;
     CFX_RenderDevice* pRenderDevice = pGraphics->GetRenderDevice();
-    _FWL_RETURN_VALUE_IF_FAIL(pRenderDevice, FALSE);
+    if (!pRenderDevice)
+      return FALSE;
     m_pTextOut->SetRenderDevice(pRenderDevice);
     CFX_Matrix mtPart = pParams->m_matrix;
     CFX_Matrix* pMatrix = pGraphics->GetMatrix();
@@ -150,7 +151,8 @@ FX_BOOL CXFA_FWLTheme::DrawText(CFWL_ThemeText* pParams) {
   CXFA_WidgetAcc* pAcc = pWidget->GetDataAcc();
   CFX_Graphics* pGraphics = pParams->m_pGraphics;
   CFX_RenderDevice* pRenderDevice = pGraphics->GetRenderDevice();
-  _FWL_RETURN_VALUE_IF_FAIL(pRenderDevice, FALSE);
+  if (!pRenderDevice)
+    return FALSE;
   m_pTextOut->SetRenderDevice(pRenderDevice);
   m_pTextOut->SetStyles(pParams->m_dwTTOStyles);
   m_pTextOut->SetAlignment(pParams->m_iTTOAlign);
@@ -274,8 +276,10 @@ FX_BOOL CXFA_FWLTheme::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
     if (!pWidget) {
       return FWL_ERR_Indefinite;
     }
-    _FWL_RETURN_VALUE_IF_FAIL(pParams, FALSE);
-    _FWL_RETURN_VALUE_IF_FAIL(m_pTextOut, FALSE);
+    if (!pParams)
+      return FALSE;
+    if (!m_pTextOut)
+      return FALSE;
     m_pTextOut->SetFont(m_pCalendarFont);
     m_pTextOut->SetFontSize(FWLTHEME_CAPACITY_FontSize);
     m_pTextOut->SetTextColor(FWLTHEME_CAPACITY_TextColor);
@@ -293,8 +297,10 @@ FX_BOOL CXFA_FWLTheme::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
   m_pTextOut->SetFont(pAcc->GetFDEFont());
   m_pTextOut->SetFontSize(pAcc->GetFontSize());
   m_pTextOut->SetTextColor(pAcc->GetTextColor());
-  _FWL_RETURN_VALUE_IF_FAIL(pParams, FALSE);
-  _FWL_RETURN_VALUE_IF_FAIL(m_pTextOut, FALSE);
+  if (!pParams)
+    return FALSE;
+  if (!m_pTextOut)
+    return FALSE;
   m_pTextOut->SetAlignment(pParams->m_iTTOAlign);
   m_pTextOut->SetStyles(pParams->m_dwTTOStyles);
   m_pTextOut->CalcLogicSize(pParams->m_wsText, pParams->m_wsText.GetLength(),

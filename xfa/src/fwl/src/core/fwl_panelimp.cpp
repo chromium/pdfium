@@ -56,7 +56,8 @@ FWL_ERR CFWL_PanelImp::Update() {
     GetClientRect(rtClient);
     FWL_GRIDUNIT eWidth = FWL_GRIDUNIT_Fixed, eHeight = FWL_GRIDUNIT_Fixed;
     IFWL_WidgetMgr* pWidgetMgr = FWL_GetWidgetMgr();
-    _FWL_RETURN_VALUE_IF_FAIL(pWidgetMgr, FWL_ERR_Indefinite);
+    if (!pWidgetMgr)
+      return FWL_ERR_Indefinite;
     IFWL_Widget* pParent =
         pWidgetMgr->GetWidget((IFWL_Widget*)this, FWL_WGTRELATION_Parent);
     if (pParent && pParent->GetClassID() == FWL_CLASSHASH_Grid) {
@@ -75,7 +76,8 @@ IFWL_Content* CFWL_PanelImp::GetContent() {
   return m_pContent;
 }
 FWL_ERR CFWL_PanelImp::SetContent(IFWL_Content* pContent) {
-  _FWL_RETURN_VALUE_IF_FAIL(pContent, FWL_ERR_Indefinite);
+  if (!pContent)
+    return FWL_ERR_Indefinite;
   m_pContent = pContent;
   return pContent->SetParent(m_pInterface);
 }
@@ -119,7 +121,8 @@ IFWL_Content* CFWL_CustomPanelImp::GetContent() {
   return m_pContent;
 }
 FWL_ERR CFWL_CustomPanelImp::SetContent(IFWL_Content* pContent) {
-  _FWL_RETURN_VALUE_IF_FAIL(pContent, FWL_ERR_Indefinite);
+  if (!pContent)
+    return FWL_ERR_Indefinite;
   m_pContent = pContent;
   return pContent->SetParent(m_pInterface);
 }

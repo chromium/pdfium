@@ -77,8 +77,8 @@ FX_DWORD CFWL_ToolTipImp::GetClassID() const {
 FWL_ERR CFWL_ToolTipImp::Initialize() {
   m_pProperties->m_dwStyles |= FWL_WGTSTYLE_Popup;
   m_pProperties->m_dwStyles &= ~FWL_WGTSTYLE_Child;
-  _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
-                                      FWL_ERR_Indefinite);
+  if (CFWL_WidgetImp::Initialize() != FWL_ERR_Succeeded)
+    return FWL_ERR_Indefinite;
   m_pDelegate = new CFWL_ToolTipImpDelegate(this);
   return FWL_ERR_Succeeded;
 }
@@ -149,9 +149,10 @@ FWL_ERR CFWL_ToolTipImp::DrawWidget(CFX_Graphics* pGraphics,
   if (toolTipTarget && !toolTipTarget->UseDefaultTheme()) {
     return toolTipTarget->DrawToolTip(pGraphics, pMatrix, m_pInterface);
   }
-  _FWL_RETURN_VALUE_IF_FAIL(pGraphics, FWL_ERR_Indefinite);
-  _FWL_RETURN_VALUE_IF_FAIL(m_pProperties->m_pThemeProvider,
-                            FWL_ERR_Indefinite);
+  if (!pGraphics)
+    return FWL_ERR_Indefinite;
+  if (!m_pProperties->m_pThemeProvider)
+    return FWL_ERR_Indefinite;
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   DrawBkground(pGraphics, pTheme, pMatrix);
   DrawText(pGraphics, pTheme, pMatrix);
@@ -177,7 +178,8 @@ void CFWL_ToolTipImp::DrawBkground(CFX_Graphics* pGraphics,
 void CFWL_ToolTipImp::DrawText(CFX_Graphics* pGraphics,
                                IFWL_ThemeProvider* pTheme,
                                const CFX_Matrix* pMatrix) {
-  _FWL_RETURN_IF_FAIL(m_pProperties->m_pDataProvider);
+  if (!m_pProperties->m_pDataProvider)
+    return;
   CFX_WideString wsCaption;
   m_pProperties->m_pDataProvider->GetCaption(m_pInterface, wsCaption);
   if (wsCaption.IsEmpty()) {

@@ -235,8 +235,8 @@ FX_DWORD CFWL_EditImp::GetClassID() const {
   return FWL_CLASSHASH_Edit;
 }
 FWL_ERR CFWL_EditImp::Initialize() {
-  _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
-                                      FWL_ERR_Indefinite);
+  if (CFWL_WidgetImp::Initialize() != FWL_ERR_Succeeded)
+    return FWL_ERR_Indefinite;
   if (!m_pDelegate) {
     m_pDelegate = new CFWL_EditImpDelegate(this);
   }
@@ -507,9 +507,10 @@ void CFWL_EditImp::DrawSpellCheck(CFX_Graphics* pGraphics,
 }
 FWL_ERR CFWL_EditImp::DrawWidget(CFX_Graphics* pGraphics,
                                  const CFX_Matrix* pMatrix) {
-  _FWL_RETURN_VALUE_IF_FAIL(pGraphics, FWL_ERR_Indefinite);
-  _FWL_RETURN_VALUE_IF_FAIL(m_pProperties->m_pThemeProvider,
-                            FWL_ERR_Indefinite);
+  if (!pGraphics)
+    return FWL_ERR_Indefinite;
+  if (!m_pProperties->m_pThemeProvider)
+    return FWL_ERR_Indefinite;
   if (m_rtClient.IsEmpty()) {
     return FWL_ERR_Indefinite;
   }
@@ -533,7 +534,8 @@ FWL_ERR CFWL_EditImp::DrawWidget(CFX_Graphics* pGraphics,
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_EditImp::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
-  _FWL_RETURN_VALUE_IF_FAIL(pThemeProvider, FWL_ERR_Indefinite);
+  if (!pThemeProvider)
+    return FWL_ERR_Indefinite;
   if (m_pHorzScrollBar) {
     m_pHorzScrollBar->SetThemeProvider(pThemeProvider);
   }
@@ -551,45 +553,54 @@ FWL_ERR CFWL_EditImp::SetText(const CFX_WideString& wsText) {
   return FWL_ERR_Succeeded;
 }
 int32_t CFWL_EditImp::GetTextLength() const {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pEdtEngine, -1);
+  if (!m_pEdtEngine)
+    return -1;
   return m_pEdtEngine->GetTextLength();
 }
 FWL_ERR CFWL_EditImp::GetText(CFX_WideString& wsText,
                               int32_t nStart,
                               int32_t nCount) const {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pEdtEngine, FWL_ERR_Succeeded);
+  if (!m_pEdtEngine)
+    return FWL_ERR_Succeeded;
   m_pEdtEngine->GetText(wsText, nStart, nCount);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_EditImp::ClearText() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pEdtEngine, FWL_ERR_Succeeded);
+  if (!m_pEdtEngine)
+    return FWL_ERR_Succeeded;
   m_pEdtEngine->ClearText();
   return FWL_ERR_Succeeded;
 }
 int32_t CFWL_EditImp::GetCaretPos() const {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pEdtEngine, -1);
+  if (!m_pEdtEngine)
+    return -1;
   return m_pEdtEngine->GetCaretPos();
 }
 int32_t CFWL_EditImp::SetCaretPos(int32_t nIndex, FX_BOOL bBefore) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pEdtEngine, -1);
+  if (!m_pEdtEngine)
+    return -1;
   return m_pEdtEngine->SetCaretPos(nIndex, bBefore);
 }
 FWL_ERR CFWL_EditImp::AddSelRange(int32_t nStart, int32_t nCount) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pEdtEngine, FWL_ERR_Succeeded);
+  if (!m_pEdtEngine)
+    return FWL_ERR_Succeeded;
   m_pEdtEngine->AddSelRange(nStart, nCount);
   return FWL_ERR_Succeeded;
 }
 int32_t CFWL_EditImp::CountSelRanges() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pEdtEngine, 0);
+  if (!m_pEdtEngine)
+    return 0;
   return m_pEdtEngine->CountSelRanges();
   return FWL_ERR_Succeeded;
 }
 int32_t CFWL_EditImp::GetSelRange(int32_t nIndex, int32_t& nStart) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pEdtEngine, -1);
+  if (!m_pEdtEngine)
+    return -1;
   return m_pEdtEngine->GetSelRange(nIndex, nStart);
 }
 FWL_ERR CFWL_EditImp::ClearSelections() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pEdtEngine, FWL_ERR_Succeeded);
+  if (!m_pEdtEngine)
+    return FWL_ERR_Succeeded;
   m_pEdtEngine->ClearSelection();
   return FWL_ERR_Succeeded;
 }
@@ -598,24 +609,28 @@ int32_t CFWL_EditImp::GetLimit() {
 }
 FWL_ERR CFWL_EditImp::SetLimit(int32_t nLimit) {
   m_nLimit = nLimit;
-  _FWL_RETURN_VALUE_IF_FAIL(m_pEdtEngine, FWL_ERR_Succeeded);
+  if (!m_pEdtEngine)
+    return FWL_ERR_Succeeded;
   m_pEdtEngine->SetLimit(nLimit);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_EditImp::SetAliasChar(FX_WCHAR wAlias) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pEdtEngine, FWL_ERR_Indefinite);
+  if (!m_pEdtEngine)
+    return FWL_ERR_Indefinite;
   m_pEdtEngine->SetAliasChar(wAlias);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_EditImp::SetFormatString(const CFX_WideString& wsFormat) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pEdtEngine, FWL_ERR_Succeeded);
+  if (!m_pEdtEngine)
+    return FWL_ERR_Succeeded;
   m_pEdtEngine->SetFormatBlock(0, wsFormat);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_EditImp::Insert(int32_t nStart,
                              const FX_WCHAR* lpText,
                              int32_t nLen) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pEdtEngine, FWL_ERR_Succeeded);
+  if (!m_pEdtEngine)
+    return FWL_ERR_Succeeded;
   if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_ReadOnly) ||
       (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)) {
     return FWL_ERR_Indefinite;
@@ -624,7 +639,8 @@ FWL_ERR CFWL_EditImp::Insert(int32_t nStart,
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_EditImp::DeleteSelections() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pEdtEngine, FWL_ERR_Succeeded);
+  if (!m_pEdtEngine)
+    return FWL_ERR_Succeeded;
   int32_t iCount = m_pEdtEngine->CountSelRanges();
   if (iCount > 0) {
     m_pEdtEngine->Delete(-1);
@@ -632,12 +648,14 @@ FWL_ERR CFWL_EditImp::DeleteSelections() {
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_EditImp::DeleteRange(int32_t nStart, int32_t nCount) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pEdtEngine, FWL_ERR_Succeeded);
+  if (!m_pEdtEngine)
+    return FWL_ERR_Succeeded;
   m_pEdtEngine->DeleteRange(nStart, nCount);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_EditImp::ReplaceSelections(const CFX_WideStringC& wsReplace) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pEdtEngine, FWL_ERR_Succeeded);
+  if (!m_pEdtEngine)
+    return FWL_ERR_Succeeded;
   int32_t iCount = m_pEdtEngine->CountSelRanges();
   for (int i = 0; i < iCount; i++) {
     int32_t nStart;
@@ -649,20 +667,24 @@ FWL_ERR CFWL_EditImp::ReplaceSelections(const CFX_WideStringC& wsReplace) {
 FWL_ERR CFWL_EditImp::Replace(int32_t nStart,
                               int32_t nLen,
                               const CFX_WideStringC& wsReplace) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pEdtEngine, FWL_ERR_Succeeded);
+  if (!m_pEdtEngine)
+    return FWL_ERR_Succeeded;
   m_pEdtEngine->Replace(nStart, nLen, wsReplace);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_EditImp::DoClipboard(int32_t iCmd) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pEdtEngine, FWL_ERR_Succeeded);
+  if (!m_pEdtEngine)
+    return FWL_ERR_Succeeded;
   if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_ReadOnly) ||
       (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)) {
     return FWL_ERR_Succeeded;
   }
   IFWL_AdapterNative* pNative = FWL_GetAdapterNative();
-  _FWL_RETURN_VALUE_IF_FAIL(pNative, FWL_ERR_Indefinite);
+  if (!pNative)
+    return FWL_ERR_Indefinite;
   IFWL_AdapterClipboardMgr* pClipBorder = pNative->GetClipboardMgr();
-  _FWL_RETURN_VALUE_IF_FAIL(pClipBorder, FWL_ERR_Indefinite);
+  if (!pClipBorder)
+    return FWL_ERR_Indefinite;
   CFX_WideString wsText;
   switch (iCmd) {
     case 1: {
@@ -709,7 +731,8 @@ FWL_ERR CFWL_EditImp::DoClipboard(int32_t iCmd) {
   return FWL_ERR_Succeeded;
 }
 FX_BOOL CFWL_EditImp::Copy(CFX_WideString& wsCopy) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pEdtEngine, FALSE);
+  if (!m_pEdtEngine)
+    return FALSE;
   int32_t nCount = m_pEdtEngine->CountSelRanges();
   if (nCount == 0) {
     return FALSE;
@@ -726,7 +749,8 @@ FX_BOOL CFWL_EditImp::Copy(CFX_WideString& wsCopy) {
   return TRUE;
 }
 FX_BOOL CFWL_EditImp::Cut(CFX_WideString& wsCut) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pEdtEngine, FALSE);
+  if (!m_pEdtEngine)
+    return FALSE;
   int32_t nCount = m_pEdtEngine->CountSelRanges();
   if (nCount == 0) {
     return FALSE;
@@ -744,7 +768,8 @@ FX_BOOL CFWL_EditImp::Cut(CFX_WideString& wsCut) {
   return TRUE;
 }
 FX_BOOL CFWL_EditImp::Paste(const CFX_WideString& wsPaste) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pEdtEngine, FALSE);
+  if (!m_pEdtEngine)
+    return FALSE;
   int32_t nCaret = m_pEdtEngine->GetCaretPos();
   int32_t iError =
       m_pEdtEngine->Insert(nCaret, wsPaste.c_str(), wsPaste.GetLength());
@@ -755,7 +780,8 @@ FX_BOOL CFWL_EditImp::Paste(const CFX_WideString& wsPaste) {
   return TRUE;
 }
 FX_BOOL CFWL_EditImp::Delete() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pEdtEngine, FALSE);
+  if (!m_pEdtEngine)
+    return FALSE;
   int32_t nCount = m_pEdtEngine->CountSelRanges();
   if (nCount < 1) {
     return FALSE;
@@ -764,14 +790,16 @@ FX_BOOL CFWL_EditImp::Delete() {
   return TRUE;
 }
 FX_BOOL CFWL_EditImp::Redo(const CFX_ByteStringC& bsRecord) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pEdtEngine, FALSE);
+  if (!m_pEdtEngine)
+    return FALSE;
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_NoRedoUndo) {
     return TRUE;
   }
   return m_pEdtEngine->Redo(bsRecord);
 }
 FX_BOOL CFWL_EditImp::Undo(const CFX_ByteStringC& bsRecord) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pEdtEngine, FALSE);
+  if (!m_pEdtEngine)
+    return FALSE;
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_NoRedoUndo) {
     return TRUE;
   }
@@ -798,7 +826,8 @@ FX_BOOL CFWL_EditImp::CanRedo() {
   return m_iCurRecord < m_RecordArr.GetSize() - 1;
 }
 FWL_ERR CFWL_EditImp::SetTabWidth(FX_FLOAT fTabWidth, FX_BOOL bEquidistant) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pEdtEngine, FWL_ERR_Succeeded);
+  if (!m_pEdtEngine)
+    return FWL_ERR_Succeeded;
   FDE_LPTXTEDTPARAMS pParams =
       (FDE_LPTXTEDTPARAMS)m_pEdtEngine->GetEditParams();
   pParams->fTabWidth = fTabWidth;
@@ -918,7 +947,8 @@ FX_BOOL CFWL_EditImp::On_PageLoad(IFDE_TxtEdtEngine* pEdit,
                                   int32_t nPurpose) {
   IFDE_TxtEdtEngine* pEdtEngine = m_pEdtEngine;
   IFDE_TxtEdtPage* pPage = pEdtEngine->GetPage(nPageIndex);
-  _FWL_RETURN_VALUE_IF_FAIL(pPage, FALSE);
+  if (!pPage)
+    return FALSE;
   pPage->LoadPage();
   return TRUE;
 }
@@ -927,7 +957,8 @@ FX_BOOL CFWL_EditImp::On_PageUnload(IFDE_TxtEdtEngine* pEdit,
                                     int32_t nPurpose) {
   IFDE_TxtEdtEngine* pEdtEngine = m_pEdtEngine;
   IFDE_TxtEdtPage* pPage = pEdtEngine->GetPage(nPageIndex);
-  _FWL_RETURN_VALUE_IF_FAIL(pPage, FALSE);
+  if (!pPage)
+    return FALSE;
   pPage->UnloadPage();
   return TRUE;
 }
@@ -1020,9 +1051,11 @@ void CFWL_EditImp::DrawTextBk(CFX_Graphics* pGraphics,
 void CFWL_EditImp::DrawContent(CFX_Graphics* pGraphics,
                                IFWL_ThemeProvider* pTheme,
                                const CFX_Matrix* pMatrix) {
-  _FWL_RETURN_IF_FAIL(m_pEdtEngine);
+  if (!m_pEdtEngine)
+    return;
   IFDE_TxtEdtPage* pPage = m_pEdtEngine->GetPage(0);
-  _FWL_RETURN_IF_FAIL(pPage);
+  if (!pPage)
+    return;
   pGraphics->SaveGraphState();
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_CombText) {
     pGraphics->SaveGraphState();
@@ -1086,11 +1119,14 @@ void CFWL_EditImp::DrawContent(CFX_Graphics* pGraphics,
     pTheme->DrawBackground(&param);
   }
   CFX_RenderDevice* pRenderDev = pGraphics->GetRenderDevice();
-  _FWL_RETURN_IF_FAIL(pRenderDev);
+  if (!pRenderDev)
+    return;
   IFDE_RenderDevice* pRenderDevice = IFDE_RenderDevice::Create(pRenderDev);
-  _FWL_RETURN_IF_FAIL(pRenderDevice);
+  if (!pRenderDevice)
+    return;
   IFDE_RenderContext* pRenderContext = IFDE_RenderContext::Create();
-  _FWL_RETURN_IF_FAIL(pRenderContext);
+  if (!pRenderContext)
+    return;
   pRenderDevice->SetClipRect(rtClip);
   pRenderContext->StartRender(pRenderDevice, (IFDE_CanvasSet*)pPage, mt);
   pRenderContext->DoRender(NULL);
@@ -1208,17 +1244,21 @@ void CFWL_EditImp::UpdateEditParams() {
     params.dwMode |= FDE_TEXTEDITMODE_ReadOnly;
   }
   FX_FLOAT* pFontSize = (FX_FLOAT*)GetThemeCapacity(FWL_WGTCAPACITY_FontSize);
-  _FWL_RETURN_IF_FAIL(pFontSize);
+  if (!pFontSize)
+    return;
   m_fFontSize = *pFontSize;
   FX_DWORD* pFontColor = (FX_DWORD*)GetThemeCapacity(FWL_WGTCAPACITY_TextColor);
-  _FWL_RETURN_IF_FAIL(pFontColor);
+  if (!pFontColor)
+    return;
   params.dwFontColor = *pFontColor;
   FX_FLOAT* pLineHeight =
       (FX_FLOAT*)GetThemeCapacity(FWL_WGTCAPACITY_LineHeight);
-  _FWL_RETURN_IF_FAIL(pLineHeight);
+  if (!pLineHeight)
+    return;
   params.fLineSpace = *pLineHeight;
   IFX_Font* pFont = (IFX_Font*)GetThemeCapacity(FWL_WGTCAPACITY_Font);
-  _FWL_RETURN_IF_FAIL(pFont);
+  if (!pFont)
+    return;
   params.pFont = pFont;
   params.fFontSize = m_fFontSize;
   params.nLineCount = (int32_t)(params.fPlateHeight / params.fLineSpace);
@@ -1258,7 +1298,8 @@ FX_BOOL CFWL_EditImp::UpdateOffset() {
   const CFX_RectF& rtEidt = m_rtEngine;
   if (rtEidt.Contains(rtCaret)) {
     IFDE_TxtEdtPage* pPage = m_pEdtEngine->GetPage(0);
-    _FWL_RETURN_VALUE_IF_FAIL(pPage, FALSE);
+    if (!pPage)
+      return FALSE;
     CFX_RectF rtFDE = pPage->GetContentsBox();
     rtFDE.Offset(fOffSetX, fOffSetY);
     if (rtFDE.right() < rtEidt.right() && m_fScrollOffsetX > 0) {
@@ -1312,7 +1353,8 @@ FX_BOOL CFWL_EditImp::UpdateOffset(IFWL_ScrollBar* pScrollBar,
 }
 void CFWL_EditImp::UpdateVAlignment() {
   IFDE_TxtEdtPage* pPage = m_pEdtEngine->GetPage(0);
-  _FWL_RETURN_IF_FAIL(pPage);
+  if (!pPage)
+    return;
   const CFX_RectF& rtFDE = pPage->GetContentsBox();
   FX_FLOAT fOffsetY = 0.0f;
   FX_FLOAT fSpaceAbove = 0.0f;
@@ -1395,7 +1437,8 @@ IFWL_ScrollBar* CFWL_EditImp::UpdateScroll() {
     return NULL;
   }
   IFDE_TxtEdtPage* pPage = m_pEdtEngine->GetPage(0);
-  _FWL_RETURN_VALUE_IF_FAIL(pPage, NULL);
+  if (!pPage)
+    return NULL;
   const CFX_RectF& rtFDE = pPage->GetContentsBox();
   IFWL_ScrollBar* pRepaint = NULL;
   if (bShowHorz) {
@@ -1481,9 +1524,11 @@ FX_BOOL CFWL_EditImp::IsShowScrollBar(FX_BOOL bVert) {
          (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_MultiLine);
 }
 FX_BOOL CFWL_EditImp::IsContentHeightOverflow() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pEdtEngine, FALSE);
+  if (!m_pEdtEngine)
+    return FALSE;
   IFDE_TxtEdtPage* pPage = m_pEdtEngine->GetPage(0);
-  _FWL_RETURN_VALUE_IF_FAIL(pPage, FALSE);
+  if (!pPage)
+    return FALSE;
   return pPage->GetContentsBox().height > m_rtEngine.height + 1.0f;
 }
 int32_t CFWL_EditImp::AddDoRecord(const CFX_ByteStringC& bsDoRecord) {
@@ -1506,7 +1551,8 @@ void CFWL_EditImp::Layout() {
   m_rtEngine = m_rtClient;
   FX_FLOAT* pfWidth =
       (FX_FLOAT*)GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth);
-  _FWL_RETURN_IF_FAIL(pfWidth);
+  if (!pfWidth)
+    return;
   FX_FLOAT fWidth = *pfWidth;
   if (!m_pOuter) {
     CFX_RectF* pUIMargin =
@@ -1746,7 +1792,8 @@ void CFWL_EditImp::ProcessInsertError(int32_t iError) {
 CFWL_EditImpDelegate::CFWL_EditImpDelegate(CFWL_EditImp* pOwner)
     : m_pOwner(pOwner) {}
 int32_t CFWL_EditImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
-  _FWL_RETURN_VALUE_IF_FAIL(pMessage, 0);
+  if (!pMessage)
+    return 0;
   FX_DWORD dwMsgCode = pMessage->GetClassID();
   int32_t iRet = 1;
   switch (dwMsgCode) {
@@ -1807,7 +1854,8 @@ int32_t CFWL_EditImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   return iRet;
 }
 FWL_ERR CFWL_EditImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
-  _FWL_RETURN_VALUE_IF_FAIL(pEvent, FWL_ERR_Indefinite);
+  if (!pEvent)
+    return FWL_ERR_Indefinite;
   FX_DWORD dwHashCode = pEvent->GetClassID();
   if (dwHashCode != FWL_EVTHASH_Scroll) {
     return FWL_ERR_Succeeded;
@@ -1843,7 +1891,8 @@ void CFWL_EditImpDelegate::DoButtonDown(CFWL_MsgMouse* pMsg) {
     m_pOwner->UpdateEditEngine();
   }
   IFDE_TxtEdtPage* pPage = m_pOwner->m_pEdtEngine->GetPage(0);
-  _FWL_RETURN_IF_FAIL(pPage);
+  if (!pPage)
+    return;
   CFX_PointF pt;
   pt.Set(pMsg->m_fx, pMsg->m_fy);
   m_pOwner->DeviceToEngine(pt);
@@ -1922,10 +1971,12 @@ void CFWL_EditImpDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
   m_pOwner->SetGrab(FALSE);
 }
 void CFWL_EditImpDelegate::OnButtonDblClk(CFWL_MsgMouse* pMsg) {
-  _FWL_RETURN_IF_FAIL(m_pOwner->m_pEdtEngine);
+  if (!m_pOwner->m_pEdtEngine)
+    return;
   DoCursor(pMsg);
   IFDE_TxtEdtPage* pPage = m_pOwner->m_pEdtEngine->GetPage(0);
-  _FWL_RETURN_IF_FAIL(pPage);
+  if (!pPage)
+    return;
   CFX_PointF pt;
   pt.Set(pMsg->m_fx, pMsg->m_fy);
   m_pOwner->DeviceToEngine(pt);
@@ -1939,13 +1990,15 @@ void CFWL_EditImpDelegate::OnButtonDblClk(CFWL_MsgMouse* pMsg) {
   m_pOwner->Repaint(&m_pOwner->m_rtEngine);
 }
 void CFWL_EditImpDelegate::OnMouseMove(CFWL_MsgMouse* pMsg) {
-  _FWL_RETURN_IF_FAIL(m_pOwner->m_pEdtEngine);
+  if (!m_pOwner->m_pEdtEngine)
+    return;
   DoCursor(pMsg);
   if (m_pOwner->m_nSelStart == -1 || !m_pOwner->m_bLButtonDown) {
     return;
   }
   IFDE_TxtEdtPage* pPage = m_pOwner->m_pEdtEngine->GetPage(0);
-  _FWL_RETURN_IF_FAIL(pPage);
+  if (!pPage)
+    return;
   CFX_PointF pt;
   pt.Set(pMsg->m_fx, pMsg->m_fy);
   m_pOwner->DeviceToEngine(pt);
@@ -1965,7 +2018,8 @@ void CFWL_EditImpDelegate::OnMouseMove(CFWL_MsgMouse* pMsg) {
   }
 }
 void CFWL_EditImpDelegate::OnKeyDown(CFWL_MsgKey* pMsg) {
-  _FWL_RETURN_IF_FAIL(m_pOwner->m_pEdtEngine);
+  if (!m_pOwner->m_pEdtEngine)
+    return;
   FDE_TXTEDTMOVECARET MoveCaret = MC_MoveNone;
   FX_BOOL bShift = pMsg->m_dwFlags & FWL_KEYFLAG_Shift;
   FX_BOOL bCtrl = pMsg->m_dwFlags & FWL_KEYFLAG_Ctrl;
@@ -2058,7 +2112,8 @@ void CFWL_EditImpDelegate::OnChar(CFWL_MsgKey* pMsg) {
       (m_pOwner->m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)) {
     return;
   }
-  _FWL_RETURN_IF_FAIL(m_pOwner->m_pEdtEngine);
+  if (!m_pOwner->m_pEdtEngine)
+    return;
   int32_t iError = 0;
   FX_WCHAR c = (FX_WCHAR)pMsg->m_dwKeyCode;
   int32_t nCaret = m_pOwner->m_pEdtEngine->GetCaretPos();

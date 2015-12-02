@@ -8,11 +8,13 @@
 CFWL_CaretTP::CFWL_CaretTP() {}
 CFWL_CaretTP::~CFWL_CaretTP() {}
 FX_BOOL CFWL_CaretTP::IsValidWidget(IFWL_Widget* pWidget) {
-  _FWL_RETURN_VALUE_IF_FAIL(pWidget, FALSE);
+  if (!pWidget)
+    return FALSE;
   return pWidget->GetClassID() == FWL_CLASSHASH_Caret;
 }
 FX_BOOL CFWL_CaretTP::DrawBackground(CFWL_ThemeBackground* pParams) {
-  _FWL_RETURN_VALUE_IF_FAIL(pParams, FALSE);
+  if (!pParams)
+    return FALSE;
   switch (pParams->m_iPart) {
     case FWL_PART_CAT_Background: {
       if (!(pParams->m_dwStates & FWL_PARTSTATE_CAT_HightLight)) {

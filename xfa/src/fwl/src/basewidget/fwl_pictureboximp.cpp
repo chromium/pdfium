@@ -51,8 +51,8 @@ FX_DWORD CFWL_PictureBoxImp::GetClassID() const {
   return FWL_CLASSHASH_PictureBox;
 }
 FWL_ERR CFWL_PictureBoxImp::Initialize() {
-  _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
-                                      FWL_ERR_Indefinite);
+  if (CFWL_WidgetImp::Initialize() != FWL_ERR_Succeeded)
+    return FWL_ERR_Indefinite;
   m_pDelegate = new CFWL_PictureBoxImpDelegate(this);
   return FWL_ERR_Succeeded;
 }
@@ -64,8 +64,8 @@ FWL_ERR CFWL_PictureBoxImp::Finalize() {
 FWL_ERR CFWL_PictureBoxImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
   if (bAutoSize) {
     rect.Set(0, 0, 0, 0);
-    _FWL_RETURN_VALUE_IF_FAIL(m_pProperties->m_pDataProvider,
-                              FWL_ERR_Indefinite);
+    if (!m_pProperties->m_pDataProvider)
+      return FWL_ERR_Indefinite;
     CFX_DIBitmap* pBitmap = ((IFWL_PictureBoxDP*)m_pProperties->m_pDataProvider)
                                 ->GetPicture(m_pInterface);
     if (pBitmap) {
@@ -90,9 +90,10 @@ FWL_ERR CFWL_PictureBoxImp::Update() {
 }
 FWL_ERR CFWL_PictureBoxImp::DrawWidget(CFX_Graphics* pGraphics,
                                        const CFX_Matrix* pMatrix) {
-  _FWL_RETURN_VALUE_IF_FAIL(pGraphics, FWL_ERR_Indefinite);
-  _FWL_RETURN_VALUE_IF_FAIL(m_pProperties->m_pThemeProvider,
-                            FWL_ERR_Indefinite);
+  if (!pGraphics)
+    return FWL_ERR_Indefinite;
+  if (!m_pProperties->m_pThemeProvider)
+    return FWL_ERR_Indefinite;
   IFWL_ThemeProvider* pTheme = GetAvailableTheme();
   if (HasBorder()) {
     DrawBorder(pGraphics, FWL_PART_PTB_Border, pTheme, pMatrix);
@@ -106,7 +107,8 @@ FWL_ERR CFWL_PictureBoxImp::DrawWidget(CFX_Graphics* pGraphics,
 void CFWL_PictureBoxImp::DrawBkground(CFX_Graphics* pGraphics,
                                       IFWL_ThemeProvider* pTheme,
                                       const CFX_Matrix* pMatrix) {
-  _FWL_RETURN_IF_FAIL(m_pProperties->m_pDataProvider);
+  if (!m_pProperties->m_pDataProvider)
+    return;
   CFX_DIBitmap* pPicture = ((IFWL_PictureBoxDP*)m_pProperties->m_pDataProvider)
                                ->GetPicture(m_pInterface);
   CFX_Matrix matrix;

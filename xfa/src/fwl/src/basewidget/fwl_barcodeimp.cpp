@@ -53,8 +53,8 @@ FWL_ERR CFWL_BarcodeImp::Initialize() {
   if (!m_pDelegate) {
     m_pDelegate = new CFWL_BarcodeImpDelegate(this);
   }
-  _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_EditImp::Initialize(),
-                                      FWL_ERR_Indefinite);
+  if (CFWL_EditImp::Initialize() != FWL_ERR_Succeeded)
+    return FWL_ERR_Indefinite;
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_BarcodeImp::Finalize() {
@@ -73,9 +73,10 @@ FWL_ERR CFWL_BarcodeImp::Update() {
 }
 FWL_ERR CFWL_BarcodeImp::DrawWidget(CFX_Graphics* pGraphics,
                                     const CFX_Matrix* pMatrix) {
-  _FWL_RETURN_VALUE_IF_FAIL(pGraphics, FWL_ERR_Indefinite);
-  _FWL_RETURN_VALUE_IF_FAIL(m_pProperties->m_pThemeProvider,
-                            FWL_ERR_Indefinite);
+  if (!pGraphics)
+    return FWL_ERR_Indefinite;
+  if (!m_pProperties->m_pThemeProvider)
+    return FWL_ERR_Indefinite;
   if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0) {
     GenerateBarcodeImageCache();
     if (!m_pBarcodeEngine || (m_dwStatus & XFA_BCS_EncodeSuccess) == 0) {
@@ -88,26 +89,27 @@ FWL_ERR CFWL_BarcodeImp::DrawWidget(CFX_Graphics* pGraphics,
       mt.Concat(*pMatrix);
     }
     int32_t errorCode = 0;
-    _FWL_RETURN_VALUE_IF_FAIL(
-        m_pBarcodeEngine->RenderDevice(pGraphics->GetRenderDevice(), pMatrix,
-                                       errorCode),
-        FWL_ERR_Indefinite);
+    if (!m_pBarcodeEngine->RenderDevice(pGraphics->GetRenderDevice(), pMatrix,
+                                        errorCode)) {
+      return FWL_ERR_Indefinite;
+    }
     return FWL_ERR_Succeeded;
   }
   return CFWL_EditImp::DrawWidget(pGraphics, pMatrix);
 }
 void CFWL_BarcodeImp::GenerateBarcodeImageCache() {
-  if ((m_dwStatus & XFA_BCS_NeedUpdate) == 0) {
+  if ((m_dwStatus & XFA_BCS_NeedUpdate) == 0)
     return;
-  }
   m_dwStatus = 0;
-  ;
   CreateBarcodeEngine();
   IFWL_BarcodeDP* pData = (IFWL_BarcodeDP*)m_pProperties->m_pDataProvider;
-  _FWL_RETURN_IF_FAIL(pData);
-  _FWL_RETURN_IF_FAIL(m_pBarcodeEngine);
+  if (!pData)
+    return;
+  if (!m_pBarcodeEngine)
+    return;
   CFX_WideString wsText;
-  _FWL_RETURN_IF_FAIL(GetText(wsText) == FWL_ERR_Succeeded);
+  if (GetText(wsText) != FWL_ERR_Succeeded)
+    return;
   CFWL_ThemePart part;
   part.m_pWidget = m_pInterface;
   IFWL_ThemeProvider* pTheme = GetAvailableTheme();

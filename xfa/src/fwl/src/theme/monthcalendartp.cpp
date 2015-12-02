@@ -56,7 +56,8 @@ CFWL_MonthCalendarTP::~CFWL_MonthCalendarTP() {
   delete m_pThemeData;
 }
 FX_BOOL CFWL_MonthCalendarTP::IsValidWidget(IFWL_Widget* pWidget) {
-  _FWL_RETURN_VALUE_IF_FAIL(pWidget, FALSE);
+  if (!pWidget)
+    return FALSE;
   return pWidget->GetClassID() == FWL_CLASSHASH_MonthCalendar;
 }
 FX_DWORD CFWL_MonthCalendarTP::SetThemeID(IFWL_Widget* pWidget,
@@ -68,7 +69,8 @@ FX_DWORD CFWL_MonthCalendarTP::SetThemeID(IFWL_Widget* pWidget,
   return CFWL_WidgetTP::SetThemeID(pWidget, dwThemeID, bChildren);
 }
 FX_BOOL CFWL_MonthCalendarTP::DrawBackground(CFWL_ThemeBackground* pParams) {
-  _FWL_RETURN_VALUE_IF_FAIL(pParams, FALSE);
+  if (!pParams)
+    return FALSE;
   switch (pParams->m_iPart) {
     case FWL_PART_MCD_Border: {
       DrawBorder(pParams->m_pGraphics, &pParams->m_rtPart, &pParams->m_matrix);
@@ -132,7 +134,8 @@ FX_BOOL CFWL_MonthCalendarTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   return TRUE;
 }
 FX_BOOL CFWL_MonthCalendarTP::DrawText(CFWL_ThemeText* pParams) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pTextOut, FALSE);
+  if (!m_pTextOut)
+    return FALSE;
   if ((pParams->m_iPart == FWL_PART_MCD_DatesIn) &&
       !(pParams->m_dwStates & FWL_ITEMSTATE_MCD_Flag) &&
       (pParams->m_dwStates &

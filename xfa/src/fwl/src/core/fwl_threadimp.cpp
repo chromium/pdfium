@@ -41,7 +41,8 @@ CFWL_NoteThread::~CFWL_NoteThread() {
   }
 }
 FWL_ERR CFWL_NoteThread::Run(FWL_HTHREAD hThread) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pNoteDriver, FWL_ERR_Indefinite);
+  if (!m_pNoteDriver)
+    return FWL_ERR_Indefinite;
   FWL_ERR result = m_pNoteDriver->Run();
   return result;
 }
@@ -51,39 +52,49 @@ IFWL_NoteDriver* CFWL_NoteThread::GetNoteDriver() {
 extern IFWL_AdapterNative* FWL_GetAdapterNative();
 FWL_HTHREAD FWL_StartThread(IFWL_Thread* pThread, FX_BOOL bSuspended) {
   IFWL_AdapterNative* pNative = FWL_GetAdapterNative();
-  _FWL_RETURN_VALUE_IF_FAIL(pNative, NULL);
+  if (!pNative)
+    return NULL;
   IFWL_AdapterThreadMgr* pThreadMgr = pNative->GetThreadMgr();
-  _FWL_RETURN_VALUE_IF_FAIL(pThreadMgr, NULL);
+  if (!pThreadMgr)
+    return NULL;
   FWL_HTHREAD hThread = NULL;
   pThreadMgr->Start(pThread, hThread, bSuspended);
   return hThread;
 }
 FWL_ERR FWL_ResumeThread(FWL_HTHREAD hThread) {
   IFWL_AdapterNative* Native = FWL_GetAdapterNative();
-  _FWL_RETURN_VALUE_IF_FAIL(Native, FWL_ERR_Indefinite);
+  if (!Native)
+    return FWL_ERR_Indefinite;
   IFWL_AdapterThreadMgr* ThreadMgr = Native->GetThreadMgr();
-  _FWL_RETURN_VALUE_IF_FAIL(ThreadMgr, FWL_ERR_Indefinite);
+  if (!ThreadMgr)
+    return FWL_ERR_Indefinite;
   return ThreadMgr->Resume(hThread);
 }
 FWL_ERR FWL_SuspendThread(FWL_HTHREAD hThread) {
   IFWL_AdapterNative* Native = FWL_GetAdapterNative();
-  _FWL_RETURN_VALUE_IF_FAIL(Native, FWL_ERR_Indefinite);
+  if (!Native)
+    return FWL_ERR_Indefinite;
   IFWL_AdapterThreadMgr* ThreadMgr = Native->GetThreadMgr();
-  _FWL_RETURN_VALUE_IF_FAIL(ThreadMgr, FWL_ERR_Indefinite);
+  if (!ThreadMgr)
+    return FWL_ERR_Indefinite;
   return ThreadMgr->Suspend(hThread);
 }
 FWL_ERR FWL_KillThread(FWL_HTHREAD hThread, int32_t iExitCode) {
   IFWL_AdapterNative* Native = FWL_GetAdapterNative();
-  _FWL_RETURN_VALUE_IF_FAIL(Native, FWL_ERR_Indefinite);
+  if (!Native)
+    return FWL_ERR_Indefinite;
   IFWL_AdapterThreadMgr* ThreadMgr = Native->GetThreadMgr();
-  _FWL_RETURN_VALUE_IF_FAIL(ThreadMgr, FWL_ERR_Indefinite);
+  if (!ThreadMgr)
+    return FWL_ERR_Indefinite;
   return ThreadMgr->Kill(hThread, iExitCode);
 }
 FWL_ERR FWL_StopThread(FWL_HTHREAD hThread, int32_t iExitCode) {
   IFWL_AdapterNative* Native = FWL_GetAdapterNative();
-  _FWL_RETURN_VALUE_IF_FAIL(Native, FWL_ERR_Indefinite);
+  if (!Native)
+    return FWL_ERR_Indefinite;
   IFWL_AdapterThreadMgr* ThreadMgr = Native->GetThreadMgr();
-  _FWL_RETURN_VALUE_IF_FAIL(ThreadMgr, FWL_ERR_Indefinite);
+  if (!ThreadMgr)
+    return FWL_ERR_Indefinite;
   return ThreadMgr->Stop(hThread, iExitCode);
 }
 FWL_HMUTEX FWL_CreateMutex() {

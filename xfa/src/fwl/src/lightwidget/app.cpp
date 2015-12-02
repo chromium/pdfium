@@ -26,7 +26,8 @@ CFWL_Theme* CFWL_App::GetTheme() {
   return m_pThemeProvider;
 }
 FWL_ERR CFWL_App::Exit(int32_t iExitCode) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pAppImp, FWL_ERR_Indefinite);
+  if (!m_pAppImp)
+    return FWL_ERR_Indefinite;
   return m_pAppImp->Exit(iExitCode);
 }
 IFWL_App* CFWL_App::GetApp() {

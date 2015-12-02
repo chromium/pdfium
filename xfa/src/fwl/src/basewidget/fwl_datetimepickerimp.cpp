@@ -143,8 +143,8 @@ CFWL_DateTimeEdit::CFWL_DateTimeEdit(const CFWL_WidgetImpProperties& properties,
     : CFWL_EditImp(properties, pOuter) {}
 FWL_ERR CFWL_DateTimeEdit::Initialize() {
   m_pDelegate = new CFWL_DateTimeEditImpDelegate(this);
-  _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_EditImp::Initialize(),
-                                      FWL_ERR_Indefinite);
+  if (CFWL_EditImp::Initialize() != FWL_ERR_Succeeded)
+    return FWL_ERR_Indefinite;
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_DateTimeEdit::Finalize() {
@@ -201,8 +201,8 @@ CFWL_DateTimeCalendar::CFWL_DateTimeCalendar(
     IFWL_Widget* pOuter)
     : CFWL_MonthCalendarImp(properties, pOuter) {}
 FWL_ERR CFWL_DateTimeCalendar::Initialize() {
-  _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_MonthCalendarImp::Initialize(),
-                                      FWL_ERR_Indefinite);
+  if (CFWL_MonthCalendarImp::Initialize() != FWL_ERR_Succeeded)
+    return FWL_ERR_Indefinite;
   delete m_pDelegate;
   m_pDelegate = new CFWL_DateTimeCalendarImpDelegate(this);
   return FWL_ERR_Succeeded;
@@ -299,7 +299,8 @@ void CFWL_DateTimeCalendarImpDelegate::OnLButtonUpEx(CFWL_MsgMouse* pMsg) {
       rtInvalidate.Union(lpDatesInfo->rect);
     }
     m_pOwner->AddSelDay(iCurSel);
-    _FWL_RETURN_IF_FAIL(m_pOwner->m_pOuter);
+    if (!m_pOwner->m_pOuter)
+      return;
     pPicker->ProcessSelChanged(m_pOwner->m_iCurYear, m_pOwner->m_iCurMonth,
                                iCurSel);
     pPicker->ShowMonthCalendar(FALSE);
@@ -446,8 +447,8 @@ FX_DWORD CFWL_DateTimePickerImp::GetClassID() const {
   return FWL_CLASSHASH_DateTimePicker;
 }
 FWL_ERR CFWL_DateTimePickerImp::Initialize() {
-  _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
-                                      FWL_ERR_Indefinite);
+  if (CFWL_WidgetImp::Initialize() != FWL_ERR_Succeeded)
+    return FWL_ERR_Indefinite;
   m_pDelegate = new CFWL_DateTimePickerImpDelegate(this);
   m_pProperties->m_dwStyleExes = FWL_STYLEEXT_DTP_ShortDateFormat;
   CFWL_WidgetImpProperties propMonth;
@@ -513,7 +514,8 @@ FWL_ERR CFWL_DateTimePickerImp::Update() {
   GetClientRect(m_rtClient);
   FX_FLOAT* pFWidth =
       (FX_FLOAT*)GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth);
-  _FWL_RETURN_VALUE_IF_FAIL(pFWidth, FWL_ERR_Indefinite);
+  if (!pFWidth)
+    return FWL_ERR_Indefinite;
   FX_FLOAT fBtn = *pFWidth;
   m_rtBtn.Set(m_rtClient.right() - fBtn, m_rtClient.top, fBtn - 1,
               m_rtClient.height - 1);
@@ -559,9 +561,10 @@ FX_DWORD CFWL_DateTimePickerImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
 }
 FWL_ERR CFWL_DateTimePickerImp::DrawWidget(CFX_Graphics* pGraphics,
                                            const CFX_Matrix* pMatrix) {
-  _FWL_RETURN_VALUE_IF_FAIL(pGraphics, FWL_ERR_Indefinite);
-  _FWL_RETURN_VALUE_IF_FAIL(m_pProperties->m_pThemeProvider,
-                            FWL_ERR_Indefinite);
+  if (!pGraphics)
+    return FWL_ERR_Indefinite;
+  if (!m_pProperties->m_pThemeProvider)
+    return FWL_ERR_Indefinite;
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   if (HasBorder()) {
     DrawBorder(pGraphics, FWL_PART_DTP_Border, pTheme, pMatrix);
@@ -593,9 +596,12 @@ FWL_ERR CFWL_DateTimePickerImp::GetCurSel(int32_t& iYear,
 FWL_ERR CFWL_DateTimePickerImp::SetCurSel(int32_t iYear,
                                           int32_t iMonth,
                                           int32_t iDay) {
-  _FWL_RETURN_VALUE_IF_FAIL(iYear > 0 && iYear < 3000, FWL_ERR_Indefinite);
-  _FWL_RETURN_VALUE_IF_FAIL(iMonth > 0 && iMonth < 13, FWL_ERR_Indefinite);
-  _FWL_RETURN_VALUE_IF_FAIL(iDay > 0 && iDay < 32, FWL_ERR_Indefinite);
+  if (iYear <= 0 || iYear >= 3000)
+    return FWL_ERR_Indefinite;
+  if (iMonth <= 0 || iMonth >= 13)
+    return FWL_ERR_Indefinite;
+  if (iDay <= 0 || iDay >= 32)
+    return FWL_ERR_Indefinite;
   m_iYear = iYear;
   m_iMonth = iMonth;
   m_iDay = iDay;
@@ -603,7 +609,8 @@ FWL_ERR CFWL_DateTimePickerImp::SetCurSel(int32_t iYear,
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_DateTimePickerImp::SetEditText(const CFX_WideString& wsText) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pEdit, FWL_ERR_Indefinite);
+  if (!m_pEdit)
+    return FWL_ERR_Indefinite;
   int32_t iRet = m_pEdit->SetText(wsText);
   Repaint(&m_rtClient);
   CFWL_Event_DtpEditChanged ev;
@@ -753,11 +760,13 @@ FX_BOOL CFWL_DateTimePickerImp::IsMonthCalendarShowed() {
   if (m_pWidgetMgr->IsFormDisabled()) {
     return DisForm_IsMonthCalendarShowed();
   }
-  _FWL_RETURN_VALUE_IF_FAIL(m_pForm, FALSE);
+  if (!m_pForm)
+    return FALSE;
   return !(m_pForm->GetStates() & FWL_WGTSTATE_Invisible);
 }
 void CFWL_DateTimePickerImp::ReSetEditAlignment() {
-  _FWL_RETURN_IF_FAIL(m_pEdit);
+  if (!m_pEdit)
+    return;
   FX_DWORD dwStylExes = m_pProperties->m_dwStyleExes;
   FX_DWORD dwAdd = 0;
   switch (dwStylExes & FWL_STYLEEXT_DTP_EditHAlignMask) {
@@ -811,8 +820,10 @@ void CFWL_DateTimePickerImp::ProcessSelChanged(int32_t iYear,
   DispatchEvent(&ev);
 }
 void CFWL_DateTimePickerImp::InitProxyForm() {
-  _FWL_RETURN_IF_FAIL(!m_pForm);
-  _FWL_RETURN_IF_FAIL(m_pMonthCal);
+  if (m_pForm)
+    return;
+  if (!m_pMonthCal)
+    return;
   CFWL_WidgetImpProperties propForm;
   propForm.m_dwStyles = FWL_WGTSTYLE_Popup;
   propForm.m_dwStates = FWL_WGTSTATE_Invisible;
@@ -861,7 +872,8 @@ void CFWL_DateTimePickerImp::DisForm_InitDateTimeEdit() {
   m_pEdit->Initialize(propEdit, m_pInterface);
 }
 FX_BOOL CFWL_DateTimePickerImp::DisForm_IsMonthCalendarShowed() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pMonthCal, FALSE);
+  if (!m_pMonthCal)
+    return FALSE;
   return !(m_pMonthCal->GetStates() & FWL_WGTSTATE_Invisible);
 }
 void CFWL_DateTimePickerImp::DisForm_ShowMonthCalendar(FX_BOOL bActivate) {
@@ -951,7 +963,8 @@ FWL_ERR CFWL_DateTimePickerImp::DisForm_Update() {
   }
   FX_FLOAT* pWidth =
       (FX_FLOAT*)GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth);
-  _FWL_RETURN_VALUE_IF_FAIL(pWidth, 0);
+  if (!pWidth)
+    return 0;
   m_fBtn = *pWidth;
   CFX_RectF rtMonthCal;
   m_pMonthCal->GetWidgetRect(rtMonthCal, TRUE);
@@ -986,7 +999,8 @@ FWL_ERR CFWL_DateTimePickerImp::DisForm_GetBBox(CFX_RectF& rect) {
 }
 FWL_ERR CFWL_DateTimePickerImp::DisForm_DrawWidget(CFX_Graphics* pGraphics,
                                                    const CFX_Matrix* pMatrix) {
-  _FWL_RETURN_VALUE_IF_FAIL(pGraphics, FWL_ERR_Indefinite);
+  if (!pGraphics)
+    return FWL_ERR_Indefinite;
   if (m_pEdit) {
     CFX_RectF rtEdit;
     m_pEdit->GetWidgetRect(rtEdit);
@@ -1014,7 +1028,8 @@ CFWL_DateTimePickerImpDelegate::CFWL_DateTimePickerImpDelegate(
     : m_pOwner(pOwner) {}
 int32_t CFWL_DateTimePickerImpDelegate::OnProcessMessage(
     CFWL_Message* pMessage) {
-  _FWL_RETURN_VALUE_IF_FAIL(pMessage, 0);
+  if (!pMessage)
+    return 0;
   FX_DWORD dwMsgCode = pMessage->GetClassID();
   int32_t iRet = 1;
   switch (dwMsgCode) {
@@ -1063,7 +1078,8 @@ FWL_ERR CFWL_DateTimePickerImpDelegate::OnDrawWidget(
 }
 void CFWL_DateTimePickerImpDelegate::OnFocusChanged(CFWL_Message* pMsg,
                                                     FX_BOOL bSet) {
-  _FWL_RETURN_IF_FAIL(pMsg);
+  if (!pMsg)
+    return;
   if (m_pOwner->m_pWidgetMgr->IsFormDisabled()) {
     return DisForm_OnFocusChanged(pMsg, bSet);
   }
@@ -1081,7 +1097,8 @@ void CFWL_DateTimePickerImpDelegate::OnFocusChanged(CFWL_Message* pMsg,
   m_pOwner->Repaint(&m_pOwner->m_rtClient);
 }
 void CFWL_DateTimePickerImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
-  _FWL_RETURN_IF_FAIL(pMsg);
+  if (!pMsg)
+    return;
   if ((m_pOwner->m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0) {
     m_pOwner->SetFocus(TRUE);
   }
@@ -1104,7 +1121,8 @@ void CFWL_DateTimePickerImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
   }
 }
 void CFWL_DateTimePickerImpDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
-  _FWL_RETURN_IF_FAIL(pMsg);
+  if (!pMsg)
+    return;
   m_pOwner->m_bLBtnDown = FALSE;
   if (m_pOwner->m_rtBtn.Contains(pMsg->m_fx, pMsg->m_fy)) {
     m_pOwner->m_iBtnState = FWL_PARTSTATE_DTP_Hovered;
@@ -1121,7 +1139,8 @@ void CFWL_DateTimePickerImpDelegate::OnMouseMove(CFWL_MsgMouse* pMsg) {
   m_pOwner->Repaint(&m_pOwner->m_rtBtn);
 }
 void CFWL_DateTimePickerImpDelegate::OnMouseLeave(CFWL_MsgMouse* pMsg) {
-  _FWL_RETURN_IF_FAIL(pMsg);
+  if (!pMsg)
+    return;
   m_pOwner->m_iBtnState = FWL_PARTSTATE_DTP_Normal;
   m_pOwner->Repaint(&m_pOwner->m_rtBtn);
 }

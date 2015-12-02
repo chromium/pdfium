@@ -11,11 +11,13 @@ CFWL_ComboBoxTP::CFWL_ComboBoxTP() {
 }
 CFWL_ComboBoxTP::~CFWL_ComboBoxTP() {}
 FX_BOOL CFWL_ComboBoxTP::IsValidWidget(IFWL_Widget* pWidget) {
-  _FWL_RETURN_VALUE_IF_FAIL(pWidget, FALSE);
+  if (!pWidget)
+    return FALSE;
   return pWidget->GetClassID() == FWL_CLASSHASH_ComboBox;
 }
 FX_BOOL CFWL_ComboBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
-  _FWL_RETURN_VALUE_IF_FAIL(pParams, FALSE);
+  if (!pParams)
+    return FALSE;
   switch (pParams->m_iPart) {
     case FWL_PART_CMB_Border: {
       DrawBorder(pParams->m_pGraphics, &pParams->m_rtPart, &pParams->m_matrix);

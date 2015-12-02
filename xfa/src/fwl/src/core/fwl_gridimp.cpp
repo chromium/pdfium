@@ -181,14 +181,14 @@ FX_DWORD CFWL_GridImp::GetClassID() const {
   return FWL_CLASSHASH_Grid;
 }
 FWL_ERR CFWL_GridImp::Initialize() {
-  _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_ContentImp::Initialize(),
-                                      FWL_ERR_Indefinite);
+  if (CFWL_ContentImp::Initialize() != FWL_ERR_Succeeded)
+    return FWL_ERR_Indefinite;
   m_pDelegate = new CFWL_GridImpDelegate(this);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_GridImp::Finalize() {
-  _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_ContentImp::Finalize(),
-                                      FWL_ERR_Indefinite);
+  if (CFWL_ContentImp::Finalize() != FWL_ERR_Succeeded)
+    return FWL_ERR_Indefinite;
   delete m_pDelegate;
   m_pDelegate = nullptr;
   return FWL_ERR_Succeeded;
@@ -219,7 +219,8 @@ FWL_ERR CFWL_GridImp::Update() {
 }
 FWL_ERR CFWL_GridImp::DrawWidget(CFX_Graphics* pGraphics,
                                  const CFX_Matrix* pMatrix) {
-  _FWL_RETURN_VALUE_IF_FAIL(pGraphics, FWL_ERR_Indefinite);
+  if (!pGraphics)
+    return FWL_ERR_Indefinite;
   if ((m_pProperties->m_dwStyleExes & FWL_GRIDSTYLEEXT_ShowGridLines) == 0) {
     return FWL_ERR_Succeeded;
   }
@@ -265,7 +266,8 @@ FWL_ERR CFWL_GridImp::DrawWidget(CFX_Graphics* pGraphics,
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_GridImp::InsertWidget(IFWL_Widget* pChild, int32_t nIndex) {
-  _FWL_RETURN_VALUE_IF_FAIL(pChild, FWL_ERR_Indefinite);
+  if (!pChild)
+    return FWL_ERR_Indefinite;
   CFWL_ContentImp::InsertWidget(pChild, nIndex);
   if (!m_mapWidgetInfo.GetValueAt(pChild)) {
     CFWL_GridWidgetInfo* pInfo = new CFWL_GridWidgetInfo;
@@ -275,7 +277,8 @@ FWL_ERR CFWL_GridImp::InsertWidget(IFWL_Widget* pChild, int32_t nIndex) {
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_GridImp::RemoveWidget(IFWL_Widget* pWidget) {
-  _FWL_RETURN_VALUE_IF_FAIL(pWidget, FWL_ERR_Indefinite);
+  if (!pWidget)
+    return FWL_ERR_Indefinite;
   CFWL_ContentImp::RemoveWidget(pWidget);
   if (CFWL_GridWidgetInfo* pInfo =
           (CFWL_GridWidgetInfo*)m_mapWidgetInfo.GetValueAt(pWidget)) {
@@ -327,7 +330,8 @@ int32_t CFWL_GridImp::GetIndex(FWL_HGRIDCOLROW hColRow) {
   return m_Rows.Find(hColRow);
 }
 FX_FLOAT CFWL_GridImp::GetSize(FWL_HGRIDCOLROW hColRow, FWL_GRIDUNIT& eUnit) {
-  _FWL_RETURN_VALUE_IF_FAIL(hColRow, -1);
+  if (!hColRow)
+    return -1;
   CFWL_GridColRow* pColRow = (CFWL_GridColRow*)hColRow;
   eUnit = pColRow->m_Size.eUnit;
   return pColRow->m_Size.fLength;
@@ -335,7 +339,8 @@ FX_FLOAT CFWL_GridImp::GetSize(FWL_HGRIDCOLROW hColRow, FWL_GRIDUNIT& eUnit) {
 FWL_ERR CFWL_GridImp::SetSize(FWL_HGRIDCOLROW hColRow,
                               FX_FLOAT fSize,
                               FWL_GRIDUNIT eUnit) {
-  _FWL_RETURN_VALUE_IF_FAIL(hColRow, FWL_ERR_Indefinite);
+  if (!hColRow)
+    return FWL_ERR_Indefinite;
   CFWL_GridColRow* pColRow = (CFWL_GridColRow*)hColRow;
   pColRow->m_Size.eUnit = eUnit;
   pColRow->m_Size.fLength = fSize;
@@ -343,7 +348,8 @@ FWL_ERR CFWL_GridImp::SetSize(FWL_HGRIDCOLROW hColRow,
 }
 FX_FLOAT CFWL_GridImp::GetMinSize(FWL_HGRIDCOLROW hColRow,
                                   FWL_GRIDUNIT& eUnit) {
-  _FWL_RETURN_VALUE_IF_FAIL(hColRow, -1);
+  if (!hColRow)
+    return -1;
   CFWL_GridColRow* pColRow = (CFWL_GridColRow*)hColRow;
   eUnit = pColRow->m_MinSize.eUnit;
   return pColRow->m_MinSize.fLength;
@@ -351,7 +357,8 @@ FX_FLOAT CFWL_GridImp::GetMinSize(FWL_HGRIDCOLROW hColRow,
 FWL_ERR CFWL_GridImp::SetMinSize(FWL_HGRIDCOLROW hColRow,
                                  FX_FLOAT fSize,
                                  FWL_GRIDUNIT eUnit) {
-  _FWL_RETURN_VALUE_IF_FAIL(hColRow, FWL_ERR_Indefinite);
+  if (!hColRow)
+    return FWL_ERR_Indefinite;
   CFWL_GridColRow* pColRow = (CFWL_GridColRow*)hColRow;
   pColRow->m_MinSize.eUnit = eUnit;
   pColRow->m_MinSize.fLength = fSize;
@@ -359,7 +366,8 @@ FWL_ERR CFWL_GridImp::SetMinSize(FWL_HGRIDCOLROW hColRow,
 }
 FX_FLOAT CFWL_GridImp::GetMaxSize(FWL_HGRIDCOLROW hColRow,
                                   FWL_GRIDUNIT& eUnit) {
-  _FWL_RETURN_VALUE_IF_FAIL(hColRow, -1);
+  if (!hColRow)
+    return -1;
   CFWL_GridColRow* pColRow = (CFWL_GridColRow*)hColRow;
   eUnit = pColRow->m_MaxSize.eUnit;
   return pColRow->m_MaxSize.fLength;
@@ -367,7 +375,8 @@ FX_FLOAT CFWL_GridImp::GetMaxSize(FWL_HGRIDCOLROW hColRow,
 FWL_ERR CFWL_GridImp::SetMaxSize(FWL_HGRIDCOLROW hColRow,
                                  FX_FLOAT fSize,
                                  FWL_GRIDUNIT eUnit) {
-  _FWL_RETURN_VALUE_IF_FAIL(hColRow, FWL_ERR_Indefinite);
+  if (!hColRow)
+    return FWL_ERR_Indefinite;
   CFWL_GridColRow* pColRow = (CFWL_GridColRow*)hColRow;
   pColRow->m_MaxSize.eUnit = eUnit;
   pColRow->m_MaxSize.fLength = fSize;
@@ -510,7 +519,8 @@ void CFWL_GridImp::ProcFixedColRow(CFWL_GridColRow* pColRow,
 void CFWL_GridImp::ProcAutoColRow(CFWL_GridColRow* pColRow,
                                   int32_t nIndex,
                                   FX_BOOL bColumn) {
-  _FWL_RETURN_IF_FAIL(pColRow);
+  if (!pColRow)
+    return;
   FX_FLOAT fMaxSize = 0, fWidgetSize = 0;
   FX_POSITION ps = m_mapWidgetInfo.GetStartPosition();
   while (ps) {
@@ -1226,7 +1236,8 @@ void CFWL_GridImp::SetAllWidgetsRect() {
   }
 }
 FX_BOOL CFWL_GridImp::IsGrid(IFWL_Widget* pWidget) {
-  _FWL_RETURN_VALUE_IF_FAIL(pWidget, FALSE);
+  if (!pWidget)
+    return FALSE;
   return pWidget->GetClassID() == FWL_CLASSHASH_Grid;
 }
 void CFWL_GridImp::SetSpanAutoColRowSize(const CFX_PtrArray& spanAutos,

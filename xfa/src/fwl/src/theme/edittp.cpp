@@ -8,7 +8,8 @@
 CFWL_EditTP::CFWL_EditTP() {}
 CFWL_EditTP::~CFWL_EditTP() {}
 FX_BOOL CFWL_EditTP::IsValidWidget(IFWL_Widget* pWidget) {
-  _FWL_RETURN_VALUE_IF_FAIL(pWidget, FALSE);
+  if (!pWidget)
+    return FALSE;
   return pWidget->GetClassID() == FWL_CLASSHASH_Edit;
 }
 FX_BOOL CFWL_EditTP::DrawBackground(CFWL_ThemeBackground* pParams) {

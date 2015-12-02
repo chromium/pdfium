@@ -91,8 +91,8 @@ FX_DWORD CFWL_ListBoxImp::GetClassID() const {
   return FWL_CLASSHASH_ListBox;
 }
 FWL_ERR CFWL_ListBoxImp::Initialize() {
-  _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
-                                      FWL_ERR_Indefinite);
+  if (CFWL_WidgetImp::Initialize() != FWL_ERR_Succeeded)
+    return FWL_ERR_Indefinite;
   m_pDelegate = new CFWL_ListBoxImpDelegate(this);
   return FWL_ERR_Succeeded;
 }
@@ -172,9 +172,10 @@ FX_DWORD CFWL_ListBoxImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
 }
 FWL_ERR CFWL_ListBoxImp::DrawWidget(CFX_Graphics* pGraphics,
                                     const CFX_Matrix* pMatrix) {
-  _FWL_RETURN_VALUE_IF_FAIL(pGraphics, FWL_ERR_Indefinite);
-  _FWL_RETURN_VALUE_IF_FAIL(m_pProperties->m_pThemeProvider,
-                            FWL_ERR_Indefinite);
+  if (!pGraphics)
+    return FWL_ERR_Indefinite;
+  if (!m_pProperties->m_pThemeProvider)
+    return FWL_ERR_Indefinite;
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   pGraphics->SaveGraphState();
   if (HasBorder()) {
@@ -202,7 +203,8 @@ FWL_ERR CFWL_ListBoxImp::DrawWidget(CFX_Graphics* pGraphics,
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_ListBoxImp::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
-  _FWL_RETURN_VALUE_IF_FAIL(pThemeProvider, FWL_ERR_Indefinite);
+  if (!pThemeProvider)
+    return FWL_ERR_Indefinite;
   if (!pThemeProvider->IsValidWidget(m_pInterface)) {
     m_pScrollBarTP = pThemeProvider;
     return FWL_ERR_Succeeded;
@@ -211,7 +213,8 @@ FWL_ERR CFWL_ListBoxImp::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
   return FWL_ERR_Succeeded;
 }
 int32_t CFWL_ListBoxImp::CountSelItems() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pProperties->m_pDataProvider, 0);
+  if (!m_pProperties->m_pDataProvider)
+    return 0;
   int32_t iRet = 0;
   IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
   int32_t iCount = pData->CountItems(m_pInterface);
@@ -228,7 +231,8 @@ int32_t CFWL_ListBoxImp::CountSelItems() {
   return iRet;
 }
 FWL_HLISTITEM CFWL_ListBoxImp::GetSelItem(int32_t nIndexSel) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pProperties->m_pDataProvider, NULL);
+  if (!m_pProperties->m_pDataProvider)
+    return NULL;
   int32_t index = 0;
   IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
   int32_t iCount = pData->CountItems(m_pInterface);
@@ -249,7 +253,8 @@ FWL_HLISTITEM CFWL_ListBoxImp::GetSelItem(int32_t nIndexSel) {
   return NULL;
 }
 int32_t CFWL_ListBoxImp::GetSelIndex(int32_t nIndex) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pProperties->m_pDataProvider, -1);
+  if (!m_pProperties->m_pDataProvider)
+    return -1;
   int32_t index = 0;
   IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
   int32_t iCount = pData->CountItems(m_pInterface);
@@ -270,7 +275,8 @@ int32_t CFWL_ListBoxImp::GetSelIndex(int32_t nIndex) {
   return -1;
 }
 FWL_ERR CFWL_ListBoxImp::SetSelItem(FWL_HLISTITEM hItem, FX_BOOL bSelect) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pProperties->m_pDataProvider, FWL_ERR_Indefinite);
+  if (!m_pProperties->m_pDataProvider)
+    return FWL_ERR_Indefinite;
   if (!hItem) {
     if (bSelect) {
       SelectAll();
@@ -289,9 +295,11 @@ FWL_ERR CFWL_ListBoxImp::SetSelItem(FWL_HLISTITEM hItem, FX_BOOL bSelect) {
 }
 FWL_ERR CFWL_ListBoxImp::GetItemText(FWL_HLISTITEM hItem,
                                      CFX_WideString& wsText) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pProperties->m_pDataProvider, FWL_ERR_Indefinite);
+  if (!m_pProperties->m_pDataProvider)
+    return FWL_ERR_Indefinite;
   IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
-  _FWL_RETURN_VALUE_IF_FAIL(hItem, FWL_ERR_Indefinite);
+  if (!hItem)
+    return FWL_ERR_Indefinite;
   pData->GetItemText(m_pInterface, hItem, wsText);
   return FWL_ERR_Succeeded;
 }
@@ -420,7 +428,8 @@ FWL_HLISTITEM CFWL_ListBoxImp::GetFocusedItem() {
   int32_t iCount = pData->CountItems(m_pInterface);
   for (int32_t i = 0; i < iCount; i++) {
     FWL_HLISTITEM hItem = pData->GetItem(m_pInterface, i);
-    _FWL_RETURN_VALUE_IF_FAIL(hItem, NULL);
+    if (!hItem)
+      return NULL;
     if (pData->GetItemStyles(m_pInterface, hItem) & FWL_ITEMSTATE_LTB_Focused) {
       return hItem;
     }
@@ -471,7 +480,8 @@ FWL_HLISTITEM CFWL_ListBoxImp::GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
 }
 FX_BOOL CFWL_ListBoxImp::GetItemCheckRect(FWL_HLISTITEM hItem,
                                           CFX_RectF& rtCheck) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pProperties->m_pDataProvider, FALSE);
+  if (!m_pProperties->m_pDataProvider)
+    return FALSE;
   if (!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_Check)) {
     return FALSE;
   }
@@ -480,7 +490,8 @@ FX_BOOL CFWL_ListBoxImp::GetItemCheckRect(FWL_HLISTITEM hItem,
   return TRUE;
 }
 FX_BOOL CFWL_ListBoxImp::GetItemChecked(FWL_HLISTITEM hItem) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pProperties->m_pDataProvider, FALSE);
+  if (!m_pProperties->m_pDataProvider)
+    return FALSE;
   if (!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_Check)) {
     return FALSE;
   }
@@ -489,7 +500,8 @@ FX_BOOL CFWL_ListBoxImp::GetItemChecked(FWL_HLISTITEM hItem) {
           FWL_ITEMSTATE_LTB_Checked);
 }
 FX_BOOL CFWL_ListBoxImp::SetItemChecked(FWL_HLISTITEM hItem, FX_BOOL bChecked) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pProperties->m_pDataProvider, FALSE);
+  if (!m_pProperties->m_pDataProvider)
+    return FALSE;
   if (!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_Check)) {
     return FALSE;
   }
@@ -499,7 +511,8 @@ FX_BOOL CFWL_ListBoxImp::SetItemChecked(FWL_HLISTITEM hItem, FX_BOOL bChecked) {
   return TRUE;
 }
 FX_BOOL CFWL_ListBoxImp::ScrollToVisible(FWL_HLISTITEM hItem) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pVertScrollBar, FALSE);
+  if (!m_pVertScrollBar)
+    return FALSE;
   CFX_RectF rtItem;
   IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
   pData->GetItemRect(m_pInterface, hItem, rtItem);
@@ -524,8 +537,10 @@ FX_BOOL CFWL_ListBoxImp::ScrollToVisible(FWL_HLISTITEM hItem) {
 void CFWL_ListBoxImp::DrawBkground(CFX_Graphics* pGraphics,
                                    IFWL_ThemeProvider* pTheme,
                                    const CFX_Matrix* pMatrix) {
-  _FWL_RETURN_IF_FAIL(pGraphics);
-  _FWL_RETURN_IF_FAIL(pTheme);
+  if (!pGraphics)
+    return;
+  if (!pTheme)
+    return;
   CFWL_ThemeBackground param;
   param.m_pWidget = m_pInterface;
   param.m_iPart = FWL_PART_LTB_Background;
@@ -698,7 +713,8 @@ void CFWL_ListBoxImp::DrawItem(CFX_Graphics* pGraphics,
 CFX_SizeF CFWL_ListBoxImp::CalcSize(FX_BOOL bAutoSize) {
   CFX_SizeF fs;
   fs.Set(0, 0);
-  _FWL_RETURN_VALUE_IF_FAIL(m_pProperties->m_pThemeProvider, fs);
+  if (!m_pProperties->m_pThemeProvider)
+    return fs;
   GetClientRect(m_rtClient);
   m_rtConent = m_rtClient;
   CFX_RectF rtUIMargin;
@@ -898,12 +914,14 @@ FX_FLOAT CFWL_ListBoxImp::GetMaxTextWidth() {
 FX_FLOAT CFWL_ListBoxImp::GetScrollWidth() {
   FX_FLOAT* pfWidth =
       (FX_FLOAT*)GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth);
-  _FWL_RETURN_VALUE_IF_FAIL(pfWidth, 0);
+  if (!pfWidth)
+    return 0;
   return *pfWidth;
 }
 FX_FLOAT CFWL_ListBoxImp::GetItemHeigt() {
   FX_FLOAT* pfFont = (FX_FLOAT*)GetThemeCapacity(FWL_WGTCAPACITY_FontSize);
-  _FWL_RETURN_VALUE_IF_FAIL(pfFont, 20);
+  if (!pfFont)
+    return 20;
   return *pfFont + 2 * FWL_LISTBOX_ItemTextMargin;
 }
 void CFWL_ListBoxImp::InitScrollBar(FX_BOOL bVert) {
@@ -946,7 +964,8 @@ void CFWL_ListBoxImp::ProcessSelChanged() {
 CFWL_ListBoxImpDelegate::CFWL_ListBoxImpDelegate(CFWL_ListBoxImp* pOwner)
     : m_pOwner(pOwner) {}
 int32_t CFWL_ListBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
-  _FWL_RETURN_VALUE_IF_FAIL(pMessage, 0);
+  if (!pMessage)
+    return 0;
   if (!m_pOwner->IsEnabled()) {
     return 1;
   }
@@ -992,7 +1011,8 @@ int32_t CFWL_ListBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   return iRet;
 }
 FWL_ERR CFWL_ListBoxImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
-  _FWL_RETURN_VALUE_IF_FAIL(pEvent, FWL_ERR_Indefinite);
+  if (!pEvent)
+    return FWL_ERR_Indefinite;
   if (pEvent->GetClassID() != FWL_EVTHASH_Scroll) {
     return FWL_ERR_Succeeded;
   }

@@ -17,7 +17,8 @@ CFWL_ScrollBarTP::~CFWL_ScrollBarTP() {
   }
 }
 FX_BOOL CFWL_ScrollBarTP::IsValidWidget(IFWL_Widget* pWidget) {
-  _FWL_RETURN_VALUE_IF_FAIL(pWidget, FALSE);
+  if (!pWidget)
+    return FALSE;
   return pWidget->GetClassID() == FWL_CLASSHASH_ScrollBar;
 }
 void* CFWL_ScrollBarTP::GetCapacity(CFWL_ThemePart* pThemePart,
@@ -37,7 +38,8 @@ FX_DWORD CFWL_ScrollBarTP::SetThemeID(IFWL_Widget* pWidget,
   return CFWL_WidgetTP::SetThemeID(pWidget, dwThemeID, bChildren);
 }
 FX_BOOL CFWL_ScrollBarTP::DrawBackground(CFWL_ThemeBackground* pParams) {
-  _FWL_RETURN_VALUE_IF_FAIL(pParams, FALSE);
+  if (!pParams)
+    return FALSE;
   IFWL_Widget* pWidget = pParams->m_pWidget;
   FWLTHEME_STATE eState = FWLTHEME_STATE_Normal;
   switch (pParams->m_dwStates & 0x03) {

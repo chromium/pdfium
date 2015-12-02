@@ -120,8 +120,8 @@ FX_DWORD CFWL_MonthCalendarImp::GetClassID() const {
   return FWL_CLASSHASH_MonthCalendar;
 }
 FWL_ERR CFWL_MonthCalendarImp::Initialize() {
-  _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
-                                      FWL_ERR_Indefinite);
+  if (CFWL_WidgetImp::Initialize() != FWL_ERR_Succeeded)
+    return FWL_ERR_Indefinite;
   m_pDelegate = new CFWL_MonthCalendarImpDelegate(this);
   return FWL_ERR_Succeeded;
 }
@@ -159,7 +159,8 @@ FWL_ERR CFWL_MonthCalendarImp::Update() {
 }
 FWL_ERR CFWL_MonthCalendarImp::DrawWidget(CFX_Graphics* pGraphics,
                                           const CFX_Matrix* pMatrix) {
-  _FWL_RETURN_VALUE_IF_FAIL(pGraphics, FWL_ERR_Indefinite);
+  if (!pGraphics)
+    return FWL_ERR_Indefinite;
   if (m_pProperties->m_pThemeProvider == NULL) {
     m_pProperties->m_pThemeProvider = GetAvailableTheme();
   }
@@ -489,7 +490,8 @@ void CFWL_MonthCalendarImp::DrawDatesInCircle(CFX_Graphics* pGraphics,
     return;
   }
   LPDATEINFO pDate = (LPDATEINFO)m_arrDates[m_iDay - 1];
-  _FWL_RETURN_IF_FAIL(pDate);
+  if (!pDate)
+    return;
   CFWL_ThemeBackground params;
   params.m_pWidget = m_pInterface;
   params.m_iPart = FWL_PART_MCD_DateInCircle;
@@ -524,7 +526,8 @@ void CFWL_MonthCalendarImp::DrawTodayCircle(CFX_Graphics* pGraphics,
 CFX_SizeF CFWL_MonthCalendarImp::CalcSize(FX_BOOL bAutoSize) {
   CFX_SizeF fs;
   fs.Set(0, 0);
-  _FWL_RETURN_VALUE_IF_FAIL(m_pProperties->m_pThemeProvider, fs);
+  if (!m_pProperties->m_pThemeProvider)
+    return fs;
   if (bAutoSize) {
     CFWL_ThemePart params;
     params.m_pWidget = m_pInterface;
@@ -939,7 +942,8 @@ FX_BOOL CFWL_MonthCalendarImp::GetDayRect(int32_t iDay, CFX_RectF& rtDay) {
     return FALSE;
   }
   LPDATEINFO pDateInfo = (LPDATEINFO)m_arrDates[iDay - 1];
-  _FWL_RETURN_VALUE_IF_FAIL(pDateInfo, FALSE);
+  if (!pDateInfo)
+    return FALSE;
   rtDay = pDateInfo->rect;
   return TRUE;
 }
@@ -948,7 +952,8 @@ CFWL_MonthCalendarImpDelegate::CFWL_MonthCalendarImpDelegate(
     : m_pOwner(pOwner) {}
 int32_t CFWL_MonthCalendarImpDelegate::OnProcessMessage(
     CFWL_Message* pMessage) {
-  _FWL_RETURN_VALUE_IF_FAIL(pMessage, 0);
+  if (!pMessage)
+    return 0;
   FX_DWORD dwMsgCode = pMessage->GetClassID();
   int32_t iRet = 1;
   switch (dwMsgCode) {

@@ -135,8 +135,8 @@ FX_DWORD CFWL_ScrollBarImp::GetClassID() const {
   return FWL_CLASSHASH_ScrollBar;
 }
 FWL_ERR CFWL_ScrollBarImp::Initialize() {
-  _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
-                                      FWL_ERR_Indefinite);
+  if (CFWL_WidgetImp::Initialize() != FWL_ERR_Succeeded)
+    return FWL_ERR_Indefinite;
   m_pDelegate = new CFWL_ScrollBarImpDelegate(this);
   return FWL_ERR_Succeeded;
 }
@@ -150,7 +150,8 @@ FWL_ERR CFWL_ScrollBarImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
     rect.Set(0, 0, 0, 0);
     FX_FLOAT* pfMinWidth =
         (FX_FLOAT*)GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth);
-    _FWL_RETURN_VALUE_IF_FAIL(pfMinWidth, FWL_ERR_Indefinite);
+    if (!pfMinWidth)
+      return FWL_ERR_Indefinite;
     if (IsVertical()) {
       rect.Set(0, 0, (*pfMinWidth), (*pfMinWidth) * 3);
     } else {
@@ -174,9 +175,10 @@ FWL_ERR CFWL_ScrollBarImp::Update() {
 }
 FWL_ERR CFWL_ScrollBarImp::DrawWidget(CFX_Graphics* pGraphics,
                                       const CFX_Matrix* pMatrix) {
-  _FWL_RETURN_VALUE_IF_FAIL(pGraphics, FWL_ERR_Indefinite);
-  _FWL_RETURN_VALUE_IF_FAIL(m_pProperties->m_pThemeProvider,
-                            FWL_ERR_Indefinite);
+  if (!pGraphics)
+    return FWL_ERR_Indefinite;
+  if (!m_pProperties->m_pThemeProvider)
+    return FWL_ERR_Indefinite;
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   if (HasBorder()) {
     DrawBorder(pGraphics, FWL_PART_SCB_Border, pTheme, pMatrix);
@@ -431,7 +433,8 @@ void CFWL_ScrollBarImp::CalcThumbButtonRect(CFX_RectF& rect) {
   if (fTrackPos < m_fRangeMin) {
     fTrackPos = m_fRangeMin;
   }
-  _FWL_RETURN_IF_FAIL(fRange);
+  if (!fRange)
+    return;
   if (m_bCustomLayout) {
     FX_FLOAT iPos = fDiff * (fTrackPos - m_fRangeMin) / fRange;
     rect.left = rtClient.left;
@@ -651,7 +654,8 @@ FX_BOOL CFWL_ScrollBarImp::OnScroll(FX_DWORD dwCode, FX_FLOAT fPos) {
 CFWL_ScrollBarImpDelegate::CFWL_ScrollBarImpDelegate(CFWL_ScrollBarImp* pOwner)
     : m_pOwner(pOwner) {}
 int32_t CFWL_ScrollBarImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
-  _FWL_RETURN_VALUE_IF_FAIL(pMessage, 0);
+  if (!pMessage)
+    return 0;
   int32_t iRet = 1;
   FX_DWORD dwMsgCode = pMessage->GetClassID();
   if (dwMsgCode == FWL_MSGHASH_Mouse) {

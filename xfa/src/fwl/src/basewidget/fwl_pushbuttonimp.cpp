@@ -49,8 +49,8 @@ FX_DWORD CFWL_PushButtonImp::GetClassID() const {
   return FWL_CLASSHASH_PushButton;
 }
 FWL_ERR CFWL_PushButtonImp::Initialize() {
-  _FWL_ERR_CHECK_RETURN_VALUE_IF_FAIL(CFWL_WidgetImp::Initialize(),
-                                      FWL_ERR_Indefinite);
+  if (CFWL_WidgetImp::Initialize() != FWL_ERR_Succeeded)
+    return FWL_ERR_Indefinite;
   m_pDelegate = new CFWL_PushButtonImpDelegate(this);
   return FWL_ERR_Succeeded;
 }
@@ -108,9 +108,10 @@ FWL_ERR CFWL_PushButtonImp::Update() {
 }
 FWL_ERR CFWL_PushButtonImp::DrawWidget(CFX_Graphics* pGraphics,
                                        const CFX_Matrix* pMatrix) {
-  _FWL_RETURN_VALUE_IF_FAIL(pGraphics, FWL_ERR_Indefinite);
-  _FWL_RETURN_VALUE_IF_FAIL(m_pProperties->m_pThemeProvider,
-                            FWL_ERR_Indefinite);
+  if (!pGraphics)
+    return FWL_ERR_Indefinite;
+  if (!m_pProperties->m_pThemeProvider)
+    return FWL_ERR_Indefinite;
   IFWL_PushButtonDP* pData = (IFWL_PushButtonDP*)m_pProperties->m_pDataProvider;
   CFX_DIBitmap* pPicture = NULL;
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
@@ -312,7 +313,8 @@ void CFWL_PushButtonImp::DrawBkground(CFX_Graphics* pGraphics,
 void CFWL_PushButtonImp::DrawText(CFX_Graphics* pGraphics,
                                   IFWL_ThemeProvider* pTheme,
                                   const CFX_Matrix* pMatrix) {
-  _FWL_RETURN_IF_FAIL(m_pProperties->m_pDataProvider);
+  if (!m_pProperties->m_pDataProvider)
+    return;
   CFX_WideString wsCaption;
   m_pProperties->m_pDataProvider->GetCaption(m_pInterface, wsCaption);
   if (wsCaption.IsEmpty()) {
@@ -399,7 +401,8 @@ CFWL_PushButtonImpDelegate::CFWL_PushButtonImpDelegate(
     CFWL_PushButtonImp* pOwner)
     : m_pOwner(pOwner) {}
 int32_t CFWL_PushButtonImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
-  _FWL_RETURN_VALUE_IF_FAIL(pMessage, 0);
+  if (!pMessage)
+    return 0;
   if (!m_pOwner->IsEnabled()) {
     return 1;
   }

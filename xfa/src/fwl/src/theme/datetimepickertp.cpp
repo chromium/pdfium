@@ -13,11 +13,13 @@ CFWL_DateTimePickerTP::~CFWL_DateTimePickerTP() {
   delete m_pThemeData;
 }
 FX_BOOL CFWL_DateTimePickerTP::IsValidWidget(IFWL_Widget* pWidget) {
-  _FWL_RETURN_VALUE_IF_FAIL(pWidget, FALSE);
+  if (!pWidget)
+    return FALSE;
   return pWidget->GetClassID() == FWL_CLASSHASH_DateTimePicker;
 }
 FX_BOOL CFWL_DateTimePickerTP::DrawBackground(CFWL_ThemeBackground* pParams) {
-  _FWL_RETURN_VALUE_IF_FAIL(pParams, FALSE);
+  if (!pParams)
+    return FALSE;
   switch (pParams->m_iPart) {
     case FWL_PART_DTP_Border: {
       DrawBorder(pParams->m_pGraphics, &pParams->m_rtPart, &pParams->m_matrix);

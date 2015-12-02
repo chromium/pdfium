@@ -9,7 +9,8 @@ CFWL_Edit* CFWL_Edit::Create() {
   return new CFWL_Edit;
 }
 FWL_ERR CFWL_Edit::Initialize(const CFWL_WidgetProperties* pProperties) {
-  _FWL_RETURN_VALUE_IF_FAIL(!m_pIface, FWL_ERR_Indefinite);
+  if (m_pIface)
+    return FWL_ERR_Indefinite;
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
@@ -24,33 +25,40 @@ FWL_ERR CFWL_Edit::Initialize(const CFWL_WidgetProperties* pProperties) {
   return ret;
 }
 FWL_ERR CFWL_Edit::SetText(const CFX_WideString& wsText) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return ((IFWL_Edit*)m_pIface)->SetText(wsText);
 }
 int32_t CFWL_Edit::GetTextLength() const {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, 0);
+  if (!m_pIface)
+    return 0;
   return ((IFWL_Edit*)m_pIface)->GetTextLength();
 }
 FWL_ERR CFWL_Edit::GetText(CFX_WideString& wsText,
                            int32_t nStart,
                            int32_t nCount) const {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return ((IFWL_Edit*)m_pIface)->GetText(wsText, nStart, nCount);
 }
 FWL_ERR CFWL_Edit::ClearText() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return ((IFWL_Edit*)m_pIface)->ClearText();
 }
 int32_t CFWL_Edit::GetCaretPos() const {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, -1);
+  if (!m_pIface)
+    return -1;
   return ((IFWL_Edit*)m_pIface)->GetCaretPos();
 }
 int32_t CFWL_Edit::SetCaretPos(int32_t nIndex, FX_BOOL bBefore) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, -1);
+  if (!m_pIface)
+    return -1;
   return ((IFWL_Edit*)m_pIface)->SetCaretPos(nIndex, bBefore);
 }
 FWL_ERR CFWL_Edit::AddSelRange(int32_t nStart, int32_t nCount) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   ((IFWL_Edit*)m_pIface)->AddSelRange(nStart, nCount);
   int32_t pos = 0;
   int32_t sum = ((IFWL_Edit*)m_pIface)->GetTextLength();
@@ -62,71 +70,87 @@ FWL_ERR CFWL_Edit::AddSelRange(int32_t nStart, int32_t nCount) {
   return ((IFWL_Edit*)m_pIface)->SetCaretPos(pos);
 }
 int32_t CFWL_Edit::CountSelRanges() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, 0);
+  if (!m_pIface)
+    return 0;
   return ((IFWL_Edit*)m_pIface)->CountSelRanges();
 }
 int32_t CFWL_Edit::GetSelRange(int32_t nIndex, int32_t& nStart) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, 0);
+  if (!m_pIface)
+    return 0;
   return ((IFWL_Edit*)m_pIface)->GetSelRange(nIndex, nStart);
 }
 FWL_ERR CFWL_Edit::ClearSelections() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return ((IFWL_Edit*)m_pIface)->ClearSelections();
 }
 int32_t CFWL_Edit::GetLimit() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, -1);
+  if (!m_pIface)
+    return -1;
   return ((IFWL_Edit*)m_pIface)->GetLimit();
 }
 FWL_ERR CFWL_Edit::SetLimit(int32_t nLimit) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return ((IFWL_Edit*)m_pIface)->SetLimit(nLimit);
 }
 FWL_ERR CFWL_Edit::SetAliasChar(FX_WCHAR wAlias) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return ((IFWL_Edit*)m_pIface)->SetAliasChar(wAlias);
 }
 FWL_ERR CFWL_Edit::SetFormatString(const CFX_WideString& wsFormat) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return ((IFWL_Edit*)m_pIface)->SetFormatString(wsFormat);
 }
 FWL_ERR CFWL_Edit::Insert(int32_t nStart,
                           const FX_WCHAR* lpText,
                           int32_t nLen) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return ((IFWL_Edit*)m_pIface)->Insert(nStart, lpText, nLen);
 }
 FWL_ERR CFWL_Edit::DeleteSelections() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return ((IFWL_Edit*)m_pIface)->DeleteSelections();
 }
 FWL_ERR CFWL_Edit::DeleteRange(int32_t nStart, int32_t nCount) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return ((IFWL_Edit*)m_pIface)->DeleteRange(nStart, nCount);
 }
 FWL_ERR CFWL_Edit::ReplaceSelections(const CFX_WideStringC& wsReplace) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return ((IFWL_Edit*)m_pIface)->ReplaceSelections(wsReplace);
 }
 FWL_ERR CFWL_Edit::Replace(int32_t nStart,
                            int32_t nLen,
                            const CFX_WideStringC& wsReplace) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return ((IFWL_Edit*)m_pIface)->Replace(nStart, nLen, wsReplace);
 }
 FWL_ERR CFWL_Edit::DoClipboard(int32_t iCmd) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return ((IFWL_Edit*)m_pIface)->DoClipboard(iCmd);
 }
 FX_BOOL CFWL_Edit::Redo(const CFX_ByteStringC& bsRecord) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FALSE);
+  if (!m_pIface)
+    return FALSE;
   return ((IFWL_Edit*)m_pIface)->Redo(bsRecord);
 }
 FX_BOOL CFWL_Edit::Undo(const CFX_ByteStringC& bsRecord) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FALSE);
+  if (!m_pIface)
+    return FALSE;
   return ((IFWL_Edit*)m_pIface)->Undo(bsRecord);
 }
 FWL_ERR CFWL_Edit::SetTabWidth(FX_FLOAT fTabWidth, FX_BOOL bEquidistant) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return ((IFWL_Edit*)m_pIface)->SetTabWidth(fTabWidth, bEquidistant);
 }
 FWL_ERR CFWL_Edit::SetNumberRange(int32_t iMin, int32_t iMax) {
@@ -136,11 +160,13 @@ FWL_ERR CFWL_Edit::SetNumberRange(int32_t iMin, int32_t iMax) {
   return ((IFWL_Edit*)m_pIface)->SetNumberRange(iMin, iMax);
 }
 FWL_ERR CFWL_Edit::SetBackColor(FX_DWORD dwColor) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return ((IFWL_Edit*)m_pIface)->SetBackColor(dwColor);
 }
 FWL_ERR CFWL_Edit::SetFont(const CFX_WideString& wsFont, FX_FLOAT fSize) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return ((IFWL_Edit*)m_pIface)->SetFont(wsFont, fSize);
 }
 FX_BOOL CFWL_Edit::CanUndo() {

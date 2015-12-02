@@ -29,9 +29,11 @@ FWL_ERR CFWL_NoteLoop::Idle(int32_t count) {
   {
     CFWL_EvtIdle ev;
     IFWL_App* pApp = FWL_GetApp();
-    _FWL_RETURN_VALUE_IF_FAIL(pApp, FWL_ERR_Indefinite);
+    if (!pApp)
+      return FWL_ERR_Indefinite;
     IFWL_NoteDriver* pDriver = pApp->GetNoteDriver();
-    _FWL_RETURN_VALUE_IF_FAIL(pDriver, FWL_ERR_Indefinite);
+    if (!pDriver)
+      return FWL_ERR_Indefinite;
     pDriver->SendNote(&ev);
   }
   return FWL_ERR_Indefinite;
@@ -84,9 +86,11 @@ void CFWL_NoteLoop::GenerateCommondEvent(FX_DWORD dwCommand) {
   CFWL_EvtMenuCommand ev;
   ev.m_iCommand = dwCommand;
   IFWL_NoteThread* pThread = m_pForm->GetOwnerThread();
-  _FWL_RETURN_IF_FAIL(pThread);
+  if (!pThread)
+    return;
   IFWL_NoteDriver* pDriver = pThread->GetNoteDriver();
-  _FWL_RETURN_IF_FAIL(pDriver);
+  if (!pDriver)
+    return;
   pDriver->SendNote(&ev);
 }
 CFWL_NoteDriver::CFWL_NoteDriver()
@@ -141,7 +145,8 @@ FX_BOOL CFWL_NoteDriver::SendNote(CFWL_Note* pNote) {
     }
     m_sendEventCalled--;
   } else {
-    _FWL_RETURN_VALUE_IF_FAIL(pNote->m_pDstTarget, FALSE);
+    if (!pNote->m_pDstTarget)
+      return FALSE;
     IFWL_WidgetDelegate* pDelegate = pNote->m_pDstTarget->SetDelegate(NULL);
     if (pDelegate) {
       pDelegate->OnProcessMessage((CFWL_Message*)pNote);
@@ -206,7 +211,8 @@ FWL_ERR CFWL_NoteDriver::PushNoteLoop(IFWL_NoteLoop* pNoteLoop) {
 }
 IFWL_NoteLoop* CFWL_NoteDriver::PopNoteLoop() {
   int32_t pos = m_noteLoopQueue.GetSize();
-  _FWL_RETURN_VALUE_IF_FAIL(pos > 0, NULL);
+  if (pos <= 0)
+    return NULL;
   IFWL_NoteLoop* p = (IFWL_NoteLoop*)m_noteLoopQueue.GetAt(pos - 1);
   m_noteLoopQueue.RemoveAt(pos - 1);
   return p;
@@ -253,7 +259,8 @@ FX_BOOL CFWL_NoteDriver::SetFocus(IFWL_Widget* pFocus, FX_BOOL bNotify) {
 }
 FWL_ERR CFWL_NoteDriver::Run() {
   CFWL_WidgetMgr* pWidgetMgr = (CFWL_WidgetMgr*)FWL_GetWidgetMgr();
-  _FWL_RETURN_VALUE_IF_FAIL(pWidgetMgr, FWL_ERR_Indefinite);
+  if (!pWidgetMgr)
+    return FWL_ERR_Indefinite;
 #if (_FX_OS_ == _FX_MACOSX_)
   IFWL_AdapterWidgetMgr* adapterWidgetMgr = pWidgetMgr->GetAdapterWidgetMgr();
   CFWL_NoteLoop* pTopLoop = GetTopLoop();
@@ -349,7 +356,8 @@ void CFWL_NoteDriver::NotifyTargetDestroy(IFWL_Widget* pNoteTarget) {
       continue;
     }
     CFWL_WidgetImp* pSubFocus = pForm->GetSubFocus();
-    _FWL_RETURN_IF_FAIL(pSubFocus);
+    if (!pSubFocus)
+      return;
     if (pSubFocus && pSubFocus->GetInterface() == pNoteTarget) {
       pForm->SetSubFocus(NULL);
     }
@@ -360,20 +368,23 @@ void CFWL_NoteDriver::NotifyFullScreenMode(IFWL_Widget* pNoteTarget,
   m_bFullScreen = bFullScreen;
 }
 FWL_ERR CFWL_NoteDriver::RegisterForm(CFWL_WidgetImp* pForm) {
-  _FWL_RETURN_VALUE_IF_FAIL(pForm, FWL_ERR_Indefinite);
+  if (!pForm)
+    return FWL_ERR_Indefinite;
   if (m_forms.Find(pForm) >= 0) {
     return FWL_ERR_Indefinite;
   }
   m_forms.Add(pForm);
   if (m_forms.GetSize() == 1) {
     CFWL_NoteLoop* pLoop = (CFWL_NoteLoop*)m_noteLoopQueue.GetAt(0);
-    _FWL_RETURN_VALUE_IF_FAIL(pLoop, FWL_ERR_Indefinite);
+    if (!pLoop)
+      return FWL_ERR_Indefinite;
     pLoop->SetMainForm(pForm);
   }
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_NoteDriver::UnRegisterForm(CFWL_WidgetImp* pForm) {
-  _FWL_RETURN_VALUE_IF_FAIL(pForm, FWL_ERR_Indefinite);
+  if (!pForm)
+    return FWL_ERR_Indefinite;
   int32_t nIndex = m_forms.Find(pForm);
   if (nIndex < 0) {
     return FWL_ERR_Indefinite;
@@ -408,7 +419,8 @@ FX_BOOL CFWL_NoteDriver::UnqueueMessage(CFWL_NoteLoop* pNoteLoop) {
 }
 CFWL_NoteLoop* CFWL_NoteDriver::GetTopLoop() {
   int32_t size = m_noteLoopQueue.GetSize();
-  _FWL_RETURN_VALUE_IF_FAIL(size > 0, NULL);
+  if (size <= 0)
+    return NULL;
   return (CFWL_NoteLoop*)m_noteLoopQueue[size - 1];
 }
 int32_t CFWL_NoteDriver::CountLoop() {
@@ -423,7 +435,8 @@ FX_BOOL CFWL_NoteDriver::ProcessMessage(CFWL_Message* pMessage) {
   IFWL_Widget* pMessageForm = pWidgetMgr->IsFormDisabled()
                                   ? pMessage->m_pDstTarget
                                   : GetMessageForm(pMessage->m_pDstTarget);
-  _FWL_RETURN_VALUE_IF_FAIL(pMessageForm, FALSE);
+  if (!pMessageForm)
+    return FALSE;
   if (DispatchMessage(pMessage, pMessageForm)) {
     if (pMessage->GetClassID() == FWL_MSGHASH_Mouse) {
       MouseSecondary((CFWL_MsgMouse*)pMessage);
@@ -515,7 +528,8 @@ FX_BOOL CFWL_NoteDriver::DoDeactivate(CFWL_MsgDeactivate* pMsg,
     return FALSE;
   }
   int32_t iTrackLoop = m_noteLoopQueue.GetSize();
-  _FWL_RETURN_VALUE_IF_FAIL(iTrackLoop > 0, FALSE);
+  if (iTrackLoop <= 0)
+    return FALSE;
   if (iTrackLoop == 1) {
     if (pMessageForm->IsInstance(FX_WSTRC(L"FWL_FORMPROXY"))) {
       return FALSE;
@@ -530,7 +544,8 @@ FX_BOOL CFWL_NoteDriver::DoDeactivate(CFWL_MsgDeactivate* pMsg,
     return TRUE;
   }
   IFWL_Widget* pDst = pMsg->m_pDstTarget;
-  _FWL_RETURN_VALUE_IF_FAIL(pDst, FALSE);
+  if (!pDst)
+    return FALSE;
 #if (_FX_OS_ == _FX_MACOSX_)
   if (pDst == pMessageForm && pDst->IsInstance(L"FWL_FORMPROXY")) {
     return TRUE;
@@ -649,7 +664,8 @@ FX_BOOL CFWL_NoteDriver::DoMouse(CFWL_MsgMouse* pMsg,
 FX_BOOL CFWL_NoteDriver::DoWheel(CFWL_MsgMouseWheel* pMsg,
                                  IFWL_Widget* pMessageForm) {
   CFWL_WidgetMgr* pWidgetMgr = (CFWL_WidgetMgr*)FWL_GetWidgetMgr();
-  _FWL_RETURN_VALUE_IF_FAIL(pWidgetMgr, FALSE);
+  if (!pWidgetMgr)
+    return FALSE;
   IFWL_Widget* pDst =
       pWidgetMgr->GetWidgetAtPoint(pMessageForm, pMsg->m_fx, pMsg->m_fy);
   if (!pDst) {
@@ -664,7 +680,8 @@ FX_BOOL CFWL_NoteDriver::DoWheel(CFWL_MsgMouseWheel* pMsg,
 }
 FX_BOOL CFWL_NoteDriver::DoSize(CFWL_MsgSize* pMsg) {
   CFWL_WidgetMgr* pWidgetMgr = (CFWL_WidgetMgr*)FWL_GetWidgetMgr();
-  _FWL_RETURN_VALUE_IF_FAIL(pWidgetMgr, FALSE);
+  if (!pWidgetMgr)
+    return FALSE;
   pWidgetMgr->NotifySizeChanged(pMsg->m_pDstTarget, (FX_FLOAT)pMsg->m_iWidth,
                                 (FX_FLOAT)pMsg->m_iHeight);
   return TRUE;
@@ -680,7 +697,8 @@ FX_BOOL CFWL_NoteDriver::DoDragFiles(CFWL_MsgDropFiles* pMsg,
 FX_BOOL CFWL_NoteDriver::DoMouseEx(CFWL_MsgMouse* pMsg,
                                    IFWL_Widget* pMessageForm) {
   CFWL_WidgetMgr* pWidgetMgr = (CFWL_WidgetMgr*)FWL_GetWidgetMgr();
-  _FWL_RETURN_VALUE_IF_FAIL(pWidgetMgr, FALSE);
+  if (!pWidgetMgr)
+    return FALSE;
   IFWL_Widget* pTarget = NULL;
   if (m_pGrab) {
     { pTarget = m_pGrab; }
@@ -754,7 +772,8 @@ FX_BOOL CFWL_NoteDriver::IsValidMessage(CFWL_Message* pMessage) {
 }
 IFWL_Widget* CFWL_NoteDriver::GetMessageForm(IFWL_Widget* pDstTarget) {
   int32_t iTrackLoop = m_noteLoopQueue.GetSize();
-  _FWL_RETURN_VALUE_IF_FAIL(iTrackLoop > 0, NULL);
+  if (iTrackLoop <= 0)
+    return NULL;
   IFWL_Widget* pMessageForm = NULL;
   if (iTrackLoop > 1) {
     CFWL_NoteLoop* pNootLoop = (CFWL_NoteLoop*)m_noteLoopQueue[iTrackLoop - 1];
@@ -764,7 +783,8 @@ IFWL_Widget* CFWL_NoteDriver::GetMessageForm(IFWL_Widget* pDstTarget) {
   }
   if (!pMessageForm && pDstTarget) {
     CFWL_WidgetMgr* pWidgetMgr = (CFWL_WidgetMgr*)FWL_GetWidgetMgr();
-    _FWL_RETURN_VALUE_IF_FAIL(pWidgetMgr, NULL);
+    if (!pWidgetMgr)
+      return NULL;
     pMessageForm =
         pWidgetMgr->GetWidget(pDstTarget, FWL_WGTRELATION_SystemForm);
   }
@@ -837,7 +857,8 @@ int32_t CFWL_EventTarget::SetEventSource(IFWL_Widget* pSource,
 }
 FX_BOOL CFWL_EventTarget::ProcessEvent(CFWL_Event* pEvent) {
   IFWL_WidgetDelegate* pDelegate = m_pListener->SetDelegate(NULL);
-  _FWL_RETURN_VALUE_IF_FAIL(pDelegate, FALSE);
+  if (!pDelegate)
+    return FALSE;
   if (m_eventSources.GetCount() == 0) {
     pDelegate->OnProcessEvent(pEvent);
     return TRUE;
@@ -1057,16 +1078,20 @@ FWL_ERR FWL_SetToolTipAutoPopDelay(int32_t nDelayTime) {
       nDelayTime);
 }
 IFWL_Widget* FWL_GetCurrentThreadModalWidget(IFWL_NoteThread* pNoteThread) {
-  _FWL_RETURN_VALUE_IF_FAIL(pNoteThread, NULL);
+  if (!pNoteThread)
+    return NULL;
   CFWL_NoteDriver* noteDriver = (CFWL_NoteDriver*)pNoteThread->GetNoteDriver();
-  _FWL_RETURN_VALUE_IF_FAIL(noteDriver, NULL);
+  if (!noteDriver)
+    return NULL;
   if (noteDriver->CountLoop() == 1) {
     return NULL;
   }
   CFWL_NoteLoop* topLoop = noteDriver->GetTopLoop();
-  _FWL_RETURN_VALUE_IF_FAIL(topLoop, NULL);
+  if (!topLoop)
+    return NULL;
   CFWL_WidgetImp* widget = topLoop->GetForm();
-  _FWL_RETURN_VALUE_IF_FAIL(widget, NULL);
+  if (!widget)
+    return NULL;
   return widget->GetInterface();
 }
 FWL_ERR FWL_SetHook(IFWL_NoteDriver* driver,

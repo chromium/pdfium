@@ -9,7 +9,8 @@ CFWL_ComboBox* CFWL_ComboBox::Create() {
   return new CFWL_ComboBox;
 }
 FWL_ERR CFWL_ComboBox::Initialize(const CFWL_WidgetProperties* pProperties) {
-  _FWL_RETURN_VALUE_IF_FAIL(!m_pIface, FWL_ERR_Indefinite);
+  if (m_pIface)
+    return FWL_ERR_Indefinite;
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
@@ -50,58 +51,71 @@ int32_t CFWL_ComboBox::CountItems() {
 FWL_ERR CFWL_ComboBox::GetTextByIndex(int32_t iIndex, CFX_WideString& wsText) {
   CFWL_ComboBoxItem* pItem =
       (CFWL_ComboBoxItem*)(m_comboBoxData.GetItem((IFWL_Widget*)this, iIndex));
-  _FWL_RETURN_VALUE_IF_FAIL(pItem, FWL_ERR_Indefinite);
+  if (!pItem)
+    return FWL_ERR_Indefinite;
   wsText = pItem->m_wsText;
   return FWL_ERR_Succeeded;
 }
 int32_t CFWL_ComboBox::GetCurSel() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, -1);
+  if (!m_pIface)
+    return -1;
   return ((IFWL_ComboBox*)m_pIface)->GetCurSel();
 }
 FWL_ERR CFWL_ComboBox::SetCurSel(int32_t iSel) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return ((IFWL_ComboBox*)m_pIface)->SetCurSel(iSel);
 }
 FWL_ERR CFWL_ComboBox::SetEditText(const CFX_WideStringC& wsText) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return ((IFWL_ComboBox*)m_pIface)->SetEditText(wsText);
 }
 int32_t CFWL_ComboBox::GetEditTextLength() const {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, 0);
+  if (!m_pIface)
+    return 0;
   return ((IFWL_ComboBox*)m_pIface)->GetEditTextLength();
 }
 FWL_ERR CFWL_ComboBox::GetEditText(CFX_WideString& wsText,
                                    int32_t nStart,
                                    int32_t nCount) const {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return ((IFWL_ComboBox*)m_pIface)->GetEditText(wsText, nStart, nCount);
 }
 FWL_ERR CFWL_ComboBox::SetEditSelRange(int32_t nStart, int32_t nCount) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return ((IFWL_ComboBox*)m_pIface)->SetEditSelRange(nStart, nCount);
 }
 int32_t CFWL_ComboBox::GetEditSelRange(int32_t nIndex, int32_t& nStart) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, 0);
+  if (!m_pIface)
+    return 0;
   return ((IFWL_ComboBox*)m_pIface)->GetEditSelRange(nIndex, nStart);
 }
 int32_t CFWL_ComboBox::GetEditLimit() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, 0);
+  if (!m_pIface)
+    return 0;
   return ((IFWL_ComboBox*)m_pIface)->GetEditLimit();
 }
 FWL_ERR CFWL_ComboBox::SetEditLimit(int32_t nLimit) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return ((IFWL_ComboBox*)m_pIface)->SetEditLimit(nLimit);
 }
 FWL_ERR CFWL_ComboBox::EditDoClipboard(int32_t iCmd) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FWL_ERR_Indefinite);
+  if (!m_pIface)
+    return FWL_ERR_Indefinite;
   return ((IFWL_ComboBox*)m_pIface)->EditDoClipboard(iCmd);
 }
 FX_BOOL CFWL_ComboBox::EditRedo(const CFX_ByteStringC& bsRecord) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FALSE);
+  if (!m_pIface)
+    return FALSE;
   return ((IFWL_ComboBox*)m_pIface)->EditRedo(bsRecord);
 }
 FX_BOOL CFWL_ComboBox::EditUndo(const CFX_ByteStringC& bsRecord) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FALSE);
+  if (!m_pIface)
+    return FALSE;
   return ((IFWL_ComboBox*)m_pIface)->EditUndo(bsRecord);
 }
 FWL_ERR CFWL_ComboBox::SetMaxListHeight(FX_FLOAT fMaxHeight) {
@@ -111,14 +125,16 @@ FWL_ERR CFWL_ComboBox::SetMaxListHeight(FX_FLOAT fMaxHeight) {
 FWL_ERR CFWL_ComboBox::SetItemData(int32_t iIndex, void* pData) {
   CFWL_ComboBoxItem* pItem =
       (CFWL_ComboBoxItem*)(m_comboBoxData.GetItem((IFWL_Widget*)this, iIndex));
-  _FWL_RETURN_VALUE_IF_FAIL(pItem, FWL_ERR_Indefinite);
+  if (!pItem)
+    return FWL_ERR_Indefinite;
   pItem->m_pData = pData;
   return FWL_ERR_Succeeded;
 }
 void* CFWL_ComboBox::GetItemData(int32_t iIndex) {
   CFWL_ComboBoxItem* pItem =
       (CFWL_ComboBoxItem*)(m_comboBoxData.GetItem((IFWL_Widget*)this, iIndex));
-  _FWL_RETURN_VALUE_IF_FAIL(pItem, NULL);
+  if (!pItem)
+    return NULL;
   return pItem->m_pData;
 }
 FWL_ERR CFWL_ComboBox::SetListTheme(IFWL_ThemeProvider* pTheme) {
@@ -131,64 +147,79 @@ FWL_ERR CFWL_ComboBox::OpenDropDownList(FX_BOOL bActivate) {
   return ((IFWL_ComboBox*)m_pIface)->OpenDropDownList(bActivate);
 }
 FX_BOOL CFWL_ComboBox::EditCanUndo() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FALSE);
+  if (!m_pIface)
+    return FALSE;
   return ((IFWL_ComboBox*)m_pIface)->EditCanUndo();
 }
 FX_BOOL CFWL_ComboBox::EditCanRedo() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FALSE);
+  if (!m_pIface)
+    return FALSE;
   return ((IFWL_ComboBox*)m_pIface)->EditCanRedo();
 }
 FX_BOOL CFWL_ComboBox::EditUndo() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FALSE);
+  if (!m_pIface)
+    return FALSE;
   return ((IFWL_ComboBox*)m_pIface)->EditUndo();
 }
 FX_BOOL CFWL_ComboBox::EditRedo() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FALSE);
+  if (!m_pIface)
+    return FALSE;
   return ((IFWL_ComboBox*)m_pIface)->EditRedo();
 }
 FX_BOOL CFWL_ComboBox::EditCanCopy() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FALSE);
+  if (!m_pIface)
+    return FALSE;
   return ((IFWL_ComboBox*)m_pIface)->EditCanCopy();
 }
 FX_BOOL CFWL_ComboBox::EditCanCut() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FALSE);
+  if (!m_pIface)
+    return FALSE;
   return ((IFWL_ComboBox*)m_pIface)->EditCanCut();
 }
 FX_BOOL CFWL_ComboBox::EditCanSelectAll() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FALSE);
+  if (!m_pIface)
+    return FALSE;
   return ((IFWL_ComboBox*)m_pIface)->EditCanSelectAll();
 }
 FX_BOOL CFWL_ComboBox::EditCopy(CFX_WideString& wsCopy) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FALSE);
+  if (!m_pIface)
+    return FALSE;
   return ((IFWL_ComboBox*)m_pIface)->EditCopy(wsCopy);
 }
 FX_BOOL CFWL_ComboBox::EditCut(CFX_WideString& wsCut) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FALSE);
+  if (!m_pIface)
+    return FALSE;
   return ((IFWL_ComboBox*)m_pIface)->EditCut(wsCut);
 }
 FX_BOOL CFWL_ComboBox::EditPaste(const CFX_WideString& wsPaste) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FALSE);
+  if (!m_pIface)
+    return FALSE;
   return ((IFWL_ComboBox*)m_pIface)->EditPaste(wsPaste);
 }
 FX_BOOL CFWL_ComboBox::EditSelectAll() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FALSE);
+  if (!m_pIface)
+    return FALSE;
   return ((IFWL_ComboBox*)m_pIface)->EditSelectAll();
 }
 FX_BOOL CFWL_ComboBox::EditDelete() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FALSE);
+  if (!m_pIface)
+    return FALSE;
   return ((IFWL_ComboBox*)m_pIface)->EditDelete();
 }
 FX_BOOL CFWL_ComboBox::EditDeSelect() {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FALSE);
+  if (!m_pIface)
+    return FALSE;
   return ((IFWL_ComboBox*)m_pIface)->EditDeSelect();
 }
 FWL_ERR CFWL_ComboBox::GetBBox(CFX_RectF& rect) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FALSE);
+  if (!m_pIface)
+    return FALSE;
   return ((IFWL_ComboBox*)m_pIface)->GetBBox(rect);
 }
 FWL_ERR CFWL_ComboBox::EditModifyStylesEx(FX_DWORD dwStylesExAdded,
                                           FX_DWORD dwStylesExRemoved) {
-  _FWL_RETURN_VALUE_IF_FAIL(m_pIface, FALSE);
+  if (!m_pIface)
+    return FALSE;
   return ((IFWL_ComboBox*)m_pIface)
       ->EditModifyStylesEx(dwStylesExAdded, dwStylesExRemoved);
 }
@@ -230,20 +261,23 @@ FX_BOOL CFWL_ComboBox::CFWL_ComboBoxDP::SetItemIndex(IFWL_Widget* pWidget,
 }
 FX_DWORD CFWL_ComboBox::CFWL_ComboBoxDP::GetItemStyles(IFWL_Widget* pWidget,
                                                        FWL_HLISTITEM hItem) {
-  _FWL_RETURN_VALUE_IF_FAIL(hItem, 0);
+  if (!hItem)
+    return 0;
   return ((CFWL_ComboBoxItem*)hItem)->m_dwStyles;
 }
 FWL_ERR CFWL_ComboBox::CFWL_ComboBoxDP::GetItemText(IFWL_Widget* pWidget,
                                                     FWL_HLISTITEM hItem,
                                                     CFX_WideString& wsText) {
-  _FWL_RETURN_VALUE_IF_FAIL(hItem, FWL_ERR_Indefinite);
+  if (!hItem)
+    return FWL_ERR_Indefinite;
   wsText = ((CFWL_ComboBoxItem*)hItem)->m_wsText;
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_ComboBox::CFWL_ComboBoxDP::GetItemRect(IFWL_Widget* pWidget,
                                                     FWL_HLISTITEM hItem,
                                                     CFX_RectF& rtItem) {
-  _FWL_RETURN_VALUE_IF_FAIL(hItem, FWL_ERR_Indefinite);
+  if (!hItem)
+    return FWL_ERR_Indefinite;
   CFWL_ComboBoxItem* pItem = (CFWL_ComboBoxItem*)hItem;
   rtItem.Set(pItem->m_rtItem.left, pItem->m_rtItem.top, pItem->m_rtItem.width,
              pItem->m_rtItem.height);
@@ -251,28 +285,32 @@ FWL_ERR CFWL_ComboBox::CFWL_ComboBoxDP::GetItemRect(IFWL_Widget* pWidget,
 }
 void* CFWL_ComboBox::CFWL_ComboBoxDP::GetItemData(IFWL_Widget* pWidget,
                                                   FWL_HLISTITEM hItem) {
-  _FWL_RETURN_VALUE_IF_FAIL(hItem, NULL);
+  if (!hItem)
+    return NULL;
   CFWL_ComboBoxItem* pItem = (CFWL_ComboBoxItem*)hItem;
   return pItem->m_pData;
 }
 FWL_ERR CFWL_ComboBox::CFWL_ComboBoxDP::SetItemStyles(IFWL_Widget* pWidget,
                                                       FWL_HLISTITEM hItem,
                                                       FX_DWORD dwStyle) {
-  _FWL_RETURN_VALUE_IF_FAIL(hItem, FWL_ERR_Indefinite);
+  if (!hItem)
+    return FWL_ERR_Indefinite;
   ((CFWL_ComboBoxItem*)hItem)->m_dwStyles = dwStyle;
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_ComboBox::CFWL_ComboBoxDP::SetItemText(IFWL_Widget* pWidget,
                                                     FWL_HLISTITEM hItem,
                                                     const FX_WCHAR* pszText) {
-  _FWL_RETURN_VALUE_IF_FAIL(hItem, FWL_ERR_Indefinite);
+  if (!hItem)
+    return FWL_ERR_Indefinite;
   ((CFWL_ComboBoxItem*)hItem)->m_wsText = pszText;
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_ComboBox::CFWL_ComboBoxDP::SetItemRect(IFWL_Widget* pWidget,
                                                     FWL_HLISTITEM hItem,
                                                     const CFX_RectF& rtItem) {
-  _FWL_RETURN_VALUE_IF_FAIL(hItem, FWL_ERR_Indefinite);
+  if (!hItem)
+    return FWL_ERR_Indefinite;
   ((CFWL_ComboBoxItem*)hItem)->m_rtItem = rtItem;
   return FWL_ERR_Succeeded;
 }
@@ -281,7 +319,8 @@ FX_FLOAT CFWL_ComboBox::CFWL_ComboBoxDP::GetItemHeight(IFWL_Widget* pWidget) {
 }
 CFX_DIBitmap* CFWL_ComboBox::CFWL_ComboBoxDP::GetItemIcon(IFWL_Widget* pWidget,
                                                           FWL_HLISTITEM hItem) {
-  _FWL_RETURN_VALUE_IF_FAIL(hItem, NULL);
+  if (!hItem)
+    return NULL;
   return ((CFWL_ComboBoxItem*)hItem)->m_pDIB;
 }
 FWL_ERR CFWL_ComboBox::CFWL_ComboBoxDP::GetItemCheckRect(IFWL_Widget* pWidget,

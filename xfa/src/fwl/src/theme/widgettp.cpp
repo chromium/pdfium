@@ -55,7 +55,8 @@ FX_BOOL CFWL_WidgetTP::DrawText(CFWL_ThemeText* pParams) {
     InitTTO();
   }
   int32_t iLen = pParams->m_wsText.GetLength();
-  _FWL_RETURN_VALUE_IF_FAIL(iLen > 0, FALSE)
+  if (iLen <= 0)
+    return FALSE;
   CFX_Graphics* pGraphics = pParams->m_pGraphics;
   m_pTextOut->SetRenderDevice(pGraphics->GetRenderDevice());
   m_pTextOut->SetStyles(pParams->m_dwTTOStyles);
@@ -134,8 +135,10 @@ FX_BOOL CFWL_WidgetTP::IsInPart(CFWL_ThemePart* pThemePart,
   return TRUE;
 }
 FX_BOOL CFWL_WidgetTP::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
-  _FWL_RETURN_VALUE_IF_FAIL(pParams, FALSE);
-  _FWL_RETURN_VALUE_IF_FAIL(m_pTextOut, FALSE);
+  if (!pParams)
+    return FALSE;
+  if (!m_pTextOut)
+    return FALSE;
   m_pTextOut->SetAlignment(pParams->m_iTTOAlign);
   m_pTextOut->SetStyles(pParams->m_dwTTOStyles | FDE_TTOSTYLE_ArabicContext);
   m_pTextOut->CalcLogicSize(pParams->m_wsText, pParams->m_wsText.GetLength(),
@@ -208,8 +211,10 @@ void CFWL_WidgetTP::DrawEdge(CFX_Graphics* pGraphics,
                              FX_DWORD dwStyles,
                              const CFX_RectF* pRect,
                              CFX_Matrix* pMatrix) {
-  _FWL_RETURN_IF_FAIL(pGraphics);
-  _FWL_RETURN_IF_FAIL(pRect);
+  if (!pGraphics)
+    return;
+  if (!pRect)
+    return;
   pGraphics->SaveGraphState();
   CFX_Color crStroke(FWL_GetThemeColor(m_dwThemeID) == 0
                          ? ArgbEncode(255, 127, 157, 185)
@@ -233,8 +238,10 @@ void CFWL_WidgetTP::DrawEdge(CFX_Graphics* pGraphics,
                              FX_DWORD dwStyles,
                              const CFX_RectF* pRect,
                              CFX_Matrix* pMatrix) {
-  _FWL_RETURN_IF_FAIL(pGraphics);
-  _FWL_RETURN_IF_FAIL(pRect);
+  if (!pGraphics)
+    return;
+  if (!pRect)
+    return;
   FWLTHEME_EDGE eType;
   FX_FLOAT fWidth;
   switch (dwStyles & FWL_WGTSTYLE_EdgeMask) {
@@ -263,8 +270,10 @@ void CFWL_WidgetTP::Draw3DRect(CFX_Graphics* pGraphics,
                                FX_ARGB cr3,
                                FX_ARGB cr4,
                                CFX_Matrix* pMatrix) {
-  _FWL_RETURN_IF_FAIL(pGraphics);
-  _FWL_RETURN_IF_FAIL(pRect);
+  if (!pGraphics)
+    return;
+  if (!pRect)
+    return;
   pGraphics->SaveGraphState();
   if (eType == FWLTHEME_EDGE_Flat) {
     CFX_Path path;
@@ -347,8 +356,10 @@ void CFWL_WidgetTP::Draw3DCircle(CFX_Graphics* pGraphics,
                                  FX_ARGB cr3,
                                  FX_ARGB cr4,
                                  CFX_Matrix* pMatrix) {
-  _FWL_RETURN_IF_FAIL(pGraphics);
-  _FWL_RETURN_IF_FAIL(pRect);
+  if (!pGraphics)
+    return;
+  if (!pRect)
+    return;
   pGraphics->SaveGraphState();
   CFX_Path path;
   path.Create();
@@ -381,8 +392,10 @@ void CFWL_WidgetTP::Draw3DCircle(CFX_Graphics* pGraphics,
 void CFWL_WidgetTP::DrawBorder(CFX_Graphics* pGraphics,
                                const CFX_RectF* pRect,
                                CFX_Matrix* pMatrix) {
-  _FWL_RETURN_IF_FAIL(pGraphics);
-  _FWL_RETURN_IF_FAIL(pRect);
+  if (!pGraphics)
+    return;
+  if (!pRect)
+    return;
   CFX_Path path;
   path.Create();
   path.AddRectangle(pRect->left, pRect->top, pRect->width, pRect->height);
@@ -403,8 +416,10 @@ void CFWL_WidgetTP::FillSoildRect(CFX_Graphics* pGraphics,
                                   FX_ARGB fillColor,
                                   const CFX_RectF* pRect,
                                   CFX_Matrix* pMatrix) {
-  _FWL_RETURN_IF_FAIL(pGraphics);
-  _FWL_RETURN_IF_FAIL(pRect);
+  if (!pGraphics)
+    return;
+  if (!pRect)
+    return;
   pGraphics->SaveGraphState();
   CFX_Color crFill(fillColor);
   pGraphics->SetFillColor(&crFill);
@@ -424,8 +439,10 @@ void CFWL_WidgetTP::DrawAxialShading(CFX_Graphics* pGraphics,
                                      CFX_Path* path,
                                      int32_t fillMode,
                                      CFX_Matrix* pMatrix) {
-  _FWL_RETURN_IF_FAIL(pGraphics);
-  _FWL_RETURN_IF_FAIL(path);
+  if (!pGraphics)
+    return;
+  if (!path)
+    return;
   CFX_PointF begPoint, endPoint;
   begPoint.Set(fx1, fy1);
   endPoint.Set(fx2, fy2);
@@ -442,8 +459,10 @@ void CFWL_WidgetTP::DrawAnnulusRect(CFX_Graphics* pGraphics,
                                     const CFX_RectF* pRect,
                                     FX_FLOAT fRingWidth,
                                     CFX_Matrix* pMatrix) {
-  _FWL_RETURN_IF_FAIL(pGraphics);
-  _FWL_RETURN_IF_FAIL(pRect);
+  if (!pGraphics)
+    return;
+  if (!pRect)
+    return;
   pGraphics->SaveGraphState();
   CFX_Color cr(fillColor);
   pGraphics->SetFillColor(&cr);
@@ -461,8 +480,10 @@ void CFWL_WidgetTP::DrawAnnulusCircle(CFX_Graphics* pGraphics,
                                       const CFX_RectF* pRect,
                                       FX_FLOAT fWidth,
                                       CFX_Matrix* pMatrix) {
-  _FWL_RETURN_IF_FAIL(pGraphics);
-  _FWL_RETURN_IF_FAIL(pRect);
+  if (!pGraphics)
+    return;
+  if (!pRect)
+    return;
   if (fWidth > pRect->width / 2) {
     return;
   }
@@ -481,8 +502,10 @@ void CFWL_WidgetTP::DrawAnnulusCircle(CFX_Graphics* pGraphics,
 void CFWL_WidgetTP::DrawFocus(CFX_Graphics* pGraphics,
                               const CFX_RectF* pRect,
                               CFX_Matrix* pMatrix) {
-  _FWL_RETURN_IF_FAIL(pGraphics);
-  _FWL_RETURN_IF_FAIL(pRect);
+  if (!pGraphics)
+    return;
+  if (!pRect)
+    return;
   pGraphics->SaveGraphState();
   CFX_Color cr(0xFF000000);
   pGraphics->SetStrokeColor(&cr);
