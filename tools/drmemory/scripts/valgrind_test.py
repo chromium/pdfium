@@ -76,8 +76,8 @@ class BaseTool(object):
                                          "test>")
     self._parser.disable_interspersed_args()
     self._parser.add_option("-t", "--timeout",
-                      dest="timeout", metavar="TIMEOUT", default=10000,
-                      help="timeout in seconds for the run (default 10000)")
+                      dest="timeout", metavar="TIMEOUT", default=100000,
+                      help="timeout in seconds for the run (default 100000)")
     self._parser.add_option("", "--build-dir",
                             help="the location of the compiler output")
     self._parser.add_option("", "--source-dir",
