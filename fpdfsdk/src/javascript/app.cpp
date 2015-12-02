@@ -217,12 +217,18 @@ FX_BOOL app::viewerVersion(IJS_Context* cc,
 FX_BOOL app::platform(IJS_Context* cc,
                       CJS_PropValue& vp,
                       CFX_WideString& sError) {
-  if (vp.IsGetting()) {
+  if (!vp.IsGetting())
+    return FALSE;
+  CPDFDoc_Environment* pEnv =
+      static_cast<CJS_Context*>(cc)->GetJSRuntime()->GetReaderApp();
+  if (!pEnv)
+    return FALSE;
+  CFX_WideString platfrom = pEnv->FFI_GetPlatform();
+  if (platfrom.IsEmpty())
     vp << JS_STR_PLATFORM;
-    return TRUE;
-  }
-
-  return FALSE;
+  else
+    vp << platfrom;
+  return TRUE;
 }
 
 FX_BOOL app::language(IJS_Context* cc,
