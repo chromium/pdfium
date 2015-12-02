@@ -6,13 +6,15 @@
 
 #ifndef _FWL_WIDGET_LIGHT_H
 #define _FWL_WIDGET_LIGHT_H
-class CFWL_WidgetMgr;
-class CFWL_Message;
+
+#include "xfa/include/fwl/core/fwl_widget.h"
+
 class CFWL_Event;
-class IFWL_WidgetDelegate;
-class IFWL_Widget;
+class CFWL_Message;
 class CFWL_Widget;
 class CFWL_WidgetDelegate;
+class CFWL_WidgetMgr;
+
 class CFWL_WidgetProperties {
  public:
   CFWL_WidgetProperties() {
@@ -24,6 +26,9 @@ class CFWL_WidgetProperties {
     m_pParent = NULL;
     m_pOwner = NULL;
   }
+  CFWL_WidgetImpProperties MakeWidgetImpProperties(
+      IFWL_DataProvider* pDataProvider) const;
+
   CFX_WideString m_wsWindowclass;
   CFX_Matrix m_ctmOnParent;
   CFX_RectF m_rtWidget;
@@ -33,6 +38,7 @@ class CFWL_WidgetProperties {
   CFWL_Widget* m_pParent;
   CFWL_Widget* m_pOwner;
 };
+
 class CFWL_Widget {
  public:
   IFWL_Widget* GetWidget();

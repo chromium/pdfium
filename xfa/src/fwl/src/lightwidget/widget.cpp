@@ -10,6 +10,22 @@
 #include "../core/include/fwl_noteimp.h"
 #include "../core/include/fwl_widgetimp.h"
 #include "../core/include/fwl_widgetmgrimp.h"
+
+CFWL_WidgetImpProperties CFWL_WidgetProperties::MakeWidgetImpProperties(
+    IFWL_DataProvider* pDataProvider) const {
+  CFWL_WidgetImpProperties result;
+  result.m_ctmOnParent = m_ctmOnParent;
+  result.m_rtWidget = m_rtWidget;
+  result.m_dwStyles = m_dwStyles;
+  result.m_dwStyleExes = m_dwStyleExes;
+  result.m_dwStates = m_dwStates;
+  if (m_pParent)
+    result.m_pParent = m_pParent->GetWidget();
+  if (m_pOwner)
+    result.m_pOwner = m_pOwner->GetWidget();
+  result.m_pDataProvider = pDataProvider;
+  return result;
+}
 IFWL_Widget* CFWL_Widget::GetWidget() {
   return m_pIface;
 }

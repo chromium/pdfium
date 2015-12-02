@@ -13,21 +13,11 @@ FWL_ERR CFWL_PictureBox::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  CFWL_WidgetImpProperties prop;
-  prop.m_dwStyles = m_pProperties->m_dwStyles;
-  prop.m_dwStyleExes = m_pProperties->m_dwStyleExes;
-  prop.m_dwStates = m_pProperties->m_dwStates;
-  prop.m_ctmOnParent = m_pProperties->m_ctmOnParent;
-  prop.m_pDataProvider = &m_PictureBoxDP;
-  if (m_pProperties->m_pParent) {
-    prop.m_pParent = m_pProperties->m_pParent->GetWidget();
-  }
-  if (m_pProperties->m_pOwner) {
-    prop.m_pOwner = m_pProperties->m_pOwner->GetWidget();
-  }
-  prop.m_rtWidget = m_pProperties->m_rtWidget;
   m_pIface = IFWL_PictureBox::Create();
-  FWL_ERR ret = ((IFWL_PictureBox*)m_pIface)->Initialize(prop, nullptr);
+  FWL_ERR ret =
+      ((IFWL_PictureBox*)m_pIface)
+          ->Initialize(m_pProperties->MakeWidgetImpProperties(&m_PictureBoxDP),
+                       nullptr);
   if (ret == FWL_ERR_Succeeded) {
     CFWL_Widget::Initialize();
   }

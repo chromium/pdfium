@@ -13,20 +13,11 @@ FWL_ERR CFWL_Caret::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  CFWL_WidgetImpProperties prop;
-  prop.m_ctmOnParent = m_pProperties->m_ctmOnParent;
-  prop.m_rtWidget = m_pProperties->m_rtWidget;
-  prop.m_dwStyles = m_pProperties->m_dwStyles;
-  prop.m_dwStyleExes = m_pProperties->m_dwStyleExes;
-  prop.m_dwStates = m_pProperties->m_dwStates;
-  if (m_pProperties->m_pParent) {
-    prop.m_pParent = m_pProperties->m_pParent->GetWidget();
-  }
-  if (m_pProperties->m_pOwner) {
-    prop.m_pOwner = m_pProperties->m_pOwner->GetWidget();
-  }
   m_pIface = IFWL_Caret::Create();
-  FWL_ERR ret = ((IFWL_Caret*)m_pIface)->Initialize(prop, nullptr);
+  FWL_ERR ret =
+      ((IFWL_Caret*)m_pIface)
+          ->Initialize(m_pProperties->MakeWidgetImpProperties(nullptr),
+                       nullptr);
   if (ret == FWL_ERR_Succeeded) {
     CFWL_Widget::Initialize();
   }
