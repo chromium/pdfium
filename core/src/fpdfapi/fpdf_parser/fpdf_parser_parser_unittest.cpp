@@ -26,6 +26,7 @@ class CPDF_TestParser : public CPDF_Parser {
   // Add test case as private friend so that RebuildCrossRef in CPDF_Parser
   // can be accessed.
   FRIEND_TEST(fpdf_parser_parser, RebuildCrossRefCorrectly);
+  FRIEND_TEST(fpdf_parser_parser, RebuildCrossRefFailed);
 };
 
 // TODO(thestig) Using unique_ptr with ReleaseDeleter is still not ideal.
@@ -210,4 +211,14 @@ TEST(fpdf_parser_parser, RebuildCrossRefCorrectly) {
     EXPECT_EQ(offsets[i], parser.m_CrossRef.GetAt(i));
     EXPECT_EQ(versions[i], parser.m_ObjVersion.GetAt(i));
   }
+}
+
+TEST(fpdf_parser_parser, RebuildCrossRefFailed) {
+  CPDF_TestParser parser;
+  std::string test_file;
+  ASSERT_TRUE(PathService::GetTestFilePath(
+      "parser_rebuildxref_error_notrailer.pdf", &test_file));
+  ASSERT_TRUE(parser.InitTest(test_file.c_str())) << test_file;
+
+  ASSERT_FALSE(parser.RebuildCrossRef());
 }
