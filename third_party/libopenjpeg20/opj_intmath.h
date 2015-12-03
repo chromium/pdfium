@@ -192,8 +192,7 @@ Multiply two fixed-precision rational numbers.
 @return Returns a * b
 */
 static INLINE OPJ_INT32 opj_int_fix_mul(OPJ_INT32 a, OPJ_INT32 b) {
-// TODO(thakis): Remove __clang__ once chromium's clang has clang r250301
-#if defined(_MSC_VER) && (_MSC_VER >= 1400) && !defined(__INTEL_COMPILER) && defined(_M_IX86) && !defined(__clang__)
+#if defined(_MSC_VER) && (_MSC_VER >= 1400) && !defined(__INTEL_COMPILER) && defined(_M_IX86)
 	OPJ_INT64 temp = __emul(a, b);
 #else
 	OPJ_INT64 temp = (OPJ_INT64) a * (OPJ_INT64) b ;
@@ -205,8 +204,7 @@ static INLINE OPJ_INT32 opj_int_fix_mul(OPJ_INT32 a, OPJ_INT32 b) {
 }
 
 static INLINE OPJ_INT32 opj_int_fix_mul_t1(OPJ_INT32 a, OPJ_INT32 b) {
-// TODO(thakis): Remove __clang__ once chromium's clang has clang r250301
-#if defined(_MSC_VER) && (_MSC_VER >= 1400) && !defined(__INTEL_COMPILER) && defined(_M_IX86) && !defined(__clang__)
+#if defined(_MSC_VER) && (_MSC_VER >= 1400) && !defined(__INTEL_COMPILER) && defined(_M_IX86)
 	OPJ_INT64 temp = __emul(a, b);
 #else
 	OPJ_INT64 temp = (OPJ_INT64) a * (OPJ_INT64) b ;
