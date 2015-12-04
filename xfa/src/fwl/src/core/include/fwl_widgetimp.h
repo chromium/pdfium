@@ -61,9 +61,7 @@ class CFWL_WidgetImp : public CFWL_TargetImp {
   virtual IFWL_WidgetDelegate* SetDelegate(IFWL_WidgetDelegate* pDelegate);
   virtual IFWL_NoteThread* GetOwnerThread() const;
   FWL_ERR SetOwnerThread(CFWL_NoteThread* pOwnerThread);
-  FWL_ERR GetProperties(CFWL_WidgetImpProperties& properties);
-  FWL_ERR SetProperties(const CFWL_WidgetImpProperties& properties);
-  IFWL_Widget* GetInterface();
+  IFWL_Widget* GetInterface() const;
   void SetInterface(IFWL_Widget* pInterface);
   CFX_SizeF GetOffsetFromParent(IFWL_Widget* pParent);
 
@@ -72,16 +70,16 @@ class CFWL_WidgetImp : public CFWL_TargetImp {
   CFWL_WidgetImp(const CFWL_WidgetImpProperties& properties,
                  IFWL_Widget* pOuter = NULL);
   virtual ~CFWL_WidgetImp();
-  FX_BOOL IsEnabled();
-  FX_BOOL IsVisible();
-  FX_BOOL IsActive();
-  FX_BOOL IsOverLapper();
-  FX_BOOL IsPopup();
-  FX_BOOL IsChild();
-  FX_BOOL IsLocked();
-  FX_BOOL IsOffscreen();
-  FX_BOOL HasBorder();
-  FX_BOOL HasEdge();
+  FX_BOOL IsEnabled() const;
+  FX_BOOL IsVisible() const;
+  FX_BOOL IsActive() const;
+  FX_BOOL IsOverLapper() const;
+  FX_BOOL IsPopup() const;
+  FX_BOOL IsChild() const;
+  FX_BOOL IsLocked() const;
+  FX_BOOL IsOffscreen() const;
+  FX_BOOL HasBorder() const;
+  FX_BOOL HasEdge() const;
   void GetEdgeRect(CFX_RectF& rtEdge);
   FX_FLOAT GetBorderSize(FX_BOOL bCX = TRUE);
   FX_FLOAT GetEdgeWidth();
@@ -89,8 +87,6 @@ class CFWL_WidgetImp : public CFWL_TargetImp {
   void* GetThemeCapacity(FX_DWORD dwCapacity);
   IFWL_ThemeProvider* GetAvailableTheme();
   CFWL_WidgetImp* GetRootOuter();
-  FX_BOOL TransformToOuter(FX_FLOAT& fx, FX_FLOAT& fy);
-  FX_BOOL TransformFromOuter(FX_FLOAT& fx, FX_FLOAT& fy);
   CFX_SizeF CalcTextSize(const CFX_WideString& wsText,
                          IFWL_ThemeProvider* pTheme,
                          FX_BOOL bMultiLine = FALSE,

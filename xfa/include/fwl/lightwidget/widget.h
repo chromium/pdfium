@@ -80,8 +80,6 @@ class CFWL_Widget {
   FWL_ERR GetMatrix(CFX_Matrix& matrix, FX_BOOL bGlobal = FALSE);
   FWL_ERR SetMatrix(const CFX_Matrix& matrix);
   FWL_ERR DrawWidget(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix = NULL);
-  FWL_ERR GetProperties(CFWL_WidgetProperties& properties);
-  FWL_ERR SetProperties(const CFWL_WidgetProperties& properties);
   IFWL_WidgetDelegate* SetDelegate(IFWL_WidgetDelegate* pDelegate);
   FWL_ERR Repaint(const CFX_RectF* pRect = NULL);
   FWL_ERR SetFocus(FX_BOOL bFocus);

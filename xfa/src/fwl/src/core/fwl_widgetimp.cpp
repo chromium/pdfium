@@ -492,16 +492,7 @@ FWL_ERR CFWL_WidgetImp::SetOwnerThread(CFWL_NoteThread* pOwnerThread) {
   m_pOwnerThread = pOwnerThread;
   return FWL_ERR_Succeeded;
 }
-FWL_ERR CFWL_WidgetImp::GetProperties(CFWL_WidgetImpProperties& properties) {
-  properties = *m_pProperties;
-  return FWL_ERR_Succeeded;
-}
-FWL_ERR CFWL_WidgetImp::SetProperties(
-    const CFWL_WidgetImpProperties& properties) {
-  *m_pProperties = properties;
-  return FWL_ERR_Succeeded;
-}
-IFWL_Widget* CFWL_WidgetImp::GetInterface() {
+IFWL_Widget* CFWL_WidgetImp::GetInterface() const {
   return m_pInterface;
 }
 void CFWL_WidgetImp::SetInterface(IFWL_Widget* pInterface) {
@@ -545,36 +536,36 @@ CFWL_WidgetImp::~CFWL_WidgetImp() {
     m_pProperties = NULL;
   }
 }
-FX_BOOL CFWL_WidgetImp::IsEnabled() {
+FX_BOOL CFWL_WidgetImp::IsEnabled() const {
   return (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled) == 0;
 }
-FX_BOOL CFWL_WidgetImp::IsVisible() {
+FX_BOOL CFWL_WidgetImp::IsVisible() const {
   return (m_pProperties->m_dwStates & FWL_WGTSTATE_Invisible) == 0;
 }
-FX_BOOL CFWL_WidgetImp::IsActive() {
+FX_BOOL CFWL_WidgetImp::IsActive() const {
   return (m_pProperties->m_dwStates & FWL_WGTSTATE_Deactivated) == 0;
 }
-FX_BOOL CFWL_WidgetImp::IsOverLapper() {
+FX_BOOL CFWL_WidgetImp::IsOverLapper() const {
   return (m_pProperties->m_dwStyles & FWL_WGTSTYLE_WindowTypeMask) ==
          FWL_WGTSTYLE_OverLapper;
 }
-FX_BOOL CFWL_WidgetImp::IsPopup() {
-  return m_pProperties->m_dwStyles & FWL_WGTSTYLE_Popup;
+FX_BOOL CFWL_WidgetImp::IsPopup() const {
+  return !!(m_pProperties->m_dwStyles & FWL_WGTSTYLE_Popup);
 }
-FX_BOOL CFWL_WidgetImp::IsChild() {
-  return m_pProperties->m_dwStyles & FWL_WGTSTYLE_Child;
+FX_BOOL CFWL_WidgetImp::IsChild() const {
+  return !!(m_pProperties->m_dwStyles & FWL_WGTSTYLE_Child);
 }
-FX_BOOL CFWL_WidgetImp::IsLocked() {
+FX_BOOL CFWL_WidgetImp::IsLocked() const {
   return m_iLock > 0;
 }
-FX_BOOL CFWL_WidgetImp::IsOffscreen() {
-  return m_pProperties->m_dwStyles & FWL_WGTSTYLE_Offscreen;
+FX_BOOL CFWL_WidgetImp::IsOffscreen() const {
+  return !!(m_pProperties->m_dwStyles & FWL_WGTSTYLE_Offscreen);
 }
-FX_BOOL CFWL_WidgetImp::HasBorder() {
-  return m_pProperties->m_dwStyles & FWL_WGTSTYLE_Border;
+FX_BOOL CFWL_WidgetImp::HasBorder() const {
+  return !!(m_pProperties->m_dwStyles & FWL_WGTSTYLE_Border);
 }
-FX_BOOL CFWL_WidgetImp::HasEdge() {
-  return m_pProperties->m_dwStyles & FWL_WGTSTYLE_EdgeMask;
+FX_BOOL CFWL_WidgetImp::HasEdge() const {
+  return !!(m_pProperties->m_dwStyles & FWL_WGTSTYLE_EdgeMask);
 }
 void CFWL_WidgetImp::GetEdgeRect(CFX_RectF& rtEdge) {
   rtEdge = m_pProperties->m_rtWidget;
@@ -655,22 +646,6 @@ CFWL_WidgetImp* CFWL_WidgetImp::GetRootOuter() {
     pRet = pOuter;
   }
   return static_cast<CFWL_WidgetImp*>(pRet->GetImpl());
-}
-FX_BOOL CFWL_WidgetImp::TransformToOuter(FX_FLOAT& fx, FX_FLOAT& fy) {
-  if (!m_pOuter)
-    return FALSE;
-  fx += m_pProperties->m_rtWidget.left;
-  fx += m_pProperties->m_rtWidget.top;
-  return TRUE;
-}
-FX_BOOL CFWL_WidgetImp::TransformFromOuter(FX_FLOAT& fx, FX_FLOAT& fy) {
-  if (!m_pOuter)
-    return FALSE;
-  CFX_RectF rect;
-  m_pOuter->GetWidgetRect(rect);
-  fx -= rect.left;
-  fx -= rect.top;
-  return TRUE;
 }
 #define FWL_WGT_CalcHeight 2048
 #define FWL_WGT_CalcWidth 2048
@@ -982,14 +957,10 @@ CFX_SizeF CFWL_WidgetImp::GetOffsetFromParent(IFWL_Widget* pParent) {
   return szRet;
 }
 FX_BOOL CFWL_WidgetImp::IsParent(IFWL_Widget* pParent) {
-  if (pParent == (IFWL_Widget*)this) {
-    return FALSE;
-  }
   IFWL_Widget* pUpWidget = GetParent();
   while (pUpWidget) {
-    if (pUpWidget == pParent) {
+    if (pUpWidget == pParent)
       return TRUE;
-    }
     pUpWidget = pUpWidget->GetParent();
   }
   return FALSE;

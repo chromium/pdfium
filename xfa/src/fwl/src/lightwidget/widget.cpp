@@ -209,28 +209,6 @@ FWL_ERR CFWL_Widget::DrawWidget(CFX_Graphics* pGraphics,
     return FWL_ERR_Indefinite;
   return m_pIface->DrawWidget(pGraphics, pMatrix);
 }
-FWL_ERR CFWL_Widget::GetProperties(CFWL_WidgetProperties& properties) {
-  properties.m_ctmOnParent = m_pProperties->m_ctmOnParent;
-  properties.m_rtWidget = m_pProperties->m_rtWidget;
-  properties.m_dwStyles = m_pProperties->m_dwStyles;
-  properties.m_dwStyleExes = m_pProperties->m_dwStyleExes;
-  properties.m_dwStates = m_pProperties->m_dwStates;
-  properties.m_pParent = m_pProperties->m_pParent;
-  properties.m_pOwner = m_pProperties->m_pOwner;
-  properties.m_wsWindowclass = m_pProperties->m_wsWindowclass;
-  return FWL_ERR_Succeeded;
-}
-FWL_ERR CFWL_Widget::SetProperties(const CFWL_WidgetProperties& properties) {
-  m_pProperties->m_ctmOnParent = properties.m_ctmOnParent;
-  m_pProperties->m_rtWidget = properties.m_rtWidget;
-  m_pProperties->m_dwStyles = properties.m_dwStyles;
-  m_pProperties->m_dwStyleExes = properties.m_dwStyleExes;
-  m_pProperties->m_dwStates = properties.m_dwStates;
-  m_pProperties->m_pParent = properties.m_pParent;
-  m_pProperties->m_pOwner = properties.m_pOwner;
-  m_pProperties->m_wsWindowclass = properties.m_wsWindowclass;
-  return FWL_ERR_Succeeded;
-}
 IFWL_WidgetDelegate* CFWL_Widget::SetDelegate(IFWL_WidgetDelegate* pDelegate) {
   if (!m_pIface)
     return NULL;
