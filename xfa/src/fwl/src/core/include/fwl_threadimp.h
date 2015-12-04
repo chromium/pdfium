@@ -6,13 +6,12 @@
 
 #ifndef _FWL_THREAD_IMP_H
 #define _FWL_THREAD_IMP_H
-class CFWL_TargetImp;
+
+#include "xfa/include/fwl/core/fwl_thread.h"  // For FWL_HTHREAD.
+
 class CFWL_NoteDriver;
-class IFWL_NoteThread;
 class IFWL_NoteDriver;
-class CFWL_Thread;
-class CFWL_NoteThread;
-class CFWL_ControlThread;
+
 class CFWL_Thread {
  public:
   CFWL_Thread();
@@ -20,15 +19,7 @@ class CFWL_Thread {
   virtual void Release() { delete this; }
   virtual FWL_ERR Run(FWL_HTHREAD hThread);
 };
-class CFWL_ControlThread : public CFWL_Thread {
- public:
-  CFWL_ControlThread(IFWL_Thread* defHandler) { _defHandler = defHandler; }
-  virtual ~CFWL_ControlThread();
-  virtual FWL_ERR Run(FWL_HTHREAD hThread);
 
- protected:
-  IFWL_Thread* _defHandler;
-};
 class CFWL_NoteThread : public CFWL_Thread {
  public:
   CFWL_NoteThread();
@@ -39,8 +30,5 @@ class CFWL_NoteThread : public CFWL_Thread {
  protected:
   CFWL_NoteDriver* m_pNoteDriver;
   FWL_HTHREAD m_hThread;
-  static CFWL_ControlThread* _assistantThreadHandler;
-  static FWL_HTHREAD _assistantThread;
-  static int32_t _refCount;
 };
 #endif

@@ -9,11 +9,6 @@
 #include "include/fwl_noteimp.h"
 #include "include/fwl_threadimp.h"
 #include "include/fwl_appimp.h"
-CFWL_ControlThread::~CFWL_ControlThread() {}
-FWL_ERR CFWL_ControlThread::Run(FWL_HTHREAD hThread) {
-  FXSYS_assert(false);
-  return FWL_ERR_Succeeded;
-}
 IFWL_Thread* IFWL_Thread::Create() {
   return (IFWL_Thread*)new CFWL_Thread;
 }
@@ -22,9 +17,6 @@ CFWL_Thread::~CFWL_Thread() {}
 FWL_ERR CFWL_Thread::Run(FWL_HTHREAD hThread) {
   return FWL_ERR_Succeeded;
 }
-CFWL_ControlThread* CFWL_NoteThread::_assistantThreadHandler = NULL;
-FWL_HTHREAD CFWL_NoteThread::_assistantThread = NULL;
-int32_t CFWL_NoteThread::_refCount = 0;
 IFWL_NoteThread* IFWL_NoteThread::Create() {
   return (IFWL_NoteThread*)new CFWL_NoteThread;
 }
