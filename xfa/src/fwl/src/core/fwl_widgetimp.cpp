@@ -649,58 +649,12 @@ IFWL_ThemeProvider* CFWL_WidgetImp::GetAvailableTheme() {
 }
 CFWL_WidgetImp* CFWL_WidgetImp::GetRootOuter() {
   IFWL_Widget* pRet = m_pOuter;
-  IFWL_Widget* pOuter = pRet;
-  while (pOuter) {
+  if (!pRet)
+    return nullptr;
+  while (IFWL_Widget* pOuter = pRet->GetOuter()) {
     pRet = pOuter;
-    pOuter = pOuter->GetOuter();
   }
-  return (CFWL_WidgetImp*)pRet;
-}
-CFWL_WidgetImp* CFWL_WidgetImp::GetSameAncestor(CFWL_WidgetImp* pWidget) {
-  CFX_PtrArray arr1, arr2;
-  CFWL_WidgetImp* pAncestor = pWidget;
-  FWL_WGTRELATION relation;
-  do {
-    arr1.Add(pAncestor);
-    relation =
-        pAncestor->IsPopup() ? FWL_WGTRELATION_Owner : FWL_WGTRELATION_Parent;
-  } while ((pAncestor = (CFWL_WidgetImp*)m_pWidgetMgr->GetWidget(
-                pAncestor->m_pInterface, relation)) != NULL);
-  pAncestor = this;
-  do {
-    arr2.Add(pAncestor);
-    relation =
-        pAncestor->IsPopup() ? FWL_WGTRELATION_Owner : FWL_WGTRELATION_Parent;
-  } while ((pAncestor = (CFWL_WidgetImp*)m_pWidgetMgr->GetWidget(
-                pAncestor->m_pInterface, relation)) != NULL);
-  for (int32_t i = 0; i < arr1.GetSize(); i++) {
-    void* pVoid = arr1[i];
-    if (arr2.Find(pVoid) < 0) {
-      continue;
-    } else {
-      return (CFWL_WidgetImp*)pVoid;
-    }
-  }
-  return NULL;
-}
-CFX_SizeF CFWL_WidgetImp::GetOffsetFromAncestor(CFWL_WidgetImp* pAncestor) {
-  CFX_SizeF szRet;
-  szRet.Set(0, 0);
-  if (pAncestor == this) {
-    return szRet;
-  }
-  CFWL_WidgetImp* pWidget = this;
-  do {
-    CFX_RectF rect;
-    pWidget->GetWidgetRect(rect);
-    szRet.x += rect.left;
-    szRet.y += rect.top;
-    FWL_WGTRELATION relation =
-        pWidget->IsPopup() ? FWL_WGTRELATION_Owner : FWL_WGTRELATION_Parent;
-    pWidget = (CFWL_WidgetImp*)m_pWidgetMgr->GetWidget((IFWL_Widget*)pWidget,
-                                                       relation);
-  } while (pWidget && pWidget != pAncestor);
-  return szRet;
+  return static_cast<CFWL_WidgetImp*>(pRet->GetImpl());
 }
 FX_BOOL CFWL_WidgetImp::TransformToOuter(FX_FLOAT& fx, FX_FLOAT& fy) {
   if (!m_pOuter)

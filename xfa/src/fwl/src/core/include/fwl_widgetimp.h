@@ -89,8 +89,6 @@ class CFWL_WidgetImp : public CFWL_TargetImp {
   void* GetThemeCapacity(FX_DWORD dwCapacity);
   IFWL_ThemeProvider* GetAvailableTheme();
   CFWL_WidgetImp* GetRootOuter();
-  CFWL_WidgetImp* GetSameAncestor(CFWL_WidgetImp* pWidget);
-  CFX_SizeF GetOffsetFromAncestor(CFWL_WidgetImp* pAncestor);
   FX_BOOL TransformToOuter(FX_FLOAT& fx, FX_FLOAT& fy);
   FX_BOOL TransformFromOuter(FX_FLOAT& fx, FX_FLOAT& fy);
   CFX_SizeF CalcTextSize(const CFX_WideString& wsText,
