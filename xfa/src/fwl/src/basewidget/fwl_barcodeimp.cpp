@@ -102,7 +102,8 @@ void CFWL_BarcodeImp::GenerateBarcodeImageCache() {
     return;
   m_dwStatus = 0;
   CreateBarcodeEngine();
-  IFWL_BarcodeDP* pData = (IFWL_BarcodeDP*)m_pProperties->m_pDataProvider;
+  IFWL_BarcodeDP* pData =
+      static_cast<IFWL_BarcodeDP*>(m_pProperties->m_pDataProvider);
   if (!pData)
     return;
   if (!m_pBarcodeEngine)
@@ -113,18 +114,20 @@ void CFWL_BarcodeImp::GenerateBarcodeImageCache() {
   CFWL_ThemePart part;
   part.m_pWidget = m_pInterface;
   IFWL_ThemeProvider* pTheme = GetAvailableTheme();
-  IFX_Font* pFont = (IFX_Font*)pTheme->GetCapacity(&part, FWL_WGTCAPACITY_Font);
-  CFX_Font* pCXFont = (CFX_Font*)(pFont ? pFont->GetDevFont() : NULL);
+  IFX_Font* pFont =
+      static_cast<IFX_Font*>(pTheme->GetCapacity(&part, FWL_WGTCAPACITY_Font));
+  CFX_Font* pCXFont =
+      pFont ? static_cast<CFX_Font*>(pFont->GetDevFont()) : nullptr;
   if (pCXFont) {
     m_pBarcodeEngine->SetFont(pCXFont);
   }
-  FX_FLOAT* pFontSize =
-      (FX_FLOAT*)pTheme->GetCapacity(&part, FWL_WGTCAPACITY_FontSize);
+  FX_FLOAT* pFontSize = static_cast<FX_FLOAT*>(
+      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_FontSize));
   if (pFontSize) {
     m_pBarcodeEngine->SetFontSize(*pFontSize);
   }
-  FX_ARGB* pFontColor =
-      (FX_ARGB*)pTheme->GetCapacity(&part, FWL_WGTCAPACITY_TextColor);
+  FX_ARGB* pFontColor = static_cast<FX_ARGB*>(
+      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_TextColor));
   if (pFontColor) {
     m_pBarcodeEngine->SetFontColor(*pFontColor);
   }
@@ -215,7 +218,7 @@ CFWL_BarcodeImpDelegate::CFWL_BarcodeImpDelegate(CFWL_BarcodeImp* pOwner)
 FWL_ERR CFWL_BarcodeImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
   FX_DWORD dwFlag = pEvent->GetClassID();
   if (dwFlag == FWL_EVTHASH_EDT_TextChanged) {
-    CFWL_BarcodeImp* pOwner = (CFWL_BarcodeImp*)m_pOwner;
+    CFWL_BarcodeImp* pOwner = static_cast<CFWL_BarcodeImp*>(m_pOwner);
     pOwner->ReleaseBarcodeEngine();
     pOwner->m_dwStatus = XFA_BCS_NeedUpdate;
   }

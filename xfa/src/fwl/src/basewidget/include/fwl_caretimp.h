@@ -6,6 +6,9 @@
 
 #ifndef _FWL_CARET_IMP_H
 #define _FWL_CARET_IMP_H
+
+#include "xfa/include/fwl/core/fwl_timer.h"
+
 class CFWL_WidgetImp;
 class CFWL_WidgetImpProperties;
 class CFWL_WidgetImpDelegate;
@@ -37,11 +40,11 @@ class CFWL_CaretImp : public CFWL_WidgetImp {
   FX_BOOL DrawCaretBK(CFX_Graphics* pGraphics,
                       IFWL_ThemeProvider* pTheme,
                       const CFX_Matrix* pMatrix);
-  class CFWL_CaretTimer {
+  class CFWL_CaretTimer : public IFWL_Timer {
    public:
     CFWL_CaretTimer(CFWL_CaretImp* m_pCaret);
-    virtual ~CFWL_CaretTimer() {}
-    virtual int32_t Run(FWL_HTIMER hTimer);
+    ~CFWL_CaretTimer() override {}
+    int32_t Run(FWL_HTIMER hTimer) override;
     CFWL_CaretImp* m_pCaret;
   };
   CFWL_CaretTimer* m_pTimer;

@@ -103,7 +103,8 @@ FWL_ERR CFWL_CheckBoxImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
       rect.Set(0, 0, sz.x, sz.y);
     }
     rect.Inflate(FWL_CKB_CaptionMargin, FWL_CKB_CaptionMargin);
-    IFWL_CheckBoxDP* pData = (IFWL_CheckBoxDP*)m_pProperties->m_pDataProvider;
+    IFWL_CheckBoxDP* pData =
+        static_cast<IFWL_CheckBoxDP*>(m_pProperties->m_pDataProvider);
     FX_FLOAT fCheckBox = pData->GetBoxSize(m_pInterface);
     rect.width += fCheckBox;
     if (rect.height < fCheckBox) {
@@ -229,7 +230,8 @@ void CFWL_CheckBoxImp::Layout() {
   FX_FLOAT fClientBottom = m_rtClient.bottom();
   if (!m_pProperties->m_pDataProvider)
     return;
-  IFWL_CheckBoxDP* pData = (IFWL_CheckBoxDP*)m_pProperties->m_pDataProvider;
+  IFWL_CheckBoxDP* pData =
+      static_cast<IFWL_CheckBoxDP*>(m_pProperties->m_pDataProvider);
   FX_FLOAT fCheckBox = pData->GetBoxSize(m_pInterface);
   switch (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_VLayoutMask) {
     case FWL_STYLEEXT_CKB_Top: {
@@ -374,15 +376,15 @@ void CFWL_CheckBoxImp::NextStates() {
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_RadioButton) {
     if ((m_pProperties->m_dwStates & FWL_STATE_CKB_CheckMask) ==
         FWL_STATE_CKB_Unchecked) {
-      IFWL_WidgetMgr* pWMgr = FWL_GetWidgetMgr();
-      CFWL_WidgetMgr* pWidgetMgr = (CFWL_WidgetMgr*)pWMgr;
+      CFWL_WidgetMgr* pWidgetMgr =
+          static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
       if (!pWidgetMgr->IsFormDisabled()) {
         CFX_PtrArray radioarr;
         pWidgetMgr->GetSameGroupRadioButton(m_pInterface, radioarr);
         IFWL_CheckBox* pCheckBox = NULL;
         int32_t iCount = radioarr.GetSize();
         for (int32_t i = 0; i < iCount; i++) {
-          pCheckBox = (IFWL_CheckBox*)radioarr[i];
+          pCheckBox = static_cast<IFWL_CheckBox*>(radioarr[i]);
           if (pCheckBox != m_pInterface &&
               pCheckBox->GetStates() & FWL_STATE_CKB_Checked) {
             pCheckBox->SetCheckState(0);
@@ -440,7 +442,7 @@ int32_t CFWL_CheckBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       break;
     }
     case FWL_MSGHASH_Mouse: {
-      CFWL_MsgMouse* pMsg = (CFWL_MsgMouse*)pMessage;
+      CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       FX_DWORD dwCmd = pMsg->m_dwCmd;
       switch (dwCmd) {
         case FWL_MSGMOUSECMD_LButtonDown: {
@@ -464,9 +466,9 @@ int32_t CFWL_CheckBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       break;
     }
     case FWL_MSGHASH_Key: {
-      CFWL_MsgKey* pKey = (CFWL_MsgKey*)pMessage;
+      CFWL_MsgKey* pKey = static_cast<CFWL_MsgKey*>(pMessage);
       if (pKey->m_dwCmd == FWL_MSGKEYCMD_KeyDown) {
-        OnKeyDown((CFWL_MsgKey*)pKey);
+        OnKeyDown(pKey);
       }
       break;
     }

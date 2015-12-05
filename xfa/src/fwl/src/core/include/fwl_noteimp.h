@@ -35,24 +35,27 @@ class CFWL_NoteLoop {
   CFWL_WidgetImp* m_pForm;
   FX_BOOL m_bContinueModal;
 };
-class CFWL_NoteDriver {
+class CFWL_NoteDriver : public IFWL_NoteDriver {
  public:
   CFWL_NoteDriver();
-  virtual ~CFWL_NoteDriver();
-  virtual FX_BOOL SendNote(CFWL_Note* pNote);
-  virtual FX_BOOL PostMessage(CFWL_Message* pMessage);
-  virtual FWL_ERR RegisterEventTarget(IFWL_Widget* pListener,
-                                      IFWL_Widget* pEventSource = NULL,
-                                      FX_DWORD dwFilter = FWL_EVENT_ALL_MASK);
-  virtual FWL_ERR UnregisterEventTarget(IFWL_Widget* pListener);
-  virtual void ClearEventTargets(FX_BOOL bRemoveAll);
-  virtual int32_t GetQueueMaxSize() const;
-  virtual FWL_ERR SetQueueMaxSize(const int32_t size);
-  virtual IFWL_NoteThread* GetOwnerThread() const;
-  virtual FWL_ERR PushNoteLoop(IFWL_NoteLoop* pNoteLoop);
-  virtual IFWL_NoteLoop* PopNoteLoop();
-  virtual FX_BOOL SetFocus(IFWL_Widget* pFocus, FX_BOOL bNotify = FALSE);
-  virtual FWL_ERR Run();
+  ~CFWL_NoteDriver() override;
+
+  // IFWL_NoteDriver:
+  FX_BOOL SendNote(CFWL_Note* pNote) override;
+  FX_BOOL PostMessage(CFWL_Message* pMessage) override;
+  FWL_ERR RegisterEventTarget(IFWL_Widget* pListener,
+                              IFWL_Widget* pEventSource = NULL,
+                              FX_DWORD dwFilter = FWL_EVENT_ALL_MASK) override;
+  FWL_ERR UnregisterEventTarget(IFWL_Widget* pListener) override;
+  void ClearEventTargets(FX_BOOL bRemoveAll) override;
+  int32_t GetQueueMaxSize() const override;
+  FWL_ERR SetQueueMaxSize(const int32_t size) override;
+  IFWL_NoteThread* GetOwnerThread() const override;
+  FWL_ERR PushNoteLoop(IFWL_NoteLoop* pNoteLoop) override;
+  IFWL_NoteLoop* PopNoteLoop() override;
+  FX_BOOL SetFocus(IFWL_Widget* pFocus, FX_BOOL bNotify = FALSE) override;
+  FWL_ERR Run() override;
+
   IFWL_Widget* GetFocus();
   IFWL_Widget* GetHover();
   void SetHover(IFWL_Widget* pHover);

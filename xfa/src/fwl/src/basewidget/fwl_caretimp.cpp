@@ -98,7 +98,7 @@ FWL_ERR CFWL_CaretImp::ShowCaret(FX_BOOL bFlag) {
     m_hTimer = NULL;
   }
   if (bFlag) {
-    m_hTimer = FWL_StartTimer((IFWL_Timer*)m_pTimer, m_dwElapse);
+    m_hTimer = FWL_StartTimer(m_pTimer, m_dwElapse);
   }
   return SetStates(FWL_WGTSTATE_Invisible, !bFlag);
 }
