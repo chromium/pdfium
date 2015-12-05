@@ -3599,13 +3599,10 @@ FX_BOOL CPDF_DataAvail::CheckHintTables(IFX_DownloadHints* pHints) {
   nonstd::unique_ptr<CPDF_HintTables> pHintTables(
       new CPDF_HintTables(this, pDict));
   CPDF_Stream* pHintStream = (CPDF_Stream*)ParseIndirectObjectAt(szHSStart, 0);
-  FX_BOOL bLoaded = FALSE;
-  if (pHintTables && pHintStream && pHintStream->GetType() == PDFOBJ_STREAM) {
-    bLoaded = pHintTables->LoadHintStream(pHintStream);
-  }
-  if (!bLoaded) {
+  if (pHintStream && pHintStream->GetType() == PDFOBJ_STREAM &&
+      pHintTables->LoadHintStream(pHintStream))
     m_pHintTables.reset(pHintTables.release());
-  }
+
   m_docStatus = PDF_DATAAVAIL_DONE;
   return TRUE;
 }
