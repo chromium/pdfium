@@ -15,6 +15,9 @@ IFWL_AdapterNative* FWL_CreateFuelAdapterNative() {
 }
 void FWL_ReleaseFuelAdapterNative(IFWL_AdapterNative* native) {}
 void FWL_PostMessageToMainRoop(CFWL_Message* pMessage) {}
+IFWL_AdapterSemaphore* IFWL_AdapterSemaphore::Create() {
+  return NULL;
+}
 FX_BOOL FWL_ShowCaret(IFWL_Widget* pWidget,
                       FX_BOOL bVisible,
                       const CFX_RectF* pRtAnchor) {

@@ -131,7 +131,7 @@ FWL_ERR CFWL_WidgetImp::Initialize() {
   IFWL_AdapterThreadMgr* pAdapterThread = pAdapter->GetThreadMgr();
   if (!pAdapterThread)
     return FWL_ERR_Indefinite;
-  SetOwnerThread((CFWL_NoteThreadImp*)pAdapterThread->GetCurrentThread());
+  SetOwnerThread((CFWL_NoteThread*)pAdapterThread->GetCurrentThread());
   IFWL_Widget* pParent = m_pProperties->m_pParent;
   m_pWidgetMgr->InsertWidget(pParent, m_pInterface);
   if (!IsChild()) {
@@ -488,7 +488,7 @@ IFWL_WidgetDelegate* CFWL_WidgetImp::SetDelegate(
 IFWL_NoteThread* CFWL_WidgetImp::GetOwnerThread() const {
   return (IFWL_NoteThread*)m_pOwnerThread;
 }
-FWL_ERR CFWL_WidgetImp::SetOwnerThread(CFWL_NoteThreadImp* pOwnerThread) {
+FWL_ERR CFWL_WidgetImp::SetOwnerThread(CFWL_NoteThread* pOwnerThread) {
   m_pOwnerThread = pOwnerThread;
   return FWL_ERR_Succeeded;
 }

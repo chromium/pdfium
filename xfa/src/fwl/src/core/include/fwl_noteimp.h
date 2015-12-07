@@ -8,7 +8,7 @@
 #define _FWL_NOTE_IMP_H
 class CFWL_TargetImp;
 class CFWL_WidgetImp;
-class CFWL_NoteThreadImp;
+class CFWL_NoteThread;
 class CFWL_ToolTipImp;
 class IFWL_ToolTipTarget;
 class CFWL_CoreToopTipDP;

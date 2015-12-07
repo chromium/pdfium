@@ -4,32 +4,31 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FWL_THREADIMP_H_
-#define FWL_THREADIMP_H_
+#ifndef _FWL_THREAD_IMP_H
+#define _FWL_THREAD_IMP_H
 
 #include "xfa/include/fwl/core/fwl_thread.h"  // For FWL_HTHREAD.
 
 class CFWL_NoteDriver;
 class IFWL_NoteDriver;
 
-class CFWL_ThreadImp {
+class CFWL_Thread {
  public:
-  CFWL_ThreadImp();
-  virtual ~CFWL_ThreadImp();
-
+  CFWL_Thread();
+  virtual ~CFWL_Thread();
+  virtual void Release() { delete this; }
   virtual FWL_ERR Run(FWL_HTHREAD hThread);
 };
 
-class CFWL_NoteThreadImp : public CFWL_ThreadImp {
+class CFWL_NoteThread : public CFWL_Thread {
  public:
-  CFWL_NoteThreadImp();
-  virtual ~CFWL_NoteThreadImp();
-
-  FWL_ERR Run(FWL_HTHREAD hThread) override;
+  CFWL_NoteThread();
+  virtual ~CFWL_NoteThread();
+  virtual FWL_ERR Run(FWL_HTHREAD hThread);
   virtual IFWL_NoteDriver* GetNoteDriver();
 
  protected:
   CFWL_NoteDriver* m_pNoteDriver;
+  FWL_HTHREAD m_hThread;
 };
-
-#endif  // FWL_THREADIMP_H_
+#endif

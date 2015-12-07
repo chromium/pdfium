@@ -4,18 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FWL_APPIMP_H_
-#define FWL_APPIMP_H_
-
-#include "xfa/src/fwl/src/core/include/fwl_threadimp.h"
-
+#ifndef _FWL_APP_IMP_H
+#define _FWL_APP_IMP_H
+class CFWL_NoteThread;
 class CFWL_WidgetMgr;
 class IFWL_AdapterNative;
 class IFWL_WidgetMgr;
 class IFWL_ThemeProvider;
 class IFWL_App;
-
-class CFWL_AppImp : public CFWL_NoteThreadImp {
+class CFWL_AppImp;
+class CFWL_AppImp : public CFWL_NoteThread {
  public:
   CFWL_AppImp(IFWL_AdapterNative* pAdapter);
   virtual ~CFWL_AppImp();
@@ -33,5 +31,4 @@ class CFWL_AppImp : public CFWL_NoteThreadImp {
   IFWL_ThemeProvider* m_pThemeProvider;
   FX_BOOL m_bFuelAdapter;
 };
-
-#endif  // FWL_APPIMP_H_
+#endif
