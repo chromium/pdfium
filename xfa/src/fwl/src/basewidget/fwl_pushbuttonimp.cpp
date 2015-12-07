@@ -67,7 +67,7 @@ FWL_ERR CFWL_PushButtonImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
     }
     CFX_WideString wsCaption;
     IFWL_PushButtonDP* pData =
-        (IFWL_PushButtonDP*)m_pProperties->m_pDataProvider;
+        static_cast<IFWL_PushButtonDP*>(m_pProperties->m_pDataProvider);
     if (pData) {
       pData->GetCaption(m_pInterface, wsCaption);
     }
@@ -77,7 +77,7 @@ FWL_ERR CFWL_PushButtonImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
       rect.Set(0, 0, sz.x, sz.y);
     }
     FX_FLOAT* fcaption =
-        (FX_FLOAT*)GetThemeCapacity(FWL_WGTCAPACITY_PSB_Margin);
+        static_cast<FX_FLOAT*>(GetThemeCapacity(FWL_WGTCAPACITY_PSB_Margin));
     rect.Inflate(*fcaption, *fcaption);
     CFWL_WidgetImp::GetWidgetRect(rect, TRUE);
   } else {
@@ -102,7 +102,8 @@ FWL_ERR CFWL_PushButtonImp::Update() {
   UpdateTextOutStyles();
   GetClientRect(m_rtClient);
   m_rtCaption = m_rtClient;
-  FX_FLOAT* fcaption = (FX_FLOAT*)GetThemeCapacity(FWL_WGTCAPACITY_PSB_Margin);
+  FX_FLOAT* fcaption =
+      static_cast<FX_FLOAT*>(GetThemeCapacity(FWL_WGTCAPACITY_PSB_Margin));
   m_rtCaption.Inflate(-*fcaption, -*fcaption);
   return FWL_ERR_Succeeded;
 }
@@ -112,7 +113,8 @@ FWL_ERR CFWL_PushButtonImp::DrawWidget(CFX_Graphics* pGraphics,
     return FWL_ERR_Indefinite;
   if (!m_pProperties->m_pThemeProvider)
     return FWL_ERR_Indefinite;
-  IFWL_PushButtonDP* pData = (IFWL_PushButtonDP*)m_pProperties->m_pDataProvider;
+  IFWL_PushButtonDP* pData =
+      static_cast<IFWL_PushButtonDP*>(m_pProperties->m_pDataProvider);
   CFX_DIBitmap* pPicture = NULL;
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   if (HasBorder()) {
@@ -415,7 +417,7 @@ int32_t CFWL_PushButtonImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       break;
     }
     case FWL_MSGHASH_Mouse: {
-      CFWL_MsgMouse* pMsg = (CFWL_MsgMouse*)pMessage;
+      CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       FX_DWORD dwCmd = pMsg->m_dwCmd;
       switch (dwCmd) {
         case FWL_MSGMOUSECMD_LButtonDown: {
@@ -439,9 +441,9 @@ int32_t CFWL_PushButtonImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       break;
     }
     case FWL_MSGHASH_Key: {
-      CFWL_MsgKey* pKey = (CFWL_MsgKey*)pMessage;
+      CFWL_MsgKey* pKey = static_cast<CFWL_MsgKey*>(pMessage);
       if (pKey->m_dwCmd == FWL_MSGKEYCMD_KeyDown) {
-        OnKeyDown((CFWL_MsgKey*)pKey);
+        OnKeyDown(pKey);
       }
       break;
     }
@@ -489,7 +491,7 @@ void CFWL_PushButtonImpDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
   }
   if (m_pOwner->m_rtClient.Contains(pMsg->m_fx, pMsg->m_fy)) {
     CFWL_EvtClick wmClick;
-    wmClick.m_pSrcTarget = (IFWL_PushButton*)m_pOwner->m_pInterface;
+    wmClick.m_pSrcTarget = m_pOwner->m_pInterface;
     m_pOwner->DispatchEvent(&wmClick);
   }
   m_pOwner->Repaint(&m_pOwner->m_rtClient);
@@ -542,7 +544,7 @@ void CFWL_PushButtonImpDelegate::OnKeyDown(CFWL_MsgKey* pMsg) {
     wmMouse.m_dwCmd = FWL_MSGMOUSECMD_LButtonUp;
     m_pOwner->DispatchEvent(&wmMouse);
     CFWL_EvtClick wmClick;
-    wmClick.m_pSrcTarget = (IFWL_PushButton*)m_pOwner->m_pInterface;
+    wmClick.m_pSrcTarget = m_pOwner->m_pInterface;
     m_pOwner->DispatchEvent(&wmClick);
     return;
   }

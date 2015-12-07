@@ -66,8 +66,9 @@ FWL_ERR CFWL_PictureBoxImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
     rect.Set(0, 0, 0, 0);
     if (!m_pProperties->m_pDataProvider)
       return FWL_ERR_Indefinite;
-    CFX_DIBitmap* pBitmap = ((IFWL_PictureBoxDP*)m_pProperties->m_pDataProvider)
-                                ->GetPicture(m_pInterface);
+    CFX_DIBitmap* pBitmap =
+        static_cast<IFWL_PictureBoxDP*>(m_pProperties->m_pDataProvider)
+            ->GetPicture(m_pInterface);
     if (pBitmap) {
       rect.Set(0, 0, (FX_FLOAT)pBitmap->GetWidth(),
                (FX_FLOAT)pBitmap->GetHeight());
@@ -107,16 +108,17 @@ FWL_ERR CFWL_PictureBoxImp::DrawWidget(CFX_Graphics* pGraphics,
 void CFWL_PictureBoxImp::DrawBkground(CFX_Graphics* pGraphics,
                                       IFWL_ThemeProvider* pTheme,
                                       const CFX_Matrix* pMatrix) {
-  if (!m_pProperties->m_pDataProvider)
+  IFWL_PictureBoxDP* pPictureDP =
+      static_cast<IFWL_PictureBoxDP*>(m_pProperties->m_pDataProvider);
+  if (!pPictureDP)
     return;
-  CFX_DIBitmap* pPicture = ((IFWL_PictureBoxDP*)m_pProperties->m_pDataProvider)
-                               ->GetPicture(m_pInterface);
+
+  CFX_DIBitmap* pPicture = pPictureDP->GetPicture(m_pInterface);
   CFX_Matrix matrix;
-  ((IFWL_PictureBoxDP*)m_pProperties->m_pDataProvider)
-      ->GetMatrix(m_pInterface, matrix);
-  if (!pPicture) {
+  pPictureDP->GetMatrix(m_pInterface, matrix);
+  if (!pPicture)
     return;
-  }
+
   matrix.Concat(*pMatrix);
   FX_FLOAT fx = (FX_FLOAT)pPicture->GetWidth();
   FX_FLOAT fy = (FX_FLOAT)pPicture->GetHeight();

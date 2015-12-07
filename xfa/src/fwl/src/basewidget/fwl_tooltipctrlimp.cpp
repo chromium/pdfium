@@ -94,7 +94,8 @@ FWL_ERR CFWL_ToolTipImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
       m_pProperties->m_pThemeProvider = GetAvailableTheme();
     }
     CFX_WideString wsCaption;
-    IFWL_ToolTipDP* pData = (IFWL_ToolTipDP*)m_pProperties->m_pDataProvider;
+    IFWL_ToolTipDP* pData =
+        static_cast<IFWL_ToolTipDP*>(m_pProperties->m_pDataProvider);
     if (pData) {
       pData->GetCaption(m_pInterface, wsCaption);
     }
@@ -131,11 +132,10 @@ FWL_ERR CFWL_ToolTipImp::GetClientRect(CFX_RectF& rect) {
   if (pTheme) {
     CFWL_ThemePart part;
     part.m_pWidget = m_pInterface;
-    FX_FLOAT* value = NULL;
-    value = (FX_FLOAT*)pTheme->GetCapacity(&part, FWL_WGTCAPACITY_CXBorder);
-    x = *value;
-    value = (FX_FLOAT*)pTheme->GetCapacity(&part, FWL_WGTCAPACITY_CYBorder);
-    y = *value;
+    x = *static_cast<FX_FLOAT*>(
+        pTheme->GetCapacity(&part, FWL_WGTCAPACITY_CXBorder));
+    y = *static_cast<FX_FLOAT*>(
+        pTheme->GetCapacity(&part, FWL_WGTCAPACITY_CYBorder));
   }
   rect = m_pProperties->m_rtWidget;
   rect.Offset(-rect.left, -rect.top);
@@ -214,7 +214,8 @@ FWL_ERR CFWL_ToolTipImp::SetAnchor(const CFX_RectF& rtAnchor) {
   return TRUE;
 }
 FWL_ERR CFWL_ToolTipImp::Show() {
-  IFWL_ToolTipDP* pData = (IFWL_ToolTipDP*)m_pProperties->m_pDataProvider;
+  IFWL_ToolTipDP* pData =
+      static_cast<IFWL_ToolTipDP*>(m_pProperties->m_pDataProvider);
   int32_t nInitDelay = pData->GetInitialDelay(m_pInterface);
   if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Invisible)) {
     m_hTimerShow = FWL_StartTimer(&m_TimerShow, nInitDelay, FALSE);
@@ -235,7 +236,8 @@ FWL_ERR CFWL_ToolTipImp::Hide() {
 }
 FWL_ERR CFWL_ToolTipImp::SetStates(FX_DWORD dwStates, FX_BOOL bSet) {
   if ((dwStates & FWL_WGTSTATE_Invisible) && !bSet) {
-    IFWL_ToolTipDP* pData = (IFWL_ToolTipDP*)m_pProperties->m_pDataProvider;
+    IFWL_ToolTipDP* pData =
+        static_cast<IFWL_ToolTipDP*>(m_pProperties->m_pDataProvider);
     int32_t nAutoPopDelay = pData->GetAutoPopDelay(m_pInterface);
     m_hTimerHide = FWL_StartTimer(&m_TimerHide, nAutoPopDelay, FALSE);
   }

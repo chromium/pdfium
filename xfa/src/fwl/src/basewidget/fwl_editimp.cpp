@@ -279,14 +279,14 @@ FWL_ERR CFWL_EditImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
     rect = m_pProperties->m_rtWidget;
     if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_OuterScrollbar) {
       if (IsShowScrollBar(TRUE)) {
-        FX_FLOAT* pfWidth =
-            (FX_FLOAT*)GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth);
+        FX_FLOAT* pfWidth = static_cast<FX_FLOAT*>(
+            GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth));
         rect.width += *pfWidth;
         rect.width += FWL_EDIT_Margin;
       }
       if (IsShowScrollBar(FALSE)) {
-        FX_FLOAT* pfWidth =
-            (FX_FLOAT*)GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth);
+        FX_FLOAT* pfWidth = static_cast<FX_FLOAT*>(
+            GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth));
         rect.height += *pfWidth;
         rect.height += FWL_EDIT_Margin;
       }
@@ -451,7 +451,7 @@ void CFWL_EditImp::DrawSpellCheck(CFX_Graphics* pGraphics,
                                   const CFX_Matrix* pMatrix) {
   pGraphics->SaveGraphState();
   if (pMatrix) {
-    pGraphics->ConcatMatrix((CFX_Matrix*)pMatrix);
+    pGraphics->ConcatMatrix(const_cast<CFX_Matrix*>(pMatrix));
   }
   FX_ARGB cr = 0xFFFF0000;
   CFX_Color crLine(cr);
@@ -994,7 +994,7 @@ FX_BOOL CFWL_EditImp::On_Validate(IFDE_TxtEdtEngine* pEdit,
                                   CFX_WideString& wsText) {
   IFWL_Widget* pDst = GetOuter();
   if (!pDst) {
-    pDst = (IFWL_Widget*)this;
+    pDst = m_pInterface;
   }
   CFWL_EvtEdtValidate event;
   event.pDstWidget = pDst;
@@ -1128,7 +1128,7 @@ void CFWL_EditImp::DrawContent(CFX_Graphics* pGraphics,
   if (!pRenderContext)
     return;
   pRenderDevice->SetClipRect(rtClip);
-  pRenderContext->StartRender(pRenderDevice, (IFDE_CanvasSet*)pPage, mt);
+  pRenderContext->StartRender(pRenderDevice, pPage, mt);
   pRenderContext->DoRender(NULL);
   pRenderContext->Release();
   pRenderDevice->Release();
@@ -1243,20 +1243,23 @@ void CFWL_EditImp::UpdateEditParams() {
       (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)) {
     params.dwMode |= FDE_TEXTEDITMODE_ReadOnly;
   }
-  FX_FLOAT* pFontSize = (FX_FLOAT*)GetThemeCapacity(FWL_WGTCAPACITY_FontSize);
+  FX_FLOAT* pFontSize =
+      static_cast<FX_FLOAT*>(GetThemeCapacity(FWL_WGTCAPACITY_FontSize));
   if (!pFontSize)
     return;
   m_fFontSize = *pFontSize;
-  FX_DWORD* pFontColor = (FX_DWORD*)GetThemeCapacity(FWL_WGTCAPACITY_TextColor);
+  FX_DWORD* pFontColor =
+      static_cast<FX_DWORD*>(GetThemeCapacity(FWL_WGTCAPACITY_TextColor));
   if (!pFontColor)
     return;
   params.dwFontColor = *pFontColor;
   FX_FLOAT* pLineHeight =
-      (FX_FLOAT*)GetThemeCapacity(FWL_WGTCAPACITY_LineHeight);
+      static_cast<FX_FLOAT*>(GetThemeCapacity(FWL_WGTCAPACITY_LineHeight));
   if (!pLineHeight)
     return;
   params.fLineSpace = *pLineHeight;
-  IFX_Font* pFont = (IFX_Font*)GetThemeCapacity(FWL_WGTCAPACITY_Font);
+  IFX_Font* pFont =
+      static_cast<IFX_Font*>(GetThemeCapacity(FWL_WGTCAPACITY_Font));
   if (!pFont)
     return;
   params.pFont = pFont;
@@ -1344,7 +1347,7 @@ FX_BOOL CFWL_EditImp::UpdateOffset() {
 }
 FX_BOOL CFWL_EditImp::UpdateOffset(IFWL_ScrollBar* pScrollBar,
                                    FX_FLOAT fPosChanged) {
-  if (pScrollBar == (IFWL_ScrollBar*)m_pHorzScrollBar) {
+  if (pScrollBar == m_pHorzScrollBar) {
     m_fScrollOffsetX += fPosChanged;
   } else {
     m_fScrollOffsetY += fPosChanged;
@@ -1359,8 +1362,8 @@ void CFWL_EditImp::UpdateVAlignment() {
   FX_FLOAT fOffsetY = 0.0f;
   FX_FLOAT fSpaceAbove = 0.0f;
   FX_FLOAT fSpaceBelow = 0.0f;
-  CFX_SizeF* pSpace =
-      (CFX_SizeF*)GetThemeCapacity(FWL_WGTCAPACITY_SpaceAboveBelow);
+  CFX_SizeF* pSpace = static_cast<CFX_SizeF*>(
+      GetThemeCapacity(FWL_WGTCAPACITY_SpaceAboveBelow));
   if (pSpace) {
     fSpaceAbove = pSpace->x;
     fSpaceBelow = pSpace->y;
@@ -1462,14 +1465,14 @@ IFWL_ScrollBar* CFWL_EditImp::UpdateScroll() {
       m_pHorzScrollBar->SetStates(FWL_WGTSTATE_Disabled, FALSE);
       m_pHorzScrollBar->UnlockUpdate();
       m_pHorzScrollBar->Update();
-      pRepaint = (IFWL_ScrollBar*)m_pHorzScrollBar;
+      pRepaint = m_pHorzScrollBar;
     } else if ((m_pHorzScrollBar->GetStates() & FWL_WGTSTATE_Disabled) == 0) {
       m_pHorzScrollBar->LockUpdate();
       m_pHorzScrollBar->SetRange(0, -1);
       m_pHorzScrollBar->SetStates(FWL_WGTSTATE_Disabled, TRUE);
       m_pHorzScrollBar->UnlockUpdate();
       m_pHorzScrollBar->Update();
-      pRepaint = (IFWL_ScrollBar*)m_pHorzScrollBar;
+      pRepaint = m_pHorzScrollBar;
     }
   }
   if (bShowVert) {
@@ -1497,14 +1500,14 @@ IFWL_ScrollBar* CFWL_EditImp::UpdateScroll() {
       m_pVertScrollBar->SetStates(FWL_WGTSTATE_Disabled, FALSE);
       m_pVertScrollBar->UnlockUpdate();
       m_pVertScrollBar->Update();
-      pRepaint = (IFWL_ScrollBar*)m_pVertScrollBar;
+      pRepaint = m_pVertScrollBar;
     } else if ((m_pVertScrollBar->GetStates() & FWL_WGTSTATE_Disabled) == 0) {
       m_pVertScrollBar->LockUpdate();
       m_pVertScrollBar->SetRange(0, -1);
       m_pVertScrollBar->SetStates(FWL_WGTSTATE_Disabled, TRUE);
       m_pVertScrollBar->UnlockUpdate();
       m_pVertScrollBar->Update();
-      pRepaint = (IFWL_ScrollBar*)m_pVertScrollBar;
+      pRepaint = m_pVertScrollBar;
     }
   }
   return pRepaint;
@@ -1550,13 +1553,13 @@ void CFWL_EditImp::Layout() {
   GetClientRect(m_rtClient);
   m_rtEngine = m_rtClient;
   FX_FLOAT* pfWidth =
-      (FX_FLOAT*)GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth);
+      static_cast<FX_FLOAT*>(GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth));
   if (!pfWidth)
     return;
   FX_FLOAT fWidth = *pfWidth;
   if (!m_pOuter) {
     CFX_RectF* pUIMargin =
-        (CFX_RectF*)GetThemeCapacity(FWL_WGTCAPACITY_UIMargin);
+        static_cast<CFX_RectF*>(GetThemeCapacity(FWL_WGTCAPACITY_UIMargin));
     if (pUIMargin) {
       m_rtEngine.Deflate(pUIMargin->left, pUIMargin->top, pUIMargin->width,
                          pUIMargin->height);
@@ -1565,8 +1568,8 @@ void CFWL_EditImp::Layout() {
     CFWL_ThemePart part;
     part.m_pWidget = m_pOuter;
     CFX_RectF* pUIMargin =
-        (CFX_RectF*)m_pOuter->GetThemeProvider()->GetCapacity(
-            &part, FWL_WGTCAPACITY_UIMargin);
+        static_cast<CFX_RectF*>(m_pOuter->GetThemeProvider()->GetCapacity(
+            &part, FWL_WGTCAPACITY_UIMargin));
     if (pUIMargin) {
       m_rtEngine.Deflate(pUIMargin->left, pUIMargin->top, pUIMargin->width,
                          pUIMargin->height);
@@ -1625,7 +1628,8 @@ void CFWL_EditImp::LayoutScrollBar() {
   FX_BOOL bShowHorzScrollbar = IsShowScrollBar(FALSE);
   if (bShowVertScrollbar) {
     if (!m_pVertScrollBar) {
-      pfWidth = (FX_FLOAT*)GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth);
+      pfWidth = static_cast<FX_FLOAT*>(
+          GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth));
       FX_FLOAT fWidth = pfWidth ? *pfWidth : 0;
       InitScrollBar();
       CFX_RectF rtVertScr;
@@ -1648,9 +1652,10 @@ void CFWL_EditImp::LayoutScrollBar() {
   }
   if (bShowHorzScrollbar) {
     if (!m_pHorzScrollBar) {
-      pfWidth =
-          !pfWidth ? (FX_FLOAT*)GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth)
-                   : pfWidth;
+      if (!pfWidth) {
+        pfWidth = static_cast<FX_FLOAT*>(
+            GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth));
+      }
       FX_FLOAT fWidth = pfWidth ? *pfWidth : 0;
       InitScrollBar(FALSE);
       CFX_RectF rtHoriScr;
@@ -1709,7 +1714,7 @@ void CFWL_EditImp::ShowCaret(FX_BOOL bVisible, CFX_RectF* pRect) {
     }
     Repaint(&m_rtEngine);
   } else {
-    IFWL_Widget* pOuter = (IFWL_Widget*)m_pInterface;
+    IFWL_Widget* pOuter = m_pInterface;
     if (bVisible) {
       pRect->Offset(m_pProperties->m_rtWidget.left,
                     m_pProperties->m_rtWidget.top);
@@ -1798,11 +1803,11 @@ int32_t CFWL_EditImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   int32_t iRet = 1;
   switch (dwMsgCode) {
     case FWL_MSGHASH_Activate: {
-      DoActivate((CFWL_MsgActivate*)pMessage);
+      DoActivate(static_cast<CFWL_MsgActivate*>(pMessage));
       break;
     }
     case FWL_MSGHASH_Deactivate: {
-      DoDeactivate((CFWL_MsgDeactivate*)pMessage);
+      DoDeactivate(static_cast<CFWL_MsgDeactivate*>(pMessage));
       break;
     }
     case FWL_MSGHASH_SetFocus:
@@ -1811,7 +1816,7 @@ int32_t CFWL_EditImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       break;
     }
     case FWL_MSGHASH_Mouse: {
-      CFWL_MsgMouse* pMsg = (CFWL_MsgMouse*)pMessage;
+      CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       FX_DWORD dwCmd = pMsg->m_dwCmd;
       switch (dwCmd) {
         case FWL_MSGMOUSECMD_LButtonDown: {
@@ -1839,7 +1844,7 @@ int32_t CFWL_EditImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       break;
     }
     case FWL_MSGHASH_Key: {
-      CFWL_MsgKey* pKey = (CFWL_MsgKey*)pMessage;
+      CFWL_MsgKey* pKey = static_cast<CFWL_MsgKey*>(pMessage);
       FX_DWORD dwCmd = pKey->m_dwCmd;
       if (dwCmd == FWL_MSGKEYCMD_KeyDown) {
         OnKeyDown(pKey);
@@ -1861,13 +1866,13 @@ FWL_ERR CFWL_EditImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
     return FWL_ERR_Succeeded;
   }
   IFWL_Widget* pSrcTarget = pEvent->m_pSrcTarget;
-  if ((pSrcTarget == (IFWL_Widget*)m_pOwner->m_pVertScrollBar &&
+  if ((pSrcTarget == m_pOwner->m_pVertScrollBar &&
        m_pOwner->m_pVertScrollBar) ||
-      (pSrcTarget == (IFWL_Widget*)m_pOwner->m_pHorzScrollBar &&
+      (pSrcTarget == m_pOwner->m_pHorzScrollBar &&
        m_pOwner->m_pHorzScrollBar)) {
-    FX_DWORD dwScrollCode = ((CFWL_EvtScroll*)pEvent)->m_iScrollCode;
-    FX_FLOAT fPos = ((CFWL_EvtScroll*)pEvent)->m_fPos;
-    OnScroll((IFWL_ScrollBar*)pSrcTarget, dwScrollCode, fPos);
+    CFWL_EvtScroll* pScrollEvent = static_cast<CFWL_EvtScroll*>(pEvent);
+    OnScroll(static_cast<IFWL_ScrollBar*>(pSrcTarget),
+             pScrollEvent->m_iScrollCode, pScrollEvent->m_fPos);
   }
   return FWL_ERR_Succeeded;
 }

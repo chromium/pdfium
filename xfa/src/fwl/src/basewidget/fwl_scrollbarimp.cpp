@@ -148,8 +148,8 @@ FWL_ERR CFWL_ScrollBarImp::Finalize() {
 FWL_ERR CFWL_ScrollBarImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
   if (bAutoSize) {
     rect.Set(0, 0, 0, 0);
-    FX_FLOAT* pfMinWidth =
-        (FX_FLOAT*)GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth);
+    FX_FLOAT* pfMinWidth = static_cast<FX_FLOAT*>(
+        GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth));
     if (!pfMinWidth)
       return FWL_ERR_Indefinite;
     if (IsVertical()) {
@@ -320,7 +320,8 @@ void CFWL_ScrollBarImp::Layout() {
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   CFWL_ThemePart part;
   part.m_pWidget = m_pInterface;
-  m_fMinThumb = *(FX_FLOAT*)pTheme->GetCapacity(&part, FWL_CAPACITY_SCB_Size);
+  m_fMinThumb = *static_cast<FX_FLOAT*>(
+      pTheme->GetCapacity(&part, FWL_CAPACITY_SCB_Size));
   m_bCustomLayout = pTheme->IsCustomizedLayout(m_pInterface);
   GetClientRect(m_rtClient);
   CalcButtonLen();
@@ -659,7 +660,7 @@ int32_t CFWL_ScrollBarImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   int32_t iRet = 1;
   FX_DWORD dwMsgCode = pMessage->GetClassID();
   if (dwMsgCode == FWL_MSGHASH_Mouse) {
-    CFWL_MsgMouse* pMsg = (CFWL_MsgMouse*)pMessage;
+    CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
     FX_DWORD dwCmd = pMsg->m_dwCmd;
     switch (dwCmd) {
       case FWL_MSGMOUSECMD_LButtonDown: {
@@ -681,7 +682,7 @@ int32_t CFWL_ScrollBarImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       default: { iRet = 0; }
     }
   } else if (dwMsgCode == FWL_MSGHASH_MouseWheel) {
-    CFWL_MsgMouseWheel* pMsg = (CFWL_MsgMouseWheel*)pMessage;
+    CFWL_MsgMouseWheel* pMsg = static_cast<CFWL_MsgMouseWheel*>(pMessage);
     OnMouseWheel(pMsg->m_fx, pMsg->m_fy, pMsg->m_dwFlags, pMsg->m_fDeltaX,
                  pMsg->m_fDeltaY);
   } else {

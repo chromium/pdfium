@@ -174,7 +174,7 @@ int32_t CFWL_DateTimeEditImpDelegate::DisForm_OnProcessMessage(
   FX_DWORD dwHashCode = pMessage->GetClassID();
   if (m_pOwner->m_pWidgetMgr->IsFormDisabled()) {
     if (dwHashCode == FWL_MSGHASH_Mouse) {
-      CFWL_MsgMouse* pMouse = (CFWL_MsgMouse*)pMessage;
+      CFWL_MsgMouse* pMouse = static_cast<CFWL_MsgMouse*>(pMessage);
       if (pMouse->m_dwCmd == FWL_MSGMOUSECMD_LButtonDown ||
           pMouse->m_dwCmd == FWL_MSGMOUSECMD_RButtonDown) {
         if ((m_pOwner->m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) == 0) {
@@ -225,7 +225,7 @@ int32_t CFWL_DateTimeCalendarImpDelegate::OnProcessMessage(
     IFWL_WidgetDelegate* pDelegate = pOuter->SetDelegate(NULL);
     return pDelegate->OnProcessMessage(pMessage);
   } else if (dwCode == FWL_MSGHASH_Mouse) {
-    CFWL_MsgMouse* pMsg = (CFWL_MsgMouse*)pMessage;
+    CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
     if (pMsg->m_dwCmd == FWL_MSGMOUSECMD_LButtonDown) {
       OnLButtonDownEx(pMsg);
       return 1;
@@ -355,7 +355,7 @@ void CFWL_DateTimeCalendarImpDelegate::OnMouseMoveEx(CFWL_MsgMouse* pMsg) {
 int32_t CFWL_DateTimeCalendarImpDelegate::DisForm_OnProcessMessage(
     CFWL_Message* pMessage) {
   if (pMessage->GetClassID() == FWL_MSGHASH_Mouse) {
-    CFWL_MsgMouse* pMsg = (CFWL_MsgMouse*)pMessage;
+    CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
     if (pMsg->m_dwCmd == FWL_MSGMOUSECMD_LButtonUp) {
       DisForm_OnLButtonUpEx(pMsg);
       return 1;
@@ -513,7 +513,7 @@ FWL_ERR CFWL_DateTimePickerImp::Update() {
   m_pEdit->SetThemeProvider(m_pProperties->m_pThemeProvider);
   GetClientRect(m_rtClient);
   FX_FLOAT* pFWidth =
-      (FX_FLOAT*)GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth);
+      static_cast<FX_FLOAT*>(GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth));
   if (!pFWidth)
     return FWL_ERR_Indefinite;
   FX_FLOAT fBtn = *pFWidth;
@@ -530,7 +530,7 @@ FWL_ERR CFWL_DateTimePickerImp::Update() {
   }
   if (m_pProperties->m_pDataProvider) {
     IFWL_DateTimePickerDP* pData =
-        (IFWL_DateTimePickerDP*)m_pProperties->m_pDataProvider;
+        static_cast<IFWL_DateTimePickerDP*>(m_pProperties->m_pDataProvider);
     pData->GetToday(m_pInterface, m_MonthCalendarDP.m_iCurYear,
                     m_MonthCalendarDP.m_iCurMonth, m_MonthCalendarDP.m_iCurDay);
   }
@@ -830,7 +830,7 @@ void CFWL_DateTimePickerImp::InitProxyForm() {
   propForm.m_pOwner = m_pInterface;
   m_pForm = new IFWL_DateTimeForm();
   m_pForm->Initialize(propForm, m_pMonthCal);
-  m_pMonthCal->SetParent((IFWL_Widget*)m_pForm);
+  m_pMonthCal->SetParent(m_pForm);
 }
 IFWL_DateTimeEdit* CFWL_DateTimePickerImp::GetDataTimeEdit() {
   return m_pEdit;
@@ -851,7 +851,7 @@ void CFWL_DateTimePickerImp::DisForm_InitDateTimeCalendar() {
   propMonth.m_dwStyles =
       FWL_WGTSTYLE_Popup | FWL_WGTSTYLE_Border | FWL_WGTSTYLE_EdgeSunken;
   propMonth.m_dwStates = FWL_WGTSTATE_Invisible;
-  propMonth.m_pParent = (IFWL_Widget*)this;
+  propMonth.m_pParent = m_pInterface;
   propMonth.m_pDataProvider = &m_MonthCalendarDP;
   propMonth.m_pThemeProvider = m_pProperties->m_pThemeProvider;
   m_pMonthCal = new IFWL_DateTimeCalender();
@@ -866,7 +866,7 @@ void CFWL_DateTimePickerImp::DisForm_InitDateTimeEdit() {
     return;
   }
   CFWL_WidgetImpProperties propEdit;
-  propEdit.m_pParent = (IFWL_Widget*)this;
+  propEdit.m_pParent = m_pInterface;
   propEdit.m_pThemeProvider = m_pProperties->m_pThemeProvider;
   m_pEdit = new IFWL_DateTimeEdit();
   m_pEdit->Initialize(propEdit, m_pInterface);
@@ -957,12 +957,12 @@ FWL_ERR CFWL_DateTimePickerImp::DisForm_Update() {
   }
   if (m_pProperties->m_pDataProvider) {
     IFWL_DateTimePickerDP* pData =
-        (IFWL_DateTimePickerDP*)m_pProperties->m_pDataProvider;
-    pData->GetToday((IFWL_Widget*)this, m_MonthCalendarDP.m_iCurYear,
+        static_cast<IFWL_DateTimePickerDP*>(m_pProperties->m_pDataProvider);
+    pData->GetToday(m_pInterface, m_MonthCalendarDP.m_iCurYear,
                     m_MonthCalendarDP.m_iCurMonth, m_MonthCalendarDP.m_iCurDay);
   }
   FX_FLOAT* pWidth =
-      (FX_FLOAT*)GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth);
+      static_cast<FX_FLOAT*>(GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth));
   if (!pWidth)
     return 0;
   m_fBtn = *pWidth;
@@ -1039,7 +1039,7 @@ int32_t CFWL_DateTimePickerImpDelegate::OnProcessMessage(
       break;
     }
     case FWL_MSGHASH_Mouse: {
-      CFWL_MsgMouse* pMouse = (CFWL_MsgMouse*)pMessage;
+      CFWL_MsgMouse* pMouse = static_cast<CFWL_MsgMouse*>(pMessage);
       FX_DWORD dwCmd = pMouse->m_dwCmd;
       switch (dwCmd) {
         case FWL_MSGMOUSECMD_LButtonDown: {
@@ -1090,7 +1090,7 @@ void CFWL_DateTimePickerImpDelegate::OnFocusChanged(CFWL_Message* pMsg,
     m_pOwner->m_pProperties->m_dwStates &= ~(FWL_WGTSTATE_Focused);
     m_pOwner->Repaint(&m_pOwner->m_rtClient);
   }
-  if (pMsg->m_pSrcTarget == (IFWL_Widget*)m_pOwner->m_pMonthCal &&
+  if (pMsg->m_pSrcTarget == m_pOwner->m_pMonthCal &&
       m_pOwner->IsMonthCalendarShowed()) {
     m_pOwner->ShowMonthCalendar(FALSE);
   }

@@ -78,7 +78,8 @@ FX_BOOL CFX_Barcode::CheckContentValidity(const CFX_WideStringC& contents) {
     case BC_EAN13:
     case BC_UPCA:
       return m_pBCEngine
-                 ? ((CBC_OneCode*)m_pBCEngine)->CheckContentValidity(contents)
+                 ? static_cast<CBC_OneCode*>(m_pBCEngine)
+                       ->CheckContentValidity(contents)
                  : TRUE;
     default:
       return TRUE;
@@ -94,10 +95,10 @@ FX_BOOL CFX_Barcode::SetPrintChecksum(FX_BOOL checksum) {
     case BC_EAN8:
     case BC_EAN13:
     case BC_UPCA:
-      return m_pBCEngine
-                 ? (((CBC_OneCode*)m_pBCEngine)->SetPrintChecksum(checksum),
-                    TRUE)
-                 : FALSE;
+      return m_pBCEngine ? (static_cast<CBC_OneCode*>(m_pBCEngine)
+                                ->SetPrintChecksum(checksum),
+                            TRUE)
+                         : FALSE;
     default:
       return FALSE;
   }
@@ -112,9 +113,10 @@ FX_BOOL CFX_Barcode::SetDataLength(int32_t length) {
     case BC_EAN8:
     case BC_EAN13:
     case BC_UPCA:
-      return m_pBCEngine
-                 ? (((CBC_OneCode*)m_pBCEngine)->SetDataLength(length), TRUE)
-                 : FALSE;
+      return m_pBCEngine ? (static_cast<CBC_OneCode*>(m_pBCEngine)
+                                ->SetDataLength(length),
+                            TRUE)
+                         : FALSE;
     default:
       return FALSE;
   }
@@ -129,9 +131,10 @@ FX_BOOL CFX_Barcode::SetCalChecksum(int32_t state) {
     case BC_EAN8:
     case BC_EAN13:
     case BC_UPCA:
-      return m_pBCEngine
-                 ? (((CBC_OneCode*)m_pBCEngine)->SetCalChecksum(state), TRUE)
-                 : FALSE;
+      return m_pBCEngine ? (static_cast<CBC_OneCode*>(m_pBCEngine)
+                                ->SetCalChecksum(state),
+                            TRUE)
+                         : FALSE;
     default:
       return FALSE;
   }
@@ -146,7 +149,9 @@ FX_BOOL CFX_Barcode::SetFont(CFX_Font* pFont) {
     case BC_EAN8:
     case BC_EAN13:
     case BC_UPCA:
-      return m_pBCEngine ? ((CBC_OneCode*)m_pBCEngine)->SetFont(pFont) : FALSE;
+      return m_pBCEngine
+                 ? static_cast<CBC_OneCode*>(m_pBCEngine)->SetFont(pFont)
+                 : FALSE;
     default:
       return FALSE;
   }
@@ -162,7 +167,8 @@ FX_BOOL CFX_Barcode::SetFontSize(FX_FLOAT size) {
     case BC_EAN13:
     case BC_UPCA:
       return m_pBCEngine
-                 ? (((CBC_OneCode*)m_pBCEngine)->SetFontSize(size), TRUE)
+                 ? (static_cast<CBC_OneCode*>(m_pBCEngine)->SetFontSize(size),
+                    TRUE)
                  : FALSE;
     default:
       return FALSE;
@@ -179,7 +185,8 @@ FX_BOOL CFX_Barcode::SetFontStyle(int32_t style) {
     case BC_EAN13:
     case BC_UPCA:
       return m_pBCEngine
-                 ? (((CBC_OneCode*)m_pBCEngine)->SetFontStyle(style), TRUE)
+                 ? (static_cast<CBC_OneCode*>(m_pBCEngine)->SetFontStyle(style),
+                    TRUE)
                  : FALSE;
     default:
       return FALSE;
@@ -196,7 +203,8 @@ FX_BOOL CFX_Barcode::SetFontColor(FX_ARGB color) {
     case BC_EAN13:
     case BC_UPCA:
       return m_pBCEngine
-                 ? (((CBC_OneCode*)m_pBCEngine)->SetFontColor(color), TRUE)
+                 ? (static_cast<CBC_OneCode*>(m_pBCEngine)->SetFontColor(color),
+                    TRUE)
                  : FALSE;
     default:
       return FALSE;

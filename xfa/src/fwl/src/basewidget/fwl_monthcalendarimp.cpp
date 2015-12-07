@@ -357,9 +357,8 @@ void CFWL_MonthCalendarImp::DrawWeek(CFX_Graphics* pGraphics,
   for (int32_t i = 0; i < 7; i++) {
     rtDayOfWeek.Set(m_rtWeek.left + i * (m_szCell.x + MONTHCAL_HMARGIN * 2),
                     m_rtWeek.top, m_szCell.x, m_szCell.y);
-    CFX_WideString* wsWeekDay = NULL;
-    wsWeekDay =
-        (CFX_WideString*)pTheme->GetCapacity(&params, i + FWL_MCCAPACITY_Sun);
+    CFX_WideString* wsWeekDay = static_cast<CFX_WideString*>(
+        pTheme->GetCapacity(&params, i + FWL_MCCAPACITY_Sun));
     params.m_rtPart = rtDayOfWeek;
     params.m_wsText = *wsWeekDay;
     params.m_dwTTOStyles = FDE_TTOSTYLE_SingleLine;
@@ -424,8 +423,8 @@ void CFWL_MonthCalendarImp::DrawToday(CFX_Graphics* pGraphics,
   params.m_pGraphics = pGraphics;
   params.m_dwStates = FWL_PARTSTATE_MCD_Normal;
   params.m_iTTOAlign = FDE_TTOALIGNMENT_CenterLeft;
-  CFX_WideString* wsDay = NULL;
-  wsDay = (CFX_WideString*)pTheme->GetCapacity(&params, FWL_MCCAPACITY_Today);
+  CFX_WideString* wsDay = static_cast<CFX_WideString*>(
+      pTheme->GetCapacity(&params, FWL_MCCAPACITY_Today));
   CFX_WideString wsText;
   GetTodayText(m_iYear, m_iMonth, m_iDay, wsText);
   params.m_wsText = *wsDay + wsText;
@@ -537,7 +536,7 @@ CFX_SizeF CFWL_MonthCalendarImp::CalcSize(FX_BOOL bAutoSize) {
     FX_FLOAT fMaxWeekH = 0.0f;
     for (FX_DWORD week = FWL_MCCAPACITY_Sun; week <= FWL_MCCAPACITY_Sat;
          week++) {
-      wsText = (CFX_WideString*)pTheme->GetCapacity(&params, week);
+      wsText = static_cast<CFX_WideString*>(pTheme->GetCapacity(&params, week));
       CFX_SizeF sz = CalcTextSize(*wsText, m_pProperties->m_pThemeProvider);
       fMaxWeekW = (fMaxWeekW >= sz.x) ? fMaxWeekW : sz.x;
       fMaxWeekH = (fMaxWeekH >= sz.y) ? fMaxWeekH : sz.y;
@@ -561,7 +560,8 @@ CFX_SizeF CFWL_MonthCalendarImp::CalcSize(FX_BOOL bAutoSize) {
     FX_FLOAT fMonthMaxH = 0.0f;
     for (FX_DWORD month = FWL_MCCAPACITY_January;
          month <= FWL_MCCAPACITY_December; month++) {
-      wsText = (CFX_WideString*)pTheme->GetCapacity(&params, month);
+      wsText =
+          static_cast<CFX_WideString*>(pTheme->GetCapacity(&params, month));
       CFX_SizeF sz = CalcTextSize(*wsText, m_pProperties->m_pThemeProvider);
       fMonthMaxW = (fMonthMaxW >= sz.x) ? fMonthMaxW : sz.x;
       fMonthMaxH = (fMonthMaxH >= sz.y) ? fMonthMaxH : sz.y;
@@ -575,8 +575,8 @@ CFX_SizeF CFWL_MonthCalendarImp::CalcSize(FX_BOOL bAutoSize) {
     fs.x = (fs.x >= fMonthMaxW) ? fs.x : fMonthMaxW;
     CFX_WideString wsToday;
     GetTodayText(m_iYear, m_iMonth, m_iDay, wsToday);
-    wsText =
-        (CFX_WideString*)pTheme->GetCapacity(&params, FWL_MCCAPACITY_Today);
+    wsText = static_cast<CFX_WideString*>(
+        pTheme->GetCapacity(&params, FWL_MCCAPACITY_Today));
     m_wsToday = *wsText + wsToday;
     m_szToday = CalcTextSize(wsToday, m_pProperties->m_pThemeProvider);
     m_szToday.y = (m_szToday.y >= m_szCell.y) ? m_szToday.y : m_szCell.y;
@@ -671,57 +671,61 @@ void CFWL_MonthCalendarImp::GetCapValue() {
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   CFWL_ThemePart part;
   part.m_pWidget = m_pInterface;
-  m_fHeadWid =
-      *(FX_FLOAT*)pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HEADER_WIDTH);
-  m_fHeadHei =
-      *(FX_FLOAT*)pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HEADER_Height);
-  m_fHeadBtnWid = *(FX_FLOAT*)pTheme->GetCapacity(
-      &part, FWL_WGTCAPACITY_MC_HEADER_BTN_WIDTH);
-  m_fHeadBtnHei = *(FX_FLOAT*)pTheme->GetCapacity(
-      &part, FWL_WGTCAPACITY_MC_HEADER_BTN_HEIGHT);
-  m_fHeadBtnHMargin = *(FX_FLOAT*)pTheme->GetCapacity(
-      &part, FWL_WGTCAPACITY_MC_HEADER_BTN_HMARGIN);
-  m_fHeadBtnVMargin = *(FX_FLOAT*)pTheme->GetCapacity(
-      &part, FWL_WGTCAPACITY_MC_HEADER_BTN_VMARGIN);
-  m_fHeadTextWid = *(FX_FLOAT*)pTheme->GetCapacity(
-      &part, FWL_WGTCAPACITY_MC_HEADER_TEXTWIDHT);
-  m_fHeadTextHei = *(FX_FLOAT*)pTheme->GetCapacity(
-      &part, FWL_WGTCAPACITY_MC_HEADER_TEXTHEIGHT);
-  m_fHeadTextHMargin = *(FX_FLOAT*)pTheme->GetCapacity(
-      &part, FWL_WGTCAPACITY_MC_HEADER_TEXT_HMARGIN);
-  m_fHeadTextVMargin = *(FX_FLOAT*)pTheme->GetCapacity(
-      &part, FWL_WGTCAPACITY_MC_HEADER_TEXT_VMARGIN);
-  m_fHSepWid =
-      *(FX_FLOAT*)pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HSEP_WIDTH);
-  m_fHSepHei =
-      *(FX_FLOAT*)pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HSEP_HEIGHT);
-  m_fWeekNumWid =
-      *(FX_FLOAT*)pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_WEEKNUM_WIDTH);
-  m_fSepDOffset =
-      *(FX_FLOAT*)pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_SEP_DOFFSET);
-  m_fSepX = *(FX_FLOAT*)pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_SEP_X);
-  m_fSepY = *(FX_FLOAT*)pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_SEP_Y);
-  m_fWeekNumHeigh =
-      *(FX_FLOAT*)pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_WEEKNUM_HEIGHT);
-  m_fWeekWid =
-      *(FX_FLOAT*)pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_WEEK_WIDTH);
-  m_fWeekHei =
-      *(FX_FLOAT*)pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_WEEK_HEIGHT);
-  m_fDateCellWid = *(FX_FLOAT*)pTheme->GetCapacity(
-      &part, FWL_WGTCAPACITY_MC_DATES_CELL_WIDTH);
-  m_fDateCellHei = *(FX_FLOAT*)pTheme->GetCapacity(
-      &part, FWL_WGTCAPACITY_MC_DATES_CELL_HEIGHT);
-  m_fTodayWid =
-      *(FX_FLOAT*)pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_TODAY_WIDHT);
-  m_fTodayHei =
-      *(FX_FLOAT*)pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_TODAY_HEIGHT);
-  m_fTodayFlagWid = *(FX_FLOAT*)pTheme->GetCapacity(
-      &part, FWL_WGTCAPACITY_MC_TODAY_FLAG_WIDHT);
-  m_fMCWid = *(FX_FLOAT*)pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_WIDTH);
+  m_fHeadWid = *static_cast<FX_FLOAT*>(
+      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HEADER_WIDTH));
+  m_fHeadHei = *static_cast<FX_FLOAT*>(
+      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HEADER_Height));
+  m_fHeadBtnWid = *static_cast<FX_FLOAT*>(
+      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HEADER_BTN_WIDTH));
+  m_fHeadBtnHei = *static_cast<FX_FLOAT*>(
+      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HEADER_BTN_HEIGHT));
+  m_fHeadBtnHMargin = *static_cast<FX_FLOAT*>(
+      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HEADER_BTN_HMARGIN));
+  m_fHeadBtnVMargin = *static_cast<FX_FLOAT*>(
+      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HEADER_BTN_VMARGIN));
+  m_fHeadTextWid = *static_cast<FX_FLOAT*>(
+      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HEADER_TEXTWIDHT));
+  m_fHeadTextHei = *static_cast<FX_FLOAT*>(
+      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HEADER_TEXTHEIGHT));
+  m_fHeadTextHMargin = *static_cast<FX_FLOAT*>(
+      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HEADER_TEXT_HMARGIN));
+  m_fHeadTextVMargin = *static_cast<FX_FLOAT*>(
+      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HEADER_TEXT_VMARGIN));
+  m_fHSepWid = *static_cast<FX_FLOAT*>(
+      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HSEP_WIDTH));
+  m_fHSepHei = *static_cast<FX_FLOAT*>(
+      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HSEP_HEIGHT));
+  m_fWeekNumWid = *static_cast<FX_FLOAT*>(
+      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_WEEKNUM_WIDTH));
+  m_fSepDOffset = *static_cast<FX_FLOAT*>(
+      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_SEP_DOFFSET));
+  m_fSepX = *static_cast<FX_FLOAT*>(
+      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_SEP_X));
+  m_fSepY = *static_cast<FX_FLOAT*>(
+      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_SEP_Y));
+  m_fWeekNumHeigh = *static_cast<FX_FLOAT*>(
+      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_WEEKNUM_HEIGHT));
+  m_fWeekWid = *static_cast<FX_FLOAT*>(
+      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_WEEK_WIDTH));
+  m_fWeekHei = *static_cast<FX_FLOAT*>(
+      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_WEEK_HEIGHT));
+  m_fDateCellWid = *static_cast<FX_FLOAT*>(
+      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_DATES_CELL_WIDTH));
+  m_fDateCellHei = *static_cast<FX_FLOAT*>(
+      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_DATES_CELL_HEIGHT));
+  m_fTodayWid = *static_cast<FX_FLOAT*>(
+      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_TODAY_WIDHT));
+  m_fTodayHei = *static_cast<FX_FLOAT*>(
+      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_TODAY_HEIGHT));
+  m_fTodayFlagWid = *static_cast<FX_FLOAT*>(
+      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_TODAY_FLAG_WIDHT));
+  m_fMCWid = *static_cast<FX_FLOAT*>(
+      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_WIDTH));
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_MCD_WeekNumbers) {
     m_fMCWid += m_fWeekNumWid;
   }
-  m_fMCHei = *(FX_FLOAT*)pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HEIGHT);
+  m_fMCHei = *static_cast<FX_FLOAT*>(
+      pTheme->GetCapacity(&part, FWL_WGTCAPACITY_MC_HEIGHT));
 }
 int32_t CFWL_MonthCalendarImp::CalWeekNumber(int32_t iYear,
                                              int32_t iMonth,
@@ -759,7 +763,7 @@ FX_BOOL CFWL_MonthCalendarImp::SetMaxDate(int32_t iYear,
 FX_BOOL CFWL_MonthCalendarImp::InitDate() {
   if (m_pProperties->m_pDataProvider) {
     IFWL_MonthCalendarDP* pDateProv =
-        (IFWL_MonthCalendarDP*)(m_pProperties->m_pDataProvider);
+        static_cast<IFWL_MonthCalendarDP*>(m_pProperties->m_pDataProvider);
     m_iYear = pDateProv->GetCurYear(m_pInterface);
     m_iMonth = pDateProv->GetCurMonth(m_pInterface);
     m_iDay = pDateProv->GetCurDay(m_pInterface);
@@ -774,10 +778,8 @@ FX_BOOL CFWL_MonthCalendarImp::InitDate() {
   }
   GetTodayText(m_iYear, m_iMonth, m_iDay, m_wsToday);
   GetHeadText(m_iCurYear, m_iCurMonth, m_wsHead);
-  {
-    m_dtMin = DATE(1500, 12, 1);
-    m_dtMax = DATE(2200, 1, 1);
-  }
+  m_dtMin = DATE(1500, 12, 1);
+  m_dtMax = DATE(2200, 1, 1);
   return TRUE;
 }
 void CFWL_MonthCalendarImp::ClearDateItem() {
@@ -966,7 +968,7 @@ int32_t CFWL_MonthCalendarImpDelegate::OnProcessMessage(
       break;
     }
     case FWL_MSGHASH_Mouse: {
-      CFWL_MsgMouse* pMouse = (CFWL_MsgMouse*)pMessage;
+      CFWL_MsgMouse* pMouse = static_cast<CFWL_MsgMouse*>(pMessage);
       FX_DWORD dwCmd = pMouse->m_dwCmd;
       switch (dwCmd) {
         case FWL_MSGMOUSECMD_LButtonDown: {
@@ -978,11 +980,11 @@ int32_t CFWL_MonthCalendarImpDelegate::OnProcessMessage(
           break;
         }
         case FWL_MSGMOUSECMD_MouseMove: {
-          OnMouseMove((CFWL_MsgMouse*)pMouse);
+          OnMouseMove(pMouse);
           break;
         }
         case FWL_MSGMOUSECMD_MouseLeave: {
-          OnMouseLeave((CFWL_MsgMouse*)pMouse);
+          OnMouseLeave(pMouse);
           break;
         }
         default: { break; }
@@ -1056,8 +1058,7 @@ void CFWL_MonthCalendarImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
         wmDateSelected.m_iEndDay = iCurSel;
         wmDateSelected.m_iOldMonth = m_pOwner->m_iCurMonth;
         wmDateSelected.m_iOldYear = m_pOwner->m_iCurYear;
-        wmDateSelected.m_pSrcTarget =
-            (IFWL_MonthCalendar*)m_pOwner->m_pInterface;
+        wmDateSelected.m_pSrcTarget = m_pOwner->m_pInterface;
         m_pOwner->DispatchEvent(&wmDateSelected);
         m_pOwner->Repaint(&rtInvalidate);
       }

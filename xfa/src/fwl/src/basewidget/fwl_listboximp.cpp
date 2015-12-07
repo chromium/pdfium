@@ -216,7 +216,8 @@ int32_t CFWL_ListBoxImp::CountSelItems() {
   if (!m_pProperties->m_pDataProvider)
     return 0;
   int32_t iRet = 0;
-  IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
+  IFWL_ListBoxDP* pData =
+      static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   int32_t iCount = pData->CountItems(m_pInterface);
   for (int32_t i = 0; i < iCount; i++) {
     FWL_HLISTITEM hItem = pData->GetItem(m_pInterface, i);
@@ -234,7 +235,8 @@ FWL_HLISTITEM CFWL_ListBoxImp::GetSelItem(int32_t nIndexSel) {
   if (!m_pProperties->m_pDataProvider)
     return NULL;
   int32_t index = 0;
-  IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
+  IFWL_ListBoxDP* pData =
+      static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   int32_t iCount = pData->CountItems(m_pInterface);
   for (int32_t i = 0; i < iCount; i++) {
     FWL_HLISTITEM hItem = pData->GetItem(m_pInterface, i);
@@ -256,7 +258,8 @@ int32_t CFWL_ListBoxImp::GetSelIndex(int32_t nIndex) {
   if (!m_pProperties->m_pDataProvider)
     return -1;
   int32_t index = 0;
-  IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
+  IFWL_ListBoxDP* pData =
+      static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   int32_t iCount = pData->CountItems(m_pInterface);
   for (int32_t i = 0; i < iCount; i++) {
     FWL_HLISTITEM hItem = pData->GetItem(m_pInterface, i);
@@ -297,7 +300,8 @@ FWL_ERR CFWL_ListBoxImp::GetItemText(FWL_HLISTITEM hItem,
                                      CFX_WideString& wsText) {
   if (!m_pProperties->m_pDataProvider)
     return FWL_ERR_Indefinite;
-  IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
+  IFWL_ListBoxDP* pData =
+      static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   if (!hItem)
     return FWL_ERR_Indefinite;
   pData->GetItemText(m_pInterface, hItem, wsText);
@@ -313,7 +317,8 @@ FWL_ERR CFWL_ListBoxImp::GetScrollPos(FX_FLOAT& fPos, FX_BOOL bVert) {
 }
 FWL_ERR* CFWL_ListBoxImp::Sort(IFWL_ListBoxCompare* pCom) {
   FWL_HLISTITEM hTemp;
-  IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
+  IFWL_ListBoxDP* pData =
+      static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   int32_t sz = pData->CountItems(m_pInterface);
   for (int32_t i = 0; i < sz - 1; i++) {
     for (int32_t j = i + 1; j < sz; j++) {
@@ -338,7 +343,8 @@ FWL_HLISTITEM CFWL_ListBoxImp::GetItem(FWL_HLISTITEM hItem,
       FX_BOOL bUp = dwKeyCode == FWL_VKEY_Up;
       FX_BOOL bDown = dwKeyCode == FWL_VKEY_Down;
       FX_BOOL bHome = dwKeyCode == FWL_VKEY_Home;
-      IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
+      IFWL_ListBoxDP* pData =
+          static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
       int32_t iDstItem = -1;
       if (bUp || bDown) {
         int32_t index = pData->GetItemIndex(m_pInterface, hItem);
@@ -359,7 +365,8 @@ FWL_HLISTITEM CFWL_ListBoxImp::GetItem(FWL_HLISTITEM hItem,
 void CFWL_ListBoxImp::SetSelection(FWL_HLISTITEM hStart,
                                    FWL_HLISTITEM hEnd,
                                    FX_BOOL bSelected) {
-  IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
+  IFWL_ListBoxDP* pData =
+      static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   int32_t iStart = pData->GetItemIndex(m_pInterface, hStart);
   int32_t iEnd = pData->GetItemIndex(m_pInterface, hEnd);
   if (iStart > iEnd) {
@@ -380,21 +387,24 @@ void CFWL_ListBoxImp::SetSelection(FWL_HLISTITEM hStart,
   }
 }
 void CFWL_ListBoxImp::SetSelectionDirect(FWL_HLISTITEM hItem, FX_BOOL bSelect) {
-  IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
+  IFWL_ListBoxDP* pData =
+      static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   FX_DWORD dwOldStyle = pData->GetItemStyles(m_pInterface, hItem);
   bSelect ? dwOldStyle |= FWL_ITEMSTATE_LTB_Selected
           : dwOldStyle &= ~FWL_ITEMSTATE_LTB_Selected;
   pData->SetItemStyles(m_pInterface, hItem, dwOldStyle);
 }
 FX_BOOL CFWL_ListBoxImp::IsItemSelected(FWL_HLISTITEM hItem) {
-  IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
+  IFWL_ListBoxDP* pData =
+      static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   FX_DWORD dwState = pData->GetItemStyles(m_pInterface, hItem);
   return (dwState & FWL_ITEMSTATE_LTB_Selected) != 0;
 }
 void CFWL_ListBoxImp::ClearSelection() {
   FX_BOOL bMulti =
       m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_MultiSelection;
-  IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
+  IFWL_ListBoxDP* pData =
+      static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   int32_t iCount = pData->CountItems(m_pInterface);
   for (int32_t i = 0; i < iCount; i++) {
     FWL_HLISTITEM hItem = pData->GetItem(m_pInterface, i);
@@ -415,7 +425,8 @@ void CFWL_ListBoxImp::SelectAll() {
   if (!bMulti) {
     return;
   }
-  IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
+  IFWL_ListBoxDP* pData =
+      static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   int32_t iCount = pData->CountItems(m_pInterface);
   if (iCount > 0) {
     FWL_HLISTITEM hItemStart = pData->GetItem(m_pInterface, 0);
@@ -424,7 +435,8 @@ void CFWL_ListBoxImp::SelectAll() {
   }
 }
 FWL_HLISTITEM CFWL_ListBoxImp::GetFocusedItem() {
-  IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
+  IFWL_ListBoxDP* pData =
+      static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   int32_t iCount = pData->CountItems(m_pInterface);
   for (int32_t i = 0; i < iCount; i++) {
     FWL_HLISTITEM hItem = pData->GetItem(m_pInterface, i);
@@ -437,7 +449,8 @@ FWL_HLISTITEM CFWL_ListBoxImp::GetFocusedItem() {
   return NULL;
 }
 void CFWL_ListBoxImp::SetFocusItem(FWL_HLISTITEM hItem) {
-  IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
+  IFWL_ListBoxDP* pData =
+      static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   FWL_HLISTITEM hFocus = GetFocusedItem();
   if (hItem != hFocus) {
     if (hFocus) {
@@ -462,7 +475,8 @@ FWL_HLISTITEM CFWL_ListBoxImp::GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
   if (m_pVertScrollBar) {
     fPosY = m_pVertScrollBar->GetPos();
   }
-  IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
+  IFWL_ListBoxDP* pData =
+      static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   int32_t nCount = pData->CountItems(m_pInterface);
   for (int32_t i = 0; i < nCount; i++) {
     FWL_HLISTITEM hItem = pData->GetItem(m_pInterface, i);
@@ -485,7 +499,8 @@ FX_BOOL CFWL_ListBoxImp::GetItemCheckRect(FWL_HLISTITEM hItem,
   if (!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_Check)) {
     return FALSE;
   }
-  IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
+  IFWL_ListBoxDP* pData =
+      static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   pData->GetItemCheckRect(m_pInterface, hItem, rtCheck);
   return TRUE;
 }
@@ -495,7 +510,8 @@ FX_BOOL CFWL_ListBoxImp::GetItemChecked(FWL_HLISTITEM hItem) {
   if (!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_Check)) {
     return FALSE;
   }
-  IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
+  IFWL_ListBoxDP* pData =
+      static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   return (pData->GetItemCheckState(m_pInterface, hItem) &
           FWL_ITEMSTATE_LTB_Checked);
 }
@@ -505,7 +521,8 @@ FX_BOOL CFWL_ListBoxImp::SetItemChecked(FWL_HLISTITEM hItem, FX_BOOL bChecked) {
   if (!(m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_Check)) {
     return FALSE;
   }
-  IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
+  IFWL_ListBoxDP* pData =
+      static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   pData->SetItemCheckState(m_pInterface, hItem,
                            bChecked ? FWL_ITEMSTATE_LTB_Checked : 0);
   return TRUE;
@@ -514,7 +531,8 @@ FX_BOOL CFWL_ListBoxImp::ScrollToVisible(FWL_HLISTITEM hItem) {
   if (!m_pVertScrollBar)
     return FALSE;
   CFX_RectF rtItem;
-  IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
+  IFWL_ListBoxDP* pData =
+      static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   pData->GetItemRect(m_pInterface, hItem, rtItem);
   FX_BOOL bScroll = FALSE;
   FX_FLOAT fPosY = m_pVertScrollBar->GetPos();
@@ -576,7 +594,8 @@ void CFWL_ListBoxImp::DrawItems(CFX_Graphics* pGraphics,
   }
   FX_BOOL bMultiCol =
       m_pProperties->m_dwStyleExes & FWL_STYLEEXT_LTB_MultiColumn;
-  IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
+  IFWL_ListBoxDP* pData =
+      static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   int32_t iCount = pData->CountItems(m_pInterface);
   for (int32_t i = 0; i < iCount; i++) {
     FWL_HLISTITEM hItem = pData->GetItem(m_pInterface, i);
@@ -614,7 +633,8 @@ void CFWL_ListBoxImp::DrawItem(CFX_Graphics* pGraphics,
                                int32_t Index,
                                const CFX_RectF& rtItem,
                                const CFX_Matrix* pMatrix) {
-  IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
+  IFWL_ListBoxDP* pData =
+      static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   FX_DWORD dwItemStyles = pData->GetItemStyles(m_pInterface, hItem);
   FX_DWORD dwPartStates = FWL_PARTSTATE_LTB_Normal;
   if (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled) {
@@ -721,7 +741,7 @@ CFX_SizeF CFWL_ListBoxImp::CalcSize(FX_BOOL bAutoSize) {
   rtUIMargin.Set(0, 0, 0, 0);
   if (!m_pOuter) {
     CFX_RectF* pUIMargin =
-        (CFX_RectF*)GetThemeCapacity(FWL_WGTCAPACITY_UIMargin);
+        static_cast<CFX_RectF*>(GetThemeCapacity(FWL_WGTCAPACITY_UIMargin));
     if (pUIMargin) {
       m_rtConent.Deflate(pUIMargin->left, pUIMargin->top, pUIMargin->width,
                          pUIMargin->height);
@@ -729,7 +749,8 @@ CFX_SizeF CFWL_ListBoxImp::CalcSize(FX_BOOL bAutoSize) {
   }
   FX_FLOAT fWidth = 0;
   if (m_pProperties->m_pThemeProvider->IsCustomizedLayout(m_pInterface)) {
-    IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
+    IFWL_ListBoxDP* pData =
+        static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
     if (!bAutoSize) {
     }
     int32_t iCount = pData->CountItems(m_pInterface);
@@ -745,7 +766,8 @@ CFX_SizeF CFWL_ListBoxImp::CalcSize(FX_BOOL bAutoSize) {
       if (!bAutoSize) {
         CFX_RectF rtItem;
         rtItem.Set(m_rtClient.left, m_rtClient.top + fs.y, r.width, r.height);
-        IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
+        IFWL_ListBoxDP* pData =
+            static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
         pData->SetItemRect(m_pInterface, hItem, rtItem);
       }
       fs.y += r.height;
@@ -764,7 +786,8 @@ CFX_SizeF CFWL_ListBoxImp::CalcSize(FX_BOOL bAutoSize) {
         fWidth = fActualWidth;
       }
     }
-    IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
+    IFWL_ListBoxDP* pData =
+        static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
     m_fItemHeight = GetItemHeigt();
     FX_BOOL bHasIcon;
     bHasIcon = GetStylesEx() & FWL_STYLEEXT_LTB_Icon;
@@ -886,7 +909,8 @@ void CFWL_ListBoxImp::GetItemSize(CFX_SizeF& size,
     if (!bAutoSize) {
       CFX_RectF rtItem;
       rtItem.Set(0, size.y, fWidth, m_fItemHeight);
-      IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
+      IFWL_ListBoxDP* pData =
+          static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
       pData->SetItemRect(m_pInterface, hItem, rtItem);
     }
     size.x = fWidth;
@@ -895,7 +919,8 @@ void CFWL_ListBoxImp::GetItemSize(CFX_SizeF& size,
 }
 FX_FLOAT CFWL_ListBoxImp::GetMaxTextWidth() {
   FX_FLOAT fRet = 0.0f;
-  IFWL_ListBoxDP* pData = (IFWL_ListBoxDP*)m_pProperties->m_pDataProvider;
+  IFWL_ListBoxDP* pData =
+      static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
   int32_t iCount = pData->CountItems(m_pInterface);
   for (int32_t i = 0; i < iCount; i++) {
     FWL_HLISTITEM hItem = pData->GetItem(m_pInterface, i);
@@ -913,13 +938,14 @@ FX_FLOAT CFWL_ListBoxImp::GetMaxTextWidth() {
 }
 FX_FLOAT CFWL_ListBoxImp::GetScrollWidth() {
   FX_FLOAT* pfWidth =
-      (FX_FLOAT*)GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth);
+      static_cast<FX_FLOAT*>(GetThemeCapacity(FWL_WGTCAPACITY_ScrollBarWidth));
   if (!pfWidth)
     return 0;
   return *pfWidth;
 }
 FX_FLOAT CFWL_ListBoxImp::GetItemHeigt() {
-  FX_FLOAT* pfFont = (FX_FLOAT*)GetThemeCapacity(FWL_WGTCAPACITY_FontSize);
+  FX_FLOAT* pfFont =
+      static_cast<FX_FLOAT*>(GetThemeCapacity(FWL_WGTCAPACITY_FontSize));
   if (!pfFont)
     return 20;
   return *pfFont + 2 * FWL_LISTBOX_ItemTextMargin;
@@ -978,7 +1004,7 @@ int32_t CFWL_ListBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       break;
     }
     case FWL_MSGHASH_Mouse: {
-      CFWL_MsgMouse* pMsg = (CFWL_MsgMouse*)pMessage;
+      CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       FX_DWORD dwCmd = pMsg->m_dwCmd;
       switch (dwCmd) {
         case FWL_MSGMOUSECMD_LButtonDown: {
@@ -994,15 +1020,13 @@ int32_t CFWL_ListBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       break;
     }
     case FWL_MSGHASH_MouseWheel: {
-      OnMouseWheel((CFWL_MsgMouseWheel*)pMessage);
+      OnMouseWheel(static_cast<CFWL_MsgMouseWheel*>(pMessage));
       break;
     }
     case FWL_MSGHASH_Key: {
-      CFWL_MsgKey* pMsg = (CFWL_MsgKey*)pMessage;
-      FX_DWORD dwCmd = pMsg->m_dwCmd;
-      if (dwCmd == FWL_MSGKEYCMD_KeyDown) {
+      CFWL_MsgKey* pMsg = static_cast<CFWL_MsgKey*>(pMessage);
+      if (pMsg->m_dwCmd == FWL_MSGKEYCMD_KeyDown)
         OnKeyDown(pMsg);
-      }
       break;
     }
     default: { iRet = 0; }
@@ -1017,13 +1041,13 @@ FWL_ERR CFWL_ListBoxImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
     return FWL_ERR_Succeeded;
   }
   IFWL_Widget* pSrcTarget = pEvent->m_pSrcTarget;
-  if ((pSrcTarget == (IFWL_Widget*)m_pOwner->m_pVertScrollBar &&
+  if ((pSrcTarget == m_pOwner->m_pVertScrollBar &&
        m_pOwner->m_pVertScrollBar) ||
-      (pSrcTarget == (IFWL_Widget*)m_pOwner->m_pHorzScrollBar &&
+      (pSrcTarget == m_pOwner->m_pHorzScrollBar &&
        m_pOwner->m_pHorzScrollBar)) {
-    FX_DWORD dwScrollCode = ((CFWL_EvtScroll*)pEvent)->m_iScrollCode;
-    FX_FLOAT fPos = ((CFWL_EvtScroll*)pEvent)->m_fPos;
-    OnScroll((IFWL_ScrollBar*)pSrcTarget, dwScrollCode, fPos);
+    CFWL_EvtScroll* pScrollEvent = static_cast<CFWL_EvtScroll*>(pEvent);
+    OnScroll(static_cast<IFWL_ScrollBar*>(pSrcTarget),
+             pScrollEvent->m_iScrollCode, pScrollEvent->m_fPos);
   }
   return FWL_ERR_Succeeded;
 }

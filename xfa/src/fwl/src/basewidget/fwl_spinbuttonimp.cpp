@@ -218,7 +218,7 @@ int32_t CFWL_SpinButtonImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       break;
     }
     case FWL_MSGHASH_Mouse: {
-      CFWL_MsgMouse* pMsg = (CFWL_MsgMouse*)pMessage;
+      CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       FX_DWORD dwCmd = pMsg->m_dwCmd;
       switch (dwCmd) {
         case FWL_MSGMOUSECMD_LButtonDown: {
@@ -242,9 +242,9 @@ int32_t CFWL_SpinButtonImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       break;
     }
     case FWL_MSGHASH_Key: {
-      CFWL_MsgKey* pKey = (CFWL_MsgKey*)pMessage;
+      CFWL_MsgKey* pKey = static_cast<CFWL_MsgKey*>(pMessage);
       if (pKey->m_dwCmd == FWL_MSGKEYCMD_KeyDown) {
-        OnKeyDown((CFWL_MsgKey*)pKey);
+        OnKeyDown(pKey);
       }
       break;
     }
