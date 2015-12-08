@@ -1052,7 +1052,6 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
             : (nStyle & FX_FONT_STYLE_Bold ? FXFONT_FW_BOLD : FXFONT_FW_NORMAL);
   }
   if (!match.IsEmpty() || iBaseFont < 12) {
-    pSubstFont->m_SubstFlags |= FXFONT_SUBST_EXACT;
     if (!match.IsEmpty()) {
       family = match;
     }
