@@ -8,7 +8,7 @@
     #'chromium_code': 1,
     'pdf_use_skia%': 0,
     'pdf_enable_v8%': 1,
-    'pdf_enable_xfa%': 1,
+    'pdf_enable_xfa%': 0, # Set to 1 by standalone.gypi in a standalone build.
     'conditions': [
       ['OS=="linux"', {
         'bundle_freetype%': 0,

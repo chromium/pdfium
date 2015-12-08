@@ -5,7 +5,7 @@
 {
   'variables': {
     'pdf_enable_v8%': 1,
-    'pdf_enable_xfa%': 1,
+    'pdf_enable_xfa%': 0,  # Set to 1 in standalone builds by standalone.gypi.
   },
   'target_defaults': {
     'defines' : [

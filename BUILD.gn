@@ -123,7 +123,6 @@ static_library("pdfium") {
     ":fpdfapi",
     ":fpdfdoc",
     ":fpdftext",
-    ":fpdfxfa",
     ":fxcodec",
     ":fxcrt",
     ":fxedit",
@@ -133,7 +132,9 @@ static_library("pdfium") {
   ]
 
   if (pdf_enable_xfa) {
-    deps += [ ":xfa" ]
+    deps += [
+      ":fpdfxfa",
+    ]
   }
 
   if (is_win) {
@@ -367,8 +368,6 @@ static_library("fxcodec") {
   deps = [
     "third_party:fx_lcms2",
     "third_party:fx_libopenjpeg",
-    "third_party:fx_lpng",
-    "third_party:fx_tiff",
     "third_party:fx_zlib",
 
     # This is a generic JPEG library dependency.
@@ -380,18 +379,12 @@ static_library("fxcodec") {
     "core/include/fxcodec/fx_codec_flate.h",
     "core/src/fxcodec/codec/codec_int.h",
     "core/src/fxcodec/codec/fx_codec.cpp",
-    "core/src/fxcodec/codec/fx_codec_bmp.cpp",
     "core/src/fxcodec/codec/fx_codec_fax.cpp",
     "core/src/fxcodec/codec/fx_codec_flate.cpp",
-    "core/src/fxcodec/codec/fx_codec_gif.cpp",
     "core/src/fxcodec/codec/fx_codec_icc.cpp",
     "core/src/fxcodec/codec/fx_codec_jbig.cpp",
     "core/src/fxcodec/codec/fx_codec_jpeg.cpp",
     "core/src/fxcodec/codec/fx_codec_jpx_opj.cpp",
-    "core/src/fxcodec/codec/fx_codec_png.cpp",
-    "core/src/fxcodec/codec/fx_codec_progress.cpp",
-    "core/src/fxcodec/codec/fx_codec_progress.h",
-    "core/src/fxcodec/codec/fx_codec_tiff.cpp",
     "core/src/fxcodec/jbig2/JBig2_ArithDecoder.cpp",
     "core/src/fxcodec/jbig2/JBig2_ArithDecoder.h",
     "core/src/fxcodec/jbig2/JBig2_ArithIntDecoder.cpp",
@@ -430,13 +423,26 @@ static_library("fxcodec") {
     "core/src/fxcodec/jbig2/JBig2_SymbolDict.h",
     "core/src/fxcodec/jbig2/JBig2_TrdProc.cpp",
     "core/src/fxcodec/jbig2/JBig2_TrdProc.h",
-    "core/src/fxcodec/lbmp/fx_bmp.cpp",
-    "core/src/fxcodec/lbmp/fx_bmp.h",
-    "core/src/fxcodec/lgif/fx_gif.cpp",
-    "core/src/fxcodec/lgif/fx_gif.h",
   ]
   include_dirs = []
-
+  if (pdf_enable_xfa) {
+    sources += [
+      "core/src/fxcodec/codec/fx_codec_bmp.cpp",
+      "core/src/fxcodec/codec/fx_codec_gif.cpp",
+      "core/src/fxcodec/codec/fx_codec_png.cpp",
+      "core/src/fxcodec/codec/fx_codec_progress.cpp",
+      "core/src/fxcodec/codec/fx_codec_progress.h",
+      "core/src/fxcodec/codec/fx_codec_tiff.cpp",
+      "core/src/fxcodec/lbmp/fx_bmp.cpp",
+      "core/src/fxcodec/lbmp/fx_bmp.h",
+      "core/src/fxcodec/lgif/fx_gif.cpp",
+      "core/src/fxcodec/lgif/fx_gif.h",
+    ]
+    deps += [
+      "third_party:fx_lpng",
+      "third_party:fx_tiff",
+    ]
+  }
   if (is_posix) {
     # core/src/fxcodec/fx_libopenjpeg/src/fx_mct.c does an pointer-to-int
     # conversion to check that an address is 16-bit aligned (benign).
@@ -456,7 +462,6 @@ config("fxge_warnings") {
 
 static_library("fxcrt") {
   sources = [
-    "core/include/fxcrt/fx_arb.h",
     "core/include/fxcrt/fx_basic.h",
     "core/include/fxcrt/fx_bidi.h",
     "core/include/fxcrt/fx_coordinates.h",
@@ -469,8 +474,6 @@ static_library("fxcrt") {
     "core/include/fxcrt/fx_ucd.h",
     "core/include/fxcrt/fx_xml.h",
     "core/src/fxcrt/extension.h",
-    "core/src/fxcrt/fx_arabic.cpp",
-    "core/src/fxcrt/fx_arabic.h",
     "core/src/fxcrt/fx_basic_array.cpp",
     "core/src/fxcrt/fx_basic_bstring.cpp",
     "core/src/fxcrt/fx_basic_buffer.cpp",
@@ -498,6 +501,13 @@ static_library("fxcrt") {
     "core/src/fxcrt/plex.h",
     "core/src/fxcrt/xml_int.h",
   ]
+  if (pdf_enable_xfa) {
+    sources += [
+      "core/include/fxcrt/fx_arb.h",
+      "core/src/fxcrt/fx_arabic.cpp",
+      "core/src/fxcrt/fx_arabic.h",
+    ]
+  }
   configs += [ ":pdfium_config" ]
 }
 
@@ -1427,7 +1437,7 @@ static_library("xfa") {
       "xfa/src/fxjse/src/value.cpp",
       "xfa/src/fxjse/src/value.h"
     ]
-    include_dirs = [
+    include_dirs += [
       "//v8",
       "//v8/include",
     ]
@@ -1460,8 +1470,6 @@ test("pdfium_unittests") {
     "core/src/fxcrt/fx_extension_unittest.cpp",
     "core/src/fxcrt/fx_system_unittest.cpp",
     "third_party/base/nonstd_unique_ptr_unittest.cpp",
-    "xfa/src/fxbarcode/pdf417/BC_PDF417HighLevelEncoder_unittest.cpp",
-    "xfa/src/fxfa/src/parser/xfa_utils_imp_unittest.cpp",
   ]
   deps = [
     "//testing/gtest",
@@ -1469,6 +1477,12 @@ test("pdfium_unittests") {
     ":pdfium",
     ":test_support",
   ]
+  if (pdf_enable_xfa) {
+    sources += [
+      "xfa/src/fxbarcode/pdf417/BC_PDF417HighLevelEncoder_unittest.cpp",
+      "xfa/src/fxfa/src/parser/xfa_utils_imp_unittest.cpp",
+    ]
+  }
   configs += [ ":pdfium_config" ]
 }
 

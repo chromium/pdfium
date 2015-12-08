@@ -31,8 +31,9 @@ config("pdfium_samples_config") {
 executable("pdfium_test") {
   testonly = true
   sources = [
-    "image_diff_png.cc",
     "pdfium_test.cc",
+    "image_diff_png.cc",
+    "image_diff_png.h",
   ]
   deps = [
     "//build/config/sanitizers:deps",
@@ -44,6 +45,9 @@ executable("pdfium_test") {
     # of results across platforms.
     "//third_party/pdfium/third_party:fx_freetype",
   ]
+  if (!pdf_enable_xfa) {
+    deps += [ "../third_party:fx_lpng" ]
+  }
   if (pdf_enable_v8) {
     deps += [ "//v8:v8_libplatform" ]
     include_dirs = [
@@ -65,6 +69,9 @@ executable("pdfium_diff") {
     "//build/config/sanitizers:deps",
     "//third_party/pdfium",
   ]
+  if (!pdf_enable_xfa) {
+    deps += [ "../third_party:fx_lpng" ]
+  }
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     ":pdfium_samples_config",
