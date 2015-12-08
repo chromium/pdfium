@@ -199,7 +199,6 @@ FX_BOOL app::viewerVersion(IJS_Context* cc,
                            CFX_WideString& sError) {
   if (!vp.IsGetting())
     return FALSE;
-
 #ifdef PDF_ENABLE_XFA
   CJS_Context* pContext = (CJS_Context*)cc;
   CPDFSDK_Document* pCurDoc = pContext->GetReaderDocument();
@@ -209,7 +208,6 @@ FX_BOOL app::viewerVersion(IJS_Context* cc,
     return TRUE;
   }
 #endif  // PDF_ENABLE_XFA
-
   vp << JS_NUM_VIEWERVERSION;
   return TRUE;
 }
@@ -219,15 +217,18 @@ FX_BOOL app::platform(IJS_Context* cc,
                       CFX_WideString& sError) {
   if (!vp.IsGetting())
     return FALSE;
+#ifdef PDF_ENABLE_XFA
   CPDFDoc_Environment* pEnv =
       static_cast<CJS_Context*>(cc)->GetJSRuntime()->GetReaderApp();
   if (!pEnv)
     return FALSE;
   CFX_WideString platfrom = pEnv->FFI_GetPlatform();
-  if (platfrom.IsEmpty())
-    vp << JS_STR_PLATFORM;
-  else
+  if (!platfrom.IsEmpty()) {
     vp << platfrom;
+    return TRUE;
+  }
+#endif
+  vp << JS_STR_PLATFORM;
   return TRUE;
 }
 
@@ -236,16 +237,18 @@ FX_BOOL app::language(IJS_Context* cc,
                       CFX_WideString& sError) {
   if (!vp.IsGetting())
     return FALSE;
+#ifdef PDF_ENABLE_XFA
   CPDFDoc_Environment* pEnv =
       static_cast<CJS_Context*>(cc)->GetJSRuntime()->GetReaderApp();
   if (!pEnv)
     return FALSE;
   CFX_WideString language = pEnv->FFI_GetLanguage();
-  if (language.IsEmpty())
-    vp << JS_STR_LANGUANGE;
-  else
+  if (!language.IsEmpty()) {
     vp << language;
-
+    return TRUE;
+  }
+#endif
+  vp << JS_STR_LANGUANGE;
   return TRUE;
 }
 
