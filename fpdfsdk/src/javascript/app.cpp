@@ -196,7 +196,6 @@ FX_BOOL app::viewerVersion(IJS_Context* cc,
                            CFX_WideString& sError) {
   if (!vp.IsGetting())
     return FALSE;
-
   vp << JS_NUM_VIEWERVERSION;
   return TRUE;
 }
@@ -204,23 +203,19 @@ FX_BOOL app::viewerVersion(IJS_Context* cc,
 FX_BOOL app::platform(IJS_Context* cc,
                       CJS_PropValue& vp,
                       CFX_WideString& sError) {
-  if (vp.IsGetting()) {
-    vp << JS_STR_PLATFORM;
-    return TRUE;
-  }
-
-  return FALSE;
+  if (!vp.IsGetting())
+    return FALSE;
+  vp << JS_STR_PLATFORM;
+  return TRUE;
 }
 
 FX_BOOL app::language(IJS_Context* cc,
                       CJS_PropValue& vp,
                       CFX_WideString& sError) {
-  if (vp.IsGetting()) {
-    vp << JS_STR_LANGUANGE;
-    return TRUE;
-  }
-
-  return FALSE;
+  if (!vp.IsGetting())
+    return FALSE;
+  vp << JS_STR_LANGUANGE;
+  return TRUE;
 }
 
 // creates a new fdf object that contains no data
