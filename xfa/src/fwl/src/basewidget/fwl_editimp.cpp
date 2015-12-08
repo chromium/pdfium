@@ -14,9 +14,6 @@
 #include "include/fwl_scrollbarimp.h"
 #include "include/fwl_editimp.h"
 #include "include/fwl_caretimp.h"
-IFWL_Edit* IFWL_Edit::Create() {
-  return new IFWL_Edit;
-}
 IFWL_Edit::IFWL_Edit() {
 }
 FWL_ERR IFWL_Edit::Initialize(const CFWL_WidgetImpProperties& properties,
@@ -168,10 +165,6 @@ CFWL_EditImp::CFWL_EditImp(IFWL_Widget* pOuter)
       m_bSetRange(FALSE),
       m_iMin(-1),
       m_iMax(0xFFFFFFF),
-      m_pVertScrollBar(NULL),
-      m_pHorzScrollBar(NULL),
-      m_pCaret(NULL),
-      m_pTextField(NULL),
       m_backColor(0),
       m_updateBackColor(FALSE),
       m_iCurRecord(-1),
@@ -196,10 +189,6 @@ CFWL_EditImp::CFWL_EditImp(const CFWL_WidgetImpProperties& properties,
       m_bSetRange(FALSE),
       m_iMin(-1),
       m_iMax(0xFFFFFFF),
-      m_pVertScrollBar(NULL),
-      m_pHorzScrollBar(NULL),
-      m_pCaret(NULL),
-      m_pTextField(NULL),
       m_backColor(0),
       m_updateBackColor(FALSE),
       m_iCurRecord(-1),
@@ -212,18 +201,6 @@ CFWL_EditImp::~CFWL_EditImp() {
   if (m_pEdtEngine) {
     m_pEdtEngine->Release();
     m_pEdtEngine = NULL;
-  }
-  if (m_pHorzScrollBar) {
-    m_pHorzScrollBar->Release();
-    m_pHorzScrollBar = NULL;
-  }
-  if (m_pVertScrollBar) {
-    m_pVertScrollBar->Release();
-    m_pVertScrollBar = NULL;
-  }
-  if (m_pCaret) {
-    m_pCaret->Release();
-    m_pCaret = NULL;
   }
   ClearRecord();
 }
@@ -1465,14 +1442,14 @@ IFWL_ScrollBar* CFWL_EditImp::UpdateScroll() {
       m_pHorzScrollBar->SetStates(FWL_WGTSTATE_Disabled, FALSE);
       m_pHorzScrollBar->UnlockUpdate();
       m_pHorzScrollBar->Update();
-      pRepaint = m_pHorzScrollBar;
+      pRepaint = m_pHorzScrollBar.get();
     } else if ((m_pHorzScrollBar->GetStates() & FWL_WGTSTATE_Disabled) == 0) {
       m_pHorzScrollBar->LockUpdate();
       m_pHorzScrollBar->SetRange(0, -1);
       m_pHorzScrollBar->SetStates(FWL_WGTSTATE_Disabled, TRUE);
       m_pHorzScrollBar->UnlockUpdate();
       m_pHorzScrollBar->Update();
-      pRepaint = m_pHorzScrollBar;
+      pRepaint = m_pHorzScrollBar.get();
     }
   }
   if (bShowVert) {
@@ -1500,14 +1477,14 @@ IFWL_ScrollBar* CFWL_EditImp::UpdateScroll() {
       m_pVertScrollBar->SetStates(FWL_WGTSTATE_Disabled, FALSE);
       m_pVertScrollBar->UnlockUpdate();
       m_pVertScrollBar->Update();
-      pRepaint = m_pVertScrollBar;
+      pRepaint = m_pVertScrollBar.get();
     } else if ((m_pVertScrollBar->GetStates() & FWL_WGTSTATE_Disabled) == 0) {
       m_pVertScrollBar->LockUpdate();
       m_pVertScrollBar->SetRange(0, -1);
       m_pVertScrollBar->SetStates(FWL_WGTSTATE_Disabled, TRUE);
       m_pVertScrollBar->UnlockUpdate();
       m_pVertScrollBar->Update();
-      pRepaint = m_pVertScrollBar;
+      pRepaint = m_pVertScrollBar.get();
     }
   }
   return pRepaint;
@@ -1693,9 +1670,9 @@ void CFWL_EditImp::InitScrollBar(FX_BOOL bVert) {
   prop.m_dwStates = FWL_WGTSTATE_Disabled | FWL_WGTSTATE_Invisible;
   prop.m_pParent = m_pInterface;
   prop.m_pThemeProvider = m_pProperties->m_pThemeProvider;
-  IFWL_ScrollBar* pScrollBar = IFWL_ScrollBar::Create();
+  IFWL_ScrollBar* pScrollBar = new IFWL_ScrollBar;
   pScrollBar->Initialize(prop, m_pInterface);
-  bVert ? (m_pVertScrollBar = pScrollBar) : (m_pHorzScrollBar = pScrollBar);
+  (bVert ? &m_pVertScrollBar : &m_pHorzScrollBar)->reset(pScrollBar);
 }
 void CFWL_EditImp::InitEngine() {
   if (m_pEdtEngine) {
@@ -1768,15 +1745,14 @@ FX_BOOL CFWL_EditImp::ValidateNumberChar(FX_WCHAR cNum) {
 void CFWL_EditImp::InitCaret() {
   if (!m_pCaret) {
     if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_InnerCaret)) {
-      m_pCaret = IFWL_Caret::Create();
+      m_pCaret.reset(new IFWL_Caret);
       m_pCaret->Initialize(m_pInterface);
       m_pCaret->SetParent(m_pInterface);
       m_pCaret->SetStates(m_pProperties->m_dwStates);
     }
   } else if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_InnerCaret) ==
              0) {
-    m_pCaret->Release();
-    m_pCaret = NULL;
+    m_pCaret.reset();
   }
 }
 void CFWL_EditImp::ClearRecord() {
@@ -1866,9 +1842,9 @@ FWL_ERR CFWL_EditImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
     return FWL_ERR_Succeeded;
   }
   IFWL_Widget* pSrcTarget = pEvent->m_pSrcTarget;
-  if ((pSrcTarget == m_pOwner->m_pVertScrollBar &&
+  if ((pSrcTarget == m_pOwner->m_pVertScrollBar.get() &&
        m_pOwner->m_pVertScrollBar) ||
-      (pSrcTarget == m_pOwner->m_pHorzScrollBar &&
+      (pSrcTarget == m_pOwner->m_pHorzScrollBar.get() &&
        m_pOwner->m_pHorzScrollBar)) {
     CFWL_EvtScroll* pScrollEvent = static_cast<CFWL_EvtScroll*>(pEvent);
     OnScroll(static_cast<IFWL_ScrollBar*>(pSrcTarget),

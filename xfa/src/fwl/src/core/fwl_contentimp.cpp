@@ -11,9 +11,6 @@
 #include "include/fwl_widgetimp.h"
 #include "include/fwl_contentimp.h"
 #include "include/fwl_widgetmgrimp.h"
-IFWL_Content* IFWL_Content::Create() {
-  return new IFWL_Content;
-}
 FWL_ERR IFWL_Content::InsertWidget(IFWL_Widget* pChild, int32_t nIndex) {
   return static_cast<CFWL_ContentImp*>(GetImpl())->InsertWidget(pChild, nIndex);
 }

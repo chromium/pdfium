@@ -11,9 +11,6 @@
 #include "include/fwl_widgetimp.h"
 #include "include/fwl_contentimp.h"
 #include "include/fwl_gridimp.h"
-IFWL_Grid* IFWL_Grid::Create() {
-  return new IFWL_Grid;
-}
 FWL_ERR IFWL_Grid::Initialize(CFWL_WidgetImpProperties& properties) {
   CFWL_GridImp* pGridImpl = new CFWL_GridImp(properties);
   SetImpl(pGridImpl);

@@ -12,9 +12,6 @@
 #define FWL_SPN_MinWidth 18
 #define FWL_SPN_MinHeight 32
 #define FWL_SPIN_Elapse 200
-IFWL_SpinButton* IFWL_SpinButton::Create() {
-  return new IFWL_SpinButton;
-}
 IFWL_SpinButton::IFWL_SpinButton() {
 }
 FWL_ERR IFWL_SpinButton::Initialize(const CFWL_WidgetImpProperties& properties,

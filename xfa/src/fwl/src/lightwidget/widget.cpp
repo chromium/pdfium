@@ -29,31 +29,6 @@ CFWL_WidgetImpProperties CFWL_WidgetProperties::MakeWidgetImpProperties(
 IFWL_Widget* CFWL_Widget::GetWidget() {
   return m_pIface;
 }
-FX_DWORD CFWL_Widget::Release() {
-  if (!m_pIface)
-    return 0;
-  FX_DWORD dwRef = m_pIface->GetRefCount();
-  if (dwRef == 1) {
-    m_pIface->Finalize();
-  }
-  m_pIface->Release();
-  if (dwRef == 1) {
-    m_pIface = NULL;
-    delete this;
-  }
-  return dwRef - 1;
-}
-CFWL_Widget* CFWL_Widget::Retain() {
-  if (!m_pIface)
-    return NULL;
-  m_pIface->Retain();
-  return this;
-}
-FX_DWORD CFWL_Widget::GetRefCount() const {
-  if (!m_pIface)
-    return 1;
-  return m_pIface->GetRefCount();
-}
 FWL_ERR CFWL_Widget::GetClassName(CFX_WideString& wsClass) const {
   if (!m_pIface)
     return FWL_ERR_Indefinite;
@@ -222,14 +197,10 @@ CFWL_Widget::CFWL_Widget()
   FXSYS_assert(m_pWidgetMgr != NULL);
 }
 CFWL_Widget::~CFWL_Widget() {
-  if (m_pProperties) {
-    delete m_pProperties;
-    m_pProperties = NULL;
-  }
+  delete m_pProperties;
   if (m_pIface) {
     m_pIface->Finalize();
-    m_pIface->Release();
-    m_pIface = NULL;
+    delete m_pIface;
   }
 }
 FWL_ERR CFWL_Widget::Repaint(const CFX_RectF* pRect) {

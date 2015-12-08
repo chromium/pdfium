@@ -6,6 +6,9 @@
 
 #ifndef _FWL_DATETIMEPICKER_IMP_H
 #define _FWL_DATETIMEPICKER_IMP_H
+
+#include "third_party/base/nonstd_unique_ptr.h"
+
 class CFWL_WidgetImp;
 class CFWL_WidgetImpProperties;
 class CFWL_WidgetImpDelegate;
@@ -164,9 +167,9 @@ class CFWL_DateTimePickerImp : public CFWL_WidgetImp {
   int32_t m_iMonth;
   int32_t m_iDay;
   FX_BOOL m_bLBtnDown;
-  IFWL_DateTimeEdit* m_pEdit;
-  IFWL_DateTimeCalender* m_pMonthCal;
-  IFWL_DateTimeForm* m_pForm;
+  nonstd::unique_ptr<IFWL_DateTimeEdit> m_pEdit;
+  nonstd::unique_ptr<IFWL_DateTimeCalender> m_pMonthCal;
+  nonstd::unique_ptr<IFWL_DateTimeForm> m_pForm;
   FX_FLOAT m_fBtn;
   class CFWL_MonthCalendarImpDP : public IFWL_MonthCalendarDP {
    public:

@@ -27,7 +27,7 @@ FWL_ERR CFWL_CheckBox::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (m_pProperties->m_pOwner) {
     prop.m_pOwner = m_pProperties->m_pOwner->GetWidget();
   }
-  m_pIface = IFWL_CheckBox::Create();
+  m_pIface = new IFWL_CheckBox;
   FWL_ERR ret = ((IFWL_CheckBox*)m_pIface)->Initialize(prop, nullptr);
   if (ret == FWL_ERR_Succeeded) {
     CFWL_Widget::Initialize();

@@ -14,7 +14,7 @@ FWL_ERR CFWL_PushButton::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  m_pIface = IFWL_PushButton::Create();
+  m_pIface = new IFWL_PushButton;
   FWL_ERR ret =
       ((IFWL_PushButton*)m_pIface)
           ->Initialize(m_pProperties->MakeWidgetImpProperties(&m_buttonData),

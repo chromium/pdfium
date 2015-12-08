@@ -65,7 +65,7 @@ enum FWL_COMMANDID {
 };
 class IFWL_Form : public IFWL_Panel {
  public:
-  static IFWL_Form* Create();
+  IFWL_Form();
   FWL_ERR Initialize(CFWL_WidgetImpProperties& properties,
                      CFX_WideString* classname,
                      IFWL_Widget* pOuter);
@@ -75,8 +75,5 @@ class IFWL_Form : public IFWL_Panel {
   IFWL_Widget* DoModal(FX_DWORD& dwCommandID);
   FWL_ERR EndDoModal();
   FWL_ERR SetBorderRegion(CFX_Path* pPath);
-
- protected:
-  IFWL_Form();
 };
 #endif

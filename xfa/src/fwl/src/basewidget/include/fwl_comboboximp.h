@@ -6,6 +6,9 @@
 
 #ifndef _FWL_COMBOBOX_IMP_H
 #define _FWL_COMBOBOX_IMP_H
+
+#include "third_party/base/nonstd_unique_ptr.h"
+
 class CFWL_WidgetImp;
 class CFWL_WidgetImpProperties;
 class CFWL_WidgetImpDelegate;
@@ -144,8 +147,6 @@ class CFWL_ComboBoxImp : public CFWL_WidgetImp {
   void ReSetListItemAlignment();
   void ProcessSelChanged(FX_BOOL bLButtonUp);
   void InitProxyForm();
-
- protected:
   FWL_ERR DisForm_Initialize();
   void DisForm_InitComboList();
   void DisForm_InitComboEdit();
@@ -160,15 +161,14 @@ class CFWL_ComboBoxImp : public CFWL_WidgetImp {
   FWL_ERR DisForm_GetBBox(CFX_RectF& rect);
   void DisForm_Layout();
 
- protected:
   CFX_RectF m_rtClient;
   CFX_RectF m_rtContent;
   CFX_RectF m_rtBtn;
   CFX_RectF m_rtList;
   CFX_RectF m_rtProxy;
   CFX_RectF m_rtHandler;
-  IFWL_Edit* m_pEdit;
-  IFWL_ListBox* m_pListBox;
+  nonstd::unique_ptr<IFWL_Edit> m_pEdit;
+  nonstd::unique_ptr<IFWL_ListBox> m_pListBox;
   IFWL_Form* m_pForm;
   FX_BOOL m_bLButtonDown;
   FX_BOOL m_bUpFormHandler;

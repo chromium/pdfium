@@ -20,7 +20,7 @@ FWL_ERR CFWL_ToolTip::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  m_pIface = IFWL_ToolTip::Create();
+  m_pIface = new IFWL_ToolTip;
   FWL_ERR ret =
       ((IFWL_ToolTip*)m_pIface)
           ->Initialize(m_pProperties->MakeWidgetImpProperties(&m_tooltipData),

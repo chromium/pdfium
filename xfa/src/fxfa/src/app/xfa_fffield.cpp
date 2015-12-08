@@ -127,10 +127,8 @@ FX_BOOL CXFA_FFField::LoadWidget() {
   return TRUE;
 }
 void CXFA_FFField::UnloadWidget() {
-  if (m_pNormalWidget) {
-    m_pNormalWidget->Release();
-    m_pNormalWidget = NULL;
-  }
+  delete m_pNormalWidget;
+  m_pNormalWidget = nullptr;
 }
 void CXFA_FFField::SetEditScrollOffset() {
   XFA_ELEMENT eType = m_pDataAcc->GetUIType();

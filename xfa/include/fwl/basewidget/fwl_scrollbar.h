@@ -47,7 +47,7 @@ enum FWL_SCBCODE {
 class IFWL_ScrollBarDP : public IFWL_DataProvider {};
 class IFWL_ScrollBar : public IFWL_Widget {
  public:
-  static IFWL_ScrollBar* Create();
+  IFWL_ScrollBar();
   FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
                      IFWL_Widget* pOuter);
   FX_BOOL IsVertical();
@@ -62,8 +62,5 @@ class IFWL_ScrollBar : public IFWL_Widget {
   FX_FLOAT GetTrackPos();
   FWL_ERR SetTrackPos(FX_FLOAT fTrackPos);
   FX_BOOL DoScroll(FX_DWORD dwCode, FX_FLOAT fPos = 0.0f);
-
- protected:
-  IFWL_ScrollBar();
 };
 #endif

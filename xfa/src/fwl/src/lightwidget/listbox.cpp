@@ -14,7 +14,7 @@ FWL_ERR CFWL_ListBox::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  m_pIface = IFWL_ListBox::Create();
+  m_pIface = new IFWL_ListBox;
   FWL_ERR ret =
       ((IFWL_ListBox*)m_pIface)
           ->Initialize(m_pProperties->MakeWidgetImpProperties(&m_ListBoxDP),

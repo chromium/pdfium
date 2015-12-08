@@ -16,7 +16,7 @@ class IFWL_Caret;
 #define FWL_PARTSTATE_CAT_HightLight 1
 class IFWL_Caret : public IFWL_Widget {
  public:
-  static IFWL_Caret* Create();
+  IFWL_Caret();
 
   FWL_ERR Initialize(IFWL_Widget* pOuter = NULL);
   FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
@@ -26,8 +26,5 @@ class IFWL_Caret : public IFWL_Widget {
   FWL_ERR GetFrequency(FX_DWORD& elapse);
   FWL_ERR SetFrequency(FX_DWORD elapse);
   FWL_ERR SetColor(CFX_Color crFill);
-
- protected:
-  IFWL_Caret();
 };
 #endif

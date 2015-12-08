@@ -16,7 +16,7 @@
 //      (nonesuch)              IFWL_Target ----------> CFWL_TargetImp
 //                                   |                       |
 //                                   A                       A
-//                   m_pIface         |                       |
+//                   m_pIface        |                       |
 //      CFWL_Widget ----------> IFWL_Widget             CFWL_WidgetImp
 //           |                       |                       |
 //           A                       A                       A
@@ -29,10 +29,8 @@ class CFWL_TargetImp;
 class IFWL_Target {
  public:
   IFWL_Target() : m_pImpl(nullptr) {}
+  virtual ~IFWL_Target();
 
-  FX_DWORD Release();
-  IFWL_Target* Retain();
-  FX_DWORD GetRefCount() const;
   FWL_ERR GetClassName(CFX_WideString& wsClass) const;
   FX_DWORD GetClassID() const;
   FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const;
@@ -41,9 +39,6 @@ class IFWL_Target {
 
   CFWL_TargetImp* GetImpl() const { return m_pImpl; }
   void SetImpl(CFWL_TargetImp* pImpl) { m_pImpl = pImpl; }
-
- protected:
-  virtual ~IFWL_Target();
 
  private:
   CFWL_TargetImp* m_pImpl;

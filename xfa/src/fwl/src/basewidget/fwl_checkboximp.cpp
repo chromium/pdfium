@@ -11,9 +11,6 @@
 #include "../core/include/fwl_widgetmgrimp.h"
 #include "include/fwl_checkboximp.h"
 #define FWL_CKB_CaptionMargin 5
-IFWL_CheckBox* IFWL_CheckBox::Create() {
-  return new IFWL_CheckBox;
-}
 IFWL_CheckBox::IFWL_CheckBox() {
 }
 FWL_ERR IFWL_CheckBox::Initialize(const CFWL_WidgetImpProperties& properties,
@@ -28,9 +25,6 @@ int32_t IFWL_CheckBox::GetCheckState() {
 }
 FWL_ERR IFWL_CheckBox::SetCheckState(int32_t iCheck) {
   return static_cast<CFWL_CheckBoxImp*>(GetImpl())->SetCheckState(iCheck);
-}
-IFWL_RadioButton* IFWL_RadioButton::Create() {
-  return new IFWL_RadioButton;
 }
 IFWL_RadioButton::IFWL_RadioButton() {
 }

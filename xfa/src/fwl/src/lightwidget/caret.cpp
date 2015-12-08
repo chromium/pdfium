@@ -14,7 +14,7 @@ FWL_ERR CFWL_Caret::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  m_pIface = IFWL_Caret::Create();
+  m_pIface = new IFWL_Caret;
   FWL_ERR ret =
       ((IFWL_Caret*)m_pIface)
           ->Initialize(m_pProperties->MakeWidgetImpProperties(nullptr),

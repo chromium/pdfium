@@ -1071,9 +1071,6 @@ FWL_ERR CFWL_CustomImp::SetProxy(IFWL_Proxy* pProxy) {
   m_pProxy = pProxy;
   return FWL_ERR_Succeeded;
 }
-IFWL_Custom* IFWL_Custom::Create() {
-  return new IFWL_Custom;
-}
 IFWL_Custom::IFWL_Custom() {
 }
 FWL_ERR IFWL_Custom::Initialize(const CFWL_WidgetImpProperties& properties,

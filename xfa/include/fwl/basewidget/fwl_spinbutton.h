@@ -27,16 +27,13 @@ class IFWL_SpinButton;
 BEGIN_FWL_EVENT_DEF(CFWL_EvtSpbClick, FWL_EVTHASH_SPB_Click)
 FX_BOOL m_bUp;
 END_FWL_EVENT_DEF
+
 class IFWL_SpinButton : public IFWL_Widget {
  public:
-  static IFWL_SpinButton* Create();
-
+  IFWL_SpinButton();
   FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
                      IFWL_Widget* pOuter);
   FWL_ERR EnableButton(FX_BOOL bEnable, FX_BOOL bUp = TRUE);
   FX_BOOL IsButtonEnable(FX_BOOL bUp = TRUE);
-
- protected:
-  IFWL_SpinButton();
 };
 #endif

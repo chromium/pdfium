@@ -9,9 +9,6 @@
 #include "../core/include/fwl_noteimp.h"
 #include "../core/include/fwl_widgetimp.h"
 #include "include/fwl_caretimp.h"
-IFWL_Caret* IFWL_Caret::Create() {
-  return new IFWL_Caret;
-}
 IFWL_Caret::IFWL_Caret() {
 }
 FWL_ERR IFWL_Caret::Initialize(IFWL_Widget* pOuter) {

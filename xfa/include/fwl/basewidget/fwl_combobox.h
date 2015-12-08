@@ -97,7 +97,7 @@ class IFWL_ComboBoxDP : public IFWL_ListBoxDP {
 };
 class IFWL_ComboBox : public IFWL_Widget {
  public:
-  static IFWL_ComboBox* Create();
+  IFWL_ComboBox();
   FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
                      IFWL_Widget* pOuter);
   int32_t GetCurSel();
@@ -133,8 +133,5 @@ class IFWL_ComboBox : public IFWL_Widget {
   FWL_ERR GetBBox(CFX_RectF& rect);
   FWL_ERR EditModifyStylesEx(FX_DWORD dwStylesExAdded,
                              FX_DWORD dwStylesExRemoved);
-
- protected:
-  IFWL_ComboBox();
 };
 #endif

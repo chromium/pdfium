@@ -14,9 +14,6 @@ class CFWL_TargetImp {
  public:
   virtual ~CFWL_TargetImp();
 
-  virtual FX_DWORD Release();
-  virtual IFWL_Target* Retain();
-  virtual FX_DWORD GetRefCount() const;
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
   virtual FX_DWORD GetClassID() const;
   virtual FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const;
@@ -25,7 +22,6 @@ class CFWL_TargetImp {
 
  protected:
   CFWL_TargetImp();
-  FX_DWORD m_dwRefCount;
 };
 
 #endif  // FWL_TARGETIMP_H_

@@ -9,9 +9,6 @@
 #include "../core/include/fwl_noteimp.h"
 #include "../core/include/fwl_widgetimp.h"
 #include "include/fwl_pushbuttonimp.h"
-IFWL_PushButton* IFWL_PushButton::Create() {
-  return new IFWL_PushButton;
-}
 FWL_ERR IFWL_PushButton::Initialize(const CFWL_WidgetImpProperties& properties,
                                     IFWL_Widget* pOuter) {
   CFWL_PushButtonImp* pPushButtonImpl =

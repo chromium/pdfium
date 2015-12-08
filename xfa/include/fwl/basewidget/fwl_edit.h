@@ -112,7 +112,8 @@ class IFWL_EditDP : public IFWL_DataProvider {};
 typedef struct _FWL_HEDTFIND { void* pData; } * FWL_HEDTFIND;
 class IFWL_Edit : public IFWL_Widget {
  public:
-  static IFWL_Edit* Create();
+  IFWL_Edit();
+
   FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
                      IFWL_Widget* pOuter);
   FWL_ERR SetText(const CFX_WideString& wsText);
@@ -158,8 +159,5 @@ class IFWL_Edit : public IFWL_Widget {
   FX_BOOL GetSuggestWords(CFX_PointF pointf, CFX_ByteStringArray& sSuggest);
   FX_BOOL ReplaceSpellCheckWord(CFX_PointF pointf,
                                 const CFX_ByteStringC& bsReplace);
-
- protected:
-  IFWL_Edit();
 };
 #endif

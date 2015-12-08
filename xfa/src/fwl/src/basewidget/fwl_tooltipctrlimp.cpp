@@ -11,9 +11,6 @@
 #include "../core/include/fwl_panelimp.h"
 #include "../core/include/fwl_formimp.h"
 #include "include/fwl_tooltipctrlimp.h"
-IFWL_ToolTip* IFWL_ToolTip::Create() {
-  return new IFWL_ToolTip;
-}
 FWL_ERR IFWL_ToolTip::Initialize(const CFWL_WidgetImpProperties& properties,
                                  IFWL_Widget* pOuter) {
   CFWL_ToolTipImp* pToolTipImpl = new CFWL_ToolTipImp(properties, pOuter);

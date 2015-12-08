@@ -6,6 +6,9 @@
 
 #ifndef _FWL_EDIT_IMP_H
 #define _FWL_EDIT_IMP_H
+
+#include "third_party/base/nonstd_unique_ptr.h"
+
 class CFWL_WidgetImp;
 class CFWL_WidgetImpProperties;
 class CFWL_WidgetImpDelegate;
@@ -163,10 +166,9 @@ class CFWL_EditImp : public CFWL_WidgetImp, public IFDE_TxtEdtEventSink {
   FX_BOOL m_bSetRange;
   int32_t m_iMin;
   int32_t m_iMax;
-  IFWL_ScrollBar* m_pVertScrollBar;
-  IFWL_ScrollBar* m_pHorzScrollBar;
-  IFWL_Caret* m_pCaret;
-  IFWL_AdapterTextField* m_pTextField;
+  nonstd::unique_ptr<IFWL_ScrollBar> m_pVertScrollBar;
+  nonstd::unique_ptr<IFWL_ScrollBar> m_pHorzScrollBar;
+  nonstd::unique_ptr<IFWL_Caret> m_pCaret;
   CFX_WideString m_wsCache;
   friend class CFWL_TxtEdtEventSink;
   friend class CFWL_EditImpDelegate;

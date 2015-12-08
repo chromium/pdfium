@@ -10,9 +10,6 @@
 #include "../core/include/fwl_widgetimp.h"
 #include "include/fwl_editimp.h"
 #include "include/fwl_barcodeimp.h"
-IFWL_Barcode* IFWL_Barcode::Create() {
-  return new IFWL_Barcode;
-}
 IFWL_Barcode::IFWL_Barcode() {
 }
 FWL_ERR IFWL_Barcode::Initialize(const CFWL_WidgetImpProperties& properties,

@@ -14,7 +14,7 @@ FWL_ERR CFWL_PictureBox::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  m_pIface = IFWL_PictureBox::Create();
+  m_pIface = new IFWL_PictureBox;
   FWL_ERR ret =
       ((IFWL_PictureBox*)m_pIface)
           ->Initialize(m_pProperties->MakeWidgetImpProperties(&m_PictureBoxDP),

@@ -15,7 +15,7 @@ FWL_ERR CFWL_DateTimePicker::Initialize(
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  m_pIface = IFWL_DateTimePicker::Create();
+  m_pIface = new IFWL_DateTimePicker;
   FWL_ERR ret =
       ((IFWL_DateTimePicker*)m_pIface)
           ->Initialize(

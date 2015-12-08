@@ -14,7 +14,7 @@ FWL_ERR CFWL_ComboBox::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  m_pIface = IFWL_ComboBox::Create();
+  m_pIface = new IFWL_ComboBox;
   FWL_ERR ret =
       ((IFWL_ComboBox*)m_pIface)
           ->Initialize(m_pProperties->MakeWidgetImpProperties(&m_comboBoxData),

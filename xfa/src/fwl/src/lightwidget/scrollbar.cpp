@@ -14,7 +14,7 @@ FWL_ERR CFWL_ScrollBar::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  m_pIface = IFWL_ScrollBar::Create();
+  m_pIface = new IFWL_ScrollBar;
   FWL_ERR ret =
       ((IFWL_ScrollBar*)m_pIface)
           ->Initialize(m_pProperties->MakeWidgetImpProperties(nullptr),

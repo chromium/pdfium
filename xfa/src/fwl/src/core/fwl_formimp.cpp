@@ -17,9 +17,6 @@
 #define FWL_SYSBTNMARGIN 5
 #define FWL_SYSBTNSPAN 2
 #define FWL_CornerEnlarge 10
-IFWL_Form* IFWL_Form::Create() {
-  return new IFWL_Form;
-}
 FWL_ERR IFWL_Form::Initialize(CFWL_WidgetImpProperties& properties,
                               CFX_WideString* classname,
                               IFWL_Widget* pOuter) {

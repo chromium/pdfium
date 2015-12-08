@@ -49,13 +49,10 @@ class IFWL_BarcodeDP : public IFWL_EditDP {
 };
 class IFWL_Barcode : public IFWL_Edit {
  public:
-  static IFWL_Barcode* Create();
+  IFWL_Barcode();
   FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
                      IFWL_Widget* pOuter);
   void SetType(BC_TYPE type);
   FX_BOOL IsProtectedType();
-
- protected:
-  IFWL_Barcode();
 };
 #endif

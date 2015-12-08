@@ -70,24 +70,19 @@ class IFWL_CheckBoxDP : public IFWL_DataProvider {
 };
 class IFWL_CheckBox : public IFWL_Widget {
  public:
-  static IFWL_CheckBox* Create();
+  IFWL_CheckBox();
   FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
                      IFWL_Widget* pOuter);
   int32_t GetCheckState();
   FWL_ERR SetCheckState(int32_t iCheck);
 
- protected:
-  IFWL_CheckBox();
 };
 class IFWL_RadioButton : public IFWL_Widget {
  public:
-  static IFWL_RadioButton* Create();
+  IFWL_RadioButton();
   FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
                      IFWL_Widget* pOuter);
   int32_t GetCheckState();
   FWL_ERR SetCheckState(int32_t iCheck);
-
- protected:
-  IFWL_RadioButton();
 };
 #endif

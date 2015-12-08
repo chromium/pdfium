@@ -11,9 +11,6 @@
 #include "include/fwl_scrollbarimp.h"
 #define FWL_SCROLLBAR_Elapse 500
 #define FWL_SCROLLBAR_MinThumb 5
-IFWL_ScrollBar* IFWL_ScrollBar::Create() {
-  return new IFWL_ScrollBar;
-}
 IFWL_ScrollBar::IFWL_ScrollBar() {
 }
 FWL_ERR IFWL_ScrollBar::Initialize(const CFWL_WidgetImpProperties& properties,

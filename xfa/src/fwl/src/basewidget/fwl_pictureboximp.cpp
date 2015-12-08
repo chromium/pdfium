@@ -9,9 +9,6 @@
 #include "../core/include/fwl_noteimp.h"
 #include "../core/include/fwl_widgetimp.h"
 #include "include/fwl_pictureboximp.h"
-IFWL_PictureBox* IFWL_PictureBox::Create() {
-  return new IFWL_PictureBox;
-}
 IFWL_PictureBox::IFWL_PictureBox() {
 }
 FWL_ERR IFWL_PictureBox::Initialize(const CFWL_WidgetImpProperties& properties,

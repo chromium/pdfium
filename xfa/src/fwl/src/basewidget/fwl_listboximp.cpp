@@ -11,9 +11,6 @@
 #include "include/fwl_scrollbarimp.h"
 #include "include/fwl_listboximp.h"
 #define FWL_LISTBOX_ItemTextMargin 2
-IFWL_ListBox* IFWL_ListBox::Create() {
-  return new IFWL_ListBox;
-}
 IFWL_ListBox::IFWL_ListBox() {
 }
 FWL_ERR IFWL_ListBox::Initialize(const CFWL_WidgetImpProperties& properties,
@@ -46,8 +43,6 @@ FWL_ERR* IFWL_ListBox::Sort(IFWL_ListBoxCompare* pCom) {
 }
 CFWL_ListBoxImp::CFWL_ListBoxImp(IFWL_Widget* pOuter)
     : CFWL_WidgetImp(pOuter),
-      m_pHorzScrollBar(NULL),
-      m_pVertScrollBar(NULL),
       m_dwTTOStyles(0),
       m_iTTOAligns(0),
       m_hAnchor(NULL),
@@ -61,8 +56,6 @@ CFWL_ListBoxImp::CFWL_ListBoxImp(IFWL_Widget* pOuter)
 CFWL_ListBoxImp::CFWL_ListBoxImp(const CFWL_WidgetImpProperties& properties,
                                  IFWL_Widget* pOuter)
     : CFWL_WidgetImp(properties, pOuter),
-      m_pHorzScrollBar(NULL),
-      m_pVertScrollBar(NULL),
       m_dwTTOStyles(0),
       m_iTTOAligns(0),
       m_hAnchor(NULL),
@@ -74,14 +67,6 @@ CFWL_ListBoxImp::CFWL_ListBoxImp(const CFWL_WidgetImpProperties& properties,
   m_rtStatic.Reset();
 }
 CFWL_ListBoxImp::~CFWL_ListBoxImp() {
-  if (m_pVertScrollBar) {
-    m_pVertScrollBar->Release();
-    m_pVertScrollBar = NULL;
-  }
-  if (m_pHorzScrollBar) {
-    m_pHorzScrollBar->Release();
-    m_pHorzScrollBar = NULL;
-  }
 }
 FWL_ERR CFWL_ListBoxImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_ListBox;
@@ -309,7 +294,8 @@ FWL_ERR CFWL_ListBoxImp::GetItemText(FWL_HLISTITEM hItem,
 }
 FWL_ERR CFWL_ListBoxImp::GetScrollPos(FX_FLOAT& fPos, FX_BOOL bVert) {
   if ((bVert && IsShowScrollBar(TRUE)) || (!bVert && IsShowScrollBar(FALSE))) {
-    IFWL_ScrollBar* pScrollBar = bVert ? m_pVertScrollBar : m_pHorzScrollBar;
+    IFWL_ScrollBar* pScrollBar =
+        bVert ? m_pVertScrollBar.get() : m_pHorzScrollBar.get();
     fPos = pScrollBar->GetPos();
     return FWL_ERR_Succeeded;
   }
@@ -959,13 +945,14 @@ void CFWL_ListBoxImp::InitScrollBar(FX_BOOL bVert) {
   prop.m_dwStates = FWL_WGTSTATE_Invisible;
   prop.m_pParent = m_pInterface;
   prop.m_pThemeProvider = m_pScrollBarTP;
-  IFWL_ScrollBar* pScrollBar = IFWL_ScrollBar::Create();
+  IFWL_ScrollBar* pScrollBar = new IFWL_ScrollBar;
   pScrollBar->Initialize(prop, m_pInterface);
-  bVert ? (m_pVertScrollBar = pScrollBar) : (m_pHorzScrollBar = pScrollBar);
+  (bVert ? &m_pVertScrollBar : &m_pHorzScrollBar)->reset(pScrollBar);
 }
 void CFWL_ListBoxImp::SortItem() {}
 FX_BOOL CFWL_ListBoxImp::IsShowScrollBar(FX_BOOL bVert) {
-  IFWL_ScrollBar* pScrollbar = bVert ? m_pVertScrollBar : m_pHorzScrollBar;
+  IFWL_ScrollBar* pScrollbar =
+      bVert ? m_pVertScrollBar.get() : m_pHorzScrollBar.get();
   if (!pScrollbar || (pScrollbar->GetStates() & FWL_WGTSTATE_Invisible)) {
     return FALSE;
   }
@@ -1041,9 +1028,9 @@ FWL_ERR CFWL_ListBoxImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
     return FWL_ERR_Succeeded;
   }
   IFWL_Widget* pSrcTarget = pEvent->m_pSrcTarget;
-  if ((pSrcTarget == m_pOwner->m_pVertScrollBar &&
+  if ((pSrcTarget == m_pOwner->m_pVertScrollBar.get() &&
        m_pOwner->m_pVertScrollBar) ||
-      (pSrcTarget == m_pOwner->m_pHorzScrollBar &&
+      (pSrcTarget == m_pOwner->m_pHorzScrollBar.get() &&
        m_pOwner->m_pHorzScrollBar)) {
     CFWL_EvtScroll* pScrollEvent = static_cast<CFWL_EvtScroll*>(pEvent);
     OnScroll(static_cast<IFWL_ScrollBar*>(pSrcTarget),

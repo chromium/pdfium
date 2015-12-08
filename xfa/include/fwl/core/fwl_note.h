@@ -120,6 +120,9 @@ class IFWL_NoteLoop;
 #define FWL_KEYFLAG_LButton (1 << 4)
 #define FWL_KEYFLAG_RButton (1 << 5)
 #define FWL_KEYFLAG_MButton (1 << 6)
+
+// Separate hierarchy not related to IFWL_* hierarchy. These should not
+// get cast to IFWL_* types.
 class CFWL_Note {
  public:
   virtual FX_DWORD Release() {
@@ -130,9 +133,9 @@ class CFWL_Note {
     }
     return dwRefCount;
   }
-  virtual IFWL_Target* Retain() {
+  virtual CFWL_Note* Retain() {
     m_dwRefCount++;
-    return (IFWL_Target*)this;
+    return this;
   }
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const {
     wsClass = L"CFWL_Note";

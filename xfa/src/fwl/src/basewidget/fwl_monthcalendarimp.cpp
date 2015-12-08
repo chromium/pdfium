@@ -17,9 +17,6 @@
 #define MONTHCAL_COLUMNS 7
 #define MONTHCAL_HEADER_BTN_VMARGIN 7
 #define MONTHCAL_HEADER_BTN_HMARGIN 5
-IFWL_MonthCalendar* IFWL_MonthCalendar::Create() {
-  return new IFWL_MonthCalendar;
-}
 IFWL_MonthCalendar::IFWL_MonthCalendar() {
 }
 FWL_ERR IFWL_MonthCalendar::Initialize(

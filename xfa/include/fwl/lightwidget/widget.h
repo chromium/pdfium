@@ -41,10 +41,8 @@ class CFWL_WidgetProperties {
 
 class CFWL_Widget {
  public:
+  virtual ~CFWL_Widget();
   IFWL_Widget* GetWidget();
-  FX_DWORD Release();
-  CFWL_Widget* Retain();
-  FX_DWORD GetRefCount() const;
   FWL_ERR GetClassName(CFX_WideString& wsClass) const;
   FX_DWORD GetClassID() const;
   virtual FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const;
@@ -85,7 +83,7 @@ class CFWL_Widget {
   FWL_ERR SetFocus(FX_BOOL bFocus);
   FWL_ERR SetGrab(FX_BOOL bSet);
   CFWL_Widget();
-  virtual ~CFWL_Widget();
+
   void RegisterEventTarget(CFWL_Widget* pEventSource = NULL,
                            FX_DWORD dwFilter = FWL_EVENT_ALL_MASK);
   void DispatchEvent(CFWL_Event* pEvent);

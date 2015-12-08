@@ -937,13 +937,9 @@ CFWL_ToolTipContainer::~CFWL_ToolTipContainer() {
   if (m_pToolTipImp) {
     IFWL_ToolTip* pToolTip = (IFWL_ToolTip*)m_pToolTipImp->GetInterface();
     pToolTip->Finalize();
-    pToolTip->Release();
-    m_pToolTipImp = NULL;
+    delete pToolTip;
   }
-  if (m_ToolTipDp) {
-    delete m_ToolTipDp;
-    m_ToolTipDp = NULL;
-  }
+  delete m_ToolTipDp;
 }
 // static
 CFWL_ToolTipContainer* CFWL_ToolTipContainer::getInstance() {
@@ -996,7 +992,7 @@ FX_BOOL CFWL_ToolTipContainer::ProcessEnter(CFWL_EvtMouse* pEvt,
       rtTooltip.Set(150, 150, 100, 50);
       prop.m_rtWidget = rtTooltip;
       m_pToolTipImp = new CFWL_ToolTipImp(prop);
-      IFWL_ToolTip* pToolTip = IFWL_ToolTip::Create();
+      IFWL_ToolTip* pToolTip = new IFWL_ToolTip;
       m_pToolTipImp->SetInterface(pToolTip);
       pToolTip->SetImpl(m_pToolTipImp);
       m_pToolTipImp->Initialize();

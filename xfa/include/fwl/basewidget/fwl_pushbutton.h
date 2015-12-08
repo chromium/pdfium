@@ -45,11 +45,8 @@ class IFWL_PushButtonDP : public IFWL_DataProvider {
 };
 class IFWL_PushButton : public IFWL_Widget {
  public:
-  static IFWL_PushButton* Create();
+  IFWL_PushButton();
   FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
                      IFWL_Widget* pOuter);
-
- protected:
-  IFWL_PushButton();
 };
 #endif

@@ -9,9 +9,6 @@
 #include "include/fwl_noteimp.h"
 #include "include/fwl_widgetimp.h"
 #include "include/fwl_panelimp.h"
-IFWL_Panel* IFWL_Panel::Create() {
-  return new IFWL_Panel;
-}
 FWL_ERR IFWL_Panel::Initialize(CFWL_WidgetImpProperties& properties,
                                IFWL_Widget* pOuter) {
   CFWL_PanelImp* pPanelImpl = new CFWL_PanelImp(properties, pOuter);
@@ -129,9 +126,6 @@ FWL_ERR CFWL_CustomPanelImp::SetContent(IFWL_Content* pContent) {
 FWL_ERR CFWL_CustomPanelImp::SetProxy(IFWL_Proxy* pProxy) {
   m_pProxy = pProxy;
   return FWL_ERR_Succeeded;
-}
-IFWL_CustomPanel* IFWL_CustomPanel::Create() {
-  return new IFWL_CustomPanel;
 }
 FWL_ERR IFWL_CustomPanel::Initialize(CFWL_WidgetImpProperties& properties,
                                      IFWL_Widget* pOuter) {
