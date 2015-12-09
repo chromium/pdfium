@@ -609,10 +609,7 @@ static_library("fxge") {
       "core/src/fxge/win32/fx_win32_print.cpp",
       "core/src/fxge/win32/win32_int.h",
     ]
-    configs -= [
-      "//build/config/win:lean_and_mean",
-      "//build/config/win:nominmax",
-    ]
+    configs -= [ "//build/config/win:lean_and_mean" ]
   }
 }
 

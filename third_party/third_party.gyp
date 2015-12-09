@@ -3,6 +3,9 @@
 # found in the LICENSE file.
 
 {
+  'variables': {
+    'pdf_enable_xfa%': 0,  # Set to 1 by standalone.gypi in standalone builds.
+  },
   'target_defaults': {
     'defines': [
       'OPJ_STATIC',
@@ -58,6 +61,7 @@
         'freetype/include/freetype/tttables.h',
         'freetype/include/ft2build.h',
         'freetype/src/base/ftbase.c',
+        'freetype/src/base/ftbase.h',
         'freetype/src/base/ftbitmap.c',
         'freetype/src/base/ftglyph.c',
         'freetype/src/base/ftinit.c',
@@ -77,6 +81,13 @@
         'freetype/src/truetype/truetype.c',
         'freetype/src/type1/type1.c',
       ],
+      'variables': {
+        'clang_warning_flags': [
+          # open_face_PS_from_sfnt_stream() and open_face_from_buffer() in
+          # ftbase.h are unused.
+          '-Wno-unused-function',
+        ],
+      },
     },
     {
       'target_name': 'fx_agg',
@@ -104,6 +115,12 @@
           'cflags': [ '-Wno-extra', ],
         }],
       ],
+      'variables': {
+        'clang_warning_flags': [
+          # calc_butt_cap() in agg_vcgen_stroke.cpp is unused.
+          '-Wno-unused-function',
+        ],
+      },
     },
     {
       'target_name': 'fx_lcms2',
@@ -149,6 +166,8 @@
       'variables': {
         'clang_warning_flags': [
           '-Wno-missing-braces',
+          # FindPrev() in cmsplugin.c is unused.
+          '-Wno-unused-function',
         ],
       },
     },
@@ -269,48 +288,6 @@
       ],
     },
     {
-      'target_name': 'fx_tiff',
-      'type': 'static_library',
-      'sources': [
-        'tiff_v403/tiffiop.h',
-        'tiff_v403/tif_aux.c',
-        'tiff_v403/tif_close.c',
-        'tiff_v403/tif_codec.c',
-        'tiff_v403/tif_color.c',
-        'tiff_v403/tif_compress.c',
-        'tiff_v403/tif_dir.c',
-        'tiff_v403/tif_dirinfo.c',
-        'tiff_v403/tif_dirread.c',
-        'tiff_v403/tif_dirwrite.c',
-        'tiff_v403/tif_dumpmode.c',
-        'tiff_v403/tif_error.c',
-        'tiff_v403/tif_extension.c',
-        'tiff_v403/tif_fax3.c',
-        'tiff_v403/tif_fax3sm.c',
-        'tiff_v403/tif_flush.c',
-        'tiff_v403/tif_getimage.c',
-        'tiff_v403/tif_jpeg.c',
-        'tiff_v403/tif_luv.c',
-        'tiff_v403/tif_lzw.c',
-        'tiff_v403/tif_next.c',
-        'tiff_v403/tif_ojpeg.c',
-        'tiff_v403/tif_open.c',
-        'tiff_v403/tif_packbits.c',
-        'tiff_v403/tif_pixarlog.c',
-        'tiff_v403/tif_predict.c',
-        'tiff_v403/tif_print.c',
-        'tiff_v403/tif_read.c',
-        'tiff_v403/tif_strip.c',
-        'tiff_v403/tif_swab.c',
-        'tiff_v403/tif_thunder.c',
-        'tiff_v403/tif_tile.c',
-        'tiff_v403/tif_version.c',
-        'tiff_v403/tif_warning.c',
-        'tiff_v403/tif_write.c',
-        'tiff_v403/tif_zip.c',
-      ],
-    },
-    {
       'target_name': 'fx_zlib',
       'type': 'static_library',
       'sources': [
@@ -346,5 +323,53 @@
         'base/template_util.h',
       ],
     },
+  ],
+  'conditions': [
+    ['pdf_enable_xfa==1', {
+      'targets': [
+        {
+          'target_name': 'fx_tiff',
+          'type': 'static_library',
+          'sources': [
+            'tiff_v403/tiffiop.h',
+            'tiff_v403/tif_aux.c',
+            'tiff_v403/tif_close.c',
+            'tiff_v403/tif_codec.c',
+            'tiff_v403/tif_color.c',
+            'tiff_v403/tif_compress.c',
+            'tiff_v403/tif_dir.c',
+            'tiff_v403/tif_dirinfo.c',
+            'tiff_v403/tif_dirread.c',
+            'tiff_v403/tif_dirwrite.c',
+            'tiff_v403/tif_dumpmode.c',
+            'tiff_v403/tif_error.c',
+            'tiff_v403/tif_extension.c',
+            'tiff_v403/tif_fax3.c',
+            'tiff_v403/tif_fax3sm.c',
+            'tiff_v403/tif_flush.c',
+            'tiff_v403/tif_getimage.c',
+            'tiff_v403/tif_jpeg.c',
+            'tiff_v403/tif_luv.c',
+            'tiff_v403/tif_lzw.c',
+            'tiff_v403/tif_next.c',
+            'tiff_v403/tif_ojpeg.c',
+            'tiff_v403/tif_open.c',
+            'tiff_v403/tif_packbits.c',
+            'tiff_v403/tif_pixarlog.c',
+            'tiff_v403/tif_predict.c',
+            'tiff_v403/tif_print.c',
+            'tiff_v403/tif_read.c',
+            'tiff_v403/tif_strip.c',
+            'tiff_v403/tif_swab.c',
+            'tiff_v403/tif_thunder.c',
+            'tiff_v403/tif_tile.c',
+            'tiff_v403/tif_version.c',
+            'tiff_v403/tif_warning.c',
+            'tiff_v403/tif_write.c',
+            'tiff_v403/tif_zip.c',
+          ],
+        },
+      ],
+    }],
   ],
 }

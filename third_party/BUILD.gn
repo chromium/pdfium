@@ -2,6 +2,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import("../pdfium.gni")
+
 group("third_party") {
   deps = [
     ":bigint",
@@ -10,23 +12,23 @@ group("third_party") {
   ]
 }
 
-static_library("bigint") {
+source_set("bigint") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
     "//third_party/pdfium:pdfium_config",
   ]
   sources = [
+    "bigint/BigInteger.cc",
     "bigint/BigInteger.hh",
     "bigint/BigIntegerLibrary.hh",
-    "bigint/BigIntegerUtils.hh",
-    "bigint/BigUnsigned.hh",
-    "bigint/NumberlikeArray.hh",
-    "bigint/BigUnsignedInABase.hh",
-    "bigint/BigInteger.cc",
     "bigint/BigIntegerUtils.cc",
+    "bigint/BigIntegerUtils.hh",
     "bigint/BigUnsigned.cc",
+    "bigint/BigUnsigned.hh",
     "bigint/BigUnsignedInABase.cc",
+    "bigint/BigUnsignedInABase.hh",
+    "bigint/NumberlikeArray.hh",
   ]
 }
 
@@ -39,7 +41,9 @@ config("fx_freetype_warnings") {
   }
 }
 
-source_set("fx_freetype") {
+# Tests may link against this even if the production library doesn't,
+# so it needs to be separate from it.
+static_library("fx_freetype") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
@@ -119,6 +123,7 @@ source_set("fx_agg") {
 }
 
 config("fx_lcms2_warnings") {
+  visibility = [ ":*" ]
   if (is_clang) {
     cflags = [
       # cmslut.cc is sloppy with aggregate initialization. Version 2.7 of this
@@ -292,50 +297,52 @@ source_set("fx_lpng") {
   ]
 }
 
-source_set("fx_tiff") {
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    "//build/config/compiler:no_chromium_code",
-    "//third_party/pdfium:pdfium_config",
-  ]
-  sources = [
-    "tiff_v403/tiffiop.h",
-    "tiff_v403/tif_aux.c",
-    "tiff_v403/tif_close.c",
-    "tiff_v403/tif_codec.c",
-    "tiff_v403/tif_color.c",
-    "tiff_v403/tif_compress.c",
-    "tiff_v403/tif_dir.c",
-    "tiff_v403/tif_dirinfo.c",
-    "tiff_v403/tif_dirread.c",
-    "tiff_v403/tif_dirwrite.c",
-    "tiff_v403/tif_dumpmode.c",
-    "tiff_v403/tif_error.c",
-    "tiff_v403/tif_extension.c",
-    "tiff_v403/tif_fax3.c",
-    "tiff_v403/tif_fax3sm.c",
-    "tiff_v403/tif_flush.c",
-    "tiff_v403/tif_getimage.c",
-    "tiff_v403/tif_jpeg.c",
-    "tiff_v403/tif_luv.c",
-    "tiff_v403/tif_lzw.c",
-    "tiff_v403/tif_next.c",
-    "tiff_v403/tif_ojpeg.c",
-    "tiff_v403/tif_open.c",
-    "tiff_v403/tif_packbits.c",
-    "tiff_v403/tif_pixarlog.c",
-    "tiff_v403/tif_predict.c",
-    "tiff_v403/tif_print.c",
-    "tiff_v403/tif_read.c",
-    "tiff_v403/tif_strip.c",
-    "tiff_v403/tif_swab.c",
-    "tiff_v403/tif_thunder.c",
-    "tiff_v403/tif_tile.c",
-    "tiff_v403/tif_version.c",
-    "tiff_v403/tif_warning.c",
-    "tiff_v403/tif_write.c",
-    "tiff_v403/tif_zip.c",
-  ]
+if (pdf_enable_xfa) {
+  source_set("fx_tiff") {
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    configs += [
+      "//build/config/compiler:no_chromium_code",
+      "//third_party/pdfium:pdfium_config",
+    ]
+    sources = [
+      "tiff_v403/tiffiop.h",
+      "tiff_v403/tif_aux.c",
+      "tiff_v403/tif_close.c",
+      "tiff_v403/tif_codec.c",
+      "tiff_v403/tif_color.c",
+      "tiff_v403/tif_compress.c",
+      "tiff_v403/tif_dir.c",
+      "tiff_v403/tif_dirinfo.c",
+      "tiff_v403/tif_dirread.c",
+      "tiff_v403/tif_dirwrite.c",
+      "tiff_v403/tif_dumpmode.c",
+      "tiff_v403/tif_error.c",
+      "tiff_v403/tif_extension.c",
+      "tiff_v403/tif_fax3.c",
+      "tiff_v403/tif_fax3sm.c",
+      "tiff_v403/tif_flush.c",
+      "tiff_v403/tif_getimage.c",
+      "tiff_v403/tif_jpeg.c",
+      "tiff_v403/tif_luv.c",
+      "tiff_v403/tif_lzw.c",
+      "tiff_v403/tif_next.c",
+      "tiff_v403/tif_ojpeg.c",
+      "tiff_v403/tif_open.c",
+      "tiff_v403/tif_packbits.c",
+      "tiff_v403/tif_pixarlog.c",
+      "tiff_v403/tif_predict.c",
+      "tiff_v403/tif_print.c",
+      "tiff_v403/tif_read.c",
+      "tiff_v403/tif_strip.c",
+      "tiff_v403/tif_swab.c",
+      "tiff_v403/tif_thunder.c",
+      "tiff_v403/tif_tile.c",
+      "tiff_v403/tif_version.c",
+      "tiff_v403/tif_warning.c",
+      "tiff_v403/tif_write.c",
+      "tiff_v403/tif_zip.c",
+    ]
+  }
 }
 
 source_set("fx_zlib") {

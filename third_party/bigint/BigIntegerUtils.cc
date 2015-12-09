@@ -43,6 +43,7 @@ std::ostream &operator <<(std::ostream &os, const BigUnsigned &x) {
 			os << '0';
 	} else
         abort();
+
 	std::string s = std::string(BigUnsignedInABase(x, base));
 	os << s;
 	return os;
