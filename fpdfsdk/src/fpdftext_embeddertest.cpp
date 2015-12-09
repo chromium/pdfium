@@ -42,9 +42,8 @@ TEST_F(FPDFTextEmbeddertest, Text) {
   // Check includes the terminating NUL that is provided.
   int num_chars = FPDFText_GetText(textpage, 0, 128, fixed_buffer);
   ASSERT_GE(num_chars, 0);
-  EXPECT_EQ(sizeof(expected) - 1, static_cast<size_t>(num_chars));
-  EXPECT_TRUE(
-      check_unsigned_shorts(expected, fixed_buffer, sizeof(expected) - 1));
+  EXPECT_EQ(sizeof(expected), static_cast<size_t>(num_chars));
+  EXPECT_TRUE(check_unsigned_shorts(expected, fixed_buffer, sizeof(expected)));
 
   // Count does not include the terminating NUL in the string literal.
   EXPECT_EQ(sizeof(expected) - 1, FPDFText_CountChars(textpage));
@@ -126,10 +125,11 @@ TEST_F(FPDFTextEmbeddertest, Text) {
   EXPECT_EQ(0xbdbd, fixed_buffer[9]);
 
   memset(fixed_buffer, 0xbd, sizeof(fixed_buffer));
-  EXPECT_EQ(9, FPDFText_GetBoundedText(textpage, 41.0, 56.0, 82.0, 48.0,
-                                       fixed_buffer, 128));
+  EXPECT_EQ(10, FPDFText_GetBoundedText(textpage, 41.0, 56.0, 82.0, 48.0,
+                                        fixed_buffer, 128));
   EXPECT_TRUE(check_unsigned_shorts(expected + 4, fixed_buffer, 9));
-  EXPECT_EQ(0xbdbd, fixed_buffer[9]);
+  EXPECT_EQ(0u, fixed_buffer[9]);
+  EXPECT_EQ(0xbdbd, fixed_buffer[10]);
 
   FPDFText_ClosePage(textpage);
   UnloadPage(page);
@@ -269,13 +269,14 @@ TEST_F(FPDFTextEmbeddertest, WebLinks) {
   // Page contains two HTTP-style URLs.
   EXPECT_EQ(2, FPDFLink_CountWebLinks(pagelink));
 
-  EXPECT_EQ(0, FPDFLink_GetURL(pagelink, 2, nullptr, 0));
-  EXPECT_EQ(0, FPDFLink_GetURL(pagelink, 1400, nullptr, 0));
-  EXPECT_EQ(0, FPDFLink_GetURL(pagelink, -1, nullptr, 0));
+  // Only a terminating NUL required for bogus links.
+  EXPECT_EQ(1, FPDFLink_GetURL(pagelink, 2, nullptr, 0));
+  EXPECT_EQ(1, FPDFLink_GetURL(pagelink, 1400, nullptr, 0));
+  EXPECT_EQ(1, FPDFLink_GetURL(pagelink, -1, nullptr, 0));
 
   // Query the number of characters required for each link (incl NUL).
-  EXPECT_EQ(24, FPDFLink_GetURL(pagelink, 0, nullptr, 0));
-  EXPECT_EQ(25, FPDFLink_GetURL(pagelink, 1, nullptr, 0));
+  EXPECT_EQ(25, FPDFLink_GetURL(pagelink, 0, nullptr, 0));
+  EXPECT_EQ(26, FPDFLink_GetURL(pagelink, 1, nullptr, 0));
 
   static const char expected_url[] = "http://example.com?q=foo";
   unsigned short fixed_buffer[128];
@@ -299,19 +300,21 @@ TEST_F(FPDFTextEmbeddertest, WebLinks) {
 
   // Retreive link with exactly-sized buffer.
   memset(fixed_buffer, 0xbd, sizeof(fixed_buffer));
-  EXPECT_EQ(sizeof(expected_url) - 1,
+  EXPECT_EQ(sizeof(expected_url),
             FPDFLink_GetURL(pagelink, 0, fixed_buffer, sizeof(expected_url)));
-  EXPECT_TRUE(check_unsigned_shorts(expected_url, fixed_buffer,
-                                    sizeof(expected_url) - 1));
-  EXPECT_EQ(0xbdbd, fixed_buffer[sizeof(expected_url) - 1]);
+  EXPECT_TRUE(
+      check_unsigned_shorts(expected_url, fixed_buffer, sizeof(expected_url)));
+  EXPECT_EQ(0u, fixed_buffer[sizeof(expected_url) - 1]);
+  EXPECT_EQ(0xbdbd, fixed_buffer[sizeof(expected_url)]);
 
   // Retreive link with ample-sized-buffer.
   memset(fixed_buffer, 0xbd, sizeof(fixed_buffer));
-  EXPECT_EQ(sizeof(expected_url) - 1,
+  EXPECT_EQ(sizeof(expected_url),
             FPDFLink_GetURL(pagelink, 0, fixed_buffer, 128));
-  EXPECT_TRUE(check_unsigned_shorts(expected_url, fixed_buffer,
-                                    sizeof(expected_url) - 1));
-  EXPECT_EQ(0xbdbd, fixed_buffer[sizeof(expected_url) - 1]);
+  EXPECT_TRUE(
+      check_unsigned_shorts(expected_url, fixed_buffer, sizeof(expected_url)));
+  EXPECT_EQ(0u, fixed_buffer[sizeof(expected_url) - 1]);
+  EXPECT_EQ(0xbdbd, fixed_buffer[sizeof(expected_url)]);
 
   // Each link rendered in a single rect in this test page.
   EXPECT_EQ(1, FPDFLink_CountRects(pagelink, 0));
