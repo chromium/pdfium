@@ -651,24 +651,6 @@
       ],
     },
     {
-      'target_name': 'fpdfxfa',
-      'type': 'static_library',
-      'dependencies': [
-        'javascript',
-        'xfa.gyp:xfa',
-      ],
-      'sources': [
-        'fpdfsdk/src/fpdfxfa/fpdfxfa_app.cpp',
-        'fpdfsdk/src/fpdfxfa/fpdfxfa_doc.cpp',
-        'fpdfsdk/src/fpdfxfa/fpdfxfa_page.cpp',
-        'fpdfsdk/src/fpdfxfa/fpdfxfa_util.cpp',
-        'fpdfsdk/include/fpdfxfa/fpdfxfa_app.h',
-        'fpdfsdk/include/fpdfxfa/fpdfxfa_doc.h',
-        'fpdfsdk/include/fpdfxfa/fpdfxfa_page.h',
-        'fpdfsdk/include/fpdfxfa/fpdfxfa_util.h',
-      ],
-    },
-    {
       'target_name': 'javascript',
       'type': 'static_library',
       'sources': [
@@ -875,4 +857,28 @@
       ],
     },
   ],
+  'conditions': [
+    ['pdf_enable_xfa==1', {
+      'targets': [
+        {
+          'target_name': 'fpdfxfa',
+          'type': 'static_library',
+          'dependencies': [
+            'javascript',
+            'xfa.gyp:xfa',
+          ],
+          'sources': [
+            'fpdfsdk/src/fpdfxfa/fpdfxfa_app.cpp',
+            'fpdfsdk/src/fpdfxfa/fpdfxfa_doc.cpp',
+            'fpdfsdk/src/fpdfxfa/fpdfxfa_page.cpp',
+            'fpdfsdk/src/fpdfxfa/fpdfxfa_util.cpp',
+            'fpdfsdk/include/fpdfxfa/fpdfxfa_app.h',
+            'fpdfsdk/include/fpdfxfa/fpdfxfa_doc.h',
+            'fpdfsdk/include/fpdfxfa/fpdfxfa_page.h',
+            'fpdfsdk/include/fpdfxfa/fpdfxfa_util.h',
+          ],
+        },
+      ]
+    }],
+  ]
 }
