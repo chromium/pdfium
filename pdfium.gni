@@ -12,6 +12,9 @@ declare_args() {
   # Build PDFium either with or without v8 support.
   pdf_enable_v8 = true
 
+  # Build PDFium either with or without XFA Forms support.
+  pdf_enable_xfa = false
+
   # Build PDFium against skia (experimental) rather than agg.
   pdf_use_skia = false
 }
