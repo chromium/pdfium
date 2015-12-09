@@ -85,7 +85,7 @@ TEST_F(FPDFDocEmbeddertest, Bookmarks) {
 
   FPDF_BOOKMARK child = FPDFBookmark_GetFirstChild(document(), nullptr);
   EXPECT_NE(nullptr, child);
-  EXPECT_EQ(32, FPDFBookmark_GetTitle(child, buf, sizeof(buf)));
+  EXPECT_EQ(34, FPDFBookmark_GetTitle(child, buf, sizeof(buf)));
   EXPECT_EQ(CFX_WideString(L"A Good Beginning"),
             CFX_WideString::FromUTF16LE(buf, 16));
 
@@ -93,7 +93,7 @@ TEST_F(FPDFDocEmbeddertest, Bookmarks) {
 
   FPDF_BOOKMARK sibling = FPDFBookmark_GetNextSibling(document(), child);
   EXPECT_NE(nullptr, sibling);
-  EXPECT_EQ(26, FPDFBookmark_GetTitle(sibling, buf, sizeof(buf)));
+  EXPECT_EQ(28, FPDFBookmark_GetTitle(sibling, buf, sizeof(buf)));
   EXPECT_EQ(CFX_WideString(L"A Good Ending"),
             CFX_WideString::FromUTF16LE(buf, 13));
 
