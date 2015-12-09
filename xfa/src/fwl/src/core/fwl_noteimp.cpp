@@ -203,7 +203,7 @@ FWL_ERR CFWL_NoteDriver::SetQueueMaxSize(const int32_t size) {
   return FWL_ERR_Succeeded;
 }
 IFWL_NoteThread* CFWL_NoteDriver::GetOwnerThread() const {
-  return (IFWL_NoteThread*)FWL_GetApp();
+  return FWL_GetApp();
 }
 FWL_ERR CFWL_NoteDriver::PushNoteLoop(IFWL_NoteLoop* pNoteLoop) {
   m_noteLoopQueue.Add(pNoteLoop);

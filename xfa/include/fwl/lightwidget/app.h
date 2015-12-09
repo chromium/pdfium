@@ -4,22 +4,25 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_APP_LIGHT_H
-#define _FWL_APP_LIGHT_H
+#ifndef FWL_LIGHTWIDGET_APP_H_
+#define FWL_LIGHTWIDGET_APP_H_
+
 class CFWL_Theme;
 class IFWL_App;
-class CFWL_App;
+
 class CFWL_App {
  public:
   CFWL_App();
   virtual ~CFWL_App();
-  FWL_ERR Initialize();
-  CFWL_Theme* GetTheme();
-  FWL_ERR Exit(int32_t iExitCode = 0);
-  IFWL_App* GetApp();
 
- protected:
-  IFWL_App* m_pAppImp;
-  CFWL_Theme* m_pThemeProvider;
+  FWL_ERR Initialize();
+  FWL_ERR Exit(int32_t iExitCode);
+
+  CFWL_Theme* GetTheme() const { return m_pTheme; }
+  IFWL_App* GetInterface() const { return m_pIface; }
+
+ private:
+  IFWL_App* m_pIface;
+  CFWL_Theme* m_pTheme;
 };
-#endif
+#endif  // FWL_LIGHTWIDGET_APP_H_

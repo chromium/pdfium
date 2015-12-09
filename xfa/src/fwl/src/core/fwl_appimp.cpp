@@ -10,11 +10,36 @@
 #include "include/fwl_noteimp.h"
 #include "include/fwl_widgetmgrimp.h"
 #include "include/fwl_appimp.h"
+
 IFWL_App* IFWL_App::Create(IFWL_AdapterNative* pAdapter) {
-  return (IFWL_App*)new CFWL_AppImp(pAdapter);
+  IFWL_App* pApp = new IFWL_App;
+  pApp->SetImpl(new CFWL_AppImp(pApp, pAdapter));
+  return pApp;
 }
-CFWL_AppImp::CFWL_AppImp(IFWL_AdapterNative* pAdapter)
-    : m_pWidgetMgr(NULL), m_pThemeProvider(NULL) {
+FWL_ERR IFWL_App::Initialize() {
+  return static_cast<CFWL_AppImp*>(GetImpl())->Initialize();
+}
+FWL_ERR IFWL_App::Finalize() {
+  return static_cast<CFWL_AppImp*>(GetImpl())->Finalize();
+}
+IFWL_AdapterNative* IFWL_App::GetAdapterNative() {
+  return static_cast<CFWL_AppImp*>(GetImpl())->GetAdapterNative();
+}
+IFWL_WidgetMgr* IFWL_App::GetWidgetMgr() {
+  return static_cast<CFWL_AppImp*>(GetImpl())->GetWidgetMgr();
+}
+IFWL_ThemeProvider* IFWL_App::GetThemeProvider() {
+  return static_cast<CFWL_AppImp*>(GetImpl())->GetThemeProvider();
+}
+FWL_ERR IFWL_App::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
+  return static_cast<CFWL_AppImp*>(GetImpl())->SetThemeProvider(pThemeProvider);
+}
+FWL_ERR IFWL_App::Exit(int32_t iExitCode) {
+  return static_cast<CFWL_AppImp*>(GetImpl())->Exit(iExitCode);
+}
+
+CFWL_AppImp::CFWL_AppImp(IFWL_App* pIface, IFWL_AdapterNative* pAdapter)
+    : CFWL_NoteThreadImp(pIface), m_pWidgetMgr(NULL), m_pThemeProvider(NULL) {
   if (!pAdapter) {
     pAdapter = FWL_CreateFuelAdapterNative();
     m_bFuelAdapter = TRUE;

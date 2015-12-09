@@ -4,31 +4,37 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_THREAD_IMP_H
-#define _FWL_THREAD_IMP_H
+#ifndef FWL_THREADIMP_H_
+#define FWL_THREADIMP_H_
 
 #include "xfa/include/fwl/core/fwl_thread.h"  // For FWL_HTHREAD.
 
 class CFWL_NoteDriver;
 class IFWL_NoteDriver;
 
-class CFWL_Thread {
+class CFWL_ThreadImp {
  public:
-  CFWL_Thread();
-  virtual ~CFWL_Thread();
-  virtual void Release() { delete this; }
+  virtual ~CFWL_ThreadImp() {}
+  IFWL_Thread* GetInterface() const { return m_pIface; }
   virtual FWL_ERR Run(FWL_HTHREAD hThread);
+
+ protected:
+  CFWL_ThreadImp(IFWL_Thread* pIface) : m_pIface(pIface) {}
+
+ private:
+  IFWL_Thread* const m_pIface;
 };
 
-class CFWL_NoteThread : public CFWL_Thread {
+class CFWL_NoteThreadImp : public CFWL_ThreadImp {
  public:
-  CFWL_NoteThread();
-  virtual ~CFWL_NoteThread();
-  virtual FWL_ERR Run(FWL_HTHREAD hThread);
+  CFWL_NoteThreadImp(IFWL_NoteThread* pIface);
+  virtual ~CFWL_NoteThreadImp();
+
+  FWL_ERR Run(FWL_HTHREAD hThread) override;
   virtual IFWL_NoteDriver* GetNoteDriver();
 
  protected:
-  CFWL_NoteDriver* m_pNoteDriver;
-  FWL_HTHREAD m_hThread;
+  CFWL_NoteDriver* const m_pNoteDriver;
 };
-#endif
+
+#endif  // FWL_THREADIMP_H_

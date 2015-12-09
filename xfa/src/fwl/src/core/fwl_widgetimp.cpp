@@ -131,7 +131,8 @@ FWL_ERR CFWL_WidgetImp::Initialize() {
   IFWL_AdapterThreadMgr* pAdapterThread = pAdapter->GetThreadMgr();
   if (!pAdapterThread)
     return FWL_ERR_Indefinite;
-  SetOwnerThread((CFWL_NoteThread*)pAdapterThread->GetCurrentThread());
+  SetOwnerThread(static_cast<CFWL_NoteThreadImp*>(
+      pAdapterThread->GetCurrentThread()->GetImpl()));
   IFWL_Widget* pParent = m_pProperties->m_pParent;
   m_pWidgetMgr->InsertWidget(pParent, m_pInterface);
   if (!IsChild()) {
@@ -486,9 +487,9 @@ IFWL_WidgetDelegate* CFWL_WidgetImp::SetDelegate(
   return pOldDelegate;
 }
 IFWL_NoteThread* CFWL_WidgetImp::GetOwnerThread() const {
-  return (IFWL_NoteThread*)m_pOwnerThread;
+  return static_cast<IFWL_NoteThread*>(m_pOwnerThread->GetInterface());
 }
-FWL_ERR CFWL_WidgetImp::SetOwnerThread(CFWL_NoteThread* pOwnerThread) {
+FWL_ERR CFWL_WidgetImp::SetOwnerThread(CFWL_NoteThreadImp* pOwnerThread) {
   m_pOwnerThread = pOwnerThread;
   return FWL_ERR_Succeeded;
 }
@@ -636,7 +637,7 @@ IFWL_ThemeProvider* CFWL_WidgetImp::GetAvailableTheme() {
       }
     }
   } while (pUp);
-  return ((CFWL_AppImp*)FWL_GetApp())->GetThemeProvider();
+  return FWL_GetApp()->GetThemeProvider();
 }
 CFWL_WidgetImp* CFWL_WidgetImp::GetRootOuter() {
   IFWL_Widget* pRet = m_pOuter;

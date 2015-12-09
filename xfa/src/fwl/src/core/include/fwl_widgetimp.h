@@ -11,7 +11,7 @@
 #include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
 
 class CFWL_NoteTarget;
-class CFWL_NoteThread;
+class CFWL_NoteThreadImp;
 class CFWL_WidgetImpProperties;
 class CFWL_WidgetMgr;
 class IFWL_DataProvider;
@@ -60,7 +60,7 @@ class CFWL_WidgetImp : public CFWL_TargetImp {
   virtual FWL_ERR SetDataProvider(IFWL_DataProvider* pDataProvider);
   virtual IFWL_WidgetDelegate* SetDelegate(IFWL_WidgetDelegate* pDelegate);
   virtual IFWL_NoteThread* GetOwnerThread() const;
-  FWL_ERR SetOwnerThread(CFWL_NoteThread* pOwnerThread);
+  FWL_ERR SetOwnerThread(CFWL_NoteThreadImp* pOwnerThread);
   IFWL_Widget* GetInterface() const;
   void SetInterface(IFWL_Widget* pInterface);
   CFX_SizeF GetOffsetFromParent(IFWL_Widget* pParent);
@@ -137,7 +137,7 @@ class CFWL_WidgetImp : public CFWL_TargetImp {
 
   FX_BOOL IsParent(IFWL_Widget* pParent);
   CFWL_WidgetMgr* m_pWidgetMgr;
-  CFWL_NoteThread* m_pOwnerThread;
+  CFWL_NoteThreadImp* m_pOwnerThread;
   CFWL_WidgetImpProperties* m_pProperties;
   CFX_PrivateData* m_pPrivateData;
   IFWL_WidgetDelegate* m_pDelegate;

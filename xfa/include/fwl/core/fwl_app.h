@@ -12,16 +12,21 @@ class IFWL_Widget;
 class IFWL_WidgetMgr;
 class IFWL_ThemeProvider;
 class IFWL_AdapterWidgetMgr;
-class IFWL_App;
+
 class IFWL_App : public IFWL_NoteThread {
  public:
   static IFWL_App* Create(IFWL_AdapterNative* pAdapter);
-  virtual FWL_ERR Initialize() = 0;
-  virtual FWL_ERR Finalize() = 0;
-  virtual IFWL_AdapterNative* GetAdapterNative() = 0;
-  virtual IFWL_WidgetMgr* GetWidgetMgr() = 0;
-  virtual FWL_ERR SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) = 0;
-  virtual FWL_ERR Exit(int32_t iExitCode = 0) = 0;
+
+  FWL_ERR Initialize();
+  FWL_ERR Finalize();
+  IFWL_AdapterNative* GetAdapterNative();
+  IFWL_WidgetMgr* GetWidgetMgr();
+  IFWL_ThemeProvider* GetThemeProvider();
+  FWL_ERR SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
+  FWL_ERR Exit(int32_t iExitCode);
+
+ private:
+  IFWL_App() {}
 };
 IFWL_App* FWL_GetApp();
 void FWL_SetApp(IFWL_App* pApp);
