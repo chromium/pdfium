@@ -742,19 +742,16 @@ FX_BOOL CFWL_FontData::LoadFont(const CFX_WideStringC& wsFontFamily,
 }
 CFWL_FontManager::CFWL_FontManager() {}
 CFWL_FontManager::~CFWL_FontManager() {
-  int32_t count = m_arrFonts.GetSize();
-  for (int32_t i = 0; i < count; i++) {
-    CFWL_FontData* data = (CFWL_FontData*)m_arrFonts[i];
-    delete data;
+  for (int32_t i = 0; i < m_arrFonts.GetSize(); i++) {
+    delete static_cast<CFWL_FontData*>(m_arrFonts[i]);
   }
   m_arrFonts.RemoveAll();
 }
 IFX_Font* CFWL_FontManager::FindFont(const CFX_WideStringC& wsFontFamily,
                                      FX_DWORD dwFontStyles,
                                      FX_WORD wCodePage) {
-  int32_t count = m_arrFonts.GetSize();
-  for (int32_t i = 0; i < count; i++) {
-    CFWL_FontData* data = (CFWL_FontData*)m_arrFonts[i];
+  for (int32_t i = 0; i < m_arrFonts.GetSize(); i++) {
+    CFWL_FontData* data = static_cast<CFWL_FontData*>(m_arrFonts[i]);
     if (data->Equal(wsFontFamily, dwFontStyles, wCodePage)) {
       return data->GetFont();
     }

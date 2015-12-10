@@ -692,7 +692,7 @@ FX_BOOL CFWL_NoteDriver::DoDragFiles(CFWL_MsgDropFiles* pMsg,
 }
 FX_BOOL CFWL_NoteDriver::DoMouseEx(CFWL_MsgMouse* pMsg,
                                    IFWL_Widget* pMessageForm) {
-  CFWL_WidgetMgr* pWidgetMgr = (CFWL_WidgetMgr*)FWL_GetWidgetMgr();
+  CFWL_WidgetMgr* pWidgetMgr = static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
   if (!pWidgetMgr)
     return FALSE;
   IFWL_Widget* pTarget = NULL;

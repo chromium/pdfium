@@ -67,13 +67,13 @@ FWL_ERR CFWL_ToolTip::SetToolTipIconSize(CFX_SizeF fSize) {
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_ToolTip::SetAnchor(const CFX_RectF& rtAnchor) {
-  return ((IFWL_ToolTip*)m_pIface)->SetAnchor(rtAnchor);
+  return static_cast<IFWL_ToolTip*>(m_pIface)->SetAnchor(rtAnchor);
 }
 FWL_ERR CFWL_ToolTip::Show() {
-  return ((IFWL_ToolTip*)m_pIface)->Show();
+  return static_cast<IFWL_ToolTip*>(m_pIface)->Show();
 }
 FWL_ERR CFWL_ToolTip::Hide() {
-  return ((IFWL_ToolTip*)m_pIface)->Hide();
+  return static_cast<IFWL_ToolTip*>(m_pIface)->Hide();
 }
 CFWL_ToolTip::CFWL_ToolTip() {}
 CFWL_ToolTip::~CFWL_ToolTip() {}

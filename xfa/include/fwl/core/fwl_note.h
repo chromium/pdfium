@@ -340,7 +340,9 @@ class IFWL_NoteDriver {
   virtual IFWL_NoteThread* GetOwnerThread() const = 0;
   virtual FWL_ERR PushNoteLoop(IFWL_NoteLoop* pNoteLoop) = 0;
   virtual IFWL_NoteLoop* PopNoteLoop() = 0;
+  virtual IFWL_Widget* GetFocus() = 0;
   virtual FX_BOOL SetFocus(IFWL_Widget* pFocus, FX_BOOL bNotify = FALSE) = 0;
+  virtual void SetGrab(IFWL_Widget* pGrab, FX_BOOL bSet) = 0;
   virtual FWL_ERR Run() = 0;
 };
 IFWL_Widget* FWL_GetCurrentThreadModalWidget(IFWL_NoteThread* pNoteThread);

@@ -6,13 +6,10 @@
 
 #include "../../../foxitlib.h"
 FX_BOOL CFWL_Theme::IsValidWidget(IFWL_Widget* pWidget) {
-  CFWL_WidgetTP* pTheme = GetTheme(pWidget);
-  return pTheme != NULL;
+  return !!GetTheme(pWidget);
 }
 FX_DWORD CFWL_Theme::GetThemeID(IFWL_Widget* pWidget) {
-  CFWL_WidgetTP* pTheme = GetTheme(pWidget);
-  FXSYS_assert(pTheme);
-  return pTheme->GetThemeID(pWidget);
+  return GetTheme(pWidget)->GetThemeID(pWidget);
 }
 FX_DWORD CFWL_Theme::SetThemeID(IFWL_Widget* pWidget,
                                 FX_DWORD dwThemeID,
@@ -20,7 +17,7 @@ FX_DWORD CFWL_Theme::SetThemeID(IFWL_Widget* pWidget,
   int32_t iCount = m_arrThemes.GetSize();
   FX_DWORD dwID;
   for (int32_t i = 0; i < iCount; i++) {
-    CFWL_WidgetTP* pTheme = (CFWL_WidgetTP*)m_arrThemes[i];
+    CFWL_WidgetTP* pTheme = static_cast<CFWL_WidgetTP*>(m_arrThemes[i]);
     dwID = pTheme->GetThemeID(pWidget);
     pTheme->SetThemeID(pWidget, dwThemeID, FALSE);
   }
@@ -73,7 +70,7 @@ FX_BOOL CFWL_Theme::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
 FWL_ERR CFWL_Theme::Initialize() {
   int32_t iCount = m_arrThemes.GetSize();
   for (int32_t i = 0; i < iCount; i++) {
-    CFWL_WidgetTP* pTheme = (CFWL_WidgetTP*)m_arrThemes[i];
+    CFWL_WidgetTP* pTheme = static_cast<CFWL_WidgetTP*>(m_arrThemes[i]);
     pTheme->Initialize();
   }
   FWLTHEME_Init();
@@ -82,7 +79,7 @@ FWL_ERR CFWL_Theme::Initialize() {
 FWL_ERR CFWL_Theme::Finalize() {
   int32_t iCount = m_arrThemes.GetSize();
   for (int32_t i = 0; i < iCount; i++) {
-    CFWL_WidgetTP* pTheme = (CFWL_WidgetTP*)m_arrThemes[i];
+    CFWL_WidgetTP* pTheme = static_cast<CFWL_WidgetTP*>(m_arrThemes[i]);
     pTheme->Finalize();
   }
   FWLTHEME_Release();
@@ -115,10 +112,8 @@ CFWL_Theme::CFWL_Theme() {
   m_arrThemes.Add(pCaretTP);
 }
 CFWL_Theme::~CFWL_Theme() {
-  int32_t iCount = m_arrThemes.GetSize();
-  for (int32_t i = 0; i < iCount; i++) {
-    CFWL_WidgetTP* pTheme = (CFWL_WidgetTP*)m_arrThemes[i];
-    delete pTheme;
+  for (int32_t i = 0; i < m_arrThemes.GetSize(); i++) {
+    delete static_cast<CFWL_WidgetTP*>(m_arrThemes[i]);
   }
   m_arrThemes.RemoveAll();
 }
@@ -128,7 +123,7 @@ FWL_ERR CFWL_Theme::SetFont(IFWL_Widget* pWidget,
                             FX_ARGB rgbFont) {
   int32_t iCount = m_arrThemes.GetSize();
   for (int32_t i = 0; i < iCount; i++) {
-    CFWL_WidgetTP* pTheme = (CFWL_WidgetTP*)m_arrThemes[i];
+    CFWL_WidgetTP* pTheme = static_cast<CFWL_WidgetTP*>(m_arrThemes[i]);
     pTheme->SetFont(pWidget, strFont, fFontSize, rgbFont);
   }
   return FWL_ERR_Succeeded;
@@ -136,7 +131,7 @@ FWL_ERR CFWL_Theme::SetFont(IFWL_Widget* pWidget,
 CFWL_WidgetTP* CFWL_Theme::GetTheme(IFWL_Widget* pWidget) {
   int32_t iCount = m_arrThemes.GetSize();
   for (int32_t i = 0; i < iCount; i++) {
-    CFWL_WidgetTP* pTheme = (CFWL_WidgetTP*)m_arrThemes[i];
+    CFWL_WidgetTP* pTheme = static_cast<CFWL_WidgetTP*>(m_arrThemes[i]);
     if (pTheme->IsValidWidget(pWidget)) {
       return pTheme;
     }

@@ -75,7 +75,7 @@ CFWL_Widget* CFWL_Widget::GetParent() {
     return NULL;
   IFWL_Widget* parent = m_pIface->GetParent();
   if (parent) {
-    return (CFWL_Widget*)parent->GetPrivateData(gs_pFWLWidget);
+    return static_cast<CFWL_Widget*>(parent->GetPrivateData(gs_pFWLWidget));
   }
   return NULL;
 }
@@ -193,7 +193,7 @@ IFWL_WidgetDelegate* CFWL_Widget::SetDelegate(IFWL_WidgetDelegate* pDelegate) {
 CFWL_Widget::CFWL_Widget()
     : m_pIface(NULL), m_pDelegate(NULL), m_pProperties(NULL) {
   m_pProperties = new CFWL_WidgetProperties;
-  m_pWidgetMgr = (CFWL_WidgetMgr*)FWL_GetWidgetMgr();
+  m_pWidgetMgr = static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
   FXSYS_assert(m_pWidgetMgr != NULL);
 }
 CFWL_Widget::~CFWL_Widget() {
@@ -219,15 +219,15 @@ FWL_ERR CFWL_Widget::SetFocus(FX_BOOL bFocus) {
   if (!m_pIface)
     return FWL_ERR_Indefinite;
   IFWL_NoteThread* pThread = m_pIface->GetOwnerThread();
-  if (!m_pIface)
+  if (!pThread)
     return FWL_ERR_Indefinite;
   IFWL_NoteDriver* pDriver = pThread->GetNoteDriver();
-  if (!m_pIface)
+  if (!pDriver)
     return FWL_ERR_Indefinite;
   if (bFocus) {
     pDriver->SetFocus(m_pIface);
   } else {
-    if (((CFWL_NoteDriver*)pDriver)->GetFocus() == m_pIface) {
+    if (pDriver->GetFocus() == m_pIface) {
       pDriver->SetFocus(NULL);
     }
   }
@@ -237,10 +237,10 @@ FWL_ERR CFWL_Widget::SetGrab(FX_BOOL bSet) {
   if (!m_pIface)
     return FWL_ERR_Indefinite;
   IFWL_NoteThread* pThread = m_pIface->GetOwnerThread();
-  if (!m_pIface)
+  if (!pThread)
     return FWL_ERR_Indefinite;
-  CFWL_NoteDriver* pDriver = (CFWL_NoteDriver*)pThread->GetNoteDriver();
-  if (!m_pIface)
+  IFWL_NoteDriver* pDriver = pThread->GetNoteDriver();
+  if (!pDriver)
     return FWL_ERR_Indefinite;
   pDriver->SetGrab(m_pIface, bSet);
   return FWL_ERR_Succeeded;

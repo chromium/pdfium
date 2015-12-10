@@ -39,14 +39,14 @@ FWL_ERR CFWL_PictureBox::SetRotation(FX_FLOAT fRotation) {
   return FWL_ERR_Succeeded;
 }
 int32_t CFWL_PictureBox::GetFlipMode() {
-  return m_PictureBoxDP.GetFlipMode((IFWL_Widget*)this);
+  return m_PictureBoxDP.GetFlipMode(m_pIface);
 }
 FWL_ERR CFWL_PictureBox::SetFlipMode(int32_t iFlipMode) {
   m_PictureBoxDP.m_iFlipMode = iFlipMode;
   return FWL_ERR_Succeeded;
 }
 int32_t CFWL_PictureBox::GetOpacity() {
-  return m_PictureBoxDP.GetOpacity((IFWL_Widget*)this);
+  return m_PictureBoxDP.GetOpacity(m_pIface);
 }
 FWL_ERR CFWL_PictureBox::SetOpacity(int32_t iOpacity) {
   m_PictureBoxDP.m_iOpacity = iOpacity;
@@ -54,7 +54,7 @@ FWL_ERR CFWL_PictureBox::SetOpacity(int32_t iOpacity) {
 }
 FWL_ERR CFWL_PictureBox::GetScale(FX_FLOAT& fScaleX, FX_FLOAT& fScaleY) {
   CFX_Matrix matrix;
-  m_PictureBoxDP.GetMatrix((IFWL_Widget*)this, matrix);
+  m_PictureBoxDP.GetMatrix(m_pIface, matrix);
   matrix.Scale(fScaleX, fScaleY);
   return FWL_ERR_Succeeded;
 }
@@ -65,7 +65,7 @@ FWL_ERR CFWL_PictureBox::SetScale(FX_FLOAT fScaleX, FX_FLOAT fScaleY) {
 }
 FWL_ERR CFWL_PictureBox::GetOffset(FX_FLOAT& fx, FX_FLOAT& fy) {
   CFX_Matrix matrix;
-  m_PictureBoxDP.GetMatrix((IFWL_Widget*)this, matrix);
+  m_PictureBoxDP.GetMatrix(m_pIface, matrix);
   fx = matrix.e;
   fy = matrix.f;
   return FWL_ERR_Succeeded;

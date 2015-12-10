@@ -57,13 +57,13 @@ class CFWL_NoteDriver : public IFWL_NoteDriver {
   IFWL_NoteThread* GetOwnerThread() const override;
   FWL_ERR PushNoteLoop(IFWL_NoteLoop* pNoteLoop) override;
   IFWL_NoteLoop* PopNoteLoop() override;
+  IFWL_Widget* GetFocus() override;
   FX_BOOL SetFocus(IFWL_Widget* pFocus, FX_BOOL bNotify = FALSE) override;
+  void SetGrab(IFWL_Widget* pGrab, FX_BOOL bSet) override;
   FWL_ERR Run() override;
 
-  IFWL_Widget* GetFocus();
   IFWL_Widget* GetHover();
   void SetHover(IFWL_Widget* pHover);
-  void SetGrab(IFWL_Widget* pGrab, FX_BOOL bSet);
   void NotifyTargetHide(IFWL_Widget* pNoteTarget);
   void NotifyTargetDestroy(IFWL_Widget* pNoteTarget);
   void NotifyFullScreenMode(IFWL_Widget* pNoteTarget, FX_BOOL bFullScreen);
