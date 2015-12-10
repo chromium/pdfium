@@ -959,7 +959,7 @@ class CPDF_PageNode {
   ~CPDF_PageNode();
   PDF_PAGENODE_TYPE m_type;
   FX_DWORD m_dwPageNo;
-  CFX_PtrArray m_childNode;
+  CFX_ArrayTemplate<CPDF_PageNode*> m_childNode;
 };
 enum PDF_DATAAVAIL_STATUS {
   PDF_DATAAVAIL_HEADER = 0,

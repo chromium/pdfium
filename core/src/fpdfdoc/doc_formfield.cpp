@@ -207,15 +207,12 @@ FX_BOOL CPDF_FormField::ResetField(FX_BOOL bNotify) {
   return TRUE;
 }
 int CPDF_FormField::GetControlIndex(const CPDF_FormControl* pControl) {
-  if (pControl == NULL) {
+  if (!pControl) {
     return -1;
   }
-  int iCount = m_ControlList.GetSize();
-  for (int i = 0; i < iCount; i++) {
-    CPDF_FormControl* pFind = (CPDF_FormControl*)m_ControlList.GetAt(i);
-    if (pFind == pControl) {
+  for (int i = 0; i < m_ControlList.GetSize(); i++) {
+    if (m_ControlList.GetAt(i) == pControl)
       return i;
-    }
   }
   return -1;
 }
@@ -399,22 +396,19 @@ FX_BOOL CPDF_FormField::SetValue(const CFX_WideString& value, FX_BOOL bNotify) {
   return SetValue(value, FALSE, bNotify);
 }
 int CPDF_FormField::GetMaxLen() {
-  CPDF_Object* pObj = FPDF_GetFieldAttr(m_pDict, "MaxLen");
-  if (pObj == NULL) {
-    int iCount = m_ControlList.GetSize();
-    for (int i = 0; i < iCount; i++) {
-      CPDF_FormControl* pControl = (CPDF_FormControl*)m_ControlList.GetAt(i);
-      if (pControl == NULL) {
-        continue;
-      }
-      CPDF_Dictionary* pWidgetDict = pControl->m_pWidgetDict;
-      if (pWidgetDict->KeyExist("MaxLen")) {
-        return pWidgetDict->GetInteger("MaxLen");
-      }
-    }
-    return 0;
+  if (CPDF_Object* pObj = FPDF_GetFieldAttr(m_pDict, "MaxLen"))
+    return pObj->GetInteger();
+
+  for (int i = 0; i < m_ControlList.GetSize(); i++) {
+    CPDF_FormControl* pControl = m_ControlList.GetAt(i);
+    if (!pControl)
+      continue;
+
+    CPDF_Dictionary* pWidgetDict = pControl->m_pWidgetDict;
+    if (pWidgetDict->KeyExist("MaxLen"))
+      return pWidgetDict->GetInteger("MaxLen");
   }
-  return pObj->GetInteger();
+  return 0;
 }
 int CPDF_FormField::CountSelectedItems() {
   CPDF_Object* pValue = FPDF_GetFieldAttr(m_pDict, "V");

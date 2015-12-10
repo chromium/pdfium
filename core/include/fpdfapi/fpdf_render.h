@@ -233,7 +233,6 @@ class CPDF_PageRenderCache {
     m_nCacheSize = 0;
     m_pCurImageCache = NULL;
     m_bCurFindCache = FALSE;
-    m_pCurImageCaches = NULL;
   }
   ~CPDF_PageRenderCache() { ClearAll(); }
   void ClearAll();
@@ -272,7 +271,6 @@ class CPDF_PageRenderCache {
 
   FX_BOOL Continue(IFX_Pause* pPause);
   CPDF_ImageCache* m_pCurImageCache;
-  CFX_PtrArray* m_pCurImageCaches;
 
  protected:
   friend class CPDF_Page;

@@ -753,9 +753,7 @@ class CPDF_FormField {
 
   int CountControls() { return m_ControlList.GetSize(); }
 
-  CPDF_FormControl* GetControl(int index) {
-    return (CPDF_FormControl*)m_ControlList.GetAt(index);
-  }
+  CPDF_FormControl* GetControl(int index) { return m_ControlList.GetAt(index); }
 
   int GetControlIndex(const CPDF_FormControl* pControl);
 
@@ -831,20 +829,7 @@ class CPDF_FormField {
 
  protected:
   CPDF_FormField(CPDF_InterForm* pForm, CPDF_Dictionary* pDict);
-
   ~CPDF_FormField();
-
-  CPDF_FormField::Type m_Type;
-
-  FX_DWORD m_Flags;
-
-  CPDF_InterForm* m_pForm;
-
-  CPDF_Dictionary* m_pDict;
-
-  CFX_PtrArray m_ControlList;
-  friend class CPDF_InterForm;
-  friend class CPDF_FormControl;
 
   CFX_WideString GetValue(FX_BOOL bDefault);
 
@@ -868,9 +853,16 @@ class CPDF_FormField {
                         FX_BOOL bDefault,
                         FX_BOOL bNotify);
 
+  CPDF_FormField::Type m_Type;
+  FX_DWORD m_Flags;
+  CPDF_InterForm* m_pForm;
+  CPDF_Dictionary* m_pDict;
+  CFX_ArrayTemplate<CPDF_FormControl*> m_ControlList;
   FX_FLOAT m_FontSize;
-
   CPDF_Font* m_pFont;
+
+  friend class CPDF_InterForm;
+  friend class CPDF_FormControl;
 };
 CPDF_Object* FPDF_GetFieldAttr(CPDF_Dictionary* pFieldDict,
                                const FX_CHAR* name,

@@ -1017,7 +1017,7 @@ static int InsertDeletePDFPage(CPDF_Document* pDoc,
                                int nPagesToGo,
                                CPDF_Dictionary* pPage,
                                FX_BOOL bInsert,
-                               CFX_PtrArray& stackList) {
+                               CFX_ArrayTemplate<CPDF_Dictionary*>& stackList) {
   CPDF_Array* pKidList = pPages->GetArray("Kids");
   if (!pKidList) {
     return -1;
@@ -1088,7 +1088,7 @@ static int InsertNewPage(CPDF_Document* pDoc,
     pPages->SetAtInteger(FX_BSTRC("Count"), nPages + 1);
     pPageDict->SetAtReference(FX_BSTRC("Parent"), pDoc, pPages->GetObjNum());
   } else {
-    CFX_PtrArray stack;
+    CFX_ArrayTemplate<CPDF_Dictionary*> stack;
     stack.Add(pPages);
     if (InsertDeletePDFPage(pDoc, pPages, iPage, pPageDict, TRUE, stack) < 0) {
       return -1;
@@ -1129,7 +1129,7 @@ void CPDF_Document::DeletePage(int iPage) {
   if (iPage < 0 || iPage >= nPages) {
     return;
   }
-  CFX_PtrArray stack;
+  CFX_ArrayTemplate<CPDF_Dictionary*> stack;
   stack.Add(pPages);
   if (InsertDeletePDFPage(this, pPages, iPage, NULL, FALSE, stack) < 0) {
     return;
