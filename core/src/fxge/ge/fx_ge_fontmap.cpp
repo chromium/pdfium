@@ -437,10 +437,10 @@ CTTFontDesc::~CTTFontDesc() {
   }
   FX_Free(m_pFontData);
 }
-FX_BOOL CTTFontDesc::ReleaseFace(FXFT_Face face) {
+int CTTFontDesc::ReleaseFace(FXFT_Face face) {
   if (m_Type == 1) {
     if (m_SingleFace.m_pFace != face) {
-      return FALSE;
+      return -1;
     }
   } else if (m_Type == 2) {
     int i;
@@ -449,15 +449,15 @@ FX_BOOL CTTFontDesc::ReleaseFace(FXFT_Face face) {
         break;
       }
     if (i == 16) {
-      return FALSE;
+      return -1;
     }
   }
   m_RefCount--;
   if (m_RefCount) {
-    return FALSE;
+    return m_RefCount;
   }
   delete this;
-  return TRUE;
+  return 0;
 }
 
 CFX_FontMgr::CFX_FontMgr() : m_FTLibrary(nullptr) {
@@ -621,13 +621,20 @@ void CFX_FontMgr::ReleaseFace(FXFT_Face face) {
   if (!face) {
     return;
   }
+  FX_BOOL bNeedFaceDone = TRUE;
   auto it = m_FaceMap.begin();
   while (it != m_FaceMap.end()) {
     auto temp = it++;
-    if (temp->second->ReleaseFace(face)) {
+    int nRet = temp->second->ReleaseFace(face);
+    if (nRet == -1)
+      continue;
+    bNeedFaceDone = FALSE;
+    if (nRet == 0)
       m_FaceMap.erase(temp);
-    }
+    break;
   }
+  if (bNeedFaceDone && !m_pBuiltinMapper->IsBuiltinFace(face))
+    FXFT_Done_Face(face);
 }
 
 bool CFX_FontMgr::GetBuiltinFont(size_t index,
