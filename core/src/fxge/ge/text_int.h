@@ -7,6 +7,8 @@
 #ifndef CORE_SRC_FXGE_GE_TEXT_INT_H_
 #define CORE_SRC_FXGE_GE_TEXT_INT_H_
 
+#include <map>
+
 #include "core/include/fxge/fx_font.h"
 #include "core/include/fxge/fx_freetype.h"
 
@@ -17,9 +19,9 @@ struct _CFX_UniqueKeyGen {
 };
 class CFX_SizeGlyphCache {
  public:
-  CFX_SizeGlyphCache() { m_GlyphMap.InitHashTable(253); }
+  CFX_SizeGlyphCache() {}
   ~CFX_SizeGlyphCache();
-  CFX_MapPtrToPtr m_GlyphMap;
+  std::map<FX_DWORD, CFX_GlyphBitmap*> m_GlyphMap;
 };
 class CTTFontDesc {
  public:

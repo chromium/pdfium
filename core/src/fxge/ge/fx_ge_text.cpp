@@ -1238,14 +1238,10 @@ CFX_FaceCache::~CFX_FaceCache() {
     delete pair.second;
   }
   m_SizeMap.clear();
-  FX_POSITION pos = m_PathMap.GetStartPosition();
-  void* key1;
-  CFX_PathData* pPath;
-  while (pos) {
-    m_PathMap.GetNextAssoc(pos, key1, (void*&)pPath);
-    delete pPath;
+  for (const auto& pair : m_PathMap) {
+    delete pair.second;
   }
-  m_PathMap.RemoveAll();
+  m_PathMap.clear();
 }
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_APPLE_
 void CFX_FaceCache::InitPlatform() {}
@@ -1266,17 +1262,16 @@ CFX_GlyphBitmap* CFX_FaceCache::LookUpGlyphBitmap(
   } else {
     pSizeCache = it->second;
   }
-  CFX_GlyphBitmap* pGlyphBitmap = NULL;
-  if (pSizeCache->m_GlyphMap.Lookup((void*)(uintptr_t)glyph_index,
-                                    (void*&)pGlyphBitmap)) {
-    return pGlyphBitmap;
-  }
-  pGlyphBitmap = RenderGlyph(pFont, glyph_index, bFontStyle, pMatrix,
-                             dest_width, anti_alias);
-  if (pGlyphBitmap == NULL) {
-    return NULL;
-  }
-  pSizeCache->m_GlyphMap.SetAt((void*)(uintptr_t)glyph_index, pGlyphBitmap);
+  auto it2 = pSizeCache->m_GlyphMap.find(glyph_index);
+  if (it2 != pSizeCache->m_GlyphMap.end())
+    return it2->second;
+
+  CFX_GlyphBitmap* pGlyphBitmap = RenderGlyph(pFont, glyph_index, bFontStyle,
+                                              pMatrix, dest_width, anti_alias);
+  if (!pGlyphBitmap)
+    return nullptr;
+
+  pSizeCache->m_GlyphMap[glyph_index] = pGlyphBitmap;
   return pGlyphBitmap;
 }
 const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(CFX_Font* pFont,
@@ -1374,14 +1369,10 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(CFX_Font* pFont,
 #endif
 }
 CFX_SizeGlyphCache::~CFX_SizeGlyphCache() {
-  FX_POSITION pos = m_GlyphMap.GetStartPosition();
-  void* Key;
-  CFX_GlyphBitmap* pGlyphBitmap = NULL;
-  while (pos) {
-    m_GlyphMap.GetNextAssoc(pos, Key, (void*&)pGlyphBitmap);
-    delete pGlyphBitmap;
+  for (const auto& pair : m_GlyphMap) {
+    delete pair.second;
   }
-  m_GlyphMap.RemoveAll();
+  m_GlyphMap.clear();
 }
 #define CONTRAST_RAMP_STEP 1
 void CFX_Font::AdjustMMParams(int glyph_index, int dest_width, int weight) {
@@ -1652,24 +1643,21 @@ CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(CFX_Font* pFont,
 const CFX_PathData* CFX_FaceCache::LoadGlyphPath(CFX_Font* pFont,
                                                  FX_DWORD glyph_index,
                                                  int dest_width) {
-  if (m_Face == NULL || glyph_index == (FX_DWORD)-1) {
-    return NULL;
-  }
-  CFX_PathData* pGlyphPath = NULL;
-  void* key;
+  if (!m_Face || glyph_index == (FX_DWORD)-1)
+    return nullptr;
+
+  FX_DWORD key = glyph_index;
   if (pFont->GetSubstFont()) {
-    key = (void*)(uintptr_t)(
-        glyph_index + ((pFont->GetSubstFont()->m_Weight / 16) << 15) +
-        ((pFont->GetSubstFont()->m_ItalicAngle / 2) << 21) +
-        ((dest_width / 16) << 25) + (pFont->IsVertical() << 31));
-  } else {
-    key = (void*)(uintptr_t)glyph_index;
+    key += (((pFont->GetSubstFont()->m_Weight / 16) << 15) +
+            ((pFont->GetSubstFont()->m_ItalicAngle / 2) << 21) +
+            ((dest_width / 16) << 25) + (pFont->IsVertical() << 31));
   }
-  if (m_PathMap.Lookup(key, (void*&)pGlyphPath)) {
-    return pGlyphPath;
-  }
-  pGlyphPath = pFont->LoadGlyphPath(glyph_index, dest_width);
-  m_PathMap.SetAt(key, pGlyphPath);
+  auto it = m_PathMap.find(key);
+  if (it != m_PathMap.end())
+    return it->second;
+
+  CFX_PathData* pGlyphPath = pFont->LoadGlyphPath(glyph_index, dest_width);
+  m_PathMap[key] = pGlyphPath;
   return pGlyphPath;
 }
 typedef struct {

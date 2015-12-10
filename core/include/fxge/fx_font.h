@@ -424,7 +424,7 @@ class CFX_FaceCache {
 
   FXFT_Face const m_Face;
   std::map<CFX_ByteString, CFX_SizeGlyphCache*> m_SizeMap;
-  CFX_MapPtrToPtr m_PathMap;
+  std::map<FX_DWORD, CFX_PathData*> m_PathMap;
   CFX_DIBitmap* m_pBitmap;
 };
 

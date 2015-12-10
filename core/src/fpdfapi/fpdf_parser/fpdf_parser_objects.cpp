@@ -227,11 +227,11 @@ CPDF_Object* CPDF_Object::GetDirect() const {
   return pRef->m_pObjList->GetIndirectObject(pRef->GetRefObjNum());
 }
 CPDF_Object* CPDF_Object::Clone(FX_BOOL bDirect) const {
-  CFX_MapPtrToPtr visited;
+  std::set<FX_DWORD> visited;
   return CloneInternal(bDirect, &visited);
 }
 CPDF_Object* CPDF_Object::CloneInternal(FX_BOOL bDirect,
-                                        CFX_MapPtrToPtr* visited) const {
+                                        std::set<FX_DWORD>* visited) const {
   switch (m_Type) {
     case PDFOBJ_BOOLEAN:
       return new CPDF_Boolean(AsBoolean()->m_bValue);
@@ -285,8 +285,8 @@ CPDF_Object* CPDF_Object::CloneInternal(FX_BOOL bDirect,
     case PDFOBJ_REFERENCE: {
       const CPDF_Reference* pRef = AsReference();
       FX_DWORD obj_num = pRef->GetRefObjNum();
-      if (bDirect && !visited->GetValueAt((void*)(uintptr_t)obj_num)) {
-        visited->SetAt((void*)(uintptr_t)obj_num, (void*)1);
+      if (bDirect && visited->find(obj_num) == visited->end()) {
+        visited->insert(obj_num);
         if (!pRef->GetDirect())
           return nullptr;
 

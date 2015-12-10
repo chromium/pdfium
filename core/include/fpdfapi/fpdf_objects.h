@@ -7,6 +7,8 @@
 #ifndef CORE_INCLUDE_FPDFAPI_FPDF_OBJECTS_H_
 #define CORE_INCLUDE_FPDFAPI_FPDF_OBJECTS_H_
 
+#include <set>
+
 #include "core/include/fxcrt/fx_coordinates.h"
 #include "core/include/fxcrt/fx_system.h"
 
@@ -129,7 +131,8 @@ class CPDF_Object {
 
  private:
   CPDF_Object(const CPDF_Object& src) {}
-  CPDF_Object* CloneInternal(FX_BOOL bDirect, CFX_MapPtrToPtr* visited) const;
+  CPDF_Object* CloneInternal(FX_BOOL bDirect,
+                             std::set<FX_DWORD>* visited) const;
 };
 class CPDF_Boolean : public CPDF_Object {
  public:

@@ -421,12 +421,9 @@ class CPDF_Annot : public CFX_PrivateData {
 
  private:
   CPDF_Dictionary* const m_pAnnotDict;
-
   CPDF_AnnotList* const m_pList;
-
   const CFX_ByteString m_sSubtype;
-
-  CFX_MapPtrToPtr m_APMap;
+  std::map<CPDF_Stream*, CPDF_Form*> m_APMap;
 };
 
 class CPDF_AnnotList {

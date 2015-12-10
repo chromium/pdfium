@@ -21,19 +21,18 @@ class CPDF_QuickStretcher;
 
 class CPDF_Type3Glyphs {
  public:
-  CPDF_Type3Glyphs() {
-    m_GlyphMap.InitHashTable(253);
-    m_TopBlueCount = m_BottomBlueCount = 0;
-  }
+  CPDF_Type3Glyphs() : m_TopBlueCount(0), m_BottomBlueCount(0) {}
   ~CPDF_Type3Glyphs();
-  CFX_MapPtrToPtr m_GlyphMap;
   void AdjustBlue(FX_FLOAT top,
                   FX_FLOAT bottom,
                   int& top_line,
                   int& bottom_line);
 
-  int m_TopBlue[TYPE3_MAX_BLUES], m_BottomBlue[TYPE3_MAX_BLUES];
-  int m_TopBlueCount, m_BottomBlueCount;
+  std::map<FX_DWORD, CFX_GlyphBitmap*> m_GlyphMap;
+  int m_TopBlue[TYPE3_MAX_BLUES];
+  int m_BottomBlue[TYPE3_MAX_BLUES];
+  int m_TopBlueCount;
+  int m_BottomBlueCount;
 };
 class CPDF_Type3Cache {
  public:
