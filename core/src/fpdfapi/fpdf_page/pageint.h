@@ -402,7 +402,7 @@ class CPDF_DocPageData {
                              CPDF_FontEncoding* pEncoding);
   void ReleaseFont(CPDF_Dictionary* pFontDict);
   CPDF_ColorSpace* GetColorSpace(CPDF_Object* pCSObj,
-                                 CPDF_Dictionary* pResources);
+                                 const CPDF_Dictionary* pResources);
   CPDF_ColorSpace* GetCopiedColorSpace(CPDF_Object* pCSObj);
   void ReleaseColorSpace(CPDF_Object* pColorSpace);
   CPDF_Pattern* GetPattern(CPDF_Object* pPatternObj,
