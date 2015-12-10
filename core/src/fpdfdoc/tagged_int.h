@@ -53,7 +53,6 @@ class CPDF_StructElementImpl final : public CPDF_StructElement {
   const CPDF_StructKid& GetKid(int index) const override {
     return m_Kids.GetData()[index];
   }
-  CFX_PtrArray* GetObjectArray() override { return &m_ObjectArray; }
   CPDF_Object* GetAttr(const CFX_ByteStringC& owner,
                        const CFX_ByteStringC& name,
                        FX_BOOL bInheritable = FALSE,
@@ -79,7 +78,6 @@ class CPDF_StructElementImpl final : public CPDF_StructElement {
                  FX_BOOL bInheritable = FALSE,
                  int subindex = -1) override;
 
-  CFX_PtrArray m_ObjectArray;
   void LoadKids(CPDF_Dictionary* pDict);
   void LoadKid(FX_DWORD PageObjNum, CPDF_Object* pObj, CPDF_StructKid* pKid);
   CPDF_Object* GetAttr(const CFX_ByteStringC& owner,

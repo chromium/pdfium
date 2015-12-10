@@ -41,12 +41,10 @@ CTextPage::CTextPage() {}
 CTextPage::~CTextPage() {
   int i;
   for (i = 0; i < m_BaseLines.GetSize(); i++) {
-    CTextBaseLine* pBaseLine = (CTextBaseLine*)m_BaseLines.GetAt(i);
-    delete pBaseLine;
+    delete m_BaseLines.GetAt(i);
   }
   for (i = 0; i < m_TextColumns.GetSize(); i++) {
-    CTextColumn* pTextColumn = (CTextColumn*)m_TextColumns.GetAt(i);
-    delete pTextColumn;
+    delete m_TextColumns.GetAt(i);
   }
 }
 void CTextPage::ProcessObject(CPDF_PageObject* pObject) {
@@ -173,7 +171,7 @@ CTextBaseLine* CTextPage::InsertTextBox(CTextBaseLine* pBaseLine,
   if (pBaseLine == NULL) {
     int i;
     for (i = 0; i < m_BaseLines.GetSize(); i++) {
-      CTextBaseLine* pExistLine = (CTextBaseLine*)m_BaseLines.GetAt(i);
+      CTextBaseLine* pExistLine = m_BaseLines.GetAt(i);
       if (pExistLine->m_BaseLine == basey) {
         pBaseLine = pExistLine;
         break;
@@ -211,7 +209,7 @@ void CTextPage::WriteOutput(CFX_WideStringArray& lines, int iMinWidth) {
   FX_FLOAT MaxRightX = 0;
   int i;
   for (i = 0; i < m_BaseLines.GetSize(); i++) {
-    CTextBaseLine* pBaseLine = (CTextBaseLine*)m_BaseLines.GetAt(i);
+    CTextBaseLine* pBaseLine = m_BaseLines.GetAt(i);
     FX_FLOAT leftx, rightx;
     if (pBaseLine->GetWidth(leftx, rightx)) {
       if (leftx < MinLeftX) {
@@ -223,12 +221,11 @@ void CTextPage::WriteOutput(CFX_WideStringArray& lines, int iMinWidth) {
     }
   }
   for (i = 0; i < m_BaseLines.GetSize(); i++) {
-    CTextBaseLine* pBaseLine = (CTextBaseLine*)m_BaseLines.GetAt(i);
-    pBaseLine->MergeBoxes();
+    m_BaseLines.GetAt(i)->MergeBoxes();
   }
   for (i = 1; i < m_BaseLines.GetSize(); i++) {
-    CTextBaseLine* pBaseLine = (CTextBaseLine*)m_BaseLines.GetAt(i);
-    CTextBaseLine* pPrevLine = (CTextBaseLine*)m_BaseLines.GetAt(i - 1);
+    CTextBaseLine* pBaseLine = m_BaseLines.GetAt(i);
+    CTextBaseLine* pPrevLine = m_BaseLines.GetAt(i - 1);
     if (pBaseLine->CanMerge(pPrevLine)) {
       pPrevLine->Merge(pBaseLine);
       delete pBaseLine;
@@ -240,7 +237,7 @@ void CTextPage::WriteOutput(CFX_WideStringArray& lines, int iMinWidth) {
     int* widths = FX_Alloc(int, m_BaseLines.GetSize());
     for (i = 0; i < m_BaseLines.GetSize(); i++) {
       widths[i] = 0;
-      CTextBaseLine* pBaseLine = (CTextBaseLine*)m_BaseLines.GetAt(i);
+      CTextBaseLine* pBaseLine = m_BaseLines.GetAt(i);
       int TotalChars = 0;
       FX_FLOAT TotalWidth = 0;
       int minchars;
@@ -277,14 +274,13 @@ void CTextPage::WriteOutput(CFX_WideStringArray& lines, int iMinWidth) {
     }
   }
   for (i = 0; i < m_BaseLines.GetSize(); i++) {
-    CTextBaseLine* pBaseLine = (CTextBaseLine*)m_BaseLines.GetAt(i);
-    pBaseLine->MergeBoxes();
+    m_BaseLines.GetAt(i)->MergeBoxes();
   }
   if (m_bKeepColumn) {
     FindColumns();
   }
   for (i = 0; i < m_BaseLines.GetSize(); i++) {
-    CTextBaseLine* pBaseLine = (CTextBaseLine*)m_BaseLines.GetAt(i);
+    CTextBaseLine* pBaseLine = m_BaseLines.GetAt(i);
     if (lastheight >= 0) {
       FX_FLOAT dy = lastbaseline - pBaseLine->m_BaseLine;
       if (dy >= (pBaseLine->m_MaxFontSizeV) * 1.5 || dy >= lastheight * 1.5) {
@@ -448,9 +444,9 @@ static FX_BOOL IsNumber(CFX_WideString& str) {
 void CTextPage::FindColumns() {
   int i;
   for (i = 0; i < m_BaseLines.GetSize(); i++) {
-    CTextBaseLine* pBaseLine = (CTextBaseLine*)m_BaseLines.GetAt(i);
+    CTextBaseLine* pBaseLine = m_BaseLines.GetAt(i);
     for (int j = 0; j < pBaseLine->m_TextList.GetSize(); j++) {
-      CTextBox* pTextBox = (CTextBox*)pBaseLine->m_TextList.GetAt(j);
+      CTextBox* pTextBox = pBaseLine->m_TextList.GetAt(j);
       CTextColumn* pColumn = FindColumn(pTextBox->m_Right);
       if (pColumn == NULL) {
         pColumn = new CTextColumn;
@@ -468,7 +464,7 @@ void CTextPage::FindColumns() {
   }
   int mincount = m_BaseLines.GetSize() / 4;
   for (i = 0; i < m_TextColumns.GetSize(); i++) {
-    CTextColumn* pTextColumn = (CTextColumn*)m_TextColumns.GetAt(i);
+    CTextColumn* pTextColumn = m_TextColumns.GetAt(i);
     if (pTextColumn->m_Count >= mincount) {
       continue;
     }
@@ -477,9 +473,9 @@ void CTextPage::FindColumns() {
     i--;
   }
   for (i = 0; i < m_BaseLines.GetSize(); i++) {
-    CTextBaseLine* pBaseLine = (CTextBaseLine*)m_BaseLines.GetAt(i);
+    CTextBaseLine* pBaseLine = m_BaseLines.GetAt(i);
     for (int j = 0; j < pBaseLine->m_TextList.GetSize(); j++) {
-      CTextBox* pTextBox = (CTextBox*)pBaseLine->m_TextList.GetAt(j);
+      CTextBox* pTextBox = pBaseLine->m_TextList.GetAt(j);
       if (IsNumber(pTextBox->m_Text)) {
         pTextBox->m_pColumn = FindColumn(pTextBox->m_Right);
       }
@@ -488,7 +484,7 @@ void CTextPage::FindColumns() {
 }
 CTextColumn* CTextPage::FindColumn(FX_FLOAT xpos) {
   for (int i = 0; i < m_TextColumns.GetSize(); i++) {
-    CTextColumn* pColumn = (CTextColumn*)m_TextColumns.GetAt(i);
+    CTextColumn* pColumn = m_TextColumns.GetAt(i);
     if (pColumn->m_AvgPos < xpos + 1 && pColumn->m_AvgPos > xpos - 1) {
       return pColumn;
     }
@@ -503,8 +499,7 @@ CTextBaseLine::CTextBaseLine() {
 }
 CTextBaseLine::~CTextBaseLine() {
   for (int i = 0; i < m_TextList.GetSize(); i++) {
-    CTextBox* pText = (CTextBox*)m_TextList.GetAt(i);
-    delete pText;
+    delete m_TextList.GetAt(i);
   }
 }
 void CTextBaseLine::InsertTextBox(FX_FLOAT leftx,
@@ -525,7 +520,7 @@ void CTextBaseLine::InsertTextBox(FX_FLOAT leftx,
   }
   int i;
   for (i = 0; i < m_TextList.GetSize(); i++) {
-    CTextBox* pText = (CTextBox*)m_TextList.GetAt(i);
+    CTextBox* pText = m_TextList.GetAt(i);
     if (pText->m_Left > leftx) {
       break;
     }
@@ -560,9 +555,9 @@ FX_BOOL CTextBaseLine::CanMerge(CTextBaseLine* pOther) {
   }
   FX_FLOAT dy = (FX_FLOAT)FXSYS_fabs(m_BaseLine - pOther->m_BaseLine);
   for (int i = 0; i < m_TextList.GetSize(); i++) {
-    CTextBox* pText = (CTextBox*)m_TextList.GetAt(i);
+    CTextBox* pText = m_TextList.GetAt(i);
     for (int j = 0; j < pOther->m_TextList.GetSize(); j++) {
-      CTextBox* pOtherText = (CTextBox*)pOther->m_TextList.GetAt(j);
+      CTextBox* pOtherText = pOther->m_TextList.GetAt(j);
       FX_FLOAT inter_left, inter_right;
       if (!GetIntersection(pText->m_Left, pText->m_Right, pOtherText->m_Left,
                            pOtherText->m_Right, inter_left, inter_right)) {
@@ -583,7 +578,7 @@ FX_BOOL CTextBaseLine::CanMerge(CTextBaseLine* pOther) {
 }
 void CTextBaseLine::Merge(CTextBaseLine* pOther) {
   for (int i = 0; i < pOther->m_TextList.GetSize(); i++) {
-    CTextBox* pText = (CTextBox*)pOther->m_TextList.GetAt(i);
+    CTextBox* pText = pOther->m_TextList.GetAt(i);
     InsertTextBox(pText->m_Left, pText->m_Right, pText->m_Top, pText->m_Bottom,
                   pText->m_SpaceWidth, pText->m_FontSizeV, pText->m_Text);
   }
@@ -591,7 +586,7 @@ void CTextBaseLine::Merge(CTextBaseLine* pOther) {
 FX_BOOL CTextBaseLine::GetWidth(FX_FLOAT& leftx, FX_FLOAT& rightx) {
   int i;
   for (i = 0; i < m_TextList.GetSize(); i++) {
-    CTextBox* pText = (CTextBox*)m_TextList.GetAt(i);
+    CTextBox* pText = m_TextList.GetAt(i);
     if (pText->m_Text != L" ") {
       break;
     }
@@ -599,15 +594,15 @@ FX_BOOL CTextBaseLine::GetWidth(FX_FLOAT& leftx, FX_FLOAT& rightx) {
   if (i == m_TextList.GetSize()) {
     return FALSE;
   }
-  CTextBox* pText = (CTextBox*)m_TextList.GetAt(i);
+  CTextBox* pText = m_TextList.GetAt(i);
   leftx = pText->m_Left;
   for (i = m_TextList.GetSize() - 1; i >= 0; i--) {
-    CTextBox* pText = (CTextBox*)m_TextList.GetAt(i);
+    CTextBox* pText = m_TextList.GetAt(i);
     if (pText->m_Text != L" ") {
       break;
     }
   }
-  pText = (CTextBox*)m_TextList.GetAt(i);
+  pText = m_TextList.GetAt(i);
   rightx = pText->m_Right;
   return TRUE;
 }
@@ -617,8 +612,8 @@ void CTextBaseLine::MergeBoxes() {
     if (i >= m_TextList.GetSize() - 1) {
       break;
     }
-    CTextBox* pThisText = (CTextBox*)m_TextList.GetAt(i);
-    CTextBox* pNextText = (CTextBox*)m_TextList.GetAt(i + 1);
+    CTextBox* pThisText = m_TextList.GetAt(i);
+    CTextBox* pNextText = m_TextList.GetAt(i + 1);
     FX_FLOAT dx = pNextText->m_Left - pThisText->m_Right;
     FX_FLOAT spacew = (pThisText->m_SpaceWidth == 0.0)
                           ? pNextText->m_SpaceWidth
@@ -646,7 +641,7 @@ void CTextBaseLine::WriteOutput(CFX_WideString& str,
                                 int iTextWidth) {
   int lastpos = -1;
   for (int i = 0; i < m_TextList.GetSize(); i++) {
-    CTextBox* pText = (CTextBox*)m_TextList.GetAt(i);
+    CTextBox* pText = m_TextList.GetAt(i);
     int xpos;
     if (pText->m_pColumn) {
       xpos =
@@ -672,7 +667,7 @@ void CTextBaseLine::WriteOutput(CFX_WideString& str,
 void CTextBaseLine::CountChars(int& count, FX_FLOAT& width, int& minchars) {
   minchars = 0;
   for (int i = 0; i < m_TextList.GetSize(); i++) {
-    CTextBox* pText = (CTextBox*)m_TextList.GetAt(i);
+    CTextBox* pText = m_TextList.GetAt(i);
     if (pText->m_Right - pText->m_Left < 0.002) {
       continue;
     }

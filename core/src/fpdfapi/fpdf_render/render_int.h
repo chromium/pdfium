@@ -137,11 +137,12 @@ class CPDF_RenderStatus {
   FX_BOOL ContinueSingleObject(const CPDF_PageObject* pObj,
                                const CFX_AffineMatrix* pObj2Device,
                                IFX_Pause* pPause);
+  CPDF_RenderContext* GetContext() { return m_pContext; }
+
   CPDF_RenderOptions m_Options;
   CPDF_Dictionary* m_pFormResource;
   CPDF_Dictionary* m_pPageResource;
-  CFX_PtrArray m_Type3FontCache;
-  CPDF_RenderContext* GetContext() { return m_pContext; }
+  CFX_ArrayTemplate<CPDF_Type3Font*> m_Type3FontCache;
 
  protected:
   friend class CPDF_ImageRenderer;

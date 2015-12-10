@@ -211,7 +211,7 @@ CFX_AggDeviceDriver::CFX_AggDeviceDriver(CFX_DIBitmap* pBitmap,
 CFX_AggDeviceDriver::~CFX_AggDeviceDriver() {
   delete m_pClipRgn;
   for (int i = 0; i < m_StateStack.GetSize(); i++)
-    delete (CFX_ClipRgn*)m_StateStack[i];
+    delete m_StateStack[i];
   DestroyPlatform();
 }
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_APPLE_
@@ -266,7 +266,7 @@ int CFX_AggDeviceDriver::GetDeviceCaps(int caps_id) {
   return 0;
 }
 void CFX_AggDeviceDriver::SaveState() {
-  void* pClip = NULL;
+  CFX_ClipRgn* pClip = NULL;
   if (m_pClipRgn) {
     pClip = new CFX_ClipRgn(*m_pClipRgn);
   }
@@ -278,8 +278,7 @@ void CFX_AggDeviceDriver::RestoreState(FX_BOOL bKeepSaved) {
     m_pClipRgn = NULL;
     return;
   }
-  CFX_ClipRgn* pSavedClip =
-      (CFX_ClipRgn*)m_StateStack[m_StateStack.GetSize() - 1];
+  CFX_ClipRgn* pSavedClip = m_StateStack[m_StateStack.GetSize() - 1];
   delete m_pClipRgn;
   m_pClipRgn = NULL;
   if (bKeepSaved) {

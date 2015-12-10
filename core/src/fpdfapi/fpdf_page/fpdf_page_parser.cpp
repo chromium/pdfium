@@ -80,7 +80,7 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
 CPDF_StreamContentParser::~CPDF_StreamContentParser() {
   ClearAllParams();
   for (int i = 0; i < m_StateStack.GetSize(); ++i) {
-    delete (CPDF_AllStates*)m_StateStack[i];
+    delete m_StateStack[i];
   }
   FX_Free(m_pPathPoints);
   if (m_pLastImageDict) {
@@ -819,12 +819,10 @@ void CPDF_StreamContentParser::Handle_EndText() {
   }
   if (m_pCurStates->m_TextState.GetObject()->m_TextMode < 4) {
     for (int i = 0; i < count; i++) {
-      CPDF_TextObject* pText = (CPDF_TextObject*)m_ClipTextList.GetAt(i);
-      delete pText;
+      delete m_ClipTextList.GetAt(i);
     }
   } else {
-    m_pCurStates->m_ClipPath.AppendTexts(
-        (CPDF_TextObject**)m_ClipTextList.GetData(), count);
+    m_pCurStates->m_ClipPath.AppendTexts(m_ClipTextList.GetData(), count);
   }
   m_ClipTextList.RemoveAll();
 }
@@ -950,7 +948,7 @@ void CPDF_StreamContentParser::Handle_RestoreGraphState() {
   if (size == 0) {
     return;
   }
-  CPDF_AllStates* pStates = (CPDF_AllStates*)m_StateStack.GetAt(size - 1);
+  CPDF_AllStates* pStates = m_StateStack.GetAt(size - 1);
   m_pCurStates->Copy(*pStates);
   delete pStates;
   m_StateStack.RemoveAt(size - 1);

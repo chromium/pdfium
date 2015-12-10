@@ -251,8 +251,7 @@ CPDF_Object* CPDF_Object::CloneInternal(FX_BOOL bDirect,
       const CPDF_Array* pThis = AsArray();
       int n = pThis->GetCount();
       for (int i = 0; i < n; i++) {
-        CPDF_Object* value =
-            static_cast<CPDF_Object*>(pThis->m_Objects.GetAt(i));
+        CPDF_Object* value = pThis->m_Objects.GetAt(i);
         pCopy->m_Objects.Add(value->CloneInternal(bDirect, visited));
       }
       return pCopy;
@@ -424,7 +423,7 @@ CPDF_String::CPDF_String(const CFX_WideString& str)
 }
 CPDF_Array::~CPDF_Array() {
   int size = m_Objects.GetSize();
-  CPDF_Object** pList = (CPDF_Object**)m_Objects.GetData();
+  CPDF_Object** pList = m_Objects.GetData();
   for (int i = 0; i < size; i++) {
     if (pList[i])
       pList[i]->Release();
@@ -453,32 +452,32 @@ CFX_AffineMatrix CPDF_Array::GetMatrix() {
 CPDF_Object* CPDF_Array::GetElement(FX_DWORD i) const {
   if (i >= (FX_DWORD)m_Objects.GetSize())
     return nullptr;
-  return static_cast<CPDF_Object*>(m_Objects.GetAt(i));
+  return m_Objects.GetAt(i);
 }
 CPDF_Object* CPDF_Array::GetElementValue(FX_DWORD i) const {
   if (i >= (FX_DWORD)m_Objects.GetSize())
     return nullptr;
-  return static_cast<CPDF_Object*>(m_Objects.GetAt(i))->GetDirect();
+  return m_Objects.GetAt(i)->GetDirect();
 }
 CFX_ByteString CPDF_Array::GetString(FX_DWORD i) const {
-  if (i < (FX_DWORD)m_Objects.GetSize())
-    return static_cast<CPDF_Object*>(m_Objects.GetAt(i))->GetString();
-  return CFX_ByteString();
+  if (i >= (FX_DWORD)m_Objects.GetSize())
+    return CFX_ByteString();
+  return m_Objects.GetAt(i)->GetString();
 }
 CFX_ByteStringC CPDF_Array::GetConstString(FX_DWORD i) const {
-  if (i < (FX_DWORD)m_Objects.GetSize())
-    return static_cast<CPDF_Object*>(m_Objects.GetAt(i))->GetConstString();
-  return CFX_ByteStringC();
+  if (i >= (FX_DWORD)m_Objects.GetSize())
+    return CFX_ByteStringC();
+  return m_Objects.GetAt(i)->GetConstString();
 }
 int CPDF_Array::GetInteger(FX_DWORD i) const {
   if (i >= (FX_DWORD)m_Objects.GetSize())
     return 0;
-  return static_cast<CPDF_Object*>(m_Objects.GetAt(i))->GetInteger();
+  return m_Objects.GetAt(i)->GetInteger();
 }
 FX_FLOAT CPDF_Array::GetNumber(FX_DWORD i) const {
   if (i >= (FX_DWORD)m_Objects.GetSize())
     return 0;
-  return static_cast<CPDF_Object*>(m_Objects.GetAt(i))->GetNumber();
+  return m_Objects.GetAt(i)->GetNumber();
 }
 CPDF_Dictionary* CPDF_Array::GetDict(FX_DWORD i) const {
   CPDF_Object* p = GetElementValue(i);
@@ -504,7 +503,7 @@ void CPDF_Array::RemoveAt(FX_DWORD i, int nCount) {
     return;
 
   for (int j = 0; j < nCount; ++j) {
-    if (CPDF_Object* p = static_cast<CPDF_Object*>(m_Objects.GetAt(i + j)))
+    if (CPDF_Object* p = m_Objects.GetAt(i + j))
       p->Release();
   }
   m_Objects.RemoveAt(i, nCount);
@@ -516,7 +515,7 @@ void CPDF_Array::SetAt(FX_DWORD i,
   ASSERT(i < (FX_DWORD)m_Objects.GetSize());
   if (i >= (FX_DWORD)m_Objects.GetSize())
     return;
-  if (CPDF_Object* pOld = static_cast<CPDF_Object*>(m_Objects.GetAt(i)))
+  if (CPDF_Object* pOld = m_Objects.GetAt(i))
     pOld->Release();
   if (pObj->GetObjNum()) {
     ASSERT(pObjs);
@@ -568,11 +567,10 @@ FX_BOOL CPDF_Array::Identical(CPDF_Array* pOther) const {
   if (m_Objects.GetSize() != pOther->m_Objects.GetSize()) {
     return FALSE;
   }
-  for (int i = 0; i < m_Objects.GetSize(); i++)
-    if (!static_cast<CPDF_Object*>(m_Objects[i])
-             ->IsIdentical(static_cast<CPDF_Object*>(pOther->m_Objects[i]))) {
+  for (int i = 0; i < m_Objects.GetSize(); i++) {
+    if (!m_Objects[i]->IsIdentical(pOther->m_Objects[i]))
       return FALSE;
-    }
+  }
   return TRUE;
 }
 CPDF_Dictionary::~CPDF_Dictionary() {

@@ -196,7 +196,7 @@ class CPDF_PageContentGenerate {
  private:
   CPDF_Page* m_pPage;
   CPDF_Document* m_pDocument;
-  CFX_PtrArray m_pageObjects;
+  CFX_ArrayTemplate<CPDF_PageObject*> m_pageObjects;
 };
 
 #endif  // CORE_INCLUDE_FPDFAPI_FPDF_PAGE_H_

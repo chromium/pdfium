@@ -71,8 +71,6 @@ class CPDF_StructElement {
 
   virtual const CPDF_StructKid& GetKid(int index) const = 0;
 
-  virtual CFX_PtrArray* GetObjectArray() = 0;
-
   virtual CPDF_Object* GetAttr(const CFX_ByteStringC& owner,
                                const CFX_ByteStringC& name,
                                FX_BOOL bInheritable = FALSE,

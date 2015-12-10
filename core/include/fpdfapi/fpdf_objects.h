@@ -350,7 +350,7 @@ class CPDF_Array : public CPDF_Object {
  protected:
   ~CPDF_Array();
 
-  CFX_PtrArray m_Objects;
+  CFX_ArrayTemplate<CPDF_Object*> m_Objects;
   friend class CPDF_Object;
 };
 inline CPDF_Array* ToArray(CPDF_Object* obj) {

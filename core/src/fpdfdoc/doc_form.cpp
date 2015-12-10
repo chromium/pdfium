@@ -36,7 +36,7 @@ class CFieldTree {
  public:
   struct _Node {
     _Node* parent;
-    CFX_PtrArray children;
+    CFX_ArrayTemplate<_Node*> children;
     CFX_WideString short_name;
     CPDF_FormField* field_ptr;
     int CountFields(int nLevel = 0) {
@@ -48,7 +48,7 @@ class CFieldTree {
       }
       int count = 0;
       for (int i = 0; i < children.GetSize(); i++) {
-        count += ((_Node*)children.GetAt(i))->CountFields(nLevel + 1);
+        count += children.GetAt(i)->CountFields(nLevel + 1);
       }
       return count;
     }
@@ -61,11 +61,8 @@ class CFieldTree {
         return NULL;
       }
       for (int i = 0; i < children.GetSize(); i++) {
-        _Node* pNode = (_Node*)children.GetAt(i);
-        CPDF_FormField* pField = pNode->GetField(fields_to_go);
-        if (pField) {
+        if (CPDF_FormField* pField = children.GetAt(i)->GetField(fields_to_go))
           return pField;
-        }
       }
       return NULL;
     }
@@ -109,17 +106,13 @@ CFieldTree::_Node* CFieldTree::AddChild(_Node* pParent,
   return pNode;
 }
 void CFieldTree::RemoveNode(_Node* pNode, int nLevel) {
-  if (pNode == NULL) {
+  if (!pNode) {
     return;
   }
-  if (nLevel > nMaxRecursion) {
-    delete pNode;
-    return;
-  }
-  CFX_PtrArray& ptr_array = pNode->children;
-  for (int i = 0; i < ptr_array.GetSize(); i++) {
-    _Node* pChild = (_Node*)ptr_array[i];
-    RemoveNode(pChild, nLevel + 1);
+  if (nLevel <= nMaxRecursion) {
+    for (int i = 0; i < pNode->children.GetSize(); i++) {
+      RemoveNode(pNode->children[i], nLevel + 1);
+    }
   }
   delete pNode;
 }
@@ -128,9 +121,8 @@ CFieldTree::_Node* CFieldTree::_Lookup(_Node* pParent,
   if (pParent == NULL) {
     return NULL;
   }
-  CFX_PtrArray& ptr_array = pParent->children;
-  for (int i = 0; i < ptr_array.GetSize(); i++) {
-    _Node* pNode = (_Node*)ptr_array[i];
+  for (int i = 0; i < pParent->children.GetSize(); i++) {
+    _Node* pNode = pParent->children[i];
     if (pNode->short_name.GetLength() == short_name.GetLength() &&
         FXSYS_memcmp(pNode->short_name.c_str(), short_name.c_str(),
                      short_name.GetLength() * sizeof(FX_WCHAR)) == 0) {
@@ -140,10 +132,8 @@ CFieldTree::_Node* CFieldTree::_Lookup(_Node* pParent,
   return NULL;
 }
 void CFieldTree::RemoveAll() {
-  CFX_PtrArray& ptr_array = m_Root.children;
-  for (int i = 0; i < ptr_array.GetSize(); i++) {
-    _Node* pNode = (_Node*)ptr_array[i];
-    RemoveNode(pNode);
+  for (int i = 0; i < m_Root.children.GetSize(); i++) {
+    RemoveNode(m_Root.children[i]);
   }
 }
 void CFieldTree::SetField(const CFX_WideString& full_name,
@@ -202,10 +192,9 @@ CPDF_FormField* CFieldTree::RemoveField(const CFX_WideString& full_name) {
     name_extractor.GetNext(pName, nLength);
   }
   if (pNode && pNode != &m_Root) {
-    CFX_PtrArray& ptr_array = pLast->children;
-    for (int i = 0; i < ptr_array.GetSize(); i++) {
-      if (pNode == (_Node*)ptr_array[i]) {
-        ptr_array.RemoveAt(i);
+    for (int i = 0; i < pLast->children.GetSize(); i++) {
+      if (pNode == pLast->children[i]) {
+        pLast->children.RemoveAt(i);
         break;
       }
     }

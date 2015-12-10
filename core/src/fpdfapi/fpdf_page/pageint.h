@@ -321,7 +321,7 @@ class CPDF_StreamContentParser {
   CPDF_StreamParser* m_pSyntax;
   nonstd::unique_ptr<CPDF_AllStates> m_pCurStates;
   CPDF_ContentMark m_CurContentMark;
-  CFX_PtrArray m_ClipTextList;
+  CFX_ArrayTemplate<CPDF_TextObject*> m_ClipTextList;
   CPDF_TextObject* m_pLastTextObject;
   FX_FLOAT m_DefFontSize;
   int m_CompatCount;
@@ -344,7 +344,7 @@ class CPDF_StreamContentParser {
   FX_BOOL m_bColored;
   FX_FLOAT m_Type3Data[6];
   FX_BOOL m_bResourceMissing;
-  CFX_PtrArray m_StateStack;
+  CFX_ArrayTemplate<CPDF_AllStates*> m_StateStack;
 };
 class CPDF_ContentParser {
  public:

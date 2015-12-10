@@ -133,7 +133,7 @@ class CFX_MemoryStream final : public IFX_MemoryStream {
   ~CFX_MemoryStream() override {
     if (m_dwFlags & FX_MEMSTREAM_TakeOver) {
       for (int32_t i = 0; i < m_Blocks.GetSize(); i++) {
-        FX_Free((uint8_t*)m_Blocks[i]);
+        FX_Free(m_Blocks[i]);
       }
     }
     m_Blocks.RemoveAll();
@@ -168,7 +168,7 @@ class CFX_MemoryStream final : public IFX_MemoryStream {
 
     m_nCurPos = newPos.ValueOrDie();
     if (m_dwFlags & FX_MEMSTREAM_Consecutive) {
-      FXSYS_memcpy(buffer, (uint8_t*)m_Blocks[0] + (size_t)offset, size);
+      FXSYS_memcpy(buffer, m_Blocks[0] + (size_t)offset, size);
       return TRUE;
     }
     size_t nStartBlock = (size_t)offset / m_nGrowSize;
@@ -178,8 +178,7 @@ class CFX_MemoryStream final : public IFX_MemoryStream {
       if (nRead > size) {
         nRead = size;
       }
-      FXSYS_memcpy(
-          buffer, (uint8_t*)m_Blocks[(int)nStartBlock] + (size_t)offset, nRead);
+      FXSYS_memcpy(buffer, m_Blocks[(int)nStartBlock] + (size_t)offset, nRead);
       buffer = ((uint8_t*)buffer) + nRead;
       size -= nRead;
       nStartBlock++;
@@ -214,7 +213,7 @@ class CFX_MemoryStream final : public IFX_MemoryStream {
         m_nTotalSize =
             (m_nCurPos + m_nGrowSize - 1) / m_nGrowSize * m_nGrowSize;
         if (m_Blocks.GetSize() < 1) {
-          void* block = FX_Alloc(uint8_t, m_nTotalSize);
+          uint8_t* block = FX_Alloc(uint8_t, m_nTotalSize);
           m_Blocks.Add(block);
         } else {
           m_Blocks[0] = FX_Realloc(uint8_t, m_Blocks[0], m_nTotalSize);
@@ -224,7 +223,7 @@ class CFX_MemoryStream final : public IFX_MemoryStream {
           return FALSE;
         }
       }
-      FXSYS_memcpy((uint8_t*)m_Blocks[0] + (size_t)offset, buffer, size);
+      FXSYS_memcpy(m_Blocks[0] + (size_t)offset, buffer, size);
       if (m_nCurSize < m_nCurPos) {
         m_nCurSize = m_nCurPos;
       }
@@ -248,8 +247,7 @@ class CFX_MemoryStream final : public IFX_MemoryStream {
       if (nWrite > size) {
         nWrite = size;
       }
-      FXSYS_memcpy((uint8_t*)m_Blocks[(int)nStartBlock] + (size_t)offset,
-                   buffer, nWrite);
+      FXSYS_memcpy(m_Blocks[(int)nStartBlock] + (size_t)offset, buffer, nWrite);
       buffer = ((uint8_t*)buffer) + nWrite;
       size -= nWrite;
       nStartBlock++;
@@ -273,7 +271,7 @@ class CFX_MemoryStream final : public IFX_MemoryStream {
     }
   }
   uint8_t* GetBuffer() const override {
-    return m_Blocks.GetSize() ? (uint8_t*)m_Blocks[0] : NULL;
+    return m_Blocks.GetSize() ? m_Blocks[0] : nullptr;
   }
   void AttachBuffer(uint8_t* pBuffer,
                     size_t nSize,
@@ -298,7 +296,7 @@ class CFX_MemoryStream final : public IFX_MemoryStream {
   }
 
  protected:
-  CFX_PtrArray m_Blocks;
+  CFX_ArrayTemplate<uint8_t*> m_Blocks;
   FX_DWORD m_dwCount;
   size_t m_nTotalSize;
   size_t m_nCurSize;

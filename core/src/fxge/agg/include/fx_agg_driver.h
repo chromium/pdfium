@@ -137,7 +137,7 @@ class CFX_AggDeviceDriver : public IFX_RenderDeviceDriver {
 
   CFX_DIBitmap* m_pBitmap;
   CFX_ClipRgn* m_pClipRgn;
-  CFX_PtrArray m_StateStack;
+  CFX_ArrayTemplate<CFX_ClipRgn*> m_StateStack;
   void* m_pPlatformGraphics;
   void* m_pPlatformBitmap;
   void* m_pDwRenderTartget;

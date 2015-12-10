@@ -358,10 +358,10 @@ FX_BOOL CPDF_RenderStatus::ProcessType3Text(
     const CPDF_TextObject* textobj,
     const CFX_AffineMatrix* pObj2Device) {
   CPDF_Type3Font* pType3Font = textobj->m_TextState.GetFont()->GetType3Font();
-  for (int j = 0; j < m_Type3FontCache.GetSize(); j++)
-    if ((CPDF_Type3Font*)m_Type3FontCache.GetAt(j) == pType3Font) {
+  for (int j = 0; j < m_Type3FontCache.GetSize(); j++) {
+    if (m_Type3FontCache.GetAt(j) == pType3Font)
       return TRUE;
-    }
+  }
   CFX_Matrix dCTM = m_pDevice->GetCTM();
   FX_FLOAT sa = FXSYS_fabs(dCTM.a);
   FX_FLOAT sd = FXSYS_fabs(dCTM.d);

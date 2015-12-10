@@ -335,7 +335,7 @@ FX_BOOL PDF_DataDecode(const uint8_t* src_buf,
   CPDF_Object* pParams =
       pDict ? pDict->GetElementValue(FX_BSTRC("DecodeParms")) : nullptr;
   CFX_ByteStringArray DecoderList;
-  CFX_PtrArray ParamList;
+  CFX_ArrayTemplate<CPDF_Object*> ParamList;
   if (CPDF_Array* pDecoders = pDecoder->AsArray()) {
     CPDF_Array* pParamsArray = ToArray(pParams);
     if (!pParamsArray)
@@ -357,8 +357,7 @@ FX_BOOL PDF_DataDecode(const uint8_t* src_buf,
         i == DecoderList.GetSize() - 1 ? last_estimated_size : 0;
     CFX_ByteString decoder = DecoderList[i];
     // Use ToDictionary here because we can push NULL into the ParamList.
-    CPDF_Dictionary* pParam =
-        ToDictionary(static_cast<CPDF_Object*>(ParamList[i]));
+    CPDF_Dictionary* pParam = ToDictionary(ParamList[i]);
     uint8_t* new_buf = nullptr;
     FX_DWORD new_size = (FX_DWORD)-1;
     int offset = -1;

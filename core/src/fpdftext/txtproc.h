@@ -48,7 +48,7 @@ class CTextBaseLine {
   FX_FLOAT m_Top;
   FX_FLOAT m_Bottom;
   FX_FLOAT m_MaxFontSizeV;
-  CFX_PtrArray m_TextList;
+  CFX_ArrayTemplate<CTextBox*> m_TextList;
 };
 class CPDF_PageObject;
 class CPDF_TextObject;
@@ -73,11 +73,12 @@ class CTextPage {
   FX_BOOL m_bBreakSpace;
 
  private:
-  CFX_PtrArray m_BaseLines;
-  CFX_PtrArray m_TextColumns;
   void FindColumns();
   CTextColumn* FindColumn(FX_FLOAT xpos);
   void BreakSpace(CPDF_TextObject* pTextObj);
+
+  CFX_ArrayTemplate<CTextBaseLine*> m_BaseLines;
+  CFX_ArrayTemplate<CTextColumn*> m_TextColumns;
 };
 
 #endif  // CORE_SRC_FPDFTEXT_TXTPROC_H_

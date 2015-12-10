@@ -2693,10 +2693,10 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
   static const int kMaxPageRecursionDepth = 1024;
 
   FX_DWORD GetObjectSize(FX_DWORD objnum, FX_FILESIZE& offset);
-  FX_BOOL IsObjectsAvail(CFX_PtrArray& obj_array,
+  FX_BOOL IsObjectsAvail(CFX_ArrayTemplate<CPDF_Object*>& obj_array,
                          FX_BOOL bParsePage,
                          IFX_DownloadHints* pHints,
-                         CFX_PtrArray& ret_array);
+                         CFX_ArrayTemplate<CPDF_Object*>& ret_array);
   FX_BOOL CheckDocStatus(IFX_DownloadHints* pHints);
   FX_BOOL CheckHeader(IFX_DownloadHints* pHints);
   FX_BOOL CheckFirstPage(IFX_DownloadHints* pHints);
@@ -2795,7 +2795,7 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
 
   CPDF_SortObjNumArray m_objnum_array;
 
-  CFX_PtrArray m_objs_array;
+  CFX_ArrayTemplate<CPDF_Object*> m_objs_array;
 
   FX_FILESIZE m_Pos;
 
@@ -2847,7 +2847,7 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
 
   CPDF_Object* m_pAcroForm;
 
-  CFX_PtrArray m_arrayAcroforms;
+  CFX_ArrayTemplate<CPDF_Object*> m_arrayAcroforms;
 
   CPDF_Dictionary* m_pPageDict;
 
@@ -2859,7 +2859,7 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
 
   FX_BOOL m_bLinearizedFormParamLoad;
 
-  CFX_PtrArray m_PagesArray;
+  CFX_ArrayTemplate<CPDF_Object*> m_PagesArray;
 
   FX_DWORD m_dwEncryptObjNum;
 
@@ -2954,7 +2954,7 @@ CPDF_DataAvail::~CPDF_DataAvail() {
 
   int iSize = m_arrayAcroforms.GetSize();
   for (int i = 0; i < iSize; ++i) {
-    static_cast<CPDF_Object*>(m_arrayAcroforms.GetAt(i))->Release();
+    m_arrayAcroforms.GetAt(i)->Release();
   }
 }
 void CPDF_DataAvail::SetDocument(CPDF_Document* pDoc) {
@@ -2991,18 +2991,19 @@ FX_DWORD CPDF_DataAvail::GetObjectSize(FX_DWORD objnum, FX_FILESIZE& offset) {
   }
   return 0;
 }
-FX_BOOL CPDF_DataAvail::IsObjectsAvail(CFX_PtrArray& obj_array,
-                                       FX_BOOL bParsePage,
-                                       IFX_DownloadHints* pHints,
-                                       CFX_PtrArray& ret_array) {
+FX_BOOL CPDF_DataAvail::IsObjectsAvail(
+    CFX_ArrayTemplate<CPDF_Object*>& obj_array,
+    FX_BOOL bParsePage,
+    IFX_DownloadHints* pHints,
+    CFX_ArrayTemplate<CPDF_Object*>& ret_array) {
   if (!obj_array.GetSize()) {
     return TRUE;
   }
   FX_DWORD count = 0;
-  CFX_PtrArray new_obj_array;
+  CFX_ArrayTemplate<CPDF_Object*> new_obj_array;
   int32_t i = 0;
   for (i = 0; i < obj_array.GetSize(); i++) {
-    CPDF_Object* pObj = static_cast<CPDF_Object*>(obj_array[i]);
+    CPDF_Object* pObj = obj_array[i];
     if (!pObj)
       continue;
 
@@ -3056,7 +3057,7 @@ FX_BOOL CPDF_DataAvail::IsObjectsAvail(CFX_PtrArray& obj_array,
   if (count > 0) {
     int32_t iSize = new_obj_array.GetSize();
     for (i = 0; i < iSize; ++i) {
-      CPDF_Object* pObj = static_cast<CPDF_Object*>(new_obj_array[i]);
+      CPDF_Object* pObj = new_obj_array[i];
       if (CPDF_Reference* pRef = pObj->AsReference()) {
         FX_DWORD dwNum = pRef->GetRefObjNum();
         if (!m_objnum_array.Find(dwNum))
@@ -3092,7 +3093,7 @@ FX_BOOL CPDF_DataAvail::CheckAcroFormSubObject(IFX_DownloadHints* pHints) {
   if (!m_objs_array.GetSize()) {
     m_objs_array.RemoveAll();
     m_objnum_array.RemoveAll();
-    CFX_PtrArray obj_array;
+    CFX_ArrayTemplate<CPDF_Object*> obj_array;
     obj_array.Append(m_arrayAcroforms);
     FX_BOOL bRet = IsObjectsAvail(obj_array, FALSE, pHints, m_objs_array);
     if (bRet) {
@@ -3100,12 +3101,12 @@ FX_BOOL CPDF_DataAvail::CheckAcroFormSubObject(IFX_DownloadHints* pHints) {
     }
     return bRet;
   }
-  CFX_PtrArray new_objs_array;
+  CFX_ArrayTemplate<CPDF_Object*> new_objs_array;
   FX_BOOL bRet = IsObjectsAvail(m_objs_array, FALSE, pHints, new_objs_array);
   if (bRet) {
     int32_t iSize = m_arrayAcroforms.GetSize();
     for (int32_t i = 0; i < iSize; ++i) {
-      static_cast<CPDF_Object*>(m_arrayAcroforms.GetAt(i))->Release();
+      m_arrayAcroforms.GetAt(i)->Release();
     }
     m_arrayAcroforms.RemoveAll();
   } else {
@@ -3391,14 +3392,14 @@ FX_BOOL CPDF_DataAvail::CheckPage(IFX_DownloadHints* pHints) {
   }
   FX_DWORD iPages = m_PagesArray.GetSize();
   for (FX_DWORD i = 0; i < iPages; i++) {
-    CPDF_Object* pPages = static_cast<CPDF_Object*>(m_PagesArray.GetAt(i));
+    CPDF_Object* pPages = m_PagesArray.GetAt(i);
     if (!pPages)
       continue;
 
     if (!GetPageKids(m_pCurrentParser, pPages)) {
       pPages->Release();
       while (++i < iPages) {
-        pPages = static_cast<CPDF_Object*>(m_PagesArray.GetAt(i));
+        pPages = m_PagesArray.GetAt(i);
         pPages->Release();
       }
       m_PagesArray.RemoveAll();
@@ -4163,7 +4164,7 @@ FX_BOOL CPDF_DataAvail::CheckPageNode(CPDF_PageNode& pageNodes,
     return FALSE;
   }
   for (int32_t i = 0; i < iSize; ++i) {
-    CPDF_PageNode* pNode = (CPDF_PageNode*)pageNodes.m_childNode.GetAt(i);
+    CPDF_PageNode* pNode = pageNodes.m_childNode.GetAt(i);
     if (!pNode) {
       continue;
     }
@@ -4310,7 +4311,7 @@ FX_BOOL CPDF_DataAvail::CheckPageAnnots(int32_t iPage,
     if (!pAnnots) {
       return TRUE;
     }
-    CFX_PtrArray obj_array;
+    CFX_ArrayTemplate<CPDF_Object*> obj_array;
     obj_array.Add(pAnnots);
     FX_BOOL bRet = IsObjectsAvail(obj_array, FALSE, pHints, m_objs_array);
     if (bRet) {
@@ -4318,7 +4319,7 @@ FX_BOOL CPDF_DataAvail::CheckPageAnnots(int32_t iPage,
     }
     return bRet;
   }
-  CFX_PtrArray new_objs_array;
+  CFX_ArrayTemplate<CPDF_Object*> new_objs_array;
   FX_BOOL bRet = IsObjectsAvail(m_objs_array, FALSE, pHints, new_objs_array);
   m_objs_array.RemoveAll();
   if (!bRet) {
@@ -4432,7 +4433,7 @@ int CPDF_DataAvail::IsPageAvail(int32_t iPage, IFX_DownloadHints* pHints) {
         ResetFirstCheck(iPage);
         return DataAvailable;
       }
-      CFX_PtrArray obj_array;
+      CFX_ArrayTemplate<CPDF_Object*> obj_array;
       obj_array.Add(m_pPageDict);
       FX_BOOL bRet = IsObjectsAvail(obj_array, TRUE, pHints, m_objs_array);
       if (bRet) {
@@ -4442,7 +4443,7 @@ int CPDF_DataAvail::IsPageAvail(int32_t iPage, IFX_DownloadHints* pHints) {
         return bRet;
       }
     } else {
-      CFX_PtrArray new_objs_array;
+      CFX_ArrayTemplate<CPDF_Object*> new_objs_array;
       FX_BOOL bRet =
           IsObjectsAvail(m_objs_array, FALSE, pHints, new_objs_array);
       m_objs_array.RemoveAll();
@@ -4487,7 +4488,7 @@ int CPDF_DataAvail::IsPageAvail(int32_t iPage, IFX_DownloadHints* pHints) {
 FX_BOOL CPDF_DataAvail::CheckResources(IFX_DownloadHints* pHints) {
   if (!m_objs_array.GetSize()) {
     m_objs_array.RemoveAll();
-    CFX_PtrArray obj_array;
+    CFX_ArrayTemplate<CPDF_Object*> obj_array;
     obj_array.Add(m_pPageResource);
     FX_BOOL bRet = IsObjectsAvail(obj_array, TRUE, pHints, m_objs_array);
     if (bRet) {
@@ -4495,7 +4496,7 @@ FX_BOOL CPDF_DataAvail::CheckResources(IFX_DownloadHints* pHints) {
     }
     return bRet;
   }
-  CFX_PtrArray new_objs_array;
+  CFX_ArrayTemplate<CPDF_Object*> new_objs_array;
   FX_BOOL bRet = IsObjectsAvail(m_objs_array, FALSE, pHints, new_objs_array);
   m_objs_array.RemoveAll();
   if (!bRet) {
@@ -4570,7 +4571,7 @@ IPDF_DataAvail::DocFormStatus CPDF_DataAvail::IsFormAvail(
     }
     m_bLinearizedFormParamLoad = TRUE;
   }
-  CFX_PtrArray new_objs_array;
+  CFX_ArrayTemplate<CPDF_Object*> new_objs_array;
   FX_BOOL bRet = IsObjectsAvail(m_objs_array, FALSE, pHints, new_objs_array);
   m_objs_array.RemoveAll();
   if (!bRet) {
@@ -4609,10 +4610,8 @@ FX_BOOL CPDF_SortObjNumArray::BinarySearch(FX_DWORD value, int32_t& iNext) {
   return FALSE;
 }
 CPDF_PageNode::~CPDF_PageNode() {
-  int32_t iSize = m_childNode.GetSize();
-  for (int32_t i = 0; i < iSize; ++i) {
-    CPDF_PageNode* pNode = (CPDF_PageNode*)m_childNode[i];
-    delete pNode;
+  for (int32_t i = 0; i < m_childNode.GetSize(); ++i) {
+    delete m_childNode[i];
   }
   m_childNode.RemoveAll();
 }
