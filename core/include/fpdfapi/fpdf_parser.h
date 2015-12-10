@@ -482,7 +482,7 @@ class CPDF_Parser {
                       FX_BOOL bSkip,
                       FX_BOOL bFirst);
 
-  FX_BOOL LoadCrossRefV5(FX_FILESIZE pos, FX_FILESIZE& prev, FX_BOOL bMainXRef);
+  FX_BOOL LoadCrossRefV5(FX_FILESIZE* pos, FX_BOOL bMainXRef);
 
   CPDF_Dictionary* LoadTrailerV4();
 

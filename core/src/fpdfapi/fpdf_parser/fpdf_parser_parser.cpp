@@ -582,21 +582,29 @@ bool CPDF_Parser::LoadCrossRefV4(FX_FILESIZE pos,
     }
     m_Syntax.RestorePos(SavedPos + count * recordsize);
   }
-  return !streampos || LoadCrossRefV5(streampos, streampos, FALSE);
+  return !streampos || LoadCrossRefV5(&streampos, FALSE);
 }
 
 FX_BOOL CPDF_Parser::LoadAllCrossRefV5(FX_FILESIZE xrefpos) {
-  if (!LoadCrossRefV5(xrefpos, xrefpos, TRUE)) {
+  if (!LoadCrossRefV5(&xrefpos, TRUE)) {
     return FALSE;
   }
-  while (xrefpos)
-    if (!LoadCrossRefV5(xrefpos, xrefpos, FALSE)) {
+  std::set<FX_FILESIZE> seen_xrefpos;
+  while (xrefpos) {
+    seen_xrefpos.insert(xrefpos);
+    if (!LoadCrossRefV5(&xrefpos, FALSE)) {
       return FALSE;
     }
+    // Check for circular references.
+    if (seen_xrefpos.find(xrefpos) != seen_xrefpos.end()) {
+      return FALSE;
+    }
+  }
   m_ObjectStreamMap.InitHashTable(101, FALSE);
   m_bXRefStream = TRUE;
   return TRUE;
 }
+
 FX_BOOL CPDF_Parser::RebuildCrossRef() {
   m_CrossRef.RemoveAll();
   m_V5Type.RemoveAll();
@@ -975,10 +983,8 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
   return m_pTrailer && m_CrossRef.GetSize() > 0;
 }
 
-FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE pos,
-                                    FX_FILESIZE& prev,
-                                    FX_BOOL bMainXRef) {
-  CPDF_Object* pObject = ParseIndirectObjectAt(m_pDocument, pos, 0, nullptr);
+FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, FX_BOOL bMainXRef) {
+  CPDF_Object* pObject = ParseIndirectObjectAt(m_pDocument, *pos, 0, nullptr);
   if (!pObject)
     return FALSE;
 
@@ -997,7 +1003,7 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE pos,
   if (!pStream)
     return FALSE;
 
-  prev = pStream->GetDict()->GetInteger(FX_BSTRC("Prev"));
+  *pos = pStream->GetDict()->GetInteger(FX_BSTRC("Prev"));
   int32_t size = pStream->GetDict()->GetInteger(FX_BSTRC("Size"));
   if (size < 0) {
     pStream->Release();
@@ -1563,7 +1569,7 @@ FX_DWORD CPDF_Parser::StartAsynParse(IFX_FileRead* pFileAccess,
   FX_BOOL bXRefRebuilt = FALSE;
   FX_BOOL bLoadV4 = FALSE;
   if (!(bLoadV4 = LoadCrossRefV4(dwFirstXRefOffset, 0, FALSE, FALSE)) &&
-      !LoadCrossRefV5(dwFirstXRefOffset, dwFirstXRefOffset, TRUE)) {
+      !LoadCrossRefV5(&dwFirstXRefOffset, TRUE)) {
     if (!RebuildCrossRef()) {
       return PDFPARSE_ERROR_FORMAT;
     }
@@ -1623,13 +1629,20 @@ FX_DWORD CPDF_Parser::StartAsynParse(IFX_FileRead* pFileAccess,
   return PDFPARSE_ERROR_SUCCESS;
 }
 FX_BOOL CPDF_Parser::LoadLinearizedAllCrossRefV5(FX_FILESIZE xrefpos) {
-  if (!LoadCrossRefV5(xrefpos, xrefpos, FALSE)) {
+  if (!LoadCrossRefV5(&xrefpos, FALSE)) {
     return FALSE;
   }
-  while (xrefpos)
-    if (!LoadCrossRefV5(xrefpos, xrefpos, FALSE)) {
+  std::set<FX_FILESIZE> seen_xrefpos;
+  while (xrefpos) {
+    seen_xrefpos.insert(xrefpos);
+    if (!LoadCrossRefV5(&xrefpos, FALSE)) {
       return FALSE;
     }
+    // Check for circular references.
+    if (seen_xrefpos.find(xrefpos) != seen_xrefpos.end()) {
+      return FALSE;
+    }
+  }
   m_ObjectStreamMap.InitHashTable(101, FALSE);
   m_bXRefStream = TRUE;
   return TRUE;
