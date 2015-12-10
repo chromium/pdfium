@@ -1864,15 +1864,8 @@ CXFA_PDFFontMgr::CXFA_PDFFontMgr(CXFA_FFDoc* pDoc) {
   m_pDoc = pDoc;
 }
 CXFA_PDFFontMgr::~CXFA_PDFFontMgr() {
-  FX_POSITION ps = m_FDE2PDFFont.GetStartPosition();
-  while (ps) {
-    IFX_Font* pFDEFont;
-    void* pPDFFont;
-    m_FDE2PDFFont.GetNextAssoc(ps, (void*&)pFDEFont, pPDFFont);
-    pFDEFont->SetFontProvider(NULL);
-  }
   m_FDE2PDFFont.RemoveAll();
-  ps = m_FontArray.GetStartPosition();
+  FX_POSITION ps = m_FontArray.GetStartPosition();
   while (ps) {
     CFX_ByteString strKey;
     IFX_Font* pFont = NULL;
