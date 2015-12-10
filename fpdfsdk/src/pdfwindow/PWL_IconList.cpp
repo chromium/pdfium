@@ -33,7 +33,7 @@ FX_FLOAT CPWL_IconList_Item::GetItemHeight(FX_FLOAT fLimitWidth) {
 }
 
 void CPWL_IconList_Item::DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                            CPDF_Matrix* pUser2Device) {
+                                            CFX_Matrix* pUser2Device) {
   CPDF_Rect rcClient = GetClientRect();
 
   if (m_bSelected) {

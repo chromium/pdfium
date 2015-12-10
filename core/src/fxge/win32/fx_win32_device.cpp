@@ -681,7 +681,7 @@ FX_BOOL CGdiDeviceDriver::SetClipRgn(void* hRgn) {
   return TRUE;
 }
 static HPEN _CreatePen(const CFX_GraphStateData* pGraphState,
-                       const CFX_AffineMatrix* pMatrix,
+                       const CFX_Matrix* pMatrix,
                        FX_DWORD argb) {
   FX_FLOAT width;
   FX_FLOAT scale = 1.f;
@@ -757,7 +757,7 @@ static HBRUSH _CreateBrush(FX_DWORD argb) {
 }
 static void _SetPathToDC(HDC hDC,
                          const CFX_PathData* pPathData,
-                         const CFX_AffineMatrix* pMatrix) {
+                         const CFX_Matrix* pMatrix) {
   BeginPath(hDC);
   int nPoints = pPathData->GetPointCount();
   FX_PATHPOINT* pPoints = pPathData->GetPoints();
@@ -835,12 +835,12 @@ void CGdiDeviceDriver::DrawLine(FX_FLOAT x1,
   MoveToEx(m_hDC, FXSYS_round(x1), FXSYS_round(y1), NULL);
   LineTo(m_hDC, FXSYS_round(x2), FXSYS_round(y2));
 }
-static FX_BOOL _MatrixNoScaled(const CFX_AffineMatrix* pMatrix) {
+static FX_BOOL _MatrixNoScaled(const CFX_Matrix* pMatrix) {
   return pMatrix->GetA() == 1.0f && pMatrix->GetB() == 0 &&
          pMatrix->GetC() == 0 && pMatrix->GetD() == 1.0f;
 }
 FX_BOOL CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
-                                   const CFX_AffineMatrix* pMatrix,
+                                   const CFX_Matrix* pMatrix,
                                    const CFX_GraphStateData* pGraphState,
                                    FX_DWORD fill_color,
                                    FX_DWORD stroke_color,
@@ -975,7 +975,7 @@ FX_BOOL CGdiDeviceDriver::FillRect(const FX_RECT* pRect,
   return TRUE;
 }
 FX_BOOL CGdiDeviceDriver::SetClip_PathFill(const CFX_PathData* pPathData,
-                                           const CFX_AffineMatrix* pMatrix,
+                                           const CFX_Matrix* pMatrix,
                                            int fill_mode) {
   if (pPathData->GetPointCount() == 5) {
     CFX_FloatRect rectf;
@@ -992,7 +992,7 @@ FX_BOOL CGdiDeviceDriver::SetClip_PathFill(const CFX_PathData* pPathData,
 }
 FX_BOOL CGdiDeviceDriver::SetClip_PathStroke(
     const CFX_PathData* pPathData,
-    const CFX_AffineMatrix* pMatrix,
+    const CFX_Matrix* pMatrix,
     const CFX_GraphStateData* pGraphState) {
   HPEN hPen = _CreatePen(pGraphState, pMatrix, 0xff000000);
   hPen = (HPEN)SelectObject(m_hDC, hPen);

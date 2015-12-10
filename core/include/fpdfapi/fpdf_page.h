@@ -63,7 +63,7 @@ class CPDF_PageObjects {
   FX_POSITION InsertObject(FX_POSITION posInsertAfter,
                            CPDF_PageObject* pNewObject);
 
-  void Transform(const CFX_AffineMatrix& matrix);
+  void Transform(const CFX_Matrix& matrix);
 
   FX_BOOL BackgroundAlphaNeeded() const { return m_bBackgroundAlphaNeeded; }
 
@@ -109,7 +109,7 @@ class CPDF_Page : public CPDF_PageObjects, public CFX_PrivateData {
   void ParseContent(CPDF_ParseOptions* pOptions = NULL,
                     FX_BOOL bReParse = FALSE);
 
-  void GetDisplayMatrix(CFX_AffineMatrix& matrix,
+  void GetDisplayMatrix(CFX_Matrix& matrix,
                         int xPos,
                         int yPos,
                         int xSize,
@@ -122,7 +122,7 @@ class CPDF_Page : public CPDF_PageObjects, public CFX_PrivateData {
 
   CFX_FloatRect GetPageBBox() const { return m_BBox; }
 
-  const CFX_AffineMatrix& GetPageMatrix() const { return m_PageMatrix; }
+  const CFX_Matrix& GetPageMatrix() const { return m_PageMatrix; }
 
   CPDF_Object* GetPageAttr(const CFX_ByteStringC& name) const;
 
@@ -137,7 +137,7 @@ class CPDF_Page : public CPDF_PageObjects, public CFX_PrivateData {
 
   FX_FLOAT m_PageHeight;
 
-  CFX_AffineMatrix m_PageMatrix;
+  CFX_Matrix m_PageMatrix;
 
   CPDF_PageRenderCache* m_pPageRender;
 };
@@ -163,13 +163,13 @@ class CPDF_Form : public CPDF_PageObjects {
   ~CPDF_Form();
 
   void StartParse(CPDF_AllStates* pGraphicStates,
-                  CFX_AffineMatrix* pParentMatrix,
+                  CFX_Matrix* pParentMatrix,
                   CPDF_Type3Char* pType3Char,
                   CPDF_ParseOptions* pOptions,
                   int level = 0);
 
   void ParseContent(CPDF_AllStates* pGraphicStates,
-                    CFX_AffineMatrix* pParentMatrix,
+                    CFX_Matrix* pParentMatrix,
                     CPDF_Type3Char* pType3Char,
                     CPDF_ParseOptions* pOptions,
                     int level = 0);

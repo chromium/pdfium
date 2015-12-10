@@ -402,19 +402,19 @@ class CPDF_Annot : public CFX_PrivateData {
 
   FX_BOOL DrawAppearance(const CPDF_Page* pPage,
                          CFX_RenderDevice* pDevice,
-                         const CFX_AffineMatrix* pUser2Device,
+                         const CFX_Matrix* pUser2Device,
                          AppearanceMode mode,
                          const CPDF_RenderOptions* pOptions);
 
   FX_BOOL DrawInContext(const CPDF_Page* pPage,
                         const CPDF_RenderContext* pContext,
-                        const CFX_AffineMatrix* pUser2Device,
+                        const CFX_Matrix* pUser2Device,
                         AppearanceMode mode);
 
   void ClearCachedAP();
 
   void DrawBorder(CFX_RenderDevice* pDevice,
-                  const CFX_AffineMatrix* pUser2Device,
+                  const CFX_Matrix* pUser2Device,
                   const CPDF_RenderOptions* pOptions);
 
   CPDF_Form* GetAPForm(const CPDF_Page* pPage, AppearanceMode mode);
@@ -437,7 +437,7 @@ class CPDF_AnnotList {
   void DisplayAnnots(const CPDF_Page* pPage,
                      CPDF_RenderContext* pContext,
                      FX_BOOL bPrinting,
-                     CFX_AffineMatrix* pMatrix,
+                     CFX_Matrix* pMatrix,
                      FX_BOOL bShowWidget,
                      CPDF_RenderOptions* pOptions) {
     DisplayAnnots(pPage, nullptr, pContext, bPrinting, pMatrix,
@@ -447,7 +447,7 @@ class CPDF_AnnotList {
                      CFX_RenderDevice* pDevice,
                      CPDF_RenderContext* pContext,
                      FX_BOOL bPrinting,
-                     CFX_AffineMatrix* pMatrix,
+                     CFX_Matrix* pMatrix,
                      FX_DWORD dwAnnotFlags,
                      CPDF_RenderOptions* pOptions,
                      FX_RECT* pClipRect);
@@ -461,7 +461,7 @@ class CPDF_AnnotList {
                    CFX_RenderDevice* pDevice,
                    CPDF_RenderContext* pContext,
                    FX_BOOL bPrinting,
-                   CFX_AffineMatrix* pMatrix,
+                   CFX_Matrix* pMatrix,
                    FX_BOOL bWidget,
                    CPDF_RenderOptions* pOptions,
                    FX_RECT* clip_rect);
@@ -517,7 +517,7 @@ class CPDF_DefaultAppearance {
 
   CFX_ByteString GetTextMatrixString();
 
-  CFX_AffineMatrix GetTextMatrix();
+  CFX_Matrix GetTextMatrix();
 
  protected:
   CFX_ByteString m_csDA;
@@ -907,7 +907,7 @@ class CPDF_FormControl {
   CFX_FloatRect GetRect() const;
 
   void DrawControl(CFX_RenderDevice* pDevice,
-                   CFX_AffineMatrix* pMatrix,
+                   CFX_Matrix* pMatrix,
                    CPDF_Page* pPage,
                    CPDF_Annot::AppearanceMode mode,
                    const CPDF_RenderOptions* pOptions = NULL);

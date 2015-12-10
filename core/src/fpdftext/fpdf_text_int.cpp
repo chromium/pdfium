@@ -51,7 +51,7 @@ FX_FLOAT _NormalizeThreshold(FX_FLOAT threshold) {
 }
 
 FX_FLOAT _CalculateBaseSpace(const CPDF_TextObject* pTextObj,
-                             const CFX_AffineMatrix& matrix) {
+                             const CFX_Matrix& matrix) {
   FX_FLOAT baseSpace = 0.0;
   const int nItems = pTextObj->CountItems();
   if (pTextObj->m_TextState.GetObject()->m_CharSpace && nItems >= 3) {
@@ -265,7 +265,7 @@ void CPDF_TextPage::GetRectArray(int start,
     }
     if (flagNewRect) {
       FX_FLOAT orgX = info_curchar.m_OriginX, orgY = info_curchar.m_OriginY;
-      CFX_AffineMatrix matrix, matrix_reverse;
+      CFX_Matrix matrix, matrix_reverse;
       info_curchar.m_pTextObj->GetTextMatrix(&matrix);
       matrix.Concat(info_curchar.m_Matrix);
       matrix_reverse.SetReverse(matrix);
@@ -908,11 +908,11 @@ void CPDF_TextPage::ProcessObject() {
     pPageObj = m_pPage->GetNextObject(pos);
     if (pPageObj) {
       if (pPageObj->m_Type == PDFPAGE_TEXT) {
-        CFX_AffineMatrix matrix;
+        CFX_Matrix matrix;
         ProcessTextObject((CPDF_TextObject*)pPageObj, matrix, pos);
         nCount++;
       } else if (pPageObj->m_Type == PDFPAGE_FORM) {
-        CFX_AffineMatrix formMatrix(1, 0, 0, 1, 0, 0);
+        CFX_Matrix formMatrix(1, 0, 0, 1, 0, 0);
         ProcessFormObject((CPDF_FormObject*)pPageObj, formMatrix);
       }
     }
@@ -926,7 +926,7 @@ void CPDF_TextPage::ProcessObject() {
   CloseTempLine();
 }
 void CPDF_TextPage::ProcessFormObject(CPDF_FormObject* pFormObj,
-                                      const CFX_AffineMatrix& formMatrix) {
+                                      const CFX_Matrix& formMatrix) {
   CPDF_PageObject* pPageObj = NULL;
   FX_POSITION pos;
   if (!pFormObj) {
@@ -936,7 +936,7 @@ void CPDF_TextPage::ProcessFormObject(CPDF_FormObject* pFormObj,
   if (!pos) {
     return;
   }
-  CFX_AffineMatrix curFormMatrix;
+  CFX_Matrix curFormMatrix;
   curFormMatrix.Copy(pFormObj->m_FormMatrix);
   curFormMatrix.Concat(formMatrix);
   while (pos) {
@@ -1187,7 +1187,7 @@ void CPDF_TextPage::CloseTempLine() {
   m_TempTextBuf.Delete(0, m_TempTextBuf.GetLength());
 }
 void CPDF_TextPage::ProcessTextObject(CPDF_TextObject* pTextObj,
-                                      const CFX_AffineMatrix& formMatrix,
+                                      const CFX_Matrix& formMatrix,
                                       FX_POSITION ObjPos) {
   CFX_FloatRect re(pTextObj->m_Left, pTextObj->m_Bottom, pTextObj->m_Right,
                    pTextObj->m_Top);
@@ -1212,7 +1212,7 @@ void CPDF_TextPage::ProcessTextObject(CPDF_TextObject* pTextObj,
   FX_FLOAT prev_width =
       GetCharWidth(item.m_CharCode, prev_Obj.m_pTextObj->GetFont()) *
       prev_Obj.m_pTextObj->GetFontSize() / 1000;
-  CFX_AffineMatrix prev_matrix;
+  CFX_Matrix prev_matrix;
   prev_Obj.m_pTextObj->GetTextMatrix(&prev_matrix);
   prev_width = FXSYS_fabs(prev_width);
   prev_matrix.Concat(prev_Obj.m_formMatrix);
@@ -1221,7 +1221,7 @@ void CPDF_TextPage::ProcessTextObject(CPDF_TextObject* pTextObj,
   FX_FLOAT this_width = GetCharWidth(item.m_CharCode, pTextObj->GetFont()) *
                         pTextObj->GetFontSize() / 1000;
   this_width = FXSYS_fabs(this_width);
-  CFX_AffineMatrix this_matrix;
+  CFX_Matrix this_matrix;
   pTextObj->GetTextMatrix(&this_matrix);
   this_width = FXSYS_fabs(this_width);
   this_matrix.Concat(formMatrix);
@@ -1247,7 +1247,7 @@ void CPDF_TextPage::ProcessTextObject(CPDF_TextObject* pTextObj,
   if (m_ParseOptions.m_bNormalizeObjs) {
     for (i = count - 1; i >= 0; i--) {
       PDFTEXT_Obj prev_Obj = m_LineObj.GetAt(i);
-      CFX_AffineMatrix prev_matrix;
+      CFX_Matrix prev_matrix;
       prev_Obj.m_pTextObj->GetTextMatrix(&prev_matrix);
       FX_FLOAT Prev_x = prev_Obj.m_pTextObj->GetPosX(),
                Prev_y = prev_Obj.m_pTextObj->GetPosY();
@@ -1369,8 +1369,8 @@ void CPDF_TextPage::ProcessMarkedContent(PDFTEXT_Obj Obj) {
     return;
   }
   CPDF_Font* pFont = pTextObj->GetFont();
-  CFX_AffineMatrix formMatrix = Obj.m_formMatrix;
-  CFX_AffineMatrix matrix;
+  CFX_Matrix formMatrix = Obj.m_formMatrix;
+  CFX_Matrix matrix;
   pTextObj->GetTextMatrix(&matrix);
   matrix.Concat(formMatrix);
   FX_FLOAT fPosX = pTextObj->GetPosX();
@@ -1482,9 +1482,9 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
   if (FXSYS_fabs(pTextObj->m_Right - pTextObj->m_Left) < 0.01f) {
     return;
   }
-  CFX_AffineMatrix formMatrix = Obj.m_formMatrix;
+  CFX_Matrix formMatrix = Obj.m_formMatrix;
   CPDF_Font* pFont = pTextObj->GetFont();
-  CFX_AffineMatrix matrix;
+  CFX_Matrix matrix;
   pTextObj->GetTextMatrix(&matrix);
   matrix.Concat(formMatrix);
   int32_t bPreMKC = PreMarkedContent(Obj);
@@ -1814,7 +1814,7 @@ FX_BOOL CPDF_TextPage::IsHyphen(FX_WCHAR curChar) {
   return FALSE;
 }
 int CPDF_TextPage::ProcessInsertObject(const CPDF_TextObject* pObj,
-                                       const CFX_AffineMatrix& formMatrix) {
+                                       const CFX_Matrix& formMatrix) {
   FindPreviousTextObject();
   FX_BOOL bNewline = FALSE;
   int WritingMode = GetTextObjectWritingMode(pObj);
@@ -1873,7 +1873,7 @@ int CPDF_TextPage::ProcessInsertObject(const CPDF_TextObject* pObj,
   this_width = FXSYS_fabs(this_width);
   FX_FLOAT threshold =
       last_width > this_width ? last_width / 4 : this_width / 4;
-  CFX_AffineMatrix prev_matrix, prev_reverse;
+  CFX_Matrix prev_matrix, prev_reverse;
   m_pPreTextObj->GetTextMatrix(&prev_matrix);
   prev_matrix.Concat(m_perMatrix);
   prev_reverse.SetReverse(prev_matrix);
@@ -1898,7 +1898,7 @@ int CPDF_TextPage::ProcessInsertObject(const CPDF_TextObject* pObj,
       if (nItem > 1) {
         CPDF_TextObjectItem tempItem;
         m_pPreTextObj->GetItemInfo(0, &tempItem);
-        CFX_AffineMatrix m;
+        CFX_Matrix m;
         m_pPreTextObj->GetTextMatrix(&m);
         if (PrevItem.m_OriginX > tempItem.m_OriginX &&
             m_DisplayMatrix.a > 0.9 && m_DisplayMatrix.b < 0.1 &&
@@ -1933,7 +1933,7 @@ int CPDF_TextPage::ProcessInsertObject(const CPDF_TextObject* pObj,
   CFX_WideString PrevStr =
       m_pPreTextObj->GetFont()->UnicodeFromCharCode(PrevItem.m_CharCode);
   FX_WCHAR preChar = PrevStr.GetAt(PrevStr.GetLength() - 1);
-  CFX_AffineMatrix matrix;
+  CFX_Matrix matrix;
   pObj->GetTextMatrix(&matrix);
   matrix.Concat(formMatrix);
   threshold = (FX_FLOAT)(nLastWidth > nThisWidth ? nLastWidth : nThisWidth);

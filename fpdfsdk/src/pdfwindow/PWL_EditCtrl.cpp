@@ -47,7 +47,7 @@ void CPWL_EditCtrl::OnCreated() {
 }
 
 FX_BOOL CPWL_EditCtrl::IsWndHorV() {
-  CPDF_Matrix mt = GetWindowMatrix();
+  CFX_Matrix mt = GetWindowMatrix();
   CPDF_Point point1(0, 1);
   CPDF_Point point2(1, 1);
 

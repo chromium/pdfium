@@ -32,7 +32,7 @@ class CPWL_Label : public CPWL_Wnd {
   FX_FLOAT GetFontSize() const override;
   void OnCreated() override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                          CPDF_Matrix* pUser2Device) override;
+                          CFX_Matrix* pUser2Device) override;
   void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) override;
   void RePosChildWnd() override;
 

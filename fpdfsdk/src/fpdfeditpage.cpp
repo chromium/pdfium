@@ -247,8 +247,8 @@ DLLEXPORT void STDCALL FPDFPageObj_Transform(FPDF_PAGEOBJECT page_object,
   if (!pPageObj)
     return;
 
-  CFX_AffineMatrix matrix((FX_FLOAT)a, (FX_FLOAT)b, (FX_FLOAT)c, (FX_FLOAT)d,
-                          (FX_FLOAT)e, (FX_FLOAT)f);
+  CFX_Matrix matrix((FX_FLOAT)a, (FX_FLOAT)b, (FX_FLOAT)c, (FX_FLOAT)d,
+                    (FX_FLOAT)e, (FX_FLOAT)f);
   pPageObj->Transform(matrix);
 }
 DLLEXPORT void STDCALL FPDFPage_TransformAnnots(FPDF_PAGE page,
@@ -267,8 +267,8 @@ DLLEXPORT void STDCALL FPDFPage_TransformAnnots(FPDF_PAGE page,
     // transformAnnots Rectangle
     CPDF_Rect rect;
     pAnnot->GetRect(rect);
-    CFX_AffineMatrix matrix((FX_FLOAT)a, (FX_FLOAT)b, (FX_FLOAT)c, (FX_FLOAT)d,
-                            (FX_FLOAT)e, (FX_FLOAT)f);
+    CFX_Matrix matrix((FX_FLOAT)a, (FX_FLOAT)b, (FX_FLOAT)c, (FX_FLOAT)d,
+                      (FX_FLOAT)e, (FX_FLOAT)f);
     rect.Transform(&matrix);
     CPDF_Array* pRectArray = NULL;
     pRectArray = pAnnot->GetAnnotDict()->GetArray("Rect");

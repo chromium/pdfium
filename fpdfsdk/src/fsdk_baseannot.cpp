@@ -560,7 +560,7 @@ CFX_ByteString CPDFSDK_BAAnnot::GetSubType() const {
 }
 
 void CPDFSDK_BAAnnot::DrawAppearance(CFX_RenderDevice* pDevice,
-                                     const CPDF_Matrix* pUser2Device,
+                                     const CFX_Matrix* pUser2Device,
                                      CPDF_Annot::AppearanceMode mode,
                                      const CPDF_RenderOptions* pOptions) {
   ASSERT(m_pPageView != NULL);
@@ -597,7 +597,7 @@ FX_BOOL CPDFSDK_BAAnnot::IsAppearanceValid(CPDF_Annot::AppearanceMode mode) {
 }
 
 void CPDFSDK_BAAnnot::DrawBorder(CFX_RenderDevice* pDevice,
-                                 const CPDF_Matrix* pUser2Device,
+                                 const CFX_Matrix* pUser2Device,
                                  const CPDF_RenderOptions* pOptions) {
   ASSERT(m_pAnnot != NULL);
   m_pAnnot->DrawBorder(pDevice, pUser2Device, pOptions);
@@ -845,7 +845,7 @@ FX_BOOL CPDFSDK_BAAnnot::GetColor(FX_COLORREF& color) const {
 
 void CPDFSDK_BAAnnot::WriteAppearance(const CFX_ByteString& sAPType,
                                       const CPDF_Rect& rcBBox,
-                                      const CPDF_Matrix& matrix,
+                                      const CFX_Matrix& matrix,
                                       const CFX_ByteString& sContents,
                                       const CFX_ByteString& sAPState) {
   CPDF_Dictionary* pAPDict = m_pAnnot->GetAnnotDict()->GetDict("AP");
@@ -967,7 +967,7 @@ CPDF_Action CPDFSDK_BAAnnot::GetAAction(CPDF_AAction::AActionType eAAT) {
 }
 
 void CPDFSDK_BAAnnot::Annot_OnDraw(CFX_RenderDevice* pDevice,
-                                   CPDF_Matrix* pUser2Device,
+                                   CFX_Matrix* pUser2Device,
                                    CPDF_RenderOptions* pOptions) {
   m_pAnnot->GetAPForm(m_pPageView->GetPDFPage(), CPDF_Annot::Normal);
   m_pAnnot->DrawAppearance(m_pPageView->GetPDFPage(), pDevice, pUser2Device,

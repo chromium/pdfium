@@ -53,7 +53,7 @@ class CQuartz2D {
 
   void* CreateFont(const uint8_t* pFontData, FX_DWORD dwFontSize);
   void DestroyFont(void* pFont);
-  void setGraphicsTextMatrix(void* graphics, CFX_AffineMatrix* matrix);
+  void setGraphicsTextMatrix(void* graphics, CFX_Matrix* matrix);
   FX_BOOL drawGraphicsString(void* graphics,
                              void* font,
                              FX_FLOAT fontSize,
@@ -61,7 +61,7 @@ class CQuartz2D {
                              CGPoint* glyphPositions,
                              int32_t chars,
                              FX_ARGB argb,
-                             CFX_AffineMatrix* matrix = NULL);
+                             CFX_Matrix* matrix = NULL);
   void saveGraphicsState(void* graphics);
   void restoreGraphicsState(void* graphics);
 };
@@ -87,13 +87,13 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
   void SaveState() override;
   void RestoreState(FX_BOOL bKeepSaved) override;
   FX_BOOL SetClip_PathFill(const CFX_PathData* pPathData,
-                           const CFX_AffineMatrix* pObject2Device,
+                           const CFX_Matrix* pObject2Device,
                            int fill_mode) override;
   FX_BOOL SetClip_PathStroke(const CFX_PathData* pPathData,
-                             const CFX_AffineMatrix* pObject2Device,
+                             const CFX_Matrix* pObject2Device,
                              const CFX_GraphStateData* pGraphState) override;
   FX_BOOL DrawPath(const CFX_PathData* pPathData,
-                   const CFX_AffineMatrix* pObject2Device,
+                   const CFX_Matrix* pObject2Device,
                    const CFX_GraphStateData* pGraphState,
                    FX_DWORD fill_color,
                    FX_DWORD stroke_color,
@@ -150,7 +150,7 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
   FX_BOOL StartDIBits(const CFX_DIBSource* pBitmap,
                       int bitmap_alpha,
                       FX_DWORD color,
-                      const CFX_AffineMatrix* pMatrix,
+                      const CFX_Matrix* pMatrix,
                       FX_DWORD flags,
                       void*& handle,
                       int alpha_flag = 0,
@@ -166,7 +166,7 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
                          const FXTEXT_CHARPOS* pCharPos,
                          CFX_Font* pFont,
                          CFX_FontCache* pCache,
-                         const CFX_AffineMatrix* pObject2Device,
+                         const CFX_Matrix* pObject2Device,
                          FX_FLOAT font_size,
                          FX_DWORD color,
                          int alpha_flag = 0,
@@ -186,8 +186,8 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
                          const FXTEXT_CHARPOS* pCharPos,
                          CFX_Font* pFont,
                          CFX_FontCache* pCache,
-                         const CFX_AffineMatrix* pGlyphMatrix,
-                         const CFX_AffineMatrix* pObject2Device,
+                         const CFX_Matrix* pGlyphMatrix,
+                         const CFX_Matrix* pObject2Device,
                          FX_FLOAT font_size,
                          FX_DWORD argb,
                          int alpha_flag,

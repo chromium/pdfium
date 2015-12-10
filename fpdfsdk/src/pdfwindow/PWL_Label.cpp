@@ -86,7 +86,7 @@ void CPWL_Label::SetParamByFlag() {
 }
 
 void CPWL_Label::DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                    CPDF_Matrix* pUser2Device) {
+                                    CFX_Matrix* pUser2Device) {
   CPWL_Wnd::DrawThisAppearance(pDevice, pUser2Device);
 
   GetClientRect();

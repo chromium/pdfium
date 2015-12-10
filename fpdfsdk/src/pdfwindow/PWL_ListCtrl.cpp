@@ -95,9 +95,9 @@ void CPWL_ListCtrl::ResetAll(FX_BOOL bMove, int32_t nStart) {
       FX_FLOAT fLeft = pChild->GetItemLeftMargin();
       FX_FLOAT fRight = pChild->GetItemRightMargin();
 
-      pChild->SetChildMatrix(CPDF_Matrix(1, 0, 0, 1,
-                                         rcClient.left - m_ptScroll.x,
-                                         rcClient.top - m_ptScroll.y));
+      pChild->SetChildMatrix(CFX_Matrix(1, 0, 0, 1,
+                                        rcClient.left - m_ptScroll.x,
+                                        rcClient.top - m_ptScroll.y));
 
       if (bMove) {
         FX_FLOAT fItemHeight = pChild->GetItemHeight(fWidth - fLeft - fRight);
@@ -138,7 +138,7 @@ void CPWL_ListCtrl::RePosChildWnd() {
 }
 
 void CPWL_ListCtrl::DrawChildAppearance(CFX_RenderDevice* pDevice,
-                                        CPDF_Matrix* pUser2Device) {
+                                        CFX_Matrix* pUser2Device) {
   pDevice->SaveState();
   CPDF_Rect rcClient = GetClientRect();
   CPDF_Rect rcTemp = rcClient;
@@ -152,7 +152,7 @@ void CPWL_ListCtrl::DrawChildAppearance(CFX_RenderDevice* pDevice,
     if (CPWL_Wnd* pChild = m_aChildren.GetAt(i)) {
       CPDF_Rect rcChild = pChild->ChildToParent(pChild->GetWindowRect());
       if (!(rcChild.top < rcClient.bottom || rcChild.bottom > rcClient.top)) {
-        CPDF_Matrix mt = pChild->GetChildMatrix();
+        CFX_Matrix mt = pChild->GetChildMatrix();
         if (mt.IsIdentity()) {
           pChild->DrawAppearance(pDevice, pUser2Device);
         } else {

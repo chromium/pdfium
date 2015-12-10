@@ -51,7 +51,7 @@ typedef struct {
   FX_FLOAT m_OriginY;
   CFX_FloatRect m_CharBox;
   CPDF_TextObject* m_pTextObj;
-  CFX_AffineMatrix m_Matrix;
+  CFX_Matrix m_Matrix;
 } FPDF_CHAR_INFO;
 typedef CFX_ArrayTemplate<CFX_FloatRect> CFX_RectArray;
 #define FPDFTEXT_LRTB 0

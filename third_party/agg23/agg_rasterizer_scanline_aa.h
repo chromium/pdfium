@@ -383,7 +383,7 @@ public:
         }
     }
     template<class VertexSource>
-    void add_path_transformed(VertexSource& vs, const CFX_AffineMatrix* pMatrix, unsigned path_id = 0)
+    void add_path_transformed(VertexSource& vs, const CFX_Matrix* pMatrix, unsigned path_id = 0)
     {
         FX_FLOAT x;
         FX_FLOAT y;

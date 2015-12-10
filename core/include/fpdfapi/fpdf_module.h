@@ -12,9 +12,9 @@
 #include "third_party/base/nonstd_unique_ptr.h"
 
 class CCodec_ModuleMgr;
-class CFX_AffineMatrix;
 class CFX_BitmapDevice;
 class CFX_DIBSource;
+class CFX_Matrix;
 class CPDF_ColorSpace;
 class CPDF_Dictionary;
 class CPDF_DocPageData;

@@ -24,22 +24,22 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
 
   /** Set clipping path using filled region */
   virtual FX_BOOL SetClip_PathFill(
-      const CFX_PathData* pPathData,           // path info
-      const CFX_AffineMatrix* pObject2Device,  // optional transformation
-      int fill_mode  // fill mode, WINDING or ALTERNATE
+      const CFX_PathData* pPathData,     // path info
+      const CFX_Matrix* pObject2Device,  // optional transformation
+      int fill_mode                      // fill mode, WINDING or ALTERNATE
       );
 
   /** Set clipping path using stroked region */
   virtual FX_BOOL SetClip_PathStroke(
-      const CFX_PathData* pPathData,           // path info
-      const CFX_AffineMatrix* pObject2Device,  // optional transformation
+      const CFX_PathData* pPathData,     // path info
+      const CFX_Matrix* pObject2Device,  // optional transformation
       const CFX_GraphStateData*
           pGraphState  // graphic state, for pen attributes
       );
 
   /** Draw a path */
   virtual FX_BOOL DrawPath(const CFX_PathData* pPathData,
-                           const CFX_AffineMatrix* pObject2Device,
+                           const CFX_Matrix* pObject2Device,
                            const CFX_GraphStateData* pGraphState,
                            FX_DWORD fill_color,
                            FX_DWORD stroke_color,
@@ -103,7 +103,7 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
   virtual FX_BOOL StartDIBits(const CFX_DIBSource* pBitmap,
                               int bitmap_alpha,
                               FX_DWORD color,
-                              const CFX_AffineMatrix* pMatrix,
+                              const CFX_Matrix* pMatrix,
                               FX_DWORD flags,
                               void*& handle,
                               int alpha_flag = 0,
@@ -115,7 +115,7 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                                  const FXTEXT_CHARPOS* pCharPos,
                                  CFX_Font* pFont,
                                  CFX_FontCache* pCache,
-                                 const CFX_AffineMatrix* pObject2Device,
+                                 const CFX_Matrix* pObject2Device,
                                  FX_FIXFLOAT font_size,
                                  FX_DWORD color,
                                  int alpha_flag = 0,

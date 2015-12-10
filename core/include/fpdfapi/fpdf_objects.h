@@ -295,7 +295,7 @@ class CPDF_Array : public CPDF_Object {
 
   CPDF_Object* GetElementValue(FX_DWORD index) const;
 
-  CFX_AffineMatrix GetMatrix();
+  CFX_Matrix GetMatrix();
 
   CFX_FloatRect GetRect();
 
@@ -400,7 +400,7 @@ class CPDF_Dictionary : public CPDF_Object {
 
   CFX_FloatRect GetRect(const CFX_ByteStringC& key) const;
 
-  CFX_AffineMatrix GetMatrix(const CFX_ByteStringC& key) const;
+  CFX_Matrix GetMatrix(const CFX_ByteStringC& key) const;
 
   FX_FLOAT GetFloat(const CFX_ByteStringC& key) const { return GetNumber(key); }
 
@@ -436,7 +436,7 @@ class CPDF_Dictionary : public CPDF_Object {
 
   void SetAtRect(const CFX_ByteStringC& key, const CFX_FloatRect& rect);
 
-  void SetAtMatrix(const CFX_ByteStringC& key, const CFX_AffineMatrix& matrix);
+  void SetAtMatrix(const CFX_ByteStringC& key, const CFX_Matrix& matrix);
 
   void SetAtBoolean(const CFX_ByteStringC& key, FX_BOOL bValue);
 

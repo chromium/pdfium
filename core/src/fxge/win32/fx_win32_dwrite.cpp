@@ -206,7 +206,7 @@ failed:
 FX_BOOL CDWriteExt::DwRendingString(void* renderTarget,
                                     CFX_ClipRgn* pClipRgn,
                                     FX_RECT& stringRect,
-                                    CFX_AffineMatrix* pMatrix,
+                                    CFX_Matrix* pMatrix,
                                     void* font,
                                     FX_FLOAT font_size,
                                     FX_ARGB text_color,

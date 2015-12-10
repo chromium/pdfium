@@ -218,7 +218,7 @@ DLLEXPORT void STDCALL FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,
   options.m_AddFlags = flags >> 8;
   options.m_pOCContext = new CPDF_OCContext(pPage->m_pDocument);
 
-  CFX_AffineMatrix matrix;
+  CFX_Matrix matrix;
   pPage->GetDisplayMatrix(matrix, start_x, start_y, size_x, size_y, rotate);
 
   FX_RECT clip;

@@ -741,6 +741,5 @@ class CFX_Matrix {
   FX_FLOAT e;
   FX_FLOAT f;
 };
-#define CFX_AffineMatrix CFX_Matrix
 
 #endif  // CORE_INCLUDE_FXCRT_FX_COORDINATES_H_

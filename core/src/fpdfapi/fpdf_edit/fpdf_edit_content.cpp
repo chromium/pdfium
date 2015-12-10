@@ -9,7 +9,7 @@
 #include "core/include/fpdfapi/fpdf_serial.h"
 #include "core/src/fpdfapi/fpdf_page/pageint.h"
 
-CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& ar, CFX_AffineMatrix& matrix) {
+CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& ar, CFX_Matrix& matrix) {
   ar << matrix.a << " " << matrix.b << " " << matrix.c << " " << matrix.d << " "
      << matrix.e << " " << matrix.f;
   return ar;

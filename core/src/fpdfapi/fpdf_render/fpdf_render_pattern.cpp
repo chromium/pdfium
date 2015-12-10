@@ -13,7 +13,7 @@
 
 #define SHADING_STEPS 256
 static void DrawAxialShading(CFX_DIBitmap* pBitmap,
-                             CFX_AffineMatrix* pObject2Bitmap,
+                             CFX_Matrix* pObject2Bitmap,
                              CPDF_Dictionary* pDict,
                              CPDF_Function** pFuncs,
                              int nFuncs,
@@ -46,7 +46,7 @@ static void DrawAxialShading(CFX_DIBitmap* pBitmap,
   FX_FLOAT y_span = end_y - start_y;
   FX_FLOAT axis_len_square =
       FXSYS_Mul(x_span, x_span) + FXSYS_Mul(y_span, y_span);
-  CFX_AffineMatrix matrix;
+  CFX_Matrix matrix;
   matrix.SetReverse(*pObject2Bitmap);
   int total_results = 0;
   for (int j = 0; j < nFuncs; j++) {
@@ -104,7 +104,7 @@ static void DrawAxialShading(CFX_DIBitmap* pBitmap,
   }
 }
 static void DrawRadialShading(CFX_DIBitmap* pBitmap,
-                              CFX_AffineMatrix* pObject2Bitmap,
+                              CFX_Matrix* pObject2Bitmap,
                               CPDF_Dictionary* pDict,
                               CPDF_Function** pFuncs,
                               int nFuncs,
@@ -121,7 +121,7 @@ static void DrawRadialShading(CFX_DIBitmap* pBitmap,
   FX_FLOAT end_x = pCoords->GetNumber(3);
   FX_FLOAT end_y = pCoords->GetNumber(4);
   FX_FLOAT end_r = pCoords->GetNumber(5);
-  CFX_AffineMatrix matrix;
+  CFX_Matrix matrix;
   matrix.SetReverse(*pObject2Bitmap);
   FX_FLOAT t_min = 0, t_max = 1.0f;
   CPDF_Array* pArray = pDict->GetArray(FX_BSTRC("Domain"));
@@ -242,7 +242,7 @@ static void DrawRadialShading(CFX_DIBitmap* pBitmap,
   }
 }
 static void DrawFuncShading(CFX_DIBitmap* pBitmap,
-                            CFX_AffineMatrix* pObject2Bitmap,
+                            CFX_Matrix* pObject2Bitmap,
                             CPDF_Dictionary* pDict,
                             CPDF_Function** pFuncs,
                             int nFuncs,
@@ -257,8 +257,8 @@ static void DrawFuncShading(CFX_DIBitmap* pBitmap,
     ymin = pDomain->GetNumber(2);
     ymax = pDomain->GetNumber(3);
   }
-  CFX_AffineMatrix mtDomain2Target = pDict->GetMatrix(FX_BSTRC("Matrix"));
-  CFX_AffineMatrix matrix, reverse_matrix;
+  CFX_Matrix mtDomain2Target = pDict->GetMatrix(FX_BSTRC("Matrix"));
+  CFX_Matrix matrix, reverse_matrix;
   matrix.SetReverse(*pObject2Bitmap);
   reverse_matrix.SetReverse(mtDomain2Target);
   matrix.Concat(reverse_matrix);
@@ -411,7 +411,7 @@ static void DrawGouraud(CFX_DIBitmap* pBitmap,
   }
 }
 static void DrawFreeGouraudShading(CFX_DIBitmap* pBitmap,
-                                   CFX_AffineMatrix* pObject2Bitmap,
+                                   CFX_Matrix* pObject2Bitmap,
                                    CPDF_Stream* pShadingStream,
                                    CPDF_Function** pFuncs,
                                    int nFuncs,
@@ -445,7 +445,7 @@ static void DrawFreeGouraudShading(CFX_DIBitmap* pBitmap,
   }
 }
 static void DrawLatticeGouraudShading(CFX_DIBitmap* pBitmap,
-                                      CFX_AffineMatrix* pObject2Bitmap,
+                                      CFX_Matrix* pObject2Bitmap,
                                       CPDF_Stream* pShadingStream,
                                       CPDF_Function** pFuncs,
                                       int nFuncs,
@@ -748,7 +748,7 @@ FX_BOOL _CheckCoonTensorPara(const CPDF_MeshStream& stream) {
 
 static void DrawCoonPatchMeshes(FX_BOOL bTensor,
                                 CFX_DIBitmap* pBitmap,
-                                CFX_AffineMatrix* pObject2Bitmap,
+                                CFX_Matrix* pObject2Bitmap,
                                 CPDF_Stream* pShadingStream,
                                 CPDF_Function** pFuncs,
                                 int nFuncs,
@@ -826,7 +826,7 @@ static void DrawCoonPatchMeshes(FX_BOOL bTensor,
   }
 }
 void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern,
-                                    CFX_AffineMatrix* pMatrix,
+                                    CFX_Matrix* pMatrix,
                                     FX_RECT& clip_rect,
                                     int alpha,
                                     FX_BOOL bAlphaMode) {
@@ -861,7 +861,7 @@ void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern,
   }
   CPDF_DeviceBuffer buffer;
   buffer.Initialize(m_pContext, m_pDevice, &clip_rect, m_pCurObj, 150);
-  CFX_AffineMatrix FinalMatrix = *pMatrix;
+  CFX_Matrix FinalMatrix = *pMatrix;
   FinalMatrix.Concat(*buffer.GetMatrix());
   CFX_DIBitmap* pBitmap = buffer.GetBitmap();
   if (pBitmap->GetBuffer() == NULL) {
@@ -913,7 +913,7 @@ void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern,
 }
 void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern,
                                            CPDF_PageObject* pPageObj,
-                                           const CFX_AffineMatrix* pObj2Device,
+                                           const CFX_Matrix* pObj2Device,
                                            FX_BOOL bStroke) {
   if (!pattern->Load()) {
     return;
@@ -935,7 +935,7 @@ void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern,
     m_pDevice->RestoreState();
     return;
   }
-  CFX_AffineMatrix matrix = pattern->m_Pattern2Form;
+  CFX_Matrix matrix = pattern->m_Pattern2Form;
   matrix.Concat(*pObj2Device);
   GetScaledMatrix(matrix);
   int alpha = pPageObj->m_GeneralState.GetAlpha(bStroke);
@@ -944,14 +944,14 @@ void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern,
   m_pDevice->RestoreState();
 }
 FX_BOOL CPDF_RenderStatus::ProcessShading(CPDF_ShadingObject* pShadingObj,
-                                          const CFX_AffineMatrix* pObj2Device) {
+                                          const CFX_Matrix* pObj2Device) {
   FX_RECT rect = pShadingObj->GetBBox(pObj2Device);
   FX_RECT clip_box = m_pDevice->GetClipBox();
   rect.Intersect(clip_box);
   if (rect.IsEmpty()) {
     return TRUE;
   }
-  CFX_AffineMatrix matrix = pShadingObj->m_Matrix;
+  CFX_Matrix matrix = pShadingObj->m_Matrix;
   matrix.Concat(*pObj2Device);
   DrawShading(pShadingObj->m_pShading, &matrix, rect,
               pShadingObj->m_GeneralState.GetAlpha(FALSE),
@@ -961,7 +961,7 @@ FX_BOOL CPDF_RenderStatus::ProcessShading(CPDF_ShadingObject* pShadingObj,
 static CFX_DIBitmap* DrawPatternBitmap(CPDF_Document* pDoc,
                                        CPDF_PageRenderCache* pCache,
                                        CPDF_TilingPattern* pPattern,
-                                       const CFX_AffineMatrix* pObject2Device,
+                                       const CFX_Matrix* pObject2Device,
                                        int width,
                                        int height,
                                        int flags) {
@@ -978,9 +978,9 @@ static CFX_DIBitmap* DrawPatternBitmap(CPDF_Document* pDoc,
   pPattern->m_Pattern2Form.TransformRect(cell_bbox);
   pObject2Device->TransformRect(cell_bbox);
   CFX_FloatRect bitmap_rect(0.0f, 0.0f, (FX_FLOAT)width, (FX_FLOAT)height);
-  CFX_AffineMatrix mtAdjust;
+  CFX_Matrix mtAdjust;
   mtAdjust.MatchRect(bitmap_rect, cell_bbox);
-  CFX_AffineMatrix mtPattern2Bitmap = *pObject2Device;
+  CFX_Matrix mtPattern2Bitmap = *pObject2Device;
   mtPattern2Bitmap.Concat(mtAdjust);
   CPDF_RenderOptions options;
   if (!pPattern->m_bColored) {
@@ -996,7 +996,7 @@ static CFX_DIBitmap* DrawPatternBitmap(CPDF_Document* pDoc,
 }
 void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
                                           CPDF_PageObject* pPageObj,
-                                          const CFX_AffineMatrix* pObj2Device,
+                                          const CFX_Matrix* pObj2Device,
                                           FX_BOOL bStroke) {
   if (!pPattern->Load()) {
     return;
@@ -1023,7 +1023,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
   FX_FLOAT sd = FXSYS_fabs(dCTM.d);
   clip_box.right = clip_box.left + (int32_t)FXSYS_ceil(clip_box.Width() * sa);
   clip_box.bottom = clip_box.top + (int32_t)FXSYS_ceil(clip_box.Height() * sd);
-  CFX_AffineMatrix mtPattern2Device = pPattern->m_Pattern2Form;
+  CFX_Matrix mtPattern2Device = pPattern->m_Pattern2Form;
   mtPattern2Device.Concat(*pObj2Device);
   GetScaledMatrix(mtPattern2Device);
   FX_BOOL bAligned = FALSE;
@@ -1044,7 +1044,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
     height = 1;
   }
   int min_col, max_col, min_row, max_row;
-  CFX_AffineMatrix mtDevice2Pattern;
+  CFX_Matrix mtDevice2Pattern;
   mtDevice2Pattern.SetReverse(mtPattern2Device);
   CFX_FloatRect clip_box_p(clip_box);
   clip_box_p.Transform(&mtDevice2Pattern);
@@ -1073,7 +1073,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
         orig_x = col * pPattern->m_XStep;
         orig_y = row * pPattern->m_YStep;
         mtPattern2Device.Transform(orig_x, orig_y);
-        CFX_AffineMatrix matrix = *pObj2Device;
+        CFX_Matrix matrix = *pObj2Device;
         matrix.Translate(orig_x - mtPattern2Device.e,
                          orig_y - mtPattern2Device.f);
         m_pDevice->SaveState();
@@ -1182,7 +1182,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
   delete pPatternBitmap;
 }
 void CPDF_RenderStatus::DrawPathWithPattern(CPDF_PathObject* pPathObj,
-                                            const CFX_AffineMatrix* pObj2Device,
+                                            const CFX_Matrix* pObj2Device,
                                             CPDF_Color* pColor,
                                             FX_BOOL bStroke) {
   CPDF_Pattern* pattern = pColor->GetPattern();
@@ -1198,7 +1198,7 @@ void CPDF_RenderStatus::DrawPathWithPattern(CPDF_PathObject* pPathObj,
   }
 }
 void CPDF_RenderStatus::ProcessPathPattern(CPDF_PathObject* pPathObj,
-                                           const CFX_AffineMatrix* pObj2Device,
+                                           const CFX_Matrix* pObj2Device,
                                            int& filltype,
                                            FX_BOOL& bStroke) {
   if (filltype) {

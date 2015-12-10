@@ -143,7 +143,7 @@ void CPWL_CBButton::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
 }
 
 void CPWL_CBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                       CPDF_Matrix* pUser2Device) {
+                                       CFX_Matrix* pUser2Device) {
   CPWL_Wnd::DrawThisAppearance(pDevice, pUser2Device);
 
   CPDF_Rect rectWnd = CPWL_Wnd::GetWindowRect();

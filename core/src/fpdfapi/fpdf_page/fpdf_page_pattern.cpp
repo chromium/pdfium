@@ -26,7 +26,7 @@ ShadingType ToShadingType(int type) {
 
 }  // namespace
 
-CPDF_Pattern::CPDF_Pattern(const CFX_AffineMatrix* pParentMatrix)
+CPDF_Pattern::CPDF_Pattern(const CFX_Matrix* pParentMatrix)
     : m_pPatternObj(NULL),
       m_PatternType(PATTERN_TILING),
       m_pDocument(NULL),
@@ -38,7 +38,7 @@ CPDF_Pattern::CPDF_Pattern(const CFX_AffineMatrix* pParentMatrix)
 CPDF_Pattern::~CPDF_Pattern() {}
 CPDF_TilingPattern::CPDF_TilingPattern(CPDF_Document* pDoc,
                                        CPDF_Object* pPatternObj,
-                                       const CFX_AffineMatrix* parentMatrix)
+                                       const CFX_Matrix* parentMatrix)
     : CPDF_Pattern(parentMatrix) {
   m_PatternType = PATTERN_TILING;
   m_pPatternObj = pPatternObj;
@@ -80,7 +80,7 @@ FX_BOOL CPDF_TilingPattern::Load() {
 CPDF_ShadingPattern::CPDF_ShadingPattern(CPDF_Document* pDoc,
                                          CPDF_Object* pPatternObj,
                                          FX_BOOL bShading,
-                                         const CFX_AffineMatrix* parentMatrix)
+                                         const CFX_Matrix* parentMatrix)
     : CPDF_Pattern(parentMatrix) {
   m_PatternType = PATTERN_SHADING;
   m_pPatternObj = bShading ? NULL : pPatternObj;
@@ -253,7 +253,7 @@ void CPDF_MeshStream::GetColor(FX_FLOAT& r, FX_FLOAT& g, FX_FLOAT& b) {
   }
 }
 FX_DWORD CPDF_MeshStream::GetVertex(CPDF_MeshVertex& vertex,
-                                    CFX_AffineMatrix* pObject2Bitmap) {
+                                    CFX_Matrix* pObject2Bitmap) {
   FX_DWORD flag = GetFlag();
   GetCoords(vertex.x, vertex.y);
   pObject2Bitmap->Transform(vertex.x, vertex.y);
@@ -263,7 +263,7 @@ FX_DWORD CPDF_MeshStream::GetVertex(CPDF_MeshVertex& vertex,
 }
 FX_BOOL CPDF_MeshStream::GetVertexRow(CPDF_MeshVertex* vertex,
                                       int count,
-                                      CFX_AffineMatrix* pObject2Bitmap) {
+                                      CFX_Matrix* pObject2Bitmap) {
   for (int i = 0; i < count; i++) {
     if (m_BitStream.IsEOF()) {
       return FALSE;
@@ -278,7 +278,7 @@ FX_BOOL CPDF_MeshStream::GetVertexRow(CPDF_MeshVertex* vertex,
 
 CFX_FloatRect GetShadingBBox(CPDF_Stream* pStream,
                              ShadingType type,
-                             const CFX_AffineMatrix* pMatrix,
+                             const CFX_Matrix* pMatrix,
                              CPDF_Function** pFuncs,
                              int nFuncs,
                              CPDF_ColorSpace* pCS) {

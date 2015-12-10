@@ -56,8 +56,7 @@ void* CQuartz2D::CreateFont(const uint8_t* pFontData, FX_DWORD dwFontSize) {
 void CQuartz2D::DestroyFont(void* pFont) {
   CGFontRelease((CGFontRef)pFont);
 }
-void CQuartz2D::setGraphicsTextMatrix(void* graphics,
-                                      CFX_AffineMatrix* matrix) {
+void CQuartz2D::setGraphicsTextMatrix(void* graphics, CFX_Matrix* matrix) {
   if (!graphics || !matrix) {
     return;
   }
@@ -74,7 +73,7 @@ FX_BOOL CQuartz2D::drawGraphicsString(void* graphics,
                                       CGPoint* glyphPositions,
                                       int32_t charsCount,
                                       FX_ARGB argb,
-                                      CFX_AffineMatrix* matrix) {
+                                      CFX_Matrix* matrix) {
   if (!graphics) {
     return FALSE;
   }
@@ -224,7 +223,7 @@ void CFX_QuartzDeviceDriver::RestoreState(FX_BOOL isKeepSaved) {
   }
 }
 FX_BOOL CFX_QuartzDeviceDriver::SetClip_PathFill(const CFX_PathData* pathData,
-                                                 const CFX_AffineMatrix* matrix,
+                                                 const CFX_Matrix* matrix,
                                                  int fillMode) {
   SaveState();
   CGAffineTransform m = CGAffineTransformIdentity;
@@ -260,7 +259,7 @@ FX_FLOAT CFX_QuartzDeviceDriver::getLineWidth(
 }
 FX_BOOL CFX_QuartzDeviceDriver::SetClip_PathStroke(
     const CFX_PathData* pathData,
-    const CFX_AffineMatrix* matrix,
+    const CFX_Matrix* matrix,
     const CFX_GraphStateData* graphState) {
   SaveState();
   CGAffineTransform m = CGAffineTransformIdentity;
@@ -336,7 +335,7 @@ static CGBlendMode GetCGBlendMode(int blend_type) {
   return mode;
 }
 FX_BOOL CFX_QuartzDeviceDriver::DrawPath(const CFX_PathData* pathData,
-                                         const CFX_AffineMatrix* matrix,
+                                         const CFX_Matrix* matrix,
                                          const CFX_GraphStateData* graphState,
                                          FX_DWORD fillArgb,
                                          FX_DWORD strokeArgb,
@@ -736,17 +735,16 @@ FX_BOOL CFX_QuartzDeviceDriver::StretchDIBits(const CFX_DIBSource* pBitmap,
   RestoreState(FALSE);
   return TRUE;
 }
-FX_BOOL CFX_QuartzDeviceDriver::CG_DrawGlypRun(
-    int nChars,
-    const FXTEXT_CHARPOS* pCharPos,
-    CFX_Font* pFont,
-    CFX_FontCache* pCache,
-    const CFX_AffineMatrix* pGlyphMatrix,
-    const CFX_AffineMatrix* pObject2Device,
-    FX_FLOAT font_size,
-    FX_DWORD argb,
-    int alpha_flag,
-    void* pIccTransform) {
+FX_BOOL CFX_QuartzDeviceDriver::CG_DrawGlypRun(int nChars,
+                                               const FXTEXT_CHARPOS* pCharPos,
+                                               CFX_Font* pFont,
+                                               CFX_FontCache* pCache,
+                                               const CFX_Matrix* pGlyphMatrix,
+                                               const CFX_Matrix* pObject2Device,
+                                               FX_FLOAT font_size,
+                                               FX_DWORD argb,
+                                               int alpha_flag,
+                                               void* pIccTransform) {
   if (nChars == 0) {
     return TRUE;
   }
@@ -769,7 +767,7 @@ FX_BOOL CFX_QuartzDeviceDriver::CG_DrawGlypRun(
     glyph_positions[i].x = pCharPos[i].m_OriginX;
     glyph_positions[i].y = pCharPos[i].m_OriginY;
   }
-  CFX_AffineMatrix text_matrix;
+  CFX_Matrix text_matrix;
   if (pObject2Device) {
     text_matrix.Concat(*pObject2Device);
   }
@@ -803,16 +801,15 @@ FX_BOOL CFX_QuartzDeviceDriver::CG_DrawGlypRun(
   RestoreState(FALSE);
   return TRUE;
 }
-FX_BOOL CFX_QuartzDeviceDriver::DrawDeviceText(
-    int nChars,
-    const FXTEXT_CHARPOS* pCharPos,
-    CFX_Font* pFont,
-    CFX_FontCache* pCache,
-    const CFX_AffineMatrix* pObject2Device,
-    FX_FLOAT font_size,
-    FX_DWORD color,
-    int alpha_flag,
-    void* pIccTransform) {
+FX_BOOL CFX_QuartzDeviceDriver::DrawDeviceText(int nChars,
+                                               const FXTEXT_CHARPOS* pCharPos,
+                                               CFX_Font* pFont,
+                                               CFX_FontCache* pCache,
+                                               const CFX_Matrix* pObject2Device,
+                                               FX_FLOAT font_size,
+                                               FX_DWORD color,
+                                               int alpha_flag,
+                                               void* pIccTransform) {
   if (NULL == pFont || NULL == _context) {
     return FALSE;
   }
@@ -837,7 +834,7 @@ FX_BOOL CFX_QuartzDeviceDriver::DrawDeviceText(
         }
       }
       const FXTEXT_CHARPOS* char_pos = pCharPos + i;
-      CFX_AffineMatrix glphy_matrix;
+      CFX_Matrix glphy_matrix;
       if (font_size < 0) {
         glphy_matrix.Concat(-1, 0, 0, -1, 0, 0);
       }

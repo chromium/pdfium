@@ -114,7 +114,7 @@ IPDFSDK_AnnotHandler* CPDFSDK_AnnotHandlerMgr::GetAnnotHandler(
 void CPDFSDK_AnnotHandlerMgr::Annot_OnDraw(CPDFSDK_PageView* pPageView,
                                            CPDFSDK_Annot* pAnnot,
                                            CFX_RenderDevice* pDevice,
-                                           CPDF_Matrix* pUser2Device,
+                                           CFX_Matrix* pUser2Device,
                                            FX_DWORD dwFlags) {
   ASSERT(pAnnot);
 
@@ -379,7 +379,7 @@ void CPDFSDK_BFAnnotHandler::ReleaseAnnot(CPDFSDK_Annot* pAnnot) {
 void CPDFSDK_BFAnnotHandler::OnDraw(CPDFSDK_PageView* pPageView,
                                     CPDFSDK_Annot* pAnnot,
                                     CFX_RenderDevice* pDevice,
-                                    CPDF_Matrix* pUser2Device,
+                                    CFX_Matrix* pUser2Device,
                                     FX_DWORD dwFlags) {
   CFX_ByteString sSubType = pAnnot->GetSubType();
 

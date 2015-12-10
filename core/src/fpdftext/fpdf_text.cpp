@@ -69,7 +69,7 @@ void CTextPage::ProcessObject(CPDF_PageObject* pObject) {
   }
   if (pText->m_TextState.GetBaselineAngle() != 0) {
     int cc = 0;
-    CFX_AffineMatrix matrix;
+    CFX_Matrix matrix;
     pText->GetTextMatrix(&matrix);
     for (int i = 0; i < pText->m_nChars; i++) {
       FX_DWORD charcode = pText->m_nChars == 1
@@ -707,7 +707,7 @@ static void CheckRotate(CPDF_Page& page, CFX_FloatRect& page_bbox) {
   if (total_count == 0) {
     return;
   }
-  CFX_AffineMatrix matrix;
+  CFX_Matrix matrix;
   if (rotated_count[0] > total_count * 2 / 3) {
     matrix.Set(0, -1, 1, 0, 0, page.GetPageHeight());
   } else if (rotated_count[1] > total_count * 2 / 3) {

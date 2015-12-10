@@ -18,7 +18,7 @@ class CPDFDoc_Environment;
 class CPDFSDK_Annot;
 class CPDFSDK_PageView;
 class CPDF_Annot;
-class CPDF_Matrix;
+class CFX_Matrix;
 class CPDF_Point;
 class CPDF_Rect;
 
@@ -49,13 +49,13 @@ class IPDFSDK_AnnotHandler {
   virtual void OnDraw(CPDFSDK_PageView* pPageView,
                       CPDFSDK_Annot* pAnnot,
                       CFX_RenderDevice* pDevice,
-                      CPDF_Matrix* pUser2Device,
+                      CFX_Matrix* pUser2Device,
                       FX_DWORD dwFlags) = 0;
 
   virtual void OnDrawSleep(CPDFSDK_PageView* pPageView,
                            CPDFSDK_Annot* pAnnot,
                            CFX_RenderDevice* pDevice,
-                           CPDF_Matrix* pUser2Device,
+                           CFX_Matrix* pUser2Device,
                            const CPDF_Rect& rcWindow,
                            FX_DWORD dwFlags) = 0;
 
@@ -142,12 +142,12 @@ class CPDFSDK_BFAnnotHandler : public IPDFSDK_AnnotHandler {
   void OnDraw(CPDFSDK_PageView* pPageView,
               CPDFSDK_Annot* pAnnot,
               CFX_RenderDevice* pDevice,
-              CPDF_Matrix* pUser2Device,
+              CFX_Matrix* pUser2Device,
               FX_DWORD dwFlags) override;
   void OnDrawSleep(CPDFSDK_PageView* pPageView,
                    CPDFSDK_Annot* pAnnot,
                    CFX_RenderDevice* pDevice,
-                   CPDF_Matrix* pUser2Device,
+                   CFX_Matrix* pUser2Device,
                    const CPDF_Rect& rcWindow,
                    FX_DWORD dwFlags) override {}
   void OnCreate(CPDFSDK_Annot* pAnnot) override;
@@ -236,7 +236,7 @@ class CPDFSDK_AnnotHandlerMgr {
   virtual void Annot_OnDraw(CPDFSDK_PageView* pPageView,
                             CPDFSDK_Annot* pAnnot,
                             CFX_RenderDevice* pDevice,
-                            CPDF_Matrix* pUser2Device,
+                            CFX_Matrix* pUser2Device,
                             FX_DWORD dwFlags);
 
   virtual void Annot_OnMouseEnter(CPDFSDK_PageView* pPageView,

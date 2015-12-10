@@ -94,21 +94,21 @@ class CPDF_RenderContext {
   void Clear();
 
   void AppendObjectList(CPDF_PageObjects* pObjs,
-                        const CFX_AffineMatrix* pObject2Device);
+                        const CFX_Matrix* pObject2Device);
 
   void Render(CFX_RenderDevice* pDevice,
               const CPDF_RenderOptions* pOptions = NULL,
-              const CFX_AffineMatrix* pFinalMatrix = NULL);
+              const CFX_Matrix* pFinalMatrix = NULL);
 
   void DrawObjectList(CFX_RenderDevice* pDevice,
                       CPDF_PageObjects* pObjs,
-                      const CFX_AffineMatrix* pObject2Device,
+                      const CFX_Matrix* pObject2Device,
                       const CPDF_RenderOptions* pOptions);
 
   void GetBackground(CFX_DIBitmap* pBuffer,
                      const CPDF_PageObject* pObj,
                      const CPDF_RenderOptions* pOptions,
-                     CFX_AffineMatrix* pFinalMatrix);
+                     CFX_Matrix* pFinalMatrix);
 
   CPDF_PageRenderCache* GetPageCache() const { return m_pPageCache; }
 
@@ -126,7 +126,7 @@ class CPDF_RenderContext {
   void Render(CFX_RenderDevice* pDevice,
               const CPDF_PageObject* pStopObj,
               const CPDF_RenderOptions* pOptions,
-              const CFX_AffineMatrix* pFinalMatrix);
+              const CFX_Matrix* pFinalMatrix);
   friend class CPDF_RenderStatus;
   friend class CPDF_ProgressiveRenderer;
 };
@@ -185,7 +185,7 @@ class CPDF_TextRenderer {
                              FX_FLOAT origin_y,
                              CPDF_Font* pFont,
                              FX_FLOAT font_size,
-                             const CFX_AffineMatrix* matrix,
+                             const CFX_Matrix* matrix,
                              const CFX_ByteString& str,
                              FX_ARGB fill_argb,
                              FX_ARGB stroke_argb = 0,
@@ -198,8 +198,8 @@ class CPDF_TextRenderer {
                               FX_FLOAT* pCharPos,
                               CPDF_Font* pFont,
                               FX_FLOAT font_size,
-                              const CFX_AffineMatrix* pText2User,
-                              const CFX_AffineMatrix* pUser2Device,
+                              const CFX_Matrix* pText2User,
+                              const CFX_Matrix* pUser2Device,
                               const CFX_GraphStateData* pGraphState,
                               FX_ARGB fill_argb,
                               FX_ARGB stroke_argb,
@@ -212,7 +212,7 @@ class CPDF_TextRenderer {
                                 FX_FLOAT* pCharPos,
                                 CPDF_Font* pFont,
                                 FX_FLOAT font_size,
-                                const CFX_AffineMatrix* pText2Device,
+                                const CFX_Matrix* pText2Device,
                                 FX_ARGB fill_argb,
                                 const CPDF_RenderOptions* pOptions);
 
@@ -222,7 +222,7 @@ class CPDF_TextRenderer {
                                FX_FLOAT* pCharPos,
                                CPDF_Font* pFont,
                                FX_FLOAT font_size,
-                               const CFX_AffineMatrix* pText2Device,
+                               const CFX_Matrix* pText2Device,
                                FX_ARGB fill_argb);
 };
 class CPDF_PageRenderCache {
@@ -288,6 +288,6 @@ class CPDF_RenderConfig {
   int m_RenderStepLimit;
 };
 
-FX_BOOL IsAvailableMatrix(const CFX_AffineMatrix& matrix);
+FX_BOOL IsAvailableMatrix(const CFX_Matrix& matrix);
 
 #endif  // CORE_INCLUDE_FPDFAPI_FPDF_RENDER_H_

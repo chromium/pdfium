@@ -51,7 +51,7 @@ void CPDF_AnnotList::DisplayPass(const CPDF_Page* pPage,
                                  CFX_RenderDevice* pDevice,
                                  CPDF_RenderContext* pContext,
                                  FX_BOOL bPrinting,
-                                 CFX_AffineMatrix* pMatrix,
+                                 CFX_Matrix* pMatrix,
                                  FX_BOOL bWidgetPass,
                                  CPDF_RenderOptions* pOptions,
                                  FX_RECT* clip_rect) {
@@ -102,7 +102,7 @@ void CPDF_AnnotList::DisplayAnnots(const CPDF_Page* pPage,
                                    CFX_RenderDevice* pDevice,
                                    CPDF_RenderContext* pContext,
                                    FX_BOOL bPrinting,
-                                   CFX_AffineMatrix* pUser2Device,
+                                   CFX_Matrix* pUser2Device,
                                    FX_DWORD dwAnnotFlags,
                                    CPDF_RenderOptions* pOptions,
                                    FX_RECT* pClipRect) {
@@ -206,7 +206,7 @@ CPDF_Form* CPDF_Annot::GetAPForm(const CPDF_Page* pPage, AppearanceMode mode) {
 static CPDF_Form* FPDFDOC_Annot_GetMatrix(const CPDF_Page* pPage,
                                           CPDF_Annot* pAnnot,
                                           CPDF_Annot::AppearanceMode mode,
-                                          const CFX_AffineMatrix* pUser2Device,
+                                          const CFX_Matrix* pUser2Device,
                                           CFX_Matrix& matrix) {
   CPDF_Form* pForm = pAnnot->GetAPForm(pPage, mode);
   if (!pForm) {
@@ -223,7 +223,7 @@ static CPDF_Form* FPDFDOC_Annot_GetMatrix(const CPDF_Page* pPage,
 }
 FX_BOOL CPDF_Annot::DrawAppearance(const CPDF_Page* pPage,
                                    CFX_RenderDevice* pDevice,
-                                   const CFX_AffineMatrix* pUser2Device,
+                                   const CFX_Matrix* pUser2Device,
                                    AppearanceMode mode,
                                    const CPDF_RenderOptions* pOptions) {
   CFX_Matrix matrix;
@@ -239,7 +239,7 @@ FX_BOOL CPDF_Annot::DrawAppearance(const CPDF_Page* pPage,
 }
 FX_BOOL CPDF_Annot::DrawInContext(const CPDF_Page* pPage,
                                   const CPDF_RenderContext* pContext,
-                                  const CFX_AffineMatrix* pUser2Device,
+                                  const CFX_Matrix* pUser2Device,
                                   AppearanceMode mode) {
   CFX_Matrix matrix;
   CPDF_Form* pForm =
@@ -251,7 +251,7 @@ FX_BOOL CPDF_Annot::DrawInContext(const CPDF_Page* pPage,
   return TRUE;
 }
 void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
-                            const CFX_AffineMatrix* pUser2Device,
+                            const CFX_Matrix* pUser2Device,
                             const CPDF_RenderOptions* pOptions) {
   if (GetSubType() == "Popup") {
     return;

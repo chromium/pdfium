@@ -159,7 +159,7 @@ void CPWL_ListBox::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
 }
 
 void CPWL_ListBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                      CPDF_Matrix* pUser2Device) {
+                                      CFX_Matrix* pUser2Device) {
   CPWL_Wnd::DrawThisAppearance(pDevice, pUser2Device);
 
   if (m_pList) {

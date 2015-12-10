@@ -179,7 +179,7 @@ class IPWL_Provider {
   virtual ~IPWL_Provider() {}
 
   // get a matrix which map user space to CWnd client space
-  virtual CPDF_Matrix GetWindowMatrix(void* pAttachedData) = 0;
+  virtual CFX_Matrix GetWindowMatrix(void* pAttachedData) = 0;
 
   /*
   0 L"&Undo\tCtrl+Z"
@@ -247,7 +247,7 @@ struct PWL_CREATEPARAM {
   CPWL_Wnd* pParentWnd;               // ignore
   CPWL_MsgControl* pMsgControl;       // ignore
   int32_t eCursorType;                // ignore
-  CPDF_Matrix mtChild;                // ignore
+  CFX_Matrix mtChild;                 // ignore
 };
 
 class CPWL_Timer {
@@ -293,7 +293,7 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   virtual void InvalidateRect(CPDF_Rect* pRect = NULL);
 
   void GetAppearanceStream(CFX_ByteString& sAppStream);
-  void DrawAppearance(CFX_RenderDevice* pDevice, CPDF_Matrix* pUser2Device);
+  void DrawAppearance(CFX_RenderDevice* pDevice, CFX_Matrix* pUser2Device);
 
   virtual FX_BOOL OnKeyDown(FX_WORD nChar, FX_DWORD nFlag);
   virtual FX_BOOL OnKeyUp(FX_WORD nChar, FX_DWORD nFlag);
@@ -378,10 +378,10 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   int32_t GetTransparency();
   void SetTransparency(int32_t nTransparency);
 
-  CPDF_Matrix GetChildToRoot() const;
-  CPDF_Matrix GetChildMatrix() const;
-  void SetChildMatrix(const CPDF_Matrix& mt);
-  CPDF_Matrix GetWindowMatrix() const;
+  CFX_Matrix GetChildToRoot() const;
+  CFX_Matrix GetChildMatrix() const;
+  void SetChildMatrix(const CFX_Matrix& mt);
+  CFX_Matrix GetWindowMatrix() const;
 
   virtual CPDF_Point ChildToParent(const CPDF_Point& point) const;
   virtual CPDF_Rect ChildToParent(const CPDF_Rect& rect) const;
@@ -408,9 +408,9 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   virtual void GetChildAppearanceStream(CFX_ByteTextBuf& sAppStream);
 
   virtual void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                  CPDF_Matrix* pUser2Device);
+                                  CFX_Matrix* pUser2Device);
   virtual void DrawChildAppearance(CFX_RenderDevice* pDevice,
-                                   CPDF_Matrix* pUser2Device);
+                                   CFX_Matrix* pUser2Device);
 
   virtual void OnCreate(PWL_CREATEPARAM& cp);
   virtual void OnCreated();

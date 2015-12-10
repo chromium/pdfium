@@ -176,7 +176,7 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
                                          CFX_Font* pFont,
                                          CFX_FontCache* pCache,
                                          FX_FLOAT font_size,
-                                         const CFX_AffineMatrix* pText2Device,
+                                         const CFX_Matrix* pText2Device,
                                          FX_DWORD fill_color,
                                          FX_DWORD text_flags,
                                          int alpha_flag,
@@ -220,7 +220,7 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
       return TRUE;
     }
   }
-  CFX_AffineMatrix char2device, deviceCtm, text2Device;
+  CFX_Matrix char2device, deviceCtm, text2Device;
   if (pText2Device) {
     char2device = *pText2Device;
     text2Device = *pText2Device;
@@ -272,7 +272,7 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
   FXTEXT_GLYPHPOS* pGlyphAndPos = FX_Alloc(FXTEXT_GLYPHPOS, nChars);
   int iChar;
   deviceCtm = char2device;
-  CFX_AffineMatrix matrixCTM = GetCTM();
+  CFX_Matrix matrixCTM = GetCTM();
   FX_FLOAT scale_x = FXSYS_fabs(matrixCTM.a);
   FX_FLOAT scale_y = FXSYS_fabs(matrixCTM.d);
   deviceCtm.Concat(scale_x, 0, 0, scale_y, 0, 0);
@@ -290,7 +290,7 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
     }
     glyph.m_OriginY = FXSYS_round(glyph.m_fOriginY);
     if (charpos.m_bGlyphAdjust) {
-      CFX_AffineMatrix new_matrix(
+      CFX_Matrix new_matrix(
           charpos.m_AdjustMatrix[0], charpos.m_AdjustMatrix[1],
           charpos.m_AdjustMatrix[2], charpos.m_AdjustMatrix[3], 0, 0);
       new_matrix.Concat(deviceCtm);
@@ -1108,8 +1108,8 @@ FX_BOOL CFX_RenderDevice::DrawTextPath(int nChars,
                                        CFX_Font* pFont,
                                        CFX_FontCache* pCache,
                                        FX_FLOAT font_size,
-                                       const CFX_AffineMatrix* pText2User,
-                                       const CFX_AffineMatrix* pUser2Device,
+                                       const CFX_Matrix* pText2User,
+                                       const CFX_Matrix* pUser2Device,
                                        const CFX_GraphStateData* pGraphState,
                                        FX_DWORD fill_color,
                                        FX_ARGB stroke_color,
@@ -1125,7 +1125,7 @@ FX_BOOL CFX_RenderDevice::DrawTextPath(int nChars,
   FX_FONTCACHE_DEFINE(pCache, pFont);
   for (int iChar = 0; iChar < nChars; iChar++) {
     const FXTEXT_CHARPOS& charpos = pCharPos[iChar];
-    CFX_AffineMatrix matrix;
+    CFX_Matrix matrix;
     if (charpos.m_bGlyphAdjust)
       matrix.Set(charpos.m_AdjustMatrix[0], charpos.m_AdjustMatrix[1],
                  charpos.m_AdjustMatrix[2], charpos.m_AdjustMatrix[3], 0, 0);
@@ -1252,7 +1252,7 @@ void CFX_FaceCache::InitPlatform() {}
 #endif
 CFX_GlyphBitmap* CFX_FaceCache::LookUpGlyphBitmap(
     CFX_Font* pFont,
-    const CFX_AffineMatrix* pMatrix,
+    const CFX_Matrix* pMatrix,
     CFX_ByteStringC& FaceGlyphsKey,
     FX_DWORD glyph_index,
     FX_BOOL bFontStyle,
@@ -1279,14 +1279,13 @@ CFX_GlyphBitmap* CFX_FaceCache::LookUpGlyphBitmap(
   pSizeCache->m_GlyphMap.SetAt((void*)(uintptr_t)glyph_index, pGlyphBitmap);
   return pGlyphBitmap;
 }
-const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(
-    CFX_Font* pFont,
-    FX_DWORD glyph_index,
-    FX_BOOL bFontStyle,
-    const CFX_AffineMatrix* pMatrix,
-    int dest_width,
-    int anti_alias,
-    int& text_flags) {
+const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(CFX_Font* pFont,
+                                                      FX_DWORD glyph_index,
+                                                      FX_BOOL bFontStyle,
+                                                      const CFX_Matrix* pMatrix,
+                                                      int dest_width,
+                                                      int anti_alias,
+                                                      int& text_flags) {
   if (glyph_index == (FX_DWORD)-1) {
     return NULL;
   }
@@ -1518,7 +1517,7 @@ static void _ContrastAdjust(uint8_t* pDataIn,
 CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(CFX_Font* pFont,
                                             FX_DWORD glyph_index,
                                             FX_BOOL bFontStyle,
-                                            const CFX_AffineMatrix* pMatrix,
+                                            const CFX_Matrix* pMatrix,
                                             int dest_width,
                                             int anti_alias) {
   if (m_Face == NULL) {

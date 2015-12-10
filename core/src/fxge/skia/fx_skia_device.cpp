@@ -127,11 +127,11 @@ class CSkia_PathData {
   SkPath m_PathData;
 
   void BuildPath(const CFX_PathData* pPathData,
-                 const CFX_AffineMatrix* pObject2Device);
+                 const CFX_Matrix* pObject2Device);
 };
 
 void CSkia_PathData::BuildPath(const CFX_PathData* pPathData,
-                               const CFX_AffineMatrix* pObject2Device) {
+                               const CFX_Matrix* pObject2Device) {
   const CFX_PathData* pFPath = pPathData;
   int nPoints = pFPath->GetPointCount();
   FX_PATHPOINT* pPoints = pFPath->GetPoints();
@@ -177,7 +177,7 @@ void CSkia_PathData::BuildPath(const CFX_PathData* pPathData,
 static void SkRasterizeStroke(SkPaint& spaint,
                               SkPath* dstPathData,
                               SkPath& path_data,
-                              const CFX_AffineMatrix* pObject2Device,
+                              const CFX_Matrix* pObject2Device,
                               const CFX_GraphStateData* pGraphState,
                               FX_FIXFLOAT scale = FIX8_ONE,
                               FX_BOOL bStrokeAdjust = FALSE,
@@ -269,16 +269,15 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(CFX_DIBitmap* pBitmap,
 CFX_SkiaDeviceDriver::~CFX_SkiaDeviceDriver() {
   delete m_pAggDriver;
 }
-FX_BOOL CFX_SkiaDeviceDriver::DrawDeviceText(
-    int nChars,
-    const FXTEXT_CHARPOS* pCharPos,
-    CFX_Font* pFont,
-    CFX_FontCache* pCache,
-    const CFX_AffineMatrix* pObject2Device,
-    FX_FIXFLOAT font_size,
-    FX_DWORD color,
-    int alpha_flag,
-    void* pIccTransform) {
+FX_BOOL CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
+                                             const FXTEXT_CHARPOS* pCharPos,
+                                             CFX_Font* pFont,
+                                             CFX_FontCache* pCache,
+                                             const CFX_Matrix* pObject2Device,
+                                             FX_FIXFLOAT font_size,
+                                             FX_DWORD color,
+                                             int alpha_flag,
+                                             void* pIccTransform) {
   return m_pAggDriver->DrawDeviceText(nChars, pCharPos, pFont, pCache,
                                       pObject2Device, font_size, color,
                                       alpha_flag, pIccTransform);
@@ -328,9 +327,9 @@ void CFX_SkiaDeviceDriver::SetClipMask(SkPath& skPath, SkPaint* spaint) {
   m_pAggDriver->m_pClipRgn->IntersectMaskF(clip_box.fLeft, clip_box.fTop, mask);
 }
 FX_BOOL CFX_SkiaDeviceDriver::SetClip_PathFill(
-    const CFX_PathData* pPathData,           // path info
-    const CFX_AffineMatrix* pObject2Device,  // optional transformation
-    int fill_mode                            // fill mode, WINDING or ALTERNATE
+    const CFX_PathData* pPathData,     // path info
+    const CFX_Matrix* pObject2Device,  // optional transformation
+    int fill_mode                      // fill mode, WINDING or ALTERNATE
     ) {
   if (m_pAggDriver->m_pClipRgn == NULL)
     m_pAggDriver->m_pClipRgn = new CFX_ClipRgn(
@@ -365,8 +364,8 @@ FX_BOOL CFX_SkiaDeviceDriver::SetClip_PathFill(
 }
 
 FX_BOOL CFX_SkiaDeviceDriver::SetClip_PathStroke(
-    const CFX_PathData* pPathData,           // path info
-    const CFX_AffineMatrix* pObject2Device,  // optional transformation
+    const CFX_PathData* pPathData,         // path info
+    const CFX_Matrix* pObject2Device,      // optional transformation
     const CFX_GraphStateData* pGraphState  // graphic state, for pen attributes
     ) {
   if (m_pAggDriver->m_pClipRgn == NULL)
@@ -425,8 +424,8 @@ FX_BOOL CFX_SkiaDeviceDriver::RenderRasterizerSkia(SkPath& skPath,
 }
 
 FX_BOOL CFX_SkiaDeviceDriver::DrawPath(
-    const CFX_PathData* pPathData,           // path info
-    const CFX_AffineMatrix* pObject2Device,  // optional transformation
+    const CFX_PathData* pPathData,          // path info
+    const CFX_Matrix* pObject2Device,       // optional transformation
     const CFX_GraphStateData* pGraphState,  // graphic state, for pen attributes
     FX_DWORD fill_color,                    // fill color
     FX_DWORD stroke_color,                  // stroke color
@@ -472,7 +471,7 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawPath(
     // flatness problem, second part doing the transformation, so we don't have
     // stroking geo problem.
     // TESTDOC: Bug #5253 - test[1].pdf
-    CFX_AffineMatrix matrix1, matrix2;
+    CFX_Matrix matrix1, matrix2;
     if (pObject2Device) {
       matrix1.a = FXSYS_fabs(pObject2Device->a) > FXSYS_fabs(pObject2Device->b)
                       ? FXSYS_fabs(pObject2Device->a)
@@ -566,7 +565,7 @@ FX_BOOL CFX_SkiaDeviceDriver::StretchDIBits(const CFX_DIBSource* pSource,
 FX_BOOL CFX_SkiaDeviceDriver::StartDIBits(const CFX_DIBSource* pSource,
                                           int bitmap_alpha,
                                           FX_DWORD argb,
-                                          const CFX_AffineMatrix* pMatrix,
+                                          const CFX_Matrix* pMatrix,
                                           FX_DWORD render_flags,
                                           void*& handle,
                                           int alpha_flag,

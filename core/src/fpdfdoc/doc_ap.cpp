@@ -333,25 +333,25 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
     nRotate = pMKDict->GetInteger("R");
   }
   CPDF_Rect rcBBox;
-  CPDF_Matrix matrix;
+  CFX_Matrix matrix;
   switch (nRotate % 360) {
     case 0:
       rcBBox = CPDF_Rect(0, 0, rcAnnot.right - rcAnnot.left,
                          rcAnnot.top - rcAnnot.bottom);
       break;
     case 90:
-      matrix = CPDF_Matrix(0, 1, -1, 0, rcAnnot.right - rcAnnot.left, 0);
+      matrix = CFX_Matrix(0, 1, -1, 0, rcAnnot.right - rcAnnot.left, 0);
       rcBBox = CPDF_Rect(0, 0, rcAnnot.top - rcAnnot.bottom,
                          rcAnnot.right - rcAnnot.left);
       break;
     case 180:
-      matrix = CPDF_Matrix(-1, 0, 0, -1, rcAnnot.right - rcAnnot.left,
-                           rcAnnot.top - rcAnnot.bottom);
+      matrix = CFX_Matrix(-1, 0, 0, -1, rcAnnot.right - rcAnnot.left,
+                          rcAnnot.top - rcAnnot.bottom);
       rcBBox = CPDF_Rect(0, 0, rcAnnot.right - rcAnnot.left,
                          rcAnnot.top - rcAnnot.bottom);
       break;
     case 270:
-      matrix = CPDF_Matrix(0, -1, 1, 0, 0, rcAnnot.top - rcAnnot.bottom);
+      matrix = CFX_Matrix(0, -1, 1, 0, 0, rcAnnot.top - rcAnnot.bottom);
       rcBBox = CPDF_Rect(0, 0, rcAnnot.top - rcAnnot.bottom,
                          rcAnnot.right - rcAnnot.left);
       break;

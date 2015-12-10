@@ -136,18 +136,18 @@ class CFX_PathData {
 
   CFX_FloatRect GetBoundingBox(FX_FLOAT line_width, FX_FLOAT miter_limit) const;
 
-  void Transform(const CFX_AffineMatrix* pMatrix);
+  void Transform(const CFX_Matrix* pMatrix);
 
   FX_BOOL IsRect() const;
 
   FX_BOOL GetZeroAreaPath(CFX_PathData& NewPath,
-                          CFX_AffineMatrix* pMatrix,
+                          CFX_Matrix* pMatrix,
                           FX_BOOL& bThin,
                           FX_BOOL bAdjust) const;
 
-  FX_BOOL IsRect(const CFX_AffineMatrix* pMatrix, CFX_FloatRect* rect) const;
+  FX_BOOL IsRect(const CFX_Matrix* pMatrix, CFX_FloatRect* rect) const;
 
-  void Append(const CFX_PathData* pSrc, const CFX_AffineMatrix* pMatrix);
+  void Append(const CFX_PathData* pSrc, const CFX_Matrix* pMatrix);
   void AppendRect(FX_FLOAT left, FX_FLOAT bottom, FX_FLOAT right, FX_FLOAT top);
 
   void SetPoint(int index, FX_FLOAT x, FX_FLOAT y, int flag);
@@ -281,17 +281,17 @@ class CFX_RenderDevice {
   const FX_RECT& GetClipBox() const { return m_ClipBox; }
 
   FX_BOOL SetClip_PathFill(const CFX_PathData* pPathData,
-                           const CFX_AffineMatrix* pObject2Device,
+                           const CFX_Matrix* pObject2Device,
                            int fill_mode);
 
   FX_BOOL SetClip_Rect(const FX_RECT* pRect);
 
   FX_BOOL SetClip_PathStroke(const CFX_PathData* pPathData,
-                             const CFX_AffineMatrix* pObject2Device,
+                             const CFX_Matrix* pObject2Device,
                              const CFX_GraphStateData* pGraphState);
 
   FX_BOOL DrawPath(const CFX_PathData* pPathData,
-                   const CFX_AffineMatrix* pObject2Device,
+                   const CFX_Matrix* pObject2Device,
                    const CFX_GraphStateData* pGraphState,
                    FX_DWORD fill_color,
                    FX_DWORD stroke_color,
@@ -364,7 +364,7 @@ class CFX_RenderDevice {
   FX_BOOL StartDIBits(const CFX_DIBSource* pBitmap,
                       int bitmap_alpha,
                       FX_DWORD color,
-                      const CFX_AffineMatrix* pMatrix,
+                      const CFX_Matrix* pMatrix,
                       FX_DWORD flags,
                       void*& handle,
                       int alpha_flag = 0,
@@ -380,7 +380,7 @@ class CFX_RenderDevice {
                          CFX_Font* pFont,
                          CFX_FontCache* pCache,
                          FX_FLOAT font_size,
-                         const CFX_AffineMatrix* pText2Device,
+                         const CFX_Matrix* pText2Device,
                          FX_DWORD fill_color,
                          FX_DWORD text_flags,
                          int alpha_flag = 0,
@@ -391,8 +391,8 @@ class CFX_RenderDevice {
                        CFX_Font* pFont,
                        CFX_FontCache* pCache,
                        FX_FLOAT font_size,
-                       const CFX_AffineMatrix* pText2User,
-                       const CFX_AffineMatrix* pUser2Device,
+                       const CFX_Matrix* pText2User,
+                       const CFX_Matrix* pUser2Device,
                        const CFX_GraphStateData* pGraphState,
                        FX_DWORD fill_color,
                        FX_DWORD stroke_color,
@@ -495,17 +495,17 @@ class IFX_RenderDeviceDriver {
   virtual void RestoreState(FX_BOOL bKeepSaved = FALSE) = 0;
 
   virtual FX_BOOL SetClip_PathFill(const CFX_PathData* pPathData,
-                                   const CFX_AffineMatrix* pObject2Device,
+                                   const CFX_Matrix* pObject2Device,
                                    int fill_mode) = 0;
 
   virtual FX_BOOL SetClip_PathStroke(const CFX_PathData* pPathData,
-                                     const CFX_AffineMatrix* pObject2Device,
+                                     const CFX_Matrix* pObject2Device,
                                      const CFX_GraphStateData* pGraphState) {
     return FALSE;
   }
 
   virtual FX_BOOL DrawPath(const CFX_PathData* pPathData,
-                           const CFX_AffineMatrix* pObject2Device,
+                           const CFX_Matrix* pObject2Device,
                            const CFX_GraphStateData* pGraphState,
                            FX_DWORD fill_color,
                            FX_DWORD stroke_color,
@@ -576,7 +576,7 @@ class IFX_RenderDeviceDriver {
   virtual FX_BOOL StartDIBits(const CFX_DIBSource* pBitmap,
                               int bitmap_alpha,
                               FX_DWORD color,
-                              const CFX_AffineMatrix* pMatrix,
+                              const CFX_Matrix* pMatrix,
                               FX_DWORD flags,
                               void*& handle,
                               int alpha_flag = 0,
@@ -593,7 +593,7 @@ class IFX_RenderDeviceDriver {
                                  const FXTEXT_CHARPOS* pCharPos,
                                  CFX_Font* pFont,
                                  CFX_FontCache* pCache,
-                                 const CFX_AffineMatrix* pObject2Device,
+                                 const CFX_Matrix* pObject2Device,
                                  FX_FLOAT font_size,
                                  FX_DWORD color,
                                  int alpha_flag = 0,
@@ -637,17 +637,17 @@ class CFX_PSRenderer {
   void RestoreState(FX_BOOL bKeepSaved = FALSE);
 
   void SetClip_PathFill(const CFX_PathData* pPathData,
-                        const CFX_AffineMatrix* pObject2Device,
+                        const CFX_Matrix* pObject2Device,
                         int fill_mode);
 
   void SetClip_PathStroke(const CFX_PathData* pPathData,
-                          const CFX_AffineMatrix* pObject2Device,
+                          const CFX_Matrix* pObject2Device,
                           const CFX_GraphStateData* pGraphState);
 
   FX_RECT GetClipBox() { return m_ClipBox; }
 
   FX_BOOL DrawPath(const CFX_PathData* pPathData,
-                   const CFX_AffineMatrix* pObject2Device,
+                   const CFX_Matrix* pObject2Device,
                    const CFX_GraphStateData* pGraphState,
                    FX_DWORD fill_color,
                    FX_DWORD stroke_color,
@@ -674,7 +674,7 @@ class CFX_PSRenderer {
 
   FX_BOOL DrawDIBits(const CFX_DIBSource* pBitmap,
                      FX_DWORD color,
-                     const CFX_AffineMatrix* pMatrix,
+                     const CFX_Matrix* pMatrix,
                      FX_DWORD flags,
                      int alpha_flag = 0,
                      void* pIccTransform = NULL);
@@ -683,7 +683,7 @@ class CFX_PSRenderer {
                    const FXTEXT_CHARPOS* pCharPos,
                    CFX_Font* pFont,
                    CFX_FontCache* pCache,
-                   const CFX_AffineMatrix* pObject2Device,
+                   const CFX_Matrix* pObject2Device,
                    FX_FLOAT font_size,
                    FX_DWORD color,
                    int alpha_flag = 0,
@@ -712,7 +712,7 @@ class CFX_PSRenderer {
   FX_BOOL m_bInited;
 
   void OutputPath(const CFX_PathData* pPathData,
-                  const CFX_AffineMatrix* pObject2Device);
+                  const CFX_Matrix* pObject2Device);
 
   void SetGraphState(const CFX_GraphStateData* pGraphState);
 

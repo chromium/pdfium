@@ -48,7 +48,7 @@ class CPWL_Edit : public CPWL_EditCtrl, public IFX_Edit_OprNotify {
   CPDF_Rect GetClientRect() const override;
   void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                          CPDF_Matrix* pUser2Device) override;
+                          CFX_Matrix* pUser2Device) override;
   FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag) override;
   FX_BOOL OnLButtonDblClk(const CPDF_Point& point, FX_DWORD nFlag) override;
   FX_BOOL OnRButtonUp(const CPDF_Point& point, FX_DWORD nFlag) override;

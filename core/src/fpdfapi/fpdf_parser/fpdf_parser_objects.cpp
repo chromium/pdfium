@@ -440,8 +440,8 @@ CFX_FloatRect CPDF_Array::GetRect() {
   rect.top = GetNumber(3);
   return rect;
 }
-CFX_AffineMatrix CPDF_Array::GetMatrix() {
-  CFX_AffineMatrix matrix;
+CFX_Matrix CPDF_Array::GetMatrix() {
+  CFX_Matrix matrix;
   if (!IsArray() || m_Objects.GetSize() != 6)
     return matrix;
 
@@ -702,8 +702,8 @@ CFX_FloatRect CPDF_Dictionary::GetRect(const CFX_ByteStringC& key) const {
     rect = pArray->GetRect();
   return rect;
 }
-CFX_AffineMatrix CPDF_Dictionary::GetMatrix(const CFX_ByteStringC& key) const {
-  CFX_AffineMatrix matrix;
+CFX_Matrix CPDF_Dictionary::GetMatrix(const CFX_ByteStringC& key) const {
+  CFX_Matrix matrix;
   CPDF_Array* pArray = GetArray(key);
   if (pArray)
     matrix = pArray->GetMatrix();
@@ -814,7 +814,7 @@ void CPDF_Dictionary::SetAtRect(const CFX_ByteStringC& key,
   SetAt(key, pArray);
 }
 void CPDF_Dictionary::SetAtMatrix(const CFX_ByteStringC& key,
-                                  const CFX_AffineMatrix& matrix) {
+                                  const CFX_Matrix& matrix) {
   CPDF_Array* pArray = new CPDF_Array;
   pArray->AddNumber16(matrix.a);
   pArray->AddNumber16(matrix.b);
