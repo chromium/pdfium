@@ -561,8 +561,8 @@ class CPDF_DIBSource : public CFX_DIBSource {
   FX_BOOL m_bHasMask;
 
  private:
-  FX_BOOL LoadColorInfo(CPDF_Dictionary* pFormResources,
-                        CPDF_Dictionary* pPageResources);
+  bool LoadColorInfo(const CPDF_Dictionary* pFormResources,
+                     const CPDF_Dictionary* pPageResources);
   DIB_COMP_DATA* GetDecodeAndMaskArray(FX_BOOL& bDefaultDecode,
                                        FX_BOOL& bColorKey);
   CPDF_DIBSource* LoadMask(FX_DWORD& MatteColor);

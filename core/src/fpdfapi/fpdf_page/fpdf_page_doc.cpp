@@ -307,8 +307,9 @@ void CPDF_DocPageData::ReleaseFont(CPDF_Dictionary* pFontDict) {
   }
 }
 
-CPDF_ColorSpace* CPDF_DocPageData::GetColorSpace(CPDF_Object* pCSObj,
-                                                 CPDF_Dictionary* pResources) {
+CPDF_ColorSpace* CPDF_DocPageData::GetColorSpace(
+    CPDF_Object* pCSObj,
+    const CPDF_Dictionary* pResources) {
   if (!pCSObj)
     return nullptr;
 

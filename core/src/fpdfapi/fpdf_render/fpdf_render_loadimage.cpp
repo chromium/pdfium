@@ -59,6 +59,10 @@ FX_SAFE_DWORD CalculatePitch32(int bpp, int width) {
   return pitch;
 }
 
+bool IsAllowedBPCValue(int bpc) {
+  return bpc == 1 || bpc == 2 || bpc == 4 || bpc == 8 || bpc == 16;
+}
+
 // Wrapper class to use with nonstd::unique_ptr for CJPX_Decoder.
 class JpxBitMapContext {
  public:
@@ -465,71 +469,66 @@ int CPDF_DIBSource::ContinueLoadDIBSource(IFX_Pause* pPause) {
   }
   return 0;
 }
-FX_BOOL CPDF_DIBSource::LoadColorInfo(CPDF_Dictionary* pFormResources,
-                                      CPDF_Dictionary* pPageResources) {
-  m_bpc_orig = m_pDict->GetInteger(FX_BSTRC("BitsPerComponent"));
-  if (m_pDict->GetInteger("ImageMask")) {
+
+bool CPDF_DIBSource::LoadColorInfo(const CPDF_Dictionary* pFormResources,
+                                   const CPDF_Dictionary* pPageResources) {
+  m_bpc_orig = m_pDict->GetInteger("BitsPerComponent");
+  if (m_pDict->GetInteger("ImageMask"))
     m_bImageMask = TRUE;
-  }
-  if (m_bImageMask || !m_pDict->KeyExist(FX_BSTRC("ColorSpace"))) {
+
+  if (m_bImageMask || !m_pDict->KeyExist("ColorSpace")) {
     if (!m_bImageMask) {
-      CPDF_Object* pFilter = m_pDict->GetElementValue(FX_BSTRC("Filter"));
+      CPDF_Object* pFilter = m_pDict->GetElementValue("Filter");
       if (pFilter) {
         CFX_ByteString filter;
         if (pFilter->IsName()) {
           filter = pFilter->GetString();
-          if (filter == FX_BSTRC("JPXDecode")) {
-            m_bDoBpcCheck = FALSE;
-            return TRUE;
-          }
         } else if (CPDF_Array* pArray = pFilter->AsArray()) {
-          if (pArray->GetString(pArray->GetCount() - 1) ==
-              FX_BSTRC("JPXDecode")) {
-            m_bDoBpcCheck = FALSE;
-            return TRUE;
-          }
+          filter = pArray->GetString(pArray->GetCount() - 1);
+        }
+
+        if (filter == FX_BSTRC("JPXDecode")) {
+          m_bDoBpcCheck = FALSE;
+          return true;
         }
       }
     }
     m_bImageMask = TRUE;
     m_bpc = m_nComponents = 1;
-    CPDF_Array* pDecode = m_pDict->GetArray(FX_BSTRC("Decode"));
-    m_bDefaultDecode = pDecode == NULL || pDecode->GetInteger(0) == 0;
-    return TRUE;
+    CPDF_Array* pDecode = m_pDict->GetArray("Decode");
+    m_bDefaultDecode = !pDecode || !pDecode->GetInteger(0);
+    return true;
   }
-  CPDF_Object* pCSObj = m_pDict->GetElementValue(FX_BSTRC("ColorSpace"));
-  if (pCSObj == NULL) {
-    return FALSE;
-  }
+
+  CPDF_Object* pCSObj = m_pDict->GetElementValue("ColorSpace");
+  if (!pCSObj)
+    return false;
+
   CPDF_DocPageData* pDocPageData = m_pDocument->GetPageData();
-  if (pFormResources) {
+  if (pFormResources)
     m_pColorSpace = pDocPageData->GetColorSpace(pCSObj, pFormResources);
-  }
-  if (m_pColorSpace == NULL) {
+  if (!m_pColorSpace)
     m_pColorSpace = pDocPageData->GetColorSpace(pCSObj, pPageResources);
-  }
-  if (m_pColorSpace == NULL) {
-    return FALSE;
-  }
+  if (!m_pColorSpace)
+    return false;
+
   m_Family = m_pColorSpace->GetFamily();
   m_nComponents = m_pColorSpace->CountComponents();
   if (m_Family == PDFCS_ICCBASED && pCSObj->IsName()) {
     CFX_ByteString cs = pCSObj->GetString();
-    if (cs == FX_BSTRC("DeviceGray")) {
+    if (cs == "DeviceGray") {
       m_nComponents = 1;
-    } else if (cs == FX_BSTRC("DeviceRGB")) {
+    } else if (cs == "DeviceRGB") {
       m_nComponents = 3;
-    } else if (cs == FX_BSTRC("DeviceCMYK")) {
+    } else if (cs == "DeviceCMYK") {
       m_nComponents = 4;
     }
   }
   ValidateDictParam();
   m_pCompData = GetDecodeAndMaskArray(m_bDefaultDecode, m_bColorKey);
-  if (m_pCompData == NULL) {
-    return FALSE;
-  }
-  return TRUE;
+  return !!m_pCompData;
 }
+
 DIB_COMP_DATA* CPDF_DIBSource::GetDecodeAndMaskArray(FX_BOOL& bDefaultDecode,
                                                      FX_BOOL& bColorKey) {
   if (m_pColorSpace == NULL) {
@@ -924,45 +923,40 @@ void CPDF_DIBSource::LoadPalette() {
     }
   }
 }
+
 void CPDF_DIBSource::ValidateDictParam() {
   m_bpc = m_bpc_orig;
-  CPDF_Object* pFilter = m_pDict->GetElementValue(FX_BSTRC("Filter"));
+  CPDF_Object* pFilter = m_pDict->GetElementValue("Filter");
   if (pFilter) {
     if (pFilter->IsName()) {
       CFX_ByteString filter = pFilter->GetString();
-      if (filter == FX_BSTRC("CCITTFaxDecode") ||
-          filter == FX_BSTRC("JBIG2Decode")) {
+      if (filter == "CCITTFaxDecode" || filter == "JBIG2Decode") {
         m_bpc = 1;
         m_nComponents = 1;
-      }
-      if (filter == FX_BSTRC("RunLengthDecode")) {
+      } else if (filter == "RunLengthDecode") {
         if (m_bpc != 1) {
           m_bpc = 8;
         }
-      } else if (filter == FX_BSTRC("DCTDecode")) {
+      } else if (filter == "DCTDecode") {
         m_bpc = 8;
       }
     } else if (CPDF_Array* pArray = pFilter->AsArray()) {
-      if (pArray->GetString(pArray->GetCount() - 1) ==
-              FX_BSTRC("CCITTFaxDecode") ||
-          pArray->GetString(pArray->GetCount() - 1) ==
-              FX_BSTRC("JBIG2Decode")) {
+      CFX_ByteString filter = pArray->GetString(pArray->GetCount() - 1);
+      if (filter == "CCITTFaxDecode" || filter == "JBIG2Decode") {
         m_bpc = 1;
         m_nComponents = 1;
-      }
-      if (pArray->GetString(pArray->GetCount() - 1) == FX_BSTRC("DCTDecode")) {
-        // Previously, pArray->GetString(pArray->GetCount() - 1) ==
-        // FX_BSTRC("RunLengthDecode") was checked in the "if" statement as
-        // well,
-        // but too many documents don't conform to it.
+      } else if (filter == "DCTDecode") {
+        // Previously, filter == "RunLengthDecode" was checked in the "if"
+        // statement as well, but too many documents don't conform to it.
         m_bpc = 8;
       }
     }
   }
-  if (m_bpc != 1 && m_bpc != 2 && m_bpc != 4 && m_bpc != 8 && m_bpc != 16) {
+
+  if (!IsAllowedBPCValue(m_bpc))
     m_bpc = 0;
-  }
 }
+
 #define NORMALCOLOR_MAX(color, max) \
   (color) > (max) ? (max) : (color) < 0 ? 0 : (color);
 void CPDF_DIBSource::TranslateScanline24bpp(uint8_t* dest_scan,
