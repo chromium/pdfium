@@ -1333,14 +1333,14 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(CFX_Font* pFont,
   auto it = m_SizeMap.find(FaceGlyphsKey);
   if (it != m_SizeMap.end()) {
     CFX_SizeGlyphCache* pSizeCache = it->second;
-    if (pSizeCache->m_GlyphMap.Lookup((void*)(uintptr_t)glyph_index,
-                                      (void*&)pGlyphBitmap)) {
-      return pGlyphBitmap;
-    }
+    auto it2 = pSizeCache->m_GlyphMap.find(glyph_index);
+    if (it2 != pSizeCache->m_GlyphMap.end())
+      return it2->second;
+
     pGlyphBitmap = RenderGlyph_Nativetext(pFont, glyph_index, pMatrix,
                                           dest_width, anti_alias);
     if (pGlyphBitmap) {
-      pSizeCache->m_GlyphMap.SetAt((void*)(uintptr_t)glyph_index, pGlyphBitmap);
+      pSizeCache->m_GlyphMap[glyph_index] = pGlyphBitmap;
       return pGlyphBitmap;
     }
   } else {
@@ -1349,7 +1349,7 @@ const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(CFX_Font* pFont,
     if (pGlyphBitmap) {
       CFX_SizeGlyphCache* pSizeCache = new CFX_SizeGlyphCache;
       m_SizeMap[FaceGlyphsKey] = pSizeCache;
-      pSizeCache->m_GlyphMap.SetAt((void*)(uintptr_t)glyph_index, pGlyphBitmap);
+      pSizeCache->m_GlyphMap[glyph_index] = pGlyphBitmap;
       return pGlyphBitmap;
     }
   }
