@@ -29,7 +29,10 @@ class CTTFontDesc {
     m_RefCount = 0;
   }
   ~CTTFontDesc();
-  FX_BOOL ReleaseFace(FXFT_Face face);
+  // ret < 0, releaseface not appropriate for this object.
+  // ret == 0, object released
+  // ret > 0, object still alive, other referrers.
+  int ReleaseFace(FXFT_Face face);
   int m_Type;
   union {
     struct {
