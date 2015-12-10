@@ -141,7 +141,7 @@ FWL_ERR CFWL_FormImp::GetClientRect(CFX_RectF& rect) {
   }
 #ifdef FWL_UseMacSystemBorder
   rect = m_rtRelative;
-  CFWL_WidgetMgr* pWidgetMgr = (CFWL_WidgetMgr*)FWL_GetWidgetMgr();
+  CFWL_WidgetMgr* pWidgetMgr = static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
   if (!pWidgetMgr)
     return FWL_ERR_Indefinite;
   IFWL_AdapterWidgetMgr* adapterWidgetMgr = pWidgetMgr->GetAdapterWidgetMgr();
@@ -159,14 +159,12 @@ FWL_ERR CFWL_FormImp::GetClientRect(CFX_RectF& rect) {
   if (pTheme) {
     CFWL_ThemePart part;
     part.m_pWidget = m_pInterface;
-    FX_FLOAT* value = NULL;
-    value = (FX_FLOAT*)pTheme->GetCapacity(&part, FWL_WGTCAPACITY_CXBorder);
-    x = *value;
-    value = (FX_FLOAT*)pTheme->GetCapacity(&part, FWL_WGTCAPACITY_CYBorder);
-    y = *value;
-    value =
-        (FX_FLOAT*)pTheme->GetCapacity(&part, FWL_WGTCAPACITY_FRM_CYCaption);
-    t = *value;
+    x = *static_cast<FX_FLOAT*>(
+        pTheme->GetCapacity(&part, FWL_WGTCAPACITY_CXBorder));
+    y = *static_cast<FX_FLOAT*>(
+        pTheme->GetCapacity(&part, FWL_WGTCAPACITY_CYBorder));
+    t = *static_cast<FX_FLOAT*>(
+        pTheme->GetCapacity(&part, FWL_WGTCAPACITY_FRM_CYCaption));
   }
   rect = m_pProperties->m_rtWidget;
   rect.Offset(-rect.left, -rect.top);
@@ -393,7 +391,7 @@ IFWL_Widget* CFWL_FormImp::DoModal() {
   if (!pDriver)
     return NULL;
   m_pNoteLoop = new CFWL_NoteLoop(this);
-  pDriver->PushNoteLoop((IFWL_NoteLoop*)m_pNoteLoop);
+  pDriver->PushNoteLoop(m_pNoteLoop);
   m_bDoModalFlag = TRUE;
   SetStates(FWL_WGTSTATE_Invisible, FALSE);
   pDriver->Run();
@@ -417,7 +415,8 @@ FWL_ERR CFWL_FormImp::EndDoModal() {
   IFWL_NoteThread* pThread = GetOwnerThread();
   if (!pThread)
     return NULL;
-  CFWL_NoteDriver* pDriver = (CFWL_NoteDriver*)pThread->GetNoteDriver();
+  CFWL_NoteDriver* pDriver =
+      static_cast<CFWL_NoteDriver*>(pThread->GetNoteDriver());
   if (!pDriver)
     return NULL;
   pDriver->PopNoteLoop();
@@ -466,7 +465,8 @@ void CFWL_FormImp::ShowChildWidget(IFWL_Widget* pParent) {
   IFWL_App* pApp = FWL_GetApp();
   if (!pApp)
     return;
-  CFWL_WidgetMgr* pWidgetMgr = (CFWL_WidgetMgr*)pApp->GetWidgetMgr();
+  CFWL_WidgetMgr* pWidgetMgr =
+      static_cast<CFWL_WidgetMgr*>(pApp->GetWidgetMgr());
   if (!pWidgetMgr)
     return;
   IFWL_Widget* pChild =
@@ -551,7 +551,7 @@ CFWL_SysBtn* CFWL_FormImp::GetSysBtnByIndex(int32_t nIndex) {
   if (m_pCloseBox) {
     arrBtn.Add(m_pCloseBox);
   }
-  return (CFWL_SysBtn*)arrBtn[nIndex];
+  return static_cast<CFWL_SysBtn*>(arrBtn[nIndex]);
 }
 int32_t CFWL_FormImp::GetSysBtnIndex(CFWL_SysBtn* pBtn) {
   CFX_PtrArray arrBtn;
@@ -574,10 +574,9 @@ FX_FLOAT CFWL_FormImp::GetCaptionHeight() {
     dwCapacity = FWL_WGTCAPACITY_FRM_CYNarrowCaption;
   }
   if (dwCapacity > 0) {
-    FX_FLOAT* pfCapHeight = (FX_FLOAT*)GetThemeCapacity(dwCapacity);
-    if (!pfCapHeight)
-      return 0;
-    return *pfCapHeight;
+    FX_FLOAT* pfCapHeight =
+        static_cast<FX_FLOAT*>(GetThemeCapacity(dwCapacity));
+    return pfCapHeight ? *pfCapHeight : 0;
   }
   return 0;
 }
@@ -618,7 +617,8 @@ void CFWL_FormImp::DrawCaptionText(CFX_Graphics* pGs,
 void CFWL_FormImp::DrawIconImage(CFX_Graphics* pGs,
                                  IFWL_ThemeProvider* pTheme,
                                  const CFX_Matrix* pMatrix) {
-  IFWL_FormDP* pData = (IFWL_FormDP*)m_pProperties->m_pDataProvider;
+  IFWL_FormDP* pData =
+      static_cast<IFWL_FormDP*>(m_pProperties->m_pDataProvider);
   CFWL_ThemeBackground param;
   param.m_pWidget = m_pInterface;
   param.m_iPart = FWL_PART_FRM_Icon;
@@ -640,7 +640,7 @@ void CFWL_FormImp::GetEdgeRect(CFX_RectF& rtEdge) {
 }
 void CFWL_FormImp::SetWorkAreaRect() {
   m_rtRestore = m_pProperties->m_rtWidget;
-  CFWL_WidgetMgr* pWidgetMgr = (CFWL_WidgetMgr*)FWL_GetWidgetMgr();
+  CFWL_WidgetMgr* pWidgetMgr = static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
   if (!pWidgetMgr)
     return;
   m_bSetMaximize = TRUE;
@@ -734,8 +734,10 @@ void CFWL_FormImp::Layout() {
   }
 }
 void CFWL_FormImp::ReSetSysBtn() {
-  m_fCXBorder = *(FX_FLOAT*)GetThemeCapacity(FWL_WGTCAPACITY_CXBorder);
-  m_fCYBorder = *(FX_FLOAT*)GetThemeCapacity(FWL_WGTCAPACITY_CYBorder);
+  m_fCXBorder =
+      *static_cast<FX_FLOAT*>(GetThemeCapacity(FWL_WGTCAPACITY_CXBorder));
+  m_fCYBorder =
+      *static_cast<FX_FLOAT*>(GetThemeCapacity(FWL_WGTCAPACITY_CYBorder));
   RemoveSysButtons();
   IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
   m_bCustomizeLayout = pTheme->IsCustomizedLayout(m_pInterface);
@@ -803,7 +805,8 @@ void CFWL_FormImp::ReSetSysBtn() {
     }
     m_iSysBox++;
   }
-  IFWL_FormDP* pData = (IFWL_FormDP*)m_pProperties->m_pDataProvider;
+  IFWL_FormDP* pData =
+      static_cast<IFWL_FormDP*>(m_pProperties->m_pDataProvider);
   if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_Icon &&
       pData->GetIcon(m_pInterface, FALSE)) {
     if (m_bCustomizeLayout) {
@@ -831,7 +834,8 @@ void CFWL_FormImp::RegisterForm() {
   IFWL_NoteThread* pThread = GetOwnerThread();
   if (!pThread)
     return;
-  CFWL_NoteDriver* pDriver = (CFWL_NoteDriver*)pThread->GetNoteDriver();
+  CFWL_NoteDriver* pDriver =
+      static_cast<CFWL_NoteDriver*>(pThread->GetNoteDriver());
   if (!pDriver)
     return;
   pDriver->RegisterForm(this);
@@ -840,7 +844,8 @@ void CFWL_FormImp::UnRegisterForm() {
   IFWL_NoteThread* pThread = GetOwnerThread();
   if (!pThread)
     return;
-  CFWL_NoteDriver* pDriver = (CFWL_NoteDriver*)pThread->GetNoteDriver();
+  CFWL_NoteDriver* pDriver =
+      static_cast<CFWL_NoteDriver*>(pThread->GetNoteDriver());
   if (!pDriver)
     return;
   pDriver->UnRegisterForm(this);
@@ -849,18 +854,22 @@ FX_BOOL CFWL_FormImp::IsDoModal() {
   return m_bDoModalFlag;
 }
 void CFWL_FormImp::SetThemeData() {
-  m_fSmallIconSz = *(FX_FLOAT*)GetThemeCapacity(FWL_WGTCAPACITY_FRM_SmallIcon);
-  m_fBigIconSz = *(FX_FLOAT*)GetThemeCapacity(FWL_WGTCAPACITY_FRM_BigIcon);
+  m_fSmallIconSz =
+      *static_cast<FX_FLOAT*>(GetThemeCapacity(FWL_WGTCAPACITY_FRM_SmallIcon));
+  m_fBigIconSz =
+      *static_cast<FX_FLOAT*>(GetThemeCapacity(FWL_WGTCAPACITY_FRM_BigIcon));
 }
 FX_BOOL CFWL_FormImp::HasIcon() {
-  IFWL_FormDP* pData = (IFWL_FormDP*)m_pProperties->m_pDataProvider;
+  IFWL_FormDP* pData =
+      static_cast<IFWL_FormDP*>(m_pProperties->m_pDataProvider);
   return !!pData->GetIcon(m_pInterface, FALSE);
 }
 void CFWL_FormImp::UpdateIcon() {
-  CFWL_WidgetMgr* pWidgetMgr = (CFWL_WidgetMgr*)FWL_GetWidgetMgr();
+  CFWL_WidgetMgr* pWidgetMgr = static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
   if (!pWidgetMgr)
     return;
-  IFWL_FormDP* pData = (IFWL_FormDP*)m_pProperties->m_pDataProvider;
+  IFWL_FormDP* pData =
+      static_cast<IFWL_FormDP*>(m_pProperties->m_pDataProvider);
   CFX_DIBitmap* pBigIcon = pData->GetIcon(m_pInterface, TRUE);
   CFX_DIBitmap* pSmallIcon = pData->GetIcon(m_pInterface, FALSE);
   if (pBigIcon && pBigIcon != m_pBigIcon) {
@@ -873,10 +882,11 @@ void CFWL_FormImp::UpdateIcon() {
   }
 }
 void CFWL_FormImp::UpdateCaption() {
-  CFWL_WidgetMgr* pWidgetMgr = (CFWL_WidgetMgr*)FWL_GetWidgetMgr();
+  CFWL_WidgetMgr* pWidgetMgr = static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
   if (!pWidgetMgr)
     return;
-  IFWL_FormDP* pData = (IFWL_FormDP*)m_pProperties->m_pDataProvider;
+  IFWL_FormDP* pData =
+      static_cast<IFWL_FormDP*>(m_pProperties->m_pDataProvider);
   if (!pData)
     return;
   CFX_WideString text;
@@ -963,7 +973,8 @@ int32_t CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     case FWL_MSGHASH_Activate: {
       m_pOwner->m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Deactivated;
       IFWL_NoteThread* pThread = m_pOwner->GetOwnerThread();
-      CFWL_NoteDriver* pDriver = (CFWL_NoteDriver*)pThread->GetNoteDriver();
+      CFWL_NoteDriver* pDriver =
+          static_cast<CFWL_NoteDriver*>(pThread->GetNoteDriver());
       CFWL_WidgetImp* pSubFocusImp = m_pOwner->GetSubFocus();
       IFWL_Widget* pSubFocus =
           pSubFocusImp ? pSubFocusImp->GetInterface() : NULL;
@@ -976,7 +987,8 @@ int32_t CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     case FWL_MSGHASH_Deactivate: {
       m_pOwner->m_pProperties->m_dwStates |= FWL_WGTSTATE_Deactivated;
       IFWL_NoteThread* pThread = m_pOwner->GetOwnerThread();
-      CFWL_NoteDriver* pDriver = (CFWL_NoteDriver*)pThread->GetNoteDriver();
+      CFWL_NoteDriver* pDriver =
+          static_cast<CFWL_NoteDriver*>(pThread->GetNoteDriver());
       CFWL_WidgetImp* pSubFocusImp = m_pOwner->GetSubFocus();
       IFWL_Widget* pSubFocus =
           pSubFocusImp ? pSubFocusImp->GetInterface() : NULL;
@@ -995,7 +1007,7 @@ int32_t CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       break;
     }
     case FWL_MSGHASH_Mouse: {
-      CFWL_MsgMouse* pMsg = (CFWL_MsgMouse*)pMessage;
+      CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
       switch (pMsg->m_dwCmd) {
         case FWL_MSGMOUSECMD_LButtonDown: {
           OnLButtonDown(pMsg);
@@ -1025,7 +1037,8 @@ int32_t CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       break;
     }
     case FWL_MSGHASH_Size: {
-      CFWL_WidgetMgr* pWidgetMgr = (CFWL_WidgetMgr*)FWL_GetWidgetMgr();
+      CFWL_WidgetMgr* pWidgetMgr =
+          static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
       if (!pWidgetMgr)
         return 0;
       pWidgetMgr->AddRedrawCounts(m_pOwner->m_pInterface);
@@ -1033,7 +1046,7 @@ int32_t CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
         break;
       }
       m_pOwner->m_bSetMaximize = FALSE;
-      CFWL_MsgSize* pMsg = (CFWL_MsgSize*)pMessage;
+      CFWL_MsgSize* pMsg = static_cast<CFWL_MsgSize*>(pMessage);
       CFX_RectF rt;
       pWidgetMgr->GetWidgetRect_Native(m_pOwner->m_pInterface, rt);
       m_pOwner->m_pProperties->m_rtWidget.left = rt.left;
@@ -1044,11 +1057,11 @@ int32_t CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
       break;
     }
     case FWL_MSGHASH_WindowMove: {
-      OnWindowMove((CFWL_MsgWindowMove*)pMessage);
+      OnWindowMove(static_cast<CFWL_MsgWindowMove*>(pMessage));
       break;
     }
     case FWL_MSGHASH_Close: {
-      OnClose((CFWL_MsgClose*)pMessage);
+      OnClose(static_cast<CFWL_MsgClose*>(pMessage));
       break;
     }
     default: { iRet = 0; }
@@ -1119,7 +1132,8 @@ void CFWL_FormImpDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
     }
     m_pOwner->m_bMaximized = !m_pOwner->m_bMaximized;
   } else if (pPressedBtn == m_pOwner->m_pMinBox) {
-    CFWL_WidgetMgr* pWidgetMgr = (CFWL_WidgetMgr*)FWL_GetWidgetMgr();
+    CFWL_WidgetMgr* pWidgetMgr =
+        static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
     if (!pWidgetMgr)
       return;
     pWidgetMgr->SetMinimize_Native(m_pOwner->m_pInterface);
@@ -1130,7 +1144,7 @@ void CFWL_FormImpDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
   }
 }
 void CFWL_FormImpDelegate::OnMouseMove(CFWL_MsgMouse* pMsg) {
-  CFWL_WidgetMgr* pWidgetMgr = (CFWL_WidgetMgr*)FWL_GetWidgetMgr();
+  CFWL_WidgetMgr* pWidgetMgr = static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
   if (m_pOwner->m_bLButtonDown) {
     IFWL_AdapterNative* pNative = FWL_GetAdapterNative();
     IFWL_AdapterCursorMgr* pCursorMgr = pNative->GetCursorMgr();

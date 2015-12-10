@@ -49,7 +49,7 @@ FWL_ERR CFWL_ContentImp::InsertWidget(IFWL_Widget* pChild, int32_t nIndex) {
   if (nIndex == -1) {
     return FWL_ERR_Succeeded;
   }
-  CFWL_WidgetMgr* pMgr = (CFWL_WidgetMgr*)FWL_GetWidgetMgr();
+  CFWL_WidgetMgr* pMgr = static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
   if (!pMgr)
     return FWL_ERR_Indefinite;
   pMgr->SetWidgetIndex(pChild, nIndex);
@@ -62,7 +62,7 @@ FWL_ERR CFWL_ContentImp::RemoveWidget(IFWL_Widget* pWidget) {
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_ContentImp::RemoveAllWidgets() {
-  CFWL_WidgetMgr* pMgr = (CFWL_WidgetMgr*)FWL_GetWidgetMgr();
+  CFWL_WidgetMgr* pMgr = static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
   if (!pMgr)
     return FWL_ERR_Indefinite;
   while (IFWL_Widget* widget =

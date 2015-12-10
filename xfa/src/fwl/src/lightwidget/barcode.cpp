@@ -29,12 +29,12 @@ CFWL_Barcode::~CFWL_Barcode() {}
 void CFWL_Barcode::SetType(BC_TYPE type) {
   if (!m_pIface)
     return;
-  ((IFWL_Barcode*)m_pIface)->SetType(type);
+  static_cast<IFWL_Barcode*>(m_pIface)->SetType(type);
 }
 FX_BOOL CFWL_Barcode::IsProtectedType() {
   if (!m_pIface)
     return 0;
-  return ((IFWL_Barcode*)m_pIface)->IsProtectedType();
+  return static_cast<IFWL_Barcode*>(m_pIface)->IsProtectedType();
 }
 FWL_ERR CFWL_Barcode::CFWL_BarcodeDP::GetCaption(IFWL_Widget* pWidget,
                                                  CFX_WideString& wsCaption) {

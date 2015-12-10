@@ -61,7 +61,6 @@ class CFWL_WidgetMgr : public IFWL_WidgetMgr {
                          FWL_WGTRELATION eRelation) override;
   int32_t GetWidgetIndex(IFWL_Widget* pWidget) override;
   FX_BOOL SetWidgetIndex(IFWL_Widget* pWidget, int32_t nIndex) override;
-  FX_BOOL IsWidget(void* pObj) override;
   FWL_ERR RepaintWidget(IFWL_Widget* pWidget,
                         const CFX_RectF* pRect = NULL) override;
   FX_DWORD GetCapability() override { return m_dwCapability; }

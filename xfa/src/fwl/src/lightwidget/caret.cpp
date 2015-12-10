@@ -25,16 +25,16 @@ FWL_ERR CFWL_Caret::Initialize(const CFWL_WidgetProperties* pProperties) {
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_Caret::ShowCaret(FX_BOOL bFlag) {
-  return ((IFWL_Caret*)m_pIface)->ShowCaret(bFlag);
+  return static_cast<IFWL_Caret*>(m_pIface)->ShowCaret(bFlag);
 }
 FWL_ERR CFWL_Caret::GetFrequency(FX_DWORD& elapse) {
-  return ((IFWL_Caret*)m_pIface)->GetFrequency(elapse);
+  return static_cast<IFWL_Caret*>(m_pIface)->GetFrequency(elapse);
 }
 FWL_ERR CFWL_Caret::SetFrequency(FX_DWORD elapse) {
-  return ((IFWL_Caret*)m_pIface)->SetFrequency(elapse);
+  return static_cast<IFWL_Caret*>(m_pIface)->SetFrequency(elapse);
 }
 FWL_ERR CFWL_Caret::SetColor(CFX_Color crFill) {
-  return ((IFWL_Caret*)m_pIface)->SetColor(crFill);
+  return static_cast<IFWL_Caret*>(m_pIface)->SetColor(crFill);
 }
 CFWL_Caret::CFWL_Caret() {}
 CFWL_Caret::~CFWL_Caret() {}

@@ -37,26 +37,29 @@ FWL_ERR CFWL_DateTimePicker::SetToday(int32_t iYear,
   return FWL_ERR_Succeeded;
 }
 int32_t CFWL_DateTimePicker::CountSelRanges() {
-  return ((IFWL_DateTimePicker*)m_pIface)->CountSelRanges();
+  return static_cast<IFWL_DateTimePicker*>(m_pIface)->CountSelRanges();
 }
 int32_t CFWL_DateTimePicker::GetSelRange(int32_t nIndex, int32_t& nStart) {
-  return ((IFWL_DateTimePicker*)m_pIface)->GetSelRange(nIndex, nStart);
+  return static_cast<IFWL_DateTimePicker*>(m_pIface)
+      ->GetSelRange(nIndex, nStart);
 }
 FWL_ERR CFWL_DateTimePicker::GetEditText(CFX_WideString& wsText) {
-  return ((IFWL_DateTimePicker*)m_pIface)->GetEditText(wsText);
+  return static_cast<IFWL_DateTimePicker*>(m_pIface)->GetEditText(wsText);
 }
 FWL_ERR CFWL_DateTimePicker::SetEditText(const CFX_WideStringC& wsText) {
-  return ((IFWL_DateTimePicker*)m_pIface)->SetEditText(wsText);
+  return static_cast<IFWL_DateTimePicker*>(m_pIface)->SetEditText(wsText);
 }
 FWL_ERR CFWL_DateTimePicker::GetCurSel(int32_t& iYear,
                                        int32_t& iMonth,
                                        int32_t& iDay) {
-  return ((IFWL_DateTimePicker*)m_pIface)->GetCurSel(iYear, iMonth, iDay);
+  return static_cast<IFWL_DateTimePicker*>(m_pIface)
+      ->GetCurSel(iYear, iMonth, iDay);
 }
 FWL_ERR CFWL_DateTimePicker::SetCurSel(int32_t iYear,
                                        int32_t iMonth,
                                        int32_t iDay) {
-  return ((IFWL_DateTimePicker*)m_pIface)->SetCurSel(iYear, iMonth, iDay);
+  return static_cast<IFWL_DateTimePicker*>(m_pIface)
+      ->SetCurSel(iYear, iMonth, iDay);
 }
 CFWL_DateTimePicker::CFWL_DateTimePicker() {}
 CFWL_DateTimePicker::~CFWL_DateTimePicker() {}
@@ -82,52 +85,52 @@ FWL_ERR CFWL_DateTimePicker::CFWL_DateTimePickerDP::GetToday(
   return FWL_ERR_Succeeded;
 }
 FX_BOOL CFWL_DateTimePicker::CanUndo() {
-  return ((IFWL_DateTimePicker*)m_pIface)->CanUndo();
+  return static_cast<IFWL_DateTimePicker*>(m_pIface)->CanUndo();
 }
 FX_BOOL CFWL_DateTimePicker::CanRedo() {
-  return ((IFWL_DateTimePicker*)m_pIface)->CanRedo();
+  return static_cast<IFWL_DateTimePicker*>(m_pIface)->CanRedo();
 }
 FX_BOOL CFWL_DateTimePicker::Undo() {
-  return ((IFWL_DateTimePicker*)m_pIface)->Undo();
+  return static_cast<IFWL_DateTimePicker*>(m_pIface)->Undo();
 }
 FX_BOOL CFWL_DateTimePicker::Redo() {
-  return ((IFWL_DateTimePicker*)m_pIface)->Redo();
+  return static_cast<IFWL_DateTimePicker*>(m_pIface)->Redo();
 }
 FX_BOOL CFWL_DateTimePicker::CanCopy() {
-  return ((IFWL_DateTimePicker*)m_pIface)->CanCopy();
+  return static_cast<IFWL_DateTimePicker*>(m_pIface)->CanCopy();
 }
 FX_BOOL CFWL_DateTimePicker::CanCut() {
-  return ((IFWL_DateTimePicker*)m_pIface)->CanCut();
+  return static_cast<IFWL_DateTimePicker*>(m_pIface)->CanCut();
 }
 FX_BOOL CFWL_DateTimePicker::CanSelectAll() {
-  return ((IFWL_DateTimePicker*)m_pIface)->CanSelectAll();
+  return static_cast<IFWL_DateTimePicker*>(m_pIface)->CanSelectAll();
 }
 FX_BOOL CFWL_DateTimePicker::Copy(CFX_WideString& wsCopy) {
-  return ((IFWL_DateTimePicker*)m_pIface)->Copy(wsCopy);
+  return static_cast<IFWL_DateTimePicker*>(m_pIface)->Copy(wsCopy);
 }
 FX_BOOL CFWL_DateTimePicker::Cut(CFX_WideString& wsCut) {
-  return ((IFWL_DateTimePicker*)m_pIface)->Copy(wsCut);
+  return static_cast<IFWL_DateTimePicker*>(m_pIface)->Copy(wsCut);
 }
 FX_BOOL CFWL_DateTimePicker::Paste(const CFX_WideString& wsPaste) {
-  return ((IFWL_DateTimePicker*)m_pIface)->Paste(wsPaste);
+  return static_cast<IFWL_DateTimePicker*>(m_pIface)->Paste(wsPaste);
 }
 FX_BOOL CFWL_DateTimePicker::SelectAll() {
-  return ((IFWL_DateTimePicker*)m_pIface)->SelectAll();
+  return static_cast<IFWL_DateTimePicker*>(m_pIface)->SelectAll();
 }
 FX_BOOL CFWL_DateTimePicker::Delete() {
-  return ((IFWL_DateTimePicker*)m_pIface)->Delete();
+  return static_cast<IFWL_DateTimePicker*>(m_pIface)->Delete();
 }
 FX_BOOL CFWL_DateTimePicker::DeSelect() {
-  return ((IFWL_DateTimePicker*)m_pIface)->DeSelect();
+  return static_cast<IFWL_DateTimePicker*>(m_pIface)->DeSelect();
 }
 FWL_ERR CFWL_DateTimePicker::GetBBox(CFX_RectF& rect) {
-  return ((IFWL_DateTimePicker*)m_pIface)->GetBBox(rect);
+  return static_cast<IFWL_DateTimePicker*>(m_pIface)->GetBBox(rect);
 }
 FWL_ERR CFWL_DateTimePicker::SetEditLimit(int32_t nLimit) {
-  return ((IFWL_DateTimePicker*)m_pIface)->SetEditLimit(nLimit);
+  return static_cast<IFWL_DateTimePicker*>(m_pIface)->SetEditLimit(nLimit);
 }
 FWL_ERR CFWL_DateTimePicker::ModifyEditStylesEx(FX_DWORD dwStylesExAdded,
                                                 FX_DWORD dwStylesExRemoved) {
-  return ((IFWL_DateTimePicker*)m_pIface)
+  return static_cast<IFWL_DateTimePicker*>(m_pIface)
       ->ModifyEditStylesEx(dwStylesExAdded, dwStylesExRemoved);
 }

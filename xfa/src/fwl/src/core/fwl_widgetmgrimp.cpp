@@ -208,11 +208,6 @@ FX_BOOL CFWL_WidgetMgr::SetWidgetIndex(IFWL_Widget* pWidget, int32_t nIndex) {
   }
   return TRUE;
 }
-FX_BOOL CFWL_WidgetMgr::IsWidget(void* pObj) {
-  if (!pObj)
-    return FALSE;
-  return GetWidgetMgrItem((IFWL_Widget*)pObj) != NULL;
-}
 FWL_ERR CFWL_WidgetMgr::RepaintWidget(IFWL_Widget* pWidget,
                                       const CFX_RectF* pRect) {
   if (!m_pAdapter)
@@ -632,7 +627,7 @@ void CFWL_WidgetMgr::ResetRedrawCounts(IFWL_Widget* pWidget) {
   pItem->iRedrawCounter = 0;
 }
 CFWL_WidgetMgrItem* CFWL_WidgetMgr::GetWidgetMgrItem(IFWL_Widget* pWidget) {
-  return (CFWL_WidgetMgrItem*)m_mapWidgetItem.GetValueAt(pWidget);
+  return static_cast<CFWL_WidgetMgrItem*>(m_mapWidgetItem.GetValueAt(pWidget));
 }
 int32_t CFWL_WidgetMgr::TravelWidgetMgr(CFWL_WidgetMgrItem* pParent,
                                         int32_t* pIndex,
@@ -701,15 +696,16 @@ int32_t CFWL_WidgetMgrDelegate::OnProcessMessageToForm(CFWL_Message* pMessage) {
     return 0;
   if (!pMessage->m_pDstTarget)
     return 0;
-  IFWL_Widget* pDstWidget = (IFWL_Widget*)pMessage->m_pDstTarget;
+  IFWL_Widget* pDstWidget = pMessage->m_pDstTarget;
   IFWL_NoteThread* pNoteThread = pDstWidget->GetOwnerThread();
   if (!pNoteThread)
     return 0;
-  CFWL_NoteDriver* pNoteDriver = (CFWL_NoteDriver*)pNoteThread->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver =
+      static_cast<CFWL_NoteDriver*>(pNoteThread->GetNoteDriver());
   if (!pNoteDriver)
     return 0;
   if (m_pWidgetMgr->IsThreadEnabled()) {
-    pMessage = (CFWL_Message*)pMessage->Clone();
+    pMessage = static_cast<CFWL_Message*>(pMessage->Clone());
   }
   if (m_pWidgetMgr->IsFormDisabled()) {
     pNoteDriver->ProcessMessage(pMessage);
@@ -757,7 +753,7 @@ FWL_ERR CFWL_WidgetMgrDelegate::OnDrawWidget(IFWL_Widget* pWidget,
     clipCopy = clipBounds;
   } else {
     clipBounds.Set(pMatrix->a, pMatrix->b, pMatrix->c, pMatrix->d);
-    ((CFX_Matrix*)pMatrix)->SetIdentity();  // FIXME: const cast.
+    const_cast<CFX_Matrix*>(pMatrix)->SetIdentity();  // FIXME: const cast.
 #ifdef FWL_UseMacSystemBorder
 #else
 #endif
@@ -859,7 +855,7 @@ void CFWL_WidgetMgrDelegate::DrawWidgetAfter(IFWL_Widget* pWidget,
   if (FWL_UseOffscreen(pWidget)) {
     CFWL_WidgetMgrItem* pItem = m_pWidgetMgr->GetWidgetMgrItem(pWidget);
     pGraphics->Transfer(pItem->pOffscreen, rtClip.left, rtClip.top, rtClip,
-                        (CFX_Matrix*)pMatrix);
+                        pMatrix);
 #ifdef _WIN32
     pItem->pOffscreen->ClearClip();
 #endif
@@ -1053,7 +1049,7 @@ FWL_ERR FWL_WidgetMgrSnapshot(IFWL_Widget* pWidget,
   pWidget->GetWidgetRect(r);
   CFX_Graphics gs;
   gs.Create((int32_t)r.width, (int32_t)r.height, FXDIB_Argb);
-  CFWL_WidgetMgr* widgetMgr = (CFWL_WidgetMgr*)FWL_GetWidgetMgr();
+  CFWL_WidgetMgr* widgetMgr = static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
   CFWL_WidgetMgrDelegate* delegate = widgetMgr->GetDelegate();
   delegate->OnDrawWidget(pWidget, &gs, pMatrix);
   CFX_DIBitmap* dib = gs.GetRenderDevice()->GetBitmap();

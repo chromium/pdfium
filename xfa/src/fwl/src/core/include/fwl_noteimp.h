@@ -6,23 +6,27 @@
 
 #ifndef _FWL_NOTE_IMP_H
 #define _FWL_NOTE_IMP_H
+
+#include "xfa/include/fwl/core/fwl_note.h"
+
 class CFWL_TargetImp;
 class CFWL_WidgetImp;
 class CFWL_NoteThreadImp;
 class CFWL_ToolTipImp;
-class IFWL_ToolTipTarget;
 class CFWL_CoreToopTipDP;
-class CFWL_NoteLoop;
 class CFWL_NoteDriver;
 class CFWL_EventTarget;
 class CFWL_ToolTipContainer;
 
-class CFWL_NoteLoop {
+class CFWL_NoteLoop : public IFWL_NoteLoop {
  public:
   CFWL_NoteLoop(CFWL_WidgetImp* pForm = NULL);
-  virtual ~CFWL_NoteLoop() {}
-  virtual FX_BOOL PreProcessMessage(CFWL_Message* pMessage);
-  virtual FWL_ERR Idle(int32_t count);
+
+  // IFWL_NoteLoop:
+  ~CFWL_NoteLoop() override {}
+  FX_BOOL PreProcessMessage(CFWL_Message* pMessage) override;
+  FWL_ERR Idle(int32_t count) override;
+
   CFWL_WidgetImp* GetForm();
   FX_BOOL ContinueModal();
   FWL_ERR EndModalLoop();

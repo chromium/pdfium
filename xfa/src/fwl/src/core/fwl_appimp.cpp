@@ -74,7 +74,8 @@ IFWL_AdapterNative* CFWL_AppImp::GetAdapterNative() {
   return m_pAdapterNative;
 }
 IFWL_AdapterWidgetMgr* FWL_GetAdapterWidgetMgr() {
-  return ((CFWL_WidgetMgr*)FWL_GetWidgetMgr())->GetAdapterWidgetMgr();
+  return static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr())
+      ->GetAdapterWidgetMgr();
 }
 IFWL_WidgetMgr* CFWL_AppImp::GetWidgetMgr() {
   return m_pWidgetMgr;
@@ -113,7 +114,8 @@ FWL_ERR FWL_SetFullScreen(IFWL_Widget* pWidget, FX_BOOL bFullScreen) {
   IFWL_NoteThread* pNoteTread = pWidget->GetOwnerThread();
   if (!pNoteTread)
     return FWL_ERR_Succeeded;
-  CFWL_NoteDriver* pNoteDriver = (CFWL_NoteDriver*)pNoteTread->GetNoteDriver();
+  CFWL_NoteDriver* pNoteDriver =
+      static_cast<CFWL_NoteDriver*>(pNoteTread->GetNoteDriver());
   if (!pNoteTread)
     return FWL_ERR_Succeeded;
   pNoteDriver->NotifyFullScreenMode(pWidget, bFullScreen);

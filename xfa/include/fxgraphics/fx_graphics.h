@@ -212,7 +212,7 @@ class CFX_Graphics {
                       const CFX_RectF& rect,
                       CFX_Matrix* matrix = NULL);
 
-  FX_ERR ConcatMatrix(CFX_Matrix* matrix);
+  FX_ERR ConcatMatrix(const CFX_Matrix* matrix);
 
   CFX_Matrix* GetMatrix();
 
@@ -241,13 +241,12 @@ class CFX_Graphics {
                       FX_BOOL isMultiline = FALSE,
                       CFX_Matrix* matrix = NULL);
 
-  FX_ERR Transfer(CFX_Graphics* graphics, CFX_Matrix* matrix = NULL);
-
+  FX_ERR Transfer(CFX_Graphics* graphics, const CFX_Matrix* matrix);
   FX_ERR Transfer(CFX_Graphics* graphics,
                   FX_FLOAT srcLeft,
                   FX_FLOAT srcTop,
                   const CFX_RectF& dstRect,
-                  CFX_Matrix* matrix = NULL);
+                  const CFX_Matrix* matrix);
 
   CFX_RenderDevice* GetRenderDevice();
 

@@ -37,10 +37,10 @@ FWL_ERR CFWL_CheckBox::SetBoxSize(FX_FLOAT fHeight) {
   return FWL_ERR_Succeeded;
 }
 int32_t CFWL_CheckBox::GetCheckState() {
-  return ((IFWL_CheckBox*)m_pIface)->GetCheckState();
+  return static_cast<IFWL_CheckBox*>(m_pIface)->GetCheckState();
 }
 FWL_ERR CFWL_CheckBox::SetCheckState(int32_t iCheck) {
-  return ((IFWL_CheckBox*)m_pIface)->SetCheckState(iCheck);
+  return static_cast<IFWL_CheckBox*>(m_pIface)->SetCheckState(iCheck);
 }
 CFWL_CheckBox::CFWL_CheckBox() {}
 CFWL_CheckBox::~CFWL_CheckBox() {}

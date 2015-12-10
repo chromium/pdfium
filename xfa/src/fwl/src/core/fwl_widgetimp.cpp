@@ -148,8 +148,8 @@ FWL_ERR CFWL_WidgetImp::Initialize() {
 }
 FWL_ERR CFWL_WidgetImp::Finalize() {
   NotifyDriver();
-  IFWL_Form* pForm = (IFWL_Form*)FWL_GetWidgetMgr()->GetWidget(
-      m_pInterface, FWL_WGTRELATION_SystemForm);
+  IFWL_Form* pForm = static_cast<IFWL_Form*>(
+      FWL_GetWidgetMgr()->GetWidget(m_pInterface, FWL_WGTRELATION_SystemForm));
   if (pForm && pForm != m_pInterface) {
     IFWL_Content* pContent = pForm->GetContent();
     if (pContent) {
@@ -275,7 +275,7 @@ FWL_ERR CFWL_WidgetImp::SetStates(FX_DWORD dwStates, FX_BOOL bSet) {
     if (bSet) {
       ret = m_pWidgetMgr->HideWidget_Native(m_pInterface);
       CFWL_NoteDriver* noteDriver =
-          (CFWL_NoteDriver*)GetOwnerThread()->GetNoteDriver();
+          static_cast<CFWL_NoteDriver*>(GetOwnerThread()->GetNoteDriver());
       IFWL_WidgetMgr* widgetMgr = FWL_GetWidgetMgr();
       noteDriver->NotifyTargetHide(m_pInterface);
       IFWL_Widget* child =
@@ -348,7 +348,7 @@ FWL_ERR CFWL_WidgetImp::TransformTo(IFWL_Widget* pWidget,
     if (IsParent(pWidget)) {
       szOffset = GetOffsetFromParent(pWidget);
     } else {
-      szOffset = ((IFWL_Widget*)pWidget)->GetOffsetFromParent(m_pInterface);
+      szOffset = pWidget->GetOffsetFromParent(m_pInterface);
       szOffset.x = -szOffset.x;
       szOffset.y = -szOffset.y;
     }
@@ -436,7 +436,7 @@ FWL_ERR CFWL_WidgetImp::GetMatrix(CFX_Matrix& matrix, FX_BOOL bGlobal) {
     CFX_RectF rect;
     int32_t count = parents.GetSize();
     for (int32_t i = count - 2; i >= 0; i--) {
-      parent = (IFWL_Widget*)parents.GetAt(i);
+      parent = static_cast<IFWL_Widget*>(parents.GetAt(i));
       parent->GetMatrix(ctmOnParent, FALSE);
       parent->GetWidgetRect(rect);
       matrix.Concat(ctmOnParent, TRUE);
@@ -509,7 +509,7 @@ CFWL_WidgetImp::CFWL_WidgetImp(const CFWL_WidgetImpProperties& properties,
       m_pInterface(NULL),
       m_iLock(0) {
   *m_pProperties = properties;
-  m_pWidgetMgr = (CFWL_WidgetMgr*)FWL_GetWidgetMgr();
+  m_pWidgetMgr = static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
   FXSYS_assert(m_pWidgetMgr != NULL);
 }
 CFWL_WidgetImp::~CFWL_WidgetImp() {
@@ -563,8 +563,8 @@ void CFWL_WidgetImp::GetEdgeRect(CFX_RectF& rtEdge) {
   }
 }
 FX_FLOAT CFWL_WidgetImp::GetBorderSize(FX_BOOL bCX) {
-  FX_FLOAT* pfBorder = (FX_FLOAT*)GetThemeCapacity(
-      bCX ? FWL_WGTCAPACITY_CXBorder : FWL_WGTCAPACITY_CYBorder);
+  FX_FLOAT* pfBorder = static_cast<FX_FLOAT*>(GetThemeCapacity(
+      bCX ? FWL_WGTCAPACITY_CXBorder : FWL_WGTCAPACITY_CYBorder));
   if (!pfBorder)
     return 0;
   return *pfBorder;
@@ -586,10 +586,8 @@ FX_FLOAT CFWL_WidgetImp::GetEdgeWidth() {
     }
   }
   if (dwCapacity > 0) {
-    FX_FLOAT* fRet = (FX_FLOAT*)GetThemeCapacity(dwCapacity);
-    if (!fRet)
-      return 0;
-    return *fRet;
+    FX_FLOAT* fRet = static_cast<FX_FLOAT*>(GetThemeCapacity(dwCapacity));
+    return fRet ? *fRet : 0;
   }
   return 0;
 }
@@ -674,16 +672,16 @@ void CFWL_WidgetImp::CalcTextRect(const CFX_WideString& wsText,
   pTheme->CalcTextRect(&calPart, rect);
 }
 void CFWL_WidgetImp::SetFocus(FX_BOOL bFocus) {
-  if (m_pWidgetMgr->IsFormDisabled()) {
+  if (m_pWidgetMgr->IsFormDisabled())
     return;
-  }
   IFWL_NoteThread* pThread = GetOwnerThread();
   if (!pThread)
     return;
-  IFWL_NoteDriver* pDriver = pThread->GetNoteDriver();
+  CFWL_NoteDriver* pDriver =
+      static_cast<CFWL_NoteDriver*>(pThread->GetNoteDriver());
   if (!pDriver)
     return;
-  IFWL_Widget* curFocus = ((CFWL_NoteDriver*)pDriver)->GetFocus();
+  IFWL_Widget* curFocus = pDriver->GetFocus();
   if (bFocus && curFocus != m_pInterface) {
     pDriver->SetFocus(m_pInterface);
   } else if (!bFocus && curFocus == m_pInterface) {
@@ -694,7 +692,8 @@ void CFWL_WidgetImp::SetGrab(FX_BOOL bSet) {
   IFWL_NoteThread* pThread = GetOwnerThread();
   if (!pThread)
     return;
-  CFWL_NoteDriver* pDriver = (CFWL_NoteDriver*)pThread->GetNoteDriver();
+  CFWL_NoteDriver* pDriver =
+      static_cast<CFWL_NoteDriver*>(pThread->GetNoteDriver());
   pDriver->SetGrab(m_pInterface, bSet);
 }
 FX_BOOL CFWL_WidgetImp::GetPopupPos(FX_FLOAT fMinHeight,
@@ -916,7 +915,8 @@ void CFWL_WidgetImp::NotifyDriver() {
   IFWL_NoteThread* pThread = GetOwnerThread();
   if (!pThread)
     return;
-  CFWL_NoteDriver* pDriver = (CFWL_NoteDriver*)pThread->GetNoteDriver();
+  CFWL_NoteDriver* pDriver =
+      static_cast<CFWL_NoteDriver*>(pThread->GetNoteDriver());
   if (!pDriver)
     return;
   pDriver->NotifyTargetDestroy(m_pInterface);
@@ -924,7 +924,7 @@ void CFWL_WidgetImp::NotifyDriver() {
 CFX_SizeF CFWL_WidgetImp::GetOffsetFromParent(IFWL_Widget* pParent) {
   CFX_SizeF szRet;
   szRet.Set(0, 0);
-  if (pParent == (IFWL_Widget*)this) {
+  if (pParent == GetInterface()) {
     return szRet;
   }
   IFWL_WidgetMgr* pWidgetMgr = FWL_GetWidgetMgr();
@@ -960,52 +960,57 @@ int32_t CFWL_WidgetImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   FX_DWORD dwMsgCode = pMessage->GetClassID();
   switch (dwMsgCode) {
     case FWL_MSGHASH_Mouse: {
+      CFWL_MsgMouse* pMsgMouse = static_cast<CFWL_MsgMouse*>(pMessage);
       CFWL_EvtMouse evt;
       evt.m_pSrcTarget = pWidget->m_pInterface;
       evt.m_pDstTarget = pWidget->m_pInterface;
-      evt.m_dwCmd = ((CFWL_MsgMouse*)pMessage)->m_dwCmd;
-      evt.m_dwFlags = ((CFWL_MsgMouse*)pMessage)->m_dwFlags;
-      evt.m_fx = ((CFWL_MsgMouse*)pMessage)->m_fx;
-      evt.m_fy = ((CFWL_MsgMouse*)pMessage)->m_fy;
+      evt.m_dwCmd = pMsgMouse->m_dwCmd;
+      evt.m_dwFlags = pMsgMouse->m_dwFlags;
+      evt.m_fx = pMsgMouse->m_fx;
+      evt.m_fy = pMsgMouse->m_fy;
       pWidget->DispatchEvent(&evt);
       break;
     }
     case FWL_MSGHASH_MouseWheel: {
+      CFWL_MsgMouseWheel* pMsgMouseWheel =
+          static_cast<CFWL_MsgMouseWheel*>(pMessage);
       CFWL_EvtMouseWheel evt;
       evt.m_pSrcTarget = pWidget->m_pInterface;
       evt.m_pDstTarget = pWidget->m_pInterface;
-      evt.m_dwFlags = ((CFWL_MsgMouseWheel*)pMessage)->m_dwFlags;
-      evt.m_fDeltaX = ((CFWL_MsgMouseWheel*)pMessage)->m_fDeltaX;
-      evt.m_fDeltaY = ((CFWL_MsgMouseWheel*)pMessage)->m_fDeltaY;
-      evt.m_fx = ((CFWL_MsgMouseWheel*)pMessage)->m_fx;
-      evt.m_fy = ((CFWL_MsgMouseWheel*)pMessage)->m_fy;
+      evt.m_dwFlags = pMsgMouseWheel->m_dwFlags;
+      evt.m_fDeltaX = pMsgMouseWheel->m_fDeltaX;
+      evt.m_fDeltaY = pMsgMouseWheel->m_fDeltaY;
+      evt.m_fx = pMsgMouseWheel->m_fx;
+      evt.m_fy = pMsgMouseWheel->m_fy;
       pWidget->DispatchEvent(&evt);
       break;
     }
     case FWL_MSGHASH_Key: {
+      CFWL_MsgKey* pMsgKey = static_cast<CFWL_MsgKey*>(pMessage);
       CFWL_EvtKey evt;
       evt.m_pSrcTarget = pWidget->m_pInterface;
-      ;
       evt.m_pDstTarget = pWidget->m_pInterface;
-      ;
-      evt.m_dwKeyCode = ((CFWL_MsgKey*)pMessage)->m_dwKeyCode;
-      evt.m_dwFlags = ((CFWL_MsgKey*)pMessage)->m_dwFlags;
-      evt.m_dwCmd = ((CFWL_MsgKey*)pMessage)->m_dwCmd;
+      evt.m_dwKeyCode = pMsgKey->m_dwKeyCode;
+      evt.m_dwFlags = pMsgKey->m_dwFlags;
+      evt.m_dwCmd = pMsgKey->m_dwCmd;
       pWidget->DispatchEvent(&evt);
       break;
     }
     case FWL_MSGHASH_SetFocus: {
+      CFWL_MsgSetFocus* pMsgSetFocus = static_cast<CFWL_MsgSetFocus*>(pMessage);
       CFWL_EvtSetFocus evt;
-      evt.m_pSrcTarget = ((CFWL_MsgSetFocus*)pMessage)->m_pDstTarget;
-      evt.m_pDstTarget = ((CFWL_MsgSetFocus*)pMessage)->m_pDstTarget;
+      evt.m_pSrcTarget = pMsgSetFocus->m_pDstTarget;
+      evt.m_pDstTarget = pMsgSetFocus->m_pDstTarget;
       evt.m_pSetFocus = pWidget->m_pInterface;
       pWidget->DispatchEvent(&evt);
       break;
     }
     case FWL_MSGHASH_KillFocus: {
+      CFWL_MsgKillFocus* pMsgKillFocus =
+          static_cast<CFWL_MsgKillFocus*>(pMessage);
       CFWL_EvtKillFocus evt;
-      evt.m_pSrcTarget = ((CFWL_MsgKillFocus*)pMessage)->m_pDstTarget;
-      evt.m_pDstTarget = ((CFWL_MsgKillFocus*)pMessage)->m_pDstTarget;
+      evt.m_pSrcTarget = pMsgKillFocus->m_pDstTarget;
+      evt.m_pDstTarget = pMsgKillFocus->m_pDstTarget;
       evt.m_pKillFocus = pWidget->m_pInterface;
       pWidget->DispatchEvent(&evt);
       break;

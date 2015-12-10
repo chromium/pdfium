@@ -57,13 +57,11 @@ FWL_ERR CFWL_PanelImp::Update() {
     if (!pWidgetMgr)
       return FWL_ERR_Indefinite;
     IFWL_Widget* pParent =
-        pWidgetMgr->GetWidget((IFWL_Widget*)this, FWL_WGTRELATION_Parent);
+        pWidgetMgr->GetWidget(GetInterface(), FWL_WGTRELATION_Parent);
     if (pParent && pParent->GetClassID() == FWL_CLASSHASH_Grid) {
-      IFWL_Grid* pGrid = (IFWL_Grid*)pParent;
-      pGrid->GetWidgetSize((IFWL_Widget*)this, FWL_GRIDSIZE_Width, eWidth);
-      pGrid->GetWidgetSize((IFWL_Widget*)this, FWL_GRIDSIZE_Height, eHeight);
-    }
-    if (eWidth != FWL_GRIDUNIT_Auto || eHeight != FWL_GRIDUNIT_Auto) {
+      IFWL_Grid* pGrid = static_cast<IFWL_Grid*>(pParent);
+      pGrid->GetWidgetSize(GetInterface(), FWL_GRIDSIZE_Width, eWidth);
+      pGrid->GetWidgetSize(GetInterface(), FWL_GRIDSIZE_Height, eHeight);
     }
     m_pContent->SetWidgetRect(rtClient);
     m_pContent->Update();

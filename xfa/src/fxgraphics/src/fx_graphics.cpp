@@ -403,7 +403,7 @@ FX_ERR CFX_Graphics::StretchImage(CFX_DIBSource* source,
     default: { return FX_ERR_Property_Invalid; }
   }
 }
-FX_ERR CFX_Graphics::ConcatMatrix(CFX_Matrix* matrix) {
+FX_ERR CFX_Graphics::ConcatMatrix(const CFX_Matrix* matrix) {
   _FX_RETURN_VALUE_IF_FAIL(matrix, FX_ERR_Parameter_Invalid);
   switch (_type) {
     case FX_CONTEXT_Device: {
@@ -544,7 +544,8 @@ FX_ERR CFX_Graphics::CalcTextRect(CFX_RectF& rect,
     default: { return FX_ERR_Property_Invalid; }
   }
 }
-FX_ERR CFX_Graphics::Transfer(CFX_Graphics* graphics, CFX_Matrix* matrix) {
+FX_ERR CFX_Graphics::Transfer(CFX_Graphics* graphics,
+                              const CFX_Matrix* matrix) {
   _FX_RETURN_VALUE_IF_FAIL(graphics, FX_ERR_Parameter_Invalid);
   CFX_Matrix m;
   m.Set(_info._CTM.a, _info._CTM.b, _info._CTM.c, _info._CTM.d, _info._CTM.e,
@@ -570,7 +571,7 @@ FX_ERR CFX_Graphics::Transfer(CFX_Graphics* graphics,
                               FX_FLOAT srcLeft,
                               FX_FLOAT srcTop,
                               const CFX_RectF& dstRect,
-                              CFX_Matrix* matrix) {
+                              const CFX_Matrix* matrix) {
   _FX_RETURN_VALUE_IF_FAIL(graphics, FX_ERR_Parameter_Invalid);
   CFX_Matrix m;
   m.Set(_info._CTM.a, _info._CTM.b, _info._CTM.c, _info._CTM.d, _info._CTM.e,
