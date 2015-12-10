@@ -165,22 +165,26 @@ static void sycc_to_rgb(int offset,
   *out_b = b;
 }
 static void sycc444_to_rgb(opj_image_t* img) {
+  int prec = img->comps[0].prec;
+  int offset = 1 << (prec - 1);
+  int upb = (1 << prec) - 1;
+  OPJ_UINT32 maxw =
+      std::min(std::min(img->comps[0].w, img->comps[1].w), img->comps[2].w);
+  OPJ_UINT32 maxh =
+      std::min(std::min(img->comps[0].h, img->comps[1].h), img->comps[2].h);
+  FX_SAFE_SIZE_T max_size = maxw;
+  max_size *= maxh;
+  if (!max_size.IsValid())
+    return;
+
+  const int* y = img->comps[0].data;
+  const int* cb = img->comps[1].data;
+  const int* cr = img->comps[2].data;
   int *d0, *d1, *d2, *r, *g, *b;
-  const int *y, *cb, *cr;
-  int maxw, maxh, max, i, offset, upb;
-  i = (int)img->comps[0].prec;
-  offset = 1 << (i - 1);
-  upb = (1 << i) - 1;
-  maxw = (int)img->comps[0].w;
-  maxh = (int)img->comps[0].h;
-  max = maxw * maxh;
-  y = img->comps[0].data;
-  cb = img->comps[1].data;
-  cr = img->comps[2].data;
-  d0 = r = FX_Alloc(int, (size_t)max);
-  d1 = g = FX_Alloc(int, (size_t)max);
-  d2 = b = FX_Alloc(int, (size_t)max);
-  for (i = 0; i < max; ++i) {
+  d0 = r = FX_Alloc(int, max_size.ValueOrDie());
+  d1 = g = FX_Alloc(int, max_size.ValueOrDie());
+  d2 = b = FX_Alloc(int, max_size.ValueOrDie());
+  for (size_t i = 0; i < max_size.ValueOrDie(); ++i) {
     sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
     ++y;
     ++cb;
@@ -197,24 +201,28 @@ static void sycc444_to_rgb(opj_image_t* img) {
   img->comps[2].data = d2;
 }
 static void sycc422_to_rgb(opj_image_t* img) {
+  int prec = img->comps[0].prec;
+  int offset = 1 << (prec - 1);
+  int upb = (1 << prec) - 1;
+  OPJ_UINT32 maxw =
+      std::min(std::min(img->comps[0].w, img->comps[1].w), img->comps[2].w);
+  OPJ_UINT32 maxh =
+      std::min(std::min(img->comps[0].h, img->comps[1].h), img->comps[2].h);
+  FX_SAFE_SIZE_T max_size = maxw;
+  max_size *= maxh;
+  if (!max_size.IsValid())
+    return;
+
+  const int* y = img->comps[0].data;
+  const int* cb = img->comps[1].data;
+  const int* cr = img->comps[2].data;
   int *d0, *d1, *d2, *r, *g, *b;
-  const int *y, *cb, *cr;
-  int maxw, maxh, max, offset, upb;
-  int i, j;
-  i = (int)img->comps[0].prec;
-  offset = 1 << (i - 1);
-  upb = (1 << i) - 1;
-  maxw = (int)img->comps[0].w;
-  maxh = (int)img->comps[0].h;
-  max = maxw * maxh;
-  y = img->comps[0].data;
-  cb = img->comps[1].data;
-  cr = img->comps[2].data;
-  d0 = r = FX_Alloc(int, (size_t)max);
-  d1 = g = FX_Alloc(int, (size_t)max);
-  d2 = b = FX_Alloc(int, (size_t)max);
-  for (i = 0; i < maxh; ++i) {
-    for (j = 0; (OPJ_UINT32)j < (maxw & ~(OPJ_UINT32)1); j += 2) {
+  d0 = r = FX_Alloc(int, max_size.ValueOrDie());
+  d1 = g = FX_Alloc(int, max_size.ValueOrDie());
+  d2 = b = FX_Alloc(int, max_size.ValueOrDie());
+  for (uint32_t i = 0; i < maxh; ++i) {
+    OPJ_UINT32 j;
+    for (j = 0; j < (maxw & ~static_cast<OPJ_UINT32>(1)); j += 2) {
       sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
       ++y;
       ++r;
@@ -248,10 +256,6 @@ static void sycc422_to_rgb(opj_image_t* img) {
   img->comps[1].h = maxh;
   img->comps[2].w = maxw;
   img->comps[2].h = maxh;
-  img->comps[1].w = (OPJ_UINT32)maxw;
-  img->comps[1].h = (OPJ_UINT32)maxh;
-  img->comps[2].w = (OPJ_UINT32)maxw;
-  img->comps[2].h = (OPJ_UINT32)maxh;
   img->comps[1].dx = img->comps[0].dx;
   img->comps[2].dx = img->comps[0].dx;
   img->comps[1].dy = img->comps[0].dy;
