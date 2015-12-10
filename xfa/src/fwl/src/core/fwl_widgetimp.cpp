@@ -832,12 +832,12 @@ void CFWL_WidgetImp::UnregisterEventTarget() {
 void CFWL_WidgetImp::DispatchKeyEvent(CFWL_MsgKey* pNote) {
   if (!pNote)
     return;
-  CFWL_MsgKey* pEvent = (CFWL_MsgKey*)pNote->CloneToEvent();
+  CFWL_EvtKey* pEvent = new CFWL_EvtKey;
   pEvent->m_pSrcTarget = m_pInterface;
   pEvent->m_dwCmd = pNote->m_dwCmd;
   pEvent->m_dwKeyCode = pNote->m_dwKeyCode;
   pEvent->m_dwFlags = pNote->m_dwFlags;
-  DispatchEvent((CFWL_Event*)pEvent);
+  DispatchEvent(pEvent);
   pEvent->Release();
 }
 void CFWL_WidgetImp::DispatchEvent(CFWL_Event* pEvent) {
