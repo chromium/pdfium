@@ -567,12 +567,12 @@ class CPDFSDK_PageView final {
 
 #ifdef PDF_ENABLE_XFA
   void PageView_OnDraw(CFX_RenderDevice* pDevice,
-                       CPDF_Matrix* pUser2Device,
+                       CFX_Matrix* pUser2Device,
                        CPDF_RenderOptions* pOptions,
                        const FX_RECT& pClip);
 #else   // PDF_ENABLE_XFA
   void PageView_OnDraw(CFX_RenderDevice* pDevice,
-                       CPDF_Matrix* pUser2Device,
+                       CFX_Matrix* pUser2Device,
                        CPDF_RenderOptions* pOptions);
 #endif  // PDF_ENABLE_XFA
 
@@ -626,7 +626,7 @@ class CPDFSDK_PageView final {
                        const CPDF_Point& point,
                        int nFlag);
   bool IsValidAnnot(const CPDF_Annot* p) const;
-  void GetCurrentMatrix(CPDF_Matrix& matrix) { matrix = m_curMatrix; }
+  void GetCurrentMatrix(CFX_Matrix& matrix) { matrix = m_curMatrix; }
   void UpdateRects(CFX_RectArray& rects);
   void UpdateView(CPDFSDK_Annot* pAnnot);
   const std::vector<CPDFSDK_Annot*>& GetAnnotList() const {
@@ -647,7 +647,7 @@ class CPDFSDK_PageView final {
   void PageView_OnHighlightFormFields(CFX_RenderDevice* pDevice,
                                       CPDFSDK_Widget* pWidget);
 
-  CPDF_Matrix m_curMatrix;
+  CFX_Matrix m_curMatrix;
   UnderlyingPageType* m_page;
   nonstd::unique_ptr<CPDF_AnnotList> m_pAnnotList;
   std::vector<CPDFSDK_Annot*> m_fxAnnotArray;

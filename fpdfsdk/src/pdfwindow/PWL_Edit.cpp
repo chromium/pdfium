@@ -370,7 +370,7 @@ void CPWL_Edit::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
 }
 
 void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                   CPDF_Matrix* pUser2Device) {
+                                   CFX_Matrix* pUser2Device) {
   CPWL_Wnd::DrawThisAppearance(pDevice, pUser2Device);
 
   CPDF_Rect rcClient = GetClientRect();

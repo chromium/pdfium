@@ -1343,12 +1343,12 @@ void CPDF_CIDFont::GetCharBBox(FX_DWORD charcode, FX_RECT& rect, int level) {
     FX_WORD CID = CIDFromCharCode(charcode);
     const uint8_t* pTransform = GetCIDTransform(CID);
     if (pTransform && !bVert) {
-      CFX_AffineMatrix matrix(CIDTransformToFloat(pTransform[0]),
-                              CIDTransformToFloat(pTransform[1]),
-                              CIDTransformToFloat(pTransform[2]),
-                              CIDTransformToFloat(pTransform[3]),
-                              CIDTransformToFloat(pTransform[4]) * 1000,
-                              CIDTransformToFloat(pTransform[5]) * 1000);
+      CFX_Matrix matrix(CIDTransformToFloat(pTransform[0]),
+                        CIDTransformToFloat(pTransform[1]),
+                        CIDTransformToFloat(pTransform[2]),
+                        CIDTransformToFloat(pTransform[3]),
+                        CIDTransformToFloat(pTransform[4]) * 1000,
+                        CIDTransformToFloat(pTransform[5]) * 1000);
       CFX_FloatRect rect_f(rect);
       rect_f.Transform(&matrix);
       rect = rect_f.GetOutterRect();

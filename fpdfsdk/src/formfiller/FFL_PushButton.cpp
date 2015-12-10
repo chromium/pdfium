@@ -34,7 +34,7 @@ FX_BOOL CFFL_PushButton::OnChar(CPDFSDK_Annot* pAnnot,
 void CFFL_PushButton::OnDraw(CPDFSDK_PageView* pPageView,
                              CPDFSDK_Annot* pAnnot,
                              CFX_RenderDevice* pDevice,
-                             CPDF_Matrix* pUser2Device,
+                             CFX_Matrix* pUser2Device,
                              FX_DWORD dwFlags) {
   CFFL_Button::OnDraw(pPageView, pAnnot, pDevice, pUser2Device, dwFlags);
 }

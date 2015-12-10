@@ -372,7 +372,7 @@ FX_ERR CFX_Graphics::ClipPath(CFX_Path* path,
     case FX_CONTEXT_Device: {
       _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
       FX_BOOL result = _renderDevice->SetClip_PathFill(
-          path->GetPathData(), (CFX_AffineMatrix*)matrix, fillMode);
+          path->GetPathData(), (CFX_Matrix*)matrix, fillMode);
       _FX_RETURN_VALUE_IF_FAIL(result, FX_ERR_Indefinite);
       return FX_ERR_Succeeded;
     }
@@ -739,7 +739,7 @@ FX_ERR CFX_Graphics::RenderDeviceStrokePath(CFX_Path* path,
   switch (_info._strokeColor->_type) {
     case FX_COLOR_Solid: {
       FX_BOOL result = _renderDevice->DrawPath(
-          path->GetPathData(), (CFX_AffineMatrix*)&m, &_info._graphState, 0x0,
+          path->GetPathData(), (CFX_Matrix*)&m, &_info._graphState, 0x0,
           _info._strokeColor->_argb, 0);
       _FX_RETURN_VALUE_IF_FAIL(result, FX_ERR_Indefinite);
       return FX_ERR_Succeeded;
@@ -766,7 +766,7 @@ FX_ERR CFX_Graphics::RenderDeviceFillPath(CFX_Path* path,
   switch (_info._fillColor->_type) {
     case FX_COLOR_Solid: {
       FX_BOOL result = _renderDevice->DrawPath(
-          path->GetPathData(), (CFX_AffineMatrix*)&m, &_info._graphState,
+          path->GetPathData(), (CFX_Matrix*)&m, &_info._graphState,
           _info._fillColor->_argb, 0x0, fillMode);
       _FX_RETURN_VALUE_IF_FAIL(result, FX_ERR_Indefinite);
       return FX_ERR_Succeeded;
@@ -795,7 +795,7 @@ FX_ERR CFX_Graphics::RenderDeviceDrawImage(CFX_DIBSource* source,
   m2.Concat(m1);
   int32_t left, top;
   CFX_DIBitmap* bmp1 = source->FlipImage(FALSE, TRUE);
-  CFX_DIBitmap* bmp2 = bmp1->TransformTo((CFX_AffineMatrix*)&m2, left, top);
+  CFX_DIBitmap* bmp2 = bmp1->TransformTo((CFX_Matrix*)&m2, left, top);
   CFX_RectF r;
   GetClipRect(r);
   FX_ERR result = FX_ERR_Indefinite;
@@ -836,7 +836,7 @@ FX_ERR CFX_Graphics::RenderDeviceStretchImage(CFX_DIBSource* source,
   m2.Concat(m1);
   int32_t left, top;
   CFX_DIBitmap* bmp2 = bmp1->FlipImage(FALSE, TRUE);
-  CFX_DIBitmap* bmp3 = bmp2->TransformTo((CFX_AffineMatrix*)&m2, left, top);
+  CFX_DIBitmap* bmp3 = bmp2->TransformTo((CFX_Matrix*)&m2, left, top);
   CFX_RectF r;
   GetClipRect(r);
   FX_ERR result = FX_ERR_Indefinite;
@@ -881,7 +881,7 @@ FX_ERR CFX_Graphics::RenderDeviceShowText(const CFX_PointF& point,
   }
   FX_BOOL result = _renderDevice->DrawNormalText(
       length, charPos, _info._font, CFX_GEModule::Get()->GetFontCache(),
-      -_info._fontSize * _info._fontHScale, (CFX_AffineMatrix*)&m,
+      -_info._fontSize * _info._fontHScale, (CFX_Matrix*)&m,
       _info._fillColor->_argb, FXTEXT_CLEARTYPE);
   _FX_RETURN_VALUE_IF_FAIL(result, FX_ERR_Indefinite);
   FX_Free(charPos);
@@ -931,7 +931,7 @@ FX_ERR CFX_Graphics::FillPathWithPattern(CFX_Path* path,
                    mask.GetPitch() * data.height);
       CFX_FloatRect rectf = path->GetPathData()->GetBoundingBox();
       if (matrix) {
-        rectf.Transform((const CFX_AffineMatrix*)matrix);
+        rectf.Transform((const CFX_Matrix*)matrix);
       }
       FX_RECT rect(FXSYS_round(rectf.left), FXSYS_round(rectf.top),
                    FXSYS_round(rectf.right), FXSYS_round(rectf.bottom));
@@ -947,8 +947,8 @@ FX_ERR CFX_Graphics::FillPathWithPattern(CFX_Path* path,
     }
   }
   _renderDevice->SaveState();
-  _renderDevice->SetClip_PathFill(path->GetPathData(),
-                                  (CFX_AffineMatrix*)matrix, fillMode);
+  _renderDevice->SetClip_PathFill(path->GetPathData(), (CFX_Matrix*)matrix,
+                                  fillMode);
   SetDIBitsWithMatrix(&bmp, &pattern->_matrix);
   _renderDevice->RestoreState();
   return FX_ERR_Succeeded;
@@ -1066,8 +1066,8 @@ FX_ERR CFX_Graphics::FillPathWithShading(CFX_Path* path,
   }
   if (result) {
     _renderDevice->SaveState();
-    _renderDevice->SetClip_PathFill(path->GetPathData(),
-                                    (CFX_AffineMatrix*)matrix, fillMode);
+    _renderDevice->SetClip_PathFill(path->GetPathData(), (CFX_Matrix*)matrix,
+                                    fillMode);
     SetDIBitsWithMatrix(&bmp, matrix);
     _renderDevice->RestoreState();
   }
@@ -1084,7 +1084,7 @@ FX_ERR CFX_Graphics::SetDIBitsWithMatrix(CFX_DIBSource* source,
     m.Concat(*matrix);
     int32_t left, top;
     CFX_DIBitmap* bmp1 = source->FlipImage(FALSE, TRUE);
-    CFX_DIBitmap* bmp2 = bmp1->TransformTo((CFX_AffineMatrix*)&m, left, top);
+    CFX_DIBitmap* bmp2 = bmp1->TransformTo((CFX_Matrix*)&m, left, top);
     _renderDevice->SetDIBits(bmp2, left, top);
     if (bmp2) {
       delete bmp2;

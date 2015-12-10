@@ -181,7 +181,7 @@ CPDF_RenderStatus::~CPDF_RenderStatus() {
 
 FX_BOOL CPDF_RenderStatus::Initialize(CPDF_RenderContext* pContext,
                                       CFX_RenderDevice* pDevice,
-                                      const CFX_AffineMatrix* pDeviceMatrix,
+                                      const CFX_Matrix* pDeviceMatrix,
                                       const CPDF_PageObject* pStopObj,
                                       const CPDF_RenderStatus* pParentState,
                                       const CPDF_GraphicStates* pInitialStates,
@@ -241,9 +241,9 @@ FX_BOOL CPDF_RenderStatus::Initialize(CPDF_RenderContext* pContext,
   return TRUE;
 }
 void CPDF_RenderStatus::RenderObjectList(const CPDF_PageObjects* pObjs,
-                                         const CFX_AffineMatrix* pObj2Device) {
+                                         const CFX_Matrix* pObj2Device) {
   CFX_FloatRect clip_rect = m_pDevice->GetClipBox();
-  CFX_AffineMatrix device2object;
+  CFX_Matrix device2object;
   device2object.SetReverse(*pObj2Device);
   device2object.TransformRect(clip_rect);
   int index = 0;
@@ -270,9 +270,8 @@ void CPDF_RenderStatus::RenderObjectList(const CPDF_PageObjects* pObjs,
     }
   }
 }
-void CPDF_RenderStatus::RenderSingleObject(
-    const CPDF_PageObject* pObj,
-    const CFX_AffineMatrix* pObj2Device) {
+void CPDF_RenderStatus::RenderSingleObject(const CPDF_PageObject* pObj,
+                                           const CFX_Matrix* pObj2Device) {
   CFX_AutoRestorer<int> restorer(&s_CurrentRecursionDepth);
   if (++s_CurrentRecursionDepth > kRenderMaxRecursionDepth) {
     return;
@@ -290,10 +289,9 @@ void CPDF_RenderStatus::RenderSingleObject(
   ProcessObjectNoClip(pObj, pObj2Device);
 }
 
-FX_BOOL CPDF_RenderStatus::ContinueSingleObject(
-    const CPDF_PageObject* pObj,
-    const CFX_AffineMatrix* pObj2Device,
-    IFX_Pause* pPause) {
+FX_BOOL CPDF_RenderStatus::ContinueSingleObject(const CPDF_PageObject* pObj,
+                                                const CFX_Matrix* pObj2Device,
+                                                IFX_Pause* pPause) {
   if (m_pObjectRenderer) {
     if (m_pObjectRenderer->Continue(pPause))
       return TRUE;
@@ -335,11 +333,10 @@ IPDF_ObjectRenderer* IPDF_ObjectRenderer::Create(int type) {
   }
   return new CPDF_ImageRenderer;
 }
-FX_BOOL CPDF_RenderStatus::GetObjectClippedRect(
-    const CPDF_PageObject* pObj,
-    const CFX_AffineMatrix* pObj2Device,
-    FX_BOOL bLogical,
-    FX_RECT& rect) const {
+FX_BOOL CPDF_RenderStatus::GetObjectClippedRect(const CPDF_PageObject* pObj,
+                                                const CFX_Matrix* pObj2Device,
+                                                FX_BOOL bLogical,
+                                                FX_RECT& rect) const {
   rect = pObj->GetBBox(pObj2Device);
   FX_RECT rtClip = m_pDevice->GetClipBox();
   if (!bLogical) {
@@ -359,7 +356,7 @@ FX_BOOL CPDF_RenderStatus::GetObjectClippedRect(
   return rect.IsEmpty();
 }
 void CPDF_RenderStatus::DitherObjectArea(const CPDF_PageObject* pObj,
-                                         const CFX_AffineMatrix* pObj2Device) {
+                                         const CFX_Matrix* pObj2Device) {
   CFX_DIBitmap* pBitmap = m_pDevice->GetBitmap();
   if (pBitmap == NULL) {
     return;
@@ -380,9 +377,8 @@ void CPDF_RenderStatus::DitherObjectArea(const CPDF_PageObject* pObj,
     pBitmap->DitherFS(pal, 16, &rect);
   }
 }
-void CPDF_RenderStatus::ProcessObjectNoClip(
-    const CPDF_PageObject* pObj,
-    const CFX_AffineMatrix* pObj2Device) {
+void CPDF_RenderStatus::ProcessObjectNoClip(const CPDF_PageObject* pObj,
+                                            const CFX_Matrix* pObj2Device) {
   FX_BOOL bRet = FALSE;
   switch (pObj->m_Type) {
     case PDFPAGE_TEXT:
@@ -405,9 +401,8 @@ void CPDF_RenderStatus::ProcessObjectNoClip(
     DrawObjWithBackground(pObj, pObj2Device);
   }
 }
-FX_BOOL CPDF_RenderStatus::DrawObjWithBlend(
-    const CPDF_PageObject* pObj,
-    const CFX_AffineMatrix* pObj2Device) {
+FX_BOOL CPDF_RenderStatus::DrawObjWithBlend(const CPDF_PageObject* pObj,
+                                            const CFX_Matrix* pObj2Device) {
   FX_BOOL bRet = FALSE;
   switch (pObj->m_Type) {
     case PDFPAGE_PATH:
@@ -427,9 +422,8 @@ void CPDF_RenderStatus::GetScaledMatrix(CFX_Matrix& matrix) const {
   matrix.a *= FXSYS_fabs(dCTM.a);
   matrix.d *= FXSYS_fabs(dCTM.d);
 }
-void CPDF_RenderStatus::DrawObjWithBackground(
-    const CPDF_PageObject* pObj,
-    const CFX_AffineMatrix* pObj2Device) {
+void CPDF_RenderStatus::DrawObjWithBackground(const CPDF_PageObject* pObj,
+                                              const CFX_Matrix* pObj2Device) {
   FX_RECT rect;
   if (GetObjectClippedRect(pObj, pObj2Device, FALSE, rect)) {
     return;
@@ -443,7 +437,7 @@ void CPDF_RenderStatus::DrawObjWithBackground(
   if (!buffer.Initialize(m_pContext, m_pDevice, &rect, pObj, &m_Options, res)) {
     return;
   }
-  CFX_AffineMatrix matrix = *pObj2Device;
+  CFX_Matrix matrix = *pObj2Device;
   matrix.Concat(*buffer.GetMatrix());
   GetScaledMatrix(matrix);
   CPDF_Dictionary* pFormResource = NULL;
@@ -462,14 +456,14 @@ void CPDF_RenderStatus::DrawObjWithBackground(
   buffer.OutputToDevice();
 }
 FX_BOOL CPDF_RenderStatus::ProcessForm(CPDF_FormObject* pFormObj,
-                                       const CFX_AffineMatrix* pObj2Device) {
+                                       const CFX_Matrix* pObj2Device) {
   CPDF_Dictionary* pOC =
       pFormObj->m_pForm->m_pFormDict->GetDict(FX_BSTRC("OC"));
   if (pOC && m_Options.m_pOCContext &&
       !m_Options.m_pOCContext->CheckOCGVisible(pOC)) {
     return TRUE;
   }
-  CFX_AffineMatrix matrix = pFormObj->m_FormMatrix;
+  CFX_Matrix matrix = pFormObj->m_FormMatrix;
   matrix.Concat(*pObj2Device);
   CPDF_Dictionary* pResources = NULL;
   if (pFormObj->m_pForm && pFormObj->m_pForm->m_pFormDict) {
@@ -486,7 +480,7 @@ FX_BOOL CPDF_RenderStatus::ProcessForm(CPDF_FormObject* pFormObj,
   m_pDevice->RestoreState();
   return TRUE;
 }
-FX_BOOL IsAvailableMatrix(const CFX_AffineMatrix& matrix) {
+FX_BOOL IsAvailableMatrix(const CFX_Matrix& matrix) {
   if (matrix.a == 0 || matrix.d == 0) {
     return matrix.b != 0 && matrix.c != 0;
   }
@@ -496,7 +490,7 @@ FX_BOOL IsAvailableMatrix(const CFX_AffineMatrix& matrix) {
   return TRUE;
 }
 FX_BOOL CPDF_RenderStatus::ProcessPath(CPDF_PathObject* pPathObj,
-                                       const CFX_AffineMatrix* pObj2Device) {
+                                       const CFX_Matrix* pObj2Device) {
   int FillType = pPathObj->m_FillType;
   FX_BOOL bStroke = pPathObj->m_bStroke;
   ProcessPathPattern(pPathObj, pObj2Device, FillType, bStroke);
@@ -511,7 +505,7 @@ FX_BOOL CPDF_RenderStatus::ProcessPath(CPDF_PathObject* pPathObj,
   if (bStroke) {
     stroke_argb = GetStrokeArgb(pPathObj);
   }
-  CFX_AffineMatrix path_matrix = pPathObj->m_Matrix;
+  CFX_Matrix path_matrix = pPathObj->m_Matrix;
   path_matrix.Concat(*pObj2Device);
   if (!IsAvailableMatrix(path_matrix)) {
     return TRUE;
@@ -623,7 +617,7 @@ FX_ARGB CPDF_RenderStatus::GetStrokeArgb(const CPDF_PageObject* pObj) const {
   return m_Options.TranslateColor(ArgbEncode(alpha, rgb));
 }
 void CPDF_RenderStatus::ProcessClipPath(CPDF_ClipPath ClipPath,
-                                        const CFX_AffineMatrix* pObj2Device) {
+                                        const CFX_Matrix* pObj2Device) {
   if (ClipPath.IsNull()) {
     if (!m_LastClipPath.IsNull()) {
       m_pDevice->RestoreState(TRUE);
@@ -683,7 +677,7 @@ void CPDF_RenderStatus::ProcessClipPath(CPDF_ClipPath ClipPath,
 }
 
 void CPDF_RenderStatus::DrawClipPath(CPDF_ClipPath ClipPath,
-                                     const CFX_AffineMatrix* pObj2Device) {
+                                     const CFX_Matrix* pObj2Device) {
   if (ClipPath.IsNull()) {
     return;
   }
@@ -707,9 +701,9 @@ void CPDF_RenderStatus::DrawClipPath(CPDF_ClipPath ClipPath,
   }
 }
 FX_BOOL CPDF_RenderStatus::SelectClipPath(CPDF_PathObject* pPathObj,
-                                          const CFX_AffineMatrix* pObj2Device,
+                                          const CFX_Matrix* pObj2Device,
                                           FX_BOOL bStroke) {
-  CFX_AffineMatrix path_matrix = pPathObj->m_Matrix;
+  CFX_Matrix path_matrix = pPathObj->m_Matrix;
   path_matrix.Concat(*pObj2Device);
   if (bStroke) {
     CFX_GraphStateData graphState(*pPathObj->m_GraphState);
@@ -725,9 +719,8 @@ FX_BOOL CPDF_RenderStatus::SelectClipPath(CPDF_PathObject* pPathObj,
   }
   return m_pDevice->SetClip_PathFill(pPathObj->m_Path, &path_matrix, fill_mode);
 }
-FX_BOOL CPDF_RenderStatus::ProcessTransparency(
-    const CPDF_PageObject* pPageObj,
-    const CFX_AffineMatrix* pObj2Device) {
+FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
+                                               const CFX_Matrix* pObj2Device) {
   const CPDF_GeneralStateData* pGeneralState = pPageObj->m_GeneralState;
   int blend_type =
       pGeneralState ? pGeneralState->m_BlendType : FXDIB_BLEND_NORMAL;
@@ -838,7 +831,7 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(
 
   CFX_DIBitmap* bitmap = bitmap_device.GetBitmap();
   bitmap->Clear(0);
-  CFX_AffineMatrix new_matrix = *pObj2Device;
+  CFX_Matrix new_matrix = *pObj2Device;
   new_matrix.TranslateI(-rect.left, -rect.top);
   new_matrix.Scale(scaleX, scaleY);
   nonstd::unique_ptr<CFX_DIBitmap> pTextMask;
@@ -855,7 +848,7 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(
       if (textobj == NULL) {
         break;
       }
-      CFX_AffineMatrix text_matrix;
+      CFX_Matrix text_matrix;
       textobj->GetTextMatrix(&text_matrix);
       CPDF_TextRenderer::DrawTextPath(
           &text_device, textobj->m_nChars, textobj->m_pCharCodes,
@@ -871,7 +864,7 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(
   bitmap_render.ProcessObjectNoClip(pPageObj, &new_matrix);
   m_bStopped = bitmap_render.m_bStopped;
   if (pSMaskDict) {
-    CFX_AffineMatrix smask_matrix;
+    CFX_Matrix smask_matrix;
     FXSYS_memcpy(&smask_matrix, pGeneralState->m_SMaskMatrix,
                  sizeof smask_matrix);
     smask_matrix.Concat(*pObj2Device);
@@ -930,7 +923,7 @@ CFX_DIBitmap* CPDF_RenderStatus::GetBackdrop(const CPDF_PageObject* pObj,
     return pBackdrop.release();
   }
 
-  CFX_AffineMatrix FinalMatrix = m_DeviceMatrix;
+  CFX_Matrix FinalMatrix = m_DeviceMatrix;
   FinalMatrix.TranslateI(-left, -top);
   FinalMatrix.Scale(scaleX, scaleY);
   pBackdrop->Clear(pBackdrop->HasAlpha() ? 0 : 0xffffffff);
@@ -943,7 +936,7 @@ CFX_DIBitmap* CPDF_RenderStatus::GetBackdrop(const CPDF_PageObject* pObj,
 void CPDF_RenderContext::GetBackground(CFX_DIBitmap* pBuffer,
                                        const CPDF_PageObject* pObj,
                                        const CPDF_RenderOptions* pOptions,
-                                       CFX_AffineMatrix* pFinalMatrix) {
+                                       CFX_Matrix* pFinalMatrix) {
   CFX_FxgeDevice device;
   device.Attach(pBuffer);
 
@@ -994,9 +987,8 @@ void CPDF_RenderContext::Clear() {
   m_bFirstLayer = TRUE;
   m_ContentList.RemoveAll();
 }
-void CPDF_RenderContext::AppendObjectList(
-    CPDF_PageObjects* pObjs,
-    const CFX_AffineMatrix* pObject2Device) {
+void CPDF_RenderContext::AppendObjectList(CPDF_PageObjects* pObjs,
+                                          const CFX_Matrix* pObject2Device) {
   _PDF_RenderItem* pItem = m_ContentList.AddSpace();
   pItem->m_pObjectList = pObjs;
   if (pObject2Device) {
@@ -1007,19 +999,19 @@ void CPDF_RenderContext::AppendObjectList(
 }
 void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
                                 const CPDF_RenderOptions* pOptions,
-                                const CFX_AffineMatrix* pLastMatrix) {
+                                const CFX_Matrix* pLastMatrix) {
   Render(pDevice, NULL, pOptions, pLastMatrix);
 }
 void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
                                 const CPDF_PageObject* pStopObj,
                                 const CPDF_RenderOptions* pOptions,
-                                const CFX_AffineMatrix* pLastMatrix) {
+                                const CFX_Matrix* pLastMatrix) {
   int count = m_ContentList.GetSize();
   for (int j = 0; j < count; j++) {
     pDevice->SaveState();
     _PDF_RenderItem* pItem = m_ContentList.GetDataPtr(j);
     if (pLastMatrix) {
-      CFX_AffineMatrix FinalMatrix = pItem->m_Matrix;
+      CFX_Matrix FinalMatrix = pItem->m_Matrix;
       FinalMatrix.Concat(*pLastMatrix);
       CPDF_RenderStatus status;
       status.Initialize(this, pDevice, pLastMatrix, pStopObj, NULL, NULL,
@@ -1051,7 +1043,7 @@ void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
 }
 void CPDF_RenderContext::DrawObjectList(CFX_RenderDevice* pDevice,
                                         CPDF_PageObjects* pObjs,
-                                        const CFX_AffineMatrix* pObject2Device,
+                                        const CFX_Matrix* pObject2Device,
                                         const CPDF_RenderOptions* pOptions) {
   AppendObjectList(pObjs, pObject2Device);
   Render(pDevice, pOptions);
@@ -1130,7 +1122,7 @@ void CPDF_ProgressiveRenderer::Continue(IFX_Pause* pPause) {
           pItem->m_pObjectList->m_Transparency, FALSE, NULL);
       m_pDevice->SaveState();
       m_ClipRect = m_pDevice->GetClipBox();
-      CFX_AffineMatrix device2object;
+      CFX_Matrix device2object;
       device2object.SetReverse(pItem->m_Matrix);
       device2object.TransformRect(m_ClipRect);
     }

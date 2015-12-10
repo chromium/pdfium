@@ -149,7 +149,7 @@ void CPDF_FormControl::CheckControl(FX_BOOL bChecked) {
 CPDF_Stream* FPDFDOC_GetAnnotAP(CPDF_Dictionary* pAnnotDict,
                                 CPDF_Annot::AppearanceMode mode);
 void CPDF_FormControl::DrawControl(CFX_RenderDevice* pDevice,
-                                   CFX_AffineMatrix* pMatrix,
+                                   CFX_Matrix* pMatrix,
                                    CPDF_Page* pPage,
                                    CPDF_Annot::AppearanceMode mode,
                                    const CPDF_RenderOptions* pOptions) {
@@ -161,10 +161,10 @@ void CPDF_FormControl::DrawControl(CFX_RenderDevice* pDevice,
     return;
   }
   CFX_FloatRect form_bbox = pStream->GetDict()->GetRect("BBox");
-  CFX_AffineMatrix form_matrix = pStream->GetDict()->GetMatrix("Matrix");
+  CFX_Matrix form_matrix = pStream->GetDict()->GetMatrix("Matrix");
   form_matrix.TransformRect(form_bbox);
   CFX_FloatRect arect = m_pWidgetDict->GetRect("Rect");
-  CFX_AffineMatrix matrix;
+  CFX_Matrix matrix;
   matrix.MatchRect(arect, form_bbox);
   matrix.Concat(*pMatrix);
   CPDF_Form form(m_pField->m_pForm->m_pDocument,

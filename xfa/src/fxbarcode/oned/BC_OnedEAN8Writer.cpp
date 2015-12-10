@@ -213,7 +213,7 @@ void CBC_OnedEAN8Writer::ShowChars(const CFX_WideStringC& contents,
   }
   CalcTextInfo(tempStr, pCharPos, m_pFont, (FX_FLOAT)strWidth, iFontSize,
                blank);
-  CFX_AffineMatrix affine_matrix(1.0, 0.0, 0.0, -1.0, 0.0, (FX_FLOAT)iFontSize);
+  CFX_Matrix affine_matrix(1.0, 0.0, 0.0, -1.0, 0.0, (FX_FLOAT)iFontSize);
   CFX_FxgeDevice ge;
   if (pOutBitmap != NULL) {
     delete ge.GetBitmap();
@@ -221,18 +221,18 @@ void CBC_OnedEAN8Writer::ShowChars(const CFX_WideStringC& contents,
     ge.GetBitmap()->Clear(m_backgroundColor);
     ge.DrawNormalText(iLen, pCharPos, m_pFont,
                       CFX_GEModule::Get()->GetFontCache(), (FX_FLOAT)iFontSize,
-                      (CFX_AffineMatrix*)&affine_matrix, m_fontColor,
+                      (CFX_Matrix*)&affine_matrix, m_fontColor,
                       FXTEXT_CLEARTYPE);
     geBitmap.SetDIBits(ge.GetBitmap(), leftPosition, m_Height - iTextHeight);
   } else {
-    CFX_AffineMatrix affine_matrix1(
-        1.0, 0.0, 0.0, -1.0, (FX_FLOAT)leftPosition * m_outputHScale,
-        (FX_FLOAT)(m_Height - iTextHeight + iFontSize));
+    CFX_Matrix affine_matrix1(1.0, 0.0, 0.0, -1.0,
+                              (FX_FLOAT)leftPosition * m_outputHScale,
+                              (FX_FLOAT)(m_Height - iTextHeight + iFontSize));
     affine_matrix1.Concat(*matrix);
-    device->DrawNormalText(
-        iLen, pCharPos, m_pFont, CFX_GEModule::Get()->GetFontCache(),
-        (FX_FLOAT)iFontSize, (CFX_AffineMatrix*)&affine_matrix1, m_fontColor,
-        FXTEXT_CLEARTYPE);
+    device->DrawNormalText(iLen, pCharPos, m_pFont,
+                           CFX_GEModule::Get()->GetFontCache(),
+                           (FX_FLOAT)iFontSize, (CFX_Matrix*)&affine_matrix1,
+                           m_fontColor, FXTEXT_CLEARTYPE);
   }
   tempStr = str.Mid(4, 4);
   iLen = tempStr.GetLength();
@@ -245,22 +245,22 @@ void CBC_OnedEAN8Writer::ShowChars(const CFX_WideStringC& contents,
     ge.GetBitmap()->Clear(m_backgroundColor);
     ge.DrawNormalText(iLen, pCharPos + 4, m_pFont,
                       CFX_GEModule::Get()->GetFontCache(), (FX_FLOAT)iFontSize,
-                      (CFX_AffineMatrix*)&affine_matrix, m_fontColor,
+                      (CFX_Matrix*)&affine_matrix, m_fontColor,
                       FXTEXT_CLEARTYPE);
     geBitmap.SetDIBits(ge.GetBitmap(), leftPosition + 33 * multiple,
                        m_Height - iTextHeight);
   } else {
-    CFX_AffineMatrix affine_matrix1(
+    CFX_Matrix affine_matrix1(
         1.0, 0.0, 0.0, -1.0,
         (FX_FLOAT)(leftPosition + 33 * multiple) * m_outputHScale,
         (FX_FLOAT)(m_Height - iTextHeight + iFontSize));
     if (matrix != NULL) {
       affine_matrix1.Concat(*matrix);
     }
-    device->DrawNormalText(
-        iLen, pCharPos + 4, m_pFont, CFX_GEModule::Get()->GetFontCache(),
-        (FX_FLOAT)iFontSize, (CFX_AffineMatrix*)&affine_matrix1, m_fontColor,
-        FXTEXT_CLEARTYPE);
+    device->DrawNormalText(iLen, pCharPos + 4, m_pFont,
+                           CFX_GEModule::Get()->GetFontCache(),
+                           (FX_FLOAT)iFontSize, (CFX_Matrix*)&affine_matrix1,
+                           m_fontColor, FXTEXT_CLEARTYPE);
   }
   FX_Free(pCharPos);
 }

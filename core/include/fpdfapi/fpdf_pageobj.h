@@ -52,11 +52,9 @@ class CPDF_Path : public CFX_CountRef<CFX_PathData> {
     return m_pObject->GetBoundingBox(line_width, miter_limit);
   }
 
-  void Transform(const CFX_AffineMatrix* pMatrix) {
-    GetModify()->Transform(pMatrix);
-  }
+  void Transform(const CFX_Matrix* pMatrix) { GetModify()->Transform(pMatrix); }
 
-  void Append(CPDF_Path src, const CFX_AffineMatrix* pMatrix) {
+  void Append(CPDF_Path src, const CFX_Matrix* pMatrix) {
     m_pObject->Append(src.m_pObject, pMatrix);
   }
 
@@ -109,7 +107,7 @@ class CPDF_ClipPath : public CFX_CountRef<CPDF_ClipPathData> {
 
   void AppendTexts(CPDF_TextObject** pTexts, int count);
 
-  void Transform(const CFX_AffineMatrix& matrix);
+  void Transform(const CFX_Matrix& matrix);
 };
 class CPDF_ColorStateData {
  public:
@@ -362,7 +360,7 @@ class CPDF_PageObject : public CPDF_GraphicStates {
 
   void Copy(const CPDF_PageObject* pSrcObject);
 
-  virtual void Transform(const CFX_AffineMatrix& matrix) = 0;
+  virtual void Transform(const CFX_Matrix& matrix) = 0;
 
   void RemoveClipPath();
 
@@ -370,13 +368,13 @@ class CPDF_PageObject : public CPDF_GraphicStates {
 
   void CopyClipPath(CPDF_PageObject* pObj);
 
-  void TransformClipPath(CFX_AffineMatrix& matrix);
+  void TransformClipPath(CFX_Matrix& matrix);
 
-  void TransformGeneralState(CFX_AffineMatrix& matrix);
+  void TransformGeneralState(CFX_Matrix& matrix);
 
   void SetColorState(CPDF_ColorState state) { m_ColorState = state; }
 
-  FX_RECT GetBBox(const CFX_AffineMatrix* pMatrix) const;
+  FX_RECT GetBBox(const CFX_Matrix* pMatrix) const;
 
   int m_Type;
 
@@ -427,7 +425,7 @@ class CPDF_TextObject : public CPDF_PageObject {
 
   FX_FLOAT GetPosY() const { return m_PosY; }
 
-  void GetTextMatrix(CFX_AffineMatrix* pMatrix) const;
+  void GetTextMatrix(CFX_Matrix* pMatrix) const;
 
   CPDF_Font* GetFont() const { return m_TextState.GetFont(); }
 
@@ -446,7 +444,7 @@ class CPDF_TextObject : public CPDF_PageObject {
   void SetTextState(CPDF_TextState TextState);
 
   // CPDF_PageObject:
-  void Transform(const CFX_AffineMatrix& matrix) override;
+  void Transform(const CFX_Matrix& matrix) override;
 
   void CalcCharPos(FX_FLOAT* pPosArray) const;
 
@@ -495,7 +493,7 @@ class CPDF_PathObject : public CPDF_PageObject {
   CPDF_PathObject() { m_Type = PDFPAGE_PATH; }
   ~CPDF_PathObject() override {}
 
-  void Transform(const CFX_AffineMatrix& maxtrix) override;
+  void Transform(const CFX_Matrix& maxtrix) override;
 
   void SetGraphState(CPDF_GraphState GraphState);
 
@@ -507,7 +505,7 @@ class CPDF_PathObject : public CPDF_PageObject {
 
   FX_BOOL m_bStroke;
 
-  CFX_AffineMatrix m_Matrix;
+  CFX_Matrix m_Matrix;
 
  protected:
   void CopyData(const CPDF_PageObject* pSrcObject) override;
@@ -518,11 +516,11 @@ class CPDF_ImageObject : public CPDF_PageObject {
   CPDF_ImageObject();
   ~CPDF_ImageObject() override;
 
-  void Transform(const CFX_AffineMatrix& matrix) override;
+  void Transform(const CFX_Matrix& matrix) override;
 
   CPDF_Image* m_pImage;
 
-  CFX_AffineMatrix m_Matrix;
+  CFX_Matrix m_Matrix;
 
   void CalcBoundingBox();
 
@@ -537,9 +535,9 @@ class CPDF_ShadingObject : public CPDF_PageObject {
 
   CPDF_ShadingPattern* m_pShading;
 
-  CFX_AffineMatrix m_Matrix;
+  CFX_Matrix m_Matrix;
 
-  void Transform(const CFX_AffineMatrix& matrix) override;
+  void Transform(const CFX_Matrix& matrix) override;
 
   void CalcBoundingBox();
 
@@ -555,11 +553,11 @@ class CPDF_FormObject : public CPDF_PageObject {
   }
   ~CPDF_FormObject() override;
 
-  void Transform(const CFX_AffineMatrix& matrix) override;
+  void Transform(const CFX_Matrix& matrix) override;
 
   CPDF_Form* m_pForm;
 
-  CFX_AffineMatrix m_FormMatrix;
+  CFX_Matrix m_FormMatrix;
 
   void CalcBoundingBox();
 

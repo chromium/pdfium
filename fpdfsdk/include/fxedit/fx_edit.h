@@ -13,7 +13,7 @@
 
 class CFX_RenderDevice;
 class CPDF_Font;
-class CPDF_Matrix;
+class CFX_Matrix;
 class CPDF_PageObjects;
 class CPDF_Point;
 class CPDF_TextObject;
@@ -435,7 +435,7 @@ class IFX_Edit {
       const CPDF_Point& ptOffset,
       const CPVT_WordRange* pRange = NULL);
   static void DrawEdit(CFX_RenderDevice* pDevice,
-                       CPDF_Matrix* pUser2Device,
+                       CFX_Matrix* pUser2Device,
                        IFX_Edit* pEdit,
                        FX_COLORREF crTextFill,
                        FX_COLORREF crTextStroke,
@@ -445,14 +445,14 @@ class IFX_Edit {
                        IFX_SystemHandler* pSystemHandler,
                        void* pFFLData);
   static void DrawUnderline(CFX_RenderDevice* pDevice,
-                            CPDF_Matrix* pUser2Device,
+                            CFX_Matrix* pUser2Device,
                             IFX_Edit* pEdit,
                             FX_COLORREF color,
                             const CPDF_Rect& rcClip,
                             const CPDF_Point& ptOffset,
                             const CPVT_WordRange* pRange);
   static void DrawRichEdit(CFX_RenderDevice* pDevice,
-                           CPDF_Matrix* pUser2Device,
+                           CFX_Matrix* pUser2Device,
                            IFX_Edit* pEdit,
                            const CPDF_Rect& rcClip,
                            const CPDF_Point& ptOffset,

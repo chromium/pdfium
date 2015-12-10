@@ -473,7 +473,7 @@ class CFX_FaceCache {
   const CFX_GlyphBitmap* LoadGlyphBitmap(CFX_Font* pFont,
                                          FX_DWORD glyph_index,
                                          FX_BOOL bFontStyle,
-                                         const CFX_AffineMatrix* pMatrix,
+                                         const CFX_Matrix* pMatrix,
                                          int dest_width,
                                          int anti_alias,
                                          int& text_flags);
@@ -485,16 +485,16 @@ class CFX_FaceCache {
   CFX_GlyphBitmap* RenderGlyph(CFX_Font* pFont,
                                FX_DWORD glyph_index,
                                FX_BOOL bFontStyle,
-                               const CFX_AffineMatrix* pMatrix,
+                               const CFX_Matrix* pMatrix,
                                int dest_width,
                                int anti_alias);
   CFX_GlyphBitmap* RenderGlyph_Nativetext(CFX_Font* pFont,
                                           FX_DWORD glyph_index,
-                                          const CFX_AffineMatrix* pMatrix,
+                                          const CFX_Matrix* pMatrix,
                                           int dest_width,
                                           int anti_alias);
   CFX_GlyphBitmap* LookUpGlyphBitmap(CFX_Font* pFont,
-                                     const CFX_AffineMatrix* pMatrix,
+                                     const CFX_Matrix* pMatrix,
                                      CFX_ByteStringC& FaceGlyphsKey,
                                      FX_DWORD glyph_index,
                                      FX_BOOL bFontStyle,

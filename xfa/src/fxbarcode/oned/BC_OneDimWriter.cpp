@@ -199,10 +199,10 @@ void CBC_OneDimWriter::ShowDeviceChars(CFX_RenderDevice* device,
   if (matrix != NULL) {
     affine_matrix.Concat(*matrix);
   }
-  device->DrawNormalText(
-      str.GetLength(), pCharPos, m_pFont, CFX_GEModule::Get()->GetFontCache(),
-      (FX_FLOAT)iFontSize, (CFX_AffineMatrix*)&affine_matrix, m_fontColor,
-      FXTEXT_CLEARTYPE);
+  device->DrawNormalText(str.GetLength(), pCharPos, m_pFont,
+                         CFX_GEModule::Get()->GetFontCache(),
+                         (FX_FLOAT)iFontSize, (CFX_Matrix*)&affine_matrix,
+                         m_fontColor, FXTEXT_CLEARTYPE);
 }
 void CBC_OneDimWriter::ShowBitmapChars(CFX_DIBitmap* pOutBitmap,
                                        const CFX_ByteString str,
@@ -217,11 +217,10 @@ void CBC_OneDimWriter::ShowBitmapChars(CFX_DIBitmap* pOutBitmap,
   ge.Create((int)geWidth, iTextHeight, m_colorSpace);
   FX_RECT geRect(0, 0, (int)geWidth, iTextHeight);
   ge.FillRect(&geRect, m_backgroundColor);
-  CFX_AffineMatrix affine_matrix(1.0, 0.0, 0.0, -1.0, 0.0, (FX_FLOAT)iFontSize);
-  ge.DrawNormalText(
-      str.GetLength(), pCharPos, m_pFont, CFX_GEModule::Get()->GetFontCache(),
-      (FX_FLOAT)iFontSize, (CFX_AffineMatrix*)&affine_matrix, m_fontColor,
-      FXTEXT_CLEARTYPE);
+  CFX_Matrix affine_matrix(1.0, 0.0, 0.0, -1.0, 0.0, (FX_FLOAT)iFontSize);
+  ge.DrawNormalText(str.GetLength(), pCharPos, m_pFont,
+                    CFX_GEModule::Get()->GetFontCache(), (FX_FLOAT)iFontSize,
+                    (CFX_Matrix*)&affine_matrix, m_fontColor, FXTEXT_CLEARTYPE);
   CFX_FxgeDevice geBitmap;
   geBitmap.Attach(pOutBitmap);
   geBitmap.SetDIBits(ge.GetBitmap(), (int)locX, (int)locY);

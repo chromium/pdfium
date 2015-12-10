@@ -477,7 +477,7 @@ class CXFA_ImageRenderer {
                 CFX_DIBSource* pDIBSource,
                 FX_ARGB bitmap_argb,
                 int bitmap_alpha,
-                const CFX_AffineMatrix* pImage2Device,
+                const CFX_Matrix* pImage2Device,
                 FX_DWORD flags,
                 int blendType = FXDIB_BLEND_NORMAL);
   FX_BOOL Continue(IFX_Pause* pPause);
@@ -485,7 +485,7 @@ class CXFA_ImageRenderer {
  protected:
   CFX_RenderDevice* m_pDevice;
   int m_Status;
-  CFX_AffineMatrix m_ImageMatrix;
+  CFX_Matrix m_ImageMatrix;
   CFX_DIBSource* m_pDIBSource;
   CFX_DIBitmap* m_pCloneConvert;
   int m_BitmapAlpha;
@@ -534,7 +534,7 @@ FX_BOOL CXFA_ImageRenderer::Start(CFX_RenderDevice* pDevice,
                                   CFX_DIBSource* pDIBSource,
                                   FX_ARGB bitmap_argb,
                                   int bitmap_alpha,
-                                  const CFX_AffineMatrix* pImage2Device,
+                                  const CFX_Matrix* pImage2Device,
                                   FX_DWORD flags,
                                   int blendType) {
   m_pDevice = pDevice;

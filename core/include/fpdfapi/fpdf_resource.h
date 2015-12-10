@@ -377,7 +377,7 @@ class CPDF_Type3Char {
   CFX_DIBitmap* m_pBitmap;
   FX_BOOL m_bColored;
   int m_Width;
-  CFX_AffineMatrix m_ImageMatrix;
+  CFX_Matrix m_ImageMatrix;
   FX_RECT m_BBox;
 };
 
@@ -395,11 +395,11 @@ class CPDF_Type3Font : public CPDF_SimpleFont {
     return GetCharWidthF(charcode);
   }
   void GetCharBBox(FX_DWORD charcode, FX_RECT& rect, int level = 0) override;
-  CFX_AffineMatrix& GetFontMatrix() { return m_FontMatrix; }
+  CFX_Matrix& GetFontMatrix() { return m_FontMatrix; }
   void CheckType3FontMetrics();
 
  protected:
-  CFX_AffineMatrix m_FontMatrix;
+  CFX_Matrix m_FontMatrix;
 
  private:
   FX_BOOL _Load() override;
@@ -647,13 +647,13 @@ class CPDF_Pattern {
 
   int m_PatternType;
 
-  CFX_AffineMatrix m_Pattern2Form;
-  CFX_AffineMatrix m_ParentMatrix;
+  CFX_Matrix m_Pattern2Form;
+  CFX_Matrix m_ParentMatrix;
 
   CPDF_Document* m_pDocument;
 
  protected:
-  CPDF_Pattern(const CFX_AffineMatrix* pParentMatrix);
+  CPDF_Pattern(const CFX_Matrix* pParentMatrix);
   FX_BOOL m_bForceClear;
 };
 
@@ -661,7 +661,7 @@ class CPDF_TilingPattern : public CPDF_Pattern {
  public:
   CPDF_TilingPattern(CPDF_Document* pDoc,
                      CPDF_Object* pPatternObj,
-                     const CFX_AffineMatrix* parentMatrix);
+                     const CFX_Matrix* parentMatrix);
 
   ~CPDF_TilingPattern() override;
 
@@ -695,7 +695,7 @@ class CPDF_ShadingPattern : public CPDF_Pattern {
   CPDF_ShadingPattern(CPDF_Document* pDoc,
                       CPDF_Object* pPatternObj,
                       FX_BOOL bShading,
-                      const CFX_AffineMatrix* parentMatrix);
+                      const CFX_Matrix* parentMatrix);
 
   ~CPDF_ShadingPattern() override;
 
@@ -746,11 +746,11 @@ class CPDF_MeshStream {
 
   void GetColor(FX_FLOAT& r, FX_FLOAT& g, FX_FLOAT& b);
 
-  FX_DWORD GetVertex(CPDF_MeshVertex& vertex, CFX_AffineMatrix* pObject2Bitmap);
+  FX_DWORD GetVertex(CPDF_MeshVertex& vertex, CFX_Matrix* pObject2Bitmap);
 
   FX_BOOL GetVertexRow(CPDF_MeshVertex* vertex,
                        int count,
-                       CFX_AffineMatrix* pObject2Bitmap);
+                       CFX_Matrix* pObject2Bitmap);
   CPDF_Function** m_pFuncs;
   CPDF_ColorSpace* m_pCS;
   FX_DWORD m_nFuncs, m_nCoordBits, m_nCompBits, m_nFlagBits, m_nComps;

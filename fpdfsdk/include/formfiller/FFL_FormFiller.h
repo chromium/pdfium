@@ -26,12 +26,12 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
   virtual void OnDraw(CPDFSDK_PageView* pPageView,
                       CPDFSDK_Annot* pAnnot,
                       CFX_RenderDevice* pDevice,
-                      CPDF_Matrix* pUser2Device,
+                      CFX_Matrix* pUser2Device,
                       FX_DWORD dwFlags);
   virtual void OnDrawDeactive(CPDFSDK_PageView* pPageView,
                               CPDFSDK_Annot* pAnnot,
                               CFX_RenderDevice* pDevice,
-                              CPDF_Matrix* pUser2Device,
+                              CFX_Matrix* pUser2Device,
                               FX_DWORD dwFlags);
 
   virtual void OnCreate(CPDFSDK_Annot* pAnnot);
@@ -84,7 +84,7 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
   IFX_SystemHandler* GetSystemHandler() const override;
 
   // IPWL_Provider
-  CPDF_Matrix GetWindowMatrix(void* pAttachedData) override;
+  CFX_Matrix GetWindowMatrix(void* pAttachedData) override;
   CFX_WideString LoadPopupMenuString(int nIndex) override;
 
   virtual void GetActionData(CPDFSDK_PageView* pPageView,
@@ -103,7 +103,7 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
   virtual CPWL_Wnd* ResetPDFWindow(CPDFSDK_PageView* pPageView,
                                    FX_BOOL bRestoreValue);
 
-  CPDF_Matrix GetCurMatrix();
+  CFX_Matrix GetCurMatrix();
 
   CPDF_Rect FFLtoPWL(const CPDF_Rect& rect);
   CPDF_Rect PWLtoFFL(const CPDF_Rect& rect);
@@ -182,12 +182,12 @@ class CFFL_Button : public CFFL_FormFiller {
   void OnDraw(CPDFSDK_PageView* pPageView,
               CPDFSDK_Annot* pAnnot,
               CFX_RenderDevice* pDevice,
-              CPDF_Matrix* pUser2Device,
+              CFX_Matrix* pUser2Device,
               FX_DWORD dwFlags) override;
   void OnDrawDeactive(CPDFSDK_PageView* pPageView,
                       CPDFSDK_Annot* pAnnot,
                       CFX_RenderDevice* pDevice,
-                      CPDF_Matrix* pUser2Device,
+                      CFX_Matrix* pUser2Device,
                       FX_DWORD dwFlags) override;
 
  protected:

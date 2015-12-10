@@ -22,7 +22,7 @@ class CPDFSDK_PageView;
 class CPDF_Annot;
 class CPDF_Page;
 class CPDF_Rect;
-class CPDF_Matrix;
+class CFX_Matrix;
 class CPDF_RenderOptions;
 class CFX_RenderDevice;
 
@@ -94,7 +94,7 @@ class CPDFSDK_Annot {
   virtual CPDF_Rect GetRect() const { return CPDF_Rect(); }
 
   virtual void Annot_OnDraw(CFX_RenderDevice* pDevice,
-                            CPDF_Matrix* pUser2Device,
+                            CFX_Matrix* pUser2Device,
                             CPDF_RenderOptions* pOptions) {}
 
   UnderlyingPageType* GetUnderlyingPage();
@@ -135,7 +135,7 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
   CPDF_Rect GetRect() const override;
   CPDF_Annot* GetPDFAnnot() const override;
   void Annot_OnDraw(CFX_RenderDevice* pDevice,
-                    CPDF_Matrix* pUser2Device,
+                    CFX_Matrix* pUser2Device,
                     CPDF_RenderOptions* pOptions) override;
 
   CPDF_Dictionary* GetAnnotDict() const;
@@ -198,18 +198,18 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
   virtual FX_BOOL IsAppearanceValid();
   virtual FX_BOOL IsAppearanceValid(CPDF_Annot::AppearanceMode mode);
   virtual void DrawAppearance(CFX_RenderDevice* pDevice,
-                              const CPDF_Matrix* pUser2Device,
+                              const CFX_Matrix* pUser2Device,
                               CPDF_Annot::AppearanceMode mode,
                               const CPDF_RenderOptions* pOptions);
   void DrawBorder(CFX_RenderDevice* pDevice,
-                  const CPDF_Matrix* pUser2Device,
+                  const CFX_Matrix* pUser2Device,
                   const CPDF_RenderOptions* pOptions);
 
   void ClearCachedAP();
 
   void WriteAppearance(const CFX_ByteString& sAPType,
                        const CPDF_Rect& rcBBox,
-                       const CPDF_Matrix& matrix,
+                       const CFX_Matrix& matrix,
                        const CFX_ByteString& sContents,
                        const CFX_ByteString& sAPState = "");
 

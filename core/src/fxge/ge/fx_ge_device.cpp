@@ -71,10 +71,9 @@ FX_BOOL CFX_RenderDevice::CreateCompatibleBitmap(CFX_DIBitmap* pDIB,
       width, height, m_RenderCaps & FXRC_ALPHA_OUTPUT ? FXDIB_Argb : FXDIB_Rgb);
 #endif
 }
-FX_BOOL CFX_RenderDevice::SetClip_PathFill(
-    const CFX_PathData* pPathData,
-    const CFX_AffineMatrix* pObject2Device,
-    int fill_mode) {
+FX_BOOL CFX_RenderDevice::SetClip_PathFill(const CFX_PathData* pPathData,
+                                           const CFX_Matrix* pObject2Device,
+                                           int fill_mode) {
   if (!m_pDeviceDriver->SetClip_PathFill(pPathData, pObject2Device,
                                          fill_mode)) {
     return FALSE;
@@ -84,7 +83,7 @@ FX_BOOL CFX_RenderDevice::SetClip_PathFill(
 }
 FX_BOOL CFX_RenderDevice::SetClip_PathStroke(
     const CFX_PathData* pPathData,
-    const CFX_AffineMatrix* pObject2Device,
+    const CFX_Matrix* pObject2Device,
     const CFX_GraphStateData* pGraphState) {
   if (!m_pDeviceDriver->SetClip_PathStroke(pPathData, pObject2Device,
                                            pGraphState)) {
@@ -113,7 +112,7 @@ void CFX_RenderDevice::UpdateClipBox() {
   m_ClipBox.bottom = m_Height;
 }
 FX_BOOL CFX_RenderDevice::DrawPath(const CFX_PathData* pPathData,
-                                   const CFX_AffineMatrix* pObject2Device,
+                                   const CFX_Matrix* pObject2Device,
                                    const CFX_GraphStateData* pGraphState,
                                    FX_DWORD fill_color,
                                    FX_DWORD stroke_color,
@@ -212,9 +211,9 @@ FX_BOOL CFX_RenderDevice::DrawPath(const CFX_PathData* pPathData,
               (((fill_alpha >> 2) << 24) | (strokecolor & 0x00ffffff));
         }
       }
-      CFX_AffineMatrix* pMatrix = NULL;
+      CFX_Matrix* pMatrix = NULL;
       if (pObject2Device && !pObject2Device->IsIdentity()) {
-        pMatrix = (CFX_AffineMatrix*)pObject2Device;
+        pMatrix = (CFX_Matrix*)pObject2Device;
       }
       int smooth_path = FX_ZEROAREA_FILL;
       if (fill_mode & FXFILL_NOPATHSMOOTH) {
@@ -260,7 +259,7 @@ FX_BOOL CFX_RenderDevice::DrawPath(const CFX_PathData* pPathData,
     }
     CFX_FxgeDevice bitmap_device;
     bitmap_device.Attach(&bitmap, 0, FALSE, &Backdrop, TRUE);
-    CFX_AffineMatrix matrix;
+    CFX_Matrix matrix;
     if (pObject2Device) {
       matrix = *pObject2Device;
     }
@@ -363,7 +362,7 @@ FX_BOOL CFX_RenderDevice::SetDIBits(const CFX_DIBSource* pBitmap,
                                     int blend_mode,
                                     void* pIccTransform) {
   ASSERT(!pBitmap->IsAlphaMask());
-  CFX_AffineMatrix ctm = GetCTM();
+  CFX_Matrix ctm = GetCTM();
   FX_FLOAT fScaleX = FXSYS_fabs(ctm.a);
   FX_FLOAT fScaleY = FXSYS_fabs(ctm.d);
   FX_RECT dest_rect(left, top,
@@ -458,7 +457,7 @@ FX_BOOL CFX_RenderDevice::StretchBitMask(const CFX_DIBSource* pBitmap,
 FX_BOOL CFX_RenderDevice::StartDIBits(const CFX_DIBSource* pBitmap,
                                       int bitmap_alpha,
                                       FX_DWORD argb,
-                                      const CFX_AffineMatrix* pMatrix,
+                                      const CFX_Matrix* pMatrix,
                                       FX_DWORD flags,
                                       void*& handle,
                                       int alpha_flag,

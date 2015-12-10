@@ -24,7 +24,7 @@ class CPWL_Signature_Image : public CPWL_Image {
  protected:
   // CPWL_Image
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                          CPDF_Matrix* pUser2Device) override;
+                          CFX_Matrix* pUser2Device) override;
   void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) override;
   void GetScale(FX_FLOAT& fHScale, FX_FLOAT& fVScale) override;
 
@@ -51,7 +51,7 @@ class CPWL_Signature : public CPWL_Wnd {
   void RePosChildWnd() override;
   void CreateChildWnd(const PWL_CREATEPARAM& cp) override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                          CPDF_Matrix* pUser2Device) override;
+                          CFX_Matrix* pUser2Device) override;
   void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) override;
 
  private:

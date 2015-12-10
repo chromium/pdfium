@@ -89,7 +89,7 @@ class CPWL_Note_Icon : public CPWL_Wnd {
  protected:
   // CPWL_Wnd
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                          CPDF_Matrix* pUser2Device) override;
+                          CFX_Matrix* pUser2Device) override;
 
  private:
   int32_t m_nType;
@@ -103,7 +103,7 @@ class CPWL_Note_CloseBox : public CPWL_Button {
  protected:
   // CPWL_Button
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                          CPDF_Matrix* pUser2Device) override;
+                          CFX_Matrix* pUser2Device) override;
   FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag) override;
   FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag) override;
 
@@ -119,7 +119,7 @@ class CPWL_Note_LBBox : public CPWL_Wnd {
  protected:
   // CPWL_Wnd
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                          CPDF_Matrix* pUser2Device) override;
+                          CFX_Matrix* pUser2Device) override;
 };
 
 class CPWL_Note_RBBox : public CPWL_Wnd {
@@ -130,7 +130,7 @@ class CPWL_Note_RBBox : public CPWL_Wnd {
  protected:
   // CPWL_Wnd
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                          CPDF_Matrix* pUser2Device) override;
+                          CFX_Matrix* pUser2Device) override;
 };
 
 class CPWL_Note_Edit : public CPWL_Edit {
@@ -173,7 +173,7 @@ class CPWL_Note_Options : public CPWL_Wnd {
   void RePosChildWnd() override;
   void CreateChildWnd(const PWL_CREATEPARAM& cp) override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                          CPDF_Matrix* pUser2Device) override;
+                          CFX_Matrix* pUser2Device) override;
   void SetTextColor(const CPWL_Color& color) override;
 
  private:

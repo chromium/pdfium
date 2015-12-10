@@ -75,7 +75,7 @@ void CPWL_Note_Options::SetText(const CFX_WideString& sText) {
 }
 
 void CPWL_Note_Options::DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                           CPDF_Matrix* pUser2Device) {
+                                           CFX_Matrix* pUser2Device) {
   CPWL_Wnd::DrawThisAppearance(pDevice, pUser2Device);
 
   CPDF_Rect rcClient = GetClientRect();
@@ -246,7 +246,7 @@ CPWL_Note_LBBox::CPWL_Note_LBBox() {}
 CPWL_Note_LBBox::~CPWL_Note_LBBox() {}
 
 void CPWL_Note_LBBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                         CPDF_Matrix* pUser2Device) {
+                                         CFX_Matrix* pUser2Device) {
   CPDF_Rect rcClient = GetClientRect();
 
   CFX_GraphStateData gsd;
@@ -276,7 +276,7 @@ CPWL_Note_RBBox::CPWL_Note_RBBox() {}
 CPWL_Note_RBBox::~CPWL_Note_RBBox() {}
 
 void CPWL_Note_RBBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                         CPDF_Matrix* pUser2Device) {
+                                         CFX_Matrix* pUser2Device) {
   CPDF_Rect rcClient = GetClientRect();
 
   CFX_GraphStateData gsd;
@@ -310,7 +310,7 @@ void CPWL_Note_Icon::SetIconType(int32_t nType) {
 }
 
 void CPWL_Note_Icon::DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                        CPDF_Matrix* pUser2Device) {
+                                        CFX_Matrix* pUser2Device) {
   CPWL_Utils::DrawIconAppStream(pDevice, pUser2Device, m_nType, GetClientRect(),
                                 GetBackgroundColor(), PWL_DEFAULT_BLACKCOLOR,
                                 GetTransparency());
@@ -324,7 +324,7 @@ CPWL_Note_CloseBox::CPWL_Note_CloseBox() : m_bMouseDown(FALSE) {}
 CPWL_Note_CloseBox::~CPWL_Note_CloseBox() {}
 
 void CPWL_Note_CloseBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                            CPDF_Matrix* pUser2Device) {
+                                            CFX_Matrix* pUser2Device) {
   CPWL_Button::DrawThisAppearance(pDevice, pUser2Device);
 
   CPDF_Rect rcClient = GetClientRect();

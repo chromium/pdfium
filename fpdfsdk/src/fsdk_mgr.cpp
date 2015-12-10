@@ -102,9 +102,9 @@ void CFX_SystemHandler::InvalidateRect(FX_HWND hWnd, FX_RECT rect) {
   UnderlyingPageType* pPage = pSDKAnnot->GetUnderlyingPage();
   if (!pPage || !pPageView)
     return;
-  CPDF_Matrix page2device;
+  CFX_Matrix page2device;
   pPageView->GetCurrentMatrix(page2device);
-  CPDF_Matrix device2page;
+  CFX_Matrix device2page;
   device2page.SetReverse(page2device);
   FX_FLOAT left, top, right, bottom;
   device2page.Transform((FX_FLOAT)rect.left, (FX_FLOAT)rect.top, left, top);
@@ -657,7 +657,7 @@ CPDFSDK_PageView::~CPDFSDK_PageView() {
 }
 
 void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
-                                       CPDF_Matrix* pUser2Device,
+                                       CFX_Matrix* pUser2Device,
 #ifdef PDF_ENABLE_XFA
                                        CPDF_RenderOptions* pOptions,
                                        const FX_RECT& pClip) {

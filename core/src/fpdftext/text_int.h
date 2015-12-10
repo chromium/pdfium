@@ -34,7 +34,7 @@ typedef struct _PAGECHAR_INFO {
   int32_t m_Flag;
   CFX_FloatRect m_CharBox;
   CPDF_TextObject* m_pTextObj;
-  CFX_AffineMatrix m_Matrix;
+  CFX_Matrix m_Matrix;
   int m_Index;
 } PAGECHAR_INFO;
 typedef CFX_SegmentedArray<PAGECHAR_INFO> PAGECHAR_InfoArray;
@@ -45,7 +45,7 @@ typedef struct {
 typedef CFX_ArrayTemplate<FPDF_SEGMENT> SEGMENT_Array;
 typedef struct {
   CPDF_TextObject* m_pTextObj;
-  CFX_AffineMatrix m_formMatrix;
+  CFX_Matrix m_formMatrix;
 } PDFTEXT_Obj;
 typedef CFX_ArrayTemplate<PDFTEXT_Obj> LINEOBJ;
 
@@ -103,13 +103,13 @@ class CPDF_TextPage : public IPDF_TextPage {
   FX_BOOL GetBaselineRotate(int start, int end, int& Rotate);
   void ProcessObject();
   void ProcessFormObject(CPDF_FormObject* pFormObj,
-                         const CFX_AffineMatrix& formMatrix);
+                         const CFX_Matrix& formMatrix);
   void ProcessTextObject(PDFTEXT_Obj pObj);
   void ProcessTextObject(CPDF_TextObject* pTextObj,
-                         const CFX_AffineMatrix& formMatrix,
+                         const CFX_Matrix& formMatrix,
                          FX_POSITION ObjPos);
   int ProcessInsertObject(const CPDF_TextObject* pObj,
-                          const CFX_AffineMatrix& formMatrix);
+                          const CFX_Matrix& formMatrix);
   FX_BOOL GenerateCharInfo(FX_WCHAR unicode, PAGECHAR_INFO& info);
   FX_BOOL IsSameAsPreTextObject(CPDF_TextObject* pTextObj, FX_POSITION ObjPos);
   FX_BOOL IsSameTextObject(CPDF_TextObject* pTextObj1,
@@ -140,9 +140,9 @@ class CPDF_TextPage : public IPDF_TextPage {
   CFX_WideTextBuf m_TempTextBuf;
   const int m_parserflag;
   CPDF_TextObject* m_pPreTextObj;
-  CFX_AffineMatrix m_perMatrix;
+  CFX_Matrix m_perMatrix;
   bool m_bIsParsed;
-  CFX_AffineMatrix m_DisplayMatrix;
+  CFX_Matrix m_DisplayMatrix;
   SEGMENT_Array m_Segment;
   CFX_RectArray m_SelRects;
   LINEOBJ m_LineObj;

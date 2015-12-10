@@ -32,7 +32,7 @@ void CPDF_ImageObject::CopyData(const CPDF_PageObject* pSrc) {
   m_pImage = pSrcObj->m_pImage->Clone();
   m_Matrix = pSrcObj->m_Matrix;
 }
-void CPDF_ImageObject::Transform(const CFX_AffineMatrix& matrix) {
+void CPDF_ImageObject::Transform(const CFX_Matrix& matrix) {
   m_Matrix.Concat(matrix);
   CalcBoundingBox();
 }

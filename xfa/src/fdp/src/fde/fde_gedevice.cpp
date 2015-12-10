@@ -124,7 +124,7 @@ FX_BOOL CFDE_FxgeDevice::DrawImage(CFX_DIBSource* pDib,
     dib2fxdev.Concat(*pDevMatrix);
   }
   void* handle = NULL;
-  m_pDevice->StartDIBits(pDib, 255, 0, (const CFX_AffineMatrix*)&dib2fxdev, 0,
+  m_pDevice->StartDIBits(pDib, 255, 0, (const CFX_Matrix*)&dib2fxdev, 0,
                          handle);
   while (m_pDevice->ContinueDIBits(handle, NULL)) {
   }
@@ -180,13 +180,13 @@ FX_BOOL CFDE_FxgeDevice::DrawString(IFDE_Brush* pBrush,
             pFxFont = (CFX_Font*)pCurFont->GetDevFont();
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
             FxFont.SetFace(pFxFont->GetFace());
-            m_pDevice->DrawNormalText(
-                iCurCount, pCurCP, &FxFont, pCache, -fFontSize,
-                (const CFX_AffineMatrix*)pMatrix, argb, FXTEXT_CLEARTYPE);
+            m_pDevice->DrawNormalText(iCurCount, pCurCP, &FxFont, pCache,
+                                      -fFontSize, (const CFX_Matrix*)pMatrix,
+                                      argb, FXTEXT_CLEARTYPE);
 #else
-            m_pDevice->DrawNormalText(
-                iCurCount, pCurCP, pFxFont, pCache, -fFontSize,
-                (const CFX_AffineMatrix*)pMatrix, argb, FXTEXT_CLEARTYPE);
+            m_pDevice->DrawNormalText(iCurCount, pCurCP, pFxFont, pCache,
+                                      -fFontSize, (const CFX_Matrix*)pMatrix,
+                                      argb, FXTEXT_CLEARTYPE);
 #endif
           }
           pCurFont = pSTFont;
@@ -203,14 +203,14 @@ FX_BOOL CFDE_FxgeDevice::DrawString(IFDE_Brush* pBrush,
         FxFont.SetFace(pFxFont->GetFace());
         FX_BOOL bRet = m_pDevice->DrawNormalText(
             iCurCount, pCurCP, &FxFont, pCache, -fFontSize,
-            (const CFX_AffineMatrix*)pMatrix, argb, FXTEXT_CLEARTYPE);
+            (const CFX_Matrix*)pMatrix, argb, FXTEXT_CLEARTYPE);
         FxFont.SetSubstFont(nullptr);
         FxFont.SetFace(nullptr);
         return bRet;
 #else
-        return m_pDevice->DrawNormalText(
-            iCurCount, pCurCP, pFxFont, pCache, -fFontSize,
-            (const CFX_AffineMatrix*)pMatrix, argb, FXTEXT_CLEARTYPE);
+        return m_pDevice->DrawNormalText(iCurCount, pCurCP, pFxFont, pCache,
+                                         -fFontSize, (const CFX_Matrix*)pMatrix,
+                                         argb, FXTEXT_CLEARTYPE);
 #endif
       }
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
@@ -286,7 +286,7 @@ FX_BOOL CFDE_FxgeDevice::DrawPath(IFDE_Pen* pPen,
   if (!CreatePen(pPen, fPenWidth, graphState)) {
     return FALSE;
   }
-  return m_pDevice->DrawPath(&pGePath->m_Path, (const CFX_AffineMatrix*)pMatrix,
+  return m_pDevice->DrawPath(&pGePath->m_Path, (const CFX_Matrix*)pMatrix,
                              &graphState, 0, pPen->GetColor(), 0);
 }
 FX_BOOL CFDE_FxgeDevice::DrawPolygon(IFDE_Pen* pPen,
@@ -410,7 +410,7 @@ FX_BOOL CFDE_FxgeDevice::FillSolidPath(IFDE_Brush* pBrush,
                                        const CFX_Matrix* pMatrix) {
   FXSYS_assert(pPath && pBrush && pBrush->GetType() == FDE_BRUSHTYPE_Solid);
   IFDE_SolidBrush* pSolidBrush = (IFDE_SolidBrush*)pBrush;
-  return m_pDevice->DrawPath(pPath, (const CFX_AffineMatrix*)pMatrix, NULL,
+  return m_pDevice->DrawPath(pPath, (const CFX_Matrix*)pMatrix, NULL,
                              pSolidBrush->GetColor(), 0, FXFILL_WINDING);
 }
 FX_BOOL CFDE_FxgeDevice::FillHatchPath(IFDE_Brush* pBrush,
@@ -430,13 +430,13 @@ FX_BOOL CFDE_FxgeDevice::FillHatchPath(IFDE_Brush* pBrush,
   FX_ARGB dwBackColor = pHatchBrush->GetColor(FALSE);
   CFX_FloatRect rectf = pPath->GetBoundingBox();
   if (pMatrix) {
-    rectf.Transform((const CFX_AffineMatrix*)pMatrix);
+    rectf.Transform((const CFX_Matrix*)pMatrix);
   }
   FX_RECT rect(FXSYS_round(rectf.left), FXSYS_round(rectf.top),
                FXSYS_round(rectf.right), FXSYS_round(rectf.bottom));
   m_pDevice->SaveState();
   m_pDevice->StartRendering();
-  m_pDevice->SetClip_PathFill(pPath, (const CFX_AffineMatrix*)pMatrix,
+  m_pDevice->SetClip_PathFill(pPath, (const CFX_Matrix*)pMatrix,
                               FXFILL_WINDING);
   m_pDevice->FillRect(&rect, dwBackColor);
   for (int32_t j = rect.bottom; j < rect.top; j += mask.GetHeight())
@@ -476,7 +476,7 @@ FX_BOOL CFDE_FxgeDevice::WrapTexture(int32_t iWrapMode,
                                      const CFX_Matrix* pMatrix) {
   CFX_FloatRect rectf = pPath->GetBoundingBox();
   if (pMatrix) {
-    rectf.Transform((const CFX_AffineMatrix*)pMatrix);
+    rectf.Transform((const CFX_Matrix*)pMatrix);
   }
   FX_RECT rect(FXSYS_round(rectf.left), FXSYS_round(rectf.top),
                FXSYS_round(rectf.right), FXSYS_round(rectf.bottom));
@@ -486,7 +486,7 @@ FX_BOOL CFDE_FxgeDevice::WrapTexture(int32_t iWrapMode,
   }
   m_pDevice->SaveState();
   m_pDevice->StartRendering();
-  m_pDevice->SetClip_PathFill(pPath, (const CFX_AffineMatrix*)pMatrix,
+  m_pDevice->SetClip_PathFill(pPath, (const CFX_Matrix*)pMatrix,
                               FXFILL_WINDING);
   switch (iWrapMode) {
     case FDE_WRAPMODE_Tile:

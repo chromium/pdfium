@@ -29,7 +29,7 @@ static void DrawTextString(CFX_RenderDevice* pDevice,
                            const CPDF_Point& pt,
                            CPDF_Font* pFont,
                            FX_FLOAT fFontSize,
-                           CPDF_Matrix* pUser2Device,
+                           CFX_Matrix* pUser2Device,
                            const CFX_ByteString& str,
                            FX_ARGB crTextFill,
                            FX_ARGB crTextStroke,
@@ -39,7 +39,7 @@ static void DrawTextString(CFX_RenderDevice* pDevice,
 
   if (pFont) {
     if (nHorzScale != 100) {
-      CPDF_Matrix mt(nHorzScale / 100.0f, 0, 0, 1, 0, 0);
+      CFX_Matrix mt(nHorzScale / 100.0f, 0, 0, 1, 0, 0);
       mt.Concat(*pUser2Device);
 
       CPDF_RenderOptions ro;
@@ -85,7 +85,7 @@ static void DrawTextString(CFX_RenderDevice* pDevice,
 }
 
 void IFX_Edit::DrawUnderline(CFX_RenderDevice* pDevice,
-                             CPDF_Matrix* pUser2Device,
+                             CFX_Matrix* pUser2Device,
                              IFX_Edit* pEdit,
                              FX_COLORREF color,
                              const CPDF_Rect& rcClip,
@@ -138,7 +138,7 @@ void IFX_Edit::DrawUnderline(CFX_RenderDevice* pDevice,
 }
 
 void IFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
-                        CPDF_Matrix* pUser2Device,
+                        CFX_Matrix* pUser2Device,
                         IFX_Edit* pEdit,
                         FX_COLORREF crTextFill,
                         FX_COLORREF crTextStroke,
@@ -277,7 +277,7 @@ void IFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
 }
 
 void IFX_Edit::DrawRichEdit(CFX_RenderDevice* pDevice,
-                            CPDF_Matrix* pUser2Device,
+                            CFX_Matrix* pUser2Device,
                             IFX_Edit* pEdit,
                             const CPDF_Rect& rcClip,
                             const CPDF_Point& ptOffset,

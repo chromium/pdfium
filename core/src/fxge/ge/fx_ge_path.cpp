@@ -156,8 +156,7 @@ void CFX_PathData::AddPointCount(int addPoints) {
   AllocPointCount(new_count);
   m_PointCount = new_count;
 }
-void CFX_PathData::Append(const CFX_PathData* pSrc,
-                          const CFX_AffineMatrix* pMatrix) {
+void CFX_PathData::Append(const CFX_PathData* pSrc, const CFX_Matrix* pMatrix) {
   int old_count = m_PointCount;
   AddPointCount(pSrc->m_PointCount);
   FXSYS_memcpy(m_pPoints + old_count, pSrc->m_pPoints,
@@ -384,7 +383,7 @@ CFX_FloatRect CFX_PathData::GetBoundingBox(FX_FLOAT line_width,
   }
   return rect;
 }
-void CFX_PathData::Transform(const CFX_AffineMatrix* pMatrix) {
+void CFX_PathData::Transform(const CFX_Matrix* pMatrix) {
   if (pMatrix == NULL) {
     return;
   }
@@ -393,7 +392,7 @@ void CFX_PathData::Transform(const CFX_AffineMatrix* pMatrix) {
   }
 }
 FX_BOOL CFX_PathData::GetZeroAreaPath(CFX_PathData& NewPath,
-                                      CFX_AffineMatrix* pMatrix,
+                                      CFX_Matrix* pMatrix,
                                       FX_BOOL& bThin,
                                       FX_BOOL bAdjust) const {
   if (m_PointCount < 3) {
@@ -563,7 +562,7 @@ FX_BOOL CFX_PathData::IsRect() const {
   }
   return m_PointCount == 5 || (m_pPoints[3].m_Flag & FXPT_CLOSEFIGURE);
 }
-FX_BOOL CFX_PathData::IsRect(const CFX_AffineMatrix* pMatrix,
+FX_BOOL CFX_PathData::IsRect(const CFX_Matrix* pMatrix,
                              CFX_FloatRect* pRect) const {
   if (pMatrix == NULL) {
     if (!IsRect()) {

@@ -17,7 +17,7 @@ void CPDF_PathObject::CopyData(const CPDF_PageObject* pSrc) {
   m_bStroke = pSrcObj->m_bStroke;
   m_Matrix = pSrcObj->m_Matrix;
 }
-void CPDF_PathObject::Transform(const CPDF_Matrix& matrix) {
+void CPDF_PathObject::Transform(const CFX_Matrix& matrix) {
   m_Matrix.Concat(matrix);
   CalcBoundingBox();
 }

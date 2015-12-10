@@ -334,7 +334,7 @@ DLLEXPORT void STDCALL FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,
     return;
 #endif  // PDF_ENABLE_XFA
 
-  CFX_AffineMatrix matrix;
+  CFX_Matrix matrix;
   pPage->GetDisplayMatrix(matrix, start_x, start_y, size_x, size_y, rotate);
 
   FX_RECT clip;

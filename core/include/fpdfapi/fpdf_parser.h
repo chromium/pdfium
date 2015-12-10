@@ -15,10 +15,10 @@
 
 class CFDF_Document;
 class CFDF_Parser;
-class CFX_AffineMatrix;
 class CFX_DIBSource;
 class CFX_FloatRect;
 class CFX_Font;
+class CFX_Matrix;
 class CFX_PrivateData;
 class CPDF_ColorSpace;
 class CPDF_CryptoHandler;
@@ -122,7 +122,7 @@ class CPDF_Document : public CFX_PrivateData, public CPDF_IndirectObjects {
 
   CPDF_Pattern* LoadPattern(CPDF_Object* pObj,
                             FX_BOOL bShading,
-                            const CFX_AffineMatrix* matrix = NULL);
+                            const CFX_Matrix* matrix = NULL);
 
   CPDF_Image* LoadImageF(CPDF_Object* pObj);
 
@@ -789,7 +789,6 @@ class CPDF_Point {
 };
 
 #define CPDF_Rect CFX_FloatRect
-#define CPDF_Matrix CFX_AffineMatrix
 CFX_ByteString PDF_NameDecode(const CFX_ByteStringC& orig);
 CFX_ByteString PDF_NameDecode(const CFX_ByteString& orig);
 CFX_ByteString PDF_NameEncode(const CFX_ByteString& orig);

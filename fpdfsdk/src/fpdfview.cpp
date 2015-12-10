@@ -770,10 +770,10 @@ DLLEXPORT void STDCALL FPDF_DeviceToPage(FPDF_PAGE page,
   pPage->DeviceToPage(start_x, start_y, size_x, size_y, rotate, device_x,
                       device_y, page_x, page_y);
 #else   // PDF_ENABLE_XFA
-  CPDF_Matrix page2device;
+  CFX_Matrix page2device;
   pPage->GetDisplayMatrix(page2device, start_x, start_y, size_x, size_y,
                           rotate);
-  CPDF_Matrix device2page;
+  CFX_Matrix device2page;
   device2page.SetReverse(page2device);
   FX_FLOAT page_x_f, page_y_f;
   device2page.Transform((FX_FLOAT)(device_x), (FX_FLOAT)(device_y), page_x_f,
@@ -802,7 +802,7 @@ DLLEXPORT void STDCALL FPDF_PageToDevice(FPDF_PAGE page,
   pPage->PageToDevice(start_x, start_y, size_x, size_y, rotate, page_x, page_y,
                       device_x, device_y);
 #else   // PDF_ENABLE_XFA
-  CPDF_Matrix page2device;
+  CFX_Matrix page2device;
   pPage->GetDisplayMatrix(page2device, start_x, start_y, size_x, size_y,
                           rotate);
   FX_FLOAT device_x_f, device_y_f;
@@ -945,7 +945,7 @@ void FPDF_RenderPage_Retail(CRenderContext* pContext,
   pContext->m_pOptions->m_pOCContext =
       new CPDF_OCContext(pPage->m_pDocument, usage);
 
-  CFX_AffineMatrix matrix;
+  CFX_Matrix matrix;
   pPage->GetDisplayMatrix(matrix, start_x, start_y, size_x, size_y, rotate);
 
   FX_RECT clip;

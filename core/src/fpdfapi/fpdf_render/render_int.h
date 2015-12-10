@@ -41,14 +41,14 @@ class CPDF_Type3Cache {
   ~CPDF_Type3Cache();
 
   CFX_GlyphBitmap* LoadGlyph(FX_DWORD charcode,
-                             const CFX_AffineMatrix* pMatrix,
+                             const CFX_Matrix* pMatrix,
                              FX_FLOAT retinaScaleX = 1.0f,
                              FX_FLOAT retinaScaleY = 1.0f);
 
  protected:
   CFX_GlyphBitmap* RenderGlyph(CPDF_Type3Glyphs* pSize,
                                FX_DWORD charcode,
-                               const CFX_AffineMatrix* pMatrix,
+                               const CFX_Matrix* pMatrix,
                                FX_FLOAT retinaScaleX = 1.0f,
                                FX_FLOAT retinaScaleY = 1.0f);
   CPDF_Type3Font* const m_pFont;
@@ -93,7 +93,7 @@ class CPDF_DocRenderData {
 struct _PDF_RenderItem {
  public:
   CPDF_PageObjects* m_pObjectList;
-  CFX_AffineMatrix m_Matrix;
+  CFX_Matrix m_Matrix;
 };
 
 typedef CFX_ArrayTemplate<_PDF_RenderItem> CPDF_RenderLayer;
@@ -104,7 +104,7 @@ class IPDF_ObjectRenderer {
   virtual ~IPDF_ObjectRenderer() {}
   virtual FX_BOOL Start(CPDF_RenderStatus* pRenderStatus,
                         const CPDF_PageObject* pObj,
-                        const CFX_AffineMatrix* pObj2Device,
+                        const CFX_Matrix* pObj2Device,
                         FX_BOOL bStdCS,
                         int blendType = FXDIB_BLEND_NORMAL) = 0;
   virtual FX_BOOL Continue(IFX_Pause* pPause) = 0;
@@ -117,7 +117,7 @@ class CPDF_RenderStatus {
   ~CPDF_RenderStatus();
   FX_BOOL Initialize(class CPDF_RenderContext* pContext,
                      CFX_RenderDevice* pDevice,
-                     const CFX_AffineMatrix* pDeviceMatrix,
+                     const CFX_Matrix* pDeviceMatrix,
                      const CPDF_PageObject* pStopObj,
                      const CPDF_RenderStatus* pParentStatus,
                      const CPDF_GraphicStates* pInitialStates,
@@ -131,11 +131,11 @@ class CPDF_RenderStatus {
                      FX_DWORD GroupFamily = 0,
                      FX_BOOL bLoadMask = FALSE);
   void RenderObjectList(const CPDF_PageObjects* pObjs,
-                        const CFX_AffineMatrix* pObj2Device);
+                        const CFX_Matrix* pObj2Device);
   void RenderSingleObject(const CPDF_PageObject* pObj,
-                          const CFX_AffineMatrix* pObj2Device);
+                          const CFX_Matrix* pObj2Device);
   FX_BOOL ContinueSingleObject(const CPDF_PageObject* pObj,
-                               const CFX_AffineMatrix* pObj2Device,
+                               const CFX_Matrix* pObj2Device,
                                IFX_Pause* pPause);
   CPDF_RenderContext* GetContext() { return m_pContext; }
 
@@ -147,49 +147,46 @@ class CPDF_RenderStatus {
  protected:
   friend class CPDF_ImageRenderer;
   friend class CPDF_RenderContext;
-  void ProcessClipPath(CPDF_ClipPath ClipPath,
-                       const CFX_AffineMatrix* pObj2Device);
-  void DrawClipPath(CPDF_ClipPath ClipPath,
-                    const CFX_AffineMatrix* pObj2Device);
+  void ProcessClipPath(CPDF_ClipPath ClipPath, const CFX_Matrix* pObj2Device);
+  void DrawClipPath(CPDF_ClipPath ClipPath, const CFX_Matrix* pObj2Device);
   FX_BOOL ProcessTransparency(const CPDF_PageObject* PageObj,
-                              const CFX_AffineMatrix* pObj2Device);
+                              const CFX_Matrix* pObj2Device);
   void ProcessObjectNoClip(const CPDF_PageObject* PageObj,
-                           const CFX_AffineMatrix* pObj2Device);
+                           const CFX_Matrix* pObj2Device);
   void DrawObjWithBackground(const CPDF_PageObject* pObj,
-                             const CFX_AffineMatrix* pObj2Device);
+                             const CFX_Matrix* pObj2Device);
   FX_BOOL DrawObjWithBlend(const CPDF_PageObject* pObj,
-                           const CFX_AffineMatrix* pObj2Device);
-  FX_BOOL ProcessPath(CPDF_PathObject* pPathObj,
-                      const CFX_AffineMatrix* pObj2Device);
+                           const CFX_Matrix* pObj2Device);
+  FX_BOOL ProcessPath(CPDF_PathObject* pPathObj, const CFX_Matrix* pObj2Device);
   void ProcessPathPattern(CPDF_PathObject* pPathObj,
-                          const CFX_AffineMatrix* pObj2Device,
+                          const CFX_Matrix* pObj2Device,
                           int& filltype,
                           FX_BOOL& bStroke);
   void DrawPathWithPattern(CPDF_PathObject* pPathObj,
-                           const CFX_AffineMatrix* pObj2Device,
+                           const CFX_Matrix* pObj2Device,
                            CPDF_Color* pColor,
                            FX_BOOL bStroke);
   void DrawTilingPattern(CPDF_TilingPattern* pPattern,
                          CPDF_PageObject* pPageObj,
-                         const CFX_AffineMatrix* pObj2Device,
+                         const CFX_Matrix* pObj2Device,
                          FX_BOOL bStroke);
   void DrawShadingPattern(CPDF_ShadingPattern* pPattern,
                           CPDF_PageObject* pPageObj,
-                          const CFX_AffineMatrix* pObj2Device,
+                          const CFX_Matrix* pObj2Device,
                           FX_BOOL bStroke);
   FX_BOOL SelectClipPath(CPDF_PathObject* pPathObj,
-                         const CFX_AffineMatrix* pObj2Device,
+                         const CFX_Matrix* pObj2Device,
                          FX_BOOL bStroke);
   FX_BOOL ProcessImage(CPDF_ImageObject* pImageObj,
-                       const CFX_AffineMatrix* pObj2Device);
+                       const CFX_Matrix* pObj2Device);
   FX_BOOL OutputBitmapAlpha(CPDF_ImageObject* pImageObj,
-                            const CFX_AffineMatrix* pImage2Device);
+                            const CFX_Matrix* pImage2Device);
   FX_BOOL OutputImage(CPDF_ImageObject* pImageObj,
-                      const CFX_AffineMatrix* pImage2Device);
+                      const CFX_Matrix* pImage2Device);
   FX_BOOL OutputDIBSource(const CFX_DIBSource* pOutputBitmap,
                           FX_ARGB fill_argb,
                           int bitmap_alpha,
-                          const CFX_AffineMatrix* pImage2Device,
+                          const CFX_Matrix* pImage2Device,
                           CPDF_ImageCache* pImageCache,
                           FX_DWORD flags);
   void CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
@@ -200,26 +197,25 @@ class CPDF_RenderStatus {
                          int blend_mode,
                          int bIsolated);
   FX_BOOL ProcessShading(CPDF_ShadingObject* pShadingObj,
-                         const CFX_AffineMatrix* pObj2Device);
+                         const CFX_Matrix* pObj2Device);
   void DrawShading(CPDF_ShadingPattern* pPattern,
-                   CFX_AffineMatrix* pMatrix,
+                   CFX_Matrix* pMatrix,
                    FX_RECT& clip_rect,
                    int alpha,
                    FX_BOOL bAlphaMode);
   FX_BOOL ProcessType3Text(const CPDF_TextObject* textobj,
-                           const CFX_AffineMatrix* pObj2Device);
+                           const CFX_Matrix* pObj2Device);
   FX_BOOL ProcessText(const CPDF_TextObject* textobj,
-                      const CFX_AffineMatrix* pObj2Device,
+                      const CFX_Matrix* pObj2Device,
                       CFX_PathData* pClippingPath);
   void DrawTextPathWithPattern(const CPDF_TextObject* textobj,
-                               const CFX_AffineMatrix* pObj2Device,
+                               const CFX_Matrix* pObj2Device,
                                CPDF_Font* pFont,
                                FX_FLOAT font_size,
-                               const CFX_AffineMatrix* pTextMatrix,
+                               const CFX_Matrix* pTextMatrix,
                                FX_BOOL bFill,
                                FX_BOOL bStroke);
-  FX_BOOL ProcessForm(CPDF_FormObject* pFormObj,
-                      const CFX_AffineMatrix* pObj2Device);
+  FX_BOOL ProcessForm(CPDF_FormObject* pFormObj, const CFX_Matrix* pObj2Device);
   CFX_DIBitmap* GetBackdrop(const CPDF_PageObject* pObj,
                             const FX_RECT& rect,
                             int& left,
@@ -227,7 +223,7 @@ class CPDF_RenderStatus {
                             FX_BOOL bBackAlphaRequired);
   CFX_DIBitmap* LoadSMask(CPDF_Dictionary* pSMaskDict,
                           FX_RECT* pClipRect,
-                          const CFX_AffineMatrix* pMatrix);
+                          const CFX_Matrix* pMatrix);
   void Init(CPDF_RenderContext* pParent);
   static class CPDF_Type3Cache* GetCachedType3(CPDF_Type3Font* pFont);
   static CPDF_GraphicStates* CloneObjStates(const CPDF_GraphicStates* pPathObj,
@@ -239,9 +235,9 @@ class CPDF_RenderStatus {
   CPDF_RenderContext* m_pContext;
   FX_BOOL m_bStopped;
   void DitherObjectArea(const CPDF_PageObject* pObj,
-                        const CFX_AffineMatrix* pObj2Device);
+                        const CFX_Matrix* pObj2Device);
   FX_BOOL GetObjectClippedRect(const CPDF_PageObject* pObj,
-                               const CFX_AffineMatrix* pObj2Device,
+                               const CFX_Matrix* pObj2Device,
                                FX_BOOL bLogical,
                                FX_RECT& rect) const;
   void GetScaledMatrix(CFX_Matrix& matrix) const;
@@ -251,7 +247,7 @@ class CPDF_RenderStatus {
   static int s_CurrentRecursionDepth;
 
   CFX_RenderDevice* m_pDevice;
-  CFX_AffineMatrix m_DeviceMatrix;
+  CFX_Matrix m_DeviceMatrix;
   CPDF_ClipPath m_LastClipPath;
   const CPDF_PageObject* m_pCurObj;
   const CPDF_PageObject* m_pStopObj;
@@ -340,7 +336,7 @@ class CPDF_ImageRenderer : public IPDF_ObjectRenderer {
   // IPDF_ObjectRenderer
   FX_BOOL Start(CPDF_RenderStatus* pStatus,
                 const CPDF_PageObject* pObj,
-                const CFX_AffineMatrix* pObj2Device,
+                const CFX_Matrix* pObj2Device,
                 FX_BOOL bStdCS,
                 int blendType = FXDIB_BLEND_NORMAL) override;
   FX_BOOL Continue(IFX_Pause* pPause) override;
@@ -349,7 +345,7 @@ class CPDF_ImageRenderer : public IPDF_ObjectRenderer {
                 const CFX_DIBSource* pDIBSource,
                 FX_ARGB bitmap_argb,
                 int bitmap_alpha,
-                const CFX_AffineMatrix* pImage2Device,
+                const CFX_Matrix* pImage2Device,
                 FX_DWORD flags,
                 FX_BOOL bStdCS,
                 int blendType = FXDIB_BLEND_NORMAL);
@@ -358,8 +354,8 @@ class CPDF_ImageRenderer : public IPDF_ObjectRenderer {
   CPDF_RenderStatus* m_pRenderStatus;
   CPDF_ImageObject* m_pImageObject;
   int m_Status;
-  const CFX_AffineMatrix* m_pObj2Device;
-  CFX_AffineMatrix m_ImageMatrix;
+  const CFX_Matrix* m_pObj2Device;
+  CFX_Matrix m_ImageMatrix;
   CPDF_ImageLoader m_Loader;
   const CFX_DIBSource* m_pDIBSource;
   CFX_DIBitmap* m_pClone;
@@ -396,7 +392,7 @@ class CPDF_ScaledRenderBuffer {
   CFX_RenderDevice* GetDevice() {
     return m_pBitmapDevice ? m_pBitmapDevice.get() : m_pDevice;
   }
-  CFX_AffineMatrix* GetMatrix() { return &m_Matrix; }
+  CFX_Matrix* GetMatrix() { return &m_Matrix; }
   void OutputToDevice();
 
  private:
@@ -405,7 +401,7 @@ class CPDF_ScaledRenderBuffer {
   FX_RECT m_Rect;
   const CPDF_PageObject* m_pObject;
   nonstd::unique_ptr<CFX_FxgeDevice> m_pBitmapDevice;
-  CFX_AffineMatrix m_Matrix;
+  CFX_Matrix m_Matrix;
 };
 
 class ICodec_ScanlineDecoder;
@@ -414,7 +410,7 @@ class CPDF_QuickStretcher {
   CPDF_QuickStretcher();
   ~CPDF_QuickStretcher();
   FX_BOOL Start(CPDF_ImageObject* pImageObj,
-                CFX_AffineMatrix* pImage2Device,
+                CFX_Matrix* pImage2Device,
                 const FX_RECT* pClipBox);
   FX_BOOL Continue(IFX_Pause* pPause);
   CFX_DIBitmap* m_pBitmap;
@@ -439,7 +435,7 @@ class CPDF_DeviceBuffer {
                      int max_dpi = 0);
   void OutputToDevice();
   CFX_DIBitmap* GetBitmap() const { return m_pBitmap.get(); }
-  const CFX_AffineMatrix* GetMatrix() const { return &m_Matrix; }
+  const CFX_Matrix* GetMatrix() const { return &m_Matrix; }
 
  private:
   CFX_RenderDevice* m_pDevice;
@@ -447,7 +443,7 @@ class CPDF_DeviceBuffer {
   FX_RECT m_Rect;
   const CPDF_PageObject* m_pObject;
   nonstd::unique_ptr<CFX_DIBitmap> m_pBitmap;
-  CFX_AffineMatrix m_Matrix;
+  CFX_Matrix m_Matrix;
 };
 
 class CPDF_ImageCache {

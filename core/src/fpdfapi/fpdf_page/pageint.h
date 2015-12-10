@@ -167,7 +167,7 @@ class CPDF_StreamContentParser {
   CPDF_StreamContentParser(CPDF_Document* pDoc,
                            CPDF_Dictionary* pPageResources,
                            CPDF_Dictionary* pParentResources,
-                           CFX_AffineMatrix* pmtContentToUser,
+                           CFX_Matrix* pmtContentToUser,
                            CPDF_PageObjects* pObjList,
                            CPDF_Dictionary* pResources,
                            CFX_FloatRect* pBBox,
@@ -312,7 +312,7 @@ class CPDF_StreamContentParser {
   CPDF_Dictionary* m_pResources;
   CPDF_PageObjects* m_pObjectList;
   int m_Level;
-  CFX_AffineMatrix m_mtContentToUser;
+  CFX_Matrix m_mtContentToUser;
   CFX_FloatRect m_BBox;
   CPDF_ParseOptions m_Options;
   _ContentParam m_ParamBuf1[PARAM_BUF_SIZE];
@@ -357,7 +357,7 @@ class CPDF_ContentParser {
   void Start(CPDF_Page* pPage, CPDF_ParseOptions* pOptions);
   void Start(CPDF_Form* pForm,
              CPDF_AllStates* pGraphicStates,
-             CFX_AffineMatrix* pParentMatrix,
+             CFX_Matrix* pParentMatrix,
              CPDF_Type3Char* pType3Char,
              CPDF_ParseOptions* pOptions,
              int level);
@@ -386,7 +386,7 @@ class CPDF_AllStates : public CPDF_GraphicStates {
   void Copy(const CPDF_AllStates& src);
   void ProcessExtGS(CPDF_Dictionary* pGS, CPDF_StreamContentParser* pParser);
   void SetLineDash(CPDF_Array*, FX_FLOAT, FX_FLOAT scale);
-  CFX_AffineMatrix m_TextMatrix, m_CTM, m_ParentMatrix;
+  CFX_Matrix m_TextMatrix, m_CTM, m_ParentMatrix;
   FX_FLOAT m_TextX, m_TextY, m_TextLineX, m_TextLineY;
   FX_FLOAT m_TextLeading, m_TextRise, m_TextHorzScale;
 };
@@ -407,7 +407,7 @@ class CPDF_DocPageData {
   void ReleaseColorSpace(CPDF_Object* pColorSpace);
   CPDF_Pattern* GetPattern(CPDF_Object* pPatternObj,
                            FX_BOOL bShading,
-                           const CFX_AffineMatrix* matrix);
+                           const CFX_Matrix* matrix);
   void ReleasePattern(CPDF_Object* pPatternObj);
   CPDF_Image* GetImage(CPDF_Object* pImageStream);
   void ReleaseImage(CPDF_Object* pImageStream);

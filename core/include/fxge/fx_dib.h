@@ -232,7 +232,7 @@ class CFX_DIBSource {
                           FX_DWORD flags = 0,
                           const FX_RECT* pClip = NULL) const;
 
-  CFX_DIBitmap* TransformTo(const CFX_AffineMatrix* pMatrix,
+  CFX_DIBitmap* TransformTo(const CFX_Matrix* pMatrix,
                             int& left,
                             int& top,
                             FX_DWORD flags = 0,
@@ -639,19 +639,19 @@ class CFX_ImageTransformer {
   ~CFX_ImageTransformer();
 
   FX_BOOL Start(const CFX_DIBSource* pSrc,
-                const CFX_AffineMatrix* pMatrix,
+                const CFX_Matrix* pMatrix,
                 int flags,
                 const FX_RECT* pClip);
 
   FX_BOOL Continue(IFX_Pause* pPause);
 
-  CFX_AffineMatrix* m_pMatrix;
+  CFX_Matrix* m_pMatrix;
   FX_RECT m_StretchClip;
   int m_ResultLeft;
   int m_ResultTop;
   int m_ResultWidth;
   int m_ResultHeight;
-  CFX_AffineMatrix m_dest2stretch;
+  CFX_Matrix m_dest2stretch;
   CFX_ImageStretcher m_Stretcher;
   CFX_BitmapStorer m_Storer;
   FX_DWORD m_Flags;
@@ -667,7 +667,7 @@ class CFX_ImageRenderer {
                 const CFX_DIBSource* pSource,
                 int bitmap_alpha,
                 FX_DWORD mask_color,
-                const CFX_AffineMatrix* pMatrix,
+                const CFX_Matrix* pMatrix,
                 FX_DWORD dib_flags,
                 FX_BOOL bRgbByteOrder = FALSE,
                 int alpha_flag = 0,
@@ -681,7 +681,7 @@ class CFX_ImageRenderer {
   const CFX_ClipRgn* m_pClipRgn;
   int m_BitmapAlpha;
   FX_DWORD m_MaskColor;
-  CFX_AffineMatrix m_Matrix;
+  CFX_Matrix m_Matrix;
   CFX_ImageTransformer* m_pTransformer;
   CFX_ImageStretcher m_Stretcher;
   CFX_BitmapComposer m_Composer;

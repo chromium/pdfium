@@ -191,7 +191,7 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
 
   CFX_ByteString GetBackgroundAppStream() const;
   CFX_ByteString GetBorderAppStream() const;
-  CPDF_Matrix GetMatrix() const;
+  CFX_Matrix GetMatrix() const;
 
   CPWL_Color GetTextPWLColor() const;
   CPWL_Color GetBorderPWLColor() const;
@@ -203,7 +203,7 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
  public:
   FX_BOOL IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode mode);
   void DrawAppearance(CFX_RenderDevice* pDevice,
-                      const CPDF_Matrix* pUser2Device,
+                      const CFX_Matrix* pUser2Device,
                       CPDF_Annot::AppearanceMode mode,
                       const CPDF_RenderOptions* pOptions) override;
 

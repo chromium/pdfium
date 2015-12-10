@@ -90,7 +90,7 @@ void CFX_PSRenderer::RestoreState(FX_BOOL bKeepSaved) {
   }
 }
 void CFX_PSRenderer::OutputPath(const CFX_PathData* pPathData,
-                                const CFX_AffineMatrix* pObject2Device) {
+                                const CFX_Matrix* pObject2Device) {
   int nPoints = pPathData->GetPointCount();
   CFX_ByteTextBuf buf;
   buf.EstimateSize(nPoints * 10);
@@ -137,7 +137,7 @@ void CFX_PSRenderer::OutputPath(const CFX_PathData* pPathData,
   m_pOutput->OutputPS((const FX_CHAR*)buf.GetBuffer(), buf.GetSize());
 }
 void CFX_PSRenderer::SetClip_PathFill(const CFX_PathData* pPathData,
-                                      const CFX_AffineMatrix* pObject2Device,
+                                      const CFX_Matrix* pObject2Device,
                                       int fill_mode) {
   StartRendering();
   OutputPath(pPathData, pObject2Device);
@@ -153,7 +153,7 @@ void CFX_PSRenderer::SetClip_PathFill(const CFX_PathData* pPathData,
   }
 }
 void CFX_PSRenderer::SetClip_PathStroke(const CFX_PathData* pPathData,
-                                        const CFX_AffineMatrix* pObject2Device,
+                                        const CFX_Matrix* pObject2Device,
                                         const CFX_GraphStateData* pGraphState) {
   StartRendering();
   SetGraphState(pGraphState);
@@ -178,7 +178,7 @@ void CFX_PSRenderer::SetClip_PathStroke(const CFX_PathData* pPathData,
   }
 }
 FX_BOOL CFX_PSRenderer::DrawPath(const CFX_PathData* pPathData,
-                                 const CFX_AffineMatrix* pObject2Device,
+                                 const CFX_Matrix* pObject2Device,
                                  const CFX_GraphStateData* pGraphState,
                                  FX_DWORD fill_color,
                                  FX_DWORD stroke_color,
@@ -333,9 +333,9 @@ FX_BOOL CFX_PSRenderer::SetDIBits(const CFX_DIBSource* pSource,
                                   int alpha_flag,
                                   void* pIccTransform) {
   StartRendering();
-  CFX_AffineMatrix matrix((FX_FLOAT)(pSource->GetWidth()), 0.0f, 0.0f,
-                          -(FX_FLOAT)(pSource->GetHeight()), (FX_FLOAT)(left),
-                          (FX_FLOAT)(top + pSource->GetHeight()));
+  CFX_Matrix matrix((FX_FLOAT)(pSource->GetWidth()), 0.0f, 0.0f,
+                    -(FX_FLOAT)(pSource->GetHeight()), (FX_FLOAT)(left),
+                    (FX_FLOAT)(top + pSource->GetHeight()));
   return DrawDIBits(pSource, color, &matrix, 0, alpha_flag, pIccTransform);
 }
 FX_BOOL CFX_PSRenderer::StretchDIBits(const CFX_DIBSource* pSource,
@@ -348,14 +348,14 @@ FX_BOOL CFX_PSRenderer::StretchDIBits(const CFX_DIBSource* pSource,
                                       int alpha_flag,
                                       void* pIccTransform) {
   StartRendering();
-  CFX_AffineMatrix matrix((FX_FLOAT)(dest_width), 0.0f, 0.0f,
-                          (FX_FLOAT)(-dest_height), (FX_FLOAT)(dest_left),
-                          (FX_FLOAT)(dest_top + dest_height));
+  CFX_Matrix matrix((FX_FLOAT)(dest_width), 0.0f, 0.0f,
+                    (FX_FLOAT)(-dest_height), (FX_FLOAT)(dest_left),
+                    (FX_FLOAT)(dest_top + dest_height));
   return DrawDIBits(pSource, color, &matrix, flags, alpha_flag, pIccTransform);
 }
 FX_BOOL CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource,
                                    FX_DWORD color,
-                                   const CFX_AffineMatrix* pMatrix,
+                                   const CFX_Matrix* pMatrix,
                                    FX_DWORD flags,
                                    int alpha_flag,
                                    void* pIccTransform) {
@@ -607,7 +607,7 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_FaceCache* pFaceCache,
         charpos.m_AdjustMatrix[3];
   }
   pPSFont->m_nGlyphs++;
-  CFX_AffineMatrix matrix;
+  CFX_Matrix matrix;
   if (charpos.m_bGlyphAdjust)
     matrix.Set(charpos.m_AdjustMatrix[0], charpos.m_AdjustMatrix[1],
                charpos.m_AdjustMatrix[2], charpos.m_AdjustMatrix[3], 0, 0);
@@ -657,7 +657,7 @@ FX_BOOL CFX_PSRenderer::DrawText(int nChars,
                                  const FXTEXT_CHARPOS* pCharPos,
                                  CFX_Font* pFont,
                                  CFX_FontCache* pCache,
-                                 const CFX_AffineMatrix* pObject2Device,
+                                 const CFX_Matrix* pObject2Device,
                                  FX_FLOAT font_size,
                                  FX_DWORD color,
                                  int alpha_flag,

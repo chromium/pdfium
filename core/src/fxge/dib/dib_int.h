@@ -18,7 +18,7 @@ extern const int16_t SDP_Table[513];
 
 class CPDF_FixedMatrix {
  public:
-  CPDF_FixedMatrix(const CFX_AffineMatrix& src, int bits) {
+  CPDF_FixedMatrix(const CFX_Matrix& src, int bits) {
     base = 1 << bits;
     a = FXSYS_round(src.a * base);
     b = FXSYS_round(src.b * base);

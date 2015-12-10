@@ -43,7 +43,7 @@ class CPWL_IconList_Item : public CPWL_Wnd {
   void RePosChildWnd() override;
   FX_FLOAT GetItemHeight(FX_FLOAT fLimitWidth) override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
-                          CPDF_Matrix* pUser2Device) override;
+                          CFX_Matrix* pUser2Device) override;
   void OnEnabled() override;
   void OnDisabled() override;
 

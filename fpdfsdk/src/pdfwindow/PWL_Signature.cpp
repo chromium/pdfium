@@ -27,7 +27,7 @@ CFX_DIBSource* CPWL_Signature_Image::GetImage() {
 }
 
 void CPWL_Signature_Image::DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                              CPDF_Matrix* pUser2Device) {
+                                              CFX_Matrix* pUser2Device) {
   CPWL_Wnd::DrawThisAppearance(pDevice, pUser2Device);
 
   if (m_pImage) {
@@ -166,7 +166,7 @@ void CPWL_Signature::CreateChildWnd(const PWL_CREATEPARAM& cp) {
 }
 
 void CPWL_Signature::DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                        CPDF_Matrix* pUser2Device) {
+                                        CFX_Matrix* pUser2Device) {
   CPWL_Wnd::DrawThisAppearance(pDevice, pUser2Device);
 
   if (m_bFlagExist)

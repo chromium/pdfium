@@ -962,15 +962,14 @@ void CPDF_ContentParser::Start(CPDF_Page* pPage, CPDF_ParseOptions* pOptions) {
 }
 void CPDF_ContentParser::Start(CPDF_Form* pForm,
                                CPDF_AllStates* pGraphicStates,
-                               CFX_AffineMatrix* pParentMatrix,
+                               CFX_Matrix* pParentMatrix,
                                CPDF_Type3Char* pType3Char,
                                CPDF_ParseOptions* pOptions,
                                int level) {
   m_pType3Char = pType3Char;
   m_pObjects = pForm;
   m_bForm = TRUE;
-  CFX_AffineMatrix form_matrix =
-      pForm->m_pFormDict->GetMatrix(FX_BSTRC("Matrix"));
+  CFX_Matrix form_matrix = pForm->m_pFormDict->GetMatrix(FX_BSTRC("Matrix"));
   if (pGraphicStates) {
     form_matrix.Concat(pGraphicStates->m_CTM);
   }

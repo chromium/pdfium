@@ -43,7 +43,7 @@ class CPDFXFA_Page {
                     int* device_x,
                     int* device_y);
 
-  void GetDisplayMatrix(CFX_AffineMatrix& matrix,
+  void GetDisplayMatrix(CFX_Matrix& matrix,
                         int xPos,
                         int yPos,
                         int xSize,

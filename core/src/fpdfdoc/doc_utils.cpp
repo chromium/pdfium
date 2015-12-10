@@ -208,8 +208,8 @@ CFX_ByteString CPDF_DefaultAppearance::GetTextMatrixString() {
   }
   return csTM;
 }
-CFX_AffineMatrix CPDF_DefaultAppearance::GetTextMatrix() {
-  CFX_AffineMatrix tm;
+CFX_Matrix CPDF_DefaultAppearance::GetTextMatrix() {
+  CFX_Matrix tm;
   if (m_csDA.IsEmpty()) {
     return tm;
   }

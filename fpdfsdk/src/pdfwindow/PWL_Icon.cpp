@@ -21,7 +21,7 @@ CFX_ByteString CPWL_Image::GetImageAppStream() {
 
   CFX_ByteString sAlias = GetImageAlias();
   CPDF_Rect rcPlate = GetClientRect();
-  CPDF_Matrix mt;
+  CFX_Matrix mt;
   mt.SetReverse(GetImageMatrix());
 
   FX_FLOAT fHScale = 1.0f;
@@ -72,14 +72,14 @@ void CPWL_Image::GetImageSize(FX_FLOAT& fWidth, FX_FLOAT& fHeight) {
   }
 }
 
-CPDF_Matrix CPWL_Image::GetImageMatrix() {
+CFX_Matrix CPWL_Image::GetImageMatrix() {
   if (m_pPDFStream) {
     if (CPDF_Dictionary* pDict = m_pPDFStream->GetDict()) {
       return pDict->GetMatrix("Matrix");
     }
   }
 
-  return CPDF_Matrix();
+  return CFX_Matrix();
 }
 
 CFX_ByteString CPWL_Image::GetImageAlias() {

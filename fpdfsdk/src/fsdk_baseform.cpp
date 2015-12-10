@@ -840,7 +840,7 @@ void CPDFSDK_Widget::ResetFieldAppearance(FX_BOOL bValueChanged) {
 }
 
 void CPDFSDK_Widget::DrawAppearance(CFX_RenderDevice* pDevice,
-                                    const CPDF_Matrix* pUser2Device,
+                                    const CFX_Matrix* pUser2Device,
                                     CPDF_Annot::AppearanceMode mode,
                                     const CPDF_RenderOptions* pOptions) {
   int nFieldType = GetFieldType();
@@ -889,7 +889,7 @@ void CPDFSDK_Widget::DrawShadow(CFX_RenderDevice* pDevice,
     CPDFDoc_Environment* pEnv = m_pInterForm->GetDocument()->GetEnv();
     if (!pEnv)
       return;
-    CFX_AffineMatrix page2device;
+    CFX_Matrix page2device;
     pPageView->GetCurrentMatrix(page2device);
     page2device.Transform(((FX_FLOAT)rc.left), ((FX_FLOAT)rc.bottom),
                           rcDevice.left, rcDevice.bottom);
@@ -1831,8 +1831,8 @@ CFX_ByteString CPDFSDK_Widget::GetBorderAppStream() const {
                                         dsBorder);
 }
 
-CPDF_Matrix CPDFSDK_Widget::GetMatrix() const {
-  CPDF_Matrix mt;
+CFX_Matrix CPDFSDK_Widget::GetMatrix() const {
+  CFX_Matrix mt;
   CPDF_FormControl* pControl = GetFormControl();
   ASSERT(pControl != NULL);
 
@@ -1843,16 +1843,16 @@ CPDF_Matrix CPDFSDK_Widget::GetMatrix() const {
   switch (abs(pControl->GetRotation() % 360)) {
     case 0:
     default:
-      mt = CPDF_Matrix(1, 0, 0, 1, 0, 0);
+      mt = CFX_Matrix(1, 0, 0, 1, 0, 0);
       break;
     case 90:
-      mt = CPDF_Matrix(0, 1, -1, 0, fWidth, 0);
+      mt = CFX_Matrix(0, 1, -1, 0, fWidth, 0);
       break;
     case 180:
-      mt = CPDF_Matrix(-1, 0, 0, -1, fWidth, fHeight);
+      mt = CFX_Matrix(-1, 0, 0, -1, fWidth, fHeight);
       break;
     case 270:
-      mt = CPDF_Matrix(0, -1, 1, 0, 0, fHeight);
+      mt = CFX_Matrix(0, -1, 1, 0, 0, fHeight);
       break;
   }
 

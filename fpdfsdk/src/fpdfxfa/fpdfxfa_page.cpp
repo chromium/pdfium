@@ -185,8 +185,8 @@ void CPDFXFA_Page::DeviceToPage(int start_x,
   if (!m_pPDFPage && !m_pXFAPageView)
     return;
 
-  CPDF_Matrix page2device;
-  CPDF_Matrix device2page;
+  CFX_Matrix page2device;
+  CFX_Matrix device2page;
   FX_FLOAT page_x_f, page_y_f;
 
   GetDisplayMatrix(page2device, start_x, start_y, size_x, size_y, rotate);
@@ -211,7 +211,7 @@ void CPDFXFA_Page::PageToDevice(int start_x,
   if (!m_pPDFPage && !m_pXFAPageView)
     return;
 
-  CPDF_Matrix page2device;
+  CFX_Matrix page2device;
   FX_FLOAT device_x_f, device_y_f;
 
   GetDisplayMatrix(page2device, start_x, start_y, size_x, size_y, rotate);
@@ -223,7 +223,7 @@ void CPDFXFA_Page::PageToDevice(int start_x,
   *device_y = FXSYS_round(device_y_f);
 }
 
-void CPDFXFA_Page::GetDisplayMatrix(CFX_AffineMatrix& matrix,
+void CPDFXFA_Page::GetDisplayMatrix(CFX_Matrix& matrix,
                                     int xPos,
                                     int yPos,
                                     int xSize,

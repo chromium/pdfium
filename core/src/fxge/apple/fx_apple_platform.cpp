@@ -34,7 +34,7 @@ void CFX_FaceCache::DestroyPlatform() {}
 CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph_Nativetext(
     CFX_Font* pFont,
     FX_DWORD glyph_index,
-    const CFX_AffineMatrix* pMatrix,
+    const CFX_Matrix* pMatrix,
     int dest_width,
     int anti_alias) {
   return NULL;
@@ -44,7 +44,7 @@ static FX_BOOL _CGDrawGlyphRun(CGContextRef pContext,
                                const FXTEXT_CHARPOS* pCharPos,
                                CFX_Font* pFont,
                                CFX_FontCache* pCache,
-                               const CFX_AffineMatrix* pObject2Device,
+                               const CFX_Matrix* pObject2Device,
                                FX_FLOAT font_size,
                                FX_DWORD argb,
                                int alpha_flag,
@@ -52,7 +52,7 @@ static FX_BOOL _CGDrawGlyphRun(CGContextRef pContext,
   if (nChars == 0) {
     return TRUE;
   }
-  CFX_AffineMatrix new_matrix;
+  CFX_Matrix new_matrix;
   FX_BOOL bNegSize = font_size < 0;
   if (bNegSize) {
     font_size = -font_size;
@@ -97,16 +97,15 @@ static FX_BOOL _CGDrawGlyphRun(CGContextRef pContext,
                                      nChars, argb, NULL);
 }
 static void _DoNothing(void* info, const void* data, size_t size) {}
-FX_BOOL CFX_AggDeviceDriver::DrawDeviceText(
-    int nChars,
-    const FXTEXT_CHARPOS* pCharPos,
-    CFX_Font* pFont,
-    CFX_FontCache* pCache,
-    const CFX_AffineMatrix* pObject2Device,
-    FX_FLOAT font_size,
-    FX_DWORD argb,
-    int alpha_flag,
-    void* pIccTransform) {
+FX_BOOL CFX_AggDeviceDriver::DrawDeviceText(int nChars,
+                                            const FXTEXT_CHARPOS* pCharPos,
+                                            CFX_Font* pFont,
+                                            CFX_FontCache* pCache,
+                                            const CFX_Matrix* pObject2Device,
+                                            FX_FLOAT font_size,
+                                            FX_DWORD argb,
+                                            int alpha_flag,
+                                            void* pIccTransform) {
   if (!pFont) {
     return FALSE;
   }

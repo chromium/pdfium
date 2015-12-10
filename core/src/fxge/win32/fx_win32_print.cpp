@@ -136,7 +136,7 @@ FX_BOOL CGdiPrinterDriver::StretchDIBits(const CFX_DIBSource* pSource,
                            dest_height, flags, pIccTransform);
 }
 static CFX_DIBitmap* Transform1bppBitmap(const CFX_DIBSource* pSrc,
-                                         const CFX_AffineMatrix* pDestMatrix) {
+                                         const CFX_Matrix* pDestMatrix) {
   ASSERT(pSrc->GetFormat() == FXDIB_1bppRgb ||
          pSrc->GetFormat() == FXDIB_1bppMask ||
          pSrc->GetFormat() == FXDIB_1bppCmyk);
@@ -152,11 +152,11 @@ static CFX_DIBitmap* Transform1bppBitmap(const CFX_DIBSource* pSrc,
   FX_FLOAT area_scale =
       FXSYS_Div((FX_FLOAT)(src_width * src_height), dest_area);
   FX_FLOAT size_scale = FXSYS_sqrt(area_scale);
-  CFX_AffineMatrix adjusted_matrix(*pDestMatrix);
+  CFX_Matrix adjusted_matrix(*pDestMatrix);
   adjusted_matrix.Scale(size_scale, size_scale);
   CFX_FloatRect result_rect_f = adjusted_matrix.GetUnitRect();
   FX_RECT result_rect = result_rect_f.GetOutterRect();
-  CFX_AffineMatrix src2result;
+  CFX_Matrix src2result;
   src2result.e = adjusted_matrix.c + adjusted_matrix.e;
   src2result.f = adjusted_matrix.d + adjusted_matrix.f;
   src2result.a = adjusted_matrix.a / pSrcBitmap->GetWidth();
@@ -164,7 +164,7 @@ static CFX_DIBitmap* Transform1bppBitmap(const CFX_DIBSource* pSrc,
   src2result.c = -adjusted_matrix.c / pSrcBitmap->GetHeight();
   src2result.d = -adjusted_matrix.d / pSrcBitmap->GetHeight();
   src2result.TranslateI(-result_rect.left, -result_rect.top);
-  CFX_AffineMatrix result2src;
+  CFX_Matrix result2src;
   result2src.SetReverse(src2result);
   CPDF_FixedMatrix result2src_fix(result2src, 8);
   int result_width = result_rect.Width();
@@ -224,7 +224,7 @@ static CFX_DIBitmap* Transform1bppBitmap(const CFX_DIBSource* pSrc,
 FX_BOOL CGdiPrinterDriver::StartDIBits(const CFX_DIBSource* pSource,
                                        int bitmap_alpha,
                                        FX_DWORD color,
-                                       const CFX_AffineMatrix* pMatrix,
+                                       const CFX_Matrix* pMatrix,
                                        FX_DWORD render_flags,
                                        void*& handle,
                                        int alpha_flag,
@@ -375,22 +375,21 @@ void CPSPrinterDriver::SaveState() {
 void CPSPrinterDriver::RestoreState(FX_BOOL bKeepSaved) {
   m_PSRenderer.RestoreState(bKeepSaved);
 }
-FX_BOOL CPSPrinterDriver::SetClip_PathFill(
-    const CFX_PathData* pPathData,
-    const CFX_AffineMatrix* pObject2Device,
-    int fill_mode) {
+FX_BOOL CPSPrinterDriver::SetClip_PathFill(const CFX_PathData* pPathData,
+                                           const CFX_Matrix* pObject2Device,
+                                           int fill_mode) {
   m_PSRenderer.SetClip_PathFill(pPathData, pObject2Device, fill_mode);
   return TRUE;
 }
 FX_BOOL CPSPrinterDriver::SetClip_PathStroke(
     const CFX_PathData* pPathData,
-    const CFX_AffineMatrix* pObject2Device,
+    const CFX_Matrix* pObject2Device,
     const CFX_GraphStateData* pGraphState) {
   m_PSRenderer.SetClip_PathStroke(pPathData, pObject2Device, pGraphState);
   return TRUE;
 }
 FX_BOOL CPSPrinterDriver::DrawPath(const CFX_PathData* pPathData,
-                                   const CFX_AffineMatrix* pObject2Device,
+                                   const CFX_Matrix* pObject2Device,
                                    const CFX_GraphStateData* pGraphState,
                                    FX_ARGB fill_color,
                                    FX_ARGB stroke_color,
@@ -444,7 +443,7 @@ FX_BOOL CPSPrinterDriver::StretchDIBits(const CFX_DIBSource* pBitmap,
 FX_BOOL CPSPrinterDriver::StartDIBits(const CFX_DIBSource* pBitmap,
                                       int bitmap_alpha,
                                       FX_DWORD color,
-                                      const CFX_AffineMatrix* pMatrix,
+                                      const CFX_Matrix* pMatrix,
                                       FX_DWORD render_flags,
                                       void*& handle,
                                       int alpha_flag,
@@ -464,7 +463,7 @@ FX_BOOL CPSPrinterDriver::DrawDeviceText(int nChars,
                                          const FXTEXT_CHARPOS* pCharPos,
                                          CFX_Font* pFont,
                                          CFX_FontCache* pCache,
-                                         const CFX_AffineMatrix* pObject2Device,
+                                         const CFX_Matrix* pObject2Device,
                                          FX_FLOAT font_size,
                                          FX_DWORD color,
                                          int alpha_flag,

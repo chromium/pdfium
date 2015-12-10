@@ -91,7 +91,7 @@ CPDF_ColorSpace* CPDF_Document::LoadColorSpace(CPDF_Object* pCSObj,
 }
 CPDF_Pattern* CPDF_Document::LoadPattern(CPDF_Object* pPatternObj,
                                          FX_BOOL bShading,
-                                         const CFX_AffineMatrix* matrix) {
+                                         const CFX_Matrix* matrix) {
   return GetValidatePageData()->GetPattern(pPatternObj, bShading, matrix);
 }
 CPDF_IccProfile* CPDF_Document::LoadIccProfile(CPDF_Stream* pStream) {
@@ -404,7 +404,7 @@ void CPDF_DocPageData::ReleaseColorSpace(CPDF_Object* pColorSpace) {
 
 CPDF_Pattern* CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj,
                                            FX_BOOL bShading,
-                                           const CFX_AffineMatrix* matrix) {
+                                           const CFX_Matrix* matrix) {
   if (!pPatternObj)
     return nullptr;
 

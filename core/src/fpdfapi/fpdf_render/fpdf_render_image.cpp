@@ -15,7 +15,7 @@
 #include "core/src/fpdfapi/fpdf_page/pageint.h"
 
 FX_BOOL CPDF_RenderStatus::ProcessImage(CPDF_ImageObject* pImageObj,
-                                        const CFX_AffineMatrix* pObj2Device) {
+                                        const CFX_Matrix* pObj2Device) {
   CPDF_ImageRenderer render;
   if (render.Start(this, pImageObj, pObj2Device, m_bStdCS, m_curBlend)) {
     render.Continue(NULL);
@@ -471,7 +471,7 @@ FX_BOOL CPDF_ImageRenderer::StartRenderDIBSource() {
 }
 FX_BOOL CPDF_ImageRenderer::Start(CPDF_RenderStatus* pStatus,
                                   const CPDF_PageObject* pObj,
-                                  const CFX_AffineMatrix* pObj2Device,
+                                  const CFX_Matrix* pObj2Device,
                                   FX_BOOL bStdCS,
                                   int blendType) {
   m_pRenderStatus = pStatus;
@@ -495,7 +495,7 @@ FX_BOOL CPDF_ImageRenderer::Start(CPDF_RenderStatus* pStatus,
                                   const CFX_DIBSource* pDIBSource,
                                   FX_ARGB bitmap_argb,
                                   int bitmap_alpha,
-                                  const CFX_AffineMatrix* pImage2Device,
+                                  const CFX_Matrix* pImage2Device,
                                   FX_DWORD flags,
                                   FX_BOOL bStdCS,
                                   int blendType) {
@@ -520,7 +520,7 @@ FX_BOOL CPDF_ImageRenderer::DrawPatternImage(const CFX_Matrix* pObj2Device) {
   if (rect.IsEmpty()) {
     return FALSE;
   }
-  CFX_AffineMatrix new_matrix = m_ImageMatrix;
+  CFX_Matrix new_matrix = m_ImageMatrix;
   new_matrix.TranslateI(-rect.left, -rect.top);
   int width = rect.Width();
   int height = rect.Height();
@@ -617,7 +617,7 @@ FX_BOOL CPDF_ImageRenderer::DrawMaskedImage() {
   if (rect.IsEmpty()) {
     return FALSE;
   }
-  CFX_AffineMatrix new_matrix = m_ImageMatrix;
+  CFX_Matrix new_matrix = m_ImageMatrix;
   new_matrix.TranslateI(-rect.left, -rect.top);
   int width = rect.Width();
   int height = rect.Height();
@@ -901,7 +901,7 @@ ICodec_ScanlineDecoder* FPDFAPI_CreateFlateDecoder(
     int bpc,
     const CPDF_Dictionary* pParams);
 FX_BOOL CPDF_QuickStretcher::Start(CPDF_ImageObject* pImageObj,
-                                   CFX_AffineMatrix* pImage2Device,
+                                   CFX_Matrix* pImage2Device,
                                    const FX_RECT* pClipBox) {
   if (FXSYS_fabs(pImage2Device->a) < FXSYS_fabs(pImage2Device->b) * 10 &&
       FXSYS_fabs(pImage2Device->d) < FXSYS_fabs(pImage2Device->c) * 10) {
@@ -1042,7 +1042,7 @@ FX_BOOL CPDF_QuickStretcher::Continue(IFX_Pause* pPause) {
 }
 CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
                                            FX_RECT* pClipRect,
-                                           const CFX_AffineMatrix* pMatrix) {
+                                           const CFX_Matrix* pMatrix) {
   if (pSMaskDict == NULL) {
     return NULL;
   }
@@ -1059,7 +1059,7 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
   if (pFuncObj && (pFuncObj->IsDictionary() || pFuncObj->IsStream()))
     pFunc.reset(CPDF_Function::Load(pFuncObj));
 
-  CFX_AffineMatrix matrix = *pMatrix;
+  CFX_Matrix matrix = *pMatrix;
   matrix.TranslateI(-pClipRect->left, -pClipRect->top);
   CPDF_Form form(m_pContext->m_pDocument, m_pContext->m_pPageResources, pGroup);
   form.ParseContent(NULL, NULL, NULL, NULL);

@@ -193,27 +193,27 @@ class CPWL_Utils {
   static CFX_ByteString GetDropButtonAppStream(const CPDF_Rect& rcBBox);
 
   static void DrawFillRect(CFX_RenderDevice* pDevice,
-                           CPDF_Matrix* pUser2Device,
+                           CFX_Matrix* pUser2Device,
                            const CPDF_Rect& rect,
                            const CPWL_Color& color,
                            int32_t nTransparancy);
   static void DrawFillRect(CFX_RenderDevice* pDevice,
-                           CPDF_Matrix* pUser2Device,
+                           CFX_Matrix* pUser2Device,
                            const CPDF_Rect& rect,
                            const FX_COLORREF& color);
   static void DrawStrokeRect(CFX_RenderDevice* pDevice,
-                             CPDF_Matrix* pUser2Device,
+                             CFX_Matrix* pUser2Device,
                              const CPDF_Rect& rect,
                              const FX_COLORREF& color,
                              FX_FLOAT fWidth);
   static void DrawStrokeLine(CFX_RenderDevice* pDevice,
-                             CPDF_Matrix* pUser2Device,
+                             CFX_Matrix* pUser2Device,
                              const CPDF_Point& ptMoveTo,
                              const CPDF_Point& ptLineTo,
                              const FX_COLORREF& color,
                              FX_FLOAT fWidth);
   static void DrawBorder(CFX_RenderDevice* pDevice,
-                         CPDF_Matrix* pUser2Device,
+                         CFX_Matrix* pUser2Device,
                          const CPDF_Rect& rect,
                          FX_FLOAT fWidth,
                          const CPWL_Color& color,
@@ -223,12 +223,12 @@ class CPWL_Utils {
                          const CPWL_Dash& dash,
                          int32_t nTransparancy);
   static void DrawFillArea(CFX_RenderDevice* pDevice,
-                           CPDF_Matrix* pUser2Device,
+                           CFX_Matrix* pUser2Device,
                            const CPDF_Point* pPts,
                            int32_t nCount,
                            const FX_COLORREF& color);
   static void DrawShadow(CFX_RenderDevice* pDevice,
-                         CPDF_Matrix* pUser2Device,
+                         CFX_Matrix* pUser2Device,
                          FX_BOOL bVertical,
                          FX_BOOL bHorizontal,
                          CPDF_Rect rect,
@@ -236,7 +236,7 @@ class CPWL_Utils {
                          int32_t nStartGray,
                          int32_t nEndGray);
   static void DrawEditSpellCheck(CFX_RenderDevice* pDevice,
-                                 CPDF_Matrix* pUser2Device,
+                                 CFX_Matrix* pUser2Device,
                                  IFX_Edit* pEdit,
                                  const CPDF_Rect& rcClip,
                                  const CPDF_Point& ptOffset,
@@ -292,7 +292,7 @@ class CPWL_Utils {
       const CPWL_Color& crFill,
       const CPWL_Color& crStroke = PWL_DEFAULT_BLACKCOLOR);
   static void DrawIconAppStream(CFX_RenderDevice* pDevice,
-                                CPDF_Matrix* pUser2Device,
+                                CFX_Matrix* pUser2Device,
                                 int32_t nType,
                                 const CPDF_Rect& rect,
                                 const CPWL_Color& crFill,

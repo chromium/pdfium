@@ -1389,7 +1389,7 @@ FX_COLORREF CPWL_Utils::PWLColorToFXColor(const CPWL_Color& color,
 }
 
 void CPWL_Utils::DrawFillRect(CFX_RenderDevice* pDevice,
-                              CPDF_Matrix* pUser2Device,
+                              CFX_Matrix* pUser2Device,
                               const CPDF_Rect& rect,
                               const FX_COLORREF& color) {
   CFX_PathData path;
@@ -1399,7 +1399,7 @@ void CPWL_Utils::DrawFillRect(CFX_RenderDevice* pDevice,
 }
 
 void CPWL_Utils::DrawFillArea(CFX_RenderDevice* pDevice,
-                              CPDF_Matrix* pUser2Device,
+                              CFX_Matrix* pUser2Device,
                               const CPDF_Point* pPts,
                               int32_t nCount,
                               const FX_COLORREF& color) {
@@ -1414,7 +1414,7 @@ void CPWL_Utils::DrawFillArea(CFX_RenderDevice* pDevice,
 }
 
 void CPWL_Utils::DrawStrokeRect(CFX_RenderDevice* pDevice,
-                                CPDF_Matrix* pUser2Device,
+                                CFX_Matrix* pUser2Device,
                                 const CPDF_Rect& rect,
                                 const FX_COLORREF& color,
                                 FX_FLOAT fWidth) {
@@ -1429,7 +1429,7 @@ void CPWL_Utils::DrawStrokeRect(CFX_RenderDevice* pDevice,
 }
 
 void CPWL_Utils::DrawStrokeLine(CFX_RenderDevice* pDevice,
-                                CPDF_Matrix* pUser2Device,
+                                CFX_Matrix* pUser2Device,
                                 const CPDF_Point& ptMoveTo,
                                 const CPDF_Point& ptLineTo,
                                 const FX_COLORREF& color,
@@ -1446,7 +1446,7 @@ void CPWL_Utils::DrawStrokeLine(CFX_RenderDevice* pDevice,
 }
 
 void CPWL_Utils::DrawFillRect(CFX_RenderDevice* pDevice,
-                              CPDF_Matrix* pUser2Device,
+                              CFX_Matrix* pUser2Device,
                               const CPDF_Rect& rect,
                               const CPWL_Color& color,
                               int32_t nTransparancy) {
@@ -1455,7 +1455,7 @@ void CPWL_Utils::DrawFillRect(CFX_RenderDevice* pDevice,
 }
 
 void CPWL_Utils::DrawShadow(CFX_RenderDevice* pDevice,
-                            CPDF_Matrix* pUser2Device,
+                            CFX_Matrix* pUser2Device,
                             FX_BOOL bVertical,
                             FX_BOOL bHorizontal,
                             CPDF_Rect rect,
@@ -1490,7 +1490,7 @@ void CPWL_Utils::DrawShadow(CFX_RenderDevice* pDevice,
 }
 
 void CPWL_Utils::DrawBorder(CFX_RenderDevice* pDevice,
-                            CPDF_Matrix* pUser2Device,
+                            CFX_Matrix* pUser2Device,
                             const CPDF_Rect& rect,
                             FX_FLOAT fWidth,
                             const CPWL_Color& color,
@@ -1697,7 +1697,7 @@ static void AddSpellCheckObj(CFX_PathData& PathData,
 }
 
 void CPWL_Utils::DrawEditSpellCheck(CFX_RenderDevice* pDevice,
-                                    CPDF_Matrix* pUser2Device,
+                                    CFX_Matrix* pUser2Device,
                                     IFX_Edit* pEdit,
                                     const CPDF_Rect& rcClip,
                                     const CPDF_Point& ptOffset,
@@ -1920,7 +1920,7 @@ CFX_ByteString CPWL_Utils::GetIconAppStream(int32_t nType,
 }
 
 void CPWL_Utils::DrawIconAppStream(CFX_RenderDevice* pDevice,
-                                   CPDF_Matrix* pUser2Device,
+                                   CFX_Matrix* pUser2Device,
                                    int32_t nType,
                                    const CPDF_Rect& rect,
                                    const CPWL_Color& crFill,

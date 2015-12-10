@@ -175,8 +175,8 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
         else
           continue;
 
-        CFX_AffineMatrix m = pDict->GetMatrix(FX_BSTRC("Matrix"));
-        CFX_AffineMatrix t = *(CFX_AffineMatrix*)matrix;
+        CFX_Matrix m = pDict->GetMatrix(FX_BSTRC("Matrix"));
+        CFX_Matrix t = *(CFX_Matrix*)matrix;
         m.Concat(t);
         pDict->SetAtMatrix(FX_BSTRC("Matrix"), m);
       }
@@ -197,8 +197,8 @@ FPDFPageObj_TransformClipPath(FPDF_PAGEOBJECT page_object,
   CPDF_PageObject* pPageObj = (CPDF_PageObject*)page_object;
   if (pPageObj == NULL)
     return;
-  CFX_AffineMatrix matrix((FX_FLOAT)a, (FX_FLOAT)b, (FX_FLOAT)c, (FX_FLOAT)d,
-                          (FX_FLOAT)e, (FX_FLOAT)f);
+  CFX_Matrix matrix((FX_FLOAT)a, (FX_FLOAT)b, (FX_FLOAT)c, (FX_FLOAT)d,
+                    (FX_FLOAT)e, (FX_FLOAT)f);
 
   // Special treatment to shading object, because the ClipPath for shading
   // object is already transformed.

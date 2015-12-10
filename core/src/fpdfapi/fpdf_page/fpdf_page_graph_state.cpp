@@ -190,7 +190,7 @@ void CPDF_ClipPath::AppendTexts(CPDF_TextObject** pTexts, int count) {
   pData->m_pTextList[pData->m_TextCount + count] = NULL;
   pData->m_TextCount += count + 1;
 }
-void CPDF_ClipPath::Transform(const CPDF_Matrix& matrix) {
+void CPDF_ClipPath::Transform(const CFX_Matrix& matrix) {
   CPDF_ClipPathData* pData = GetModify();
   int i;
   for (i = 0; i < pData->m_PathCount; i++) {
@@ -529,7 +529,7 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
         if (ToDictionary(pObject)) {
           pGeneralState->m_pSoftMask = pObject;
           FXSYS_memcpy(pGeneralState->m_SMaskMatrix,
-                       &pParser->GetCurStates()->m_CTM, sizeof(CPDF_Matrix));
+                       &pParser->GetCurStates()->m_CTM, sizeof(CFX_Matrix));
         } else {
           pGeneralState->m_pSoftMask = NULL;
         }

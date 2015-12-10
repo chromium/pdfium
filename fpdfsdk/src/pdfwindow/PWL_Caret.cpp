@@ -33,7 +33,7 @@ void CPWL_Caret::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
 }
 
 void CPWL_Caret::DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                    CPDF_Matrix* pUser2Device) {
+                                    CFX_Matrix* pUser2Device) {
   if (IsVisible() && m_bFlash) {
     CPDF_Rect rcRect = GetCaretRect();
     CPDF_Rect rcClip = GetClipRect();

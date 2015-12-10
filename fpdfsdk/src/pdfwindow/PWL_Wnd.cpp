@@ -224,7 +224,7 @@ void CPWL_Wnd::Create(const PWL_CREATEPARAM& cp) {
     PWL_CREATEPARAM ccp = m_sPrivateParam;
 
     ccp.dwFlags &= 0xFFFF0000L;  // remove sub styles
-    ccp.mtChild = CPDF_Matrix(1, 0, 0, 1, 0, 0);
+    ccp.mtChild = CFX_Matrix(1, 0, 0, 1, 0, 0);
 
     CreateScrollBar(ccp);
     CreateChildWnd(ccp);
@@ -344,7 +344,7 @@ void CPWL_Wnd::GetChildAppearanceStream(CFX_ByteTextBuf& sAppStream) {
 }
 
 void CPWL_Wnd::DrawAppearance(CFX_RenderDevice* pDevice,
-                              CPDF_Matrix* pUser2Device) {
+                              CFX_Matrix* pUser2Device) {
   if (IsValid() && IsVisible()) {
     DrawThisAppearance(pDevice, pUser2Device);
     DrawChildAppearance(pDevice, pUser2Device);
@@ -352,7 +352,7 @@ void CPWL_Wnd::DrawAppearance(CFX_RenderDevice* pDevice,
 }
 
 void CPWL_Wnd::DrawThisAppearance(CFX_RenderDevice* pDevice,
-                                  CPDF_Matrix* pUser2Device) {
+                                  CFX_Matrix* pUser2Device) {
   CPDF_Rect rectWnd = GetWindowRect();
   if (!rectWnd.IsEmpty()) {
     if (HasFlag(PWS_BACKGROUND)) {
@@ -372,10 +372,10 @@ void CPWL_Wnd::DrawThisAppearance(CFX_RenderDevice* pDevice,
 }
 
 void CPWL_Wnd::DrawChildAppearance(CFX_RenderDevice* pDevice,
-                                   CPDF_Matrix* pUser2Device) {
+                                   CFX_Matrix* pUser2Device) {
   for (int32_t i = 0, sz = m_aChildren.GetSize(); i < sz; i++) {
     if (CPWL_Wnd* pChild = m_aChildren.GetAt(i)) {
-      CPDF_Matrix mt = pChild->GetChildMatrix();
+      CFX_Matrix mt = pChild->GetChildMatrix();
       if (mt.IsIdentity()) {
         pChild->DrawAppearance(pDevice, pUser2Device);
       } else {
@@ -918,8 +918,8 @@ void CPWL_Wnd::SetTransparency(int32_t nTransparency) {
   m_sPrivateParam.nTransparency = nTransparency;
 }
 
-CPDF_Matrix CPWL_Wnd::GetWindowMatrix() const {
-  CPDF_Matrix mt = GetChildToRoot();
+CFX_Matrix CPWL_Wnd::GetWindowMatrix() const {
+  CFX_Matrix mt = GetChildToRoot();
 
   if (IPWL_Provider* pProvider = GetProvider()) {
     mt.Concat(pProvider->GetWindowMatrix(GetAttachedData()));
@@ -930,7 +930,7 @@ CPDF_Matrix CPWL_Wnd::GetWindowMatrix() const {
 }
 
 void CPWL_Wnd::PWLtoWnd(const CPDF_Point& point, int32_t& x, int32_t& y) const {
-  CPDF_Matrix mt = GetWindowMatrix();
+  CFX_Matrix mt = GetWindowMatrix();
   CPDF_Point pt = point;
   mt.Transform(pt.x, pt.y);
   x = (int32_t)(pt.x + 0.5);
@@ -939,7 +939,7 @@ void CPWL_Wnd::PWLtoWnd(const CPDF_Point& point, int32_t& x, int32_t& y) const {
 
 FX_RECT CPWL_Wnd::PWLtoWnd(const CPDF_Rect& rect) const {
   CPDF_Rect rcTemp = rect;
-  CPDF_Matrix mt = GetWindowMatrix();
+  CFX_Matrix mt = GetWindowMatrix();
   mt.TransformRect(rcTemp);
   return FX_RECT((int32_t)(rcTemp.left + 0.5), (int32_t)(rcTemp.bottom + 0.5),
                  (int32_t)(rcTemp.right + 0.5), (int32_t)(rcTemp.top + 0.5));
@@ -950,7 +950,7 @@ FX_HWND CPWL_Wnd::GetAttachedHWnd() const {
 }
 
 CPDF_Point CPWL_Wnd::ChildToParent(const CPDF_Point& point) const {
-  CPDF_Matrix mt = GetChildMatrix();
+  CFX_Matrix mt = GetChildMatrix();
   if (mt.IsIdentity())
     return point;
 
@@ -960,7 +960,7 @@ CPDF_Point CPWL_Wnd::ChildToParent(const CPDF_Point& point) const {
 }
 
 CPDF_Rect CPWL_Wnd::ChildToParent(const CPDF_Rect& rect) const {
-  CPDF_Matrix mt = GetChildMatrix();
+  CFX_Matrix mt = GetChildMatrix();
   if (mt.IsIdentity())
     return rect;
 
@@ -970,7 +970,7 @@ CPDF_Rect CPWL_Wnd::ChildToParent(const CPDF_Rect& rect) const {
 }
 
 CPDF_Point CPWL_Wnd::ParentToChild(const CPDF_Point& point) const {
-  CPDF_Matrix mt = GetChildMatrix();
+  CFX_Matrix mt = GetChildMatrix();
   if (mt.IsIdentity())
     return point;
 
@@ -981,7 +981,7 @@ CPDF_Point CPWL_Wnd::ParentToChild(const CPDF_Point& point) const {
 }
 
 CPDF_Rect CPWL_Wnd::ParentToChild(const CPDF_Rect& rect) const {
-  CPDF_Matrix mt = GetChildMatrix();
+  CFX_Matrix mt = GetChildMatrix();
   if (mt.IsIdentity())
     return rect;
 
@@ -991,8 +991,8 @@ CPDF_Rect CPWL_Wnd::ParentToChild(const CPDF_Rect& rect) const {
   return rc;
 }
 
-CPDF_Matrix CPWL_Wnd::GetChildToRoot() const {
-  CPDF_Matrix mt(1, 0, 0, 1, 0, 0);
+CFX_Matrix CPWL_Wnd::GetChildToRoot() const {
+  CFX_Matrix mt(1, 0, 0, 1, 0, 0);
   if (HasFlag(PWS_CHILD)) {
     const CPWL_Wnd* pParent = this;
     while (pParent) {
@@ -1003,14 +1003,14 @@ CPDF_Matrix CPWL_Wnd::GetChildToRoot() const {
   return mt;
 }
 
-CPDF_Matrix CPWL_Wnd::GetChildMatrix() const {
+CFX_Matrix CPWL_Wnd::GetChildMatrix() const {
   if (HasFlag(PWS_CHILD))
     return m_sPrivateParam.mtChild;
 
-  return CPDF_Matrix(1, 0, 0, 1, 0, 0);
+  return CFX_Matrix(1, 0, 0, 1, 0, 0);
 }
 
-void CPWL_Wnd::SetChildMatrix(const CPDF_Matrix& mt) {
+void CPWL_Wnd::SetChildMatrix(const CFX_Matrix& mt) {
   m_sPrivateParam.mtChild = mt;
 }
 

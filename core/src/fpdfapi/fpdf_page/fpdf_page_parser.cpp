@@ -19,7 +19,7 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
     CPDF_Document* pDocument,
     CPDF_Dictionary* pPageResources,
     CPDF_Dictionary* pParentResources,
-    CFX_AffineMatrix* pmtContentToUser,
+    CFX_Matrix* pmtContentToUser,
     CPDF_PageObjects* pObjList,
     CPDF_Dictionary* pResources,
     CPDF_Rect* pBBox,
@@ -620,7 +620,7 @@ void CPDF_StreamContentParser::Handle_ConcatMatrix() {
   FX_FLOAT a2 = GetNumber16(5), b2 = GetNumber16(4), c2 = GetNumber16(3),
            d2 = GetNumber16(2);
   FX_FLOAT e2 = GetNumber(1), f2 = GetNumber(0);
-  CFX_AffineMatrix new_matrix(a2, b2, c2, d2, e2, f2);
+  CFX_Matrix new_matrix(a2, b2, c2, d2, e2, f2);
   new_matrix.Concat(m_pCurStates->m_CTM);
   m_pCurStates->m_CTM = new_matrix;
   OnChangeTextMatrix();
@@ -721,8 +721,7 @@ void CPDF_StreamContentParser::AddForm(CPDF_Stream* pStream) {
   if (!m_Options.m_bSeparateForm) {
     CPDF_Dictionary* pResources =
         pStream->GetDict()->GetDict(FX_BSTRC("Resources"));
-    CFX_AffineMatrix form_matrix =
-        pStream->GetDict()->GetMatrix(FX_BSTRC("Matrix"));
+    CFX_Matrix form_matrix = pStream->GetDict()->GetMatrix(FX_BSTRC("Matrix"));
     form_matrix.Concat(m_pCurStates->m_CTM);
     CPDF_Array* pBBox = pStream->GetDict()->GetArray(FX_BSTRC("BBox"));
     CFX_FloatRect form_bbox;
@@ -777,7 +776,7 @@ CPDF_ImageObject* CPDF_StreamContentParser::AddImage(CPDF_Stream* pStream,
   if (pStream == NULL && pImage == NULL) {
     return NULL;
   }
-  CFX_AffineMatrix ImageMatrix;
+  CFX_Matrix ImageMatrix;
   ImageMatrix.Copy(m_pCurStates->m_CTM);
   ImageMatrix.Concat(m_mtContentToUser);
   CPDF_ImageObject* pImageObj = new CPDF_ImageObject;
@@ -1093,7 +1092,7 @@ void CPDF_StreamContentParser::Handle_SetColorPS_Stroke() {
 }
 CFX_FloatRect GetShadingBBox(CPDF_Stream* pStream,
                              ShadingType type,
-                             const CFX_AffineMatrix* pMatrix,
+                             const CFX_Matrix* pMatrix,
                              CPDF_Function** pFuncs,
                              int nFuncs,
                              CPDF_ColorSpace* pCS);
@@ -1387,8 +1386,8 @@ void CPDF_StreamContentParser::Handle_SetTextMatrix() {
   m_pCurStates->m_TextLineY = 0;
 }
 void CPDF_StreamContentParser::OnChangeTextMatrix() {
-  CFX_AffineMatrix text_matrix(m_pCurStates->m_TextHorzScale, 0.0f, 0.0f, 1.0f,
-                               0.0f, 0.0f);
+  CFX_Matrix text_matrix(m_pCurStates->m_TextHorzScale, 0.0f, 0.0f, 1.0f, 0.0f,
+                         0.0f);
   text_matrix.Concat(m_pCurStates->m_TextMatrix);
   text_matrix.Concat(m_pCurStates->m_CTM);
   text_matrix.Concat(m_mtContentToUser);
@@ -1511,7 +1510,7 @@ void CPDF_StreamContentParser::AddPathObject(int FillType, FX_BOOL bStroke) {
   pPathData->SetPointCount(PathPointCount);
   FXSYS_memcpy(pPathData->GetPoints(), m_pPathPoints,
                sizeof(FX_PATHPOINT) * PathPointCount);
-  CFX_AffineMatrix matrix = m_pCurStates->m_CTM;
+  CFX_Matrix matrix = m_pCurStates->m_CTM;
   matrix.Concat(m_mtContentToUser);
   if (bStroke || FillType) {
     CPDF_PathObject* pPathObj = new CPDF_PathObject;

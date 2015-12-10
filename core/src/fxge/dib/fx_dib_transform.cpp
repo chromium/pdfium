@@ -152,7 +152,7 @@ const int16_t SDP_Table[513] = {
 
 class CFX_BilinearMatrix : public CPDF_FixedMatrix {
  public:
-  CFX_BilinearMatrix(const CFX_AffineMatrix& src, int bits)
+  CFX_BilinearMatrix(const CFX_Matrix& src, int bits)
       : CPDF_FixedMatrix(src, bits) {}
   inline void Transform(int x,
                         int y,
@@ -296,7 +296,7 @@ FX_RECT FXDIB_SwapClipBox(FX_RECT& clip,
   rect.Normalize();
   return rect;
 }
-CFX_DIBitmap* CFX_DIBSource::TransformTo(const CFX_AffineMatrix* pDestMatrix,
+CFX_DIBitmap* CFX_DIBSource::TransformTo(const CFX_Matrix* pDestMatrix,
                                          int& result_left,
                                          int& result_top,
                                          FX_DWORD flags,
@@ -337,10 +337,10 @@ CFX_ImageTransformer::CFX_ImageTransformer() {
 }
 CFX_ImageTransformer::~CFX_ImageTransformer() {}
 FX_BOOL CFX_ImageTransformer::Start(const CFX_DIBSource* pSrc,
-                                    const CFX_AffineMatrix* pDestMatrix,
+                                    const CFX_Matrix* pDestMatrix,
                                     int flags,
                                     const FX_RECT* pDestClip) {
-  m_pMatrix = (CFX_AffineMatrix*)pDestMatrix;
+  m_pMatrix = (CFX_Matrix*)pDestMatrix;
   CFX_FloatRect unit_rect = pDestMatrix->GetUnitRect();
   FX_RECT result_rect = unit_rect.GetClosestRect();
   FX_RECT result_clip = result_rect;
@@ -384,8 +384,8 @@ FX_BOOL CFX_ImageTransformer::Start(const CFX_DIBSource* pSrc,
       (int)FXSYS_ceil(FXSYS_sqrt2(pDestMatrix->a, pDestMatrix->b));
   int stretch_height =
       (int)FXSYS_ceil(FXSYS_sqrt2(pDestMatrix->c, pDestMatrix->d));
-  CFX_AffineMatrix stretch2dest(1.0f, 0.0f, 0.0f, -1.0f, 0.0f,
-                                (FX_FLOAT)(stretch_height));
+  CFX_Matrix stretch2dest(1.0f, 0.0f, 0.0f, -1.0f, 0.0f,
+                          (FX_FLOAT)(stretch_height));
   stretch2dest.Concat(
       pDestMatrix->a / stretch_width, pDestMatrix->b / stretch_width,
       pDestMatrix->c / stretch_height, pDestMatrix->d / stretch_height,
@@ -442,9 +442,8 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
   if (pTransformed->m_pAlphaMask) {
     pTransformed->m_pAlphaMask->Clear(0);
   }
-  CFX_AffineMatrix result2stretch(1.0f, 0.0f, 0.0f, 1.0f,
-                                  (FX_FLOAT)(m_ResultLeft),
-                                  (FX_FLOAT)(m_ResultTop));
+  CFX_Matrix result2stretch(1.0f, 0.0f, 0.0f, 1.0f, (FX_FLOAT)(m_ResultLeft),
+                            (FX_FLOAT)(m_ResultTop));
   result2stretch.Concat(m_dest2stretch);
   result2stretch.TranslateI(-m_StretchClip.left, -m_StretchClip.top);
   if (stretch_buf_mask == NULL && pTransformed->m_pAlphaMask) {
