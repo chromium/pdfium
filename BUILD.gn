@@ -2,6 +2,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import("//build_overrides/v8.gni")
 import("//testing/test.gni")
 import("pdfium.gni")
 
@@ -183,6 +184,7 @@ source_set("test_support") {
       "//v8",
       "//v8/include",
     ]
+    configs += [ "//v8:external_startup_data" ]
   }
   configs += [ ":pdfium_config" ]
 }
@@ -725,6 +727,7 @@ static_library("javascript") {
     public_deps = [
       "//v8",
     ]
+    configs += [ "//v8:external_startup_data" ]
   } else {
     sources += [ "fpdfsdk/src/javascript/JS_Runtime_Stub.cpp" ]
   }
@@ -1522,6 +1525,7 @@ test("pdfium_embeddertests") {
       "//v8",
       "//v8/include",
     ]
+    configs += [ "//v8:external_startup_data" ]
   }
   configs += [ ":pdfium_config" ]
 }

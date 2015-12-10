@@ -3,6 +3,7 @@
 # found in the LICENSE file.
 
 import("//build/config/sanitizers/sanitizers.gni")
+import("//build_overrides/v8.gni")
 import("../pdfium.gni")
 
 group("samples") {
@@ -54,6 +55,7 @@ executable("pdfium_test") {
       "//v8",
       "//v8/include",
     ]
+    configs += [ "//v8:external_startup_data" ]
   }
   configs += [ ":pdfium_samples_config" ]
 }
