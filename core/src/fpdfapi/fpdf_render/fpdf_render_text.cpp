@@ -34,24 +34,18 @@ CFX_GlyphBitmap* CPDF_Type3Cache::LoadGlyph(FX_DWORD charcode,
   } else {
     pSizeCache = it->second;
   }
-  CFX_GlyphBitmap* pGlyphBitmap;
-  if (pSizeCache->m_GlyphMap.Lookup((void*)(uintptr_t)charcode,
-                                    (void*&)pGlyphBitmap)) {
-    return pGlyphBitmap;
-  }
-  pGlyphBitmap =
+  auto it2 = pSizeCache->m_GlyphMap.find(charcode);
+  if (it2 != pSizeCache->m_GlyphMap.end())
+    return it2->second;
+
+  CFX_GlyphBitmap* pGlyphBitmap =
       RenderGlyph(pSizeCache, charcode, pMatrix, retinaScaleX, retinaScaleY);
-  pSizeCache->m_GlyphMap.SetAt((void*)(uintptr_t)charcode, pGlyphBitmap);
+  pSizeCache->m_GlyphMap[charcode] = pGlyphBitmap;
   return pGlyphBitmap;
 }
 CPDF_Type3Glyphs::~CPDF_Type3Glyphs() {
-  FX_POSITION pos = m_GlyphMap.GetStartPosition();
-  void* Key;
-  CFX_GlyphBitmap* pGlyphBitmap;
-  while (pos) {
-    m_GlyphMap.GetNextAssoc(pos, Key, (void*&)pGlyphBitmap);
-    delete pGlyphBitmap;
-  }
+  for (const auto& pair : m_GlyphMap)
+    delete pair.second;
 }
 static int _AdjustBlue(FX_FLOAT pos, int& count, int blues[]) {
   FX_FLOAT min_distance = 1000000.0f * 1.0f;

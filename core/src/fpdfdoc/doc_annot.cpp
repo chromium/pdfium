@@ -124,14 +124,10 @@ CPDF_Annot::~CPDF_Annot() {
   ClearCachedAP();
 }
 void CPDF_Annot::ClearCachedAP() {
-  FX_POSITION pos = m_APMap.GetStartPosition();
-  while (pos) {
-    void* pForm;
-    void* pObjects;
-    m_APMap.GetNextAssoc(pos, pForm, pObjects);
-    delete (CPDF_PageObjects*)pObjects;
+  for (const auto& pair : m_APMap) {
+    delete pair.second;
   }
-  m_APMap.RemoveAll();
+  m_APMap.clear();
 }
 CFX_ByteString CPDF_Annot::GetSubType() const {
   return m_sSubtype;
@@ -192,14 +188,14 @@ CPDF_Form* CPDF_Annot::GetAPForm(const CPDF_Page* pPage, AppearanceMode mode) {
   if (!pStream)
     return nullptr;
 
-  void* pForm;
-  if (m_APMap.Lookup(pStream, pForm))
-    return static_cast<CPDF_Form*>(pForm);
+  auto it = m_APMap.find(pStream);
+  if (it != m_APMap.end())
+    return it->second;
 
   CPDF_Form* pNewForm =
       new CPDF_Form(m_pList->GetDocument(), pPage->m_pResources, pStream);
   pNewForm->ParseContent(nullptr, nullptr, nullptr, nullptr);
-  m_APMap.SetAt(pStream, pNewForm);
+  m_APMap[pStream] = pNewForm;
   return pNewForm;
 }
 
