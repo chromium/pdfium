@@ -28,6 +28,7 @@ CFWL_TargetImp::CFWL_TargetImp() {}
 CFWL_TargetImp::~CFWL_TargetImp() {
 }
 FWL_ERR CFWL_TargetImp::GetClassName(CFX_WideString& wsClass) const {
+  wsClass.Empty();
   return FWL_ERR_Succeeded;
 }
 FX_DWORD CFWL_TargetImp::GetClassID() const {

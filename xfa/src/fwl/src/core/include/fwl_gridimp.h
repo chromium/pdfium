@@ -70,8 +70,7 @@ class CFWL_GridWidgetInfo {
 };
 class CFWL_GridImp : public CFWL_ContentImp {
  public:
-  CFWL_GridImp();
-  CFWL_GridImp(const CFWL_WidgetImpProperties& properties);
+  CFWL_GridImp(const CFWL_WidgetImpProperties& properties, IFWL_Widget* pOuter);
   virtual ~CFWL_GridImp();
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
   virtual FX_DWORD GetClassID() const;

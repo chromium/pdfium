@@ -13,19 +13,24 @@
 #include "include/fwl_formimp.h"
 #include "include/fwl_widgetmgrimp.h"
 #include "include/fwl_appimp.h"
+#include "xfa/src/fwl/src/basewidget/include/fwl_formproxyimp.h"
+
 #define FWL_SYSBTNSIZE 21
 #define FWL_SYSBTNMARGIN 5
 #define FWL_SYSBTNSPAN 2
 #define FWL_CornerEnlarge 10
-FWL_ERR IFWL_Form::Initialize(CFWL_WidgetImpProperties& properties,
-                              CFX_WideString* classname,
-                              IFWL_Widget* pOuter) {
-  CFWL_FormImp* pFormImpl = new CFWL_FormImp(properties, pOuter);
-  SetImpl(pFormImpl);
-  pFormImpl->SetInterface(this);
-  pFormImpl->SetPrivateData(this, classname, NULL);
-  return pFormImpl->Initialize();
+
+// static
+IFWL_Form* IFWL_Form::CreateFormProxy(CFWL_WidgetImpProperties& properties,
+                                      CFX_WideString* classname,
+                                      IFWL_Widget* pOuter) {
+  IFWL_Form* pForm = new IFWL_Form;
+  CFWL_FormProxyImp* pFormProxyImpl = new CFWL_FormProxyImp(properties, pOuter);
+  pForm->SetImpl(pFormProxyImpl);
+  pFormProxyImpl->SetInterface(pForm);
+  return pForm;
 }
+IFWL_Form::IFWL_Form() {}
 FWL_FORMSIZE IFWL_Form::GetFormSize() {
   return static_cast<CFWL_FormImp*>(GetImpl())->GetFormSize();
 }
@@ -44,38 +49,7 @@ FWL_ERR IFWL_Form::EndDoModal() {
 FWL_ERR IFWL_Form::SetBorderRegion(CFX_Path* pPath) {
   return static_cast<CFWL_FormImp*>(GetImpl())->SetBorderRegion(pPath);
 }
-IFWL_Form::IFWL_Form() {
-}
-CFWL_FormImp::CFWL_FormImp(IFWL_Widget* pOuter)
-    : CFWL_PanelImp(pOuter),
-      m_pCloseBox(NULL),
-      m_pMinBox(NULL),
-      m_pMaxBox(NULL),
-      m_pCaptionBox(NULL),
-      m_pNoteLoop(NULL),
-      m_pSubFocus(NULL),
-      m_fCXBorder(0),
-      m_fCYBorder(0),
-      m_iCaptureBtn(-1),
-      m_iSysBox(0),
-      m_eResizeType(FORM_RESIZETYPE_None),
-      m_bLButtonDown(FALSE),
-      m_bMaximized(FALSE),
-      m_bSetMaximize(FALSE),
-      m_bCustomizeLayout(FALSE),
-      m_eFormSize(FWL_FORMSIZE_Manual),
-      m_bDoModalFlag(FALSE),
-      m_pBigIcon(NULL),
-      m_pSmallIcon(NULL),
-      m_bMouseIn(FALSE) {
-  m_rtRelative.Reset();
-  m_rtCaption.Reset();
-  m_rtRestore.Reset();
-  m_rtCaptionText.Reset();
-  m_rtIcon.Reset();
-  m_InfoStart.m_ptStart.Reset();
-  m_InfoStart.m_szStart.Reset();
-}
+
 CFWL_FormImp::CFWL_FormImp(const CFWL_WidgetImpProperties& properties,
                            IFWL_Widget* pOuter)
     : CFWL_PanelImp(properties, pOuter),

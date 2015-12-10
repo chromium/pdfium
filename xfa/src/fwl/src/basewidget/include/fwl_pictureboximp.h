@@ -14,9 +14,8 @@ class CFWL_PictureBoxImp;
 class CFWL_PictureBoxImpDelegate;
 class CFWL_PictureBoxImp : public CFWL_WidgetImp {
  public:
-  CFWL_PictureBoxImp(IFWL_Widget* pOuter = NULL);
   CFWL_PictureBoxImp(const CFWL_WidgetImpProperties& properties,
-                     IFWL_Widget* pOuter = NULL);
+                     IFWL_Widget* pOuter);
   ~CFWL_PictureBoxImp();
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
   virtual FX_DWORD GetClassID() const;

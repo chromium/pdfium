@@ -499,30 +499,15 @@ IFWL_Widget* CFWL_WidgetImp::GetInterface() const {
 void CFWL_WidgetImp::SetInterface(IFWL_Widget* pInterface) {
   m_pInterface = pInterface;
 }
-CFWL_WidgetImp::CFWL_WidgetImp(IFWL_Widget* pOuter)
-    : m_pProperties(NULL),
-      m_pPrivateData(NULL),
-      m_pDelegate(NULL),
-      m_pCurDelegate(NULL),
-      m_pOuter(pOuter),
-      m_pInterface(NULL),
-      m_iLock(0) {
-  m_pProperties = new CFWL_WidgetImpProperties;
-  m_pWidgetMgr = (CFWL_WidgetMgr*)FWL_GetWidgetMgr();
-  FXSYS_assert(m_pWidgetMgr != NULL);
-}
 CFWL_WidgetImp::CFWL_WidgetImp(const CFWL_WidgetImpProperties& properties,
                                IFWL_Widget* pOuter)
-    : m_pProperties(NULL),
+    : m_pProperties(new CFWL_WidgetImpProperties),
       m_pPrivateData(NULL),
       m_pDelegate(NULL),
       m_pCurDelegate(NULL),
       m_pOuter(pOuter),
       m_pInterface(NULL),
       m_iLock(0) {
-  if (!m_pProperties) {
-    m_pProperties = new CFWL_WidgetImpProperties;
-  }
   *m_pProperties = properties;
   m_pWidgetMgr = (CFWL_WidgetMgr*)FWL_GetWidgetMgr();
   FXSYS_assert(m_pWidgetMgr != NULL);
@@ -1040,9 +1025,8 @@ FWL_ERR CFWL_WidgetImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
 }
 class CFWL_CustomImp : public CFWL_WidgetImp {
  public:
-  CFWL_CustomImp(IFWL_Widget* pOuter = NULL);
   CFWL_CustomImp(const CFWL_WidgetImpProperties& properties,
-                 IFWL_Widget* pOuter = NULL);
+                 IFWL_Widget* pOuter);
   virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
   virtual FWL_ERR Update();
   virtual FWL_ERR SetProxy(IFWL_Proxy* pProxy);
@@ -1050,8 +1034,6 @@ class CFWL_CustomImp : public CFWL_WidgetImp {
  protected:
   IFWL_Proxy* m_pProxy;
 };
-CFWL_CustomImp::CFWL_CustomImp(IFWL_Widget* pOuter)
-    : CFWL_WidgetImp(pOuter), m_pProxy(NULL) {}
 CFWL_CustomImp::CFWL_CustomImp(const CFWL_WidgetImpProperties& properties,
                                IFWL_Widget* pOuter)
     : CFWL_WidgetImp(properties, pOuter), m_pProxy(NULL) {}
@@ -1072,15 +1054,17 @@ FWL_ERR CFWL_CustomImp::SetProxy(IFWL_Proxy* pProxy) {
   m_pProxy = pProxy;
   return FWL_ERR_Succeeded;
 }
-IFWL_Custom::IFWL_Custom() {
-}
-FWL_ERR IFWL_Custom::Initialize(const CFWL_WidgetImpProperties& properties,
-                                IFWL_Widget* pOuter) {
+
+// static
+IFWL_Custom* IFWL_Custom::Create(const CFWL_WidgetImpProperties& properties,
+                                 IFWL_Widget* pOuter) {
+  IFWL_Custom* pCustom = new IFWL_Custom;
   CFWL_CustomImp* pCustomImpl = new CFWL_CustomImp(properties, pOuter);
-  SetImpl(pCustomImpl);
-  pCustomImpl->SetInterface(this);
-  return pCustomImpl->Initialize();
+  pCustom->SetImpl(pCustomImpl);
+  pCustomImpl->SetInterface(pCustom);
+  return pCustom;
 }
+IFWL_Custom::IFWL_Custom() {}
 FWL_ERR IFWL_Custom::SetProxy(IFWL_Proxy* pProxy) {
   return static_cast<CFWL_CustomImp*>(GetImpl())->SetProxy(pProxy);
 }

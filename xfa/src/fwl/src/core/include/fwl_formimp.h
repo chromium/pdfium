@@ -67,9 +67,7 @@ typedef struct RestoreResizeInfo {
 } RestoreInfo;
 class CFWL_FormImp : public CFWL_PanelImp {
  public:
-  CFWL_FormImp(IFWL_Widget* pOuter = NULL);
-  CFWL_FormImp(const CFWL_WidgetImpProperties& properties,
-               IFWL_Widget* pOuter = NULL);
+  CFWL_FormImp(const CFWL_WidgetImpProperties& properties, IFWL_Widget* pOuter);
   virtual ~CFWL_FormImp();
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
   virtual FX_DWORD GetClassID() const;

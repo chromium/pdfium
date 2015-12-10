@@ -14,9 +14,8 @@ class CFWL_PushButtonImp;
 class CFWL_PushButtonImpDelegate;
 class CFWL_PushButtonImp : public CFWL_WidgetImp {
  public:
-  CFWL_PushButtonImp(IFWL_Widget* pOuter = NULL);
   CFWL_PushButtonImp(const CFWL_WidgetImpProperties& properties,
-                     IFWL_Widget* pOuter = NULL);
+                     IFWL_Widget* pOuter);
   virtual ~CFWL_PushButtonImp();
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
   virtual FX_DWORD GetClassID() const;

@@ -14,7 +14,6 @@ class CFWL_FormProxyImp;
 class CFWL_FormProxyImpDelegate;
 class CFWL_FormProxyImp : public CFWL_FormImp {
  public:
-  CFWL_FormProxyImp(IFWL_Widget* pOuter);
   CFWL_FormProxyImp(const CFWL_WidgetImpProperties& properties,
                     IFWL_Widget* pOuter);
   ~CFWL_FormProxyImp();

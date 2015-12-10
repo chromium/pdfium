@@ -10,26 +10,23 @@
 #include "../core/include/fwl_widgetimp.h"
 #include "include/fwl_editimp.h"
 #include "include/fwl_barcodeimp.h"
-IFWL_Barcode::IFWL_Barcode() {
+
+// static
+IFWL_Barcode* IFWL_Barcode::Create(const CFWL_WidgetImpProperties& properties) {
+  IFWL_Barcode* pBarcode = new IFWL_Barcode;
+  CFWL_BarcodeImp* pBarcodeImpl = new CFWL_BarcodeImp(properties, nullptr);
+  pBarcode->SetImpl(pBarcodeImpl);
+  pBarcodeImpl->SetInterface(pBarcode);
+  return pBarcode;
 }
-FWL_ERR IFWL_Barcode::Initialize(const CFWL_WidgetImpProperties& properties,
-                                 IFWL_Widget* pOuter) {
-  CFWL_BarcodeImp* pBarcodeImpl = new CFWL_BarcodeImp(properties, pOuter);
-  SetImpl(pBarcodeImpl);
-  pBarcodeImpl->SetInterface(this);
-  return pBarcodeImpl->Initialize();
-}
+IFWL_Barcode::IFWL_Barcode() {}
 void IFWL_Barcode::SetType(BC_TYPE type) {
   static_cast<CFWL_BarcodeImp*>(GetImpl())->SetType(type);
 }
 FX_BOOL IFWL_Barcode::IsProtectedType() {
   return static_cast<CFWL_BarcodeImp*>(GetImpl())->IsProtectedType();
 }
-CFWL_BarcodeImp::CFWL_BarcodeImp(IFWL_Widget* pOuter)
-    : CFWL_EditImp(pOuter),
-      m_pBarcodeEngine(NULL),
-      m_dwStatus(0),
-      m_type(BC_UNKNOWN) {}
+
 CFWL_BarcodeImp::CFWL_BarcodeImp(const CFWL_WidgetImpProperties& properties,
                                  IFWL_Widget* pOuter)
     : CFWL_EditImp(properties, pOuter),

@@ -14,15 +14,15 @@ FWL_ERR CFWL_ListBox::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  m_pIface = new IFWL_ListBox;
-  FWL_ERR ret =
-      ((IFWL_ListBox*)m_pIface)
-          ->Initialize(m_pProperties->MakeWidgetImpProperties(&m_ListBoxDP),
-                       nullptr);
-  if (ret == FWL_ERR_Succeeded) {
-    CFWL_Widget::Initialize();
+  nonstd::unique_ptr<IFWL_ListBox> pListBox(IFWL_ListBox::Create(
+      m_pProperties->MakeWidgetImpProperties(&m_ListBoxDP), nullptr));
+  FWL_ERR ret = pListBox->Initialize();
+  if (ret != FWL_ERR_Succeeded) {
+    return ret;
   }
-  return ret;
+  m_pIface = pListBox.release();
+  CFWL_Widget::Initialize();
+  return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_ListBox::AddDIBitmap(CFX_DIBitmap* pDIB, FWL_HLISTITEM hItem) {
   ((CFWL_ListItem*)hItem)->m_pDIB = pDIB;

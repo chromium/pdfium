@@ -13,9 +13,8 @@ class IFWL_Content;
 class CFWL_PanelImp;
 class CFWL_PanelImp : public CFWL_WidgetImp {
  public:
-  CFWL_PanelImp(IFWL_Widget* pOuter = NULL);
   CFWL_PanelImp(const CFWL_WidgetImpProperties& properties,
-                IFWL_Widget* pOuter = NULL);
+                IFWL_Widget* pOuter);
   virtual ~CFWL_PanelImp();
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
   virtual FX_DWORD GetClassID() const;

@@ -11,40 +11,24 @@
 #include "../core/include/fwl_widgetmgrimp.h"
 #include "include/fwl_checkboximp.h"
 #define FWL_CKB_CaptionMargin 5
-IFWL_CheckBox::IFWL_CheckBox() {
-}
-FWL_ERR IFWL_CheckBox::Initialize(const CFWL_WidgetImpProperties& properties,
-                                  IFWL_Widget* pOuter) {
+
+// static
+IFWL_CheckBox* IFWL_CheckBox::Create(const CFWL_WidgetImpProperties& properties,
+                                     IFWL_Widget* pOuter) {
+  IFWL_CheckBox* pCheckBox = new IFWL_CheckBox;
   CFWL_CheckBoxImp* pCheckBoxImpl = new CFWL_CheckBoxImp(properties, pOuter);
-  SetImpl(pCheckBoxImpl);
-  pCheckBoxImpl->SetInterface(this);
-  return pCheckBoxImpl->Initialize();
+  pCheckBox->SetImpl(pCheckBoxImpl);
+  pCheckBoxImpl->SetInterface(pCheckBox);
+  return pCheckBox;
 }
+IFWL_CheckBox::IFWL_CheckBox() {}
 int32_t IFWL_CheckBox::GetCheckState() {
   return static_cast<CFWL_CheckBoxImp*>(GetImpl())->GetCheckState();
 }
 FWL_ERR IFWL_CheckBox::SetCheckState(int32_t iCheck) {
   return static_cast<CFWL_CheckBoxImp*>(GetImpl())->SetCheckState(iCheck);
 }
-IFWL_RadioButton::IFWL_RadioButton() {
-}
-FWL_ERR IFWL_RadioButton::Initialize(const CFWL_WidgetImpProperties& properties,
-                                     IFWL_Widget* pOuter) {
-  CFWL_CheckBoxImp* pCheckBoxImpl = new CFWL_CheckBoxImp(properties, pOuter);
-  SetImpl(pCheckBoxImpl);
-  pCheckBoxImpl->SetInterface(this);
-  return pCheckBoxImpl->Initialize();
-}
-CFWL_CheckBoxImp::CFWL_CheckBoxImp(IFWL_Widget* pOuter)
-    : CFWL_WidgetImp(pOuter),
-      m_dwTTOStyles(FDE_TTOSTYLE_SingleLine),
-      m_iTTOAlign(FDE_TTOALIGNMENT_Center),
-      m_bBtnDown(FALSE) {
-  m_rtClient.Reset();
-  m_rtBox.Reset();
-  m_rtCaption.Reset();
-  m_rtFocus.Reset();
-}
+
 CFWL_CheckBoxImp::CFWL_CheckBoxImp(const CFWL_WidgetImpProperties& properties,
                                    IFWL_Widget* pOuter)
     : CFWL_WidgetImp(properties, pOuter),
@@ -58,15 +42,11 @@ CFWL_CheckBoxImp::CFWL_CheckBoxImp(const CFWL_WidgetImpProperties& properties,
 }
 CFWL_CheckBoxImp::~CFWL_CheckBoxImp() {}
 FWL_ERR CFWL_CheckBoxImp::GetClassName(CFX_WideString& wsClass) const {
-  wsClass = (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_RadioButton)
-                ? FWL_CLASS_RadioButton
-                : FWL_CLASS_CheckBox;
+  wsClass = FWL_CLASS_CheckBox;
   return FWL_ERR_Succeeded;
 }
 FX_DWORD CFWL_CheckBoxImp::GetClassID() const {
-  return m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_RadioButton
-             ? FWL_CLASSHASH_RadioButton
-             : FWL_CLASSHASH_CheckBox;
+  return FWL_CLASSHASH_CheckBox;
 }
 FWL_ERR CFWL_CheckBoxImp::Initialize() {
   if (CFWL_WidgetImp::Initialize() != FWL_ERR_Succeeded)

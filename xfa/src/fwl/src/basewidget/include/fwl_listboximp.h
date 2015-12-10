@@ -18,9 +18,8 @@ class CFWL_ListBoxImp;
 class CFWL_ListBoxImpDelegate;
 class CFWL_ListBoxImp : public CFWL_WidgetImp {
  public:
-  CFWL_ListBoxImp(IFWL_Widget* pOuter = NULL);
   CFWL_ListBoxImp(const CFWL_WidgetImpProperties& properties,
-                  IFWL_Widget* pOuter = NULL);
+                  IFWL_Widget* pOuter);
   ~CFWL_ListBoxImp();
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
   virtual FX_DWORD GetClassID() const;

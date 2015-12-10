@@ -17,17 +17,19 @@
 #define MONTHCAL_COLUMNS 7
 #define MONTHCAL_HEADER_BTN_VMARGIN 7
 #define MONTHCAL_HEADER_BTN_HMARGIN 5
-IFWL_MonthCalendar::IFWL_MonthCalendar() {
-}
-FWL_ERR IFWL_MonthCalendar::Initialize(
+
+// static
+IFWL_MonthCalendar* IFWL_MonthCalendar::Create(
     const CFWL_WidgetImpProperties& properties,
     IFWL_Widget* pOuter) {
+  IFWL_MonthCalendar* pMonthCalendar = new IFWL_MonthCalendar;
   CFWL_MonthCalendarImp* pMonthCalendarImpl =
       new CFWL_MonthCalendarImp(properties, pOuter);
-  SetImpl(pMonthCalendarImpl);
-  pMonthCalendarImpl->SetInterface(this);
-  return pMonthCalendarImpl->Initialize();
+  pMonthCalendar->SetImpl(pMonthCalendarImpl);
+  pMonthCalendarImpl->SetInterface(pMonthCalendar);
+  return pMonthCalendar;
 }
+IFWL_MonthCalendar::IFWL_MonthCalendar() {}
 int32_t IFWL_MonthCalendar::CountSelect() {
   return static_cast<CFWL_MonthCalendarImp*>(GetImpl())->CountSelect();
 }
@@ -44,35 +46,7 @@ FX_BOOL IFWL_MonthCalendar::SetSelect(int32_t iYear,
   return static_cast<CFWL_MonthCalendarImp*>(GetImpl())
       ->SetSelect(iYear, iMonth, iDay);
 }
-CFWL_MonthCalendarImp::CFWL_MonthCalendarImp(IFWL_Widget* pOuter)
-    : CFWL_WidgetImp(pOuter),
-      m_iCurYear(2011),
-      m_iCurMonth(1),
-      m_iYear(2011),
-      m_iMonth(1),
-      m_iDay(1),
-      m_iHovered(-1),
-      m_iLBtnPartStates(FWL_PARTSTATE_MCD_Normal),
-      m_iRBtnPartStates(FWL_PARTSTATE_MCD_Normal) {
-  m_rtHead.Reset();
-  m_rtWeek.Reset();
-  m_rtLBtn.Reset();
-  m_rtRBtn.Reset();
-  m_rtDates.Reset();
-  m_rtHSep.Reset();
-  m_rtHeadText.Reset();
-  m_rtToday.Reset();
-  m_rtTodayFlag.Reset();
-  m_rtClient.Reset();
-  m_rtWeekNum.Reset();
-  m_rtWeekNumSep.Reset();
-  m_szHead.Reset();
-  m_szCell.Reset();
-  m_szToday.Reset();
-  m_pDateTime = new CFX_DateTime;
-  m_bInit = FALSE;
-  m_iMaxSel = 1;
-}
+
 CFWL_MonthCalendarImp::CFWL_MonthCalendarImp(
     const CFWL_WidgetImpProperties& properties,
     IFWL_Widget* pOuter)

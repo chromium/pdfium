@@ -31,11 +31,14 @@ class IFWL_ToolTipDP : public IFWL_DataProvider {
 };
 class IFWL_ToolTip : public IFWL_Form {
  public:
-  IFWL_ToolTip();
-  FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
-                     IFWL_Widget* pOuter);
+  static IFWL_ToolTip* Create(const CFWL_WidgetImpProperties& properties,
+                              IFWL_Widget* pOuter);
+
   FWL_ERR SetAnchor(const CFX_RectF& rtAnchor);
   FWL_ERR Show();
   FWL_ERR Hide();
+
+ protected:
+  IFWL_ToolTip();
 };
 #endif

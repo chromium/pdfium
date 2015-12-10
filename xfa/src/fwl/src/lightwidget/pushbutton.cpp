@@ -14,15 +14,15 @@ FWL_ERR CFWL_PushButton::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  m_pIface = new IFWL_PushButton;
-  FWL_ERR ret =
-      ((IFWL_PushButton*)m_pIface)
-          ->Initialize(m_pProperties->MakeWidgetImpProperties(&m_buttonData),
-                       nullptr);
-  if (ret == FWL_ERR_Succeeded) {
-    CFWL_Widget::Initialize();
+  nonstd::unique_ptr<IFWL_PushButton> pPushButton(IFWL_PushButton::Create(
+      m_pProperties->MakeWidgetImpProperties(&m_buttonData), nullptr));
+  FWL_ERR ret = pPushButton->Initialize();
+  if (ret != FWL_ERR_Succeeded) {
+    return ret;
   }
-  return ret;
+  m_pIface = pPushButton.release();
+  CFWL_Widget::Initialize();
+  return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_PushButton::GetCaption(CFX_WideString& wsCaption) {
   wsCaption = m_buttonData.m_wsCaption;

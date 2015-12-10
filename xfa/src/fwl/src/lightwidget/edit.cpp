@@ -14,15 +14,15 @@ FWL_ERR CFWL_Edit::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  m_pIface = new IFWL_Edit;
-  FWL_ERR ret =
-      ((IFWL_Edit*)m_pIface)
-          ->Initialize(m_pProperties->MakeWidgetImpProperties(nullptr),
-                       nullptr);
-  if (ret == FWL_ERR_Succeeded) {
-    CFWL_Widget::Initialize();
+  nonstd::unique_ptr<IFWL_Edit> pEdit(IFWL_Edit::Create(
+      m_pProperties->MakeWidgetImpProperties(nullptr), nullptr));
+  FWL_ERR ret = pEdit->Initialize();
+  if (ret != FWL_ERR_Succeeded) {
+    return ret;
   }
-  return ret;
+  m_pIface = pEdit.release();
+  CFWL_Widget::Initialize();
+  return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_Edit::SetText(const CFX_WideString& wsText) {
   if (!m_pIface)

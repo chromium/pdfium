@@ -70,9 +70,9 @@ class IFWL_DateTimePickerDP : public IFWL_DataProvider {
 };
 class IFWL_DateTimePicker : public IFWL_Widget {
  public:
-  IFWL_DateTimePicker();
-  FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
-                     IFWL_Widget* pOuter);
+  static IFWL_DateTimePicker* Create(const CFWL_WidgetImpProperties& properties,
+                                     IFWL_Widget* pOuter);
+
   FWL_ERR GetCurSel(int32_t& iYear, int32_t& iMonth, int32_t& iDay);
   FWL_ERR SetCurSel(int32_t iYear, int32_t iMonth, int32_t iDay);
   FWL_ERR SetEditText(const CFX_WideString& wsText);
@@ -98,5 +98,8 @@ class IFWL_DateTimePicker : public IFWL_Widget {
   FWL_ERR SetEditLimit(int32_t nLimit);
   FWL_ERR ModifyEditStylesEx(FX_DWORD dwStylesExAdded,
                              FX_DWORD dwStylesExRemoved);
+
+ protected:
+  IFWL_DateTimePicker();
 };
 #endif

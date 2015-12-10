@@ -14,15 +14,15 @@ FWL_ERR CFWL_Caret::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  m_pIface = new IFWL_Caret;
-  FWL_ERR ret =
-      ((IFWL_Caret*)m_pIface)
-          ->Initialize(m_pProperties->MakeWidgetImpProperties(nullptr),
-                       nullptr);
-  if (ret == FWL_ERR_Succeeded) {
-    CFWL_Widget::Initialize();
+  nonstd::unique_ptr<IFWL_Caret> pCaret(IFWL_Caret::Create(
+      m_pProperties->MakeWidgetImpProperties(nullptr), nullptr));
+  FWL_ERR ret = pCaret->Initialize();
+  if (ret != FWL_ERR_Succeeded) {
+    return ret;
   }
-  return ret;
+  m_pIface = pCaret.release();
+  CFWL_Widget::Initialize();
+  return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_Caret::ShowCaret(FX_BOOL bFlag) {
   return ((IFWL_Caret*)m_pIface)->ShowCaret(bFlag);

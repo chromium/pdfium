@@ -19,9 +19,7 @@ class CFWL_EditImp;
 class CFWL_EditImpDelegate;
 class CFWL_EditImp : public CFWL_WidgetImp, public IFDE_TxtEdtEventSink {
  public:
-  CFWL_EditImp(IFWL_Widget* pOuter = NULL);
-  CFWL_EditImp(const CFWL_WidgetImpProperties& properties,
-               IFWL_Widget* pOuter = NULL);
+  CFWL_EditImp(const CFWL_WidgetImpProperties& properties, IFWL_Widget* pOuter);
   ~CFWL_EditImp() override;
 
   // CFWL_WidgetImp:

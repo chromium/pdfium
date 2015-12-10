@@ -14,15 +14,15 @@ FWL_ERR CFWL_Barcode::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  m_pIface = new IFWL_Barcode;
-  FWL_ERR ret =
-      ((IFWL_Barcode*)m_pIface)
-          ->Initialize(m_pProperties->MakeWidgetImpProperties(&m_barcodeData),
-                       nullptr);
-  if (ret == FWL_ERR_Succeeded) {
-    CFWL_Widget::Initialize();
+  nonstd::unique_ptr<IFWL_Barcode> pBarcode(IFWL_Barcode::Create(
+      m_pProperties->MakeWidgetImpProperties(&m_barcodeData)));
+  FWL_ERR ret = pBarcode->Initialize();
+  if (ret != FWL_ERR_Succeeded) {
+    return ret;
   }
-  return ret;
+  m_pIface = pBarcode.release();
+  CFWL_Widget::Initialize();
+  return FWL_ERR_Succeeded;
 }
 CFWL_Barcode::CFWL_Barcode() {}
 CFWL_Barcode::~CFWL_Barcode() {}

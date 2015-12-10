@@ -29,11 +29,7 @@ CFWL_CheckBoxTP::~CFWL_CheckBoxTP() {
   }
 }
 FX_BOOL CFWL_CheckBoxTP::IsValidWidget(IFWL_Widget* pWidget) {
-  if (!pWidget)
-    return FALSE;
-  FX_DWORD dwHash = pWidget->GetClassID();
-  return dwHash == FWL_CLASSHASH_CheckBox ||
-         dwHash == FWL_CLASSHASH_RadioButton;
+  return pWidget && pWidget->GetClassID() == FWL_CLASSHASH_CheckBox;
 }
 FX_DWORD CFWL_CheckBoxTP::SetThemeID(IFWL_Widget* pWidget,
                                      FX_DWORD dwThemeID,

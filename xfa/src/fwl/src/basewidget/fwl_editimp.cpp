@@ -11,18 +11,31 @@
 #include "../core/include/fwl_noteimp.h"
 #include "../core/include/fwl_widgetimp.h"
 #include "../core/include/fwl_widgetmgrimp.h"
-#include "include/fwl_scrollbarimp.h"
-#include "include/fwl_editimp.h"
 #include "include/fwl_caretimp.h"
-IFWL_Edit::IFWL_Edit() {
-}
-FWL_ERR IFWL_Edit::Initialize(const CFWL_WidgetImpProperties& properties,
-                              IFWL_Widget* pOuter) {
+#include "include/fwl_comboboximp.h"
+#include "include/fwl_editimp.h"
+#include "include/fwl_scrollbarimp.h"
+
+// static
+IFWL_Edit* IFWL_Edit::Create(const CFWL_WidgetImpProperties& properties,
+                             IFWL_Widget* pOuter) {
+  IFWL_Edit* pEdit = new IFWL_Edit;
   CFWL_EditImp* pEditImpl = new CFWL_EditImp(properties, pOuter);
-  SetImpl(pEditImpl);
-  pEditImpl->SetInterface(this);
-  return pEditImpl->Initialize();
+  pEdit->SetImpl(pEditImpl);
+  pEditImpl->SetInterface(pEdit);
+  return pEdit;
 }
+// static
+IFWL_Edit* IFWL_Edit::CreateComboEdit(
+    const CFWL_WidgetImpProperties& properties,
+    IFWL_Widget* pOuter) {
+  IFWL_Edit* pEdit = new IFWL_Edit;
+  CFWL_EditImp* pComboEditImpl = new CFWL_ComboEditImp(properties, pOuter);
+  pEdit->SetImpl(pComboEditImpl);
+  pComboEditImpl->SetInterface(pEdit);
+  return pEdit;
+}
+IFWL_Edit::IFWL_Edit() {}
 FWL_ERR IFWL_Edit::SetText(const CFX_WideString& wsText) {
   return static_cast<CFWL_EditImp*>(GetImpl())->SetText(wsText);
 }
@@ -150,29 +163,6 @@ FX_BOOL IFWL_Edit::ReplaceSpellCheckWord(CFX_PointF pointf,
       ->ReplaceSpellCheckWord(pointf, bsReplace);
 }
 #define FWL_EDIT_Margin 3
-CFWL_EditImp::CFWL_EditImp(IFWL_Widget* pOuter)
-    : CFWL_WidgetImp(pOuter),
-      m_fVAlignOffset(0.0f),
-      m_fScrollOffsetX(0.0f),
-      m_fScrollOffsetY(0.0f),
-      m_pEdtEngine(NULL),
-      m_bLButtonDown(FALSE),
-      m_nSelStart(0),
-      m_nLimit(-1),
-      m_fSpaceAbove(0),
-      m_fSpaceBelow(0),
-      m_fFontSize(0),
-      m_bSetRange(FALSE),
-      m_iMin(-1),
-      m_iMax(0xFFFFFFF),
-      m_backColor(0),
-      m_updateBackColor(FALSE),
-      m_iCurRecord(-1),
-      m_iMaxRecord(128) {
-  m_rtClient.Reset();
-  m_rtEngine.Reset();
-  m_rtStatic.Reset();
-}
 CFWL_EditImp::CFWL_EditImp(const CFWL_WidgetImpProperties& properties,
                            IFWL_Widget* pOuter)
     : CFWL_WidgetImp(properties, pOuter),
@@ -1670,8 +1660,8 @@ void CFWL_EditImp::InitScrollBar(FX_BOOL bVert) {
   prop.m_dwStates = FWL_WGTSTATE_Disabled | FWL_WGTSTATE_Invisible;
   prop.m_pParent = m_pInterface;
   prop.m_pThemeProvider = m_pProperties->m_pThemeProvider;
-  IFWL_ScrollBar* pScrollBar = new IFWL_ScrollBar;
-  pScrollBar->Initialize(prop, m_pInterface);
+  IFWL_ScrollBar* pScrollBar = IFWL_ScrollBar::Create(prop, m_pInterface);
+  pScrollBar->Initialize();
   (bVert ? &m_pVertScrollBar : &m_pHorzScrollBar)->reset(pScrollBar);
 }
 void CFWL_EditImp::InitEngine() {
@@ -1745,8 +1735,9 @@ FX_BOOL CFWL_EditImp::ValidateNumberChar(FX_WCHAR cNum) {
 void CFWL_EditImp::InitCaret() {
   if (!m_pCaret) {
     if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_InnerCaret)) {
-      m_pCaret.reset(new IFWL_Caret);
-      m_pCaret->Initialize(m_pInterface);
+      CFWL_WidgetImpProperties prop;
+      m_pCaret.reset(IFWL_Caret::Create(prop, m_pInterface));
+      m_pCaret->Initialize();
       m_pCaret->SetParent(m_pInterface);
       m_pCaret->SetStates(m_pProperties->m_dwStates);
     }

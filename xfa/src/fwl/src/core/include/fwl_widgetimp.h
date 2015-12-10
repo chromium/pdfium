@@ -66,9 +66,8 @@ class CFWL_WidgetImp : public CFWL_TargetImp {
   CFX_SizeF GetOffsetFromParent(IFWL_Widget* pParent);
 
  protected:
-  CFWL_WidgetImp(IFWL_Widget* pOuter = NULL);
   CFWL_WidgetImp(const CFWL_WidgetImpProperties& properties,
-                 IFWL_Widget* pOuter = NULL);
+                 IFWL_Widget* pOuter);
   virtual ~CFWL_WidgetImp();
   FX_BOOL IsEnabled() const;
   FX_BOOL IsVisible() const;

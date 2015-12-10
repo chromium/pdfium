@@ -14,15 +14,15 @@ FWL_ERR CFWL_ComboBox::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  m_pIface = new IFWL_ComboBox;
-  FWL_ERR ret =
-      ((IFWL_ComboBox*)m_pIface)
-          ->Initialize(m_pProperties->MakeWidgetImpProperties(&m_comboBoxData),
-                       nullptr);
-  if (ret == FWL_ERR_Succeeded) {
-    CFWL_Widget::Initialize();
+  nonstd::unique_ptr<IFWL_ComboBox> pComboBox(IFWL_ComboBox::Create(
+      m_pProperties->MakeWidgetImpProperties(&m_comboBoxData)));
+  FWL_ERR ret = pComboBox->Initialize();
+  if (ret != FWL_ERR_Succeeded) {
+    return ret;
   }
-  return ret;
+  m_pIface = pComboBox.release();
+  CFWL_Widget::Initialize();
+  return FWL_ERR_Succeeded;
 }
 int32_t CFWL_ComboBox::AddString(const CFX_WideStringC& wsText) {
   CFWL_ComboBoxItem* pItem = new CFWL_ComboBoxItem;

@@ -31,6 +31,8 @@ class IFWL_Target {
   IFWL_Target() : m_pImpl(nullptr) {}
   virtual ~IFWL_Target();
 
+  // These call into equivalent polymorphic methods of m_pImpl. There
+  // should be no need to override these in subclasses.
   FWL_ERR GetClassName(CFX_WideString& wsClass) const;
   FX_DWORD GetClassID() const;
   FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const;
@@ -38,6 +40,8 @@ class IFWL_Target {
   FWL_ERR Finalize();
 
   CFWL_TargetImp* GetImpl() const { return m_pImpl; }
+
+ protected:
   void SetImpl(CFWL_TargetImp* pImpl) { m_pImpl = pImpl; }
 
  private:

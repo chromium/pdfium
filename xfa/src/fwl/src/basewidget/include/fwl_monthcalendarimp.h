@@ -17,9 +17,8 @@ class CFWL_MonthCalendarImp;
 class CFWL_MonthCalendarImpDelegate;
 class CFWL_MonthCalendarImp : public CFWL_WidgetImp {
  public:
-  CFWL_MonthCalendarImp(IFWL_Widget* pOuter = NULL);
   CFWL_MonthCalendarImp(const CFWL_WidgetImpProperties& properties,
-                        IFWL_Widget* pOuter = NULL);
+                        IFWL_Widget* pOuter);
   ~CFWL_MonthCalendarImp();
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
   virtual FX_DWORD GetClassID() const;

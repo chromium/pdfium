@@ -11,12 +11,15 @@
 #include "../core/include/fwl_panelimp.h"
 #include "../core/include/fwl_formimp.h"
 #include "include/fwl_tooltipctrlimp.h"
-FWL_ERR IFWL_ToolTip::Initialize(const CFWL_WidgetImpProperties& properties,
-                                 IFWL_Widget* pOuter) {
+
+// static
+IFWL_ToolTip* IFWL_ToolTip::Create(const CFWL_WidgetImpProperties& properties,
+                                   IFWL_Widget* pOuter) {
+  IFWL_ToolTip* pToolTip = new IFWL_ToolTip;
   CFWL_ToolTipImp* pToolTipImpl = new CFWL_ToolTipImp(properties, pOuter);
-  SetImpl(pToolTipImpl);
-  pToolTipImpl->SetInterface(this);
-  return pToolTipImpl->Initialize();
+  pToolTip->SetImpl(pToolTipImpl);
+  pToolTipImpl->SetInterface(pToolTip);
+  return pToolTip;
 }
 FWL_ERR IFWL_ToolTip::SetAnchor(const CFX_RectF& rtAnchor) {
   return static_cast<CFWL_ToolTipImp*>(GetImpl())->SetAnchor(rtAnchor);
@@ -28,20 +31,6 @@ FWL_ERR IFWL_ToolTip::Hide() {
   return static_cast<CFWL_ToolTipImp*>(GetImpl())->Hide();
 }
 IFWL_ToolTip::IFWL_ToolTip() {
-}
-CFWL_ToolTipImp::CFWL_ToolTipImp(IFWL_Widget* pOuter)
-    : CFWL_FormImp(pOuter),
-      m_bBtnDown(FALSE),
-      m_dwTTOStyles(FDE_TTOSTYLE_SingleLine),
-      m_iTTOAlign(FDE_TTOALIGNMENT_Center),
-      m_hTimerShow(NULL),
-      m_hTimerHide(NULL),
-      m_pTimer(NULL) {
-  m_rtClient.Set(0, 0, 0, 0);
-  m_rtCaption.Set(0, 0, 0, 0);
-  m_pTimer = NULL;
-  m_TimerShow.m_pToolTip = this;
-  m_TimerHide.m_pToolTip = this;
 }
 CFWL_ToolTipImp::CFWL_ToolTipImp(const CFWL_WidgetImpProperties& properties,
                                  IFWL_Widget* pOuter)

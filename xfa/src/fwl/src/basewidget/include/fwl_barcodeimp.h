@@ -20,9 +20,8 @@ class CFWL_BarcodeImpDelegate;
 #define XFA_BCS_EncodeSuccess 0x0002
 class CFWL_BarcodeImp : public CFWL_EditImp {
  public:
-  CFWL_BarcodeImp(IFWL_Widget* pOuter = NULL);
   CFWL_BarcodeImp(const CFWL_WidgetImpProperties& properties,
-                  IFWL_Widget* pOuter = NULL);
+                  IFWL_Widget* pOuter);
   virtual ~CFWL_BarcodeImp();
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
   virtual FX_DWORD GetClassID() const;

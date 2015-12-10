@@ -11,15 +11,18 @@
 #include "include/fwl_scrollbarimp.h"
 #define FWL_SCROLLBAR_Elapse 500
 #define FWL_SCROLLBAR_MinThumb 5
-IFWL_ScrollBar::IFWL_ScrollBar() {
-}
-FWL_ERR IFWL_ScrollBar::Initialize(const CFWL_WidgetImpProperties& properties,
-                                   IFWL_Widget* pOuter) {
+
+// static
+IFWL_ScrollBar* IFWL_ScrollBar::Create(
+    const CFWL_WidgetImpProperties& properties,
+    IFWL_Widget* pOuter) {
+  IFWL_ScrollBar* pScrollBar = new IFWL_ScrollBar;
   CFWL_ScrollBarImp* pScrollBarImpl = new CFWL_ScrollBarImp(properties, pOuter);
-  SetImpl(pScrollBarImpl);
-  pScrollBarImpl->SetInterface(this);
-  return pScrollBarImpl->Initialize();
+  pScrollBar->SetImpl(pScrollBarImpl);
+  pScrollBarImpl->SetInterface(pScrollBar);
+  return pScrollBar;
 }
+IFWL_ScrollBar::IFWL_ScrollBar() {}
 FX_BOOL IFWL_ScrollBar::IsVertical() {
   return static_cast<CFWL_ScrollBarImp*>(GetImpl())->IsVertical();
 }
@@ -55,39 +58,6 @@ FWL_ERR IFWL_ScrollBar::SetTrackPos(FX_FLOAT fTrackPos) {
 }
 FX_BOOL IFWL_ScrollBar::DoScroll(FX_DWORD dwCode, FX_FLOAT fPos) {
   return static_cast<CFWL_ScrollBarImp*>(GetImpl())->DoScroll(dwCode, fPos);
-}
-CFWL_ScrollBarImp::CFWL_ScrollBarImp(IFWL_Widget* pOuter)
-    : CFWL_WidgetImp(pOuter),
-      m_hTimer(NULL),
-      m_fRangeMin(0),
-      m_fRangeMax(-1),
-      m_fPageSize(0),
-      m_fStepSize(0),
-      m_fPos(0),
-      m_fTrackPos(0),
-      m_iMinButtonState(FWL_PARTSTATE_SCB_Normal),
-      m_iMaxButtonState(FWL_PARTSTATE_SCB_Normal),
-      m_iThumbButtonState(FWL_PARTSTATE_SCB_Normal),
-      m_iMinTrackState(FWL_PARTSTATE_SCB_Normal),
-      m_iMaxTrackState(FWL_PARTSTATE_SCB_Normal),
-      m_fLastTrackPos(0),
-      m_cpTrackPointX(0),
-      m_cpTrackPointY(0),
-      m_iMouseWheel(0),
-      m_bTrackMouseLeave(FALSE),
-      m_bMouseHover(FALSE),
-      m_bMouseDown(FALSE),
-      m_bRepaintThumb(FALSE),
-      m_fButtonLen(0),
-      m_bMinSize(FALSE),
-      m_bCustomLayout(FALSE),
-      m_fMinThumb(FWL_SCROLLBAR_MinThumb) {
-  m_rtClient.Reset();
-  m_rtThumb.Reset();
-  m_rtMinBtn.Reset();
-  m_rtMaxBtn.Reset();
-  m_rtMinTrack.Reset();
-  m_rtMaxTrack.Reset();
 }
 CFWL_ScrollBarImp::CFWL_ScrollBarImp(const CFWL_WidgetImpProperties& properties,
                                      IFWL_Widget* pOuter)

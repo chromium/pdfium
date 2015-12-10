@@ -14,9 +14,8 @@ class CFWL_CheckBoxImp;
 class CFWL_CheckBoxImpDelegate;
 class CFWL_CheckBoxImp : public CFWL_WidgetImp {
  public:
-  CFWL_CheckBoxImp(IFWL_Widget* pOuter = NULL);
   CFWL_CheckBoxImp(const CFWL_WidgetImpProperties& properties,
-                   IFWL_Widget* pOuter = NULL);
+                   IFWL_Widget* pOuter);
   ~CFWL_CheckBoxImp();
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
   virtual FX_DWORD GetClassID() const;

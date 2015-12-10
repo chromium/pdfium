@@ -15,9 +15,8 @@ class CFWL_SpinButtonImp;
 class CFWL_SpinButtonImpDelegate;
 class CFWL_SpinButtonImp : public CFWL_WidgetImp, public IFWL_Timer {
  public:
-  CFWL_SpinButtonImp(IFWL_Widget* pOuter = NULL);
   CFWL_SpinButtonImp(const CFWL_WidgetImpProperties& properties,
-                     IFWL_Widget* pOuter = NULL);
+                     IFWL_Widget* pOuter);
   ~CFWL_SpinButtonImp();
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
   virtual FX_DWORD GetClassID() const;

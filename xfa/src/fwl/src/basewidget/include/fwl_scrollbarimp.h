@@ -16,9 +16,8 @@ class CFWL_ScrollBarImp;
 class CFWL_ScrollBarImpDelegate;
 class CFWL_ScrollBarImp : public CFWL_WidgetImp, public IFWL_Timer {
  public:
-  CFWL_ScrollBarImp(IFWL_Widget* pOuter = NULL);
   CFWL_ScrollBarImp(const CFWL_WidgetImpProperties& properties,
-                    IFWL_Widget* pOuter = NULL);
+                    IFWL_Widget* pOuter);
   ~CFWL_ScrollBarImp();
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
   virtual FX_DWORD GetClassID() const;

@@ -14,25 +14,19 @@ FWL_ERR CFWL_CheckBox::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  CFWL_WidgetImpProperties prop;
-  prop.m_ctmOnParent = m_pProperties->m_ctmOnParent;
-  prop.m_rtWidget = m_pProperties->m_rtWidget;
-  prop.m_dwStyles = m_pProperties->m_dwStyles;
-  prop.m_dwStyleExes = m_pProperties->m_dwStyleExes;
-  prop.m_dwStates = m_pProperties->m_dwStates;
-  prop.m_pDataProvider = &m_checkboxData;
-  if (m_pProperties->m_pParent) {
-    prop.m_pParent = m_pProperties->m_pParent->GetWidget();
+  CFWL_WidgetImpProperties prop =
+      m_pProperties->MakeWidgetImpProperties(&m_checkboxData);
+  prop.m_pParent = m_pProperties->m_pParent->GetWidget();
+  prop.m_pOwner = m_pProperties->m_pOwner->GetWidget();
+  nonstd::unique_ptr<IFWL_CheckBox> pCheckBox(
+      IFWL_CheckBox::Create(prop, nullptr));
+  FWL_ERR ret = pCheckBox->Initialize();
+  if (ret != FWL_ERR_Succeeded) {
+    return ret;
   }
-  if (m_pProperties->m_pOwner) {
-    prop.m_pOwner = m_pProperties->m_pOwner->GetWidget();
-  }
-  m_pIface = new IFWL_CheckBox;
-  FWL_ERR ret = ((IFWL_CheckBox*)m_pIface)->Initialize(prop, nullptr);
-  if (ret == FWL_ERR_Succeeded) {
-    CFWL_Widget::Initialize();
-  }
-  return ret;
+  m_pIface = pCheckBox.release();
+  CFWL_Widget::Initialize();
+  return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_CheckBox::SetCaption(const CFX_WideStringC& wsCaption) {
   m_checkboxData.m_wsCaption = wsCaption;

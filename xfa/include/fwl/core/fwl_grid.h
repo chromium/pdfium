@@ -8,7 +8,6 @@
 #define _FWL_GRID_H
 class IFWL_Widget;
 class IFWL_Content;
-class IFWL_Grid;
 #define FWL_CLASS_Grid L"FWL_GRID"
 #define FWL_CLASSHASH_Grid 3150298670
 #define FWL_GRIDSTYLEEXT_ShowGridLines (1L << 0)
@@ -39,8 +38,7 @@ enum FWL_GRIDSIZE {
 typedef struct _FWL_HGRIDCOLROW { void* pData; } * FWL_HGRIDCOLROW;
 class IFWL_Grid : public IFWL_Content {
  public:
-  static IFWL_Grid* Create();
-  FWL_ERR Initialize(CFWL_WidgetImpProperties& properties);
+  static IFWL_Grid* Create(const CFWL_WidgetImpProperties& properties);
 
   FWL_HGRIDCOLROW InsertColRow(FX_BOOL bColumn, int32_t nIndex = -1);
   int32_t CountColRows(FX_BOOL bColumn);

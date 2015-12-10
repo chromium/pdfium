@@ -15,9 +15,8 @@ class CFWL_ToolTipImp;
 class CFWL_ToolTipImpDelegate;
 class CFWL_ToolTipImp : public CFWL_FormImp {
  public:
-  CFWL_ToolTipImp(IFWL_Widget* pOuter = NULL);
   CFWL_ToolTipImp(const CFWL_WidgetImpProperties& properties,
-                  IFWL_Widget* pOuter = NULL);
+                  IFWL_Widget* pOuter);
   virtual ~CFWL_ToolTipImp();
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
   virtual FX_DWORD GetClassID() const;

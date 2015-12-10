@@ -14,15 +14,15 @@ FWL_ERR CFWL_PictureBox::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  m_pIface = new IFWL_PictureBox;
-  FWL_ERR ret =
-      ((IFWL_PictureBox*)m_pIface)
-          ->Initialize(m_pProperties->MakeWidgetImpProperties(&m_PictureBoxDP),
-                       nullptr);
-  if (ret == FWL_ERR_Succeeded) {
-    CFWL_Widget::Initialize();
+  nonstd::unique_ptr<IFWL_PictureBox> pPictureBox(IFWL_PictureBox::Create(
+      m_pProperties->MakeWidgetImpProperties(&m_PictureBoxDP), nullptr));
+  FWL_ERR ret = pPictureBox->Initialize();
+  if (ret != FWL_ERR_Succeeded) {
+    return ret;
   }
-  return ret;
+  m_pIface = pPictureBox.release();
+  CFWL_Widget::Initialize();
+  return FWL_ERR_Succeeded;
 }
 CFX_DIBitmap* CFWL_PictureBox::GetPicture() {
   return m_PictureBoxDP.m_pBitmap;

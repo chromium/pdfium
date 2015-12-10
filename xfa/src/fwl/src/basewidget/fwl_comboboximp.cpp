@@ -18,15 +18,17 @@
 #include "include/fwl_listboximp.h"
 #include "include/fwl_formproxyimp.h"
 #include "include/fwl_comboboximp.h"
-IFWL_ComboBox::IFWL_ComboBox() {
+
+// static
+IFWL_ComboBox* IFWL_ComboBox::Create(
+    const CFWL_WidgetImpProperties& properties) {
+  IFWL_ComboBox* pComboBox = new IFWL_ComboBox;
+  CFWL_ComboBoxImp* pComboBoxImpl = new CFWL_ComboBoxImp(properties, nullptr);
+  pComboBox->SetImpl(pComboBoxImpl);
+  pComboBoxImpl->SetInterface(pComboBox);
+  return pComboBox;
 }
-FWL_ERR IFWL_ComboBox::Initialize(const CFWL_WidgetImpProperties& properties,
-                                  IFWL_Widget* pOuter) {
-  CFWL_ComboBoxImp* pComboBoxImpl = new CFWL_ComboBoxImp(properties, pOuter);
-  SetImpl(pComboBoxImpl);
-  pComboBoxImpl->SetInterface(this);
-  return pComboBoxImpl->Initialize();
-}
+IFWL_ComboBox::IFWL_ComboBox() {}
 int32_t IFWL_ComboBox::GetCurSel() {
   return static_cast<CFWL_ComboBoxImp*>(GetImpl())->GetCurSel();
 }
@@ -124,10 +126,7 @@ FWL_ERR IFWL_ComboBox::EditModifyStylesEx(FX_DWORD dwStylesExAdded,
   return static_cast<CFWL_ComboBoxImp*>(GetImpl())
       ->EditModifyStylesEx(dwStylesExAdded, dwStylesExRemoved);
 }
-CFWL_ComboEditImp::CFWL_ComboEditImp(IFWL_Widget* pOuter)
-    : CFWL_EditImp(pOuter) {
-  m_pOuter = static_cast<CFWL_ComboBoxImp*>(pOuter->GetImpl());
-}
+
 CFWL_ComboEditImp::CFWL_ComboEditImp(const CFWL_WidgetImpProperties& properties,
                                      IFWL_Widget* pOuter)
     : CFWL_EditImp(properties, pOuter) {
@@ -191,10 +190,6 @@ void CFWL_ComboEditImp::FlagFocus(FX_BOOL bSet) {
 };
 void CFWL_ComboEditImp::SetComboBoxFocus(FX_BOOL bSet) {
   m_pOuter->SetFocus(bSet);
-}
-CFWL_ComboListImp::CFWL_ComboListImp(IFWL_Widget* pOuter)
-    : CFWL_ListBoxImp(pOuter), m_bNotifyOwner(TRUE) {
-  FXSYS_assert(pOuter != NULL);
 }
 CFWL_ComboListImp::CFWL_ComboListImp(const CFWL_WidgetImpProperties& properties,
                                      IFWL_Widget* pOuter)
@@ -467,18 +462,6 @@ void CFWL_ComboListImpDelegate::OnDropListKeyDown(CFWL_MsgKey* pKey) {
     default: {}
   }
 }
-CFWL_ComboBoxImp::CFWL_ComboBoxImp(IFWL_Widget* pOuter)
-    : CFWL_WidgetImp(pOuter),
-      m_pForm(NULL),
-      m_bLButtonDown(FALSE),
-      m_iCurSel(-1),
-      m_iBtnState(FWL_PARTSTATE_CMB_Normal),
-      m_fComboFormHandler(0),
-      m_bNeedShowList(FALSE) {
-  m_rtClient.Reset();
-  m_rtBtn.Reset();
-  m_rtHandler.Reset();
-}
 CFWL_ComboBoxImp::CFWL_ComboBoxImp(const CFWL_WidgetImpProperties& properties,
                                    IFWL_Widget* pOuter)
     : CFWL_WidgetImp(properties, pOuter),
@@ -515,18 +498,13 @@ FWL_ERR CFWL_ComboBoxImp::Initialize() {
     prop.m_dwStyleExes |= FWL_STYLEEXT_LTB_Icon;
   }
   prop.m_pDataProvider = m_pProperties->m_pDataProvider;
-  CFWL_ComboListImp* pList = new CFWL_ComboListImp(prop, m_pInterface);
-  m_pListBox.reset(new IFWL_ListBox);
-  pList->SetInterface(m_pListBox.get());
-  m_pListBox->SetImpl(pList);
-  pList->Initialize();
+  m_pListBox.reset(IFWL_ListBox::CreateComboList(prop, m_pInterface));
+  m_pListBox->Initialize();
   if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CMB_DropDown) && !m_pEdit) {
-    CFWL_ComboEditImp* pEdit = new CFWL_ComboEditImp(m_pInterface);
-    m_pEdit.reset(new IFWL_Edit);
-    pEdit->SetInterface(m_pEdit.get());
-    m_pEdit->SetImpl(pEdit);
-    pEdit->Initialize();
-    pEdit->SetOuter(m_pInterface);
+    CFWL_WidgetImpProperties prop2;
+    m_pEdit.reset(IFWL_Edit::CreateComboEdit(prop2, m_pInterface));
+    m_pEdit->Initialize();
+    static_cast<CFWL_EditImp*>(m_pEdit->GetImpl())->SetOuter(m_pInterface);
   }
   if (m_pEdit) {
     m_pEdit->SetParent(m_pInterface);
@@ -575,12 +553,10 @@ FWL_ERR CFWL_ComboBoxImp::ModifyStylesEx(FX_DWORD dwStylesExAdded,
   FX_BOOL bAddDropDown = dwStylesExAdded & FWL_STYLEEXT_CMB_DropDown;
   FX_BOOL bRemoveDropDown = dwStylesExRemoved & FWL_STYLEEXT_CMB_DropDown;
   if (bAddDropDown && !m_pEdit) {
-    CFWL_ComboEditImp* pEdit = new CFWL_ComboEditImp(m_pInterface);
-    m_pEdit.reset(new IFWL_Edit);
-    pEdit->SetInterface(m_pEdit.get());
-    m_pEdit->SetImpl(pEdit);
-    pEdit->Initialize();
-    pEdit->SetOuter(m_pInterface);
+    CFWL_WidgetImpProperties prop;
+    m_pEdit.reset(IFWL_Edit::CreateComboEdit(prop, nullptr));
+    m_pEdit->Initialize();
+    static_cast<CFWL_EditImp*>(m_pEdit->GetImpl())->SetOuter(m_pInterface);
     m_pEdit->SetParent(m_pInterface);
   } else if (bRemoveDropDown && m_pEdit) {
     m_pEdit->SetStates(FWL_WGTSTATE_Invisible, TRUE);
@@ -1155,11 +1131,10 @@ void CFWL_ComboBoxImp::InitProxyForm() {
   propForm.m_pOwner = m_pInterface;
   propForm.m_dwStyles = FWL_WGTSTYLE_Popup;
   propForm.m_dwStates = FWL_WGTSTATE_Invisible;
-  m_pProxy = new CFWL_FormProxyImp(propForm, m_pListBox.get());
-  m_pForm = new IFWL_Form;
-  m_pProxy->SetInterface(m_pForm);
-  m_pForm->SetImpl(m_pProxy);
-  m_pProxy->Initialize();
+  CFX_WideString className;
+  m_pForm = IFWL_Form::CreateFormProxy(propForm, &className, m_pListBox.get());
+  m_pForm->Initialize();
+  m_pProxy = static_cast<CFWL_FormProxyImp*>(m_pForm->GetImpl());
   m_pListBox->SetParent(m_pForm);
   m_pListProxyDelegate = new CFWL_ComboProxyImpDelegate(m_pForm, this);
   m_pProxy->SetDelegate(m_pListProxyDelegate);
@@ -1182,11 +1157,8 @@ void CFWL_ComboBoxImp::DisForm_InitComboList() {
   prop.m_dwStates = FWL_WGTSTATE_Invisible;
   prop.m_pDataProvider = m_pProperties->m_pDataProvider;
   prop.m_pThemeProvider = m_pProperties->m_pThemeProvider;
-  CFWL_ComboListImp* pList = new CFWL_ComboListImp(prop, m_pInterface);
-  m_pListBox.reset(new IFWL_ListBox);
-  pList->SetInterface(m_pListBox.get());
-  m_pListBox->SetImpl(pList);
-  pList->Initialize();
+  m_pListBox.reset(IFWL_ListBox::Create(prop, m_pInterface));
+  m_pListBox->Initialize();
 }
 void CFWL_ComboBoxImp::DisForm_InitComboEdit() {
   if (m_pEdit) {
@@ -1195,14 +1167,9 @@ void CFWL_ComboBoxImp::DisForm_InitComboEdit() {
   CFWL_WidgetImpProperties prop;
   prop.m_pParent = m_pInterface;
   prop.m_pThemeProvider = m_pProperties->m_pThemeProvider;
-  if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CMB_DropDown) == 0) {
-  }
-  CFWL_ComboEditImp* pEdit = new CFWL_ComboEditImp(prop, m_pInterface);
-  m_pEdit.reset(new IFWL_Edit);
-  pEdit->SetInterface(m_pEdit.get());
-  m_pEdit->SetImpl(pEdit);
-  pEdit->Initialize();
-  pEdit->SetOuter(m_pInterface);
+  m_pEdit.reset(IFWL_Edit::Create(prop, m_pInterface));
+  m_pEdit->Initialize();
+  static_cast<CFWL_ComboEditImp*>(m_pEdit->GetImpl())->SetOuter(m_pInterface);
 }
 void CFWL_ComboBoxImp::DisForm_ShowDropList(FX_BOOL bActivate) {
   FX_BOOL bDropList = DisForm_IsDropListShowed();

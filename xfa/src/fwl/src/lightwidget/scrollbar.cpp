@@ -14,15 +14,15 @@ FWL_ERR CFWL_ScrollBar::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  m_pIface = new IFWL_ScrollBar;
-  FWL_ERR ret =
-      ((IFWL_ScrollBar*)m_pIface)
-          ->Initialize(m_pProperties->MakeWidgetImpProperties(nullptr),
-                       nullptr);
-  if (ret == FWL_ERR_Succeeded) {
-    CFWL_Widget::Initialize();
+  nonstd::unique_ptr<IFWL_ScrollBar> pScrollBar(IFWL_ScrollBar::Create(
+      m_pProperties->MakeWidgetImpProperties(nullptr), nullptr));
+  FWL_ERR ret = pScrollBar->Initialize();
+  if (ret != FWL_ERR_Succeeded) {
+    return ret;
   }
-  return ret;
+  m_pIface = pScrollBar.release();
+  CFWL_Widget::Initialize();
+  return FWL_ERR_Succeeded;
 }
 FX_BOOL CFWL_ScrollBar::IsVertical() {
   if (!m_pIface)

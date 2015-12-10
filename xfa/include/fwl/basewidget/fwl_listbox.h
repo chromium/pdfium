@@ -109,10 +109,12 @@ class IFWL_ListBoxCompare {
 };
 class IFWL_ListBox : public IFWL_Widget {
  public:
-  IFWL_ListBox();
+  static IFWL_ListBox* Create(const CFWL_WidgetImpProperties& properties,
+                              IFWL_Widget* pOuter);
+  static IFWL_ListBox* CreateComboList(
+      const CFWL_WidgetImpProperties& properties,
+      IFWL_Widget* pOuter);
 
-  FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
-                     IFWL_Widget* pOuter);
   int32_t CountSelItems();
   FWL_HLISTITEM GetSelItem(int32_t nIndexSel);
   int32_t GetSelIndex(int32_t nIndex);
@@ -120,5 +122,8 @@ class IFWL_ListBox : public IFWL_Widget {
   FWL_ERR GetItemText(FWL_HLISTITEM hItem, CFX_WideString& wsText);
   FWL_ERR GetScrollPos(FX_FLOAT& fPos, FX_BOOL bVert = TRUE);
   FWL_ERR* Sort(IFWL_ListBoxCompare* pCom);
+
+ protected:
+  IFWL_ListBox();
 };
 #endif

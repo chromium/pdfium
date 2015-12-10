@@ -12,15 +12,19 @@
 #define FWL_SPN_MinWidth 18
 #define FWL_SPN_MinHeight 32
 #define FWL_SPIN_Elapse 200
-IFWL_SpinButton::IFWL_SpinButton() {
+
+// static
+IFWL_SpinButton* IFWL_SpinButton::Create(
+    const CFWL_WidgetImpProperties& properties,
+    IFWL_Widget* pOuter) {
+  IFWL_SpinButton* pSpinButton = new IFWL_SpinButton;
+  CFWL_SpinButtonImp* pSpinButtonImpl =
+      new CFWL_SpinButtonImp(properties, nullptr);
+  pSpinButton->SetImpl(pSpinButtonImpl);
+  pSpinButtonImpl->SetInterface(pSpinButton);
+  return pSpinButton;
 }
-FWL_ERR IFWL_SpinButton::Initialize(const CFWL_WidgetImpProperties& properties,
-                                    IFWL_Widget* pOuter) {
-  CFWL_SpinButtonImp* pSpinButtonImpl = new CFWL_SpinButtonImp(properties);
-  SetImpl(pSpinButtonImpl);
-  pSpinButtonImpl->SetInterface(this);
-  return pSpinButtonImpl->Initialize();
-}
+IFWL_SpinButton::IFWL_SpinButton() {}
 FWL_ERR IFWL_SpinButton::EnableButton(FX_BOOL bEnable, FX_BOOL bUp) {
   return static_cast<CFWL_SpinButtonImp*>(GetImpl())
       ->EnableButton(bEnable, bUp);
@@ -28,18 +32,7 @@ FWL_ERR IFWL_SpinButton::EnableButton(FX_BOOL bEnable, FX_BOOL bUp) {
 FX_BOOL IFWL_SpinButton::IsButtonEnable(FX_BOOL bUp) {
   return static_cast<CFWL_SpinButtonImp*>(GetImpl())->IsButtonEnable(bUp);
 }
-CFWL_SpinButtonImp::CFWL_SpinButtonImp(IFWL_Widget* pOuter)
-    : CFWL_WidgetImp(pOuter),
-      m_dwUpState(FWL_PARTSTATE_SPB_Normal),
-      m_dwDnState(FWL_PARTSTATE_SPB_Normal),
-      m_iButtonIndex(0),
-      m_bLButtonDwn(FALSE),
-      m_hTimer(NULL) {
-  m_rtClient.Reset();
-  m_rtUpButton.Reset();
-  m_rtDnButton.Reset();
-  m_pProperties->m_dwStyleExes |= FWL_STYLEEXE_SPB_Vert;
-}
+
 CFWL_SpinButtonImp::CFWL_SpinButtonImp(
     const CFWL_WidgetImpProperties& properties,
     IFWL_Widget* pOuter)

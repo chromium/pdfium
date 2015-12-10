@@ -63,17 +63,21 @@ enum FWL_COMMANDID {
   FWL_COMMANDID_Yes,
   FWL_COMMANDID_No,
 };
+
 class IFWL_Form : public IFWL_Panel {
  public:
-  IFWL_Form();
-  FWL_ERR Initialize(CFWL_WidgetImpProperties& properties,
-                     CFX_WideString* classname,
-                     IFWL_Widget* pOuter);
+  static IFWL_Form* CreateFormProxy(CFWL_WidgetImpProperties& properties,
+                                    CFX_WideString* classname,
+                                    IFWL_Widget* pOuter);
+
   FWL_FORMSIZE GetFormSize();
   FWL_ERR SetFormSize(FWL_FORMSIZE eFormSize);
   IFWL_Widget* DoModal();
   IFWL_Widget* DoModal(FX_DWORD& dwCommandID);
   FWL_ERR EndDoModal();
   FWL_ERR SetBorderRegion(CFX_Path* pPath);
+
+ protected:
+  IFWL_Form();
 };
 #endif

@@ -17,9 +17,8 @@ class CFWL_CaretImp;
 class CFWL_CaretImpDelegate;
 class CFWL_CaretImp : public CFWL_WidgetImp {
  public:
-  CFWL_CaretImp(IFWL_Widget* pOuter = NULL);
   CFWL_CaretImp(const CFWL_WidgetImpProperties& properties,
-                IFWL_Widget* pOuter = NULL);
+                IFWL_Widget* pOuter);
   virtual ~CFWL_CaretImp();
 
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;

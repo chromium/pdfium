@@ -40,10 +40,13 @@ class IFWL_PictureBoxDP : public IFWL_DataProvider {
   virtual int32_t GetFlipMode(IFWL_Widget* pWidget) = 0;
   virtual FWL_ERR GetMatrix(IFWL_Widget* pWidget, CFX_Matrix& matrix) = 0;
 };
+
 class IFWL_PictureBox : public IFWL_Widget {
  public:
+  static IFWL_PictureBox* Create(const CFWL_WidgetImpProperties& properties,
+                                 IFWL_Widget* pOuter);
+
+ protected:
   IFWL_PictureBox();
-  FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
-                     IFWL_Widget* pOuter);
 };
 #endif

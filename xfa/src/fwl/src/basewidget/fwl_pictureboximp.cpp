@@ -9,25 +9,20 @@
 #include "../core/include/fwl_noteimp.h"
 #include "../core/include/fwl_widgetimp.h"
 #include "include/fwl_pictureboximp.h"
-IFWL_PictureBox::IFWL_PictureBox() {
-}
-FWL_ERR IFWL_PictureBox::Initialize(const CFWL_WidgetImpProperties& properties,
-                                    IFWL_Widget* pOuter) {
+
+// static
+IFWL_PictureBox* IFWL_PictureBox::Create(
+    const CFWL_WidgetImpProperties& properties,
+    IFWL_Widget* pOuter) {
+  IFWL_PictureBox* pPictureBox = new IFWL_PictureBox;
   CFWL_PictureBoxImp* pPictureBoxImpl =
       new CFWL_PictureBoxImp(properties, pOuter);
-  SetImpl(pPictureBoxImpl);
-  pPictureBoxImpl->SetInterface(this);
-  return pPictureBoxImpl->Initialize();
+  pPictureBox->SetImpl(pPictureBoxImpl);
+  pPictureBoxImpl->SetInterface(pPictureBox);
+  return pPictureBox;
 }
-CFWL_PictureBoxImp::CFWL_PictureBoxImp(IFWL_Widget* pOuter)
-    : CFWL_WidgetImp(pOuter),
-      m_bTop(FALSE),
-      m_bVCenter(FALSE),
-      m_bButton(FALSE) {
-  m_rtClient.Reset();
-  m_rtImage.Reset();
-  m_matrix.SetIdentity();
-}
+IFWL_PictureBox::IFWL_PictureBox() {}
+
 CFWL_PictureBoxImp::CFWL_PictureBoxImp(
     const CFWL_WidgetImpProperties& properties,
     IFWL_Widget* pOuter)

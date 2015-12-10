@@ -11,12 +11,16 @@
 #include "include/fwl_widgetimp.h"
 #include "include/fwl_contentimp.h"
 #include "include/fwl_gridimp.h"
-FWL_ERR IFWL_Grid::Initialize(CFWL_WidgetImpProperties& properties) {
-  CFWL_GridImp* pGridImpl = new CFWL_GridImp(properties);
-  SetImpl(pGridImpl);
-  pGridImpl->SetInterface(this);
-  return pGridImpl->Initialize();
+
+// static
+IFWL_Grid* IFWL_Grid::Create(const CFWL_WidgetImpProperties& properties) {
+  IFWL_Grid* pGrid = new IFWL_Grid;
+  CFWL_GridImp* pGridImpl = new CFWL_GridImp(properties, nullptr);
+  pGrid->SetImpl(pGridImpl);
+  pGridImpl->SetInterface(pGrid);
+  return pGrid;
 }
+IFWL_Grid::IFWL_Grid() {}
 FWL_HGRIDCOLROW IFWL_Grid::InsertColRow(FX_BOOL bColumn, int32_t nIndex) {
   return static_cast<CFWL_GridImp*>(GetImpl())->InsertColRow(bColumn, nIndex);
 }
@@ -117,24 +121,10 @@ FWL_ERR IFWL_Grid::SetGridSize(FWL_GRIDSIZE eSize,
                                FWL_GRIDUNIT eUit) {
   return static_cast<CFWL_GridImp*>(GetImpl())->SetGridSize(eSize, fSize, eUit);
 }
-IFWL_Grid::IFWL_Grid() {
-}
-CFWL_GridImp::CFWL_GridImp() {
-  m_Size[FWL_GRIDSIZE_Width].eUnit = FWL_GRIDUNIT_Auto;
-  m_Size[FWL_GRIDSIZE_Width].fLength = 0;
-  m_Size[FWL_GRIDSIZE_Height].eUnit = FWL_GRIDUNIT_Auto;
-  m_Size[FWL_GRIDSIZE_Height].fLength = 0;
-  m_Size[FWL_GRIDSIZE_MinWidth].eUnit = FWL_GRIDUNIT_Fixed;
-  m_Size[FWL_GRIDSIZE_MinWidth].fLength = 0;
-  m_Size[FWL_GRIDSIZE_MaxWidth].eUnit = FWL_GRIDUNIT_Infinity;
-  m_Size[FWL_GRIDSIZE_MaxWidth].fLength = 0;
-  m_Size[FWL_GRIDSIZE_MinHeight].eUnit = FWL_GRIDUNIT_Fixed;
-  m_Size[FWL_GRIDSIZE_MinHeight].fLength = 0;
-  m_Size[FWL_GRIDSIZE_MaxHeight].eUnit = FWL_GRIDUNIT_Infinity;
-  m_Size[FWL_GRIDSIZE_MaxHeight].fLength = 0;
-}
-CFWL_GridImp::CFWL_GridImp(const CFWL_WidgetImpProperties& properties)
-    : CFWL_ContentImp(properties) {
+
+CFWL_GridImp::CFWL_GridImp(const CFWL_WidgetImpProperties& properties,
+                           IFWL_Widget* pOuter)
+    : CFWL_ContentImp(properties, pOuter) {
   m_Size[FWL_GRIDSIZE_Width].eUnit = FWL_GRIDUNIT_Auto;
   m_Size[FWL_GRIDSIZE_Width].fLength = 0;
   m_Size[FWL_GRIDSIZE_Height].eUnit = FWL_GRIDUNIT_Auto;

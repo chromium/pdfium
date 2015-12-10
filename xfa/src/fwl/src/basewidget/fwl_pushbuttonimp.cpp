@@ -9,24 +9,21 @@
 #include "../core/include/fwl_noteimp.h"
 #include "../core/include/fwl_widgetimp.h"
 #include "include/fwl_pushbuttonimp.h"
-FWL_ERR IFWL_PushButton::Initialize(const CFWL_WidgetImpProperties& properties,
-                                    IFWL_Widget* pOuter) {
+
+// static
+IFWL_PushButton* IFWL_PushButton::Create(
+    const CFWL_WidgetImpProperties& properties,
+    IFWL_Widget* pOuter) {
+  IFWL_PushButton* pPushButton = new IFWL_PushButton;
   CFWL_PushButtonImp* pPushButtonImpl =
       new CFWL_PushButtonImp(properties, pOuter);
-  SetImpl(pPushButtonImpl);
-  pPushButtonImpl->SetInterface(this);
-  return pPushButtonImpl->Initialize();
+  pPushButton->SetImpl(pPushButtonImpl);
+  pPushButtonImpl->SetInterface(pPushButton);
+  return pPushButton;
 }
 IFWL_PushButton::IFWL_PushButton() {
 }
-CFWL_PushButtonImp::CFWL_PushButtonImp(IFWL_Widget* pOuter)
-    : CFWL_WidgetImp(pOuter),
-      m_bBtnDown(FALSE),
-      m_dwTTOStyles(FDE_TTOSTYLE_SingleLine),
-      m_iTTOAlign(FDE_TTOALIGNMENT_Center) {
-  m_rtClient.Set(0, 0, 0, 0);
-  m_rtCaption.Set(0, 0, 0, 0);
-}
+
 CFWL_PushButtonImp::CFWL_PushButtonImp(
     const CFWL_WidgetImpProperties& properties,
     IFWL_Widget* pOuter)

@@ -20,15 +20,15 @@ FWL_ERR CFWL_ToolTip::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  m_pIface = new IFWL_ToolTip;
-  FWL_ERR ret =
-      ((IFWL_ToolTip*)m_pIface)
-          ->Initialize(m_pProperties->MakeWidgetImpProperties(&m_tooltipData),
-                       nullptr);
-  if (ret == FWL_ERR_Succeeded) {
-    CFWL_Widget::Initialize();
+  nonstd::unique_ptr<IFWL_ToolTip> pToolTip(IFWL_ToolTip::Create(
+      m_pProperties->MakeWidgetImpProperties(&m_tooltipData), nullptr));
+  FWL_ERR ret = pToolTip->Initialize();
+  if (ret != FWL_ERR_Succeeded) {
+    return ret;
   }
-  return ret;
+  m_pIface = pToolTip.release();
+  CFWL_Widget::Initialize();
+  return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_ToolTip::GetCaption(CFX_WideString& wsCaption) {
   wsCaption = m_tooltipData.m_wsCaption;

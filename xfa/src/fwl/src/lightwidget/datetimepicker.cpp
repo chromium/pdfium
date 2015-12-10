@@ -15,17 +15,19 @@ FWL_ERR CFWL_DateTimePicker::Initialize(
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  m_pIface = new IFWL_DateTimePicker;
-  FWL_ERR ret =
-      ((IFWL_DateTimePicker*)m_pIface)
-          ->Initialize(
-              m_pProperties->MakeWidgetImpProperties(&m_DateTimePickerDP),
-              nullptr);
-  if (ret == FWL_ERR_Succeeded) {
-    CFWL_Widget::Initialize();
+  nonstd::unique_ptr<IFWL_DateTimePicker> pDateTimePicker(
+      IFWL_DateTimePicker::Create(
+          m_pProperties->MakeWidgetImpProperties(&m_DateTimePickerDP),
+          nullptr));
+  FWL_ERR ret = pDateTimePicker->Initialize();
+  if (ret != FWL_ERR_Succeeded) {
+    return ret;
   }
-  return ret;
+  m_pIface = pDateTimePicker.release();
+  CFWL_Widget::Initialize();
+  return FWL_ERR_Succeeded;
 }
+
 FWL_ERR CFWL_DateTimePicker::SetToday(int32_t iYear,
                                       int32_t iMonth,
                                       int32_t iDay) {

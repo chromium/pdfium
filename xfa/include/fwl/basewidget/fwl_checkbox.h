@@ -11,9 +11,7 @@ class IFWL_Widget;
 class IFWL_CheckBoxDP;
 class IFWL_CheckBox;
 #define FWL_CLASS_CheckBox L"FWL_CHECKBOX"
-#define FWL_CLASS_RadioButton L"FWL_RADIOBUTTON"
 #define FWL_CLASSHASH_CheckBox 4107183823
-#define FWL_CLASSHASH_RadioButton 3811304691
 #define FWL_STYLEEXT_CKB_Left (0L << 0)
 #define FWL_STYLEEXT_CKB_Center (1L << 0)
 #define FWL_STYLEEXT_CKB_Right (2L << 0)
@@ -68,21 +66,16 @@ class IFWL_CheckBoxDP : public IFWL_DataProvider {
  public:
   virtual FX_FLOAT GetBoxSize(IFWL_Widget* pWidget) = 0;
 };
+
 class IFWL_CheckBox : public IFWL_Widget {
  public:
-  IFWL_CheckBox();
-  FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
-                     IFWL_Widget* pOuter);
+  static IFWL_CheckBox* Create(const CFWL_WidgetImpProperties& properties,
+                               IFWL_Widget* pOuter);
   int32_t GetCheckState();
   FWL_ERR SetCheckState(int32_t iCheck);
 
+ protected:
+  IFWL_CheckBox();
 };
-class IFWL_RadioButton : public IFWL_Widget {
- public:
-  IFWL_RadioButton();
-  FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
-                     IFWL_Widget* pOuter);
-  int32_t GetCheckState();
-  FWL_ERR SetCheckState(int32_t iCheck);
-};
+
 #endif

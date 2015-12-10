@@ -8,12 +8,12 @@
 #define _FWL_COMBOBOX_IMP_H
 
 #include "third_party/base/nonstd_unique_ptr.h"
+#include "xfa/src/fwl/src/basewidget/include/fwl_editimp.h"
+#include "xfa/src/fwl/src/basewidget/include/fwl_listboximp.h"
 
 class CFWL_WidgetImp;
 class CFWL_WidgetImpProperties;
 class CFWL_WidgetImpDelegate;
-class CFWL_EditImp;
-class CFWL_EditImpDelegate;
 class CFWL_ListBoxImp;
 class CFWL_ListBoxImpDelegate;
 class CFWL_FormProxyImp;
@@ -27,9 +27,8 @@ class CFWL_ComboBoxImpDelegate;
 class CFWL_ComboProxyImpDelegate;
 class CFWL_ComboEditImp : public CFWL_EditImp {
  public:
-  CFWL_ComboEditImp(IFWL_Widget* pOuter);
   CFWL_ComboEditImp(const CFWL_WidgetImpProperties& properties,
-                    IFWL_Widget* pOuter = NULL);
+                    IFWL_Widget* pOuter);
 
   void ClearSelected();
   void SetSelected();
@@ -51,7 +50,6 @@ class CFWL_ComboEditImpDelegate : public CFWL_EditImpDelegate {
 };
 class CFWL_ComboListImp : public CFWL_ListBoxImp {
  public:
-  CFWL_ComboListImp(IFWL_Widget* pOuter);
   CFWL_ComboListImp(const CFWL_WidgetImpProperties& properties,
                     IFWL_Widget* pOuter);
   virtual FWL_ERR Initialize();
@@ -82,9 +80,8 @@ class CFWL_ComboListImpDelegate : public CFWL_ListBoxImpDelegate {
 };
 class CFWL_ComboBoxImp : public CFWL_WidgetImp {
  public:
-  CFWL_ComboBoxImp(IFWL_Widget* pOuter = NULL);
   CFWL_ComboBoxImp(const CFWL_WidgetImpProperties& properties,
-                   IFWL_Widget* pOuter = NULL);
+                   IFWL_Widget* pOuter);
   virtual ~CFWL_ComboBoxImp();
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
   virtual FX_DWORD GetClassID() const;

@@ -23,21 +23,35 @@ class CFWL_DateTimeCalendar;
 class CFWL_DateTimeCalendarImpDelegate;
 class CFWL_DateTimePickerImp;
 class CFWL_DateTimePickerImpDelegate;
+
 class IFWL_DateTimeForm : public IFWL_Form {
  public:
-  FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
-                     IFWL_Widget* pOuter = NULL);
+  static IFWL_DateTimeForm* Create(const CFWL_WidgetImpProperties& properties,
+                                   IFWL_Widget* pOuter);
+
+ protected:
+  IFWL_DateTimeForm() {}
 };
+
 class IFWL_DateTimeCalender : public IFWL_MonthCalendar {
  public:
-  FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
-                     IFWL_Widget* pOuter = NULL);
+  static IFWL_DateTimeCalender* Create(
+      const CFWL_WidgetImpProperties& properties,
+      IFWL_Widget* pOuter);
+
+ protected:
+  IFWL_DateTimeCalender() {}
 };
+
 class IFWL_DateTimeEdit : public IFWL_Edit {
  public:
-  FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
-                     IFWL_Widget* pOuter = NULL);
+  static IFWL_DateTimeEdit* Create(const CFWL_WidgetImpProperties& properties,
+                                   IFWL_Widget* pOuter);
+
+ protected:
+  IFWL_DateTimeEdit() {}
 };
+
 class CFWL_DateTimeEdit : public CFWL_EditImp {
  public:
   CFWL_DateTimeEdit(const CFWL_WidgetImpProperties& properties,
@@ -88,9 +102,8 @@ class CFWL_DateTimeCalendarImpDelegate : public CFWL_MonthCalendarImpDelegate {
 };
 class CFWL_DateTimePickerImp : public CFWL_WidgetImp {
  public:
-  CFWL_DateTimePickerImp(IFWL_Widget* pOuter = NULL);
   CFWL_DateTimePickerImp(const CFWL_WidgetImpProperties& properties,
-                         IFWL_Widget* pOuter = NULL);
+                         IFWL_Widget* pOuter);
   virtual ~CFWL_DateTimePickerImp();
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
   virtual FX_DWORD GetClassID() const;

@@ -310,7 +310,6 @@ FX_BOOL CXFA_FWLTheme::CalcTextRect(CFWL_ThemeText* pParams, CFX_RectF& rect) {
 CFWL_WidgetTP* CXFA_FWLTheme::GetTheme(IFWL_Widget* pWidget) {
   switch (pWidget->GetClassID()) {
     case FWL_CLASSHASH_CheckBox:
-    case FWL_CLASSHASH_RadioButton:
       return m_pCheckBoxTP;
     case FWL_CLASSHASH_ListBox:
       return m_pListBoxTP;

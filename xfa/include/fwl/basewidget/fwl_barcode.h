@@ -47,12 +47,14 @@ class IFWL_BarcodeDP : public IFWL_EditDP {
   virtual FX_BOOL GetTruncated() = 0;
   virtual FX_DWORD GetBarcodeAttributeMask() = 0;
 };
+
 class IFWL_Barcode : public IFWL_Edit {
  public:
-  IFWL_Barcode();
-  FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
-                     IFWL_Widget* pOuter);
+  static IFWL_Barcode* Create(const CFWL_WidgetImpProperties& properties);
   void SetType(BC_TYPE type);
   FX_BOOL IsProtectedType();
+
+ protected:
+  IFWL_Barcode();
 };
 #endif

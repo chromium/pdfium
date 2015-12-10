@@ -10,16 +10,30 @@
 #include "../core/include/fwl_widgetimp.h"
 #include "include/fwl_scrollbarimp.h"
 #include "include/fwl_listboximp.h"
+#include "include/fwl_comboboximp.h"
+
 #define FWL_LISTBOX_ItemTextMargin 2
-IFWL_ListBox::IFWL_ListBox() {
-}
-FWL_ERR IFWL_ListBox::Initialize(const CFWL_WidgetImpProperties& properties,
-                                 IFWL_Widget* pOuter) {
+
+// static
+IFWL_ListBox* IFWL_ListBox::Create(const CFWL_WidgetImpProperties& properties,
+                                   IFWL_Widget* pOuter) {
+  IFWL_ListBox* pListBox = new IFWL_ListBox;
   CFWL_ListBoxImp* pListBoxImpl = new CFWL_ListBoxImp(properties, pOuter);
-  SetImpl(pListBoxImpl);
-  pListBoxImpl->SetInterface(this);
-  return pListBoxImpl->Initialize();
+  pListBox->SetImpl(pListBoxImpl);
+  pListBoxImpl->SetInterface(pListBox);
+  return pListBox;
 }
+// static
+IFWL_ListBox* IFWL_ListBox::CreateComboList(
+    const CFWL_WidgetImpProperties& properties,
+    IFWL_Widget* pOuter) {
+  IFWL_ListBox* pListBox = new IFWL_ListBox;
+  CFWL_ListBoxImp* pComboListImpl = new CFWL_ComboListImp(properties, pOuter);
+  pListBox->SetImpl(pComboListImpl);
+  pComboListImpl->SetInterface(pListBox);
+  return pListBox;
+}
+IFWL_ListBox::IFWL_ListBox() {}
 int32_t IFWL_ListBox::CountSelItems() {
   return static_cast<CFWL_ListBoxImp*>(GetImpl())->CountSelItems();
 }
@@ -41,18 +55,7 @@ FWL_ERR IFWL_ListBox::GetScrollPos(FX_FLOAT& fPos, FX_BOOL bVert) {
 FWL_ERR* IFWL_ListBox::Sort(IFWL_ListBoxCompare* pCom) {
   return static_cast<CFWL_ListBoxImp*>(GetImpl())->Sort(pCom);
 }
-CFWL_ListBoxImp::CFWL_ListBoxImp(IFWL_Widget* pOuter)
-    : CFWL_WidgetImp(pOuter),
-      m_dwTTOStyles(0),
-      m_iTTOAligns(0),
-      m_hAnchor(NULL),
-      m_fScorllBarWidth(0),
-      m_bLButtonDown(FALSE),
-      m_pScrollBarTP(NULL) {
-  m_rtClient.Reset();
-  m_rtConent.Reset();
-  m_rtStatic.Reset();
-}
+
 CFWL_ListBoxImp::CFWL_ListBoxImp(const CFWL_WidgetImpProperties& properties,
                                  IFWL_Widget* pOuter)
     : CFWL_WidgetImp(properties, pOuter),
@@ -945,8 +948,8 @@ void CFWL_ListBoxImp::InitScrollBar(FX_BOOL bVert) {
   prop.m_dwStates = FWL_WGTSTATE_Invisible;
   prop.m_pParent = m_pInterface;
   prop.m_pThemeProvider = m_pScrollBarTP;
-  IFWL_ScrollBar* pScrollBar = new IFWL_ScrollBar;
-  pScrollBar->Initialize(prop, m_pInterface);
+  IFWL_ScrollBar* pScrollBar = IFWL_ScrollBar::Create(prop, m_pInterface);
+  pScrollBar->Initialize();
   (bVert ? &m_pVertScrollBar : &m_pHorzScrollBar)->reset(pScrollBar);
 }
 void CFWL_ListBoxImp::SortItem() {}

@@ -991,11 +991,9 @@ FX_BOOL CFWL_ToolTipContainer::ProcessEnter(CFWL_EvtMouse* pEvt,
       CFX_RectF rtTooltip;
       rtTooltip.Set(150, 150, 100, 50);
       prop.m_rtWidget = rtTooltip;
-      m_pToolTipImp = new CFWL_ToolTipImp(prop);
-      IFWL_ToolTip* pToolTip = new IFWL_ToolTip;
-      m_pToolTipImp->SetInterface(pToolTip);
-      pToolTip->SetImpl(m_pToolTipImp);
-      m_pToolTipImp->Initialize();
+      IFWL_ToolTip* pToolTip = IFWL_ToolTip::Create(prop, nullptr);
+      pToolTip->Initialize();
+      m_pToolTipImp = static_cast<CFWL_ToolTipImp*>(pToolTip->GetImpl());
       m_pToolTipImp->ModifyStylesEx(FWL_STYLEEXT_TTP_Multiline, 0);
       m_pToolTipImp->SetStates(FWL_WGTSTATE_Invisible, TRUE);
     }

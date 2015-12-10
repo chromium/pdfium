@@ -11,8 +11,7 @@
 #include "../core/include/fwl_panelimp.h"
 #include "../core/include/fwl_formimp.h"
 #include "include/fwl_formproxyimp.h"
-CFWL_FormProxyImp::CFWL_FormProxyImp(IFWL_Widget* pOuter)
-    : CFWL_FormImp(pOuter) {}
+
 CFWL_FormProxyImp::CFWL_FormProxyImp(const CFWL_WidgetImpProperties& properties,
                                      IFWL_Widget* pOuter)
     : CFWL_FormImp(properties, pOuter) {}

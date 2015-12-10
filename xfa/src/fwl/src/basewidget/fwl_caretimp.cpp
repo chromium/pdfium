@@ -9,21 +9,17 @@
 #include "../core/include/fwl_noteimp.h"
 #include "../core/include/fwl_widgetimp.h"
 #include "include/fwl_caretimp.h"
-IFWL_Caret::IFWL_Caret() {
-}
-FWL_ERR IFWL_Caret::Initialize(IFWL_Widget* pOuter) {
-  CFWL_CaretImp* pCaretImpl = new CFWL_CaretImp(pOuter);
-  SetImpl(pCaretImpl);
-  pCaretImpl->SetInterface(this);
-  return pCaretImpl->Initialize();
-}
-FWL_ERR IFWL_Caret::Initialize(const CFWL_WidgetImpProperties& properties,
+
+// static
+IFWL_Caret* IFWL_Caret::Create(const CFWL_WidgetImpProperties& properties,
                                IFWL_Widget* pOuter) {
+  IFWL_Caret* pCaret = new IFWL_Caret;
   CFWL_CaretImp* pCaretImpl = new CFWL_CaretImp(properties, pOuter);
-  SetImpl(pCaretImpl);
-  pCaretImpl->SetInterface(this);
-  return pCaretImpl->Initialize();
+  pCaret->SetImpl(pCaretImpl);
+  pCaretImpl->SetInterface(pCaret);
+  return pCaret;
 }
+IFWL_Caret::IFWL_Caret() {}
 FWL_ERR IFWL_Caret::ShowCaret(FX_BOOL bFlag) {
   return static_cast<CFWL_CaretImp*>(GetImpl())->ShowCaret(bFlag);
 }
@@ -36,18 +32,14 @@ FWL_ERR IFWL_Caret::SetFrequency(FX_DWORD elapse) {
 FWL_ERR IFWL_Caret::SetColor(CFX_Color crFill) {
   return static_cast<CFWL_CaretImp*>(GetImpl())->SetColor(crFill);
 }
-CFWL_CaretImp::CFWL_CaretImp(IFWL_Widget* pOuter) : m_hTimer(NULL) {
-  m_dwElapse = 400;
-  m_pTimer = new CFWL_CaretTimer(this);
-  m_bSetColor = FALSE;
-  SetStates(FWL_STATE_CAT_HightLight);
-}
+
 CFWL_CaretImp::CFWL_CaretImp(const CFWL_WidgetImpProperties& properties,
                              IFWL_Widget* pOuter)
-    : m_hTimer(NULL) {
-  m_dwElapse = 400;
+    : CFWL_WidgetImp(properties, pOuter),
+      m_hTimer(nullptr),
+      m_dwElapse(400),
+      m_bSetColor(FALSE) {
   m_pTimer = new CFWL_CaretTimer(this);
-  m_bSetColor = FALSE;
   SetStates(FWL_STATE_CAT_HightLight);
 }
 CFWL_CaretImp::~CFWL_CaretImp() {

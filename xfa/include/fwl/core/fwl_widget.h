@@ -92,9 +92,9 @@ class CFWL_WidgetImpProperties {
 };
 class IFWL_Custom : public IFWL_Widget {
  public:
-  static IFWL_Custom* Create();
-  FWL_ERR Initialize(const CFWL_WidgetImpProperties& properties,
-                     IFWL_Widget* pOuter);
+  static IFWL_Custom* Create(const CFWL_WidgetImpProperties& properties,
+                             IFWL_Widget* pOuter);
+
   FWL_ERR SetProxy(IFWL_Proxy* pProxy);
 
  protected:

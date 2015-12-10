@@ -34,19 +34,13 @@ FWL_ERR IFWL_Content::SetMaxSize(FX_FLOAT fWidth, FX_FLOAT fHeight) {
 }
 IFWL_Content::IFWL_Content() {
 }
-CFWL_ContentImp::CFWL_ContentImp() {
-  m_fWidthMin = 0;
-  m_fWidthMax = 10000;
-  m_fHeightMin = 0;
-  m_fHeightMax = 10000;
-}
-CFWL_ContentImp::CFWL_ContentImp(const CFWL_WidgetImpProperties& properties)
-    : CFWL_WidgetImp(properties) {
-  m_fWidthMin = 0;
-  m_fWidthMax = 10000;
-  m_fHeightMin = 0;
-  m_fHeightMax = 10000;
-}
+CFWL_ContentImp::CFWL_ContentImp(const CFWL_WidgetImpProperties& properties,
+                                 IFWL_Widget* pOuter)
+    : CFWL_WidgetImp(properties, pOuter),
+      m_fWidthMin(0),
+      m_fWidthMax(10000),
+      m_fHeightMin(0),
+      m_fHeightMax(10000) {}
 CFWL_ContentImp::~CFWL_ContentImp() {}
 FWL_ERR CFWL_ContentImp::InsertWidget(IFWL_Widget* pChild, int32_t nIndex) {
   if (!pChild)
