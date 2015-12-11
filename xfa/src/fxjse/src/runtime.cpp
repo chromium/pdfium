@@ -31,9 +31,6 @@ void FXJSE_Initialize() {
   }
   bV8Initialized = TRUE;
   atexit(FXJSE_KillV8);
-  const FX_CHAR* szCmdFlags =
-      "--block_concurrent_recompilation ";
-  v8::V8::SetFlagsFromString(szCmdFlags, FXSYS_strlen(szCmdFlags));
 }
 static void FXJSE_Runtime_DisposeCallback(v8::Isolate* pIsolate) {
   {
