@@ -87,13 +87,6 @@ FX_BOOL CXFA_FFSignature::OnRButtonDblClk(FX_DWORD dwFlags,
                                           FX_FLOAT fy) {
   return FALSE;
 }
-
-FX_BOOL CXFA_FFSignature::OnSetFocus() {
-  return FALSE;
-}
-FX_BOOL CXFA_FFSignature::OnKillFocus() {
-  return FALSE;
-}
 FX_BOOL CXFA_FFSignature::OnKeyDown(FX_DWORD dwKeyCode, FX_DWORD dwFlags) {
   return FALSE;
 }

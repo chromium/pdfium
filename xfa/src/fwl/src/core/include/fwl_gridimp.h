@@ -92,14 +92,14 @@ class CFWL_GridImp : public CFWL_ContentImp {
   virtual FWL_ERR SetSize(FWL_HGRIDCOLROW hColRow,
                           FX_FLOAT fSize,
                           FWL_GRIDUNIT eUnit);
-  virtual FX_FLOAT GetMinSize(FWL_HGRIDCOLROW hColRow, FWL_GRIDUNIT& eUnit);
-  virtual FWL_ERR SetMinSize(FWL_HGRIDCOLROW hColRow,
-                             FX_FLOAT fSize,
-                             FWL_GRIDUNIT eUnit);
-  virtual FX_FLOAT GetMaxSize(FWL_HGRIDCOLROW hColRow, FWL_GRIDUNIT& eUnit);
-  virtual FWL_ERR SetMaxSize(FWL_HGRIDCOLROW hColRow,
-                             FX_FLOAT fSize,
-                             FWL_GRIDUNIT eUnit);
+  FX_FLOAT GetMinSize(FWL_HGRIDCOLROW hColRow, FWL_GRIDUNIT& eUnit);
+  FWL_ERR SetMinSize(FWL_HGRIDCOLROW hColRow,
+                     FX_FLOAT fSize,
+                     FWL_GRIDUNIT eUnit);
+  FX_FLOAT GetMaxSize(FWL_HGRIDCOLROW hColRow, FWL_GRIDUNIT& eUnit);
+  FWL_ERR SetMaxSize(FWL_HGRIDCOLROW hColRow,
+                     FX_FLOAT fSize,
+                     FWL_GRIDUNIT eUnit);
   virtual FX_BOOL DeleteColRow(FWL_HGRIDCOLROW hColRow);
   virtual FX_BOOL IsColumn(FWL_HGRIDCOLROW hColRow);
   virtual int32_t GetWidgetPos(IFWL_Widget* pWidget, FX_BOOL bColumn);

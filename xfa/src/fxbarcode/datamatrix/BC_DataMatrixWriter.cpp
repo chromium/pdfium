@@ -86,21 +86,6 @@ uint8_t* CBC_DataMatrixWriter::Encode(const CFX_WideString& contents,
   delete placement;
   return result;
 }
-uint8_t* CBC_DataMatrixWriter::Encode(const CFX_ByteString& contents,
-                                      BCFORMAT format,
-                                      int32_t& outWidth,
-                                      int32_t& outHeight,
-                                      int32_t& e) {
-  return NULL;
-}
-uint8_t* CBC_DataMatrixWriter::Encode(const CFX_ByteString& contents,
-                                      BCFORMAT format,
-                                      int32_t& outWidth,
-                                      int32_t& outHeight,
-                                      int32_t hints,
-                                      int32_t& e) {
-  return NULL;
-}
 CBC_CommonByteMatrix* CBC_DataMatrixWriter::encodeLowLevel(
     CBC_DefaultPlacement* placement,
     CBC_SymbolInfo* symbolInfo,

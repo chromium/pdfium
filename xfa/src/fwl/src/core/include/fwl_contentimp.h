@@ -18,10 +18,10 @@ class CFWL_ContentImp : public CFWL_WidgetImp {
   virtual FWL_ERR InsertWidget(IFWL_Widget* pChild, int32_t nIndex = -1);
   virtual FWL_ERR RemoveWidget(IFWL_Widget* pWidget);
   virtual FWL_ERR RemoveAllWidgets();
-  virtual FWL_ERR GetMinSize(FX_FLOAT& fWidth, FX_FLOAT& fHeight);
-  virtual FWL_ERR SetMinSize(FX_FLOAT fWidth, FX_FLOAT fHeight);
-  virtual FWL_ERR GetMaxSize(FX_FLOAT& fWidth, FX_FLOAT& fHeight);
-  virtual FWL_ERR SetMaxSize(FX_FLOAT fWidth, FX_FLOAT fHeight);
+  FWL_ERR GetMinSize(FX_FLOAT& fWidth, FX_FLOAT& fHeight);
+  FWL_ERR SetMinSize(FX_FLOAT fWidth, FX_FLOAT fHeight);
+  FWL_ERR GetMaxSize(FX_FLOAT& fWidth, FX_FLOAT& fHeight);
+  FWL_ERR SetMaxSize(FX_FLOAT fWidth, FX_FLOAT fHeight);
 
  protected:
   FX_FLOAT m_fWidthMin;

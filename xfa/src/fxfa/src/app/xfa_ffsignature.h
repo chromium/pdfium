@@ -6,7 +6,7 @@
 
 #ifndef _FXFA_FORMFILLER_SIGNATURE_IMP_H
 #define _FXFA_FORMFILLER_SIGNATURE_IMP_H
-class CXFA_FFSignature : public CXFA_FFField {
+class CXFA_FFSignature final : public CXFA_FFField {
  public:
   CXFA_FFSignature(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
   virtual ~CXFA_FFSignature();
@@ -30,8 +30,6 @@ class CXFA_FFSignature : public CXFA_FFField {
   virtual FX_BOOL OnRButtonUp(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
   virtual FX_BOOL OnRButtonDblClk(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
 
-  virtual FX_BOOL OnSetFocus();
-  virtual FX_BOOL OnKillFocus();
   virtual FX_BOOL OnKeyDown(FX_DWORD dwKeyCode, FX_DWORD dwFlags);
   virtual FX_BOOL OnKeyUp(FX_DWORD dwKeyCode, FX_DWORD dwFlags);
   virtual FX_BOOL OnChar(FX_DWORD dwChar, FX_DWORD dwFlags);

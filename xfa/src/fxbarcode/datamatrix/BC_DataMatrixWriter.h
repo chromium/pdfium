@@ -21,17 +21,6 @@ class CBC_DataMatrixWriter : public CBC_TwoDimWriter {
                   int32_t& outWidth,
                   int32_t& outHeight,
                   int32_t& e);
-  uint8_t* Encode(const CFX_ByteString& contents,
-                  BCFORMAT format,
-                  int32_t& outWidth,
-                  int32_t& outHeight,
-                  int32_t& e);
-  uint8_t* Encode(const CFX_ByteString& contents,
-                  BCFORMAT format,
-                  int32_t& outWidth,
-                  int32_t& outHeight,
-                  int32_t hints,
-                  int32_t& e);
   FX_BOOL SetErrorCorrectionLevel(int32_t level);
 
  private:

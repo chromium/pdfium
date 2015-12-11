@@ -44,25 +44,6 @@ FX_BOOL CBC_PDF417Writer::SetErrorCorrectionLevel(int32_t level) {
 void CBC_PDF417Writer::SetTruncated(FX_BOOL truncated) {
   m_bTruncated = truncated;
 }
-uint8_t* CBC_PDF417Writer::Encode(const CFX_ByteString& contents,
-                                  BCFORMAT format,
-                                  int32_t& outWidth,
-                                  int32_t& outHeight,
-                                  int32_t& e) {
-  if (format != BCFORMAT_PDF_417) {
-    return NULL;
-  }
-  CFX_WideString encodeContents = contents.UTF8Decode();
-  return Encode(encodeContents, outWidth, outHeight, e);
-}
-uint8_t* CBC_PDF417Writer::Encode(const CFX_ByteString& contents,
-                                  BCFORMAT format,
-                                  int32_t& outWidth,
-                                  int32_t& outHeight,
-                                  int32_t hints,
-                                  int32_t& e) {
-  return NULL;
-}
 uint8_t* CBC_PDF417Writer::Encode(const CFX_WideString& contents,
                                   int32_t& outWidth,
                                   int32_t& outHeight,
