@@ -14,12 +14,8 @@ FWL_ERR CFWL_CheckBox::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  CFWL_WidgetImpProperties prop =
-      m_pProperties->MakeWidgetImpProperties(&m_checkboxData);
-  prop.m_pParent = m_pProperties->m_pParent->GetWidget();
-  prop.m_pOwner = m_pProperties->m_pOwner->GetWidget();
-  nonstd::unique_ptr<IFWL_CheckBox> pCheckBox(
-      IFWL_CheckBox::Create(prop, nullptr));
+  nonstd::unique_ptr<IFWL_CheckBox> pCheckBox(IFWL_CheckBox::Create(
+      m_pProperties->MakeWidgetImpProperties(&m_checkboxData), nullptr));
   FWL_ERR ret = pCheckBox->Initialize();
   if (ret != FWL_ERR_Succeeded) {
     return ret;
