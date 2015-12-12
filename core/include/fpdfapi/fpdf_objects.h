@@ -611,8 +611,8 @@ class CPDF_IndirectObjects {
   FX_DWORD AddIndirectObject(CPDF_Object* pObj);
 
   void ReleaseIndirectObject(FX_DWORD objnum);
-
-  void InsertIndirectObject(FX_DWORD objnum, CPDF_Object* pObj);
+  // Takes ownership of |pObj|.
+  FX_BOOL InsertIndirectObject(FX_DWORD objnum, CPDF_Object* pObj);
 
   FX_DWORD GetLastObjNum() const;
 
