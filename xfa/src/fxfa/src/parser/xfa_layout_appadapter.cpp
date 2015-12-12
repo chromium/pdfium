@@ -41,12 +41,18 @@ FX_DWORD XFA_GetRelevant(CXFA_Node* pFormItem, FX_DWORD dwParentRelvant) {
   return dwRelevant;
 }
 void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem) {
-  CXFA_LayoutItem* pNext, * pNode = pLayoutItem->m_pFirstChild;
+  CXFA_LayoutItem* pNode = pLayoutItem->m_pFirstChild;
   while (pNode) {
-    pNext = pNode->m_pNextSibling;
-    pNode->m_pParent = NULL;
+    CXFA_LayoutItem* pNext = pNode->m_pNextSibling;
+    pNode->m_pParent = nullptr;
     XFA_ReleaseLayoutItem(pNode);
     pNode = pNext;
+  }
+  IXFA_Notify* pNotify =
+      pLayoutItem->m_pFormNode->GetDocument()->GetParser()->GetNotify();
+  if (pLayoutItem->m_pFormNode->GetClassID() == XFA_ELEMENT_PageArea) {
+    pNotify->OnPageEvent(static_cast<CXFA_ContainerLayoutItem*>(pLayoutItem),
+                         XFA_PAGEEVENT_PageRemoved);
   }
   delete pLayoutItem;
 }
