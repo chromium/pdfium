@@ -987,16 +987,17 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, FX_BOOL bMainXRef) {
   CPDF_Object* pObject = ParseIndirectObjectAt(m_pDocument, *pos, 0, nullptr);
   if (!pObject)
     return FALSE;
-
   if (m_pDocument) {
+    FX_BOOL bInserted = FALSE;
     CPDF_Dictionary* pDict = m_pDocument->GetRoot();
     if (!pDict || pDict->GetObjNum() != pObject->m_ObjNum) {
-      m_pDocument->InsertIndirectObject(pObject->m_ObjNum, pObject);
+      bInserted = m_pDocument->InsertIndirectObject(pObject->m_ObjNum, pObject);
     } else {
       if (pObject->IsStream())
         pObject->Release();
-      return FALSE;
     }
+    if (!bInserted)
+      return FALSE;
   }
 
   CPDF_Stream* pStream = pObject->AsStream();
@@ -4553,7 +4554,8 @@ CPDF_Dictionary* CPDF_DataAvail::GetPage(int index) {
       if (!pPageDict) {
         return nullptr;
       }
-      m_pDocument->InsertIndirectObject(dwObjNum, pPageDict);
+      if (!m_pDocument->InsertIndirectObject(dwObjNum, pPageDict))
+        return nullptr;
       return pPageDict->GetDict();
     }
   }

@@ -1156,25 +1156,26 @@ void CPDF_IndirectObjects::ReleaseIndirectObject(FX_DWORD objnum) {
   pValue->Destroy();
   m_IndirectObjs.RemoveKey((void*)(uintptr_t)objnum);
 }
-void CPDF_IndirectObjects::InsertIndirectObject(FX_DWORD objnum,
-                                                CPDF_Object* pObj) {
-  if (objnum == 0 || pObj == NULL) {
-    return;
-  }
-  void* value = NULL;
+FX_BOOL CPDF_IndirectObjects::InsertIndirectObject(FX_DWORD objnum,
+                                                   CPDF_Object* pObj) {
+  if (!objnum || !pObj)
+    return FALSE;
+  void* value = nullptr;
   if (m_IndirectObjs.Lookup((void*)(uintptr_t)objnum, value)) {
     if (value) {
-      CPDF_Object* pValue = static_cast<CPDF_Object*>(value);
-      if (pObj->GetGenNum() <= pValue->GetGenNum())
-        return;
-      pValue->Destroy();
+      CPDF_Object* pExistingObj = static_cast<CPDF_Object*>(value);
+      if (pObj->GetGenNum() <= pExistingObj->GetGenNum()) {
+        pObj->Destroy();
+        return FALSE;
+      }
+      pExistingObj->Destroy();
     }
   }
   pObj->m_ObjNum = objnum;
   m_IndirectObjs.SetAt((void*)(uintptr_t)objnum, pObj);
-  if (m_LastObjNum < objnum) {
+  if (m_LastObjNum < objnum)
     m_LastObjNum = objnum;
-  }
+  return TRUE;
 }
 FX_DWORD CPDF_IndirectObjects::GetLastObjNum() const {
   return m_LastObjNum;
