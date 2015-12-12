@@ -534,8 +534,7 @@ FX_ERR CFX_Graphics::CalcTextRect(CFX_RectF& rect,
       _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
       int32_t length = text.GetLength();
       FX_DWORD* charCodes = FX_Alloc(FX_DWORD, length);
-      FXTEXT_CHARPOS* charPos =
-          FX_Alloc(FXTEXT_CHARPOS, length * sizeof(FXTEXT_CHARPOS));
+      FXTEXT_CHARPOS* charPos = FX_Alloc(FXTEXT_CHARPOS, length);
       CalcTextInfo(text, charCodes, charPos, rect);
       FX_Free(charPos);
       FX_Free(charCodes);
@@ -867,8 +866,7 @@ FX_ERR CFX_Graphics::RenderDeviceShowText(const CFX_PointF& point,
                                           CFX_Matrix* matrix) {
   int32_t length = text.GetLength();
   FX_DWORD* charCodes = FX_Alloc(FX_DWORD, length);
-  FXTEXT_CHARPOS* charPos =
-      FX_Alloc(FXTEXT_CHARPOS, length * sizeof(FXTEXT_CHARPOS));
+  FXTEXT_CHARPOS* charPos = FX_Alloc(FXTEXT_CHARPOS, length);
   CFX_RectF rect;
   rect.Set(point.x, point.y, 0, 0);
   CalcTextInfo(text, charCodes, charPos, rect);

@@ -80,7 +80,7 @@ uint8_t* CBC_DataMatrixWriter::Encode(const CFX_WideString& contents,
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   outWidth = bytematrix->GetWidth();
   outHeight = bytematrix->GetHeight();
-  uint8_t* result = FX_Alloc(uint8_t, outWidth * outHeight);
+  uint8_t* result = FX_Alloc2D(uint8_t, outWidth, outHeight);
   FXSYS_memcpy(result, bytematrix->GetArray(), outWidth * outHeight);
   delete bytematrix;
   delete placement;

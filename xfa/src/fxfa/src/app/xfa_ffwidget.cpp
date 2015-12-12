@@ -903,7 +903,7 @@ FX_CHAR* XFA_Base64Encode(const uint8_t* buf, int32_t buf_len) {
   FX_CHAR* out = NULL;
   int i, j;
   FX_DWORD limb;
-  out = (FX_CHAR*)FX_Alloc(FX_CHAR, ((buf_len * 8 + 5) / 6) + 5);
+  out = FX_Alloc(FX_CHAR, ((buf_len * 8 + 5) / 6) + 5);
   for (i = 0, j = 0, limb = 0; i + 2 < buf_len; i += 3, j += 4) {
     limb = ((FX_DWORD)buf[i] << 16) | ((FX_DWORD)buf[i + 1] << 8) |
            ((FX_DWORD)buf[i + 2]);

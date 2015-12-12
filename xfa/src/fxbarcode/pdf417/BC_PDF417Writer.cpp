@@ -97,7 +97,7 @@ uint8_t* CBC_PDF417Writer::Encode(const CFX_WideString& contents,
       outWidth = temp;
     }
   }
-  uint8_t* result = (uint8_t*)FX_Alloc(uint8_t, outHeight * outWidth);
+  uint8_t* result = FX_Alloc2D(uint8_t, outHeight, outWidth);
   FXSYS_memcpy(result, originalScale.GetData(), outHeight * outWidth);
   return result;
 }

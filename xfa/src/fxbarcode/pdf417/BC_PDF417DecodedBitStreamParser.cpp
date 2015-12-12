@@ -360,7 +360,7 @@ int32_t CBC_DecodedBitStreamPaser::byteCompaction(int32_t mode,
   if (mode == BYTE_COMPACTION_MODE_LATCH) {
     int32_t count = 0;
     int64_t value = 0;
-    FX_WORD* decodedData = FX_Alloc(FX_WORD, 6 * sizeof(FX_WORD));
+    FX_WORD* decodedData = FX_Alloc(FX_WORD, 6);
     CFX_Int32Array byteCompactedCodewords;
     byteCompactedCodewords.SetSize(6);
     FX_BOOL end = FALSE;
@@ -421,7 +421,7 @@ int32_t CBC_DecodedBitStreamPaser::byteCompaction(int32_t mode,
         }
       }
       if ((count % 5 == 0) && (count > 0)) {
-        FX_WORD* decodedData = FX_Alloc(FX_WORD, 6 * sizeof(FX_WORD));
+        FX_WORD* decodedData = FX_Alloc(FX_WORD, 6);
         int32_t j = 0;
         for (; j < 6; ++j) {
           decodedData[5 - j] = (FX_WORD)(value & 0xFF);

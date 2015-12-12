@@ -28,7 +28,7 @@ CBC_CommonByteMatrix::CBC_CommonByteMatrix(int32_t width, int32_t height) {
   m_bytes = NULL;
 }
 void CBC_CommonByteMatrix::Init() {
-  m_bytes = FX_Alloc(uint8_t, m_height * m_width);
+  m_bytes = FX_Alloc2D(uint8_t, m_height, m_width);
   FXSYS_memset(m_bytes, 0xff, m_height * m_width);
 }
 CBC_CommonByteMatrix::~CBC_CommonByteMatrix() {
