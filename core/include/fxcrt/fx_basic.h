@@ -916,6 +916,12 @@ class CFX_BitStream {
 
   void Rewind() { m_BitPos = 0; }
 
+  FX_DWORD GetPos() { return m_BitPos; }
+
+  FX_DWORD BitsRemaining() {
+    return m_BitSize >= m_BitPos ? m_BitSize - m_BitPos : 0;
+  }
+
  protected:
   FX_DWORD m_BitPos;
 

@@ -34,7 +34,7 @@ class CPDF_HintTables {
 
  protected:
   FX_BOOL ReadPageHintTable(CFX_BitStream* hStream);
-  FX_BOOL ReadSharedObjHintTable(CFX_BitStream* hStream);
+  FX_BOOL ReadSharedObjHintTable(CFX_BitStream* hStream, FX_DWORD offset);
   FX_DWORD GetItemLength(int index, const CFX_FileSizeArray& szArray);
 
  private:
