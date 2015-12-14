@@ -415,7 +415,7 @@ void CPDF_StreamContentParser::Handle_BeginMarkedContent_Dictionary() {
   }
   FX_BOOL bDirect = TRUE;
   if (pProperty->IsName()) {
-    pProperty = FindResourceObj(FX_BSTRC("Properties"), pProperty->GetString());
+    pProperty = FindResourceObj("Properties", pProperty->GetString());
     if (!pProperty)
       return;
     bDirect = FALSE;
@@ -680,9 +680,9 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
     if (!m_pResources)
       return;
 
-    CPDF_Dictionary* pList = m_pResources->GetDict(FX_BSTRC("XObject"));
+    CPDF_Dictionary* pList = m_pResources->GetDict("XObject");
     if (!pList && m_pPageResources && m_pResources != m_pPageResources)
-      pList = m_pPageResources->GetDict(FX_BSTRC("XObject"));
+      pList = m_pPageResources->GetDict("XObject");
     if (!pList)
       return;
     CPDF_Reference* pRes = ToReference(pList->GetElement(name));
@@ -694,24 +694,23 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
       return;
   }
 
-  CPDF_Stream* pXObject = ToStream(FindResourceObj(FX_BSTRC("XObject"), name));
+  CPDF_Stream* pXObject = ToStream(FindResourceObj("XObject", name));
   if (!pXObject) {
     m_bResourceMissing = TRUE;
     return;
   }
 
-  CFX_ByteStringC type =
-      pXObject->GetDict()
-          ? pXObject->GetDict()->GetConstString(FX_BSTRC("Subtype"))
-          : CFX_ByteStringC();
-  if (type == FX_BSTRC("Image")) {
+  CFX_ByteStringC type = pXObject->GetDict()
+                             ? pXObject->GetDict()->GetConstString("Subtype")
+                             : CFX_ByteStringC();
+  if (type == "Image") {
     if (m_Options.m_bTextOnly) {
       return;
     }
     CPDF_ImageObject* pObj = AddImage(pXObject, NULL, FALSE);
     m_LastImageName = name;
     m_pLastImage = pObj->m_pImage;
-  } else if (type == FX_BSTRC("Form")) {
+  } else if (type == "Form") {
     AddForm(pXObject);
   } else {
     return;
@@ -719,15 +718,14 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
 }
 void CPDF_StreamContentParser::AddForm(CPDF_Stream* pStream) {
   if (!m_Options.m_bSeparateForm) {
-    CPDF_Dictionary* pResources =
-        pStream->GetDict()->GetDict(FX_BSTRC("Resources"));
-    CFX_Matrix form_matrix = pStream->GetDict()->GetMatrix(FX_BSTRC("Matrix"));
+    CPDF_Dictionary* pResources = pStream->GetDict()->GetDict("Resources");
+    CFX_Matrix form_matrix = pStream->GetDict()->GetMatrix("Matrix");
     form_matrix.Concat(m_pCurStates->m_CTM);
-    CPDF_Array* pBBox = pStream->GetDict()->GetArray(FX_BSTRC("BBox"));
+    CPDF_Array* pBBox = pStream->GetDict()->GetArray("BBox");
     CFX_FloatRect form_bbox;
     CPDF_Path ClipPath;
     if (pBBox) {
-      form_bbox = pStream->GetDict()->GetRect(FX_BSTRC("BBox"));
+      form_bbox = pStream->GetDict()->GetRect("BBox");
       ClipPath.New();
       ClipPath.AppendRect(form_bbox.left, form_bbox.bottom, form_bbox.right,
                           form_bbox.top);
@@ -860,8 +858,7 @@ void CPDF_StreamContentParser::Handle_SetGray_Stroke() {
 }
 void CPDF_StreamContentParser::Handle_SetExtendGraphState() {
   CFX_ByteString name = GetString(0);
-  CPDF_Dictionary* pGS =
-      ToDictionary(FindResourceObj(FX_BSTRC("ExtGState"), name));
+  CPDF_Dictionary* pGS = ToDictionary(FindResourceObj("ExtGState", name));
   if (!pGS) {
     m_bResourceMissing = TRUE;
     return;
@@ -1192,11 +1189,10 @@ CPDF_Object* CPDF_StreamContentParser::FindResourceObj(
   return pRes;
 }
 CPDF_Font* CPDF_StreamContentParser::FindFont(const CFX_ByteString& name) {
-  CPDF_Dictionary* pFontDict =
-      ToDictionary(FindResourceObj(FX_BSTRC("Font"), name));
+  CPDF_Dictionary* pFontDict = ToDictionary(FindResourceObj("Font", name));
   if (!pFontDict) {
     m_bResourceMissing = TRUE;
-    return CPDF_Font::GetStockFont(m_pDocument, FX_BSTRC("Helvetica"));
+    return CPDF_Font::GetStockFont(m_pDocument, "Helvetica");
   }
 
   CPDF_Font* pFont = m_pDocument->LoadFont(pFontDict);
@@ -1208,26 +1204,25 @@ CPDF_Font* CPDF_StreamContentParser::FindFont(const CFX_ByteString& name) {
 }
 CPDF_ColorSpace* CPDF_StreamContentParser::FindColorSpace(
     const CFX_ByteString& name) {
-  if (name == FX_BSTRC("Pattern")) {
+  if (name == "Pattern") {
     return CPDF_ColorSpace::GetStockCS(PDFCS_PATTERN);
   }
-  if (name == FX_BSTRC("DeviceGray") || name == FX_BSTRC("DeviceCMYK") ||
-      name == FX_BSTRC("DeviceRGB")) {
+  if (name == "DeviceGray" || name == "DeviceCMYK" || name == "DeviceRGB") {
     CFX_ByteString defname = "Default";
     defname += name.Mid(7);
-    CPDF_Object* pDefObj = FindResourceObj(FX_BSTRC("ColorSpace"), defname);
+    CPDF_Object* pDefObj = FindResourceObj("ColorSpace", defname);
     if (pDefObj == NULL) {
-      if (name == FX_BSTRC("DeviceGray")) {
+      if (name == "DeviceGray") {
         return CPDF_ColorSpace::GetStockCS(PDFCS_DEVICEGRAY);
       }
-      if (name == FX_BSTRC("DeviceRGB")) {
+      if (name == "DeviceRGB") {
         return CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB);
       }
       return CPDF_ColorSpace::GetStockCS(PDFCS_DEVICECMYK);
     }
     return m_pDocument->LoadColorSpace(pDefObj);
   }
-  CPDF_Object* pCSObj = FindResourceObj(FX_BSTRC("ColorSpace"), name);
+  CPDF_Object* pCSObj = FindResourceObj("ColorSpace", name);
   if (pCSObj == NULL) {
     m_bResourceMissing = TRUE;
     return NULL;
@@ -1236,8 +1231,8 @@ CPDF_ColorSpace* CPDF_StreamContentParser::FindColorSpace(
 }
 CPDF_Pattern* CPDF_StreamContentParser::FindPattern(const CFX_ByteString& name,
                                                     FX_BOOL bShading) {
-  CPDF_Object* pPattern = FindResourceObj(
-      bShading ? FX_BSTRC("Shading") : FX_BSTRC("Pattern"), name);
+  CPDF_Object* pPattern =
+      FindResourceObj(bShading ? "Shading" : "Pattern", name);
   if (!pPattern || (!pPattern->IsDictionary() && !pPattern->IsStream())) {
     m_bResourceMissing = TRUE;
     return NULL;

@@ -296,7 +296,7 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
       } else {
         flags |= PDFFONT_NONSYMBOLIC;
       }
-      pBaseDict->SetAtName(FX_BSTRC("Encoding"), "WinAnsiEncoding");
+      pBaseDict->SetAtName("Encoding", "WinAnsiEncoding");
     } else {
       flags |= PDFFONT_NONSYMBOLIC;
       int i;
@@ -307,21 +307,21 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
         }
       if (i < sizeof g_FX_CharsetUnicodes / sizeof(FX_CharsetUnicodes)) {
         CPDF_Dictionary* pEncoding = new CPDF_Dictionary;
-        pEncoding->SetAtName(FX_BSTRC("BaseEncoding"), "WinAnsiEncoding");
+        pEncoding->SetAtName("BaseEncoding", "WinAnsiEncoding");
         CPDF_Array* pArray = new CPDF_Array;
         pArray->AddInteger(128);
         const FX_WCHAR* pUnicodes = g_FX_CharsetUnicodes[i].m_pUnicodes;
         for (int j = 0; j < 128; j++) {
           CFX_ByteString name = PDF_AdobeNameFromUnicode(pUnicodes[j]);
           if (name.IsEmpty()) {
-            pArray->AddName(FX_BSTRC(".notdef"));
+            pArray->AddName(".notdef");
           } else {
             pArray->AddName(name);
           }
         }
-        pEncoding->SetAt(FX_BSTRC("Differences"), pArray);
+        pEncoding->SetAt("Differences", pArray);
         AddIndirectObject(pEncoding);
-        pBaseDict->SetAtReference(FX_BSTRC("Encoding"), this, pEncoding);
+        pBaseDict->SetAtReference("Encoding", this, pEncoding);
       }
     }
     if (pLogFont->lfWeight > FW_MEDIUM && pLogFont->lfItalic) {
@@ -633,7 +633,7 @@ CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont,
       } else {
         flags |= PDFFONT_NONSYMBOLIC;
       }
-      pBaseDict->SetAtName(FX_BSTRC("Encoding"), "WinAnsiEncoding");
+      pBaseDict->SetAtName("Encoding", "WinAnsiEncoding");
     } else {
       flags |= PDFFONT_NONSYMBOLIC;
       size_t i;
@@ -647,21 +647,21 @@ CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont,
       }
       if (i < sizeof g_FX_CharsetUnicodes / sizeof(FX_CharsetUnicodes)) {
         CPDF_Dictionary* pEncoding = new CPDF_Dictionary;
-        pEncoding->SetAtName(FX_BSTRC("BaseEncoding"), "WinAnsiEncoding");
+        pEncoding->SetAtName("BaseEncoding", "WinAnsiEncoding");
         CPDF_Array* pArray = new CPDF_Array;
         pArray->AddInteger(128);
         const FX_WCHAR* pUnicodes = g_FX_CharsetUnicodes[i].m_pUnicodes;
         for (int j = 0; j < 128; j++) {
           CFX_ByteString name = PDF_AdobeNameFromUnicode(pUnicodes[j]);
           if (name.IsEmpty()) {
-            pArray->AddName(FX_BSTRC(".notdef"));
+            pArray->AddName(".notdef");
           } else {
             pArray->AddName(name);
           }
         }
-        pEncoding->SetAt(FX_BSTRC("Differences"), pArray);
+        pEncoding->SetAt("Differences", pArray);
         AddIndirectObject(pEncoding);
-        pBaseDict->SetAtReference(FX_BSTRC("Encoding"), this, pEncoding);
+        pBaseDict->SetAtReference("Encoding", this, pEncoding);
       }
     }
     if (weight > 0.0 && trait & kCTFontItalicTrait) {
@@ -864,7 +864,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert) {
       } else {
         flags |= PDFFONT_NONSYMBOLIC;
       }
-      pBaseDict->SetAtName(FX_BSTRC("Encoding"), "WinAnsiEncoding");
+      pBaseDict->SetAtName("Encoding", "WinAnsiEncoding");
       for (charcode = 128; charcode <= 255; charcode++) {
         int glyph_index = pEncoding->GlyphFromCharCode(charcode);
         int char_width = pFont->GetGlyphWidth(glyph_index);
@@ -880,14 +880,14 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert) {
         }
       if (i < sizeof g_FX_CharsetUnicodes / sizeof(FX_CharsetUnicodes)) {
         CPDF_Dictionary* pEncodingDict = new CPDF_Dictionary;
-        pEncodingDict->SetAtName(FX_BSTRC("BaseEncoding"), "WinAnsiEncoding");
+        pEncodingDict->SetAtName("BaseEncoding", "WinAnsiEncoding");
         CPDF_Array* pArray = new CPDF_Array;
         pArray->AddInteger(128);
         const FX_WCHAR* pUnicodes = g_FX_CharsetUnicodes[i].m_pUnicodes;
         for (int j = 0; j < 128; j++) {
           CFX_ByteString name = PDF_AdobeNameFromUnicode(pUnicodes[j]);
           if (name.IsEmpty()) {
-            pArray->AddName(FX_BSTRC(".notdef"));
+            pArray->AddName(".notdef");
           } else {
             pArray->AddName(name);
           }
@@ -895,9 +895,9 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert) {
           int char_width = pFont->GetGlyphWidth(glyph_index);
           pWidths->AddInteger(char_width);
         }
-        pEncodingDict->SetAt(FX_BSTRC("Differences"), pArray);
+        pEncodingDict->SetAt("Differences", pArray);
         AddIndirectObject(pEncodingDict);
-        pBaseDict->SetAtReference(FX_BSTRC("Encoding"), this, pEncodingDict);
+        pBaseDict->SetAtReference("Encoding", this, pEncodingDict);
       }
     }
     if (pFont->IsBold() && pFont->IsItalic()) {
@@ -1025,7 +1025,7 @@ static int InsertDeletePDFPage(CPDF_Document* pDoc,
   int nKids = pKidList->GetCount();
   for (int i = 0; i < nKids; i++) {
     CPDF_Dictionary* pKid = pKidList->GetDict(i);
-    if (pKid->GetString("Type") == FX_BSTRC("Page")) {
+    if (pKid->GetString("Type") == "Page") {
       if (nPagesToGo == 0) {
         if (bInsert) {
           pKidList->InsertAt(i, new CPDF_Reference(pDoc, pPage->GetObjNum()));
@@ -1070,7 +1070,7 @@ static int InsertNewPage(CPDF_Document* pDoc,
   if (!pRoot) {
     return -1;
   }
-  CPDF_Dictionary* pPages = pRoot->GetDict(FX_BSTRC("Pages"));
+  CPDF_Dictionary* pPages = pRoot->GetDict("Pages");
   if (!pPages) {
     return -1;
   }
@@ -1079,14 +1079,14 @@ static int InsertNewPage(CPDF_Document* pDoc,
     return -1;
   }
   if (iPage == nPages) {
-    CPDF_Array* pPagesList = pPages->GetArray(FX_BSTRC("Kids"));
+    CPDF_Array* pPagesList = pPages->GetArray("Kids");
     if (!pPagesList) {
       pPagesList = new CPDF_Array;
-      pPages->SetAt(FX_BSTRC("Kids"), pPagesList);
+      pPages->SetAt("Kids", pPagesList);
     }
     pPagesList->Add(pPageDict, pDoc);
-    pPages->SetAtInteger(FX_BSTRC("Count"), nPages + 1);
-    pPageDict->SetAtReference(FX_BSTRC("Parent"), pDoc, pPages->GetObjNum());
+    pPages->SetAtInteger("Count", nPages + 1);
+    pPageDict->SetAtReference("Parent", pDoc, pPages->GetObjNum());
   } else {
     CFX_ArrayTemplate<CPDF_Dictionary*> stack;
     stack.Add(pPages);

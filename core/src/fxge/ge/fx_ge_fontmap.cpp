@@ -362,7 +362,7 @@ int32_t GetStyleType(const CFX_ByteString& bsStyle, FX_BOOL bRevert) {
 }
 
 FX_BOOL CheckSupportThirdPartFont(CFX_ByteString name, int& PitchFamily) {
-  if (name == FX_BSTRC("MyriadPro")) {
+  if (name == "MyriadPro") {
     PitchFamily &= ~FXFONT_FF_ROMAN;
     return TRUE;
   }
@@ -854,7 +854,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
     }
   }
   PDF_GetStandardFontName(&SubstName);
-  if (SubstName == FX_BSTRC("Symbol") && !bTrueType) {
+  if (SubstName == "Symbol" && !bTrueType) {
     pSubstFont->m_Family = "Chrome Symbol";
     pSubstFont->m_Charset = FXFONT_SYMBOL_CHARSET;
     pSubstFont->m_SubstFlags |= FXFONT_SUBST_STANDARD;
@@ -867,7 +867,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
     m_FoxitFaces[12] = m_pFontMgr->GetFixedFace(pFontData, size, 0);
     return m_FoxitFaces[12];
   }
-  if (SubstName == FX_BSTRC("ZapfDingbats")) {
+  if (SubstName == "ZapfDingbats") {
     pSubstFont->m_Family = "Chrome Dingbats";
     pSubstFont->m_Charset = FXFONT_SYMBOL_CHARSET;
     pSubstFont->m_SubstFlags |= FXFONT_SUBST_STANDARD;
@@ -884,7 +884,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
   CFX_ByteString family, style;
   FX_BOOL bHasComma = FALSE;
   FX_BOOL bHasHypen = FALSE;
-  int find = SubstName.Find(FX_BSTRC(","), 0);
+  int find = SubstName.Find(",", 0);
   if (find >= 0) {
     family = SubstName.Left(find);
     PDF_GetStandardFontName(&family);
@@ -1107,7 +1107,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
       if (Charset == FXFONT_SYMBOL_CHARSET) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_ || \
     _FXM_PLATFORM_ == _FXM_PLATFORM_ANDROID_
-        if (SubstName == FX_BSTRC("Symbol")) {
+        if (SubstName == "Symbol") {
           pSubstFont->m_Family = "Chrome Symbol";
           pSubstFont->m_SubstFlags |= FXFONT_SUBST_STANDARD;
           pSubstFont->m_Charset = FXFONT_SYMBOL_CHARSET;
@@ -1383,14 +1383,13 @@ void CFX_FolderFontInfo::ReportFace(CFX_ByteString& path,
   m_pMapper->AddInstalledFont(facename, FXFONT_ANSI_CHARSET);
   pInfo->m_Charsets |= CHARSET_FLAG_ANSI;
   pInfo->m_Styles = 0;
-  if (style.Find(FX_BSTRC("Bold")) > -1) {
+  if (style.Find("Bold") > -1) {
     pInfo->m_Styles |= FXFONT_BOLD;
   }
-  if (style.Find(FX_BSTRC("Italic")) > -1 ||
-      style.Find(FX_BSTRC("Oblique")) > -1) {
+  if (style.Find("Italic") > -1 || style.Find("Oblique") > -1) {
     pInfo->m_Styles |= FXFONT_ITALIC;
   }
-  if (facename.Find(FX_BSTRC("Serif")) > -1) {
+  if (facename.Find("Serif") > -1) {
     pInfo->m_Styles |= FXFONT_SERIF;
   }
   m_FontList[facename] = pInfo;

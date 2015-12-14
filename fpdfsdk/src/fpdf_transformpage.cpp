@@ -156,9 +156,9 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
   }
 
   // Need to transform the patterns as well.
-  CPDF_Dictionary* pRes = pPageDic->GetDict(FX_BSTRC("Resources"));
+  CPDF_Dictionary* pRes = pPageDic->GetDict("Resources");
   if (pRes) {
-    CPDF_Dictionary* pPattenDict = pRes->GetDict(FX_BSTRC("Pattern"));
+    CPDF_Dictionary* pPattenDict = pRes->GetDict("Pattern");
     if (pPattenDict) {
       FX_POSITION pos = pPattenDict->GetStartPos();
       while (pos) {
@@ -175,10 +175,10 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
         else
           continue;
 
-        CFX_Matrix m = pDict->GetMatrix(FX_BSTRC("Matrix"));
+        CFX_Matrix m = pDict->GetMatrix("Matrix");
         CFX_Matrix t = *(CFX_Matrix*)matrix;
         m.Concat(t);
-        pDict->SetAtMatrix(FX_BSTRC("Matrix"), m);
+        pDict->SetAtMatrix("Matrix", m);
       }
     }
   }

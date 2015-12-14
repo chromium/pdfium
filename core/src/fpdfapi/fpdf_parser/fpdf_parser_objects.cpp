@@ -164,7 +164,7 @@ void CPDF_Object::SetString(const CFX_ByteString& str) {
   ASSERT(this != NULL);
   switch (m_Type) {
     case PDFOBJ_BOOLEAN:
-      AsBoolean()->m_bValue = (str == FX_BSTRC("true"));
+      AsBoolean()->m_bValue = (str == "true");
       return;
     case PDFOBJ_NUMBER:
       AsNumber()->SetString(str);
@@ -863,7 +863,7 @@ void CPDF_Stream::InitStream(uint8_t* pData,
   }
   m_dwSize = size;
   if (m_pDict) {
-    m_pDict->SetAtInteger(FX_BSTRC("Length"), size);
+    m_pDict->SetAtInteger("Length", size);
   }
 }
 void CPDF_Stream::SetData(const uint8_t* pData,
@@ -885,10 +885,10 @@ void CPDF_Stream::SetData(const uint8_t* pData,
   m_dwSize = size;
   if (!m_pDict)
     m_pDict = new CPDF_Dictionary;
-  m_pDict->SetAtInteger(FX_BSTRC("Length"), size);
+  m_pDict->SetAtInteger("Length", size);
   if (!bCompressed) {
-    m_pDict->RemoveAt(FX_BSTRC("Filter"));
-    m_pDict->RemoveAt(FX_BSTRC("DecodeParms"));
+    m_pDict->RemoveAt("Filter");
+    m_pDict->RemoveAt("DecodeParms");
   }
 }
 FX_BOOL CPDF_Stream::ReadRawData(FX_FILESIZE offset,
@@ -907,7 +907,7 @@ void CPDF_Stream::InitStreamFromFile(IFX_FileRead* pFile,
   m_pFile = pFile;
   m_dwSize = (FX_DWORD)pFile->GetSize();
   if (m_pDict) {
-    m_pDict->SetAtInteger(FX_BSTRC("Length"), m_dwSize);
+    m_pDict->SetAtInteger("Length", m_dwSize);
   }
 }
 
@@ -996,7 +996,7 @@ void CPDF_StreamAcc::LoadAllData(const CPDF_Stream* pStream,
 
   m_pStream = pStream;
   if (pStream->IsMemoryBased() &&
-      (!pStream->GetDict()->KeyExist(FX_BSTRC("Filter")) || bRawAccess)) {
+      (!pStream->GetDict()->KeyExist("Filter") || bRawAccess)) {
     m_dwSize = pStream->m_dwSize;
     m_pData = (uint8_t*)pStream->m_pDataBuf;
     return;
@@ -1015,7 +1015,7 @@ void CPDF_StreamAcc::LoadAllData(const CPDF_Stream* pStream,
   }
   uint8_t* pDecryptedData = pSrcData;
   FX_DWORD dwDecryptedSize = dwSrcSize;
-  if (!pStream->GetDict()->KeyExist(FX_BSTRC("Filter")) || bRawAccess) {
+  if (!pStream->GetDict()->KeyExist("Filter") || bRawAccess) {
     m_pData = pDecryptedData;
     m_dwSize = dwDecryptedSize;
   } else {

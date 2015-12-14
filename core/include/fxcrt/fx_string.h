@@ -135,7 +135,6 @@ inline bool operator==(const char* lhs, const CFX_ByteStringC& rhs) {
 inline bool operator!=(const char* lhs, const CFX_ByteStringC& rhs) {
   return rhs != lhs;
 }
-#define FX_BSTRC(str) CFX_ByteStringC(str, sizeof str - 1)
 #define FXBSTR_ID(c1, c2, c3, c4) ((c1 << 24) | (c2 << 16) | (c3 << 8) | (c4))
 
 // A mutable string with shared buffers using copy-on-write semantics that

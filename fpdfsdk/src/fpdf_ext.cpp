@@ -96,7 +96,7 @@ FX_BOOL CheckSharedForm(const CXML_Element* pElement, CFX_ByteString cbName) {
     CFX_ByteString space, name;
     CFX_WideString value;
     pElement->GetAttrByIndex(i, space, name, value);
-    if (space == FX_BSTRC("xmlns") && name == FX_BSTRC("adhocwf") &&
+    if (space == "xmlns" && name == "adhocwf" &&
         value == L"http://ns.adobe.com/AcrobatAdhocWorkflow/1.0/") {
       CXML_Element* pVersion = pElement->GetElement("adhocwf", cbName);
       if (!pVersion)

@@ -247,7 +247,7 @@ void CFPF_SkiaFontMgr::LoadSystemFonts() {
   if (m_bLoaded) {
     return;
   }
-  ScanPath(FX_BSTRC("/system/fonts"));
+  ScanPath("/system/fonts");
   OutputSystemFonts();
   m_bLoaded = TRUE;
 }
@@ -416,14 +416,13 @@ void CFPF_SkiaFontMgr::ScanPath(const CFX_ByteStringC& path) {
   FX_BOOL bFolder = FALSE;
   while (FX_GetNextFile(handle, filename, bFolder)) {
     if (bFolder) {
-      if (filename == FX_BSTRC(".") || filename == FX_BSTRC("..")) {
+      if (filename == "." || filename == "..") {
         continue;
       }
     } else {
       CFX_ByteString ext = filename.Right(4);
       ext.MakeLower();
-      if (ext != FX_BSTRC(".ttf") && ext != FX_BSTRC(".ttc") &&
-          ext != FX_BSTRC(".otf")) {
+      if (ext != ".ttf" && ext != ".ttc" && ext != ".otf") {
         continue;
       }
     }

@@ -19,7 +19,7 @@ CPDF_Dest CPDF_Action::GetDest(CPDF_Document* pDoc) const {
     return CPDF_Dest();
   }
   if (pDest->IsString() || pDest->IsName()) {
-    CPDF_NameTree name_tree(pDoc, FX_BSTRC("Dests"));
+    CPDF_NameTree name_tree(pDoc, "Dests");
     CFX_ByteStringC name = pDest->GetString();
     return CPDF_Dest(name_tree.LookupNamedDest(pDoc, name));
   }
@@ -58,9 +58,9 @@ CFX_WideString CPDF_Action::GetFilePath() const {
   CFX_WideString path;
   if (pFile == NULL) {
     if (type == "Launch") {
-      CPDF_Dictionary* pWinDict = m_pDict->GetDict(FX_BSTRC("Win"));
+      CPDF_Dictionary* pWinDict = m_pDict->GetDict("Win");
       if (pWinDict) {
-        return CFX_WideString::FromLocal(pWinDict->GetString(FX_BSTRC("F")));
+        return CFX_WideString::FromLocal(pWinDict->GetString("F"));
       }
     }
     return path;
@@ -81,7 +81,7 @@ CFX_ByteString CPDF_Action::GetURI(CPDF_Document* pDoc) const {
   CPDF_Dictionary* pRoot = pDoc->GetRoot();
   CPDF_Dictionary* pURI = pRoot->GetDict("URI");
   if (pURI != NULL) {
-    if (csURI.Find(FX_BSTRC(":"), 0) < 1) {
+    if (csURI.Find(":", 0) < 1) {
       csURI = pURI->GetString("Base") + csURI;
     }
   }
@@ -189,10 +189,10 @@ CPDF_Dictionary* CPDF_Action::GetAnnot() const {
     return nullptr;
   }
   CFX_ByteString csType = m_pDict->GetString("S");
-  if (csType == FX_BSTRC("Rendition")) {
+  if (csType == "Rendition") {
     return m_pDict->GetDict("AN");
   }
-  if (csType == FX_BSTRC("Movie")) {
+  if (csType == "Movie") {
     return m_pDict->GetDict("Annotation");
   }
   return nullptr;
@@ -202,21 +202,21 @@ int32_t CPDF_Action::GetOperationType() const {
     return 0;
   }
   CFX_ByteString csType = m_pDict->GetString("S");
-  if (csType == FX_BSTRC("Rendition")) {
+  if (csType == "Rendition") {
     return m_pDict->GetInteger("OP");
   }
-  if (csType == FX_BSTRC("Movie")) {
+  if (csType == "Movie") {
     CFX_ByteString csOP = m_pDict->GetString("Operation");
-    if (csOP == FX_BSTRC("Play")) {
+    if (csOP == "Play") {
       return 0;
     }
-    if (csOP == FX_BSTRC("Stop")) {
+    if (csOP == "Stop") {
       return 1;
     }
-    if (csOP == FX_BSTRC("Pause")) {
+    if (csOP == "Pause") {
       return 2;
     }
-    if (csOP == FX_BSTRC("Resume")) {
+    if (csOP == "Resume") {
       return 3;
     }
   }
@@ -299,13 +299,13 @@ CPDF_DocJSActions::CPDF_DocJSActions(CPDF_Document* pDoc) : m_pDocument(pDoc) {}
 
 int CPDF_DocJSActions::CountJSActions() const {
   ASSERT(m_pDocument != NULL);
-  CPDF_NameTree name_tree(m_pDocument, FX_BSTRC("JavaScript"));
+  CPDF_NameTree name_tree(m_pDocument, "JavaScript");
   return name_tree.GetCount();
 }
 CPDF_Action CPDF_DocJSActions::GetJSAction(int index,
                                            CFX_ByteString& csName) const {
   ASSERT(m_pDocument != NULL);
-  CPDF_NameTree name_tree(m_pDocument, FX_BSTRC("JavaScript"));
+  CPDF_NameTree name_tree(m_pDocument, "JavaScript");
   CPDF_Object* pAction = name_tree.LookupValue(index, csName);
   if (!ToDictionary(pAction)) {
     return CPDF_Action();
@@ -314,7 +314,7 @@ CPDF_Action CPDF_DocJSActions::GetJSAction(int index,
 }
 CPDF_Action CPDF_DocJSActions::GetJSAction(const CFX_ByteString& csName) const {
   ASSERT(m_pDocument != NULL);
-  CPDF_NameTree name_tree(m_pDocument, FX_BSTRC("JavaScript"));
+  CPDF_NameTree name_tree(m_pDocument, "JavaScript");
   CPDF_Object* pAction = name_tree.LookupValue(csName);
   if (!ToDictionary(pAction)) {
     return CPDF_Action();
@@ -323,6 +323,6 @@ CPDF_Action CPDF_DocJSActions::GetJSAction(const CFX_ByteString& csName) const {
 }
 int CPDF_DocJSActions::FindJSAction(const CFX_ByteString& csName) const {
   ASSERT(m_pDocument != NULL);
-  CPDF_NameTree name_tree(m_pDocument, FX_BSTRC("JavaScript"));
+  CPDF_NameTree name_tree(m_pDocument, "JavaScript");
   return name_tree.GetIndex(csName);
 }

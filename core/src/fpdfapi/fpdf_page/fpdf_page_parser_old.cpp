@@ -81,7 +81,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
     if (type == CPDF_StreamParser::Keyword) {
       CFX_ByteString bsKeyword(m_pSyntax->GetWordBuf(),
                                m_pSyntax->GetWordSize());
-      if (bsKeyword != FX_BSTRC("ID")) {
+      if (bsKeyword != "ID") {
         m_pSyntax->SetPos(savePos);
         pDict->Release();
         return;
@@ -104,16 +104,15 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
   }
   _PDF_ReplaceAbbr(pDict);
   CPDF_Object* pCSObj = NULL;
-  if (pDict->KeyExist(FX_BSTRC("ColorSpace"))) {
-    pCSObj = pDict->GetElementValue(FX_BSTRC("ColorSpace"));
+  if (pDict->KeyExist("ColorSpace")) {
+    pCSObj = pDict->GetElementValue("ColorSpace");
     if (pCSObj->IsName()) {
       CFX_ByteString name = pCSObj->GetString();
-      if (name != FX_BSTRC("DeviceRGB") && name != FX_BSTRC("DeviceGray") &&
-          name != FX_BSTRC("DeviceCMYK")) {
-        pCSObj = FindResourceObj(FX_BSTRC("ColorSpace"), name);
+      if (name != "DeviceRGB" && name != "DeviceGray" && name != "DeviceCMYK") {
+        pCSObj = FindResourceObj("ColorSpace", name);
         if (pCSObj && !pCSObj->GetObjNum()) {
           pCSObj = pCSObj->Clone();
-          pDict->SetAt(FX_BSTRC("ColorSpace"), pCSObj);
+          pDict->SetAt("ColorSpace", pCSObj);
         }
       }
     }
@@ -141,7 +140,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
     }
     return;
   }
-  pDict->SetAtName(FX_BSTRC("Subtype"), FX_BSTRC("Image"));
+  pDict->SetAtName("Subtype", "Image");
   CPDF_ImageObject* pImgObj = AddImage(pStream, NULL, TRUE);
   if (!pImgObj) {
     if (pStream) {
@@ -290,33 +289,33 @@ FX_DWORD PDF_DecodeInlineStream(const uint8_t* src_buf,
                                 CPDF_Dictionary* pParam,
                                 uint8_t*& dest_buf,
                                 FX_DWORD& dest_size) {
-  if (decoder == FX_BSTRC("CCITTFaxDecode") || decoder == FX_BSTRC("CCF")) {
+  if (decoder == "CCITTFaxDecode" || decoder == "CCF") {
     ICodec_ScanlineDecoder* pDecoder =
         FPDFAPI_CreateFaxDecoder(src_buf, limit, width, height, pParam);
     return _DecodeAllScanlines(pDecoder, dest_buf, dest_size);
   }
-  if (decoder == FX_BSTRC("ASCII85Decode") || decoder == FX_BSTRC("A85")) {
+  if (decoder == "ASCII85Decode" || decoder == "A85") {
     return A85Decode(src_buf, limit, dest_buf, dest_size);
   }
-  if (decoder == FX_BSTRC("ASCIIHexDecode") || decoder == FX_BSTRC("AHx")) {
+  if (decoder == "ASCIIHexDecode" || decoder == "AHx") {
     return HexDecode(src_buf, limit, dest_buf, dest_size);
   }
-  if (decoder == FX_BSTRC("FlateDecode") || decoder == FX_BSTRC("Fl")) {
+  if (decoder == "FlateDecode" || decoder == "Fl") {
     return FPDFAPI_FlateOrLZWDecode(FALSE, src_buf, limit, pParam, dest_size,
                                     dest_buf, dest_size);
   }
-  if (decoder == FX_BSTRC("LZWDecode") || decoder == FX_BSTRC("LZW")) {
+  if (decoder == "LZWDecode" || decoder == "LZW") {
     return FPDFAPI_FlateOrLZWDecode(TRUE, src_buf, limit, pParam, 0, dest_buf,
                                     dest_size);
   }
-  if (decoder == FX_BSTRC("DCTDecode") || decoder == FX_BSTRC("DCT")) {
+  if (decoder == "DCTDecode" || decoder == "DCT") {
     ICodec_ScanlineDecoder* pDecoder =
         CPDF_ModuleMgr::Get()->GetJpegModule()->CreateDecoder(
             src_buf, limit, width, height, 0,
-            pParam ? pParam->GetInteger(FX_BSTRC("ColorTransform"), 1) : 1);
+            pParam ? pParam->GetInteger("ColorTransform", 1) : 1);
     return _DecodeAllScanlines(pDecoder, dest_buf, dest_size);
   }
-  if (decoder == FX_BSTRC("RunLengthDecode") || decoder == FX_BSTRC("RL")) {
+  if (decoder == "RunLengthDecode" || decoder == "RL") {
     return RunLengthDecode(src_buf, limit, dest_buf, dest_size);
   }
   dest_size = 0;
@@ -335,23 +334,23 @@ CPDF_Stream* CPDF_StreamParser::ReadInlineStream(CPDF_Document* pDoc,
 
   CFX_ByteString Decoder;
   CPDF_Dictionary* pParam = nullptr;
-  CPDF_Object* pFilter = pDict->GetElementValue(FX_BSTRC("Filter"));
+  CPDF_Object* pFilter = pDict->GetElementValue("Filter");
   if (pFilter) {
     if (CPDF_Array* pArray = pFilter->AsArray()) {
       Decoder = pArray->GetString(0);
-      CPDF_Array* pParams = pDict->GetArray(FX_BSTRC("DecodeParms"));
+      CPDF_Array* pParams = pDict->GetArray("DecodeParms");
       if (pParams)
         pParam = pParams->GetDict(0);
     } else {
       Decoder = pFilter->GetString();
-      pParam = pDict->GetDict(FX_BSTRC("DecodeParms"));
+      pParam = pDict->GetDict("DecodeParms");
     }
   }
-  FX_DWORD width = pDict->GetInteger(FX_BSTRC("Width"));
-  FX_DWORD height = pDict->GetInteger(FX_BSTRC("Height"));
+  FX_DWORD width = pDict->GetInteger("Width");
+  FX_DWORD height = pDict->GetInteger("Height");
   FX_DWORD OrigSize = 0;
   if (pCSObj != NULL) {
-    FX_DWORD bpc = pDict->GetInteger(FX_BSTRC("BitsPerComponent"));
+    FX_DWORD bpc = pDict->GetInteger("BitsPerComponent");
     FX_DWORD nComponents = 1;
     CPDF_ColorSpace* pCS = pDoc->LoadColorSpace(pCSObj);
     if (pCS == NULL) {
@@ -409,12 +408,12 @@ CPDF_Stream* CPDF_StreamParser::ReadInlineStream(CPDF_Document* pDoc,
       dwStreamSize = dwDestSize;
       if (CPDF_Array* pArray = pFilter->AsArray()) {
         pArray->RemoveAt(0);
-        CPDF_Array* pParams = pDict->GetArray(FX_BSTRC("DecodeParms"));
+        CPDF_Array* pParams = pDict->GetArray("DecodeParms");
         if (pParams)
           pParams->RemoveAt(0);
       } else {
-        pDict->RemoveAt(FX_BSTRC("Filter"));
-        pDict->RemoveAt(FX_BSTRC("DecodeParms"));
+        pDict->RemoveAt("Filter");
+        pDict->RemoveAt("DecodeParms");
       }
     } else {
       FX_Free(pData);
@@ -443,7 +442,7 @@ CPDF_Stream* CPDF_StreamParser::ReadInlineStream(CPDF_Document* pDoc,
       m_Pos += dwStreamSize;
     }
   }
-  pDict->SetAtInteger(FX_BSTRC("Length"), (int)dwStreamSize);
+  pDict->SetAtInteger("Length", (int)dwStreamSize);
   return new CPDF_Stream(pData, dwStreamSize, pDict);
 }
 
@@ -938,8 +937,7 @@ void CPDF_ContentParser::Start(CPDF_Page* pPage, CPDF_ParseOptions* pOptions) {
   m_Status = ToBeContinued;
   m_InternalStage = PAGEPARSE_STAGE_GETCONTENT;
   m_CurrentOffset = 0;
-  CPDF_Object* pContent =
-      pPage->m_pFormDict->GetElementValue(FX_BSTRC("Contents"));
+  CPDF_Object* pContent = pPage->m_pFormDict->GetElementValue("Contents");
   if (pContent == NULL) {
     m_Status = Done;
     return;
@@ -969,11 +967,11 @@ void CPDF_ContentParser::Start(CPDF_Form* pForm,
   m_pType3Char = pType3Char;
   m_pObjects = pForm;
   m_bForm = TRUE;
-  CFX_Matrix form_matrix = pForm->m_pFormDict->GetMatrix(FX_BSTRC("Matrix"));
+  CFX_Matrix form_matrix = pForm->m_pFormDict->GetMatrix("Matrix");
   if (pGraphicStates) {
     form_matrix.Concat(pGraphicStates->m_CTM);
   }
-  CPDF_Array* pBBox = pForm->m_pFormDict->GetArray(FX_BSTRC("BBox"));
+  CPDF_Array* pBBox = pForm->m_pFormDict->GetArray("BBox");
   CFX_FloatRect form_bbox;
   CPDF_Path ClipPath;
   if (pBBox) {
@@ -990,8 +988,7 @@ void CPDF_ContentParser::Start(CPDF_Form* pForm,
       form_bbox.Transform(pParentMatrix);
     }
   }
-  CPDF_Dictionary* pResources =
-      pForm->m_pFormDict->GetDict(FX_BSTRC("Resources"));
+  CPDF_Dictionary* pResources = pForm->m_pFormDict->GetDict("Resources");
   m_pParser = new CPDF_StreamContentParser(
       pForm->m_pDocument, pForm->m_pPageResources, pForm->m_pResources,
       pParentMatrix, pForm, pResources, &form_bbox, pOptions, pGraphicStates,
@@ -1058,8 +1055,7 @@ void CPDF_ContentParser::Continue(IFX_Pause* pPause) {
         m_InternalStage = PAGEPARSE_STAGE_PARSE;
         m_CurrentOffset = 0;
       } else {
-        CPDF_Array* pContent =
-            m_pObjects->m_pFormDict->GetArray(FX_BSTRC("Contents"));
+        CPDF_Array* pContent = m_pObjects->m_pFormDict->GetArray("Contents");
         m_pStreamArray[m_CurrentOffset] = new CPDF_StreamAcc;
         CPDF_Stream* pStreamObj = ToStream(
             pContent ? pContent->GetElementValue(m_CurrentOffset) : nullptr);

@@ -17,11 +17,11 @@ IFXCRT_FileAccess* FXCRT_FileAccess_Create() {
 }
 void FXCRT_GetFileModeString(FX_DWORD dwModes, CFX_ByteString& bsMode) {
   if (dwModes & FX_FILEMODE_ReadOnly) {
-    bsMode = FX_BSTRC("rb");
+    bsMode = "rb";
   } else if (dwModes & FX_FILEMODE_Truncate) {
-    bsMode = FX_BSTRC("w+b");
+    bsMode = "w+b";
   } else {
-    bsMode = FX_BSTRC("a+b");
+    bsMode = "a+b";
   }
 }
 void FXCRT_GetFileModeString(FX_DWORD dwModes, CFX_WideString& wsMode) {

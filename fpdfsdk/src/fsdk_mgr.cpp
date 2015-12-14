@@ -551,7 +551,7 @@ FX_BOOL CPDFSDK_Document::KillFocusAnnot(FX_UINT nFlag) {
     CPDFSDK_Annot* pFocusAnnot = m_pFocusAnnot;
     m_pFocusAnnot = nullptr;
     if (pAnnotHandler->Annot_OnKillFocus(pFocusAnnot, nFlag)) {
-      if (pFocusAnnot->GetType() == FX_BSTRC("Widget")) {
+      if (pFocusAnnot->GetType() == "Widget") {
         CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pFocusAnnot;
         int nFieldType = pWidget->GetFieldType();
         if (FIELDTYPE_TEXTFIELD == nFieldType ||

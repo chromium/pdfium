@@ -409,19 +409,17 @@ FX_BOOL CPDF_ImageRenderer::StartRenderDIBSource() {
   if (m_pRenderStatus->m_pDevice->GetDeviceClass() != FXDC_DISPLAY) {
     CPDF_Object* pFilters =
         m_pImageObject->m_pImage->GetStream()->GetDict()->GetElementValue(
-            FX_BSTRC("Filter"));
+            "Filter");
     if (pFilters) {
       if (pFilters->IsName()) {
         CFX_ByteStringC bsDecodeType = pFilters->GetConstString();
-        if (bsDecodeType == FX_BSTRC("DCTDecode") ||
-            bsDecodeType == FX_BSTRC("JPXDecode")) {
+        if (bsDecodeType == "DCTDecode" || bsDecodeType == "JPXDecode") {
           m_Flags |= FXRENDER_IMAGE_LOSSY;
         }
       } else if (CPDF_Array* pArray = pFilters->AsArray()) {
         for (FX_DWORD i = 0; i < pArray->GetCount(); i++) {
           CFX_ByteStringC bsDecodeType = pArray->GetConstString(i);
-          if (bsDecodeType == FX_BSTRC("DCTDecode") ||
-              bsDecodeType == FX_BSTRC("JPXDecode")) {
+          if (bsDecodeType == "DCTDecode" || bsDecodeType == "JPXDecode") {
             m_Flags |= FXRENDER_IMAGE_LOSSY;
             break;
           }
@@ -455,7 +453,7 @@ FX_BOOL CPDF_ImageRenderer::StartRenderDIBSource() {
     CPDF_Dictionary* pPageResources = pPage ? pPage->m_pPageResources : NULL;
     CPDF_Object* pCSObj =
         m_pImageObject->m_pImage->GetStream()->GetDict()->GetElementValue(
-            FX_BSTRC("ColorSpace"));
+            "ColorSpace");
     CPDF_ColorSpace* pColorSpace =
         pDocument->LoadColorSpace(pCSObj, pPageResources);
     if (pColorSpace) {
@@ -925,17 +923,17 @@ FX_BOOL CPDF_QuickStretcher::Start(CPDF_ImageObject* pImageObj,
   m_ClipLeft = result_rect.left - image_rect.left;
   m_ClipTop = result_rect.top - image_rect.top;
   CPDF_Dictionary* pDict = pImageObj->m_pImage->GetDict();
-  if (pDict->GetInteger(FX_BSTRC("BitsPerComponent")) != 8) {
+  if (pDict->GetInteger("BitsPerComponent") != 8) {
     return FALSE;
   }
-  if (pDict->KeyExist(FX_BSTRC("SMask")) || pDict->KeyExist(FX_BSTRC("Mask"))) {
+  if (pDict->KeyExist("SMask") || pDict->KeyExist("Mask")) {
     return FALSE;
   }
-  m_SrcWidth = pDict->GetInteger(FX_BSTRC("Width"));
-  m_SrcHeight = pDict->GetInteger(FX_BSTRC("Height"));
+  m_SrcWidth = pDict->GetInteger("Width");
+  m_SrcHeight = pDict->GetInteger("Height");
   m_pCS = NULL;
   m_Bpp = 3;
-  CPDF_Object* pCSObj = pDict->GetElementValue(FX_BSTRC("ColorSpace"));
+  CPDF_Object* pCSObj = pDict->GetElementValue("ColorSpace");
   if (pCSObj == NULL) {
     return FALSE;
   }
@@ -956,13 +954,12 @@ FX_BOOL CPDF_QuickStretcher::Start(CPDF_ImageObject* pImageObj,
                           TRUE);
   m_pDecoder = NULL;
   if (!m_StreamAcc.GetImageDecoder().IsEmpty()) {
-    if (m_StreamAcc.GetImageDecoder() == FX_BSTRC("DCTDecode")) {
+    if (m_StreamAcc.GetImageDecoder() == "DCTDecode") {
       const CPDF_Dictionary* pParam = m_StreamAcc.GetImageParam();
       m_pDecoder = CPDF_ModuleMgr::Get()->GetJpegModule()->CreateDecoder(
           m_StreamAcc.GetData(), m_StreamAcc.GetSize(), m_SrcWidth, m_SrcHeight,
-          m_Bpp,
-          pParam ? pParam->GetInteger(FX_BSTRC("ColorTransform"), 1) : 1);
-    } else if (m_StreamAcc.GetImageDecoder() == FX_BSTRC("FlateDecode")) {
+          m_Bpp, pParam ? pParam->GetInteger("ColorTransform", 1) : 1);
+    } else if (m_StreamAcc.GetImageDecoder() == "FlateDecode") {
       m_pDecoder = FPDFAPI_CreateFlateDecoder(
           m_StreamAcc.GetData(), m_StreamAcc.GetSize(), m_SrcWidth, m_SrcHeight,
           m_Bpp, 8, m_StreamAcc.GetImageParam());
@@ -1049,13 +1046,13 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
   int width = pClipRect->right - pClipRect->left;
   int height = pClipRect->bottom - pClipRect->top;
   FX_BOOL bLuminosity = FALSE;
-  bLuminosity = pSMaskDict->GetConstString(FX_BSTRC("S")) != FX_BSTRC("Alpha");
-  CPDF_Stream* pGroup = pSMaskDict->GetStream(FX_BSTRC("G"));
+  bLuminosity = pSMaskDict->GetConstString("S") != "Alpha";
+  CPDF_Stream* pGroup = pSMaskDict->GetStream("G");
   if (pGroup == NULL) {
     return NULL;
   }
   nonstd::unique_ptr<CPDF_Function> pFunc;
-  CPDF_Object* pFuncObj = pSMaskDict->GetElementValue(FX_BSTRC("TR"));
+  CPDF_Object* pFuncObj = pSMaskDict->GetElementValue("TR");
   if (pFuncObj && (pFuncObj->IsDictionary() || pFuncObj->IsStream()))
     pFunc.reset(CPDF_Function::Load(pFuncObj));
 
@@ -1079,13 +1076,12 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
   CPDF_Object* pCSObj = NULL;
   CPDF_ColorSpace* pCS = NULL;
   if (bLuminosity) {
-    CPDF_Array* pBC = pSMaskDict->GetArray(FX_BSTRC("BC"));
+    CPDF_Array* pBC = pSMaskDict->GetArray("BC");
     FX_ARGB back_color = 0xff000000;
     if (pBC) {
       CPDF_Dictionary* pDict = pGroup->GetDict();
-      if (pDict && pDict->GetDict(FX_BSTRC("Group")))
-        pCSObj =
-            pDict->GetDict(FX_BSTRC("Group"))->GetElementValue(FX_BSTRC("CS"));
+      if (pDict && pDict->GetDict("Group"))
+        pCSObj = pDict->GetDict("Group")->GetElementValue("CS");
       else
         pCSObj = NULL;
       pCS = m_pContext->m_pDocument->LoadColorSpace(pCSObj);
@@ -1119,7 +1115,7 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
   }
   CPDF_Dictionary* pFormResource = NULL;
   if (form.m_pFormDict) {
-    pFormResource = form.m_pFormDict->GetDict(FX_BSTRC("Resources"));
+    pFormResource = form.m_pFormDict->GetDict("Resources");
   }
   CPDF_RenderOptions options;
   options.m_ColorMode = bLuminosity ? RENDER_COLOR_NORMAL : RENDER_COLOR_ALPHA;

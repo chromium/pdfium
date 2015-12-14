@@ -45,8 +45,8 @@ CPDF_TilingPattern::CPDF_TilingPattern(CPDF_Document* pDoc,
   m_pDocument = pDoc;
   CPDF_Dictionary* pDict = m_pPatternObj->GetDict();
   ASSERT(pDict != NULL);
-  m_Pattern2Form = pDict->GetMatrix(FX_BSTRC("Matrix"));
-  m_bColored = pDict->GetInteger(FX_BSTRC("PaintType")) == 1;
+  m_Pattern2Form = pDict->GetMatrix("Matrix");
+  m_bColored = pDict->GetInteger("PaintType") == 1;
   if (parentMatrix) {
     m_Pattern2Form.Concat(*parentMatrix);
   }
@@ -64,9 +64,9 @@ FX_BOOL CPDF_TilingPattern::Load() {
   if (!pDict)
     return FALSE;
 
-  m_bColored = pDict->GetInteger(FX_BSTRC("PaintType")) == 1;
-  m_XStep = (FX_FLOAT)FXSYS_fabs(pDict->GetNumber(FX_BSTRC("XStep")));
-  m_YStep = (FX_FLOAT)FXSYS_fabs(pDict->GetNumber(FX_BSTRC("YStep")));
+  m_bColored = pDict->GetInteger("PaintType") == 1;
+  m_XStep = (FX_FLOAT)FXSYS_fabs(pDict->GetNumber("XStep"));
+  m_YStep = (FX_FLOAT)FXSYS_fabs(pDict->GetNumber("YStep"));
 
   CPDF_Stream* pStream = m_pPatternObj->AsStream();
   if (!pStream)
@@ -74,7 +74,7 @@ FX_BOOL CPDF_TilingPattern::Load() {
 
   m_pForm = new CPDF_Form(m_pDocument, NULL, pStream);
   m_pForm->ParseContent(NULL, &m_ParentMatrix, NULL, NULL);
-  m_BBox = pDict->GetRect(FX_BSTRC("BBox"));
+  m_BBox = pDict->GetRect("BBox");
   return TRUE;
 }
 CPDF_ShadingPattern::CPDF_ShadingPattern(CPDF_Document* pDoc,
@@ -89,8 +89,8 @@ CPDF_ShadingPattern::CPDF_ShadingPattern(CPDF_Document* pDoc,
   if (!bShading) {
     CPDF_Dictionary* pDict = m_pPatternObj->GetDict();
     ASSERT(pDict != NULL);
-    m_Pattern2Form = pDict->GetMatrix(FX_BSTRC("Matrix"));
-    m_pShadingObj = pDict->GetElementValue(FX_BSTRC("Shading"));
+    m_Pattern2Form = pDict->GetMatrix("Matrix");
+    m_pShadingObj = pDict->GetElementValue("Shading");
     if (parentMatrix) {
       m_Pattern2Form.Concat(*parentMatrix);
     }
@@ -137,7 +137,7 @@ FX_BOOL CPDF_ShadingPattern::Load() {
       delete m_pFunctions[i];
     m_nFuncs = 0;
   }
-  CPDF_Object* pFunc = pShadingDict->GetElementValue(FX_BSTRC("Function"));
+  CPDF_Object* pFunc = pShadingDict->GetElementValue("Function");
   if (pFunc) {
     if (CPDF_Array* pArray = pFunc->AsArray()) {
       m_nFuncs = std::min<int>(pArray->GetCount(), 4);
@@ -150,7 +150,7 @@ FX_BOOL CPDF_ShadingPattern::Load() {
       m_nFuncs = 1;
     }
   }
-  CPDF_Object* pCSObj = pShadingDict->GetElementValue(FX_BSTRC("ColorSpace"));
+  CPDF_Object* pCSObj = pShadingDict->GetElementValue("ColorSpace");
   if (pCSObj == NULL) {
     return FALSE;
   }
@@ -160,8 +160,7 @@ FX_BOOL CPDF_ShadingPattern::Load() {
     m_pCountedCS = pDocPageData->FindColorSpacePtr(m_pCS->GetArray());
   }
 
-  m_ShadingType =
-      ToShadingType(pShadingDict->GetInteger(FX_BSTRC("ShadingType")));
+  m_ShadingType = ToShadingType(pShadingDict->GetInteger("ShadingType"));
 
   // We expect to have a stream if our shading type is a mesh.
   if (IsMeshShading() && !ToStream(m_pShadingObj))
@@ -183,9 +182,9 @@ FX_BOOL CPDF_MeshStream::Load(CPDF_Stream* pShadingStream,
   m_nFuncs = nFuncs;
   m_pCS = pCS;
   CPDF_Dictionary* pDict = pShadingStream->GetDict();
-  m_nCoordBits = pDict->GetInteger(FX_BSTRC("BitsPerCoordinate"));
-  m_nCompBits = pDict->GetInteger(FX_BSTRC("BitsPerComponent"));
-  m_nFlagBits = pDict->GetInteger(FX_BSTRC("BitsPerFlag"));
+  m_nCoordBits = pDict->GetInteger("BitsPerCoordinate");
+  m_nCompBits = pDict->GetInteger("BitsPerComponent");
+  m_nFlagBits = pDict->GetInteger("BitsPerFlag");
   if (!m_nCoordBits || !m_nCompBits) {
     return FALSE;
   }
@@ -199,7 +198,7 @@ FX_BOOL CPDF_MeshStream::Load(CPDF_Stream* pShadingStream,
   }
   m_CoordMax = m_nCoordBits == 32 ? -1 : (1 << m_nCoordBits) - 1;
   m_CompMax = (1 << m_nCompBits) - 1;
-  CPDF_Array* pDecode = pDict->GetArray(FX_BSTRC("Decode"));
+  CPDF_Array* pDecode = pDict->GetArray("Decode");
   if (pDecode == NULL || pDecode->GetCount() != 4 + m_nComps * 2) {
     return FALSE;
   }

@@ -507,7 +507,7 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
         break;
       }
       case FXBSTR_ID('T', 'R', 0, 0):
-        if (pGS->KeyExist(FX_BSTRC("TR2"))) {
+        if (pGS->KeyExist("TR2")) {
           continue;
         }
       case FXBSTR_ID('T', 'R', '2', 0):
@@ -542,7 +542,7 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
         break;
       case FXBSTR_ID('O', 'P', 0, 0):
         pGeneralState->m_StrokeOP = pObject->GetInteger();
-        if (!pGS->KeyExist(FX_BSTRC("op"))) {
+        if (!pGS->KeyExist("op")) {
           pGeneralState->m_FillOP = pObject->GetInteger();
         }
         break;
@@ -553,14 +553,14 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
         pGeneralState->m_OPMode = pObject->GetInteger();
         break;
       case FXBSTR_ID('B', 'G', 0, 0):
-        if (pGS->KeyExist(FX_BSTRC("BG2"))) {
+        if (pGS->KeyExist("BG2")) {
           continue;
         }
       case FXBSTR_ID('B', 'G', '2', 0):
         pGeneralState->m_pBG = pObject;
         break;
       case FXBSTR_ID('U', 'C', 'R', 0):
-        if (pGS->KeyExist(FX_BSTRC("UCR2"))) {
+        if (pGS->KeyExist("UCR2")) {
           continue;
         }
       case FXBSTR_ID('U', 'C', 'R', '2'):
@@ -608,8 +608,7 @@ CPDF_ContentMarkItem::~CPDF_ContentMarkItem() {
 FX_BOOL CPDF_ContentMarkItem::HasMCID() const {
   if (m_pParam &&
       (m_ParamType == DirectDict || m_ParamType == PropertiesDict)) {
-    return ToDictionary(static_cast<CPDF_Object*>(m_pParam))
-        ->KeyExist(FX_BSTRC("MCID"));
+    return ToDictionary(static_cast<CPDF_Object*>(m_pParam))->KeyExist("MCID");
   }
   return FALSE;
 }
@@ -626,8 +625,8 @@ int CPDF_ContentMarkData::GetMCID() const {
         type == CPDF_ContentMarkItem::DirectDict) {
       CPDF_Dictionary* pDict =
           ToDictionary(static_cast<CPDF_Object*>(m_Marks[i].GetParam()));
-      if (pDict->KeyExist(FX_BSTRC("MCID"))) {
-        return pDict->GetInteger(FX_BSTRC("MCID"));
+      if (pDict->KeyExist("MCID")) {
+        return pDict->GetInteger("MCID");
       }
     }
   }

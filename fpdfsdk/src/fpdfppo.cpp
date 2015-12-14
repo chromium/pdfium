@@ -396,7 +396,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_CopyViewerPreferences(FPDF_DOCUMENT dest_doc,
     return FALSE;
 
   CPDF_Dictionary* pSrcDict = pSrcDoc->GetRoot();
-  pSrcDict = pSrcDict->GetDict(FX_BSTRC("ViewerPreferences"));
+  pSrcDict = pSrcDict->GetDict("ViewerPreferences");
   if (!pSrcDict)
     return FALSE;
 
@@ -404,6 +404,6 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_CopyViewerPreferences(FPDF_DOCUMENT dest_doc,
   if (!pDstDict)
     return FALSE;
 
-  pDstDict->SetAt(FX_BSTRC("ViewerPreferences"), pSrcDict->Clone(TRUE));
+  pDstDict->SetAt("ViewerPreferences", pSrcDict->Clone(TRUE));
   return TRUE;
 }

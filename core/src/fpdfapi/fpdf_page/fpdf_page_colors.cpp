@@ -332,16 +332,16 @@ FX_BOOL CPDF_CalGray::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
   if (!pDict)
     return FALSE;
 
-  CPDF_Array* pParam = pDict->GetArray(FX_BSTRC("WhitePoint"));
+  CPDF_Array* pParam = pDict->GetArray("WhitePoint");
   int i;
   for (i = 0; i < 3; i++) {
     m_WhitePoint[i] = pParam ? pParam->GetNumber(i) : 0;
   }
-  pParam = pDict->GetArray(FX_BSTRC("BlackPoint"));
+  pParam = pDict->GetArray("BlackPoint");
   for (i = 0; i < 3; i++) {
     m_BlackPoint[i] = pParam ? pParam->GetNumber(i) : 0;
   }
-  m_Gamma = pDict->GetNumber(FX_BSTRC("Gamma"));
+  m_Gamma = pDict->GetNumber("Gamma");
   if (m_Gamma == 0) {
     m_Gamma = 1.0f;
   }
@@ -408,16 +408,16 @@ FX_BOOL CPDF_CalRGB::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
   if (!pDict)
     return FALSE;
 
-  CPDF_Array* pParam = pDict->GetArray(FX_BSTRC("WhitePoint"));
+  CPDF_Array* pParam = pDict->GetArray("WhitePoint");
   int i;
   for (i = 0; i < 3; i++) {
     m_WhitePoint[i] = pParam ? pParam->GetNumber(i) : 0;
   }
-  pParam = pDict->GetArray(FX_BSTRC("BlackPoint"));
+  pParam = pDict->GetArray("BlackPoint");
   for (i = 0; i < 3; i++) {
     m_BlackPoint[i] = pParam ? pParam->GetNumber(i) : 0;
   }
-  pParam = pDict->GetArray(FX_BSTRC("Gamma"));
+  pParam = pDict->GetArray("Gamma");
   if (pParam) {
     m_bGamma = TRUE;
     for (i = 0; i < 3; i++) {
@@ -426,7 +426,7 @@ FX_BOOL CPDF_CalRGB::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
   } else {
     m_bGamma = FALSE;
   }
-  pParam = pDict->GetArray(FX_BSTRC("Matrix"));
+  pParam = pDict->GetArray("Matrix");
   if (pParam) {
     m_bMatrix = TRUE;
     for (i = 0; i < 9; i++) {
@@ -528,16 +528,16 @@ FX_BOOL CPDF_LabCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
   if (!pDict) {
     return FALSE;
   }
-  CPDF_Array* pParam = pDict->GetArray(FX_BSTRC("WhitePoint"));
+  CPDF_Array* pParam = pDict->GetArray("WhitePoint");
   int i;
   for (i = 0; i < 3; i++) {
     m_WhitePoint[i] = pParam ? pParam->GetNumber(i) : 0;
   }
-  pParam = pDict->GetArray(FX_BSTRC("BlackPoint"));
+  pParam = pDict->GetArray("BlackPoint");
   for (i = 0; i < 3; i++) {
     m_BlackPoint[i] = pParam ? pParam->GetNumber(i) : 0;
   }
-  pParam = pDict->GetArray(FX_BSTRC("Range"));
+  pParam = pDict->GetArray("Range");
   const FX_FLOAT def_ranges[4] = {-100 * 1.0f, 100 * 1.0f, -100 * 1.0f,
                                   100 * 1.0f};
   for (i = 0; i < 4; i++) {
@@ -701,7 +701,7 @@ FX_BOOL CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
   CPDF_Dictionary* pDict = pStream->GetDict();
   if (m_pProfile->m_pTransform == NULL) {  // No valid ICC profile or using sRGB
     CPDF_Object* pAlterCSObj =
-        pDict ? pDict->GetElementValue(FX_BSTRC("Alternate")) : NULL;
+        pDict ? pDict->GetElementValue("Alternate") : NULL;
     if (pAlterCSObj) {
       CPDF_ColorSpace* pAlterCS = CPDF_ColorSpace::Load(pDoc, pAlterCSObj);
       if (pAlterCS) {
@@ -712,8 +712,7 @@ FX_BOOL CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
             m_bOwn = TRUE;
           } else {  // No valid alternative colorspace
             pAlterCS->ReleaseCS();
-            int32_t nDictComponents =
-                pDict ? pDict->GetInteger(FX_BSTRC("N")) : 0;
+            int32_t nDictComponents = pDict ? pDict->GetInteger("N") : 0;
             if (nDictComponents != 1 && nDictComponents != 3 &&
                 nDictComponents != 4) {
               return FALSE;
@@ -741,7 +740,7 @@ FX_BOOL CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
       }
     }
   }
-  CPDF_Array* pRanges = pDict->GetArray(FX_BSTRC("Range"));
+  CPDF_Array* pRanges = pDict->GetArray("Range");
   m_pRanges = FX_Alloc2D(FX_FLOAT, m_nComponents, 2);
   for (int i = 0; i < m_nComponents * 2; i++) {
     if (pRanges) {
@@ -1049,7 +1048,7 @@ void CPDF_SeparationCS::GetDefaultValue(int iComponent,
 }
 FX_BOOL CPDF_SeparationCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
   CFX_ByteString name = pArray->GetString(1);
-  if (name == FX_BSTRC("None")) {
+  if (name == "None") {
     m_Type = None;
   } else {
     m_Type = Colorant;
@@ -1189,16 +1188,16 @@ CPDF_ColorSpace* CPDF_ColorSpace::GetStockCS(int family) {
   ;
 }
 CPDF_ColorSpace* _CSFromName(const CFX_ByteString& name) {
-  if (name == FX_BSTRC("DeviceRGB") || name == FX_BSTRC("RGB")) {
+  if (name == "DeviceRGB" || name == "RGB") {
     return CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB);
   }
-  if (name == FX_BSTRC("DeviceGray") || name == FX_BSTRC("G")) {
+  if (name == "DeviceGray" || name == "G") {
     return CPDF_ColorSpace::GetStockCS(PDFCS_DEVICEGRAY);
   }
-  if (name == FX_BSTRC("DeviceCMYK") || name == FX_BSTRC("CMYK")) {
+  if (name == "DeviceCMYK" || name == "CMYK") {
     return CPDF_ColorSpace::GetStockCS(PDFCS_DEVICECMYK);
   }
-  if (name == FX_BSTRC("Pattern")) {
+  if (name == "Pattern") {
     return CPDF_ColorSpace::GetStockCS(PDFCS_PATTERN);
   }
   return NULL;
