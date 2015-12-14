@@ -75,6 +75,12 @@ int32_t GetStreamFirst(CPDF_StreamAcc* pObjStream) {
   return pObjStream->GetDict()->GetInteger(FX_BSTRC("First"));
 }
 
+bool CanReadFromBitStream(const CFX_BitStream* hStream,
+                          const FX_SAFE_DWORD& num_bits) {
+  return (num_bits.IsValid() &&
+          hStream->BitsRemaining() >= num_bits.ValueOrDie());
+}
+
 }  // namespace
 
 // TODO(thestig) Using unique_ptr with ReleaseDeleter is still not ideal.
@@ -4695,10 +4701,10 @@ FX_BOOL CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
   int nPages = pPageNum ? pPageNum->GetInteger() : 0;
   if (nPages < 1)
     return FALSE;
+
   FX_SAFE_DWORD required_bits = dwDeltaObjectsBits;
   required_bits *= pdfium::base::checked_cast<FX_DWORD>(nPages);
-  if (!required_bits.IsValid() ||
-      hStream->BitsRemaining() < required_bits.ValueOrDie())
+  if (!CanReadFromBitStream(hStream, required_bits))
     return FALSE;
   for (int i = 0; i < nPages; ++i) {
     FX_SAFE_DWORD safeDeltaObj = hStream->GetBits(dwDeltaObjectsBits);
@@ -4708,10 +4714,10 @@ FX_BOOL CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
     m_dwDeltaNObjsArray.Add(safeDeltaObj.ValueOrDie());
   }
   hStream->ByteAlign();
+
   required_bits = dwDeltaPageLenBits;
   required_bits *= pdfium::base::checked_cast<FX_DWORD>(nPages);
-  if (!required_bits.IsValid() ||
-      hStream->BitsRemaining() < required_bits.ValueOrDie())
+  if (!CanReadFromBitStream(hStream, required_bits))
     return FALSE;
   CFX_DWordArray dwPageLenArray;
   for (int i = 0; i < nPages; ++i) {
@@ -4752,40 +4758,41 @@ FX_BOOL CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
                             dwPageLenArray[nPages - 1]);
   }
   hStream->ByteAlign();
+
   // number of shared objects
   required_bits = dwSharedObjBits;
   required_bits *= pdfium::base::checked_cast<FX_DWORD>(nPages);
-  if (!required_bits.IsValid() ||
-      hStream->BitsRemaining() < required_bits.ValueOrDie())
+  if (!CanReadFromBitStream(hStream, required_bits))
     return FALSE;
   for (int i = 0; i < nPages; i++) {
     m_dwNSharedObjsArray.Add(hStream->GetBits(dwSharedObjBits));
   }
   hStream->ByteAlign();
+
   // array of identifier, sizes = nshared_objects
   for (int i = 0; i < nPages; i++) {
     required_bits = dwSharedIdBits;
     required_bits *= m_dwNSharedObjsArray[i];
-    if (!required_bits.IsValid() ||
-        hStream->BitsRemaining() < required_bits.ValueOrDie())
+    if (!CanReadFromBitStream(hStream, required_bits))
       return FALSE;
     for (int j = 0; j < m_dwNSharedObjsArray[i]; j++) {
       m_dwIdentifierArray.Add(hStream->GetBits(dwSharedIdBits));
     }
   }
   hStream->ByteAlign();
+
   for (int i = 0; i < nPages; i++) {
     FX_SAFE_DWORD safeSize = m_dwNSharedObjsArray[i];
     safeSize *= dwSharedNumeratorBits;
-    if (!safeSize.IsValid() || hStream->BitsRemaining() < safeSize.ValueOrDie())
+    if (!CanReadFromBitStream(hStream, safeSize))
       return FALSE;
     hStream->SkipBits(safeSize.ValueOrDie());
   }
   hStream->ByteAlign();
+
   FX_SAFE_DWORD safeTotalPageLen = pdfium::base::checked_cast<FX_DWORD>(nPages);
   safeTotalPageLen *= dwDeltaPageLenBits;
-  if (!safeTotalPageLen.IsValid() ||
-      hStream->BitsRemaining() < safeTotalPageLen.ValueOrDie())
+  if (!CanReadFromBitStream(hStream, safeTotalPageLen))
     return FALSE;
   hStream->SkipBits(safeTotalPageLen.ValueOrDie());
   hStream->ByteAlign();
@@ -4838,8 +4845,7 @@ FX_BOOL CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
   FX_DWORD dwCurObjLen = 0;
   FX_SAFE_DWORD required_bits = dwSharedObjTotal;
   required_bits *= dwDeltaGroupLen;
-  if (!required_bits.IsValid() ||
-      hStream->BitsRemaining() < required_bits.ValueOrDie())
+  if (!CanReadFromBitStream(hStream, required_bits))
     return FALSE;
 
   for (int i = 0; i < dwSharedObjTotal; ++i) {
@@ -4973,8 +4979,8 @@ FX_BOOL CPDF_HintTables::LoadHintStream(CPDF_Stream* pHintStream) {
   // The header section of shared object hint table is 24 bytes.
   // Hint table has at least 60 bytes.
   const FX_DWORD MIN_STREAM_LEN = 60;
-  if (size < MIN_STREAM_LEN || shared_hint_table_offset < 0 ||
-      size < shared_hint_table_offset || !shared_hint_table_offset) {
+  if (size < MIN_STREAM_LEN || shared_hint_table_offset <= 0 ||
+      size < shared_hint_table_offset) {
     return FALSE;
   }
   CFX_BitStream bs;
