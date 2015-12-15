@@ -281,12 +281,12 @@ TEST(fxcrt, WideStringUTF16LE_Encode) {
     CFX_WideString ws;
     CFX_ByteString bs;
   } utf16le_encode_cases[] = {
-      {L"", CFX_ByteString("\0\0")},
-      {L"abc", CFX_ByteString("a\0b\0c\0\0\0")},
-      {L"abcdef", CFX_ByteString("a\0b\0c\0d\0e\0f\0\0\0")},
-      {L"abc\0def", CFX_ByteString("a\0b\0c\0\0\0")},
-      {L"\xaabb\xccdd", CFX_ByteString("\xbb\xaa\xdd\xcc\0\0")},
-      {L"\x3132\x6162", CFX_ByteString("\x32\x31\x62\x61\0\0")},
+      {L"", CFX_ByteString("\0\0", 2)},
+      {L"abc", CFX_ByteString("a\0b\0c\0\0\0", 8)},
+      {L"abcdef", CFX_ByteString("a\0b\0c\0d\0e\0f\0\0\0", 14)},
+      {L"abc\0def", CFX_ByteString("a\0b\0c\0\0\0", 8)},
+      {L"\xaabb\xccdd", CFX_ByteString("\xbb\xaa\xdd\xcc\0\0", 6)},
+      {L"\x3132\x6162", CFX_ByteString("\x32\x31\x62\x61\0\0", 6)},
   };
 
   for (size_t i = 0; i < FX_ArraySize(utf16le_encode_cases); ++i) {
