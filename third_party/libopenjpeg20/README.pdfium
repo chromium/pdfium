@@ -15,4 +15,5 @@ Local Modifications:
 0003-dwt-decode.patch: Check array bounds for opj_dwt_decode_1() and friends.
 0004-j2k_read_mcc.patch: Move incrementing of l_tcp->m_nb_mcc_records to the right place.
 0005-jp2_apply_pclr.patch: Fix out of bounds access.
+0006-tcd_init_tile.patch: Fix a dividing zero bug in opj_tcd_init_tile().
 TODO(thestig): List all the other patches.
