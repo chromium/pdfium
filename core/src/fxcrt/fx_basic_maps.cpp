@@ -60,7 +60,7 @@ void CFX_MapPtrToPtr::GetNextAssoc(FX_POSITION& rNextPosition,
 FX_BOOL CFX_MapPtrToPtr::Lookup(void* key, void*& rValue) const {
   FX_DWORD nHash;
   CAssoc* pAssoc = GetAssocAt(key, nHash);
-  if (pAssoc == NULL) {
+  if (!pAssoc) {
     return FALSE;
   }
   rValue = pAssoc->value;
@@ -69,7 +69,7 @@ FX_BOOL CFX_MapPtrToPtr::Lookup(void* key, void*& rValue) const {
 void* CFX_MapPtrToPtr::GetValueAt(void* key) const {
   FX_DWORD nHash;
   CAssoc* pAssoc = GetAssocAt(key, nHash);
-  if (pAssoc == NULL) {
+  if (!pAssoc) {
     return NULL;
   }
   return pAssoc->value;
@@ -78,7 +78,7 @@ void*& CFX_MapPtrToPtr::operator[](void* key) {
   FX_DWORD nHash;
   CAssoc* pAssoc;
   if ((pAssoc = GetAssocAt(key, nHash)) == NULL) {
-    if (m_pHashTable == NULL) {
+    if (!m_pHashTable) {
       InitHashTable(m_nHashTableSize);
     }
     pAssoc = NewAssoc();
@@ -91,7 +91,7 @@ void*& CFX_MapPtrToPtr::operator[](void* key) {
 CFX_MapPtrToPtr::CAssoc* CFX_MapPtrToPtr::GetAssocAt(void* key,
                                                      FX_DWORD& nHash) const {
   nHash = HashKey(key) % m_nHashTableSize;
-  if (m_pHashTable == NULL) {
+  if (!m_pHashTable) {
     return NULL;
   }
   CAssoc* pAssoc;
@@ -102,7 +102,7 @@ CFX_MapPtrToPtr::CAssoc* CFX_MapPtrToPtr::GetAssocAt(void* key,
   return NULL;
 }
 CFX_MapPtrToPtr::CAssoc* CFX_MapPtrToPtr::NewAssoc() {
-  if (m_pFreeList == NULL) {
+  if (!m_pFreeList) {
     CFX_Plex* newBlock = CFX_Plex::Create(m_pBlocks, m_nBlockSize,
                                           sizeof(CFX_MapPtrToPtr::CAssoc));
     CFX_MapPtrToPtr::CAssoc* pAssoc =
@@ -132,7 +132,7 @@ void CFX_MapPtrToPtr::InitHashTable(FX_DWORD nHashSize, FX_BOOL bAllocNow) {
   m_nHashTableSize = nHashSize;
 }
 FX_BOOL CFX_MapPtrToPtr::RemoveKey(void* key) {
-  if (m_pHashTable == NULL) {
+  if (!m_pHashTable) {
     return FALSE;
   }
   CAssoc** ppAssocPrev;
@@ -237,7 +237,7 @@ FX_POSITION CFX_CMapByteStringToPtr::GetStartPosition() const {
 void CFX_CMapByteStringToPtr::GetNextAssoc(FX_POSITION& rNextPosition,
                                            CFX_ByteString& rKey,
                                            void*& rValue) const {
-  if (rNextPosition == NULL) {
+  if (!rNextPosition) {
     return;
   }
   int index = (int)(uintptr_t)rNextPosition - 1;
@@ -257,7 +257,7 @@ void CFX_CMapByteStringToPtr::GetNextAssoc(FX_POSITION& rNextPosition,
   rNextPosition = NULL;
 }
 void* CFX_CMapByteStringToPtr::GetNextValue(FX_POSITION& rNextPosition) const {
-  if (rNextPosition == NULL) {
+  if (!rNextPosition) {
     return NULL;
   }
   int index = (int)(uintptr_t)rNextPosition - 1;

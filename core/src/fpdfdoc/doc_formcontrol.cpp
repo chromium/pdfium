@@ -20,11 +20,11 @@ CFX_ByteString CPDF_FormControl::GetOnStateName() {
          GetType() == CPDF_FormField::RadioButton);
   CFX_ByteString csOn;
   CPDF_Dictionary* pAP = m_pWidgetDict->GetDict("AP");
-  if (pAP == NULL) {
+  if (!pAP) {
     return csOn;
   }
   CPDF_Dictionary* pN = pAP->GetDict("N");
-  if (pN == NULL) {
+  if (!pN) {
     return csOn;
   }
   FX_POSITION pos = pN->GetStartPos();
@@ -51,14 +51,14 @@ void CPDF_FormControl::SetOnStateName(const CFX_ByteString& csOn) {
     m_pWidgetDict->SetAtName("AS", csValue);
   }
   CPDF_Dictionary* pAP = m_pWidgetDict->GetDict("AP");
-  if (pAP == NULL) {
+  if (!pAP) {
     return;
   }
   FX_POSITION pos1 = pAP->GetStartPos();
   while (pos1) {
     CFX_ByteString csKey1;
     CPDF_Object* pObj1 = pAP->GetNextElement(pos1, csKey1);
-    if (pObj1 == NULL) {
+    if (!pObj1) {
       continue;
     }
     CPDF_Object* pObjDirect1 = pObj1->GetDirect();
@@ -70,7 +70,7 @@ void CPDF_FormControl::SetOnStateName(const CFX_ByteString& csOn) {
     while (pos2) {
       CFX_ByteString csKey2;
       CPDF_Object* pObj2 = pSubDict->GetNextElement(pos2, csKey2);
-      if (pObj2 == NULL) {
+      if (!pObj2) {
         continue;
       }
       if (csKey2 != "Off") {
@@ -124,7 +124,7 @@ FX_BOOL CPDF_FormControl::IsDefaultChecked() {
   ASSERT(GetType() == CPDF_FormField::CheckBox ||
          GetType() == CPDF_FormField::RadioButton);
   CPDF_Object* pDV = FPDF_GetFieldAttr(m_pField->m_pDict, "DV");
-  if (pDV == NULL) {
+  if (!pDV) {
     return FALSE;
   }
   CFX_ByteString csDV = pDV->GetString();
@@ -157,7 +157,7 @@ void CPDF_FormControl::DrawControl(CFX_RenderDevice* pDevice,
     return;
   }
   CPDF_Stream* pStream = FPDFDOC_GetAnnotAP(m_pWidgetDict, mode);
-  if (pStream == NULL) {
+  if (!pStream) {
     return;
   }
   CFX_FloatRect form_bbox = pStream->GetDict()->GetRect("BBox");
@@ -176,7 +176,7 @@ void CPDF_FormControl::DrawControl(CFX_RenderDevice* pDevice,
 }
 const FX_CHAR* g_sHighlightingMode[] = {"N", "I", "O", "P", "T", ""};
 CPDF_FormControl::HighlightingMode CPDF_FormControl::GetHighlightingMode() {
-  if (m_pWidgetDict == NULL) {
+  if (!m_pWidgetDict) {
     return Invert;
   }
   CFX_ByteString csH = m_pWidgetDict->GetString("H", "I");
@@ -317,10 +317,9 @@ int CPDF_FormControl::GetControlAlignment() {
     return m_pWidgetDict->GetInteger("Q", 0);
   }
   CPDF_Object* pObj = FPDF_GetFieldAttr(m_pField->m_pDict, "Q");
-  if (pObj == NULL) {
-    return m_pField->m_pForm->GetFormAlignment();
-  }
-  return pObj->GetInteger();
+  if (pObj)
+    return pObj->GetInteger();
+  return m_pField->m_pForm->GetFormAlignment();
 }
 
 CPDF_ApSettings::CPDF_ApSettings(CPDF_Dictionary* pDict) : m_pDict(pDict) {}
@@ -386,11 +385,11 @@ void CPDF_ApSettings::GetOriginalColor(int& iColorType,
   for (int i = 0; i < 4; i++) {
     fc[i] = 0;
   }
-  if (m_pDict == NULL) {
+  if (!m_pDict) {
     return;
   }
   CPDF_Array* pEntry = m_pDict->GetArray(csEntry);
-  if (pEntry == NULL) {
+  if (!pEntry) {
     return;
   }
   FX_DWORD dwCount = pEntry->GetCount();

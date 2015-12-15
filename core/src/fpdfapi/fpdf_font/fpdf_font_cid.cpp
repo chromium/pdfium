@@ -848,14 +848,14 @@ FX_WORD CPDF_CMap::CIDFromCharCode(FX_DWORD charcode) const {
   if (m_pEmbedMap) {
     return FPDFAPI_CIDFromCharCode(m_pEmbedMap, charcode);
   }
-  if (m_pMapping == NULL) {
+  if (!m_pMapping) {
     return (FX_WORD)charcode;
   }
   if (charcode >> 16) {
     if (m_pAddMapping) {
       void* found = FXSYS_bsearch(&charcode, m_pAddMapping + 4,
                                   *(FX_DWORD*)m_pAddMapping, 8, CompareCID);
-      if (found == NULL) {
+      if (!found) {
         if (m_pUseMap) {
           return m_pUseMap->CIDFromCharCode(charcode);
         }
@@ -1058,7 +1058,7 @@ CPDF_CIDFont::~CPDF_CIDFont() {
   delete m_pTTGSUBTable;
 }
 FX_WORD CPDF_CIDFont::CIDFromCharCode(FX_DWORD charcode) const {
-  if (m_pCMap == NULL) {
+  if (!m_pCMap) {
     return (FX_WORD)charcode;
   }
   return m_pCMap->CIDFromCharCode(charcode);
@@ -1073,12 +1073,12 @@ FX_WCHAR CPDF_CIDFont::_UnicodeFromCharCode(FX_DWORD charcode) const {
     case CIDCODING_UTF16:
       return (FX_WCHAR)charcode;
     case CIDCODING_CID:
-      if (m_pCID2UnicodeMap == NULL || !m_pCID2UnicodeMap->IsLoaded()) {
+      if (!m_pCID2UnicodeMap || !m_pCID2UnicodeMap->IsLoaded()) {
         return 0;
       }
       return m_pCID2UnicodeMap->UnicodeFromCID((FX_WORD)charcode);
   }
-  if (!m_pCMap->IsLoaded() || m_pCID2UnicodeMap == NULL ||
+  if (!m_pCMap->IsLoaded() || !m_pCID2UnicodeMap ||
       !m_pCID2UnicodeMap->IsLoaded()) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
     FX_WCHAR unicode;
@@ -1111,7 +1111,7 @@ FX_DWORD CPDF_CIDFont::_CharCodeFromUnicode(FX_WCHAR unicode) const {
     case CIDCODING_UTF16:
       return unicode;
     case CIDCODING_CID: {
-      if (m_pCID2UnicodeMap == NULL || !m_pCID2UnicodeMap->IsLoaded()) {
+      if (!m_pCID2UnicodeMap || !m_pCID2UnicodeMap->IsLoaded()) {
         return 0;
       }
       FX_DWORD CID = 0;
@@ -1157,14 +1157,14 @@ FX_BOOL CPDF_CIDFont::_Load() {
     return LoadGB2312();
   }
   CPDF_Array* pFonts = m_pFontDict->GetArray("DescendantFonts");
-  if (pFonts == NULL) {
+  if (!pFonts) {
     return FALSE;
   }
   if (pFonts->GetCount() != 1) {
     return FALSE;
   }
   CPDF_Dictionary* pCIDFontDict = pFonts->GetDict(0);
-  if (pCIDFontDict == NULL) {
+  if (!pCIDFontDict) {
     return FALSE;
   }
   m_BaseFont = pCIDFontDict->GetString("BaseFont");
@@ -1180,7 +1180,7 @@ FX_BOOL CPDF_CIDFont::_Load() {
     LoadFontDescriptor(pFontDesc);
   }
   CPDF_Object* pEncoding = m_pFontDict->GetElementValue("Encoding");
-  if (pEncoding == NULL) {
+  if (!pEncoding) {
     return FALSE;
   }
   CFX_ByteString subtype = pCIDFontDict->GetString("Subtype");
@@ -1201,7 +1201,7 @@ FX_BOOL CPDF_CIDFont::_Load() {
   } else {
     return FALSE;
   }
-  if (m_pCMap == NULL) {
+  if (!m_pCMap) {
     return FALSE;
   }
   m_Charset = m_pCMap->m_Charset;
@@ -1218,8 +1218,8 @@ FX_BOOL CPDF_CIDFont::_Load() {
             ->GetFontGlobals()
             ->m_CMapManager.GetCID2UnicodeMap(
                 m_Charset,
-                m_pFontFile == NULL && (m_pCMap->m_Coding == CIDCODING_CID ||
-                                        pCIDFontDict->KeyExist("W")));
+                !m_pFontFile && (m_pCMap->m_Coding == CIDCODING_CID ||
+                                 pCIDFontDict->KeyExist("W")));
   if (m_Font.GetFace()) {
     if (m_bType1) {
       FXFT_Select_Charmap(m_Font.GetFace(), FXFT_ENCODING_UNICODE);
@@ -1333,7 +1333,7 @@ void CPDF_CIDFont::GetCharBBox(FX_DWORD charcode, FX_RECT& rect, int level) {
   } else {
     rect = FX_RECT(0, 0, 0, 0);
   }
-  if (m_pFontFile == NULL && m_Charset == CIDSET_JAPAN1) {
+  if (!m_pFontFile && m_Charset == CIDSET_JAPAN1) {
     FX_WORD CID = CIDFromCharCode(charcode);
     const uint8_t* pTransform = GetCIDTransform(CID);
     if (pTransform && !bVert) {
@@ -1458,7 +1458,7 @@ int CPDF_CIDFont::GlyphFromCharCode(FX_DWORD charcode, FX_BOOL* pVertGlyph) {
   if (pVertGlyph) {
     *pVertGlyph = FALSE;
   }
-  if (m_pFontFile == NULL && m_pCIDToGIDMap == NULL) {
+  if (!m_pFontFile && !m_pCIDToGIDMap) {
     FX_WORD cid = CIDFromCharCode(charcode);
     FX_WCHAR unicode = 0;
     if (m_bCIDIsGID) {
@@ -1504,7 +1504,7 @@ int CPDF_CIDFont::GlyphFromCharCode(FX_DWORD charcode, FX_BOOL* pVertGlyph) {
         iBaseEncoding = PDFFONT_ENCODING_MACROMAN;
       }
       const FX_CHAR* name = GetAdobeCharName(iBaseEncoding, NULL, charcode);
-      if (name == NULL) {
+      if (!name) {
         return charcode == 0 ? -1 : (int)charcode;
       }
       FX_WORD unicode = PDF_UnicodeFromAdobeName(name);
@@ -1616,7 +1616,7 @@ int CPDF_CIDFont::AppendChar(FX_CHAR* str, FX_DWORD charcode) const {
   return m_pCMap->AppendChar(str, charcode);
 }
 FX_BOOL CPDF_CIDFont::IsUnicodeCompatible() const {
-  if (!m_pCMap->IsLoaded() || m_pCID2UnicodeMap == NULL ||
+  if (!m_pCMap->IsLoaded() || !m_pCID2UnicodeMap ||
       !m_pCID2UnicodeMap->IsLoaded()) {
     return m_pCMap->m_Coding != CIDCODING_UNKNOWN;
   }

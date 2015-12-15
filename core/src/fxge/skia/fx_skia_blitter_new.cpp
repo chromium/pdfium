@@ -16,7 +16,7 @@ void CFX_SkiaRenderer::blitAntiH(int x,
                                  const SkAlpha antialias[],
                                  const int16_t runs[]) {
   FXSYS_assert(m_Alpha);
-  if (m_pOriDevice == NULL && composite_span == NULL)
+  if (!m_pOriDevice && !composite_span)
     return;
   if (y < m_ClipBox.top || y >= m_ClipBox.bottom)
     return;
@@ -106,12 +106,13 @@ void CFX_SkiaRenderer::CompositeSpan1bpp_0(uint8_t* dest_scan,
   dest_scan += col_start / 8;
 
   int index = 0;
-  if (m_pDevice->GetPalette() == NULL)
-    index = ((uint8_t)m_Color == 0xff) ? 1 : 0;
-  else {
-    for (int i = 0; i < 2; i++)
+  if (m_pDevice->GetPalette()) {
+    for (int i = 0; i < 2; i++) {
       if (FXARGB_TODIB(m_pDevice->GetPalette()[i]) == m_Color)
         index = i;
+    }
+  } else {
+    index = ((uint8_t)m_Color == 0xff) ? 1 : 0;
   }
   uint8_t* dest_scan1 = dest_scan;
   int src_alpha = m_Alpha * cover_scan / 255;
@@ -150,12 +151,13 @@ void CFX_SkiaRenderer::CompositeSpan1bpp_4(uint8_t* dest_scan,
   dest_scan += col_start / 8;
 
   int index = 0;
-  if (m_pDevice->GetPalette() == NULL)
-    index = ((uint8_t)m_Color == 0xff) ? 1 : 0;
-  else {
-    for (int i = 0; i < 2; i++)
+  if (m_pDevice->GetPalette()) {
+    for (int i = 0; i < 2; i++) {
       if (FXARGB_TODIB(m_pDevice->GetPalette()[i]) == m_Color)
         index = i;
+    }
+  } else {
+    index = ((uint8_t)m_Color == 0xff) ? 1 : 0;
   }
   uint8_t* dest_scan1 = dest_scan;
   int src_alpha = m_Alpha * cover_scan / 255;
@@ -1736,9 +1738,7 @@ FX_BOOL CFX_SkiaRenderer::Init(
       composite_span = &CFX_SkiaRenderer::CompositeSpanRGB24_14;
       break;
   }
-  if (composite_span == NULL)
-    return FALSE;
-  return TRUE;
+  return !!composite_span;
 }
 
 /*----------------------------------------------------------------------------------------------------*/

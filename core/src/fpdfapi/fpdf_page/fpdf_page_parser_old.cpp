@@ -249,7 +249,7 @@ CPDF_StreamParser::~CPDF_StreamParser() {
 FX_DWORD _DecodeAllScanlines(ICodec_ScanlineDecoder* pDecoder,
                              uint8_t*& dest_buf,
                              FX_DWORD& dest_size) {
-  if (pDecoder == NULL) {
+  if (!pDecoder) {
     return (FX_DWORD)-1;
   }
   int ncomps = pDecoder->CountComps();
@@ -353,7 +353,7 @@ CPDF_Stream* CPDF_StreamParser::ReadInlineStream(CPDF_Document* pDoc,
     FX_DWORD bpc = pDict->GetInteger("BitsPerComponent");
     FX_DWORD nComponents = 1;
     CPDF_ColorSpace* pCS = pDoc->LoadColorSpace(pCSObj);
-    if (pCS == NULL) {
+    if (!pCS) {
       nComponents = 3;
     } else {
       nComponents = pCS->CountComponents();
@@ -634,7 +634,7 @@ CPDF_Object* CPDF_StreamParser::ReadNextObject(FX_BOOL bAllowNestedArray,
       CFX_ByteString key =
           PDF_NameDecode(CFX_ByteStringC(m_WordBuffer + 1, m_WordSize - 1));
       CPDF_Object* pObj = ReadNextObject(TRUE);
-      if (pObj == NULL) {
+      if (!pObj) {
         if (pDict) {
           pDict->Release();
         }
@@ -655,7 +655,7 @@ CPDF_Object* CPDF_StreamParser::ReadNextObject(FX_BOOL bAllowNestedArray,
     CPDF_Array* pArray = CPDF_Array::Create();
     while (1) {
       CPDF_Object* pObj = ReadNextObject(bAllowNestedArray, TRUE);
-      if (pObj == NULL) {
+      if (!pObj) {
         if (m_WordSize == 0 || m_WordBuffer[0] == ']') {
           return pArray;
         }
@@ -924,8 +924,8 @@ void CPDF_ContentParser::Clear() {
   m_Status = Ready;
 }
 void CPDF_ContentParser::Start(CPDF_Page* pPage, CPDF_ParseOptions* pOptions) {
-  if (m_Status != Ready || pPage == NULL || pPage->m_pDocument == NULL ||
-      pPage->m_pFormDict == NULL) {
+  if (m_Status != Ready || !pPage || !pPage->m_pDocument ||
+      !pPage->m_pFormDict) {
     m_Status = Done;
     return;
   }
@@ -938,7 +938,7 @@ void CPDF_ContentParser::Start(CPDF_Page* pPage, CPDF_ParseOptions* pOptions) {
   m_InternalStage = PAGEPARSE_STAGE_GETCONTENT;
   m_CurrentOffset = 0;
   CPDF_Object* pContent = pPage->m_pFormDict->GetElementValue("Contents");
-  if (pContent == NULL) {
+  if (!pContent) {
     m_Status = Done;
     return;
   }

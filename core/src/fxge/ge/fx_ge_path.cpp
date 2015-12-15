@@ -384,7 +384,7 @@ CFX_FloatRect CFX_PathData::GetBoundingBox(FX_FLOAT line_width,
   return rect;
 }
 void CFX_PathData::Transform(const CFX_Matrix* pMatrix) {
-  if (pMatrix == NULL) {
+  if (!pMatrix) {
     return;
   }
   for (int i = 0; i < m_PointCount; i++) {
@@ -564,7 +564,7 @@ FX_BOOL CFX_PathData::IsRect() const {
 }
 FX_BOOL CFX_PathData::IsRect(const CFX_Matrix* pMatrix,
                              CFX_FloatRect* pRect) const {
-  if (pMatrix == NULL) {
+  if (!pMatrix) {
     if (!IsRect()) {
       return FALSE;
     }

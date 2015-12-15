@@ -120,7 +120,7 @@ FX_DWORD FXSYS_GetFullPathName(const FX_CHAR* filename,
                                FX_CHAR* buf,
                                FX_CHAR** filepart) {
   int srclen = FXSYS_strlen(filename);
-  if (buf == NULL || (int)buflen < srclen + 1) {
+  if (!buf || (int)buflen < srclen + 1) {
     return srclen + 1;
   }
   FXSYS_strcpy(buf, filename);
@@ -142,7 +142,7 @@ FXSYS_FILE* FXSYS_wfopen(const FX_WCHAR* filename, const FX_WCHAR* mode) {
                      CFX_ByteString::FromUnicode(mode));
 }
 char* FXSYS_strlwr(char* str) {
-  if (str == NULL) {
+  if (!str) {
     return NULL;
   }
   char* s = str;
@@ -153,7 +153,7 @@ char* FXSYS_strlwr(char* str) {
   return s;
 }
 char* FXSYS_strupr(char* str) {
-  if (str == NULL) {
+  if (!str) {
     return NULL;
   }
   char* s = str;
@@ -164,7 +164,7 @@ char* FXSYS_strupr(char* str) {
   return s;
 }
 FX_WCHAR* FXSYS_wcslwr(FX_WCHAR* str) {
-  if (str == NULL) {
+  if (!str) {
     return NULL;
   }
   FX_WCHAR* s = str;
@@ -175,7 +175,7 @@ FX_WCHAR* FXSYS_wcslwr(FX_WCHAR* str) {
   return s;
 }
 FX_WCHAR* FXSYS_wcsupr(FX_WCHAR* str) {
-  if (str == NULL) {
+  if (!str) {
     return NULL;
   }
   FX_WCHAR* s = str;

@@ -155,7 +155,7 @@ DLLEXPORT int STDCALL FPDFText_GetBoundedText(FPDF_TEXTPAGE text_page,
                      (FX_FLOAT)top);
   CFX_WideString str = textpage->GetTextByRect(rect);
 
-  if (buflen <= 0 || buffer == NULL) {
+  if (buflen <= 0 || !buffer) {
     return str.GetLength();
   }
 
@@ -242,7 +242,7 @@ DLLEXPORT int STDCALL FPDFLink_GetURL(FPDF_PAGELINK link_page,
 
   CFX_ByteString cbUTF16URL = url.UTF16LE_Encode();
   int len = cbUTF16URL.GetLength() / sizeof(unsigned short);
-  if (buffer == NULL || buflen <= 0)
+  if (!buffer || buflen <= 0)
     return len;
   int size = len < buflen ? len : buflen;
   if (size > 0) {

@@ -163,11 +163,11 @@ CFX_GlyphBitmap* CPDF_Type3Cache::RenderGlyph(CPDF_Type3Glyphs* pSize,
     } else {
     }
   }
-  if (pResBitmap == NULL) {
+  if (!pResBitmap) {
     image_matrix.Scale(retinaScaleX, retinaScaleY);
     pResBitmap = pBitmap->TransformTo(&image_matrix, left, top);
   }
-  if (pResBitmap == NULL) {
+  if (!pResBitmap) {
     return NULL;
   }
   CFX_GlyphBitmap* pGlyph = new CFX_GlyphBitmap;
@@ -212,7 +212,7 @@ FX_BOOL CPDF_RenderStatus::ProcessText(const CPDF_TextObject* textobj,
         break;
       case 1:
       case 5:
-        if (pFont->GetFace() == NULL &&
+        if (!pFont->GetFace() &&
             !(pFont->GetSubstFont()->m_SubstFlags & FXFONT_SUBST_GLYPHPATH)) {
           bFill = TRUE;
         } else {
@@ -221,7 +221,7 @@ FX_BOOL CPDF_RenderStatus::ProcessText(const CPDF_TextObject* textobj,
         break;
       case 2:
       case 6:
-        if (pFont->GetFace() == NULL &&
+        if (!pFont->GetFace() &&
             !(pFont->GetSubstFont()->m_SubstFlags & FXFONT_SUBST_GLYPHPATH)) {
           bFill = TRUE;
         } else {
@@ -299,21 +299,21 @@ FX_BOOL CPDF_RenderStatus::ProcessText(const CPDF_TextObject* textobj,
       pFont, font_size, &text_matrix, fill_argb, &m_Options);
 }
 CPDF_Type3Cache* CPDF_RenderStatus::GetCachedType3(CPDF_Type3Font* pFont) {
-  if (pFont->m_pDocument == NULL) {
+  if (!pFont->m_pDocument) {
     return NULL;
   }
   pFont->m_pDocument->GetPageData()->GetFont(pFont->GetFontDict(), FALSE);
   return pFont->m_pDocument->GetRenderData()->GetCachedType3(pFont);
 }
 static void ReleaseCachedType3(CPDF_Type3Font* pFont) {
-  if (pFont->m_pDocument == NULL) {
+  if (!pFont->m_pDocument) {
     return;
   }
   pFont->m_pDocument->GetRenderData()->ReleaseCachedType3(pFont);
   pFont->m_pDocument->GetPageData()->ReleaseFont(pFont->GetFontDict());
 }
 FX_BOOL CPDF_Type3Char::LoadBitmap(CPDF_RenderContext* pContext) {
-  if (m_pBitmap || m_pForm == NULL) {
+  if (m_pBitmap || !m_pForm) {
     return TRUE;
   }
   if (m_pForm->CountObjects() == 1 && !m_bColored) {
@@ -383,7 +383,7 @@ FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj,
       continue;
     }
     CPDF_Type3Char* pType3Char = pType3Font->LoadChar(charcode);
-    if (pType3Char == NULL) {
+    if (!pType3Char) {
       continue;
     }
     CFX_Matrix matrix = char_matrix;
@@ -394,7 +394,7 @@ FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj,
       if (pGlyphAndPos) {
         for (int i = 0; i < iChar; i++) {
           FXTEXT_GLYPHPOS& glyph = pGlyphAndPos[i];
-          if (glyph.m_pGlyph == NULL) {
+          if (!glyph.m_pGlyph) {
             continue;
           }
           m_pDevice->SetBitMask(&glyph.m_pGlyph->m_Bitmap,
@@ -452,7 +452,7 @@ FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj,
         CPDF_Type3Cache* pCache = GetCachedType3(pType3Font);
         refTypeCache.m_dwCount++;
         CFX_GlyphBitmap* pBitmap = pCache->LoadGlyph(charcode, &matrix, sa, sd);
-        if (pBitmap == NULL) {
+        if (!pBitmap) {
           continue;
         }
         int origin_x = FXSYS_round(matrix.e);
@@ -491,7 +491,7 @@ FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj,
     bitmap.Clear(0);
     for (int iChar = 0; iChar < textobj->m_nChars; iChar++) {
       FXTEXT_GLYPHPOS& glyph = pGlyphAndPos[iChar];
-      if (glyph.m_pGlyph == NULL) {
+      if (!glyph.m_pGlyph) {
         continue;
       }
       bitmap.TransferBitmap(
@@ -557,7 +557,7 @@ void CPDF_CharPosList::Load(int nChars,
     charpos.m_OriginX = iChar ? pCharPos[iChar - 1] : 0;
     charpos.m_OriginY = 0;
     charpos.m_bGlyphAdjust = FALSE;
-    if (pCIDFont == NULL) {
+    if (!pCIDFont) {
       continue;
     }
     FX_WORD CID = pCIDFont->CIDFromCharCode(CharCode);
@@ -762,7 +762,7 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
     FXTEXT_CHARPOS& charpos = CharPosList.m_pCharPos[i];
     const CFX_PathData* pPath = pFaceCache->LoadGlyphPath(
         &pFont->m_Font, charpos.m_GlyphIndex, charpos.m_FontCharWidth);
-    if (pPath == NULL) {
+    if (!pPath) {
       continue;
     }
     CPDF_PathObject path;

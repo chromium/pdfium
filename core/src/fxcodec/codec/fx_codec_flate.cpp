@@ -34,7 +34,7 @@ static void FPDFAPI_FlateCompress(unsigned char* dest_buf,
 void* FPDFAPI_FlateInit(void* (*alloc_func)(void*, unsigned int, unsigned int),
                         void (*free_func)(void*, void*)) {
   z_stream* p = (z_stream*)alloc_func(0, 1, sizeof(z_stream));
-  if (p == NULL) {
+  if (!p) {
     return NULL;
   }
   FXSYS_memset(p, 0, sizeof(z_stream));
@@ -835,7 +835,7 @@ FX_BOOL CCodec_FlateScanlineDecoder::v_Rewind() {
     FPDFAPI_FlateEnd(m_pFlate);
   }
   m_pFlate = FPDFAPI_FlateInit(my_alloc_func, my_free_func);
-  if (m_pFlate == NULL) {
+  if (!m_pFlate) {
     return FALSE;
   }
   FPDFAPI_FlateInput(m_pFlate, m_SrcBuf, m_SrcSize);

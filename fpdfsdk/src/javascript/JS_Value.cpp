@@ -611,7 +611,7 @@ int _getDaylightSavingTA(double d) {
     return 0;
   time_t t = (time_t)(d / 1000);
   struct tm* tmp = localtime(&t);
-  if (tmp == NULL)
+  if (!tmp)
     return 0;
   if (tmp->tm_isdst > 0)
     // One hour.

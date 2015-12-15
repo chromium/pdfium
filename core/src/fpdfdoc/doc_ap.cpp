@@ -292,7 +292,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
   FX_BOOL bUseFormRes = FALSE;
   CPDF_Dictionary* pFontDict = NULL;
   CPDF_Dictionary* pDRDict = pAnnotDict->GetDict("DR");
-  if (pDRDict == NULL) {
+  if (!pDRDict) {
     pDRDict = pFormDict->GetDict("DR");
     bUseFormRes = TRUE;
   }
@@ -312,7 +312,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
   }
   if (!pFontDict) {
     pFontDict = CPDF_Dictionary::Create();
-    if (pFontDict == NULL) {
+    if (!pFontDict) {
       return FALSE;
     }
     pFontDict->SetAtName("Type", "Font");
@@ -418,11 +418,8 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
                 rcBBox.right - fBorderWidth, rcBBox.top - fBorderWidth);
   rcBody.Normalize();
   CPDF_Dictionary* pAPDict = pAnnotDict->GetDict("AP");
-  if (pAPDict == NULL) {
+  if (!pAPDict) {
     pAPDict = CPDF_Dictionary::Create();
-    if (pAPDict == NULL) {
-      return FALSE;
-    }
     pAnnotDict->SetAt("AP", pAPDict);
   }
   CPDF_Stream* pNormalStream = pAPDict->GetStream("N");
@@ -440,7 +437,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
       CPDF_Dictionary* pStreamResFontList = pStreamResList->GetDict("Font");
       if (!pStreamResFontList) {
         pStreamResFontList = CPDF_Dictionary::Create();
-        if (pStreamResFontList == NULL) {
+        if (!pStreamResFontList) {
           return FALSE;
         }
         pStreamResList->SetAt("Font", pStreamResFontList);
@@ -688,7 +685,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
         CPDF_Dictionary* pStreamResFontList = pStreamResList->GetDict("Font");
         if (!pStreamResFontList) {
           pStreamResFontList = CPDF_Dictionary::Create();
-          if (pStreamResFontList == NULL) {
+          if (!pStreamResFontList) {
             return FALSE;
           }
           pStreamResList->SetAt("Font", pStreamResFontList);

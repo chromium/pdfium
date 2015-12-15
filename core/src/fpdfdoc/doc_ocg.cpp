@@ -25,7 +25,7 @@ static FX_BOOL FPDFDOC_OCG_HasIntent(const CPDF_Dictionary* pDict,
                                      const CFX_ByteStringC& csElement,
                                      const CFX_ByteStringC& csDef = "") {
   CPDF_Object* pIntent = pDict->GetElementValue("Intent");
-  if (pIntent == NULL) {
+  if (!pIntent) {
     return csElement == csDef;
   }
   CFX_ByteString bsIntent;
@@ -189,7 +189,7 @@ FX_BOOL CPDF_OCContext::GetOCGVE(CPDF_Array* pExpression,
   if (nLevel > 32) {
     return FALSE;
   }
-  if (pExpression == NULL) {
+  if (!pExpression) {
     return FALSE;
   }
   int32_t iCount = pExpression->GetCount();
@@ -209,7 +209,7 @@ FX_BOOL CPDF_OCContext::GetOCGVE(CPDF_Array* pExpression,
     FX_BOOL bValue = FALSE;
     for (int32_t i = 1; i < iCount; i++) {
       pOCGObj = pExpression->GetElementValue(1);
-      if (pOCGObj == NULL) {
+      if (!pOCGObj) {
         continue;
       }
       FX_BOOL bItem = FALSE;

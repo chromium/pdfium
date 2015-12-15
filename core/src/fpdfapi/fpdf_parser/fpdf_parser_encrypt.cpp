@@ -115,14 +115,14 @@ static FX_BOOL _LoadCryptInfo(CPDF_Dictionary* pEncryptDict,
   keylen = 0;
   if (Version >= 4) {
     CPDF_Dictionary* pCryptFilters = pEncryptDict->GetDict("CF");
-    if (pCryptFilters == NULL) {
+    if (!pCryptFilters) {
       return FALSE;
     }
     if (name == "Identity") {
       cipher = FXCIPHER_NONE;
     } else {
       CPDF_Dictionary* pDefFilter = pCryptFilters->GetDict(name);
-      if (pDefFilter == NULL) {
+      if (!pDefFilter) {
         return FALSE;
       }
       int nKeyBits = 0;
@@ -329,7 +329,7 @@ FX_BOOL CPDF_StandardSecurityHandler::AES256_CheckPassword(
   if (FXSYS_memcmp(digest, pkey, 32) != 0) {
     return FALSE;
   }
-  if (key == NULL) {
+  if (!key) {
     return TRUE;
   }
   if (m_Revision >= 6) {
@@ -399,7 +399,7 @@ int CPDF_StandardSecurityHandler::CheckPassword(const uint8_t* password,
     return AES256_CheckPassword(password, size, bOwner, key);
   }
   uint8_t keybuf[32];
-  if (key == NULL) {
+  if (!key) {
     key = keybuf;
   }
   if (bOwner) {
@@ -541,7 +541,7 @@ void CPDF_StandardSecurityHandler::OnCreate(CPDF_Dictionary* pEncryptDict,
   if (!LoadDict(pEncryptDict, type, cipher, key_len)) {
     return;
   }
-  if (bDefault && (owner_pass == NULL || owner_size == 0)) {
+  if (bDefault && (!owner_pass || owner_size == 0)) {
     owner_pass = user_pass;
     owner_size = user_size;
   }

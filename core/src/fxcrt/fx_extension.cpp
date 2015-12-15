@@ -275,8 +275,7 @@ void FX_Random_GenerateBase(FX_DWORD* pBuffer, int32_t iCount) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 FX_BOOL FX_GenerateCryptoRandom(FX_DWORD* pBuffer, int32_t iCount) {
   HCRYPTPROV hCP = NULL;
-  if (!::CryptAcquireContext(&hCP, NULL, NULL, PROV_RSA_FULL, 0) ||
-      hCP == NULL) {
+  if (!::CryptAcquireContext(&hCP, NULL, NULL, PROV_RSA_FULL, 0) || !hCP) {
     return FALSE;
   }
   ::CryptGenRandom(hCP, iCount * sizeof(FX_DWORD), (uint8_t*)pBuffer);

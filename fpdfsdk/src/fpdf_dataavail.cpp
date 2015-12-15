@@ -122,7 +122,7 @@ FPDFAvail_IsDocAvail(FPDF_AVAIL avail, FX_DOWNLOADHINTS* hints) {
 
 DLLEXPORT FPDF_DOCUMENT STDCALL
 FPDFAvail_GetDocument(FPDF_AVAIL avail, FPDF_BYTESTRING password) {
-  if (avail == NULL)
+  if (!avail)
     return NULL;
   CPDF_Parser* pParser = new CPDF_Parser;
   pParser->SetPassword(password);

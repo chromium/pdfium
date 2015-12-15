@@ -133,7 +133,7 @@ CFX_ByteString CPDF_Annot::GetSubType() const {
 }
 
 void CPDF_Annot::GetRect(CPDF_Rect& rect) const {
-  if (m_pAnnotDict == NULL) {
+  if (!m_pAnnotDict) {
     return;
   }
   rect = m_pAnnotDict->GetRect("Rect");
@@ -147,7 +147,7 @@ FX_DWORD CPDF_Annot::GetFlags() const {
 CPDF_Stream* FPDFDOC_GetAnnotAP(CPDF_Dictionary* pAnnotDict,
                                 CPDF_Annot::AppearanceMode mode) {
   CPDF_Dictionary* pAP = pAnnotDict->GetDict("AP");
-  if (pAP == NULL) {
+  if (!pAP) {
     return NULL;
   }
   const FX_CHAR* ap_entry = "N";
@@ -267,14 +267,14 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
   char style_char;
   FX_FLOAT width;
   CPDF_Array* pDashArray = NULL;
-  if (pBS == NULL) {
+  if (!pBS) {
     CPDF_Array* pBorderArray = m_pAnnotDict->GetArray("Border");
     style_char = 'S';
     if (pBorderArray) {
       width = pBorderArray->GetNumber(2);
       if (pBorderArray->GetCount() == 4) {
         pDashArray = pBorderArray->GetArray(3);
-        if (pDashArray == NULL) {
+        if (!pDashArray) {
           return;
         }
         int nLen = pDashArray->GetCount();

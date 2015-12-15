@@ -195,7 +195,7 @@ FPDFPageObj_TransformClipPath(FPDF_PAGEOBJECT page_object,
                               double e,
                               double f) {
   CPDF_PageObject* pPageObj = (CPDF_PageObject*)page_object;
-  if (pPageObj == NULL)
+  if (!pPageObj)
     return;
   CFX_Matrix matrix((FX_FLOAT)a, (FX_FLOAT)b, (FX_FLOAT)c, (FX_FLOAT)d,
                     (FX_FLOAT)e, (FX_FLOAT)f);
@@ -226,7 +226,7 @@ DLLEXPORT void STDCALL FPDF_DestroyClipPath(FPDF_CLIPPATH clipPath) {
 
 void OutputPath(CFX_ByteTextBuf& buf, CPDF_Path path) {
   const CFX_PathData* pPathData = path;
-  if (pPathData == NULL)
+  if (!pPathData)
     return;
 
   FX_PATHPOINT* pPoints = pPathData->GetPoints();

@@ -226,7 +226,7 @@ FX_BOOL CFX_Font::IsFixedWidth() const {
 }
 
 CFX_WideString CFX_Font::GetPsName() const {
-  if (m_Face == NULL) {
+  if (!m_Face) {
     return CFX_WideString();
   }
   CFX_WideString psName =
@@ -237,7 +237,7 @@ CFX_WideString CFX_Font::GetPsName() const {
   return psName;
 }
 CFX_ByteString CFX_Font::GetFamilyName() const {
-  if (m_Face == NULL && m_pSubstFont == NULL) {
+  if (!m_Face && !m_pSubstFont) {
     return CFX_ByteString();
   }
   if (m_Face) {
@@ -246,7 +246,7 @@ CFX_ByteString CFX_Font::GetFamilyName() const {
   return m_pSubstFont->m_Family;
 }
 CFX_ByteString CFX_Font::GetFaceName() const {
-  if (m_Face == NULL && m_pSubstFont == NULL) {
+  if (!m_Face && !m_pSubstFont) {
     return CFX_ByteString();
   }
   if (m_Face) {
@@ -264,7 +264,7 @@ CFX_ByteString CFX_Font::GetFaceName() const {
   return m_pSubstFont->m_Family;
 }
 FX_BOOL CFX_Font::GetBBox(FX_RECT& bbox) {
-  if (m_Face == NULL) {
+  if (!m_Face) {
     return FALSE;
   }
   int em = FXFT_Get_Face_UnitsPerEM(m_Face);

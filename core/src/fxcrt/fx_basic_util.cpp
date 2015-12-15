@@ -20,7 +20,7 @@ CFX_PrivateData::~CFX_PrivateData() {
   ClearAll();
 }
 void FX_PRIVATEDATA::FreeData() {
-  if (m_pData == NULL) {
+  if (!m_pData) {
     return;
   }
   if (m_bSelfDestruct) {
@@ -33,7 +33,7 @@ void CFX_PrivateData::AddData(void* pModuleId,
                               void* pData,
                               PD_CALLBACK_FREEDATA callback,
                               FX_BOOL bSelfDestruct) {
-  if (pModuleId == NULL) {
+  if (!pModuleId) {
     return;
   }
   FX_PRIVATEDATA* pList = m_DataList.GetData();
@@ -58,7 +58,7 @@ void CFX_PrivateData::SetPrivateObj(void* pModuleId, CFX_DestructObject* pObj) {
   AddData(pModuleId, pObj, NULL, TRUE);
 }
 FX_BOOL CFX_PrivateData::RemovePrivateData(void* pModuleId) {
-  if (pModuleId == NULL) {
+  if (!pModuleId) {
     return FALSE;
   }
   FX_PRIVATEDATA* pList = m_DataList.GetData();
@@ -72,7 +72,7 @@ FX_BOOL CFX_PrivateData::RemovePrivateData(void* pModuleId) {
   return FALSE;
 }
 void* CFX_PrivateData::GetPrivateData(void* pModuleId) {
-  if (pModuleId == NULL) {
+  if (!pModuleId) {
     return NULL;
   }
   FX_PRIVATEDATA* pList = m_DataList.GetData();
@@ -93,7 +93,7 @@ void CFX_PrivateData::ClearAll() {
   m_DataList.RemoveAll();
 }
 void FX_atonum(const CFX_ByteStringC& strc, FX_BOOL& bInteger, void* pData) {
-  if (FXSYS_memchr(strc.GetPtr(), '.', strc.GetLength()) == NULL) {
+  if (!FXSYS_memchr(strc.GetPtr(), '.', strc.GetLength())) {
     bInteger = TRUE;
     int cc = 0, integer = 0;
     const FX_CHAR* str = strc.GetCStr();
@@ -257,7 +257,7 @@ void* FX_OpenFolder(const FX_WCHAR* path) {
 FX_BOOL FX_GetNextFile(void* handle,
                        CFX_ByteString& filename,
                        FX_BOOL& bFolder) {
-  if (handle == NULL) {
+  if (!handle) {
     return FALSE;
   }
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
@@ -289,7 +289,7 @@ FX_BOOL FX_GetNextFile(void* handle,
   return FALSE;
 #else
   struct dirent* de = readdir((DIR*)handle);
-  if (de == NULL) {
+  if (!de) {
     return FALSE;
   }
   filename = de->d_name;
@@ -300,7 +300,7 @@ FX_BOOL FX_GetNextFile(void* handle,
 FX_BOOL FX_GetNextFile(void* handle,
                        CFX_WideString& filename,
                        FX_BOOL& bFolder) {
-  if (handle == NULL) {
+  if (!handle) {
     return FALSE;
   }
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
@@ -319,7 +319,7 @@ FX_BOOL FX_GetNextFile(void* handle,
   return FALSE;
 #else
   struct dirent* de = readdir((DIR*)handle);
-  if (de == NULL) {
+  if (!de) {
     return FALSE;
   }
   filename = CFX_WideString::FromLocal(de->d_name);
@@ -328,7 +328,7 @@ FX_BOOL FX_GetNextFile(void* handle,
 #endif
 }
 void FX_CloseFolder(void* handle) {
-  if (handle == NULL) {
+  if (!handle) {
     return;
   }
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_

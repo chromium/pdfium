@@ -56,13 +56,13 @@ void CPDF_PageContentGenerate::GenerateContent() {
 CFX_ByteString CPDF_PageContentGenerate::RealizeResource(
     CPDF_Object* pResourceObj,
     const FX_CHAR* szType) {
-  if (m_pPage->m_pResources == NULL) {
+  if (!m_pPage->m_pResources) {
     m_pPage->m_pResources = new CPDF_Dictionary;
     int objnum = m_pDocument->AddIndirectObject(m_pPage->m_pResources);
     m_pPage->m_pFormDict->SetAtReference("Resources", m_pDocument, objnum);
   }
   CPDF_Dictionary* pResList = m_pPage->m_pResources->GetDict(szType);
-  if (pResList == NULL) {
+  if (!pResList) {
     pResList = new CPDF_Dictionary;
     m_pPage->m_pResources->SetAt(szType, pResList);
   }

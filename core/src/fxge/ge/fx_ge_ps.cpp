@@ -374,7 +374,7 @@ FX_BOOL CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource,
   int width = pSource->GetWidth();
   int height = pSource->GetHeight();
   buf << width << " " << height;
-  if (pSource->GetBPP() == 1 && pSource->GetPalette() == NULL) {
+  if (pSource->GetBPP() == 1 && !pSource->GetPalette()) {
     int pitch = (width + 7) / 8;
     FX_DWORD src_size = height * pitch;
     uint8_t* src_buf = FX_Alloc(uint8_t, src_size);
@@ -433,7 +433,7 @@ FX_BOOL CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource,
           break;
       }
     }
-    if (pConverted == NULL) {
+    if (!pConverted) {
       OUTPUT_PS("\nQ\n");
       return FALSE;
     }
@@ -449,7 +449,7 @@ FX_BOOL CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource,
         filter = "/DCTDecode filter ";
       }
     }
-    if (filter == NULL) {
+    if (!filter) {
       int src_pitch = width * Bpp;
       output_size = height * src_pitch;
       output_buf = FX_Alloc(uint8_t, output_size);
@@ -603,7 +603,7 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_FaceCache* pFaceCache,
   matrix.Concat(1.0f, 0, 0, 1.0f, 0, 0);
   const CFX_PathData* pPathData = pFaceCache->LoadGlyphPath(
       pFont, charpos.m_GlyphIndex, charpos.m_FontCharWidth);
-  if (pPathData == NULL) {
+  if (!pPathData) {
     return;
   }
   CFX_PathData TransformedPath(*pPathData);
@@ -663,7 +663,7 @@ FX_BOOL CFX_PSRenderer::DrawText(int nChars,
   buf << "q[" << pObject2Device->a << " " << pObject2Device->b << " "
       << pObject2Device->c << " " << pObject2Device->d << " "
       << pObject2Device->e << " " << pObject2Device->f << "]cm\n";
-  if (pCache == NULL) {
+  if (!pCache) {
     pCache = CFX_GEModule::Get()->GetFontCache();
   }
   CFX_FaceCache* pFaceCache = pCache->GetCachedFace(pFont);

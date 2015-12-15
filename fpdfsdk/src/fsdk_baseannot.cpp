@@ -566,7 +566,7 @@ FX_BOOL CPDFSDK_BAAnnot::IsAppearanceValid() {
 
 FX_BOOL CPDFSDK_BAAnnot::IsAppearanceValid(CPDF_Annot::AppearanceMode mode) {
   CPDF_Dictionary* pAP = m_pAnnot->GetAnnotDict()->GetDict("AP");
-  if (pAP == NULL)
+  if (!pAP)
     return FALSE;
 
   // Choose the right sub-ap
@@ -580,10 +580,7 @@ FX_BOOL CPDFSDK_BAAnnot::IsAppearanceValid(CPDF_Annot::AppearanceMode mode) {
 
   // Get the AP stream or subdirectory
   CPDF_Object* psub = pAP->GetElementValue(ap_entry);
-  if (psub == NULL)
-    return FALSE;
-
-  return TRUE;
+  return !!psub;
 }
 
 void CPDFSDK_BAAnnot::DrawBorder(CFX_RenderDevice* pDevice,

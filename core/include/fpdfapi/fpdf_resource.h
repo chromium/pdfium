@@ -605,7 +605,7 @@ class CPDF_Color {
 
   ~CPDF_Color();
 
-  FX_BOOL IsNull() const { return m_pBuffer == NULL; }
+  FX_BOOL IsNull() const { return !m_pBuffer; }
 
   FX_BOOL IsEqual(const CPDF_Color& other) const;
 

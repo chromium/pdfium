@@ -74,7 +74,7 @@ void CPDF_PageRenderCache::CacheOptimization(int32_t dwLimitCacheSize) {
 }
 void CPDF_PageRenderCache::ClearImageCache(CPDF_Stream* pStream) {
   void* value = m_ImageCaches.GetValueAt(pStream);
-  if (value == NULL) {
+  if (!value) {
     m_ImageCaches.RemoveKey(pStream);
     return;
   }
@@ -95,7 +95,7 @@ FX_DWORD CPDF_PageRenderCache::EstimateSize() {
   return dwSize;
 }
 FX_DWORD CPDF_PageRenderCache::GetCachedSize(CPDF_Stream* pStream) const {
-  if (pStream == NULL) {
+  if (!pStream) {
     return m_nCacheSize;
   }
   CPDF_ImageCache* pImageCache;
@@ -175,7 +175,7 @@ void CPDF_PageRenderCache::ResetBitmap(CPDF_Stream* pStream,
                                        const CFX_DIBitmap* pBitmap) {
   CPDF_ImageCache* pImageCache;
   if (!m_ImageCaches.Lookup(pStream, (void*&)pImageCache)) {
-    if (pBitmap == NULL) {
+    if (!pBitmap) {
       return;
     }
     pImageCache = new CPDF_ImageCache(m_pPage->m_pDocument, pStream);
@@ -220,7 +220,7 @@ void CPDF_PageRenderCache::ClearImageData() {
   }
 }
 void CPDF_ImageCache::ClearImageData() {
-  if (m_pCachedBitmap && m_pCachedBitmap->GetBuffer() == NULL) {
+  if (m_pCachedBitmap && !m_pCachedBitmap->GetBuffer()) {
     ((CPDF_DIBSource*)m_pCachedBitmap)->ClearImageData();
   }
 }

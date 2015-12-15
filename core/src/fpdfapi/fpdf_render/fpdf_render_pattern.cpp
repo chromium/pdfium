@@ -21,7 +21,7 @@ static void DrawAxialShading(CFX_DIBitmap* pBitmap,
                              int alpha) {
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
   CPDF_Array* pCoords = pDict->GetArray("Coords");
-  if (pCoords == NULL) {
+  if (!pCoords) {
     return;
   }
   FX_FLOAT start_x = pCoords->GetNumber(0);
@@ -112,7 +112,7 @@ static void DrawRadialShading(CFX_DIBitmap* pBitmap,
                               int alpha) {
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
   CPDF_Array* pCoords = pDict->GetArray("Coords");
-  if (pCoords == NULL) {
+  if (!pCoords) {
     return;
   }
   FX_FLOAT start_x = pCoords->GetNumber(0);
@@ -834,7 +834,7 @@ void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern,
   int nFuncs = pPattern->m_nFuncs;
   CPDF_Dictionary* pDict = pPattern->m_pShadingObj->GetDict();
   CPDF_ColorSpace* pColorSpace = pPattern->m_pCS;
-  if (pColorSpace == NULL) {
+  if (!pColorSpace) {
     return;
   }
   FX_ARGB background = 0;
@@ -864,7 +864,7 @@ void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern,
   CFX_Matrix FinalMatrix = *pMatrix;
   FinalMatrix.Concat(*buffer.GetMatrix());
   CFX_DIBitmap* pBitmap = buffer.GetBitmap();
-  if (pBitmap->GetBuffer() == NULL) {
+  if (!pBitmap->GetBuffer()) {
     return;
   }
   pBitmap->Clear(background);
@@ -1121,7 +1121,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
         m_pContext->m_pDocument, m_pContext->m_pPageCache, pPattern,
         pObj2Device, width, height, m_Options.m_Flags);
   }
-  if (pPatternBitmap == NULL) {
+  if (!pPatternBitmap) {
     m_pDevice->RestoreState();
     return;
   }
@@ -1185,7 +1185,7 @@ void CPDF_RenderStatus::DrawPathWithPattern(CPDF_PathObject* pPathObj,
                                             CPDF_Color* pColor,
                                             FX_BOOL bStroke) {
   CPDF_Pattern* pattern = pColor->GetPattern();
-  if (pattern == NULL) {
+  if (!pattern) {
     return;
   }
   if (pattern->m_PatternType == PATTERN_TILING) {

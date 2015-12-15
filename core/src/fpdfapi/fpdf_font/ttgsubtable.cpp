@@ -47,7 +47,7 @@ FX_BOOL CFX_GlyphMap::Lookup(int key, int& value) {
   void* pResult = FXSYS_bsearch(&key, m_Buffer.GetBuffer(),
                                 m_Buffer.GetSize() / sizeof(_IntPair),
                                 sizeof(_IntPair), _CompareInt);
-  if (pResult == NULL) {
+  if (!pResult) {
     return FALSE;
   }
   value = ((FX_DWORD*)pResult)[1];
@@ -158,7 +158,7 @@ bool CFX_CTTGSUBTable::GetVerticalGlyphSub2(uint32_t glyphnum,
 int CFX_CTTGSUBTable::GetCoverageIndex(struct TCoverageFormatBase* Coverage,
                                        uint32_t g) {
   int i = 0;
-  if (Coverage == NULL) {
+  if (!Coverage) {
     return -1;
   }
   switch (Coverage->CoverageFormat) {

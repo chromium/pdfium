@@ -463,7 +463,7 @@ CXML_Element* CXML_Parser::ParseElement(CXML_Element* pParent,
             iState = 0;
             m_dwIndex--;
             CXML_Element* pSubElement = ParseElement(pElement, TRUE);
-            if (pSubElement == NULL) {
+            if (!pSubElement) {
               break;
             }
             pSubElement->m_pParent = pElement;
@@ -767,7 +767,7 @@ FX_DWORD CXML_Element::FindElement(CXML_Element* pChild) const {
 }
 const CFX_WideString* CXML_AttrMap::Lookup(const CFX_ByteStringC& space,
                                            const CFX_ByteStringC& name) const {
-  if (m_pMap == NULL) {
+  if (!m_pMap) {
     return NULL;
   }
   for (int i = 0; i < m_pMap->GetSize(); i++) {
@@ -803,7 +803,7 @@ void CXML_AttrMap::SetAt(const CFX_ByteStringC& space,
 }
 void CXML_AttrMap::RemoveAt(const CFX_ByteStringC& space,
                             const CFX_ByteStringC& name) {
-  if (m_pMap == NULL) {
+  if (!m_pMap) {
     return;
   }
   for (int i = 0; i < m_pMap->GetSize(); i++) {
@@ -816,7 +816,7 @@ void CXML_AttrMap::RemoveAt(const CFX_ByteStringC& space,
   }
 }
 int CXML_AttrMap::GetSize() const {
-  return m_pMap == NULL ? 0 : m_pMap->GetSize();
+  return m_pMap ? m_pMap->GetSize() : 0;
 }
 CXML_AttrItem& CXML_AttrMap::GetAt(int index) const {
   return (*m_pMap)[index];

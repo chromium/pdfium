@@ -105,7 +105,7 @@ FX_WORD FPDFAPI_CIDFromCharCode(const FXCMAP_CMap* pMap, FX_DWORD charcode) {
   }
   FX_WORD code = (FX_WORD)charcode;
   while (1) {
-    if (pMap->m_pWordMap == NULL) {
+    if (!pMap->m_pWordMap) {
       return 0;
     }
     if (pMap->m_WordMapType == FXCMAP_CMap::Single) {

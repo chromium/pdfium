@@ -17,7 +17,7 @@ int32_t PDF_CreatorAppendObject(const CPDF_Object* pObj,
                                 CFX_FileBufferArchive* pFile,
                                 FX_FILESIZE& offset) {
   int32_t len = 0;
-  if (pObj == NULL) {
+  if (!pObj) {
     if (pFile->AppendString(" null") < 0) {
       return -1;
     }
@@ -416,7 +416,7 @@ FX_BOOL CPDF_Encryptor::Initialize(CPDF_CryptoHandler* pHandler,
   if (src_size == 0) {
     return TRUE;
   }
-  if (pHandler == NULL) {
+  if (!pHandler) {
     m_pData = (uint8_t*)src_data;
     m_dwSize = src_size;
     m_bNewBuf = FALSE;
@@ -1071,7 +1071,7 @@ int32_t CPDF_Creator::WriteDirectObj(FX_DWORD objnum,
                                      const CPDF_Object* pObj,
                                      FX_BOOL bEncrypt) {
   int32_t len = 0;
-  if (pObj == NULL) {
+  if (!pObj) {
     if (m_File.AppendString(" null") < 0) {
       return -1;
     }
@@ -1098,7 +1098,7 @@ int32_t CPDF_Creator::WriteDirectObj(FX_DWORD objnum,
     case PDFOBJ_STRING: {
       CFX_ByteString str = pObj->GetString();
       FX_BOOL bHex = pObj->AsString()->IsHex();
-      if (m_pCryptoHandler == NULL || !bEncrypt) {
+      if (!m_pCryptoHandler || !bEncrypt) {
         CFX_ByteString content = PDF_EncodeString(str, bHex);
         if ((len = m_File.AppendString(content)) < 0) {
           return -1;
@@ -1200,7 +1200,7 @@ int32_t CPDF_Creator::WriteDirectObj(FX_DWORD objnum,
       break;
     }
     case PDFOBJ_DICTIONARY: {
-      if (m_pCryptoHandler == NULL || pObj == m_pEncryptDict) {
+      if (!m_pCryptoHandler || pObj == m_pEncryptDict) {
         return PDF_CreatorAppendObject(pObj, &m_File, m_Offset);
       }
       if (m_File.AppendString("<<") < 0) {
@@ -1263,7 +1263,7 @@ int32_t CPDF_Creator::WriteOldIndirectObject(FX_DWORD objnum) {
   if (m_pParser->m_bVersionUpdated || m_bSecurityChanged || bExistInMap ||
       bObjStm) {
     CPDF_Object* pObj = m_pDocument->GetIndirectObject(objnum);
-    if (pObj == NULL) {
+    if (!pObj) {
       m_ObjectOffset[objnum] = 0;
       m_ObjectSize[objnum] = 0;
       return 0;
@@ -1278,7 +1278,7 @@ int32_t CPDF_Creator::WriteOldIndirectObject(FX_DWORD objnum) {
     uint8_t* pBuffer;
     FX_DWORD size;
     m_pParser->GetIndirectBinary(objnum, pBuffer, size);
-    if (pBuffer == NULL) {
+    if (!pBuffer) {
       return 0;
     }
     if (m_pParser->m_V5Type[objnum] == 2) {
@@ -1477,7 +1477,7 @@ void CPDF_Creator::AppendNewObjNum(FX_DWORD objbum) {
 int32_t CPDF_Creator::WriteDoc_Stage1(IFX_Pause* pPause) {
   FXSYS_assert(m_iStage > -1 || m_iStage < 20);
   if (m_iStage == 0) {
-    if (m_pParser == NULL) {
+    if (!m_pParser) {
       m_dwFlags &= ~FPDFCREATE_INCREMENTAL;
     }
     if (m_bSecurityChanged && (m_dwFlags & FPDFCREATE_NO_ORIGINAL) == 0) {

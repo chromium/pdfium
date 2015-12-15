@@ -814,7 +814,7 @@ CFX_Edit::~CFX_Edit() {
   m_pVTProvide = NULL;
   delete m_pIterator;
   m_pIterator = NULL;
-  ASSERT(m_pGroupUndoItem == NULL);
+  ASSERT(!m_pGroupUndoItem);
 }
 
 // public methods
@@ -3089,7 +3089,7 @@ int32_t CFX_Edit::GetCharSetFromUnicode(FX_WORD word, int32_t nOldCharset) {
 }
 
 void CFX_Edit::BeginGroupUndo(const CFX_WideString& sTitle) {
-  ASSERT(m_pGroupUndoItem == NULL);
+  ASSERT(!m_pGroupUndoItem);
 
   m_pGroupUndoItem = new CFX_Edit_GroupUndoItem(sTitle);
 }

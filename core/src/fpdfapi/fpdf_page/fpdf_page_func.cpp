@@ -207,7 +207,7 @@ FX_BOOL CPDF_PSProc::Parse(CPDF_SimpleParser& parser) {
         }
         i++;
       }
-      if (_PDF_PSOpNames[i].name == NULL) {
+      if (!_PDF_PSOpNames[i].name) {
         FX_FLOAT* pd = FX_Alloc(FX_FLOAT, 1);
         *pd = FX_atof(word);
         m_Operators.Add((void*)PSOP_CONST);
@@ -683,7 +683,7 @@ CPDF_ExpIntFunc::~CPDF_ExpIntFunc() {
 }
 FX_BOOL CPDF_ExpIntFunc::v_Init(CPDF_Object* pObj) {
   CPDF_Dictionary* pDict = pObj->GetDict();
-  if (pDict == NULL) {
+  if (!pDict) {
     return FALSE;
   }
   CPDF_Array* pArray0 = pDict->GetArray("C0");
@@ -813,7 +813,7 @@ FX_BOOL CPDF_StitchFunc::v_Call(FX_FLOAT* inputs, FX_FLOAT* outputs) const {
     if (input < m_pBounds[i + 1]) {
       break;
     }
-  if (m_pSubFunctions[i] == NULL) {
+  if (!m_pSubFunctions[i]) {
     return FALSE;
   }
   input = PDF_Interpolate(input, m_pBounds[i], m_pBounds[i + 1],
@@ -823,7 +823,7 @@ FX_BOOL CPDF_StitchFunc::v_Call(FX_FLOAT* inputs, FX_FLOAT* outputs) const {
   return TRUE;
 }
 CPDF_Function* CPDF_Function::Load(CPDF_Object* pFuncObj) {
-  if (pFuncObj == NULL) {
+  if (!pFuncObj) {
     return NULL;
   }
   CPDF_Function* pFunc = NULL;

@@ -56,7 +56,7 @@ CFX_WideString CPDF_Action::GetFilePath() const {
   }
   CPDF_Object* pFile = m_pDict->GetElementValue("F");
   CFX_WideString path;
-  if (pFile == NULL) {
+  if (!pFile) {
     if (type == "Launch") {
       CPDF_Dictionary* pWinDict = m_pDict->GetDict("Win");
       if (pWinDict) {
@@ -71,7 +71,7 @@ CFX_WideString CPDF_Action::GetFilePath() const {
 }
 CFX_ByteString CPDF_Action::GetURI(CPDF_Document* pDoc) const {
   CFX_ByteString csURI;
-  if (m_pDict == NULL) {
+  if (!m_pDict) {
     return csURI;
   }
   if (m_pDict->GetString("S") != "URI") {
@@ -88,11 +88,11 @@ CFX_ByteString CPDF_Action::GetURI(CPDF_Document* pDoc) const {
   return csURI;
 }
 FX_DWORD CPDF_ActionFields::GetFieldsCount() const {
-  if (m_pAction == NULL) {
+  if (!m_pAction) {
     return 0;
   }
   CPDF_Dictionary* pDict = m_pAction->GetDict();
-  if (pDict == NULL) {
+  if (!pDict) {
     return 0;
   }
   CFX_ByteString csType = pDict->GetString("S");
@@ -146,11 +146,11 @@ std::vector<CPDF_Object*> CPDF_ActionFields::GetAllFields() const {
 }
 
 CPDF_Object* CPDF_ActionFields::GetField(FX_DWORD iIndex) const {
-  if (m_pAction == NULL) {
+  if (!m_pAction) {
     return NULL;
   }
   CPDF_Dictionary* pDict = m_pAction->GetDict();
-  if (pDict == NULL) {
+  if (!pDict) {
     return NULL;
   }
   CFX_ByteString csType = pDict->GetString("S");
@@ -160,7 +160,7 @@ CPDF_Object* CPDF_ActionFields::GetField(FX_DWORD iIndex) const {
   } else {
     pFields = pDict->GetArray("Fields");
   }
-  if (pFields == NULL) {
+  if (!pFields) {
     return NULL;
   }
   CPDF_Object* pFindObj = NULL;
@@ -175,7 +175,7 @@ CPDF_Object* CPDF_ActionFields::GetField(FX_DWORD iIndex) const {
 
 CFX_WideString CPDF_Action::GetJavaScript() const {
   CFX_WideString csJS;
-  if (m_pDict == NULL) {
+  if (!m_pDict) {
     return csJS;
   }
   CPDF_Object* pJS = m_pDict->GetElementValue("JS");
@@ -195,7 +195,7 @@ CPDF_Dictionary* CPDF_Action::GetAnnot() const {
   return nullptr;
 }
 int32_t CPDF_Action::GetOperationType() const {
-  if (m_pDict == NULL) {
+  if (!m_pDict) {
     return 0;
   }
   CFX_ByteString csType = m_pDict->GetString("S");
@@ -233,7 +233,7 @@ FX_DWORD CPDF_Action::GetSubActionsCount() const {
   return 0;
 }
 CPDF_Action CPDF_Action::GetSubAction(FX_DWORD iIndex) const {
-  if (m_pDict == NULL || !m_pDict->KeyExist("Next")) {
+  if (!m_pDict || !m_pDict->KeyExist("Next")) {
     return CPDF_Action();
   }
   CPDF_Object* pNext = m_pDict->GetElementValue("Next");
@@ -249,10 +249,7 @@ const FX_CHAR* g_sAATypes[] = {"E",  "X",  "D",  "U",  "Fo", "Bl", "PO", "PC",
                                "PV", "PI", "O",  "C",  "K",  "F",  "V",  "C",
                                "WC", "WS", "DS", "WP", "DP", ""};
 FX_BOOL CPDF_AAction::ActionExist(AActionType eType) const {
-  if (m_pDict == NULL) {
-    return FALSE;
-  }
-  return m_pDict->KeyExist(g_sAATypes[(int)eType]);
+  return m_pDict && m_pDict->KeyExist(g_sAATypes[(int)eType]);
 }
 CPDF_Action CPDF_AAction::GetAction(AActionType eType) const {
   if (!m_pDict) {
@@ -261,14 +258,14 @@ CPDF_Action CPDF_AAction::GetAction(AActionType eType) const {
   return CPDF_Action(m_pDict->GetDict(g_sAATypes[(int)eType]));
 }
 FX_POSITION CPDF_AAction::GetStartPos() const {
-  if (m_pDict == NULL) {
+  if (!m_pDict) {
     return NULL;
   }
   return m_pDict->GetStartPos();
 }
 CPDF_Action CPDF_AAction::GetNextAction(FX_POSITION& pos,
                                         AActionType& eType) const {
-  if (m_pDict == NULL) {
+  if (!m_pDict) {
     return CPDF_Action();
   }
   CFX_ByteString csKey;

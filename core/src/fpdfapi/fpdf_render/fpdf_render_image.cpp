@@ -29,7 +29,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
                                           int bitmap_alpha,
                                           int blend_mode,
                                           int Transparency) {
-  if (pDIBitmap == NULL) {
+  if (!pDIBitmap) {
     return;
   }
   FX_BOOL bIsolated = Transparency & PDFTRANS_ISOLATED;
@@ -353,7 +353,7 @@ FX_BOOL CPDF_ImageRenderer::StartLoadDIBSource() {
   return FALSE;
 }
 FX_BOOL CPDF_ImageRenderer::StartRenderDIBSource() {
-  if (m_Loader.m_pBitmap == NULL) {
+  if (!m_Loader.m_pBitmap) {
     return FALSE;
   }
   m_BitmapAlpha = 255;
@@ -363,7 +363,7 @@ FX_BOOL CPDF_ImageRenderer::StartRenderDIBSource() {
   }
   m_pDIBSource = m_Loader.m_pBitmap;
   if (m_pRenderStatus->m_Options.m_ColorMode == RENDER_COLOR_ALPHA &&
-      m_Loader.m_pMask == NULL) {
+      !m_Loader.m_pMask) {
     return StartBitmapAlpha();
   }
   if (pGeneralState && pGeneralState->m_pTR) {
@@ -844,7 +844,7 @@ FX_BOOL CPDF_ImageRenderer::Continue(IFX_Pause* pPause) {
       return TRUE;
     }
     CFX_DIBitmap* pBitmap = m_pTransformer->m_Storer.Detach();
-    if (pBitmap == NULL) {
+    if (!pBitmap) {
       return FALSE;
     }
     if (pBitmap->IsAlphaMask()) {
@@ -934,11 +934,11 @@ FX_BOOL CPDF_QuickStretcher::Start(CPDF_ImageObject* pImageObj,
   m_pCS = NULL;
   m_Bpp = 3;
   CPDF_Object* pCSObj = pDict->GetElementValue("ColorSpace");
-  if (pCSObj == NULL) {
+  if (!pCSObj) {
     return FALSE;
   }
   m_pCS = CPDF_ColorSpace::Load(pImageObj->m_pImage->GetDocument(), pCSObj);
-  if (m_pCS == NULL) {
+  if (!m_pCS) {
     return FALSE;
   }
   if (!_IsSupported(m_pCS)) {
@@ -995,12 +995,12 @@ FX_BOOL CPDF_QuickStretcher::Continue(IFX_Pause* pPause) {
     const uint8_t* src_scan;
     if (m_pDecoder) {
       src_scan = m_pDecoder->GetScanline(src_y);
-      if (src_scan == NULL) {
+      if (!src_scan) {
         break;
       }
     } else {
       src_scan = m_StreamAcc.GetData();
-      if (src_scan == NULL) {
+      if (!src_scan) {
         break;
       }
       src_scan += src_y * src_pitch;
@@ -1011,7 +1011,7 @@ FX_BOOL CPDF_QuickStretcher::Continue(IFX_Pause* pPause) {
       int src_x = (m_bFlipX ? (m_DestWidth - dest_x - 1) : dest_x) * src_width /
                   m_DestWidth;
       const uint8_t* src_pixel = src_scan + src_x * m_Bpp;
-      if (m_pCS == NULL) {
+      if (!m_pCS) {
         *result_scan = src_pixel[2];
         result_scan++;
         *result_scan = src_pixel[1];
@@ -1040,7 +1040,7 @@ FX_BOOL CPDF_QuickStretcher::Continue(IFX_Pause* pPause) {
 CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
                                            FX_RECT* pClipRect,
                                            const CFX_Matrix* pMatrix) {
-  if (pSMaskDict == NULL) {
+  if (!pSMaskDict) {
     return NULL;
   }
   int width = pClipRect->right - pClipRect->left;
@@ -1048,7 +1048,7 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
   FX_BOOL bLuminosity = FALSE;
   bLuminosity = pSMaskDict->GetConstString("S") != "Alpha";
   CPDF_Stream* pGroup = pSMaskDict->GetStream("G");
-  if (pGroup == NULL) {
+  if (!pGroup) {
     return NULL;
   }
   nonstd::unique_ptr<CPDF_Function> pFunc;

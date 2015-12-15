@@ -686,12 +686,12 @@ void CGdiplusExt::Load() {
   strPlusPath += "\\";
   strPlusPath += "GDIPLUS.DLL";
   m_hModule = LoadLibraryA(strPlusPath);
-  if (m_hModule == NULL) {
+  if (!m_hModule) {
     return;
   }
   for (int i = 0; i < sizeof g_GdipFuncNames / sizeof(LPCSTR); i++) {
     m_Functions[i] = GetProcAddress(m_hModule, g_GdipFuncNames[i]);
-    if (m_Functions[i] == NULL) {
+    if (!m_Functions[i]) {
       m_hModule = NULL;
       return;
     }
@@ -701,7 +701,7 @@ void CGdiplusExt::Load() {
   ((FuncType_GdiplusStartup)m_Functions[FuncId_GdiplusStartup])(
       &gdiplusToken, &gdiplusStartupInput, NULL);
   m_GdiModule = LoadLibraryA("GDI32.DLL");
-  if (m_GdiModule == NULL) {
+  if (!m_GdiModule) {
     return;
   }
   m_pGdiAddFontMemResourceEx =
@@ -973,9 +973,9 @@ static GpPen* _GdipCreatePen(const CFX_GraphStateData* pGraphState,
   FX_FLOAT width = pGraphState ? pGraphState->m_LineWidth : 1.0f;
   if (!bTextMode) {
     FX_FLOAT unit =
-        pMatrix == NULL
-            ? 1.0f
-            : FXSYS_Div(1.0f, (pMatrix->GetXUnit() + pMatrix->GetYUnit()) / 2);
+        pMatrix
+            ? FXSYS_Div(1.0f, (pMatrix->GetXUnit() + pMatrix->GetYUnit()) / 2)
+            : 1.0f;
     if (width < unit) {
       width = unit;
     }
@@ -1198,7 +1198,7 @@ FX_BOOL CGdiplusExt::DrawPath(HDC hDC,
     }
   }
   int new_fill_mode = fill_mode & 3;
-  if (nPoints == 4 && pGraphState == NULL) {
+  if (nPoints == 4 && !pGraphState) {
     int v1, v2;
     if (IsSmallTriangle(points, pObject2Device, v1, v2)) {
       GpPen* pPen = NULL;
@@ -1380,7 +1380,7 @@ class GpStream final : public IStream {
     return S_OK;
   }
   virtual HRESULT STDMETHODCALLTYPE Stat(STATSTG* pStatstg, DWORD grfStatFlag) {
-    if (pStatstg == NULL) {
+    if (!pStatstg) {
       return STG_E_INVALIDFUNCTION;
     }
     ZeroMemory(pStatstg, sizeof(STATSTG));
@@ -1492,7 +1492,7 @@ CFX_DIBitmap* _FX_WindowsDIB_LoadFromBuf(BITMAPINFO* pbmi,
                                          FX_BOOL bAlpha);
 CFX_DIBitmap* CGdiplusExt::LoadDIBitmap(WINDIB_Open_Args_ args) {
   PREVIEW3_DIBITMAP* pInfo = ::LoadDIBitmap(args);
-  if (pInfo == NULL) {
+  if (!pInfo) {
     return NULL;
   }
   int height = abs(pInfo->pbmi->bmiHeader.biHeight);

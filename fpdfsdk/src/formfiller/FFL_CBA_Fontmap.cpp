@@ -122,7 +122,7 @@ CPDF_Font* CBA_FontMap::FindResFontSameCharset(CPDF_Dictionary* pResDict,
   ASSERT(pDocument != NULL);
 
   CPDF_Dictionary* pFonts = pResDict->GetDict("Font");
-  if (pFonts == NULL)
+  if (!pFonts)
     return NULL;
 
   CPDF_Font* pFind = NULL;
@@ -132,7 +132,7 @@ CPDF_Font* CBA_FontMap::FindResFontSameCharset(CPDF_Dictionary* pResDict,
     CPDF_Object* pObj = NULL;
     CFX_ByteString csKey;
     pObj = pFonts->GetNextElement(pos, csKey);
-    if (pObj == NULL)
+    if (!pObj)
       continue;
 
     CPDF_Dictionary* pElement = ToDictionary(pObj->GetDirect());
@@ -142,10 +142,10 @@ CPDF_Font* CBA_FontMap::FindResFontSameCharset(CPDF_Dictionary* pResDict,
       continue;
 
     CPDF_Font* pFont = pDocument->LoadFont(pElement);
-    if (pFont == NULL)
+    if (!pFont)
       continue;
     const CFX_SubstFont* pSubst = pFont->GetSubstFont();
-    if (pSubst == NULL)
+    if (!pSubst)
       continue;
     if (pSubst->m_Charset == nCharset) {
       sFontAlias = csKey;
@@ -170,7 +170,7 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
 
   CPDF_Dictionary* pAPDict = m_pAnnotDict->GetDict("AP");
 
-  if (pAPDict == NULL) {
+  if (!pAPDict) {
     pAPDict = new CPDF_Dictionary;
     m_pAnnotDict->SetAt("AP", pAPDict);
   }
@@ -181,7 +181,7 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
     return;
 
   CPDF_Stream* pStream = pAPDict->GetStream(m_sAPType);
-  if (pStream == NULL) {
+  if (!pStream) {
     pStream = new CPDF_Stream(NULL, 0, NULL);
     int32_t objnum = m_pDocument->AddIndirectObject(pStream);
     pAPDict->SetAtReference(m_sAPType, m_pDocument, objnum);

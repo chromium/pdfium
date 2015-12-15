@@ -423,7 +423,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
   }
   int stretch_width = m_StretchClip.Width();
   int stretch_height = m_StretchClip.Height();
-  if (m_Storer.GetBitmap() == NULL) {
+  if (!m_Storer.GetBitmap()) {
     return FALSE;
   }
   const uint8_t* stretch_buf = m_Storer.GetBitmap()->GetBuffer();
@@ -446,7 +446,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
                             (FX_FLOAT)(m_ResultTop));
   result2stretch.Concat(m_dest2stretch);
   result2stretch.TranslateI(-m_StretchClip.left, -m_StretchClip.top);
-  if (stretch_buf_mask == NULL && pTransformed->m_pAlphaMask) {
+  if (!stretch_buf_mask && pTransformed->m_pAlphaMask) {
     pTransformed->m_pAlphaMask->Clear(0xff000000);
   } else if (pTransformed->m_pAlphaMask) {
     int stretch_pitch_mask = m_Storer.GetBitmap()->m_pAlphaMask->GetPitch();

@@ -20,7 +20,7 @@ CPDF_Document::CPDF_Document() : CPDF_IndirectObjects(NULL) {
   m_pDocRender = CPDF_ModuleMgr::Get()->GetRenderModule()->CreateDocData(this);
 }
 void CPDF_Document::CreateNewDoc() {
-  ASSERT(m_pRootDict == NULL && m_pInfoDict == NULL);
+  ASSERT(!m_pRootDict && !m_pInfoDict);
   m_pRootDict = new CPDF_Dictionary;
   m_pRootDict->SetAtName("Type", "Catalog");
   int objnum = AddIndirectObject(m_pRootDict);
@@ -550,7 +550,7 @@ CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont,
                                      FX_BOOL bTranslateName) {
   CTFontRef font = (CTFontRef)pFont;
   CTFontDescriptorRef descriptor = CTFontCopyFontDescriptor(font);
-  if (descriptor == NULL) {
+  if (!descriptor) {
     return NULL;
   }
   CFX_ByteString basefont;
@@ -560,7 +560,7 @@ CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont,
   FXSYS_memset(bbox, 0, sizeof(int) * 4);
   CFArrayRef languages = (CFArrayRef)CTFontDescriptorCopyAttribute(
       descriptor, kCTFontLanguagesAttribute);
-  if (languages == NULL) {
+  if (!languages) {
     CFRelease(descriptor);
     return NULL;
   }
@@ -574,7 +574,7 @@ CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont,
   }
   CFRelease(descriptor);
   CFDictionaryRef traits = (CFDictionaryRef)CTFontCopyTraits(font);
-  if (traits == NULL) {
+  if (!traits) {
     CFRelease(languages);
     return NULL;
   }
@@ -825,7 +825,7 @@ static void _InsertWidthArray1(CFX_Font* pFont,
 }
 
 CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert) {
-  if (pFont == NULL) {
+  if (!pFont) {
     return NULL;
   }
   FX_BOOL bCJK = charset == FXFONT_CHINESEBIG5_CHARSET ||
@@ -1118,11 +1118,11 @@ CPDF_Font* CPDF_Document::AddStandardFont(const FX_CHAR* font,
 
 void CPDF_Document::DeletePage(int iPage) {
   CPDF_Dictionary* pRoot = GetRoot();
-  if (pRoot == NULL) {
+  if (!pRoot) {
     return;
   }
   CPDF_Dictionary* pPages = pRoot->GetDict("Pages");
-  if (pPages == NULL) {
+  if (!pPages) {
     return;
   }
   int nPages = pPages->GetInteger("Count");

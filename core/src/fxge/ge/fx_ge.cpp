@@ -41,7 +41,7 @@ void CFX_GEModule::Destroy() {
   g_pGEModule = NULL;
 }
 CFX_FontCache* CFX_GEModule::GetFontCache() {
-  if (m_pFontCache == NULL) {
+  if (!m_pFontCache) {
     m_pFontCache = new CFX_FontCache();
   }
   return m_pFontCache;

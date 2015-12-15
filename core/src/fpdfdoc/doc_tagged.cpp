@@ -35,7 +35,7 @@ CPDF_StructTree* CPDF_StructTree::LoadDoc(const CPDF_Document* pDoc) {
 CPDF_StructTreeImpl::CPDF_StructTreeImpl(const CPDF_Document* pDoc) {
   CPDF_Dictionary* pCatalog = pDoc->GetRoot();
   m_pTreeRoot = pCatalog->GetDict("StructTreeRoot");
-  if (m_pTreeRoot == NULL) {
+  if (!m_pTreeRoot) {
     return;
   }
   m_pRoleMap = m_pTreeRoot->GetDict("RoleMap");
@@ -95,7 +95,7 @@ void CPDF_StructTreeImpl::LoadPageTree(const CPDF_Dictionary* pPageDict) {
   }
   CFX_MapPtrToPtr element_map;
   CPDF_Dictionary* pParentTree = m_pTreeRoot->GetDict("ParentTree");
-  if (pParentTree == NULL) {
+  if (!pParentTree) {
     return;
   }
   CPDF_NumberTree parent_tree(pParentTree);
@@ -107,7 +107,7 @@ void CPDF_StructTreeImpl::LoadPageTree(const CPDF_Dictionary* pPageDict) {
 
     for (i = 0; i < pParentArray->GetCount(); i++) {
       CPDF_Dictionary* pParent = pParentArray->GetDict(i);
-      if (pParent == NULL) {
+      if (!pParent) {
         continue;
       }
       AddPageNode(pParent, element_map);
@@ -127,7 +127,7 @@ CPDF_StructElementImpl* CPDF_StructTreeImpl::AddPageNode(CPDF_Dictionary* pDict,
   pElement = new CPDF_StructElementImpl(this, NULL, pDict);
   map.SetAt(pDict, pElement);
   CPDF_Dictionary* pParent = pDict->GetDict("P");
-  if (pParent == NULL || pParent->GetString("Type") == "StructTreeRoot") {
+  if (!pParent || pParent->GetString("Type") == "StructTreeRoot") {
     if (!AddTopLevelNode(pDict, pElement)) {
       pElement->Release();
       map.RemoveKey(pDict);
@@ -294,7 +294,7 @@ void CPDF_StructElementImpl::LoadKid(FX_DWORD PageObjNum,
   } else {
     pKid->m_Type = CPDF_StructKid::Element;
     pKid->m_Element.m_pDict = pKidDict;
-    if (m_pTree->m_pPage == NULL) {
+    if (!m_pTree->m_pPage) {
       pKid->m_Element.m_pElement =
           new CPDF_StructElementImpl(m_pTree, this, pKidDict);
     } else {
@@ -339,7 +339,7 @@ CPDF_Object* CPDF_StructElementImpl::GetAttr(const CFX_ByteStringC& owner,
     if (pAttr) {
       return pAttr;
     }
-    if (m_pParent == NULL) {
+    if (!m_pParent) {
       return NULL;
     }
     return m_pParent->GetAttr(owner, name, TRUE, fLevel + 1);

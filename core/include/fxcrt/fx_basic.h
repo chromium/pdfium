@@ -884,7 +884,7 @@ class CFX_CountRef {
 
   void operator=(void* p) {
     FXSYS_assert(p == 0);
-    if (m_pObject == NULL) {
+    if (!m_pObject) {
       return;
     }
     m_pObject->m_RefCount--;
@@ -898,12 +898,12 @@ class CFX_CountRef {
 
   operator const ObjClass*() const { return m_pObject; }
 
-  FX_BOOL IsNull() const { return m_pObject == NULL; }
+  FX_BOOL IsNull() const { return !m_pObject; }
 
-  FX_BOOL NotNull() const { return m_pObject != NULL; }
+  FX_BOOL NotNull() const { return !IsNull(); }
 
   ObjClass* GetModify() {
-    if (m_pObject == NULL) {
+    if (!m_pObject) {
       m_pObject = new CountedObj;
       m_pObject->m_RefCount = 1;
     } else if (m_pObject->m_RefCount > 1) {
@@ -916,7 +916,7 @@ class CFX_CountRef {
   }
 
   void SetNull() {
-    if (m_pObject == NULL) {
+    if (!m_pObject) {
       return;
     }
     m_pObject->m_RefCount--;

@@ -689,7 +689,7 @@ CPDF_PageObjects::~CPDF_PageObjects() {
   }
 }
 void CPDF_PageObjects::ContinueParse(IFX_Pause* pPause) {
-  if (m_pParser == NULL) {
+  if (!m_pParser) {
     return;
   }
   m_pParser->Continue(pPause);
@@ -720,10 +720,7 @@ int CPDF_PageObjects::GetObjectIndex(CPDF_PageObject* pObj) const {
 }
 CPDF_PageObject* CPDF_PageObjects::GetObjectByIndex(int index) const {
   FX_POSITION pos = m_ObjectList.FindIndex(index);
-  if (pos == NULL) {
-    return NULL;
-  }
-  return (CPDF_PageObject*)m_ObjectList.GetAt(pos);
+  return pos ? static_cast<CPDF_PageObject*>(m_ObjectList.GetAt(pos)) : nullptr;
 }
 void CPDF_PageObjects::Transform(const CFX_Matrix& matrix) {
   FX_POSITION pos = m_ObjectList.GetHeadPosition();
@@ -758,11 +755,11 @@ CFX_FloatRect CPDF_PageObjects::CalcBoundingBox() const {
   return CFX_FloatRect(left, bottom, right, top);
 }
 void CPDF_PageObjects::LoadTransInfo() {
-  if (m_pFormDict == NULL) {
+  if (!m_pFormDict) {
     return;
   }
   CPDF_Dictionary* pGroup = m_pFormDict->GetDict("Group");
-  if (pGroup == NULL) {
+  if (!pGroup) {
     return;
   }
   if (pGroup->GetString("S") != "Transparency") {
@@ -800,7 +797,7 @@ void CPDF_Page::Load(CPDF_Document* pDocument,
     m_pPageRender =
         CPDF_ModuleMgr::Get()->GetRenderModule()->CreatePageCache(this);
   }
-  if (pPageDict == NULL) {
+  if (!pPageDict) {
     m_PageWidth = m_PageHeight = 100 * 1.0f;
     m_pPageResources = m_pResources = NULL;
     return;
@@ -912,10 +909,10 @@ CPDF_Form::CPDF_Form(CPDF_Document* pDoc,
   m_pFormDict = pFormStream ? pFormStream->GetDict() : NULL;
   m_pResources = m_pFormDict->GetDict("Resources");
   m_pPageResources = pPageResources;
-  if (m_pResources == NULL) {
+  if (!m_pResources) {
     m_pResources = pParentResources;
   }
-  if (m_pResources == NULL) {
+  if (!m_pResources) {
     m_pResources = pPageResources;
   }
   m_Transparency = 0;

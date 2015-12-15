@@ -582,7 +582,7 @@ FX_POSITION CPDF_Dictionary::GetStartPos() const {
 }
 CPDF_Object* CPDF_Dictionary::GetNextElement(FX_POSITION& pos,
                                              CFX_ByteString& key) const {
-  if (pos == NULL) {
+  if (!pos) {
     return NULL;
   }
   CPDF_Object* p;
@@ -736,7 +736,7 @@ void CPDF_Dictionary::RemoveAt(const CFX_ByteStringC& key) {
   ASSERT(m_Type == PDFOBJ_DICTIONARY);
   CPDF_Object* p = NULL;
   m_Map.Lookup(key, (void*&)p);
-  if (p == NULL) {
+  if (!p) {
     return;
   }
   p->Release();
@@ -747,14 +747,14 @@ void CPDF_Dictionary::ReplaceKey(const CFX_ByteStringC& oldkey,
   ASSERT(m_Type == PDFOBJ_DICTIONARY);
   CPDF_Object* p = NULL;
   m_Map.Lookup(oldkey, (void*&)p);
-  if (p == NULL) {
+  if (!p) {
     return;
   }
   m_Map.RemoveKey(oldkey);
   m_Map.SetAt(newkey, p);
 }
 FX_BOOL CPDF_Dictionary::Identical(CPDF_Dictionary* pOther) const {
-  if (pOther == NULL) {
+  if (!pOther) {
     return FALSE;
   }
   if (m_Map.GetCount() != pOther->m_Map.GetCount()) {

@@ -130,7 +130,7 @@ FX_BOOL CFX_RenderDevice::DrawPath(const CFX_PathData* pPathData,
   if ((fill_mode & 3) == 0) {
     fill_alpha = 0;
   }
-  if (pGraphState == NULL) {
+  if (!pGraphState) {
     stroke_alpha = 0;
   }
   if (stroke_alpha == 0 && pPathData->GetPointCount() == 2) {

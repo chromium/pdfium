@@ -258,7 +258,7 @@ void CPDF_RenderStatus::RenderObjectList(const CPDF_PageObjects* pObjs,
     if (!pCurObj) {
       continue;
     }
-    if (pCurObj == NULL || pCurObj->m_Left > clip_rect.right ||
+    if (!pCurObj || pCurObj->m_Left > clip_rect.right ||
         pCurObj->m_Right < clip_rect.left ||
         pCurObj->m_Bottom > clip_rect.top ||
         pCurObj->m_Top < clip_rect.bottom) {
@@ -358,7 +358,7 @@ FX_BOOL CPDF_RenderStatus::GetObjectClippedRect(const CPDF_PageObject* pObj,
 void CPDF_RenderStatus::DitherObjectArea(const CPDF_PageObject* pObj,
                                          const CFX_Matrix* pObj2Device) {
   CFX_DIBitmap* pBitmap = m_pDevice->GetBitmap();
-  if (pBitmap == NULL) {
+  if (!pBitmap) {
     return;
   }
   FX_RECT rect;
@@ -684,7 +684,7 @@ void CPDF_RenderStatus::DrawClipPath(CPDF_ClipPath ClipPath,
   int i;
   for (i = 0; i < nClipPath; i++) {
     const CFX_PathData* pPathData = ClipPath.GetPath(i);
-    if (pPathData == NULL) {
+    if (!pPathData) {
       continue;
     }
     CFX_GraphStateData stroke_state;
@@ -780,8 +780,8 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
       pDocument->GetPageData()->ReleaseColorSpace(pCSObj);
     }
   }
-  if (pSMaskDict == NULL && group_alpha == 1.0f &&
-      blend_type == FXDIB_BLEND_NORMAL && !bTextClip && !bGroupTransparent) {
+  if (!pSMaskDict && group_alpha == 1.0f && blend_type == FXDIB_BLEND_NORMAL &&
+      !bTextClip && !bGroupTransparent) {
     return FALSE;
   }
   FX_BOOL isolated = Transparency & PDFTRANS_ISOLATED;
@@ -838,7 +838,7 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
     text_device.Attach(pTextMask.get());
     for (FX_DWORD i = 0; i < pPageObj->m_ClipPath.GetTextCount(); i++) {
       CPDF_TextObject* textobj = pPageObj->m_ClipPath.GetText(i);
-      if (textobj == NULL) {
+      if (!textobj) {
         break;
       }
       CFX_Matrix text_matrix;
@@ -1079,7 +1079,7 @@ void CPDF_ProgressiveRenderer::Continue(IFX_Pause* pPause) {
   for (; m_LayerIndex < nLayers; m_LayerIndex++) {
     _PDF_RenderItem* pItem = m_pContext->m_ContentList.GetDataPtr(m_LayerIndex);
     FX_POSITION LastPos = pItem->m_pObjectList->GetLastObjectPosition();
-    if (m_ObjectPos == NULL) {
+    if (!m_ObjectPos) {
       if (LastPos == m_PrevLastPos) {
         if (!pItem->m_pObjectList->IsParsed()) {
           pItem->m_pObjectList->ContinueParse(pPause);
