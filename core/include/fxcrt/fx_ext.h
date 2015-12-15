@@ -93,7 +93,7 @@ template <class baseType>
 class CFX_SSortTemplate {
  public:
   void ShellSort(baseType* pArray, int32_t iCount) {
-    FXSYS_assert(pArray != NULL && iCount > 0);
+    FXSYS_assert(pArray && iCount > 0);
     int32_t i, j, gap;
     baseType v1, v2;
     gap = iCount >> 1;

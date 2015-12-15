@@ -434,7 +434,7 @@ void CPDF_RenderStatus::DrawObjWithBackground(const CPDF_PageObject* pObj,
     res = 0;
   }
   CPDF_ScaledRenderBuffer buffer;
-  if (!buffer.Initialize(m_pContext, m_pDevice, &rect, pObj, &m_Options, res)) {
+  if (!buffer.Initialize(m_pContext, m_pDevice, rect, pObj, &m_Options, res)) {
     return;
   }
   CFX_Matrix matrix = *pObj2Device;
@@ -537,12 +537,9 @@ FX_BOOL CPDF_RenderStatus::ProcessPath(CPDF_PathObject* pPathObj,
                              m_curBlend);
 }
 CPDF_TransferFunc* CPDF_RenderStatus::GetTransferFunc(CPDF_Object* pObj) const {
-  ASSERT(pObj != NULL);
+  ASSERT(pObj);
   CPDF_DocRenderData* pDocCache = m_pContext->m_pDocument->GetRenderData();
-  if (!pDocCache) {
-    return NULL;
-  }
-  return pDocCache->GetTransferFunc(pObj);
+  return pDocCache ? pDocCache->GetTransferFunc(pObj) : nullptr;
 }
 FX_ARGB CPDF_RenderStatus::GetFillArgb(const CPDF_PageObject* pObj,
                                        FX_BOOL bType3) const {
@@ -1343,19 +1340,18 @@ CPDF_ScaledRenderBuffer::~CPDF_ScaledRenderBuffer() {}
 #define _FPDFAPI_IMAGESIZE_LIMIT_ (30 * 1024 * 1024)
 FX_BOOL CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext,
                                             CFX_RenderDevice* pDevice,
-                                            FX_RECT* pRect,
+                                            const FX_RECT& pRect,
                                             const CPDF_PageObject* pObj,
                                             const CPDF_RenderOptions* pOptions,
                                             int max_dpi) {
-  FXSYS_assert(pRect != NULL);
   m_pDevice = pDevice;
   if (m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_GET_BITS) {
     return TRUE;
   }
   m_pContext = pContext;
-  m_Rect = *pRect;
+  m_Rect = pRect;
   m_pObject = pObj;
-  m_Matrix.TranslateI(-pRect->left, -pRect->top);
+  m_Matrix.TranslateI(-pRect.left, -pRect.top);
   int horz_size = pDevice->GetDeviceCaps(FXDC_HORZ_SIZE);
   int vert_size = pDevice->GetDeviceCaps(FXDC_VERT_SIZE);
   if (horz_size && vert_size && max_dpi) {
@@ -1380,7 +1376,7 @@ FX_BOOL CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext,
   CFX_FloatRect rect;
   int32_t iWidth, iHeight, iPitch;
   while (1) {
-    rect = *pRect;
+    rect = pRect;
     m_Matrix.TransformRect(rect);
     FX_RECT bitmap_rect = rect.GetOutterRect();
     iWidth = bitmap_rect.Width();

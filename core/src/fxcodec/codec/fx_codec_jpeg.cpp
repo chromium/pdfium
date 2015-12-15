@@ -297,10 +297,10 @@ static FX_BOOL _JpegLoadInfo(const uint8_t* src_buf,
   color_transform =
       cinfo.jpeg_color_space == JCS_YCbCr || cinfo.jpeg_color_space == JCS_YCCK;
   bits_per_components = cinfo.data_precision;
-  if (icc_buf_ptr != NULL) {
+  if (icc_buf_ptr) {
     *icc_buf_ptr = NULL;
   }
-  if (icc_length != NULL) {
+  if (icc_length) {
     *icc_length = 0;
   }
   jpeg_destroy_decompress(&cinfo);
@@ -546,7 +546,7 @@ FX_BOOL CCodec_JpegModule::Encode(const CFX_DIBSource* pSource,
                                   int quality,
                                   const uint8_t* icc_buf,
                                   FX_DWORD icc_length) {
-  if (pSource->GetBPP() < 8 || pSource->GetPalette() != NULL) {
+  if (pSource->GetBPP() < 8 || pSource->GetPalette()) {
     ASSERT(pSource->GetBPP() >= 8 && pSource->GetPalette() == NULL);
     return FALSE;
   }
@@ -682,7 +682,7 @@ FX_BOOL CCodec_JpegModule::ReadScanline(void* pContext,
 }
 FX_DWORD CCodec_JpegModule::GetAvailInput(void* pContext,
                                           uint8_t** avail_buf_ptr) {
-  if (avail_buf_ptr != NULL) {
+  if (avail_buf_ptr) {
     *avail_buf_ptr = NULL;
     if (((FXJPEG_Context*)pContext)->m_SrcMgr.bytes_in_buffer > 0) {
       *avail_buf_ptr =

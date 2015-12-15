@@ -1295,7 +1295,7 @@ class GpStream final : public IStream {
                                          ULONG* pcbRead) {
     size_t bytes_left;
     size_t bytes_out;
-    if (pcbRead != NULL) {
+    if (pcbRead) {
       *pcbRead = 0;
     }
     if (m_ReadPos == m_InterStream.GetLength()) {
@@ -1305,7 +1305,7 @@ class GpStream final : public IStream {
     bytes_out = FX_MIN(cb, bytes_left);
     FXSYS_memcpy(Output, m_InterStream.GetBuffer() + m_ReadPos, bytes_out);
     m_ReadPos += (int32_t)bytes_out;
-    if (pcbRead != NULL) {
+    if (pcbRead) {
       *pcbRead = (ULONG)bytes_out;
     }
     return S_OK;
@@ -1314,13 +1314,13 @@ class GpStream final : public IStream {
                                           ULONG cb,
                                           ULONG* pcbWritten) {
     if (cb <= 0) {
-      if (pcbWritten != NULL) {
+      if (pcbWritten) {
         *pcbWritten = 0;
       }
       return S_OK;
     }
     m_InterStream.InsertBlock(m_InterStream.GetLength(), Input, cb);
-    if (pcbWritten != NULL) {
+    if (pcbWritten) {
       *pcbWritten = cb;
     }
     return S_OK;
@@ -1374,7 +1374,7 @@ class GpStream final : public IStream {
       return STG_E_SEEKERROR;
     }
     m_ReadPos = new_read_position;
-    if (lpNewFilePointer != NULL) {
+    if (lpNewFilePointer) {
       lpNewFilePointer->QuadPart = m_ReadPos;
     }
     return S_OK;

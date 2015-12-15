@@ -17,8 +17,6 @@ CFX_ListItem::CFX_ListItem()
       m_bCaret(FALSE),
       m_rcListItem(0.0f, 0.0f, 0.0f, 0.0f) {
   m_pEdit = IFX_Edit::NewEdit();
-  ASSERT(m_pEdit != NULL);
-
   m_pEdit->SetAlignmentV(1);
   m_pEdit->Initialize();
 }

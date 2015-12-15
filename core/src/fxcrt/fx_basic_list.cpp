@@ -17,7 +17,7 @@ CFX_PtrList::CFX_PtrList(int nBlockSize)
 FX_POSITION CFX_PtrList::AddTail(void* newElement) {
   CNode* pNewNode = NewNode(m_pNodeTail, NULL);
   pNewNode->data = newElement;
-  if (m_pNodeTail != NULL) {
+  if (m_pNodeTail) {
     m_pNodeTail->pNext = pNewNode;
   } else {
     m_pNodeHead = pNewNode;
@@ -28,7 +28,7 @@ FX_POSITION CFX_PtrList::AddTail(void* newElement) {
 FX_POSITION CFX_PtrList::AddHead(void* newElement) {
   CNode* pNewNode = NewNode(NULL, m_pNodeHead);
   pNewNode->data = newElement;
-  if (m_pNodeHead != NULL) {
+  if (m_pNodeHead) {
     m_pNodeHead->pPrev = pNewNode;
   } else {
     m_pNodeTail = pNewNode;
@@ -43,7 +43,7 @@ FX_POSITION CFX_PtrList::InsertAfter(FX_POSITION position, void* newElement) {
   CNode* pOldNode = (CNode*)position;
   CNode* pNewNode = NewNode(pOldNode, pOldNode->pNext);
   pNewNode->data = newElement;
-  if (pOldNode->pNext != NULL) {
+  if (pOldNode->pNext) {
     pOldNode->pNext->pPrev = pNewNode;
   } else {
     m_pNodeTail = pNewNode;
@@ -91,7 +91,6 @@ CFX_PtrList::CNode* CFX_PtrList::NewNode(CFX_PtrList::CNode* pPrev,
       m_pNodeFree = pNode;
     }
   }
-  ASSERT(m_pNodeFree != NULL);
   CFX_PtrList::CNode* pNode = m_pNodeFree;
   m_pNodeFree = m_pNodeFree->pNext;
   pNode->pPrev = pPrev;
@@ -122,9 +121,9 @@ FX_POSITION CFX_PtrList::Find(void* searchValue, FX_POSITION startAfter) const {
   } else {
     pNode = pNode->pNext;
   }
-  for (; pNode != NULL; pNode = pNode->pNext)
-    if (pNode->data == searchValue) {
+  for (; pNode; pNode = pNode->pNext) {
+    if (pNode->data == searchValue)
       return (FX_POSITION)pNode;
-    }
+  }
   return NULL;
 }

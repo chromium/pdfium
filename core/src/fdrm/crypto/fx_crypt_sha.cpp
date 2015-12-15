@@ -369,7 +369,7 @@ typedef struct {
   uint8_t buffer[128];
 } sha384_context;
 uint64_t FX_ato64i(const FX_CHAR* str) {
-  FXSYS_assert(str != NULL);
+  FXSYS_assert(str);
   uint64_t ret = 0;
   int len = (int)FXSYS_strlen(str);
   len = len > 16 ? 16 : len;

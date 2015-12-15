@@ -22,11 +22,7 @@
 
 static v8::Isolate* GetIsolate(IJS_Context* cc) {
   CJS_Context* pContext = (CJS_Context*)cc;
-  ASSERT(pContext != NULL);
-
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  ASSERT(pRuntime != NULL);
-
   return pRuntime->GetIsolate();
 }
 
@@ -194,8 +190,6 @@ FX_BOOL Document::numFields(IJS_Context* cc,
 FX_BOOL Document::dirty(IJS_Context* cc,
                         CJS_PropValue& vp,
                         CFX_WideString& sError) {
-  ASSERT(m_pDocument != NULL);
-
   if (vp.IsGetting()) {
     if (m_pDocument->GetChangeMark())
       vp << true;
@@ -218,8 +212,6 @@ FX_BOOL Document::dirty(IJS_Context* cc,
 FX_BOOL Document::ADBE(IJS_Context* cc,
                        CJS_PropValue& vp,
                        CFX_WideString& sError) {
-  ASSERT(m_pDocument != NULL);
-
   if (vp.IsGetting()) {
     vp.SetNull();
   } else {
@@ -231,8 +223,6 @@ FX_BOOL Document::ADBE(IJS_Context* cc,
 FX_BOOL Document::pageNum(IJS_Context* cc,
                           CJS_PropValue& vp,
                           CFX_WideString& sError) {
-  ASSERT(m_pDocument != NULL);
-
   if (vp.IsGetting()) {
     if (CPDFSDK_PageView* pPageView = m_pDocument->GetCurrentView()) {
       vp << pPageView->GetPageIndex();
@@ -394,8 +384,6 @@ FX_BOOL Document::mailForm(IJS_Context* cc,
                            const std::vector<CJS_Value>& params,
                            CJS_Value& vRet,
                            CFX_WideString& sError) {
-  ASSERT(m_pDocument != NULL);
-
   if (!m_pDocument->GetPermissions(FPDFPERM_EXTRACT_ACCESS))
     return FALSE;
 
@@ -410,18 +398,13 @@ FX_BOOL Document::mailForm(IJS_Context* cc,
 
   CPDFSDK_InterForm* pInterForm =
       (CPDFSDK_InterForm*)m_pDocument->GetInterForm();
-  ASSERT(pInterForm != NULL);
-
   CFX_ByteTextBuf textBuf;
   if (!pInterForm->ExportFormToFDFTextBuf(textBuf))
     return FALSE;
 
   CJS_Context* pContext = (CJS_Context*)cc;
-  ASSERT(pContext != NULL);
   CPDFDoc_Environment* pEnv = pContext->GetReaderApp();
-  ASSERT(pEnv != NULL);
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  ASSERT(pRuntime != NULL);
 
   pRuntime->BeginBlock();
   pEnv->JS_docmailForm(textBuf.GetBuffer(), textBuf.GetLength(), bUI,
@@ -485,8 +468,6 @@ FX_BOOL Document::print(IJS_Context* cc,
       bAnnotations = params[7].ToBool();
   }
 
-  ASSERT(m_pDocument != NULL);
-
   if (CPDFDoc_Environment* pEnv = m_pDocument->GetEnv()) {
     pEnv->JS_docprint(bUI, nStart, nEnd, bSilent, bShrinkToFit, bPrintAsImage,
                       bReverse, bAnnotations);
@@ -503,8 +484,6 @@ FX_BOOL Document::removeField(IJS_Context* cc,
                               const std::vector<CJS_Value>& params,
                               CJS_Value& vRet,
                               CFX_WideString& sError) {
-  ASSERT(m_pDocument != NULL);
-
   if (!(m_pDocument->GetPermissions(FPDFPERM_MODIFY) ||
         m_pDocument->GetPermissions(FPDFPERM_ANNOT_FORM)))
     return FALSE;
@@ -518,7 +497,6 @@ FX_BOOL Document::removeField(IJS_Context* cc,
   CFX_WideString sFieldName = params[0].ToCFXWideString();
   CPDFSDK_InterForm* pInterForm =
       (CPDFSDK_InterForm*)m_pDocument->GetInterForm();
-  ASSERT(pInterForm != NULL);
 
   std::vector<CPDFSDK_Widget*> widgets;
   pInterForm->GetWidgets(sFieldName, &widgets);
@@ -1100,11 +1078,8 @@ FX_BOOL Document::baseURL(IJS_Context* cc,
 FX_BOOL Document::calculate(IJS_Context* cc,
                             CJS_PropValue& vp,
                             CFX_WideString& sError) {
-  ASSERT(m_pDocument != NULL);
-
   CPDFSDK_InterForm* pInterForm =
       (CPDFSDK_InterForm*)m_pDocument->GetInterForm();
-  ASSERT(pInterForm != NULL);
 
   if (vp.IsGetting()) {
     if (pInterForm->IsCalculateEnabled())
@@ -1220,7 +1195,6 @@ FX_BOOL Document::closeDoc(IJS_Context* cc,
                            const std::vector<CJS_Value>& params,
                            CJS_Value& vRet,
                            CFX_WideString& sError) {
-  ASSERT(m_pDocument != NULL);
   return TRUE;
 }
 
@@ -1479,8 +1453,6 @@ FX_BOOL Document::calculateNow(IJS_Context* cc,
                                const std::vector<CJS_Value>& params,
                                CJS_Value& vRet,
                                CFX_WideString& sError) {
-  ASSERT(m_pDocument != NULL);
-
   if (!(m_pDocument->GetPermissions(FPDFPERM_MODIFY) ||
         m_pDocument->GetPermissions(FPDFPERM_ANNOT_FORM) ||
         m_pDocument->GetPermissions(FPDFPERM_FILL_FORM)))
@@ -1488,7 +1460,6 @@ FX_BOOL Document::calculateNow(IJS_Context* cc,
 
   CPDFSDK_InterForm* pInterForm =
       (CPDFSDK_InterForm*)m_pDocument->GetInterForm();
-  ASSERT(pInterForm != NULL);
   pInterForm->OnCalculate();
   return TRUE;
 }
@@ -1503,8 +1474,6 @@ FX_BOOL Document::getPageNthWord(IJS_Context* cc,
                                  const std::vector<CJS_Value>& params,
                                  CJS_Value& vRet,
                                  CFX_WideString& sError) {
-  ASSERT(m_pDocument != NULL);
-
   if (!m_pDocument->GetPermissions(FPDFPERM_EXTRACT_ACCESS))
     return FALSE;
 
@@ -1565,8 +1534,6 @@ FX_BOOL Document::getPageNthWordQuads(IJS_Context* cc,
                                       const std::vector<CJS_Value>& params,
                                       CJS_Value& vRet,
                                       CFX_WideString& sError) {
-  ASSERT(m_pDocument != NULL);
-
   if (!m_pDocument->GetPermissions(FPDFPERM_EXTRACT_ACCESS))
     return FALSE;
 
@@ -1577,16 +1544,12 @@ FX_BOOL Document::getPageNumWords(IJS_Context* cc,
                                   const std::vector<CJS_Value>& params,
                                   CJS_Value& vRet,
                                   CFX_WideString& sError) {
-  ASSERT(m_pDocument != NULL);
-
   if (!m_pDocument->GetPermissions(FPDFPERM_EXTRACT_ACCESS))
     return FALSE;
 
   int nPageNo = params.size() > 0 ? params[0].ToInt() : 0;
 
   CPDF_Document* pDocument = m_pDocument->GetPDFDocument();
-  ASSERT(pDocument != NULL);
-
   CJS_Context* pContext = static_cast<CJS_Context*>(cc);
   if (nPageNo < 0 || nPageNo >= pDocument->GetPageCount()) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSVALUEERROR);
@@ -1673,8 +1636,6 @@ int Document::CountWords(CPDF_TextObject* pTextObj) {
 
 CFX_WideString Document::GetObjWordStr(CPDF_TextObject* pTextObj,
                                        int nWordIndex) {
-  ASSERT(pTextObj != NULL);
-
   CFX_WideString swRet;
 
   CPDF_Font* pFont = pTextObj->GetFont();

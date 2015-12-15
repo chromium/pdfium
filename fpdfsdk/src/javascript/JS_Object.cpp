@@ -86,8 +86,6 @@ int CJS_Object::MsgBox(CPDFDoc_Environment* pApp,
 }
 
 void CJS_Object::Alert(CJS_Context* pContext, const FX_WCHAR* swMsg) {
-  ASSERT(pContext != NULL);
-
   if (pContext->IsMsgBoxEnabled()) {
     CPDFDoc_Environment* pApp = pContext->GetReaderApp();
     if (pApp)

@@ -20,10 +20,7 @@ CPWL_Wnd* CFFL_CheckBox::NewPDFWindow(const PWL_CREATEPARAM& cp,
                                       CPDFSDK_PageView* pPageView) {
   CPWL_CheckBox* pWnd = new CPWL_CheckBox();
   pWnd->Create(cp);
-
-  ASSERT(m_pWidget != NULL);
   pWnd->SetCheck(m_pWidget->IsChecked());
-
   return pWnd;
 }
 
@@ -45,10 +42,10 @@ FX_BOOL CFFL_CheckBox::OnChar(CPDFSDK_Annot* pAnnot,
     case FWL_VKEY_Return:
     case FWL_VKEY_Space: {
       CFFL_IFormFiller* pIFormFiller = m_pApp->GetIFormFiller();
-      ASSERT(pIFormFiller != NULL);
+      ASSERT(pIFormFiller);
 
       CPDFSDK_PageView* pPageView = pAnnot->GetPageView();
-      ASSERT(pPageView != NULL);
+      ASSERT(pPageView);
 
       FX_BOOL bReset = FALSE;
       FX_BOOL bExit = FALSE;
@@ -94,18 +91,11 @@ FX_BOOL CFFL_CheckBox::OnLButtonUp(CPDFSDK_PageView* pPageView,
 }
 
 FX_BOOL CFFL_CheckBox::IsDataChanged(CPDFSDK_PageView* pPageView) {
-  ASSERT(m_pWidget != NULL);
-
-  if (CPWL_CheckBox* pWnd = (CPWL_CheckBox*)GetPDFWindow(pPageView, FALSE)) {
-    return pWnd->IsChecked() != m_pWidget->IsChecked();
-  }
-
-  return FALSE;
+  CPWL_CheckBox* pWnd = (CPWL_CheckBox*)GetPDFWindow(pPageView, FALSE);
+  return pWnd && pWnd->IsChecked() != m_pWidget->IsChecked();
 }
 
 void CFFL_CheckBox::SaveData(CPDFSDK_PageView* pPageView) {
-  ASSERT(m_pWidget != NULL);
-
   if (CPWL_CheckBox* pWnd = (CPWL_CheckBox*)GetPDFWindow(pPageView, FALSE)) {
     FX_BOOL bNewChecked = pWnd->IsChecked();
 

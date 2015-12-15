@@ -49,7 +49,7 @@ FX_BOOL CGdiPrinterDriver::SetDIBits(const CFX_DIBSource* pSource,
                          pSource->GetHeight(), &clip_rect, 0, alpha_flag,
                          pIccTransform, FXDIB_BLEND_NORMAL);
   }
-  ASSERT(pSource != NULL && !pSource->IsAlphaMask() && pSrcRect != NULL);
+  ASSERT(pSource && !pSource->IsAlphaMask() && pSrcRect);
   ASSERT(blend_type == FXDIB_BLEND_NORMAL);
   if (pSource->HasAlpha()) {
     return FALSE;

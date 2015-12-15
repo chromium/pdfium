@@ -27,7 +27,7 @@ CPWL_EditCtrl::CPWL_EditCtrl()
       m_nCharSet(DEFAULT_CHARSET),
       m_nCodePage(0) {
   m_pEdit = IFX_Edit::NewEdit();
-  ASSERT(m_pEdit != NULL);
+  ASSERT(m_pEdit);
 }
 
 CPWL_EditCtrl::~CPWL_EditCtrl() {

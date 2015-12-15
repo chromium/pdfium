@@ -259,7 +259,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap,
       delete pMaskBitmap;
     }
   }
-  FX_BOOL bStream = pFileWrite != NULL && pFileRead != NULL;
+  FX_BOOL bStream = pFileWrite && pFileRead;
   if (opType == 0) {
     if (iCompress & PDF_IMAGE_LOSSLESS_COMPRESS) {
       if (pBitmap->GetBPP() == 1) {
@@ -270,7 +270,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap,
       if (pBitmap->GetBPP() == 1) {
         _JBIG2EncodeBitmap(pDict, pBitmap, m_pDocument, dest_buf, dest_size,
                            FALSE);
-      } else if (pBitmap->GetBPP() >= 8 && pBitmap->GetPalette() != NULL) {
+      } else if (pBitmap->GetBPP() >= 8 && pBitmap->GetPalette()) {
         CFX_DIBitmap* pNewBitmap = new CFX_DIBitmap();
         pNewBitmap->Copy(pBitmap);
         pNewBitmap->ConvertFormat(FXDIB_Rgb);

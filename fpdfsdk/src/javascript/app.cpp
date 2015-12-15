@@ -129,7 +129,7 @@ FX_BOOL app::activeDocs(IJS_Context* cc,
           pRuntime->GetIsolate(), pRuntime, CJS_Document::g_nObjDefnID);
       pJSDocument =
           (CJS_Document*)FXJS_GetPrivate(pRuntime->GetIsolate(), pObj);
-      ASSERT(pJSDocument != NULL);
+      ASSERT(pJSDocument);
     }
     aDocs.SetElement(0, CJS_Value(pRuntime, pJSDocument));
   }
@@ -450,9 +450,7 @@ FX_BOOL app::setTimeOut(IJS_Context* cc,
   }
 
   CJS_Context* pContext = (CJS_Context*)cc;
-  ASSERT(pContext != NULL);
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  ASSERT(pRuntime != NULL);
 
   CFX_WideString script = params.size() > 0 ? params[0].ToCFXWideString() : L"";
   if (script.IsEmpty()) {
@@ -561,8 +559,6 @@ FX_BOOL app::execMenuItem(IJS_Context* cc,
 }
 
 void app::TimerProc(CJS_Timer* pTimer) {
-  ASSERT(pTimer != NULL);
-
   CJS_Runtime* pRuntime = pTimer->GetRuntime();
 
   switch (pTimer->GetType()) {
@@ -804,10 +800,7 @@ FX_BOOL app::response(IJS_Context* cc,
   }
 
   CJS_Context* pContext = (CJS_Context*)cc;
-  ASSERT(pContext != NULL);
-
   CPDFDoc_Environment* pApp = pContext->GetReaderApp();
-  ASSERT(pApp != NULL);
 
   const int MAX_INPUT_BYTES = 2048;
   nonstd::unique_ptr<char[]> pBuff(new char[MAX_INPUT_BYTES + 2]);

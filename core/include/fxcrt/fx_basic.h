@@ -1176,7 +1176,7 @@ class CFX_ListArrayTemplate {
 
   T2& operator[](int32_t nIndex) {
     uint8_t* data = m_Data.GetAt(nIndex);
-    FXSYS_assert(data != NULL);
+    FXSYS_assert(data);
     return (T2&)(*(volatile T2*)data);
   }
 

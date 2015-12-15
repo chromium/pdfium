@@ -123,7 +123,7 @@ CFX_ByteString CPVT_FontMap::GetPDFFontAlias(int32_t nFontIndex) {
   return "";
 }
 CPVT_Provider::CPVT_Provider(IPVT_FontMap* pFontMap) : m_pFontMap(pFontMap) {
-  ASSERT(m_pFontMap != NULL);
+  ASSERT(m_pFontMap);
 }
 CPVT_Provider::~CPVT_Provider() {}
 int32_t CPVT_Provider::GetCharWidth(int32_t nFontIndex,

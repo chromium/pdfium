@@ -844,7 +844,6 @@ FX_BOOL CFX_DIBitmap::MultiplyAlpha(const CFX_DIBSource* pSrcBitmap) {
   if (pSrcBitmap->GetWidth() != m_Width ||
       pSrcBitmap->GetHeight() != m_Height) {
     pSrcClone = pSrcBitmap->StretchTo(m_Width, m_Height);
-    ASSERT(pSrcClone != NULL);
     if (pSrcClone == NULL) {
       return FALSE;
     }
@@ -1340,7 +1339,7 @@ FX_BOOL CFX_DIBitmap::DitherFS(const FX_DWORD* pPalette,
   if (m_pBuffer == NULL) {
     return FALSE;
   }
-  if (m_bpp != 8 && m_pPalette != NULL && m_AlphaFlag != 0) {
+  if (m_bpp != 8 && m_pPalette && m_AlphaFlag != 0) {
     return FALSE;
   }
   if (m_Width < 4 && m_Height < 4) {

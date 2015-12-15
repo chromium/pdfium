@@ -93,7 +93,7 @@ IFX_Edit* CFX_Edit_Iterator::GetEdit() const {
 
 CFX_Edit_Provider::CFX_Edit_Provider(IFX_Edit_FontMap* pFontMap)
     : m_pFontMap(pFontMap) {
-  ASSERT(m_pFontMap != NULL);
+  ASSERT(m_pFontMap);
 }
 
 CFX_Edit_Provider::~CFX_Edit_Provider() {}
@@ -286,8 +286,6 @@ void CFX_Edit_Undo::Undo() {
 
   if (m_nCurUndoPos > 0) {
     IFX_Edit_UndoItem* pItem = m_UndoItemStack.GetAt(m_nCurUndoPos - 1);
-    ASSERT(pItem != NULL);
-
     pItem->Undo();
 
     m_nCurUndoPos--;
@@ -308,8 +306,6 @@ void CFX_Edit_Undo::Redo() {
 
   if (m_nCurUndoPos < nStackSize) {
     IFX_Edit_UndoItem* pItem = m_UndoItemStack.GetAt(m_nCurUndoPos);
-    ASSERT(pItem != NULL);
-
     pItem->Redo();
 
     m_nCurUndoPos++;
@@ -325,7 +321,7 @@ FX_BOOL CFX_Edit_Undo::IsWorking() const {
 
 void CFX_Edit_Undo::AddItem(IFX_Edit_UndoItem* pItem) {
   ASSERT(!m_bWorking);
-  ASSERT(pItem != NULL);
+  ASSERT(pItem);
   ASSERT(m_nBufSize > 1);
 
   if (m_nCurUndoPos < m_UndoItemStack.GetSize())
@@ -390,8 +386,6 @@ CFX_Edit_GroupUndoItem::~CFX_Edit_GroupUndoItem() {
 }
 
 void CFX_Edit_GroupUndoItem::AddUndoItem(CFX_Edit_UndoItem* pUndoItem) {
-  ASSERT(pUndoItem != NULL);
-
   pUndoItem->SetFirst(FALSE);
   pUndoItem->SetLast(FALSE);
 
@@ -404,11 +398,9 @@ void CFX_Edit_GroupUndoItem::AddUndoItem(CFX_Edit_UndoItem* pUndoItem) {
 void CFX_Edit_GroupUndoItem::UpdateItems() {
   if (m_Items.GetSize() > 0) {
     CFX_Edit_UndoItem* pFirstItem = m_Items[0];
-    ASSERT(pFirstItem != NULL);
     pFirstItem->SetFirst(TRUE);
 
     CFX_Edit_UndoItem* pLastItem = m_Items[m_Items.GetSize() - 1];
-    ASSERT(pLastItem != NULL);
     pLastItem->SetLast(TRUE);
   }
 }
@@ -416,8 +408,6 @@ void CFX_Edit_GroupUndoItem::UpdateItems() {
 void CFX_Edit_GroupUndoItem::Undo() {
   for (int i = m_Items.GetSize() - 1; i >= 0; i--) {
     CFX_Edit_UndoItem* pUndoItem = m_Items[i];
-    ASSERT(pUndoItem != NULL);
-
     pUndoItem->Undo();
   }
 }
@@ -425,8 +415,6 @@ void CFX_Edit_GroupUndoItem::Undo() {
 void CFX_Edit_GroupUndoItem::Redo() {
   for (int i = 0, sz = m_Items.GetSize(); i < sz; i++) {
     CFX_Edit_UndoItem* pUndoItem = m_Items[i];
-    ASSERT(pUndoItem != NULL);
-
     pUndoItem->Redo();
   }
 }
@@ -818,7 +806,7 @@ CFX_Edit::CFX_Edit(IPDF_VariableText* pVT)
       m_bNotify(TRUE),
       m_bOprNotify(FALSE),
       m_pGroupUndoItem(NULL) {
-  ASSERT(pVT != NULL);
+  ASSERT(pVT);
 }
 
 CFX_Edit::~CFX_Edit() {
@@ -3107,8 +3095,6 @@ void CFX_Edit::BeginGroupUndo(const CFX_WideString& sTitle) {
 }
 
 void CFX_Edit::EndGroupUndo() {
-  ASSERT(m_pGroupUndoItem != NULL);
-
   m_pGroupUndoItem->UpdateItems();
   m_Undo.AddItem(m_pGroupUndoItem);
   if (m_bOprNotify && m_pOprNotify)

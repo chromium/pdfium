@@ -1186,7 +1186,7 @@ FX_BOOL CGdiDisplayDriver::StretchDIBits(const CFX_DIBSource* pSource,
                                          int alpha_flag,
                                          void* pIccTransform,
                                          int blend_type) {
-  ASSERT(pSource != NULL && pClipRect != NULL);
+  ASSERT(pSource && pClipRect);
   if (flags || dest_width > 10000 || dest_width < -10000 ||
       dest_height > 10000 || dest_height < -10000) {
     return UseFoxitStretchEngine(pSource, color, dest_left, dest_top,

@@ -13,8 +13,7 @@
 
 CPWL_Label::CPWL_Label() : m_pEdit(NULL) {
   m_pEdit = IFX_Edit::NewEdit();
-
-  ASSERT(m_pEdit != NULL);
+  ASSERT(m_pEdit);
 }
 
 CPWL_Label::~CPWL_Label() {

@@ -12,10 +12,7 @@ CFX_ByteString GetPDFWordString(IFX_Edit_FontMap* pFontMap,
                                 int32_t nFontIndex,
                                 FX_WORD Word,
                                 FX_WORD SubWord) {
-  ASSERT(pFontMap != NULL);
-
   CFX_ByteString sWord;
-
   if (CPDF_Font* pPDFFont = pFontMap->GetPDFFont(nFontIndex)) {
     if (SubWord > 0) {
       Word = SubWord;

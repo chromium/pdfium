@@ -603,12 +603,10 @@ FX_BOOL CPDFSDK_Document::GetPermissions(int nFlag) {
 }
 
 IJS_Runtime* CPDFSDK_Document::GetJsRuntime() {
-  ASSERT(m_pEnv != NULL);
   return m_pEnv->GetJSRuntime();
 }
 
 CFX_WideString CPDFSDK_Document::GetPath() {
-  ASSERT(m_pEnv != NULL);
   return m_pEnv->JS_docGetFilePath();
 }
 

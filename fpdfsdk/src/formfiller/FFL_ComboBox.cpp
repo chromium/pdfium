@@ -27,10 +27,7 @@ CFFL_ComboBox::~CFFL_ComboBox() {
 PWL_CREATEPARAM CFFL_ComboBox::GetCreateParam() {
   PWL_CREATEPARAM cp = CFFL_FormFiller::GetCreateParam();
 
-  ASSERT(m_pWidget != NULL);
-
   int nFlags = m_pWidget->GetFieldFlags();
-
   if (nFlags & FIELDFLAG_EDIT) {
     cp.dwFlags |= PCBS_ALLOWCUSTOMTEXT;
   }
@@ -93,8 +90,6 @@ FX_BOOL CFFL_ComboBox::IsDataChanged(CPDFSDK_PageView* pPageView) {
 }
 
 void CFFL_ComboBox::SaveData(CPDFSDK_PageView* pPageView) {
-  ASSERT(m_pWidget != NULL);
-
   if (CPWL_ComboBox* pWnd = (CPWL_ComboBox*)GetPDFWindow(pPageView, FALSE)) {
     CFX_WideString swText = pWnd->GetText();
     int32_t nCurSel = pWnd->GetSelect();
@@ -165,7 +160,6 @@ void CFFL_ComboBox::GetActionData(CPDFSDK_PageView* pPageView,
       break;
     case CPDF_AAction::LoseFocus:
     case CPDF_AAction::GetFocus:
-      ASSERT(m_pWidget != NULL);
       fa.sValue = m_pWidget->GetValue();
       break;
     default:
@@ -207,7 +201,7 @@ FX_BOOL CFFL_ComboBox::IsActionDataChanged(CPDF_AAction::AActionType type,
 }
 
 void CFFL_ComboBox::SaveState(CPDFSDK_PageView* pPageView) {
-  ASSERT(pPageView != NULL);
+  ASSERT(pPageView);
 
   if (CPWL_ComboBox* pComboBox =
           static_cast<CPWL_ComboBox*>(GetPDFWindow(pPageView, FALSE))) {
@@ -221,7 +215,7 @@ void CFFL_ComboBox::SaveState(CPDFSDK_PageView* pPageView) {
 }
 
 void CFFL_ComboBox::RestoreState(CPDFSDK_PageView* pPageView) {
-  ASSERT(pPageView != NULL);
+  ASSERT(pPageView);
 
   if (CPWL_ComboBox* pComboBox =
           static_cast<CPWL_ComboBox*>(GetPDFWindow(pPageView, TRUE))) {
@@ -268,9 +262,7 @@ FX_BOOL CFFL_ComboBox::IsFieldFull(CPDFSDK_PageView* pPageView) {
 #endif  // PDF_ENABLE_XFA
 
 void CFFL_ComboBox::OnSetFocus(CPWL_Wnd* pWnd) {
-  ASSERT(m_pApp != NULL);
-
-  ASSERT(pWnd != NULL);
+  ASSERT(m_pApp);
 
   if (pWnd->GetClassName() == PWL_CLASSNAME_EDIT) {
     CPWL_Edit* pEdit = (CPWL_Edit*)pWnd;
@@ -290,11 +282,11 @@ void CFFL_ComboBox::OnSetFocus(CPWL_Wnd* pWnd) {
 }
 
 void CFFL_ComboBox::OnKillFocus(CPWL_Wnd* pWnd) {
-  ASSERT(m_pApp != NULL);
+  ASSERT(m_pApp);
 }
 
 void CFFL_ComboBox::OnAddUndo(CPWL_Edit* pEdit) {
-  ASSERT(pEdit != NULL);
+  ASSERT(pEdit);
 }
 
 CFX_WideString CFFL_ComboBox::GetSelectExportText() {

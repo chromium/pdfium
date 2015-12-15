@@ -47,8 +47,6 @@ void CPWL_Note_Options::SetTextColor(const CPWL_Color& color) {
 
 void CPWL_Note_Options::RePosChildWnd() {
   if (IsValid()) {
-    ASSERT(m_pText != NULL);
-
     CPDF_Rect rcClient = GetClientRect();
 
     if (rcClient.Width() > 15.0f) {
@@ -103,8 +101,6 @@ void CPWL_Note_Options::DrawThisAppearance(CFX_RenderDevice* pDevice,
 }
 
 CPDF_Rect CPWL_Note_Options::GetContentRect() const {
-  ASSERT(m_pText != NULL);
-
   CPDF_Rect rcText = m_pText->GetContentRect();
   rcText.right += 15.0f;
   return rcText;
@@ -661,10 +657,6 @@ void CPWL_NoteItem::CreateChildWnd(const PWL_CREATEPARAM& cp) {
 
 void CPWL_NoteItem::RePosChildWnd() {
   if (IsValid()) {
-    ASSERT(m_pSubject != NULL);
-    ASSERT(m_pDateTime != NULL);
-    ASSERT(m_pContents != NULL);
-
     CPDF_Rect rcClient = GetClientRect();
 
     CPDF_Rect rcSubject = rcClient;
@@ -759,8 +751,6 @@ void CPWL_NoteItem::ResetSubjectName(int32_t nItemIndex) {
   }
 
   const CPWL_Note* pNote = GetNote();
-  ASSERT(pNote != NULL);
-
   CFX_WideString sSubject;
   sSubject.Format(pNote->GetReplyString().c_str(), nItemIndex);
 
@@ -924,10 +914,6 @@ FX_FLOAT CPWL_NoteItem::GetItemHeight(FX_FLOAT fLimitWidth) {
       return m_fOldItemHeight;
 
     m_bSizeChanged = FALSE;
-
-    ASSERT(m_pSubject != NULL);
-    ASSERT(m_pDateTime != NULL);
-    ASSERT(m_pContents != NULL);
 
     FX_FLOAT fRet = m_pDateTime->GetContentRect().Height();
     FX_FLOAT fBorderWidth = (FX_FLOAT)GetBorderWidth();
@@ -1156,17 +1142,6 @@ void CPWL_Note::RePosNoteChildren() {
   m_bResizing = TRUE;
 
   if (IsValid()) {
-    ASSERT(m_pSubject != NULL);
-    ASSERT(m_pDateTime != NULL);
-    ASSERT(m_pContents != NULL);
-    ASSERT(m_pAuthor != NULL);
-    ASSERT(m_pCloseBox != NULL);
-    ASSERT(m_pIcon != NULL);
-    ASSERT(m_pLBBox != NULL);
-    ASSERT(m_pRBBox != NULL);
-    ASSERT(m_pContentsBar != NULL);
-    ASSERT(m_pOptions != NULL);
-
     CPDF_Rect rcClient = GetClientRect();
 
     CPDF_Rect rcIcon = rcClient;
@@ -1267,21 +1242,10 @@ void CPWL_Note::RePosNoteChildren() {
   m_bResizing = FALSE;
 }
 
+// TODO(thestig): Make this return an enum.
 // 0-normal / 1-caption / 2-leftbottom corner / 3-rightbottom corner / 4-close /
 // 5-options
 int32_t CPWL_Note::NoteHitTest(const CPDF_Point& point) const {
-  ASSERT(m_pSubject != NULL);
-  ASSERT(m_pDateTime != NULL);
-  ASSERT(m_pContents != NULL);
-  ASSERT(m_pAuthor != NULL);
-  ASSERT(m_pIcon != NULL);
-  ASSERT(m_pContentsBar != NULL);
-
-  ASSERT(m_pCloseBox != NULL);
-  ASSERT(m_pLBBox != NULL);
-  ASSERT(m_pRBBox != NULL);
-  ASSERT(m_pOptions != NULL);
-
   GetClientRect();
 
   if (m_pSubject->WndHitTest(m_pSubject->ParentToChild(point)))

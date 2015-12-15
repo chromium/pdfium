@@ -24,7 +24,6 @@ static int32_t FPDFDOC_OCG_FindGroup(const CPDF_Object* pObject,
 static FX_BOOL FPDFDOC_OCG_HasIntent(const CPDF_Dictionary* pDict,
                                      const CFX_ByteStringC& csElement,
                                      const CFX_ByteStringC& csDef = "") {
-  FXSYS_assert(pDict != NULL);
   CPDF_Object* pIntent = pDict->GetElementValue("Intent");
   if (pIntent == NULL) {
     return csElement == csDef;
@@ -89,7 +88,7 @@ static CFX_ByteString FPDFDOC_OCG_GetUsageTypeString(
   return csState;
 }
 CPDF_OCContext::CPDF_OCContext(CPDF_Document* pDoc, UsageType eUsageType) {
-  FXSYS_assert(pDoc != NULL);
+  FXSYS_assert(pDoc);
   m_pDocument = pDoc;
   m_eUsageType = eUsageType;
 }
@@ -235,9 +234,8 @@ FX_BOOL CPDF_OCContext::GetOCGVE(CPDF_Array* pExpression,
 }
 FX_BOOL CPDF_OCContext::LoadOCMDState(const CPDF_Dictionary* pOCMDDict,
                                       FX_BOOL bFromConfig) {
-  FXSYS_assert(pOCMDDict != NULL);
   CPDF_Array* pVE = pOCMDDict->GetArray("VE");
-  if (pVE != NULL) {
+  if (pVE) {
     return GetOCGVE(pVE, bFromConfig);
   }
   CFX_ByteString csP = pOCMDDict->GetString("P", "AnyOn");

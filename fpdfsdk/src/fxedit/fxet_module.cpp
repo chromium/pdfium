@@ -19,8 +19,6 @@ IFX_Edit* IFX_Edit::NewEdit() {
 }
 
 void IFX_Edit::DelEdit(IFX_Edit* pEdit) {
-  ASSERT(pEdit != NULL);
-
   IPDF_VariableText::DelVariableText(pEdit->GetVariableText());
 
   delete (CFX_Edit*)pEdit;
@@ -33,7 +31,6 @@ IFX_List* IFX_List::NewList() {
 }
 
 void IFX_List::DelList(IFX_List* pList) {
-  ASSERT(pList != NULL);
-
+  ASSERT(pList);
   delete (CFX_ListCtrl*)pList;
 }

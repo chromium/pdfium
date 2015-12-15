@@ -707,7 +707,6 @@ DLLEXPORT void STDCALL FORM_DoDocumentAAction(FPDF_FORMHANDLE hHandle,
     CPDF_Action action = aa.GetAction((CPDF_AAction::AActionType)aaType);
     CPDFSDK_ActionHandler* pActionHandler =
         ((CPDFDoc_Environment*)hHandle)->GetActionHander();
-    ASSERT(pActionHandler != NULL);
     pActionHandler->DoAction_Document(action, (CPDF_AAction::AActionType)aaType,
                                       pSDKDoc);
   }

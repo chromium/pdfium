@@ -295,7 +295,7 @@ void CFX_ByteString::CopyBeforeWrite() {
   m_pData->Release();
   FX_STRSIZE nDataLength = pData->m_nDataLength;
   m_pData = StringData::Create(nDataLength);
-  if (m_pData != NULL) {
+  if (m_pData) {
     FXSYS_memcpy(m_pData->m_String, pData->m_String, nDataLength + 1);
   }
 }
@@ -698,7 +698,7 @@ FX_STRSIZE CFX_ByteString::Insert(FX_STRSIZE nIndex, FX_CHAR ch) {
     if (!m_pData) {
       return 0;
     }
-    if (pOldData != NULL) {
+    if (pOldData) {
       FXSYS_memmove(m_pData->m_String, pstr, (pOldData->m_nDataLength + 1));
       pOldData->Release();
     } else {

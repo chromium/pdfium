@@ -22,8 +22,8 @@ static std::map<int32_t, CPWL_Timer*>& GetPWLTimeMap() {
 CPWL_Timer::CPWL_Timer(CPWL_TimerHandler* pAttached,
                        IFX_SystemHandler* pSystemHandler)
     : m_nTimerID(0), m_pAttached(pAttached), m_pSystemHandler(pSystemHandler) {
-  ASSERT(m_pAttached != NULL);
-  ASSERT(m_pSystemHandler != NULL);
+  ASSERT(m_pAttached);
+  ASSERT(m_pSystemHandler);
 }
 
 CPWL_Timer::~CPWL_Timer() {

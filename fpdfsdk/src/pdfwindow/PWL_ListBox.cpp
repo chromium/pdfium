@@ -20,7 +20,7 @@
 /* ------------------------ CPWL_List_Notify ----------------------- */
 
 CPWL_List_Notify::CPWL_List_Notify(CPWL_ListBox* pList) : m_pList(pList) {
-  ASSERT(m_pList != NULL);
+  ASSERT(m_pList);
 }
 
 CPWL_List_Notify::~CPWL_List_Notify() {}
@@ -74,8 +74,6 @@ CPWL_ListBox::CPWL_ListBox()
       m_bHoverSel(FALSE),
       m_pFillerNotify(NULL) {
   m_pList = IFX_List::NewList();
-
-  ASSERT(m_pList != NULL);
 }
 
 CPWL_ListBox::~CPWL_ListBox() {

@@ -227,12 +227,8 @@ FX_BOOL JSGlobalAlternate::setPersistent(IJS_Context* cc,
 }
 
 void JSGlobalAlternate::UpdateGlobalPersistentVariables() {
-  ASSERT(m_pGlobalData != NULL);
-
   for (int i = 0, sz = m_pGlobalData->GetSize(); i < sz; i++) {
     CJS_GlobalData_Element* pData = m_pGlobalData->GetAt(i);
-    ASSERT(pData != NULL);
-
     switch (pData->data.nType) {
       case JS_GLOBALDATA_TYPE_NUMBER:
         SetGlobalVariables(pData->data.sKey, JS_GLOBALDATA_TYPE_NUMBER,
@@ -380,12 +376,8 @@ void JSGlobalAlternate::ObjectToArray(IJS_Context* cc,
 
 void JSGlobalAlternate::PutObjectProperty(v8::Local<v8::Object> pObj,
                                           CJS_KeyValue* pData) {
-  ASSERT(pData != NULL);
-
   for (int i = 0, sz = pData->objData.Count(); i < sz; i++) {
     CJS_KeyValue* pObjData = pData->objData.GetAt(i);
-    ASSERT(pObjData != NULL);
-
     switch (pObjData->nType) {
       case JS_GLOBALDATA_TYPE_NUMBER:
         FXJS_PutObjectNumber(NULL, pObj, pObjData->sKey.UTF8Decode().c_str(),

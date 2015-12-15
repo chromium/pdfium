@@ -59,8 +59,7 @@ void CPDFSDK_AnnotHandlerMgr::UnRegisterAnnotHandler(
 
 CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::NewAnnot(CPDF_Annot* pAnnot,
                                                  CPDFSDK_PageView* pPageView) {
-  ASSERT(pAnnot != NULL);
-  ASSERT(pPageView != NULL);
+  ASSERT(pPageView);
 
   if (IPDFSDK_AnnotHandler* pAnnotHandler =
           GetAnnotHandler(pAnnot->GetSubType())) {
@@ -86,8 +85,6 @@ CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::NewAnnot(IXFA_Widget* pAnnot,
 #endif  // PDF_ENABLE_XFA
 
 void CPDFSDK_AnnotHandlerMgr::ReleaseAnnot(CPDFSDK_Annot* pAnnot) {
-  ASSERT(pAnnot != NULL);
-
   pAnnot->GetPDFPage();
 
   if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot)) {
@@ -99,8 +96,6 @@ void CPDFSDK_AnnotHandlerMgr::ReleaseAnnot(CPDFSDK_Annot* pAnnot) {
 }
 
 void CPDFSDK_AnnotHandlerMgr::Annot_OnCreate(CPDFSDK_Annot* pAnnot) {
-  ASSERT(pAnnot != NULL);
-
   CPDF_Annot* pPDFAnnot = pAnnot->GetPDFAnnot();
 
   CPDFSDK_DateTime curTime;
@@ -113,7 +108,7 @@ void CPDFSDK_AnnotHandlerMgr::Annot_OnCreate(CPDFSDK_Annot* pAnnot) {
 }
 
 void CPDFSDK_AnnotHandlerMgr::Annot_OnLoad(CPDFSDK_Annot* pAnnot) {
-  ASSERT(pAnnot != NULL);
+  ASSERT(pAnnot);
 
   if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot)) {
     pAnnotHandler->OnLoad(pAnnot);
@@ -122,8 +117,6 @@ void CPDFSDK_AnnotHandlerMgr::Annot_OnLoad(CPDFSDK_Annot* pAnnot) {
 
 IPDFSDK_AnnotHandler* CPDFSDK_AnnotHandlerMgr::GetAnnotHandler(
     CPDFSDK_Annot* pAnnot) const {
-  ASSERT(pAnnot != NULL);
-
   CPDF_Annot* pPDFAnnot = pAnnot->GetPDFAnnot();
   if (pPDFAnnot)
     return GetAnnotHandler(pPDFAnnot->GetSubType());
@@ -164,7 +157,7 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonDown(
     CPDFSDK_Annot* pAnnot,
     FX_DWORD nFlags,
     const CPDF_Point& point) {
-  ASSERT(pAnnot != NULL);
+  ASSERT(pAnnot);
 
   if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot)) {
     return pAnnotHandler->OnLButtonDown(pPageView, pAnnot, nFlags, point);
@@ -175,7 +168,7 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonUp(CPDFSDK_PageView* pPageView,
                                                    CPDFSDK_Annot* pAnnot,
                                                    FX_DWORD nFlags,
                                                    const CPDF_Point& point) {
-  ASSERT(pAnnot != NULL);
+  ASSERT(pAnnot);
 
   if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot)) {
     return pAnnotHandler->OnLButtonUp(pPageView, pAnnot, nFlags, point);
@@ -187,7 +180,7 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonDblClk(
     CPDFSDK_Annot* pAnnot,
     FX_DWORD nFlags,
     const CPDF_Point& point) {
-  ASSERT(pAnnot != NULL);
+  ASSERT(pAnnot);
 
   if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot)) {
     return pAnnotHandler->OnLButtonDblClk(pPageView, pAnnot, nFlags, point);
@@ -198,7 +191,7 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnMouseMove(CPDFSDK_PageView* pPageView,
                                                    CPDFSDK_Annot* pAnnot,
                                                    FX_DWORD nFlags,
                                                    const CPDF_Point& point) {
-  ASSERT(pAnnot != NULL);
+  ASSERT(pAnnot);
 
   if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot)) {
     return pAnnotHandler->OnMouseMove(pPageView, pAnnot, nFlags, point);
@@ -210,7 +203,7 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnMouseWheel(CPDFSDK_PageView* pPageView,
                                                     FX_DWORD nFlags,
                                                     short zDelta,
                                                     const CPDF_Point& point) {
-  ASSERT(pAnnot != NULL);
+  ASSERT(pAnnot);
 
   if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot)) {
     return pAnnotHandler->OnMouseWheel(pPageView, pAnnot, nFlags, zDelta,
@@ -223,7 +216,7 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnRButtonDown(
     CPDFSDK_Annot* pAnnot,
     FX_DWORD nFlags,
     const CPDF_Point& point) {
-  ASSERT(pAnnot != NULL);
+  ASSERT(pAnnot);
 
   if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot)) {
     return pAnnotHandler->OnRButtonDown(pPageView, pAnnot, nFlags, point);
@@ -234,7 +227,7 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnRButtonUp(CPDFSDK_PageView* pPageView,
                                                    CPDFSDK_Annot* pAnnot,
                                                    FX_DWORD nFlags,
                                                    const CPDF_Point& point) {
-  ASSERT(pAnnot != NULL);
+  ASSERT(pAnnot);
 
   if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot)) {
     return pAnnotHandler->OnRButtonUp(pPageView, pAnnot, nFlags, point);
@@ -245,7 +238,7 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnRButtonUp(CPDFSDK_PageView* pPageView,
 void CPDFSDK_AnnotHandlerMgr::Annot_OnMouseEnter(CPDFSDK_PageView* pPageView,
                                                  CPDFSDK_Annot* pAnnot,
                                                  FX_DWORD nFlag) {
-  ASSERT(pAnnot != NULL);
+  ASSERT(pAnnot);
 
   if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot)) {
     pAnnotHandler->OnMouseEnter(pPageView, pAnnot, nFlag);
@@ -256,7 +249,7 @@ void CPDFSDK_AnnotHandlerMgr::Annot_OnMouseEnter(CPDFSDK_PageView* pPageView,
 void CPDFSDK_AnnotHandlerMgr::Annot_OnMouseExit(CPDFSDK_PageView* pPageView,
                                                 CPDFSDK_Annot* pAnnot,
                                                 FX_DWORD nFlag) {
-  ASSERT(pAnnot != NULL);
+  ASSERT(pAnnot);
 
   if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot)) {
     pAnnotHandler->OnMouseExit(pPageView, pAnnot, nFlag);
@@ -304,7 +297,7 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnKeyUp(CPDFSDK_Annot* pAnnot,
 
 FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnSetFocus(CPDFSDK_Annot* pAnnot,
                                                   FX_DWORD nFlag) {
-  ASSERT(pAnnot != NULL);
+  ASSERT(pAnnot);
 
   if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot)) {
     if (pAnnotHandler->OnSetFocus(pAnnot, nFlag)) {
@@ -449,15 +442,13 @@ CPDFSDK_Annot* CPDFSDK_BFAnnotHandler::NewAnnot(IXFA_Widget* hWidget,
 #endif  // PDF_ENABLE_XFA
 
 void CPDFSDK_BFAnnotHandler::ReleaseAnnot(CPDFSDK_Annot* pAnnot) {
-  ASSERT(pAnnot != NULL);
+  ASSERT(pAnnot);
 
   if (m_pFormFiller)
     m_pFormFiller->OnDelete(pAnnot);
 
   CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
   CPDFSDK_InterForm* pInterForm = pWidget->GetInterForm();
-  ASSERT(pInterForm != NULL);
-
   CPDF_FormControl* pCtrol = pWidget->GetFormControl();
   pInterForm->RemoveMap(pCtrol);
 
@@ -484,7 +475,6 @@ void CPDFSDK_BFAnnotHandler::OnDraw(CPDFSDK_PageView* pPageView,
 void CPDFSDK_BFAnnotHandler::OnMouseEnter(CPDFSDK_PageView* pPageView,
                                           CPDFSDK_Annot* pAnnot,
                                           FX_DWORD nFlag) {
-  ASSERT(pAnnot != NULL);
   CFX_ByteString sSubType = pAnnot->GetSubType();
 
   if (sSubType == BFFT_SIGNATURE) {
@@ -496,7 +486,6 @@ void CPDFSDK_BFAnnotHandler::OnMouseEnter(CPDFSDK_PageView* pPageView,
 void CPDFSDK_BFAnnotHandler::OnMouseExit(CPDFSDK_PageView* pPageView,
                                          CPDFSDK_Annot* pAnnot,
                                          FX_DWORD nFlag) {
-  ASSERT(pAnnot != NULL);
   CFX_ByteString sSubType = pAnnot->GetSubType();
 
   if (sSubType == BFFT_SIGNATURE) {
@@ -509,7 +498,6 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnLButtonDown(CPDFSDK_PageView* pPageView,
                                               CPDFSDK_Annot* pAnnot,
                                               FX_DWORD nFlags,
                                               const CPDF_Point& point) {
-  ASSERT(pAnnot != NULL);
   CFX_ByteString sSubType = pAnnot->GetSubType();
 
   if (sSubType == BFFT_SIGNATURE) {
@@ -525,7 +513,6 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnLButtonUp(CPDFSDK_PageView* pPageView,
                                             CPDFSDK_Annot* pAnnot,
                                             FX_DWORD nFlags,
                                             const CPDF_Point& point) {
-  ASSERT(pAnnot != NULL);
   CFX_ByteString sSubType = pAnnot->GetSubType();
 
   if (sSubType == BFFT_SIGNATURE) {
@@ -541,7 +528,6 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnLButtonDblClk(CPDFSDK_PageView* pPageView,
                                                 CPDFSDK_Annot* pAnnot,
                                                 FX_DWORD nFlags,
                                                 const CPDF_Point& point) {
-  ASSERT(pAnnot != NULL);
   CFX_ByteString sSubType = pAnnot->GetSubType();
 
   if (sSubType == BFFT_SIGNATURE) {
@@ -557,7 +543,6 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnMouseMove(CPDFSDK_PageView* pPageView,
                                             CPDFSDK_Annot* pAnnot,
                                             FX_DWORD nFlags,
                                             const CPDF_Point& point) {
-  ASSERT(pAnnot != NULL);
   CFX_ByteString sSubType = pAnnot->GetSubType();
 
   if (sSubType == BFFT_SIGNATURE) {
@@ -574,7 +559,6 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnMouseWheel(CPDFSDK_PageView* pPageView,
                                              FX_DWORD nFlags,
                                              short zDelta,
                                              const CPDF_Point& point) {
-  ASSERT(pAnnot != NULL);
   CFX_ByteString sSubType = pAnnot->GetSubType();
 
   if (sSubType == BFFT_SIGNATURE) {
@@ -591,7 +575,6 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnRButtonDown(CPDFSDK_PageView* pPageView,
                                               CPDFSDK_Annot* pAnnot,
                                               FX_DWORD nFlags,
                                               const CPDF_Point& point) {
-  ASSERT(pAnnot != NULL);
   CFX_ByteString sSubType = pAnnot->GetSubType();
 
   if (sSubType == BFFT_SIGNATURE) {
@@ -606,7 +589,6 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnRButtonUp(CPDFSDK_PageView* pPageView,
                                             CPDFSDK_Annot* pAnnot,
                                             FX_DWORD nFlags,
                                             const CPDF_Point& point) {
-  ASSERT(pAnnot != NULL);
   CFX_ByteString sSubType = pAnnot->GetSubType();
 
   if (sSubType == BFFT_SIGNATURE) {
@@ -621,7 +603,6 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnRButtonUp(CPDFSDK_PageView* pPageView,
 FX_BOOL CPDFSDK_BFAnnotHandler::OnChar(CPDFSDK_Annot* pAnnot,
                                        FX_DWORD nChar,
                                        FX_DWORD nFlags) {
-  ASSERT(pAnnot != NULL);
   CFX_ByteString sSubType = pAnnot->GetSubType();
 
   if (sSubType == BFFT_SIGNATURE) {
@@ -636,7 +617,6 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnChar(CPDFSDK_Annot* pAnnot,
 FX_BOOL CPDFSDK_BFAnnotHandler::OnKeyDown(CPDFSDK_Annot* pAnnot,
                                           int nKeyCode,
                                           int nFlag) {
-  ASSERT(pAnnot != NULL);
   CFX_ByteString sSubType = pAnnot->GetSubType();
 
   if (sSubType == BFFT_SIGNATURE) {
@@ -654,7 +634,6 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnKeyUp(CPDFSDK_Annot* pAnnot,
   return FALSE;
 }
 void CPDFSDK_BFAnnotHandler::OnCreate(CPDFSDK_Annot* pAnnot) {
-  ASSERT(pAnnot != NULL);
   CFX_ByteString sSubType = pAnnot->GetSubType();
 
   if (sSubType == BFFT_SIGNATURE) {
@@ -696,7 +675,6 @@ void CPDFSDK_BFAnnotHandler::OnLoad(CPDFSDK_Annot* pAnnot) {
 
 FX_BOOL CPDFSDK_BFAnnotHandler::OnSetFocus(CPDFSDK_Annot* pAnnot,
                                            FX_DWORD nFlag) {
-  ASSERT(pAnnot != NULL);
   CFX_ByteString sSubType = pAnnot->GetSubType();
 
   if (sSubType == BFFT_SIGNATURE) {
@@ -709,7 +687,6 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnSetFocus(CPDFSDK_Annot* pAnnot,
 }
 FX_BOOL CPDFSDK_BFAnnotHandler::OnKillFocus(CPDFSDK_Annot* pAnnot,
                                             FX_DWORD nFlag) {
-  ASSERT(pAnnot != NULL);
   CFX_ByteString sSubType = pAnnot->GetSubType();
 
   if (sSubType == BFFT_SIGNATURE) {
@@ -723,7 +700,6 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnKillFocus(CPDFSDK_Annot* pAnnot,
 
 CPDF_Rect CPDFSDK_BFAnnotHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
                                               CPDFSDK_Annot* pAnnot) {
-  ASSERT(pAnnot != NULL);
   CFX_ByteString sSubType = pAnnot->GetSubType();
 
   if (sSubType == BFFT_SIGNATURE) {

@@ -27,8 +27,6 @@ CPDFSDK_Document* CJS_Context::GetReaderDocument() {
 }
 
 CPDFDoc_Environment* CJS_Context::GetReaderApp() {
-  ASSERT(m_pRuntime != NULL);
-
   return m_pRuntime->GetReaderApp();
 }
 

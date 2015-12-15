@@ -34,7 +34,7 @@ const FX_CHAR* g_sATypes[] = {
     "SetOCGState", "Rendition",  "Trans",     "GoTo3DView", ""};
 CPDF_Action::ActionType CPDF_Action::GetType() const {
   ActionType eType = Unknown;
-  if (m_pDict != NULL) {
+  if (m_pDict) {
     CFX_ByteString csType = m_pDict->GetString("S");
     if (!csType.IsEmpty()) {
       int i = 0;
@@ -80,7 +80,7 @@ CFX_ByteString CPDF_Action::GetURI(CPDF_Document* pDoc) const {
   csURI = m_pDict->GetString("URI");
   CPDF_Dictionary* pRoot = pDoc->GetRoot();
   CPDF_Dictionary* pURI = pRoot->GetDict("URI");
-  if (pURI != NULL) {
+  if (pURI) {
     if (csURI.Find(":", 0) < 1) {
       csURI = pURI->GetString("Base") + csURI;
     }
@@ -179,10 +179,7 @@ CFX_WideString CPDF_Action::GetJavaScript() const {
     return csJS;
   }
   CPDF_Object* pJS = m_pDict->GetElementValue("JS");
-  if (pJS != NULL) {
-    return pJS->GetUnicodeText();
-  }
-  return csJS;
+  return pJS ? pJS->GetUnicodeText() : csJS;
 }
 CPDF_Dictionary* CPDF_Action::GetAnnot() const {
   if (!m_pDict) {
@@ -298,13 +295,13 @@ CPDF_Action CPDF_AAction::GetNextAction(FX_POSITION& pos,
 CPDF_DocJSActions::CPDF_DocJSActions(CPDF_Document* pDoc) : m_pDocument(pDoc) {}
 
 int CPDF_DocJSActions::CountJSActions() const {
-  ASSERT(m_pDocument != NULL);
+  ASSERT(m_pDocument);
   CPDF_NameTree name_tree(m_pDocument, "JavaScript");
   return name_tree.GetCount();
 }
 CPDF_Action CPDF_DocJSActions::GetJSAction(int index,
                                            CFX_ByteString& csName) const {
-  ASSERT(m_pDocument != NULL);
+  ASSERT(m_pDocument);
   CPDF_NameTree name_tree(m_pDocument, "JavaScript");
   CPDF_Object* pAction = name_tree.LookupValue(index, csName);
   if (!ToDictionary(pAction)) {
@@ -313,7 +310,7 @@ CPDF_Action CPDF_DocJSActions::GetJSAction(int index,
   return CPDF_Action(pAction->GetDict());
 }
 CPDF_Action CPDF_DocJSActions::GetJSAction(const CFX_ByteString& csName) const {
-  ASSERT(m_pDocument != NULL);
+  ASSERT(m_pDocument);
   CPDF_NameTree name_tree(m_pDocument, "JavaScript");
   CPDF_Object* pAction = name_tree.LookupValue(csName);
   if (!ToDictionary(pAction)) {
@@ -322,7 +319,7 @@ CPDF_Action CPDF_DocJSActions::GetJSAction(const CFX_ByteString& csName) const {
   return CPDF_Action(pAction->GetDict());
 }
 int CPDF_DocJSActions::FindJSAction(const CFX_ByteString& csName) const {
-  ASSERT(m_pDocument != NULL);
+  ASSERT(m_pDocument);
   CPDF_NameTree name_tree(m_pDocument, "JavaScript");
   return name_tree.GetIndex(csName);
 }

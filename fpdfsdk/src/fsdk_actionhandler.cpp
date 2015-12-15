@@ -134,8 +134,6 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteDocumentOpenAction(
 FX_BOOL CPDFSDK_ActionHandler::ExecuteLinkAction(const CPDF_Action& action,
                                                  CPDFSDK_Document* pDocument,
                                                  CFX_PtrList& list) {
-  ASSERT(pDocument != NULL);
-
   CPDF_Dictionary* pDict = action.GetDict();
   if (list.Find(pDict))
     return FALSE;
@@ -181,8 +179,6 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteDocumentPageAction(
     CPDF_AAction::AActionType type,
     CPDFSDK_Document* pDocument,
     CFX_PtrList& list) {
-  ASSERT(pDocument != NULL);
-
   CPDF_Dictionary* pDict = action.GetDict();
   if (list.Find(pDict))
     return FALSE;
@@ -216,15 +212,10 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteDocumentPageAction(
 
 FX_BOOL CPDFSDK_ActionHandler::IsValidField(CPDFSDK_Document* pDocument,
                                             CPDF_Dictionary* pFieldDict) {
-  ASSERT(pDocument != NULL);
-  ASSERT(pFieldDict != NULL);
+  ASSERT(pFieldDict);
 
   CPDFSDK_InterForm* pInterForm = pDocument->GetInterForm();
-  ASSERT(pInterForm != NULL);
-
   CPDF_InterForm* pPDFInterForm = pInterForm->GetInterForm();
-  ASSERT(pPDFInterForm != NULL);
-
   return pPDFInterForm->GetFieldByDict(pFieldDict) != NULL;
 }
 
@@ -235,8 +226,6 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteFieldAction(
     CPDF_FormField* pFormField,
     PDFSDK_FieldAction& data,
     CFX_PtrList& list) {
-  ASSERT(pDocument != NULL);
-
   CPDF_Dictionary* pDict = action.GetDict();
   if (list.Find(pDict))
     return FALSE;
@@ -273,8 +262,6 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteScreenAction(
     CPDFSDK_Document* pDocument,
     CPDFSDK_Annot* pScreen,
     CFX_PtrList& list) {
-  ASSERT(pDocument != NULL);
-
   CPDF_Dictionary* pDict = action.GetDict();
   if (list.Find(pDict))
     return FALSE;
@@ -317,8 +304,6 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteBookMark(const CPDF_Action& action,
                                                CPDFSDK_Document* pDocument,
                                                CPDF_Bookmark* pBookmark,
                                                CFX_PtrList& list) {
-  ASSERT(pDocument != NULL);
-
   CPDF_Dictionary* pDict = action.GetDict();
   if (list.Find(pDict))
     return FALSE;
@@ -361,7 +346,7 @@ FX_BOOL CPDFSDK_ActionHandler::ExecuteBookMark(const CPDF_Action& action,
 
 void CPDFSDK_ActionHandler::DoAction_NoJs(const CPDF_Action& action,
                                           CPDFSDK_Document* pDocument) {
-  ASSERT(pDocument != NULL);
+  ASSERT(pDocument);
 
   switch (action.GetType()) {
     case CPDF_Action::GoTo:
@@ -467,8 +452,6 @@ void CPDFSDK_ActionHandler::DoAction_URI(CPDFSDK_Document* pDocument,
   ASSERT(action);
 
   CPDFDoc_Environment* pApp = pDocument->GetEnv();
-  ASSERT(pApp != NULL);
-
   CFX_ByteString sURI = action.GetURI(pDocument->GetPDFDocument());
   pApp->FFI_DoURIAction(sURI.c_str());
 }
@@ -492,16 +475,10 @@ void CPDFSDK_ActionHandler::RunFieldJavaScript(CPDFSDK_Document* pDocument,
   ASSERT(type != CPDF_AAction::Calculate);
   ASSERT(type != CPDF_AAction::Format);
 
-  ASSERT(pDocument != NULL);
-
   IJS_Runtime* pRuntime = pDocument->GetJsRuntime();
-  ASSERT(pRuntime != NULL);
-
   pRuntime->SetReaderDocument(pDocument);
 
   IJS_Context* pContext = pRuntime->NewContext();
-  ASSERT(pContext != NULL);
-
   switch (type) {
     case CPDF_AAction::CursorEnter:
       pContext->OnField_MouseEnter(data.bModifier, data.bShift, pFormField);
@@ -552,16 +529,9 @@ void CPDFSDK_ActionHandler::RunDocumentOpenJavaScript(
     CPDFSDK_Document* pDocument,
     const CFX_WideString& sScriptName,
     const CFX_WideString& script) {
-  ASSERT(pDocument != NULL);
-
   IJS_Runtime* pRuntime = pDocument->GetJsRuntime();
-  ASSERT(pRuntime != NULL);
-
   pRuntime->SetReaderDocument(pDocument);
-
   IJS_Context* pContext = pRuntime->NewContext();
-  ASSERT(pContext != NULL);
-
   pContext->OnDoc_Open(pDocument, sScriptName);
 
   CFX_WideString csInfo;
@@ -577,16 +547,10 @@ void CPDFSDK_ActionHandler::RunDocumentPageJavaScript(
     CPDFSDK_Document* pDocument,
     CPDF_AAction::AActionType type,
     const CFX_WideString& script) {
-  ASSERT(pDocument != NULL);
-
   IJS_Runtime* pRuntime = pDocument->GetJsRuntime();
-  ASSERT(pRuntime != NULL);
-
   pRuntime->SetReaderDocument(pDocument);
 
   IJS_Context* pContext = pRuntime->NewContext();
-  ASSERT(pContext != NULL);
-
   switch (type) {
     case CPDF_AAction::OpenPage:
       pContext->OnPage_Open(pDocument);
@@ -631,11 +595,7 @@ void CPDFSDK_ActionHandler::RunDocumentPageJavaScript(
 
 FX_BOOL CPDFSDK_FormActionHandler::DoAction_Hide(const CPDF_Action& action,
                                                  CPDFSDK_Document* pDocument) {
-  ASSERT(pDocument != NULL);
-
   CPDFSDK_InterForm* pInterForm = (CPDFSDK_InterForm*)pDocument->GetInterForm();
-  ASSERT(pInterForm != NULL);
-
   if (pInterForm->DoAction_Hide(action)) {
     pDocument->SetChangeMark();
     return TRUE;
@@ -647,37 +607,21 @@ FX_BOOL CPDFSDK_FormActionHandler::DoAction_Hide(const CPDF_Action& action,
 FX_BOOL CPDFSDK_FormActionHandler::DoAction_SubmitForm(
     const CPDF_Action& action,
     CPDFSDK_Document* pDocument) {
-  ASSERT(pDocument != NULL);
-
   CPDFSDK_InterForm* pInterForm = (CPDFSDK_InterForm*)pDocument->GetInterForm();
-  ASSERT(pInterForm != NULL);
-
   return pInterForm->DoAction_SubmitForm(action);
 }
 
 FX_BOOL CPDFSDK_FormActionHandler::DoAction_ResetForm(
     const CPDF_Action& action,
     CPDFSDK_Document* pDocument) {
-  ASSERT(pDocument != NULL);
-
   CPDFSDK_InterForm* pInterForm = (CPDFSDK_InterForm*)pDocument->GetInterForm();
-  ASSERT(pInterForm != NULL);
-
-  if (pInterForm->DoAction_ResetForm(action)) {
-    return TRUE;
-  }
-
-  return FALSE;
+  return pInterForm->DoAction_ResetForm(action);
 }
 
 FX_BOOL CPDFSDK_FormActionHandler::DoAction_ImportData(
     const CPDF_Action& action,
     CPDFSDK_Document* pDocument) {
-  ASSERT(pDocument != NULL);
-
   CPDFSDK_InterForm* pInterForm = (CPDFSDK_InterForm*)pDocument->GetInterForm();
-  ASSERT(pInterForm != NULL);
-
   if (pInterForm->DoAction_ImportData(action)) {
     pDocument->SetChangeMark();
     return TRUE;
