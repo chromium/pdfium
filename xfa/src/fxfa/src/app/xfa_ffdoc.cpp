@@ -228,11 +228,11 @@ FX_BOOL CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
   if (pRoot == NULL) {
     return FALSE;
   }
-  CPDF_Dictionary* pAcroForm = pRoot->GetDict(FX_BSTRC("AcroForm"));
+  CPDF_Dictionary* pAcroForm = pRoot->GetDict("AcroForm");
   if (pAcroForm == NULL) {
     return FALSE;
   }
-  CPDF_Object* pElementXFA = pAcroForm->GetElementValue(FX_BSTRC("XFA"));
+  CPDF_Object* pElementXFA = pAcroForm->GetElementValue("XFA");
   if (pElementXFA == NULL) {
     return FALSE;
   }

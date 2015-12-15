@@ -1886,11 +1886,11 @@ IFX_Font* CXFA_PDFFontMgr::FindFont(CFX_ByteString strPsName,
     return NULL;
   }
   CPDF_Dictionary* pFontSetDict =
-      pDoc->GetRoot()->GetDict(FX_BSTRC("AcroForm"))->GetDict(FX_BSTRC("DR"));
+      pDoc->GetRoot()->GetDict("AcroForm")->GetDict("DR");
   if (!pFontSetDict) {
     return NULL;
   }
-  pFontSetDict = (CPDF_Dictionary*)pFontSetDict->GetDict(FX_BSTRC("Font"));
+  pFontSetDict = (CPDF_Dictionary*)pFontSetDict->GetDict("Font");
   if (!pFontSetDict) {
     return NULL;
   }
@@ -1908,7 +1908,7 @@ IFX_Font* CXFA_PDFFontMgr::FindFont(CFX_ByteString strPsName,
       return NULL;
     }
     CPDF_Dictionary* pFontDict = (CPDF_Dictionary*)pDirect;
-    if (pFontDict->GetString("Type") != FX_BSTRC("Font")) {
+    if (pFontDict->GetString("Type") != "Font") {
       return NULL;
     }
     CPDF_Font* pPDFFont = pDoc->LoadFont(pFontDict);
@@ -1977,7 +1977,7 @@ FX_BOOL CXFA_PDFFontMgr::PsNameMatchDRFontName(
   }
   int32_t iDifferLength = bsDRName.GetLength() - iPsLen;
   if (iDifferLength > 1 || (bBold || bItalic)) {
-    int32_t iBoldIndex = bsDRName.Find(FX_BSTRC("Bold"));
+    int32_t iBoldIndex = bsDRName.Find("Bold");
     FX_BOOL bBoldFont = iBoldIndex > 0;
     if (bBold ^ bBoldFont) {
       return FALSE;
@@ -1987,11 +1987,11 @@ FX_BOOL CXFA_PDFFontMgr::PsNameMatchDRFontName(
           FX_MIN(iDifferLength - 4, bsDRName.GetLength() - iBoldIndex - 4);
     }
     FX_BOOL bItalicFont = TRUE;
-    if (bsDRName.Find(FX_BSTRC("Italic")) > 0) {
+    if (bsDRName.Find("Italic") > 0) {
       iDifferLength -= 6;
-    } else if (bsDRName.Find(FX_BSTRC("It")) > 0) {
+    } else if (bsDRName.Find("It") > 0) {
       iDifferLength -= 2;
-    } else if (bsDRName.Find(FX_BSTRC("Oblique")) > 0) {
+    } else if (bsDRName.Find("Oblique") > 0) {
       iDifferLength -= 7;
     } else {
       bItalicFont = FALSE;
@@ -2001,10 +2001,8 @@ FX_BOOL CXFA_PDFFontMgr::PsNameMatchDRFontName(
     }
     if (iDifferLength > 1) {
       CFX_ByteString bsDRTailer = bsDRName.Right(iDifferLength);
-      if (bsDRTailer.Equal(FX_BSTRC("MT")) ||
-          bsDRTailer.Equal(FX_BSTRC("PSMT")) ||
-          bsDRTailer.Equal(FX_BSTRC("Regular")) ||
-          bsDRTailer.Equal(FX_BSTRC("Reg"))) {
+      if (bsDRTailer.Equal("MT") || bsDRTailer.Equal("PSMT") ||
+          bsDRTailer.Equal("Regular") || bsDRTailer.Equal("Reg")) {
         return TRUE;
       }
       if (bBoldFont || bItalicFont) {
@@ -2013,18 +2011,18 @@ FX_BOOL CXFA_PDFFontMgr::PsNameMatchDRFontName(
       FX_BOOL bMatch = FALSE;
       switch (bsPsName.GetAt(iPsLen - 1)) {
         case 'L': {
-          if (bsDRName.Right(5).Equal(FX_BSTRC("Light"))) {
+          if (bsDRName.Right(5).Equal("Light")) {
             bMatch = TRUE;
           }
         } break;
         case 'R': {
-          if (bsDRName.Right(7).Equal(FX_BSTRC("Regular")) ||
-              bsDRName.Right(3).Equal(FX_BSTRC("Reg"))) {
+          if (bsDRName.Right(7).Equal("Regular") ||
+              bsDRName.Right(3).Equal("Reg")) {
             bMatch = TRUE;
           }
         } break;
         case 'M': {
-          if (bsDRName.Right(5).Equal(FX_BSTRC("Medium"))) {
+          if (bsDRName.Right(5).Equal("Medium")) {
             bMatch = TRUE;
           }
         } break;

@@ -191,7 +191,7 @@ CPDF_FormControl::HighlightingMode CPDF_FormControl::GetHighlightingMode() {
 }
 
 CPDF_ApSettings CPDF_FormControl::GetMK() const {
-  return CPDF_ApSettings(m_pWidgetDict ? m_pWidgetDict->GetDict(FX_BSTRC("MK"))
+  return CPDF_ApSettings(m_pWidgetDict ? m_pWidgetDict->GetDict("MK")
                                        : nullptr);
 }
 
@@ -330,7 +330,7 @@ bool CPDF_ApSettings::HasMKEntry(const CFX_ByteStringC& csEntry) const {
 }
 
 int CPDF_ApSettings::GetRotation() const {
-  return m_pDict ? m_pDict->GetInteger(FX_BSTRC("R")) : 0;
+  return m_pDict ? m_pDict->GetInteger("R") : 0;
 }
 
 FX_ARGB CPDF_ApSettings::GetColor(int& iColorType,
@@ -421,10 +421,9 @@ CPDF_Stream* CPDF_ApSettings::GetIcon(const CFX_ByteStringC& csEntry) const {
 }
 
 CPDF_IconFit CPDF_ApSettings::GetIconFit() const {
-  return m_pDict ? m_pDict->GetDict(FX_BSTRC("IF")) : nullptr;
+  return m_pDict ? m_pDict->GetDict("IF") : nullptr;
 }
 
 int CPDF_ApSettings::GetTextPosition() const {
-  return m_pDict ? m_pDict->GetInteger(FX_BSTRC("TP"), TEXTPOS_CAPTION)
-                 : TEXTPOS_CAPTION;
+  return m_pDict ? m_pDict->GetInteger("TP", TEXTPOS_CAPTION) : TEXTPOS_CAPTION;
 }

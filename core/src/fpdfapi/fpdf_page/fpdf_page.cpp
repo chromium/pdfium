@@ -761,18 +761,18 @@ void CPDF_PageObjects::LoadTransInfo() {
   if (m_pFormDict == NULL) {
     return;
   }
-  CPDF_Dictionary* pGroup = m_pFormDict->GetDict(FX_BSTRC("Group"));
+  CPDF_Dictionary* pGroup = m_pFormDict->GetDict("Group");
   if (pGroup == NULL) {
     return;
   }
-  if (pGroup->GetString(FX_BSTRC("S")) != FX_BSTRC("Transparency")) {
+  if (pGroup->GetString("S") != "Transparency") {
     return;
   }
   m_Transparency |= PDFTRANS_GROUP;
-  if (pGroup->GetInteger(FX_BSTRC("I"))) {
+  if (pGroup->GetInteger("I")) {
     m_Transparency |= PDFTRANS_ISOLATED;
   }
-  if (pGroup->GetInteger(FX_BSTRC("K"))) {
+  if (pGroup->GetInteger("K")) {
     m_Transparency |= PDFTRANS_KNOCKOUT;
   }
 }
@@ -805,10 +805,10 @@ void CPDF_Page::Load(CPDF_Document* pDocument,
     m_pPageResources = m_pResources = NULL;
     return;
   }
-  CPDF_Object* pageAttr = GetPageAttr(FX_BSTRC("Resources"));
+  CPDF_Object* pageAttr = GetPageAttr("Resources");
   m_pResources = pageAttr ? pageAttr->GetDict() : NULL;
   m_pPageResources = m_pResources;
-  CPDF_Object* pRotate = GetPageAttr(FX_BSTRC("Rotate"));
+  CPDF_Object* pRotate = GetPageAttr("Rotate");
   int rotate = 0;
   if (pRotate) {
     rotate = pRotate->GetInteger() / 90 % 4;
@@ -816,7 +816,7 @@ void CPDF_Page::Load(CPDF_Document* pDocument,
   if (rotate < 0) {
     rotate += 4;
   }
-  CPDF_Array* pMediaBox = ToArray(GetPageAttr(FX_BSTRC("MediaBox")));
+  CPDF_Array* pMediaBox = ToArray(GetPageAttr("MediaBox"));
   CFX_FloatRect mediabox;
   if (pMediaBox) {
     mediabox = pMediaBox->GetRect();
@@ -826,7 +826,7 @@ void CPDF_Page::Load(CPDF_Document* pDocument,
     mediabox = CFX_FloatRect(0, 0, 612, 792);
   }
 
-  CPDF_Array* pCropBox = ToArray(GetPageAttr(FX_BSTRC("CropBox")));
+  CPDF_Array* pCropBox = ToArray(GetPageAttr("CropBox"));
   if (pCropBox) {
     m_BBox = pCropBox->GetRect();
     m_BBox.Normalize();
@@ -889,7 +889,7 @@ CPDF_Object* FPDFAPI_GetPageAttr(CPDF_Dictionary* pPageDict,
     if (pObj) {
       return pObj;
     }
-    CPDF_Dictionary* pParent = pPageDict->GetDict(FX_BSTRC("Parent"));
+    CPDF_Dictionary* pParent = pPageDict->GetDict("Parent");
     if (!pParent || pParent == pPageDict) {
       return NULL;
     }
@@ -910,7 +910,7 @@ CPDF_Form::CPDF_Form(CPDF_Document* pDoc,
   m_pDocument = pDoc;
   m_pFormStream = pFormStream;
   m_pFormDict = pFormStream ? pFormStream->GetDict() : NULL;
-  m_pResources = m_pFormDict->GetDict(FX_BSTRC("Resources"));
+  m_pResources = m_pFormDict->GetDict("Resources");
   m_pPageResources = pPageResources;
   if (m_pResources == NULL) {
     m_pResources = pParentResources;

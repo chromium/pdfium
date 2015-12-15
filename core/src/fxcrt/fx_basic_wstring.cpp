@@ -288,7 +288,7 @@ CFX_ByteString CFX_WideString::UTF8Encode() const {
 }
 CFX_ByteString CFX_WideString::UTF16LE_Encode() const {
   if (m_pData == NULL) {
-    return CFX_ByteString(FX_BSTRC("\0\0"));
+    return CFX_ByteString("\0\0", 2);
   }
   int len = m_pData->m_nDataLength;
   CFX_ByteString result;

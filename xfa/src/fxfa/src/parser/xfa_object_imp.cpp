@@ -65,8 +65,7 @@ void CXFA_Object::ThrowScriptErrorMessage(int32_t iStringID, ...) {
   va_start(arg_ptr, iStringID);
   wsMessage.FormatV((const FX_WCHAR*)wsFormat, arg_ptr);
   va_end(arg_ptr);
-  FXJSE_ThrowMessage(FX_BSTRC(""),
-                     FX_UTF8Encode(wsMessage, wsMessage.GetLength()));
+  FXJSE_ThrowMessage("", FX_UTF8Encode(wsMessage, wsMessage.GetLength()));
 }
 static void XFA_DeleteWideString(void* pData) {
   if (pData) {
@@ -742,8 +741,7 @@ void CXFA_Node::Script_TreeClass_Nodes(FXJSE_HVALUE hValue,
     FXSYS_assert(pAppProvider);
     CFX_WideString wsMessage;
     pAppProvider->LoadString(XFA_IDS_Unable_TO_SET, wsMessage);
-    FXJSE_ThrowMessage(FX_BSTRC(""),
-                       FX_UTF8Encode(wsMessage, wsMessage.GetLength()));
+    FXJSE_ThrowMessage("", FX_UTF8Encode(wsMessage, wsMessage.GetLength()));
   } else {
     CXFA_AttachNodeList* pNodeList = new CXFA_AttachNodeList(m_pDocument, this);
     FXJSE_Value_SetObject(hValue, (CXFA_Object*)pNodeList,
@@ -1066,15 +1064,14 @@ void CXFA_Node::Script_NodeClass_SaveXML(CFXJSE_Arguments* pArguments) {
   FX_BOOL bPrettyMode = FALSE;
   if (iLength == 1) {
     CFX_ByteString bsPretty = pArguments->GetUTF8String(0);
-    if (bsPretty.Equal(FX_BSTRC("pretty"))) {
+    if (bsPretty.Equal("pretty")) {
       bPrettyMode = TRUE;
     } else {
       ThrowScriptErrorMessage(XFA_IDS_ARGUMENT_MISMATCH);
       return;
     }
   }
-  CFX_ByteStringC bsXMLHeader =
-      FX_BSTRC("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+  CFX_ByteStringC bsXMLHeader = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
   if (GetPacketID() == XFA_XDPPACKET_Form) {
     IFX_MemoryStream* pMemoryStream = FX_CreateMemoryStream(TRUE);
     if (!pMemoryStream) {
@@ -1137,7 +1134,7 @@ void CXFA_Node::Script_NodeClass_SaveXML(CFXJSE_Arguments* pArguments) {
       return;
     }
   } else {
-    FXJSE_Value_SetUTF8String(pArguments->GetReturnValue(), FX_BSTRC(""));
+    FXJSE_Value_SetUTF8String(pArguments->GetReturnValue(), "");
   }
 }
 void CXFA_Node::Script_NodeClass_SetAttribute(CFXJSE_Arguments* pArguments) {
@@ -1292,16 +1289,14 @@ void CXFA_Node::Script_Attribute_BOOL(FXJSE_HVALUE hValue,
   if (bSetting) {
     SetBoolean(eAttribute, FXJSE_Value_ToBoolean(hValue), TRUE);
   } else {
-    FXJSE_Value_SetUTF8String(
-        hValue, GetBoolean(eAttribute) ? FX_BSTRC("1") : FX_BSTRC("0"));
+    FXJSE_Value_SetUTF8String(hValue, GetBoolean(eAttribute) ? "1" : "0");
   }
 }
 void CXFA_Node::Script_Attribute_BOOLRead(FXJSE_HVALUE hValue,
                                           FX_BOOL bSetting,
                                           XFA_ATTRIBUTE eAttribute) {
   if (!bSetting) {
-    FXJSE_Value_SetUTF8String(
-        hValue, GetBoolean(eAttribute) ? FX_BSTRC("1") : FX_BSTRC("0"));
+    FXJSE_Value_SetUTF8String(hValue, GetBoolean(eAttribute) ? "1" : "0");
   } else {
     ThrowScriptErrorMessage(XFA_IDS_INVAlID_PROP_SET);
   }
@@ -2181,7 +2176,7 @@ void CXFA_Node::Script_Field_ExecEvent(CFXJSE_Arguments* pArguments) {
     int32_t iRet = execSingleEventByName(
         CFX_WideString::FromUTF8(eventString, eventString.GetLength()),
         XFA_ELEMENT_Field);
-    if (eventString == FX_BSTRC("validate")) {
+    if (eventString == "validate") {
       FXJSE_Value_SetBoolean(pArguments->GetReturnValue(),
                              ((iRet == XFA_EVENTERROR_Error) ? FALSE : TRUE));
     }
@@ -3401,7 +3396,7 @@ void CXFA_Node::Script_Occur_Min(FXJSE_HVALUE hValue,
 void CXFA_Node::Script_Desc_Metadata(CFXJSE_Arguments* pArguments) {
   int32_t argc = pArguments->GetLength();
   if ((argc == 0) || (argc == 1)) {
-    FXJSE_Value_SetUTF8String(pArguments->GetReturnValue(), FX_BSTRC(""));
+    FXJSE_Value_SetUTF8String(pArguments->GetReturnValue(), "");
   } else {
     ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"metadata");
   }

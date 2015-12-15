@@ -90,7 +90,7 @@ static CFX_WideString FX_GetXMLContent(const CFX_ByteStringC& bsSpace,
   int32_t i = 0;
   for (; i < nCount; i++) {
     pDatePattern = pxmlElement->GetElement(bsSpace, bsTag, i);
-    if (pDatePattern->GetAttrValue(FX_BSTRC("name")) == wsName) {
+    if (pDatePattern->GetAttrValue("name") == wsName) {
       break;
     }
   }
@@ -107,12 +107,12 @@ void CFX_Locale::GetNumbericSymbol(FX_LOCALENUMSYMBOL eType,
   CFX_ByteString bsSpace;
   CFX_WideString wsName = gs_LocalNumberSymbols[eType];
   CXML_Element* pNumberSymbols =
-      m_pElement->GetElement(bsSpace, FX_BSTRC("numberSymbols"));
+      m_pElement->GetElement(bsSpace, "numberSymbols");
   if (!pNumberSymbols) {
     return;
   }
-  wsNumSymbol = FX_GetXMLContent(bsSpace, pNumberSymbols,
-                                 FX_BSTRC("numberSymbol"), wsName);
+  wsNumSymbol =
+      FX_GetXMLContent(bsSpace, pNumberSymbols, "numberSymbol", wsName);
 }
 void CFX_Locale::GetDateTimeSymbols(CFX_WideString& wsDtSymbol) const {
   if (!m_pElement) {
@@ -120,7 +120,7 @@ void CFX_Locale::GetDateTimeSymbols(CFX_WideString& wsDtSymbol) const {
   }
   CFX_ByteString bsSpace;
   CXML_Element* pNumberSymbols =
-      m_pElement->GetElement(bsSpace, FX_BSTRC("dateTimeSymbols"));
+      m_pElement->GetElement(bsSpace, "dateTimeSymbols");
   if (!pNumberSymbols) {
     return;
   }
@@ -132,9 +132,8 @@ static void FX_GetCalendarSymbol(CXML_Element* pXmlElement,
                                  FX_BOOL bAbbr,
                                  CFX_WideString& wsName) {
   CFX_ByteString bsSpace;
-  CFX_ByteString pstrSymbolNames = symbol_type + FX_BSTRC("Names");
-  CXML_Element* pChild =
-      pXmlElement->GetElement(bsSpace, FX_BSTRC("calendarSymbols"));
+  CFX_ByteString pstrSymbolNames = symbol_type + "Names";
+  CXML_Element* pChild = pXmlElement->GetElement(bsSpace, "calendarSymbols");
   if (!pChild) {
     return;
   }
@@ -142,10 +141,10 @@ static void FX_GetCalendarSymbol(CXML_Element* pXmlElement,
   if (!pSymbolNames) {
     return;
   }
-  if (pSymbolNames->GetAttrInteger(FX_BSTRC("abbr")) != bAbbr) {
+  if (pSymbolNames->GetAttrInteger("abbr") != bAbbr) {
     pSymbolNames = pChild->GetElement(bsSpace, pstrSymbolNames, 1);
   }
-  if (pSymbolNames && pSymbolNames->GetAttrInteger(FX_BSTRC("abbr")) == bAbbr) {
+  if (pSymbolNames && pSymbolNames->GetAttrInteger("abbr") == bAbbr) {
     CXML_Element* pSymbolName =
         pSymbolNames->GetElement(bsSpace, symbol_type, index);
     if (pSymbolName) {
@@ -208,7 +207,7 @@ void CFX_Locale::GetTimeZone(FX_TIMEZONE& tz) const {
   if (!m_pElement) {
     return;
   }
-  CXML_Element* pxmlTimeZone = m_pElement->GetElement("", FX_BSTRC("timeZone"));
+  CXML_Element* pxmlTimeZone = m_pElement->GetElement("", "timeZone");
   if (pxmlTimeZone) {
     CFX_WideString wsTimeZone = pxmlTimeZone->GetContent(0);
     FX_ParseTimeZone(wsTimeZone, wsTimeZone.GetLength(), tz);

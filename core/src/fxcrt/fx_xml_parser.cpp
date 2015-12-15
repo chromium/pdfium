@@ -200,15 +200,15 @@ FX_DWORD CXML_Parser::GetCharRef() {
           m_dwIndex++;
           if (ch == ';') {
             CFX_ByteStringC ref = buf.GetByteString();
-            if (ref == FX_BSTRC("gt")) {
+            if (ref == "gt") {
               code = '>';
-            } else if (ref == FX_BSTRC("lt")) {
+            } else if (ref == "lt") {
               code = '<';
-            } else if (ref == FX_BSTRC("amp")) {
+            } else if (ref == "amp") {
               code = '&';
-            } else if (ref == FX_BSTRC("apos")) {
+            } else if (ref == "apos") {
               code = '\'';
-            } else if (ref == FX_BSTRC("quot")) {
+            } else if (ref == "quot") {
               code = '"';
             }
             iState = 10;
@@ -327,12 +327,12 @@ void CXML_Parser::GetTagName(CFX_ByteString& space,
         case 1:
           if (ch == '?') {
             m_dwIndex++;
-            SkipLiterals(FX_BSTRC("?>"));
+            SkipLiterals("?>");
             iState = 0;
             break;
           } else if (ch == '!') {
             m_dwIndex++;
-            SkipLiterals(FX_BSTRC("-->"));
+            SkipLiterals("-->");
             iState = 0;
             break;
           }
@@ -441,7 +441,7 @@ CXML_Element* CXML_Parser::ParseElement(CXML_Element* pParent,
           if (ch == '!') {
             iState = 2;
           } else if (ch == '?') {
-            SkipLiterals(FX_BSTRC("?>"));
+            SkipLiterals("?>");
             SkipWhiteSpaces();
             iState = 0;
           } else if (ch == '/') {
@@ -474,12 +474,12 @@ CXML_Element* CXML_Parser::ParseElement(CXML_Element* pParent,
           break;
         case 2:
           if (ch == '[') {
-            SkipLiterals(FX_BSTRC("]]>"));
+            SkipLiterals("]]>");
           } else if (ch == '-') {
             m_dwIndex++;
-            SkipLiterals(FX_BSTRC("-->"));
+            SkipLiterals("-->");
           } else {
-            SkipLiterals(FX_BSTRC(">"));
+            SkipLiterals(">");
           }
           decoder.Clear();
           SkipWhiteSpaces();
@@ -607,9 +607,9 @@ CFX_ByteString CXML_Element::GetNamespaceURI(
   const CXML_Element* pElement = this;
   do {
     if (qName.IsEmpty()) {
-      pwsSpace = pElement->m_AttrMap.Lookup(FX_BSTRC(""), FX_BSTRC("xmlns"));
+      pwsSpace = pElement->m_AttrMap.Lookup("", "xmlns");
     } else {
-      pwsSpace = pElement->m_AttrMap.Lookup(FX_BSTRC("xmlns"), qName);
+      pwsSpace = pElement->m_AttrMap.Lookup("xmlns", qName);
     }
     if (pwsSpace) {
       break;

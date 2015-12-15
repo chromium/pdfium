@@ -919,7 +919,7 @@ void CPDF_InterForm::LoadField(CPDF_Dictionary* pFieldDict, int nLevel) {
   }
 }
 FX_BOOL CPDF_InterForm::HasXFAForm() const {
-  return m_pFormDict && m_pFormDict->GetArray(FX_BSTRC("XFA")) != NULL;
+  return m_pFormDict && m_pFormDict->GetArray("XFA") != NULL;
 }
 void CPDF_InterForm::FixPageFields(const CPDF_Page* pPage) {
   ASSERT(pPage != NULL);
@@ -927,20 +927,20 @@ void CPDF_InterForm::FixPageFields(const CPDF_Page* pPage) {
   if (pPageDict == NULL) {
     return;
   }
-  CPDF_Array* pAnnots = pPageDict->GetArray(FX_BSTRC("Annots"));
+  CPDF_Array* pAnnots = pPageDict->GetArray("Annots");
   if (pAnnots == NULL) {
     return;
   }
   int iAnnotCount = pAnnots->GetCount();
   for (int i = 0; i < iAnnotCount; i++) {
     CPDF_Dictionary* pAnnot = pAnnots->GetDict(i);
-    if (pAnnot != NULL && pAnnot->GetString(FX_BSTRC("Subtype")) == "Widget") {
+    if (pAnnot != NULL && pAnnot->GetString("Subtype") == "Widget") {
       LoadField(pAnnot);
     }
   }
 }
 CPDF_FormField* CPDF_InterForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
-  if (!pFieldDict->KeyExist(FX_BSTRC("T"))) {
+  if (!pFieldDict->KeyExist("T")) {
     return NULL;
   }
   CPDF_Dictionary* pDict = pFieldDict;
@@ -952,25 +952,24 @@ CPDF_FormField* CPDF_InterForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
   pField = m_pFieldTree->GetField(csWName);
   if (pField == NULL) {
     CPDF_Dictionary* pParent = pFieldDict;
-    if (!pFieldDict->KeyExist(FX_BSTRC("T")) &&
-        pFieldDict->GetString(FX_BSTRC("Subtype")) == FX_BSTRC("Widget")) {
-      pParent = pFieldDict->GetDict(FX_BSTRC("Parent"));
+    if (!pFieldDict->KeyExist("T") &&
+        pFieldDict->GetString("Subtype") == "Widget") {
+      pParent = pFieldDict->GetDict("Parent");
       if (!pParent) {
         pParent = pFieldDict;
       }
     }
-    if (pParent && pParent != pFieldDict &&
-        !pParent->KeyExist(FX_BSTRC("FT"))) {
-      if (pFieldDict->KeyExist(FX_BSTRC("FT"))) {
-        CPDF_Object* pFTValue = pFieldDict->GetElementValue(FX_BSTRC("FT"));
+    if (pParent && pParent != pFieldDict && !pParent->KeyExist("FT")) {
+      if (pFieldDict->KeyExist("FT")) {
+        CPDF_Object* pFTValue = pFieldDict->GetElementValue("FT");
         if (pFTValue) {
-          pParent->SetAt(FX_BSTRC("FT"), pFTValue->Clone());
+          pParent->SetAt("FT", pFTValue->Clone());
         }
       }
-      if (pFieldDict->KeyExist(FX_BSTRC("Ff"))) {
-        CPDF_Object* pFfValue = pFieldDict->GetElementValue(FX_BSTRC("Ff"));
+      if (pFieldDict->KeyExist("Ff")) {
+        CPDF_Object* pFfValue = pFieldDict->GetElementValue("Ff");
         if (pFfValue) {
-          pParent->SetAt(FX_BSTRC("Ff"), pFfValue->Clone());
+          pParent->SetAt("Ff", pFfValue->Clone());
         }
       }
     }
@@ -1073,9 +1072,8 @@ CFDF_Document* CPDF_InterForm::ExportToFDF(
   if (!pdf_path.IsEmpty()) {
     if (bSimpleFileSpec) {
       CFX_WideString wsFilePath = FILESPEC_EncodeFileName(pdf_path);
-      pMainDict->SetAtString(FX_BSTRC("F"),
-                             CFX_ByteString::FromUnicode(wsFilePath));
-      pMainDict->SetAtString(FX_BSTRC("UF"), PDF_EncodeText(wsFilePath));
+      pMainDict->SetAtString("F", CFX_ByteString::FromUnicode(wsFilePath));
+      pMainDict->SetAtString("UF", PDF_EncodeText(wsFilePath));
     } else {
       CPDF_FileSpec filespec;
       filespec.SetFileName(pdf_path);
@@ -1246,7 +1244,7 @@ FX_BOOL CPDF_InterForm::ImportFromFDF(const CFDF_Document* pFDF,
   if (pFields == NULL) {
     return FALSE;
   }
-  m_bsEncoding = pMainDict->GetString(FX_BSTRC("Encoding"));
+  m_bsEncoding = pMainDict->GetString("Encoding");
   if (bNotify && m_pFormNotify != NULL) {
     int iRet = m_pFormNotify->BeforeFormImportData(this);
     if (iRet < 0) {

@@ -11,43 +11,43 @@ CPDF_ViewerPreferences::CPDF_ViewerPreferences(CPDF_Document* pDoc)
 CPDF_ViewerPreferences::~CPDF_ViewerPreferences() {}
 FX_BOOL CPDF_ViewerPreferences::IsDirectionR2L() const {
   CPDF_Dictionary* pDict = m_pDoc->GetRoot();
-  pDict = pDict->GetDict(FX_BSTRC("ViewerPreferences"));
+  pDict = pDict->GetDict("ViewerPreferences");
   if (!pDict) {
     return FALSE;
   }
-  return FX_BSTRC("R2L") == pDict->GetString(FX_BSTRC("Direction"));
+  return "R2L" == pDict->GetString("Direction");
 }
 FX_BOOL CPDF_ViewerPreferences::PrintScaling() const {
   CPDF_Dictionary* pDict = m_pDoc->GetRoot();
-  pDict = pDict->GetDict(FX_BSTRC("ViewerPreferences"));
+  pDict = pDict->GetDict("ViewerPreferences");
   if (!pDict) {
     return TRUE;
   }
-  return FX_BSTRC("None") != pDict->GetString(FX_BSTRC("PrintScaling"));
+  return "None" != pDict->GetString("PrintScaling");
 }
 int32_t CPDF_ViewerPreferences::NumCopies() const {
   CPDF_Dictionary* pDict = m_pDoc->GetRoot();
-  pDict = pDict->GetDict(FX_BSTRC("ViewerPreferences"));
+  pDict = pDict->GetDict("ViewerPreferences");
   if (!pDict) {
     return 1;
   }
-  return pDict->GetInteger(FX_BSTRC("NumCopies"));
+  return pDict->GetInteger("NumCopies");
 }
 CPDF_Array* CPDF_ViewerPreferences::PrintPageRange() const {
   CPDF_Dictionary* pDict = m_pDoc->GetRoot();
   CPDF_Array* pRange = NULL;
-  pDict = pDict->GetDict(FX_BSTRC("ViewerPreferences"));
+  pDict = pDict->GetDict("ViewerPreferences");
   if (!pDict) {
     return pRange;
   }
-  pRange = pDict->GetArray(FX_BSTRC("PrintPageRange"));
+  pRange = pDict->GetArray("PrintPageRange");
   return pRange;
 }
 CFX_ByteString CPDF_ViewerPreferences::Duplex() const {
   CPDF_Dictionary* pDict = m_pDoc->GetRoot();
-  pDict = pDict->GetDict(FX_BSTRC("ViewerPreferences"));
+  pDict = pDict->GetDict("ViewerPreferences");
   if (!pDict) {
-    return FX_BSTRC("None");
+    return "None";
   }
-  return pDict->GetString(FX_BSTRC("Duplex"));
+  return pDict->GetString("Duplex");
 }

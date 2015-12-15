@@ -273,7 +273,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFLink_Enumerate(FPDF_PAGE page,
         ToDictionary(static_cast<CPDF_Object*>(pAnnots->GetElementValue(i)));
     if (!pDict)
       continue;
-    if (pDict->GetString(FX_BSTRC("Subtype")).Equal(FX_BSTRC("Link"))) {
+    if (pDict->GetString("Subtype").Equal("Link")) {
       *startPos = i + 1;
       *linkAnnot = (FPDF_LINK)pDict;
       return TRUE;
@@ -288,7 +288,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFLink_GetAnnotRect(FPDF_LINK linkAnnot,
     return FALSE;
   CPDF_Dictionary* pAnnotDict =
       ToDictionary(static_cast<CPDF_Object*>(linkAnnot));
-  CPDF_Rect rt = pAnnotDict->GetRect(FX_BSTRC("Rect"));
+  CPDF_Rect rt = pAnnotDict->GetRect("Rect");
   rect->left = rt.left;
   rect->bottom = rt.bottom;
   rect->right = rt.right;
@@ -301,7 +301,7 @@ DLLEXPORT int STDCALL FPDFLink_CountQuadPoints(FPDF_LINK linkAnnot) {
     return 0;
   CPDF_Dictionary* pAnnotDict =
       ToDictionary(static_cast<CPDF_Object*>(linkAnnot));
-  CPDF_Array* pArray = pAnnotDict->GetArray(FX_BSTRC("QuadPoints"));
+  CPDF_Array* pArray = pAnnotDict->GetArray("QuadPoints");
   if (!pArray)
     return 0;
   return pArray->GetCount() / 8;
@@ -314,7 +314,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFLink_GetQuadPoints(FPDF_LINK linkAnnot,
     return FALSE;
   CPDF_Dictionary* pAnnotDict =
       ToDictionary(static_cast<CPDF_Object*>(linkAnnot));
-  CPDF_Array* pArray = pAnnotDict->GetArray(FX_BSTRC("QuadPoints"));
+  CPDF_Array* pArray = pAnnotDict->GetArray("QuadPoints");
   if (pArray) {
     if (quadIndex < 0 || quadIndex >= (int)pArray->GetCount() / 8 ||
         ((quadIndex * 8 + 7) >= (int)pArray->GetCount()))

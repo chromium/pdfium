@@ -110,7 +110,7 @@ FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument,
       iFormIndex = i + 1;
     else if (pPDFObj->GetString() == "datasets")
       iDataSetsIndex = i + 1;
-    else if (pPDFObj->GetString() == FX_BSTRC("template"))
+    else if (pPDFObj->GetString() == "template")
       iTemplate = i + 1;
   }
   IXFA_ChecksumContext* pContext = NULL;

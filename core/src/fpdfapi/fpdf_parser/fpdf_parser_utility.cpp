@@ -345,12 +345,12 @@ CFX_ByteString PDF_NameEncode(const CFX_ByteString& orig) {
 }
 CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& buf, const CPDF_Object* pObj) {
   if (pObj == NULL) {
-    buf << FX_BSTRC(" null");
+    buf << " null";
     return buf;
   }
   switch (pObj->GetType()) {
     case PDFOBJ_NULL:
-      buf << FX_BSTRC(" null");
+      buf << " null";
       break;
     case PDFOBJ_BOOLEAN:
     case PDFOBJ_NUMBER:
@@ -361,51 +361,51 @@ CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& buf, const CPDF_Object* pObj) {
       break;
     case PDFOBJ_NAME: {
       CFX_ByteString str = pObj->GetString();
-      buf << FX_BSTRC("/") << PDF_NameEncode(str);
+      buf << "/" << PDF_NameEncode(str);
       break;
     }
     case PDFOBJ_REFERENCE: {
-      buf << " " << pObj->AsReference()->GetRefObjNum() << FX_BSTRC(" 0 R ");
+      buf << " " << pObj->AsReference()->GetRefObjNum() << " 0 R ";
       break;
     }
     case PDFOBJ_ARRAY: {
       const CPDF_Array* p = pObj->AsArray();
-      buf << FX_BSTRC("[");
+      buf << "[";
       for (FX_DWORD i = 0; i < p->GetCount(); i++) {
         CPDF_Object* pElement = p->GetElement(i);
         if (pElement->GetObjNum()) {
-          buf << " " << pElement->GetObjNum() << FX_BSTRC(" 0 R");
+          buf << " " << pElement->GetObjNum() << " 0 R";
         } else {
           buf << pElement;
         }
       }
-      buf << FX_BSTRC("]");
+      buf << "]";
       break;
     }
     case PDFOBJ_DICTIONARY: {
       const CPDF_Dictionary* p = pObj->AsDictionary();
-      buf << FX_BSTRC("<<");
+      buf << "<<";
       FX_POSITION pos = p->GetStartPos();
       while (pos) {
         CFX_ByteString key;
         CPDF_Object* pValue = p->GetNextElement(pos, key);
-        buf << FX_BSTRC("/") << PDF_NameEncode(key);
+        buf << "/" << PDF_NameEncode(key);
         if (pValue && pValue->GetObjNum()) {
-          buf << " " << pValue->GetObjNum() << FX_BSTRC(" 0 R ");
+          buf << " " << pValue->GetObjNum() << " 0 R ";
         } else {
           buf << pValue;
         }
       }
-      buf << FX_BSTRC(">>");
+      buf << ">>";
       break;
     }
     case PDFOBJ_STREAM: {
       const CPDF_Stream* p = pObj->AsStream();
-      buf << p->GetDict() << FX_BSTRC("stream\r\n");
+      buf << p->GetDict() << "stream\r\n";
       CPDF_StreamAcc acc;
       acc.LoadAllData(p, TRUE);
       buf.AppendBlock(acc.GetData(), acc.GetSize());
-      buf << FX_BSTRC("\r\nendstream");
+      buf << "\r\nendstream";
       break;
     }
     default:

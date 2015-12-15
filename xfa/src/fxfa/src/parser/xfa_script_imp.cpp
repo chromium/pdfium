@@ -209,7 +209,7 @@ void CXFA_ScriptContext::GlobalPropertyGetter(FXJSE_HOBJECT hObject,
   CFX_WideString wsPropName = CFX_WideString::FromUTF8(
       (const FX_CHAR*)szPropName.GetPtr(), szPropName.GetLength());
   if (lpScriptContext->GetType() == XFA_SCRIPTLANGTYPE_Formcalc) {
-    if (szPropName == FX_BSTRC(FOXIT_XFA_FM2JS_FORMCALC_RUNTIME)) {
+    if (szPropName == FOXIT_XFA_FM2JS_FORMCALC_RUNTIME) {
       XFA_FM2JS_GlobalPropertyGetter(lpScriptContext->m_hFM2JSContext, hValue);
       return;
     }

@@ -1037,11 +1037,11 @@ FPDF_VIEWERREF_GetDuplex(FPDF_DOCUMENT document) {
     return DuplexUndefined;
   CPDF_ViewerPreferences viewRef(pDoc);
   CFX_ByteString duplex = viewRef.Duplex();
-  if (FX_BSTRC("Simplex") == duplex)
+  if ("Simplex" == duplex)
     return Simplex;
-  if (FX_BSTRC("DuplexFlipShortEdge") == duplex)
+  if ("DuplexFlipShortEdge" == duplex)
     return DuplexFlipShortEdge;
-  if (FX_BSTRC("DuplexFlipLongEdge") == duplex)
+  if ("DuplexFlipLongEdge" == duplex)
     return DuplexFlipLongEdge;
   return DuplexUndefined;
 }
@@ -1055,9 +1055,9 @@ DLLEXPORT FPDF_DWORD STDCALL FPDF_CountNamedDests(FPDF_DOCUMENT document) {
   if (!pRoot)
     return 0;
 
-  CPDF_NameTree nameTree(pDoc, FX_BSTRC("Dests"));
+  CPDF_NameTree nameTree(pDoc, "Dests");
   int count = nameTree.GetCount();
-  CPDF_Dictionary* pDest = pRoot->GetDict(FX_BSTRC("Dests"));
+  CPDF_Dictionary* pDest = pRoot->GetDict("Dests");
   if (pDest)
     count += pDest->GetCount();
   return count;
@@ -1072,7 +1072,7 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDestByName(FPDF_DOCUMENT document,
   if (!pDoc)
     return nullptr;
 
-  CPDF_NameTree name_tree(pDoc, FX_BSTRC("Dests"));
+  CPDF_NameTree name_tree(pDoc, "Dests");
   return name_tree.LookupNamedDest(pDoc, name);
 }
 
@@ -1150,10 +1150,10 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document,
 
   CPDF_Object* pDestObj = NULL;
   CFX_ByteString bsName;
-  CPDF_NameTree nameTree(pDoc, FX_BSTRC("Dests"));
+  CPDF_NameTree nameTree(pDoc, "Dests");
   int count = nameTree.GetCount();
   if (index >= count) {
-    CPDF_Dictionary* pDest = pRoot->GetDict(FX_BSTRC("Dests"));
+    CPDF_Dictionary* pDest = pRoot->GetDict("Dests");
     if (!pDest)
       return NULL;
     if (index >= count + pDest->GetCount())
@@ -1175,7 +1175,7 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document,
   if (!pDestObj)
     return nullptr;
   if (CPDF_Dictionary* pDict = pDestObj->AsDictionary()) {
-    pDestObj = pDict->GetArray(FX_BSTRC("D"));
+    pDestObj = pDict->GetArray("D");
     if (!pDestObj)
       return nullptr;
   }

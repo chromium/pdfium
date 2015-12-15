@@ -77,7 +77,7 @@ CPDF_Dest CPDF_Link::GetDest(CPDF_Document* pDoc) {
     return CPDF_Dest();
 
   if (pDest->IsString() || pDest->IsName()) {
-    CPDF_NameTree name_tree(pDoc, FX_BSTRC("Dests"));
+    CPDF_NameTree name_tree(pDoc, "Dests");
     CFX_ByteStringC name = pDest->GetString();
     return CPDF_Dest(name_tree.LookupNamedDest(pDoc, name));
   }

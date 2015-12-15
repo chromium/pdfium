@@ -981,7 +981,7 @@ void CFX_ByteString::TrimRight(FX_CHAR chTarget) {
   TrimRight(CFX_ByteStringC(chTarget));
 }
 void CFX_ByteString::TrimRight() {
-  TrimRight(FX_BSTRC("\x09\x0a\x0b\x0c\x0d\x20"));
+  TrimRight("\x09\x0a\x0b\x0c\x0d\x20");
 }
 void CFX_ByteString::TrimLeft(const CFX_ByteStringC& lpszTargets) {
   if (m_pData == NULL) {
@@ -1018,7 +1018,7 @@ void CFX_ByteString::TrimLeft(FX_CHAR chTarget) {
   TrimLeft(CFX_ByteStringC(chTarget));
 }
 void CFX_ByteString::TrimLeft() {
-  TrimLeft(FX_BSTRC("\x09\x0a\x0b\x0c\x0d\x20"));
+  TrimLeft("\x09\x0a\x0b\x0c\x0d\x20");
 }
 FX_DWORD CFX_ByteString::GetID(FX_STRSIZE start_pos) const {
   return CFX_ByteStringC(*this).GetID(start_pos);

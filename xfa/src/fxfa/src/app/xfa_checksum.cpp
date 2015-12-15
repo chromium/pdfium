@@ -21,9 +21,9 @@ void* CXFA_SAXReaderHandler::OnTagEnter(const CFX_ByteStringC& bsTagName,
   }
   m_SAXContext.m_eNode = eType;
   CFX_ByteTextBuf& textBuf = m_SAXContext.m_TextBuf;
-  textBuf << FX_BSTRC("<");
+  textBuf << "<";
   if (eType == FX_SAXNODE_Instruction) {
-    textBuf << FX_BSTRC("?");
+    textBuf << "?";
   }
   textBuf << bsTagName;
   m_SAXContext.m_bsTagName = bsTagName;
@@ -36,18 +36,14 @@ void CXFA_SAXReaderHandler::OnTagAttribute(void* pTag,
     return;
   }
   CFX_ByteTextBuf& textBuf = ((CXFA_SAXContext*)pTag)->m_TextBuf;
-  textBuf << FX_BSTRC(" ");
-  textBuf << bsAttri;
-  textBuf << FX_BSTRC("=\"");
-  textBuf << bsValue;
-  textBuf << FX_BSTRC("\"");
+  textBuf << " " << bsAttri << "=\"" << bsValue << "\"";
 }
 void CXFA_SAXReaderHandler::OnTagBreak(void* pTag) {
   if (pTag == NULL) {
     return;
   }
   CFX_ByteTextBuf& textBuf = ((CXFA_SAXContext*)pTag)->m_TextBuf;
-  textBuf << FX_BSTRC(">");
+  textBuf << ">";
   UpdateChecksum(FALSE);
 }
 void CXFA_SAXReaderHandler::OnTagData(void* pTag,
@@ -59,11 +55,11 @@ void CXFA_SAXReaderHandler::OnTagData(void* pTag,
   }
   CFX_ByteTextBuf& textBuf = ((CXFA_SAXContext*)pTag)->m_TextBuf;
   if (eType == FX_SAXNODE_CharData) {
-    textBuf << FX_BSTRC("<![CDATA[");
+    textBuf << "<![CDATA[";
   }
   textBuf << bsData;
   if (eType == FX_SAXNODE_CharData) {
-    textBuf << FX_BSTRC("]]>");
+    textBuf << "]]>";
   }
 }
 void CXFA_SAXReaderHandler::OnTagClose(void* pTag, FX_DWORD dwEndPos) {
@@ -73,11 +69,9 @@ void CXFA_SAXReaderHandler::OnTagClose(void* pTag, FX_DWORD dwEndPos) {
   CXFA_SAXContext* pSAXContext = (CXFA_SAXContext*)pTag;
   CFX_ByteTextBuf& textBuf = pSAXContext->m_TextBuf;
   if (pSAXContext->m_eNode == FX_SAXNODE_Instruction) {
-    textBuf << FX_BSTRC("?>");
+    textBuf << "?>";
   } else if (pSAXContext->m_eNode == FX_SAXNODE_Tag) {
-    textBuf << FX_BSTRC("></");
-    textBuf << pSAXContext->m_bsTagName;
-    textBuf << FX_BSTRC(">");
+    textBuf << "></" << pSAXContext->m_bsTagName << ">";
   }
   UpdateChecksum(FALSE);
 }
@@ -88,9 +82,7 @@ void CXFA_SAXReaderHandler::OnTagEnd(void* pTag,
     return;
   }
   CFX_ByteTextBuf& textBuf = ((CXFA_SAXContext*)pTag)->m_TextBuf;
-  textBuf << FX_BSTRC("</");
-  textBuf << bsTagName;
-  textBuf << FX_BSTRC(">");
+  textBuf << "</" << bsTagName << ">";
   UpdateChecksum(FALSE);
 }
 void CXFA_SAXReaderHandler::OnTargetData(void* pTag,
@@ -102,14 +94,11 @@ void CXFA_SAXReaderHandler::OnTargetData(void* pTag,
   }
   if (eType == FX_SAXNODE_Comment) {
     CFX_ByteTextBuf& textBuf = m_SAXContext.m_TextBuf;
-    textBuf << FX_BSTRC("<!--");
-    textBuf << bsData;
-    textBuf << FX_BSTRC("-->");
+    textBuf << "<!--" << bsData << "-->";
     UpdateChecksum(FALSE);
   } else {
     CFX_ByteTextBuf& textBuf = ((CXFA_SAXContext*)pTag)->m_TextBuf;
-    textBuf << FX_BSTRC(" ");
-    textBuf << bsData;
+    textBuf << " " << bsData;
   }
 }
 void CXFA_SAXReaderHandler::UpdateChecksum(FX_BOOL bCheckSpace) {

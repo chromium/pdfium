@@ -11,8 +11,7 @@
 #include "pdf_vt.h"
 
 FX_BOOL FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
-  if (!pAnnotDict ||
-      pAnnotDict->GetConstString("Subtype") != FX_BSTRC("Widget")) {
+  if (!pAnnotDict || pAnnotDict->GetConstString("Subtype") != "Widget") {
     return FALSE;
   }
   CFX_ByteString field_type = FPDF_GetFieldAttr(pAnnotDict, "FT")->GetString();
@@ -292,16 +291,16 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
   CPVT_Color crText = ParseColor(DA);
   FX_BOOL bUseFormRes = FALSE;
   CPDF_Dictionary* pFontDict = NULL;
-  CPDF_Dictionary* pDRDict = pAnnotDict->GetDict(FX_BSTRC("DR"));
+  CPDF_Dictionary* pDRDict = pAnnotDict->GetDict("DR");
   if (pDRDict == NULL) {
-    pDRDict = pFormDict->GetDict(FX_BSTRC("DR"));
+    pDRDict = pFormDict->GetDict("DR");
     bUseFormRes = TRUE;
   }
   CPDF_Dictionary* pDRFontDict = NULL;
   if (pDRDict && (pDRFontDict = pDRDict->GetDict("Font"))) {
     pFontDict = pDRFontDict->GetDict(sFontName.Mid(1));
     if (!pFontDict && !bUseFormRes) {
-      pDRDict = pFormDict->GetDict(FX_BSTRC("DR"));
+      pDRDict = pFormDict->GetDict("DR");
       pDRFontDict = pDRDict->GetDict("Font");
       if (pDRFontDict) {
         pFontDict = pDRFontDict->GetDict(sFontName.Mid(1));
@@ -316,10 +315,10 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
     if (pFontDict == NULL) {
       return FALSE;
     }
-    pFontDict->SetAtName(FX_BSTRC("Type"), "Font");
-    pFontDict->SetAtName(FX_BSTRC("Subtype"), "Type1");
-    pFontDict->SetAtName(FX_BSTRC("BaseFont"), "Helvetica");
-    pFontDict->SetAtName(FX_BSTRC("Encoding"), "WinAnsiEncoding");
+    pFontDict->SetAtName("Type", "Font");
+    pFontDict->SetAtName("Subtype", "Type1");
+    pFontDict->SetAtName("BaseFont", "Helvetica");
+    pFontDict->SetAtName("Encoding", "WinAnsiEncoding");
     pDoc->AddIndirectObject(pFontDict);
     pDRFontDict->SetAtReference(sFontName.Mid(1), pDoc, pFontDict);
   }

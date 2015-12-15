@@ -411,8 +411,7 @@ FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj,
       Options.m_Flags &= ~RENDER_FORCE_DOWNSAMPLE;
       CPDF_Dictionary* pFormResource = NULL;
       if (pType3Char->m_pForm && pType3Char->m_pForm->m_pFormDict) {
-        pFormResource =
-            pType3Char->m_pForm->m_pFormDict->GetDict(FX_BSTRC("Resources"));
+        pFormResource = pType3Char->m_pForm->m_pFormDict->GetDict("Resources");
       }
       if (fill_alpha == 255) {
         CPDF_RenderStatus status;

@@ -1099,42 +1099,40 @@ class CPDF_ApSettings {
   int GetRotation() const;
 
   FX_ARGB GetBorderColor(int& iColorType) const {
-    return GetColor(iColorType, FX_BSTRC("BC"));
+    return GetColor(iColorType, "BC");
   }
 
   FX_FLOAT GetOriginalBorderColor(int index) const {
-    return GetOriginalColor(index, FX_BSTRC("BC"));
+    return GetOriginalColor(index, "BC");
   }
 
   void GetOriginalBorderColor(int& iColorType, FX_FLOAT fc[4]) const {
-    GetOriginalColor(iColorType, fc, FX_BSTRC("BC"));
+    GetOriginalColor(iColorType, fc, "BC");
   }
 
   FX_ARGB GetBackgroundColor(int& iColorType) const {
-    return GetColor(iColorType, FX_BSTRC("BG"));
+    return GetColor(iColorType, "BG");
   }
 
   FX_FLOAT GetOriginalBackgroundColor(int index) const {
-    return GetOriginalColor(index, FX_BSTRC("BG"));
+    return GetOriginalColor(index, "BG");
   }
 
   void GetOriginalBackgroundColor(int& iColorType, FX_FLOAT fc[4]) const {
-    GetOriginalColor(iColorType, fc, FX_BSTRC("BG"));
+    GetOriginalColor(iColorType, fc, "BG");
   }
 
-  CFX_WideString GetNormalCaption() const { return GetCaption(FX_BSTRC("CA")); }
+  CFX_WideString GetNormalCaption() const { return GetCaption("CA"); }
 
-  CFX_WideString GetRolloverCaption() const {
-    return GetCaption(FX_BSTRC("RC"));
-  }
+  CFX_WideString GetRolloverCaption() const { return GetCaption("RC"); }
 
-  CFX_WideString GetDownCaption() const { return GetCaption(FX_BSTRC("AC")); }
+  CFX_WideString GetDownCaption() const { return GetCaption("AC"); }
 
-  CPDF_Stream* GetNormalIcon() const { return GetIcon(FX_BSTRC("I")); }
+  CPDF_Stream* GetNormalIcon() const { return GetIcon("I"); }
 
-  CPDF_Stream* GetRolloverIcon() const { return GetIcon(FX_BSTRC("RI")); }
+  CPDF_Stream* GetRolloverIcon() const { return GetIcon("RI"); }
 
-  CPDF_Stream* GetDownIcon() const { return GetIcon(FX_BSTRC("IX")); }
+  CPDF_Stream* GetDownIcon() const { return GetIcon("IX"); }
 
   CPDF_IconFit GetIconFit() const;
 

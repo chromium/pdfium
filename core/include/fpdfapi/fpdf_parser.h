@@ -313,11 +313,10 @@ class CPDF_SyntaxParser {
 
   void GetNextWord();
 
-  FX_BOOL IsWholeWord(FX_FILESIZE startpos,
-                      FX_FILESIZE limit,
-                      const uint8_t* tag,
-                      FX_DWORD taglen,
-                      FX_BOOL checkKeyword);
+  bool IsWholeWord(FX_FILESIZE startpos,
+                   FX_FILESIZE limit,
+                   const CFX_ByteStringC& tag,
+                   FX_BOOL checkKeyword);
 
   CFX_ByteString ReadString();
 

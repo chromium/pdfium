@@ -263,7 +263,7 @@ CPDF_Font* CPDF_DocPageData::GetStandardFont(const CFX_ByteStringC& fontName,
       continue;
     if (pFont->GetFontType() != PDFFONT_TYPE1)
       continue;
-    if (pFont->GetFontDict()->KeyExist(FX_BSTRC("Widths")))
+    if (pFont->GetFontDict()->KeyExist("Widths"))
       continue;
 
     CPDF_Type1Font* pT1Font = pFont->GetType1Font();
@@ -274,11 +274,11 @@ CPDF_Font* CPDF_DocPageData::GetStandardFont(const CFX_ByteStringC& fontName,
   }
 
   CPDF_Dictionary* pDict = new CPDF_Dictionary;
-  pDict->SetAtName(FX_BSTRC("Type"), FX_BSTRC("Font"));
-  pDict->SetAtName(FX_BSTRC("Subtype"), FX_BSTRC("Type1"));
-  pDict->SetAtName(FX_BSTRC("BaseFont"), fontName);
+  pDict->SetAtName("Type", "Font");
+  pDict->SetAtName("Subtype", "Type1");
+  pDict->SetAtName("BaseFont", fontName);
   if (pEncoding) {
-    pDict->SetAt(FX_BSTRC("Encoding"), pEncoding->Realize());
+    pDict->SetAt("Encoding", pEncoding->Realize());
   }
   m_pPDFDoc->AddIndirectObject(pDict);
   CPDF_Font* pFont = CPDF_Font::CreateFontF(m_pPDFDoc, pDict);
@@ -317,7 +317,7 @@ CPDF_ColorSpace* CPDF_DocPageData::GetColorSpace(
     CFX_ByteString name = pCSObj->GetConstString();
     CPDF_ColorSpace* pCS = _CSFromName(name);
     if (!pCS && pResources) {
-      CPDF_Dictionary* pList = pResources->GetDict(FX_BSTRC("ColorSpace"));
+      CPDF_Dictionary* pList = pResources->GetDict("ColorSpace");
       if (pList) {
         pCSObj = pList->GetElementValue(name);
         return GetColorSpace(pCSObj, nullptr);
@@ -326,20 +326,20 @@ CPDF_ColorSpace* CPDF_DocPageData::GetColorSpace(
     if (!pCS || !pResources)
       return pCS;
 
-    CPDF_Dictionary* pColorSpaces = pResources->GetDict(FX_BSTRC("ColorSpace"));
+    CPDF_Dictionary* pColorSpaces = pResources->GetDict("ColorSpace");
     if (!pColorSpaces)
       return pCS;
 
     CPDF_Object* pDefaultCS = nullptr;
     switch (pCS->GetFamily()) {
       case PDFCS_DEVICERGB:
-        pDefaultCS = pColorSpaces->GetElementValue(FX_BSTRC("DefaultRGB"));
+        pDefaultCS = pColorSpaces->GetElementValue("DefaultRGB");
         break;
       case PDFCS_DEVICEGRAY:
-        pDefaultCS = pColorSpaces->GetElementValue(FX_BSTRC("DefaultGray"));
+        pDefaultCS = pColorSpaces->GetElementValue("DefaultGray");
         break;
       case PDFCS_DEVICECMYK:
-        pDefaultCS = pColorSpaces->GetElementValue(FX_BSTRC("DefaultCMYK"));
+        pDefaultCS = pColorSpaces->GetElementValue("DefaultCMYK");
         break;
     }
     return pDefaultCS ? GetColorSpace(pDefaultCS, nullptr) : pCS;
@@ -423,7 +423,7 @@ CPDF_Pattern* CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj,
   } else {
     CPDF_Dictionary* pDict = pPatternObj ? pPatternObj->GetDict() : nullptr;
     if (pDict) {
-      int type = pDict->GetInteger(FX_BSTRC("PatternType"));
+      int type = pDict->GetInteger("PatternType");
       if (type == 1) {
         pPattern = new CPDF_TilingPattern(m_pPDFDoc, pPatternObj, matrix);
       } else if (type == 2) {
@@ -553,9 +553,9 @@ CPDF_StreamAcc* CPDF_DocPageData::GetFontFileStreamAcc(
     return it->second->AddRef();
 
   CPDF_Dictionary* pFontDict = pFontStream->GetDict();
-  int32_t org_size = pFontDict->GetInteger(FX_BSTRC("Length1")) +
-                     pFontDict->GetInteger(FX_BSTRC("Length2")) +
-                     pFontDict->GetInteger(FX_BSTRC("Length3"));
+  int32_t org_size = pFontDict->GetInteger("Length1") +
+                     pFontDict->GetInteger("Length2") +
+                     pFontDict->GetInteger("Length3");
   if (org_size < 0)
     org_size = 0;
 

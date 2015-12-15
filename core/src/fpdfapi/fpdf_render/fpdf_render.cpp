@@ -444,8 +444,7 @@ void CPDF_RenderStatus::DrawObjWithBackground(const CPDF_PageObject* pObj,
   if (pObj->m_Type == PDFPAGE_FORM) {
     CPDF_FormObject* pFormObj = (CPDF_FormObject*)pObj;
     if (pFormObj->m_pForm && pFormObj->m_pForm->m_pFormDict) {
-      pFormResource =
-          pFormObj->m_pForm->m_pFormDict->GetDict(FX_BSTRC("Resources"));
+      pFormResource = pFormObj->m_pForm->m_pFormDict->GetDict("Resources");
     }
   }
   CPDF_RenderStatus status;
@@ -457,8 +456,7 @@ void CPDF_RenderStatus::DrawObjWithBackground(const CPDF_PageObject* pObj,
 }
 FX_BOOL CPDF_RenderStatus::ProcessForm(CPDF_FormObject* pFormObj,
                                        const CFX_Matrix* pObj2Device) {
-  CPDF_Dictionary* pOC =
-      pFormObj->m_pForm->m_pFormDict->GetDict(FX_BSTRC("OC"));
+  CPDF_Dictionary* pOC = pFormObj->m_pForm->m_pFormDict->GetDict("OC");
   if (pOC && m_Options.m_pOCContext &&
       !m_Options.m_pOCContext->CheckOCGVisible(pOC)) {
     return TRUE;
@@ -467,7 +465,7 @@ FX_BOOL CPDF_RenderStatus::ProcessForm(CPDF_FormObject* pFormObj,
   matrix.Concat(*pObj2Device);
   CPDF_Dictionary* pResources = NULL;
   if (pFormObj->m_pForm && pFormObj->m_pForm->m_pFormDict) {
-    pResources = pFormObj->m_pForm->m_pFormDict->GetDict(FX_BSTRC("Resources"));
+    pResources = pFormObj->m_pForm->m_pFormDict->GetDict("Resources");
   }
   CPDF_RenderStatus status;
   status.Initialize(m_pContext, m_pDevice, NULL, m_pStopObj, this, pFormObj,
@@ -731,9 +729,7 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
       pGeneralState ? ToDictionary(pGeneralState->m_pSoftMask) : NULL;
   if (pSMaskDict) {
     if (pPageObj->m_Type == PDFPAGE_IMAGE &&
-        ((CPDF_ImageObject*)pPageObj)
-            ->m_pImage->GetDict()
-            ->KeyExist(FX_BSTRC("SMask"))) {
+        ((CPDF_ImageObject*)pPageObj)->m_pImage->GetDict()->KeyExist("SMask")) {
       pSMaskDict = NULL;
     }
   }
@@ -775,7 +771,7 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
     CPDF_Object* pCSObj = ((CPDF_ImageObject*)pPageObj)
                               ->m_pImage->GetStream()
                               ->GetDict()
-                              ->GetElementValue(FX_BSTRC("ColorSpace"));
+                              ->GetElementValue("ColorSpace");
     CPDF_ColorSpace* pColorSpace =
         pDocument->LoadColorSpace(pCSObj, pPageResources);
     if (pColorSpace) {
@@ -1414,7 +1410,7 @@ FX_BOOL IPDF_OCContext::CheckObjectVisible(const CPDF_PageObject* pObj) {
   int nItems = pData->CountItems();
   for (int i = 0; i < nItems; i++) {
     CPDF_ContentMarkItem& item = pData->GetItem(i);
-    if (item.GetName() == FX_BSTRC("OC") &&
+    if (item.GetName() == "OC" &&
         item.GetParamType() == CPDF_ContentMarkItem::PropertiesDict) {
       CPDF_Dictionary* pOCG =
           ToDictionary(static_cast<CPDF_Object*>(item.GetParam()));
