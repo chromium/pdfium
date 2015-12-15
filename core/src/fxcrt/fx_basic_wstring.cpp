@@ -989,7 +989,7 @@ int CFX_WideString::GetInteger() const {
   return m_pData ? FXSYS_wtoi(m_pData->m_String) : 0;
 }
 FX_FLOAT CFX_WideString::GetFloat() const {
-  return m_pData ? FX_wtof(m_pData->m_String, m_pData->m_nDataLength) : 0.0;
+  return m_pData ? FX_wtof(m_pData->m_String, m_pData->m_nDataLength) : 0.0f;
 }
 static CFX_ByteString _DefMap_GetByteString(CFX_CharMap* pCharMap,
                                             const CFX_WideString& widestr) {
