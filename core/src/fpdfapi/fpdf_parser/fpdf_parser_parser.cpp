@@ -2362,11 +2362,11 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
       m_Pos += ReadEOLMarkers(m_Pos);
       FXSYS_memset(m_WordBuffer, 0, ENDSTREAM_LEN + 1);
       GetNextWord();
-      if (FXSYS_memcmp(m_WordBuffer, "endstream", ENDSTREAM_LEN) == 0 &&
-          IsWholeWord(m_Pos - ENDSTREAM_LEN, m_FileLen,
-                      FX_BSTRC("endstream").GetPtr(), ENDSTREAM_LEN, TRUE)) {
+      // Earlier version of PDF specification doesn't require EOL marker before
+      // 'endstream' keyword. If keyword 'endstream' follows the bytes in
+      // specified length, it signals the end of stream.
+      if (FXSYS_memcmp(m_WordBuffer, "endstream", ENDSTREAM_LEN) == 0)
         bSearchForKeyword = FALSE;
-      }
     }
     if (bSearchForKeyword) {
       // If len is not available, len needs to be calculated
