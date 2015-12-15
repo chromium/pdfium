@@ -1182,7 +1182,9 @@ FX_BOOL CPDF_Parser::IsFormStream(FX_DWORD objnum, FX_BOOL& bForm) {
   FX_FILESIZE size = ((FX_FILESIZE*)pResult)[1] - pos;
   FX_FILESIZE SavedPos = m_Syntax.SavePos();
   m_Syntax.RestorePos(pos);
-  bForm = m_Syntax.SearchMultiWord("/Form\0stream", TRUE, size) == 0;
+  const char kFormStream[] = "/Form\0stream";
+  const CFX_ByteStringC kFormStreamStr(kFormStream, sizeof(kFormStream) - 1);
+  bForm = m_Syntax.SearchMultiWord(kFormStreamStr, TRUE, size) == 0;
   m_Syntax.RestorePos(SavedPos);
   return TRUE;
 }
