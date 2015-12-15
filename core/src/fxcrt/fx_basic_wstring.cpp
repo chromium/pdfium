@@ -258,7 +258,7 @@ void CFX_WideString::CopyBeforeWrite() {
   m_pData->Release();
   FX_STRSIZE nDataLength = pData->m_nDataLength;
   m_pData = StringData::Create(nDataLength);
-  if (m_pData != NULL) {
+  if (m_pData) {
     FXSYS_memcpy(m_pData->m_String, pData->m_String,
                  (nDataLength + 1) * sizeof(FX_WCHAR));
   }
@@ -540,7 +540,7 @@ FX_STRSIZE CFX_WideString::Find(FX_WCHAR ch, FX_STRSIZE nStart) const {
   return (lpsz == NULL) ? -1 : (int)(lpsz - m_pData->m_String);
 }
 void CFX_WideString::TrimRight(const FX_WCHAR* lpszTargetList) {
-  FXSYS_assert(lpszTargetList != NULL);
+  FXSYS_assert(lpszTargetList);
   if (m_pData == NULL || *lpszTargetList == 0) {
     return;
   }
@@ -569,7 +569,7 @@ void CFX_WideString::TrimRight() {
   TrimRight(L"\x09\x0a\x0b\x0c\x0d\x20");
 }
 void CFX_WideString::TrimLeft(const FX_WCHAR* lpszTargets) {
-  FXSYS_assert(lpszTargets != NULL);
+  FXSYS_assert(lpszTargets);
   if (m_pData == NULL || *lpszTargets == 0) {
     return;
   }
@@ -617,7 +617,7 @@ FX_STRSIZE CFX_WideString::Replace(const FX_WCHAR* lpszOld,
   FX_WCHAR* lpszEnd = m_pData->m_String + m_pData->m_nDataLength;
   FX_WCHAR* lpszTarget;
   {
-    while ((lpszTarget = (FX_WCHAR*)FXSYS_wcsstr(lpszStart, lpszOld)) != NULL &&
+    while ((lpszTarget = (FX_WCHAR*)FXSYS_wcsstr(lpszStart, lpszOld)) &&
            lpszStart < lpszEnd) {
       nCount++;
       lpszStart = lpszTarget + nSourceLen;
@@ -678,7 +678,7 @@ FX_STRSIZE CFX_WideString::Insert(FX_STRSIZE nIndex, FX_WCHAR ch) {
     if (!m_pData) {
       return 0;
     }
-    if (pOldData != NULL) {
+    if (pOldData) {
       FXSYS_memmove(m_pData->m_String, pstr,
                     (pOldData->m_nDataLength + 1) * sizeof(FX_WCHAR));
       pOldData->Release();

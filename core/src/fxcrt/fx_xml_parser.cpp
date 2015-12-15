@@ -819,7 +819,6 @@ int CXML_AttrMap::GetSize() const {
   return m_pMap == NULL ? 0 : m_pMap->GetSize();
 }
 CXML_AttrItem& CXML_AttrMap::GetAt(int index) const {
-  ASSERT(m_pMap != NULL);
   return (*m_pMap)[index];
 }
 void CXML_AttrMap::RemoveAll() {

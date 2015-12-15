@@ -429,7 +429,7 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
 
 #if (_FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_)
 uint32_t FX_GetLangHashCode(const FX_CHAR* pStr) {
-  FXSYS_assert(pStr != NULL);
+  FXSYS_assert(pStr);
   int32_t iLength = FXSYS_strlen(pStr);
   const FX_CHAR* pStrEnd = pStr + iLength;
   uint32_t uHashCode = 0;

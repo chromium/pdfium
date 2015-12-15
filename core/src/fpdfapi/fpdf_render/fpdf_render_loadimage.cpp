@@ -788,7 +788,7 @@ int CPDF_DIBSource::StratLoadMask() {
   m_pMaskStream = m_pDict->GetStream("SMask");
   if (m_pMaskStream) {
     CPDF_Array* pMatte = m_pMaskStream->GetDict()->GetArray("Matte");
-    if (pMatte != NULL && m_pColorSpace &&
+    if (pMatte && m_pColorSpace &&
         (FX_DWORD)m_pColorSpace->CountComponents() <= m_nComponents) {
       FX_FLOAT R, G, B;
       FX_FLOAT* pColor = FX_Alloc(FX_FLOAT, m_nComponents);

@@ -18,14 +18,14 @@ typedef HRESULT(__stdcall* FuncType_DWriteCreateFactory)(
     __out IUnknown**);
 template <typename InterfaceType>
 inline void SafeRelease(InterfaceType** currentObject) {
-  if (*currentObject != NULL) {
+  if (*currentObject) {
     (*currentObject)->Release();
     *currentObject = NULL;
   }
 }
 template <typename InterfaceType>
 inline InterfaceType* SafeAcquire(InterfaceType* newObject) {
-  if (newObject != NULL) {
+  if (newObject) {
     newObject->AddRef();
   }
   return newObject;

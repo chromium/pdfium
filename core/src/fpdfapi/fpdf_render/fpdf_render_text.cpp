@@ -313,7 +313,7 @@ static void ReleaseCachedType3(CPDF_Type3Font* pFont) {
   pFont->m_pDocument->GetPageData()->ReleaseFont(pFont->GetFontDict());
 }
 FX_BOOL CPDF_Type3Char::LoadBitmap(CPDF_RenderContext* pContext) {
-  if (m_pBitmap != NULL || m_pForm == NULL) {
+  if (m_pBitmap || m_pForm == NULL) {
     return TRUE;
   }
   if (m_pForm->CountObjects() == 1 && !m_bColored) {

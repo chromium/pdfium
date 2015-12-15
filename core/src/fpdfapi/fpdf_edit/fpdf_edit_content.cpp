@@ -45,7 +45,7 @@ void CPDF_PageContentGenerate::GenerateContent() {
   }
   CPDF_Object* pContent =
       pPageDict ? pPageDict->GetElementValue("Contents") : NULL;
-  if (pContent != NULL) {
+  if (pContent) {
     pPageDict->RemoveAt("Contents");
   }
   CPDF_Stream* pStream = new CPDF_Stream(NULL, 0, NULL);

@@ -115,7 +115,6 @@ void CJS_EventHandler::OnField_MouseEnter(FX_BOOL bModifier,
   m_bModifier = bModifier;
   m_bShift = bShift;
 
-  ASSERT(pTarget != NULL);
   m_strTargetName = pTarget->GetFullName();
 }
 
@@ -126,7 +125,6 @@ void CJS_EventHandler::OnField_MouseExit(FX_BOOL bModifier,
 
   m_bModifier = bModifier;
   m_bShift = bShift;
-  ASSERT(pTarget != NULL);
   m_strTargetName = pTarget->GetFullName();
 }
 
@@ -138,7 +136,6 @@ void CJS_EventHandler::OnField_MouseDown(FX_BOOL bModifier,
 
   m_bModifier = bModifier;
   m_bShift = bShift;
-  ASSERT(pTarget != NULL);
   m_strTargetName = pTarget->GetFullName();
 }
 
@@ -149,7 +146,6 @@ void CJS_EventHandler::OnField_MouseUp(FX_BOOL bModifier,
 
   m_bModifier = bModifier;
   m_bShift = bShift;
-  ASSERT(pTarget != NULL);
   m_strTargetName = pTarget->GetFullName();
 }
 
@@ -161,7 +157,6 @@ void CJS_EventHandler::OnField_Focus(FX_BOOL bModifier,
 
   m_bModifier = bModifier;
   m_bShift = bShift;
-  ASSERT(pTarget != NULL);
   m_strTargetName = pTarget->GetFullName();
   m_pValue = (CFX_WideString*)&Value;
 }
@@ -174,7 +169,6 @@ void CJS_EventHandler::OnField_Blur(FX_BOOL bModifier,
 
   m_bModifier = bModifier;
   m_bShift = bShift;
-  ASSERT(pTarget != NULL);
   m_strTargetName = pTarget->GetFullName();
   m_pValue = (CFX_WideString*)&Value;
 }
@@ -201,7 +195,6 @@ void CJS_EventHandler::OnField_Keystroke(CFX_WideString& strChange,
   m_pISelEnd = &nSelEnd;
   m_pISelStart = &nSelStart;
   m_bShift = bShift;
-  ASSERT(pTarget != NULL);
   m_strTargetName = pTarget->GetFullName();
   m_pValue = &Value;
   m_bWillCommit = bWillCommit;
@@ -224,7 +217,6 @@ void CJS_EventHandler::OnField_Validate(CFX_WideString& strChange,
   m_bKeyDown = bKeyDown;
   m_bModifier = bModifier;
   m_bShift = bShift;
-  ASSERT(pTarget != NULL);
   m_strTargetName = pTarget->GetFullName();
   m_pValue = &Value;
   m_pbRc = &bRc;
@@ -238,7 +230,6 @@ void CJS_EventHandler::OnField_Calculate(CPDF_FormField* pSource,
 
   if (pSource)
     m_strSourceName = pSource->GetFullName();
-  ASSERT(pTarget != NULL);
   m_strTargetName = pTarget->GetFullName();
   m_pValue = &Value;
   m_pbRc = &bRc;
@@ -250,7 +241,6 @@ void CJS_EventHandler::OnField_Format(CPDF_FormField* pTarget,
   Initial(JET_FIELD_FORMAT);
 
   m_nCommitKey = 0;
-  ASSERT(pTarget != NULL);
   m_strTargetName = pTarget->GetFullName();
   m_pValue = &Value;
   m_bWillCommit = bWillCommit;

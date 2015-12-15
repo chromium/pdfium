@@ -48,7 +48,7 @@ class CXML_DataStmAcc : public IFX_BufferRead {
  public:
   CXML_DataStmAcc(IFX_FileRead* pFileRead)
       : m_pFileRead(pFileRead), m_pBuffer(NULL), m_nStart(0), m_dwSize(0) {
-    FXSYS_assert(m_pFileRead != NULL);
+    FXSYS_assert(m_pFileRead);
   }
   ~CXML_DataStmAcc() override { FX_Free(m_pBuffer); }
 

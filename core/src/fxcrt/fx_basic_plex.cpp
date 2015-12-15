@@ -18,10 +18,9 @@ CFX_Plex* CFX_Plex::Create(CFX_Plex*& pHead,
 }
 void CFX_Plex::FreeDataChain() {
   CFX_Plex* p = this;
-  while (p != NULL) {
-    uint8_t* bytes = (uint8_t*)p;
-    CFX_Plex* pNext = p->pNext;
-    FX_Free(bytes);
-    p = pNext;
+  while (p) {
+    CFX_Plex* old = p;
+    p = p->pNext;
+    FX_Free(old);
   }
 }

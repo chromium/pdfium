@@ -49,8 +49,8 @@ CPDF_Rect CFFL_FormFiller::GetWindowRect(CPDFSDK_PageView* pPageView) {
 
 FX_RECT CFFL_FormFiller::GetViewBBox(CPDFSDK_PageView* pPageView,
                                      CPDFSDK_Annot* pAnnot) {
-  ASSERT(pPageView != NULL);
-  ASSERT(pAnnot != NULL);
+  ASSERT(pPageView);
+  ASSERT(pAnnot);
 
   CPDF_Rect rcAnnot = m_pWidget->GetRect();
 
@@ -109,7 +109,7 @@ void CFFL_FormFiller::OnMouseEnter(CPDFSDK_PageView* pPageView,
 void CFFL_FormFiller::OnMouseExit(CPDFSDK_PageView* pPageView,
                                   CPDFSDK_Annot* pAnnot) {
   EndTimer();
-  ASSERT(m_pWidget != NULL);
+  ASSERT(m_pWidget);
 }
 
 FX_BOOL CFFL_FormFiller::OnLButtonDown(CPDFSDK_PageView* pPageView,
@@ -216,7 +216,7 @@ FX_BOOL CFFL_FormFiller::OnKeyDown(CPDFSDK_Annot* pAnnot,
                                    FX_UINT nFlags) {
   if (IsValid()) {
     CPDFSDK_PageView* pPageView = GetCurPageView();
-    ASSERT(pPageView != NULL);
+    ASSERT(pPageView);
 
     if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, FALSE)) {
       return pWnd->OnKeyDown(nKeyCode, nFlags);
@@ -231,7 +231,7 @@ FX_BOOL CFFL_FormFiller::OnChar(CPDFSDK_Annot* pAnnot,
                                 FX_UINT nFlags) {
   if (IsValid()) {
     CPDFSDK_PageView* pPageView = GetCurPageView();
-    ASSERT(pPageView != NULL);
+    ASSERT(pPageView);
 
     if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, FALSE)) {
       return pWnd->OnChar(nChar, nFlags);
@@ -284,7 +284,7 @@ FX_BOOL CFFL_FormFiller::IsValid() const {
 }
 
 PWL_CREATEPARAM CFFL_FormFiller::GetCreateParam() {
-  ASSERT(m_pApp != NULL);
+  ASSERT(m_pApp);
 
   PWL_CREATEPARAM cp;
   cp.pParentWnd = NULL;
@@ -415,8 +415,6 @@ CFX_Matrix CFFL_FormFiller::GetWindowMatrix(void* pAttachedData) {
 CFX_Matrix CFFL_FormFiller::GetCurMatrix() {
   CFX_Matrix mt;
 
-  ASSERT(m_pWidget != NULL);
-
   CPDF_Rect rcDA;
   m_pWidget->GetPDFAnnot()->GetRect(rcDA);
 
@@ -443,7 +441,7 @@ CFX_Matrix CFFL_FormFiller::GetCurMatrix() {
 }
 
 CFX_WideString CFFL_FormFiller::LoadPopupMenuString(int nIndex) {
-  ASSERT(m_pApp != NULL);
+  ASSERT(m_pApp);
 
   return L"";
 }
@@ -637,7 +635,7 @@ void CFFL_Button::OnMouseExit(CPDFSDK_PageView* pPageView,
   FX_RECT rect = GetViewBBox(pPageView, pAnnot);
   InvalidateRect(rect.left, rect.top, rect.right, rect.bottom);
   EndTimer();
-  ASSERT(m_pWidget != NULL);
+  ASSERT(m_pWidget);
 }
 
 FX_BOOL CFFL_Button::OnLButtonDown(CPDFSDK_PageView* pPageView,
@@ -675,7 +673,7 @@ FX_BOOL CFFL_Button::OnMouseMove(CPDFSDK_PageView* pPageView,
                                  CPDFSDK_Annot* pAnnot,
                                  FX_UINT nFlags,
                                  const CPDF_Point& point) {
-  ASSERT(m_pApp != NULL);
+  ASSERT(m_pApp);
 
   return TRUE;
 }
@@ -685,7 +683,7 @@ void CFFL_Button::OnDraw(CPDFSDK_PageView* pPageView,
                          CFX_RenderDevice* pDevice,
                          CFX_Matrix* pUser2Device,
                          FX_DWORD dwFlags) {
-  ASSERT(pPageView != NULL);
+  ASSERT(pPageView);
   CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
   CPDF_FormControl* pCtrl = pWidget->GetFormControl();
   CPDF_FormControl::HighlightingMode eHM = pCtrl->GetHighlightingMode();

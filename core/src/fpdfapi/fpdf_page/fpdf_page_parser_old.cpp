@@ -349,7 +349,7 @@ CPDF_Stream* CPDF_StreamParser::ReadInlineStream(CPDF_Document* pDoc,
   FX_DWORD width = pDict->GetInteger("Width");
   FX_DWORD height = pDict->GetInteger("Height");
   FX_DWORD OrigSize = 0;
-  if (pCSObj != NULL) {
+  if (pCSObj) {
     FX_DWORD bpc = pDict->GetInteger("BitsPerComponent");
     FX_DWORD nComponents = 1;
     CPDF_ColorSpace* pCS = pDoc->LoadColorSpace(pCSObj);

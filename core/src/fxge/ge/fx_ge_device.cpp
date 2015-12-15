@@ -19,7 +19,6 @@ void CFX_RenderDevice::SetDeviceDriver(IFX_RenderDeviceDriver* pDriver) {
   InitDeviceInfo();
 }
 void CFX_RenderDevice::InitDeviceInfo() {
-  ASSERT(m_pDeviceDriver != NULL);
   m_Width = m_pDeviceDriver->GetDeviceCaps(FXDC_PIXEL_WIDTH);
   m_Height = m_pDeviceDriver->GetDeviceCaps(FXDC_PIXEL_HEIGHT);
   m_bpp = m_pDeviceDriver->GetDeviceCaps(FXDC_BITS_PIXEL);

@@ -44,7 +44,7 @@ CPDF_TilingPattern::CPDF_TilingPattern(CPDF_Document* pDoc,
   m_pPatternObj = pPatternObj;
   m_pDocument = pDoc;
   CPDF_Dictionary* pDict = m_pPatternObj->GetDict();
-  ASSERT(pDict != NULL);
+  ASSERT(pDict);
   m_Pattern2Form = pDict->GetMatrix("Matrix");
   m_bColored = pDict->GetInteger("PaintType") == 1;
   if (parentMatrix) {
@@ -88,7 +88,7 @@ CPDF_ShadingPattern::CPDF_ShadingPattern(CPDF_Document* pDoc,
   m_bShadingObj = bShading;
   if (!bShading) {
     CPDF_Dictionary* pDict = m_pPatternObj->GetDict();
-    ASSERT(pDict != NULL);
+    ASSERT(pDict);
     m_Pattern2Form = pDict->GetMatrix("Matrix");
     m_pShadingObj = pDict->GetElementValue("Shading");
     if (parentMatrix) {

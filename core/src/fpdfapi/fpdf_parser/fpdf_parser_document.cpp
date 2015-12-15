@@ -9,7 +9,7 @@
 
 CPDF_Document::CPDF_Document(CPDF_Parser* pParser)
     : CPDF_IndirectObjects(pParser) {
-  ASSERT(pParser != NULL);
+  ASSERT(pParser);
   m_pRootDict = NULL;
   m_pInfoDict = NULL;
   m_bLinearized = FALSE;

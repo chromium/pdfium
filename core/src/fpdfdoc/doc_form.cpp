@@ -328,7 +328,7 @@ static int CALLBACK EnumFontFamExProc(ENUMLOGFONTEXA* lpelfe,
                                       NEWTEXTMETRICEX* lpntme,
                                       DWORD FontType,
                                       LPARAM lParam) {
-  if (FontType != 0x004 || strchr(lpelfe->elfLogFont.lfFaceName, '@') != NULL) {
+  if (FontType != 0x004 || strchr(lpelfe->elfLogFont.lfFaceName, '@')) {
     return 1;
   }
   LPDF_FONTDATA pData = (LPDF_FONTDATA)lParam;
@@ -355,7 +355,7 @@ static FX_BOOL RetrieveSpecificFont(uint8_t charSet,
   memset(&lf, 0, sizeof(LOGFONTA));
   lf.lfCharSet = charSet;
   lf.lfPitchAndFamily = pitchAndFamily;
-  if (pcsFontName != NULL) {
+  if (pcsFontName) {
     strcpy(lf.lfFaceName, pcsFontName);
   }
   return RetrieveSpecificFont(lf);
@@ -406,7 +406,7 @@ CFX_ByteString CPDF_InterForm::GetNativeFont(uint8_t charSet, void* pLogFont) {
     bRet = RetrieveSpecificFont(charSet, DEFAULT_PITCH | FF_DONTCARE, NULL, lf);
   }
   if (bRet) {
-    if (pLogFont != NULL) {
+    if (pLogFont) {
       memcpy(pLogFont, &lf, sizeof(LOGFONTA));
     }
     csFontName = lf.lfFaceName;
@@ -540,7 +540,7 @@ FX_BOOL CPDF_InterForm::ValidateFieldName(
         continue;
       }
       if (pField == pExcludedField) {
-        if (pExcludedControl != NULL) {
+        if (pExcludedControl) {
           if (pField->CountControls() < 2) {
             continue;
           }
@@ -904,10 +904,9 @@ void CPDF_InterForm::LoadField(CPDF_Dictionary* pFieldDict, int nLevel) {
   }
 }
 FX_BOOL CPDF_InterForm::HasXFAForm() const {
-  return m_pFormDict && m_pFormDict->GetArray("XFA") != NULL;
+  return m_pFormDict && m_pFormDict->GetArray("XFA");
 }
 void CPDF_InterForm::FixPageFields(const CPDF_Page* pPage) {
-  ASSERT(pPage != NULL);
   CPDF_Dictionary* pPageDict = pPage->m_pFormDict;
   if (pPageDict == NULL) {
     return;
@@ -919,7 +918,7 @@ void CPDF_InterForm::FixPageFields(const CPDF_Page* pPage) {
   int iAnnotCount = pAnnots->GetCount();
   for (int i = 0; i < iAnnotCount; i++) {
     CPDF_Dictionary* pAnnot = pAnnots->GetDict(i);
-    if (pAnnot != NULL && pAnnot->GetString("Subtype") == "Widget") {
+    if (pAnnot && pAnnot->GetString("Subtype") == "Widget") {
       LoadField(pAnnot);
     }
   }
@@ -1127,7 +1126,6 @@ const struct _SupportFieldEncoding {
 static void FPDFDOC_FDF_GetFieldValue(CPDF_Dictionary* pFieldDict,
                                       CFX_WideString& csValue,
                                       CFX_ByteString& bsEncoding) {
-  ASSERT(pFieldDict != NULL);
   CFX_ByteString csBValue = pFieldDict->GetString("V");
   int32_t iCount = sizeof(g_fieldEncoding) / sizeof(g_fieldEncoding[0]);
   int32_t i = 0;
@@ -1138,7 +1136,7 @@ static void FPDFDOC_FDF_GetFieldValue(CPDF_Dictionary* pFieldDict,
   if (i < iCount) {
     CFX_CharMap* pCharMap =
         CFX_CharMap::GetDefaultMapper(g_fieldEncoding[i].m_codePage);
-    FXSYS_assert(pCharMap != NULL);
+    FXSYS_assert(pCharMap);
     csValue.ConvertFrom(csBValue, pCharMap);
     return;
   }
@@ -1181,7 +1179,7 @@ void CPDF_InterForm::FDF_ImportField(CPDF_Dictionary* pFieldDict,
   CFX_WideString csWValue;
   FPDFDOC_FDF_GetFieldValue(pFieldDict, csWValue, m_bsEncoding);
   int iType = pField->GetFieldType();
-  if (bNotify && m_pFormNotify != NULL) {
+  if (bNotify && m_pFormNotify) {
     int iRet = 0;
     if (iType == FIELDTYPE_LISTBOX) {
       iRet = m_pFormNotify->BeforeSelectionChange(pField, csWValue);
@@ -1203,7 +1201,7 @@ void CPDF_InterForm::FDF_ImportField(CPDF_Dictionary* pFieldDict,
     pField->m_pDict->SetAt("Opt",
                            pFieldDict->GetElementValue("Opt")->Clone(TRUE));
   }
-  if (bNotify && m_pFormNotify != NULL) {
+  if (bNotify && m_pFormNotify) {
     if (iType == FIELDTYPE_CHECKBOX || iType == FIELDTYPE_RADIOBUTTON) {
       m_pFormNotify->AfterCheckedStatusChange(pField, statusArray);
     } else if (iType == FIELDTYPE_LISTBOX) {
@@ -1230,7 +1228,7 @@ FX_BOOL CPDF_InterForm::ImportFromFDF(const CFDF_Document* pFDF,
     return FALSE;
   }
   m_bsEncoding = pMainDict->GetString("Encoding");
-  if (bNotify && m_pFormNotify != NULL) {
+  if (bNotify && m_pFormNotify) {
     int iRet = m_pFormNotify->BeforeFormImportData(this);
     if (iRet < 0) {
       return FALSE;
@@ -1243,7 +1241,7 @@ FX_BOOL CPDF_InterForm::ImportFromFDF(const CFDF_Document* pFDF,
     }
     FDF_ImportField(pField, L"", bNotify);
   }
-  if (bNotify && m_pFormNotify != NULL) {
+  if (bNotify && m_pFormNotify) {
     m_pFormNotify->AfterFormImportData(this);
   }
   return TRUE;

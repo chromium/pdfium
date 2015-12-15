@@ -77,7 +77,7 @@ static CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
     return NULL;
   }
   CPDF_Array* pLimits = pNode->GetArray("Limits");
-  if (pLimits != NULL) {
+  if (pLimits) {
     CFX_ByteString csLeft = pLimits->GetString(0);
     CFX_ByteString csRight = pLimits->GetString(1);
     if (csLeft.Compare(csRight) > 0) {
@@ -96,7 +96,7 @@ static CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
       CFX_ByteString csValue = pNames->GetString(i * 2);
       int32_t iCompare = csValue.Compare(csName);
       if (iCompare <= 0) {
-        if (ppFind != NULL) {
+        if (ppFind) {
           *ppFind = pNames;
         }
         if (iCompare < 0) {
@@ -144,7 +144,7 @@ static CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
       nCurIndex += nCount;
       return NULL;
     }
-    if (ppFind != NULL) {
+    if (ppFind) {
       *ppFind = pNames;
     }
     csName = pNames->GetString((nIndex - nCurIndex) * 2);
@@ -389,7 +389,6 @@ CPDF_Stream* CPDF_FileSpec::GetFileStream() const {
 static void FPDFDOC_FILESPEC_SetFileName(CPDF_Object* pObj,
                                          const CFX_WideStringC& wsFileName,
                                          FX_BOOL bURL) {
-  ASSERT(pObj != NULL);
   CFX_WideString wsStr;
   if (bURL) {
     wsStr = wsFileName;
@@ -405,7 +404,6 @@ static void FPDFDOC_FILESPEC_SetFileName(CPDF_Object* pObj,
 }
 void CPDF_FileSpec::SetFileName(const CFX_WideStringC& wsFileName,
                                 FX_BOOL bURL) {
-  ASSERT(m_pObj != NULL);
   if (bURL) {
     if (CPDF_Dictionary* pDict = m_pObj->AsDictionary()) {
       pDict->SetAtName("FS", "URL");
@@ -483,12 +481,12 @@ CFX_WideString CPDF_PageLabel::GetLabel(int nPage) const {
   int n = nPage;
   while (n >= 0) {
     pValue = numberTree.LookupValue(n);
-    if (pValue != NULL) {
+    if (pValue) {
       break;
     }
     n--;
   }
-  if (pValue != NULL) {
+  if (pValue) {
     pValue = pValue->GetDirect();
     if (CPDF_Dictionary* pLabel = pValue->AsDictionary()) {
       if (pLabel->KeyExist("P")) {

@@ -1433,8 +1433,8 @@ void CPDF_Creator::InitNewObjNumOffsets() {
   FX_BOOL bNewStart = FALSE;
   for (; i < iCount; i++) {
     FX_DWORD dwCurObjNum = m_NewObjNumArray.ElementAt(i);
-    FX_BOOL bExist = (dwCurObjNum < nOldSize &&
-                      m_ObjectOffset.GetPtrAt(dwCurObjNum) != NULL);
+    FX_BOOL bExist =
+        (dwCurObjNum < nOldSize && m_ObjectOffset.GetPtrAt(dwCurObjNum));
     if (bExist || dwCurObjNum - dwLastObjNum > 1) {
       if (!bNewStart) {
         m_ObjectOffset.Add(dwStartObjNum, dwLastObjNum - dwStartObjNum + 1);

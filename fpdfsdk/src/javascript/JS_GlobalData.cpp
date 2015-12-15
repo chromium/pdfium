@@ -23,8 +23,6 @@ void CJS_GlobalVariableArray::Copy(const CJS_GlobalVariableArray& array) {
   Empty();
   for (int i = 0, sz = array.Count(); i < sz; i++) {
     CJS_KeyValue* pOldObjData = array.GetAt(i);
-    ASSERT(pOldObjData != NULL);
-
     switch (pOldObjData->nType) {
       case JS_GLOBALDATA_TYPE_NUMBER: {
         CJS_KeyValue* pNewObjData = new CJS_KeyValue;
@@ -141,19 +139,15 @@ int CJS_GlobalData::FindGlobalVariable(const FX_CHAR* propname) {
 
 CJS_GlobalData_Element* CJS_GlobalData::GetGlobalVariable(
     const FX_CHAR* propname) {
-  ASSERT(propname != NULL);
+  ASSERT(propname);
 
   int nFind = FindGlobalVariable(propname);
-  if (nFind >= 0)
-    return m_arrayGlobalData.GetAt(nFind);
-
-  return NULL;
+  return nFind >= 0 ? m_arrayGlobalData.GetAt(nFind) : nullptr;
 }
 
 void CJS_GlobalData::SetGlobalVariableNumber(const FX_CHAR* propname,
                                              double dData) {
-  ASSERT(propname != NULL);
-
+  ASSERT(propname);
   CFX_ByteString sPropName = propname;
   sPropName.TrimLeft();
   sPropName.TrimRight();
@@ -174,7 +168,7 @@ void CJS_GlobalData::SetGlobalVariableNumber(const FX_CHAR* propname,
 
 void CJS_GlobalData::SetGlobalVariableBoolean(const FX_CHAR* propname,
                                               bool bData) {
-  ASSERT(propname != NULL);
+  ASSERT(propname);
   CFX_ByteString sPropName = propname;
 
   sPropName.TrimLeft();
@@ -198,7 +192,7 @@ void CJS_GlobalData::SetGlobalVariableBoolean(const FX_CHAR* propname,
 
 void CJS_GlobalData::SetGlobalVariableString(const FX_CHAR* propname,
                                              const CFX_ByteString& sData) {
-  ASSERT(propname != NULL);
+  ASSERT(propname);
   CFX_ByteString sPropName = propname;
 
   sPropName.TrimLeft();
@@ -223,7 +217,7 @@ void CJS_GlobalData::SetGlobalVariableString(const FX_CHAR* propname,
 void CJS_GlobalData::SetGlobalVariableObject(
     const FX_CHAR* propname,
     const CJS_GlobalVariableArray& array) {
-  ASSERT(propname != NULL);
+  ASSERT(propname);
   CFX_ByteString sPropName = propname;
 
   sPropName.TrimLeft();
@@ -246,7 +240,7 @@ void CJS_GlobalData::SetGlobalVariableObject(
 }
 
 void CJS_GlobalData::SetGlobalVariableNull(const FX_CHAR* propname) {
-  ASSERT(propname != NULL);
+  ASSERT(propname);
   CFX_ByteString sPropName = propname;
 
   sPropName.TrimLeft();
@@ -268,7 +262,7 @@ void CJS_GlobalData::SetGlobalVariableNull(const FX_CHAR* propname) {
 
 FX_BOOL CJS_GlobalData::SetGlobalVariablePersistent(const FX_CHAR* propname,
                                                     FX_BOOL bPersistent) {
-  ASSERT(propname != NULL);
+  ASSERT(propname);
   CFX_ByteString sPropName = propname;
 
   sPropName.TrimLeft();
@@ -286,7 +280,7 @@ FX_BOOL CJS_GlobalData::SetGlobalVariablePersistent(const FX_CHAR* propname,
 }
 
 FX_BOOL CJS_GlobalData::DeleteGlobalVariable(const FX_CHAR* propname) {
-  ASSERT(propname != NULL);
+  ASSERT(propname);
   CFX_ByteString sPropName = propname;
 
   sPropName.TrimLeft();
@@ -409,8 +403,6 @@ void CJS_GlobalData::SaveGlobalPersisitentVariables() {
 
   for (int i = 0, sz = m_arrayGlobalData.GetSize(); i < sz; i++) {
     CJS_GlobalData_Element* pElement = m_arrayGlobalData.GetAt(i);
-    ASSERT(pElement != NULL);
-
     if (pElement->bPersistent) {
       CFX_BinaryBuf sElement;
       MakeByteString(pElement->data.sKey, &pElement->data, sElement);

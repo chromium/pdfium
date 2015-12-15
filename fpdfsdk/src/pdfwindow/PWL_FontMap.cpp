@@ -14,7 +14,7 @@
 
 CPWL_FontMap::CPWL_FontMap(IFX_SystemHandler* pSystemHandler)
     : m_pPDFDoc(NULL), m_pSystemHandler(pSystemHandler) {
-  ASSERT(m_pSystemHandler != NULL);
+  ASSERT(m_pSystemHandler);
 }
 
 CPWL_FontMap::~CPWL_FontMap() {

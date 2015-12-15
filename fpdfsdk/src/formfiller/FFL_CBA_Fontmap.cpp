@@ -14,8 +14,6 @@ CBA_FontMap::CBA_FontMap(CPDFSDK_Annot* pAnnot,
       m_pAnnotDict(NULL),
       m_pDefaultFont(NULL),
       m_sAPType("N") {
-  ASSERT(pAnnot != NULL);
-
   CPDF_Page* pPage = pAnnot->GetPDFPage();
 
   m_pDocument = pPage->m_pDocument;

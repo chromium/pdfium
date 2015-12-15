@@ -528,8 +528,6 @@ void CPDFSDK_Annot::SetTabOrder(int iTabOrder) {
 }
 
 CPDF_Dictionary* CPDFSDK_BAAnnot::GetAnnotDict() const {
-  ASSERT(m_pAnnot != NULL);
-
   return m_pAnnot->GetAnnotDict();
 }
 
@@ -541,17 +539,12 @@ void CPDFSDK_BAAnnot::SetRect(const CPDF_Rect& rect) {
 }
 
 CPDF_Rect CPDFSDK_BAAnnot::GetRect() const {
-  ASSERT(m_pAnnot != NULL);
-
   CPDF_Rect rect;
   m_pAnnot->GetRect(rect);
-
   return rect;
 }
 
 CFX_ByteString CPDFSDK_BAAnnot::GetType() const {
-  ASSERT(m_pAnnot != NULL);
-
   return m_pAnnot->GetSubType();
 }
 
@@ -563,9 +556,6 @@ void CPDFSDK_BAAnnot::DrawAppearance(CFX_RenderDevice* pDevice,
                                      const CFX_Matrix* pUser2Device,
                                      CPDF_Annot::AppearanceMode mode,
                                      const CPDF_RenderOptions* pOptions) {
-  ASSERT(m_pPageView != NULL);
-  ASSERT(m_pAnnot != NULL);
-
   m_pAnnot->DrawAppearance(m_pPageView->GetPDFPage(), pDevice, pUser2Device,
                            mode, pOptions);
 }
@@ -599,12 +589,10 @@ FX_BOOL CPDFSDK_BAAnnot::IsAppearanceValid(CPDF_Annot::AppearanceMode mode) {
 void CPDFSDK_BAAnnot::DrawBorder(CFX_RenderDevice* pDevice,
                                  const CFX_Matrix* pUser2Device,
                                  const CPDF_RenderOptions* pOptions) {
-  ASSERT(m_pAnnot != NULL);
   m_pAnnot->DrawBorder(pDevice, pUser2Device, pOptions);
 }
 
 void CPDFSDK_BAAnnot::ClearCachedAP() {
-  ASSERT(m_pAnnot != NULL);
   m_pAnnot->ClearCachedAP();
 }
 
@@ -944,8 +932,6 @@ CPDF_AAction CPDFSDK_BAAnnot::GetAAction() const {
 }
 
 void CPDFSDK_BAAnnot::SetAAction(const CPDF_AAction& aa) {
-  ASSERT(aa != NULL);
-
   if ((CPDF_AAction&)aa != m_pAnnot->GetAnnotDict()->GetDict("AA"))
     m_pAnnot->GetAnnotDict()->SetAt("AA", (CPDF_AAction&)aa);
 }

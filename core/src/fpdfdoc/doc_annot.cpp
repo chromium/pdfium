@@ -304,7 +304,7 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
   }
   CPDF_Array* pColor = m_pAnnotDict->GetArray("C");
   FX_DWORD argb = 0xff000000;
-  if (pColor != NULL) {
+  if (pColor) {
     int R = (int32_t)(pColor->GetNumber(0) * 255);
     int G = (int32_t)(pColor->GetNumber(1) * 255);
     int B = (int32_t)(pColor->GetNumber(2) * 255);

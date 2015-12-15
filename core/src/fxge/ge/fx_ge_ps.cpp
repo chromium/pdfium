@@ -417,7 +417,7 @@ FX_BOOL CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource,
           pConverted = pSource->CloneConvert(FXDIB_Rgb);
           break;
         case FXDIB_8bppRgb:
-          if (pSource->GetPalette() != NULL) {
+          if (pSource->GetPalette()) {
             pConverted = pSource->CloneConvert(FXDIB_Rgb);
           }
           break;
@@ -425,7 +425,7 @@ FX_BOOL CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource,
           pConverted = pSource->CloneConvert(FXDIB_Cmyk);
           break;
         case FXDIB_8bppCmyk:
-          if (pSource->GetPalette() != NULL) {
+          if (pSource->GetPalette()) {
             pConverted = pSource->CloneConvert(FXDIB_Cmyk);
           }
           break;

@@ -344,7 +344,7 @@ FX_BOOL CPDF_ImageRenderer::StartLoadDIBSource() {
           m_LoadHandle, m_bStdCS, m_pRenderStatus->m_GroupFamily,
           m_pRenderStatus->m_bLoadMask, m_pRenderStatus, dest_width,
           dest_height)) {
-    if (m_LoadHandle != NULL) {
+    if (m_LoadHandle) {
       m_Status = 4;
       return TRUE;
     }
@@ -389,7 +389,7 @@ FX_BOOL CPDF_ImageRenderer::StartRenderDIBSource() {
     CPDF_Color* pColor = m_pImageObject->m_ColorState.GetFillColor();
     if (pColor && pColor->IsPattern()) {
       m_pPattern = pColor->GetPattern();
-      if (m_pPattern != NULL) {
+      if (m_pPattern) {
         m_bPatternColor = TRUE;
       }
     }
@@ -711,7 +711,7 @@ FX_BOOL CPDF_ImageRenderer::StartDIBSource() {
   if (m_pRenderStatus->m_pDevice->StartDIBits(
           m_pDIBSource, m_BitmapAlpha, m_FillArgb, &m_ImageMatrix, m_Flags,
           m_DeviceHandle, 0, NULL, m_BlendType)) {
-    if (m_DeviceHandle != NULL) {
+    if (m_DeviceHandle) {
       m_Status = 3;
       return TRUE;
     }

@@ -1096,9 +1096,7 @@ FX_BOOL CJS_PublicMethods::AFNumber_Keystroke(
     CJS_Value& vRet,
     CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
-  ASSERT(pContext != NULL);
   CJS_EventHandler* pEvent = pContext->GetEventHandler();
-  ASSERT(pEvent != NULL);
 
   if (params.size() < 2)
     return FALSE;
@@ -1217,9 +1215,7 @@ FX_BOOL CJS_PublicMethods::AFPercent_Format(
     CFX_WideString& sError) {
 #if _FX_OS_ != _FX_ANDROID_
   CJS_Context* pContext = (CJS_Context*)cc;
-  ASSERT(pContext != NULL);
   CJS_EventHandler* pEvent = pContext->GetEventHandler();
-  ASSERT(pEvent != NULL);
 
   if (params.size() != 2) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
@@ -1319,9 +1315,7 @@ FX_BOOL CJS_PublicMethods::AFDate_FormatEx(IJS_Context* cc,
                                            CJS_Value& vRet,
                                            CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
-  ASSERT(pContext != NULL);
   CJS_EventHandler* pEvent = pContext->GetEventHandler();
-  ASSERT(pEvent != NULL);
 
   if (params.size() != 1) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
@@ -1436,9 +1430,7 @@ FX_BOOL CJS_PublicMethods::AFDate_KeystrokeEx(
     CJS_Value& vRet,
     CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
-  ASSERT(pContext != NULL);
   CJS_EventHandler* pEvent = pContext->GetEventHandler();
-  ASSERT(pEvent != NULL);
 
   if (params.size() != 1) {
     sError = L"AFDate_KeystrokeEx's parameters' size r not correct";
@@ -1609,7 +1601,6 @@ FX_BOOL CJS_PublicMethods::AFSpecial_Format(
     CJS_Value& vRet,
     CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
-  ASSERT(pContext != NULL);
 
   if (params.size() != 1) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
@@ -1620,8 +1611,6 @@ FX_BOOL CJS_PublicMethods::AFSpecial_Format(
   int iIndex = params[0].ToInt();
 
   CJS_EventHandler* pEvent = pContext->GetEventHandler();
-  ASSERT(pEvent != NULL);
-
   if (!pEvent->m_pValue)
     return FALSE;
   CFX_WideString& Value = pEvent->Value();
@@ -1661,10 +1650,7 @@ FX_BOOL CJS_PublicMethods::AFSpecial_KeystrokeEx(
     CJS_Value& vRet,
     CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
-  ASSERT(pContext != NULL);
   CJS_EventHandler* pEvent = pContext->GetEventHandler();
-
-  ASSERT(pEvent != NULL);
 
   if (params.size() < 1) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
@@ -1805,9 +1791,7 @@ FX_BOOL CJS_PublicMethods::AFMergeChange(IJS_Context* cc,
                                          CJS_Value& vRet,
                                          CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
-  ASSERT(pContext != NULL);
   CJS_EventHandler* pEventHandler = pContext->GetEventHandler();
-  ASSERT(pEventHandler != NULL);
 
   if (params.size() != 1) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
@@ -1847,7 +1831,7 @@ FX_BOOL CJS_PublicMethods::AFParseDateEx(IJS_Context* cc,
                                          CJS_Value& vRet,
                                          CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
-  ASSERT(pContext != NULL);
+  ASSERT(pContext);
 
   if (params.size() != 2) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
@@ -1878,7 +1862,7 @@ FX_BOOL CJS_PublicMethods::AFSimple(IJS_Context* cc,
                                     CFX_WideString& sError) {
   if (params.size() != 3) {
     CJS_Context* pContext = (CJS_Context*)cc;
-    ASSERT(pContext != NULL);
+    ASSERT(pContext);
 
     sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
     return FALSE;
@@ -1895,7 +1879,7 @@ FX_BOOL CJS_PublicMethods::AFMakeNumber(IJS_Context* cc,
                                         CFX_WideString& sError) {
   if (params.size() != 1) {
     CJS_Context* pContext = (CJS_Context*)cc;
-    ASSERT(pContext != NULL);
+    ASSERT(pContext);
 
     sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
     return FALSE;
@@ -2011,9 +1995,7 @@ FX_BOOL CJS_PublicMethods::AFRange_Validate(
     CJS_Value& vRet,
     CFX_WideString& sError) {
   CJS_Context* pContext = (CJS_Context*)cc;
-  ASSERT(pContext != NULL);
   CJS_EventHandler* pEvent = pContext->GetEventHandler();
-  ASSERT(pEvent != NULL);
 
   if (params.size() != 4) {
     sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);

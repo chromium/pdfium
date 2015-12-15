@@ -161,7 +161,6 @@ CPDF_Array* CPDF_Object::GetArray() const {
   return const_cast<CPDF_Array*>(AsArray());
 }
 void CPDF_Object::SetString(const CFX_ByteString& str) {
-  ASSERT(this != NULL);
   switch (m_Type) {
     case PDFOBJ_BOOLEAN:
       AsBoolean()->m_bValue = (str == "true");
@@ -526,17 +525,15 @@ void CPDF_Array::SetAt(FX_DWORD i,
 void CPDF_Array::InsertAt(FX_DWORD index,
                           CPDF_Object* pObj,
                           CPDF_IndirectObjects* pObjs) {
-  ASSERT(pObj != NULL);
   if (pObj->GetObjNum()) {
-    ASSERT(pObjs != NULL);
+    ASSERT(pObjs);
     pObj = new CPDF_Reference(pObjs, pObj->GetObjNum());
   }
   m_Objects.InsertAt(index, pObj);
 }
 void CPDF_Array::Add(CPDF_Object* pObj, CPDF_IndirectObjects* pObjs) {
-  ASSERT(pObj != NULL);
   if (pObj->GetObjNum()) {
-    ASSERT(pObjs != NULL);
+    ASSERT(pObjs);
     pObj = new CPDF_Reference(pObjs, pObj->GetObjNum());
   }
   m_Objects.Add(pObj);

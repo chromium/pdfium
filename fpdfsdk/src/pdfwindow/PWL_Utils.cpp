@@ -528,9 +528,6 @@ CFX_ByteString CPWL_Utils::GetSpellCheckAppStream(
     IPWL_SpellCheck* pSpellCheck,
     const CPDF_Point& ptOffset,
     const CPVT_WordRange* pRange) {
-  ASSERT(pEdit != NULL);
-  ASSERT(pSpellCheck != NULL);
-
   CFX_ByteTextBuf sRet;
 
   if (pRange && pRange->IsExist()) {

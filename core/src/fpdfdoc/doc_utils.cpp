@@ -242,7 +242,7 @@ void InitInterFormDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument) {
     CFX_ByteString csBaseName, csDefault;
     uint8_t charSet = CPDF_InterForm::GetNativeCharSet();
     pFont = CPDF_InterForm::AddStandardFont(pDocument, "Helvetica");
-    if (pFont != NULL) {
+    if (pFont) {
       AddInterFormFont(pFormDict, pDocument, pFont, csBaseName);
       csDefault = csBaseName;
     }
@@ -250,14 +250,14 @@ void InitInterFormDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument) {
       CFX_ByteString csFontName = CPDF_InterForm::GetNativeFont(charSet, NULL);
       if (pFont == NULL || csFontName != "Helvetica") {
         pFont = CPDF_InterForm::AddNativeFont(pDocument);
-        if (pFont != NULL) {
+        if (pFont) {
           csBaseName = "";
           AddInterFormFont(pFormDict, pDocument, pFont, csBaseName);
           csDefault = csBaseName;
         }
       }
     }
-    if (pFont != NULL) {
+    if (pFont) {
       csDA = "/" + PDF_NameEncode(csDefault) + " 0 Tf";
     }
   }
@@ -452,9 +452,9 @@ CPDF_Font* GetNativeInterFormFont(CPDF_Dictionary* pFormDict,
   uint8_t charSet = CPDF_InterForm::GetNativeCharSet();
   CFX_SubstFont* pSubst;
   CPDF_Font* pFont = GetDefaultInterFormFont(pFormDict, pDocument);
-  if (pFont != NULL) {
+  if (pFont) {
     pSubst = (CFX_SubstFont*)pFont->GetSubstFont();
-    if (pSubst != NULL && pSubst->m_Charset == (int)charSet) {
+    if (pSubst && pSubst->m_Charset == (int)charSet) {
       FindInterFormFont(pFormDict, pFont, csNameTag);
       return pFont;
     }
@@ -592,7 +592,7 @@ CPDF_Font* AddNativeInterFormFont(CPDF_Dictionary*& pFormDict,
   CFX_ByteString csTemp;
   CPDF_Font* pFont =
       GetNativeInterFormFont(pFormDict, pDocument, charSet, csTemp);
-  if (pFont != NULL) {
+  if (pFont) {
     csNameTag = csTemp;
     return pFont;
   }
@@ -603,7 +603,7 @@ CPDF_Font* AddNativeInterFormFont(CPDF_Dictionary*& pFormDict,
     }
   }
   pFont = CPDF_InterForm::AddNativeFont(charSet, pDocument);
-  if (pFont != NULL) {
+  if (pFont) {
     AddInterFormFont(pFormDict, pDocument, pFont, csNameTag);
   }
   return pFont;
@@ -679,7 +679,7 @@ void CPDF_IconFit::GetIconPosition(FX_FLOAT& fLeft, FX_FLOAT& fBottom) {
     return;
   }
   CPDF_Array* pA = m_pDict->GetArray("A");
-  if (pA != NULL) {
+  if (pA) {
     FX_DWORD dwCount = pA->GetCount();
     if (dwCount > 0) {
       fLeft = pA->GetNumber(0);

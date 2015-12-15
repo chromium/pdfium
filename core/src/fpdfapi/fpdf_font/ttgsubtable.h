@@ -277,10 +277,9 @@ class CFX_CTTGSUBTable {
     TLookup()
         : LookupType(0), LookupFlag(0), SubTableCount(0), SubTable(NULL) {}
     ~TLookup() {
-      if (SubTableCount > 0 && SubTable != NULL) {
-        for (int i = 0; i < SubTableCount; i++) {
+      if (SubTable) {
+        for (int i = 0; i < SubTableCount; ++i)
           delete SubTable[i];
-        }
         delete[] SubTable;
       }
     }

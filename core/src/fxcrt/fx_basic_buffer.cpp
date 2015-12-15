@@ -151,7 +151,7 @@ void CFX_WideTextBuf::AppendChar(FX_WCHAR ch) {
   if (m_AllocSize < m_DataSize + (FX_STRSIZE)sizeof(FX_WCHAR)) {
     ExpandBuf(sizeof(FX_WCHAR));
   }
-  ASSERT(m_pBuffer != NULL);
+  ASSERT(m_pBuffer);
   *(FX_WCHAR*)(m_pBuffer + m_DataSize) = ch;
   m_DataSize += sizeof(FX_WCHAR);
 }
@@ -170,7 +170,7 @@ CFX_WideTextBuf& CFX_WideTextBuf::operator<<(int i) {
   if (m_AllocSize < m_DataSize + (FX_STRSIZE)(len * sizeof(FX_WCHAR))) {
     ExpandBuf(len * sizeof(FX_WCHAR));
   }
-  ASSERT(m_pBuffer != NULL);
+  ASSERT(m_pBuffer);
   FX_WCHAR* str = (FX_WCHAR*)(m_pBuffer + m_DataSize);
   for (FX_STRSIZE j = 0; j < len; j++) {
     *str++ = buf[j];
@@ -184,7 +184,7 @@ CFX_WideTextBuf& CFX_WideTextBuf::operator<<(double f) {
   if (m_AllocSize < m_DataSize + (FX_STRSIZE)(len * sizeof(FX_WCHAR))) {
     ExpandBuf(len * sizeof(FX_WCHAR));
   }
-  ASSERT(m_pBuffer != NULL);
+  ASSERT(m_pBuffer);
   FX_WCHAR* str = (FX_WCHAR*)(m_pBuffer + m_DataSize);
   for (FX_STRSIZE i = 0; i < len; i++) {
     *str++ = buf[i];
