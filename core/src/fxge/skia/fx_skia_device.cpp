@@ -212,20 +212,7 @@ static void SkRasterizeStroke(SkPaint& spaint,
   if (width <= unit)
     width = unit;
 
-  if (pGraphState->m_DashArray == NULL) {
-    SkStroke stroker;
-    stroker.setCap(cap);
-    stroker.setJoin(join);
-    stroker.setMiterLimit(pGraphState->m_MiterLimit);
-    stroker.setWidth(width);
-    stroker.setDoFill(FALSE);
-    stroker.strokePath(path_data, dstPathData);
-    SkMatrix smatrix;
-    smatrix.setAll(pObject2Device->a, pObject2Device->c, pObject2Device->e,
-                   pObject2Device->b, pObject2Device->d, pObject2Device->f, 0,
-                   0, 1);
-    dstPathData->transform(smatrix);
-  } else {
+  if (pGraphState->m_DashArray) {
     int count = (pGraphState->m_DashCount + 1) / 2;
     SkScalar* intervals = FX_Alloc2D(SkScalar, count, sizeof(SkScalar));
     // Set dash pattern
@@ -255,6 +242,19 @@ static void SkRasterizeStroke(SkPaint& spaint,
                    0, 1);
     dstPathData->transform(smatrix);
     FX_Free(intervals);
+  } else {
+    SkStroke stroker;
+    stroker.setCap(cap);
+    stroker.setJoin(join);
+    stroker.setMiterLimit(pGraphState->m_MiterLimit);
+    stroker.setWidth(width);
+    stroker.setDoFill(FALSE);
+    stroker.strokePath(path_data, dstPathData);
+    SkMatrix smatrix;
+    smatrix.setAll(pObject2Device->a, pObject2Device->c, pObject2Device->e,
+                   pObject2Device->b, pObject2Device->d, pObject2Device->f, 0,
+                   0, 1);
+    dstPathData->transform(smatrix);
   }
 }
 
@@ -331,9 +331,10 @@ FX_BOOL CFX_SkiaDeviceDriver::SetClip_PathFill(
     const CFX_Matrix* pObject2Device,  // optional transformation
     int fill_mode                      // fill mode, WINDING or ALTERNATE
     ) {
-  if (m_pAggDriver->m_pClipRgn == NULL)
+  if (!m_pAggDriver->m_pClipRgn) {
     m_pAggDriver->m_pClipRgn = new CFX_ClipRgn(
         GetDeviceCaps(FXDC_PIXEL_WIDTH), GetDeviceCaps(FXDC_PIXEL_HEIGHT));
+  }
 
   if (pPathData->GetPointCount() == 5 || pPathData->GetPointCount() == 4) {
     CFX_FloatRect rectf;
@@ -368,9 +369,10 @@ FX_BOOL CFX_SkiaDeviceDriver::SetClip_PathStroke(
     const CFX_Matrix* pObject2Device,      // optional transformation
     const CFX_GraphStateData* pGraphState  // graphic state, for pen attributes
     ) {
-  if (m_pAggDriver->m_pClipRgn == NULL)
+  if (!m_pAggDriver->m_pClipRgn) {
     m_pAggDriver->m_pClipRgn = new CFX_ClipRgn(
         GetDeviceCaps(FXDC_PIXEL_WIDTH), GetDeviceCaps(FXDC_PIXEL_HEIGHT));
+  }
 
   // build path data
   CSkia_PathData path_data;
@@ -432,7 +434,7 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawPath(
     int fill_mode,  // fill mode, WINDING or ALTERNATE. 0 for not filled
     int alpha_flag,
     void* pIccTransform) {
-  if (GetBuffer() == NULL)
+  if (!GetBuffer())
     return TRUE;
   FOXIT_DEBUG1("CFX_SkiaDeviceDriver::DrawPath: entering");
   SkIRect rect;
@@ -592,7 +594,7 @@ FX_BOOL CFX_SkiaDevice::Attach(CFX_DIBitmap* pBitmap,
                                FX_BOOL bRgbByteOrder,
                                CFX_DIBitmap* pOriDevice,
                                FX_BOOL bGroupKnockout) {
-  if (pBitmap == NULL)
+  if (!pBitmap)
     return FALSE;
   SetBitmap(pBitmap);
   CFX_SkiaDeviceDriver* pDriver = new CFX_SkiaDeviceDriver(

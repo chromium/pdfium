@@ -212,12 +212,12 @@ FX_BOOL CPDF_DIBSource::Load(CPDF_Document* pDoc,
                              FX_BOOL bStdCS,
                              FX_DWORD GroupFamily,
                              FX_BOOL bLoadMask) {
-  if (pStream == NULL) {
+  if (!pStream) {
     return FALSE;
   }
   m_pDocument = pDoc;
   m_pDict = pStream->GetDict();
-  if (m_pDict == NULL) {
+  if (!m_pDict) {
     return FALSE;
   }
   m_pStream = pStream;
@@ -243,7 +243,7 @@ FX_BOOL CPDF_DIBSource::Load(CPDF_Document* pDoc,
   }
   m_pStreamAcc = new CPDF_StreamAcc;
   m_pStreamAcc->LoadAllData(pStream, FALSE, src_size.ValueOrDie(), TRUE);
-  if (m_pStreamAcc->GetSize() == 0 || m_pStreamAcc->GetData() == NULL) {
+  if (m_pStreamAcc->GetSize() == 0 || !m_pStreamAcc->GetData()) {
     return FALSE;
   }
   if (!CreateDecoder()) {
@@ -333,7 +333,7 @@ int CPDF_DIBSource::StartLoadDIBSource(CPDF_Document* pDoc,
                                        FX_BOOL bStdCS,
                                        FX_DWORD GroupFamily,
                                        FX_BOOL bLoadMask) {
-  if (pStream == NULL) {
+  if (!pStream) {
     return 0;
   }
   m_pDocument = pDoc;
@@ -363,7 +363,7 @@ int CPDF_DIBSource::StartLoadDIBSource(CPDF_Document* pDoc,
   }
   m_pStreamAcc = new CPDF_StreamAcc;
   m_pStreamAcc->LoadAllData(pStream, FALSE, src_size.ValueOrDie(), TRUE);
-  if (m_pStreamAcc->GetSize() == 0 || m_pStreamAcc->GetData() == NULL) {
+  if (m_pStreamAcc->GetSize() == 0 || !m_pStreamAcc->GetData()) {
     return 0;
   }
   int ret = CreateDecoder();
@@ -401,7 +401,7 @@ int CPDF_DIBSource::ContinueLoadDIBSource(IFX_Pause* pPause) {
       return 0;
     }
     ICodec_Jbig2Module* pJbig2Module = CPDF_ModuleMgr::Get()->GetJbig2Module();
-    if (m_pJbig2Context == NULL) {
+    if (!m_pJbig2Context) {
       m_pJbig2Context = pJbig2Module->CreateJbig2Context();
       if (m_pStreamAcc->GetImageParam()) {
         CPDF_Stream* pGlobals =
@@ -531,7 +531,7 @@ bool CPDF_DIBSource::LoadColorInfo(const CPDF_Dictionary* pFormResources,
 
 DIB_COMP_DATA* CPDF_DIBSource::GetDecodeAndMaskArray(FX_BOOL& bDefaultDecode,
                                                      FX_BOOL& bColorKey) {
-  if (m_pColorSpace == NULL) {
+  if (!m_pColorSpace) {
     return NULL;
   }
   DIB_COMP_DATA* pCompData = FX_Alloc(DIB_COMP_DATA, m_nComponents);
@@ -565,7 +565,7 @@ DIB_COMP_DATA* CPDF_DIBSource::GetDecodeAndMaskArray(FX_BOOL& bDefaultDecode,
   }
   if (!m_pDict->KeyExist("SMask")) {
     CPDF_Object* pMask = m_pDict->GetElementValue("Mask");
-    if (pMask == NULL) {
+    if (!pMask) {
       return pCompData;
     }
     if (CPDF_Array* pArray = pMask->AsArray()) {
@@ -628,7 +628,7 @@ int CPDF_DIBSource::CreateDecoder() {
             return 0;
           }
           m_pCompData = GetDecodeAndMaskArray(m_bDefaultDecode, m_bColorKey);
-          if (m_pCompData == NULL) {
+          if (!m_pCompData) {
             return 0;
           }
         }
@@ -807,7 +807,7 @@ int CPDF_DIBSource::StratLoadMask() {
   return m_pMaskStream ? StartLoadMaskDIB() : 1;
 }
 int CPDF_DIBSource::ContinueLoadMaskDIB(IFX_Pause* pPause) {
-  if (m_pMask == NULL) {
+  if (!m_pMask) {
     return 1;
   }
   int ret = m_pMask->ContinueLoadDIBSource(pPause);
@@ -860,7 +860,7 @@ void CPDF_DIBSource::LoadPalette() {
   if (m_bpc * m_nComponents > 8) {
     return;
   }
-  if (m_pColorSpace == NULL) {
+  if (!m_pColorSpace) {
     return;
   }
   if (m_bpc * m_nComponents == 1) {
@@ -1606,7 +1606,7 @@ FX_BOOL CPDF_ImageLoader::Load(const CPDF_ImageObject* pImage,
                                FX_DWORD GroupFamily,
                                FX_BOOL bLoadMask,
                                CPDF_RenderStatus* pRenderStatus) {
-  if (pImage == NULL) {
+  if (!pImage) {
     return FALSE;
   }
   if (pCache) {

@@ -209,7 +209,7 @@ CFX_Palette::~CFX_Palette() {
   m_lut = 0;
 }
 FX_BOOL CFX_Palette::BuildPalette(const CFX_DIBSource* pBitmap, int pal_type) {
-  if (pBitmap == NULL) {
+  if (!pBitmap) {
     return FALSE;
   }
   FX_Free(m_pPalette);
@@ -560,7 +560,7 @@ inline FX_BOOL _ConvertBuffer_Rgb2PltRgb8_NoTransform(
   palette.BuildPalette(pSrcBitmap, FXDIB_PALETTE_LOC);
   FX_DWORD* cLut = palette.GetColorLut();
   FX_DWORD* aLut = palette.GetAmountLut();
-  if (cLut == NULL || aLut == NULL) {
+  if (!cLut || !aLut) {
     return FALSE;
   }
   int lut = palette.Getlut();
@@ -987,7 +987,7 @@ FX_BOOL ConvertBuffer(FXDIB_Format dest_format,
     }
     case FXDIB_8bppRgb:
     case FXDIB_8bppRgba: {
-      if ((src_format & 0xff) == 8 && pSrcBitmap->GetPalette() == NULL) {
+      if ((src_format & 0xff) == 8 && !pSrcBitmap->GetPalette()) {
         return ConvertBuffer(FXDIB_8bppMask, dest_buf, dest_pitch, width,
                              height, pSrcBitmap, src_left, src_top, d_pal,
                              pIccTransform);
@@ -1082,12 +1082,12 @@ FX_BOOL ConvertBuffer(FXDIB_Format dest_format,
 CFX_DIBitmap* CFX_DIBSource::CloneConvert(FXDIB_Format dest_format,
                                           const FX_RECT* pClip,
                                           void* pIccTransform) const {
-  if (dest_format == GetFormat() && pIccTransform == NULL) {
+  if (dest_format == GetFormat() && !pIccTransform) {
     return Clone(pClip);
   }
   if (pClip) {
     CFX_DIBitmap* pClone = Clone(pClip);
-    if (pClone == NULL) {
+    if (!pClone) {
       return NULL;
     }
     if (!pClone->ConvertFormat(dest_format, pIccTransform)) {
@@ -1105,7 +1105,7 @@ CFX_DIBitmap* CFX_DIBSource::CloneConvert(FXDIB_Format dest_format,
   CFX_DIBitmap* pSrcAlpha = NULL;
   if (HasAlpha()) {
     pSrcAlpha = (GetFormat() == FXDIB_Argb) ? GetAlphaMask() : m_pAlphaMask;
-    if (pSrcAlpha == NULL) {
+    if (!pSrcAlpha) {
       delete pClone;
       return NULL;
     }
@@ -1144,16 +1144,16 @@ CFX_DIBitmap* CFX_DIBSource::CloneConvert(FXDIB_Format dest_format,
 FX_BOOL CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format,
                                     void* pIccTransform) {
   FXDIB_Format src_format = GetFormat();
-  if (dest_format == src_format && pIccTransform == NULL) {
+  if (dest_format == src_format && !pIccTransform) {
     return TRUE;
   }
   if (dest_format == FXDIB_8bppMask && src_format == FXDIB_8bppRgb &&
-      m_pPalette == NULL) {
+      !m_pPalette) {
     m_AlphaFlag = 1;
     return TRUE;
   }
   if (dest_format == FXDIB_Argb && src_format == FXDIB_Rgb32 &&
-      pIccTransform == NULL) {
+      !pIccTransform) {
     m_AlphaFlag = 2;
     for (int row = 0; row < m_Height; row++) {
       uint8_t* scanline = m_pBuffer + row * m_Pitch + 3;
@@ -1167,7 +1167,7 @@ FX_BOOL CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format,
   int dest_bpp = dest_format & 0xff;
   int dest_pitch = (dest_bpp * m_Width + 31) / 32 * 4;
   uint8_t* dest_buf = FX_TryAlloc(uint8_t, dest_pitch * m_Height + 4);
-  if (dest_buf == NULL) {
+  if (!dest_buf) {
     return FALSE;
   }
   CFX_DIBitmap* pAlphaMask = NULL;
@@ -1186,12 +1186,12 @@ FX_BOOL CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format,
   } else if (dest_format & 0x0200) {
     if (src_format == FXDIB_Argb) {
       pAlphaMask = GetAlphaMask();
-      if (pAlphaMask == NULL) {
+      if (!pAlphaMask) {
         FX_Free(dest_buf);
         return FALSE;
       }
     } else {
-      if (m_pAlphaMask == NULL) {
+      if (!m_pAlphaMask) {
         if (!BuildAlphaMask()) {
           FX_Free(dest_buf);
           return FALSE;

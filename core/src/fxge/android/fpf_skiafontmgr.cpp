@@ -238,7 +238,7 @@ CFPF_SkiaFontMgr::~CFPF_SkiaFontMgr() {
   }
 }
 FX_BOOL CFPF_SkiaFontMgr::InitFTLibrary() {
-  if (m_FTLibrary == NULL) {
+  if (!m_FTLibrary) {
     FXFT_Init_FreeType(&m_FTLibrary);
   }
   return m_FTLibrary != NULL;

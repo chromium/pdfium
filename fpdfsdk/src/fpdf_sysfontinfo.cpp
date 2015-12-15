@@ -55,7 +55,7 @@ class CFX_ExternalFontInfo final : public IFX_SystemFontInfo {
   }
 
   FX_BOOL GetFaceName(void* hFont, CFX_ByteString& name) override {
-    if (m_pInfo->GetFaceName == NULL)
+    if (!m_pInfo->GetFaceName)
       return FALSE;
     FX_DWORD size = m_pInfo->GetFaceName(m_pInfo, hFont, NULL, 0);
     if (size == 0)
@@ -170,7 +170,7 @@ static void DefaultDeleteFont(struct _FPDF_SYSFONTINFO* pThis, void* hFont) {
 
 DLLEXPORT FPDF_SYSFONTINFO* STDCALL FPDF_GetDefaultSystemFontInfo() {
   IFX_SystemFontInfo* pFontInfo = IFX_SystemFontInfo::CreateDefault(nullptr);
-  if (pFontInfo == NULL)
+  if (!pFontInfo)
     return NULL;
 
   FPDF_SYSFONTINFO_DEFAULT* pFontInfoExt =

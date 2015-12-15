@@ -488,7 +488,7 @@ DLLEXPORT FPDF_PAGE STDCALL FPDF_LoadPage(FPDF_DOCUMENT document,
   return pDoc->GetPage(page_index);
 #else   // PDF_ENABLE_XFA
   CPDF_Dictionary* pDict = pDoc->GetPage(page_index);
-  if (pDict == NULL)
+  if (!pDict)
     return NULL;
   CPDF_Page* pPage = new CPDF_Page;
   pPage->Load(pDoc, pDict);
@@ -602,7 +602,7 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
   bmih.biWidth = width;
   pContext->m_hBitmap = CreateDIBSection(dc, (BITMAPINFO*)&bmih, DIB_RGB_COLORS,
                                          &pBuffer, NULL, 0);
-  if (pContext->m_hBitmap == NULL) {
+  if (!pContext->m_hBitmap) {
 #if defined(DEBUG) || defined(_DEBUG)
     char str[128];
     memset(str, 0, sizeof(str));
@@ -640,7 +640,7 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
 
   // Now output to real device
   HDC hMemDC = CreateCompatibleDC(dc);
-  if (hMemDC == NULL) {
+  if (!hMemDC) {
 #if defined(DEBUG) || defined(_DEBUG)
     char str[128];
     memset(str, 0, sizeof(str));
@@ -763,7 +763,7 @@ DLLEXPORT void STDCALL FPDF_DeviceToPage(FPDF_PAGE page,
                                          int device_y,
                                          double* page_x,
                                          double* page_y) {
-  if (page == NULL || page_x == NULL || page_y == NULL)
+  if (!page || !page_x || !page_y)
     return;
   UnderlyingPageType* pPage = UnderlyingFromFPDFPage(page);
 #ifdef PDF_ENABLE_XFA
@@ -856,7 +856,7 @@ DLLEXPORT void STDCALL FPDFBitmap_FillRect(FPDF_BITMAP bitmap,
                                            int width,
                                            int height,
                                            FPDF_DWORD color) {
-  if (bitmap == NULL)
+  if (!bitmap)
     return;
 #ifdef _SKIA_SUPPORT_
   CFX_SkiaDevice device;
@@ -871,27 +871,19 @@ DLLEXPORT void STDCALL FPDFBitmap_FillRect(FPDF_BITMAP bitmap,
 }
 
 DLLEXPORT void* STDCALL FPDFBitmap_GetBuffer(FPDF_BITMAP bitmap) {
-  if (bitmap == NULL)
-    return NULL;
-  return ((CFX_DIBitmap*)bitmap)->GetBuffer();
+  return bitmap ? ((CFX_DIBitmap*)bitmap)->GetBuffer() : nullptr;
 }
 
 DLLEXPORT int STDCALL FPDFBitmap_GetWidth(FPDF_BITMAP bitmap) {
-  if (bitmap == NULL)
-    return 0;
-  return ((CFX_DIBitmap*)bitmap)->GetWidth();
+  return bitmap ? ((CFX_DIBitmap*)bitmap)->GetWidth() : 0;
 }
 
 DLLEXPORT int STDCALL FPDFBitmap_GetHeight(FPDF_BITMAP bitmap) {
-  if (bitmap == NULL)
-    return 0;
-  return ((CFX_DIBitmap*)bitmap)->GetHeight();
+  return bitmap ? ((CFX_DIBitmap*)bitmap)->GetHeight() : 0;
 }
 
 DLLEXPORT int STDCALL FPDFBitmap_GetStride(FPDF_BITMAP bitmap) {
-  if (bitmap == NULL)
-    return 0;
-  return ((CFX_DIBitmap*)bitmap)->GetPitch();
+  return bitmap ? ((CFX_DIBitmap*)bitmap)->GetPitch() : 0;
 }
 
 DLLEXPORT void STDCALL FPDFBitmap_Destroy(FPDF_BITMAP bitmap) {

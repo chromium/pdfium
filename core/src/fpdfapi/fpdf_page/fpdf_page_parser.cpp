@@ -117,7 +117,7 @@ void CPDF_StreamContentParser::AddNameParam(const FX_CHAR* name, int len) {
         CPDF_Name::Create(PDF_NameDecode(CFX_ByteStringC(name, len)));
   } else {
     m_ParamBuf1[index].m_Type = PDFOBJ_NAME;
-    if (FXSYS_memchr(name, '#', len) == NULL) {
+    if (!FXSYS_memchr(name, '#', len)) {
       FXSYS_memcpy(m_ParamBuf1[index].m_Name.m_Buffer, name, len);
       m_ParamBuf1[index].m_Name.m_Len = len;
     } else {
@@ -410,7 +410,7 @@ void CPDF_StreamContentParser::Handle_BeginMarkedContent_Dictionary() {
   }
   CFX_ByteString tag = GetString(1);
   CPDF_Object* pProperty = GetObject(0);
-  if (pProperty == NULL) {
+  if (!pProperty) {
     return;
   }
   FX_BOOL bDirect = TRUE;
@@ -631,7 +631,7 @@ void CPDF_StreamContentParser::Handle_SetColorSpace_Fill() {
   }
   CFX_ByteString csname = GetString(0);
   CPDF_ColorSpace* pCS = FindColorSpace(csname);
-  if (pCS == NULL) {
+  if (!pCS) {
     return;
   }
   m_pCurStates->m_ColorState.GetModify()->m_FillColor.SetColorSpace(pCS);
@@ -642,7 +642,7 @@ void CPDF_StreamContentParser::Handle_SetColorSpace_Stroke() {
   }
   CFX_ByteString csname = GetString(0);
   CPDF_ColorSpace* pCS = FindColorSpace(csname);
-  if (pCS == NULL) {
+  if (!pCS) {
     return;
   }
   m_pCurStates->m_ColorState.GetModify()->m_StrokeColor.SetColorSpace(pCS);
@@ -652,7 +652,7 @@ void CPDF_StreamContentParser::Handle_SetDash() {
     return;
   }
   CPDF_Array* pArray = GetObject(1) ? GetObject(1)->GetArray() : NULL;
-  if (pArray == NULL) {
+  if (!pArray) {
     return;
   }
   m_pCurStates->SetLineDash(pArray, GetNumber(0), 1.0f);
@@ -771,7 +771,7 @@ void CPDF_StreamContentParser::AddForm(CPDF_Stream* pStream) {
 CPDF_ImageObject* CPDF_StreamContentParser::AddImage(CPDF_Stream* pStream,
                                                      CPDF_Image* pImage,
                                                      FX_BOOL bInline) {
-  if (pStream == NULL && pImage == NULL) {
+  if (!pStream && !pImage) {
     return NULL;
   }
   CFX_Matrix ImageMatrix;
@@ -1032,7 +1032,7 @@ void CPDF_StreamContentParser::Handle_SetColorPS_Fill() {
     return;
   }
   CPDF_Object* pLastParam = GetObject(0);
-  if (pLastParam == NULL) {
+  if (!pLastParam) {
     return;
   }
   int nargs = m_ParamCount;
@@ -1062,7 +1062,7 @@ void CPDF_StreamContentParser::Handle_SetColorPS_Stroke() {
     return;
   }
   CPDF_Object* pLastParam = GetObject(0);
-  if (pLastParam == NULL) {
+  if (!pLastParam) {
     return;
   }
   int nargs = m_ParamCount;
@@ -1099,7 +1099,7 @@ void CPDF_StreamContentParser::Handle_ShadeFill() {
     return;
   }
   CPDF_Pattern* pPattern = FindPattern(GetString(0), TRUE);
-  if (pPattern == NULL) {
+  if (!pPattern) {
     return;
   }
   if (pPattern->m_PatternType != PATTERN_SHADING) {
@@ -1162,24 +1162,24 @@ void CPDF_StreamContentParser::Handle_SetFont() {
 CPDF_Object* CPDF_StreamContentParser::FindResourceObj(
     const CFX_ByteStringC& type,
     const CFX_ByteString& name) {
-  if (m_pResources == NULL) {
+  if (!m_pResources) {
     return NULL;
   }
   if (m_pResources == m_pPageResources) {
     CPDF_Dictionary* pList = m_pResources->GetDict(type);
-    if (pList == NULL) {
+    if (!pList) {
       return NULL;
     }
     CPDF_Object* pRes = pList->GetElementValue(name);
     return pRes;
   }
   CPDF_Dictionary* pList = m_pResources->GetDict(type);
-  if (pList == NULL) {
-    if (m_pPageResources == NULL) {
+  if (!pList) {
+    if (!m_pPageResources) {
       return NULL;
     }
     CPDF_Dictionary* pList = m_pPageResources->GetDict(type);
-    if (pList == NULL) {
+    if (!pList) {
       return NULL;
     }
     CPDF_Object* pRes = pList->GetElementValue(name);
@@ -1211,7 +1211,7 @@ CPDF_ColorSpace* CPDF_StreamContentParser::FindColorSpace(
     CFX_ByteString defname = "Default";
     defname += name.Mid(7);
     CPDF_Object* pDefObj = FindResourceObj("ColorSpace", defname);
-    if (pDefObj == NULL) {
+    if (!pDefObj) {
       if (name == "DeviceGray") {
         return CPDF_ColorSpace::GetStockCS(PDFCS_DEVICEGRAY);
       }
@@ -1223,7 +1223,7 @@ CPDF_ColorSpace* CPDF_StreamContentParser::FindColorSpace(
     return m_pDocument->LoadColorSpace(pDefObj);
   }
   CPDF_Object* pCSObj = FindResourceObj("ColorSpace", name);
-  if (pCSObj == NULL) {
+  if (!pCSObj) {
     m_bResourceMissing = TRUE;
     return NULL;
   }
@@ -1253,7 +1253,7 @@ void CPDF_StreamContentParser::AddTextObject(CFX_ByteString* pStrs,
                                              FX_FLOAT* pKerning,
                                              int nsegs) {
   CPDF_Font* pFont = m_pCurStates->m_TextState.GetFont();
-  if (pFont == NULL) {
+  if (!pFont) {
     return;
   }
   if (fInitKerning != 0) {
@@ -1324,7 +1324,7 @@ void CPDF_StreamContentParser::Handle_ShowText() {
 }
 void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
   CPDF_Array* pArray = GetObject(0) ? GetObject(0)->GetArray() : NULL;
-  if (pArray == NULL) {
+  if (!pArray) {
     return;
   }
   int n = pArray->GetCount();

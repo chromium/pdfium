@@ -36,7 +36,7 @@ void CWeightTable::Calc(int dest_len,
   }
   m_pWeightTables =
       FX_TryAlloc(uint8_t, (dest_max - dest_min) * m_ItemSize + 4);
-  if (m_pWeightTables == NULL) {
+  if (!m_pWeightTables) {
     return;
   }
   if ((flags & FXDIB_NOSMOOTH) != 0 || FXSYS_fabs((FX_FLOAT)scale) < 1.0f) {
@@ -242,7 +242,7 @@ CStretchEngine::CStretchEngine(IFX_ScanlineComposer* pDestBitmap,
   size += 31;
   size = size / 32 * 4;
   m_pDestScanline = FX_TryAlloc(uint8_t, size);
-  if (m_pDestScanline == NULL) {
+  if (!m_pDestScanline) {
     return;
   }
   if (dest_format == FXDIB_Rgb32) {
@@ -339,13 +339,13 @@ CStretchEngine::~CStretchEngine() {
   FX_Free(m_pDestMaskScanline);
 }
 FX_BOOL CStretchEngine::StartStretchHorz() {
-  if (m_DestWidth == 0 || m_pDestScanline == NULL ||
+  if (m_DestWidth == 0 || !m_pDestScanline ||
       m_SrcClip.Height() > (int)((1U << 29) / m_InterPitch) ||
       m_SrcClip.Height() == 0) {
     return FALSE;
   }
   m_pInterBuf = FX_TryAlloc(unsigned char, m_SrcClip.Height() * m_InterPitch);
-  if (m_pInterBuf == NULL) {
+  if (!m_pInterBuf) {
     return FALSE;
   }
   if (m_pSource && m_bHasAlpha && m_pSource->m_pAlphaMask) {
@@ -359,7 +359,7 @@ FX_BOOL CStretchEngine::StartStretchHorz() {
   }
   m_WeightTable.Calc(m_DestWidth, m_DestClip.left, m_DestClip.right, m_SrcWidth,
                      m_SrcClip.left, m_SrcClip.right, m_Flags);
-  if (m_WeightTable.m_pWeightTables == NULL) {
+  if (!m_WeightTable.m_pWeightTables) {
     return FALSE;
   }
   m_CurRow = m_SrcClip.top;
@@ -603,7 +603,7 @@ void CStretchEngine::StretchVert() {
   CWeightTable table;
   table.Calc(m_DestHeight, m_DestClip.top, m_DestClip.bottom, m_SrcHeight,
              m_SrcClip.top, m_SrcClip.bottom, m_Flags);
-  if (table.m_pWeightTables == NULL) {
+  if (!table.m_pWeightTables) {
     return;
   }
   int DestBpp = m_DestBpp / 8;
@@ -849,10 +849,7 @@ FX_BOOL CFX_ImageStretcher::StartStretch() {
   return TRUE;
 }
 FX_BOOL CFX_ImageStretcher::ContinueStretch(IFX_Pause* pPause) {
-  if (m_pStretchEngine == NULL) {
-    return FALSE;
-  }
-  return m_pStretchEngine->Continue(pPause);
+  return m_pStretchEngine && m_pStretchEngine->Continue(pPause);
 }
 FX_BOOL CFX_ImageStretcher::StartQuickStretch() {
   m_bFlipX = FALSE;
@@ -883,7 +880,7 @@ FX_BOOL CFX_ImageStretcher::StartQuickStretch() {
   return TRUE;
 }
 FX_BOOL CFX_ImageStretcher::ContinueQuickStretch(IFX_Pause* pPause) {
-  if (m_pScanline == NULL) {
+  if (!m_pScanline) {
     return FALSE;
   }
   int result_width = m_ClipRect.Width(), result_height = m_ClipRect.Height();

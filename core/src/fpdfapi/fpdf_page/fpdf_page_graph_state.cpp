@@ -103,7 +103,7 @@ CPDF_Rect CPDF_ClipPath::GetClipBox() const {
     FX_BOOL bLayerStarted = FALSE;
     for (int i = 0; i < count; i++) {
       CPDF_TextObject* pTextObj = GetText(i);
-      if (pTextObj == NULL) {
+      if (!pTextObj) {
         if (!bStarted) {
           rect = layer_rect;
           bStarted = TRUE;
@@ -637,7 +637,7 @@ void CPDF_ContentMarkData::AddMark(const CFX_ByteString& name,
                                    FX_BOOL bDirect) {
   CPDF_ContentMarkItem& item = m_Marks.Add();
   item.SetName(name);
-  if (pDict == NULL) {
+  if (!pDict) {
     return;
   }
   item.SetParam(bDirect ? CPDF_ContentMarkItem::DirectDict
@@ -652,7 +652,7 @@ void CPDF_ContentMarkData::DeleteLastMark() {
   m_Marks.RemoveAt(size - 1);
 }
 FX_BOOL CPDF_ContentMark::HasMark(const CFX_ByteStringC& mark) const {
-  if (m_pObject == NULL) {
+  if (!m_pObject) {
     return FALSE;
   }
   for (int i = 0; i < m_pObject->CountItems(); i++) {
@@ -665,7 +665,7 @@ FX_BOOL CPDF_ContentMark::HasMark(const CFX_ByteStringC& mark) const {
 }
 FX_BOOL CPDF_ContentMark::LookupMark(const CFX_ByteStringC& mark,
                                      CPDF_Dictionary*& pDict) const {
-  if (m_pObject == NULL) {
+  if (!m_pObject) {
     return FALSE;
   }
   for (int i = 0; i < m_pObject->CountItems(); i++) {

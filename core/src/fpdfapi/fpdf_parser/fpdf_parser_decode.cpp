@@ -454,7 +454,7 @@ CFX_WideString PDF_DecodeText(const uint8_t* src_data,
       }
     }
     result.ReleaseBuffer(dest_pos);
-  } else if (pCharMap == NULL) {
+  } else if (!pCharMap) {
     FX_WCHAR* dest_buf = result.GetBuffer(src_len);
     for (FX_DWORD i = 0; i < src_len; i++) {
       dest_buf[i] = PDFDocEncoding[src_data[i]];
@@ -473,7 +473,7 @@ CFX_ByteString PDF_EncodeText(const FX_WCHAR* pString,
     len = FXSYS_wcslen(pString);
   }
   CFX_ByteString result;
-  if (pCharMap == NULL) {
+  if (!pCharMap) {
     FX_CHAR* dest_buf1 = result.GetBuffer(len);
     int i;
     for (i = 0; i < len; i++) {

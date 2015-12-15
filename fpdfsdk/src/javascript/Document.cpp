@@ -1259,14 +1259,14 @@ void IconTree::InsertIconElement(IconElement* pNewIcon) {
   if (!pNewIcon)
     return;
 
-  if (m_pHead == NULL && m_pEnd == NULL) {
-    m_pHead = m_pEnd = pNewIcon;
-    m_iLength++;
-  } else {
+  if (m_pHead || m_pEnd) {
     m_pEnd->NextIcon = pNewIcon;
     m_pEnd = pNewIcon;
-    m_iLength++;
+  } else {
+    m_pHead = pNewIcon;
+    m_pEnd = pNewIcon;
   }
+  m_iLength++;
 }
 
 void IconTree::DeleteIconTree() {

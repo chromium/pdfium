@@ -438,7 +438,7 @@ void color_apply_icc_profile(opj_image_t* image) {
   int max;
   cmsHPROFILE in_prof =
       cmsOpenProfileFromMem(image->icc_profile_buf, image->icc_profile_len);
-  if (in_prof == NULL) {
+  if (!in_prof) {
     return;
   }
   cmsColorSpaceSignature out_space = cmsGetColorSpace(in_prof);
@@ -479,7 +479,7 @@ void color_apply_icc_profile(opj_image_t* image) {
       cmsCreateTransform(in_prof, in_type, out_prof, out_type, intent, 0);
   cmsCloseProfile(in_prof);
   cmsCloseProfile(out_prof);
-  if (transform == NULL) {
+  if (!transform) {
     image->color_space = oldspace;
     return;
   }
@@ -597,7 +597,7 @@ void color_apply_conversion(opj_image_t* image) {
                                    INTENT_PERCEPTUAL, 0);
     cmsCloseProfile(in);
     cmsCloseProfile(out);
-    if (transform == NULL) {
+    if (!transform) {
       return;
     }
     prec0 = (double)image->comps[0].prec;
@@ -708,7 +708,7 @@ FX_BOOL CJPX_Decoder::Init(const unsigned char* src_data, FX_DWORD src_size) {
   DecodeData srcData(const_cast<unsigned char*>(src_data), src_size);
   l_stream = fx_opj_stream_create_memory_stream(&srcData,
                                                 OPJ_J2K_STREAM_CHUNK_SIZE, 1);
-  if (l_stream == NULL) {
+  if (!l_stream) {
     return FALSE;
   }
   opj_dparameters_t parameters;

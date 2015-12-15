@@ -175,7 +175,7 @@ extern "C" double FXstrtod(const char* nptr, char** endptr) {
   const char* exp_ptr = NULL;
   int e_number = 0, e_signal = 0, e_point = 0, is_negative = 0;
   int exp_ret = 0, exp_sig = 1, fra_ret = 0, fra_count = 0, fra_base = 1;
-  if (nptr == NULL) {
+  if (!nptr) {
     return 0.0;
   }
   for (;; ptr++) {

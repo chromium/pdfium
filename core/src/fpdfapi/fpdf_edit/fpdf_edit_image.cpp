@@ -51,7 +51,7 @@ CPDF_Dictionary* CPDF_Image::InitJPEG(uint8_t* pData, FX_DWORD size) {
   m_bIsMask = FALSE;
   m_Width = width;
   m_Height = height;
-  if (m_pStream == NULL) {
+  if (!m_pStream) {
     m_pStream = new CPDF_Stream(NULL, 0, NULL);
   }
   return pDict;
@@ -367,7 +367,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap,
       dest_buf = NULL;
     }
   }
-  if (m_pStream == NULL) {
+  if (!m_pStream) {
     m_pStream = new CPDF_Stream(NULL, 0, NULL);
   }
   if (!bStream) {

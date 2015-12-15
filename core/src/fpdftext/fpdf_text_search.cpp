@@ -303,13 +303,8 @@ void GetTextStream_Unicode(CFX_WideTextBuf& buffer,
   FX_POSITION pos = pPage->GetFirstObjectPosition();
   while (pos) {
     CPDF_PageObject* pObject = pPage->GetNextObject(pos);
-    if (pObject == NULL) {
-      continue;
-    }
-    if (pObject->m_Type != PDFPAGE_TEXT) {
-      continue;
-    }
-    textstream.ProcessObject((CPDF_TextObject*)pObject, FALSE);
+    if (pObject && pObject->m_Type == PDFPAGE_TEXT)
+      textstream.ProcessObject((CPDF_TextObject*)pObject, FALSE);
   }
 }
 CFX_WideString PDF_GetFirstTextLine_Unicode(CPDF_Document* pDoc,

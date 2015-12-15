@@ -108,7 +108,7 @@ CFX_ByteString::CFX_ByteString(char ch) {
   }
 }
 CFX_ByteString::CFX_ByteString(const CFX_ByteString& stringSrc) {
-  if (stringSrc.m_pData == NULL) {
+  if (!stringSrc.m_pData) {
     m_pData = NULL;
     return;
   }
@@ -143,7 +143,7 @@ CFX_ByteString::CFX_ByteString(const CFX_ByteStringC& str1,
   }
 }
 const CFX_ByteString& CFX_ByteString::operator=(const FX_CHAR* lpsz) {
-  if (lpsz == NULL || lpsz[0] == 0) {
+  if (!lpsz || lpsz[0] == 0) {
     Empty();
   } else {
     AssignCopy(FXSYS_strlen(lpsz), lpsz);
@@ -203,7 +203,7 @@ const CFX_ByteString& CFX_ByteString::operator+=(char ch) {
   return *this;
 }
 const CFX_ByteString& CFX_ByteString::operator+=(const CFX_ByteString& string) {
-  if (string.m_pData == NULL) {
+  if (!string.m_pData) {
     return *this;
   }
   ConcatInPlace(string.m_pData->m_nDataLength, string.m_pData->m_String);
@@ -228,7 +228,7 @@ bool CFX_ByteString::Equal(const char* ptr) const {
          FXSYS_memcmp(ptr, m_pData->m_String, m_pData->m_nDataLength) == 0;
 }
 bool CFX_ByteString::Equal(const CFX_ByteStringC& str) const {
-  if (m_pData == NULL) {
+  if (!m_pData) {
     return str.IsEmpty();
   }
   return m_pData->m_nDataLength == str.GetLength() &&
@@ -252,7 +252,7 @@ void CFX_ByteString::Empty() {
   }
 }
 bool CFX_ByteString::EqualNoCase(const CFX_ByteStringC& str) const {
-  if (m_pData == NULL) {
+  if (!m_pData) {
     return str.IsEmpty();
   }
   FX_STRSIZE len = str.GetLength();
@@ -288,7 +288,7 @@ void CFX_ByteString::AssignCopy(FX_STRSIZE nSrcLen,
   m_pData->m_String[nSrcLen] = 0;
 }
 void CFX_ByteString::CopyBeforeWrite() {
-  if (m_pData == NULL || m_pData->m_nRefs <= 1) {
+  if (!m_pData || m_pData->m_nRefs <= 1) {
     return;
   }
   StringData* pData = m_pData;
@@ -307,7 +307,7 @@ void CFX_ByteString::AllocBeforeWrite(FX_STRSIZE nLen) {
   m_pData = StringData::Create(nLen);
 }
 void CFX_ByteString::ReleaseBuffer(FX_STRSIZE nNewLength) {
-  if (m_pData == NULL) {
+  if (!m_pData) {
     return;
   }
   CopyBeforeWrite();
@@ -327,14 +327,14 @@ void CFX_ByteString::Reserve(FX_STRSIZE len) {
   ReleaseBuffer(GetLength());
 }
 FX_CHAR* CFX_ByteString::GetBuffer(FX_STRSIZE nMinBufLength) {
-  if (m_pData == NULL && nMinBufLength == 0) {
+  if (!m_pData && nMinBufLength == 0) {
     return NULL;
   }
   if (m_pData && m_pData->m_nRefs <= 1 &&
       m_pData->m_nAllocLength >= nMinBufLength) {
     return m_pData->m_String;
   }
-  if (m_pData == NULL) {
+  if (!m_pData) {
     m_pData = StringData::Create(nMinBufLength);
     if (!m_pData) {
       return NULL;
@@ -358,7 +358,7 @@ FX_CHAR* CFX_ByteString::GetBuffer(FX_STRSIZE nMinBufLength) {
   return m_pData->m_String;
 }
 FX_STRSIZE CFX_ByteString::Delete(FX_STRSIZE nIndex, FX_STRSIZE nCount) {
-  if (m_pData == NULL) {
+  if (!m_pData) {
     return 0;
   }
   if (nIndex < 0) {
@@ -381,10 +381,10 @@ FX_STRSIZE CFX_ByteString::Delete(FX_STRSIZE nIndex, FX_STRSIZE nCount) {
 }
 void CFX_ByteString::ConcatInPlace(FX_STRSIZE nSrcLen,
                                    const FX_CHAR* lpszSrcData) {
-  if (nSrcLen == 0 || lpszSrcData == NULL) {
+  if (nSrcLen == 0 || !lpszSrcData) {
     return;
   }
-  if (m_pData == NULL) {
+  if (!m_pData) {
     m_pData = StringData::Create(nSrcLen);
     if (!m_pData) {
       return;
@@ -420,7 +420,7 @@ void CFX_ByteString::ConcatCopy(FX_STRSIZE nSrc1Len,
   pOldData->Release();
 }
 CFX_ByteString CFX_ByteString::Mid(FX_STRSIZE nFirst) const {
-  if (m_pData == NULL) {
+  if (!m_pData) {
     return CFX_ByteString();
   }
   return Mid(nFirst, m_pData->m_nDataLength - nFirst);
@@ -453,7 +453,7 @@ void CFX_ByteString::AllocCopy(CFX_ByteString& dest,
   if (nCopyLen == 0 || nCopyLen < 0) {
     return;
   }
-  ASSERT(dest.m_pData == NULL);
+  ASSERT(!dest.m_pData);
   dest.m_pData = StringData::Create(nCopyLen);
   if (dest.m_pData) {
     FXSYS_memcpy(dest.m_pData->m_String, m_pData->m_String + nCopyIndex,
@@ -558,48 +558,48 @@ void CFX_ByteString::FormatV(const FX_CHAR* lpszFormat, va_list argList) {
         break;
       case 's': {
         const FX_CHAR* pstrNextArg = va_arg(argList, const FX_CHAR*);
-        if (pstrNextArg == NULL) {
-          nItemLen = 6;
-        } else {
+        if (pstrNextArg) {
           nItemLen = FXSYS_strlen(pstrNextArg);
           if (nItemLen < 1) {
             nItemLen = 1;
           }
+        } else {
+          nItemLen = 6;
         }
       } break;
       case 'S': {
         FX_WCHAR* pstrNextArg = va_arg(argList, FX_WCHAR*);
-        if (pstrNextArg == NULL) {
-          nItemLen = 6;
-        } else {
+        if (pstrNextArg) {
           nItemLen = FXSYS_wcslen(pstrNextArg);
           if (nItemLen < 1) {
             nItemLen = 1;
           }
+        } else {
+          nItemLen = 6;
         }
       } break;
       case 's' | FORCE_ANSI:
       case 'S' | FORCE_ANSI: {
         const FX_CHAR* pstrNextArg = va_arg(argList, const FX_CHAR*);
-        if (pstrNextArg == NULL) {
-          nItemLen = 6;
-        } else {
+        if (pstrNextArg) {
           nItemLen = FXSYS_strlen(pstrNextArg);
           if (nItemLen < 1) {
             nItemLen = 1;
           }
+        } else {
+          nItemLen = 6;
         }
       } break;
       case 's' | FORCE_UNICODE:
       case 'S' | FORCE_UNICODE: {
         FX_WCHAR* pstrNextArg = va_arg(argList, FX_WCHAR*);
-        if (pstrNextArg == NULL) {
-          nItemLen = 6;
-        } else {
+        if (pstrNextArg) {
           nItemLen = FXSYS_wcslen(pstrNextArg);
           if (nItemLen < 1) {
             nItemLen = 1;
           }
+        } else {
+          nItemLen = 6;
         }
       } break;
     }
@@ -691,7 +691,7 @@ FX_STRSIZE CFX_ByteString::Insert(FX_STRSIZE nIndex, FX_CHAR ch) {
     nIndex = nNewLength;
   }
   nNewLength++;
-  if (m_pData == NULL || m_pData->m_nAllocLength < nNewLength) {
+  if (!m_pData || m_pData->m_nAllocLength < nNewLength) {
     StringData* pOldData = m_pData;
     const FX_CHAR* pstr = m_pData->m_String;
     m_pData = StringData::Create(nNewLength);
@@ -712,7 +712,7 @@ FX_STRSIZE CFX_ByteString::Insert(FX_STRSIZE nIndex, FX_CHAR ch) {
   return nNewLength;
 }
 CFX_ByteString CFX_ByteString::Right(FX_STRSIZE nCount) const {
-  if (m_pData == NULL) {
+  if (!m_pData) {
     return CFX_ByteString();
   }
   if (nCount < 0) {
@@ -726,7 +726,7 @@ CFX_ByteString CFX_ByteString::Right(FX_STRSIZE nCount) const {
   return dest;
 }
 CFX_ByteString CFX_ByteString::Left(FX_STRSIZE nCount) const {
-  if (m_pData == NULL) {
+  if (!m_pData) {
     return CFX_ByteString();
   }
   if (nCount < 0) {
@@ -740,7 +740,7 @@ CFX_ByteString CFX_ByteString::Left(FX_STRSIZE nCount) const {
   return dest;
 }
 FX_STRSIZE CFX_ByteString::Find(FX_CHAR ch, FX_STRSIZE nStart) const {
-  if (m_pData == NULL) {
+  if (!m_pData) {
     return -1;
   }
   FX_STRSIZE nLength = m_pData->m_nDataLength;
@@ -748,10 +748,10 @@ FX_STRSIZE CFX_ByteString::Find(FX_CHAR ch, FX_STRSIZE nStart) const {
     return -1;
   }
   const FX_CHAR* lpsz = FXSYS_strchr(m_pData->m_String + nStart, ch);
-  return (lpsz == NULL) ? -1 : (int)(lpsz - m_pData->m_String);
+  return lpsz ? (int)(lpsz - m_pData->m_String) : -1;
 }
 FX_STRSIZE CFX_ByteString::ReverseFind(FX_CHAR ch) const {
-  if (m_pData == NULL) {
+  if (!m_pData) {
     return -1;
   }
   FX_STRSIZE nLength = m_pData->m_nDataLength;
@@ -788,7 +788,7 @@ const FX_CHAR* FX_strstr(const FX_CHAR* str1,
 }
 FX_STRSIZE CFX_ByteString::Find(const CFX_ByteStringC& lpszSub,
                                 FX_STRSIZE nStart) const {
-  if (m_pData == NULL) {
+  if (!m_pData) {
     return -1;
   }
   FX_STRSIZE nLength = m_pData->m_nDataLength;
@@ -798,10 +798,10 @@ FX_STRSIZE CFX_ByteString::Find(const CFX_ByteStringC& lpszSub,
   const FX_CHAR* lpsz =
       FX_strstr(m_pData->m_String + nStart, m_pData->m_nDataLength - nStart,
                 lpszSub.GetCStr(), lpszSub.GetLength());
-  return (lpsz == NULL) ? -1 : (int)(lpsz - m_pData->m_String);
+  return lpsz ? (int)(lpsz - m_pData->m_String) : -1;
 }
 void CFX_ByteString::MakeLower() {
-  if (m_pData == NULL) {
+  if (!m_pData) {
     return;
   }
   CopyBeforeWrite();
@@ -811,7 +811,7 @@ void CFX_ByteString::MakeLower() {
   FXSYS_strlwr(m_pData->m_String);
 }
 void CFX_ByteString::MakeUpper() {
-  if (m_pData == NULL) {
+  if (!m_pData) {
     return;
   }
   CopyBeforeWrite();
@@ -821,7 +821,7 @@ void CFX_ByteString::MakeUpper() {
   FXSYS_strupr(m_pData->m_String);
 }
 FX_STRSIZE CFX_ByteString::Remove(FX_CHAR chRemove) {
-  if (m_pData == NULL) {
+  if (!m_pData) {
     return 0;
   }
   CopyBeforeWrite();
@@ -845,7 +845,7 @@ FX_STRSIZE CFX_ByteString::Remove(FX_CHAR chRemove) {
 }
 FX_STRSIZE CFX_ByteString::Replace(const CFX_ByteStringC& lpszOld,
                                    const CFX_ByteStringC& lpszNew) {
-  if (m_pData == NULL) {
+  if (!m_pData) {
     return 0;
   }
   if (lpszOld.IsEmpty()) {
@@ -859,7 +859,7 @@ FX_STRSIZE CFX_ByteString::Replace(const CFX_ByteStringC& lpszOld,
   while (1) {
     const FX_CHAR* pTarget = FX_strstr(pStart, (FX_STRSIZE)(pEnd - pStart),
                                        lpszOld.GetCStr(), nSourceLen);
-    if (pTarget == NULL) {
+    if (!pTarget) {
       break;
     }
     nCount++;
@@ -895,7 +895,7 @@ FX_STRSIZE CFX_ByteString::Replace(const CFX_ByteStringC& lpszOld,
   return nCount;
 }
 void CFX_ByteString::SetAt(FX_STRSIZE nIndex, FX_CHAR ch) {
-  if (m_pData == NULL) {
+  if (!m_pData) {
     return;
   }
   FXSYS_assert(nIndex >= 0);
@@ -924,13 +924,13 @@ CFX_ByteString CFX_ByteString::FromUnicode(const CFX_WideString& str) {
 }
 void CFX_ByteString::ConvertFrom(const CFX_WideString& str,
                                  CFX_CharMap* pCharMap) {
-  if (pCharMap == NULL) {
+  if (!pCharMap) {
     pCharMap = CFX_CharMap::GetDefaultMapper();
   }
   *this = (*pCharMap->m_GetByteString)(pCharMap, str);
 }
 int CFX_ByteString::Compare(const CFX_ByteStringC& str) const {
-  if (m_pData == NULL) {
+  if (!m_pData) {
     return str.IsEmpty() ? 0 : -1;
   }
   int this_len = m_pData->m_nDataLength;
@@ -953,7 +953,7 @@ int CFX_ByteString::Compare(const CFX_ByteStringC& str) const {
   return 0;
 }
 void CFX_ByteString::TrimRight(const CFX_ByteStringC& lpszTargets) {
-  if (m_pData == NULL || lpszTargets.IsEmpty()) {
+  if (!m_pData || lpszTargets.IsEmpty()) {
     return;
   }
   CopyBeforeWrite();
@@ -984,7 +984,7 @@ void CFX_ByteString::TrimRight() {
   TrimRight("\x09\x0a\x0b\x0c\x0d\x20");
 }
 void CFX_ByteString::TrimLeft(const CFX_ByteStringC& lpszTargets) {
-  if (m_pData == NULL) {
+  if (!m_pData) {
     return;
   }
   if (lpszTargets.IsEmpty()) {

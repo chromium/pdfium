@@ -82,7 +82,7 @@ static void _error_do_nothing2(j_common_ptr cinfo, char*) {}
 static FX_BOOL _JpegEmbedIccProfile(j_compress_ptr cinfo,
                                     const uint8_t* icc_buf_ptr,
                                     FX_DWORD icc_length) {
-  if (icc_buf_ptr == NULL || icc_length == 0) {
+  if (!icc_buf_ptr || icc_length == 0) {
     return FALSE;
   }
   FX_DWORD icc_segment_size = (JPEG_MARKER_MAXSIZE - 2 - JPEG_OVERHEAD_LEN);
@@ -516,7 +516,7 @@ ICodec_ScanlineDecoder* CCodec_JpegModule::CreateDecoder(
     int height,
     int nComps,
     FX_BOOL ColorTransform) {
-  if (src_buf == NULL || src_size == 0) {
+  if (!src_buf || src_size == 0) {
     return NULL;
   }
   CCodec_JpegDecoder* pDecoder = new CCodec_JpegDecoder;
@@ -546,10 +546,9 @@ FX_BOOL CCodec_JpegModule::Encode(const CFX_DIBSource* pSource,
                                   int quality,
                                   const uint8_t* icc_buf,
                                   FX_DWORD icc_length) {
-  if (pSource->GetBPP() < 8 || pSource->GetPalette()) {
-    ASSERT(pSource->GetBPP() >= 8 && pSource->GetPalette() == NULL);
+  if (pSource->GetBPP() < 8 || pSource->GetPalette())
     return FALSE;
-  }
+
   _JpegEncode(pSource, dest_buf, dest_size, quality, icc_buf, icc_length);
   return TRUE;
 }

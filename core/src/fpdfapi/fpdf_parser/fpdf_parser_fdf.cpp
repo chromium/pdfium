@@ -30,7 +30,7 @@ CFDF_Document* CFDF_Document::ParseFile(IFX_FileRead* pFile, FX_BOOL bOwnFile) {
   }
   CFDF_Document* pDoc = new CFDF_Document;
   pDoc->ParseStream(pFile, bOwnFile);
-  if (pDoc->m_pRootDict == NULL) {
+  if (!pDoc->m_pRootDict) {
     delete pDoc;
     return NULL;
   }
@@ -59,7 +59,7 @@ void CFDF_Document::ParseStream(IFX_FileRead* pFile, FX_BOOL bOwnFile) {
         break;
       }
       CPDF_Object* pObj = parser.GetObject(this, objnum, 0, 0);
-      if (pObj == NULL) {
+      if (!pObj) {
         break;
       }
       InsertIndirectObject(objnum, pObj);
@@ -81,7 +81,7 @@ void CFDF_Document::ParseStream(IFX_FileRead* pFile, FX_BOOL bOwnFile) {
   }
 }
 FX_BOOL CFDF_Document::WriteBuf(CFX_ByteTextBuf& buf) const {
-  if (m_pRootDict == NULL) {
+  if (!m_pRootDict) {
     return FALSE;
   }
   buf << "%FDF-1.2\r\n";

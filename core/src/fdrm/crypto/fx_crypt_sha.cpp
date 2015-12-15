@@ -390,7 +390,7 @@ uint64_t FX_ato64i(const FX_CHAR* str) {
   return ret;
 }
 void CRYPT_SHA384Start(void* context) {
-  if (context == NULL) {
+  if (!context) {
     return;
   }
   sha384_context* ctx = (sha384_context*)context;
@@ -604,7 +604,7 @@ void CRYPT_SHA384Generate(const uint8_t* data,
   CRYPT_SHA384Finish(&context, digest);
 }
 void CRYPT_SHA512Start(void* context) {
-  if (context == NULL) {
+  if (!context) {
     return;
   }
   sha384_context* ctx = (sha384_context*)context;

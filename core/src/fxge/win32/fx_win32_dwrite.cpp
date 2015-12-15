@@ -65,7 +65,7 @@ class CDwFontFileLoader final : public IDWriteFontFileLoader {
                       OUT IDWriteFontFileStream** fontFileStream);
 
   static IDWriteFontFileLoader* GetLoader() {
-    if (instance_ == NULL) {
+    if (!instance_) {
       instance_ = new CDwFontFileLoader();
     }
     return instance_;
@@ -216,7 +216,7 @@ FX_BOOL CDWriteExt::DwRendingString(void* renderTarget,
                                     FX_FLOAT baselineOriginY,
                                     void* glyph_offsets,
                                     FX_FLOAT* glyph_advances) {
-  if (renderTarget == NULL) {
+  if (!renderTarget) {
     return TRUE;
   }
   CDwGdiTextRenderer* pTextRenderer = (CDwGdiTextRenderer*)renderTarget;

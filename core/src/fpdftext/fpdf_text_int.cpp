@@ -2464,12 +2464,12 @@ FX_BOOL CPDF_TextPageFind::ExtractSubString(CFX_WideString& rString,
                                             const FX_WCHAR* lpszFullString,
                                             int iSubString,
                                             FX_WCHAR chSep) {
-  if (lpszFullString == NULL) {
+  if (!lpszFullString) {
     return FALSE;
   }
   while (iSubString--) {
     lpszFullString = FXSYS_wcschr(lpszFullString, chSep);
-    if (lpszFullString == NULL) {
+    if (!lpszFullString) {
       rString.Empty();
       return FALSE;
     }
@@ -2479,8 +2479,8 @@ FX_BOOL CPDF_TextPageFind::ExtractSubString(CFX_WideString& rString,
     }
   }
   const FX_WCHAR* lpchEnd = FXSYS_wcschr(lpszFullString, chSep);
-  int nLen = (lpchEnd == NULL) ? (int)FXSYS_wcslen(lpszFullString)
-                               : (int)(lpchEnd - lpszFullString);
+  int nLen = lpchEnd ? (int)(lpchEnd - lpszFullString)
+                     : (int)FXSYS_wcslen(lpszFullString);
   ASSERT(nLen >= 0);
   FXSYS_memcpy(rString.GetBuffer(nLen), lpszFullString,
                nLen * sizeof(FX_WCHAR));

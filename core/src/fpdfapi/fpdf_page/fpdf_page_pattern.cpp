@@ -129,7 +129,7 @@ FX_BOOL CPDF_ShadingPattern::Load() {
 
   CPDF_Dictionary* pShadingDict =
       m_pShadingObj ? m_pShadingObj->GetDict() : NULL;
-  if (pShadingDict == NULL) {
+  if (!pShadingDict) {
     return FALSE;
   }
   if (m_nFuncs) {
@@ -151,7 +151,7 @@ FX_BOOL CPDF_ShadingPattern::Load() {
     }
   }
   CPDF_Object* pCSObj = pShadingDict->GetElementValue("ColorSpace");
-  if (pCSObj == NULL) {
+  if (!pCSObj) {
     return FALSE;
   }
   CPDF_DocPageData* pDocPageData = m_pDocument->GetPageData();
@@ -199,7 +199,7 @@ FX_BOOL CPDF_MeshStream::Load(CPDF_Stream* pShadingStream,
   m_CoordMax = m_nCoordBits == 32 ? -1 : (1 << m_nCoordBits) - 1;
   m_CompMax = (1 << m_nCompBits) - 1;
   CPDF_Array* pDecode = pDict->GetArray("Decode");
-  if (pDecode == NULL || pDecode->GetCount() != 4 + m_nComps * 2) {
+  if (!pDecode || pDecode->GetCount() != 4 + m_nComps * 2) {
     return FALSE;
   }
   m_xmin = pDecode->GetNumber(0);

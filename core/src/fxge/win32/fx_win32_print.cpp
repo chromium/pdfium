@@ -56,7 +56,7 @@ FX_BOOL CGdiPrinterDriver::SetDIBits(const CFX_DIBSource* pSource,
   }
   CFX_DIBExtractor temp(pSource);
   CFX_DIBitmap* pBitmap = temp;
-  if (pBitmap == NULL) {
+  if (!pBitmap) {
     return FALSE;
   }
   return GDI_SetDIBits(pBitmap, pSrcRect, left, top, pIccTransform);
@@ -82,7 +82,7 @@ FX_BOOL CGdiPrinterDriver::StretchDIBits(const CFX_DIBSource* pSource,
     if (dest_width < 0 || dest_height < 0) {
       CFX_DIBitmap* pFlipped =
           pSource->FlipImage(dest_width < 0, dest_height < 0);
-      if (pFlipped == NULL) {
+      if (!pFlipped) {
         return FALSE;
       }
       if (dest_width < 0) {
@@ -99,7 +99,7 @@ FX_BOOL CGdiPrinterDriver::StretchDIBits(const CFX_DIBSource* pSource,
     }
     CFX_DIBExtractor temp(pSource);
     CFX_DIBitmap* pBitmap = temp;
-    if (pBitmap == NULL) {
+    if (!pBitmap) {
       return FALSE;
     }
     return GDI_StretchBitMask(pBitmap, dest_left, dest_top, dest_width,
@@ -112,7 +112,7 @@ FX_BOOL CGdiPrinterDriver::StretchDIBits(const CFX_DIBSource* pSource,
   if (dest_width < 0 || dest_height < 0) {
     CFX_DIBitmap* pFlipped =
         pSource->FlipImage(dest_width < 0, dest_height < 0);
-    if (pFlipped == NULL) {
+    if (!pFlipped) {
       return FALSE;
     }
     if (dest_width < 0) {
@@ -129,7 +129,7 @@ FX_BOOL CGdiPrinterDriver::StretchDIBits(const CFX_DIBSource* pSource,
   }
   CFX_DIBExtractor temp(pSource);
   CFX_DIBitmap* pBitmap = temp;
-  if (pBitmap == NULL) {
+  if (!pBitmap) {
     return FALSE;
   }
   return GDI_StretchDIBits(pBitmap, dest_left, dest_top, dest_width,
@@ -142,7 +142,7 @@ static CFX_DIBitmap* Transform1bppBitmap(const CFX_DIBSource* pSrc,
          pSrc->GetFormat() == FXDIB_1bppCmyk);
   CFX_DIBExtractor src_bitmap(pSrc);
   CFX_DIBitmap* pSrcBitmap = src_bitmap;
-  if (pSrcBitmap == NULL) {
+  if (!pSrcBitmap) {
     return NULL;
   }
   int src_width = pSrcBitmap->GetWidth(), src_height = pSrcBitmap->GetHeight();
@@ -250,7 +250,7 @@ FX_BOOL CGdiPrinterDriver::StartDIBits(const CFX_DIBSource* pSource,
   if (FXSYS_fabs(pMatrix->a) < 0.5f && FXSYS_fabs(pMatrix->d) < 0.5f) {
     CFX_DIBitmap* pTransformed =
         pSource->SwapXY(pMatrix->c > 0, pMatrix->b < 0);
-    if (pTransformed == NULL) {
+    if (!pTransformed) {
       return FALSE;
     }
     FX_BOOL ret = StretchDIBits(
@@ -261,7 +261,7 @@ FX_BOOL CGdiPrinterDriver::StartDIBits(const CFX_DIBSource* pSource,
   }
   if (pSource->GetBPP() == 1) {
     CFX_DIBitmap* pTransformed = Transform1bppBitmap(pSource, pMatrix);
-    if (pIccTransform == NULL) {
+    if (!pIccTransform) {
       return FALSE;
     }
     SaveState();

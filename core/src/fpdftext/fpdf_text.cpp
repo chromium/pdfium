@@ -168,7 +168,7 @@ CTextBaseLine* CTextPage::InsertTextBox(CTextBaseLine* pBaseLine,
   if (str.GetLength() == 0) {
     return NULL;
   }
-  if (pBaseLine == NULL) {
+  if (!pBaseLine) {
     int i;
     for (i = 0; i < m_BaseLines.GetSize(); i++) {
       CTextBaseLine* pExistLine = m_BaseLines.GetAt(i);
@@ -180,7 +180,7 @@ CTextBaseLine* CTextPage::InsertTextBox(CTextBaseLine* pBaseLine,
         break;
       }
     }
-    if (pBaseLine == NULL) {
+    if (!pBaseLine) {
       pBaseLine = new CTextBaseLine;
       pBaseLine->m_BaseLine = basey;
       m_BaseLines.InsertAt(i, pBaseLine);
@@ -448,17 +448,17 @@ void CTextPage::FindColumns() {
     for (int j = 0; j < pBaseLine->m_TextList.GetSize(); j++) {
       CTextBox* pTextBox = pBaseLine->m_TextList.GetAt(j);
       CTextColumn* pColumn = FindColumn(pTextBox->m_Right);
-      if (pColumn == NULL) {
+      if (pColumn) {
+        pColumn->m_AvgPos =
+            (pColumn->m_Count * pColumn->m_AvgPos + pTextBox->m_Right) /
+            (pColumn->m_Count + 1);
+        pColumn->m_Count++;
+      } else {
         pColumn = new CTextColumn;
         pColumn->m_Count = 1;
         pColumn->m_AvgPos = pTextBox->m_Right;
         pColumn->m_TextPos = -1;
         m_TextColumns.Add(pColumn);
-      } else {
-        pColumn->m_AvgPos =
-            (pColumn->m_Count * pColumn->m_AvgPos + pTextBox->m_Right) /
-            (pColumn->m_Count + 1);
-        pColumn->m_Count++;
       }
     }
   }
@@ -726,7 +726,7 @@ void PDF_GetPageText_Unicode(CFX_WideStringArray& lines,
                              int iMinWidth,
                              FX_DWORD flags) {
   lines.RemoveAll();
-  if (pPage == NULL) {
+  if (!pPage) {
     return;
   }
   CPDF_Page page;

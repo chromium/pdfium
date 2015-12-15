@@ -28,24 +28,24 @@ CFX_ByteString CFX_WindowsDIB::GetBitmapInfo(const CFX_DIBitmap* pBitmap) {
   pbmih->biWidth = pBitmap->GetWidth();
   if (pBitmap->GetBPP() == 8) {
     FX_DWORD* pPalette = (FX_DWORD*)(pbmih + 1);
-    if (pBitmap->GetPalette() == NULL) {
+    if (pBitmap->GetPalette()) {
       for (int i = 0; i < 256; i++) {
-        pPalette[i] = i * 0x010101;
+        pPalette[i] = pBitmap->GetPalette()[i];
       }
     } else {
       for (int i = 0; i < 256; i++) {
-        pPalette[i] = pBitmap->GetPalette()[i];
+        pPalette[i] = i * 0x010101;
       }
     }
   }
   if (pBitmap->GetBPP() == 1) {
     FX_DWORD* pPalette = (FX_DWORD*)(pbmih + 1);
-    if (pBitmap->GetPalette() == NULL) {
-      pPalette[0] = 0;
-      pPalette[1] = 0xffffff;
-    } else {
+    if (pBitmap->GetPalette()) {
       pPalette[0] = pBitmap->GetPalette()[0];
       pPalette[1] = pBitmap->GetPalette()[1];
+    } else {
+      pPalette[0] = 0;
+      pPalette[1] = 0xffffff;
     }
   }
   result.ReleaseBuffer(len);
@@ -125,7 +125,7 @@ CFX_DIBitmap* CFX_WindowsDIB::LoadFromFile(const FX_WCHAR* filename) {
   }
   HBITMAP hBitmap = (HBITMAP)LoadImageW(NULL, (wchar_t*)filename, IMAGE_BITMAP,
                                         0, 0, LR_LOADFROMFILE);
-  if (hBitmap == NULL) {
+  if (!hBitmap) {
     return NULL;
   }
   HDC hDC = CreateCompatibleDC(NULL);
@@ -158,7 +158,7 @@ CFX_DIBitmap* CFX_WindowsDIB::LoadDIBitmap(WINDIB_Open_Args_ args) {
   }
   HBITMAP hBitmap = (HBITMAP)LoadImageW(NULL, (wchar_t*)args.path_name,
                                         IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-  if (hBitmap == NULL) {
+  if (!hBitmap) {
     return NULL;
   }
   HDC hDC = CreateCompatibleDC(NULL);
@@ -184,8 +184,8 @@ CFX_DIBitmap* CFX_WindowsDIB::LoadFromDDB(HDC hDC,
                                           HBITMAP hBitmap,
                                           FX_DWORD* pPalette,
                                           FX_DWORD palsize) {
-  FX_BOOL bCreatedDC = hDC == NULL;
-  if (hDC == NULL) {
+  FX_BOOL bCreatedDC = !hDC;
+  if (bCreatedDC) {
     hDC = CreateCompatibleDC(NULL);
   }
   BITMAPINFOHEADER bmih;
