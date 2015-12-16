@@ -344,7 +344,7 @@ FX_FILESIZE CPDF_Parser::GetObjectOffset(FX_DWORD objnum) {
 }
 
 FX_BOOL CPDF_Parser::LoadAllCrossRefV4(FX_FILESIZE xrefpos) {
-  if (!LoadCrossRefV4(xrefpos, 0, TRUE, FALSE)) {
+  if (!LoadCrossRefV4(xrefpos, 0, TRUE)) {
     return FALSE;
   }
   m_pTrailer = LoadTrailerV4();
@@ -370,7 +370,7 @@ FX_BOOL CPDF_Parser::LoadAllCrossRefV4(FX_FILESIZE xrefpos) {
   xrefpos = newxrefpos;
   while (xrefpos) {
     CrossRefList.InsertAt(0, xrefpos);
-    LoadCrossRefV4(xrefpos, 0, TRUE, FALSE);
+    LoadCrossRefV4(xrefpos, 0, TRUE);
     nonstd::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>> pDict(
         LoadTrailerV4());
     if (!pDict)
@@ -388,7 +388,7 @@ FX_BOOL CPDF_Parser::LoadAllCrossRefV4(FX_FILESIZE xrefpos) {
     m_Trailers.Add(pDict.release());
   }
   for (int32_t i = 0; i < CrossRefList.GetSize(); i++) {
-    if (!LoadCrossRefV4(CrossRefList[i], XRefStreamList[i], FALSE, i == 0))
+    if (!LoadCrossRefV4(CrossRefList[i], XRefStreamList[i], FALSE))
       return FALSE;
   }
   return TRUE;
@@ -412,7 +412,7 @@ FX_BOOL CPDF_Parser::LoadLinearizedAllCrossRefV4(FX_FILESIZE xrefpos,
   xrefpos = GetDirectInteger(m_pTrailer, "Prev");
   while (xrefpos) {
     CrossRefList.InsertAt(0, xrefpos);
-    LoadCrossRefV4(xrefpos, 0, TRUE, FALSE);
+    LoadCrossRefV4(xrefpos, 0, TRUE);
     CPDF_Dictionary* pDict = LoadTrailerV4();
     if (!pDict) {
       return FALSE;
@@ -422,7 +422,7 @@ FX_BOOL CPDF_Parser::LoadLinearizedAllCrossRefV4(FX_FILESIZE xrefpos,
     m_Trailers.Add(pDict);
   }
   for (int32_t i = 1; i < CrossRefList.GetSize(); i++)
-    if (!LoadCrossRefV4(CrossRefList[i], XRefStreamList[i], FALSE, i == 0)) {
+    if (!LoadCrossRefV4(CrossRefList[i], XRefStreamList[i], FALSE)) {
       return FALSE;
     }
   return TRUE;
@@ -497,8 +497,7 @@ bool CPDF_Parser::FindPosInOffsets(FX_FILESIZE pos) const {
 
 bool CPDF_Parser::LoadCrossRefV4(FX_FILESIZE pos,
                                  FX_FILESIZE streampos,
-                                 FX_BOOL bSkip,
-                                 FX_BOOL bFirst) {
+                                 FX_BOOL bSkip) {
   m_Syntax.RestorePos(pos);
   if (m_Syntax.GetKeyword() != "xref")
     return false;
@@ -527,17 +526,13 @@ bool CPDF_Parser::LoadCrossRefV4(FX_FILESIZE pos,
     FX_DWORD count = m_Syntax.GetDirectNum();
     m_Syntax.ToNextWord();
     SavedPos = m_Syntax.SavePos();
-    FX_BOOL bFirstItem = FALSE;
     const int32_t recordsize = 20;
-    if (bFirst)
-      bFirstItem = TRUE;
     m_dwXrefStartObjNum = start_objnum;
     if (!bSkip) {
       std::vector<char> buf(1024 * recordsize + 1);
       char* pBuf = pdfium::vector_as_array(&buf);
       pBuf[1024 * recordsize] = '\0';
       int32_t nBlocks = count / 1024 + 1;
-      FX_BOOL bFirstBlock = TRUE;
       for (int32_t block = 0; block < nBlocks; block++) {
         int32_t block_size = block == nBlocks - 1 ? count % 1024 : 1024;
         m_Syntax.ReadBlock(reinterpret_cast<uint8_t*>(pBuf),
@@ -546,18 +541,6 @@ bool CPDF_Parser::LoadCrossRefV4(FX_FILESIZE pos,
           FX_DWORD objnum = start_objnum + block * 1024 + i;
           char* pEntry = pBuf + i * recordsize;
           if (pEntry[17] == 'f') {
-            if (bFirstItem) {
-              objnum = 0;
-              bFirstItem = FALSE;
-            }
-            if (bFirstBlock) {
-              FX_FILESIZE offset = (FX_FILESIZE)FXSYS_atoi64(pEntry);
-              int32_t version = FXSYS_atoi(pEntry + 11);
-              if (offset == 0 && version == 65535 && start_objnum != 0) {
-                start_objnum--;
-                objnum = 0;
-              }
-            }
             m_CrossRef.SetAtGrow(objnum, 0);
             m_V5Type.SetAtGrow(objnum, 0);
           } else {
@@ -579,9 +562,6 @@ bool CPDF_Parser::LoadCrossRefV4(FX_FILESIZE pos,
               m_SortedOffset.Add(m_CrossRef[objnum]);
             }
             m_V5Type.SetAtGrow(objnum, 1);
-          }
-          if (bFirstBlock) {
-            bFirstBlock = FALSE;
           }
         }
       }
@@ -1574,7 +1554,7 @@ FX_DWORD CPDF_Parser::StartAsynParse(IFX_FileRead* pFileAccess,
   FX_FILESIZE dwFirstXRefOffset = m_Syntax.SavePos();
   FX_BOOL bXRefRebuilt = FALSE;
   FX_BOOL bLoadV4 = FALSE;
-  if (!(bLoadV4 = LoadCrossRefV4(dwFirstXRefOffset, 0, FALSE, FALSE)) &&
+  if (!(bLoadV4 = LoadCrossRefV4(dwFirstXRefOffset, 0, FALSE)) &&
       !LoadCrossRefV5(&dwFirstXRefOffset, TRUE)) {
     if (!RebuildCrossRef()) {
       return PDFPARSE_ERROR_FORMAT;
