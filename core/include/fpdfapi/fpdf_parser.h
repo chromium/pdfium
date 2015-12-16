@@ -476,10 +476,7 @@ class CPDF_Parser {
 
   FX_BOOL LoadAllCrossRefV5(FX_FILESIZE pos);
 
-  bool LoadCrossRefV4(FX_FILESIZE pos,
-                      FX_FILESIZE streampos,
-                      FX_BOOL bSkip,
-                      FX_BOOL bFirst);
+  bool LoadCrossRefV4(FX_FILESIZE pos, FX_FILESIZE streampos, FX_BOOL bSkip);
 
   FX_BOOL LoadCrossRefV5(FX_FILESIZE* pos, FX_BOOL bMainXRef);
 
