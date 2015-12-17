@@ -735,7 +735,7 @@ DLLEXPORT void STDCALL FPDF_ClosePage(FPDF_PAGE page) {
 
 DLLEXPORT void STDCALL FPDF_CloseDocument(FPDF_DOCUMENT document) {
 #ifdef PDF_ENABLE_XFA
-  delete CPDFDocumentFromFPDFDocument(document);
+  delete UnderlyingFromFPDFDocument(document);
 #else   // PDF_ENABLE_XFA
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
