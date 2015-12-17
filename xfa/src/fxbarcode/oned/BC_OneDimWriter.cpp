@@ -243,9 +243,6 @@ void CBC_OneDimWriter::ShowChars(const CFX_WideStringC& contents,
   CFX_ByteString str = FX_UTF8Encode(contents);
   int32_t iLen = str.GetLength();
   FXTEXT_CHARPOS* pCharPos = FX_Alloc(FXTEXT_CHARPOS, iLen);
-  if (!pCharPos) {
-    return;
-  }
   FXSYS_memset(pCharPos, 0, sizeof(FXTEXT_CHARPOS) * iLen);
   FX_FLOAT charsLen = 0;
   FX_FLOAT geWidth = 0;

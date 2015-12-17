@@ -41,25 +41,19 @@ CFDE_TextOut::CFDE_TextOut()
   m_rtLogicClip.Reset();
 }
 CFDE_TextOut::~CFDE_TextOut() {
-  if (m_pTxtBreak != NULL) {
+  if (m_pTxtBreak) {
     m_pTxtBreak->Release();
   }
-  if (m_pCharWidths != NULL) {
-    FDE_Free(m_pCharWidths);
-  }
-  if (m_pEllCharWidths != NULL) {
-    FDE_Free(m_pEllCharWidths);
-  }
-  if (m_pRenderDevice != NULL) {
+  FX_Free(m_pCharWidths);
+  FX_Free(m_pEllCharWidths);
+  if (m_pRenderDevice) {
     m_pRenderDevice->Release();
   }
-  if (m_pCharPos != NULL) {
-    FDE_Free(m_pCharPos);
-  }
+  FX_Free(m_pCharPos);
   m_ttoLines.RemoveAll();
 }
 void CFDE_TextOut::SetFont(IFX_Font* pFont) {
-  FXSYS_assert(pFont != NULL);
+  FXSYS_assert(pFont);
   m_pFont = pFont;
   m_pTxtBreak->SetFont(pFont);
 }
@@ -415,34 +409,31 @@ void CFDE_TextOut::DrawText(const FX_WCHAR* pwsStr,
 void CFDE_TextOut::ExpandBuffer(int32_t iSize, int32_t iType) {
   switch (iType) {
     case 0:
-      if (m_pCharWidths == NULL) {
-        m_pCharWidths = (int32_t*)FDE_Alloc(iSize * sizeof(int32_t));
+      if (!m_pCharWidths) {
+        m_pCharWidths = FX_Alloc(int32_t, iSize);
         m_iChars = iSize;
       } else if (m_iChars < iSize) {
-        m_pCharWidths =
-            (int32_t*)FDE_Realloc(m_pCharWidths, iSize * sizeof(int32_t));
+        m_pCharWidths = FX_Realloc(int32_t, m_pCharWidths, iSize);
         m_iChars = iSize;
       }
-      FXSYS_memset(m_pCharWidths, 0, iSize);
+      FXSYS_memset(m_pCharWidths, 0, iSize * sizeof(int32_t));
       break;
     case 1:
-      if (m_pEllCharWidths == NULL) {
-        m_pEllCharWidths = (int32_t*)FDE_Alloc(iSize * sizeof(int32_t));
+      if (!m_pEllCharWidths) {
+        m_pEllCharWidths = FX_Alloc(int32_t, iSize);
         m_iEllChars = iSize;
       } else if (m_iEllChars < iSize) {
-        m_pEllCharWidths =
-            (int32_t*)FDE_Realloc(m_pEllCharWidths, iSize * sizeof(int32_t));
+        m_pEllCharWidths = FX_Realloc(int32_t, m_pEllCharWidths, iSize);
         m_iEllChars = iSize;
       }
-      FXSYS_memset(m_pEllCharWidths, 0, iSize);
+      FXSYS_memset(m_pEllCharWidths, 0, iSize * sizeof(int32_t));
       break;
     case 2:
       if (m_pCharPos == NULL) {
-        m_pCharPos = (FXTEXT_CHARPOS*)FDE_Alloc(iSize * sizeof(FXTEXT_CHARPOS));
+        m_pCharPos = FX_Alloc(FXTEXT_CHARPOS, iSize);
         m_iCharPosSize = iSize;
       } else if (m_iCharPosSize < iSize) {
-        m_pCharPos = (FXTEXT_CHARPOS*)FDE_Realloc(
-            m_pCharPos, iSize * sizeof(FXTEXT_CHARPOS));
+        m_pCharPos = FX_Realloc(FXTEXT_CHARPOS, m_pCharPos, iSize);
         m_iCharPosSize = iSize;
       }
       break;

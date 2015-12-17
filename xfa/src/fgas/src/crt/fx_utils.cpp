@@ -49,13 +49,12 @@ uint8_t* CFX_BaseArray::AddSpaceTo(int32_t index) {
     int32_t iGrowSize = m_pData->iGrowSize;
     iTotalCount = (index / iGrowSize + 1) * iGrowSize;
     int32_t iNewSize = iTotalCount * iBlockSize;
-    if (pBuffer == NULL) {
+    if (!pBuffer) {
       pBuffer = FX_Alloc(uint8_t, iNewSize);
     } else {
       pBuffer = FX_Realloc(uint8_t, pBuffer, iNewSize);
     }
   }
-  FXSYS_assert(pBuffer != NULL);
   int32_t& iBlockCount = m_pData->iBlockCount;
   if (index >= iBlockCount) {
     iBlockCount = index + 1;
@@ -161,7 +160,7 @@ uint8_t* CFX_BaseMassArrayImp::AddSpaceTo(int32_t index) {
         pChunk = (uint8_t*)m_pData->GetAt(index / m_iChunkSize);
         break;
       } else {
-        pChunk = (uint8_t*)FX_Alloc(uint8_t, iMemSize);
+        pChunk = FX_Alloc(uint8_t, iMemSize);
         if (m_iChunkCount < m_pData->GetSize()) {
           m_pData->SetAt(m_iChunkCount, pChunk);
         } else {
@@ -354,10 +353,9 @@ uint8_t* CFX_BaseDiscreteArray::AddSpaceTo(int32_t index) {
   if (iChunk < iChunkCount) {
     pChunk = (uint8_t*)pData->ChunkBuffer.GetAt(iChunk);
   }
-  if (pChunk == NULL) {
-    int32_t iMemSize = iChunkSize * pData->iBlockSize;
-    pChunk = (uint8_t*)FX_Alloc(uint8_t, iMemSize);
-    FXSYS_memset(pChunk, 0, iMemSize);
+  if (!pChunk) {
+    pChunk = FX_Alloc2D(uint8_t, iChunkSize, pData->iBlockSize);
+    FXSYS_memset(pChunk, 0, iChunkSize * pData->iBlockSize);
     pData->ChunkBuffer.SetAtGrow(iChunk, pChunk);
     if (iChunkCount <= iChunk) {
       iChunkCount = iChunk + 1;

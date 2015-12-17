@@ -33,9 +33,6 @@ FX_BOOL CFX_SAXFile::StartFile(IFX_FileRead* pFile,
   }
   m_dwBufSize = FX_MIN(dwLen, FX_SAXFILE_BUFSIZE);
   m_pBuf = FX_Alloc(uint8_t, m_dwBufSize);
-  if (!m_pBuf) {
-    return FALSE;
-  }
   if (!pFile->ReadBlock(m_pBuf, dwStart, m_dwBufSize)) {
     return FALSE;
   }
@@ -77,8 +74,8 @@ CFX_SAXReader::CFX_SAXReader()
       m_iNameSize(256),
       m_dwParseMode(0),
       m_pCommentContext(nullptr) {
-  m_pszData = (uint8_t*)FX_Alloc(uint8_t, m_iDataSize);
-  m_pszName = (uint8_t*)FX_Alloc(uint8_t, m_iNameSize);
+  m_pszData = FX_Alloc(uint8_t, m_iDataSize);
+  m_pszName = FX_Alloc(uint8_t, m_iNameSize);
 }
 CFX_SAXReader::~CFX_SAXReader() {
   Reset();

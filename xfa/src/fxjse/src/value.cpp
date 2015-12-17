@@ -500,9 +500,6 @@ FX_BOOL CFXJSE_Value::Call(CFXJSE_Value* lpReceiver,
   v8::Local<v8::Value>* lpLocalArgs = NULL;
   if (nArgCount) {
     lpLocalArgs = FX_Alloc(v8::Local<v8::Value>, nArgCount);
-    if (!lpLocalArgs) {
-      return FALSE;
-    }
     for (uint32_t i = 0; i < nArgCount; i++) {
       new (lpLocalArgs + i) v8::Local<v8::Value>;
       CFXJSE_Value* lpArg = (CFXJSE_Value*)lpArgs[i];

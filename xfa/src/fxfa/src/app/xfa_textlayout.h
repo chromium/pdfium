@@ -49,11 +49,7 @@ class CXFA_TextParseContext : public CFX_Target {
         m_ppMatchedDecls(nullptr),
         m_dwMatchedDecls(0),
         m_eDisplay(FDE_CSSDISPLAY_None) {}
-  ~CXFA_TextParseContext() {
-    if (m_ppMatchedDecls != NULL) {
-      FDE_Free(m_ppMatchedDecls);
-    }
-  }
+  ~CXFA_TextParseContext() { FX_Free(m_ppMatchedDecls); }
   void SetDisplay(FDE_CSSDISPLAY eDisplay) { m_eDisplay = eDisplay; }
   FDE_CSSDISPLAY GetDisplay() const { return m_eDisplay; }
   void SetDecls(const IFDE_CSSDeclaration** ppDeclArray, int32_t iDeclCount);

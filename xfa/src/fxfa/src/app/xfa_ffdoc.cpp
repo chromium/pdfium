@@ -76,10 +76,7 @@ FX_BOOL XFA_GetPDFContentsFromPDFXML(IFDE_XMLNode* pPDFElement,
   pChunkElement->GetTextData(wsPDFContent);
   iBufferSize = FX_Base64DecodeW(wsPDFContent, wsPDFContent.GetLength(), NULL);
   pByteBuffer = FX_Alloc(uint8_t, iBufferSize + 1);
-  if (!pByteBuffer) {
-    return FALSE;
-  }
-  pByteBuffer[iBufferSize] = '0';
+  pByteBuffer[iBufferSize] = '0';  // FIXME: I bet this is wrong.
   FX_Base64DecodeW(wsPDFContent, wsPDFContent.GetLength(), pByteBuffer);
   return TRUE;
 }

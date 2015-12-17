@@ -49,9 +49,9 @@ void CXFA_TextParseContext::SetDecls(const IFDE_CSSDeclaration** ppDeclArray,
     return;
   }
   m_dwMatchedDecls = iDeclCount;
-  int32_t iBytes = iDeclCount * sizeof(IFDE_CSSDeclaration*);
-  m_ppMatchedDecls = (IFDE_CSSDeclaration**)FDE_Alloc(iBytes);
-  FX_memcpy(m_ppMatchedDecls, ppDeclArray, iBytes);
+  m_ppMatchedDecls = FX_Alloc(IFDE_CSSDeclaration*, iDeclCount);
+  FX_memcpy(m_ppMatchedDecls, ppDeclArray,
+            iDeclCount * sizeof(IFDE_CSSDeclaration*));
 }
 CXFA_TextParser::~CXFA_TextParser() {
   if (m_pUASheet != NULL) {
@@ -1270,10 +1270,8 @@ FX_BOOL CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
       XFA_LPCTEXTPIECE pPiece = pPieceLine->m_textPieces.GetAt(j);
       int32_t iChars = pPiece->iChars;
       if (iCharCount < iChars) {
-        if (pCharPos != NULL) {
-          FDE_Free(pCharPos);
-        }
-        pCharPos = (FXTEXT_CHARPOS*)FDE_Alloc(iChars * sizeof(FXTEXT_CHARPOS));
+        FX_Free(pCharPos);
+        pCharPos = FX_Alloc(FXTEXT_CHARPOS, iChars);
         iCharCount = iChars;
       }
       FXSYS_memset(pCharPos, 0, iCharCount * sizeof(FXTEXT_CHARPOS));
@@ -1284,9 +1282,7 @@ FX_BOOL CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
     }
   }
   pDevice->RestoreState(state);
-  if (pCharPos != NULL) {
-    FDE_Free(pCharPos);
-  }
+  FX_Free(pCharPos);
   pSolidBrush->Release();
   pPen->Release();
   pDevice->Release();

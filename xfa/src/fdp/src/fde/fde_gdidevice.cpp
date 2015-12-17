@@ -42,9 +42,7 @@ CFDE_GdiDevice::CFDE_GdiDevice(CFX_DIBitmap* pBitmap)
 CFDE_GdiDevice::~CFDE_GdiDevice() {
   delete m_pGraphics;
   delete m_pBitmap;
-  if (m_pGlyphBuf) {
-    FDE_Free(m_pGlyphBuf);
-  }
+  FX_Free(m_pGlyphBuf);
 }
 int32_t CFDE_GdiDevice::GetWidth() const {
   return m_pBitmap->GetWidth();
@@ -193,10 +191,10 @@ FX_BOOL CFDE_GdiDevice::DrawString(IFDE_Brush* pBrush,
                                                &mat2, gm, NULL, 0);
     if (dwSize > 0) {
       if (m_pGlyphBuf == NULL) {
-        m_pGlyphBuf = FDE_Alloc(dwSize);
+        m_pGlyphBuf = FX_Alloc(uint8_t, dwSize);
         m_dwGlyphLen = dwSize;
       } else if (m_dwGlyphLen < dwSize) {
-        m_pGlyphBuf = FDE_Realloc(m_pGlyphBuf, dwSize);
+        m_pGlyphBuf = FX_Realloc(uint8_t, m_pGlyphBuf, dwSize);
         m_dwGlyphLen = dwSize;
       }
       pGdiFont->GetGlyphDIBits(pCharPos->m_GlyphIndex, argb, &mat2, gm,

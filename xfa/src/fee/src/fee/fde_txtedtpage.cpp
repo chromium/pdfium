@@ -287,7 +287,7 @@ int32_t CFDE_TxtEdtPage::GetCharCount() const {
 int32_t CFDE_TxtEdtPage::GetDisplayPos(const CFX_RectF& rtClip,
                                        FXTEXT_CHARPOS*& pCharPos,
                                        FX_LPRECTF pBBox) const {
-  pCharPos = (FXTEXT_CHARPOS*)FDE_Alloc(sizeof(FXTEXT_CHARPOS) * m_nCharCount);
+  pCharPos = FX_Alloc(FXTEXT_CHARPOS, m_nCharCount);
   int32_t nCharPosCount = 0;
   FDE_HVISUALOBJ hVisualObj = NULL;
   int32_t nVisualObjCount = m_PieceMassArr.GetSize();
@@ -304,10 +304,9 @@ int32_t CFDE_TxtEdtPage::GetDisplayPos(const CFX_RectF& rtClip,
     pos += nCount;
   }
   if ((nCharPosCount * 5) < (m_nCharCount << 2)) {
-    int32_t nLength = sizeof(FXTEXT_CHARPOS) * nCharPosCount;
-    FXTEXT_CHARPOS* pTemp = (FXTEXT_CHARPOS*)FDE_Alloc(nLength);
-    FXSYS_memcpy(pTemp, pCharPos, nLength);
-    FDE_Free(pCharPos);
+    FXTEXT_CHARPOS* pTemp = FX_Alloc(FXTEXT_CHARPOS, nCharPosCount);
+    FXSYS_memcpy(pTemp, pCharPos, sizeof(FXTEXT_CHARPOS) * nCharPosCount);
+    FX_Free(pCharPos);
     pCharPos = pTemp;
   }
   return nCharPosCount;

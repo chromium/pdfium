@@ -4,20 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FDE_MEM
-#define _FDE_MEM
+#ifndef FDE_MEM_H_
+#define FDE_MEM_H_
 
 #include "../../../../core/include/fxcrt/fx_memory.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-#define FDE_Alloc(size) FX_Alloc(uint8_t, size)
-#define FDE_Realloc(ptr, newSize) FX_Realloc(uint8_t, ptr, newSize)
-#define FDE_Free(ptr) FX_Free(ptr)
-#ifdef __cplusplus
-}
 #define FDE_NewWith FXTARGET_NewWith
 #define FDE_DeleteWith FXTARGET_DeleteWith
-#endif
-#endif
+
+#endif  // FDE_MEM_H_

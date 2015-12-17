@@ -158,20 +158,18 @@ FDE_RENDERSTATUS CFDE_RenderContext::DoRender(IFX_Pause* pPause) {
 void CFDE_RenderContext::StopRender() {
   Lock();
   m_eStatus = FDE_RENDERSTATUS_Reset;
-  m_pRenderDevice = NULL;
+  m_pRenderDevice = nullptr;
   m_Transform.SetIdentity();
-  if (m_pIterator != NULL) {
+  if (m_pIterator) {
     m_pIterator->Release();
-    m_pIterator = NULL;
+    m_pIterator = nullptr;
   }
-  if (m_pSolidBrush != NULL) {
+  if (m_pSolidBrush) {
     m_pSolidBrush->Release();
-    m_pSolidBrush = NULL;
+    m_pSolidBrush = nullptr;
   }
-  if (m_pCharPos != NULL) {
-    FDE_Free(m_pCharPos);
-    m_pCharPos = NULL;
-  }
+  FX_Free(m_pCharPos);
+  m_pCharPos = nullptr;
   m_iCharPosCount = 0;
   Unlock();
 }
@@ -194,10 +192,9 @@ void CFDE_RenderContext::RenderText(IFDE_TextSet* pTextSet,
     }
   }
   if (m_pCharPos == NULL) {
-    m_pCharPos = (FXTEXT_CHARPOS*)FDE_Alloc(sizeof(FXTEXT_CHARPOS) * iCount);
+    m_pCharPos = FX_Alloc(FXTEXT_CHARPOS, iCount);
   } else if (m_iCharPosCount < iCount) {
-    m_pCharPos = (FXTEXT_CHARPOS*)FDE_Realloc(m_pCharPos,
-                                              sizeof(FXTEXT_CHARPOS) * iCount);
+    m_pCharPos = FX_Realloc(FXTEXT_CHARPOS, m_pCharPos, iCount);
   }
   if (m_iCharPosCount < iCount) {
     m_iCharPosCount = iCount;

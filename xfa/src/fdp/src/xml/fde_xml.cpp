@@ -1325,39 +1325,24 @@ CFDE_BlockBuffer::~CFDE_BlockBuffer() {
 }
 FX_WCHAR* CFDE_BlockBuffer::GetAvailableBlock(int32_t& iIndexInBlock) {
   iIndexInBlock = 0;
-  int32_t iBlockNum = m_BlockArray.GetSize();
-  if (iBlockNum == 0) {
-    return NULL;
+  if (!m_BlockArray.GetSize()) {
+    return nullptr;
   }
   int32_t iRealIndex = m_iStartPosition + m_iDataLength;
-  FX_WCHAR* pDataBlock = NULL;
   if (iRealIndex == m_iBufferSize) {
-    FX_WCHAR* pBlock = (FX_WCHAR*)FDE_Alloc(m_iAllocStep * sizeof(FX_WCHAR));
-    if (pBlock) {
-      m_BlockArray.Add(pBlock);
-      m_iBufferSize += m_iAllocStep;
-    }
-    iIndexInBlock = 0;
-    pDataBlock = pBlock;
-  } else {
-    int32_t iBlockIndex = iRealIndex / m_iAllocStep;
-    int32_t iInnerIndex = iRealIndex % m_iAllocStep;
-    iIndexInBlock = iInnerIndex;
-    pDataBlock = (FX_WCHAR*)m_BlockArray[iBlockIndex];
+    FX_WCHAR* pBlock = FX_Alloc(FX_WCHAR, m_iAllocStep);
+    m_BlockArray.Add(pBlock);
+    m_iBufferSize += m_iAllocStep;
+    return pBlock;
   }
-  return pDataBlock;
+  iIndexInBlock = iRealIndex % m_iAllocStep;
+  return (FX_WCHAR*)m_BlockArray[iRealIndex / m_iAllocStep];
 }
 FX_BOOL CFDE_BlockBuffer::InitBuffer(int32_t iBufferSize) {
   ClearBuffer();
   int32_t iNumOfBlock = (iBufferSize - 1) / m_iAllocStep + 1;
   for (int32_t i = 0; i < iNumOfBlock; i++) {
-    FX_WCHAR* pBlockBuffer =
-        (FX_WCHAR*)FDE_Alloc(m_iAllocStep * sizeof(FX_WCHAR));
-    if (pBlockBuffer == NULL) {
-      ClearBuffer();
-      return FALSE;
-    }
-    m_BlockArray.Add(pBlockBuffer);
+    m_BlockArray.Add(FX_Alloc(FX_WCHAR, m_iAllocStep));
   }
   m_iBufferSize = iNumOfBlock * m_iAllocStep;
   return TRUE;
@@ -1373,10 +1358,7 @@ void CFDE_BlockBuffer::SetTextChar(int32_t iIndex, FX_WCHAR ch) {
   if (iBlockIndex >= iBlockSize) {
     int32_t iNewBlocks = iBlockIndex - iBlockSize + 1;
     do {
-      FX_WCHAR* pBlock = (FX_WCHAR*)FDE_Alloc(m_iAllocStep * sizeof(FX_WCHAR));
-      if (!pBlock) {
-        return;
-      }
+      FX_WCHAR* pBlock = FX_Alloc(FX_WCHAR, m_iAllocStep);
       m_BlockArray.Add(pBlock);
       m_iBufferSize += m_iAllocStep;
     } while (--iNewBlocks);
@@ -1457,7 +1439,7 @@ void CFDE_BlockBuffer::ClearBuffer() {
   m_iBufferSize = 0;
   int32_t iSize = m_BlockArray.GetSize();
   for (int32_t i = 0; i < iSize; i++) {
-    FDE_Free(m_BlockArray[i]);
+    FX_Free(m_BlockArray[i]);
     m_BlockArray[i] = NULL;
   }
   m_BlockArray.RemoveAll();
@@ -1506,7 +1488,7 @@ void CFDE_XMLSyntaxParser::Init(IFX_Stream* pStream,
   uint8_t bom[4];
   m_iCurrentPos = m_pStream->GetBOM(bom);
   FXSYS_assert(m_pBuffer == NULL);
-  m_pBuffer = (FX_WCHAR*)FDE_Alloc(m_iXMLPlaneSize * sizeof(FX_WCHAR));
+  m_pBuffer = FX_Alloc(FX_WCHAR, m_iXMLPlaneSize);
   m_pStart = m_pEnd = m_pBuffer;
   FXSYS_assert(!m_BlockBuffer.IsInitialized());
   m_BlockBuffer.InitBuffer();
@@ -1519,8 +1501,7 @@ FX_DWORD CFDE_XMLSyntaxParser::DoSyntaxParse() {
       m_dwStatus == FDE_XMLSYNTAXSTATUS_EOS) {
     return m_dwStatus;
   }
-  FXSYS_assert(m_pStream != NULL && m_pBuffer != NULL &&
-               m_BlockBuffer.IsInitialized());
+  FXSYS_assert(m_pStream && m_pBuffer && m_BlockBuffer.IsInitialized());
   int32_t iStreamLength = m_pStream->GetLength();
   int32_t iPos;
   FX_WCHAR ch;
@@ -2026,11 +2007,12 @@ void CFDE_XMLSyntaxParser::Init(IFX_Stream* pStream,
   uint8_t bom[4];
   m_iCurrentPos = m_pStream->GetBOM(bom);
   FXSYS_assert(m_pBuffer == NULL);
-  m_pBuffer = (FX_WCHAR*)FDE_Alloc(m_iXMLPlaneSize * sizeof(FX_WCHAR));
+  m_pBuffer = FX_Alloc(FX_WCHAR, m_iXMLPlaneSize);
   m_pStart = m_pEnd = m_pBuffer;
   FXSYS_assert(m_pwsTextData == NULL);
-  m_pwsTextData = (FX_WCHAR*)FDE_Alloc(m_iTextDataSize * sizeof(FX_WCHAR));
-  m_iParsedBytes = m_iParsedChars = 0;
+  m_pwsTextData = FX_Alloc(FX_WCHAR, m_iTextDataSize);
+  m_iParsedBytes = 0;
+  m_iParsedChars = 0;
   m_iBufferChars = 0;
 }
 FX_DWORD CFDE_XMLSyntaxParser::DoSyntaxParse() {
@@ -2449,13 +2431,9 @@ CFDE_XMLSyntaxParser::~CFDE_XMLSyntaxParser() {
     m_pCurrentBlock = NULL;
   }
 #else
-  if (m_pwsTextData != NULL) {
-    FDE_Free(m_pwsTextData);
-  }
+  FX_Free(m_pwsTextData);
 #endif
-  if (m_pBuffer != NULL) {
-    FDE_Free(m_pBuffer);
-  }
+  FX_Free(m_pBuffer);
 }
 int32_t CFDE_XMLSyntaxParser::GetStatus() const {
   if (m_pStream == NULL) {
@@ -2648,8 +2626,7 @@ void CFDE_XMLSyntaxParser::ReallocTextDataBuffer() {
   } else {
     m_iTextDataSize += 1024 * 1024;
   }
-  m_pwsTextData =
-      (FX_WCHAR*)FDE_Realloc(m_pwsTextData, m_iTextDataSize * sizeof(FX_WCHAR));
+  m_pwsTextData = FX_Realloc(FX_WCHAR, m_pwsTextData, m_iTextDataSize);
 }
 void CFDE_XMLSyntaxParser::GetData(CFX_WideString& wsData) const {
   FX_WCHAR* pBuf = wsData.GetBuffer(m_iTextDataLength);

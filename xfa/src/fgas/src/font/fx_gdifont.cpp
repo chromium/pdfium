@@ -19,8 +19,8 @@ CFX_GdiFontCache::~CFX_GdiFontCache() {
     pGlyph = NULL;
     m_GlyphMap.GetNextAssoc(pos, (void*&)iGlyph, (void*&)pGlyph);
     if (pGlyph != NULL) {
-      FDE_Free(pGlyph->pOutline);
-      FDE_Free(pGlyph);
+      FX_Free(pGlyph->pOutline);
+      FX_Free(pGlyph);
     }
   }
   m_GlyphMap.RemoveAll();
@@ -29,7 +29,7 @@ void CFX_GdiFontCache::SetCachedGlyphOutline(FX_DWORD dwGlyph,
                                              const GLYPHMETRICS& gm,
                                              uint8_t* pOutline) {
   FXSYS_assert(pOutline != NULL);
-  FX_LPGDIGOCACHE pGlyph = (FX_LPGDIGOCACHE)FDE_Alloc(sizeof(FX_GDIGOCACHE));
+  FX_LPGDIGOCACHE pGlyph = FX_Alloc(FX_GDIGOCACHE, 1);
   pGlyph->gm = gm;
   pGlyph->pOutline = pOutline;
   m_GlyphMap.SetAt((void*)dwGlyph, (void*)pGlyph);
@@ -250,13 +250,10 @@ FX_BOOL CFX_GdiFont::LoadFont(IFX_Stream* pFontStream) {
   if (iLength < 1) {
     return FALSE;
   }
-  uint8_t* pBuf = (uint8_t*)FDE_Alloc(iLength);
-  if (pBuf == NULL) {
-    return FALSE;
-  }
+  uint8_t* pBuf = FX_Alloc(uint8_t, iLength);
   iLength = pFontStream->ReadData(pBuf, iLength);
   FX_BOOL bRet = LoadFont(pBuf, iLength);
-  FDE_Free(pBuf);
+  FX_Free(pBuf);
   return bRet;
 }
 FX_BOOL CFX_GdiFont::LoadFont(const LOGFONTW& lf) {
@@ -275,11 +272,7 @@ int32_t CFX_GdiFont::GetFontFamilies(Gdiplus::FontCollection& fc) {
   if (iCount < 1) {
     return iCount;
   }
-  Gdiplus::FontFamily* pFontFamilies =
-      (Gdiplus::FontFamily*)FDE_Alloc(iCount * sizeof(Gdiplus::FontFamily));
-  if (pFontFamilies == NULL) {
-    return -1;
-  }
+  Gdiplus::FontFamily* pFontFamilies = FX_Alloc(Gdiplus::FontFamily, iCount);
   int32_t iFind = 0;
   fc.GetFamilies(iCount, pFontFamilies, &iFind);
   for (int32_t i = 0; i < iCount; i++) {
@@ -289,7 +282,7 @@ int32_t CFX_GdiFont::GetFontFamilies(Gdiplus::FontCollection& fc) {
     wsFamilyName.ReleaseBuffer();
     m_FontFamilies.Add(wsFamilyName);
   }
-  FDE_Free(pFontFamilies);
+  FX_Free(pFontFamilies);
   return iCount;
 }
 void CFX_GdiFont::RetrieveFontStyles() {
@@ -487,7 +480,7 @@ FX_DWORD CFX_GdiFont::GetGlyphDIBits(int32_t iGlyphIndex,
     if (dwGlyphSize == 0 || dwGlyphSize == GDI_ERROR) {
       return 0;
     }
-    pGlyphOutline = (uint8_t*)FX_Alloc(dwGlyphSize);
+    pGlyphOutline = FX_Alloc(uint8_t, dwGlyphSize);
     ::GetGlyphOutlineW(m_hDC, iGlyphIndex, uFormat, &gm, dwGlyphSize,
                        pGlyphOutline, pMatrix);
     if (pCache == NULL) {

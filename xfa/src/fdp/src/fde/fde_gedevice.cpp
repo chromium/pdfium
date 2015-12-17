@@ -49,12 +49,9 @@ CFDE_FxgeDevice::CFDE_FxgeDevice(CFX_RenderDevice* pDevice,
                (FX_FLOAT)rt.Height());
 }
 CFDE_FxgeDevice::~CFDE_FxgeDevice() {
-  if (m_pCharPos != NULL) {
-    FDE_Free(m_pCharPos);
-  }
-  if (m_bOwnerDevice && m_pDevice) {
+  FX_Free(m_pCharPos);
+  if (m_bOwnerDevice)
     delete m_pDevice;
-  }
 }
 int32_t CFDE_FxgeDevice::GetWidth() const {
   return m_pDevice->GetWidth();

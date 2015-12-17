@@ -5437,12 +5437,10 @@ void CXFA_FM2JSContext::Get(FXJSE_HOBJECT hThis,
     if (pFile) {
       int32_t size = pFile->GetSize();
       uint8_t* pData = FX_Alloc(uint8_t, size);
-      if (pData) {
-        pFile->ReadBlock(pData, size);
-        FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                  CFX_ByteStringC(pData, size));
-        FX_Free(pData);
-      }
+      pFile->ReadBlock(pData, size);
+      FXJSE_Value_SetUTF8String(args.GetReturnValue(),
+                                CFX_ByteStringC(pData, size));
+      FX_Free(pData);
       pFile->Release();
     }
     FXJSE_Value_Release(argOne);

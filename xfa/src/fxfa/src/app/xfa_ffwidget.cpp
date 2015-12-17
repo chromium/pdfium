@@ -841,7 +841,7 @@ static uint8_t* XFA_RemoveBase64Whitespace(const uint8_t* pStr, int32_t iLen) {
   if (iLen == 0) {
     iLen = FXSYS_strlen((FX_CHAR*)pStr);
   }
-  pCP = (uint8_t*)FDE_Alloc(iLen + 1);
+  pCP = FX_Alloc(uint8_t, iLen + 1);
   for (; i < iLen; i++) {
     if ((pStr[i] & 128) == 0) {
       if (g_inv_base64[pStr[i]] != 0xFF || pStr[i] == '=') {
@@ -894,7 +894,7 @@ static int32_t XFA_Base64Decode(const FX_CHAR* pStr, uint8_t* pOutBuffer) {
       j += 3;
     }
   }
-  FDE_Free(pBuffer);
+  FX_Free(pBuffer);
   return j;
 }
 static FX_CHAR g_base64_chars[] =
@@ -979,7 +979,7 @@ CFX_DIBitmap* XFA_LoadImageData(CXFA_FFDoc* pDoc,
     if (iEncoding == XFA_ATTRIBUTEENUM_Base64) {
       CFX_ByteString bsData = wsImage.UTF8Encode();
       int32_t iLength = bsData.GetLength();
-      pImageBuffer = FDE_Alloc(iLength);
+      pImageBuffer = FX_Alloc(uint8_t, iLength);
       int32_t iRead = XFA_Base64Decode((const FX_CHAR*)bsData, pImageBuffer);
       if (iRead > 0) {
         pImageFileRead = FX_CreateMemoryStream(pImageBuffer, iRead);
@@ -1003,17 +1003,13 @@ CFX_DIBitmap* XFA_LoadImageData(CXFA_FFDoc* pDoc,
     pImageFileRead = pDoc->GetDocProvider()->OpenLinkedFile(pDoc, wsURL);
   }
   if (!pImageFileRead) {
-    if (pImageBuffer) {
-      FDE_Free(pImageBuffer);
-    }
+    FX_Free(pImageBuffer);
     return NULL;
   }
   bNameImage = FALSE;
   CFX_DIBitmap* pBitmap =
       XFA_LoadImageFromBuffer(pImageFileRead, type, iImageXDpi, iImageYDpi);
-  if (pImageBuffer) {
-    FDE_Free(pImageBuffer);
-  }
+  FX_Free(pImageBuffer);
   pImageFileRead->Release();
   return pBitmap;
 }

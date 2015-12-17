@@ -45,9 +45,6 @@ FX_LPSTATICSTORECHUNK CFX_StaticStore::AllocChunk(size_t size) {
   FXSYS_assert(size != 0);
   FX_LPSTATICSTORECHUNK pChunk = (FX_LPSTATICSTORECHUNK)FX_Alloc(
       uint8_t, sizeof(FX_STATICSTORECHUNK) + size);
-  if (pChunk == NULL) {
-    return NULL;
-  }
   pChunk->iChunkSize = size;
   pChunk->iFreeSize = size;
   pChunk->pNextChunk = NULL;

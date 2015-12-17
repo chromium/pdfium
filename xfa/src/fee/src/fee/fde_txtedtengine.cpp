@@ -124,8 +124,7 @@ void CFDE_TxtEdtEngine::SetTextByStream(IFX_Stream* pStream) {
       int32_t nPos = pStream->GetBOM(bom);
       pStream->Seek(FX_STREAMSEEK_Begin, nPos);
       int32_t nPlateSize = FX_MIN(nStreamLength, m_pTxtBuf->GetChunkSize());
-      FX_WCHAR* lpwstr = (FX_WCHAR*)FDE_Alloc(nPlateSize * sizeof(FX_WCHAR));
-      FXSYS_assert(lpwstr);
+      FX_WCHAR* lpwstr = FX_Alloc(FX_WCHAR, nPlateSize);
       FX_BOOL bEos = false;
       while (!bEos) {
         int32_t nRead = pStream->ReadString(lpwstr, nPlateSize, bEos);
@@ -133,7 +132,7 @@ void CFDE_TxtEdtEngine::SetTextByStream(IFX_Stream* pStream) {
         m_pTxtBuf->Insert(nIndex, lpwstr, nRead);
         nIndex += nRead;
       }
-      FDE_Free(lpwstr);
+      FX_Free(lpwstr);
     }
   }
   m_pTxtBuf->Insert(nIndex, &m_wLineEnd, 1);

@@ -791,10 +791,10 @@ int32_t CFX_TextStream::ReadString(FX_WCHAR* pStr,
     iBytes = FX_MIN(iBytes, m_pStreamImp->GetLength() - pos);
     if (iBytes > 0) {
       if (m_pBuf == NULL) {
-        m_pBuf = (uint8_t*)FX_Alloc(uint8_t, iBytes);
+        m_pBuf = FX_Alloc(uint8_t, iBytes);
         m_iBufSize = iBytes;
       } else if (iBytes > m_iBufSize) {
-        m_pBuf = (uint8_t*)FX_Realloc(uint8_t, m_pBuf, iBytes);
+        m_pBuf = FX_Realloc(uint8_t, m_pBuf, iBytes);
         m_iBufSize = iBytes;
       }
       m_pStreamImp->Lock();

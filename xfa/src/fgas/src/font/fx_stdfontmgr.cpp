@@ -465,9 +465,6 @@ static int32_t CALLBACK FX_GdiFontEnumProc(ENUMLOGFONTEX* lpelfe,
     return 1;
   }
   FX_LPFONTDESCRIPTOR pFont = FX_Alloc(FX_FONTDESCRIPTOR, 1);
-  if (NULL == pFont) {
-    return 0;
-  }
   FXSYS_memset(pFont, 0, sizeof(FX_FONTDESCRIPTOR));
   pFont->uCharSet = lf.lfCharSet;
   pFont->dwFontStyles = FX_GetGdiFontStyles(lf);
@@ -1265,12 +1262,10 @@ void CFX_FontMgrImp::ReportFace(FXFT_Face pFace,
   unsigned int error = FXFT_Load_Sfnt_Table(pFace, dwTag, 0, NULL, &nLength);
   if (0 == error && 0 != nLength) {
     pTable = FX_Alloc(uint8_t, nLength);
-    if (NULL != pTable) {
-      error = FXFT_Load_Sfnt_Table(pFace, dwTag, 0, pTable, NULL);
-      if (0 != error) {
-        FX_Free(pTable);
-        pTable = NULL;
-      }
+    error = FXFT_Load_Sfnt_Table(pFace, dwTag, 0, pTable, NULL);
+    if (0 != error) {
+      FX_Free(pTable);
+      pTable = NULL;
     }
   }
   GetNames(pTable, pFont->m_wsFamilyNames);
