@@ -1093,7 +1093,6 @@ typedef enum {
   Done
 } FX_ProgressiveStatus;
 #define ProgressiveStatus FX_ProgressiveStatus
-#define FX_NAMESPACE_DECLARE(namespace, type) namespace ::type
 
 class CFX_Vector_3by1 {
  public:

@@ -19,9 +19,10 @@ class CAgg_PathData {
  public:
   CAgg_PathData() {}
   ~CAgg_PathData() {}
-  FX_NAMESPACE_DECLARE(agg, path_storage) m_PathData;
   void BuildPath(const CFX_PathData* pPathData,
                  const CFX_Matrix* pObject2Device);
+
+  agg::path_storage m_PathData;
 };
 class CFX_AggDeviceDriver : public IFX_RenderDeviceDriver {
  public:
@@ -122,16 +123,14 @@ class CFX_AggDeviceDriver : public IFX_RenderDeviceDriver {
                          void* pIccTransform) override;
   int GetDriverType() override { return 1; }
 
-  FX_BOOL RenderRasterizer(FX_NAMESPACE_DECLARE(agg, rasterizer_scanline_aa) &
-                               rasterizer,
+  FX_BOOL RenderRasterizer(agg::rasterizer_scanline_aa& rasterizer,
                            FX_DWORD color,
                            FX_BOOL bFullCover,
                            FX_BOOL bGroupKnockout,
                            int alpha_flag,
                            void* pIccTransform);
 
-  void SetClipMask(FX_NAMESPACE_DECLARE(agg, rasterizer_scanline_aa) &
-                   rasterizer);
+  void SetClipMask(agg::rasterizer_scanline_aa& rasterizer);
 
   virtual uint8_t* GetBuffer() const { return m_pBitmap->GetBuffer(); }
 
