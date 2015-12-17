@@ -260,6 +260,10 @@
         '-Wno-unused-parameter',
       ],
     },
+    'variables': {
+      'clang_warning_flags': [],
+    },
+    'includes': [ 'set_clang_warning_flags.gypi', ],
     'conditions': [
       ['component=="shared_library"', {
         'cflags': [
