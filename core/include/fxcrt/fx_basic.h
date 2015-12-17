@@ -1198,7 +1198,6 @@ typedef enum {
   Done
 } FX_ProgressiveStatus;
 #define ProgressiveStatus FX_ProgressiveStatus
-#define FX_NAMESPACE_DECLARE(namespace, type) namespace ::type
 #ifdef PDF_ENABLE_XFA
 class IFX_Unknown {
  public:
