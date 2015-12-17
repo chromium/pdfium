@@ -58,8 +58,10 @@
       }],
       ['OS=="linux" or OS=="mac"', {
         'clang%': 1,
+        'host_clang%': 1,
       }, {
         'clang%': 0,
+        'host_clang%': 0,
       }],
       # Set default gomadir.
       ['OS=="win"', {
