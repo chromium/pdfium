@@ -46,7 +46,7 @@ CPDF_AnnotList::~CPDF_AnnotList() {
     delete annot;
 }
 
-void CPDF_AnnotList::DisplayPass(const CPDF_Page* pPage,
+void CPDF_AnnotList::DisplayPass(CPDF_Page* pPage,
                                  CFX_RenderDevice* pDevice,
                                  CPDF_RenderContext* pContext,
                                  FX_BOOL bPrinting,
@@ -97,7 +97,7 @@ void CPDF_AnnotList::DisplayPass(const CPDF_Page* pPage,
   }
 }
 
-void CPDF_AnnotList::DisplayAnnots(const CPDF_Page* pPage,
+void CPDF_AnnotList::DisplayAnnots(CPDF_Page* pPage,
                                    CFX_RenderDevice* pDevice,
                                    CPDF_RenderContext* pContext,
                                    FX_BOOL bPrinting,
@@ -216,7 +216,7 @@ static CPDF_Form* FPDFDOC_Annot_GetMatrix(const CPDF_Page* pPage,
   matrix.Concat(*pUser2Device);
   return pForm;
 }
-FX_BOOL CPDF_Annot::DrawAppearance(const CPDF_Page* pPage,
+FX_BOOL CPDF_Annot::DrawAppearance(CPDF_Page* pPage,
                                    CFX_RenderDevice* pDevice,
                                    const CFX_Matrix* pUser2Device,
                                    AppearanceMode mode,
@@ -227,13 +227,12 @@ FX_BOOL CPDF_Annot::DrawAppearance(const CPDF_Page* pPage,
   if (!pForm) {
     return FALSE;
   }
-  CPDF_RenderContext context;
-  context.Create((CPDF_Page*)pPage);
+  CPDF_RenderContext context(pPage);
   context.DrawObjectList(pDevice, pForm, &matrix, pOptions);
   return TRUE;
 }
 FX_BOOL CPDF_Annot::DrawInContext(const CPDF_Page* pPage,
-                                  const CPDF_RenderContext* pContext,
+                                  CPDF_RenderContext* pContext,
                                   const CFX_Matrix* pUser2Device,
                                   AppearanceMode mode) {
   CFX_Matrix matrix;
@@ -242,7 +241,7 @@ FX_BOOL CPDF_Annot::DrawInContext(const CPDF_Page* pPage,
   if (!pForm) {
     return FALSE;
   }
-  ((CPDF_RenderContext*)pContext)->AppendObjectList(pForm, &matrix);
+  pContext->AppendObjectList(pForm, &matrix);
   return TRUE;
 }
 void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,

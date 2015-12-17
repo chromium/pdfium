@@ -956,30 +956,18 @@ CPDF_GraphicStates* CPDF_RenderStatus::CloneObjStates(
   }
   return pStates;
 }
-CPDF_RenderContext::CPDF_RenderContext() {}
-void CPDF_RenderContext::Create(CPDF_Document* pDoc,
-                                CPDF_PageRenderCache* pPageCache,
-                                CPDF_Dictionary* pPageResources,
-                                FX_BOOL bFirstLayer) {
-  m_pDocument = pDoc;
-  m_pPageResources = pPageResources;
-  m_pPageCache = pPageCache;
-  m_bFirstLayer = bFirstLayer;
-}
-void CPDF_RenderContext::Create(CPDF_Page* pPage, FX_BOOL bFirstLayer) {
-  m_pDocument = pPage->m_pDocument;
-  m_pPageResources = pPage->m_pPageResources;
-  m_pPageCache = pPage->GetRenderCache();
-  m_bFirstLayer = bFirstLayer;
-}
+CPDF_RenderContext::CPDF_RenderContext(CPDF_Page* pPage)
+    : m_pDocument(pPage->m_pDocument),
+      m_pPageResources(pPage->m_pPageResources),
+      m_pPageCache(pPage->GetRenderCache()),
+      m_bFirstLayer(TRUE) {}
+CPDF_RenderContext::CPDF_RenderContext(CPDF_Document* pDoc,
+                                       CPDF_PageRenderCache* pPageCache)
+    : m_pDocument(pDoc),
+      m_pPageResources(nullptr),
+      m_pPageCache(pPageCache),
+      m_bFirstLayer(TRUE) {}
 CPDF_RenderContext::~CPDF_RenderContext() {}
-void CPDF_RenderContext::Clear() {
-  m_pDocument = NULL;
-  m_pPageResources = NULL;
-  m_pPageCache = NULL;
-  m_bFirstLayer = TRUE;
-  m_ContentList.RemoveAll();
-}
 void CPDF_RenderContext::AppendObjectList(CPDF_PageObjects* pObjs,
                                           const CFX_Matrix* pObject2Device) {
   _PDF_RenderItem* pItem = m_ContentList.AddSpace();

@@ -340,7 +340,7 @@ FX_BOOL CPDF_ImageRenderer::StartLoadDIBSource() {
     dest_height = -dest_height;
   }
   if (m_Loader.StartLoadImage(
-          m_pImageObject, m_pRenderStatus->m_pContext->m_pPageCache,
+          m_pImageObject, m_pRenderStatus->m_pContext->GetPageCache(),
           m_LoadHandle, m_bStdCS, m_pRenderStatus->m_GroupFamily,
           m_pRenderStatus->m_bLoadMask, m_pRenderStatus, dest_width,
           dest_height)) {
@@ -444,8 +444,8 @@ FX_BOOL CPDF_ImageRenderer::StartRenderDIBSource() {
       pGeneralState->m_StrokeAlpha == 1 && pGeneralState->m_FillAlpha == 1) {
     CPDF_Document* pDocument = NULL;
     CPDF_Page* pPage = NULL;
-    if (m_pRenderStatus->m_pContext->m_pPageCache) {
-      pPage = m_pRenderStatus->m_pContext->m_pPageCache->GetPage();
+    if (m_pRenderStatus->m_pContext->GetPageCache()) {
+      pPage = m_pRenderStatus->m_pContext->GetPageCache()->GetPage();
       pDocument = pPage->m_pDocument;
     } else {
       pDocument = m_pImageObject->m_pImage->GetDocument();
