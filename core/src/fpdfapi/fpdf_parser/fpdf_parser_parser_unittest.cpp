@@ -43,7 +43,7 @@ class CFX_TestBufferRead : public IFX_FileRead {
   void Release() override { delete this; }
 
   // IFX_FileRead
-  virtual FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) {
+  FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override {
     if (offset < 0 || offset + size > total_size_) {
       return FALSE;
     }
@@ -51,7 +51,7 @@ class CFX_TestBufferRead : public IFX_FileRead {
     memcpy(buffer, buffer_ + offset, size);
     return TRUE;
   }
-  virtual FX_FILESIZE GetSize() { return (FX_FILESIZE)total_size_; };
+  FX_FILESIZE GetSize() override { return (FX_FILESIZE)total_size_; };
 
  protected:
   const unsigned char* buffer_;

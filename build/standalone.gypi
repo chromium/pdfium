@@ -59,8 +59,10 @@
       }],
       ['OS=="linux" or OS=="mac"', {
         'clang%': 1,
+        'host_clang%': 1,
       }, {
         'clang%': 0,
+        'host_clang%': 0,
       }],
       # Set default gomadir.
       ['OS=="win"', {
@@ -261,6 +263,10 @@
         '-Wno-unused-parameter',
       ],
     },
+    'variables': {
+      'clang_warning_flags': [],
+    },
+    'includes': [ 'set_clang_warning_flags.gypi', ],
     'conditions': [
       ['component=="shared_library"', {
         'cflags': [
