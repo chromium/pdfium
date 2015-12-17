@@ -988,8 +988,7 @@ static CFX_DIBitmap* DrawPatternBitmap(CPDF_Document* pDoc,
   }
   flags |= RENDER_FORCE_HALFTONE;
   options.m_Flags = flags;
-  CPDF_RenderContext context;
-  context.Create(pDoc, pCache, NULL);
+  CPDF_RenderContext context(pDoc, pCache);
   context.DrawObjectList(&bitmap_device, pPattern->m_pForm, &mtPattern2Bitmap,
                          &options);
   return pBitmap;

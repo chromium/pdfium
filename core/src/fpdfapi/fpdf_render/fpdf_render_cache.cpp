@@ -250,7 +250,7 @@ FX_BOOL CPDF_ImageCache::GetCachedBitmap(CFX_DIBSource*& pBitmap,
     return FALSE;
   }
   CPDF_RenderContext* pContext = pRenderStatus->GetContext();
-  CPDF_PageRenderCache* pPageRenderCache = pContext->m_pPageCache;
+  CPDF_PageRenderCache* pPageRenderCache = pContext->GetPageCache();
   m_dwTimeCount = pPageRenderCache->GetTimeCount();
   CPDF_DIBSource* pSrc = new CPDF_DIBSource;
   CPDF_DIBSource* pMaskSrc = NULL;
@@ -325,7 +325,7 @@ int CPDF_ImageCache::ContinueGetCachedBitmap() {
   m_MatteColor = ((CPDF_DIBSource*)m_pCurBitmap)->m_MatteColor;
   m_pCurMask = ((CPDF_DIBSource*)m_pCurBitmap)->DetachMask();
   CPDF_RenderContext* pContext = m_pRenderStatus->GetContext();
-  CPDF_PageRenderCache* pPageRenderCache = pContext->m_pPageCache;
+  CPDF_PageRenderCache* pPageRenderCache = pContext->GetPageCache();
   m_dwTimeCount = pPageRenderCache->GetTimeCount();
   if (m_pCurBitmap->GetPitch() * m_pCurBitmap->GetHeight() <
       FPDF_HUGE_IMAGE_SIZE) {

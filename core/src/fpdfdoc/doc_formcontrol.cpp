@@ -170,22 +170,20 @@ void CPDF_FormControl::DrawControl(CFX_RenderDevice* pDevice,
   CPDF_Form form(m_pField->m_pForm->m_pDocument,
                  m_pField->m_pForm->m_pFormDict->GetDict("DR"), pStream);
   form.ParseContent(NULL, NULL, NULL, NULL);
-  CPDF_RenderContext context;
-  context.Create(pPage);
+  CPDF_RenderContext context(pPage);
   context.DrawObjectList(pDevice, &form, &matrix, pOptions);
 }
-const FX_CHAR* g_sHighlightingMode[] = {"N", "I", "O", "P", "T", ""};
+static const FX_CHAR* const g_sHighlightingMode[] = {
+    // Must match order of HiglightingMode enum.
+    "N", "I", "O", "P", "T", nullptr};
 CPDF_FormControl::HighlightingMode CPDF_FormControl::GetHighlightingMode() {
   if (!m_pWidgetDict) {
     return Invert;
   }
   CFX_ByteString csH = m_pWidgetDict->GetString("H", "I");
-  int i = 0;
-  while (g_sHighlightingMode[i][0] != '\0') {
-    if (csH.Equal(g_sHighlightingMode[i])) {
-      return (HighlightingMode)i;
-    }
-    i++;
+  for (int i = 0; g_sHighlightingMode[i]; ++i) {
+    if (csH.Equal(g_sHighlightingMode[i]))
+      return static_cast<HighlightingMode>(i);
   }
   return Invert;
 }

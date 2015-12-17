@@ -80,18 +80,9 @@ class CPDF_RenderOptions {
 };
 class CPDF_RenderContext {
  public:
-  CPDF_RenderContext();
-
-  void Create(CPDF_Page* pPage, FX_BOOL bFirstLayer = TRUE);
-
-  void Create(CPDF_Document* pDoc = NULL,
-              CPDF_PageRenderCache* pPageCache = NULL,
-              CPDF_Dictionary* pPageResources = NULL,
-              FX_BOOL bFirstLayer = TRUE);
-
+  explicit CPDF_RenderContext(CPDF_Page* pPage);
+  CPDF_RenderContext(CPDF_Document* pDoc, CPDF_PageRenderCache* pPageCache);
   ~CPDF_RenderContext();
-
-  void Clear();
 
   void AppendObjectList(CPDF_PageObjects* pObjs,
                         const CFX_Matrix* pObject2Device);
@@ -112,21 +103,18 @@ class CPDF_RenderContext {
 
   CPDF_PageRenderCache* GetPageCache() const { return m_pPageCache; }
 
-  CPDF_Document* m_pDocument;
-
-  CPDF_Dictionary* m_pPageResources;
-
-  CPDF_PageRenderCache* m_pPageCache;
-
  protected:
-  CFX_ArrayTemplate<struct _PDF_RenderItem> m_ContentList;
-
-  FX_BOOL m_bFirstLayer;
-
   void Render(CFX_RenderDevice* pDevice,
               const CPDF_PageObject* pStopObj,
               const CPDF_RenderOptions* pOptions,
               const CFX_Matrix* pFinalMatrix);
+
+  CPDF_Document* const m_pDocument;
+  CPDF_Dictionary* m_pPageResources;
+  CPDF_PageRenderCache* m_pPageCache;
+  CFX_ArrayTemplate<struct _PDF_RenderItem> m_ContentList;
+  FX_BOOL m_bFirstLayer;
+
   friend class CPDF_RenderStatus;
   friend class CPDF_ProgressiveRenderer;
 };

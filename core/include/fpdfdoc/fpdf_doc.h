@@ -400,14 +400,14 @@ class CPDF_Annot : public CFX_PrivateData {
   const CPDF_Dictionary* GetAnnotDict() const { return m_pAnnotDict; }
   CPDF_Dictionary* GetAnnotDict() { return m_pAnnotDict; }
 
-  FX_BOOL DrawAppearance(const CPDF_Page* pPage,
+  FX_BOOL DrawAppearance(CPDF_Page* pPage,
                          CFX_RenderDevice* pDevice,
                          const CFX_Matrix* pUser2Device,
                          AppearanceMode mode,
                          const CPDF_RenderOptions* pOptions);
 
   FX_BOOL DrawInContext(const CPDF_Page* pPage,
-                        const CPDF_RenderContext* pContext,
+                        CPDF_RenderContext* pContext,
                         const CFX_Matrix* pUser2Device,
                         AppearanceMode mode);
 
@@ -431,7 +431,7 @@ class CPDF_AnnotList {
   explicit CPDF_AnnotList(CPDF_Page* pPage);
   ~CPDF_AnnotList();
 
-  void DisplayAnnots(const CPDF_Page* pPage,
+  void DisplayAnnots(CPDF_Page* pPage,
                      CPDF_RenderContext* pContext,
                      FX_BOOL bPrinting,
                      CFX_Matrix* pMatrix,
@@ -440,7 +440,7 @@ class CPDF_AnnotList {
     DisplayAnnots(pPage, nullptr, pContext, bPrinting, pMatrix,
                   bShowWidget ? 3 : 1, pOptions, nullptr);
   }
-  void DisplayAnnots(const CPDF_Page* pPage,
+  void DisplayAnnots(CPDF_Page* pPage,
                      CFX_RenderDevice* pDevice,
                      CPDF_RenderContext* pContext,
                      FX_BOOL bPrinting,
@@ -454,7 +454,7 @@ class CPDF_AnnotList {
   CPDF_Document* GetDocument() const { return m_pDocument; }
 
  protected:
-  void DisplayPass(const CPDF_Page* pPage,
+  void DisplayPass(CPDF_Page* pPage,
                    CFX_RenderDevice* pDevice,
                    CPDF_RenderContext* pContext,
                    FX_BOOL bPrinting,
