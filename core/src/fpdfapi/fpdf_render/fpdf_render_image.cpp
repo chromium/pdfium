@@ -311,7 +311,7 @@ CPDF_ImageRenderer::~CPDF_ImageRenderer() {
   if (m_DeviceHandle) {
     m_pRenderStatus->m_pDevice->CancelDIBits(m_DeviceHandle);
   }
-  delete (CPDF_ProgressiveImageLoaderHandle*)m_LoadHandle;
+  delete m_LoadHandle;
   delete m_pClone;
 }
 FX_BOOL CPDF_ImageRenderer::StartLoadDIBSource() {
@@ -325,16 +325,15 @@ FX_BOOL CPDF_ImageRenderer::StartLoadDIBSource() {
   if (m_ImageMatrix.d > 0) {
     dest_height = -dest_height;
   }
-  if (m_Loader.StartLoadImage(
-          m_pImageObject, m_pRenderStatus->m_pContext->GetPageCache(),
-          m_LoadHandle, m_bStdCS, m_pRenderStatus->m_GroupFamily,
-          m_pRenderStatus->m_bLoadMask, m_pRenderStatus, dest_width,
-          dest_height)) {
+  if (m_Loader.Start(m_pImageObject,
+                     m_pRenderStatus->m_pContext->GetPageCache(), m_LoadHandle,
+                     m_bStdCS, m_pRenderStatus->m_GroupFamily,
+                     m_pRenderStatus->m_bLoadMask, m_pRenderStatus, dest_width,
+                     dest_height)) {
     if (m_LoadHandle) {
       m_Status = 4;
       return TRUE;
     }
-    return FALSE;
   }
   return FALSE;
 }
