@@ -18,7 +18,6 @@ class CPDF_FormObject;
 class CPDF_ImageCache;
 class CPDF_ImageObject;
 class CPDF_PathObject;
-class CPDF_QuickStretcher;
 class CPDF_RenderContext;
 class CPDF_RenderOptions;
 class CPDF_RenderStatus;
