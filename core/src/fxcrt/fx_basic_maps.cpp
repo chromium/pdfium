@@ -7,6 +7,13 @@
 #include "core/include/fxcrt/fx_basic.h"
 #include "plex.h"
 
+namespace {
+
+const uint8_t kFreeLength = 0xfe;
+const uint8_t kHasAllocatedBufferLength = 0xff;
+
+}  // namespace
+
 CFX_MapPtrToPtr::CFX_MapPtrToPtr(int nBlockSize)
     : m_pHashTable(NULL),
       m_nHashTableSize(17),
@@ -165,7 +172,7 @@ struct _CompactString {
   uint8_t* m_pBuffer;
 };
 static void _CompactStringRelease(_CompactString* pCompact) {
-  if (pCompact->m_CompactLen == 0xff) {
+  if (pCompact->m_CompactLen == kHasAllocatedBufferLength) {
     FX_Free(pCompact->m_pBuffer);
   }
 }
@@ -178,7 +185,7 @@ static FX_BOOL _CompactStringSame(_CompactString* pCompact,
     }
     return FXSYS_memcmp(&pCompact->m_LenHigh, pStr, len) == 0;
   }
-  if (pCompact->m_CompactLen != 0xff ||
+  if (pCompact->m_CompactLen != kHasAllocatedBufferLength ||
       pCompact->m_LenHigh * 256 + pCompact->m_LenLow != len) {
     return FALSE;
   }
@@ -192,18 +199,18 @@ static void _CompactStringStore(_CompactString* pCompact,
     FXSYS_memcpy(&pCompact->m_LenHigh, pStr, len);
     return;
   }
-  pCompact->m_CompactLen = 0xff;
+  pCompact->m_CompactLen = kHasAllocatedBufferLength;
   pCompact->m_LenHigh = len / 256;
   pCompact->m_LenLow = len % 256;
   pCompact->m_pBuffer = FX_Alloc(uint8_t, len);
   FXSYS_memcpy(pCompact->m_pBuffer, pStr, len);
 }
 static CFX_ByteStringC _CompactStringGet(_CompactString* pCompact) {
-  if (pCompact->m_CompactLen == 0xff) {
+  if (pCompact->m_CompactLen == kHasAllocatedBufferLength) {
     return CFX_ByteStringC(pCompact->m_pBuffer,
                            pCompact->m_LenHigh * 256 + pCompact->m_LenLow);
   }
-  if (pCompact->m_CompactLen == 0xfe) {
+  if (pCompact->m_CompactLen == kFreeLength) {
     return CFX_ByteStringC();
   }
   return CFX_ByteStringC(&pCompact->m_LenHigh, pCompact->m_CompactLen);
@@ -228,7 +235,7 @@ FX_POSITION CFX_CMapByteStringToPtr::GetStartPosition() const {
   int size = m_Buffer.GetSize();
   for (int i = 0; i < size; i++) {
     _CompactString* pKey = (_CompactString*)m_Buffer.GetAt(i);
-    if (pKey->m_CompactLen != 0xfe) {
+    if (pKey->m_CompactLen != kFreeLength) {
       return (FX_POSITION)(uintptr_t)(i + 1);
     }
   }
@@ -248,7 +255,7 @@ void CFX_CMapByteStringToPtr::GetNextAssoc(FX_POSITION& rNextPosition,
   int size = m_Buffer.GetSize();
   while (index < size) {
     pKey = (_CompactString*)m_Buffer.GetAt(index);
-    if (pKey->m_CompactLen != 0xfe) {
+    if (pKey->m_CompactLen != kFreeLength) {
       rNextPosition = (FX_POSITION)(uintptr_t)(index + 1);
       return;
     }
@@ -267,7 +274,7 @@ void* CFX_CMapByteStringToPtr::GetNextValue(FX_POSITION& rNextPosition) const {
   int size = m_Buffer.GetSize();
   while (index < size) {
     pKey = (_CompactString*)m_Buffer.GetAt(index);
-    if (pKey->m_CompactLen != 0xfe) {
+    if (pKey->m_CompactLen != kFreeLength) {
       rNextPosition = (FX_POSITION)(uintptr_t)(index + 1);
       return rValue;
     }
@@ -304,7 +311,7 @@ void CFX_CMapByteStringToPtr::SetAt(const CFX_ByteStringC& key, void* value) {
   }
   for (int index = 0; index < size; index++) {
     _CompactString* pKey = (_CompactString*)m_Buffer.GetAt(index);
-    if (pKey->m_CompactLen) {
+    if (pKey->m_CompactLen != kFreeLength) {
       continue;
     }
     _CompactStringStore(pKey, key.GetPtr(), key_len);
@@ -331,7 +338,7 @@ void CFX_CMapByteStringToPtr::RemoveKey(const CFX_ByteStringC& key) {
       continue;
     }
     _CompactStringRelease(pKey);
-    pKey->m_CompactLen = 0xfe;
+    pKey->m_CompactLen = kFreeLength;
     return;
   }
 }
@@ -340,7 +347,7 @@ int CFX_CMapByteStringToPtr::GetCount() const {
   int size = m_Buffer.GetSize();
   for (int i = 0; i < size; i++) {
     _CompactString* pKey = (_CompactString*)m_Buffer.GetAt(i);
-    if (pKey->m_CompactLen != 0xfe) {
+    if (pKey->m_CompactLen != kFreeLength) {
       count++;
     }
   }
