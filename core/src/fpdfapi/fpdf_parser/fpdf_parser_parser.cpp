@@ -4907,11 +4907,11 @@ int32_t CPDF_HintTables::CheckPage(int index, IFX_DownloadHints* pHints) {
   if (index == nFirstAvailPage)
     return IPDF_DataAvail::DataAvailable;
   FX_DWORD dwLength = GetItemLength(index, m_szPageOffsetArray);
-  if (!dwLength ||
-      !m_pDataAvail->IsDataAvail(m_szPageOffsetArray[index], dwLength,
-                                 pHints)) {
+  // If two pages have the same offset, it should be treated as an error.
+  if (!dwLength)
+    return IPDF_DataAvail::DataError;
+  if (!m_pDataAvail->IsDataAvail(m_szPageOffsetArray[index], dwLength, pHints))
     return IPDF_DataAvail::DataNotAvailable;
-  }
   // Download data of shared objects in the page.
   FX_DWORD offset = 0;
   for (int i = 0; i < index; ++i) {
@@ -4920,7 +4920,7 @@ int32_t CPDF_HintTables::CheckPage(int index, IFX_DownloadHints* pHints) {
   CPDF_Object* pFirstPageObj = m_pLinearizedDict->GetElementValue("O");
   int nFirstPageObjNum = pFirstPageObj ? pFirstPageObj->GetInteger() : -1;
   if (nFirstPageObjNum < 0)
-    return FALSE;  // TODO(thestig): Fix this and the return type.
+    return IPDF_DataAvail::DataError;
   FX_DWORD dwIndex = 0;
   FX_DWORD dwObjNum = 0;
   for (int j = 0; j < m_dwNSharedObjsArray[index]; ++j) {
@@ -4933,8 +4933,10 @@ int32_t CPDF_HintTables::CheckPage(int index, IFX_DownloadHints* pHints) {
       continue;
     }
     dwLength = GetItemLength(dwIndex, m_szSharedObjOffsetArray);
-    if (!dwLength ||
-        !m_pDataAvail->IsDataAvail(m_szSharedObjOffsetArray[dwIndex], dwLength,
+    // If two objects have the same offset, it should be treated as an error.
+    if (!dwLength)
+      return IPDF_DataAvail::DataError;
+    if (!m_pDataAvail->IsDataAvail(m_szSharedObjOffsetArray[dwIndex], dwLength,
                                    pHints)) {
       return IPDF_DataAvail::DataNotAvailable;
     }
