@@ -14,6 +14,7 @@
 #include "core/include/fpdfapi/fpdf_resource.h"
 #include "core/include/fpdftext/fpdf_text.h"
 #include "core/include/fxcrt/fx_bidi.h"
+#include "core/include/fxcrt/fx_ext.h"
 #include "core/include/fxcrt/fx_ucd.h"
 #include "text_int.h"
 #include "third_party/base/nonstd_unique_ptr.h"
@@ -2607,80 +2608,69 @@ FX_BOOL CPDF_LinkExtract::CheckWebLink(CFX_WideString& strBeCheck) {
   }
   return FALSE;
 }
-FX_BOOL CPDF_LinkExtract::CheckMailLink(CFX_WideString& str) {
-  str.MakeLower();
+bool CPDF_LinkExtract::CheckMailLink(CFX_WideString& str) {
   int aPos = str.Find(L'@');
+  // Invalid when no '@'.
   if (aPos < 1) {
     return FALSE;
   }
-  if (str.GetAt(aPos - 1) == L'.' || str.GetAt(aPos - 1) == L'_') {
-    return FALSE;
-  }
-  int i;
-  for (i = aPos - 1; i >= 0; i--) {
+
+  // Check the local part.
+  int pPos = aPos;  // Used to track the position of '@' or '.'.
+  for (int i = aPos - 1; i >= 0; i--) {
     FX_WCHAR ch = str.GetAt(i);
-    if (ch == L'_' || ch == L'.' || (ch >= L'a' && ch <= L'z') ||
-        (ch >= L'0' && ch <= L'9')) {
+    if (ch == L'_' || ch == L'-' || FXSYS_iswalnum(ch)) {
       continue;
-    } else {
+    }
+    if (ch != L'.' || i == pPos - 1 || i == 0) {
       if (i == aPos - 1) {
+        // There is '.' or invalid char before '@'.
         return FALSE;
       }
-      str = str.Right(str.GetLength() - i - 1);
+      // End extracting for other invalid chars, '.' at the beginning, or
+      // consecutive '.'.
+      int removed_len = i == pPos - 1 ? i + 2 : i + 1;
+      str = str.Right(str.GetLength() - removed_len);
       break;
     }
+    // Found a valid '.'.
+    pPos = i;
   }
-  aPos = str.Find(L'@');
-  if (aPos < 1) {
-    return FALSE;
-  }
-  CFX_WideString strtemp = L"";
-  for (i = 0; i < aPos; i++) {
-    FX_WCHAR wch = str.GetAt(i);
-    if (wch >= L'a' && wch <= L'z') {
-      break;
-    } else {
-      strtemp = str.Right(str.GetLength() - i + 1);
-    }
-  }
-  if (strtemp != L"") {
-    str = strtemp;
-  }
+
+  // Check the domain name part.
   aPos = str.Find(L'@');
   if (aPos < 1) {
     return FALSE;
   }
   str.TrimRight(L'.');
-  strtemp = str;
-  int ePos = str.Find(L'.');
-  if (ePos == -1) {
+  // At least one '.' in domain name, but not at the beginning.
+  // TODO(weili): RFC5322 allows domain names to be a local name without '.'.
+  // Check whether we should remove this check.
+  int ePos = str.Find(L'.', aPos + 1);
+  if (ePos == -1 || ePos == aPos + 1) {
     return FALSE;
   }
-  while (ePos != -1) {
-    strtemp = strtemp.Right(strtemp.GetLength() - ePos - 1);
-    ePos = strtemp.Find('.');
-  }
-  ePos = strtemp.GetLength();
-  for (i = 0; i < ePos; i++) {
-    FX_WCHAR wch = str.GetAt(i);
-    if ((wch >= L'a' && wch <= L'z') || (wch >= L'0' && wch <= L'9')) {
-      continue;
-    } else {
-      str = str.Left(str.GetLength() - ePos + i + 1);
-      ePos = ePos - i - 1;
-      break;
-    }
-  }
+  // Validate all other chars in domain name.
   int nLen = str.GetLength();
-  for (i = aPos + 1; i < nLen - ePos; i++) {
+  pPos = 0;  // Used to track the position of '.'.
+  for (int i = aPos + 1; i < nLen; i++) {
     FX_WCHAR wch = str.GetAt(i);
-    if (wch == L'-' || wch == L'.' || (wch >= L'a' && wch <= L'z') ||
-        (wch >= L'0' && wch <= L'9')) {
+    if (wch == L'-' || FXSYS_iswalnum(wch)) {
       continue;
-    } else {
+    }
+    if (wch != L'.' || i == pPos + 1) {
+      // Domain name should end before invalid char.
+      int host_end = i == pPos + 1 ? i - 2 : i - 1;
+      if (pPos > 0 && host_end - aPos >= 3) {
+        // Trim the ending invalid chars if there is at least one '.' and name.
+        str = str.Left(host_end + 1);
+        break;
+      }
       return FALSE;
     }
+    pPos = i;
   }
+
   if (str.Find(L"mailto:") == -1) {
     str = L"mailto:" + str;
   }
