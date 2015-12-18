@@ -14,7 +14,7 @@
 #include "third_party/base/nonstd_unique_ptr.h"
 
 class CFX_GlyphBitmap;
-class CPDF_ImageCache;
+class CPDF_ImageCacheEntry;
 class ICodec_ScanlineDecoder;
 
 #define TYPE3_MAX_BLUES 16
@@ -186,7 +186,7 @@ class CPDF_RenderStatus {
                           FX_ARGB fill_argb,
                           int bitmap_alpha,
                           const CFX_Matrix* pImage2Device,
-                          CPDF_ImageCache* pImageCache,
+                          CPDF_ImageCacheEntry* pImageCache,
                           FX_DWORD flags);
   void CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
                          int left,
@@ -424,10 +424,10 @@ class CPDF_DeviceBuffer {
   CFX_Matrix m_Matrix;
 };
 
-class CPDF_ImageCache {
+class CPDF_ImageCacheEntry {
  public:
-  CPDF_ImageCache(CPDF_Document* pDoc, CPDF_Stream* pStream);
-  ~CPDF_ImageCache();
+  CPDF_ImageCacheEntry(CPDF_Document* pDoc, CPDF_Stream* pStream);
+  ~CPDF_ImageCacheEntry();
   void ClearImageData();
   void Reset(const CFX_DIBitmap* pBitmap);
   FX_BOOL GetCachedBitmap(CFX_DIBSource*& pBitmap,
@@ -456,7 +456,6 @@ class CPDF_ImageCache {
                            int32_t downsampleWidth = 0,
                            int32_t downsampleHeight = 0);
   int Continue(IFX_Pause* pPause);
-  int ContinueGetCachedBitmap();
   CFX_DIBSource* DetachBitmap();
   CFX_DIBSource* DetachMask();
   CFX_DIBSource* m_pCurBitmap;
@@ -465,6 +464,8 @@ class CPDF_ImageCache {
   CPDF_RenderStatus* m_pRenderStatus;
 
  protected:
+  void ContinueGetCachedBitmap();
+
   CPDF_Document* m_pDocument;
   CPDF_Stream* m_pStream;
   CFX_DIBSource* m_pCachedBitmap;
