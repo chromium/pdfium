@@ -3600,10 +3600,11 @@ FX_BOOL CPDF_DataAvail::CheckHintTables(IFX_DownloadHints* pHints) {
   m_syntaxParser.InitParser(m_pFileRead, m_dwHeaderOffset);
   nonstd::unique_ptr<CPDF_HintTables> pHintTables(
       new CPDF_HintTables(this, pDict));
-  CPDF_Stream* pHintStream = (CPDF_Stream*)ParseIndirectObjectAt(szHSStart, 0);
-  if (pHintStream && pHintStream->GetType() == PDFOBJ_STREAM &&
-      pHintTables->LoadHintStream(pHintStream))
-    m_pHintTables.reset(pHintTables.release());
+  nonstd::unique_ptr<CPDF_Object, ReleaseDeleter<CPDF_Object>> pHintStream(
+      ParseIndirectObjectAt(szHSStart, 0));
+  CPDF_Stream* pStream = ToStream(pHintStream.get());
+  if (pStream && pHintTables->LoadHintStream(pStream))
+    m_pHintTables = nonstd::move(pHintTables);
 
   m_docStatus = PDF_DATAAVAIL_DONE;
   return TRUE;
