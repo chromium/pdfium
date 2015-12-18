@@ -15,7 +15,7 @@
 
 class CFX_GlyphBitmap;
 class CPDF_ImageCache;
-class CPDF_QuickStretcher;
+class ICodec_ScanlineDecoder;
 
 #define TYPE3_MAX_BLUES 16
 
@@ -363,7 +363,6 @@ class CPDF_ImageRenderer : public IPDF_ObjectRenderer {
   CPDF_Pattern* m_pPattern;
   FX_ARGB m_FillArgb;
   FX_DWORD m_Flags;
-  CPDF_QuickStretcher* m_pQuickStretcher;
   CFX_ImageTransformer* m_pTransformer;
   void* m_DeviceHandle;
   void* m_LoadHandle;
@@ -401,26 +400,6 @@ class CPDF_ScaledRenderBuffer {
   const CPDF_PageObject* m_pObject;
   nonstd::unique_ptr<CFX_FxgeDevice> m_pBitmapDevice;
   CFX_Matrix m_Matrix;
-};
-
-class ICodec_ScanlineDecoder;
-class CPDF_QuickStretcher {
- public:
-  CPDF_QuickStretcher();
-  ~CPDF_QuickStretcher();
-  FX_BOOL Start(CPDF_ImageObject* pImageObj,
-                CFX_Matrix* pImage2Device,
-                const FX_RECT* pClipBox);
-  FX_BOOL Continue(IFX_Pause* pPause);
-  CFX_DIBitmap* m_pBitmap;
-  int m_ResultLeft, m_ResultTop, m_ClipLeft, m_ClipTop;
-  int m_DestWidth, m_DestHeight, m_ResultWidth, m_ResultHeight;
-  int m_Bpp, m_SrcWidth, m_SrcHeight;
-  FX_BOOL m_bFlipX, m_bFlipY;
-  CPDF_ColorSpace* m_pCS;
-  ICodec_ScanlineDecoder* m_pDecoder;
-  CPDF_StreamAcc m_StreamAcc;
-  int m_LineIndex;
 };
 
 class CPDF_DeviceBuffer {

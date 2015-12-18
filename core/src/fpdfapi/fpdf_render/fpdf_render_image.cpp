@@ -291,24 +291,11 @@ void CPDF_DIBTransferFunc::TranslateDownSamples(uint8_t* dest_buf,
       }
   }
 }
-static FX_BOOL _IsSupported(CPDF_ColorSpace* pCS) {
-  if (pCS->GetFamily() == PDFCS_DEVICERGB ||
-      pCS->GetFamily() == PDFCS_DEVICEGRAY ||
-      pCS->GetFamily() == PDFCS_DEVICECMYK ||
-      pCS->GetFamily() == PDFCS_CALGRAY || pCS->GetFamily() == PDFCS_CALRGB) {
-    return TRUE;
-  }
-  if (pCS->GetFamily() == PDFCS_INDEXED && _IsSupported(pCS->GetBaseCS())) {
-    return TRUE;
-  }
-  return FALSE;
-}
 CPDF_ImageRenderer::CPDF_ImageRenderer() {
   m_pRenderStatus = NULL;
   m_pImageObject = NULL;
   m_Result = TRUE;
   m_Status = 0;
-  m_pQuickStretcher = NULL;
   m_pTransformer = NULL;
   m_DeviceHandle = NULL;
   m_LoadHandle = NULL;
@@ -320,7 +307,6 @@ CPDF_ImageRenderer::CPDF_ImageRenderer() {
   m_pObj2Device = NULL;
 }
 CPDF_ImageRenderer::~CPDF_ImageRenderer() {
-  delete m_pQuickStretcher;
   delete m_pTransformer;
   if (m_DeviceHandle) {
     m_pRenderStatus->m_pDevice->CancelDIBits(m_DeviceHandle);
@@ -825,20 +811,6 @@ FX_BOOL CPDF_ImageRenderer::StartBitmapAlpha() {
   return FALSE;
 }
 FX_BOOL CPDF_ImageRenderer::Continue(IFX_Pause* pPause) {
-  if (m_Status == 1) {
-    if (m_pQuickStretcher->Continue(pPause)) {
-      return TRUE;
-    }
-    if (m_pQuickStretcher->m_pBitmap->IsAlphaMask())
-      m_pRenderStatus->m_pDevice->SetBitMask(
-          m_pQuickStretcher->m_pBitmap, m_pQuickStretcher->m_ResultLeft,
-          m_pQuickStretcher->m_ResultTop, m_FillArgb);
-    else
-      m_pRenderStatus->m_pDevice->SetDIBits(
-          m_pQuickStretcher->m_pBitmap, m_pQuickStretcher->m_ResultLeft,
-          m_pQuickStretcher->m_ResultTop, m_BlendType);
-    return FALSE;
-  }
   if (m_Status == 2) {
     if (m_pTransformer->Continue(pPause)) {
       return TRUE;
@@ -878,18 +850,6 @@ FX_BOOL CPDF_ImageRenderer::Continue(IFX_Pause* pPause) {
   }
   return FALSE;
 }
-CPDF_QuickStretcher::CPDF_QuickStretcher() {
-  m_pBitmap = NULL;
-  m_pDecoder = NULL;
-  m_pCS = NULL;
-}
-CPDF_QuickStretcher::~CPDF_QuickStretcher() {
-  delete m_pBitmap;
-  if (m_pCS) {
-    m_pCS->ReleaseCS();
-  }
-  delete m_pDecoder;
-}
 ICodec_ScanlineDecoder* FPDFAPI_CreateFlateDecoder(
     const uint8_t* src_buf,
     FX_DWORD src_size,
@@ -898,145 +858,6 @@ ICodec_ScanlineDecoder* FPDFAPI_CreateFlateDecoder(
     int nComps,
     int bpc,
     const CPDF_Dictionary* pParams);
-FX_BOOL CPDF_QuickStretcher::Start(CPDF_ImageObject* pImageObj,
-                                   CFX_Matrix* pImage2Device,
-                                   const FX_RECT* pClipBox) {
-  if (FXSYS_fabs(pImage2Device->a) < FXSYS_fabs(pImage2Device->b) * 10 &&
-      FXSYS_fabs(pImage2Device->d) < FXSYS_fabs(pImage2Device->c) * 10) {
-    return FALSE;
-  }
-  CFX_FloatRect image_rect_f = pImage2Device->GetUnitRect();
-  FX_RECT image_rect = image_rect_f.GetOutterRect();
-  m_DestWidth = image_rect.Width();
-  m_DestHeight = image_rect.Height();
-  m_bFlipX = pImage2Device->a < 0;
-  m_bFlipY = pImage2Device->d > 0;
-  FX_RECT result_rect = *pClipBox;
-  result_rect.Intersect(image_rect);
-  if (result_rect.IsEmpty()) {
-    return FALSE;
-  }
-  m_ResultWidth = result_rect.Width();
-  m_ResultHeight = result_rect.Height();
-  m_ResultLeft = result_rect.left;
-  m_ResultTop = result_rect.top;
-  m_ClipLeft = result_rect.left - image_rect.left;
-  m_ClipTop = result_rect.top - image_rect.top;
-  CPDF_Dictionary* pDict = pImageObj->m_pImage->GetDict();
-  if (pDict->GetInteger("BitsPerComponent") != 8) {
-    return FALSE;
-  }
-  if (pDict->KeyExist("SMask") || pDict->KeyExist("Mask")) {
-    return FALSE;
-  }
-  m_SrcWidth = pDict->GetInteger("Width");
-  m_SrcHeight = pDict->GetInteger("Height");
-  m_pCS = NULL;
-  m_Bpp = 3;
-  CPDF_Object* pCSObj = pDict->GetElementValue("ColorSpace");
-  if (!pCSObj) {
-    return FALSE;
-  }
-  m_pCS = CPDF_ColorSpace::Load(pImageObj->m_pImage->GetDocument(), pCSObj);
-  if (!m_pCS) {
-    return FALSE;
-  }
-  if (!_IsSupported(m_pCS)) {
-    return FALSE;
-  }
-  m_Bpp = m_pCS->CountComponents();
-  if (m_pCS->sRGB()) {
-    m_pCS->ReleaseCS();
-    m_pCS = NULL;
-  }
-  CPDF_Stream* pStream = pImageObj->m_pImage->GetStream();
-  m_StreamAcc.LoadAllData(pStream, FALSE, m_SrcWidth * m_SrcHeight * m_Bpp,
-                          TRUE);
-  m_pDecoder = NULL;
-  if (!m_StreamAcc.GetImageDecoder().IsEmpty()) {
-    if (m_StreamAcc.GetImageDecoder() == "DCTDecode") {
-      const CPDF_Dictionary* pParam = m_StreamAcc.GetImageParam();
-      m_pDecoder = CPDF_ModuleMgr::Get()->GetJpegModule()->CreateDecoder(
-          m_StreamAcc.GetData(), m_StreamAcc.GetSize(), m_SrcWidth, m_SrcHeight,
-          m_Bpp, pParam ? pParam->GetInteger("ColorTransform", 1) : 1);
-    } else if (m_StreamAcc.GetImageDecoder() == "FlateDecode") {
-      m_pDecoder = FPDFAPI_CreateFlateDecoder(
-          m_StreamAcc.GetData(), m_StreamAcc.GetSize(), m_SrcWidth, m_SrcHeight,
-          m_Bpp, 8, m_StreamAcc.GetImageParam());
-    } else {
-      return FALSE;
-    }
-    m_pDecoder->DownScale(m_DestWidth, m_DestHeight);
-  }
-  m_pBitmap = new CFX_DIBitmap;
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-  m_pBitmap->Create(m_ResultWidth, m_ResultHeight, FXDIB_Rgb32);
-#else
-  m_pBitmap->Create(m_ResultWidth, m_ResultHeight, FXDIB_Rgb);
-#endif
-  m_LineIndex = 0;
-  return TRUE;
-}
-FX_BOOL CPDF_QuickStretcher::Continue(IFX_Pause* pPause) {
-  uint8_t* result_buf = m_pBitmap->GetBuffer();
-  int src_width = m_pDecoder ? m_pDecoder->GetWidth() : m_SrcWidth;
-  int src_height = m_pDecoder ? m_pDecoder->GetHeight() : m_SrcHeight;
-  int src_pitch = src_width * m_Bpp;
-  while (m_LineIndex < m_ResultHeight) {
-    int dest_y, src_y;
-    if (m_bFlipY) {
-      dest_y = m_ResultHeight - m_LineIndex - 1;
-      src_y =
-          (m_DestHeight - (dest_y + m_ClipTop) - 1) * src_height / m_DestHeight;
-    } else {
-      dest_y = m_LineIndex;
-      src_y = (dest_y + m_ClipTop) * src_height / m_DestHeight;
-    }
-    const uint8_t* src_scan;
-    if (m_pDecoder) {
-      src_scan = m_pDecoder->GetScanline(src_y);
-      if (!src_scan) {
-        break;
-      }
-    } else {
-      src_scan = m_StreamAcc.GetData();
-      if (!src_scan) {
-        break;
-      }
-      src_scan += src_y * src_pitch;
-    }
-    uint8_t* result_scan = result_buf + dest_y * m_pBitmap->GetPitch();
-    for (int x = 0; x < m_ResultWidth; x++) {
-      int dest_x = m_ClipLeft + x;
-      int src_x = (m_bFlipX ? (m_DestWidth - dest_x - 1) : dest_x) * src_width /
-                  m_DestWidth;
-      const uint8_t* src_pixel = src_scan + src_x * m_Bpp;
-      if (!m_pCS) {
-        *result_scan = src_pixel[2];
-        result_scan++;
-        *result_scan = src_pixel[1];
-        result_scan++;
-        *result_scan = src_pixel[0];
-        result_scan++;
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-        result_scan++;
-#endif
-      } else {
-        m_pCS->TranslateImageLine(result_scan, src_pixel, 1, 0, 0);
-#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-        result_scan += 4;
-#else
-        result_scan += 3;
-#endif
-      }
-    }
-    m_LineIndex++;
-    if (pPause && pPause->NeedToPauseNow()) {
-      return TRUE;
-    }
-  }
-  return FALSE;
-}
 CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
                                            FX_RECT* pClipRect,
                                            const CFX_Matrix* pMatrix) {
