@@ -1157,7 +1157,7 @@ void CFWL_ComboBoxImp::DisForm_InitComboList() {
   prop.m_dwStates = FWL_WGTSTATE_Invisible;
   prop.m_pDataProvider = m_pProperties->m_pDataProvider;
   prop.m_pThemeProvider = m_pProperties->m_pThemeProvider;
-  m_pListBox.reset(IFWL_ListBox::Create(prop, m_pInterface));
+  m_pListBox.reset(IFWL_ListBox::CreateComboList(prop, m_pInterface));
   m_pListBox->Initialize();
 }
 void CFWL_ComboBoxImp::DisForm_InitComboEdit() {
@@ -1167,7 +1167,7 @@ void CFWL_ComboBoxImp::DisForm_InitComboEdit() {
   CFWL_WidgetImpProperties prop;
   prop.m_pParent = m_pInterface;
   prop.m_pThemeProvider = m_pProperties->m_pThemeProvider;
-  m_pEdit.reset(IFWL_Edit::Create(prop, m_pInterface));
+  m_pEdit.reset(IFWL_Edit::CreateComboEdit(prop, m_pInterface));
   m_pEdit->Initialize();
   static_cast<CFWL_ComboEditImp*>(m_pEdit->GetImpl())->SetOuter(m_pInterface);
 }
