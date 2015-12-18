@@ -7,15 +7,17 @@
 #ifndef CORE_INCLUDE_FPDFAPI_FPDF_RENDER_H_
 #define CORE_INCLUDE_FPDFAPI_FPDF_RENDER_H_
 
+#include <map>
+
+#include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fxge/fx_ge.h"
-#include "fpdf_page.h"
 #include "third_party/base/nonstd_unique_ptr.h"
 
 class CFX_GraphStateData;
 class CFX_PathData;
 class CFX_RenderDevice;
 class CPDF_FormObject;
-class CPDF_ImageCache;
+class CPDF_ImageCacheEntry;
 class CPDF_ImageObject;
 class CPDF_PathObject;
 class CPDF_RenderContext;
@@ -214,20 +216,17 @@ class CPDF_TextRenderer {
 };
 class CPDF_PageRenderCache {
  public:
-  CPDF_PageRenderCache(CPDF_Page* pPage) {
-    m_pPage = pPage;
-    m_nTimeCount = 0;
-    m_nCacheSize = 0;
-    m_pCurImageCache = NULL;
-    m_bCurFindCache = FALSE;
-  }
-  ~CPDF_PageRenderCache() { ClearAll(); }
-  void ClearAll();
+  explicit CPDF_PageRenderCache(CPDF_Page* pPage)
+      : m_pPage(pPage),
+        m_pCurImageCacheEntry(nullptr),
+        m_nTimeCount(0),
+        m_nCacheSize(0),
+        m_bCurFindCache(FALSE) {}
+  ~CPDF_PageRenderCache();
   void ClearImageData();
 
   FX_DWORD EstimateSize();
   void CacheOptimization(int32_t dwLimitCacheSize);
-  FX_DWORD GetCachedSize(CPDF_Stream* pStream) const;
   FX_DWORD GetTimeCount() const { return m_nTimeCount; }
   void SetTimeCount(FX_DWORD dwTimeCount) { m_nTimeCount = dwTimeCount; }
 
@@ -243,11 +242,12 @@ class CPDF_PageRenderCache {
                        int32_t downsampleHeight = 0);
 
   void ResetBitmap(CPDF_Stream* pStream, const CFX_DIBitmap* pBitmap);
-  void ClearImageCache(CPDF_Stream* pStream);
-  CPDF_Page* GetPage() { return m_pPage; }
-  CFX_MapPtrToPtr m_ImageCaches;
+  void ClearImageCacheEntry(CPDF_Stream* pStream);
+  CPDF_Page* GetPage() const { return m_pPage; }
+  CPDF_ImageCacheEntry* GetCurImageCacheEntry() const {
+    return m_pCurImageCacheEntry;
+  }
 
- public:
   FX_BOOL StartGetCachedBitmap(CPDF_Stream* pStream,
                                FX_BOOL bStdCS = FALSE,
                                FX_DWORD GroupFamily = 0,
@@ -257,12 +257,12 @@ class CPDF_PageRenderCache {
                                int32_t downsampleHeight = 0);
 
   FX_BOOL Continue(IFX_Pause* pPause);
-  CPDF_ImageCache* m_pCurImageCache;
 
  protected:
   friend class CPDF_Page;
-  CPDF_Page* m_pPage;
-
+  CPDF_Page* const m_pPage;
+  CPDF_ImageCacheEntry* m_pCurImageCacheEntry;
+  std::map<CPDF_Stream*, CPDF_ImageCacheEntry*> m_ImageCache;
   FX_DWORD m_nTimeCount;
   FX_DWORD m_nCacheSize;
   FX_BOOL m_bCurFindCache;

@@ -97,7 +97,6 @@ class CPDF_PageObjects {
 class CPDF_Page : public CPDF_PageObjects, public CFX_PrivateData {
  public:
   CPDF_Page();
-
   ~CPDF_Page();
 
   void Load(CPDF_Document* pDocument,
@@ -105,7 +104,6 @@ class CPDF_Page : public CPDF_PageObjects, public CFX_PrivateData {
             FX_BOOL bPageCache = TRUE);
 
   void StartParse(CPDF_ParseOptions* pOptions = NULL, FX_BOOL bReParse = FALSE);
-
   void ParseContent(CPDF_ParseOptions* pOptions = NULL,
                     FX_BOOL bReParse = FALSE);
 
@@ -117,28 +115,17 @@ class CPDF_Page : public CPDF_PageObjects, public CFX_PrivateData {
                         int iRotate) const;
 
   FX_FLOAT GetPageWidth() const { return m_PageWidth; }
-
   FX_FLOAT GetPageHeight() const { return m_PageHeight; }
-
   CFX_FloatRect GetPageBBox() const { return m_BBox; }
-
   const CFX_Matrix& GetPageMatrix() const { return m_PageMatrix; }
-
   CPDF_Object* GetPageAttr(const CFX_ByteStringC& name) const;
-
   CPDF_PageRenderCache* GetRenderCache() const { return m_pPageRender; }
-
-  void ClearRenderCache();
 
  protected:
   friend class CPDF_ContentParser;
-
   FX_FLOAT m_PageWidth;
-
   FX_FLOAT m_PageHeight;
-
   CFX_Matrix m_PageMatrix;
-
   CPDF_PageRenderCache* m_pPageRender;
 };
 class CPDF_ParseOptions {

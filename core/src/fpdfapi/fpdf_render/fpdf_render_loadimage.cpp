@@ -1560,17 +1560,19 @@ FX_BOOL CPDF_ProgressiveImageLoaderHandle::Start(
     ret = pCache->StartGetCachedBitmap(pImage->m_pImage->GetStream(), bStdCS,
                                        GroupFamily, bLoadMask, pRenderStatus,
                                        m_nDownsampleWidth, m_nDownsampleHeight);
-    if (ret == FALSE) {
+    if (!ret) {
       m_pImageLoader->m_bCached = TRUE;
-      m_pImageLoader->m_pBitmap = pCache->m_pCurImageCache->DetachBitmap();
-      m_pImageLoader->m_pMask = pCache->m_pCurImageCache->DetachMask();
-      m_pImageLoader->m_MatteColor = pCache->m_pCurImageCache->m_MatteColor;
+      m_pImageLoader->m_pBitmap =
+          pCache->GetCurImageCacheEntry()->DetachBitmap();
+      m_pImageLoader->m_pMask = pCache->GetCurImageCacheEntry()->DetachMask();
+      m_pImageLoader->m_MatteColor =
+          pCache->GetCurImageCacheEntry()->m_MatteColor;
     }
   } else {
     ret = pImage->m_pImage->StartLoadDIBSource(pRenderStatus->m_pFormResource,
                                                pRenderStatus->m_pPageResource,
                                                bStdCS, GroupFamily, bLoadMask);
-    if (ret == FALSE) {
+    if (!ret) {
       m_pImageLoader->m_bCached = FALSE;
       m_pImageLoader->m_pBitmap = m_pImage->m_pImage->DetachBitmap();
       m_pImageLoader->m_pMask = m_pImage->m_pImage->DetachMask();
@@ -1583,15 +1585,17 @@ FX_BOOL CPDF_ProgressiveImageLoaderHandle::Continue(IFX_Pause* pPause) {
   FX_BOOL ret;
   if (m_pCache) {
     ret = m_pCache->Continue(pPause);
-    if (ret == FALSE) {
+    if (!ret) {
       m_pImageLoader->m_bCached = TRUE;
-      m_pImageLoader->m_pBitmap = m_pCache->m_pCurImageCache->DetachBitmap();
-      m_pImageLoader->m_pMask = m_pCache->m_pCurImageCache->DetachMask();
-      m_pImageLoader->m_MatteColor = m_pCache->m_pCurImageCache->m_MatteColor;
+      m_pImageLoader->m_pBitmap =
+          m_pCache->GetCurImageCacheEntry()->DetachBitmap();
+      m_pImageLoader->m_pMask = m_pCache->GetCurImageCacheEntry()->DetachMask();
+      m_pImageLoader->m_MatteColor =
+          m_pCache->GetCurImageCacheEntry()->m_MatteColor;
     }
   } else {
     ret = m_pImage->m_pImage->Continue(pPause);
-    if (ret == FALSE) {
+    if (!ret) {
       m_pImageLoader->m_bCached = FALSE;
       m_pImageLoader->m_pBitmap = m_pImage->m_pImage->DetachBitmap();
       m_pImageLoader->m_pMask = m_pImage->m_pImage->DetachMask();
