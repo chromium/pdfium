@@ -1534,22 +1534,21 @@ void CPDF_DIBSource::ClearImageData() {
   }
 }
 
-CPDF_ProgressiveImageLoaderHandle::CPDF_ProgressiveImageLoaderHandle() {
+CPDF_ImageLoaderHandle::CPDF_ImageLoaderHandle() {
   m_pImageLoader = NULL;
   m_pCache = NULL;
   m_pImage = NULL;
 }
-CPDF_ProgressiveImageLoaderHandle::~CPDF_ProgressiveImageLoaderHandle() {}
-FX_BOOL CPDF_ProgressiveImageLoaderHandle::Start(
-    CPDF_ImageLoader* pImageLoader,
-    const CPDF_ImageObject* pImage,
-    CPDF_PageRenderCache* pCache,
-    FX_BOOL bStdCS,
-    FX_DWORD GroupFamily,
-    FX_BOOL bLoadMask,
-    CPDF_RenderStatus* pRenderStatus,
-    int32_t nDownsampleWidth,
-    int32_t nDownsampleHeight) {
+CPDF_ImageLoaderHandle::~CPDF_ImageLoaderHandle() {}
+FX_BOOL CPDF_ImageLoaderHandle::Start(CPDF_ImageLoader* pImageLoader,
+                                      const CPDF_ImageObject* pImage,
+                                      CPDF_PageRenderCache* pCache,
+                                      FX_BOOL bStdCS,
+                                      FX_DWORD GroupFamily,
+                                      FX_BOOL bLoadMask,
+                                      CPDF_RenderStatus* pRenderStatus,
+                                      int32_t nDownsampleWidth,
+                                      int32_t nDownsampleHeight) {
   m_pImageLoader = pImageLoader;
   m_pCache = pCache;
   m_pImage = (CPDF_ImageObject*)pImage;
@@ -1581,7 +1580,7 @@ FX_BOOL CPDF_ProgressiveImageLoaderHandle::Start(
   }
   return ret;
 }
-FX_BOOL CPDF_ProgressiveImageLoaderHandle::Continue(IFX_Pause* pPause) {
+FX_BOOL CPDF_ImageLoaderHandle::Continue(IFX_Pause* pPause) {
   FX_BOOL ret;
   if (m_pCache) {
     ret = m_pCache->Continue(pPause);
@@ -1604,49 +1603,25 @@ FX_BOOL CPDF_ProgressiveImageLoaderHandle::Continue(IFX_Pause* pPause) {
   }
   return ret;
 }
-FX_BOOL CPDF_ImageLoader::Load(const CPDF_ImageObject* pImage,
-                               CPDF_PageRenderCache* pCache,
-                               FX_BOOL bStdCS,
-                               FX_DWORD GroupFamily,
-                               FX_BOOL bLoadMask,
-                               CPDF_RenderStatus* pRenderStatus) {
-  if (!pImage) {
-    return FALSE;
-  }
-  if (pCache) {
-    pCache->GetCachedBitmap(pImage->m_pImage->GetStream(), m_pBitmap, m_pMask,
-                            m_MatteColor, bStdCS, GroupFamily, bLoadMask,
-                            pRenderStatus, m_nDownsampleWidth,
-                            m_nDownsampleHeight);
-    m_bCached = TRUE;
-  } else {
-    m_pBitmap = pImage->m_pImage->LoadDIBSource(&m_pMask, &m_MatteColor, bStdCS,
-                                                GroupFamily, bLoadMask);
-    m_bCached = FALSE;
-  }
-  return FALSE;
-}
-FX_BOOL CPDF_ImageLoader::StartLoadImage(const CPDF_ImageObject* pImage,
-                                         CPDF_PageRenderCache* pCache,
-                                         void*& LoadHandle,
-                                         FX_BOOL bStdCS,
-                                         FX_DWORD GroupFamily,
-                                         FX_BOOL bLoadMask,
-                                         CPDF_RenderStatus* pRenderStatus,
-                                         int32_t nDownsampleWidth,
-                                         int32_t nDownsampleHeight) {
+FX_BOOL CPDF_ImageLoader::Start(const CPDF_ImageObject* pImage,
+                                CPDF_PageRenderCache* pCache,
+                                CPDF_ImageLoaderHandle*& LoadHandle,
+                                FX_BOOL bStdCS,
+                                FX_DWORD GroupFamily,
+                                FX_BOOL bLoadMask,
+                                CPDF_RenderStatus* pRenderStatus,
+                                int32_t nDownsampleWidth,
+                                int32_t nDownsampleHeight) {
   m_nDownsampleWidth = nDownsampleWidth;
   m_nDownsampleHeight = nDownsampleHeight;
-  CPDF_ProgressiveImageLoaderHandle* pLoaderHandle =
-      new CPDF_ProgressiveImageLoaderHandle;
-  FX_BOOL ret = pLoaderHandle->Start(this, pImage, pCache, bStdCS, GroupFamily,
-                                     bLoadMask, pRenderStatus,
-                                     m_nDownsampleWidth, m_nDownsampleHeight);
-  LoadHandle = pLoaderHandle;
-  return ret;
+  LoadHandle = new CPDF_ImageLoaderHandle;
+  return LoadHandle->Start(this, pImage, pCache, bStdCS, GroupFamily, bLoadMask,
+                           pRenderStatus, m_nDownsampleWidth,
+                           m_nDownsampleHeight);
 }
-FX_BOOL CPDF_ImageLoader::Continue(void* LoadHandle, IFX_Pause* pPause) {
-  return ((CPDF_ProgressiveImageLoaderHandle*)LoadHandle)->Continue(pPause);
+FX_BOOL CPDF_ImageLoader::Continue(CPDF_ImageLoaderHandle* LoadHandle,
+                                   IFX_Pause* pPause) {
+  return LoadHandle->Continue(pPause);
 }
 CPDF_ImageLoader::~CPDF_ImageLoader() {
   if (!m_bCached) {

@@ -14,7 +14,9 @@
 #include "third_party/base/nonstd_unique_ptr.h"
 
 class CFX_GlyphBitmap;
+class CFX_ImageTransformer;
 class CPDF_ImageCacheEntry;
+class CPDF_ImageLoaderHandle;
 class ICodec_ScanlineDecoder;
 
 #define TYPE3_MAX_BLUES 16
@@ -266,33 +268,26 @@ class CPDF_RenderStatus {
 };
 class CPDF_ImageLoader {
  public:
-  CPDF_ImageLoader() {
-    m_pBitmap = NULL;
-    m_pMask = NULL;
-    m_MatteColor = 0;
-    m_bCached = FALSE;
-    m_nDownsampleWidth = 0;
-    m_nDownsampleHeight = 0;
-  }
-
-  FX_BOOL Load(const CPDF_ImageObject* pImage,
-               CPDF_PageRenderCache* pCache,
-               FX_BOOL bStdCS = FALSE,
-               FX_DWORD GroupFamily = 0,
-               FX_BOOL bLoadMask = FALSE,
-               CPDF_RenderStatus* pRenderStatus = NULL);
-
-  FX_BOOL StartLoadImage(const CPDF_ImageObject* pImage,
-                         CPDF_PageRenderCache* pCache,
-                         void*& LoadHandle,
-                         FX_BOOL bStdCS = FALSE,
-                         FX_DWORD GroupFamily = 0,
-                         FX_BOOL bLoadMask = FALSE,
-                         CPDF_RenderStatus* pRenderStatus = NULL,
-                         int32_t nDownsampleWidth = 0,
-                         int32_t nDownsampleHeight = 0);
-  FX_BOOL Continue(void* LoadHandle, IFX_Pause* pPause);
+  CPDF_ImageLoader()
+      : m_pBitmap(nullptr),
+        m_pMask(nullptr),
+        m_MatteColor(0),
+        m_bCached(FALSE),
+        m_nDownsampleWidth(0),
+        m_nDownsampleHeight(0) {}
   ~CPDF_ImageLoader();
+
+  FX_BOOL Start(const CPDF_ImageObject* pImage,
+                CPDF_PageRenderCache* pCache,
+                CPDF_ImageLoaderHandle*& LoadHandle,
+                FX_BOOL bStdCS = FALSE,
+                FX_DWORD GroupFamily = 0,
+                FX_BOOL bLoadMask = FALSE,
+                CPDF_RenderStatus* pRenderStatus = NULL,
+                int32_t nDownsampleWidth = 0,
+                int32_t nDownsampleHeight = 0);
+  FX_BOOL Continue(CPDF_ImageLoaderHandle* LoadHandle, IFX_Pause* pPause);
+
   CFX_DIBSource* m_pBitmap;
   CFX_DIBSource* m_pMask;
   FX_DWORD m_MatteColor;
@@ -302,10 +297,10 @@ class CPDF_ImageLoader {
   int32_t m_nDownsampleWidth;
   int32_t m_nDownsampleHeight;
 };
-class CPDF_ProgressiveImageLoaderHandle {
+class CPDF_ImageLoaderHandle {
  public:
-  CPDF_ProgressiveImageLoaderHandle();
-  ~CPDF_ProgressiveImageLoaderHandle();
+  CPDF_ImageLoaderHandle();
+  ~CPDF_ImageLoaderHandle();
 
   FX_BOOL Start(CPDF_ImageLoader* pImageLoader,
                 const CPDF_ImageObject* pImage,
@@ -325,7 +320,6 @@ class CPDF_ProgressiveImageLoaderHandle {
   int32_t m_nDownsampleWidth;
   int32_t m_nDownsampleHeight;
 };
-class CFX_ImageTransformer;
 
 class CPDF_ImageRenderer : public IPDF_ObjectRenderer {
  public:
@@ -365,7 +359,7 @@ class CPDF_ImageRenderer : public IPDF_ObjectRenderer {
   FX_DWORD m_Flags;
   CFX_ImageTransformer* m_pTransformer;
   void* m_DeviceHandle;
-  void* m_LoadHandle;
+  CPDF_ImageLoaderHandle* m_LoadHandle;
   FX_BOOL m_bStdCS;
   int m_BlendType;
   FX_BOOL StartBitmapAlpha();
