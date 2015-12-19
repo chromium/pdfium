@@ -1063,10 +1063,7 @@ CFDF_Document* CPDF_InterForm::ExportToFDF(
       pMainDict->SetAt("F", static_cast<CPDF_Object*>(filespec));
     }
   }
-  CPDF_Array* pFields = CPDF_Array::Create();
-  if (!pFields) {
-    return NULL;
-  }
+  CPDF_Array* pFields = new CPDF_Array;
   pMainDict->SetAt("Fields", pFields);
   int nCount = m_pFieldTree->m_Root.CountFields();
   for (int i = 0; i < nCount; i++) {
@@ -1084,16 +1081,8 @@ CFDF_Document* CPDF_InterForm::ExportToFDF(
         continue;
 
       CFX_WideString fullname = GetFullName(pField->GetFieldDict());
-      CPDF_Dictionary* pFieldDict = CPDF_Dictionary::Create();
-      if (!pFieldDict)
-        return nullptr;
-
-      CPDF_String* pString = CPDF_String::Create(fullname);
-      if (!pString) {
-        pFieldDict->Release();
-        return nullptr;
-      }
-      pFieldDict->SetAt("T", pString);
+      CPDF_Dictionary* pFieldDict = new CPDF_Dictionary;
+      pFieldDict->SetAt("T", new CPDF_String(fullname));
       if (pField->GetType() == CPDF_FormField::CheckBox ||
           pField->GetType() == CPDF_FormField::RadioButton) {
         CFX_WideString csExport = pField->GetCheckValue(FALSE);

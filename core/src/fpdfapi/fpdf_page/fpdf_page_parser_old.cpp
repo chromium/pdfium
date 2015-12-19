@@ -75,7 +75,7 @@ FX_DWORD CPDF_StreamContentParser::Parse(const uint8_t* pData,
 void _PDF_ReplaceAbbr(CPDF_Object* pObj);
 void CPDF_StreamContentParser::Handle_BeginImage() {
   FX_FILESIZE savePos = m_pSyntax->GetPos();
-  CPDF_Dictionary* pDict = CPDF_Dictionary::Create();
+  CPDF_Dictionary* pDict = new CPDF_Dictionary;
   while (1) {
     CPDF_StreamParser::SyntaxType type = m_pSyntax->ParseNextElement();
     if (type == CPDF_StreamParser::Keyword) {
@@ -516,16 +516,16 @@ CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {
 
   if (m_WordSize == 4) {
     if (*(FX_DWORD*)m_WordBuffer == FXDWORD_TRUE) {
-      m_pLastObj = CPDF_Boolean::Create(TRUE);
+      m_pLastObj = new CPDF_Boolean(TRUE);
       return Others;
     }
     if (*(FX_DWORD*)m_WordBuffer == FXDWORD_NULL) {
-      m_pLastObj = CPDF_Null::Create();
+      m_pLastObj = new CPDF_Null;
       return Others;
     }
   } else if (m_WordSize == 5) {
     if (*(FX_DWORD*)m_WordBuffer == FXDWORD_FALS && m_WordBuffer[4] == 'e') {
-      m_pLastObj = CPDF_Boolean::Create(FALSE);
+      m_pLastObj = new CPDF_Boolean(FALSE);
       return Others;
     }
   }
@@ -603,42 +603,40 @@ CPDF_Object* CPDF_StreamParser::ReadNextObject(FX_BOOL bAllowNestedArray,
   }
   if (bIsNumber) {
     m_WordBuffer[m_WordSize] = 0;
-    return CPDF_Number::Create(CFX_ByteStringC(m_WordBuffer, m_WordSize));
+    return new CPDF_Number(CFX_ByteStringC(m_WordBuffer, m_WordSize));
   }
   int first_char = m_WordBuffer[0];
   if (first_char == '/') {
-    return CPDF_Name::Create(
+    return new CPDF_Name(
         PDF_NameDecode(CFX_ByteStringC(m_WordBuffer + 1, m_WordSize - 1)));
   }
   if (first_char == '(') {
-    return CPDF_String::Create(ReadString());
+    return new CPDF_String(ReadString(), FALSE);
   }
   if (first_char == '<') {
     if (m_WordSize == 1) {
-      return CPDF_String::Create(ReadHexString(), TRUE);
+      return new CPDF_String(ReadHexString(), TRUE);
     }
-    CPDF_Dictionary* pDict = CPDF_Dictionary::Create();
+    CPDF_Dictionary* pDict = new CPDF_Dictionary;
     while (1) {
       GetNextWord(bIsNumber);
       if (m_WordSize == 0) {
         pDict->Release();
-        return NULL;
+        return nullptr;
       }
       if (m_WordSize == 2 && m_WordBuffer[0] == '>') {
         break;
       }
       if (m_WordBuffer[0] != '/') {
         pDict->Release();
-        return NULL;
+        return nullptr;
       }
       CFX_ByteString key =
           PDF_NameDecode(CFX_ByteStringC(m_WordBuffer + 1, m_WordSize - 1));
       CPDF_Object* pObj = ReadNextObject(TRUE);
       if (!pObj) {
-        if (pDict) {
-          pDict->Release();
-        }
-        return NULL;
+        pDict->Release();
+        return nullptr;
       }
       if (!key.IsEmpty()) {
         pDict->SetAt(key, pObj);
@@ -652,31 +650,29 @@ CPDF_Object* CPDF_StreamParser::ReadNextObject(FX_BOOL bAllowNestedArray,
     if (!bAllowNestedArray && bInArray) {
       return NULL;
     }
-    CPDF_Array* pArray = CPDF_Array::Create();
+    CPDF_Array* pArray = new CPDF_Array;
     while (1) {
       CPDF_Object* pObj = ReadNextObject(bAllowNestedArray, TRUE);
-      if (!pObj) {
-        if (m_WordSize == 0 || m_WordBuffer[0] == ']') {
-          return pArray;
-        }
-        if (m_WordBuffer[0] == '[') {
-          continue;
-        }
-      } else {
+      if (pObj) {
         pArray->Add(pObj);
+        continue;
       }
+
+      if (m_WordSize == 0 || m_WordBuffer[0] == ']')
+        break;
     }
+    return pArray;
   }
   if (m_WordSize == 4) {
     if (*(FX_DWORD*)m_WordBuffer == FXDWORD_TRUE) {
-      return CPDF_Boolean::Create(TRUE);
+      return new CPDF_Boolean(TRUE);
     }
     if (*(FX_DWORD*)m_WordBuffer == FXDWORD_NULL) {
-      return CPDF_Null::Create();
+      return new CPDF_Null;
     }
   } else if (m_WordSize == 5) {
     if (*(FX_DWORD*)m_WordBuffer == FXDWORD_FALS && m_WordBuffer[4] == 'e') {
-      return CPDF_Boolean::Create(FALSE);
+      return new CPDF_Boolean(FALSE);
     }
   }
   return NULL;

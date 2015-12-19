@@ -106,7 +106,7 @@ void CPDF_PageContentGenerate::ProcessForm(CFX_ByteTextBuf& buf,
     return;
   }
   CPDF_Stream* pStream = new CPDF_Stream(NULL, 0, NULL);
-  CPDF_Dictionary* pFormDict = CPDF_Dictionary::Create();
+  CPDF_Dictionary* pFormDict = new CPDF_Dictionary;
   pFormDict->SetAtName("Type", "XObject");
   pFormDict->SetAtName("Subtype", "Form");
   CFX_FloatRect bbox = m_pPage->GetPageBBox();

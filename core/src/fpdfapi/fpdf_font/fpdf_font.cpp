@@ -390,7 +390,7 @@ CPDF_Font* CPDF_Font::GetStockFont(CPDF_Document* pDoc,
   if (pFont) {
     return pFont;
   }
-  CPDF_Dictionary* pDict = CPDF_Dictionary::Create();
+  CPDF_Dictionary* pDict = new CPDF_Dictionary;
   pDict->SetAtName("Type", "Font");
   pDict->SetAtName("Subtype", "Type1");
   pDict->SetAtName("BaseFont", fontname);
@@ -1391,28 +1391,29 @@ CPDF_Object* CPDF_FontEncoding::Realize() {
   }
   if (predefined) {
     if (predefined == PDFFONT_ENCODING_WINANSI) {
-      return CPDF_Name::Create("WinAnsiEncoding");
+      return new CPDF_Name("WinAnsiEncoding");
     }
     if (predefined == PDFFONT_ENCODING_MACROMAN) {
-      return CPDF_Name::Create("MacRomanEncoding");
+      return new CPDF_Name("MacRomanEncoding");
     }
     if (predefined == PDFFONT_ENCODING_MACEXPERT) {
-      return CPDF_Name::Create("MacExpertEncoding");
+      return new CPDF_Name("MacExpertEncoding");
     }
     return NULL;
   }
-  CPDF_Dictionary* pDict = CPDF_Dictionary::Create();
-  pDict->SetAtName("BaseEncoding", "WinAnsiEncoding");
   const FX_WORD* pStandard =
       PDF_UnicodesForPredefinedCharSet(PDFFONT_ENCODING_WINANSI);
-  CPDF_Array* pDiff = CPDF_Array::Create();
+  CPDF_Array* pDiff = new CPDF_Array;
   for (int i = 0; i < 256; i++) {
     if (pStandard[i] == m_Unicodes[i]) {
       continue;
     }
-    pDiff->Add(CPDF_Number::Create(i));
-    pDiff->Add(CPDF_Name::Create(PDF_AdobeNameFromUnicode(m_Unicodes[i])));
+    pDiff->Add(new CPDF_Number(i));
+    pDiff->Add(new CPDF_Name(PDF_AdobeNameFromUnicode(m_Unicodes[i])));
   }
+
+  CPDF_Dictionary* pDict = new CPDF_Dictionary;
+  pDict->SetAtName("BaseEncoding", "WinAnsiEncoding");
   pDict->SetAt("Differences", pDiff);
   return pDict;
 }

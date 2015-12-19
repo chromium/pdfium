@@ -571,7 +571,7 @@ FX_BOOL CPDF_FormField::SetItemSelection(int index,
             m_pDict->RemoveAt("V");
           }
         } else if (pValue->IsArray()) {
-          CPDF_Array* pArray = CPDF_Array::Create();
+          CPDF_Array* pArray = new CPDF_Array;
           int iCount = CountOptions();
           for (int i = 0; i < iCount; i++) {
             if (i != index) {
@@ -598,13 +598,10 @@ FX_BOOL CPDF_FormField::SetItemSelection(int index,
       if (!(m_Flags & FORMLIST_MULTISELECT)) {
         m_pDict->SetAtString("V", PDF_EncodeText(opt_value));
       } else {
-        CPDF_Array* pArray = CPDF_Array::Create();
-        if (!pArray) {
-          return FALSE;
-        }
-        FX_BOOL bSelected;
+        CPDF_Array* pArray = new CPDF_Array;
         int iCount = CountOptions();
         for (int i = 0; i < iCount; i++) {
+          FX_BOOL bSelected;
           if (i != index) {
             bSelected = IsItemSelected(i);
           } else {
@@ -619,10 +616,7 @@ FX_BOOL CPDF_FormField::SetItemSelection(int index,
       }
     } else if (m_Type == ComboBox) {
       m_pDict->SetAtString("V", PDF_EncodeText(opt_value));
-      CPDF_Array* pI = CPDF_Array::Create();
-      if (!pI) {
-        return FALSE;
-      }
+      CPDF_Array* pI = new CPDF_Array;
       pI->AddInteger(index);
       m_pDict->SetAt("I", pI);
     }
@@ -740,7 +734,7 @@ int CPDF_FormField::InsertOption(CFX_WideString csOptLabel,
   if (csOptLabel.IsEmpty())
     return -1;
 
-  if (bNotify && m_pForm->m_pFormNotify != NULL) {
+  if (bNotify && m_pForm->m_pFormNotify) {
     int iRet = 0;
     if (GetType() == ListBox)
       iRet = m_pForm->m_pFormNotify->BeforeSelectionChange(this, csOptLabel);
@@ -751,27 +745,23 @@ int CPDF_FormField::InsertOption(CFX_WideString csOptLabel,
   }
 
   CFX_ByteString csStr = PDF_EncodeText(csOptLabel, csOptLabel.GetLength());
-  CPDF_Array* pOpt = NULL;
   CPDF_Object* pValue = FPDF_GetFieldAttr(m_pDict, "Opt");
-  if (pValue == NULL || pValue->GetType() != PDFOBJ_ARRAY) {
-    pOpt = CPDF_Array::Create();
-    if (pOpt == NULL)
-      return -1;
+  CPDF_Array* pOpt = ToArray(pValue);
+  if (!pOpt) {
+    pOpt = new CPDF_Array;
     m_pDict->SetAt("Opt", pOpt);
-  } else
-    pOpt = (CPDF_Array*)pValue;
+  }
+
   int iCount = (int)pOpt->GetCount();
   if (index < 0 || index >= iCount) {
     pOpt->AddString(csStr);
     index = iCount;
   } else {
-    CPDF_String* pString = CPDF_String::Create(csStr);
-    if (pString == NULL)
-      return -1;
+    CPDF_String* pString = new CPDF_String(csStr, FALSE);
     pOpt->InsertAt(index, pString);
   }
 
-  if (bNotify && m_pForm->m_pFormNotify != NULL) {
+  if (bNotify && m_pForm->m_pFormNotify) {
     if (GetType() == ListBox)
       m_pForm->m_pFormNotify->AfterSelectionChange(this);
     if (GetType() == ComboBox)
@@ -781,7 +771,7 @@ int CPDF_FormField::InsertOption(CFX_WideString csOptLabel,
   return index;
 }
 FX_BOOL CPDF_FormField::ClearOptions(FX_BOOL bNotify) {
-  if (bNotify && m_pForm->m_pFormNotify != NULL) {
+  if (bNotify && m_pForm->m_pFormNotify) {
     int iRet = 0;
     CFX_WideString csValue;
     int iIndex = GetSelectedIndex(0);
@@ -801,7 +791,7 @@ FX_BOOL CPDF_FormField::ClearOptions(FX_BOOL bNotify) {
   m_pDict->RemoveAt("I");
   m_pDict->RemoveAt("TI");
 
-  if (bNotify && m_pForm->m_pFormNotify != NULL) {
+  if (bNotify && m_pForm->m_pFormNotify) {
     if (GetType() == ListBox)
       m_pForm->m_pFormNotify->AfterSelectionChange(this);
     if (GetType() == ComboBox)
@@ -985,10 +975,7 @@ FX_BOOL CPDF_FormField::SelectOption(int iOptIndex,
     if (!bSelected) {
       return TRUE;
     }
-    pArray = CPDF_Array::Create();
-    if (!pArray) {
-      return FALSE;
-    }
+    pArray = new CPDF_Array;
     m_pDict->SetAt("I", pArray);
   }
   FX_BOOL bReturn = FALSE;
@@ -1031,10 +1018,7 @@ FX_BOOL CPDF_FormField::SelectOption(int iOptIndex,
           return FALSE;
         }
       }
-      CPDF_Number* pNum = CPDF_Number::Create(iOptIndex);
-      if (!pNum) {
-        return FALSE;
-      }
+      CPDF_Number* pNum = new CPDF_Number(iOptIndex);
       pArray->InsertAt(i, pNum);
       bReturn = TRUE;
       break;

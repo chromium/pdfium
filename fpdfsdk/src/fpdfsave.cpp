@@ -185,7 +185,7 @@ FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument,
         pData->InitStreamFromFile(pDsfileWrite, pDataDict);
         pPDFDocument->AddIndirectObject(pData);
         iLast = pArray->GetCount() - 2;
-        pArray->InsertAt(iLast, CPDF_String::Create("datasets"));
+        pArray->InsertAt(iLast, new CPDF_String("datasets", FALSE));
         pArray->InsertAt(iLast + 1, pData, pPDFDocument);
       }
       fileList.Add(pDsfileWrite);
@@ -212,7 +212,7 @@ FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument,
         pData->InitStreamFromFile(pfileWrite, pDataDict);
         pPDFDocument->AddIndirectObject(pData);
         iLast = pArray->GetCount() - 2;
-        pArray->InsertAt(iLast, CPDF_String::Create("form"));
+        pArray->InsertAt(iLast, new CPDF_String("form", FALSE));
         pArray->InsertAt(iLast + 1, pData, pPDFDocument);
       }
       fileList.Add(pfileWrite);

@@ -43,7 +43,7 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_CreateNewDocument() {
   pInfoDict = pDoc->GetInfo();
   if (pInfoDict) {
     if (FSDK_IsSandBoxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS))
-      pInfoDict->SetAt("CreationDate", new CPDF_String(DateStr));
+      pInfoDict->SetAt("CreationDate", new CPDF_String(DateStr, FALSE));
     pInfoDict->SetAt("Creator", new CPDF_String(L"PDFium"));
   }
 
@@ -285,7 +285,7 @@ DLLEXPORT void STDCALL FPDFPage_TransformAnnots(FPDF_PAGE page,
     CPDF_Array* pRectArray = NULL;
     pRectArray = pAnnot->GetAnnotDict()->GetArray("Rect");
     if (!pRectArray)
-      pRectArray = CPDF_Array::Create();
+      pRectArray = new CPDF_Array;
     pRectArray->SetAt(0, new CPDF_Number(rect.left));
     pRectArray->SetAt(1, new CPDF_Number(rect.bottom));
     pRectArray->SetAt(2, new CPDF_Number(rect.right));

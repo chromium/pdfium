@@ -544,7 +544,7 @@ void CPDF_Array::AddName(const CFX_ByteString& str) {
 }
 void CPDF_Array::AddString(const CFX_ByteString& str) {
   ASSERT(IsArray());
-  Add(new CPDF_String(str));
+  Add(new CPDF_String(str, FALSE));
 }
 void CPDF_Array::AddInteger(int i) {
   ASSERT(IsArray());
@@ -781,7 +781,7 @@ void CPDF_Dictionary::SetAtName(const CFX_ByteStringC& key,
 }
 void CPDF_Dictionary::SetAtString(const CFX_ByteStringC& key,
                                   const CFX_ByteString& str) {
-  SetAt(key, new CPDF_String(str));
+  SetAt(key, new CPDF_String(str, FALSE));
 }
 void CPDF_Dictionary::SetAtReference(const CFX_ByteStringC& key,
                                      CPDF_IndirectObjects* pDoc,

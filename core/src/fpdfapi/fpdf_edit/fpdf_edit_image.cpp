@@ -33,7 +33,7 @@ CPDF_Dictionary* CPDF_Image::InitJPEG(uint8_t* pData, FX_DWORD size) {
     csname = "DeviceRGB";
   } else if (num_comps == 4) {
     csname = "DeviceCMYK";
-    CPDF_Array* pDecode = CPDF_Array::Create();
+    CPDF_Array* pDecode = new CPDF_Array;
     for (int n = 0; n < 4; n++) {
       pDecode->AddInteger(1);
       pDecode->AddInteger(0);
@@ -151,7 +151,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap,
       pBuf[4] = (FX_CHAR)set_g;
       pBuf[5] = (FX_CHAR)set_b;
       ct.ReleaseBuffer(6);
-      pCS->Add(CPDF_String::Create(ct, TRUE));
+      pCS->Add(new CPDF_String(ct, TRUE));
       pDict->SetAt("ColorSpace", pCS);
     }
     pDict->SetAtInteger("BitsPerComponent", 1);

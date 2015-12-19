@@ -329,7 +329,7 @@ FX_BOOL CPDF_FileSpec::GetFileName(CFX_WideString& csFileName) const {
   return TRUE;
 }
 CPDF_FileSpec::CPDF_FileSpec() {
-  m_pObj = CPDF_Dictionary::Create();
+  m_pObj = new CPDF_Dictionary;
   if (CPDF_Dictionary* pDict = ToDictionary(m_pObj)) {
     pDict->SetAtName("Type", "Filespec");
   }
