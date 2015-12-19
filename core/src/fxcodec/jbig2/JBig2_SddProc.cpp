@@ -4,16 +4,19 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "JBig2_SddProc.h"
+#include "core/src/fxcodec/jbig2/JBig2_SddProc.h"
 
-#include "JBig2_ArithIntDecoder.h"
-#include "JBig2_GrdProc.h"
-#include "JBig2_GrrdProc.h"
-#include "JBig2_HuffmanDecoder.h"
-#include "JBig2_HuffmanTable.h"
-#include "JBig2_SymbolDict.h"
-#include "JBig2_TrdProc.h"
+#include <vector>
+
 #include "core/include/fxcrt/fx_basic.h"
+#include "core/src/fxcodec/jbig2/JBig2_ArithIntDecoder.h"
+#include "core/src/fxcodec/jbig2/JBig2_GrdProc.h"
+#include "core/src/fxcodec/jbig2/JBig2_GrrdProc.h"
+#include "core/src/fxcodec/jbig2/JBig2_HuffmanDecoder.h"
+#include "core/src/fxcodec/jbig2/JBig2_HuffmanTable.h"
+#include "core/src/fxcodec/jbig2/JBig2_HuffmanTable_Standard.h"
+#include "core/src/fxcodec/jbig2/JBig2_SymbolDict.h"
+#include "core/src/fxcodec/jbig2/JBig2_TrdProc.h"
 #include "third_party/base/nonstd_unique_ptr.h"
 #include "third_party/base/stl_util.h"
 
