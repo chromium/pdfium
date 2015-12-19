@@ -43,17 +43,16 @@ FX_BOOL CPDF_PageOrganizer::PDFDocInit(CPDF_Document* pDestPDFDoc,
   if (!pNewRoot)
     return FALSE;
 
-  // Set the document information////////////////////////////////////////////
-
+  // Set the document information
   CPDF_Dictionary* DInfoDict = pDestPDFDoc->GetInfo();
   if (!DInfoDict)
     return FALSE;
 
   CFX_ByteString producerstr;
   producerstr.Format("PDFium");
-  DInfoDict->SetAt("Producer", new CPDF_String(producerstr));
+  DInfoDict->SetAt("Producer", new CPDF_String(producerstr, FALSE));
 
-  // Set type////////////////////////////////////////////////////////////////
+  // Set type
   CFX_ByteString cbRootType = pNewRoot->GetString("Type", "");
   if (cbRootType.Equal("")) {
     pNewRoot->SetAt("Type", new CPDF_Name("Catalog"));
@@ -100,7 +99,7 @@ FX_BOOL CPDF_PageOrganizer::ExportPage(CPDF_Document* pSrcPDFDoc,
     if (!pSrcPageDict || !pCurPageDict)
       return FALSE;
 
-    // Clone the page dictionary///////////
+    // Clone the page dictionary
     FX_POSITION SrcPos = pSrcPageDict->GetStartPos();
     while (SrcPos) {
       CFX_ByteString cbSrcKeyStr;
@@ -112,7 +111,7 @@ FX_BOOL CPDF_PageOrganizer::ExportPage(CPDF_Document* pSrcPDFDoc,
       }
     }
 
-    // inheritable item///////////////////////
+    // inheritable item
     CPDF_Object* pInheritable = nullptr;
     // 1 MediaBox  //required
     if (!pCurPageDict->KeyExist("MediaBox")) {
@@ -156,7 +155,6 @@ FX_BOOL CPDF_PageOrganizer::ExportPage(CPDF_Document* pSrcPDFDoc,
         pCurPageDict->SetAt("Rotate", pInheritable->Clone());
     }
 
-    /////////////////////////////////////////////
     // Update the reference
     FX_DWORD dwOldPageObj = pSrcPageDict->GetObjNum();
     FX_DWORD dwNewPageObj = pCurPageDict->GetObjNum();

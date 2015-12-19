@@ -571,7 +571,7 @@ FX_BOOL CPDF_FormField::SetItemSelection(int index,
             m_pDict->RemoveAt("V");
           }
         } else if (pValue->IsArray()) {
-          CPDF_Array* pArray = CPDF_Array::Create();
+          CPDF_Array* pArray = new CPDF_Array;
           int iCount = CountOptions();
           for (int i = 0; i < iCount; i++) {
             if (i != index) {
@@ -598,13 +598,10 @@ FX_BOOL CPDF_FormField::SetItemSelection(int index,
       if (!(m_Flags & FORMLIST_MULTISELECT)) {
         m_pDict->SetAtString("V", PDF_EncodeText(opt_value));
       } else {
-        CPDF_Array* pArray = CPDF_Array::Create();
-        if (!pArray) {
-          return FALSE;
-        }
-        FX_BOOL bSelected;
+        CPDF_Array* pArray = new CPDF_Array;
         int iCount = CountOptions();
         for (int i = 0; i < iCount; i++) {
+          FX_BOOL bSelected;
           if (i != index) {
             bSelected = IsItemSelected(i);
           } else {
@@ -619,10 +616,7 @@ FX_BOOL CPDF_FormField::SetItemSelection(int index,
       }
     } else if (m_Type == ComboBox) {
       m_pDict->SetAtString("V", PDF_EncodeText(opt_value));
-      CPDF_Array* pI = CPDF_Array::Create();
-      if (!pI) {
-        return FALSE;
-      }
+      CPDF_Array* pI = new CPDF_Array;
       pI->AddInteger(index);
       m_pDict->SetAt("I", pI);
     }
@@ -906,10 +900,7 @@ FX_BOOL CPDF_FormField::SelectOption(int iOptIndex,
     if (!bSelected) {
       return TRUE;
     }
-    pArray = CPDF_Array::Create();
-    if (!pArray) {
-      return FALSE;
-    }
+    pArray = new CPDF_Array;
     m_pDict->SetAt("I", pArray);
   }
   FX_BOOL bReturn = FALSE;
@@ -952,10 +943,7 @@ FX_BOOL CPDF_FormField::SelectOption(int iOptIndex,
           return FALSE;
         }
       }
-      CPDF_Number* pNum = CPDF_Number::Create(iOptIndex);
-      if (!pNum) {
-        return FALSE;
-      }
+      CPDF_Number* pNum = new CPDF_Number(iOptIndex);
       pArray->InsertAt(i, pNum);
       bReturn = TRUE;
       break;

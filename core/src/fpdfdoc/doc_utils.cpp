@@ -228,7 +228,7 @@ void InitInterFormDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument) {
     return;
   }
   if (!pFormDict) {
-    pFormDict = CPDF_Dictionary::Create();
+    pFormDict = new CPDF_Dictionary;
     FX_DWORD dwObjNum = pDocument->AddIndirectObject(pFormDict);
     CPDF_Dictionary* pRoot = pDocument->GetRoot();
     pRoot->SetAtReference("AcroForm", pDocument, dwObjNum);
@@ -560,12 +560,12 @@ void AddInterFormFont(CPDF_Dictionary*& pFormDict,
   }
   CPDF_Dictionary* pDR = pFormDict->GetDict("DR");
   if (!pDR) {
-    pDR = CPDF_Dictionary::Create();
+    pDR = new CPDF_Dictionary;
     pFormDict->SetAt("DR", pDR);
   }
   CPDF_Dictionary* pFonts = pDR->GetDict("Font");
   if (!pFonts) {
-    pFonts = CPDF_Dictionary::Create();
+    pFonts = new CPDF_Dictionary;
     pDR->SetAt("Font", pFonts);
   }
   if (csNameTag.IsEmpty()) {

@@ -114,7 +114,7 @@ void CPDF_StreamContentParser::AddNameParam(const FX_CHAR* name, int len) {
   if (len > 32) {
     m_ParamBuf1[index].m_Type = 0;
     m_ParamBuf1[index].m_pObject =
-        CPDF_Name::Create(PDF_NameDecode(CFX_ByteStringC(name, len)));
+        new CPDF_Name(PDF_NameDecode(CFX_ByteStringC(name, len)));
   } else {
     m_ParamBuf1[index].m_Type = PDFOBJ_NAME;
     if (!FXSYS_memchr(name, '#', len)) {
@@ -165,15 +165,15 @@ CPDF_Object* CPDF_StreamContentParser::GetObject(FX_DWORD index) {
   _ContentParam& param = m_ParamBuf1[real_index];
   if (param.m_Type == PDFOBJ_NUMBER) {
     CPDF_Number* pNumber = param.m_Number.m_bInteger
-                               ? CPDF_Number::Create(param.m_Number.m_Integer)
-                               : CPDF_Number::Create(param.m_Number.m_Float);
+                               ? new CPDF_Number(param.m_Number.m_Integer)
+                               : new CPDF_Number(param.m_Number.m_Float);
 
     param.m_Type = 0;
     param.m_pObject = pNumber;
     return pNumber;
   }
   if (param.m_Type == PDFOBJ_NAME) {
-    CPDF_Name* pName = CPDF_Name::Create(
+    CPDF_Name* pName = new CPDF_Name(
         CFX_ByteString(param.m_Name.m_Buffer, param.m_Name.m_Len));
     param.m_Type = 0;
     param.m_pObject = pName;
@@ -524,7 +524,7 @@ void _PDF_ReplaceAbbr(CPDF_Object* pObj) {
               _PDF_InlineValueAbbr,
               sizeof _PDF_InlineValueAbbr / sizeof(_FX_BSTR), name);
           if (!fullname.IsEmpty()) {
-            pArray->SetAt(i, CPDF_Name::Create(fullname));
+            pArray->SetAt(i, new CPDF_Name(fullname));
           }
         } else {
           _PDF_ReplaceAbbr(pElement);
@@ -587,7 +587,7 @@ void _PDF_ReplaceFull(CPDF_Object* pObj) {
               _PDF_InlineValueAbbr,
               sizeof _PDF_InlineValueAbbr / sizeof(_FX_BSTR), name);
           if (!abbrName.IsEmpty()) {
-            pArray->SetAt(i, CPDF_Name::Create(abbrName));
+            pArray->SetAt(i, new CPDF_Name(abbrName));
           }
         } else {
           _PDF_ReplaceFull(pElement);

@@ -2010,7 +2010,7 @@ void CPDF_Creator::InitID(FX_BOOL bDefault) {
   FX_BOOL bNewId = !m_pIDArray;
   if (!m_pIDArray) {
     FX_DWORD* pBuffer = NULL;
-    m_pIDArray = CPDF_Array::Create();
+    m_pIDArray = new CPDF_Array;
     CPDF_Object* pID1 = pOldIDArray ? pOldIDArray->GetElement(0) : NULL;
     if (pID1) {
       m_pIDArray->Add(pID1->Clone());
@@ -2018,7 +2018,7 @@ void CPDF_Creator::InitID(FX_BOOL bDefault) {
       pBuffer = FX_Alloc(FX_DWORD, 4);
       PDF_GenerateFileID((FX_DWORD)(uintptr_t) this, m_dwLastObjNum, pBuffer);
       CFX_ByteStringC bsBuffer((const uint8_t*)pBuffer, 4 * sizeof(FX_DWORD));
-      m_pIDArray->Add(CPDF_String::Create(bsBuffer, TRUE), m_pDocument);
+      m_pIDArray->Add(new CPDF_String(bsBuffer, TRUE), m_pDocument);
     }
     FX_Free(pBuffer);
   }
@@ -2034,7 +2034,7 @@ void CPDF_Creator::InitID(FX_BOOL bDefault) {
     FX_DWORD* pBuffer = FX_Alloc(FX_DWORD, 4);
     PDF_GenerateFileID((FX_DWORD)(uintptr_t) this, m_dwLastObjNum, pBuffer);
     CFX_ByteStringC bsBuffer((const uint8_t*)pBuffer, 4 * sizeof(FX_DWORD));
-    m_pIDArray->Add(CPDF_String::Create(bsBuffer, TRUE), m_pDocument);
+    m_pIDArray->Add(new CPDF_String(bsBuffer, TRUE), m_pDocument);
     FX_Free(pBuffer);
     return;
   }

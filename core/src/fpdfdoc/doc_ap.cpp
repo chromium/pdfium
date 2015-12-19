@@ -311,10 +311,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
     return FALSE;
   }
   if (!pFontDict) {
-    pFontDict = CPDF_Dictionary::Create();
-    if (!pFontDict) {
-      return FALSE;
-    }
+    pFontDict = new CPDF_Dictionary;
     pFontDict->SetAtName("Type", "Font");
     pFontDict->SetAtName("Subtype", "Type1");
     pFontDict->SetAtName("BaseFont", "Helvetica");
@@ -419,7 +416,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
   rcBody.Normalize();
   CPDF_Dictionary* pAPDict = pAnnotDict->GetDict("AP");
   if (!pAPDict) {
-    pAPDict = CPDF_Dictionary::Create();
+    pAPDict = new CPDF_Dictionary;
     pAnnotDict->SetAt("AP", pAPDict);
   }
   CPDF_Stream* pNormalStream = pAPDict->GetStream("N");
@@ -436,10 +433,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
     if (pStreamResList) {
       CPDF_Dictionary* pStreamResFontList = pStreamResList->GetDict("Font");
       if (!pStreamResFontList) {
-        pStreamResFontList = CPDF_Dictionary::Create();
-        if (!pStreamResFontList) {
-          return FALSE;
-        }
+        pStreamResFontList = new CPDF_Dictionary;
         pStreamResList->SetAt("Font", pStreamResFontList);
       }
       if (!pStreamResFontList->KeyExist(sFontName)) {
@@ -684,10 +678,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
       if (pStreamResList) {
         CPDF_Dictionary* pStreamResFontList = pStreamResList->GetDict("Font");
         if (!pStreamResFontList) {
-          pStreamResFontList = CPDF_Dictionary::Create();
-          if (!pStreamResFontList) {
-            return FALSE;
-          }
+          pStreamResFontList = new CPDF_Dictionary;
           pStreamResList->SetAt("Font", pStreamResFontList);
         }
         if (!pStreamResFontList->KeyExist(sFontName)) {

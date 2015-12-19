@@ -2033,17 +2033,17 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList,
     m_Pos = SavedPos;
     if (bTypeOnly)
       return (CPDF_Object*)PDFOBJ_NUMBER;
-    return CPDF_Number::Create(word);
+    return new CPDF_Number(word);
   }
   if (word == "true" || word == "false") {
     if (bTypeOnly)
       return (CPDF_Object*)PDFOBJ_BOOLEAN;
-    return CPDF_Boolean::Create(word == "true");
+    return new CPDF_Boolean(word == "true");
   }
   if (word == "null") {
     if (bTypeOnly)
       return (CPDF_Object*)PDFOBJ_NULL;
-    return CPDF_Null::Create();
+    return new CPDF_Null;
   }
   if (word == "(") {
     if (bTypeOnly)
@@ -2052,7 +2052,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList,
     if (m_pCryptoHandler && bDecrypt) {
       m_pCryptoHandler->Decrypt(objnum, gennum, str);
     }
-    return CPDF_String::Create(str, FALSE);
+    return new CPDF_String(str, FALSE);
   }
   if (word == "<") {
     if (bTypeOnly)
@@ -2061,12 +2061,12 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList,
     if (m_pCryptoHandler && bDecrypt) {
       m_pCryptoHandler->Decrypt(objnum, gennum, str);
     }
-    return CPDF_String::Create(str, TRUE);
+    return new CPDF_String(str, TRUE);
   }
   if (word == "[") {
     if (bTypeOnly)
       return (CPDF_Object*)PDFOBJ_ARRAY;
-    CPDF_Array* pArray = CPDF_Array::Create();
+    CPDF_Array* pArray = new CPDF_Array;
     while (CPDF_Object* pObj = GetObject(pObjList, objnum, gennum))
       pArray->Add(pObj);
 
@@ -2075,7 +2075,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList,
   if (word[0] == '/') {
     if (bTypeOnly)
       return (CPDF_Object*)PDFOBJ_NAME;
-    return CPDF_Name::Create(
+    return new CPDF_Name(
         PDF_NameDecode(CFX_ByteStringC(m_WordBuffer + 1, m_WordSize - 1)));
   }
   if (word == "<<") {
@@ -2088,7 +2088,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList,
     int32_t nKeys = 0;
     FX_FILESIZE dwSignValuePos = 0;
     nonstd::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>> pDict(
-        CPDF_Dictionary::Create());
+        new CPDF_Dictionary);
     while (1) {
       FX_BOOL bIsNumber;
       CFX_ByteString key = GetNextWord(bIsNumber);
@@ -2194,17 +2194,17 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
     m_Pos = SavedPos;
     if (bTypeOnly)
       return (CPDF_Object*)PDFOBJ_NUMBER;
-    return CPDF_Number::Create(word);
+    return new CPDF_Number(word);
   }
   if (word == "true" || word == "false") {
     if (bTypeOnly)
       return (CPDF_Object*)PDFOBJ_BOOLEAN;
-    return CPDF_Boolean::Create(word == "true");
+    return new CPDF_Boolean(word == "true");
   }
   if (word == "null") {
     if (bTypeOnly)
       return (CPDF_Object*)PDFOBJ_NULL;
-    return CPDF_Null::Create();
+    return new CPDF_Null;
   }
   if (word == "(") {
     if (bTypeOnly)
@@ -2212,7 +2212,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
     CFX_ByteString str = ReadString();
     if (m_pCryptoHandler)
       m_pCryptoHandler->Decrypt(objnum, gennum, str);
-    return CPDF_String::Create(str, FALSE);
+    return new CPDF_String(str, FALSE);
   }
   if (word == "<") {
     if (bTypeOnly)
@@ -2220,13 +2220,13 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
     CFX_ByteString str = ReadHexString();
     if (m_pCryptoHandler)
       m_pCryptoHandler->Decrypt(objnum, gennum, str);
-    return CPDF_String::Create(str, TRUE);
+    return new CPDF_String(str, TRUE);
   }
   if (word == "[") {
     if (bTypeOnly)
       return (CPDF_Object*)PDFOBJ_ARRAY;
     nonstd::unique_ptr<CPDF_Array, ReleaseDeleter<CPDF_Array>> pArray(
-        CPDF_Array::Create());
+        new CPDF_Array);
     while (CPDF_Object* pObj = GetObject(pObjList, objnum, gennum))
       pArray->Add(pObj);
     return m_WordBuffer[0] == ']' ? pArray.release() : nullptr;
@@ -2234,7 +2234,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
   if (word[0] == '/') {
     if (bTypeOnly)
       return (CPDF_Object*)PDFOBJ_NAME;
-    return CPDF_Name::Create(
+    return new CPDF_Name(
         PDF_NameDecode(CFX_ByteStringC(m_WordBuffer + 1, m_WordSize - 1)));
   }
   if (word == "<<") {
@@ -2244,7 +2244,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
       pContext->m_DictStart = SavedPos;
 
     nonstd::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>> pDict(
-        CPDF_Dictionary::Create());
+        new CPDF_Dictionary);
     while (1) {
       FX_BOOL bIsNumber;
       FX_FILESIZE SavedPos = m_Pos;
