@@ -516,7 +516,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
       pSymbolDictDecoder->SDHUFFDH = Table_B5.get();
     } else {
       CJBig2_Segment* pSeg =
-          findReferredSegmentByTypeAndIndex(pSegment, 53, ++nIndex);
+          findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
       pSymbolDictDecoder->SDHUFFDH = pSeg->m_Result.ht;
@@ -533,7 +533,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
       pSymbolDictDecoder->SDHUFFDW = Table_B3.get();
     } else {
       CJBig2_Segment* pSeg =
-          findReferredSegmentByTypeAndIndex(pSegment, 53, ++nIndex);
+          findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
       pSymbolDictDecoder->SDHUFFDW = pSeg->m_Result.ht;
@@ -545,7 +545,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
       pSymbolDictDecoder->SDHUFFBMSIZE = Table_B1.get();
     } else {
       CJBig2_Segment* pSeg =
-          findReferredSegmentByTypeAndIndex(pSegment, 53, ++nIndex);
+          findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
       pSymbolDictDecoder->SDHUFFBMSIZE = pSeg->m_Result.ht;
@@ -560,7 +560,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
         pSymbolDictDecoder->SDHUFFAGGINST = Table_B1.get();
       } else {
         CJBig2_Segment* pSeg =
-            findReferredSegmentByTypeAndIndex(pSegment, 53, ++nIndex);
+            findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
         if (!pSeg)
           return JBIG2_ERROR_FATAL;
         pSymbolDictDecoder->SDHUFFAGGINST = pSeg->m_Result.ht;
@@ -782,7 +782,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFFS = Table_B7.get();
     } else {
       CJBig2_Segment* pSeg =
-          findReferredSegmentByTypeAndIndex(pSegment, 53, ++nIndex);
+          findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
       pTRD->SBHUFFFS = pSeg->m_Result.ht;
@@ -804,7 +804,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFDS = Table_B10.get();
     } else {
       CJBig2_Segment* pSeg =
-          findReferredSegmentByTypeAndIndex(pSegment, 53, ++nIndex);
+          findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
       pTRD->SBHUFFDS = pSeg->m_Result.ht;
@@ -826,7 +826,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFDT = Table_B13.get();
     } else {
       CJBig2_Segment* pSeg =
-          findReferredSegmentByTypeAndIndex(pSegment, 53, ++nIndex);
+          findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
       pTRD->SBHUFFDT = pSeg->m_Result.ht;
@@ -843,7 +843,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFRDW = Table_B15.get();
     } else {
       CJBig2_Segment* pSeg =
-          findReferredSegmentByTypeAndIndex(pSegment, 53, ++nIndex);
+          findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
       pTRD->SBHUFFRDW = pSeg->m_Result.ht;
@@ -864,7 +864,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFRDH = Table_B15.get();
     } else {
       CJBig2_Segment* pSeg =
-          findReferredSegmentByTypeAndIndex(pSegment, 53, ++nIndex);
+          findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
       pTRD->SBHUFFRDH = pSeg->m_Result.ht;
@@ -885,7 +885,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFRDX = Table_B15.get();
     } else {
       CJBig2_Segment* pSeg =
-          findReferredSegmentByTypeAndIndex(pSegment, 53, ++nIndex);
+          findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
       pTRD->SBHUFFRDX = pSeg->m_Result.ht;
@@ -906,7 +906,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFRDY = Table_B15.get();
     } else {
       CJBig2_Segment* pSeg =
-          findReferredSegmentByTypeAndIndex(pSegment, 53, ++nIndex);
+          findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
       pTRD->SBHUFFRDY = pSeg->m_Result.ht;
@@ -918,7 +918,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFRSIZE = Table_B1.get();
     } else {
       CJBig2_Segment* pSeg =
-          findReferredSegmentByTypeAndIndex(pSegment, 53, ++nIndex);
+          findReferredSegmentByTypeAndIndex(pSegment, 53, nIndex++);
       if (!pSeg)
         return JBIG2_ERROR_FATAL;
       pTRD->SBHUFFRSIZE = pSeg->m_Result.ht;

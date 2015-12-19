@@ -103,15 +103,20 @@ int CJBig2_HuffmanTable::parseFromCodedBuffer(CJBig2_BitStream* pStream) {
   FX_DWORD HTLOW;
   FX_DWORD HTHIGH;
   if (pStream->readInteger(&HTLOW) == -1 ||
-      pStream->readInteger(&HTHIGH) == -1 || HTLOW > HTHIGH) {
+      pStream->readInteger(&HTHIGH) == -1) {
     return FALSE;
   }
+
+  const int low = static_cast<int>(HTLOW);
+  const int high = static_cast<int>(HTHIGH);
+  if (low > high)
+    return false;
 
   FX_DWORD nSize = 16;
   PREFLEN = FX_Alloc(int, nSize);
   RANGELEN = FX_Alloc(int, nSize);
   RANGELOW = FX_Alloc(int, nSize);
-  FX_DWORD CURRANGELOW = HTLOW;
+  int cur_low = low;
   NTEMP = 0;
   do {
     HT_CHECK_MEMORY_ADJUST
@@ -119,23 +124,23 @@ int CJBig2_HuffmanTable::parseFromCodedBuffer(CJBig2_BitStream* pStream) {
         (pStream->readNBits(HTRS, &RANGELEN[NTEMP]) == -1)) {
       return FALSE;
     }
-    RANGELOW[NTEMP] = CURRANGELOW;
-    CURRANGELOW = CURRANGELOW + (1 << RANGELEN[NTEMP]);
+    RANGELOW[NTEMP] = cur_low;
+    cur_low += (1 << RANGELEN[NTEMP]);
     NTEMP = NTEMP + 1;
-  } while (CURRANGELOW < HTHIGH);
+  } while (cur_low < high);
   HT_CHECK_MEMORY_ADJUST
   if (pStream->readNBits(HTPS, &PREFLEN[NTEMP]) == -1)
     return FALSE;
 
   RANGELEN[NTEMP] = 32;
-  RANGELOW[NTEMP] = HTLOW - 1;
+  RANGELOW[NTEMP] = low - 1;
   ++NTEMP;
   HT_CHECK_MEMORY_ADJUST
   if (pStream->readNBits(HTPS, &PREFLEN[NTEMP]) == -1)
     return FALSE;
 
   RANGELEN[NTEMP] = 32;
-  RANGELOW[NTEMP] = HTHIGH;
+  RANGELOW[NTEMP] = high;
   NTEMP = NTEMP + 1;
   if (HTOOB) {
     HT_CHECK_MEMORY_ADJUST
