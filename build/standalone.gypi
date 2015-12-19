@@ -274,6 +274,10 @@
         ],
       }],
       ['asan==1', {
+        'defines': [
+          'ADDRESS_SANITIZER',
+          'LEAK_SANITIZER',
+        ],
         'cflags': [
           '-fsanitize=address',
           '-gline-tables-only',
