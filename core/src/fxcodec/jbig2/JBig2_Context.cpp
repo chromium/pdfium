@@ -4,17 +4,21 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "JBig2_Context.h"
+#include "core/src/fxcodec/jbig2/JBig2_Context.h"
 
+#include <algorithm>
 #include <list>
+#include <vector>
 
-#include "JBig2_ArithDecoder.h"
-#include "JBig2_GrdProc.h"
-#include "JBig2_GrrdProc.h"
-#include "JBig2_HtrdProc.h"
-#include "JBig2_PddProc.h"
-#include "JBig2_SddProc.h"
-#include "JBig2_TrdProc.h"
+#include "core/src/fxcodec/jbig2/JBig2_ArithDecoder.h"
+#include "core/src/fxcodec/jbig2/JBig2_BitStream.h"
+#include "core/src/fxcodec/jbig2/JBig2_GrdProc.h"
+#include "core/src/fxcodec/jbig2/JBig2_GrrdProc.h"
+#include "core/src/fxcodec/jbig2/JBig2_HtrdProc.h"
+#include "core/src/fxcodec/jbig2/JBig2_HuffmanTable_Standard.h"
+#include "core/src/fxcodec/jbig2/JBig2_PddProc.h"
+#include "core/src/fxcodec/jbig2/JBig2_SddProc.h"
+#include "core/src/fxcodec/jbig2/JBig2_TrdProc.h"
 
 namespace {
 
@@ -1262,12 +1266,13 @@ int32_t CJBig2_Context::parseGenericRefinementRegion(CJBig2_Segment* pSegment) {
 
 int32_t CJBig2_Context::parseTable(CJBig2_Segment* pSegment) {
   pSegment->m_nResultType = JBIG2_HUFFMAN_TABLE_POINTER;
-  pSegment->m_Result.ht = new CJBig2_HuffmanTable(m_pStream.get());
-  if (!pSegment->m_Result.ht->isOK()) {
-    delete pSegment->m_Result.ht;
-    pSegment->m_Result.ht = NULL;
+  pSegment->m_Result.ht = nullptr;
+  nonstd::unique_ptr<CJBig2_HuffmanTable> pHuff(
+      new CJBig2_HuffmanTable(m_pStream.get()));
+  if (!pHuff->IsOK())
     return JBIG2_ERROR_FATAL;
-  }
+
+  pSegment->m_Result.ht = pHuff.release();
   m_pStream->alignByte();
   return JBIG2_SUCCESS;
 }

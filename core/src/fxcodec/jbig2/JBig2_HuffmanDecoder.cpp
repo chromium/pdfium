@@ -21,33 +21,26 @@ int CJBig2_HuffmanDecoder::decodeAValue(CJBig2_HuffmanTable* pTable,
   while (1) {
     FX_DWORD nTmp;
     if (m_pStream->read1Bit(&nTmp) == -1)
-      return -1;
+      break;
 
     nVal = (nVal << 1) | nTmp;
     ++nBits;
-    for (FX_DWORD i = 0; i < pTable->NTEMP; ++i) {
-      if ((pTable->PREFLEN[i] == nBits) && (pTable->CODES[i] == nVal)) {
-        if ((pTable->HTOOB == 1) && (i == pTable->NTEMP - 1))
+    for (FX_DWORD i = 0; i < pTable->Size(); ++i) {
+      if (pTable->GetPREFLEN()[i] == nBits && pTable->GetCODES()[i] == nVal) {
+        if (pTable->IsHTOOB() && i == pTable->Size() - 1)
           return JBIG2_OOB;
 
-        if (m_pStream->readNBits(pTable->RANGELEN[i], &nTmp) == -1)
+        if (m_pStream->readNBits(pTable->GetRANGELEN()[i], &nTmp) == -1)
           return -1;
 
-        if (pTable->HTOOB) {
-          if (i == pTable->NTEMP - 3)
-            *nResult = pTable->RANGELOW[i] - nTmp;
-          else
-            *nResult = pTable->RANGELOW[i] + nTmp;
-          return 0;
-        }
-
-        if (i == pTable->NTEMP - 2)
-          *nResult = pTable->RANGELOW[i] - nTmp;
+        FX_DWORD offset = pTable->IsHTOOB() ? 3 : 2;
+        if (i == pTable->Size() - offset)
+          *nResult = pTable->GetRANGELOW()[i] - nTmp;
         else
-          *nResult = pTable->RANGELOW[i] + nTmp;
+          *nResult = pTable->GetRANGELOW()[i] + nTmp;
         return 0;
       }
     }
   }
-  return -2;
+  return -1;
 }
