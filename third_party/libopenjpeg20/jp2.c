@@ -1194,7 +1194,7 @@ static OPJ_BOOL opj_jp2_read_cmap(	opj_jp2_t * jp2,
 
 
 	for(i = 0; i < nr_channels; ++i) {
-		opj_read_bytes(p_cmap_header_data, &l_value, 2);			/* CMP^i */
+		opj_read_bytes_BE(p_cmap_header_data, &l_value, 2);			/* CMP^i */
 		p_cmap_header_data +=2;
 		cmap[i].cmp = (OPJ_UINT16) l_value;
 
