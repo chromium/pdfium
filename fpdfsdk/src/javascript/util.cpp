@@ -105,7 +105,7 @@ int util::ParstDataType(std::wstring* sFormat) {
         return UTIL_STRING;
       }
       if (c == L'.' || c == L'+' || c == L'-' || c == L'#' || c == L' ' ||
-          CJS_PublicMethods::IsDigit(c)) {
+          FXSYS_iswdigit(c)) {
         continue;
       }
       break;
@@ -502,8 +502,7 @@ FX_BOOL util::scand(IJS_Context* cc,
   CFX_WideString sDate = params[1].ToCFXWideString();
   double dDate = JS_GetDateTime();
   if (sDate.GetLength() > 0) {
-    FX_BOOL bWrongFormat = FALSE;
-    dDate = CJS_PublicMethods::MakeRegularDate(sDate, sFormat, bWrongFormat);
+    dDate = CJS_PublicMethods::MakeRegularDate(sDate, sFormat, nullptr);
   }
 
   if (!JS_PortIsNan(dDate)) {
