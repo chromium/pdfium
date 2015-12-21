@@ -11,7 +11,8 @@
 
 class CJS_PublicMethods : public CJS_Object {
  public:
-  CJS_PublicMethods(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
+  explicit CJS_PublicMethods(v8::Local<v8::Object> pObject)
+      : CJS_Object(pObject) {}
   ~CJS_PublicMethods() override {}
 
  public:
@@ -140,7 +141,7 @@ class CJS_PublicMethods : public CJS_Object {
                                           int& nSkip);
   static double MakeRegularDate(const CFX_WideString& value,
                                 const CFX_WideString& format,
-                                FX_BOOL& bWrongFormat);
+                                bool* bWrongFormat);
   static CFX_WideString MakeFormatDate(double dDate,
                                        const CFX_WideString& format);
   static FX_BOOL ConvertStringToNumber(const FX_WCHAR* swSource,
@@ -148,7 +149,7 @@ class CJS_PublicMethods : public CJS_Object {
                                        FX_BOOL& bDot);
   static double ParseStringToNumber(const FX_WCHAR* swSource);
   static double ParseNormalDate(const CFX_WideString& value,
-                                FX_BOOL& bWrongFormat);
+                                bool* bWrongFormat);
   static double MakeInterDate(CFX_WideString strValue);
   static double ParseNumber(const FX_WCHAR* swSource,
                             FX_BOOL& bAllDigits,
@@ -167,11 +168,6 @@ class CJS_PublicMethods : public CJS_Object {
 
   static FX_BOOL IsNumber(const FX_CHAR* string);
   static FX_BOOL IsNumber(const FX_WCHAR* string);
-
-  static FX_BOOL IsDigit(char ch);
-  static FX_BOOL IsDigit(wchar_t ch);
-  static FX_BOOL IsAlphabetic(wchar_t ch);
-  static FX_BOOL IsAlphaNumeric(wchar_t ch);
 
   static FX_BOOL maskSatisfied(wchar_t c_Change, wchar_t c_Mask);
   static FX_BOOL isReservedMaskChar(wchar_t ch);
