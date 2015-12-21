@@ -649,7 +649,7 @@ int _DayFromYear(int y) {
 }
 
 double _TimeFromYear(int y) {
-  return ((double)86400000) * _DayFromYear(y);
+  return 86400000.0 * _DayFromYear(y);
 }
 
 double _TimeFromYearMonth(int y, int m) {
@@ -669,12 +669,12 @@ int _Day(double t) {
 
 int _YearFromTime(double t) {
   // estimate the time.
-  int y = 1970 + (int)(t / (365.0 * 86400000));
+  int y = 1970 + static_cast<int>(t / (365.2425 * 86400000));
   if (_TimeFromYear(y) <= t) {
     while (_TimeFromYear(y + 1) <= t)
       y++;
   } else
-    while (_TimeFromYear(y - 1) > t)
+    while (_TimeFromYear(y) > t)
       y--;
   return y;
 }

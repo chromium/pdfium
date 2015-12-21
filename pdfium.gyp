@@ -773,7 +773,10 @@
             '<(DEPTH)/v8/tools/gyp/v8.gyp:v8_libplatform',
           ],
           'sources': [
+            'fpdfsdk/src/javascript/public_methods_embeddertest.cpp',
             'fpdfsdk/src/jsapi/fxjs_v8_embeddertest.cpp',
+            'testing/js_embedder_test.cpp',
+            'testing/js_embedder_test.h',
           ],
         }],
       ],
