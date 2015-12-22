@@ -394,10 +394,6 @@ class CPDF_Parser {
 
   CFX_ByteString GetPassword() { return m_Password; }
 
-  CPDF_SecurityHandler* GetSecurityHandler() {
-    return m_pSecurityHandler.get();
-  }
-
   CPDF_CryptoHandler* GetCryptoHandler() {
     return m_Syntax.m_pCryptoHandler.get();
   }
@@ -405,17 +401,11 @@ class CPDF_Parser {
   void SetSecurityHandler(CPDF_SecurityHandler* pSecurityHandler,
                           FX_BOOL bForced = FALSE);
 
-  CFX_ByteString GetRecipient() { return m_bsRecipient; }
-
   CPDF_Dictionary* GetTrailer() { return m_pTrailer; }
 
   FX_FILESIZE GetLastXRefOffset() { return m_LastXRefOffset; }
 
   CPDF_Document* GetDocument() { return m_pDocument; }
-
-  CFX_ArrayTemplate<CPDF_Dictionary*>* GetOtherTrailers() {
-    return &m_Trailers;
-  }
 
   FX_DWORD GetRootObjNum();
   FX_DWORD GetInfoObjNum();
@@ -423,25 +413,18 @@ class CPDF_Parser {
 
   CPDF_Dictionary* GetEncryptDict() { return m_pEncryptDict; }
 
-  FX_BOOL IsEncrypted() { return GetEncryptDict() != NULL; }
-
   CPDF_Object* ParseIndirectObject(CPDF_IndirectObjects* pObjList,
                                    FX_DWORD objnum,
                                    PARSE_CONTEXT* pContext = NULL);
-  FX_DWORD GetLastObjNum();
+  FX_DWORD GetLastObjNum() const;
+  bool IsValidObjectNumber(FX_DWORD objnum) const;
   FX_BOOL IsFormStream(FX_DWORD objnum, FX_BOOL& bForm);
 
   FX_FILESIZE GetObjectOffset(FX_DWORD objnum);
 
   FX_FILESIZE GetObjectSize(FX_DWORD objnum);
 
-  int GetObjectVersion(FX_DWORD objnum) { return m_ObjVersion[objnum]; }
-
   void GetIndirectBinary(FX_DWORD objnum, uint8_t*& pBuffer, FX_DWORD& size);
-
-  FX_BOOL GetFileStreamOption() { return m_Syntax.m_bFileStream; }
-
-  void SetFileStreamOption(FX_BOOL b) { m_Syntax.m_bFileStream = b; }
 
   IFX_FileRead* GetFileAccess() const { return m_Syntax.m_pFileAccess; }
 
@@ -523,13 +506,23 @@ class CPDF_Parser {
 
   CFX_ByteString m_Password;
 
-  CFX_FileSizeArray m_CrossRef;
+  struct ObjectInfo {
+    ObjectInfo() : pos(0) {}
+
+    FX_FILESIZE pos;
+// TODO(thestig): Use fields below in place of |m_V5Type| and |m_ObjVersion|
+#if 0
+    uint8_t type;
+    uint16_t gennum;
+#endif
+  };
+  std::map<FX_DWORD, ObjectInfo> m_ObjectInfo;
 
   CFX_ByteArray m_V5Type;
+  CFX_WordArray m_ObjVersion;
 
   CFX_FileSizeArray m_SortedOffset;
 
-  CFX_WordArray m_ObjVersion;
   CFX_ArrayTemplate<CPDF_Dictionary*> m_Trailers;
 
   FX_BOOL m_bVersionUpdated;
