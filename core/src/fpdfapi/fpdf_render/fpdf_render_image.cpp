@@ -6,6 +6,9 @@
 
 #include "render_int.h"
 
+#include <utility>
+#include <vector>
+
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_pageobj.h"
 #include "core/include/fpdfapi/fpdf_render.h"
@@ -126,7 +129,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
   pBackdrop1->Clear((FX_DWORD)-1);
   pBackdrop1->CompositeBitmap(0, 0, pBackdrop->GetWidth(),
                               pBackdrop->GetHeight(), pBackdrop.get(), 0, 0);
-  pBackdrop = nonstd::move(pBackdrop1);
+  pBackdrop = std::move(pBackdrop1);
   m_pDevice->SetDIBits(pBackdrop.get(), back_left, back_top);
 }
 

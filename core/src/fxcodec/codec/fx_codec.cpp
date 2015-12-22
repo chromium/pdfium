@@ -1,4 +1,3 @@
-
 // Copyright 2014 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -8,6 +7,7 @@
 #include "core/include/fxcodec/fx_codec.h"
 
 #include <cmath>
+#include <utility>
 
 #include "codec_int.h"
 #include "core/include/fxcrt/fx_ext.h"
@@ -146,7 +146,7 @@ void CCodec_ScanlineDecoder::DownScale(int dest_width, int dest_height) {
   if (!cache->AllocateCache())
     return;
 
-  m_pDataCache = nonstd::move(cache);
+  m_pDataCache = std::move(cache);
 }
 
 FX_BOOL CCodec_BasicModule::RunLengthEncode(const uint8_t* src_buf,

@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 #include <sstream>
+#include <utility>
 
 #include "testing/gtest/include/gtest/gtest.h"
 #include "macros.h"
@@ -65,20 +66,20 @@ TEST(UniquePtrTest, MoveTest) {
     EXPECT_EQ(1, constructed);
     EXPECT_TRUE(ptr1);
 
-    unique_ptr<CtorDtorLogger> ptr2(nonstd::move(ptr1));
+    unique_ptr<CtorDtorLogger> ptr2(std::move(ptr1));
     EXPECT_EQ(1, constructed);
     EXPECT_FALSE(ptr1);
     EXPECT_TRUE(ptr2);
 
     unique_ptr<CtorDtorLogger> ptr3;
-    ptr3 = nonstd::move(ptr2);
+    ptr3 = std::move(ptr2);
     EXPECT_EQ(1, constructed);
     EXPECT_FALSE(ptr2);
     EXPECT_TRUE(ptr3);
 
     unique_ptr<CtorDtorLogger> ptr4(new CtorDtorLogger(&constructed4));
     EXPECT_EQ(1, constructed4);
-    ptr4 = nonstd::move(ptr3);
+    ptr4 = std::move(ptr3);
     EXPECT_EQ(0, constructed4);
     EXPECT_FALSE(ptr3);
     EXPECT_TRUE(ptr4);
