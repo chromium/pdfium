@@ -468,17 +468,13 @@ void util::printx(const std::string& cFormat,
       case '\\':
         break;
       case '>': {
-        for (std::string::iterator it = cSource.begin(); it != cSource.end();
-             it++) {
-          *it = toupper(*it);
-        }
+        for (char& c : cSource)
+          c = toupper(c);
         break;
       }
       case '<': {
-        for (std::string::iterator it = cSource.begin(); it != cSource.end();
-             it++) {
-          *it = tolower(*it);
-        }
+        for (char& c : cSource)
+          c = tolower(c);
         break;
       }
       case '=':

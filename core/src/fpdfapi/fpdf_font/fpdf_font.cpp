@@ -13,6 +13,7 @@
 #include "core/include/fpdfapi/fpdf_resource.h"
 #include "core/include/fxcrt/fx_ext.h"
 #include "core/include/fxge/fx_freetype.h"
+#include "third_party/base/stl_util.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
 #include "core/src/fxge/apple/apple_int.h"
@@ -1727,7 +1728,7 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(FX_DWORD charcode, int level) {
   rcBBox.top = FXSYS_round(char_rect.top * 1000);
   rcBBox.bottom = FXSYS_round(char_rect.bottom * 1000);
 
-  FXSYS_assert(m_CacheMap.find(charcode) == m_CacheMap.end());
+  ASSERT(!pdfium::ContainsKey(m_CacheMap, charcode));
   CPDF_Type3Char* pCachedChar = pNewChar.release();
   m_CacheMap[charcode] = pCachedChar;
   if (pCachedChar->m_pForm->CountObjects() == 0) {

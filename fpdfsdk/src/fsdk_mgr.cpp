@@ -13,6 +13,7 @@
 #include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "public/fpdf_ext.h"
 #include "third_party/base/nonstd_unique_ptr.h"
+#include "third_party/base/stl_util.h"
 
 #if _FX_OS_ == _FX_ANDROID_
 #include "time.h"
@@ -689,9 +690,7 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetFXWidgetAtPoint(FX_FLOAT pageX,
 void CPDFSDK_PageView::KillFocusAnnotIfNeeded() {
   // if there is a focused annot on the page, we should kill the focus first.
   if (CPDFSDK_Annot* focusedAnnot = m_pSDKDoc->GetFocusAnnot()) {
-    auto it =
-        std::find(m_fxAnnotArray.begin(), m_fxAnnotArray.end(), focusedAnnot);
-    if (it != m_fxAnnotArray.end())
+    if (pdfium::ContainsValue(m_fxAnnotArray, focusedAnnot))
       KillFocusAnnot();
   }
 }
@@ -911,7 +910,7 @@ bool CPDFSDK_PageView::IsValidAnnot(const CPDF_Annot* p) const {
     return false;
 
   const auto& annots = m_pAnnotList->All();
-  return std::find(annots.begin(), annots.end(), p) != annots.end();
+  return pdfium::ContainsValue(annots, p);
 }
 
 CPDFSDK_Annot* CPDFSDK_PageView::GetFocusAnnot() {

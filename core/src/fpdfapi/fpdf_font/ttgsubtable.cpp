@@ -9,6 +9,7 @@
 #include "core/include/fxge/fx_freetype.h"
 #include "core/include/fxge/fx_ge.h"
 #include "third_party/base/nonstd_unique_ptr.h"
+#include "third_party/base/stl_util.h"
 
 CFX_GlyphMap::CFX_GlyphMap() {}
 CFX_GlyphMap::~CFX_GlyphMap() {}
@@ -86,7 +87,7 @@ bool CFX_CTTGSUBTable::GetVerticalGlyph(uint32_t glyphnum,
                 k);
           if (FeatureList.FeatureRecord[index].FeatureTag == tag[0] ||
               FeatureList.FeatureRecord[index].FeatureTag == tag[1]) {
-            if (m_featureMap.find(index) == m_featureMap.end()) {
+            if (!pdfium::ContainsKey(m_featureMap, index)) {
               m_featureMap[index] = index;
             }
           }

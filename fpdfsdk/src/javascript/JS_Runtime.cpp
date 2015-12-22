@@ -26,6 +26,7 @@
 #include "global.h"
 #include "report.h"
 #include "util.h"
+#include "third_party/base/stl_util.h"
 
 // static
 void IJS_Runtime::Initialize(unsigned int slot, void* isolate) {
@@ -206,11 +207,11 @@ v8::Local<v8::Context> CJS_Runtime::NewJSContext() {
 }
 
 void CJS_Runtime::AddObserver(Observer* observer) {
-  ASSERT(m_observers.find(observer) == m_observers.end());
+  ASSERT(!pdfium::ContainsKey(m_observers, observer));
   m_observers.insert(observer);
 }
 
 void CJS_Runtime::RemoveObserver(Observer* observer) {
-  ASSERT(m_observers.find(observer) != m_observers.end());
+  ASSERT(pdfium::ContainsKey(m_observers, observer));
   m_observers.erase(observer);
 }
