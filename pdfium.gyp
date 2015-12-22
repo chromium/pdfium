@@ -508,7 +508,6 @@
         'core/src/fxge/ge/fx_ge_fontmap.cpp',
         'core/src/fxge/ge/fx_ge_linux.cpp',
         'core/src/fxge/ge/fx_ge_path.cpp',
-        'core/src/fxge/ge/fx_ge_ps.cpp',
         'core/src/fxge/ge/fx_ge_text.cpp',
         'core/src/fxge/ge/text_int.h',
       ],

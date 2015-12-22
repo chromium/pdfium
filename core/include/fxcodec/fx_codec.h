@@ -25,7 +25,6 @@ class ICodec_JpxModule;
 class ICodec_Jbig2Module;
 class ICodec_IccModule;
 class ICodec_FlateModule;
-class ICodec_Jbig2Encoder;
 class ICodec_ScanlineDecoder;
 
 class CCodec_ModuleMgr {
@@ -52,14 +51,6 @@ class CCodec_ModuleMgr {
 class ICodec_BasicModule {
  public:
   virtual ~ICodec_BasicModule() {}
-  virtual FX_BOOL RunLengthEncode(const uint8_t* src_buf,
-                                  FX_DWORD src_size,
-                                  uint8_t*& dest_buf,
-                                  FX_DWORD& dest_size) = 0;
-  virtual FX_BOOL A85Encode(const uint8_t* src_buf,
-                            FX_DWORD src_size,
-                            uint8_t*& dest_buf,
-                            FX_DWORD& dest_size) = 0;
   virtual ICodec_ScanlineDecoder* CreateRunLengthDecoder(const uint8_t* src_buf,
                                                          FX_DWORD src_size,
                                                          int width,
@@ -117,18 +108,14 @@ class ICodec_FlateModule {
                                     FX_DWORD estimated_size,
                                     uint8_t*& dest_buf,
                                     FX_DWORD& dest_size) = 0;
-  virtual FX_BOOL Encode(const uint8_t* src_buf,
+  virtual bool Encode(const uint8_t* src_buf,
+                      FX_DWORD src_size,
+                      uint8_t** dest_buf,
+                      FX_DWORD* dest_size) = 0;
+  virtual bool PngEncode(const uint8_t* src_buf,
                          FX_DWORD src_size,
-                         int predictor,
-                         int Colors,
-                         int BitsPerComponent,
-                         int Columns,
-                         uint8_t*& dest_buf,
-                         FX_DWORD& dest_size) = 0;
-  virtual FX_BOOL Encode(const uint8_t* src_buf,
-                         FX_DWORD src_size,
-                         uint8_t*& dest_buf,
-                         FX_DWORD& dest_size) = 0;
+                         uint8_t** dest_buf,
+                         FX_DWORD* dest_size) = 0;
 };
 class ICodec_FaxModule {
  public:
@@ -144,14 +131,8 @@ class ICodec_FaxModule {
                                                 FX_BOOL BlackIs1,
                                                 int Columns,
                                                 int Rows) = 0;
-
-  virtual FX_BOOL Encode(const uint8_t* src_buf,
-                         int width,
-                         int height,
-                         int pitch,
-                         uint8_t*& dest_buf,
-                         FX_DWORD& dest_size) = 0;
 };
+
 class ICodec_JpegModule {
  public:
   virtual ~ICodec_JpegModule() {}
@@ -163,22 +144,13 @@ class ICodec_JpegModule {
                                                 int nComps,
                                                 FX_BOOL ColorTransform) = 0;
 
-  virtual FX_BOOL LoadInfo(const uint8_t* src_buf,
-                           FX_DWORD src_size,
-                           int& width,
-                           int& height,
-                           int& num_components,
-                           int& bits_per_components,
-                           FX_BOOL& color_transform,
-                           uint8_t** icc_buf_ptr = NULL,
-                           FX_DWORD* icc_length = NULL) = 0;
-
-  virtual FX_BOOL Encode(const class CFX_DIBSource* pSource,
-                         uint8_t*& dest_buf,
-                         FX_STRSIZE& dest_size,
-                         int quality = 75,
-                         const uint8_t* icc_buf = NULL,
-                         FX_DWORD icc_length = 0) = 0;
+  virtual bool LoadInfo(const uint8_t* src_buf,
+                        FX_DWORD src_size,
+                        int* width,
+                        int* height,
+                        int* num_components,
+                        int* bits_per_components,
+                        bool* color_transform) = 0;
 
   virtual void* Start() = 0;
 
@@ -242,10 +214,7 @@ class ICodec_Jbig2Module {
                                         IFX_Pause* pPause) = 0;
   virtual void DestroyJbig2Context(void* pJbig2Content) = 0;
 };
-class ICodec_Jbig2Encoder {
- public:
-  virtual ~ICodec_Jbig2Encoder() {}
-};
+
 class ICodec_IccModule {
  public:
   typedef enum {

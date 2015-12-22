@@ -22,14 +22,6 @@ class CFX_IccTransformCache;
 class CCodec_BasicModule : public ICodec_BasicModule {
  public:
   // ICodec_BasicModule:
-  FX_BOOL RunLengthEncode(const uint8_t* src_buf,
-                          FX_DWORD src_size,
-                          uint8_t*& dest_buf,
-                          FX_DWORD& dest_size) override;
-  FX_BOOL A85Encode(const uint8_t* src_buf,
-                    FX_DWORD src_size,
-                    uint8_t*& dest_buf,
-                    FX_DWORD& dest_size) override;
   ICodec_ScanlineDecoder* CreateRunLengthDecoder(const uint8_t* src_buf,
                                                  FX_DWORD src_size,
                                                  int width,
@@ -113,12 +105,6 @@ class CCodec_FaxModule : public ICodec_FaxModule {
                                         FX_BOOL BlackIs1,
                                         int Columns,
                                         int Rows) override;
-  FX_BOOL Encode(const uint8_t* src_buf,
-                 int width,
-                 int height,
-                 int pitch,
-                 uint8_t*& dest_buf,
-                 FX_DWORD& dest_size) override;
 };
 
 class CCodec_FlateModule : public ICodec_FlateModule {
@@ -144,18 +130,14 @@ class CCodec_FlateModule : public ICodec_FlateModule {
                                     FX_DWORD estimated_size,
                                     uint8_t*& dest_buf,
                                     FX_DWORD& dest_size);
-  virtual FX_BOOL Encode(const uint8_t* src_buf,
+  virtual bool Encode(const uint8_t* src_buf,
+                      FX_DWORD src_size,
+                      uint8_t** dest_buf,
+                      FX_DWORD* dest_size);
+  virtual bool PngEncode(const uint8_t* src_buf,
                          FX_DWORD src_size,
-                         int predictor,
-                         int Colors,
-                         int BitsPerComponent,
-                         int Columns,
-                         uint8_t*& dest_buf,
-                         FX_DWORD& dest_size);
-  virtual FX_BOOL Encode(const uint8_t* src_buf,
-                         FX_DWORD src_size,
-                         uint8_t*& dest_buf,
-                         FX_DWORD& dest_size);
+                         uint8_t** dest_buf,
+                         FX_DWORD* dest_size);
 };
 
 class CCodec_JpegModule : public ICodec_JpegModule {
@@ -167,21 +149,13 @@ class CCodec_JpegModule : public ICodec_JpegModule {
                                         int height,
                                         int nComps,
                                         FX_BOOL ColorTransform) override;
-  FX_BOOL LoadInfo(const uint8_t* src_buf,
-                   FX_DWORD src_size,
-                   int& width,
-                   int& height,
-                   int& num_components,
-                   int& bits_per_components,
-                   FX_BOOL& color_transform,
-                   uint8_t** icc_buf_ptr,
-                   FX_DWORD* icc_length) override;
-  FX_BOOL Encode(const CFX_DIBSource* pSource,
-                 uint8_t*& dest_buf,
-                 FX_STRSIZE& dest_size,
-                 int quality,
-                 const uint8_t* icc_buf,
-                 FX_DWORD icc_length) override;
+  bool LoadInfo(const uint8_t* src_buf,
+                FX_DWORD src_size,
+                int* width,
+                int* height,
+                int* num_components,
+                int* bits_per_components,
+                bool* color_transform) override;
   void* Start() override;
   void Finish(void* pContext) override;
   void Input(void* pContext,

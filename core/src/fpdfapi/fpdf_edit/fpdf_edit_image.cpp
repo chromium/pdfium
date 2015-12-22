@@ -16,11 +16,12 @@ CPDF_Dictionary* CPDF_Image::InitJPEG(uint8_t* pData, FX_DWORD size) {
   int32_t height;
   int32_t num_comps;
   int32_t bits;
-  FX_BOOL color_trans;
+  bool color_trans;
   if (!CPDF_ModuleMgr::Get()->GetJpegModule()->LoadInfo(
-          pData, size, width, height, num_comps, bits, color_trans)) {
-    return NULL;
+          pData, size, &width, &height, &num_comps, &bits, &color_trans)) {
+    return nullptr;
   }
+
   CPDF_Dictionary* pDict = new CPDF_Dictionary;
   pDict->SetAtName("Type", "XObject");
   pDict->SetAtName("Subtype", "Image");
