@@ -7,6 +7,7 @@
 #include "render_int.h"
 
 #include <utility>
+#include <vector>
 
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_pageobj.h"

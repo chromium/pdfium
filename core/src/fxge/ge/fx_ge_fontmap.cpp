@@ -5,6 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include <limits>
+#include <vector>
 
 #include "core/include/fxge/fx_freetype.h"
 #include "core/include/fxge/fx_ge.h"
