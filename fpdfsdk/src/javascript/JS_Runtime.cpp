@@ -26,6 +26,7 @@
 #include "global.h"
 #include "report.h"
 #include "util.h"
+#include "third_party/base/stl_util.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "../../../xfa/src/fxjse/src/value.h"
@@ -326,11 +327,11 @@ FX_BOOL CJS_Runtime::SetHValueByName(const CFX_ByteStringC& utf8Name,
 
 #endif
 void CJS_Runtime::AddObserver(Observer* observer) {
-  ASSERT(m_observers.find(observer) == m_observers.end());
+  ASSERT(!pdfium::ContainsKey(m_observers, observer));
   m_observers.insert(observer);
 }
 
 void CJS_Runtime::RemoveObserver(Observer* observer) {
-  ASSERT(m_observers.find(observer) != m_observers.end());
+  ASSERT(pdfium::ContainsKey(m_observers, observer));
   m_observers.erase(observer);
 }

@@ -7,6 +7,7 @@
 #include "core/include/fpdfapi/fpdf_parser.h"
 
 #include "core/include/fxcrt/fx_string.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -284,12 +285,10 @@ CPDF_Object* CPDF_Object::CloneInternal(FX_BOOL bDirect,
     case PDFOBJ_REFERENCE: {
       const CPDF_Reference* pRef = AsReference();
       FX_DWORD obj_num = pRef->GetRefObjNum();
-      if (bDirect && visited->find(obj_num) == visited->end()) {
+      if (bDirect && !pdfium::ContainsKey(*visited, obj_num)) {
         visited->insert(obj_num);
-        if (!pRef->GetDirect())
-          return nullptr;
-
-        return pRef->GetDirect()->CloneInternal(TRUE, visited);
+        auto* pDirect = pRef->GetDirect();
+        return pDirect ? pDirect->CloneInternal(TRUE, visited) : nullptr;
       }
       return new CPDF_Reference(pRef->m_pObjList, obj_num);
     }

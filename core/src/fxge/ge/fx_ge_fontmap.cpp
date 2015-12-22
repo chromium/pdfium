@@ -9,7 +9,7 @@
 #include "core/include/fxge/fx_freetype.h"
 #include "core/include/fxge/fx_ge.h"
 #include "core/src/fxge/fontdata/chromefontdata/chromefontdata.h"
-#include "text_int.h"
+#include "core/src/fxge/ge/text_int.h"
 #include "third_party/base/stl_util.h"
 
 #define GET_TT_SHORT(w) (FX_WORD)(((w)[0] << 8) | (w)[1])
@@ -1426,9 +1426,9 @@ void CFX_FolderFontInfo::ReportFace(CFX_ByteString& path,
   if (style != "Regular") {
     facename += " " + style;
   }
-  if (m_FontList.find(facename) != m_FontList.end()) {
+  if (pdfium::ContainsKey(m_FontList, facename))
     return;
-  }
+
   CFX_FontFaceInfo* pInfo =
       new CFX_FontFaceInfo(path, facename, tables, offset, filesize);
   CFX_ByteString os2 = FPDF_LoadTableFromTT(pFile, tables, nTables, 0x4f532f32);

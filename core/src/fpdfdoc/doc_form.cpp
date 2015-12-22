@@ -6,6 +6,7 @@
 
 #include "core/include/fpdfdoc/fpdf_doc.h"
 #include "doc_utils.h"
+#include "third_party/base/stl_util.h"
 
 const int nMaxRecursion = 32;
 
@@ -846,8 +847,7 @@ bool CPDF_InterForm::ResetForm(const std::vector<CPDF_FormField*>& fields,
     if (!pField)
       continue;
 
-    auto it = std::find(fields.begin(), fields.end(), pField);
-    if (bIncludeOrExclude == (it != fields.end()))
+    if (bIncludeOrExclude == pdfium::ContainsValue(fields, pField))
       pField->ResetField(bNotify);
   }
   if (bNotify && m_pFormNotify)
@@ -1019,10 +1019,8 @@ CPDF_FormField* CPDF_InterForm::CheckRequiredFields(
       continue;
 
     bool bFind = true;
-    if (fields) {
-      auto it = std::find(fields->begin(), fields->end(), pField);
-      bFind = (it != fields->end());
-    }
+    if (fields)
+      bFind = pdfium::ContainsValue(*fields, pField);
     if (bIncludeOrExclude == bFind) {
       CPDF_Dictionary* pFieldDict = pField->m_pDict;
       if ((dwFlags & 0x02) != 0 && pFieldDict->GetString("V").IsEmpty()) {
@@ -1075,8 +1073,7 @@ CFDF_Document* CPDF_InterForm::ExportToFDF(
     if (dwFlags & 0x04)
       continue;
 
-    auto it = std::find(fields.begin(), fields.end(), pField);
-    if (bIncludeOrExclude == (it != fields.end())) {
+    if (bIncludeOrExclude == pdfium::ContainsValue(fields, pField)) {
       if ((dwFlags & 0x02) != 0 && pField->m_pDict->GetString("V").IsEmpty())
         continue;
 

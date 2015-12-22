@@ -596,7 +596,7 @@ FX_BOOL CPDF_Parser::LoadAllCrossRefV5(FX_FILESIZE xrefpos) {
       return FALSE;
     }
     // Check for circular references.
-    if (seen_xrefpos.find(xrefpos) != seen_xrefpos.end()) {
+    if (pdfium::ContainsKey(seen_xrefpos, xrefpos)) {
       return FALSE;
     }
   }
@@ -1204,7 +1204,7 @@ CPDF_Object* CPDF_Parser::ParseIndirectObject(CPDF_IndirectObjects* pObjList,
   const int32_t offset = GetStreamFirst(pObjStream);
 
   // Read object numbers from |pObjStream| into a cache.
-  if (m_ObjCache.find(pObjStream) == m_ObjCache.end()) {
+  if (!pdfium::ContainsKey(m_ObjCache, pObjStream)) {
     for (int32_t i = GetStreamNCount(pObjStream); i > 0; --i) {
       FX_DWORD thisnum = syntax.GetDirectNum();
       FX_DWORD thisoff = syntax.GetDirectNum();
@@ -1634,7 +1634,7 @@ FX_BOOL CPDF_Parser::LoadLinearizedAllCrossRefV5(FX_FILESIZE xrefpos) {
       return FALSE;
     }
     // Check for circular references.
-    if (seen_xrefpos.find(xrefpos) != seen_xrefpos.end()) {
+    if (pdfium::ContainsKey(seen_xrefpos, xrefpos)) {
       return FALSE;
     }
   }
@@ -2766,7 +2766,7 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
                              CPDF_PageNode* pPageNode,
                              IFX_DownloadHints* pHints);
   FX_BOOL CheckPageCount(IFX_DownloadHints* pHints);
-  FX_BOOL IsFirstCheck(int iPage);
+  bool IsFirstCheck(int iPage);
   void ResetFirstCheck(int iPage);
   FX_BOOL IsDataAvail(FX_FILESIZE offset,
                       FX_DWORD size,
@@ -3349,12 +3349,8 @@ FX_BOOL CPDF_DataAvail::PreparePageItem() {
   m_docStatus = PDF_DATAAVAIL_PAGETREE;
   return TRUE;
 }
-FX_BOOL CPDF_DataAvail::IsFirstCheck(int iPage) {
-  if (m_pageMapCheckState.find(iPage) != m_pageMapCheckState.end())
-    return FALSE;
-
-  m_pageMapCheckState.insert(iPage);
-  return TRUE;
+bool CPDF_DataAvail::IsFirstCheck(int iPage) {
+  return m_pageMapCheckState.insert(iPage).second;
 }
 void CPDF_DataAvail::ResetFirstCheck(int iPage) {
   m_pageMapCheckState.erase(iPage);
@@ -4381,9 +4377,9 @@ int CPDF_DataAvail::IsPageAvail(int32_t iPage, IFX_DownloadHints* pHints) {
     m_objs_array.RemoveAll();
     m_objnum_array.RemoveAll();
   }
-  if (m_pagesLoadState.find(iPage) != m_pagesLoadState.end()) {
+  if (pdfium::ContainsKey(m_pagesLoadState, iPage))
     return DataAvailable;
-  }
+
   if (m_bLinearized) {
     if ((FX_DWORD)iPage == m_dwFirstPageNo) {
       m_pagesLoadState.insert(iPage);
