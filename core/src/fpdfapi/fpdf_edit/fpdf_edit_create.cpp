@@ -1319,16 +1319,19 @@ int32_t CPDF_Creator::WriteOldIndirectObject(FX_DWORD objnum) {
   return 1;
 }
 int32_t CPDF_Creator::WriteOldObjs(IFX_Pause* pPause) {
-  FX_DWORD nOldSize = m_pParser->m_CrossRef.GetSize();
+  FX_DWORD nLastObjNum = m_pParser->GetLastObjNum();
+  if (!m_pParser->IsValidObjectNumber(nLastObjNum))
+    return 0;
+
   FX_DWORD objnum = (FX_DWORD)(uintptr_t)m_Pos;
-  for (; objnum < nOldSize; objnum++) {
+  for (; objnum <= nLastObjNum; ++objnum) {
     int32_t iRet = WriteOldIndirectObject(objnum);
-    if (!iRet) {
-      continue;
-    }
-    if (iRet < 0) {
+    if (iRet < 0)
       return iRet;
-    }
+
+    if (!iRet)
+      continue;
+
     m_ObjectSize[objnum] = (FX_DWORD)(m_Offset - m_ObjectOffset[objnum]);
     if (pPause && pPause->NeedToPauseNow()) {
       m_Pos = (void*)(uintptr_t)(objnum + 1);
@@ -1389,7 +1392,6 @@ void CPDF_Creator::InitOldObjNumOffsets() {
 void CPDF_Creator::InitNewObjNumOffsets() {
   FX_BOOL bIncremental = (m_dwFlags & FPDFCREATE_INCREMENTAL) != 0;
   FX_BOOL bNoOriginal = (m_dwFlags & FPDFCREATE_NO_ORIGINAL) != 0;
-  FX_DWORD nOldSize = m_pParser ? m_pParser->m_CrossRef.GetSize() : 0;
   FX_POSITION pos = m_pDocument->m_IndirectObjs.GetStartPosition();
   while (pos) {
     size_t key = 0;
@@ -1403,10 +1405,9 @@ void CPDF_Creator::InitNewObjNumOffsets() {
       if (!pObj->IsModified()) {
         continue;
       }
-    } else {
-      if (objnum < nOldSize && m_pParser->m_V5Type[objnum] != 0) {
-        continue;
-      }
+    } else if (m_pParser->IsValidObjectNumber(objnum) &&
+               m_pParser->m_V5Type[objnum]) {
+      continue;
     }
     AppendNewObjNum(objnum);
   }
@@ -1433,8 +1434,8 @@ void CPDF_Creator::InitNewObjNumOffsets() {
   FX_BOOL bNewStart = FALSE;
   for (; i < iCount; i++) {
     FX_DWORD dwCurObjNum = m_NewObjNumArray.ElementAt(i);
-    FX_BOOL bExist =
-        (dwCurObjNum < nOldSize && m_ObjectOffset.GetPtrAt(dwCurObjNum));
+    bool bExist = m_pParser->IsValidObjectNumber(dwCurObjNum) &&
+                  m_ObjectOffset.GetPtrAt(dwCurObjNum);
     if (bExist || dwCurObjNum - dwLastObjNum > 1) {
       if (!bNewStart) {
         m_ObjectOffset.Add(dwStartObjNum, dwLastObjNum - dwStartObjNum + 1);
@@ -1555,7 +1556,7 @@ int32_t CPDF_Creator::WriteDoc_Stage1(IFX_Pause* pPause) {
             m_pParser->m_V5Type[objnum] == 255) {
           continue;
         }
-        m_ObjectOffset[objnum] = m_pParser->m_CrossRef[objnum];
+        m_ObjectOffset[objnum] = m_pParser->m_ObjectInfo[objnum].pos;
         if (bObjStm) {
           m_pXRefStream->AddObjectNumberToIndexArray(objnum);
         }
