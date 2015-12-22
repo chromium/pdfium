@@ -100,8 +100,8 @@ void CXFA_FFPushButton::UnloadWidget() {
   }
   CXFA_FFField::UnloadWidget();
 }
-FX_BOOL CXFA_FFPushButton::LayoutWidget() {
-  CXFA_FFWidget::LayoutWidget();
+FX_BOOL CXFA_FFPushButton::PerformLayout() {
+  CXFA_FFWidget::PerformLayout();
   CFX_RectF rtWidget;
   GetRectWithoutRotate(rtWidget);
   m_rtUI = rtWidget;

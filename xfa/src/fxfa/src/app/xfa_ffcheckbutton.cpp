@@ -81,8 +81,8 @@ void CXFA_FFCheckButton::UpdateWidgetProperty() {
   pCheckBox->ModifyStylesEx(
       dwStyleEx, FWL_STYLEEXT_CKB_SignShapeMask | FWL_STYLEEXT_CKB_3State);
 }
-FX_BOOL CXFA_FFCheckButton::LayoutWidget() {
-  CXFA_FFWidget::LayoutWidget();
+FX_BOOL CXFA_FFCheckButton::PerformLayout() {
+  CXFA_FFWidget::PerformLayout();
   FX_FLOAT fCheckSize = m_pDataAcc->GetCheckButtonSize();
   CXFA_Margin mgWidget = m_pDataAcc->GetMargin();
   CFX_RectF rtWidget;

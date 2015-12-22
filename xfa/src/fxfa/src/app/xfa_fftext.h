@@ -20,7 +20,7 @@ class CXFA_FFText : public CXFA_FFDraw {
                             FX_DWORD dwStatus = 0,
                             int32_t iRotate = 0);
   virtual FX_BOOL IsLoaded();
-  virtual FX_BOOL LayoutWidget();
+  virtual FX_BOOL PerformLayout();
 
  private:
   virtual const FX_WCHAR* GetLinkURLAtPoint(FX_FLOAT fx, FX_FLOAT fy);

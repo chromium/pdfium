@@ -530,7 +530,7 @@ void CXFA_FFNotify::OnValueChanged(CXFA_Node* pSender,
       if (bUpdateProperty) {
         pWidget->UpdateWidgetProperty();
       }
-      pWidget->LayoutWidget();
+      pWidget->PerformLayout();
       pWidget->AddInvalidateRect();
     }
   } else {
@@ -598,7 +598,7 @@ void CXFA_FFNotify::OnLayoutItemAdd(CXFA_FFDocView* pDocView,
       pWidget->GetWidgetRect(rtOld);
       CFX_RectF rtNew = pWidget->ReCacheWidgetRect();
       if (rtOld != rtNew) {
-        pWidget->LayoutWidget();
+        pWidget->PerformLayout();
       }
     } else {
       pWidget->LoadWidget();

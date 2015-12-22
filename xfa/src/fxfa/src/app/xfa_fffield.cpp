@@ -123,7 +123,7 @@ FX_BOOL CXFA_FFField::IsLoaded() {
 FX_BOOL CXFA_FFField::LoadWidget() {
   SetFWLThemeProvider();
   m_pDataAcc->LoadCaption();
-  LayoutWidget();
+  PerformLayout();
   return TRUE;
 }
 void CXFA_FFField::UnloadWidget() {
@@ -148,8 +148,8 @@ void CXFA_FFField::SetEditScrollOffset() {
     ((CFWL_Edit*)m_pNormalWidget)->SetScrollOffset(fScrollOffset);
   }
 }
-FX_BOOL CXFA_FFField::LayoutWidget() {
-  CXFA_FFWidget::LayoutWidget();
+FX_BOOL CXFA_FFField::PerformLayout() {
+  CXFA_FFWidget::PerformLayout();
   CapPlacement();
   LayoutCaption();
   SetFWLRect();

@@ -61,7 +61,7 @@ class CXFA_FFWidget : public IXFA_Widget,
   virtual FX_BOOL IsLoaded();
   virtual FX_BOOL LoadWidget();
   virtual void UnloadWidget();
-  virtual FX_BOOL LayoutWidget();
+  virtual FX_BOOL PerformLayout();
   virtual FX_BOOL UpdateFWLData();
   virtual void UpdateWidgetProperty();
   virtual FX_BOOL OnMouseEnter();

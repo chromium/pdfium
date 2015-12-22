@@ -115,12 +115,11 @@ FX_BOOL CXFA_FFWidget::IsLoaded() {
   return m_pPageView != NULL;
 }
 FX_BOOL CXFA_FFWidget::LoadWidget() {
-  LayoutWidget();
-  ;
+  PerformLayout();
   return TRUE;
 }
 void CXFA_FFWidget::UnloadWidget() {}
-FX_BOOL CXFA_FFWidget::LayoutWidget() {
+FX_BOOL CXFA_FFWidget::PerformLayout() {
   ReCacheWidgetRect();
   return TRUE;
 }

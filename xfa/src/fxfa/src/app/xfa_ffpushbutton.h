@@ -20,7 +20,7 @@ class CXFA_FFPushButton : public CXFA_FFField {
                             int32_t iRotate = 0);
   virtual FX_BOOL LoadWidget();
   virtual void UnloadWidget();
-  virtual FX_BOOL LayoutWidget();
+  virtual FX_BOOL PerformLayout();
   virtual void UpdateWidgetProperty();
   virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
   virtual FWL_ERR OnProcessEvent(CFWL_Event* pEvent);

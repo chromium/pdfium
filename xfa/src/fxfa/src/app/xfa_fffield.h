@@ -24,7 +24,7 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   virtual FX_BOOL IsLoaded();
   virtual FX_BOOL LoadWidget();
   virtual void UnloadWidget();
-  virtual FX_BOOL LayoutWidget();
+  virtual FX_BOOL PerformLayout();
   virtual void UpdateFWL();
   FX_DWORD UpdateUIProperty();
   virtual FX_BOOL OnMouseEnter();

@@ -17,7 +17,7 @@ class CXFA_FFCheckButton : public CXFA_FFField {
                             int32_t iRotate = 0);
 
   virtual FX_BOOL LoadWidget();
-  virtual FX_BOOL LayoutWidget();
+  virtual FX_BOOL PerformLayout();
   virtual FX_BOOL UpdateFWLData();
   virtual void UpdateWidgetProperty();
   virtual FX_BOOL OnLButtonUp(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
