@@ -540,27 +540,30 @@ CFX_ByteString PDF_EncodeString(const CFX_ByteString& src, FX_BOOL bHex) {
   result.AppendChar(')');
   return result.GetByteString();
 }
-
-bool FlateEncode(const uint8_t* src_buf,
+void FlateEncode(const uint8_t* src_buf,
                  FX_DWORD src_size,
-                 uint8_t** dest_buf,
-                 FX_DWORD* dest_size) {
+                 uint8_t*& dest_buf,
+                 FX_DWORD& dest_size) {
   CCodec_ModuleMgr* pEncoders = CPDF_ModuleMgr::Get()->GetCodecModule();
-  return pEncoders &&
-         pEncoders->GetFlateModule()->Encode(src_buf, src_size, dest_buf,
-                                             dest_size);
+  if (pEncoders) {
+    pEncoders->GetFlateModule()->Encode(src_buf, src_size, dest_buf, dest_size);
+  }
 }
-
-bool PngEncode(const uint8_t* src_buf,
-               FX_DWORD src_size,
-               uint8_t** dest_buf,
-               FX_DWORD* dest_size) {
+void FlateEncode(const uint8_t* src_buf,
+                 FX_DWORD src_size,
+                 int predictor,
+                 int Colors,
+                 int BitsPerComponent,
+                 int Columns,
+                 uint8_t*& dest_buf,
+                 FX_DWORD& dest_size) {
   CCodec_ModuleMgr* pEncoders = CPDF_ModuleMgr::Get()->GetCodecModule();
-  return pEncoders &&
-         pEncoders->GetFlateModule()->Encode(src_buf, src_size, dest_buf,
-                                             dest_size);
+  if (pEncoders) {
+    pEncoders->GetFlateModule()->Encode(src_buf, src_size, predictor, Colors,
+                                        BitsPerComponent, Columns, dest_buf,
+                                        dest_size);
+  }
 }
-
 FX_DWORD FlateDecode(const uint8_t* src_buf,
                      FX_DWORD src_size,
                      uint8_t*& dest_buf,

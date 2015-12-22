@@ -307,11 +307,11 @@ class CPDF_FlateEncoder {
  public:
   CPDF_FlateEncoder();
   ~CPDF_FlateEncoder();
-  bool Initialize(CPDF_Stream* pStream, FX_BOOL bFlateEncode);
-  bool Initialize(const uint8_t* pBuffer,
-                  FX_DWORD size,
-                  bool bFlateEncode,
-                  bool bXRefStream);
+  FX_BOOL Initialize(CPDF_Stream* pStream, FX_BOOL bFlateEncode);
+  FX_BOOL Initialize(const uint8_t* pBuffer,
+                     FX_DWORD size,
+                     FX_BOOL bFlateEncode,
+                     FX_BOOL bXRefStream = FALSE);
   void CloneDict();
   uint8_t* m_pData;
   FX_DWORD m_dwSize;
@@ -334,7 +334,8 @@ void CPDF_FlateEncoder::CloneDict() {
     m_bCloned = TRUE;
   }
 }
-bool CPDF_FlateEncoder::Initialize(CPDF_Stream* pStream, FX_BOOL bFlateEncode) {
+FX_BOOL CPDF_FlateEncoder::Initialize(CPDF_Stream* pStream,
+                                      FX_BOOL bFlateEncode) {
   m_Acc.LoadAllData(pStream, TRUE);
   if ((pStream && pStream->GetDict() &&
        pStream->GetDict()->KeyExist("Filter")) ||
@@ -353,41 +354,36 @@ bool CPDF_FlateEncoder::Initialize(CPDF_Stream* pStream, FX_BOOL bFlateEncode) {
       m_dwSize = m_Acc.GetSize();
       m_pDict = pStream->GetDict();
     }
-    return true;
+    return TRUE;
   }
-  m_pData = nullptr;
+  m_pData = NULL;
   m_dwSize = 0;
   m_bNewData = TRUE;
   m_bCloned = TRUE;
-  if (!::FlateEncode(m_Acc.GetData(), m_Acc.GetSize(), &m_pData, &m_dwSize))
-    return false;
-
+  ::FlateEncode(m_Acc.GetData(), m_Acc.GetSize(), m_pData, m_dwSize);
   m_pDict = ToDictionary(pStream->GetDict()->Clone());
   m_pDict->SetAtInteger("Length", m_dwSize);
   m_pDict->SetAtName("Filter", "FlateDecode");
   m_pDict->RemoveAt("DecodeParms");
-  return true;
+  return TRUE;
 }
-
-bool CPDF_FlateEncoder::Initialize(const uint8_t* pBuffer,
-                                   FX_DWORD size,
-                                   bool bFlateEncode,
-                                   bool bXRefStream) {
+FX_BOOL CPDF_FlateEncoder::Initialize(const uint8_t* pBuffer,
+                                      FX_DWORD size,
+                                      FX_BOOL bFlateEncode,
+                                      FX_BOOL bXRefStream) {
   if (!bFlateEncode) {
     m_pData = (uint8_t*)pBuffer;
     m_dwSize = size;
-    return true;
+    return TRUE;
   }
   m_bNewData = TRUE;
-  bool ret;
   if (bXRefStream) {
-    ret = ::PngEncode(pBuffer, size, &m_pData, &m_dwSize);
+    ::FlateEncode(pBuffer, size, 12, 1, 8, 7, m_pData, m_dwSize);
   } else {
-    ret = ::FlateEncode(pBuffer, size, &m_pData, &m_dwSize);
+    ::FlateEncode(pBuffer, size, m_pData, m_dwSize);
   }
-  return ret;
+  return TRUE;
 }
-
 CPDF_FlateEncoder::~CPDF_FlateEncoder() {
   if (m_bCloned && m_pDict) {
     m_pDict->Release();
@@ -522,15 +518,11 @@ FX_FILESIZE CPDF_ObjectStream::End(CPDF_Creator* pCreator) {
   } else {
     tempBuffer << m_Buffer;
     CPDF_FlateEncoder encoder;
-    if (!encoder.Initialize(tempBuffer.GetBuffer(), tempBuffer.GetLength(),
-                            pCreator->m_bCompress, false)) {
-      return -1;
-    }
+    encoder.Initialize(tempBuffer.GetBuffer(), tempBuffer.GetLength(),
+                       pCreator->m_bCompress);
     CPDF_Encryptor encryptor;
-    if (!encryptor.Initialize(pHandler, m_dwObjNum, encoder.m_pData,
-                              encoder.m_dwSize)) {
-      return -1;
-    }
+    encryptor.Initialize(pHandler, m_dwObjNum, encoder.m_pData,
+                         encoder.m_dwSize);
     if ((len = pFile->AppendDWord(encryptor.m_dwSize)) < 0) {
       return -1;
     }
@@ -776,21 +768,22 @@ FX_BOOL CPDF_XRefStream::GenerateXRefStream(CPDF_Creator* pCreator,
     }
     offset += len + 6;
   }
+  FX_BOOL bPredictor = TRUE;
   CPDF_FlateEncoder encoder;
-  if (!encoder.Initialize(m_Buffer.GetBuffer(), m_Buffer.GetLength(),
-                          pCreator->m_bCompress, true)) {
-    return FALSE;
-  }
+  encoder.Initialize(m_Buffer.GetBuffer(), m_Buffer.GetLength(),
+                     pCreator->m_bCompress, bPredictor);
   if (pCreator->m_bCompress) {
     if (pFile->AppendString("/Filter /FlateDecode") < 0) {
       return FALSE;
     }
     offset += 20;
-    if ((len = pFile->AppendString("/DecodeParms<</Columns 7/Predictor 12>>")) <
-        0) {
-      return FALSE;
+    if (bPredictor) {
+      if ((len = pFile->AppendString(
+               "/DecodeParms<</Columns 7/Predictor 12>>")) < 0) {
+        return FALSE;
+      }
+      offset += len;
     }
-    offset += len;
   }
   if (pFile->AppendString("/Length ") < 0) {
     return FALSE;
@@ -1009,10 +1002,8 @@ int32_t CPDF_Creator::WriteStream(const CPDF_Object* pStream,
                                   FX_DWORD objnum,
                                   CPDF_CryptoHandler* pCrypto) {
   CPDF_FlateEncoder encoder;
-  if (!encoder.Initialize(const_cast<CPDF_Stream*>(pStream->AsStream()),
-                          pStream == m_pMetadata ? FALSE : m_bCompress)) {
-    return -1;
-  }
+  encoder.Initialize(const_cast<CPDF_Stream*>(pStream->AsStream()),
+                     pStream == m_pMetadata ? FALSE : m_bCompress);
   CPDF_Encryptor encryptor;
   if (!encryptor.Initialize(pCrypto, objnum, encoder.m_pData,
                             encoder.m_dwSize)) {
@@ -1116,10 +1107,8 @@ int32_t CPDF_Creator::WriteDirectObj(FX_DWORD objnum,
         break;
       }
       CPDF_Encryptor encryptor;
-      if (!encryptor.Initialize(m_pCryptoHandler, objnum, (uint8_t*)str.c_str(),
-                                str.GetLength())) {
-        return -1;
-      }
+      encryptor.Initialize(m_pCryptoHandler, objnum, (uint8_t*)str.c_str(),
+                           str.GetLength());
       CFX_ByteString content = PDF_EncodeString(
           CFX_ByteString((const FX_CHAR*)encryptor.m_pData, encryptor.m_dwSize),
           bHex);
@@ -1131,17 +1120,11 @@ int32_t CPDF_Creator::WriteDirectObj(FX_DWORD objnum,
     }
     case PDFOBJ_STREAM: {
       CPDF_FlateEncoder encoder;
-      if (!encoder.Initialize(const_cast<CPDF_Stream*>(pObj->AsStream()),
-                              m_bCompress)) {
-        return -1;
-      }
-
+      encoder.Initialize(const_cast<CPDF_Stream*>(pObj->AsStream()),
+                         m_bCompress);
       CPDF_Encryptor encryptor;
       CPDF_CryptoHandler* pHandler = m_pCryptoHandler;
-      if (!encryptor.Initialize(pHandler, objnum, encoder.m_pData,
-                                encoder.m_dwSize)) {
-        return -1;
-      }
+      encryptor.Initialize(pHandler, objnum, encoder.m_pData, encoder.m_dwSize);
       if ((FX_DWORD)encoder.m_pDict->GetInteger("Length") !=
           encryptor.m_dwSize) {
         encoder.CloneDict();

@@ -615,11 +615,11 @@ int CPDF_DIBSource::CreateDecoder() {
         src_data, src_size, m_Width, m_Height, m_nComponents,
         pParams ? pParams->GetInteger("ColorTransform", 1) : 1);
     if (!m_pDecoder) {
-      bool bTransform = false;
+      FX_BOOL bTransform = FALSE;
       int comps, bpc;
       ICodec_JpegModule* pJpegModule = CPDF_ModuleMgr::Get()->GetJpegModule();
-      if (pJpegModule->LoadInfo(src_data, src_size, &m_Width, &m_Height, &comps,
-                                &bpc, &bTransform)) {
+      if (pJpegModule->LoadInfo(src_data, src_size, m_Width, m_Height, comps,
+                                bpc, bTransform)) {
         if (m_nComponents != comps) {
           FX_Free(m_pCompData);
           m_nComponents = comps;

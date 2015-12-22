@@ -47,14 +47,14 @@ TEST_F(FPDFParserDecodeEmbeddertest, FlateEncode) {
 
   for (size_t i = 0; i < FX_ArraySize(flate_encode_cases); ++i) {
     FlateEncodeCase* ptr = &flate_encode_cases[i];
-    unsigned char* buf;
-    unsigned int buf_size;
-    EXPECT_TRUE(FlateEncode(ptr->input, ptr->input_size, &buf, &buf_size));
-    ASSERT_TRUE(buf);
+    unsigned char* result;
+    unsigned int result_size;
+    FlateEncode(ptr->input, ptr->input_size, result, result_size);
+    ASSERT_TRUE(result);
     EXPECT_EQ(std::string((const char*)ptr->expected, ptr->expected_size),
-              std::string((const char*)buf, buf_size))
+              std::string((const char*)result, result_size))
         << " for case " << i;
-    FX_Free(buf);
+    FX_Free(result);
   }
 }
 

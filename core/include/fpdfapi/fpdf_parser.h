@@ -826,19 +826,18 @@ CFX_WideString FPDF_FileSpec_GetWin32Path(const CPDF_Object* pFileSpec);
 void FPDF_FileSpec_SetWin32Path(CPDF_Object* pFileSpec,
                                 const CFX_WideString& fullpath);
 
-bool FlateEncode(const uint8_t* src_buf,
+void FlateEncode(const uint8_t* src_buf,
                  FX_DWORD src_size,
-                 uint8_t** dest_buf,
-                 FX_DWORD* dest_size);
-
-// This used to have more parameters like the predictor and bpc, but there was
-// only one callers, so the interface has been simplified, the values are hard
-// coded, and dead code has been removed.
-bool PngEncode(const uint8_t* src_buf,
-               FX_DWORD src_size,
-               uint8_t** dest_buf,
-               FX_DWORD* dest_size);
-
+                 uint8_t*& dest_buf,
+                 FX_DWORD& dest_size);
+void FlateEncode(const uint8_t* src_buf,
+                 FX_DWORD src_size,
+                 int predictor,
+                 int Colors,
+                 int BitsPerComponent,
+                 int Columns,
+                 uint8_t*& dest_buf,
+                 FX_DWORD& dest_size);
 FX_DWORD FlateDecode(const uint8_t* src_buf,
                      FX_DWORD src_size,
                      uint8_t*& dest_buf,
