@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <list>
+#include <utility>
 #include <vector>
 
 #include "core/src/fxcodec/jbig2/JBig2_ArithDecoder.h"
@@ -1119,7 +1120,7 @@ int32_t CJBig2_Context::parseGenericRegion(CJBig2_Segment* pSegment,
       }
     }
     pGRD->USESKIP = 0;
-    m_pGRD = nonstd::move(pGRD);
+    m_pGRD = std::move(pGRD);
   }
   pSegment->m_nResultType = JBIG2_IMAGE_POINTER;
   if (m_pGRD->MMR == 0) {

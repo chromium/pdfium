@@ -327,7 +327,7 @@ FX_DWORD CPDF_Parser::SetEncryptHandler() {
     if (!pSecurityHandler->OnInit(this, m_pEncryptDict)) {
       return err;
     }
-    m_pSecurityHandler = nonstd::move(pSecurityHandler);
+    m_pSecurityHandler = std::move(pSecurityHandler);
     nonstd::unique_ptr<CPDF_CryptoHandler> pCryptoHandler(
         m_pSecurityHandler->CreateCryptoHandler());
     if (!pCryptoHandler->Init(m_pEncryptDict, m_pSecurityHandler.get())) {
@@ -456,8 +456,7 @@ FX_BOOL CPDF_Parser::LoadLinearizedCrossRefV4(FX_FILESIZE pos,
   FX_FILESIZE SavedPos = m_Syntax.SavePos();
   const int32_t recordsize = 20;
   std::vector<char> buf(1024 * recordsize + 1);
-  char* pBuf = pdfium::vector_as_array(&buf);
-  pBuf[1024 * recordsize] = '\0';
+  buf[1024 * recordsize] = '\0';
   int32_t nBlocks = count / 1024 + 1;
   for (int32_t block = 0; block < nBlocks; block++) {
     int32_t block_size = block == nBlocks - 1 ? count % 1024 : 1024;
@@ -465,12 +464,13 @@ FX_BOOL CPDF_Parser::LoadLinearizedCrossRefV4(FX_FILESIZE pos,
     if ((FX_FILESIZE)(dwStartPos + dwReadSize) > m_Syntax.m_FileLen) {
       return FALSE;
     }
-    if (!m_Syntax.ReadBlock(reinterpret_cast<uint8_t*>(pBuf), dwReadSize)) {
+    if (!m_Syntax.ReadBlock(reinterpret_cast<uint8_t*>(buf.data()),
+                            dwReadSize)) {
       return FALSE;
     }
     for (int32_t i = 0; i < block_size; i++) {
       FX_DWORD objnum = start_objnum + block * 1024 + i;
-      char* pEntry = pBuf + i * recordsize;
+      char* pEntry = &buf[i * recordsize];
       if (pEntry[17] == 'f') {
         m_ObjectInfo[objnum].pos = 0;
         m_V5Type.SetAtGrow(objnum, 0);
@@ -544,16 +544,15 @@ bool CPDF_Parser::LoadCrossRefV4(FX_FILESIZE pos,
     m_dwXrefStartObjNum = start_objnum;
     if (!bSkip) {
       std::vector<char> buf(1024 * recordsize + 1);
-      char* pBuf = pdfium::vector_as_array(&buf);
-      pBuf[1024 * recordsize] = '\0';
+      buf[1024 * recordsize] = '\0';
       int32_t nBlocks = count / 1024 + 1;
       for (int32_t block = 0; block < nBlocks; block++) {
         int32_t block_size = block == nBlocks - 1 ? count % 1024 : 1024;
-        m_Syntax.ReadBlock(reinterpret_cast<uint8_t*>(pBuf),
+        m_Syntax.ReadBlock(reinterpret_cast<uint8_t*>(buf.data()),
                            block_size * recordsize);
         for (int32_t i = 0; i < block_size; i++) {
           FX_DWORD objnum = start_objnum + block * 1024 + i;
-          char* pEntry = pBuf + i * recordsize;
+          char* pEntry = &buf[i * recordsize];
           if (pEntry[17] == 'f') {
             m_ObjectInfo[objnum].pos = 0;
             m_V5Type.SetAtGrow(objnum, 0);
@@ -3606,7 +3605,7 @@ FX_BOOL CPDF_DataAvail::CheckHintTables(IFX_DownloadHints* pHints) {
       ParseIndirectObjectAt(szHSStart, 0));
   CPDF_Stream* pStream = ToStream(pHintStream.get());
   if (pStream && pHintTables->LoadHintStream(pStream))
-    m_pHintTables = nonstd::move(pHintTables);
+    m_pHintTables = std::move(pHintTables);
 
   m_docStatus = PDF_DATAAVAIL_DONE;
   return TRUE;

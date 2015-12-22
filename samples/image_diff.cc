@@ -80,8 +80,8 @@ class Image {
 
     fclose(f);
 
-    if (!image_diff_png::DecodePNG(&compressed[0], compressed.size(),
-                                   &data_, &w_, &h_)) {
+    if (!image_diff_png::DecodePNG(compressed.data(), compressed.size(), &data_,
+                                   &w_, &h_)) {
       Clear();
       return false;
     }

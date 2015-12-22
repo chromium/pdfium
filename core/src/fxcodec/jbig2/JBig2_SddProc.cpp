@@ -18,9 +18,6 @@
 #include "core/src/fxcodec/jbig2/JBig2_SymbolDict.h"
 #include "core/src/fxcodec/jbig2/JBig2_TrdProc.h"
 #include "third_party/base/nonstd_unique_ptr.h"
-#include "third_party/base/stl_util.h"
-
-using pdfium::vector_as_array;
 
 CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
     CJBig2_ArithDecoder* pArithDecoder,
@@ -110,7 +107,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
         pGRD->GBAT[5] = SDAT[5];
         pGRD->GBAT[6] = SDAT[6];
         pGRD->GBAT[7] = SDAT[7];
-        BS = pGRD->decode_Arith(pArithDecoder, vector_as_array(gbContext));
+        BS = pGRD->decode_Arith(pArithDecoder, gbContext->data());
         if (!BS) {
           goto failed;
         }
@@ -198,8 +195,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
           ids.IARDX = IARDX.get();
           ids.IARDY = IARDY.get();
           ids.IAID = IAID.get();
-          BS = pDecoder->decode_Arith(pArithDecoder, vector_as_array(grContext),
-                                      &ids);
+          BS = pDecoder->decode_Arith(pArithDecoder, grContext->data(), &ids);
           if (!BS) {
             FX_Free(SBSYMS);
             goto failed;
@@ -234,7 +230,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
           pGRRD->GRAT[1] = SDRAT[1];
           pGRRD->GRAT[2] = SDRAT[2];
           pGRRD->GRAT[3] = SDRAT[3];
-          BS = pGRRD->decode(pArithDecoder, vector_as_array(grContext));
+          BS = pGRRD->decode(pArithDecoder, grContext->data());
           if (!BS) {
             FX_Free(SBSYMS);
             goto failed;
@@ -448,7 +444,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
           pDecoder->SBRAT[1] = SDRAT[1];
           pDecoder->SBRAT[2] = SDRAT[2];
           pDecoder->SBRAT[3] = SDRAT[3];
-          BS = pDecoder->decode_Huffman(pStream, vector_as_array(grContext));
+          BS = pDecoder->decode_Huffman(pStream, grContext->data());
           if (!BS) {
             FX_Free(SBSYMCODES);
             FX_Free(SBSYMS);
@@ -520,7 +516,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
           pGRRD->GRAT[3] = SDRAT[3];
           nonstd::unique_ptr<CJBig2_ArithDecoder> pArithDecoder(
               new CJBig2_ArithDecoder(pStream));
-          BS = pGRRD->decode(pArithDecoder.get(), vector_as_array(grContext));
+          BS = pGRRD->decode(pArithDecoder.get(), grContext->data());
           if (!BS) {
             FX_Free(SBSYMS);
             goto failed;

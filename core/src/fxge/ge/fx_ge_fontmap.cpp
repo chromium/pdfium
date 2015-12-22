@@ -711,7 +711,7 @@ CFX_ByteString CFX_FontMapper::GetPSNameFromTT(void* hFont) {
     return CFX_ByteString();
 
   std::vector<uint8_t> buffer(size);
-  uint8_t* buffer_ptr = pdfium::vector_as_array(&buffer);
+  uint8_t* buffer_ptr = buffer.data();
   FX_DWORD bytes_read =
       m_pFontInfo->GetFontData(hFont, kTableNAME, buffer_ptr, size);
   return (bytes_read == size) ? GetNameFromTT(buffer_ptr, 6) : CFX_ByteString();

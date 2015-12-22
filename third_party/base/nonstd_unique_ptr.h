@@ -74,17 +74,11 @@
 #include <stdlib.h>
 
 #include <ostream>
+#include <utility>
 
 #include "template_util.h"
 
 namespace nonstd {
-
-// Replacement for move, but doesn't allow things that are already
-// rvalue references.
-template <class T>
-T&& move(T& t) {
-  return static_cast<T&&>(t);
-}
 
 // Function object which deletes its parameter, which must be a pointer.
 // If C is an array type, invokes 'delete[]' on the parameter; otherwise,
@@ -244,7 +238,7 @@ class unique_ptr : public internal::unique_ptr_base<C, D> {
 
   // Move constructor.
   unique_ptr(unique_ptr&& that)
-      : internal::unique_ptr_base<C, D>(nonstd::move(that)) {}
+      : internal::unique_ptr_base<C, D>(std::move(that)) {}
 
   // operator=.  Allows assignment from a nullptr. Deletes the currently owned
   // object, if any.
@@ -317,7 +311,7 @@ class unique_ptr<C[], D> : public internal::unique_ptr_base<C, D> {
 
   // Move constructor.
   unique_ptr(unique_ptr&& that)
-      : internal::unique_ptr_base<C, D>(nonstd::move(that)) {}
+      : internal::unique_ptr_base<C, D>(std::move(that)) {}
 
   // operator=.  Allows assignment from a nullptr. Deletes the currently owned
   // array, if any.
