@@ -307,12 +307,6 @@ class CPWL_Note : public CPWL_NoteItem {
   CFX_WideString GetReplyString() const;
   void SetReplyString(const CFX_WideString& string);
 
-  // 0-normal / 1-caption / 2-leftbottom corner / 3-rightbottom corner / 4-close
-  // / 5-options
-  int32_t NoteHitTest(const CPDF_Point& point) const;
-  CPDF_Rect GetCaptionRect() const { return m_rcCaption; }
-  IPopup_Note* GetPopupNote() const { return m_pPopupNote; }
-
   // CPWL_NoteItem
   void SetSubjectName(const CFX_WideString& sName) override;
   void SetAuthorName(const CFX_WideString& sName) override;
@@ -350,9 +344,7 @@ class CPWL_Note : public CPWL_NoteItem {
   IPWL_NoteNotify* m_pNoteNotify;
   FX_BOOL m_bResizing;
   PWL_SCROLL_INFO m_OldScrollInfo;
-  CPDF_Rect m_rcCaption;
-  FX_BOOL m_bEnalbleNotify;
-  IPopup_Note* m_pPopupNote;
+  FX_BOOL m_bEnableNotify;
   CFX_WideString m_sReplyString;
 };
 

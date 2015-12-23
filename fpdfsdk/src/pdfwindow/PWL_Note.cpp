@@ -1059,9 +1059,7 @@ CPWL_Note::CPWL_Note(IPopup_Note* pPopupNote,
       m_pOptions(NULL),
       m_pNoteNotify(pNoteNotify),
       m_bResizing(FALSE),
-      m_rcCaption(0, 0, 0, 0),
-      m_bEnalbleNotify(TRUE),
-      m_pPopupNote(pPopupNote) {}
+      m_bEnableNotify(TRUE) {}
 
 CPWL_Note::~CPWL_Note() {}
 
@@ -1070,7 +1068,7 @@ IPWL_NoteItem* CPWL_Note::Reply() {
 }
 
 void CPWL_Note::EnableNotify(FX_BOOL bEnabled) {
-  m_bEnalbleNotify = bEnabled;
+  m_bEnableNotify = bEnabled;
 }
 
 void CPWL_Note::RePosChildWnd() {
@@ -1234,44 +1232,9 @@ void CPWL_Note::RePosNoteChildren() {
     rcContentsBar.left = rcContentsBar.right - PWL_SCROLLBAR_WIDTH;
     rcContentsBar.Normalize();
     m_pContentsBar->Move(rcContentsBar, TRUE, FALSE);
-
-    m_rcCaption = rcClient;
-    m_rcCaption.bottom = rcContents.top;
   }
 
   m_bResizing = FALSE;
-}
-
-// TODO(thestig): Make this return an enum.
-// 0-normal / 1-caption / 2-leftbottom corner / 3-rightbottom corner / 4-close /
-// 5-options
-int32_t CPWL_Note::NoteHitTest(const CPDF_Point& point) const {
-  GetClientRect();
-
-  if (m_pSubject->WndHitTest(m_pSubject->ParentToChild(point)))
-    return 1;
-  if (m_pDateTime->WndHitTest(m_pDateTime->ParentToChild(point)))
-    return 1;
-  if (m_pAuthor->WndHitTest(m_pAuthor->ParentToChild(point)))
-    return 1;
-  if (m_pIcon->WndHitTest(m_pIcon->ParentToChild(point)))
-    return 1;
-
-  if (m_pContents->WndHitTest(m_pContents->ParentToChild(point)))
-    return 0;
-  if (m_pContentsBar->WndHitTest(m_pContentsBar->ParentToChild(point)))
-    return 0;
-
-  if (m_pCloseBox->WndHitTest(m_pCloseBox->ParentToChild(point)))
-    return 4;
-  if (m_pLBBox->WndHitTest(m_pLBBox->ParentToChild(point)))
-    return 2;
-  if (m_pRBBox->WndHitTest(m_pRBBox->ParentToChild(point)))
-    return 3;
-  if (m_pOptions->WndHitTest(m_pOptions->ParentToChild(point)))
-    return 5;
-
-  return 1;
 }
 
 void CPWL_Note::CreateChildWnd(const PWL_CREATEPARAM& cp) {
@@ -1551,10 +1514,7 @@ const CPWL_Note* CPWL_Note::GetNote() const {
 }
 
 IPWL_NoteNotify* CPWL_Note::GetNoteNotify() const {
-  if (m_bEnalbleNotify)
-    return m_pNoteNotify;
-
-  return NULL;
+  return m_bEnableNotify ? m_pNoteNotify : nullptr;
 }
 
 void CPWL_Note::SetIconType(int32_t nType) {
