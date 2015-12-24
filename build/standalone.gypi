@@ -328,6 +328,14 @@
           'V8_USE_EXTERNAL_STARTUP_DATA',
         ],
       }],  # v8_use_external_startup_data==1
+      ['clang==1 or host_clang==1', {
+        # This is here so that all files get recompiled after a clang roll and
+        # when turning clang on or off.
+        # (defines are passed via the command line, and build systems rebuild
+        # things when their commandline changes). Nothing should ever read this
+        # define.
+        'defines': ['CR_CLANG_REVISION=<!(python <(DEPTH)/tools/clang/scripts/update.py --print-revision)'],
+      }],
     ],
   },
   'xcode_settings': {
