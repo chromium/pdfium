@@ -23,7 +23,7 @@ deps = {
     "https://chromium.googlesource.com/v8/v8.git@96cb90983775bfce634271a70180fdd1bfc23099",
 
   "v8/third_party/icu":
-    "https://chromium.googlesource.com/chromium/deps/icu46",
+    "https://chromium.googlesource.com/chromium/deps/icu.git@8d342a405be5ae8aacb1e16f0bc31c3a4fbf26a2",
 }
 
 deps_os = {
