@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "codec_int.h"
+#include "core/include/fpdfapi/fpdf_resource.h"
 #include "core/include/fxcodec/fx_codec.h"
 #include "core/include/fxcrt/fx_safe_types.h"
 #include "third_party/lcms2-2.6/include/lcms2.h"
@@ -660,7 +661,7 @@ void color_apply_conversion(opj_image_t* image) {
 }
 class CJPX_Decoder {
  public:
-  explicit CJPX_Decoder(bool use_colorspace);
+  explicit CJPX_Decoder(CPDF_ColorSpace* cs);
   ~CJPX_Decoder();
   FX_BOOL Init(const unsigned char* src_data, FX_DWORD src_size);
   void GetInfo(FX_DWORD* width, FX_DWORD* height, FX_DWORD* components);
@@ -674,15 +675,11 @@ class CJPX_Decoder {
   opj_image_t* image;
   opj_codec_t* l_codec;
   opj_stream_t* l_stream;
-  const bool m_UseColorSpace;
+  const CPDF_ColorSpace* const m_ColorSpace;
 };
 
-CJPX_Decoder::CJPX_Decoder(bool use_colorspace)
-    : image(nullptr),
-      l_codec(nullptr),
-      l_stream(nullptr),
-      m_UseColorSpace(use_colorspace) {
-}
+CJPX_Decoder::CJPX_Decoder(CPDF_ColorSpace* cs)
+    : image(nullptr), l_codec(nullptr), l_stream(nullptr), m_ColorSpace(cs) {}
 
 CJPX_Decoder::~CJPX_Decoder() {
   if (l_codec) {
@@ -724,6 +721,8 @@ FX_BOOL CJPX_Decoder::Init(const unsigned char* src_data, FX_DWORD src_size) {
   if (!l_codec) {
     return FALSE;
   }
+  if (m_ColorSpace && m_ColorSpace->GetFamily() == PDFCS_INDEXED)
+    parameters.flags |= OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG;
   opj_set_info_handler(l_codec, fx_info_callback, 00);
   opj_set_warning_handler(l_codec, fx_warning_callback, 00);
   opj_set_error_handler(l_codec, fx_error_callback, 00);
@@ -734,7 +733,7 @@ FX_BOOL CJPX_Decoder::Init(const unsigned char* src_data, FX_DWORD src_size) {
     image = NULL;
     return FALSE;
   }
-  image->pdfium_use_colorspace = m_UseColorSpace;
+  image->pdfium_use_colorspace = !!m_ColorSpace;
 
   if (!parameters.nb_tile_to_decode) {
     if (!opj_set_decode_area(l_codec, image, parameters.DA_x0, parameters.DA_y0,
@@ -865,8 +864,8 @@ CCodec_JpxModule::~CCodec_JpxModule() {
 
 CJPX_Decoder* CCodec_JpxModule::CreateDecoder(const uint8_t* src_buf,
                                               FX_DWORD src_size,
-                                              bool use_colorspace) {
-  nonstd::unique_ptr<CJPX_Decoder> decoder(new CJPX_Decoder(use_colorspace));
+                                              CPDF_ColorSpace* cs) {
+  nonstd::unique_ptr<CJPX_Decoder> decoder(new CJPX_Decoder(cs));
   return decoder->Init(src_buf, src_size) ? decoder.release() : nullptr;
 }
 

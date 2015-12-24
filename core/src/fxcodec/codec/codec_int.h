@@ -18,6 +18,7 @@
 
 class CFX_IccProfileCache;
 class CFX_IccTransformCache;
+class CPDF_ColorSpace;
 
 class CCodec_BasicModule : public ICodec_BasicModule {
  public:
@@ -332,7 +333,7 @@ class CCodec_JpxModule : public ICodec_JpxModule {
   // ICodec_JpxModule:
   CJPX_Decoder* CreateDecoder(const uint8_t* src_buf,
                               FX_DWORD src_size,
-                              bool use_colorspace) override;
+                              CPDF_ColorSpace* cs) override;
   void GetImageInfo(CJPX_Decoder* pDecoder,
                     FX_DWORD* width,
                     FX_DWORD* height,

@@ -684,9 +684,8 @@ void CPDF_DIBSource::LoadJpxBitmap() {
 
   nonstd::unique_ptr<JpxBitMapContext> context(
       new JpxBitMapContext(pJpxModule));
-  context->set_decoder(pJpxModule->CreateDecoder(m_pStreamAcc->GetData(),
-                                                 m_pStreamAcc->GetSize(),
-                                                 m_pColorSpace == nullptr));
+  context->set_decoder(pJpxModule->CreateDecoder(
+      m_pStreamAcc->GetData(), m_pStreamAcc->GetSize(), m_pColorSpace));
   if (!context->decoder())
     return;
 
