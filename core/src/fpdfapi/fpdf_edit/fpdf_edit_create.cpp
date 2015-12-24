@@ -1405,7 +1405,7 @@ void CPDF_Creator::InitNewObjNumOffsets() {
       if (!pObj->IsModified()) {
         continue;
       }
-    } else if (m_pParser->IsValidObjectNumber(objnum) &&
+    } else if (m_pParser && m_pParser->IsValidObjectNumber(objnum) &&
                m_pParser->m_V5Type[objnum]) {
       continue;
     }
@@ -1434,7 +1434,7 @@ void CPDF_Creator::InitNewObjNumOffsets() {
   FX_BOOL bNewStart = FALSE;
   for (; i < iCount; i++) {
     FX_DWORD dwCurObjNum = m_NewObjNumArray.ElementAt(i);
-    bool bExist = m_pParser->IsValidObjectNumber(dwCurObjNum) &&
+    bool bExist = m_pParser && m_pParser->IsValidObjectNumber(dwCurObjNum) &&
                   m_ObjectOffset.GetPtrAt(dwCurObjNum);
     if (bExist || dwCurObjNum - dwLastObjNum > 1) {
       if (!bNewStart) {
