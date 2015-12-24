@@ -15,6 +15,7 @@
 
 class CFX_DIBSource;
 class CJPX_Decoder;
+class CPDF_ColorSpace;
 class CPDF_PrivateData;
 class CPDF_StreamAcc;
 class ICodec_ScanlineDecoder;
@@ -207,7 +208,7 @@ class ICodec_JpxModule {
 
   virtual CJPX_Decoder* CreateDecoder(const uint8_t* src_buf,
                                       FX_DWORD src_size,
-                                      bool use_colorspace) = 0;
+                                      CPDF_ColorSpace* cs) = 0;
 
   virtual void GetImageInfo(CJPX_Decoder* pDecoder,
                             FX_DWORD* width,
