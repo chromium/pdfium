@@ -4381,6 +4381,8 @@ int CPDF_DataAvail::IsPageAvail(int32_t iPage, IFX_DownloadHints* pHints) {
 
   if (m_bLinearized) {
     if ((FX_DWORD)iPage == m_dwFirstPageNo) {
+      if (!CheckLinearizedFirstPage(iPage, pHints))
+        return DataNotAvailable;
       m_pagesLoadState.insert(iPage);
       return DataAvailable;
     }
