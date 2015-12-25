@@ -2975,10 +2975,10 @@ FX_DWORD CPDF_DataAvail::GetObjectSize(FX_DWORD objnum, FX_FILESIZE& offset) {
   if (!pParser || !pParser->IsValidObjectNumber(objnum))
     return 0;
 
-  if (pParser->m_V5Type[objnum] == 2) {
+  if (pParser->m_V5Type[objnum] == 2)
     objnum = pParser->m_ObjectInfo[objnum].pos;
-  } else if (pParser->m_V5Type[objnum] == 1 ||
-             pParser->m_V5Type[objnum] == 255) {
+
+  if (pParser->m_V5Type[objnum] == 1 || pParser->m_V5Type[objnum] == 255) {
     offset = pParser->m_ObjectInfo[objnum].pos;
     if (offset == 0) {
       return 0;
