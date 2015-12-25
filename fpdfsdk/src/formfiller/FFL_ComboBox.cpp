@@ -32,11 +32,8 @@ PWL_CREATEPARAM CFFL_ComboBox::GetCreateParam() {
     cp.dwFlags |= PCBS_ALLOWCUSTOMTEXT;
   }
 
-  if (!m_pFontMap) {
+  if (!m_pFontMap)
     m_pFontMap = new CBA_FontMap(m_pWidget, GetSystemHandler());
-    m_pFontMap->Initial();
-  }
-
   cp.pFontMap = m_pFontMap;
   cp.pFocusHandler = this;
 

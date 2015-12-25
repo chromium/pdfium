@@ -494,10 +494,8 @@ void CPDFSDK_Widget::ResetAppearance_PushButton() {
   CPDFSDK_Document* pDoc = m_pInterForm->GetDocument();
   CPDFDoc_Environment* pEnv = pDoc->GetEnv();
 
-  CBA_FontMap FontMap(this, pEnv->GetSysHandler());
-  FontMap.Initial();
-
-  FontMap.SetAPType("N");
+  CBA_FontMap font_map(this, pEnv->GetSysHandler());
+  font_map.SetAPType("N");
 
   CFX_ByteString csAP =
       CPWL_Utils::GetRectFillAppStream(rcWindow, crBackground) +
@@ -505,7 +503,7 @@ void CPDFSDK_Widget::ResetAppearance_PushButton() {
                                      crLeftTop, crRightBottom, nBorderStyle,
                                      dsBorder) +
       CPWL_Utils::GetPushButtonAppStream(
-          iconFit.GetFittingBounds() ? rcWindow : rcClient, &FontMap,
+          iconFit.GetFittingBounds() ? rcWindow : rcClient, &font_map,
           pNormalIcon, iconFit, csNormalCaption, crText, fFontSize, nLayout);
 
   WriteAppearance("N", GetRotatedRect(), GetMatrix(), csAP);
@@ -519,14 +517,14 @@ void CPDFSDK_Widget::ResetAppearance_PushButton() {
       pRolloverIcon = pNormalIcon;
     }
 
-    FontMap.SetAPType("R");
+    font_map.SetAPType("R");
 
     csAP = CPWL_Utils::GetRectFillAppStream(rcWindow, crBackground) +
            CPWL_Utils::GetBorderAppStream(rcWindow, fBorderWidth, crBorder,
                                           crLeftTop, crRightBottom,
                                           nBorderStyle, dsBorder) +
            CPWL_Utils::GetPushButtonAppStream(
-               iconFit.GetFittingBounds() ? rcWindow : rcClient, &FontMap,
+               iconFit.GetFittingBounds() ? rcWindow : rcClient, &font_map,
                pRolloverIcon, iconFit, csRolloverCaption, crText, fFontSize,
                nLayout);
 
@@ -551,7 +549,7 @@ void CPDFSDK_Widget::ResetAppearance_PushButton() {
         break;
     }
 
-    FontMap.SetAPType("D");
+    font_map.SetAPType("D");
 
     csAP = CPWL_Utils::GetRectFillAppStream(
                rcWindow, CPWL_Utils::SubstractColor(crBackground, 0.25f)) +
@@ -559,7 +557,7 @@ void CPDFSDK_Widget::ResetAppearance_PushButton() {
                                           crLeftTop, crRightBottom,
                                           nBorderStyle, dsBorder) +
            CPWL_Utils::GetPushButtonAppStream(
-               iconFit.GetFittingBounds() ? rcWindow : rcClient, &FontMap,
+               iconFit.GetFittingBounds() ? rcWindow : rcClient, &font_map,
                pDownIcon, iconFit, csDownCaption, crText, fFontSize, nLayout);
 
     WriteAppearance("D", GetRotatedRect(), GetMatrix(), csAP);
@@ -875,9 +873,8 @@ void CPDFSDK_Widget::ResetAppearance_ComboBox(const FX_WCHAR* sValue) {
 
     CPDFSDK_Document* pDoc = m_pInterForm->GetDocument();
     CPDFDoc_Environment* pEnv = pDoc->GetEnv();
-    CBA_FontMap FontMap(this, pEnv->GetSysHandler());
-    FontMap.Initial();
-    pEdit->SetFontMap(&FontMap);
+    CBA_FontMap font_map(this, pEnv->GetSysHandler());
+    pEdit->SetFontMap(&font_map);
 
     CPDF_Rect rcEdit = rcClient;
     rcEdit.right = rcButton.left;
@@ -947,9 +944,8 @@ void CPDFSDK_Widget::ResetAppearance_ListBox() {
     CPDFSDK_Document* pDoc = m_pInterForm->GetDocument();
     CPDFDoc_Environment* pEnv = pDoc->GetEnv();
 
-    CBA_FontMap FontMap(this, pEnv->GetSysHandler());
-    FontMap.Initial();
-    pEdit->SetFontMap(&FontMap);
+    CBA_FontMap font_map(this, pEnv->GetSysHandler());
+    pEdit->SetFontMap(&font_map);
 
     pEdit->SetPlateRect(CPDF_Rect(rcClient.left, 0.0f, rcClient.right, 0.0f));
 
@@ -1035,9 +1031,8 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const FX_WCHAR* sValue) {
     CPDFSDK_Document* pDoc = m_pInterForm->GetDocument();
     CPDFDoc_Environment* pEnv = pDoc->GetEnv();
 
-    CBA_FontMap FontMap(this, pEnv->GetSysHandler());
-    FontMap.Initial();
-    pEdit->SetFontMap(&FontMap);
+    CBA_FontMap font_map(this, pEnv->GetSysHandler());
+    pEdit->SetFontMap(&font_map);
 
     CPDF_Rect rcClient = GetClientRect();
     pEdit->SetPlateRect(rcClient);
@@ -1068,8 +1063,8 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const FX_WCHAR* sValue) {
         pEdit->SetCharArray(nMaxLen);
 
         if (IsFloatZero(fFontSize)) {
-          fFontSize = CPWL_Edit::GetCharArrayAutoFontSize(FontMap.GetPDFFont(0),
-                                                          rcClient, nMaxLen);
+          fFontSize = CPWL_Edit::GetCharArrayAutoFontSize(
+              font_map.GetPDFFont(0), rcClient, nMaxLen);
         }
       } else {
         if (sValue)

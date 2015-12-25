@@ -18,16 +18,8 @@ CBA_FontMap::CBA_FontMap(CPDFSDK_Annot* pAnnot,
 
   m_pDocument = pPage->m_pDocument;
   m_pAnnotDict = pAnnot->GetPDFAnnot()->GetAnnotDict();
+  Initialize();
 }
-
-CBA_FontMap::CBA_FontMap(CPDF_Document* pDocument,
-                         CPDF_Dictionary* pAnnotDict,
-                         IFX_SystemHandler* pSystemHandler)
-    : CPWL_FontMap(pSystemHandler),
-      m_pDocument(pDocument),
-      m_pAnnotDict(pAnnotDict),
-      m_pDefaultFont(NULL),
-      m_sAPType("N") {}
 
 CBA_FontMap::~CBA_FontMap() {}
 
@@ -37,7 +29,7 @@ void CBA_FontMap::Reset() {
   m_sDefaultFontName = "";
 }
 
-void CBA_FontMap::Initial(const FX_CHAR* fontname) {
+void CBA_FontMap::Initialize() {
   int32_t nCharset = DEFAULT_CHARSET;
 
   if (!m_pDefaultFont) {
@@ -60,7 +52,7 @@ void CBA_FontMap::Initial(const FX_CHAR* fontname) {
   }
 
   if (nCharset != ANSI_CHARSET)
-    CPWL_FontMap::Initial(fontname);
+    CPWL_FontMap::Initialize();
 }
 
 void CBA_FontMap::SetDefaultFont(CPDF_Font* pFont,
@@ -72,9 +64,6 @@ void CBA_FontMap::SetDefaultFont(CPDF_Font* pFont,
 
   m_pDefaultFont = pFont;
   m_sDefaultFontName = sFontName;
-
-  //	if (m_sDefaultFontName.IsEmpty())
-  //		m_sDefaultFontName = pFont->GetFontTypeName();
 
   int32_t nCharset = DEFAULT_CHARSET;
   if (const CFX_SubstFont* pSubstFont = m_pDefaultFont->GetSubstFont())
@@ -278,5 +267,5 @@ void CBA_FontMap::SetAPType(const CFX_ByteString& sAPType) {
   m_sAPType = sAPType;
 
   Reset();
-  Initial();
+  Initialize();
 }

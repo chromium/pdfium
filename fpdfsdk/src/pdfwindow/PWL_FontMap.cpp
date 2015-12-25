@@ -151,13 +151,8 @@ void CPWL_FontMap::Empty() {
   }
 }
 
-void CPWL_FontMap::Initial(const FX_CHAR* fontname) {
-  CFX_ByteString sFontName = fontname;
-
-  if (sFontName.IsEmpty())
-    sFontName = DEFAULT_FONT_NAME;
-
-  GetFontIndex(sFontName, ANSI_CHARSET, FALSE);
+void CPWL_FontMap::Initialize() {
+  GetFontIndex(DEFAULT_FONT_NAME, ANSI_CHARSET, FALSE);
 }
 
 /*
