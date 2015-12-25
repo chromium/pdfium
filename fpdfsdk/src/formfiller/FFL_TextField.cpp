@@ -68,10 +68,8 @@ PWL_CREATEPARAM CFFL_TextField::GetCreateParam() {
       break;
   }
 
-  if (!m_pFontMap) {
+  if (!m_pFontMap)
     m_pFontMap = new CBA_FontMap(m_pWidget, m_pApp->GetSysHandler());
-    m_pFontMap->Initial();
-  }
   cp.pFontMap = m_pFontMap;
   cp.pFocusHandler = this;
 
