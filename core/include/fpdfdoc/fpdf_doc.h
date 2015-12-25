@@ -8,11 +8,11 @@
 #define CORE_INCLUDE_FPDFDOC_FPDF_DOC_H_
 
 #include <map>
+#include <memory>
 #include <vector>
 
 #include "core/include/fpdfapi/fpdf_parser.h"
 #include "core/include/fpdfapi/fpdf_render.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 class CFieldTree;
 class CPDF_AAction;
@@ -700,7 +700,7 @@ class CPDF_InterForm : public CFX_PrivateData {
 
   std::map<const CPDF_Dictionary*, CPDF_FormControl*> m_ControlMap;
 
-  nonstd::unique_ptr<CFieldTree> m_pFieldTree;
+  std::unique_ptr<CFieldTree> m_pFieldTree;
 
   CFX_ByteString m_bsEncoding;
 
@@ -1068,7 +1068,7 @@ class CPDF_Metadata {
   const CXML_Element* GetRoot() const;
 
  private:
-  nonstd::unique_ptr<CXML_Element> m_pXmlElement;
+  std::unique_ptr<CXML_Element> m_pXmlElement;
 };
 
 class CPDF_ViewerPreferences {

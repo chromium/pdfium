@@ -5,9 +5,11 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "codec_int.h"
+
+#include <memory>
+
 #include "core/include/fxcodec/fx_codec.h"
 #include "core/include/fxcodec/fx_codec_flate.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 #include "third_party/zlib_v128/zlib.h"
 
 extern "C" {
@@ -639,7 +641,7 @@ void FlateUncompress(const uint8_t* src_buf,
   if (!context)
     return;
 
-  nonstd::unique_ptr<uint8_t, FxFreeDeleter> guess_buf(
+  std::unique_ptr<uint8_t, FxFreeDeleter> guess_buf(
       FX_Alloc(uint8_t, guess_size + 1));
   guess_buf.get()[guess_size] = '\0';
 
@@ -933,7 +935,7 @@ FX_DWORD CCodec_FlateModule::FlateOrLZWDecode(FX_BOOL bLZW,
   }
   if (bLZW) {
     {
-      nonstd::unique_ptr<CLZWDecoder> decoder(new CLZWDecoder);
+      std::unique_ptr<CLZWDecoder> decoder(new CLZWDecoder);
       dest_size = (FX_DWORD)-1;
       offset = src_size;
       int err = decoder->Decode(NULL, dest_size, src_buf, offset, bEarlyChange);
@@ -942,7 +944,7 @@ FX_DWORD CCodec_FlateModule::FlateOrLZWDecode(FX_BOOL bLZW,
       }
     }
     {
-      nonstd::unique_ptr<CLZWDecoder> decoder(new CLZWDecoder);
+      std::unique_ptr<CLZWDecoder> decoder(new CLZWDecoder);
       dest_buf = FX_Alloc(uint8_t, dest_size + 1);
       dest_buf[dest_size] = '\0';
       decoder->Decode(dest_buf, dest_size, src_buf, offset, bEarlyChange);

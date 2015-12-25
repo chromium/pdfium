@@ -8,12 +8,13 @@
 #define CORE_INCLUDE_FXCODEC_FX_CODEC_H_
 
 #include <map>
+#include <memory>
 #include <vector>
 
 #include "core/include/fxcodec/fx_codec_def.h"
 #include "core/include/fxcrt/fx_basic.h"
 #include "core/include/fxcrt/fx_coordinates.h"  // For FX_RECT.
-#include "third_party/base/nonstd_unique_ptr.h"
+#include "fx_codec_def.h"
 
 class CFX_DIBSource;
 class CJPX_Decoder;
@@ -80,19 +81,19 @@ class CCodec_ModuleMgr {
 #endif  // PDF_ENABLE_XFA
 
  protected:
-  nonstd::unique_ptr<ICodec_BasicModule> m_pBasicModule;
-  nonstd::unique_ptr<ICodec_FaxModule> m_pFaxModule;
-  nonstd::unique_ptr<ICodec_JpegModule> m_pJpegModule;
-  nonstd::unique_ptr<ICodec_JpxModule> m_pJpxModule;
-  nonstd::unique_ptr<ICodec_Jbig2Module> m_pJbig2Module;
-  nonstd::unique_ptr<ICodec_IccModule> m_pIccModule;
+  std::unique_ptr<ICodec_BasicModule> m_pBasicModule;
+  std::unique_ptr<ICodec_FaxModule> m_pFaxModule;
+  std::unique_ptr<ICodec_JpegModule> m_pJpegModule;
+  std::unique_ptr<ICodec_JpxModule> m_pJpxModule;
+  std::unique_ptr<ICodec_Jbig2Module> m_pJbig2Module;
+  std::unique_ptr<ICodec_IccModule> m_pIccModule;
 #ifdef PDF_ENABLE_XFA
-  nonstd::unique_ptr<ICodec_PngModule> m_pPngModule;
-  nonstd::unique_ptr<ICodec_GifModule> m_pGifModule;
-  nonstd::unique_ptr<ICodec_BmpModule> m_pBmpModule;
-  nonstd::unique_ptr<ICodec_TiffModule> m_pTiffModule;
+  std::unique_ptr<ICodec_PngModule> m_pPngModule;
+  std::unique_ptr<ICodec_GifModule> m_pGifModule;
+  std::unique_ptr<ICodec_BmpModule> m_pBmpModule;
+  std::unique_ptr<ICodec_TiffModule> m_pTiffModule;
 #endif  // PDF_ENABLE_XFA
-  nonstd::unique_ptr<ICodec_FlateModule> m_pFlateModule;
+  std::unique_ptr<ICodec_FlateModule> m_pFlateModule;
 };
 class ICodec_BasicModule {
  public:

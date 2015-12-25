@@ -7,10 +7,11 @@
 #ifndef FPDFSDK_INCLUDE_FSDK_ACTIONHANDLER_H_
 #define FPDFSDK_INCLUDE_FSDK_ACTIONHANDLER_H_
 
+#include <memory>
+
 #include "core/include/fpdfdoc/fpdf_doc.h"
 #include "core/include/fxcrt/fx_string.h"
 #include "fsdk_baseform.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 class CFX_PtrList;
 class CPDFSDK_Annot;
@@ -116,7 +117,7 @@ class CPDFSDK_ActionHandler {
   void DoAction_SetOCGState(CPDFSDK_Document* pDocument,
                             const CPDF_Action& action);
 
-  nonstd::unique_ptr<CPDFSDK_FormActionHandler> m_pFormActionHandler;
+  std::unique_ptr<CPDFSDK_FormActionHandler> m_pFormActionHandler;
 };
 
 #endif  // FPDFSDK_INCLUDE_FSDK_ACTIONHANDLER_H_

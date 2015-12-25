@@ -6,6 +6,7 @@
 
 #include "core/src/fxcodec/jbig2/JBig2_SddProc.h"
 
+#include <memory>
 #include <vector>
 
 #include "core/include/fxcrt/fx_basic.h"
@@ -17,7 +18,6 @@
 #include "core/src/fxcodec/jbig2/JBig2_HuffmanTable_Standard.h"
 #include "core/src/fxcodec/jbig2/JBig2_SymbolDict.h"
 #include "core/src/fxcodec/jbig2/JBig2_TrdProc.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
     CJBig2_ArithDecoder* pArithDecoder,
@@ -39,21 +39,21 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
   uint8_t SBSYMCODELEN;
   int32_t RDXI, RDYI;
   CJBig2_Image** SBSYMS;
-  nonstd::unique_ptr<CJBig2_ArithIaidDecoder> IAID;
-  nonstd::unique_ptr<CJBig2_SymbolDict> pDict;
-  nonstd::unique_ptr<CJBig2_ArithIntDecoder> IADH(new CJBig2_ArithIntDecoder);
-  nonstd::unique_ptr<CJBig2_ArithIntDecoder> IADW(new CJBig2_ArithIntDecoder);
-  nonstd::unique_ptr<CJBig2_ArithIntDecoder> IAAI(new CJBig2_ArithIntDecoder);
-  nonstd::unique_ptr<CJBig2_ArithIntDecoder> IARDX(new CJBig2_ArithIntDecoder);
-  nonstd::unique_ptr<CJBig2_ArithIntDecoder> IARDY(new CJBig2_ArithIntDecoder);
-  nonstd::unique_ptr<CJBig2_ArithIntDecoder> IAEX(new CJBig2_ArithIntDecoder);
-  nonstd::unique_ptr<CJBig2_ArithIntDecoder> IADT(new CJBig2_ArithIntDecoder);
-  nonstd::unique_ptr<CJBig2_ArithIntDecoder> IAFS(new CJBig2_ArithIntDecoder);
-  nonstd::unique_ptr<CJBig2_ArithIntDecoder> IADS(new CJBig2_ArithIntDecoder);
-  nonstd::unique_ptr<CJBig2_ArithIntDecoder> IAIT(new CJBig2_ArithIntDecoder);
-  nonstd::unique_ptr<CJBig2_ArithIntDecoder> IARI(new CJBig2_ArithIntDecoder);
-  nonstd::unique_ptr<CJBig2_ArithIntDecoder> IARDW(new CJBig2_ArithIntDecoder);
-  nonstd::unique_ptr<CJBig2_ArithIntDecoder> IARDH(new CJBig2_ArithIntDecoder);
+  std::unique_ptr<CJBig2_ArithIaidDecoder> IAID;
+  std::unique_ptr<CJBig2_SymbolDict> pDict;
+  std::unique_ptr<CJBig2_ArithIntDecoder> IADH(new CJBig2_ArithIntDecoder);
+  std::unique_ptr<CJBig2_ArithIntDecoder> IADW(new CJBig2_ArithIntDecoder);
+  std::unique_ptr<CJBig2_ArithIntDecoder> IAAI(new CJBig2_ArithIntDecoder);
+  std::unique_ptr<CJBig2_ArithIntDecoder> IARDX(new CJBig2_ArithIntDecoder);
+  std::unique_ptr<CJBig2_ArithIntDecoder> IARDY(new CJBig2_ArithIntDecoder);
+  std::unique_ptr<CJBig2_ArithIntDecoder> IAEX(new CJBig2_ArithIntDecoder);
+  std::unique_ptr<CJBig2_ArithIntDecoder> IADT(new CJBig2_ArithIntDecoder);
+  std::unique_ptr<CJBig2_ArithIntDecoder> IAFS(new CJBig2_ArithIntDecoder);
+  std::unique_ptr<CJBig2_ArithIntDecoder> IADS(new CJBig2_ArithIntDecoder);
+  std::unique_ptr<CJBig2_ArithIntDecoder> IAIT(new CJBig2_ArithIntDecoder);
+  std::unique_ptr<CJBig2_ArithIntDecoder> IARI(new CJBig2_ArithIntDecoder);
+  std::unique_ptr<CJBig2_ArithIntDecoder> IARDW(new CJBig2_ArithIntDecoder);
+  std::unique_ptr<CJBig2_ArithIntDecoder> IARDH(new CJBig2_ArithIntDecoder);
   nTmp = 0;
   while ((FX_DWORD)(1 << nTmp) < (SDNUMINSYMS + SDNUMNEWSYMS)) {
     nTmp++;
@@ -92,7 +92,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
       }
       TOTWIDTH = TOTWIDTH + SYMWIDTH;
       if (SDREFAGG == 0) {
-        nonstd::unique_ptr<CJBig2_GRDProc> pGRD(new CJBig2_GRDProc());
+        std::unique_ptr<CJBig2_GRDProc> pGRD(new CJBig2_GRDProc());
         pGRD->MMR = 0;
         pGRD->GBW = SYMWIDTH;
         pGRD->GBH = HCHEIGHT;
@@ -114,7 +114,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
       } else {
         IAAI->decode(pArithDecoder, (int*)&REFAGGNINST);
         if (REFAGGNINST > 1) {
-          nonstd::unique_ptr<CJBig2_TRDProc> pDecoder(new CJBig2_TRDProc());
+          std::unique_ptr<CJBig2_TRDProc> pDecoder(new CJBig2_TRDProc());
           pDecoder->SBHUFF = SDHUFF;
           pDecoder->SBREFINE = 1;
           pDecoder->SBW = SYMWIDTH;
@@ -139,35 +139,32 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
           pDecoder->TRANSPOSED = 0;
           pDecoder->REFCORNER = JBIG2_CORNER_TOPLEFT;
           pDecoder->SBDSOFFSET = 0;
-          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFFS(
-              new CJBig2_HuffmanTable(HuffmanTable_B6,
-                                      FX_ArraySize(HuffmanTable_B6),
-                                      HuffmanTable_HTOOB_B6));
-          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFDS(
-              new CJBig2_HuffmanTable(HuffmanTable_B8,
-                                      FX_ArraySize(HuffmanTable_B8),
-                                      HuffmanTable_HTOOB_B8));
-          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFDT(
-              new CJBig2_HuffmanTable(HuffmanTable_B11,
-                                      FX_ArraySize(HuffmanTable_B11),
-                                      HuffmanTable_HTOOB_B11));
-          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFRDW(
+          std::unique_ptr<CJBig2_HuffmanTable> SBHUFFFS(new CJBig2_HuffmanTable(
+              HuffmanTable_B6, FX_ArraySize(HuffmanTable_B6),
+              HuffmanTable_HTOOB_B6));
+          std::unique_ptr<CJBig2_HuffmanTable> SBHUFFDS(new CJBig2_HuffmanTable(
+              HuffmanTable_B8, FX_ArraySize(HuffmanTable_B8),
+              HuffmanTable_HTOOB_B8));
+          std::unique_ptr<CJBig2_HuffmanTable> SBHUFFDT(new CJBig2_HuffmanTable(
+              HuffmanTable_B11, FX_ArraySize(HuffmanTable_B11),
+              HuffmanTable_HTOOB_B11));
+          std::unique_ptr<CJBig2_HuffmanTable> SBHUFFRDW(
               new CJBig2_HuffmanTable(HuffmanTable_B15,
                                       FX_ArraySize(HuffmanTable_B15),
                                       HuffmanTable_HTOOB_B15));
-          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFRDH(
+          std::unique_ptr<CJBig2_HuffmanTable> SBHUFFRDH(
               new CJBig2_HuffmanTable(HuffmanTable_B15,
                                       FX_ArraySize(HuffmanTable_B15),
                                       HuffmanTable_HTOOB_B15));
-          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFRDX(
+          std::unique_ptr<CJBig2_HuffmanTable> SBHUFFRDX(
               new CJBig2_HuffmanTable(HuffmanTable_B15,
                                       FX_ArraySize(HuffmanTable_B15),
                                       HuffmanTable_HTOOB_B15));
-          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFRDY(
+          std::unique_ptr<CJBig2_HuffmanTable> SBHUFFRDY(
               new CJBig2_HuffmanTable(HuffmanTable_B15,
                                       FX_ArraySize(HuffmanTable_B15),
                                       HuffmanTable_HTOOB_B15));
-          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFRSIZE(
+          std::unique_ptr<CJBig2_HuffmanTable> SBHUFFRSIZE(
               new CJBig2_HuffmanTable(HuffmanTable_B1,
                                       FX_ArraySize(HuffmanTable_B1),
                                       HuffmanTable_HTOOB_B1));
@@ -218,7 +215,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
             FX_Free(SBSYMS);
             goto failed;
           }
-          nonstd::unique_ptr<CJBig2_GRRDProc> pGRRD(new CJBig2_GRRDProc());
+          std::unique_ptr<CJBig2_GRRDProc> pGRRD(new CJBig2_GRRDProc());
           pGRRD->GRW = SYMWIDTH;
           pGRRD->GRH = HCHEIGHT;
           pGRRD->GRTEMPLATE = SDRTEMPLATE;
@@ -315,7 +312,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
   FX_DWORD BMSIZE;
   FX_DWORD stride;
   CJBig2_Image** SBSYMS;
-  nonstd::unique_ptr<CJBig2_HuffmanDecoder> pHuffmanDecoder(
+  std::unique_ptr<CJBig2_HuffmanDecoder> pHuffmanDecoder(
       new CJBig2_HuffmanDecoder(pStream));
   SDNEWSYMS = FX_Alloc(CJBig2_Image*, SDNUMNEWSYMS);
   FXSYS_memset(SDNEWSYMS, 0, SDNUMNEWSYMS * sizeof(CJBig2_Image*));
@@ -325,8 +322,8 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
     SDNEWSYMWIDTHS = FX_Alloc(FX_DWORD, SDNUMNEWSYMS);
     FXSYS_memset(SDNEWSYMWIDTHS, 0, SDNUMNEWSYMS * sizeof(FX_DWORD));
   }
-  nonstd::unique_ptr<CJBig2_SymbolDict> pDict(new CJBig2_SymbolDict());
-  nonstd::unique_ptr<CJBig2_HuffmanTable> pTable;
+  std::unique_ptr<CJBig2_SymbolDict> pDict(new CJBig2_SymbolDict());
+  std::unique_ptr<CJBig2_HuffmanTable> pTable;
 
   HCHEIGHT = 0;
   NSYMSDECODED = 0;
@@ -370,7 +367,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
         }
         BS = nullptr;
         if (REFAGGNINST > 1) {
-          nonstd::unique_ptr<CJBig2_TRDProc> pDecoder(new CJBig2_TRDProc());
+          std::unique_ptr<CJBig2_TRDProc> pDecoder(new CJBig2_TRDProc());
           pDecoder->SBHUFF = SDHUFF;
           pDecoder->SBREFINE = 1;
           pDecoder->SBW = SYMWIDTH;
@@ -399,35 +396,32 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
           pDecoder->TRANSPOSED = 0;
           pDecoder->REFCORNER = JBIG2_CORNER_TOPLEFT;
           pDecoder->SBDSOFFSET = 0;
-          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFFS(
-              new CJBig2_HuffmanTable(HuffmanTable_B6,
-                                      FX_ArraySize(HuffmanTable_B6),
-                                      HuffmanTable_HTOOB_B6));
-          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFDS(
-              new CJBig2_HuffmanTable(HuffmanTable_B8,
-                                      FX_ArraySize(HuffmanTable_B8),
-                                      HuffmanTable_HTOOB_B8));
-          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFDT(
-              new CJBig2_HuffmanTable(HuffmanTable_B11,
-                                      FX_ArraySize(HuffmanTable_B11),
-                                      HuffmanTable_HTOOB_B11));
-          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFRDW(
+          std::unique_ptr<CJBig2_HuffmanTable> SBHUFFFS(new CJBig2_HuffmanTable(
+              HuffmanTable_B6, FX_ArraySize(HuffmanTable_B6),
+              HuffmanTable_HTOOB_B6));
+          std::unique_ptr<CJBig2_HuffmanTable> SBHUFFDS(new CJBig2_HuffmanTable(
+              HuffmanTable_B8, FX_ArraySize(HuffmanTable_B8),
+              HuffmanTable_HTOOB_B8));
+          std::unique_ptr<CJBig2_HuffmanTable> SBHUFFDT(new CJBig2_HuffmanTable(
+              HuffmanTable_B11, FX_ArraySize(HuffmanTable_B11),
+              HuffmanTable_HTOOB_B11));
+          std::unique_ptr<CJBig2_HuffmanTable> SBHUFFRDW(
               new CJBig2_HuffmanTable(HuffmanTable_B15,
                                       FX_ArraySize(HuffmanTable_B15),
                                       HuffmanTable_HTOOB_B15));
-          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFRDH(
+          std::unique_ptr<CJBig2_HuffmanTable> SBHUFFRDH(
               new CJBig2_HuffmanTable(HuffmanTable_B15,
                                       FX_ArraySize(HuffmanTable_B15),
                                       HuffmanTable_HTOOB_B15));
-          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFRDX(
+          std::unique_ptr<CJBig2_HuffmanTable> SBHUFFRDX(
               new CJBig2_HuffmanTable(HuffmanTable_B15,
                                       FX_ArraySize(HuffmanTable_B15),
                                       HuffmanTable_HTOOB_B15));
-          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFRDY(
+          std::unique_ptr<CJBig2_HuffmanTable> SBHUFFRDY(
               new CJBig2_HuffmanTable(HuffmanTable_B15,
                                       FX_ArraySize(HuffmanTable_B15),
                                       HuffmanTable_HTOOB_B15));
-          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFRSIZE(
+          std::unique_ptr<CJBig2_HuffmanTable> SBHUFFRSIZE(
               new CJBig2_HuffmanTable(HuffmanTable_B1,
                                       FX_ArraySize(HuffmanTable_B1),
                                       HuffmanTable_HTOOB_B1));
@@ -483,11 +477,11 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
             }
           }
           FX_Free(SBSYMCODES);
-          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFRDX(
+          std::unique_ptr<CJBig2_HuffmanTable> SBHUFFRDX(
               new CJBig2_HuffmanTable(HuffmanTable_B15,
                                       FX_ArraySize(HuffmanTable_B15),
                                       HuffmanTable_HTOOB_B15));
-          nonstd::unique_ptr<CJBig2_HuffmanTable> SBHUFFRSIZE(
+          std::unique_ptr<CJBig2_HuffmanTable> SBHUFFRSIZE(
               new CJBig2_HuffmanTable(HuffmanTable_B1,
                                       FX_ArraySize(HuffmanTable_B1),
                                       HuffmanTable_HTOOB_B1));
@@ -502,7 +496,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
           JBIG2_memcpy(SBSYMS, SDINSYMS, SDNUMINSYMS * sizeof(CJBig2_Image*));
           JBIG2_memcpy(SBSYMS + SDNUMINSYMS, SDNEWSYMS,
                        NSYMSDECODED * sizeof(CJBig2_Image*));
-          nonstd::unique_ptr<CJBig2_GRRDProc> pGRRD(new CJBig2_GRRDProc());
+          std::unique_ptr<CJBig2_GRRDProc> pGRRD(new CJBig2_GRRDProc());
           pGRRD->GRW = SYMWIDTH;
           pGRRD->GRH = HCHEIGHT;
           pGRRD->GRTEMPLATE = SDRTEMPLATE;
@@ -514,7 +508,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
           pGRRD->GRAT[1] = SDRAT[1];
           pGRRD->GRAT[2] = SDRAT[2];
           pGRRD->GRAT[3] = SDRAT[3];
-          nonstd::unique_ptr<CJBig2_ArithDecoder> pArithDecoder(
+          std::unique_ptr<CJBig2_ArithDecoder> pArithDecoder(
               new CJBig2_ArithDecoder(pStream));
           BS = pGRRD->decode(pArithDecoder.get(), grContext->data());
           if (!BS) {
@@ -555,7 +549,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
           goto failed;
         }
       } else {
-        nonstd::unique_ptr<CJBig2_GRDProc> pGRD(new CJBig2_GRDProc());
+        std::unique_ptr<CJBig2_GRDProc> pGRD(new CJBig2_GRDProc());
         pGRD->MMR = 1;
         pGRD->GBW = TOTWIDTH;
         pGRD->GBH = HCHEIGHT;

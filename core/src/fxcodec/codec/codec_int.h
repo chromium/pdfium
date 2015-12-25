@@ -8,12 +8,13 @@
 #define CORE_SRC_FXCODEC_CODEC_CODEC_INT_H_
 
 #include <limits.h>
+
 #include <list>
 #include <map>
+#include <memory>
 
 #include "core/include/fxcodec/fx_codec.h"
 #include "core/src/fxcodec/jbig2/JBig2_Context.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 #include "third_party/libopenjpeg20/openjpeg.h"  // For OPJ_SIZE_T.
 
 class CFX_IccProfileCache;
@@ -78,7 +79,7 @@ class CCodec_ScanlineDecoder : public ICodec_ScanlineDecoder {
     const int m_Height;
     const FX_DWORD m_Pitch;
     int m_nCachedLines;
-    nonstd::unique_ptr<uint8_t, FxFreeDeleter> m_Data;
+    std::unique_ptr<uint8_t, FxFreeDeleter> m_Data;
   };
 
   virtual FX_BOOL v_Rewind() = 0;
@@ -98,7 +99,7 @@ class CCodec_ScanlineDecoder : public ICodec_ScanlineDecoder {
   FX_BOOL m_bColorTransformed;
   int m_NextLine;
   uint8_t* m_pLastScanline;
-  nonstd::unique_ptr<ImageDataCache> m_pDataCache;
+  std::unique_ptr<ImageDataCache> m_pDataCache;
 };
 
 class CCodec_FaxModule : public ICodec_FaxModule {

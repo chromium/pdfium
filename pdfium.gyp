@@ -771,7 +771,6 @@
         'core/src/fxcrt/fx_system_unittest.cpp',
         'testing/fx_string_testhelpers.h',
         'testing/fx_string_testhelpers.cpp',
-        'third_party/base/nonstd_unique_ptr_unittest.cpp',
       ],
       'conditions': [
         ['pdf_enable_xfa==1', {

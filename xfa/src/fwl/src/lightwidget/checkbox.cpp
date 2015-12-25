@@ -4,7 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <memory>
+
 #include "../../../foxitlib.h"
+
 CFWL_CheckBox* CFWL_CheckBox::Create() {
   return new CFWL_CheckBox;
 }
@@ -14,7 +17,7 @@ FWL_ERR CFWL_CheckBox::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  nonstd::unique_ptr<IFWL_CheckBox> pCheckBox(IFWL_CheckBox::Create(
+  std::unique_ptr<IFWL_CheckBox> pCheckBox(IFWL_CheckBox::Create(
       m_pProperties->MakeWidgetImpProperties(&m_checkboxData), nullptr));
   FWL_ERR ret = pCheckBox->Initialize();
   if (ret != FWL_ERR_Succeeded) {

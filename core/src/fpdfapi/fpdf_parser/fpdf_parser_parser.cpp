@@ -6,6 +6,7 @@
 
 #include "parser_int.h"
 
+#include <memory>
 #include <set>
 #include <utility>
 #include <vector>
@@ -16,7 +17,6 @@
 #include "core/include/fxcrt/fx_ext.h"
 #include "core/include/fxcrt/fx_safe_types.h"
 #include "core/src/fpdfapi/fpdf_page/pageint.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -94,7 +94,7 @@ bool CanReadFromBitStream(const CFX_BitStream* hStream,
 // TODO(thestig) Using unique_ptr with ReleaseDeleter is still not ideal.
 // Come up or wait for something better.
 using ScopedFileStream =
-    nonstd::unique_ptr<IFX_FileStream, ReleaseDeleter<IFX_FileStream>>;
+    std::unique_ptr<IFX_FileStream, ReleaseDeleter<IFX_FileStream>>;
 
 FX_BOOL IsSignatureDict(const CPDF_Dictionary* pDict) {
   CPDF_Object* pType = pDict->GetElementValue("Type");
@@ -307,7 +307,7 @@ FX_DWORD CPDF_Parser::SetEncryptHandler() {
     if (!m_pSecurityHandler->OnInit(this, m_pEncryptDict)) {
       return err;
     }
-    nonstd::unique_ptr<CPDF_CryptoHandler> pCryptoHandler(
+    std::unique_ptr<CPDF_CryptoHandler> pCryptoHandler(
         m_pSecurityHandler->CreateCryptoHandler());
     if (!pCryptoHandler->Init(m_pEncryptDict, m_pSecurityHandler.get())) {
       return PDFPARSE_ERROR_HANDLER;
@@ -315,7 +315,7 @@ FX_DWORD CPDF_Parser::SetEncryptHandler() {
     m_Syntax.SetEncrypt(pCryptoHandler.release());
   } else if (m_pEncryptDict) {
     CFX_ByteString filter = m_pEncryptDict->GetString("Filter");
-    nonstd::unique_ptr<CPDF_SecurityHandler> pSecurityHandler;
+    std::unique_ptr<CPDF_SecurityHandler> pSecurityHandler;
     FX_DWORD err = PDFPARSE_ERROR_HANDLER;
     if (filter == "Standard") {
       pSecurityHandler.reset(FPDF_CreateStandardSecurityHandler());
@@ -328,7 +328,7 @@ FX_DWORD CPDF_Parser::SetEncryptHandler() {
       return err;
     }
     m_pSecurityHandler = std::move(pSecurityHandler);
-    nonstd::unique_ptr<CPDF_CryptoHandler> pCryptoHandler(
+    std::unique_ptr<CPDF_CryptoHandler> pCryptoHandler(
         m_pSecurityHandler->CreateCryptoHandler());
     if (!pCryptoHandler->Init(m_pEncryptDict, m_pSecurityHandler.get())) {
       return PDFPARSE_ERROR_HANDLER;
@@ -385,7 +385,7 @@ FX_BOOL CPDF_Parser::LoadAllCrossRefV4(FX_FILESIZE xrefpos) {
   while (xrefpos) {
     CrossRefList.InsertAt(0, xrefpos);
     LoadCrossRefV4(xrefpos, 0, TRUE);
-    nonstd::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>> pDict(
+    std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>> pDict(
         LoadTrailerV4());
     if (!pDict)
       return FALSE;
@@ -1456,7 +1456,7 @@ CPDF_Dictionary* CPDF_Parser::LoadTrailerV4() {
   if (m_Syntax.GetKeyword() != "trailer")
     return nullptr;
 
-  nonstd::unique_ptr<CPDF_Object, ReleaseDeleter<CPDF_Object>> pObj(
+  std::unique_ptr<CPDF_Object, ReleaseDeleter<CPDF_Object>> pObj(
       m_Syntax.GetObject(m_pDocument, 0, 0, 0));
   if (!ToDictionary(pObj.get()))
     return nullptr;
@@ -2095,7 +2095,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList,
 
     int32_t nKeys = 0;
     FX_FILESIZE dwSignValuePos = 0;
-    nonstd::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>> pDict(
+    std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>> pDict(
         new CPDF_Dictionary);
     while (1) {
       FX_BOOL bIsNumber;
@@ -2233,7 +2233,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
   if (word == "[") {
     if (bTypeOnly)
       return (CPDF_Object*)PDFOBJ_ARRAY;
-    nonstd::unique_ptr<CPDF_Array, ReleaseDeleter<CPDF_Array>> pArray(
+    std::unique_ptr<CPDF_Array, ReleaseDeleter<CPDF_Array>> pArray(
         new CPDF_Array);
     while (CPDF_Object* pObj = GetObject(pObjList, objnum, gennum))
       pArray->Add(pObj);
@@ -2251,7 +2251,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
     if (pContext)
       pContext->m_DictStart = SavedPos;
 
-    nonstd::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>> pDict(
+    std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>> pDict(
         new CPDF_Dictionary);
     while (1) {
       FX_BOOL bIsNumber;
@@ -2271,7 +2271,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
         continue;
 
       key = PDF_NameDecode(key);
-      nonstd::unique_ptr<CPDF_Object, ReleaseDeleter<CPDF_Object>> obj(
+      std::unique_ptr<CPDF_Object, ReleaseDeleter<CPDF_Object>> obj(
           GetObject(pObjList, objnum, gennum));
       if (!obj) {
         uint8_t ch;
@@ -2884,7 +2884,7 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
   std::set<FX_DWORD> m_pageMapCheckState;
   std::set<FX_DWORD> m_pagesLoadState;
 
-  nonstd::unique_ptr<CPDF_HintTables> m_pHintTables;
+  std::unique_ptr<CPDF_HintTables> m_pHintTables;
   FX_BOOL m_bSupportHintTable;
 };
 
@@ -3599,9 +3599,9 @@ FX_BOOL CPDF_DataAvail::CheckHintTables(IFX_DownloadHints* pHints) {
     return FALSE;
   }
   m_syntaxParser.InitParser(m_pFileRead, m_dwHeaderOffset);
-  nonstd::unique_ptr<CPDF_HintTables> pHintTables(
+  std::unique_ptr<CPDF_HintTables> pHintTables(
       new CPDF_HintTables(this, pDict));
-  nonstd::unique_ptr<CPDF_Object, ReleaseDeleter<CPDF_Object>> pHintStream(
+  std::unique_ptr<CPDF_Object, ReleaseDeleter<CPDF_Object>> pHintStream(
       ParseIndirectObjectAt(szHSStart, 0));
   CPDF_Stream* pStream = ToStream(pHintStream.get());
   if (pStream && pHintTables->LoadHintStream(pStream))
@@ -3981,7 +3981,7 @@ FX_BOOL CPDF_DataAvail::CheckTrailer(IFX_DownloadHints* pHints) {
     }
     ScopedFileStream file(FX_CreateMemoryStream(pBuf, (size_t)iSize, FALSE));
     m_syntaxParser.InitParser(file.get(), 0);
-    nonstd::unique_ptr<CPDF_Object, ReleaseDeleter<CPDF_Object>> pTrailer(
+    std::unique_ptr<CPDF_Object, ReleaseDeleter<CPDF_Object>> pTrailer(
         m_syntaxParser.GetObject(nullptr, 0, 0));
     if (!pTrailer) {
       m_Pos += m_syntaxParser.SavePos();

@@ -6,6 +6,7 @@
 
 #include "render_int.h"
 
+#include <memory>
 #include <vector>
 
 #include "core/include/fpdfapi/fpdf_module.h"
@@ -15,7 +16,6 @@
 #include "core/include/fxcrt/fx_safe_types.h"
 #include "core/include/fxge/fx_ge.h"
 #include "core/src/fpdfapi/fpdf_page/pageint.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 namespace {
 
@@ -63,7 +63,7 @@ bool IsAllowedBPCValue(int bpc) {
   return bpc == 1 || bpc == 2 || bpc == 4 || bpc == 8 || bpc == 16;
 }
 
-// Wrapper class to use with nonstd::unique_ptr for CJPX_Decoder.
+// Wrapper class to use with std::unique_ptr for CJPX_Decoder.
 class JpxBitMapContext {
  public:
   explicit JpxBitMapContext(ICodec_JpxModule* jpx_module)
@@ -199,7 +199,7 @@ CFX_DIBitmap* CPDF_DIBSource::GetBitmap() const {
   return m_pCachedBitmap ? m_pCachedBitmap.get() : Clone();
 }
 void CPDF_DIBSource::ReleaseBitmap(CFX_DIBitmap* pBitmap) const {
-  if (pBitmap && pBitmap != m_pCachedBitmap) {
+  if (pBitmap && pBitmap != m_pCachedBitmap.get()) {
     delete pBitmap;
   }
 }
@@ -682,8 +682,7 @@ void CPDF_DIBSource::LoadJpxBitmap() {
   if (!pJpxModule)
     return;
 
-  nonstd::unique_ptr<JpxBitMapContext> context(
-      new JpxBitMapContext(pJpxModule));
+  std::unique_ptr<JpxBitMapContext> context(new JpxBitMapContext(pJpxModule));
   context->set_decoder(pJpxModule->CreateDecoder(
       m_pStreamAcc->GetData(), m_pStreamAcc->GetSize(), m_pColorSpace));
   if (!context->decoder())

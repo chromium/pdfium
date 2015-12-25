@@ -4,7 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <memory>
+
 #include "../../../foxitlib.h"
+
 CFWL_DateTimePicker* CFWL_DateTimePicker::Create() {
   return new CFWL_DateTimePicker;
 }
@@ -15,7 +18,7 @@ FWL_ERR CFWL_DateTimePicker::Initialize(
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  nonstd::unique_ptr<IFWL_DateTimePicker> pDateTimePicker(
+  std::unique_ptr<IFWL_DateTimePicker> pDateTimePicker(
       IFWL_DateTimePicker::Create(
           m_pProperties->MakeWidgetImpProperties(&m_DateTimePickerDP),
           nullptr));

@@ -4,9 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <memory>
+
 #include "fx_path_generator.h"
 #include "pre.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 class CAGG_Graphics {
  public:
@@ -1099,7 +1100,7 @@ FX_ERR CFX_Graphics::CalcTextInfo(const CFX_WideString& text,
                                   FX_DWORD* charCodes,
                                   FXTEXT_CHARPOS* charPos,
                                   CFX_RectF& rect) {
-  nonstd::unique_ptr<CFX_UnicodeEncoding> encoding(
+  std::unique_ptr<CFX_UnicodeEncoding> encoding(
       new CFX_UnicodeEncoding(_info._font));
   int32_t length = text.GetLength();
   FX_FLOAT penX = (FX_FLOAT)rect.left;

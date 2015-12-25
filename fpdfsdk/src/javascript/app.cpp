@@ -6,6 +6,8 @@
 
 #include "app.h"
 
+#include <memory>
+
 #include "Document.h"
 #include "JS_Context.h"
 #include "JS_Define.h"
@@ -16,7 +18,6 @@
 #include "fpdfsdk/include/fsdk_mgr.h"  // For CPDFDoc_Environment.
 #include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "resource.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 BEGIN_JS_STATIC_CONST(CJS_TimerObj)
 END_JS_STATIC_CONST()
@@ -803,7 +804,7 @@ FX_BOOL app::response(IJS_Context* cc,
   CPDFDoc_Environment* pApp = pContext->GetReaderApp();
 
   const int MAX_INPUT_BYTES = 2048;
-  nonstd::unique_ptr<char[]> pBuff(new char[MAX_INPUT_BYTES + 2]);
+  std::unique_ptr<char[]> pBuff(new char[MAX_INPUT_BYTES + 2]);
   memset(pBuff.get(), 0, MAX_INPUT_BYTES + 2);
   int nLengthBytes = pApp->JS_appResponse(
       swQuestion.c_str(), swTitle.c_str(), swDefault.c_str(), swLabel.c_str(),

@@ -4,7 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <memory>
+
 #include "../../../foxitlib.h"
+
 CFWL_Caret* CFWL_Caret::Create() {
   return new CFWL_Caret;
 }
@@ -14,7 +17,7 @@ FWL_ERR CFWL_Caret::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  nonstd::unique_ptr<IFWL_Caret> pCaret(IFWL_Caret::Create(
+  std::unique_ptr<IFWL_Caret> pCaret(IFWL_Caret::Create(
       m_pProperties->MakeWidgetImpProperties(nullptr), nullptr));
   FWL_ERR ret = pCaret->Initialize();
   if (ret != FWL_ERR_Succeeded) {

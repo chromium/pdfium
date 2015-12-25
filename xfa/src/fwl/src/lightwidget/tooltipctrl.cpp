@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <memory>
+
 #include "../../../foxitlib.h"
 #include "../core/include/fwl_targetimp.h"
 #include "../core/include/fwl_noteimp.h"
@@ -11,6 +13,7 @@
 #include "../core/include/fwl_panelimp.h"
 #include "../core/include/fwl_formimp.h"
 #include "../core/include/fwl_threadimp.h"
+
 CFWL_ToolTip* CFWL_ToolTip::Create() {
   return new CFWL_ToolTip;
 }
@@ -20,7 +23,7 @@ FWL_ERR CFWL_ToolTip::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  nonstd::unique_ptr<IFWL_ToolTip> pToolTip(IFWL_ToolTip::Create(
+  std::unique_ptr<IFWL_ToolTip> pToolTip(IFWL_ToolTip::Create(
       m_pProperties->MakeWidgetImpProperties(&m_tooltipData), nullptr));
   FWL_ERR ret = pToolTip->Initialize();
   if (ret != FWL_ERR_Succeeded) {

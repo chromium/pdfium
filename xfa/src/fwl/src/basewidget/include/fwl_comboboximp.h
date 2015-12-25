@@ -7,7 +7,8 @@
 #ifndef _FWL_COMBOBOX_IMP_H
 #define _FWL_COMBOBOX_IMP_H
 
-#include "third_party/base/nonstd_unique_ptr.h"
+#include <memory>
+
 #include "xfa/src/fwl/src/basewidget/include/fwl_editimp.h"
 #include "xfa/src/fwl/src/basewidget/include/fwl_listboximp.h"
 
@@ -164,8 +165,8 @@ class CFWL_ComboBoxImp : public CFWL_WidgetImp {
   CFX_RectF m_rtList;
   CFX_RectF m_rtProxy;
   CFX_RectF m_rtHandler;
-  nonstd::unique_ptr<IFWL_Edit> m_pEdit;
-  nonstd::unique_ptr<IFWL_ListBox> m_pListBox;
+  std::unique_ptr<IFWL_Edit> m_pEdit;
+  std::unique_ptr<IFWL_ListBox> m_pListBox;
   IFWL_Form* m_pForm;
   FX_BOOL m_bLButtonDown;
   FX_BOOL m_bUpFormHandler;

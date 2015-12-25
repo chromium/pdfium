@@ -865,7 +865,7 @@ CCodec_JpxModule::~CCodec_JpxModule() {
 CJPX_Decoder* CCodec_JpxModule::CreateDecoder(const uint8_t* src_buf,
                                               FX_DWORD src_size,
                                               CPDF_ColorSpace* cs) {
-  nonstd::unique_ptr<CJPX_Decoder> decoder(new CJPX_Decoder(cs));
+  std::unique_ptr<CJPX_Decoder> decoder(new CJPX_Decoder(cs));
   return decoder->Init(src_buf, src_size) ? decoder.release() : nullptr;
 }
 

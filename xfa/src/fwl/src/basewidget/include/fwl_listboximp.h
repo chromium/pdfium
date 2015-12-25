@@ -7,7 +7,7 @@
 #ifndef _FWL_LISTBOX_IMP_H
 #define _FWL_LISTBOX_IMP_H
 
-#include "third_party/base/nonstd_unique_ptr.h"
+#include <memory>
 
 class CFWL_WidgetImp;
 class CFWL_WidgetImpProperties;
@@ -86,8 +86,8 @@ class CFWL_ListBoxImp : public CFWL_WidgetImp {
   CFX_RectF m_rtClient;
   CFX_RectF m_rtStatic;
   CFX_RectF m_rtConent;
-  nonstd::unique_ptr<IFWL_ScrollBar> m_pHorzScrollBar;
-  nonstd::unique_ptr<IFWL_ScrollBar> m_pVertScrollBar;
+  std::unique_ptr<IFWL_ScrollBar> m_pHorzScrollBar;
+  std::unique_ptr<IFWL_ScrollBar> m_pVertScrollBar;
   FX_DWORD m_dwTTOStyles;
   int32_t m_iTTOAligns;
   FWL_HLISTITEM m_hAnchor;

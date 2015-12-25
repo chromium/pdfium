@@ -4,6 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <cctype>
+#include <cwctype>
+#include <memory>
+
 #include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fpdfapi/fpdf_pageobj.h"
 #include "core/include/fpdfapi/fpdf_resource.h"
@@ -11,11 +15,7 @@
 #include "core/include/fxcrt/fx_bidi.h"
 #include "core/include/fxcrt/fx_ucd.h"
 #include "text_int.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 #include "txtproc.h"
-
-#include <cctype>
-#include <cwctype>
 
 CFX_ByteString CharFromUnicodeAlt(FX_WCHAR unicode,
                                   int destcp,
@@ -314,7 +314,7 @@ void NormalizeString(CFX_WideString& str) {
     return;
   }
   CFX_WideString sBuffer;
-  nonstd::unique_ptr<CFX_BidiChar> pBidiChar(new CFX_BidiChar);
+  std::unique_ptr<CFX_BidiChar> pBidiChar(new CFX_BidiChar);
   CFX_WordArray order;
   FX_BOOL bR2L = FALSE;
   int32_t start = 0, count = 0, i = 0;

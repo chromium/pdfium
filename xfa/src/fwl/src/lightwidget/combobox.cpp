@@ -4,7 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <memory>
+
 #include "../../../foxitlib.h"
+
 CFWL_ComboBox* CFWL_ComboBox::Create() {
   return new CFWL_ComboBox;
 }
@@ -14,7 +17,7 @@ FWL_ERR CFWL_ComboBox::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  nonstd::unique_ptr<IFWL_ComboBox> pComboBox(IFWL_ComboBox::Create(
+  std::unique_ptr<IFWL_ComboBox> pComboBox(IFWL_ComboBox::Create(
       m_pProperties->MakeWidgetImpProperties(&m_comboBoxData)));
   FWL_ERR ret = pComboBox->Initialize();
   if (ret != FWL_ERR_Succeeded) {

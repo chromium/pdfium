@@ -6,10 +6,11 @@
 
 #include "JBig2_GrrdProc.h"
 
+#include <memory>
+
 #include "JBig2_ArithDecoder.h"
 #include "JBig2_BitStream.h"
 #include "JBig2_Image.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 CJBig2_Image* CJBig2_GRRDProc::decode(CJBig2_ArithDecoder* pArithDecoder,
                                       JBig2ArithCtx* grContext) {
@@ -37,7 +38,7 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template0_unopt(
   FX_DWORD CONTEXT;
   FX_DWORD line1, line2, line3, line4, line5;
   LTP = 0;
-  nonstd::unique_ptr<CJBig2_Image> GRREG(new CJBig2_Image(GRW, GRH));
+  std::unique_ptr<CJBig2_Image> GRREG(new CJBig2_Image(GRW, GRH));
   GRREG->fill(0);
   for (FX_DWORD h = 0; h < GRH; h++) {
     if (TPGRON) {
@@ -162,7 +163,7 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template0_opt(
   GRW = (int32_t)CJBig2_GRRDProc::GRW;
   GRH = (int32_t)CJBig2_GRRDProc::GRH;
   LTP = 0;
-  nonstd::unique_ptr<CJBig2_Image> GRREG(new CJBig2_Image(GRW, GRH));
+  std::unique_ptr<CJBig2_Image> GRREG(new CJBig2_Image(GRW, GRH));
   if (!GRREG->m_pData)
     return nullptr;
 
@@ -289,7 +290,7 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template1_unopt(
   FX_DWORD CONTEXT;
   FX_DWORD line1, line2, line3, line4, line5;
   LTP = 0;
-  nonstd::unique_ptr<CJBig2_Image> GRREG(new CJBig2_Image(GRW, GRH));
+  std::unique_ptr<CJBig2_Image> GRREG(new CJBig2_Image(GRW, GRH));
   GRREG->fill(0);
   for (FX_DWORD h = 0; h < GRH; h++) {
     if (TPGRON) {
@@ -400,7 +401,7 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template1_opt(
   GRW = (int32_t)CJBig2_GRRDProc::GRW;
   GRH = (int32_t)CJBig2_GRRDProc::GRH;
   LTP = 0;
-  nonstd::unique_ptr<CJBig2_Image> GRREG(new CJBig2_Image(GRW, GRH));
+  std::unique_ptr<CJBig2_Image> GRREG(new CJBig2_Image(GRW, GRH));
   if (!GRREG->m_pData)
     return nullptr;
 

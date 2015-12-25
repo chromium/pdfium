@@ -4,7 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <memory>
+
 #include "../../../foxitlib.h"
+
 CFWL_Barcode* CFWL_Barcode::Create() {
   return new CFWL_Barcode;
 }
@@ -14,7 +17,7 @@ FWL_ERR CFWL_Barcode::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  nonstd::unique_ptr<IFWL_Barcode> pBarcode(IFWL_Barcode::Create(
+  std::unique_ptr<IFWL_Barcode> pBarcode(IFWL_Barcode::Create(
       m_pProperties->MakeWidgetImpProperties(&m_barcodeData)));
   FWL_ERR ret = pBarcode->Initialize();
   if (ret != FWL_ERR_Succeeded) {

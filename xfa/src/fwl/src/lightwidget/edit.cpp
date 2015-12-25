@@ -4,7 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <memory>
+
 #include "../../../foxitlib.h"
+
 CFWL_Edit* CFWL_Edit::Create() {
   return new CFWL_Edit;
 }
@@ -14,7 +17,7 @@ FWL_ERR CFWL_Edit::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  nonstd::unique_ptr<IFWL_Edit> pEdit(IFWL_Edit::Create(
+  std::unique_ptr<IFWL_Edit> pEdit(IFWL_Edit::Create(
       m_pProperties->MakeWidgetImpProperties(nullptr), nullptr));
   FWL_ERR ret = pEdit->Initialize();
   if (ret != FWL_ERR_Succeeded) {

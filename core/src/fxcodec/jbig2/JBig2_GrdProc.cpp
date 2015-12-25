@@ -6,11 +6,12 @@
 
 #include "JBig2_GrdProc.h"
 
+#include <memory>
+
 #include "JBig2_ArithDecoder.h"
 #include "JBig2_BitStream.h"
 #include "JBig2_Image.h"
 #include "core/include/fxcodec/fx_codec.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 CJBig2_GRDProc::CJBig2_GRDProc()
     : m_loopIndex(0),
@@ -71,7 +72,7 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template0_opt3(
   int32_t nStride, nStride2, k;
   int32_t nLineBytes, nBitsLeft, cc;
   LTP = 0;
-  nonstd::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
+  std::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
   if (!GBREG->m_pData)
     return nullptr;
 
@@ -158,7 +159,7 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template0_unopt(
   FX_DWORD CONTEXT;
   FX_DWORD line1, line2, line3;
   LTP = 0;
-  nonstd::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
+  std::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
   GBREG->fill(0);
   for (FX_DWORD h = 0; h < GBH; h++) {
     if (TPGDON) {
@@ -209,7 +210,7 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template1_opt3(
   int32_t nStride, nStride2, k;
   int32_t nLineBytes, nBitsLeft, cc;
   LTP = 0;
-  nonstd::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
+  std::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
   if (!GBREG->m_pData)
     return nullptr;
 
@@ -295,7 +296,7 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template1_unopt(
   FX_DWORD CONTEXT;
   FX_DWORD line1, line2, line3;
   LTP = 0;
-  nonstd::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
+  std::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
   GBREG->fill(0);
   for (FX_DWORD h = 0; h < GBH; h++) {
     if (TPGDON) {
@@ -343,7 +344,7 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template2_opt3(
   int32_t nStride, nStride2, k;
   int32_t nLineBytes, nBitsLeft, cc;
   LTP = 0;
-  nonstd::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
+  std::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
   if (!GBREG->m_pData)
     return nullptr;
 
@@ -429,7 +430,7 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template2_unopt(
   FX_DWORD CONTEXT;
   FX_DWORD line1, line2, line3;
   LTP = 0;
-  nonstd::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
+  std::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
   GBREG->fill(0);
   for (FX_DWORD h = 0; h < GBH; h++) {
     if (TPGDON) {
@@ -476,7 +477,7 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template3_opt3(
   int32_t nStride, k;
   int32_t nLineBytes, nBitsLeft, cc;
   LTP = 0;
-  nonstd::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
+  std::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
   if (!GBREG->m_pData)
     return nullptr;
 
@@ -548,7 +549,7 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template3_unopt(
   FX_DWORD CONTEXT;
   FX_DWORD line1, line2;
   LTP = 0;
-  nonstd::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
+  std::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
   GBREG->fill(0);
   for (FX_DWORD h = 0; h < GBH; h++) {
     if (TPGDON) {

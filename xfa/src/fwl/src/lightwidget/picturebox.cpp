@@ -4,7 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <memory>
+
 #include "../../../foxitlib.h"
+
 CFWL_PictureBox* CFWL_PictureBox::Create() {
   return new CFWL_PictureBox;
 }
@@ -14,7 +17,7 @@ FWL_ERR CFWL_PictureBox::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  nonstd::unique_ptr<IFWL_PictureBox> pPictureBox(IFWL_PictureBox::Create(
+  std::unique_ptr<IFWL_PictureBox> pPictureBox(IFWL_PictureBox::Create(
       m_pProperties->MakeWidgetImpProperties(&m_PictureBoxDP), nullptr));
   FWL_ERR ret = pPictureBox->Initialize();
   if (ret != FWL_ERR_Succeeded) {

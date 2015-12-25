@@ -1700,7 +1700,7 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(FX_DWORD charcode, int level) {
   if (!pStream)
     return nullptr;
 
-  nonstd::unique_ptr<CPDF_Type3Char> pNewChar(new CPDF_Type3Char(new CPDF_Form(
+  std::unique_ptr<CPDF_Type3Char> pNewChar(new CPDF_Type3Char(new CPDF_Form(
       m_pDocument, m_pFontResources ? m_pFontResources : m_pPageResources,
       pStream, nullptr)));
 

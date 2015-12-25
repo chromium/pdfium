@@ -4,7 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <memory>
+
 #include "../../../foxitlib.h"
+
 CFWL_PushButton* CFWL_PushButton::Create() {
   return new CFWL_PushButton;
 }
@@ -14,7 +17,7 @@ FWL_ERR CFWL_PushButton::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  nonstd::unique_ptr<IFWL_PushButton> pPushButton(IFWL_PushButton::Create(
+  std::unique_ptr<IFWL_PushButton> pPushButton(IFWL_PushButton::Create(
       m_pProperties->MakeWidgetImpProperties(&m_buttonData), nullptr));
   FWL_ERR ret = pPushButton->Initialize();
   if (ret != FWL_ERR_Succeeded) {

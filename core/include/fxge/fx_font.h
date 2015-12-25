@@ -8,10 +8,10 @@
 #define CORE_INCLUDE_FXGE_FX_FONT_H_
 
 #include <map>
+#include <memory>
 
 #include "core/include/fxcrt/fx_system.h"
 #include "fx_dib.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 typedef struct FT_FaceRec_* FXFT_Face;
 typedef void* FXFT_Library;
@@ -273,7 +273,7 @@ class CFX_FontMgr {
   FXFT_Library GetFTLibrary() const { return m_FTLibrary; }
 
  private:
-  nonstd::unique_ptr<CFX_FontMapper> m_pBuiltinMapper;
+  std::unique_ptr<CFX_FontMapper> m_pBuiltinMapper;
   std::map<CFX_ByteString, CTTFontDesc*> m_FaceMap;
   FXFT_Library m_FTLibrary;
 };

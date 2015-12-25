@@ -3140,7 +3140,7 @@ FX_BOOL Field::getArray(IJS_Context* cc,
 
   CJS_Array FormFieldArray(pRuntime);
   for (int j = 0, jsz = swSort.GetSize(); j < jsz; j++) {
-    nonstd::unique_ptr<CFX_WideString> pStr(swSort.GetAt(j));
+    std::unique_ptr<CFX_WideString> pStr(swSort.GetAt(j));
     v8::Local<v8::Object> pObj = FXJS_NewFxDynamicObj(
         pRuntime->GetIsolate(), pRuntime, CJS_Field::g_nObjDefnID);
     ASSERT(!pObj.IsEmpty());

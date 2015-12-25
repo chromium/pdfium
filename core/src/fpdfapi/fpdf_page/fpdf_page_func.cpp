@@ -8,12 +8,12 @@
 
 #include <limits.h>
 
+#include <memory>
 #include <vector>
 
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fxcrt/fx_safe_types.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 #include "third_party/base/numerics/safe_conversions_impl.h"
 
 class CPDF_PSEngine;
@@ -768,7 +768,7 @@ FX_BOOL CPDF_StitchFunc::v_Init(CPDF_Object* pObj) {
     if (pSub == pObj) {
       return FALSE;
     }
-    nonstd::unique_ptr<CPDF_Function> pFunc(CPDF_Function::Load(pSub));
+    std::unique_ptr<CPDF_Function> pFunc(CPDF_Function::Load(pSub));
     if (!pFunc) {
       return FALSE;
     }

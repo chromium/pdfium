@@ -1314,7 +1314,7 @@ FX_BOOL CFWL_EditImp::UpdateOffset() {
 }
 FX_BOOL CFWL_EditImp::UpdateOffset(IFWL_ScrollBar* pScrollBar,
                                    FX_FLOAT fPosChanged) {
-  if (pScrollBar == m_pHorzScrollBar) {
+  if (pScrollBar == m_pHorzScrollBar.get()) {
     m_fScrollOffsetX += fPosChanged;
   } else {
     m_fScrollOffsetY += fPosChanged;

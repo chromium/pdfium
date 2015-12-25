@@ -7,12 +7,12 @@
 #ifndef CORE_SRC_FXCODEC_JBIG2_JBIG2_SYMBOLDICT_H_
 #define CORE_SRC_FXCODEC_JBIG2_JBIG2_SYMBOLDICT_H_
 
+#include <memory>
 #include <vector>
 
 #include "JBig2_ArithDecoder.h"
 #include "JBig2_List.h"
 #include "core/include/fxcrt/fx_basic.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 class CJBig2_Image;
 
@@ -21,7 +21,7 @@ class CJBig2_SymbolDict {
   CJBig2_SymbolDict();
   ~CJBig2_SymbolDict();
 
-  nonstd::unique_ptr<CJBig2_SymbolDict> DeepCopy() const;
+  std::unique_ptr<CJBig2_SymbolDict> DeepCopy() const;
 
   // Takes ownership of |image|.
   void AddImage(CJBig2_Image* image) { m_SDEXSYMS.push_back(image); }

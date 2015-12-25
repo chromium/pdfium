@@ -6,17 +6,18 @@
 
 #include "JBig2_GsidProc.h"
 
+#include <memory>
+
 #include "JBig2_BitStream.h"
 #include "JBig2_GrdProc.h"
 #include "JBig2_Image.h"
 #include "JBig2_List.h"
 #include "core/include/fxcrt/fx_basic.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 FX_DWORD* CJBig2_GSIDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
                                         JBig2ArithCtx* gbContext,
                                         IFX_Pause* pPause) {
-  nonstd::unique_ptr<CJBig2_GRDProc> pGRD(new CJBig2_GRDProc());
+  std::unique_ptr<CJBig2_GRDProc> pGRD(new CJBig2_GRDProc());
   pGRD->MMR = GSMMR;
   pGRD->GBW = GSW;
   pGRD->GBH = GSH;
@@ -55,7 +56,7 @@ FX_DWORD* CJBig2_GSIDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
     if (i < GSBPP - 1)
       pImage->composeFrom(0, 0, GSPLANES.get(i + 1), JBIG2_COMPOSE_XOR);
   }
-  nonstd::unique_ptr<FX_DWORD, FxFreeDeleter> GSVALS(
+  std::unique_ptr<FX_DWORD, FxFreeDeleter> GSVALS(
       FX_Alloc2D(FX_DWORD, GSW, GSH));
   JBIG2_memset(GSVALS.get(), 0, sizeof(FX_DWORD) * GSW * GSH);
   for (FX_DWORD y = 0; y < GSH; ++y) {
@@ -70,12 +71,12 @@ FX_DWORD* CJBig2_GSIDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
 
 FX_DWORD* CJBig2_GSIDProc::decode_MMR(CJBig2_BitStream* pStream,
                                       IFX_Pause* pPause) {
-  nonstd::unique_ptr<CJBig2_GRDProc> pGRD(new CJBig2_GRDProc());
+  std::unique_ptr<CJBig2_GRDProc> pGRD(new CJBig2_GRDProc());
   pGRD->MMR = GSMMR;
   pGRD->GBW = GSW;
   pGRD->GBH = GSH;
 
-  nonstd::unique_ptr<CJBig2_Image*> GSPLANES(FX_Alloc(CJBig2_Image*, GSBPP));
+  std::unique_ptr<CJBig2_Image*> GSPLANES(FX_Alloc(CJBig2_Image*, GSBPP));
   JBIG2_memset(GSPLANES.get(), 0, sizeof(CJBig2_Image*) * GSBPP);
   FXCODEC_STATUS status =
       pGRD->Start_decode_MMR(&GSPLANES.get()[GSBPP - 1], pStream, nullptr);
@@ -106,7 +107,7 @@ FX_DWORD* CJBig2_GSIDProc::decode_MMR(CJBig2_BitStream* pStream,
                                    JBIG2_COMPOSE_XOR);
     J = J - 1;
   }
-  nonstd::unique_ptr<FX_DWORD> GSVALS(FX_Alloc2D(FX_DWORD, GSW, GSH));
+  std::unique_ptr<FX_DWORD> GSVALS(FX_Alloc2D(FX_DWORD, GSW, GSH));
   JBIG2_memset(GSVALS.get(), 0, sizeof(FX_DWORD) * GSW * GSH);
   for (FX_DWORD y = 0; y < GSH; ++y) {
     for (FX_DWORD x = 0; x < GSW; ++x) {

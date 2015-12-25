@@ -15,9 +15,9 @@ CJBig2_SymbolDict::CJBig2_SymbolDict() {
 CJBig2_SymbolDict::~CJBig2_SymbolDict() {
 }
 
-nonstd::unique_ptr<CJBig2_SymbolDict> CJBig2_SymbolDict::DeepCopy() const {
+std::unique_ptr<CJBig2_SymbolDict> CJBig2_SymbolDict::DeepCopy() const {
   const CJBig2_SymbolDict* src = this;
-  nonstd::unique_ptr<CJBig2_SymbolDict> dst(new CJBig2_SymbolDict);
+  std::unique_ptr<CJBig2_SymbolDict> dst(new CJBig2_SymbolDict);
   for (size_t i = 0; i < src->m_SDEXSYMS.size(); ++i) {
     CJBig2_Image* image = src->m_SDEXSYMS.get(i);
     dst->m_SDEXSYMS.push_back(image ? new CJBig2_Image(*image) : nullptr);

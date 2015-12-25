@@ -97,7 +97,7 @@ class CPDF_TestParser : public CPDF_Parser {
 // TODO(thestig) Using unique_ptr with ReleaseDeleter is still not ideal.
 // Come up or wait for something better.
 using ScopedFileStream =
-    nonstd::unique_ptr<IFX_FileStream, ReleaseDeleter<IFX_FileStream>>;
+    std::unique_ptr<IFX_FileStream, ReleaseDeleter<IFX_FileStream>>;
 
 TEST(fpdf_parser_parser, ReadHexString) {
   {

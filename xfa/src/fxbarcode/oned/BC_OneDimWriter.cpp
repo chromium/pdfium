@@ -22,10 +22,11 @@
 
 #include "BC_OneDimWriter.h"
 
+#include <memory>
+
 #include "../BC_Writer.h"
 #include "../barcode.h"
 #include "../common/BC_CommonBitMatrix.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 CBC_OneDimWriter::CBC_OneDimWriter() {
   m_locTextLoc = BC_TEXT_LOC_BELOWEMBED;
@@ -132,7 +133,7 @@ void CBC_OneDimWriter::CalcTextInfo(const CFX_ByteString& text,
                                     FX_FLOAT geWidth,
                                     int32_t fontSize,
                                     FX_FLOAT& charsLen) {
-  nonstd::unique_ptr<CFX_UnicodeEncodingEx> encoding(
+  std::unique_ptr<CFX_UnicodeEncodingEx> encoding(
       FX_CreateFontEncodingEx(cFont));
 
   int32_t length = text.GetLength();

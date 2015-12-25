@@ -107,7 +107,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
   int back_left, back_top;
   FX_RECT rect(left, top, left + pDIBitmap->GetWidth(),
                top + pDIBitmap->GetHeight());
-  nonstd::unique_ptr<CFX_DIBitmap> pBackdrop(
+  std::unique_ptr<CFX_DIBitmap> pBackdrop(
       GetBackdrop(m_pCurObj, rect, back_left, back_top,
                   blend_mode > FXDIB_BLEND_NORMAL && bIsolated));
   if (!pBackdrop)
@@ -123,7 +123,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
                              pDIBitmap, mask_argb, 0, 0, blend_mode);
   }
 
-  nonstd::unique_ptr<CFX_DIBitmap> pBackdrop1(new CFX_DIBitmap);
+  std::unique_ptr<CFX_DIBitmap> pBackdrop1(new CFX_DIBitmap);
   pBackdrop1->Create(pBackdrop->GetWidth(), pBackdrop->GetHeight(),
                      FXDIB_Rgb32);
   pBackdrop1->Clear((FX_DWORD)-1);
@@ -760,7 +760,7 @@ FX_BOOL CPDF_ImageRenderer::StartDIBSource() {
   FX_RECT dest_clip(
       dest_rect.left - image_rect.left, dest_rect.top - image_rect.top,
       dest_rect.right - image_rect.left, dest_rect.bottom - image_rect.top);
-  nonstd::unique_ptr<CFX_DIBitmap> pStretched(
+  std::unique_ptr<CFX_DIBitmap> pStretched(
       m_pDIBSource->StretchTo(dest_width, dest_height, m_Flags, &dest_clip));
   if (pStretched) {
     m_pRenderStatus->CompositeDIBitmap(pStretched.get(), dest_rect.left,
@@ -785,7 +785,7 @@ FX_BOOL CPDF_ImageRenderer::StartBitmapAlpha() {
     if (FXSYS_fabs(m_ImageMatrix.b) >= 0.5f ||
         FXSYS_fabs(m_ImageMatrix.c) >= 0.5f) {
       int left, top;
-      nonstd::unique_ptr<CFX_DIBitmap> pTransformed(
+      std::unique_ptr<CFX_DIBitmap> pTransformed(
           pAlphaMask->TransformTo(&m_ImageMatrix, left, top));
       if (!pTransformed)
         return TRUE;
@@ -874,7 +874,7 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
   if (!pGroup) {
     return NULL;
   }
-  nonstd::unique_ptr<CPDF_Function> pFunc;
+  std::unique_ptr<CPDF_Function> pFunc;
   CPDF_Object* pFuncObj = pSMaskDict->GetElementValue("TR");
   if (pFuncObj && (pFuncObj->IsDictionary() || pFuncObj->IsStream()))
     pFunc.reset(CPDF_Function::Load(pFuncObj));
@@ -947,7 +947,7 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
                     &options, 0, m_bDropObjects, pFormResource, TRUE, NULL, 0,
                     pCS ? pCS->GetFamily() : 0, bLuminosity);
   status.RenderObjectList(&form, &matrix);
-  nonstd::unique_ptr<CFX_DIBitmap> pMask(new CFX_DIBitmap);
+  std::unique_ptr<CFX_DIBitmap> pMask(new CFX_DIBitmap);
   if (!pMask->Create(width, height, FXDIB_8bppMask))
     return nullptr;
 

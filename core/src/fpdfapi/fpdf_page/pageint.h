@@ -8,10 +8,10 @@
 #define CORE_SRC_FPDFAPI_FPDF_PAGE_PAGEINT_H_
 
 #include <map>
+#include <memory>
 
 #include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fpdfapi/fpdf_pageobj.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 class CPDF_AllStates;
 class CPDF_ParseOptions;
@@ -319,7 +319,7 @@ class CPDF_StreamContentParser {
   FX_DWORD m_ParamStartPos;
   FX_DWORD m_ParamCount;
   CPDF_StreamParser* m_pSyntax;
-  nonstd::unique_ptr<CPDF_AllStates> m_pCurStates;
+  std::unique_ptr<CPDF_AllStates> m_pCurStates;
   CPDF_ContentMark m_CurContentMark;
   CFX_ArrayTemplate<CPDF_TextObject*> m_ClipTextList;
   CPDF_TextObject* m_pLastTextObject;

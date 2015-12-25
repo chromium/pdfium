@@ -8,6 +8,7 @@
 #define FPDFSDK_INCLUDE_FSDK_MGR_H_
 
 #include <map>
+#include <memory>
 
 #include "core/include/fpdftext/fpdf_text.h"
 #include "fsdk_actionhandler.h"
@@ -20,7 +21,6 @@
 #include "javascript/IJavaScript.h"
 #include "public/fpdf_formfill.h"
 #include "public/fpdf_fwlevent.h"  // cross platform keycode and events define.
-#include "third_party/base/nonstd_unique_ptr.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfxfa/fpdfxfa_doc.h"
@@ -469,14 +469,14 @@ class CPDFDoc_Environment final {
   CPDFSDK_ActionHandler* GetActionHander();       // Creates if not present.
 
  private:
-  nonstd::unique_ptr<CPDFSDK_AnnotHandlerMgr> m_pAnnotHandlerMgr;
-  nonstd::unique_ptr<CPDFSDK_ActionHandler> m_pActionHandler;
-  nonstd::unique_ptr<IJS_Runtime> m_pJSRuntime;
+  std::unique_ptr<CPDFSDK_AnnotHandlerMgr> m_pAnnotHandlerMgr;
+  std::unique_ptr<CPDFSDK_ActionHandler> m_pActionHandler;
+  std::unique_ptr<IJS_Runtime> m_pJSRuntime;
   FPDF_FORMFILLINFO* const m_pInfo;
   CPDFSDK_Document* m_pSDKDoc;
   UnderlyingDocumentType* const m_pUnderlyingDoc;
-  nonstd::unique_ptr<CFFL_IFormFiller> m_pIFormFiller;
-  nonstd::unique_ptr<IFX_SystemHandler> m_pSysHandler;
+  std::unique_ptr<CFFL_IFormFiller> m_pIFormFiller;
+  std::unique_ptr<IFX_SystemHandler> m_pSysHandler;
 };
 
 class CPDFSDK_Document {
@@ -553,10 +553,10 @@ class CPDFSDK_Document {
  private:
   std::map<UnderlyingPageType*, CPDFSDK_PageView*> m_pageMap;
   UnderlyingDocumentType* m_pDoc;
-  nonstd::unique_ptr<CPDFSDK_InterForm> m_pInterForm;
+  std::unique_ptr<CPDFSDK_InterForm> m_pInterForm;
   CPDFSDK_Annot* m_pFocusAnnot;
   CPDFDoc_Environment* m_pEnv;
-  nonstd::unique_ptr<CPDF_OCContext> m_pOccontent;
+  std::unique_ptr<CPDF_OCContext> m_pOccontent;
   FX_BOOL m_bChangeMask;
   FX_BOOL m_bBeingDestroyed;
 };
@@ -649,7 +649,7 @@ class CPDFSDK_PageView final {
 
   CFX_Matrix m_curMatrix;
   UnderlyingPageType* m_page;
-  nonstd::unique_ptr<CPDF_AnnotList> m_pAnnotList;
+  std::unique_ptr<CPDF_AnnotList> m_pAnnotList;
   std::vector<CPDFSDK_Annot*> m_fxAnnotArray;
   CPDFSDK_Document* m_pSDKDoc;
 #ifdef PDF_ENABLE_XFA

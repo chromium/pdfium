@@ -4,7 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <memory>
+
 #include "../../../foxitlib.h"
+
 CFWL_ScrollBar* CFWL_ScrollBar::Create() {
   return new CFWL_ScrollBar;
 }
@@ -14,7 +17,7 @@ FWL_ERR CFWL_ScrollBar::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  nonstd::unique_ptr<IFWL_ScrollBar> pScrollBar(IFWL_ScrollBar::Create(
+  std::unique_ptr<IFWL_ScrollBar> pScrollBar(IFWL_ScrollBar::Create(
       m_pProperties->MakeWidgetImpProperties(nullptr), nullptr));
   FWL_ERR ret = pScrollBar->Initialize();
   if (ret != FWL_ERR_Succeeded) {

@@ -4,7 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <memory>
+
 #include "../../../foxitlib.h"
+
 CFWL_ListBox* CFWL_ListBox::Create() {
   return new CFWL_ListBox;
 }
@@ -14,7 +17,7 @@ FWL_ERR CFWL_ListBox::Initialize(const CFWL_WidgetProperties* pProperties) {
   if (pProperties) {
     *m_pProperties = *pProperties;
   }
-  nonstd::unique_ptr<IFWL_ListBox> pListBox(IFWL_ListBox::Create(
+  std::unique_ptr<IFWL_ListBox> pListBox(IFWL_ListBox::Create(
       m_pProperties->MakeWidgetImpProperties(&m_ListBoxDP), nullptr));
   FWL_ERR ret = pListBox->Initialize();
   if (ret != FWL_ERR_Succeeded) {

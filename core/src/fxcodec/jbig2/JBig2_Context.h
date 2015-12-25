@@ -8,6 +8,7 @@
 #define CORE_SRC_FXCODEC_JBIG2_JBIG2_CONTEXT_H_
 
 #include <list>
+#include <memory>
 #include <utility>
 
 #include "JBig2_List.h"
@@ -15,7 +16,6 @@
 #include "JBig2_Segment.h"
 #include "core/include/fpdfapi/fpdf_objects.h"
 #include "core/include/fxcodec/fx_codec_def.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 class CJBig2_ArithDecoder;
 class CJBig2_GRDProc;
@@ -110,20 +110,20 @@ class CJBig2_Context {
 
  private:
   CJBig2_Context* m_pGlobalContext;
-  nonstd::unique_ptr<CJBig2_BitStream> m_pStream;
+  std::unique_ptr<CJBig2_BitStream> m_pStream;
   CJBig2_List<CJBig2_Segment> m_SegmentList;
   CJBig2_List<JBig2PageInfo> m_PageInfoList;
-  nonstd::unique_ptr<CJBig2_Image> m_pPage;
+  std::unique_ptr<CJBig2_Image> m_pPage;
   size_t m_nSegmentDecoded;
   bool m_bInPage;
   bool m_bBufSpecified;
   int32_t m_PauseStep;
   IFX_Pause* m_pPause;
   FXCODEC_STATUS m_ProcessingStatus;
-  nonstd::unique_ptr<CJBig2_ArithDecoder> m_pArithDecoder;
-  nonstd::unique_ptr<CJBig2_GRDProc> m_pGRD;
+  std::unique_ptr<CJBig2_ArithDecoder> m_pArithDecoder;
+  std::unique_ptr<CJBig2_GRDProc> m_pGRD;
   JBig2ArithCtx* m_gbContext;
-  nonstd::unique_ptr<CJBig2_Segment> m_pSegment;
+  std::unique_ptr<CJBig2_Segment> m_pSegment;
   FX_DWORD m_dwOffset;
   JBig2RegionInfo m_ri;
   std::list<CJBig2_CachePair>* const m_pSymbolDictCache;

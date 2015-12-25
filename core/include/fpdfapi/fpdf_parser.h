@@ -8,10 +8,10 @@
 #define CORE_INCLUDE_FPDFAPI_FPDF_PARSER_H_
 
 #include <map>
+#include <memory>
 
 #include "core/include/fxcrt/fx_system.h"
 #include "fpdf_objects.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 class CFDF_Document;
 class CFDF_Parser;
@@ -347,7 +347,7 @@ class CPDF_SyntaxParser {
 
   FX_FILESIZE m_BufOffset;
 
-  nonstd::unique_ptr<CPDF_CryptoHandler> m_pCryptoHandler;
+  std::unique_ptr<CPDF_CryptoHandler> m_pCryptoHandler;
 
   uint8_t m_WordBuffer[257];
 
@@ -496,7 +496,7 @@ class CPDF_Parser {
 
   FX_BOOL m_bXRefStream;
 
-  nonstd::unique_ptr<CPDF_SecurityHandler> m_pSecurityHandler;
+  std::unique_ptr<CPDF_SecurityHandler> m_pSecurityHandler;
 
   FX_BOOL m_bForceUseSecurityHandler;
 

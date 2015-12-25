@@ -6,6 +6,7 @@
 #define TESTING_EMBEDDER_TEST_H_
 
 #include <map>
+#include <memory>
 #include <string>
 
 #include "public/fpdf_dataavail.h"
@@ -13,7 +14,6 @@
 #include "public/fpdf_formfill.h"
 #include "public/fpdfview.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 #ifdef PDF_ENABLE_V8
 #include "v8/include/v8.h"
@@ -108,7 +108,7 @@ class EmbedderTest : public ::testing::Test,
 
  protected:
   Delegate* delegate_;
-  nonstd::unique_ptr<Delegate> default_delegate_;
+  std::unique_ptr<Delegate> default_delegate_;
   FPDF_DOCUMENT document_;
   FPDF_FORMHANDLE form_handle_;
   FPDF_AVAIL avail_;
