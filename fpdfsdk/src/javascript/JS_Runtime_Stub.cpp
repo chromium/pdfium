@@ -4,9 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <memory>
+
 #include "fpdfsdk/include/fsdk_mgr.h"  // For CPDFDoc_Environment.
 #include "fpdfsdk/include/javascript/IJavaScript.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 class CJS_ContextStub final : public IJS_Context {
  public:
@@ -144,7 +145,7 @@ class CJS_RuntimeStub final : public IJS_Runtime {
 
  protected:
   CPDFSDK_Document* m_pDoc;
-  nonstd::unique_ptr<CJS_ContextStub> m_pContext;
+  std::unique_ptr<CJS_ContextStub> m_pContext;
 };
 
 // static

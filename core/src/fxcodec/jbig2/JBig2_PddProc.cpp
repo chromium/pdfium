@@ -6,10 +6,11 @@
 
 #include "JBig2_PddProc.h"
 
+#include <memory>
+
 #include "JBig2_GrdProc.h"
 #include "JBig2_Image.h"
 #include "JBig2_PatternDict.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 CJBig2_PatternDict* CJBig2_PDDProc::decode_Arith(
     CJBig2_ArithDecoder* pArithDecoder,
@@ -17,12 +18,12 @@ CJBig2_PatternDict* CJBig2_PDDProc::decode_Arith(
     IFX_Pause* pPause) {
   FX_DWORD GRAY;
   CJBig2_Image* BHDC = nullptr;
-  nonstd::unique_ptr<CJBig2_PatternDict> pDict(new CJBig2_PatternDict());
+  std::unique_ptr<CJBig2_PatternDict> pDict(new CJBig2_PatternDict());
   pDict->NUMPATS = GRAYMAX + 1;
   pDict->HDPATS = FX_Alloc(CJBig2_Image*, pDict->NUMPATS);
   JBIG2_memset(pDict->HDPATS, 0, sizeof(CJBig2_Image*) * pDict->NUMPATS);
 
-  nonstd::unique_ptr<CJBig2_GRDProc> pGRD(new CJBig2_GRDProc());
+  std::unique_ptr<CJBig2_GRDProc> pGRD(new CJBig2_GRDProc());
   pGRD->MMR = HDMMR;
   pGRD->GBW = (GRAYMAX + 1) * HDPW;
   pGRD->GBH = HDPH;
@@ -60,12 +61,12 @@ CJBig2_PatternDict* CJBig2_PDDProc::decode_MMR(CJBig2_BitStream* pStream,
                                                IFX_Pause* pPause) {
   FX_DWORD GRAY;
   CJBig2_Image* BHDC = nullptr;
-  nonstd::unique_ptr<CJBig2_PatternDict> pDict(new CJBig2_PatternDict());
+  std::unique_ptr<CJBig2_PatternDict> pDict(new CJBig2_PatternDict());
   pDict->NUMPATS = GRAYMAX + 1;
   pDict->HDPATS = FX_Alloc(CJBig2_Image*, pDict->NUMPATS);
   JBIG2_memset(pDict->HDPATS, 0, sizeof(CJBig2_Image*) * pDict->NUMPATS);
 
-  nonstd::unique_ptr<CJBig2_GRDProc> pGRD(new CJBig2_GRDProc());
+  std::unique_ptr<CJBig2_GRDProc> pGRD(new CJBig2_GRDProc());
   pGRD->MMR = HDMMR;
   pGRD->GBW = (GRAYMAX + 1) * HDPW;
   pGRD->GBH = HDPH;

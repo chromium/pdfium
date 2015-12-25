@@ -6,11 +6,12 @@
 
 #include "JBig2_TrdProc.h"
 
+#include <memory>
+
 #include "JBig2_ArithDecoder.h"
 #include "JBig2_ArithIntDecoder.h"
 #include "JBig2_GrrdProc.h"
 #include "JBig2_HuffmanDecoder.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
                                              JBig2ArithCtx* grContext) {
@@ -28,9 +29,9 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
   FX_BOOL bFirst;
   FX_DWORD nTmp;
   int32_t nVal, nBits;
-  nonstd::unique_ptr<CJBig2_HuffmanDecoder> pHuffmanDecoder(
+  std::unique_ptr<CJBig2_HuffmanDecoder> pHuffmanDecoder(
       new CJBig2_HuffmanDecoder(pStream));
-  nonstd::unique_ptr<CJBig2_Image> SBREG(new CJBig2_Image(SBW, SBH));
+  std::unique_ptr<CJBig2_Image> SBREG(new CJBig2_Image(SBW, SBH));
   SBREG->fill(SBDEFPIXEL);
   if (pHuffmanDecoder->decodeAValue(SBHUFFDT, &STRIPT) != 0)
     return nullptr;
@@ -123,7 +124,7 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
         if ((int)(WOI + RDWI) < 0 || (int)(HOI + RDHI) < 0)
           return nullptr;
 
-        nonstd::unique_ptr<CJBig2_GRRDProc> pGRRD(new CJBig2_GRRDProc());
+        std::unique_ptr<CJBig2_GRRDProc> pGRRD(new CJBig2_GRRDProc());
         pGRRD->GRW = WOI + RDWI;
         pGRRD->GRH = HOI + RDHI;
         pGRRD->GRTEMPLATE = SBRTEMPLATE;
@@ -137,7 +138,7 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
         pGRRD->GRAT[3] = SBRAT[3];
 
         {
-          nonstd::unique_ptr<CJBig2_ArithDecoder> pArithDecoder(
+          std::unique_ptr<CJBig2_ArithDecoder> pArithDecoder(
               new CJBig2_ArithDecoder(pStream));
           IBI = pGRRD->decode(pArithDecoder.get(), grContext);
           if (!IBI)
@@ -255,7 +256,7 @@ CJBig2_Image* CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
     IAID = new CJBig2_ArithIaidDecoder(SBSYMCODELEN);
     bRetained = FALSE;
   }
-  nonstd::unique_ptr<CJBig2_Image> SBREG(new CJBig2_Image(SBW, SBH));
+  std::unique_ptr<CJBig2_Image> SBREG(new CJBig2_Image(SBW, SBH));
   SBREG->fill(SBDEFPIXEL);
   IADT->decode(pArithDecoder, &STRIPT);
   STRIPT *= SBSTRIPS;
@@ -312,7 +313,7 @@ CJBig2_Image* CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
         if ((int)(WOI + RDWI) < 0 || (int)(HOI + RDHI) < 0) {
           goto failed;
         }
-        nonstd::unique_ptr<CJBig2_GRRDProc> pGRRD(new CJBig2_GRRDProc());
+        std::unique_ptr<CJBig2_GRRDProc> pGRRD(new CJBig2_GRRDProc());
         pGRRD->GRW = WOI + RDWI;
         pGRRD->GRH = HOI + RDHI;
         pGRRD->GRTEMPLATE = SBRTEMPLATE;

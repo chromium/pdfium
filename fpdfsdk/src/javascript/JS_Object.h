@@ -8,11 +8,11 @@
 #define FPDFSDK_SRC_JAVASCRIPT_JS_OBJECT_H_
 
 #include <map>
+#include <memory>
 
 #include "JS_Runtime.h"
 #include "fpdfsdk/include/fsdk_define.h"  // For FX_UINT
 #include "fpdfsdk/include/jsapi/fxjs_v8.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 class CJS_Context;
 class CJS_Object;
@@ -68,7 +68,7 @@ class CJS_Object {
   v8::Isolate* GetIsolate() { return m_pIsolate; }
 
  protected:
-  nonstd::unique_ptr<CJS_EmbedObj> m_pEmbedObj;
+  std::unique_ptr<CJS_EmbedObj> m_pEmbedObj;
   v8::Global<v8::Object> m_pV8Object;
   v8::Isolate* m_pIsolate;
 };

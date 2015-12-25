@@ -5,11 +5,11 @@
 #ifndef TESTING_JS_EMBEDDER_TEST_H_
 #define TESTING_JS_EMBEDDER_TEST_H_
 
+#include <memory>
 #include <vector>
 
 #include "fpdfsdk/include/jsapi/fxjs_v8.h"
 #include "testing/embedder_test.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 class JSEmbedderTest : public EmbedderTest {
  public:
@@ -23,7 +23,7 @@ class JSEmbedderTest : public EmbedderTest {
   v8::Local<v8::Context> GetV8Context();
 
  private:
-  nonstd::unique_ptr<FXJS_ArrayBufferAllocator> m_pArrayBufferAllocator;
+  std::unique_ptr<FXJS_ArrayBufferAllocator> m_pArrayBufferAllocator;
   v8::Isolate* m_pIsolate;
   v8::Global<v8::Context> m_pPersistentContext;
   std::vector<v8::Global<v8::Object>*> m_StaticObjects;

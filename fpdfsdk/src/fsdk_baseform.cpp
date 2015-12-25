@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <memory>
+
 #include "fpdfsdk/include/formfiller/FFL_FormFiller.h"
 #include "fpdfsdk/include/fsdk_actionhandler.h"
 #include "fpdfsdk/include/fsdk_baseannot.h"
@@ -11,7 +13,6 @@
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/include/javascript/IJavaScript.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 #define IsFloatZero(f) ((f) < 0.01 && (f) > -0.01)
 #define IsFloatBigger(fa, fb) ((fa) > (fb) && !IsFloatZero((fa) - (fb)))
@@ -1449,7 +1450,7 @@ FX_BOOL CPDFSDK_InterForm::HighlightWidgets() {
 
 CPDFSDK_Widget* CPDFSDK_InterForm::GetSibling(CPDFSDK_Widget* pWidget,
                                               FX_BOOL bNext) const {
-  nonstd::unique_ptr<CBA_AnnotIterator> pIterator(
+  std::unique_ptr<CBA_AnnotIterator> pIterator(
       new CBA_AnnotIterator(pWidget->GetPageView(), "Widget", ""));
 
   if (bNext) {
@@ -1917,7 +1918,7 @@ FX_BOOL CPDFSDK_InterForm::ExportFieldsToFDFTextBuf(
     const std::vector<CPDF_FormField*>& fields,
     FX_BOOL bIncludeOrExclude,
     CFX_ByteTextBuf& textBuf) {
-  nonstd::unique_ptr<CFDF_Document> pFDF(m_pInterForm->ExportToFDF(
+  std::unique_ptr<CFDF_Document> pFDF(m_pInterForm->ExportToFDF(
       m_pDocument->GetPath(), fields, bIncludeOrExclude));
   return pFDF ? pFDF->WriteBuf(textBuf) : FALSE;
 }

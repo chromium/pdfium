@@ -650,7 +650,7 @@ void CPDF_RenderStatus::ProcessClipPath(CPDF_ClipPath ClipPath,
     return;
   }
 
-  nonstd::unique_ptr<CFX_PathData> pTextClippingPath;
+  std::unique_ptr<CFX_PathData> pTextClippingPath;
   for (int i = 0; i < textcount; ++i) {
     CPDF_TextObject* pText = ClipPath.GetText(i);
     if (pText) {
@@ -811,7 +811,7 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
   int width = FXSYS_round((FX_FLOAT)rect.Width() * scaleX);
   int height = FXSYS_round((FX_FLOAT)rect.Height() * scaleY);
   CFX_FxgeDevice bitmap_device;
-  nonstd::unique_ptr<CFX_DIBitmap> oriDevice;
+  std::unique_ptr<CFX_DIBitmap> oriDevice;
   if (!isolated && (m_pDevice->GetRenderCaps() & FXRC_GET_BITS)) {
     oriDevice.reset(new CFX_DIBitmap);
     if (!m_pDevice->CreateCompatibleBitmap(oriDevice.get(), width, height))
@@ -827,7 +827,7 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
   CFX_Matrix new_matrix = *pObj2Device;
   new_matrix.TranslateI(-rect.left, -rect.top);
   new_matrix.Scale(scaleX, scaleY);
-  nonstd::unique_ptr<CFX_DIBitmap> pTextMask;
+  std::unique_ptr<CFX_DIBitmap> pTextMask;
   if (bTextClip) {
     pTextMask.reset(new CFX_DIBitmap);
     if (!pTextMask->Create(width, height, FXDIB_8bppMask))
@@ -861,7 +861,7 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
     FXSYS_memcpy(&smask_matrix, pGeneralState->m_SMaskMatrix,
                  sizeof smask_matrix);
     smask_matrix.Concat(*pObj2Device);
-    nonstd::unique_ptr<CFX_DIBSource> pSMaskSource(
+    std::unique_ptr<CFX_DIBSource> pSMaskSource(
         LoadSMask(pSMaskDict, &rect, &smask_matrix));
     if (pSMaskSource)
       bitmap->MultiplyAlpha(pSMaskSource.get());
@@ -896,7 +896,7 @@ CFX_DIBitmap* CPDF_RenderStatus::GetBackdrop(const CPDF_PageObject* pObj,
   FX_FLOAT scaleY = FXSYS_fabs(deviceCTM.d);
   int width = FXSYS_round(bbox.Width() * scaleX);
   int height = FXSYS_round(bbox.Height() * scaleY);
-  nonstd::unique_ptr<CFX_DIBitmap> pBackdrop(new CFX_DIBitmap);
+  std::unique_ptr<CFX_DIBitmap> pBackdrop(new CFX_DIBitmap);
   if (bBackAlphaRequired && !m_bDropObjects)
     pBackdrop->Create(width, height, FXDIB_Argb);
   else
@@ -1190,7 +1190,7 @@ CPDF_TransferFunc* CPDF_DocRenderData::GetTransferFunc(CPDF_Object* pObj) {
     return pTransferCounter->AddRef();
   }
 
-  nonstd::unique_ptr<CPDF_Function> pFuncs[3];
+  std::unique_ptr<CPDF_Function> pFuncs[3];
   FX_BOOL bUniTransfer = TRUE;
   FX_BOOL bIdentity = TRUE;
   if (CPDF_Array* pArray = pObj->AsArray()) {

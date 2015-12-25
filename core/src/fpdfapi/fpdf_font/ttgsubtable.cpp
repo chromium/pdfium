@@ -6,9 +6,10 @@
 
 #include "ttgsubtable.h"
 
+#include <memory>
+
 #include "core/include/fxge/fx_freetype.h"
 #include "core/include/fxge/fx_ge.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 #include "third_party/base/stl_util.h"
 
 CFX_GlyphMap::CFX_GlyphMap() {}
@@ -405,7 +406,7 @@ IFX_GSUBTable* IFX_GSUBTable::Create(CFX_Font* pFont) {
       FXFT_Load_Sfnt_Table(pFont->GetFace(), FT_MAKE_TAG('G', 'S', 'U', 'B'), 0,
                            pFont->GetSubData(), NULL);
   if (!error && pFont->GetSubData()) {
-    nonstd::unique_ptr<CFX_GSUBTable> pGsubTable(new CFX_GSUBTable);
+    std::unique_ptr<CFX_GSUBTable> pGsubTable(new CFX_GSUBTable);
     if (pGsubTable->m_GsubImp.LoadGSUBTable((FT_Bytes)pFont->GetSubData())) {
       return pGsubTable.release();
     }

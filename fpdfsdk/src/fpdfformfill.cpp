@@ -6,10 +6,11 @@
 
 #include "public/fpdf_formfill.h"
 
+#include <memory>
+
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
 #include "public/fpdfview.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 namespace {
 
@@ -228,9 +229,9 @@ DLLEXPORT void STDCALL FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,
   clip.bottom = start_y + size_y;
 
 #ifdef _SKIA_SUPPORT_
-  nonstd::unique_ptr<CFX_SkiaDevice> pDevice(new CFX_SkiaDevice);
+  std::unique_ptr<CFX_SkiaDevice> pDevice(new CFX_SkiaDevice);
 #else
-  nonstd::unique_ptr<CFX_FxgeDevice> pDevice(new CFX_FxgeDevice);
+  std::unique_ptr<CFX_FxgeDevice> pDevice(new CFX_FxgeDevice);
 #endif
   pDevice->Attach((CFX_DIBitmap*)bitmap);
   pDevice->SaveState();

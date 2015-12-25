@@ -846,7 +846,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert) {
   }
   CPDF_Dictionary* pBaseDict = new CPDF_Dictionary;
   pBaseDict->SetAtName("Type", "Font");
-  nonstd::unique_ptr<CFX_UnicodeEncoding> pEncoding(
+  std::unique_ptr<CFX_UnicodeEncoding> pEncoding(
       new CFX_UnicodeEncoding(pFont));
   CPDF_Dictionary* pFontDict = pBaseDict;
   if (!bCJK) {

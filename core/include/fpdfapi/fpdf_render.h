@@ -8,10 +8,10 @@
 #define CORE_INCLUDE_FPDFAPI_FPDF_RENDER_H_
 
 #include <map>
+#include <memory>
 
 #include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fxge/fx_ge.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 class CFX_GraphStateData;
 class CFX_PathData;
@@ -151,7 +151,7 @@ class CPDF_ProgressiveRenderer {
   CPDF_RenderContext* const m_pContext;
   CFX_RenderDevice* const m_pDevice;
   const CPDF_RenderOptions* const m_pOptions;
-  nonstd::unique_ptr<CPDF_RenderStatus> m_pRenderStatus;
+  std::unique_ptr<CPDF_RenderStatus> m_pRenderStatus;
   CFX_FloatRect m_ClipRect;
   FX_DWORD m_LayerIndex;
   FX_DWORD m_ObjectIndex;

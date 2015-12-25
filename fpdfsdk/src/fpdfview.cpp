@@ -6,6 +6,8 @@
 
 #include "public/fpdfview.h"
 
+#include <memory>
+
 #include "core/include/fxcodec/fx_codec.h"
 #include "core/include/fxcrt/fx_safe_types.h"
 #include "fpdfsdk/include/fsdk_define.h"
@@ -14,7 +16,6 @@
 #include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "public/fpdf_ext.h"
 #include "public/fpdf_progressive.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 #include "third_party/base/numerics/safe_conversions_impl.h"
 
 UnderlyingDocumentType* UnderlyingFromFPDFDocument(FPDF_DOCUMENT doc) {
@@ -606,7 +607,7 @@ DLLEXPORT void STDCALL FPDF_PageToDevice(FPDF_PAGE page,
 DLLEXPORT FPDF_BITMAP STDCALL FPDFBitmap_Create(int width,
                                                 int height,
                                                 int alpha) {
-  nonstd::unique_ptr<CFX_DIBitmap> pBitmap(new CFX_DIBitmap);
+  std::unique_ptr<CFX_DIBitmap> pBitmap(new CFX_DIBitmap);
   if (!pBitmap->Create(width, height, alpha ? FXDIB_Argb : FXDIB_Rgb32)) {
     return NULL;
   }

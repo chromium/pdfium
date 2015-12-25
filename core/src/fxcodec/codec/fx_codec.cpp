@@ -134,7 +134,7 @@ void CCodec_ScanlineDecoder::DownScale(int dest_width, int dest_height) {
     return;
   }
 
-  nonstd::unique_ptr<ImageDataCache> cache(
+  std::unique_ptr<ImageDataCache> cache(
       new ImageDataCache(m_OutputWidth, m_OutputHeight, m_Pitch));
   if (!cache->AllocateCache())
     return;

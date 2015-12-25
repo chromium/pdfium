@@ -92,7 +92,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
     }
     CFX_ByteString key((const FX_CHAR*)m_pSyntax->GetWordBuf() + 1,
                        m_pSyntax->GetWordSize() - 1);
-    nonstd::unique_ptr<CPDF_Object, ReleaseDeleter<CPDF_Object>> pObj(
+    std::unique_ptr<CPDF_Object, ReleaseDeleter<CPDF_Object>> pObj(
         m_pSyntax->ReadNextObject());
     if (!key.IsEmpty()) {
       FX_DWORD dwObjNum = pObj ? pObj->GetObjNum() : 0;

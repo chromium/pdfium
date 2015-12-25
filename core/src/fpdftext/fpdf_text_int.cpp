@@ -4,9 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
 #include <cctype>
 #include <cwctype>
-#include <algorithm>
+#include <memory>
 
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_page.h"
@@ -17,7 +18,6 @@
 #include "core/include/fxcrt/fx_ext.h"
 #include "core/include/fxcrt/fx_ucd.h"
 #include "text_int.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 namespace {
 
@@ -1053,7 +1053,7 @@ void CPDF_TextPage::CloseTempLine() {
   if (count1 <= 0) {
     return;
   }
-  nonstd::unique_ptr<CFX_BidiChar> pBidiChar(new CFX_BidiChar);
+  std::unique_ptr<CFX_BidiChar> pBidiChar(new CFX_BidiChar);
   CFX_WideString str = m_TempTextBuf.GetWideString();
   CFX_WordArray order;
   FX_BOOL bR2L = FALSE;
@@ -1441,7 +1441,7 @@ void CPDF_TextPage::SwapTempTextBuf(int32_t iCharListStartAppend,
 FX_BOOL CPDF_TextPage::IsRightToLeft(const CPDF_TextObject* pTextObj,
                                      const CPDF_Font* pFont,
                                      int nItems) const {
-  nonstd::unique_ptr<CFX_BidiChar> pBidiChar(new CFX_BidiChar);
+  std::unique_ptr<CFX_BidiChar> pBidiChar(new CFX_BidiChar);
   int32_t nR2L = 0;
   int32_t nL2R = 0;
   int32_t start = 0, count = 0;

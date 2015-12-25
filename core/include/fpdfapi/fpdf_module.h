@@ -7,9 +7,10 @@
 #ifndef CORE_INCLUDE_FPDFAPI_FPDF_MODULE_H_
 #define CORE_INCLUDE_FPDFAPI_FPDF_MODULE_H_
 
+#include <memory>
+
 #include "core/include/fxcrt/fx_coordinates.h"
 #include "core/include/fxcrt/fx_system.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 class CCodec_ModuleMgr;
 class CFX_BitmapDevice;
@@ -78,8 +79,8 @@ class CPDF_ModuleMgr {
   ~CPDF_ModuleMgr();
 
   CCodec_ModuleMgr* m_pCodecModule;
-  nonstd::unique_ptr<IPDF_RenderModule> m_pRenderModule;
-  nonstd::unique_ptr<IPDF_PageModule> m_pPageModule;
+  std::unique_ptr<IPDF_RenderModule> m_pRenderModule;
+  std::unique_ptr<IPDF_PageModule> m_pPageModule;
   FX_BOOL (*m_pDownloadCallback)(const FX_CHAR* module_name);
   CFX_PrivateData m_privateData;
 };

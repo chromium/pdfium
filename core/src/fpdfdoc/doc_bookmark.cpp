@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <memory>
 #include <vector>
 
 #include "core/include/fpdfdoc/fpdf_doc.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 CPDF_Bookmark CPDF_BookmarkTree::GetFirstChild(
     const CPDF_Bookmark& parent) const {
@@ -60,7 +60,7 @@ CFX_WideString CPDF_Bookmark::GetTitle() const {
   if (!len) {
     return CFX_WideString();
   }
-  nonstd::unique_ptr<FX_WCHAR[]> buf(new FX_WCHAR[len]);
+  std::unique_ptr<FX_WCHAR[]> buf(new FX_WCHAR[len]);
   for (int i = 0; i < len; i++) {
     FX_WCHAR w = title[i];
     buf[i] = w > 0x20 ? w : 0x20;

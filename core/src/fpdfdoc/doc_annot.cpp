@@ -6,7 +6,6 @@
 
 #include "core/include/fpdfapi/fpdf_pageobj.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
     : m_pDocument(pPage->m_pDocument) {

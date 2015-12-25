@@ -9,7 +9,6 @@
 #include <limits>
 
 #include "third_party/base/macros.h"
-#include "third_party/base/template_util.h"
 
 namespace pdfium {
 namespace base {

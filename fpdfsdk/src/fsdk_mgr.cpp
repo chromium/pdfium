@@ -5,6 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include <algorithm>
+#include <memory>
 
 #include "fpdfsdk/include/fsdk_mgr.h"
 
@@ -12,7 +13,6 @@
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "public/fpdf_ext.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 #include "third_party/base/stl_util.h"
 
 #if _FX_OS_ == _FX_ANDROID_
@@ -273,7 +273,7 @@ CFX_WideString CPDFDoc_Environment::JS_fieldBrowse() {
   if (nRequiredLen <= 0)
     return L"";
 
-  nonstd::unique_ptr<char[]> pBuff(new char[nRequiredLen]);
+  std::unique_ptr<char[]> pBuff(new char[nRequiredLen]);
   memset(pBuff.get(), 0, nRequiredLen);
   const int nActualLen = m_pInfo->m_pJsPlatform->Field_browse(
       m_pInfo->m_pJsPlatform, pBuff.get(), nRequiredLen);
@@ -296,7 +296,7 @@ CFX_WideString CPDFDoc_Environment::JS_docGetFilePath() {
   if (nRequiredLen <= 0)
     return L"";
 
-  nonstd::unique_ptr<char[]> pBuff(new char[nRequiredLen]);
+  std::unique_ptr<char[]> pBuff(new char[nRequiredLen]);
   memset(pBuff.get(), 0, nRequiredLen);
   const int nActualLen = m_pInfo->m_pJsPlatform->Doc_getFilePath(
       m_pInfo->m_pJsPlatform, pBuff.get(), nRequiredLen);

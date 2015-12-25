@@ -8,10 +8,10 @@
 #define CORE_SRC_FPDFAPI_FPDF_RENDER_RENDER_INT_H_
 
 #include <map>
+#include <memory>
 
 #include "core/include/fpdfapi/fpdf_pageobj.h"
 #include "core/include/fpdfapi/fpdf_render.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 class CFX_GlyphBitmap;
 class CFX_ImageTransformer;
@@ -254,7 +254,7 @@ class CPDF_RenderStatus {
   const CPDF_PageObject* m_pStopObj;
   CPDF_GraphicStates m_InitialStates;
   int m_HalftoneLimit;
-  nonstd::unique_ptr<IPDF_ObjectRenderer> m_pObjectRenderer;
+  std::unique_ptr<IPDF_ObjectRenderer> m_pObjectRenderer;
   FX_BOOL m_bPrint;
   int m_Transparency;
   int m_DitherBits;
@@ -392,7 +392,7 @@ class CPDF_ScaledRenderBuffer {
   CPDF_RenderContext* m_pContext;
   FX_RECT m_Rect;
   const CPDF_PageObject* m_pObject;
-  nonstd::unique_ptr<CFX_FxgeDevice> m_pBitmapDevice;
+  std::unique_ptr<CFX_FxgeDevice> m_pBitmapDevice;
   CFX_Matrix m_Matrix;
 };
 
@@ -414,7 +414,7 @@ class CPDF_DeviceBuffer {
   CPDF_RenderContext* m_pContext;
   FX_RECT m_Rect;
   const CPDF_PageObject* m_pObject;
-  nonstd::unique_ptr<CFX_DIBitmap> m_pBitmap;
+  std::unique_ptr<CFX_DIBitmap> m_pBitmap;
   CFX_Matrix m_Matrix;
 };
 
@@ -589,7 +589,7 @@ class CPDF_DIBSource : public CFX_DIBSource {
   DIB_COMP_DATA* m_pCompData;
   uint8_t* m_pLineBuf;
   uint8_t* m_pMaskedLine;
-  nonstd::unique_ptr<CFX_DIBitmap> m_pCachedBitmap;
+  std::unique_ptr<CFX_DIBitmap> m_pCachedBitmap;
   ICodec_ScanlineDecoder* m_pDecoder;
 };
 

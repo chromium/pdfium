@@ -7,11 +7,11 @@
 #ifndef CORE_INCLUDE_FXCODEC_FX_CODEC_H_
 #define CORE_INCLUDE_FXCODEC_FX_CODEC_H_
 
+#include <memory>
 #include <vector>
 
 #include "core/include/fxcrt/fx_basic.h"
 #include "fx_codec_def.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 class CFX_DIBSource;
 class CJPX_Decoder;
@@ -42,13 +42,13 @@ class CCodec_ModuleMgr {
   ICodec_FlateModule* GetFlateModule() const { return m_pFlateModule.get(); }
 
  protected:
-  nonstd::unique_ptr<ICodec_BasicModule> m_pBasicModule;
-  nonstd::unique_ptr<ICodec_FaxModule> m_pFaxModule;
-  nonstd::unique_ptr<ICodec_JpegModule> m_pJpegModule;
-  nonstd::unique_ptr<ICodec_JpxModule> m_pJpxModule;
-  nonstd::unique_ptr<ICodec_Jbig2Module> m_pJbig2Module;
-  nonstd::unique_ptr<ICodec_IccModule> m_pIccModule;
-  nonstd::unique_ptr<ICodec_FlateModule> m_pFlateModule;
+  std::unique_ptr<ICodec_BasicModule> m_pBasicModule;
+  std::unique_ptr<ICodec_FaxModule> m_pFaxModule;
+  std::unique_ptr<ICodec_JpegModule> m_pJpegModule;
+  std::unique_ptr<ICodec_JpxModule> m_pJpxModule;
+  std::unique_ptr<ICodec_Jbig2Module> m_pJbig2Module;
+  std::unique_ptr<ICodec_IccModule> m_pIccModule;
+  std::unique_ptr<ICodec_FlateModule> m_pFlateModule;
 };
 class ICodec_BasicModule {
  public:

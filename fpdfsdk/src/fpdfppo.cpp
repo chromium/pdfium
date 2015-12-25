@@ -6,8 +6,9 @@
 
 #include "public/fpdf_ppo.h"
 
+#include <memory>
+
 #include "fpdfsdk/include/fsdk_define.h"
-#include "third_party/base/nonstd_unique_ptr.h"
 
 class CPDF_PageOrganizer {
  public:
@@ -91,7 +92,7 @@ FX_BOOL CPDF_PageOrganizer::ExportPage(CPDF_Document* pSrcPDFDoc,
                                        int nIndex) {
   int curpage = nIndex;
 
-  nonstd::unique_ptr<ObjectNumberMap> pObjNumberMap(new ObjectNumberMap);
+  std::unique_ptr<ObjectNumberMap> pObjNumberMap(new ObjectNumberMap);
 
   for (int i = 0; i < nPageNum->GetSize(); ++i) {
     CPDF_Dictionary* pCurPageDict = pDestPDFDoc->CreateNewPage(curpage);
