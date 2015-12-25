@@ -4,18 +4,20 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "util.h"
+#include "fpdfsdk/src/javascript/util.h"
 
-#include "JS_Context.h"
-#include "JS_Define.h"
-#include "JS_EventHandler.h"
-#include "JS_Object.h"
-#include "JS_Runtime.h"
-#include "JS_Value.h"
-#include "PublicMethods.h"
+#include <time.h>
+
 #include "core/include/fxcrt/fx_ext.h"
 #include "fpdfsdk/include/javascript/IJavaScript.h"
-#include "resource.h"
+#include "fpdfsdk/src/javascript/JS_Context.h"
+#include "fpdfsdk/src/javascript/JS_Define.h"
+#include "fpdfsdk/src/javascript/JS_EventHandler.h"
+#include "fpdfsdk/src/javascript/JS_Object.h"
+#include "fpdfsdk/src/javascript/JS_Runtime.h"
+#include "fpdfsdk/src/javascript/JS_Value.h"
+#include "fpdfsdk/src/javascript/PublicMethods.h"
+#include "fpdfsdk/src/javascript/resource.h"
 
 #if _FX_OS_ == _FX_ANDROID_
 #include <ctype.h>
