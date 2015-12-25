@@ -262,7 +262,6 @@
       4100, # Unreferenced formal parameter
       4121, # Alignment of a member was sensitive to packing
       4244, # Conversion from 'type1' to 'type2', possible loss of data
-      4481, # Nonstandard extension used: override specifier 'keyword'
       4505, # Unreferenced local function has been removed
       4510, # Default constructor could not be generated
       4512, # Assignment operator could not be generated
