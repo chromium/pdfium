@@ -51,13 +51,13 @@ void CJS_GlobalVariableArray::Copy(const CJS_GlobalVariableArray& array) {
         pNewObjData->nType = pOldObjData->nType;
         pNewObjData->objData.Copy(pOldObjData->objData);
         Add(pNewObjData);
-      }
+      } break;
       case JS_GLOBALDATA_TYPE_NULL: {
         CJS_KeyValue* pNewObjData = new CJS_KeyValue;
         pNewObjData->sKey = pOldObjData->sKey;
         pNewObjData->nType = pOldObjData->nType;
         Add(pNewObjData);
-      }
+      } break;
     }
   }
 }

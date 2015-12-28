@@ -273,8 +273,10 @@ void CFFL_FormFiller::KillFocusForAnnot(CPDFSDK_Annot* pAnnot, FX_UINT nFlag) {
     case FIELDTYPE_CHECKBOX:
     case FIELDTYPE_RADIOBUTTON:
       bDestroyPDFWindow = TRUE;
+      break;
     default:
       bDestroyPDFWindow = FALSE;
+      break;
   }
   EscapeFiller(pPageView, bDestroyPDFWindow);
 }
