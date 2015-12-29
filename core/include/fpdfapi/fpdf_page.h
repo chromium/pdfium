@@ -67,6 +67,8 @@ class CPDF_PageObjects {
 
   FX_BOOL BackgroundAlphaNeeded() const { return m_bBackgroundAlphaNeeded; }
 
+  FX_BOOL HasImageMask() const { return m_bHasImageMask; }
+
   CFX_FloatRect CalcBoundingBox() const;
 
   CPDF_Dictionary* m_pFormDict;
@@ -89,6 +91,7 @@ class CPDF_PageObjects {
 
   CFX_PtrList m_ObjectList;
   FX_BOOL m_bBackgroundAlphaNeeded;
+  FX_BOOL m_bHasImageMask;
   FX_BOOL m_bReleaseMembers;
   CPDF_ContentParser* m_pParser;
   ParseState m_ParseState;
