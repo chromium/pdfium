@@ -675,6 +675,7 @@ CPDF_PageObjects::CPDF_PageObjects(FX_BOOL bReleaseMembers)
       m_Transparency(0),
       m_ObjectList(128),
       m_bBackgroundAlphaNeeded(FALSE),
+      m_bHasImageMask(FALSE),
       m_bReleaseMembers(bReleaseMembers),
       m_pParser(nullptr),
       m_ParseState(CONTENT_NOT_PARSED) {}

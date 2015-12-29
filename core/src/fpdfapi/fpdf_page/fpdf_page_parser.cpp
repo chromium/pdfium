@@ -710,6 +710,8 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
     CPDF_ImageObject* pObj = AddImage(pXObject, NULL, FALSE);
     m_LastImageName = name;
     m_pLastImage = pObj->m_pImage;
+    if (!m_pObjectList->m_bHasImageMask)
+      m_pObjectList->m_bHasImageMask = m_pLastImage->IsMask();
   } else if (type == "Form") {
     AddForm(pXObject);
   } else {

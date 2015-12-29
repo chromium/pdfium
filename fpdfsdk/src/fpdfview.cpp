@@ -336,10 +336,10 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
   pPage->SetPrivateData((void*)1, pContext, DropContext);
 
 #ifndef _WIN32_WCE
-  CFX_DIBitmap* pBitmap = NULL;
-  FX_BOOL bBackgroundAlphaNeeded = FALSE;
-  bBackgroundAlphaNeeded = pPage->BackgroundAlphaNeeded();
-  if (bBackgroundAlphaNeeded) {
+  CFX_DIBitmap* pBitmap = nullptr;
+  FX_BOOL bBackgroundAlphaNeeded = pPage->BackgroundAlphaNeeded();
+  FX_BOOL bHasImageMask = pPage->HasImageMask();
+  if (bBackgroundAlphaNeeded || bHasImageMask) {
     pBitmap = new CFX_DIBitmap;
     pBitmap->Create(size_x, size_y, FXDIB_Argb);
     pBitmap->Clear(0x00ffffff);
@@ -350,13 +350,14 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
     pContext->m_pDevice = new CFX_FxgeDevice;
     ((CFX_FxgeDevice*)pContext->m_pDevice)->Attach((CFX_DIBitmap*)pBitmap);
 #endif
-  } else
+  } else {
     pContext->m_pDevice = new CFX_WindowsDevice(dc);
+  }
 
   FPDF_RenderPage_Retail(pContext, page, start_x, start_y, size_x, size_y,
                          rotate, flags, TRUE, NULL);
 
-  if (bBackgroundAlphaNeeded) {
+  if (bBackgroundAlphaNeeded || bHasImageMask) {
     if (pBitmap) {
       CFX_WindowsDevice WinDC(dc);
 
@@ -369,8 +370,9 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
                               FXDIB_BLEND_NORMAL, NULL, FALSE, NULL);
         WinDC.StretchDIBits(pDst, 0, 0, size_x, size_y);
         delete pDst;
-      } else
+      } else {
         WinDC.SetDIBits(pBitmap, 0, 0);
+      }
     }
   }
 #else
@@ -471,10 +473,9 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
 #endif
 
 #endif
-  if (bBackgroundAlphaNeeded) {
+  if (bBackgroundAlphaNeeded || bHasImageMask)
     delete pBitmap;
-    pBitmap = NULL;
-  }
+
   delete pContext;
   pPage->RemovePrivateData((void*)1);
 }
