@@ -1636,7 +1636,7 @@ int32_t CPDF_Creator::WriteDoc_Stage3(IFX_Pause* pPause) {
         CFX_ByteString str;
         str = m_ObjectOffset.GetPtrAt(1)
                   ? "xref\r\n"
-                  : "xref\r\n0 1\r\n0000000000 65536 f\r\n";
+                  : "xref\r\n0 1\r\n0000000000 65535 f\r\n";
         if (m_File.AppendString(str) < 0) {
           return -1;
         }
@@ -1668,7 +1668,7 @@ int32_t CPDF_Creator::WriteDoc_Stage3(IFX_Pause* pPause) {
         j++;
       }
       if (i == 1) {
-        str.Format("0 %d\r\n0000000000 65536 f\r\n", j);
+        str.Format("0 %d\r\n0000000000 65535 f\r\n", j);
       } else {
         str.Format("%d %d\r\n", i, j - i);
       }
@@ -1710,7 +1710,7 @@ int32_t CPDF_Creator::WriteDoc_Stage3(IFX_Pause* pPause) {
       }
       objnum = m_NewObjNumArray.ElementAt(i);
       if (objnum == 1) {
-        str.Format("0 %d\r\n0000000000 65536 f\r\n", j - i + 1);
+        str.Format("0 %d\r\n0000000000 65535 f\r\n", j - i + 1);
       } else {
         str.Format("%d %d\r\n", objnum, j - i);
       }
