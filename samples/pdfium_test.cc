@@ -338,15 +338,17 @@ bool RenderPage(const std::string& name,
                 const int page_index,
                 const Options& options) {
   FPDF_PAGE page = FPDF_LoadPage(doc, page_index);
-  if (!page)
+  if (!page) {
     return false;
+  }
   FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page);
   FORM_OnAfterLoadPage(page, form);
   FORM_DoPageAAction(page, form, FPDFPAGE_AACTION_OPEN);
 
   double scale = 1.0;
-  if (!options.scale_factor_as_string.empty())
+  if (!options.scale_factor_as_string.empty()) {
     std::stringstream(options.scale_factor_as_string) >> scale;
+  }
   int width = static_cast<int>(FPDF_GetPageWidth(page) * scale);
   int height = static_cast<int>(FPDF_GetPageHeight(page) * scale);
   int alpha = FPDFPage_HasTransparency(page) ? 1 : 0;
