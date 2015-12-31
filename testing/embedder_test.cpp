@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "public/fpdf_dataavail.h"
+#include "public/fpdf_edit.h"
 #include "public/fpdf_text.h"
 #include "public/fpdfview.h"
 #include "testing/gmock/include/gmock/gmock.h"
@@ -213,8 +214,10 @@ FPDF_PAGE EmbedderTest::LoadAndCachePage(int page_number) {
 FPDF_BITMAP EmbedderTest::RenderPage(FPDF_PAGE page) {
   int width = static_cast<int>(FPDF_GetPageWidth(page));
   int height = static_cast<int>(FPDF_GetPageHeight(page));
-  FPDF_BITMAP bitmap = FPDFBitmap_Create(width, height, 0);
-  FPDFBitmap_FillRect(bitmap, 0, 0, width, height, 0xFFFFFFFF);
+  int alpha = FPDFPage_HasTransparency(page) ? 1 : 0;
+  FPDF_BITMAP bitmap = FPDFBitmap_Create(width, height, alpha);
+  FPDF_DWORD fill_color = alpha ? 0x00000000 : 0xFFFFFFFF;
+  FPDFBitmap_FillRect(bitmap, 0, 0, width, height, fill_color);
   FPDF_RenderPageBitmap(bitmap, page, 0, 0, width, height, 0, 0);
   FPDF_FFLDraw(form_handle_, bitmap, page, 0, 0, width, height, 0, 0);
   return bitmap;
