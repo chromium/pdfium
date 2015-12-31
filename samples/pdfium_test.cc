@@ -15,6 +15,7 @@
 
 #include "image_diff_png.h"
 #include "public/fpdf_dataavail.h"
+#include "public/fpdf_edit.h"
 #include "public/fpdf_ext.h"
 #include "public/fpdf_formfill.h"
 #include "public/fpdf_text.h"
@@ -350,14 +351,14 @@ bool RenderPage(const std::string& name,
   }
   int width = static_cast<int>(FPDF_GetPageWidth(page) * scale);
   int height = static_cast<int>(FPDF_GetPageHeight(page) * scale);
-
-  FPDF_BITMAP bitmap = FPDFBitmap_Create(width, height, 0);
+  int alpha = FPDFPage_HasTransparency(page) ? 1 : 0;
+  FPDF_BITMAP bitmap = FPDFBitmap_Create(width, height, alpha);
   if (!bitmap) {
     fprintf(stderr, "Page was too large to be rendered.\n");
     return false;
   }
-
-  FPDFBitmap_FillRect(bitmap, 0, 0, width, height, 0xFFFFFFFF);
+  FPDF_DWORD fill_color = alpha ? 0x00000000 : 0xFFFFFFFF;
+  FPDFBitmap_FillRect(bitmap, 0, 0, width, height, fill_color);
   FPDF_RenderPageBitmap(bitmap, page, 0, 0, width, height, 0, 0);
 
   FPDF_FFLDraw(form, bitmap, page, 0, 0, width, height, 0, 0);
