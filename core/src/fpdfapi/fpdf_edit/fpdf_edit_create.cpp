@@ -654,7 +654,6 @@ int32_t CPDF_XRefStream::EndObjectStream(CPDF_Creator* pCreator, FX_BOOL bEOF) {
     }
     if (iSize > 0 && bEOF) {
       pCreator->m_ObjectOffset.Add(dwObjStmNum, 1);
-      pCreator->m_ObjectSize.Add(dwObjStmNum, 1);
       pCreator->m_ObjectOffset[dwObjStmNum] = objOffset;
     }
     m_iSeg = iSeg;
@@ -1265,7 +1264,6 @@ int32_t CPDF_Creator::WriteOldIndirectObject(FX_DWORD objnum) {
     CPDF_Object* pObj = m_pDocument->GetIndirectObject(objnum);
     if (!pObj) {
       m_ObjectOffset[objnum] = 0;
-      m_ObjectSize[objnum] = 0;
       return 0;
     }
     if (WriteIndirectObj(pObj)) {
@@ -1332,7 +1330,6 @@ int32_t CPDF_Creator::WriteOldObjs(IFX_Pause* pPause) {
     if (!iRet)
       continue;
 
-    m_ObjectSize[objnum] = (FX_DWORD)(m_Offset - m_ObjectOffset[objnum]);
     if (pPause && pPause->NeedToPauseNow()) {
       m_Pos = (void*)(uintptr_t)(objnum + 1);
       return 1;
@@ -1355,7 +1352,6 @@ int32_t CPDF_Creator::WriteNewObjs(FX_BOOL bIncremental, IFX_Pause* pPause) {
     if (WriteIndirectObj(pObj)) {
       return -1;
     }
-    m_ObjectSize[objnum] = (FX_DWORD)(m_Offset - m_ObjectOffset[objnum]);
     index++;
     if (pPause && pPause->NeedToPauseNow()) {
       m_Pos = (FX_POSITION)(uintptr_t)index;
@@ -1385,7 +1381,6 @@ void CPDF_Creator::InitOldObjNumOffsets() {
       j++;
     }
     m_ObjectOffset.Add(dwStart, j - dwStart);
-    m_ObjectSize.Add(dwStart, j - dwStart);
     dwStart = j;
   }
 }
@@ -1437,10 +1432,8 @@ void CPDF_Creator::InitNewObjNumOffsets() {
     bool bExist = m_pParser && m_pParser->IsValidObjectNumber(dwCurObjNum) &&
                   m_ObjectOffset.GetPtrAt(dwCurObjNum);
     if (bExist || dwCurObjNum - dwLastObjNum > 1) {
-      if (!bNewStart) {
+      if (!bNewStart)
         m_ObjectOffset.Add(dwStartObjNum, dwLastObjNum - dwStartObjNum + 1);
-        m_ObjectSize.Add(dwStartObjNum, dwLastObjNum - dwStartObjNum + 1);
-      }
       dwStartObjNum = dwCurObjNum;
     }
     if (bNewStart) {
@@ -1450,7 +1443,6 @@ void CPDF_Creator::InitNewObjNumOffsets() {
     dwLastObjNum = dwCurObjNum;
   }
   m_ObjectOffset.Add(dwStartObjNum, dwLastObjNum - dwStartObjNum + 1);
-  m_ObjectSize.Add(dwStartObjNum, dwLastObjNum - dwStartObjNum + 1);
 }
 void CPDF_Creator::AppendNewObjNum(FX_DWORD objbum) {
   int32_t iStart = 0, iFind = 0;
@@ -1609,8 +1601,6 @@ int32_t CPDF_Creator::WriteDoc_Stage2(IFX_Pause* pPause) {
       }
       m_ObjectOffset.Add(m_dwLastObjNum, 1);
       m_ObjectOffset[m_dwLastObjNum] = saveOffset;
-      m_ObjectSize.Add(m_dwLastObjNum, 1);
-      m_ObjectSize[m_dwLastObjNum] = m_Offset - saveOffset;
       m_dwEnryptObjNum = m_dwLastObjNum;
       if (m_dwFlags & FPDFCREATE_INCREMENTAL) {
         m_NewObjNumArray.Add(m_dwLastObjNum);
@@ -1998,7 +1988,6 @@ FX_BOOL CPDF_Creator::Create(FX_DWORD flags) {
   m_Offset = 0;
   m_dwLastObjNum = m_pDocument->GetLastObjNum();
   m_ObjectOffset.Clear();
-  m_ObjectSize.Clear();
   m_NewObjNumArray.RemoveAll();
   InitID();
   if (flags & FPDFCREATE_PROGRESSIVE) {

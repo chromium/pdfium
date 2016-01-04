@@ -1187,8 +1187,7 @@ class CFX_ListArrayTemplate {
 };
 typedef CFX_ListArrayTemplate<CFX_SortListArray<sizeof(FX_FILESIZE)>,
                               FX_FILESIZE> CFX_FileSizeListArray;
-typedef CFX_ListArrayTemplate<CFX_SortListArray<sizeof(FX_DWORD)>, FX_DWORD>
-    CFX_DWordListArray;
+
 typedef enum {
   Ready,
   ToBeContinued,
