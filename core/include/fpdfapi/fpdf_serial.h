@@ -91,15 +91,11 @@ class CPDF_Creator {
   FX_DWORD m_dwFlags;
   FX_POSITION m_Pos;
   FX_FILESIZE m_XrefStart;
-
   CFX_FileSizeListArray m_ObjectOffset;
-
-  CFX_DWordListArray m_ObjectSize;
   CFX_DWordArray m_NewObjNumArray;
-
   CPDF_Array* m_pIDArray;
-
   int32_t m_FileVersion;
+
   friend class CPDF_ObjectStream;
   friend class CPDF_XRefStream;
 };
