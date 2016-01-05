@@ -6,6 +6,7 @@
 
 #include "parser_int.h"
 
+#include <algorithm>
 #include <memory>
 #include <set>
 #include <utility>
@@ -619,21 +620,24 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
   }
   int32_t status = 0;
   int32_t inside_index = 0;
-  FX_DWORD objnum = 0, gennum = 0;
+  FX_DWORD objnum = 0;
+  FX_DWORD gennum = 0;
   int32_t depth = 0;
-  uint8_t* buffer = FX_Alloc(uint8_t, 4096);
+  const FX_DWORD kBufferSize = 4096;
+  std::vector<uint8_t> buffer(kBufferSize);
   FX_FILESIZE pos = m_Syntax.m_HeaderOffset;
-  FX_FILESIZE start_pos = 0, start_pos1 = 0;
-  FX_FILESIZE last_obj = -1, last_xref = -1, last_trailer = -1;
+  FX_FILESIZE start_pos = 0;
+  FX_FILESIZE start_pos1 = 0;
+  FX_FILESIZE last_obj = -1;
+  FX_FILESIZE last_xref = -1;
+  FX_FILESIZE last_trailer = -1;
   while (pos < m_Syntax.m_FileLen) {
-    FX_BOOL bOverFlow = FALSE;
-    FX_DWORD size = (FX_DWORD)(m_Syntax.m_FileLen - pos);
-    if (size > 4096) {
-      size = 4096;
-    }
-    if (!m_Syntax.m_pFileAccess->ReadBlock(buffer, pos, size)) {
+    const FX_FILESIZE saved_pos = pos;
+    bool bOverFlow = false;
+    FX_DWORD size = std::min((FX_DWORD)(m_Syntax.m_FileLen - pos), kBufferSize);
+    if (!m_Syntax.m_pFileAccess->ReadBlock(buffer.data(), pos, size))
       break;
-    }
+
     for (FX_DWORD i = 0; i < size; i++) {
       uint8_t byte = buffer[i];
       switch (status) {
@@ -807,7 +811,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
                 FX_FILESIZE nLen = obj_end - obj_pos - offset;
                 if ((FX_DWORD)nLen > size - i) {
                   pos = obj_end + m_Syntax.m_HeaderOffset;
-                  bOverFlow = TRUE;
+                  bOverFlow = true;
                 } else {
                   i += (FX_DWORD)nLen;
                 }
@@ -854,11 +858,11 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
                       if (!pRoot ||
                           (pRef && IsValidObjectNumber(pRef->GetRefObjNum()) &&
                            m_ObjectInfo[pRef->GetRefObjNum()].pos != 0)) {
-                        FX_POSITION pos = pTrailer->GetStartPos();
-                        while (pos) {
+                        FX_POSITION trailer_pos = pTrailer->GetStartPos();
+                        while (trailer_pos) {
                           CFX_ByteString key;
                           CPDF_Object* pElement =
-                              pTrailer->GetNextElement(pos, key);
+                              pTrailer->GetNextElement(trailer_pos, key);
                           FX_DWORD dwObjNum =
                               pElement ? pElement->GetObjNum() : 0;
                           if (dwObjNum) {
@@ -965,6 +969,11 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
       }
     }
     pos += size;
+
+    // If the position has not changed at all in a loop iteration, then break
+    // out to prevent infinite looping.
+    if (pos == saved_pos)
+      break;
   }
   if (last_xref != -1 && last_xref > last_obj) {
     last_trailer = last_xref;
@@ -978,7 +987,6 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
   if (!pResult) {
     m_SortedOffset.Add(offset);
   }
-  FX_Free(buffer);
   return m_pTrailer && !m_ObjectInfo.empty();
 }
 
