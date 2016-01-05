@@ -204,3 +204,11 @@ TEST_F(FPDFViewEmbeddertest, Crasher_454695) {
 TEST_F(FPDFViewEmbeddertest, Hang_298) {
   EXPECT_FALSE(OpenDocument("bug_298.pdf"));
 }
+
+// Test if the document opens without infinite looping.
+// Previously this test will hang in a loop inside LoadAllCrossRefV4. After
+// the fix, LoadAllCrossRefV4 will return false after detecting a cross
+// reference loop. Cross references will be rebuilt successfully.
+TEST_F(FPDFViewEmbeddertest, CrossRefV4Loop) {
+  EXPECT_TRUE(OpenDocument("bug_xrefv4_loop.pdf"));
+}
