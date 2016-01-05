@@ -10,31 +10,22 @@
 #include <map>
 #include <memory>
 
+#include "core/include/fpdfapi/fpdf_objects.h"
 #include "core/include/fxcrt/fx_system.h"
-#include "fpdf_objects.h"
 
-class CFDF_Document;
-class CFDF_Parser;
-class CFX_DIBSource;
-class CFX_FloatRect;
 class CFX_Font;
 class CFX_Matrix;
-class CFX_PrivateData;
 class CPDF_ColorSpace;
 class CPDF_CryptoHandler;
 class CPDF_DocPageData;
 class CPDF_DocRenderData;
-class CPDF_Document;
 class CPDF_Font;
 class CPDF_FontEncoding;
-class CPDF_HintTables;
 class CPDF_IccProfile;
 class CPDF_Image;
-class CPDF_ModuleMgr;
 class CPDF_Object;
 class CPDF_Parser;
 class CPDF_Pattern;
-class CPDF_Point;
 class CPDF_SecurityHandler;
 class CPDF_StandardSecurityHandler;
 class IFX_FileRead;
@@ -420,9 +411,9 @@ class CPDF_Parser {
   bool IsValidObjectNumber(FX_DWORD objnum) const;
   FX_BOOL IsFormStream(FX_DWORD objnum, FX_BOOL& bForm);
 
-  FX_FILESIZE GetObjectOffset(FX_DWORD objnum);
+  FX_FILESIZE GetObjectOffset(FX_DWORD objnum) const;
 
-  FX_FILESIZE GetObjectSize(FX_DWORD objnum);
+  FX_FILESIZE GetObjectSize(FX_DWORD objnum) const;
 
   void GetIndirectBinary(FX_DWORD objnum, uint8_t*& pBuffer, FX_DWORD& size);
 
@@ -449,10 +440,6 @@ class CPDF_Parser {
   FX_DWORD GetFirstPageNo() { return m_dwFirstPageNo; }
 
  protected:
-  CPDF_Document* m_pDocument;
-
-  CPDF_SyntaxParser m_Syntax;
-  FX_BOOL m_bOwnFileRead;
   CPDF_Object* ParseDirect(CPDF_Object* pObj);
 
   FX_BOOL LoadAllCrossRefV4(FX_FILESIZE pos);
@@ -485,12 +472,19 @@ class CPDF_Parser {
 
   bool FindPosInOffsets(FX_FILESIZE pos) const;
 
+  void SetEncryptDictionary(CPDF_Dictionary* pDict);
+
+  FX_FILESIZE GetObjectPositionOrZero(FX_DWORD objnum) const;
+
+  CPDF_Document* m_pDocument;
+
+  CPDF_SyntaxParser m_Syntax;
+  FX_BOOL m_bOwnFileRead;
   int m_FileVersion;
 
   CPDF_Dictionary* m_pTrailer;
 
   CPDF_Dictionary* m_pEncryptDict;
-  void SetEncryptDictionary(CPDF_Dictionary* pDict);
 
   FX_FILESIZE m_LastXRefOffset;
 

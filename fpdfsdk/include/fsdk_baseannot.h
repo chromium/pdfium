@@ -21,7 +21,6 @@
 class CPDFSDK_PageView;
 class CPDF_Annot;
 class CPDF_Page;
-class CPDF_Rect;
 class CFX_Matrix;
 class CPDF_RenderOptions;
 class CFX_RenderDevice;
