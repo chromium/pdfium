@@ -98,7 +98,7 @@ char* GetFileContents(const char* filename, size_t* retlen) {
   return buffer;
 }
 
-std::wstring GetWideString(FPDF_WIDESTRING wstr) {
+std::wstring GetPlatformWString(FPDF_WIDESTRING wstr) {
   if (!wstr)
     return nullptr;
 
@@ -112,6 +112,19 @@ std::wstring GetWideString(FPDF_WIDESTRING wstr) {
     platform_string[i] = ptr[0] + 256 * ptr[1];
   }
   return platform_string;
+}
+
+FPDF_WIDESTRING GetFPDFWideString(const std::wstring& wstr) {
+  size_t length = sizeof(uint16_t) * (wstr.length() + 1);
+  unsigned char* ptr = static_cast<unsigned char*>(malloc(length));
+  size_t i = 0;
+  for (wchar_t w : wstr) {
+    ptr[i++] = w & 0xff;
+    ptr[i++] = (w >> 8) & 0xff;
+  }
+  ptr[i++] = 0;
+  ptr[i] = 0;
+  return reinterpret_cast<FPDF_WIDESTRING>(ptr);
 }
 
 #ifdef PDF_ENABLE_V8

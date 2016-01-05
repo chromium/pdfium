@@ -5,6 +5,7 @@
 #include "public/fpdf_text.h"
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
+#include "testing/test_support.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {
@@ -143,11 +144,10 @@ TEST_F(FPDFTextEmbeddertest, TextSearch) {
   FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
   EXPECT_NE(nullptr, textpage);
 
-  // Avoid issues with system wchar_t width vs. FPDF_WideString.
-  const unsigned short nope[] = {'n', 'o', 'p', 'e', '\0'};
-  const unsigned short world[] = {'w', 'o', 'r', 'l', 'd', '\0'};
-  const unsigned short world_caps[] = {'W', 'O', 'R', 'L', 'D', '\0'};
-  const unsigned short world_substr[] = {'o', 'r', 'l', 'd', '\0'};
+  FPDF_WIDESTRING nope = GetFPDFWideString(L"nope");
+  FPDF_WIDESTRING world = GetFPDFWideString(L"world");
+  FPDF_WIDESTRING world_caps = GetFPDFWideString(L"WORLD");
+  FPDF_WIDESTRING world_substr = GetFPDFWideString(L"orld");
 
   // No occurences of "nope" in test page.
   FPDF_SCHHANDLE search = FPDFText_FindStart(textpage, nope, 0, 0);
@@ -239,6 +239,12 @@ TEST_F(FPDFTextEmbeddertest, TextSearch) {
 
   FPDFText_ClosePage(textpage);
   UnloadPage(page);
+
+  // Alas, the typedef includes the "const".
+  free(const_cast<unsigned short*>(nope));
+  free(const_cast<unsigned short*>(world));
+  free(const_cast<unsigned short*>(world_caps));
+  free(const_cast<unsigned short*>(world_substr));
 }
 
 // Test that the page has characters despite a bad stream length.
