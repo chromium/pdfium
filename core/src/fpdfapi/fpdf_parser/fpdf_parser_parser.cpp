@@ -374,30 +374,25 @@ FX_BOOL CPDF_Parser::LoadAllCrossRefV4(FX_FILESIZE xrefpos) {
   CFX_FileSizeArray CrossRefList, XRefStreamList;
   CrossRefList.Add(xrefpos);
   XRefStreamList.Add(GetDirectInteger(m_pTrailer, "XRefStm"));
-  if (!CheckDirectType(m_pTrailer, "Prev", PDFOBJ_NUMBER)) {
-    return FALSE;
-  }
-  FX_FILESIZE newxrefpos = GetDirectInteger(m_pTrailer, "Prev");
-  if (newxrefpos == xrefpos) {
-    return FALSE;
-  }
-  xrefpos = newxrefpos;
+
+  std::set<FX_FILESIZE> seen_xrefpos;
+  seen_xrefpos.insert(xrefpos);
+  // When |m_pTrailer| doesn't have Prev entry or Prev entry value is not
+  // numerical, GetDirectInteger() returns 0. Loading will end.
+  xrefpos = GetDirectInteger(m_pTrailer, "Prev");
   while (xrefpos) {
+    // Check for circular references.
+    if (pdfium::ContainsKey(seen_xrefpos, xrefpos))
+      return FALSE;
+    seen_xrefpos.insert(xrefpos);
     CrossRefList.InsertAt(0, xrefpos);
     LoadCrossRefV4(xrefpos, 0, TRUE);
     std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>> pDict(
         LoadTrailerV4());
     if (!pDict)
       return FALSE;
+    xrefpos = GetDirectInteger(pDict.get(), "Prev");
 
-    if (!CheckDirectType(pDict.get(), "Prev", PDFOBJ_NUMBER))
-      return FALSE;
-
-    newxrefpos = GetDirectInteger(pDict.get(), "Prev");
-    if (newxrefpos == xrefpos)
-      return FALSE;
-
-    xrefpos = newxrefpos;
     XRefStreamList.InsertAt(0, pDict->GetInteger("XRefStm"));
     m_Trailers.Add(pDict.release());
   }
@@ -423,17 +418,26 @@ FX_BOOL CPDF_Parser::LoadLinearizedAllCrossRefV4(FX_FILESIZE xrefpos,
   CFX_FileSizeArray CrossRefList, XRefStreamList;
   CrossRefList.Add(xrefpos);
   XRefStreamList.Add(GetDirectInteger(m_pTrailer, "XRefStm"));
+
+  std::set<FX_FILESIZE> seen_xrefpos;
+  seen_xrefpos.insert(xrefpos);
   xrefpos = GetDirectInteger(m_pTrailer, "Prev");
   while (xrefpos) {
+    // Check for circular references.
+    if (pdfium::ContainsKey(seen_xrefpos, xrefpos))
+      return FALSE;
+    seen_xrefpos.insert(xrefpos);
     CrossRefList.InsertAt(0, xrefpos);
     LoadCrossRefV4(xrefpos, 0, TRUE);
-    CPDF_Dictionary* pDict = LoadTrailerV4();
+    std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>> pDict(
+        LoadTrailerV4());
     if (!pDict) {
       return FALSE;
     }
-    xrefpos = GetDirectInteger(pDict, "Prev");
+    xrefpos = GetDirectInteger(pDict.get(), "Prev");
+
     XRefStreamList.InsertAt(0, pDict->GetInteger("XRefStm"));
-    m_Trailers.Add(pDict);
+    m_Trailers.Add(pDict.release());
   }
   for (int32_t i = 1; i < CrossRefList.GetSize(); i++)
     if (!LoadCrossRefV4(CrossRefList[i], XRefStreamList[i], FALSE)) {
