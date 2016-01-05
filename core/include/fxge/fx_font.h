@@ -323,8 +323,8 @@ class CFX_FontMapper {
                                    FX_DWORD flags,
                                    int weight,
                                    int italic_angle);
-  FX_BOOL IsBuiltinFace(const FXFT_Face face) const;
 #endif  // PDF_ENABLE_XFA
+  FX_BOOL IsBuiltinFace(const FXFT_Face face) const;
 
  private:
   static const size_t MM_FACE_COUNT = 2;

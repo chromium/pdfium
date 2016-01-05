@@ -1286,6 +1286,7 @@ FXFT_Face CFX_FontMapper::FindSubstFontByUnicode(FX_DWORD dwUnicode,
   m_pFontInfo->DeleteFont(hFont);
   return face;
 }
+#endif  // PDF_ENABLE_XFA
 
 FX_BOOL CFX_FontMapper::IsBuiltinFace(const FXFT_Face face) const {
   for (int i = 0; i < MM_FACE_COUNT; ++i) {
@@ -1300,7 +1301,6 @@ FX_BOOL CFX_FontMapper::IsBuiltinFace(const FXFT_Face face) const {
   }
   return FALSE;
 }
-#endif  // PDF_ENABLE_XFA
 
 extern "C" {
 unsigned long _FTStreamRead(FXFT_Stream stream,
