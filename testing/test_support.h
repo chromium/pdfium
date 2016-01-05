@@ -19,7 +19,11 @@ char* GetFileContents(const char* filename, size_t* retlen);
 
 // Converts a FPDF_WIDESTRING to a std::wstring.
 // Deals with differences between UTF16LE and wchar_t.
-std::wstring GetWideString(FPDF_WIDESTRING wstr);
+std::wstring GetPlatformWString(const FPDF_WIDESTRING wstr);
+
+// Returns a newly mallocated FPDF_WIDESTRING (caller must free()).
+// Deals with differences between UTF16LE and wchar_t.
+FPDF_WIDESTRING GetFPDFWideString(const std::wstring& wstr);
 
 #ifdef PDF_ENABLE_V8
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA

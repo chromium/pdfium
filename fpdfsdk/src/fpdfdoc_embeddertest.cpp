@@ -7,6 +7,7 @@
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
 #include "testing/fx_string_testhelpers.h"
+#include "testing/test_support.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 class FPDFDocEmbeddertest : public EmbedderTest {};
@@ -101,20 +102,28 @@ TEST_F(FPDFDocEmbeddertest, Bookmarks) {
 }
 
 TEST_F(FPDFDocEmbeddertest, FindBookmarks) {
-  // Open a file with two bookmarks, and extract the first.
+  // Open a file with two bookmarks.
   EXPECT_TRUE(OpenDocument("bookmarks.pdf"));
 
-  unsigned short buf[128];
-  FPDF_BOOKMARK child = FPDFBookmark_GetFirstChild(document(), nullptr);
+  // Find the first one, based on its known title.
+  FPDF_WIDESTRING title = GetFPDFWideString(L"A Good Beginning");
+  FPDF_BOOKMARK child = FPDFBookmark_Find(document(), title);
   EXPECT_NE(nullptr, child);
+
+  // Check that the string matches.
+  unsigned short buf[128];
   EXPECT_EQ(34, FPDFBookmark_GetTitle(child, buf, sizeof(buf)));
   EXPECT_EQ(CFX_WideString(L"A Good Beginning"),
             CFX_WideString::FromUTF16LE(buf, 16));
 
-  // Find the same one again using the title.
-  EXPECT_EQ(child, FPDFBookmark_Find(document(), buf));
+  // Check that it is them same as the one returned by GetFirstChild.
+  EXPECT_EQ(child, FPDFBookmark_GetFirstChild(document(), nullptr));
 
   // Try to find one using a non-existent title.
-  buf[0] = 'X';
-  EXPECT_EQ(nullptr, FPDFBookmark_Find(document(), buf));
+  FPDF_WIDESTRING bad_title = GetFPDFWideString(L"A BAD Beginning");
+  EXPECT_EQ(nullptr, FPDFBookmark_Find(document(), bad_title));
+
+  // Alas, the typedef includes the "const".
+  free(const_cast<unsigned short*>(title));
+  free(const_cast<unsigned short*>(bad_title));
 }
