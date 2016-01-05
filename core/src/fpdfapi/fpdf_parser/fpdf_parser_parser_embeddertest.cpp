@@ -33,3 +33,8 @@ TEST_F(FPDFParserEmbeddertest, Bug_544880) {
 TEST_F(FPDFParserEmbeddertest, Feature_Linearized_Loading) {
   EXPECT_TRUE(OpenDocument("feature_linearized_loading.pdf", true));
 }
+
+TEST_F(FPDFParserEmbeddertest, Bug_325) {
+  EXPECT_FALSE(OpenDocument("bug_325_a.pdf"));
+  EXPECT_FALSE(OpenDocument("bug_325_b.pdf"));
+}
