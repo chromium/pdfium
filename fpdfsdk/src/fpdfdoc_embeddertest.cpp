@@ -99,3 +99,22 @@ TEST_F(FPDFDocEmbeddertest, Bookmarks) {
 
   EXPECT_EQ(nullptr, FPDFBookmark_GetNextSibling(document(), sibling));
 }
+
+TEST_F(FPDFDocEmbeddertest, FindBookmarks) {
+  // Open a file with two bookmarks, and extract the first.
+  EXPECT_TRUE(OpenDocument("bookmarks.pdf"));
+
+  unsigned short buf[128];
+  FPDF_BOOKMARK child = FPDFBookmark_GetFirstChild(document(), nullptr);
+  EXPECT_NE(nullptr, child);
+  EXPECT_EQ(34, FPDFBookmark_GetTitle(child, buf, sizeof(buf)));
+  EXPECT_EQ(CFX_WideString(L"A Good Beginning"),
+            CFX_WideString::FromUTF16LE(buf, 16));
+
+  // Find the same one again using the title.
+  EXPECT_EQ(child, FPDFBookmark_Find(document(), buf));
+
+  // Try to find one using a non-existent title.
+  buf[0] = 'X';
+  EXPECT_EQ(nullptr, FPDFBookmark_Find(document(), buf));
+}
