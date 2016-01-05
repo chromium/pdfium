@@ -24,7 +24,6 @@ class CPDFSDK_PageView;
 class CPDF_Annot;
 class CFX_Matrix;
 class CPDF_Point;
-class CPDF_Rect;
 
 class IPDFSDK_AnnotHandler {
  public:
