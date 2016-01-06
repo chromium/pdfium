@@ -4,13 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/pdfwindow/PDFWindow.h"
 #include "fpdfsdk/include/pdfwindow/PWL_ComboBox.h"
+
 #include "fpdfsdk/include/pdfwindow/PWL_Edit.h"
 #include "fpdfsdk/include/pdfwindow/PWL_EditCtrl.h"
 #include "fpdfsdk/include/pdfwindow/PWL_ListBox.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Utils.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
+#include "public/fpdf_fwlevent.h"
 
 #define PWLCB_DEFAULTFONTSIZE 12.0f
 
@@ -18,8 +19,6 @@
 #define IsFloatBigger(fa, fb) ((fa) > (fb) && !IsFloatZero((fa) - (fb)))
 #define IsFloatSmaller(fa, fb) ((fa) < (fb) && !IsFloatZero((fa) - (fb)))
 #define IsFloatEqual(fa, fb) IsFloatZero((fa) - (fb))
-
-/* ---------------------------- CPWL_CBListBox ---------------------------- */
 
 FX_BOOL CPWL_CBListBox::OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag) {
   CPWL_Wnd::OnLButtonUp(point, nFlag);
@@ -107,8 +106,6 @@ FX_BOOL CPWL_CBListBox::OnCharWithExit(FX_WORD nChar,
 
   return TRUE;
 }
-
-/* ---------------------------- CPWL_CBButton ---------------------------- */
 
 void CPWL_CBButton::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
   CPWL_Wnd::GetThisAppearanceStream(sAppStream);
@@ -198,8 +195,6 @@ FX_BOOL CPWL_CBButton::OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag) {
 
   return TRUE;
 }
-
-/* ---------------------------- CPWL_ComboBox ---------------------------- */
 
 CPWL_ComboBox::CPWL_ComboBox()
     : m_pEdit(NULL),

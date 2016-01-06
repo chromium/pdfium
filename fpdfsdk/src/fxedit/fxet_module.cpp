@@ -6,9 +6,6 @@
 
 #include "fpdfsdk/include/fxedit/fxet_edit.h"
 #include "fpdfsdk/include/fxedit/fxet_list.h"
-#include "fpdfsdk/include/fxedit/fxet_stub.h"
-
-/* ---------------------- IFX_Edit ---------------------- */
 
 IFX_Edit* IFX_Edit::NewEdit() {
   if (IPDF_VariableText* pVT = IPDF_VariableText::NewVariableText()) {
@@ -23,8 +20,6 @@ void IFX_Edit::DelEdit(IFX_Edit* pEdit) {
 
   delete (CFX_Edit*)pEdit;
 }
-
-/* ---------------------- IFX_List ---------------------- */
 
 IFX_List* IFX_List::NewList() {
   return new CFX_ListCtrl();

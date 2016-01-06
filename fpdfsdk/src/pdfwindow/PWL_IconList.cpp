@@ -4,20 +4,19 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/pdfwindow/PDFWindow.h"
 #include "fpdfsdk/include/pdfwindow/PWL_IconList.h"
+
 #include "fpdfsdk/include/pdfwindow/PWL_Label.h"
 #include "fpdfsdk/include/pdfwindow/PWL_ListCtrl.h"
 #include "fpdfsdk/include/pdfwindow/PWL_ScrollBar.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Utils.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
+#include "public/fpdf_fwlevent.h"
 
 #define PWL_IconList_ITEM_ICON_LEFTMARGIN 10.0f
 #define PWL_IconList_ITEM_WIDTH 20.0f
 #define PWL_IconList_ITEM_HEIGHT 20.0f
 #define PWL_IconList_ITEM_SPACE 4.0f
-
-/* ------------------ CPWL_IconList_Item ------------------- */
 
 CPWL_IconList_Item::CPWL_IconList_Item()
     : m_nIconIndex(-1), m_pData(NULL), m_bSelected(FALSE), m_pText(NULL) {}
@@ -127,8 +126,6 @@ void CPWL_IconList_Item::OnDisabled() {
 
   InvalidateRect();
 }
-
-/* ----------------- CPWL_IconList_Content ----------------- */
 
 CPWL_IconList_Content::CPWL_IconList_Content(int32_t nListCount)
     : m_nSelectIndex(-1),
@@ -347,8 +344,6 @@ void CPWL_IconList_Content::SetIconFillColor(const CPWL_Color& color) {
     }
   }
 }
-
-/* -------------------- CPWL_IconList --------------------- */
 
 CPWL_IconList::CPWL_IconList(int32_t nListCount)
     : m_pListContent(NULL), m_nListCount(nListCount) {}

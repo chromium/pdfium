@@ -5,12 +5,10 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "fpdfsdk/include/fxedit/fxet_edit.h"
-#include "fpdfsdk/include/fxedit/fxet_stub.h"
+
+#include "core/include/fpdfapi/fpdf_resource.h"
 
 #define FX_EDIT_UNDO_MAXITEM 10000
-
-/* ---------------------------- CFX_Edit_Iterator ----------------------------
- */
 
 CFX_Edit_Iterator::CFX_Edit_Iterator(CFX_Edit* pEdit,
                                      IPDF_VariableText_Iterator* pVTIterator)
@@ -88,9 +86,6 @@ IFX_Edit* CFX_Edit_Iterator::GetEdit() const {
   return m_pEdit;
 }
 
-/* --------------------------- CFX_Edit_Provider -------------------------------
- */
-
 CFX_Edit_Provider::CFX_Edit_Provider(IFX_Edit_FontMap* pFontMap)
     : m_pFontMap(pFontMap) {
   ASSERT(m_pFontMap);
@@ -147,9 +142,6 @@ int32_t CFX_Edit_Provider::GetDefaultFontIndex() {
 FX_BOOL CFX_Edit_Provider::IsLatinWord(FX_WORD word) {
   return FX_EDIT_ISLATINWORD(word);
 }
-
-/* --------------------------------- CFX_Edit_Refresh
- * --------------------------------- */
 
 CFX_Edit_Refresh::CFX_Edit_Refresh() {}
 
@@ -219,9 +211,9 @@ void CFX_Edit_Refresh::Analyse(int32_t nAlignment) {
                   fWidthDiff =
                       pNewRect->m_rcLine.Width() - pOldRect->m_rcLine.Width();
                   rcResult = pNewRect->m_rcLine;
-                  if (fWidthDiff > 0.0f)
+                  if (fWidthDiff > 0.0f) {
                     rcResult.left = rcResult.right - fWidthDiff;
-                  else {
+                  } else {
                     rcResult.left = rcResult.right;
                     rcResult.right += (-fWidthDiff);
                   }
@@ -233,8 +225,6 @@ void CFX_Edit_Refresh::Analyse(int32_t nAlignment) {
               rcResult.Union(pNewRect->m_rcLine);
               m_RefreshRects.Add(rcResult);
             }
-          } else {
-            // don't need to do anything
           }
         }
       } else {
@@ -243,8 +233,6 @@ void CFX_Edit_Refresh::Analyse(int32_t nAlignment) {
     } else {
       if (pNewRect) {
         m_RefreshRects.Add(pNewRect->m_rcLine);
-      } else {
-        // error
       }
     }
     i++;
@@ -262,9 +250,6 @@ const CFX_Edit_RectArray* CFX_Edit_Refresh::GetRefreshRects() const {
 void CFX_Edit_Refresh::EndRefresh() {
   m_RefreshRects.Empty();
 }
-
-/* ------------------------------------- CFX_Edit_Undo
- * ------------------------------------- */
 
 CFX_Edit_Undo::CFX_Edit_Undo(int32_t nBufsize)
     : m_nCurUndoPos(0),
@@ -371,9 +356,6 @@ void CFX_Edit_Undo::Reset() {
   m_UndoItemStack.RemoveAll();
 }
 
-/* -------------------------------- CFX_Edit_GroupUndoItem
- * -------------------------------- */
-
 CFX_Edit_GroupUndoItem::CFX_Edit_GroupUndoItem(const CFX_WideString& sTitle)
     : m_sTitle(sTitle) {}
 
@@ -423,9 +405,6 @@ CFX_WideString CFX_Edit_GroupUndoItem::GetUndoTitle() {
   return m_sTitle;
 }
 
-/* ------------------------------------- CFX_Edit_UndoItem derived classes
- * ------------------------------------- */
-
 CFXEU_InsertWord::CFXEU_InsertWord(CFX_Edit* pEdit,
                                    const CPVT_WordPlace& wpOldPlace,
                                    const CPVT_WordPlace& wpNewPlace,
@@ -460,8 +439,6 @@ void CFXEU_InsertWord::Undo() {
   }
 }
 
-/* -------------------------------------------------------------------------- */
-
 CFXEU_InsertReturn::CFXEU_InsertReturn(CFX_Edit* pEdit,
                                        const CPVT_WordPlace& wpOldPlace,
                                        const CPVT_WordPlace& wpNewPlace,
@@ -495,9 +472,6 @@ void CFXEU_InsertReturn::Undo() {
     m_pEdit->Backspace(FALSE, TRUE);
   }
 }
-
-/* -------------------------------------------------------------------------- */
-// CFXEU_Backspace
 
 CFXEU_Backspace::CFXEU_Backspace(CFX_Edit* pEdit,
                                  const CPVT_WordPlace& wpOldPlace,
@@ -535,9 +509,6 @@ void CFXEU_Backspace::Undo() {
     }
   }
 }
-
-/* -------------------------------------------------------------------------- */
-// CFXEU_Delete
 
 CFXEU_Delete::CFXEU_Delete(CFX_Edit* pEdit,
                            const CPVT_WordPlace& wpOldPlace,
@@ -578,9 +549,6 @@ void CFXEU_Delete::Undo() {
   }
 }
 
-/* -------------------------------------------------------------------------- */
-// CFXEU_Clear
-
 CFXEU_Clear::CFXEU_Clear(CFX_Edit* pEdit,
                          const CPVT_WordRange& wrSel,
                          const CFX_WideString& swText)
@@ -605,9 +573,6 @@ void CFXEU_Clear::Undo() {
     m_pEdit->SetSel(m_wrSel.BeginPos, m_wrSel.EndPos);
   }
 }
-
-/* -------------------------------------------------------------------------- */
-// CFXEU_ClearRich
 
 CFXEU_ClearRich::CFXEU_ClearRich(CFX_Edit* pEdit,
                                  const CPVT_WordPlace& wpOldPlace,
@@ -652,9 +617,6 @@ void CFXEU_ClearRich::Undo() {
     }
   }
 }
-/* -------------------------------------------------------------------------- */
-// CFXEU_InsertText
-
 CFXEU_InsertText::CFXEU_InsertText(CFX_Edit* pEdit,
                                    const CPVT_WordPlace& wpOldPlace,
                                    const CPVT_WordPlace& wpNewPlace,
@@ -693,8 +655,6 @@ void CFXEU_InsertText::Undo() {
     m_pEdit->Clear(FALSE, TRUE);
   }
 }
-
-/* -------------------------------------------------------------------------- */
 
 CFXEU_SetSecProps::CFXEU_SetSecProps(CFX_Edit* pEdit,
                                      const CPVT_WordPlace& place,
@@ -739,8 +699,6 @@ void CFXEU_SetSecProps::Undo() {
   }
 }
 
-/* -------------------------------------------------------------------------- */
-
 CFXEU_SetWordProps::CFXEU_SetWordProps(CFX_Edit* pEdit,
                                        const CPVT_WordPlace& place,
                                        EDIT_PROPS_E ep,
@@ -780,9 +738,6 @@ void CFXEU_SetWordProps::Undo() {
   }
 }
 
-/* ------------------------------------- CFX_Edit
- * ------------------------------------- */
-
 CFX_Edit::CFX_Edit(IPDF_VariableText* pVT)
     : m_pVT(pVT),
       m_pNotify(NULL),
@@ -816,8 +771,6 @@ CFX_Edit::~CFX_Edit() {
   m_pIterator = NULL;
   ASSERT(!m_pGroupUndoItem);
 }
-
-// public methods
 
 void CFX_Edit::Initialize() {
   m_pVT->Initialize();
@@ -860,105 +813,92 @@ IFX_Edit_FontMap* CFX_Edit::GetFontMap() {
   return NULL;
 }
 
-void CFX_Edit::SetPlateRect(const CPDF_Rect& rect, FX_BOOL bPaint /* = TRUE*/) {
+void CFX_Edit::SetPlateRect(const CPDF_Rect& rect, FX_BOOL bPaint) {
   m_pVT->SetPlateRect(rect);
   m_ptScrollPos = CPDF_Point(rect.left, rect.top);
   if (bPaint)
     Paint();
 }
 
-void CFX_Edit::SetAlignmentH(int32_t nFormat /* =0 */,
-                             FX_BOOL bPaint /* = TRUE*/) {
+void CFX_Edit::SetAlignmentH(int32_t nFormat, FX_BOOL bPaint) {
   m_pVT->SetAlignment(nFormat);
   if (bPaint)
     Paint();
 }
 
-void CFX_Edit::SetAlignmentV(int32_t nFormat /* =0 */,
-                             FX_BOOL bPaint /* = TRUE*/) {
+void CFX_Edit::SetAlignmentV(int32_t nFormat, FX_BOOL bPaint) {
   m_nAlignment = nFormat;
   if (bPaint)
     Paint();
 }
 
-void CFX_Edit::SetPasswordChar(FX_WORD wSubWord /* ='*' */,
-                               FX_BOOL bPaint /* = TRUE*/) {
+void CFX_Edit::SetPasswordChar(FX_WORD wSubWord, FX_BOOL bPaint) {
   m_pVT->SetPasswordChar(wSubWord);
   if (bPaint)
     Paint();
 }
 
-void CFX_Edit::SetLimitChar(int32_t nLimitChar /* =0 */,
-                            FX_BOOL bPaint /* = TRUE*/) {
+void CFX_Edit::SetLimitChar(int32_t nLimitChar, FX_BOOL bPaint) {
   m_pVT->SetLimitChar(nLimitChar);
   if (bPaint)
     Paint();
 }
 
-void CFX_Edit::SetCharArray(int32_t nCharArray /* =0 */,
-                            FX_BOOL bPaint /* = TRUE*/) {
+void CFX_Edit::SetCharArray(int32_t nCharArray, FX_BOOL bPaint) {
   m_pVT->SetCharArray(nCharArray);
   if (bPaint)
     Paint();
 }
 
-void CFX_Edit::SetCharSpace(FX_FLOAT fCharSpace /* =0.0f */,
-                            FX_BOOL bPaint /* = TRUE*/) {
+void CFX_Edit::SetCharSpace(FX_FLOAT fCharSpace, FX_BOOL bPaint) {
   m_pVT->SetCharSpace(fCharSpace);
   if (bPaint)
     Paint();
 }
 
-void CFX_Edit::SetHorzScale(int32_t nHorzScale /* =100 */,
-                            FX_BOOL bPaint /* = TRUE*/) {
+void CFX_Edit::SetHorzScale(int32_t nHorzScale, FX_BOOL bPaint) {
   m_pVT->SetHorzScale(nHorzScale);
   if (bPaint)
     Paint();
 }
 
-void CFX_Edit::SetMultiLine(FX_BOOL bMultiLine /* =TRUE */,
-                            FX_BOOL bPaint /* = TRUE*/) {
+void CFX_Edit::SetMultiLine(FX_BOOL bMultiLine, FX_BOOL bPaint) {
   m_pVT->SetMultiLine(bMultiLine);
   if (bPaint)
     Paint();
 }
 
-void CFX_Edit::SetAutoReturn(FX_BOOL bAuto /* =TRUE */,
-                             FX_BOOL bPaint /* = TRUE*/) {
+void CFX_Edit::SetAutoReturn(FX_BOOL bAuto, FX_BOOL bPaint) {
   m_pVT->SetAutoReturn(bAuto);
   if (bPaint)
     Paint();
 }
 
-void CFX_Edit::SetLineLeading(FX_FLOAT fLineLeading /* =TRUE */,
-                              FX_BOOL bPaint /* = TRUE*/) {
+void CFX_Edit::SetLineLeading(FX_FLOAT fLineLeading, FX_BOOL bPaint) {
   m_pVT->SetLineLeading(fLineLeading);
   if (bPaint)
     Paint();
 }
 
-void CFX_Edit::SetAutoFontSize(FX_BOOL bAuto /* =TRUE */,
-                               FX_BOOL bPaint /* = TRUE*/) {
+void CFX_Edit::SetAutoFontSize(FX_BOOL bAuto, FX_BOOL bPaint) {
   m_pVT->SetAutoFontSize(bAuto);
   if (bPaint)
     Paint();
 }
 
-void CFX_Edit::SetFontSize(FX_FLOAT fFontSize, FX_BOOL bPaint /* = TRUE*/) {
+void CFX_Edit::SetFontSize(FX_FLOAT fFontSize, FX_BOOL bPaint) {
   m_pVT->SetFontSize(fFontSize);
   if (bPaint)
     Paint();
 }
 
-void CFX_Edit::SetAutoScroll(FX_BOOL bAuto /* =TRUE */,
-                             FX_BOOL bPaint /* = TRUE*/) {
+void CFX_Edit::SetAutoScroll(FX_BOOL bAuto, FX_BOOL bPaint) {
   m_bEnableScroll = bAuto;
   if (bPaint)
     Paint();
 }
 
-void CFX_Edit::SetTextOverflow(FX_BOOL bAllowed /*= FALSE*/,
-                               FX_BOOL bPaint /* = TRUE*/) {
+void CFX_Edit::SetTextOverflow(FX_BOOL bAllowed, FX_BOOL bPaint) {
   m_bEnableOverflow = bAllowed;
   if (bPaint)
     Paint();
@@ -1155,8 +1095,7 @@ FX_BOOL CFX_Edit::IsRichText() const {
   return m_pVT->IsRichText();
 }
 
-void CFX_Edit::SetRichText(FX_BOOL bRichText /* =TRUE */,
-                           FX_BOOL bPaint /* = TRUE*/) {
+void CFX_Edit::SetRichText(FX_BOOL bRichText, FX_BOOL bPaint) {
   m_pVT->SetRichText(bRichText);
   if (bPaint)
     Paint();
@@ -1220,7 +1159,7 @@ FX_BOOL CFX_Edit::SetRichTextCharSpace(FX_FLOAT fCharSpace) {
   return SetRichTextProps(EP_CHARSPACE, NULL, &WordProps);
 }
 
-FX_BOOL CFX_Edit::SetRichTextHorzScale(int32_t nHorzScale /*= 100*/) {
+FX_BOOL CFX_Edit::SetRichTextHorzScale(int32_t nHorzScale) {
   CPVT_WordProps WordProps;
   WordProps.nHorzScale = nHorzScale;
   return SetRichTextProps(EP_HORZSCALE, NULL, &WordProps);
@@ -1258,8 +1197,6 @@ FX_BOOL CFX_Edit::SetRichTextProps(EDIT_PROPS_E eProps,
       pIterator->SetAt(wrTemp.BeginPos);
 
       BeginGroupUndo(L"");
-      ;
-
       bSet = SetSecProps(eProps, wrTemp.BeginPos, pSecProps, pWordProps, wrTemp,
                          TRUE);
 
@@ -1645,20 +1582,20 @@ FX_BOOL CFX_Edit::SetWordProps(EDIT_PROPS_E eProps,
 }
 
 void CFX_Edit::SetText(const FX_WCHAR* text,
-                       int32_t charset /*= DEFAULT_CHARSET*/,
-                       const CPVT_SecProps* pSecProps /*= NULL*/,
-                       const CPVT_WordProps* pWordProps /*= NULL*/) {
+                       int32_t charset,
+                       const CPVT_SecProps* pSecProps,
+                       const CPVT_WordProps* pWordProps) {
   SetText(text, charset, pSecProps, pWordProps, TRUE, TRUE);
 }
 
 FX_BOOL CFX_Edit::InsertWord(FX_WORD word,
-                             int32_t charset /*= DEFAULT_CHARSET*/,
-                             const CPVT_WordProps* pWordProps /*= NULL*/) {
+                             int32_t charset,
+                             const CPVT_WordProps* pWordProps) {
   return InsertWord(word, charset, pWordProps, TRUE, TRUE);
 }
 
-FX_BOOL CFX_Edit::InsertReturn(const CPVT_SecProps* pSecProps /*= NULL*/,
-                               const CPVT_WordProps* pWordProps /*= NULL*/) {
+FX_BOOL CFX_Edit::InsertReturn(const CPVT_SecProps* pSecProps,
+                               const CPVT_WordProps* pWordProps) {
   return InsertReturn(pSecProps, pWordProps, TRUE, TRUE);
 }
 
@@ -1675,9 +1612,9 @@ FX_BOOL CFX_Edit::Clear() {
 }
 
 FX_BOOL CFX_Edit::InsertText(const FX_WCHAR* text,
-                             int32_t charset /*= DEFAULT_CHARSET*/,
-                             const CPVT_SecProps* pSecProps /*= NULL*/,
-                             const CPVT_WordProps* pWordProps /*= NULL*/) {
+                             int32_t charset,
+                             const CPVT_SecProps* pSecProps,
+                             const CPVT_WordProps* pWordProps) {
   return InsertText(text, charset, pSecProps, pWordProps, TRUE, TRUE);
 }
 
@@ -1708,8 +1645,6 @@ int32_t CFX_Edit::GetHorzScale() const {
 FX_FLOAT CFX_Edit::GetCharSpace() const {
   return m_pVT->GetCharSpace();
 }
-
-// inner methods
 
 CPVT_WordRange CFX_Edit::GetWholeWordRange() const {
   if (m_pVT->IsValid())
@@ -2033,31 +1968,8 @@ void CFX_Edit::Refresh(REFRESH_PLAN_E ePlan,
     m_Refresh.BeginRefresh();
     RefreshPushLineRects(GetVisibleWordRange());
 
-    //      if (!FX_EDIT_IsFloatEqual(m_ptRefreshScrollPos.x,m_ptScrollPos.x) ||
-    //          !FX_EDIT_IsFloatEqual(m_ptRefreshScrollPos.y,m_ptScrollPos.y))
-    //      {
     m_Refresh.NoAnalyse();
     m_ptRefreshScrollPos = m_ptScrollPos;
-    //      }
-    //      else
-    //      {
-    //          switch (ePlan)
-    //          {
-    //          case RP_ANALYSE:
-    //              m_Refresh.Analyse(m_pVT->GetAlignment());
-    //
-    //              if (pRange1) RefreshPushRandomRects(*pRange1);
-    //              if (pRange2) RefreshPushRandomRects(*pRange2);
-    //              break;
-    //          case RP_NOANALYSE:
-    //              m_Refresh.NoAnalyse();
-    //              break;
-    //          case RP_OPTIONAL:
-    //              if (pRange1) RefreshPushRandomRects(*pRange1);
-    //              if (pRange2) RefreshPushRandomRects(*pRange2);
-    //              break;
-    //          }
-    //      }
 
     if (m_bNotify && m_pNotify) {
       if (!m_bNotifyFlag) {
@@ -2097,7 +2009,6 @@ void CFX_Edit::RefreshPushLineRects(const CPVT_WordRange& wr) {
 
         m_Refresh.Push(CPVT_WordRange(lineinfo.lineplace, lineinfo.lineEnd),
                        VTToEdit(rcLine));
-
       } while (pIterator->NextLine());
     }
   }
@@ -2549,7 +2460,6 @@ void CFX_Edit::SetText(const FX_WCHAR* text,
     Paint();
   if (m_bOprNotify && m_pOprNotify)
     m_pOprNotify->OnSetText(m_wpCaret, m_wpOldCaret);
-  // if (bAddUndo)
 }
 
 FX_BOOL CFX_Edit::InsertWord(FX_WORD word,
@@ -3103,9 +3013,9 @@ void CFX_Edit::EndGroupUndo() {
 }
 
 void CFX_Edit::AddEditUndoItem(CFX_Edit_UndoItem* pEditUndoItem) {
-  if (m_pGroupUndoItem)
+  if (m_pGroupUndoItem) {
     m_pGroupUndoItem->AddUndoItem(pEditUndoItem);
-  else {
+  } else {
     m_Undo.AddItem(pEditUndoItem);
     if (m_bOprNotify && m_pOprNotify)
       m_pOprNotify->OnAddUndo(pEditUndoItem);

@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/formfiller/FFL_CBA_Fontmap.h"
 #include "fpdfsdk/include/formfiller/FFL_TextField.h"
 
-/* ------------------------------- CFFL_TextField
- * ------------------------------- */
+#include "fpdfsdk/include/formfiller/FFL_CBA_Fontmap.h"
+#include "fpdfsdk/include/fsdk_common.h"
+#include "fpdfsdk/include/fsdk_mgr.h"
 
 CFFL_TextField::CFFL_TextField(CPDFDoc_Environment* pApp, CPDFSDK_Annot* pAnnot)
     : CFFL_FormFiller(pApp, pAnnot), m_pFontMap(NULL) {
@@ -247,8 +247,9 @@ CPWL_Wnd* CFFL_TextField::ResetPDFWindow(CPDFSDK_PageView* pPageView,
   if (bRestoreValue) {
     RestoreState(pPageView);
     pRet = GetPDFWindow(pPageView, FALSE);
-  } else
+  } else {
     pRet = GetPDFWindow(pPageView, TRUE);
+  }
 
   m_pWidget->UpdateField();
 

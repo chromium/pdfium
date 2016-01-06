@@ -4,18 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "fpdfsdk/include/pdfwindow/PWL_Edit.h"
+
 #include "core/include/fxcrt/fx_safe_types.h"
 #include "core/include/fxcrt/fx_xml.h"
-#include "fpdfsdk/include/pdfwindow/PDFWindow.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Caret.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Edit.h"
 #include "fpdfsdk/include/pdfwindow/PWL_EditCtrl.h"
 #include "fpdfsdk/include/pdfwindow/PWL_FontMap.h"
 #include "fpdfsdk/include/pdfwindow/PWL_ScrollBar.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Utils.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
-
-/* ---------------------------- CPWL_Edit ------------------------------ */
+#include "public/fpdf_fwlevent.h"
 
 CPWL_Edit::CPWL_Edit()
     : m_pFillerNotify(NULL), m_pSpellCheck(NULL), m_bFocus(FALSE) {
@@ -101,12 +100,12 @@ CPDF_Rect CPWL_Edit::GetClientRect() const {
 }
 
 void CPWL_Edit::SetAlignFormatH(PWL_EDIT_ALIGNFORMAT_H nFormat,
-                                FX_BOOL bPaint /* = TRUE*/) {
+                                FX_BOOL bPaint) {
   m_pEdit->SetAlignmentH((int32_t)nFormat, bPaint);
 }
 
 void CPWL_Edit::SetAlignFormatV(PWL_EDIT_ALIGNFORMAT_V nFormat,
-                                FX_BOOL bPaint /* = TRUE*/) {
+                                FX_BOOL bPaint) {
   m_pEdit->SetAlignmentV((int32_t)nFormat, bPaint);
 }
 
@@ -1126,43 +1125,39 @@ CPVT_WordRange CPWL_Edit::GetSameWordsRange(const CPVT_WordPlace& place,
 
     if (bLatin) {
       while (pIterator->NextWord()) {
-        if (pIterator->GetWord(wordinfo) &&
-            FX_EDIT_ISLATINWORD(wordinfo.Word)) {
-          wpEnd = pIterator->GetAt();
-          continue;
-        } else
+        if (!pIterator->GetWord(wordinfo) ||
+            !FX_EDIT_ISLATINWORD(wordinfo.Word)) {
           break;
-      };
+        }
+
+        wpEnd = pIterator->GetAt();
+      }
     } else if (bArabic) {
       while (pIterator->NextWord()) {
-        if (pIterator->GetWord(wordinfo) && PWL_ISARABICWORD(wordinfo.Word)) {
-          wpEnd = pIterator->GetAt();
-          continue;
-        } else
+        if (!pIterator->GetWord(wordinfo) || !PWL_ISARABICWORD(wordinfo.Word))
           break;
-      };
+
+        wpEnd = pIterator->GetAt();
+      }
     }
 
     pIterator->SetAt(place);
 
     if (bLatin) {
       do {
-        if (pIterator->GetWord(wordinfo) &&
-            FX_EDIT_ISLATINWORD(wordinfo.Word)) {
-          continue;
-        } else {
-          wpStart = pIterator->GetAt();
+        if (!pIterator->GetWord(wordinfo) ||
+            !FX_EDIT_ISLATINWORD(wordinfo.Word)) {
           break;
         }
+
+        wpStart = pIterator->GetAt();
       } while (pIterator->PrevWord());
     } else if (bArabic) {
       do {
-        if (pIterator->GetWord(wordinfo) && PWL_ISARABICWORD(wordinfo.Word)) {
-          continue;
-        } else {
-          wpStart = pIterator->GetAt();
+        if (!pIterator->GetWord(wordinfo) || !PWL_ISARABICWORD(wordinfo.Word))
           break;
-        }
+
+        wpStart = pIterator->GetAt();
       } while (pIterator->PrevWord());
     }
 

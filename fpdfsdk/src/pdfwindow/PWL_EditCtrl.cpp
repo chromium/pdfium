@@ -4,20 +4,19 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/pdfwindow/PDFWindow.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Caret.h"
 #include "fpdfsdk/include/pdfwindow/PWL_EditCtrl.h"
+
+#include "fpdfsdk/include/pdfwindow/PWL_Caret.h"
 #include "fpdfsdk/include/pdfwindow/PWL_FontMap.h"
 #include "fpdfsdk/include/pdfwindow/PWL_ScrollBar.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Utils.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
+#include "public/fpdf_fwlevent.h"
 
 #define IsFloatZero(f) ((f) < 0.0001 && (f) > -0.0001)
 #define IsFloatBigger(fa, fb) ((fa) > (fb) && !IsFloatZero((fa) - (fb)))
 #define IsFloatSmaller(fa, fb) ((fa) < (fb) && !IsFloatZero((fa) - (fb)))
 #define IsFloatEqual(fa, fb) IsFloatZero((fa) - (fb))
-
-/* ---------------------------- CPWL_EditCtrl ------------------------------ */
 
 CPWL_EditCtrl::CPWL_EditCtrl()
     : m_pEdit(NULL),

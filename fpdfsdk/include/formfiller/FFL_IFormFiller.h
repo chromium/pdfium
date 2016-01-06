@@ -9,10 +9,15 @@
 
 #include <map>
 
-#include "FormFiller.h"
+#include "fpdfsdk/include/fsdk_define.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Edit.h"
 
 class CFFL_FormFiller;
 class CFFL_PrivateData;
+class CPDFDoc_Environment;
+class CPDFSDK_Annot;
+class CPDFSDK_PageView;
+class CPDFSDK_Widget;
 
 class CFFL_IFormFiller : public IPWL_Filler_Notify {
  public:

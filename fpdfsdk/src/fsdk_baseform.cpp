@@ -4,15 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "fpdfsdk/include/fsdk_baseform.h"
+
 #include <memory>
 
 #include "fpdfsdk/include/formfiller/FFL_FormFiller.h"
 #include "fpdfsdk/include/fsdk_actionhandler.h"
 #include "fpdfsdk/include/fsdk_baseannot.h"
-#include "fpdfsdk/include/fsdk_baseform.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/include/javascript/IJavaScript.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Utils.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "../include/fpdfxfa/fpdfxfa_doc.h"
@@ -2795,8 +2797,6 @@ FX_COLORREF CPDFSDK_InterForm::GetHighlightColor(int nFieldType) {
     return m_aHighlightColor[0];
   return m_aHighlightColor[nFieldType - 1];
 }
-
-/* ------------------------- CBA_AnnotIterator ------------------------- */
 
 CBA_AnnotIterator::CBA_AnnotIterator(CPDFSDK_PageView* pPageView,
                                      const CFX_ByteString& sType,

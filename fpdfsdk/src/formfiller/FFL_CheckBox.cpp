@@ -5,11 +5,11 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "fpdfsdk/include/formfiller/FFL_CheckBox.h"
-#include "fpdfsdk/include/formfiller/FFL_FormFiller.h"
-#include "fpdfsdk/include/formfiller/FormFiller.h"
 
-/* ------------------------------- CFFL_CheckBox -------------------------------
- */
+#include "fpdfsdk/include/formfiller/FFL_FormFiller.h"
+#include "fpdfsdk/include/fsdk_mgr.h"
+#include "fpdfsdk/include/pdfwindow/PWL_SpecialButton.h"
+#include "public/fpdf_fwlevent.h"
 
 CFFL_CheckBox::CFFL_CheckBox(CPDFDoc_Environment* pApp, CPDFSDK_Widget* pWidget)
     : CFFL_Button(pApp, pWidget) {}
@@ -80,7 +80,6 @@ FX_BOOL CFFL_CheckBox::OnLButtonUp(CPDFSDK_PageView* pPageView,
     if (CPWL_CheckBox* pWnd = (CPWL_CheckBox*)GetPDFWindow(pPageView, TRUE)) {
       CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
       pWnd->SetCheck(!pWidget->IsChecked());
-      //	pWnd->SetCheck(!pWnd->IsChecked());
     }
 
     if (!CommitData(pPageView, nFlags))

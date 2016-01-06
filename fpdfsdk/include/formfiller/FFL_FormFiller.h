@@ -7,8 +7,9 @@
 #ifndef FPDFSDK_INCLUDE_FORMFILLER_FFL_FORMFILLER_H_
 #define FPDFSDK_INCLUDE_FORMFILLER_FFL_FORMFILLER_H_
 
-#include "FFL_IFormFiller.h"
-#include "FFL_CBA_Fontmap.h"
+#include "fpdfsdk/include/formfiller/FFL_CBA_Fontmap.h"
+#include "fpdfsdk/include/formfiller/FFL_IFormFiller.h"
+#include "fpdfsdk/include/fsdk_baseform.h"
 
 class CPDFDoc_Environment;
 class CPDFSDK_Annot;
