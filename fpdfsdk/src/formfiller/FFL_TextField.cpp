@@ -16,6 +16,8 @@ CFFL_TextField::CFFL_TextField(CPDFDoc_Environment* pApp, CPDFSDK_Annot* pAnnot)
 }
 
 CFFL_TextField::~CFFL_TextField() {
+  for (const auto& it : m_Maps)
+    it.second->InvalidateFocusHandler(this);
   delete m_pFontMap;
 }
 
