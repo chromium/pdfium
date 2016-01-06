@@ -71,7 +71,8 @@ void InitializeV8Common(v8::Platform** platform) {
 
 }  // namespace
 
-char* GetFileContents(const char* filename, size_t* retlen) {
+std::unique_ptr<char, pdfium::FreeDeleter> GetFileContents(const char* filename,
+                                                           size_t* retlen) {
   FILE* file = fopen(filename, "rb");
   if (!file) {
     fprintf(stderr, "Failed to open: %s\n", filename);
@@ -83,15 +84,15 @@ char* GetFileContents(const char* filename, size_t* retlen) {
     return nullptr;
   }
   (void)fseek(file, 0, SEEK_SET);
-  char* buffer = (char*)malloc(file_length);
+  std::unique_ptr<char, pdfium::FreeDeleter> buffer(
+      static_cast<char*>(malloc(file_length)));
   if (!buffer) {
     return nullptr;
   }
-  size_t bytes_read = fread(buffer, 1, file_length, file);
+  size_t bytes_read = fread(buffer.get(), 1, file_length, file);
   (void)fclose(file);
   if (bytes_read != file_length) {
     fprintf(stderr, "Failed to read: %s\n", filename);
-    free(buffer);
     return nullptr;
   }
   *retlen = bytes_read;
@@ -114,9 +115,12 @@ std::wstring GetPlatformWString(FPDF_WIDESTRING wstr) {
   return platform_string;
 }
 
-FPDF_WIDESTRING GetFPDFWideString(const std::wstring& wstr) {
+std::unique_ptr<unsigned short, pdfium::FreeDeleter> GetFPDFWideString(
+    const std::wstring& wstr) {
   size_t length = sizeof(uint16_t) * (wstr.length() + 1);
-  unsigned char* ptr = static_cast<unsigned char*>(malloc(length));
+  std::unique_ptr<unsigned short, pdfium::FreeDeleter> result(
+      static_cast<unsigned short*>(malloc(length)));
+  char* ptr = reinterpret_cast<char*>(result.get());
   size_t i = 0;
   for (wchar_t w : wstr) {
     ptr[i++] = w & 0xff;
@@ -124,7 +128,7 @@ FPDF_WIDESTRING GetFPDFWideString(const std::wstring& wstr) {
   }
   ptr[i++] = 0;
   ptr[i] = 0;
-  return reinterpret_cast<FPDF_WIDESTRING>(ptr);
+  return result;
 }
 
 #ifdef PDF_ENABLE_V8

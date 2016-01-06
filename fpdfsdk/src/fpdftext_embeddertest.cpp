@@ -144,13 +144,17 @@ TEST_F(FPDFTextEmbeddertest, TextSearch) {
   FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
   EXPECT_NE(nullptr, textpage);
 
-  FPDF_WIDESTRING nope = GetFPDFWideString(L"nope");
-  FPDF_WIDESTRING world = GetFPDFWideString(L"world");
-  FPDF_WIDESTRING world_caps = GetFPDFWideString(L"WORLD");
-  FPDF_WIDESTRING world_substr = GetFPDFWideString(L"orld");
+  std::unique_ptr<unsigned short, pdfium::FreeDeleter> nope =
+      GetFPDFWideString(L"nope");
+  std::unique_ptr<unsigned short, pdfium::FreeDeleter> world =
+      GetFPDFWideString(L"world");
+  std::unique_ptr<unsigned short, pdfium::FreeDeleter> world_caps =
+      GetFPDFWideString(L"WORLD");
+  std::unique_ptr<unsigned short, pdfium::FreeDeleter> world_substr =
+      GetFPDFWideString(L"orld");
 
   // No occurences of "nope" in test page.
-  FPDF_SCHHANDLE search = FPDFText_FindStart(textpage, nope, 0, 0);
+  FPDF_SCHHANDLE search = FPDFText_FindStart(textpage, nope.get(), 0, 0);
   EXPECT_NE(nullptr, search);
   EXPECT_EQ(0, FPDFText_GetSchResultIndex(search));
   EXPECT_EQ(0, FPDFText_GetSchCount(search));
@@ -167,7 +171,7 @@ TEST_F(FPDFTextEmbeddertest, TextSearch) {
   FPDFText_FindClose(search);
 
   // Two occurences of "world" in test page.
-  search = FPDFText_FindStart(textpage, world, 0, 2);
+  search = FPDFText_FindStart(textpage, world.get(), 0, 2);
   EXPECT_NE(nullptr, search);
 
   // Remains not found until advanced.
@@ -201,7 +205,7 @@ TEST_F(FPDFTextEmbeddertest, TextSearch) {
   FPDFText_FindClose(search);
 
   // Exact search unaffected by case sensitiity and whole word flags.
-  search = FPDFText_FindStart(textpage, world,
+  search = FPDFText_FindStart(textpage, world.get(),
                               FPDF_MATCHCASE | FPDF_MATCHWHOLEWORD, 0);
   EXPECT_NE(nullptr, search);
   EXPECT_TRUE(FPDFText_FindNext(search));
@@ -210,7 +214,7 @@ TEST_F(FPDFTextEmbeddertest, TextSearch) {
   FPDFText_FindClose(search);
 
   // Default is case-insensitive, so matching agaist caps works.
-  search = FPDFText_FindStart(textpage, world_caps, 0, 0);
+  search = FPDFText_FindStart(textpage, world_caps.get(), 0, 0);
   EXPECT_NE(nullptr, search);
   EXPECT_TRUE(FPDFText_FindNext(search));
   EXPECT_EQ(7, FPDFText_GetSchResultIndex(search));
@@ -218,33 +222,28 @@ TEST_F(FPDFTextEmbeddertest, TextSearch) {
   FPDFText_FindClose(search);
 
   // But can be made case sensitive, in which case this fails.
-  search = FPDFText_FindStart(textpage, world_caps, FPDF_MATCHCASE, 0);
+  search = FPDFText_FindStart(textpage, world_caps.get(), FPDF_MATCHCASE, 0);
   EXPECT_FALSE(FPDFText_FindNext(search));
   EXPECT_EQ(0, FPDFText_GetSchResultIndex(search));
   EXPECT_EQ(0, FPDFText_GetSchCount(search));
   FPDFText_FindClose(search);
 
   // Default is match anywhere within word, so matching substirng works.
-  search = FPDFText_FindStart(textpage, world_substr, 0, 0);
+  search = FPDFText_FindStart(textpage, world_substr.get(), 0, 0);
   EXPECT_TRUE(FPDFText_FindNext(search));
   EXPECT_EQ(8, FPDFText_GetSchResultIndex(search));
   EXPECT_EQ(4, FPDFText_GetSchCount(search));
   FPDFText_FindClose(search);
 
   // But can be made to mach word boundaries, in which case this fails.
-  search = FPDFText_FindStart(textpage, world_substr, FPDF_MATCHWHOLEWORD, 0);
+  search =
+      FPDFText_FindStart(textpage, world_substr.get(), FPDF_MATCHWHOLEWORD, 0);
   EXPECT_FALSE(FPDFText_FindNext(search));
   // TODO(tsepez): investigate strange index/count values in this state.
   FPDFText_FindClose(search);
 
   FPDFText_ClosePage(textpage);
   UnloadPage(page);
-
-  // Alas, the typedef includes the "const".
-  free(const_cast<unsigned short*>(nope));
-  free(const_cast<unsigned short*>(world));
-  free(const_cast<unsigned short*>(world_caps));
-  free(const_cast<unsigned short*>(world_substr));
 }
 
 // Test that the page has characters despite a bad stream length.

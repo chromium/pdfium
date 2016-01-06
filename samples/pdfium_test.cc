@@ -611,11 +611,10 @@ int main(int argc, const char* argv[]) {
     std::string filename = files.front();
     files.pop_front();
     size_t file_length = 0;
-    char* file_contents = GetFileContents(filename.c_str(), &file_length);
-    if (!file_contents)
-      continue;
-    RenderPdf(filename, file_contents, file_length, options);
-    free(file_contents);
+    std::unique_ptr<char, pdfium::FreeDeleter> file_contents =
+        GetFileContents(filename.c_str(), &file_length);
+    if (file_contents)
+      RenderPdf(filename, file_contents.get(), file_length, options);
   }
 
   FPDF_DestroyLibrary();
