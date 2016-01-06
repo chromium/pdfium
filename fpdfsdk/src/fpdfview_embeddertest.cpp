@@ -196,8 +196,12 @@ TEST_F(FPDFViewEmbeddertest, Crasher_452455) {
 }
 
 TEST_F(FPDFViewEmbeddertest, Crasher_454695) {
-  // Document is damanged and can't be opened.
+  // Document is damaged and can't be opened.
   EXPECT_FALSE(OpenDocument("bug_454695.pdf"));
+}
+
+TEST_F(FPDFViewEmbeddertest, Crasher_572871) {
+  EXPECT_TRUE(OpenDocument("bug_572871.pdf"));
 }
 
 // The following tests pass if the document opens without infinite looping.

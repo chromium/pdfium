@@ -237,6 +237,16 @@ void CPWL_Wnd::OnCreated() {}
 
 void CPWL_Wnd::OnDestroy() {}
 
+void CPWL_Wnd::InvalidateFocusHandler(IPWL_FocusHandler* handler) {
+  if (m_sPrivateParam.pFocusHandler == handler)
+    m_sPrivateParam.pFocusHandler = nullptr;
+}
+
+void CPWL_Wnd::InvalidateProvider(IPWL_Provider* provider) {
+  if (m_sPrivateParam.pProvider == provider)
+    m_sPrivateParam.pProvider = nullptr;
+}
+
 void CPWL_Wnd::Destroy() {
   KillFocus();
 
