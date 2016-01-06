@@ -78,6 +78,10 @@ class EmbedderTest : public ::testing::Test,
   FPDF_DOCUMENT document() { return document_; }
   FPDF_FORMHANDLE form_handle() { return form_handle_; }
 
+  // Create an empty document, and its form fill environment. Returns true
+  // on success or false on failure.
+  virtual bool CreateEmptyDocument();
+
   // Open the document specified by |filename|, and create its form fill
   // environment, or return false on failure.
   // The filename is relative to the test data directory where we store all the
@@ -107,6 +111,8 @@ class EmbedderTest : public ::testing::Test,
   virtual void UnloadPage(FPDF_PAGE page);
 
  protected:
+  void SetupFormFillEnvironment();
+
   Delegate* delegate_;
   std::unique_ptr<Delegate> default_delegate_;
   FPDF_DOCUMENT document_;
