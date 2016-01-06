@@ -7,6 +7,9 @@
 #ifndef FPDFSDK_SRC_JAVASCRIPT_DOCUMENT_H_
 #define FPDFSDK_SRC_JAVASCRIPT_DOCUMENT_H_
 
+#include <list>
+#include <memory>
+
 #include "JS_Define.h"
 
 class PrintParamsObj : public CJS_EmbedObj {
@@ -37,29 +40,11 @@ class Icon;
 class Field;
 
 struct IconElement {
-  IconElement() : IconName(L""), NextIcon(NULL), IconStream(NULL) {}
-  virtual ~IconElement() {}
+  IconElement(const CFX_WideString& name, Icon* stream)
+      : IconName(name), IconStream(stream) {}
+
   CFX_WideString IconName;
-  IconElement* NextIcon;
   Icon* IconStream;
-};
-
-class IconTree {
- public:
-  IconTree() : m_pHead(NULL), m_pEnd(NULL), m_iLength(0) {}
-
-  virtual ~IconTree() {}
-
- public:
-  void InsertIconElement(IconElement* pNewIcon);
-  void DeleteIconTree();
-  int GetLength();
-  IconElement* operator[](int iIndex);
-
- private:
-  IconElement* m_pHead;
-  IconElement* m_pEnd;
-  int m_iLength;
 };
 
 struct CJS_DelayData;
@@ -295,7 +280,7 @@ class Document : public CJS_EmbedObj {
   CFX_WideString GetObjWordStr(CPDF_TextObject* pTextObj, int nWordIndex);
 
   v8::Isolate* m_isolate;
-  IconTree* m_pIconTree;
+  std::list<std::unique_ptr<IconElement>> m_IconList;
   CPDFSDK_Document* m_pDocument;
   CFX_WideString m_cwBaseURL;
   bool m_bDelay;

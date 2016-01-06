@@ -149,23 +149,13 @@ void CJS_Document::InitInstance(IJS_Runtime* pIRuntime) {
 Document::Document(CJS_Object* pJSObject)
     : CJS_EmbedObj(pJSObject),
       m_isolate(NULL),
-      m_pIconTree(NULL),
       m_pDocument(NULL),
       m_cwBaseURL(L""),
       m_bDelay(FALSE) {}
 
 Document::~Document() {
-  if (m_pIconTree) {
-    m_pIconTree->DeleteIconTree();
-    delete m_pIconTree;
-    m_pIconTree = NULL;
-  }
   for (int i = 0; i < m_DelayData.GetSize(); i++) {
-    if (CJS_DelayData* pData = m_DelayData.GetAt(i)) {
-      delete pData;
-      pData = NULL;
-      m_DelayData.SetAt(i, NULL);
-    }
+    delete m_DelayData.GetAt(i);
   }
 
   m_DelayData.RemoveAll();
@@ -1255,51 +1245,6 @@ bool Document::IsEnclosedInRect(CFX_FloatRect rect, CFX_FloatRect LinkRect) {
           rect.right >= LinkRect.right && rect.bottom >= LinkRect.bottom);
 }
 
-void IconTree::InsertIconElement(IconElement* pNewIcon) {
-  if (!pNewIcon)
-    return;
-
-  if (m_pHead || m_pEnd) {
-    m_pEnd->NextIcon = pNewIcon;
-    m_pEnd = pNewIcon;
-  } else {
-    m_pHead = pNewIcon;
-    m_pEnd = pNewIcon;
-  }
-  m_iLength++;
-}
-
-void IconTree::DeleteIconTree() {
-  if (!m_pHead || !m_pEnd)
-    return;
-
-  IconElement* pTemp = NULL;
-  while (m_pEnd != m_pHead) {
-    pTemp = m_pHead;
-    m_pHead = m_pHead->NextIcon;
-    delete pTemp;
-  }
-
-  delete m_pEnd;
-  m_pHead = NULL;
-  m_pEnd = NULL;
-}
-
-int IconTree::GetLength() {
-  return m_iLength;
-}
-
-IconElement* IconTree::operator[](int iIndex) {
-  if (iIndex >= 0 && iIndex <= m_iLength) {
-    IconElement* pTemp = m_pHead;
-    for (int i = 0; i < iIndex; i++) {
-      pTemp = pTemp->NextIcon;
-    }
-    return pTemp;
-  }
-  return NULL;
-}
-
 FX_BOOL Document::addIcon(IJS_Context* cc,
                           const std::vector<CJS_Value>& params,
                           CJS_Value& vRet,
@@ -1328,15 +1273,8 @@ FX_BOOL Document::addIcon(IJS_Context* cc,
     return FALSE;
   }
 
-  Icon* pIcon = (Icon*)pEmbedObj;
-  if (!m_pIconTree)
-    m_pIconTree = new IconTree();
-
-  IconElement* pNewIcon = new IconElement();
-  pNewIcon->IconName = swIconName;
-  pNewIcon->NextIcon = NULL;
-  pNewIcon->IconStream = pIcon;
-  m_pIconTree->InsertIconElement(pNewIcon);
+  m_IconList.push_back(std::unique_ptr<IconElement>(
+      new IconElement(swIconName, (Icon*)pEmbedObj)));
   return TRUE;
 }
 
@@ -1349,18 +1287,16 @@ FX_BOOL Document::icons(IJS_Context* cc,
     return FALSE;
   }
 
-  if (!m_pIconTree) {
+  if (m_IconList.empty()) {
     vp.SetNull();
     return TRUE;
   }
 
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
   CJS_Array Icons(pRuntime);
-  IconElement* pIconElement = NULL;
-  int iIconTreeLength = m_pIconTree->GetLength();
-  for (int i = 0; i < iIconTreeLength; i++) {
-    pIconElement = (*m_pIconTree)[i];
 
+  int i = 0;
+  for (const auto& pIconElement : m_IconList) {
     v8::Local<v8::Object> pObj = FXJS_NewFxDynamicObj(
         pRuntime->GetIsolate(), pRuntime, CJS_Icon::g_nObjDefnID);
     if (pObj.IsEmpty())
@@ -1376,7 +1312,7 @@ FX_BOOL Document::icons(IJS_Context* cc,
 
     pIcon->SetStream(pIconElement->IconStream->GetStream());
     pIcon->SetIconName(pIconElement->IconName);
-    Icons.SetElement(i, CJS_Value(pRuntime, pJS_Icon));
+    Icons.SetElement(i++, CJS_Value(pRuntime, pJS_Icon));
   }
 
   vp << Icons;
@@ -1393,16 +1329,15 @@ FX_BOOL Document::getIcon(IJS_Context* cc,
     return FALSE;
   }
 
-  if (!m_pIconTree)
+  if (m_IconList.empty())
     return FALSE;
-  CFX_WideString swIconName = params[0].ToCFXWideString();
-  int iIconCounts = m_pIconTree->GetLength();
 
+  CFX_WideString swIconName = params[0].ToCFXWideString();
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
 
-  for (int i = 0; i < iIconCounts; i++) {
-    if ((*m_pIconTree)[i]->IconName == swIconName) {
-      Icon* pRetIcon = (*m_pIconTree)[i]->IconStream;
+  for (const auto& pIconElement : m_IconList) {
+    if (pIconElement->IconName == swIconName) {
+      Icon* pRetIcon = pIconElement->IconStream;
 
       v8::Local<v8::Object> pObj = FXJS_NewFxDynamicObj(
           pRuntime->GetIsolate(), pRuntime, CJS_Icon::g_nObjDefnID);
