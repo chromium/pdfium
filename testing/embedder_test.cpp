@@ -102,6 +102,15 @@ void EmbedderTest::TearDown() {
   free(file_contents_);
 }
 
+bool EmbedderTest::CreateEmptyDocument() {
+  document_ = FPDF_CreateNewDocument();
+  if (!document_)
+    return false;
+
+  SetupFormFillEnvironment();
+  return true;
+}
+
 bool EmbedderTest::OpenDocument(const std::string& filename,
                                 bool must_linearize) {
   std::string file_path;
@@ -169,7 +178,11 @@ bool EmbedderTest::OpenDocument(const std::string& filename,
 #endif  // PDF_ENABLE_XFA
 
   (void)FPDF_GetDocPermissions(document_);
+  SetupFormFillEnvironment();
+  return true;
+}
 
+void EmbedderTest::SetupFormFillEnvironment() {
   IPDF_JSPLATFORM* platform = static_cast<IPDF_JSPLATFORM*>(this);
   memset(platform, 0, sizeof(IPDF_JSPLATFORM));
   platform->version = 2;
@@ -190,8 +203,6 @@ bool EmbedderTest::OpenDocument(const std::string& filename,
   form_handle_ = FPDFDOC_InitFormFillEnvironment(document_, formfillinfo);
   FPDF_SetFormFieldHighlightColor(form_handle_, 0, 0xFFE4DD);
   FPDF_SetFormFieldHighlightAlpha(form_handle_, 100);
-
-  return true;
 }
 
 void EmbedderTest::DoOpenActions() {

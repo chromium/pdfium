@@ -793,6 +793,7 @@
         'core/src/fpdfapi/fpdf_render/fpdf_render_pattern_embeddertest.cpp',
         'fpdfsdk/src/fpdf_dataavail_embeddertest.cpp',
         'fpdfsdk/src/fpdfdoc_embeddertest.cpp',
+        'fpdfsdk/src/fpdfedit_embeddertest.cpp',
         'fpdfsdk/src/fpdfext_embeddertest.cpp',
         'fpdfsdk/src/fpdfformfill_embeddertest.cpp',
         'fpdfsdk/src/fpdfsave_embeddertest.cpp',
