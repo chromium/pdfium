@@ -267,8 +267,6 @@ class Document : public CJS_EmbedObj {
                                    CFX_ByteString& strFolderName);
   void AddDelayData(CJS_DelayData* pData);
   void DoFieldDelay(const CFX_WideString& sFieldName, int nControlIndex);
-  void AddDelayAnnotData(CJS_AnnotObj* pData);
-  void DoAnnotDelay();
   void SetIsolate(v8::Isolate* isolate) { m_isolate = isolate; }
   CJS_Document* GetCJSDoc() const;
 
@@ -285,7 +283,6 @@ class Document : public CJS_EmbedObj {
   CFX_WideString m_cwBaseURL;
   bool m_bDelay;
   CFX_ArrayTemplate<CJS_DelayData*> m_DelayData;
-  CFX_ArrayTemplate<CJS_AnnotObj*> m_DelayAnnotData;
 };
 
 class CJS_Document : public CJS_Object {

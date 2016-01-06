@@ -159,7 +159,6 @@ Document::~Document() {
   }
 
   m_DelayData.RemoveAll();
-  m_DelayAnnotData.RemoveAll();
 }
 
 // the total number of fileds in document.
@@ -1697,18 +1696,6 @@ void Document::DoFieldDelay(const CFX_WideString& sFieldName,
     Field::DoDelay(m_pDocument, pData);
     DelayDataForFieldAndControlIndex.SetAt(i, NULL);
     delete pData;
-  }
-}
-
-void Document::AddDelayAnnotData(CJS_AnnotObj* pData) {
-  m_DelayAnnotData.Add(pData);
-}
-
-void Document::DoAnnotDelay() {
-  CFX_DWordArray DelArray;
-
-  for (int j = DelArray.GetSize() - 1; j >= 0; j--) {
-    m_DelayData.RemoveAt(DelArray[j]);
   }
 }
 
