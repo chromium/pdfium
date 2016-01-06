@@ -34,7 +34,8 @@ CPDF_DocRenderData* CPDF_Document::GetValidateRenderData() {
 }
 void CPDF_Document::LoadDoc() {
   m_LastObjNum = m_pParser->GetLastObjNum();
-  CPDF_Object* pRootObj = GetIndirectObject(m_pParser->GetRootObjNum());
+  CPDF_Object* pRootObj =
+      GetIndirectObject(m_pParser->GetRootObjNum(), nullptr);
   if (!pRootObj) {
     return;
   }
@@ -42,7 +43,8 @@ void CPDF_Document::LoadDoc() {
   if (!m_pRootDict) {
     return;
   }
-  CPDF_Object* pInfoObj = GetIndirectObject(m_pParser->GetInfoObjNum());
+  CPDF_Object* pInfoObj =
+      GetIndirectObject(m_pParser->GetInfoObjNum(), nullptr);
   if (pInfoObj) {
     m_pInfoDict = pInfoObj->GetDict();
   }
@@ -56,13 +58,14 @@ void CPDF_Document::LoadDoc() {
 void CPDF_Document::LoadAsynDoc(CPDF_Dictionary* pLinearized) {
   m_bLinearized = TRUE;
   m_LastObjNum = m_pParser->GetLastObjNum();
-  CPDF_Object* indirectObj = GetIndirectObject(m_pParser->GetRootObjNum());
-  m_pRootDict = indirectObj ? indirectObj->GetDict() : NULL;
+  CPDF_Object* pIndirectObj =
+      GetIndirectObject(m_pParser->GetRootObjNum(), nullptr);
+  m_pRootDict = pIndirectObj ? pIndirectObj->GetDict() : nullptr;
   if (!m_pRootDict) {
     return;
   }
-  indirectObj = GetIndirectObject(m_pParser->GetInfoObjNum());
-  m_pInfoDict = indirectObj ? indirectObj->GetDict() : NULL;
+  pIndirectObj = GetIndirectObject(m_pParser->GetInfoObjNum(), nullptr);
+  m_pInfoDict = pIndirectObj ? pIndirectObj->GetDict() : nullptr;
   CPDF_Array* pIDArray = m_pParser->GetIDArray();
   if (pIDArray) {
     m_ID1 = pIDArray->GetString(0);
@@ -142,14 +145,16 @@ CPDF_Dictionary* CPDF_Document::GetPage(int iPage) {
 
   if (m_bLinearized && (iPage == (int)m_dwFirstPageNo)) {
     if (CPDF_Dictionary* pDict =
-            ToDictionary(GetIndirectObject(m_dwFirstPageObjNum)))
+            ToDictionary(GetIndirectObject(m_dwFirstPageObjNum, nullptr)))
       return pDict;
   }
 
   int objnum = m_PageList.GetAt(iPage);
   if (objnum) {
-    if (CPDF_Dictionary* pDict = ToDictionary(GetIndirectObject(objnum)))
+    if (CPDF_Dictionary* pDict =
+            ToDictionary(GetIndirectObject(objnum, nullptr))) {
       return pDict;
+    }
   }
 
   CPDF_Dictionary* pRoot = GetRoot();

@@ -61,7 +61,7 @@ CFX_ByteString CPDF_Object::GetString() const {
         break;
 
       CPDF_Object* pObj =
-          pRef->m_pObjList->GetIndirectObject(pRef->GetRefObjNum());
+          pRef->m_pObjList->GetIndirectObject(pRef->GetRefObjNum(), nullptr);
       return pObj ? pObj->GetString() : CFX_ByteString();
     }
   }
@@ -83,12 +83,13 @@ CFX_ByteStringC CPDF_Object::GetConstString() const {
         break;
 
       CPDF_Object* pObj =
-          pRef->m_pObjList->GetIndirectObject(pRef->GetRefObjNum());
+          pRef->m_pObjList->GetIndirectObject(pRef->GetRefObjNum(), nullptr);
       return pObj ? pObj->GetConstString() : CFX_ByteStringC();
     }
   }
   return CFX_ByteStringC();
 }
+
 FX_FLOAT CPDF_Object::GetNumber() const {
   switch (m_Type) {
     case PDFOBJ_NUMBER:
@@ -99,20 +100,22 @@ FX_FLOAT CPDF_Object::GetNumber() const {
         break;
 
       CPDF_Object* pObj =
-          pRef->m_pObjList->GetIndirectObject(pRef->GetRefObjNum());
+          pRef->m_pObjList->GetIndirectObject(pRef->GetRefObjNum(), nullptr);
       return pObj ? pObj->GetNumber() : 0;
     }
   }
   return 0;
 }
+
 FX_FLOAT CPDF_Object::GetNumber16() const {
   return GetNumber();
 }
+
 int CPDF_Object::GetInteger() const {
   CFX_AutoRestorer<int> restorer(&s_nCurRefDepth);
-  if (++s_nCurRefDepth > OBJECT_REF_MAX_DEPTH) {
+  if (++s_nCurRefDepth > kObjectRefMaxDepth)
     return 0;
-  }
+
   switch (m_Type) {
     case PDFOBJ_BOOLEAN:
       return AsBoolean()->m_bValue;
@@ -146,7 +149,8 @@ CPDF_Dictionary* CPDF_Object::GetDict() const {
       CPDF_IndirectObjects* pIndirect = pRef->GetObjList();
       if (!pIndirect)
         return nullptr;
-      CPDF_Object* pObj = pIndirect->GetIndirectObject(pRef->GetRefObjNum());
+      CPDF_Object* pObj =
+          pIndirect->GetIndirectObject(pRef->GetRefObjNum(), nullptr);
       if (!pObj || (pObj == this))
         return nullptr;
       return pObj->GetDict();
@@ -161,6 +165,7 @@ CPDF_Array* CPDF_Object::GetArray() const {
   // See bug #234.
   return const_cast<CPDF_Array*>(AsArray());
 }
+
 void CPDF_Object::SetString(const CFX_ByteString& str) {
   switch (m_Type) {
     case PDFOBJ_BOOLEAN:
@@ -218,14 +223,16 @@ FX_BOOL CPDF_Object::IsIdentical(CPDF_Object* pOther) const {
   }
   return FALSE;
 }
+
 CPDF_Object* CPDF_Object::GetDirect() const {
   const CPDF_Reference* pRef = AsReference();
   if (!pRef)
     return const_cast<CPDF_Object*>(this);
   if (!pRef->m_pObjList)
     return nullptr;
-  return pRef->m_pObjList->GetIndirectObject(pRef->GetRefObjNum());
+  return pRef->m_pObjList->GetIndirectObject(pRef->GetRefObjNum(), nullptr);
 }
+
 CPDF_Object* CPDF_Object::Clone(FX_BOOL bDirect) const {
   std::set<FX_DWORD> visited;
   return CloneInternal(bDirect, &visited);
@@ -1089,9 +1096,8 @@ CPDF_IndirectObjects::~CPDF_IndirectObjects() {
     static_cast<CPDF_Object*>(value)->Destroy();
   }
 }
-CPDF_Object* CPDF_IndirectObjects::GetIndirectObject(
-    FX_DWORD objnum,
-    struct PARSE_CONTEXT* pContext) {
+CPDF_Object* CPDF_IndirectObjects::GetIndirectObject(FX_DWORD objnum,
+                                                     PARSE_CONTEXT* pContext) {
   if (objnum == 0)
     return nullptr;
   void* value;

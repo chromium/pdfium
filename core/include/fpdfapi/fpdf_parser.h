@@ -245,13 +245,13 @@ class CPDF_SyntaxParser {
   CPDF_Object* GetObject(CPDF_IndirectObjects* pObjList,
                          FX_DWORD objnum,
                          FX_DWORD gennum,
-                         struct PARSE_CONTEXT* pContext = NULL,
-                         FX_BOOL bDecrypt = TRUE);
+                         PARSE_CONTEXT* pContext,
+                         FX_BOOL bDecrypt);
 
   CPDF_Object* GetObjectByStrict(CPDF_IndirectObjects* pObjList,
                                  FX_DWORD objnum,
                                  FX_DWORD gennum,
-                                 struct PARSE_CONTEXT* pContext = NULL);
+                                 PARSE_CONTEXT* pContext);
 
   int GetDirectNum();
 
@@ -425,12 +425,12 @@ class CPDF_Parser {
   CPDF_Object* ParseIndirectObjectAt(CPDF_IndirectObjects* pObjList,
                                      FX_FILESIZE pos,
                                      FX_DWORD objnum,
-                                     struct PARSE_CONTEXT* pContext);
+                                     PARSE_CONTEXT* pContext);
 
   CPDF_Object* ParseIndirectObjectAtByStrict(CPDF_IndirectObjects* pObjList,
                                              FX_FILESIZE pos,
                                              FX_DWORD objnum,
-                                             struct PARSE_CONTEXT* pContext,
+                                             PARSE_CONTEXT* pContext,
                                              FX_FILESIZE* pResultPos);
 
   FX_DWORD StartAsynParse(IFX_FileRead* pFile,
@@ -840,7 +840,7 @@ FX_DWORD RunLengthDecode(const uint8_t* src_buf,
                          FX_DWORD src_size,
                          uint8_t*& dest_buf,
                          FX_DWORD& dest_size);
-FX_BOOL IsSignatureDict(const CPDF_Dictionary* pDict);
+bool IsSignatureDict(const CPDF_Dictionary* pDict);
 
 class CPDF_NumberTree {
  public:
