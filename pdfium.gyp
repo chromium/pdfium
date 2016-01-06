@@ -4,7 +4,8 @@
 
 {
   'variables': {
-    'chromium_code': 1,
+    # TODO(thakis): Enable this, pdfium:29
+    #'chromium_code': 1,
     'pdf_use_skia%': 0,
     'pdf_enable_v8%': 1,
     'conditions': [
