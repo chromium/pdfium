@@ -7,7 +7,6 @@
 #ifndef FPDFSDK_INCLUDE_FSDK_DEFINE_H_
 #define FPDFSDK_INCLUDE_FSDK_DEFINE_H_
 
-#include "core/include/fpdfapi/fpdfapi.h"
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_pageobj.h"
 #include "core/include/fpdfapi/fpdf_parser.h"
@@ -40,7 +39,7 @@ class IFSDK_PAUSE_Adapter;
 
 class CPDF_CustomAccess final : public IFX_FileRead {
  public:
-  CPDF_CustomAccess(FPDF_FILEACCESS* pFileAccess);
+  explicit CPDF_CustomAccess(FPDF_FILEACCESS* pFileAccess);
   ~CPDF_CustomAccess() override {}
 
   // IFX_FileRead

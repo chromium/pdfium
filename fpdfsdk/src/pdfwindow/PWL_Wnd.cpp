@@ -6,12 +6,9 @@
 
 #include <map>
 
-#include "fpdfsdk/include/pdfwindow/PDFWindow.h"
 #include "fpdfsdk/include/pdfwindow/PWL_ScrollBar.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Utils.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
-
-/* -------------------------- CPWL_Timer -------------------------- */
 
 static std::map<int32_t, CPWL_Timer*>& GetPWLTimeMap() {
   // Leak the object at shutdown.
@@ -58,8 +55,6 @@ void CPWL_Timer::TimerProc(int32_t idEvent) {
     pTimer->m_pAttached->TimerProc();
 }
 
-/* -------------------------- CPWL_TimerHandler -------------------------- */
-
 CPWL_TimerHandler::CPWL_TimerHandler() : m_pTimer(NULL) {}
 
 CPWL_TimerHandler::~CPWL_TimerHandler() {
@@ -81,20 +76,16 @@ void CPWL_TimerHandler::EndTimer() {
 
 void CPWL_TimerHandler::TimerProc() {}
 
-/* --------------------------- CPWL_MsgControl ---------------------------- */
-
 class CPWL_MsgControl {
   friend class CPWL_Wnd;
 
  public:
-  CPWL_MsgControl(CPWL_Wnd* pWnd) {
-    //      PWL_TRACE("new CPWL_MsgControl\n");
+  explicit CPWL_MsgControl(CPWL_Wnd* pWnd) {
     m_pCreatedWnd = pWnd;
     Default();
   }
 
   ~CPWL_MsgControl() {
-    //      PWL_TRACE("~CPWL_MsgControl\n");
     Default();
   }
 
@@ -114,10 +105,12 @@ class CPWL_MsgControl {
   }
 
   FX_BOOL IsWndCaptureMouse(const CPWL_Wnd* pWnd) const {
-    if (pWnd)
-      for (int32_t i = 0, sz = m_aMousePath.GetSize(); i < sz; i++)
+    if (pWnd) {
+      for (int32_t i = 0, sz = m_aMousePath.GetSize(); i < sz; i++) {
         if (m_aMousePath.GetAt(i) == pWnd)
           return TRUE;
+      }
+    }
 
     return FALSE;
   }
@@ -127,10 +120,12 @@ class CPWL_MsgControl {
   }
 
   FX_BOOL IsWndCaptureKeyboard(const CPWL_Wnd* pWnd) const {
-    if (pWnd)
-      for (int32_t i = 0, sz = m_aKeyboardPath.GetSize(); i < sz; i++)
+    if (pWnd) {
+      for (int32_t i = 0, sz = m_aKeyboardPath.GetSize(); i < sz; i++) {
         if (m_aKeyboardPath.GetAt(i) == pWnd)
           return TRUE;
+      }
+    }
 
     return FALSE;
   }
@@ -186,8 +181,6 @@ class CPWL_MsgControl {
   CPWL_Wnd* m_pMainMouseWnd;
   CPWL_Wnd* m_pMainKeyboardWnd;
 };
-
-/* --------------------------- CPWL_Wnd ---------------------------- */
 
 CPWL_Wnd::CPWL_Wnd()
     : m_pVScrollBar(NULL),
@@ -620,14 +613,6 @@ int32_t CPWL_Wnd::GetBorderWidth() const {
 }
 
 int32_t CPWL_Wnd::GetInnerBorderWidth() const {
-  /*
-  switch (GetBorderStyle())
-  {
-  case PBS_BEVELED:
-  case PBS_INSET:
-      return GetBorderWidth() / 2;
-  }
-  */
   return 0;
 }
 
@@ -901,8 +886,6 @@ CPWL_Color CPWL_Wnd::GetBorderRightBottomColor(int32_t nBorderStyle) const {
 
   return color;
 }
-
-/* ----------------------------------------------------------------- */
 
 int32_t CPWL_Wnd::GetTransparency() {
   return m_sPrivateParam.nTransparency;

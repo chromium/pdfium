@@ -4,16 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "fpdfsdk/include/formfiller/FFL_ListBox.h"
+
 #include "fpdfsdk/include/formfiller/FFL_CBA_Fontmap.h"
 #include "fpdfsdk/include/formfiller/FFL_FormFiller.h"
 #include "fpdfsdk/include/formfiller/FFL_IFormFiller.h"
-#include "fpdfsdk/include/formfiller/FFL_ListBox.h"
-#include "fpdfsdk/include/formfiller/FormFiller.h"
+#include "fpdfsdk/include/fsdk_common.h"
+#include "fpdfsdk/include/fsdk_mgr.h"
+#include "fpdfsdk/include/pdfwindow/PWL_ListBox.h"
 
 #define FFL_DEFAULTLISTBOXFONTSIZE 12.0f
-
-/* ------------------------------- CFFL_ListBox -------------------------------
- */
 
 CFFL_ListBox::CFFL_ListBox(CPDFDoc_Environment* pApp, CPDFSDK_Annot* pWidget)
     : CFFL_FormFiller(pApp, pWidget), m_pFontMap(NULL) {}
@@ -213,8 +213,9 @@ CPWL_Wnd* CFFL_ListBox::ResetPDFWindow(CPDFSDK_PageView* pPageView,
   if (bRestoreValue) {
     RestoreState(pPageView);
     pRet = GetPDFWindow(pPageView, FALSE);
-  } else
+  } else {
     pRet = GetPDFWindow(pPageView, TRUE);
+  }
 
   m_pWidget->UpdateField();
 

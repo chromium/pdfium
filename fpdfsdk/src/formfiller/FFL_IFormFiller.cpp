@@ -4,14 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "fpdfsdk/include/formfiller/FFL_IFormFiller.h"
+
 #include "fpdfsdk/include/formfiller/FFL_CheckBox.h"
 #include "fpdfsdk/include/formfiller/FFL_ComboBox.h"
 #include "fpdfsdk/include/formfiller/FFL_FormFiller.h"
-#include "fpdfsdk/include/formfiller/FFL_IFormFiller.h"
 #include "fpdfsdk/include/formfiller/FFL_ListBox.h"
 #include "fpdfsdk/include/formfiller/FFL_PushButton.h"
 #include "fpdfsdk/include/formfiller/FFL_RadioButton.h"
 #include "fpdfsdk/include/formfiller/FFL_TextField.h"
+#include "fpdfsdk/include/fsdk_mgr.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Utils.h"
 
 #define FFL_MAXLISTBOXHEIGHT 140.0f
 
@@ -602,8 +605,9 @@ void CFFL_IFormFiller::QueryWherePopup(void* pPrivateData,
     } else {
       fMaxListBoxHeight = FFL_MAXLISTBOXHEIGHT;
     }
-  } else
+  } else {
     fMaxListBoxHeight = fPopupMax;
+  }
 
   if (fBottom > fMaxListBoxHeight) {
     fFactHeight = fMaxListBoxHeight;

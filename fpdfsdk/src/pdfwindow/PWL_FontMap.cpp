@@ -4,13 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/pdfwindow/PDFWindow.h"
 #include "fpdfsdk/include/pdfwindow/PWL_FontMap.h"
+
+#include "core/include/fpdfapi/fpdf_module.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
 
 #define DEFAULT_FONT_NAME "Helvetica"
-
-/* ------------------------------ CPWL_FontMap ------------------------------ */
 
 CPWL_FontMap::CPWL_FontMap(IFX_SystemHandler* pSystemHandler)
     : m_pPDFDoc(NULL), m_pSystemHandler(pSystemHandler) {
@@ -239,13 +238,6 @@ int32_t CPWL_FontMap::GetPWLFontIndex(FX_WORD word, int32_t nCharset) {
   if (!pNewFont)
     return -1;
 
-  /*
-  if (CPDF_Font* pFont = GetPDFFont(nFind))
-  {
-      PWLFont.AddWordToFontDict(pFontDict, word);
-  }
-  */
-
   CFX_ByteString sAlias = EncodeFontAlias("Arial_Chrome", nCharset);
   AddedFont(pNewFont, sAlias);
 
@@ -313,9 +305,9 @@ CPDF_Font* CPWL_FontMap::AddStandardFont(CPDF_Document* pDoc,
 
   CPDF_Font* pFont = NULL;
 
-  if (sFontName == "ZapfDingbats")
+  if (sFontName == "ZapfDingbats") {
     pFont = pDoc->AddStandardFont(sFontName, NULL);
-  else {
+  } else {
     CPDF_FontEncoding fe(PDFFONT_ENCODING_WINANSI);
     pFont = pDoc->AddStandardFont(sFontName, &fe);
   }
@@ -498,8 +490,6 @@ int32_t CPWL_FontMap::CharSetFromUnicode(FX_WORD word, int32_t nOldCharset) {
 
   return ANSI_CHARSET;
 }
-
-/* ------------------------ CPWL_DocFontMap ------------------------ */
 
 CPWL_DocFontMap::CPWL_DocFontMap(IFX_SystemHandler* pSystemHandler,
                                  CPDF_Document* pAttachedDoc)

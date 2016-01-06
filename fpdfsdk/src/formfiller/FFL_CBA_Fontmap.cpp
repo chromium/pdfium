@@ -5,7 +5,9 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "fpdfsdk/include/formfiller/FFL_CBA_Fontmap.h"
-#include "fpdfsdk/include/formfiller/FormFiller.h"
+
+#include "core/include/fpdfapi/fpdf_page.h"
+#include "fpdfsdk/include/fsdk_baseannot.h"
 
 CBA_FontMap::CBA_FontMap(CPDFSDK_Annot* pAnnot,
                          IFX_SystemHandler* pSystemHandler)
@@ -35,9 +37,9 @@ void CBA_FontMap::Initialize() {
   if (!m_pDefaultFont) {
     m_pDefaultFont = GetAnnotDefaultFont(m_sDefaultFontName);
     if (m_pDefaultFont) {
-      if (const CFX_SubstFont* pSubstFont = m_pDefaultFont->GetSubstFont())
+      if (const CFX_SubstFont* pSubstFont = m_pDefaultFont->GetSubstFont()) {
         nCharset = pSubstFont->m_Charset;
-      else {
+      } else {
         if (m_sDefaultFontName == "Wingdings" ||
             m_sDefaultFontName == "Wingdings2" ||
             m_sDefaultFontName == "Wingdings3" ||

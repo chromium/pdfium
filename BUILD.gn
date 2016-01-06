@@ -232,7 +232,6 @@ static_library("fpdfapi") {
     "core/include/fpdfapi/fpdf_render.h",
     "core/include/fpdfapi/fpdf_resource.h",
     "core/include/fpdfapi/fpdf_serial.h",
-    "core/include/fpdfapi/fpdfapi.h",
     "core/src/fpdfapi/fpdf_basic_module.cpp",
     "core/src/fpdfapi/fpdf_cmaps/CNS1/Adobe-CNS1-UCS2_5.cpp",
     "core/src/fpdfapi/fpdf_cmaps/CNS1/B5pc-H_0.cpp",
@@ -583,7 +582,6 @@ static_library("fxedit") {
     "fpdfsdk/include/fxedit/fx_edit.h",
     "fpdfsdk/include/fxedit/fxet_edit.h",
     "fpdfsdk/include/fxedit/fxet_list.h",
-    "fpdfsdk/include/fxedit/fxet_stub.h",
     "fpdfsdk/src/fxedit/fxet_ap.cpp",
     "fpdfsdk/src/fxedit/fxet_edit.cpp",
     "fpdfsdk/src/fxedit/fxet_list.cpp",
@@ -595,8 +593,6 @@ static_library("fxedit") {
 
 static_library("pdfwindow") {
   sources = [
-    "fpdfsdk/include/pdfwindow/IPDFWindow.h",
-    "fpdfsdk/include/pdfwindow/PDFWindow.h",
     "fpdfsdk/include/pdfwindow/PWL_Button.h",
     "fpdfsdk/include/pdfwindow/PWL_Caret.h",
     "fpdfsdk/include/pdfwindow/PWL_ComboBox.h",
@@ -708,7 +704,6 @@ static_library("formfiller") {
     "fpdfsdk/include/formfiller/FFL_PushButton.h",
     "fpdfsdk/include/formfiller/FFL_RadioButton.h",
     "fpdfsdk/include/formfiller/FFL_TextField.h",
-    "fpdfsdk/include/formfiller/FormFiller.h",
     "fpdfsdk/src/formfiller/FFL_CBA_Fontmap.cpp",
     "fpdfsdk/src/formfiller/FFL_CheckBox.cpp",
     "fpdfsdk/src/formfiller/FFL_ComboBox.cpp",

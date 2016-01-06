@@ -4,12 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/formfiller/FFL_FormFiller.h"
 #include "fpdfsdk/include/formfiller/FFL_RadioButton.h"
-#include "fpdfsdk/include/formfiller/FormFiller.h"
 
-/* ------------------------------- CFFL_RadioButton
- * ------------------------------- */
+#include "fpdfsdk/include/formfiller/FFL_FormFiller.h"
+#include "fpdfsdk/include/fsdk_mgr.h"
+#include "fpdfsdk/include/pdfwindow/PWL_SpecialButton.h"
 
 CFFL_RadioButton::CFFL_RadioButton(CPDFDoc_Environment* pApp,
                                    CPDFSDK_Annot* pWidget)

@@ -4,16 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/pdfwindow/PDFWindow.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Note.h"
+
 #include "fpdfsdk/include/pdfwindow/PWL_Button.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Caret.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Edit.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Edit.h"
 #include "fpdfsdk/include/pdfwindow/PWL_EditCtrl.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Label.h"
 #include "fpdfsdk/include/pdfwindow/PWL_ListCtrl.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Note.h"
-#include "fpdfsdk/include/pdfwindow/PWL_ScrollBar.h"
 #include "fpdfsdk/include/pdfwindow/PWL_ScrollBar.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Utils.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
@@ -30,9 +28,6 @@
 #define IsFloatBigger(fa, fb) ((fa) > (fb) && !IsFloatZero((fa) - (fb)))
 #define IsFloatSmaller(fa, fb) ((fa) < (fb) && !IsFloatZero((fa) - (fb)))
 #define IsFloatEqual(fa, fb) IsFloatZero((fa) - (fb))
-
-/* ------------------------------- CPWL_Note_Options
- * ------------------------------- */
 
 CPWL_Note_Options::CPWL_Note_Options() : m_pText(NULL) {}
 
@@ -105,9 +100,6 @@ CPDF_Rect CPWL_Note_Options::GetContentRect() const {
   rcText.right += 15.0f;
   return rcText;
 }
-
-/* ------------------------------- CPWL_Note_Edit ------------------------------
- */
 
 CPWL_Note_Edit::CPWL_Note_Edit()
     : m_bEnableNotify(TRUE),
@@ -234,9 +226,6 @@ FX_FLOAT CPWL_Note_Edit::GetItemRightMargin() {
   return POPUP_ITEM_TEXT_INDENT;
 }
 
-/* -------------------------------- CPWL_Note_LBBox
- * --------------------------------*/
-
 CPWL_Note_LBBox::CPWL_Note_LBBox() {}
 
 CPWL_Note_LBBox::~CPWL_Note_LBBox() {}
@@ -263,9 +252,6 @@ void CPWL_Note_LBBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
       CPWL_Utils::PWLColorToFXColor(GetTextColor(), GetTransparency()),
       FXFILL_ALTERNATE);
 }
-
-/* -------------------------------- CPWL_Note_RBBox
- * --------------------------------*/
 
 CPWL_Note_RBBox::CPWL_Note_RBBox() {}
 
@@ -294,9 +280,6 @@ void CPWL_Note_RBBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
       FXFILL_ALTERNATE);
 }
 
-/* --------------------------------- CPWL_Note_Icon
- * ---------------------------------- */
-
 CPWL_Note_Icon::CPWL_Note_Icon() : m_nType(0) {}
 
 CPWL_Note_Icon::~CPWL_Note_Icon() {}
@@ -311,9 +294,6 @@ void CPWL_Note_Icon::DrawThisAppearance(CFX_RenderDevice* pDevice,
                                 GetBackgroundColor(), PWL_DEFAULT_BLACKCOLOR,
                                 GetTransparency());
 }
-
-/* --------------------------------- CPWL_Note_CloseBox
- * ---------------------------------- */
 
 CPWL_Note_CloseBox::CPWL_Note_CloseBox() : m_bMouseDown(FALSE) {}
 
@@ -369,9 +349,6 @@ FX_BOOL CPWL_Note_CloseBox::OnLButtonUp(const CPDF_Point& point,
 
   return CPWL_Button::OnLButtonUp(point, nFlag);
 }
-
-/* ------------------------------ CPWL_Note_Contents
- * ------------------------------- */
 
 CPWL_Note_Contents::CPWL_Note_Contents() : m_pEdit(NULL) {}
 
@@ -439,12 +416,13 @@ int32_t CPWL_Note_Contents::CountSubItems() const {
 IPWL_NoteItem* CPWL_Note_Contents::GetSubItems(int32_t index) const {
   int32_t nIndex = index + 1;
 
-  if (nIndex > 0 && nIndex < m_aChildren.GetSize())
+  if (nIndex > 0 && nIndex < m_aChildren.GetSize()) {
     if (CPWL_Wnd* pChild = m_aChildren.GetAt(nIndex)) {
       ASSERT(pChild->GetClassName() == "CPWL_NoteItem");
       CPWL_NoteItem* pItem = (CPWL_NoteItem*)pChild;
       return pItem;
     }
+  }
   return NULL;
 }
 
@@ -601,9 +579,6 @@ void CPWL_Note_Contents::EnableRead(FX_BOOL bEnabled) {
   }
 }
 
-/* ---------------------------------- CPWL_NoteItem
- * ---------------------------------- */
-
 CPWL_NoteItem::CPWL_NoteItem()
     : m_pSubject(NULL),
       m_pDateTime(NULL),
@@ -645,7 +620,6 @@ void CPWL_NoteItem::CreateChildWnd(const PWL_CREATEPARAM& cp) {
   m_pContents = new CPWL_Note_Contents;
   PWL_CREATEPARAM ccp = cp;
   ccp.pParentWnd = this;
-  // ccp.sBackgroundColor = PWL_DEFAULT_WHITECOLOR;
   ccp.sBackgroundColor =
       CPWL_Color(COLORTYPE_RGB, 240 / 255.0f, 240 / 255.0f, 240 / 255.0f);
   ccp.dwFlags = PWS_VISIBLE | PWS_CHILD | PWS_BACKGROUND;
@@ -1044,9 +1018,6 @@ void CPWL_NoteItem::EnableRead(FX_BOOL bEnabled) {
   m_pContents->EnableRead(bEnabled);
 }
 
-/* ---------------------------------- CPWL_Note
- * ---------------------------------- */
-
 CPWL_Note::CPWL_Note(IPopup_Note* pPopupNote,
                      IPWL_NoteNotify* pNoteNotify,
                      IPWL_NoteHandler* pNoteHandler)
@@ -1380,8 +1351,7 @@ void CPWL_Note::OnNotify(CPWL_Wnd* pWnd,
           0) {
         FX_BOOL bScrollChanged = FALSE;
 
-        if (lParam < 3)  //·ÀÖ¹ËÀÑ­»· mantis:15759
-        {
+        if (lParam < 3) {
           bScrollChanged = ResetScrollBar();
           if (bScrollChanged) {
             lParam++;

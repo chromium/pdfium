@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/include/fpdfapi/fpdf_resource.h"
 #include "fpdfsdk/include/fxedit/fx_edit.h"
 #include "fpdfsdk/include/fxedit/fxet_edit.h"
-#include "fpdfsdk/include/fxedit/fxet_stub.h"
 
 CFX_ByteString GetPDFWordString(IFX_Edit_FontMap* pFontMap,
                                 int32_t nFontIndex,
@@ -177,7 +177,7 @@ CFX_ByteString IFX_Edit::GetEditAppearanceStream(
 CFX_ByteString IFX_Edit::GetSelectAppearanceStream(
     IFX_Edit* pEdit,
     const CPDF_Point& ptOffset,
-    const CPVT_WordRange* pRange /*= NULL*/) {
+    const CPVT_WordRange* pRange) {
   CFX_ByteTextBuf sRet;
 
   if (pRange && pRange->IsExist()) {

@@ -4,7 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/pdfwindow/PDFWindow.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Icon.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Utils.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
@@ -13,8 +12,6 @@
 #define IsFloatBigger(fa, fb) ((fa) > (fb) && !IsFloatZero((fa) - (fb)))
 #define IsFloatSmaller(fa, fb) ((fa) < (fb) && !IsFloatZero((fa) - (fb)))
 #define IsFloatEqual(fa, fb) IsFloatZero((fa) - (fb))
-
-/* ---------------------------- CPWL_Utils ------------------------------ */
 
 CFX_ByteString CPWL_Utils::GetAppStreamFromArray(const CPWL_PathData* pPathData,
                                                  int32_t nCount) {
@@ -136,71 +133,49 @@ CPVT_WordRange CPWL_Utils::OverlapWordRange(const CPVT_WordRange& wr1,
 }
 
 CFX_ByteString CPWL_Utils::GetAP_Check(const CPDF_Rect& crBBox) {
-  CFX_ByteTextBuf csAP;
+  const FX_FLOAT fWidth = crBBox.right - crBBox.left;
+  const FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
 
-  FX_FLOAT fWidth = crBBox.right - crBBox.left;
-  FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
+  CPWL_Point pts[8][3] = {{CPWL_Point(0.28f, 0.52f), CPWL_Point(0.27f, 0.48f),
+                           CPWL_Point(0.29f, 0.40f)},
+                          {CPWL_Point(0.30f, 0.33f), CPWL_Point(0.31f, 0.29f),
+                           CPWL_Point(0.31f, 0.28f)},
+                          {CPWL_Point(0.39f, 0.28f), CPWL_Point(0.49f, 0.29f),
+                           CPWL_Point(0.77f, 0.67f)},
+                          {CPWL_Point(0.76f, 0.68f), CPWL_Point(0.78f, 0.69f),
+                           CPWL_Point(0.76f, 0.75f)},
+                          {CPWL_Point(0.76f, 0.75f), CPWL_Point(0.73f, 0.80f),
+                           CPWL_Point(0.68f, 0.75f)},
+                          {CPWL_Point(0.68f, 0.74f), CPWL_Point(0.68f, 0.74f),
+                           CPWL_Point(0.44f, 0.47f)},
+                          {CPWL_Point(0.43f, 0.47f), CPWL_Point(0.40f, 0.47f),
+                           CPWL_Point(0.41f, 0.58f)},
+                          {CPWL_Point(0.40f, 0.60f), CPWL_Point(0.28f, 0.66f),
+                           CPWL_Point(0.30f, 0.56f)}};
 
-  const int32_t num = 8;
-
-  CPWL_Point pts[num * 3] = {// 1
-                             CPWL_Point(0.28f, 0.52f), CPWL_Point(0.27f, 0.48f),
-                             CPWL_Point(0.29f, 0.40f),
-
-                             // 2
-                             CPWL_Point(0.30f, 0.33f), CPWL_Point(0.31f, 0.29f),
-                             CPWL_Point(0.31f, 0.28f),
-
-                             // 3
-                             CPWL_Point(0.39f, 0.28f), CPWL_Point(0.49f, 0.29f),
-                             CPWL_Point(0.77f, 0.67f),
-
-                             // 4
-                             CPWL_Point(0.76f, 0.68f), CPWL_Point(0.78f, 0.69f),
-                             CPWL_Point(0.76f, 0.75f),
-
-                             // 5
-                             CPWL_Point(0.76f, 0.75f), CPWL_Point(0.73f, 0.80f),
-                             CPWL_Point(0.68f, 0.75f),
-
-                             // 6
-                             CPWL_Point(0.68f, 0.74f), CPWL_Point(0.68f, 0.74f),
-                             CPWL_Point(0.44f, 0.47f),
-
-                             // 7
-                             CPWL_Point(0.43f, 0.47f), CPWL_Point(0.40f, 0.47f),
-                             CPWL_Point(0.41f, 0.58f),
-
-                             // 8
-                             CPWL_Point(0.40f, 0.60f), CPWL_Point(0.28f, 0.66f),
-                             CPWL_Point(0.30f, 0.56f)};
-
-  for (int32_t j = 0; j < num * 3; j++) {
-    pts[j].x *= fWidth;
-    pts[j].x += crBBox.left;
-
-    pts[j].y *= fHeight;
-    pts[j].y += crBBox.bottom;
+  for (size_t i = 0; i < FX_ArraySize(pts); ++i) {
+    for (size_t j = 0; j < FX_ArraySize(pts[0]); ++j) {
+      pts[i][j].x = pts[i][j].x * fWidth + crBBox.left;
+      pts[i][j].y *= pts[i][j].y * fHeight + crBBox.bottom;
+    }
   }
 
-  csAP << pts[0].x << " " << pts[0].y << " m\n";
+  CFX_ByteTextBuf csAP;
+  csAP << pts[0][0].x << " " << pts[0][0].y << " m\n";
 
-  for (int32_t i = 0; i < num; i++) {
-    int32_t nCur = i * 3;
-    int32_t n1 = i * 3 + 1;
-    int32_t n2 = i * 3 + 2;
-    int32_t nNext = (i < num - 1 ? (i + 1) * 3 : 0);
+  for (size_t i = 0; i < FX_ArraySize(pts); ++i) {
+    size_t nNext = i < FX_ArraySize(pts) - 1 ? i + 1 : 0;
 
-    FX_FLOAT px1 = pts[n1].x - pts[nCur].x;
-    FX_FLOAT py1 = pts[n1].y - pts[nCur].y;
-    FX_FLOAT px2 = pts[n2].x - pts[nNext].x;
-    FX_FLOAT py2 = pts[n2].y - pts[nNext].y;
+    FX_FLOAT px1 = pts[i][1].x - pts[i][0].x;
+    FX_FLOAT py1 = pts[i][1].y - pts[i][0].y;
+    FX_FLOAT px2 = pts[i][2].x - pts[nNext][0].x;
+    FX_FLOAT py2 = pts[i][2].y - pts[nNext][0].y;
 
-    csAP << pts[nCur].x + px1 * PWL_BEZIER << " "
-         << pts[nCur].y + py1 * PWL_BEZIER << " "
-         << pts[nNext].x + px2 * PWL_BEZIER << " "
-         << pts[nNext].y + py2 * PWL_BEZIER << " " << pts[nNext].x << " "
-         << pts[nNext].y << " c\n";
+    csAP << pts[i][0].x + px1 * PWL_BEZIER << " "
+         << pts[i][0].y + py1 * PWL_BEZIER << " "
+         << pts[nNext][0].x + px2 * PWL_BEZIER << " "
+         << pts[nNext][0].y + py2 * PWL_BEZIER << " " << pts[nNext][0].x << " "
+         << pts[nNext][0].y << " c\n";
   }
 
   return csAP.GetByteString();
@@ -2338,7 +2313,6 @@ void CPWL_Utils::GetGraphics_Cross(CFX_ByteString& sPathData,
                                    const PWL_PATH_TYPE type) {
   FX_FLOAT fWidth = crBBox.right - crBBox.left;
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
-  // FX_FLOAT fcatercorner = (FX_FLOAT)sqrt(fWidth*fWidth + fHeight*fHeight);
   CPWL_Point center_point(crBBox.left + fWidth / 2,
                           crBBox.bottom + fHeight / 2);
 

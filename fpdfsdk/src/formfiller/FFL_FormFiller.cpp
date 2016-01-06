@@ -4,16 +4,18 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/formfiller/FFL_CBA_Fontmap.h"
 #include "fpdfsdk/include/formfiller/FFL_FormFiller.h"
+
+#include "fpdfsdk/include/formfiller/FFL_CBA_Fontmap.h"
+#include "fpdfsdk/include/fsdk_common.h"
+#include "fpdfsdk/include/fsdk_mgr.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Utils.h"
 
 #define GetRed(rgb) ((uint8_t)(rgb))
 #define GetGreen(rgb) ((uint8_t)(((FX_WORD)(rgb)) >> 8))
 #define GetBlue(rgb) ((uint8_t)((rgb) >> 16))
 
 #define FFL_HINT_ELAPSE 800
-
-/* ------------------------- CFFL_FormFiller ------------------------- */
 
 CFFL_FormFiller::CFFL_FormFiller(CPDFDoc_Environment* pApp,
                                  CPDFSDK_Annot* pAnnot)
@@ -616,8 +618,6 @@ void CFFL_FormFiller::InvalidateRect(double left,
   m_pApp->FFI_Invalidate(pPage, left, top, right, bottom);
 }
 
-/* ------------------------- CFFL_Button ------------------------- */
-
 CFFL_Button::CFFL_Button(CPDFDoc_Environment* pApp, CPDFSDK_Annot* pWidget)
     : CFFL_FormFiller(pApp, pWidget), m_bMouseIn(FALSE), m_bMouseDown(FALSE) {}
 
@@ -690,25 +690,25 @@ void CFFL_Button::OnDraw(CPDFSDK_PageView* pPageView,
   CPDF_FormControl* pCtrl = pWidget->GetFormControl();
   CPDF_FormControl::HighlightingMode eHM = pCtrl->GetHighlightingMode();
 
-  if (eHM == CPDF_FormControl::Push) {
-    if (m_bMouseDown) {
-      if (pWidget->IsWidgetAppearanceValid(CPDF_Annot::Down))
-        pWidget->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Down, NULL);
-      else
-        pWidget->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Normal,
-                                NULL);
-    } else if (m_bMouseIn) {
-      if (pWidget->IsWidgetAppearanceValid(CPDF_Annot::Rollover))
-        pWidget->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Rollover,
-                                NULL);
-      else
-        pWidget->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Normal,
-                                NULL);
-    } else {
-      pWidget->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Normal, NULL);
-    }
-  } else
+  if (eHM != CPDF_FormControl::Push) {
     pWidget->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Normal, NULL);
+    return;
+  }
+
+  if (m_bMouseDown) {
+    if (pWidget->IsWidgetAppearanceValid(CPDF_Annot::Down))
+      pWidget->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Down, NULL);
+    else
+      pWidget->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Normal, NULL);
+  } else if (m_bMouseIn) {
+    if (pWidget->IsWidgetAppearanceValid(CPDF_Annot::Rollover))
+      pWidget->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Rollover,
+                              NULL);
+    else
+      pWidget->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Normal, NULL);
+  } else {
+    pWidget->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Normal, NULL);
+  }
 }
 
 void CFFL_Button::OnDrawDeactive(CPDFSDK_PageView* pPageView,

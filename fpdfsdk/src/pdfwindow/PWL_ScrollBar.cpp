@@ -4,7 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/pdfwindow/PDFWindow.h"
 #include "fpdfsdk/include/pdfwindow/PWL_ScrollBar.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Utils.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
@@ -610,8 +609,9 @@ void CPWL_ScrollBar::RePosChildWnd() {
                                   rcClient.left + fBWidth, rcClient.top);
           rcMaxButton = CPDF_Rect(rcClient.right - fBWidth, rcClient.bottom,
                                   rcClient.right, rcClient.top);
-        } else
+        } else {
           SetVisible(FALSE);
+        }
       }
       break;
     case SBT_VSCROLL:
@@ -633,8 +633,9 @@ void CPWL_ScrollBar::RePosChildWnd() {
                                   rcClient.right, rcClient.top);
           rcMaxButton = CPDF_Rect(rcClient.left, rcClient.bottom,
                                   rcClient.right, rcClient.bottom + fBWidth);
-        } else
+        } else {
           SetVisible(FALSE);
+        }
       }
       break;
   }

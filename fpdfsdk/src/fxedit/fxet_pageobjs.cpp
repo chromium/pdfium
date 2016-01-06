@@ -4,9 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/include/fpdfapi/fpdf_pageobj.h"
+#include "core/include/fpdfapi/fpdf_render.h"
+#include "fpdfsdk/include/fx_systemhandler.h"
 #include "fpdfsdk/include/fxedit/fx_edit.h"
 #include "fpdfsdk/include/fxedit/fxet_edit.h"
-#include "fpdfsdk/include/fxedit/fxet_stub.h"
 
 #define FX_EDIT_UNDERLINEHALFWIDTH 0.5f
 #define FX_EDIT_CROSSOUTHALFWIDTH 0.5f
@@ -57,9 +59,10 @@ static void DrawTextString(CFX_RenderDevice* pDevice,
         CPDF_TextRenderer::DrawTextString(pDevice, x, y, pFont, fFontSize, &mt,
                                           str, crTextFill, crTextStroke, &gsd,
                                           &ro);
-      } else
+      } else {
         CPDF_TextRenderer::DrawTextString(pDevice, x, y, pFont, fFontSize, &mt,
                                           str, crTextFill, 0, NULL, &ro);
+      }
     } else {
       CPDF_RenderOptions ro;
       ro.m_Flags = RENDER_CLEARTYPE;
@@ -76,10 +79,11 @@ static void DrawTextString(CFX_RenderDevice* pDevice,
         CPDF_TextRenderer::DrawTextString(pDevice, x, y, pFont, fFontSize,
                                           pUser2Device, str, crTextFill,
                                           crTextStroke, &gsd, &ro);
-      } else
+      } else {
         CPDF_TextRenderer::DrawTextString(pDevice, x, y, pFont, fFontSize,
                                           pUser2Device, str, crTextFill, 0,
                                           NULL, &ro);
+      }
     }
   }
 }
@@ -218,8 +222,6 @@ void IFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
                            word.ptWord.x + word.fWidth,
                            line.ptLine.y + line.fLineAscent);
               rc.Intersect(rcClip);
-              // CFX_Edit* pEt = (CFX_Edit*)pEdit;
-              // CPDF_Rect rcEdit = pEt->VTToEdit(rc);
               pSystemHandler->OutputSelectedRect(pFFLData, rc);
             } else {
               CFX_PathData pathSelBK;
@@ -282,7 +284,6 @@ void IFX_Edit::DrawRichEdit(CFX_RenderDevice* pDevice,
                             const CPDF_Rect& rcClip,
                             const CPDF_Point& ptOffset,
                             const CPVT_WordRange* pRange) {
-  // FX_FLOAT fFontSize = pEdit->GetFontSize();
   CPVT_WordRange wrSelect = pEdit->GetSelectWordRange();
 
   FX_COLORREF crCurText = ArgbEncode(255, 0, 0, 0);
@@ -588,17 +589,7 @@ void IFX_Edit::GenerateRichPageObjects(
           sTextBuf << GetPDFWordString(pFontMap, word.WordProps.nFontIndex,
                                        word.Word, 0);
 
-          if (word.WordProps.nWordStyle &
-              PVTWORD_STYLE_UNDERLINE) { /*
-                                                AddLineToPageObjects(pPageObjects,
-                                            crCurText,
-                                                        CPDF_Point(word.ptWord.x,
-                                            word.ptWord.y + word.fDescent *
-                                            0.4f),
-                                                        CPDF_Point(word.ptWord.x
-                                            + word.fWidth, word.ptWord.y +
-                                            word.fDescent * 0.4f));
-*/
+          if (word.WordProps.nWordStyle & PVTWORD_STYLE_UNDERLINE) {
             CPDF_Rect rcUnderline = GetUnderLineRect(word);
             rcUnderline.left += ptOffset.x;
             rcUnderline.right += ptOffset.x;
