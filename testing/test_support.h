@@ -6,6 +6,7 @@
 #define TESTING_EMBEDDER_TEST_SUPPORT_H_
 
 #include <stdlib.h>
+#include <memory>
 #include <string>
 
 #include "public/fpdfview.h"
@@ -14,16 +15,27 @@
 #include "v8/include/v8.h"
 #endif  // PDF_ENABLE_V8
 
-// Reads the entire contents of a file into a newly malloc'd buffer.
-char* GetFileContents(const char* filename, size_t* retlen);
+namespace pdfium {
+
+// Used with std::unique_ptr to free() objects that can't be deleted.
+struct FreeDeleter {
+  inline void operator()(void* ptr) const { free(ptr); }
+};
+
+}  // namespace pdfium
+
+// Reads the entire contents of a file into a newly alloc'd buffer.
+std::unique_ptr<char, pdfium::FreeDeleter> GetFileContents(const char* filename,
+                                                           size_t* retlen);
 
 // Converts a FPDF_WIDESTRING to a std::wstring.
 // Deals with differences between UTF16LE and wchar_t.
 std::wstring GetPlatformWString(const FPDF_WIDESTRING wstr);
 
-// Returns a newly mallocated FPDF_WIDESTRING (caller must free()).
+// Returns a newly allocated FPDF_WIDESTRING.
 // Deals with differences between UTF16LE and wchar_t.
-FPDF_WIDESTRING GetFPDFWideString(const std::wstring& wstr);
+std::unique_ptr<unsigned short, pdfium::FreeDeleter> GetFPDFWideString(
+    const std::wstring& wstr);
 
 #ifdef PDF_ENABLE_V8
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA

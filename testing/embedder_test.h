@@ -14,6 +14,7 @@
 #include "public/fpdf_formfill.h"
 #include "public/fpdfview.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "testing/test_support.h"
 
 #ifdef PDF_ENABLE_V8
 #include "v8/include/v8.h"
@@ -129,7 +130,7 @@ class EmbedderTest : public ::testing::Test,
   void* external_isolate_;
   TestLoader* loader_;
   size_t file_length_;
-  char* file_contents_;
+  std::unique_ptr<char, pdfium::FreeDeleter> file_contents_;
 
  private:
   static void UnsupportedHandlerTrampoline(UNSUPPORT_INFO*, int type);

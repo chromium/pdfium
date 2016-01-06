@@ -106,8 +106,9 @@ TEST_F(FPDFDocEmbeddertest, FindBookmarks) {
   EXPECT_TRUE(OpenDocument("bookmarks.pdf"));
 
   // Find the first one, based on its known title.
-  FPDF_WIDESTRING title = GetFPDFWideString(L"A Good Beginning");
-  FPDF_BOOKMARK child = FPDFBookmark_Find(document(), title);
+  std::unique_ptr<unsigned short, pdfium::FreeDeleter> title =
+      GetFPDFWideString(L"A Good Beginning");
+  FPDF_BOOKMARK child = FPDFBookmark_Find(document(), title.get());
   EXPECT_NE(nullptr, child);
 
   // Check that the string matches.
@@ -120,10 +121,7 @@ TEST_F(FPDFDocEmbeddertest, FindBookmarks) {
   EXPECT_EQ(child, FPDFBookmark_GetFirstChild(document(), nullptr));
 
   // Try to find one using a non-existent title.
-  FPDF_WIDESTRING bad_title = GetFPDFWideString(L"A BAD Beginning");
-  EXPECT_EQ(nullptr, FPDFBookmark_Find(document(), bad_title));
-
-  // Alas, the typedef includes the "const".
-  free(const_cast<unsigned short*>(title));
-  free(const_cast<unsigned short*>(bad_title));
+  std::unique_ptr<unsigned short, pdfium::FreeDeleter> bad_title =
+      GetFPDFWideString(L"A BAD Beginning");
+  EXPECT_EQ(nullptr, FPDFBookmark_Find(document(), bad_title.get()));
 }

@@ -90,7 +90,6 @@ void EmbedderTest::TearDown() {
 #endif  // PDF_ENABLE_V8
 
   delete loader_;
-  free(file_contents_);
 }
 
 bool EmbedderTest::CreateEmptyDocument() {
@@ -111,7 +110,7 @@ bool EmbedderTest::OpenDocument(const std::string& filename,
   if (!file_contents_)
     return false;
 
-  loader_ = new TestLoader(file_contents_, file_length_);
+  loader_ = new TestLoader(file_contents_.get(), file_length_);
   file_access_.m_FileLen = static_cast<unsigned long>(file_length_);
   file_access_.m_GetBlock = TestLoader::GetBlock;
   file_access_.m_Param = loader_;
