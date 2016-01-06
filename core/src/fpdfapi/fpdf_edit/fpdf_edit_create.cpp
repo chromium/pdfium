@@ -1207,7 +1207,7 @@ int32_t CPDF_Creator::WriteDirectObj(FX_DWORD objnum,
       }
       m_Offset += 2;
       const CPDF_Dictionary* p = pObj->AsDictionary();
-      FX_BOOL bSignDict = IsSignatureDict(p);
+      bool bSignDict = IsSignatureDict(p);
       FX_POSITION pos = p->GetStartPos();
       while (pos) {
         FX_BOOL bSignValue = FALSE;
@@ -1261,7 +1261,7 @@ int32_t CPDF_Creator::WriteOldIndirectObject(FX_DWORD objnum) {
       (m_pParser->m_V5Type[objnum] == 2) && m_pEncryptDict && !m_pXRefStream;
   if (m_pParser->m_bVersionUpdated || m_bSecurityChanged || bExistInMap ||
       bObjStm) {
-    CPDF_Object* pObj = m_pDocument->GetIndirectObject(objnum);
+    CPDF_Object* pObj = m_pDocument->GetIndirectObject(objnum, nullptr);
     if (!pObj) {
       m_ObjectOffset[objnum] = 0;
       return 0;

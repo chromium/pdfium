@@ -58,7 +58,7 @@ void CFDF_Document::ParseStream(IFX_FileRead* pFile, FX_BOOL bOwnFile) {
       if (word != "obj") {
         break;
       }
-      CPDF_Object* pObj = parser.GetObject(this, objnum, 0, 0);
+      CPDF_Object* pObj = parser.GetObject(this, objnum, 0, nullptr, true);
       if (!pObj) {
         break;
       }
@@ -72,7 +72,7 @@ void CFDF_Document::ParseStream(IFX_FileRead* pFile, FX_BOOL bOwnFile) {
         break;
       }
       if (CPDF_Dictionary* pMainDict =
-              ToDictionary(parser.GetObject(this, 0, 0, 0))) {
+              ToDictionary(parser.GetObject(this, 0, 0, nullptr, true))) {
         m_pRootDict = pMainDict->GetDict("Root");
         pMainDict->Release();
       }

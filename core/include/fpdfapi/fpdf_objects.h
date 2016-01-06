@@ -28,6 +28,7 @@ class CPDF_StreamAcc;
 class CPDF_StreamFilter;
 class CPDF_String;
 class IFX_FileRead;
+struct PARSE_CONTEXT;
 
 #define PDFOBJ_INVALID 0
 #define PDFOBJ_BOOLEAN 1
@@ -120,7 +121,7 @@ class CPDF_Object {
   ~CPDF_Object() {}
   void Destroy();
 
-  static const int OBJECT_REF_MAX_DEPTH = 128;
+  static const int kObjectRefMaxDepth = 128;
   static int s_nCurRefDepth;
   FX_DWORD m_Type;
   FX_DWORD m_ObjNum;
@@ -573,8 +574,7 @@ class CPDF_IndirectObjects {
 
   ~CPDF_IndirectObjects();
 
-  CPDF_Object* GetIndirectObject(FX_DWORD objnum,
-                                 struct PARSE_CONTEXT* pContext = NULL);
+  CPDF_Object* GetIndirectObject(FX_DWORD objnum, PARSE_CONTEXT* pContext);
 
   int GetIndirectType(FX_DWORD objnum);
 

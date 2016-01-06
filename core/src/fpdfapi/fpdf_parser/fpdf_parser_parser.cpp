@@ -90,18 +90,11 @@ bool CanReadFromBitStream(const CFX_BitStream* hStream,
 using ScopedFileStream =
     std::unique_ptr<IFX_FileStream, ReleaseDeleter<IFX_FileStream>>;
 
-FX_BOOL IsSignatureDict(const CPDF_Dictionary* pDict) {
+bool IsSignatureDict(const CPDF_Dictionary* pDict) {
   CPDF_Object* pType = pDict->GetElementValue("Type");
-  if (!pType) {
+  if (!pType)
     pType = pDict->GetElementValue("FT");
-    if (!pType) {
-      return FALSE;
-    }
-  }
-  if (pType->GetString() == "Sig") {
-    return TRUE;
-  }
-  return FALSE;
+  return pType && pType->GetString() == "Sig";
 }
 
 CPDF_Parser::CPDF_Parser() {
@@ -294,7 +287,8 @@ FX_DWORD CPDF_Parser::SetEncryptHandler() {
     if (CPDF_Dictionary* pEncryptDict = pEncryptObj->AsDictionary()) {
       SetEncryptDictionary(pEncryptDict);
     } else if (CPDF_Reference* pRef = pEncryptObj->AsReference()) {
-      pEncryptObj = m_pDocument->GetIndirectObject(pRef->GetRefObjNum());
+      pEncryptObj =
+          m_pDocument->GetIndirectObject(pRef->GetRefObjNum(), nullptr);
       if (pEncryptObj)
         SetEncryptDictionary(pEncryptObj->GetDict());
     }
@@ -844,7 +838,8 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
             if (PDFCharIsWhitespace(byte) || PDFCharIsDelimiter(byte)) {
               last_trailer = pos + i - 7;
               m_Syntax.RestorePos(pos + i - m_Syntax.m_HeaderOffset);
-              CPDF_Object* pObj = m_Syntax.GetObject(m_pDocument, 0, 0, 0);
+              CPDF_Object* pObj =
+                  m_Syntax.GetObject(m_pDocument, 0, 0, nullptr, true);
               if (pObj) {
                 if (!pObj->IsDictionary() && !pObj->AsStream()) {
                   pObj->Release();
@@ -1228,7 +1223,7 @@ CPDF_Object* CPDF_Parser::ParseIndirectObject(CPDF_IndirectObjects* pObjList,
     return nullptr;
 
   syntax.RestorePos(offset + it->second);
-  return syntax.GetObject(pObjList, 0, 0, pContext);
+  return syntax.GetObject(pObjList, 0, 0, pContext, true);
 }
 
 CPDF_StreamAcc* CPDF_Parser::GetObjectStream(FX_DWORD objnum) {
@@ -1236,8 +1231,8 @@ CPDF_StreamAcc* CPDF_Parser::GetObjectStream(FX_DWORD objnum) {
   if (m_ObjectStreamMap.Lookup((void*)(uintptr_t)objnum, (void*&)pStreamAcc))
     return pStreamAcc;
 
-  const CPDF_Stream* pStream =
-      ToStream(m_pDocument ? m_pDocument->GetIndirectObject(objnum) : nullptr);
+  const CPDF_Stream* pStream = ToStream(
+      m_pDocument ? m_pDocument->GetIndirectObject(objnum, nullptr) : nullptr);
   if (!pStream)
     return nullptr;
 
@@ -1412,7 +1407,7 @@ CPDF_Object* CPDF_Parser::ParseIndirectObjectAt(CPDF_IndirectObjects* pObjList,
     return NULL;
   }
   CPDF_Object* pObj =
-      m_Syntax.GetObject(pObjList, objnum, parser_gennum, pContext);
+      m_Syntax.GetObject(pObjList, objnum, parser_gennum, pContext, true);
   m_Syntax.SavePos();
   CFX_ByteString bsWord = m_Syntax.GetKeyword();
   if (bsWord == "endobj") {
@@ -1431,7 +1426,7 @@ CPDF_Object* CPDF_Parser::ParseIndirectObjectAtByStrict(
     CPDF_IndirectObjects* pObjList,
     FX_FILESIZE pos,
     FX_DWORD objnum,
-    struct PARSE_CONTEXT* pContext,
+    PARSE_CONTEXT* pContext,
     FX_FILESIZE* pResultPos) {
   FX_FILESIZE SavedPos = m_Syntax.SavePos();
   m_Syntax.RestorePos(pos);
@@ -1470,7 +1465,7 @@ CPDF_Dictionary* CPDF_Parser::LoadTrailerV4() {
     return nullptr;
 
   std::unique_ptr<CPDF_Object, ReleaseDeleter<CPDF_Object>> pObj(
-      m_Syntax.GetObject(m_pDocument, 0, 0, 0));
+      m_Syntax.GetObject(m_pDocument, 0, 0, nullptr, true));
   if (!ToDictionary(pObj.get()))
     return nullptr;
   return pObj.release()->AsDictionary();
@@ -1523,7 +1518,7 @@ FX_BOOL CPDF_Parser::IsLinearizedFile(IFX_FileRead* pFileAccess,
     m_Syntax.RestorePos(SavedPos);
     return FALSE;
   }
-  m_pLinearized = m_Syntax.GetObject(NULL, objnum, gennum, 0);
+  m_pLinearized = m_Syntax.GetObject(nullptr, objnum, gennum, nullptr, true);
   if (!m_pLinearized) {
     return FALSE;
   }
@@ -2089,9 +2084,10 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList,
     if (bTypeOnly)
       return (CPDF_Object*)PDFOBJ_ARRAY;
     CPDF_Array* pArray = new CPDF_Array;
-    while (CPDF_Object* pObj = GetObject(pObjList, objnum, gennum))
+    while (CPDF_Object* pObj =
+               GetObject(pObjList, objnum, gennum, nullptr, true)) {
       pArray->Add(pObj);
-
+    }
     return pArray;
   }
   if (word[0] == '/') {
@@ -2136,7 +2132,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList,
       if (key == "/Contents")
         dwSignValuePos = m_Pos;
 
-      CPDF_Object* pObj = GetObject(pObjList, objnum, gennum);
+      CPDF_Object* pObj = GetObject(pObjList, objnum, gennum, nullptr, true);
       if (!pObj)
         continue;
 
@@ -2153,7 +2149,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList,
     if (IsSignatureDict(pDict.get())) {
       FX_FILESIZE dwSavePos = m_Pos;
       m_Pos = dwSignValuePos;
-      CPDF_Object* pObj = GetObject(pObjList, objnum, gennum, NULL, FALSE);
+      CPDF_Object* pObj = GetObject(pObjList, objnum, gennum, nullptr, FALSE);
       pDict->SetAt("Contents", pObj);
       m_Pos = dwSavePos;
     }
@@ -2187,7 +2183,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
     CPDF_IndirectObjects* pObjList,
     FX_DWORD objnum,
     FX_DWORD gennum,
-    struct PARSE_CONTEXT* pContext) {
+    PARSE_CONTEXT* pContext) {
   CFX_AutoRestorer<int> restorer(&s_CurrentRecursionDepth);
   if (++s_CurrentRecursionDepth > kParserMaxRecursionDepth) {
     return NULL;
@@ -2249,8 +2245,10 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
       return (CPDF_Object*)PDFOBJ_ARRAY;
     std::unique_ptr<CPDF_Array, ReleaseDeleter<CPDF_Array>> pArray(
         new CPDF_Array);
-    while (CPDF_Object* pObj = GetObject(pObjList, objnum, gennum))
+    while (CPDF_Object* pObj =
+               GetObject(pObjList, objnum, gennum, nullptr, true)) {
       pArray->Add(pObj);
+    }
     return m_WordBuffer[0] == ']' ? pArray.release() : nullptr;
   }
   if (word[0] == '/') {
@@ -2286,7 +2284,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
 
       key = PDF_NameDecode(key);
       std::unique_ptr<CPDF_Object, ReleaseDeleter<CPDF_Object>> obj(
-          GetObject(pObjList, objnum, gennum));
+          GetObject(pObjList, objnum, gennum, nullptr, true));
       if (!obj) {
         uint8_t ch;
         while (GetNextChar(ch) && ch != 0x0A && ch != 0x0D) {
@@ -3062,7 +3060,7 @@ FX_BOOL CPDF_DataAvail::IsObjectsAvail(
         } else if (!m_objnum_array.Find(dwNum)) {
           m_objnum_array.AddObjNum(dwNum);
           CPDF_Object* pReferred =
-              m_pDocument->GetIndirectObject(pRef->GetRefObjNum(), NULL);
+              m_pDocument->GetIndirectObject(pRef->GetRefObjNum(), nullptr);
           if (pReferred) {
             new_obj_array.Add(pReferred);
           }
@@ -3644,7 +3642,7 @@ CPDF_Object* CPDF_DataAvail::ParseIndirectObjectAt(
     return NULL;
   }
   CPDF_Object* pObj =
-      m_syntaxParser.GetObject(pObjList, parser_objnum, gennum, 0);
+      m_syntaxParser.GetObject(pObjList, parser_objnum, gennum, nullptr, true);
   m_syntaxParser.RestorePos(SavedPos);
   return pObj;
 }
@@ -3992,7 +3990,7 @@ FX_BOOL CPDF_DataAvail::CheckTrailer(IFX_DownloadHints* pHints) {
     ScopedFileStream file(FX_CreateMemoryStream(pBuf, (size_t)iSize, FALSE));
     m_syntaxParser.InitParser(file.get(), 0);
     std::unique_ptr<CPDF_Object, ReleaseDeleter<CPDF_Object>> pTrailer(
-        m_syntaxParser.GetObject(nullptr, 0, 0));
+        m_syntaxParser.GetObject(nullptr, 0, 0, nullptr, true));
     if (!pTrailer) {
       m_Pos += m_syntaxParser.SavePos();
       pHints->AddSegment(m_Pos, iTrailerSize);
