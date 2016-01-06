@@ -915,20 +915,7 @@ class IPDF_DataAvail {
   IFX_FileAvail* m_pFileAvail;
   IFX_FileRead* m_pFileRead;
 };
-class CPDF_SortObjNumArray {
- public:
-  void AddObjNum(FX_DWORD dwObjNum);
 
-  FX_BOOL Find(FX_DWORD dwObjNum);
-
-  void RemoveAll() { m_number_array.RemoveAll(); }
-
- protected:
-  FX_BOOL BinarySearch(FX_DWORD value, int& iNext);
-
- protected:
-  CFX_DWordArray m_number_array;
-};
 enum PDF_PAGENODE_TYPE {
   PDF_PAGENODE_UNKOWN = 0,
   PDF_PAGENODE_PAGE,
