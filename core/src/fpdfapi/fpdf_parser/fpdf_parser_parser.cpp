@@ -216,8 +216,8 @@ FX_DWORD CPDF_Parser::StartParse(IFX_FileRead* pFileAccess,
       m_SortedOffset.Add(startxref_offset);
 
     m_Syntax.GetKeyword();
-    FX_BOOL bNumber;
-    CFX_ByteString xrefpos_str = m_Syntax.GetNextWord(bNumber);
+    bool bNumber;
+    CFX_ByteString xrefpos_str = m_Syntax.GetNextWord(&bNumber);
     if (!bNumber)
       return PDFPARSE_ERROR_FORMAT;
 
@@ -523,8 +523,8 @@ bool CPDF_Parser::LoadCrossRefV4(FX_FILESIZE pos,
 
   while (1) {
     FX_FILESIZE SavedPos = m_Syntax.SavePos();
-    FX_BOOL bIsNumber;
-    CFX_ByteString word = m_Syntax.GetNextWord(bIsNumber);
+    bool bIsNumber;
+    CFX_ByteString word = m_Syntax.GetNextWord(&bIsNumber);
     if (word.IsEmpty())
       return false;
 
@@ -881,8 +881,9 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
                       FX_FILESIZE dwSavePos = m_Syntax.SavePos();
                       CFX_ByteString strWord = m_Syntax.GetKeyword();
                       if (!strWord.Compare("startxref")) {
-                        FX_BOOL bNumber = FALSE;
-                        CFX_ByteString bsOffset = m_Syntax.GetNextWord(bNumber);
+                        bool bNumber;
+                        CFX_ByteString bsOffset =
+                            m_Syntax.GetNextWord(&bNumber);
                         if (bNumber) {
                           m_LastXRefOffset = FXSYS_atoi(bsOffset);
                         }
@@ -1317,8 +1318,8 @@ void CPDF_Parser::GetIndirectBinary(FX_DWORD objnum,
   }
   FX_FILESIZE SavedPos = m_Syntax.SavePos();
   m_Syntax.RestorePos(pos);
-  FX_BOOL bIsNumber;
-  CFX_ByteString word = m_Syntax.GetNextWord(bIsNumber);
+  bool bIsNumber;
+  CFX_ByteString word = m_Syntax.GetNextWord(&bIsNumber);
   if (!bIsNumber) {
     m_Syntax.RestorePos(SavedPos);
     return;
@@ -1328,7 +1329,7 @@ void CPDF_Parser::GetIndirectBinary(FX_DWORD objnum,
     m_Syntax.RestorePos(SavedPos);
     return;
   }
-  word = m_Syntax.GetNextWord(bIsNumber);
+  word = m_Syntax.GetNextWord(&bIsNumber);
   if (!bIsNumber) {
     m_Syntax.RestorePos(SavedPos);
     return;
@@ -1348,11 +1349,11 @@ void CPDF_Parser::GetIndirectBinary(FX_DWORD objnum,
   FX_BOOL bNextOffValid = FALSE;
   if (nextoff != pos) {
     m_Syntax.RestorePos(nextoff);
-    word = m_Syntax.GetNextWord(bIsNumber);
+    word = m_Syntax.GetNextWord(&bIsNumber);
     if (word == "xref") {
       bNextOffValid = TRUE;
     } else if (bIsNumber) {
-      word = m_Syntax.GetNextWord(bIsNumber);
+      word = m_Syntax.GetNextWord(&bIsNumber);
       if (bIsNumber && m_Syntax.GetKeyword() == "obj") {
         bNextOffValid = TRUE;
       }
@@ -1383,8 +1384,8 @@ CPDF_Object* CPDF_Parser::ParseIndirectObjectAt(CPDF_IndirectObjects* pObjList,
                                                 PARSE_CONTEXT* pContext) {
   FX_FILESIZE SavedPos = m_Syntax.SavePos();
   m_Syntax.RestorePos(pos);
-  FX_BOOL bIsNumber;
-  CFX_ByteString word = m_Syntax.GetNextWord(bIsNumber);
+  bool bIsNumber;
+  CFX_ByteString word = m_Syntax.GetNextWord(&bIsNumber);
   if (!bIsNumber) {
     m_Syntax.RestorePos(SavedPos);
     return NULL;
@@ -1396,7 +1397,7 @@ CPDF_Object* CPDF_Parser::ParseIndirectObjectAt(CPDF_IndirectObjects* pObjList,
     m_Syntax.RestorePos(SavedPos);
     return NULL;
   }
-  word = m_Syntax.GetNextWord(bIsNumber);
+  word = m_Syntax.GetNextWord(&bIsNumber);
   if (!bIsNumber) {
     m_Syntax.RestorePos(SavedPos);
     return NULL;
@@ -1430,8 +1431,8 @@ CPDF_Object* CPDF_Parser::ParseIndirectObjectAtByStrict(
     FX_FILESIZE* pResultPos) {
   FX_FILESIZE SavedPos = m_Syntax.SavePos();
   m_Syntax.RestorePos(pos);
-  FX_BOOL bIsNumber;
-  CFX_ByteString word = m_Syntax.GetNextWord(bIsNumber);
+  bool bIsNumber;
+  CFX_ByteString word = m_Syntax.GetNextWord(&bIsNumber);
   if (!bIsNumber) {
     m_Syntax.RestorePos(SavedPos);
     return NULL;
@@ -1441,7 +1442,7 @@ CPDF_Object* CPDF_Parser::ParseIndirectObjectAtByStrict(
     m_Syntax.RestorePos(SavedPos);
     return NULL;
   }
-  word = m_Syntax.GetNextWord(bIsNumber);
+  word = m_Syntax.GetNextWord(&bIsNumber);
   if (!bIsNumber) {
     m_Syntax.RestorePos(SavedPos);
     return NULL;
@@ -1503,13 +1504,13 @@ FX_BOOL CPDF_Parser::IsLinearizedFile(IFX_FileRead* pFileAccess,
   m_Syntax.InitParser(pFileAccess, offset);
   m_Syntax.RestorePos(m_Syntax.m_HeaderOffset + 9);
   FX_FILESIZE SavedPos = m_Syntax.SavePos();
-  FX_BOOL bIsNumber;
-  CFX_ByteString word = m_Syntax.GetNextWord(bIsNumber);
+  bool bIsNumber;
+  CFX_ByteString word = m_Syntax.GetNextWord(&bIsNumber);
   if (!bIsNumber) {
     return FALSE;
   }
   FX_DWORD objnum = FXSYS_atoi(word);
-  word = m_Syntax.GetNextWord(bIsNumber);
+  word = m_Syntax.GetNextWord(&bIsNumber);
   if (!bIsNumber) {
     return FALSE;
   }
@@ -1525,7 +1526,7 @@ FX_BOOL CPDF_Parser::IsLinearizedFile(IFX_FileRead* pFileAccess,
 
   CPDF_Dictionary* pDict = m_pLinearized->GetDict();
   if (pDict && pDict->GetElement("Linearized")) {
-    m_Syntax.GetNextWord(bIsNumber);
+    m_Syntax.GetNextWord(nullptr);
 
     CPDF_Object* pLen = pDict->GetElement("L");
     if (!pLen) {
@@ -1779,9 +1780,10 @@ FX_BOOL CPDF_SyntaxParser::ReadBlock(uint8_t* pBuf, FX_DWORD size) {
   return TRUE;
 }
 
-void CPDF_SyntaxParser::GetNextWord() {
+void CPDF_SyntaxParser::GetNextWordInternal(bool* bIsNumber) {
   m_WordSize = 0;
-  m_bIsNumber = TRUE;
+  if (bIsNumber)
+    *bIsNumber = true;
   uint8_t ch;
   if (!GetNextChar(ch)) {
     return;
@@ -1803,7 +1805,8 @@ void CPDF_SyntaxParser::GetNextWord() {
   }
 
   if (PDFCharIsDelimiter(ch)) {
-    m_bIsNumber = FALSE;
+    if (bIsNumber)
+      *bIsNumber = false;
     m_WordBuffer[m_WordSize++] = ch;
     if (ch == '/') {
       while (1) {
@@ -1841,7 +1844,8 @@ void CPDF_SyntaxParser::GetNextWord() {
       m_WordBuffer[m_WordSize++] = ch;
 
     if (!PDFCharIsNumeric(ch))
-      m_bIsNumber = FALSE;
+      if (bIsNumber)
+        *bIsNumber = false;
     if (!GetNextChar(ch))
       return;
 
@@ -1851,6 +1855,7 @@ void CPDF_SyntaxParser::GetNextWord() {
     }
   }
 }
+
 CFX_ByteString CPDF_SyntaxParser::ReadString() {
   uint8_t ch;
   if (!GetNextChar(ch)) {
@@ -2008,15 +2013,15 @@ void CPDF_SyntaxParser::ToNextWord() {
   m_Pos--;
 }
 
-CFX_ByteString CPDF_SyntaxParser::GetNextWord(FX_BOOL& bIsNumber) {
-  GetNextWord();
-  bIsNumber = m_bIsNumber;
-  return CFX_ByteString(m_WordBuffer, m_WordSize);
+CFX_ByteString CPDF_SyntaxParser::GetNextWord(bool* bIsNumber) {
+  GetNextWordInternal(bIsNumber);
+  return CFX_ByteString((const FX_CHAR*)m_WordBuffer, m_WordSize);
 }
+
 CFX_ByteString CPDF_SyntaxParser::GetKeyword() {
-  FX_BOOL dummy;
-  return GetNextWord(dummy);
+  return GetNextWord(nullptr);
 }
+
 CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList,
                                           FX_DWORD objnum,
                                           FX_DWORD gennum,
@@ -2028,8 +2033,8 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList,
   }
   FX_FILESIZE SavedPos = m_Pos;
   FX_BOOL bTypeOnly = pContext && (pContext->m_Flags & PDFPARSE_TYPEONLY);
-  FX_BOOL bIsNumber;
-  CFX_ByteString word = GetNextWord(bIsNumber);
+  bool bIsNumber;
+  CFX_ByteString word = GetNextWord(&bIsNumber);
   if (word.GetLength() == 0) {
     if (bTypeOnly)
       return (CPDF_Object*)PDFOBJ_INVALID;
@@ -2037,9 +2042,9 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList,
   }
   if (bIsNumber) {
     FX_FILESIZE SavedPos = m_Pos;
-    CFX_ByteString nextword = GetNextWord(bIsNumber);
+    CFX_ByteString nextword = GetNextWord(&bIsNumber);
     if (bIsNumber) {
-      CFX_ByteString nextword2 = GetNextWord(bIsNumber);
+      CFX_ByteString nextword2 = GetNextWord(nullptr);
       if (nextword2 == "R") {
         FX_DWORD objnum = FXSYS_atoi(word);
         if (bTypeOnly)
@@ -2108,8 +2113,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList,
     std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>> pDict(
         new CPDF_Dictionary);
     while (1) {
-      FX_BOOL bIsNumber;
-      CFX_ByteString key = GetNextWord(bIsNumber);
+      CFX_ByteString key = GetNextWord(nullptr);
       if (key.IsEmpty())
         return nullptr;
 
@@ -2160,8 +2164,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList,
       }
     }
     FX_FILESIZE SavedPos = m_Pos;
-    FX_BOOL bIsNumber;
-    CFX_ByteString nextword = GetNextWord(bIsNumber);
+    CFX_ByteString nextword = GetNextWord(nullptr);
     if (nextword != "stream") {
       m_Pos = SavedPos;
       return pDict.release();
@@ -2190,8 +2193,8 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
   }
   FX_FILESIZE SavedPos = m_Pos;
   FX_BOOL bTypeOnly = pContext && (pContext->m_Flags & PDFPARSE_TYPEONLY);
-  FX_BOOL bIsNumber;
-  CFX_ByteString word = GetNextWord(bIsNumber);
+  bool bIsNumber;
+  CFX_ByteString word = GetNextWord(&bIsNumber);
   if (word.GetLength() == 0) {
     if (bTypeOnly)
       return (CPDF_Object*)PDFOBJ_INVALID;
@@ -2199,9 +2202,9 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
   }
   if (bIsNumber) {
     FX_FILESIZE SavedPos = m_Pos;
-    CFX_ByteString nextword = GetNextWord(bIsNumber);
+    CFX_ByteString nextword = GetNextWord(&bIsNumber);
     if (bIsNumber) {
-      CFX_ByteString nextword2 = GetNextWord(bIsNumber);
+      CFX_ByteString nextword2 = GetNextWord(nullptr);
       if (nextword2 == "R") {
         if (bTypeOnly)
           return (CPDF_Object*)PDFOBJ_REFERENCE;
@@ -2266,9 +2269,8 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
     std::unique_ptr<CPDF_Dictionary, ReleaseDeleter<CPDF_Dictionary>> pDict(
         new CPDF_Dictionary);
     while (1) {
-      FX_BOOL bIsNumber;
       FX_FILESIZE SavedPos = m_Pos;
-      CFX_ByteString key = GetNextWord(bIsNumber);
+      CFX_ByteString key = GetNextWord(nullptr);
       if (key.IsEmpty())
         return nullptr;
 
@@ -2303,8 +2305,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
       }
     }
     FX_FILESIZE SavedPos = m_Pos;
-    FX_BOOL bIsNumber;
-    CFX_ByteString nextword = GetNextWord(bIsNumber);
+    CFX_ByteString nextword = GetNextWord(nullptr);
     if (nextword != "stream") {
       m_Pos = SavedPos;
       return pDict.release();
@@ -2368,7 +2369,7 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
       }
       m_Pos += ReadEOLMarkers(m_Pos);
       FXSYS_memset(m_WordBuffer, 0, kEndStreamStr.GetLength() + 1);
-      GetNextWord();
+      GetNextWordInternal(nullptr);
       // Earlier version of PDF specification doesn't require EOL marker before
       // 'endstream' keyword. If keyword 'endstream' follows the bytes in
       // specified length, it signals the end of stream.
@@ -2468,7 +2469,7 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
   }
   streamStartPos = m_Pos;
   FXSYS_memset(m_WordBuffer, 0, kEndObjStr.GetLength() + 1);
-  GetNextWord();
+  GetNextWordInternal(nullptr);
   int numMarkers = ReadEOLMarkers(m_Pos);
   if (m_WordSize == kEndObjStr.GetLength() && numMarkers != 0 &&
       FXSYS_memcmp(m_WordBuffer, kEndObjStr.GetPtr(), kEndObjStr.GetLength()) ==
@@ -2491,10 +2492,11 @@ void CPDF_SyntaxParser::InitParser(IFX_FileRead* pFileAccess,
       (size_t)((FX_FILESIZE)m_BufSize > m_FileLen ? m_FileLen : m_BufSize));
 }
 int32_t CPDF_SyntaxParser::GetDirectNum() {
-  GetNextWord();
-  if (!m_bIsNumber) {
+  bool bIsNumber;
+  GetNextWordInternal(&bIsNumber);
+  if (!bIsNumber)
     return 0;
-  }
+
   m_WordBuffer[m_WordSize] = 0;
   return FXSYS_atoi(reinterpret_cast<const FX_CHAR*>(m_WordBuffer));
 }
@@ -3623,23 +3625,23 @@ CPDF_Object* CPDF_DataAvail::ParseIndirectObjectAt(
     CPDF_IndirectObjects* pObjList) {
   FX_FILESIZE SavedPos = m_syntaxParser.SavePos();
   m_syntaxParser.RestorePos(pos);
-  FX_BOOL bIsNumber;
-  CFX_ByteString word = m_syntaxParser.GetNextWord(bIsNumber);
-  if (!bIsNumber) {
-    return NULL;
-  }
+  bool bIsNumber;
+  CFX_ByteString word = m_syntaxParser.GetNextWord(&bIsNumber);
+  if (!bIsNumber)
+    return nullptr;
+
   FX_DWORD parser_objnum = FXSYS_atoi(word);
-  if (objnum && parser_objnum != objnum) {
-    return NULL;
-  }
-  word = m_syntaxParser.GetNextWord(bIsNumber);
-  if (!bIsNumber) {
-    return NULL;
-  }
+  if (objnum && parser_objnum != objnum)
+    return nullptr;
+
+  word = m_syntaxParser.GetNextWord(&bIsNumber);
+  if (!bIsNumber)
+    return nullptr;
+
   FX_DWORD gennum = FXSYS_atoi(word);
   if (m_syntaxParser.GetKeyword() != "obj") {
     m_syntaxParser.RestorePos(SavedPos);
-    return NULL;
+    return nullptr;
   }
   CPDF_Object* pObj =
       m_syntaxParser.GetObject(pObjList, parser_objnum, gennum, nullptr, true);
@@ -3675,11 +3677,11 @@ FX_BOOL CPDF_DataAvail::IsLinearizedFile(uint8_t* pData, FX_DWORD dwLen) {
   m_dwHeaderOffset = offset;
   m_syntaxParser.InitParser(file.get(), offset);
   m_syntaxParser.RestorePos(m_syntaxParser.m_HeaderOffset + 9);
-  FX_BOOL bNumber = FALSE;
-  CFX_ByteString wordObjNum = m_syntaxParser.GetNextWord(bNumber);
-  if (!bNumber) {
+  bool bNumber;
+  CFX_ByteString wordObjNum = m_syntaxParser.GetNextWord(&bNumber);
+  if (!bNumber)
     return FALSE;
-  }
+
   FX_DWORD objnum = FXSYS_atoi(wordObjNum);
   if (m_pLinearized) {
     m_pLinearized->Release();
@@ -3719,9 +3721,9 @@ FX_BOOL CPDF_DataAvail::CheckEnd(IFX_DownloadHints* pHints) {
     m_syntaxParser.InitParser(file.get(), 0);
     m_syntaxParser.RestorePos(dwSize - 1);
     if (m_syntaxParser.SearchWord("startxref", TRUE, FALSE, dwSize)) {
-      FX_BOOL bNumber;
-      m_syntaxParser.GetNextWord(bNumber);
-      CFX_ByteString xrefpos_str = m_syntaxParser.GetNextWord(bNumber);
+      m_syntaxParser.GetNextWord(nullptr);
+      bool bNumber;
+      CFX_ByteString xrefpos_str = m_syntaxParser.GetNextWord(&bNumber);
       if (!bNumber) {
         m_docStatus = PDF_DATAAVAIL_ERROR;
         return FALSE;
@@ -3754,11 +3756,11 @@ int32_t CPDF_DataAvail::CheckCrossRefStream(IFX_DownloadHints* pHints,
     m_pFileRead->ReadBlock(pBuf, m_dwCurrentXRefSteam, iSize);
     ScopedFileStream file(FX_CreateMemoryStream(pBuf, (size_t)iSize, FALSE));
     m_parser.m_Syntax.InitParser(file.get(), 0);
-    FX_BOOL bNumber = FALSE;
-    CFX_ByteString objnum = m_parser.m_Syntax.GetNextWord(bNumber);
-    if (!bNumber) {
+    bool bNumber;
+    CFX_ByteString objnum = m_parser.m_Syntax.GetNextWord(&bNumber);
+    if (!bNumber)
       return -1;
-    }
+
     FX_DWORD objNum = FXSYS_atoi(objnum);
     CPDF_Object* pObj = m_parser.ParseIndirectObjectAt(NULL, 0, objNum, NULL);
     if (!pObj) {

@@ -288,7 +288,7 @@ class CPDF_SyntaxParser {
 
   FX_BOOL ReadBlock(uint8_t* pBuf, FX_DWORD size);
 
-  CFX_ByteString GetNextWord(FX_BOOL& bIsNumber);
+  CFX_ByteString GetNextWord(bool* bIsNumber);
 
  protected:
   friend class CPDF_Parser;
@@ -302,7 +302,7 @@ class CPDF_SyntaxParser {
 
   FX_BOOL GetCharAtBackward(FX_FILESIZE pos, uint8_t& ch);
 
-  void GetNextWord();
+  void GetNextWordInternal(bool* bIsNumber);
 
   bool IsWholeWord(FX_FILESIZE startpos,
                    FX_FILESIZE limit,
@@ -343,8 +343,6 @@ class CPDF_SyntaxParser {
   uint8_t m_WordBuffer[257];
 
   FX_DWORD m_WordSize;
-
-  FX_BOOL m_bIsNumber;
 
   FX_FILESIZE m_dwWordPos;
 };
