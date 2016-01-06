@@ -46,15 +46,15 @@ void CFDF_Document::ParseStream(IFX_FileRead* pFile, FX_BOOL bOwnFile) {
   CPDF_SyntaxParser parser;
   parser.InitParser(m_pFile, 0);
   while (1) {
-    FX_BOOL bNumber;
-    CFX_ByteString word = parser.GetNextWord(bNumber);
+    bool bNumber;
+    CFX_ByteString word = parser.GetNextWord(&bNumber);
     if (bNumber) {
       FX_DWORD objnum = FXSYS_atoi(word);
-      word = parser.GetNextWord(bNumber);
+      word = parser.GetNextWord(&bNumber);
       if (!bNumber) {
         break;
       }
-      word = parser.GetNextWord(bNumber);
+      word = parser.GetNextWord(nullptr);
       if (word != "obj") {
         break;
       }
@@ -63,7 +63,7 @@ void CFDF_Document::ParseStream(IFX_FileRead* pFile, FX_BOOL bOwnFile) {
         break;
       }
       InsertIndirectObject(objnum, pObj);
-      word = parser.GetNextWord(bNumber);
+      word = parser.GetNextWord(nullptr);
       if (word != "endobj") {
         break;
       }
