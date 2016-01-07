@@ -9,7 +9,7 @@
 #include "codec_int.h"
 
 extern "C" {
-#include "third_party/tiff_v403/tiffiop.h"
+#include "third_party/libtiff/tiffiop.h"
 }
 
 void* IccLib_CreateTransform_sRGB(const unsigned char* pProfileData,
@@ -181,22 +181,10 @@ void _TIFFmemcpy(void* des, const void* src, tmsize_t size) {
 int _TIFFmemcmp(const void* ptr1, const void* ptr2, tmsize_t size) {
   return FXSYS_memcmp(ptr1, ptr2, (size_t)size);
 }
-static void _tiff_warning_ext(thandle_t context,
-                              const char* module,
-                              const char* fmt,
-                              va_list ap) {
-  if (module != NULL) {
-  }
-}
-TIFFErrorHandlerExt _TIFFwarningHandlerExt = _tiff_warning_ext;
-static void _tiff_error_ext(thandle_t context,
-                            const char* module,
-                            const char* fmt,
-                            va_list ap) {
-  if (module != NULL) {
-  }
-}
-TIFFErrorHandlerExt _TIFFerrorHandlerExt = _tiff_error_ext;
+
+TIFFErrorHandler _TIFFwarningHandler = nullptr;
+TIFFErrorHandler _TIFFerrorHandler = nullptr;
+
 int TIFFCmyk2Rgb(thandle_t context,
                  uint8 c,
                  uint8 m,
