@@ -10,6 +10,7 @@
 #include <string>
 
 #include "public/fpdfview.h"
+#include "public/fpdf_save.h"
 
 #ifdef PDF_ENABLE_V8
 #include "v8/include/v8.h"
@@ -60,6 +61,21 @@ class TestLoader {
  private:
   const char* const m_pBuf;
   const size_t m_Len;
+};
+
+class TestSaver : public FPDF_FILEWRITE {
+ public:
+  TestSaver();
+
+  void ClearString();
+  const std::string& GetString() const { return m_String; }
+
+ private:
+  static int WriteBlockCallback(FPDF_FILEWRITE* pFileWrite,
+                                const void* data,
+                                unsigned long size);
+
+  std::string m_String;
 };
 
 #endif  // TESTING_EMBEDDER_TEST_SUPPORT_H_
