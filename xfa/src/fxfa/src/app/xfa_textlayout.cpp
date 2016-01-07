@@ -215,17 +215,16 @@ IFDE_CSSComputedStyle* CXFA_TextParser::CreateStyle(
 IFDE_CSSComputedStyle* CXFA_TextParser::ComputeStyle(
     IFDE_XMLNode* pXMLNode,
     IFDE_CSSComputedStyle* pParentStyle) {
-  CXFA_TextParseContext* pContext =
-      (CXFA_TextParseContext*)m_mapXMLNodeToParseContext.GetValueAt(pXMLNode);
-  if (pContext == NULL) {
-    return NULL;
-  }
+  CXFA_TextParseContext* pContext = static_cast<CXFA_TextParseContext*>(
+      m_mapXMLNodeToParseContext.GetValueAt(pXMLNode));
+  if (!pContext)
+    return nullptr;
   pContext->m_pParentStyle = pParentStyle;
+  pParentStyle->AddRef();
   CXFA_CSSTagProvider tagProvider;
   ParseTagInfo(pXMLNode, tagProvider);
-  if (tagProvider.m_bContent) {
-    return NULL;
-  }
+  if (tagProvider.m_bContent)
+    return nullptr;
   IFDE_CSSComputedStyle* pStyle = CreateStyle(pParentStyle);
   IFDE_CSSAccelerator* pCSSAccel = m_pSelector->InitAccelerator();
   pCSSAccel->OnEnterTag(&tagProvider);
