@@ -31,83 +31,56 @@ FX_BOOL FT_UseTTCharmap(FXFT_Face face, int platform_id, int encoding_id) {
   }
   return FALSE;
 }
-CPDF_FontGlobals::CPDF_FontGlobals() : m_pContrastRamps(NULL) {
+
+CFX_StockFontArray::CFX_StockFontArray() {}
+
+CFX_StockFontArray::~CFX_StockFontArray() {
+  for (size_t i = 0; i < FX_ArraySize(m_StockFonts); ++i) {
+    if (!m_StockFonts[i])
+      continue;
+    CPDF_Dictionary* pFontDict = m_StockFonts[i]->GetFontDict();
+    if (pFontDict)
+      pFontDict->Release();
+  }
+}
+
+CPDF_Font* CFX_StockFontArray::GetFont(int index) const {
+  if (index < 0 || index >= FX_ArraySize(m_StockFonts))
+    return nullptr;
+  return m_StockFonts[index].get();
+}
+
+void CFX_StockFontArray::SetFont(int index, CPDF_Font* font) {
+  if (index < 0 || index >= FX_ArraySize(m_StockFonts))
+    return;
+  m_StockFonts[index].reset(font);
+}
+
+CPDF_FontGlobals::CPDF_FontGlobals() {
   FXSYS_memset(m_EmbeddedCharsets, 0, sizeof(m_EmbeddedCharsets));
   FXSYS_memset(m_EmbeddedToUnicodes, 0, sizeof(m_EmbeddedToUnicodes));
 }
-CPDF_FontGlobals::~CPDF_FontGlobals() {
-  ClearAll();
-  FX_Free(m_pContrastRamps);
-}
-class CFX_StockFontArray {
- public:
-  CFX_StockFontArray() {
-    FXSYS_memset(m_pStockFonts, 0, sizeof(m_pStockFonts));
-  }
-  ~CFX_StockFontArray() {
-    for (size_t i = 0; i < FX_ArraySize(m_pStockFonts); i++) {
-      if (!m_pStockFonts[i])
-        continue;
-      CPDF_Dictionary* pFontDict = m_pStockFonts[i]->GetFontDict();
-      if (pFontDict)
-        pFontDict->Release();
-      delete m_pStockFonts[i];
-    }
-  }
-  CPDF_Font* GetFont(int index) const {
-    if (index < 0 || index >= FX_ArraySize(m_pStockFonts))
-      return NULL;
-    return m_pStockFonts[index];
-  }
-  void SetFont(int index, CPDF_Font* font) {
-    if (index < 0 || index >= FX_ArraySize(m_pStockFonts))
-      return;
-    delete m_pStockFonts[index];
-    m_pStockFonts[index] = font;
-  }
 
- private:
-  CPDF_Font* m_pStockFonts[14];
-};
-CPDF_Font* CPDF_FontGlobals::Find(void* key, int index) {
-  void* value = NULL;
-  if (!m_pStockMap.Lookup(key, value)) {
-    return NULL;
-  }
-  if (!value) {
-    return NULL;
-  }
-  return static_cast<CFX_StockFontArray*>(value)->GetFont(index);
+CPDF_FontGlobals::~CPDF_FontGlobals() {
 }
-void CPDF_FontGlobals::Set(void* key, int index, CPDF_Font* pFont) {
-  void* value = NULL;
-  CFX_StockFontArray* font_array = NULL;
-  if (m_pStockMap.Lookup(key, value)) {
-    font_array = static_cast<CFX_StockFontArray*>(value);
-  } else {
-    font_array = new CFX_StockFontArray();
-    m_pStockMap.SetAt(key, font_array);
-  }
-  font_array->SetFont(index, pFont);
+
+CPDF_Font* CPDF_FontGlobals::Find(CPDF_Document* pDoc, int index) {
+  auto it = m_StockMap.find(pDoc);
+  if (it == m_StockMap.end())
+    return nullptr;
+  return it->second ? it->second->GetFont(index) : nullptr;
 }
-void CPDF_FontGlobals::Clear(void* key) {
-  void* value = NULL;
-  if (!m_pStockMap.Lookup(key, value)) {
-    return;
-  }
-  delete static_cast<CFX_StockFontArray*>(value);
-  m_pStockMap.RemoveKey(key);
+
+void CPDF_FontGlobals::Set(CPDF_Document* pDoc, int index, CPDF_Font* pFont) {
+  if (!pdfium::ContainsKey(m_StockMap, pDoc))
+    m_StockMap[pDoc].reset(new CFX_StockFontArray);
+  m_StockMap[pDoc]->SetFont(index, pFont);
 }
-void CPDF_FontGlobals::ClearAll() {
-  FX_POSITION pos = m_pStockMap.GetStartPosition();
-  while (pos) {
-    void* key = NULL;
-    void* value = NULL;
-    m_pStockMap.GetNextAssoc(pos, key, value);
-    delete static_cast<CFX_StockFontArray*>(value);
-    m_pStockMap.RemoveKey(key);
-  }
+
+void CPDF_FontGlobals::Clear(CPDF_Document* pDoc) {
+  m_StockMap.erase(pDoc);
 }
+
 CPDF_Font::CPDF_Font(int fonttype) : m_FontType(fonttype) {
   m_FontBBox.left = m_FontBBox.right = m_FontBBox.top = m_FontBBox.bottom = 0;
   m_StemV = m_Ascent = m_Descent = m_ItalicAngle = 0;
