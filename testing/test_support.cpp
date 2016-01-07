@@ -45,11 +45,12 @@ bool GetExternalData(const std::string& exe_path,
   std::string full_path =
       GetFullPathForSnapshotFile(exe_path, bin_dir, filename);
   size_t data_length = 0;
-  char* data_buffer = GetFileContents(full_path.c_str(), &data_length);
-  if (!data_buffer) {
+  std::unique_ptr<char, pdfium::FreeDeleter> data_buffer =
+      GetFileContents(full_path.c_str(), &data_length);
+  if (!data_buffer)
     return false;
-  }
-  result_data->data = const_cast<const char*>(data_buffer);
+
+  result_data->data = data_buffer.release();
   result_data->raw_size = data_length;
   return true;
 }
