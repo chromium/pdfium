@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "parser_int.h"
+#include "core/include/fpdfapi/fpdf_parser.h"
 
 #include <algorithm>
 #include <memory>
@@ -14,10 +14,10 @@
 
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_page.h"
-#include "core/include/fpdfapi/fpdf_parser.h"
 #include "core/include/fxcrt/fx_ext.h"
 #include "core/include/fxcrt/fx_safe_types.h"
 #include "core/src/fpdfapi/fpdf_page/pageint.h"
+#include "core/src/fpdfapi/fpdf_parser/parser_int.h"
 #include "third_party/base/stl_util.h"
 
 namespace {

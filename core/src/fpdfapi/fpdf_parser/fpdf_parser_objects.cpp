@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/include/fpdfapi/fpdf_parser.h"
+#include "core/include/fpdfapi/fpdf_objects.h"
 
+#include "core/include/fpdfapi/fpdf_parser.h"
 #include "core/include/fxcrt/fx_string.h"
 #include "third_party/base/stl_util.h"
 
