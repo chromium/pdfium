@@ -37,7 +37,6 @@ class CPDFXFA_Document : public IXFA_DocProvider {
   int GetDocType() { return m_iDocType; }
 
   CPDFSDK_Document* GetSDKDocument(CPDFDoc_Environment* pFormFillEnv);
-  void ReleaseSDKDoc();
 
   void FXRect2PDFRect(const CFX_RectF& fxRectF, CPDF_Rect& pdfRect);
 

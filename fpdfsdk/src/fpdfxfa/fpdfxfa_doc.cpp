@@ -45,14 +45,17 @@ CPDFXFA_Document::CPDFXFA_Document(CPDF_Document* pPDFDoc,
 }
 
 CPDFXFA_Document::~CPDFXFA_Document() {
+  if (m_pJSContext && m_pSDKDoc && m_pSDKDoc->GetEnv())
+    m_pSDKDoc->GetEnv()->GetJSRuntime()->ReleaseContext(m_pJSContext);
+
+  delete m_pSDKDoc;
+
   if (m_pPDFDoc) {
-    CPDF_Parser* pParser = (CPDF_Parser*)m_pPDFDoc->GetParser();
-    if (pParser == NULL) {
-      delete m_pPDFDoc;
-    } else {
+    CPDF_Parser* pParser = m_pPDFDoc->GetParser();
+    if (pParser)
       delete pParser;
-    }
-    m_pPDFDoc = NULL;
+    else
+      delete m_pPDFDoc;
   }
   if (m_pXFADoc) {
     IXFA_App* pApp = m_pApp->GetXFAApp();
@@ -63,17 +66,6 @@ CPDFXFA_Document::~CPDFXFA_Document() {
       }
     }
   }
-
-  if (m_pJSContext) {
-    if (m_pSDKDoc && m_pSDKDoc->GetEnv()) {
-      m_pSDKDoc->GetEnv()->GetJSRuntime()->ReleaseContext(m_pJSContext);
-      m_pJSContext = NULL;
-    }
-  }
-
-  if (m_pSDKDoc)
-    delete m_pSDKDoc;
-  m_pSDKDoc = NULL;
 }
 
 FX_BOOL CPDFXFA_Document::LoadXFADoc() {
@@ -204,13 +196,6 @@ CPDFSDK_Document* CPDFXFA_Document::GetSDKDocument(
   return m_pSDKDoc;
 }
 
-void CPDFXFA_Document::ReleaseSDKDoc() {
-  if (m_pSDKDoc)
-    delete m_pSDKDoc;
-
-  m_pSDKDoc = NULL;
-}
-
 void CPDFXFA_Document::FXRect2PDFRect(const CFX_RectF& fxRectF,
                                       CPDF_Rect& pdfRect) {
   pdfRect.left = fxRectF.left;
@@ -219,7 +204,6 @@ void CPDFXFA_Document::FXRect2PDFRect(const CFX_RectF& fxRectF,
   pdfRect.bottom = fxRectF.top;
 }
 
-//////////////////////////////////////////////////////////////////////////
 void CPDFXFA_Document::SetChangeMark(IXFA_Doc* hDoc) {
   if (hDoc == m_pXFADoc && m_pSDKDoc) {
     m_pSDKDoc->SetChangeMark();
