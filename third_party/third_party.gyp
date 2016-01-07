@@ -330,6 +330,7 @@
           'type': 'static_library',
           'sources': [
             'libtiff/tiffiop.h',
+            'libtiff/tiffvers.h',
             'libtiff/tif_aux.c',
             'libtiff/tif_close.c',
             'libtiff/tif_codec.c',

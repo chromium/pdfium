@@ -306,6 +306,7 @@ if (pdf_enable_xfa) {
     ]
     sources = [
       "libtiff/tiffiop.h",
+      "libtiff/tiffvers.h",
       "libtiff/tif_aux.c",
       "libtiff/tif_close.c",
       "libtiff/tif_codec.c",
