@@ -294,7 +294,6 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   void Move(const CPDF_Rect& rcNew, FX_BOOL bReset, FX_BOOL bRefresh);
   virtual void InvalidateRect(CPDF_Rect* pRect = NULL);
 
-  void GetAppearanceStream(CFX_ByteString& sAppStream);
   void DrawAppearance(CFX_RenderDevice* pDevice, CFX_Matrix* pUser2Device);
 
   virtual FX_BOOL OnKeyDown(FX_WORD nChar, FX_DWORD nFlag);
@@ -341,27 +340,21 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   virtual void SetFontSize(FX_FLOAT fFontSize);
 
   void SetBackgroundColor(const CPWL_Color& color);
-  void SetBorderColor(const CPWL_Color& color);
-  void SetBorderWidth(int32_t nBorderWidth);
   void SetClipRect(const CPDF_Rect& rect);
   void SetBorderStyle(int32_t eBorderStyle);
-  void SetBorderDash(const CPWL_Dash& sDash);
 
-  CPDF_Rect GetOriginWindowRect() const;
   virtual CPDF_Rect GetWindowRect() const;
   virtual CPDF_Rect GetClientRect() const;
   CPDF_Point GetCenterPoint() const;
-  CPDF_Rect GetClientCenterSquare() const;
-  CPDF_Rect GetWindowCenterSquare() const;
   int32_t GetBorderWidth() const;
   FX_BOOL IsVisible() const { return m_bVisible; }
   FX_BOOL HasFlag(FX_DWORD dwFlags) const;
   void AddFlag(FX_DWORD dwFlags);
   void RemoveFlag(FX_DWORD dwFlags);
-  CPDF_Rect GetClipRect() const;
+  const CPDF_Rect& GetClipRect() const;
   CPWL_Wnd* GetParentWindow() const;
   int32_t GetBorderStyle() const;
-  CPWL_Dash GetBorderDash() const;
+  const CPWL_Dash& GetBorderDash() const;
   void* GetAttachedData() const;
 
   FX_BOOL WndHitTest(const CPDF_Point& point) const;
@@ -427,7 +420,7 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   void SetNotifyFlag(FX_BOOL bNotifying = TRUE) { m_bNotifying = bNotifying; }
 
   FX_BOOL IsValid() const;
-  PWL_CREATEPARAM GetCreationParam() const;
+  const PWL_CREATEPARAM& GetCreationParam() const;
   FX_BOOL IsNotifying() const { return m_bNotifying; }
 
   void InvalidateRectMove(const CPDF_Rect& rcOld, const CPDF_Rect& rcNew);

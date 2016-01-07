@@ -302,14 +302,6 @@ void CPWL_Wnd::InvalidateRectMove(const CPDF_Rect& rcOld,
   InvalidateRect(&rcUnion);
 }
 
-void CPWL_Wnd::GetAppearanceStream(CFX_ByteString& sAppStream) {
-  if (IsValid()) {
-    CFX_ByteTextBuf sTextBuf;
-    GetAppearanceStream(sTextBuf);
-    sAppStream += sTextBuf.GetByteString();
-  }
-}
-
 void CPWL_Wnd::GetAppearanceStream(CFX_ByteTextBuf& sAppStream) {
   if (IsValid() && IsVisible()) {
     GetThisAppearanceStream(sAppStream);
@@ -366,11 +358,11 @@ void CPWL_Wnd::DrawThisAppearance(CFX_RenderDevice* pDevice,
     }
 
     if (HasFlag(PWS_BORDER))
-      CPWL_Utils::DrawBorder(
-          pDevice, pUser2Device, rectWnd, (FX_FLOAT)GetBorderWidth(),
-          GetBorderColor(), GetBorderLeftTopColor(GetBorderStyle()),
-          GetBorderRightBottomColor(GetBorderStyle()), GetBorderStyle(),
-          GetBorderDash(), GetTransparency());
+      CPWL_Utils::DrawBorder(pDevice, pUser2Device, rectWnd,
+                             (FX_FLOAT)GetBorderWidth(), GetBorderColor(),
+                             GetBorderLeftTopColor(GetBorderStyle()),
+                             GetBorderRightBottomColor(GetBorderStyle()),
+                             GetBorderStyle(), GetTransparency());
   }
 }
 
@@ -528,16 +520,12 @@ FX_BOOL CPWL_Wnd::IsValid() const {
   return m_bCreated;
 }
 
-PWL_CREATEPARAM CPWL_Wnd::GetCreationParam() const {
+const PWL_CREATEPARAM& CPWL_Wnd::GetCreationParam() const {
   return m_sPrivateParam;
 }
 
 CPWL_Wnd* CPWL_Wnd::GetParentWindow() const {
   return m_sPrivateParam.pParentWnd;
-}
-
-CPDF_Rect CPWL_Wnd::GetOriginWindowRect() const {
-  return m_sPrivateParam.rcRectWnd;
 }
 
 CPDF_Rect CPWL_Wnd::GetWindowRect() const {
@@ -559,15 +547,6 @@ CPDF_Point CPWL_Wnd::GetCenterPoint() const {
   CPDF_Rect rcClient = GetClientRect();
   return CPDF_Point((rcClient.left + rcClient.right) * 0.5f,
                     (rcClient.top + rcClient.bottom) * 0.5f);
-}
-
-CPDF_Rect CPWL_Wnd::GetClientCenterSquare() const {
-  return CPWL_Utils::GetCenterSquare(GetClientRect());
-}
-
-CPDF_Rect CPWL_Wnd::GetWindowCenterSquare() const {
-  return CPWL_Utils::GetCenterSquare(
-      CPWL_Utils::DeflateRect(GetWindowRect(), 0.1f));
 }
 
 FX_BOOL CPWL_Wnd::HasFlag(FX_DWORD dwFlags) const {
@@ -626,11 +605,6 @@ int32_t CPWL_Wnd::GetInnerBorderWidth() const {
   return 0;
 }
 
-void CPWL_Wnd::SetBorderWidth(int32_t nBorderWidth) {
-  if (HasFlag(PWS_BORDER))
-    m_sPrivateParam.dwBorderWidth = nBorderWidth;
-}
-
 CPWL_Color CPWL_Wnd::GetBorderColor() const {
   if (HasFlag(PWS_BORDER))
     return m_sPrivateParam.sBorderColor;
@@ -638,22 +612,12 @@ CPWL_Color CPWL_Wnd::GetBorderColor() const {
   return CPWL_Color();
 }
 
-void CPWL_Wnd::SetBorderColor(const CPWL_Color& color) {
-  if (HasFlag(PWS_BORDER))
-    m_sPrivateParam.sBorderColor = color;
-}
-
-CPWL_Dash CPWL_Wnd::GetBorderDash() const {
+const CPWL_Dash& CPWL_Wnd::GetBorderDash() const {
   return m_sPrivateParam.sDash;
 }
 
 void* CPWL_Wnd::GetAttachedData() const {
   return m_sPrivateParam.pAttachedData;
-}
-
-void CPWL_Wnd::SetBorderDash(const CPWL_Dash& sDash) {
-  if (HasFlag(PWS_BORDER))
-    m_sPrivateParam.sDash = sDash;
 }
 
 CPWL_ScrollBar* CPWL_Wnd::GetVScrollBar() const {
@@ -754,7 +718,7 @@ void CPWL_Wnd::SetClipRect(const CPDF_Rect& rect) {
   m_rcClip.Normalize();
 }
 
-CPDF_Rect CPWL_Wnd::GetClipRect() const {
+const CPDF_Rect& CPWL_Wnd::GetClipRect() const {
   return m_rcClip;
 }
 

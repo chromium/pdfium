@@ -1469,7 +1469,6 @@ void CPWL_Utils::DrawBorder(CFX_RenderDevice* pDevice,
                             const CPWL_Color& crLeftTop,
                             const CPWL_Color& crRightBottom,
                             int32_t nStyle,
-                            const CPWL_Dash& dash,
                             int32_t nTransparancy) {
   FX_FLOAT fLeft = rect.left;
   FX_FLOAT fRight = rect.right;
