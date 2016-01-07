@@ -5,10 +5,11 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "core/include/fpdfapi/fpdf_parser.h"
+
 #include "core/include/fxcrt/fx_ext.h"
 
 // Indexed by 8-bit character code, contains either:
-//   'W' - for whitespace: NUL, TAB, CR, LF, FF, 0x80, 0xff
+//   'W' - for whitespace: NUL, TAB, CR, LF, FF, SPACE, 0x80, 0xff
 //   'N' - for numeric: 0123456789+-.
 //   'D' - for delimiter: %()/<>[]{}
 //   'R' - otherwise.
@@ -59,9 +60,6 @@ const char PDF_CharType[256] = {
     'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R',
     'R', 'R', 'R', 'R', 'R', 'R', 'R', 'W'};
 
-#ifndef MAX_PATH
-#define MAX_PATH 4096
-#endif
 CPDF_SimpleParser::CPDF_SimpleParser(const uint8_t* pData, FX_DWORD dwSize) {
   m_pData = pData;
   m_dwSize = dwSize;

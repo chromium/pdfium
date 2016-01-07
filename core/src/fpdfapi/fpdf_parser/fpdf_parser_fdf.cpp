@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/include/fpdfapi/fpdf_parser.h"
+
 #include "core/include/fpdfapi/fpdf_serial.h"
 
 CFDF_Document::CFDF_Document() : CPDF_IndirectObjects(NULL) {
