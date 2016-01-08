@@ -216,3 +216,9 @@ TEST_F(FPDFViewEmbeddertest, Hang_298) {
 TEST_F(FPDFViewEmbeddertest, CrossRefV4Loop) {
   EXPECT_TRUE(OpenDocument("bug_xrefv4_loop.pdf"));
 }
+
+// The test should pass when circular references to ParseIndirectObject will not
+// cause infinite loop.
+TEST_F(FPDFViewEmbeddertest, Hang_343) {
+  EXPECT_FALSE(OpenDocument("bug_343.pdf"));
+}
