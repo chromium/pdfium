@@ -57,7 +57,11 @@
 #define SIZEOF_UNSIGNED_LONG 4
 #endif
 
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_ && _MSC_VER < 1900
+#define HAVE_SNPRINTF 0
+#else
 #define HAVE_SNPRINTF 1
+#endif
 
 /* Signed 8-bit type */
 #define TIFF_INT8_T signed char
