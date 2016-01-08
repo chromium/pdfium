@@ -6,6 +6,8 @@
 
 #include "core/src/fpdfapi/fpdf_edit/editint.h"
 
+#include <vector>
+
 #include "core/include/fxcrt/fx_ext.h"
 #include "core/include/fpdfapi/fpdf_serial.h"
 #include "core/include/fpdfapi/fpdf_parser.h"
