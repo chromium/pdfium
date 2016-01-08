@@ -7,7 +7,7 @@
 #ifndef FPDFXFA_APP_H_
 #define FPDFXFA_APP_H_
 
-#include "../../../xfa/include/fxfa/fxfa.h"
+#include "xfa/include/fxfa/fxfa.h"
 
 class IFXJS_Runtime;
 

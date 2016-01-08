@@ -19,13 +19,13 @@
 #include "public/fpdfview.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "../../xfa/include/fwl/adapter/fwl_adaptertimermgr.h"
-#include "../../xfa/include/fxbarcode/BC_BarCode.h"
-#include "../../xfa/include/fxfa/fxfa.h"
-#include "../../xfa/include/fxgraphics/fx_graphics.h"
-#include "../../xfa/include/fxjse/fxjse.h"
 #include "fpdfsdk/include/fpdfxfa/fpdfxfa_doc.h"
 #include "fpdfsdk/include/fpdfxfa/fpdfxfa_page.h"
+#include "xfa/include/fwl/adapter/fwl_adaptertimermgr.h"
+#include "xfa/include/fxbarcode/BC_BarCode.h"
+#include "xfa/include/fxfa/fxfa.h"
+#include "xfa/include/fxgraphics/fx_graphics.h"
+#include "xfa/include/fxjse/fxjse.h"
 #endif  // PDF_ENABLE_XFA
 
 #ifdef _WIN32

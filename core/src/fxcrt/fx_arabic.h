@@ -7,7 +7,7 @@
 #ifndef CORE_SRC_FXCRT_FX_ARABIC_H_
 #define CORE_SRC_FXCRT_FX_ARABIC_H_
 
-#include "../../include/fxcrt/fx_arb.h"
+#include "core/include/fxcrt/fx_arb.h"
 
 class CFX_ArabicChar : public IFX_ArabicChar {
  public:

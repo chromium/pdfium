@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fxcodec/fx_codec.h"
-#include "../../../include/fxge/fx_dib.h"
+#include "core/include/fxcodec/fx_codec.h"
+#include "core/include/fxge/fx_dib.h"
 #include "codec_int.h"
 
 extern "C" {

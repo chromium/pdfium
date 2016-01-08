@@ -10,9 +10,9 @@
 #include "public/fpdf_edit.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "../include/fpdfxfa/fpdfxfa_app.h"
-#include "../include/fpdfxfa/fpdfxfa_doc.h"
-#include "../include/fpdfxfa/fpdfxfa_util.h"
+#include "fpdfsdk/include/fpdfxfa/fpdfxfa_app.h"
+#include "fpdfsdk/include/fpdfxfa/fpdfxfa_doc.h"
+#include "fpdfsdk/include/fpdfxfa/fpdfxfa_util.h"
 #include "public/fpdf_formfill.h"
 #endif
 

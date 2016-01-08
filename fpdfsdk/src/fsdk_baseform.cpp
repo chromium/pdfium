@@ -17,8 +17,8 @@
 #include "fpdfsdk/include/pdfwindow/PWL_Utils.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "../include/fpdfxfa/fpdfxfa_doc.h"
-#include "../include/fpdfxfa/fpdfxfa_util.h"
+#include "fpdfsdk/include/fpdfxfa/fpdfxfa_doc.h"
+#include "fpdfsdk/include/fpdfxfa/fpdfxfa_util.h"
 #endif  // PDF_ENABLE_XFA
 
 #define IsFloatZero(f) ((f) < 0.01 && (f) > -0.01)

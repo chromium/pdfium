@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../include/fxge/fx_dib.h"
-#include "../../../include/fxcodec/fx_codec.h"
+#include "core/include/fxge/fx_dib.h"
+#include "core/include/fxcodec/fx_codec.h"
 #include "fx_codec_progress.h"
 void CFXCODEC_WeightTable::Calc(int dest_len,
                                 int dest_min,

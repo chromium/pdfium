@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fsdk_define.h"
-#include "../../include/fpdfxfa/fpdfxfa_doc.h"
-#include "../../include/fsdk_mgr.h"
-#include "../../include/fpdfxfa/fpdfxfa_app.h"
-#include "../../include/fpdfxfa/fpdfxfa_util.h"
-#include "../../include/fpdfxfa/fpdfxfa_page.h"
-#include "../../include/javascript/IJavaScript.h"
+#include "fpdfsdk/include/fsdk_define.h"
+#include "fpdfsdk/include/fpdfxfa/fpdfxfa_doc.h"
+#include "fpdfsdk/include/fsdk_mgr.h"
+#include "fpdfsdk/include/fpdfxfa/fpdfxfa_app.h"
+#include "fpdfsdk/include/fpdfxfa/fpdfxfa_util.h"
+#include "fpdfsdk/include/fpdfxfa/fpdfxfa_page.h"
+#include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "public/fpdf_formfill.h"
 
 #define IDS_XFA_Validate_Input                                          \

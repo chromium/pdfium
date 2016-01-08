@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../include/fsdk_define.h"
-#include "../../include/fsdk_mgr.h"
-#include "../../include/fpdfxfa/fpdfxfa_util.h"
+#include "fpdfsdk/include/fsdk_define.h"
+#include "fpdfsdk/include/fsdk_mgr.h"
+#include "fpdfsdk/include/fpdfxfa/fpdfxfa_util.h"
 
 CFX_PtrArray CXFA_FWLAdapterTimerMgr::ms_timerArray;
 

@@ -12,8 +12,8 @@
 #include "fpdfsdk/include/fsdk_mgr.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "../include/fpdfxfa/fpdfxfa_doc.h"
-#include "../include/fpdfxfa/fpdfxfa_util.h"
+#include "fpdfsdk/include/fpdfxfa/fpdfxfa_doc.h"
+#include "fpdfsdk/include/fpdfxfa/fpdfxfa_util.h"
 #endif  // PDF_ENABLE_XFA
 
 CPDFSDK_AnnotHandlerMgr::CPDFSDK_AnnotHandlerMgr(CPDFDoc_Environment* pApp) {

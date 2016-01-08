@@ -6,7 +6,7 @@
 
 #include <setjmp.h>
 
-#include "../../../include/fxcrt/fx_basic.h"
+#include "core/include/fxcrt/fx_basic.h"
 
 #define BMP_SUPPORT_BITFIELD
 #define BMP_WIDTHBYTES(width, bitCount) ((width * bitCount) + 31) / 32 * 4

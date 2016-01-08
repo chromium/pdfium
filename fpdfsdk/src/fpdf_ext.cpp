@@ -10,7 +10,7 @@
 #include "fpdfsdk/include/fsdk_define.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "../include/fpdfxfa/fpdfxfa_doc.h"
+#include "fpdfsdk/include/fpdfxfa/fpdfxfa_doc.h"
 #endif  // PDF_ENABLE_XFA
 
 #define FPDFSDK_UNSUPPORT_CALL 100

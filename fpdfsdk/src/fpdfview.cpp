@@ -19,11 +19,11 @@
 #include "third_party/base/numerics/safe_conversions_impl.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "../include/fpdfxfa/fpdfxfa_app.h"
-#include "../include/fpdfxfa/fpdfxfa_doc.h"
-#include "../include/fpdfxfa/fpdfxfa_page.h"
-#include "../include/fpdfxfa/fpdfxfa_util.h"
 #include "core/include/fpdfapi/fpdf_module.h"
+#include "fpdfsdk/include/fpdfxfa/fpdfxfa_app.h"
+#include "fpdfsdk/include/fpdfxfa/fpdfxfa_doc.h"
+#include "fpdfsdk/include/fpdfxfa/fpdfxfa_page.h"
+#include "fpdfsdk/include/fpdfxfa/fpdfxfa_util.h"
 #include "public/fpdf_formfill.h"
 #endif  // PDF_ENABLE_XFA
 

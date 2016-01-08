@@ -23,8 +23,8 @@
 #include "public/fpdf_fwlevent.h"  // cross platform keycode and events define.
 
 #ifdef PDF_ENABLE_XFA
-#include "fpdfxfa/fpdfxfa_doc.h"
-#include "fpdfxfa/fpdfxfa_page.h"
+#include "fpdfsdk/include/fpdfxfa/fpdfxfa_doc.h"
+#include "fpdfsdk/include/fpdfxfa/fpdfxfa_page.h"
 #endif  // PDF_ENABLE_XFA
 
 class CFFL_IFormFiller;

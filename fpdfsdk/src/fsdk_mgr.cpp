@@ -16,10 +16,10 @@
 #include "third_party/base/stl_util.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "../include/fpdfxfa/fpdfxfa_app.h"
-#include "../include/fpdfxfa/fpdfxfa_doc.h"
-#include "../include/fpdfxfa/fpdfxfa_page.h"
-#include "../include/fpdfxfa/fpdfxfa_util.h"
+#include "fpdfsdk/include/fpdfxfa/fpdfxfa_app.h"
+#include "fpdfsdk/include/fpdfxfa/fpdfxfa_doc.h"
+#include "fpdfsdk/include/fpdfxfa/fpdfxfa_page.h"
+#include "fpdfsdk/include/fpdfxfa/fpdfxfa_util.h"
 #endif  // PDF_ENABLE_XFA
 
 #if _FX_OS_ == _FX_ANDROID_

@@ -6,7 +6,7 @@
 
 #include <setjmp.h>
 
-#include "../../../include/fxcrt/fx_basic.h"
+#include "core/include/fxcrt/fx_basic.h"
 
 extern FX_WORD _GetWord_LSBFirst(uint8_t* p);
 extern void _SetWord_LSBFirst(uint8_t* p, FX_WORD v);

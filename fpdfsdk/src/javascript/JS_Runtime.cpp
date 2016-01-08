@@ -29,8 +29,8 @@
 #include "third_party/base/stl_util.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "../../../xfa/src/fxjse/src/value.h"
-#include "../../include/fpdfxfa/fpdfxfa_app.h"
+#include "fpdfsdk/include/fpdfxfa/fpdfxfa_app.h"
+#include "xfa/src/fxjse/src/value.h"
 #endif  // PDF_ENABLE_XFA
 
 // static
