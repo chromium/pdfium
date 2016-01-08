@@ -142,9 +142,6 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
 
 CPDF_StreamContentParser::~CPDF_StreamContentParser() {
   ClearAllParams();
-  for (int i = 0; i < m_StateStack.GetSize(); ++i) {
-    delete m_StateStack[i];
-  }
   FX_Free(m_pPathPoints);
   if (m_pLastImageDict) {
     m_pLastImageDict->Release();
@@ -937,19 +934,16 @@ void CPDF_StreamContentParser::Handle_EndPath() {
   AddPathObject(0, FALSE);
 }
 void CPDF_StreamContentParser::Handle_SaveGraphState() {
-  CPDF_AllStates* pStates = new CPDF_AllStates;
+  std::unique_ptr<CPDF_AllStates> pStates(new CPDF_AllStates);
   pStates->Copy(*m_pCurStates);
-  m_StateStack.Add(pStates);
+  m_StateStack.push_back(std::move(pStates));
 }
 void CPDF_StreamContentParser::Handle_RestoreGraphState() {
-  int size = m_StateStack.GetSize();
-  if (size == 0) {
+  if (m_StateStack.empty())
     return;
-  }
-  CPDF_AllStates* pStates = m_StateStack.GetAt(size - 1);
+  std::unique_ptr<CPDF_AllStates> pStates = std::move(m_StateStack.back());
+  m_StateStack.pop_back();
   m_pCurStates->Copy(*pStates);
-  delete pStates;
-  m_StateStack.RemoveAt(size - 1);
 }
 void CPDF_StreamContentParser::Handle_Rectangle() {
   if (m_Options.m_bTextOnly) {
