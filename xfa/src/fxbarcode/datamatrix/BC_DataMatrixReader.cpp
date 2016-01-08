@@ -20,11 +20,11 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
-#include "../BC_BinaryBitmap.h"
-#include "../BC_Reader.h"
-#include "../qrcode/BC_QRDetectorResult.h"
-#include "../common/BC_CommonDecoderResult.h"
+#include "xfa/src/fxbarcode/barcode.h"
+#include "xfa/src/fxbarcode/BC_BinaryBitmap.h"
+#include "xfa/src/fxbarcode/BC_Reader.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRDetectorResult.h"
+#include "xfa/src/fxbarcode/common/BC_CommonDecoderResult.h"
 #include "BC_DataMatrixDecoder.h"
 #include "BC_DataMatrixDetector.h"
 #include "BC_DataMatrixReader.h"

@@ -20,10 +20,10 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
-#include "../BC_TwoDimWriter.h"
-#include "../BC_Reader.h"
-#include "../common/BC_CommonByteMatrix.h"
+#include "xfa/src/fxbarcode/barcode.h"
+#include "xfa/src/fxbarcode/BC_TwoDimWriter.h"
+#include "xfa/src/fxbarcode/BC_Reader.h"
+#include "xfa/src/fxbarcode/common/BC_CommonByteMatrix.h"
 #include "BC_QRCodeWriter.h"
 #include "BC_QRCoderEncoder.h"
 #include "BC_QRCoder.h"

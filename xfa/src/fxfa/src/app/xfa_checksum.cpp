@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../foxitlib.h"
-#include "../common/xfa_common.h"
+#include "xfa/src/foxitlib.h"
+#include "xfa/src/fxfa/src/common/xfa_common.h"
 #include "xfa_checksum.h"
 CXFA_SAXReaderHandler::CXFA_SAXReaderHandler(CXFA_ChecksumContext* pContext)
     : m_pContext(pContext) {

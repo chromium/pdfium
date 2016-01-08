@@ -7,7 +7,7 @@
 #ifndef FXFA_SRC_APP_XFA_FFDOC_H_
 #define FXFA_SRC_APP_XFA_FFDOC_H_
 
-#include "../../../../include/fxfa/fxfa.h"
+#include "xfa/include/fxfa/fxfa.h"
 
 class CXFA_FFApp;
 class CXFA_FFNotify;

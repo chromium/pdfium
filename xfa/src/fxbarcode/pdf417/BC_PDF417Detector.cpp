@@ -20,11 +20,11 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
-#include "../BC_ResultPoint.h"
-#include "../BC_BinaryBitmap.h"
-#include "../common/BC_CommonBitMatrix.h"
-#include "../common/BC_CommonBitArray.h"
+#include "xfa/src/fxbarcode/barcode.h"
+#include "xfa/src/fxbarcode/BC_ResultPoint.h"
+#include "xfa/src/fxbarcode/BC_BinaryBitmap.h"
+#include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
+#include "xfa/src/fxbarcode/common/BC_CommonBitArray.h"
 #include "BC_PDF417DetectorResult.h"
 #include "BC_PDF417Detector.h"
 #define INTERGER_MAX 2147483647

@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../foxitlib.h"
-#include "../core/include/fwl_targetimp.h"
-#include "../core/include/fwl_noteimp.h"
-#include "../core/include/fwl_widgetimp.h"
-#include "include/fwl_scrollbarimp.h"
-#include "include/fwl_listboximp.h"
-#include "include/fwl_comboboximp.h"
+#include "xfa/src/foxitlib.h"
+#include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+#include "xfa/src/fwl/src/basewidget/include/fwl_scrollbarimp.h"
+#include "xfa/src/fwl/src/basewidget/include/fwl_listboximp.h"
+#include "xfa/src/fwl/src/basewidget/include/fwl_comboboximp.h"
 
 #define FWL_LISTBOX_ItemTextMargin 2
 

@@ -7,7 +7,7 @@
 #ifndef _FX_RTFBREAK_IMP
 #define _FX_RTFBREAK_IMP
 
-#include "../../../../../core/include/fxcrt/fx_arb.h"
+#include "core/include/fxcrt/fx_arb.h"
 
 class CFX_RTFLine;
 class CFX_RTFBreak;

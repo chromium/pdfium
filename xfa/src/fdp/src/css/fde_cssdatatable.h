@@ -115,9 +115,7 @@ class CFDE_CSSValueListParser : public CFX_Target {
   const FX_WCHAR* m_pCur;
   const FX_WCHAR* m_pEnd;
 };
-#ifdef _cplusplus
-extern "C" {
-#endif
+
 #define FDE_CSSVALUETYPE_MaybeNumber 0x0100
 #define FDE_CSSVALUETYPE_MaybeEnum 0x0200
 #define FDE_CSSVALUETYPE_MaybeURI 0x0400
@@ -193,7 +191,5 @@ FX_BOOL FDE_ParseCSSURI(const FX_WCHAR* pszValue,
                         int32_t iValueLen,
                         int32_t& iOffset,
                         int32_t& iLength);
-#ifdef _cplusplus
-};
-#endif
+
 #endif

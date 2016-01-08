@@ -24,9 +24,9 @@
 
 #include <memory>
 
-#include "../BC_Writer.h"
-#include "../barcode.h"
-#include "../common/BC_CommonBitMatrix.h"
+#include "xfa/src/fxbarcode/BC_Writer.h"
+#include "xfa/src/fxbarcode/barcode.h"
+#include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 
 CBC_OneDimWriter::CBC_OneDimWriter() {
   m_locTextLoc = BC_TEXT_LOC_BELOWEMBED;

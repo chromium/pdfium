@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
+#include "xfa/src/fxbarcode/barcode.h"
 #include "BC_DataMatrixVersion.h"
 #include "BC_DataMatrixDataBlock.h"
 CBC_DataMatrixDataBlock::~CBC_DataMatrixDataBlock() {}

@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../fgas_base.h"
+#include "xfa/src/fgas/src/fgas_base.h"
 #include "fx_memory.h"
 #define FX_4BYTEALIGN(size) (((size) + 3) / 4 * 4)
 IFX_MEMAllocator* FX_CreateAllocator(FX_ALLOCTYPE eType,

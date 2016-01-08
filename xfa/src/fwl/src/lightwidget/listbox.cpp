@@ -6,7 +6,7 @@
 
 #include <memory>
 
-#include "../../../foxitlib.h"
+#include "xfa/src/foxitlib.h"
 
 CFWL_ListBox* CFWL_ListBox::Create() {
   return new CFWL_ListBox;

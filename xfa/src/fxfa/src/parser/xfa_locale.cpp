@@ -4,19 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../../../core/include/fxcrt/fx_xml.h"
-#include "../../../foxitlib.h"
-#include "../common/xfa_utils.h"
-#include "../common/xfa_object.h"
-#include "../common/xfa_document.h"
-#include "../common/xfa_parser.h"
-#include "../common/xfa_script.h"
-#include "../common/xfa_docdata.h"
-#include "../common/xfa_doclayout.h"
-#include "../common/xfa_debug.h"
-#include "../common/xfa_localemgr.h"
-#include "../common/xfa_fm2jsapi.h"
-#include "xfa_debug_parser.h"
+#include "core/include/fxcrt/fx_xml.h"
+#include "xfa/src/foxitlib.h"
+#include "xfa/src/fxfa/src/common/xfa_utils.h"
+#include "xfa/src/fxfa/src/common/xfa_object.h"
+#include "xfa/src/fxfa/src/common/xfa_document.h"
+#include "xfa/src/fxfa/src/common/xfa_parser.h"
+#include "xfa/src/fxfa/src/common/xfa_script.h"
+#include "xfa/src/fxfa/src/common/xfa_docdata.h"
+#include "xfa/src/fxfa/src/common/xfa_doclayout.h"
+#include "xfa/src/fxfa/src/common/xfa_localemgr.h"
+#include "xfa/src/fxfa/src/common/xfa_fm2jsapi.h"
 #include "xfa_locale.h"
 
 static const FX_WCHAR* g_FX_Percent = L"z,zzz,zzz,zzz,zzz,zzz%";

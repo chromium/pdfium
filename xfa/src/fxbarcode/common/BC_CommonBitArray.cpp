@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
+#include "xfa/src/fxbarcode/barcode.h"
 #include "BC_CommonBitArray.h"
 CBC_CommonBitArray::CBC_CommonBitArray(CBC_CommonBitArray* array) {
   m_size = array->GetSize();

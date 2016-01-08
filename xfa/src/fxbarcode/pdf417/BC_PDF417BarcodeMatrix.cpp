@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
+#include "xfa/src/fxbarcode/barcode.h"
 #include "BC_PDF417BarcodeRow.h"
 #include "BC_PDF417BarcodeMatrix.h"
 CBC_BarcodeMatrix::CBC_BarcodeMatrix(int32_t height, int32_t width) {

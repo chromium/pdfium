@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../fgas_base.h"
+#include "xfa/src/fgas/src/fgas_base.h"
 #include "fx_sax_imp.h"
 IFX_SAXReader* FX_SAXReader_Create() {
   return new CFX_SAXReader;

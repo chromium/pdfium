@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../fgas_base.h"
+#include "xfa/src/fgas/src/fgas_base.h"
 
-extern const FX_LINEBREAKTYPE gs_FX_LineBreak_PairTable[64][32] = {
+const FX_LINEBREAKTYPE gs_FX_LineBreak_PairTable[64][32] = {
     {FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB,
      FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB,
      FX_LBPB, FX_LBPB, FX_LBPB, FX_LBCP, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB,
@@ -264,6 +264,7 @@ extern const FX_LINEBREAKTYPE gs_FX_LineBreak_PairTable[64][32] = {
      FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN,
      FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN},
 };
+
 void FX_GetLineBreakPositions(const FX_WCHAR* pwsText,
                               FX_LINEBREAKTYPE* pBrkType,
                               int32_t iLength) {

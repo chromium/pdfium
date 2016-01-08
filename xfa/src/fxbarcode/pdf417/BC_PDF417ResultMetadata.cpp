@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
+#include "xfa/src/fxbarcode/barcode.h"
 #include "BC_PDF417ResultMetadata.h"
 CBC_PDF417ResultMetadata::CBC_PDF417ResultMetadata() {}
 CBC_PDF417ResultMetadata::~CBC_PDF417ResultMetadata() {}

@@ -20,8 +20,8 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
-#include "../common/BC_CommonByteMatrix.h"
+#include "xfa/src/fxbarcode/barcode.h"
+#include "xfa/src/fxbarcode/common/BC_CommonByteMatrix.h"
 #include "BC_QRCoderErrorCorrectionLevel.h"
 #include "BC_QRCoderMode.h"
 #include "BC_QRCoder.h"

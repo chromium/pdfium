@@ -24,9 +24,9 @@
 
 #include <stdlib.h>
 
-#include "../BC_DecoderResult.h"
-#include "../barcode.h"
-#include "../common/BC_CommonDecoderResult.h"
+#include "xfa/src/fxbarcode/BC_DecoderResult.h"
+#include "xfa/src/fxbarcode/barcode.h"
+#include "xfa/src/fxbarcode/common/BC_CommonDecoderResult.h"
 #include "BC_PDF417ResultMetadata.h"
 #include "third_party/bigint/BigIntegerLibrary.hh"
 

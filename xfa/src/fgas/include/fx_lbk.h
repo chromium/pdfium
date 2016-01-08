@@ -6,6 +6,10 @@
 
 #ifndef _FX_LINEBREAK
 #define _FX_LINEBREAK
+
+#include "core/include/fxcrt/fx_system.h"
+#include "xfa/src/fgas/include/fx_utl.h"
+
 enum FX_LINEBREAKTYPE {
   FX_LBT_UNKNOWN = 0x00,
   FX_LBT_DIRECT_BRK = 0x1A,
@@ -15,6 +19,7 @@ enum FX_LINEBREAKTYPE {
   FX_LBT_PROHIBITED_BRK = 0x5E,
   FX_LBT_HANGUL_SPACE_BRK = 0x6F,
 };
+
 #define FX_LBUN FX_LBT_UNKNOWN
 #define FX_LBDB FX_LBT_DIRECT_BRK
 #define FX_LBIB FX_LBT_INDIRECT_BRK
@@ -22,6 +27,9 @@ enum FX_LINEBREAKTYPE {
 #define FX_LBCP FX_LBT_COM_PROHIBITED_BRK
 #define FX_LBPB FX_LBT_PROHIBITED_BRK
 #define FX_LBHS FX_LBT_HANGUL_SPACE_BRK
+
+extern const FX_LINEBREAKTYPE gs_FX_LineBreak_PairTable[64][32];
+
 void FX_GetLineBreakPositions(const FX_WCHAR* pwsText,
                               FX_LINEBREAKTYPE* pBrkType,
                               int32_t iLength);

@@ -20,12 +20,12 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
-#include "../BC_UtilCodingConvert.h"
-#include "../common/BC_CommonByteArray.h"
-#include "../common/BC_CommonByteMatrix.h"
-#include "../common/reedsolomon/BC_ReedSolomon.h"
-#include "../common/reedsolomon/BC_ReedSolomonGF256.h"
+#include "xfa/src/fxbarcode/barcode.h"
+#include "xfa/src/fxbarcode/BC_UtilCodingConvert.h"
+#include "xfa/src/fxbarcode/common/BC_CommonByteArray.h"
+#include "xfa/src/fxbarcode/common/BC_CommonByteMatrix.h"
+#include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomon.h"
+#include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"
 #include "BC_QRCoder.h"
 #include "BC_QRCoderEncoder.h"
 #include "BC_QRCoderMode.h"

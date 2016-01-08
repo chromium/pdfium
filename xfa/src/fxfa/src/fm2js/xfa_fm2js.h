@@ -6,17 +6,16 @@
 
 #ifndef _XFA_FM2JS_H
 #define _XFA_FM2JS_H
-#include "../../../foxitlib.h"
-#include "../common/xfa_utils.h"
-#include "../common/xfa_object.h"
-#include "../common/xfa_document.h"
-#include "../common/xfa_parser.h"
-#include "../common/xfa_script.h"
-#include "../common/xfa_docdata.h"
-#include "../common/xfa_doclayout.h"
-#include "../common/xfa_debug.h"
-#include "../common/xfa_localemgr.h"
-#include "../common/xfa_fm2jsapi.h"
+#include "xfa/src/foxitlib.h"
+#include "xfa/src/fxfa/src/common/xfa_utils.h"
+#include "xfa/src/fxfa/src/common/xfa_object.h"
+#include "xfa/src/fxfa/src/common/xfa_document.h"
+#include "xfa/src/fxfa/src/common/xfa_parser.h"
+#include "xfa/src/fxfa/src/common/xfa_script.h"
+#include "xfa/src/fxfa/src/common/xfa_docdata.h"
+#include "xfa/src/fxfa/src/common/xfa_doclayout.h"
+#include "xfa/src/fxfa/src/common/xfa_localemgr.h"
+#include "xfa/src/fxfa/src/common/xfa_fm2jsapi.h"
 #define RUNTIMEFUNCTIONRETURNVALUE \
   (FX_WSTRC(L"foxit_xfa_formcalc_runtime_func_return_value"))
 #define EXCLAMATION_IN_IDENTIFIER \

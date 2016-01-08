@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../fgas_base.h"
+#include "xfa/src/fgas/src/fgas_base.h"
 const uint8_t g_FXDaysPerMonth[12] = {31, 28, 31, 30, 31, 30,
                                       31, 31, 30, 31, 30, 31};
 const uint8_t g_FXDaysPerLeapMonth[12] = {31, 29, 31, 30, 31, 30,

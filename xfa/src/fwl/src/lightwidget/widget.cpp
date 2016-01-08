@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../foxitlib.h"
-#include "../../src/core/include/fwl_noteimp.h"
-#include "../core/include/fwl_targetimp.h"
-#include "../core/include/fwl_noteimp.h"
-#include "../core/include/fwl_widgetimp.h"
-#include "../core/include/fwl_widgetmgrimp.h"
+#include "xfa/src/foxitlib.h"
+#include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_widgetmgrimp.h"
 
 CFWL_WidgetImpProperties CFWL_WidgetProperties::MakeWidgetImpProperties(
     IFWL_DataProvider* pDataProvider) const {

@@ -20,12 +20,12 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
-#include "../BC_UtilCodingConvert.h"
-#include "../common/BC_CommonBitSource.h"
-#include "../common/BC_CommonECI.h"
-#include "../common/BC_CommonCharacterSetECI.h"
-#include "../common/BC_CommonDecoderResult.h"
+#include "xfa/src/fxbarcode/barcode.h"
+#include "xfa/src/fxbarcode/BC_UtilCodingConvert.h"
+#include "xfa/src/fxbarcode/common/BC_CommonBitSource.h"
+#include "xfa/src/fxbarcode/common/BC_CommonECI.h"
+#include "xfa/src/fxbarcode/common/BC_CommonCharacterSetECI.h"
+#include "xfa/src/fxbarcode/common/BC_CommonDecoderResult.h"
 #include "BC_QRCoderMode.h"
 #include "BC_QRDecodedBitStreamParser.h"
 const FX_CHAR* CBC_QRDecodedBitStreamParser::UTF_8 = "utf8";

@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
+#include "xfa/src/fxbarcode/barcode.h"
 #include "BC_QRCoderVersion.h"
 #include "BC_QRCoderMode.h"
 CBC_QRCoderMode* CBC_QRCoderMode::sBYTE = NULL;

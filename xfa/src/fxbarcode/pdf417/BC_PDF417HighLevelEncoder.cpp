@@ -22,8 +22,8 @@
 
 #include "BC_PDF417HighLevelEncoder.h"
 
-#include "../BC_UtilCodingConvert.h"
-#include "../barcode.h"
+#include "xfa/src/fxbarcode/BC_UtilCodingConvert.h"
+#include "xfa/src/fxbarcode/barcode.h"
 #include "BC_PDF417Compaction.h"
 #include "third_party/bigint/BigIntegerLibrary.hh"
 

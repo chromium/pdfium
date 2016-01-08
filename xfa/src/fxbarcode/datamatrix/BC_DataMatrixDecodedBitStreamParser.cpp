@@ -20,9 +20,9 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
-#include "../common/BC_CommonDecoderResult.h"
-#include "../common/BC_CommonBitSource.h"
+#include "xfa/src/fxbarcode/barcode.h"
+#include "xfa/src/fxbarcode/common/BC_CommonDecoderResult.h"
+#include "xfa/src/fxbarcode/common/BC_CommonBitSource.h"
 #include "BC_DataMatrixDecodedBitStreamParser.h"
 const FX_CHAR CBC_DataMatrixDecodedBitStreamParser::C40_BASIC_SET_CHARS[] = {
     '*', '*', '*', ' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',

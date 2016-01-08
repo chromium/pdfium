@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../foxitlib.h"
+#include "xfa/src/foxitlib.h"
 CFWL_EditTP::CFWL_EditTP() {}
 CFWL_EditTP::~CFWL_EditTP() {}
 FX_BOOL CFWL_EditTP::IsValidWidget(IFWL_Widget* pWidget) {

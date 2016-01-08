@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
+#include "xfa/src/fxbarcode/barcode.h"
 #include "BC_CommonBitArray.h"
 #include "BC_CommonBitMatrix.h"
 CBC_CommonBitMatrix::CBC_CommonBitMatrix() {

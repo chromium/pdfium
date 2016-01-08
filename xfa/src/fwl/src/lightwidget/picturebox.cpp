@@ -6,7 +6,7 @@
 
 #include <memory>
 
-#include "../../../foxitlib.h"
+#include "xfa/src/foxitlib.h"
 
 CFWL_PictureBox* CFWL_PictureBox::Create() {
   return new CFWL_PictureBox;

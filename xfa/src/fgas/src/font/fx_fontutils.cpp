@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../fgas_base.h"
+#include "xfa/src/fgas/src/fgas_base.h"
 #include "fx_fontutils.h"
 FX_DWORD FGAS_GetFontHashCode(FX_WORD wCodePage, FX_DWORD dwFontStyles) {
   FX_DWORD dwHash = wCodePage;

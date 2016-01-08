@@ -20,9 +20,9 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
-#include "../BC_ResultPoint.h"
-#include "../common/BC_CommonBitMatrix.h"
+#include "xfa/src/fxbarcode/barcode.h"
+#include "xfa/src/fxbarcode/BC_ResultPoint.h"
+#include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "BC_QRDetectorResult.h"
 CBC_QRDetectorResult::CBC_QRDetectorResult(CBC_CommonBitMatrix* bits,
                                            CFX_PtrArray* points)

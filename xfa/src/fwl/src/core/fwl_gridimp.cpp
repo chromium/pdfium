@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../foxitlib.h"
-#include "include/fwl_targetimp.h"
-#include "include/fwl_threadimp.h"
-#include "include/fwl_noteimp.h"
-#include "include/fwl_widgetimp.h"
-#include "include/fwl_contentimp.h"
-#include "include/fwl_gridimp.h"
+#include "xfa/src/foxitlib.h"
+#include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_threadimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_contentimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_gridimp.h"
 
 // static
 IFWL_Grid* IFWL_Grid::Create(const CFWL_WidgetImpProperties& properties) {

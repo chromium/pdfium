@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../foxitlib.h"
-#include "../core/include/fwl_targetimp.h"
-#include "../core/include/fwl_noteimp.h"
-#include "../core/include/fwl_widgetimp.h"
-#include "include/fwl_caretimp.h"
+#include "xfa/src/foxitlib.h"
+#include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+#include "xfa/src/fwl/src/basewidget/include/fwl_caretimp.h"
 
 // static
 IFWL_Caret* IFWL_Caret::Create(const CFWL_WidgetImpProperties& properties,

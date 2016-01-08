@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
+#include "xfa/src/fxbarcode/barcode.h"
 #include "BC_PDF417ErrorCorrection.h"
 int32_t CBC_PDF417ErrorCorrection::EC_COEFFICIENTS[][2500] = {
     {27, 917},

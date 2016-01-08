@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
+#include "xfa/src/fxbarcode/barcode.h"
 #include "BC_CommonPerspectiveTransform.h"
 CBC_CommonPerspectiveTransform::CBC_CommonPerspectiveTransform(FX_FLOAT a11,
                                                                FX_FLOAT a21,

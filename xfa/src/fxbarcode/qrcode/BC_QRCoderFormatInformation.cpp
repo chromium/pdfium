@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
+#include "xfa/src/fxbarcode/barcode.h"
 #include "BC_QRCoderErrorCorrectionLevel.h"
 #include "BC_QRCoderFormatInformation.h"
 const int32_t CBC_QRCoderFormatInformation::FORMAT_INFO_MASK_QR = 0X5412;

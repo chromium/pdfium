@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../foxitlib.h"
+#include "xfa/src/foxitlib.h"
 #include "fde_txtedtblock.h"
 #ifdef FDE_USEFORMATBLOCK
 #define FDE_TXTEDT_FORMATBLOCK_BGN 0xFFF9

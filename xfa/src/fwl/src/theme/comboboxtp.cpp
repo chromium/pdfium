@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../foxitlib.h"
+#include "xfa/src/foxitlib.h"
 #define FWLTHEME_CAPACITY_ComboFormHandler 8.0f
 CFWL_ComboBoxTP::CFWL_ComboBoxTP() {
   m_dwThemeID = 0;

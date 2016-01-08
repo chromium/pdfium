@@ -4,13 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../foxitlib.h"
-#include "../../include/ifde_txtedtengine.h"
-#include "../../include/ifde_txtedtbuf.h"
-#include "../../include/ifde_txtedtpage.h"
+#include "xfa/src/foxitlib.h"
+#include "xfa/src/fee/include/ifde_txtedtengine.h"
+#include "xfa/src/fee/include/ifde_txtedtbuf.h"
+#include "xfa/src/fee/include/ifde_txtedtpage.h"
 #include "fde_txtedtengine.h"
 #include "fde_txtedtparag.h"
-#include "fde_txtedtkmpmatch.h"
 #include "fde_txtedtbuf.h"
 #ifdef FDE_USEFORMATBLOCK
 #include "fde_txtedtblock.h"

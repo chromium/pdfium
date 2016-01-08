@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-#include "../../barcode.h"
+#include "xfa/src/fxbarcode/barcode.h"
 #include "BC_ReedSolomonGF256Poly.h"
 #include "BC_ReedSolomonGF256.h"
 CBC_ReedSolomonGF256* CBC_ReedSolomonGF256::QRCodeFild = NULL;

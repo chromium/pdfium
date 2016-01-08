@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+// TODO(thestig): Remove this file and do IWYU.
+
 #ifndef _FDE
 #define _FDE
 #include "fde_mem.h"

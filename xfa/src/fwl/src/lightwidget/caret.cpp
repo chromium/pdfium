@@ -6,7 +6,7 @@
 
 #include <memory>
 
-#include "../../../foxitlib.h"
+#include "xfa/src/foxitlib.h"
 
 CFWL_Caret* CFWL_Caret::Create() {
   return new CFWL_Caret;

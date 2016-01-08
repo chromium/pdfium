@@ -20,13 +20,13 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
-#include "../BC_ResultPoint.h"
-#include "../common/BC_WhiteRectangleDetector.h"
-#include "../common/BC_CommonBitMatrix.h"
-#include "../qrcode/BC_QRFinderPatternFinder.h"
-#include "../qrcode/BC_QRDetectorResult.h"
-#include "../qrcode/BC_QRGridSampler.h"
+#include "xfa/src/fxbarcode/barcode.h"
+#include "xfa/src/fxbarcode/BC_ResultPoint.h"
+#include "xfa/src/fxbarcode/common/BC_WhiteRectangleDetector.h"
+#include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRFinderPatternFinder.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRDetectorResult.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRGridSampler.h"
 #include "BC_DataMatrixDetector.h"
 const int32_t CBC_DataMatrixDetector::INTEGERS[5] = {0, 1, 2, 3, 4};
 CBC_DataMatrixDetector::CBC_DataMatrixDetector(CBC_CommonBitMatrix* image)

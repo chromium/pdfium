@@ -6,7 +6,7 @@
 
 #include <memory>
 
-#include "../../../foxitlib.h"
+#include "xfa/src/foxitlib.h"
 
 CFWL_Edit* CFWL_Edit::Create() {
   return new CFWL_Edit;

@@ -7,7 +7,7 @@
 #ifndef FXFA_OBJECTACC_H_
 #define FXFA_OBJECTACC_H_
 
-#include "../../../core/include/fxge/fx_dib.h"  // For FX_ARGB.
+#include "core/include/fxge/fx_dib.h"  // For FX_ARGB.
 
 class CXFA_Node;
 class IFX_Locale;

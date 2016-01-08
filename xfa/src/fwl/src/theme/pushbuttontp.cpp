@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../foxitlib.h"
+#include "xfa/src/foxitlib.h"
 #define PUSHBUTTON_SIZE_Corner 2
 CFWL_PushButtonTP::CFWL_PushButtonTP() {
   m_pThemeData = new PBThemeData;

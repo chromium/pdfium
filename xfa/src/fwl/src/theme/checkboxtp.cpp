@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../foxitlib.h"
+#include "xfa/src/foxitlib.h"
 #define CHECKBOX_SIZE_SIGNMARGIN 3
 #define CHECKBOX_SIZE_SIGNBORDER 2
 #define CHECKBOX_SIZE_SIGNPATH 100

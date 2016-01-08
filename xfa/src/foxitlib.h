@@ -4,12 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+// TODO(thestig): Remove this file and do IWYU.
+
 #ifndef _FOXIT_LIB_H_
 #define _FOXIT_LIB_H_
-#include "../include/foxitxfa.h"
-#include "./fgas/include/fgas.h"
-#include "./fdp/include/fde.h"
-#include "./fee/include/ifde_txtedtengine.h"
-#include "./fee/include/ifde_txtedtpage.h"
-#include "./fee/include/fx_wordbreak.h"
+#include "xfa/include/foxitxfa.h"
+#include "xfa/src/fgas/include/fgas.h"
+#include "xfa/src/fdp/include/fde.h"
+#include "xfa/src/fee/include/ifde_txtedtengine.h"
+#include "xfa/src/fee/include/ifde_txtedtpage.h"
+#include "xfa/src/fee/include/fx_wordbreak.h"
 #endif

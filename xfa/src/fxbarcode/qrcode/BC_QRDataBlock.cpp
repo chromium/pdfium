@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
+#include "xfa/src/fxbarcode/barcode.h"
 #include "BC_QRCoderECBlocks.h"
 #include "BC_QRCoderECB.h"
 #include "BC_QRDataBlock.h"

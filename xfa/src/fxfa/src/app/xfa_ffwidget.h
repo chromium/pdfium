@@ -7,7 +7,7 @@
 #ifndef _FXFA_FORMFILLER_WIDGET_IMP_H
 #define _FXFA_FORMFILLER_WIDGET_IMP_H
 
-#include "../../../../include/fxfa/fxfa.h"
+#include "xfa/include/fxfa/fxfa.h"
 
 class CXFA_FFPageView;
 class CXFA_FFDocView;

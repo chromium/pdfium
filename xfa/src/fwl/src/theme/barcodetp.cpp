@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../foxitlib.h"
+#include "xfa/src/foxitlib.h"
 CFWL_BarcodeTP::CFWL_BarcodeTP() {}
 CFWL_BarcodeTP::~CFWL_BarcodeTP() {}
 FX_BOOL CFWL_BarcodeTP::IsValidWidget(IFWL_Widget* pWidget) {

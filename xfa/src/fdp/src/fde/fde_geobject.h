@@ -7,7 +7,7 @@
 #ifndef _FDE_GRAPHOBJS_IMP
 #define _FDE_GRAPHOBJS_IMP
 #ifndef _FDEPLUS
-#include "../../../foxitlib.h"
+#include "xfa/src/foxitlib.h"
 class CFDE_GEFontMgr;
 class CFDE_Path : public IFDE_Path, public CFX_Target {
  public:

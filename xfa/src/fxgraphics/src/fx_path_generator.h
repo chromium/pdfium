@@ -7,7 +7,7 @@
 #ifndef __H_FX_PATH_GENERATOR__
 #define __H_FX_PATH_GENERATOR__
 
-#include "../../../../core/include/fxge/fx_ge.h"
+#include "core/include/fxge/fx_ge.h"
 
 class CFX_PathGenerator {
  public:

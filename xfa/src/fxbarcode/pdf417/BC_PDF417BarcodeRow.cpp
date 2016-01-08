@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
+#include "xfa/src/fxbarcode/barcode.h"
 #include "BC_PDF417BarcodeRow.h"
 CBC_BarcodeRow::CBC_BarcodeRow(int32_t width) {
   m_row.SetSize(width);

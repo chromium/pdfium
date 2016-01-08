@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+// TODO(thestig): Remove this file and do IWYU.
+
 #ifndef _FGAS_
 #define _FGAS_
 #include "fx_sys.h"

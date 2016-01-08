@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
+#include "xfa/src/fxbarcode/barcode.h"
 #include "BC_Encoder.h"
 #include "BC_DefaultPlacement.h"
 CBC_DefaultPlacement::CBC_DefaultPlacement(CFX_WideString codewords,

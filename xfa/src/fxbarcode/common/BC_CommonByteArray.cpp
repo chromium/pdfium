@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
+#include "xfa/src/fxbarcode/barcode.h"
 #include "BC_CommonByteArray.h"
 CBC_CommonByteArray::CBC_CommonByteArray() {
   m_bytes = NULL;

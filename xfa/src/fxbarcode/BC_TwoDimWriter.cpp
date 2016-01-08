@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "barcode.h"
-#include "common/BC_CommonBitMatrix.h"
-#include "BC_Writer.h"
-#include "BC_TwoDimWriter.h"
+#include "xfa/src/fxbarcode/barcode.h"
+#include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
+#include "xfa/src/fxbarcode/BC_Writer.h"
+#include "xfa/src/fxbarcode/BC_TwoDimWriter.h"
 CBC_TwoDimWriter::CBC_TwoDimWriter() {
   m_iCorrectLevel = 1;
   m_bFixedSize = TRUE;

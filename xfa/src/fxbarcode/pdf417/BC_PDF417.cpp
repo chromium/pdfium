@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
+#include "xfa/src/fxbarcode/barcode.h"
 #include "BC_PDF417Compaction.h"
 #include "BC_PDF417BarcodeRow.h"
 #include "BC_PDF417BarcodeMatrix.h"

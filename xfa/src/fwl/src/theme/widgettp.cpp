@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../foxitlib.h"
+#include "xfa/src/foxitlib.h"
 static void FWL_SetChildThemeID(IFWL_Widget* pParent, FX_DWORD dwThemeID) {
   IFWL_WidgetMgr* pWidgetMgr = FWL_GetWidgetMgr();
   IFWL_Widget* pChild =

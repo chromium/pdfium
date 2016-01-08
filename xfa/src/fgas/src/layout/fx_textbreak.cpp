@@ -4,10 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../../../core/include/fxcrt/fx_arb.h"
-#include "../fgas_base.h"
-#include "fx_unicode.h"
-#include "fx_textbreak.h"
+#include "core/include/fxcrt/fx_arb.h"
+#include "xfa/src/fgas/include/fx_lbk.h"
+#include "xfa/src/fgas/src/fgas_base.h"
+#include "xfa/src/fgas/src/layout/fx_unicode.h"
+#include "xfa/src/fgas/src/layout/fx_textbreak.h"
 
 extern const FX_LINEBREAKTYPE gs_FX_LineBreak_PairTable[64][32];
 IFX_TxtBreak* IFX_TxtBreak::Create(FX_DWORD dwPolicies) {

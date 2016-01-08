@@ -6,7 +6,7 @@
 
 #include <memory>
 
-#include "../../../foxitlib.h"
+#include "xfa/src/foxitlib.h"
 
 CFWL_ScrollBar* CFWL_ScrollBar::Create() {
   return new CFWL_ScrollBar;

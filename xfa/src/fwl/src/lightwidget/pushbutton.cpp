@@ -6,7 +6,7 @@
 
 #include <memory>
 
-#include "../../../foxitlib.h"
+#include "xfa/src/foxitlib.h"
 
 CFWL_PushButton* CFWL_PushButton::Create() {
   return new CFWL_PushButton;

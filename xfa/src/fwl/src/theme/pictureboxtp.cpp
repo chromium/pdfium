@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../foxitlib.h"
+#include "xfa/src/foxitlib.h"
 CFWL_PictureBoxTP::CFWL_PictureBoxTP() {}
 CFWL_PictureBoxTP::~CFWL_PictureBoxTP() {}
 FX_BOOL CFWL_PictureBoxTP::IsValidWidget(IFWL_Widget* pWidget) {

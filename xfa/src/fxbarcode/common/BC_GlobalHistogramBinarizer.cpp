@@ -20,9 +20,9 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
-#include "../BC_Binarizer.h"
-#include "../BC_LuminanceSource.h"
+#include "xfa/src/fxbarcode/barcode.h"
+#include "xfa/src/fxbarcode/BC_Binarizer.h"
+#include "xfa/src/fxbarcode/BC_LuminanceSource.h"
 #include "BC_CommonBitMatrix.h"
 #include "BC_CommonBitArray.h"
 #include "BC_GlobalHistogramBinarizer.h"

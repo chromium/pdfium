@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
+#include "xfa/src/fxbarcode/barcode.h"
 #include "BC_PDF417Common.h"
 int32_t CBC_PDF417Common::NUMBER_OF_CODEWORDS = 929;
 int32_t CBC_PDF417Common::MAX_CODEWORDS_IN_BARCODE = NUMBER_OF_CODEWORDS - 1;

@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../fgas_base.h"
+#include "xfa/src/fgas/src/fgas_base.h"
 #include "fx_stream.h"
 IFX_Stream* IFX_Stream::CreateStream(IFX_BufferRead* pBufferRead,
                                      FX_DWORD dwAccess,

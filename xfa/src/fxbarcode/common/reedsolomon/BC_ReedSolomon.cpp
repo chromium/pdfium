@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-#include "../../barcode.h"
+#include "xfa/src/fxbarcode/barcode.h"
 #include "BC_ReedSolomonGF256.h"
 #include "BC_ReedSolomonGF256Poly.h"
 #include "BC_ReedSolomon.h"

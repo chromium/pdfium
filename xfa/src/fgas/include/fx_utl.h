@@ -8,7 +8,7 @@
 #define _FX_UTILS
 
 #include "fx_mem.h"
-#include "../../../../core/include/fxcrt/fx_coordinates.h"  // For CFX_Rect.
+#include "core/include/fxcrt/fx_coordinates.h"  // For CFX_Rect.
 
 class CFX_ThreadLock;
 class CFX_BaseArray;

@@ -7,7 +7,7 @@
 #ifndef _FX_TEXTBREAK_IMP
 #define _FX_TEXTBREAK_IMP
 
-#include "../../../../../core/include/fxcrt/fx_memory.h"
+#include "core/include/fxcrt/fx_memory.h"
 
 class IFX_ArabicChar;
 class CFX_Txtbreak;

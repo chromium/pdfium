@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
+#include "xfa/src/fxbarcode/barcode.h"
 #include "BC_PDF417Common.h"
 #include "BC_PDF417BarcodeValue.h"
 CBC_BarcodeValue::CBC_BarcodeValue() {}

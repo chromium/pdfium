@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../foxitlib.h"
-#include "../common/xfa_common.h"
+#include "xfa/src/foxitlib.h"
+#include "xfa/src/fxfa/src/common/xfa_common.h"
 #include "xfa_fwladapter.h"
 #include "xfa_ffwidgethandler.h"
 #include "xfa_ffwidget.h"

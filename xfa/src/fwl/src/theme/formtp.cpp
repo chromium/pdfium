@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../foxitlib.h"
+#include "xfa/src/foxitlib.h"
 #define FWLTHEME_CAPACITY_CXFormBorder 3
 #define FWLTHEME_CAPACITY_CYFormBorder 3
 #define FWLTHEME_CAPACITY_CYNarrowCaption 18

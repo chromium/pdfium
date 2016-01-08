@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../foxitlib.h"
+#include "xfa/src/foxitlib.h"
 #define FWL_THEMECAPACITY_MC_HEADER_WIDTH 200
 #define FWL_THEMECAPACITY_MC_HEADER_HEIGHT 30
 #define FWL_THEMECAPACITY_MC_HEADER_BTN_WIDTH 18

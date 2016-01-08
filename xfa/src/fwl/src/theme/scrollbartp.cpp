@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../foxitlib.h"
+#include "xfa/src/foxitlib.h"
 #define FWL_SCROLL_PawLen 12.5f
 CFWL_ScrollBarTP::CFWL_ScrollBarTP() {
   m_pThemeData = new SBThemeData;

@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../foxitlib.h"
+#include "xfa/src/foxitlib.h"
 FX_BOOL CFWL_Theme::IsValidWidget(IFWL_Widget* pWidget) {
   return !!GetTheme(pWidget);
 }

@@ -20,10 +20,10 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
-#include "../BC_Dimension.h"
-#include "../BC_UtilCodingConvert.h"
-#include "../common/BC_CommonBitMatrix.h"
+#include "xfa/src/fxbarcode/barcode.h"
+#include "xfa/src/fxbarcode/BC_Dimension.h"
+#include "xfa/src/fxbarcode/BC_UtilCodingConvert.h"
+#include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "BC_Encoder.h"
 #include "BC_SymbolShapeHint.h"
 #include "BC_SymbolInfo.h"

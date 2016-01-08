@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../foxitlib.h"
+#include "xfa/src/foxitlib.h"
 #include "fx_wordbreak_impl.h"
 #define FX_IsOdd(a) ((a)&1)
 FX_WordBreakProp FX_GetWordBreakProperty(FX_WCHAR wcCodePoint) {

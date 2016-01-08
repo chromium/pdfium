@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
+#include "xfa/src/fxbarcode/barcode.h"
 #include "BC_PDF417Codeword.h"
 #include "BC_PDF417BarcodeMetadata.h"
 #include "BC_PDF417BoundingBox.h"

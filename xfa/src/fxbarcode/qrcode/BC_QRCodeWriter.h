@@ -6,7 +6,7 @@
 
 #ifndef _BC_QRCODERWRITER_H_
 #define _BC_QRCODERWRITER_H_
-#include "../BC_TwoDimWriter.h"
+#include "xfa/src/fxbarcode/BC_TwoDimWriter.h"
 class CBC_TwoDimWriter;
 class CBC_MultiBarCodes;
 class CBC_QRCoderWriter;

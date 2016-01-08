@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "../../../testing/gtest/include/gtest/gtest.h"
-#include "../../../foxitlib.h"
-#include "../common/xfa_utils.h"
+#include "testing/gtest/include/gtest/gtest.h"
+#include "xfa/src/foxitlib.h"
+#include "xfa/src/fxfa/src/common/xfa_utils.h"
 
 TEST(XfaUtilsImp, XFA_MapRotation) {
   struct TestCase {

@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../fgas_base.h"
+#include "xfa/src/fgas/src/fgas_base.h"
 #include "fx_stdfontmgr.h"
 #include "fx_fontutils.h"
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_

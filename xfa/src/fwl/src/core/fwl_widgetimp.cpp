@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../foxitlib.h"
-#include "include/fwl_targetimp.h"
-#include "include/fwl_noteimp.h"
-#include "include/fwl_threadimp.h"
-#include "include/fwl_appimp.h"
-#include "include/fwl_widgetmgrimp.h"
-#include "include/fwl_widgetimp.h"
+#include "xfa/src/foxitlib.h"
+#include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_threadimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_appimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_widgetmgrimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
 FWL_ERR IFWL_Widget::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
   return static_cast<CFWL_WidgetImp*>(GetImpl())
       ->GetWidgetRect(rect, bAutoSize);

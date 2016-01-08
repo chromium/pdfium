@@ -20,8 +20,8 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
-#include "../BC_Writer.h"
+#include "xfa/src/fxbarcode/barcode.h"
+#include "xfa/src/fxbarcode/BC_Writer.h"
 #include "BC_OneDimWriter.h"
 #include "BC_OnedEAN13Writer.h"
 #include "BC_OnedUPCAWriter.h"

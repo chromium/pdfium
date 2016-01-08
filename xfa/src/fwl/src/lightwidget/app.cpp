@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../foxitlib.h"
+#include "xfa/src/foxitlib.h"
 CFWL_App::CFWL_App() : m_pIface(IFWL_App::Create(nullptr)), m_pTheme(nullptr) {}
 CFWL_App::~CFWL_App() {
   if (m_pTheme) {

@@ -6,7 +6,7 @@
 
 #include <memory>
 
-#include "../../../foxitlib.h"
+#include "xfa/src/foxitlib.h"
 
 CFWL_ComboBox* CFWL_ComboBox::Create() {
   return new CFWL_ComboBox;

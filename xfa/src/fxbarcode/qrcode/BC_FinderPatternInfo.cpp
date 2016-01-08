@@ -20,8 +20,8 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
-#include "../BC_ResultPoint.h"
+#include "xfa/src/fxbarcode/barcode.h"
+#include "xfa/src/fxbarcode/BC_ResultPoint.h"
 #include "BC_QRFinderPattern.h"
 #include "BC_FinderPatternInfo.h"
 CBC_QRFinderPatternInfo::CBC_QRFinderPatternInfo(CFX_PtrArray* patternCenters) {

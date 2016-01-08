@@ -20,8 +20,8 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
-#include "../common/BC_CommonByteArray.h"
+#include "xfa/src/fxbarcode/barcode.h"
+#include "xfa/src/fxbarcode/common/BC_CommonByteArray.h"
 #include "BC_QRCoderBlockPair.h"
 CBC_QRCoderBlockPair::CBC_QRCoderBlockPair(
     CBC_CommonByteArray* data,

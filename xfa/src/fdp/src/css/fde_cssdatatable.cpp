@@ -4,11 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../foxitlib.h"
+#include "xfa/src/foxitlib.h"
 #include "fde_cssdatatable.h"
-#ifdef _cplusplus
-extern "C" {
-#endif
+
 FX_BOOL FDE_CSSLengthToFloat(const FDE_CSSLENGTH& len,
                              FX_FLOAT fPercentBase,
                              FX_FLOAT& fResult) {
@@ -776,9 +774,7 @@ FX_BOOL FDE_ParseCSSColor(const FX_WCHAR* pszValue,
   }
   return FALSE;
 }
-#ifdef _cplusplus
-};
-#endif
+
 CFDE_CSSValueList::CFDE_CSSValueList(IFX_MEMAllocator* pStaticStore,
                                      const CFDE_CSSValueArray& list) {
   m_iCount = list.GetSize();

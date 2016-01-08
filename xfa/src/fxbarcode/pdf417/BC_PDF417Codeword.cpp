@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
+#include "xfa/src/fxbarcode/barcode.h"
 #include "BC_PDF417Codeword.h"
 int32_t CBC_Codeword::BARCODE_ROW_UNKNOWN = -1;
 CBC_Codeword::CBC_Codeword(int32_t startX,

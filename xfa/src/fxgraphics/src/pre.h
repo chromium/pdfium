@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../foxitlib.h"
+#include "xfa/src/foxitlib.h"
 #ifndef FXSYS_Mul
 #define FXSYS_Mul(a, b) ((a) * (b))
 #define FXSYS_Div(a, b) ((a) / (b))

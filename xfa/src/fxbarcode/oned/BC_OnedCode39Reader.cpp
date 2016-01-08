@@ -20,9 +20,9 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
-#include "../BC_Reader.h"
-#include "../common/BC_CommonBitArray.h"
+#include "xfa/src/fxbarcode/barcode.h"
+#include "xfa/src/fxbarcode/BC_Reader.h"
+#include "xfa/src/fxbarcode/common/BC_CommonBitArray.h"
 #include "BC_OneDReader.h"
 #include "BC_OnedCode39Reader.h"
 const FX_CHAR* CBC_OnedCode39Reader::ALPHABET_STRING =

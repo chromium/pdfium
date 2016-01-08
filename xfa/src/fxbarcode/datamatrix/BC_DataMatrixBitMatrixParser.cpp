@@ -20,8 +20,8 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
-#include "../common/BC_CommonBitMatrix.h"
+#include "xfa/src/fxbarcode/barcode.h"
+#include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "BC_DataMatrixVersion.h"
 #include "BC_DataMatrixBitMatrixParser.h"
 CBC_DataMatrixBitMatrixParser::CBC_DataMatrixBitMatrixParser() {

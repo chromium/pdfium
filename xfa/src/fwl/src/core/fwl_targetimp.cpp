@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../foxitlib.h"
-#include "include/fwl_targetimp.h"
+#include "xfa/src/foxitlib.h"
+#include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
 FWL_ERR IFWL_Target::GetClassName(CFX_WideString& wsClass) const {
   return m_pImpl->GetClassName(wsClass);
 }

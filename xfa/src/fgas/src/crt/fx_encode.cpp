@@ -4,8 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../fgas_base.h"
-#include "fx_codepage.h"
+#include "xfa/src/fgas/src/fgas_base.h"
 void FX_SwapByteOrder(FX_WCHAR* pStr, int32_t iLength) {
   FXSYS_assert(pStr != NULL);
   if (iLength < 0) {

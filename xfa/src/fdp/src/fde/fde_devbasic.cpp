@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "../../../foxitlib.h"
+#include "xfa/src/foxitlib.h"
 #include "fde_devbasic.h"
 static const FDE_HATCHDATA gs_HatchBitmapData[FDE_HATCHSTYLE_Total] = {
     {16,

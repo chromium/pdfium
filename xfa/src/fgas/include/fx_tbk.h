@@ -7,7 +7,7 @@
 #ifndef _FX_TEXTBREAK
 #define _FX_TEXTBREAK
 
-#include "../../../../core/include/fxcrt/fx_ucd.h"
+#include "core/include/fxcrt/fx_ucd.h"
 
 class IFX_Font;
 class CFX_Char;

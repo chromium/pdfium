@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-#include "../barcode.h"
+#include "xfa/src/fxbarcode/barcode.h"
 #include "BC_CommonByteMatrix.h"
 CBC_CommonByteMatrix::CBC_CommonByteMatrix(int32_t width, int32_t height) {
   m_height = height;
