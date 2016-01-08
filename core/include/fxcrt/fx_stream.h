@@ -44,18 +44,7 @@ FX_WCHAR FX_GetFolderSeparator();
 #define FX_FILEMODE_Write 0
 #define FX_FILEMODE_ReadOnly 1
 #define FX_FILEMODE_Truncate 2
-FX_BOOL FX_File_Exist(const CFX_ByteStringC& fileName);
-FX_BOOL FX_File_Exist(const CFX_WideStringC& fileName);
-FX_BOOL FX_File_Delete(const CFX_ByteStringC& fileName);
-FX_BOOL FX_File_Delete(const CFX_WideStringC& fileName);
-FX_BOOL FX_File_Copy(const CFX_ByteStringC& fileNameSrc,
-                     const CFX_ByteStringC& fileNameDst);
-FX_BOOL FX_File_Copy(const CFX_WideStringC& fileNameSrc,
-                     const CFX_WideStringC& fileNameDst);
-FX_BOOL FX_File_Move(const CFX_ByteStringC& fileNameSrc,
-                     const CFX_ByteStringC& fileNameDst);
-FX_BOOL FX_File_Move(const CFX_WideStringC& fileNameSrc,
-                     const CFX_WideStringC& fileNameDst);
+
 class IFX_StreamWrite {
  public:
   virtual ~IFX_StreamWrite() {}

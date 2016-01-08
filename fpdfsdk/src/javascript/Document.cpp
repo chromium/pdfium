@@ -666,16 +666,6 @@ CPDFSDK_Document* Document::GetReaderDoc() {
   return m_pDocument;
 }
 
-FX_BOOL Document::ExtractFileName(CPDFSDK_Document* pDoc,
-                                  CFX_ByteString& strFileName) {
-  return FALSE;
-}
-
-FX_BOOL Document::ExtractFolderName(CPDFSDK_Document* pDoc,
-                                    CFX_ByteString& strFolderName) {
-  return FALSE;
-}
-
 FX_BOOL Document::bookmarkRoot(IJS_Context* cc,
                                CJS_PropValue& vp,
                                CFX_WideString& sError) {
@@ -1105,48 +1095,6 @@ FX_BOOL Document::documentFileName(IJS_Context* cc,
     vp << L"";
   }
   return TRUE;
-}
-
-CFX_WideString Document::ReversalStr(CFX_WideString cbFrom) {
-  size_t iLength = cbFrom.GetLength();
-  pdfium::base::CheckedNumeric<size_t> iSize = sizeof(wchar_t);
-  iSize *= (iLength + 1);
-  wchar_t* pResult = (wchar_t*)malloc(iSize.ValueOrDie());
-  wchar_t* pFrom = (wchar_t*)cbFrom.GetBuffer(iLength);
-
-  for (size_t i = 0; i < iLength; i++) {
-    pResult[i] = *(pFrom + iLength - i - 1);
-  }
-  pResult[iLength] = L'\0';
-
-  cbFrom.ReleaseBuffer();
-  CFX_WideString cbRet = CFX_WideString(pResult);
-  free(pResult);
-  pResult = NULL;
-  return cbRet;
-}
-
-CFX_WideString Document::CutString(CFX_WideString cbFrom) {
-  size_t iLength = cbFrom.GetLength();
-  pdfium::base::CheckedNumeric<size_t> iSize = sizeof(wchar_t);
-  iSize *= (iLength + 1);
-  wchar_t* pResult = (wchar_t*)malloc(iSize.ValueOrDie());
-  wchar_t* pFrom = (wchar_t*)cbFrom.GetBuffer(iLength);
-
-  for (size_t i = 0; i < iLength; i++) {
-    if (pFrom[i] == L'\\' || pFrom[i] == L'/') {
-      pResult[i] = L'\0';
-      break;
-    }
-    pResult[i] = pFrom[i];
-  }
-  pResult[iLength] = L'\0';
-
-  cbFrom.ReleaseBuffer();
-  CFX_WideString cbRet = CFX_WideString(pResult);
-  free(pResult);
-  pResult = NULL;
-  return cbRet;
 }
 
 FX_BOOL Document::path(IJS_Context* cc,

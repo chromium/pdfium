@@ -592,10 +592,6 @@ void CPWL_ComboBox::SetSelectText() {
   m_nSelectItem = m_pList->GetCurSel();
 }
 
-FX_BOOL CPWL_ComboBox::IsModified() const {
-  return m_pEdit->IsModified();
-}
-
 void CPWL_ComboBox::SetFillerNotify(IPWL_Filler_Notify* pNotify) {
   m_pFillerNotify = pNotify;
 

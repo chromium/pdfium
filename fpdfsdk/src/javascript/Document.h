@@ -56,7 +56,6 @@ class Document : public CJS_EmbedObj {
   Document(CJS_Object* pJSObject);
   ~Document() override;
 
- public:
   FX_BOOL ADBE(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
   FX_BOOL author(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
   FX_BOOL baseURL(IJS_Context* cc, CJS_PropValue& vp, CFX_WideString& sError);
@@ -258,21 +257,14 @@ class Document : public CJS_EmbedObj {
                      CJS_Value& vRet,
                      CFX_WideString& sError);
 
- public:
   void AttachDoc(CPDFSDK_Document* pDoc);
   CPDFSDK_Document* GetReaderDoc();
-  static FX_BOOL ExtractFileName(CPDFSDK_Document* pDoc,
-                                 CFX_ByteString& strFileName);
-  static FX_BOOL ExtractFolderName(CPDFSDK_Document* pDoc,
-                                   CFX_ByteString& strFolderName);
   void AddDelayData(CJS_DelayData* pData);
   void DoFieldDelay(const CFX_WideString& sFieldName, int nControlIndex);
   void SetIsolate(v8::Isolate* isolate) { m_isolate = isolate; }
   CJS_Document* GetCJSDoc() const;
 
  private:
-  CFX_WideString ReversalStr(CFX_WideString cbFrom);
-  CFX_WideString CutString(CFX_WideString cbFrom);
   bool IsEnclosedInRect(CFX_FloatRect rect, CFX_FloatRect LinkRect);
   int CountWords(CPDF_TextObject* pTextObj);
   CFX_WideString GetObjWordStr(CPDF_TextObject* pTextObj, int nWordIndex);
