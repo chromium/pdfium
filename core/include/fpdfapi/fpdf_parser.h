@@ -9,6 +9,7 @@
 
 #include <map>
 #include <memory>
+#include <set>
 
 #include "core/include/fpdfapi/fpdf_objects.h"
 #include "core/include/fxcrt/fx_system.h"
@@ -535,6 +536,9 @@ class CPDF_Parser {
   // Mapping of streams to their object caches. This is valid as long as the
   // streams in |m_ObjectStreamMap| are valid.
   std::map<CPDF_StreamAcc*, StreamObjectCache> m_ObjCache;
+
+  // All indirect object numbers that are being parsed.
+  std::set<FX_DWORD> m_ParsingObjNums;
 
   friend class CPDF_Creator;
   friend class CPDF_DataAvail;

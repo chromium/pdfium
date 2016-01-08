@@ -36,6 +36,20 @@ struct SearchTagRecord {
   FX_DWORD m_Offset;
 };
 
+template <typename T>
+class ScopedSetInsertion {
+ public:
+  ScopedSetInsertion(std::set<T>* org_set, T elem)
+      : m_Set(org_set), m_Entry(elem) {
+    m_Set->insert(m_Entry);
+  }
+  ~ScopedSetInsertion() { m_Set->erase(m_Entry); }
+
+ private:
+  std::set<T>* const m_Set;
+  const T m_Entry;
+};
+
 int CompareFileSize(const void* p1, const void* p2) {
   return *(FX_FILESIZE*)p1 - *(FX_FILESIZE*)p2;
 }
@@ -1192,6 +1206,11 @@ CPDF_Object* CPDF_Parser::ParseIndirectObject(CPDF_IndirectObjects* pObjList,
                                               PARSE_CONTEXT* pContext) {
   if (!IsValidObjectNumber(objnum))
     return nullptr;
+
+  // Prevent circular parsing the same object.
+  if (pdfium::ContainsKey(m_ParsingObjNums, objnum))
+    return nullptr;
+  ScopedSetInsertion<FX_DWORD> local_insert(&m_ParsingObjNums, objnum);
 
   if (m_V5Type[objnum] == 1 || m_V5Type[objnum] == 255) {
     FX_FILESIZE pos = m_ObjectInfo[objnum].pos;
