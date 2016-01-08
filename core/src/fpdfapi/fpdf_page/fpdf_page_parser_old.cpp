@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "pageint.h"
+#include "core/src/fpdfapi/fpdf_page/pageint.h"
 
 #include <limits.h>
 
@@ -72,7 +72,7 @@ FX_DWORD CPDF_StreamContentParser::Parse(const uint8_t* pData,
   }
   return m_pSyntax->GetPos();
 }
-void _PDF_ReplaceAbbr(CPDF_Object* pObj);
+
 void CPDF_StreamContentParser::Handle_BeginImage() {
   FX_FILESIZE savePos = m_pSyntax->GetPos();
   CPDF_Dictionary* pDict = new CPDF_Dictionary;
@@ -102,7 +102,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
         pDict->SetAt(key, pObj.release());
     }
   }
-  _PDF_ReplaceAbbr(pDict);
+  PDF_ReplaceAbbr(pDict);
   CPDF_Object* pCSObj = NULL;
   if (pDict->KeyExist("ColorSpace")) {
     pCSObj = pDict->GetElementValue("ColorSpace");
@@ -933,6 +933,7 @@ void CPDF_ContentParser::Start(CPDF_Page* pPage, CPDF_ParseOptions* pOptions) {
   m_Status = ToBeContinued;
   m_InternalStage = PAGEPARSE_STAGE_GETCONTENT;
   m_CurrentOffset = 0;
+
   CPDF_Object* pContent = pPage->m_pFormDict->GetElementValue("Contents");
   if (!pContent) {
     m_Status = Done;
@@ -951,7 +952,6 @@ void CPDF_ContentParser::Start(CPDF_Page* pPage, CPDF_ParseOptions* pOptions) {
     m_pStreamArray = FX_Alloc(CPDF_StreamAcc*, m_nStreams);
   } else {
     m_Status = Done;
-    return;
   }
 }
 void CPDF_ContentParser::Start(CPDF_Form* pForm,
@@ -1006,11 +1006,7 @@ void CPDF_ContentParser::Start(CPDF_Form* pForm,
   }
   m_nStreams = 0;
   m_pSingleStream = new CPDF_StreamAcc;
-  if (pForm->m_pDocument) {
-    m_pSingleStream->LoadAllData(pForm->m_pFormStream, FALSE);
-  } else {
-    m_pSingleStream->LoadAllData(pForm->m_pFormStream, FALSE);
-  }
+  m_pSingleStream->LoadAllData(pForm->m_pFormStream, FALSE);
   m_pData = (uint8_t*)m_pSingleStream->GetData();
   m_Size = m_pSingleStream->GetSize();
   m_Status = ToBeContinued;

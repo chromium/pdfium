@@ -449,4 +449,6 @@ class CPDF_PatternCS : public CPDF_ColorSpace {
   CPDF_CountedColorSpace* m_pCountedBaseCS;
 };
 
+void PDF_ReplaceAbbr(CPDF_Object* pObj);
+
 #endif  // CORE_SRC_FPDFAPI_FPDF_PAGE_PAGEINT_H_

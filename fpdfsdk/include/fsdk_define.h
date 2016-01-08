@@ -11,7 +11,6 @@
 #include "core/include/fpdfapi/fpdf_pageobj.h"
 #include "core/include/fpdfapi/fpdf_parser.h"
 #include "core/include/fpdfapi/fpdf_render.h"
-#include "core/include/fpdfapi/fpdf_serial.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
 #include "core/include/fpdfdoc/fpdf_vt.h"
 #include "core/include/fxge/fx_ge.h"
