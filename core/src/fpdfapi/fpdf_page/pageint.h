@@ -268,7 +268,7 @@ class CPDF_StreamContentParser {
   FX_BOOL m_bColored;
   FX_FLOAT m_Type3Data[6];
   FX_BOOL m_bResourceMissing;
-  CFX_ArrayTemplate<CPDF_AllStates*> m_StateStack;
+  std::vector<std::unique_ptr<CPDF_AllStates>> m_StateStack;
 };
 class CPDF_ContentParser {
  public:
@@ -287,21 +287,26 @@ class CPDF_ContentParser {
              int level);
   void Continue(IFX_Pause* pPause);
 
- protected:
-  void Clear();
+ private:
+  enum InternalStage {
+    STAGE_GETCONTENT = 1,
+    STAGE_PARSE,
+    STAGE_CHECKCLIP,
+  };
+
   ParseStatus m_Status;
+  InternalStage m_InternalStage;
   CPDF_PageObjects* m_pObjects;
   FX_BOOL m_bForm;
   CPDF_ParseOptions m_Options;
   CPDF_Type3Char* m_pType3Char;
-  int m_InternalStage;
-  CPDF_StreamAcc* m_pSingleStream;
-  CPDF_StreamAcc** m_pStreamArray;
   FX_DWORD m_nStreams;
+  std::unique_ptr<CPDF_StreamAcc> m_pSingleStream;
+  std::vector<std::unique_ptr<CPDF_StreamAcc>> m_StreamArray;
   uint8_t* m_pData;
   FX_DWORD m_Size;
-  class CPDF_StreamContentParser* m_pParser;
   FX_DWORD m_CurrentOffset;
+  std::unique_ptr<CPDF_StreamContentParser> m_pParser;
 };
 class CPDF_AllStates : public CPDF_GraphicStates {
  public:

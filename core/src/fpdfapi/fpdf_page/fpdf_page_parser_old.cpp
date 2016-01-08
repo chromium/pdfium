@@ -12,6 +12,7 @@
 #include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fxcodec/fx_codec.h"
 #include "core/include/fxcrt/fx_ext.h"
+#include "core/include/fxcrt/fx_safe_types.h"
 
 namespace {
 
@@ -889,35 +890,18 @@ bool CPDF_StreamParser::PositionIsInBounds() const {
   return m_Pos < m_Size;
 }
 
-#define PAGEPARSE_STAGE_GETCONTENT 1
-#define PAGEPARSE_STAGE_PARSE 2
-#define PAGEPARSE_STAGE_CHECKCLIP 3
-CPDF_ContentParser::CPDF_ContentParser() {
-  m_pParser = NULL;
-  m_pStreamArray = NULL;
-  m_pSingleStream = NULL;
-  m_pData = NULL;
-  m_Status = Ready;
-  m_pType3Char = NULL;
-}
+CPDF_ContentParser::CPDF_ContentParser()
+    : m_Status(Ready),
+      m_InternalStage(STAGE_GETCONTENT),
+      m_pObjects(nullptr),
+      m_bForm(false),
+      m_pType3Char(nullptr),
+      m_pData(nullptr),
+      m_Size(0),
+      m_CurrentOffset(0) {}
 CPDF_ContentParser::~CPDF_ContentParser() {
-  Clear();
-}
-void CPDF_ContentParser::Clear() {
-  delete m_pParser;
-  delete m_pSingleStream;
-  if (m_pStreamArray) {
-    for (FX_DWORD i = 0; i < m_nStreams; i++)
-      delete m_pStreamArray[i];
-    FX_Free(m_pStreamArray);
-  }
   if (!m_pSingleStream)
     FX_Free(m_pData);
-  m_pParser = NULL;
-  m_pStreamArray = NULL;
-  m_pSingleStream = NULL;
-  m_pData = NULL;
-  m_Status = Ready;
 }
 void CPDF_ContentParser::Start(CPDF_Page* pPage, CPDF_ParseOptions* pOptions) {
   if (m_Status != Ready || !pPage || !pPage->m_pDocument ||
@@ -931,7 +915,7 @@ void CPDF_ContentParser::Start(CPDF_Page* pPage, CPDF_ParseOptions* pOptions) {
     m_Options = *pOptions;
   }
   m_Status = ToBeContinued;
-  m_InternalStage = PAGEPARSE_STAGE_GETCONTENT;
+  m_InternalStage = STAGE_GETCONTENT;
   m_CurrentOffset = 0;
 
   CPDF_Object* pContent = pPage->m_pFormDict->GetElementValue("Contents");
@@ -941,15 +925,14 @@ void CPDF_ContentParser::Start(CPDF_Page* pPage, CPDF_ParseOptions* pOptions) {
   }
   if (CPDF_Stream* pStream = pContent->AsStream()) {
     m_nStreams = 0;
-    m_pSingleStream = new CPDF_StreamAcc;
+    m_pSingleStream.reset(new CPDF_StreamAcc);
     m_pSingleStream->LoadAllData(pStream, FALSE);
   } else if (CPDF_Array* pArray = pContent->AsArray()) {
     m_nStreams = pArray->GetCount();
-    if (m_nStreams == 0) {
+    if (m_nStreams)
+      m_StreamArray.resize(m_nStreams);
+    else
       m_Status = Done;
-      return;
-    }
-    m_pStreamArray = FX_Alloc(CPDF_StreamAcc*, m_nStreams);
   } else {
     m_Status = Done;
   }
@@ -985,11 +968,10 @@ void CPDF_ContentParser::Start(CPDF_Form* pForm,
     }
   }
   CPDF_Dictionary* pResources = pForm->m_pFormDict->GetDict("Resources");
-  m_pParser = new CPDF_StreamContentParser(
+  m_pParser.reset(new CPDF_StreamContentParser(
       pForm->m_pDocument, pForm->m_pPageResources, pForm->m_pResources,
       pParentMatrix, pForm, pResources, &form_bbox, pOptions, pGraphicStates,
-      level);
-
+      level));
   m_pParser->GetCurStates()->m_CTM = form_matrix;
   m_pParser->GetCurStates()->m_ParentMatrix = form_matrix;
   if (ClipPath.NotNull()) {
@@ -1005,73 +987,70 @@ void CPDF_ContentParser::Start(CPDF_Form* pForm,
     pData->m_pSoftMask = NULL;
   }
   m_nStreams = 0;
-  m_pSingleStream = new CPDF_StreamAcc;
+  m_pSingleStream.reset(new CPDF_StreamAcc);
   m_pSingleStream->LoadAllData(pForm->m_pFormStream, FALSE);
   m_pData = (uint8_t*)m_pSingleStream->GetData();
   m_Size = m_pSingleStream->GetSize();
   m_Status = ToBeContinued;
-  m_InternalStage = PAGEPARSE_STAGE_PARSE;
+  m_InternalStage = STAGE_PARSE;
   m_CurrentOffset = 0;
 }
 void CPDF_ContentParser::Continue(IFX_Pause* pPause) {
   int steps = 0;
   while (m_Status == ToBeContinued) {
-    if (m_InternalStage == PAGEPARSE_STAGE_GETCONTENT) {
+    if (m_InternalStage == STAGE_GETCONTENT) {
       if (m_CurrentOffset == m_nStreams) {
-        if (m_pStreamArray) {
-          m_Size = 0;
-          FX_DWORD i;
-          for (i = 0; i < m_nStreams; i++) {
-            FX_DWORD size = m_pStreamArray[i]->GetSize();
-            if (m_Size + size + 1 <= m_Size) {
-              m_Status = Done;
-              return;
-            }
-            m_Size += size + 1;
+        if (!m_StreamArray.empty()) {
+          FX_SAFE_DWORD safeSize = 0;
+          for (const auto& stream : m_StreamArray) {
+            safeSize += stream->GetSize();
+            safeSize += 1;
           }
+          if (!safeSize.IsValid()) {
+            m_Status = Done;
+            return;
+          }
+          m_Size = safeSize.ValueOrDie();
           m_pData = FX_Alloc(uint8_t, m_Size);
           FX_DWORD pos = 0;
-          for (i = 0; i < m_nStreams; i++) {
-            FXSYS_memcpy(m_pData + pos, m_pStreamArray[i]->GetData(),
-                         m_pStreamArray[i]->GetSize());
-            pos += m_pStreamArray[i]->GetSize() + 1;
-            m_pData[pos - 1] = ' ';
-            delete m_pStreamArray[i];
+          for (const auto& stream : m_StreamArray) {
+            FXSYS_memcpy(m_pData + pos, stream->GetData(), stream->GetSize());
+            pos += stream->GetSize();
+            m_pData[pos++] = ' ';
           }
-          FX_Free(m_pStreamArray);
-          m_pStreamArray = NULL;
+          m_StreamArray.clear();
         } else {
           m_pData = (uint8_t*)m_pSingleStream->GetData();
           m_Size = m_pSingleStream->GetSize();
         }
-        m_InternalStage = PAGEPARSE_STAGE_PARSE;
+        m_InternalStage = STAGE_PARSE;
         m_CurrentOffset = 0;
       } else {
         CPDF_Array* pContent = m_pObjects->m_pFormDict->GetArray("Contents");
-        m_pStreamArray[m_CurrentOffset] = new CPDF_StreamAcc;
+        m_StreamArray[m_CurrentOffset].reset(new CPDF_StreamAcc);
         CPDF_Stream* pStreamObj = ToStream(
             pContent ? pContent->GetElementValue(m_CurrentOffset) : nullptr);
-        m_pStreamArray[m_CurrentOffset]->LoadAllData(pStreamObj, FALSE);
+        m_StreamArray[m_CurrentOffset]->LoadAllData(pStreamObj, FALSE);
         m_CurrentOffset++;
       }
     }
-    if (m_InternalStage == PAGEPARSE_STAGE_PARSE) {
+    if (m_InternalStage == STAGE_PARSE) {
       if (!m_pParser) {
-        m_pParser = new CPDF_StreamContentParser(
+        m_pParser.reset(new CPDF_StreamContentParser(
             m_pObjects->m_pDocument, m_pObjects->m_pPageResources, nullptr,
             nullptr, m_pObjects, m_pObjects->m_pResources, &m_pObjects->m_BBox,
-            &m_Options, nullptr, 0);
+            &m_Options, nullptr, 0));
         m_pParser->GetCurStates()->m_ColorState.GetModify()->Default();
       }
       if (m_CurrentOffset >= m_Size) {
-        m_InternalStage = PAGEPARSE_STAGE_CHECKCLIP;
+        m_InternalStage = STAGE_CHECKCLIP;
       } else {
         m_CurrentOffset +=
             m_pParser->Parse(m_pData + m_CurrentOffset,
                              m_Size - m_CurrentOffset, PARSE_STEP_LIMIT);
       }
     }
-    if (m_InternalStage == PAGEPARSE_STAGE_CHECKCLIP) {
+    if (m_InternalStage == STAGE_CHECKCLIP) {
       if (m_pType3Char) {
         m_pType3Char->m_bColored = m_pParser->IsColored();
         m_pType3Char->m_Width =
