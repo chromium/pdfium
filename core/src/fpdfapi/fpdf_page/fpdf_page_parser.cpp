@@ -225,7 +225,7 @@ CPDF_Object* CPDF_StreamContentParser::GetObject(FX_DWORD index) {
   if (real_index >= PARAM_BUF_SIZE) {
     real_index -= PARAM_BUF_SIZE;
   }
-  _ContentParam& param = m_ParamBuf1[real_index];
+  ContentParam& param = m_ParamBuf1[real_index];
   if (param.m_Type == PDFOBJ_NUMBER) {
     CPDF_Number* pNumber = param.m_Number.m_bInteger
                                ? new CPDF_Number(param.m_Number.m_Integer)
@@ -256,7 +256,7 @@ CFX_ByteString CPDF_StreamContentParser::GetString(FX_DWORD index) {
   if (real_index >= PARAM_BUF_SIZE) {
     real_index -= PARAM_BUF_SIZE;
   }
-  _ContentParam& param = m_ParamBuf1[real_index];
+  ContentParam& param = m_ParamBuf1[real_index];
   if (param.m_Type == PDFOBJ_NAME) {
     return CFX_ByteString(param.m_Name.m_Buffer, param.m_Name.m_Len);
   }
@@ -273,7 +273,7 @@ FX_FLOAT CPDF_StreamContentParser::GetNumber(FX_DWORD index) {
   if (real_index >= PARAM_BUF_SIZE) {
     real_index -= PARAM_BUF_SIZE;
   }
-  _ContentParam& param = m_ParamBuf1[real_index];
+  ContentParam& param = m_ParamBuf1[real_index];
   if (param.m_Type == PDFOBJ_NUMBER) {
     return param.m_Number.m_bInteger ? (FX_FLOAT)param.m_Number.m_Integer
                                      : param.m_Number.m_Float;

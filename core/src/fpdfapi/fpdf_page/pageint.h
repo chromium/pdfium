@@ -20,6 +20,8 @@ class CPDF_ParseOptions;
 
 class CPDF_StreamParser {
  public:
+  enum SyntaxType { EndOfData, Number, Keyword, Name, Others };
+
   CPDF_StreamParser(const uint8_t* pData, FX_DWORD dwSize);
   ~CPDF_StreamParser();
 
@@ -27,19 +29,16 @@ class CPDF_StreamParser {
                                 CPDF_Dictionary* pDict,
                                 CPDF_Object* pCSObj,
                                 FX_BOOL bDecode);
-  typedef enum { EndOfData, Number, Keyword, Name, Others } SyntaxType;
-
   SyntaxType ParseNextElement();
   uint8_t* GetWordBuf() { return m_WordBuffer; }
-  FX_DWORD GetWordSize() { return m_WordSize; }
+  FX_DWORD GetWordSize() const { return m_WordSize; }
   CPDF_Object* GetObject() {
     CPDF_Object* pObj = m_pLastObj;
     m_pLastObj = NULL;
     return pObj;
   }
-  FX_DWORD GetPos() { return m_Pos; }
+  FX_DWORD GetPos() const { return m_Pos; }
   void SetPos(FX_DWORD pos) { m_Pos = pos; }
-
   CPDF_Object* ReadNextObject(FX_BOOL bAllowNestedArray = FALSE,
                               FX_BOOL bInArray = FALSE);
   void SkipPathObject();
@@ -65,84 +64,9 @@ class CPDF_StreamParser {
  private:
   bool PositionIsInBounds() const;
 };
-typedef enum {
-  PDFOP_CloseFillStrokePath = 0,
-  PDFOP_FillStrokePath,
-  PDFOP_CloseEOFillStrokePath,
-  PDFOP_EOFillStrokePath,
-  PDFOP_BeginMarkedContent_Dictionary,
-  PDFOP_BeginImage,
-  PDFOP_BeginMarkedContent,
-  PDFOP_BeginText,
-  PDFOP_BeginSectionUndefined,
-  PDFOP_CurveTo_123,
-  PDFOP_ConcatMatrix,
-  PDFOP_SetColorSpace_Fill,
-  PDFOP_SetColorSpace_Stroke,
-  PDFOP_SetDash,
-  PDFOP_SetCharWidth,
-  PDFOP_SetCachedDevice,
-  PDFOP_ExecuteXObject,
-  PDFOP_MarkPlace_Dictionary,
-  PDFOP_EndImage,
-  PDFOP_EndMarkedContent,
-  PDFOP_EndText,
-  PDFOP_EndSectionUndefined,
-  PDFOP_FillPath,
-  PDFOP_FillPathOld,
-  PDFOP_EOFillPath,
-  PDFOP_SetGray_Fill,
-  PDFOP_SetGray_Stroke,
-  PDFOP_SetExtendGraphState,
-  PDFOP_ClosePath,
-  PDFOP_SetFlat,
-  PDFOP_BeginImageData,
-  PDFOP_SetLineJoin,
-  PDFOP_SetLineCap,
-  PDFOP_SetCMYKColor_Fill,
-  PDFOP_SetCMYKColor_Stroke,
-  PDFOP_LineTo,
-  PDFOP_MoveTo,
-  PDFOP_SetMiterLimit,
-  PDFOP_MarkPlace,
-  PDFOP_EndPath,
-  PDFOP_SaveGraphState,
-  PDFOP_RestoreGraphState,
-  PDFOP_Rectangle,
-  PDFOP_SetRGBColor_Fill,
-  PDFOP_SetRGBColor_Stroke,
-  PDFOP_SetRenderIntent,
-  PDFOP_CloseStrokePath,
-  PDFOP_StrokePath,
-  PDFOP_SetColor_Fill,
-  PDFOP_SetColor_Stroke,
-  PDFOP_SetColorPS_Fill,
-  PDFOP_SetColorPS_Stroke,
-  PDFOP_ShadeFill,
-  PDFOP_SetCharSpace,
-  PDFOP_MoveTextPoint,
-  PDFOP_MoveTextPoint_SetLeading,
-  PDFOP_SetFont,
-  PDFOP_ShowText,
-  PDFOP_ShowText_Positioning,
-  PDFOP_SetTextLeading,
-  PDFOP_SetTextMatrix,
-  PDFOP_SetTextRenderMode,
-  PDFOP_SetTextRise,
-  PDFOP_SetWordSpace,
-  PDFOP_SetHorzScale,
-  PDFOP_MoveToNextLine,
-  PDFOP_CurveTo_23,
-  PDFOP_SetLineWidth,
-  PDFOP_Clip,
-  PDFOP_EOClip,
-  PDFOP_CurveTo_13,
-  PDFOP_NextLineShowText,
-  PDFOP_NextLineShowText_Space,
-  PDFOP_Invalid
-} PDFOP;
+
 #define PARAM_BUF_SIZE 16
-typedef struct {
+struct ContentParam {
   int m_Type;
   union {
     struct {
@@ -158,7 +82,7 @@ typedef struct {
       char m_Buffer[32];
     } m_Name;
   };
-} _ContentParam;
+};
 #define _FPDF_MAX_FORM_LEVEL_ 30
 #define _FPDF_MAX_TYPE3_FORM_LEVEL_ 4
 #define _FPDF_MAX_OBJECT_STACK_SIZE_ 512
@@ -315,7 +239,7 @@ class CPDF_StreamContentParser {
   CFX_Matrix m_mtContentToUser;
   CFX_FloatRect m_BBox;
   CPDF_ParseOptions m_Options;
-  _ContentParam m_ParamBuf1[PARAM_BUF_SIZE];
+  ContentParam m_ParamBuf1[PARAM_BUF_SIZE];
   FX_DWORD m_ParamStartPos;
   FX_DWORD m_ParamCount;
   CPDF_StreamParser* m_pSyntax;
@@ -353,7 +277,7 @@ class CPDF_ContentParser {
   CPDF_ContentParser();
   ~CPDF_ContentParser();
 
-  ParseStatus GetStatus() { return m_Status; }
+  ParseStatus GetStatus() const { return m_Status; }
   void Start(CPDF_Page* pPage, CPDF_ParseOptions* pOptions);
   void Start(CPDF_Form* pForm,
              CPDF_AllStates* pGraphicStates,
