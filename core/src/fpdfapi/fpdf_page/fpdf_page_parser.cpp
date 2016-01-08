@@ -4,16 +4,79 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "pageint.h"
+#include "core/src/fpdfapi/fpdf_page/pageint.h"
 
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fpdfapi/fpdf_serial.h"
 
-#define REQUIRE_PARAMS(count)  \
-  if (m_ParamCount != count) { \
-    return;                    \
+namespace {
+
+struct _FX_BSTR {
+  const FX_CHAR* m_Ptr;
+  int m_Size;
+};
+#define _FX_BSTRC(str) \
+  { str, sizeof(str) - 1 }
+
+struct PDF_AbbrPairs {
+  _FX_BSTR full_name;
+  _FX_BSTR abbr;
+};
+
+const PDF_AbbrPairs PDF_InlineKeyAbbr[] = {
+    {_FX_BSTRC("BitsPerComponent"), _FX_BSTRC("BPC")},
+    {_FX_BSTRC("ColorSpace"), _FX_BSTRC("CS")},
+    {_FX_BSTRC("Decode"), _FX_BSTRC("D")},
+    {_FX_BSTRC("DecodeParms"), _FX_BSTRC("DP")},
+    {_FX_BSTRC("Filter"), _FX_BSTRC("F")},
+    {_FX_BSTRC("Height"), _FX_BSTRC("H")},
+    {_FX_BSTRC("ImageMask"), _FX_BSTRC("IM")},
+    {_FX_BSTRC("Interpolate"), _FX_BSTRC("I")},
+    {_FX_BSTRC("Width"), _FX_BSTRC("W")},
+};
+
+const PDF_AbbrPairs PDF_InlineValueAbbr[] = {
+    {_FX_BSTRC("DeviceGray"), _FX_BSTRC("G")},
+    {_FX_BSTRC("DeviceRGB"), _FX_BSTRC("RGB")},
+    {_FX_BSTRC("DeviceCMYK"), _FX_BSTRC("CMYK")},
+    {_FX_BSTRC("Indexed"), _FX_BSTRC("I")},
+    {_FX_BSTRC("ASCIIHexDecode"), _FX_BSTRC("AHx")},
+    {_FX_BSTRC("ASCII85Decode"), _FX_BSTRC("A85")},
+    {_FX_BSTRC("LZWDecode"), _FX_BSTRC("LZW")},
+    {_FX_BSTRC("FlateDecode"), _FX_BSTRC("Fl")},
+    {_FX_BSTRC("RunLengthDecode"), _FX_BSTRC("RL")},
+    {_FX_BSTRC("CCITTFaxDecode"), _FX_BSTRC("CCF")},
+    {_FX_BSTRC("DCTDecode"), _FX_BSTRC("DCT")},
+};
+
+CFX_ByteStringC PDF_FindFullName(const PDF_AbbrPairs* table,
+                                 size_t count,
+                                 const CFX_ByteStringC& abbr) {
+  for (size_t i = 0; i < count; ++i) {
+    if (abbr.GetLength() != table[i].abbr.m_Size)
+      continue;
+    if (memcmp(abbr.GetPtr(), table[i].abbr.m_Ptr, abbr.GetLength()))
+      continue;
+    return CFX_ByteStringC(table[i].full_name.m_Ptr, table[i].full_name.m_Size);
   }
+  return CFX_ByteStringC();
+}
+
+CFX_ByteStringC PDF_FindAbbrName(const PDF_AbbrPairs* table,
+                                 size_t count,
+                                 const CFX_ByteStringC& name) {
+  for (size_t i = 0; i < count; ++i) {
+    if (name.GetLength() != table[i].full_name.m_Size)
+      continue;
+    if (memcmp(name.GetPtr(), table[i].full_name.m_Ptr, name.GetLength()))
+      continue;
+    return CFX_ByteStringC(table[i].abbr.m_Ptr, table[i].abbr.m_Size);
+  }
+  return CFX_ByteStringC();
+}
+
+}  // namespace
 
 CPDF_StreamContentParser::CPDF_StreamContentParser(
     CPDF_Document* pDocument,
@@ -361,7 +424,7 @@ FX_BOOL CPDF_StreamContentParser::OnOperator(const FX_CHAR* op) {
   while (i < 4) {
     opid <<= 8;
     i++;
-  };
+  }
   int low = 0, high = sizeof g_OpCodes / sizeof(OpCode) - 1;
   while (low <= high) {
     int middle = (low + high) / 2;
@@ -431,60 +494,8 @@ void CPDF_StreamContentParser::Handle_BeginMarkedContent() {
   CFX_ByteString tag = GetString(0);
   m_CurContentMark.GetModify()->AddMark(tag, NULL, FALSE);
 }
-struct _FX_BSTR {
-  const FX_CHAR* m_Ptr;
-  int m_Size;
-};
-#define _FX_BSTRC(str) \
-  { str, sizeof(str) - 1 }
-const _FX_BSTR _PDF_InlineKeyAbbr[] = {
-    _FX_BSTRC("BitsPerComponent"),
-    _FX_BSTRC("BPC"),
-    _FX_BSTRC("ColorSpace"),
-    _FX_BSTRC("CS"),
-    _FX_BSTRC("Decode"),
-    _FX_BSTRC("D"),
-    _FX_BSTRC("DecodeParms"),
-    _FX_BSTRC("DP"),
-    _FX_BSTRC("Filter"),
-    _FX_BSTRC("F"),
-    _FX_BSTRC("Height"),
-    _FX_BSTRC("H"),
-    _FX_BSTRC("ImageMask"),
-    _FX_BSTRC("IM"),
-    _FX_BSTRC("Interpolate"),
-    _FX_BSTRC("I"),
-    _FX_BSTRC("Width"),
-    _FX_BSTRC("W"),
-};
-const _FX_BSTR _PDF_InlineValueAbbr[] = {
-    _FX_BSTRC("DeviceGray"),      _FX_BSTRC("G"),
-    _FX_BSTRC("DeviceRGB"),       _FX_BSTRC("RGB"),
-    _FX_BSTRC("DeviceCMYK"),      _FX_BSTRC("CMYK"),
-    _FX_BSTRC("Indexed"),         _FX_BSTRC("I"),
-    _FX_BSTRC("ASCIIHexDecode"),  _FX_BSTRC("AHx"),
-    _FX_BSTRC("ASCII85Decode"),   _FX_BSTRC("A85"),
-    _FX_BSTRC("LZWDecode"),       _FX_BSTRC("LZW"),
-    _FX_BSTRC("FlateDecode"),     _FX_BSTRC("Fl"),
-    _FX_BSTRC("RunLengthDecode"), _FX_BSTRC("RL"),
-    _FX_BSTRC("CCITTFaxDecode"),  _FX_BSTRC("CCF"),
-    _FX_BSTRC("DCTDecode"),       _FX_BSTRC("DCT"),
-};
-static CFX_ByteStringC _PDF_FindFullName(const _FX_BSTR* table,
-                                         int count,
-                                         const CFX_ByteStringC& abbr) {
-  int i = 0;
-  while (i < count) {
-    if (abbr.GetLength() == table[i + 1].m_Size &&
-        FXSYS_memcmp(abbr.GetPtr(), table[i + 1].m_Ptr, abbr.GetLength()) ==
-            0) {
-      return CFX_ByteStringC(table[i].m_Ptr, table[i].m_Size);
-    }
-    i += 2;
-  }
-  return CFX_ByteStringC();
-}
-void _PDF_ReplaceAbbr(CPDF_Object* pObj) {
+
+void PDF_ReplaceAbbr(CPDF_Object* pObj) {
   switch (pObj->GetType()) {
     case PDFOBJ_DICTIONARY: {
       CPDF_Dictionary* pDict = pObj->AsDictionary();
@@ -492,9 +503,8 @@ void _PDF_ReplaceAbbr(CPDF_Object* pObj) {
       while (pos) {
         CFX_ByteString key;
         CPDF_Object* value = pDict->GetNextElement(pos, key);
-        CFX_ByteStringC fullname = _PDF_FindFullName(
-            _PDF_InlineKeyAbbr, sizeof _PDF_InlineKeyAbbr / sizeof(_FX_BSTR),
-            key);
+        CFX_ByteStringC fullname = PDF_FindFullName(
+            PDF_InlineKeyAbbr, FX_ArraySize(PDF_InlineKeyAbbr), key);
         if (!fullname.IsEmpty()) {
           pDict->ReplaceKey(key, fullname);
           key = fullname;
@@ -502,14 +512,13 @@ void _PDF_ReplaceAbbr(CPDF_Object* pObj) {
 
         if (value->IsName()) {
           CFX_ByteString name = value->GetString();
-          fullname = _PDF_FindFullName(
-              _PDF_InlineValueAbbr,
-              sizeof _PDF_InlineValueAbbr / sizeof(_FX_BSTR), name);
+          fullname = PDF_FindFullName(PDF_InlineValueAbbr,
+                                      FX_ArraySize(PDF_InlineValueAbbr), name);
           if (!fullname.IsEmpty()) {
             pDict->SetAtName(key, fullname);
           }
         } else {
-          _PDF_ReplaceAbbr(value);
+          PDF_ReplaceAbbr(value);
         }
       }
       break;
@@ -520,35 +529,21 @@ void _PDF_ReplaceAbbr(CPDF_Object* pObj) {
         CPDF_Object* pElement = pArray->GetElement(i);
         if (pElement->IsName()) {
           CFX_ByteString name = pElement->GetString();
-          CFX_ByteStringC fullname = _PDF_FindFullName(
-              _PDF_InlineValueAbbr,
-              sizeof _PDF_InlineValueAbbr / sizeof(_FX_BSTR), name);
+          CFX_ByteStringC fullname = PDF_FindFullName(
+              PDF_InlineValueAbbr, FX_ArraySize(PDF_InlineValueAbbr), name);
           if (!fullname.IsEmpty()) {
             pArray->SetAt(i, new CPDF_Name(fullname));
           }
         } else {
-          _PDF_ReplaceAbbr(pElement);
+          PDF_ReplaceAbbr(pElement);
         }
       }
       break;
     }
   }
 }
-static CFX_ByteStringC _PDF_FindAbbrName(const _FX_BSTR* table,
-                                         int count,
-                                         const CFX_ByteStringC& fullName) {
-  int i = 0;
-  while (i < count) {
-    if (fullName.GetLength() == table[i].m_Size &&
-        FXSYS_memcmp(fullName.GetPtr(), table[i].m_Ptr, fullName.GetLength()) ==
-            0) {
-      return CFX_ByteStringC(table[i + 1].m_Ptr, table[i + 1].m_Size);
-    }
-    i += 2;
-  }
-  return CFX_ByteStringC();
-}
-void _PDF_ReplaceFull(CPDF_Object* pObj) {
+
+void PDF_ReplaceFull(CPDF_Object* pObj) {
   switch (pObj->GetType()) {
     case PDFOBJ_DICTIONARY: {
       CPDF_Dictionary* pDict = pObj->AsDictionary();
@@ -556,23 +551,21 @@ void _PDF_ReplaceFull(CPDF_Object* pObj) {
       while (pos) {
         CFX_ByteString key;
         CPDF_Object* value = pDict->GetNextElement(pos, key);
-        CFX_ByteStringC abbrName = _PDF_FindAbbrName(
-            _PDF_InlineKeyAbbr, sizeof(_PDF_InlineKeyAbbr) / sizeof(_FX_BSTR),
-            key);
+        CFX_ByteStringC abbrName = PDF_FindAbbrName(
+            PDF_InlineKeyAbbr, FX_ArraySize(PDF_InlineKeyAbbr), key);
         if (!abbrName.IsEmpty()) {
           pDict->ReplaceKey(key, abbrName);
           key = abbrName;
         }
         if (value->IsName()) {
           CFX_ByteString name = value->GetString();
-          abbrName = _PDF_FindAbbrName(
-              _PDF_InlineValueAbbr,
-              sizeof(_PDF_InlineValueAbbr) / sizeof(_FX_BSTR), name);
+          abbrName = PDF_FindAbbrName(PDF_InlineValueAbbr,
+                                      FX_ArraySize(PDF_InlineValueAbbr), name);
           if (!abbrName.IsEmpty()) {
             pDict->SetAtName(key, abbrName);
           }
         } else {
-          _PDF_ReplaceFull(value);
+          PDF_ReplaceFull(value);
         }
       }
       break;
@@ -583,14 +576,13 @@ void _PDF_ReplaceFull(CPDF_Object* pObj) {
         CPDF_Object* pElement = pArray->GetElement(i);
         if (pElement->IsName()) {
           CFX_ByteString name = pElement->GetString();
-          CFX_ByteStringC abbrName = _PDF_FindAbbrName(
-              _PDF_InlineValueAbbr,
-              sizeof _PDF_InlineValueAbbr / sizeof(_FX_BSTR), name);
+          CFX_ByteStringC abbrName = PDF_FindAbbrName(
+              PDF_InlineValueAbbr, FX_ArraySize(PDF_InlineValueAbbr), name);
           if (!abbrName.IsEmpty()) {
             pArray->SetAt(i, new CPDF_Name(abbrName));
           }
         } else {
-          _PDF_ReplaceFull(pElement);
+          PDF_ReplaceFull(pElement);
         }
       }
       break;
@@ -893,7 +885,9 @@ void CPDF_StreamContentParser::Handle_SetLineCap() {
       (CFX_GraphStateData::LineCap)GetInteger(0);
 }
 void CPDF_StreamContentParser::Handle_SetCMYKColor_Fill() {
-  REQUIRE_PARAMS(4);
+  if (m_ParamCount != 4)
+    return;
+
   FX_FLOAT values[4];
   for (int i = 0; i < 4; i++) {
     values[i] = GetNumber(3 - i);
@@ -902,7 +896,9 @@ void CPDF_StreamContentParser::Handle_SetCMYKColor_Fill() {
   m_pCurStates->m_ColorState.SetFillColor(pCS, values, 4);
 }
 void CPDF_StreamContentParser::Handle_SetCMYKColor_Stroke() {
-  REQUIRE_PARAMS(4);
+  if (m_ParamCount != 4)
+    return;
+
   FX_FLOAT values[4];
   for (int i = 0; i < 4; i++) {
     values[i] = GetNumber(3 - i);
@@ -911,14 +907,18 @@ void CPDF_StreamContentParser::Handle_SetCMYKColor_Stroke() {
   m_pCurStates->m_ColorState.SetStrokeColor(pCS, values, 4);
 }
 void CPDF_StreamContentParser::Handle_LineTo() {
-  REQUIRE_PARAMS(2);
+  if (m_ParamCount != 2)
+    return;
+
   if (m_Options.m_bTextOnly) {
     return;
   }
   AddPathPoint(GetNumber(1), GetNumber(0), FXPT_LINETO);
 }
 void CPDF_StreamContentParser::Handle_MoveTo() {
-  REQUIRE_PARAMS(2);
+  if (m_ParamCount != 2)
+    return;
+
   if (m_Options.m_bTextOnly) {
     m_pSyntax->SkipPathObject();
     return;
@@ -970,7 +970,9 @@ void CPDF_StreamContentParser::AddPathRect(FX_FLOAT x,
   AddPathPoint(x, y, FXPT_LINETO | FXPT_CLOSEFIGURE);
 }
 void CPDF_StreamContentParser::Handle_SetRGBColor_Fill() {
-  REQUIRE_PARAMS(3);
+  if (m_ParamCount != 3)
+    return;
+
   FX_FLOAT values[3];
   for (int i = 0; i < 3; i++) {
     values[i] = GetNumber(2 - i);
@@ -979,7 +981,9 @@ void CPDF_StreamContentParser::Handle_SetRGBColor_Fill() {
   m_pCurStates->m_ColorState.SetFillColor(pCS, values, 3);
 }
 void CPDF_StreamContentParser::Handle_SetRGBColor_Stroke() {
-  REQUIRE_PARAMS(3);
+  if (m_ParamCount != 3)
+    return;
+
   FX_FLOAT values[3];
   for (int i = 0; i < 3; i++) {
     values[i] = GetNumber(2 - i);
@@ -1341,7 +1345,7 @@ void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
           FXSYS_Mul(pArray->GetNumber(i),
                     m_pCurStates->m_TextState.GetFontSize()) /
           1000;
-    };
+    }
     return;
   }
   CFX_ByteString* pStrs = new CFX_ByteString[nsegs];

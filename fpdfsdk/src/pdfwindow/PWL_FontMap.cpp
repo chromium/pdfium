@@ -9,7 +9,26 @@
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
 
-#define DEFAULT_FONT_NAME "Helvetica"
+namespace {
+
+const char kDefaultFontName[] = "Helvetica";
+
+const char* const g_sDEStandardFontName[] = {"Courier",
+                                             "Courier-Bold",
+                                             "Courier-BoldOblique",
+                                             "Courier-Oblique",
+                                             "Helvetica",
+                                             "Helvetica-Bold",
+                                             "Helvetica-BoldOblique",
+                                             "Helvetica-Oblique",
+                                             "Times-Roman",
+                                             "Times-Bold",
+                                             "Times-Italic",
+                                             "Times-BoldItalic",
+                                             "Symbol",
+                                             "ZapfDingbats"};
+
+}  // namespace
 
 CPWL_FontMap::CPWL_FontMap(IFX_SystemHandler* pSystemHandler)
     : m_pPDFDoc(NULL), m_pSystemHandler(pSystemHandler) {
@@ -151,34 +170,11 @@ void CPWL_FontMap::Empty() {
 }
 
 void CPWL_FontMap::Initialize() {
-  GetFontIndex(DEFAULT_FONT_NAME, ANSI_CHARSET, FALSE);
+  GetFontIndex(kDefaultFontName, ANSI_CHARSET, FALSE);
 }
 
-/*
-List of currently supported standard fonts:
-Courier, Courier-Bold, Courier-BoldOblique, Courier-Oblique
-Helvetica, Helvetica-Bold, Helvetica-BoldOblique, Helvetica-Oblique
-Times-Roman, Times-Bold, Times-Italic, Times-BoldItalic
-Symbol, ZapfDingbats
-*/
-
-const char* g_sDEStandardFontName[] = {"Courier",
-                                       "Courier-Bold",
-                                       "Courier-BoldOblique",
-                                       "Courier-Oblique",
-                                       "Helvetica",
-                                       "Helvetica-Bold",
-                                       "Helvetica-BoldOblique",
-                                       "Helvetica-Oblique",
-                                       "Times-Roman",
-                                       "Times-Bold",
-                                       "Times-Italic",
-                                       "Times-BoldItalic",
-                                       "Symbol",
-                                       "ZapfDingbats"};
-
 FX_BOOL CPWL_FontMap::IsStandardFont(const CFX_ByteString& sFontName) {
-  for (int32_t i = 0; i < 14; i++) {
+  for (int32_t i = 0; i < FX_ArraySize(g_sDEStandardFontName); ++i) {
     if (sFontName == g_sDEStandardFontName[i])
       return TRUE;
   }

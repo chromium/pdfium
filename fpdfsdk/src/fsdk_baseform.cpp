@@ -1551,66 +1551,6 @@ FX_BOOL CPDFSDK_InterForm::IsCalculateEnabled() const {
   return m_bCalculate;
 }
 
-#ifdef _WIN32
-CPDF_Stream* CPDFSDK_InterForm::LoadImageFromFile(const CFX_WideString& sFile) {
-  CPDF_Document* pDocument = m_pDocument->GetPDFDocument();
-  CPDF_Stream* pRetStream = NULL;
-
-  if (CFX_DIBitmap* pBmp = CFX_WindowsDIB::LoadFromFile(sFile.c_str())) {
-    int nWidth = pBmp->GetWidth();
-    int nHeight = pBmp->GetHeight();
-
-    CPDF_Image Image(pDocument);
-    Image.SetImage(pBmp, FALSE);
-    CPDF_Stream* pImageStream = Image.GetStream();
-    if (pImageStream) {
-      if (pImageStream->GetObjNum() == 0)
-        pDocument->AddIndirectObject(pImageStream);
-
-      CPDF_Dictionary* pStreamDict = new CPDF_Dictionary();
-      pStreamDict->SetAtName("Subtype", "Form");
-      pStreamDict->SetAtName("Name", "IMG");
-      CPDF_Array* pMatrix = new CPDF_Array();
-      pStreamDict->SetAt("Matrix", pMatrix);
-      pMatrix->AddInteger(1);
-      pMatrix->AddInteger(0);
-      pMatrix->AddInteger(0);
-      pMatrix->AddInteger(1);
-      pMatrix->AddInteger(-nWidth / 2);
-      pMatrix->AddInteger(-nHeight / 2);
-      CPDF_Dictionary* pResource = new CPDF_Dictionary();
-      pStreamDict->SetAt("Resources", pResource);
-      CPDF_Dictionary* pXObject = new CPDF_Dictionary();
-      pResource->SetAt("XObject", pXObject);
-      pXObject->SetAtReference("Img", pDocument, pImageStream);
-      CPDF_Array* pProcSet = new CPDF_Array();
-      pResource->SetAt("ProcSet", pProcSet);
-      pProcSet->AddName("PDF");
-      pProcSet->AddName("ImageC");
-      pStreamDict->SetAtName("Type", "XObject");
-      CPDF_Array* pBBox = new CPDF_Array();
-      pStreamDict->SetAt("BBox", pBBox);
-      pBBox->AddInteger(0);
-      pBBox->AddInteger(0);
-      pBBox->AddInteger(nWidth);
-      pBBox->AddInteger(nHeight);
-      pStreamDict->SetAtInteger("FormType", 1);
-
-      pRetStream = new CPDF_Stream(NULL, 0, NULL);
-      CFX_ByteString csStream;
-      csStream.Format("q\n%d 0 0 %d 0 0 cm\n/Img Do\nQ", nWidth, nHeight);
-      pRetStream->InitStream((uint8_t*)csStream.c_str(), csStream.GetLength(),
-                             pStreamDict);
-      pDocument->AddIndirectObject(pRetStream);
-    }
-
-    delete pBmp;
-  }
-
-  return pRetStream;
-}
-#endif
-
 void CPDFSDK_InterForm::OnCalculate(CPDF_FormField* pFormField) {
   CPDFDoc_Environment* pEnv = m_pDocument->GetEnv();
   ASSERT(pEnv);

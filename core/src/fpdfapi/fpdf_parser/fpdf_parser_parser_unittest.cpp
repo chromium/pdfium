@@ -20,18 +20,6 @@ bool CompareArray(const CFX_ArrayTemplate<TYPE>& array1,
       return false;
   return true;
 }
-template bool CompareArray<uint8_t>(const CFX_ByteArray&,
-                                    const uint8_t*,
-                                    size_t);
-template bool CompareArray<FX_WORD>(const CFX_WordArray&,
-                                    const FX_WORD*,
-                                    size_t);
-template bool CompareArray<FX_DWORD>(const CFX_DWordArray&,
-                                     const FX_DWORD*,
-                                     size_t);
-template bool CompareArray<FX_FILESIZE>(const CFX_FileSizeArray&,
-                                        const FX_FILESIZE*,
-                                        size_t);
 
 // Provide a way to read test data from a buffer instead of a file.
 class CFX_TestBufferRead : public IFX_FileRead {

@@ -360,13 +360,15 @@ FX_BOOL CPDF_Parser::LoadAllCrossRefV4(FX_FILESIZE xrefpos) {
   if (!m_pTrailer) {
     return FALSE;
   }
+
   int32_t xrefsize = GetDirectInteger(m_pTrailer, "Size");
   if (xrefsize <= 0 || xrefsize > kMaxXRefSize) {
     return FALSE;
   }
   m_ObjectInfo[0].pos = 0;
   m_V5Type.SetSize(xrefsize);
-  CFX_FileSizeArray CrossRefList, XRefStreamList;
+  CFX_FileSizeArray CrossRefList;
+  CFX_FileSizeArray XRefStreamList;
   CrossRefList.Add(xrefpos);
   XRefStreamList.Add(GetDirectInteger(m_pTrailer, "XRefStm"));
 
@@ -1416,9 +1418,8 @@ CPDF_Object* CPDF_Parser::ParseIndirectObjectAt(CPDF_IndirectObjects* pObjList,
   }
   m_Syntax.RestorePos(SavedPos);
   if (pObj) {
-    if (!objnum) {
+    if (!objnum)
       pObj->m_ObjNum = parser_objnum;
-    }
     pObj->m_GenNum = parser_gennum;
   }
   return pObj;
@@ -1582,8 +1583,9 @@ FX_DWORD CPDF_Parser::StartAsynParse(IFX_FileRead* pFileAccess,
   if (bLoadV4) {
     m_pTrailer = LoadTrailerV4();
     if (!m_pTrailer) {
-      return FALSE;
+      return PDFPARSE_ERROR_SUCCESS;
     }
+
     int32_t xrefsize = GetDirectInteger(m_pTrailer, "Size");
     if (xrefsize > 0) {
       m_ObjectInfo[0].pos = 0;
@@ -2759,7 +2761,6 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
   FX_BOOL LoadAllXref(IFX_DownloadHints* pHints);
   FX_BOOL LoadAllFile(IFX_DownloadHints* pHints);
   int32_t CheckLinearizedData(IFX_DownloadHints* pHints);
-  FX_BOOL CheckFileResources(IFX_DownloadHints* pHints);
   FX_BOOL CheckPageAnnots(int iPage, IFX_DownloadHints* pHints);
 
   FX_BOOL CheckLinearizedFirstPage(int iPage, IFX_DownloadHints* pHints);
@@ -4296,7 +4297,7 @@ int CPDF_DataAvail::CheckLinearizedData(IFX_DownloadHints* pHints) {
       pHints->AddSegment(m_dwLastXRefOffset, data_size.ValueOrDie());
       return DataNotAvailable;
     }
-    FX_DWORD dwRet = (m_pDocument->GetParser())->LoadLinearizedMainXRefTable();
+    FX_DWORD dwRet = m_pDocument->GetParser()->LoadLinearizedMainXRefTable();
     m_bMainXRefLoadTried = TRUE;
     if (dwRet != PDFPARSE_ERROR_SUCCESS) {
       return DataError;
@@ -4929,6 +4930,7 @@ int32_t CPDF_HintTables::CheckPage(int index, IFX_DownloadHints* pHints) {
   }
   return IPDF_DataAvail::DataAvailable;
 }
+
 FX_BOOL CPDF_HintTables::LoadHintStream(CPDF_Stream* pHintStream) {
   if (!pHintStream || !m_pLinearizedDict)
     return FALSE;
@@ -4954,6 +4956,7 @@ FX_BOOL CPDF_HintTables::LoadHintStream(CPDF_Stream* pHintStream) {
          ReadSharedObjHintTable(&bs, pdfium::base::checked_cast<FX_DWORD>(
                                          shared_hint_table_offset));
 }
+
 int CPDF_HintTables::ReadPrimaryHintStreamOffset() const {
   if (!m_pLinearizedDict)
     return -1;

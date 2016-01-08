@@ -196,10 +196,6 @@ class CPDFSDK_InterForm : public CPDF_FormNotify {
   void EnableCalculate(FX_BOOL bEnabled);
   FX_BOOL IsCalculateEnabled() const;
 
-#ifdef _WIN32
-  CPDF_Stream* LoadImageFromFile(const CFX_WideString& sFile);
-#endif
-
   void OnKeyStrokeCommit(CPDF_FormField* pFormField,
                          CFX_WideString& csValue,
                          FX_BOOL& bRC);

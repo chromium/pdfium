@@ -324,9 +324,7 @@ FX_BOOL PDF_DataDecode(const uint8_t* src_buf,
                        CFX_ByteString& ImageEncoding,
                        CPDF_Dictionary*& pImageParms,
                        FX_DWORD last_estimated_size,
-                       FX_BOOL bImageAcc)
-
-{
+                       FX_BOOL bImageAcc) {
   CPDF_Object* pDecoder = pDict ? pDict->GetElementValue("Filter") : nullptr;
   if (!pDecoder || (!pDecoder->IsArray() && !pDecoder->IsName()))
     return FALSE;
