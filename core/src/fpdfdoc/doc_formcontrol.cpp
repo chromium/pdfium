@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "core/include/fpdfdoc/fpdf_doc.h"
 
 CPDF_FormControl::CPDF_FormControl(CPDF_FormField* pField,
@@ -358,9 +360,9 @@ FX_ARGB CPDF_ApSettings::GetColor(int& iColorType,
     FX_FLOAT m = pEntry->GetNumber(1);
     FX_FLOAT y = pEntry->GetNumber(2);
     FX_FLOAT k = pEntry->GetNumber(3);
-    FX_FLOAT r = 1.0f - FX_MIN(1.0f, c + k);
-    FX_FLOAT g = 1.0f - FX_MIN(1.0f, m + k);
-    FX_FLOAT b = 1.0f - FX_MIN(1.0f, y + k);
+    FX_FLOAT r = 1.0f - std::min(1.0f, c + k);
+    FX_FLOAT g = 1.0f - std::min(1.0f, m + k);
+    FX_FLOAT b = 1.0f - std::min(1.0f, y + k);
     color = ArgbEncode(255, (int)(r * 255), (int)(g * 255), (int)(b * 255));
   }
   return color;

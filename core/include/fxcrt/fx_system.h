@@ -110,7 +110,6 @@ static_assert(FALSE == false, "false_needs_to_be_false");
 #endif
 #endif
 
-#define FX_MAX(a, b) (((a) > (b)) ? (a) : (b))
 #define FX_MIN(a, b) (((a) < (b)) ? (a) : (b))
 #define FX_PI 3.1415926535897932384626433832795f
 

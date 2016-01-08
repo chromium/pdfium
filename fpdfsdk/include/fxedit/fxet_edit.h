@@ -8,19 +8,10 @@
 #define FPDFSDK_INCLUDE_FXEDIT_FXET_EDIT_H_
 
 #include "core/include/fpdfdoc/fpdf_vt.h"
-#include "fx_edit.h"
+#include "fpdfsdk/include/fxedit/fx_edit.h"
 
-class CFX_Edit_Page;
-struct CFX_Edit_LineRect;
-class CFX_Edit_LineRectArray;
-class CFX_Edit_RectArray;
-class CFX_Edit_Refresh;
-class CFX_Edit_Select;
 class CFX_Edit;
 class CFX_Edit_Iterator;
-class CFX_Edit_Refresh;
-class CFX_Edit_UndoItem;
-class CFX_Edit_Undo;
 class CFX_Edit_Provider;
 
 #define FX_EDIT_IsFloatZero(f) (f < 0.0001 && f > -0.0001)
@@ -28,18 +19,6 @@ class CFX_Edit_Provider;
 #define FX_EDIT_IsFloatBigger(fa, fb) (fa > fb && !FX_EDIT_IsFloatEqual(fa, fb))
 #define FX_EDIT_IsFloatSmaller(fa, fb) \
   (fa < fb && !FX_EDIT_IsFloatEqual(fa, fb))
-
-template <class T>
-T FX_EDIT_MIN(const T& i, const T& j) {
-  return ((i < j) ? i : j);
-}
-template <class T>
-T FX_EDIT_MAX(const T& i, const T& j) {
-  return ((i > j) ? i : j);
-}
-
-#define FX_EDIT_PI 3.14159265358979f
-#define FX_EDIT_ITALIC_ANGEL 10 * FX_EDIT_PI / 180.0f
 
 /* ------------------------- CFX_Edit_Refresh ---------------------------- */
 
@@ -195,7 +174,7 @@ class CFX_Edit_Select {
     Set(begin, end);
   }
 
-  CFX_Edit_Select(const CPVT_WordRange& range) {
+  explicit CFX_Edit_Select(const CPVT_WordRange& range) {
     Set(range.BeginPos, range.EndPos);
   }
 
@@ -230,7 +209,7 @@ class CFX_Edit_Select {
 
 class CFX_Edit_Undo {
  public:
-  CFX_Edit_Undo(int32_t nBufsize = 10000);
+  explicit CFX_Edit_Undo(int32_t nBufsize);
   virtual ~CFX_Edit_Undo();
 
   void Undo();
@@ -285,7 +264,7 @@ class CFX_Edit_UndoItem : public IFX_Edit_UndoItem {
 
 class CFX_Edit_GroupUndoItem : public IFX_Edit_UndoItem {
  public:
-  CFX_Edit_GroupUndoItem(const CFX_WideString& sTitle);
+  explicit CFX_Edit_GroupUndoItem(const CFX_WideString& sTitle);
   ~CFX_Edit_GroupUndoItem() override;
 
   void Undo() override;
@@ -542,7 +521,7 @@ class CFX_Edit : public IFX_Edit {
   friend class CFXEU_InsertText;
 
  public:
-  CFX_Edit(IPDF_VariableText* pVT);
+  explicit CFX_Edit(IPDF_VariableText* pVT);
   ~CFX_Edit() override;
 
   // IFX_Edit
@@ -813,7 +792,7 @@ class CFX_Edit_Iterator : public IFX_Edit_Iterator {
 
 class CFX_Edit_Provider : public IPDF_VariableText_Provider {
  public:
-  CFX_Edit_Provider(IFX_Edit_FontMap* pFontMap);
+  explicit CFX_Edit_Provider(IFX_Edit_FontMap* pFontMap);
   ~CFX_Edit_Provider() override;
 
   IFX_Edit_FontMap* GetFontMap();

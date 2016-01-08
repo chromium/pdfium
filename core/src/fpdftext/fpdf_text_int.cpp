@@ -161,9 +161,9 @@ FX_BOOL CPDF_TextPage::ParseTextPage() {
       PAGECHAR_INFO charinfo = *(PAGECHAR_INFO*)m_charList.GetAt(i);
       if (charinfo.m_Flag == FPDFTEXT_CHAR_GENERATED) {
         bNormal = TRUE;
-      } else if (charinfo.m_Unicode == 0 || IsControlChar(charinfo))
+      } else if (charinfo.m_Unicode == 0 || IsControlChar(charinfo)) {
         bNormal = FALSE;
-      else {
+      } else {
         bNormal = TRUE;
       }
       if (bNormal) {
@@ -1807,10 +1807,10 @@ FX_BOOL CPDF_TextPage::IsHyphen(FX_WCHAR curChar) {
       }
       preChar = (PAGECHAR_INFO)m_charList[size - 1];
     }
-    if (FPDFTEXT_CHAR_PIECE == preChar.m_Flag)
-      if (0xAD == preChar.m_Unicode || 0x2D == preChar.m_Unicode) {
-        return TRUE;
-      }
+    if (FPDFTEXT_CHAR_PIECE == preChar.m_Flag &&
+        (0xAD == preChar.m_Unicode || 0x2D == preChar.m_Unicode)) {
+      return TRUE;
+    }
   }
   return FALSE;
 }
@@ -1920,17 +1920,14 @@ int CPDF_TextPage::ProcessInsertObject(const CPDF_TextObject* pObj,
       }
     }
   }
-  if (bNewline) {
-    if (IsHyphen(curChar)) {
-      return 3;
-    }
-    return 2;
-  }
+  if (bNewline)
+    return IsHyphen(curChar) ? 3 : 2;
+
   int32_t nChars = pObj->CountChars();
-  if (nChars == 1 && (0x2D == curChar || 0xAD == curChar))
-    if (IsHyphen(curChar)) {
-      return 3;
-    }
+  if (nChars == 1 && (0x2D == curChar || 0xAD == curChar) &&
+      IsHyphen(curChar)) {
+    return 3;
+  }
   CFX_WideString PrevStr =
       m_pPreTextObj->GetFont()->UnicodeFromCharCode(PrevItem.m_CharCode);
   FX_WCHAR preChar = PrevStr.GetAt(PrevStr.GetLength() - 1);
@@ -1956,7 +1953,7 @@ int CPDF_TextPage::ProcessInsertObject(const CPDF_TextObject* pObj,
     threshold *= 1.5;
   }
   if (FXSYS_fabs(last_pos + last_width - x) > threshold && curChar != L' ' &&
-      preChar != L' ')
+      preChar != L' ') {
     if (curChar != L' ' && preChar != L' ') {
       if ((x - last_pos - last_width) > threshold ||
           (last_pos - x - last_width) > threshold) {
@@ -1970,6 +1967,7 @@ int CPDF_TextPage::ProcessInsertObject(const CPDF_TextObject* pObj,
         return 1;
       }
     }
+  }
   return 0;
 }
 FX_BOOL CPDF_TextPage::IsSameTextObject(CPDF_TextObject* pTextObj1,
@@ -2023,8 +2021,8 @@ FX_BOOL CPDF_TextPage::IsSameTextObject(CPDF_TextObject* pTextObj1,
           GetCharWidth(itemPer.m_CharCode, pTextObj2->GetFont()) *
               pTextObj2->GetFontSize() / 1000 * 0.9 ||
       FXSYS_fabs(pTextObj1->GetPosY() - pTextObj2->GetPosY()) >
-          FX_MAX(FX_MAX(rcPreObj.Height(), rcPreObj.Width()),
-                 pTextObj2->GetFontSize()) /
+          std::max(std::max(rcPreObj.Height(), rcPreObj.Width()),
+                   pTextObj2->GetFontSize()) /
               8) {
     return FALSE;
   }

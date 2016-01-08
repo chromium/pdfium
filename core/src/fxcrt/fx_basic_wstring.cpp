@@ -5,6 +5,8 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include <stddef.h>  // For offsetof().
+
+#include <algorithm>
 #include <cctype>
 
 #include "core/include/fxcrt/fx_basic.h"
@@ -639,7 +641,7 @@ FX_STRSIZE CFX_WideString::Replace(const FX_WCHAR* lpszOld,
       pOldData->Release();
     }
     lpszStart = m_pData->m_String;
-    lpszEnd = m_pData->m_String + FX_MAX(m_pData->m_nDataLength, nNewLength);
+    lpszEnd = m_pData->m_String + std::max(m_pData->m_nDataLength, nNewLength);
     {
       while ((lpszTarget = (FX_WCHAR*)FXSYS_wcsstr(lpszStart, lpszOld)) !=
                  NULL &&
@@ -758,9 +760,7 @@ void CFX_WideString::FormatV(const FX_WCHAR* lpszFormat, va_list argList) {
         nMaxLen += 2;
       } else if (*lpsz == '*') {
         nWidth = va_arg(argList, int);
-      } else if (*lpsz == '-' || *lpsz == '+' || *lpsz == '0' || *lpsz == ' ')
-        ;
-      else {
+      } else if (*lpsz != '-' && *lpsz != '+' && *lpsz != '0' && *lpsz != ' ') {
         break;
       }
     }

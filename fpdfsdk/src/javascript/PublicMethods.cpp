@@ -6,6 +6,8 @@
 
 #include "PublicMethods.h"
 
+#include <algorithm>
+
 #include "Field.h"
 #include "JS_Context.h"
 #include "JS_Define.h"
@@ -142,10 +144,10 @@ double CJS_PublicMethods::AF_Simple(const FX_WCHAR* sFuction,
     return dValue1 * dValue2;
   }
   if (FXSYS_wcsicmp(sFuction, L"MIN") == 0) {
-    return FX_MIN(dValue1, dValue2);
+    return std::min(dValue1, dValue2);
   }
   if (FXSYS_wcsicmp(sFuction, L"MAX") == 0) {
-    return FX_MAX(dValue1, dValue2);
+    return std::max(dValue1, dValue2);
   }
   return dValue1;
 }

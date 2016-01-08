@@ -7,6 +7,8 @@
 #ifndef CORE_INCLUDE_FXCRT_FX_BASIC_H_
 #define CORE_INCLUDE_FXCRT_FX_BASIC_H_
 
+#include <algorithm>
+
 #include "fx_memory.h"
 #include "fx_stream.h"
 #include "fx_string.h"
@@ -991,7 +993,7 @@ class CFX_SortListArray {
       return;
     }
     while (nCount > 0) {
-      int32_t temp_count = FX_MIN(nCount, FX_DATALIST_LENGTH);
+      int32_t temp_count = std::min(nCount, FX_DATALIST_LENGTH);
       DataList list;
       list.data = FX_Alloc2D(uint8_t, temp_count, unit);
       list.start = nStart;

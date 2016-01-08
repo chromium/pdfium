@@ -4,8 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/pdfwindow/PWL_Icon.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Utils.h"
+
+#include <algorithm>
+
+#include "fpdfsdk/include/pdfwindow/PWL_Icon.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
 
 #define IsFloatZero(f) ((f) < 0.0001 && (f) > -0.0001)
@@ -1256,7 +1259,7 @@ void CPWL_Utils::ConvertCMYK2GRAY(FX_FLOAT dC,
   if (dC < 0 || dC > 1 || dM < 0 || dM > 1 || dY < 0 || dY > 1 || dK < 0 ||
       dK > 1)
     return;
-  dGray = 1.0f - FX_MIN(1.0f, 0.3f * dC + 0.59f * dM + 0.11f * dY + dK);
+  dGray = 1.0f - std::min(1.0f, 0.3f * dC + 0.59f * dM + 0.11f * dY + dK);
 }
 
 void CPWL_Utils::ConvertGRAY2CMYK(FX_FLOAT dGray,
@@ -1302,9 +1305,9 @@ void CPWL_Utils::ConvertCMYK2RGB(FX_FLOAT dC,
   if (dC < 0 || dC > 1 || dM < 0 || dM > 1 || dY < 0 || dY > 1 || dK < 0 ||
       dK > 1)
     return;
-  dR = 1.0f - FX_MIN(1.0f, dC + dK);
-  dG = 1.0f - FX_MIN(1.0f, dM + dK);
-  dB = 1.0f - FX_MIN(1.0f, dY + dK);
+  dR = 1.0f - std::min(1.0f, dC + dK);
+  dG = 1.0f - std::min(1.0f, dM + dK);
+  dB = 1.0f - std::min(1.0f, dY + dK);
 }
 
 void CPWL_Utils::ConvertRGB2CMYK(FX_FLOAT dR,
@@ -1320,7 +1323,7 @@ void CPWL_Utils::ConvertRGB2CMYK(FX_FLOAT dR,
   dC = 1.0f - dR;
   dM = 1.0f - dG;
   dY = 1.0f - dB;
-  dK = FX_MIN(dC, FX_MIN(dM, dY));
+  dK = std::min(dC, std::min(dM, dY));
 }
 
 void CPWL_Utils::PWLColorToARGB(const CPWL_Color& color,

@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "core/include/fxcrt/fx_ext.h"
 #include "fpdfsdk/include/fsdk_baseannot.h"
 #include "fpdfsdk/include/fsdk_define.h"
@@ -815,9 +817,9 @@ FX_BOOL CPDFSDK_BAAnnot::GetColor(FX_COLORREF& color) const {
       FX_FLOAT y = pEntry->GetNumber(2);
       FX_FLOAT k = pEntry->GetNumber(3);
 
-      FX_FLOAT r = 1.0f - FX_MIN(1.0f, c + k);
-      FX_FLOAT g = 1.0f - FX_MIN(1.0f, m + k);
-      FX_FLOAT b = 1.0f - FX_MIN(1.0f, y + k);
+      FX_FLOAT r = 1.0f - std::min(1.0f, c + k);
+      FX_FLOAT g = 1.0f - std::min(1.0f, m + k);
+      FX_FLOAT b = 1.0f - std::min(1.0f, y + k);
 
       color = FXSYS_RGB((int)(r * 255), (int)(g * 255), (int)(b * 255));
 

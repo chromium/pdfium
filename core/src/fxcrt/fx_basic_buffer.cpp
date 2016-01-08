@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "core/include/fxcrt/fx_basic.h"
 
 FX_STRSIZE FX_ftoa(FX_FLOAT f, FX_CHAR* buf);
@@ -273,7 +275,7 @@ int32_t IFX_BufferArchive::AppendBlock(const void* pBuf, size_t size) {
   uint8_t* buffer = (uint8_t*)pBuf;
   FX_STRSIZE temp_size = (FX_STRSIZE)size;
   while (temp_size > 0) {
-    FX_STRSIZE buf_size = FX_MIN(m_BufSize - m_Length, (FX_STRSIZE)temp_size);
+    FX_STRSIZE buf_size = std::min(m_BufSize - m_Length, (FX_STRSIZE)temp_size);
     FXSYS_memcpy(m_pBuffer + m_Length, buffer, buf_size);
     m_Length += buf_size;
     if (m_Length == m_BufSize) {

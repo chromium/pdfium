@@ -14,6 +14,59 @@
 #include <ctime>
 #endif
 
+CFX_CRTFileStream::CFX_CRTFileStream(IFXCRT_FileAccess* pFA)
+    : m_pFile(pFA), m_dwCount(1) {}
+
+CFX_CRTFileStream::~CFX_CRTFileStream() {
+  if (m_pFile) {
+    m_pFile->Release();
+  }
+}
+
+IFX_FileStream* CFX_CRTFileStream::Retain() {
+  m_dwCount++;
+  return this;
+}
+
+void CFX_CRTFileStream::Release() {
+  FX_DWORD nCount = --m_dwCount;
+  if (!nCount) {
+    delete this;
+  }
+}
+
+FX_FILESIZE CFX_CRTFileStream::GetSize() {
+  return m_pFile->GetSize();
+}
+
+FX_BOOL CFX_CRTFileStream::IsEOF() {
+  return GetPosition() >= GetSize();
+}
+
+FX_FILESIZE CFX_CRTFileStream::GetPosition() {
+  return m_pFile->GetPosition();
+}
+
+FX_BOOL CFX_CRTFileStream::ReadBlock(void* buffer,
+                                     FX_FILESIZE offset,
+                                     size_t size) {
+  return (FX_BOOL)m_pFile->ReadPos(buffer, size, offset);
+}
+
+size_t CFX_CRTFileStream::ReadBlock(void* buffer, size_t size) {
+  return m_pFile->Read(buffer, size);
+}
+
+FX_BOOL CFX_CRTFileStream::WriteBlock(const void* buffer,
+                                      FX_FILESIZE offset,
+                                      size_t size) {
+  return (FX_BOOL)m_pFile->WritePos(buffer, size, offset);
+}
+
+FX_BOOL CFX_CRTFileStream::Flush() {
+  return m_pFile->Flush();
+}
+
 IFX_FileStream* FX_CreateFileStream(const FX_CHAR* filename, FX_DWORD dwModes) {
   IFXCRT_FileAccess* pFA = FXCRT_FileAccess_Create();
   if (!pFA) {

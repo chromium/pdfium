@@ -8,6 +8,8 @@
 
 #include <limits.h>
 
+#include <algorithm>
+
 #include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fxcodec/fx_codec.h"
@@ -39,6 +41,24 @@ int ComponentsForFamily(int family) {
   if (family == PDFCS_DEVICEGRAY)
     return 1;
   return 4;
+}
+
+void ReverseRGB(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels) {
+  if (pDestBuf == pSrcBuf) {
+    for (int i = 0; i < pixels; i++) {
+      uint8_t temp = pDestBuf[2];
+      pDestBuf[2] = pDestBuf[0];
+      pDestBuf[0] = temp;
+      pDestBuf += 3;
+    }
+  } else {
+    for (int i = 0; i < pixels; i++) {
+      *pDestBuf++ = pSrcBuf[2];
+      *pDestBuf++ = pSrcBuf[1];
+      *pDestBuf++ = pSrcBuf[0];
+      pSrcBuf += 3;
+    }
+  }
 }
 
 }  // namespace
@@ -82,9 +102,9 @@ FX_BOOL CPDF_DeviceCS::GetRGB(FX_FLOAT* pBuf,
       AdobeCMYK_to_sRGB(pBuf[0], pBuf[1], pBuf[2], pBuf[3], R, G, B);
     } else {
       FX_FLOAT k = pBuf[3];
-      R = 1.0f - FX_MIN(1.0f, pBuf[0] + k);
-      G = 1.0f - FX_MIN(1.0f, pBuf[1] + k);
-      B = 1.0f - FX_MIN(1.0f, pBuf[2] + k);
+      R = 1.0f - std::min(1.0f, pBuf[0] + k);
+      G = 1.0f - std::min(1.0f, pBuf[1] + k);
+      B = 1.0f - std::min(1.0f, pBuf[2] + k);
     }
   } else {
     ASSERT(m_Family == PDFCS_PATTERN);
@@ -148,22 +168,7 @@ FX_BOOL CPDF_DeviceCS::v_SetCMYK(FX_FLOAT* pBuf,
   }
   return FALSE;
 }
-static void ReverseRGB(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels) {
-  if (pDestBuf == pSrcBuf)
-    for (int i = 0; i < pixels; i++) {
-      uint8_t temp = pDestBuf[2];
-      pDestBuf[2] = pDestBuf[0];
-      pDestBuf[0] = temp;
-      pDestBuf += 3;
-    }
-  else
-    for (int i = 0; i < pixels; i++) {
-      *pDestBuf++ = pSrcBuf[2];
-      *pDestBuf++ = pSrcBuf[1];
-      *pDestBuf++ = pSrcBuf[0];
-      pSrcBuf += 3;
-    }
-}
+
 void CPDF_DeviceCS::TranslateImageLine(uint8_t* pDestBuf,
                                        const uint8_t* pSrcBuf,
                                        int pixels,
@@ -196,9 +201,9 @@ void CPDF_DeviceCS::TranslateImageLine(uint8_t* pDestBuf,
                            pDestBuf[2], pDestBuf[1], pDestBuf[0]);
       } else {
         uint8_t k = pSrcBuf[3];
-        pDestBuf[2] = 255 - FX_MIN(255, pSrcBuf[0] + k);
-        pDestBuf[1] = 255 - FX_MIN(255, pSrcBuf[1] + k);
-        pDestBuf[0] = 255 - FX_MIN(255, pSrcBuf[2] + k);
+        pDestBuf[2] = 255 - std::min(255, pSrcBuf[0] + k);
+        pDestBuf[1] = 255 - std::min(255, pSrcBuf[1] + k);
+        pDestBuf[0] = 255 - std::min(255, pSrcBuf[2] + k);
       }
       pSrcBuf += 4;
       pDestBuf += 3;
@@ -1012,11 +1017,13 @@ CPDF_ColorSpace* CPDF_PatternCS::GetBaseCS() const {
 }
 class CPDF_SeparationCS : public CPDF_ColorSpace {
  public:
-  CPDF_SeparationCS(CPDF_Document* pDoc)
+  explicit CPDF_SeparationCS(CPDF_Document* pDoc)
       : CPDF_ColorSpace(pDoc, PDFCS_SEPARATION, 1),
         m_pAltCS(nullptr),
         m_pFunc(nullptr) {}
   ~CPDF_SeparationCS() override;
+
+  // CPDF_ColorSpace:
   void GetDefaultValue(int iComponent,
                        FX_FLOAT& value,
                        FX_FLOAT& min,
@@ -1109,11 +1116,13 @@ void CPDF_SeparationCS::EnableStdConversion(FX_BOOL bEnabled) {
 }
 class CPDF_DeviceNCS : public CPDF_ColorSpace {
  public:
-  CPDF_DeviceNCS(CPDF_Document* pDoc)
+  explicit CPDF_DeviceNCS(CPDF_Document* pDoc)
       : CPDF_ColorSpace(pDoc, PDFCS_DEVICEN, 0),
         m_pAltCS(nullptr),
         m_pFunc(nullptr) {}
   ~CPDF_DeviceNCS() override;
+
+  // CPDF_ColorSpace:
   void GetDefaultValue(int iComponent,
                        FX_FLOAT& value,
                        FX_FLOAT& min,
@@ -1183,10 +1192,11 @@ void CPDF_DeviceNCS::EnableStdConversion(FX_BOOL bEnabled) {
     m_pAltCS->EnableStdConversion(bEnabled);
   }
 }
+
 CPDF_ColorSpace* CPDF_ColorSpace::GetStockCS(int family) {
   return CPDF_ModuleMgr::Get()->GetPageModule()->GetStockCS(family);
-  ;
 }
+
 CPDF_ColorSpace* _CSFromName(const CFX_ByteString& name) {
   if (name == "DeviceRGB" || name == "RGB") {
     return CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB);

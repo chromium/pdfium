@@ -6,6 +6,8 @@
 
 #include "fpdfsdk/include/fxedit/fxet_edit.h"
 
+#include <algorithm>
+
 #include "core/include/fpdfapi/fpdf_resource.h"
 
 #define FX_EDIT_UNDO_MAXITEM 10000
@@ -176,8 +178,7 @@ void CFX_Edit_Refresh::Analyse(int32_t nAlignment) {
   CPDF_Rect rcResult;
   FX_FLOAT fWidthDiff;
 
-  int32_t szMax =
-      FX_EDIT_MAX(m_OldLineRects.GetSize(), m_NewLineRects.GetSize());
+  int32_t szMax = std::max(m_OldLineRects.GetSize(), m_NewLineRects.GetSize());
   int32_t i = 0;
 
   while (i < szMax) {
@@ -1726,7 +1727,7 @@ void CFX_Edit::SetContentChanged() {
 
 void CFX_Edit::SelectAll() {
   if (m_pVT->IsValid()) {
-    m_SelState = GetWholeWordRange();
+    m_SelState = CFX_Edit_Select(GetWholeWordRange());
     SetCaret(m_SelState.EndPos);
 
     ScrollToCaret();

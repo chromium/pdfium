@@ -6,6 +6,8 @@
 
 #include "public/fpdf_flatten.h"
 
+#include <algorithm>
+
 #include "fpdfsdk/include/fsdk_define.h"
 
 typedef CFX_ArrayTemplate<CPDF_Dictionary*> CPDF_ObjectArray;
@@ -300,8 +302,8 @@ void GetOffset(FX_FLOAT& fa,
   FX_FLOAT x4 = matrix.a * rcStream.right + matrix.c * rcStream.top + matrix.e;
   FX_FLOAT y4 = matrix.b * rcStream.right + matrix.d * rcStream.top + matrix.f;
 
-  FX_FLOAT left = FX_MIN(FX_MIN(x1, x2), FX_MIN(x3, x4));
-  FX_FLOAT bottom = FX_MIN(FX_MIN(y1, y2), FX_MIN(y3, y4));
+  FX_FLOAT left = std::min(std::min(x1, x2), std::min(x3, x4));
+  FX_FLOAT bottom = std::min(std::min(y1, y2), std::min(y3, y4));
 
   fa = (rcAnnot.right - rcAnnot.left) / fStreamWidth;
   fd = (rcAnnot.top - rcAnnot.bottom) / fStreamHeight;
