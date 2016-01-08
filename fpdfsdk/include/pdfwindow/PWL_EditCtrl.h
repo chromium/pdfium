@@ -117,7 +117,6 @@ class CPWL_EditCtrl : public CPWL_Wnd, public IFX_Edit_Notify {
   void SetFontSize(FX_FLOAT fFontSize) override;
   FX_FLOAT GetFontSize() const override;
   void SetCursor() override;
-  FX_BOOL IsModified() const override;
 
  protected:
   // IFX_Edit_Notify

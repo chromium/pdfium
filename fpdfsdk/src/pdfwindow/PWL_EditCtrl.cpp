@@ -383,10 +383,6 @@ void CPWL_EditCtrl::SetCaret(FX_BOOL bVisible,
   }
 }
 
-FX_BOOL CPWL_EditCtrl::IsModified() const {
-  return m_pEdit->IsModified();
-}
-
 CFX_WideString CPWL_EditCtrl::GetText() const {
   return m_pEdit->GetText();
 }

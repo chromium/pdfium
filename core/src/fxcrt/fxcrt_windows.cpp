@@ -9,20 +9,6 @@
 #include "core/include/fxcrt/fx_string.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-FX_BOOL FX_File_Exist(const CFX_ByteStringC& fileName) {
-  FX_DWORD dwAttri = ::GetFileAttributesA(fileName.GetCStr());
-  if (dwAttri == -1) {
-    return FALSE;
-  }
-  return (dwAttri & FILE_ATTRIBUTE_DIRECTORY) == 0;
-}
-FX_BOOL FX_File_Exist(const CFX_WideStringC& fileName) {
-  FX_DWORD dwAttri = ::GetFileAttributesW((LPCWSTR)fileName.GetPtr());
-  if (dwAttri == -1) {
-    return FALSE;
-  }
-  return (dwAttri & FILE_ATTRIBUTE_DIRECTORY) == 0;
-}
 IFXCRT_FileAccess* FXCRT_FileAccess_Create() {
   return new CFXCRT_FileAccess_Win64;
 }
@@ -182,29 +168,5 @@ FX_BOOL CFXCRT_FileAccess_Win64::Truncate(FX_FILESIZE szFile) {
     return FALSE;
   }
   return ::SetEndOfFile(m_hFile);
-}
-FX_BOOL FX_File_Delete(const CFX_ByteStringC& fileName) {
-  return ::DeleteFileA(fileName.GetCStr());
-}
-FX_BOOL FX_File_Delete(const CFX_WideStringC& fileName) {
-  return ::DeleteFileW((LPCWSTR)fileName.GetPtr());
-}
-FX_BOOL FX_File_Copy(const CFX_ByteStringC& fileNameSrc,
-                     const CFX_ByteStringC& fileNameDst) {
-  return ::CopyFileA(fileNameSrc.GetCStr(), fileNameDst.GetCStr(), FALSE);
-}
-FX_BOOL FX_File_Copy(const CFX_WideStringC& fileNameSrc,
-                     const CFX_WideStringC& fileNameDst) {
-  return ::CopyFileW((LPCWSTR)fileNameSrc.GetPtr(),
-                     (LPCWSTR)fileNameDst.GetPtr(), FALSE);
-}
-FX_BOOL FX_File_Move(const CFX_ByteStringC& fileNameSrc,
-                     const CFX_ByteStringC& fileNameDst) {
-  return ::MoveFileA(fileNameSrc.GetCStr(), fileNameDst.GetCStr());
-}
-FX_BOOL FX_File_Move(const CFX_WideStringC& fileNameSrc,
-                     const CFX_WideStringC& fileNameDst) {
-  return ::MoveFileW((LPCWSTR)fileNameSrc.GetPtr(),
-                     (LPCWSTR)fileNameDst.GetPtr());
 }
 #endif

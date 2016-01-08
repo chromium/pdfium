@@ -335,8 +335,6 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   virtual CPWL_Color GetBorderLeftTopColor(int32_t nBorderStyle) const;
   virtual CPWL_Color GetBorderRightBottomColor(int32_t nBorderStyle) const;
 
-  virtual FX_BOOL IsModified() const { return FALSE; }
-
   virtual void SetFontSize(FX_FLOAT fFontSize);
 
   void SetBackgroundColor(const CPWL_Color& color);

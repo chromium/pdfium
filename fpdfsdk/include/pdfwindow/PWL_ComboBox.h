@@ -65,7 +65,6 @@ class CPWL_ComboBox : public CPWL_Wnd {
   CPDF_Rect GetFocusRect() const override;
   void SetFocus() override;
   void KillFocus() override;
-  FX_BOOL IsModified() const override;
 
   void SetFillerNotify(IPWL_Filler_Notify* pNotify);
 
