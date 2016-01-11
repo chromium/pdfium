@@ -44,6 +44,7 @@ DLLEXPORT int STDCALL FPDFText_CountChars(FPDF_TEXTPAGE text_page) {
   IPDF_TextPage* textpage = (IPDF_TextPage*)text_page;
   return textpage->CountChars();
 }
+
 DLLEXPORT unsigned int STDCALL FPDFText_GetUnicode(FPDF_TEXTPAGE text_page,
                                                    int index) {
   if (!text_page)
@@ -54,9 +55,10 @@ DLLEXPORT unsigned int STDCALL FPDFText_GetUnicode(FPDF_TEXTPAGE text_page,
     return 0;
 
   FPDF_CHAR_INFO charinfo;
-  textpage->GetCharInfo(index, charinfo);
+  textpage->GetCharInfo(index, &charinfo);
   return charinfo.m_Unicode;
 }
+
 DLLEXPORT double STDCALL FPDFText_GetFontSize(FPDF_TEXTPAGE text_page,
                                               int index) {
   if (!text_page)
@@ -67,7 +69,7 @@ DLLEXPORT double STDCALL FPDFText_GetFontSize(FPDF_TEXTPAGE text_page,
     return 0;
 
   FPDF_CHAR_INFO charinfo;
-  textpage->GetCharInfo(index, charinfo);
+  textpage->GetCharInfo(index, &charinfo);
   return charinfo.m_FontSize;
 }
 
@@ -84,7 +86,7 @@ DLLEXPORT void STDCALL FPDFText_GetCharBox(FPDF_TEXTPAGE text_page,
   if (index < 0 || index >= textpage->CountChars())
     return;
   FPDF_CHAR_INFO charinfo;
-  textpage->GetCharInfo(index, charinfo);
+  textpage->GetCharInfo(index, &charinfo);
   *left = charinfo.m_CharBox.left;
   *right = charinfo.m_CharBox.right;
   *bottom = charinfo.m_CharBox.bottom;

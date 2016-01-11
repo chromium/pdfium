@@ -42,7 +42,8 @@ CFX_WideString PDF_GetFirstTextLine_Unicode(CPDF_Document* pDoc,
 #define CHAR_NORMAL 0
 #define CHAR_GENERATED 1
 #define CHAR_UNUNICODE 2
-typedef struct {
+
+struct FPDF_CHAR_INFO {
   FX_WCHAR m_Unicode;
   FX_WCHAR m_Charcode;
   int32_t m_Flag;
@@ -52,7 +53,8 @@ typedef struct {
   CFX_FloatRect m_CharBox;
   CPDF_TextObject* m_pTextObj;
   CFX_Matrix m_Matrix;
-} FPDF_CHAR_INFO;
+};
+
 typedef CFX_ArrayTemplate<CFX_FloatRect> CFX_RectArray;
 #define FPDFTEXT_LRTB 0
 #define FPDFTEXT_RLTB 1
@@ -92,7 +94,7 @@ class IPDF_TextPage {
 
   virtual int CountChars() const = 0;
 
-  virtual void GetCharInfo(int index, FPDF_CHAR_INFO& info) const = 0;
+  virtual void GetCharInfo(int index, FPDF_CHAR_INFO* info) const = 0;
 
   virtual void GetRectArray(int start,
                             int nCount,

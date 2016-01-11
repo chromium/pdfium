@@ -61,7 +61,7 @@ class CPDF_TextPage : public IPDF_TextPage {
   int CharIndexFromTextIndex(int TextIndex) const override;
   int TextIndexFromCharIndex(int CharIndex) const override;
   int CountChars() const override;
-  void GetCharInfo(int index, FPDF_CHAR_INFO& info) const override;
+  void GetCharInfo(int index, FPDF_CHAR_INFO* info) const override;
   void GetRectArray(int start,
                     int nCount,
                     CFX_RectArray& rectArray) const override;
