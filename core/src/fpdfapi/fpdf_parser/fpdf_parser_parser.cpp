@@ -2163,12 +2163,13 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList,
       pDict->SetAt(keyNoSlash, pObj);
     }
 
-    if (IsSignatureDict(pDict.get())) {
-      FX_FILESIZE dwSavePos = m_Pos;
+    // Only when this is a signature dictionary and has contents, we reset the
+    // contents to the un-decrypted form.
+    if (IsSignatureDict(pDict.get()) && dwSignValuePos) {
+      CFX_AutoRestorer<FX_FILESIZE> save_pos(&m_Pos);
       m_Pos = dwSignValuePos;
       CPDF_Object* pObj = GetObject(pObjList, objnum, gennum, nullptr, FALSE);
       pDict->SetAt("Contents", pObj);
-      m_Pos = dwSavePos;
     }
     if (pContext) {
       pContext->m_DictEnd = m_Pos;
