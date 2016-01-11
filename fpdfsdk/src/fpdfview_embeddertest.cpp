@@ -222,3 +222,9 @@ TEST_F(FPDFViewEmbeddertest, CrossRefV4Loop) {
 TEST_F(FPDFViewEmbeddertest, Hang_343) {
   EXPECT_FALSE(OpenDocument("bug_343.pdf"));
 }
+
+// The test should pass when the absence of 'Contents' field in a signature
+// dictionary will not cause an infinite loop in CPDF_SyntaxParser::GetObject().
+TEST_F(FPDFViewEmbeddertest, Hang_344) {
+  EXPECT_FALSE(OpenDocument("bug_344.pdf"));
+}
