@@ -257,6 +257,7 @@ class CFX_FontMapper {
                           int italic_angle,
                           int CharsetCP,
                           CFX_SubstFont* pSubstFont);
+  FX_BOOL IsBuiltinFace(const FXFT_Face face) const;
 
  private:
   static const size_t MM_FACE_COUNT = 2;
