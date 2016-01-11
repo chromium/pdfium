@@ -1213,11 +1213,9 @@ CPDF_ColorSpace* CPDF_ColorSpace::Load(CPDF_Document* pDoc, CPDF_Object* pObj) {
     if (!pDict)
       return nullptr;
 
-    CPDF_ColorSpace* pRet = nullptr;
-    FX_POSITION pos = pDict->GetStartPos();
-    while (pos) {
-      CFX_ByteString bsKey;
-      CPDF_Object* pValue = pDict->GetNextElement(pos, bsKey);
+    for (const auto& it : *pDict) {
+      CPDF_ColorSpace* pRet = nullptr;
+      CPDF_Object* pValue = it.second;
       if (ToName(pValue))
         pRet = _CSFromName(pValue->GetString());
       if (pRet)

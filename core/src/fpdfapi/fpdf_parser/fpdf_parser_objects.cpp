@@ -267,12 +267,9 @@ CPDF_Object* CPDF_Object::CloneInternal(FX_BOOL bDirect,
     case PDFOBJ_DICTIONARY: {
       CPDF_Dictionary* pCopy = new CPDF_Dictionary();
       const CPDF_Dictionary* pThis = AsDictionary();
-      FX_POSITION pos = pThis->m_Map.GetStartPosition();
-      while (pos) {
-        CFX_ByteString key;
-        CPDF_Object* value;
-        pThis->m_Map.GetNextAssoc(pos, key, (void*&)value);
-        pCopy->m_Map.SetAt(key, value->CloneInternal(bDirect, visited));
+      for (const auto& it : *pThis) {
+        pCopy->m_Map.insert(std::make_pair(
+            it.first, it.second->CloneInternal(bDirect, visited)));
       }
       return pCopy;
     }
@@ -578,38 +575,23 @@ FX_BOOL CPDF_Array::Identical(CPDF_Array* pOther) const {
   return TRUE;
 }
 CPDF_Dictionary::~CPDF_Dictionary() {
-  FX_POSITION pos = m_Map.GetStartPosition();
-  while (pos) {
-    if (CPDF_Object* value = static_cast<CPDF_Object*>(m_Map.GetNextValue(pos)))
-      value->Release();
+  for (const auto& it : m_Map) {
+    it.second->Release();
   }
-}
-FX_POSITION CPDF_Dictionary::GetStartPos() const {
-  return m_Map.GetStartPosition();
-}
-CPDF_Object* CPDF_Dictionary::GetNextElement(FX_POSITION& pos,
-                                             CFX_ByteString& key) const {
-  if (!pos) {
-    return NULL;
-  }
-  CPDF_Object* p;
-  m_Map.GetNextAssoc(pos, key, (void*&)p);
-  return p;
 }
 CPDF_Object* CPDF_Dictionary::GetElement(const CFX_ByteStringC& key) const {
-  CPDF_Object* p = NULL;
-  m_Map.Lookup(key, (void*&)p);
-  return p;
+  auto it = m_Map.find(key);
+  if (it == m_Map.end())
+    return nullptr;
+  return it->second;
 }
 CPDF_Object* CPDF_Dictionary::GetElementValue(
     const CFX_ByteStringC& key) const {
-  CPDF_Object* p = NULL;
-  m_Map.Lookup(key, (void*&)p);
-  return p ? p->GetDirect() : NULL;
+  CPDF_Object* p = GetElement(key);
+  return p ? p->GetDirect() : nullptr;
 }
 CFX_ByteString CPDF_Dictionary::GetString(const CFX_ByteStringC& key) const {
-  CPDF_Object* p = NULL;
-  m_Map.Lookup(key, (void*&)p);
+  CPDF_Object* p = GetElement(key);
   if (p) {
     return p->GetString();
   }
@@ -617,8 +599,7 @@ CFX_ByteString CPDF_Dictionary::GetString(const CFX_ByteStringC& key) const {
 }
 CFX_ByteStringC CPDF_Dictionary::GetConstString(
     const CFX_ByteStringC& key) const {
-  CPDF_Object* p = NULL;
-  m_Map.Lookup(key, (void*&)p);
+  CPDF_Object* p = GetElement(key);
   if (p) {
     return p->GetConstString();
   }
@@ -626,16 +607,14 @@ CFX_ByteStringC CPDF_Dictionary::GetConstString(
 }
 CFX_WideString CPDF_Dictionary::GetUnicodeText(const CFX_ByteStringC& key,
                                                CFX_CharMap* pCharMap) const {
-  CPDF_Object* p = NULL;
-  m_Map.Lookup(key, (void*&)p);
+  CPDF_Object* p = GetElement(key);
   if (CPDF_Reference* pRef = ToReference(p))
     p = pRef->GetDirect();
   return p ? p->GetUnicodeText(pCharMap) : CFX_WideString();
 }
 CFX_ByteString CPDF_Dictionary::GetString(const CFX_ByteStringC& key,
                                           const CFX_ByteStringC& def) const {
-  CPDF_Object* p = NULL;
-  m_Map.Lookup(key, (void*&)p);
+  CPDF_Object* p = GetElement(key);
   if (p) {
     return p->GetString();
   }
@@ -644,32 +623,28 @@ CFX_ByteString CPDF_Dictionary::GetString(const CFX_ByteStringC& key,
 CFX_ByteStringC CPDF_Dictionary::GetConstString(
     const CFX_ByteStringC& key,
     const CFX_ByteStringC& def) const {
-  CPDF_Object* p = NULL;
-  m_Map.Lookup(key, (void*&)p);
+  CPDF_Object* p = GetElement(key);
   if (p) {
     return p->GetConstString();
   }
   return CFX_ByteStringC(def);
 }
 int CPDF_Dictionary::GetInteger(const CFX_ByteStringC& key) const {
-  CPDF_Object* p = NULL;
-  m_Map.Lookup(key, (void*&)p);
+  CPDF_Object* p = GetElement(key);
   if (p) {
     return p->GetInteger();
   }
   return 0;
 }
 int CPDF_Dictionary::GetInteger(const CFX_ByteStringC& key, int def) const {
-  CPDF_Object* p = NULL;
-  m_Map.Lookup(key, (void*&)p);
+  CPDF_Object* p = GetElement(key);
   if (p) {
     return p->GetInteger();
   }
   return def;
 }
 FX_FLOAT CPDF_Dictionary::GetNumber(const CFX_ByteStringC& key) const {
-  CPDF_Object* p = NULL;
-  m_Map.Lookup(key, (void*&)p);
+  CPDF_Object* p = GetElement(key);
   if (p) {
     return p->GetNumber();
   }
@@ -677,8 +652,7 @@ FX_FLOAT CPDF_Dictionary::GetNumber(const CFX_ByteStringC& key) const {
 }
 FX_BOOL CPDF_Dictionary::GetBoolean(const CFX_ByteStringC& key,
                                     FX_BOOL bDefault) const {
-  CPDF_Object* p = NULL;
-  m_Map.Lookup(key, (void*&)p);
+  CPDF_Object* p = GetElement(key);
   if (ToBoolean(p))
     return p->GetInteger();
   return bDefault;
@@ -714,67 +688,67 @@ CFX_Matrix CPDF_Dictionary::GetMatrix(const CFX_ByteStringC& key) const {
   return matrix;
 }
 FX_BOOL CPDF_Dictionary::KeyExist(const CFX_ByteStringC& key) const {
-  void* value;
-  return m_Map.Lookup(key, value);
+  return pdfium::ContainsKey(m_Map, key);
 }
 
 void CPDF_Dictionary::SetAt(const CFX_ByteStringC& key, CPDF_Object* pObj) {
   ASSERT(IsDictionary());
-  void* pValue = nullptr;
-  m_Map.Lookup(key, pValue);
-  CPDF_Object* pExisting = static_cast<CPDF_Object*>(pValue);
-  if (pExisting == pObj)
+  // Avoid 2 constructions of CFX_ByteString.
+  CFX_ByteString key_bytestring = key;
+  auto it = m_Map.find(key_bytestring);
+  if (it == m_Map.end()) {
+    if (pObj) {
+      m_Map.insert(std::make_pair(key_bytestring, pObj));
+    }
     return;
+  }
 
-  if (pExisting)
-    pExisting->Release();
+  if (it->second == pObj)
+    return;
+  it->second->Release();
 
   if (pObj)
-    m_Map.SetAt(key, pObj);
+    it->second = pObj;
   else
-    m_Map.RemoveKey(key);
-}
-
-void CPDF_Dictionary::AddValue(const CFX_ByteStringC& key, CPDF_Object* pObj) {
-  ASSERT(m_Type == PDFOBJ_DICTIONARY);
-  m_Map.AddValue(key, pObj);
+    m_Map.erase(it);
 }
 void CPDF_Dictionary::RemoveAt(const CFX_ByteStringC& key) {
   ASSERT(m_Type == PDFOBJ_DICTIONARY);
-  CPDF_Object* p = NULL;
-  m_Map.Lookup(key, (void*&)p);
-  if (!p) {
+  auto it = m_Map.find(key);
+  if (it == m_Map.end())
     return;
-  }
-  p->Release();
-  m_Map.RemoveKey(key);
+
+  it->second->Release();
+  m_Map.erase(it);
 }
 void CPDF_Dictionary::ReplaceKey(const CFX_ByteStringC& oldkey,
                                  const CFX_ByteStringC& newkey) {
   ASSERT(m_Type == PDFOBJ_DICTIONARY);
-  CPDF_Object* p = NULL;
-  m_Map.Lookup(oldkey, (void*&)p);
-  if (!p) {
+  auto old_it = m_Map.find(oldkey);
+  if (old_it == m_Map.end())
     return;
+
+  // Avoid 2 constructions of CFX_ByteString.
+  CFX_ByteString newkey_bytestring = newkey;
+  auto new_it = m_Map.find(newkey_bytestring);
+  if (new_it != m_Map.end()) {
+    new_it->second->Release();
+    new_it->second = old_it->second;
+  } else {
+    m_Map.insert(std::make_pair(newkey_bytestring, old_it->second));
   }
-  m_Map.RemoveKey(oldkey);
-  m_Map.SetAt(newkey, p);
+  m_Map.erase(old_it);
 }
 FX_BOOL CPDF_Dictionary::Identical(CPDF_Dictionary* pOther) const {
   if (!pOther) {
     return FALSE;
   }
-  if (m_Map.GetCount() != pOther->m_Map.GetCount()) {
+  if (m_Map.size() != pOther->m_Map.size()) {
     return FALSE;
   }
-  FX_POSITION pos = m_Map.GetStartPosition();
-  while (pos) {
-    CFX_ByteString key;
-    void* value;
-    m_Map.GetNextAssoc(pos, key, value);
-    if (!value)
-      return FALSE;
-    if (!static_cast<CPDF_Object*>(value)->IsIdentical(pOther->GetElement(key)))
+  for (const auto& it : m_Map) {
+    const CFX_ByteString& key = it.first;
+    if (!it.second->IsIdentical(pOther->GetElement(key)))
       return FALSE;
   }
   return TRUE;
@@ -798,7 +772,7 @@ void CPDF_Dictionary::SetAtReference(const CFX_ByteStringC& key,
 void CPDF_Dictionary::AddReference(const CFX_ByteStringC& key,
                                    CPDF_IndirectObjects* pDoc,
                                    FX_DWORD objnum) {
-  AddValue(key, new CPDF_Reference(pDoc, objnum));
+  SetAt(key, new CPDF_Reference(pDoc, objnum));
 }
 void CPDF_Dictionary::SetAtNumber(const CFX_ByteStringC& key, FX_FLOAT f) {
   CPDF_Number* pNumber = new CPDF_Number;

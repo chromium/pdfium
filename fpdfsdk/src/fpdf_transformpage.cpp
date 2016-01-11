@@ -160,14 +160,12 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
   if (pRes) {
     CPDF_Dictionary* pPattenDict = pRes->GetDict("Pattern");
     if (pPattenDict) {
-      FX_POSITION pos = pPattenDict->GetStartPos();
-      while (pos) {
-        CPDF_Dictionary* pDict = nullptr;
-        CFX_ByteString key;
-        CPDF_Object* pObj = pPattenDict->GetNextElement(pos, key);
+      for (const auto& it : *pPattenDict) {
+        CPDF_Object* pObj = it.second;
         if (pObj->IsReference())
           pObj = pObj->GetDirect();
 
+        CPDF_Dictionary* pDict = nullptr;
         if (pObj->IsDictionary())
           pDict = pObj->AsDictionary();
         else if (CPDF_Stream* pStream = pObj->AsStream())

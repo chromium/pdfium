@@ -279,11 +279,8 @@ FX_DWORD CountInterFormFonts(CPDF_Dictionary* pFormDict) {
     return 0;
   }
   FX_DWORD dwCount = 0;
-  FX_POSITION pos = pFonts->GetStartPos();
-  while (pos) {
-    CPDF_Object* pObj = NULL;
-    CFX_ByteString csKey;
-    pObj = pFonts->GetNextElement(pos, csKey);
+  for (const auto& it : *pFonts) {
+    CPDF_Object* pObj = it.second;
     if (!pObj) {
       continue;
     }
@@ -311,11 +308,9 @@ CPDF_Font* GetInterFormFont(CPDF_Dictionary* pFormDict,
     return NULL;
   }
   FX_DWORD dwCount = 0;
-  FX_POSITION pos = pFonts->GetStartPos();
-  while (pos) {
-    CPDF_Object* pObj = NULL;
-    CFX_ByteString csKey;
-    pObj = pFonts->GetNextElement(pos, csKey);
+  for (const auto& it : *pFonts) {
+    const CFX_ByteString& csKey = it.first;
+    CPDF_Object* pObj = it.second;
     if (!pObj) {
       continue;
     }
@@ -371,11 +366,9 @@ CPDF_Font* GetInterFormFont(CPDF_Dictionary* pFormDict,
   if (!pFonts) {
     return NULL;
   }
-  FX_POSITION pos = pFonts->GetStartPos();
-  while (pos) {
-    CPDF_Object* pObj = NULL;
-    CFX_ByteString csKey;
-    pObj = pFonts->GetNextElement(pos, csKey);
+  for (const auto& it : *pFonts) {
+    const CFX_ByteString& csKey = it.first;
+    CPDF_Object* pObj = it.second;
     if (!pObj) {
       continue;
     }
@@ -414,11 +407,9 @@ CPDF_Font* GetNativeInterFormFont(CPDF_Dictionary* pFormDict,
   if (!pFonts) {
     return NULL;
   }
-  FX_POSITION pos = pFonts->GetStartPos();
-  while (pos) {
-    CPDF_Object* pObj = NULL;
-    CFX_ByteString csKey;
-    pObj = pFonts->GetNextElement(pos, csKey);
+  for (const auto& it : *pFonts) {
+    const CFX_ByteString& csKey = it.first;
+    CPDF_Object* pObj = it.second;
     if (!pObj) {
       continue;
     }
@@ -472,11 +463,9 @@ FX_BOOL FindInterFormFont(CPDF_Dictionary* pFormDict,
   if (!pFonts) {
     return FALSE;
   }
-  FX_POSITION pos = pFonts->GetStartPos();
-  while (pos) {
-    CPDF_Object* pObj = NULL;
-    CFX_ByteString csKey;
-    pObj = pFonts->GetNextElement(pos, csKey);
+  for (const auto& it : *pFonts) {
+    const CFX_ByteString& csKey = it.first;
+    CPDF_Object* pObj = it.second;
     if (!pObj) {
       continue;
     }
@@ -512,11 +501,9 @@ FX_BOOL FindInterFormFont(CPDF_Dictionary* pFormDict,
   if (csFontName.GetLength() > 0) {
     csFontName.Remove(' ');
   }
-  FX_POSITION pos = pFonts->GetStartPos();
-  while (pos) {
-    CPDF_Object* pObj = NULL;
-    CFX_ByteString csKey, csTmp;
-    pObj = pFonts->GetNextElement(pos, csKey);
+  for (const auto& it : *pFonts) {
+    const CFX_ByteString& csKey = it.first;
+    CPDF_Object* pObj = it.second;
     if (!pObj) {
       continue;
     }

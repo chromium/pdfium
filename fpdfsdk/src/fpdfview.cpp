@@ -1049,11 +1049,15 @@ DLLEXPORT FPDF_DWORD STDCALL FPDF_CountNamedDests(FPDF_DOCUMENT document) {
     return 0;
 
   CPDF_NameTree nameTree(pDoc, "Dests");
-  int count = nameTree.GetCount();
+  pdfium::base::CheckedNumeric<FPDF_DWORD> count = nameTree.GetCount();
   CPDF_Dictionary* pDest = pRoot->GetDict("Dests");
   if (pDest)
     count += pDest->GetCount();
-  return count;
+
+  if (!count.IsValid())
+    return 0;
+
+  return count.ValueOrDie();
 }
 
 DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDestByName(FPDF_DOCUMENT document,
@@ -1141,21 +1145,25 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document,
   if (!pRoot)
     return nullptr;
 
-  CPDF_Object* pDestObj = NULL;
+  CPDF_Object* pDestObj = nullptr;
   CFX_ByteString bsName;
   CPDF_NameTree nameTree(pDoc, "Dests");
   int count = nameTree.GetCount();
   if (index >= count) {
     CPDF_Dictionary* pDest = pRoot->GetDict("Dests");
     if (!pDest)
-      return NULL;
-    if (index >= count + pDest->GetCount())
-      return NULL;
+      return nullptr;
+
+    pdfium::base::CheckedNumeric<int> checked_count = count;
+    checked_count += pDest->GetCount();
+    if (!checked_count.IsValid() || index >= checked_count.ValueOrDie())
+      return nullptr;
+
     index -= count;
-    FX_POSITION pos = pDest->GetStartPos();
     int i = 0;
-    while (pos) {
-      pDestObj = pDest->GetNextElement(pos, bsName);
+    for (const auto& it : *pDest) {
+      bsName = it.first;
+      pDestObj = it.second;
       if (!pDestObj)
         continue;
       if (i == index)

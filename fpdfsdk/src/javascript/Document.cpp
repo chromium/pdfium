@@ -790,10 +790,9 @@ FX_BOOL Document::info(IJS_Context* cc,
     FXJS_PutObjectString(isolate, pObj, L"Trapped", cwTrapped.c_str());
 
     // It's to be compatible to non-standard info dictionary.
-    FX_POSITION pos = pDictionary->GetStartPos();
-    while (pos) {
-      CFX_ByteString bsKey;
-      CPDF_Object* pValueObj = pDictionary->GetNextElement(pos, bsKey);
+    for (const auto& it : *pDictionary) {
+      const CFX_ByteString& bsKey = it.first;
+      CPDF_Object* pValueObj = it.second;
       CFX_WideString wsKey = CFX_WideString::FromUTF8(bsKey, bsKey.GetLength());
 
       if (pValueObj->IsString() || pValueObj->IsName()) {

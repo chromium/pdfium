@@ -1896,10 +1896,9 @@ IFX_Font* CXFA_PDFFontMgr::FindFont(CFX_ByteString strPsName,
   }
   strPsName.Remove(' ');
   IFX_FontMgr* pFDEFontMgr = m_pDoc->GetApp()->GetFDEFontMgr();
-  FX_POSITION pos = pFontSetDict->GetStartPos();
-  while (pos) {
-    CFX_ByteString key;
-    CPDF_Object* pObj = pFontSetDict->GetNextElement(pos, key);
+  for (const auto& it : *pFontSetDict) {
+    const CFX_ByteString& key = it.first;
+    CPDF_Object* pObj = it.second;
     if (!PsNameMatchDRFontName(strPsName, bBold, bItalic, key, bStrictMatch)) {
       continue;
     }

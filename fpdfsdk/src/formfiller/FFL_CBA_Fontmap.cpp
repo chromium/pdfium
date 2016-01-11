@@ -118,11 +118,9 @@ CPDF_Font* CBA_FontMap::FindResFontSameCharset(CPDF_Dictionary* pResDict,
 
   CPDF_Font* pFind = NULL;
 
-  FX_POSITION pos = pFonts->GetStartPos();
-  while (pos) {
-    CPDF_Object* pObj = NULL;
-    CFX_ByteString csKey;
-    pObj = pFonts->GetNextElement(pos, csKey);
+  for (const auto& it : *pFonts) {
+    const CFX_ByteString& csKey = it.first;
+    CPDF_Object* pObj = it.second;
     if (!pObj)
       continue;
 
