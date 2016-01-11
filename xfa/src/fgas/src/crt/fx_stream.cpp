@@ -1204,7 +1204,6 @@ IFX_FileRead* FX_CreateFileRead(IFX_Stream* pBaseStream,
   FXSYS_assert(pBaseStream != NULL);
   return new CFGAS_FileRead(pBaseStream, bReleaseStream);
 }
-#ifdef FX_FILESIZE
 CFGAS_FileRead::CFGAS_FileRead(IFX_Stream* pStream, FX_BOOL bReleaseStream)
     : m_bReleaseStream(bReleaseStream), m_pStream(pStream) {
   FXSYS_assert(m_pStream != NULL);
@@ -1226,30 +1225,7 @@ FX_BOOL CFGAS_FileRead::ReadBlock(void* buffer,
   m_pStream->Unlock();
   return iLen == (int32_t)size;
 }
-#else
-CFGAS_FileRead::CFGAS_FileRead(IFX_Stream* pStream, FX_BOOL bReleaseStream)
-    : m_bReleaseStream(bReleaseStream), m_pStream(pStream) {
-  FXSYS_assert(m_pStream != NULL);
-}
-CFGAS_FileRead::~CFGAS_FileRead() {
-  if (m_bReleaseStream) {
-    m_pStream->Release();
-  }
-}
-FX_DWORD CFGAS_FileRead::GetSize() {
-  return (FX_DWORD)m_pStream->GetLength();
-}
-FX_BOOL CFGAS_FileRead::ReadBlock(void* buffer,
-                                  FX_DWORD offset,
-                                  FX_DWORD size) {
-  m_pStream->Lock();
-  m_pStream->Seek(FX_STREAMSEEK_Begin, (int32_t)offset);
-  int32_t iLen = m_pStream->ReadData((uint8_t*)buffer, (int32_t)size);
-  m_pStream->Unlock();
-  return iLen == (int32_t)size;
-}
-#endif
-#ifdef FX_FILESIZE
+
 IFX_FileRead* FX_CreateFileRead(IFX_BufferRead* pBufferRead,
                                 FX_FILESIZE iFileSize,
                                 FX_BOOL bReleaseStream) {
@@ -1343,106 +1319,13 @@ FX_BOOL CFX_BufferAccImp::ReadBlock(void* buffer,
   }
   return TRUE;
 }
-#else
-IFX_FileRead* FX_CreateFileRead(IFX_BufferRead* pBufferRead,
-                                int32_t iFileSize,
-                                FX_BOOL bReleaseStream) {
-  if (!pBufferRead) {
-    return NULL;
-  }
-  return new CFX_BufferAccImp(pBufferRead, iFileSize, bReleaseStream);
-}
-CFX_BufferAccImp::CFX_BufferAccImp(IFX_BufferRead* pBufferRead,
-                                   int32_t iFileSize,
-                                   FX_BOOL bReleaseStream)
-    : m_pBufferRead(pBufferRead),
-      m_bReleaseStream(bReleaseStream),
-      m_iBufSize(iFileSize) {
-  FXSYS_assert(m_pBufferRead);
-}
-CFX_BufferAccImp::~CFX_BufferAccImp() {
-  if (m_bReleaseStream && m_pBufferRead) {
-    m_pBufferRead->Release();
-  }
-}
-FX_DWORD CFX_BufferAccImp::GetSize() {
-  if (!m_pBufferRead) {
-    return 0;
-  }
-  if (m_iBufSize >= 0) {
-    return m_iBufSize;
-  }
-  if (!m_pBufferRead->ReadNextBlock(TRUE)) {
-    return 0;
-  }
-  m_iBufSize = (FX_DWORD)m_pBufferRead->GetBlockSize();
-  while (!m_pBufferRead->IsEOF()) {
-    m_pBufferRead->ReadNextBlock(FALSE);
-    m_iBufSize += (FX_DWORD)m_pBufferRead->GetBlockSize();
-  }
-  return m_iBufSize;
-}
-FX_BOOL CFX_BufferAccImp::ReadBlock(void* buffer,
-                                    FX_DWORD offset,
-                                    FX_DWORD size) {
-  if (!m_pBufferRead) {
-    return FALSE;
-  }
-  if (!buffer || !size) {
-    return TRUE;
-  }
-  FX_DWORD dwBufSize = GetSize();
-  if (offset >= dwBufSize) {
-    return FALSE;
-  }
-  size_t dwBlockSize = m_pBufferRead->GetBlockSize();
-  FX_DWORD dwBlockOffset = m_pBufferRead->GetBlockOffset();
-  if (offset < dwBlockOffset) {
-    if (!m_pBufferRead->ReadNextBlock(TRUE)) {
-      return FALSE;
-    }
-    dwBlockSize = m_pBufferRead->GetBlockSize();
-    dwBlockOffset = m_pBufferRead->GetBlockOffset();
-  }
-  while (offset < dwBlockOffset ||
-         offset >= (FX_DWORD)(dwBlockOffset + dwBlockSize)) {
-    if (m_pBufferRead->IsEOF() || !m_pBufferRead->ReadNextBlock(FALSE)) {
-      break;
-    }
-    dwBlockSize = m_pBufferRead->GetBlockSize();
-    dwBlockOffset = m_pBufferRead->GetBlockOffset();
-  }
-  if (offset < dwBlockOffset ||
-      offset >= (FX_DWORD)(dwBlockOffset + dwBlockSize)) {
-    return FALSE;
-  }
-  const uint8_t* pBuffer = m_pBufferRead->GetBlockBuffer();
-  FX_DWORD dwOffset = offset - dwBlockOffset;
-  FX_DWORD dwCopySize = std::min(size, dwBlockSize - dwOffset);
-  FXSYS_memcpy(buffer, pBuffer + dwOffset, dwCopySize);
-  offset = dwCopySize;
-  size -= dwCopySize;
-  while (size) {
-    if (!m_pBufferRead->ReadNextBlock(FALSE)) {
-      break;
-    }
-    dwBlockOffset = m_pBufferRead->GetBlockOffset();
-    dwBlockSize = m_pBufferRead->GetBlockSize();
-    pBuffer = m_pBufferRead->GetBlockBuffer();
-    dwCopySize = std::min(size, dwBlockSize);
-    FXSYS_memcpy(((uint8_t*)buffer) + offset, pBuffer, dwCopySize);
-    offset += dwCopySize;
-    size -= dwCopySize;
-  }
-  return TRUE;
-}
-#endif
+
 IFX_FileWrite* FX_CreateFileWrite(IFX_Stream* pBaseStream,
                                   FX_BOOL bReleaseStream) {
   FXSYS_assert(pBaseStream != NULL);
   return new CFGAS_FileWrite(pBaseStream, bReleaseStream);
 }
-#ifdef FX_FILESIZE
+
 CFGAS_FileWrite::CFGAS_FileWrite(IFX_Stream* pStream, FX_BOOL bReleaseStream)
     : m_pStream(pStream), m_bReleaseStream(bReleaseStream) {
   FXSYS_assert(m_pStream != NULL);
@@ -1472,34 +1355,3 @@ FX_BOOL CFGAS_FileWrite::WriteBlock(const void* pData,
   m_pStream->Unlock();
   return iLen == (int32_t)size;
 }
-#else
-CFGAS_FileWrite::CFGAS_FileWrite(IFX_Stream* pStream, FX_BOOL bReleaseStream)
-    : m_pStream(pStream), m_bReleaseStream(bReleaseStream) {
-  FXSYS_assert(m_pStream != NULL);
-}
-CFGAS_FileWrite::~CFGAS_FileWrite() {
-  if (m_bReleaseStream) {
-    m_pStream->Release();
-  }
-}
-FX_DWORD CFGAS_FileWrite::GetSize() {
-  return m_pStream->GetLength();
-}
-FX_DWORD CFGAS_FileWrite::Flush() {
-  m_pStream->Flush();
-  return 0;
-}
-FX_BOOL CFGAS_FileWrite::WriteBlock(const void* pData, FX_DWORD size) {
-  return m_pStream->WriteData((const uint8_t*)pData, (int32_t)size) ==
-         (int32_t)size;
-}
-FX_BOOL CFGAS_FileWrite::WriteBlock(const void* pData,
-                                    FX_DWORD offset,
-                                    FX_DWORD size) {
-  m_pStream->Lock();
-  m_pStream->Seek(FX_STREAMSEEK_Begin, offset);
-  int32_t iLen = m_pStream->WriteData((uint8_t*)pData, (int32_t)size);
-  m_pStream->Unlock();
-  return iLen == (int32_t)size;
-}
-#endif

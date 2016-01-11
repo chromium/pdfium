@@ -9,15 +9,9 @@
 class IFX_Stream;
 IFX_FileRead* FX_CreateFileRead(IFX_Stream* pBaseStream,
                                 FX_BOOL bReleaseStream = FALSE);
-#ifdef FX_FILESIZE
 IFX_FileRead* FX_CreateFileRead(IFX_BufferRead* pBufferRead,
                                 FX_FILESIZE iFileSize = -1,
                                 FX_BOOL bReleaseStream = TRUE);
-#else
-IFX_FileRead* FX_CreateFileRead(IFX_BufferRead* pBufferRead,
-                                int32_t iFileSize = -1,
-                                FX_BOOL bReleaseStream = TRUE);
-#endif
 IFX_FileWrite* FX_CreateFileWrite(IFX_Stream* pBaseStream,
                                   FX_BOOL bReleaseStream = FALSE);
 enum FX_STREAMACCESS {

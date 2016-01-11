@@ -261,7 +261,7 @@ class CFX_TextStream : public IFX_Stream, public CFX_ThreadLock {
   int32_t m_iRefCount;
   void InitStream();
 };
-#ifdef FX_FILESIZE
+
 class CFGAS_FileRead : public IFX_FileRead {
  public:
   CFGAS_FileRead(IFX_Stream* pStream, FX_BOOL bReleaseStream);
@@ -274,22 +274,7 @@ class CFGAS_FileRead : public IFX_FileRead {
   FX_BOOL m_bReleaseStream;
   IFX_Stream* m_pStream;
 };
-#else
-class CFGAS_FileRead : public IFX_FileRead {
- public:
-  CFGAS_FileRead(IFX_Stream* pStream, FX_BOOL bReleaseStream);
-  virtual ~CFGAS_FileRead();
 
-  virtual void Release() { delete this; }
-  virtual FX_DWORD GetSize();
-  virtual FX_BOOL ReadBlock(void* buffer, FX_DWORD offset, FX_DWORD size);
-
- protected:
-  FX_BOOL m_bReleaseStream;
-  IFX_Stream* m_pStream;
-};
-#endif
-#ifdef FX_FILESIZE
 class CFX_BufferAccImp : public IFX_FileRead {
  public:
   CFX_BufferAccImp(IFX_BufferRead* pBufferRead,
@@ -305,25 +290,7 @@ class CFX_BufferAccImp : public IFX_FileRead {
   FX_BOOL m_bReleaseStream;
   FX_FILESIZE m_iBufSize;
 };
-#else
-class CFX_BufferAccImp : public IFX_FileRead {
- public:
-  CFX_BufferAccImp(IFX_BufferRead* pBufferRead,
-                   int32_t iFileSize,
-                   FX_BOOL bReleaseStream);
-  virtual ~CFX_BufferAccImp();
 
-  virtual void Release() { delete this; }
-  virtual FX_DWORD GetSize();
-  virtual FX_BOOL ReadBlock(void* buffer, FX_DWORD offset, FX_DWORD size);
-
- protected:
-  IFX_BufferRead* m_pBufferRead;
-  FX_BOOL m_bReleaseStream;
-  int32_t m_iBufSize;
-};
-#endif
-#ifdef FX_FILESIZE
 class CFGAS_FileWrite : public IFX_FileWrite {
  public:
   CFGAS_FileWrite(IFX_Stream* pStream, FX_BOOL bReleaseStream);
@@ -340,21 +307,5 @@ class CFGAS_FileWrite : public IFX_FileWrite {
   IFX_Stream* m_pStream;
   FX_BOOL m_bReleaseStream;
 };
-#else
-class CFGAS_FileWrite : public IFX_FileWrite {
- public:
-  CFGAS_FileWrite(IFX_Stream* pStream, FX_BOOL bReleaseStream);
-  virtual ~CFGAS_FileWrite();
 
-  virtual void Release() { delete this; }
-  virtual FX_DWORD GetSize();
-  virtual FX_DWORD Flush();
-  virtual FX_BOOL WriteBlock(const void* pData, FX_DWORD size);
-  virtual FX_BOOL WriteBlock(const void* pData, FX_DWORD offset, FX_DWORD size);
-
- protected:
-  IFX_Stream* m_pStream;
-  FX_BOOL m_bReleaseStream;
-};
-#endif
 #endif
