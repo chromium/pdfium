@@ -77,6 +77,8 @@ FX_FLOAT _CalculateBaseSpace(const CPDF_TextObject* pTextObj,
   return baseSpace;
 }
 
+const FX_FLOAT kDefaultFontSize = 1.0f;
+
 }  // namespace
 
 CPDFText_ParseOptions::CPDFText_ParseOptions()
@@ -458,28 +460,31 @@ int CPDF_TextPage::GetIndexAtPos(FX_FLOAT x,
   CPDF_Point point(x, y);
   return GetIndexAtPos(point, xTolerance, yTolerance);
 }
-void CPDF_TextPage::GetCharInfo(int index, FPDF_CHAR_INFO& info) const {
+
+void CPDF_TextPage::GetCharInfo(int index, FPDF_CHAR_INFO* info) const {
   if (m_ParseOptions.m_bGetCharCodeOnly || !m_bIsParsed)
     return;
 
   if (index < 0 || index >= m_charList.GetSize())
     return;
 
-  PAGECHAR_INFO charinfo;
-  charinfo = *(PAGECHAR_INFO*)m_charList.GetAt(index);
-  info.m_Charcode = charinfo.m_CharCode;
-  info.m_OriginX = charinfo.m_OriginX;
-  info.m_OriginY = charinfo.m_OriginY;
-  info.m_Unicode = charinfo.m_Unicode;
-  info.m_Flag = charinfo.m_Flag;
-  info.m_CharBox = charinfo.m_CharBox;
-  info.m_pTextObj = charinfo.m_pTextObj;
-  if (charinfo.m_pTextObj && charinfo.m_pTextObj->GetFont()) {
-    info.m_FontSize = charinfo.m_pTextObj->GetFontSize();
+  const PAGECHAR_INFO* charinfo =
+      static_cast<PAGECHAR_INFO*>(m_charList.GetAt(index));
+  info->m_Charcode = charinfo->m_CharCode;
+  info->m_OriginX = charinfo->m_OriginX;
+  info->m_OriginY = charinfo->m_OriginY;
+  info->m_Unicode = charinfo->m_Unicode;
+  info->m_Flag = charinfo->m_Flag;
+  info->m_CharBox = charinfo->m_CharBox;
+  info->m_pTextObj = charinfo->m_pTextObj;
+  if (charinfo->m_pTextObj && charinfo->m_pTextObj->GetFont()) {
+    info->m_FontSize = charinfo->m_pTextObj->GetFontSize();
+  } else {
+    info->m_FontSize = kDefaultFontSize;
   }
-  info.m_Matrix.Copy(charinfo.m_Matrix);
-  return;
+  info->m_Matrix.Copy(charinfo->m_Matrix);
 }
+
 void CPDF_TextPage::CheckMarkedContentObject(int32_t& start,
                                              int32_t& nCount) const {
   PAGECHAR_INFO charinfo = *(PAGECHAR_INFO*)m_charList.GetAt(start);
@@ -594,6 +599,7 @@ void CPDF_TextPage::GetRect(int rectIndex,
   right = m_SelRects.GetAt(rectIndex).right;
   bottom = m_SelRects.GetAt(rectIndex).bottom;
 }
+
 FX_BOOL CPDF_TextPage::GetBaselineRotate(int start, int end, int& Rotate) {
   if (m_ParseOptions.m_bGetCharCodeOnly) {
     return FALSE;
@@ -601,19 +607,18 @@ FX_BOOL CPDF_TextPage::GetBaselineRotate(int start, int end, int& Rotate) {
   if (end == start) {
     return FALSE;
   }
-  FX_FLOAT dx, dy;
-  FPDF_CHAR_INFO info1, info2;
-  GetCharInfo(start, info1);
-  GetCharInfo(end, info2);
-  while (info2.m_CharBox.Width() == 0 || info2.m_CharBox.Height() == 0) {
-    end--;
-    if (end <= start) {
+  FPDF_CHAR_INFO info_start;
+  FPDF_CHAR_INFO info_end;
+  GetCharInfo(start, &info_start);
+  GetCharInfo(end, &info_end);
+  while (info_end.m_CharBox.Width() == 0 || info_end.m_CharBox.Height() == 0) {
+    if (--end <= start)
       return FALSE;
-    }
-    GetCharInfo(end, info2);
+
+    GetCharInfo(end, &info_end);
   }
-  dx = (info2.m_OriginX - info1.m_OriginX);
-  dy = (info2.m_OriginY - info1.m_OriginY);
+  FX_FLOAT dx = (info_end.m_OriginX - info_start.m_OriginX);
+  FX_FLOAT dy = (info_end.m_OriginY - info_start.m_OriginY);
   if (dx == 0) {
     if (dy > 0) {
       Rotate = 90;
@@ -633,6 +638,7 @@ FX_BOOL CPDF_TextPage::GetBaselineRotate(int start, int end, int& Rotate) {
   }
   return TRUE;
 }
+
 FX_BOOL CPDF_TextPage::GetBaselineRotate(const CFX_FloatRect& rect,
                                          int& Rotate) {
   if (m_ParseOptions.m_bGetCharCodeOnly) {
@@ -2053,6 +2059,7 @@ FX_BOOL CPDF_TextPage::IsSameAsPreTextObject(CPDF_TextObject* pTextObj,
   }
   return FALSE;
 }
+
 FX_BOOL CPDF_TextPage::GenerateCharInfo(FX_WCHAR unicode, PAGECHAR_INFO& info) {
   int size = m_TempCharList.GetSize();
   PAGECHAR_INFO preChar;
@@ -2071,24 +2078,21 @@ FX_BOOL CPDF_TextPage::GenerateCharInfo(FX_WCHAR unicode, PAGECHAR_INFO& info) {
   info.m_CharCode = -1;
   info.m_Flag = FPDFTEXT_CHAR_GENERATED;
   int preWidth = 0;
-  if (preChar.m_pTextObj && preChar.m_CharCode != (FX_DWORD)-1) {
+  if (preChar.m_pTextObj && preChar.m_CharCode != (FX_DWORD)-1)
     preWidth = GetCharWidth(preChar.m_CharCode, preChar.m_pTextObj->GetFont());
-  }
-  FX_FLOAT fs = 0;
-  if (preChar.m_pTextObj) {
-    fs = preChar.m_pTextObj->GetFontSize();
-  } else {
-    fs = preChar.m_CharBox.Height();
-  }
-  if (!fs) {
-    fs = 1;
-  }
-  info.m_OriginX = preChar.m_OriginX + preWidth * (fs) / 1000;
+
+  FX_FLOAT fFontSize = preChar.m_pTextObj ? preChar.m_pTextObj->GetFontSize()
+                                          : preChar.m_CharBox.Height();
+  if (!fFontSize)
+    fFontSize = kDefaultFontSize;
+
+  info.m_OriginX = preChar.m_OriginX + preWidth * (fFontSize) / 1000;
   info.m_OriginY = preChar.m_OriginY;
   info.m_CharBox = CFX_FloatRect(info.m_OriginX, info.m_OriginY, info.m_OriginX,
                                  info.m_OriginY);
   return TRUE;
 }
+
 FX_BOOL CPDF_TextPage::IsRectIntersect(const CFX_FloatRect& rect1,
                                        const CFX_FloatRect& rect2) {
   CFX_FloatRect rect = rect1;
@@ -2124,7 +2128,7 @@ CPDF_TextPageFind::CPDF_TextPageFind(const IPDF_TextPage* pTextPage)
   }
   for (int i = 0; i < nCount; i++) {
     FPDF_CHAR_INFO info;
-    pTextPage->GetCharInfo(i, info);
+    pTextPage->GetCharInfo(i, &info);
     int indexSize = m_CharIndex.GetSize();
     if (info.m_Flag == CHAR_NORMAL || info.m_Flag == CHAR_GENERATED) {
       if (indexSize % 2) {
@@ -2550,7 +2554,7 @@ void CPDF_LinkExtract::ParseLink() {
   int TotalChar = m_pTextPage->CountChars();
   while (pos < TotalChar) {
     FPDF_CHAR_INFO pageChar;
-    m_pTextPage->GetCharInfo(pos, pageChar);
+    m_pTextPage->GetCharInfo(pos, &pageChar);
     if (pageChar.m_Flag == CHAR_GENERATED || pageChar.m_Unicode == 0x20 ||
         pos == TotalChar - 1) {
       int nCount = pos - start;

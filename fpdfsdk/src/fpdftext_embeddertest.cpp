@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include "core/include/fxcrt/fx_basic.h"
 #include "public/fpdf_text.h"
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
@@ -10,9 +11,9 @@
 
 namespace {
 
-static bool check_unsigned_shorts(const char* expected,
-                                  const unsigned short* actual,
-                                  size_t length) {
+bool check_unsigned_shorts(const char* expected,
+                           const unsigned short* actual,
+                           size_t length) {
   if (length > strlen(expected) + 1) {
     return false;
   }
@@ -364,6 +365,27 @@ TEST_F(FPDFTextEmbeddertest, WebLinks) {
   EXPECT_EQ(-2.0, top);
 
   FPDFLink_CloseWebLinks(pagelink);
+  FPDFText_ClosePage(textpage);
+  UnloadPage(page);
+}
+
+TEST_F(FPDFTextEmbeddertest, GetFontSize) {
+  EXPECT_TRUE(OpenDocument("hello_world.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_NE(nullptr, page);
+
+  FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page);
+  EXPECT_NE(nullptr, textpage);
+
+  const double kExpectedFontsSizes[] = {12, 12, 12, 12, 12, 12, 12, 12, 12, 12,
+                                        12, 12, 12, 1,  1,  16, 16, 16, 16, 16,
+                                        16, 16, 16, 16, 16, 16, 16, 16, 16, 16};
+
+  int count = FPDFText_CountChars(textpage);
+  ASSERT_EQ(FX_ArraySize(kExpectedFontsSizes), count);
+  for (int i = 0; i < count; ++i)
+    EXPECT_EQ(kExpectedFontsSizes[i], FPDFText_GetFontSize(textpage, i)) << i;
+
   FPDFText_ClosePage(textpage);
   UnloadPage(page);
 }
