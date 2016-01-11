@@ -1187,12 +1187,12 @@ void CPDF_RenderStatus::DrawPathWithPattern(CPDF_PathObject* pPathObj,
   if (!pattern) {
     return;
   }
-  if (pattern->m_PatternType == PATTERN_TILING) {
-    DrawTilingPattern((CPDF_TilingPattern*)pattern, pPathObj, pObj2Device,
-                      bStroke);
+  if (pattern->m_PatternType == CPDF_Pattern::TILING) {
+    DrawTilingPattern(static_cast<CPDF_TilingPattern*>(pattern), pPathObj,
+                      pObj2Device, bStroke);
   } else {
-    DrawShadingPattern((CPDF_ShadingPattern*)pattern, pPathObj, pObj2Device,
-                       bStroke);
+    DrawShadingPattern(static_cast<CPDF_ShadingPattern*>(pattern), pPathObj,
+                       pObj2Device, bStroke);
   }
 }
 void CPDF_RenderStatus::ProcessPathPattern(CPDF_PathObject* pPathObj,

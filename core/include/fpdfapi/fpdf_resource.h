@@ -636,24 +636,27 @@ class CPDF_Color {
   void ReleaseColorSpace();
   FX_FLOAT* m_pBuffer;
 };
-#define PATTERN_TILING 1
-#define PATTERN_SHADING 2
+
 class CPDF_Pattern {
  public:
+  enum PatternType { TILING = 1, SHADING };
+
   virtual ~CPDF_Pattern();
+
   void SetForceClear(FX_BOOL bForceClear) { m_bForceClear = bForceClear; }
 
-  CPDF_Object* m_pPatternObj;
-
-  int m_PatternType;
-
+  const PatternType m_PatternType;
+  CPDF_Document* const m_pDocument;
+  CPDF_Object* const m_pPatternObj;
   CFX_Matrix m_Pattern2Form;
   CFX_Matrix m_ParentMatrix;
 
-  CPDF_Document* m_pDocument;
-
  protected:
-  CPDF_Pattern(const CFX_Matrix* pParentMatrix);
+  CPDF_Pattern(PatternType type,
+               CPDF_Document* pDoc,
+               CPDF_Object* pObj,
+               const CFX_Matrix* pParentMatrix);
+
   FX_BOOL m_bForceClear;
 };
 
@@ -705,30 +708,21 @@ class CPDF_ShadingPattern : public CPDF_Pattern {
            m_ShadingType == kCoonsPatchMeshShading ||
            m_ShadingType == kTensorProductPatchMeshShading;
   }
-
-  CPDF_Object* m_pShadingObj;
-
-  FX_BOOL m_bShadingObj;
-
   FX_BOOL Load();
 
-  FX_BOOL Reload();
-
   ShadingType m_ShadingType;
+  FX_BOOL m_bShadingObj;
+  CPDF_Object* m_pShadingObj;
 
-  CPDF_ColorSpace* m_pCS;  // Still keep m_pCS as some CPDF_ColorSpace (name
-                           // object) are not managed as counted objects. Refer
-                           // to CPDF_DocPageData::GetColorSpace.
+  // Still keep |m_pCS| as some CPDF_ColorSpace (name object) are not managed
+  // as counted objects. Refer to CPDF_DocPageData::GetColorSpace.
+  CPDF_ColorSpace* m_pCS;
 
   CPDF_CountedColorSpace* m_pCountedCS;
-
   CPDF_Function* m_pFunctions[4];
-
   int m_nFuncs;
-
- protected:
-  void Clear();
 };
+
 struct CPDF_MeshVertex {
   FX_FLOAT x, y;
   FX_FLOAT r, g, b;
