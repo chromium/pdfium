@@ -869,11 +869,9 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
                       if (!pRoot ||
                           (pRef && IsValidObjectNumber(pRef->GetRefObjNum()) &&
                            m_ObjectInfo[pRef->GetRefObjNum()].pos != 0)) {
-                        FX_POSITION trailer_pos = pTrailer->GetStartPos();
-                        while (trailer_pos) {
-                          CFX_ByteString key;
-                          CPDF_Object* pElement =
-                              pTrailer->GetNextElement(trailer_pos, key);
+                        for (const auto& it : *pTrailer) {
+                          const CFX_ByteString& key = it.first;
+                          CPDF_Object* pElement = it.second;
                           FX_DWORD dwObjNum =
                               pElement ? pElement->GetObjNum() : 0;
                           if (dwObjNum) {
@@ -2162,13 +2160,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList,
         continue;
 
       CFX_ByteStringC keyNoSlash(key.c_str() + 1, key.GetLength() - 1);
-      // TODO(thestig): Remove this conditional once CPDF_Dictionary has a
-      // better underlying map implementation.
-      if (nKeys < 32) {
-        pDict->SetAt(keyNoSlash, pObj);
-      } else {
-        pDict->AddValue(keyNoSlash, pObj);
-      }
+      pDict->SetAt(keyNoSlash, pObj);
     }
 
     if (IsSignatureDict(pDict.get())) {
@@ -2315,8 +2307,8 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
         return nullptr;
       }
       if (key.GetLength() > 1) {
-        pDict->AddValue(CFX_ByteStringC(key.c_str() + 1, key.GetLength() - 1),
-                        obj.release());
+        pDict->SetAt(CFX_ByteStringC(key.c_str() + 1, key.GetLength() - 1),
+                     obj.release());
       }
     }
     if (pContext) {
@@ -3058,11 +3050,9 @@ FX_BOOL CPDF_DataAvail::IsObjectsAvail(
         if (pDict && pDict->GetString("Type") == "Page" && !bParsePage) {
           continue;
         }
-        FX_POSITION pos = pDict->GetStartPos();
-        while (pos) {
-          CPDF_Object* value;
-          CFX_ByteString key;
-          value = pDict->GetNextElement(pos, key);
+        for (const auto& it : *pDict) {
+          const CFX_ByteString& key = it.first;
+          CPDF_Object* value = it.second;
           if (key != "Parent") {
             new_obj_array.Add(value);
           }

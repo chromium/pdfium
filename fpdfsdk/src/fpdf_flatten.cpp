@@ -442,10 +442,9 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
       if (!sAnnotState.IsEmpty()) {
         pAPStream = pAPDic->GetStream(sAnnotState);
       } else {
-        FX_POSITION pos = pAPDic->GetStartPos();
-        if (pos) {
-          CFX_ByteString sKey;
-          CPDF_Object* pFirstObj = pAPDic->GetNextElement(pos, sKey);
+        auto it = pAPDic->begin();
+        if (it != pAPDic->end()) {
+          CPDF_Object* pFirstObj = it->second;
           if (pFirstObj) {
             if (pFirstObj->IsReference())
               pFirstObj = pFirstObj->GetDirect();

@@ -458,10 +458,9 @@ void CPDF_AllStates::SetLineDash(CPDF_Array* pArray,
 void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
                                   CPDF_StreamContentParser* pParser) {
   CPDF_GeneralStateData* pGeneralState = m_GeneralState.GetModify();
-  FX_POSITION pos = pGS->GetStartPos();
-  while (pos) {
-    CFX_ByteString key_str;
-    CPDF_Object* pElement = pGS->GetNextElement(pos, key_str);
+  for (const auto& it : *pGS) {
+    const CFX_ByteString& key_str = it.first;
+    CPDF_Object* pElement = it.second;
     CPDF_Object* pObject = pElement ? pElement->GetDirect() : nullptr;
     if (!pObject)
       continue;

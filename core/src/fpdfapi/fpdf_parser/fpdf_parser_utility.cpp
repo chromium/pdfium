@@ -383,10 +383,9 @@ CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& buf, const CPDF_Object* pObj) {
     case PDFOBJ_DICTIONARY: {
       const CPDF_Dictionary* p = pObj->AsDictionary();
       buf << "<<";
-      FX_POSITION pos = p->GetStartPos();
-      while (pos) {
-        CFX_ByteString key;
-        CPDF_Object* pValue = p->GetNextElement(pos, key);
+      for (const auto& it : *p) {
+        const CFX_ByteString& key = it.first;
+        CPDF_Object* pValue = it.second;
         buf << "/" << PDF_NameEncode(key);
         if (pValue && pValue->GetObjNum()) {
           buf << " " << pValue->GetObjNum() << " 0 R ";

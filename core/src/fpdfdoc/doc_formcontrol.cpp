@@ -29,11 +29,9 @@ CFX_ByteString CPDF_FormControl::GetOnStateName() {
   if (!pN) {
     return csOn;
   }
-  FX_POSITION pos = pN->GetStartPos();
-  while (pos) {
-    pN->GetNextElement(pos, csOn);
-    if (csOn != "Off") {
-      return csOn;
+  for (const auto& it : *pN) {
+    if (it.first != "Off") {
+      return it.first;
     }
   }
   return CFX_ByteString();
@@ -56,10 +54,8 @@ void CPDF_FormControl::SetOnStateName(const CFX_ByteString& csOn) {
   if (!pAP) {
     return;
   }
-  FX_POSITION pos1 = pAP->GetStartPos();
-  while (pos1) {
-    CFX_ByteString csKey1;
-    CPDF_Object* pObj1 = pAP->GetNextElement(pos1, csKey1);
+  for (const auto& it : *pAP) {
+    CPDF_Object* pObj1 = it.second;
     if (!pObj1) {
       continue;
     }
@@ -68,10 +64,9 @@ void CPDF_FormControl::SetOnStateName(const CFX_ByteString& csOn) {
     if (!pSubDict)
       continue;
 
-    FX_POSITION pos2 = pSubDict->GetStartPos();
-    while (pos2) {
-      CFX_ByteString csKey2;
-      CPDF_Object* pObj2 = pSubDict->GetNextElement(pos2, csKey2);
+    for (const auto& subdict_it : *pSubDict) {
+      const CFX_ByteString& csKey2 = subdict_it.first;
+      CPDF_Object* pObj2 = subdict_it.second;
       if (!pObj2) {
         continue;
       }

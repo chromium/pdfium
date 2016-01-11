@@ -7,6 +7,7 @@
 #ifndef CORE_INCLUDE_FPDFAPI_FPDF_OBJECTS_H_
 #define CORE_INCLUDE_FPDFAPI_FPDF_OBJECTS_H_
 
+#include <map>
 #include <set>
 
 #include "core/include/fxcrt/fx_coordinates.h"
@@ -339,6 +340,9 @@ inline const CPDF_Array* ToArray(const CPDF_Object* obj) {
 
 class CPDF_Dictionary : public CPDF_Object {
  public:
+  using iterator = std::map<CFX_ByteString, CPDF_Object*>::iterator;
+  using const_iterator = std::map<CFX_ByteString, CPDF_Object*>::const_iterator;
+
   CPDF_Dictionary() : CPDF_Object(PDFOBJ_DICTIONARY) {}
 
   CPDF_Object* GetElement(const CFX_ByteStringC& key) const;
@@ -381,10 +385,6 @@ class CPDF_Dictionary : public CPDF_Object {
 
   FX_BOOL KeyExist(const CFX_ByteStringC& key) const;
 
-  FX_POSITION GetStartPos() const;
-
-  CPDF_Object* GetNextElement(FX_POSITION& pos, CFX_ByteString& key) const;
-
   void SetAt(const CFX_ByteStringC& key, CPDF_Object* pObj);
 
   void SetAtName(const CFX_ByteStringC& key, const CFX_ByteString& name);
@@ -421,14 +421,20 @@ class CPDF_Dictionary : public CPDF_Object {
 
   FX_BOOL Identical(CPDF_Dictionary* pDict) const;
 
-  int GetCount() const { return m_Map.GetCount(); }
+  size_t GetCount() const { return m_Map.size(); }
 
-  void AddValue(const CFX_ByteStringC& key, CPDF_Object* pObj);
+  iterator begin() { return m_Map.begin(); }
+
+  iterator end() { return m_Map.end(); }
+
+  const_iterator begin() const { return m_Map.begin(); }
+
+  const_iterator end() const { return m_Map.end(); }
 
  protected:
   ~CPDF_Dictionary();
 
-  CFX_CMapByteStringToPtr m_Map;
+  std::map<CFX_ByteString, CPDF_Object*> m_Map;
 
   friend class CPDF_Object;
 };

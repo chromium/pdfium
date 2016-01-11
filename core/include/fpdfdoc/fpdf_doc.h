@@ -298,10 +298,6 @@ class CPDF_AAction {
 
   CPDF_Action GetAction(AActionType eType) const;
 
-  FX_POSITION GetStartPos() const;
-
-  CPDF_Action GetNextAction(FX_POSITION& pos, AActionType& eType) const;
-
   CPDF_Dictionary* m_pDict;
 };
 class CPDF_DocJSActions {

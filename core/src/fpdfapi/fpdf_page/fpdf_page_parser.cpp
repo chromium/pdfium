@@ -496,10 +496,9 @@ void PDF_ReplaceAbbr(CPDF_Object* pObj) {
   switch (pObj->GetType()) {
     case PDFOBJ_DICTIONARY: {
       CPDF_Dictionary* pDict = pObj->AsDictionary();
-      FX_POSITION pos = pDict->GetStartPos();
-      while (pos) {
-        CFX_ByteString key;
-        CPDF_Object* value = pDict->GetNextElement(pos, key);
+      for (const auto& it : *pDict) {
+        CFX_ByteString key = it.first;
+        CPDF_Object* value = it.second;
         CFX_ByteStringC fullname = PDF_FindFullName(
             PDF_InlineKeyAbbr, FX_ArraySize(PDF_InlineKeyAbbr), key);
         if (!fullname.IsEmpty()) {
@@ -544,10 +543,9 @@ void PDF_ReplaceFull(CPDF_Object* pObj) {
   switch (pObj->GetType()) {
     case PDFOBJ_DICTIONARY: {
       CPDF_Dictionary* pDict = pObj->AsDictionary();
-      FX_POSITION pos = pDict->GetStartPos();
-      while (pos) {
-        CFX_ByteString key;
-        CPDF_Object* value = pDict->GetNextElement(pos, key);
+      for (const auto& it : *pDict) {
+        CFX_ByteString key = it.first;
+        CPDF_Object* value = it.second;
         CFX_ByteStringC abbrName = PDF_FindAbbrName(
             PDF_InlineKeyAbbr, FX_ArraySize(PDF_InlineKeyAbbr), key);
         if (!abbrName.IsEmpty()) {

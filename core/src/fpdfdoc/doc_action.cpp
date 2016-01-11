@@ -257,37 +257,6 @@ CPDF_Action CPDF_AAction::GetAction(AActionType eType) const {
   }
   return CPDF_Action(m_pDict->GetDict(g_sAATypes[(int)eType]));
 }
-FX_POSITION CPDF_AAction::GetStartPos() const {
-  if (!m_pDict) {
-    return NULL;
-  }
-  return m_pDict->GetStartPos();
-}
-CPDF_Action CPDF_AAction::GetNextAction(FX_POSITION& pos,
-                                        AActionType& eType) const {
-  if (!m_pDict) {
-    return CPDF_Action();
-  }
-  CFX_ByteString csKey;
-  CPDF_Object* pObj = m_pDict->GetNextElement(pos, csKey);
-  if (!pObj) {
-    return CPDF_Action();
-  }
-  CPDF_Object* pDirect = pObj->GetDirect();
-  CPDF_Dictionary* pDict = ToDictionary(pDirect);
-  if (!pDict)
-    return CPDF_Action();
-
-  int i = 0;
-  while (g_sAATypes[i][0] != '\0') {
-    if (csKey == g_sAATypes[i]) {
-      break;
-    }
-    i++;
-  }
-  eType = (AActionType)i;
-  return CPDF_Action(pDict);
-}
 
 CPDF_DocJSActions::CPDF_DocJSActions(CPDF_Document* pDoc) : m_pDocument(pDoc) {}
 

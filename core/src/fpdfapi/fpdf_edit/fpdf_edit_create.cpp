@@ -15,6 +15,8 @@
 #define PDF_OBJECTSTREAM_MAXLENGTH (256 * 1024)
 #define PDF_XREFSTREAM_MAXSIZE 10000
 
+// TODO(ochang): Make helper for appending "objnum 0 R ".
+
 namespace {
 
 int32_t PDF_CreatorAppendObject(const CPDF_Object* pObj,
@@ -112,10 +114,9 @@ int32_t PDF_CreatorAppendObject(const CPDF_Object* pObj,
       }
       offset += 2;
       const CPDF_Dictionary* p = pObj->AsDictionary();
-      FX_POSITION pos = p->GetStartPos();
-      while (pos) {
-        CFX_ByteString key;
-        CPDF_Object* pValue = p->GetNextElement(pos, key);
+      for (const auto& it : *p) {
+        const CFX_ByteString& key = it.first;
+        CPDF_Object* pValue = it.second;
         if (pFile->AppendString("/") < 0) {
           return -1;
         }
@@ -184,10 +185,9 @@ int32_t PDF_CreatorWriteTrailer(CPDF_Document* pDocument,
   CPDF_Parser* pParser = (CPDF_Parser*)pDocument->GetParser();
   if (pParser) {
     CPDF_Dictionary* p = pParser->GetTrailer();
-    FX_POSITION pos = p->GetStartPos();
-    while (pos) {
-      CFX_ByteString key;
-      CPDF_Object* pValue = p->GetNextElement(pos, key);
+    for (const auto& it : *p) {
+      const CFX_ByteString& key = it.first;
+      CPDF_Object* pValue = it.second;
       if (key == "Encrypt" || key == "Size" || key == "Filter" ||
           key == "Index" || key == "Length" || key == "Prev" || key == "W" ||
           key == "XRefStm" || key == "Type" || key == "ID") {
@@ -1238,11 +1238,10 @@ int32_t CPDF_Creator::WriteDirectObj(FX_DWORD objnum,
       m_Offset += 2;
       const CPDF_Dictionary* p = pObj->AsDictionary();
       bool bSignDict = IsSignatureDict(p);
-      FX_POSITION pos = p->GetStartPos();
-      while (pos) {
+      for (const auto& it : *p) {
         FX_BOOL bSignValue = FALSE;
-        CFX_ByteString key;
-        CPDF_Object* pValue = p->GetNextElement(pos, key);
+        const CFX_ByteString& key = it.first;
+        CPDF_Object* pValue = it.second;
         if (m_File.AppendString("/") < 0) {
           return -1;
         }
@@ -1773,10 +1772,11 @@ int32_t CPDF_Creator::WriteDoc_Stage4(IFX_Pause* pPause) {
     }
     if (m_pParser) {
       CPDF_Dictionary* p = m_pParser->m_pTrailer;
-      FX_POSITION pos = p->GetStartPos();
-      while (pos) {
-        CFX_ByteString key;
-        CPDF_Object* pValue = p->GetNextElement(pos, key);
+      for (const auto& it : *p) {
+        const CFX_ByteString& key = it.first;
+        CPDF_Object* pValue = it.second;
+        // TODO(ochang): Consolidate with similar check in
+        // PDF_CreatorWriteTrailer.
         if (key == "Encrypt" || key == "Size" || key == "Filter" ||
             key == "Index" || key == "Length" || key == "Prev" || key == "W" ||
             key == "XRefStm" || key == "ID") {

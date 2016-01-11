@@ -101,10 +101,9 @@ FX_BOOL CPDF_PageOrganizer::ExportPage(CPDF_Document* pSrcPDFDoc,
       return FALSE;
 
     // Clone the page dictionary
-    FX_POSITION SrcPos = pSrcPageDict->GetStartPos();
-    while (SrcPos) {
-      CFX_ByteString cbSrcKeyStr;
-      CPDF_Object* pObj = pSrcPageDict->GetNextElement(SrcPos, cbSrcKeyStr);
+    for (const auto& it : *pSrcPageDict) {
+      const CFX_ByteString& cbSrcKeyStr = it.first;
+      CPDF_Object* pObj = it.second;
       if (cbSrcKeyStr.Compare(("Type")) && cbSrcKeyStr.Compare(("Parent"))) {
         if (pCurPageDict->KeyExist(cbSrcKeyStr))
           pCurPageDict->RemoveAt(cbSrcKeyStr);
@@ -214,11 +213,9 @@ FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
     }
     case PDFOBJ_DICTIONARY: {
       CPDF_Dictionary* pDict = pObj->AsDictionary();
-
-      FX_POSITION pos = pDict->GetStartPos();
-      while (pos) {
-        CFX_ByteString key("");
-        CPDF_Object* pNextObj = pDict->GetNextElement(pos, key);
+      for (const auto& it : *pDict) {
+        const CFX_ByteString& key = it.first;
+        CPDF_Object* pNextObj = it.second;
         if (!FXSYS_strcmp(key, "Parent") || !FXSYS_strcmp(key, "Prev") ||
             !FXSYS_strcmp(key, "First")) {
           continue;
