@@ -1323,8 +1323,9 @@ FX_BOOL CFX_BufferAccImp::ReadBlock(void* buffer,
     return FALSE;
   }
   const uint8_t* pBuffer = m_pBufferRead->GetBlockBuffer();
-  FX_FILESIZE dwOffset = offset - dwBlockOffset;
-  size_t dwCopySize = std::min(size, dwBlockSize - dwOffset);
+  const FX_FILESIZE dwOffset = offset - dwBlockOffset;
+  size_t dwCopySize =
+      std::min(size, static_cast<size_t>(dwBlockSize - dwOffset));
   FXSYS_memcpy(buffer, pBuffer + dwOffset, dwCopySize);
   offset = dwCopySize;
   size -= dwCopySize;
