@@ -1100,10 +1100,10 @@ void CPDF_StreamContentParser::Handle_ShadeFill() {
   if (!pPattern) {
     return;
   }
-  if (pPattern->m_PatternType != PATTERN_SHADING) {
+  if (pPattern->m_PatternType != CPDF_Pattern::SHADING) {
     return;
   }
-  CPDF_ShadingPattern* pShading = (CPDF_ShadingPattern*)pPattern;
+  CPDF_ShadingPattern* pShading = static_cast<CPDF_ShadingPattern*>(pPattern);
   if (!pShading->m_bShadingObj) {
     return;
   }

@@ -522,12 +522,14 @@ FX_BOOL CPDF_ImageRenderer::DrawPatternImage(const CFX_Matrix* pObj2Device) {
                              m_pRenderStatus->m_bDropObjects, NULL, TRUE);
     CFX_Matrix patternDevice = *pObj2Device;
     patternDevice.Translate((FX_FLOAT)-rect.left, (FX_FLOAT)-rect.top);
-    if (m_pPattern->m_PatternType == PATTERN_TILING) {
-      bitmap_render.DrawTilingPattern((CPDF_TilingPattern*)m_pPattern,
-                                      m_pImageObject, &patternDevice, FALSE);
+    if (m_pPattern->m_PatternType == CPDF_Pattern::TILING) {
+      bitmap_render.DrawTilingPattern(
+          static_cast<CPDF_TilingPattern*>(m_pPattern), m_pImageObject,
+          &patternDevice, FALSE);
     } else {
-      bitmap_render.DrawShadingPattern((CPDF_ShadingPattern*)m_pPattern,
-                                       m_pImageObject, &patternDevice, FALSE);
+      bitmap_render.DrawShadingPattern(
+          static_cast<CPDF_ShadingPattern*>(m_pPattern), m_pImageObject,
+          &patternDevice, FALSE);
     }
   }
   {

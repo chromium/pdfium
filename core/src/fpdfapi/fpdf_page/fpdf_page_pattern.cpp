@@ -26,25 +26,23 @@ ShadingType ToShadingType(int type) {
 
 }  // namespace
 
-CPDF_Pattern::CPDF_Pattern(const CFX_Matrix* pParentMatrix)
-    : m_pPatternObj(NULL),
-      m_PatternType(PATTERN_TILING),
-      m_pDocument(NULL),
+CPDF_Pattern::CPDF_Pattern(PatternType type,
+                           CPDF_Document* pDoc,
+                           CPDF_Object* pObj,
+                           const CFX_Matrix* pParentMatrix)
+    : m_PatternType(type),
+      m_pDocument(pDoc),
+      m_pPatternObj(pObj),
       m_bForceClear(FALSE) {
-  if (pParentMatrix) {
+  if (pParentMatrix)
     m_ParentMatrix = *pParentMatrix;
-  }
 }
 CPDF_Pattern::~CPDF_Pattern() {}
 CPDF_TilingPattern::CPDF_TilingPattern(CPDF_Document* pDoc,
                                        CPDF_Object* pPatternObj,
                                        const CFX_Matrix* parentMatrix)
-    : CPDF_Pattern(parentMatrix) {
-  m_PatternType = PATTERN_TILING;
-  m_pPatternObj = pPatternObj;
-  m_pDocument = pDoc;
+    : CPDF_Pattern(TILING, pDoc, pPatternObj, parentMatrix) {
   CPDF_Dictionary* pDict = m_pPatternObj->GetDict();
-  ASSERT(pDict);
   m_Pattern2Form = pDict->GetMatrix("Matrix");
   m_bColored = pDict->GetInteger("PaintType") == 1;
   if (parentMatrix) {
@@ -81,46 +79,34 @@ CPDF_ShadingPattern::CPDF_ShadingPattern(CPDF_Document* pDoc,
                                          CPDF_Object* pPatternObj,
                                          FX_BOOL bShading,
                                          const CFX_Matrix* parentMatrix)
-    : CPDF_Pattern(parentMatrix) {
-  m_PatternType = PATTERN_SHADING;
-  m_pPatternObj = bShading ? NULL : pPatternObj;
-  m_pDocument = pDoc;
-  m_bShadingObj = bShading;
+    : CPDF_Pattern(SHADING,
+                   pDoc,
+                   bShading ? nullptr : pPatternObj,
+                   parentMatrix),
+      m_ShadingType(kInvalidShading),
+      m_bShadingObj(bShading),
+      m_pShadingObj(pPatternObj),
+      m_pCS(nullptr),
+      m_pCountedCS(nullptr),
+      m_nFuncs(0) {
   if (!bShading) {
     CPDF_Dictionary* pDict = m_pPatternObj->GetDict();
-    ASSERT(pDict);
     m_Pattern2Form = pDict->GetMatrix("Matrix");
     m_pShadingObj = pDict->GetElementValue("Shading");
-    if (parentMatrix) {
+    if (parentMatrix)
       m_Pattern2Form.Concat(*parentMatrix);
-    }
-  } else {
-    m_pShadingObj = pPatternObj;
   }
-  m_ShadingType = kInvalidShading;
-  m_pCS = NULL;
-  m_nFuncs = 0;
-  for (int i = 0; i < 4; i++) {
-    m_pFunctions[i] = NULL;
-  }
-  m_pCountedCS = NULL;
+  for (int i = 0; i < FX_ArraySize(m_pFunctions); ++i)
+    m_pFunctions[i] = nullptr;
 }
+
 CPDF_ShadingPattern::~CPDF_ShadingPattern() {
-  Clear();
-}
-void CPDF_ShadingPattern::Clear() {
-  for (int i = 0; i < m_nFuncs; i++) {
+  for (int i = 0; i < m_nFuncs; ++i)
     delete m_pFunctions[i];
-    m_pFunctions[i] = NULL;
-  }
+
   CPDF_ColorSpace* pCS = m_pCountedCS ? m_pCountedCS->get() : NULL;
-  if (pCS && m_pDocument) {
+  if (pCS && m_pDocument)
     m_pDocument->GetPageData()->ReleaseColorSpace(pCS->GetArray());
-  }
-  m_ShadingType = kInvalidShading;
-  m_pCS = NULL;
-  m_pCountedCS = NULL;
-  m_nFuncs = 0;
 }
 
 FX_BOOL CPDF_ShadingPattern::Load() {
@@ -167,10 +153,6 @@ FX_BOOL CPDF_ShadingPattern::Load() {
     return FALSE;
 
   return TRUE;
-}
-FX_BOOL CPDF_ShadingPattern::Reload() {
-  Clear();
-  return Load();
 }
 FX_BOOL CPDF_MeshStream::Load(CPDF_Stream* pShadingStream,
                               CPDF_Function** pFuncs,
