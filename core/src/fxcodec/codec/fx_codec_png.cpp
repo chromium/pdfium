@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "core/include/fxcodec/fx_codec.h"
 #include "core/include/fxge/fx_dib.h"
 #include "codec_int.h"
@@ -62,24 +64,24 @@ static void _png_load_bmp_attribute(png_structp png_ptr,
 #endif
 #if defined(PNG_TEXT_SUPPORTED)
     int i;
-    FX_DWORD len;
+    FX_STRSIZE len;
     const FX_CHAR* buf;
     int num_text;
     png_textp text = NULL;
     png_get_text(png_ptr, info_ptr, &text, &num_text);
     for (i = 0; i < num_text; i++) {
-      len = (FX_DWORD)FXSYS_strlen(text[i].key);
+      len = FXSYS_strlen(text[i].key);
       buf = "Time";
-      if (!FXSYS_memcmp(buf, text[i].key, FX_MIN(len, FXSYS_strlen(buf)))) {
+      if (!FXSYS_memcmp(buf, text[i].key, std::min(len, FXSYS_strlen(buf)))) {
         if (!bTime) {
           FXSYS_memset(pAttribute->m_strTime, 0, sizeof(pAttribute->m_strTime));
           FXSYS_memcpy(
               pAttribute->m_strTime, text[i].text,
-              FX_MIN(sizeof(pAttribute->m_strTime) - 1, text[i].text_length));
+              std::min(sizeof(pAttribute->m_strTime) - 1, text[i].text_length));
         }
       } else {
         buf = "Author";
-        if (!FXSYS_memcmp(buf, text[i].key, FX_MIN(len, FXSYS_strlen(buf)))) {
+        if (!FXSYS_memcmp(buf, text[i].key, std::min(len, FXSYS_strlen(buf)))) {
           pAttribute->m_strAuthor.Empty();
           pAttribute->m_strAuthor.Load((uint8_t*)text[i].text,
                                        (FX_STRSIZE)text[i].text_length);

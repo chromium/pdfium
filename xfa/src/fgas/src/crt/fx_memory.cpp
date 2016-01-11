@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "xfa/src/fgas/src/fgas_base.h"
 #include "fx_memory.h"
 #define FX_4BYTEALIGN(size) (((size) + 3) / 4 * 4)
@@ -59,7 +61,7 @@ FX_LPSTATICSTORECHUNK CFX_StaticStore::AllocChunk(size_t size) {
 FX_LPSTATICSTORECHUNK CFX_StaticStore::FindChunk(size_t size) {
   FXSYS_assert(size != 0);
   if (m_pLastChunk == NULL || m_pLastChunk->iFreeSize < size) {
-    return AllocChunk(FX_MAX(m_iDefChunkSize, size));
+    return AllocChunk(std::max(m_iDefChunkSize, size));
   }
   return m_pLastChunk;
 }
@@ -242,7 +244,7 @@ void* CFX_DynamicStore::Alloc(size_t size) {
     pChunk = pChunk->pNextChunk;
   }
   if (pChunk == NULL) {
-    pChunk = AllocChunk(FX_MAX(m_iDefChunkSize, size));
+    pChunk = AllocChunk(std::max(m_iDefChunkSize, size));
     pBlock = pChunk->FirstBlock();
   }
   FXSYS_assert(pChunk != NULL && pBlock != NULL);

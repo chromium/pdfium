@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "core/include/fxcrt/fx_arb.h"
 #include "xfa/src/fgas/include/fx_lbk.h"
 #include "xfa/src/fgas/src/fgas_base.h"
@@ -605,7 +607,7 @@ FX_DWORD CFX_TxtBreak::AppendChar(FX_WCHAR wch) {
   FX_DWORD dwRet2 =
       (this->*g_FX_TxtBreak_lpfAppendChar[dwType >> FX_CHARTYPEBITS])(
           pCurChar, iRotation);
-  return FX_MAX(dwRet1, dwRet2);
+  return std::max(dwRet1, dwRet2);
 }
 void CFX_TxtBreak::EndBreak_UpdateArabicShapes() {
   FXSYS_assert(m_bArabicShapes);
@@ -1572,7 +1574,7 @@ int32_t CFX_TxtBreak::GetCharRects(FX_LPCTXTRUN pTxtRun,
   if (bCharBBox) {
     bCharBBox = pFont->GetBBox(bbox);
   }
-  FX_FLOAT fLeft = FX_MAX(0, bbox.left * fScale);
+  FX_FLOAT fLeft = std::max(0.0f, bbox.left * fScale);
   FX_FLOAT fHeight = FXSYS_fabs(bbox.height * fScale);
   rtArray.RemoveAll();
   rtArray.SetSize(iLength);
@@ -1642,13 +1644,13 @@ int32_t CFX_TxtBreak::GetCharRects(FX_LPCTXTRUN pTxtRun,
         rtBBoxF.left = rect.top + (rect.height - fHeight) / 2.0f;
         rtBBoxF.height = fCharWidth;
         rtBBoxF.width = fHeight;
-        rtBBoxF.left = FX_MAX(rtBBoxF.left, 0);
+        rtBBoxF.left = std::max(rtBBoxF.left, 0.0f);
       } else {
         rtBBoxF.left = rect.left + fRTLeft;
         rtBBoxF.top = rect.top + (rect.height - fHeight) / 2.0f;
         rtBBoxF.width = fCharWidth;
         rtBBoxF.height = fHeight;
-        rtBBoxF.top = FX_MAX(rtBBoxF.top, 0);
+        rtBBoxF.top = std::max(rtBBoxF.top, 0.0f);
       }
       rtArray.SetAt(i, rtBBoxF);
       continue;

@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fee/include/ifde_txtedtengine.h"
 #include "xfa/src/fee/include/ifde_txtedtbuf.h"
@@ -122,7 +124,7 @@ void CFDE_TxtEdtEngine::SetTextByStream(IFX_Stream* pStream) {
       uint8_t bom[4];
       int32_t nPos = pStream->GetBOM(bom);
       pStream->Seek(FX_STREAMSEEK_Begin, nPos);
-      int32_t nPlateSize = FX_MIN(nStreamLength, m_pTxtBuf->GetChunkSize());
+      int32_t nPlateSize = std::min(nStreamLength, m_pTxtBuf->GetChunkSize());
       FX_WCHAR* lpwstr = FX_Alloc(FX_WCHAR, nPlateSize);
       FX_BOOL bEos = false;
       while (!bEos) {
@@ -389,7 +391,7 @@ int32_t CFDE_TxtEdtEngine::MoveCaretPos(FDE_TXTEDTMOVECARET eMoveCaret,
       break;
   }
   if (bShift && m_nAnchorPos != -1 && (m_nAnchorPos != m_nCaret)) {
-    AddSelRange(FX_MIN(m_nAnchorPos, m_nCaret),
+    AddSelRange(std::min(m_nAnchorPos, m_nCaret),
                 FXSYS_abs(m_nAnchorPos - m_nCaret));
     m_Param.pEventSink->On_SelChanged(this);
   }

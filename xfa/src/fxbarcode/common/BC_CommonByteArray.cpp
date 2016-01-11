@@ -20,6 +20,8 @@
  * limitations under the License.
  */
 
+#include <algorithm>
+
 #include "xfa/src/fxbarcode/barcode.h"
 #include "BC_CommonByteArray.h"
 CBC_CommonByteArray::CBC_CommonByteArray() {
@@ -61,7 +63,7 @@ FX_BOOL CBC_CommonByteArray::IsEmpty() {
 }
 void CBC_CommonByteArray::AppendByte(int32_t value) {
   if (m_size == 0 || m_index >= m_size) {
-    int32_t newSize = FX_MAX(32, m_size << 1);
+    int32_t newSize = std::max(32, m_size << 1);
     Reserve(newSize);
   }
   m_bytes[m_index] = (uint8_t)value;

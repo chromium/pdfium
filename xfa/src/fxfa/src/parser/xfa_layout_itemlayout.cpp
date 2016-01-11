@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/common/xfa_utils.h"
 #include "xfa/src/fxfa/src/common/xfa_object.h"
@@ -1277,8 +1279,8 @@ static inline void XFA_ItemLayoutProcessor_RelocateTableRowCells(
       fColSpanWidth += rgSpecifiedColumnWidths[nCurrentColIdx + i];
     }
     if (nColSpan != nOriginalColSpan) {
-      fColSpanWidth =
-          bMetWholeRowCell ? 0 : FX_MAX(fColSpanWidth, pLayoutChild->m_sSize.y);
+      fColSpanWidth = bMetWholeRowCell ? 0 : std::max(fColSpanWidth,
+                                                      pLayoutChild->m_sSize.y);
     }
     if (nOriginalColSpan == -1) {
       bMetWholeRowCell = TRUE;

@@ -20,6 +20,8 @@
  * limitations under the License.
  */
 
+#include <algorithm>
+
 #include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/BC_Reader.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitArray.h"
@@ -140,7 +142,7 @@ CFX_Int32Array* CBC_OnedCodaBarReader::FindAsteriskPattern(
       if (counterPosition == patternLength - 1) {
         if (ArrayContains(STARTEND_ENCODING, ToNarrowWidePattern(&counters))) {
           FX_BOOL btemp3 =
-              row->IsRange(FX_MAX(0, patternStart - (i - patternStart) / 2),
+              row->IsRange(std::max(0, patternStart - (i - patternStart) / 2),
                            patternStart, FALSE, e);
           BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
           if (btemp3) {

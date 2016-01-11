@@ -6,6 +6,7 @@
 
 #include "render_int.h"
 
+#include <algorithm>
 #include <memory>
 #include <vector>
 
@@ -573,8 +574,8 @@ DIB_COMP_DATA* CPDF_DIBSource::GetDecodeAndMaskArray(FX_BOOL& bDefaultDecode,
         for (FX_DWORD i = 0; i < m_nComponents; i++) {
           int min_num = pArray->GetInteger(i * 2);
           int max_num = pArray->GetInteger(i * 2 + 1);
-          pCompData[i].m_ColorKeyMin = FX_MAX(min_num, 0);
-          pCompData[i].m_ColorKeyMax = FX_MIN(max_num, max_data);
+          pCompData[i].m_ColorKeyMin = std::max(min_num, 0);
+          pCompData[i].m_ColorKeyMax = std::min(max_num, max_data);
         }
       }
       bColorKey = TRUE;

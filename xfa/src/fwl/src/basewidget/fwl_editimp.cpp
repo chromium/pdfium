@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fwl/src/core/include/fwl_threadimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_appimp.h"
@@ -887,11 +889,11 @@ void CFWL_EditImp::On_TextChanged(IFDE_TxtEdtEngine* pEdit,
     fContentHeight1 = page1->GetContentsBox().height;
   }
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_HSelfAdaption) {
-    rtTemp.width = FX_MAX(m_pProperties->m_rtWidget.width, fContentWidth1);
+    rtTemp.width = std::max(m_pProperties->m_rtWidget.width, fContentWidth1);
     m_pProperties->m_rtWidget.width = fContentWidth1;
   }
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_VSelfAdaption) {
-    rtTemp.height = FX_MAX(m_pProperties->m_rtWidget.height, fContentHeight1);
+    rtTemp.height = std::max(m_pProperties->m_rtWidget.height, fContentHeight1);
     m_pProperties->m_rtWidget.height = fContentHeight1;
   }
   CFWL_EvtEdtTextChanged event;
@@ -1062,8 +1064,8 @@ void CFWL_EditImp::DrawContent(CFX_Graphics* pGraphics,
       if (nCharEnd < nPageCharStart || nCharStart > nPageCharEnd) {
         continue;
       }
-      int32_t nBgn = FX_MAX(nCharStart, nPageCharStart);
-      int32_t nEnd = FX_MIN(nCharEnd, nPageCharEnd);
+      int32_t nBgn = std::max(nCharStart, nPageCharStart);
+      int32_t nEnd = std::min(nCharEnd, nPageCharEnd);
       pPage->CalcRangeRectArray(nBgn - nPageCharStart, nEnd - nBgn + 1,
                                 rectArr);
     }
@@ -1926,8 +1928,8 @@ void CFWL_EditImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
   }
   FX_BOOL bShift = pMsg->m_dwFlags & FWL_KEYFLAG_Shift;
   if (bShift && m_pOwner->m_nSelStart != nIndex) {
-    int32_t iStart = FX_MIN(m_pOwner->m_nSelStart, nIndex);
-    int32_t iEnd = FX_MAX(m_pOwner->m_nSelStart, nIndex);
+    int32_t iStart = std::min(m_pOwner->m_nSelStart, nIndex);
+    int32_t iEnd = std::max(m_pOwner->m_nSelStart, nIndex);
     m_pOwner->m_pEdtEngine->AddSelRange(iStart, iEnd - iStart);
     bRepaint = TRUE;
   } else {
@@ -1985,7 +1987,7 @@ void CFWL_EditImpDelegate::OnMouseMove(CFWL_MsgMouse* pMsg) {
       m_pOwner->m_nSelStart = nLen;
     }
     m_pOwner->m_pEdtEngine->AddSelRange(
-        FX_MIN(m_pOwner->m_nSelStart, nIndex),
+        std::min(m_pOwner->m_nSelStart, nIndex),
         FXSYS_abs(nIndex - m_pOwner->m_nSelStart));
   }
 }

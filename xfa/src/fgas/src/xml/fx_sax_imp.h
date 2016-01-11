@@ -6,7 +6,7 @@
 
 #ifndef _FX_SAX_IMP_
 #define _FX_SAX_IMP_
-#define FX_SAXFILE_BUFSIZE 32768
+
 class CFX_SAXFile {
  public:
   CFX_SAXFile();

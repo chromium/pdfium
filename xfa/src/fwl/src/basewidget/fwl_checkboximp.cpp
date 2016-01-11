@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
@@ -245,8 +247,8 @@ void CFWL_CheckBoxImp::Layout() {
     CalcTextRect(wsCaption, m_pProperties->m_pThemeProvider, m_dwTTOStyles,
                  m_iTTOAlign, rtFocus);
     if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_MultiLine) == 0) {
-      FX_FLOAT fWidth = FX_MAX(m_rtCaption.width, rtFocus.width);
-      FX_FLOAT fHeight = FX_MIN(m_rtCaption.height, rtFocus.height);
+      FX_FLOAT fWidth = std::max(m_rtCaption.width, rtFocus.width);
+      FX_FLOAT fHeight = std::min(m_rtCaption.height, rtFocus.height);
       FX_FLOAT fLeft = m_rtCaption.left;
       FX_FLOAT fTop = m_rtCaption.top;
       if ((m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_HLayoutMask) ==

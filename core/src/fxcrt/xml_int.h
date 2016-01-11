@@ -7,6 +7,8 @@
 #ifndef CORE_SRC_FXCRT_XML_INT_H_
 #define CORE_SRC_FXCRT_XML_INT_H_
 
+#include <algorithm>
+
 #include "core/include/fxcrt/fx_stream.h"
 
 class CFX_UTF8Decoder;
@@ -43,10 +45,9 @@ class CXML_DataBufAcc : public IFX_BufferRead {
   size_t m_dwCurPos;
 };
 
-#define FX_XMLDATASTREAM_BufferSize (32 * 1024)
 class CXML_DataStmAcc : public IFX_BufferRead {
  public:
-  CXML_DataStmAcc(IFX_FileRead* pFileRead)
+  explicit CXML_DataStmAcc(IFX_FileRead* pFileRead)
       : m_pFileRead(pFileRead), m_pBuffer(NULL), m_nStart(0), m_dwSize(0) {
     FXSYS_assert(m_pFileRead);
   }
@@ -69,7 +70,9 @@ class CXML_DataStmAcc : public IFX_BufferRead {
     if (m_nStart >= nLength) {
       return FALSE;
     }
-    m_dwSize = (size_t)FX_MIN(FX_XMLDATASTREAM_BufferSize, nLength - m_nStart);
+    static const FX_FILESIZE FX_XMLDATASTREAM_BufferSize = 32 * 1024;
+    m_dwSize = static_cast<size_t>(
+        std::min(FX_XMLDATASTREAM_BufferSize, nLength - m_nStart));
     if (!m_pBuffer) {
       m_pBuffer = FX_Alloc(uint8_t, m_dwSize);
     }

@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "xfa/src/fgas/include/fx_utl.h"
 #include "xfa/src/fgas/src/fgas_base.h"
 #include "fx_utils.h"
@@ -241,7 +243,8 @@ void CFX_BaseMassArrayImp::Append(int32_t iDstStart,
   uint8_t* pSrcChunk = (uint8_t*)src.GetAt(iSrcStart);
   int32_t iDstChunkSize = m_iChunkSize - (iDstStart % m_iChunkSize);
   int32_t iSrcChunkSize = src.m_iChunkSize - (iSrcStart % src.m_iChunkSize);
-  int32_t iCopySize = FX_MIN(iSrcCount, FX_MIN(iSrcChunkSize, iDstChunkSize));
+  int32_t iCopySize =
+      std::min(iSrcCount, std::min(iSrcChunkSize, iDstChunkSize));
   int32_t iCopyBytes = iCopySize * m_iBlockSize;
   while (iSrcCount > 0) {
     FXSYS_assert(pDstChunk != NULL && pSrcChunk != NULL);
@@ -263,7 +266,7 @@ void CFX_BaseMassArrayImp::Append(int32_t iDstStart,
     } else {
       pDstChunk += iCopyBytes;
     }
-    iCopySize = FX_MIN(iSrcCount, FX_MIN(iSrcChunkSize, iDstChunkSize));
+    iCopySize = std::min(iSrcCount, std::min(iSrcChunkSize, iDstChunkSize));
     iCopyBytes = iCopySize * m_iBlockSize;
   }
 }

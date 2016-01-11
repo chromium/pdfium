@@ -4,10 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
+#include "third_party/base/numerics/safe_math.h"
 #include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/BC_Writer.h"
 #include "xfa/src/fxbarcode/BC_TwoDimWriter.h"
+
 CBC_TwoDimWriter::CBC_TwoDimWriter() {
   m_iCorrectLevel = 1;
   m_bFixedSize = TRUE;
@@ -92,18 +96,18 @@ void CBC_TwoDimWriter::RenderResult(uint8_t* code,
                                     int32_t& e) {
   int32_t inputWidth = codeWidth;
   int32_t inputHeight = codeHeight;
-  int32_t tempWidth = inputWidth + (1 << 1);
-  int32_t tempHeight = inputHeight + (1 << 1);
-  FX_FLOAT moduleHSize = (FX_FLOAT)FX_MIN(m_ModuleWidth, m_ModuleHeight);
-  if (moduleHSize > 8) {
-    moduleHSize = 8;
-  } else if (moduleHSize < 1) {
-    moduleHSize = 1;
-  }
-  int32_t outputWidth = (int32_t)FX_MAX(tempWidth * moduleHSize, tempWidth);
-  int32_t outputHeight = (int32_t)FX_MAX(tempHeight * moduleHSize, tempHeight);
-  int32_t multiX = 1;
-  int32_t multiY = 1;
+  int32_t tempWidth = inputWidth + 2;
+  int32_t tempHeight = inputHeight + 2;
+  FX_FLOAT moduleHSize = std::min(m_ModuleWidth, m_ModuleHeight);
+  moduleHSize = std::min(moduleHSize, 8.0f);
+  moduleHSize = std::max(moduleHSize, 1.0f);
+  pdfium::base::CheckedNumeric<int32_t> scaledWidth = tempWidth;
+  pdfium::base::CheckedNumeric<int32_t> scaledHeight = tempHeight;
+  scaledWidth *= moduleHSize;
+  scaledHeight *= moduleHSize;
+
+  int32_t outputWidth = scaledWidth.ValueOrDie();
+  int32_t outputHeight = scaledHeight.ValueOrDie();
   if (m_bFixedSize) {
     if (m_Width < outputWidth || m_Height < outputHeight) {
       e = BCExceptionBitmapSizeError;
@@ -117,10 +121,10 @@ void CBC_TwoDimWriter::RenderResult(uint8_t* code,
           outputHeight * ceil((FX_FLOAT)m_Height / (FX_FLOAT)outputHeight));
     }
   }
-  multiX = (int32_t)ceil((FX_FLOAT)outputWidth / (FX_FLOAT)tempWidth);
-  multiY = (int32_t)ceil((FX_FLOAT)outputHeight / (FX_FLOAT)tempHeight);
+  int32_t multiX = (int32_t)ceil((FX_FLOAT)outputWidth / (FX_FLOAT)tempWidth);
+  int32_t multiY = (int32_t)ceil((FX_FLOAT)outputHeight / (FX_FLOAT)tempHeight);
   if (m_bFixedSize) {
-    multiX = FX_MIN(multiX, multiY);
+    multiX = std::min(multiX, multiY);
     multiY = multiX;
   }
   int32_t leftPadding = (outputWidth - (inputWidth * multiX)) / 2;

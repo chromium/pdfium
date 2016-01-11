@@ -7,6 +7,8 @@
 #ifndef CORE_SRC_FXCRT_EXTENSION_H_
 #define CORE_SRC_FXCRT_EXTENSION_H_
 
+#include <algorithm>
+
 #include "core/include/fxcrt/fx_basic.h"
 #include "core/include/fxcrt/fx_safe_types.h"
 
@@ -67,39 +69,21 @@ class CFX_CRTFileAccess : public IFX_FileAccess {
 
 class CFX_CRTFileStream final : public IFX_FileStream {
  public:
-  CFX_CRTFileStream(IFXCRT_FileAccess* pFA) : m_pFile(pFA), m_dwCount(1) {}
-  ~CFX_CRTFileStream() override {
-    if (m_pFile) {
-      m_pFile->Release();
-    }
-  }
-  virtual IFX_FileStream* Retain() override {
-    m_dwCount++;
-    return this;
-  }
-  virtual void Release() override {
-    FX_DWORD nCount = --m_dwCount;
-    if (!nCount) {
-      delete this;
-    }
-  }
-  virtual FX_FILESIZE GetSize() override { return m_pFile->GetSize(); }
-  virtual FX_BOOL IsEOF() override { return GetPosition() >= GetSize(); }
-  virtual FX_FILESIZE GetPosition() override { return m_pFile->GetPosition(); }
-  virtual FX_BOOL ReadBlock(void* buffer,
-                            FX_FILESIZE offset,
-                            size_t size) override {
-    return (FX_BOOL)m_pFile->ReadPos(buffer, size, offset);
-  }
-  virtual size_t ReadBlock(void* buffer, size_t size) override {
-    return m_pFile->Read(buffer, size);
-  }
-  virtual FX_BOOL WriteBlock(const void* buffer,
-                             FX_FILESIZE offset,
-                             size_t size) override {
-    return (FX_BOOL)m_pFile->WritePos(buffer, size, offset);
-  }
-  virtual FX_BOOL Flush() override { return m_pFile->Flush(); }
+  explicit CFX_CRTFileStream(IFXCRT_FileAccess* pFA);
+  ~CFX_CRTFileStream() override;
+
+  // IFX_FileStream:
+  IFX_FileStream* Retain() override;
+  void Release() override;
+  FX_FILESIZE GetSize() override;
+  FX_BOOL IsEOF() override;
+  FX_FILESIZE GetPosition() override;
+  FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
+  size_t ReadBlock(void* buffer, size_t size) override;
+  FX_BOOL WriteBlock(const void* buffer,
+                     FX_FILESIZE offset,
+                     size_t size) override;
+  FX_BOOL Flush() override;
 
  protected:
   IFXCRT_FileAccess* m_pFile;
@@ -111,7 +95,7 @@ class CFX_CRTFileStream final : public IFX_FileStream {
 #define FX_MEMSTREAM_TakeOver 0x02
 class CFX_MemoryStream final : public IFX_MemoryStream {
  public:
-  CFX_MemoryStream(FX_BOOL bConsecutive)
+  explicit CFX_MemoryStream(FX_BOOL bConsecutive)
       : m_dwCount(1),
         m_nTotalSize(0),
         m_nCurSize(0),
@@ -190,7 +174,7 @@ class CFX_MemoryStream final : public IFX_MemoryStream {
     if (m_nCurPos >= m_nCurSize) {
       return 0;
     }
-    size_t nRead = FX_MIN(size, m_nCurSize - m_nCurPos);
+    size_t nRead = std::min(size, m_nCurSize - m_nCurPos);
     if (!ReadBlock(buffer, (int32_t)m_nCurPos, nRead)) {
       return 0;
     }
@@ -262,12 +246,13 @@ class CFX_MemoryStream final : public IFX_MemoryStream {
   void EstimateSize(size_t nInitSize, size_t nGrowSize) override {
     if (m_dwFlags & FX_MEMSTREAM_Consecutive) {
       if (m_Blocks.GetSize() < 1) {
-        uint8_t* pBlock = FX_Alloc(uint8_t, FX_MAX(nInitSize, 4096));
+        uint8_t* pBlock =
+            FX_Alloc(uint8_t, std::max(nInitSize, static_cast<size_t>(4096)));
         m_Blocks.Add(pBlock);
       }
-      m_nGrowSize = FX_MAX(nGrowSize, 4096);
+      m_nGrowSize = std::max(nGrowSize, static_cast<size_t>(4096));
     } else if (m_Blocks.GetSize() < 1) {
-      m_nGrowSize = FX_MAX(nGrowSize, 4096);
+      m_nGrowSize = std::max(nGrowSize, static_cast<size_t>(4096));
     }
   }
   uint8_t* GetBuffer() const override {

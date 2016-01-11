@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "xfa/src/foxitlib.h"
 #include "fde_gedevice.h"
 #include "fde_geobject.h"
@@ -541,7 +543,7 @@ FX_BOOL CFDE_FxgeDevice::FillLinearGradientPath(IFDE_Brush* pBrush,
   FX_FLOAT fLength = fDiagonal.Length();
   FX_FLOAT fTotalX = fLength / FXSYS_cos(fTheta);
   FX_FLOAT fTotalY = fLength / FXSYS_cos(FX_PI / 2 - fTheta);
-  FX_FLOAT fSteps = FX_MAX(fTotalX, fTotalY);
+  FX_FLOAT fSteps = std::max(fTotalX, fTotalY);
   FX_FLOAT dx = fTotalX / fSteps;
   FX_FLOAT dy = fTotalY / fSteps;
   FX_ARGB cr0, cr1;

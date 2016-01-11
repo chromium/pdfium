@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/common/xfa_common.h"
 #include "xfa_textlayout.h"
@@ -511,7 +513,7 @@ FX_FLOAT CXFA_TextParser::GetLineHeight(IXFA_TextProvider* pTextProvider,
     if (fLineHeight < 0.1f) {
       fLineHeight = fFontSize;
     } else {
-      fLineHeight = FX_MIN(fLineHeight, fFontSize);
+      fLineHeight = std::min(fLineHeight, fFontSize);
     }
   } else if (fLineHeight < 0.1f) {
     fLineHeight = GetFontSize(pTextProvider, pStyle) * 1.2f;
@@ -1704,7 +1706,7 @@ void CXFA_TextLayout::DoTabstops(IFDE_CSSComputedStyle* pStyle,
         }
       }
       m_pTabstopContext->m_fLeft =
-          FX_MIN(fLeft, m_pTabstopContext->m_fTabWidth);
+          std::min(fLeft, m_pTabstopContext->m_fTabWidth);
       m_pTabstopContext->m_bTabstops = FALSE;
       m_pTabstopContext->m_fTabWidth = 0;
     }
@@ -1772,7 +1774,7 @@ void CXFA_TextLayout::AppendTextLine(FX_DWORD dwStatus,
       } else if (fBaseLine < -fBaseLineTemp) {
         fBaseLine = -fBaseLineTemp;
       }
-      fLineStep = FX_MAX(fLineStep, fLineHeight);
+      fLineStep = std::max(fLineStep, fLineHeight);
       if (pUserData != NULL && pUserData->m_pLinkData != NULL) {
         pUserData->m_pLinkData->AddRef();
         pTP->pLinkData = pUserData->m_pLinkData;
@@ -1786,7 +1788,7 @@ void CXFA_TextLayout::AppendTextLine(FX_DWORD dwStatus,
       FX_FLOAT& fTop = pTP->rtPiece.top;
       FX_FLOAT fBaseLineTemp = fTop;
       fTop = fLinePos + fLineStep - pTP->rtPiece.height - fBaseLineTemp;
-      fTop = FX_MAX(0, fTop);
+      fTop = std::max(0.0f, fTop);
     }
     fLinePos += fLineStep + fBaseLine;
   } else {
@@ -1809,11 +1811,11 @@ void CXFA_TextLayout::AppendTextLine(FX_DWORD dwStatus,
           fLineHeight = fLineHeightTmp;
         }
       }
-      fLineStep = FX_MAX(fLineStep, fLineHeight);
+      fLineStep = std::max(fLineStep, fLineHeight);
       fLineWidth += pPiece->m_iWidth / 20000.0f;
     }
     fLinePos += fLineStep;
-    m_fMaxWidth = FX_MAX(m_fMaxWidth, fLineWidth);
+    m_fMaxWidth = std::max(m_fMaxWidth, fLineWidth);
     if (m_pLoader && m_pLoader->m_bSaveLineHeight) {
       FX_FLOAT fHeight = fLinePos - m_pLoader->m_fLastPos;
       m_pLoader->m_fLastPos = fLinePos;

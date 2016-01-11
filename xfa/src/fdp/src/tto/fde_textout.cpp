@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "xfa/src/foxitlib.h"
 #include "fde_textout.h"
 IFDE_TextOut* IFDE_TextOut::Create() {
@@ -270,11 +272,11 @@ void CFDE_TextOut::CalcTextSize(const FX_WCHAR* pwsStr,
     rect.top += fStartPos;
     rect.left += fInc;
     rect.width = fHeight;
-    rect.height = FX_MIN(fWidth, rect.Height());
+    rect.height = std::min(fWidth, rect.Height());
   } else {
     rect.left += fStartPos;
     rect.top += fInc;
-    rect.width = FX_MIN(fWidth, rect.Width());
+    rect.width = std::min(fWidth, rect.Width());
     rect.height = fHeight;
     if (m_dwStyles & FDE_TTOSTYLE_LastLineHeight) {
       rect.height -= m_fLineSpace - m_fFontSize;
@@ -313,7 +315,7 @@ FX_BOOL CFDE_TextOut::RetrieveLineWidth(FX_DWORD dwBreakStatus,
   for (int32_t i = 0; i < iCount; i++) {
     const CFX_TxtPiece* pPiece = m_pTxtBreak->GetBreakPiece(i);
     fLineWidth += (FX_FLOAT)pPiece->m_iWidth / 20000.0f;
-    fStartPos = FX_MIN(fStartPos, (FX_FLOAT)pPiece->m_iStartPos / 20000.0f);
+    fStartPos = std::min(fStartPos, (FX_FLOAT)pPiece->m_iStartPos / 20000.0f);
   }
   m_pTxtBreak->ClearBreakPieces();
   if (dwBreakStatus == FX_TXTBREAK_ParagraphBreak) {
@@ -322,7 +324,7 @@ FX_BOOL CFDE_TextOut::RetrieveLineWidth(FX_DWORD dwBreakStatus,
   if (!bLineWrap && dwBreakStatus == FX_TXTBREAK_LineBreak) {
     fWidth += fLineWidth;
   } else {
-    fWidth = FX_MAX(fWidth, fLineWidth);
+    fWidth = std::max(fWidth, fLineWidth);
     fHeight += fLineStep;
   }
   m_iTotalLines++;

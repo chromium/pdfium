@@ -20,6 +20,8 @@
  * limitations under the License.
  */
 
+#include <algorithm>
+
 #include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/BC_UtilCodingConvert.h"
 #include "xfa/src/fxbarcode/common/BC_CommonByteArray.h"
@@ -876,8 +878,8 @@ void CBC_QRCoderEncoder::InterleaveWithECBytes(CBC_QRCoderBitVector* bits,
         GenerateECBytes(dataBytes, numEcBytesInBlosk, e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);
     blocks.Add(new CBC_QRCoderBlockPair(dataBytes, ecBytes));
-    maxNumDataBytes = FX_MAX(maxNumDataBytes, dataBytes->Size());
-    maxNumEcBytes = FX_MAX(maxNumEcBytes, ecBytes->Size());
+    maxNumDataBytes = std::max(maxNumDataBytes, dataBytes->Size());
+    maxNumEcBytes = std::max(maxNumEcBytes, ecBytes->Size());
     dataBytesOffset += numDataBytesInBlock;
   }
   if (numDataBytes != dataBytesOffset) {

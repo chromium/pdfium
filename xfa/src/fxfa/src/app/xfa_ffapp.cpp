@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/common/xfa_common.h"
 #include "xfa_ffdochandler.h"
@@ -47,7 +49,7 @@ FX_BOOL CXFA_FileRead::ReadBlock(void* buffer,
   while (index < iCount) {
     CPDF_StreamAcc& acc = m_Data[index];
     FX_DWORD dwSize = acc.GetSize();
-    FX_DWORD dwRead = FX_MIN(size, dwSize - offset);
+    size_t dwRead = std::min(size, static_cast<size_t>(dwSize - offset));
     FXSYS_memcpy(buffer, acc.GetData() + offset, dwRead);
     size -= dwRead;
     if (size == 0) {

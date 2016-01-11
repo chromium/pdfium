@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "xfa/src/foxitlib.h"
 #include "fde_xml.h"
 #ifdef __cplusplus
@@ -1484,7 +1486,7 @@ void CFDE_XMLSyntaxParser::Init(IFX_Stream* pStream,
   int32_t iStreamLength = pStream->GetLength();
   FXSYS_assert(iStreamLength > 0);
   m_pStream = pStream;
-  m_iXMLPlaneSize = FX_MIN(iXMLPlaneSize, iStreamLength);
+  m_iXMLPlaneSize = std::min(iXMLPlaneSize, iStreamLength);
   uint8_t bom[4];
   m_iCurrentPos = m_pStream->GetBOM(bom);
   FXSYS_assert(m_pBuffer == NULL);
@@ -2002,7 +2004,7 @@ void CFDE_XMLSyntaxParser::Init(IFX_Stream* pStream,
   int32_t iStreamLength = pStream->GetLength();
   FXSYS_assert(iStreamLength > 0);
   m_pStream = pStream;
-  m_iXMLPlaneSize = FX_MIN(iXMLPlaneSize, iStreamLength);
+  m_iXMLPlaneSize = std::min(iXMLPlaneSize, iStreamLength);
   m_iTextDataSize = iTextDataSize;
   uint8_t bom[4];
   m_iCurrentPos = m_pStream->GetBOM(bom);

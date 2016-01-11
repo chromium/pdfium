@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
@@ -769,7 +771,7 @@ FX_BOOL CFWL_WidgetImp::GetPopupPosComboBox(FX_FLOAT fMinHeight,
   } else if (rtPopup.height < fMinHeight) {
     fPopHeight = fMinHeight;
   }
-  FX_FLOAT fWidth = FX_MAX(rtAnchor.width, rtPopup.width);
+  FX_FLOAT fWidth = std::max(rtAnchor.width, rtPopup.width);
   FX_FLOAT fBottom = rtAnchor.bottom() + fPopHeight;
   TransformTo(NULL, fx, fy);
   if (fBottom + fy > fScreenHeight) {

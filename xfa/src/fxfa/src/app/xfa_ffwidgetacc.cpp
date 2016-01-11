@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/common/xfa_common.h"
 #include "xfa_ffwidget.h"
@@ -825,12 +827,12 @@ FX_BOOL CXFA_WidgetAcc::CalculateFieldAutoSize(CFX_SizeF& size) {
       case XFA_ATTRIBUTEENUM_Right:
       case XFA_ATTRIBUTEENUM_Inline: {
         size.x += szCap.x;
-        size.y = FX_MAX(size.y, szCap.y);
+        size.y = std::max(size.y, szCap.y);
       } break;
       case XFA_ATTRIBUTEENUM_Top:
       case XFA_ATTRIBUTEENUM_Bottom: {
         size.y += szCap.y;
-        size.x = FX_MAX(size.x, szCap.x);
+        size.x = std::max(size.x, szCap.x);
       }
       default:
         break;
@@ -859,10 +861,10 @@ FX_BOOL CXFA_WidgetAcc::CalculateWidgetAutoSize(CFX_SizeF& size) {
     size.x = fVal;
   } else {
     if (this->GetMinWidth(fMin)) {
-      size.x = FX_MAX(size.x, fMin);
+      size.x = std::max(size.x, fMin);
     }
     if (this->GetMaxWidth(fMax) && fMax > 0) {
-      size.x = FX_MIN(size.x, fMax);
+      size.x = std::min(size.x, fMax);
     }
   }
   fVal = 0, fMin = 0, fMax = 0;
@@ -870,10 +872,10 @@ FX_BOOL CXFA_WidgetAcc::CalculateWidgetAutoSize(CFX_SizeF& size) {
     size.y = fVal;
   } else {
     if (this->GetMinHeight(fMin)) {
-      size.y = FX_MAX(size.y, fMin);
+      size.y = std::max(size.y, fMin);
     }
     if (this->GetMaxHeight(fMax) && fMax > 0) {
-      size.y = FX_MIN(size.y, fMax);
+      size.y = std::min(size.y, fMax);
     }
   }
   return TRUE;
@@ -944,7 +946,7 @@ FX_BOOL CXFA_WidgetAcc::CalculateTextEditAutoSize(CFX_SizeF& size) {
         case XFA_ATTRIBUTEENUM_Left:
         case XFA_ATTRIBUTEENUM_Right:
         case XFA_ATTRIBUTEENUM_Inline: {
-          size.y = FX_MAX(size.y, szCap.y);
+          size.y = std::max(size.y, szCap.y);
         } break;
         case XFA_ATTRIBUTEENUM_Top:
         case XFA_ATTRIBUTEENUM_Bottom: {
@@ -1071,10 +1073,10 @@ FX_FLOAT CXFA_WidgetAcc::CalculateWidgetAutoWidth(FX_FLOAT fWidthCalc) {
   }
   FX_FLOAT fMin = 0, fMax = 0;
   if (this->GetMinWidth(fMin)) {
-    fWidthCalc = FX_MAX(fWidthCalc, fMin);
+    fWidthCalc = std::max(fWidthCalc, fMin);
   }
   if (this->GetMaxWidth(fMax) && fMax > 0) {
-    fWidthCalc = FX_MIN(fWidthCalc, fMax);
+    fWidthCalc = std::min(fWidthCalc, fMax);
   }
   return fWidthCalc;
 }
@@ -1098,10 +1100,10 @@ FX_FLOAT CXFA_WidgetAcc::CalculateWidgetAutoHeight(FX_FLOAT fHeightCalc) {
   }
   FX_FLOAT fMin = 0, fMax = 0;
   if (this->GetMinHeight(fMin)) {
-    fHeightCalc = FX_MAX(fHeightCalc, fMin);
+    fHeightCalc = std::max(fHeightCalc, fMin);
   }
   if (this->GetMaxHeight(fMax) && fMax > 0) {
-    fHeightCalc = FX_MIN(fHeightCalc, fMax);
+    fHeightCalc = std::min(fHeightCalc, fMax);
   }
   return fHeightCalc;
 }

@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fee/include/ifde_txtedtbuf.h"
 #include "xfa/src/fee/include/ifde_txtedtengine.h"
@@ -269,7 +271,7 @@ void CFDE_TxtEdtBuf::Insert(int32_t nPos,
     if (lpChunk->nUsed != m_nChunkSize) {
       cp.nChunkIndex--;
       int32_t nFree = m_nChunkSize - lpChunk->nUsed;
-      int32_t nCopy = FX_MIN(nLengthTemp, nFree);
+      int32_t nCopy = std::min(nLengthTemp, nFree);
       FXSYS_memcpy(lpChunk->wChars + lpChunk->nUsed, lpText,
                    nCopy * sizeof(FX_WCHAR));
       lpText += nCopy;
@@ -282,7 +284,7 @@ void CFDE_TxtEdtBuf::Insert(int32_t nPos,
     FDE_LPCHUNKHEADER lpChunk = (FDE_LPCHUNKHEADER)m_pAllocator->Alloc(
         sizeof(FDE_CHUNKHEADER) + (m_nChunkSize - 1) * sizeof(FX_WCHAR));
     FXSYS_assert(lpChunk);
-    int32_t nCopy = FX_MIN(nLengthTemp, m_nChunkSize);
+    int32_t nCopy = std::min(nLengthTemp, m_nChunkSize);
     FXSYS_memcpy(lpChunk->wChars, lpText, nCopy * sizeof(FX_WCHAR));
     lpText += nCopy;
     nLengthTemp -= nCopy;
@@ -302,7 +304,7 @@ void CFDE_TxtEdtBuf::Delete(int32_t nIndex, int32_t nLength) {
   int32_t nFirstPart = cpEnd.nCharIndex + 1;
   int32_t nMovePart = lpChunk->nUsed - nFirstPart;
   if (nMovePart != 0) {
-    int32_t nDelete = FX_MIN(nFirstPart, nLength);
+    int32_t nDelete = std::min(nFirstPart, nLength);
     FXSYS_memmove(lpChunk->wChars + nFirstPart - nDelete,
                   lpChunk->wChars + nFirstPart, nMovePart * sizeof(FX_WCHAR));
     lpChunk->nUsed -= nDelete;
@@ -311,7 +313,7 @@ void CFDE_TxtEdtBuf::Delete(int32_t nIndex, int32_t nLength) {
   }
   while (nLength > 0) {
     lpChunk = (FDE_LPCHUNKHEADER)m_Chunks[cpEnd.nChunkIndex];
-    int32_t nDeleted = FX_MIN(lpChunk->nUsed, nLength);
+    int32_t nDeleted = std::min(lpChunk->nUsed, nLength);
     lpChunk->nUsed -= nDeleted;
     if (lpChunk->nUsed == 0) {
       m_pAllocator->Free(lpChunk);

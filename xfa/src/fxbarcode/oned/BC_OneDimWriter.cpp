@@ -22,6 +22,7 @@
 
 #include "BC_OneDimWriter.h"
 
+#include <algorithm>
 #include <memory>
 
 #include "xfa/src/fxbarcode/BC_Writer.h"
@@ -391,7 +392,8 @@ void CBC_OneDimWriter::RenderResult(const CFX_WideStringC& contents,
     m_outputHScale = (FX_FLOAT)m_Width / (FX_FLOAT)codeLength;
   }
   if (!isDevice) {
-    m_outputHScale = FX_MAX(m_outputHScale, m_ModuleWidth);
+    m_outputHScale =
+        std::max(m_outputHScale, static_cast<FX_FLOAT>(m_ModuleWidth));
   }
   FX_FLOAT dataLengthScale = 1.0;
   if (m_iDataLenth > 0 && contents.GetLength() != 0) {
@@ -407,7 +409,7 @@ void CBC_OneDimWriter::RenderResult(const CFX_WideStringC& contents,
   int32_t outputHeight = 1;
   if (!isDevice) {
     if (m_Height == 0) {
-      outputHeight = FX_MAX(20, m_ModuleHeight);
+      outputHeight = std::max(20, m_ModuleHeight);
     } else {
       outputHeight = m_Height;
     }

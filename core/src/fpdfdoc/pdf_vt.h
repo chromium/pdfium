@@ -22,14 +22,7 @@ class CPDF_VariableText_Iterator;
 #define IsFloatZero(f) ((f) < 0.0001 && (f) > -0.0001)
 #define IsFloatBigger(fa, fb) ((fa) > (fb) && !IsFloatZero((fa) - (fb)))
 #define IsFloatSmaller(fa, fb) ((fa) < (fb) && !IsFloatZero((fa) - (fb)))
-template <class T>
-T FPDF_MIN(const T& i, const T& j) {
-  return ((i < j) ? i : j);
-}
-template <class T>
-T FPDF_MAX(const T& i, const T& j) {
-  return ((i > j) ? i : j);
-}
+
 class CPVT_Size {
  public:
   CPVT_Size() : x(0.0f), y(0.0f) {}
@@ -51,7 +44,7 @@ class CPVT_FloatRect : public CFX_FloatRect {
     right = other_right;
     bottom = other_bottom;
   }
-  CPVT_FloatRect(const CPDF_Rect& rect) {
+  explicit CPVT_FloatRect(const CPDF_Rect& rect) {
     left = rect.left;
     top = rect.top;
     right = rect.right;
@@ -246,7 +239,7 @@ class CSection {
   friend class CTypeset;
 
  public:
-  CSection(CPDF_VariableText* pVT);
+  explicit CSection(CPDF_VariableText* pVT);
   virtual ~CSection();
   void ResetAll();
   void ResetLineArray();
@@ -285,7 +278,7 @@ class CSection {
 };
 class CTypeset {
  public:
-  CTypeset(CSection* pSection);
+  explicit CTypeset(CSection* pSection);
   virtual ~CTypeset();
   CPVT_Size GetEditSize(FX_FLOAT fFontSize);
   CPVT_FloatRect Typeset();
@@ -307,37 +300,37 @@ class CPDF_EditContainer {
   virtual const CPDF_Rect& GetPlateRect() const { return m_rcPlate; }
   virtual void SetContentRect(const CPVT_FloatRect& rect) {
     m_rcContent = rect;
-  };
+  }
   virtual CPDF_Rect GetContentRect() const { return m_rcContent; }
   FX_FLOAT GetPlateWidth() const { return m_rcPlate.right - m_rcPlate.left; }
   FX_FLOAT GetPlateHeight() const { return m_rcPlate.top - m_rcPlate.bottom; }
   CPVT_Size GetPlateSize() const {
     return CPVT_Size(GetPlateWidth(), GetPlateHeight());
-  };
+  }
   CPDF_Point GetBTPoint() const {
     return CPDF_Point(m_rcPlate.left, m_rcPlate.top);
-  };
+  }
   CPDF_Point GetETPoint() const {
     return CPDF_Point(m_rcPlate.right, m_rcPlate.bottom);
-  };
+  }
   inline CPDF_Point InToOut(const CPDF_Point& point) const {
     return CPDF_Point(point.x + GetBTPoint().x, GetBTPoint().y - point.y);
-  };
+  }
   inline CPDF_Point OutToIn(const CPDF_Point& point) const {
     return CPDF_Point(point.x - GetBTPoint().x, GetBTPoint().y - point.y);
-  };
+  }
   inline CPDF_Rect InToOut(const CPVT_FloatRect& rect) const {
     CPDF_Point ptLeftTop = InToOut(CPDF_Point(rect.left, rect.top));
     CPDF_Point ptRightBottom = InToOut(CPDF_Point(rect.right, rect.bottom));
     return CPDF_Rect(ptLeftTop.x, ptRightBottom.y, ptRightBottom.x,
                      ptLeftTop.y);
-  };
+  }
   inline CPVT_FloatRect OutToIn(const CPDF_Rect& rect) const {
     CPDF_Point ptLeftTop = OutToIn(CPDF_Point(rect.left, rect.top));
     CPDF_Point ptRightBottom = OutToIn(CPDF_Point(rect.right, rect.bottom));
     return CPVT_FloatRect(ptLeftTop.x, ptLeftTop.y, ptRightBottom.x,
                           ptRightBottom.y);
-  };
+  }
 
  private:
   CPDF_Rect m_rcPlate;
@@ -539,7 +532,7 @@ class CPDF_VariableText : public IPDF_VariableText, private CPDF_EditContainer {
 
 class CPDF_VariableText_Iterator : public IPDF_VariableText_Iterator {
  public:
-  CPDF_VariableText_Iterator(CPDF_VariableText* pVT);
+  explicit CPDF_VariableText_Iterator(CPDF_VariableText* pVT);
   ~CPDF_VariableText_Iterator() override;
 
   // IPDF_VariableText_Iterator

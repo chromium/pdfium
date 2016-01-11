@@ -20,6 +20,8 @@
  * limitations under the License.
  */
 
+#include <algorithm>
+
 #include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/BC_ResultPoint.h"
 #include "xfa/src/fxbarcode/common/BC_WhiteRectangleDetector.h"
@@ -166,7 +168,7 @@ CBC_QRDetectorResult* CBC_DataMatrixDetector::Detect(int32_t& e) {
                    correctedTopRight.get(), dimensionTop, dimensionRight, e));
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   } else {
-    int32_t dimension = FX_MIN(dimensionRight, dimensionTop);
+    int32_t dimension = std::min(dimensionRight, dimensionTop);
     correctedTopRight = CBC_AutoPtr<CBC_ResultPoint>(
         CorrectTopRight(bottomLeft, bottomRight, topLeft, topRight, dimension));
     if (correctedTopRight.get() == NULL) {
@@ -176,12 +178,12 @@ CBC_QRDetectorResult* CBC_DataMatrixDetector::Detect(int32_t& e) {
       topRight = NULL;
     }
     int32_t dimensionCorrected =
-        FX_MAX(CBC_AutoPtr<CBC_ResultPointsAndTransitions>(
-                   TransitionsBetween(topLeft, correctedTopRight.get()))
-                   ->GetTransitions(),
-               CBC_AutoPtr<CBC_ResultPointsAndTransitions>(
-                   TransitionsBetween(bottomRight, correctedTopRight.get()))
-                   ->GetTransitions());
+        std::max(CBC_AutoPtr<CBC_ResultPointsAndTransitions>(
+                     TransitionsBetween(topLeft, correctedTopRight.get()))
+                     ->GetTransitions(),
+                 CBC_AutoPtr<CBC_ResultPointsAndTransitions>(
+                     TransitionsBetween(bottomRight, correctedTopRight.get()))
+                     ->GetTransitions());
     dimensionCorrected++;
     if ((dimensionCorrected & 0x01) == 1) {
       dimensionCorrected++;

@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "core/include/fxcrt/fx_xml.h"
 #include "xfa/src/fgas/src/fgas_base.h"
 #include "fx_localeimp.h"
@@ -4579,7 +4581,7 @@ static inline int8_t fxmath_decimal_helper_raw_compare_any(uint64_t a[],
                                                            uint64_t b[],
                                                            uint8_t bl) {
   int8_t retVal = 0;
-  for (int i = FX_MAX(al - 1, bl - 1); i >= 0; i--) {
+  for (int i = std::max(al - 1, bl - 1); i >= 0; i--) {
     uint64_t l = (i >= al ? 0 : a[i]), r = (i >= bl ? 0 : b[i]);
     retVal += (l > r ? 1 : (l < r ? -1 : 0));
     if (retVal) {
@@ -4680,13 +4682,13 @@ static inline void fxmath_decimal_helper_raw_div(uint64_t a[],
         fxmath_decimal_helper_dec_any(right, al);
         break;
       case 0:
-        for (i = 0; i < FX_MIN(al, cl); i++) {
+        for (i = 0; i < std::min(al, cl); i++) {
           c[i] = cur[i];
         }
         return;
     }
   }
-  for (i = 0; i < FX_MIN(al, cl); i++) {
+  for (i = 0; i < std::min(al, cl); i++) {
     c[i] = left[i];
   }
 }
@@ -4956,8 +4958,8 @@ int8_t CFX_Decimal::Compare(const CFX_Decimal& val) const {
   int8_t retVal = 0;
   if (FXMATH_DECIMAL_FLAGS2SCALE(lhs.m_uFlags) !=
       FXMATH_DECIMAL_FLAGS2SCALE(rhs.m_uFlags)) {
-    uint8_t scale = FX_MIN(FXMATH_DECIMAL_FLAGS2SCALE(lhs.m_uFlags),
-                           FXMATH_DECIMAL_FLAGS2SCALE(rhs.m_uFlags));
+    uint8_t scale = std::min(FXMATH_DECIMAL_FLAGS2SCALE(lhs.m_uFlags),
+                             FXMATH_DECIMAL_FLAGS2SCALE(rhs.m_uFlags));
     lhs.SetScale(scale);
     rhs.SetScale(scale);
   }
@@ -4975,8 +4977,8 @@ CFX_Decimal CFX_Decimal::AddOrMinus(const CFX_Decimal& val,
   CFX_Decimal lhs = *this, rhs = val;
   if (FXMATH_DECIMAL_FLAGS2SCALE(lhs.m_uFlags) !=
       FXMATH_DECIMAL_FLAGS2SCALE(rhs.m_uFlags)) {
-    uint8_t scale = FX_MAX(FXMATH_DECIMAL_FLAGS2SCALE(lhs.m_uFlags),
-                           FXMATH_DECIMAL_FLAGS2SCALE(rhs.m_uFlags));
+    uint8_t scale = std::max(FXMATH_DECIMAL_FLAGS2SCALE(lhs.m_uFlags),
+                             FXMATH_DECIMAL_FLAGS2SCALE(rhs.m_uFlags));
     lhs.SetScale(scale);
     rhs.SetScale(scale);
   }

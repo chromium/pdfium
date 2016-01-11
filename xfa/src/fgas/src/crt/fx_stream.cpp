@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "xfa/src/fgas/src/fgas_base.h"
 #include "fx_stream.h"
 IFX_Stream* IFX_Stream::CreateStream(IFX_BufferRead* pBufferRead,
@@ -204,7 +206,7 @@ int32_t CFX_FileStreamImp::ReadString(FX_WCHAR* pStr,
     return 0;
   }
   int32_t iPosition = FXSYS_ftell(m_hFile);
-  int32_t iLen = FX_MIN((m_iLength - iPosition) / 2, iMaxLength);
+  int32_t iLen = std::min((m_iLength - iPosition) / 2, iMaxLength);
   if (iLen <= 0) {
     return 0;
   }
@@ -415,7 +417,7 @@ int32_t CFX_BufferReadStreamImp::ReadData(uint8_t* pBuffer,
   const uint8_t* pBufferTmp = m_pBufferRead->GetBlockBuffer();
   FX_DWORD dwOffsetTmp = m_iPosition - dwBlockOffset;
   FX_DWORD dwCopySize =
-      FX_MIN(iBufferSize, (int32_t)(dwBlockSize - dwOffsetTmp));
+      std::min(iBufferSize, (int32_t)(dwBlockSize - dwOffsetTmp));
   FXSYS_memcpy(pBuffer, pBufferTmp + dwOffsetTmp, dwCopySize);
   dwOffsetTmp = dwCopySize;
   iBufferSize -= dwCopySize;
@@ -426,7 +428,7 @@ int32_t CFX_BufferReadStreamImp::ReadData(uint8_t* pBuffer,
     dwBlockOffset = m_pBufferRead->GetBlockOffset();
     dwBlockSize = m_pBufferRead->GetBlockSize();
     pBufferTmp = m_pBufferRead->GetBlockBuffer();
-    dwCopySize = FX_MIN((FX_DWORD)iBufferSize, dwBlockSize);
+    dwCopySize = std::min((FX_DWORD)iBufferSize, dwBlockSize);
     FXSYS_memcpy(pBuffer + dwOffsetTmp, pBufferTmp, dwCopySize);
     dwOffsetTmp += dwCopySize;
     iBufferSize -= dwCopySize;
@@ -562,7 +564,7 @@ FX_BOOL CFX_BufferStreamImp::IsEOF() const {
 int32_t CFX_BufferStreamImp::ReadData(uint8_t* pBuffer, int32_t iBufferSize) {
   FXSYS_assert(m_pData != NULL);
   FXSYS_assert(pBuffer != NULL && iBufferSize > 0);
-  int32_t iLen = FX_MIN(m_iLength - m_iPosition, iBufferSize);
+  int32_t iLen = std::min(m_iLength - m_iPosition, iBufferSize);
   if (iLen <= 0) {
     return 0;
   }
@@ -575,7 +577,7 @@ int32_t CFX_BufferStreamImp::ReadString(FX_WCHAR* pStr,
                                         FX_BOOL& bEOS) {
   FXSYS_assert(m_pData != NULL);
   FXSYS_assert(pStr != NULL && iMaxLength > 0);
-  int32_t iLen = FX_MIN((m_iLength - m_iPosition) / 2, iMaxLength);
+  int32_t iLen = std::min((m_iLength - m_iPosition) / 2, iMaxLength);
   if (iLen <= 0) {
     return 0;
   }
@@ -592,7 +594,7 @@ int32_t CFX_BufferStreamImp::WriteData(const uint8_t* pBuffer,
                                        int32_t iBufferSize) {
   FXSYS_assert(m_pData != NULL && (m_dwAccess & FX_STREAMACCESS_Write) != 0);
   FXSYS_assert(pBuffer != NULL && iBufferSize > 0);
-  int32_t iLen = FX_MIN(m_iTotalSize - m_iPosition, iBufferSize);
+  int32_t iLen = std::min(m_iTotalSize - m_iPosition, iBufferSize);
   if (iLen <= 0) {
     return 0;
   }
@@ -607,7 +609,7 @@ int32_t CFX_BufferStreamImp::WriteString(const FX_WCHAR* pStr,
                                          int32_t iLength) {
   FXSYS_assert(m_pData != NULL && (m_dwAccess & FX_STREAMACCESS_Write) != 0);
   FXSYS_assert(pStr != NULL && iLength > 0);
-  int32_t iLen = FX_MIN((m_iTotalSize - m_iPosition) / 2, iLength);
+  int32_t iLen = std::min((m_iTotalSize - m_iPosition) / 2, iLength);
   if (iLen <= 0) {
     return 0;
   }
@@ -688,7 +690,7 @@ void CFX_TextStream::InitStream() {
     }
   }
 #endif
-  m_pStreamImp->Seek(FX_STREAMSEEK_Begin, FX_MAX(m_wBOMLength, iPosition));
+  m_pStreamImp->Seek(FX_STREAMSEEK_Begin, std::max(m_wBOMLength, iPosition));
 }
 void CFX_TextStream::Release() {
   if (--m_iRefCount < 1) {
@@ -747,7 +749,7 @@ int32_t CFX_TextStream::GetBOM(uint8_t bom[4]) const {
     return 0;
   }
   *(FX_DWORD*)bom = m_dwBOM;
-  return (int32_t)m_wBOMLength;
+  return m_wBOMLength;
 }
 FX_WORD CFX_TextStream::SetCodePage(FX_WORD wCodePage) {
   if (m_wBOMLength > 0) {
@@ -788,7 +790,7 @@ int32_t CFX_TextStream::ReadString(FX_WCHAR* pStr,
   } else {
     int32_t pos = m_pStreamImp->GetPosition();
     int32_t iBytes = pByteSize == NULL ? iMaxLength : *pByteSize;
-    iBytes = FX_MIN(iBytes, m_pStreamImp->GetLength() - pos);
+    iBytes = std::min(iBytes, m_pStreamImp->GetLength() - pos);
     if (iBytes > 0) {
       if (m_pBuf == NULL) {
         m_pBuf = FX_Alloc(uint8_t, iBytes);
@@ -1024,7 +1026,7 @@ int32_t CFX_Stream::ReadData(uint8_t* pBuffer, int32_t iBufferSize) {
   if (m_pStreamImp == NULL) {
     return -1;
   }
-  int32_t iLen = FX_MIN(m_iStart + m_iLength - m_iPosition, iBufferSize);
+  int32_t iLen = std::min(m_iStart + m_iLength - m_iPosition, iBufferSize);
   if (iLen <= 0) {
     return 0;
   }
@@ -1048,9 +1050,9 @@ int32_t CFX_Stream::ReadString(FX_WCHAR* pStr,
   int32_t iEnd = m_iStart + m_iLength;
   int32_t iLen = iEnd - m_iPosition;
   if (pByteSize != NULL) {
-    iLen = FX_MIN(iLen, *pByteSize);
+    iLen = std::min(iLen, *pByteSize);
   }
-  iLen = FX_MIN(iEnd / 2, iMaxLength);
+  iLen = std::min(iEnd / 2, iMaxLength);
   if (iLen <= 0) {
     return 0;
   }
@@ -1076,7 +1078,7 @@ int32_t CFX_Stream::WriteData(const uint8_t* pBuffer, int32_t iBufferSize) {
   }
   int32_t iLen = iBufferSize;
   if (m_eStreamType == FX_STREAMTYPE_Stream) {
-    iLen = FX_MIN(m_iStart + m_iTotalSize - m_iPosition, iBufferSize);
+    iLen = std::min(m_iStart + m_iTotalSize - m_iPosition, iBufferSize);
     if (iLen <= 0) {
       return 0;
     }
@@ -1104,7 +1106,7 @@ int32_t CFX_Stream::WriteString(const FX_WCHAR* pStr, int32_t iLength) {
   }
   int32_t iLen = iLength;
   if (m_eStreamType == FX_STREAMTYPE_Stream) {
-    iLen = FX_MIN((m_iStart + m_iTotalSize - m_iPosition) / 2, iLength);
+    iLen = std::min((m_iStart + m_iTotalSize - m_iPosition) / 2, iLength);
     if (iLen <= 0) {
       return 0;
     }
@@ -1322,7 +1324,7 @@ FX_BOOL CFX_BufferAccImp::ReadBlock(void* buffer,
   }
   const uint8_t* pBuffer = m_pBufferRead->GetBlockBuffer();
   FX_FILESIZE dwOffset = offset - dwBlockOffset;
-  size_t dwCopySize = FX_MIN(size, dwBlockSize - dwOffset);
+  size_t dwCopySize = std::min(size, dwBlockSize - dwOffset);
   FXSYS_memcpy(buffer, pBuffer + dwOffset, dwCopySize);
   offset = dwCopySize;
   size -= dwCopySize;
@@ -1333,7 +1335,7 @@ FX_BOOL CFX_BufferAccImp::ReadBlock(void* buffer,
     dwBlockOffset = m_pBufferRead->GetBlockOffset();
     dwBlockSize = m_pBufferRead->GetBlockSize();
     pBuffer = m_pBufferRead->GetBlockBuffer();
-    dwCopySize = FX_MIN(size, dwBlockSize);
+    dwCopySize = std::min(size, dwBlockSize);
     FXSYS_memcpy(((uint8_t*)buffer) + offset, pBuffer, dwCopySize);
     offset += dwCopySize;
     size -= dwCopySize;
@@ -1415,7 +1417,7 @@ FX_BOOL CFX_BufferAccImp::ReadBlock(void* buffer,
   }
   const uint8_t* pBuffer = m_pBufferRead->GetBlockBuffer();
   FX_DWORD dwOffset = offset - dwBlockOffset;
-  FX_DWORD dwCopySize = FX_MIN(size, dwBlockSize - dwOffset);
+  FX_DWORD dwCopySize = std::min(size, dwBlockSize - dwOffset);
   FXSYS_memcpy(buffer, pBuffer + dwOffset, dwCopySize);
   offset = dwCopySize;
   size -= dwCopySize;
@@ -1426,7 +1428,7 @@ FX_BOOL CFX_BufferAccImp::ReadBlock(void* buffer,
     dwBlockOffset = m_pBufferRead->GetBlockOffset();
     dwBlockSize = m_pBufferRead->GetBlockSize();
     pBuffer = m_pBufferRead->GetBlockBuffer();
-    dwCopySize = FX_MIN(size, dwBlockSize);
+    dwCopySize = std::min(size, dwBlockSize);
     FXSYS_memcpy(((uint8_t*)buffer) + offset, pBuffer, dwCopySize);
     offset += dwCopySize;
     size -= dwCopySize;

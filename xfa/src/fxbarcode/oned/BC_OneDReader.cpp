@@ -20,6 +20,8 @@
  * limitations under the License.
  */
 
+#include <algorithm>
+
 #include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/BC_Reader.h"
 #include "xfa/src/fxbarcode/BC_BinaryBitmap.h"
@@ -48,7 +50,7 @@ CFX_ByteString CBC_OneDReader::DeDecode(CBC_BinaryBitmap* image,
   CBC_CommonBitArray* row = NULL;
   int32_t middle = height >> 1;
   FX_BOOL tryHarder = FALSE;
-  int32_t rowStep = FX_MAX(1, height >> (tryHarder ? 8 : 5));
+  int32_t rowStep = std::max(1, height >> (tryHarder ? 8 : 5));
   int32_t maxLines;
   if (tryHarder) {
     maxLines = height;

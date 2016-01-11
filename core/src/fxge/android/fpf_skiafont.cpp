@@ -5,6 +5,9 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "fx_fpf.h"
+
+#include <algorithm>
+
 #if _FX_OS_ == _FX_ANDROID_
 #include "fpf_skiafont.h"
 #include "fpf_skiafontmgr.h"
@@ -106,8 +109,8 @@ FX_BOOL CFPF_SkiaFont::GetGlyphBBox(int32_t iGlyphIndex, FX_RECT& rtBBox) {
     rtBBox.right = FPF_EM_ADJUST(x_ppem, cbox.xMax);
     rtBBox.top = FPF_EM_ADJUST(y_ppem, cbox.yMax);
     rtBBox.bottom = FPF_EM_ADJUST(y_ppem, cbox.yMin);
-    rtBBox.top = FX_MIN(rtBBox.top, GetAscent());
-    rtBBox.bottom = FX_MAX(rtBBox.bottom, GetDescent());
+    rtBBox.top = std::min(rtBBox.top, GetAscent());
+    rtBBox.bottom = std::max(rtBBox.bottom, GetDescent());
     FXFT_Done_Glyph(glyph);
     return FXFT_Set_Pixel_Sizes(m_Face, 0, 64) == 0;
   }

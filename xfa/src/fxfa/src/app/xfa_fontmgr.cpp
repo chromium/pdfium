@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/common/xfa_common.h"
 #include "xfa_fontmgr.h"
@@ -1983,7 +1985,7 @@ FX_BOOL CXFA_PDFFontMgr::PsNameMatchDRFontName(
     }
     if (bBoldFont) {
       iDifferLength =
-          FX_MIN(iDifferLength - 4, bsDRName.GetLength() - iBoldIndex - 4);
+          std::min(iDifferLength - 4, bsDRName.GetLength() - iBoldIndex - 4);
     }
     FX_BOOL bItalicFont = TRUE;
     if (bsDRName.Find("Italic") > 0) {

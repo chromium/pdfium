@@ -6,6 +6,8 @@
 
 #include "core/src/fxge/agg/include/fx_agg_driver.h"
 
+#include <algorithm>
+
 #include "core/include/fxcodec/fx_codec.h"
 #include "core/include/fxge/fx_ge.h"
 #include "core/src/fxge/dib/dib_int.h"
@@ -19,20 +21,15 @@
 #include "third_party/agg23/agg_renderer_scanline.h"
 #include "third_party/agg23/agg_scanline_u.h"
 
-void _HardClip(FX_FLOAT& x, FX_FLOAT& y) {
-  if (x > 50000) {
-    x = 50000;
-  }
-  if (x < -50000) {
-    x = -50000;
-  }
-  if (y > 50000) {
-    y = 50000;
-  }
-  if (y < -50000) {
-    y = -50000;
-  }
+namespace {
+
+void HardClip(FX_FLOAT& x, FX_FLOAT& y) {
+  x = std::max(std::min(x, 50000.0f), -50000.0f);
+  y = std::max(std::min(y, 50000.0f), -50000.0f);
 }
+
+}  // namespace
+
 void CAgg_PathData::BuildPath(const CFX_PathData* pPathData,
                               const CFX_Matrix* pObject2Device) {
   int nPoints = pPathData->GetPointCount();
@@ -42,7 +39,7 @@ void CAgg_PathData::BuildPath(const CFX_PathData* pPathData,
     if (pObject2Device) {
       pObject2Device->Transform(x, y);
     }
-    _HardClip(x, y);
+    HardClip(x, y);
     int point_type = pPoints[i].m_Flag & FXPT_TYPE;
     if (point_type == FXPT_MOVETO) {
       m_PathData.move_to(x, y);
@@ -73,6 +70,7 @@ void CAgg_PathData::BuildPath(const CFX_PathData* pPathData,
   }
 }
 namespace agg {
+
 template <class BaseRenderer>
 class renderer_scanline_aa_offset {
  public:
@@ -109,7 +107,9 @@ class renderer_scanline_aa_offset {
   color_type m_color;
   unsigned m_left, m_top;
 };
-}
+
+}  // namespace agg
+
 static void RasterizeStroke(agg::rasterizer_scanline_aa& rasterizer,
                             agg::path_storage& path_data,
                             const CFX_Matrix* pObject2Device,
@@ -1257,8 +1257,8 @@ FX_BOOL CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
     }
     CFX_Matrix matrix1, matrix2;
     if (pObject2Device) {
-      matrix1.a =
-          FX_MAX(FXSYS_fabs(pObject2Device->a), FXSYS_fabs(pObject2Device->b));
+      matrix1.a = std::max(FXSYS_fabs(pObject2Device->a),
+                           FXSYS_fabs(pObject2Device->b));
       matrix1.d = matrix1.a;
       matrix2.Set(pObject2Device->a / matrix1.a, pObject2Device->b / matrix1.a,
                   pObject2Device->c / matrix1.d, pObject2Device->d / matrix1.d,

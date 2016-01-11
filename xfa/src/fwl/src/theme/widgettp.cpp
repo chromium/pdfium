@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "xfa/src/foxitlib.h"
 static void FWL_SetChildThemeID(IFWL_Widget* pParent, FX_DWORD dwThemeID) {
   IFWL_WidgetMgr* pWidgetMgr = FWL_GetWidgetMgr();
@@ -528,7 +530,7 @@ void CFWL_WidgetTP::DrawArrow(CFX_Graphics* pGraphics,
   CFX_Path path;
   path.Create();
   FX_FLOAT fBtn =
-      FX_MIN(pRect->width, pRect->height) / FWLTHEME_ARROW_Denominator;
+      std::min(pRect->width, pRect->height) / FWLTHEME_ARROW_Denominator;
   rtArrow.left = pRect->left + (pRect->width - fBtn) / 2;
   rtArrow.top = pRect->top + (pRect->height - fBtn) / 2;
   rtArrow.width = fBtn;

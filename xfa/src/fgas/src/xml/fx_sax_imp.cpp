@@ -4,8 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "xfa/src/fgas/src/fgas_base.h"
 #include "fx_sax_imp.h"
+
+namespace {
+
+const FX_DWORD kSaxFileBufSize = 32768;
+
+}  // namespace
+
 IFX_SAXReader* FX_SAXReader_Create() {
   return new CFX_SAXReader;
 }
@@ -31,7 +40,7 @@ FX_BOOL CFX_SAXFile::StartFile(IFX_FileRead* pFile,
   if (dwLen == 0) {
     return FALSE;
   }
-  m_dwBufSize = FX_MIN(dwLen, FX_SAXFILE_BUFSIZE);
+  m_dwBufSize = std::min(dwLen, kSaxFileBufSize);
   m_pBuf = FX_Alloc(uint8_t, m_dwBufSize);
   if (!pFile->ReadBlock(m_pBuf, dwStart, m_dwBufSize)) {
     return FALSE;
@@ -49,7 +58,7 @@ FX_BOOL CFX_SAXFile::ReadNextBlock() {
   if (dwSize == 0) {
     return FALSE;
   }
-  m_dwBufSize = FX_MIN(dwSize, FX_SAXFILE_BUFSIZE);
+  m_dwBufSize = std::min(dwSize, kSaxFileBufSize);
   if (!m_pFile->ReadBlock(m_pBuf, m_dwCur, m_dwBufSize)) {
     return FALSE;
   }

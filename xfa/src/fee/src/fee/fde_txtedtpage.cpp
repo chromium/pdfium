@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fee/include/ifde_txtedtbuf.h"
 #include "xfa/src/fee/include/ifde_txtedtengine.h"
@@ -395,8 +397,8 @@ int32_t CFDE_TxtEdtPage::LoadPage(FX_LPCRECTF pClipBox, IFX_Pause* pPause) {
   pBreak->ClearBreakPieces();
   int32_t nPageLineCount = m_pEditEngine->GetPageLineCount();
   int32_t nStartLine = nPageLineCount * m_nPageIndex;
-  int32_t nEndLine = FX_MIN((nStartLine + nPageLineCount - 1),
-                            (m_pEditEngine->GetLineCount() - 1));
+  int32_t nEndLine = std::min((nStartLine + nPageLineCount - 1),
+                              (m_pEditEngine->GetLineCount() - 1));
   int32_t nPageStart, nPageEnd, nTemp, nBgnParag, nStartLineInParag, nEndParag,
       nEndLineInParag;
   nBgnParag = m_pEditEngine->Line2Parag(0, 0, nStartLine, nStartLineInParag);

@@ -5,6 +5,16 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "fx_bmp.h"
+
+#include <algorithm>
+
+namespace {
+
+const size_t kBmpCoreHeaderSize = 12;
+const size_t kBmpInfoHeaderSize = 40;
+
+}  // namespace
+
 FX_DWORD _GetDWord_LSBFirst(uint8_t* p) {
   return p[0] | (p[1] << 8) | (p[2] << 16) | (p[3] << 24);
 }
@@ -80,10 +90,12 @@ int32_t _bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
     bmp_ptr->img_ifh_size =
         _GetDWord_LSBFirst(bmp_ptr->next_in + bmp_ptr->skip_size);
     bmp_ptr->pal_type = 0;
-    ASSERT(sizeof(BmpCoreHeader) == 12);
-    ASSERT(sizeof(BmpInfoHeader) == 40);
+    static_assert(sizeof(BmpCoreHeader) == kBmpCoreHeaderSize,
+                  "BmpCoreHeader has wrong size");
+    static_assert(sizeof(BmpInfoHeader) == kBmpInfoHeaderSize,
+                  "BmpInfoHeader has wrong size");
     switch (bmp_ptr->img_ifh_size) {
-      case FX_MIN(12, sizeof(BmpCoreHeader)): {
+      case kBmpCoreHeaderSize: {
         bmp_ptr->pal_type = 1;
         BmpCoreHeaderPtr bmp_core_header_ptr = NULL;
         if (_bmp_read_data(bmp_ptr, (uint8_t**)&bmp_core_header_ptr,
@@ -100,7 +112,7 @@ int32_t _bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
         bmp_ptr->compress_flag = BMP_RGB;
         bmp_ptr->imgTB_flag = FALSE;
       } break;
-      case FX_MIN(40, sizeof(BmpInfoHeader)): {
+      case kBmpInfoHeaderSize: {
         BmpInfoHeaderPtr bmp_info_header_ptr = NULL;
         if (_bmp_read_data(bmp_ptr, (uint8_t**)&bmp_info_header_ptr,
                            bmp_ptr->img_ifh_size) == NULL) {
@@ -127,7 +139,8 @@ int32_t _bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
         }
       } break;
       default: {
-        if (bmp_ptr->img_ifh_size > FX_MIN(40, sizeof(BmpInfoHeader))) {
+        if (bmp_ptr->img_ifh_size >
+            std::min(kBmpInfoHeaderSize, sizeof(BmpInfoHeader))) {
           BmpInfoHeaderPtr bmp_info_header_ptr = NULL;
           if (_bmp_read_data(bmp_ptr, (uint8_t**)&bmp_info_header_ptr,
                              bmp_ptr->img_ifh_size) == NULL) {

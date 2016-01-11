@@ -20,6 +20,8 @@
  * limitations under the License.
  */
 
+#include <algorithm>
+
 #include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/BC_ResultPoint.h"
@@ -255,16 +257,16 @@ CBC_QRAlignmentPattern* CBC_QRDetector::FindAlignmentInRegion(
     FX_FLOAT allowanceFactor,
     int32_t& e) {
   int32_t allowance = (int32_t)(allowanceFactor * overallEstModuleSize);
-  int32_t alignmentAreaLeftX = FX_MAX(0, estAlignmentX - allowance);
+  int32_t alignmentAreaLeftX = std::max(0, estAlignmentX - allowance);
   int32_t alignmentAreaRightX =
-      FX_MIN(m_image->GetWidth() - 1, estAlignmentX + allowance);
+      std::min(m_image->GetWidth() - 1, estAlignmentX + allowance);
   if (alignmentAreaRightX - alignmentAreaLeftX < overallEstModuleSize * 3) {
     e = BCExceptionRead;
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   }
-  int32_t alignmentAreaTopY = FX_MAX(0, estAlignmentY - allowance);
+  int32_t alignmentAreaTopY = std::max(0, estAlignmentY - allowance);
   int32_t alignmentAreaBottomY =
-      FX_MIN(m_image->GetHeight() - 1, estAlignmentY + allowance);
+      std::min(m_image->GetHeight() - 1, estAlignmentY + allowance);
   CBC_QRAlignmentPatternFinder alignmentFinder(
       m_image, alignmentAreaLeftX, alignmentAreaTopY,
       alignmentAreaRightX - alignmentAreaLeftX,

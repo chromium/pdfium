@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/common/xfa_common.h"
 #include "xfa_ffapp.h"
@@ -776,7 +778,7 @@ void XFA_DrawImage(CFX_Graphics* pGS,
     case XFA_ATTRIBUTEENUM_Fit: {
       FX_FLOAT f1 = rtImage.height / rtFit.height;
       FX_FLOAT f2 = rtImage.width / rtFit.width;
-      f1 = FX_MIN(f1, f2);
+      f1 = std::min(f1, f2);
       rtFit.height = rtFit.height * f1;
       rtFit.width = rtFit.width * f1;
     } break;
@@ -1116,7 +1118,7 @@ static void XFA_BOX_GetPath_Arc(CXFA_Box box,
   a = rtDraw.width / 2.0f;
   b = rtDraw.height / 2.0f;
   if (box.IsCircular() || (dwFlags & XFA_DRAWBOX_ForceRound) != 0) {
-    a = b = FX_MIN(a, b);
+    a = b = std::min(a, b);
   }
   CFX_PointF center = rtDraw.Center();
   rtDraw.left = center.x - a;
@@ -1655,7 +1657,7 @@ static void XFA_BOX_StrokeArc(CXFA_Box box,
   a = rtWidget.width / 2.0f;
   b = rtWidget.height / 2.0f;
   if (dwFlags & XFA_DRAWBOX_ForceRound) {
-    a = b = FX_MIN(a, b);
+    a = b = std::min(a, b);
   }
   CFX_PointF center = rtWidget.Center();
   rtWidget.left = center.x - a;

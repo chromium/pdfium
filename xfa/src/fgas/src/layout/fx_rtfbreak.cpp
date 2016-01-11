@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "xfa/src/fgas/include/fx_lbk.h"
 #include "xfa/src/fgas/src/fgas_base.h"
 #include "xfa/src/fgas/src/layout/fx_unicode.h"
@@ -389,7 +391,7 @@ FX_DWORD CFX_RTFBreak::AppendChar(FX_WCHAR wch) {
       (this->*g_FX_RTFBreak_lpfAppendChar[dwType >> FX_CHARTYPEBITS])(
           pCurChar, iRotation);
   m_dwCharType = dwType;
-  return FX_MAX(dwRet1, dwRet2);
+  return std::max(dwRet1, dwRet2);
 }
 FX_DWORD CFX_RTFBreak::AppendChar_CharCode(FX_WCHAR wch) {
   FXSYS_assert(m_pFont != NULL && m_pCurLine != NULL);
@@ -1151,7 +1153,7 @@ void CFX_RTFBreak::GetLineRect(CFX_RectF& rect) const {
     pBreakPiece = rtfPieces.GetPtrAt(i);
     int32_t iFontHeight = FXSYS_round(pBreakPiece->m_iFontHeight *
                                       pBreakPiece->m_iVerticalScale / 100.0f);
-    iMax = FX_MAX(pBreakPiece->m_iFontSize, iFontHeight);
+    iMax = std::max(pBreakPiece->m_iFontSize, iFontHeight);
     if (i == 0) {
       iLineHeight = iMax;
     } else if (iLineHeight < iMax) {
@@ -1441,7 +1443,7 @@ int32_t CFX_RTFBreak::GetCharRects(FX_LPCRTFTEXTOBJ pText,
   if (bCharBBox) {
     bCharBBox = pFont->GetBBox(bbox);
   }
-  FX_FLOAT fLeft = FX_MAX(0, bbox.left * fScale);
+  FX_FLOAT fLeft = std::max(0.0f, bbox.left * fScale);
   FX_FLOAT fHeight = FXSYS_fabs(bbox.height * fScale);
   rtArray.RemoveAll();
   rtArray.SetSize(iLength);
@@ -1506,13 +1508,13 @@ int32_t CFX_RTFBreak::GetCharRects(FX_LPCRTFTEXTOBJ pText,
         rtBBoxF.left = rect.top + (rect.height - fHeight) / 2.0f;
         rtBBoxF.height = fCharWidth;
         rtBBoxF.width = fHeight;
-        rtBBoxF.left = FX_MAX(rtBBoxF.left, 0);
+        rtBBoxF.left = std::max(rtBBoxF.left, 0.0f);
       } else {
         rtBBoxF.left = rect.left + fRTLeft;
         rtBBoxF.top = rect.top + (rect.height - fHeight) / 2.0f;
         rtBBoxF.width = fCharWidth;
         rtBBoxF.height = fHeight;
-        rtBBoxF.top = FX_MAX(rtBBoxF.top, 0);
+        rtBBoxF.top = std::max(rtBBoxF.top, 0.0f);
       }
       rtArray.SetAt(i, rtBBoxF);
       continue;

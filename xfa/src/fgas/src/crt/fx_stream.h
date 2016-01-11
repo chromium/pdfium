@@ -252,7 +252,7 @@ class CFX_TextStream : public IFX_Stream, public CFX_ThreadLock {
 
  protected:
   FX_WORD m_wCodePage;
-  FX_WORD m_wBOMLength;
+  int32_t m_wBOMLength;
   FX_DWORD m_dwBOM;
   uint8_t* m_pBuf;
   int32_t m_iBufSize;

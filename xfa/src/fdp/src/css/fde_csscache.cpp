@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "xfa/src/foxitlib.h"
 #include "fde_csscache.h"
 _FDE_CSSCACHEITEM::_FDE_CSSCACHEITEM(IFDE_CSSStyleSheet* p)
@@ -34,8 +36,9 @@ void CFDE_CSSStyleSheetCache::AddStyleSheet(const CFX_ByteStringC& szKey,
                                             IFDE_CSSStyleSheet* pStyleSheet) {
   FXSYS_assert(pStyleSheet != NULL);
   if (m_pFixedStore == NULL) {
-    m_pFixedStore = FX_CreateAllocator(
-        FX_ALLOCTYPE_Fixed, FX_MAX(10, m_iMaxItems), sizeof(FDE_CSSCACHEITEM));
+    m_pFixedStore =
+        FX_CreateAllocator(FX_ALLOCTYPE_Fixed, std::max(10, m_iMaxItems),
+                           sizeof(FDE_CSSCACHEITEM));
     FXSYS_assert(m_pFixedStore != NULL);
   }
   auto it = m_Stylesheets.find(szKey);

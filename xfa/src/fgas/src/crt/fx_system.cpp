@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <algorithm>
+
 #include "xfa/src/fgas/src/fgas_base.h"
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN32_MOBILE_ || \
     _FX_OS_ == _FX_WIN64_
@@ -155,7 +157,7 @@ FX_BOOL FX_IsRelativePath(const CFX_WideStringC& wsUrl) {
   if (iUrlLen == 0) {
     return TRUE;
   }
-  for (int32_t i = FX_MIN(5, iUrlLen) - 1; i >= 0; --i)
+  for (int32_t i = std::min(5, iUrlLen) - 1; i >= 0; --i)
     if (wsUrl.GetAt(i) == ':') {
       return FALSE;
     }
