@@ -939,10 +939,11 @@ int32_t CPDF_Creator::WriteIndirectObjectToStream(const CPDF_Object* pObj) {
     return 1;
 
   CPDF_Dictionary* pDict = pObj->GetDict();
-  if (pObj->IsStream())
+  if (pObj->IsStream()) {
     if (pDict && pDict->GetString(FX_BSTRC("Type")) == FX_BSTRC("XRef"))
       return 0;
     return 1;
+  }
 
   if (pDict) {
     if (pDict == m_pDocument->m_pRootDict || pDict == m_pEncryptDict)
