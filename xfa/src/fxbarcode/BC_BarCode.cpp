@@ -212,8 +212,8 @@ FX_BOOL CBC_Code39::Encode(const CFX_WideStringC& contents,
       ((CBC_OnedCode39Writer*)m_pBCWriter)->RenderTextContents(contents);
   m_renderContents = renderContents;
   CFX_ByteString byteString = filtercontents.UTF8Encode();
-  uint8_t* data =
-      m_pBCWriter->Encode(byteString, format, outWidth, outHeight, e);
+  uint8_t* data = static_cast<CBC_OnedCode39Writer*>(m_pBCWriter)
+                      ->Encode(byteString, format, outWidth, outHeight, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   ((CBC_OneDimWriter*)m_pBCWriter)
       ->RenderResult(renderContents, data, outWidth, isDevice, e);
@@ -315,8 +315,8 @@ FX_BOOL CBC_Codabar::Encode(const CFX_WideStringC& contents,
       ((CBC_OneDimWriter*)m_pBCWriter)->FilterContents(contents);
   CFX_ByteString byteString = filtercontents.UTF8Encode();
   m_renderContents = filtercontents;
-  uint8_t* data =
-      m_pBCWriter->Encode(byteString, format, outWidth, outHeight, e);
+  uint8_t* data = static_cast<CBC_OnedCodaBarWriter*>(m_pBCWriter)
+                      ->Encode(byteString, format, outWidth, outHeight, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   ((CBC_OneDimWriter*)m_pBCWriter)
       ->RenderResult(filtercontents, data, outWidth, isDevice, e);
@@ -396,8 +396,8 @@ FX_BOOL CBC_Code128::Encode(const CFX_WideStringC& contents,
       ((CBC_OnedCode128Writer*)m_pBCWriter)->FilterContents(content);
   m_renderContents = encodeContents;
   CFX_ByteString byteString = encodeContents.UTF8Encode();
-  uint8_t* data =
-      m_pBCWriter->Encode(byteString, format, outWidth, outHeight, e);
+  uint8_t* data = static_cast<CBC_OnedCode128Writer*>(m_pBCWriter)
+                      ->Encode(byteString, format, outWidth, outHeight, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   ((CBC_OneDimWriter*)m_pBCWriter)
       ->RenderResult(encodeContents, data, outWidth, isDevice, e);
@@ -479,8 +479,8 @@ FX_BOOL CBC_EAN8::Encode(const CFX_WideStringC& contents,
   CFX_WideString encodeContents = Preprocess(contents);
   CFX_ByteString byteString = encodeContents.UTF8Encode();
   m_renderContents = encodeContents;
-  uint8_t* data =
-      m_pBCWriter->Encode(byteString, format, outWidth, outHeight, e);
+  uint8_t* data = static_cast<CBC_OnedEAN8Writer*>(m_pBCWriter)
+                      ->Encode(byteString, format, outWidth, outHeight, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   ((CBC_OneDimWriter*)m_pBCWriter)
       ->RenderResult(encodeContents, data, outWidth, isDevice, e);
@@ -563,8 +563,8 @@ FX_BOOL CBC_EAN13::Encode(const CFX_WideStringC& contents,
   CFX_WideString encodeContents = Preprocess(contents);
   CFX_ByteString byteString = encodeContents.UTF8Encode();
   m_renderContents = encodeContents;
-  uint8_t* data =
-      m_pBCWriter->Encode(byteString, format, outWidth, outHeight, e);
+  uint8_t* data = static_cast<CBC_OnedEAN13Writer*>(m_pBCWriter)
+                      ->Encode(byteString, format, outWidth, outHeight, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   ((CBC_OneDimWriter*)m_pBCWriter)
       ->RenderResult(encodeContents, data, outWidth, isDevice, e);
@@ -649,8 +649,8 @@ FX_BOOL CBC_UPCA::Encode(const CFX_WideStringC& contents,
   CFX_ByteString byteString = encodeContents.UTF8Encode();
   m_renderContents = encodeContents;
   ((CBC_OnedUPCAWriter*)m_pBCWriter)->Init();
-  uint8_t* data =
-      m_pBCWriter->Encode(byteString, format, outWidth, outHeight, e);
+  uint8_t* data = static_cast<CBC_OnedUPCAWriter*>(m_pBCWriter)
+                      ->Encode(byteString, format, outWidth, outHeight, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   ((CBC_OneDimWriter*)m_pBCWriter)
       ->RenderResult(encodeContents, data, outWidth, isDevice, e);

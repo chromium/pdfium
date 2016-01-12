@@ -15,17 +15,6 @@ class CBC_Writer {
  public:
   CBC_Writer();
   virtual ~CBC_Writer();
-  virtual uint8_t* Encode(const CFX_ByteString& contents,
-                          BCFORMAT format,
-                          int32_t& outWidth,
-                          int32_t& outHeight,
-                          int32_t& e) = 0;
-  virtual uint8_t* Encode(const CFX_ByteString& contents,
-                          BCFORMAT format,
-                          int32_t& outWidth,
-                          int32_t& outHeight,
-                          int32_t hints,
-                          int32_t& e) = 0;
   virtual FX_BOOL SetCharEncoding(int32_t encoding);
   virtual FX_BOOL SetModuleHeight(int32_t moduleHeight);
   virtual FX_BOOL SetModuleWidth(int32_t moduleWidth);

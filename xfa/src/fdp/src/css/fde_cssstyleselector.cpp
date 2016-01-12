@@ -597,10 +597,6 @@ void CFDE_CSSStyleSelector::ApplyProperty(
     FDE_CSSPROPERTY eProperty,
     IFDE_CSSValue* pValue,
     CFDE_CSSComputedStyle* pComputedStyle) {
-  if (pComputedStyle->m_InheritedData.m_pFontFamily &&
-      *(FX_DWORD*)pComputedStyle->m_InheritedData.m_pFontFamily == 0xcdcdcdcd) {
-    pComputedStyle = pComputedStyle;  // FIXME: likely a real bug.
-  }
   if (pValue->GetType() == FDE_CSSVALUETYPE_Primitive) {
     IFDE_CSSPrimitiveValue* pPrimitive = (IFDE_CSSPrimitiveValue*)pValue;
     FDE_CSSPRIMITIVETYPE eType = pPrimitive->GetPrimitiveType();

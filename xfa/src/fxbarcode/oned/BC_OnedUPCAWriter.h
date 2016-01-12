@@ -28,6 +28,11 @@ class CBC_OnedUPCAWriter : public CBC_OneDimWriter {
                   int32_t& outHeight,
                   int32_t hints,
                   int32_t& e);
+  uint8_t* Encode(const CFX_ByteString& contents,
+                  int32_t& outLength,
+                  int32_t& e) {
+    return nullptr;
+  }
   void RenderResult(const CFX_WideStringC& contents,
                     uint8_t* code,
                     int32_t codeLength,

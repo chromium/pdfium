@@ -15,28 +15,6 @@ class CBC_TwoDimWriter : public CBC_Writer {
  public:
   CBC_TwoDimWriter();
   virtual ~CBC_TwoDimWriter();
-  virtual uint8_t* Encode(const CFX_WideString& contents,
-                          int32_t ecLevel,
-                          int32_t& outWidth,
-                          int32_t& outHeight,
-                          int32_t& e) {
-    return nullptr;
-  };
-  virtual uint8_t* Encode(const CFX_ByteString& contents,
-                          BCFORMAT format,
-                          int32_t& outWidth,
-                          int32_t& outHeight,
-                          int32_t hints,
-                          int32_t& e) {
-    return nullptr;
-  };
-  virtual uint8_t* Encode(const CFX_ByteString& contents,
-                          BCFORMAT format,
-                          int32_t& outWidth,
-                          int32_t& outHeight,
-                          int32_t& e) {
-    return nullptr;
-  };
   virtual void RenderResult(uint8_t* code,
                             int32_t codeWidth,
                             int32_t codeHeight,
