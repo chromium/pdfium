@@ -1199,9 +1199,10 @@ FX_BOOL CPDF_Parser::IsFormStream(FX_DWORD objnum, FX_BOOL& bForm) {
   return TRUE;
 }
 
-CPDF_Object* CPDF_Parser::ParseIndirectObject(CPDF_IndirectObjects* pObjList,
-                                              FX_DWORD objnum,
-                                              PARSE_CONTEXT* pContext) {
+CPDF_Object* CPDF_Parser::ParseIndirectObject(
+    CPDF_IndirectObjectHolder* pObjList,
+    FX_DWORD objnum,
+    PARSE_CONTEXT* pContext) {
   if (!IsValidObjectNumber(objnum))
     return nullptr;
 
@@ -1397,10 +1398,11 @@ void CPDF_Parser::GetIndirectBinary(FX_DWORD objnum,
   m_Syntax.RestorePos(SavedPos);
 }
 
-CPDF_Object* CPDF_Parser::ParseIndirectObjectAt(CPDF_IndirectObjects* pObjList,
-                                                FX_FILESIZE pos,
-                                                FX_DWORD objnum,
-                                                PARSE_CONTEXT* pContext) {
+CPDF_Object* CPDF_Parser::ParseIndirectObjectAt(
+    CPDF_IndirectObjectHolder* pObjList,
+    FX_FILESIZE pos,
+    FX_DWORD objnum,
+    PARSE_CONTEXT* pContext) {
   FX_FILESIZE SavedPos = m_Syntax.SavePos();
   m_Syntax.RestorePos(pos);
   bool bIsNumber;
@@ -1442,7 +1444,7 @@ CPDF_Object* CPDF_Parser::ParseIndirectObjectAt(CPDF_IndirectObjects* pObjList,
   return pObj;
 }
 CPDF_Object* CPDF_Parser::ParseIndirectObjectAtByStrict(
-    CPDF_IndirectObjects* pObjList,
+    CPDF_IndirectObjectHolder* pObjList,
     FX_FILESIZE pos,
     FX_DWORD objnum,
     PARSE_CONTEXT* pContext,
@@ -2041,7 +2043,7 @@ CFX_ByteString CPDF_SyntaxParser::GetKeyword() {
   return GetNextWord(nullptr);
 }
 
-CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList,
+CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjectHolder* pObjList,
                                           FX_DWORD objnum,
                                           FX_DWORD gennum,
                                           PARSE_CONTEXT* pContext,
@@ -2197,7 +2199,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjects* pObjList,
 }
 
 CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
-    CPDF_IndirectObjects* pObjList,
+    CPDF_IndirectObjectHolder* pObjList,
     FX_DWORD objnum,
     FX_DWORD gennum,
     PARSE_CONTEXT* pContext) {
@@ -2761,9 +2763,10 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
   void SetStartOffset(FX_FILESIZE dwOffset);
   FX_BOOL GetNextToken(CFX_ByteString& token);
   FX_BOOL GetNextChar(uint8_t& ch);
-  CPDF_Object* ParseIndirectObjectAt(FX_FILESIZE pos,
-                                     FX_DWORD objnum,
-                                     CPDF_IndirectObjects* pObjList = NULL);
+  CPDF_Object* ParseIndirectObjectAt(
+      FX_FILESIZE pos,
+      FX_DWORD objnum,
+      CPDF_IndirectObjectHolder* pObjList = NULL);
   CPDF_Object* GetObject(FX_DWORD objnum,
                          IFX_DownloadHints* pHints,
                          FX_BOOL* pExistInFile);
@@ -3633,7 +3636,7 @@ FX_BOOL CPDF_DataAvail::CheckHintTables(IFX_DownloadHints* pHints) {
 CPDF_Object* CPDF_DataAvail::ParseIndirectObjectAt(
     FX_FILESIZE pos,
     FX_DWORD objnum,
-    CPDF_IndirectObjects* pObjList) {
+    CPDF_IndirectObjectHolder* pObjList) {
   FX_FILESIZE SavedPos = m_syntaxParser.SavePos();
   m_syntaxParser.RestorePos(pos);
   bool bIsNumber;

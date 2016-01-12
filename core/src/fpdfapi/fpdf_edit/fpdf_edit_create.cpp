@@ -11,6 +11,7 @@
 #include "core/include/fxcrt/fx_ext.h"
 #include "core/include/fpdfapi/fpdf_serial.h"
 #include "core/include/fpdfapi/fpdf_parser.h"
+#include "third_party/base/stl_util.h"
 
 #define PDF_OBJECTSTREAM_MAXLENGTH (256 * 1024)
 #define PDF_XREFSTREAM_MAXSIZE 10000
@@ -1283,9 +1284,8 @@ int32_t CPDF_Creator::WriteOldIndirectObject(FX_DWORD objnum) {
     return 0;
   }
   m_ObjectOffset[objnum] = m_Offset;
-  void* valuetemp = NULL;
   FX_BOOL bExistInMap =
-      m_pDocument->m_IndirectObjs.Lookup((void*)(uintptr_t)objnum, valuetemp);
+      pdfium::ContainsKey(m_pDocument->m_IndirectObjs, objnum);
   FX_BOOL bObjStm =
       (m_pParser->m_V5Type[objnum] == 2) && m_pEncryptDict && !m_pXRefStream;
   if (m_pParser->m_bVersionUpdated || m_bSecurityChanged || bExistInMap ||
@@ -1371,14 +1371,13 @@ int32_t CPDF_Creator::WriteNewObjs(FX_BOOL bIncremental, IFX_Pause* pPause) {
   int32_t index = (int32_t)(uintptr_t)m_Pos;
   while (index < iCount) {
     FX_DWORD objnum = m_NewObjNumArray.ElementAt(index);
-    CPDF_Object* pObj = NULL;
-    m_pDocument->m_IndirectObjs.Lookup((void*)(uintptr_t)objnum, (void*&)pObj);
-    if (NULL == pObj) {
+    auto it = m_pDocument->m_IndirectObjs.find(objnum);
+    if (it == m_pDocument->m_IndirectObjs.end()) {
       ++index;
       continue;
     }
     m_ObjectOffset[objnum] = m_Offset;
-    if (WriteIndirectObj(pObj)) {
+    if (WriteIndirectObj(it->second)) {
       return -1;
     }
     index++;
@@ -1416,24 +1415,17 @@ void CPDF_Creator::InitOldObjNumOffsets() {
 void CPDF_Creator::InitNewObjNumOffsets() {
   FX_BOOL bIncremental = (m_dwFlags & FPDFCREATE_INCREMENTAL) != 0;
   FX_BOOL bNoOriginal = (m_dwFlags & FPDFCREATE_NO_ORIGINAL) != 0;
-  FX_POSITION pos = m_pDocument->m_IndirectObjs.GetStartPosition();
-  while (pos) {
-    size_t key = 0;
-    CPDF_Object* pObj;
-    m_pDocument->m_IndirectObjs.GetNextAssoc(pos, (void*&)key, (void*&)pObj);
-    FX_DWORD objnum = (FX_DWORD)key;
-    if (pObj->GetObjNum() == -1) {
+  for (const auto& pair : m_pDocument->m_IndirectObjs) {
+    if (pair.second->GetObjNum() == -1)
       continue;
-    }
     if (bIncremental) {
-      if (!pObj->IsModified()) {
+      if (!pair.second->IsModified())
         continue;
-      }
-    } else if (m_pParser && m_pParser->IsValidObjectNumber(objnum) &&
-               m_pParser->m_V5Type[objnum]) {
+    } else if (m_pParser && m_pParser->IsValidObjectNumber(pair.first) &&
+               m_pParser->m_V5Type[pair.first]) {
       continue;
     }
-    AppendNewObjNum(objnum);
+    AppendNewObjNum(pair.first);
   }
   int32_t iCount = m_NewObjNumArray.GetSize();
   if (iCount == 0) {

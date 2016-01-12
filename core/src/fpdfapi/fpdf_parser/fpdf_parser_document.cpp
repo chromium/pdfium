@@ -9,7 +9,7 @@
 #include "core/include/fpdfapi/fpdf_module.h"
 
 CPDF_Document::CPDF_Document(CPDF_Parser* pParser)
-    : CPDF_IndirectObjects(pParser) {
+    : CPDF_IndirectObjectHolder(pParser) {
   ASSERT(pParser);
   m_pRootDict = NULL;
   m_pInfoDict = NULL;
@@ -332,13 +332,11 @@ FX_BOOL CPDF_Document::IsOwner() const {
   return !m_pParser || m_pParser->IsOwner();
 }
 FX_BOOL CPDF_Document::IsFormStream(FX_DWORD objnum, FX_BOOL& bForm) const {
-  {
-    CPDF_Object* pObj;
-    if (m_IndirectObjs.Lookup((void*)(uintptr_t)objnum, (void*&)pObj)) {
-      CPDF_Stream* pStream = pObj->AsStream();
-      bForm = pStream && pStream->GetDict()->GetString("Subtype") == "Form";
-      return TRUE;
-    }
+  auto it = m_IndirectObjs.find(objnum);
+  if (it != m_IndirectObjs.end()) {
+    CPDF_Stream* pStream = it->second->AsStream();
+    bForm = pStream && pStream->GetDict()->GetString("Subtype") == "Form";
+    return TRUE;
   }
   if (!m_pParser) {
     bForm = FALSE;
