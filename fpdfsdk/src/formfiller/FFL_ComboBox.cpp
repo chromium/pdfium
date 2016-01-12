@@ -21,6 +21,8 @@ CFFL_ComboBox::CFFL_ComboBox(CPDFDoc_Environment* pApp, CPDFSDK_Annot* pAnnot)
 }
 
 CFFL_ComboBox::~CFFL_ComboBox() {
+  for (const auto& it : m_Maps)
+    it.second->InvalidateFocusHandler(this);
   delete m_pFontMap;
 }
 

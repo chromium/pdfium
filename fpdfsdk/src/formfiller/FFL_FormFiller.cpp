@@ -22,9 +22,10 @@ CFFL_FormFiller::CFFL_FormFiller(CPDFDoc_Environment* pApp,
 }
 
 CFFL_FormFiller::~CFFL_FormFiller() {
-  for (auto& it : m_Maps) {
+  for (const auto& it : m_Maps) {
     CPWL_Wnd* pWnd = it.second;
     CFFL_PrivateData* pData = (CFFL_PrivateData*)pWnd->GetAttachedData();
+    pWnd->InvalidateProvider(this);
     pWnd->Destroy();
     delete pWnd;
     delete pData;

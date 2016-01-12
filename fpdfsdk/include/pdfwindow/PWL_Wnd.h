@@ -288,6 +288,8 @@ class CPWL_Wnd : public CPWL_TimerHandler {
 
   void Create(const PWL_CREATEPARAM& cp);
   virtual CFX_ByteString GetClassName() const;
+  void InvalidateFocusHandler(IPWL_FocusHandler* handler);
+  void InvalidateProvider(IPWL_Provider* provider);
   void Destroy();
   void Move(const CPDF_Rect& rcNew, FX_BOOL bReset, FX_BOOL bRefresh);
   virtual void InvalidateRect(CPDF_Rect* pRect = NULL);
