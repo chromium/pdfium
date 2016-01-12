@@ -46,6 +46,7 @@ class CFX_ThreadLock {
 class CFX_BaseArray : public CFX_Target {
  protected:
   CFX_BaseArray(int32_t iGrowSize, int32_t iBlockSize);
+  ~CFX_BaseArray();
   int32_t GetSize() const;
   int32_t GetBlockSize() const;
   uint8_t* AddSpaceTo(int32_t index);

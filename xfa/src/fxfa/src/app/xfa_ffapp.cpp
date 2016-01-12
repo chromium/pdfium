@@ -92,6 +92,7 @@ CXFA_FFApp::~CXFA_FFApp() {
   if (m_pFWLApp) {
     m_pFWLApp->Finalize();
     m_pFWLApp->Release();
+    delete m_pFWLApp;
   }
   if (m_pFWLTheme) {
     m_pFWLTheme->Release();

@@ -65,6 +65,7 @@ CPDFXFA_Document::~CPDFXFA_Document() {
         CloseXFADoc(pDocHandler);
       }
     }
+    delete m_pXFADoc;
   }
 }
 

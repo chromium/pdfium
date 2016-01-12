@@ -36,6 +36,10 @@ CFX_BaseArray::CFX_BaseArray(int32_t iGrowSize, int32_t iBlockSize) {
   FXSYS_assert(iGrowSize > 0 && iBlockSize > 0);
   m_pData = new FX_BASEARRAYDATA(iGrowSize, iBlockSize);
 }
+CFX_BaseArray::~CFX_BaseArray() {
+  RemoveAll();
+  delete m_pData;
+}
 int32_t CFX_BaseArray::GetSize() const {
   return m_pData->iBlockCount;
 }
