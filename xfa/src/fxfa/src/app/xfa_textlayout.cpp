@@ -795,8 +795,8 @@ void CXFA_TextLayout::InitBreak(FX_FLOAT fLineWidth) {
       fStartPos += fIndent;
     }
   }
-  m_pBreak->SetLineWidth(fStart, fLineWidth);
-  m_pBreak->SetLinePos(fStartPos);
+  m_pBreak->SetLineBoundary(fStart, fLineWidth);
+  m_pBreak->SetLineStartPos(fStartPos);
   if (font.IsExistInXML()) {
     m_pBreak->SetHorizontalScale((int32_t)font.GetHorizontalScale());
     m_pBreak->SetVerticalScale((int32_t)font.GetVerticalScale());
@@ -868,12 +868,12 @@ void CXFA_TextLayout::InitBreak(IFDE_CSSComputedStyle* pStyle,
         pStyle->GetBoundaryStyles()->SetMarginWidth(pNewRect);
       }
     }
-    m_pBreak->SetLineWidth(fStart, fLineWidth);
+    m_pBreak->SetLineBoundary(fStart, fLineWidth);
     FX_FLOAT fIndent = pParaStyle->GetTextIndent().GetValue();
     if (fIndent > 0) {
       fStart += fIndent;
     }
-    m_pBreak->SetLinePos(fStart);
+    m_pBreak->SetLineStartPos(fStart);
     m_pBreak->SetTabWidth(m_textParser.GetTabInterval(pStyle));
     if (m_pTabstopContext == NULL) {
       m_pTabstopContext = new CXFA_TextTabstopsContext;
@@ -1840,7 +1840,7 @@ void CXFA_TextLayout::AppendTextLine(FX_DWORD dwStatus,
         if (fSpaceBelow < 0.1f) {
           fSpaceBelow = 0;
         }
-        m_pBreak->SetLinePos(fStartPos);
+        m_pBreak->SetLineStartPos(fStartPos);
         fLinePos += fSpaceBelow;
       }
     }
@@ -1856,7 +1856,7 @@ void CXFA_TextLayout::AppendTextLine(FX_DWORD dwStatus,
     if (fTextIndent < 0) {
       fStart -= fTextIndent;
     }
-    m_pBreak->SetLinePos(fStart);
+    m_pBreak->SetLineStartPos(fStart);
     pStyle->Release();
   }
   m_iLines++;

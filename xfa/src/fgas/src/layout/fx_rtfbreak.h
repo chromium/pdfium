@@ -67,8 +67,8 @@ class CFX_RTFBreak : public IFX_RTFBreak {
   CFX_RTFBreak(FX_DWORD dwPolicies);
   ~CFX_RTFBreak();
   virtual void Release() { delete this; }
-  virtual void SetLineWidth(FX_FLOAT fLineStart, FX_FLOAT fLineEnd);
-  virtual void SetLinePos(FX_FLOAT fLinePos);
+  void SetLineBoundary(FX_FLOAT fLineStart, FX_FLOAT fLineEnd) override final;
+  void SetLineStartPos(FX_FLOAT fLinePos) override final;
   virtual FX_DWORD GetLayoutStyles() const { return m_dwLayoutStyles; }
   virtual void SetLayoutStyles(FX_DWORD dwLayoutStyles);
   virtual void SetFont(IFX_Font* pFont);
@@ -114,8 +114,8 @@ class CFX_RTFBreak : public IFX_RTFBreak {
  protected:
   FX_DWORD m_dwPolicies;
   IFX_ArabicChar* m_pArabicChar;
-  int32_t m_iLineStart;
-  int32_t m_iLineEnd;
+  int32_t m_iBoundaryStart;
+  int32_t m_iBoundaryEnd;
   FX_DWORD m_dwLayoutStyles;
   FX_BOOL m_bPagination;
   FX_BOOL m_bVertical;
