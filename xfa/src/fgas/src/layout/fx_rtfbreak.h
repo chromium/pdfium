@@ -66,44 +66,44 @@ class CFX_RTFBreak : public IFX_RTFBreak {
  public:
   CFX_RTFBreak(FX_DWORD dwPolicies);
   ~CFX_RTFBreak();
-  virtual void Release() { delete this; }
+  void Release() override { delete this; }
   void SetLineBoundary(FX_FLOAT fLineStart, FX_FLOAT fLineEnd) override final;
   void SetLineStartPos(FX_FLOAT fLinePos) override final;
-  virtual FX_DWORD GetLayoutStyles() const { return m_dwLayoutStyles; }
-  virtual void SetLayoutStyles(FX_DWORD dwLayoutStyles);
-  virtual void SetFont(IFX_Font* pFont);
-  virtual void SetFontSize(FX_FLOAT fFontSize);
-  virtual void SetTabWidth(FX_FLOAT fTabWidth);
-  virtual void AddPositionedTab(FX_FLOAT fTabPos);
-  virtual void SetPositionedTabs(const CFX_FloatArray& tabs);
-  virtual void ClearPositionedTabs();
-  virtual void SetDefaultChar(FX_WCHAR wch);
-  virtual void SetLineBreakChar(FX_WCHAR wch);
-  virtual void SetLineBreakTolerance(FX_FLOAT fTolerance);
-  virtual void SetHorizontalScale(int32_t iScale);
-  virtual void SetVerticalScale(int32_t iScale);
-  virtual void SetCharRotation(int32_t iCharRotation);
-  virtual void SetCharSpace(FX_FLOAT fCharSpace);
-  virtual void SetWordSpace(FX_BOOL bDefault, FX_FLOAT fWordSpace);
-  virtual void SetReadingOrder(FX_BOOL bRTL = FALSE);
-  virtual void SetAlignment(int32_t iAlignment = FX_RTFLINEALIGNMENT_Left);
-  virtual void SetUserData(IFX_Unknown* pUserData);
-  virtual FX_DWORD AppendChar(FX_WCHAR wch);
-  virtual FX_DWORD EndBreak(FX_DWORD dwStatus = FX_RTFBREAK_PieceBreak);
-  virtual int32_t CountBreakPieces() const;
-  virtual const CFX_RTFPiece* GetBreakPiece(int32_t index) const;
-  virtual void GetLineRect(CFX_RectF& rect) const;
-  virtual void ClearBreakPieces();
-  virtual void Reset();
-  virtual int32_t GetDisplayPos(
+  FX_DWORD GetLayoutStyles() const override { return m_dwLayoutStyles; }
+  void SetLayoutStyles(FX_DWORD dwLayoutStyles) override;
+  void SetFont(IFX_Font* pFont) override;
+  void SetFontSize(FX_FLOAT fFontSize) override;
+  void SetTabWidth(FX_FLOAT fTabWidth) override;
+  void AddPositionedTab(FX_FLOAT fTabPos) override;
+  void SetPositionedTabs(const CFX_FloatArray& tabs) override;
+  void ClearPositionedTabs() override;
+  void SetDefaultChar(FX_WCHAR wch) override;
+  void SetLineBreakChar(FX_WCHAR wch) override;
+  void SetLineBreakTolerance(FX_FLOAT fTolerance) override;
+  void SetHorizontalScale(int32_t iScale) override;
+  void SetVerticalScale(int32_t iScale) override;
+  void SetCharRotation(int32_t iCharRotation) override;
+  void SetCharSpace(FX_FLOAT fCharSpace) override;
+  void SetWordSpace(FX_BOOL bDefault, FX_FLOAT fWordSpace) override;
+  void SetReadingOrder(FX_BOOL bRTL = FALSE) override;
+  void SetAlignment(int32_t iAlignment = FX_RTFLINEALIGNMENT_Left) override;
+  void SetUserData(IFX_Unknown* pUserData) override;
+  FX_DWORD AppendChar(FX_WCHAR wch) override;
+  FX_DWORD EndBreak(FX_DWORD dwStatus = FX_RTFBREAK_PieceBreak) override;
+  int32_t CountBreakPieces() const override;
+  const CFX_RTFPiece* GetBreakPiece(int32_t index) const override;
+  void GetLineRect(CFX_RectF& rect) const override;
+  void ClearBreakPieces() override;
+  void Reset() override;
+  int32_t GetDisplayPos(
       FX_LPCRTFTEXTOBJ pText,
       FXTEXT_CHARPOS* pCharPos,
       FX_BOOL bCharCode = FALSE,
       CFX_WideString* pWSForms = NULL,
-      FX_AdjustCharDisplayPos pAdjustPos = NULL) const;
-  virtual int32_t GetCharRects(FX_LPCRTFTEXTOBJ pText,
-                               CFX_RectFArray& rtArray,
-                               FX_BOOL bCharBBox = FALSE) const;
+      FX_AdjustCharDisplayPos pAdjustPos = NULL) const override;
+  int32_t GetCharRects(FX_LPCRTFTEXTOBJ pText,
+                       CFX_RectFArray& rtArray,
+                       FX_BOOL bCharBBox = FALSE) const override;
   FX_DWORD AppendChar_CharCode(FX_WCHAR wch);
   FX_DWORD AppendChar_Combination(CFX_RTFChar* pCurChar, int32_t iRotation);
   FX_DWORD AppendChar_Tab(CFX_RTFChar* pCurChar, int32_t iRotation);
