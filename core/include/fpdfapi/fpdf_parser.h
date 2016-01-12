@@ -64,7 +64,7 @@ inline bool PDFCharIsLineEnding(uint8_t c) {
 // Indexed by 8-bit char code, contains unicode code points.
 extern const FX_WORD PDFDocEncoding[256];
 
-class CPDF_Document : public CFX_PrivateData, public CPDF_IndirectObjects {
+class CPDF_Document : public CFX_PrivateData, public CPDF_IndirectObjectHolder {
  public:
   CPDF_Document();
   explicit CPDF_Document(CPDF_Parser* pParser);
@@ -243,13 +243,13 @@ class CPDF_SyntaxParser {
 
   void RestorePos(FX_FILESIZE pos) { m_Pos = pos; }
 
-  CPDF_Object* GetObject(CPDF_IndirectObjects* pObjList,
+  CPDF_Object* GetObject(CPDF_IndirectObjectHolder* pObjList,
                          FX_DWORD objnum,
                          FX_DWORD gennum,
                          PARSE_CONTEXT* pContext,
                          FX_BOOL bDecrypt);
 
-  CPDF_Object* GetObjectByStrict(CPDF_IndirectObjects* pObjList,
+  CPDF_Object* GetObjectByStrict(CPDF_IndirectObjectHolder* pObjList,
                                  FX_DWORD objnum,
                                  FX_DWORD gennum,
                                  PARSE_CONTEXT* pContext);
@@ -403,7 +403,7 @@ class CPDF_Parser {
 
   CPDF_Dictionary* GetEncryptDict() { return m_pEncryptDict; }
 
-  CPDF_Object* ParseIndirectObject(CPDF_IndirectObjects* pObjList,
+  CPDF_Object* ParseIndirectObject(CPDF_IndirectObjectHolder* pObjList,
                                    FX_DWORD objnum,
                                    PARSE_CONTEXT* pContext = NULL);
   FX_DWORD GetLastObjNum() const;
@@ -421,16 +421,17 @@ class CPDF_Parser {
   int GetFileVersion() const { return m_FileVersion; }
 
   FX_BOOL IsXRefStream() const { return m_bXRefStream; }
-  CPDF_Object* ParseIndirectObjectAt(CPDF_IndirectObjects* pObjList,
+  CPDF_Object* ParseIndirectObjectAt(CPDF_IndirectObjectHolder* pObjList,
                                      FX_FILESIZE pos,
                                      FX_DWORD objnum,
                                      PARSE_CONTEXT* pContext);
 
-  CPDF_Object* ParseIndirectObjectAtByStrict(CPDF_IndirectObjects* pObjList,
-                                             FX_FILESIZE pos,
-                                             FX_DWORD objnum,
-                                             PARSE_CONTEXT* pContext,
-                                             FX_FILESIZE* pResultPos);
+  CPDF_Object* ParseIndirectObjectAtByStrict(
+      CPDF_IndirectObjectHolder* pObjList,
+      FX_FILESIZE pos,
+      FX_DWORD objnum,
+      PARSE_CONTEXT* pContext,
+      FX_FILESIZE* pResultPos);
 
   FX_DWORD StartAsynParse(IFX_FileRead* pFile,
                           FX_BOOL bReParse = FALSE,
@@ -795,7 +796,7 @@ inline CFX_ByteString PDF_EncodeText(const CFX_WideString& str,
   return PDF_EncodeText(str.c_str(), str.GetLength(), pCharMap);
 }
 FX_FLOAT PDF_ClipFloat(FX_FLOAT f);
-class CFDF_Document : public CPDF_IndirectObjects {
+class CFDF_Document : public CPDF_IndirectObjectHolder {
  public:
   static CFDF_Document* CreateNewDoc();
   static CFDF_Document* ParseFile(IFX_FileRead* pFile,

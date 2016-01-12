@@ -6,6 +6,8 @@
 
 #include "core/include/fpdfapi/fpdf_objects.h"
 
+#include <algorithm>
+
 #include "core/include/fpdfapi/fpdf_parser.h"
 #include "core/include/fxcrt/fx_string.h"
 #include "third_party/base/stl_util.h"
@@ -147,7 +149,7 @@ CPDF_Dictionary* CPDF_Object::GetDict() const {
       return AsStream()->GetDict();
     case PDFOBJ_REFERENCE: {
       const CPDF_Reference* pRef = AsReference();
-      CPDF_IndirectObjects* pIndirect = pRef->GetObjList();
+      CPDF_IndirectObjectHolder* pIndirect = pRef->GetObjList();
       if (!pIndirect)
         return nullptr;
       CPDF_Object* pObj =
@@ -300,7 +302,7 @@ CPDF_Object* CPDF_Object::CloneInternal(FX_BOOL bDirect,
   }
   return NULL;
 }
-CPDF_Object* CPDF_Object::CloneRef(CPDF_IndirectObjects* pDoc) const {
+CPDF_Object* CPDF_Object::CloneRef(CPDF_IndirectObjectHolder* pDoc) const {
   if (m_ObjNum) {
     return new CPDF_Reference(pDoc, m_ObjNum);
   }
@@ -513,7 +515,7 @@ void CPDF_Array::RemoveAt(FX_DWORD i, int nCount) {
 }
 void CPDF_Array::SetAt(FX_DWORD i,
                        CPDF_Object* pObj,
-                       CPDF_IndirectObjects* pObjs) {
+                       CPDF_IndirectObjectHolder* pObjs) {
   ASSERT(IsArray());
   ASSERT(i < (FX_DWORD)m_Objects.GetSize());
   if (i >= (FX_DWORD)m_Objects.GetSize())
@@ -528,14 +530,14 @@ void CPDF_Array::SetAt(FX_DWORD i,
 }
 void CPDF_Array::InsertAt(FX_DWORD index,
                           CPDF_Object* pObj,
-                          CPDF_IndirectObjects* pObjs) {
+                          CPDF_IndirectObjectHolder* pObjs) {
   if (pObj->GetObjNum()) {
     ASSERT(pObjs);
     pObj = new CPDF_Reference(pObjs, pObj->GetObjNum());
   }
   m_Objects.InsertAt(index, pObj);
 }
-void CPDF_Array::Add(CPDF_Object* pObj, CPDF_IndirectObjects* pObjs) {
+void CPDF_Array::Add(CPDF_Object* pObj, CPDF_IndirectObjectHolder* pObjs) {
   if (pObj->GetObjNum()) {
     ASSERT(pObjs);
     pObj = new CPDF_Reference(pObjs, pObj->GetObjNum());
@@ -560,7 +562,8 @@ void CPDF_Array::AddNumber(FX_FLOAT f) {
   pNumber->SetNumber(f);
   Add(pNumber);
 }
-void CPDF_Array::AddReference(CPDF_IndirectObjects* pDoc, FX_DWORD objnum) {
+void CPDF_Array::AddReference(CPDF_IndirectObjectHolder* pDoc,
+                              FX_DWORD objnum) {
   ASSERT(IsArray());
   Add(new CPDF_Reference(pDoc, objnum));
 }
@@ -765,12 +768,12 @@ void CPDF_Dictionary::SetAtString(const CFX_ByteStringC& key,
   SetAt(key, new CPDF_String(str, FALSE));
 }
 void CPDF_Dictionary::SetAtReference(const CFX_ByteStringC& key,
-                                     CPDF_IndirectObjects* pDoc,
+                                     CPDF_IndirectObjectHolder* pDoc,
                                      FX_DWORD objnum) {
   SetAt(key, new CPDF_Reference(pDoc, objnum));
 }
 void CPDF_Dictionary::AddReference(const CFX_ByteStringC& key,
-                                   CPDF_IndirectObjects* pDoc,
+                                   CPDF_IndirectObjectHolder* pDoc,
                                    FX_DWORD objnum) {
   SetAt(key, new CPDF_Reference(pDoc, objnum));
 }
@@ -1049,111 +1052,88 @@ uint8_t* CPDF_StreamAcc::DetachData() {
   FXSYS_memcpy(p, m_pData, m_dwSize);
   return p;
 }
-void CPDF_Reference::SetRef(CPDF_IndirectObjects* pDoc, FX_DWORD objnum) {
+void CPDF_Reference::SetRef(CPDF_IndirectObjectHolder* pDoc, FX_DWORD objnum) {
   m_pObjList = pDoc;
   m_RefObjNum = objnum;
 }
-CPDF_IndirectObjects::CPDF_IndirectObjects(CPDF_Parser* pParser) {
-  m_pParser = pParser;
-  m_IndirectObjs.InitHashTable(1013);
-  if (pParser) {
+CPDF_IndirectObjectHolder::CPDF_IndirectObjectHolder(CPDF_Parser* pParser)
+    : m_pParser(pParser), m_LastObjNum(0) {
+  if (pParser)
     m_LastObjNum = m_pParser->GetLastObjNum();
-  } else {
-    m_LastObjNum = 0;
+}
+CPDF_IndirectObjectHolder::~CPDF_IndirectObjectHolder() {
+  for (const auto& pair : m_IndirectObjs) {
+    pair.second->Destroy();
   }
 }
-CPDF_IndirectObjects::~CPDF_IndirectObjects() {
-  FX_POSITION pos = m_IndirectObjs.GetStartPosition();
-  while (pos) {
-    void* key;
-    void* value;
-    m_IndirectObjs.GetNextAssoc(pos, key, value);
-    static_cast<CPDF_Object*>(value)->Destroy();
-  }
-}
-CPDF_Object* CPDF_IndirectObjects::GetIndirectObject(FX_DWORD objnum,
-                                                     PARSE_CONTEXT* pContext) {
+CPDF_Object* CPDF_IndirectObjectHolder::GetIndirectObject(
+    FX_DWORD objnum,
+    PARSE_CONTEXT* pContext) {
   if (objnum == 0)
     return nullptr;
-  void* value;
-  if (m_IndirectObjs.Lookup((void*)(uintptr_t)objnum, value)) {
-    CPDF_Object* pValue = static_cast<CPDF_Object*>(value);
-    if (pValue->GetObjNum() == -1)
-      return nullptr;
-    return pValue;
-  }
 
-  CPDF_Object* pObj = nullptr;
-  if (m_pParser)
-    pObj = m_pParser->ParseIndirectObject(this, objnum, pContext);
+  auto it = m_IndirectObjs.find(objnum);
+  if (it != m_IndirectObjs.end())
+    return it->second->GetObjNum() != -1 ? it->second : nullptr;
+
+  if (!m_pParser)
+    return nullptr;
+
+  CPDF_Object* pObj = m_pParser->ParseIndirectObject(this, objnum, pContext);
   if (!pObj)
     return nullptr;
 
   pObj->m_ObjNum = objnum;
-  if (m_LastObjNum < objnum) {
-    m_LastObjNum = objnum;
-  }
-  if (m_IndirectObjs.Lookup((void*)(uintptr_t)objnum, value)) {
-    if (value)
-      static_cast<CPDF_Object*>(value)->Destroy();
-  }
-  m_IndirectObjs.SetAt((void*)(uintptr_t)objnum, pObj);
+  m_LastObjNum = std::max(m_LastObjNum, objnum);
+  if (m_IndirectObjs[objnum])
+    m_IndirectObjs[objnum]->Destroy();
+
+  m_IndirectObjs[objnum] = pObj;
   return pObj;
 }
-int CPDF_IndirectObjects::GetIndirectType(FX_DWORD objnum) {
-  void* value;
-  if (m_IndirectObjs.Lookup((void*)(uintptr_t)objnum, value))
-    return static_cast<CPDF_Object*>(value)->GetType();
+int CPDF_IndirectObjectHolder::GetIndirectType(FX_DWORD objnum) {
+  auto it = m_IndirectObjs.find(objnum);
+  if (it != m_IndirectObjs.end())
+    return it->second->GetType();
 
-  if (m_pParser) {
-    PARSE_CONTEXT context;
-    FXSYS_memset(&context, 0, sizeof(PARSE_CONTEXT));
-    context.m_Flags = PDFPARSE_TYPEONLY;
-    return (int)(uintptr_t)m_pParser->ParseIndirectObject(this, objnum,
-                                                          &context);
-  }
-  return 0;
+  if (!m_pParser)
+    return 0;
+
+  PARSE_CONTEXT context;
+  FXSYS_memset(&context, 0, sizeof(PARSE_CONTEXT));
+  context.m_Flags = PDFPARSE_TYPEONLY;
+  return (int)(uintptr_t)m_pParser->ParseIndirectObject(this, objnum, &context);
 }
-FX_DWORD CPDF_IndirectObjects::AddIndirectObject(CPDF_Object* pObj) {
+FX_DWORD CPDF_IndirectObjectHolder::AddIndirectObject(CPDF_Object* pObj) {
   if (pObj->m_ObjNum) {
     return pObj->m_ObjNum;
   }
   m_LastObjNum++;
-  m_IndirectObjs.SetAt((void*)(uintptr_t)m_LastObjNum, pObj);
+  m_IndirectObjs[m_LastObjNum] = pObj;
   pObj->m_ObjNum = m_LastObjNum;
   return m_LastObjNum;
 }
-void CPDF_IndirectObjects::ReleaseIndirectObject(FX_DWORD objnum) {
-  void* value;
-  if (!m_IndirectObjs.Lookup((void*)(uintptr_t)objnum, value))
+void CPDF_IndirectObjectHolder::ReleaseIndirectObject(FX_DWORD objnum) {
+  auto it = m_IndirectObjs.find(objnum);
+  if (it == m_IndirectObjs.end() || it->second->GetObjNum() == -1)
     return;
-  CPDF_Object* pValue = static_cast<CPDF_Object*>(value);
-  if (pValue->GetObjNum() == -1)
-    return;
-  pValue->Destroy();
-  m_IndirectObjs.RemoveKey((void*)(uintptr_t)objnum);
+  it->second->Destroy();
+  m_IndirectObjs.erase(it);
 }
-FX_BOOL CPDF_IndirectObjects::InsertIndirectObject(FX_DWORD objnum,
-                                                   CPDF_Object* pObj) {
+FX_BOOL CPDF_IndirectObjectHolder::InsertIndirectObject(FX_DWORD objnum,
+                                                        CPDF_Object* pObj) {
   if (!objnum || !pObj)
     return FALSE;
-  void* value = nullptr;
-  if (m_IndirectObjs.Lookup((void*)(uintptr_t)objnum, value)) {
-    if (value) {
-      CPDF_Object* pExistingObj = static_cast<CPDF_Object*>(value);
-      if (pObj->GetGenNum() <= pExistingObj->GetGenNum()) {
-        pObj->Destroy();
-        return FALSE;
-      }
-      pExistingObj->Destroy();
+  auto it = m_IndirectObjs.find(objnum);
+  if (it != m_IndirectObjs.end()) {
+    if (pObj->GetGenNum() <= it->second->GetGenNum()) {
+      pObj->Destroy();
+      return FALSE;
     }
+    it->second->Destroy();
   }
   pObj->m_ObjNum = objnum;
-  m_IndirectObjs.SetAt((void*)(uintptr_t)objnum, pObj);
-  if (m_LastObjNum < objnum)
-    m_LastObjNum = objnum;
+  m_IndirectObjs[objnum] = pObj;
+  m_LastObjNum = std::max(m_LastObjNum, objnum);
   return TRUE;
-}
-FX_DWORD CPDF_IndirectObjects::GetLastObjNum() const {
-  return m_LastObjNum;
 }

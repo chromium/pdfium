@@ -8,7 +8,7 @@
 
 #include "core/include/fpdfapi/fpdf_serial.h"
 
-CFDF_Document::CFDF_Document() : CPDF_IndirectObjects(NULL) {
+CFDF_Document::CFDF_Document() : CPDF_IndirectObjectHolder(NULL) {
   m_pRootDict = NULL;
   m_pFile = NULL;
   m_bOwnFile = FALSE;
@@ -87,12 +87,8 @@ FX_BOOL CFDF_Document::WriteBuf(CFX_ByteTextBuf& buf) const {
     return FALSE;
   }
   buf << "%FDF-1.2\r\n";
-  FX_POSITION pos = m_IndirectObjs.GetStartPosition();
-  while (pos) {
-    size_t objnum;
-    CPDF_Object* pObj;
-    m_IndirectObjs.GetNextAssoc(pos, (void*&)objnum, (void*&)pObj);
-    buf << (FX_DWORD)objnum << " 0 obj\r\n" << pObj << "\r\nendobj\r\n\r\n";
+  for (const auto& pair : m_IndirectObjs) {
+    buf << pair.first << " 0 obj\r\n" << pair.second << "\r\nendobj\r\n\r\n";
   }
   buf << "trailer\r\n<</Root " << m_pRootDict->GetObjNum()
       << " 0 R>>\r\n%%EOF\r\n";

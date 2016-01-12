@@ -18,7 +18,7 @@ class CPDF_Boolean;
 class CPDF_CryptoHandler;
 class CPDF_Dictionary;
 class CPDF_Document;
-class CPDF_IndirectObjects;
+class CPDF_IndirectObjectHolder;
 class CPDF_Name;
 class CPDF_Null;
 class CPDF_Number;
@@ -54,7 +54,7 @@ class CPDF_Object {
 
   CPDF_Object* Clone(FX_BOOL bDirect = FALSE) const;
 
-  CPDF_Object* CloneRef(CPDF_IndirectObjects* pObjs) const;
+  CPDF_Object* CloneRef(CPDF_IndirectObjectHolder* pObjs) const;
 
   CPDF_Object* GetDirect() const;
 
@@ -128,7 +128,7 @@ class CPDF_Object {
   FX_DWORD m_ObjNum;
   FX_DWORD m_GenNum;
 
-  friend class CPDF_IndirectObjects;
+  friend class CPDF_IndirectObjectHolder;
   friend class CPDF_Parser;
   friend class CPDF_SyntaxParser;
 
@@ -295,15 +295,15 @@ class CPDF_Array : public CPDF_Object {
 
   void SetAt(FX_DWORD index,
              CPDF_Object* pObj,
-             CPDF_IndirectObjects* pObjs = NULL);
+             CPDF_IndirectObjectHolder* pObjs = NULL);
 
   void InsertAt(FX_DWORD index,
                 CPDF_Object* pObj,
-                CPDF_IndirectObjects* pObjs = NULL);
+                CPDF_IndirectObjectHolder* pObjs = NULL);
 
   void RemoveAt(FX_DWORD index, int nCount = 1);
 
-  void Add(CPDF_Object* pObj, CPDF_IndirectObjects* pObjs = NULL);
+  void Add(CPDF_Object* pObj, CPDF_IndirectObjectHolder* pObjs = NULL);
 
   void AddNumber(FX_FLOAT f);
 
@@ -313,9 +313,9 @@ class CPDF_Array : public CPDF_Object {
 
   void AddName(const CFX_ByteString& str);
 
-  void AddReference(CPDF_IndirectObjects* pDoc, FX_DWORD objnum);
+  void AddReference(CPDF_IndirectObjectHolder* pDoc, FX_DWORD objnum);
 
-  void AddReference(CPDF_IndirectObjects* pDoc, CPDF_Object* obj) {
+  void AddReference(CPDF_IndirectObjectHolder* pDoc, CPDF_Object* obj) {
     AddReference(pDoc, obj->GetObjNum());
   }
 
@@ -396,17 +396,17 @@ class CPDF_Dictionary : public CPDF_Object {
   void SetAtNumber(const CFX_ByteStringC& key, FX_FLOAT f);
 
   void SetAtReference(const CFX_ByteStringC& key,
-                      CPDF_IndirectObjects* pDoc,
+                      CPDF_IndirectObjectHolder* pDoc,
                       FX_DWORD objnum);
 
   void SetAtReference(const CFX_ByteStringC& key,
-                      CPDF_IndirectObjects* pDoc,
+                      CPDF_IndirectObjectHolder* pDoc,
                       CPDF_Object* obj) {
     SetAtReference(key, pDoc, obj->GetObjNum());
   }
 
   void AddReference(const CFX_ByteStringC& key,
-                    CPDF_IndirectObjects* pDoc,
+                    CPDF_IndirectObjectHolder* pDoc,
                     FX_DWORD objnum);
 
   void SetAtRect(const CFX_ByteStringC& key, const CFX_FloatRect& rect);
@@ -548,21 +548,21 @@ class CPDF_Null : public CPDF_Object {
 
 class CPDF_Reference : public CPDF_Object {
  public:
-  CPDF_Reference(CPDF_IndirectObjects* pDoc, int objnum)
+  CPDF_Reference(CPDF_IndirectObjectHolder* pDoc, int objnum)
       : CPDF_Object(PDFOBJ_REFERENCE), m_pObjList(pDoc), m_RefObjNum(objnum) {}
 
-  CPDF_IndirectObjects* GetObjList() const { return m_pObjList; }
+  CPDF_IndirectObjectHolder* GetObjList() const { return m_pObjList; }
 
   FX_DWORD GetRefObjNum() const { return m_RefObjNum; }
 
-  void SetRef(CPDF_IndirectObjects* pDoc, FX_DWORD objnum);
+  void SetRef(CPDF_IndirectObjectHolder* pDoc, FX_DWORD objnum);
 
   FX_BOOL Identical(CPDF_Reference* pOther) const {
     return m_RefObjNum == pOther->m_RefObjNum;
   }
 
  protected:
-  CPDF_IndirectObjects* m_pObjList;
+  CPDF_IndirectObjectHolder* m_pObjList;
 
   FX_DWORD m_RefObjNum;
   friend class CPDF_Object;
@@ -574,40 +574,32 @@ inline const CPDF_Reference* ToReference(const CPDF_Object* obj) {
   return obj ? obj->AsReference() : nullptr;
 }
 
-class CPDF_IndirectObjects {
+class CPDF_IndirectObjectHolder {
  public:
-  explicit CPDF_IndirectObjects(CPDF_Parser* pParser);
+  using iterator = std::map<FX_DWORD, CPDF_Object*>::iterator;
+  using const_iterator = std::map<FX_DWORD, CPDF_Object*>::const_iterator;
 
-  ~CPDF_IndirectObjects();
-
-  CPDF_Object* GetIndirectObject(FX_DWORD objnum, PARSE_CONTEXT* pContext);
+  explicit CPDF_IndirectObjectHolder(CPDF_Parser* pParser);
+  ~CPDF_IndirectObjectHolder();
 
   int GetIndirectType(FX_DWORD objnum);
-
+  CPDF_Object* GetIndirectObject(FX_DWORD objnum, PARSE_CONTEXT* pContext);
   FX_DWORD AddIndirectObject(CPDF_Object* pObj);
-
   void ReleaseIndirectObject(FX_DWORD objnum);
+
   // Takes ownership of |pObj|.
   FX_BOOL InsertIndirectObject(FX_DWORD objnum, CPDF_Object* pObj);
 
-  FX_DWORD GetLastObjNum() const;
-
-  FX_POSITION GetStartPosition() const {
-    return m_IndirectObjs.GetStartPosition();
-  }
-
-  void GetNextAssoc(FX_POSITION& rPos,
-                    FX_DWORD& objnum,
-                    CPDF_Object*& pObject) const {
-    m_IndirectObjs.GetNextAssoc(rPos, (void*&)objnum, (void*&)pObject);
-  }
+  FX_DWORD GetLastObjNum() const { return m_LastObjNum; }
+  iterator begin() { return m_IndirectObjs.begin(); }
+  const_iterator begin() const { return m_IndirectObjs.cbegin(); }
+  iterator end() { return m_IndirectObjs.end(); }
+  const_iterator end() const { return m_IndirectObjs.end(); }
 
  protected:
-  CFX_MapPtrToPtr m_IndirectObjs;
-
   CPDF_Parser* m_pParser;
-
   FX_DWORD m_LastObjNum;
+  std::map<FX_DWORD, CPDF_Object*> m_IndirectObjs;
 };
 
 #endif  // CORE_INCLUDE_FPDFAPI_FPDF_OBJECTS_H_

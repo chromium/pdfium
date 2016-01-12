@@ -10,7 +10,7 @@
 #include "core/include/fpdfapi/fpdf_page.h"
 #include "core/src/fpdfapi/fpdf_page/pageint.h"
 
-CPDF_Document::CPDF_Document() : CPDF_IndirectObjects(NULL) {
+CPDF_Document::CPDF_Document() : CPDF_IndirectObjectHolder(NULL) {
   m_pRootDict = NULL;
   m_pInfoDict = NULL;
   m_bLinearized = FALSE;
