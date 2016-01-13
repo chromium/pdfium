@@ -29,7 +29,8 @@ class CPDF_HintTables {
                      FX_FILESIZE& szPageStartPos,
                      FX_FILESIZE& szPageLength,
                      FX_DWORD& dwObjNum);
-  FX_BOOL CheckPage(int index, IFX_DownloadHints* pHints);
+  IPDF_DataAvail::DocAvailStatus CheckPage(int index,
+                                           IFX_DownloadHints* pHints);
   FX_BOOL LoadHintStream(CPDF_Stream* pHintStream);
 
  protected:

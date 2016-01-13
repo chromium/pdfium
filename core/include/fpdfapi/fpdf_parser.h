@@ -905,7 +905,7 @@ class IPDF_DataAvail {
 
   virtual DocAvailStatus IsDocAvail(IFX_DownloadHints* pHints) = 0;
   virtual void SetDocument(CPDF_Document* pDoc) = 0;
-  virtual int IsPageAvail(int iPage, IFX_DownloadHints* pHints) = 0;
+  virtual DocAvailStatus IsPageAvail(int iPage, IFX_DownloadHints* pHints) = 0;
   virtual FX_BOOL IsLinearized() = 0;
   virtual DocFormStatus IsFormAvail(IFX_DownloadHints* pHints) = 0;
   virtual DocLinearizationStatus IsLinearizedPDF() = 0;
@@ -943,7 +943,7 @@ enum PDF_DATAAVAIL_STATUS {
   PDF_DATAAVAIL_CROSSREF_ITEM,
   PDF_DATAAVAIL_CROSSREF_STREAM,
   PDF_DATAAVAIL_TRAILER,
-  PDF_DATAAVAIL_LOADALLCRSOSSREF,
+  PDF_DATAAVAIL_LOADALLCROSSREF,
   PDF_DATAAVAIL_ROOT,
   PDF_DATAAVAIL_INFO,
   PDF_DATAAVAIL_ACROFORM,
