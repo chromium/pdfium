@@ -304,6 +304,7 @@ if (pdf_enable_xfa) {
       "//build/config/compiler:no_chromium_code",
       "//third_party/pdfium:pdfium_config",
     ]
+    deps = [ "//third_party:jpeg" ]
     sources = [
       "libtiff/tiffiop.h",
       "libtiff/tiffvers.h",
