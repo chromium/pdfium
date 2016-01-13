@@ -475,6 +475,7 @@ class CPDF_Parser {
   void SetEncryptDictionary(CPDF_Dictionary* pDict);
 
   FX_FILESIZE GetObjectPositionOrZero(FX_DWORD objnum) const;
+  void ShrinkObjectMap(FX_DWORD size);
 
   CPDF_Document* m_pDocument;
 

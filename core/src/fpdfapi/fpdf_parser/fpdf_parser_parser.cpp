@@ -143,6 +143,22 @@ FX_FILESIZE CPDF_Parser::GetObjectPositionOrZero(FX_DWORD objnum) const {
   return it != m_ObjectInfo.end() ? it->second.pos : 0;
 }
 
+void CPDF_Parser::ShrinkObjectMap(FX_DWORD objnum) {
+  if (objnum == 0) {
+    m_ObjectInfo.clear();
+    return;
+  }
+
+  auto it = m_ObjectInfo.lower_bound(objnum);
+  while (it != m_ObjectInfo.end()) {
+    auto saved_it = it++;
+    m_ObjectInfo.erase(saved_it);
+  }
+
+  if (!pdfium::ContainsKey(m_ObjectInfo, objnum - 1))
+    m_ObjectInfo[objnum - 1].pos = 0;
+}
+
 void CPDF_Parser::CloseParser(FX_BOOL bReParse) {
   m_bVersionUpdated = FALSE;
   if (!bReParse) {
@@ -379,7 +395,7 @@ FX_BOOL CPDF_Parser::LoadAllCrossRefV4(FX_FILESIZE xrefpos) {
   if (xrefsize <= 0 || xrefsize > kMaxXRefSize) {
     return FALSE;
   }
-  m_ObjectInfo[0].pos = 0;
+  ShrinkObjectMap(xrefsize);
   m_V5Type.SetSize(xrefsize);
   CFX_FileSizeArray CrossRefList;
   CFX_FileSizeArray XRefStreamList;
@@ -1029,7 +1045,7 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, FX_BOOL bMainXRef) {
   }
   if (bMainXRef) {
     m_pTrailer = ToDictionary(pStream->GetDict()->Clone());
-    m_ObjectInfo[0].pos = 0;
+    ShrinkObjectMap(size);
     if (m_V5Type.SetSize(size)) {
       FXSYS_memset(m_V5Type.GetData(), 0, size);
     }
@@ -1607,7 +1623,7 @@ FX_DWORD CPDF_Parser::StartAsynParse(IFX_FileRead* pFileAccess,
 
     int32_t xrefsize = GetDirectInteger(m_pTrailer, "Size");
     if (xrefsize > 0) {
-      m_ObjectInfo[0].pos = 0;
+      ShrinkObjectMap(xrefsize);
       m_V5Type.SetSize(xrefsize);
     }
   }
