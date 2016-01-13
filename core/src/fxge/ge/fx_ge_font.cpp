@@ -106,11 +106,8 @@ FX_BOOL CFX_Font::LoadClone(const CFX_Font* pFont) {
 
 CFX_Font::~CFX_Font() {
   delete m_pSubstFont;
-  m_pSubstFont = NULL;
-#ifndef PDF_ENABLE_XFA
   FX_Free(m_pFontDataAllocation);
-  m_pFontDataAllocation = NULL;
-#else
+#ifdef PDF_ENABLE_XFA
   if (m_bLogic) {
     m_OtfFontData.DetachBuffer();
     return;
@@ -130,10 +127,8 @@ CFX_Font::~CFX_Font() {
   }
 #ifdef PDF_ENABLE_XFA
   FX_Free(m_pOwnedStream);
-  m_pOwnedStream = NULL;
 #endif  // PDF_ENABLE_XFA
   FX_Free(m_pGsubData);
-  m_pGsubData = NULL;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
   ReleasePlatformResource();
 #endif
