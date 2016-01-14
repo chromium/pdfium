@@ -18,4 +18,5 @@ Local Modifications:
 0006-tcd_init_tile.patch: Fix a dividing zero bug in opj_tcd_init_tile().
 0007-jp2_read_cmap.patch: Fix wrong rendering on greyscale images with index colorspace.
 0008-jp2_check_color.patch: Replace an assertion with returning false.
+0009-opj_pi_next.patch: Fix potential bad precno value in opj_pi_next* functions.
 TODO(thestig): List all the other patches.
