@@ -213,9 +213,11 @@ FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
     }
     case PDFOBJ_DICTIONARY: {
       CPDF_Dictionary* pDict = pObj->AsDictionary();
-      for (const auto& it : *pDict) {
-        const CFX_ByteString& key = it.first;
-        CPDF_Object* pNextObj = it.second;
+      auto it = pDict->begin();
+      while (it != pDict->end()) {
+        const CFX_ByteString& key = it->first;
+        CPDF_Object* pNextObj = it->second;
+        ++it;
         if (!FXSYS_strcmp(key, "Parent") || !FXSYS_strcmp(key, "Prev") ||
             !FXSYS_strcmp(key, "First")) {
           continue;

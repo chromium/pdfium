@@ -734,6 +734,9 @@ void CPDF_Dictionary::ReplaceKey(const CFX_ByteStringC& oldkey,
   // Avoid 2 constructions of CFX_ByteString.
   CFX_ByteString newkey_bytestring = newkey;
   auto new_it = m_Map.find(newkey_bytestring);
+  if (new_it == old_it)
+    return;
+
   if (new_it != m_Map.end()) {
     new_it->second->Release();
     new_it->second = old_it->second;

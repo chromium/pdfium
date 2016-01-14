@@ -385,6 +385,7 @@ class CPDF_Dictionary : public CPDF_Object {
 
   FX_BOOL KeyExist(const CFX_ByteStringC& key) const;
 
+  // Set* functions invalidate iterators for the element with the key |key|.
   void SetAt(const CFX_ByteStringC& key, CPDF_Object* pObj);
 
   void SetAtName(const CFX_ByteStringC& key, const CFX_ByteString& name);
@@ -415,8 +416,10 @@ class CPDF_Dictionary : public CPDF_Object {
 
   void SetAtBoolean(const CFX_ByteStringC& key, FX_BOOL bValue);
 
+  // Invalidates iterators for the element with the key |key|.
   void RemoveAt(const CFX_ByteStringC& key);
 
+  // Invalidates iterators for the element with the key |oldkey|.
   void ReplaceKey(const CFX_ByteStringC& oldkey, const CFX_ByteStringC& newkey);
 
   FX_BOOL Identical(CPDF_Dictionary* pDict) const;
