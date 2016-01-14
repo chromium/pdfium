@@ -64,9 +64,11 @@ void CPDF_FormControl::SetOnStateName(const CFX_ByteString& csOn) {
     if (!pSubDict)
       continue;
 
-    for (const auto& subdict_it : *pSubDict) {
-      const CFX_ByteString& csKey2 = subdict_it.first;
-      CPDF_Object* pObj2 = subdict_it.second;
+    auto subdict_it = pSubDict->begin();
+    while (subdict_it != pSubDict->end()) {
+      const CFX_ByteString& csKey2 = subdict_it->first;
+      CPDF_Object* pObj2 = subdict_it->second;
+      ++subdict_it;
       if (!pObj2) {
         continue;
       }
