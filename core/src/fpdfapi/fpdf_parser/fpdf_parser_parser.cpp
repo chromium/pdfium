@@ -885,9 +885,11 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
                       if (!pRoot ||
                           (pRef && IsValidObjectNumber(pRef->GetRefObjNum()) &&
                            m_ObjectInfo[pRef->GetRefObjNum()].pos != 0)) {
-                        for (const auto& it : *pTrailer) {
-                          const CFX_ByteString& key = it.first;
-                          CPDF_Object* pElement = it.second;
+                        auto it = pTrailer->begin();
+                        while (it != pTrailer->end()) {
+                          const CFX_ByteString& key = it->first;
+                          CPDF_Object* pElement = it->second;
+                          ++it;
                           FX_DWORD dwObjNum =
                               pElement ? pElement->GetObjNum() : 0;
                           if (dwObjNum) {
