@@ -125,7 +125,11 @@
    /* NEON optimizations are to be at least considered by libpng, so enable the
     * callbacks to do this.
     */
-#  define PNG_FILTER_OPTIMIZATIONS png_init_filter_functions_neon
+/*
+ * Disabled by sbc since this copy of libpng doesn't contains the arm
+ * specific code (e.g. arm/arm_init.c)
+ */
+/*#  define PNG_FILTER_OPTIMIZATIONS png_init_filter_functions_neon*/
 #endif
 
 /* Is this a build of a DLL where compilation of the object modules requires
