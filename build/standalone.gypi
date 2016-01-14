@@ -99,6 +99,12 @@
         'xcode_settings': {
           'GCC_OPTIMIZATION_LEVEL': '0',  # -O0
         },
+        'conditions': [
+          ['OS=="linux"', {
+            # Enable libstdc++ debugging to help catch problems early.
+            'defines': ['_GLIBCXX_DEBUG=1',],
+          }],
+        ],
       },
       'Release': {
         'cflags': [
