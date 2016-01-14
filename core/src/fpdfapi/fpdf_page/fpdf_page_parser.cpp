@@ -50,6 +50,12 @@ const PDF_AbbrPairs PDF_InlineValueAbbr[] = {
     {_FX_BSTRC("DCTDecode"), _FX_BSTRC("DCT")},
 };
 
+struct AbbrReplacementOp {
+  bool is_replace_key;
+  CFX_ByteString key;
+  CFX_ByteStringC replacement;
+};
+
 CFX_ByteStringC PDF_FindFullName(const PDF_AbbrPairs* table,
                                  size_t count,
                                  const CFX_ByteStringC& abbr) {
@@ -59,19 +65,6 @@ CFX_ByteStringC PDF_FindFullName(const PDF_AbbrPairs* table,
     if (memcmp(abbr.GetPtr(), table[i].abbr.m_Ptr, abbr.GetLength()))
       continue;
     return CFX_ByteStringC(table[i].full_name.m_Ptr, table[i].full_name.m_Size);
-  }
-  return CFX_ByteStringC();
-}
-
-CFX_ByteStringC PDF_FindAbbrName(const PDF_AbbrPairs* table,
-                                 size_t count,
-                                 const CFX_ByteStringC& name) {
-  for (size_t i = 0; i < count; ++i) {
-    if (name.GetLength() != table[i].full_name.m_Size)
-      continue;
-    if (memcmp(name.GetPtr(), table[i].full_name.m_Ptr, name.GetLength()))
-      continue;
-    return CFX_ByteStringC(table[i].abbr.m_Ptr, table[i].abbr.m_Size);
   }
   return CFX_ByteStringC();
 }
@@ -496,13 +489,18 @@ void PDF_ReplaceAbbr(CPDF_Object* pObj) {
   switch (pObj->GetType()) {
     case PDFOBJ_DICTIONARY: {
       CPDF_Dictionary* pDict = pObj->AsDictionary();
+      std::vector<AbbrReplacementOp> replacements;
       for (const auto& it : *pDict) {
         CFX_ByteString key = it.first;
         CPDF_Object* value = it.second;
         CFX_ByteStringC fullname = PDF_FindFullName(
             PDF_InlineKeyAbbr, FX_ArraySize(PDF_InlineKeyAbbr), key);
         if (!fullname.IsEmpty()) {
-          pDict->ReplaceKey(key, fullname);
+          AbbrReplacementOp op;
+          op.is_replace_key = true;
+          op.key = key;
+          op.replacement = fullname;
+          replacements.push_back(op);
           key = fullname;
         }
 
@@ -511,11 +509,21 @@ void PDF_ReplaceAbbr(CPDF_Object* pObj) {
           fullname = PDF_FindFullName(PDF_InlineValueAbbr,
                                       FX_ArraySize(PDF_InlineValueAbbr), name);
           if (!fullname.IsEmpty()) {
-            pDict->SetAtName(key, fullname);
+            AbbrReplacementOp op;
+            op.is_replace_key = false;
+            op.key = key;
+            op.replacement = fullname;
+            replacements.push_back(op);
           }
         } else {
           PDF_ReplaceAbbr(value);
         }
+      }
+      for (const auto& op : replacements) {
+        if (op.is_replace_key)
+          pDict->ReplaceKey(op.key, op.replacement);
+        else
+          pDict->SetAtName(op.key, op.replacement);
       }
       break;
     }
@@ -539,51 +547,6 @@ void PDF_ReplaceAbbr(CPDF_Object* pObj) {
   }
 }
 
-void PDF_ReplaceFull(CPDF_Object* pObj) {
-  switch (pObj->GetType()) {
-    case PDFOBJ_DICTIONARY: {
-      CPDF_Dictionary* pDict = pObj->AsDictionary();
-      for (const auto& it : *pDict) {
-        CFX_ByteString key = it.first;
-        CPDF_Object* value = it.second;
-        CFX_ByteStringC abbrName = PDF_FindAbbrName(
-            PDF_InlineKeyAbbr, FX_ArraySize(PDF_InlineKeyAbbr), key);
-        if (!abbrName.IsEmpty()) {
-          pDict->ReplaceKey(key, abbrName);
-          key = abbrName;
-        }
-        if (value->IsName()) {
-          CFX_ByteString name = value->GetString();
-          abbrName = PDF_FindAbbrName(PDF_InlineValueAbbr,
-                                      FX_ArraySize(PDF_InlineValueAbbr), name);
-          if (!abbrName.IsEmpty()) {
-            pDict->SetAtName(key, abbrName);
-          }
-        } else {
-          PDF_ReplaceFull(value);
-        }
-      }
-      break;
-    }
-    case PDFOBJ_ARRAY: {
-      CPDF_Array* pArray = pObj->AsArray();
-      for (FX_DWORD i = 0; i < pArray->GetCount(); i++) {
-        CPDF_Object* pElement = pArray->GetElement(i);
-        if (pElement->IsName()) {
-          CFX_ByteString name = pElement->GetString();
-          CFX_ByteStringC abbrName = PDF_FindAbbrName(
-              PDF_InlineValueAbbr, FX_ArraySize(PDF_InlineValueAbbr), name);
-          if (!abbrName.IsEmpty()) {
-            pArray->SetAt(i, new CPDF_Name(abbrName));
-          }
-        } else {
-          PDF_ReplaceFull(pElement);
-        }
-      }
-      break;
-    }
-  }
-}
 void CPDF_StreamContentParser::Handle_BeginText() {
   m_pCurStates->m_TextMatrix.Set(1.0f, 0, 0, 1.0f, 0, 0);
   OnChangeTextMatrix();
