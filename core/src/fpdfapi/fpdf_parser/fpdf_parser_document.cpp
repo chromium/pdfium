@@ -6,7 +6,43 @@
 
 #include "core/include/fpdfapi/fpdf_parser.h"
 
+#include <set>
+
 #include "core/include/fpdfapi/fpdf_module.h"
+#include "third_party/base/stl_util.h"
+
+namespace {
+
+int CountPages(CPDF_Dictionary* pPages,
+               std::set<CPDF_Dictionary*>* visited_pages) {
+  int count = pPages->GetInteger("Count");
+  if (count > 0 && count < FPDF_PAGE_MAX_NUM) {
+    return count;
+  }
+  CPDF_Array* pKidList = pPages->GetArray("Kids");
+  if (!pKidList) {
+    return 0;
+  }
+  count = 0;
+  for (FX_DWORD i = 0; i < pKidList->GetCount(); i++) {
+    CPDF_Dictionary* pKid = pKidList->GetDict(i);
+    if (!pKid || pdfium::ContainsKey(*visited_pages, pKid)) {
+      continue;
+    }
+    if (pKid->KeyExist("Kids")) {
+      // Use |visited_pages| to help detect circular references of pages.
+      ScopedSetInsertion<CPDF_Dictionary*> local_add(visited_pages, pKid);
+      count += CountPages(pKid, visited_pages);
+    } else {
+      // This page is a leaf node.
+      count++;
+    }
+  }
+  pPages->SetAtInteger("Count", count);
+  return count;
+}
+
+}  // namespace
 
 CPDF_Document::CPDF_Document(CPDF_Parser* pParser)
     : CPDF_IndirectObjectHolder(pParser) {
@@ -54,7 +90,7 @@ void CPDF_Document::LoadDoc() {
     m_ID1 = pIDArray->GetString(0);
     m_ID2 = pIDArray->GetString(1);
   }
-  m_PageList.SetSize(_GetPageCount());
+  m_PageList.SetSize(RetrievePageCount());
 }
 void CPDF_Document::LoadAsynDoc(CPDF_Dictionary* pLinearized) {
   m_bLinearized = TRUE;
@@ -87,7 +123,7 @@ void CPDF_Document::LoadAsynDoc(CPDF_Dictionary* pLinearized) {
     m_dwFirstPageObjNum = pObjNum->GetInteger();
 }
 void CPDF_Document::LoadPages() {
-  m_PageList.SetSize(_GetPageCount());
+  m_PageList.SetSize(RetrievePageCount());
 }
 CPDF_Document::~CPDF_Document() {
   if (m_pDocPage) {
@@ -256,34 +292,8 @@ int CPDF_Document::GetPageIndex(FX_DWORD objnum) {
 int CPDF_Document::GetPageCount() const {
   return m_PageList.GetSize();
 }
-static int _CountPages(CPDF_Dictionary* pPages, int level) {
-  if (level > 128) {
-    return 0;
-  }
-  int count = pPages->GetInteger("Count");
-  if (count > 0 && count < FPDF_PAGE_MAX_NUM) {
-    return count;
-  }
-  CPDF_Array* pKidList = pPages->GetArray("Kids");
-  if (!pKidList) {
-    return 0;
-  }
-  count = 0;
-  for (FX_DWORD i = 0; i < pKidList->GetCount(); i++) {
-    CPDF_Dictionary* pKid = pKidList->GetDict(i);
-    if (!pKid) {
-      continue;
-    }
-    if (!pKid->KeyExist("Kids")) {
-      count++;
-    } else {
-      count += _CountPages(pKid, level + 1);
-    }
-  }
-  pPages->SetAtInteger("Count", count);
-  return count;
-}
-int CPDF_Document::_GetPageCount() const {
+
+int CPDF_Document::RetrievePageCount() const {
   CPDF_Dictionary* pRoot = GetRoot();
   if (!pRoot) {
     return 0;
@@ -295,8 +305,11 @@ int CPDF_Document::_GetPageCount() const {
   if (!pPages->KeyExist("Kids")) {
     return 1;
   }
-  return _CountPages(pPages, 0);
+  std::set<CPDF_Dictionary*> visited_pages;
+  visited_pages.insert(pPages);
+  return CountPages(pPages, &visited_pages);
 }
+
 FX_BOOL CPDF_Document::IsContentUsedElsewhere(FX_DWORD objnum,
                                               CPDF_Dictionary* pThisPageDict) {
   for (int i = 0; i < m_PageList.GetSize(); i++) {

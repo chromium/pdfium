@@ -61,6 +61,20 @@ inline bool PDFCharIsLineEnding(uint8_t c) {
   return c == '\r' || c == '\n';
 }
 
+template <typename T>
+class ScopedSetInsertion {
+ public:
+  ScopedSetInsertion(std::set<T>* org_set, T elem)
+      : m_Set(org_set), m_Entry(elem) {
+    m_Set->insert(m_Entry);
+  }
+  ~ScopedSetInsertion() { m_Set->erase(m_Entry); }
+
+ private:
+  std::set<T>* const m_Set;
+  const T m_Entry;
+};
+
 // Indexed by 8-bit char code, contains unicode code points.
 extern const FX_WORD PDFDocEncoding[256];
 
@@ -168,7 +182,9 @@ class CPDF_Document : public CFX_PrivateData, public CPDF_IndirectObjectHolder {
 
   CFX_DWordArray m_PageList;
 
-  int _GetPageCount() const;
+  // Retrieve page count information by getting count value from the tree nodes
+  // or walking through the tree nodes to calculate it.
+  int RetrievePageCount() const;
   CPDF_Dictionary* _FindPDFPage(CPDF_Dictionary* pPages,
                                 int iPage,
                                 int nPagesToGo,
