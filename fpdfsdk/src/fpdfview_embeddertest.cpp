@@ -204,6 +204,12 @@ TEST_F(FPDFViewEmbeddertest, Crasher_572871) {
   EXPECT_TRUE(OpenDocument("bug_572871.pdf"));
 }
 
+// It tests that document can still be loaded even the trailer has no 'Size'
+// field if other information is right.
+TEST_F(FPDFViewEmbeddertest, Failed_213) {
+  EXPECT_TRUE(OpenDocument("bug_213.pdf"));
+}
+
 // The following tests pass if the document opens without infinite looping.
 TEST_F(FPDFViewEmbeddertest, Hang_298) {
   EXPECT_FALSE(OpenDocument("bug_298.pdf"));

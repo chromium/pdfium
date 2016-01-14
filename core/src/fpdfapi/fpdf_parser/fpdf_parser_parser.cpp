@@ -378,11 +378,11 @@ FX_BOOL CPDF_Parser::LoadAllCrossRefV4(FX_FILESIZE xrefpos) {
   }
 
   int32_t xrefsize = GetDirectInteger(m_pTrailer, "Size");
-  if (xrefsize <= 0 || xrefsize > kMaxXRefSize) {
-    return FALSE;
+  if (xrefsize > 0 && xrefsize <= kMaxXRefSize) {
+    ShrinkObjectMap(xrefsize);
+    m_V5Type.SetSize(xrefsize);
   }
-  ShrinkObjectMap(xrefsize);
-  m_V5Type.SetSize(xrefsize);
+
   CFX_FileSizeArray CrossRefList;
   CFX_FileSizeArray XRefStreamList;
   CrossRefList.Add(xrefpos);
