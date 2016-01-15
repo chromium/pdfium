@@ -194,38 +194,147 @@ CFX_ByteString CJS_PublicMethods::StrTrim(const FX_CHAR* pStr) {
   return StrRTrim(StrLTrim(pStr));
 }
 
-FX_BOOL CJS_PublicMethods::ConvertStringToNumber(const FX_WCHAR* swSource,
-                                                 double& dRet) {
-  CFX_ByteString sDigits = CFX_WideString(swSource).UTF8Encode();
+double CJS_PublicMethods::ParseNumber(const FX_WCHAR* swSource,
+                                      FX_BOOL& bAllDigits,
+                                      FX_BOOL& bDot,
+                                      FX_BOOL& bSign,
+                                      FX_BOOL& bKXJS) {
+  bDot = FALSE;
+  bSign = FALSE;
+  bKXJS = FALSE;
 
-  // Always interpret "," as "." independent of the locale.
-  for (FX_STRSIZE k = 0; k < sDigits.GetLength(); k++) {
-    if (sDigits[k] == ',')
-      sDigits.SetAt(k, '.');
+  FX_BOOL bDigitExist = FALSE;
+
+  const FX_WCHAR* p = swSource;
+  wchar_t c;
+
+  const FX_WCHAR* pStart = NULL;
+  const FX_WCHAR* pEnd = NULL;
+
+  while ((c = *p)) {
+    if (!pStart && c != L' ') {
+      pStart = p;
+    }
+
+    pEnd = p;
+    p++;
   }
 
-  // Parse a number, ignoring leading and trailing whitespace.
-  // Fail if there is trailing garbage.
-  const char* pStart = sDigits.c_str();
-  const char* pEnd = NULL;
-  dRet = strtod(pStart, const_cast<char**>(&pEnd));
-  if (pEnd == pStart) {
-    return FALSE;
+  if (!pStart) {
+    bAllDigits = FALSE;
+    return 0;
   }
-  for (; *pEnd; pEnd++) {
-    if (!isspace(*pEnd)) {
-      dRet = 0;
-      return FALSE;
+
+  while (pEnd != pStart) {
+    if (*pEnd == L' ')
+      pEnd--;
+    else
+      break;
+  }
+
+  double dRet = 0;
+  p = pStart;
+  bAllDigits = TRUE;
+  CFX_WideString swDigits;
+
+  while (p <= pEnd) {
+    c = *p;
+
+    if (FXSYS_iswdigit(c)) {
+      swDigits += c;
+      bDigitExist = TRUE;
+    } else {
+      switch (c) {
+        case L' ':
+          bAllDigits = FALSE;
+          break;
+        case L'.':
+        case L',':
+          if (!bDot) {
+            if (bDigitExist) {
+              swDigits += L'.';
+            } else {
+              swDigits += L'0';
+              swDigits += L'.';
+              bDigitExist = TRUE;
+            }
+
+            bDot = TRUE;
+            break;
+          }
+        case 'e':
+        case 'E':
+          if (!bKXJS) {
+            p++;
+            c = *p;
+            if (c == '+' || c == '-') {
+              bKXJS = TRUE;
+              swDigits += 'e';
+              swDigits += c;
+            }
+            break;
+          }
+        case L'-':
+          if (!bDigitExist && !bSign) {
+            swDigits += c;
+            bSign = TRUE;
+            break;
+          }
+        default:
+          bAllDigits = FALSE;
+
+          if (p != pStart && !bDot && bDigitExist) {
+            swDigits += L'.';
+            bDot = TRUE;
+          } else {
+            bDot = FALSE;
+            bDigitExist = FALSE;
+            swDigits = L"";
+          }
+          break;
+      }
+    }
+
+    p++;
+  }
+
+  if (swDigits.GetLength() > 0 && swDigits.GetLength() < 17) {
+    CFX_ByteString sDigits = swDigits.UTF8Encode();
+
+    if (bKXJS) {
+      dRet = atof(sDigits);
+    } else {
+      if (bDot) {
+        char* pStopString;
+        dRet = ::strtod(sDigits, &pStopString);
+      } else {
+        dRet = atol(sDigits);
+      }
     }
   }
 
-  return TRUE;
+  return dRet;
 }
 
 double CJS_PublicMethods::ParseStringToNumber(const FX_WCHAR* swSource) {
-  double dRet;
-  ConvertStringToNumber(swSource, dRet);
-  return dRet;
+  FX_BOOL bAllDigits = FALSE;
+  FX_BOOL bDot = FALSE;
+  FX_BOOL bSign = FALSE;
+  FX_BOOL bKXJS = FALSE;
+
+  return ParseNumber(swSource, bAllDigits, bDot, bSign, bKXJS);
+}
+
+FX_BOOL CJS_PublicMethods::ConvertStringToNumber(const FX_WCHAR* swSource,
+                                                 double& dRet,
+                                                 FX_BOOL& bDot) {
+  FX_BOOL bAllDigits = FALSE;
+  FX_BOOL bSign = FALSE;
+  FX_BOOL bKXJS = FALSE;
+
+  dRet = ParseNumber(swSource, bAllDigits, bDot, bSign, bKXJS);
+
+  return bAllDigits;
 }
 
 CJS_Array CJS_PublicMethods::AF_MakeArrayFromList(CJS_Runtime* pRuntime,
