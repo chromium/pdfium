@@ -19,10 +19,6 @@
 #include "jpeglib.h"
 #include "jchuff.h"		/* Declarations shared with jcphuff.c */
 
-#ifdef _FX_MANAGED_CODE_
-#define savable_state	savable_state_c
-#endif
-
 /* Expanded entropy encoder object for Huffman encoding.
  *
  * The savable_state subrecord contains fields that change within an MCU,

@@ -116,16 +116,8 @@
   extern void   free   OF((voidpf ptr));
 #endif
 
-#if defined(_FX_MANAGED_CODE_) && defined(__cplusplus)
-extern "C" {
-#endif
-
 extern void* FXMEM_DefaultAlloc(size_t, int);
 extern void FXMEM_DefaultFree(void*, int);
-
-#if defined(_FX_MANAGED_CODE_) && defined(__cplusplus)
-}
-#endif
 
 #define malloc(size) FXMEM_DefaultAlloc(size, 0)
 #define free(ptr) FXMEM_DefaultFree(ptr, 0)

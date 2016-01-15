@@ -38,10 +38,6 @@
 
 #ifdef UPSAMPLE_MERGING_SUPPORTED
 
-#ifdef _FX_MANAGED_CODE_
-#define my_upsampler	my_upsampler_m
-#endif
-
 /* Private subobject */
 
 typedef struct {

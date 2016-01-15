@@ -326,16 +326,8 @@ void ZLIB_INTERNAL zcfree (opaque, ptr)
 #endif /* !Z_SOLO */
 #endif	/* 0 */
 
-#if defined(_FX_MANAGED_CODE_) && defined(__cplusplus)
-extern "C" {
-#endif
-
 extern void* FXMEM_DefaultAlloc(size_t, int);
 extern void FXMEM_DefaultFree(void*, int);
-
-#if defined(_FX_MANAGED_CODE_) && defined(__cplusplus)
-}
-#endif
 
 /* XYQ 2007-1-19 */
 voidpf zcalloc(voidpf opaque, unsigned items, unsigned size)

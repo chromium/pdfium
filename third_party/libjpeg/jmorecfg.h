@@ -195,12 +195,8 @@ typedef unsigned int JDIMENSION;
 /* a function referenced thru EXTERNs: */
 #define GLOBAL(type)		type
 
-#ifdef _FX_MANAGED_CODE_
-#define EXTERN(type)		extern "C" type
-#else
 /* a reference to a GLOBAL function: */
 #define EXTERN(type)		extern type
-#endif
 
 
 /* This macro is used to declare a "method", that is, a function pointer.
