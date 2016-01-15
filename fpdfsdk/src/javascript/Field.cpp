@@ -2741,13 +2741,8 @@ FX_BOOL Field::value(IJS_Context* cc,
         CFX_WideString swValue = pFormField->GetValue();
 
         double dRet;
-        FX_BOOL bDot;
-        if (CJS_PublicMethods::ConvertStringToNumber(swValue.c_str(), dRet,
-                                                     bDot)) {
-          if (bDot)
-            vp << dRet;
-          else
-            vp << dRet;
+        if (CJS_PublicMethods::ConvertStringToNumber(swValue.c_str(), dRet)) {
+          vp << dRet;
         } else {
           vp << swValue;
         }
@@ -2769,13 +2764,8 @@ FX_BOOL Field::value(IJS_Context* cc,
           CFX_WideString swValue = pFormField->GetValue();
 
           double dRet;
-          FX_BOOL bDot;
-          if (CJS_PublicMethods::ConvertStringToNumber(swValue.c_str(), dRet,
-                                                       bDot)) {
-            if (bDot)
-              vp << dRet;
-            else
-              vp << dRet;
+          if (CJS_PublicMethods::ConvertStringToNumber(swValue.c_str(), dRet)) {
+            vp << dRet;
           } else {
             vp << swValue;
           }
@@ -2790,9 +2780,7 @@ FX_BOOL Field::value(IJS_Context* cc,
 
           CFX_WideString swValue = pFormField->GetControl(i)->GetExportValue();
           double dRet;
-          FX_BOOL bDotDummy;
-          if (CJS_PublicMethods::ConvertStringToNumber(swValue.c_str(), dRet,
-                                                       bDotDummy)) {
+          if (CJS_PublicMethods::ConvertStringToNumber(swValue.c_str(), dRet)) {
             vp << dRet;
           } else {
             vp << swValue;
