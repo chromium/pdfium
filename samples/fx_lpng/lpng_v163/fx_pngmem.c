@@ -18,16 +18,8 @@
 
 #include "pngpriv.h"
 
-#if defined(_FX_MANAGED_CODE_) && defined(__cplusplus)
-extern "C" {
-#endif
-
 void*	FXMEM_DefaultAlloc(int byte_size, int);
 void	FXMEM_DefaultFree(void* pointer, int);
-
-#if defined(_FX_MANAGED_CODE_) && defined(__cplusplus)
-}
-#endif
 
 #if defined(PNG_READ_SUPPORTED) || defined(PNG_WRITE_SUPPORTED)
 /* Free a png_struct */

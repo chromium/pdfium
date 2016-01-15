@@ -19,10 +19,6 @@
 #include "jpeglib.h"
 #include "jdhuff.h"		/* Declarations shared with jdphuff.c */
 
-#ifdef _FX_MANAGED_CODE_
-#define savable_state	savable_state_d
-#endif
-
 /*
  * Expanded entropy decoder object for Huffman decoding.
  *
