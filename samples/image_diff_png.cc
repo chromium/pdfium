@@ -17,7 +17,7 @@
 #include <string>
 
 #include "third_party/base/logging.h"
-#include "third_party/lpng_v163/png.h"
+#include "third_party/libpng/png.h"
 #include "third_party/zlib_v128/zlib.h"
 
 namespace image_diff_png {

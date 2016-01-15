@@ -12,7 +12,7 @@
 
 extern "C" {
 #undef FAR
-#include "third_party/lpng_v163/png.h"
+#include "third_party/libpng/png.h"
 }
 
 static void _png_error_data(png_structp png_ptr, png_const_charp error_msg) {
