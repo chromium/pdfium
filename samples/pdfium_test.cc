@@ -42,8 +42,9 @@ enum OutputFormat {
 };
 
 struct Options {
-  Options() : output_format(OUTPUT_NONE) { }
+  Options() : show_config(false), output_format(OUTPUT_NONE) {}
 
+  bool show_config;
   OutputFormat output_format;
   std::string scale_factor_as_string;
   std::string exe_path;
@@ -258,7 +259,9 @@ bool ParseCommandLine(const std::vector<std::string>& args,
   size_t cur_idx = 1;
   for (; cur_idx < args.size(); ++cur_idx) {
     const std::string& cur_arg = args[cur_idx];
-    if (cur_arg == "--ppm") {
+    if (cur_arg == "--show-config") {
+      options->show_config = true;
+    } else if (cur_arg == "--ppm") {
       if (options->output_format != OUTPUT_NONE) {
         fprintf(stderr, "Duplicate or conflicting --ppm argument\n");
         return false;
@@ -311,13 +314,11 @@ bool ParseCommandLine(const std::vector<std::string>& args,
         return false;
       }
       options->scale_factor_as_string = cur_arg.substr(8);
-    }
-    else
+    } else if (cur_arg.size() >= 2 && cur_arg[0] == '-' && cur_arg[1] == '-') {
+      fprintf(stderr, "Unrecognized argument %s\n", cur_arg.c_str());
+      return false;
+    } else
       break;
-  }
-  if (cur_idx >= args.size()) {
-    fprintf(stderr, "No input files.\n");
-    return false;
   }
   for (size_t i = cur_idx; i < args.size(); i++) {
     files->push_back(args[i]);
@@ -553,8 +554,30 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
   fprintf(stderr, "Skipped %d bad pages.\n", bad_pages);
 }
 
+static void ShowConfig() {
+  std::string config;
+  std::string maybe_comma;
+#if PDF_ENABLE_V8
+  config.append(maybe_comma);
+  config.append("V8");
+  maybe_comma = ",";
+#endif  // PDF_ENABLE_V8
+#ifdef V8_USE_EXTERNAL_STARTUP_DATA
+  config.append(maybe_comma);
+  config.append("V8_EXTERNAL");
+  maybe_comma = ",";
+#endif  // V8_USE_EXTERNAL_STARTUP_DATA
+#ifdef PDF_ENABLE_XFA
+  config.append(maybe_comma);
+  config.append("XFA");
+  maybe_comma = ",";
+#endif  // PDF_ENABLE_XFA
+  printf("%s\n", config.c_str());
+}
+
 static const char usage_string[] =
     "Usage: pdfium_test [OPTION] [FILE]...\n"
+    "  --show-config     - print build options and exit\n"
     "  --bin-dir=<path>  - override path to v8 external data\n"
     "  --font-dir=<path> - override path to external fonts\n"
     "  --scale=<number>  - scale output size by number (e.g. 0.5)\n"
@@ -571,6 +594,16 @@ int main(int argc, const char* argv[]) {
   std::list<std::string> files;
   if (!ParseCommandLine(args, &options, &files)) {
     fprintf(stderr, "%s", usage_string);
+    return 1;
+  }
+
+  if (options.show_config) {
+    ShowConfig();
+    return 0;
+  }
+
+  if (files.empty()) {
+    fprintf(stderr, "No input files.\n");
     return 1;
   }
 
