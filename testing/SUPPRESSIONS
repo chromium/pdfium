@@ -1,67 +1,460 @@
-# List of tests to be skipped, on all platforms, one per line.
-# Try to keep the file alphabetized.
-1_10_watermark.pdf
-1_1_textbox.pdf
-1_2_typewriter.pdf
-1_3_callout.pdf
-2_6_textbox.pdf
-3_4_textbox.pdf
-5.2.pdf
-FRC_10_8.2.2__T8.3_original_file.pdf
-FRC_11_8.2.2__T8.3_first_last_exchange.pdf
-FRC_12_8.2.2__T8.3_first_outline_obj_ID.pdf
-FRC_13_8.2.2__T8.3_Count_edit300.pdf
-FRC_14_8.2.2__T8.3_Count_edit0.pdf
-FRC_15_8.2.2__T8.3_Count_edit1.pdf
-FRC_16_8.2.2__T8.3_Count_edit_1.pdf
-FRC_1_8.2.2__T8.3_First_empty.pdf
-FRC_2_8.2.2__T8.3_Last_empty.pdf
-FRC_3_8.2.2_Type_empty.pdf
-FRC_4_8.2.2__T8.3_Count_empty.pdf
-FRC_5_8.2.2__T8.3_First_remove.pdf
-FRC_6_8.2.2__T8.3_Last_remove.pdf
-FRC_7_8.2.2_Type_remove.pdf
-FRC_8.4.1_Annotations_M.pdf
-FRC_8.4.1_Annotations_NM.pdf
-FRC_8.5_Page_C_SubmitForm.pdf
-FRC_8.5_Page_PI_ResetForm_Phantom.pdf
-FRC_8_8.2.2__T8.3_Count_remove.pdf
-FRC_9_8.2.2__T8.3_remove_first_item.pdf
-action.pdf
-all_trigger_alert.pdf
-all_trigger_browsefordoc.pdf
-all_trigger_mailmsg.pdf
-all_trigger_newdoc.pdf
-all_trigger_print.pdf
-bookmark.pdf
-calcorderindex_test.pdf
-calculate_order.pdf
-ch_1.pdf
-check_box.pdf
-combo_box.pdf
-fillform.pdf
-form_action_trigger.pdf
-form_button_sign_url.pdf
-form_combo_sign_url.pdf
-form_combobox0.pdf
-form_combobox_actioin_goto.pdf
-form_combobox_date1.pdf
-form_combobox_importform.pdf
-form_combobox_resetform.pdf
-form_list.pdf
-form_list1.pdf
-form_text_sign_url.pdf
-format_custom_keystroke.pdf
-formfeild.pdf
-javascriptaction.pdf
-js_calculate.pdf
-list_box.pdf
-number.pdf
-push_button.pdf
-radio_button.pdf
-run_custom_validate_script.pdf
-signature.pdf
-signature_4.pdf
-test_app_beep.pdf
-test_control.pdf
-text_field.pdf
+# Copyright 2016 The PDFium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+#
+# List of tests to be skipped, one per line.
+# There are four space-separated columns per line
+# Each column (except column 0) can contain a comma-separated list of values.
+#
+# Column 0: test file name
+# Column 1: platform: *, win, mac, linux
+# Column 2: v8 support: *, nov8, v8
+# Column 3: xfa support: *, noxfa, xfa
+#
+# All columns on a line on a line must match, but filenames may be repeated
+# on subsequent lines to suppress more cases.  Within each column, any one of
+# the comma-separated values must match in order for the colum to "match".
+# The filenames and keywords are case-sensitive.
+#
+# Try to keep the file alphabetized within each category of test.
+
+#
+# Pixel tests
+#
+font_size.in mac * noxfa
+
+#
+# Corpus tests
+#
+050_extra_m.pdf mac,win * noxfa
+12.pdf mac * noxfa
+1_10_watermark.pdf * * noxfa
+1_1_textbox.pdf * * noxfa
+1_2_typewriter.pdf * * noxfa
+1_3_callout.pdf * * noxfa
+1_matrix.pdf mac * noxfa
+1m_diff_lsjdf.pdf mac * noxfa
+1m_same_xxxx.pdf mac * noxfa
+2_11_stamp3.pdf mac * noxfa
+2_6_textbox.pdf * * noxfa
+2_color_calrgb.pdf mac * noxfa
+2_color_indexed.pdf mac * noxfa
+3_4_textbox.pdf * * noxfa
+3_interpolate_image.pdf mac * noxfa
+3bigpreview.pdf mac,win * noxfa
+4_35.pdf mac * noxfa
+4_39.pdf mac * noxfa
+5.1.pdf mac * noxfa
+5.2.pdf * * noxfa
+5.5_simple_font.pdf mac,win * noxfa
+8.2_name_dest_f_dest.pdf mac * noxfa
+8.2_outline.pdf mac * noxfa
+8.3_presentation.pdf mac * noxfa
+FRC_10_8.2.2_Prev_remove_all.pdf mac * noxfa
+FRC_10_8.2.2__T8.3_original_file.pdf * * noxfa
+FRC_10_8.2.4_View_C.pdf mac * noxfa
+FRC_10_8.2.4__remove_ModDate_value.pdf mac * noxfa
+FRC_11_8.2.2_Prev_remove_obj.pdf mac * noxfa
+FRC_11_8.2.2__T8.3_first_last_exchange.pdf * * noxfa
+FRC_11_8.2.4_View_edit.pdf mac * noxfa
+FRC_11_8.2.4__remove_ModDate_all.pdf mac * noxfa
+FRC_12_8.2.2__Next_remove_value.pdf mac * noxfa
+FRC_12_8.2.2__T8.3_first_outline_obj_ID.pdf * * noxfa
+FRC_12_8.2.4_View_remove_all.pdf mac * noxfa
+FRC_12_8.2.4__remove_ModDate_obj_.pdf mac * noxfa
+FRC_13_8.2.2__Next_remove_all.pdf mac * noxfa
+FRC_13_8.2.2__T8.3_Count_edit300.pdf * * noxfa
+FRC_13_8.2.4_View_remove_value.pdf mac * noxfa
+FRC_13_8.2.4_remove_Size_value.pdf mac * noxfa
+FRC_14_8.2.2__Next_remove_obj.pdf mac * noxfa
+FRC_14_8.2.2__T8.3_Count_edit0.pdf * * noxfa
+FRC_14_8.2.4_Sort_remove_all.pdf mac * noxfa
+FRC_14_8.2.4_remove_Size_all.pdf mac * noxfa
+FRC_15_8.2.2__Next_exchange.pdf mac * noxfa
+FRC_15_8.2.2__T8.3_Count_edit1.pdf * * noxfa
+FRC_15_8.2.4_Sort_remove_value.pdf mac * noxfa
+FRC_15_8.2.4_remove_Size_obj.pdf mac * noxfa
+FRC_16_8.2.2__Next_add.pdf mac * noxfa
+FRC_16_8.2.2__T8.3_Count_edit_1.pdf * * noxfa
+FRC_16_8.2.4__remove_CompressedSize__value.pdf mac * noxfa
+FRC_17_8.2.2__T8.4_First_remove_value.pdf mac * noxfa
+FRC_17_8.2.4__remove_CompressedSize__all.pdf mac * noxfa
+FRC_18_8.2.2__T8.4_First_remove_all.pdf mac * noxfa
+FRC_18_8.2.4__remove_CompressedSize__obj.pdf mac * noxfa
+FRC_19_8.2.2__T8.4_First_remove_obj.pdf mac * noxfa
+FRC_19_8.2.4__remove_CreationDate_value.pdf mac * noxfa
+FRC_1_8.2.2__T8.3_First_empty.pdf * * noxfa
+FRC_1_8.2.2__Title_edit.pdf mac * noxfa
+FRC_1_8.2.4_Type_8.6_.pdf mac * noxfa
+FRC_1_8.2.4__original.pdf mac * noxfa
+FRC_20_8.2.2__T8.4_First_remove_value2.pdf mac * noxfa
+FRC_20_8.2.4__remove_CreationDate_all.pdf mac * noxfa
+FRC_21_8.2.2__T8.4_First_remove_all2.pdf mac * noxfa
+FRC_21_8.2.4__remove_CreationDate_obj.pdf mac * noxfa
+FRC_22_8.2.2__T8.4_First_remove_obj2.pdf mac * noxfa
+FRC_22_8.2.4__remove_Order_value.pdf mac * noxfa
+FRC_23_8.2.2__T8.4_Last_remove_value.pdf mac * noxfa
+FRC_23_8.2.4__remove_Order_all.pdf mac * noxfa
+FRC_24_8.2.2__T8.4_Last_remove_all.pdf mac * noxfa
+FRC_24_8.2.4__remove_Order_obj.pdf mac * noxfa
+FRC_25_8.2.2__T8.4_Last_remove_obj.pdf mac * noxfa
+FRC_26_8.2.2__T8.4_Last_remove_value2.pdf mac * noxfa
+FRC_27_8.2.2__T8.4_Last_remove_all2.pdf mac * noxfa
+FRC_28_8.2.2__T8.4_Last_remove_obj2.pdf mac * noxfa
+FRC_29_8.2.2__T8.4_First_Last_exchange.pdf mac * noxfa
+FRC_2_8.2.2__T8.3_Last_empty.pdf * * noxfa
+FRC_2_8.2.2__Title_remove_value.pdf mac * noxfa
+FRC_2_8.2.4_Type_8.6__remove_value.pdf mac * noxfa
+FRC_2_8.2.4__add_type_.pdf mac * noxfa
+FRC_3.5_AuthEvent_EFOpen.pdf mac * noxfa
+FRC_3.5_CFM_AESV2__EncryptMetadata_F.pdf mac * noxfa
+FRC_3.5_CF_EFF_StdCF_Strf_Stmf_Identity.pdf mac * noxfa
+FRC_3.5_CF_Strf_stmf_StdCF.pdf mac * noxfa
+FRC_3.5_EncryptMetadata_None.pdf mac * noxfa
+FRC_3.5_P_4_Password_1.pdf mac * noxfa
+FRC_3.5_P__1852_Password_1.pdf mac * noxfa
+FRC_3.5_P__2584_Password_1.pdf mac * noxfa
+FRC_3.5_P__2616_Password_1.pdf mac * noxfa
+FRC_3.5_P__2880_Password_1.pdf mac * noxfa
+FRC_3.5_P__3376_Password_1.pdf mac * noxfa
+FRC_3.5_P__3392_Password_1.pdf mac * noxfa
+FRC_3.5_P__3608_Password_1.pdf mac * noxfa
+FRC_3.5_P__3616_Password_1.pdf mac,win * noxfa
+FRC_3.5_P__3648_Password_1.pdf mac * noxfa
+FRC_3.5_P__3900_Password_1.pdf mac * noxfa
+FRC_3.5_V_4_CFM_V2_.pdf mac * noxfa
+FRC_3.5_V_5_CFM_AESV3.pdf mac * noxfa
+FRC_3.5_v_1_length_40_Filter_standard.pdf mac * noxfa
+FRC_3.5_v_2_length_128_AuthEvent_DocOpen_.pdf mac * noxfa
+FRC_31_8.2.2_add_dest_entry.pdf mac * noxfa
+FRC_32_8.2.2_A_Support_action.pdf mac * noxfa
+FRC_33_8.2.2_A_empty.pdf mac * noxfa
+FRC_34_8.2.2_A_remove.pdf mac * noxfa
+FRC_35_8.2.2_A_remove_A_item.pdf mac * noxfa
+FRC_36_8.2.2_Dest.pdf mac * noxfa
+FRC_37_8.2.2_Dest_empty.pdf mac * noxfa
+FRC_38_8.2.2_Dest_remove.pdf mac * noxfa
+FRC_39_8.2.2_C_edit.pdf mac * noxfa
+FRC_3_8.2.2_Type_empty.pdf * * noxfa
+FRC_3_8.2.2__Title_remove_all.pdf mac * noxfa
+FRC_3_8.2.4_Type_8.6__edit_.pdf mac * noxfa
+FRC_3_8.2.4__add_type_value.pdf mac * noxfa
+FRC_4.5.3_DeviceCMYK_k.pdf mac * noxfa
+FRC_4.5.3_DeviceGray_g.pdf mac * noxfa
+FRC_4.5.3_DeviceRGB_rg.pdf mac * noxfa
+FRC_4.5.4_CalGray_gamma.pdf mac * noxfa
+FRC_4.5.4_CalGray_whitepoint.pdf mac * noxfa
+FRC_4.5.4_CalRGB_gamma.pdf mac * noxfa
+FRC_4.5.4_CalRGB_matrix.pdf mac * noxfa
+FRC_4.5.4_CalRGB_whitepoint.pdf mac * noxfa
+FRC_4.5.4_ICCBased.pdf mac * noxfa
+FRC_4.5.4_Lab.pdf mac * noxfa
+FRC_4.5.4_RI_Absolute.pdf mac * noxfa
+FRC_4.5.4_RI_Perceptual.pdf mac * noxfa
+FRC_4.5.4_RI_Relative.pdf mac * noxfa
+FRC_4.5.4_RI_Saturation.pdf mac * noxfa
+FRC_4.5.4_Separation.pdf mac * noxfa
+FRC_4.5.5_DeviceN.pdf mac * noxfa
+FRC_4.5.5_Indexed.pdf mac * noxfa
+FRC_4.5.5_Pattern_tiling.pdf mac * noxfa
+FRC_40_8.2.2_C_empty1.pdf mac * noxfa
+FRC_41_8.2.2_C_empty2.pdf mac * noxfa
+FRC_42_8.2.2_C_empty3.pdf mac * noxfa
+FRC_43_8.2.2_C_empty.pdf mac * noxfa
+FRC_44_8.2.2_C_remove.pdf mac * noxfa
+FRC_45_8.2.2_F_edit_F_1_2_3.pdf mac * noxfa
+FRC_46_8.2.2_F_edit_F__1__2__3.pdf mac * noxfa
+FRC_47_8.2.2_F_edit_F_32__32.pdf mac * noxfa
+FRC_48_8.2.2_F_edit_F_100__100.pdf mac * noxfa
+FRC_49_8.2.2_F_empty.pdf mac * noxfa
+FRC_4_8.2.2_Parent_edit2.pdf mac * noxfa
+FRC_4_8.2.2__T8.3_Count_empty.pdf * * noxfa
+FRC_4_8.2.4_Schema_8.6__remove_all.pdf mac * noxfa
+FRC_4_8.2.4__remove_FileName_value.pdf mac * noxfa
+FRC_50_8.2.2_F_remove.pdf mac * noxfa
+FRC_51_8.2.2_T_8.4__Count_edit_count_100.pdf mac * noxfa
+FRC_52_8.2.2_T_8.4__Count_edit_count_0.pdf mac * noxfa
+FRC_53_8.2.2_T_8.4__Count_empty.pdf mac * noxfa
+FRC_54_8.2.2_T_8.4__Count_empty1.pdf mac * noxfa
+FRC_55_8.2.2_T_8.4__Count_remove.pdf mac * noxfa
+FRC_56_8.2.2_C_edit_C__1.pdf mac * noxfa
+FRC_57_8.2.2_C_edit_C_2.pdf mac * noxfa
+FRC_58_8.2.2_Count_edit_count__2.pdf mac * noxfa
+FRC_5_8.2.2_Parent_remove_value.pdf mac * noxfa
+FRC_5_8.2.2__T8.3_First_remove.pdf * * noxfa
+FRC_5_8.2.4_Schema_8.6__remove_value.pdf mac * noxfa
+FRC_5_8.2.4__remove_FileName_all.pdf mac * noxfa
+FRC_6_8.2.2_Parent_remove_all.pdf mac * noxfa
+FRC_6_8.2.2__T8.3_Last_remove.pdf * * noxfa
+FRC_6_8.2.4_Schema_8.6__remove_obj.pdf mac * noxfa
+FRC_6_8.2.4__remove_FileName_obj.pdf mac * noxfa
+FRC_7_8.2.2_Parent_remove_obj.pdf mac * noxfa
+FRC_7_8.2.2_Type_remove.pdf * * noxfa
+FRC_7_8.2.4_View_H.pdf mac * noxfa
+FRC_7_8.2.4__remove_Description_value.pdf mac * noxfa
+FRC_8.4.1_Annotations_AP_N_.pdf mac * noxfa
+FRC_8.4.1_Annotations_AP_N_R.D_.pdf mac * noxfa
+FRC_8.4.1_Annotations_AP_N_R_.pdf mac * noxfa
+FRC_8.4.1_Annotations_AS_Off_.pdf mac * noxfa
+FRC_8.4.1_Annotations_AS_Yes_.pdf mac * noxfa
+FRC_8.4.1_Annotations_Border.pdf mac * noxfa
+FRC_8.4.1_Annotations_C.pdf mac * noxfa
+FRC_8.4.1_Annotations_M.pdf * * noxfa
+FRC_8.4.1_Annotations_M_text_string_.pdf mac * noxfa
+FRC_8.4.1_Annotations_NM.pdf * * noxfa
+FRC_8.4.1_Annotations_P.pdf mac * noxfa
+FRC_8.4.1_Annotations_Rect.pdf mac * noxfa
+FRC_8.4.1_Annotations_Type.pdf mac * noxfa
+FRC_8.4.2_Annotation_Flags_F_Hidden.pdf mac * noxfa
+FRC_8.4.2_Annotation_Flags_F_Invisible.pdf mac * noxfa
+FRC_8.4.2_Annotation_Flags_F_Locked.pdf mac * noxfa
+FRC_8.4.2_Annotation_Flags_F_LockedContents.pdf mac * noxfa
+FRC_8.4.2_Annotation_Flags_F_NoRotate.pdf mac * noxfa
+FRC_8.4.2_Annotation_Flags_F_NoView.pdf mac * noxfa
+FRC_8.4.2_Annotation_Flags_F_NoZoom.pdf mac * noxfa
+FRC_8.4.2_Annotation_Flags_F_Print.pdf mac * noxfa
+FRC_8.4.2_Annotation_Flags_F_ReadOnly.pdf mac * noxfa
+FRC_8.4.2_Annotation_Flags_F_ToggleNoView.pdf mac * noxfa
+FRC_8.4.3_Border_Stypes_D_different_values.pdf mac * noxfa
+FRC_8.4.3_Border_Stypes_D_remove.pdf mac * noxfa
+FRC_8.4.3_Border_Stypes_I_different_values.pdf mac * noxfa
+FRC_8.4.3_Border_Stypes_I_remove.pdf mac * noxfa
+FRC_8.4.3_Border_Stypes_S_different_values_BE_.pdf mac * noxfa
+FRC_8.4.3_Border_Stypes_S_different_values_BS_.pdf mac * noxfa
+FRC_8.4.3_Border_Stypes_S_not_exist_BS_.pdf mac * noxfa
+FRC_8.4.3_Border_Stypes_S_remove_BE_.pdf mac * noxfa
+FRC_8.4.3_Border_Stypes_S_remove_BS_.pdf mac * noxfa
+FRC_8.4.3_Border_Stypes_Type_add.pdf mac * noxfa
+FRC_8.4.3_Border_Stypes_Type_not_exist_default_.pdf mac * noxfa
+FRC_8.4.3_Border_Stypes_W_different_values.pdf mac * noxfa
+FRC_8.4.3_Border_Stypes_W_remove.pdf mac * noxfa
+FRC_8.5_Bl_Hide.pdf mac * noxfa
+FRC_8.5_Catalog_OpenAction.pdf mac * noxfa
+FRC_8.5_Catalog_WC.pdf mac * noxfa
+FRC_8.5_DP.pdf mac * noxfa
+FRC_8.5_DS.pdf mac * noxfa
+FRC_8.5_E_GoTo_D.pdf mac * noxfa
+FRC_8.5_Fo_URI_Base.pdf mac * noxfa
+FRC_8.5_Link_URL.pdf mac * noxfa
+FRC_8.5_Outline_A.pdf mac * noxfa
+FRC_8.5_Page_C_SubmitForm.pdf * * noxfa
+FRC_8.5_Page_O_URI.pdf mac * noxfa
+FRC_8.5_Page_PI_ResetForm_Phantom.pdf * * noxfa
+FRC_8.5_Page_PV_Named_Phantom.pdf mac * noxfa
+FRC_8.5_Screen_Fo_JavaScript.pdf mac * noxfa
+FRC_8.5_Screen_Img_D_Launch.pdf mac * noxfa
+FRC_8.5_Screen_Rendition.pdf mac * noxfa
+FRC_8.5_URI_IsMap.pdf mac * noxfa
+FRC_8.5_U_GoToR_NewWindow.pdf mac * noxfa
+FRC_8.5_U_GoToR_NewWindow_2.pdf mac * noxfa
+FRC_8.5_WP.pdf mac * noxfa
+FRC_8.5_WS.pdf mac * noxfa
+FRC_8.5_Widget_C.pdf mac * noxfa
+FRC_8.5_Widget_F.pdf mac * noxfa
+FRC_8.5_Widget_K.pdf mac * noxfa
+FRC_8.5_Widget_V.pdf mac * noxfa
+FRC_8.5_X_GoToR_D.pdf mac * noxfa
+FRC_8_8.2.2_Parent_edit.pdf mac * noxfa
+FRC_8_8.2.2__T8.3_Count_remove.pdf * * noxfa
+FRC_8_8.2.4_View_D.pdf mac * noxfa
+FRC_8_8.2.4__remove__Description_all.pdf mac * noxfa
+FRC_9_8.2.2_Prev_remove_value.pdf mac * noxfa
+FRC_9_8.2.2__T8.3_remove_first_item.pdf * * noxfa
+FRC_9_8.2.4_View_T.pdf mac * noxfa
+FRC_9_8.2.4__remove__Description_obj.pdf mac * noxfa
+action.pdf * * noxfa
+action_execute_a_menu_item.pdf mac * noxfa
+action_hide_show_form.pdf mac * noxfa
+action_on_focus.pdf mac * noxfa
+action_open_a_file.pdf mac * noxfa
+action_pdf_save_close.pdf mac * noxfa
+action_reset.pdf mac * noxfa
+action_run_javascript.pdf mac * noxfa
+action_submit_a_form.pdf mac * noxfa
+all_trigger_alert.pdf * * noxfa
+all_trigger_browsefordoc.pdf * * noxfa
+all_trigger_mailmsg.pdf * * noxfa
+all_trigger_newdoc.pdf * * noxfa
+all_trigger_print.pdf * * noxfa
+all_trigger_run_js_lunchurl.pdf mac * noxfa
+all_trigger_run_js_maildoc.pdf mac * noxfa
+app_launchurl.pdf mac * noxfa
+appstoredescription3.1_en_updated.pdf mac * noxfa
+bookmark.pdf * * noxfa
+bookmarkgetcolor.pdf mac * noxfa
+bug_0_length_line.pdf mac * noxfa
+bug_0_width_line.pdf mac * noxfa
+bug_white_space.pdf mac * noxfa
+calcorderindex_test.pdf * * noxfa
+calculate_average.pdf mac * noxfa
+calculate_order.pdf * * noxfa
+calculate_sum_a_b_c.pdf mac * noxfa
+calculate_validate.pdf mac * noxfa
+ch_1.pdf * * noxfa
+check_box.pdf * * noxfa
+color.pdf mac * noxfa
+colorspace.pdf mac * noxfa
+colorspace_test1.pdf mac * noxfa
+combo_box.pdf * * noxfa
+combo_box_format.pdf mac * noxfa
+date.pdf mac * noxfa
+edit_transform.pdf mac * noxfa
+en_contact.pdf mac * noxfa
+en_diy.pdf mac * noxfa
+en_foxit.pdf mac * noxfa
+en_fqa2.pdf mac * noxfa
+en_introduce.pdf mac * noxfa
+en_tem.pdf mac * noxfa
+en_uicase_.pdf mac * noxfa
+event.change.pdf mac * noxfa
+event.changeex.pdf mac * noxfa
+event.keydown.pdf mac * noxfa
+event.keydown_1_.pdf mac * noxfa
+event.type_name.pdf mac * noxfa
+event.value.pdf mac * noxfa
+event_change.pdf mac * noxfa
+example_001.pdf mac * noxfa
+example_002.pdf mac,win * noxfa
+example_003.pdf mac,win * noxfa
+example_004.pdf mac * noxfa
+example_005.pdf mac * noxfa
+example_006.pdf mac,win * noxfa
+example_007.pdf mac * noxfa
+example_008.pdf mac * noxfa
+example_009.pdf mac * noxfa
+example_010.pdf mac,win * noxfa
+example_011.pdf mac * noxfa
+example_012.pdf mac * noxfa
+example_013.pdf mac * noxfa
+example_014.pdf mac * noxfa
+example_015.pdf mac,win * noxfa
+example_016.pdf mac * noxfa
+example_017.pdf mac * noxfa
+example_018.pdf mac * noxfa
+example_019.pdf mac * noxfa
+example_020.pdf mac * noxfa
+example_021.pdf mac * noxfa
+example_022.pdf mac * noxfa
+example_023.pdf mac,win * noxfa
+example_024.pdf mac * noxfa
+example_025.pdf mac * noxfa
+example_026.pdf mac * noxfa
+example_027.pdf mac * noxfa
+example_028.pdf mac * noxfa
+example_029.pdf mac * noxfa
+example_030.pdf mac * noxfa
+example_031.pdf mac * noxfa
+example_032.pdf mac * noxfa
+example_033.pdf mac,win * noxfa
+example_034.pdf mac * noxfa
+example_035.pdf mac,win * noxfa
+example_036.pdf mac,win * noxfa
+example_037.pdf mac * noxfa
+example_038.pdf mac,win * noxfa
+example_039.pdf mac * noxfa
+example_040.pdf mac * noxfa
+example_041.pdf mac,win * noxfa
+example_042.pdf mac * noxfa
+example_043.pdf mac * noxfa
+example_044.pdf mac * noxfa
+example_045.pdf mac,win * noxfa
+example_046.pdf mac,win * noxfa
+example_047.pdf mac * noxfa
+example_048.pdf mac * noxfa
+example_049.pdf mac * noxfa
+example_050.pdf mac * noxfa
+example_051.pdf mac * noxfa
+example_052.pdf mac * noxfa
+example_053.pdf mac,win * noxfa
+example_054.pdf mac * noxfa
+example_055.pdf mac,win * noxfa
+example_056.pdf mac * noxfa
+example_057.pdf mac * noxfa
+example_058.pdf mac * noxfa
+example_059.pdf mac,win * noxfa
+example_060.pdf mac * noxfa
+example_061.pdf mac,win * noxfa
+example_062.pdf mac * noxfa
+example_063.pdf mac * noxfa
+example_064.pdf mac * noxfa
+example_065.pdf mac * noxfa
+fillform.pdf * * noxfa
+form_action_trigger.pdf * * noxfa
+form_button_sign_url.pdf * * noxfa
+form_combo_sign_url.pdf * * noxfa
+form_combobox0.pdf * * noxfa
+form_combobox_actioin_goto.pdf * * noxfa
+form_combobox_date.pdf mac * noxfa
+form_combobox_date1.pdf * * noxfa
+form_combobox_date2.pdf mac * noxfa
+form_combobox_importform.pdf * * noxfa
+form_combobox_num.pdf mac * noxfa
+form_combobox_per.pdf mac * noxfa
+form_combobox_plus.pdf mac * noxfa
+form_combobox_product.pdf mac * noxfa
+form_combobox_resetform.pdf * * noxfa
+form_combobox_time.pdf mac * noxfa
+form_list.pdf * * noxfa
+form_list1.pdf * * noxfa
+form_same.pdf mac * noxfa
+form_text_sign_url.pdf * * noxfa
+format_combo_box.pdf mac * noxfa
+format_custom_format.pdf linux,mac * noxfa
+format_custom_keystroke.pdf * * noxfa
+format_number.pdf mac * noxfa
+format_percentage.pdf mac * noxfa
+format_text_color.pdf mac * noxfa
+formfeild.pdf * * noxfa
+getarray.pdf mac * noxfa
+group_xobject.pdf mac * noxfa
+javascriptaction.pdf * * noxfa
+jetman_std.pdf mac * noxfa
+js_calculate.pdf * * noxfa
+list_box.pdf * * noxfa
+negative.pdf mac * noxfa
+new_certify1.pdf mac * noxfa
+new_signature1.pdf mac * noxfa
+new_signature2.pdf mac * noxfa
+new_stamp4.pdf mac * noxfa
+new_stamp5.pdf mac * noxfa
+new_textmarkup1.pdf mac * noxfa
+new_textmarkup2.pdf mac * noxfa
+new_textmarkup4.pdf mac * noxfa
+new_textmarkup5.pdf mac * noxfa
+new_textmarkup6.pdf mac * noxfa
+new_textmarkup7.pdf mac * noxfa
+new_textmarkup8.pdf mac * noxfa
+number.pdf * * noxfa
+octest.pdf mac * noxfa
+open_a_weblink.pdf mac * noxfa
+path_10_jd.pdf mac * noxfa
+path_5_pattern.pdf mac * noxfa
+path_6_graphics4.5.5.pdf mac * noxfa
+path_7.pdf mac * noxfa
+path_9.pdf mac * noxfa
+percentage.pdf mac * noxfa
+push_button.pdf * * noxfa
+quick_start_guide.pdf mac * noxfa
+radio_button.pdf * * noxfa
+run_custom_validate_script.pdf * * noxfa
+show_1.pdf mac * noxfa
+signature.pdf * * noxfa
+signature_4.pdf * * noxfa
+simplified_field_notation.pdf mac * noxfa
+special.pdf mac * noxfa
+submit_form.pdf mac * noxfa
+test_app_beep.pdf * * noxfa
+test_control.pdf * * noxfa
+test_m.pdf mac,win * noxfa
+text_field.pdf * * noxfa
+text_field_font_input_decimal_point.pdf mac * noxfa
+text_field_multiline_line_spacing.pdf mac * noxfa
+thread_action.pdf mac * noxfa
+time.pdf mac * noxfa
+transformation.pdf mac * noxfa
+transparent.pdf mac * noxfa
+whats_new_in_v3.0.pdf mac * noxfa
+widget_javascript.pdf mac * noxfa
+zh_file1.pdf mac * noxfa
+zh_function_list.pdf mac * noxfa
+zh_shared_document.pdf mac * noxfa
