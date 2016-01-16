@@ -1,6 +1,6 @@
-diff a/third_party/libpng/pngpriv.h b/third_party/libpng/pngpriv.h
---- a/third_party/libpng/pngpriv.h
-+++ b/third_party/libpng/pngpriv.h
+diff a/third_party/libpng16/pngpriv.h b/third_party/libpng16/pngpriv.h
+--- a/third_party/libpng16/pngpriv.h
++++ b/third_party/libpng16/pngpriv.h
 @@ -127,7 +127,7 @@
      */
  #  if (defined(__ARM_NEON__) || defined(__ARM_NEON)) && \
