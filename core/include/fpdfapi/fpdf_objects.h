@@ -45,43 +45,30 @@ struct PARSE_CONTEXT;
 class CPDF_Object {
  public:
   int GetType() const { return m_Type; }
-
   FX_DWORD GetObjNum() const { return m_ObjNum; }
-
   FX_DWORD GetGenNum() const { return m_GenNum; }
 
   FX_BOOL IsIdentical(CPDF_Object* pObj) const;
-
   CPDF_Object* Clone(FX_BOOL bDirect = FALSE) const;
-
   CPDF_Object* CloneRef(CPDF_IndirectObjectHolder* pObjs) const;
 
   CPDF_Object* GetDirect() const;
+  int GetDirectType() const;
+  FX_BOOL IsModified() const { return FALSE; }
 
   void Release();
 
   CFX_ByteString GetString() const;
-
   CFX_ByteStringC GetConstString() const;
-
   CFX_WideString GetUnicodeText(CFX_CharMap* pCharMap = NULL) const;
   FX_FLOAT GetNumber() const;
-
   FX_FLOAT GetNumber16() const;
-
   int GetInteger() const;
-
   CPDF_Dictionary* GetDict() const;
-
   CPDF_Array* GetArray() const;
 
   void SetString(const CFX_ByteString& str);
-
   void SetUnicodeText(const FX_WCHAR* pUnicodes, int len = -1);
-
-  int GetDirectType() const;
-
-  FX_BOOL IsModified() const { return FALSE; }
 
   bool IsArray() const { return m_Type == PDFOBJ_ARRAY; }
   bool IsBoolean() const { return m_Type == PDFOBJ_BOOLEAN; }
@@ -94,25 +81,18 @@ class CPDF_Object {
 
   CPDF_Array* AsArray();
   const CPDF_Array* AsArray() const;
-
   CPDF_Boolean* AsBoolean();
   const CPDF_Boolean* AsBoolean() const;
-
   CPDF_Dictionary* AsDictionary();
   const CPDF_Dictionary* AsDictionary() const;
-
   CPDF_Name* AsName();
   const CPDF_Name* AsName() const;
-
   CPDF_Number* AsNumber();
   const CPDF_Number* AsNumber() const;
-
   CPDF_Reference* AsReference();
   const CPDF_Reference* AsReference() const;
-
   CPDF_Stream* AsStream();
   const CPDF_Stream* AsStream() const;
-
   CPDF_String* AsString();
   const CPDF_String* AsString() const;
 
@@ -122,8 +102,8 @@ class CPDF_Object {
   ~CPDF_Object() {}
   void Destroy();
 
-  static const int kObjectRefMaxDepth = 128;
-  static int s_nCurRefDepth;
+  const CPDF_Object* const GetBasicObject() const;
+
   FX_DWORD m_Type;
   FX_DWORD m_ObjNum;
   FX_DWORD m_GenNum;
@@ -146,6 +126,9 @@ class CPDF_Boolean : public CPDF_Object {
   FX_BOOL Identical(CPDF_Boolean* pOther) const {
     return m_bValue == pOther->m_bValue;
   }
+
+  CFX_ByteString GetString() const { return m_bValue ? "true" : "false"; }
+  FX_BOOL GetValue() const { return m_bValue; }
 
  protected:
   FX_BOOL m_bValue;
@@ -216,7 +199,7 @@ class CPDF_String : public CPDF_Object {
 
   explicit CPDF_String(const CFX_WideString& str);
 
-  CFX_ByteString& GetString() { return m_String; }
+  CFX_ByteString GetString() const { return m_String; }
 
   FX_BOOL Identical(CPDF_String* pOther) const {
     return m_String == pOther->m_String;
@@ -246,7 +229,7 @@ class CPDF_Name : public CPDF_Object {
   explicit CPDF_Name(const FX_CHAR* str)
       : CPDF_Object(PDFOBJ_NAME), m_Name(str) {}
 
-  CFX_ByteString& GetString() { return m_Name; }
+  CFX_ByteString GetString() const { return m_Name; }
 
   FX_BOOL Identical(CPDF_Name* pOther) const {
     return m_Name == pOther->m_Name;
