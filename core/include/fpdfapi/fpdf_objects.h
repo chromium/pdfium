@@ -102,7 +102,7 @@ class CPDF_Object {
   ~CPDF_Object() {}
   void Destroy();
 
-  const CPDF_Object* const GetBasicObject() const;
+  const CPDF_Object* GetBasicObject() const;
 
   FX_DWORD m_Type;
   FX_DWORD m_ObjNum;

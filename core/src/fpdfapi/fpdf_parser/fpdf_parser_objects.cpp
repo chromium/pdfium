@@ -46,7 +46,7 @@ void CPDF_Object::Destroy() {
   }
 }
 
-const CPDF_Object* const CPDF_Object::GetBasicObject() const {
+const CPDF_Object* CPDF_Object::GetBasicObject() const {
   const CPDF_Reference* pRef = AsReference();
   if (!pRef) {
     // This is not an indirect reference.
