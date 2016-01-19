@@ -2464,7 +2464,8 @@ png_colorspace_set_rgb_coefficients(png_structrp png_ptr)
 
 #endif /* COLORSPACE */
 
-#ifdef __GNUC__
+/* #ifdef __GNUC__ */
+#if 1
 /* This exists solely to work round a warning from GNU C. */
 static int /* PRIVATE */
 png_gt(size_t a, size_t b)

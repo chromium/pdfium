@@ -12,3 +12,4 @@ Local Modifications:
 pnglibconf.h: a copy of libpng's scripts/pnglibconf.h.prebuilt.
 0000-build-config.patch: Local build configuration changes.
 0001-disable-arm-neon.diff: Disable ARM NEON optimizations.
+0002-static-png-gt.patch: Unconditionally use static png_gt() in png.c to avoid compilation warning.
