@@ -1,8 +1,0 @@
-# List of tests to be skipped on linux platforms, one per line.
-# Try to keep the file alphabetized.
-format_custom_format.pdf
-# These XFA-only failures are in a separate section.
-050_extra_m.pdf
-3bigpreview.pdf
-example_033.pdf
-test_m.pdf

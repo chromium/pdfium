@@ -8,27 +8,30 @@ import os
 import common
 
 class Suppressor:
-  SUPPRESSIONS_FILENAME = 'SUPPRESSIONS'
-  PLATFORM_SUPPRESSIONS_FILENAME = 'SUPPRESSIONS_%s' % common.os_name()
-
   def __init__(self, finder):
-    testing_dir = finder.TestingDir()
-    self.suppression_list = self._ExtractSuppressions(
-      os.path.join(testing_dir, self.SUPPRESSIONS_FILENAME))
-    self.platform_suppression_list = self._ExtractSuppressions(
-      os.path.join(testing_dir, self.PLATFORM_SUPPRESSIONS_FILENAME))
+    with open(os.path.join(finder.TestingDir(), 'SUPPRESSIONS')) as f:
+      self.suppression_set = set(self._FilterSuppressions(
+        common.os_name(), "v8", "xfa", self._ExtractSuppressions(f)))
 
-  def _ExtractSuppressions(self, suppressions_filename):
-    with open(suppressions_filename) as f:
-      return [y for y in [x.split('#')[0].strip() for x in f.readlines()] if y]
+  def _ExtractSuppressions(self, f):
+    return [y.split(' ') for y in
+            [x.split('#')[0].strip() for x in
+             f.readlines()] if y]
+
+  def _FilterSuppressions(self, os, js, xfa, unfiltered_list):
+    return [x[0] for x in unfiltered_list
+            if self._MatchSuppression(x, os, js, xfa)]
+
+  def _MatchSuppression(self, item, os, js, xfa):
+    os_column = item[1].split(",");
+    js_column = item[2].split(",");
+    xfa_column = item[3].split(",");
+    return (('*' in os_column or os in os_column) and
+            ('*' in js_column or js in js_column) and
+            ('*' in xfa_column or xfa in xfa_column))
 
   def IsSuppressed(self, input_filename):
-    if input_filename in self.suppression_list:
-      print ("%s is suppressed, found in %s file" %
-             (input_filename, self.SUPPRESSIONS_FILENAME))
-      return True
-    if input_filename in self.platform_suppression_list:
-      print ("%s is suppressed, found in %s file" %
-             (input_filename, self.PLATFORM_SUPPRESSIONS_FILENAME))
+    if input_filename in self.suppression_set:
+      print "%s is suppressed" % input_filename
       return True
     return False
