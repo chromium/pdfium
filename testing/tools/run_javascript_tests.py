@@ -63,6 +63,11 @@ def main():
   if not os.path.exists(working_dir):
     os.makedirs(working_dir)
 
+  feature_string = subprocess.check_output([pdfium_test_path, '--show-config'])
+  if "V8" not in feature_string.strip().split(","):
+    print "V8 not enabled, skipping."
+    return 0
+
   input_files = []
   if len(args):
     for file_name in args:

@@ -8,10 +8,13 @@ import os
 import common
 
 class Suppressor:
-  def __init__(self, finder):
+  def __init__(self, finder, feature_string):
+    feature_vector = feature_string.strip().split(",")
+    v8_option = ["nov8", "v8"]["V8" in feature_vector]
+    xfa_option = ["noxfa", "xfa"]["XFA" in feature_vector]
     with open(os.path.join(finder.TestingDir(), 'SUPPRESSIONS')) as f:
       self.suppression_set = set(self._FilterSuppressions(
-        common.os_name(), "v8", "noxfa", self._ExtractSuppressions(f)))
+        common.os_name(), v8_option, xfa_option, self._ExtractSuppressions(f)))
 
   def _ExtractSuppressions(self, f):
     return [y.split(' ') for y in

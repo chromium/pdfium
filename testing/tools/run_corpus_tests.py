@@ -102,7 +102,8 @@ def main():
   if not os.path.exists(working_dir):
     os.makedirs(working_dir)
 
-  test_suppressor = suppressor.Suppressor(finder)
+  feature_string = subprocess.check_output([pdfium_test_path, '--show-config'])
+  test_suppressor = suppressor.Suppressor(finder, feature_string)
   image_differ = pngdiffer.PNGDiffer(finder)
 
   # test files are under .../pdfium/testing/corpus.
