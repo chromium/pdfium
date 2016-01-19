@@ -18,9 +18,6 @@ const FX_DWORD kBlockSize = 1024;
 
 }  // namespace
 
-// static
-int CPDF_Object::s_nCurRefDepth = 0;
-
 void CPDF_Object::Release() {
   if (m_ObjNum) {
     return;
@@ -48,65 +45,55 @@ void CPDF_Object::Destroy() {
       delete this;
   }
 }
-CFX_ByteString CPDF_Object::GetString() const {
-  switch (m_Type) {
-    case PDFOBJ_BOOLEAN:
-      return AsBoolean()->m_bValue ? "true" : "false";
-    case PDFOBJ_NUMBER:
-      return AsNumber()->GetString();
-    case PDFOBJ_STRING:
-      return AsString()->m_String;
-    case PDFOBJ_NAME:
-      return AsName()->m_Name;
-    case PDFOBJ_REFERENCE: {
-      const CPDF_Reference* pRef = AsReference();
-      if (!pRef->m_pObjList)
-        break;
 
-      CPDF_Object* pObj =
-          pRef->m_pObjList->GetIndirectObject(pRef->GetRefObjNum(), nullptr);
-      return pObj ? pObj->GetString() : CFX_ByteString();
+const CPDF_Object* const CPDF_Object::GetBasicObject() const {
+  const CPDF_Reference* pRef = AsReference();
+  if (!pRef) {
+    // This is not an indirect reference.
+    return this;
+  }
+  if (!pRef->m_pObjList)
+    return nullptr;
+  return pRef->m_pObjList->GetIndirectObject(pRef->GetRefObjNum(), nullptr);
+}
+
+CFX_ByteString CPDF_Object::GetString() const {
+  const CPDF_Object* obj = GetBasicObject();
+  if (obj) {
+    switch (obj->GetType()) {
+      case PDFOBJ_BOOLEAN:
+        return obj->AsBoolean()->GetString();
+      case PDFOBJ_NUMBER:
+        return obj->AsNumber()->GetString();
+      case PDFOBJ_STRING:
+        return obj->AsString()->GetString();
+      case PDFOBJ_NAME:
+        return obj->AsName()->GetString();
     }
   }
   return CFX_ByteString();
 }
-CFX_ByteStringC CPDF_Object::GetConstString() const {
-  switch (m_Type) {
-    case PDFOBJ_STRING: {
-      CFX_ByteString str = AsString()->m_String;
-      return CFX_ByteStringC((const uint8_t*)str, str.GetLength());
-    }
-    case PDFOBJ_NAME: {
-      CFX_ByteString name = AsName()->m_Name;
-      return CFX_ByteStringC((const uint8_t*)name, name.GetLength());
-    }
-    case PDFOBJ_REFERENCE: {
-      const CPDF_Reference* pRef = AsReference();
-      if (!pRef->m_pObjList)
-        break;
 
-      CPDF_Object* pObj =
-          pRef->m_pObjList->GetIndirectObject(pRef->GetRefObjNum(), nullptr);
-      return pObj ? pObj->GetConstString() : CFX_ByteStringC();
+CFX_ByteStringC CPDF_Object::GetConstString() const {
+  const CPDF_Object* obj = GetBasicObject();
+  if (obj) {
+    FX_DWORD type = obj->GetType();
+    if (type == PDFOBJ_STRING) {
+      CFX_ByteString str = obj->AsString()->GetString();
+      return CFX_ByteStringC(str);
+    }
+    if (type == PDFOBJ_NAME) {
+      CFX_ByteString name = obj->AsName()->GetString();
+      return CFX_ByteStringC(name);
     }
   }
   return CFX_ByteStringC();
 }
 
 FX_FLOAT CPDF_Object::GetNumber() const {
-  switch (m_Type) {
-    case PDFOBJ_NUMBER:
-      return AsNumber()->GetNumber();
-    case PDFOBJ_REFERENCE: {
-      const CPDF_Reference* pRef = AsReference();
-      if (!pRef->m_pObjList)
-        break;
-
-      CPDF_Object* pObj =
-          pRef->m_pObjList->GetIndirectObject(pRef->GetRefObjNum(), nullptr);
-      return pObj ? pObj->GetNumber() : 0;
-    }
-  }
+  const CPDF_Object* obj = GetBasicObject();
+  if (obj && obj->GetType() == PDFOBJ_NUMBER)
+    return AsNumber()->GetNumber();
   return 0;
 }
 
@@ -115,52 +102,30 @@ FX_FLOAT CPDF_Object::GetNumber16() const {
 }
 
 int CPDF_Object::GetInteger() const {
-  CFX_AutoRestorer<int> restorer(&s_nCurRefDepth);
-  if (++s_nCurRefDepth > kObjectRefMaxDepth)
-    return 0;
-
-  switch (m_Type) {
-    case PDFOBJ_BOOLEAN:
-      return AsBoolean()->m_bValue;
-    case PDFOBJ_NUMBER:
-      return AsNumber()->GetInteger();
-    case PDFOBJ_REFERENCE: {
-      const CPDF_Reference* pRef = AsReference();
-      PARSE_CONTEXT context;
-      FXSYS_memset(&context, 0, sizeof(PARSE_CONTEXT));
-      if (!pRef->m_pObjList)
-        return 0;
-
-      CPDF_Object* pObj =
-          pRef->m_pObjList->GetIndirectObject(pRef->GetRefObjNum(), &context);
-      return pObj ? pObj->GetInteger() : 0;
-    }
+  const CPDF_Object* obj = GetBasicObject();
+  if (obj) {
+    FX_DWORD type = obj->GetType();
+    if (type == PDFOBJ_BOOLEAN)
+      return obj->AsBoolean()->GetValue();
+    if (type == PDFOBJ_NUMBER)
+      return obj->AsNumber()->GetInteger();
   }
   return 0;
 }
 
 CPDF_Dictionary* CPDF_Object::GetDict() const {
-  switch (m_Type) {
-    case PDFOBJ_DICTIONARY:
+  const CPDF_Object* obj = GetBasicObject();
+  if (obj) {
+    FX_DWORD type = obj->GetType();
+    if (type == PDFOBJ_DICTIONARY) {
       // The method should be made non-const if we want to not be const.
       // See bug #234.
       return const_cast<CPDF_Dictionary*>(AsDictionary());
-    case PDFOBJ_STREAM:
-      return AsStream()->GetDict();
-    case PDFOBJ_REFERENCE: {
-      const CPDF_Reference* pRef = AsReference();
-      CPDF_IndirectObjectHolder* pIndirect = pRef->GetObjList();
-      if (!pIndirect)
-        return nullptr;
-      CPDF_Object* pObj =
-          pIndirect->GetIndirectObject(pRef->GetRefObjNum(), nullptr);
-      if (!pObj || (pObj == this))
-        return nullptr;
-      return pObj->GetDict();
     }
-    default:
-      return nullptr;
+    if (type == PDFOBJ_STREAM)
+      return AsStream()->GetDict();
   }
+  return nullptr;
 }
 
 CPDF_Array* CPDF_Object::GetArray() const {
