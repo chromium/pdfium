@@ -7,7 +7,7 @@
 #include <algorithm>
 
 #include "xfa/src/foxitlib.h"
-#include "fde_xml.h"
+#include "fde_xml_imp.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -1320,8 +1320,7 @@ CFDE_BlockBuffer::CFDE_BlockBuffer(int32_t iAllocStep)
     : m_iDataLength(0),
       m_iBufferSize(0),
       m_iAllocStep(iAllocStep),
-      m_iStartPosition(0) {
-}
+      m_iStartPosition(0) {}
 CFDE_BlockBuffer::~CFDE_BlockBuffer() {
   ClearBuffer();
 }

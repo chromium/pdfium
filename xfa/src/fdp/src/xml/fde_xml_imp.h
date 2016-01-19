@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FDE_XML_IMP
-#define _FDE_XML_IMP
+#ifndef FDE_XML_IMP_H_
+#define FDE_XML_IMP_H_
+
 #define _FDE_BLOCK_BUFFER
 #ifdef _FDE_BLOCK_BUFFER
 class CFDE_BlockBuffer;
@@ -370,4 +371,5 @@ class CFDE_XMLSyntaxParser : public IFDE_XMLSyntaxParser, public CFX_Target {
   void GetData(CFX_WideString& wsData) const;
 #endif
 };
-#endif
+
+#endif  // FDE_XML_IMP_H_

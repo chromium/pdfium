@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FDE_XML
-#define _FDE_XML
+#ifndef FDE_XML_H_
+#define FDE_XML_H_
+
 class IFDE_XMLNode;
 class IFDE_XMLInstruction;
 class IFDE_XMLDeclaration;
@@ -228,4 +229,5 @@ class IFDE_XMLSyntaxParser {
   virtual void GetTextData(CFX_WideString& wsText) const = 0;
   virtual void GetTargetData(CFX_WideString& wsData) const = 0;
 };
-#endif
+
+#endif  // FDE_XML_H_
