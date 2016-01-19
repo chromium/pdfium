@@ -456,5 +456,6 @@ class CPDF_PatternCS : public CPDF_ColorSpace {
 };
 
 void PDF_ReplaceAbbr(CPDF_Object* pObj);
+bool IsPathOperator(const uint8_t* buf, size_t len);
 
 #endif  // CORE_SRC_FPDFAPI_FPDF_PAGE_PAGEINT_H_
