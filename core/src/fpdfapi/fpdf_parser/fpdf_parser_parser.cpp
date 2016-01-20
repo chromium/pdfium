@@ -161,14 +161,7 @@ void CPDF_Parser::CloseParser(FX_BOOL bReParse) {
     m_Syntax.m_pFileAccess->Release();
     m_Syntax.m_pFileAccess = NULL;
   }
-  FX_POSITION pos = m_ObjectStreamMap.GetStartPosition();
-  while (pos) {
-    void* objnum;
-    CPDF_StreamAcc* pStream;
-    m_ObjectStreamMap.GetNextAssoc(pos, objnum, (void*&)pStream);
-    delete pStream;
-  }
-  m_ObjectStreamMap.RemoveAll();
+  m_ObjectStreamMap.clear();
   m_ObjCache.clear();
 
   m_SortedOffset.RemoveAll();
@@ -616,7 +609,7 @@ FX_BOOL CPDF_Parser::LoadAllCrossRefV5(FX_FILESIZE xrefpos) {
       return FALSE;
     }
   }
-  m_ObjectStreamMap.InitHashTable(101, FALSE);
+  m_ObjectStreamMap.clear();
   m_bXRefStream = TRUE;
   return TRUE;
 }
@@ -1252,18 +1245,18 @@ CPDF_Object* CPDF_Parser::ParseIndirectObject(
 }
 
 CPDF_StreamAcc* CPDF_Parser::GetObjectStream(FX_DWORD objnum) {
-  CPDF_StreamAcc* pStreamAcc = nullptr;
-  if (m_ObjectStreamMap.Lookup((void*)(uintptr_t)objnum, (void*&)pStreamAcc))
-    return pStreamAcc;
+  auto it = m_ObjectStreamMap.find(objnum);
+  if (it != m_ObjectStreamMap.end())
+    return it->second.get();
 
   const CPDF_Stream* pStream = ToStream(
       m_pDocument ? m_pDocument->GetIndirectObject(objnum, nullptr) : nullptr);
   if (!pStream)
     return nullptr;
 
-  pStreamAcc = new CPDF_StreamAcc;
+  CPDF_StreamAcc* pStreamAcc = new CPDF_StreamAcc;
   pStreamAcc->LoadAllData(pStream);
-  m_ObjectStreamMap.SetAt((void*)(uintptr_t)objnum, pStreamAcc);
+  m_ObjectStreamMap[objnum].reset(pStreamAcc);
   return pStreamAcc;
 }
 
@@ -1671,7 +1664,7 @@ FX_BOOL CPDF_Parser::LoadLinearizedAllCrossRefV5(FX_FILESIZE xrefpos) {
       return FALSE;
     }
   }
-  m_ObjectStreamMap.InitHashTable(101, FALSE);
+  m_ObjectStreamMap.clear();
   m_bXRefStream = TRUE;
   return TRUE;
 }
@@ -1695,14 +1688,7 @@ FX_DWORD CPDF_Parser::LoadLinearizedMainXRefTable() {
     m_Syntax.GetNextChar(ch);
   }
   m_LastXRefOffset += dwCount;
-  FX_POSITION pos = m_ObjectStreamMap.GetStartPosition();
-  while (pos) {
-    void* objnum;
-    CPDF_StreamAcc* pStream;
-    m_ObjectStreamMap.GetNextAssoc(pos, objnum, (void*&)pStream);
-    delete pStream;
-  }
-  m_ObjectStreamMap.RemoveAll();
+  m_ObjectStreamMap.clear();
   m_ObjCache.clear();
 
   if (!LoadLinearizedAllCrossRefV4(m_LastXRefOffset, m_dwXrefStartObjNum) &&

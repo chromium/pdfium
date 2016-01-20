@@ -9,12 +9,16 @@
 
 #if _FX_OS_ == _FX_ANDROID_
 
+#include <map>
+
 #include "core/include/fxge/fpf.h"
 
 #define FPF_SKIAFONTTYPE_Unknown 0
 #define FPF_SKIAFONTTYPE_Path 1
 #define FPF_SKIAFONTTYPE_File 2
 #define FPF_SKIAFONTTYPE_Buffer 3
+
+class CFPF_SkiaFont;
 
 class CFPF_SkiaFontDescriptor {
  public:
@@ -110,7 +114,7 @@ class CFPF_SkiaFontMgr : public IFPF_FontMgr {
   FX_BOOL m_bLoaded;
   CFX_PtrArray m_FontFaces;
   FXFT_Library m_FTLibrary;
-  CFX_MapPtrToPtr m_FamilyFonts;
+  std::map<FX_DWORD, CFPF_SkiaFont*> m_FamilyFonts;
 };
 
 #endif

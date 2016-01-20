@@ -545,7 +545,7 @@ class CPDF_Parser {
   FX_DWORD m_dwXrefStartObjNum;
 
   // A map of object numbers to indirect streams. Map owns the streams.
-  CFX_MapPtrToPtr m_ObjectStreamMap;
+  std::map<FX_DWORD, std::unique_ptr<CPDF_StreamAcc>> m_ObjectStreamMap;
 
   // Mapping of object numbers to offsets. The offsets are relative to the first
   // object in the stream.

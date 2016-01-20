@@ -93,7 +93,7 @@ void CPDF_StructTreeImpl::LoadPageTree(const CPDF_Dictionary* pPageDict) {
   for (i = 0; i < dwKids; i++) {
     m_Kids[i] = NULL;
   }
-  CFX_MapPtrToPtr element_map;
+  std::map<CPDF_Dictionary*, CPDF_StructElementImpl*> element_map;
   CPDF_Dictionary* pParentTree = m_pTreeRoot->GetDict("ParentTree");
   if (!pParentTree) {
     return;
@@ -114,23 +114,25 @@ void CPDF_StructTreeImpl::LoadPageTree(const CPDF_Dictionary* pPageDict) {
     }
   }
 }
-CPDF_StructElementImpl* CPDF_StructTreeImpl::AddPageNode(CPDF_Dictionary* pDict,
-                                                         CFX_MapPtrToPtr& map,
-                                                         int nLevel) {
-  if (nLevel > nMaxRecursion) {
+CPDF_StructElementImpl* CPDF_StructTreeImpl::AddPageNode(
+    CPDF_Dictionary* pDict,
+    std::map<CPDF_Dictionary*, CPDF_StructElementImpl*>& map,
+    int nLevel) {
+  if (nLevel > nMaxRecursion)
     return NULL;
-  }
-  CPDF_StructElementImpl* pElement = NULL;
-  if (map.Lookup(pDict, (void*&)pElement)) {
-    return pElement;
-  }
-  pElement = new CPDF_StructElementImpl(this, NULL, pDict);
-  map.SetAt(pDict, pElement);
+
+  auto it = map.find(pDict);
+  if (it != map.end())
+    return it->second;
+
+  CPDF_StructElementImpl* pElement =
+      new CPDF_StructElementImpl(this, NULL, pDict);
+  map[pDict] = pElement;
   CPDF_Dictionary* pParent = pDict->GetDict("P");
   if (!pParent || pParent->GetString("Type") == "StructTreeRoot") {
     if (!AddTopLevelNode(pDict, pElement)) {
       pElement->Release();
-      map.RemoveKey(pDict);
+      map.erase(pDict);
     }
   } else {
     CPDF_StructElementImpl* pParentElement =
@@ -148,7 +150,7 @@ CPDF_StructElementImpl* CPDF_StructTreeImpl::AddPageNode(CPDF_Dictionary* pDict,
     }
     if (!bSave) {
       pElement->Release();
-      map.RemoveKey(pDict);
+      map.erase(pDict);
     }
   }
   return pElement;

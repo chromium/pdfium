@@ -429,7 +429,6 @@
         'core/src/fxcrt/fx_basic_coords.cpp',
         'core/src/fxcrt/fx_basic_gcc.cpp',
         'core/src/fxcrt/fx_basic_list.cpp',
-        'core/src/fxcrt/fx_basic_maps.cpp',
         'core/src/fxcrt/fx_basic_memmgr.cpp',
         'core/src/fxcrt/fx_basic_plex.cpp',
         'core/src/fxcrt/fx_basic_utf.cpp',
