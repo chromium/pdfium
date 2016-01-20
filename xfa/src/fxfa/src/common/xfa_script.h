@@ -102,7 +102,6 @@ class IXFA_ScriptContext {
   virtual void AddNodesOfRunScript(CXFA_Node* pNode) = 0;
   virtual FXJSE_HCLASS GetJseNormalClass() = 0;
   virtual XFA_SCRIPTLANGTYPE GetType() = 0;
-  virtual void AddJSBuiltinObject(XFA_LPCJSBUILTININFO pBuitinObject) = 0;
   virtual void SetRunAtType(XFA_ATTRIBUTEENUM eRunAt) = 0;
   virtual FX_BOOL IsRunAtClient() = 0;
 };

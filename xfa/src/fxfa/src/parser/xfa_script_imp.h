@@ -7,8 +7,7 @@
 #ifndef _FXFA_SCRIPT_IMP_H
 #define _FXFA_SCRIPT_IMP_H
 #define XFA_RESOLVENODE_TagName 0x0002
-#define XFA_JSBUILTIN_Initialized 0x0001
-#define XFA_JSBUILTIN_HasCount 0x0002
+
 class CXFA_ResolveProcessor;
 class CXFA_ScriptContext : public IXFA_ScriptContext {
  public:
@@ -45,7 +44,6 @@ class CXFA_ScriptContext : public IXFA_ScriptContext {
   virtual void AddNodesOfRunScript(CXFA_Node* pNode);
   virtual FXJSE_HCLASS GetJseNormalClass();
 
-  virtual void AddJSBuiltinObject(XFA_LPCJSBUILTININFO pBuitinObject);
   virtual void SetRunAtType(XFA_ATTRIBUTEENUM eRunAt) { m_eRunAtType = eRunAt; }
   virtual FX_BOOL IsRunAtClient() {
     return m_eRunAtType != XFA_ATTRIBUTEENUM_Server;
@@ -96,6 +94,7 @@ class CXFA_ScriptContext : public IXFA_ScriptContext {
   FXJSE_HCONTEXT CreateVariablesContext(CXFA_Node* pScriptNode,
                                         CXFA_Node* pSubform);
   void DefineJsClass();
+  void RemoveBuiltInObjs(FXJSE_HCONTEXT jsContext) const;
 
   CXFA_Document* m_pDocument;
   FXJSE_HCONTEXT m_hJsContext;
@@ -114,7 +113,6 @@ class CXFA_ScriptContext : public IXFA_ScriptContext {
   CXFA_ResolveProcessor* m_pResolveProcessor;
   XFA_HFM2JSCONTEXT m_hFM2JSContext;
   CXFA_Object* m_pThisObject;
-  CFX_CMapByteStringToPtr m_JSBuiltInObjects;
   FX_DWORD m_dwBuiltInInFlags;
   XFA_ATTRIBUTEENUM m_eRunAtType;
 };

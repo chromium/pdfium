@@ -60,18 +60,6 @@ CXFA_ScriptContext::~CXFA_ScriptContext() {
     delete ((CXFA_NodeList*)m_CacheListArray[i]);
   }
   m_CacheListArray.RemoveAll();
-  if (m_dwBuiltInInFlags & XFA_JSBUILTIN_HasCount) {
-    FX_POSITION ps = m_JSBuiltInObjects.GetStartPosition();
-    while (ps) {
-      CFX_ByteString bsKey;
-      void* pValue = NULL;
-      m_JSBuiltInObjects.GetNextAssoc(ps, bsKey, pValue);
-      if (pValue) {
-        FXJSE_Value_Release((FXJSE_HVALUE)pValue);
-      }
-    }
-    m_JSBuiltInObjects.RemoveAll();
-  }
 }
 void CXFA_ScriptContext::Initialize(FXJSE_HRUNTIME hRuntime) {
   m_hJsRuntime = hRuntime;
@@ -105,28 +93,6 @@ FX_BOOL CXFA_ScriptContext::RunScript(XFA_SCRIPTLANGTYPE eScriptType,
     btScript =
         FX_UTF8Encode(wsJavaScript.GetBuffer(), wsJavaScript.GetLength());
   } else {
-    if ((m_dwBuiltInInFlags & XFA_JSBUILTIN_Initialized) == 0) {
-      m_dwBuiltInInFlags = XFA_JSBUILTIN_Initialized;
-      FX_POSITION ps = m_JSBuiltInObjects.GetStartPosition();
-      if (ps) {
-        FXJSE_HVALUE hObject = FXJSE_Context_GetGlobalObject(m_hJsContext);
-        while (ps) {
-          CFX_ByteString bsKey;
-          void* pValue;
-          m_JSBuiltInObjects.GetNextAssoc(ps, bsKey, pValue);
-          FXJSE_HVALUE hProp = FXJSE_Value_Create(m_hJsRuntime);
-          if (FXJSE_Value_GetObjectProp(hObject, bsKey, hProp)) {
-            m_JSBuiltInObjects.SetAt(bsKey, hProp);
-            FXJSE_Value_DeleteObjectProp(hObject, bsKey);
-            m_dwBuiltInInFlags |= XFA_JSBUILTIN_HasCount;
-          } else {
-            m_JSBuiltInObjects.RemoveKey(bsKey);
-            FXJSE_Value_Release(hProp);
-          }
-        }
-        FXJSE_Value_Release(hObject);
-      }
-    }
     btScript = FX_UTF8Encode(wsScript.GetPtr(), wsScript.GetLength());
   }
   CXFA_Object* pOriginalObject = m_pThisObject;
@@ -242,9 +208,6 @@ void CXFA_ScriptContext::GlobalPropertyGetter(FXJSE_HOBJECT hObject,
   if (pScriptObject &&
       lpScriptContext->QueryVariableHValue((CXFA_Node*)pScriptObject,
                                            szPropName, hValue, TRUE)) {
-    return;
-  }
-  if (lpScriptContext->QueryBuiltinHValue(szPropName, hValue)) {
     return;
   }
   IXFA_Notify* pNotify = pDoc->GetNotify();
@@ -432,6 +395,7 @@ void CXFA_ScriptContext::DefineJsContext() {
   m_JsGlobalClass.dynMethodCall = CXFA_ScriptContext::NormalMethodCall;
   m_hJsContext = FXJSE_Context_Create(m_hJsRuntime, &m_JsGlobalClass,
                                       m_pDocument->GetRoot());
+  RemoveBuiltInObjs(m_hJsContext);
   FXJSE_Context_EnableCompatibleMode(
       m_hJsContext, FXJSE_COMPATIBLEMODEFLAG_CONSTRUCTOREXTRAMETHODS);
 }
@@ -461,6 +425,7 @@ FXJSE_HCONTEXT CXFA_ScriptContext::CreateVariablesContext(
   CXFA_ThisProxy* lpVariableNode = new CXFA_ThisProxy(pSubform, pScriptNode);
   FXJSE_HCONTEXT hVariablesContext = FXJSE_Context_Create(
       m_hJsRuntime, &m_JsGlobalVariablesClass, (CXFA_Object*)lpVariableNode);
+  RemoveBuiltInObjs(hVariablesContext);
   FXJSE_Context_EnableCompatibleMode(
       hVariablesContext, FXJSE_COMPATIBLEMODEFLAG_CONSTRUCTOREXTRAMETHODS);
   m_mapVariableToHValue.SetAt(pScriptNode, hVariablesContext);
@@ -546,17 +511,6 @@ FX_BOOL CXFA_ScriptContext::QueryVariableHValue(
   }
   return bRes;
 }
-FX_BOOL CXFA_ScriptContext::QueryBuiltinHValue(
-    const CFX_ByteStringC& szPropName,
-    FXJSE_HVALUE hValue) {
-  void* pBuiltin = NULL;
-  if ((m_dwBuiltInInFlags & XFA_JSBUILTIN_HasCount) &&
-      m_JSBuiltInObjects.Lookup(szPropName, pBuiltin)) {
-    FXJSE_Value_Set(hValue, (FXJSE_HVALUE)pBuiltin);
-    return TRUE;
-  }
-  return FALSE;
-}
 void CXFA_ScriptContext::ReleaseVariablesMap() {
   FX_POSITION ps = m_mapVariableToHValue.GetStartPosition();
   while (ps) {
@@ -589,15 +543,19 @@ void CXFA_ScriptContext::DefineJsClass() {
   m_JsNormalClass.dynMethodCall = CXFA_ScriptContext::NormalMethodCall;
   m_hJsClass = FXJSE_DefineClass(m_hJsContext, &m_JsNormalClass);
 }
+void CXFA_ScriptContext::RemoveBuiltInObjs(FXJSE_HCONTEXT jsContext) const {
+  static const CFX_ByteStringC OBJ_NAME[2] = {"Number", "Date"};
+  FXJSE_HVALUE hObject = FXJSE_Context_GetGlobalObject(jsContext);
+  FXJSE_HVALUE hProp = FXJSE_Value_Create(m_hJsRuntime);
+  for (int i = 0; i < 2; ++i) {
+    if (FXJSE_Value_GetObjectProp(hObject, OBJ_NAME[i], hProp))
+      FXJSE_Value_DeleteObjectProp(hObject, OBJ_NAME[i]);
+  }
+  FXJSE_Value_Release(hProp);
+  FXJSE_Value_Release(hObject);
+}
 FXJSE_HCLASS CXFA_ScriptContext::GetJseNormalClass() {
   return m_hJsClass;
-}
-void CXFA_ScriptContext::AddJSBuiltinObject(
-    XFA_LPCJSBUILTININFO pBuitinObject) {
-  if (m_dwBuiltInInFlags & XFA_JSBUILTIN_Initialized) {
-    return;
-  }
-  m_JSBuiltInObjects.SetAt(pBuitinObject->pName, (void*)pBuitinObject);
 }
 int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode,
                                            const CFX_WideStringC& wsExpression,
@@ -823,25 +781,4 @@ void CXFA_ScriptContext::AddNodesOfRunScript(CXFA_Node* pNode) {
 }
 IXFA_ScriptContext* XFA_ScriptContext_Create(CXFA_Document* pDocument) {
   return new CXFA_ScriptContext(pDocument);
-}
-static const XFA_JSBUILTININFO gs_JSBUILTINData[] = {
-    {0x8108b9a9, "Number"},
-    {0xe07e3fbe, "Date"},
-};
-const int32_t g_iJSBuiltinCount =
-    sizeof(XFA_JSBUILTININFO) / sizeof(XFA_JSBUILTININFO);
-XFA_LPCJSBUILTININFO XFA_GetJSBuiltinByHash(uint32_t uHashCode) {
-  int32_t iStart = 0, iEnd = g_iJSBuiltinCount - 1, iMid;
-  do {
-    iMid = (iStart + iEnd) / 2;
-    XFA_LPCJSBUILTININFO pInfo = gs_JSBUILTINData + iMid;
-    if (uHashCode == pInfo->uUnicodeHash) {
-      return pInfo;
-    } else if (uHashCode < pInfo->uUnicodeHash) {
-      iEnd = iMid - 1;
-    } else {
-      iStart = iMid + 1;
-    }
-  } while (iStart <= iEnd);
-  return NULL;
 }

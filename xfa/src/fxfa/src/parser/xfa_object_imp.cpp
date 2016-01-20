@@ -3967,13 +3967,8 @@ FX_BOOL CXFA_Node::SetCData(XFA_ATTRIBUTE eAttr,
     SetUserData(pKey, pClone, &deleteWideStringCallBack);
   } else {
     SetMapModuleString(pKey, wsValue);
-    if (eAttr == XFA_ATTRIBUTE_Name) {
+    if (eAttr == XFA_ATTRIBUTE_Name)
       UpdateNameHash();
-      if (XFA_LPCJSBUILTININFO pBuiltin =
-              XFA_GetJSBuiltinByHash(m_dwNameHash)) {
-        m_pDocument->GetScriptContext()->AddJSBuiltinObject(pBuiltin);
-      }
-    }
   }
   OnChanged(eAttr, (void*)(const FX_WCHAR*)wsValue, bNotify, bScriptModify);
   if (IsNeedSavingXMLNode() && eAttr != XFA_ATTRIBUTE_QualifiedName &&
