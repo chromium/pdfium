@@ -637,35 +637,6 @@ class CFX_MapPtrToPtr {
   CAssoc* GetAssocAt(void* key, FX_DWORD& hash) const;
 };
 
-class CFX_CMapByteStringToPtr {
- public:
-  CFX_CMapByteStringToPtr();
-
-  ~CFX_CMapByteStringToPtr();
-
-  void RemoveAll();
-
-  FX_POSITION GetStartPosition() const;
-
-  void GetNextAssoc(FX_POSITION& rNextPosition,
-                    CFX_ByteString& rKey,
-                    void*& rValue) const;
-
-  void* GetNextValue(FX_POSITION& rNextPosition) const;
-
-  FX_BOOL Lookup(const CFX_ByteStringC& key, void*& rValue) const;
-
-  void SetAt(const CFX_ByteStringC& key, void* value);
-
-  void RemoveKey(const CFX_ByteStringC& key);
-
-  int GetCount() const;
-
-  void AddValue(const CFX_ByteStringC& key, void* pValue);
-
- private:
-  CFX_BaseSegmentedArray m_Buffer;
-};
 class CFX_PtrList {
  protected:
   struct CNode {
