@@ -219,14 +219,11 @@ CFPF_SkiaFontMgr::CFPF_SkiaFontMgr() : m_bLoaded(FALSE), m_FTLibrary(NULL) {}
 CFPF_SkiaFontMgr::~CFPF_SkiaFontMgr() {
   void* pkey = NULL;
   CFPF_SkiaFont* pValue = NULL;
-  FX_POSITION pos = m_FamilyFonts.GetStartPosition();
-  while (pos) {
-    m_FamilyFonts.GetNextAssoc(pos, pkey, (void*&)pValue);
-    if (pValue) {
-      pValue->Release();
-    }
+  for (const auto& pair : m_FamilyFonts) {
+    if (pair.second)
+      pair.second->Release();
   }
-  m_FamilyFonts.RemoveAll();
+  m_FamilyFonts.clear();
   for (int32_t i = m_FontFaces.GetUpperBound(); i >= 0; i--) {
     CFPF_SkiaFontDescriptor* pFont =
         (CFPF_SkiaFontDescriptor*)m_FontFaces.ElementAt(i);
@@ -259,12 +256,10 @@ IFPF_Font* CFPF_SkiaFontMgr::CreateFont(const CFX_ByteStringC& bsFamilyname,
                                         FX_DWORD dwStyle,
                                         FX_DWORD dwMatch) {
   FX_DWORD dwHash = FPF_SKIAGetFamilyHash(bsFamilyname, dwStyle, uCharset);
-  IFPF_Font* pFont = NULL;
-  if (m_FamilyFonts.Lookup((void*)(uintptr_t)dwHash, (void*&)pFont)) {
-    if (pFont) {
-      return pFont->Retain();
-    }
-  }
+  auto it = m_FamilyFonts.find(dwHash);
+  if (it != m_FamilyFonts.end() && it->second)
+    return it->second->Retain();
+
   FX_DWORD dwFaceName = FPF_SKIANormalizeFontName(bsFamilyname);
   FX_DWORD dwSubst = FPF_SkiaGetSubstFont(dwFaceName);
   FX_DWORD dwSubstSans = FPF_SkiaGetSansFont(dwFaceName);
@@ -335,7 +330,7 @@ IFPF_Font* CFPF_SkiaFontMgr::CreateFont(const CFX_ByteStringC& bsFamilyname,
         (CFPF_SkiaFontDescriptor*)m_FontFaces.ElementAt(nItem);
     CFPF_SkiaFont* pFont = new CFPF_SkiaFont;
     if (pFont->InitFont(this, pFontDes, bsFamilyname, dwStyle, uCharset)) {
-      m_FamilyFonts.SetAt((void*)(uintptr_t)dwHash, (void*)pFont);
+      m_FamilyFonts[dwHash] = pFont;
       return pFont->Retain();
     }
     pFont->Release();

@@ -640,6 +640,7 @@ class CFX_FixedBufGrow {
   DataType m_Data[FixedSize];
   DataType* m_pData;
 };
+#ifdef PDF_ENABLE_XFA
 class CFX_MapPtrToPtr {
  protected:
   struct CAssoc {
@@ -704,7 +705,7 @@ class CFX_MapPtrToPtr {
 
   CAssoc* GetAssocAt(void* key, FX_DWORD& hash) const;
 };
-#ifdef PDF_ENABLE_XFA
+
 template <class KeyType, class ValueType>
 class CFX_MapPtrTemplate : public CFX_MapPtrToPtr {
  public:

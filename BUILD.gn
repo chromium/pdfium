@@ -481,7 +481,6 @@ static_library("fxcrt") {
     "core/src/fxcrt/fx_basic_coords.cpp",
     "core/src/fxcrt/fx_basic_gcc.cpp",
     "core/src/fxcrt/fx_basic_list.cpp",
-    "core/src/fxcrt/fx_basic_maps.cpp",
     "core/src/fxcrt/fx_basic_memmgr.cpp",
     "core/src/fxcrt/fx_basic_plex.cpp",
     "core/src/fxcrt/fx_basic_utf.cpp",
@@ -507,6 +506,7 @@ static_library("fxcrt") {
       "core/include/fxcrt/fx_arb.h",
       "core/src/fxcrt/fx_arabic.cpp",
       "core/src/fxcrt/fx_arabic.h",
+      "core/src/fxcrt/fx_basic_maps.cpp",
     ]
   }
   configs += [ ":pdfium_config" ]
