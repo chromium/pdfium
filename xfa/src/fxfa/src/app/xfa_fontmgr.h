@@ -4,8 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXFA_FORMFILLER_FONTMGR_IMP_H
-#define _FXFA_FORMFILLER_FONTMGR_IMP_H
+#ifndef XFA_FONTMGR_H_
+#define XFA_FONTMGR_H_
+
+#include <map>
+
 struct XFA_FONTINFO {
   FX_DWORD dwFontNameHash;
   const FX_WCHAR* pPsName;
@@ -13,6 +16,7 @@ struct XFA_FONTINFO {
   FX_WORD dwStyles;
   FX_WORD wCodePage;
 };
+
 class CXFA_DefFontMgr : public IXFA_FontMgr {
  public:
   CXFA_DefFontMgr() {}
@@ -31,6 +35,7 @@ class CXFA_DefFontMgr : public IXFA_FontMgr {
  protected:
   CFX_PtrArray m_CacheFonts;
 };
+
 class CXFA_PDFFontMgr : public IFX_FontProvider {
  public:
   CXFA_PDFFontMgr(CXFA_FFDoc* pDoc);
@@ -59,9 +64,11 @@ class CXFA_PDFFontMgr : public IFX_FontProvider {
                                 FX_BOOL bItalic,
                                 const CFX_ByteString& bsDRFontName,
                                 FX_BOOL bStrictMatch = TRUE);
+
   CXFA_FFDoc* m_pDoc;
-  CFX_CMapByteStringToPtr m_FontArray;
+  std::map<CFX_ByteString, IFX_Font*> m_FontMap;
 };
+
 class CXFA_FontMgr {
  public:
   CXFA_FontMgr();
@@ -77,8 +84,10 @@ class CXFA_FontMgr {
 
  protected:
   void DelAllMgrMap();
+
   CFX_MapPtrToPtr m_PDFFontMgrArray;
   IXFA_FontMgr* m_pDefFontMgr;
-  CFX_CMapByteStringToPtr m_FontArray;
+  std::map<CFX_ByteString, IFX_Font*> m_FontMap;
 };
-#endif
+
+#endif  //  XFA_FONTMGR_H_

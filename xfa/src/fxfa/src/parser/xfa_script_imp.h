@@ -4,8 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXFA_SCRIPT_IMP_H
-#define _FXFA_SCRIPT_IMP_H
+#ifndef XFA_SCRIPT_IMP_H_
+#define XFA_SCRIPT_IMP_H_
+
+#include <map>
+
 #define XFA_RESOLVENODE_TagName 0x0002
 
 class CXFA_ResolveProcessor;
@@ -116,4 +119,5 @@ class CXFA_ScriptContext : public IXFA_ScriptContext {
   FX_DWORD m_dwBuiltInInFlags;
   XFA_ATTRIBUTEENUM m_eRunAtType;
 };
-#endif
+
+#endif  //  XFA_SCRIPT_IMP_H_
