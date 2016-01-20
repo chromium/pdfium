@@ -138,29 +138,25 @@ int CPDFXFA_Document::GetPageCount() {
 }
 
 CPDFXFA_Page* CPDFXFA_Document::GetPage(int page_index) {
-  if (!m_pPDFDoc && !m_pXFADoc)
-    return NULL;
-
-  CPDFXFA_Page* pPage = NULL;
-  if (m_XFAPageList.GetSize()) {
+  if (page_index < 0)
+    return nullptr;
+  CPDFXFA_Page* pPage = nullptr;
+  int nCount = m_XFAPageList.GetSize();
+  if (nCount > 0 && page_index < nCount) {
     pPage = m_XFAPageList.GetAt(page_index);
     if (pPage)
       pPage->AddRef();
   } else {
     m_XFAPageList.SetSize(GetPageCount());
   }
-
-  if (!pPage) {
-    pPage = new CPDFXFA_Page(this, page_index);
-    FX_BOOL bRet = pPage->LoadPage();
-    if (!bRet) {
-      delete pPage;
-      return NULL;
-    }
-
-    m_XFAPageList.SetAt(page_index, pPage);
+  if (pPage)
+    return pPage;
+  pPage = new CPDFXFA_Page(this, page_index);
+  if (!pPage->LoadPage()) {
+    delete pPage;
+    return nullptr;
   }
-
+  m_XFAPageList.SetAt(page_index, pPage);
   return pPage;
 }
 
@@ -476,6 +472,22 @@ FX_BOOL CPDFXFA_Document::PopupMenu(IXFA_Widget* hWidget,
 
 void CPDFXFA_Document::PageViewEvent(IXFA_PageView* pPageView,
                                      FX_DWORD dwFlags) {
+  if (!pPageView || (dwFlags != XFA_PAGEVIEWEVENT_PostAdded &&
+                     dwFlags != XFA_PAGEVIEWEVENT_PostRemoved)) {
+    return;
+  }
+  CPDFXFA_Page* pPage = nullptr;
+  if (dwFlags == XFA_PAGEVIEWEVENT_PostAdded) {
+    pPage = GetPage(pPageView->GetPageViewIndex());
+    if (pPage)
+      pPage->SetXFAPageView(pPageView);
+    return;
+  }
+  pPage = GetPage(pPageView);
+  if (!pPage)
+    return;
+  pPage->SetXFAPageView(nullptr);
+  m_pSDKDoc->GetPageView(pPage)->ClearFXAnnots();
 }
 
 void CPDFXFA_Document::WidgetEvent(IXFA_Widget* hWidget,

@@ -1118,6 +1118,18 @@ void CPDFSDK_PageView::LoadFXAnnots() {
   SetLock(FALSE);
 }
 
+void CPDFSDK_PageView::ClearFXAnnots() {
+  SetLock(TRUE);
+  if (m_pSDKDoc && GetFocusAnnot())
+    m_pSDKDoc->SetFocusAnnot(nullptr);
+  m_CaptureWidget = nullptr;
+  for (CPDFSDK_Annot* pAnnot : m_fxAnnotArray)
+    m_pSDKDoc->GetEnv()->GetAnnotHandlerMgr()->ReleaseAnnot(pAnnot);
+  m_fxAnnotArray.clear();
+  m_pAnnotList.reset();
+  SetLock(FALSE);
+}
+
 void CPDFSDK_PageView::UpdateRects(CFX_RectArray& rects) {
   for (int i = 0; i < rects.GetSize(); i++) {
     CPDF_Rect rc = rects.GetAt(i);

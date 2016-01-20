@@ -20,6 +20,7 @@ class CPDFXFA_Page {
   int GetPageIndex() { return m_iPageIndex; }
   CPDF_Page* GetPDFPage() { return m_pPDFPage; }
   IXFA_PageView* GetXFAPageView() { return m_pXFAPageView; }
+  void SetXFAPageView(IXFA_PageView* pPageView) { m_pXFAPageView = pPageView; }
 
   FX_FLOAT GetPageWidth();
   FX_FLOAT GetPageHeight();
