@@ -194,149 +194,6 @@ CFX_ByteString CJS_PublicMethods::StrTrim(const FX_CHAR* pStr) {
   return StrRTrim(StrLTrim(pStr));
 }
 
-double CJS_PublicMethods::ParseNumber(const FX_WCHAR* swSource,
-                                      FX_BOOL& bAllDigits,
-                                      FX_BOOL& bDot,
-                                      FX_BOOL& bSign,
-                                      FX_BOOL& bKXJS) {
-  bDot = FALSE;
-  bSign = FALSE;
-  bKXJS = FALSE;
-
-  FX_BOOL bDigitExist = FALSE;
-
-  const FX_WCHAR* p = swSource;
-  wchar_t c;
-
-  const FX_WCHAR* pStart = NULL;
-  const FX_WCHAR* pEnd = NULL;
-
-  while ((c = *p)) {
-    if (!pStart && c != L' ') {
-      pStart = p;
-    }
-
-    pEnd = p;
-    p++;
-  }
-
-  if (!pStart) {
-    bAllDigits = FALSE;
-    return 0;
-  }
-
-  while (pEnd != pStart) {
-    if (*pEnd == L' ')
-      pEnd--;
-    else
-      break;
-  }
-
-  double dRet = 0;
-  p = pStart;
-  bAllDigits = TRUE;
-  CFX_WideString swDigits;
-
-  while (p <= pEnd) {
-    c = *p;
-
-    if (FXSYS_iswdigit(c)) {
-      swDigits += c;
-      bDigitExist = TRUE;
-    } else {
-      switch (c) {
-        case L' ':
-          bAllDigits = FALSE;
-          break;
-        case L'.':
-        case L',':
-          if (!bDot) {
-            if (bDigitExist) {
-              swDigits += L'.';
-            } else {
-              swDigits += L'0';
-              swDigits += L'.';
-              bDigitExist = TRUE;
-            }
-
-            bDot = TRUE;
-            break;
-          }
-        case 'e':
-        case 'E':
-          if (!bKXJS) {
-            p++;
-            c = *p;
-            if (c == '+' || c == '-') {
-              bKXJS = TRUE;
-              swDigits += 'e';
-              swDigits += c;
-            }
-            break;
-          }
-        case L'-':
-          if (!bDigitExist && !bSign) {
-            swDigits += c;
-            bSign = TRUE;
-            break;
-          }
-        default:
-          bAllDigits = FALSE;
-
-          if (p != pStart && !bDot && bDigitExist) {
-            swDigits += L'.';
-            bDot = TRUE;
-          } else {
-            bDot = FALSE;
-            bDigitExist = FALSE;
-            swDigits = L"";
-          }
-          break;
-      }
-    }
-
-    p++;
-  }
-
-  if (swDigits.GetLength() > 0 && swDigits.GetLength() < 17) {
-    CFX_ByteString sDigits = swDigits.UTF8Encode();
-
-    if (bKXJS) {
-      dRet = atof(sDigits);
-    } else {
-      if (bDot) {
-        char* pStopString;
-        dRet = ::strtod(sDigits, &pStopString);
-      } else {
-        dRet = atol(sDigits);
-      }
-    }
-  }
-
-  return dRet;
-}
-
-double CJS_PublicMethods::ParseStringToNumber(const FX_WCHAR* swSource) {
-  FX_BOOL bAllDigits = FALSE;
-  FX_BOOL bDot = FALSE;
-  FX_BOOL bSign = FALSE;
-  FX_BOOL bKXJS = FALSE;
-
-  return ParseNumber(swSource, bAllDigits, bDot, bSign, bKXJS);
-}
-
-FX_BOOL CJS_PublicMethods::ConvertStringToNumber(const FX_WCHAR* swSource,
-                                                 double& dRet,
-                                                 FX_BOOL& bDot) {
-  FX_BOOL bAllDigits = FALSE;
-  FX_BOOL bSign = FALSE;
-  FX_BOOL bKXJS = FALSE;
-
-  dRet = ParseNumber(swSource, bAllDigits, bDot, bSign, bKXJS);
-
-  return bAllDigits;
-}
-
 CJS_Array CJS_PublicMethods::AF_MakeArrayFromList(CJS_Runtime* pRuntime,
                                                   CJS_Value val) {
   CJS_Array StrArray(pRuntime);
@@ -1344,71 +1201,57 @@ FX_BOOL CJS_PublicMethods::AFDate_FormatEx(IJS_Context* cc,
 }
 
 double CJS_PublicMethods::MakeInterDate(CFX_WideString strValue) {
-  int nHour;
-  int nMin;
-  int nSec;
-  int nYear;
-  int nMonth;
-  int nDay;
-
   CFX_WideStringArray wsArray;
-  CFX_WideString sMonth = L"";
   CFX_WideString sTemp = L"";
-  int nSize = strValue.GetLength();
-
-  for (int i = 0; i < nSize; i++) {
+  for (int i = 0; i < strValue.GetLength(); ++i) {
     FX_WCHAR c = strValue.GetAt(i);
     if (c == L' ' || c == L':') {
       wsArray.Add(sTemp);
       sTemp = L"";
       continue;
     }
-
     sTemp += c;
   }
-
   wsArray.Add(sTemp);
   if (wsArray.GetSize() != 8)
     return 0;
 
+  int nMonth = 1;
   sTemp = wsArray[1];
   if (sTemp.Compare(L"Jan") == 0)
     nMonth = 1;
-  if (sTemp.Compare(L"Feb") == 0)
+  else if (sTemp.Compare(L"Feb") == 0)
     nMonth = 2;
-  if (sTemp.Compare(L"Mar") == 0)
+  else if (sTemp.Compare(L"Mar") == 0)
     nMonth = 3;
-  if (sTemp.Compare(L"Apr") == 0)
+  else if (sTemp.Compare(L"Apr") == 0)
     nMonth = 4;
-  if (sTemp.Compare(L"May") == 0)
+  else if (sTemp.Compare(L"May") == 0)
     nMonth = 5;
-  if (sTemp.Compare(L"Jun") == 0)
+  else if (sTemp.Compare(L"Jun") == 0)
     nMonth = 6;
-  if (sTemp.Compare(L"Jul") == 0)
+  else if (sTemp.Compare(L"Jul") == 0)
     nMonth = 7;
-  if (sTemp.Compare(L"Aug") == 0)
+  else if (sTemp.Compare(L"Aug") == 0)
     nMonth = 8;
-  if (sTemp.Compare(L"Sep") == 0)
+  else if (sTemp.Compare(L"Sep") == 0)
     nMonth = 9;
-  if (sTemp.Compare(L"Oct") == 0)
+  else if (sTemp.Compare(L"Oct") == 0)
     nMonth = 10;
-  if (sTemp.Compare(L"Nov") == 0)
+  else if (sTemp.Compare(L"Nov") == 0)
     nMonth = 11;
-  if (sTemp.Compare(L"Dec") == 0)
+  else if (sTemp.Compare(L"Dec") == 0)
     nMonth = 12;
 
-  nDay = (int)ParseStringToNumber(wsArray[2].c_str());
-  nHour = (int)ParseStringToNumber(wsArray[3].c_str());
-  nMin = (int)ParseStringToNumber(wsArray[4].c_str());
-  nSec = (int)ParseStringToNumber(wsArray[5].c_str());
-  nYear = (int)ParseStringToNumber(wsArray[7].c_str());
-
+  int nDay = FX_atof(wsArray[2]);
+  int nHour = FX_atof(wsArray[3]);
+  int nMin = FX_atof(wsArray[4]);
+  int nSec = FX_atof(wsArray[5]);
+  int nYear = FX_atof(wsArray[7]);
   double dRet = JS_MakeDate(JS_MakeDay(nYear, nMonth - 1, nDay),
                             JS_MakeTime(nHour, nMin, nSec, 0));
-
-  if (JS_PortIsNan(dRet)) {
+  if (JS_PortIsNan(dRet))
     dRet = JS_DateParse(strValue.c_str());
-  }
 
   return dRet;
 }
@@ -1866,14 +1709,17 @@ FX_BOOL CJS_PublicMethods::AFMakeNumber(IJS_Context* cc,
                                         const std::vector<CJS_Value>& params,
                                         CJS_Value& vRet,
                                         CFX_WideString& sError) {
+  CJS_Context* pContext = (CJS_Context*)cc;
   if (params.size() != 1) {
-    CJS_Context* pContext = (CJS_Context*)cc;
-    ASSERT(pContext);
-
     sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
     return FALSE;
   }
-  vRet = ParseStringToNumber(params[0].ToCFXWideString().c_str());
+  CFX_WideString ws = params[0].ToCFXWideString();
+  ws.Replace(L",", L".");
+  vRet = ws;
+  vRet.MaybeCoerceToNumber();
+  if (vRet.GetType() != CJS_Value::VT_number)
+    vRet = 0;
   return TRUE;
 }
 
@@ -1913,38 +1759,40 @@ FX_BOOL CJS_PublicMethods::AFSimple_Calculate(
     for (int j = 0, jsz = pInterForm->CountFields(wsFieldName); j < jsz; j++) {
       if (CPDF_FormField* pFormField = pInterForm->GetField(j, wsFieldName)) {
         double dTemp = 0.0;
-
         switch (pFormField->GetFieldType()) {
           case FIELDTYPE_TEXTFIELD:
           case FIELDTYPE_COMBOBOX: {
-            dTemp = ParseStringToNumber(pFormField->GetValue().c_str());
-            break;
-          }
+            CFX_WideString trimmed = pFormField->GetValue();
+            trimmed.TrimRight();
+            trimmed.TrimLeft();
+            dTemp = FX_atof(trimmed);
+          } break;
           case FIELDTYPE_PUSHBUTTON: {
             dTemp = 0.0;
-            break;
-          }
+          } break;
           case FIELDTYPE_CHECKBOX:
           case FIELDTYPE_RADIOBUTTON: {
             dTemp = 0.0;
             for (int c = 0, csz = pFormField->CountControls(); c < csz; c++) {
               if (CPDF_FormControl* pFormCtrl = pFormField->GetControl(c)) {
                 if (pFormCtrl->IsChecked()) {
-                  dTemp +=
-                      ParseStringToNumber(pFormCtrl->GetExportValue().c_str());
+                  CFX_WideString trimmed = pFormCtrl->GetExportValue();
+                  trimmed.TrimRight();
+                  trimmed.TrimLeft();
+                  dTemp = FX_atof(trimmed);
                   break;
                 }
               }
             }
-            break;
-          }
+          } break;
           case FIELDTYPE_LISTBOX: {
-            if (pFormField->CountSelectedItems() > 1)
-              break;
-
-            dTemp = ParseStringToNumber(pFormField->GetValue().c_str());
-            break;
-          }
+            if (pFormField->CountSelectedItems() <= 1) {
+              CFX_WideString trimmed = pFormField->GetValue();
+              trimmed.TrimRight();
+              trimmed.TrimLeft();
+              dTemp = FX_atof(trimmed);
+            }
+          } break;
           default:
             break;
         }

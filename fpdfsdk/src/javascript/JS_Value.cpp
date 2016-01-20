@@ -19,8 +19,6 @@ static double GetNan() {
   return *(double*)g_nan;
 }
 
-/* ---------------------------- CJS_Value ---------------------------- */
-
 CJS_Value::CJS_Value(CJS_Runtime* pRuntime)
     : m_eType(VT_unknown), m_pJSRuntime(pRuntime) {
 }
@@ -98,9 +96,6 @@ void CJS_Value::Detach() {
   m_eType = VT_unknown;
 }
 
-/* ----------------------------------------------------------------------------------------
- */
-
 int CJS_Value::ToInt() const {
   return FXJS_ToInt32(m_pJSRuntime->GetIsolate(), m_pValue);
 }
@@ -146,8 +141,26 @@ v8::Local<v8::Array> CJS_Value::ToV8Array() const {
   return v8::Local<v8::Array>();
 }
 
-/* ----------------------------------------------------------------------------------------
- */
+void CJS_Value::MaybeCoerceToNumber() {
+  bool bAllowNaN = false;
+  if (m_eType == VT_string) {
+    CFX_ByteString bstr = ToCFXByteString();
+    if (bstr.GetLength() == 0)
+      return;
+    if (bstr == "NaN")
+      bAllowNaN = true;
+  }
+  v8::TryCatch(m_pJSRuntime->GetIsolate());
+  v8::MaybeLocal<v8::Number> maybeNum =
+      m_pValue->ToNumber(m_pJSRuntime->GetIsolate()->GetCurrentContext());
+  if (maybeNum.IsEmpty())
+    return;
+  v8::Local<v8::Number> num = maybeNum.ToLocalChecked();
+  if (std::isnan(num->Value()) && !bAllowNaN)
+    return;
+  m_pValue = num;
+  m_eType = VT_number;
+}
 
 void CJS_Value::operator=(int iValue) {
   m_pValue = FXJS_NewNumber(m_pJSRuntime->GetIsolate(), iValue);
@@ -216,9 +229,6 @@ void CJS_Value::operator=(CJS_Value value) {
   m_eType = value.m_eType;
   m_pJSRuntime = value.m_pJSRuntime;
 }
-
-/* ----------------------------------------------------------------------------------------
- */
 
 CJS_Value::Type CJS_Value::GetType() const {
   if (m_pValue.IsEmpty())

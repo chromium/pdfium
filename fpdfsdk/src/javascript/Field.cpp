@@ -2737,19 +2737,7 @@ FX_BOOL Field::value(IJS_Context* cc,
         return FALSE;
       case FIELDTYPE_COMBOBOX:
       case FIELDTYPE_TEXTFIELD: {
-        CFX_WideString swValue = pFormField->GetValue();
-
-        double dRet;
-        FX_BOOL bDot;
-        if (CJS_PublicMethods::ConvertStringToNumber(swValue.c_str(), dRet,
-                                                     bDot)) {
-          if (bDot)
-            vp << dRet;
-          else
-            vp << dRet;
-        } else {
-          vp << swValue;
-        }
+        vp << pFormField->GetValue();
       } break;
       case FIELDTYPE_LISTBOX: {
         if (pFormField->CountSelectedItems() > 1) {
@@ -2765,40 +2753,18 @@ FX_BOOL Field::value(IJS_Context* cc,
           }
           vp << ValueArray;
         } else {
-          CFX_WideString swValue = pFormField->GetValue();
-
-          double dRet;
-          FX_BOOL bDot;
-          if (CJS_PublicMethods::ConvertStringToNumber(swValue.c_str(), dRet,
-                                                       bDot)) {
-            if (bDot)
-              vp << dRet;
-            else
-              vp << dRet;
-          } else {
-            vp << swValue;
-          }
+          vp << pFormField->GetValue();
         }
       } break;
       case FIELDTYPE_CHECKBOX:
       case FIELDTYPE_RADIOBUTTON: {
-        FX_BOOL bFind = FALSE;
+        bool bFind = false;
         for (int i = 0, sz = pFormField->CountControls(); i < sz; i++) {
-          if (!pFormField->GetControl(i)->IsChecked())
-            continue;
-
-          CFX_WideString swValue = pFormField->GetControl(i)->GetExportValue();
-          double dRet;
-          FX_BOOL bDotDummy;
-          if (CJS_PublicMethods::ConvertStringToNumber(swValue.c_str(), dRet,
-                                                       bDotDummy)) {
-            vp << dRet;
-          } else {
-            vp << swValue;
+          if (pFormField->GetControl(i)->IsChecked()) {
+            vp << pFormField->GetControl(i)->GetExportValue();
+            bFind = true;
+            break;
           }
-
-          bFind = TRUE;
-          break;
         }
         if (!bFind)
           vp << L"Off";
@@ -2808,7 +2774,7 @@ FX_BOOL Field::value(IJS_Context* cc,
         break;
     }
   }
-
+  vp.MaybeCoerceToNumber();
   return TRUE;
 }
 

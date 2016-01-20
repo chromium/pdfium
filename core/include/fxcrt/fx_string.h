@@ -794,9 +794,7 @@ inline bool operator!=(const wchar_t* lhs, const CFX_WideString& rhs) {
 inline bool operator!=(const CFX_WideStringC& lhs, const CFX_WideString& rhs) {
   return rhs != lhs;
 }
-FX_FLOAT FX_atof(const CFX_ByteStringC& str);
-void FX_atonum(const CFX_ByteStringC& str, FX_BOOL& bInteger, void* pData);
-FX_STRSIZE FX_ftoa(FX_FLOAT f, FX_CHAR* buf);
+
 CFX_ByteString FX_UTF8Encode(const FX_WCHAR* pwsStr, FX_STRSIZE len);
 inline CFX_ByteString FX_UTF8Encode(const CFX_WideStringC& wsStr) {
   return FX_UTF8Encode(wsStr.GetPtr(), wsStr.GetLength());
@@ -804,5 +802,12 @@ inline CFX_ByteString FX_UTF8Encode(const CFX_WideStringC& wsStr) {
 inline CFX_ByteString FX_UTF8Encode(const CFX_WideString& wsStr) {
   return FX_UTF8Encode(wsStr.c_str(), wsStr.GetLength());
 }
+
+FX_FLOAT FX_atof(const CFX_ByteStringC& str);
+inline FX_FLOAT FX_atof(const CFX_WideStringC& wsStr) {
+  return FX_atof(FX_UTF8Encode(wsStr.GetPtr(), wsStr.GetLength()));
+}
+void FX_atonum(const CFX_ByteStringC& str, FX_BOOL& bInteger, void* pData);
+FX_STRSIZE FX_ftoa(FX_FLOAT f, FX_CHAR* buf);
 
 #endif  // CORE_INCLUDE_FXCRT_FX_STRING_H_

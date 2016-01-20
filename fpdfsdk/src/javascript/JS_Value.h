@@ -62,6 +62,11 @@ class CJS_Value {
   v8::Local<v8::Array> ToV8Array() const;
   v8::Local<v8::Value> ToV8Value() const;
 
+  // Replace the current |m_pValue| with a v8::Number if possible
+  // to make one from the current |m_pValue|, updating |m_eType|
+  // as appropriate to indicate the result.
+  void MaybeCoerceToNumber();
+
   void operator=(int iValue);
   void operator=(bool bValue);
   void operator=(double);
