@@ -1759,25 +1759,16 @@ CXFA_DefFontMgr::~CXFA_DefFontMgr() {
   }
   m_CacheFonts.RemoveAll();
 }
-#define _FXFA_USEGASFONTMGR_
 IFX_Font* CXFA_DefFontMgr::GetFont(IXFA_Doc* hDoc,
                                    const CFX_WideStringC& wsFontFamily,
                                    FX_DWORD dwFontStyles,
                                    FX_WORD wCodePage) {
   CFX_WideString wsFontName = wsFontFamily;
   IFX_FontMgr* pFDEFontMgr = ((CXFA_FFDoc*)hDoc)->GetApp()->GetFDEFontMgr();
-#ifdef _FXFA_USEGASFONTMGR_
   const XFA_FONTINFO* pCurFont = NULL;
   FX_BOOL bGetFontInfo = TRUE;
   IFX_Font* pFont = pFDEFontMgr->LoadFont((const FX_WCHAR*)wsFontName,
                                           dwFontStyles, wCodePage);
-#else
-  const XFA_FONTINFO* pCurFont = XFA_GetFontINFOByFontName(wsFontName);
-  FX_BOOL bGetFontInfo = FALSE;
-  IFX_Font* pFont = IFX_Font::LoadFont(
-      (const FX_WCHAR*)wsFontName, dwFontStyles | FX_FONTSTYLE_ExactMatch,
-      pCurFont ? pCurFont->wCodePage : wCodePage, pFDEFontMgr);
-#endif
   if (!pFont && hDoc) {
     if (bGetFontInfo) {
       pCurFont = XFA_GetFontINFOByFontName(wsFontName);
@@ -1800,13 +1791,7 @@ IFX_Font* CXFA_DefFontMgr::GetFont(IXFA_Doc* hDoc,
         }
         CFX_WideString wsReplace =
             CFX_WideString(pReplace, pNameText - pReplace);
-#ifdef _FXFA_USEGASFONTMGR_
         pFont = pFDEFontMgr->LoadFont(wsReplace, dwStyle, wCodePage);
-#else
-        pFont = IFX_Font::LoadFont((const FX_WCHAR*)wsReplace,
-                                   dwStyle | FX_FONTSTYLE_ExactMatch,
-                                   pCurFont->wCodePage, pFDEFontMgr);
-#endif
         if (pFont != NULL) {
           break;
         }
@@ -1826,24 +1811,11 @@ IFX_Font* CXFA_DefFontMgr::GetDefaultFont(IXFA_Doc* hDoc,
                                           FX_DWORD dwFontStyles,
                                           FX_WORD wCodePage) {
   IFX_FontMgr* pFDEFontMgr = ((CXFA_FFDoc*)hDoc)->GetApp()->GetFDEFontMgr();
-#ifdef _FXFA_USEGASFONTMGR_
   IFX_Font* pFont =
       pFDEFontMgr->LoadFont(L"Arial Narrow", dwFontStyles, wCodePage);
-#else
-  const XFA_FONTINFO* pCurFont = XFA_GetFontINFOByFontName(wsFontFamily);
-  IFX_Font* pFont =
-      IFX_Font::LoadFont(L"Arial Narrow", dwFontStyles,
-                         pCurFont ? pCurFont->wCodePage : 1252, pFDEFontMgr);
-#endif
   if (!pFont)
-#ifdef _FXFA_USEGASFONTMGR_
     pFont =
         pFDEFontMgr->LoadFont((const FX_WCHAR*)NULL, dwFontStyles, wCodePage);
-#else
-    pFont =
-        IFX_Font::LoadFont((const FX_WCHAR*)NULL, dwFontStyles,
-                           pCurFont ? pCurFont->wCodePage : 1252, pFDEFontMgr);
-#endif
   FXSYS_assert(pFont != NULL);
   if (pFont) {
     m_CacheFonts.Add(pFont);
