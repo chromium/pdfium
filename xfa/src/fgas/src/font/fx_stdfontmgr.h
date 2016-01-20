@@ -179,14 +179,20 @@ class CFX_FontMgrImp : public IFX_FontMgr {
                              int32_t iFaceIndex,
                              int32_t* pFaceCount,
                              FX_BOOL bSaveStream = FALSE);
+  virtual IFX_Font* LoadFont(const CFX_WideString& wsFaceName,
+                             int32_t iFaceIndex,
+                             int32_t* pFaceCount);
   virtual void ClearFontCache();
   virtual void RemoveFont(IFX_Font* pFont);
   FX_BOOL EnumFonts();
+  FX_BOOL EnumFontsFromFontMapper();
+  FX_BOOL EnumFontsFromFiles();
 
  protected:
   void ReportFace(FXFT_Face pFace,
                   CFX_FontDescriptors& Fonts,
                   IFX_FileAccess* pFontAccess);
+  void ReportFaces(IFX_FileRead* pFontStream);
   void GetNames(const uint8_t* name_table, CFX_WideStringArray& Names);
   void GetCharsets(FXFT_Face pFace, CFX_WordArray& Charsets);
   void GetUSBCSB(FXFT_Face pFace, FX_DWORD* USB, FX_DWORD* CSB);
@@ -194,7 +200,6 @@ class CFX_FontMgrImp : public IFX_FontMgr {
   CFX_FontDescriptors m_InstalledFonts;
   FX_BOOL VerifyUnicode(CFX_FontDescriptor* pDesc, FX_WCHAR wcUnicode);
   FX_BOOL VerifyUnicode(IFX_Font* pFont, FX_WCHAR wcUnicode);
-  void NormalizeFontName(CFX_WideString& FontName);
   int32_t IsPartName(const CFX_WideString& Name1, const CFX_WideString& Name2);
   int32_t MatchFonts(CFX_FontDescriptorInfos& MatchedFonts,
                      FX_WORD wCodePage,
@@ -211,6 +216,9 @@ class CFX_FontMgrImp : public IFX_FontMgr {
                      int32_t* pFaceCount,
                      FX_BOOL bWantCache = FALSE);
   FXFT_Face LoadFace(IFX_FileRead* pFontStream, int32_t iFaceIndex);
+  IFX_FileRead* CreateFontStream(CFX_FontMapper* pFontMapper,
+                                 IFX_SystemFontInfo* pSystemFontInfo,
+                                 FX_DWORD index);
   CFX_HashFontDescsMap m_Hash2CandidateList;
   CFX_HashFontsMap m_Hash2Fonts;
   CFX_HashFileMap m_Hash2FileAccess;

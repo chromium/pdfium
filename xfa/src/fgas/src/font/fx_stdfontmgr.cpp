@@ -4,6 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/src/fxcrt/extension.h"
 #include "xfa/src/fgas/src/fgas_base.h"
 #include "fx_stdfontmgr.h"
 #include "fx_fontutils.h"
@@ -608,44 +609,52 @@ CFX_FontMgrImp::CFX_FontMgrImp(IFX_FontSourceEnum* pFontEnum,
       m_pDelegate(pDelegate),
       m_pUserData(pUserData) {}
 
-FX_BOOL CFX_FontMgrImp::EnumFonts() {
+FX_BOOL CFX_FontMgrImp::EnumFontsFromFontMapper() {
+  CFX_FontMapper* pFontMapper =
+      CFX_GEModule::Get()->GetFontMgr()->GetBuiltinMapper();
+  if (!pFontMapper)
+    return FALSE;
+  IFX_SystemFontInfo* pSystemFontInfo = pFontMapper->GetSystemFontInfo();
+  if (!pSystemFontInfo)
+    return FALSE;
+  pSystemFontInfo->EnumFontList(pFontMapper);
+  for (int32_t i = 0; i < pFontMapper->GetFaceSize(); ++i) {
+    IFX_FileRead* pFontStream =
+        CreateFontStream(pFontMapper, pSystemFontInfo, i);
+    if (!pFontStream)
+      continue;
+    ReportFaces(pFontStream);
+    pFontStream->Release();
+  }
+  if (m_InstalledFonts.GetSize() == 0)
+    return FALSE;
+  return TRUE;
+}
+FX_BOOL CFX_FontMgrImp::EnumFontsFromFiles() {
   CFX_GEModule::Get()->GetFontMgr()->InitFTLibrary();
-  FXFT_Face pFace = NULL;
+  FXFT_Face pFace = nullptr;
   FX_POSITION pos = m_pFontSource->GetStartPosition();
-  IFX_FileAccess* pFontSource = NULL;
-  IFX_FileRead* pFontStream = NULL;
+  IFX_FileAccess* pFontSource = nullptr;
+  IFX_FileRead* pFontStream = nullptr;
   while (pos) {
     pFontSource = m_pFontSource->GetNext(pos);
     pFontStream = pFontSource->CreateFileStream(FX_FILEMODE_ReadOnly);
-    if (NULL == pFontStream) {
+    if (!pFontStream) {
       pFontSource->Release();
       continue;
     }
-    if (NULL == (pFace = LoadFace(pFontStream, 0))) {
-      pFontStream->Release();
-      pFontSource->Release();
-      continue;
-    }
-    int32_t nFaceCount = pFace->num_faces;
-    ReportFace(pFace, m_InstalledFonts, pFontSource);
-    if (FXFT_Get_Face_External_Stream(pFace)) {
-      FXFT_Clear_Face_External_Stream(pFace);
-    }
-    FXFT_Done_Face(pFace);
-    for (int32_t i = 1; i < nFaceCount; i++) {
-      if (NULL == (pFace = LoadFace(pFontStream, i))) {
-        continue;
-      }
-      ReportFace(pFace, m_InstalledFonts, pFontSource);
-      if (FXFT_Get_Face_External_Stream(pFace)) {
-        FXFT_Clear_Face_External_Stream(pFace);
-      }
-      FXFT_Done_Face(pFace);
-    }
+    ReportFaces(pFontStream);
     pFontStream->Release();
     pFontSource->Release();
   }
+  if (m_InstalledFonts.GetSize() == 0)
+    return FALSE;
   return TRUE;
+}
+FX_BOOL CFX_FontMgrImp::EnumFonts() {
+  if (EnumFontsFromFontMapper())
+    return TRUE;
+  return EnumFontsFromFiles();
 }
 void CFX_FontMgrImp::Release() {
   for (int32_t i = 0; i < m_InstalledFonts.GetSize(); i++) {
@@ -756,7 +765,10 @@ IFX_Font* CFX_FontMgrImp::GetFontByCodePage(FX_WORD wCodePage,
     return NULL;
   }
   CFX_FontDescriptor* pDesc = sortedFonts->GetAt(0).pFont;
-  pFont = LoadFont(pDesc->m_pFileAccess, pDesc->m_nFaceIndex, NULL);
+  if (pDesc->m_pFileAccess)
+    pFont = LoadFont(pDesc->m_pFileAccess, pDesc->m_nFaceIndex, nullptr);
+  else
+    pFont = LoadFont(pDesc->m_wsFaceName, pDesc->m_nFaceIndex, nullptr);
   if (NULL != pFont) {
     pFont->SetLogicalFontStyle(dwFontStyles);
   }
@@ -978,6 +990,39 @@ IFX_Font* CFX_FontMgrImp::LoadFont(IFX_FileAccess* pFontAccess,
   }
   return pFont;
 }
+IFX_Font* CFX_FontMgrImp::LoadFont(const CFX_WideString& wsFaceName,
+                                   int32_t iFaceIndex,
+                                   int32_t* pFaceCount) {
+  CFX_FontMgr* pFontMgr = CFX_GEModule::Get()->GetFontMgr();
+  CFX_FontMapper* pFontMapper = pFontMgr->GetBuiltinMapper();
+  if (!pFontMapper)
+    return nullptr;
+  IFX_SystemFontInfo* pSystemFontInfo = pFontMapper->GetSystemFontInfo();
+  if (!pSystemFontInfo)
+    return nullptr;
+  IFX_FileRead* pFontStream =
+      CreateFontStream(pFontMapper, pSystemFontInfo, iFaceIndex);
+  if (!pFontStream)
+    return nullptr;
+  if (!LoadFace(pFontStream, 0)) {
+    pFontStream->Release();
+    return nullptr;
+  }
+  CFX_Font* pInternalFont = new CFX_Font();
+  if (!pInternalFont->LoadFile(pFontStream, iFaceIndex)) {
+    pFontStream->Release();
+    return nullptr;
+  }
+  IFX_Font* pFont = IFX_Font::LoadFont(pInternalFont, this, FALSE);
+  if (!pFont) {
+    pFontStream->Release();
+    return nullptr;
+  }
+  m_IFXFont2FileRead.SetAt(pFont, pFontStream);
+  if (pFaceCount)
+    *pFaceCount = ((CFX_Font*)pFont->GetDevFont())->GetFace()->num_faces;
+  return pFont;
+}
 extern "C" {
 unsigned long _ftStreamRead(FXFT_Stream stream,
                             unsigned long offset,
@@ -1030,6 +1075,22 @@ FXFT_Face CFX_FontMgrImp::LoadFace(IFX_FileRead* pFontStream,
   FXFT_Set_Pixel_Sizes(pFace, 0, 64);
   return pFace;
 }
+IFX_FileRead* CFX_FontMgrImp::CreateFontStream(
+    CFX_FontMapper* pFontMapper,
+    IFX_SystemFontInfo* pSystemFontInfo,
+    FX_DWORD index) {
+  int iExact = 0;
+  void* hFont = pSystemFontInfo->MapFont(
+      0, 0, FXFONT_DEFAULT_CHARSET, 0, pFontMapper->GetFaceName(index), iExact);
+  if (!hFont)
+    return nullptr;
+  FX_DWORD dwFileSize = pSystemFontInfo->GetFontData(hFont, 0, nullptr, 0);
+  if (dwFileSize == 0)
+    return nullptr;
+  uint8_t* pBuffer = FX_Alloc(uint8_t, dwFileSize + 1);
+  dwFileSize = pSystemFontInfo->GetFontData(hFont, 0, pBuffer, dwFileSize);
+  return new CFX_MemoryStream(pBuffer, dwFileSize, TRUE);
+}
 
 int32_t CFX_FontMgrImp::MatchFonts(CFX_FontDescriptorInfos& MatchedFonts,
                                    FX_WORD wCodePage,
@@ -1038,7 +1099,6 @@ int32_t CFX_FontMgrImp::MatchFonts(CFX_FontDescriptorInfos& MatchedFonts,
                                    FX_WCHAR wcUnicode) {
   MatchedFonts.RemoveAll();
   CFX_WideString wsNormalizedFontName = FontName;
-  NormalizeFontName(wsNormalizedFontName);
   static const int32_t nMax = 0xffff;
   CFX_FontDescriptor* pFont = NULL;
   int32_t nCount = m_InstalledFonts.GetSize();
@@ -1276,12 +1336,27 @@ void CFX_FontMgrImp::ReportFace(FXFT_Face pFace,
   pFont->m_wsFaceName =
       CFX_WideString::FromLocal(FXFT_Get_Postscript_Name(pFace));
   pFont->m_nFaceIndex = pFace->face_index;
-  pFont->m_pFileAccess = pFontAccess->Retain();
-  NormalizeFontName(pFont->m_wsFaceName);
-  for (int32_t i = 0; i < pFont->m_wsFamilyNames.GetSize(); i++) {
-    NormalizeFontName(pFont->m_wsFamilyNames[i]);
-  }
+  if (pFontAccess)
+    pFont->m_pFileAccess = pFontAccess->Retain();
+  else
+    pFont->m_pFileAccess = nullptr;
   Fonts.Add(pFont);
+}
+void CFX_FontMgrImp::ReportFaces(IFX_FileRead* pFontStream) {
+  int32_t index = 0;
+  int32_t num_faces = 0;
+  do {
+    FXFT_Face pFace = LoadFace(pFontStream, index++);
+    if (!pFace)
+      continue;
+    // All faces keep number of faces. It can be retrieved from any one face.
+    if (!num_faces)
+      num_faces = pFace->num_faces;
+    ReportFace(pFace, m_InstalledFonts, nullptr);
+    if (FXFT_Get_Face_External_Stream(pFace))
+      FXFT_Clear_Face_External_Stream(pFace);
+    FXFT_Done_Face(pFace);
+  } while (index < num_faces);
 }
 FX_DWORD CFX_FontMgrImp::GetFlags(FXFT_Face pFace) {
   FX_DWORD flag = 0;
@@ -1446,11 +1521,6 @@ void CFX_FontMgrImp::GetUSBCSB(FXFT_Face pFace, FX_DWORD* USB, FX_DWORD* CSB) {
     CSB[0] = 0;
     CSB[1] = 0;
   }
-}
-void CFX_FontMgrImp::NormalizeFontName(CFX_WideString& FontName) {
-  FontName.MakeLower();
-  FontName.Remove(' ');
-  FontName.Remove('-');
 }
 int32_t CFX_FontMgrImp::IsPartName(const CFX_WideString& Name1,
                                    const CFX_WideString& Name2) {

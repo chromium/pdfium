@@ -325,6 +325,8 @@ class CFX_FontMapper {
                                    int italic_angle);
 #endif  // PDF_ENABLE_XFA
   FX_BOOL IsBuiltinFace(const FXFT_Face face) const;
+  int GetFaceSize() const { return m_FaceArray.GetSize(); }
+  CFX_ByteString GetFaceName(int index) const { return m_FaceArray[index]; }
 
  private:
   static const size_t MM_FACE_COUNT = 2;
