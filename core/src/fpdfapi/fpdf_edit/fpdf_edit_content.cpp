@@ -14,7 +14,7 @@ CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& ar, CFX_Matrix& matrix) {
      << matrix.e << " " << matrix.f;
   return ar;
 }
-CPDF_PageContentGenerate::CPDF_PageContentGenerate(CPDF_Page* pPage)
+CPDF_PageContentGenerator::CPDF_PageContentGenerator(CPDF_Page* pPage)
     : m_pPage(pPage) {
   m_pDocument = NULL;
   if (m_pPage) {
@@ -25,15 +25,15 @@ CPDF_PageContentGenerate::CPDF_PageContentGenerate(CPDF_Page* pPage)
     InsertPageObject(pPage->GetNextObject(pos));
   }
 }
-CPDF_PageContentGenerate::~CPDF_PageContentGenerate() {}
-FX_BOOL CPDF_PageContentGenerate::InsertPageObject(
+CPDF_PageContentGenerator::~CPDF_PageContentGenerator() {}
+FX_BOOL CPDF_PageContentGenerator::InsertPageObject(
     CPDF_PageObject* pPageObject) {
   if (!pPageObject) {
     return FALSE;
   }
   return m_pageObjects.Add(pPageObject);
 }
-void CPDF_PageContentGenerate::GenerateContent() {
+void CPDF_PageContentGenerator::GenerateContent() {
   CFX_ByteTextBuf buf;
   CPDF_Dictionary* pPageDict = m_pPage->m_pFormDict;
   for (int i = 0; i < m_pageObjects.GetSize(); ++i) {
@@ -53,7 +53,7 @@ void CPDF_PageContentGenerate::GenerateContent() {
   m_pDocument->AddIndirectObject(pStream);
   pPageDict->SetAtReference("Contents", m_pDocument, pStream->GetObjNum());
 }
-CFX_ByteString CPDF_PageContentGenerate::RealizeResource(
+CFX_ByteString CPDF_PageContentGenerator::RealizeResource(
     CPDF_Object* pResourceObj,
     const FX_CHAR* szType) {
   if (!m_pPage->m_pResources) {
@@ -79,8 +79,8 @@ CFX_ByteString CPDF_PageContentGenerate::RealizeResource(
   pResList->AddReference(name, m_pDocument, pResourceObj->GetObjNum());
   return name;
 }
-void CPDF_PageContentGenerate::ProcessImage(CFX_ByteTextBuf& buf,
-                                            CPDF_ImageObject* pImageObj) {
+void CPDF_PageContentGenerator::ProcessImage(CFX_ByteTextBuf& buf,
+                                             CPDF_ImageObject* pImageObj) {
   if ((pImageObj->m_Matrix.a == 0 && pImageObj->m_Matrix.b == 0) ||
       (pImageObj->m_Matrix.c == 0 && pImageObj->m_Matrix.d == 0)) {
     return;
@@ -98,10 +98,10 @@ void CPDF_PageContentGenerate::ProcessImage(CFX_ByteTextBuf& buf,
     buf << "/" << PDF_NameEncode(name) << " Do Q\n";
   }
 }
-void CPDF_PageContentGenerate::ProcessForm(CFX_ByteTextBuf& buf,
-                                           const uint8_t* data,
-                                           FX_DWORD size,
-                                           CFX_Matrix& matrix) {
+void CPDF_PageContentGenerator::ProcessForm(CFX_ByteTextBuf& buf,
+                                            const uint8_t* data,
+                                            FX_DWORD size,
+                                            CFX_Matrix& matrix) {
   if (!data || !size) {
     return;
   }
@@ -117,7 +117,7 @@ void CPDF_PageContentGenerate::ProcessForm(CFX_ByteTextBuf& buf,
   CFX_ByteString name = RealizeResource(pStream, "XObject");
   buf << "/" << PDF_NameEncode(name) << " Do Q\n";
 }
-void CPDF_PageContentGenerate::TransformContent(CFX_Matrix& matrix) {
+void CPDF_PageContentGenerator::TransformContent(CFX_Matrix& matrix) {
   CPDF_Dictionary* pDict = m_pPage->m_pFormDict;
   CPDF_Object* pContent = pDict ? pDict->GetElementValue("Contents") : NULL;
   if (!pContent)
