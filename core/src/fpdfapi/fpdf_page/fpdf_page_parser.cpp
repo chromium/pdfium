@@ -738,8 +738,8 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
     CPDF_ImageObject* pObj = AddImage(pXObject, NULL, FALSE);
     m_LastImageName = name;
     m_pLastImage = pObj->m_pImage;
-    if (!m_pObjectList->m_bHasImageMask)
-      m_pObjectList->m_bHasImageMask = m_pLastImage->IsMask();
+    if (!m_pObjectList->HasImageMask())
+      m_pObjectList->SetHasImageMask(m_pLastImage->IsMask());
   } else if (type == "Form") {
     AddForm(pXObject);
   } else {
@@ -791,13 +791,13 @@ void CPDF_StreamContentParser::AddForm(CPDF_Stream* pStream) {
   status.m_ColorState = m_pCurStates->m_ColorState;
   status.m_TextState = m_pCurStates->m_TextState;
   pFormObj->m_pForm->ParseContent(&status, NULL, NULL, &m_Options, m_Level + 1);
-  if (!m_pObjectList->m_bBackgroundAlphaNeeded &&
-      pFormObj->m_pForm->m_bBackgroundAlphaNeeded) {
-    m_pObjectList->m_bBackgroundAlphaNeeded = TRUE;
+  if (!m_pObjectList->BackgroundAlphaNeeded() &&
+      pFormObj->m_pForm->BackgroundAlphaNeeded()) {
+    m_pObjectList->SetBackgroundAlphaNeeded(TRUE);
   }
   pFormObj->CalcBoundingBox();
   SetGraphicStates(pFormObj, TRUE, TRUE, TRUE);
-  m_pObjectList->m_ObjectList.AddTail(pFormObj);
+  m_pObjectList->AddTail(pFormObj);
 }
 
 CPDF_ImageObject* CPDF_StreamContentParser::AddImage(CPDF_Stream* pStream,
@@ -822,7 +822,7 @@ CPDF_ImageObject* CPDF_StreamContentParser::AddImage(CPDF_Stream* pStream,
   SetGraphicStates(pImageObj, pImageObj->m_pImage->IsMask(), FALSE, FALSE);
   pImageObj->m_Matrix = ImageMatrix;
   pImageObj->CalcBoundingBox();
-  m_pObjectList->m_ObjectList.AddTail(pImageObj);
+  m_pObjectList->AddTail(pImageObj);
   return pImageObj;
 }
 
@@ -1211,7 +1211,7 @@ void CPDF_StreamContentParser::Handle_ShadeFill() {
   pObj->m_Right = bbox.right;
   pObj->m_Top = bbox.top;
   pObj->m_Bottom = bbox.bottom;
-  m_pObjectList->m_ObjectList.AddTail(pObj);
+  m_pObjectList->AddTail(pObj);
 }
 
 void CPDF_StreamContentParser::Handle_SetCharSpace() {
@@ -1389,7 +1389,7 @@ void CPDF_StreamContentParser::AddTextObject(CFX_ByteString* pStrs,
     pCopy->Copy(pText);
     m_ClipTextList.Add(pCopy);
   }
-  m_pObjectList->m_ObjectList.AddTail(pText);
+  m_pObjectList->AddTail(pText);
   if (pKerning && pKerning[nsegs - 1] != 0) {
     if (!pFont->IsVertWriting()) {
       m_pCurStates->m_TextX -=
@@ -1624,7 +1624,7 @@ void CPDF_StreamContentParser::AddPathObject(int FillType, FX_BOOL bStroke) {
     pPathObj->m_Matrix = matrix;
     SetGraphicStates(pPathObj, TRUE, FALSE, TRUE);
     pPathObj->CalcBoundingBox();
-    m_pObjectList->m_ObjectList.AddTail(pPathObj);
+    m_pObjectList->AddTail(pPathObj);
   }
   if (PathClipType) {
     if (!matrix.IsIdentity()) {

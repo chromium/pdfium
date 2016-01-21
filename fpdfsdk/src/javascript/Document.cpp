@@ -1378,8 +1378,7 @@ FX_BOOL Document::getPageNthWord(IJS_Context* cc,
 
   CPDF_Page page;
   page.Load(pDocument, pPageDict);
-  page.StartParse();
-  page.ParseContent();
+  page.ParseContent(nullptr);
 
   FX_POSITION pos = page.GetFirstObjectPosition();
 
@@ -1429,7 +1428,6 @@ FX_BOOL Document::getPageNumWords(IJS_Context* cc,
     return FALSE;
 
   int nPageNo = params.size() > 0 ? params[0].ToInt() : 0;
-
   CPDF_Document* pDocument = m_pDocument->GetPDFDocument();
   CJS_Context* pContext = static_cast<CJS_Context*>(cc);
   if (nPageNo < 0 || nPageNo >= pDocument->GetPageCount()) {
@@ -1443,13 +1441,10 @@ FX_BOOL Document::getPageNumWords(IJS_Context* cc,
 
   CPDF_Page page;
   page.Load(pDocument, pPageDict);
-  page.StartParse();
-  page.ParseContent();
-
-  FX_POSITION pos = page.GetFirstObjectPosition();
+  page.ParseContent(nullptr);
 
   int nWords = 0;
-
+  FX_POSITION pos = page.GetFirstObjectPosition();
   while (pos) {
     if (CPDF_PageObject* pPageObj = page.GetNextObject(pos)) {
       if (pPageObj->m_Type == PDFPAGE_TEXT) {
@@ -1460,7 +1455,6 @@ FX_BOOL Document::getPageNumWords(IJS_Context* cc,
   }
 
   vRet = nWords;
-
   return TRUE;
 }
 

@@ -841,10 +841,10 @@ void CPDF_ContentParser::Continue(IFX_Pause* pPause) {
         m_pType3Char->m_BBox.top =
             FXSYS_round(m_pParser->GetType3Data()[5] * 1000);
       }
-      FX_POSITION pos = m_pObjects->m_ObjectList.GetHeadPosition();
+      FX_POSITION pos = m_pObjects->GetFirstObjectPosition();
       while (pos) {
         CPDF_PageObject* pObj =
-            (CPDF_PageObject*)m_pObjects->m_ObjectList.GetNext(pos);
+            (CPDF_PageObject*)m_pObjects->GetNextObject(pos);
         if (pObj->m_ClipPath.IsNull()) {
           continue;
         }

@@ -80,8 +80,7 @@ DLLEXPORT FPDF_PAGE STDCALL FPDFPage_New(FPDF_DOCUMENT document,
 
   CPDF_Page* pPage = new CPDF_Page;
   pPage->Load(pDoc, pPageDict);
-  pPage->ParseContent();
-
+  pPage->ParseContent(nullptr);
   return pPage;
 }
 

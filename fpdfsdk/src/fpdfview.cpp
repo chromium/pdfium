@@ -297,7 +297,7 @@ DLLEXPORT FPDF_PAGE STDCALL FPDF_LoadPage(FPDF_DOCUMENT document,
     return NULL;
   CPDF_Page* pPage = new CPDF_Page;
   pPage->Load(pDoc, pDict);
-  pPage->ParseContent();
+  pPage->ParseContent(nullptr);
   return pPage;
 }
 

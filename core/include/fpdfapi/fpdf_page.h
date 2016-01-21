@@ -7,11 +7,12 @@
 #ifndef CORE_INCLUDE_FPDFAPI_FPDF_PAGE_H_
 #define CORE_INCLUDE_FPDFAPI_FPDF_PAGE_H_
 
-#include "core/include/fxge/fx_dib.h"
-#include "fpdf_parser.h"
-#include "fpdf_resource.h"
+#include <memory>
 
-class CPDF_PageObjects;
+#include "core/include/fpdfapi/fpdf_parser.h"
+#include "core/include/fpdfapi/fpdf_resource.h"
+#include "core/include/fxge/fx_dib.h"
+
 class CPDF_Page;
 class CPDF_Form;
 class CPDF_ParseOptions;
@@ -27,7 +28,7 @@ class CPDF_StreamContentParser;
 
 class CPDF_PageObjects {
  public:
-  CPDF_PageObjects(FX_BOOL bReleaseMembers = TRUE);
+  CPDF_PageObjects();
   ~CPDF_PageObjects();
 
   void ContinueParse(IFX_Pause* pPause);
@@ -54,6 +55,7 @@ class CPDF_PageObjects {
     return (CPDF_PageObject*)m_ObjectList.GetAt(pos);
   }
 
+  void AddTail(CPDF_PageObject* obj) { m_ObjectList.AddTail(obj); }
   FX_DWORD CountObjects() const { return m_ObjectList.GetCount(); }
 
   int GetObjectIndex(CPDF_PageObject* pObj) const;
@@ -66,9 +68,12 @@ class CPDF_PageObjects {
   void Transform(const CFX_Matrix& matrix);
 
   FX_BOOL BackgroundAlphaNeeded() const { return m_bBackgroundAlphaNeeded; }
+  void SetBackgroundAlphaNeeded(FX_BOOL needed) {
+    m_bBackgroundAlphaNeeded = needed;
+  }
 
   FX_BOOL HasImageMask() const { return m_bHasImageMask; }
-
+  void SetHasImageMask(FX_BOOL value) { m_bHasImageMask = value; }
   CFX_FloatRect CalcBoundingBox() const;
 
   CPDF_Dictionary* m_pFormDict;
@@ -80,21 +85,15 @@ class CPDF_PageObjects {
   int m_Transparency;
 
  protected:
-  friend class CPDF_ContentParser;
-  friend class CPDF_StreamContentParser;
-  friend class CPDF_AllStates;
-
   enum ParseState { CONTENT_NOT_PARSED, CONTENT_PARSING, CONTENT_PARSED };
 
   void LoadTransInfo();
-  void ClearCacheObjects();
 
-  CFX_PtrList m_ObjectList;
   FX_BOOL m_bBackgroundAlphaNeeded;
   FX_BOOL m_bHasImageMask;
-  FX_BOOL m_bReleaseMembers;
-  CPDF_ContentParser* m_pParser;
   ParseState m_ParseState;
+  std::unique_ptr<CPDF_ContentParser> m_pParser;
+  CFX_PtrList m_ObjectList;
 };
 
 class CPDF_Page : public CPDF_PageObjects, public CFX_PrivateData {
@@ -106,9 +105,7 @@ class CPDF_Page : public CPDF_PageObjects, public CFX_PrivateData {
             CPDF_Dictionary* pPageDict,
             FX_BOOL bPageCache = TRUE);
 
-  void StartParse(CPDF_ParseOptions* pOptions = NULL, FX_BOOL bReParse = FALSE);
-  void ParseContent(CPDF_ParseOptions* pOptions = NULL,
-                    FX_BOOL bReParse = FALSE);
+  void ParseContent(CPDF_ParseOptions* pOptions);
 
   void GetDisplayMatrix(CFX_Matrix& matrix,
                         int xPos,
@@ -126,6 +123,8 @@ class CPDF_Page : public CPDF_PageObjects, public CFX_PrivateData {
 
  protected:
   friend class CPDF_ContentParser;
+  void StartParse(CPDF_ParseOptions* pOptions);
+
   FX_FLOAT m_PageWidth;
   FX_FLOAT m_PageHeight;
   CFX_Matrix m_PageMatrix;
