@@ -166,15 +166,15 @@ class CPDF_Form : public CPDF_PageObjects {
 
   CPDF_Form* Clone() const;
 };
-class CPDF_PageContentGenerate {
+class CPDF_PageContentGenerator {
  public:
-  CPDF_PageContentGenerate(CPDF_Page* pPage);
-  ~CPDF_PageContentGenerate();
+  CPDF_PageContentGenerator(CPDF_Page* pPage);
+  ~CPDF_PageContentGenerator();
   FX_BOOL InsertPageObject(CPDF_PageObject* pPageObject);
   void GenerateContent();
   void TransformContent(CFX_Matrix& matrix);
 
- protected:
+ private:
   void ProcessImage(CFX_ByteTextBuf& buf, CPDF_ImageObject* pImageObj);
   void ProcessForm(CFX_ByteTextBuf& buf,
                    const uint8_t* data,
@@ -183,7 +183,6 @@ class CPDF_PageContentGenerate {
   CFX_ByteString RealizeResource(CPDF_Object* pResourceObj,
                                  const FX_CHAR* szType);
 
- private:
   CPDF_Page* m_pPage;
   CPDF_Document* m_pDocument;
   CFX_ArrayTemplate<CPDF_PageObject*> m_pageObjects;

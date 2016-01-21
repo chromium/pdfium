@@ -230,7 +230,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GenerateContent(FPDF_PAGE page) {
           "Page")) {
     return FALSE;
   }
-  CPDF_PageContentGenerate CG(pPage);
+  CPDF_PageContentGenerator CG(pPage);
   CG.GenerateContent();
 
   return TRUE;
