@@ -666,24 +666,18 @@ void CPDF_FormObject::CalcBoundingBox() {
   m_Right = form_rect.right;
   m_Top = form_rect.top;
 }
-CPDF_PageObjects::CPDF_PageObjects(FX_BOOL bReleaseMembers)
+CPDF_PageObjects::CPDF_PageObjects()
     : m_pFormDict(nullptr),
       m_pFormStream(nullptr),
       m_pDocument(nullptr),
       m_pPageResources(nullptr),
       m_pResources(nullptr),
       m_Transparency(0),
-      m_ObjectList(128),
       m_bBackgroundAlphaNeeded(FALSE),
       m_bHasImageMask(FALSE),
-      m_bReleaseMembers(bReleaseMembers),
-      m_pParser(nullptr),
-      m_ParseState(CONTENT_NOT_PARSED) {}
+      m_ParseState(CONTENT_NOT_PARSED),
+      m_ObjectList(128) {}
 CPDF_PageObjects::~CPDF_PageObjects() {
-  delete m_pParser;
-  if (!m_bReleaseMembers) {
-    return;
-  }
   FX_POSITION pos = m_ObjectList.GetHeadPosition();
   while (pos) {
     delete (CPDF_PageObject*)m_ObjectList.GetNext(pos);
@@ -696,8 +690,7 @@ void CPDF_PageObjects::ContinueParse(IFX_Pause* pPause) {
   m_pParser->Continue(pPause);
   if (m_pParser->GetStatus() == CPDF_ContentParser::Done) {
     m_ParseState = CONTENT_PARSED;
-    delete m_pParser;
-    m_pParser = NULL;
+    m_pParser.reset();
   }
 }
 FX_POSITION CPDF_PageObjects::InsertObject(FX_POSITION posInsertAfter,
@@ -774,21 +767,9 @@ void CPDF_PageObjects::LoadTransInfo() {
     m_Transparency |= PDFTRANS_KNOCKOUT;
   }
 }
-void CPDF_PageObjects::ClearCacheObjects() {
-  m_ParseState = CONTENT_NOT_PARSED;
-  delete m_pParser;
-  m_pParser = NULL;
-  if (m_bReleaseMembers) {
-    FX_POSITION pos = m_ObjectList.GetHeadPosition();
-    while (pos) {
-      delete (CPDF_PageObject*)m_ObjectList.GetNext(pos);
-    }
-  }
-  m_ObjectList.RemoveAll();
-}
-CPDF_Page::CPDF_Page() {
-  m_pPageRender = NULL;
-}
+
+CPDF_Page::CPDF_Page() : m_pPageRender(nullptr) {}
+
 void CPDF_Page::Load(CPDF_Document* pDocument,
                      CPDF_Dictionary* pPageDict,
                      FX_BOOL bPageCache) {
@@ -858,20 +839,17 @@ void CPDF_Page::Load(CPDF_Document* pDocument,
   m_Transparency = PDFTRANS_ISOLATED;
   LoadTransInfo();
 }
-void CPDF_Page::StartParse(CPDF_ParseOptions* pOptions, FX_BOOL bReParse) {
-  if (bReParse) {
-    ClearCacheObjects();
-  }
+void CPDF_Page::StartParse(CPDF_ParseOptions* pOptions) {
   if (m_ParseState == CONTENT_PARSED || m_ParseState == CONTENT_PARSING) {
     return;
   }
-  m_pParser = new CPDF_ContentParser;
+  m_pParser.reset(new CPDF_ContentParser);
   m_pParser->Start(this, pOptions);
   m_ParseState = CONTENT_PARSING;
 }
-void CPDF_Page::ParseContent(CPDF_ParseOptions* pOptions, FX_BOOL bReParse) {
-  StartParse(pOptions, bReParse);
-  ContinueParse(NULL);
+void CPDF_Page::ParseContent(CPDF_ParseOptions* pOptions) {
+  StartParse(pOptions);
+  ContinueParse(nullptr);
 }
 CPDF_Page::~CPDF_Page() {
   if (m_pPageRender) {
@@ -928,7 +906,7 @@ void CPDF_Form::StartParse(CPDF_AllStates* pGraphicStates,
   if (m_ParseState == CONTENT_PARSED || m_ParseState == CONTENT_PARSING) {
     return;
   }
-  m_pParser = new CPDF_ContentParser;
+  m_pParser.reset(new CPDF_ContentParser);
   m_pParser->Start(this, pGraphicStates, pParentMatrix, pType3Char, pOptions,
                    level);
   m_ParseState = CONTENT_PARSING;

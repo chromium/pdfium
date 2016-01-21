@@ -520,7 +520,7 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
 
         pGeneralState->SetBlendMode(mode);
         if (pGeneralState->m_BlendType > FXDIB_BLEND_MULTIPLY) {
-          pParser->GetObjectList()->m_bBackgroundAlphaNeeded = TRUE;
+          pParser->GetObjectList()->SetBackgroundAlphaNeeded(TRUE);
         }
         break;
       }
