@@ -739,7 +739,7 @@ void FPDF_RenderPage_Retail(CRenderContext* pContext,
   pContext->m_pDevice->SetClip_Rect(&clip);
 
   pContext->m_pContext = new CPDF_RenderContext(pPage);
-  pContext->m_pContext->AppendObjectList(pPage, &matrix);
+  pContext->m_pContext->AppendLayer(pPage, &matrix);
 
   if (flags & FPDF_ANNOT) {
     pContext->m_pAnnots = new CPDF_AnnotList(pPage);

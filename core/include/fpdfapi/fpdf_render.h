@@ -20,8 +20,6 @@ class CPDF_FormObject;
 class CPDF_ImageCacheEntry;
 class CPDF_ImageObject;
 class CPDF_PathObject;
-class CPDF_RenderContext;
-class CPDF_RenderOptions;
 class CPDF_RenderStatus;
 class CPDF_ShadingObject;
 class CPDF_TextObject;
@@ -55,69 +53,65 @@ class IPDF_OCContext {
 #define RENDER_NOPATHSMOOTH 0x20000000
 #define RENDER_NOIMAGESMOOTH 0x40000000
 #define RENDER_LIMITEDIMAGECACHE 0x80000000
+
 class CPDF_RenderOptions {
  public:
   CPDF_RenderOptions();
+  FX_ARGB TranslateColor(FX_ARGB argb) const;
 
   int m_ColorMode;
-
   FX_COLORREF m_BackColor;
-
   FX_COLORREF m_ForeColor;
-
   FX_DWORD m_Flags;
-
   int m_Interpolation;
-
   FX_DWORD m_AddFlags;
-
   IPDF_OCContext* m_pOCContext;
-
   FX_DWORD m_dwLimitCacheSize;
-
   int m_HalftoneLimit;
-
-  FX_ARGB TranslateColor(FX_ARGB argb) const;
 };
+
 class CPDF_RenderContext {
  public:
+  class Layer {
+   public:
+    CPDF_PageObjectList* m_pObjectList;
+    CFX_Matrix m_Matrix;
+  };
+
   explicit CPDF_RenderContext(CPDF_Page* pPage);
   CPDF_RenderContext(CPDF_Document* pDoc, CPDF_PageRenderCache* pPageCache);
   ~CPDF_RenderContext();
 
-  void AppendObjectList(CPDF_PageObjectList* pObjs,
-                        const CFX_Matrix* pObject2Device);
+  void AppendLayer(CPDF_PageObjectList* pObjectList,
+                   const CFX_Matrix* pObject2Device);
 
   void Render(CFX_RenderDevice* pDevice,
-              const CPDF_RenderOptions* pOptions = NULL,
-              const CFX_Matrix* pFinalMatrix = NULL);
+              const CPDF_RenderOptions* pOptions,
+              const CFX_Matrix* pFinalMatrix);
 
-  void DrawObjectList(CFX_RenderDevice* pDevice,
-                      CPDF_PageObjectList* pObjs,
-                      const CFX_Matrix* pObject2Device,
-                      const CPDF_RenderOptions* pOptions);
+  void Render(CFX_RenderDevice* pDevice,
+              const CPDF_PageObject* pStopObj,
+              const CPDF_RenderOptions* pOptions,
+              const CFX_Matrix* pFinalMatrix);
 
   void GetBackground(CFX_DIBitmap* pBuffer,
                      const CPDF_PageObject* pObj,
                      const CPDF_RenderOptions* pOptions,
                      CFX_Matrix* pFinalMatrix);
 
+  FX_DWORD CountLayers() const { return m_Layers.GetSize(); }
+  Layer* GetLayer(FX_DWORD index) { return m_Layers.GetDataPtr(index); }
+
+  CPDF_Document* GetDocument() const { return m_pDocument; }
+  CPDF_Dictionary* GetPageResources() const { return m_pPageResources; }
   CPDF_PageRenderCache* GetPageCache() const { return m_pPageCache; }
 
  protected:
-  void Render(CFX_RenderDevice* pDevice,
-              const CPDF_PageObject* pStopObj,
-              const CPDF_RenderOptions* pOptions,
-              const CFX_Matrix* pFinalMatrix);
-
   CPDF_Document* const m_pDocument;
   CPDF_Dictionary* m_pPageResources;
   CPDF_PageRenderCache* m_pPageCache;
-  CFX_ArrayTemplate<struct _PDF_RenderItem> m_ContentList;
   FX_BOOL m_bFirstLayer;
-
-  friend class CPDF_RenderStatus;
-  friend class CPDF_ProgressiveRenderer;
+  CFX_ArrayTemplate<Layer> m_Layers;
 };
 
 class CPDF_ProgressiveRenderer {

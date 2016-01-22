@@ -170,7 +170,8 @@ void CPDF_FormControl::DrawControl(CFX_RenderDevice* pDevice,
                  m_pField->m_pForm->m_pFormDict->GetDict("DR"), pStream);
   form.ParseContent(NULL, NULL, NULL, NULL);
   CPDF_RenderContext context(pPage);
-  context.DrawObjectList(pDevice, &form, &matrix, pOptions);
+  context.AppendLayer(&form, &matrix);
+  context.Render(pDevice, pOptions, nullptr);
 }
 static const FX_CHAR* const g_sHighlightingMode[] = {
     // Must match order of HiglightingMode enum.
