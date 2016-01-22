@@ -114,7 +114,7 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
     CPDF_Dictionary* pPageResources,
     CPDF_Dictionary* pParentResources,
     CFX_Matrix* pmtContentToUser,
-    CPDF_PageObjects* pObjList,
+    CPDF_PageObjectList* pObjList,
     CPDF_Dictionary* pResources,
     CPDF_Rect* pBBox,
     CPDF_ParseOptions* pOptions,

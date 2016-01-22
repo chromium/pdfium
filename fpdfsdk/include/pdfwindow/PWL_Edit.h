@@ -110,10 +110,10 @@ class CPWL_Edit : public CPWL_EditCtrl, public IFX_Edit_OprNotify {
     m_pFillerNotify = pNotify;
   }
 
-  void GeneratePageObjects(CPDF_PageObjects* pPageObjects,
+  void GeneratePageObjects(CPDF_PageObjectList* pPageObjects,
                            const CPDF_Point& ptOffset,
                            CFX_ArrayTemplate<CPDF_TextObject*>& ObjArray);
-  void GeneratePageObjects(CPDF_PageObjects* pPageObjects,
+  void GeneratePageObjects(CPDF_PageObjectList* pPageObjects,
                            const CPDF_Point& ptOffset);
 
  protected:

@@ -85,7 +85,7 @@ class CPDF_RenderContext {
   CPDF_RenderContext(CPDF_Document* pDoc, CPDF_PageRenderCache* pPageCache);
   ~CPDF_RenderContext();
 
-  void AppendObjectList(CPDF_PageObjects* pObjs,
+  void AppendObjectList(CPDF_PageObjectList* pObjs,
                         const CFX_Matrix* pObject2Device);
 
   void Render(CFX_RenderDevice* pDevice,
@@ -93,7 +93,7 @@ class CPDF_RenderContext {
               const CFX_Matrix* pFinalMatrix = NULL);
 
   void DrawObjectList(CFX_RenderDevice* pDevice,
-                      CPDF_PageObjects* pObjs,
+                      CPDF_PageObjectList* pObjs,
                       const CFX_Matrix* pObject2Device,
                       const CPDF_RenderOptions* pOptions);
 

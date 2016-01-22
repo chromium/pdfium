@@ -240,7 +240,7 @@ FX_BOOL CPDF_RenderStatus::Initialize(CPDF_RenderContext* pContext,
   m_Transparency = transparency;
   return TRUE;
 }
-void CPDF_RenderStatus::RenderObjectList(const CPDF_PageObjects* pObjs,
+void CPDF_RenderStatus::RenderObjectList(const CPDF_PageObjectList* pObjs,
                                          const CFX_Matrix* pObj2Device) {
   CFX_FloatRect clip_rect = m_pDevice->GetClipBox();
   CFX_Matrix device2object;
@@ -968,7 +968,7 @@ CPDF_RenderContext::CPDF_RenderContext(CPDF_Document* pDoc,
       m_pPageCache(pPageCache),
       m_bFirstLayer(TRUE) {}
 CPDF_RenderContext::~CPDF_RenderContext() {}
-void CPDF_RenderContext::AppendObjectList(CPDF_PageObjects* pObjs,
+void CPDF_RenderContext::AppendObjectList(CPDF_PageObjectList* pObjs,
                                           const CFX_Matrix* pObject2Device) {
   _PDF_RenderItem* pItem = m_ContentList.AddSpace();
   pItem->m_pObjectList = pObjs;
@@ -1023,7 +1023,7 @@ void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
   }
 }
 void CPDF_RenderContext::DrawObjectList(CFX_RenderDevice* pDevice,
-                                        CPDF_PageObjects* pObjs,
+                                        CPDF_PageObjectList* pObjs,
                                         const CFX_Matrix* pObject2Device,
                                         const CPDF_RenderOptions* pOptions) {
   AppendObjectList(pObjs, pObject2Device);

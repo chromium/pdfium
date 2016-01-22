@@ -26,10 +26,10 @@ class CPDF_StreamContentParser;
 #define PDFTRANS_ISOLATED 0x0200
 #define PDFTRANS_KNOCKOUT 0x0400
 
-class CPDF_PageObjects {
+class CPDF_PageObjectList {
  public:
-  CPDF_PageObjects();
-  ~CPDF_PageObjects();
+  CPDF_PageObjectList();
+  ~CPDF_PageObjectList();
 
   void ContinueParse(IFX_Pause* pPause);
 
@@ -96,7 +96,7 @@ class CPDF_PageObjects {
   CFX_PtrList m_ObjectList;
 };
 
-class CPDF_Page : public CPDF_PageObjects, public CFX_PrivateData {
+class CPDF_Page : public CPDF_PageObjectList, public CFX_PrivateData {
  public:
   CPDF_Page();
   ~CPDF_Page();
@@ -142,7 +142,7 @@ class CPDF_ParseOptions {
 
   FX_BOOL m_bDecodeInlineImage;
 };
-class CPDF_Form : public CPDF_PageObjects {
+class CPDF_Form : public CPDF_PageObjectList {
  public:
   CPDF_Form(CPDF_Document* pDocument,
             CPDF_Dictionary* pPageResources,

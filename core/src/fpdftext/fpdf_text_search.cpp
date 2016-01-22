@@ -296,7 +296,7 @@ FX_BOOL CPDF_TextStream::ProcessObject(const CPDF_TextObject* pObj,
   return FALSE;
 }
 void GetTextStream_Unicode(CFX_WideTextBuf& buffer,
-                           CPDF_PageObjects* pPage,
+                           CPDF_PageObjectList* pPage,
                            FX_BOOL bUseLF,
                            CFX_PtrArray* pObjArray) {
   CPDF_TextStream textstream(buffer, bUseLF, pObjArray);
