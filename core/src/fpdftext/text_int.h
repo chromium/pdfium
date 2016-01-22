@@ -54,9 +54,8 @@ class CPDF_TextPage : public IPDF_TextPage {
   CPDF_TextPage(const CPDF_Page* pPage, int flags);
   ~CPDF_TextPage() override {}
 
-  // IPDF_TextPage
+  // IPDF_TextPage:
   FX_BOOL ParseTextPage() override;
-  void NormalizeObjects(FX_BOOL bNormalize) override;
   bool IsParsed() const override { return m_bIsParsed; }
   int CharIndexFromTextIndex(int TextIndex) const override;
   int TextIndexFromCharIndex(int CharIndex) const override;
@@ -130,7 +129,6 @@ class CPDF_TextPage : public IPDF_TextPage {
                         const CPDF_Font* pFont,
                         int nItems) const;
 
-  CPDFText_ParseOptions m_ParseOptions;
   CFX_WordArray m_CharIndex;
   const CPDF_PageObjectList* const m_pPage;
   PAGECHAR_InfoArray m_charList;
