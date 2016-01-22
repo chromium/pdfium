@@ -989,8 +989,8 @@ static CFX_DIBitmap* DrawPatternBitmap(CPDF_Document* pDoc,
   flags |= RENDER_FORCE_HALFTONE;
   options.m_Flags = flags;
   CPDF_RenderContext context(pDoc, pCache);
-  context.DrawObjectList(&bitmap_device, pPattern->m_pForm, &mtPattern2Bitmap,
-                         &options);
+  context.AppendLayer(pPattern->m_pForm, &mtPattern2Bitmap);
+  context.Render(&bitmap_device, &options, nullptr);
   return pBitmap;
 }
 void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
@@ -1111,13 +1111,13 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
   CFX_DIBitmap* pPatternBitmap = NULL;
   if (width * height < 16) {
     CFX_DIBitmap* pEnlargedBitmap =
-        DrawPatternBitmap(m_pContext->m_pDocument, m_pContext->m_pPageCache,
+        DrawPatternBitmap(m_pContext->GetDocument(), m_pContext->GetPageCache(),
                           pPattern, pObj2Device, 8, 8, m_Options.m_Flags);
     pPatternBitmap = pEnlargedBitmap->StretchTo(width, height);
     delete pEnlargedBitmap;
   } else {
     pPatternBitmap = DrawPatternBitmap(
-        m_pContext->m_pDocument, m_pContext->m_pPageCache, pPattern,
+        m_pContext->GetDocument(), m_pContext->GetPageCache(), pPattern,
         pObj2Device, width, height, m_Options.m_Flags);
   }
   if (!pPatternBitmap) {

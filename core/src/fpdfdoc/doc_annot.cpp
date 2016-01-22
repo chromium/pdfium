@@ -227,7 +227,8 @@ FX_BOOL CPDF_Annot::DrawAppearance(CPDF_Page* pPage,
     return FALSE;
   }
   CPDF_RenderContext context(pPage);
-  context.DrawObjectList(pDevice, pForm, &matrix, pOptions);
+  context.AppendLayer(pForm, &matrix);
+  context.Render(pDevice, pOptions, nullptr);
   return TRUE;
 }
 FX_BOOL CPDF_Annot::DrawInContext(const CPDF_Page* pPage,
@@ -240,7 +241,7 @@ FX_BOOL CPDF_Annot::DrawInContext(const CPDF_Page* pPage,
   if (!pForm) {
     return FALSE;
   }
-  pContext->AppendObjectList(pForm, &matrix);
+  pContext->AppendLayer(pForm, &matrix);
   return TRUE;
 }
 void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,

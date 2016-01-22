@@ -91,13 +91,6 @@ class CPDF_DocRenderData {
   CPDF_Type3CacheMap m_Type3FaceMap;
   CPDF_TransferFuncMap m_TransferFuncMap;
 };
-struct _PDF_RenderItem {
- public:
-  CPDF_PageObjectList* m_pObjectList;
-  CFX_Matrix m_Matrix;
-};
-
-typedef CFX_ArrayTemplate<_PDF_RenderItem> CPDF_RenderLayer;
 
 class IPDF_ObjectRenderer {
  public:

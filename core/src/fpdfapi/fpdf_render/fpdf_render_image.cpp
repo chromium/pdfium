@@ -883,7 +883,8 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
 
   CFX_Matrix matrix = *pMatrix;
   matrix.TranslateI(-pClipRect->left, -pClipRect->top);
-  CPDF_Form form(m_pContext->m_pDocument, m_pContext->m_pPageResources, pGroup);
+  CPDF_Form form(m_pContext->GetDocument(), m_pContext->GetPageResources(),
+                 pGroup);
   form.ParseContent(NULL, NULL, NULL, NULL);
   CFX_FxgeDevice bitmap_device;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
@@ -909,7 +910,7 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
         pCSObj = pDict->GetDict("Group")->GetElementValue("CS");
       else
         pCSObj = NULL;
-      pCS = m_pContext->m_pDocument->LoadColorSpace(pCSObj);
+      pCS = m_pContext->GetDocument()->LoadColorSpace(pCSObj);
       if (pCS) {
         FX_FLOAT R, G, B;
         FX_DWORD comps = 8;
@@ -931,7 +932,7 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
         pCS->GetRGB(pFloats, R, G, B);
         back_color = 0xff000000 | ((int32_t)(R * 255) << 16) |
                      ((int32_t)(G * 255) << 8) | (int32_t)(B * 255);
-        m_pContext->m_pDocument->GetPageData()->ReleaseColorSpace(pCSObj);
+        m_pContext->GetDocument()->GetPageData()->ReleaseColorSpace(pCSObj);
       }
     }
     bitmap.Clear(back_color);
