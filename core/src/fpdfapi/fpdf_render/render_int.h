@@ -93,7 +93,7 @@ class CPDF_DocRenderData {
 };
 struct _PDF_RenderItem {
  public:
-  CPDF_PageObjects* m_pObjectList;
+  CPDF_PageObjectList* m_pObjectList;
   CFX_Matrix m_Matrix;
 };
 
@@ -131,7 +131,7 @@ class CPDF_RenderStatus {
                      FX_ARGB fill_color = 0,
                      FX_DWORD GroupFamily = 0,
                      FX_BOOL bLoadMask = FALSE);
-  void RenderObjectList(const CPDF_PageObjects* pObjs,
+  void RenderObjectList(const CPDF_PageObjectList* pObjs,
                         const CFX_Matrix* pObj2Device);
   void RenderSingleObject(const CPDF_PageObject* pObj,
                           const CFX_Matrix* pObj2Device);

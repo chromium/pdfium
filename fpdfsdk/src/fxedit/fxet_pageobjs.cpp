@@ -409,7 +409,7 @@ void IFX_Edit::DrawRichEdit(CFX_RenderDevice* pDevice,
   pDevice->RestoreState();
 }
 
-static void AddRectToPageObjects(CPDF_PageObjects* pPageObjs,
+static void AddRectToPageObjects(CPDF_PageObjectList* pPageObjs,
                                  FX_COLORREF crFill,
                                  const CPDF_Rect& rcFill) {
   CPDF_PathObject* pPathObj = new CPDF_PathObject;
@@ -429,7 +429,7 @@ static void AddRectToPageObjects(CPDF_PageObjects* pPageObjs,
   pPageObjs->InsertObject(pPageObjs->GetLastObjectPosition(), pPathObj);
 }
 
-static CPDF_TextObject* AddTextObjToPageObjects(CPDF_PageObjects* pPageObjs,
+static CPDF_TextObject* AddTextObjToPageObjects(CPDF_PageObjectList* pPageObjs,
                                                 FX_COLORREF crText,
                                                 CPDF_Font* pFont,
                                                 FX_FLOAT fFontSize,
@@ -468,7 +468,7 @@ static CPDF_TextObject* AddTextObjToPageObjects(CPDF_PageObjects* pPageObjs,
 }
 
 void IFX_Edit::GeneratePageObjects(
-    CPDF_PageObjects* pPageObjects,
+    CPDF_PageObjectList* pPageObjects,
     IFX_Edit* pEdit,
     const CPDF_Point& ptOffset,
     const CPVT_WordRange* pRange,
@@ -532,7 +532,7 @@ void IFX_Edit::GeneratePageObjects(
 }
 
 void IFX_Edit::GenerateRichPageObjects(
-    CPDF_PageObjects* pPageObjects,
+    CPDF_PageObjectList* pPageObjects,
     IFX_Edit* pEdit,
     const CPDF_Point& ptOffset,
     const CPVT_WordRange* pRange,
@@ -624,7 +624,7 @@ void IFX_Edit::GenerateRichPageObjects(
   }
 }
 
-void IFX_Edit::GenerateUnderlineObjects(CPDF_PageObjects* pPageObjects,
+void IFX_Edit::GenerateUnderlineObjects(CPDF_PageObjectList* pPageObjects,
                                         IFX_Edit* pEdit,
                                         const CPDF_Point& ptOffset,
                                         const CPVT_WordRange* pRange,

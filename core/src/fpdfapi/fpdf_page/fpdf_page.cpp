@@ -666,7 +666,7 @@ void CPDF_FormObject::CalcBoundingBox() {
   m_Right = form_rect.right;
   m_Top = form_rect.top;
 }
-CPDF_PageObjects::CPDF_PageObjects()
+CPDF_PageObjectList::CPDF_PageObjectList()
     : m_pFormDict(nullptr),
       m_pFormStream(nullptr),
       m_pDocument(nullptr),
@@ -677,13 +677,13 @@ CPDF_PageObjects::CPDF_PageObjects()
       m_bHasImageMask(FALSE),
       m_ParseState(CONTENT_NOT_PARSED),
       m_ObjectList(128) {}
-CPDF_PageObjects::~CPDF_PageObjects() {
+CPDF_PageObjectList::~CPDF_PageObjectList() {
   FX_POSITION pos = m_ObjectList.GetHeadPosition();
   while (pos) {
     delete (CPDF_PageObject*)m_ObjectList.GetNext(pos);
   }
 }
-void CPDF_PageObjects::ContinueParse(IFX_Pause* pPause) {
+void CPDF_PageObjectList::ContinueParse(IFX_Pause* pPause) {
   if (!m_pParser) {
     return;
   }
@@ -693,14 +693,14 @@ void CPDF_PageObjects::ContinueParse(IFX_Pause* pPause) {
     m_pParser.reset();
   }
 }
-FX_POSITION CPDF_PageObjects::InsertObject(FX_POSITION posInsertAfter,
-                                           CPDF_PageObject* pNewObject) {
+FX_POSITION CPDF_PageObjectList::InsertObject(FX_POSITION posInsertAfter,
+                                              CPDF_PageObject* pNewObject) {
   if (!posInsertAfter) {
     return m_ObjectList.AddHead(pNewObject);
   }
   return m_ObjectList.InsertAfter(posInsertAfter, pNewObject);
 }
-int CPDF_PageObjects::GetObjectIndex(CPDF_PageObject* pObj) const {
+int CPDF_PageObjectList::GetObjectIndex(CPDF_PageObject* pObj) const {
   int index = 0;
   FX_POSITION pos = m_ObjectList.GetHeadPosition();
   while (pos) {
@@ -712,18 +712,18 @@ int CPDF_PageObjects::GetObjectIndex(CPDF_PageObject* pObj) const {
   }
   return -1;
 }
-CPDF_PageObject* CPDF_PageObjects::GetObjectByIndex(int index) const {
+CPDF_PageObject* CPDF_PageObjectList::GetObjectByIndex(int index) const {
   FX_POSITION pos = m_ObjectList.FindIndex(index);
   return pos ? static_cast<CPDF_PageObject*>(m_ObjectList.GetAt(pos)) : nullptr;
 }
-void CPDF_PageObjects::Transform(const CFX_Matrix& matrix) {
+void CPDF_PageObjectList::Transform(const CFX_Matrix& matrix) {
   FX_POSITION pos = m_ObjectList.GetHeadPosition();
   while (pos) {
     CPDF_PageObject* pObj = (CPDF_PageObject*)m_ObjectList.GetNext(pos);
     pObj->Transform(matrix);
   }
 }
-CFX_FloatRect CPDF_PageObjects::CalcBoundingBox() const {
+CFX_FloatRect CPDF_PageObjectList::CalcBoundingBox() const {
   if (m_ObjectList.GetCount() == 0) {
     return CFX_FloatRect(0, 0, 0, 0);
   }
@@ -748,7 +748,7 @@ CFX_FloatRect CPDF_PageObjects::CalcBoundingBox() const {
   }
   return CFX_FloatRect(left, bottom, right, top);
 }
-void CPDF_PageObjects::LoadTransInfo() {
+void CPDF_PageObjectList::LoadTransInfo() {
   if (!m_pFormDict) {
     return;
   }

@@ -10,7 +10,7 @@
 #include "core/include/fpdfapi/fpdf_parser.h"
 
 class CPDF_Page;
-class CPDF_PageObjects;
+class CPDF_PageObjectList;
 class CPDF_TextObject;
 class IPDF_LinkExtract;
 class IPDF_ReflowedPage;
