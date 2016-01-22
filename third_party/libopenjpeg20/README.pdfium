@@ -19,4 +19,5 @@ Local Modifications:
 0007-jp2_read_cmap.patch: Fix wrong rendering on greyscale images with index colorspace.
 0008-jp2_check_color.patch: Replace an assertion with returning false.
 0009-opj_pi_next.patch: Fix potential bad precno value in opj_pi_next* functions.
+0010-pi_update_decode_poc.patch: Set proper upper bound for an array in opj_pi_update_decode_poc().
 TODO(thestig): List all the other patches.
