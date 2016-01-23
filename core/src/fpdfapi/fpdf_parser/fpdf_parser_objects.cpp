@@ -93,7 +93,7 @@ CFX_ByteStringC CPDF_Object::GetConstString() const {
 FX_FLOAT CPDF_Object::GetNumber() const {
   const CPDF_Object* obj = GetBasicObject();
   if (obj && obj->GetType() == PDFOBJ_NUMBER)
-    return AsNumber()->GetNumber();
+    return obj->AsNumber()->GetNumber();
   return 0;
 }
 
@@ -120,10 +120,10 @@ CPDF_Dictionary* CPDF_Object::GetDict() const {
     if (type == PDFOBJ_DICTIONARY) {
       // The method should be made non-const if we want to not be const.
       // See bug #234.
-      return const_cast<CPDF_Dictionary*>(AsDictionary());
+      return const_cast<CPDF_Dictionary*>(obj->AsDictionary());
     }
     if (type == PDFOBJ_STREAM)
-      return AsStream()->GetDict();
+      return obj->AsStream()->GetDict();
   }
   return nullptr;
 }
