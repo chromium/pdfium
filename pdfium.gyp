@@ -713,6 +713,7 @@
         'core/src/fpdfapi/fpdf_font/fpdf_font_unittest.cpp',
         'core/src/fpdfapi/fpdf_page/fpdf_page_parser_old_unittest.cpp',
         'core/src/fpdfapi/fpdf_parser/fpdf_parser_decode_unittest.cpp',
+        'core/src/fpdfapi/fpdf_parser/fpdf_parser_objects_unittest.cpp',
         'core/src/fpdfapi/fpdf_parser/fpdf_parser_parser_unittest.cpp',
         'core/src/fpdftext/fpdf_text_int_unittest.cpp',
         'core/src/fxcodec/codec/fx_codec_jpx_unittest.cpp',
