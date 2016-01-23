@@ -67,13 +67,6 @@ typedef CFX_ArrayTemplate<CFX_FloatRect> CFX_RectArray;
 #define FPDFTEXT_WRITINGMODE_LRTB 1
 #define FPDFTEXT_WRITINGMODE_RLTB 2
 #define FPDFTEXT_WRITINGMODE_TBRL 3
-class CPDFText_ParseOptions {
- public:
-  CPDFText_ParseOptions();
-  FX_BOOL m_bGetCharCodeOnly;
-  FX_BOOL m_bNormalizeObjs;
-  FX_BOOL m_bOutputHyphen;
-};
 
 class IPDF_TextPage {
  public:
@@ -81,8 +74,6 @@ class IPDF_TextPage {
   static IPDF_TextPage* CreateReflowTextPage(IPDF_ReflowedPage* pRefPage);
 
   virtual ~IPDF_TextPage() {}
-
-  virtual void NormalizeObjects(FX_BOOL bNormalize) = 0;
 
   virtual FX_BOOL ParseTextPage() = 0;
 
