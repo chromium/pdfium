@@ -134,6 +134,7 @@ const void* CFX_BasicArray::GetDataPtr(int index) const {
   }
   return m_pData + index * m_nUnitSize;
 }
+#ifdef PDF_ENABLE_XFA
 CFX_BaseSegmentedArray::CFX_BaseSegmentedArray(int unit_size,
                                                int segment_units,
                                                int index_size)
@@ -338,3 +339,4 @@ void CFX_BaseSegmentedArray::Delete(int index, int count) {
   }
   m_DataSize -= count;
 }
+#endif  // PDF_ENABLE_XFA

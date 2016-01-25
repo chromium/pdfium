@@ -7,6 +7,8 @@
 #ifndef CORE_SRC_FPDFTEXT_TEXT_INT_H_
 #define CORE_SRC_FPDFTEXT_TEXT_INT_H_
 
+#include <deque>
+
 #include "core/include/fpdftext/fpdf_text.h"
 #include "core/include/fxcrt/fx_basic.h"
 
@@ -26,7 +28,7 @@ class CPDF_TextPageFind;
 #define FPDFTEXT_MC_DONE 1
 #define FPDFTEXT_MC_DELAY 2
 
-typedef struct _PAGECHAR_INFO {
+struct PAGECHAR_INFO {
   int m_CharCode;
   FX_WCHAR m_Unicode;
   FX_FLOAT m_OriginX;
@@ -36,18 +38,17 @@ typedef struct _PAGECHAR_INFO {
   CPDF_TextObject* m_pTextObj;
   CFX_Matrix m_Matrix;
   int m_Index;
-} PAGECHAR_INFO;
-typedef CFX_SegmentedArray<PAGECHAR_INFO> PAGECHAR_InfoArray;
-typedef struct {
+};
+
+struct FPDF_SEGMENT {
   int m_Start;
   int m_nCount;
-} FPDF_SEGMENT;
-typedef CFX_ArrayTemplate<FPDF_SEGMENT> SEGMENT_Array;
-typedef struct {
+};
+
+struct PDFTEXT_Obj {
   CPDF_TextObject* m_pTextObj;
   CFX_Matrix m_formMatrix;
-} PDFTEXT_Obj;
-typedef CFX_ArrayTemplate<PDFTEXT_Obj> LINEOBJ;
+};
 
 class CPDF_TextPage : public IPDF_TextPage {
  public:
@@ -91,7 +92,6 @@ class CPDF_TextPage : public IPDF_TextPage {
   void GetBoundedSegment(int index, int& start, int& count) const override;
   int GetWordBreak(int index, int direction) const override;
 
-  const PAGECHAR_InfoArray* GetCharList() const { return &m_charList; }
   static FX_BOOL IsRectIntersect(const CFX_FloatRect& rect1,
                                  const CFX_FloatRect& rect2);
   static FX_BOOL IsLetter(FX_WCHAR unicode);
@@ -132,18 +132,18 @@ class CPDF_TextPage : public IPDF_TextPage {
 
   CFX_WordArray m_CharIndex;
   const CPDF_PageObjectList* const m_pPage;
-  PAGECHAR_InfoArray m_charList;
+  std::deque<PAGECHAR_INFO> m_CharList;
+  std::deque<PAGECHAR_INFO> m_TempCharList;
   CFX_WideTextBuf m_TextBuf;
-  PAGECHAR_InfoArray m_TempCharList;
   CFX_WideTextBuf m_TempTextBuf;
   const int m_parserflag;
   CPDF_TextObject* m_pPreTextObj;
   CFX_Matrix m_perMatrix;
   bool m_bIsParsed;
   CFX_Matrix m_DisplayMatrix;
-  SEGMENT_Array m_Segment;
+  CFX_ArrayTemplate<FPDF_SEGMENT> m_Segments;
   CFX_RectArray m_SelRects;
-  LINEOBJ m_LineObj;
+  CFX_ArrayTemplate<PDFTEXT_Obj> m_LineObj;
   int32_t m_TextlineDir;
   CFX_FloatRect m_CurlineRect;
 };

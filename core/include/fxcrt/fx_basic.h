@@ -548,6 +548,7 @@ class CFX_ObjectArray : public CFX_BasicArray {
 };
 typedef CFX_ObjectArray<CFX_ByteString> CFX_ByteStringArray;
 typedef CFX_ObjectArray<CFX_WideString> CFX_WideStringArray;
+#ifdef PDF_ENABLE_XFA
 class CFX_BaseSegmentedArray {
  public:
   CFX_BaseSegmentedArray(int unit_size = 1,
@@ -613,6 +614,7 @@ class CFX_SegmentedArray : public CFX_BaseSegmentedArray {
     return *(ElementType*)CFX_BaseSegmentedArray::GetAt(index);
   }
 };
+#endif  // PDF_ENABLE_XFA
 template <class DataType, int FixedSize>
 class CFX_FixedBufGrow {
  public:

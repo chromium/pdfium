@@ -5,6 +5,8 @@
 #ifndef PDFIUM_THIRD_PARTY_BASE_STL_UTIL_H_
 #define PDFIUM_THIRD_PARTY_BASE_STL_UTIL_H_
 
+#include "third_party/base/numerics/safe_conversions.h"
+
 namespace pdfium {
 
 // Test to see if a set, map, hash_set or hash_map contains a particular key.
@@ -20,6 +22,13 @@ template <typename Collection, typename Value>
 bool ContainsValue(const Collection& collection, const Value& value) {
   return std::find(collection.begin(), collection.end(), value) !=
          collection.end();
+}
+
+// Convenience routine for "int-fected" code, so that the stl collection
+// size_t size() method return values will be checked.
+template <typename ResultType, typename Collection>
+ResultType CollectionSize(const Collection& collection) {
+  return pdfium::base::checked_cast<ResultType, size_t>(collection.size());
 }
 
 }  // namespace pdfium
