@@ -70,12 +70,9 @@ CPDF_SimpleParser::CPDF_SimpleParser(const CFX_ByteStringC& str) {
   m_dwSize = str.GetLength();
   m_dwCurPos = 0;
 }
-void CPDF_SimpleParser::ParseWord(const uint8_t*& pStart,
-                                  FX_DWORD& dwSize,
-                                  int& type) {
+void CPDF_SimpleParser::ParseWord(const uint8_t*& pStart, FX_DWORD& dwSize) {
   pStart = NULL;
   dwSize = 0;
-  type = PDFWORD_EOF;
   uint8_t ch;
   while (1) {
     if (m_dwSize <= m_dwCurPos)
@@ -110,12 +107,10 @@ void CPDF_SimpleParser::ParseWord(const uint8_t*& pStart,
         if (!PDFCharIsOther(ch) && !PDFCharIsNumeric(ch)) {
           m_dwCurPos--;
           dwSize = m_dwCurPos - start_pos;
-          type = PDFWORD_NAME;
           return;
         }
       }
     } else {
-      type = PDFWORD_DELIMITER;
       dwSize = 1;
       if (ch == '<') {
         if (m_dwSize <= m_dwCurPos)
@@ -138,11 +133,8 @@ void CPDF_SimpleParser::ParseWord(const uint8_t*& pStart,
     return;
   }
 
-  type = PDFWORD_NUMBER;
   dwSize = 1;
   while (1) {
-    if (!PDFCharIsNumeric(ch))
-      type = PDFWORD_TEXT;
     if (m_dwSize <= m_dwCurPos)
       return;
     ch = m_pData[m_dwCurPos++];
@@ -157,8 +149,7 @@ void CPDF_SimpleParser::ParseWord(const uint8_t*& pStart,
 CFX_ByteStringC CPDF_SimpleParser::GetWord() {
   const uint8_t* pStart;
   FX_DWORD dwSize;
-  int type;
-  ParseWord(pStart, dwSize, type);
+  ParseWord(pStart, dwSize);
   if (dwSize == 1 && pStart[0] == '<') {
     while (m_dwCurPos < m_dwSize && m_pData[m_dwCurPos] != '>') {
       m_dwCurPos++;

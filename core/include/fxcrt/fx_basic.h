@@ -992,16 +992,6 @@ class CFX_ListArrayTemplate {
 typedef CFX_ListArrayTemplate<CFX_SortListArray<sizeof(FX_FILESIZE)>,
                               FX_FILESIZE> CFX_FileSizeListArray;
 
-typedef enum {
-  Ready,
-  ToBeContinued,
-  Found,
-  NotFound,
-  Failed,
-  Done
-} FX_ProgressiveStatus;
-#define ProgressiveStatus FX_ProgressiveStatus
-
 class CFX_Vector_3by1 {
  public:
   CFX_Vector_3by1() : a(0.0f), b(0.0f), c(0.0f) {}

@@ -1707,8 +1707,6 @@ CPDF_SyntaxParser::CPDF_SyntaxParser() {
   m_BufSize = CPDF_ModuleMgr::kFileBufSize;
   m_pFileBuf = NULL;
   m_MetadataObjnum = 0;
-  m_dwWordPos = 0;
-  m_bFileStream = FALSE;
 }
 
 CPDF_SyntaxParser::~CPDF_SyntaxParser() {
@@ -2001,7 +1999,6 @@ void CPDF_SyntaxParser::ToNextWord() {
 
   while (1) {
     while (PDFCharIsWhitespace(ch)) {
-      m_dwWordPos = m_Pos;
       if (!GetNextChar(ch))
         return;
     }
