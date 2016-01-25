@@ -310,40 +310,17 @@ int CPDF_Document::RetrievePageCount() const {
   return CountPages(pPages, &visited_pages);
 }
 
-FX_BOOL CPDF_Document::IsContentUsedElsewhere(FX_DWORD objnum,
-                                              CPDF_Dictionary* pThisPageDict) {
-  for (int i = 0; i < m_PageList.GetSize(); i++) {
-    CPDF_Dictionary* pPageDict = GetPage(i);
-    if (pPageDict == pThisPageDict) {
-      continue;
-    }
-    CPDF_Object* pContents =
-        pPageDict ? pPageDict->GetElement("Contents") : NULL;
-    if (!pContents) {
-      continue;
-    }
-    if (pContents->GetDirectType() == PDFOBJ_ARRAY) {
-      CPDF_Array* pArray = pContents->GetDirect()->AsArray();
-      for (FX_DWORD j = 0; j < pArray->GetCount(); j++) {
-        CPDF_Reference* pRef = ToReference(pArray->GetElement(j));
-        if (pRef && pRef->GetRefObjNum() == objnum)
-          return TRUE;
-      }
-    } else if (pContents->GetObjNum() == objnum) {
-      return TRUE;
-    }
-  }
-  return FALSE;
-}
 FX_DWORD CPDF_Document::GetUserPermissions(FX_BOOL bCheckRevision) const {
   if (!m_pParser) {
     return (FX_DWORD)-1;
   }
   return m_pParser->GetPermissions(bCheckRevision);
 }
+
 FX_BOOL CPDF_Document::IsOwner() const {
   return !m_pParser || m_pParser->IsOwner();
 }
+
 FX_BOOL CPDF_Document::IsFormStream(FX_DWORD objnum, FX_BOOL& bForm) const {
   auto it = m_IndirectObjs.find(objnum);
   if (it != m_IndirectObjs.end()) {
@@ -357,13 +334,13 @@ FX_BOOL CPDF_Document::IsFormStream(FX_DWORD objnum, FX_BOOL& bForm) const {
   }
   return m_pParser->IsFormStream(objnum, bForm);
 }
+
 void CPDF_Document::ClearPageData() {
-  if (m_pDocPage) {
+  if (m_pDocPage)
     CPDF_ModuleMgr::Get()->GetPageModule()->ClearDoc(this);
-  }
 }
+
 void CPDF_Document::ClearRenderData() {
-  if (m_pDocRender) {
+  if (m_pDocRender)
     CPDF_ModuleMgr::Get()->GetRenderModule()->ClearDocData(m_pDocRender);
-  }
 }

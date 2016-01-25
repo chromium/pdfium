@@ -194,7 +194,6 @@ class CPDF_Document : public CFX_PrivateData, public CPDF_IndirectObjectHolder {
                      FX_DWORD objnum,
                      int& index,
                      int level = 0);
-  FX_BOOL IsContentUsedElsewhere(FX_DWORD objnum, CPDF_Dictionary* pPageDict);
   FX_BOOL CheckOCGVisible(CPDF_Dictionary* pOCG, FX_BOOL bPrinting);
   CPDF_DocPageData* GetValidatePageData();
   CPDF_DocRenderData* GetValidateRenderData();
@@ -364,10 +363,7 @@ class CPDF_SyntaxParser {
   FX_FILESIZE m_dwWordPos;
 };
 
-#define PDFPARSE_TYPEONLY 1
-#define PDFPARSE_NOSTREAM 2
 struct PARSE_CONTEXT {
-  uint32_t m_Flags;
   FX_FILESIZE m_DictStart;
   FX_FILESIZE m_DictEnd;
   FX_FILESIZE m_DataStart;

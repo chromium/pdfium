@@ -2040,16 +2040,13 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjectHolder* pObjList,
                                           FX_BOOL bDecrypt) {
   CFX_AutoRestorer<int> restorer(&s_CurrentRecursionDepth);
   if (++s_CurrentRecursionDepth > kParserMaxRecursionDepth) {
-    return NULL;
+    return nullptr;
   }
   FX_FILESIZE SavedPos = m_Pos;
-  FX_BOOL bTypeOnly = pContext && (pContext->m_Flags & PDFPARSE_TYPEONLY);
   bool bIsNumber;
   CFX_ByteString word = GetNextWord(&bIsNumber);
   if (word.GetLength() == 0) {
-    if (bTypeOnly)
-      return (CPDF_Object*)PDFOBJ_INVALID;
-    return NULL;
+    return nullptr;
   }
   if (bIsNumber) {
     FX_FILESIZE SavedPos = m_Pos;
@@ -2058,29 +2055,19 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjectHolder* pObjList,
       CFX_ByteString nextword2 = GetNextWord(nullptr);
       if (nextword2 == "R") {
         FX_DWORD objnum = FXSYS_atoi(word);
-        if (bTypeOnly)
-          return (CPDF_Object*)PDFOBJ_REFERENCE;
         return new CPDF_Reference(pObjList, objnum);
       }
     }
     m_Pos = SavedPos;
-    if (bTypeOnly)
-      return (CPDF_Object*)PDFOBJ_NUMBER;
     return new CPDF_Number(word);
   }
   if (word == "true" || word == "false") {
-    if (bTypeOnly)
-      return (CPDF_Object*)PDFOBJ_BOOLEAN;
     return new CPDF_Boolean(word == "true");
   }
   if (word == "null") {
-    if (bTypeOnly)
-      return (CPDF_Object*)PDFOBJ_NULL;
     return new CPDF_Null;
   }
   if (word == "(") {
-    if (bTypeOnly)
-      return (CPDF_Object*)PDFOBJ_STRING;
     CFX_ByteString str = ReadString();
     if (m_pCryptoHandler && bDecrypt) {
       m_pCryptoHandler->Decrypt(objnum, gennum, str);
@@ -2088,8 +2075,6 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjectHolder* pObjList,
     return new CPDF_String(str, FALSE);
   }
   if (word == "<") {
-    if (bTypeOnly)
-      return (CPDF_Object*)PDFOBJ_STRING;
     CFX_ByteString str = ReadHexString();
     if (m_pCryptoHandler && bDecrypt) {
       m_pCryptoHandler->Decrypt(objnum, gennum, str);
@@ -2097,8 +2082,6 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjectHolder* pObjList,
     return new CPDF_String(str, TRUE);
   }
   if (word == "[") {
-    if (bTypeOnly)
-      return (CPDF_Object*)PDFOBJ_ARRAY;
     CPDF_Array* pArray = new CPDF_Array;
     while (CPDF_Object* pObj =
                GetObject(pObjList, objnum, gennum, nullptr, true)) {
@@ -2107,15 +2090,10 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjectHolder* pObjList,
     return pArray;
   }
   if (word[0] == '/') {
-    if (bTypeOnly)
-      return (CPDF_Object*)PDFOBJ_NAME;
     return new CPDF_Name(
         PDF_NameDecode(CFX_ByteStringC(m_WordBuffer + 1, m_WordSize - 1)));
   }
   if (word == "<<") {
-    if (bTypeOnly)
-      return (CPDF_Object*)PDFOBJ_DICTIONARY;
-
     if (pContext)
       pContext->m_DictStart = SavedPos;
 
@@ -2165,9 +2143,6 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjectHolder* pObjList,
     }
     if (pContext) {
       pContext->m_DictEnd = m_Pos;
-      if (pContext->m_Flags & PDFPARSE_NOSTREAM) {
-        return pDict.release();
-      }
     }
     FX_FILESIZE SavedPos = m_Pos;
     CFX_ByteString nextword = GetNextWord(nullptr);
@@ -2175,16 +2150,11 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjectHolder* pObjList,
       m_Pos = SavedPos;
       return pDict.release();
     }
-
     return ReadStream(pDict.release(), pContext, objnum, gennum);
   }
   if (word == ">>") {
     m_Pos = SavedPos;
-    return nullptr;
   }
-  if (bTypeOnly)
-    return (CPDF_Object*)PDFOBJ_INVALID;
-
   return nullptr;
 }
 
@@ -2195,15 +2165,12 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
     PARSE_CONTEXT* pContext) {
   CFX_AutoRestorer<int> restorer(&s_CurrentRecursionDepth);
   if (++s_CurrentRecursionDepth > kParserMaxRecursionDepth) {
-    return NULL;
+    return nullptr;
   }
   FX_FILESIZE SavedPos = m_Pos;
-  FX_BOOL bTypeOnly = pContext && (pContext->m_Flags & PDFPARSE_TYPEONLY);
   bool bIsNumber;
   CFX_ByteString word = GetNextWord(&bIsNumber);
   if (word.GetLength() == 0) {
-    if (bTypeOnly)
-      return (CPDF_Object*)PDFOBJ_INVALID;
     return nullptr;
   }
   if (bIsNumber) {
@@ -2212,46 +2179,31 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
     if (bIsNumber) {
       CFX_ByteString nextword2 = GetNextWord(nullptr);
       if (nextword2 == "R") {
-        if (bTypeOnly)
-          return (CPDF_Object*)PDFOBJ_REFERENCE;
-        FX_DWORD objnum = FXSYS_atoi(word);
-        return new CPDF_Reference(pObjList, objnum);
+        return new CPDF_Reference(pObjList, FXSYS_atoi(word));
       }
     }
     m_Pos = SavedPos;
-    if (bTypeOnly)
-      return (CPDF_Object*)PDFOBJ_NUMBER;
     return new CPDF_Number(word);
   }
   if (word == "true" || word == "false") {
-    if (bTypeOnly)
-      return (CPDF_Object*)PDFOBJ_BOOLEAN;
     return new CPDF_Boolean(word == "true");
   }
   if (word == "null") {
-    if (bTypeOnly)
-      return (CPDF_Object*)PDFOBJ_NULL;
     return new CPDF_Null;
   }
   if (word == "(") {
-    if (bTypeOnly)
-      return (CPDF_Object*)PDFOBJ_STRING;
     CFX_ByteString str = ReadString();
     if (m_pCryptoHandler)
       m_pCryptoHandler->Decrypt(objnum, gennum, str);
     return new CPDF_String(str, FALSE);
   }
   if (word == "<") {
-    if (bTypeOnly)
-      return (CPDF_Object*)PDFOBJ_STRING;
     CFX_ByteString str = ReadHexString();
     if (m_pCryptoHandler)
       m_pCryptoHandler->Decrypt(objnum, gennum, str);
     return new CPDF_String(str, TRUE);
   }
   if (word == "[") {
-    if (bTypeOnly)
-      return (CPDF_Object*)PDFOBJ_ARRAY;
     std::unique_ptr<CPDF_Array, ReleaseDeleter<CPDF_Array>> pArray(
         new CPDF_Array);
     while (CPDF_Object* pObj =
@@ -2261,14 +2213,10 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
     return m_WordBuffer[0] == ']' ? pArray.release() : nullptr;
   }
   if (word[0] == '/') {
-    if (bTypeOnly)
-      return (CPDF_Object*)PDFOBJ_NAME;
     return new CPDF_Name(
         PDF_NameDecode(CFX_ByteStringC(m_WordBuffer + 1, m_WordSize - 1)));
   }
   if (word == "<<") {
-    if (bTypeOnly)
-      return (CPDF_Object*)PDFOBJ_DICTIONARY;
     if (pContext)
       pContext->m_DictStart = SavedPos;
 
@@ -2306,9 +2254,6 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
     }
     if (pContext) {
       pContext->m_DictEnd = m_Pos;
-      if (pContext->m_Flags & PDFPARSE_NOSTREAM) {
-        return pDict.release();
-      }
     }
     FX_FILESIZE SavedPos = m_Pos;
     CFX_ByteString nextword = GetNextWord(nullptr);
@@ -2321,10 +2266,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
   }
   if (word == ">>") {
     m_Pos = SavedPos;
-    return nullptr;
   }
-  if (bTypeOnly)
-    return (CPDF_Object*)PDFOBJ_INVALID;
   return nullptr;
 }
 

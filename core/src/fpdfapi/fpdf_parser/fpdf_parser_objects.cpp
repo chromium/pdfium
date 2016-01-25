@@ -151,12 +151,6 @@ void CPDF_Object::SetString(const CFX_ByteString& str) {
   }
   ASSERT(FALSE);
 }
-int CPDF_Object::GetDirectType() const {
-  const CPDF_Reference* pRef = AsReference();
-  if (!pRef)
-    return m_Type;
-  return pRef->m_pObjList->GetIndirectType(pRef->GetRefObjNum());
-}
 FX_BOOL CPDF_Object::IsIdentical(CPDF_Object* pOther) const {
   if (this == pOther)
     return TRUE;
@@ -1058,19 +1052,6 @@ CPDF_Object* CPDF_IndirectObjectHolder::GetIndirectObject(
 
   m_IndirectObjs[objnum] = pObj;
   return pObj;
-}
-int CPDF_IndirectObjectHolder::GetIndirectType(FX_DWORD objnum) {
-  auto it = m_IndirectObjs.find(objnum);
-  if (it != m_IndirectObjs.end())
-    return it->second->GetType();
-
-  if (!m_pParser)
-    return 0;
-
-  PARSE_CONTEXT context;
-  FXSYS_memset(&context, 0, sizeof(PARSE_CONTEXT));
-  context.m_Flags = PDFPARSE_TYPEONLY;
-  return (int)(uintptr_t)m_pParser->ParseIndirectObject(this, objnum, &context);
 }
 FX_DWORD CPDF_IndirectObjectHolder::AddIndirectObject(CPDF_Object* pObj) {
   if (pObj->m_ObjNum) {
