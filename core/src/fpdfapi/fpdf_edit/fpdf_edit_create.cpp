@@ -1290,7 +1290,7 @@ int32_t CPDF_Creator::WriteOldIndirectObject(FX_DWORD objnum) {
       (m_pParser->m_V5Type[objnum] == 2) && m_pEncryptDict && !m_pXRefStream;
   if (m_pParser->m_bVersionUpdated || m_bSecurityChanged || bExistInMap ||
       bObjStm) {
-    CPDF_Object* pObj = m_pDocument->GetIndirectObject(objnum, nullptr);
+    CPDF_Object* pObj = m_pDocument->GetIndirectObject(objnum);
     if (!pObj) {
       m_ObjectOffset[objnum] = 0;
       return 0;
