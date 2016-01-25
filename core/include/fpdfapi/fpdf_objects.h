@@ -53,7 +53,6 @@ class CPDF_Object {
   CPDF_Object* CloneRef(CPDF_IndirectObjectHolder* pObjs) const;
 
   CPDF_Object* GetDirect() const;
-  int GetDirectType() const;
   FX_BOOL IsModified() const { return FALSE; }
 
   void Release();
@@ -568,7 +567,6 @@ class CPDF_IndirectObjectHolder {
   explicit CPDF_IndirectObjectHolder(CPDF_Parser* pParser);
   ~CPDF_IndirectObjectHolder();
 
-  int GetIndirectType(FX_DWORD objnum);
   CPDF_Object* GetIndirectObject(FX_DWORD objnum, PARSE_CONTEXT* pContext);
   FX_DWORD AddIndirectObject(CPDF_Object* pObj);
   void ReleaseIndirectObject(FX_DWORD objnum);
