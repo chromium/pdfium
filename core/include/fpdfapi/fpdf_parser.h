@@ -261,13 +261,11 @@ class CPDF_SyntaxParser {
   CPDF_Object* GetObject(CPDF_IndirectObjectHolder* pObjList,
                          FX_DWORD objnum,
                          FX_DWORD gennum,
-                         PARSE_CONTEXT* pContext,
                          FX_BOOL bDecrypt);
 
   CPDF_Object* GetObjectByStrict(CPDF_IndirectObjectHolder* pObjList,
                                  FX_DWORD objnum,
-                                 FX_DWORD gennum,
-                                 PARSE_CONTEXT* pContext);
+                                 FX_DWORD gennum);
 
   int GetDirectNum();
 
@@ -332,7 +330,6 @@ class CPDF_SyntaxParser {
   unsigned int ReadEOLMarkers(FX_FILESIZE pos);
 
   CPDF_Stream* ReadStream(CPDF_Dictionary* pDict,
-                          PARSE_CONTEXT* pContext,
                           FX_DWORD objnum,
                           FX_DWORD gennum);
 
@@ -361,13 +358,6 @@ class CPDF_SyntaxParser {
   FX_DWORD m_WordSize;
 
   FX_FILESIZE m_dwWordPos;
-};
-
-struct PARSE_CONTEXT {
-  FX_FILESIZE m_DictStart;
-  FX_FILESIZE m_DictEnd;
-  FX_FILESIZE m_DataStart;
-  FX_FILESIZE m_DataEnd;
 };
 
 #define PDFPARSE_ERROR_SUCCESS 0
@@ -416,8 +406,8 @@ class CPDF_Parser {
   CPDF_Dictionary* GetEncryptDict() { return m_pEncryptDict; }
 
   CPDF_Object* ParseIndirectObject(CPDF_IndirectObjectHolder* pObjList,
-                                   FX_DWORD objnum,
-                                   PARSE_CONTEXT* pContext = NULL);
+                                   FX_DWORD objnum);
+
   FX_DWORD GetLastObjNum() const;
   bool IsValidObjectNumber(FX_DWORD objnum) const;
   FX_BOOL IsFormStream(FX_DWORD objnum, FX_BOOL& bForm);
@@ -435,14 +425,12 @@ class CPDF_Parser {
   FX_BOOL IsXRefStream() const { return m_bXRefStream; }
   CPDF_Object* ParseIndirectObjectAt(CPDF_IndirectObjectHolder* pObjList,
                                      FX_FILESIZE pos,
-                                     FX_DWORD objnum,
-                                     PARSE_CONTEXT* pContext);
+                                     FX_DWORD objnum);
 
   CPDF_Object* ParseIndirectObjectAtByStrict(
       CPDF_IndirectObjectHolder* pObjList,
       FX_FILESIZE pos,
       FX_DWORD objnum,
-      PARSE_CONTEXT* pContext,
       FX_FILESIZE* pResultPos);
 
   FX_DWORD StartAsynParse(IFX_FileRead* pFile,

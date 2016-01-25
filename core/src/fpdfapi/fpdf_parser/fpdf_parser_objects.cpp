@@ -54,7 +54,7 @@ const CPDF_Object* CPDF_Object::GetBasicObject() const {
   }
   if (!pRef->m_pObjList)
     return nullptr;
-  return pRef->m_pObjList->GetIndirectObject(pRef->GetRefObjNum(), nullptr);
+  return pRef->m_pObjList->GetIndirectObject(pRef->GetRefObjNum());
 }
 
 CFX_ByteString CPDF_Object::GetString() const {
@@ -192,7 +192,7 @@ CPDF_Object* CPDF_Object::GetDirect() const {
     return const_cast<CPDF_Object*>(this);
   if (!pRef->m_pObjList)
     return nullptr;
-  return pRef->m_pObjList->GetIndirectObject(pRef->GetRefObjNum(), nullptr);
+  return pRef->m_pObjList->GetIndirectObject(pRef->GetRefObjNum());
 }
 
 CPDF_Object* CPDF_Object::Clone(FX_BOOL bDirect) const {
@@ -1028,9 +1028,7 @@ CPDF_IndirectObjectHolder::~CPDF_IndirectObjectHolder() {
     pair.second->Destroy();
   }
 }
-CPDF_Object* CPDF_IndirectObjectHolder::GetIndirectObject(
-    FX_DWORD objnum,
-    PARSE_CONTEXT* pContext) {
+CPDF_Object* CPDF_IndirectObjectHolder::GetIndirectObject(FX_DWORD objnum) {
   if (objnum == 0)
     return nullptr;
 
@@ -1041,7 +1039,7 @@ CPDF_Object* CPDF_IndirectObjectHolder::GetIndirectObject(
   if (!m_pParser)
     return nullptr;
 
-  CPDF_Object* pObj = m_pParser->ParseIndirectObject(this, objnum, pContext);
+  CPDF_Object* pObj = m_pParser->ParseIndirectObject(this, objnum);
   if (!pObj)
     return nullptr;
 

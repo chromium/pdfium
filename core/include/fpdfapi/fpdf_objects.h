@@ -29,7 +29,6 @@ class CPDF_StreamAcc;
 class CPDF_StreamFilter;
 class CPDF_String;
 class IFX_FileRead;
-struct PARSE_CONTEXT;
 
 #define PDFOBJ_INVALID 0
 #define PDFOBJ_BOOLEAN 1
@@ -567,7 +566,7 @@ class CPDF_IndirectObjectHolder {
   explicit CPDF_IndirectObjectHolder(CPDF_Parser* pParser);
   ~CPDF_IndirectObjectHolder();
 
-  CPDF_Object* GetIndirectObject(FX_DWORD objnum, PARSE_CONTEXT* pContext);
+  CPDF_Object* GetIndirectObject(FX_DWORD objnum);
   FX_DWORD AddIndirectObject(CPDF_Object* pObj);
   void ReleaseIndirectObject(FX_DWORD objnum);
 

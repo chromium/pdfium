@@ -71,8 +71,7 @@ CPDF_DocRenderData* CPDF_Document::GetValidateRenderData() {
 }
 void CPDF_Document::LoadDoc() {
   m_LastObjNum = m_pParser->GetLastObjNum();
-  CPDF_Object* pRootObj =
-      GetIndirectObject(m_pParser->GetRootObjNum(), nullptr);
+  CPDF_Object* pRootObj = GetIndirectObject(m_pParser->GetRootObjNum());
   if (!pRootObj) {
     return;
   }
@@ -80,8 +79,7 @@ void CPDF_Document::LoadDoc() {
   if (!m_pRootDict) {
     return;
   }
-  CPDF_Object* pInfoObj =
-      GetIndirectObject(m_pParser->GetInfoObjNum(), nullptr);
+  CPDF_Object* pInfoObj = GetIndirectObject(m_pParser->GetInfoObjNum());
   if (pInfoObj) {
     m_pInfoDict = pInfoObj->GetDict();
   }
@@ -95,13 +93,12 @@ void CPDF_Document::LoadDoc() {
 void CPDF_Document::LoadAsynDoc(CPDF_Dictionary* pLinearized) {
   m_bLinearized = TRUE;
   m_LastObjNum = m_pParser->GetLastObjNum();
-  CPDF_Object* pIndirectObj =
-      GetIndirectObject(m_pParser->GetRootObjNum(), nullptr);
+  CPDF_Object* pIndirectObj = GetIndirectObject(m_pParser->GetRootObjNum());
   m_pRootDict = pIndirectObj ? pIndirectObj->GetDict() : nullptr;
   if (!m_pRootDict) {
     return;
   }
-  pIndirectObj = GetIndirectObject(m_pParser->GetInfoObjNum(), nullptr);
+  pIndirectObj = GetIndirectObject(m_pParser->GetInfoObjNum());
   m_pInfoDict = pIndirectObj ? pIndirectObj->GetDict() : nullptr;
   CPDF_Array* pIDArray = m_pParser->GetIDArray();
   if (pIDArray) {
@@ -182,16 +179,15 @@ CPDF_Dictionary* CPDF_Document::GetPage(int iPage) {
 
   if (m_bLinearized && (iPage == (int)m_dwFirstPageNo)) {
     if (CPDF_Dictionary* pDict =
-            ToDictionary(GetIndirectObject(m_dwFirstPageObjNum, nullptr)))
+            ToDictionary(GetIndirectObject(m_dwFirstPageObjNum))) {
       return pDict;
+    }
   }
 
   int objnum = m_PageList.GetAt(iPage);
   if (objnum) {
-    if (CPDF_Dictionary* pDict =
-            ToDictionary(GetIndirectObject(objnum, nullptr))) {
+    if (CPDF_Dictionary* pDict = ToDictionary(GetIndirectObject(objnum)))
       return pDict;
-    }
   }
 
   CPDF_Dictionary* pRoot = GetRoot();
