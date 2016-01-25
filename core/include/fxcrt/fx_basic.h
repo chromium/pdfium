@@ -1162,15 +1162,6 @@ class CFX_ListArrayTemplate {
 typedef CFX_ListArrayTemplate<CFX_SortListArray<sizeof(FX_FILESIZE)>,
                               FX_FILESIZE> CFX_FileSizeListArray;
 
-typedef enum {
-  Ready,
-  ToBeContinued,
-  Found,
-  NotFound,
-  Failed,
-  Done
-} FX_ProgressiveStatus;
-#define ProgressiveStatus FX_ProgressiveStatus
 #ifdef PDF_ENABLE_XFA
 class IFX_Unknown {
  public:

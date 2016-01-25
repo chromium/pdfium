@@ -207,11 +207,6 @@ class CPDF_Document : public CFX_PrivateData, public CPDF_IndirectObjectHolder {
   CPDF_DocRenderData* m_pDocRender;
 };
 
-#define PDFWORD_EOF 0
-#define PDFWORD_NUMBER 1
-#define PDFWORD_TEXT 2
-#define PDFWORD_DELIMITER 3
-#define PDFWORD_NAME 4
 class CPDF_SimpleParser {
  public:
   CPDF_SimpleParser(const uint8_t* pData, FX_DWORD dwSize);
@@ -239,14 +234,13 @@ class CPDF_SimpleParser {
   }
 
  private:
-  void ParseWord(const uint8_t*& pStart, FX_DWORD& dwSize, int& type);
+  void ParseWord(const uint8_t*& pStart, FX_DWORD& dwSize);
 
   const uint8_t* m_pData;
-
   FX_DWORD m_dwSize;
-
   FX_DWORD m_dwCurPos;
 };
+
 class CPDF_SyntaxParser {
  public:
   CPDF_SyntaxParser();
@@ -335,8 +329,6 @@ class CPDF_SyntaxParser {
 
   FX_FILESIZE m_Pos;
 
-  FX_BOOL m_bFileStream;
-
   int m_MetadataObjnum;
 
   IFX_FileRead* m_pFileAccess;
@@ -356,8 +348,6 @@ class CPDF_SyntaxParser {
   uint8_t m_WordBuffer[257];
 
   FX_DWORD m_WordSize;
-
-  FX_FILESIZE m_dwWordPos;
 };
 
 #define PDFPARSE_ERROR_SUCCESS 0
