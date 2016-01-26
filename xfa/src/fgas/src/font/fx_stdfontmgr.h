@@ -219,6 +219,7 @@ class CFX_FontMgrImp : public IFX_FontMgr {
   IFX_FileRead* CreateFontStream(CFX_FontMapper* pFontMapper,
                                  IFX_SystemFontInfo* pSystemFontInfo,
                                  FX_DWORD index);
+  IFX_FileRead* CreateFontStream(const CFX_ByteString& bsFaceName);
   CFX_HashFontDescsMap m_Hash2CandidateList;
   CFX_HashFontsMap m_Hash2Fonts;
   CFX_HashFileMap m_Hash2FileAccess;

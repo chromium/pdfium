@@ -632,7 +632,6 @@ FX_BOOL CFX_FontMgrImp::EnumFontsFromFontMapper() {
 }
 FX_BOOL CFX_FontMgrImp::EnumFontsFromFiles() {
   CFX_GEModule::Get()->GetFontMgr()->InitFTLibrary();
-  FXFT_Face pFace = nullptr;
   FX_POSITION pos = m_pFontSource->GetStartPosition();
   IFX_FileAccess* pFontSource = nullptr;
   IFX_FileRead* pFontStream = nullptr;
@@ -784,94 +783,75 @@ IFX_Font* CFX_FontMgrImp::GetFontByCharset(uint8_t nCharset,
 IFX_Font* CFX_FontMgrImp::GetFontByUnicode(FX_WCHAR wUnicode,
                                            FX_DWORD dwFontStyles,
                                            const FX_WCHAR* pszFontFamily) {
-  IFX_Font* pFont = NULL;
-  if (m_FailedUnicodes2NULL.Lookup(wUnicode, pFont)) {
-    return NULL;
-  }
+  IFX_Font* pFont = nullptr;
+  if (m_FailedUnicodes2NULL.Lookup(wUnicode, pFont))
+    return nullptr;
   FGAS_LPCFONTUSB x = FGAS_GetUnicodeBitField(wUnicode);
-  FX_WORD wCodePage = NULL == x ? 0xFFFF : x->wCodePage;
-  FX_WORD wBitField = NULL == x ? 999 : x->wBitField;
+  FX_WORD wCodePage = x ? x->wCodePage : 0xFFFF;
+  FX_WORD wBitField = x ? x->wBitField : 0x03E7;
   CFX_ByteString bsHash;
-  if (wCodePage == 0xFFFF) {
+  if (wCodePage == 0xFFFF)
     bsHash.Format("%d, %d, %d", wCodePage, wBitField, dwFontStyles);
-  } else {
+  else
     bsHash.Format("%d, %d", wCodePage, dwFontStyles);
-  }
   bsHash += CFX_WideString(pszFontFamily).UTF8Encode();
   FX_DWORD dwHash = FX_HashCode_String_GetA(bsHash, bsHash.GetLength());
-  CFX_ArrayTemplate<IFX_Font*>* pFonts = NULL;
+  CFX_ArrayTemplate<IFX_Font*>* pFonts = nullptr;
   if (m_Hash2Fonts.Lookup(dwHash, pFonts)) {
-    if (NULL == pFonts) {
-      return NULL;
-    }
-    if (0 != pFonts->GetSize()) {
-      for (int32_t i = 0; i < pFonts->GetSize(); i++) {
-        if (VerifyUnicode(pFonts->GetAt(i), wUnicode)) {
-          return pFonts->GetAt(i)->Retain();
-        }
-      }
+    if (!pFonts)
+      return nullptr;
+    for (int32_t i = 0; i < pFonts->GetSize(); ++i) {
+      if (VerifyUnicode(pFonts->GetAt(i), wUnicode))
+        return pFonts->GetAt(i)->Retain();
     }
   }
   if (!pFonts)
     pFonts = new CFX_ArrayTemplate<IFX_Font*>;
   m_Hash2Fonts.SetAt(dwHash, pFonts);
-  CFX_FontDescriptorInfos* sortedFonts = NULL;
+  CFX_FontDescriptorInfos* sortedFonts = nullptr;
   if (!m_Hash2CandidateList.Lookup(dwHash, sortedFonts)) {
     sortedFonts = new CFX_FontDescriptorInfos;
     MatchFonts(*sortedFonts, wCodePage, dwFontStyles,
                CFX_WideString(pszFontFamily), wUnicode);
     m_Hash2CandidateList.SetAt(dwHash, sortedFonts);
   }
-  for (int32_t i = 0; i < sortedFonts->GetSize(); i++) {
+  for (int32_t i = 0; i < sortedFonts->GetSize(); ++i) {
     CFX_FontDescriptor* pDesc = sortedFonts->GetAt(i).pFont;
-    if (VerifyUnicode(pDesc, wUnicode)) {
-      pFont = LoadFont(pDesc->m_pFileAccess, pDesc->m_nFaceIndex, NULL);
-      if (NULL != pFont) {
-        pFont->SetLogicalFontStyle(dwFontStyles);
-      }
-      pFonts->Add(pFont);
-      return pFont;
-    }
+    if (!VerifyUnicode(pDesc, wUnicode))
+      continue;
+    if (pDesc->m_pFileAccess)
+      pFont = LoadFont(pDesc->m_pFileAccess, pDesc->m_nFaceIndex, nullptr);
+    else
+      pFont = LoadFont(pDesc->m_wsFaceName, pDesc->m_nFaceIndex, nullptr);
+    if (!pFont)
+      continue;
+    pFont->SetLogicalFontStyle(dwFontStyles);
+    pFonts->Add(pFont);
+    return pFont;
   }
-  if (NULL == pszFontFamily) {
-    m_FailedUnicodes2NULL.SetAt(wUnicode, NULL);
-  }
-  return NULL;
+  if (!pszFontFamily)
+    m_FailedUnicodes2NULL.SetAt(wUnicode, nullptr);
+  return nullptr;
 }
 FX_BOOL CFX_FontMgrImp::VerifyUnicode(CFX_FontDescriptor* pDesc,
                                       FX_WCHAR wcUnicode) {
-  IFX_FileRead* pFileRead =
-      pDesc->m_pFileAccess->CreateFileStream(FX_FILEMODE_ReadOnly);
-  if (NULL == pFileRead) {
+  IFX_FileRead* pFileRead = nullptr;
+  if (pDesc->m_pFileAccess)
+    pFileRead = pDesc->m_pFileAccess->CreateFileStream(FX_FILEMODE_ReadOnly);
+  else
+    pFileRead = CreateFontStream(pDesc->m_wsFaceName.UTF8Encode());
+  if (!pFileRead)
     return FALSE;
-  }
   FXFT_Face pFace = LoadFace(pFileRead, pDesc->m_nFaceIndex);
-  if (NULL == pFace) {
-    goto BadRet;
-  }
-  if (0 != FXFT_Select_Charmap(pFace, FXFT_ENCODING_UNICODE)) {
-    goto BadRet;
-  }
-  if (0 == FXFT_Get_Char_Index(pFace, wcUnicode)) {
-    goto BadRet;
-  }
+  FT_Error retCharmap = FXFT_Select_Charmap(pFace, FXFT_ENCODING_UNICODE);
+  FT_Error retIndex = FXFT_Get_Char_Index(pFace, wcUnicode);
   pFileRead->Release();
-  if (FXFT_Get_Face_External_Stream(pFace)) {
+  if (!pFace)
+    return FALSE;
+  if (FXFT_Get_Face_External_Stream(pFace))
     FXFT_Clear_Face_External_Stream(pFace);
-  }
   FXFT_Done_Face(pFace);
-  return TRUE;
-BadRet:
-  if (NULL != pFileRead) {
-    pFileRead->Release();
-  }
-  if (NULL != pFace) {
-    if (FXFT_Get_Face_External_Stream(pFace)) {
-      FXFT_Clear_Face_External_Stream(pFace);
-    }
-    FXFT_Done_Face(pFace);
-  }
-  return FALSE;
+  return !retCharmap && retIndex;
 }
 FX_BOOL CFX_FontMgrImp::VerifyUnicode(IFX_Font* pFont, FX_WCHAR wcUnicode) {
   if (NULL == pFont) {
@@ -1091,7 +1071,22 @@ IFX_FileRead* CFX_FontMgrImp::CreateFontStream(
   dwFileSize = pSystemFontInfo->GetFontData(hFont, 0, pBuffer, dwFileSize);
   return new CFX_MemoryStream(pBuffer, dwFileSize, TRUE);
 }
-
+IFX_FileRead* CFX_FontMgrImp::CreateFontStream(
+    const CFX_ByteString& bsFaceName) {
+  CFX_FontMgr* pFontMgr = CFX_GEModule::Get()->GetFontMgr();
+  CFX_FontMapper* pFontMapper = pFontMgr->GetBuiltinMapper();
+  if (!pFontMapper)
+    return nullptr;
+  IFX_SystemFontInfo* pSystemFontInfo = pFontMapper->GetSystemFontInfo();
+  if (!pSystemFontInfo)
+    return nullptr;
+  pSystemFontInfo->EnumFontList(pFontMapper);
+  for (int32_t i = 0; i < pFontMapper->GetFaceSize(); ++i) {
+    if (pFontMapper->GetFaceName(i) == bsFaceName)
+      return CreateFontStream(pFontMapper, pSystemFontInfo, i);
+  }
+  return nullptr;
+}
 int32_t CFX_FontMgrImp::MatchFonts(CFX_FontDescriptorInfos& MatchedFonts,
                                    FX_WORD wCodePage,
                                    FX_DWORD dwFontStyles,
