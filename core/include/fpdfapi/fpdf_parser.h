@@ -328,52 +328,40 @@ class CPDF_SyntaxParser {
                           FX_DWORD gennum);
 
   FX_FILESIZE m_Pos;
-
   int m_MetadataObjnum;
-
   IFX_FileRead* m_pFileAccess;
-
   FX_DWORD m_HeaderOffset;
-
   FX_FILESIZE m_FileLen;
-
   uint8_t* m_pFileBuf;
-
   FX_DWORD m_BufSize;
-
   FX_FILESIZE m_BufOffset;
-
   std::unique_ptr<CPDF_CryptoHandler> m_pCryptoHandler;
-
   uint8_t m_WordBuffer[257];
-
   FX_DWORD m_WordSize;
 };
 
-#define PDFPARSE_ERROR_SUCCESS 0
-#define PDFPARSE_ERROR_FILE 1
-#define PDFPARSE_ERROR_FORMAT 2
-#define PDFPARSE_ERROR_PASSWORD 3
-#define PDFPARSE_ERROR_HANDLER 4
-#define PDFPARSE_ERROR_CERT 5
-
 class CPDF_Parser {
  public:
+  enum Error {
+    SUCCESS = 0,
+    FILE_ERROR,
+    FORMAT_ERROR,
+    PASSWORD_ERROR,
+    HANDLER_ERROR
+  };
+
   CPDF_Parser();
   ~CPDF_Parser();
 
-  FX_DWORD StartParse(IFX_FileRead* pFile,
-                      FX_BOOL bReParse = FALSE,
-                      FX_BOOL bOwnFileRead = TRUE);
-
+  Error StartParse(IFX_FileRead* pFile,
+                   FX_BOOL bReParse = FALSE,
+                   FX_BOOL bOwnFileRead = TRUE);
   void CloseParser(FX_BOOL bReParse = FALSE);
 
   FX_DWORD GetPermissions(FX_BOOL bCheckRevision = FALSE);
-
   FX_BOOL IsOwner();
 
   void SetPassword(const FX_CHAR* password) { m_Password = password; }
-
   CFX_ByteString GetPassword() { return m_Password; }
 
   CPDF_CryptoHandler* GetCryptoHandler() {
@@ -383,17 +371,15 @@ class CPDF_Parser {
   void SetSecurityHandler(CPDF_SecurityHandler* pSecurityHandler,
                           FX_BOOL bForced = FALSE);
 
-  CPDF_Dictionary* GetTrailer() { return m_pTrailer; }
-
-  FX_FILESIZE GetLastXRefOffset() { return m_LastXRefOffset; }
-
-  CPDF_Document* GetDocument() { return m_pDocument; }
+  CPDF_Dictionary* GetTrailer() const { return m_pTrailer; }
+  FX_FILESIZE GetLastXRefOffset() const { return m_LastXRefOffset; }
+  CPDF_Document* GetDocument() const { return m_pDocument; }
 
   FX_DWORD GetRootObjNum();
   FX_DWORD GetInfoObjNum();
   CPDF_Array* GetIDArray();
 
-  CPDF_Dictionary* GetEncryptDict() { return m_pEncryptDict; }
+  CPDF_Dictionary* GetEncryptDict() const { return m_pEncryptDict; }
 
   CPDF_Object* ParseIndirectObject(CPDF_IndirectObjectHolder* pObjList,
                                    FX_DWORD objnum);
@@ -403,16 +389,13 @@ class CPDF_Parser {
   FX_BOOL IsFormStream(FX_DWORD objnum, FX_BOOL& bForm);
 
   FX_FILESIZE GetObjectOffset(FX_DWORD objnum) const;
-
   FX_FILESIZE GetObjectSize(FX_DWORD objnum) const;
 
   void GetIndirectBinary(FX_DWORD objnum, uint8_t*& pBuffer, FX_DWORD& size);
-
   IFX_FileRead* GetFileAccess() const { return m_Syntax.m_pFileAccess; }
-
   int GetFileVersion() const { return m_FileVersion; }
-
   FX_BOOL IsXRefStream() const { return m_bXRefStream; }
+
   CPDF_Object* ParseIndirectObjectAt(CPDF_IndirectObjectHolder* pObjList,
                                      FX_FILESIZE pos,
                                      FX_DWORD objnum);
@@ -423,72 +406,45 @@ class CPDF_Parser {
       FX_DWORD objnum,
       FX_FILESIZE* pResultPos);
 
-  FX_DWORD StartAsynParse(IFX_FileRead* pFile,
-                          FX_BOOL bReParse = FALSE,
-                          FX_BOOL bOwnFileRead = TRUE);
+  Error StartAsynParse(IFX_FileRead* pFile,
+                       FX_BOOL bReParse = FALSE,
+                       FX_BOOL bOwnFileRead = TRUE);
 
-  FX_DWORD GetFirstPageNo() { return m_dwFirstPageNo; }
+  FX_DWORD GetFirstPageNo() const { return m_dwFirstPageNo; }
 
  protected:
   CPDF_Object* ParseDirect(CPDF_Object* pObj);
-
   FX_BOOL LoadAllCrossRefV4(FX_FILESIZE pos);
-
   FX_BOOL LoadAllCrossRefV5(FX_FILESIZE pos);
-
   bool LoadCrossRefV4(FX_FILESIZE pos, FX_FILESIZE streampos, FX_BOOL bSkip);
-
   FX_BOOL LoadCrossRefV5(FX_FILESIZE* pos, FX_BOOL bMainXRef);
-
   CPDF_Dictionary* LoadTrailerV4();
-
   FX_BOOL RebuildCrossRef();
-
-  FX_DWORD SetEncryptHandler();
-
+  Error SetEncryptHandler();
   void ReleaseEncryptHandler();
-
   FX_BOOL LoadLinearizedAllCrossRefV4(FX_FILESIZE pos, FX_DWORD dwObjCount);
-
   FX_BOOL LoadLinearizedCrossRefV4(FX_FILESIZE pos, FX_DWORD dwObjCount);
-
   FX_BOOL LoadLinearizedAllCrossRefV5(FX_FILESIZE pos);
-
-  FX_DWORD LoadLinearizedMainXRefTable();
-
+  Error LoadLinearizedMainXRefTable();
   CPDF_StreamAcc* GetObjectStream(FX_DWORD number);
-
   FX_BOOL IsLinearizedFile(IFX_FileRead* pFileAccess, FX_DWORD offset);
-
   bool FindPosInOffsets(FX_FILESIZE pos) const;
-
   void SetEncryptDictionary(CPDF_Dictionary* pDict);
-
   FX_FILESIZE GetObjectPositionOrZero(FX_DWORD objnum) const;
   void ShrinkObjectMap(FX_DWORD size);
 
   CPDF_Document* m_pDocument;
-
   CPDF_SyntaxParser m_Syntax;
   FX_BOOL m_bOwnFileRead;
   int m_FileVersion;
-
   CPDF_Dictionary* m_pTrailer;
-
   CPDF_Dictionary* m_pEncryptDict;
-
   FX_FILESIZE m_LastXRefOffset;
-
   FX_BOOL m_bXRefStream;
-
   std::unique_ptr<CPDF_SecurityHandler> m_pSecurityHandler;
-
   FX_BOOL m_bForceUseSecurityHandler;
-
   CFX_ByteString m_bsRecipient;
-
   CFX_ByteString m_FilePath;
-
   CFX_ByteString m_Password;
 
   struct ObjectInfo {
@@ -505,17 +461,11 @@ class CPDF_Parser {
 
   CFX_ByteArray m_V5Type;
   CFX_WordArray m_ObjVersion;
-
   CFX_FileSizeArray m_SortedOffset;
-
   CFX_ArrayTemplate<CPDF_Dictionary*> m_Trailers;
-
   FX_BOOL m_bVersionUpdated;
-
   CPDF_Object* m_pLinearized;
-
   FX_DWORD m_dwFirstPageNo;
-
   FX_DWORD m_dwXrefStartObjNum;
 
   // A map of object numbers to indirect streams. Map owns the streams.
@@ -667,6 +617,9 @@ class CPDF_StandardSecurityHandler : public CPDF_SecurityHandler {
 
   int m_KeyLen;
 };
+
+CPDF_SecurityHandler* FPDF_CreateStandardSecurityHandler();
+
 class CPDF_CryptoHandler {
  public:
   virtual ~CPDF_CryptoHandler() {}

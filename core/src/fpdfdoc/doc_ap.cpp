@@ -10,6 +10,12 @@
 #include "doc_utils.h"
 #include "pdf_vt.h"
 
+#define PBS_SOLID 0
+#define PBS_DASH 1
+#define PBS_BEVELED 2
+#define PBS_INSET 3
+#define PBS_UNDERLINED 4
+
 FX_BOOL FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
   if (!pAnnotDict || pAnnotDict->GetConstString("Subtype") != "Widget") {
     return FALSE;
@@ -224,14 +230,14 @@ static CPVT_Color ParseColor(const CFX_ByteString& str) {
   CPDF_SimpleParser syntax(str);
   syntax.SetPos(0);
   if (syntax.FindTagParam("g", 1)) {
-    return CPVT_Color(CT_GRAY, FX_atof(syntax.GetWord()));
+    return CPVT_Color(CPVT_Color::GRAY, FX_atof(syntax.GetWord()));
   }
   syntax.SetPos(0);
   if (syntax.FindTagParam("rg", 3)) {
     FX_FLOAT f1 = FX_atof(syntax.GetWord());
     FX_FLOAT f2 = FX_atof(syntax.GetWord());
     FX_FLOAT f3 = FX_atof(syntax.GetWord());
-    return CPVT_Color(CT_RGB, f1, f2, f3);
+    return CPVT_Color(CPVT_Color::RGB, f1, f2, f3);
   }
   syntax.SetPos(0);
   if (syntax.FindTagParam("k", 4)) {
@@ -239,22 +245,22 @@ static CPVT_Color ParseColor(const CFX_ByteString& str) {
     FX_FLOAT f2 = FX_atof(syntax.GetWord());
     FX_FLOAT f3 = FX_atof(syntax.GetWord());
     FX_FLOAT f4 = FX_atof(syntax.GetWord());
-    return CPVT_Color(CT_CMYK, f1, f2, f3, f4);
+    return CPVT_Color(CPVT_Color::CMYK, f1, f2, f3, f4);
   }
-  return CPVT_Color(CT_TRANSPARENT);
+  return CPVT_Color(CPVT_Color::TRANSPARENT);
 }
 static CPVT_Color ParseColor(const CPDF_Array& array) {
   CPVT_Color rt;
   switch (array.GetCount()) {
     case 1:
-      rt = CPVT_Color(CT_GRAY, array.GetFloat(0));
+      rt = CPVT_Color(CPVT_Color::GRAY, array.GetFloat(0));
       break;
     case 3:
-      rt = CPVT_Color(CT_RGB, array.GetFloat(0), array.GetFloat(1),
+      rt = CPVT_Color(CPVT_Color::RGB, array.GetFloat(0), array.GetFloat(1),
                       array.GetFloat(2));
       break;
     case 4:
-      rt = CPVT_Color(CT_CMYK, array.GetFloat(0), array.GetFloat(1),
+      rt = CPVT_Color(CPVT_Color::CMYK, array.GetFloat(0), array.GetFloat(1),
                       array.GetFloat(2), array.GetFloat(3));
       break;
   }
@@ -374,14 +380,14 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
       case 'B':
         nBorderStyle = PBS_BEVELED;
         fBorderWidth *= 2;
-        crLeftTop = CPVT_Color(CT_GRAY, 1);
-        crRightBottom = CPVT_Color(CT_GRAY, 0.5);
+        crLeftTop = CPVT_Color(CPVT_Color::GRAY, 1);
+        crRightBottom = CPVT_Color(CPVT_Color::GRAY, 0.5);
         break;
       case 'I':
         nBorderStyle = PBS_INSET;
         fBorderWidth *= 2;
-        crLeftTop = CPVT_Color(CT_GRAY, 0.5);
-        crRightBottom = CPVT_Color(CT_GRAY, 0.75);
+        crLeftTop = CPVT_Color(CPVT_Color::GRAY, 0.5);
+        crRightBottom = CPVT_Color(CPVT_Color::GRAY, 0.75);
         break;
       case 'U':
         nBorderStyle = PBS_UNDERLINED;
@@ -555,7 +561,8 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
                    << "Q\nEMC\n";
       }
       CFX_ByteString sButton = CPVT_GenerateAP::GenerateColorAP(
-          CPVT_Color(CT_RGB, 220.0f / 255.0f, 220.0f / 255.0f, 220.0f / 255.0f),
+          CPVT_Color(CPVT_Color::RGB, 220.0f / 255.0f, 220.0f / 255.0f,
+                     220.0f / 255.0f),
           TRUE);
       if (sButton.GetLength() > 0 && !rcButton.IsEmpty()) {
         sAppStream << "q\n" << sButton;
@@ -563,8 +570,9 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
                    << rcButton.Width() << " " << rcButton.Height() << " re f\n";
         sAppStream << "Q\n";
         CFX_ByteString sButtonBorder = CPVT_GenerateAP::GenerateBorderAP(
-            rcButton, 2, CPVT_Color(CT_GRAY, 0), CPVT_Color(CT_GRAY, 1),
-            CPVT_Color(CT_GRAY, 0.5), PBS_BEVELED, CPVT_Dash(3, 0, 0));
+            rcButton, 2, CPVT_Color(CPVT_Color::GRAY, 0),
+            CPVT_Color(CPVT_Color::GRAY, 1), CPVT_Color(CPVT_Color::GRAY, 0.5),
+            PBS_BEVELED, CPVT_Dash(3, 0, 0));
         if (sButtonBorder.GetLength() > 0) {
           sAppStream << "q\n" << sButtonBorder << "Q\n";
         }
@@ -635,14 +643,14 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
               CPDF_Rect rcItem =
                   CPDF_Rect(rcBody.left, fy - fItemHeight, rcBody.right, fy);
               sBody << "q\n" << CPVT_GenerateAP::GenerateColorAP(
-                                    CPVT_Color(CT_RGB, 0, 51.0f / 255.0f,
-                                               113.0f / 255.0f),
+                                    CPVT_Color(CPVT_Color::RGB, 0,
+                                               51.0f / 255.0f, 113.0f / 255.0f),
                                     TRUE)
                     << rcItem.left << " " << rcItem.bottom << " "
                     << rcItem.Width() << " " << rcItem.Height() << " re f\n"
                     << "Q\n";
               sBody << "BT\n" << CPVT_GenerateAP::GenerateColorAP(
-                                     CPVT_Color(CT_GRAY, 1), TRUE)
+                                     CPVT_Color(CPVT_Color::GRAY, 1), TRUE)
                     << CPVT_GenerateAP::GenerateEditAP(&map, vt.GetIterator(),
                                                        CPDF_Point(0.0f, fy),
                                                        TRUE, 0)
@@ -903,19 +911,21 @@ CFX_ByteString CPVT_GenerateAP::GenerateColorAP(const CPVT_Color& color,
                                                 const FX_BOOL& bFillOrStroke) {
   CFX_ByteTextBuf sColorStream;
   switch (color.nColorType) {
-    case CT_RGB:
+    case CPVT_Color::RGB:
       sColorStream << color.fColor1 << " " << color.fColor2 << " "
                    << color.fColor3 << " " << (bFillOrStroke ? "rg" : "RG")
                    << "\n";
       break;
-    case CT_GRAY:
+    case CPVT_Color::GRAY:
       sColorStream << color.fColor1 << " " << (bFillOrStroke ? "g" : "G")
                    << "\n";
       break;
-    case CT_CMYK:
+    case CPVT_Color::CMYK:
       sColorStream << color.fColor1 << " " << color.fColor2 << " "
                    << color.fColor3 << " " << color.fColor4 << " "
                    << (bFillOrStroke ? "k" : "K") << "\n";
+      break;
+    case CPVT_Color::TRANSPARENT:
       break;
   }
   return sColorStream.GetByteString();

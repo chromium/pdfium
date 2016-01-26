@@ -179,11 +179,10 @@ void CPDF_Parser::CloseParser(FX_BOOL bReParse) {
     m_pLinearized = NULL;
   }
 }
-CPDF_SecurityHandler* FPDF_CreateStandardSecurityHandler();
-CPDF_SecurityHandler* FPDF_CreatePubKeyHandler(void*);
-FX_DWORD CPDF_Parser::StartParse(IFX_FileRead* pFileAccess,
-                                 FX_BOOL bReParse,
-                                 FX_BOOL bOwnFileRead) {
+
+CPDF_Parser::Error CPDF_Parser::StartParse(IFX_FileRead* pFileAccess,
+                                           FX_BOOL bReParse,
+                                           FX_BOOL bOwnFileRead) {
   CloseParser(bReParse);
   m_bXRefStream = FALSE;
   m_LastXRefOffset = 0;
@@ -193,23 +192,23 @@ FX_DWORD CPDF_Parser::StartParse(IFX_FileRead* pFileAccess,
   if (offset == -1) {
     if (bOwnFileRead && pFileAccess)
       pFileAccess->Release();
-    return PDFPARSE_ERROR_FORMAT;
+    return FORMAT_ERROR;
   }
   m_Syntax.InitParser(pFileAccess, offset);
 
   uint8_t ch;
   if (!m_Syntax.GetCharAt(5, ch))
-    return PDFPARSE_ERROR_FORMAT;
+    return FORMAT_ERROR;
   if (std::isdigit(ch))
     m_FileVersion = FXSYS_toDecimalDigit(ch) * 10;
 
   if (!m_Syntax.GetCharAt(7, ch))
-    return PDFPARSE_ERROR_FORMAT;
+    return FORMAT_ERROR;
   if (std::isdigit(ch))
     m_FileVersion += FXSYS_toDecimalDigit(ch);
 
   if (m_Syntax.m_FileLen < m_Syntax.m_HeaderOffset + 9)
-    return PDFPARSE_ERROR_FORMAT;
+    return FORMAT_ERROR;
 
   m_Syntax.RestorePos(m_Syntax.m_FileLen - m_Syntax.m_HeaderOffset - 9);
   if (!bReParse)
@@ -228,54 +227,54 @@ FX_DWORD CPDF_Parser::StartParse(IFX_FileRead* pFileAccess,
     bool bNumber;
     CFX_ByteString xrefpos_str = m_Syntax.GetNextWord(&bNumber);
     if (!bNumber)
-      return PDFPARSE_ERROR_FORMAT;
+      return FORMAT_ERROR;
 
     m_LastXRefOffset = (FX_FILESIZE)FXSYS_atoi64(xrefpos_str);
     if (!LoadAllCrossRefV4(m_LastXRefOffset) &&
         !LoadAllCrossRefV5(m_LastXRefOffset)) {
       if (!RebuildCrossRef())
-        return PDFPARSE_ERROR_FORMAT;
+        return FORMAT_ERROR;
 
       bXRefRebuilt = TRUE;
       m_LastXRefOffset = 0;
     }
   } else {
     if (!RebuildCrossRef())
-      return PDFPARSE_ERROR_FORMAT;
+      return FORMAT_ERROR;
 
     bXRefRebuilt = TRUE;
   }
-  FX_DWORD dwRet = SetEncryptHandler();
-  if (dwRet != PDFPARSE_ERROR_SUCCESS)
-    return dwRet;
+  Error eRet = SetEncryptHandler();
+  if (eRet != SUCCESS)
+    return eRet;
 
   m_pDocument->LoadDoc();
   if (!m_pDocument->GetRoot() || m_pDocument->GetPageCount() == 0) {
     if (bXRefRebuilt)
-      return PDFPARSE_ERROR_FORMAT;
+      return FORMAT_ERROR;
 
     ReleaseEncryptHandler();
     if (!RebuildCrossRef())
-      return PDFPARSE_ERROR_FORMAT;
+      return FORMAT_ERROR;
 
-    dwRet = SetEncryptHandler();
-    if (dwRet != PDFPARSE_ERROR_SUCCESS)
-      return dwRet;
+    eRet = SetEncryptHandler();
+    if (eRet != SUCCESS)
+      return eRet;
 
     m_pDocument->LoadDoc();
     if (!m_pDocument->GetRoot())
-      return PDFPARSE_ERROR_FORMAT;
+      return FORMAT_ERROR;
   }
   FXSYS_qsort(m_SortedOffset.GetData(), m_SortedOffset.GetSize(),
               sizeof(FX_FILESIZE), CompareFileSize);
   if (GetRootObjNum() == 0) {
     ReleaseEncryptHandler();
     if (!RebuildCrossRef() || GetRootObjNum() == 0)
-      return PDFPARSE_ERROR_FORMAT;
+      return FORMAT_ERROR;
 
-    dwRet = SetEncryptHandler();
-    if (dwRet != PDFPARSE_ERROR_SUCCESS)
-      return dwRet;
+    eRet = SetEncryptHandler();
+    if (eRet != SUCCESS)
+      return eRet;
   }
   if (m_pSecurityHandler && !m_pSecurityHandler->IsMetadataEncrypted()) {
     CPDF_Reference* pMetadata =
@@ -283,13 +282,13 @@ FX_DWORD CPDF_Parser::StartParse(IFX_FileRead* pFileAccess,
     if (pMetadata)
       m_Syntax.m_MetadataObjnum = pMetadata->GetRefObjNum();
   }
-  return PDFPARSE_ERROR_SUCCESS;
+  return SUCCESS;
 }
-FX_DWORD CPDF_Parser::SetEncryptHandler() {
+CPDF_Parser::Error CPDF_Parser::SetEncryptHandler() {
   ReleaseEncryptHandler();
   SetEncryptDictionary(NULL);
   if (!m_pTrailer) {
-    return PDFPARSE_ERROR_FORMAT;
+    return FORMAT_ERROR;
   }
   CPDF_Object* pEncryptObj = m_pTrailer->GetElement("Encrypt");
   if (pEncryptObj) {
@@ -302,29 +301,28 @@ FX_DWORD CPDF_Parser::SetEncryptHandler() {
     }
   }
   if (m_bForceUseSecurityHandler) {
-    FX_DWORD err = PDFPARSE_ERROR_HANDLER;
     if (!m_pSecurityHandler) {
-      return PDFPARSE_ERROR_HANDLER;
+      return HANDLER_ERROR;
     }
     if (!m_pSecurityHandler->OnInit(this, m_pEncryptDict)) {
-      return err;
+      return HANDLER_ERROR;
     }
     std::unique_ptr<CPDF_CryptoHandler> pCryptoHandler(
         m_pSecurityHandler->CreateCryptoHandler());
     if (!pCryptoHandler->Init(m_pEncryptDict, m_pSecurityHandler.get())) {
-      return PDFPARSE_ERROR_HANDLER;
+      return HANDLER_ERROR;
     }
     m_Syntax.SetEncrypt(pCryptoHandler.release());
   } else if (m_pEncryptDict) {
     CFX_ByteString filter = m_pEncryptDict->GetString("Filter");
     std::unique_ptr<CPDF_SecurityHandler> pSecurityHandler;
-    FX_DWORD err = PDFPARSE_ERROR_HANDLER;
+    Error err = HANDLER_ERROR;
     if (filter == "Standard") {
       pSecurityHandler.reset(FPDF_CreateStandardSecurityHandler());
-      err = PDFPARSE_ERROR_PASSWORD;
+      err = PASSWORD_ERROR;
     }
     if (!pSecurityHandler) {
-      return PDFPARSE_ERROR_HANDLER;
+      return HANDLER_ERROR;
     }
     if (!pSecurityHandler->OnInit(this, m_pEncryptDict)) {
       return err;
@@ -333,11 +331,11 @@ FX_DWORD CPDF_Parser::SetEncryptHandler() {
     std::unique_ptr<CPDF_CryptoHandler> pCryptoHandler(
         m_pSecurityHandler->CreateCryptoHandler());
     if (!pCryptoHandler->Init(m_pEncryptDict, m_pSecurityHandler.get())) {
-      return PDFPARSE_ERROR_HANDLER;
+      return HANDLER_ERROR;
     }
     m_Syntax.SetEncrypt(pCryptoHandler.release());
   }
-  return PDFPARSE_ERROR_SUCCESS;
+  return SUCCESS;
 }
 void CPDF_Parser::ReleaseEncryptHandler() {
   m_Syntax.m_pCryptoHandler.reset();
@@ -1562,16 +1560,16 @@ FX_BOOL CPDF_Parser::IsLinearizedFile(IFX_FileRead* pFileAccess,
   m_pLinearized = NULL;
   return FALSE;
 }
-FX_DWORD CPDF_Parser::StartAsynParse(IFX_FileRead* pFileAccess,
-                                     FX_BOOL bReParse,
-                                     FX_BOOL bOwnFileRead) {
+CPDF_Parser::Error CPDF_Parser::StartAsynParse(IFX_FileRead* pFileAccess,
+                                               FX_BOOL bReParse,
+                                               FX_BOOL bOwnFileRead) {
   CloseParser(bReParse);
   m_bXRefStream = FALSE;
   m_LastXRefOffset = 0;
   m_bOwnFileRead = bOwnFileRead;
   int32_t offset = GetHeaderOffset(pFileAccess);
   if (offset == -1) {
-    return PDFPARSE_ERROR_FORMAT;
+    return FORMAT_ERROR;
   }
   if (!IsLinearizedFile(pFileAccess, offset)) {
     m_Syntax.m_pFileAccess = NULL;
@@ -1586,7 +1584,7 @@ FX_DWORD CPDF_Parser::StartAsynParse(IFX_FileRead* pFileAccess,
   if (!(bLoadV4 = LoadCrossRefV4(dwFirstXRefOffset, 0, FALSE)) &&
       !LoadCrossRefV5(&dwFirstXRefOffset, TRUE)) {
     if (!RebuildCrossRef()) {
-      return PDFPARSE_ERROR_FORMAT;
+      return FORMAT_ERROR;
     }
     bXRefRebuilt = TRUE;
     m_LastXRefOffset = 0;
@@ -1594,7 +1592,7 @@ FX_DWORD CPDF_Parser::StartAsynParse(IFX_FileRead* pFileAccess,
   if (bLoadV4) {
     m_pTrailer = LoadTrailerV4();
     if (!m_pTrailer) {
-      return PDFPARSE_ERROR_SUCCESS;
+      return SUCCESS;
     }
 
     int32_t xrefsize = GetDirectInteger(m_pTrailer, "Size");
@@ -1603,26 +1601,26 @@ FX_DWORD CPDF_Parser::StartAsynParse(IFX_FileRead* pFileAccess,
       m_V5Type.SetSize(xrefsize);
     }
   }
-  FX_DWORD dwRet = SetEncryptHandler();
-  if (dwRet != PDFPARSE_ERROR_SUCCESS) {
-    return dwRet;
+  Error eRet = SetEncryptHandler();
+  if (eRet != SUCCESS) {
+    return eRet;
   }
   m_pDocument->LoadAsynDoc(m_pLinearized->GetDict());
   if (!m_pDocument->GetRoot() || m_pDocument->GetPageCount() == 0) {
     if (bXRefRebuilt) {
-      return PDFPARSE_ERROR_FORMAT;
+      return FORMAT_ERROR;
     }
     ReleaseEncryptHandler();
     if (!RebuildCrossRef()) {
-      return PDFPARSE_ERROR_FORMAT;
+      return FORMAT_ERROR;
     }
-    dwRet = SetEncryptHandler();
-    if (dwRet != PDFPARSE_ERROR_SUCCESS) {
-      return dwRet;
+    eRet = SetEncryptHandler();
+    if (eRet != SUCCESS) {
+      return eRet;
     }
     m_pDocument->LoadAsynDoc(m_pLinearized->GetDict());
     if (!m_pDocument->GetRoot()) {
-      return PDFPARSE_ERROR_FORMAT;
+      return FORMAT_ERROR;
     }
   }
   FXSYS_qsort(m_SortedOffset.GetData(), m_SortedOffset.GetSize(),
@@ -1630,11 +1628,11 @@ FX_DWORD CPDF_Parser::StartAsynParse(IFX_FileRead* pFileAccess,
   if (GetRootObjNum() == 0) {
     ReleaseEncryptHandler();
     if (!RebuildCrossRef() || GetRootObjNum() == 0)
-      return PDFPARSE_ERROR_FORMAT;
+      return FORMAT_ERROR;
 
-    dwRet = SetEncryptHandler();
-    if (dwRet != PDFPARSE_ERROR_SUCCESS) {
-      return dwRet;
+    eRet = SetEncryptHandler();
+    if (eRet != SUCCESS) {
+      return eRet;
     }
   }
   if (m_pSecurityHandler && m_pSecurityHandler->IsMetadataEncrypted()) {
@@ -1642,7 +1640,7 @@ FX_DWORD CPDF_Parser::StartAsynParse(IFX_FileRead* pFileAccess,
             ToReference(m_pDocument->GetRoot()->GetElement("Metadata")))
       m_Syntax.m_MetadataObjnum = pMetadata->GetRefObjNum();
   }
-  return PDFPARSE_ERROR_SUCCESS;
+  return SUCCESS;
 }
 FX_BOOL CPDF_Parser::LoadLinearizedAllCrossRefV5(FX_FILESIZE xrefpos) {
   if (!LoadCrossRefV5(&xrefpos, FALSE)) {
@@ -1663,7 +1661,8 @@ FX_BOOL CPDF_Parser::LoadLinearizedAllCrossRefV5(FX_FILESIZE xrefpos) {
   m_bXRefStream = TRUE;
   return TRUE;
 }
-FX_DWORD CPDF_Parser::LoadLinearizedMainXRefTable() {
+
+CPDF_Parser::Error CPDF_Parser::LoadLinearizedMainXRefTable() {
   FX_DWORD dwSaveMetadataObjnum = m_Syntax.m_MetadataObjnum;
   m_Syntax.m_MetadataObjnum = 0;
   if (m_pTrailer) {
@@ -1690,12 +1689,12 @@ FX_DWORD CPDF_Parser::LoadLinearizedMainXRefTable() {
       !LoadLinearizedAllCrossRefV5(m_LastXRefOffset)) {
     m_LastXRefOffset = 0;
     m_Syntax.m_MetadataObjnum = dwSaveMetadataObjnum;
-    return PDFPARSE_ERROR_FORMAT;
+    return FORMAT_ERROR;
   }
   FXSYS_qsort(m_SortedOffset.GetData(), m_SortedOffset.GetSize(),
               sizeof(FX_FILESIZE), CompareFileSize);
   m_Syntax.m_MetadataObjnum = dwSaveMetadataObjnum;
-  return PDFPARSE_ERROR_SUCCESS;
+  return SUCCESS;
 }
 
 // static
@@ -4208,9 +4207,10 @@ IPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckLinearizedData(
       pHints->AddSegment(m_dwLastXRefOffset, data_size.ValueOrDie());
       return DataNotAvailable;
     }
-    FX_DWORD dwRet = m_pDocument->GetParser()->LoadLinearizedMainXRefTable();
+    CPDF_Parser::Error eRet =
+        m_pDocument->GetParser()->LoadLinearizedMainXRefTable();
     m_bMainXRefLoadTried = TRUE;
-    if (dwRet != PDFPARSE_ERROR_SUCCESS) {
+    if (eRet != CPDF_Parser::SUCCESS) {
       return DataError;
     }
     if (!PreparePageItem()) {

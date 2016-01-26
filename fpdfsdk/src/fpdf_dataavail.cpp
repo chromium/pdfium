@@ -122,19 +122,20 @@ FPDFAvail_IsDocAvail(FPDF_AVAIL avail, FX_DOWNLOADHINTS* hints) {
 
 DLLEXPORT FPDF_DOCUMENT STDCALL
 FPDFAvail_GetDocument(FPDF_AVAIL avail, FPDF_BYTESTRING password) {
-  if (!avail)
+  CFPDF_DataAvail* pDataAvail = static_cast<CFPDF_DataAvail*>(avail);
+  if (!pDataAvail)
     return NULL;
+
   CPDF_Parser* pParser = new CPDF_Parser;
   pParser->SetPassword(password);
-
-  FX_DWORD err_code = pParser->StartAsynParse(
-      ((CFPDF_DataAvail*)avail)->m_pDataAvail->GetFileRead());
-  if (err_code) {
+  CPDF_Parser::Error error =
+      pParser->StartAsynParse(pDataAvail->m_pDataAvail->GetFileRead());
+  if (error != CPDF_Parser::SUCCESS) {
     delete pParser;
-    ProcessParseError(err_code);
+    ProcessParseError(error);
     return NULL;
   }
-  ((CFPDF_DataAvail*)avail)->m_pDataAvail->SetDocument(pParser->GetDocument());
+  pDataAvail->m_pDataAvail->SetDocument(pParser->GetDocument());
   CheckUnSupportError(pParser->GetDocument(), FPDF_ERR_SUCCESS);
   return FPDFDocumentFromCPDFDocument(pParser->GetDocument());
 }

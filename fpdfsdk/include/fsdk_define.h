@@ -135,6 +135,6 @@ void FPDF_RenderPage_Retail(CRenderContext* pContext,
 
 void CheckUnSupportError(CPDF_Document* pDoc, FX_DWORD err_code);
 void CheckUnSupportAnnot(CPDF_Document* pDoc, const CPDF_Annot* pPDFAnnot);
-void ProcessParseError(FX_DWORD err_code);
+void ProcessParseError(CPDF_Parser::Error err);
 
 #endif  // FPDFSDK_INCLUDE_FSDK_DEFINE_H_

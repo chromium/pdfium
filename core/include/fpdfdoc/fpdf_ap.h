@@ -16,22 +16,20 @@ class IPVT_FontMap {
   virtual CPDF_Font* GetPDFFont(int32_t nFontIndex) = 0;
   virtual CFX_ByteString GetPDFFontAlias(int32_t nFontIndex) = 0;
 };
+
 struct CPVT_Dash {
   CPVT_Dash(int32_t dash, int32_t gap, int32_t phase)
       : nDash(dash), nGap(gap), nPhase(phase) {}
 
   int32_t nDash;
-
   int32_t nGap;
-
   int32_t nPhase;
 };
-#define CT_TRANSPARENT 0
-#define CT_GRAY 1
-#define CT_RGB 2
-#define CT_CMYK 3
+
 struct CPVT_Color {
-  CPVT_Color(int32_t type = 0,
+  enum Type { TRANSPARENT = 0, GRAY, RGB, CMYK };
+
+  CPVT_Color(Type type = TRANSPARENT,
              FX_FLOAT color1 = 0.0f,
              FX_FLOAT color2 = 0.0f,
              FX_FLOAT color3 = 0.0f,
@@ -42,12 +40,13 @@ struct CPVT_Color {
         fColor3(color3),
         fColor4(color4) {}
 
-  int32_t nColorType;
+  Type nColorType;
   FX_FLOAT fColor1;
   FX_FLOAT fColor2;
   FX_FLOAT fColor3;
   FX_FLOAT fColor4;
 };
+
 class CPVT_Provider : public IPDF_VariableText_Provider {
  public:
   CPVT_Provider(IPVT_FontMap* pFontMap);
@@ -68,11 +67,7 @@ class CPVT_Provider : public IPDF_VariableText_Provider {
  private:
   IPVT_FontMap* m_pFontMap;
 };
-#define PBS_SOLID 0
-#define PBS_DASH 1
-#define PBS_BEVELED 2
-#define PBS_INSET 3
-#define PBS_UNDERLINED 4
+
 class CPVT_GenerateAP {
  public:
   static FX_BOOL GenerateTextFieldAP(CPDF_Document* pDoc,

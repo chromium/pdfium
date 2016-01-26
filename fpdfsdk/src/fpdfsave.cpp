@@ -61,9 +61,6 @@ void CFX_IFileWrite::Release() {
 }
 
 #ifdef PDF_ENABLE_XFA
-#define XFA_DATASETS 0
-#define XFA_FORMS 1
-
 FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument,
                              CFX_PtrArray& fileList) {
   if (!pDocument)

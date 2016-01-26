@@ -274,19 +274,23 @@ int GetLastError() {
 }
 #endif  // _WIN32
 
-void ProcessParseError(FX_DWORD err_code) {
+void ProcessParseError(CPDF_Parser::Error err) {
+  FX_DWORD err_code;
   // Translate FPDFAPI error code to FPDFVIEW error code
-  switch (err_code) {
-    case PDFPARSE_ERROR_FILE:
+  switch (err) {
+    case CPDF_Parser::SUCCESS:
+      err_code = FPDF_ERR_SUCCESS;
+      break;
+    case CPDF_Parser::FILE_ERROR:
       err_code = FPDF_ERR_FILE;
       break;
-    case PDFPARSE_ERROR_FORMAT:
+    case CPDF_Parser::FORMAT_ERROR:
       err_code = FPDF_ERR_FORMAT;
       break;
-    case PDFPARSE_ERROR_PASSWORD:
+    case CPDF_Parser::PASSWORD_ERROR:
       err_code = FPDF_ERR_PASSWORD;
       break;
-    case PDFPARSE_ERROR_HANDLER:
+    case CPDF_Parser::HANDLER_ERROR:
       err_code = FPDF_ERR_SECURITY;
       break;
   }
@@ -310,10 +314,10 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadDocument(FPDF_STRING file_path,
   CPDF_Parser* pParser = new CPDF_Parser;
   pParser->SetPassword(password);
 
-  FX_DWORD err_code = pParser->StartParse(pFileAccess);
-  if (err_code) {
+  CPDF_Parser::Error error = pParser->StartParse(pFileAccess);
+  if (error != CPDF_Parser::SUCCESS) {
     delete pParser;
-    ProcessParseError(err_code);
+    ProcessParseError(error);
     return NULL;
   }
 #ifdef PDF_ENABLE_XFA
@@ -399,15 +403,15 @@ DLLEXPORT FPDF_DOCUMENT STDCALL FPDF_LoadMemDocument(const void* data_buf,
   CPDF_Parser* pParser = new CPDF_Parser;
   pParser->SetPassword(password);
   CMemFile* pMemFile = new CMemFile((uint8_t*)data_buf, size);
-  FX_DWORD err_code = pParser->StartParse(pMemFile);
-  if (err_code) {
+  CPDF_Parser::Error error = pParser->StartParse(pMemFile);
+  if (error != CPDF_Parser::SUCCESS) {
     delete pParser;
-    ProcessParseError(err_code);
+    ProcessParseError(error);
     return NULL;
   }
   CPDF_Document* pDoc = NULL;
   pDoc = pParser ? pParser->GetDocument() : NULL;
-  CheckUnSupportError(pDoc, err_code);
+  CheckUnSupportError(pDoc, error);
   return FPDFDocumentFromCPDFDocument(pParser->GetDocument());
 }
 
@@ -417,15 +421,15 @@ FPDF_LoadCustomDocument(FPDF_FILEACCESS* pFileAccess,
   CPDF_Parser* pParser = new CPDF_Parser;
   pParser->SetPassword(password);
   CPDF_CustomAccess* pFile = new CPDF_CustomAccess(pFileAccess);
-  FX_DWORD err_code = pParser->StartParse(pFile);
-  if (err_code) {
+  CPDF_Parser::Error error = pParser->StartParse(pFile);
+  if (error != CPDF_Parser::SUCCESS) {
     delete pParser;
-    ProcessParseError(err_code);
+    ProcessParseError(error);
     return NULL;
   }
   CPDF_Document* pDoc = NULL;
   pDoc = pParser ? pParser->GetDocument() : NULL;
-  CheckUnSupportError(pDoc, err_code);
+  CheckUnSupportError(pDoc, error);
   return FPDFDocumentFromCPDFDocument(pParser->GetDocument());
 }
 
