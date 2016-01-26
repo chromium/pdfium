@@ -957,8 +957,6 @@ void CPDFSDK_BAAnnot::Annot_OnDraw(CFX_RenderDevice* pDevice,
   m_pAnnot->GetAPForm(m_pPageView->GetPDFPage(), CPDF_Annot::Normal);
   m_pAnnot->DrawAppearance(m_pPageView->GetPDFPage(), pDevice, pUser2Device,
                            CPDF_Annot::Normal, NULL);
-
-  return;
 }
 
 UnderlyingPageType* CPDFSDK_Annot::GetUnderlyingPage() {
@@ -966,7 +964,5 @@ UnderlyingPageType* CPDFSDK_Annot::GetUnderlyingPage() {
 }
 
 CPDF_Page* CPDFSDK_Annot::GetPDFPage() {
-  if (m_pPageView)
-    return m_pPageView->GetPDFPage();
-  return NULL;
+  return m_pPageView ? m_pPageView->GetPDFPage() : nullptr;
 }
