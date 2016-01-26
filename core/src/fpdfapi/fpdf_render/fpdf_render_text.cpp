@@ -319,7 +319,7 @@ FX_BOOL CPDF_Type3Char::LoadBitmap(CPDF_RenderContext* pContext) {
   if (m_pForm->CountObjects() == 1 && !m_bColored) {
     CPDF_PageObject* pPageObj =
         m_pForm->GetObjectAt(m_pForm->GetFirstObjectPosition());
-    if (pPageObj->m_Type == PDFPAGE_IMAGE) {
+    if (pPageObj->m_Type == CPDF_PageObject::IMAGE) {
       CPDF_ImageObject* pImage = (CPDF_ImageObject*)pPageObj;
       m_ImageMatrix = pImage->m_Matrix;
       const CFX_DIBSource* pSource = pImage->m_pImage->LoadDIBSource();

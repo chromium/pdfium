@@ -203,12 +203,12 @@ FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT pageObject) {
   if (pGeneralState && pGeneralState->m_FillAlpha != 1.0f)
     return TRUE;
 
-  if (pPageObj->m_Type == PDFPAGE_PATH) {
+  if (pPageObj->m_Type == CPDF_PageObject::PATH) {
     if (pGeneralState && pGeneralState->m_StrokeAlpha != 1.0f)
       return TRUE;
   }
 
-  if (pPageObj->m_Type == PDFPAGE_FORM) {
+  if (pPageObj->m_Type == CPDF_PageObject::FORM) {
     CPDF_FormObject* pFormObj = (CPDF_FormObject*)pPageObj;
     if (pFormObj->m_pForm &&
         (pFormObj->m_pForm->m_Transparency & PDFTRANS_ISOLATED))

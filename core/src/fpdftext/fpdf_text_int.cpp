@@ -771,7 +771,7 @@ int32_t CPDF_TextPage::FindTextlineFlowDirection() {
     if (NULL == pPageObj) {
       continue;
     }
-    if (PDFPAGE_TEXT != pPageObj->m_Type) {
+    if (CPDF_PageObject::TEXT != pPageObj->m_Type) {
       continue;
     }
     int32_t minH =
@@ -860,11 +860,11 @@ void CPDF_TextPage::ProcessObject() {
   while (pos) {
     pPageObj = m_pPage->GetNextObject(pos);
     if (pPageObj) {
-      if (pPageObj->m_Type == PDFPAGE_TEXT) {
+      if (pPageObj->m_Type == CPDF_PageObject::TEXT) {
         CFX_Matrix matrix;
         ProcessTextObject((CPDF_TextObject*)pPageObj, matrix, pos);
         nCount++;
-      } else if (pPageObj->m_Type == PDFPAGE_FORM) {
+      } else if (pPageObj->m_Type == CPDF_PageObject::FORM) {
         CFX_Matrix formMatrix(1, 0, 0, 1, 0, 0);
         ProcessFormObject((CPDF_FormObject*)pPageObj, formMatrix);
       }
@@ -895,9 +895,9 @@ void CPDF_TextPage::ProcessFormObject(CPDF_FormObject* pFormObj,
   while (pos) {
     pPageObj = pFormObj->m_pForm->GetNextObject(pos);
     if (pPageObj) {
-      if (pPageObj->m_Type == PDFPAGE_TEXT) {
+      if (pPageObj->m_Type == CPDF_PageObject::TEXT) {
         ProcessTextObject((CPDF_TextObject*)pPageObj, curFormMatrix, pos);
-      } else if (pPageObj->m_Type == PDFPAGE_FORM) {
+      } else if (pPageObj->m_Type == CPDF_PageObject::FORM) {
         ProcessFormObject((CPDF_FormObject*)pPageObj, curFormMatrix);
       }
     }
@@ -1967,7 +1967,7 @@ FX_BOOL CPDF_TextPage::IsSameAsPreTextObject(CPDF_TextObject* pTextObj,
     if (pObj == pTextObj) {
       continue;
     }
-    if (pObj->m_Type != PDFPAGE_TEXT) {
+    if (pObj->m_Type != CPDF_PageObject::TEXT) {
       continue;
     }
     if (IsSameTextObject((CPDF_TextObject*)pObj, pTextObj)) {

@@ -1388,7 +1388,7 @@ FX_BOOL Document::getPageNthWord(IJS_Context* cc,
 
   while (pos) {
     if (CPDF_PageObject* pPageObj = page.GetNextObject(pos)) {
-      if (pPageObj->m_Type == PDFPAGE_TEXT) {
+      if (pPageObj->m_Type == CPDF_PageObject::TEXT) {
         int nObjWords = CountWords((CPDF_TextObject*)pPageObj);
 
         if (nWords + nObjWords >= nWordNo) {
@@ -1447,7 +1447,7 @@ FX_BOOL Document::getPageNumWords(IJS_Context* cc,
   FX_POSITION pos = page.GetFirstObjectPosition();
   while (pos) {
     if (CPDF_PageObject* pPageObj = page.GetNextObject(pos)) {
-      if (pPageObj->m_Type == PDFPAGE_TEXT) {
+      if (pPageObj->m_Type == CPDF_PageObject::TEXT) {
         CPDF_TextObject* pTextObj = (CPDF_TextObject*)pPageObj;
         nWords += CountWords(pTextObj);
       }

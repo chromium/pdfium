@@ -38,7 +38,7 @@ void CPDF_PageContentGenerator::GenerateContent() {
   CPDF_Dictionary* pPageDict = m_pPage->m_pFormDict;
   for (int i = 0; i < m_pageObjects.GetSize(); ++i) {
     CPDF_PageObject* pPageObj = m_pageObjects[i];
-    if (!pPageObj || pPageObj->m_Type != PDFPAGE_IMAGE) {
+    if (!pPageObj || pPageObj->m_Type != CPDF_PageObject::IMAGE) {
       continue;
     }
     ProcessImage(buf, (CPDF_ImageObject*)pPageObj);

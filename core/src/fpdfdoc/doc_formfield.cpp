@@ -300,13 +300,15 @@ CFX_WideString CPDF_FormField::GetValue(FX_BOOL bDefault) {
     }
   }
   switch (pValue->GetType()) {
-    case PDFOBJ_STRING:
-    case PDFOBJ_STREAM:
+    case CPDF_Object::STRING:
+    case CPDF_Object::STREAM:
       return pValue->GetUnicodeText();
-    case PDFOBJ_ARRAY:
+    case CPDF_Object::ARRAY:
       pValue = pValue->AsArray()->GetElementValue(0);
       if (pValue)
         return pValue->GetUnicodeText();
+      break;
+    default:
       break;
   }
   return CFX_WideString();

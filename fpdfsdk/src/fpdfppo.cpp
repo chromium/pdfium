@@ -203,7 +203,7 @@ FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
                                             CPDF_Document* pDoc,
                                             ObjectNumberMap* pObjNumberMap) {
   switch (pObj->GetType()) {
-    case PDFOBJ_REFERENCE: {
+    case CPDF_Object::REFERENCE: {
       CPDF_Reference* pReference = pObj->AsReference();
       FX_DWORD newobjnum = GetNewObjId(pDoc, pObjNumberMap, pReference);
       if (newobjnum == 0)
@@ -211,7 +211,7 @@ FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
       pReference->SetRef(pDoc, newobjnum);
       break;
     }
-    case PDFOBJ_DICTIONARY: {
+    case CPDF_Object::DICTIONARY: {
       CPDF_Dictionary* pDict = pObj->AsDictionary();
       auto it = pDict->begin();
       while (it != pDict->end()) {
@@ -231,7 +231,7 @@ FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
       }
       break;
     }
-    case PDFOBJ_ARRAY: {
+    case CPDF_Object::ARRAY: {
       CPDF_Array* pArray = pObj->AsArray();
       FX_DWORD count = pArray->GetCount();
       for (FX_DWORD i = 0; i < count; ++i) {
@@ -243,7 +243,7 @@ FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
       }
       break;
     }
-    case PDFOBJ_STREAM: {
+    case CPDF_Object::STREAM: {
       CPDF_Stream* pStream = pObj->AsStream();
       CPDF_Dictionary* pDict = pStream->GetDict();
       if (pDict) {

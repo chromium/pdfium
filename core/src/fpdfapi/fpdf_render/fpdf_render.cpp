@@ -312,7 +312,7 @@ FX_BOOL CPDF_RenderStatus::ContinueSingleObject(const CPDF_PageObject* pObj,
   if (ProcessTransparency(pObj, pObj2Device))
     return FALSE;
 
-  if (pObj->m_Type == PDFPAGE_IMAGE) {
+  if (pObj->m_Type == CPDF_PageObject::IMAGE) {
     m_pObjectRenderer.reset(IPDF_ObjectRenderer::Create(pObj->m_Type));
     if (!m_pObjectRenderer->Start(this, pObj, pObj2Device, FALSE)) {
       if (!m_pObjectRenderer->m_Result)
@@ -328,7 +328,7 @@ FX_BOOL CPDF_RenderStatus::ContinueSingleObject(const CPDF_PageObject* pObj,
 }
 
 IPDF_ObjectRenderer* IPDF_ObjectRenderer::Create(int type) {
-  if (type != PDFPAGE_IMAGE) {
+  if (type != CPDF_PageObject::IMAGE) {
     return NULL;
   }
   return new CPDF_ImageRenderer;
@@ -381,19 +381,19 @@ void CPDF_RenderStatus::ProcessObjectNoClip(const CPDF_PageObject* pObj,
                                             const CFX_Matrix* pObj2Device) {
   FX_BOOL bRet = FALSE;
   switch (pObj->m_Type) {
-    case PDFPAGE_TEXT:
+    case CPDF_PageObject::TEXT:
       bRet = ProcessText((CPDF_TextObject*)pObj, pObj2Device, NULL);
       break;
-    case PDFPAGE_PATH:
+    case CPDF_PageObject::PATH:
       bRet = ProcessPath((CPDF_PathObject*)pObj, pObj2Device);
       break;
-    case PDFPAGE_IMAGE:
+    case CPDF_PageObject::IMAGE:
       bRet = ProcessImage((CPDF_ImageObject*)pObj, pObj2Device);
       break;
-    case PDFPAGE_SHADING:
+    case CPDF_PageObject::SHADING:
       bRet = ProcessShading((CPDF_ShadingObject*)pObj, pObj2Device);
       break;
-    case PDFPAGE_FORM:
+    case CPDF_PageObject::FORM:
       bRet = ProcessForm((CPDF_FormObject*)pObj, pObj2Device);
       break;
   }
@@ -405,14 +405,16 @@ FX_BOOL CPDF_RenderStatus::DrawObjWithBlend(const CPDF_PageObject* pObj,
                                             const CFX_Matrix* pObj2Device) {
   FX_BOOL bRet = FALSE;
   switch (pObj->m_Type) {
-    case PDFPAGE_PATH:
+    case CPDF_PageObject::PATH:
       bRet = ProcessPath((CPDF_PathObject*)pObj, pObj2Device);
       break;
-    case PDFPAGE_IMAGE:
+    case CPDF_PageObject::IMAGE:
       bRet = ProcessImage((CPDF_ImageObject*)pObj, pObj2Device);
       break;
-    case PDFPAGE_FORM:
+    case CPDF_PageObject::FORM:
       bRet = ProcessForm((CPDF_FormObject*)pObj, pObj2Device);
+      break;
+    default:
       break;
   }
   return bRet;
@@ -429,7 +431,7 @@ void CPDF_RenderStatus::DrawObjWithBackground(const CPDF_PageObject* pObj,
     return;
   }
   int res = 300;
-  if (pObj->m_Type == PDFPAGE_IMAGE &&
+  if (pObj->m_Type == CPDF_PageObject::IMAGE &&
       m_pDevice->GetDeviceCaps(FXDC_DEVICE_CLASS) == FXDC_PRINTER) {
     res = 0;
   }
@@ -441,7 +443,7 @@ void CPDF_RenderStatus::DrawObjWithBackground(const CPDF_PageObject* pObj,
   matrix.Concat(*buffer.GetMatrix());
   GetScaledMatrix(matrix);
   CPDF_Dictionary* pFormResource = NULL;
-  if (pObj->m_Type == PDFPAGE_FORM) {
+  if (pObj->m_Type == CPDF_PageObject::FORM) {
     CPDF_FormObject* pFormObj = (CPDF_FormObject*)pObj;
     if (pFormObj->m_pForm && pFormObj->m_pForm->m_pFormDict) {
       pFormResource = pFormObj->m_pForm->m_pFormDict->GetDict("Resources");
@@ -725,7 +727,7 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
   CPDF_Dictionary* pSMaskDict =
       pGeneralState ? ToDictionary(pGeneralState->m_pSoftMask) : NULL;
   if (pSMaskDict) {
-    if (pPageObj->m_Type == PDFPAGE_IMAGE &&
+    if (pPageObj->m_Type == CPDF_PageObject::IMAGE &&
         ((CPDF_ImageObject*)pPageObj)->m_pImage->GetDict()->KeyExist("SMask")) {
       pSMaskDict = NULL;
     }
@@ -734,7 +736,7 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
   FX_FLOAT group_alpha = 1.0f;
   int Transparency = m_Transparency;
   FX_BOOL bGroupTransparent = FALSE;
-  if (pPageObj->m_Type == PDFPAGE_FORM) {
+  if (pPageObj->m_Type == CPDF_PageObject::FORM) {
     CPDF_FormObject* pFormObj = (CPDF_FormObject*)pPageObj;
     const CPDF_GeneralStateData* pStateData =
         pFormObj->m_GeneralState.GetObject();
@@ -754,7 +756,7 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
     bTextClip = TRUE;
   }
   if ((m_Options.m_Flags & RENDER_OVERPRINT) &&
-      pPageObj->m_Type == PDFPAGE_IMAGE && pGeneralState &&
+      pPageObj->m_Type == CPDF_PageObject::IMAGE && pGeneralState &&
       pGeneralState->m_FillOP && pGeneralState->m_StrokeOP) {
     CPDF_Document* pDocument = NULL;
     CPDF_Page* pPage = NULL;
@@ -874,7 +876,7 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
     bitmap->MultiplyAlpha((int32_t)(group_alpha * 255));
   }
   Transparency = m_Transparency;
-  if (pPageObj->m_Type == PDFPAGE_FORM) {
+  if (pPageObj->m_Type == CPDF_PageObject::FORM) {
     Transparency |= PDFTRANS_GROUP;
   }
   CompositeDIBitmap(bitmap, rect.left, rect.top, 0, 255, blend_type,
@@ -1118,13 +1120,13 @@ void CPDF_ProgressiveRenderer::Continue(IFX_Pause* pPause) {
                                                   pPause)) {
           return;
         }
-        if (pCurObj->m_Type == PDFPAGE_IMAGE &&
+        if (pCurObj->m_Type == CPDF_PageObject::IMAGE &&
             m_pRenderStatus->m_Options.m_Flags & RENDER_LIMITEDIMAGECACHE) {
           m_pContext->GetPageCache()->CacheOptimization(
               m_pRenderStatus->m_Options.m_dwLimitCacheSize);
         }
-        if (pCurObj->m_Type == PDFPAGE_FORM ||
-            pCurObj->m_Type == PDFPAGE_SHADING) {
+        if (pCurObj->m_Type == CPDF_PageObject::FORM ||
+            pCurObj->m_Type == CPDF_PageObject::SHADING) {
           objs_to_go = 0;
         } else {
           objs_to_go--;
