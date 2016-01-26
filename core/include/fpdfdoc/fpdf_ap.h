@@ -27,9 +27,9 @@ struct CPVT_Dash {
 };
 
 struct CPVT_Color {
-  enum Type { TRANSPARENT = 0, GRAY, RGB, CMYK };
+  enum Type { kTransparent = 0, kGray, kRGB, kCMYK };
 
-  CPVT_Color(Type type = TRANSPARENT,
+  CPVT_Color(Type type = kTransparent,
              FX_FLOAT color1 = 0.0f,
              FX_FLOAT color2 = 0.0f,
              FX_FLOAT color3 = 0.0f,
