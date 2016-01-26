@@ -188,8 +188,8 @@ int CPDF_StreamContentParser::GetNextParamPos() {
     if (m_ParamStartPos == PARAM_BUF_SIZE) {
       m_ParamStartPos = 0;
     }
-    if (m_ParamBuf1[m_ParamStartPos].m_Type == 0) {
-      if (CPDF_Object* pObject = m_ParamBuf1[m_ParamStartPos].m_pObject)
+    if (m_ParamBuf[m_ParamStartPos].m_Type == 0) {
+      if (CPDF_Object* pObject = m_ParamBuf[m_ParamStartPos].m_pObject)
         pObject->Release();
     }
     return m_ParamStartPos;
@@ -205,39 +205,39 @@ int CPDF_StreamContentParser::GetNextParamPos() {
 void CPDF_StreamContentParser::AddNameParam(const FX_CHAR* name, int len) {
   int index = GetNextParamPos();
   if (len > 32) {
-    m_ParamBuf1[index].m_Type = 0;
-    m_ParamBuf1[index].m_pObject =
+    m_ParamBuf[index].m_Type = ContentParam::OBJECT;
+    m_ParamBuf[index].m_pObject =
         new CPDF_Name(PDF_NameDecode(CFX_ByteStringC(name, len)));
   } else {
-    m_ParamBuf1[index].m_Type = CPDF_Object::NAME;
+    m_ParamBuf[index].m_Type = ContentParam::NAME;
     if (!FXSYS_memchr(name, '#', len)) {
-      FXSYS_memcpy(m_ParamBuf1[index].m_Name.m_Buffer, name, len);
-      m_ParamBuf1[index].m_Name.m_Len = len;
+      FXSYS_memcpy(m_ParamBuf[index].m_Name.m_Buffer, name, len);
+      m_ParamBuf[index].m_Name.m_Len = len;
     } else {
       CFX_ByteString str = PDF_NameDecode(CFX_ByteStringC(name, len));
-      FXSYS_memcpy(m_ParamBuf1[index].m_Name.m_Buffer, str.c_str(),
+      FXSYS_memcpy(m_ParamBuf[index].m_Name.m_Buffer, str.c_str(),
                    str.GetLength());
-      m_ParamBuf1[index].m_Name.m_Len = str.GetLength();
+      m_ParamBuf[index].m_Name.m_Len = str.GetLength();
     }
   }
 }
 
 void CPDF_StreamContentParser::AddNumberParam(const FX_CHAR* str, int len) {
   int index = GetNextParamPos();
-  m_ParamBuf1[index].m_Type = CPDF_Object::NUMBER;
-  FX_atonum(CFX_ByteStringC(str, len), m_ParamBuf1[index].m_Number.m_bInteger,
-            &m_ParamBuf1[index].m_Number.m_Integer);
+  m_ParamBuf[index].m_Type = ContentParam::NUMBER;
+  FX_atonum(CFX_ByteStringC(str, len), m_ParamBuf[index].m_Number.m_bInteger,
+            &m_ParamBuf[index].m_Number.m_Integer);
 }
 void CPDF_StreamContentParser::AddObjectParam(CPDF_Object* pObj) {
   int index = GetNextParamPos();
-  m_ParamBuf1[index].m_Type = 0;
-  m_ParamBuf1[index].m_pObject = pObj;
+  m_ParamBuf[index].m_Type = ContentParam::OBJECT;
+  m_ParamBuf[index].m_pObject = pObj;
 }
 void CPDF_StreamContentParser::ClearAllParams() {
   FX_DWORD index = m_ParamStartPos;
   for (FX_DWORD i = 0; i < m_ParamCount; i++) {
-    if (m_ParamBuf1[index].m_Type == 0) {
-      if (CPDF_Object* pObject = m_ParamBuf1[index].m_pObject)
+    if (m_ParamBuf[index].m_Type == 0) {
+      if (CPDF_Object* pObject = m_ParamBuf[index].m_pObject)
         pObject->Release();
     }
     index++;
@@ -257,24 +257,24 @@ CPDF_Object* CPDF_StreamContentParser::GetObject(FX_DWORD index) {
   if (real_index >= PARAM_BUF_SIZE) {
     real_index -= PARAM_BUF_SIZE;
   }
-  ContentParam& param = m_ParamBuf1[real_index];
-  if (param.m_Type == CPDF_Object::NUMBER) {
+  ContentParam& param = m_ParamBuf[real_index];
+  if (param.m_Type == ContentParam::NUMBER) {
     CPDF_Number* pNumber = param.m_Number.m_bInteger
                                ? new CPDF_Number(param.m_Number.m_Integer)
                                : new CPDF_Number(param.m_Number.m_Float);
 
-    param.m_Type = 0;
+    param.m_Type = ContentParam::OBJECT;
     param.m_pObject = pNumber;
     return pNumber;
   }
-  if (param.m_Type == CPDF_Object::NAME) {
+  if (param.m_Type == ContentParam::NAME) {
     CPDF_Name* pName = new CPDF_Name(
         CFX_ByteString(param.m_Name.m_Buffer, param.m_Name.m_Len));
-    param.m_Type = 0;
+    param.m_Type = ContentParam::OBJECT;
     param.m_pObject = pName;
     return pName;
   }
-  if (param.m_Type == 0) {
+  if (param.m_Type == ContentParam::OBJECT) {
     return param.m_pObject;
   }
   ASSERT(FALSE);
@@ -289,8 +289,8 @@ CFX_ByteString CPDF_StreamContentParser::GetString(FX_DWORD index) {
   if (real_index >= PARAM_BUF_SIZE) {
     real_index -= PARAM_BUF_SIZE;
   }
-  ContentParam& param = m_ParamBuf1[real_index];
-  if (param.m_Type == CPDF_Object::NAME) {
+  ContentParam& param = m_ParamBuf[real_index];
+  if (param.m_Type == ContentParam::NAME) {
     return CFX_ByteString(param.m_Name.m_Buffer, param.m_Name.m_Len);
   }
   if (param.m_Type == 0 && param.m_pObject) {
@@ -307,8 +307,8 @@ FX_FLOAT CPDF_StreamContentParser::GetNumber(FX_DWORD index) {
   if (real_index >= PARAM_BUF_SIZE) {
     real_index -= PARAM_BUF_SIZE;
   }
-  ContentParam& param = m_ParamBuf1[real_index];
-  if (param.m_Type == CPDF_Object::NUMBER) {
+  ContentParam& param = m_ParamBuf[real_index];
+  if (param.m_Type == ContentParam::NUMBER) {
     return param.m_Number.m_bInteger ? (FX_FLOAT)param.m_Number.m_Integer
                                      : param.m_Number.m_Float;
   }
