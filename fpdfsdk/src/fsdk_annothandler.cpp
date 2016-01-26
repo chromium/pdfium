@@ -240,10 +240,8 @@ void CPDFSDK_AnnotHandlerMgr::Annot_OnMouseEnter(CPDFSDK_PageView* pPageView,
                                                  FX_DWORD nFlag) {
   ASSERT(pAnnot);
 
-  if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot)) {
+  if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot))
     pAnnotHandler->OnMouseEnter(pPageView, pAnnot, nFlag);
-  }
-  return;
 }
 
 void CPDFSDK_AnnotHandlerMgr::Annot_OnMouseExit(CPDFSDK_PageView* pPageView,
@@ -251,10 +249,8 @@ void CPDFSDK_AnnotHandlerMgr::Annot_OnMouseExit(CPDFSDK_PageView* pPageView,
                                                 FX_DWORD nFlag) {
   ASSERT(pAnnot);
 
-  if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot)) {
+  if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot))
     pAnnotHandler->OnMouseExit(pPageView, pAnnot, nFlag);
-  }
-  return;
 }
 
 FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnChar(CPDFSDK_Annot* pAnnot,

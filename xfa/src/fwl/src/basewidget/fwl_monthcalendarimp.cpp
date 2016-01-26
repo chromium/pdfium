@@ -974,9 +974,10 @@ FWL_ERR CFWL_MonthCalendarImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
                                                     const CFX_Matrix* pMatrix) {
   return m_pOwner->DrawWidget(pGraphics, pMatrix);
 }
+
 void CFWL_MonthCalendarImpDelegate::OnActivate(CFWL_Message* pMsg) {
-  return;
 }
+
 void CFWL_MonthCalendarImpDelegate::OnFocusChanged(CFWL_Message* pMsg,
                                                    FX_BOOL bSet) {
   if (bSet) {

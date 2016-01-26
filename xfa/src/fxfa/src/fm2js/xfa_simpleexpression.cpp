@@ -167,8 +167,8 @@ void CXFA_FMIdentifierExpressionn::ToJavaScript(CFX_WideTextBuf& javascript) {
     tempStr = EXCLAMATION_IN_IDENTIFIER + tempStr.Mid(1);
   }
   javascript << tempStr;
-  return;
 }
+
 CXFA_FMUnaryExpression::CXFA_FMUnaryExpression(FX_DWORD line,
                                                XFA_FM_TOKEN op,
                                                CXFA_FMSimpleExpression* pExp)

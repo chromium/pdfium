@@ -360,7 +360,6 @@ void CXFA_ItemLayoutProcessor::SplitLayoutItem(
 void CXFA_ItemLayoutProcessor::SplitLayoutItem(FX_FLOAT fSplitPos) {
   ASSERT(m_pLayoutItem);
   SplitLayoutItem(m_pLayoutItem, NULL, fSplitPos);
-  return;
 }
 
 IXFA_LayoutPage* CXFA_LayoutItem::GetPage() const {

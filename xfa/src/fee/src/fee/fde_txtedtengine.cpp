@@ -210,9 +210,9 @@ void CFDE_TxtEdtEngine::GetText(CFX_WideString& wsText,
 #else
   m_pTxtBuf->GetRange(wsText, nStart, nCount);
   RecoverParagEnd(wsText);
-  return;
 #endif
 }
+
 void CFDE_TxtEdtEngine::ClearText() {
   DeleteRange(0, -1);
 }
@@ -934,8 +934,8 @@ void CFDE_TxtEdtEngine::RemoveSelRange(int32_t nStart, int32_t nCount) {
       return;
     }
   }
-  return;
 }
+
 void CFDE_TxtEdtEngine::AddSelRange(int32_t nStart, int32_t nCount) {
   if (nCount == -1) {
     nCount = GetTextLength() - nStart;
@@ -1003,8 +1003,8 @@ void CFDE_TxtEdtEngine::AddSelRange(int32_t nStart, int32_t nCount) {
     }
   }
   m_Param.pEventSink->On_SelChanged(this);
-  return;
 }
+
 int32_t CFDE_TxtEdtEngine::CountSelRanges() {
   return m_SelRangePtrArr.GetSize();
 }

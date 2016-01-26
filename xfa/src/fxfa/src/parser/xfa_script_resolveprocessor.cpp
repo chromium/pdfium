@@ -715,8 +715,8 @@ void CXFA_ResolveProcessor::XFA_ResolveNode_DoPredicateFilter(
     }
     FXJSE_Value_Release(pRetValue);
   }
-  return;
 }
+
 void CXFA_ResolveProcessor::XFA_ResolveNode_FilterCondition(
     CXFA_ResolveNodesData& rnd,
     CFX_WideString wsCondition) {

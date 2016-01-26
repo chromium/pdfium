@@ -978,15 +978,11 @@ UnderlyingPageType* CPDFSDK_Annot::GetUnderlyingPage() {
 }
 
 CPDF_Page* CPDFSDK_Annot::GetPDFPage() {
-  if (m_pPageView)
-    return m_pPageView->GetPDFPage();
-  return NULL;
+  return m_pPageView ? m_pPageView->GetPDFPage() : nullptr;
 }
 
 #ifdef PDF_ENABLE_XFA
 CPDFXFA_Page* CPDFSDK_Annot::GetPDFXFAPage() {
-  if (m_pPageView)
-    return m_pPageView->GetPDFXFAPage();
-  return NULL;
+  return m_pPageView ? m_pPageView->GetPDFXFAPage() : nullptr;
 }
 #endif  // PDF_ENABLE_XFA

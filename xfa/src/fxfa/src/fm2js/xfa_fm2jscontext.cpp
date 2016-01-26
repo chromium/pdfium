@@ -2472,8 +2472,8 @@ void CXFA_FM2JSContext::Num2AllTime(FXJSE_HOBJECT hThis,
   if (!iRet) {
     strTime = "";
   }
-  return;
 }
+
 void CXFA_FM2JSContext::GetLocalTimeZone(int32_t& iHour,
                                          int32_t& iMin,
                                          int32_t& iSec) {

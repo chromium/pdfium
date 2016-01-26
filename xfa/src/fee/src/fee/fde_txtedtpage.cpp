@@ -351,8 +351,8 @@ void CFDE_TxtEdtPage::CalcRangeRectArray(int32_t nStart,
       RectFArr.Add(piece->rtPiece);
     }
   }
-  return;
 }
+
 int32_t CFDE_TxtEdtPage::SelectWord(const CFX_PointF& fPoint, int32_t& nCount) {
   if (m_nRefCount < 0) {
     return -1;
@@ -582,8 +582,8 @@ void CFDE_TxtEdtPage::UnloadPage(FX_LPCRECTF pClipBox) {
     m_pBgnParag = NULL;
     m_pEndParag = NULL;
   }
-  return;
 }
+
 const CFX_RectF& CFDE_TxtEdtPage::GetContentsBox() {
   return m_rtPageContents;
 }
