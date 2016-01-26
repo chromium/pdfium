@@ -68,7 +68,8 @@ class CPDF_StreamParser {
 
 #define PARAM_BUF_SIZE 16
 struct ContentParam {
-  int m_Type;
+  enum Type { OBJECT = 0, NUMBER, NAME };
+  Type m_Type;
   union {
     struct {
       FX_BOOL m_bInteger;
@@ -240,7 +241,7 @@ class CPDF_StreamContentParser {
   CFX_Matrix m_mtContentToUser;
   CFX_FloatRect m_BBox;
   CPDF_ParseOptions m_Options;
-  ContentParam m_ParamBuf1[PARAM_BUF_SIZE];
+  ContentParam m_ParamBuf[PARAM_BUF_SIZE];
   FX_DWORD m_ParamStartPos;
   FX_DWORD m_ParamCount;
   CPDF_StreamParser* m_pSyntax;

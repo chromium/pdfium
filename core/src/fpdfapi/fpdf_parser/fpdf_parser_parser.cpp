@@ -4851,7 +4851,7 @@ FX_BOOL CPDF_HintTables::LoadHintStream(CPDF_Stream* pHintStream) {
     return FALSE;
   CPDF_Dictionary* pDict = pHintStream->GetDict();
   CPDF_Object* pOffset = pDict ? pDict->GetElement("S") : nullptr;
-  if (!pOffset || pOffset->GetType() != CPDF_Object::NUMBER)
+  if (!pOffset || !pOffset->IsNumber())
     return FALSE;
   int shared_hint_table_offset = pOffset->GetInteger();
   CPDF_StreamAcc acc;
