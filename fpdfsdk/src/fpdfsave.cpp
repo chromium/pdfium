@@ -93,7 +93,7 @@ FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument,
   CPDF_Object* pXFA = pAcroForm->GetElement("XFA");
   if (pXFA == NULL)
     return TRUE;
-  if (pXFA->GetType() != PDFOBJ_ARRAY)
+  if (!pXFA->IsArray())
     return FALSE;
   CPDF_Array* pArray = pXFA->GetArray();
   if (NULL == pArray)
@@ -105,7 +105,7 @@ FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument,
   int iLast = size - 2;
   for (int i = 0; i < size - 1; i++) {
     CPDF_Object* pPDFObj = pArray->GetElement(i);
-    if (pPDFObj->GetType() != PDFOBJ_STRING)
+    if (!pPDFObj->IsString())
       continue;
     if (pPDFObj->GetString() == "form")
       iFormIndex = i + 1;
@@ -136,13 +136,12 @@ FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument,
   if (iFormIndex != -1) {
     // Get form CPDF_Stream
     CPDF_Object* pFormPDFObj = pArray->GetElement(iFormIndex);
-    if (pFormPDFObj->GetType() == PDFOBJ_REFERENCE) {
-      CPDF_Object* pFormDircetObj = pFormPDFObj->GetDirect();
-      if (NULL != pFormDircetObj &&
-          pFormDircetObj->GetType() == PDFOBJ_STREAM) {
-        pFormStream = (CPDF_Stream*)pFormDircetObj;
+    if (pFormPDFObj->IsReference()) {
+      CPDF_Object* pFormDirectObj = pFormPDFObj->GetDirect();
+      if (pFormDirectObj && pFormDirectObj->IsStream()) {
+        pFormStream = (CPDF_Stream*)pFormDirectObj;
       }
-    } else if (pFormPDFObj->GetType() == PDFOBJ_STREAM) {
+    } else if (pFormPDFObj->IsStream()) {
       pFormStream = (CPDF_Stream*)pFormPDFObj;
     }
   }
@@ -150,14 +149,13 @@ FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument,
   if (iDataSetsIndex != -1) {
     // Get datasets CPDF_Stream
     CPDF_Object* pDataSetsPDFObj = pArray->GetElement(iDataSetsIndex);
-    if (pDataSetsPDFObj->GetType() == PDFOBJ_REFERENCE) {
+    if (pDataSetsPDFObj->IsReference()) {
       CPDF_Reference* pDataSetsRefObj = (CPDF_Reference*)pDataSetsPDFObj;
-      CPDF_Object* pDataSetsDircetObj = pDataSetsRefObj->GetDirect();
-      if (NULL != pDataSetsDircetObj &&
-          pDataSetsDircetObj->GetType() == PDFOBJ_STREAM) {
-        pDataSetsStream = (CPDF_Stream*)pDataSetsDircetObj;
+      CPDF_Object* pDataSetsDirectObj = pDataSetsRefObj->GetDirect();
+      if (pDataSetsDirectObj && pDataSetsDirectObj->IsStream()) {
+        pDataSetsStream = (CPDF_Stream*)pDataSetsDirectObj;
       }
-    } else if (pDataSetsPDFObj->GetType() == PDFOBJ_STREAM) {
+    } else if (pDataSetsPDFObj->IsStream()) {
       pDataSetsStream = (CPDF_Stream*)pDataSetsPDFObj;
     }
   }

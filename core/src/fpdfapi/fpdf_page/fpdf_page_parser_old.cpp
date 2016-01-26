@@ -855,7 +855,7 @@ void CPDF_ContentParser::Continue(IFX_Pause* pPause) {
           continue;
         }
         CPDF_Path ClipPath = pObj->m_ClipPath.GetPath(0);
-        if (!ClipPath.IsRect() || pObj->m_Type == PDFPAGE_SHADING) {
+        if (!ClipPath.IsRect() || pObj->m_Type == CPDF_PageObject::SHADING) {
           continue;
         }
         CFX_FloatRect old_rect(ClipPath.GetPointX(0), ClipPath.GetPointY(0),

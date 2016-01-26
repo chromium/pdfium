@@ -207,11 +207,10 @@ void SetPageContents(CFX_ByteString key,
     return;
   }
 
-  int iType = pContentsObj->GetType();
   CPDF_Array* pContentsArray = NULL;
 
-  switch (iType) {
-    case PDFOBJ_STREAM: {
+  switch (pContentsObj->GetType()) {
+    case CPDF_Object::STREAM: {
       pContentsArray = new CPDF_Array;
       CPDF_Stream* pContents = pContentsObj->AsStream();
       FX_DWORD dwObjNum = pDocument->AddIndirectObject(pContents);
@@ -227,7 +226,7 @@ void SetPageContents(CFX_ByteString key,
       break;
     }
 
-    case PDFOBJ_ARRAY: {
+    case CPDF_Object::ARRAY: {
       pContentsArray = pContentsObj->AsArray();
       break;
     }

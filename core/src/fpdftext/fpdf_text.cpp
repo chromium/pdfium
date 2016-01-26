@@ -48,7 +48,7 @@ CTextPage::~CTextPage() {
   }
 }
 void CTextPage::ProcessObject(CPDF_PageObject* pObject) {
-  if (pObject->m_Type != PDFPAGE_TEXT) {
+  if (pObject->m_Type != CPDF_PageObject::TEXT) {
     return;
   }
   CPDF_TextObject* pText = (CPDF_TextObject*)pObject;
@@ -682,7 +682,7 @@ static void CheckRotate(CPDF_Page& page, CFX_FloatRect& page_bbox) {
   FX_POSITION pos = page.GetFirstObjectPosition();
   while (pos) {
     CPDF_PageObject* pObj = page.GetNextObject(pos);
-    if (pObj->m_Type != PDFPAGE_TEXT) {
+    if (pObj->m_Type != CPDF_PageObject::TEXT) {
       continue;
     }
     total_count++;

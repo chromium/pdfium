@@ -11,15 +11,15 @@
 
 CPDF_PageObject* CPDF_PageObject::Create(int type) {
   switch (type) {
-    case PDFPAGE_TEXT:
+    case TEXT:
       return new CPDF_TextObject;
-    case PDFPAGE_IMAGE:
+    case IMAGE:
       return new CPDF_ImageObject;
-    case PDFPAGE_PATH:
+    case PATH:
       return new CPDF_PathObject;
-    case PDFPAGE_SHADING:
+    case SHADING:
       return new CPDF_ShadingObject;
-    case PDFPAGE_FORM:
+    case FORM:
       return new CPDF_FormObject;
   }
   return NULL;
@@ -54,14 +54,16 @@ void CPDF_PageObject::RemoveClipPath() {
 }
 void CPDF_PageObject::RecalcBBox() {
   switch (m_Type) {
-    case PDFPAGE_TEXT:
+    case TEXT:
       ((CPDF_TextObject*)this)->RecalcPositionData();
       break;
-    case PDFPAGE_PATH:
+    case PATH:
       ((CPDF_PathObject*)this)->CalcBoundingBox();
       break;
-    case PDFPAGE_SHADING:
+    case SHADING:
       ((CPDF_ShadingObject*)this)->CalcBoundingBox();
+      break;
+    default:
       break;
   }
 }
@@ -88,13 +90,12 @@ FX_RECT CPDF_PageObject::GetBBox(const CFX_Matrix* pMatrix) const {
 }
 
 CPDF_TextObject::CPDF_TextObject()
-    : m_PosX(0),
+    : CPDF_PageObject(TEXT),
+      m_PosX(0),
       m_PosY(0),
       m_nChars(0),
       m_pCharCodes(nullptr),
-      m_pCharPos(nullptr) {
-  m_Type = PDFPAGE_TEXT;
-}
+      m_pCharPos(nullptr) {}
 
 CPDF_TextObject::~CPDF_TextObject() {
   if (m_nChars > 1) {
@@ -607,11 +608,11 @@ void CPDF_TextObject::SetTextState(CPDF_TextState TextState) {
   CalcPositionData(nullptr, nullptr, 0);
 }
 
-CPDF_ShadingObject::CPDF_ShadingObject() {
-  m_pShading = NULL;
-  m_Type = PDFPAGE_SHADING;
-}
+CPDF_ShadingObject::CPDF_ShadingObject()
+    : CPDF_PageObject(SHADING), m_pShading(nullptr) {}
+
 CPDF_ShadingObject::~CPDF_ShadingObject() {}
+
 void CPDF_ShadingObject::CopyData(const CPDF_PageObject* pSrc) {
   CPDF_ShadingObject* pSrcObj = (CPDF_ShadingObject*)pSrc;
   m_pShading = pSrcObj->m_pShading;
@@ -623,6 +624,7 @@ void CPDF_ShadingObject::CopyData(const CPDF_PageObject* pSrc) {
   }
   m_Matrix = pSrcObj->m_Matrix;
 }
+
 void CPDF_ShadingObject::Transform(const CFX_Matrix& matrix) {
   if (!m_ClipPath.IsNull()) {
     m_ClipPath.GetModify();
@@ -635,6 +637,7 @@ void CPDF_ShadingObject::Transform(const CFX_Matrix& matrix) {
     matrix.TransformRect(m_Left, m_Right, m_Top, m_Bottom);
   }
 }
+
 void CPDF_ShadingObject::CalcBoundingBox() {
   if (m_ClipPath.IsNull()) {
     return;
@@ -645,6 +648,7 @@ void CPDF_ShadingObject::CalcBoundingBox() {
   m_Right = rect.right;
   m_Top = rect.top;
 }
+
 CPDF_FormObject::~CPDF_FormObject() {
   delete m_pForm;
 }

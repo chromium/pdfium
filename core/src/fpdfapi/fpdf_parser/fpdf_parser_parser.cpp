@@ -2940,15 +2940,15 @@ FX_BOOL CPDF_DataAvail::IsObjectsAvail(
 
     int32_t type = pObj->GetType();
     switch (type) {
-      case PDFOBJ_ARRAY: {
+      case CPDF_Object::ARRAY: {
         CPDF_Array* pArray = pObj->GetArray();
         for (FX_DWORD k = 0; k < pArray->GetCount(); k++) {
           new_obj_array.Add(pArray->GetElement(k));
         }
       } break;
-      case PDFOBJ_STREAM:
+      case CPDF_Object::STREAM:
         pObj = pObj->GetDict();
-      case PDFOBJ_DICTIONARY: {
+      case CPDF_Object::DICTIONARY: {
         CPDF_Dictionary* pDict = pObj->GetDict();
         if (pDict && pDict->GetString("Type") == "Page" && !bParsePage) {
           continue;
@@ -2961,7 +2961,7 @@ FX_BOOL CPDF_DataAvail::IsObjectsAvail(
           }
         }
       } break;
-      case PDFOBJ_REFERENCE: {
+      case CPDF_Object::REFERENCE: {
         CPDF_Reference* pRef = pObj->AsReference();
         FX_DWORD dwNum = pRef->GetRefObjNum();
         FX_FILESIZE offset;
@@ -3348,10 +3348,10 @@ FX_BOOL CPDF_DataAvail::GetPageKids(CPDF_Parser* pParser, CPDF_Object* pPages) {
     return TRUE;
   }
   switch (pKids->GetType()) {
-    case PDFOBJ_REFERENCE:
+    case CPDF_Object::REFERENCE:
       m_PageObjList.Add(pKids->AsReference()->GetRefObjNum());
       break;
-    case PDFOBJ_ARRAY: {
+    case CPDF_Object::ARRAY: {
       CPDF_Array* pKidsArray = pKids->AsArray();
       for (FX_DWORD i = 0; i < pKidsArray->GetCount(); ++i) {
         if (CPDF_Reference* pRef = ToReference(pKidsArray->GetElement(i)))
@@ -4042,13 +4042,13 @@ FX_BOOL CPDF_DataAvail::CheckUnkownPageNode(FX_DWORD dwPageNo,
       return TRUE;
     }
     switch (pKids->GetType()) {
-      case PDFOBJ_REFERENCE: {
+      case CPDF_Object::REFERENCE: {
         CPDF_Reference* pKid = pKids->AsReference();
         CPDF_PageNode* pNode = new CPDF_PageNode();
         pPageNode->m_childNode.Add(pNode);
         pNode->m_dwPageNo = pKid->GetRefObjNum();
       } break;
-      case PDFOBJ_ARRAY: {
+      case CPDF_Object::ARRAY: {
         CPDF_Array* pKidsArray = pKids->AsArray();
         for (FX_DWORD i = 0; i < pKidsArray->GetCount(); ++i) {
           CPDF_Reference* pKid = ToReference(pKidsArray->GetElement(i));
@@ -4851,7 +4851,7 @@ FX_BOOL CPDF_HintTables::LoadHintStream(CPDF_Stream* pHintStream) {
     return FALSE;
   CPDF_Dictionary* pDict = pHintStream->GetDict();
   CPDF_Object* pOffset = pDict ? pDict->GetElement("S") : nullptr;
-  if (!pOffset || pOffset->GetType() != PDFOBJ_NUMBER)
+  if (!pOffset || pOffset->GetType() != CPDF_Object::NUMBER)
     return FALSE;
   int shared_hint_table_offset = pOffset->GetInteger();
   CPDF_StreamAcc acc;

@@ -30,20 +30,21 @@ class CPDF_StreamFilter;
 class CPDF_String;
 class IFX_FileRead;
 
-#define PDFOBJ_INVALID 0
-#define PDFOBJ_BOOLEAN 1
-#define PDFOBJ_NUMBER 2
-#define PDFOBJ_STRING 3
-#define PDFOBJ_NAME 4
-#define PDFOBJ_ARRAY 5
-#define PDFOBJ_DICTIONARY 6
-#define PDFOBJ_STREAM 7
-#define PDFOBJ_NULL 8
-#define PDFOBJ_REFERENCE 9
-
 class CPDF_Object {
  public:
-  int GetType() const { return m_Type; }
+  enum Type {
+    BOOLEAN = 1,
+    NUMBER,
+    STRING,
+    NAME,
+    ARRAY,
+    DICTIONARY,
+    STREAM,
+    NULLOBJ,
+    REFERENCE
+  };
+
+  Type GetType() const { return m_Type; }
   FX_DWORD GetObjNum() const { return m_ObjNum; }
   FX_DWORD GetGenNum() const { return m_GenNum; }
 
@@ -68,14 +69,14 @@ class CPDF_Object {
   void SetString(const CFX_ByteString& str);
   void SetUnicodeText(const FX_WCHAR* pUnicodes, int len = -1);
 
-  bool IsArray() const { return m_Type == PDFOBJ_ARRAY; }
-  bool IsBoolean() const { return m_Type == PDFOBJ_BOOLEAN; }
-  bool IsDictionary() const { return m_Type == PDFOBJ_DICTIONARY; }
-  bool IsName() const { return m_Type == PDFOBJ_NAME; }
-  bool IsNumber() const { return m_Type == PDFOBJ_NUMBER; }
-  bool IsReference() const { return m_Type == PDFOBJ_REFERENCE; }
-  bool IsStream() const { return m_Type == PDFOBJ_STREAM; }
-  bool IsString() const { return m_Type == PDFOBJ_STRING; }
+  bool IsArray() const { return m_Type == ARRAY; }
+  bool IsBoolean() const { return m_Type == BOOLEAN; }
+  bool IsDictionary() const { return m_Type == DICTIONARY; }
+  bool IsName() const { return m_Type == NAME; }
+  bool IsNumber() const { return m_Type == NUMBER; }
+  bool IsReference() const { return m_Type == REFERENCE; }
+  bool IsStream() const { return m_Type == STREAM; }
+  bool IsString() const { return m_Type == STRING; }
 
   CPDF_Array* AsArray();
   const CPDF_Array* AsArray() const;
@@ -95,14 +96,13 @@ class CPDF_Object {
   const CPDF_String* AsString() const;
 
  protected:
-  explicit CPDF_Object(FX_DWORD type)
-      : m_Type(type), m_ObjNum(0), m_GenNum(0) {}
+  explicit CPDF_Object(Type type) : m_Type(type), m_ObjNum(0), m_GenNum(0) {}
   ~CPDF_Object() {}
   void Destroy();
 
   const CPDF_Object* GetBasicObject() const;
 
-  FX_DWORD m_Type;
+  const Type m_Type;
   FX_DWORD m_ObjNum;
   FX_DWORD m_GenNum;
 
@@ -111,15 +111,14 @@ class CPDF_Object {
   friend class CPDF_SyntaxParser;
 
  private:
-  CPDF_Object(const CPDF_Object& src) {}
   CPDF_Object* CloneInternal(FX_BOOL bDirect,
                              std::set<FX_DWORD>* visited) const;
 };
 class CPDF_Boolean : public CPDF_Object {
  public:
-  CPDF_Boolean() : CPDF_Object(PDFOBJ_BOOLEAN), m_bValue(false) {}
+  CPDF_Boolean() : CPDF_Object(BOOLEAN), m_bValue(false) {}
   explicit CPDF_Boolean(FX_BOOL value)
-      : CPDF_Object(PDFOBJ_BOOLEAN), m_bValue(value) {}
+      : CPDF_Object(BOOLEAN), m_bValue(value) {}
 
   FX_BOOL Identical(CPDF_Boolean* pOther) const {
     return m_bValue == pOther->m_bValue;
@@ -141,7 +140,7 @@ inline const CPDF_Boolean* ToBoolean(const CPDF_Object* obj) {
 
 class CPDF_Number : public CPDF_Object {
  public:
-  CPDF_Number() : CPDF_Object(PDFOBJ_NUMBER), m_bInteger(TRUE), m_Integer(0) {}
+  CPDF_Number() : CPDF_Object(NUMBER), m_bInteger(TRUE), m_Integer(0) {}
 
   explicit CPDF_Number(int value);
 
@@ -190,10 +189,10 @@ inline const CPDF_Number* ToNumber(const CPDF_Object* obj) {
 
 class CPDF_String : public CPDF_Object {
  public:
-  CPDF_String() : CPDF_Object(PDFOBJ_STRING), m_bHex(FALSE) {}
+  CPDF_String() : CPDF_Object(STRING), m_bHex(FALSE) {}
 
   CPDF_String(const CFX_ByteString& str, FX_BOOL bHex)
-      : CPDF_Object(PDFOBJ_STRING), m_String(str), m_bHex(bHex) {}
+      : CPDF_Object(STRING), m_String(str), m_bHex(bHex) {}
 
   explicit CPDF_String(const CFX_WideString& str);
 
@@ -221,11 +220,10 @@ inline const CPDF_String* ToString(const CPDF_Object* obj) {
 class CPDF_Name : public CPDF_Object {
  public:
   explicit CPDF_Name(const CFX_ByteString& str)
-      : CPDF_Object(PDFOBJ_NAME), m_Name(str) {}
+      : CPDF_Object(NAME), m_Name(str) {}
   explicit CPDF_Name(const CFX_ByteStringC& str)
-      : CPDF_Object(PDFOBJ_NAME), m_Name(str) {}
-  explicit CPDF_Name(const FX_CHAR* str)
-      : CPDF_Object(PDFOBJ_NAME), m_Name(str) {}
+      : CPDF_Object(NAME), m_Name(str) {}
+  explicit CPDF_Name(const FX_CHAR* str) : CPDF_Object(NAME), m_Name(str) {}
 
   CFX_ByteString GetString() const { return m_Name; }
 
@@ -246,7 +244,7 @@ inline const CPDF_Name* ToName(const CPDF_Object* obj) {
 
 class CPDF_Array : public CPDF_Object {
  public:
-  CPDF_Array() : CPDF_Object(PDFOBJ_ARRAY) {}
+  CPDF_Array() : CPDF_Object(ARRAY) {}
 
   FX_DWORD GetCount() const { return m_Objects.GetSize(); }
 
@@ -324,7 +322,7 @@ class CPDF_Dictionary : public CPDF_Object {
   using iterator = std::map<CFX_ByteString, CPDF_Object*>::iterator;
   using const_iterator = std::map<CFX_ByteString, CPDF_Object*>::const_iterator;
 
-  CPDF_Dictionary() : CPDF_Object(PDFOBJ_DICTIONARY) {}
+  CPDF_Dictionary() : CPDF_Object(DICTIONARY) {}
 
   CPDF_Object* GetElement(const CFX_ByteStringC& key) const;
 
@@ -527,13 +525,13 @@ class CPDF_StreamAcc {
 
 class CPDF_Null : public CPDF_Object {
  public:
-  CPDF_Null() : CPDF_Object(PDFOBJ_NULL) {}
+  CPDF_Null() : CPDF_Object(NULLOBJ) {}
 };
 
 class CPDF_Reference : public CPDF_Object {
  public:
   CPDF_Reference(CPDF_IndirectObjectHolder* pDoc, int objnum)
-      : CPDF_Object(PDFOBJ_REFERENCE), m_pObjList(pDoc), m_RefObjNum(objnum) {}
+      : CPDF_Object(REFERENCE), m_pObjList(pDoc), m_RefObjNum(objnum) {}
 
   CPDF_IndirectObjectHolder* GetObjList() const { return m_pObjList; }
 

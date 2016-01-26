@@ -32,14 +32,14 @@ int32_t PDF_CreatorAppendObject(const CPDF_Object* pObj,
     return 1;
   }
   switch (pObj->GetType()) {
-    case PDFOBJ_NULL:
+    case CPDF_Object::NULLOBJ:
       if (pFile->AppendString(" null") < 0) {
         return -1;
       }
       offset += 5;
       break;
-    case PDFOBJ_BOOLEAN:
-    case PDFOBJ_NUMBER:
+    case CPDF_Object::BOOLEAN:
+    case CPDF_Object::NUMBER:
       if (pFile->AppendString(" ") < 0) {
         return -1;
       }
@@ -48,7 +48,7 @@ int32_t PDF_CreatorAppendObject(const CPDF_Object* pObj,
       }
       offset += len + 1;
       break;
-    case PDFOBJ_STRING: {
+    case CPDF_Object::STRING: {
       CFX_ByteString str = pObj->GetString();
       FX_BOOL bHex = pObj->AsString()->IsHex();
       if ((len = pFile->AppendString(PDF_EncodeString(str, bHex))) < 0) {
@@ -57,7 +57,7 @@ int32_t PDF_CreatorAppendObject(const CPDF_Object* pObj,
       offset += len;
       break;
     }
-    case PDFOBJ_NAME: {
+    case CPDF_Object::NAME: {
       if (pFile->AppendString("/") < 0) {
         return -1;
       }
@@ -68,7 +68,7 @@ int32_t PDF_CreatorAppendObject(const CPDF_Object* pObj,
       offset += len + 1;
       break;
     }
-    case PDFOBJ_REFERENCE: {
+    case CPDF_Object::REFERENCE: {
       if (pFile->AppendString(" ") < 0)
         return -1;
       if ((len = pFile->AppendDWord(pObj->AsReference()->GetRefObjNum())) < 0)
@@ -78,7 +78,7 @@ int32_t PDF_CreatorAppendObject(const CPDF_Object* pObj,
       offset += len + 6;
       break;
     }
-    case PDFOBJ_ARRAY: {
+    case CPDF_Object::ARRAY: {
       if (pFile->AppendString("[") < 0) {
         return -1;
       }
@@ -109,7 +109,7 @@ int32_t PDF_CreatorAppendObject(const CPDF_Object* pObj,
       offset += 1;
       break;
     }
-    case PDFOBJ_DICTIONARY: {
+    case CPDF_Object::DICTIONARY: {
       if (pFile->AppendString("<<") < 0) {
         return -1;
       }
@@ -148,7 +148,7 @@ int32_t PDF_CreatorAppendObject(const CPDF_Object* pObj,
       offset += 2;
       break;
     }
-    case PDFOBJ_STREAM: {
+    case CPDF_Object::STREAM: {
       const CPDF_Stream* p = pObj->AsStream();
       if (PDF_CreatorAppendObject(p->GetDict(), pFile, offset) < 0) {
         return -1;
@@ -1109,14 +1109,14 @@ int32_t CPDF_Creator::WriteDirectObj(FX_DWORD objnum,
     return 1;
   }
   switch (pObj->GetType()) {
-    case PDFOBJ_NULL:
+    case CPDF_Object::NULLOBJ:
       if (m_File.AppendString(" null") < 0) {
         return -1;
       }
       m_Offset += 5;
       break;
-    case PDFOBJ_BOOLEAN:
-    case PDFOBJ_NUMBER:
+    case CPDF_Object::BOOLEAN:
+    case CPDF_Object::NUMBER:
       if (m_File.AppendString(" ") < 0) {
         return -1;
       }
@@ -1125,7 +1125,7 @@ int32_t CPDF_Creator::WriteDirectObj(FX_DWORD objnum,
       }
       m_Offset += len + 1;
       break;
-    case PDFOBJ_STRING: {
+    case CPDF_Object::STRING: {
       CFX_ByteString str = pObj->GetString();
       FX_BOOL bHex = pObj->AsString()->IsHex();
       if (!m_pCryptoHandler || !bEncrypt) {
@@ -1148,7 +1148,7 @@ int32_t CPDF_Creator::WriteDirectObj(FX_DWORD objnum,
       m_Offset += len;
       break;
     }
-    case PDFOBJ_STREAM: {
+    case CPDF_Object::STREAM: {
       CPDF_FlateEncoder encoder;
       encoder.Initialize(const_cast<CPDF_Stream*>(pObj->AsStream()),
                          m_bCompress);
@@ -1177,7 +1177,7 @@ int32_t CPDF_Creator::WriteDirectObj(FX_DWORD objnum,
       m_Offset += len;
       break;
     }
-    case PDFOBJ_NAME: {
+    case CPDF_Object::NAME: {
       if (m_File.AppendString("/") < 0) {
         return -1;
       }
@@ -1188,7 +1188,7 @@ int32_t CPDF_Creator::WriteDirectObj(FX_DWORD objnum,
       m_Offset += len + 1;
       break;
     }
-    case PDFOBJ_REFERENCE: {
+    case CPDF_Object::REFERENCE: {
       if (m_File.AppendString(" ") < 0)
         return -1;
       if ((len = m_File.AppendDWord(pObj->AsReference()->GetRefObjNum())) < 0)
@@ -1198,7 +1198,7 @@ int32_t CPDF_Creator::WriteDirectObj(FX_DWORD objnum,
       m_Offset += len + 5;
       break;
     }
-    case PDFOBJ_ARRAY: {
+    case CPDF_Object::ARRAY: {
       if (m_File.AppendString("[") < 0) {
         return -1;
       }
@@ -1229,7 +1229,7 @@ int32_t CPDF_Creator::WriteDirectObj(FX_DWORD objnum,
       m_Offset += 1;
       break;
     }
-    case PDFOBJ_DICTIONARY: {
+    case CPDF_Object::DICTIONARY: {
       if (!m_pCryptoHandler || pObj == m_pEncryptDict) {
         return PDF_CreatorAppendObject(pObj, &m_File, m_Offset);
       }

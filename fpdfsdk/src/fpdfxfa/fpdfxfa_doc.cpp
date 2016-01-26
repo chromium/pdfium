@@ -648,7 +648,7 @@ void CPDFXFA_Document::ExportData(IXFA_Doc* hDoc,
     CPDF_Object* pXFA = pAcroForm->GetElement("XFA");
     if (pXFA == NULL)
       return;
-    if (pXFA->GetType() != PDFOBJ_ARRAY)
+    if (!pXFA->IsArray())
       return;
     CPDF_Array* pArray = pXFA->GetArray();
     if (NULL == pArray)
@@ -657,12 +657,12 @@ void CPDFXFA_Document::ExportData(IXFA_Doc* hDoc,
     for (int i = 1; i < size; i += 2) {
       CPDF_Object* pPDFObj = pArray->GetElement(i);
       CPDF_Object* pPrePDFObj = pArray->GetElement(i - 1);
-      if (pPrePDFObj->GetType() != PDFOBJ_STRING)
+      if (!pPrePDFObj->IsString())
         continue;
-      if (pPDFObj->GetType() != PDFOBJ_REFERENCE)
+      if (!pPDFObj->IsReference())
         continue;
       CPDF_Object* pDirectObj = pPDFObj->GetDirect();
-      if (pDirectObj->GetType() != PDFOBJ_STREAM)
+      if (!pDirectObj->IsStream())
         continue;
       if (pPrePDFObj->GetString() == "form") {
         CFX_WideStringC form(L"form");
@@ -965,7 +965,7 @@ FX_BOOL CPDFXFA_Document::_ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
       fileStream.Flush();
       return FALSE;
     }
-    if (pXFA->GetType() != PDFOBJ_ARRAY) {
+    if (!pXFA->IsArray()) {
       fileStream.Flush();
       return FALSE;
     }
@@ -978,12 +978,12 @@ FX_BOOL CPDFXFA_Document::_ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
     for (int i = 1; i < size; i += 2) {
       CPDF_Object* pPDFObj = pArray->GetElement(i);
       CPDF_Object* pPrePDFObj = pArray->GetElement(i - 1);
-      if (pPrePDFObj->GetType() != PDFOBJ_STRING)
+      if (!pPrePDFObj->IsString())
         continue;
-      if (pPDFObj->GetType() != PDFOBJ_REFERENCE)
+      if (!pPDFObj->IsReference())
         continue;
       CPDF_Object* pDirectObj = pPDFObj->GetDirect();
-      if (pDirectObj->GetType() != PDFOBJ_STREAM)
+      if (!pDirectObj->IsStream())
         continue;
       if (pPrePDFObj->GetString() == "config" && !(flag & FXFA_CONFIG))
         continue;

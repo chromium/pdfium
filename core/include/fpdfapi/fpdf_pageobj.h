@@ -328,12 +328,6 @@ class CPDF_ContentMark : public CFX_CountRef<CPDF_ContentMarkData> {
                      CPDF_Dictionary*& pDict) const;
 };
 
-#define PDFPAGE_TEXT 1
-#define PDFPAGE_PATH 2
-#define PDFPAGE_IMAGE 3
-#define PDFPAGE_SHADING 4
-#define PDFPAGE_FORM 5
-
 class CPDF_GraphicStates {
  public:
   void CopyStates(const CPDF_GraphicStates& src);
@@ -353,47 +347,42 @@ class CPDF_GraphicStates {
 
 class CPDF_PageObject : public CPDF_GraphicStates {
  public:
+  enum Type {
+    TEXT = 1,
+    PATH,
+    IMAGE,
+    SHADING,
+    FORM,
+  };
+
   static CPDF_PageObject* Create(int type);
   virtual ~CPDF_PageObject();
 
   CPDF_PageObject* Clone() const;
-
   void Copy(const CPDF_PageObject* pSrcObject);
 
   virtual void Transform(const CFX_Matrix& matrix) = 0;
 
   void RemoveClipPath();
-
   void AppendClipPath(CPDF_Path path, int type, FX_BOOL bAutoMerge);
-
   void CopyClipPath(CPDF_PageObject* pObj);
-
   void TransformClipPath(CFX_Matrix& matrix);
-
   void TransformGeneralState(CFX_Matrix& matrix);
-
   void SetColorState(CPDF_ColorState state) { m_ColorState = state; }
-
   FX_RECT GetBBox(const CFX_Matrix* pMatrix) const;
 
-  int m_Type;
-
+  const Type m_Type;
   FX_FLOAT m_Left;
-
   FX_FLOAT m_Right;
-
   FX_FLOAT m_Top;
-
   FX_FLOAT m_Bottom;
-
   CPDF_ContentMark m_ContentMark;
 
  protected:
   virtual void CopyData(const CPDF_PageObject* pSrcObject) = 0;
 
   void RecalcBBox();
-
-  CPDF_PageObject() {}
+  CPDF_PageObject(Type type) : m_Type(type) {}
 };
 
 struct CPDF_TextObjectItem {
@@ -490,7 +479,7 @@ class CPDF_TextObject : public CPDF_PageObject {
 
 class CPDF_PathObject : public CPDF_PageObject {
  public:
-  CPDF_PathObject() { m_Type = PDFPAGE_PATH; }
+  CPDF_PathObject() : CPDF_PageObject(PATH) {}
   ~CPDF_PathObject() override {}
 
   void Transform(const CFX_Matrix& maxtrix) override;
@@ -547,19 +536,14 @@ class CPDF_ShadingObject : public CPDF_PageObject {
 
 class CPDF_FormObject : public CPDF_PageObject {
  public:
-  CPDF_FormObject() {
-    m_Type = PDFPAGE_FORM;
-    m_pForm = NULL;
-  }
+  CPDF_FormObject() : CPDF_PageObject(FORM), m_pForm(nullptr) {}
   ~CPDF_FormObject() override;
 
   void Transform(const CFX_Matrix& matrix) override;
+  void CalcBoundingBox();
 
   CPDF_Form* m_pForm;
-
   CFX_Matrix m_FormMatrix;
-
-  void CalcBoundingBox();
 
  protected:
   void CopyData(const CPDF_PageObject* pSrcObject) override;

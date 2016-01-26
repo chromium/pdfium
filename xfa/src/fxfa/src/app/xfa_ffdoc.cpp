@@ -233,9 +233,8 @@ FX_BOOL CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
   if (pElementXFA == NULL) {
     return FALSE;
   }
-  int32_t iObjType = pElementXFA->GetType();
   CFX_ArrayTemplate<CPDF_Stream*> xfaStreams;
-  if (iObjType == PDFOBJ_ARRAY) {
+  if (pElementXFA->IsArray()) {
     CPDF_Array* pXFAArray = (CPDF_Array*)pElementXFA;
     FX_DWORD count = pXFAArray->GetCount() / 2;
     for (FX_DWORD i = 0; i < count; i++) {
@@ -244,7 +243,7 @@ FX_BOOL CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
         xfaStreams.Add(pStream);
       }
     }
-  } else if (iObjType == PDFOBJ_STREAM) {
+  } else if (pElementXFA->IsStream()) {
     xfaStreams.Add((CPDF_Stream*)pElementXFA);
   }
   if (xfaStreams.GetSize() < 1) {
@@ -372,7 +371,7 @@ CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(const CFX_WideStringC& wsName,
     }
   }
 #endif
-  if (!pObject || pObject->GetType() != PDFOBJ_STREAM) {
+  if (!pObject || !pObject->IsStream()) {
     return NULL;
   }
   if (!imageDIBDpi) {

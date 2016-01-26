@@ -338,26 +338,26 @@ CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& buf, const CPDF_Object* pObj) {
     return buf;
   }
   switch (pObj->GetType()) {
-    case PDFOBJ_NULL:
+    case CPDF_Object::NULLOBJ:
       buf << " null";
       break;
-    case PDFOBJ_BOOLEAN:
-    case PDFOBJ_NUMBER:
+    case CPDF_Object::BOOLEAN:
+    case CPDF_Object::NUMBER:
       buf << " " << pObj->GetString();
       break;
-    case PDFOBJ_STRING:
+    case CPDF_Object::STRING:
       buf << PDF_EncodeString(pObj->GetString(), pObj->AsString()->IsHex());
       break;
-    case PDFOBJ_NAME: {
+    case CPDF_Object::NAME: {
       CFX_ByteString str = pObj->GetString();
       buf << "/" << PDF_NameEncode(str);
       break;
     }
-    case PDFOBJ_REFERENCE: {
+    case CPDF_Object::REFERENCE: {
       buf << " " << pObj->AsReference()->GetRefObjNum() << " 0 R ";
       break;
     }
-    case PDFOBJ_ARRAY: {
+    case CPDF_Object::ARRAY: {
       const CPDF_Array* p = pObj->AsArray();
       buf << "[";
       for (FX_DWORD i = 0; i < p->GetCount(); i++) {
@@ -371,7 +371,7 @@ CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& buf, const CPDF_Object* pObj) {
       buf << "]";
       break;
     }
-    case PDFOBJ_DICTIONARY: {
+    case CPDF_Object::DICTIONARY: {
       const CPDF_Dictionary* p = pObj->AsDictionary();
       buf << "<<";
       for (const auto& it : *p) {
@@ -387,7 +387,7 @@ CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& buf, const CPDF_Object* pObj) {
       buf << ">>";
       break;
     }
-    case PDFOBJ_STREAM: {
+    case CPDF_Object::STREAM: {
       const CPDF_Stream* p = pObj->AsStream();
       buf << p->GetDict() << "stream\r\n";
       CPDF_StreamAcc acc;

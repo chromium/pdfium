@@ -919,12 +919,12 @@ void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern,
     return;
   }
   m_pDevice->SaveState();
-  if (pPageObj->m_Type == PDFPAGE_PATH) {
+  if (pPageObj->m_Type == CPDF_PageObject::PATH) {
     if (!SelectClipPath((CPDF_PathObject*)pPageObj, pObj2Device, bStroke)) {
       m_pDevice->RestoreState();
       return;
     }
-  } else if (pPageObj->m_Type == PDFPAGE_IMAGE) {
+  } else if (pPageObj->m_Type == CPDF_PageObject::IMAGE) {
     FX_RECT rect = pPageObj->GetBBox(pObj2Device);
     m_pDevice->SetClip_Rect(&rect);
   } else {
@@ -1001,12 +1001,12 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
     return;
   }
   m_pDevice->SaveState();
-  if (pPageObj->m_Type == PDFPAGE_PATH) {
+  if (pPageObj->m_Type == CPDF_PageObject::PATH) {
     if (!SelectClipPath((CPDF_PathObject*)pPageObj, pObj2Device, bStroke)) {
       m_pDevice->RestoreState();
       return;
     }
-  } else if (pPageObj->m_Type == PDFPAGE_IMAGE) {
+  } else if (pPageObj->m_Type == CPDF_PageObject::IMAGE) {
     FX_RECT rect = pPageObj->GetBBox(pObj2Device);
     m_pDevice->SetClip_Rect(&rect);
   } else {

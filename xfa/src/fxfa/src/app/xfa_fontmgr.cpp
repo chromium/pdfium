@@ -1871,7 +1871,7 @@ IFX_Font* CXFA_PDFFontMgr::FindFont(CFX_ByteString strPsName,
       continue;
     }
     CPDF_Object* pDirect = pObj->GetDirect();
-    if (pDirect == NULL || pDirect->GetType() != PDFOBJ_DICTIONARY) {
+    if (!pDirect || !pDirect->IsDictionary()) {
       return NULL;
     }
     CPDF_Dictionary* pFontDict = (CPDF_Dictionary*)pDirect;
