@@ -35,7 +35,7 @@ CPDFSDK_Widget::~CPDFSDK_Widget() {}
 
 FX_BOOL CPDFSDK_Widget::IsWidgetAppearanceValid(
     CPDF_Annot::AppearanceMode mode) {
-  CPDF_Dictionary* pAP = m_pAnnot->GetAnnotDict()->GetDict("AP");
+  CPDF_Dictionary* pAP = m_pAnnot->GetAnnotDict()->GetDictBy("AP");
   if (!pAP)
     return FALSE;
 
@@ -64,7 +64,7 @@ FX_BOOL CPDFSDK_Widget::IsWidgetAppearanceValid(
     case FIELDTYPE_CHECKBOX:
     case FIELDTYPE_RADIOBUTTON:
       if (CPDF_Dictionary* pSubDict = psub->AsDictionary()) {
-        return pSubDict->GetStream(GetAppState()) != NULL;
+        return pSubDict->GetStreamBy(GetAppState()) != NULL;
       }
       return FALSE;
   }
@@ -472,21 +472,21 @@ void CPDFSDK_Widget::ResetAppearance_PushButton() {
 
   if (pNormalIcon) {
     if (CPDF_Dictionary* pImageDict = pNormalIcon->GetDict()) {
-      if (pImageDict->GetString("Name").IsEmpty())
+      if (pImageDict->GetStringBy("Name").IsEmpty())
         pImageDict->SetAtString("Name", "ImgA");
     }
   }
 
   if (pRolloverIcon) {
     if (CPDF_Dictionary* pImageDict = pRolloverIcon->GetDict()) {
-      if (pImageDict->GetString("Name").IsEmpty())
+      if (pImageDict->GetStringBy("Name").IsEmpty())
         pImageDict->SetAtString("Name", "ImgB");
     }
   }
 
   if (pDownIcon) {
     if (CPDF_Dictionary* pImageDict = pDownIcon->GetDict()) {
-      if (pImageDict->GetString("Name").IsEmpty())
+      if (pImageDict->GetStringBy("Name").IsEmpty())
         pImageDict->SetAtString("Name", "ImgC");
     }
   }
@@ -1317,18 +1317,18 @@ void CPDFSDK_Widget::AddImageToAppearance(const CFX_ByteString& sAPType,
   CPDF_Document* pDoc = m_pPageView->GetPDFDocument();
   ASSERT(pDoc);
 
-  CPDF_Dictionary* pAPDict = m_pAnnot->GetAnnotDict()->GetDict("AP");
-  CPDF_Stream* pStream = pAPDict->GetStream(sAPType);
+  CPDF_Dictionary* pAPDict = m_pAnnot->GetAnnotDict()->GetDictBy("AP");
+  CPDF_Stream* pStream = pAPDict->GetStreamBy(sAPType);
   CPDF_Dictionary* pStreamDict = pStream->GetDict();
   CFX_ByteString sImageAlias = "IMG";
 
   if (CPDF_Dictionary* pImageDict = pImage->GetDict()) {
-    sImageAlias = pImageDict->GetString("Name");
+    sImageAlias = pImageDict->GetStringBy("Name");
     if (sImageAlias.IsEmpty())
       sImageAlias = "IMG";
   }
 
-  CPDF_Dictionary* pStreamResList = pStreamDict->GetDict("Resources");
+  CPDF_Dictionary* pStreamResList = pStreamDict->GetDictBy("Resources");
   if (!pStreamResList) {
     pStreamResList = new CPDF_Dictionary();
     pStreamDict->SetAt("Resources", pStreamResList);
@@ -1342,7 +1342,7 @@ void CPDFSDK_Widget::AddImageToAppearance(const CFX_ByteString& sAPType,
 }
 
 void CPDFSDK_Widget::RemoveAppearance(const CFX_ByteString& sAPType) {
-  if (CPDF_Dictionary* pAPDict = m_pAnnot->GetAnnotDict()->GetDict("AP")) {
+  if (CPDF_Dictionary* pAPDict = m_pAnnot->GetAnnotDict()->GetDictBy("AP")) {
     pAPDict->RemoveAt(sAPType);
   }
 }
@@ -1472,7 +1472,7 @@ CPDFSDK_Widget* CPDFSDK_InterForm::GetWidget(CPDF_FormControl* pControl) const {
   CPDF_Document* pDocument = m_pDocument->GetPDFDocument();
   CPDFSDK_PageView* pPage = nullptr;
 
-  if (CPDF_Dictionary* pPageDict = pControlDict->GetDict("P")) {
+  if (CPDF_Dictionary* pPageDict = pControlDict->GetDictBy("P")) {
     int nPageIndex = pDocument->GetPageIndex(pPageDict->GetObjNum());
     if (nPageIndex >= 0) {
       pPage = m_pDocument->GetPageView(nPageIndex);
@@ -1520,7 +1520,7 @@ int CPDFSDK_InterForm::GetPageIndexByAnnotDict(
 
   for (int i = 0, sz = pDocument->GetPageCount(); i < sz; i++) {
     if (CPDF_Dictionary* pPageDict = pDocument->GetPage(i)) {
-      if (CPDF_Array* pAnnots = pPageDict->GetArray("Annots")) {
+      if (CPDF_Array* pAnnots = pPageDict->GetArrayBy("Annots")) {
         for (int j = 0, jsz = pAnnots->GetCount(); j < jsz; j++) {
           CPDF_Object* pDict = pAnnots->GetElementValue(j);
           if (pAnnotDict == pDict) {
@@ -1812,25 +1812,25 @@ FX_BOOL CPDFSDK_InterForm::FDFToURLEncodedData(uint8_t*& pBuf,
                                                FX_STRSIZE& nBufSize) {
   CFDF_Document* pFDF = CFDF_Document::ParseMemory(pBuf, nBufSize);
   if (pFDF) {
-    CPDF_Dictionary* pMainDict = pFDF->GetRoot()->GetDict("FDF");
+    CPDF_Dictionary* pMainDict = pFDF->GetRoot()->GetDictBy("FDF");
     if (!pMainDict)
       return FALSE;
 
     // Get fields
-    CPDF_Array* pFields = pMainDict->GetArray("Fields");
+    CPDF_Array* pFields = pMainDict->GetArrayBy("Fields");
     if (!pFields)
       return FALSE;
 
     CFX_ByteTextBuf fdfEncodedData;
 
     for (FX_DWORD i = 0; i < pFields->GetCount(); i++) {
-      CPDF_Dictionary* pField = pFields->GetDict(i);
+      CPDF_Dictionary* pField = pFields->GetDictAt(i);
       if (!pField)
         continue;
       CFX_WideString name;
-      name = pField->GetUnicodeText("T");
+      name = pField->GetUnicodeTextBy("T");
       CFX_ByteString name_b = CFX_ByteString::FromUnicode(name);
-      CFX_ByteString csBValue = pField->GetString("V");
+      CFX_ByteString csBValue = pField->GetStringBy("V");
       CFX_WideString csWValue = PDF_DecodeText(csBValue);
       CFX_ByteString csValue_b = CFX_ByteString::FromUnicode(csWValue);
 
@@ -2084,7 +2084,7 @@ CBA_AnnotIterator::CBA_AnnotIterator(CPDFSDK_PageView* pPageView,
       m_sSubType(sSubType),
       m_nTabs(BAI_STRUCTURE) {
   CPDF_Page* pPDFPage = m_pPageView->GetPDFPage();
-  CFX_ByteString sTabs = pPDFPage->m_pFormDict->GetString("Tabs");
+  CFX_ByteString sTabs = pPDFPage->m_pFormDict->GetStringBy("Tabs");
 
   if (sTabs == "R") {
     m_nTabs = BAI_ROW;

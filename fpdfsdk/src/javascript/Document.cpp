@@ -741,7 +741,7 @@ FX_BOOL Document::author(IJS_Context* cc,
     return FALSE;
 
   if (vp.IsGetting()) {
-    vp << pDictionary->GetUnicodeText("Author");
+    vp << pDictionary->GetUnicodeTextBy("Author");
     return TRUE;
   } else {
     if (!m_pDocument->GetPermissions(FPDFPERM_MODIFY))
@@ -762,15 +762,15 @@ FX_BOOL Document::info(IJS_Context* cc,
   if (!pDictionary)
     return FALSE;
 
-  CFX_WideString cwAuthor = pDictionary->GetUnicodeText("Author");
-  CFX_WideString cwTitle = pDictionary->GetUnicodeText("Title");
-  CFX_WideString cwSubject = pDictionary->GetUnicodeText("Subject");
-  CFX_WideString cwKeywords = pDictionary->GetUnicodeText("Keywords");
-  CFX_WideString cwCreator = pDictionary->GetUnicodeText("Creator");
-  CFX_WideString cwProducer = pDictionary->GetUnicodeText("Producer");
-  CFX_WideString cwCreationDate = pDictionary->GetUnicodeText("CreationDate");
-  CFX_WideString cwModDate = pDictionary->GetUnicodeText("ModDate");
-  CFX_WideString cwTrapped = pDictionary->GetUnicodeText("Trapped");
+  CFX_WideString cwAuthor = pDictionary->GetUnicodeTextBy("Author");
+  CFX_WideString cwTitle = pDictionary->GetUnicodeTextBy("Title");
+  CFX_WideString cwSubject = pDictionary->GetUnicodeTextBy("Subject");
+  CFX_WideString cwKeywords = pDictionary->GetUnicodeTextBy("Keywords");
+  CFX_WideString cwCreator = pDictionary->GetUnicodeTextBy("Creator");
+  CFX_WideString cwProducer = pDictionary->GetUnicodeTextBy("Producer");
+  CFX_WideString cwCreationDate = pDictionary->GetUnicodeTextBy("CreationDate");
+  CFX_WideString cwModDate = pDictionary->GetUnicodeTextBy("ModDate");
+  CFX_WideString cwTrapped = pDictionary->GetUnicodeTextBy("Trapped");
 
   v8::Isolate* isolate = GetIsolate(cc);
   if (vp.IsGetting()) {
@@ -819,7 +819,7 @@ FX_BOOL Document::creationDate(IJS_Context* cc,
     return FALSE;
 
   if (vp.IsGetting()) {
-    vp << pDictionary->GetUnicodeText("CreationDate");
+    vp << pDictionary->GetUnicodeTextBy("CreationDate");
   } else {
     if (!m_pDocument->GetPermissions(FPDFPERM_MODIFY))
       return FALSE;
@@ -840,7 +840,7 @@ FX_BOOL Document::creator(IJS_Context* cc,
     return FALSE;
 
   if (vp.IsGetting()) {
-    vp << pDictionary->GetUnicodeText("Creator");
+    vp << pDictionary->GetUnicodeTextBy("Creator");
   } else {
     if (!m_pDocument->GetPermissions(FPDFPERM_MODIFY))
       return FALSE;
@@ -896,7 +896,7 @@ FX_BOOL Document::keywords(IJS_Context* cc,
     return FALSE;
 
   if (vp.IsGetting()) {
-    vp << pDictionary->GetUnicodeText("Keywords");
+    vp << pDictionary->GetUnicodeTextBy("Keywords");
   } else {
     if (!m_pDocument->GetPermissions(FPDFPERM_MODIFY))
       return FALSE;
@@ -917,7 +917,7 @@ FX_BOOL Document::modDate(IJS_Context* cc,
     return FALSE;
 
   if (vp.IsGetting()) {
-    vp << pDictionary->GetUnicodeText("ModDate");
+    vp << pDictionary->GetUnicodeTextBy("ModDate");
   } else {
     if (!m_pDocument->GetPermissions(FPDFPERM_MODIFY))
       return FALSE;
@@ -938,7 +938,7 @@ FX_BOOL Document::producer(IJS_Context* cc,
     return FALSE;
 
   if (vp.IsGetting()) {
-    vp << pDictionary->GetUnicodeText("Producer");
+    vp << pDictionary->GetUnicodeTextBy("Producer");
   } else {
     if (!m_pDocument->GetPermissions(FPDFPERM_MODIFY))
       return FALSE;
@@ -959,7 +959,7 @@ FX_BOOL Document::subject(IJS_Context* cc,
     return FALSE;
 
   if (vp.IsGetting()) {
-    vp << pDictionary->GetUnicodeText("Subject");
+    vp << pDictionary->GetUnicodeTextBy("Subject");
   } else {
     if (!m_pDocument->GetPermissions(FPDFPERM_MODIFY))
       return FALSE;
@@ -983,7 +983,7 @@ FX_BOOL Document::title(IJS_Context* cc,
     return FALSE;
 
   if (vp.IsGetting()) {
-    vp << pDictionary->GetUnicodeText("Title");
+    vp << pDictionary->GetUnicodeTextBy("Title");
   } else {
     if (!m_pDocument->GetPermissions(FPDFPERM_MODIFY))
       return FALSE;

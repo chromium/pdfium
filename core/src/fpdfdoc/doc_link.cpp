@@ -56,20 +56,20 @@ CPDF_Link CPDF_LinkList::GetLinkAtPoint(CPDF_Page* pPage,
 
 void CPDF_LinkList::LoadPageLinks(CPDF_Page* pPage,
                                   std::vector<CPDF_Dictionary*>* pList) {
-  CPDF_Array* pAnnotList = pPage->m_pFormDict->GetArray("Annots");
+  CPDF_Array* pAnnotList = pPage->m_pFormDict->GetArrayBy("Annots");
   if (!pAnnotList)
     return;
 
   for (FX_DWORD i = 0; i < pAnnotList->GetCount(); ++i) {
-    CPDF_Dictionary* pAnnot = pAnnotList->GetDict(i);
-    bool add_link = (pAnnot && pAnnot->GetString("Subtype") == "Link");
+    CPDF_Dictionary* pAnnot = pAnnotList->GetDictAt(i);
+    bool add_link = (pAnnot && pAnnot->GetStringBy("Subtype") == "Link");
     // Add non-links as nullptrs to preserve z-order.
     pList->push_back(add_link ? pAnnot : nullptr);
   }
 }
 
 CPDF_Rect CPDF_Link::GetRect() {
-  return m_pDict->GetRect("Rect");
+  return m_pDict->GetRectBy("Rect");
 }
 CPDF_Dest CPDF_Link::GetDest(CPDF_Document* pDoc) {
   CPDF_Object* pDest = m_pDict->GetElementValue("Dest");
@@ -86,5 +86,5 @@ CPDF_Dest CPDF_Link::GetDest(CPDF_Document* pDoc) {
   return CPDF_Dest();
 }
 CPDF_Action CPDF_Link::GetAction() {
-  return CPDF_Action(m_pDict->GetDict("A"));
+  return CPDF_Action(m_pDict->GetDictBy("A"));
 }

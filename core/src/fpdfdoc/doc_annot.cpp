@@ -12,13 +12,14 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
   if (!pPage->m_pFormDict)
     return;
 
-  CPDF_Array* pAnnots = pPage->m_pFormDict->GetArray("Annots");
+  CPDF_Array* pAnnots = pPage->m_pFormDict->GetArrayBy("Annots");
   if (!pAnnots)
     return;
 
   CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
-  CPDF_Dictionary* pAcroForm = pRoot->GetDict("AcroForm");
-  FX_BOOL bRegenerateAP = pAcroForm && pAcroForm->GetBoolean("NeedAppearances");
+  CPDF_Dictionary* pAcroForm = pRoot->GetDictBy("AcroForm");
+  FX_BOOL bRegenerateAP =
+      pAcroForm && pAcroForm->GetBooleanBy("NeedAppearances");
   for (FX_DWORD i = 0; i < pAnnots->GetCount(); ++i) {
     CPDF_Dictionary* pDict = ToDictionary(pAnnots->GetElementValue(i));
     if (!pDict)
@@ -30,10 +31,10 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
       CPDF_Reference* pAction = new CPDF_Reference(m_pDocument, dwObjNum);
       pAnnots->InsertAt(i, pAction);
       pAnnots->RemoveAt(i + 1);
-      pDict = pAnnots->GetDict(i);
+      pDict = pAnnots->GetDictAt(i);
     }
     m_AnnotList.push_back(new CPDF_Annot(pDict, this));
-    if (bRegenerateAP && pDict->GetConstString("Subtype") == "Widget" &&
+    if (bRegenerateAP && pDict->GetConstStringBy("Subtype") == "Widget" &&
         CPDF_InterForm::UpdatingAPEnabled()) {
       FPDF_GenerateAP(m_pDocument, pDict);
     }
@@ -72,7 +73,7 @@ void CPDF_AnnotList::DisplayPass(CPDF_Page* pPage,
       IPDF_OCContext* pOCContext = pOptions->m_pOCContext;
       CPDF_Dictionary* pAnnotDict = pAnnot->GetAnnotDict();
       if (pOCContext && pAnnotDict &&
-          !pOCContext->CheckOCGVisible(pAnnotDict->GetDict("OC"))) {
+          !pOCContext->CheckOCGVisible(pAnnotDict->GetDictBy("OC"))) {
         continue;
       }
     }
@@ -117,7 +118,7 @@ void CPDF_AnnotList::DisplayAnnots(CPDF_Page* pPage,
 CPDF_Annot::CPDF_Annot(CPDF_Dictionary* pDict, CPDF_AnnotList* pList)
     : m_pAnnotDict(pDict),
       m_pList(pList),
-      m_sSubtype(m_pAnnotDict->GetConstString("Subtype")) {}
+      m_sSubtype(m_pAnnotDict->GetConstStringBy("Subtype")) {}
 CPDF_Annot::~CPDF_Annot() {
   ClearCachedAP();
 }
@@ -135,17 +136,17 @@ void CPDF_Annot::GetRect(CPDF_Rect& rect) const {
   if (!m_pAnnotDict) {
     return;
   }
-  rect = m_pAnnotDict->GetRect("Rect");
+  rect = m_pAnnotDict->GetRectBy("Rect");
   rect.Normalize();
 }
 
 FX_DWORD CPDF_Annot::GetFlags() const {
-  return m_pAnnotDict->GetInteger("F");
+  return m_pAnnotDict->GetIntegerBy("F");
 }
 
 CPDF_Stream* FPDFDOC_GetAnnotAP(CPDF_Dictionary* pAnnotDict,
                                 CPDF_Annot::AppearanceMode mode) {
-  CPDF_Dictionary* pAP = pAnnotDict->GetDict("AP");
+  CPDF_Dictionary* pAP = pAnnotDict->GetDictBy("AP");
   if (!pAP) {
     return NULL;
   }
@@ -164,19 +165,19 @@ CPDF_Stream* FPDFDOC_GetAnnotAP(CPDF_Dictionary* pAnnotDict,
     return pStream;
 
   if (CPDF_Dictionary* pDict = psub->AsDictionary()) {
-    CFX_ByteString as = pAnnotDict->GetString("AS");
+    CFX_ByteString as = pAnnotDict->GetStringBy("AS");
     if (as.IsEmpty()) {
-      CFX_ByteString value = pAnnotDict->GetString("V");
+      CFX_ByteString value = pAnnotDict->GetStringBy("V");
       if (value.IsEmpty()) {
-        CPDF_Dictionary* pDict = pAnnotDict->GetDict("Parent");
-        value = pDict ? pDict->GetString("V") : CFX_ByteString();
+        CPDF_Dictionary* pDict = pAnnotDict->GetDictBy("Parent");
+        value = pDict ? pDict->GetStringBy("V") : CFX_ByteString();
       }
       if (value.IsEmpty() || !pDict->KeyExist(value))
         as = "Off";
       else
         as = value;
     }
-    return pDict->GetStream(as);
+    return pDict->GetStreamBy(as);
   }
   return nullptr;
 }
@@ -206,8 +207,8 @@ static CPDF_Form* FPDFDOC_Annot_GetMatrix(const CPDF_Page* pPage,
   if (!pForm) {
     return NULL;
   }
-  CFX_FloatRect form_bbox = pForm->m_pFormDict->GetRect("BBox");
-  CFX_Matrix form_matrix = pForm->m_pFormDict->GetMatrix("Matrix");
+  CFX_FloatRect form_bbox = pForm->m_pFormDict->GetRectBy("BBox");
+  CFX_Matrix form_matrix = pForm->m_pFormDict->GetMatrixBy("Matrix");
   form_matrix.TransformRect(form_bbox);
   CPDF_Rect arect;
   pAnnot->GetRect(arect);
@@ -262,17 +263,17 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
   if (!bPrinting && (annot_flags & ANNOTFLAG_NOVIEW)) {
     return;
   }
-  CPDF_Dictionary* pBS = m_pAnnotDict->GetDict("BS");
+  CPDF_Dictionary* pBS = m_pAnnotDict->GetDictBy("BS");
   char style_char;
   FX_FLOAT width;
   CPDF_Array* pDashArray = NULL;
   if (!pBS) {
-    CPDF_Array* pBorderArray = m_pAnnotDict->GetArray("Border");
+    CPDF_Array* pBorderArray = m_pAnnotDict->GetArrayBy("Border");
     style_char = 'S';
     if (pBorderArray) {
-      width = pBorderArray->GetNumber(2);
+      width = pBorderArray->GetNumberAt(2);
       if (pBorderArray->GetCount() == 4) {
-        pDashArray = pBorderArray->GetArray(3);
+        pDashArray = pBorderArray->GetArrayAt(3);
         if (!pDashArray) {
           return;
         }
@@ -293,20 +294,20 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
       width = 1;
     }
   } else {
-    CFX_ByteString style = pBS->GetString("S");
-    pDashArray = pBS->GetArray("D");
+    CFX_ByteString style = pBS->GetStringBy("S");
+    pDashArray = pBS->GetArrayBy("D");
     style_char = style[1];
-    width = pBS->GetNumber("W");
+    width = pBS->GetNumberBy("W");
   }
   if (width <= 0) {
     return;
   }
-  CPDF_Array* pColor = m_pAnnotDict->GetArray("C");
+  CPDF_Array* pColor = m_pAnnotDict->GetArrayBy("C");
   FX_DWORD argb = 0xff000000;
   if (pColor) {
-    int R = (int32_t)(pColor->GetNumber(0) * 255);
-    int G = (int32_t)(pColor->GetNumber(1) * 255);
-    int B = (int32_t)(pColor->GetNumber(2) * 255);
+    int R = (int32_t)(pColor->GetNumberAt(0) * 255);
+    int G = (int32_t)(pColor->GetNumberAt(1) * 255);
+    int B = (int32_t)(pColor->GetNumberAt(2) * 255);
     argb = ArgbEncode(0xff, R, G, B);
   }
   CPDF_GraphStateData graph_state;
@@ -321,7 +322,7 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
       graph_state.m_DashCount = dash_count;
       FX_DWORD i;
       for (i = 0; i < pDashArray->GetCount(); ++i) {
-        graph_state.m_DashArray[i] = pDashArray->GetNumber(i);
+        graph_state.m_DashArray[i] = pDashArray->GetNumberAt(i);
       }
       if (i < dash_count) {
         graph_state.m_DashArray[i] = graph_state.m_DashArray[i - 1];

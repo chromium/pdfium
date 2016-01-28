@@ -756,18 +756,18 @@ void CPDF_PageObjectList::LoadTransInfo() {
   if (!m_pFormDict) {
     return;
   }
-  CPDF_Dictionary* pGroup = m_pFormDict->GetDict("Group");
+  CPDF_Dictionary* pGroup = m_pFormDict->GetDictBy("Group");
   if (!pGroup) {
     return;
   }
-  if (pGroup->GetString("S") != "Transparency") {
+  if (pGroup->GetStringBy("S") != "Transparency") {
     return;
   }
   m_Transparency |= PDFTRANS_GROUP;
-  if (pGroup->GetInteger("I")) {
+  if (pGroup->GetIntegerBy("I")) {
     m_Transparency |= PDFTRANS_ISOLATED;
   }
-  if (pGroup->GetInteger("K")) {
+  if (pGroup->GetIntegerBy("K")) {
     m_Transparency |= PDFTRANS_KNOCKOUT;
   }
 }
@@ -869,7 +869,7 @@ CPDF_Object* FPDFAPI_GetPageAttr(CPDF_Dictionary* pPageDict,
     if (pObj) {
       return pObj;
     }
-    CPDF_Dictionary* pParent = pPageDict->GetDict("Parent");
+    CPDF_Dictionary* pParent = pPageDict->GetDictBy("Parent");
     if (!pParent || pParent == pPageDict) {
       return NULL;
     }
@@ -890,7 +890,7 @@ CPDF_Form::CPDF_Form(CPDF_Document* pDoc,
   m_pDocument = pDoc;
   m_pFormStream = pFormStream;
   m_pFormDict = pFormStream ? pFormStream->GetDict() : NULL;
-  m_pResources = m_pFormDict->GetDict("Resources");
+  m_pResources = m_pFormDict->GetDictBy("Resources");
   m_pPageResources = pPageResources;
   if (!m_pResources) {
     m_pResources = pParentResources;

@@ -412,16 +412,16 @@ FX_FLOAT PDF_ClipFloat(FX_FLOAT f) {
   return f;
 }
 static CPDF_Object* SearchNumberNode(CPDF_Dictionary* pNode, int num) {
-  CPDF_Array* pLimits = pNode->GetArray("Limits");
+  CPDF_Array* pLimits = pNode->GetArrayBy("Limits");
   if (pLimits &&
-      (num < pLimits->GetInteger(0) || num > pLimits->GetInteger(1))) {
+      (num < pLimits->GetIntegerAt(0) || num > pLimits->GetIntegerAt(1))) {
     return NULL;
   }
-  CPDF_Array* pNumbers = pNode->GetArray("Nums");
+  CPDF_Array* pNumbers = pNode->GetArrayBy("Nums");
   if (pNumbers) {
     FX_DWORD dwCount = pNumbers->GetCount() / 2;
     for (FX_DWORD i = 0; i < dwCount; i++) {
-      int index = pNumbers->GetInteger(i * 2);
+      int index = pNumbers->GetIntegerAt(i * 2);
       if (num == index) {
         return pNumbers->GetElementValue(i * 2 + 1);
       }
@@ -431,12 +431,12 @@ static CPDF_Object* SearchNumberNode(CPDF_Dictionary* pNode, int num) {
     }
     return NULL;
   }
-  CPDF_Array* pKids = pNode->GetArray("Kids");
+  CPDF_Array* pKids = pNode->GetArrayBy("Kids");
   if (!pKids) {
     return NULL;
   }
   for (FX_DWORD i = 0; i < pKids->GetCount(); i++) {
-    CPDF_Dictionary* pKid = pKids->GetDict(i);
+    CPDF_Dictionary* pKid = pKids->GetDictAt(i);
     if (!pKid) {
       continue;
     }

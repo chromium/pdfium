@@ -333,20 +333,20 @@ class CPDF_CalGray : public CPDF_ColorSpace {
 };
 
 FX_BOOL CPDF_CalGray::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
-  CPDF_Dictionary* pDict = pArray->GetDict(1);
+  CPDF_Dictionary* pDict = pArray->GetDictAt(1);
   if (!pDict)
     return FALSE;
 
-  CPDF_Array* pParam = pDict->GetArray("WhitePoint");
+  CPDF_Array* pParam = pDict->GetArrayBy("WhitePoint");
   int i;
   for (i = 0; i < 3; i++) {
-    m_WhitePoint[i] = pParam ? pParam->GetNumber(i) : 0;
+    m_WhitePoint[i] = pParam ? pParam->GetNumberAt(i) : 0;
   }
-  pParam = pDict->GetArray("BlackPoint");
+  pParam = pDict->GetArrayBy("BlackPoint");
   for (i = 0; i < 3; i++) {
-    m_BlackPoint[i] = pParam ? pParam->GetNumber(i) : 0;
+    m_BlackPoint[i] = pParam ? pParam->GetNumberAt(i) : 0;
   }
-  m_Gamma = pDict->GetNumber("Gamma");
+  m_Gamma = pDict->GetNumberBy("Gamma");
   if (m_Gamma == 0) {
     m_Gamma = 1.0f;
   }
@@ -409,33 +409,33 @@ class CPDF_CalRGB : public CPDF_ColorSpace {
   FX_BOOL m_bMatrix;
 };
 FX_BOOL CPDF_CalRGB::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
-  CPDF_Dictionary* pDict = pArray->GetDict(1);
+  CPDF_Dictionary* pDict = pArray->GetDictAt(1);
   if (!pDict)
     return FALSE;
 
-  CPDF_Array* pParam = pDict->GetArray("WhitePoint");
+  CPDF_Array* pParam = pDict->GetArrayBy("WhitePoint");
   int i;
   for (i = 0; i < 3; i++) {
-    m_WhitePoint[i] = pParam ? pParam->GetNumber(i) : 0;
+    m_WhitePoint[i] = pParam ? pParam->GetNumberAt(i) : 0;
   }
-  pParam = pDict->GetArray("BlackPoint");
+  pParam = pDict->GetArrayBy("BlackPoint");
   for (i = 0; i < 3; i++) {
-    m_BlackPoint[i] = pParam ? pParam->GetNumber(i) : 0;
+    m_BlackPoint[i] = pParam ? pParam->GetNumberAt(i) : 0;
   }
-  pParam = pDict->GetArray("Gamma");
+  pParam = pDict->GetArrayBy("Gamma");
   if (pParam) {
     m_bGamma = TRUE;
     for (i = 0; i < 3; i++) {
-      m_Gamma[i] = pParam->GetNumber(i);
+      m_Gamma[i] = pParam->GetNumberAt(i);
     }
   } else {
     m_bGamma = FALSE;
   }
-  pParam = pDict->GetArray("Matrix");
+  pParam = pDict->GetArrayBy("Matrix");
   if (pParam) {
     m_bMatrix = TRUE;
     for (i = 0; i < 9; i++) {
-      m_Matrix[i] = pParam->GetNumber(i);
+      m_Matrix[i] = pParam->GetNumberAt(i);
     }
   } else {
     m_bMatrix = FALSE;
@@ -529,24 +529,24 @@ class CPDF_LabCS : public CPDF_ColorSpace {
   FX_FLOAT m_Ranges[4];
 };
 FX_BOOL CPDF_LabCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
-  CPDF_Dictionary* pDict = pArray->GetDict(1);
+  CPDF_Dictionary* pDict = pArray->GetDictAt(1);
   if (!pDict) {
     return FALSE;
   }
-  CPDF_Array* pParam = pDict->GetArray("WhitePoint");
+  CPDF_Array* pParam = pDict->GetArrayBy("WhitePoint");
   int i;
   for (i = 0; i < 3; i++) {
-    m_WhitePoint[i] = pParam ? pParam->GetNumber(i) : 0;
+    m_WhitePoint[i] = pParam ? pParam->GetNumberAt(i) : 0;
   }
-  pParam = pDict->GetArray("BlackPoint");
+  pParam = pDict->GetArrayBy("BlackPoint");
   for (i = 0; i < 3; i++) {
-    m_BlackPoint[i] = pParam ? pParam->GetNumber(i) : 0;
+    m_BlackPoint[i] = pParam ? pParam->GetNumberAt(i) : 0;
   }
-  pParam = pDict->GetArray("Range");
+  pParam = pDict->GetArrayBy("Range");
   const FX_FLOAT def_ranges[4] = {-100 * 1.0f, 100 * 1.0f, -100 * 1.0f,
                                   100 * 1.0f};
   for (i = 0; i < 4; i++) {
-    m_Ranges[i] = pParam ? pParam->GetNumber(i) : def_ranges[i];
+    m_Ranges[i] = pParam ? pParam->GetNumberAt(i) : def_ranges[i];
   }
   return TRUE;
 }
@@ -692,7 +692,7 @@ CPDF_ICCBasedCS::~CPDF_ICCBasedCS() {
 }
 
 FX_BOOL CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
-  CPDF_Stream* pStream = pArray->GetStream(1);
+  CPDF_Stream* pStream = pArray->GetStreamAt(1);
   if (!pStream) {
     return FALSE;
   }
@@ -717,7 +717,7 @@ FX_BOOL CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
             m_bOwn = TRUE;
           } else {  // No valid alternative colorspace
             pAlterCS->ReleaseCS();
-            int32_t nDictComponents = pDict ? pDict->GetInteger("N") : 0;
+            int32_t nDictComponents = pDict ? pDict->GetIntegerBy("N") : 0;
             if (nDictComponents != 1 && nDictComponents != 3 &&
                 nDictComponents != 4) {
               return FALSE;
@@ -745,11 +745,11 @@ FX_BOOL CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
       }
     }
   }
-  CPDF_Array* pRanges = pDict->GetArray("Range");
+  CPDF_Array* pRanges = pDict->GetArrayBy("Range");
   m_pRanges = FX_Alloc2D(FX_FLOAT, m_nComponents, 2);
   for (int i = 0; i < m_nComponents * 2; i++) {
     if (pRanges) {
-      m_pRanges[i] = pRanges->GetNumber(i);
+      m_pRanges[i] = pRanges->GetNumberAt(i);
     } else if (i % 2) {
       m_pRanges[i] = 1.0f;
     } else {
@@ -914,7 +914,7 @@ FX_BOOL CPDF_IndexedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
                                m_pCompMinMax[i * 2 + 1]);
     m_pCompMinMax[i * 2 + 1] -= m_pCompMinMax[i * 2];
   }
-  m_MaxIndex = pArray->GetInteger(2);
+  m_MaxIndex = pArray->GetIntegerAt(2);
 
   CPDF_Object* pTableObj = pArray->GetElementValue(3);
   if (!pTableObj)
@@ -1054,7 +1054,7 @@ void CPDF_SeparationCS::GetDefaultValue(int iComponent,
   max = 1.0f;
 }
 FX_BOOL CPDF_SeparationCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
-  CFX_ByteString name = pArray->GetString(1);
+  CFX_ByteString name = pArray->GetStringAt(1);
   if (name == "None") {
     m_Type = None;
   } else {

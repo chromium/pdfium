@@ -56,15 +56,15 @@ int CPDF_Dest::GetZoomMode() {
 }
 FX_FLOAT CPDF_Dest::GetParam(int index) {
   CPDF_Array* pArray = ToArray(m_pObj);
-  return pArray ? pArray->GetNumber(2 + index) : 0;
+  return pArray ? pArray->GetNumberAt(2 + index) : 0;
 }
 CFX_ByteString CPDF_Dest::GetRemoteName() {
   return m_pObj ? m_pObj->GetString() : CFX_ByteString();
 }
 CPDF_NameTree::CPDF_NameTree(CPDF_Document* pDoc,
                              const CFX_ByteStringC& category) {
-  if (pDoc->GetRoot() && pDoc->GetRoot()->GetDict("Names"))
-    m_pRoot = pDoc->GetRoot()->GetDict("Names")->GetDict(category);
+  if (pDoc->GetRoot() && pDoc->GetRoot()->GetDictBy("Names"))
+    m_pRoot = pDoc->GetRoot()->GetDictBy("Names")->GetDictBy(category);
   else
     m_pRoot = NULL;
 }
@@ -76,10 +76,10 @@ static CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
   if (nLevel > nMaxRecursion) {
     return NULL;
   }
-  CPDF_Array* pLimits = pNode->GetArray("Limits");
+  CPDF_Array* pLimits = pNode->GetArrayBy("Limits");
   if (pLimits) {
-    CFX_ByteString csLeft = pLimits->GetString(0);
-    CFX_ByteString csRight = pLimits->GetString(1);
+    CFX_ByteString csLeft = pLimits->GetStringAt(0);
+    CFX_ByteString csRight = pLimits->GetStringAt(1);
     if (csLeft.Compare(csRight) > 0) {
       CFX_ByteString csTmp = csRight;
       csRight = csLeft;
@@ -89,11 +89,11 @@ static CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
       return NULL;
     }
   }
-  CPDF_Array* pNames = pNode->GetArray("Names");
+  CPDF_Array* pNames = pNode->GetArrayBy("Names");
   if (pNames) {
     FX_DWORD dwCount = pNames->GetCount() / 2;
     for (FX_DWORD i = 0; i < dwCount; i++) {
-      CFX_ByteString csValue = pNames->GetString(i * 2);
+      CFX_ByteString csValue = pNames->GetStringAt(i * 2);
       int32_t iCompare = csValue.Compare(csName);
       if (iCompare <= 0) {
         if (ppFind) {
@@ -111,12 +111,12 @@ static CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
     nIndex += dwCount;
     return NULL;
   }
-  CPDF_Array* pKids = pNode->GetArray("Kids");
+  CPDF_Array* pKids = pNode->GetArrayBy("Kids");
   if (!pKids) {
     return NULL;
   }
   for (FX_DWORD i = 0; i < pKids->GetCount(); i++) {
-    CPDF_Dictionary* pKid = pKids->GetDict(i);
+    CPDF_Dictionary* pKid = pKids->GetDictAt(i);
     if (!pKid) {
       continue;
     }
@@ -137,7 +137,7 @@ static CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
   if (nLevel > nMaxRecursion) {
     return NULL;
   }
-  CPDF_Array* pNames = pNode->GetArray("Names");
+  CPDF_Array* pNames = pNode->GetArrayBy("Names");
   if (pNames) {
     int nCount = pNames->GetCount() / 2;
     if (nIndex >= nCurIndex + nCount) {
@@ -147,15 +147,15 @@ static CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
     if (ppFind) {
       *ppFind = pNames;
     }
-    csName = pNames->GetString((nIndex - nCurIndex) * 2);
+    csName = pNames->GetStringAt((nIndex - nCurIndex) * 2);
     return pNames->GetElementValue((nIndex - nCurIndex) * 2 + 1);
   }
-  CPDF_Array* pKids = pNode->GetArray("Kids");
+  CPDF_Array* pKids = pNode->GetArrayBy("Kids");
   if (!pKids) {
     return NULL;
   }
   for (FX_DWORD i = 0; i < pKids->GetCount(); i++) {
-    CPDF_Dictionary* pKid = pKids->GetDict(i);
+    CPDF_Dictionary* pKid = pKids->GetDictAt(i);
     if (!pKid) {
       continue;
     }
@@ -171,17 +171,17 @@ static int CountNames(CPDF_Dictionary* pNode, int nLevel = 0) {
   if (nLevel > nMaxRecursion) {
     return 0;
   }
-  CPDF_Array* pNames = pNode->GetArray("Names");
+  CPDF_Array* pNames = pNode->GetArrayBy("Names");
   if (pNames) {
     return pNames->GetCount() / 2;
   }
-  CPDF_Array* pKids = pNode->GetArray("Kids");
+  CPDF_Array* pKids = pNode->GetArrayBy("Kids");
   if (!pKids) {
     return 0;
   }
   int nCount = 0;
   for (FX_DWORD i = 0; i < pKids->GetCount(); i++) {
-    CPDF_Dictionary* pKid = pKids->GetDict(i);
+    CPDF_Dictionary* pKid = pKids->GetDictAt(i);
     if (!pKid) {
       continue;
     }
@@ -224,7 +224,7 @@ CPDF_Array* CPDF_NameTree::LookupNamedDest(CPDF_Document* pDoc,
                                            const CFX_ByteStringC& sName) {
   CPDF_Object* pValue = LookupValue(sName);
   if (!pValue) {
-    CPDF_Dictionary* pDests = pDoc->GetRoot()->GetDict("Dests");
+    CPDF_Dictionary* pDests = pDoc->GetRoot()->GetDictBy("Dests");
     if (!pDests)
       return nullptr;
     pValue = pDests->GetElementValue(sName);
@@ -234,7 +234,7 @@ CPDF_Array* CPDF_NameTree::LookupNamedDest(CPDF_Document* pDoc,
   if (CPDF_Array* pArray = pValue->AsArray())
     return pArray;
   if (CPDF_Dictionary* pDict = pValue->AsDictionary())
-    return pDict->GetArray("D");
+    return pDict->GetArrayBy("D");
   return nullptr;
 }
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_ || \
@@ -304,20 +304,20 @@ FX_BOOL CPDF_FileSpec::GetFileName(CFX_WideString& csFileName) const {
     return FALSE;
   }
   if (CPDF_Dictionary* pDict = m_pObj->AsDictionary()) {
-    csFileName = pDict->GetUnicodeText("UF");
+    csFileName = pDict->GetUnicodeTextBy("UF");
     if (csFileName.IsEmpty()) {
-      csFileName = CFX_WideString::FromLocal(pDict->GetString("F"));
+      csFileName = CFX_WideString::FromLocal(pDict->GetStringBy("F"));
     }
-    if (pDict->GetString("FS") == "URL") {
+    if (pDict->GetStringBy("FS") == "URL") {
       return TRUE;
     }
     if (csFileName.IsEmpty()) {
       if (pDict->KeyExist("DOS")) {
-        csFileName = CFX_WideString::FromLocal(pDict->GetString("DOS"));
+        csFileName = CFX_WideString::FromLocal(pDict->GetStringBy("DOS"));
       } else if (pDict->KeyExist("Mac")) {
-        csFileName = CFX_WideString::FromLocal(pDict->GetString("Mac"));
+        csFileName = CFX_WideString::FromLocal(pDict->GetStringBy("Mac"));
       } else if (pDict->KeyExist("Unix")) {
-        csFileName = CFX_WideString::FromLocal(pDict->GetString("Unix"));
+        csFileName = CFX_WideString::FromLocal(pDict->GetStringBy("Unix"));
       } else {
         return FALSE;
       }
@@ -336,7 +336,7 @@ CPDF_FileSpec::CPDF_FileSpec() {
 }
 FX_BOOL CPDF_FileSpec::IsURL() const {
   if (CPDF_Dictionary* pDict = ToDictionary(m_pObj)) {
-    return pDict->GetString("FS") == "URL";
+    return pDict->GetStringBy("FS") == "URL";
   }
   return FALSE;
 }
@@ -382,8 +382,8 @@ CPDF_Stream* CPDF_FileSpec::GetFileStream() const {
     return nullptr;
   if (CPDF_Stream* pStream = m_pObj->AsStream())
     return pStream;
-  if (CPDF_Dictionary* pEF = m_pObj->AsDictionary()->GetDict("EF"))
-    return pEF->GetStream("F");
+  if (CPDF_Dictionary* pEF = m_pObj->AsDictionary()->GetDictBy("EF"))
+    return pEF->GetStreamBy("F");
   return nullptr;
 }
 static void FPDFDOC_FILESPEC_SetFileName(CPDF_Object* pObj,
@@ -475,7 +475,7 @@ CFX_WideString CPDF_PageLabel::GetLabel(int nPage) const {
   if (!pPDFRoot) {
     return wsLabel;
   }
-  CPDF_Dictionary* pLabels = pPDFRoot->GetDict("PageLabels");
+  CPDF_Dictionary* pLabels = pPDFRoot->GetDictBy("PageLabels");
   CPDF_NumberTree numberTree(pLabels);
   CPDF_Object* pValue = NULL;
   int n = nPage;
@@ -490,10 +490,10 @@ CFX_WideString CPDF_PageLabel::GetLabel(int nPage) const {
     pValue = pValue->GetDirect();
     if (CPDF_Dictionary* pLabel = pValue->AsDictionary()) {
       if (pLabel->KeyExist("P")) {
-        wsLabel += pLabel->GetUnicodeText("P");
+        wsLabel += pLabel->GetUnicodeTextBy("P");
       }
-      CFX_ByteString bsNumberingStyle = pLabel->GetString("S", NULL);
-      int nLabelNum = nPage - n + pLabel->GetInteger("St", 1);
+      CFX_ByteString bsNumberingStyle = pLabel->GetStringBy("S", NULL);
+      int nLabelNum = nPage - n + pLabel->GetIntegerBy("St", 1);
       CFX_WideString wsNumPortion =
           _GetLabelNumPortion(nLabelNum, bsNumberingStyle);
       wsLabel += wsNumPortion;

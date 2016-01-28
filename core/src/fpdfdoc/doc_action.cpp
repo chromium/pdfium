@@ -10,7 +10,7 @@ CPDF_Dest CPDF_Action::GetDest(CPDF_Document* pDoc) const {
   if (!m_pDict) {
     return CPDF_Dest();
   }
-  CFX_ByteString type = m_pDict->GetString("S");
+  CFX_ByteString type = m_pDict->GetStringBy("S");
   if (type != "GoTo" && type != "GoToR") {
     return CPDF_Dest();
   }
@@ -35,7 +35,7 @@ const FX_CHAR* g_sATypes[] = {
 CPDF_Action::ActionType CPDF_Action::GetType() const {
   ActionType eType = Unknown;
   if (m_pDict) {
-    CFX_ByteString csType = m_pDict->GetString("S");
+    CFX_ByteString csType = m_pDict->GetStringBy("S");
     if (!csType.IsEmpty()) {
       int i = 0;
       while (g_sATypes[i][0] != '\0') {
@@ -49,7 +49,7 @@ CPDF_Action::ActionType CPDF_Action::GetType() const {
   return eType;
 }
 CFX_WideString CPDF_Action::GetFilePath() const {
-  CFX_ByteString type = m_pDict->GetString("S");
+  CFX_ByteString type = m_pDict->GetStringBy("S");
   if (type != "GoToR" && type != "Launch" && type != "SubmitForm" &&
       type != "ImportData") {
     return CFX_WideString();
@@ -58,9 +58,9 @@ CFX_WideString CPDF_Action::GetFilePath() const {
   CFX_WideString path;
   if (!pFile) {
     if (type == "Launch") {
-      CPDF_Dictionary* pWinDict = m_pDict->GetDict("Win");
+      CPDF_Dictionary* pWinDict = m_pDict->GetDictBy("Win");
       if (pWinDict) {
-        return CFX_WideString::FromLocal(pWinDict->GetString("F"));
+        return CFX_WideString::FromLocal(pWinDict->GetStringBy("F"));
       }
     }
     return path;
@@ -74,15 +74,15 @@ CFX_ByteString CPDF_Action::GetURI(CPDF_Document* pDoc) const {
   if (!m_pDict) {
     return csURI;
   }
-  if (m_pDict->GetString("S") != "URI") {
+  if (m_pDict->GetStringBy("S") != "URI") {
     return csURI;
   }
-  csURI = m_pDict->GetString("URI");
+  csURI = m_pDict->GetStringBy("URI");
   CPDF_Dictionary* pRoot = pDoc->GetRoot();
-  CPDF_Dictionary* pURI = pRoot->GetDict("URI");
+  CPDF_Dictionary* pURI = pRoot->GetDictBy("URI");
   if (pURI) {
     if (csURI.Find(":", 0) < 1) {
-      csURI = pURI->GetString("Base") + csURI;
+      csURI = pURI->GetStringBy("Base") + csURI;
     }
   }
   return csURI;
@@ -95,12 +95,12 @@ FX_DWORD CPDF_ActionFields::GetFieldsCount() const {
   if (!pDict) {
     return 0;
   }
-  CFX_ByteString csType = pDict->GetString("S");
+  CFX_ByteString csType = pDict->GetStringBy("S");
   CPDF_Object* pFields = NULL;
   if (csType == "Hide") {
     pFields = pDict->GetElementValue("T");
   } else {
-    pFields = pDict->GetArray("Fields");
+    pFields = pDict->GetArrayBy("Fields");
   }
   if (!pFields)
     return 0;
@@ -122,12 +122,12 @@ std::vector<CPDF_Object*> CPDF_ActionFields::GetAllFields() const {
   if (!pDict)
     return fields;
 
-  CFX_ByteString csType = pDict->GetString("S");
+  CFX_ByteString csType = pDict->GetStringBy("S");
   CPDF_Object* pFields;
   if (csType == "Hide")
     pFields = pDict->GetElementValue("T");
   else
-    pFields = pDict->GetArray("Fields");
+    pFields = pDict->GetArrayBy("Fields");
   if (!pFields)
     return fields;
 
@@ -153,12 +153,12 @@ CPDF_Object* CPDF_ActionFields::GetField(FX_DWORD iIndex) const {
   if (!pDict) {
     return NULL;
   }
-  CFX_ByteString csType = pDict->GetString("S");
+  CFX_ByteString csType = pDict->GetStringBy("S");
   CPDF_Object* pFields = NULL;
   if (csType == "Hide") {
     pFields = pDict->GetElementValue("T");
   } else {
-    pFields = pDict->GetArray("Fields");
+    pFields = pDict->GetArrayBy("Fields");
   }
   if (!pFields) {
     return NULL;
@@ -185,12 +185,12 @@ CPDF_Dictionary* CPDF_Action::GetAnnot() const {
   if (!m_pDict) {
     return nullptr;
   }
-  CFX_ByteString csType = m_pDict->GetString("S");
+  CFX_ByteString csType = m_pDict->GetStringBy("S");
   if (csType == "Rendition") {
-    return m_pDict->GetDict("AN");
+    return m_pDict->GetDictBy("AN");
   }
   if (csType == "Movie") {
-    return m_pDict->GetDict("Annotation");
+    return m_pDict->GetDictBy("Annotation");
   }
   return nullptr;
 }
@@ -198,12 +198,12 @@ int32_t CPDF_Action::GetOperationType() const {
   if (!m_pDict) {
     return 0;
   }
-  CFX_ByteString csType = m_pDict->GetString("S");
+  CFX_ByteString csType = m_pDict->GetStringBy("S");
   if (csType == "Rendition") {
-    return m_pDict->GetInteger("OP");
+    return m_pDict->GetIntegerBy("OP");
   }
   if (csType == "Movie") {
-    CFX_ByteString csOP = m_pDict->GetString("Operation");
+    CFX_ByteString csOP = m_pDict->GetStringBy("Operation");
     if (csOP == "Play") {
       return 0;
     }
@@ -241,7 +241,7 @@ CPDF_Action CPDF_Action::GetSubAction(FX_DWORD iIndex) const {
     if (iIndex == 0)
       return CPDF_Action(pDict);
   } else if (CPDF_Array* pArray = ToArray(pNext)) {
-    return CPDF_Action(pArray->GetDict(iIndex));
+    return CPDF_Action(pArray->GetDictAt(iIndex));
   }
   return CPDF_Action();
 }
@@ -255,7 +255,7 @@ CPDF_Action CPDF_AAction::GetAction(AActionType eType) const {
   if (!m_pDict) {
     return CPDF_Action();
   }
-  return CPDF_Action(m_pDict->GetDict(g_sAATypes[(int)eType]));
+  return CPDF_Action(m_pDict->GetDictBy(g_sAATypes[(int)eType]));
 }
 
 CPDF_DocJSActions::CPDF_DocJSActions(CPDF_Document* pDoc) : m_pDocument(pDoc) {}

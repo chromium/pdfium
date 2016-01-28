@@ -265,7 +265,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFLink_Enumerate(FPDF_PAGE page,
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage || !pPage->m_pFormDict)
     return FALSE;
-  CPDF_Array* pAnnots = pPage->m_pFormDict->GetArray("Annots");
+  CPDF_Array* pAnnots = pPage->m_pFormDict->GetArrayBy("Annots");
   if (!pAnnots)
     return FALSE;
   for (int i = *startPos; i < (int)pAnnots->GetCount(); i++) {
@@ -273,7 +273,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFLink_Enumerate(FPDF_PAGE page,
         ToDictionary(static_cast<CPDF_Object*>(pAnnots->GetElementValue(i)));
     if (!pDict)
       continue;
-    if (pDict->GetString("Subtype").Equal("Link")) {
+    if (pDict->GetStringBy("Subtype").Equal("Link")) {
       *startPos = i + 1;
       *linkAnnot = (FPDF_LINK)pDict;
       return TRUE;
@@ -288,7 +288,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFLink_GetAnnotRect(FPDF_LINK linkAnnot,
     return FALSE;
   CPDF_Dictionary* pAnnotDict =
       ToDictionary(static_cast<CPDF_Object*>(linkAnnot));
-  CPDF_Rect rt = pAnnotDict->GetRect("Rect");
+  CPDF_Rect rt = pAnnotDict->GetRectBy("Rect");
   rect->left = rt.left;
   rect->bottom = rt.bottom;
   rect->right = rt.right;
@@ -301,7 +301,7 @@ DLLEXPORT int STDCALL FPDFLink_CountQuadPoints(FPDF_LINK linkAnnot) {
     return 0;
   CPDF_Dictionary* pAnnotDict =
       ToDictionary(static_cast<CPDF_Object*>(linkAnnot));
-  CPDF_Array* pArray = pAnnotDict->GetArray("QuadPoints");
+  CPDF_Array* pArray = pAnnotDict->GetArrayBy("QuadPoints");
   if (!pArray)
     return 0;
   return pArray->GetCount() / 8;
@@ -314,19 +314,19 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFLink_GetQuadPoints(FPDF_LINK linkAnnot,
     return FALSE;
   CPDF_Dictionary* pAnnotDict =
       ToDictionary(static_cast<CPDF_Object*>(linkAnnot));
-  CPDF_Array* pArray = pAnnotDict->GetArray("QuadPoints");
+  CPDF_Array* pArray = pAnnotDict->GetArrayBy("QuadPoints");
   if (pArray) {
     if (quadIndex < 0 || quadIndex >= (int)pArray->GetCount() / 8 ||
         ((quadIndex * 8 + 7) >= (int)pArray->GetCount()))
       return FALSE;
-    quadPoints->x1 = pArray->GetNumber(quadIndex * 8);
-    quadPoints->y1 = pArray->GetNumber(quadIndex * 8 + 1);
-    quadPoints->x2 = pArray->GetNumber(quadIndex * 8 + 2);
-    quadPoints->y2 = pArray->GetNumber(quadIndex * 8 + 3);
-    quadPoints->x3 = pArray->GetNumber(quadIndex * 8 + 4);
-    quadPoints->y3 = pArray->GetNumber(quadIndex * 8 + 5);
-    quadPoints->x4 = pArray->GetNumber(quadIndex * 8 + 6);
-    quadPoints->y4 = pArray->GetNumber(quadIndex * 8 + 7);
+    quadPoints->x1 = pArray->GetNumberAt(quadIndex * 8);
+    quadPoints->y1 = pArray->GetNumberAt(quadIndex * 8 + 1);
+    quadPoints->x2 = pArray->GetNumberAt(quadIndex * 8 + 2);
+    quadPoints->y2 = pArray->GetNumberAt(quadIndex * 8 + 3);
+    quadPoints->x3 = pArray->GetNumberAt(quadIndex * 8 + 4);
+    quadPoints->y3 = pArray->GetNumberAt(quadIndex * 8 + 5);
+    quadPoints->x4 = pArray->GetNumberAt(quadIndex * 8 + 6);
+    quadPoints->y4 = pArray->GetNumberAt(quadIndex * 8 + 7);
     return TRUE;
   }
   return FALSE;
@@ -344,7 +344,7 @@ DLLEXPORT unsigned long STDCALL FPDF_GetMetaText(FPDF_DOCUMENT doc,
   CPDF_Dictionary* pInfo = pDoc->GetInfo();
   if (!pInfo)
     return 0;
-  CFX_WideString text = pInfo->GetUnicodeText(tag);
+  CFX_WideString text = pInfo->GetUnicodeTextBy(tag);
   // Use UTF-16LE encoding
   CFX_ByteString encodedText = text.UTF16LE_Encode();
   unsigned long len = encodedText.GetLength();

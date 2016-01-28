@@ -54,7 +54,7 @@ FX_BOOL CPDF_PageOrganizer::PDFDocInit(CPDF_Document* pDestPDFDoc,
   DInfoDict->SetAt("Producer", new CPDF_String(producerstr, FALSE));
 
   // Set type
-  CFX_ByteString cbRootType = pNewRoot->GetString("Type", "");
+  CFX_ByteString cbRootType = pNewRoot->GetStringBy("Type", "");
   if (cbRootType.Equal("")) {
     pNewRoot->SetAt("Type", new CPDF_Name("Catalog"));
   }
@@ -68,12 +68,12 @@ FX_BOOL CPDF_PageOrganizer::PDFDocInit(CPDF_Document* pDestPDFDoc,
     pNewRoot->SetAt("Pages", new CPDF_Reference(pDestPDFDoc, NewPagesON));
   }
 
-  CFX_ByteString cbPageType = pNewPages->GetString("Type", "");
+  CFX_ByteString cbPageType = pNewPages->GetStringBy("Type", "");
   if (cbPageType.Equal("")) {
     pNewPages->SetAt("Type", new CPDF_Name("Pages"));
   }
 
-  CPDF_Array* pKeysArray = pNewPages->GetArray("Kids");
+  CPDF_Array* pKeysArray = pNewPages->GetArrayBy("Kids");
   if (!pKeysArray) {
     CPDF_Array* pNewKids = new CPDF_Array;
     FX_DWORD Kidsobjnum = -1;
@@ -285,7 +285,7 @@ FX_DWORD CPDF_PageOrganizer::GetNewObjId(CPDF_Document* pDoc,
 
   if (CPDF_Dictionary* pDictClone = pClone->AsDictionary()) {
     if (pDictClone->KeyExist("Type")) {
-      CFX_ByteString strType = pDictClone->GetString("Type");
+      CFX_ByteString strType = pDictClone->GetStringBy("Type");
       if (!FXSYS_stricmp(strType, "Pages")) {
         pDictClone->Release();
         return 4;
@@ -394,7 +394,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_CopyViewerPreferences(FPDF_DOCUMENT dest_doc,
     return FALSE;
 
   CPDF_Dictionary* pSrcDict = pSrcDoc->GetRoot();
-  pSrcDict = pSrcDict->GetDict("ViewerPreferences");
+  pSrcDict = pSrcDict->GetDictBy("ViewerPreferences");
   if (!pSrcDict)
     return FALSE;
 

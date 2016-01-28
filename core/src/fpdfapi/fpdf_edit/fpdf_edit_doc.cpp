@@ -197,7 +197,7 @@ static void _InsertWidthArray(HDC hDC,
       break;
     }
   if (i == size) {
-    int first = pWidthArray->GetInteger(pWidthArray->GetCount() - 1);
+    int first = pWidthArray->GetIntegerAt(pWidthArray->GetCount() - 1);
     pWidthArray->AddInteger(first + size - 1);
     pWidthArray->AddInteger(*widths);
   } else {
@@ -533,7 +533,7 @@ static void _InsertWidthArray(CTFontRef font,
       break;
     }
   if (i == size) {
-    int first = pWidthArray->GetInteger(pWidthArray->GetCount() - 1);
+    int first = pWidthArray->GetIntegerAt(pWidthArray->GetCount() - 1);
     pWidthArray->AddInteger(first + size - 1);
     pWidthArray->AddInteger(*widths);
   } else {
@@ -811,7 +811,7 @@ static void _InsertWidthArray1(CFX_Font* pFont,
       break;
     }
   if (i == size) {
-    int first = pWidthArray->GetInteger(pWidthArray->GetCount() - 1);
+    int first = pWidthArray->GetIntegerAt(pWidthArray->GetCount() - 1);
     pWidthArray->AddInteger(first + size - 1);
     pWidthArray->AddInteger(*widths);
   } else {
@@ -1018,14 +1018,14 @@ static int InsertDeletePDFPage(CPDF_Document* pDoc,
                                CPDF_Dictionary* pPage,
                                FX_BOOL bInsert,
                                CFX_ArrayTemplate<CPDF_Dictionary*>& stackList) {
-  CPDF_Array* pKidList = pPages->GetArray("Kids");
+  CPDF_Array* pKidList = pPages->GetArrayBy("Kids");
   if (!pKidList) {
     return -1;
   }
   int nKids = pKidList->GetCount();
   for (int i = 0; i < nKids; i++) {
-    CPDF_Dictionary* pKid = pKidList->GetDict(i);
-    if (pKid->GetString("Type") == "Page") {
+    CPDF_Dictionary* pKid = pKidList->GetDictAt(i);
+    if (pKid->GetStringBy("Type") == "Page") {
       if (nPagesToGo == 0) {
         if (bInsert) {
           pKidList->InsertAt(i, new CPDF_Reference(pDoc, pPage->GetObjNum()));
@@ -1033,13 +1033,13 @@ static int InsertDeletePDFPage(CPDF_Document* pDoc,
         } else {
           pKidList->RemoveAt(i);
         }
-        pPages->SetAtInteger("Count",
-                             pPages->GetInteger("Count") + (bInsert ? 1 : -1));
+        pPages->SetAtInteger(
+            "Count", pPages->GetIntegerBy("Count") + (bInsert ? 1 : -1));
         return 1;
       }
       nPagesToGo--;
     } else {
-      int nPages = pKid->GetInteger("Count");
+      int nPages = pKid->GetIntegerBy("Count");
       if (nPagesToGo < nPages) {
         int stackCount = stackList.GetSize();
         for (int j = 0; j < stackCount; ++j) {
@@ -1053,8 +1053,8 @@ static int InsertDeletePDFPage(CPDF_Document* pDoc,
           return -1;
         }
         stackList.RemoveAt(stackCount);
-        pPages->SetAtInteger("Count",
-                             pPages->GetInteger("Count") + (bInsert ? 1 : -1));
+        pPages->SetAtInteger(
+            "Count", pPages->GetIntegerBy("Count") + (bInsert ? 1 : -1));
         return 1;
       }
       nPagesToGo -= nPages;
@@ -1070,7 +1070,7 @@ static int InsertNewPage(CPDF_Document* pDoc,
   if (!pRoot) {
     return -1;
   }
-  CPDF_Dictionary* pPages = pRoot->GetDict("Pages");
+  CPDF_Dictionary* pPages = pRoot->GetDictBy("Pages");
   if (!pPages) {
     return -1;
   }
@@ -1079,7 +1079,7 @@ static int InsertNewPage(CPDF_Document* pDoc,
     return -1;
   }
   if (iPage == nPages) {
-    CPDF_Array* pPagesList = pPages->GetArray("Kids");
+    CPDF_Array* pPagesList = pPages->GetArrayBy("Kids");
     if (!pPagesList) {
       pPagesList = new CPDF_Array;
       pPages->SetAt("Kids", pPagesList);
@@ -1121,11 +1121,11 @@ void CPDF_Document::DeletePage(int iPage) {
   if (!pRoot) {
     return;
   }
-  CPDF_Dictionary* pPages = pRoot->GetDict("Pages");
+  CPDF_Dictionary* pPages = pRoot->GetDictBy("Pages");
   if (!pPages) {
     return;
   }
-  int nPages = pPages->GetInteger("Count");
+  int nPages = pPages->GetIntegerBy("Count");
   if (iPage < 0 || iPage >= nPages) {
     return;
   }

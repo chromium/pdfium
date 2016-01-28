@@ -408,7 +408,7 @@ int CPDF_FormField::GetMaxLen() {
 
     CPDF_Dictionary* pWidgetDict = pControl->m_pWidgetDict;
     if (pWidgetDict->KeyExist("MaxLen"))
-      return pWidgetDict->GetInteger("MaxLen");
+      return pWidgetDict->GetIntegerBy("MaxLen");
   }
   return 0;
 }
@@ -873,7 +873,7 @@ int CPDF_FormField::GetSelectedOptionIndex(int index) {
   }
   int iCount = (int)pArray->GetCount();
   if (iCount > 0 && index < iCount) {
-    return pArray->GetInteger(index);
+    return pArray->GetIntegerAt(index);
   }
   return -1;
 }
@@ -888,7 +888,7 @@ FX_BOOL CPDF_FormField::IsOptionSelected(int iOptIndex) {
   }
   int iCount = (int)pArray->GetCount();
   for (int i = 0; i < iCount; i++) {
-    if (pArray->GetInteger(i) == iOptIndex) {
+    if (pArray->GetIntegerAt(i) == iOptIndex) {
       return TRUE;
     }
   }
@@ -897,7 +897,7 @@ FX_BOOL CPDF_FormField::IsOptionSelected(int iOptIndex) {
 FX_BOOL CPDF_FormField::SelectOption(int iOptIndex,
                                      FX_BOOL bSelected,
                                      FX_BOOL bNotify) {
-  CPDF_Array* pArray = m_pDict->GetArray("I");
+  CPDF_Array* pArray = m_pDict->GetArrayBy("I");
   if (!pArray) {
     if (!bSelected) {
       return TRUE;
@@ -907,7 +907,7 @@ FX_BOOL CPDF_FormField::SelectOption(int iOptIndex,
   }
   FX_BOOL bReturn = FALSE;
   for (int i = 0; i < (int)pArray->GetCount(); i++) {
-    int iFind = pArray->GetInteger(i);
+    int iFind = pArray->GetIntegerAt(i);
     if (iFind == iOptIndex) {
       if (bSelected) {
         return TRUE;
@@ -1006,7 +1006,7 @@ void CPDF_FormField::LoadDA() {
     DA = pObj_t->GetString();
   }
   if (DA.IsEmpty() && m_pForm->m_pFormDict) {
-    DA = m_pForm->m_pFormDict->GetString("DA");
+    DA = m_pForm->m_pFormDict->GetStringBy("DA");
   }
   if (DA.IsEmpty()) {
     return;
@@ -1015,10 +1015,11 @@ void CPDF_FormField::LoadDA() {
   syntax.FindTagParam("Tf", 2);
   CFX_ByteString font_name = syntax.GetWord();
   CPDF_Dictionary* pFontDict = NULL;
-  if (m_pForm->m_pFormDict && m_pForm->m_pFormDict->GetDict("DR") &&
-      m_pForm->m_pFormDict->GetDict("DR")->GetDict("Font"))
-    pFontDict = m_pForm->m_pFormDict->GetDict("DR")->GetDict("Font")->GetDict(
-        font_name);
+  if (m_pForm->m_pFormDict && m_pForm->m_pFormDict->GetDictBy("DR") &&
+      m_pForm->m_pFormDict->GetDictBy("DR")->GetDictBy("Font"))
+    pFontDict = m_pForm->m_pFormDict->GetDictBy("DR")
+                    ->GetDictBy("Font")
+                    ->GetDictBy(font_name);
 
   if (!pFontDict) {
     return;

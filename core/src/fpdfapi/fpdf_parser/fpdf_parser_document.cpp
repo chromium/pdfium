@@ -15,17 +15,17 @@ namespace {
 
 int CountPages(CPDF_Dictionary* pPages,
                std::set<CPDF_Dictionary*>* visited_pages) {
-  int count = pPages->GetInteger("Count");
+  int count = pPages->GetIntegerBy("Count");
   if (count > 0 && count < FPDF_PAGE_MAX_NUM) {
     return count;
   }
-  CPDF_Array* pKidList = pPages->GetArray("Kids");
+  CPDF_Array* pKidList = pPages->GetArrayBy("Kids");
   if (!pKidList) {
     return 0;
   }
   count = 0;
   for (FX_DWORD i = 0; i < pKidList->GetCount(); i++) {
-    CPDF_Dictionary* pKid = pKidList->GetDict(i);
+    CPDF_Dictionary* pKid = pKidList->GetDictAt(i);
     if (!pKid || pdfium::ContainsKey(*visited_pages, pKid)) {
       continue;
     }
@@ -85,8 +85,8 @@ void CPDF_Document::LoadDoc() {
   }
   CPDF_Array* pIDArray = m_pParser->GetIDArray();
   if (pIDArray) {
-    m_ID1 = pIDArray->GetString(0);
-    m_ID2 = pIDArray->GetString(1);
+    m_ID1 = pIDArray->GetStringAt(0);
+    m_ID2 = pIDArray->GetStringAt(1);
   }
   m_PageList.SetSize(RetrievePageCount());
 }
@@ -102,8 +102,8 @@ void CPDF_Document::LoadAsynDoc(CPDF_Dictionary* pLinearized) {
   m_pInfoDict = pIndirectObj ? pIndirectObj->GetDict() : nullptr;
   CPDF_Array* pIDArray = m_pParser->GetIDArray();
   if (pIDArray) {
-    m_ID1 = pIDArray->GetString(0);
-    m_ID2 = pIDArray->GetString(1);
+    m_ID1 = pIDArray->GetStringAt(0);
+    m_ID2 = pIDArray->GetStringAt(1);
   }
   FX_DWORD dwPageCount = 0;
   CPDF_Object* pCount = pLinearized->GetElement("N");
@@ -136,7 +136,7 @@ CPDF_Dictionary* CPDF_Document::_FindPDFPage(CPDF_Dictionary* pPages,
                                              int iPage,
                                              int nPagesToGo,
                                              int level) {
-  CPDF_Array* pKidList = pPages->GetArray("Kids");
+  CPDF_Array* pKidList = pPages->GetArrayBy("Kids");
   if (!pKidList) {
     if (nPagesToGo == 0) {
       return pPages;
@@ -148,7 +148,7 @@ CPDF_Dictionary* CPDF_Document::_FindPDFPage(CPDF_Dictionary* pPages,
   }
   int nKids = pKidList->GetCount();
   for (int i = 0; i < nKids; i++) {
-    CPDF_Dictionary* pKid = pKidList->GetDict(i);
+    CPDF_Dictionary* pKid = pKidList->GetDictAt(i);
     if (!pKid) {
       nPagesToGo--;
       continue;
@@ -163,7 +163,7 @@ CPDF_Dictionary* CPDF_Document::_FindPDFPage(CPDF_Dictionary* pPages,
       m_PageList.SetAt(iPage - nPagesToGo, pKid->GetObjNum());
       nPagesToGo--;
     } else {
-      int nPages = pKid->GetInteger("Count");
+      int nPages = pKid->GetIntegerBy("Count");
       if (nPagesToGo < nPages) {
         return _FindPDFPage(pKid, iPage, nPagesToGo, level + 1);
       }
@@ -194,7 +194,7 @@ CPDF_Dictionary* CPDF_Document::GetPage(int iPage) {
   if (!pRoot)
     return nullptr;
 
-  CPDF_Dictionary* pPages = pRoot->GetDict("Pages");
+  CPDF_Dictionary* pPages = pRoot->GetDictBy("Pages");
   if (!pPages)
     return nullptr;
 
@@ -212,14 +212,14 @@ int CPDF_Document::_FindPageIndex(CPDF_Dictionary* pNode,
                                   int& index,
                                   int level) {
   if (pNode->KeyExist("Kids")) {
-    CPDF_Array* pKidList = pNode->GetArray("Kids");
+    CPDF_Array* pKidList = pNode->GetArrayBy("Kids");
     if (!pKidList) {
       return -1;
     }
     if (level >= FX_MAX_PAGE_LEVEL) {
       return -1;
     }
-    FX_DWORD count = pNode->GetInteger("Count");
+    FX_DWORD count = pNode->GetIntegerBy("Count");
     if (count <= skip_count) {
       skip_count -= count;
       index += count;
@@ -236,7 +236,7 @@ int CPDF_Document::_FindPageIndex(CPDF_Dictionary* pNode,
       }
     }
     for (FX_DWORD i = 0; i < pKidList->GetCount(); i++) {
-      CPDF_Dictionary* pKid = pKidList->GetDict(i);
+      CPDF_Dictionary* pKid = pKidList->GetDictAt(i);
       if (!pKid) {
         continue;
       }
@@ -278,7 +278,7 @@ int CPDF_Document::GetPageIndex(FX_DWORD objnum) {
   if (!pRoot) {
     return -1;
   }
-  CPDF_Dictionary* pPages = pRoot->GetDict("Pages");
+  CPDF_Dictionary* pPages = pRoot->GetDictBy("Pages");
   if (!pPages) {
     return -1;
   }
@@ -294,7 +294,7 @@ int CPDF_Document::RetrievePageCount() const {
   if (!pRoot) {
     return 0;
   }
-  CPDF_Dictionary* pPages = pRoot->GetDict("Pages");
+  CPDF_Dictionary* pPages = pRoot->GetDictBy("Pages");
   if (!pPages) {
     return 0;
   }
@@ -321,7 +321,7 @@ FX_BOOL CPDF_Document::IsFormStream(FX_DWORD objnum, FX_BOOL& bForm) const {
   auto it = m_IndirectObjs.find(objnum);
   if (it != m_IndirectObjs.end()) {
     CPDF_Stream* pStream = it->second->AsStream();
-    bForm = pStream && pStream->GetDict()->GetString("Subtype") == "Form";
+    bForm = pStream && pStream->GetDict()->GetStringBy("Subtype") == "Form";
     return TRUE;
   }
   if (!m_pParser) {

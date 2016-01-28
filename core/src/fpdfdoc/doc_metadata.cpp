@@ -12,7 +12,7 @@ CPDF_Metadata::CPDF_Metadata(CPDF_Document* pDoc) {
   if (!pRoot)
     return;
 
-  CPDF_Stream* pStream = pRoot->GetStream("Metadata");
+  CPDF_Stream* pStream = pRoot->GetStreamBy("Metadata");
   if (!pStream)
     return;
 
