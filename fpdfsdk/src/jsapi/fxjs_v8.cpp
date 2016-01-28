@@ -125,6 +125,31 @@ void FXJS_ArrayBufferAllocator::Free(void* data, size_t length) {
   free(data);
 }
 
+void V8TemplateMapTraits::Dispose(v8::Isolate* isolate,
+                                  v8::Global<v8::Object> value,
+                                  void* key) {
+  v8::Local<v8::Object> obj = value.Get(isolate);
+  if (obj.IsEmpty())
+    return;
+  int id = FXJS_GetObjDefnID(obj);
+  if (id == -1)
+    return;
+
+  CFXJS_ObjDefinition* pObjDef = CFXJS_ObjDefinition::ForID(isolate, id);
+  if (!pObjDef)
+    return;
+  if (pObjDef->m_pDestructor)
+    pObjDef->m_pDestructor(obj);
+  FXJS_FreePrivate(obj);
+}
+
+V8TemplateMapTraits::MapType* V8TemplateMapTraits::MapFromWeakCallbackInfo(
+    const v8::WeakCallbackInfo<WeakCallbackDataType>& data) {
+  V8TemplateMap* pMap =
+      (FXJS_PerIsolateData::Get(data.GetIsolate()))->m_pDynamicObjsMap;
+  return pMap ? &pMap->m_map : nullptr;
+}
+
 void FXJS_Initialize(unsigned int embedderDataSlot, v8::Isolate* pIsolate) {
   if (g_isolate) {
     ASSERT(g_embedderDataSlot == embedderDataSlot);
@@ -290,6 +315,10 @@ void FXJS_InitializeRuntime(
   v8::Context::Scope context_scope(v8Context);
 
   FXJS_PerIsolateData::SetUp(pIsolate);
+  FXJS_PerIsolateData* pData = FXJS_PerIsolateData::Get(pIsolate);
+  if (!pData)
+    return;
+  pData->CreateDynamicObjsMap(pIsolate);
   v8Context->SetAlignedPointerInEmbedderData(kPerContextDataIndex, pIRuntime);
 
   int maxID = CFXJS_ObjDefinition::MaxID(pIsolate);
@@ -315,7 +344,8 @@ void FXJS_InitializeRuntime(
                                   v8::NewStringType::kNormal,
                                   bs.GetLength()).ToLocalChecked();
 
-      v8::Local<v8::Object> obj = FXJS_NewFxDynamicObj(pIsolate, pIRuntime, i);
+      v8::Local<v8::Object> obj =
+          FXJS_NewFxDynamicObj(pIsolate, pIRuntime, i, true);
       v8Context->Global()->Set(v8Context, m_ObjName, obj).FromJust();
       pStaticObjects->at(i) = new v8::Global<v8::Object>(pIsolate, obj);
     }
@@ -338,6 +368,7 @@ void FXJS_ReleaseRuntime(v8::Isolate* pIsolate,
   FXJS_PerIsolateData* pData = FXJS_PerIsolateData::Get(pIsolate);
   if (!pData)
     return;
+  pData->ReleaseDynamicObjsMap();
 
 #ifdef PDF_ENABLE_XFA
   // XFA, if present, should have already cleaned itself up.
@@ -417,7 +448,8 @@ int FXJS_Execute(v8::Isolate* pIsolate,
 
 v8::Local<v8::Object> FXJS_NewFxDynamicObj(v8::Isolate* pIsolate,
                                            IJS_Runtime* pIRuntime,
-                                           int nObjDefnID) {
+                                           int nObjDefnID,
+                                           bool bStatic) {
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
   if (nObjDefnID == -1) {
@@ -441,10 +473,15 @@ v8::Local<v8::Object> FXJS_NewFxDynamicObj(v8::Isolate* pIsolate,
   if (!pObjDef->GetInstanceTemplate()->NewInstance(context).ToLocal(&obj))
     return v8::Local<v8::Object>();
 
-  obj->SetAlignedPointerInInternalField(0, new CFXJS_PerObjectData(nObjDefnID));
+  CFXJS_PerObjectData* pPerObjData = new CFXJS_PerObjectData(nObjDefnID);
+  obj->SetAlignedPointerInInternalField(0, pPerObjData);
   if (pObjDef->m_pConstructor)
     pObjDef->m_pConstructor(pIRuntime, obj);
 
+  if (!bStatic && FXJS_PerIsolateData::Get(pIsolate)->m_pDynamicObjsMap) {
+    FXJS_PerIsolateData::Get(pIsolate)
+        ->m_pDynamicObjsMap->set(pPerObjData, obj);
+  }
   return obj;
 }
 

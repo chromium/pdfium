@@ -15,6 +15,7 @@
 #define FPDFSDK_INCLUDE_JSAPI_FXJS_V8_H_
 
 #include <v8.h>
+#include <v8-util.h>
 
 #include <vector>
 
@@ -45,21 +46,76 @@ struct FXJSErr {
   unsigned linnum;
 };
 
+// Global weak map to save dynamic objects.
+class V8TemplateMapTraits : public v8::StdMapTraits<void*, v8::Object> {
+ public:
+  typedef v8::GlobalValueMap<void*, v8::Object, V8TemplateMapTraits> MapType;
+  typedef void WeakCallbackDataType;
+
+  static WeakCallbackDataType* WeakCallbackParameter(
+      MapType* map,
+      void* key,
+      const v8::Local<v8::Object>& value) {
+    return key;
+  }
+  static MapType* MapFromWeakCallbackInfo(
+      const v8::WeakCallbackInfo<WeakCallbackDataType>&);
+
+  static void* KeyFromWeakCallbackInfo(
+      const v8::WeakCallbackInfo<WeakCallbackDataType>& data) {
+    return data.GetParameter();
+  }
+  static const v8::PersistentContainerCallbackType kCallbackType =
+      v8::kWeakWithInternalFields;
+  static void DisposeWeak(
+      const v8::WeakCallbackInfo<WeakCallbackDataType>& data) {}
+  static void OnWeakCallback(
+      const v8::WeakCallbackInfo<WeakCallbackDataType>& data) {}
+  static void Dispose(v8::Isolate* isolate,
+                      v8::Global<v8::Object> value,
+                      void* key);
+  static void DisposeCallbackData(WeakCallbackDataType* callbackData) {}
+};
+
+class V8TemplateMap {
+ public:
+  typedef v8::GlobalValueMap<void*, v8::Object, V8TemplateMapTraits> MapType;
+
+  void set(void* key, v8::Local<v8::Object> handle) {
+    ASSERT(!m_map.Contains(key));
+    m_map.Set(key, handle);
+  }
+  explicit V8TemplateMap(v8::Isolate* isolate) : m_map(isolate) {}
+  friend class V8TemplateMapTraits;
+
+ private:
+  MapType m_map;
+};
+
 class FXJS_PerIsolateData {
  public:
   static void SetUp(v8::Isolate* pIsolate);
   static FXJS_PerIsolateData* Get(v8::Isolate* pIsolate);
+  void CreateDynamicObjsMap(v8::Isolate* pIsolate) {
+    m_pDynamicObjsMap = new V8TemplateMap(pIsolate);
+  }
+  void ReleaseDynamicObjsMap() {
+    delete m_pDynamicObjsMap;
+    m_pDynamicObjsMap = nullptr;
+  }
 
   std::vector<CFXJS_ObjDefinition*> m_ObjectDefnArray;
 #ifdef PDF_ENABLE_XFA
   CFXJSE_RuntimeData* m_pFXJSERuntimeData;
 #endif  // PDF_ENABLE_XFA
+  V8TemplateMap* m_pDynamicObjsMap;
 
  protected:
 #ifndef PDF_ENABLE_XFA
-  FXJS_PerIsolateData() {}
+  FXJS_PerIsolateData() : m_pDynamicObjsMap(nullptr) {}
 #else  // PDF_ENABLE_XFA
-  FXJS_PerIsolateData() : m_pFXJSERuntimeData(nullptr) {}
+  FXJS_PerIsolateData()
+      : m_pFXJSERuntimeData(nullptr), m_pDynamicObjsMap(nullptr) {}
 #endif  // PDF_ENABLE_XFA
 };
 
@@ -160,7 +216,8 @@ int FXJS_Execute(v8::Isolate* pIsolate,
 
 v8::Local<v8::Object> FXJS_NewFxDynamicObj(v8::Isolate* pIsolate,
                                            IJS_Runtime* pJSContext,
-                                           int nObjDefnID);
+                                           int nObjDefnID,
+                                           bool bStatic = false);
 v8::Local<v8::Object> FXJS_GetThisObj(v8::Isolate* pIsolate);
 int FXJS_GetObjDefnID(v8::Local<v8::Object> pObj);
 const wchar_t* FXJS_GetTypeof(v8::Local<v8::Value> pObj);
