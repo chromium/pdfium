@@ -1,6 +1,6 @@
 include_rules = [
   '+public',
-  '+third_party/libpng',
+  '+third_party/libpng16',
   '+third_party/zlib_v128',
   '+v8',
 ]

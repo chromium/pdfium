@@ -4,10 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/src/fxcrt/extension.h"
+#include "core/include/fxcrt/fx_stream.h"
 #include "xfa/src/fgas/src/fgas_base.h"
-#include "fx_stdfontmgr.h"
-#include "fx_fontutils.h"
+#include "xfa/src/fgas/src/font/fx_fontutils.h"
+#include "xfa/src/fgas/src/font/fx_stdfontmgr.h"
+
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 IFX_FontMgr* IFX_FontMgr::Create(FX_LPEnumAllFonts pEnumerator,
                                  FX_LPMatchFont pMatcher,
@@ -1055,6 +1056,7 @@ FXFT_Face CFX_FontMgrImp::LoadFace(IFX_FileRead* pFontStream,
   FXFT_Set_Pixel_Sizes(pFace, 0, 64);
   return pFace;
 }
+
 IFX_FileRead* CFX_FontMgrImp::CreateFontStream(
     CFX_FontMapper* pFontMapper,
     IFX_SystemFontInfo* pSystemFontInfo,
@@ -1069,8 +1071,9 @@ IFX_FileRead* CFX_FontMgrImp::CreateFontStream(
     return nullptr;
   uint8_t* pBuffer = FX_Alloc(uint8_t, dwFileSize + 1);
   dwFileSize = pSystemFontInfo->GetFontData(hFont, 0, pBuffer, dwFileSize);
-  return new CFX_MemoryStream(pBuffer, dwFileSize, TRUE);
+  return FX_CreateMemoryStream(pBuffer, dwFileSize, TRUE);
 }
+
 IFX_FileRead* CFX_FontMgrImp::CreateFontStream(
     const CFX_ByteString& bsFaceName) {
   CFX_FontMgr* pFontMgr = CFX_GEModule::Get()->GetFontMgr();
