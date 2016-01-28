@@ -141,7 +141,7 @@ class CPDFXFA_Document : public IXFA_DocProvider {
   // Get document path
   virtual void GetURL(IXFA_Doc* hDoc, CFX_WideString& wsDocURL);
   virtual FX_ARGB GetHighlightColor(IXFA_Doc* hDoc);
-  virtual void AddDoRecord(IXFA_Widget* hWidget);
+
   /**
    *Submit data to email, http, ftp.
    * @param[in] hDoc The document handler.

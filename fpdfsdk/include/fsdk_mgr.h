@@ -277,7 +277,6 @@ class CPDFDoc_Environment final {
     wsURL = CFX_WideString();
   }
 
-  void FFI_AddDoRecord(FPDF_DOCUMENT document, FPDF_WIDGET hWidget) {}
   void FFI_PageEvent(FPDF_PAGE page, FPDF_DWORD flag) {}
 
   void FFI_GetPageViewRect(FPDF_PAGE page, FS_RECTF& dstRect) {

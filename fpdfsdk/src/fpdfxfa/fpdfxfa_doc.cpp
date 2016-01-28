@@ -804,19 +804,11 @@ FX_ARGB CPDFXFA_Document::GetHighlightColor(IXFA_Doc* hDoc) {
   return 0;
 }
 
-void CPDFXFA_Document::AddDoRecord(IXFA_Widget* hWidget) {
-  CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
-  if (pEnv == NULL)
-    return;
-  return;
-  // pEnv->FFI_AddDoRecord(this, hWidget);
-}
-
 FX_BOOL CPDFXFA_Document::_NotifySubmit(FX_BOOL bPrevOrPost) {
   if (bPrevOrPost)
     return _OnBeforeNotifySumbit();
-  else
-    _OnAfterNotifySumbit();
+
+  _OnAfterNotifySumbit();
   return TRUE;
 }
 

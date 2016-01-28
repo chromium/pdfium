@@ -370,9 +370,7 @@ void CXFA_FFTextEdit::OnTextFull(IFWL_Widget* pWidget) {
   eParam.m_pTarget = m_pDataAcc;
   m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Full, &eParam);
 }
-void CXFA_FFTextEdit::OnAddDoRecord(IFWL_Widget* pWidget) {
-  GetDoc()->GetDocProvider()->AddDoRecord(this);
-}
+
 FX_BOOL CXFA_FFTextEdit::CheckWord(const CFX_ByteStringC& sWord) {
   if (sWord.IsEmpty() || m_pDataAcc->GetUIType() != XFA_ELEMENT_TextEdit) {
     return TRUE;
@@ -397,10 +395,6 @@ FWL_ERR CXFA_FFTextEdit::OnProcessEvent(CFWL_Event* pEvent) {
       CFWL_EvtEdtTextChanged* event = (CFWL_EvtEdtTextChanged*)pEvent;
       CFX_WideString wsChange;
       OnTextChanged(m_pNormalWidget->GetWidget(), wsChange, event->wsPrevText);
-      break;
-    }
-    case FWL_EVTHASH_EDT_AddDoRecord: {
-      OnAddDoRecord(m_pNormalWidget->GetWidget());
       break;
     }
     case FWL_EVTHASH_EDT_TextFull: {

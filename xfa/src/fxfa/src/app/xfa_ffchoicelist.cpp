@@ -501,9 +501,7 @@ void CXFA_FFComboBox::OnPostOpen(IFWL_Widget* pWidget) {
   eParam.m_pTarget = m_pDataAcc;
   m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_PostOpen, &eParam);
 }
-void CXFA_FFComboBox::OnAddDoRecord(IFWL_Widget* pWidget) {
-  GetDoc()->GetDocProvider()->AddDoRecord(this);
-}
+
 int32_t CXFA_FFComboBox::OnProcessMessage(CFWL_Message* pMessage) {
   return m_pOldDelegate->OnProcessMessage(pMessage);
 }

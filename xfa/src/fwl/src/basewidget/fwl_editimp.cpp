@@ -931,18 +931,12 @@ FX_BOOL CFWL_EditImp::On_PageUnload(IFDE_TxtEdtEngine* pEdit,
   pPage->UnloadPage();
   return TRUE;
 }
+
 void CFWL_EditImp::On_AddDoRecord(IFDE_TxtEdtEngine* pEdit,
                                   const CFX_ByteStringC& bsDoRecord) {
   AddDoRecord(bsDoRecord);
-  CFWL_WidgetImp* pSrcTarget = GetRootOuter();
-  if (!pSrcTarget) {
-    pSrcTarget = this;
-  }
-  CFWL_EvtEdtAddDoRecord evt;
-  evt.m_pSrcTarget = m_pInterface;
-  evt.m_wsDoRecord = bsDoRecord;
-  m_pDelegate->OnProcessEvent(&evt);
 }
+
 FX_BOOL CFWL_EditImp::On_ValidateField(IFDE_TxtEdtEngine* pEdit,
                                        int32_t nBlockIndex,
                                        int32_t nFieldIndex,

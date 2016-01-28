@@ -77,7 +77,6 @@ class CXFA_FFComboBox : public CXFA_FFField {
                        FX_BOOL bLButtonUp);
   void OnPreOpen(IFWL_Widget* pWidget);
   void OnPostOpen(IFWL_Widget* pWidget);
-  void OnAddDoRecord(IFWL_Widget* pWidget);
   void SetItemState(int32_t nIndex, FX_BOOL bSelected);
   void InsertItem(const CFX_WideStringC& wsLabel, int32_t nIndex = -1);
   void DeleteItem(int32_t nIndex);

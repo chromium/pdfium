@@ -437,7 +437,6 @@ class IXFA_DocProvider {
   }
   virtual void GetURL(IXFA_Doc* hDoc, CFX_WideString& wsDocURL) = 0;
   virtual FX_ARGB GetHighlightColor(IXFA_Doc* hDoc) = 0;
-  virtual void AddDoRecord(IXFA_Widget* hWidget) = 0;
 
   virtual FX_BOOL SubmitData(IXFA_Doc* hDoc, CXFA_Submit submit) = 0;
   virtual FX_BOOL CheckWord(IXFA_Doc* hDoc, const CFX_ByteStringC& sWord) = 0;

@@ -60,8 +60,7 @@ enum FWL_EDT_TEXTCHANGED {
   FWL_EDT_TEXTCHANGED_Delete,
   FWL_EDT_TEXTCHANGED_Replace,
 };
-#define FWL_EVT_EDT_AddDoRecord L"FWL_EVENT_EDT_AddDoRecord"
-#define FWL_EVTHASH_EDT_AddDoRecord 3701672224
+
 #define FWL_EVT_EDT_TextChanged L"FWL_EVENT_EDT_TextChanged"
 #define FWL_EVTHASH_EDT_TextChanged 1064022132
 #define FWL_EVT_EDT_PreSelfAdaption L"FWL_EVENT_PreSelfAdaption"
@@ -74,9 +73,7 @@ enum FWL_EDT_TEXTCHANGED {
 #define FWL_EVTHASH_EDT_GetSuggestWords 315782791
 #define FWL_EVT_EDT_TextFull L"FWL_EVTHASH_EDT_TextFull"
 #define FWL_EVTHASH_EDT_TextFull 2158580174
-BEGIN_FWL_EVENT_DEF(CFWL_EvtEdtAddDoRecord, FWL_EVTHASH_EDT_AddDoRecord)
-CFX_ByteString m_wsDoRecord;
-END_FWL_EVENT_DEF
+
 BEGIN_FWL_EVENT_DEF(CFWL_EvtEdtTextChanged, FWL_EVTHASH_EDT_TextChanged)
 int32_t nChangeType;
 CFX_WideString wsInsert;
