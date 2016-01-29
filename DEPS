@@ -20,7 +20,7 @@ deps = {
     "https://chromium.googlesource.com/chromium/src/tools/clang",
 
   "v8":
-    "https://chromium.googlesource.com/v8/v8.git@ee1671b9afdb9eb23179d08cd3e573e520f45904",
+    "https://chromium.googlesource.com/v8/v8.git@43be96989f6e9ba9c22c4fe0f46c09c9a5b9cb12",
 
   "v8/base/trace_event/common":
     "https://chromium.googlesource.com/chromium/src/base/trace_event/common.git@d83d44b13d07c2fd0a40101a7deef9b93b841732",
