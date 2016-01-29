@@ -195,10 +195,15 @@ void WriteEmf(FPDF_PAGE page, const char* pdf_name, int num) {
 }
 #endif
 
-int ExampleAppAlert(IPDF_JSPLATFORM*, FPDF_WIDESTRING msg, FPDF_WIDESTRING,
-                    int, int) {
-  std::wstring platform_string = GetPlatformWString(msg);
-  printf("Alert: %ls\n", platform_string.c_str());
+int ExampleAppAlert(IPDF_JSPLATFORM*,
+                    FPDF_WIDESTRING msg,
+                    FPDF_WIDESTRING title,
+                    int nType,
+                    int nIcon) {
+  printf("%ls", GetPlatformWString(title).c_str());
+  if (nIcon || nType)
+    printf("[icon=%d,type=%d]", nIcon, nType);
+  printf(": %ls\n", GetPlatformWString(msg).c_str());
   return 0;
 }
 

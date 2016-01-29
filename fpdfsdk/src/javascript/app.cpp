@@ -246,89 +246,49 @@ FX_BOOL app::alert(IJS_Context* cc,
                    const std::vector<CJS_Value>& params,
                    CJS_Value& vRet,
                    CFX_WideString& sError) {
-  int iSize = params.size();
-  if (iSize < 1)
-    return FALSE;
-
-  CFX_WideString swMsg = L"";
-  CFX_WideString swTitle = L"";
-  int iIcon = 0;
-  int iType = 0;
-
+  CJS_Context* pContext = static_cast<CJS_Context*>(cc);
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
-  v8::Isolate* isolate = pRuntime->GetIsolate();
+  std::vector<CJS_Value> newParams = JS_ExpandKeywordParams(
+      pRuntime, params, 4, L"cMsg", L"nIcon", L"nType", L"cTitle");
 
-  if (iSize == 1) {
-    if (params[0].GetType() == CJS_Value::VT_object) {
-      v8::Local<v8::Object> pObj = params[0].ToV8Object();
-      {
-        v8::Local<v8::Value> pValue =
-            FXJS_GetObjectElement(isolate, pObj, L"cMsg");
-        swMsg = CJS_Value(pRuntime, pValue, CJS_Value::VT_unknown)
-                    .ToCFXWideString();
+  if (newParams[0].GetType() == CJS_Value::VT_unknown) {
+    sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
+    return FALSE;
+  }
 
-        pValue = FXJS_GetObjectElement(isolate, pObj, L"cTitle");
-        swTitle = CJS_Value(pRuntime, pValue, CJS_Value::VT_unknown)
-                      .ToCFXWideString();
-
-        pValue = FXJS_GetObjectElement(isolate, pObj, L"nIcon");
-        iIcon = CJS_Value(pRuntime, pValue, CJS_Value::VT_unknown).ToInt();
-
-        pValue = FXJS_GetObjectElement(isolate, pObj, L"nType");
-        iType = CJS_Value(pRuntime, pValue, CJS_Value::VT_unknown).ToInt();
+  CFX_WideString swMsg;
+  if (newParams[0].GetType() == CJS_Value::VT_object) {
+    CJS_Array carray(pRuntime);
+    if (newParams[0].ConvertToArray(carray)) {
+      swMsg = L"[";
+      CJS_Value element(pRuntime);
+      for (int i = 0; i < carray.GetLength(); ++i) {
+        if (i)
+          swMsg += L", ";
+        carray.GetElement(i, element);
+        swMsg += element.ToCFXWideString();
       }
-
-      if (swMsg == L"") {
-        CJS_Array carray(pRuntime);
-        if (params[0].ConvertToArray(carray)) {
-          int iLength = carray.GetLength();
-          CJS_Value* pValue = new CJS_Value(pRuntime);
-          for (int i = 0; i < iLength; ++i) {
-            carray.GetElement(i, *pValue);
-            swMsg += (*pValue).ToCFXWideString();
-            if (i < iLength - 1)
-              swMsg += L",  ";
-          }
-
-          delete pValue;
-        }
-      }
-
-      if (swTitle == L"")
-        swTitle = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSALERT);
-    } else if (params[0].GetType() == CJS_Value::VT_boolean) {
-      FX_BOOL bGet = params[0].ToBool();
-      if (bGet)
-        swMsg = L"true";
-      else
-        swMsg = L"false";
-
-      swTitle = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSALERT);
+      swMsg += L"]";
     } else {
-      swMsg = params[0].ToCFXWideString();
-      swTitle = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSALERT);
+      swMsg = newParams[0].ToCFXWideString();
     }
   } else {
-    if (params[0].GetType() == CJS_Value::VT_boolean) {
-      FX_BOOL bGet = params[0].ToBool();
-      if (bGet)
-        swMsg = L"true";
-      else
-        swMsg = L"false";
-    } else {
-      swMsg = params[0].ToCFXWideString();
-    }
-    swTitle = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSALERT);
-
-    for (int i = 1; i < iSize; i++) {
-      if (i == 1)
-        iIcon = params[i].ToInt();
-      if (i == 2)
-        iType = params[i].ToInt();
-      if (i == 3)
-        swTitle = params[i].ToCFXWideString();
-    }
+    swMsg = newParams[0].ToCFXWideString();
   }
+
+  int iIcon = 0;
+  if (newParams[1].GetType() != CJS_Value::VT_unknown)
+    iIcon = newParams[1].ToInt();
+
+  int iType = 0;
+  if (newParams[2].GetType() != CJS_Value::VT_unknown)
+    iType = newParams[2].ToInt();
+
+  CFX_WideString swTitle;
+  if (newParams[3].GetType() != CJS_Value::VT_unknown)
+    swTitle = newParams[3].ToCFXWideString();
+  else
+    swTitle = JSGetStringFromID(pContext, IDS_STRING_JSALERT);
 
   pRuntime->BeginBlock();
   vRet = MsgBox(pRuntime->GetReaderApp(), swMsg.c_str(), swTitle.c_str(), iType,

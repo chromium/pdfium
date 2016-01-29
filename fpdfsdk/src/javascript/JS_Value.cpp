@@ -7,6 +7,7 @@
 #include "JS_Value.h"
 
 #include <time.h>
+#include <algorithm>
 #include <cmath>
 #include <limits>
 
@@ -878,4 +879,36 @@ bool JS_PortIsNan(double d) {
 
 double JS_LocalTime(double d) {
   return JS_GetDateTime() + _getDaylightSavingTA(d);
+}
+
+std::vector<CJS_Value> JS_ExpandKeywordParams(
+    CJS_Runtime* pRuntime,
+    const std::vector<CJS_Value>& originals,
+    size_t nKeywords,
+    ...) {
+  ASSERT(nKeywords);
+
+  std::vector<CJS_Value> result(nKeywords, CJS_Value(pRuntime));
+  size_t size = std::min(originals.size(), nKeywords);
+  for (size_t i = 0; i < size; ++i)
+    result[i] = originals[i];
+
+  if (originals.size() != 1 || originals[0].GetType() != CJS_Value::VT_object ||
+      originals[0].IsArrayObject()) {
+    return result;
+  }
+  v8::Local<v8::Object> pObj = originals[0].ToV8Object();
+  result[0] = CJS_Value(pRuntime);  // Make unknown.
+
+  va_list ap;
+  va_start(ap, nKeywords);
+  for (int i = 0; i < nKeywords; ++i) {
+    const wchar_t* property = va_arg(ap, const wchar_t*);
+    v8::Local<v8::Value> v8Value =
+        FXJS_GetObjectElement(pRuntime->GetIsolate(), pObj, property);
+    if (!v8Value->IsUndefined())
+      result[i] = CJS_Value(pRuntime, v8Value, CJS_Value::VT_unknown);
+  }
+  va_end(ap);
+  return result;
 }
