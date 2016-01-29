@@ -61,7 +61,7 @@ CFX_ByteString CPDF_PageContentGenerator::RealizeResource(
     int objnum = m_pDocument->AddIndirectObject(m_pPage->m_pResources);
     m_pPage->m_pFormDict->SetAtReference("Resources", m_pDocument, objnum);
   }
-  CPDF_Dictionary* pResList = m_pPage->m_pResources->GetDict(szType);
+  CPDF_Dictionary* pResList = m_pPage->m_pResources->GetDictBy(szType);
   if (!pResList) {
     pResList = new CPDF_Dictionary;
     m_pPage->m_pResources->SetAt(szType, pResList);

@@ -500,10 +500,10 @@ FX_BOOL CPDF_SampledFunc::v_Init(CPDF_Object* pObj) {
     return false;
 
   CPDF_Dictionary* pDict = pStream->GetDict();
-  CPDF_Array* pSize = pDict->GetArray("Size");
-  CPDF_Array* pEncode = pDict->GetArray("Encode");
-  CPDF_Array* pDecode = pDict->GetArray("Decode");
-  m_nBitsPerSample = pDict->GetInteger("BitsPerSample");
+  CPDF_Array* pSize = pDict->GetArrayBy("Size");
+  CPDF_Array* pEncode = pDict->GetArrayBy("Encode");
+  CPDF_Array* pDecode = pDict->GetArrayBy("Decode");
+  m_nBitsPerSample = pDict->GetIntegerBy("BitsPerSample");
   if (m_nBitsPerSample > 32) {
     return FALSE;
   }
@@ -513,14 +513,14 @@ FX_BOOL CPDF_SampledFunc::v_Init(CPDF_Object* pObj) {
   m_pEncodeInfo = FX_Alloc(SampleEncodeInfo, m_nInputs);
   FX_SAFE_DWORD nTotalSampleBits = 1;
   for (int i = 0; i < m_nInputs; i++) {
-    m_pEncodeInfo[i].sizes = pSize ? pSize->GetInteger(i) : 0;
+    m_pEncodeInfo[i].sizes = pSize ? pSize->GetIntegerAt(i) : 0;
     if (!pSize && i == 0) {
-      m_pEncodeInfo[i].sizes = pDict->GetInteger("Size");
+      m_pEncodeInfo[i].sizes = pDict->GetIntegerBy("Size");
     }
     nTotalSampleBits *= m_pEncodeInfo[i].sizes;
     if (pEncode) {
-      m_pEncodeInfo[i].encode_min = pEncode->GetFloat(i * 2);
-      m_pEncodeInfo[i].encode_max = pEncode->GetFloat(i * 2 + 1);
+      m_pEncodeInfo[i].encode_min = pEncode->GetFloatAt(i * 2);
+      m_pEncodeInfo[i].encode_max = pEncode->GetFloatAt(i * 2 + 1);
     } else {
       m_pEncodeInfo[i].encode_min = 0;
       if (m_pEncodeInfo[i].sizes == 1) {
@@ -542,8 +542,8 @@ FX_BOOL CPDF_SampledFunc::v_Init(CPDF_Object* pObj) {
   m_pDecodeInfo = FX_Alloc(SampleDecodeInfo, m_nOutputs);
   for (int i = 0; i < m_nOutputs; i++) {
     if (pDecode) {
-      m_pDecodeInfo[i].decode_min = pDecode->GetFloat(2 * i);
-      m_pDecodeInfo[i].decode_max = pDecode->GetFloat(2 * i + 1);
+      m_pDecodeInfo[i].decode_min = pDecode->GetFloatAt(2 * i);
+      m_pDecodeInfo[i].decode_max = pDecode->GetFloatAt(2 * i + 1);
     } else {
       m_pDecodeInfo[i].decode_min = m_pRanges[i * 2];
       m_pDecodeInfo[i].decode_max = m_pRanges[i * 2 + 1];
@@ -686,21 +686,21 @@ FX_BOOL CPDF_ExpIntFunc::v_Init(CPDF_Object* pObj) {
   if (!pDict) {
     return FALSE;
   }
-  CPDF_Array* pArray0 = pDict->GetArray("C0");
+  CPDF_Array* pArray0 = pDict->GetArrayBy("C0");
   if (m_nOutputs == 0) {
     m_nOutputs = 1;
     if (pArray0) {
       m_nOutputs = pArray0->GetCount();
     }
   }
-  CPDF_Array* pArray1 = pDict->GetArray("C1");
+  CPDF_Array* pArray1 = pDict->GetArrayBy("C1");
   m_pBeginValues = FX_Alloc2D(FX_FLOAT, m_nOutputs, 2);
   m_pEndValues = FX_Alloc2D(FX_FLOAT, m_nOutputs, 2);
   for (int i = 0; i < m_nOutputs; i++) {
-    m_pBeginValues[i] = pArray0 ? pArray0->GetFloat(i) : 0.0f;
-    m_pEndValues[i] = pArray1 ? pArray1->GetFloat(i) : 1.0f;
+    m_pBeginValues[i] = pArray0 ? pArray0->GetFloatAt(i) : 0.0f;
+    m_pEndValues[i] = pArray1 ? pArray1->GetFloatAt(i) : 1.0f;
   }
-  m_Exponent = pDict->GetFloat("N");
+  m_Exponent = pDict->GetFloatBy("N");
   m_nOrigOutputs = m_nOutputs;
   if (m_nOutputs && m_nInputs > INT_MAX / m_nOutputs) {
     return FALSE;
@@ -754,7 +754,7 @@ FX_BOOL CPDF_StitchFunc::v_Init(CPDF_Object* pObj) {
   if (m_nInputs != kRequiredNumInputs) {
     return FALSE;
   }
-  CPDF_Array* pArray = pDict->GetArray("Functions");
+  CPDF_Array* pArray = pDict->GetArrayBy("Functions");
   if (!pArray) {
     return FALSE;
   }
@@ -788,21 +788,21 @@ FX_BOOL CPDF_StitchFunc::v_Init(CPDF_Object* pObj) {
   }
   m_pBounds = FX_Alloc(FX_FLOAT, nSubs + 1);
   m_pBounds[0] = m_pDomains[0];
-  pArray = pDict->GetArray("Bounds");
+  pArray = pDict->GetArrayBy("Bounds");
   if (!pArray) {
     return FALSE;
   }
   for (FX_DWORD i = 0; i < nSubs - 1; i++) {
-    m_pBounds[i + 1] = pArray->GetFloat(i);
+    m_pBounds[i + 1] = pArray->GetFloatAt(i);
   }
   m_pBounds[nSubs] = m_pDomains[1];
   m_pEncode = FX_Alloc2D(FX_FLOAT, nSubs, 2);
-  pArray = pDict->GetArray("Encode");
+  pArray = pDict->GetArrayBy("Encode");
   if (!pArray) {
     return FALSE;
   }
   for (FX_DWORD i = 0; i < nSubs * 2; i++) {
-    m_pEncode[i] = pArray->GetFloat(i);
+    m_pEncode[i] = pArray->GetFloatAt(i);
   }
   return TRUE;
 }
@@ -829,9 +829,9 @@ CPDF_Function* CPDF_Function::Load(CPDF_Object* pFuncObj) {
   CPDF_Function* pFunc = NULL;
   int type;
   if (CPDF_Stream* pStream = pFuncObj->AsStream()) {
-    type = pStream->GetDict()->GetInteger("FunctionType");
+    type = pStream->GetDict()->GetIntegerBy("FunctionType");
   } else if (CPDF_Dictionary* pDict = pFuncObj->AsDictionary()) {
-    type = pDict->GetInteger("FunctionType");
+    type = pDict->GetIntegerBy("FunctionType");
   } else {
     return NULL;
   }
@@ -864,7 +864,7 @@ FX_BOOL CPDF_Function::Init(CPDF_Object* pObj) {
   CPDF_Stream* pStream = pObj->AsStream();
   CPDF_Dictionary* pDict = pStream ? pStream->GetDict() : pObj->AsDictionary();
 
-  CPDF_Array* pDomains = pDict->GetArray("Domain");
+  CPDF_Array* pDomains = pDict->GetArrayBy("Domain");
   if (!pDomains)
     return FALSE;
 
@@ -874,15 +874,15 @@ FX_BOOL CPDF_Function::Init(CPDF_Object* pObj) {
 
   m_pDomains = FX_Alloc2D(FX_FLOAT, m_nInputs, 2);
   for (int i = 0; i < m_nInputs * 2; i++) {
-    m_pDomains[i] = pDomains->GetFloat(i);
+    m_pDomains[i] = pDomains->GetFloatAt(i);
   }
-  CPDF_Array* pRanges = pDict->GetArray("Range");
+  CPDF_Array* pRanges = pDict->GetArrayBy("Range");
   m_nOutputs = 0;
   if (pRanges) {
     m_nOutputs = pRanges->GetCount() / 2;
     m_pRanges = FX_Alloc2D(FX_FLOAT, m_nOutputs, 2);
     for (int i = 0; i < m_nOutputs * 2; i++) {
-      m_pRanges[i] = pRanges->GetFloat(i);
+      m_pRanges[i] = pRanges->GetFloatAt(i);
     }
   }
   FX_DWORD old_outputs = m_nOutputs;

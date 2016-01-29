@@ -12,40 +12,40 @@
 CPDF_Bookmark CPDF_BookmarkTree::GetFirstChild(
     const CPDF_Bookmark& parent) const {
   if (!parent.m_pDict) {
-    CPDF_Dictionary* pRoot = m_pDocument->GetRoot()->GetDict("Outlines");
+    CPDF_Dictionary* pRoot = m_pDocument->GetRoot()->GetDictBy("Outlines");
     if (!pRoot) {
       return CPDF_Bookmark();
     }
-    return CPDF_Bookmark(pRoot->GetDict("First"));
+    return CPDF_Bookmark(pRoot->GetDictBy("First"));
   }
-  return CPDF_Bookmark(parent.m_pDict->GetDict("First"));
+  return CPDF_Bookmark(parent.m_pDict->GetDictBy("First"));
 }
 CPDF_Bookmark CPDF_BookmarkTree::GetNextSibling(
     const CPDF_Bookmark& bookmark) const {
   if (!bookmark.m_pDict) {
     return CPDF_Bookmark();
   }
-  CPDF_Dictionary* pNext = bookmark.m_pDict->GetDict("Next");
+  CPDF_Dictionary* pNext = bookmark.m_pDict->GetDictBy("Next");
   return pNext == bookmark.m_pDict ? CPDF_Bookmark() : CPDF_Bookmark(pNext);
 }
 FX_DWORD CPDF_Bookmark::GetColorRef() const {
   if (!m_pDict) {
     return 0;
   }
-  CPDF_Array* pColor = m_pDict->GetArray("C");
+  CPDF_Array* pColor = m_pDict->GetArrayBy("C");
   if (!pColor) {
     return FXSYS_RGB(0, 0, 0);
   }
-  int r = FXSYS_round(pColor->GetNumber(0) * 255);
-  int g = FXSYS_round(pColor->GetNumber(1) * 255);
-  int b = FXSYS_round(pColor->GetNumber(2) * 255);
+  int r = FXSYS_round(pColor->GetNumberAt(0) * 255);
+  int g = FXSYS_round(pColor->GetNumberAt(1) * 255);
+  int b = FXSYS_round(pColor->GetNumberAt(2) * 255);
   return FXSYS_RGB(r, g, b);
 }
 FX_DWORD CPDF_Bookmark::GetFontStyle() const {
   if (!m_pDict) {
     return 0;
   }
-  return m_pDict->GetInteger("F");
+  return m_pDict->GetIntegerBy("F");
 }
 CFX_WideString CPDF_Bookmark::GetTitle() const {
   if (!m_pDict) {
@@ -87,5 +87,5 @@ CPDF_Action CPDF_Bookmark::GetAction() const {
   if (!m_pDict) {
     return CPDF_Action();
   }
-  return CPDF_Action(m_pDict->GetDict("A"));
+  return CPDF_Action(m_pDict->GetDictBy("A"));
 }

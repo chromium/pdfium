@@ -32,14 +32,14 @@ FPDF_BOOL GetBoundingBox(CPDF_Page* page,
                          float* right,
                          float* top) {
   CPDF_Dictionary* pPageDict = page->m_pFormDict;
-  CPDF_Array* pArray = pPageDict->GetArray(key);
+  CPDF_Array* pArray = pPageDict->GetArrayBy(key);
   if (!pArray)
     return FALSE;
 
-  *left = pArray->GetFloat(0);
-  *bottom = pArray->GetFloat(1);
-  *right = pArray->GetFloat(2);
-  *top = pArray->GetFloat(3);
+  *left = pArray->GetFloatAt(0);
+  *bottom = pArray->GetFloatAt(1);
+  *right = pArray->GetFloatAt(2);
+  *top = pArray->GetFloatAt(3);
   return TRUE;
 }
 
@@ -113,7 +113,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
   CPDF_Object* pContentObj =
       pPageDic ? pPageDic->GetElement("Contents") : nullptr;
   if (!pContentObj)
-    pContentObj = pPageDic ? pPageDic->GetArray("Contents") : nullptr;
+    pContentObj = pPageDic ? pPageDic->GetArrayBy("Contents") : nullptr;
   if (!pContentObj)
     return FALSE;
 
@@ -156,9 +156,9 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
   }
 
   // Need to transform the patterns as well.
-  CPDF_Dictionary* pRes = pPageDic->GetDict("Resources");
+  CPDF_Dictionary* pRes = pPageDic->GetDictBy("Resources");
   if (pRes) {
-    CPDF_Dictionary* pPattenDict = pRes->GetDict("Pattern");
+    CPDF_Dictionary* pPattenDict = pRes->GetDictBy("Pattern");
     if (pPattenDict) {
       for (const auto& it : *pPattenDict) {
         CPDF_Object* pObj = it.second;
@@ -173,7 +173,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
         else
           continue;
 
-        CFX_Matrix m = pDict->GetMatrix("Matrix");
+        CFX_Matrix m = pDict->GetMatrixBy("Matrix");
         CFX_Matrix t = *(CFX_Matrix*)matrix;
         m.Concat(t);
         pDict->SetAtMatrix("Matrix", m);
@@ -270,7 +270,7 @@ DLLEXPORT void STDCALL FPDFPage_InsertClipPath(FPDF_PAGE page,
   CPDF_Object* pContentObj =
       pPageDic ? pPageDic->GetElement("Contents") : nullptr;
   if (!pContentObj)
-    pContentObj = pPageDic ? pPageDic->GetArray("Contents") : nullptr;
+    pContentObj = pPageDic ? pPageDic->GetArrayBy("Contents") : nullptr;
   if (!pContentObj)
     return;
 

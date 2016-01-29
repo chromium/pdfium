@@ -283,7 +283,7 @@ DLLEXPORT void STDCALL FPDFPage_TransformAnnots(FPDF_PAGE page,
                       (FX_FLOAT)e, (FX_FLOAT)f);
     rect.Transform(&matrix);
     CPDF_Array* pRectArray = NULL;
-    pRectArray = pAnnot->GetAnnotDict()->GetArray("Rect");
+    pRectArray = pAnnot->GetAnnotDict()->GetArrayBy("Rect");
     if (!pRectArray)
       pRectArray = new CPDF_Array;
     pRectArray->SetAt(0, new CPDF_Number(rect.left));

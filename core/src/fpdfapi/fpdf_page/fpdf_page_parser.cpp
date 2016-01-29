@@ -708,9 +708,9 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
     if (!m_pResources)
       return;
 
-    CPDF_Dictionary* pList = m_pResources->GetDict("XObject");
+    CPDF_Dictionary* pList = m_pResources->GetDictBy("XObject");
     if (!pList && m_pPageResources && m_pResources != m_pPageResources)
-      pList = m_pPageResources->GetDict("XObject");
+      pList = m_pPageResources->GetDictBy("XObject");
     if (!pList)
       return;
     CPDF_Reference* pRes = ToReference(pList->GetElement(name));
@@ -729,7 +729,7 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
   }
 
   CFX_ByteStringC type = pXObject->GetDict()
-                             ? pXObject->GetDict()->GetConstString("Subtype")
+                             ? pXObject->GetDict()->GetConstStringBy("Subtype")
                              : CFX_ByteStringC();
   if (type == "Image") {
     if (m_Options.m_bTextOnly) {
@@ -749,14 +749,14 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
 
 void CPDF_StreamContentParser::AddForm(CPDF_Stream* pStream) {
   if (!m_Options.m_bSeparateForm) {
-    CPDF_Dictionary* pResources = pStream->GetDict()->GetDict("Resources");
-    CFX_Matrix form_matrix = pStream->GetDict()->GetMatrix("Matrix");
+    CPDF_Dictionary* pResources = pStream->GetDict()->GetDictBy("Resources");
+    CFX_Matrix form_matrix = pStream->GetDict()->GetMatrixBy("Matrix");
     form_matrix.Concat(m_pCurStates->m_CTM);
-    CPDF_Array* pBBox = pStream->GetDict()->GetArray("BBox");
+    CPDF_Array* pBBox = pStream->GetDict()->GetArrayBy("BBox");
     CFX_FloatRect form_bbox;
     CPDF_Path ClipPath;
     if (pBBox) {
-      form_bbox = pStream->GetDict()->GetRect("BBox");
+      form_bbox = pStream->GetDict()->GetRectBy("BBox");
       ClipPath.New();
       ClipPath.AppendRect(form_bbox.left, form_bbox.bottom, form_bbox.right,
                           form_bbox.top);
@@ -1249,19 +1249,19 @@ CPDF_Object* CPDF_StreamContentParser::FindResourceObj(
     return NULL;
   }
   if (m_pResources == m_pPageResources) {
-    CPDF_Dictionary* pList = m_pResources->GetDict(type);
+    CPDF_Dictionary* pList = m_pResources->GetDictBy(type);
     if (!pList) {
       return NULL;
     }
     CPDF_Object* pRes = pList->GetElementValue(name);
     return pRes;
   }
-  CPDF_Dictionary* pList = m_pResources->GetDict(type);
+  CPDF_Dictionary* pList = m_pResources->GetDictBy(type);
   if (!pList) {
     if (!m_pPageResources) {
       return NULL;
     }
-    CPDF_Dictionary* pList = m_pPageResources->GetDict(type);
+    CPDF_Dictionary* pList = m_pPageResources->GetDictBy(type);
     if (!pList) {
       return NULL;
     }
@@ -1427,7 +1427,7 @@ void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
   if (nsegs == 0) {
     for (int i = 0; i < n; i++) {
       m_pCurStates->m_TextX -=
-          FXSYS_Mul(pArray->GetNumber(i),
+          FXSYS_Mul(pArray->GetNumberAt(i),
                     m_pCurStates->m_TextState.GetFontSize()) /
           1000;
     }

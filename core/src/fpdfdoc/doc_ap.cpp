@@ -17,7 +17,7 @@
 #define PBS_UNDERLINED 4
 
 FX_BOOL FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
-  if (!pAnnotDict || pAnnotDict->GetConstString("Subtype") != "Widget") {
+  if (!pAnnotDict || pAnnotDict->GetConstStringBy("Subtype") != "Widget") {
     return FALSE;
   }
   CFX_ByteString field_type = FPDF_GetFieldAttr(pAnnotDict, "FT")->GetString();
@@ -35,9 +35,9 @@ FX_BOOL FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
   if (field_type == "Btn") {
     if (!(flags & (1 << 16))) {
       if (!pAnnotDict->KeyExist("AS")) {
-        if (CPDF_Dictionary* pParentDict = pAnnotDict->GetDict("Parent")) {
+        if (CPDF_Dictionary* pParentDict = pAnnotDict->GetDictBy("Parent")) {
           if (pParentDict->KeyExist("AS")) {
-            pAnnotDict->SetAtString("AS", pParentDict->GetString("AS"));
+            pAnnotDict->SetAtString("AS", pParentDict->GetStringBy("AS"));
           }
         }
       }
@@ -89,10 +89,10 @@ void CPVT_FontMap::GetAnnotSysPDFFont(CPDF_Document* pDoc,
                                       CFX_ByteString& sSysFontAlias) {
   if (pDoc && pResDict) {
     CFX_ByteString sFontAlias;
-    CPDF_Dictionary* pFormDict = pDoc->GetRoot()->GetDict("AcroForm");
+    CPDF_Dictionary* pFormDict = pDoc->GetRoot()->GetDictBy("AcroForm");
     if (CPDF_Font* pPDFFont =
             AddNativeInterFormFont(pFormDict, pDoc, sSysFontAlias)) {
-      if (CPDF_Dictionary* pFontList = pResDict->GetDict("Font")) {
+      if (CPDF_Dictionary* pFontList = pResDict->GetDictBy("Font")) {
         if (!pFontList->KeyExist(sSysFontAlias)) {
           pFontList->SetAtReference(sSysFontAlias, pDoc,
                                     pPDFFont->GetFontDict());
@@ -253,15 +253,16 @@ static CPVT_Color ParseColor(const CPDF_Array& array) {
   CPVT_Color rt;
   switch (array.GetCount()) {
     case 1:
-      rt = CPVT_Color(CPVT_Color::kGray, array.GetFloat(0));
+      rt = CPVT_Color(CPVT_Color::kGray, array.GetFloatAt(0));
       break;
     case 3:
-      rt = CPVT_Color(CPVT_Color::kRGB, array.GetFloat(0), array.GetFloat(1),
-                      array.GetFloat(2));
+      rt = CPVT_Color(CPVT_Color::kRGB, array.GetFloatAt(0),
+                      array.GetFloatAt(1), array.GetFloatAt(2));
       break;
     case 4:
-      rt = CPVT_Color(CPVT_Color::kCMYK, array.GetFloat(0), array.GetFloat(1),
-                      array.GetFloat(2), array.GetFloat(3));
+      rt = CPVT_Color(CPVT_Color::kCMYK, array.GetFloatAt(0),
+                      array.GetFloatAt(1), array.GetFloatAt(2),
+                      array.GetFloatAt(3));
       break;
   }
   return rt;
@@ -271,7 +272,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
                                 const int32_t& nWidgetType) {
   CPDF_Dictionary* pFormDict = NULL;
   if (CPDF_Dictionary* pRootDict = pDoc->GetRoot()) {
-    pFormDict = pRootDict->GetDict("AcroForm");
+    pFormDict = pRootDict->GetDictBy("AcroForm");
   }
   if (!pFormDict) {
     return FALSE;
@@ -281,7 +282,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
     DA = pDAObj->GetString();
   }
   if (DA.IsEmpty()) {
-    DA = pFormDict->GetString("DA");
+    DA = pFormDict->GetStringBy("DA");
   }
   if (DA.IsEmpty()) {
     return FALSE;
@@ -297,19 +298,19 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
   CPVT_Color crText = ParseColor(DA);
   FX_BOOL bUseFormRes = FALSE;
   CPDF_Dictionary* pFontDict = NULL;
-  CPDF_Dictionary* pDRDict = pAnnotDict->GetDict("DR");
+  CPDF_Dictionary* pDRDict = pAnnotDict->GetDictBy("DR");
   if (!pDRDict) {
-    pDRDict = pFormDict->GetDict("DR");
+    pDRDict = pFormDict->GetDictBy("DR");
     bUseFormRes = TRUE;
   }
   CPDF_Dictionary* pDRFontDict = NULL;
-  if (pDRDict && (pDRFontDict = pDRDict->GetDict("Font"))) {
-    pFontDict = pDRFontDict->GetDict(sFontName.Mid(1));
+  if (pDRDict && (pDRFontDict = pDRDict->GetDictBy("Font"))) {
+    pFontDict = pDRFontDict->GetDictBy(sFontName.Mid(1));
     if (!pFontDict && !bUseFormRes) {
-      pDRDict = pFormDict->GetDict("DR");
-      pDRFontDict = pDRDict->GetDict("Font");
+      pDRDict = pFormDict->GetDictBy("DR");
+      pDRFontDict = pDRDict->GetDictBy("Font");
       if (pDRFontDict) {
-        pFontDict = pDRFontDict->GetDict(sFontName.Mid(1));
+        pFontDict = pDRFontDict->GetDictBy(sFontName.Mid(1));
       }
     }
   }
@@ -329,10 +330,10 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
   if (!pDefFont) {
     return FALSE;
   }
-  CPDF_Rect rcAnnot = pAnnotDict->GetRect("Rect");
+  CPDF_Rect rcAnnot = pAnnotDict->GetRectBy("Rect");
   int32_t nRotate = 0;
-  if (CPDF_Dictionary* pMKDict = pAnnotDict->GetDict("MK")) {
-    nRotate = pMKDict->GetInteger("R");
+  if (CPDF_Dictionary* pMKDict = pAnnotDict->GetDictBy("MK")) {
+    nRotate = pMKDict->GetIntegerBy("R");
   }
   CPDF_Rect rcBBox;
   CFX_Matrix matrix;
@@ -362,15 +363,15 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
   FX_FLOAT fBorderWidth = 1;
   CPVT_Dash dsBorder(3, 0, 0);
   CPVT_Color crLeftTop, crRightBottom;
-  if (CPDF_Dictionary* pBSDict = pAnnotDict->GetDict("BS")) {
+  if (CPDF_Dictionary* pBSDict = pAnnotDict->GetDictBy("BS")) {
     if (pBSDict->KeyExist("W")) {
-      fBorderWidth = pBSDict->GetNumber("W");
+      fBorderWidth = pBSDict->GetNumberBy("W");
     }
-    if (CPDF_Array* pArray = pBSDict->GetArray("D")) {
-      dsBorder = CPVT_Dash(pArray->GetInteger(0), pArray->GetInteger(1),
-                           pArray->GetInteger(2));
+    if (CPDF_Array* pArray = pBSDict->GetArrayBy("D")) {
+      dsBorder = CPVT_Dash(pArray->GetIntegerAt(0), pArray->GetIntegerAt(1),
+                           pArray->GetIntegerAt(2));
     }
-    switch (pBSDict->GetString("S").GetAt(0)) {
+    switch (pBSDict->GetStringBy("S").GetAt(0)) {
       case 'S':
         nBorderStyle = PBS_SOLID;
         break;
@@ -395,11 +396,11 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
     }
   }
   CPVT_Color crBorder, crBG;
-  if (CPDF_Dictionary* pMKDict = pAnnotDict->GetDict("MK")) {
-    if (CPDF_Array* pArray = pMKDict->GetArray("BC")) {
+  if (CPDF_Dictionary* pMKDict = pAnnotDict->GetDictBy("MK")) {
+    if (CPDF_Array* pArray = pMKDict->GetArrayBy("BC")) {
       crBorder = ParseColor(*pArray);
     }
-    if (CPDF_Array* pArray = pMKDict->GetArray("BG")) {
+    if (CPDF_Array* pArray = pMKDict->GetArrayBy("BG")) {
       crBG = ParseColor(*pArray);
     }
   }
@@ -420,24 +421,24 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
       CPDF_Rect(rcBBox.left + fBorderWidth, rcBBox.bottom + fBorderWidth,
                 rcBBox.right - fBorderWidth, rcBBox.top - fBorderWidth);
   rcBody.Normalize();
-  CPDF_Dictionary* pAPDict = pAnnotDict->GetDict("AP");
+  CPDF_Dictionary* pAPDict = pAnnotDict->GetDictBy("AP");
   if (!pAPDict) {
     pAPDict = new CPDF_Dictionary;
     pAnnotDict->SetAt("AP", pAPDict);
   }
-  CPDF_Stream* pNormalStream = pAPDict->GetStream("N");
+  CPDF_Stream* pNormalStream = pAPDict->GetStreamBy("N");
   if (!pNormalStream) {
     pNormalStream = new CPDF_Stream(nullptr, 0, nullptr);
     int32_t objnum = pDoc->AddIndirectObject(pNormalStream);
-    pAnnotDict->GetDict("AP")->SetAtReference("N", pDoc, objnum);
+    pAnnotDict->GetDictBy("AP")->SetAtReference("N", pDoc, objnum);
   }
   CPDF_Dictionary* pStreamDict = pNormalStream->GetDict();
   if (pStreamDict) {
     pStreamDict->SetAtMatrix("Matrix", matrix);
     pStreamDict->SetAtRect("BBox", rcBBox);
-    CPDF_Dictionary* pStreamResList = pStreamDict->GetDict("Resources");
+    CPDF_Dictionary* pStreamResList = pStreamDict->GetDictBy("Resources");
     if (pStreamResList) {
-      CPDF_Dictionary* pStreamResFontList = pStreamResList->GetDict("Font");
+      CPDF_Dictionary* pStreamResFontList = pStreamResList->GetDictBy("Font");
       if (!pStreamResFontList) {
         pStreamResFontList = new CPDF_Dictionary;
         pStreamResList->SetAt("Font", pStreamResFontList);
@@ -446,8 +447,8 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
         pStreamResFontList->SetAtReference(sFontName, pDoc, pFontDict);
       }
     } else {
-      pStreamDict->SetAt("Resources", pFormDict->GetDict("DR")->Clone());
-      pStreamResList = pStreamDict->GetDict("Resources");
+      pStreamDict->SetAt("Resources", pFormDict->GetDictBy("DR")->Clone());
+      pStreamResList = pStreamDict->GetDictBy("Resources");
     }
   }
   switch (nWidgetType) {
@@ -467,7 +468,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
               ? FPDF_GetFieldAttr(pAnnotDict, "MaxLen")->GetInteger()
               : 0;
       CPVT_FontMap map(pDoc,
-                       pStreamDict ? pStreamDict->GetDict("Resources") : NULL,
+                       pStreamDict ? pStreamDict->GetDictBy("Resources") : NULL,
                        pDefFont, sFontName.Right(sFontName.GetLength() - 1));
       CPVT_Provider prd(&map);
       CPDF_VariableText vt;
@@ -526,7 +527,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
               ? FPDF_GetFieldAttr(pAnnotDict, "V")->GetUnicodeText()
               : CFX_WideString();
       CPVT_FontMap map(pDoc,
-                       pStreamDict ? pStreamDict->GetDict("Resources") : NULL,
+                       pStreamDict ? pStreamDict->GetDictBy("Resources") : NULL,
                        pDefFont, sFontName.Right(sFontName.GetLength() - 1));
       CPVT_Provider prd(&map);
       CPDF_VariableText vt;
@@ -593,7 +594,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
     } break;
     case 2: {
       CPVT_FontMap map(pDoc,
-                       pStreamDict ? pStreamDict->GetDict("Resources") : NULL,
+                       pStreamDict ? pStreamDict->GetDictBy("Resources") : NULL,
                        pDefFont, sFontName.Right(sFontName.GetLength() - 1));
       CPVT_Provider prd(&map);
       CPDF_Array* pOpts = FPDF_GetFieldAttr(pAnnotDict, "Opt")
@@ -622,7 +623,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
             FX_BOOL bSelected = FALSE;
             if (pSels) {
               for (FX_DWORD s = 0, ssz = pSels->GetCount(); s < ssz; s++) {
-                if (i == pSels->GetInteger(s)) {
+                if (i == pSels->GetIntegerAt(s)) {
                   bSelected = TRUE;
                   break;
                 }
@@ -683,9 +684,9 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
     if (pStreamDict) {
       pStreamDict->SetAtMatrix("Matrix", matrix);
       pStreamDict->SetAtRect("BBox", rcBBox);
-      CPDF_Dictionary* pStreamResList = pStreamDict->GetDict("Resources");
+      CPDF_Dictionary* pStreamResList = pStreamDict->GetDictBy("Resources");
       if (pStreamResList) {
-        CPDF_Dictionary* pStreamResFontList = pStreamResList->GetDict("Font");
+        CPDF_Dictionary* pStreamResFontList = pStreamResList->GetDictBy("Font");
         if (!pStreamResFontList) {
           pStreamResFontList = new CPDF_Dictionary;
           pStreamResList->SetAt("Font", pStreamResFontList);
@@ -694,8 +695,8 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
           pStreamResFontList->SetAtReference(sFontName, pDoc, pFontDict);
         }
       } else {
-        pStreamDict->SetAt("Resources", pFormDict->GetDict("DR")->Clone());
-        pStreamResList = pStreamDict->GetDict("Resources");
+        pStreamDict->SetAt("Resources", pFormDict->GetDictBy("DR")->Clone());
+        pStreamResList = pStreamDict->GetDictBy("Resources");
       }
     }
   }

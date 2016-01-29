@@ -84,7 +84,7 @@ FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument,
   CPDF_Dictionary* pRoot = pPDFDocument->GetRoot();
   if (pRoot == NULL)
     return FALSE;
-  CPDF_Dictionary* pAcroForm = pRoot->GetDict("AcroForm");
+  CPDF_Dictionary* pAcroForm = pRoot->GetDictBy("AcroForm");
   if (NULL == pAcroForm)
     return FALSE;
   CPDF_Object* pXFA = pAcroForm->GetElement("XFA");
@@ -119,7 +119,7 @@ FX_BOOL _SaveXFADocumentData(CPDFXFA_Document* pDocument,
 
   // template
   if (iTemplate > -1) {
-    CPDF_Stream* pTemplateStream = pArray->GetStream(iTemplate);
+    CPDF_Stream* pTemplateStream = pArray->GetStreamAt(iTemplate);
     CPDF_StreamAcc streamAcc;
     streamAcc.LoadAllData(pTemplateStream);
     uint8_t* pData = (uint8_t*)streamAcc.GetData();

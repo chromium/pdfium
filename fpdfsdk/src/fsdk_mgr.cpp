@@ -465,9 +465,9 @@ FX_BOOL CPDFSDK_Document::ProcOpenAction() {
   if (!pRoot)
     return FALSE;
 
-  CPDF_Object* pOpenAction = pRoot->GetDict("OpenAction");
+  CPDF_Object* pOpenAction = pRoot->GetDictBy("OpenAction");
   if (!pOpenAction)
-    pOpenAction = pRoot->GetArray("OpenAction");
+    pOpenAction = pRoot->GetArrayBy("OpenAction");
 
   if (!pOpenAction)
     return FALSE;
@@ -819,7 +819,7 @@ CPDFSDK_Annot* CPDFSDK_PageView::AddAnnot(IXFA_Widget* pPDFAnnot) {
 #endif  // PDF_ENABLE_XFA
 
 CPDFSDK_Annot* CPDFSDK_PageView::AddAnnot(CPDF_Dictionary* pDict) {
-  return pDict ? AddAnnot(pDict->GetString("Subtype"), pDict) : nullptr;
+  return pDict ? AddAnnot(pDict->GetStringBy("Subtype"), pDict) : nullptr;
 }
 
 CPDFSDK_Annot* CPDFSDK_PageView::AddAnnot(const FX_CHAR* lpSubType,

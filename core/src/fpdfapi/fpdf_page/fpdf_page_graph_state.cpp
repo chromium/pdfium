@@ -452,7 +452,7 @@ void CPDF_AllStates::SetLineDash(CPDF_Array* pArray,
   pData->m_DashPhase = FXSYS_Mul(phase, scale);
   pData->SetDashCount(pArray->GetCount());
   for (FX_DWORD i = 0; i < pArray->GetCount(); i++) {
-    pData->m_DashArray[i] = FXSYS_Mul(pArray->GetNumber(i), scale);
+    pData->m_DashArray[i] = FXSYS_Mul(pArray->GetNumberAt(i), scale);
   }
 }
 void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
@@ -486,11 +486,11 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
         if (!pDash)
           break;
 
-        CPDF_Array* pArray = pDash->GetArray(0);
+        CPDF_Array* pArray = pDash->GetArrayAt(0);
         if (!pArray)
           break;
 
-        SetLineDash(pArray, pDash->GetNumber(1), 1.0f);
+        SetLineDash(pArray, pDash->GetNumberAt(1), 1.0f);
         break;
       }
       case FXBSTR_ID('R', 'I', 0, 0):
@@ -501,8 +501,8 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
         if (!pFont)
           break;
 
-        m_TextState.GetModify()->m_FontSize = pFont->GetNumber(1);
-        m_TextState.SetFont(pParser->FindFont(pFont->GetString(0)));
+        m_TextState.GetModify()->m_FontSize = pFont->GetNumberAt(1);
+        m_TextState.SetFont(pParser->FindFont(pFont->GetStringAt(0)));
         break;
       }
       case FXBSTR_ID('T', 'R', 0, 0):
@@ -516,7 +516,7 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
       case FXBSTR_ID('B', 'M', 0, 0): {
         CPDF_Array* pArray = pObject->AsArray();
         CFX_ByteString mode =
-            pArray ? pArray->GetString(0) : pObject->GetString();
+            pArray ? pArray->GetStringAt(0) : pObject->GetString();
 
         pGeneralState->SetBlendMode(mode);
         if (pGeneralState->m_BlendType > FXDIB_BLEND_MULTIPLY) {
@@ -625,7 +625,7 @@ int CPDF_ContentMarkData::GetMCID() const {
       CPDF_Dictionary* pDict =
           ToDictionary(static_cast<CPDF_Object*>(m_Marks[i].GetParam()));
       if (pDict->KeyExist("MCID")) {
-        return pDict->GetInteger("MCID");
+        return pDict->GetIntegerBy("MCID");
       }
     }
   }

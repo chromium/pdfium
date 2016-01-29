@@ -75,7 +75,7 @@ void CFDF_Document::ParseStream(IFX_FileRead* pFile, FX_BOOL bOwnFile) {
       }
       if (CPDF_Dictionary* pMainDict =
               ToDictionary(parser.GetObject(this, 0, 0, true))) {
-        m_pRootDict = pMainDict->GetDict("Root");
+        m_pRootDict = pMainDict->GetDictBy("Root");
         pMainDict->Release();
       }
       break;
@@ -95,12 +95,12 @@ FX_BOOL CFDF_Document::WriteBuf(CFX_ByteTextBuf& buf) const {
   return TRUE;
 }
 CFX_WideString CFDF_Document::GetWin32Path() const {
-  CPDF_Dictionary* pDict = m_pRootDict ? m_pRootDict->GetDict("FDF") : NULL;
+  CPDF_Dictionary* pDict = m_pRootDict ? m_pRootDict->GetDictBy("FDF") : NULL;
   CPDF_Object* pFileSpec = pDict ? pDict->GetElementValue("F") : NULL;
   if (!pFileSpec)
     return CFX_WideString();
   if (pFileSpec->IsString())
-    return FPDF_FileSpec_GetWin32Path(m_pRootDict->GetDict("FDF"));
+    return FPDF_FileSpec_GetWin32Path(m_pRootDict->GetDictBy("FDF"));
   return FPDF_FileSpec_GetWin32Path(pFileSpec);
 }
 static CFX_WideString ChangeSlash(const FX_WCHAR* str) {
@@ -147,15 +147,15 @@ CFX_WideString FPDF_FileSpec_GetWin32Path(const CPDF_Object* pFileSpec) {
   if (!pFileSpec) {
     wsFileName = CFX_WideString();
   } else if (const CPDF_Dictionary* pDict = pFileSpec->AsDictionary()) {
-    wsFileName = pDict->GetUnicodeText("UF");
+    wsFileName = pDict->GetUnicodeTextBy("UF");
     if (wsFileName.IsEmpty()) {
-      wsFileName = CFX_WideString::FromLocal(pDict->GetString("F"));
+      wsFileName = CFX_WideString::FromLocal(pDict->GetStringBy("F"));
     }
-    if (pDict->GetString("FS") == "URL") {
+    if (pDict->GetStringBy("FS") == "URL") {
       return wsFileName;
     }
     if (wsFileName.IsEmpty() && pDict->KeyExist("DOS")) {
-      wsFileName = CFX_WideString::FromLocal(pDict->GetString("DOS"));
+      wsFileName = CFX_WideString::FromLocal(pDict->GetStringBy("DOS"));
     }
   } else {
     wsFileName = CFX_WideString::FromLocal(pFileSpec->GetString());

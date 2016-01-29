@@ -20,25 +20,25 @@ static void DrawAxialShading(CFX_DIBitmap* pBitmap,
                              CPDF_ColorSpace* pCS,
                              int alpha) {
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
-  CPDF_Array* pCoords = pDict->GetArray("Coords");
+  CPDF_Array* pCoords = pDict->GetArrayBy("Coords");
   if (!pCoords) {
     return;
   }
-  FX_FLOAT start_x = pCoords->GetNumber(0);
-  FX_FLOAT start_y = pCoords->GetNumber(1);
-  FX_FLOAT end_x = pCoords->GetNumber(2);
-  FX_FLOAT end_y = pCoords->GetNumber(3);
+  FX_FLOAT start_x = pCoords->GetNumberAt(0);
+  FX_FLOAT start_y = pCoords->GetNumberAt(1);
+  FX_FLOAT end_x = pCoords->GetNumberAt(2);
+  FX_FLOAT end_y = pCoords->GetNumberAt(3);
   FX_FLOAT t_min = 0, t_max = 1.0f;
-  CPDF_Array* pArray = pDict->GetArray("Domain");
+  CPDF_Array* pArray = pDict->GetArrayBy("Domain");
   if (pArray) {
-    t_min = pArray->GetNumber(0);
-    t_max = pArray->GetNumber(1);
+    t_min = pArray->GetNumberAt(0);
+    t_max = pArray->GetNumberAt(1);
   }
   FX_BOOL bStartExtend = FALSE, bEndExtend = FALSE;
-  pArray = pDict->GetArray("Extend");
+  pArray = pDict->GetArrayBy("Extend");
   if (pArray) {
-    bStartExtend = pArray->GetInteger(0);
-    bEndExtend = pArray->GetInteger(1);
+    bStartExtend = pArray->GetIntegerAt(0);
+    bEndExtend = pArray->GetIntegerAt(1);
   }
   int width = pBitmap->GetWidth();
   int height = pBitmap->GetHeight();
@@ -111,29 +111,29 @@ static void DrawRadialShading(CFX_DIBitmap* pBitmap,
                               CPDF_ColorSpace* pCS,
                               int alpha) {
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
-  CPDF_Array* pCoords = pDict->GetArray("Coords");
+  CPDF_Array* pCoords = pDict->GetArrayBy("Coords");
   if (!pCoords) {
     return;
   }
-  FX_FLOAT start_x = pCoords->GetNumber(0);
-  FX_FLOAT start_y = pCoords->GetNumber(1);
-  FX_FLOAT start_r = pCoords->GetNumber(2);
-  FX_FLOAT end_x = pCoords->GetNumber(3);
-  FX_FLOAT end_y = pCoords->GetNumber(4);
-  FX_FLOAT end_r = pCoords->GetNumber(5);
+  FX_FLOAT start_x = pCoords->GetNumberAt(0);
+  FX_FLOAT start_y = pCoords->GetNumberAt(1);
+  FX_FLOAT start_r = pCoords->GetNumberAt(2);
+  FX_FLOAT end_x = pCoords->GetNumberAt(3);
+  FX_FLOAT end_y = pCoords->GetNumberAt(4);
+  FX_FLOAT end_r = pCoords->GetNumberAt(5);
   CFX_Matrix matrix;
   matrix.SetReverse(*pObject2Bitmap);
   FX_FLOAT t_min = 0, t_max = 1.0f;
-  CPDF_Array* pArray = pDict->GetArray("Domain");
+  CPDF_Array* pArray = pDict->GetArrayBy("Domain");
   if (pArray) {
-    t_min = pArray->GetNumber(0);
-    t_max = pArray->GetNumber(1);
+    t_min = pArray->GetNumberAt(0);
+    t_max = pArray->GetNumberAt(1);
   }
   FX_BOOL bStartExtend = FALSE, bEndExtend = FALSE;
-  pArray = pDict->GetArray("Extend");
+  pArray = pDict->GetArrayBy("Extend");
   if (pArray) {
-    bStartExtend = pArray->GetInteger(0);
-    bEndExtend = pArray->GetInteger(1);
+    bStartExtend = pArray->GetIntegerAt(0);
+    bEndExtend = pArray->GetIntegerAt(1);
   }
   int total_results = 0;
   for (int j = 0; j < nFuncs; j++) {
@@ -249,15 +249,15 @@ static void DrawFuncShading(CFX_DIBitmap* pBitmap,
                             CPDF_ColorSpace* pCS,
                             int alpha) {
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
-  CPDF_Array* pDomain = pDict->GetArray("Domain");
+  CPDF_Array* pDomain = pDict->GetArrayBy("Domain");
   FX_FLOAT xmin = 0, ymin = 0, xmax = 1.0f, ymax = 1.0f;
   if (pDomain) {
-    xmin = pDomain->GetNumber(0);
-    xmax = pDomain->GetNumber(1);
-    ymin = pDomain->GetNumber(2);
-    ymax = pDomain->GetNumber(3);
+    xmin = pDomain->GetNumberAt(0);
+    xmax = pDomain->GetNumberAt(1);
+    ymin = pDomain->GetNumberAt(2);
+    ymax = pDomain->GetNumberAt(3);
   }
-  CFX_Matrix mtDomain2Target = pDict->GetMatrix("Matrix");
+  CFX_Matrix mtDomain2Target = pDict->GetMatrixBy("Matrix");
   CFX_Matrix matrix, reverse_matrix;
   matrix.SetReverse(*pObject2Bitmap);
   reverse_matrix.SetReverse(mtDomain2Target);
@@ -453,7 +453,7 @@ static void DrawLatticeGouraudShading(CFX_DIBitmap* pBitmap,
                                       int alpha) {
   ASSERT(pBitmap->GetFormat() == FXDIB_Argb);
 
-  int row_verts = pShadingStream->GetDict()->GetInteger("VerticesPerRow");
+  int row_verts = pShadingStream->GetDict()->GetIntegerBy("VerticesPerRow");
   if (row_verts < 2)
     return;
 
@@ -841,12 +841,12 @@ void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern,
   if (!pPattern->m_bShadingObj &&
       pPattern->m_pShadingObj->GetDict()->KeyExist("Background")) {
     CPDF_Array* pBackColor =
-        pPattern->m_pShadingObj->GetDict()->GetArray("Background");
+        pPattern->m_pShadingObj->GetDict()->GetArrayBy("Background");
     if (pBackColor &&
         pBackColor->GetCount() >= (FX_DWORD)pColorSpace->CountComponents()) {
       CFX_FixedBufGrow<FX_FLOAT, 16> comps(pColorSpace->CountComponents());
       for (int i = 0; i < pColorSpace->CountComponents(); i++) {
-        comps[i] = pBackColor->GetNumber(i);
+        comps[i] = pBackColor->GetNumberAt(i);
       }
       FX_FLOAT R = 0.0f, G = 0.0f, B = 0.0f;
       pColorSpace->GetRGB(comps, R, G, B);
@@ -855,7 +855,7 @@ void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern,
     }
   }
   if (pDict->KeyExist("BBox")) {
-    CFX_FloatRect rect = pDict->GetRect("BBox");
+    CFX_FloatRect rect = pDict->GetRectBy("BBox");
     rect.Transform(pMatrix);
     clip_rect.Intersect(rect.GetOutterRect());
   }
@@ -1063,7 +1063,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
     }
     CPDF_Dictionary* pFormResource = NULL;
     if (pPattern->m_pForm->m_pFormDict) {
-      pFormResource = pPattern->m_pForm->m_pFormDict->GetDict("Resources");
+      pFormResource = pPattern->m_pForm->m_pFormDict->GetDictBy("Resources");
     }
     for (int col = min_col; col <= max_col; col++)
       for (int row = min_row; row <= max_row; row++) {

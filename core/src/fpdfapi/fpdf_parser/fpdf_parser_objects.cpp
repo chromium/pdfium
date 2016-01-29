@@ -401,10 +401,10 @@ CFX_FloatRect CPDF_Array::GetRect() {
   if (!IsArray() || m_Objects.GetSize() != 4)
     return rect;
 
-  rect.left = GetNumber(0);
-  rect.bottom = GetNumber(1);
-  rect.right = GetNumber(2);
-  rect.top = GetNumber(3);
+  rect.left = GetNumberAt(0);
+  rect.bottom = GetNumberAt(1);
+  rect.right = GetNumberAt(2);
+  rect.top = GetNumberAt(3);
   return rect;
 }
 CFX_Matrix CPDF_Array::GetMatrix() {
@@ -412,8 +412,8 @@ CFX_Matrix CPDF_Array::GetMatrix() {
   if (!IsArray() || m_Objects.GetSize() != 6)
     return matrix;
 
-  matrix.Set(GetNumber(0), GetNumber(1), GetNumber(2), GetNumber(3),
-             GetNumber(4), GetNumber(5));
+  matrix.Set(GetNumberAt(0), GetNumberAt(1), GetNumberAt(2), GetNumberAt(3),
+             GetNumberAt(4), GetNumberAt(5));
   return matrix;
 }
 CPDF_Object* CPDF_Array::GetElement(FX_DWORD i) const {
@@ -426,27 +426,27 @@ CPDF_Object* CPDF_Array::GetElementValue(FX_DWORD i) const {
     return nullptr;
   return m_Objects.GetAt(i)->GetDirect();
 }
-CFX_ByteString CPDF_Array::GetString(FX_DWORD i) const {
+CFX_ByteString CPDF_Array::GetStringAt(FX_DWORD i) const {
   if (i >= (FX_DWORD)m_Objects.GetSize())
     return CFX_ByteString();
   return m_Objects.GetAt(i)->GetString();
 }
-CFX_ByteStringC CPDF_Array::GetConstString(FX_DWORD i) const {
+CFX_ByteStringC CPDF_Array::GetConstStringAt(FX_DWORD i) const {
   if (i >= (FX_DWORD)m_Objects.GetSize())
     return CFX_ByteStringC();
   return m_Objects.GetAt(i)->GetConstString();
 }
-int CPDF_Array::GetInteger(FX_DWORD i) const {
+int CPDF_Array::GetIntegerAt(FX_DWORD i) const {
   if (i >= (FX_DWORD)m_Objects.GetSize())
     return 0;
   return m_Objects.GetAt(i)->GetInteger();
 }
-FX_FLOAT CPDF_Array::GetNumber(FX_DWORD i) const {
+FX_FLOAT CPDF_Array::GetNumberAt(FX_DWORD i) const {
   if (i >= (FX_DWORD)m_Objects.GetSize())
     return 0;
   return m_Objects.GetAt(i)->GetNumber();
 }
-CPDF_Dictionary* CPDF_Array::GetDict(FX_DWORD i) const {
+CPDF_Dictionary* CPDF_Array::GetDictAt(FX_DWORD i) const {
   CPDF_Object* p = GetElementValue(i);
   if (!p)
     return NULL;
@@ -456,10 +456,10 @@ CPDF_Dictionary* CPDF_Array::GetDict(FX_DWORD i) const {
     return pStream->GetDict();
   return NULL;
 }
-CPDF_Stream* CPDF_Array::GetStream(FX_DWORD i) const {
+CPDF_Stream* CPDF_Array::GetStreamAt(FX_DWORD i) const {
   return ToStream(GetElementValue(i));
 }
-CPDF_Array* CPDF_Array::GetArray(FX_DWORD i) const {
+CPDF_Array* CPDF_Array::GetArrayAt(FX_DWORD i) const {
   return ToArray(GetElementValue(i));
 }
 void CPDF_Array::RemoveAt(FX_DWORD i, int nCount) {
@@ -555,14 +555,14 @@ CPDF_Object* CPDF_Dictionary::GetElementValue(
   CPDF_Object* p = GetElement(key);
   return p ? p->GetDirect() : nullptr;
 }
-CFX_ByteString CPDF_Dictionary::GetString(const CFX_ByteStringC& key) const {
+CFX_ByteString CPDF_Dictionary::GetStringBy(const CFX_ByteStringC& key) const {
   CPDF_Object* p = GetElement(key);
   if (p) {
     return p->GetString();
   }
   return CFX_ByteString();
 }
-CFX_ByteStringC CPDF_Dictionary::GetConstString(
+CFX_ByteStringC CPDF_Dictionary::GetConstStringBy(
     const CFX_ByteStringC& key) const {
   CPDF_Object* p = GetElement(key);
   if (p) {
@@ -570,22 +570,22 @@ CFX_ByteStringC CPDF_Dictionary::GetConstString(
   }
   return CFX_ByteStringC();
 }
-CFX_WideString CPDF_Dictionary::GetUnicodeText(const CFX_ByteStringC& key,
-                                               CFX_CharMap* pCharMap) const {
+CFX_WideString CPDF_Dictionary::GetUnicodeTextBy(const CFX_ByteStringC& key,
+                                                 CFX_CharMap* pCharMap) const {
   CPDF_Object* p = GetElement(key);
   if (CPDF_Reference* pRef = ToReference(p))
     p = pRef->GetDirect();
   return p ? p->GetUnicodeText(pCharMap) : CFX_WideString();
 }
-CFX_ByteString CPDF_Dictionary::GetString(const CFX_ByteStringC& key,
-                                          const CFX_ByteStringC& def) const {
+CFX_ByteString CPDF_Dictionary::GetStringBy(const CFX_ByteStringC& key,
+                                            const CFX_ByteStringC& def) const {
   CPDF_Object* p = GetElement(key);
   if (p) {
     return p->GetString();
   }
   return CFX_ByteString(def);
 }
-CFX_ByteStringC CPDF_Dictionary::GetConstString(
+CFX_ByteStringC CPDF_Dictionary::GetConstStringBy(
     const CFX_ByteStringC& key,
     const CFX_ByteStringC& def) const {
   CPDF_Object* p = GetElement(key);
@@ -594,35 +594,35 @@ CFX_ByteStringC CPDF_Dictionary::GetConstString(
   }
   return CFX_ByteStringC(def);
 }
-int CPDF_Dictionary::GetInteger(const CFX_ByteStringC& key) const {
+int CPDF_Dictionary::GetIntegerBy(const CFX_ByteStringC& key) const {
   CPDF_Object* p = GetElement(key);
   if (p) {
     return p->GetInteger();
   }
   return 0;
 }
-int CPDF_Dictionary::GetInteger(const CFX_ByteStringC& key, int def) const {
+int CPDF_Dictionary::GetIntegerBy(const CFX_ByteStringC& key, int def) const {
   CPDF_Object* p = GetElement(key);
   if (p) {
     return p->GetInteger();
   }
   return def;
 }
-FX_FLOAT CPDF_Dictionary::GetNumber(const CFX_ByteStringC& key) const {
+FX_FLOAT CPDF_Dictionary::GetNumberBy(const CFX_ByteStringC& key) const {
   CPDF_Object* p = GetElement(key);
   if (p) {
     return p->GetNumber();
   }
   return 0;
 }
-FX_BOOL CPDF_Dictionary::GetBoolean(const CFX_ByteStringC& key,
-                                    FX_BOOL bDefault) const {
+FX_BOOL CPDF_Dictionary::GetBooleanBy(const CFX_ByteStringC& key,
+                                      FX_BOOL bDefault) const {
   CPDF_Object* p = GetElement(key);
   if (ToBoolean(p))
     return p->GetInteger();
   return bDefault;
 }
-CPDF_Dictionary* CPDF_Dictionary::GetDict(const CFX_ByteStringC& key) const {
+CPDF_Dictionary* CPDF_Dictionary::GetDictBy(const CFX_ByteStringC& key) const {
   CPDF_Object* p = GetElementValue(key);
   if (!p)
     return nullptr;
@@ -632,22 +632,22 @@ CPDF_Dictionary* CPDF_Dictionary::GetDict(const CFX_ByteStringC& key) const {
     return pStream->GetDict();
   return nullptr;
 }
-CPDF_Array* CPDF_Dictionary::GetArray(const CFX_ByteStringC& key) const {
+CPDF_Array* CPDF_Dictionary::GetArrayBy(const CFX_ByteStringC& key) const {
   return ToArray(GetElementValue(key));
 }
-CPDF_Stream* CPDF_Dictionary::GetStream(const CFX_ByteStringC& key) const {
+CPDF_Stream* CPDF_Dictionary::GetStreamBy(const CFX_ByteStringC& key) const {
   return ToStream(GetElementValue(key));
 }
-CFX_FloatRect CPDF_Dictionary::GetRect(const CFX_ByteStringC& key) const {
+CFX_FloatRect CPDF_Dictionary::GetRectBy(const CFX_ByteStringC& key) const {
   CFX_FloatRect rect;
-  CPDF_Array* pArray = GetArray(key);
+  CPDF_Array* pArray = GetArrayBy(key);
   if (pArray)
     rect = pArray->GetRect();
   return rect;
 }
-CFX_Matrix CPDF_Dictionary::GetMatrix(const CFX_ByteStringC& key) const {
+CFX_Matrix CPDF_Dictionary::GetMatrixBy(const CFX_ByteStringC& key) const {
   CFX_Matrix matrix;
-  CPDF_Array* pArray = GetArray(key);
+  CPDF_Array* pArray = GetArrayBy(key);
   if (pArray)
     matrix = pArray->GetMatrix();
   return matrix;

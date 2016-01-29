@@ -60,7 +60,7 @@ void CPWL_Image::GetImageSize(FX_FLOAT& fWidth, FX_FLOAT& fHeight) {
 
   if (m_pPDFStream) {
     if (CPDF_Dictionary* pDict = m_pPDFStream->GetDict()) {
-      CPDF_Rect rect = pDict->GetRect("BBox");
+      CPDF_Rect rect = pDict->GetRectBy("BBox");
 
       fWidth = rect.right - rect.left;
       fHeight = rect.top - rect.bottom;
@@ -71,7 +71,7 @@ void CPWL_Image::GetImageSize(FX_FLOAT& fWidth, FX_FLOAT& fHeight) {
 CFX_Matrix CPWL_Image::GetImageMatrix() {
   if (m_pPDFStream) {
     if (CPDF_Dictionary* pDict = m_pPDFStream->GetDict()) {
-      return pDict->GetMatrix("Matrix");
+      return pDict->GetMatrixBy("Matrix");
     }
   }
 
@@ -84,7 +84,7 @@ CFX_ByteString CPWL_Image::GetImageAlias() {
 
   if (m_pPDFStream) {
     if (CPDF_Dictionary* pDict = m_pPDFStream->GetDict()) {
-      return pDict->GetString("Name");
+      return pDict->GetStringBy("Name");
     }
   }
 
@@ -128,13 +128,13 @@ void CPWL_Icon::GetIconPosition(FX_FLOAT& fLeft, FX_FLOAT& fBottom) {
     fLeft = 0.0f;
     fBottom = 0.0f;
     CPDF_Array* pA =
-        m_pIconFit->m_pDict ? m_pIconFit->m_pDict->GetArray("A") : NULL;
+        m_pIconFit->m_pDict ? m_pIconFit->m_pDict->GetArrayBy("A") : NULL;
     if (pA) {
       FX_DWORD dwCount = pA->GetCount();
       if (dwCount > 0)
-        fLeft = pA->GetNumber(0);
+        fLeft = pA->GetNumberAt(0);
       if (dwCount > 1)
-        fBottom = pA->GetNumber(1);
+        fBottom = pA->GetNumberAt(1);
     }
   } else {
     fLeft = 0.0f;

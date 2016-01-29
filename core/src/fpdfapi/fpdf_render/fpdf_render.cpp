@@ -446,7 +446,7 @@ void CPDF_RenderStatus::DrawObjWithBackground(const CPDF_PageObject* pObj,
   if (pObj->m_Type == CPDF_PageObject::FORM) {
     CPDF_FormObject* pFormObj = (CPDF_FormObject*)pObj;
     if (pFormObj->m_pForm && pFormObj->m_pForm->m_pFormDict) {
-      pFormResource = pFormObj->m_pForm->m_pFormDict->GetDict("Resources");
+      pFormResource = pFormObj->m_pForm->m_pFormDict->GetDictBy("Resources");
     }
   }
   CPDF_RenderStatus status;
@@ -458,7 +458,7 @@ void CPDF_RenderStatus::DrawObjWithBackground(const CPDF_PageObject* pObj,
 }
 FX_BOOL CPDF_RenderStatus::ProcessForm(CPDF_FormObject* pFormObj,
                                        const CFX_Matrix* pObj2Device) {
-  CPDF_Dictionary* pOC = pFormObj->m_pForm->m_pFormDict->GetDict("OC");
+  CPDF_Dictionary* pOC = pFormObj->m_pForm->m_pFormDict->GetDictBy("OC");
   if (pOC && m_Options.m_pOCContext &&
       !m_Options.m_pOCContext->CheckOCGVisible(pOC)) {
     return TRUE;
@@ -467,7 +467,7 @@ FX_BOOL CPDF_RenderStatus::ProcessForm(CPDF_FormObject* pFormObj,
   matrix.Concat(*pObj2Device);
   CPDF_Dictionary* pResources = NULL;
   if (pFormObj->m_pForm && pFormObj->m_pForm->m_pFormDict) {
-    pResources = pFormObj->m_pForm->m_pFormDict->GetDict("Resources");
+    pResources = pFormObj->m_pForm->m_pFormDict->GetDictBy("Resources");
   }
   CPDF_RenderStatus status;
   status.Initialize(m_pContext, m_pDevice, NULL, m_pStopObj, this, pFormObj,
@@ -746,7 +746,7 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
     Transparency = pFormObj->m_pForm->m_Transparency;
     bGroupTransparent = !!(Transparency & PDFTRANS_ISOLATED);
     if (pFormObj->m_pForm->m_pFormDict) {
-      pFormResource = pFormObj->m_pForm->m_pFormDict->GetDict("Resources");
+      pFormResource = pFormObj->m_pForm->m_pFormDict->GetDictBy("Resources");
     }
   }
   FX_BOOL bTextClip = FALSE;

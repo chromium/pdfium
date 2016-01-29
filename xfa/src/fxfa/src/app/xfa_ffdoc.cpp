@@ -225,7 +225,7 @@ FX_BOOL CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
   if (pRoot == NULL) {
     return FALSE;
   }
-  CPDF_Dictionary* pAcroForm = pRoot->GetDict("AcroForm");
+  CPDF_Dictionary* pAcroForm = pRoot->GetDictBy("AcroForm");
   if (pAcroForm == NULL) {
     return FALSE;
   }
@@ -238,7 +238,7 @@ FX_BOOL CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
     CPDF_Array* pXFAArray = (CPDF_Array*)pElementXFA;
     FX_DWORD count = pXFAArray->GetCount() / 2;
     for (FX_DWORD i = 0; i < count; i++) {
-      CPDF_Stream* pStream = pXFAArray->GetStream(i * 2 + 1);
+      CPDF_Stream* pStream = pXFAArray->GetStreamAt(i * 2 + 1);
       if (pStream != NULL) {
         xfaStreams.Add(pStream);
       }
@@ -334,11 +334,11 @@ CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(const CFX_WideStringC& wsName,
   if (pRoot == NULL) {
     return NULL;
   }
-  CPDF_Dictionary* pNames = pRoot->GetDict("Names");
+  CPDF_Dictionary* pNames = pRoot->GetDictBy("Names");
   if (!pNames) {
     return NULL;
   }
-  CPDF_Dictionary* pXFAImages = pNames->GetDict("XFAImages");
+  CPDF_Dictionary* pXFAImages = pNames->GetDictBy("XFAImages");
   if (!pXFAImages) {
     return NULL;
   }

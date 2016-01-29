@@ -86,10 +86,11 @@ FX_BOOL CPDF_Image::LoadImageF(CPDF_Stream* pStream, FX_BOOL bInline) {
   if (m_bInline) {
     m_pInlineDict = ToDictionary(pDict->Clone());
   }
-  m_pOC = pDict->GetDict("OC");
-  m_bIsMask = !pDict->KeyExist("ColorSpace") || pDict->GetInteger("ImageMask");
-  m_bInterpolate = pDict->GetInteger("Interpolate");
-  m_Height = pDict->GetInteger("Height");
-  m_Width = pDict->GetInteger("Width");
+  m_pOC = pDict->GetDictBy("OC");
+  m_bIsMask =
+      !pDict->KeyExist("ColorSpace") || pDict->GetIntegerBy("ImageMask");
+  m_bInterpolate = pDict->GetIntegerBy("Interpolate");
+  m_Height = pDict->GetIntegerBy("Height");
+  m_Width = pDict->GetIntegerBy("Width");
   return TRUE;
 }

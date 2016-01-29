@@ -347,7 +347,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_HasXFAField(FPDF_DOCUMENT document,
   if (!pRoot)
     return FALSE;
 
-  CPDF_Dictionary* pAcroForm = pRoot->GetDict("AcroForm");
+  CPDF_Dictionary* pAcroForm = pRoot->GetDictBy("AcroForm");
   if (!pAcroForm)
     return FALSE;
 
@@ -355,7 +355,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_HasXFAField(FPDF_DOCUMENT document,
   if (!pXFA)
     return FALSE;
 
-  FX_BOOL bDynamicXFA = pRoot->GetBoolean("NeedsRendering", FALSE);
+  FX_BOOL bDynamicXFA = pRoot->GetBooleanBy("NeedsRendering", FALSE);
 
   if (bDynamicXFA)
     *docType = DOCTYPE_DYNAMIC_XFA;
@@ -463,7 +463,7 @@ DLLEXPORT unsigned long STDCALL FPDF_GetDocPermissions(FPDF_DOCUMENT document) {
 #endif  // PDF_ENABLE_XFA
 
   CPDF_Dictionary* pDict = pDoc->GetParser()->GetEncryptDict();
-  return pDict ? pDict->GetInteger("P") : (FX_DWORD)-1;
+  return pDict ? pDict->GetIntegerBy("P") : (FX_DWORD)-1;
 }
 
 DLLEXPORT int STDCALL FPDF_GetSecurityHandlerRevision(FPDF_DOCUMENT document) {
@@ -472,7 +472,7 @@ DLLEXPORT int STDCALL FPDF_GetSecurityHandlerRevision(FPDF_DOCUMENT document) {
     return -1;
 
   CPDF_Dictionary* pDict = pDoc->GetParser()->GetEncryptDict();
-  return pDict ? pDict->GetInteger("R") : -1;
+  return pDict ? pDict->GetIntegerBy("R") : -1;
 }
 
 DLLEXPORT int STDCALL FPDF_GetPageCount(FPDF_DOCUMENT document) {
@@ -1054,7 +1054,7 @@ DLLEXPORT FPDF_DWORD STDCALL FPDF_CountNamedDests(FPDF_DOCUMENT document) {
 
   CPDF_NameTree nameTree(pDoc, "Dests");
   pdfium::base::CheckedNumeric<FPDF_DWORD> count = nameTree.GetCount();
-  CPDF_Dictionary* pDest = pRoot->GetDict("Dests");
+  CPDF_Dictionary* pDest = pRoot->GetDictBy("Dests");
   if (pDest)
     count += pDest->GetCount();
 
@@ -1154,7 +1154,7 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document,
   CPDF_NameTree nameTree(pDoc, "Dests");
   int count = nameTree.GetCount();
   if (index >= count) {
-    CPDF_Dictionary* pDest = pRoot->GetDict("Dests");
+    CPDF_Dictionary* pDest = pRoot->GetDictBy("Dests");
     if (!pDest)
       return nullptr;
 
@@ -1180,7 +1180,7 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document,
   if (!pDestObj)
     return nullptr;
   if (CPDF_Dictionary* pDict = pDestObj->AsDictionary()) {
-    pDestObj = pDict->GetArray("D");
+    pDestObj = pDict->GetArrayBy("D");
     if (!pDestObj)
       return nullptr;
   }

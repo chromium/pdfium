@@ -579,7 +579,7 @@ void CPDFXFA_Document::GetTitle(IXFA_Doc* hDoc, CFX_WideString& wsTitle) {
   if (pInfoDict == NULL)
     return;
 
-  CFX_ByteString csTitle = pInfoDict->GetString("Title");
+  CFX_ByteString csTitle = pInfoDict->GetStringBy("Title");
   wsTitle = wsTitle.FromLocal(csTitle.GetBuffer(csTitle.GetLength()));
   csTitle.ReleaseBuffer(csTitle.GetLength());
 }
@@ -642,7 +642,7 @@ void CPDFXFA_Document::ExportData(IXFA_Doc* hDoc,
     CPDF_Dictionary* pRoot = m_pPDFDoc->GetRoot();
     if (pRoot == NULL)
       return;
-    CPDF_Dictionary* pAcroForm = pRoot->GetDict("AcroForm");
+    CPDF_Dictionary* pAcroForm = pRoot->GetDictBy("AcroForm");
     if (NULL == pAcroForm)
       return;
     CPDF_Object* pXFA = pAcroForm->GetElement("XFA");
@@ -947,7 +947,7 @@ FX_BOOL CPDFXFA_Document::_ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
       fileStream.Flush();
       return FALSE;
     }
-    CPDF_Dictionary* pAcroForm = pRoot->GetDict("AcroForm");
+    CPDF_Dictionary* pAcroForm = pRoot->GetDictBy("AcroForm");
     if (NULL == pAcroForm) {
       fileStream.Flush();
       return FALSE;

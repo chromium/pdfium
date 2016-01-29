@@ -69,7 +69,7 @@ void CheckUnSupportAnnot(CPDF_Document* pDoc, const CPDF_Annot* pPDFAnnot) {
     const CPDF_Dictionary* pAnnotDict = pPDFAnnot->GetAnnotDict();
     CFX_ByteString cbString;
     if (pAnnotDict->KeyExist("IT"))
-      cbString = pAnnotDict->GetString("IT");
+      cbString = pAnnotDict->GetStringBy("IT");
     if (cbString.Compare("Img") != 0)
       FPDF_UnSupportError(FPDF_UNSP_ANNOT_SCREEN_MEDIA);
   } else if (cbSubType.Compare("Movie") == 0) {
@@ -84,7 +84,7 @@ void CheckUnSupportAnnot(CPDF_Document* pDoc, const CPDF_Annot* pPDFAnnot) {
     const CPDF_Dictionary* pAnnotDict = pPDFAnnot->GetAnnotDict();
     CFX_ByteString cbString;
     if (pAnnotDict->KeyExist("FT")) {
-      cbString = pAnnotDict->GetString("FT");
+      cbString = pAnnotDict->GetStringBy("FT");
     }
     if (cbString.Compare("Sig") == 0) {
       FPDF_UnSupportError(FPDF_UNSP_ANNOT_SIG);
@@ -150,18 +150,18 @@ void CheckUnSupportError(CPDF_Document* pDoc, FX_DWORD err_code) {
       return;
     }
     if (pRootDict->KeyExist("Names")) {
-      CPDF_Dictionary* pNameDict = pRootDict->GetDict("Names");
+      CPDF_Dictionary* pNameDict = pRootDict->GetDictBy("Names");
       if (pNameDict && pNameDict->KeyExist("EmbeddedFiles")) {
         FPDF_UnSupportError(FPDF_UNSP_DOC_ATTACHMENT);
         return;
       }
       if (pNameDict && pNameDict->KeyExist("JavaScript")) {
-        CPDF_Dictionary* pJSDict = pNameDict->GetDict("JavaScript");
-        CPDF_Array* pArray = pJSDict ? pJSDict->GetArray("Names") : NULL;
+        CPDF_Dictionary* pJSDict = pNameDict->GetDictBy("JavaScript");
+        CPDF_Array* pArray = pJSDict ? pJSDict->GetArrayBy("Names") : NULL;
         if (pArray) {
           int nCount = pArray->GetCount();
           for (int i = 0; i < nCount; i++) {
-            CFX_ByteString cbStr = pArray->GetString(i);
+            CFX_ByteString cbStr = pArray->GetStringAt(i);
             if (cbStr.Compare("com.adobe.acrobat.SharedReview.Register") == 0) {
               FPDF_UnSupportError(FPDF_UNSP_DOC_SHAREDREVIEW);
               return;

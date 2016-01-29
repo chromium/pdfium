@@ -964,7 +964,7 @@ int32_t CPDF_Creator::WriteIndirectObjectToStream(const CPDF_Object* pObj) {
 
   CPDF_Dictionary* pDict = pObj->GetDict();
   if (pObj->IsStream()) {
-    if (pDict && pDict->GetString("Type") == "XRef")
+    if (pDict && pDict->GetStringBy("Type") == "XRef")
       return 0;
     return 1;
   }
@@ -974,7 +974,7 @@ int32_t CPDF_Creator::WriteIndirectObjectToStream(const CPDF_Object* pObj) {
       return 1;
     if (IsSignatureDict(pDict))
       return 1;
-    if (pDict->GetString("Type") == "Page")
+    if (pDict->GetStringBy("Type") == "Page")
       return 1;
   }
 
@@ -1039,7 +1039,7 @@ int32_t CPDF_Creator::WriteStream(const CPDF_Object* pStream,
                             encoder.m_dwSize)) {
     return -1;
   }
-  if ((FX_DWORD)encoder.m_pDict->GetInteger("Length") != encryptor.m_dwSize) {
+  if ((FX_DWORD)encoder.m_pDict->GetIntegerBy("Length") != encryptor.m_dwSize) {
     encoder.CloneDict();
     encoder.m_pDict->SetAtInteger("Length", encryptor.m_dwSize);
   }
@@ -1155,7 +1155,7 @@ int32_t CPDF_Creator::WriteDirectObj(FX_DWORD objnum,
       CPDF_Encryptor encryptor;
       CPDF_CryptoHandler* pHandler = m_pCryptoHandler;
       encryptor.Initialize(pHandler, objnum, encoder.m_pData, encoder.m_dwSize);
-      if ((FX_DWORD)encoder.m_pDict->GetInteger("Length") !=
+      if ((FX_DWORD)encoder.m_pDict->GetIntegerBy("Length") !=
           encryptor.m_dwSize) {
         encoder.CloneDict();
         encoder.m_pDict->SetAtInteger("Length", encryptor.m_dwSize);
@@ -2015,7 +2015,7 @@ void CPDF_Creator::InitID(FX_BOOL bDefault) {
   }
   m_pIDArray->Add(m_pIDArray->GetElement(0)->Clone());
   if (m_pEncryptDict && !pOldIDArray && m_pParser && bNewId) {
-    if (m_pEncryptDict->GetString("Filter") == "Standard") {
+    if (m_pEncryptDict->GetStringBy("Filter") == "Standard") {
       CPDF_StandardSecurityHandler handler;
       CFX_ByteString user_pass = m_pParser->GetPassword();
       FX_DWORD flag = PDF_ENCRYPT_CONTENT;

@@ -218,7 +218,7 @@ class CPDF_Action {
 
   CPDF_Dictionary* GetDict() const { return m_pDict; }
 
-  CFX_ByteString GetTypeName() const { return m_pDict->GetString("S"); }
+  CFX_ByteString GetTypeName() const { return m_pDict->GetStringBy("S"); }
 
   ActionType GetType() const;
 
@@ -226,19 +226,19 @@ class CPDF_Action {
 
   CFX_WideString GetFilePath() const;
 
-  FX_BOOL GetNewWindow() const { return m_pDict->GetBoolean("NewWindow"); }
+  FX_BOOL GetNewWindow() const { return m_pDict->GetBooleanBy("NewWindow"); }
 
   CFX_ByteString GetURI(CPDF_Document* pDoc) const;
 
-  FX_BOOL GetMouseMap() const { return m_pDict->GetBoolean("IsMap"); }
+  FX_BOOL GetMouseMap() const { return m_pDict->GetBooleanBy("IsMap"); }
 
   CPDF_ActionFields GetWidgets() const { return this; }
 
-  FX_BOOL GetHideStatus() const { return m_pDict->GetBoolean("H", TRUE); }
+  FX_BOOL GetHideStatus() const { return m_pDict->GetBooleanBy("H", TRUE); }
 
-  CFX_ByteString GetNamedAction() const { return m_pDict->GetString("N"); }
+  CFX_ByteString GetNamedAction() const { return m_pDict->GetStringBy("N"); }
 
-  FX_DWORD GetFlags() const { return m_pDict->GetInteger("Flags"); }
+  FX_DWORD GetFlags() const { return m_pDict->GetIntegerBy("Flags"); }
 
   CFX_WideString GetJavaScript() const;
 
@@ -246,15 +246,15 @@ class CPDF_Action {
 
   int32_t GetOperationType() const;
 
-  CPDF_Stream* GetSoundStream() const { return m_pDict->GetStream("Sound"); }
+  CPDF_Stream* GetSoundStream() const { return m_pDict->GetStreamBy("Sound"); }
 
-  FX_FLOAT GetVolume() const { return m_pDict->GetNumber("Volume"); }
+  FX_FLOAT GetVolume() const { return m_pDict->GetNumberBy("Volume"); }
 
-  FX_BOOL IsSynchronous() const { return m_pDict->GetBoolean("Synchronous"); }
+  FX_BOOL IsSynchronous() const { return m_pDict->GetBooleanBy("Synchronous"); }
 
-  FX_BOOL IsRepeat() const { return m_pDict->GetBoolean("Repeat"); }
+  FX_BOOL IsRepeat() const { return m_pDict->GetBooleanBy("Repeat"); }
 
-  FX_BOOL IsMixPlay() const { return m_pDict->GetBoolean("Mix"); }
+  FX_BOOL IsMixPlay() const { return m_pDict->GetBooleanBy("Mix"); }
 
   FX_DWORD GetSubActionsCount() const;
 

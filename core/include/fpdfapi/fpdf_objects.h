@@ -256,21 +256,21 @@ class CPDF_Array : public CPDF_Object {
 
   CFX_FloatRect GetRect();
 
-  CFX_ByteString GetString(FX_DWORD index) const;
+  CFX_ByteString GetStringAt(FX_DWORD index) const;
 
-  CFX_ByteStringC GetConstString(FX_DWORD index) const;
+  CFX_ByteStringC GetConstStringAt(FX_DWORD index) const;
 
-  int GetInteger(FX_DWORD index) const;
+  int GetIntegerAt(FX_DWORD index) const;
 
-  FX_FLOAT GetNumber(FX_DWORD index) const;
+  FX_FLOAT GetNumberAt(FX_DWORD index) const;
 
-  CPDF_Dictionary* GetDict(FX_DWORD index) const;
+  CPDF_Dictionary* GetDictAt(FX_DWORD index) const;
 
-  CPDF_Stream* GetStream(FX_DWORD index) const;
+  CPDF_Stream* GetStreamAt(FX_DWORD index) const;
 
-  CPDF_Array* GetArray(FX_DWORD index) const;
+  CPDF_Array* GetArrayAt(FX_DWORD index) const;
 
-  FX_FLOAT GetFloat(FX_DWORD index) const { return GetNumber(index); }
+  FX_FLOAT GetFloatAt(FX_DWORD index) const { return GetNumberAt(index); }
 
   void SetAt(FX_DWORD index,
              CPDF_Object* pObj,
@@ -298,7 +298,7 @@ class CPDF_Array : public CPDF_Object {
     AddReference(pDoc, obj->GetObjNum());
   }
 
-  FX_FLOAT GetNumber16(FX_DWORD index) const { return GetNumber(index); }
+  FX_FLOAT GetNumber16(FX_DWORD index) const { return GetNumberAt(index); }
 
   void AddNumber16(FX_FLOAT value) { AddNumber(value); }
 
@@ -328,39 +328,41 @@ class CPDF_Dictionary : public CPDF_Object {
 
   CPDF_Object* GetElementValue(const CFX_ByteStringC& key) const;
 
-  CFX_ByteString GetString(const CFX_ByteStringC& key) const;
+  CFX_ByteString GetStringBy(const CFX_ByteStringC& key) const;
 
-  CFX_ByteStringC GetConstString(const CFX_ByteStringC& key) const;
+  CFX_ByteStringC GetConstStringBy(const CFX_ByteStringC& key) const;
 
-  CFX_ByteString GetString(const CFX_ByteStringC& key,
-                           const CFX_ByteStringC& default_str) const;
+  CFX_ByteString GetStringBy(const CFX_ByteStringC& key,
+                             const CFX_ByteStringC& default_str) const;
 
-  CFX_ByteStringC GetConstString(const CFX_ByteStringC& key,
-                                 const CFX_ByteStringC& default_str) const;
+  CFX_ByteStringC GetConstStringBy(const CFX_ByteStringC& key,
+                                   const CFX_ByteStringC& default_str) const;
 
-  CFX_WideString GetUnicodeText(const CFX_ByteStringC& key,
-                                CFX_CharMap* pCharMap = NULL) const;
+  CFX_WideString GetUnicodeTextBy(const CFX_ByteStringC& key,
+                                  CFX_CharMap* pCharMap = NULL) const;
 
-  int GetInteger(const CFX_ByteStringC& key) const;
+  int GetIntegerBy(const CFX_ByteStringC& key) const;
 
-  int GetInteger(const CFX_ByteStringC& key, int default_int) const;
+  int GetIntegerBy(const CFX_ByteStringC& key, int default_int) const;
 
-  FX_BOOL GetBoolean(const CFX_ByteStringC& key,
-                     FX_BOOL bDefault = FALSE) const;
+  FX_BOOL GetBooleanBy(const CFX_ByteStringC& key,
+                       FX_BOOL bDefault = FALSE) const;
 
-  FX_FLOAT GetNumber(const CFX_ByteStringC& key) const;
+  FX_FLOAT GetNumberBy(const CFX_ByteStringC& key) const;
 
-  CPDF_Dictionary* GetDict(const CFX_ByteStringC& key) const;
+  CPDF_Dictionary* GetDictBy(const CFX_ByteStringC& key) const;
 
-  CPDF_Stream* GetStream(const CFX_ByteStringC& key) const;
+  CPDF_Stream* GetStreamBy(const CFX_ByteStringC& key) const;
 
-  CPDF_Array* GetArray(const CFX_ByteStringC& key) const;
+  CPDF_Array* GetArrayBy(const CFX_ByteStringC& key) const;
 
-  CFX_FloatRect GetRect(const CFX_ByteStringC& key) const;
+  CFX_FloatRect GetRectBy(const CFX_ByteStringC& key) const;
 
-  CFX_Matrix GetMatrix(const CFX_ByteStringC& key) const;
+  CFX_Matrix GetMatrixBy(const CFX_ByteStringC& key) const;
 
-  FX_FLOAT GetFloat(const CFX_ByteStringC& key) const { return GetNumber(key); }
+  FX_FLOAT GetFloatBy(const CFX_ByteStringC& key) const {
+    return GetNumberBy(key);
+  }
 
   FX_BOOL KeyExist(const CFX_ByteStringC& key) const;
 
