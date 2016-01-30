@@ -493,11 +493,12 @@ class CPDF_DIBSource : public CFX_DIBSource {
                           FX_BOOL bFlipX,
                           int clip_left,
                           int clip_width) const override;
-  void SetDownSampleSize(int dest_width, int dest_height) const override;
+  void SetDownSampleSize(int dest_width, int dest_height) override;
 
   CFX_DIBitmap* GetBitmap() const;
   void ReleaseBitmap(CFX_DIBitmap*) const;
   void ClearImageData();
+  FX_DWORD GetMatteColor() const { return m_MatteColor; }
 
   int StartLoadDIBSource(CPDF_Document* pDoc,
                          const CPDF_Stream* pStream,
@@ -513,14 +514,6 @@ class CPDF_DIBSource : public CFX_DIBSource {
   int ContinueLoadMaskDIB(IFX_Pause* pPause);
   int ContinueToLoadMask();
   CPDF_DIBSource* DetachMask();
-  CPDF_DIBSource* m_pMask;
-  FX_DWORD m_MatteColor;
-  void* m_pJbig2Context;
-  CPDF_StreamAcc* m_pGlobalStream;
-  FX_BOOL m_bStdCS;
-  int m_Status;
-  CPDF_Stream* m_pMaskStream;
-  FX_BOOL m_bHasMask;
 
  private:
   bool LoadColorInfo(const CPDF_Dictionary* pFormResources,
@@ -566,7 +559,7 @@ class CPDF_DIBSource : public CFX_DIBSource {
 
   CPDF_Document* m_pDocument;
   const CPDF_Stream* m_pStream;
-  CPDF_StreamAcc* m_pStreamAcc;
+  std::unique_ptr<CPDF_StreamAcc> m_pStreamAcc;
   const CPDF_Dictionary* m_pDict;
   CPDF_ColorSpace* m_pColorSpace;
   FX_DWORD m_Family;
@@ -574,16 +567,24 @@ class CPDF_DIBSource : public CFX_DIBSource {
   FX_DWORD m_bpc_orig;
   FX_DWORD m_nComponents;
   FX_DWORD m_GroupFamily;
+  FX_DWORD m_MatteColor;
   FX_BOOL m_bLoadMask;
   FX_BOOL m_bDefaultDecode;
   FX_BOOL m_bImageMask;
   FX_BOOL m_bDoBpcCheck;
   FX_BOOL m_bColorKey;
+  FX_BOOL m_bHasMask;
+  FX_BOOL m_bStdCS;
   DIB_COMP_DATA* m_pCompData;
   uint8_t* m_pLineBuf;
   uint8_t* m_pMaskedLine;
   std::unique_ptr<CFX_DIBitmap> m_pCachedBitmap;
-  ICodec_ScanlineDecoder* m_pDecoder;
+  std::unique_ptr<ICodec_ScanlineDecoder> m_pDecoder;
+  void* m_pJbig2Context;
+  CPDF_DIBSource* m_pMask;
+  std::unique_ptr<CPDF_StreamAcc> m_pGlobalStream;
+  CPDF_Stream* m_pMaskStream;
+  int m_Status;
 };
 
 #define FPDF_HUGE_IMAGE_SIZE 60000000

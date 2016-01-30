@@ -292,7 +292,7 @@ int CPDF_ImageCacheEntry::StartGetCachedBitmap(CPDF_Dictionary* pFormResources,
   return 0;
 }
 void CPDF_ImageCacheEntry::ContinueGetCachedBitmap() {
-  m_MatteColor = ((CPDF_DIBSource*)m_pCurBitmap)->m_MatteColor;
+  m_MatteColor = ((CPDF_DIBSource*)m_pCurBitmap)->GetMatteColor();
   m_pCurMask = ((CPDF_DIBSource*)m_pCurBitmap)->DetachMask();
   CPDF_RenderContext* pContext = m_pRenderStatus->GetContext();
   CPDF_PageRenderCache* pPageRenderCache = pContext->GetPageCache();
