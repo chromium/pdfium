@@ -228,6 +228,8 @@ class CPDFDoc_Environment final {
 
 class CPDFSDK_Document {
  public:
+  static CPDFSDK_Document* FromFPDFFormHandle(FPDF_FORMHANDLE hHandle);
+
   CPDFSDK_Document(UnderlyingDocumentType* pDoc, CPDFDoc_Environment* pEnv);
   ~CPDFSDK_Document();
 
