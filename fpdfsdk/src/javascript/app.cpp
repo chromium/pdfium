@@ -533,67 +533,51 @@ FX_BOOL app::mailMsg(IJS_Context* cc,
                      const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError) {
-  if (params.size() < 1)
-    return FALSE;
-
-  FX_BOOL bUI = TRUE;
-  CFX_WideString cTo = L"";
-  CFX_WideString cCc = L"";
-  CFX_WideString cBcc = L"";
-  CFX_WideString cSubject = L"";
-  CFX_WideString cMsg = L"";
-
   CJS_Context* pContext = static_cast<CJS_Context*>(cc);
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  v8::Isolate* isolate = pRuntime->GetIsolate();
+  std::vector<CJS_Value> newParams =
+      JS_ExpandKeywordParams(pRuntime, params, 6, L"bUI", L"cTo", L"cCc",
+                             L"cBcc", L"cSubject", L"cMsg");
 
-  if (params[0].GetType() == CJS_Value::VT_object) {
-    v8::Local<v8::Object> pObj = params[0].ToV8Object();
+  if (newParams[0].GetType() == CJS_Value::VT_unknown) {
+    sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
+    return FALSE;
+  }
+  bool bUI = newParams[0].ToBool();
 
-    v8::Local<v8::Value> pValue = FXJS_GetObjectElement(isolate, pObj, L"bUI");
-    bUI = CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToBool();
-
-    pValue = FXJS_GetObjectElement(isolate, pObj, L"cTo");
-    cTo = CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
-
-    pValue = FXJS_GetObjectElement(isolate, pObj, L"cCc");
-    cCc = CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
-
-    pValue = FXJS_GetObjectElement(isolate, pObj, L"cBcc");
-    cBcc =
-        CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
-
-    pValue = FXJS_GetObjectElement(isolate, pObj, L"cSubject");
-    cSubject =
-        CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
-
-    pValue = FXJS_GetObjectElement(isolate, pObj, L"cMsg");
-    cMsg =
-        CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
+  CFX_WideString cTo;
+  if (newParams[1].GetType() != CJS_Value::VT_unknown) {
+    cTo = newParams[1].ToCFXWideString();
   } else {
-    if (params.size() < 2)
+    if (!bUI) {
+      // cTo parameter required when UI not invoked.
+      sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
       return FALSE;
-
-    bUI = params[0].ToBool();
-    cTo = params[1].ToCFXWideString();
-
-    if (params.size() >= 3)
-      cCc = params[2].ToCFXWideString();
-    if (params.size() >= 4)
-      cBcc = params[3].ToCFXWideString();
-    if (params.size() >= 5)
-      cSubject = params[4].ToCFXWideString();
-    if (params.size() >= 6)
-      cMsg = params[5].ToCFXWideString();
+    }
   }
 
+  CFX_WideString cCc;
+  if (newParams[2].GetType() != CJS_Value::VT_unknown)
+    cCc = newParams[2].ToCFXWideString();
+
+  CFX_WideString cBcc;
+  if (newParams[3].GetType() != CJS_Value::VT_unknown)
+    cBcc = newParams[3].ToCFXWideString();
+
+  CFX_WideString cSubject;
+  if (newParams[4].GetType() != CJS_Value::VT_unknown)
+    cSubject = newParams[4].ToCFXWideString();
+
+  CFX_WideString cMsg;
+  if (newParams[5].GetType() != CJS_Value::VT_unknown)
+    cMsg = newParams[5].ToCFXWideString();
+
   pRuntime->BeginBlock();
-  pContext->GetReaderApp()->JS_docmailForm(NULL, 0, bUI, cTo.c_str(),
+  pContext->GetReaderApp()->JS_docmailForm(nullptr, 0, bUI, cTo.c_str(),
                                            cSubject.c_str(), cCc.c_str(),
                                            cBcc.c_str(), cMsg.c_str());
   pRuntime->EndBlock();
-
-  return FALSE;
+  return TRUE;
 }
 
 FX_BOOL app::launchURL(IJS_Context* cc,
@@ -612,7 +596,6 @@ FX_BOOL app::runtimeHighlight(IJS_Context* cc,
   } else {
     vp << m_bRuntimeHighLight;
   }
-
   return TRUE;
 }
 

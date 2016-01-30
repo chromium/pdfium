@@ -332,9 +332,9 @@ void CPDFDoc_Environment::JS_docmailForm(void* mailData,
                                          const FX_WCHAR* Msg) {
   if (m_pInfo && m_pInfo->m_pJsPlatform && m_pInfo->m_pJsPlatform->Doc_mail) {
     CFX_ByteString bsTo = CFX_WideString(To).UTF16LE_Encode();
-    CFX_ByteString bsCC = CFX_WideString(Subject).UTF16LE_Encode();
-    CFX_ByteString bsBcc = CFX_WideString(BCC).UTF16LE_Encode();
     CFX_ByteString bsSubject = CFX_WideString(Subject).UTF16LE_Encode();
+    CFX_ByteString bsCC = CFX_WideString(CC).UTF16LE_Encode();
+    CFX_ByteString bsBcc = CFX_WideString(BCC).UTF16LE_Encode();
     CFX_ByteString bsMsg = CFX_WideString(Msg).UTF16LE_Encode();
     FPDF_WIDESTRING pTo = (FPDF_WIDESTRING)bsTo.GetBuffer(bsTo.GetLength());
     FPDF_WIDESTRING pCC = (FPDF_WIDESTRING)bsCC.GetBuffer(bsCC.GetLength());

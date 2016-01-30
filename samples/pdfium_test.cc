@@ -211,6 +211,21 @@ void ExampleDocGotoPage(IPDF_JSPLATFORM*, int pageNumber) {
   printf("Goto Page: %d\n", pageNumber);
 }
 
+void ExampleDocMail(IPDF_JSPLATFORM*,
+                    void* mailData,
+                    int length,
+                    FPDF_BOOL bUI,
+                    FPDF_WIDESTRING To,
+                    FPDF_WIDESTRING Subject,
+                    FPDF_WIDESTRING CC,
+                    FPDF_WIDESTRING BCC,
+                    FPDF_WIDESTRING Msg) {
+  printf("Mail Msg: %d, to=%ls, cc=%ls, bcc=%ls, subject=%ls, body=%ls\n", bUI,
+         GetPlatformWString(To).c_str(), GetPlatformWString(CC).c_str(),
+         GetPlatformWString(BCC).c_str(), GetPlatformWString(Subject).c_str(),
+         GetPlatformWString(Msg).c_str());
+}
+
 void ExampleUnsupportedHandler(UNSUPPORT_INFO*, int type) {
   std::string feature = "Unknown";
   switch (type) {
@@ -411,6 +426,7 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
   platform_callbacks.version = 3;
   platform_callbacks.app_alert = ExampleAppAlert;
   platform_callbacks.Doc_gotoPage = ExampleDocGotoPage;
+  platform_callbacks.Doc_mail = ExampleDocMail;
 
   FPDF_FORMFILLINFO form_callbacks;
   memset(&form_callbacks, '\0', sizeof(form_callbacks));
