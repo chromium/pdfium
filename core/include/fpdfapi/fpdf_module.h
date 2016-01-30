@@ -28,7 +28,6 @@ class CPDF_PageObjectList;
 class CPDF_PageRenderCache;
 class CPDF_RenderConfig;
 class CPDF_RenderOptions;
-class CPDF_SecurityHandler;
 class CPDF_Stream;
 class ICodec_FaxModule;
 class ICodec_FlateModule;

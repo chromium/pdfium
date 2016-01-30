@@ -954,10 +954,8 @@ int32_t CPDF_Creator::WriteIndirectObjectToStream(const CPDF_Object* pObj) {
     return 1;
 
   FX_DWORD objnum = pObj->GetObjNum();
-  if (m_pParser && m_pParser->m_ObjVersion.GetSize() > (int32_t)objnum &&
-      m_pParser->m_ObjVersion[objnum] > 0) {
+  if (m_pParser && m_pParser->GetObjectGenNum(objnum) > 0)
     return 1;
-  }
 
   if (pObj->IsNumber())
     return 1;
@@ -1280,15 +1278,15 @@ int32_t CPDF_Creator::WriteDirectObj(FX_DWORD objnum,
   return 1;
 }
 int32_t CPDF_Creator::WriteOldIndirectObject(FX_DWORD objnum) {
-  if (m_pParser->m_V5Type[objnum] == 0 || m_pParser->m_V5Type[objnum] == 255) {
+  if (m_pParser->IsObjectFreeOrNull(objnum))
     return 0;
-  }
+
   m_ObjectOffset[objnum] = m_Offset;
   FX_BOOL bExistInMap =
       pdfium::ContainsKey(m_pDocument->m_IndirectObjs, objnum);
-  FX_BOOL bObjStm =
-      (m_pParser->m_V5Type[objnum] == 2) && m_pEncryptDict && !m_pXRefStream;
-  if (m_pParser->m_bVersionUpdated || m_bSecurityChanged || bExistInMap ||
+  const uint8_t object_type = m_pParser->GetObjectType(objnum);
+  FX_BOOL bObjStm = (object_type == 2) && m_pEncryptDict && !m_pXRefStream;
+  if (m_pParser->IsVersionUpdated() || m_bSecurityChanged || bExistInMap ||
       bObjStm) {
     CPDF_Object* pObj = m_pDocument->GetIndirectObject(objnum);
     if (!pObj) {
@@ -1308,7 +1306,7 @@ int32_t CPDF_Creator::WriteOldIndirectObject(FX_DWORD objnum) {
     if (!pBuffer) {
       return 0;
     }
-    if (m_pParser->m_V5Type[objnum] == 2) {
+    if (object_type == 2) {
       if (m_pXRefStream) {
         if (WriteIndirectObjectToStream(objnum, pBuffer, size) < 0) {
           FX_Free(pBuffer);
@@ -1396,18 +1394,16 @@ void CPDF_Creator::InitOldObjNumOffsets() {
   FX_DWORD dwStart = 0;
   FX_DWORD dwEnd = m_pParser->GetLastObjNum();
   while (dwStart <= dwEnd) {
-    while (dwStart <= dwEnd && (m_pParser->m_V5Type[dwStart] == 0 ||
-                                m_pParser->m_V5Type[dwStart] == 255)) {
+    while (dwStart <= dwEnd && m_pParser->IsObjectFreeOrNull(dwStart))
       dwStart++;
-    }
-    if (dwStart > dwEnd) {
+
+    if (dwStart > dwEnd)
       break;
-    }
+
     j = dwStart;
-    while (j <= dwEnd && m_pParser->m_V5Type[j] != 0 &&
-           m_pParser->m_V5Type[j] != 255) {
+    while (j <= dwEnd && !m_pParser->IsObjectFreeOrNull(j))
       j++;
-    }
+
     m_ObjectOffset.Add(dwStart, j - dwStart);
     dwStart = j;
   }
@@ -1416,17 +1412,20 @@ void CPDF_Creator::InitNewObjNumOffsets() {
   FX_BOOL bIncremental = (m_dwFlags & FPDFCREATE_INCREMENTAL) != 0;
   FX_BOOL bNoOriginal = (m_dwFlags & FPDFCREATE_NO_ORIGINAL) != 0;
   for (const auto& pair : m_pDocument->m_IndirectObjs) {
-    if (pair.second->GetObjNum() == -1)
+    const FX_DWORD objnum = pair.first;
+    const CPDF_Object* pObj = pair.second;
+    if (pObj->GetObjNum() == -1)
       continue;
     if (bIncremental) {
-      if (!pair.second->IsModified())
+      if (!pObj->IsModified())
         continue;
-    } else if (m_pParser && m_pParser->IsValidObjectNumber(pair.first) &&
-               m_pParser->m_V5Type[pair.first]) {
+    } else if (m_pParser && m_pParser->IsValidObjectNumber(objnum) &&
+               m_pParser->GetObjectType(objnum)) {
       continue;
     }
-    AppendNewObjNum(pair.first);
+    AppendNewObjNum(objnum);
   }
+
   int32_t iCount = m_NewObjNumArray.GetSize();
   if (iCount == 0) {
     return;
@@ -1565,11 +1564,10 @@ int32_t CPDF_Creator::WriteDoc_Stage1(IFX_Pause* pPause) {
       FX_DWORD dwEnd = m_pParser->GetLastObjNum();
       FX_BOOL bObjStm = (m_dwFlags & FPDFCREATE_OBJECTSTREAM) != 0;
       for (FX_DWORD objnum = 0; objnum <= dwEnd; objnum++) {
-        if (m_pParser->m_V5Type[objnum] == 0 ||
-            m_pParser->m_V5Type[objnum] == 255) {
+        if (m_pParser->IsObjectFreeOrNull(objnum))
           continue;
-        }
-        m_ObjectOffset[objnum] = m_pParser->m_ObjectInfo[objnum].pos;
+
+        m_ObjectOffset[objnum] = m_pParser->GetObjectPositionOrZero(objnum);
         if (bObjStm) {
           m_pXRefStream->AddObjectNumberToIndexArray(objnum);
         }
@@ -1763,7 +1761,7 @@ int32_t CPDF_Creator::WriteDoc_Stage4(IFX_Pause* pPause) {
       }
     }
     if (m_pParser) {
-      CPDF_Dictionary* p = m_pParser->m_pTrailer;
+      CPDF_Dictionary* p = m_pParser->GetTrailer();
       for (const auto& it : *p) {
         const CFX_ByteString& key = it.first;
         CPDF_Object* pValue = it.second;
