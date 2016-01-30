@@ -390,6 +390,13 @@ CFFL_IFormFiller* CPDFDoc_Environment::GetIFormFiller() {
   return m_pIFormFiller.get();
 }
 
+// static
+CPDFSDK_Document* CPDFSDK_Document::FromFPDFFormHandle(
+    FPDF_FORMHANDLE hHandle) {
+  CPDFDoc_Environment* pEnv = static_cast<CPDFDoc_Environment*>(hHandle);
+  return pEnv ? pEnv->GetSDKDocument() : nullptr;
+}
+
 CPDFSDK_Document::CPDFSDK_Document(UnderlyingDocumentType* pDoc,
                                    CPDFDoc_Environment* pEnv)
     : m_pDoc(pDoc),

@@ -20,13 +20,8 @@
 
 namespace {
 
-CPDFSDK_Document* FormHandleToSDKDoc(FPDF_FORMHANDLE hHandle) {
-  CPDFDoc_Environment* pEnv = (CPDFDoc_Environment*)hHandle;
-  return pEnv ? pEnv->GetSDKDocument() : nullptr;
-}
-
 CPDFSDK_InterForm* FormHandleToInterForm(FPDF_FORMHANDLE hHandle) {
-  CPDFSDK_Document* pSDKDoc = FormHandleToSDKDoc(hHandle);
+  CPDFSDK_Document* pSDKDoc = CPDFSDK_Document::FromFPDFFormHandle(hHandle);
   return pSDKDoc ? pSDKDoc->GetInterForm() : nullptr;
 }
 
@@ -36,7 +31,7 @@ CPDFSDK_PageView* FormHandleToPageView(FPDF_FORMHANDLE hHandle,
   if (!pPage)
     return nullptr;
 
-  CPDFSDK_Document* pSDKDoc = FormHandleToSDKDoc(hHandle);
+  CPDFSDK_Document* pSDKDoc = CPDFSDK_Document::FromFPDFFormHandle(hHandle);
   return pSDKDoc ? pSDKDoc->GetPageView(pPage, TRUE) : nullptr;
 }
 
@@ -285,7 +280,7 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_OnChar(FPDF_FORMHANDLE hHandle,
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FORM_ForceToKillFocus(FPDF_FORMHANDLE hHandle) {
-  CPDFSDK_Document* pSDKDoc = FormHandleToSDKDoc(hHandle);
+  CPDFSDK_Document* pSDKDoc = CPDFSDK_Document::FromFPDFFormHandle(hHandle);
   if (!pSDKDoc)
     return FALSE;
 
@@ -681,20 +676,20 @@ DLLEXPORT void STDCALL FORM_OnBeforeClosePage(FPDF_PAGE page,
 }
 
 DLLEXPORT void STDCALL FORM_DoDocumentJSAction(FPDF_FORMHANDLE hHandle) {
-  CPDFSDK_Document* pSDKDoc = FormHandleToSDKDoc(hHandle);
+  CPDFSDK_Document* pSDKDoc = CPDFSDK_Document::FromFPDFFormHandle(hHandle);
   if (pSDKDoc && ((CPDFDoc_Environment*)hHandle)->IsJSInitiated())
     pSDKDoc->ProcJavascriptFun();
 }
 
 DLLEXPORT void STDCALL FORM_DoDocumentOpenAction(FPDF_FORMHANDLE hHandle) {
-  CPDFSDK_Document* pSDKDoc = FormHandleToSDKDoc(hHandle);
+  CPDFSDK_Document* pSDKDoc = CPDFSDK_Document::FromFPDFFormHandle(hHandle);
   if (pSDKDoc && ((CPDFDoc_Environment*)hHandle)->IsJSInitiated())
     pSDKDoc->ProcOpenAction();
 }
 
 DLLEXPORT void STDCALL FORM_DoDocumentAAction(FPDF_FORMHANDLE hHandle,
                                               int aaType) {
-  CPDFSDK_Document* pSDKDoc = FormHandleToSDKDoc(hHandle);
+  CPDFSDK_Document* pSDKDoc = CPDFSDK_Document::FromFPDFFormHandle(hHandle);
   if (!pSDKDoc)
     return;
 

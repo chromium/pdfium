@@ -802,6 +802,7 @@
         'fpdfsdk/src/fpdfview_c_api_test.c',
         'fpdfsdk/src/fpdfview_c_api_test.h',
         'fpdfsdk/src/fpdfview_embeddertest.cpp',
+        'fpdfsdk/src/fsdk_baseform_embeddertest.cpp',
         'testing/embedder_test.cpp',
         'testing/embedder_test.h',
         'testing/embedder_test_mock_delegate.h',
