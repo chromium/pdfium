@@ -313,10 +313,6 @@ FX_DWORD CPDF_Document::GetUserPermissions(FX_BOOL bCheckRevision) const {
   return m_pParser->GetPermissions(bCheckRevision);
 }
 
-FX_BOOL CPDF_Document::IsOwner() const {
-  return !m_pParser || m_pParser->IsOwner();
-}
-
 FX_BOOL CPDF_Document::IsFormStream(FX_DWORD objnum, FX_BOOL& bForm) const {
   auto it = m_IndirectObjs.find(objnum);
   if (it != m_IndirectObjs.end()) {

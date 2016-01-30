@@ -124,16 +124,16 @@ DLLEXPORT FPDF_DOCUMENT STDCALL
 FPDFAvail_GetDocument(FPDF_AVAIL avail, FPDF_BYTESTRING password) {
   CFPDF_DataAvail* pDataAvail = static_cast<CFPDF_DataAvail*>(avail);
   if (!pDataAvail)
-    return NULL;
+    return nullptr;
 
   CPDF_Parser* pParser = new CPDF_Parser;
   pParser->SetPassword(password);
   CPDF_Parser::Error error =
-      pParser->StartAsynParse(pDataAvail->m_pDataAvail->GetFileRead());
+      pParser->StartAsyncParse(pDataAvail->m_pDataAvail->GetFileRead());
   if (error != CPDF_Parser::SUCCESS) {
     delete pParser;
     ProcessParseError(error);
-    return NULL;
+    return nullptr;
   }
   pDataAvail->m_pDataAvail->SetDocument(pParser->GetDocument());
   CheckUnSupportError(pParser->GetDocument(), FPDF_ERR_SUCCESS);
