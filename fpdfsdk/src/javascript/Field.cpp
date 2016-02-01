@@ -6,6 +6,10 @@
 
 #include "Field.h"
 
+#include <algorithm>
+#include <memory>
+#include <vector>
+
 #include "Document.h"
 #include "Icon.h"
 #include "JS_Context.h"
@@ -3083,10 +3087,6 @@ FX_BOOL Field::deleteItemAt(IJS_Context* cc,
   return TRUE;
 }
 
-int JS_COMPARESTRING(CFX_WideString* ps1, CFX_WideString* ps2) {
-  return ps1->Compare(*ps2);
-}
-
 FX_BOOL Field::getArray(IJS_Context* cc,
                         const std::vector<CJS_Value>& params,
                         CJS_Value& vRet,
@@ -3095,35 +3095,38 @@ FX_BOOL Field::getArray(IJS_Context* cc,
   if (FieldArray.empty())
     return FALSE;
 
-  CGW_ArrayTemplate<CFX_WideString*> swSort;
+  std::vector<std::unique_ptr<CFX_WideString>> swSort;
+  for (CPDF_FormField* pFormField : FieldArray) {
+    swSort.push_back(std::unique_ptr<CFX_WideString>(
+        new CFX_WideString(pFormField->GetFullName())));
+  }
 
-  for (CPDF_FormField* pFormField : FieldArray)
-    swSort.Add(new CFX_WideString(pFormField->GetFullName()));
-  swSort.Sort(JS_COMPARESTRING);
+  std::sort(
+      swSort.begin(), swSort.end(),
+      [](const std::unique_ptr<CFX_WideString>& p1,
+         const std::unique_ptr<CFX_WideString>& p2) { return *p1 < *p2; });
 
   CJS_Context* pContext = (CJS_Context*)cc;
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  ASSERT(pRuntime);
-
   CJS_Array FormFieldArray(pRuntime);
-  for (int j = 0, jsz = swSort.GetSize(); j < jsz; j++) {
-    std::unique_ptr<CFX_WideString> pStr(swSort.GetAt(j));
+
+  int j = 0;
+  for (const auto& pStr : swSort) {
     v8::Local<v8::Object> pObj = FXJS_NewFxDynamicObj(
         pRuntime->GetIsolate(), pRuntime, CJS_Field::g_nObjDefnID);
     ASSERT(!pObj.IsEmpty());
 
     CJS_Field* pJSField =
-        (CJS_Field*)FXJS_GetPrivate(pRuntime->GetIsolate(), pObj);
-    Field* pField = (Field*)pJSField->GetEmbedObject();
+        static_cast<CJS_Field*>(FXJS_GetPrivate(pRuntime->GetIsolate(), pObj));
+    Field* pField = static_cast<Field*>(pJSField->GetEmbedObject());
     pField->AttachField(m_pJSDoc, *pStr);
 
     CJS_Value FormFieldValue(pRuntime);
     FormFieldValue = pJSField;
-    FormFieldArray.SetElement(j, FormFieldValue);
+    FormFieldArray.SetElement(j++, FormFieldValue);
   }
 
   vRet = FormFieldArray;
-  swSort.RemoveAll();
   return TRUE;
 }
 
