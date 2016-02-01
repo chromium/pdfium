@@ -14,12 +14,13 @@
 #endif
 
 #include <map>
+#include <vector>
 
 #include "core/include/fpdfapi/fpdf_parser.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
 #include "core/include/fxcrt/fx_basic.h"
 #include "core/include/fxge/fx_dib.h"
-#include "fsdk_baseannot.h"
+#include "fpdfsdk/include/fsdk_baseannot.h"
 
 class CFFL_FormFiller;
 class CPDFSDK_Annot;
@@ -373,14 +374,10 @@ class CPDFSDK_InterForm : public CPDF_FormNotify {
   FX_BOOL m_bNeedHightlight[kNumFieldTypes];
 };
 
-#define BAI_STRUCTURE 0
-#define BAI_ROW 1
-#define BAI_COLUMN 2
-
-#define CPDFSDK_Annots CFX_ArrayTemplate<CPDFSDK_Annot*>
-#define CPDFSDK_SortAnnots CGW_ArrayTemplate<CPDFSDK_Annot*>
 class CBA_AnnotIterator {
  public:
+  enum TabOrder { STRUCTURE = 0, ROW, COLUMN };
+
   CBA_AnnotIterator(CPDFSDK_PageView* pPageView,
                     const CFX_ByteString& sType,
                     const CFX_ByteString& sSubType);
@@ -393,15 +390,19 @@ class CBA_AnnotIterator {
 
  private:
   void GenerateResults();
-  static int CompareByLeft(CPDFSDK_Annot* p1, CPDFSDK_Annot* p2);
-  static int CompareByTop(CPDFSDK_Annot* p1, CPDFSDK_Annot* p2);
-  static CPDF_Rect GetAnnotRect(CPDFSDK_Annot* pAnnot);
+  static CPDF_Rect GetAnnotRect(const CPDFSDK_Annot* pAnnot);
 
+  // Function signature compatible with std::sort().
+  static bool CompareByLeftAscending(const CPDFSDK_Annot* p1,
+                                     const CPDFSDK_Annot* p2);
+  static bool CompareByTopDescending(const CPDFSDK_Annot* p1,
+                                     const CPDFSDK_Annot* p2);
+
+  TabOrder m_eTabOrder;
   CPDFSDK_PageView* m_pPageView;
   CFX_ByteString m_sType;
   CFX_ByteString m_sSubType;
-  int m_nTabs;
-  CPDFSDK_Annots m_Annots;
+  std::vector<CPDFSDK_Annot*> m_Annots;
 };
 
 #endif  // FPDFSDK_INCLUDE_FSDK_BASEFORM_H_

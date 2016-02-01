@@ -561,6 +561,7 @@ class CPDFSDK_Document {
   FX_BOOL m_bChangeMask;
   FX_BOOL m_bBeingDestroyed;
 };
+
 class CPDFSDK_PageView final {
  public:
   CPDFSDK_PageView(CPDFSDK_Document* pSDKDoc, UnderlyingPageType* page);
@@ -665,79 +666,6 @@ class CPDFSDK_PageView final {
   FX_BOOL m_bOnWidget;
   FX_BOOL m_bValid;
   FX_BOOL m_bLocked;
-};
-
-template <class TYPE>
-class CGW_ArrayTemplate : public CFX_ArrayTemplate<TYPE> {
- public:
-  CGW_ArrayTemplate() {}
-  ~CGW_ArrayTemplate() {}
-
-  typedef int (*LP_COMPARE)(TYPE p1, TYPE p2);
-
-  void Sort(LP_COMPARE pCompare, FX_BOOL bAscent = TRUE) {
-    int nSize = this->GetSize();
-    QuickSort(0, nSize - 1, bAscent, pCompare);
-  }
-
- private:
-  void QuickSort(FX_UINT nStartPos,
-                 FX_UINT nStopPos,
-                 FX_BOOL bAscend,
-                 LP_COMPARE pCompare) {
-    if (nStartPos >= nStopPos)
-      return;
-
-    if ((nStopPos - nStartPos) == 1) {
-      TYPE Value1 = this->GetAt(nStartPos);
-      TYPE Value2 = this->GetAt(nStopPos);
-
-      int iGreate = (*pCompare)(Value1, Value2);
-      if ((bAscend && iGreate > 0) || (!bAscend && iGreate < 0)) {
-        this->SetAt(nStartPos, Value2);
-        this->SetAt(nStopPos, Value1);
-      }
-      return;
-    }
-
-    FX_UINT m = nStartPos + (nStopPos - nStartPos) / 2;
-    FX_UINT i = nStartPos;
-
-    TYPE Value = this->GetAt(m);
-
-    while (i < m) {
-      TYPE temp = this->GetAt(i);
-
-      int iGreate = (*pCompare)(temp, Value);
-      if ((bAscend && iGreate > 0) || (!bAscend && iGreate < 0)) {
-        this->InsertAt(m + 1, temp);
-        this->RemoveAt(i);
-        m--;
-      } else {
-        i++;
-      }
-    }
-
-    FX_UINT j = nStopPos;
-
-    while (j > m) {
-      TYPE temp = this->GetAt(j);
-
-      int iGreate = (*pCompare)(temp, Value);
-      if ((bAscend && iGreate < 0) || (!bAscend && iGreate > 0)) {
-        this->RemoveAt(j);
-        this->InsertAt(m, temp);
-        m++;
-      } else {
-        j--;
-      }
-    }
-
-    if (nStartPos < m)
-      QuickSort(nStartPos, m, bAscend, pCompare);
-    if (nStopPos > m)
-      QuickSort(m, nStopPos, bAscend, pCompare);
-  }
 };
 
 #endif  // FPDFSDK_INCLUDE_FSDK_MGR_H_
