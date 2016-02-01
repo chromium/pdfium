@@ -290,9 +290,10 @@ TEST(fpdf_parser_parser, LoadCrossRefV4) {
     ASSERT_TRUE(parser.LoadCrossRefV4(0, 0, FALSE));
     const FX_FILESIZE offsets[] = {0, 17, 81, 0, 331, 409};
     const uint8_t types[] = {0, 1, 1, 0, 1, 1};
-    for (size_t i = 0; i < FX_ArraySize(offsets); ++i)
+    for (size_t i = 0; i < FX_ArraySize(offsets); ++i) {
       EXPECT_EQ(offsets[i], parser.m_ObjectInfo[i].pos);
-    ASSERT_TRUE(CompareArray(parser.m_V5Type, types, FX_ArraySize(types)));
+      EXPECT_EQ(types[i], parser.m_ObjectInfo[i].type);
+    }
   }
   {
     const unsigned char xref_table[] =
@@ -315,9 +316,10 @@ TEST(fpdf_parser_parser, LoadCrossRefV4) {
     const FX_FILESIZE offsets[] = {0, 0,     0,     25325, 0, 0,    0,
                                    0, 25518, 25635, 0,     0, 25777};
     const uint8_t types[] = {0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1};
-    for (size_t i = 0; i < FX_ArraySize(offsets); ++i)
+    for (size_t i = 0; i < FX_ArraySize(offsets); ++i) {
       EXPECT_EQ(offsets[i], parser.m_ObjectInfo[i].pos);
-    ASSERT_TRUE(CompareArray(parser.m_V5Type, types, FX_ArraySize(types)));
+      EXPECT_EQ(types[i], parser.m_ObjectInfo[i].type);
+    }
   }
   {
     const unsigned char xref_table[] =
@@ -340,9 +342,10 @@ TEST(fpdf_parser_parser, LoadCrossRefV4) {
     const FX_FILESIZE offsets[] = {0, 0, 0,     25325, 0, 0,    0,
                                    0, 0, 25635, 0,     0, 25777};
     const uint8_t types[] = {0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1};
-    for (size_t i = 0; i < FX_ArraySize(offsets); ++i)
+    for (size_t i = 0; i < FX_ArraySize(offsets); ++i) {
       EXPECT_EQ(offsets[i], parser.m_ObjectInfo[i].pos);
-    ASSERT_TRUE(CompareArray(parser.m_V5Type, types, FX_ArraySize(types)));
+      EXPECT_EQ(types[i], parser.m_ObjectInfo[i].type);
+    }
   }
   {
     const unsigned char xref_table[] =
@@ -363,8 +366,9 @@ TEST(fpdf_parser_parser, LoadCrossRefV4) {
     ASSERT_TRUE(parser.LoadCrossRefV4(0, 0, FALSE));
     const FX_FILESIZE offsets[] = {0, 23, 0, 0, 0, 45, 179};
     const uint8_t types[] = {0, 1, 0, 0, 0, 1, 1};
-    for (size_t i = 0; i < FX_ArraySize(offsets); ++i)
+    for (size_t i = 0; i < FX_ArraySize(offsets); ++i) {
       EXPECT_EQ(offsets[i], parser.m_ObjectInfo[i].pos);
-    ASSERT_TRUE(CompareArray(parser.m_V5Type, types, FX_ArraySize(types)));
+      EXPECT_EQ(types[i], parser.m_ObjectInfo[i].type);
+    }
   }
 }
