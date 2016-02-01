@@ -690,77 +690,50 @@ FX_BOOL app::response(IJS_Context* cc,
                       const std::vector<CJS_Value>& params,
                       CJS_Value& vRet,
                       CFX_WideString& sError) {
-  CFX_WideString swQuestion = L"";
-  CFX_WideString swLabel = L"";
-  CFX_WideString swTitle = L"PDF";
-  CFX_WideString swDefault = L"";
-  bool bPassWord = false;
-
+  CJS_Context* pContext = static_cast<CJS_Context*>(cc);
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
-  v8::Isolate* isolate = pRuntime->GetIsolate();
+  std::vector<CJS_Value> newParams =
+      JS_ExpandKeywordParams(pRuntime, params, 5, L"cQuestion", L"cTitle",
+                             L"cDefault", L"bPassword", L"cLabel");
 
-  int iLength = params.size();
-  if (iLength > 0 && params[0].GetType() == CJS_Value::VT_object) {
-    v8::Local<v8::Object> pObj = params[0].ToV8Object();
-    v8::Local<v8::Value> pValue =
-        FXJS_GetObjectElement(isolate, pObj, L"cQuestion");
-    swQuestion =
-        CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
-
-    pValue = FXJS_GetObjectElement(isolate, pObj, L"cTitle");
-    swTitle =
-        CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
-
-    pValue = FXJS_GetObjectElement(isolate, pObj, L"cDefault");
-    swDefault =
-        CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
-
-    pValue = FXJS_GetObjectElement(isolate, pObj, L"cLabel");
-    swLabel =
-        CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToCFXWideString();
-
-    pValue = FXJS_GetObjectElement(isolate, pObj, L"bPassword");
-    bPassWord = CJS_Value(pRuntime, pValue, GET_VALUE_TYPE(pValue)).ToBool();
-  } else {
-    switch (iLength) {
-      case 5:
-        swLabel = params[4].ToCFXWideString();
-      // FALLTHROUGH
-      case 4:
-        bPassWord = params[3].ToBool();
-      // FALLTHROUGH
-      case 3:
-        swDefault = params[2].ToCFXWideString();
-      // FALLTHROUGH
-      case 2:
-        swTitle = params[1].ToCFXWideString();
-      // FALLTHROUGH
-      case 1:
-        swQuestion = params[0].ToCFXWideString();
-      // FALLTHROUGH
-      default:
-        break;
-    }
+  if (newParams[0].GetType() == CJS_Value::VT_unknown) {
+    sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
+    return FALSE;
   }
+  CFX_WideString swQuestion = newParams[0].ToCFXWideString();
 
-  CJS_Context* pContext = (CJS_Context*)cc;
-  CPDFDoc_Environment* pApp = pContext->GetReaderApp();
+  CFX_WideString swTitle = L"PDF";
+  if (newParams[1].GetType() != CJS_Value::VT_unknown)
+    swTitle = newParams[1].ToCFXWideString();
+
+  CFX_WideString swDefault;
+  if (newParams[2].GetType() != CJS_Value::VT_unknown)
+    swDefault = newParams[2].ToCFXWideString();
+
+  bool bPassword = false;
+  if (newParams[3].GetType() != CJS_Value::VT_unknown)
+    bPassword = newParams[3].ToBool();
+
+  CFX_WideString swLabel;
+  if (newParams[4].GetType() != CJS_Value::VT_unknown)
+    swLabel = newParams[4].ToCFXWideString();
 
   const int MAX_INPUT_BYTES = 2048;
   std::unique_ptr<char[]> pBuff(new char[MAX_INPUT_BYTES + 2]);
   memset(pBuff.get(), 0, MAX_INPUT_BYTES + 2);
-  int nLengthBytes = pApp->JS_appResponse(
+
+  int nLengthBytes = pContext->GetReaderApp()->JS_appResponse(
       swQuestion.c_str(), swTitle.c_str(), swDefault.c_str(), swLabel.c_str(),
-      bPassWord, pBuff.get(), MAX_INPUT_BYTES);
-  if (nLengthBytes <= 0) {
-    vRet.SetNull();
+      bPassword, pBuff.get(), MAX_INPUT_BYTES);
+
+  if (nLengthBytes < 0 || nLengthBytes > MAX_INPUT_BYTES) {
+    sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAM_TOOLONG);
     return FALSE;
   }
-  nLengthBytes = std::min(nLengthBytes, MAX_INPUT_BYTES);
 
-  CFX_WideString ret_string = CFX_WideString::FromUTF16LE(
-      (unsigned short*)pBuff.get(), nLengthBytes / sizeof(unsigned short));
-  vRet = ret_string.c_str();
+  vRet = CFX_WideString::FromUTF16LE(reinterpret_cast<uint16_t*>(pBuff.get()),
+                                     nLengthBytes / sizeof(uint16_t))
+             .c_str();
   return TRUE;
 }
 
