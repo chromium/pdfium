@@ -36,6 +36,10 @@ class CPDFSDK_PageView;
 class CPDFSDK_Widget;
 class IFX_SystemHandler;
 
+// NOTE: |bsUTF16LE| must outlive the use of the result. Care must be taken
+// since modifying the result would impact |bsUTF16LE|.
+FPDF_WIDESTRING AsFPDFWideString(CFX_ByteString* bsUTF16LE);
+
 class CPDFDoc_Environment final {
  public:
   CPDFDoc_Environment(UnderlyingDocumentType* pDoc, FPDF_FORMFILLINFO* pFFinfo);
@@ -117,56 +121,6 @@ class CPDFDoc_Environment final {
   }
 
   FX_BOOL FFI_IsINSERTKeyDown(FX_DWORD nFlag) const { return FALSE; }
-
-  int JS_appAlert(const FX_WCHAR* Msg,
-                  const FX_WCHAR* Title,
-                  FX_UINT Type,
-                  FX_UINT Icon);
-  int JS_appResponse(const FX_WCHAR* Question,
-                     const FX_WCHAR* Title,
-                     const FX_WCHAR* Default,
-                     const FX_WCHAR* cLabel,
-                     FPDF_BOOL bPassword,
-                     void* response,
-                     int length);
-
-  void JS_appBeep(int nType) {
-    if (m_pInfo && m_pInfo->m_pJsPlatform && m_pInfo->m_pJsPlatform->app_beep)
-      m_pInfo->m_pJsPlatform->app_beep(m_pInfo->m_pJsPlatform, nType);
-  }
-
-  CFX_WideString JS_fieldBrowse();
-  CFX_WideString JS_docGetFilePath();
-
-  void JS_docSubmitForm(void* formData, int length, const FX_WCHAR* URL);
-  void JS_docmailForm(void* mailData,
-                      int length,
-                      FPDF_BOOL bUI,
-                      const FX_WCHAR* To,
-                      const FX_WCHAR* Subject,
-                      const FX_WCHAR* CC,
-                      const FX_WCHAR* BCC,
-                      const FX_WCHAR* Msg);
-
-  void JS_docprint(FPDF_BOOL bUI,
-                   int nStart,
-                   int nEnd,
-                   FPDF_BOOL bSilent,
-                   FPDF_BOOL bShrinkToFit,
-                   FPDF_BOOL bPrintAsImage,
-                   FPDF_BOOL bReverse,
-                   FPDF_BOOL bAnnotations) {
-    if (m_pInfo && m_pInfo->m_pJsPlatform && m_pInfo->m_pJsPlatform->Doc_print)
-      m_pInfo->m_pJsPlatform->Doc_print(m_pInfo->m_pJsPlatform, bUI, nStart,
-                                        nEnd, bSilent, bShrinkToFit,
-                                        bPrintAsImage, bReverse, bAnnotations);
-  }
-
-  void JS_docgotoPage(int nPageNum) {
-    if (m_pInfo && m_pInfo->m_pJsPlatform &&
-        m_pInfo->m_pJsPlatform->Doc_gotoPage)
-      m_pInfo->m_pJsPlatform->Doc_gotoPage(m_pInfo->m_pJsPlatform, nPageNum);
-  }
 
   FPDF_PAGE FFI_GetPage(FPDF_DOCUMENT document, int nPageIndex) {
     if (m_pInfo && m_pInfo->FFI_GetPage)
@@ -451,6 +405,39 @@ class CPDFDoc_Environment final {
     return L"";
   }
 #endif  // PDF_ENABLE_XFA
+
+  int JS_appAlert(const FX_WCHAR* Msg,
+                  const FX_WCHAR* Title,
+                  FX_UINT Type,
+                  FX_UINT Icon);
+  int JS_appResponse(const FX_WCHAR* Question,
+                     const FX_WCHAR* Title,
+                     const FX_WCHAR* Default,
+                     const FX_WCHAR* cLabel,
+                     FPDF_BOOL bPassword,
+                     void* response,
+                     int length);
+  void JS_appBeep(int nType);
+  CFX_WideString JS_fieldBrowse();
+  CFX_WideString JS_docGetFilePath();
+  void JS_docSubmitForm(void* formData, int length, const FX_WCHAR* URL);
+  void JS_docmailForm(void* mailData,
+                      int length,
+                      FPDF_BOOL bUI,
+                      const FX_WCHAR* To,
+                      const FX_WCHAR* Subject,
+                      const FX_WCHAR* CC,
+                      const FX_WCHAR* BCC,
+                      const FX_WCHAR* Msg);
+  void JS_docprint(FPDF_BOOL bUI,
+                   int nStart,
+                   int nEnd,
+                   FPDF_BOOL bSilent,
+                   FPDF_BOOL bShrinkToFit,
+                   FPDF_BOOL bPrintAsImage,
+                   FPDF_BOOL bReverse,
+                   FPDF_BOOL bAnnotations);
+  void JS_docgotoPage(int nPageNum);
 
   FX_BOOL IsJSInitiated() const { return m_pInfo && m_pInfo->m_pJsPlatform; }
   void SetSDKDocument(CPDFSDK_Document* pFXDoc) { m_pSDKDoc = pFXDoc; }
