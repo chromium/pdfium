@@ -7,20 +7,6 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/path_service.h"
 
-// Functions to help test an array's content against expected results.
-template <class TYPE>
-bool CompareArray(const CFX_ArrayTemplate<TYPE>& array1,
-                  const TYPE* array2,
-                  size_t size) {
-  if (array1.GetSize() != size)
-    return false;
-
-  for (int i = 0; i < size; ++i)
-    if (array1.GetAt(i) != array2[i])
-      return false;
-  return true;
-}
-
 // Provide a way to read test data from a buffer instead of a file.
 class CFX_TestBufferRead : public IFX_FileRead {
  public:
@@ -257,8 +243,8 @@ TEST(fpdf_parser_parser, RebuildCrossRefCorrectly) {
   const FX_WORD versions[] = {0, 0, 2, 4, 6, 8, 0};
   for (size_t i = 0; i < FX_ArraySize(offsets); ++i)
     EXPECT_EQ(offsets[i], parser.m_ObjectInfo[i].pos);
-  ASSERT_TRUE(
-      CompareArray(parser.m_ObjVersion, versions, FX_ArraySize(versions)));
+  for (size_t i = 0; i < FX_ArraySize(versions); ++i)
+    EXPECT_EQ(versions[i], parser.m_ObjectInfo[i].gennum);
 }
 
 TEST(fpdf_parser_parser, RebuildCrossRefFailed) {
