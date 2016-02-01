@@ -195,6 +195,9 @@ void WriteEmf(FPDF_PAGE page, const char* pdf_name, int num) {
 }
 #endif
 
+// These example JS platform callback handlers are entirely optional,
+// and exist here to show the flow of information from a document back
+// to the embedder.
 int ExampleAppAlert(IPDF_JSPLATFORM*,
                     FPDF_WIDESTRING msg,
                     FPDF_WIDESTRING title,
@@ -205,6 +208,29 @@ int ExampleAppAlert(IPDF_JSPLATFORM*,
     printf("[icon=%d,type=%d]", nIcon, nType);
   printf(": %ls\n", GetPlatformWString(msg).c_str());
   return 0;
+}
+
+int ExampleAppResponse(IPDF_JSPLATFORM*,
+                       FPDF_WIDESTRING question,
+                       FPDF_WIDESTRING title,
+                       FPDF_WIDESTRING defaultValue,
+                       FPDF_WIDESTRING label,
+                       FPDF_BOOL isPassword,
+                       void* response,
+                       int length) {
+  printf("%ls: %ls, defaultValue=%ls, label=%ls, isPassword=%d, length=%d\n",
+         GetPlatformWString(title).c_str(),
+         GetPlatformWString(question).c_str(),
+         GetPlatformWString(defaultValue).c_str(),
+         GetPlatformWString(label).c_str(), isPassword, length);
+
+  // UTF-16, always LE regardless of platform.
+  uint8_t* ptr = static_cast<uint8_t*>(response);
+  ptr[0] = 'N';
+  ptr[1] = 0;
+  ptr[2] = 'o';
+  ptr[3] = 0;
+  return 4;
 }
 
 void ExampleDocGotoPage(IPDF_JSPLATFORM*, int pageNumber) {
@@ -425,6 +451,7 @@ void RenderPdf(const std::string& name, const char* pBuf, size_t len,
   memset(&platform_callbacks, '\0', sizeof(platform_callbacks));
   platform_callbacks.version = 3;
   platform_callbacks.app_alert = ExampleAppAlert;
+  platform_callbacks.app_response = ExampleAppResponse;
   platform_callbacks.Doc_gotoPage = ExampleDocGotoPage;
   platform_callbacks.Doc_mail = ExampleDocMail;
 
