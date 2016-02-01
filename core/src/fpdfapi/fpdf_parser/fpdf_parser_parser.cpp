@@ -131,7 +131,9 @@ uint8_t CPDF_Parser::GetObjectType(FX_DWORD objnum) const {
 }
 
 uint16_t CPDF_Parser::GetObjectGenNum(FX_DWORD objnum) const {
-  return m_ObjVersion[objnum];
+  ASSERT(IsValidObjectNumber(objnum));
+  auto it = m_ObjectInfo.find(objnum);
+  return it != m_ObjectInfo.end() ? it->second.gennum : 0;
 }
 
 bool CPDF_Parser::IsObjectFreeOrNull(FX_DWORD objnum) const {
@@ -179,7 +181,6 @@ void CPDF_Parser::CloseParser() {
 
   m_SortedOffset.RemoveAll();
   m_ObjectInfo.clear();
-  m_ObjVersion.RemoveAll();
   int32_t iLen = m_Trailers.GetSize();
   for (int32_t i = 0; i < iLen; ++i) {
     if (CPDF_Dictionary* trailer = m_Trailers.GetAt(i))
@@ -486,7 +487,7 @@ FX_BOOL CPDF_Parser::LoadLinearizedCrossRefV4(FX_FILESIZE pos,
         if (version >= 1) {
           m_bVersionUpdated = TRUE;
         }
-        m_ObjVersion.SetAtGrow(objnum, version);
+        m_ObjectInfo[objnum].gennum = version;
         if (m_ObjectInfo[objnum].pos < m_Syntax.m_FileLen) {
           void* pResult = FXSYS_bsearch(
               &m_ObjectInfo[objnum].pos, m_SortedOffset.GetData(),
@@ -568,7 +569,7 @@ bool CPDF_Parser::LoadCrossRefV4(FX_FILESIZE pos,
             if (version >= 1) {
               m_bVersionUpdated = TRUE;
             }
-            m_ObjVersion.SetAtGrow(objnum, version);
+            m_ObjectInfo[objnum].gennum = version;
             if (m_ObjectInfo[objnum].pos < m_Syntax.m_FileLen &&
                 !FindPosInOffsets(m_ObjectInfo[objnum].pos)) {
               m_SortedOffset.Add(m_ObjectInfo[objnum].pos);
@@ -606,7 +607,6 @@ FX_BOOL CPDF_Parser::LoadAllCrossRefV5(FX_FILESIZE xrefpos) {
 FX_BOOL CPDF_Parser::RebuildCrossRef() {
   m_ObjectInfo.clear();
   m_SortedOffset.RemoveAll();
-  m_ObjVersion.RemoveAll();
   if (m_pTrailer) {
     m_pTrailer->Release();
     m_pTrailer = NULL;
@@ -811,9 +811,9 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
                 if (!m_ObjectInfo.empty() && IsValidObjectNumber(objnum) &&
                     m_ObjectInfo[objnum].pos) {
                   if (pObject) {
-                    FX_DWORD oldgen = m_ObjVersion.GetAt(objnum);
+                    FX_DWORD oldgen = GetObjectGenNum(objnum);
                     m_ObjectInfo[objnum].pos = obj_pos;
-                    m_ObjVersion.SetAt(objnum, (int16_t)gennum);
+                    m_ObjectInfo[objnum].gennum = gennum;
                     if (oldgen != gennum) {
                       m_bVersionUpdated = TRUE;
                     }
@@ -821,7 +821,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
                 } else {
                   m_ObjectInfo[objnum].pos = obj_pos;
                   m_ObjectInfo[objnum].type = 1;
-                  m_ObjVersion.SetAtGrow(objnum, (int16_t)gennum);
+                  m_ObjectInfo[objnum].gennum = gennum;
                 }
                 if (pObject) {
                   pObject->Release();

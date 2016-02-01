@@ -430,18 +430,14 @@ class CPDF_Parser {
   CFX_ByteString m_Password;
 
   struct ObjectInfo {
-    ObjectInfo() : pos(0), type(0) {}
+    ObjectInfo() : pos(0), type(0), gennum(0) {}
 
     FX_FILESIZE pos;
     uint8_t type;
-// TODO(thestig): Use field below in place of |m_ObjVersion|
-#if 0
     uint16_t gennum;
-#endif
   };
   std::map<FX_DWORD, ObjectInfo> m_ObjectInfo;
 
-  CFX_WordArray m_ObjVersion;
   CFX_FileSizeArray m_SortedOffset;
   CFX_ArrayTemplate<CPDF_Dictionary*> m_Trailers;
   FX_BOOL m_bVersionUpdated;
