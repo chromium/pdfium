@@ -10,6 +10,7 @@
 #include <cctype>
 #include <cwctype>
 #include <memory>
+#include <vector>
 
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_page.h"
