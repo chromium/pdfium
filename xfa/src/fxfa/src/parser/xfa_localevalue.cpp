@@ -672,61 +672,59 @@ FX_BOOL CXFA_LocaleValue::ValidateCanonicalDate(const CFX_WideString& wsDate,
 }
 FX_BOOL CXFA_LocaleValue::ValidateCanonicalTime(const CFX_WideString& wsTime) {
   int nLen = wsTime.GetLength();
-  if (nLen < 2) {
+  if (nLen < 2)
     return FALSE;
-  }
-  const FX_WORD wCountH = 2, wCountM = 2, wCountS = 2, wCountF = 3;
+  const FX_WORD wCountH = 2;
+  const FX_WORD wCountM = 2;
+  const FX_WORD wCountS = 2;
+  const FX_WORD wCountF = 3;
   FX_BOOL bSymbol = (wsTime.Find(':') == -1) ? FALSE : TRUE;
-  FX_WORD wHour = 0, wMinute = 0, wSecond = 0, wFraction = 0;
+  FX_WORD wHour = 0;
+  FX_WORD wMinute = 0;
+  FX_WORD wSecond = 0;
+  FX_WORD wFraction = 0;
   const FX_WCHAR* pTime = (const FX_WCHAR*)wsTime;
-  int nIndex = 0, nStart = 0;
-  while (pTime[nIndex] != '\0' && nIndex - nStart < wCountH) {
-    if (!XFA_IsDigit(pTime[nIndex])) {
+  int nIndex = 0;
+  int nStart = 0;
+  while (nIndex - nStart < wCountH && pTime[nIndex]) {
+    if (!XFA_IsDigit(pTime[nIndex]))
       return FALSE;
-    }
-    wHour = (pTime[nIndex] - '0') + wHour * 10;
+    wHour = pTime[nIndex] - '0' + wHour * 10;
     nIndex++;
   }
   if (bSymbol) {
-    if (nIndex < nLen && pTime[nIndex] != ':') {
+    if (nIndex < nLen && pTime[nIndex] != ':')
       return FALSE;
-    }
     nIndex++;
   }
   nStart = nIndex;
-  while (pTime[nIndex] != '\0' && nIndex - nStart < wCountM && nIndex < nLen) {
-    if (!XFA_IsDigit(pTime[nIndex])) {
+  while (nIndex - nStart < wCountM && nIndex < nLen && pTime[nIndex]) {
+    if (!XFA_IsDigit(pTime[nIndex]))
       return FALSE;
-    }
-    wMinute = (pTime[nIndex] - '0') + wMinute * 10;
+    wMinute = pTime[nIndex] - '0' + wMinute * 10;
     nIndex++;
   }
   if (bSymbol) {
-    if (nIndex < nLen && pTime[nIndex] != ':') {
+    if (nIndex < nLen && pTime[nIndex] != ':')
       return FALSE;
-    }
     nIndex++;
   }
   nStart = nIndex;
-  while (pTime[nIndex] != '\0' && nIndex - nStart < wCountS && nIndex < nLen) {
-    if (!XFA_IsDigit(pTime[nIndex])) {
+  while (nIndex - nStart < wCountS && nIndex < nLen && pTime[nIndex]) {
+    if (!XFA_IsDigit(pTime[nIndex]))
       return FALSE;
-    }
-    wSecond = (pTime[nIndex] - '0') + wSecond * 10;
+    wSecond = pTime[nIndex] - '0' + wSecond * 10;
     nIndex++;
   }
   if (wsTime.Find('.') > 0) {
-    if (pTime[nIndex] != '.') {
+    if (pTime[nIndex] != '.')
       return FALSE;
-    }
     nIndex++;
     nStart = nIndex;
-    while (pTime[nIndex] != '\0' && nIndex - nStart < wCountF &&
-           nIndex < nLen) {
-      if (!XFA_IsDigit(pTime[nIndex])) {
+    while (nIndex - nStart < wCountF && nIndex < nLen && pTime[nIndex]) {
+      if (!XFA_IsDigit(pTime[nIndex]))
         return FALSE;
-      }
-      wFraction = (pTime[nIndex] - '0') + wFraction * 10;
+      wFraction = pTime[nIndex] - '0' + wFraction * 10;
       nIndex++;
     }
   }
@@ -734,56 +732,34 @@ FX_BOOL CXFA_LocaleValue::ValidateCanonicalTime(const CFX_WideString& wsTime) {
     if (pTime[nIndex] == 'Z') {
       nIndex++;
     } else if (pTime[nIndex] == '-' || pTime[nIndex] == '+') {
-      int16_t nOffsetH = 0, nOffsetM = 0;
+      int16_t nOffsetH = 0;
+      int16_t nOffsetM = 0;
       nIndex++;
       nStart = nIndex;
-      while (pTime[nIndex] != '\0' && nIndex - nStart < wCountH &&
-             nIndex < nLen) {
-        if (!XFA_IsDigit(pTime[nIndex])) {
+      while (nIndex - nStart < wCountH && nIndex < nLen && pTime[nIndex]) {
+        if (!XFA_IsDigit(pTime[nIndex]))
           return FALSE;
-        }
-        nOffsetH = (pTime[nIndex] - '0') + nOffsetH * 10;
+        nOffsetH = pTime[nIndex] - '0' + nOffsetH * 10;
         nIndex++;
       }
       if (bSymbol) {
-        if (nIndex < nLen && pTime[nIndex] != ':') {
+        if (nIndex < nLen && pTime[nIndex] != ':')
           return FALSE;
-        }
         nIndex++;
       }
       nStart = nIndex;
-      while (pTime[nIndex] != '\0' && nIndex - nStart < wCountM &&
-             nIndex < nLen) {
-        if (!XFA_IsDigit(pTime[nIndex])) {
+      while (nIndex - nStart < wCountM && nIndex < nLen && pTime[nIndex]) {
+        if (!XFA_IsDigit(pTime[nIndex]))
           return FALSE;
-        }
-        nOffsetM = (pTime[nIndex] - '0') + nOffsetM * 10;
+        nOffsetM = pTime[nIndex] - '0' + nOffsetM * 10;
         nIndex++;
       }
-      if (nOffsetH > 12) {
+      if (nOffsetH > 12 || nOffsetM >= 60)
         return FALSE;
-      }
-      if (nOffsetM >= 60) {
-        return FALSE;
-      }
     }
   }
-  if (nIndex != nLen) {
-    return FALSE;
-  }
-  if (wHour >= 24) {
-    return FALSE;
-  }
-  if (wMinute >= 60) {
-    return FALSE;
-  }
-  if (wSecond >= 60) {
-    return FALSE;
-  }
-  if (wFraction > 999) {
-    return FALSE;
-  }
-  return TRUE;
+  return nIndex == nLen && wHour < 24 && wMinute < 60 && wSecond < 60 &&
+         wFraction <= 999;
 }
 FX_BOOL CXFA_LocaleValue::ValidateCanonicalDateTime(
     const CFX_WideString& wsDateTime) {
