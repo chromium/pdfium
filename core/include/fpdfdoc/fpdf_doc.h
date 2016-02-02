@@ -797,8 +797,8 @@ class CPDF_FormField {
   int FindOptionValue(const CFX_WideString& csOptValue, int iStartIndex = 0);
 
   FX_BOOL CheckControl(int iControlIndex,
-                       FX_BOOL bChecked,
-                       FX_BOOL bNotify = FALSE);
+                       bool bChecked,
+                       bool bNotify = false);
 
   int GetTopVisibleIndex();
 

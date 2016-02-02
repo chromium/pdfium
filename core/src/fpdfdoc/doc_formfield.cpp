@@ -726,8 +726,8 @@ int CPDF_FormField::FindOptionValue(const CFX_WideString& csOptValue,
   return -1;
 }
 FX_BOOL CPDF_FormField::CheckControl(int iControlIndex,
-                                     FX_BOOL bChecked,
-                                     FX_BOOL bNotify) {
+                                     bool bChecked,
+                                     bool bNotify) {
   ASSERT(GetType() == CheckBox || GetType() == RadioButton);
   CPDF_FormControl* pControl = GetControl(iControlIndex);
   if (!pControl) {
