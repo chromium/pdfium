@@ -748,16 +748,10 @@ int32_t CPDF_TextPage::FindTextlineFlowDirection() {
   }
   const int32_t nPageWidth = (int32_t)((CPDF_Page*)m_pPage)->GetPageWidth();
   const int32_t nPageHeight = (int32_t)((CPDF_Page*)m_pPage)->GetPageHeight();
-  CFX_ByteArray nHorizontalMask;
-  if (!nHorizontalMask.SetSize(nPageWidth)) {
-    return -1;
-  }
-  uint8_t* pDataH = nHorizontalMask.GetData();
-  CFX_ByteArray nVerticalMask;
-  if (!nVerticalMask.SetSize(nPageHeight)) {
-    return -1;
-  }
-  uint8_t* pDataV = nVerticalMask.GetData();
+  std::vector<uint8_t> nHorizontalMask(nPageWidth);
+  std::vector<uint8_t> nVerticalMask(nPageHeight);
+  uint8_t* pDataH = nHorizontalMask.data();
+  uint8_t* pDataV = nVerticalMask.data();
   int32_t index = 0;
   FX_FLOAT fLineHeight = 0.0f;
   CPDF_PageObject* pPageObj = NULL;

@@ -7,6 +7,8 @@
 #ifndef CORE_SRC_FPDFDOC_DOC_UTILS_H_
 #define CORE_SRC_FPDFDOC_DOC_UTILS_H_
 
+#include <vector>
+
 CFX_WideString GetFullName(CPDF_Dictionary* pFieldDict);
 void InitInterFormDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument);
 FX_DWORD CountInterFormFonts(CPDF_Dictionary* pFormDict);
@@ -54,7 +56,7 @@ CPDF_Font* GetDefaultInterFormFont(CPDF_Dictionary* pFormDict,
 void SetDefaultInterFormFont(CPDF_Dictionary*& pFormDict,
                              CPDF_Document* pDocument,
                              const CPDF_Font* pFont);
-void SaveCheckedFieldStatus(CPDF_FormField* pField, CFX_ByteArray& statusArray);
+std::vector<bool> SaveCheckedFieldStatus(CPDF_FormField* pField);
 FX_BOOL NeedPDFEncodeForFieldFullName(const CFX_WideString& csFieldName);
 FX_BOOL NeedPDFEncodeForFieldTree(CPDF_Dictionary* pFieldDict, int nLevel = 0);
 void EncodeFieldName(const CFX_WideString& csName, CFX_ByteString& csT);

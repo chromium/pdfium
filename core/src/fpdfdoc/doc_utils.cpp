@@ -678,17 +678,17 @@ FX_BOOL CPDF_IconFit::GetFittingBounds() {
   }
   return m_pDict->GetBooleanBy("FB");
 }
-void SaveCheckedFieldStatus(CPDF_FormField* pField,
-                            CFX_ByteArray& statusArray) {
+
+std::vector<bool> SaveCheckedFieldStatus(CPDF_FormField* pField) {
+  std::vector<bool> result;
   int iCount = pField->CountControls();
-  for (int i = 0; i < iCount; i++) {
-    CPDF_FormControl* pControl = pField->GetControl(i);
-    if (!pControl) {
-      continue;
-    }
-    statusArray.Add(pControl->IsChecked() ? 1 : 0);
+  for (int i = 0; i < iCount; ++i) {
+    if (CPDF_FormControl* pControl = pField->GetControl(i))
+      result.push_back(pControl->IsChecked());
   }
+  return result;
 }
+
 CPDF_Object* FPDF_GetFieldAttr(CPDF_Dictionary* pFieldDict,
                                const FX_CHAR* name,
                                int nLevel) {
