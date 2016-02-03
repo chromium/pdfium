@@ -997,23 +997,21 @@ class CPDF_FormNotify {
  public:
   virtual ~CPDF_FormNotify() {}
 
-  virtual int BeforeValueChange(const CPDF_FormField* pField,
-                                CFX_WideString& csValue) {
+  virtual int BeforeValueChange(CPDF_FormField* pField,
+                                const CFX_WideString& csValue) {
     return 0;
   }
-  virtual int AfterValueChange(const CPDF_FormField* pField) { return 0; }
-
-  virtual int BeforeSelectionChange(const CPDF_FormField* pField,
-                                    CFX_WideString& csValue) {
+  virtual void AfterValueChange(CPDF_FormField* pField) {}
+  virtual int BeforeSelectionChange(CPDF_FormField* pField,
+                                    const CFX_WideString& csValue) {
     return 0;
   }
-  virtual int AfterSelectionChange(const CPDF_FormField* pField) { return 0; }
-
+  virtual void AfterSelectionChange(CPDF_FormField* pField) {}
   virtual void AfterCheckedStatusChange(CPDF_FormField* pField) {}
-  virtual int BeforeFormReset(const CPDF_InterForm* pForm) { return 0; }
-  virtual int AfterFormReset(const CPDF_InterForm* pForm) { return 0; }
-  virtual int BeforeFormImportData(const CPDF_InterForm* pForm) { return 0; }
-  virtual int AfterFormImportData(const CPDF_InterForm* pForm) { return 0; }
+  virtual int BeforeFormReset(CPDF_InterForm* pForm) { return 0; }
+  virtual void AfterFormReset(CPDF_InterForm* pForm) {}
+  virtual int BeforeFormImportData(CPDF_InterForm* pForm) { return 0; }
+  virtual void AfterFormImportData(CPDF_InterForm* pForm) {}
 };
 
 FX_BOOL FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);

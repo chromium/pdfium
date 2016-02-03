@@ -197,12 +197,9 @@ class CPDFSDK_InterForm : public CPDF_FormNotify {
   void EnableCalculate(FX_BOOL bEnabled);
   FX_BOOL IsCalculateEnabled() const;
 
-  void OnKeyStrokeCommit(CPDF_FormField* pFormField,
-                         CFX_WideString& csValue,
-                         FX_BOOL& bRC);
-  void OnValidate(CPDF_FormField* pFormField,
-                  CFX_WideString& csValue,
-                  FX_BOOL& bRC);
+  FX_BOOL OnKeyStrokeCommit(CPDF_FormField* pFormField,
+                            const CFX_WideString& csValue);
+  FX_BOOL OnValidate(CPDF_FormField* pFormField, const CFX_WideString& csValue);
   void OnCalculate(CPDF_FormField* pFormField = NULL);
   CFX_WideString OnFormat(CPDF_FormField* pFormField, FX_BOOL& bFormated);
 
@@ -231,18 +228,18 @@ class CPDFSDK_InterForm : public CPDF_FormNotify {
   CFX_WideString GetTemporaryFileName(const CFX_WideString& sFileExt);
 
  private:
-  // CPDF_FormNotify
-  int BeforeValueChange(const CPDF_FormField* pField,
-                        CFX_WideString& csValue) override;
-  int AfterValueChange(const CPDF_FormField* pField) override;
-  int BeforeSelectionChange(const CPDF_FormField* pField,
-                            CFX_WideString& csValue) override;
-  int AfterSelectionChange(const CPDF_FormField* pField) override;
+  // CPDF_FormNotify:
+  int BeforeValueChange(CPDF_FormField* pField,
+                        const CFX_WideString& csValue) override;
+  void AfterValueChange(CPDF_FormField* pField) override;
+  int BeforeSelectionChange(CPDF_FormField* pField,
+                            const CFX_WideString& csValue) override;
+  void AfterSelectionChange(CPDF_FormField* pField) override;
   void AfterCheckedStatusChange(CPDF_FormField* pField) override;
-  int BeforeFormReset(const CPDF_InterForm* pForm) override;
-  int AfterFormReset(const CPDF_InterForm* pForm) override;
-  int BeforeFormImportData(const CPDF_InterForm* pForm) override;
-  int AfterFormImportData(const CPDF_InterForm* pForm) override;
+  int BeforeFormReset(CPDF_InterForm* pForm) override;
+  void AfterFormReset(CPDF_InterForm* pForm) override;
+  int BeforeFormImportData(CPDF_InterForm* pForm) override;
+  void AfterFormImportData(CPDF_InterForm* pForm) override;
 
   FX_BOOL FDFToURLEncodedData(CFX_WideString csFDFFile,
                               CFX_WideString csTxtFile);
