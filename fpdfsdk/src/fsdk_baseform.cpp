@@ -2322,46 +2322,46 @@ void CPDFSDK_InterForm::UpdateField(CPDF_FormField* pFormField) {
   }
 }
 
-void CPDFSDK_InterForm::OnKeyStrokeCommit(CPDF_FormField* pFormField,
-                                          CFX_WideString& csValue,
-                                          FX_BOOL& bRC) {
+FX_BOOL CPDFSDK_InterForm::OnKeyStrokeCommit(CPDF_FormField* pFormField,
+                                             const CFX_WideString& csValue) {
   CPDF_AAction aAction = pFormField->GetAdditionalAction();
-  if (aAction && aAction.ActionExist(CPDF_AAction::KeyStroke)) {
-    CPDF_Action action = aAction.GetAction(CPDF_AAction::KeyStroke);
-    if (action) {
-      CPDFDoc_Environment* pEnv = m_pDocument->GetEnv();
-      CPDFSDK_ActionHandler* pActionHandler = pEnv->GetActionHander();
-      PDFSDK_FieldAction fa;
-      fa.bModifier = pEnv->FFI_IsCTRLKeyDown(0);
-      fa.bShift = pEnv->FFI_IsSHIFTKeyDown(0);
-      fa.sValue = csValue;
+  if (!aAction || !aAction.ActionExist(CPDF_AAction::KeyStroke))
+    return TRUE;
 
-      pActionHandler->DoAction_FieldJavaScript(action, CPDF_AAction::KeyStroke,
-                                               m_pDocument, pFormField, fa);
-      bRC = fa.bRC;
-    }
-  }
+  CPDF_Action action = aAction.GetAction(CPDF_AAction::KeyStroke);
+  if (!action)
+    return TRUE;
+
+  CPDFDoc_Environment* pEnv = m_pDocument->GetEnv();
+  CPDFSDK_ActionHandler* pActionHandler = pEnv->GetActionHander();
+  PDFSDK_FieldAction fa;
+  fa.bModifier = pEnv->FFI_IsCTRLKeyDown(0);
+  fa.bShift = pEnv->FFI_IsSHIFTKeyDown(0);
+  fa.sValue = csValue;
+  pActionHandler->DoAction_FieldJavaScript(action, CPDF_AAction::KeyStroke,
+                                           m_pDocument, pFormField, fa);
+  return fa.bRC;
 }
 
-void CPDFSDK_InterForm::OnValidate(CPDF_FormField* pFormField,
-                                   CFX_WideString& csValue,
-                                   FX_BOOL& bRC) {
+FX_BOOL CPDFSDK_InterForm::OnValidate(CPDF_FormField* pFormField,
+                                      const CFX_WideString& csValue) {
   CPDF_AAction aAction = pFormField->GetAdditionalAction();
-  if (aAction && aAction.ActionExist(CPDF_AAction::Validate)) {
-    CPDF_Action action = aAction.GetAction(CPDF_AAction::Validate);
-    if (action) {
-      CPDFDoc_Environment* pEnv = m_pDocument->GetEnv();
-      CPDFSDK_ActionHandler* pActionHandler = pEnv->GetActionHander();
-      PDFSDK_FieldAction fa;
-      fa.bModifier = pEnv->FFI_IsCTRLKeyDown(0);
-      fa.bShift = pEnv->FFI_IsSHIFTKeyDown(0);
-      fa.sValue = csValue;
+  if (!aAction || !aAction.ActionExist(CPDF_AAction::Validate))
+    return TRUE;
 
-      pActionHandler->DoAction_FieldJavaScript(action, CPDF_AAction::Validate,
-                                               m_pDocument, pFormField, fa);
-      bRC = fa.bRC;
-    }
-  }
+  CPDF_Action action = aAction.GetAction(CPDF_AAction::Validate);
+  if (!action)
+    return TRUE;
+
+  CPDFDoc_Environment* pEnv = m_pDocument->GetEnv();
+  CPDFSDK_ActionHandler* pActionHandler = pEnv->GetActionHander();
+  PDFSDK_FieldAction fa;
+  fa.bModifier = pEnv->FFI_IsCTRLKeyDown(0);
+  fa.bShift = pEnv->FFI_IsSHIFTKeyDown(0);
+  fa.sValue = csValue;
+  pActionHandler->DoAction_FieldJavaScript(action, CPDF_AAction::Validate,
+                                           m_pDocument, pFormField, fa);
+  return fa.bRC;
 }
 
 FX_BOOL CPDFSDK_InterForm::DoAction_Hide(const CPDF_Action& action) {
@@ -2608,67 +2608,55 @@ std::vector<CPDF_FormField*> CPDFSDK_InterForm::GetFieldFromObjects(
   return fields;
 }
 
-int CPDFSDK_InterForm::BeforeValueChange(const CPDF_FormField* pField,
-                                         CFX_WideString& csValue) {
-  CPDF_FormField* pFormField = (CPDF_FormField*)pField;
-  int nType = pFormField->GetFieldType();
-  if (nType == FIELDTYPE_COMBOBOX || nType == FIELDTYPE_TEXTFIELD) {
-    FX_BOOL bRC = TRUE;
-    OnKeyStrokeCommit(pFormField, csValue, bRC);
-    if (bRC) {
-      OnValidate(pFormField, csValue, bRC);
-      return bRC ? 1 : -1;
-    }
-    return -1;
-  }
-  return 0;
-}
-
-int CPDFSDK_InterForm::AfterValueChange(const CPDF_FormField* pField) {
-  CPDF_FormField* pFormField = (CPDF_FormField*)pField;
-#ifdef PDF_ENABLE_XFA
-  SynchronizeField(pFormField, FALSE);
-#endif  // PDF_ENABLE_XFA
-  int nType = pFormField->GetFieldType();
-  if (nType == FIELDTYPE_COMBOBOX || nType == FIELDTYPE_TEXTFIELD) {
-    OnCalculate(pFormField);
-    FX_BOOL bFormated = FALSE;
-    CFX_WideString sValue = OnFormat(pFormField, bFormated);
-    if (bFormated)
-      ResetFieldAppearance(pFormField, sValue.c_str(), TRUE);
-    else
-      ResetFieldAppearance(pFormField, NULL, TRUE);
-    UpdateField(pFormField);
-  }
-  return 0;
-}
-
-int CPDFSDK_InterForm::BeforeSelectionChange(const CPDF_FormField* pField,
-                                             CFX_WideString& csValue) {
-  CPDF_FormField* pFormField = (CPDF_FormField*)pField;
-  if (pFormField->GetFieldType() != FIELDTYPE_LISTBOX)
+int CPDFSDK_InterForm::BeforeValueChange(CPDF_FormField* pField,
+                                         const CFX_WideString& csValue) {
+  int nType = pField->GetFieldType();
+  if (nType != FIELDTYPE_COMBOBOX && nType != FIELDTYPE_TEXTFIELD)
     return 0;
 
-  FX_BOOL bRC = TRUE;
-  OnKeyStrokeCommit(pFormField, csValue, bRC);
-  if (!bRC)
+  if (!OnKeyStrokeCommit(pField, csValue))
     return -1;
 
-  OnValidate(pFormField, csValue, bRC);
-  if (!bRC)
+  if (!OnValidate(pField, csValue))
     return -1;
 
   return 1;
 }
 
-int CPDFSDK_InterForm::AfterSelectionChange(const CPDF_FormField* pField) {
-  CPDF_FormField* pFormField = (CPDF_FormField*)pField;
-  if (pFormField->GetFieldType() == FIELDTYPE_LISTBOX) {
-    OnCalculate(pFormField);
-    ResetFieldAppearance(pFormField, NULL, TRUE);
-    UpdateField(pFormField);
+void CPDFSDK_InterForm::AfterValueChange(CPDF_FormField* pField) {
+#ifdef PDF_ENABLE_XFA
+  SynchronizeField(pField, FALSE);
+#endif  // PDF_ENABLE_XFA
+  int nType = pField->GetFieldType();
+  if (nType == FIELDTYPE_COMBOBOX || nType == FIELDTYPE_TEXTFIELD) {
+    OnCalculate(pField);
+    FX_BOOL bFormated = FALSE;
+    CFX_WideString sValue = OnFormat(pField, bFormated);
+    ResetFieldAppearance(pField, bFormated ? sValue.c_str() : nullptr, TRUE);
+    UpdateField(pField);
   }
-  return 0;
+}
+
+int CPDFSDK_InterForm::BeforeSelectionChange(CPDF_FormField* pField,
+                                             const CFX_WideString& csValue) {
+  if (pField->GetFieldType() != FIELDTYPE_LISTBOX)
+    return 0;
+
+  if (!OnKeyStrokeCommit(pField, csValue))
+    return -1;
+
+  if (!OnValidate(pField, csValue))
+    return -1;
+
+  return 1;
+}
+
+void CPDFSDK_InterForm::AfterSelectionChange(CPDF_FormField* pField) {
+  if (pField->GetFieldType() == FIELDTYPE_LISTBOX) {
+    OnCalculate(pField);
+    ResetFieldAppearance(pField, NULL, TRUE);
+    UpdateField(pField);
+  }
 }
 
 void CPDFSDK_InterForm::AfterCheckedStatusChange(CPDF_FormField* pField) {
@@ -2679,22 +2667,20 @@ void CPDFSDK_InterForm::AfterCheckedStatusChange(CPDF_FormField* pField) {
   }
 }
 
-int CPDFSDK_InterForm::BeforeFormReset(const CPDF_InterForm* pForm) {
+int CPDFSDK_InterForm::BeforeFormReset(CPDF_InterForm* pForm) {
   return 0;
 }
 
-int CPDFSDK_InterForm::AfterFormReset(const CPDF_InterForm* pForm) {
+void CPDFSDK_InterForm::AfterFormReset(CPDF_InterForm* pForm) {
   OnCalculate(nullptr);
+}
+
+int CPDFSDK_InterForm::BeforeFormImportData(CPDF_InterForm* pForm) {
   return 0;
 }
 
-int CPDFSDK_InterForm::BeforeFormImportData(const CPDF_InterForm* pForm) {
-  return 0;
-}
-
-int CPDFSDK_InterForm::AfterFormImportData(const CPDF_InterForm* pForm) {
+void CPDFSDK_InterForm::AfterFormImportData(CPDF_InterForm* pForm) {
   OnCalculate(nullptr);
-  return 0;
 }
 
 FX_BOOL CPDFSDK_InterForm::IsNeedHighLight(int nFieldType) {
