@@ -7,6 +7,8 @@
 #ifndef CORE_SRC_FPDFAPI_FPDF_EDIT_EDITINT_H_
 #define CORE_SRC_FPDFAPI_FPDF_EDIT_EDITINT_H_
 
+#include <vector>
+
 #include "core/include/fxcrt/fx_basic.h"
 #include "core/include/fxcrt/fx_stream.h"
 #include "core/include/fxcrt/fx_system.h"
@@ -38,32 +40,33 @@ class CPDF_ObjectStream {
 };
 class CPDF_XRefStream {
  public:
+  struct Index {
+    FX_DWORD objnum;
+    FX_DWORD count;
+  };
+
   CPDF_XRefStream();
 
   FX_BOOL Start();
-
   int32_t CompressIndirectObject(FX_DWORD dwObjNum,
                                  const CPDF_Object* pObj,
                                  CPDF_Creator* pCreator);
-
   int32_t CompressIndirectObject(FX_DWORD dwObjNum,
                                  const uint8_t* pBuffer,
                                  FX_DWORD dwSize,
                                  CPDF_Creator* pCreator);
-
   FX_BOOL End(CPDF_Creator* pCreator, FX_BOOL bEOF = FALSE);
-  FX_BOOL AddObjectNumberToIndexArray(FX_DWORD objnum);
+  void AddObjectNumberToIndexArray(FX_DWORD objnum);
   FX_BOOL EndXRefStream(CPDF_Creator* pCreator);
 
-  CFX_DWordArray m_IndexArray;
-
+  std::vector<Index> m_IndexArray;
   FX_FILESIZE m_PrevOffset;
   FX_DWORD m_dwTempObjNum;
 
  protected:
   int32_t EndObjectStream(CPDF_Creator* pCreator, FX_BOOL bEOF = TRUE);
   FX_BOOL GenerateXRefStream(CPDF_Creator* pCreator, FX_BOOL bEOF);
-  int32_t m_iSeg;
+  size_t m_iSeg;
   CPDF_ObjectStream m_ObjStream;
   CFX_ByteTextBuf m_Buffer;
 };
