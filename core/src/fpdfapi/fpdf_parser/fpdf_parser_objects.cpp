@@ -454,10 +454,10 @@ void CPDF_Dictionary::SetAtRect(const CFX_ByteStringC& key,
 void CPDF_Dictionary::SetAtMatrix(const CFX_ByteStringC& key,
                                   const CFX_Matrix& matrix) {
   CPDF_Array* pArray = new CPDF_Array;
-  pArray->AddNumber16(matrix.a);
-  pArray->AddNumber16(matrix.b);
-  pArray->AddNumber16(matrix.c);
-  pArray->AddNumber16(matrix.d);
+  pArray->AddNumber(matrix.a);
+  pArray->AddNumber(matrix.b);
+  pArray->AddNumber(matrix.c);
+  pArray->AddNumber(matrix.d);
   pArray->AddNumber(matrix.e);
   pArray->AddNumber(matrix.f);
   SetAt(key, pArray);
