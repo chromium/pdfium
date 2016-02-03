@@ -327,8 +327,7 @@ class CPDFSDK_InterForm : public CPDF_FormNotify {
   int BeforeSelectionChange(const CPDF_FormField* pField,
                             CFX_WideString& csValue) override;
   int AfterSelectionChange(const CPDF_FormField* pField) override;
-  int AfterCheckedStatusChange(const CPDF_FormField* pField,
-                               const CFX_ByteArray& statusArray) override;
+  void AfterCheckedStatusChange(CPDF_FormField* pField) override;
   int BeforeFormReset(const CPDF_InterForm* pForm) override;
   int AfterFormReset(const CPDF_InterForm* pForm) override;
   int BeforeFormImportData(const CPDF_InterForm* pForm) override;

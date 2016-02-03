@@ -734,12 +734,10 @@ class CPDF_FormField {
 
   CFX_WideString GetFullName();
 
-  Type GetType() { return m_Type; }
-
-  FX_DWORD GetFlags() { return m_Flags; }
+  Type GetType() const { return m_Type; }
+  FX_DWORD GetFlags() const { return m_Flags; }
 
   CPDF_Dictionary* GetFieldDict() const { return m_pDict; }
-
   void SetFieldDict(CPDF_Dictionary* pDict) { m_pDict = pDict; }
 
   FX_BOOL ResetField(FX_BOOL bNotify = FALSE);
@@ -799,8 +797,8 @@ class CPDF_FormField {
   int FindOptionValue(const CFX_WideString& csOptValue, int iStartIndex = 0);
 
   FX_BOOL CheckControl(int iControlIndex,
-                       FX_BOOL bChecked,
-                       FX_BOOL bNotify = FALSE);
+                       bool bChecked,
+                       bool bNotify = false);
 
   int GetTopVisibleIndex();
 
@@ -895,16 +893,15 @@ class CPDF_IconFit {
 #define TEXTPOS_RIGHT 4
 #define TEXTPOS_LEFT 5
 #define TEXTPOS_OVERLAID 6
+
 class CPDF_FormControl {
  public:
-  CPDF_FormField::Type GetType() { return m_pField->GetType(); }
+  enum HighlightingMode { None = 0, Invert, Outline, Push, Toggle };
 
+  CPDF_FormField::Type GetType() const { return m_pField->GetType(); }
   CPDF_InterForm* GetInterForm() const { return m_pForm; }
-
   CPDF_FormField* GetField() const { return m_pField; }
-
   CPDF_Dictionary* GetWidget() const { return m_pWidgetDict; }
-
   CFX_FloatRect GetRect() const;
 
   void DrawControl(CFX_RenderDevice* pDevice,
@@ -914,19 +911,13 @@ class CPDF_FormControl {
                    const CPDF_RenderOptions* pOptions = NULL);
 
   CFX_ByteString GetCheckedAPState();
-
   CFX_WideString GetExportValue();
 
-  FX_BOOL IsChecked();
-
-  FX_BOOL IsDefaultChecked();
-
-  enum HighlightingMode { None = 0, Invert, Outline, Push, Toggle };
+  bool IsChecked() const;
+  bool IsDefaultChecked() const;
 
   HighlightingMode GetHighlightingMode();
-
   bool HasMKEntry(CFX_ByteString csEntry) const;
-
   int GetRotation();
 
   inline FX_ARGB GetBorderColor(int& iColorType) {
@@ -982,8 +973,7 @@ class CPDF_FormControl {
  protected:
   CPDF_FormControl(CPDF_FormField* pField, CPDF_Dictionary* pWidgetDict);
 
-  CFX_ByteString GetOnStateName();
-
+  CFX_ByteString GetOnStateName() const;
   void SetOnStateName(const CFX_ByteString& csOn);
 
   void CheckControl(FX_BOOL bChecked);
@@ -1010,6 +1000,7 @@ class CPDF_FormControl {
   friend class CPDF_InterForm;
   friend class CPDF_FormField;
 };
+
 class CPDF_FormNotify {
  public:
   virtual ~CPDF_FormNotify() {}
@@ -1018,29 +1009,21 @@ class CPDF_FormNotify {
                                 CFX_WideString& csValue) {
     return 0;
   }
-
   virtual int AfterValueChange(const CPDF_FormField* pField) { return 0; }
 
   virtual int BeforeSelectionChange(const CPDF_FormField* pField,
                                     CFX_WideString& csValue) {
     return 0;
   }
-
   virtual int AfterSelectionChange(const CPDF_FormField* pField) { return 0; }
 
-  virtual int AfterCheckedStatusChange(const CPDF_FormField* pField,
-                                       const CFX_ByteArray& statusArray) {
-    return 0;
-  }
-
+  virtual void AfterCheckedStatusChange(CPDF_FormField* pField) {}
   virtual int BeforeFormReset(const CPDF_InterForm* pForm) { return 0; }
-
   virtual int AfterFormReset(const CPDF_InterForm* pForm) { return 0; }
-
   virtual int BeforeFormImportData(const CPDF_InterForm* pForm) { return 0; }
-
   virtual int AfterFormImportData(const CPDF_InterForm* pForm) { return 0; }
 };
+
 FX_BOOL FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
 class CPDF_PageLabel {
  public:

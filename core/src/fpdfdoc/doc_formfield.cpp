@@ -102,10 +102,6 @@ FX_BOOL CPDF_FormField::ResetField(FX_BOOL bNotify) {
   switch (m_Type) {
     case CPDF_FormField::CheckBox:
     case CPDF_FormField::RadioButton: {
-      CFX_ByteArray statusArray;
-      if (bNotify && m_pForm->m_pFormNotify) {
-        SaveCheckedFieldStatus(this, statusArray);
-      }
       int iCount = CountControls();
       if (iCount) {
         if (PDF_FormField_IsUnison(this)) {
@@ -121,7 +117,7 @@ FX_BOOL CPDF_FormField::ResetField(FX_BOOL bNotify) {
         }
       }
       if (bNotify && m_pForm->m_pFormNotify) {
-        m_pForm->m_pFormNotify->AfterCheckedStatusChange(this, statusArray);
+        m_pForm->m_pFormNotify->AfterCheckedStatusChange(this);
       }
     } break;
     case CPDF_FormField::ComboBox: {
@@ -805,8 +801,8 @@ FX_BOOL CPDF_FormField::ClearOptions(FX_BOOL bNotify) {
 }
 #endif  // PDF_ENABLE_XFA
 FX_BOOL CPDF_FormField::CheckControl(int iControlIndex,
-                                     FX_BOOL bChecked,
-                                     FX_BOOL bNotify) {
+                                     bool bChecked,
+                                     bool bNotify) {
   ASSERT(GetType() == CheckBox || GetType() == RadioButton);
   CPDF_FormControl* pControl = GetControl(iControlIndex);
   if (!pControl) {
@@ -814,10 +810,6 @@ FX_BOOL CPDF_FormField::CheckControl(int iControlIndex,
   }
   if (!bChecked && pControl->IsChecked() == bChecked) {
     return FALSE;
-  }
-  CFX_ByteArray statusArray;
-  if (bNotify && m_pForm->m_pFormNotify) {
-    SaveCheckedFieldStatus(this, statusArray);
   }
   CFX_WideString csWExport = pControl->GetExportValue();
   CFX_ByteString csBExport = PDF_EncodeText(csWExport);
@@ -864,7 +856,7 @@ FX_BOOL CPDF_FormField::CheckControl(int iControlIndex,
     m_pDict->SetAtName("V", csIndex);
   }
   if (bNotify && m_pForm->m_pFormNotify) {
-    m_pForm->m_pFormNotify->AfterCheckedStatusChange(this, statusArray);
+    m_pForm->m_pFormNotify->AfterCheckedStatusChange(this);
   }
   m_pForm->m_bUpdated = TRUE;
   return TRUE;
@@ -892,10 +884,6 @@ FX_BOOL CPDF_FormField::SetCheckValue(const CFX_WideString& value,
                                       FX_BOOL bDefault,
                                       FX_BOOL bNotify) {
   ASSERT(GetType() == CheckBox || GetType() == RadioButton);
-  CFX_ByteArray statusArray;
-  if (bNotify && m_pForm->m_pFormNotify) {
-    SaveCheckedFieldStatus(this, statusArray);
-  }
   int iCount = CountControls();
   for (int i = 0; i < iCount; i++) {
     CPDF_FormControl* pControl = GetControl(i);
@@ -914,7 +902,7 @@ FX_BOOL CPDF_FormField::SetCheckValue(const CFX_WideString& value,
     }
   }
   if (bNotify && m_pForm->m_pFormNotify) {
-    m_pForm->m_pFormNotify->AfterCheckedStatusChange(this, statusArray);
+    m_pForm->m_pFormNotify->AfterCheckedStatusChange(this);
   }
   m_pForm->m_bUpdated = TRUE;
   return TRUE;

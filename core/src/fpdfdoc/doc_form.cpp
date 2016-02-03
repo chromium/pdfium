@@ -1175,10 +1175,6 @@ void CPDF_InterForm::FDF_ImportField(CPDF_Dictionary* pFieldDict,
       return;
     }
   }
-  CFX_ByteArray statusArray;
-  if (iType == FIELDTYPE_CHECKBOX || iType == FIELDTYPE_RADIOBUTTON) {
-    SaveCheckedFieldStatus(pField, statusArray);
-  }
   pField->SetValue(csWValue);
   CPDF_FormField::Type eType = pField->GetType();
   if ((eType == CPDF_FormField::ListBox || eType == CPDF_FormField::ComboBox) &&
@@ -1188,7 +1184,7 @@ void CPDF_InterForm::FDF_ImportField(CPDF_Dictionary* pFieldDict,
   }
   if (bNotify && m_pFormNotify) {
     if (iType == FIELDTYPE_CHECKBOX || iType == FIELDTYPE_RADIOBUTTON) {
-      m_pFormNotify->AfterCheckedStatusChange(pField, statusArray);
+      m_pFormNotify->AfterCheckedStatusChange(pField);
     } else if (iType == FIELDTYPE_LISTBOX) {
       m_pFormNotify->AfterSelectionChange(pField);
     } else if (iType == FIELDTYPE_COMBOBOX || iType == FIELDTYPE_TEXTFIELD) {

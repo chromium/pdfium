@@ -435,13 +435,13 @@ class CFX_ArrayTemplate : public CFX_BasicArray {
     return -1;
   }
 };
-typedef CFX_ArrayTemplate<uint8_t> CFX_ByteArray;
 typedef CFX_ArrayTemplate<FX_WORD> CFX_WordArray;
 typedef CFX_ArrayTemplate<FX_DWORD> CFX_DWordArray;
 typedef CFX_ArrayTemplate<void*> CFX_PtrArray;
 typedef CFX_ArrayTemplate<FX_FILESIZE> CFX_FileSizeArray;
 #ifdef PDF_ENABLE_XFA
 typedef CFX_ArrayTemplate<FX_FLOAT> CFX_FloatArray;
+typedef CFX_ArrayTemplate<uint8_t> CFX_ByteArray;
 typedef CFX_ArrayTemplate<int32_t> CFX_Int32Array;
 #endif  // PDF_ENABLE_XFA
 

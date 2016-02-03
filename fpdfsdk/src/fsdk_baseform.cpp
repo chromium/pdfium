@@ -2671,16 +2671,12 @@ int CPDFSDK_InterForm::AfterSelectionChange(const CPDF_FormField* pField) {
   return 0;
 }
 
-int CPDFSDK_InterForm::AfterCheckedStatusChange(
-    const CPDF_FormField* pField,
-    const CFX_ByteArray& statusArray) {
-  CPDF_FormField* pFormField = (CPDF_FormField*)pField;
-  int nType = pFormField->GetFieldType();
+void CPDFSDK_InterForm::AfterCheckedStatusChange(CPDF_FormField* pField) {
+  int nType = pField->GetFieldType();
   if (nType == FIELDTYPE_CHECKBOX || nType == FIELDTYPE_RADIOBUTTON) {
-    OnCalculate(pFormField);
-    UpdateField(pFormField);
+    OnCalculate(pField);
+    UpdateField(pField);
   }
-  return 0;
 }
 
 int CPDFSDK_InterForm::BeforeFormReset(const CPDF_InterForm* pForm) {

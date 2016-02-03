@@ -17,7 +17,7 @@ CPDF_FormControl::CPDF_FormControl(CPDF_FormField* pField,
 CFX_FloatRect CPDF_FormControl::GetRect() const {
   return m_pWidgetDict->GetRectBy("Rect");
 }
-CFX_ByteString CPDF_FormControl::GetOnStateName() {
+CFX_ByteString CPDF_FormControl::GetOnStateName() const {
   ASSERT(GetType() == CPDF_FormField::CheckBox ||
          GetType() == CPDF_FormField::RadioButton);
   CFX_ByteString csOn;
@@ -112,14 +112,16 @@ CFX_WideString CPDF_FormControl::GetExportValue() {
   CFX_WideString csWOn = PDF_DecodeText(csOn);
   return csWOn;
 }
-FX_BOOL CPDF_FormControl::IsChecked() {
+
+bool CPDF_FormControl::IsChecked() const {
   ASSERT(GetType() == CPDF_FormField::CheckBox ||
          GetType() == CPDF_FormField::RadioButton);
   CFX_ByteString csOn = GetOnStateName();
   CFX_ByteString csAS = m_pWidgetDict->GetStringBy("AS");
   return csAS == csOn;
 }
-FX_BOOL CPDF_FormControl::IsDefaultChecked() {
+
+bool CPDF_FormControl::IsDefaultChecked() const {
   ASSERT(GetType() == CPDF_FormField::CheckBox ||
          GetType() == CPDF_FormField::RadioButton);
   CPDF_Object* pDV = FPDF_GetFieldAttr(m_pField->m_pDict, "DV");
@@ -130,6 +132,7 @@ FX_BOOL CPDF_FormControl::IsDefaultChecked() {
   CFX_ByteString csOn = GetOnStateName();
   return (csDV == csOn);
 }
+
 void CPDF_FormControl::CheckControl(FX_BOOL bChecked) {
   ASSERT(GetType() == CPDF_FormField::CheckBox ||
          GetType() == CPDF_FormField::RadioButton);
