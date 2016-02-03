@@ -312,7 +312,6 @@ class CPDF_Array : public CPDF_Object {
   void AddReference(CPDF_IndirectObjectHolder* pDoc, CPDF_Object* obj) {
     AddReference(pDoc, obj->GetObjNum());
   }
-  void AddNumber16(FX_FLOAT value) { AddNumber(value); }
 
  protected:
   ~CPDF_Array();
