@@ -615,12 +615,12 @@ void CXFA_FFNotify::OnLayoutItemRemoving(CXFA_FFDocView* pDocView,
                                          void* pParam2) {
   CXFA_FFWidget* pWidget = static_cast<CXFA_FFWidget*>(pSender);
   pDocView->DeleteLayoutItem(pWidget);
-  if (pDocView->GetLayoutStatus() < XFA_DOCVIEW_LAYOUTSTATUS_End) {
+  if (pDocView->GetLayoutStatus() < XFA_DOCVIEW_LAYOUTSTATUS_End)
     return;
-  }
   m_pDoc->GetDocProvider()->WidgetEvent(pWidget, pWidget->GetDataAcc(),
-                                        XFA_WIDGETEVENT_PreRemoved, NULL, NULL);
-  pWidget->AddInvalidateRect(NULL);
+                                        XFA_WIDGETEVENT_PreRemoved, nullptr,
+                                        pWidget->GetPageView());
+  pWidget->AddInvalidateRect(nullptr);
 }
 void CXFA_FFNotify::OnLayoutItemRectChanged(CXFA_FFDocView* pDocView,
                                             IXFA_DocLayout* pLayout,

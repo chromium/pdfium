@@ -40,14 +40,18 @@ FX_DWORD XFA_GetRelevant(CXFA_Node* pFormItem, FX_DWORD dwParentRelvant) {
 }
 void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem) {
   CXFA_LayoutItem* pNode = pLayoutItem->m_pFirstChild;
+  IXFA_Notify* pNotify =
+      pLayoutItem->m_pFormNode->GetDocument()->GetParser()->GetNotify();
+  IXFA_DocLayout* pDocLayout =
+      pLayoutItem->m_pFormNode->GetDocument()->GetDocLayout();
   while (pNode) {
     CXFA_LayoutItem* pNext = pNode->m_pNextSibling;
     pNode->m_pParent = nullptr;
+    pNotify->OnLayoutEvent(pDocLayout, static_cast<CXFA_LayoutItem*>(pNode),
+                           XFA_LAYOUTEVENT_ItemRemoving);
     XFA_ReleaseLayoutItem(pNode);
     pNode = pNext;
   }
-  IXFA_Notify* pNotify =
-      pLayoutItem->m_pFormNode->GetDocument()->GetParser()->GetNotify();
   if (pLayoutItem->m_pFormNode->GetClassID() == XFA_ELEMENT_PageArea) {
     pNotify->OnPageEvent(static_cast<CXFA_ContainerLayoutItem*>(pLayoutItem),
                          XFA_PAGEEVENT_PageRemoved);

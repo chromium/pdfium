@@ -477,17 +477,21 @@ void CPDFXFA_Document::PageViewEvent(IXFA_PageView* pPageView,
     return;
   }
   CPDFXFA_Page* pPage = nullptr;
+  CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
   if (dwFlags == XFA_PAGEVIEWEVENT_PostAdded) {
-    pPage = GetPage(pPageView->GetPageViewIndex());
+    int nPageIndex = pPageView->GetPageViewIndex();
+    pPage = GetPage(nPageIndex);
     if (pPage)
       pPage->SetXFAPageView(pPageView);
+    pEnv->FFI_PageEvent(nPageIndex, dwFlags);
     return;
   }
   pPage = GetPage(pPageView);
   if (!pPage)
     return;
-  pPage->SetXFAPageView(nullptr);
+  pEnv->FFI_PageEvent(pPage->GetPageIndex(), dwFlags);
   m_pSDKDoc->GetPageView(pPage)->ClearFXAnnots();
+  pPage->Release();
 }
 
 void CPDFXFA_Document::WidgetEvent(IXFA_Widget* hWidget,

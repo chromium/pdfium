@@ -404,6 +404,10 @@ class CPDFDoc_Environment final {
     }
     return L"";
   }
+  void FFI_PageEvent(int iPageIndex, int iEventType) const {
+    // Todo: call a call-back function when it's implemented
+    // in applicaiton's side.
+  }
 #endif  // PDF_ENABLE_XFA
 
   int JS_appAlert(const FX_WCHAR* Msg,
