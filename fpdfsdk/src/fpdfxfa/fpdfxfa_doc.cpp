@@ -1107,12 +1107,12 @@ FX_BOOL CPDFXFA_Document::_MailToInfo(CFX_WideString& csURL,
 
 FX_BOOL CPDFXFA_Document::_SubmitData(IXFA_Doc* hDoc, CXFA_Submit submit) {
 #ifdef PDF_ENABLE_XFA
+  CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
+  if (!pEnv)
+    return FALSE;
   CFX_WideStringC csURLC;
   submit.GetSubmitTarget(csURLC);
   CFX_WideString csURL = csURLC;
-  CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
-  if (pEnv == NULL)
-    return FALSE;
   if (csURL.IsEmpty()) {
     CFX_WideString ws;
     ws.FromLocal("Submit cancelled.");
@@ -1123,46 +1123,45 @@ FX_BOOL CPDFXFA_Document::_SubmitData(IXFA_Doc* hDoc, CXFA_Submit submit) {
     bs.ReleaseBuffer(len * sizeof(unsigned short));
     return FALSE;
   }
-
   FPDF_BOOL bRet = TRUE;
-  FPDF_FILEHANDLER* pFileHandler = NULL;
+  FPDF_FILEHANDLER* pFileHandler = nullptr;
   int fileFlag = -1;
-
-  if (submit.GetSubmitFormat() == XFA_ATTRIBUTEENUM_Xdp) {
-    CFX_WideStringC csContentC;
-    submit.GetSubmitXDPContent(csContentC);
-    CFX_WideString csContent;
-    csContent = csContentC.GetPtr();
-    csContent.TrimLeft();
-    csContent.TrimRight();
-    CFX_WideString space;
-    space.FromLocal(" ");
-    csContent = space + csContent + space;
-    FPDF_DWORD flag = 0;
-    if (submit.IsSubmitEmbedPDF())
-      flag |= FXFA_PDF;
-    _ToXFAContentFlags(csContent, flag);
-    pFileHandler = pEnv->FFI_OpenFile(FXFA_SAVEAS_XDP, NULL, "wb");
-    fileFlag = FXFA_SAVEAS_XDP;
-    _ExportSubmitFile(pFileHandler, FXFA_SAVEAS_XDP, 0, flag);
-  } else if (submit.GetSubmitFormat() == XFA_ATTRIBUTEENUM_Xml) {
-    pFileHandler = pEnv->FFI_OpenFile(FXFA_SAVEAS_XML, NULL, "wb");
-    fileFlag = FXFA_SAVEAS_XML;
-    _ExportSubmitFile(pFileHandler, FXFA_SAVEAS_XML, 0);
-  } else if (submit.GetSubmitFormat() == XFA_ATTRIBUTEENUM_Pdf) {
-    // csfilename = csDocName;
-  } else if (submit.GetSubmitFormat() == XFA_ATTRIBUTEENUM_Formdata) {
-    return FALSE;
-  } else if (submit.GetSubmitFormat() == XFA_ATTRIBUTEENUM_Urlencoded) {
-    pFileHandler = pEnv->FFI_OpenFile(FXFA_SAVEAS_XML, NULL, "wb");
-    fileFlag = FXFA_SAVEAS_XML;
-    _ExportSubmitFile(pFileHandler, FXFA_SAVEAS_XML, 0);
-  } else if (submit.GetSubmitFormat() == XFA_ATTRIBUTEENUM_Xfd) {
-    return FALSE;
-  } else {
-    return FALSE;
+  switch (submit.GetSubmitFormat()) {
+    case XFA_ATTRIBUTEENUM_Xdp: {
+      CFX_WideStringC csContentC;
+      submit.GetSubmitXDPContent(csContentC);
+      CFX_WideString csContent;
+      csContent = csContentC;
+      csContent.TrimLeft();
+      csContent.TrimRight();
+      CFX_WideString space;
+      space.FromLocal(" ");
+      csContent = space + csContent + space;
+      FPDF_DWORD flag = 0;
+      if (submit.IsSubmitEmbedPDF())
+        flag |= FXFA_PDF;
+      _ToXFAContentFlags(csContent, flag);
+      pFileHandler = pEnv->FFI_OpenFile(FXFA_SAVEAS_XDP, nullptr, "wb");
+      fileFlag = FXFA_SAVEAS_XDP;
+      _ExportSubmitFile(pFileHandler, FXFA_SAVEAS_XDP, 0, flag);
+      break;
+    }
+    case XFA_ATTRIBUTEENUM_Xml:
+      pFileHandler = pEnv->FFI_OpenFile(FXFA_SAVEAS_XML, nullptr, "wb");
+      fileFlag = FXFA_SAVEAS_XML;
+      _ExportSubmitFile(pFileHandler, FXFA_SAVEAS_XML, 0);
+      break;
+    case XFA_ATTRIBUTEENUM_Pdf:
+      break;
+    case XFA_ATTRIBUTEENUM_Urlencoded:
+      pFileHandler = pEnv->FFI_OpenFile(FXFA_SAVEAS_XML, nullptr, "wb");
+      fileFlag = FXFA_SAVEAS_XML;
+      _ExportSubmitFile(pFileHandler, FXFA_SAVEAS_XML, 0);
+      break;
+    default:
+      return false;
   }
-  if (pFileHandler == NULL)
+  if (!pFileHandler)
     return FALSE;
   if (0 == csURL.Left(7).CompareNoCase(L"mailto:")) {
     CFX_WideString csToAddress;
@@ -1170,25 +1169,21 @@ FX_BOOL CPDFXFA_Document::_SubmitData(IXFA_Doc* hDoc, CXFA_Submit submit) {
     CFX_WideString csBCCAddress;
     CFX_WideString csSubject;
     CFX_WideString csMsg;
-
     bRet = _MailToInfo(csURL, csToAddress, csCCAddress, csBCCAddress, csSubject,
                        csMsg);
-    if (FALSE == bRet)
+    if (!bRet)
       return FALSE;
-
     CFX_ByteString bsTo = CFX_WideString(csToAddress).UTF16LE_Encode();
     CFX_ByteString bsCC = CFX_WideString(csCCAddress).UTF16LE_Encode();
     CFX_ByteString bsBcc = CFX_WideString(csBCCAddress).UTF16LE_Encode();
     CFX_ByteString bsSubject = CFX_WideString(csSubject).UTF16LE_Encode();
     CFX_ByteString bsMsg = CFX_WideString(csMsg).UTF16LE_Encode();
-
     FPDF_WIDESTRING pTo = (FPDF_WIDESTRING)bsTo.GetBuffer(bsTo.GetLength());
     FPDF_WIDESTRING pCC = (FPDF_WIDESTRING)bsCC.GetBuffer(bsCC.GetLength());
     FPDF_WIDESTRING pBcc = (FPDF_WIDESTRING)bsBcc.GetBuffer(bsBcc.GetLength());
     FPDF_WIDESTRING pSubject =
         (FPDF_WIDESTRING)bsSubject.GetBuffer(bsSubject.GetLength());
     FPDF_WIDESTRING pMsg = (FPDF_WIDESTRING)bsMsg.GetBuffer(bsMsg.GetLength());
-
     pEnv->FFI_EmailTo(pFileHandler, pTo, pSubject, pCC, pBcc, pMsg);
     bsTo.ReleaseBuffer();
     bsCC.ReleaseBuffer();
@@ -1205,7 +1200,6 @@ FX_BOOL CPDFXFA_Document::_SubmitData(IXFA_Doc* hDoc, CXFA_Submit submit) {
         (FPDF_WIDESTRING)bs.GetBuffer(len * sizeof(unsigned short)));
     bs.ReleaseBuffer(len * sizeof(unsigned short));
   }
-
   return bRet;
 #else
   return TRUE;
