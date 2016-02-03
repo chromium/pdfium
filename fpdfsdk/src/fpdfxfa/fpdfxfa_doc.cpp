@@ -542,15 +542,13 @@ int32_t CPDFXFA_Document::GetCurrentPage(IXFA_Doc* hDoc) {
   return pEnv->FFI_GetCurrentPageIndex(this);
 }
 void CPDFXFA_Document::SetCurrentPage(IXFA_Doc* hDoc, int32_t iCurPage) {
-  if (hDoc != m_pXFADoc || !m_pSDKDoc)
+  if (hDoc != m_pXFADoc || !m_pSDKDoc || m_iDocType != DOCTYPE_DYNAMIC_XFA ||
+      iCurPage < 0 || iCurPage >= m_pSDKDoc->GetPageCount()) {
     return;
-  if (m_iDocType != DOCTYPE_DYNAMIC_XFA)
-    return;
-
+  }
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
-  if (pEnv == NULL)
+  if (!pEnv)
     return;
-
   pEnv->FFI_SetCurrentPage(this, iCurPage);
 }
 FX_BOOL CPDFXFA_Document::IsCalculationsEnabled(IXFA_Doc* hDoc) {
