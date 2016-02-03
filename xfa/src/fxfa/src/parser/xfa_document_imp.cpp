@@ -90,14 +90,15 @@ void CXFA_Document::SetRoot(CXFA_Node* pNewRoot) {
 IXFA_Notify* CXFA_Document::GetNotify() const {
   return m_pParser->GetNotify();
 }
-CXFA_Object* CXFA_Document::GetXFANode(const CFX_WideStringC& wsNodeName) {
-  return GetXFANode(
+CXFA_Object* CXFA_Document::GetXFAObject(const CFX_WideStringC& wsNodeName) {
+  return GetXFAObject(
       FX_HashCode_String_GetW(wsNodeName.GetPtr(), wsNodeName.GetLength()));
 }
-CXFA_Object* CXFA_Document::GetXFANode(FX_DWORD dwNodeNameHash) {
+CXFA_Object* CXFA_Document::GetXFAObject(FX_DWORD dwNodeNameHash) {
   switch (dwNodeNameHash) {
     case XFA_HASHCODE_Data: {
-      CXFA_Node* pDatasetsNode = (CXFA_Node*)GetXFANode(XFA_HASHCODE_Datasets);
+      CXFA_Node* pDatasetsNode =
+          (CXFA_Node*)GetXFAObject(XFA_HASHCODE_Datasets);
       if (!pDatasetsNode) {
         return NULL;
       }
@@ -124,7 +125,7 @@ CXFA_Object* CXFA_Document::GetXFANode(FX_DWORD dwNodeNameHash) {
     }
       return NULL;
     case XFA_HASHCODE_Record: {
-      CXFA_Node* pData = (CXFA_Node*)GetXFANode(XFA_HASHCODE_Data);
+      CXFA_Node* pData = (CXFA_Node*)GetXFAObject(XFA_HASHCODE_Data);
       return pData ? pData->GetFirstChildByClass(XFA_ELEMENT_DataGroup) : NULL;
     }
     case XFA_HASHCODE_DataWindow: {
@@ -212,7 +213,7 @@ FX_BOOL CXFA_Document::IsInteractive() {
   if (m_dwDocFlags & XFA_DOCFLAG_HasInteractive) {
     return m_dwDocFlags & XFA_DOCFLAG_Interactive;
   }
-  CXFA_Node* pConfig = (CXFA_Node*)this->GetXFANode(XFA_HASHCODE_Config);
+  CXFA_Node* pConfig = (CXFA_Node*)this->GetXFAObject(XFA_HASHCODE_Config);
   if (!pConfig) {
     return FALSE;
   }
@@ -241,7 +242,7 @@ CXFA_LocaleMgr* CXFA_Document::GetLocalMgr() {
     CFX_WideString wsLanguage;
     this->GetParser()->GetNotify()->GetAppProvider()->GetLanguage(wsLanguage);
     m_pLocalMgr = new CXFA_LocaleMgr(
-        (CXFA_Node*)this->GetXFANode(XFA_HASHCODE_LocaleSet), wsLanguage);
+        (CXFA_Node*)this->GetXFAObject(XFA_HASHCODE_LocaleSet), wsLanguage);
   }
   return m_pLocalMgr;
 }
@@ -355,7 +356,7 @@ static void XFA_ProtoMerge_MergeNode(CXFA_Document* pDocument,
   }
 }
 void CXFA_Document::DoProtoMerge() {
-  CXFA_Node* pTemplateRoot = (CXFA_Node*)GetXFANode(XFA_HASHCODE_Template);
+  CXFA_Node* pTemplateRoot = (CXFA_Node*)GetXFAObject(XFA_HASHCODE_Template);
   if (!pTemplateRoot) {
     return;
   }

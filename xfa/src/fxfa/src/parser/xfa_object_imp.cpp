@@ -480,7 +480,7 @@ CXFA_WidgetData* CXFA_Node::GetContainerWidgetData() {
                             : NULL;
 }
 FX_BOOL CXFA_Node::GetLocaleName(CFX_WideString& wsLocaleName) {
-  CXFA_Node* pForm = (CXFA_Node*)GetDocument()->GetXFANode(XFA_HASHCODE_Form);
+  CXFA_Node* pForm = (CXFA_Node*)GetDocument()->GetXFAObject(XFA_HASHCODE_Form);
   CXFA_Node* pTopSubform = pForm->GetFirstChildByClass(XFA_ELEMENT_Subform);
   FXSYS_assert(pTopSubform);
   CXFA_Node* pLocaleNode = this;
@@ -495,7 +495,7 @@ FX_BOOL CXFA_Node::GetLocaleName(CFX_WideString& wsLocaleName) {
     return bLocale;
   }
   CXFA_Node* pConfig =
-      (CXFA_Node*)GetDocument()->GetXFANode(XFA_HASHCODE_Config);
+      (CXFA_Node*)GetDocument()->GetXFAObject(XFA_HASHCODE_Config);
   wsLocaleName = GetDocument()->GetLocalMgr()->GetConfigLocaleName(pConfig);
   if (!wsLocaleName.IsEmpty()) {
     bLocale = TRUE;
@@ -1479,7 +1479,7 @@ void CXFA_Node::Script_Attribute_String(FXJSE_HVALUE hValue,
         this->GetClassID() == XFA_ELEMENT_Desc) {
       CFX_WideString wsUseVal = wsValue, wsID, wsSOM;
       CXFA_Node* pTemplateNode =
-          (CXFA_Node*)m_pDocument->GetXFANode(XFA_HASHCODE_Template);
+          (CXFA_Node*)m_pDocument->GetXFAObject(XFA_HASHCODE_Template);
       CXFA_Node* pProtoRoot =
           pTemplateNode->GetFirstChildByClass(XFA_ELEMENT_Subform)
               ->GetFirstChildByClass(XFA_ELEMENT_Proto);
@@ -3110,7 +3110,7 @@ static CXFA_Node* XFA_ScriptInstanceManager_CreateInstance(
     }
   }
   if (!pDataScope) {
-    pDataScope = (CXFA_Node*)pDocument->GetXFANode(XFA_HASHCODE_Record);
+    pDataScope = (CXFA_Node*)pDocument->GetXFAObject(XFA_HASHCODE_Record);
     ASSERT(pDataScope);
   }
   CXFA_Node* pInstance = pDocument->DataMerge_CopyContainer(
@@ -3190,7 +3190,7 @@ void CXFA_Node::Script_InstanceManager_RemoveInstance(
     return;
   }
   pLayoutPro->AddChangedContainer(
-      (CXFA_Node*)m_pDocument->GetXFANode(XFA_HASHCODE_Form));
+      (CXFA_Node*)m_pDocument->GetXFAObject(XFA_HASHCODE_Form));
 }
 void CXFA_Node::Script_InstanceManager_SetInstances(
     CFXJSE_Arguments* pArguments) {
@@ -3237,7 +3237,7 @@ void CXFA_Node::Script_InstanceManager_AddInstance(
     return;
   }
   pLayoutPro->AddChangedContainer(
-      (CXFA_Node*)m_pDocument->GetXFANode(XFA_HASHCODE_Form));
+      (CXFA_Node*)m_pDocument->GetXFAObject(XFA_HASHCODE_Form));
 }
 void CXFA_Node::Script_InstanceManager_InsertInstance(
     CFXJSE_Arguments* pArguments) {
@@ -3280,7 +3280,7 @@ void CXFA_Node::Script_InstanceManager_InsertInstance(
     return;
   }
   pLayoutPro->AddChangedContainer(
-      (CXFA_Node*)m_pDocument->GetXFANode(XFA_HASHCODE_Form));
+      (CXFA_Node*)m_pDocument->GetXFAObject(XFA_HASHCODE_Form));
 }
 int32_t CXFA_Node::InstanceManager_SetInstances(int32_t iDesired) {
   CXFA_Occur nodeOccur = GetOccurNode();
@@ -3345,7 +3345,7 @@ int32_t CXFA_Node::InstanceManager_SetInstances(int32_t iDesired) {
     return 0;
   }
   pLayoutPro->AddChangedContainer(
-      (CXFA_Node*)m_pDocument->GetXFANode(XFA_HASHCODE_Form));
+      (CXFA_Node*)m_pDocument->GetXFAObject(XFA_HASHCODE_Form));
   return 0;
 }
 int32_t CXFA_Node::InstanceManager_MoveInstance(int32_t iTo, int32_t iFrom) {
@@ -3366,7 +3366,7 @@ int32_t CXFA_Node::InstanceManager_MoveInstance(int32_t iTo, int32_t iFrom) {
     return 0;
   }
   pLayoutPro->AddChangedContainer(
-      (CXFA_Node*)m_pDocument->GetXFANode(XFA_HASHCODE_Form));
+      (CXFA_Node*)m_pDocument->GetXFAObject(XFA_HASHCODE_Form));
   return 0;
 }
 void CXFA_Node::Script_Occur_Max(FXJSE_HVALUE hValue,
@@ -4485,21 +4485,21 @@ CXFA_Node* CXFA_Node::GetModelNode() {
     case XFA_XDPPACKET_XDP:
       return m_pDocument->GetRoot();
     case XFA_XDPPACKET_Config:
-      return (CXFA_Node*)m_pDocument->GetXFANode(XFA_HASHCODE_Config);
+      return (CXFA_Node*)m_pDocument->GetXFAObject(XFA_HASHCODE_Config);
     case XFA_XDPPACKET_Template:
-      return (CXFA_Node*)m_pDocument->GetXFANode(XFA_HASHCODE_Template);
+      return (CXFA_Node*)m_pDocument->GetXFAObject(XFA_HASHCODE_Template);
     case XFA_XDPPACKET_Form:
-      return (CXFA_Node*)m_pDocument->GetXFANode(XFA_HASHCODE_Form);
+      return (CXFA_Node*)m_pDocument->GetXFAObject(XFA_HASHCODE_Form);
     case XFA_XDPPACKET_Datasets:
-      return (CXFA_Node*)m_pDocument->GetXFANode(XFA_HASHCODE_Datasets);
+      return (CXFA_Node*)m_pDocument->GetXFAObject(XFA_HASHCODE_Datasets);
     case XFA_XDPPACKET_LocaleSet:
-      return (CXFA_Node*)m_pDocument->GetXFANode(XFA_HASHCODE_LocaleSet);
+      return (CXFA_Node*)m_pDocument->GetXFAObject(XFA_HASHCODE_LocaleSet);
     case XFA_XDPPACKET_ConnectionSet:
-      return (CXFA_Node*)m_pDocument->GetXFANode(XFA_HASHCODE_ConnectionSet);
+      return (CXFA_Node*)m_pDocument->GetXFAObject(XFA_HASHCODE_ConnectionSet);
     case XFA_XDPPACKET_SourceSet:
-      return (CXFA_Node*)m_pDocument->GetXFANode(XFA_HASHCODE_SourceSet);
+      return (CXFA_Node*)m_pDocument->GetXFAObject(XFA_HASHCODE_SourceSet);
     case XFA_XDPPACKET_Xdc:
-      return (CXFA_Node*)m_pDocument->GetXFANode(XFA_HASHCODE_Xdc);
+      return (CXFA_Node*)m_pDocument->GetXFAObject(XFA_HASHCODE_Xdc);
     default:
       return this;
   }

@@ -100,7 +100,8 @@ void XFA_XPDPacket_MergeRootNode(CXFA_Node* pOriginRoot, CXFA_Node* pNewRoot) {
 int32_t CXFA_FFDoc::DoLoad(IFX_Pause* pPause) {
   int32_t iStatus = m_pDocument->GetParser()->DoParse(pPause);
   if (iStatus == XFA_PARSESTATUS_Done && !m_pPDFDoc) {
-    CXFA_Node* pPDFNode = (CXFA_Node*)m_pDocument->GetXFANode(XFA_HASHCODE_Pdf);
+    CXFA_Node* pPDFNode =
+        (CXFA_Node*)m_pDocument->GetXFAObject(XFA_HASHCODE_Pdf);
     if (!pPDFNode) {
       return XFA_PARSESTATUS_SyntaxErr;
     }
@@ -159,7 +160,8 @@ int32_t CXFA_FFDoc::DoLoad(IFX_Pause* pPause) {
 void CXFA_FFDoc::StopLoad() {
   m_pApp->GetXFAFontMgr()->LoadDocFonts(this);
   m_dwDocType = XFA_DOCTYPE_Static;
-  CXFA_Node* pConfig = (CXFA_Node*)m_pDocument->GetXFANode(XFA_HASHCODE_Config);
+  CXFA_Node* pConfig =
+      (CXFA_Node*)m_pDocument->GetXFAObject(XFA_HASHCODE_Config);
   if (!pConfig) {
     return;
   }
@@ -395,7 +397,7 @@ CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(const CFX_WideStringC& wsName,
 IFDE_XMLElement* CXFA_FFDoc::GetPackageData(const CFX_WideStringC& wsPackage) {
   FX_DWORD packetHash =
       FX_HashCode_String_GetW(wsPackage.GetPtr(), wsPackage.GetLength());
-  CXFA_Object* pObject = m_pDocument->GetXFANode(packetHash);
+  CXFA_Object* pObject = m_pDocument->GetXFAObject(packetHash);
   CXFA_Node* pNode =
       (pObject && pObject->IsNode()) ? (CXFA_Node*)pObject : NULL;
   if (!pNode) {
@@ -419,7 +421,7 @@ FX_BOOL CXFA_FFDoc::SavePackage(const CFX_WideStringC& wsPackage,
   if (packetHash == XFA_HASHCODE_Xfa) {
     pNode = m_pDocument->GetRoot();
   } else {
-    CXFA_Object* pObject = m_pDocument->GetXFANode(packetHash);
+    CXFA_Object* pObject = m_pDocument->GetXFAObject(packetHash);
     pNode = (pObject && pObject->IsNode()) ? (CXFA_Node*)pObject : NULL;
   }
   FX_BOOL bFlags = FALSE;

@@ -42,12 +42,13 @@ FX_BOOL CXFA_DataImporter::ImportData(IFX_FileRead* pDataDocument) {
     return FALSE;
   }
   CXFA_Node* pDataModel =
-      (CXFA_Node*)m_pDocument->GetXFANode(XFA_HASHCODE_Datasets);
+      (CXFA_Node*)m_pDocument->GetXFAObject(XFA_HASHCODE_Datasets);
   if (!pDataModel) {
     pDataDocumentParser->Release();
     return FALSE;
   }
-  CXFA_Node* pDataNode = (CXFA_Node*)m_pDocument->GetXFANode(XFA_HASHCODE_Data);
+  CXFA_Node* pDataNode =
+      (CXFA_Node*)m_pDocument->GetXFAObject(XFA_HASHCODE_Data);
   if (pDataNode) {
     pDataModel->RemoveChild(pDataNode);
   }
@@ -444,7 +445,7 @@ void XFA_DataExporter_RegenerateFormFile(CXFA_Node* pNode,
     pStream->WriteString(pURI, FXSYS_wcslen(pURI));
     CFX_WideString wsVersionNumber;
     XFA_DataExporter_RecognizeXFAVersionNumber(
-        (CXFA_Node*)pNode->GetDocument()->GetXFANode(XFA_XDPPACKET_Template),
+        (CXFA_Node*)pNode->GetDocument()->GetXFAObject(XFA_XDPPACKET_Template),
         wsVersionNumber);
     if (wsVersionNumber.IsEmpty()) {
       wsVersionNumber = FX_WSTRC(L"2.8");

@@ -60,7 +60,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes(CXFA_ResolveNodesData& rnd) {
     return 1;
   } else if (rnd.m_CurNode->GetClassID() == XFA_ELEMENT_Xfa) {
     CXFA_Object* pObjNode =
-        rnd.m_pSC->GetDocument()->GetXFANode(rnd.m_uHashName);
+        rnd.m_pSC->GetDocument()->GetXFAObject(rnd.m_uHashName);
     if (pObjNode) {
       rnd.m_Nodes.Add(pObjNode);
     } else if (rnd.m_uHashName == XFA_HASHCODE_Xfa) {
@@ -124,7 +124,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Dollar(
   if (dwNameHash == XFA_HASHCODE_Xfa) {
     nodes.Add(rnd.m_pSC->GetDocument()->GetRoot());
   } else {
-    CXFA_Object* pObjNode = rnd.m_pSC->GetDocument()->GetXFANode(dwNameHash);
+    CXFA_Object* pObjNode = rnd.m_pSC->GetDocument()->GetXFAObject(dwNameHash);
     if (pObjNode) {
       rnd.m_Nodes.Add(pObjNode);
     }
@@ -140,7 +140,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Excalmatory(
     return 0;
   }
   CXFA_Node* datasets =
-      (CXFA_Node*)rnd.m_pSC->GetDocument()->GetXFANode(XFA_HASHCODE_Datasets);
+      (CXFA_Node*)rnd.m_pSC->GetDocument()->GetXFAObject(XFA_HASHCODE_Datasets);
   if (datasets == NULL) {
     return 0;
   }

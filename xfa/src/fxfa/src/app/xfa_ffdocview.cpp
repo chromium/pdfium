@@ -80,7 +80,7 @@ int32_t CXFA_FFDocView::StartLayout(int32_t iStartPage) {
     return iStatus;
   }
   CXFA_Node* pRootItem =
-      (CXFA_Node*)m_pDoc->GetXFADoc()->GetXFANode(XFA_HASHCODE_Form);
+      (CXFA_Node*)m_pDoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Form);
   if (!pRootItem) {
     return iStatus;
   }
@@ -102,7 +102,7 @@ int32_t CXFA_FFDocView::DoLayout(IFX_Pause* pPause) {
 }
 void CXFA_FFDocView::StopLayout() {
   CXFA_Node* pRootItem =
-      (CXFA_Node*)m_pDoc->GetXFADoc()->GetXFANode(XFA_HASHCODE_Form);
+      (CXFA_Node*)m_pDoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Form);
   if (!pRootItem) {
     return;
   }
@@ -265,7 +265,7 @@ int32_t CXFA_FFDocView::ProcessWidgetEvent(CXFA_EventParam* pParam,
   if (pParam->m_eType == XFA_EVENT_Validate) {
     CFX_WideString wsValidateStr = FX_WSTRC(L"preSubmit");
     CXFA_Node* pConfigItem =
-        (CXFA_Node*)m_pDoc->GetXFADoc()->GetXFANode(XFA_HASHCODE_Config);
+        (CXFA_Node*)m_pDoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Config);
     if (pConfigItem) {
       CXFA_Node* pValidateNode = NULL;
       CXFA_Node* pAcrobatNode = pConfigItem->GetChild(0, XFA_ELEMENT_Acrobat);
@@ -303,7 +303,7 @@ int32_t CXFA_FFDocView::ProcessWidgetEvent(CXFA_EventParam* pParam,
   CXFA_Node* pNode = pWidgetAcc ? pWidgetAcc->GetNode() : NULL;
   if (!pNode) {
     CXFA_Node* pRootItem =
-        (CXFA_Node*)m_pDoc->GetXFADoc()->GetXFANode(XFA_HASHCODE_Form);
+        (CXFA_Node*)m_pDoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Form);
     if (!pRootItem) {
       return XFA_EVENTERROR_Error;
     }
@@ -635,7 +635,7 @@ void CXFA_FFDocView::AddIndexChangedSubform(CXFA_Node* pNode) {
 }
 void CXFA_FFDocView::RunDocClose() {
   CXFA_Node* pRootItem =
-      (CXFA_Node*)m_pDoc->GetXFADoc()->GetXFANode(XFA_HASHCODE_Form);
+      (CXFA_Node*)m_pDoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Form);
   if (!pRootItem) {
     return;
   }
@@ -748,7 +748,7 @@ FX_BOOL CXFA_FFDocView::RunValidate() {
 }
 FX_BOOL CXFA_FFDocView::RunEventLayoutReady() {
   CXFA_Node* pRootItem =
-      (CXFA_Node*)m_pDoc->GetXFADoc()->GetXFANode(XFA_HASHCODE_Form);
+      (CXFA_Node*)m_pDoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Form);
   if (!pRootItem) {
     return FALSE;
   }
@@ -835,7 +835,7 @@ void CXFA_FFDocView::SetChangeMark() {
 }
 CXFA_Node* CXFA_FFDocView::GetRootSubform() {
   CXFA_Node* pFormPacketNode =
-      (CXFA_Node*)m_pDoc->GetXFADoc()->GetXFANode(XFA_HASHCODE_Form);
+      (CXFA_Node*)m_pDoc->GetXFADoc()->GetXFAObject(XFA_HASHCODE_Form);
   if (!pFormPacketNode) {
     return NULL;
   }

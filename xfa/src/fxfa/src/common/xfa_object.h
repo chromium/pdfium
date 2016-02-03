@@ -4,17 +4,18 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _XFA_OBJECT_H_
-#define _XFA_OBJECT_H_
-class CXFA_Document;
-class IXFA_ObjFactory;
-class IXFA_Notify;
-class CXFA_Object;
-class CXFA_OrdinaryObject;
-class CXFA_Node;
-class CXFA_NodeList;
+#ifndef XFA_OBJECT_H_
+#define XFA_OBJECT_H_
+
 class CXFA_ArrayNodeList;
 class CXFA_AttachNodeList;
+class CXFA_Document;
+class CXFA_Node;
+class CXFA_NodeList;
+class CXFA_OrdinaryObject;
+class IXFA_Notify;
+class IXFA_ObjFactory;
+
 enum XFA_OBJECTTYPE {
   XFA_OBJECTTYPE_OrdinaryObject = 0x0,
   XFA_OBJECTTYPE_OrdinaryList = 0x1,
@@ -41,21 +42,22 @@ enum XFA_OBJECTTYPE {
 class CXFA_Object {
  public:
   CXFA_Object(CXFA_Document* pDocument, FX_DWORD uFlags);
-  inline CXFA_Document* GetDocument() const { return m_pDocument; }
-  inline FX_DWORD GetFlag() const { return m_uFlags; }
-  inline XFA_OBJECTTYPE GetObjectType() const {
+  CXFA_Document* GetDocument() const { return m_pDocument; }
+  FX_DWORD GetFlag() const { return m_uFlags; }
+  XFA_OBJECTTYPE GetObjectType() const {
     return (XFA_OBJECTTYPE)(m_uFlags & XFA_OBJECTTYPEMASK);
   }
-  inline FX_BOOL IsNode() const {
+
+  FX_BOOL IsNode() const {
     return (m_uFlags & XFA_OBJECTTYPEMASK) >= XFA_OBJECTTYPE_Node;
   }
-  inline FX_BOOL IsOrdinaryObject() const {
+  FX_BOOL IsOrdinaryObject() const {
     return (m_uFlags & XFA_OBJECTTYPEMASK) == XFA_OBJECTTYPE_OrdinaryObject;
   }
-  inline FX_BOOL IsNodeList() const {
+  FX_BOOL IsNodeList() const {
     return (m_uFlags & XFA_OBJECTTYPEMASK) == XFA_OBJECTTYPE_NodeList;
   }
-  inline FX_BOOL IsOrdinaryList() const {
+  FX_BOOL IsOrdinaryList() const {
     return (m_uFlags & XFA_OBJECTTYPEMASK) == XFA_OBJECTTYPE_OrdinaryList;
   }
   FX_BOOL IsContentNode() const {
@@ -64,6 +66,15 @@ class CXFA_Object {
   FX_BOOL IsContainerNode() const {
     return (m_uFlags & XFA_OBJECTTYPEMASK) == XFA_OBJECTTYPE_ContainerNode;
   }
+
+  CXFA_Node* AsNode();
+  CXFA_OrdinaryObject* AsOrdinaryObject();
+  CXFA_NodeList* AsNodeList();
+
+  const CXFA_Node* AsNode() const;
+  const CXFA_OrdinaryObject* AsOrdinaryObject() const;
+  const CXFA_NodeList* AsNodeList() const;
+
   XFA_ELEMENT GetClassID() const;
   void GetClassName(CFX_WideStringC& wsName) const;
   uint32_t GetClassHashCode() const;
@@ -73,7 +84,7 @@ class CXFA_Object {
   void ThrowScriptErrorMessage(int32_t iStringID, ...);
 
  protected:
-  CXFA_Document* m_pDocument;
+  CXFA_Document* const m_pDocument;
   FX_DWORD m_uFlags;
 };
 #define XFA_NODEFILTER_Children 0x01
@@ -664,7 +675,7 @@ class CXFA_ThisProxy : public CXFA_Object {
 };
 class CXFA_NodeList : public CXFA_Object {
  public:
-  CXFA_NodeList(CXFA_Document* pDocument);
+  explicit CXFA_NodeList(CXFA_Document* pDocument);
   virtual ~CXFA_NodeList() {}
   XFA_ELEMENT GetClassID() const { return XFA_ELEMENT_NodeList; }
   CXFA_Node* NamedItem(const CFX_WideStringC& wsName);
@@ -686,7 +697,7 @@ class CXFA_NodeList : public CXFA_Object {
 };
 class CXFA_ArrayNodeList : public CXFA_NodeList {
  public:
-  CXFA_ArrayNodeList(CXFA_Document* pDocument);
+  explicit CXFA_ArrayNodeList(CXFA_Document* pDocument);
   void SetArrayNodeList(const CXFA_NodeArray& srcArray);
   virtual int32_t GetLength();
   virtual FX_BOOL Append(CXFA_Node* pNode);
@@ -745,4 +756,46 @@ class CXFA_TraverseStrategy_XFANode {
 };
 typedef CXFA_NodeIteratorTemplate<CXFA_Node, CXFA_TraverseStrategy_XFANode>
     CXFA_NodeIterator;
-#endif
+
+inline CXFA_Node* CXFA_Object::AsNode() {
+  return IsNode() ? static_cast<CXFA_Node*>(this) : nullptr;
+}
+inline CXFA_OrdinaryObject* CXFA_Object::AsOrdinaryObject() {
+  return IsOrdinaryObject() ? static_cast<CXFA_OrdinaryObject*>(this) : nullptr;
+}
+inline CXFA_NodeList* CXFA_Object::AsNodeList() {
+  return IsNodeList() ? static_cast<CXFA_NodeList*>(this) : nullptr;
+}
+
+inline const CXFA_Node* CXFA_Object::AsNode() const {
+  return IsNode() ? static_cast<const CXFA_Node*>(this) : nullptr;
+}
+inline const CXFA_OrdinaryObject* CXFA_Object::AsOrdinaryObject() const {
+  return IsOrdinaryObject() ? static_cast<const CXFA_OrdinaryObject*>(this)
+                            : nullptr;
+}
+inline const CXFA_NodeList* CXFA_Object::AsNodeList() const {
+  return IsNodeList() ? static_cast<const CXFA_NodeList*>(this) : nullptr;
+}
+
+inline CXFA_Node* ToNode(CXFA_Object* pObj) {
+  return pObj ? pObj->AsNode() : nullptr;
+}
+inline CXFA_OrdinaryObject* ToOrdinaryObject(CXFA_Object* pObj) {
+  return pObj ? pObj->AsOrdinaryObject() : nullptr;
+}
+inline CXFA_NodeList* ToNodeList(CXFA_Object* pObj) {
+  return pObj ? pObj->AsNodeList() : nullptr;
+}
+
+inline const CXFA_Node* ToNode(const CXFA_Object* pObj) {
+  return pObj ? pObj->AsNode() : nullptr;
+}
+inline const CXFA_OrdinaryObject* ToOrdinaryObject(const CXFA_Object* pObj) {
+  return pObj ? pObj->AsOrdinaryObject() : nullptr;
+}
+inline const CXFA_NodeList* ToNodeList(const CXFA_Object* pObj) {
+  return pObj ? pObj->AsNodeList() : nullptr;
+}
+
+#endif  // XFA_OBJECT_H_

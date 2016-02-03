@@ -1162,7 +1162,7 @@ static void XFA_DataMerge_UpdateBindingRelations(CXFA_Document* pDocument,
                                               ? XFA_ELEMENT_DataGroup
                                               : XFA_ELEMENT_DataValue;
               CXFA_Node* pRecordNode =
-                  (CXFA_Node*)pDocument->GetXFANode(XFA_HASHCODE_Record);
+                  (CXFA_Node*)pDocument->GetXFAObject(XFA_HASHCODE_Record);
               pDataNode = XFA_DataDescription_MaybeCreateDataNode(
                   pDocument, pRecordNode, eDataNodeType,
                   pFormNode->GetCData(XFA_ATTRIBUTE_Name));
@@ -1279,7 +1279,7 @@ static void XFA_DataMerge_UpdateBindingRelations(CXFA_Document* pDocument, CXFA_
                                           ? XFA_ELEMENT_DataGroup
                                           : XFA_ELEMENT_DataValue;
           CXFA_Node* pRecordNode =
-              (CXFA_Node*)pDocument->GetXFANode(XFA_HASHCODE_Record);
+              (CXFA_Node*)pDocument->GetXFAObject(XFA_HASHCODE_Record);
           pDataNode = XFA_DataDescription_MaybeCreateDataNode(
               pDocument, pRecordNode, eDataNodeType,
               pFormNode->GetCData(XFA_ATTRIBUTE_Name));
@@ -1337,7 +1337,7 @@ CXFA_Node* XFA_DataMerge_FindDataScope(CXFA_Node* pParentFormNode) {
       return pDataScope;
     }
   }
-  return (CXFA_Node*)pParentFormNode->GetDocument()->GetXFANode(
+  return (CXFA_Node*)pParentFormNode->GetDocument()->GetXFAObject(
       XFA_HASHCODE_Data);
 }
 void CXFA_Document::DataMerge_UpdateBindingRelations(
@@ -1383,7 +1383,7 @@ CXFA_Node* CXFA_Document::GetNotBindNode(CXFA_ObjArray& arrayNodes) {
   return NULL;
 }
 void CXFA_Document::DoDataMerge() {
-  CXFA_Node* pDatasetsRoot = (CXFA_Node*)GetXFANode(XFA_HASHCODE_Datasets);
+  CXFA_Node* pDatasetsRoot = (CXFA_Node*)GetXFAObject(XFA_HASHCODE_Datasets);
   if (!pDatasetsRoot) {
     IFDE_XMLElement* pDatasetsXMLNode =
         IFDE_XMLElement::Create(FX_WSTRC(L"xfa:datasets"));
@@ -1537,7 +1537,7 @@ void CXFA_Document::DoDataMerge() {
   }
 }
 void CXFA_Document::DoDataRemerge(FX_BOOL bDoDataMerge) {
-  CXFA_Node* pFormRoot = (CXFA_Node*)this->GetXFANode(XFA_HASHCODE_Form);
+  CXFA_Node* pFormRoot = (CXFA_Node*)this->GetXFAObject(XFA_HASHCODE_Form);
   if (pFormRoot) {
     while (CXFA_Node* pNode = pFormRoot->GetNodeItem(XFA_NODEITEM_FirstChild)) {
       pFormRoot->RemoveChild(pNode);

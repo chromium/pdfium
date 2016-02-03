@@ -1704,7 +1704,7 @@ FX_BOOL CXFA_TextProvider::GetEmbbedObj(FX_BOOL bURI,
     }
     if (!pIDNode) {
       pIDNode = pDocument->GetNodeByID(
-          (CXFA_Node*)pDocument->GetXFANode(XFA_HASHCODE_Form), wsAttr);
+          (CXFA_Node*)pDocument->GetXFAObject(XFA_HASHCODE_Form), wsAttr);
     }
     if (pIDNode) {
       pEmbAcc = (CXFA_WidgetAcc*)pIDNode->GetWidgetData();

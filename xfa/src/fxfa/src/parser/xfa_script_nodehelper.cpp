@@ -353,7 +353,7 @@ FX_BOOL CXFA_NodeHelper::XFA_ResolveNodes_CreateNode(
   FX_BOOL bResult = FALSE;
   if (wsName.GetAt(0) == '!') {
     wsName = wsName.Right(wsName.GetLength() - 1);
-    m_pCreateParent = (CXFA_Node*)pScriptContext->GetDocument()->GetXFANode(
+    m_pCreateParent = (CXFA_Node*)pScriptContext->GetDocument()->GetXFAObject(
         XFA_HASHCODE_Datasets);
   }
   if (wsName.GetAt(0) == '#') {

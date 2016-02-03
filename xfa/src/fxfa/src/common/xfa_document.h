@@ -141,8 +141,8 @@ class CXFA_Document : public IXFA_ObjFactory {
   IXFA_DocParser* GetParser() const { return m_pParser; }
   IXFA_Notify* GetNotify() const;
   void SetRoot(CXFA_Node* pNewRoot);
-  CXFA_Object* GetXFANode(const CFX_WideStringC& wsNodeName);
-  CXFA_Object* GetXFANode(FX_DWORD wsNodeNameHash);
+  CXFA_Object* GetXFAObject(const CFX_WideStringC& wsNodeName);
+  CXFA_Object* GetXFAObject(FX_DWORD wsNodeNameHash);
   void AddPurgeNode(CXFA_Node* pNode);
   FX_BOOL RemovePurgeNode(CXFA_Node* pNode);
   void PurgeNodes();

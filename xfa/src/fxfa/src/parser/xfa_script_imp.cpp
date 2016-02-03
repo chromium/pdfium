@@ -181,7 +181,7 @@ void CXFA_ScriptContext::GlobalPropertyGetter(FXJSE_HOBJECT hObject,
         FX_HashCode_String_GetW(wsPropName, wsPropName.GetLength());
     if (uHashCode != XFA_HASHCODE_Layout) {
       CXFA_Object* pObject =
-          lpScriptContext->GetDocument()->GetXFANode(uHashCode);
+          lpScriptContext->GetDocument()->GetXFAObject(uHashCode);
       if (pObject) {
         FXJSE_Value_Set(hValue, lpScriptContext->GetJSValueFromMap(pObject));
         return;
