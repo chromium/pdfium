@@ -241,7 +241,10 @@ DLLEXPORT void STDCALL FPDF_InitLibraryWithConfig(
   pModuleMgr->InitPageModule();
   pModuleMgr->InitRenderModule();
 #ifdef PDF_ENABLE_XFA
-  CPDFXFA_App::GetInstance()->Initialize();
+  CPDFXFA_App::GetInstance()->Initialize(
+      (cfg && cfg->version >= 2)
+          ? reinterpret_cast<FXJSE_HRUNTIME>(cfg->m_pIsolate)
+          : nullptr);
 #else   // PDF_ENABLE_XFA
   pModuleMgr->LoadEmbeddedGB1CMaps();
   pModuleMgr->LoadEmbeddedJapan1CMaps();

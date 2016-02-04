@@ -370,11 +370,6 @@ void FXJS_ReleaseRuntime(v8::Isolate* pIsolate,
     return;
   pData->ReleaseDynamicObjsMap();
 
-#ifdef PDF_ENABLE_XFA
-  // XFA, if present, should have already cleaned itself up.
-  FXSYS_assert(!pData->m_pFXJSERuntimeData);
-#endif  // PDF_ENABLE_XFA
-
   int maxID = CFXJS_ObjDefinition::MaxID(pIsolate);
   for (int i = 0; i < maxID; ++i) {
     CFXJS_ObjDefinition* pObjDef = CFXJS_ObjDefinition::ForID(pIsolate, i);

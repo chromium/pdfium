@@ -24,7 +24,7 @@ typedef double FXJSE_DOUBLE;
 void FXJSE_Initialize();
 void FXJSE_Finalize();
 FXJSE_HRUNTIME FXJSE_Runtime_Create();
-void FXJSE_Runtime_Release(FXJSE_HRUNTIME hRuntime);
+void FXJSE_Runtime_Release(FXJSE_HRUNTIME hRuntime, bool bOwnedRuntime);
 typedef struct _FXJSE_CLASS FXJSE_CLASS;
 FXJSE_HCONTEXT FXJSE_Context_Create(FXJSE_HRUNTIME hRuntime,
                                     const FXJSE_CLASS* lpGlobalClass = nullptr,

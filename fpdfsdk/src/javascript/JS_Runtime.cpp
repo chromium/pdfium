@@ -121,9 +121,7 @@ CJS_Runtime::~CJS_Runtime() {
     delete m_ContextArray.GetAt(i);
 
   m_ContextArray.RemoveAll();
-#ifndef PDF_ENABLE_XFA
   FXJS_ReleaseRuntime(GetIsolate(), &m_context, &m_StaticObjects);
-#endif
 
   m_pApp = NULL;
   m_pDocument = NULL;

@@ -58,12 +58,19 @@ FXJSE_HRUNTIME FXJSE_Runtime_Create() {
   CFXJSE_RuntimeData::g_RuntimeList->AppendRuntime(pIsolate);
   return reinterpret_cast<FXJSE_HRUNTIME>(pIsolate);
 }
-void FXJSE_Runtime_Release(FXJSE_HRUNTIME hRuntime) {
+void FXJSE_Runtime_Release(FXJSE_HRUNTIME hRuntime, bool bOwnedRuntime) {
   v8::Isolate* pIsolate = reinterpret_cast<v8::Isolate*>(hRuntime);
-  if (pIsolate) {
+  if (!pIsolate)
+    return;
+  if (bOwnedRuntime) {
     ASSERT(CFXJSE_RuntimeData::g_RuntimeList);
     CFXJSE_RuntimeData::g_RuntimeList->RemoveRuntime(
         pIsolate, FXJSE_Runtime_DisposeCallback);
+  } else {
+    if (FXJS_PerIsolateData* pData = FXJS_PerIsolateData::Get(pIsolate)) {
+      delete pData->m_pFXJSERuntimeData;
+      pData->m_pFXJSERuntimeData = nullptr;
+    }
   }
 }
 CFXJSE_RuntimeData* CFXJSE_RuntimeData::Create(v8::Isolate* pIsolate) {
