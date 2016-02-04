@@ -8,58 +8,40 @@
 #include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/include/fpdfxfa/fpdfxfa_util.h"
 
-CFX_PtrArray CXFA_FWLAdapterTimerMgr::ms_timerArray;
+std::vector<CFWL_TimerInfo*> CXFA_FWLAdapterTimerMgr::s_TimerArray;
 
 FWL_ERR CXFA_FWLAdapterTimerMgr::Start(IFWL_Timer* pTimer,
                                        FX_DWORD dwElapse,
                                        FWL_HTIMER& hTimer,
-                                       FX_BOOL bImmediately /* = TRUE */) {
-  if (m_pEnv) {
-    uint32_t uIDEvent = m_pEnv->FFI_SetTimer(dwElapse, TimerProc);
-    CFWL_TimerInfo* pInfo = new CFWL_TimerInfo;
-    pInfo->uIDEvent = uIDEvent;
-    pInfo->pTimer = pTimer;
-    ms_timerArray.Add(pInfo);
+                                       FX_BOOL bImmediately) {
+  if (!m_pEnv)
+    return FWL_ERR_Indefinite;
 
-    hTimer = (FWL_HTIMER)pInfo;
-    return FWL_ERR_Succeeded;
-  }
-
-  return FWL_ERR_Indefinite;
+  uint32_t uIDEvent = m_pEnv->FFI_SetTimer(dwElapse, TimerProc);
+  s_TimerArray.push_back(new CFWL_TimerInfo(uIDEvent, pTimer));
+  hTimer = reinterpret_cast<FWL_HTIMER>(s_TimerArray.back());
+  return FWL_ERR_Succeeded;
 }
 
 FWL_ERR CXFA_FWLAdapterTimerMgr::Stop(FWL_HTIMER hTimer) {
-  if (!hTimer)
+  if (!hTimer || !m_pEnv)
     return FWL_ERR_Indefinite;
 
-  if (m_pEnv) {
-    CFWL_TimerInfo* pInfo = (CFWL_TimerInfo*)hTimer;
-
-    m_pEnv->FFI_KillTimer(pInfo->uIDEvent);
-
-    int32_t index = ms_timerArray.Find(pInfo);
-    if (index >= 0) {
-      ms_timerArray.RemoveAt(index);
-      delete pInfo;
-    }
-    return FWL_ERR_Succeeded;
+  CFWL_TimerInfo* pInfo = reinterpret_cast<CFWL_TimerInfo*>(hTimer);
+  m_pEnv->FFI_KillTimer(pInfo->uIDEvent);
+  auto it = std::find(s_TimerArray.begin(), s_TimerArray.end(), pInfo);
+  if (it != s_TimerArray.end()) {
+    s_TimerArray.erase(it);
+    delete pInfo;
   }
-
-  return FWL_ERR_Indefinite;
+  return FWL_ERR_Succeeded;
 }
 
 void CXFA_FWLAdapterTimerMgr::TimerProc(int32_t idEvent) {
-  CFWL_TimerInfo* pInfo = NULL;
-  int32_t iCount = CXFA_FWLAdapterTimerMgr::ms_timerArray.GetSize();
-  for (int32_t i = 0; i < iCount; i++) {
-    CFWL_TimerInfo* pTemp =
-        (CFWL_TimerInfo*)CXFA_FWLAdapterTimerMgr::ms_timerArray.GetAt(i);
-    if (pTemp->uIDEvent == idEvent) {
-      pInfo = pTemp;
+  for (CFWL_TimerInfo* pInfo : s_TimerArray) {
+    if (pInfo->uIDEvent == idEvent) {
+      pInfo->pTimer->Run(reinterpret_cast<FWL_HTIMER>(pInfo));
       break;
     }
-  }
-  if (pInfo) {
-    pInfo->pTimer->Run((FWL_HTIMER)pInfo);
   }
 }

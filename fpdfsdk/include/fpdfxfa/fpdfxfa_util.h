@@ -7,12 +7,16 @@
 #ifndef FPDFSDK_INCLUDE_FPDFXFA_FPDFXFA_UTIL_H_
 #define FPDFSDK_INCLUDE_FPDFXFA_FPDFXFA_UTIL_H_
 
+#include <vector>
+
 #include "xfa/include/fwl/adapter/fwl_adaptertimermgr.h"
 
 #define JS_STR_VIEWERTYPE_STANDARD L"Exchange"
 #define JS_STR_LANGUANGE L"ENU"
 #define JS_STR_VIEWERVARIATION L"Full"
 #define JS_STR_VIEWERVERSION_XFA L"11"
+
+class CFWL_TimerInfo;
 
 class CXFA_FWLAdapterTimerMgr : public IFWL_AdapterTimerMgr {
  public:
@@ -26,13 +30,16 @@ class CXFA_FWLAdapterTimerMgr : public IFWL_AdapterTimerMgr {
  protected:
   static void TimerProc(int32_t idEvent);
 
-  static CFX_PtrArray ms_timerArray;
-  CPDFDoc_Environment* m_pEnv;
+  static std::vector<CFWL_TimerInfo*> s_TimerArray;
+  CPDFDoc_Environment* const m_pEnv;
 };
 
 class CFWL_TimerInfo {
  public:
   CFWL_TimerInfo() : pTimer(nullptr) {}
+  CFWL_TimerInfo(uint32_t event, IFWL_Timer* timer)
+      : uIDEvent(event), pTimer(timer) {}
+
   uint32_t uIDEvent;
   IFWL_Timer* pTimer;
 };
