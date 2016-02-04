@@ -467,8 +467,8 @@ CXML_Element* CXML_Parser::ParseElement(CXML_Element* pParent,
               break;
             }
             pSubElement->m_pParent = pElement;
-            pElement->m_Children.Add((void*)CXML_Element::Element);
-            pElement->m_Children.Add(pSubElement);
+            pElement->m_Children.push_back(
+                {CXML_Element::Element, pSubElement});
             SkipWhiteSpaces();
           }
           break;
@@ -514,8 +514,7 @@ void CXML_Parser::InsertContentSegment(FX_BOOL bCDATA,
   }
   CXML_Content* pContent = new CXML_Content;
   pContent->Set(bCDATA, content);
-  pElement->m_Children.Add((void*)CXML_Element::Content);
-  pElement->m_Children.Add(pContent);
+  pElement->m_Children.push_back({CXML_Element::Content, pContent});
 }
 static CXML_Element* XML_ContinueParse(CXML_Parser& parser,
                                        FX_BOOL bSaveSpaceChars,
@@ -573,18 +572,16 @@ void CXML_Element::Empty() {
   RemoveChildren();
 }
 void CXML_Element::RemoveChildren() {
-  for (int i = 0; i < m_Children.GetSize(); i += 2) {
-    ChildType type = (ChildType)(uintptr_t)m_Children.GetAt(i);
-    if (type == Content) {
-      CXML_Content* content = (CXML_Content*)m_Children.GetAt(i + 1);
-      delete content;
-    } else if (type == Element) {
-      CXML_Element* child = (CXML_Element*)m_Children.GetAt(i + 1);
+  for (const ChildRecord& record : m_Children) {
+    if (record.type == Content) {
+      delete static_cast<CXML_Content*>(record.child);
+    } else if (record.type == Element) {
+      CXML_Element* child = static_cast<CXML_Element*>(record.child);
       child->RemoveChildren();
       delete child;
     }
   }
-  m_Children.RemoveAll();
+  m_Children.clear();
 }
 CFX_ByteString CXML_Element::GetTagName(FX_BOOL bQualified) const {
   if (!bQualified || m_QSpaceName.IsEmpty()) {
@@ -688,45 +685,32 @@ FX_BOOL CXML_Element::GetAttrFloat(const CFX_ByteStringC& space,
   }
   return FALSE;
 }
-FX_DWORD CXML_Element::CountChildren() const {
-  return m_Children.GetSize() / 2;
-}
 CXML_Element::ChildType CXML_Element::GetChildType(FX_DWORD index) const {
-  index <<= 1;
-  if (index >= (FX_DWORD)m_Children.GetSize()) {
-    return Invalid;
-  }
-  return (ChildType)(uintptr_t)m_Children.GetAt(index);
+  return index < m_Children.size() ? m_Children[index].type : Invalid;
 }
 CFX_WideString CXML_Element::GetContent(FX_DWORD index) const {
-  index <<= 1;
-  if (index >= (FX_DWORD)m_Children.GetSize() ||
-      (ChildType)(uintptr_t)m_Children.GetAt(index) != Content) {
-    return CFX_WideString();
-  }
-  CXML_Content* pContent = (CXML_Content*)m_Children.GetAt(index + 1);
-  if (pContent) {
-    return pContent->m_Content;
+  if (index < m_Children.size() && m_Children[index].type == Content) {
+    CXML_Content* pContent =
+        static_cast<CXML_Content*>(m_Children[index].child);
+    if (pContent)
+      return pContent->m_Content;
   }
   return CFX_WideString();
 }
 CXML_Element* CXML_Element::GetElement(FX_DWORD index) const {
-  index <<= 1;
-  if (index >= (FX_DWORD)m_Children.GetSize() ||
-      (ChildType)(uintptr_t)m_Children.GetAt(index) != Element) {
-    return NULL;
+  if (index < m_Children.size() && m_Children[index].type == Element) {
+    return static_cast<CXML_Element*>(m_Children[index].child);
   }
-  return (CXML_Element*)m_Children.GetAt(index + 1);
+  return nullptr;
 }
 FX_DWORD CXML_Element::CountElements(const CFX_ByteStringC& space,
                                      const CFX_ByteStringC& tag) const {
   int count = 0;
-  for (int i = 0; i < m_Children.GetSize(); i += 2) {
-    ChildType type = (ChildType)(uintptr_t)m_Children.GetAt(i);
-    if (type != Element) {
+  for (const ChildRecord& record : m_Children) {
+    if (record.type != Element)
       continue;
-    }
-    CXML_Element* pKid = (CXML_Element*)m_Children.GetAt(i + 1);
+
+    CXML_Element* pKid = static_cast<CXML_Element*>(record.child);
     if ((space.IsEmpty() || pKid->m_QSpaceName == space) &&
         pKid->m_TagName == tag) {
       count++;
@@ -737,31 +721,30 @@ FX_DWORD CXML_Element::CountElements(const CFX_ByteStringC& space,
 CXML_Element* CXML_Element::GetElement(const CFX_ByteStringC& space,
                                        const CFX_ByteStringC& tag,
                                        int index) const {
-  if (index < 0) {
-    return NULL;
-  }
-  for (int i = 0; i < m_Children.GetSize(); i += 2) {
-    ChildType type = (ChildType)(uintptr_t)m_Children.GetAt(i);
-    if (type != Element) {
+  if (index < 0)
+    return nullptr;
+
+  for (const ChildRecord& record : m_Children) {
+    if (record.type != Element)
       continue;
-    }
-    CXML_Element* pKid = (CXML_Element*)m_Children.GetAt(i + 1);
-    if ((!space.IsEmpty() && pKid->m_QSpaceName != space) ||
-        pKid->m_TagName != tag) {
-      continue;
-    }
-    if (index-- == 0) {
-      return pKid;
+
+    CXML_Element* pKid = static_cast<CXML_Element*>(record.child);
+    if ((space.IsEmpty() || pKid->m_QSpaceName == space) &&
+        pKid->m_TagName == tag) {
+      if (index-- == 0)
+        return pKid;
     }
   }
   return NULL;
 }
 FX_DWORD CXML_Element::FindElement(CXML_Element* pChild) const {
-  for (int i = 0; i < m_Children.GetSize(); i += 2) {
-    if ((ChildType)(uintptr_t)m_Children.GetAt(i) == Element &&
-        (CXML_Element*)m_Children.GetAt(i + 1) == pChild) {
-      return (FX_DWORD)(i >> 1);
+  int index = 0;
+  for (const ChildRecord& record : m_Children) {
+    if (record.type == Element &&
+        static_cast<CXML_Element*>(record.child) == pChild) {
+      return index;
     }
+    ++index;
   }
   return (FX_DWORD)-1;
 }
