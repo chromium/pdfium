@@ -104,7 +104,7 @@ void CXFA_TextParser::InitCSSData(IXFA_TextProvider* pTextProvider) {
     m_pSelector->SetFontMgr(pFontMgr);
     FX_FLOAT fFontSize = 10;
     CXFA_Font font = pTextProvider->GetFontNode();
-    if (font.IsExistInXML()) {
+    if (font) {
       fFontSize = font.GetFontSize();
     }
     m_pSelector->SetDefFontSize(fFontSize);
@@ -136,7 +136,7 @@ IFDE_CSSComputedStyle* CXFA_TextParser::CreateRootStyle(
   IFDE_CSSFontStyle* pFontStyle = pStyle->GetFontStyles();
   IFDE_CSSParagraphStyle* pParaStyle = pStyle->GetParagraphStyles();
   FX_FLOAT fLineHeight = 0, fFontSize = 10;
-  if (para.IsExistInXML()) {
+  if (para) {
     fLineHeight = para.GetLineHeight();
     FDE_CSSLENGTH indent;
     indent.Set(FDE_CSSLENGTHUNIT_Point, para.GetTextIndent());
@@ -164,7 +164,7 @@ IFDE_CSSComputedStyle* CXFA_TextParser::CreateRootStyle(
     rtMarginWidth.bottom.Set(FDE_CSSLENGTHUNIT_Point, para.GetSpaceBelow());
     pStyle->GetBoundaryStyles()->SetMarginWidth(rtMarginWidth);
   }
-  if (font.IsExistInXML()) {
+  if (font) {
     pFontStyle->SetColor(font.GetColor());
     pFontStyle->SetFontStyle(font.IsItalic() ? FDE_CSSFONTSTYLE_Italic
                                              : FDE_CSSFONTSTYLE_Normal);
@@ -324,7 +324,7 @@ void CXFA_TextParser::ParseTagInfo(IFDE_XMLNode* pXMLNode,
 int32_t CXFA_TextParser::GetVAlgin(IXFA_TextProvider* pTextProvider) const {
   int32_t iAlign = XFA_ATTRIBUTEENUM_Top;
   CXFA_Para para = pTextProvider->GetParaNode();
-  if (para.IsExistInXML()) {
+  if (para) {
     iAlign = para.GetVerticalAlign();
   }
   return iAlign;
@@ -357,7 +357,7 @@ IFX_Font* CXFA_TextParser::GetFont(IXFA_TextProvider* pTextProvider,
   CFX_WideStringC wsFamily = FX_WSTRC(L"Courier");
   FX_DWORD dwStyle = 0;
   CXFA_Font font = pTextProvider->GetFontNode();
-  if (font.IsExistInXML()) {
+  if (font) {
     font.GetTypeface(wsFamily);
     if (font.IsBold()) {
       dwStyle |= FX_FONTSTYLE_Bold;
@@ -391,7 +391,7 @@ FX_FLOAT CXFA_TextParser::GetFontSize(IXFA_TextProvider* pTextProvider,
     return pStyle->GetFontStyles()->GetFontSize();
   }
   CXFA_Font font = pTextProvider->GetFontNode();
-  if (font.IsExistInXML()) {
+  if (font) {
     return font.GetFontSize();
   }
   return 10;
@@ -457,7 +457,7 @@ void CXFA_TextParser::GetUnderline(IXFA_TextProvider* pTextProvider,
     }
   } else {
     CXFA_Font font = pTextProvider->GetFontNode();
-    if (font.IsExistInXML()) {
+    if (font) {
       iUnderline = font.GetUnderline();
       iPeriod = font.GetUnderlinePeriod();
     }
@@ -471,7 +471,7 @@ void CXFA_TextParser::GetLinethrough(IXFA_TextProvider* pTextProvider,
     iLinethrough = (dwDecoration & FDE_CSSTEXTDECORATION_LineThrough) ? 1 : 0;
   } else {
     CXFA_Font font = pTextProvider->GetFontNode();
-    if (font.IsExistInXML()) {
+    if (font) {
       iLinethrough = font.GetLineThrough();
     }
   }
@@ -761,7 +761,7 @@ void CXFA_TextLayout::InitBreak(FX_FLOAT fLineWidth) {
   CXFA_Para para = m_pTextProvider->GetParaNode();
   FX_FLOAT fStart = 0;
   FX_FLOAT fStartPos = 0;
-  if (para.IsExistInXML()) {
+  if (para) {
     int32_t iAlign = FX_RTFLINEALIGNMENT_Left;
     switch (para.GetHorizontalAlign()) {
       case XFA_ATTRIBUTEENUM_Center:
@@ -797,7 +797,7 @@ void CXFA_TextLayout::InitBreak(FX_FLOAT fLineWidth) {
   }
   m_pBreak->SetLineBoundary(fStart, fLineWidth);
   m_pBreak->SetLineStartPos(fStartPos);
-  if (font.IsExistInXML()) {
+  if (font) {
     m_pBreak->SetHorizontalScale((int32_t)font.GetHorizontalScale());
     m_pBreak->SetVerticalScale((int32_t)font.GetVerticalScale());
     m_pBreak->SetCharSpace(font.GetLetterSpacing());
@@ -1347,7 +1347,7 @@ void CXFA_TextLayout::LoadText(CXFA_Node* pNode,
   InitBreak(szText.x);
   CXFA_Para para = m_pTextProvider->GetParaNode();
   FX_FLOAT fSpaceAbove = 0;
-  if (para.IsExistInXML()) {
+  if (para) {
     fSpaceAbove = para.GetSpaceAbove();
     if (fSpaceAbove < 0.1f) {
       fSpaceAbove = 0;
@@ -1830,7 +1830,7 @@ void CXFA_TextLayout::AppendTextLine(FX_DWORD dwStatus,
     m_pBreak->Reset();
     if (!pStyle && bEndBreak) {
       CXFA_Para para = m_pTextProvider->GetParaNode();
-      if (para.IsExistInXML()) {
+      if (para) {
         FX_FLOAT fStartPos = para.GetMarginLeft();
         FX_FLOAT fIndent = para.GetTextIndent();
         if (fIndent > 0) {

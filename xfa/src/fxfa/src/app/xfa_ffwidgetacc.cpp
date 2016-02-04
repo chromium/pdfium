@@ -126,8 +126,7 @@ class CXFA_FieldLayoutData : public CXFA_WidgetLayoutData {
       return TRUE;
     }
     CXFA_Caption caption = pAcc->GetCaption();
-    if (caption.IsExistInXML() &&
-        caption.GetPresence() != XFA_ATTRIBUTEENUM_Hidden) {
+    if (caption && caption.GetPresence() != XFA_ATTRIBUTEENUM_Hidden) {
       m_pCapTextProvider =
           new CXFA_TextProvider(pAcc, XFA_TEXTPROVIDERTYPE_Caption);
       m_pCapTextLayout = new CXFA_TextLayout(m_pCapTextProvider);
@@ -594,7 +593,7 @@ int32_t CXFA_WidgetAcc::ProcessValidate(int32_t iFlags) {
   if (!validate) {
     return XFA_EVENTERROR_NotExist;
   }
-  FX_BOOL bInitDoc = ((CXFA_Node*)validate)->HasFlag(XFA_NODEFLAG_NeedsInitApp);
+  FX_BOOL bInitDoc = validate.GetNode()->HasFlag(XFA_NODEFLAG_NeedsInitApp);
   FX_BOOL bStatus =
       m_pDocView->GetLayoutStatus() < XFA_DOCVIEW_LAYOUTSTATUS_End;
   int32_t iFormat = 0;
@@ -616,7 +615,7 @@ int32_t CXFA_WidgetAcc::ProcessValidate(int32_t iFlags) {
     bVersionFlag = TRUE;
   }
   if (bInitDoc) {
-    ((CXFA_Node*)validate)->SetFlag(XFA_NODEFLAG_NeedsInitApp, FALSE, FALSE);
+    validate.GetNode()->SetFlag(XFA_NODEFLAG_NeedsInitApp, FALSE, FALSE);
   } else {
     iFormat = ProcessFormatTestValidate(validate, bVersionFlag);
     if (!bVersionFlag) {
@@ -760,8 +759,7 @@ void CXFA_WidgetAcc::NotifyEvent(FX_DWORD dwEvent,
 }
 void CXFA_WidgetAcc::CalcCaptionSize(CFX_SizeF& szCap) {
   CXFA_Caption caption = this->GetCaption();
-  if (!caption.IsExistInXML() ||
-      caption.GetPresence() != XFA_ATTRIBUTEENUM_Visible) {
+  if (!caption || caption.GetPresence() != XFA_ATTRIBUTEENUM_Visible) {
     return;
   }
   LoadCaption();
@@ -842,7 +840,7 @@ FX_BOOL CXFA_WidgetAcc::CalculateFieldAutoSize(CFX_SizeF& size) {
 }
 FX_BOOL CXFA_WidgetAcc::CalculateWidgetAutoSize(CFX_SizeF& size) {
   CXFA_Margin mgWidget = this->GetMargin();
-  if (mgWidget.IsExistInXML()) {
+  if (mgWidget) {
     FX_FLOAT fLeftInset, fTopInset, fRightInset, fBottomInset;
     mgWidget.GetLeftInset(fLeftInset);
     mgWidget.GetTopInset(fTopInset);
@@ -852,7 +850,7 @@ FX_BOOL CXFA_WidgetAcc::CalculateWidgetAutoSize(CFX_SizeF& size) {
     size.y += fTopInset + fBottomInset;
   }
   CXFA_Para para = this->GetPara();
-  if (para.IsExistInXML()) {
+  if (para) {
     size.x += para.GetMarginLeft();
     size.x += para.GetTextIndent();
   }
@@ -933,7 +931,7 @@ FX_BOOL CXFA_WidgetAcc::CalculateTextEditAutoSize(CFX_SizeF& size) {
     GetUIMargin(rtUIMargin);
     size.x -= rtUIMargin.left + rtUIMargin.width;
     CXFA_Margin mgWidget = this->GetMargin();
-    if (mgWidget.IsExistInXML()) {
+    if (mgWidget) {
       FX_FLOAT fLeftInset, fRightInset;
       mgWidget.GetLeftInset(fLeftInset);
       mgWidget.GetRightInset(fRightInset);
@@ -1065,7 +1063,7 @@ void CXFA_WidgetAcc::LoadText() {
 }
 FX_FLOAT CXFA_WidgetAcc::CalculateWidgetAutoWidth(FX_FLOAT fWidthCalc) {
   CXFA_Margin mgWidget = this->GetMargin();
-  if (mgWidget.IsExistInXML()) {
+  if (mgWidget) {
     FX_FLOAT fLeftInset, fRightInset;
     mgWidget.GetLeftInset(fLeftInset);
     mgWidget.GetRightInset(fRightInset);
@@ -1082,7 +1080,7 @@ FX_FLOAT CXFA_WidgetAcc::CalculateWidgetAutoWidth(FX_FLOAT fWidthCalc) {
 }
 FX_FLOAT CXFA_WidgetAcc::GetWidthWithoutMargin(FX_FLOAT fWidthCalc) {
   CXFA_Margin mgWidget = this->GetMargin();
-  if (mgWidget.IsExistInXML()) {
+  if (mgWidget) {
     FX_FLOAT fLeftInset, fRightInset;
     mgWidget.GetLeftInset(fLeftInset);
     mgWidget.GetRightInset(fRightInset);
@@ -1092,7 +1090,7 @@ FX_FLOAT CXFA_WidgetAcc::GetWidthWithoutMargin(FX_FLOAT fWidthCalc) {
 }
 FX_FLOAT CXFA_WidgetAcc::CalculateWidgetAutoHeight(FX_FLOAT fHeightCalc) {
   CXFA_Margin mgWidget = this->GetMargin();
-  if (mgWidget.IsExistInXML()) {
+  if (mgWidget) {
     FX_FLOAT fTopInset, fBottomInset;
     mgWidget.GetTopInset(fTopInset);
     mgWidget.GetBottomInset(fBottomInset);
@@ -1109,7 +1107,7 @@ FX_FLOAT CXFA_WidgetAcc::CalculateWidgetAutoHeight(FX_FLOAT fHeightCalc) {
 }
 FX_FLOAT CXFA_WidgetAcc::GetHeightWithoutMargin(FX_FLOAT fHeightCalc) {
   CXFA_Margin mgWidget = this->GetMargin();
-  if (mgWidget.IsExistInXML()) {
+  if (mgWidget) {
     FX_FLOAT fTopInset, fBottomInset;
     mgWidget.GetTopInset(fTopInset);
     mgWidget.GetBottomInset(fBottomInset);
@@ -1206,7 +1204,7 @@ FX_BOOL CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex,
   FX_FLOAT fBottomInset = 0;
   if (iBlockIndex == 0) {
     CXFA_Margin mgWidget = this->GetMargin();
-    if (mgWidget.IsExistInXML()) {
+    if (mgWidget) {
       mgWidget.GetTopInset(fTopInset);
       mgWidget.GetBottomInset(fBottomInset);
     }
@@ -1241,8 +1239,7 @@ FX_BOOL CXFA_WidgetAcc::FindSplitPos(int32_t iBlockIndex,
   FX_FLOAT fCapReserve = 0;
   if (iBlockIndex == 0) {
     CXFA_Caption caption = GetCaption();
-    if (caption.IsExistInXML() &&
-        caption.GetPresence() != XFA_ATTRIBUTEENUM_Hidden) {
+    if (caption && caption.GetPresence() != XFA_ATTRIBUTEENUM_Hidden) {
       iCapPlacement = (XFA_ATTRIBUTEENUM)caption.GetPlacementType();
       fCapReserve = caption.GetReserve();
     }
@@ -1665,7 +1662,7 @@ CXFA_Para CXFA_TextProvider::GetParaNode() {
     return m_pWidgetAcc->GetPara();
   }
   CXFA_Node* pNode = m_pWidgetAcc->GetNode()->GetChild(0, XFA_ELEMENT_Caption);
-  return pNode->GetChild(0, XFA_ELEMENT_Para);
+  return CXFA_Para(pNode->GetChild(0, XFA_ELEMENT_Para));
 }
 CXFA_Font CXFA_TextProvider::GetFontNode() {
   if (m_eType == XFA_TEXTPROVIDERTYPE_Text) {
@@ -1674,7 +1671,7 @@ CXFA_Font CXFA_TextProvider::GetFontNode() {
   CXFA_Node* pNode = m_pWidgetAcc->GetNode()->GetChild(0, XFA_ELEMENT_Caption);
   pNode = pNode->GetChild(0, XFA_ELEMENT_Font);
   if (pNode) {
-    return pNode;
+    return CXFA_Font(pNode);
   }
   return m_pWidgetAcc->GetFont();
 }

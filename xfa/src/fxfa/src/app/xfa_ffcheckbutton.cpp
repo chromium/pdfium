@@ -87,13 +87,13 @@ FX_BOOL CXFA_FFCheckButton::PerformLayout() {
   CXFA_Margin mgWidget = m_pDataAcc->GetMargin();
   CFX_RectF rtWidget;
   GetRectWithoutRotate(rtWidget);
-  if (mgWidget.IsExistInXML()) {
+  if (mgWidget) {
     XFA_RectWidthoutMargin(rtWidget, mgWidget);
   }
   int32_t iCapPlacement = -1;
   FX_FLOAT fCapReserve = 0;
   CXFA_Caption caption = m_pDataAcc->GetCaption();
-  if (caption.IsExistInXML() && caption.GetPresence()) {
+  if (caption && caption.GetPresence()) {
     m_rtCaption.Set(rtWidget.left, rtWidget.top, rtWidget.width,
                     rtWidget.height);
     iCapPlacement = caption.GetPlacementType();
@@ -163,7 +163,7 @@ FX_BOOL CXFA_FFCheckButton::PerformLayout() {
   CXFA_Border borderUI = m_pDataAcc->GetUIBorder();
   if (borderUI) {
     CXFA_Margin margin = borderUI.GetMargin();
-    if (margin.IsExistInXML()) {
+    if (margin) {
       XFA_RectWidthoutMargin(m_rtUI, margin);
     }
   }

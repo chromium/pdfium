@@ -1902,7 +1902,7 @@ void CXFA_Node::Script_Som_FillColor(FXJSE_HVALUE hValue,
   }
   CXFA_Border border = pWidgetData->GetBorder(TRUE);
   CXFA_Fill borderfill = border.GetFill(TRUE);
-  CXFA_Node* pNode = (CXFA_Node*)borderfill;
+  CXFA_Node* pNode = borderfill.GetNode();
   if (!pNode) {
     return;
   }
@@ -2060,7 +2060,7 @@ void CXFA_Node::Script_Som_FontColor(FXJSE_HVALUE hValue,
     return;
   }
   CXFA_Font font = pWidgetData->GetFont(TRUE);
-  CXFA_Node* pNode = (CXFA_Node*)font;
+  CXFA_Node* pNode = font.GetNode();
   if (!pNode) {
     return;
   }
@@ -2808,10 +2808,9 @@ void CXFA_Node::Script_InstanceManager_Max(FXJSE_HVALUE hValue,
   if (bSetting) {
     ThrowScriptErrorMessage(XFA_IDS_INVAlID_PROP_SET);
     return;
-  } else {
-    CXFA_Occur nodeOccur = GetOccurNode();
-    FXJSE_Value_SetInteger(hValue, nodeOccur.GetMax());
   }
+  CXFA_Occur nodeOccur(GetOccurNode());
+  FXJSE_Value_SetInteger(hValue, nodeOccur.GetMax());
 }
 void CXFA_Node::Script_InstanceManager_Min(FXJSE_HVALUE hValue,
                                            FX_BOOL bSetting,
@@ -2819,10 +2818,9 @@ void CXFA_Node::Script_InstanceManager_Min(FXJSE_HVALUE hValue,
   if (bSetting) {
     ThrowScriptErrorMessage(XFA_IDS_INVAlID_PROP_SET);
     return;
-  } else {
-    CXFA_Occur nodeOccur = GetOccurNode();
-    FXJSE_Value_SetInteger(hValue, nodeOccur.GetMin());
   }
+  CXFA_Occur nodeOccur(GetOccurNode());
+  FXJSE_Value_SetInteger(hValue, nodeOccur.GetMin());
 }
 static int32_t XFA_ScriptInstanceManager_GetCount(CXFA_Node* pInstMgrNode) {
   ASSERT(pInstMgrNode);
@@ -3167,7 +3165,7 @@ void CXFA_Node::Script_InstanceManager_RemoveInstance(
     ThrowScriptErrorMessage(XFA_IDS_INDEX_OUT_OF_BOUNDS);
     return;
   }
-  CXFA_Occur nodeOccur = GetOccurNode();
+  CXFA_Occur nodeOccur(GetOccurNode());
   int32_t iMin = nodeOccur.GetMin();
   if (iCount - 1 < iMin) {
     ThrowScriptErrorMessage(XFA_IDS_VIOLATE_BOUNDARY, L"min");
@@ -3214,7 +3212,7 @@ void CXFA_Node::Script_InstanceManager_AddInstance(
     fFlags = pArguments->GetInt32(0) == 0 ? FALSE : TRUE;
   }
   int32_t iCount = XFA_ScriptInstanceManager_GetCount(this);
-  CXFA_Occur nodeOccur = GetOccurNode();
+  CXFA_Occur nodeOccur(GetOccurNode());
   int32_t iMax = nodeOccur.GetMax();
   if (iMax >= 0 && iCount >= iMax) {
     ThrowScriptErrorMessage(XFA_IDS_VIOLATE_BOUNDARY, L"max");
@@ -3252,7 +3250,7 @@ void CXFA_Node::Script_InstanceManager_InsertInstance(
   if (argc == 2) {
     bBind = pArguments->GetInt32(1) == 0 ? FALSE : TRUE;
   }
-  CXFA_Occur nodeOccur = GetOccurNode();
+  CXFA_Occur nodeOccur(GetOccurNode());
   int32_t iCount = XFA_ScriptInstanceManager_GetCount(this);
   if (iIndex < 0 || iIndex > iCount) {
     ThrowScriptErrorMessage(XFA_IDS_INDEX_OUT_OF_BOUNDS);
@@ -3283,7 +3281,7 @@ void CXFA_Node::Script_InstanceManager_InsertInstance(
       (CXFA_Node*)m_pDocument->GetXFAObject(XFA_HASHCODE_Form));
 }
 int32_t CXFA_Node::InstanceManager_SetInstances(int32_t iDesired) {
-  CXFA_Occur nodeOccur = GetOccurNode();
+  CXFA_Occur nodeOccur(GetOccurNode());
   int32_t iMax = nodeOccur.GetMax();
   int32_t iMin = nodeOccur.GetMin();
   if (iDesired < iMin) {

@@ -226,7 +226,7 @@ FX_BOOL CXFA_FFDocView::ResetSingleWidgetAccData(CXFA_WidgetAcc* pWidgetAcc) {
   }
   if (CXFA_Validate validate = pWidgetAcc->GetValidate()) {
     AddValidateWidget(pWidgetAcc);
-    ((CXFA_Node*)validate)->SetFlag(XFA_NODEFLAG_NeedsInitApp, TRUE, FALSE);
+    validate.GetNode()->SetFlag(XFA_NODEFLAG_NeedsInitApp, TRUE, FALSE);
   }
   return TRUE;
 }

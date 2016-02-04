@@ -106,7 +106,7 @@ void CXFA_FFWidget::RenderWidget(CFX_Graphics* pGS,
     CFX_RectF rtBorder;
     GetRectWithoutRotate(rtBorder);
     CXFA_Margin margin = border.GetMargin();
-    if (margin.IsExistInXML()) {
+    if (margin) {
       XFA_RectWidthoutMargin(rtBorder, margin);
     }
     rtBorder.Normalize();
@@ -1151,8 +1151,8 @@ static void XFA_BOX_GetPath(CXFA_Box box,
   CFX_PointF cpStart, cp, cp1, cp2;
   CFX_RectF rtRadius;
   int32_t n = (nIndex & 1) ? nIndex - 1 : nIndex;
-  CXFA_Corner corner1 = (CXFA_Node*)strokes[n];
-  CXFA_Corner corner2 = (CXFA_Node*)strokes[(n + 2) % 8];
+  CXFA_Corner corner1(strokes[n].GetNode());
+  CXFA_Corner corner2(strokes[(n + 2) % 8].GetNode());
   fRadius1 = bCorner ? corner1.GetRadius() : 0;
   fRadius2 = bCorner ? corner2.GetRadius() : 0;
   bInverted = corner1.IsInverted();
@@ -1362,8 +1362,8 @@ static void XFA_BOX_GetFillPath(CXFA_Box box,
   CFX_PointF cp, cp1, cp2;
   CFX_RectF rtRadius;
   for (int32_t i = 0; i < 8; i += 2) {
-    CXFA_Corner corner1 = (CXFA_Node*)strokes[i];
-    CXFA_Corner corner2 = (CXFA_Node*)strokes[(i + 2) % 8];
+    CXFA_Corner corner1(strokes[i].GetNode());
+    CXFA_Corner corner2(strokes[(i + 2) % 8].GetNode());
     fRadius1 = corner1.GetRadius();
     fRadius2 = corner2.GetRadius();
     bInverted = corner1.IsInverted();
@@ -1548,7 +1548,7 @@ static void XFA_BOX_Fill(CXFA_Box box,
                          CFX_Matrix* pMatrix,
                          FX_DWORD dwFlags) {
   CXFA_Fill fill = box.GetFill();
-  if (!fill.IsExistInXML() || fill.GetPresence() != XFA_ATTRIBUTEENUM_Visible) {
+  if (!fill || fill.GetPresence() != XFA_ATTRIBUTEENUM_Visible) {
     return;
   }
   pGS->SaveGraphState();
@@ -1593,7 +1593,7 @@ static void XFA_BOX_StrokePath(CXFA_Stroke stroke,
                                CFX_Path* pPath,
                                CFX_Graphics* pGS,
                                CFX_Matrix* pMatrix) {
-  if (!stroke.IsExistInXML() || !stroke.IsVisible()) {
+  if (!stroke || !stroke.IsVisible()) {
     return;
   }
   FX_FLOAT fThickness = stroke.GetThickness();
@@ -1619,7 +1619,7 @@ static void XFA_BOX_StrokeArc(CXFA_Box box,
                               CFX_Matrix* pMatrix,
                               FX_DWORD dwFlags) {
   CXFA_Edge edge = box.GetEdge(0);
-  if (!edge.IsExistInXML() || !edge.IsVisible()) {
+  if (!edge || !edge.IsVisible()) {
     return;
   }
   FX_BOOL bVisible = FALSE;
@@ -1893,7 +1893,7 @@ static void XFA_BOX_Stroke(CXFA_Box box,
     return;
   }
   for (int32_t i = 1; i < 8; i += 2) {
-    CXFA_Edge edge = (CXFA_Node*)strokes[i];
+    CXFA_Edge edge(strokes[i].GetNode());
     FX_FLOAT fThickness = edge.GetThickness();
     if (fThickness < 0) {
       fThickness = 0;

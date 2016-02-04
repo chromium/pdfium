@@ -185,8 +185,7 @@ void CXFA_FFField::CapPlacement() {
   XFA_ATTRIBUTEENUM iCapPlacement = XFA_ATTRIBUTEENUM_Unknown;
   FX_FLOAT fCapReserve = 0;
   CXFA_Caption caption = m_pDataAcc->GetCaption();
-  if (caption.IsExistInXML() &&
-      caption.GetPresence() != XFA_ATTRIBUTEENUM_Hidden) {
+  if (caption && caption.GetPresence() != XFA_ATTRIBUTEENUM_Hidden) {
     iCapPlacement = (XFA_ATTRIBUTEENUM)caption.GetPlacementType();
     if (iCapPlacement == XFA_ATTRIBUTEENUM_Top && GetPrev()) {
       m_rtCaption.Set(0, 0, 0, 0);
@@ -262,7 +261,7 @@ void CXFA_FFField::CapPlacement() {
   CXFA_Border borderUI = m_pDataAcc->GetUIBorder();
   if (borderUI) {
     CXFA_Margin margin = borderUI.GetMargin();
-    if (margin.IsExistInXML()) {
+    if (margin) {
       XFA_RectWidthoutMargin(m_rtUI, margin);
     }
   }
@@ -659,8 +658,7 @@ void CXFA_FFField::RenderCaption(CFX_Graphics* pGS, CFX_Matrix* pMatrix) {
     return;
   }
   CXFA_Caption caption = m_pDataAcc->GetCaption();
-  if (caption.IsExistInXML() &&
-      caption.GetPresence() == XFA_ATTRIBUTEENUM_Visible) {
+  if (caption && caption.GetPresence() == XFA_ATTRIBUTEENUM_Visible) {
     if (!pCapTextLayout->IsLoaded()) {
       CFX_SizeF size;
       size.Set(m_rtCaption.width, m_rtCaption.height);

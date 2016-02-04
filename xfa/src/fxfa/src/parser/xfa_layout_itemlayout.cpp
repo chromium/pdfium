@@ -3010,7 +3010,7 @@ FX_BOOL CXFA_ItemLayoutProcessor::JudgeLeaderOrTrailerForOccur(
   if (!pTemplate) {
     pTemplate = pFormNode;
   }
-  CXFA_Occur NodeOccur = pTemplate->GetFirstChildByClass(XFA_ELEMENT_Occur);
+  CXFA_Occur NodeOccur(pTemplate->GetFirstChildByClass(XFA_ELEMENT_Occur));
   int32_t iMax = NodeOccur.GetMax();
   if (iMax > -1) {
     int32_t iCount =

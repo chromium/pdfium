@@ -22,7 +22,7 @@ CXFA_Node* XFA_CreateUIChild(CXFA_Node* pNode, XFA_ELEMENT& eWidgetType) {
   }
   eWidgetType = XFA_ELEMENT_UNKNOWN;
   XFA_ELEMENT eUIType = XFA_ELEMENT_UNKNOWN;
-  CXFA_Value defValue = pNode->GetProperty(0, XFA_ELEMENT_Value, TRUE);
+  CXFA_Value defValue(pNode->GetProperty(0, XFA_ELEMENT_Value, TRUE));
   XFA_ELEMENT eValueType = (XFA_ELEMENT)defValue.GetChildValueClassID();
   switch (eValueType) {
     case XFA_ELEMENT_Boolean:
@@ -99,7 +99,7 @@ CXFA_Node* XFA_CreateUIChild(CXFA_Node* pNode, XFA_ELEMENT& eWidgetType) {
   if (!pUIChild) {
     if (eUIType == XFA_ELEMENT_UNKNOWN) {
       eUIType = XFA_ELEMENT_TextEdit;
-      ((CXFA_Node*)defValue)->GetProperty(0, XFA_ELEMENT_Text, TRUE);
+      defValue.GetNode()->GetProperty(0, XFA_ELEMENT_Text, TRUE);
     }
     pUIChild = pUI->GetProperty(0, eUIType, TRUE);
   } else if (eUIType == XFA_ELEMENT_UNKNOWN) {
@@ -136,7 +136,7 @@ CXFA_Node* XFA_CreateUIChild(CXFA_Node* pNode, XFA_ELEMENT& eWidgetType) {
         eValueType = XFA_ELEMENT_Text;
         break;
     }
-    ((CXFA_Node*)defValue)->GetProperty(0, eValueType, TRUE);
+    defValue.GetNode()->GetProperty(0, eValueType, TRUE);
   }
   return pUIChild;
 }

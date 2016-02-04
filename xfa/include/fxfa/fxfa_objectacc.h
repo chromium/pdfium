@@ -52,6 +52,7 @@ class CXFA_Encodings;
 class CXFA_EncryptionMethods;
 class CXFA_Reasons;
 class CXFA_Manifest;
+
 inline FX_BOOL XFA_IsSpace(FX_WCHAR c) {
   return (c == 0x20) || (c == 0x0d) || (c == 0x0a) || (c == 0x09);
 }
@@ -60,14 +61,13 @@ inline FX_BOOL XFA_IsDigit(FX_WCHAR c) {
 }
 typedef CFX_ArrayTemplate<CXFA_Node*> CXFA_NodeArray;
 typedef CFX_ArrayTemplate<CXFA_Object*> CXFA_ObjArray;
+
 class CXFA_Data {
  public:
-  CXFA_Data(CXFA_Node* pNode) : m_pNode(pNode) {}
-  operator CXFA_Node*() const { return m_pNode; }
-  CXFA_Node* GetNode() { return m_pNode; }
+  explicit CXFA_Data(CXFA_Node* pNode) : m_pNode(pNode) {}
 
-  FX_BOOL IsExistInXML() const { return m_pNode != NULL; }
-
+  operator bool() const { return !!m_pNode; }
+  CXFA_Node* GetNode() const { return m_pNode; }
   XFA_ELEMENT GetClassID() const;
 
  protected:
@@ -75,38 +75,34 @@ class CXFA_Data {
                      FX_FLOAT& fValue,
                      FX_BOOL bUseDefault = FALSE) const;
   FX_BOOL SetMeasure(XFA_ATTRIBUTE eAttr, FX_FLOAT fValue);
+
   CXFA_Node* m_pNode;
 };
+
 class CXFA_Fill : public CXFA_Data {
  public:
-  CXFA_Fill(CXFA_Node* pNode);
+  explicit CXFA_Fill(CXFA_Node* pNode);
   ~CXFA_Fill();
 
   int32_t GetPresence();
-
   FX_ARGB GetColor(FX_BOOL bText = FALSE);
-
-  void SetColor(FX_ARGB color);
-
   int32_t GetFillType();
-
   int32_t GetPattern(FX_ARGB& foreColor);
-
   int32_t GetStipple(FX_ARGB& stippleColor);
-
   int32_t GetLinear(FX_ARGB& endColor);
-
   int32_t GetRadial(FX_ARGB& endColor);
   FX_BOOL SetPresence(int32_t iPresence);
+  void SetColor(FX_ARGB color);
   FX_BOOL SetFillType(int32_t iType);
   FX_BOOL SetPattern(int32_t iPattern, FX_ARGB foreColor);
   FX_BOOL SetStipple(int32_t iStipple, FX_ARGB stippleColor);
   FX_BOOL SetLinear(int32_t iLinear, FX_ARGB endColor);
   FX_BOOL SetRadial(int32_t iRadial, FX_ARGB endColor);
 };
+
 class CXFA_Margin : public CXFA_Data {
  public:
-  CXFA_Margin(CXFA_Node* pNode);
+  explicit CXFA_Margin(CXFA_Node* pNode);
   FX_BOOL GetLeftInset(FX_FLOAT& fInset, FX_FLOAT fDefInset = 0) const;
   FX_BOOL GetTopInset(FX_FLOAT& fInset, FX_FLOAT fDefInset = 0) const;
   FX_BOOL GetRightInset(FX_FLOAT& fInset, FX_FLOAT fDefInset = 0) const;
@@ -116,43 +112,31 @@ class CXFA_Margin : public CXFA_Data {
   FX_BOOL SetRightInset(FX_FLOAT fInset);
   FX_BOOL SetBottomInset(FX_FLOAT fInset);
 };
+
 class CXFA_Font : public CXFA_Data {
  public:
-  CXFA_Font(CXFA_Node* pNode);
+  explicit CXFA_Font(CXFA_Node* pNode);
 
   FX_FLOAT GetBaselineShift();
-
   FX_FLOAT GetHorizontalScale();
-
   FX_FLOAT GetVerticalScale();
-
   FX_FLOAT GetLetterSpacing();
-
   int32_t GetLineThrough();
-
   int32_t GetLineThroughPeriod();
-
   int32_t GetOverline();
-
   int32_t GetOverlinePeriod();
-
   int32_t GetUnderline();
-
   int32_t GetUnderlinePeriod();
-
   FX_FLOAT GetFontSize();
-
   void GetTypeface(CFX_WideStringC& wsTypeFace);
 
   FX_BOOL IsBold();
-
   FX_BOOL IsItalic();
-
   FX_BOOL IsUseKerning();
 
   FX_ARGB GetColor();
-
   void SetColor(FX_ARGB color);
+
   FX_BOOL SetBaselineShift(FX_FLOAT fBaselineShift);
   FX_BOOL SetHorizontalScale(FX_FLOAT fHorizontalScale);
   FX_BOOL SetVerticalScale(FX_FLOAT fVerticalScale);
@@ -164,35 +148,29 @@ class CXFA_Font : public CXFA_Data {
   FX_BOOL SetUnderline(int32_t iUnderline);
   FX_BOOL SetUnderlinePeriod(int32_t iUnderlinePeriod);
 };
+
 class CXFA_Caption : public CXFA_Data {
  public:
-  CXFA_Caption(CXFA_Node* pNode);
+  explicit CXFA_Caption(CXFA_Node* pNode);
 
   int32_t GetPresence();
-
   int32_t GetPlacementType();
-
   FX_FLOAT GetReserve();
-
   CXFA_Margin GetMargin();
-
   CXFA_Font GetFont();
-
   CXFA_Value GetValue();
-
   CXFA_Para GetPara();
   FX_BOOL SetPresence(int32_t iPresence);
   FX_BOOL SetPlacementType(int32_t iType);
   FX_BOOL SetReserve(FX_FLOAT fReserve);
 };
+
 class CXFA_Para : public CXFA_Data {
  public:
-  CXFA_Para(CXFA_Node* pNode);
+  explicit CXFA_Para(CXFA_Node* pNode);
 
   int32_t GetHorizontalAlign();
-
   int32_t GetVerticalAlign();
-
   FX_FLOAT GetLineHeight();
   FX_FLOAT GetMarginLeft();
   FX_FLOAT GetMarginRight();
@@ -214,6 +192,7 @@ class CXFA_Para : public CXFA_Data {
   FX_BOOL SetTextIndent(FX_FLOAT fTextIndent);
   FX_BOOL SetWidows(int32_t iWidows);
 };
+
 class CXFA_Keep : public CXFA_Data {
  public:
   CXFA_Keep(CXFA_Node* pNode, CXFA_Node* pParent);
@@ -228,6 +207,7 @@ class CXFA_Keep : public CXFA_Data {
  private:
   CXFA_Node* m_pParent;
 };
+
 enum XFA_TEXTENCODING {
   XFA_TEXTENCODING_None,
   XFA_TEXTENCODING_Big5,
@@ -242,12 +222,12 @@ enum XFA_TEXTENCODING {
   XFA_TEXTENCODING_UTF16,
   XFA_TEXTENCODING_UTF8
 };
+
 class CXFA_Event : public CXFA_Data {
  public:
-  CXFA_Event(CXFA_Node* pNode);
+  explicit CXFA_Event(CXFA_Node* pNode);
 
   int32_t GetActivity();
-
   int32_t GetEventType();
   void GetRef(CFX_WideStringC& wsRef);
 
@@ -256,7 +236,6 @@ class CXFA_Event : public CXFA_Data {
   void GetExecuteConnection(CFX_WideString& wsConnection);
 
   CXFA_Script GetScript();
-
   CXFA_Submit GetSubmit();
 
   int32_t GetSignDataOperation();
@@ -269,16 +248,18 @@ class CXFA_Event : public CXFA_Data {
   FX_BOOL SetSignDataOperation(int32_t iOperation);
   FX_BOOL SetSignDataTarget(const CFX_WideString& wsTarget);
 };
+
 enum XFA_SCRIPTTYPE {
   XFA_SCRIPTTYPE_Formcalc = 0,
   XFA_SCRIPTTYPE_Javascript,
   XFA_SCRIPTTYPE_Unkown,
 };
+
 class CXFA_Script : public CXFA_Data {
  public:
-  CXFA_Script(CXFA_Node* pNode);
-  void GetBinding(CFX_WideString& wsBinding);
+  explicit CXFA_Script(CXFA_Node* pNode);
 
+  void GetBinding(CFX_WideString& wsBinding);
   XFA_SCRIPTTYPE GetContentType();
   int32_t GetRunAt();
   void GetExpression(CFX_WideString& wsExpression);
@@ -287,9 +268,11 @@ class CXFA_Script : public CXFA_Data {
   FX_BOOL SetRunAt(int32_t iRunAt);
   FX_BOOL SetExpression(const CFX_WideString& wsExpression);
 };
+
 class CXFA_Submit : public CXFA_Data {
  public:
-  CXFA_Submit(CXFA_Node* pNode);
+  explicit CXFA_Submit(CXFA_Node* pNode);
+
   FX_BOOL IsSubmitEmbedPDF();
   int32_t GetSubmitFormat();
   void GetSubmitTarget(CFX_WideStringC& wsTarget);
@@ -300,12 +283,12 @@ class CXFA_Submit : public CXFA_Data {
   FX_BOOL SetSubmitTextEncoding(XFA_TEXTENCODING eTextEncoding);
   FX_BOOL SetSubmitXDPContent(const CFX_WideString& wsContent);
 };
+
 class CXFA_Value : public CXFA_Data {
  public:
-  CXFA_Value(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+  explicit CXFA_Value(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
   XFA_ELEMENT GetChildValueClassID();
-
   FX_BOOL GetChildValueContent(CFX_WideString& wsContent);
   CXFA_Arc GetArc();
   CXFA_Line GetLine();
@@ -317,18 +300,22 @@ class CXFA_Value : public CXFA_Data {
                                FX_BOOL bNotify = FALSE,
                                XFA_ELEMENT iType = XFA_ELEMENT_UNKNOWN);
 };
+
 class CXFA_Line : public CXFA_Data {
  public:
-  CXFA_Line(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+  explicit CXFA_Line(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+
   int32_t GetHand();
   FX_BOOL GetSlop();
   CXFA_Edge GetEdge();
   FX_BOOL SetHand(int32_t iHand);
   FX_BOOL SetSlop(int32_t iSlop);
 };
+
 class CXFA_Text : public CXFA_Data {
  public:
-  CXFA_Text(CXFA_Node* pNode);
+  explicit CXFA_Text(CXFA_Node* pNode);
+
   void GetName(CFX_WideStringC& wsName);
   int32_t GetMaxChars();
   void GetRid(CFX_WideStringC& wsRid);
@@ -338,9 +325,11 @@ class CXFA_Text : public CXFA_Data {
   FX_BOOL SetMaxChars(int32_t iMaxChars);
   FX_BOOL SetRid(const CFX_WideString& wsRid);
 };
+
 class CXFA_ExData : public CXFA_Data {
  public:
-  CXFA_ExData(CXFA_Node* pNode);
+  explicit CXFA_ExData(CXFA_Node* pNode);
+
   void GetContentType(CFX_WideStringC& wsContentType);
   void GetHref(CFX_WideStringC& wsHref);
   int32_t GetMaxLength();
@@ -357,9 +346,11 @@ class CXFA_ExData : public CXFA_Data {
                      FX_BOOL bScriptModify = FALSE,
                      FX_BOOL bSyncData = TRUE);
 };
+
 class CXFA_Image : public CXFA_Data {
  public:
   CXFA_Image(CXFA_Node* pNode, FX_BOOL bDefValue);
+
   int32_t GetAspect();
   FX_BOOL GetContentType(CFX_WideString& wsContentType);
   FX_BOOL GetHref(CFX_WideString& wsHref);
@@ -374,9 +365,10 @@ class CXFA_Image : public CXFA_Data {
  protected:
   FX_BOOL m_bDefValue;
 };
+
 class CXFA_Calculate : public CXFA_Data {
  public:
-  CXFA_Calculate(CXFA_Node* pNode);
+  explicit CXFA_Calculate(CXFA_Node* pNode);
 
   int32_t GetOverride();
   CXFA_Script GetScript();
@@ -384,9 +376,11 @@ class CXFA_Calculate : public CXFA_Data {
   FX_BOOL SetOverride(int32_t iOverride);
   FX_BOOL SetMessageText(const CFX_WideString& wsMessage);
 };
+
 class CXFA_Validate : public CXFA_Data {
  public:
-  CXFA_Validate(CXFA_Node* pNode);
+  explicit CXFA_Validate(CXFA_Node* pNode);
+
   int32_t GetFormatTest();
   FX_BOOL SetFormatTest(CFX_WideString wsValue);
   int32_t GetNullTest();
@@ -410,16 +404,19 @@ class CXFA_Validate : public CXFA_Data {
                        CFX_WideString& wsValue,
                        XFA_ATTRIBUTEENUM eName);
 };
+
 class CXFA_Variables : public CXFA_Data {
  public:
-  CXFA_Variables(CXFA_Node* pNode);
+  explicit CXFA_Variables(CXFA_Node* pNode);
 
   int32_t CountScripts();
   CXFA_Script GetScript(int32_t nIndex);
 };
+
 class CXFA_Bind : public CXFA_Data {
  public:
-  CXFA_Bind(CXFA_Node* pNode);
+  explicit CXFA_Bind(CXFA_Node* pNode);
+
   int32_t GetMatch();
   void GetRef(CFX_WideStringC& wsRef);
   void GetPicture(CFX_WideString& wsPicture);
@@ -427,21 +424,26 @@ class CXFA_Bind : public CXFA_Data {
   FX_BOOL SetRef(const CFX_WideString& wsRef);
   FX_BOOL SetPicture(const CFX_WideString& wsPicture);
 };
+
 class CXFA_Assist : public CXFA_Data {
  public:
-  CXFA_Assist(CXFA_Node* pNode);
+  explicit CXFA_Assist(CXFA_Node* pNode);
 
   CXFA_ToolTip GetToolTip();
 };
+
 class CXFA_ToolTip : public CXFA_Data {
  public:
-  CXFA_ToolTip(CXFA_Node* pNode);
+  explicit CXFA_ToolTip(CXFA_Node* pNode);
+
   FX_BOOL GetTip(CFX_WideString& wsTip);
   FX_BOOL SetTip(const CFX_WideString& wsTip);
 };
+
 class CXFA_BindItems : public CXFA_Data {
  public:
-  CXFA_BindItems(CXFA_Node* pNode);
+  explicit CXFA_BindItems(CXFA_Node* pNode);
+
   void GetConnection(CFX_WideStringC& wsConnection);
   void GetLabelRef(CFX_WideStringC& wsLabelRef);
   void GetValueRef(CFX_WideStringC& wsValueRef);
@@ -451,82 +453,65 @@ class CXFA_BindItems : public CXFA_Data {
   FX_BOOL SetValueRef(const CFX_WideString& wsValueRef);
   FX_BOOL SetRef(const CFX_WideString& wsRef);
 };
+
 #define XFA_STROKE_SAMESTYLE_NoPresence 1
 #define XFA_STROKE_SAMESTYLE_Corner 2
+
 class CXFA_Stroke : public CXFA_Data {
  public:
-  CXFA_Stroke(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+  explicit CXFA_Stroke(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
   FX_BOOL IsCorner() const { return GetClassID() == XFA_ELEMENT_Corner; }
-
   FX_BOOL IsEdge() const { return GetClassID() == XFA_ELEMENT_Edge; }
-
   int32_t GetPresence() const;
   FX_BOOL IsVisible() const {
     return GetPresence() == XFA_ATTRIBUTEENUM_Visible;
   }
 
   int32_t GetCapType() const;
-
   int32_t GetStrokeType() const;
-
   FX_FLOAT GetThickness() const;
   CXFA_Measurement GetMSThickness() const;
-
   void SetThickness(FX_FLOAT fThickness);
   void SetMSThickness(CXFA_Measurement msThinkness);
-
   FX_ARGB GetColor() const;
-
   void SetColor(FX_ARGB argb);
-
   int32_t GetJoinType() const;
-
   FX_BOOL IsInverted() const;
-
   FX_FLOAT GetRadius() const;
-
   FX_BOOL SameStyles(CXFA_Stroke stroke, FX_DWORD dwFlags = 0) const;
 };
+
 class CXFA_Corner : public CXFA_Stroke {
  public:
-  CXFA_Corner(CXFA_Node* pNode) : CXFA_Stroke(pNode) {}
+  explicit CXFA_Corner(CXFA_Node* pNode) : CXFA_Stroke(pNode) {}
 };
+
 class CXFA_Edge : public CXFA_Stroke {
  public:
-  CXFA_Edge(CXFA_Node* pNode) : CXFA_Stroke(pNode) {}
+  explicit CXFA_Edge(CXFA_Node* pNode) : CXFA_Stroke(pNode) {}
 };
+
 typedef CFX_ArrayTemplate<CXFA_Stroke> CXFA_StrokeArray;
 typedef CFX_ArrayTemplate<CXFA_Edge> CXFA_EdgeArray;
 typedef CFX_ArrayTemplate<CXFA_Corner> CXFA_CornerArray;
+
 class CXFA_Box : public CXFA_Data {
  public:
-  CXFA_Box(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+  explicit CXFA_Box(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
   FX_BOOL IsArc() const { return GetClassID() == XFA_ELEMENT_Arc; }
-
   FX_BOOL IsBorder() const { return GetClassID() == XFA_ELEMENT_Border; }
-
   FX_BOOL IsRectangle() const { return GetClassID() == XFA_ELEMENT_Rectangle; }
-
   int32_t GetBreak() const;
-
   int32_t GetHand() const;
-
   int32_t GetPresence() const;
-
   int32_t CountCorners() const;
-
   CXFA_Corner GetCorner(int32_t nIndex) const;
-
   int32_t CountEdges() const;
-
   CXFA_Edge GetEdge(int32_t nIndex = 0) const;
-
   void GetStrokes(CXFA_StrokeArray& strokes) const;
-
   FX_BOOL IsCircular() const;
-
   FX_BOOL GetStartAngle(FX_FLOAT& fStartAngle) const;
   FX_FLOAT GetStartAngle() const {
     FX_FLOAT fStartAngle;
@@ -542,41 +527,44 @@ class CXFA_Box : public CXFA_Data {
   }
 
   CXFA_Fill GetFill(FX_BOOL bModified = FALSE) const;
-
   CXFA_Margin GetMargin() const;
-
   FX_BOOL SameStyles() const;
-
   int32_t Get3DStyle(FX_BOOL& bVisible, FX_FLOAT& fThickness) const;
 };
+
 class CXFA_Arc : public CXFA_Box {
  public:
-  CXFA_Arc(CXFA_Node* pNode) : CXFA_Box(pNode) {}
+  explicit CXFA_Arc(CXFA_Node* pNode) : CXFA_Box(pNode) {}
 };
+
 class CXFA_Border : public CXFA_Box {
  public:
-  CXFA_Border(CXFA_Node* pNode) : CXFA_Box(pNode) {}
+  explicit CXFA_Border(CXFA_Node* pNode) : CXFA_Box(pNode) {}
 };
+
 class CXFA_Rectangle : public CXFA_Box {
  public:
-  CXFA_Rectangle(CXFA_Node* pNode) : CXFA_Box(pNode) {}
+  explicit CXFA_Rectangle(CXFA_Node* pNode) : CXFA_Box(pNode) {}
 };
+
 enum XFA_CHECKSTATE {
   XFA_CHECKSTATE_On = 0,
   XFA_CHECKSTATE_Off = 1,
   XFA_CHECKSTATE_Neutral = 2,
 };
+
 enum XFA_VALUEPICTURE {
   XFA_VALUEPICTURE_Raw = 0,
   XFA_VALUEPICTURE_Display,
   XFA_VALUEPICTURE_Edit,
   XFA_VALUEPICTURE_DataBind,
 };
+
 class CXFA_WidgetData : public CXFA_Data {
  public:
-  CXFA_WidgetData(CXFA_Node* pNode);
-  CXFA_Node* GetUIChild();
+  explicit CXFA_WidgetData(CXFA_Node* pNode);
 
+  CXFA_Node* GetUIChild();
   XFA_ELEMENT GetUIType();
   CFX_WideString GetRawValue();
   int32_t GetAccess(FX_BOOL bTemplate = FALSE);
@@ -743,9 +731,11 @@ class CXFA_WidgetData : public CXFA_Data {
   CXFA_Node* m_pUiChildNode;
   XFA_ELEMENT m_eUIType;
 };
+
 class CXFA_Occur : public CXFA_Data {
  public:
-  CXFA_Occur(CXFA_Node* pNode);
+  explicit CXFA_Occur(CXFA_Node* pNode);
+
   int32_t GetMax();
   int32_t GetMin();
   int32_t GetInitial();
@@ -753,9 +743,11 @@ class CXFA_Occur : public CXFA_Data {
   void SetMax(int32_t iMax);
   void SetMin(int32_t iMin);
 };
+
 class CXFA_Filter : public CXFA_Data {
  public:
-  CXFA_Filter(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+  explicit CXFA_Filter(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+
   CFX_WideString GetFilterString(XFA_ATTRIBUTE eAttribute);
   XFA_ATTRIBUTEENUM GetAppearanceFilterType();
   CFX_WideString GetAppearanceFilterContent();
@@ -776,70 +768,86 @@ class CXFA_Filter : public CXFA_Data {
   CFX_WideString GetlockDocumentContent();
   int32_t GetMDPPermissions();
   XFA_ATTRIBUTEENUM GetMDPSignatureType();
-
   CXFA_Reasons GetReasons(FX_BOOL bModified = FALSE);
   CFX_WideString GetTimeStampServer();
   XFA_ATTRIBUTEENUM GetTimeStampType();
 };
+
 class CXFA_Certificate : public CXFA_Data {
  public:
-  CXFA_Certificate(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+  explicit CXFA_Certificate(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+
   CFX_WideString GetCertificateName();
   CFX_WideString GetCertificateContent();
 };
+
 class CXFA_WrapCertificate : public CXFA_Data {
  public:
-  CXFA_WrapCertificate(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+  explicit CXFA_WrapCertificate(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+
   XFA_ATTRIBUTEENUM GetType();
   int32_t CountCertificates();
   CXFA_Certificate GetCertificate(int32_t nIndex);
 };
+
 class CXFA_Oids : public CXFA_Data {
  public:
-  CXFA_Oids(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+  explicit CXFA_Oids(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+
   XFA_ATTRIBUTEENUM GetOidsType();
   int32_t CountOids();
   CFX_WideString GetOidContent(int32_t nIndex);
 };
+
 class CXFA_SubjectDNs : public CXFA_Data {
  public:
-  CXFA_SubjectDNs(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+  explicit CXFA_SubjectDNs(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+
   XFA_ATTRIBUTEENUM GetSubjectDNsType();
   int32_t CountSubjectDNs();
   CFX_WideString GetSubjectDNString(int32_t nIndex, XFA_ATTRIBUTE eAttribute);
   CFX_WideString GetSubjectDNContent(int32_t nIndex);
 };
+
 class CXFA_DigestMethods : public CXFA_Data {
  public:
-  CXFA_DigestMethods(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+  explicit CXFA_DigestMethods(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+
   XFA_ATTRIBUTEENUM GetDigestMethodsType();
   int32_t CountDigestMethods();
   CFX_WideString GetDigestMethodContent(int32_t nIndex);
 };
+
 class CXFA_Encodings : public CXFA_Data {
  public:
-  CXFA_Encodings(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+  explicit CXFA_Encodings(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+
   XFA_ATTRIBUTEENUM GetEncodingsType();
   int32_t CountEncodings();
   CFX_WideString GetEncodingContent(int32_t nIndex);
 };
+
 class CXFA_EncryptionMethods : public CXFA_Data {
  public:
-  CXFA_EncryptionMethods(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+  explicit CXFA_EncryptionMethods(CXFA_Node* pNode) : CXFA_Data(pNode) {}
   XFA_ATTRIBUTEENUM GetEncryptionMethodsType();
   int32_t CountEncryptionMethods();
   CFX_WideString GetEncryptionMethodContent(int32_t nIndex);
 };
+
 class CXFA_Reasons : public CXFA_Data {
  public:
-  CXFA_Reasons(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+  explicit CXFA_Reasons(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+
   XFA_ATTRIBUTEENUM GetReasonsType();
   int32_t CountReasons();
   CFX_WideString GetReasonContent(int32_t nIndex);
 };
+
 class CXFA_Manifest : public CXFA_Data {
  public:
-  CXFA_Manifest(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+  explicit CXFA_Manifest(CXFA_Node* pNode) : CXFA_Data(pNode) {}
+
   XFA_ATTRIBUTEENUM GetAction();
   int32_t CountReives();
   CFX_WideString GetRefContent(int32_t nIndex);

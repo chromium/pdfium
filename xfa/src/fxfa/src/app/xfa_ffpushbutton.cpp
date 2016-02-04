@@ -122,8 +122,7 @@ FX_BOOL CXFA_FFPushButton::PerformLayout() {
 }
 FX_FLOAT CXFA_FFPushButton::GetLineWidth() {
   CXFA_Border border = m_pDataAcc->GetBorder();
-  if (border.IsExistInXML() &&
-      (border.GetPresence() == XFA_ATTRIBUTEENUM_Visible)) {
+  if (border && border.GetPresence() == XFA_ATTRIBUTEENUM_Visible) {
     CXFA_Edge edge = border.GetEdge(0);
     return edge.GetThickness();
   }
@@ -137,8 +136,7 @@ FX_ARGB CXFA_FFPushButton::GetFillColor() {
 }
 void CXFA_FFPushButton::LoadHighlightCaption() {
   CXFA_Caption caption = m_pDataAcc->GetCaption();
-  if (caption.IsExistInXML() &&
-      caption.GetPresence() != XFA_ATTRIBUTEENUM_Hidden) {
+  if (caption && caption.GetPresence() != XFA_ATTRIBUTEENUM_Hidden) {
     {
       CFX_WideString wsRollover;
       FX_BOOL bRichText;
@@ -175,8 +173,7 @@ void CXFA_FFPushButton::RenderHighlightCaption(CFX_Graphics* pGS,
                                                CFX_Matrix* pMatrix) {
   CXFA_TextLayout* pCapTextLayout = m_pDataAcc->GetCaptionTextLayout();
   CXFA_Caption caption = m_pDataAcc->GetCaption();
-  if (caption.IsExistInXML() &&
-      caption.GetPresence() == XFA_ATTRIBUTEENUM_Visible) {
+  if (caption && caption.GetPresence() == XFA_ATTRIBUTEENUM_Visible) {
     CFX_RenderDevice* pRenderDevice = pGS->GetRenderDevice();
     CFX_RectF rtWidget;
     GetRectWithoutRotate(rtWidget);

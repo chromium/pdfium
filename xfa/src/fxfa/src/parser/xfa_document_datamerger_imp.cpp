@@ -109,7 +109,7 @@ static void XFA_DataMerge_CreateDataBinding(CXFA_Node* pFormNode,
   FXSYS_assert(pWidgetData);
   FX_BOOL bNotify = FALSE;
   XFA_ELEMENT eUIType = pWidgetData->GetUIType();
-  CXFA_Value defValue = pFormNode->GetProperty(0, XFA_ELEMENT_Value);
+  CXFA_Value defValue(pFormNode->GetProperty(0, XFA_ELEMENT_Value));
   if (!bDataToForm) {
     CFX_WideString wsValue;
     CFX_WideString wsFormatedValue;
@@ -294,7 +294,7 @@ static void XFA_DataMerge_CreateDataBinding(CXFA_Node* pFormNode,
               wsNormailizeValue += wsItem;
             }
             CXFA_ExData exData = defValue.GetExData();
-            FXSYS_assert(exData != NULL);
+            FXSYS_assert(exData);
             exData.SetContentType((iCounts == 1) ? FX_WSTRC(L"text/plain")
                                                  : FX_WSTRC(L"text/xml"));
           }

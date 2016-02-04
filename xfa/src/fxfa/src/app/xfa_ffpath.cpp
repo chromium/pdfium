@@ -65,7 +65,7 @@ void CXFA_FFLine::RenderWidget(CFX_Graphics* pGS,
   FX_BOOL bSlope = lineObj.GetSlop();
   int32_t iCap = 0;
   CXFA_Edge edge = lineObj.GetEdge();
-  if (edge.IsExistInXML()) {
+  if (edge) {
     if (edge.GetPresence() != XFA_ATTRIBUTEENUM_Visible) {
       return;
     }
