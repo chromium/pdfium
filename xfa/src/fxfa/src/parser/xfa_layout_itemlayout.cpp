@@ -1770,7 +1770,7 @@ static FX_FLOAT XFA_ItemLayoutProcessor_InsertPendingItems(
   while (pProcessor->m_rgPendingNodes.GetCount() > 0) {
     FX_POSITION pos = pProcessor->m_rgPendingNodes.GetHeadPosition();
     CXFA_Node* pPendingNode =
-        (CXFA_Node*)pProcessor->m_rgPendingNodes.GetAt(pos);
+        reinterpret_cast<CXFA_Node*>(pProcessor->m_rgPendingNodes.GetAt(pos));
     pProcessor->m_rgPendingNodes.RemoveAt(pos);
     CXFA_ContentLayoutItem* pPendingLayoutItem = NULL;
     CXFA_ItemLayoutProcessor* pPendingProcessor =

@@ -92,8 +92,8 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_AnyChild(
     bClassName = TRUE;
     wsName = wsName.Right(wsName.GetLength() - 1);
   }
-  findNode = m_pNodeHelper->XFA_ResolveNodes_GetOneChild(
-      (CXFA_Node*)rnd.m_CurNode, wsName, bClassName);
+  findNode = m_pNodeHelper->XFA_ResolveNodes_GetOneChild(ToNode(rnd.m_CurNode),
+                                                         wsName, bClassName);
   if (findNode == NULL) {
     return 0;
   }
@@ -140,8 +140,8 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Excalmatory(
     return 0;
   }
   CXFA_Node* datasets =
-      (CXFA_Node*)rnd.m_pSC->GetDocument()->GetXFAObject(XFA_HASHCODE_Datasets);
-  if (datasets == NULL) {
+      ToNode(rnd.m_pSC->GetDocument()->GetXFAObject(XFA_HASHCODE_Datasets));
+  if (!datasets) {
     return 0;
   }
   CXFA_ResolveNodesData rndFind;
@@ -164,7 +164,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_NumberSign(
     CXFA_ResolveNodesData& rnd) {
   CFX_WideString wsName = rnd.m_wsName.Right(rnd.m_wsName.GetLength() - 1);
   CFX_WideString wsCondition = rnd.m_wsCondition;
-  CXFA_Node* curNode = (CXFA_Node*)rnd.m_CurNode;
+  CXFA_Node* curNode = ToNode(rnd.m_CurNode);
   if (XFA_ResolveNodes_ForAttributeRs(curNode, rnd, wsName)) {
     return 1;
   }
@@ -212,7 +212,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
   if (!rnd.m_CurNode->IsNode()) {
     return 0;
   }
-  CXFA_Node* curNode = (CXFA_Node*)rnd.m_CurNode;
+  CXFA_Node* curNode = ToNode(rnd.m_CurNode);
   CXFA_ObjArray& nodes = rnd.m_Nodes;
   int32_t nNum = nodes.GetSize();
   FX_DWORD dwStyles = rnd.m_dwStyles;
@@ -308,13 +308,13 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
     if (nodes.GetSize() > nNum) {
       if (!(dwStyles & XFA_RESOLVENODE_ALL)) {
         CXFA_NodeArray upArrayNodes;
-        if (m_pNodeHelper->XFA_NodeIsTransparent((CXFA_Node*)curNode)) {
+        if (m_pNodeHelper->XFA_NodeIsTransparent(ToNode(curNode))) {
           m_pNodeHelper->XFA_CountSiblings(
-              (CXFA_Node*)nodes[0], XFA_LOGIC_Transparent, &upArrayNodes,
+              ToNode(nodes[0]), XFA_LOGIC_Transparent, &upArrayNodes,
               !!(dwStyles & XFA_RESOLVENODE_TagName));
         }
         if (upArrayNodes.GetSize() > nodes.GetSize()) {
-          upArrayNodes[0] = (CXFA_Node*)nodes[0];
+          upArrayNodes[0] = ToNode(nodes[0]);
           nodes.RemoveAll();
           nodes.Append((CXFA_ObjArray&)upArrayNodes);
           upArrayNodes.RemoveAll();
@@ -357,16 +357,15 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
     if (XFA_ELEMENT_Subform == curNode->GetClassID() &&
         XFA_HASHCODE_Occur == uNameHash) {
       CXFA_Node* pInstanceManager =
-          ((CXFA_Node*)curNode)->GetInstanceMgrOfSubform();
+          curNode->AsNode()->GetInstanceMgrOfSubform();
       if (pInstanceManager) {
         pProp = pInstanceManager->GetProperty(0, XFA_ELEMENT_Occur, TRUE);
       }
     } else {
       XFA_LPCELEMENTINFO pElement = XFA_GetElementByName(wsName);
       if (pElement) {
-        pProp = ((CXFA_Node*)curNode)
-                    ->GetProperty(0, pElement->eName,
-                                  pElement->eName != XFA_ELEMENT_PageSet);
+        pProp = curNode->AsNode()->GetProperty(
+            0, pElement->eName, pElement->eName != XFA_ELEMENT_PageSet);
       }
     }
     if (pProp) {
@@ -375,11 +374,11 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
     }
   }
   CXFA_Node* parentNode = m_pNodeHelper->XFA_ResolveNodes_GetParent(
-      (CXFA_Node*)curNode, XFA_LOGIC_NoTransparent);
+      curNode->AsNode(), XFA_LOGIC_NoTransparent);
   uint32_t uCurClassHash = curNode->GetClassHashCode();
-  if (parentNode == NULL) {
+  if (!parentNode) {
     if (uCurClassHash == uNameHash) {
-      nodes.Add((CXFA_Node*)curNode);
+      nodes.Add(curNode->AsNode());
       XFA_ResolveNode_FilterCondition(rnd, wsCondition);
       if (nodes.GetSize() > 0) {
         return 1;
@@ -457,10 +456,10 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
       if (m_pNodeHelper->XFA_NodeIsTransparent(parentNode)) {
         CXFA_NodeArray upArrayNodes;
         m_pNodeHelper->XFA_CountSiblings(
-            (CXFA_Node*)nodes[0], XFA_LOGIC_Transparent, &upArrayNodes,
+            ToNode(nodes[0]), XFA_LOGIC_Transparent, &upArrayNodes,
             !!(dwStyles & XFA_RESOLVENODE_TagName));
         if (upArrayNodes.GetSize() > nodes.GetSize()) {
-          upArrayNodes[0] = (CXFA_Node*)nodes[0];
+          upArrayNodes[0] = ToNode(nodes[0]);
           nodes.RemoveAll();
           nodes.Append((CXFA_ObjArray&)upArrayNodes);
           upArrayNodes.RemoveAll();
@@ -499,7 +498,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
 }
 int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Asterisk(
     CXFA_ResolveNodesData& rnd) {
-  CXFA_Node* curNode = (CXFA_Node*)rnd.m_CurNode;
+  CXFA_Node* curNode = ToNode(rnd.m_CurNode);
   CXFA_ObjArray& nodes = rnd.m_Nodes;
   CXFA_NodeArray array;
   curNode->GetNodeList(array,
@@ -645,7 +644,7 @@ void CXFA_ResolveProcessor::XFA_ResolveNode_ConditionArray(
   if (bAll) {
     if (rnd.m_dwStyles & XFA_RESOLVENODE_CreateNode) {
       if (rnd.m_dwStyles & XFA_RESOLVENODE_Bind) {
-        m_pNodeHelper->m_pCreateParent = (CXFA_Node*)rnd.m_CurNode;
+        m_pNodeHelper->m_pCreateParent = ToNode(rnd.m_CurNode);
         m_pNodeHelper->m_iCreateCount = 1;
         findNodes.RemoveAll();
         m_pNodeHelper->m_iCurAllStart = -1;
@@ -653,7 +652,7 @@ void CXFA_ResolveProcessor::XFA_ResolveNode_ConditionArray(
       } else {
         if (m_pNodeHelper->m_iCurAllStart == -1) {
           m_pNodeHelper->m_iCurAllStart = m_iCurStart;
-          m_pNodeHelper->m_pAllStartParent = (CXFA_Node*)rnd.m_CurNode;
+          m_pNodeHelper->m_pAllStartParent = ToNode(rnd.m_CurNode);
         }
       }
     } else if (rnd.m_dwStyles & XFA_RESOLVENODE_BindNew) {
@@ -674,7 +673,7 @@ void CXFA_ResolveProcessor::XFA_ResolveNode_ConditionArray(
   }
   if (iFoundCount <= iIndex || iIndex < 0) {
     if (rnd.m_dwStyles & XFA_RESOLVENODE_CreateNode) {
-      m_pNodeHelper->m_pCreateParent = (CXFA_Node*)rnd.m_CurNode;
+      m_pNodeHelper->m_pCreateParent = ToNode(rnd.m_CurNode);
       m_pNodeHelper->m_iCreateCount = iIndex - iFoundCount + 1;
     }
     findNodes.RemoveAll();
@@ -749,7 +748,7 @@ void CXFA_ResolveProcessor::XFA_ResolveNode_FilterCondition(
     }
     if (iFoundCount <= iCurrIndex) {
       if (rnd.m_dwStyles & XFA_RESOLVENODE_CreateNode) {
-        m_pNodeHelper->m_pCreateParent = (CXFA_Node*)rnd.m_CurNode;
+        m_pNodeHelper->m_pCreateParent = ToNode(rnd.m_CurNode);
         m_pNodeHelper->m_iCreateCount = iCurrIndex - iFoundCount + 1;
       }
       findNodes.RemoveAll();

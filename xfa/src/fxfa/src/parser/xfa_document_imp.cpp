@@ -97,8 +97,7 @@ CXFA_Object* CXFA_Document::GetXFAObject(const CFX_WideStringC& wsNodeName) {
 CXFA_Object* CXFA_Document::GetXFAObject(FX_DWORD dwNodeNameHash) {
   switch (dwNodeNameHash) {
     case XFA_HASHCODE_Data: {
-      CXFA_Node* pDatasetsNode =
-          (CXFA_Node*)GetXFAObject(XFA_HASHCODE_Datasets);
+      CXFA_Node* pDatasetsNode = ToNode(GetXFAObject(XFA_HASHCODE_Datasets));
       if (!pDatasetsNode) {
         return NULL;
       }
@@ -125,7 +124,7 @@ CXFA_Object* CXFA_Document::GetXFAObject(FX_DWORD dwNodeNameHash) {
     }
       return NULL;
     case XFA_HASHCODE_Record: {
-      CXFA_Node* pData = (CXFA_Node*)GetXFAObject(XFA_HASHCODE_Data);
+      CXFA_Node* pData = ToNode(GetXFAObject(XFA_HASHCODE_Data));
       return pData ? pData->GetFirstChildByClass(XFA_ELEMENT_DataGroup) : NULL;
     }
     case XFA_HASHCODE_DataWindow: {
@@ -213,7 +212,7 @@ FX_BOOL CXFA_Document::IsInteractive() {
   if (m_dwDocFlags & XFA_DOCFLAG_HasInteractive) {
     return m_dwDocFlags & XFA_DOCFLAG_Interactive;
   }
-  CXFA_Node* pConfig = (CXFA_Node*)this->GetXFAObject(XFA_HASHCODE_Config);
+  CXFA_Node* pConfig = ToNode(GetXFAObject(XFA_HASHCODE_Config));
   if (!pConfig) {
     return FALSE;
   }
@@ -240,9 +239,9 @@ FX_BOOL CXFA_Document::IsInteractive() {
 CXFA_LocaleMgr* CXFA_Document::GetLocalMgr() {
   if (!m_pLocalMgr) {
     CFX_WideString wsLanguage;
-    this->GetParser()->GetNotify()->GetAppProvider()->GetLanguage(wsLanguage);
+    GetParser()->GetNotify()->GetAppProvider()->GetLanguage(wsLanguage);
     m_pLocalMgr = new CXFA_LocaleMgr(
-        (CXFA_Node*)this->GetXFAObject(XFA_HASHCODE_LocaleSet), wsLanguage);
+        ToNode(GetXFAObject(XFA_HASHCODE_LocaleSet)), wsLanguage);
   }
   return m_pLocalMgr;
 }
@@ -356,7 +355,7 @@ static void XFA_ProtoMerge_MergeNode(CXFA_Document* pDocument,
   }
 }
 void CXFA_Document::DoProtoMerge() {
-  CXFA_Node* pTemplateRoot = (CXFA_Node*)GetXFAObject(XFA_HASHCODE_Template);
+  CXFA_Node* pTemplateRoot = ToNode(GetXFAObject(XFA_HASHCODE_Template));
   if (!pTemplateRoot) {
     return;
   }
@@ -425,7 +424,7 @@ void CXFA_Document::DoProtoMerge() {
       int32_t iRet = m_pScriptContext->ResolveObjects(pUseHrefNode, wsSOM,
                                                       resoveNodeRS, dwFlag);
       if (iRet > 0 && resoveNodeRS.nodes[0]->IsNode()) {
-        pProtoNode = (CXFA_Node*)resoveNodeRS.nodes[0];
+        pProtoNode = resoveNodeRS.nodes[0]->AsNode();
       }
     } else if (!wsID.IsEmpty()) {
       if (!mIDMap.Lookup(

@@ -305,7 +305,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_OpenList(
   if (iLength >= 1) {
     FXJSE_HVALUE hValue = pArguments->GetValue(0);
     if (FXJSE_Value_IsObject(hValue)) {
-      pNode = (CXFA_Node*)FXJSE_Value_ToObject(hValue, NULL);
+      pNode = static_cast<CXFA_Node*>(FXJSE_Value_ToObject(hValue, nullptr));
     } else if (FXJSE_Value_IsUTF8String(hValue)) {
       CFX_ByteString bsString;
       FXJSE_Value_ToUTF8String(hValue, bsString);
@@ -330,7 +330,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_OpenList(
         FXJSE_Value_Release(hValue);
         return;
       }
-      pNode = (CXFA_Node*)resoveNodeRS.nodes[0];
+      pNode = resoveNodeRS.nodes[0]->AsNode();
     }
     FXJSE_Value_Release(hValue);
   }
@@ -463,7 +463,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_ResetData(
     if (iRet < 1 || !resoveNodeRS.nodes[0]->IsNode()) {
       continue;
     }
-    pNode = (CXFA_Node*)resoveNodeRS.nodes[0];
+    pNode = resoveNodeRS.nodes[0]->AsNode();
     pNotify->ResetData(pNode->GetWidgetData());
   }
   if (!pNode) {
@@ -508,7 +508,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_SetFocus(
   if (iLength >= 1) {
     FXJSE_HVALUE hValue = pArguments->GetValue(0);
     if (FXJSE_Value_IsObject(hValue)) {
-      pNode = (CXFA_Node*)FXJSE_Value_ToObject(hValue, NULL);
+      pNode = static_cast<CXFA_Node*>(FXJSE_Value_ToObject(hValue, NULL));
     } else if (FXJSE_Value_IsUTF8String(hValue)) {
       CFX_ByteString bsString;
       FXJSE_Value_ToUTF8String(hValue, bsString);
@@ -533,7 +533,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_SetFocus(
         FXJSE_Value_Release(hValue);
         return;
       }
-      pNode = (CXFA_Node*)resoveNodeRS.nodes[0];
+      pNode = resoveNodeRS.nodes[0]->AsNode();
     }
     FXJSE_Value_Release(hValue);
   }

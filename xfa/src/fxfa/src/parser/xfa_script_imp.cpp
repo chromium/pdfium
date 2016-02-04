@@ -117,9 +117,9 @@ void CXFA_ScriptContext::GlobalPropertySetter(FXJSE_HOBJECT hObject,
   FX_DWORD dwFlag = XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings |
                     XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
                     XFA_RESOLVENODE_Attributes;
-  CXFA_Node* pRefNode = (CXFA_Node*)lpScriptContext->GetThisObject();
+  CXFA_Node* pRefNode = ToNode(lpScriptContext->GetThisObject());
   if (lpOrginalNode->GetObjectType() == XFA_OBJECTTYPE_VariablesThis) {
-    pRefNode = (CXFA_Node*)lpCurNode;
+    pRefNode = ToNode(lpCurNode);
   }
   if (lpScriptContext->QueryNodeByFlag(pRefNode, wsPropName, hValue, dwFlag,
                                        TRUE)) {
@@ -190,9 +190,9 @@ void CXFA_ScriptContext::GlobalPropertyGetter(FXJSE_HOBJECT hObject,
   }
   FX_DWORD dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
                     XFA_RESOLVENODE_Attributes;
-  CXFA_Node* pRefNode = (CXFA_Node*)lpScriptContext->GetThisObject();
+  CXFA_Node* pRefNode = ToNode(lpScriptContext->GetThisObject());
   if (pOrginalObject->GetObjectType() == XFA_OBJECTTYPE_VariablesThis) {
-    pRefNode = (CXFA_Node*)lpCurNode;
+    pRefNode = ToNode(lpCurNode);
   }
   if (lpScriptContext->QueryNodeByFlag(pRefNode, wsPropName, hValue, dwFlag,
                                        FALSE)) {
@@ -206,8 +206,8 @@ void CXFA_ScriptContext::GlobalPropertyGetter(FXJSE_HOBJECT hObject,
   CXFA_Object* pScriptObject =
       lpScriptContext->GetVariablesThis(pOrginalObject, TRUE);
   if (pScriptObject &&
-      lpScriptContext->QueryVariableHValue((CXFA_Node*)pScriptObject,
-                                           szPropName, hValue, TRUE)) {
+      lpScriptContext->QueryVariableHValue(pScriptObject->AsNode(), szPropName,
+                                           hValue, TRUE)) {
     return;
   }
   IXFA_Notify* pNotify = pDoc->GetNotify();
@@ -239,8 +239,8 @@ void CXFA_ScriptContext::NormalPropertyGetter(FXJSE_HOBJECT hObject,
   }
   FX_DWORD dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
                     XFA_RESOLVENODE_Attributes;
-  FX_BOOL bRet = lpScriptContext->QueryNodeByFlag(
-      (CXFA_Node*)pObject, wsPropName, hValue, dwFlag, FALSE);
+  FX_BOOL bRet = lpScriptContext->QueryNodeByFlag(ToNode(pObject), wsPropName,
+                                                  hValue, dwFlag, FALSE);
   if (bRet) {
     return;
   }
@@ -248,8 +248,8 @@ void CXFA_ScriptContext::NormalPropertyGetter(FXJSE_HOBJECT hObject,
       (lpScriptContext->GetType() == XFA_SCRIPTLANGTYPE_Javascript &&
        !lpScriptContext->IsStrictScopeInJavaScript())) {
     dwFlag = XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings;
-    bRet = lpScriptContext->QueryNodeByFlag((CXFA_Node*)pObject, wsPropName,
-                                            hValue, dwFlag, FALSE);
+    bRet = lpScriptContext->QueryNodeByFlag(ToNode(pObject), wsPropName, hValue,
+                                            dwFlag, FALSE);
   }
   if (bRet) {
     return;
@@ -257,7 +257,7 @@ void CXFA_ScriptContext::NormalPropertyGetter(FXJSE_HOBJECT hObject,
   CXFA_Object* pScriptObject =
       lpScriptContext->GetVariablesThis(pOrginalObject, TRUE);
   if (pScriptObject) {
-    bRet = lpScriptContext->QueryVariableHValue((CXFA_Node*)pScriptObject,
+    bRet = lpScriptContext->QueryVariableHValue(ToNode(pScriptObject),
                                                 szPropName, hValue, TRUE);
   }
   if (!bRet) {
@@ -287,7 +287,7 @@ void CXFA_ScriptContext::NormalPropertySetter(FXJSE_HOBJECT hObject,
       if (wsPropName.GetAt(0) == '#') {
         wsPropName = wsPropName.Right(wsPropName.GetLength() - 1);
       }
-      CXFA_Node* pNode = (CXFA_Node*)pObject;
+      CXFA_Node* pNode = ToNode(pObject);
       CXFA_Node* pPropOrChild = NULL;
       XFA_LPCELEMENTINFO lpElementInfo = XFA_GetElementByName(wsPropName);
       if (lpElementInfo) {
@@ -310,8 +310,8 @@ void CXFA_ScriptContext::NormalPropertySetter(FXJSE_HOBJECT hObject,
     CXFA_Object* pScriptObject =
         lpScriptContext->GetVariablesThis(pOrginalObject, TRUE);
     if (pScriptObject) {
-      lpScriptContext->QueryVariableHValue((CXFA_Node*)pScriptObject,
-                                           szPropName, hValue, FALSE);
+      lpScriptContext->QueryVariableHValue(ToNode(pScriptObject), szPropName,
+                                           hValue, FALSE);
     }
   }
 }
@@ -569,10 +569,9 @@ int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode,
       (dwStyles & (XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings))) {
     m_upObjectArray.RemoveAll();
   }
-  if (refNode &&
-      (dwStyles & (XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings)) &&
-      refNode->IsNode()) {
-    m_upObjectArray.Add((CXFA_Node*)refNode);
+  if (refNode && refNode->IsNode() &&
+      (dwStyles & (XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings))) {
+    m_upObjectArray.Add(refNode->AsNode());
   }
   FX_BOOL bNextCreate = FALSE;
   if (dwStyles & XFA_RESOLVENODE_CreateNode) {
@@ -611,7 +610,7 @@ int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode,
             break;
           }
         } else {
-          pDataNode = (CXFA_Node*)findNodes[0];
+          pDataNode = findNodes[0]->AsNode();
           findNodes.RemoveAll();
           findNodes.Add(pDataNode);
           break;
@@ -682,7 +681,7 @@ int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode,
         bNextCreate = TRUE;
         if (m_pResolveProcessor->GetNodeHelper()->m_pCreateParent == NULL) {
           m_pResolveProcessor->GetNodeHelper()->m_pCreateParent =
-              (CXFA_Node*)rndFind.m_CurNode;
+              ToNode(rndFind.m_CurNode);
           m_pResolveProcessor->GetNodeHelper()->m_iCreateCount = 1;
         }
         FX_BOOL bCreate =
@@ -731,7 +730,7 @@ FXJSE_HVALUE CXFA_ScriptContext::GetJSValueFromMap(CXFA_Object* pObject) {
     return NULL;
   }
   if (pObject->IsNode()) {
-    RunVariablesScript((CXFA_Node*)pObject);
+    RunVariablesScript(pObject->AsNode());
   }
   void* pValue = m_mapXFAToHValue.GetValueAt(pObject);
   if (pValue == NULL) {

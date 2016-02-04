@@ -52,7 +52,7 @@ int32_t CXFA_LayoutProcessor::StartLayout(FX_BOOL bForceRestart) {
   }
   m_nProgressCounter = 0;
   CXFA_Node* pFormPacketNode =
-      (CXFA_Node*)m_pDocument->GetXFAObject(XFA_HASHCODE_Form);
+      ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Form));
   if (!pFormPacketNode) {
     return -1;
   }

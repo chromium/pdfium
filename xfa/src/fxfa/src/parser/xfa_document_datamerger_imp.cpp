@@ -459,11 +459,11 @@ static CXFA_Node* XFA_DataMerge_FindDataRefDataNode(CXFA_Document* pDocument,
       rs.dwFlags == XFA_RESOLVENODE_RSTYPE_CreateNodeMidAll ||
       rs.nodes.GetSize() > 1) {
     return pDocument->GetNotBindNode(rs.nodes);
-  } else if (rs.dwFlags == XFA_RESOLVENODE_RSTYPE_CreateNodeOne) {
+  }
+  if (rs.dwFlags == XFA_RESOLVENODE_RSTYPE_CreateNodeOne) {
     CXFA_Object* pObject = (rs.nodes.GetSize() > 0) ? rs.nodes[0] : NULL;
-    CXFA_Node* pNode =
-        (pObject && pObject->IsNode()) ? (CXFA_Node*)pObject : NULL;
-    if (!bForceBind && (pNode != NULL) && pNode->HasBindItem()) {
+    CXFA_Node* pNode = ToNode(pObject);
+    if (!bForceBind && pNode && pNode->HasBindItem()) {
       pNode = NULL;
     }
     return pNode;
@@ -840,7 +840,8 @@ static CXFA_Node* XFA_DataMerge_CopyContainer_SubformSet(
       subformMapArray.GetStartPosition();
       for (int32_t iIndex = 0; iIndex < subformArray.GetSize(); iIndex++) {
         CXFA_Node* pSubform = subformArray[iIndex];
-        CXFA_Node* pDataNode = (CXFA_Node*)subformMapArray.GetValueAt(pSubform);
+        CXFA_Node* pDataNode =
+            reinterpret_cast<CXFA_Node*>(subformMapArray.GetValueAt(pSubform));
         for (CXFA_Node* pTemplateChild =
                  pTemplateNode->GetNodeItem(XFA_NODEITEM_FirstChild);
              pTemplateChild; pTemplateChild = pTemplateChild->GetNodeItem(
@@ -1162,7 +1163,7 @@ static void XFA_DataMerge_UpdateBindingRelations(CXFA_Document* pDocument,
                                               ? XFA_ELEMENT_DataGroup
                                               : XFA_ELEMENT_DataValue;
               CXFA_Node* pRecordNode =
-                  (CXFA_Node*)pDocument->GetXFAObject(XFA_HASHCODE_Record);
+                  ToNode(pDocument->GetXFAObject(XFA_HASHCODE_Record));
               pDataNode = XFA_DataDescription_MaybeCreateDataNode(
                   pDocument, pRecordNode, eDataNodeType,
                   pFormNode->GetCData(XFA_ATTRIBUTE_Name));
@@ -1192,8 +1193,7 @@ static void XFA_DataMerge_UpdateBindingRelations(CXFA_Document* pDocument,
           pDocument->GetScriptContext()->ResolveObjects(pDataScope, wsRef, rs,
                                                         dFlags, pTemplateNode);
           CXFA_Object* pObject = (rs.nodes.GetSize() > 0) ? rs.nodes[0] : NULL;
-          pDataNode =
-              (pObject && pObject->IsNode()) ? (CXFA_Node*)pObject : NULL;
+          pDataNode = ToNode(pObject);
           if (pDataNode) {
             XFA_DataMerge_CreateDataBinding(
                 pFormNode, pDataNode,
@@ -1279,7 +1279,7 @@ static void XFA_DataMerge_UpdateBindingRelations(CXFA_Document* pDocument, CXFA_
                                           ? XFA_ELEMENT_DataGroup
                                           : XFA_ELEMENT_DataValue;
           CXFA_Node* pRecordNode =
-              (CXFA_Node*)pDocument->GetXFAObject(XFA_HASHCODE_Record);
+              ToNode(pDocument->GetXFAObject(XFA_HASHCODE_Record));
           pDataNode = XFA_DataDescription_MaybeCreateDataNode(
               pDocument, pRecordNode, eDataNodeType,
               pFormNode->GetCData(XFA_ATTRIBUTE_Name));
@@ -1302,7 +1302,7 @@ static void XFA_DataMerge_UpdateBindingRelations(CXFA_Document* pDocument, CXFA_
         pDocument->GetScriptContext()->ResolveObjects(pDataScope, wsRef, rs,
                                                       dFlags, pTemplateNode);
         CXFA_Object* pObject = (rs.nodes.GetSize() > 0) ? rs.nodes[0] : NULL;
-        pDataNode = (pObject && pObject->IsNode()) ? (CXFA_Node*)pObject : NULL;
+        pDataNode = ToNode(pObject);
         if (pDataNode) {
           XFA_DataMerge_CreateDataBinding(pFormNode, pDataNode, FALSE);
         }
@@ -1337,8 +1337,8 @@ CXFA_Node* XFA_DataMerge_FindDataScope(CXFA_Node* pParentFormNode) {
       return pDataScope;
     }
   }
-  return (CXFA_Node*)pParentFormNode->GetDocument()->GetXFAObject(
-      XFA_HASHCODE_Data);
+  return ToNode(
+      pParentFormNode->GetDocument()->GetXFAObject(XFA_HASHCODE_Data));
 }
 void CXFA_Document::DataMerge_UpdateBindingRelations(
     CXFA_Node* pFormUpdateRoot) {
@@ -1359,10 +1359,10 @@ void CXFA_Document::DataMerge_UpdateBindingRelations(
   while (rgFormNodeList.GetCount()) {
     FX_POSITION pos;
     pos = rgFormNodeList.GetHeadPosition();
-    CXFA_Node* pCurFormNode = (CXFA_Node*)rgFormNodeList.GetAt(pos);
+    CXFA_Node* pCurFormNode = ToNode(rgFormNodeList.GetAt(pos));
     rgFormNodeList.RemoveAt(pos);
     pos = rgDataScopeList.GetHeadPosition();
-    CXFA_Node* pCurDataScope = (CXFA_Node*)rgDataScopeList.GetAt(pos);
+    CXFA_Node* pCurDataScope = ToNode(rgDataScopeList.GetAt(pos));
     rgDataScopeList.RemoveAt(pos);
     XFA_DataMerge_UpdateBindingRelations(this, pCurFormNode, pCurDataScope,
                                          rgFormNodeList, rgDataScopeList);
@@ -1371,19 +1371,14 @@ void CXFA_Document::DataMerge_UpdateBindingRelations(
 }
 CXFA_Node* CXFA_Document::GetNotBindNode(CXFA_ObjArray& arrayNodes) {
   for (int32_t i = 0; i < arrayNodes.GetSize(); i++) {
-    CXFA_Object* pObject = arrayNodes[i];
-    if (!pObject->IsNode()) {
-      continue;
-    }
-    if (((CXFA_Node*)pObject)->HasBindItem()) {
-      continue;
-    }
-    return ((CXFA_Node*)pObject);
+    CXFA_Node* pNode = arrayNodes[i]->AsNode();
+    if (pNode && !pNode->HasBindItem())
+      return pNode;
   }
-  return NULL;
+  return nullptr;
 }
 void CXFA_Document::DoDataMerge() {
-  CXFA_Node* pDatasetsRoot = (CXFA_Node*)GetXFAObject(XFA_HASHCODE_Datasets);
+  CXFA_Node* pDatasetsRoot = ToNode(GetXFAObject(XFA_HASHCODE_Datasets));
   if (!pDatasetsRoot) {
     IFDE_XMLElement* pDatasetsXMLNode =
         IFDE_XMLElement::Create(FX_WSTRC(L"xfa:datasets"));
@@ -1537,7 +1532,7 @@ void CXFA_Document::DoDataMerge() {
   }
 }
 void CXFA_Document::DoDataRemerge(FX_BOOL bDoDataMerge) {
-  CXFA_Node* pFormRoot = (CXFA_Node*)this->GetXFAObject(XFA_HASHCODE_Form);
+  CXFA_Node* pFormRoot = ToNode(GetXFAObject(XFA_HASHCODE_Form));
   if (pFormRoot) {
     while (CXFA_Node* pNode = pFormRoot->GetNodeItem(XFA_NODEITEM_FirstChild)) {
       pFormRoot->RemoveChild(pNode);

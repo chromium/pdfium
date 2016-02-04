@@ -35,7 +35,7 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Verify(
   IXFA_Doc* hDoc = pNotify->GetHDOC();
   CXFA_Node* pNode = NULL;
   if (iLength >= 1) {
-    pNode = (CXFA_Node*)pArguments->GetObject(0);
+    pNode = static_cast<CXFA_Node*>(pArguments->GetObject(0));
   }
   int32_t bVerify = pNotify->GetDocProvider()->Verify(hDoc, pNode);
   FXJSE_HVALUE hValue = pArguments->GetReturnValue();
@@ -108,7 +108,7 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Clear(
   CXFA_Node* pNode = NULL;
   FX_BOOL bClear = TRUE;
   if (iLength >= 1) {
-    pNode = (CXFA_Node*)pArguments->GetObject(0);
+    pNode = static_cast<CXFA_Node*>(pArguments->GetObject(0));
   }
   if (iLength >= 2) {
     bClear = pArguments->GetInt32(1) == 0 ? FALSE : TRUE;

@@ -1921,7 +1921,7 @@ void CXFA_WidgetData::SetCheckState(XFA_CHECKSTATE eCheckState,
   }
 }
 CXFA_Node* CXFA_WidgetData::GetExclGroupNode() {
-  CXFA_Node* pExcl = (CXFA_Node*)m_pNode->GetNodeItem(XFA_NODEITEM_Parent);
+  CXFA_Node* pExcl = ToNode(m_pNode->GetNodeItem(XFA_NODEITEM_Parent));
   if (!pExcl || pExcl->GetClassID() != XFA_ELEMENT_ExclGroup) {
     return NULL;
   }
@@ -1933,9 +1933,8 @@ CXFA_Node* CXFA_WidgetData::GetSelectedMember() {
   if (wsState.IsEmpty()) {
     return pSelectedMember;
   }
-  for (CXFA_Node* pNode =
-           (CXFA_Node*)m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
-       pNode != NULL; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  for (CXFA_Node* pNode = ToNode(m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild));
+       pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     CXFA_WidgetData widgetData(pNode);
     if (widgetData.GetCheckState() == XFA_CHECKSTATE_On) {
       pSelectedMember = pNode;
@@ -1949,9 +1948,8 @@ CXFA_Node* CXFA_WidgetData::SetSelectedMember(const CFX_WideStringC& wsName,
   CXFA_Node* pSelectedMember = NULL;
   FX_DWORD nameHash =
       FX_HashCode_String_GetW(wsName.GetPtr(), wsName.GetLength());
-  for (CXFA_Node* pNode =
-           (CXFA_Node*)m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
-       pNode != NULL; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
+  for (CXFA_Node* pNode = ToNode(m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild));
+       pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     if (pNode->GetNameHash() == nameHash) {
       CXFA_WidgetData widgetData(pNode);
       widgetData.SetCheckState(XFA_CHECKSTATE_On, bNotify);

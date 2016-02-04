@@ -1549,9 +1549,10 @@ void CXFA_FM2JSContext::Time2Num(FXJSE_HOBJECT hThis,
       IFX_LocaleMgr* pMgr = (IFX_LocaleMgr*)pDoc->GetLocalMgr();
       IFX_Locale* pLocale = NULL;
       if (localString.IsEmpty()) {
-        CXFA_Object* pThisNode = pDoc->GetScriptContext()->GetThisObject();
-        FXSYS_assert(pThisNode->IsNode());
-        CXFA_WidgetData widgetData((CXFA_Node*)pThisNode);
+        CXFA_Node* pThisNode =
+            ToNode(pDoc->GetScriptContext()->GetThisObject());
+        FXSYS_assert(pThisNode);
+        CXFA_WidgetData widgetData(pThisNode);
         pLocale = widgetData.GetLocal();
       } else {
         pLocale = pMgr->GetLocaleByName(
@@ -1998,9 +1999,9 @@ FX_BOOL CXFA_FM2JSContext::Local2IsoDate(FXJSE_HOBJECT hThis,
   IFX_LocaleMgr* pMgr = (IFX_LocaleMgr*)pDoc->GetLocalMgr();
   IFX_Locale* pLocale = NULL;
   if (szLocale.IsEmpty()) {
-    CXFA_Object* pThisNode = pDoc->GetScriptContext()->GetThisObject();
-    FXSYS_assert(pThisNode->IsNode());
-    CXFA_WidgetData widgetData((CXFA_Node*)pThisNode);
+    CXFA_Node* pThisNode = ToNode(pDoc->GetScriptContext()->GetThisObject());
+    FXSYS_assert(pThisNode);
+    CXFA_WidgetData widgetData(pThisNode);
     pLocale = widgetData.GetLocal();
   } else {
     pLocale = pMgr->GetLocaleByName(
@@ -2038,9 +2039,9 @@ FX_BOOL CXFA_FM2JSContext::Local2IsoTime(FXJSE_HOBJECT hThis,
   IFX_LocaleMgr* pMgr = (IFX_LocaleMgr*)pDoc->GetLocalMgr();
   IFX_Locale* pLocale = NULL;
   if (szLocale.IsEmpty()) {
-    CXFA_Object* pThisNode = pDoc->GetScriptContext()->GetThisObject();
-    FXSYS_assert(pThisNode->IsNode());
-    CXFA_WidgetData widgetData((CXFA_Node*)pThisNode);
+    CXFA_Node* pThisNode = ToNode(pDoc->GetScriptContext()->GetThisObject());
+    FXSYS_assert(pThisNode);
+    CXFA_WidgetData widgetData(pThisNode);
     pLocale = widgetData.GetLocal();
   } else {
     pLocale = pMgr->GetLocaleByName(
@@ -2081,9 +2082,9 @@ FX_BOOL CXFA_FM2JSContext::IsoDate2Local(FXJSE_HOBJECT hThis,
   IFX_LocaleMgr* pMgr = (IFX_LocaleMgr*)pDoc->GetLocalMgr();
   IFX_Locale* pLocale = NULL;
   if (szLocale.IsEmpty()) {
-    CXFA_Object* pThisNode = pDoc->GetScriptContext()->GetThisObject();
-    FXSYS_assert(pThisNode->IsNode());
-    CXFA_WidgetData widgetData((CXFA_Node*)pThisNode);
+    CXFA_Node* pThisNode = ToNode(pDoc->GetScriptContext()->GetThisObject());
+    FXSYS_assert(pThisNode);
+    CXFA_WidgetData widgetData(pThisNode);
     pLocale = widgetData.GetLocal();
   } else {
     pLocale = pMgr->GetLocaleByName(
@@ -2123,9 +2124,9 @@ FX_BOOL CXFA_FM2JSContext::IsoTime2Local(FXJSE_HOBJECT hThis,
   IFX_LocaleMgr* pMgr = (IFX_LocaleMgr*)pDoc->GetLocalMgr();
   IFX_Locale* pLocale = NULL;
   if (szLocale.IsEmpty()) {
-    CXFA_Object* pThisNode = pDoc->GetScriptContext()->GetThisObject();
-    FXSYS_assert(pThisNode->IsNode());
-    CXFA_WidgetData widgetData((CXFA_Node*)pThisNode);
+    CXFA_Node* pThisNode = ToNode(pDoc->GetScriptContext()->GetThisObject());
+    FXSYS_assert(pThisNode);
+    CXFA_WidgetData widgetData(pThisNode);
     pLocale = widgetData.GetLocal();
   } else {
     pLocale = pMgr->GetLocaleByName(
@@ -2167,9 +2168,9 @@ FX_BOOL CXFA_FM2JSContext::GetGMTTime(FXJSE_HOBJECT hThis,
   IFX_LocaleMgr* pMgr = (IFX_LocaleMgr*)pDoc->GetLocalMgr();
   IFX_Locale* pLocale = NULL;
   if (szLocale.IsEmpty()) {
-    CXFA_Object* pThisNode = pDoc->GetScriptContext()->GetThisObject();
-    FXSYS_assert(pThisNode->IsNode());
-    CXFA_WidgetData widgetData((CXFA_Node*)pThisNode);
+    CXFA_Node* pThisNode = ToNode(pDoc->GetScriptContext()->GetThisObject());
+    FXSYS_assert(pThisNode);
+    CXFA_WidgetData widgetData(pThisNode);
     pLocale = widgetData.GetLocal();
   } else {
     pLocale = pMgr->GetLocaleByName(
@@ -2352,9 +2353,9 @@ void CXFA_FM2JSContext::GetLocalDateFormat(FXJSE_HOBJECT hThis,
   IFX_LocaleMgr* pMgr = (IFX_LocaleMgr*)pDoc->GetLocalMgr();
   IFX_Locale* pLocale = NULL;
   if (szLocalStr.IsEmpty()) {
-    CXFA_Object* pThisNode = pDoc->GetScriptContext()->GetThisObject();
-    FXSYS_assert(pThisNode->IsNode());
-    CXFA_WidgetData widgetData((CXFA_Node*)pThisNode);
+    CXFA_Node* pThisNode = ToNode(pDoc->GetScriptContext()->GetThisObject());
+    FXSYS_assert(pThisNode);
+    CXFA_WidgetData widgetData(pThisNode);
     pLocale = widgetData.GetLocal();
   } else {
     pLocale = pMgr->GetLocaleByName(
@@ -2407,9 +2408,8 @@ void CXFA_FM2JSContext::GetLocalTimeFormat(FXJSE_HOBJECT hThis,
   IFX_LocaleMgr* pMgr = (IFX_LocaleMgr*)pDoc->GetLocalMgr();
   IFX_Locale* pLocale = NULL;
   if (szLocalStr.IsEmpty()) {
-    CXFA_Object* pThisObject = pDoc->GetScriptContext()->GetThisObject();
-    FXSYS_assert(pThisObject->IsNode());
-    CXFA_Node* pThisNode = (CXFA_Node*)pThisObject;
+    CXFA_Node* pThisNode = ToNode(pDoc->GetScriptContext()->GetThisObject());
+    FXSYS_assert(pThisNode);
     CXFA_WidgetData widgetData(pThisNode);
     pLocale = widgetData.GetLocal();
   } else {
@@ -4359,9 +4359,9 @@ void CXFA_FM2JSContext::Format(FXJSE_HOBJECT hThis,
     HValueToUTF8String(argTwo, szValue);
     CXFA_Document* pDoc = pContext->GetDocument();
     IFX_LocaleMgr* pMgr = (IFX_LocaleMgr*)pDoc->GetLocalMgr();
-    CXFA_Object* pThisNode = pDoc->GetScriptContext()->GetThisObject();
-    FXSYS_assert(pThisNode->IsNode());
-    CXFA_WidgetData widgetData((CXFA_Node*)pThisNode);
+    CXFA_Node* pThisNode = ToNode(pDoc->GetScriptContext()->GetThisObject());
+    FXSYS_assert(pThisNode);
+    CXFA_WidgetData widgetData(pThisNode);
     IFX_Locale* pLocale = widgetData.GetLocal();
     FX_DWORD patternType;
     FX_BOOL bCompelte = XFA_PATTERN_STRING_Type(szPattern, patternType);
@@ -4571,9 +4571,9 @@ void CXFA_FM2JSContext::Parse(FXJSE_HOBJECT hThis,
       HValueToUTF8String(argTwo, szValue);
       CXFA_Document* pDoc = pContext->GetDocument();
       IFX_LocaleMgr* pMgr = (IFX_LocaleMgr*)pDoc->GetLocalMgr();
-      CXFA_Object* pThisNode = pDoc->GetScriptContext()->GetThisObject();
-      FXSYS_assert(pThisNode->IsNode());
-      CXFA_WidgetData widgetData((CXFA_Node*)pThisNode);
+      CXFA_Node* pThisNode = ToNode(pDoc->GetScriptContext()->GetThisObject());
+      FXSYS_assert(pThisNode);
+      CXFA_WidgetData widgetData(pThisNode);
       IFX_Locale* pLocale = widgetData.GetLocal();
       FX_DWORD patternType;
       FX_BOOL bCompletePattern =
@@ -6753,24 +6753,23 @@ void CXFA_FM2JSContext::unfoldArgs(FXJSE_HOBJECT hThis,
 }
 void CXFA_FM2JSContext::GetObjectDefaultValue(FXJSE_HVALUE hObjectValue,
                                               FXJSE_HVALUE hDefaultValue) {
-  CXFA_Object* pNode = (CXFA_Object*)FXJSE_Value_ToObject(hObjectValue, NULL);
-  if (pNode && pNode->IsNode()) {
-    ((CXFA_Node*)pNode)
-        ->Script_Som_DefaultValue(hDefaultValue, FALSE, (XFA_ATTRIBUTE)-1);
+  CXFA_Node* pNode =
+      ToNode((CXFA_Object*)FXJSE_Value_ToObject(hObjectValue, NULL));
+  if (pNode) {
+    pNode->Script_Som_DefaultValue(hDefaultValue, FALSE, (XFA_ATTRIBUTE)-1);
   } else {
     FXJSE_Value_SetNull(hDefaultValue);
   }
 }
 FX_BOOL CXFA_FM2JSContext::SetObjectDefaultValue(FXJSE_HVALUE hObjectValue,
                                                  FXJSE_HVALUE hNewValue) {
-  FX_BOOL bSuccess = FALSE;
-  CXFA_Object* pNode = (CXFA_Object*)FXJSE_Value_ToObject(hObjectValue, NULL);
-  if (pNode && pNode->IsNode()) {
-    ((CXFA_Node*)pNode)
-        ->Script_Som_DefaultValue(hNewValue, TRUE, (XFA_ATTRIBUTE)-1);
-    bSuccess = TRUE;
+  CXFA_Node* pNode =
+      ToNode((CXFA_Object*)FXJSE_Value_ToObject(hObjectValue, NULL));
+  if (pNode) {
+    pNode->Script_Som_DefaultValue(hNewValue, TRUE, (XFA_ATTRIBUTE)-1);
+    return TRUE;
   }
-  return bSuccess;
+  return FALSE;
 }
 void CXFA_FM2JSContext::GenerateSomExpression(const CFX_ByteStringC& szName,
                                               int32_t iIndexFlags,
@@ -6855,8 +6854,7 @@ int32_t CXFA_FM2JSContext::ResolveObjects(FXJSE_HOBJECT hThis,
       FXSYS_assert(pNode);
       if (bHasNoResolveName) {
         CFX_WideString wsName;
-        if (pNode->IsNode()) {
-          CXFA_Node* pXFANode = (CXFA_Node*)pNode;
+        if (CXFA_Node* pXFANode = pNode->AsNode()) {
           pXFANode->GetAttribute(XFA_ATTRIBUTE_Name, wsName, FALSE);
         }
         if (wsName.IsEmpty()) {

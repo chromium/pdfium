@@ -79,7 +79,7 @@ XFA_ATTRIBUTEENUM CXFA_FFDocHandler::GetRestoreState(IXFA_Doc* hDoc) {
   if (!pXFADoc) {
     return XFA_ATTRIBUTEENUM_Unknown;
   }
-  CXFA_Node* pForm = (CXFA_Node*)pXFADoc->GetXFAObject(XFA_HASHCODE_Form);
+  CXFA_Node* pForm = ToNode(pXFADoc->GetXFAObject(XFA_HASHCODE_Form));
   if (!pForm) {
     return XFA_ATTRIBUTEENUM_Unknown;
   }

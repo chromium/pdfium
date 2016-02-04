@@ -293,7 +293,7 @@ static CXFA_Node* XFA_ResolveBreakTarget(CXFA_Node* pPageSetRoot,
     bTargetAllFind = FALSE;
     if (wsTargetExpr.GetAt(0) == '#') {
       CXFA_Node* pNode = pDocument->GetNodeByID(
-          (CXFA_Node*)pDocument->GetXFAObject(XFA_HASHCODE_Template),
+          ToNode(pDocument->GetXFAObject(XFA_HASHCODE_Template)),
           wsTargetExpr.Mid(1));
       if (pNode) {
         return pNode;
@@ -311,7 +311,7 @@ static CXFA_Node* XFA_ResolveBreakTarget(CXFA_Node* pPageSetRoot,
               XFA_RESOLVENODE_Attributes | XFA_RESOLVENODE_Siblings |
               XFA_RESOLVENODE_Parent);
       if (iCount > 0 && rs.nodes[0]->IsNode()) {
-        return (CXFA_Node*)rs.nodes[0];
+        return rs.nodes[0]->AsNode();
       }
     }
     iSpliteIndex = iSpliteNextIndex;
@@ -1739,7 +1739,7 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
           }
           pContainerItem->m_pFormNode = pDocument->DataMerge_CopyContainer(
               pContainerItem->m_pFormNode, pParentNode,
-              (CXFA_Node*)pDocument->GetXFAObject(XFA_HASHCODE_Record), TRUE);
+              ToNode(pDocument->GetXFAObject(XFA_HASHCODE_Record)), TRUE);
         } break;
         case XFA_ELEMENT_ContentArea: {
           CXFA_Node* pParentNode = pContainerItem->m_pParent->m_pFormNode;
@@ -1760,7 +1760,8 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
     }
     if (!pPendingPageSet->GetNodeItem(XFA_NODEITEM_Parent)) {
       CXFA_Node* pFormToplevelSubform =
-          ((CXFA_Node*)pDocument->GetXFAObject(XFA_HASHCODE_Form))
+          pDocument->GetXFAObject(XFA_HASHCODE_Form)
+              ->AsNode()
               ->GetFirstChildByClass(XFA_ELEMENT_Subform);
       pFormToplevelSubform->InsertChild(pPendingPageSet);
     }
