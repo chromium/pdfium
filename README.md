@@ -1,5 +1,10 @@
 # PDFium
 
+## News
+
+As of 2016-02-04, the XFA branch is deprecated.  Instead, see the section on
+configuration below.
+
 ## Prerequisites
 
 Get the chromium depot tools via the instructions at
@@ -40,6 +45,20 @@ The second option is to generate platform-specific build files, i.e. Makefiles
 on Linux, sln files on Windows, and xcodeproj files on Mac. To do so, set the
 GYP\_GENERATORS environment variable appropriately (e.g. "make", "msvs", or
 "xcode") before running the above command.
+
+### Selecting build configuration
+
+PDFium may be built either with or without JavaScript support, and with
+or without XFA forms support.  Both of these features are enabled by
+default. Also note that the XFA feature requires JavaScript.
+
+To build without XFA, set `pdf_enable_xfa=0` before running `gyp_pdfium`.
+To build without JavaScript, set `pdf_enable_v8=0 pdf_enable_xfa=0` before
+running `gyp_pdfium`. For example
+```
+GYP_DEFINES='pdf_enable_v8=0 pdf_enable_xfa=0' build/gyp_pdfium
+```
+gives the smallest possible build configuration.
 
 ### Using goma (Googlers only)
 
@@ -117,28 +136,10 @@ as much as possible. The main exceptions are:
 1. Code has to conform to the existing style and not Chromium/Google style.
 2. There is no commit queue, approved committers can land their changes via
 `git cl land`
-3. Changes must be merged to the XFA branch as well (see below).
 
 ## Branches
 
-There is a branch for a forthcoming feature called XFA that you can get by
-following the steps above, then:
+Prior to 2016-02-04, there existed an actively developed origin/xfa branch.
+The origin/xfa branch is now an evolutionary dead-end. Everything you need
+to build either with or without the XFA feature is on origin/master.
 
-```
-git checkout origin/xfa
-build/gyp_pdfium
-ninja -C out/Debug
-```
-
-Merging to XFA requires:
-
-```
-git checkout origin/xfa
-git checkout -b merge_branch
-git branch --set-upstream-to=origin/xfa
-git cherry-pick -x <commit hash>
-git commit --amend # add Merge to XFA
-git cl upload
-```
-
-Then wait for approval, and `git cl land`
