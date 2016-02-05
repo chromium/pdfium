@@ -4,22 +4,28 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_COMBOBOX_LIGHT_H
-#define _FWL_COMBOBOX_LIGHT_H
-class CFWL_Widget;
+#ifndef XFA_INCLUDE_FWL_LIGHTWIDGET_COMBOBOX_H_
+#define XFA_INCLUDE_FWL_LIGHTWIDGET_COMBOBOX_H_
+
+#include <memory>
+#include <vector>
+
+#include "xfa/include/fwl/basewidget/fwl_combobox.h"
+#include "xfa/include/fwl/lightwidget/widget.h"
+
 class CFWL_WidgetProperties;
 class IFWL_ComboBoxDP;
-class CFWL_ComboBox;
 class CFWL_ComboBoxDP;
 class CFWL_ComboBoxItem;
+
 class CFWL_ComboBox : public CFWL_Widget {
  public:
   static CFWL_ComboBox* Create();
   FWL_ERR Initialize(const CFWL_WidgetProperties* pProperties = NULL);
   int32_t AddString(const CFX_WideStringC& wsText);
   int32_t AddString(const CFX_WideStringC& wsText, CFX_DIBitmap* pIcon);
-  int32_t RemoveAt(int32_t iIndex);
-  int32_t RemoveAll();
+  bool RemoveAt(int32_t iIndex);  // Returns false iff |iIndex| out of range.
+  void RemoveAll();
   int32_t CountItems();
   FWL_ERR GetTextByIndex(int32_t iIndex, CFX_WideString& wsText);
   int32_t GetCurSel();
@@ -113,12 +119,13 @@ class CFWL_ComboBox : public CFWL_Widget {
                                       FX_DWORD dwCheckState);
     virtual FX_FLOAT GetListHeight(IFWL_Widget* pWidget);
 
-    CFX_PtrArray m_arrItem;
+    std::vector<std::unique_ptr<CFWL_ComboBoxItem>> m_ItemArray;
     FX_FLOAT m_fMaxListHeight;
     FX_FLOAT m_fItemHeight;
   };
   CFWL_ComboBoxDP m_comboBoxData;
 };
+
 class CFWL_ComboBoxItem {
  public:
   CFWL_ComboBoxItem() {
@@ -133,4 +140,5 @@ class CFWL_ComboBoxItem {
   CFX_RectF m_rtCheckBox;
   void* m_pData;
 };
-#endif
+
+#endif  // XFA_INCLUDE_FWL_LIGHTWIDGET_COMBOBOX_H_

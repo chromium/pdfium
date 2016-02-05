@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include <memory>
+#include <utility>
 
 #include "xfa/src/foxitlib.h"
 
@@ -28,25 +28,30 @@ FWL_ERR CFWL_ComboBox::Initialize(const CFWL_WidgetProperties* pProperties) {
   return FWL_ERR_Succeeded;
 }
 int32_t CFWL_ComboBox::AddString(const CFX_WideStringC& wsText) {
-  CFWL_ComboBoxItem* pItem = new CFWL_ComboBoxItem;
+  std::unique_ptr<CFWL_ComboBoxItem> pItem(new CFWL_ComboBoxItem);
   pItem->m_wsText = wsText;
   pItem->m_dwStyles = 0;
-  return m_comboBoxData.m_arrItem.Add(pItem);
+  m_comboBoxData.m_ItemArray.push_back(std::move(pItem));
+  return m_comboBoxData.m_ItemArray.size() - 1;
 }
 int32_t CFWL_ComboBox::AddString(const CFX_WideStringC& wsText,
                                  CFX_DIBitmap* pIcon) {
-  CFWL_ComboBoxItem* pItem = new CFWL_ComboBoxItem;
+  std::unique_ptr<CFWL_ComboBoxItem> pItem(new CFWL_ComboBoxItem);
   pItem->m_wsText = wsText;
   pItem->m_dwStyles = 0;
   pItem->m_pDIB = pIcon;
-  return m_comboBoxData.m_arrItem.Add(pItem);
+  m_comboBoxData.m_ItemArray.push_back(std::move(pItem));
+  return m_comboBoxData.m_ItemArray.size() - 1;
 }
-int32_t CFWL_ComboBox::RemoveAt(int32_t iIndex) {
-  return m_comboBoxData.m_arrItem.RemoveAt(iIndex);
+bool CFWL_ComboBox::RemoveAt(int32_t iIndex) {
+  if (iIndex < 0 || iIndex >= m_comboBoxData.m_ItemArray.size())
+    return false;
+
+  m_comboBoxData.m_ItemArray.erase(m_comboBoxData.m_ItemArray.begin() + iIndex);
+  return true;
 }
-int32_t CFWL_ComboBox::RemoveAll() {
-  m_comboBoxData.m_arrItem.RemoveAll();
-  return 0;
+void CFWL_ComboBox::RemoveAll() {
+  m_comboBoxData.m_ItemArray.clear();
 }
 int32_t CFWL_ComboBox::CountItems() {
   return m_comboBoxData.CountItems(GetWidget());
@@ -234,32 +239,33 @@ CFWL_ComboBox::CFWL_ComboBoxDP::CFWL_ComboBoxDP() {
   m_fItemHeight = 0;
   m_fMaxListHeight = 0;
 }
-CFWL_ComboBox::CFWL_ComboBoxDP::~CFWL_ComboBoxDP() {
-  int32_t nCount = m_arrItem.GetSize();
-  for (int32_t i = 0; i < nCount; i++) {
-    delete static_cast<CFWL_ComboBoxItem*>(m_arrItem[i]);
-  }
-  m_arrItem.RemoveAll();
-}
+CFWL_ComboBox::CFWL_ComboBoxDP::~CFWL_ComboBoxDP() {}
 int32_t CFWL_ComboBox::CFWL_ComboBoxDP::CountItems(IFWL_Widget* pWidget) {
-  return m_arrItem.GetSize();
+  return m_ItemArray.size();
 }
 FWL_HLISTITEM CFWL_ComboBox::CFWL_ComboBoxDP::GetItem(IFWL_Widget* pWidget,
                                                       int32_t nIndex) {
-  int32_t iCount = m_arrItem.GetSize();
-  if (nIndex >= iCount || nIndex < 0) {
-    return NULL;
-  }
-  return (FWL_HLISTITEM)m_arrItem[nIndex];
+  return nIndex >= 0 && nIndex < m_ItemArray.size()
+             ? reinterpret_cast<FWL_HLISTITEM>(m_ItemArray[nIndex].get())
+             : nullptr;
 }
 int32_t CFWL_ComboBox::CFWL_ComboBoxDP::GetItemIndex(IFWL_Widget* pWidget,
                                                      FWL_HLISTITEM hItem) {
-  return m_arrItem.Find(hItem);
+  auto it = std::find_if(
+      m_ItemArray.begin(), m_ItemArray.end(),
+      [hItem](const std::unique_ptr<CFWL_ComboBoxItem>& candidate) {
+        return candidate.get() == reinterpret_cast<CFWL_ComboBoxItem*>(hItem);
+      });
+  return it != m_ItemArray.end() ? it - m_ItemArray.begin() : -1;
 }
 FX_BOOL CFWL_ComboBox::CFWL_ComboBoxDP::SetItemIndex(IFWL_Widget* pWidget,
                                                      FWL_HLISTITEM hItem,
                                                      int32_t nIndex) {
-  return m_arrItem.SetAt(nIndex, hItem);
+  if (nIndex < 0 || nIndex >= m_ItemArray.size())
+    return FALSE;
+
+  m_ItemArray[nIndex].reset(reinterpret_cast<CFWL_ComboBoxItem*>(hItem));
+  return TRUE;
 }
 FX_DWORD CFWL_ComboBox::CFWL_ComboBoxDP::GetItemStyles(IFWL_Widget* pWidget,
                                                        FWL_HLISTITEM hItem) {
