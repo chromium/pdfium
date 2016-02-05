@@ -551,7 +551,7 @@ void CXFA_FFNotify::OnChildAdded(CXFA_Node* pSender,
   }
   FX_BOOL bLayoutReady =
       !(pDocView->m_bInLayoutStatus) &&
-      (pDocView->GetLayoutStatus() >= XFA_DOCVIEW_LAYOUTSTATUS_End);
+      (pDocView->GetLayoutStatus() == XFA_DOCVIEW_LAYOUTSTATUS_End);
   if (bLayoutReady) {
     m_pDoc->GetDocProvider()->SetChangeMark(m_pDoc);
   }
@@ -562,7 +562,7 @@ void CXFA_FFNotify::OnChildRemoved(CXFA_Node* pSender,
   if (CXFA_FFDocView* pDocView = m_pDoc->GetDocView()) {
     FX_BOOL bLayoutReady =
         !(pDocView->m_bInLayoutStatus) &&
-        (pDocView->GetLayoutStatus() >= XFA_DOCVIEW_LAYOUTSTATUS_End);
+        (pDocView->GetLayoutStatus() == XFA_DOCVIEW_LAYOUTSTATUS_End);
     if (bLayoutReady) {
       m_pDoc->GetDocProvider()->SetChangeMark(m_pDoc);
     }
@@ -580,33 +580,28 @@ void CXFA_FFNotify::OnLayoutItemAdd(CXFA_FFDocView* pDocView,
   FX_DWORD dwFilter = XFA_WIDGETSTATUS_Visible | XFA_WIDGETSTATUS_Viewable |
                       XFA_WIDGETSTATUS_Printable;
   pWidget->ModifyStatus(dwStatus, dwFilter);
-  if (pDocView->GetLayoutStatus() >= XFA_DOCVIEW_LAYOUTSTATUS_End) {
-    IXFA_PageView* pPrePageView = pWidget->GetPageView();
-    if (pPrePageView != pNewPageView ||
-        (dwStatus & (XFA_WIDGETSTATUS_Visible | XFA_WIDGETSTATUS_Viewable)) ==
-            (XFA_WIDGETSTATUS_Visible | XFA_WIDGETSTATUS_Viewable)) {
-      pWidget->SetPageView(pNewPageView);
-      m_pDoc->GetDocProvider()->WidgetEvent(pWidget, pWidget->GetDataAcc(),
-                                            XFA_WIDGETEVENT_PostAdded,
-                                            pNewPageView, pPrePageView);
-    }
-    if ((dwStatus & XFA_WIDGETSTATUS_Visible) == 0) {
-      return;
-    }
-    if (pWidget->IsLoaded()) {
-      CFX_RectF rtOld;
-      pWidget->GetWidgetRect(rtOld);
-      CFX_RectF rtNew = pWidget->ReCacheWidgetRect();
-      if (rtOld != rtNew) {
-        pWidget->PerformLayout();
-      }
-    } else {
-      pWidget->LoadWidget();
-    }
-    pWidget->AddInvalidateRect(NULL);
-  } else {
+  IXFA_PageView* pPrePageView = pWidget->GetPageView();
+  if (pPrePageView != pNewPageView ||
+      (dwStatus & (XFA_WIDGETSTATUS_Visible | XFA_WIDGETSTATUS_Viewable)) ==
+          (XFA_WIDGETSTATUS_Visible | XFA_WIDGETSTATUS_Viewable)) {
     pWidget->SetPageView(pNewPageView);
+    m_pDoc->GetDocProvider()->WidgetEvent(pWidget, pWidget->GetDataAcc(),
+                                          XFA_WIDGETEVENT_PostAdded,
+                                          pNewPageView, pPrePageView);
   }
+  if (pDocView->GetLayoutStatus() != XFA_DOCVIEW_LAYOUTSTATUS_End ||
+      !(dwStatus & XFA_WIDGETSTATUS_Visible)) {
+    return;
+  }
+  if (pWidget->IsLoaded()) {
+    CFX_RectF rtOld;
+    pWidget->GetWidgetRect(rtOld);
+    if (rtOld != pWidget->ReCacheWidgetRect())
+      pWidget->PerformLayout();
+  } else {
+    pWidget->LoadWidget();
+  }
+  pWidget->AddInvalidateRect(nullptr);
 }
 void CXFA_FFNotify::OnLayoutItemRemoving(CXFA_FFDocView* pDocView,
                                          IXFA_DocLayout* pLayout,
@@ -615,8 +610,6 @@ void CXFA_FFNotify::OnLayoutItemRemoving(CXFA_FFDocView* pDocView,
                                          void* pParam2) {
   CXFA_FFWidget* pWidget = static_cast<CXFA_FFWidget*>(pSender);
   pDocView->DeleteLayoutItem(pWidget);
-  if (pDocView->GetLayoutStatus() < XFA_DOCVIEW_LAYOUTSTATUS_End)
-    return;
   m_pDoc->GetDocProvider()->WidgetEvent(pWidget, pWidget->GetDataAcc(),
                                         XFA_WIDGETEVENT_PreRemoved, nullptr,
                                         pWidget->GetPageView());
