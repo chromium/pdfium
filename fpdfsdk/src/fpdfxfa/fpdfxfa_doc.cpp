@@ -45,18 +45,6 @@ CPDFXFA_Document::CPDFXFA_Document(CPDF_Document* pPDFDoc,
 }
 
 CPDFXFA_Document::~CPDFXFA_Document() {
-  if (m_pJSContext && m_pSDKDoc && m_pSDKDoc->GetEnv())
-    m_pSDKDoc->GetEnv()->GetJSRuntime()->ReleaseContext(m_pJSContext);
-
-  delete m_pSDKDoc;
-
-  if (m_pPDFDoc) {
-    CPDF_Parser* pParser = m_pPDFDoc->GetParser();
-    if (pParser)
-      delete pParser;
-    else
-      delete m_pPDFDoc;
-  }
   if (m_pXFADoc) {
     IXFA_App* pApp = m_pApp->GetXFAApp();
     if (pApp) {
@@ -66,6 +54,16 @@ CPDFXFA_Document::~CPDFXFA_Document() {
       }
     }
     delete m_pXFADoc;
+  }
+  if (m_pJSContext && m_pSDKDoc && m_pSDKDoc->GetEnv())
+    m_pSDKDoc->GetEnv()->GetJSRuntime()->ReleaseContext(m_pJSContext);
+  delete m_pSDKDoc;
+  if (m_pPDFDoc) {
+    CPDF_Parser* pParser = m_pPDFDoc->GetParser();
+    if (pParser)
+      delete pParser;
+    else
+      delete m_pPDFDoc;
   }
 }
 
@@ -490,7 +488,6 @@ void CPDFXFA_Document::PageViewEvent(IXFA_PageView* pPageView,
   if (!pPage)
     return;
   pEnv->FFI_PageEvent(pPage->GetPageIndex(), dwFlags);
-  m_pSDKDoc->GetPageView(pPage)->ClearFXAnnots();
   pPage->Release();
 }
 
