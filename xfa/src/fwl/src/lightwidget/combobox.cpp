@@ -44,9 +44,10 @@ int32_t CFWL_ComboBox::AddString(const CFX_WideStringC& wsText,
   return m_comboBoxData.m_ItemArray.size() - 1;
 }
 bool CFWL_ComboBox::RemoveAt(int32_t iIndex) {
-  if (iIndex < 0 || iIndex >= m_comboBoxData.m_ItemArray.size())
+  if (iIndex < 0 ||
+      static_cast<size_t>(iIndex) >= m_comboBoxData.m_ItemArray.size()) {
     return false;
-
+  }
   m_comboBoxData.m_ItemArray.erase(m_comboBoxData.m_ItemArray.begin() + iIndex);
   return true;
 }
@@ -245,9 +246,10 @@ int32_t CFWL_ComboBox::CFWL_ComboBoxDP::CountItems(IFWL_Widget* pWidget) {
 }
 FWL_HLISTITEM CFWL_ComboBox::CFWL_ComboBoxDP::GetItem(IFWL_Widget* pWidget,
                                                       int32_t nIndex) {
-  return nIndex >= 0 && nIndex < m_ItemArray.size()
-             ? reinterpret_cast<FWL_HLISTITEM>(m_ItemArray[nIndex].get())
-             : nullptr;
+  if (nIndex < 0 || static_cast<size_t>(nIndex) >= m_ItemArray.size())
+    return nullptr;
+
+  return reinterpret_cast<FWL_HLISTITEM>(m_ItemArray[nIndex].get());
 }
 int32_t CFWL_ComboBox::CFWL_ComboBoxDP::GetItemIndex(IFWL_Widget* pWidget,
                                                      FWL_HLISTITEM hItem) {
@@ -261,7 +263,7 @@ int32_t CFWL_ComboBox::CFWL_ComboBoxDP::GetItemIndex(IFWL_Widget* pWidget,
 FX_BOOL CFWL_ComboBox::CFWL_ComboBoxDP::SetItemIndex(IFWL_Widget* pWidget,
                                                      FWL_HLISTITEM hItem,
                                                      int32_t nIndex) {
-  if (nIndex < 0 || nIndex >= m_ItemArray.size())
+  if (nIndex < 0 || static_cast<size_t>(nIndex) >= m_ItemArray.size())
     return FALSE;
 
   m_ItemArray[nIndex].reset(reinterpret_cast<CFWL_ComboBoxItem*>(hItem));
