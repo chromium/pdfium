@@ -180,7 +180,6 @@ void CXFA_FFDocView::UpdateDocView() {
   this->RunCalculateWidgets();
   this->RunValidate();
   ShowNullTestMsg();
-  m_iStatus = XFA_DOCVIEW_LAYOUTSTATUS_Next;
   if (RunLayout() && m_bLayoutEvent) {
     RunEventLayoutReady();
   }
@@ -396,7 +395,7 @@ void CXFA_FFDocView::SetFocusWidgetAcc(CXFA_WidgetAcc* pWidgetAcc) {
       pWidgetAcc ? pWidgetAcc->GetNextWidget(NULL) : NULL;
   if (SetFocus(pNewFocus)) {
     m_pFocusAcc = pWidgetAcc;
-    if (m_iStatus >= XFA_DOCVIEW_LAYOUTSTATUS_End) {
+    if (m_iStatus == XFA_DOCVIEW_LAYOUTSTATUS_End) {
       m_pDoc->GetDocProvider()->SetFocusWidget(m_pDoc, m_pFocusWidget);
     }
   }
@@ -535,20 +534,15 @@ CXFA_WidgetAcc* CXFA_FFDocView::GetWidgetAccByName(
 void CXFA_FFDocView::OnPageEvent(IXFA_LayoutPage* pSender,
                                  XFA_PAGEEVENT eEvent,
                                  int32_t iPageIndex) {
-  FX_BOOL bNofify = m_iStatus >= XFA_DOCVIEW_LAYOUTSTATUS_End;
   CXFA_FFPageView* pFFPageView = static_cast<CXFA_FFPageView*>(pSender);
   if (eEvent == XFA_PAGEEVENT_PageRemoved) {
-    if (bNofify) {
       m_pDoc->GetDocProvider()->PageViewEvent(pFFPageView,
                                               XFA_PAGEVIEWEVENT_PostRemoved);
-    }
-  } else if (eEvent == XFA_PAGEEVENT_PageAdded) {
-    if (bNofify) {
-      m_pDoc->GetDocProvider()->PageViewEvent(pFFPageView,
-                                              XFA_PAGEVIEWEVENT_PostAdded);
-      pFFPageView->LoadPageView();
-    }
+      return;
   }
+  m_pDoc->GetDocProvider()->PageViewEvent(pFFPageView,
+                                          XFA_PAGEVIEWEVENT_PostAdded);
+  pFFPageView->LoadPageView();
 }
 void CXFA_FFDocView::LockUpdate() {
   m_iLock++;
