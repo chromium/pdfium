@@ -64,6 +64,7 @@ TEST_F(FPDFFormFillEmbeddertest, BUG_514690) {
   UnloadPage(page);
 }
 
+#ifdef PDF_ENABLE_V8
 TEST_F(FPDFFormFillEmbeddertest, BUG_551248) {
   EmbedderTestTimerHandlingDelegate delegate;
   SetDelegate(&delegate);
@@ -83,3 +84,4 @@ TEST_F(FPDFFormFillEmbeddertest, BUG_551248) {
   EXPECT_EQ(0, alerts[0].type);
   EXPECT_EQ(0, alerts[0].icon);
 }
+#endif  // PDF_ENABLE_V8
