@@ -9,9 +9,9 @@
 
 #include <map>
 
+#include "core/include/fpdfapi/fpdf_parser.h"
 #include "core/include/fxcrt/fx_system.h"
 #include "core/include/fxge/fx_font.h"
-#include "fpdf_parser.h"
 
 class CFX_CTTGSUBTable;
 class CFX_DIBitmap;

@@ -7,8 +7,8 @@
 #ifndef CORE_INCLUDE_FPDFAPI_FPDF_PAGEOBJ_H_
 #define CORE_INCLUDE_FPDFAPI_FPDF_PAGEOBJ_H_
 
+#include "core/include/fpdfapi/fpdf_resource.h"
 #include "core/include/fxge/fx_ge.h"
-#include "fpdf_resource.h"
 
 class CPDF_ClipPath;
 class CPDF_ClipPathData;

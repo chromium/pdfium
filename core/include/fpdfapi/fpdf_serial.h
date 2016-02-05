@@ -7,12 +7,14 @@
 #ifndef CORE_INCLUDE_FPDFAPI_FPDF_SERIAL_H_
 #define CORE_INCLUDE_FPDFAPI_FPDF_SERIAL_H_
 
-#include "fpdf_page.h"
-#include "fpdf_pageobj.h"
+#include "core/include/fpdfapi/fpdf_page.h"
+#include "core/include/fpdfapi/fpdf_pageobj.h"
 
 class CPDF_ObjectStream;
 class CPDF_XRefStream;
+
 CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& buf, const CPDF_Object* pObj);
+
 #define FPDFCREATE_INCREMENTAL 1
 #define FPDFCREATE_NO_ORIGINAL 2
 #define FPDFCREATE_PROGRESSIVE 4
