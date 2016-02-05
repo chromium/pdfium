@@ -1473,6 +1473,11 @@ void CPDF_DIBSource::DownSampleScanline32Bit(int orig_Bpp,
           src_bit_pos += m_bpc;
         }
         pSrcPixel = extracted_components;
+      } else if (m_bpc == 16) {
+        for (FX_DWORD j = 0; j < m_nComponents; ++j) {
+          extracted_components[j] = pSrcPixel[j * 2];
+        }
+        pSrcPixel = extracted_components;
       }
 
       if (m_pColorSpace) {

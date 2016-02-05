@@ -8,7 +8,7 @@ deps = {
     "https://chromium.googlesource.com/chromium/buildtools.git@c2f259809d5ede3275df5ea0842f0431990c4f98",
 
   "testing/corpus":
-     "https://pdfium.googlesource.com/pdfium_tests@cc132ff8921c76ea69888cae4bb00e01dd1ce0b3",
+     "https://pdfium.googlesource.com/pdfium_tests@bafb069353f96d441c6a37786d18cd9f5407937f",
 
   "testing/gmock":
      "https://chromium.googlesource.com/external/googlemock.git@29763965ab52f24565299976b936d1265cb6a271",
