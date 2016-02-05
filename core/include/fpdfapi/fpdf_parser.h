@@ -396,6 +396,14 @@ class CPDF_Parser {
   FX_DWORD GetFirstPageNo() const { return m_dwFirstPageNo; }
 
  protected:
+  struct ObjectInfo {
+    ObjectInfo() : pos(0), type(0), gennum(0) {}
+
+    FX_FILESIZE pos;
+    uint8_t type;
+    uint16_t gennum;
+  };
+
   void CloseParser();
   CPDF_Object* ParseDirect(CPDF_Object* pObj);
   FX_BOOL LoadAllCrossRefV4(FX_FILESIZE pos);
@@ -412,7 +420,6 @@ class CPDF_Parser {
   Error LoadLinearizedMainXRefTable();
   CPDF_StreamAcc* GetObjectStream(FX_DWORD number);
   FX_BOOL IsLinearizedFile(IFX_FileRead* pFileAccess, FX_DWORD offset);
-  bool FindPosInOffsets(FX_FILESIZE pos) const;
   void SetEncryptDictionary(CPDF_Dictionary* pDict);
   void ShrinkObjectMap(FX_DWORD size);
 
@@ -428,17 +435,8 @@ class CPDF_Parser {
   CFX_ByteString m_bsRecipient;
   CFX_ByteString m_FilePath;
   CFX_ByteString m_Password;
-
-  struct ObjectInfo {
-    ObjectInfo() : pos(0), type(0), gennum(0) {}
-
-    FX_FILESIZE pos;
-    uint8_t type;
-    uint16_t gennum;
-  };
   std::map<FX_DWORD, ObjectInfo> m_ObjectInfo;
-
-  CFX_FileSizeArray m_SortedOffset;
+  std::set<FX_FILESIZE> m_SortedOffset;
   CFX_ArrayTemplate<CPDF_Dictionary*> m_Trailers;
   FX_BOOL m_bVersionUpdated;
   CPDF_Object* m_pLinearized;

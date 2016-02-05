@@ -7,6 +7,8 @@
 #ifndef CORE_SRC_FPDFAPI_FPDF_PARSER_PARSER_INT_H_
 #define CORE_SRC_FPDFAPI_FPDF_PARSER_PARSER_INT_H_
 
+#include <vector>
+
 #include "core/include/fxcrt/fx_basic.h"
 #include "core/include/fxcrt/fx_stream.h"
 
@@ -36,7 +38,7 @@ class CPDF_HintTables {
  protected:
   FX_BOOL ReadPageHintTable(CFX_BitStream* hStream);
   FX_BOOL ReadSharedObjHintTable(CFX_BitStream* hStream, FX_DWORD offset);
-  FX_DWORD GetItemLength(int index, const CFX_FileSizeArray& szArray);
+  FX_DWORD GetItemLength(int index, const std::vector<FX_FILESIZE>& szArray);
 
  private:
   int ReadPrimaryHintStreamOffset() const;
@@ -50,8 +52,8 @@ class CPDF_HintTables {
   CFX_DWordArray m_dwNSharedObjsArray;
   CFX_DWordArray m_dwSharedObjNumArray;
   CFX_DWordArray m_dwIdentifierArray;
-  CFX_FileSizeArray m_szPageOffsetArray;
-  CFX_FileSizeArray m_szSharedObjOffsetArray;
+  std::vector<FX_FILESIZE> m_szPageOffsetArray;
+  std::vector<FX_FILESIZE> m_szSharedObjOffsetArray;
 };
 
 #endif  // CORE_SRC_FPDFAPI_FPDF_PARSER_PARSER_INT_H_
