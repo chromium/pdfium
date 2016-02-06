@@ -52,6 +52,7 @@ void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem) {
     XFA_ReleaseLayoutItem(pNode);
     pNode = pNext;
   }
+  pNotify->OnLayoutEvent(pDocLayout, pLayoutItem, XFA_LAYOUTEVENT_ItemRemoving);
   if (pLayoutItem->m_pFormNode->GetClassID() == XFA_ELEMENT_PageArea) {
     pNotify->OnPageEvent(static_cast<CXFA_ContainerLayoutItem*>(pLayoutItem),
                          XFA_PAGEEVENT_PageRemoved);
