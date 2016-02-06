@@ -1446,38 +1446,33 @@ void CPDF_DIBSource::DownSampleScanline32Bit(int orig_Bpp,
                      (int64_t)src_width / dest_width;
     src_x %= src_width;
 
-    // No need to check for 32-bit overflow, as |src_x| is bounded by
-    // |src_width| and DownSampleScanline already checked for overflow with the
-    // pitch calculation.
-    const uint8_t* pSrcPixel = nullptr;
-    size_t bit_offset = 0;
-    if (m_bpc % 8 == 0) {
-      pSrcPixel = pSrcLine + src_x * orig_Bpp;
-    } else {
-      size_t num_bits = src_x * m_bpc * m_nComponents;
-      pSrcPixel = pSrcLine + num_bits / 8;
-      bit_offset = num_bits % 8;
-    }
-
     uint8_t* pDestPixel = dest_scan + i * dest_Bpp;
     FX_ARGB argb;
     if (src_x == last_src_x) {
       argb = last_argb;
     } else {
       CFX_FixedBufGrow<uint8_t, 128> extracted_components(m_nComponents);
+      const uint8_t* pSrcPixel = nullptr;
       if (m_bpc % 8 != 0) {
-        uint64_t src_bit_pos = bit_offset;
+        // No need to check for 32-bit overflow, as |src_x| is bounded by
+        // |src_width| and DownSampleScanline() already checked for overflow
+        // with the pitch calculation.
+        size_t num_bits = src_x * m_bpc * m_nComponents;
+        uint64_t src_bit_pos = num_bits % 8;
+        pSrcPixel = pSrcLine + num_bits / 8;
         for (FX_DWORD j = 0; j < m_nComponents; ++j) {
           extracted_components[j] = static_cast<uint8_t>(
               GetBits8(pSrcPixel, src_bit_pos, m_bpc) * unit_To8Bpc);
           src_bit_pos += m_bpc;
         }
         pSrcPixel = extracted_components;
-      } else if (m_bpc == 16) {
-        for (FX_DWORD j = 0; j < m_nComponents; ++j) {
-          extracted_components[j] = pSrcPixel[j * 2];
+      } else {
+        pSrcPixel = pSrcLine + src_x * orig_Bpp;
+        if (m_bpc == 16) {
+          for (FX_DWORD j = 0; j < m_nComponents; ++j)
+            extracted_components[j] = pSrcPixel[j * 2];
+          pSrcPixel = extracted_components;
         }
-        pSrcPixel = extracted_components;
       }
 
       if (m_pColorSpace) {
