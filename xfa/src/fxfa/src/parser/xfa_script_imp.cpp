@@ -143,23 +143,24 @@ FX_BOOL CXFA_ScriptContext::QueryNodeByFlag(CXFA_Node* refNode,
                                             FXJSE_HVALUE hValue,
                                             FX_DWORD dwFlag,
                                             FX_BOOL bSetting) {
+  if (!refNode)
+    return false;
   XFA_RESOLVENODE_RS resolveRs;
-  int32_t iRet = ResolveObjects(refNode, propname, resolveRs, dwFlag);
-  FX_BOOL bResult = FALSE;
-  if (iRet > 0) {
-    bResult = TRUE;
-    if (resolveRs.dwFlags == XFA_RESOVENODE_RSTYPE_Nodes) {
-      FXJSE_HVALUE pValue = GetJSValueFromMap(resolveRs.nodes[0]);
-      FXJSE_Value_Set(hValue, pValue);
-    } else if (resolveRs.dwFlags == XFA_RESOVENODE_RSTYPE_Attribute) {
-      XFA_LPCSCRIPTATTRIBUTEINFO lpAttributeInfo = resolveRs.pScriptAttribute;
-      if (lpAttributeInfo) {
-        (resolveRs.nodes[0]->*(lpAttributeInfo->lpfnCallback))(
-            hValue, bSetting, (XFA_ATTRIBUTE)lpAttributeInfo->eAttribute);
-      }
+  if (ResolveObjects(refNode, propname, resolveRs, dwFlag) <= 0)
+    return false;
+  if (resolveRs.dwFlags == XFA_RESOVENODE_RSTYPE_Nodes) {
+    FXJSE_HVALUE pValue = GetJSValueFromMap(resolveRs.nodes[0]);
+    FXJSE_Value_Set(hValue, pValue);
+    return true;
+  }
+  if (resolveRs.dwFlags == XFA_RESOVENODE_RSTYPE_Attribute) {
+    XFA_LPCSCRIPTATTRIBUTEINFO lpAttributeInfo = resolveRs.pScriptAttribute;
+    if (lpAttributeInfo) {
+      (resolveRs.nodes[0]->*(lpAttributeInfo->lpfnCallback))(
+          hValue, bSetting, (XFA_ATTRIBUTE)lpAttributeInfo->eAttribute);
     }
   }
-  return bResult;
+  return true;
 }
 void CXFA_ScriptContext::GlobalPropertyGetter(FXJSE_HOBJECT hObject,
                                               const CFX_ByteStringC& szPropName,
@@ -479,7 +480,7 @@ FX_BOOL CXFA_ScriptContext::QueryVariableHValue(
     const CFX_ByteStringC& szPropName,
     FXJSE_HVALUE hValue,
     FX_BOOL bGetter) {
-  if (pScriptNode->GetClassID() != XFA_ELEMENT_Script) {
+  if (!pScriptNode || pScriptNode->GetClassID() != XFA_ELEMENT_Script) {
     return FALSE;
   }
   CXFA_Node* variablesNode = pScriptNode->GetNodeItem(XFA_NODEITEM_Parent);

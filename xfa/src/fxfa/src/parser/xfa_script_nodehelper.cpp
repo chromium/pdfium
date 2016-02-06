@@ -43,11 +43,12 @@ int32_t CXFA_NodeHelper::XFA_CountSiblings(CXFA_Node* pNode,
                                            XFA_LOGIC_TYPE eLogicType,
                                            CXFA_NodeArray* pSiblings,
                                            FX_BOOL bIsClassName) {
+  if (!pNode)
+    return 0;
   CXFA_Node* parent =
       XFA_ResolveNodes_GetParent(pNode, XFA_LOGIC_NoTransparent);
-  if (parent == NULL) {
+  if (!parent)
     return 0;
-  }
   XFA_LPCPROPERTY pPropert = XFA_GetPropertyOfElement(
       parent->GetClassID(), pNode->GetClassID(), XFA_XDPPACKET_UNKNOWN);
   if (!pPropert && eLogicType == XFA_LOGIC_Transparent) {
