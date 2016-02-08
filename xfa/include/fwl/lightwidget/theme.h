@@ -4,8 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_THEME_LIGHT_H
-#define _FWL_THEME_LIGHT_H
+#ifndef XFA_INCLUDE_FWL_LIGHTWIDGET_THEME_H_
+#define XFA_INCLUDE_FWL_LIGHTWIDGET_THEME_H_
+
+#include <memory>
+#include <vector>
 
 #include "xfa/include/fwl/core/fwl_theme.h"
 
@@ -45,6 +48,7 @@ class CFWL_Theme : public IFWL_ThemeProvider {
   CFWL_WidgetTP* GetTheme(IFWL_Widget* pWidget);
 
  protected:
-  CFX_PtrArray m_arrThemes;
+  std::vector<std::unique_ptr<CFWL_WidgetTP>> m_ThemesArray;
 };
-#endif
+
+#endif  // XFA_INCLUDE_FWL_LIGHTWIDGET_THEME_H_

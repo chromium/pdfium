@@ -166,7 +166,7 @@ FWL_ERR CFWL_WidgetTP::SetFont(IFWL_Widget* pWidget,
   if (!m_pTextOut) {
     return FWL_ERR_Succeeded;
   }
-  m_pFDEFont = FWL_GetFontManager()->FindFont(strFont, 0, 0);
+  m_pFDEFont = CFWL_FontManager::GetInstance()->FindFont(strFont, 0, 0);
   m_pTextOut->SetFont(m_pFDEFont);
   m_pTextOut->SetFontSize(fFontSize);
   m_pTextOut->SetTextColor(rgbFont);
@@ -193,7 +193,8 @@ FX_ERR CFWL_WidgetTP::InitTTO() {
   if (m_pTextOut) {
     return FWL_ERR_Succeeded;
   }
-  m_pFDEFont = FWL_GetFontManager()->FindFont(FX_WSTRC(L"Helvetica"), 0, 0);
+  m_pFDEFont =
+      CFWL_FontManager::GetInstance()->FindFont(FX_WSTRC(L"Helvetica"), 0, 0);
   m_pTextOut = IFDE_TextOut::Create();
   m_pTextOut->SetFont(m_pFDEFont);
   m_pTextOut->SetFontSize(FWLTHEME_CAPACITY_FontSize);
@@ -683,17 +684,6 @@ FWLCOLOR CFWL_WidgetTP::BlendColor(FWLCOLOR srcColor,
 CFWL_ArrowData::CFWL_ArrowData() : m_pColorData(NULL) {
   SetColorData(0);
 }
-CFWL_FontManager* FWL_GetFontManager() {
-  static CFWL_FontManager* _fontManager = NULL;
-  if (_fontManager == NULL) {
-    _fontManager = new CFWL_FontManager;
-  }
-  return _fontManager;
-}
-void FWL_ReleaseFontManager() {
-  CFWL_FontManager* fontManager = FWL_GetFontManager();
-  delete fontManager;
-}
 CFWL_FontData::CFWL_FontData()
     : m_dwStyles(0),
       m_dwCodePage(0),
@@ -742,36 +732,38 @@ FX_BOOL CFWL_FontData::LoadFont(const CFX_WideStringC& wsFontFamily,
                                m_pFontMgr);
   return m_pFont != NULL;
 }
-CFWL_FontManager::CFWL_FontManager() {}
-CFWL_FontManager::~CFWL_FontManager() {
-  for (int32_t i = 0; i < m_arrFonts.GetSize(); i++) {
-    delete static_cast<CFWL_FontData*>(m_arrFonts[i]);
-  }
-  m_arrFonts.RemoveAll();
+
+CFWL_FontManager* CFWL_FontManager::s_FontManager = nullptr;
+CFWL_FontManager* CFWL_FontManager::GetInstance() {
+  if (!s_FontManager)
+    s_FontManager = new CFWL_FontManager;
+  return s_FontManager;
 }
+void CFWL_FontManager::DestroyInstance() {
+  delete s_FontManager;
+  s_FontManager = nullptr;
+}
+CFWL_FontManager::CFWL_FontManager() {}
+CFWL_FontManager::~CFWL_FontManager() {}
 IFX_Font* CFWL_FontManager::FindFont(const CFX_WideStringC& wsFontFamily,
                                      FX_DWORD dwFontStyles,
                                      FX_WORD wCodePage) {
-  for (int32_t i = 0; i < m_arrFonts.GetSize(); i++) {
-    CFWL_FontData* data = static_cast<CFWL_FontData*>(m_arrFonts[i]);
-    if (data->Equal(wsFontFamily, dwFontStyles, wCodePage)) {
-      return data->GetFont();
-    }
+  for (const auto& pData : m_FontsArray) {
+    if (pData->Equal(wsFontFamily, dwFontStyles, wCodePage))
+      return pData->GetFont();
   }
-  CFWL_FontData* fontData = new CFWL_FontData;
-  if (!fontData->LoadFont(wsFontFamily, dwFontStyles, wCodePage)) {
-    delete fontData;
-    return NULL;
-  }
-  m_arrFonts.Add(fontData);
-  return fontData->GetFont();
+  std::unique_ptr<CFWL_FontData> pFontData(new CFWL_FontData);
+  if (!pFontData->LoadFont(wsFontFamily, dwFontStyles, wCodePage))
+    return nullptr;
+  m_FontsArray.push_back(std::move(pFontData));
+  return m_FontsArray.back()->GetFont();
 }
 FX_BOOL FWLTHEME_Init() {
   return TRUE;
 }
 void FWLTHEME_Release() {
   CFWL_ArrowData::DestroyInstance();
-  FWL_ReleaseFontManager();
+  CFWL_FontManager::DestroyInstance();
 }
 FX_DWORD FWL_GetThemeLayout(FX_DWORD dwThemeID) {
   return 0xffff0000 & dwThemeID;

@@ -6,6 +6,7 @@
 
 #include <memory>
 
+#include "third_party/base/stl_util.h"
 #include "xfa/src/foxitlib.h"
 
 CFWL_ListBox* CFWL_ListBox::Create() {
@@ -33,16 +34,17 @@ FWL_ERR CFWL_ListBox::AddDIBitmap(CFX_DIBitmap* pDIB, FWL_HLISTITEM hItem) {
 }
 FWL_HLISTITEM CFWL_ListBox::AddString(const CFX_WideStringC& wsAdd,
                                       FX_BOOL bSelect) {
-  CFWL_ListItem* pItem = new CFWL_ListItem;
+  std::unique_ptr<CFWL_ListItem> pItem(new CFWL_ListItem);
   pItem->m_dwStates = 0;
   pItem->m_wsText = wsAdd;
   pItem->m_dwStates = bSelect ? FWL_ITEMSTATE_LTB_Selected : 0;
-  m_ListBoxDP.m_arrItem.Add(pItem);
-  return (FWL_HLISTITEM)pItem;
+  m_ListBoxDP.m_ItemArray.push_back(std::move(pItem));
+  return (FWL_HLISTITEM)m_ListBoxDP.m_ItemArray.back().get();
 }
 FX_BOOL CFWL_ListBox::DeleteString(FWL_HLISTITEM hItem) {
   int32_t nIndex = m_ListBoxDP.GetItemIndex(GetWidget(), hItem);
-  if (nIndex < 0 || nIndex >= m_ListBoxDP.m_arrItem.GetSize()) {
+  if (nIndex < 0 ||
+      static_cast<size_t>(nIndex) >= m_ListBoxDP.m_ItemArray.size()) {
     return FALSE;
   }
   CFWL_ListItem* pDelItem =
@@ -60,18 +62,18 @@ FX_BOOL CFWL_ListBox::DeleteString(FWL_HLISTITEM hItem) {
         reinterpret_cast<CFWL_ListItem*>(m_ListBoxDP.GetItem(m_pIface, iSel));
     pSel->m_dwStates |= FWL_ITEMSTATE_LTB_Selected;
   }
-  m_ListBoxDP.m_arrItem.RemoveAt(nIndex);
+  m_ListBoxDP.m_ItemArray.erase(m_ListBoxDP.m_ItemArray.begin() + nIndex);
   delete pDelItem;
   return TRUE;
 }
 FX_BOOL CFWL_ListBox::DeleteAll() {
-  int32_t iCount = m_ListBoxDP.CountItems(m_pIface);
-  for (int32_t i = 0; i < iCount; i++) {
+  size_t iCount = m_ListBoxDP.CountItems(m_pIface);
+  for (size_t i = 0; i < iCount; ++i) {
     CFWL_ListItem* pItem =
         reinterpret_cast<CFWL_ListItem*>(m_ListBoxDP.GetItem(m_pIface, i));
     delete pItem;
   }
-  m_ListBoxDP.m_arrItem.RemoveAll();
+  m_ListBoxDP.m_ItemArray.clear();
   return TRUE;
 }
 int32_t CFWL_ListBox::CountSelItems() {
@@ -109,33 +111,28 @@ FWL_ERR CFWL_ListBox::SetItemHeight(FX_FLOAT fItemHeight) {
   return FWL_ERR_Succeeded;
 }
 FWL_HLISTITEM CFWL_ListBox::GetFocusItem() {
-  for (int32_t i = 0; i < m_ListBoxDP.m_arrItem.GetSize(); i++) {
-    CFWL_ListItem* hItem =
-        static_cast<CFWL_ListItem*>(m_ListBoxDP.m_arrItem[i]);
-    if (hItem->m_dwStates & FWL_ITEMSTATE_LTB_Focused) {
-      return (FWL_HLISTITEM)hItem;
-    }
+  for (const auto& hItem : m_ListBoxDP.m_ItemArray) {
+    if (hItem->m_dwStates & FWL_ITEMSTATE_LTB_Focused)
+      return (FWL_HLISTITEM)hItem.get();
   }
-  return NULL;
+  return nullptr;
 }
 FWL_ERR CFWL_ListBox::SetFocusItem(FWL_HLISTITEM hItem) {
   int32_t nIndex = m_ListBoxDP.GetItemIndex(GetWidget(), hItem);
-  static_cast<CFWL_ListItem*>(m_ListBoxDP.m_arrItem[nIndex])->m_dwStates |=
-      FWL_ITEMSTATE_LTB_Focused;
+  m_ListBoxDP.m_ItemArray[nIndex]->m_dwStates |= FWL_ITEMSTATE_LTB_Focused;
   return FWL_ERR_Succeeded;
 }
 FWL_ERR* CFWL_ListBox::Sort(IFWL_ListBoxCompare* pCom) {
   return static_cast<IFWL_ListBox*>(m_pIface)->Sort(pCom);
 }
 int32_t CFWL_ListBox::CountItems() {
-  return m_ListBoxDP.m_arrItem.GetSize();
+  return pdfium::CollectionSize<int32_t>(m_ListBoxDP.m_ItemArray);
 }
 FWL_HLISTITEM CFWL_ListBox::GetItem(int32_t nIndex) {
-  int32_t nCount = m_ListBoxDP.m_arrItem.GetSize();
-  if (nIndex > nCount - 1 && nIndex < 0) {
-    return NULL;
-  }
-  return (FWL_HLISTITEM)m_ListBoxDP.m_arrItem[nIndex];
+  if (nIndex < 0 || nIndex >= CountItems())
+    return nullptr;
+
+  return (FWL_HLISTITEM)m_ListBoxDP.m_ItemArray[nIndex].get();
 }
 FWL_ERR CFWL_ListBox::SetItemString(FWL_HLISTITEM hItem,
                                     const CFX_WideStringC& wsText) {
@@ -195,37 +192,38 @@ FX_DWORD CFWL_ListBox::GetItemStates(FWL_HLISTITEM hItem) {
 CFWL_ListBox::CFWL_ListBox() {}
 CFWL_ListBox::~CFWL_ListBox() {}
 CFWL_ListBox::CFWL_ListBoxDP::CFWL_ListBoxDP() {}
-CFWL_ListBox::CFWL_ListBoxDP::~CFWL_ListBoxDP() {
-  int32_t nCount = m_arrItem.GetSize();
-  for (int32_t i = 0; i < nCount; i++) {
-    delete static_cast<CFWL_ListItem*>(m_arrItem[i]);
-  }
-  m_arrItem.RemoveAll();
-}
+CFWL_ListBox::CFWL_ListBoxDP::~CFWL_ListBoxDP() {}
 FWL_ERR CFWL_ListBox::CFWL_ListBoxDP::GetCaption(IFWL_Widget* pWidget,
                                                  CFX_WideString& wsCaption) {
   wsCaption = m_wsData;
   return FWL_ERR_Succeeded;
 }
 int32_t CFWL_ListBox::CFWL_ListBoxDP::CountItems(IFWL_Widget* pWidget) {
-  return m_arrItem.GetSize();
+  return pdfium::CollectionSize<int32_t>(m_ItemArray);
 }
 FWL_HLISTITEM CFWL_ListBox::CFWL_ListBoxDP::GetItem(IFWL_Widget* pWidget,
                                                     int32_t nIndex) {
-  if (nIndex >= m_arrItem.GetSize() || nIndex < 0) {
-    return NULL;
-  } else {
-    return (FWL_HLISTITEM)m_arrItem[nIndex];
-  }
+  if (nIndex < 0 || nIndex >= CountItems(pWidget))
+    return nullptr;
+
+  return (FWL_HLISTITEM)m_ItemArray[nIndex].get();
 }
 int32_t CFWL_ListBox::CFWL_ListBoxDP::GetItemIndex(IFWL_Widget* pWidget,
                                                    FWL_HLISTITEM hItem) {
-  return m_arrItem.Find(hItem);
+  auto it = std::find_if(
+      m_ItemArray.begin(), m_ItemArray.end(),
+      [hItem](const std::unique_ptr<CFWL_ListItem>& candidate) {
+        return candidate.get() == reinterpret_cast<CFWL_ListItem*>(hItem);
+      });
+  return it != m_ItemArray.end() ? it - m_ItemArray.begin() : -1;
 }
 FX_BOOL CFWL_ListBox::CFWL_ListBoxDP::SetItemIndex(IFWL_Widget* pWidget,
                                                    FWL_HLISTITEM hItem,
                                                    int32_t nIndex) {
-  return m_arrItem.SetAt(nIndex, hItem);
+  if (nIndex < 0 || nIndex >= CountItems(pWidget))
+    return FALSE;
+  m_ItemArray[nIndex].reset(reinterpret_cast<CFWL_ListItem*>(hItem));
+  return TRUE;
 }
 FX_DWORD CFWL_ListBox::CFWL_ListBoxDP::GetItemStyles(IFWL_Widget* pWidget,
                                                      FWL_HLISTITEM hItem) {

@@ -4,13 +4,20 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_LISTBOX_LIGHT_H
-#define _FWL_LISTBOX_LIGHT_H
+#ifndef XFA_INCLUDE_FWL_LIGHTWIDGET_LISTBOX_H_
+#define XFA_INCLUDE_FWL_LIGHTWIDGET_LISTBOX_H_
+
+#include <memory>
+#include <vector>
+
+#include "xfa/include/fwl/lightwidget/widget.h"
+
 class CFWL_Widget;
 class CFWL_WidgetProperties;
 class IFWL_ListBoxDP;
 class CFWL_ListBox;
 class CFWL_ListItem;
+
 class CFWL_ListBox : public CFWL_Widget {
  public:
   static CFWL_ListBox* Create();
@@ -46,54 +53,58 @@ class CFWL_ListBox : public CFWL_Widget {
    public:
     CFWL_ListBoxDP();
     ~CFWL_ListBoxDP();
-    virtual FWL_ERR GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption);
 
-    virtual int32_t CountItems(IFWL_Widget* pWidget);
-    virtual FWL_HLISTITEM GetItem(IFWL_Widget* pWidget, int32_t nIndex);
-    virtual int32_t GetItemIndex(IFWL_Widget* pWidget, FWL_HLISTITEM hItem);
-    virtual FX_BOOL SetItemIndex(IFWL_Widget* pWidget,
-                                 FWL_HLISTITEM hItem,
-                                 int32_t nIndex);
+    // IFWL_DataProvider:
+    FWL_ERR GetCaption(IFWL_Widget* pWidget,
+                       CFX_WideString& wsCaption) override;
 
-    virtual FX_DWORD GetItemStyles(IFWL_Widget* pWidget, FWL_HLISTITEM hItem);
-    virtual FWL_ERR GetItemText(IFWL_Widget* pWidget,
-                                FWL_HLISTITEM hItem,
-                                CFX_WideString& wsText);
-    virtual FWL_ERR GetItemRect(IFWL_Widget* pWidget,
-                                FWL_HLISTITEM hItem,
-                                CFX_RectF& rtItem);
-    virtual void* GetItemData(IFWL_Widget* pWidget, FWL_HLISTITEM hItem);
+    // IFWL_ListBoxDP:
+    int32_t CountItems(IFWL_Widget* pWidget) override;
+    FWL_HLISTITEM GetItem(IFWL_Widget* pWidget, int32_t nIndex) override;
+    int32_t GetItemIndex(IFWL_Widget* pWidget, FWL_HLISTITEM hItem) override;
+    FX_BOOL SetItemIndex(IFWL_Widget* pWidget,
+                         FWL_HLISTITEM hItem,
+                         int32_t nIndex) override;
+    FX_DWORD GetItemStyles(IFWL_Widget* pWidget, FWL_HLISTITEM hItem) override;
+    FWL_ERR GetItemText(IFWL_Widget* pWidget,
+                        FWL_HLISTITEM hItem,
+                        CFX_WideString& wsText) override;
+    FWL_ERR GetItemRect(IFWL_Widget* pWidget,
+                        FWL_HLISTITEM hItem,
+                        CFX_RectF& rtItem) override;
+    void* GetItemData(IFWL_Widget* pWidget, FWL_HLISTITEM hItem) override;
+    FWL_ERR SetItemStyles(IFWL_Widget* pWidget,
+                          FWL_HLISTITEM hItem,
+                          FX_DWORD dwStyle) override;
+    FWL_ERR SetItemText(IFWL_Widget* pWidget,
+                        FWL_HLISTITEM hItem,
+                        const FX_WCHAR* pszText) override;
+    FWL_ERR SetItemRect(IFWL_Widget* pWidget,
+                        FWL_HLISTITEM hItem,
+                        const CFX_RectF& rtItem) override;
+    FX_FLOAT GetItemHeight(IFWL_Widget* pWidget) override;
+    CFX_DIBitmap* GetItemIcon(IFWL_Widget* pWidget,
+                              FWL_HLISTITEM hItem) override;
+    FWL_ERR GetItemCheckRect(IFWL_Widget* pWidget,
+                             FWL_HLISTITEM hItem,
+                             CFX_RectF& rtCheck) override;
+    FWL_ERR SetItemCheckRect(IFWL_Widget* pWidget,
+                             FWL_HLISTITEM hItem,
+                             const CFX_RectF& rtCheck) override;
+    FX_DWORD GetItemCheckState(IFWL_Widget* pWidget,
+                               FWL_HLISTITEM hItem) override;
+    FWL_ERR SetItemCheckState(IFWL_Widget* pWidget,
+                              FWL_HLISTITEM hItem,
+                              FX_DWORD dwCheckState) override;
 
-    virtual FWL_ERR SetItemStyles(IFWL_Widget* pWidget,
-                                  FWL_HLISTITEM hItem,
-                                  FX_DWORD dwStyle);
-    virtual FWL_ERR SetItemText(IFWL_Widget* pWidget,
-                                FWL_HLISTITEM hItem,
-                                const FX_WCHAR* pszText);
-    virtual FWL_ERR SetItemRect(IFWL_Widget* pWidget,
-                                FWL_HLISTITEM hItem,
-                                const CFX_RectF& rtItem);
-    virtual FX_FLOAT GetItemHeight(IFWL_Widget* pWidget);
-    virtual CFX_DIBitmap* GetItemIcon(IFWL_Widget* pWidget,
-                                      FWL_HLISTITEM hItem);
-    virtual FWL_ERR GetItemCheckRect(IFWL_Widget* pWidget,
-                                     FWL_HLISTITEM hItem,
-                                     CFX_RectF& rtCheck);
-    virtual FWL_ERR SetItemCheckRect(IFWL_Widget* pWidget,
-                                     FWL_HLISTITEM hItem,
-                                     const CFX_RectF& rtCheck);
-    virtual FX_DWORD GetItemCheckState(IFWL_Widget* pWidget,
-                                       FWL_HLISTITEM hItem);
-    virtual FWL_ERR SetItemCheckState(IFWL_Widget* pWidget,
-                                      FWL_HLISTITEM hItem,
-                                      FX_DWORD dwCheckState);
-
-    CFX_PtrArray m_arrItem;
+    std::vector<std::unique_ptr<CFWL_ListItem>> m_ItemArray;
     CFX_WideString m_wsData;
     FX_FLOAT m_fItemHeight;
   };
+
   CFWL_ListBoxDP m_ListBoxDP;
 };
+
 class CFWL_ListItem {
  public:
   CFWL_ListItem() {
@@ -113,4 +124,5 @@ class CFWL_ListItem {
   FX_DWORD m_dwCheckState;
   CFX_RectF m_rtCheckBox;
 };
-#endif
+
+#endif  // XFA_INCLUDE_FWL_LIGHTWIDGET_LISTBOX_H_
