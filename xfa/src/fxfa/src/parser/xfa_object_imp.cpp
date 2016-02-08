@@ -1056,6 +1056,7 @@ void CXFA_Node::Script_NodeClass_LoadXML(CFXJSE_Arguments* pArguments) {
 }
 void CXFA_Node::Script_NodeClass_SaveFilteredXML(CFXJSE_Arguments* pArguments) {
 }
+
 void CXFA_Node::Script_NodeClass_SaveXML(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength < 0 || iLength > 1) {
@@ -1065,20 +1066,15 @@ void CXFA_Node::Script_NodeClass_SaveXML(CFXJSE_Arguments* pArguments) {
   FX_BOOL bPrettyMode = FALSE;
   if (iLength == 1) {
     CFX_ByteString bsPretty = pArguments->GetUTF8String(0);
-    if (bsPretty.Equal("pretty")) {
-      bPrettyMode = TRUE;
-    } else {
+    if (!bsPretty.Equal("pretty")) {
       ThrowScriptErrorMessage(XFA_IDS_ARGUMENT_MISMATCH);
       return;
     }
+    bPrettyMode = TRUE;
   }
   CFX_ByteStringC bsXMLHeader = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
   if (GetPacketID() == XFA_XDPPACKET_Form) {
     IFX_MemoryStream* pMemoryStream = FX_CreateMemoryStream(TRUE);
-    if (!pMemoryStream) {
-      FXJSE_Value_SetUTF8String(pArguments->GetReturnValue(), bsXMLHeader);
-      return;
-    }
     IFX_Stream* pStream = IFX_Stream::CreateStream(
         (IFX_FileWrite*)pMemoryStream,
         FX_STREAMACCESS_Text | FX_STREAMACCESS_Write | FX_STREAMACCESS_Append);
@@ -1101,7 +1097,8 @@ void CXFA_Node::Script_NodeClass_SaveXML(CFXJSE_Arguments* pArguments) {
       pMemoryStream = NULL;
     }
     return;
-  } else if (GetPacketID() == XFA_XDPPACKET_Datasets) {
+  }
+  if (GetPacketID() == XFA_XDPPACKET_Datasets) {
     IFDE_XMLNode* pElement = this->GetXMLMappingNode();
     if (!pElement || pElement->GetType() != FDE_XMLNODE_Element) {
       FXJSE_Value_SetUTF8String(pArguments->GetReturnValue(), bsXMLHeader);
@@ -1109,35 +1106,28 @@ void CXFA_Node::Script_NodeClass_SaveXML(CFXJSE_Arguments* pArguments) {
     }
     XFA_DataExporter_DealWithDataGroupNode(this);
     IFX_MemoryStream* pMemoryStream = FX_CreateMemoryStream(TRUE);
-    if (!pMemoryStream) {
-      FXJSE_Value_SetUTF8String(pArguments->GetReturnValue(), bsXMLHeader);
-      return;
+    IFX_Stream* pStream = IFX_Stream::CreateStream(
+        (IFX_FileWrite*)pMemoryStream,
+        FX_STREAMACCESS_Text | FX_STREAMACCESS_Write | FX_STREAMACCESS_Append);
+    if (pStream) {
+      pStream->SetCodePage(FX_CODEPAGE_UTF8);
+      pStream->WriteData(bsXMLHeader.GetPtr(), bsXMLHeader.GetLength());
+      pElement->SaveXMLNode(pStream);
+      FXJSE_Value_SetUTF8String(pArguments->GetReturnValue(),
+                                CFX_ByteStringC(pMemoryStream->GetBuffer(),
+                                                pMemoryStream->GetSize()));
+      pStream->Release();
+      pStream = NULL;
     }
     if (pMemoryStream) {
-      IFX_Stream* pStream = IFX_Stream::CreateStream(
-          (IFX_FileWrite*)pMemoryStream, FX_STREAMACCESS_Text |
-                                             FX_STREAMACCESS_Write |
-                                             FX_STREAMACCESS_Append);
-      if (pStream) {
-        pStream->SetCodePage(FX_CODEPAGE_UTF8);
-        pStream->WriteData(bsXMLHeader.GetPtr(), bsXMLHeader.GetLength());
-        pElement->SaveXMLNode(pStream);
-        FXJSE_Value_SetUTF8String(pArguments->GetReturnValue(),
-                                  CFX_ByteStringC(pMemoryStream->GetBuffer(),
-                                                  pMemoryStream->GetSize()));
-        pStream->Release();
-        pStream = NULL;
-      }
-      if (pMemoryStream) {
-        pMemoryStream->Release();
-        pMemoryStream = NULL;
-      }
-      return;
+      pMemoryStream->Release();
+      pMemoryStream = NULL;
     }
-  } else {
-    FXJSE_Value_SetUTF8String(pArguments->GetReturnValue(), "");
+    return;
   }
+  FXJSE_Value_SetUTF8String(pArguments->GetReturnValue(), "");
 }
+
 void CXFA_Node::Script_NodeClass_SetAttribute(CFXJSE_Arguments* pArguments) {
   int32_t iLength = pArguments->GetLength();
   if (iLength != 2) {

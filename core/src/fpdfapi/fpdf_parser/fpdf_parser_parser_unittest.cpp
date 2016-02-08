@@ -68,11 +68,6 @@ class CPDF_TestParser : public CPDF_Parser {
   FRIEND_TEST(fpdf_parser_parser, LoadCrossRefV4);
 };
 
-// TODO(thestig) Using unique_ptr with ReleaseDeleter is still not ideal.
-// Come up or wait for something better.
-using ScopedFileStream =
-    std::unique_ptr<IFX_FileStream, ReleaseDeleter<IFX_FileStream>>;
-
 TEST(fpdf_parser_parser, ReadHexString) {
   {
     // Empty string.

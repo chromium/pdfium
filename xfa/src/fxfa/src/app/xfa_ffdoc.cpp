@@ -113,13 +113,6 @@ int32_t CXFA_FFDoc::DoLoad(IFX_Pause* pPause) {
     IFX_FileRead* pXFAReader = NULL;
     if (XFA_GetPDFContentsFromPDFXML(pPDFXML, pByteBuffer, iBufferSize)) {
       pXFAReader = FX_CreateMemoryStream(pByteBuffer, iBufferSize, TRUE);
-      if (!pXFAReader) {
-        if (pByteBuffer) {
-          FX_Free(pByteBuffer);
-          pByteBuffer = NULL;
-        }
-        return XFA_PARSESTATUS_SyntaxErr;
-      }
     } else {
       CFX_WideString wsHref;
       ((IFDE_XMLElement*)pPDFXML)->GetString(L"href", wsHref);

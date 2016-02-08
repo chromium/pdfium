@@ -81,11 +81,6 @@ bool CanReadFromBitStream(const CFX_BitStream* hStream,
 
 }  // namespace
 
-// TODO(thestig) Using unique_ptr with ReleaseDeleter is still not ideal.
-// Come up or wait for something better.
-using ScopedFileStream =
-    std::unique_ptr<IFX_FileStream, ReleaseDeleter<IFX_FileStream>>;
-
 bool IsSignatureDict(const CPDF_Dictionary* pDict) {
   CPDF_Object* pType = pDict->GetElementValue("Type");
   if (!pType)

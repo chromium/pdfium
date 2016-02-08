@@ -12,7 +12,7 @@
 #include <set>
 
 #include "core/include/fpdfapi/fpdf_objects.h"
-#include "core/include/fxcrt/fx_system.h"
+#include "core/include/fxcrt/fx_basic.h"
 
 class CFX_Font;
 class CFX_Matrix;
@@ -28,7 +28,6 @@ class CPDF_Object;
 class CPDF_Parser;
 class CPDF_Pattern;
 class CPDF_StandardSecurityHandler;
-class IFX_FileRead;
 class IPDF_SecurityHandler;
 
 #define FPDFPERM_PRINT 0x0004
@@ -40,6 +39,11 @@ class IPDF_SecurityHandler;
 #define FPDFPERM_ASSEMBLE 0x0400
 #define FPDFPERM_PRINT_HIGH 0x0800
 #define FPDF_PAGE_MAX_NUM 0xFFFFF
+
+// TODO(thestig) Using unique_ptr with ReleaseDeleter is still not ideal.
+// Come up or wait for something better.
+using ScopedFileStream =
+    std::unique_ptr<IFX_FileStream, ReleaseDeleter<IFX_FileStream>>;
 
 // Use the accessors below instead of directly accessing PDF_CharType.
 extern const char PDF_CharType[256];
