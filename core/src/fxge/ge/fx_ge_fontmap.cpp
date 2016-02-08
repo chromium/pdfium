@@ -10,7 +10,7 @@
 #include "core/include/fxge/fx_freetype.h"
 #include "core/include/fxge/fx_ge.h"
 #include "core/src/fxge/fontdata/chromefontdata/chromefontdata.h"
-#include "core/src/fxge/ge/text_int.h"
+#include "core/src/fxge/ge/fx_text_int.h"
 #include "third_party/base/stl_util.h"
 
 #define GET_TT_SHORT(w) (FX_WORD)(((w)[0] << 8) | (w)[1])

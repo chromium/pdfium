@@ -14,8 +14,8 @@
 #include "core/include/fpdftext/fpdf_text.h"
 #include "core/include/fxcrt/fx_bidi.h"
 #include "core/include/fxcrt/fx_ucd.h"
-#include "text_int.h"
-#include "txtproc.h"
+#include "core/src/fpdftext/text_int.h"
+#include "core/src/fpdftext/txtproc.h"
 
 CFX_ByteString CharFromUnicodeAlt(FX_WCHAR unicode,
                                   int destcp,
@@ -785,5 +785,5 @@ void PDF_GetTextStream_Unicode(CFX_WideTextBuf& buffer,
   options.m_bTextOnly = TRUE;
   options.m_bSeparateForm = FALSE;
   page.ParseContent(&options);
-  GetTextStream_Unicode(buffer, &page, TRUE, NULL);
+  GetTextStream_Unicode(buffer, &page, TRUE);
 }

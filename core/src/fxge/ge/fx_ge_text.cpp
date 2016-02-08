@@ -7,7 +7,7 @@
 #include "core/include/fxge/fx_ge.h"
 #include "core/include/fxge/fx_freetype.h"
 #include "core/include/fxcodec/fx_codec.h"
-#include "text_int.h"
+#include "core/src/fxge/ge/fx_text_int.h"
 
 #undef FX_GAMMA
 #undef FX_GAMMA_INVERSE

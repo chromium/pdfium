@@ -6,7 +6,7 @@
 
 #include "core/include/fxge/fx_ge.h"
 
-#include "text_int.h"
+#include "core/src/fxge/ge/fx_text_int.h"
 
 static CFX_GEModule* g_pGEModule = NULL;
 CFX_GEModule::CFX_GEModule(const char** pUserFontPaths) {

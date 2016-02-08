@@ -14,7 +14,7 @@
 #include "core/include/fxge/fx_ge_apple.h"
 #include "core/src/fxge/agg/include/fx_agg_driver.h"
 #include "core/src/fxge/dib/dib_int.h"
-#include "core/src/fxge/ge/text_int.h"
+#include "core/src/fxge/ge/fx_text_int.h"
 
 void CFX_AggDeviceDriver::InitPlatform() {
   CQuartz2D& quartz2d =

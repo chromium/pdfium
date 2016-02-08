@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_SRC_FXGE_GE_TEXT_INT_H_
-#define CORE_SRC_FXGE_GE_TEXT_INT_H_
+#ifndef CORE_SRC_FXGE_GE_FX_TEXT_INT_H_
+#define CORE_SRC_FXGE_GE_FX_TEXT_INT_H_
 
 #include <map>
 
@@ -81,4 +81,4 @@ class CFX_FontFaceInfo {
   FX_DWORD m_Charsets;
 };
 
-#endif  // CORE_SRC_FXGE_GE_TEXT_INT_H_
+#endif  // CORE_SRC_FXGE_GE_FX_TEXT_INT_H_

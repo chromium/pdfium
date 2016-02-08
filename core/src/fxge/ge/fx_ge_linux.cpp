@@ -6,7 +6,7 @@
 
 #include "core/include/fxge/fx_ge.h"
 #include "core/src/fxge/agg/include/fx_agg_driver.h"
-#include "text_int.h"
+#include "core/src/fxge/ge/fx_text_int.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_
 class CFX_LinuxFontInfo : public CFX_FolderFontInfo {

@@ -6,28 +6,19 @@
 
 #include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fpdfapi/fpdf_pageobj.h"
-#include "text_int.h"
+#include "core/src/fpdftext/text_int.h"
 
 class CPDF_TextStream {
  public:
-  CPDF_TextStream(CFX_WideTextBuf& buffer,
-                  FX_BOOL bUseLF,
-                  CFX_PtrArray* pObjArray);
+  CPDF_TextStream(CFX_WideTextBuf& buffer, FX_BOOL bUseLF)
+      : m_Buffer(buffer), m_bUseLF(bUseLF), m_pLastObj(nullptr) {}
   ~CPDF_TextStream() {}
   FX_BOOL ProcessObject(const CPDF_TextObject* pObj, FX_BOOL bFirstLine);
+
   CFX_WideTextBuf& m_Buffer;
   FX_BOOL m_bUseLF;
-  CFX_PtrArray* m_pObjArray;
   const CPDF_TextObject* m_pLastObj;
 };
-CPDF_TextStream::CPDF_TextStream(CFX_WideTextBuf& buffer,
-                                 FX_BOOL bUseLF,
-                                 CFX_PtrArray* pObjArray)
-    : m_Buffer(buffer) {
-  m_pLastObj = NULL;
-  m_bUseLF = bUseLF;
-  m_pObjArray = pObjArray;
-}
 FX_BOOL FPDFText_IsSameTextObject(const CPDF_TextObject* pTextObj1,
                                   const CPDF_TextObject* pTextObj2) {
   if (!pTextObj1 || !pTextObj2) {
@@ -160,9 +151,6 @@ FX_BOOL CPDF_TextStream::ProcessObject(const CPDF_TextObject* pObj,
       int len = m_Buffer.GetLength();
       if (len && m_bUseLF && m_Buffer.GetBuffer()[len - 1] == L'-') {
         m_Buffer.Delete(len - 1, 1);
-        if (m_pObjArray) {
-          m_pObjArray->RemoveAt((len - 1) * 2, 2);
-        }
       } else {
         if (bFirstLine) {
           return TRUE;
@@ -170,25 +158,12 @@ FX_BOOL CPDF_TextStream::ProcessObject(const CPDF_TextObject* pObj,
         if (m_bUseLF) {
           m_Buffer.AppendChar(L'\r');
           m_Buffer.AppendChar(L'\n');
-          if (m_pObjArray) {
-            for (int i = 0; i < 4; i++) {
-              m_pObjArray->Add(NULL);
-            }
-          }
         } else {
           m_Buffer.AppendChar(' ');
-          if (m_pObjArray) {
-            m_pObjArray->Add(NULL);
-            m_pObjArray->Add(NULL);
-          }
         }
       }
     } else if (result == 1) {
       m_Buffer.AppendChar(L' ');
-      if (m_pObjArray) {
-        m_pObjArray->Add(NULL);
-        m_pObjArray->Add(NULL);
-      }
     } else if (result == -1) {
       m_pLastObj = pObj;
       return FALSE;
@@ -266,10 +241,6 @@ FX_BOOL CPDF_TextStream::ProcessObject(const CPDF_TextObject* pObj,
       }
       if (threshold && (spacing && spacing >= threshold)) {
         m_Buffer.AppendChar(L' ');
-        if (m_pObjArray) {
-          m_pObjArray->Add(NULL);
-          m_pObjArray->Add(NULL);
-        }
       }
       if (item.m_CharCode == (FX_DWORD)-1) {
         continue;
@@ -279,27 +250,16 @@ FX_BOOL CPDF_TextStream::ProcessObject(const CPDF_TextObject* pObj,
     CFX_WideString unicode_str = pFont->UnicodeFromCharCode(item.m_CharCode);
     if (unicode_str.IsEmpty()) {
       m_Buffer.AppendChar((FX_WCHAR)item.m_CharCode);
-      if (m_pObjArray) {
-        m_pObjArray->Add((void*)pObj);
-        m_pObjArray->Add((void*)(intptr_t)item_index);
-      }
     } else {
       m_Buffer << unicode_str;
-      if (m_pObjArray) {
-        for (int i = 0; i < unicode_str.GetLength(); i++) {
-          m_pObjArray->Add((void*)pObj);
-          m_pObjArray->Add((void*)(intptr_t)item_index);
-        }
-      }
     }
   }
   return FALSE;
 }
 void GetTextStream_Unicode(CFX_WideTextBuf& buffer,
                            CPDF_PageObjectList* pPage,
-                           FX_BOOL bUseLF,
-                           CFX_PtrArray* pObjArray) {
-  CPDF_TextStream textstream(buffer, bUseLF, pObjArray);
+                           FX_BOOL bUseLF) {
+  CPDF_TextStream textstream(buffer, bUseLF);
   FX_POSITION pos = pPage->GetFirstObjectPosition();
   while (pos) {
     CPDF_PageObject* pObject = pPage->GetNextObject(pos);
@@ -317,7 +277,7 @@ CFX_WideString PDF_GetFirstTextLine_Unicode(CPDF_Document* pDoc,
   options.m_bTextOnly = TRUE;
   options.m_bSeparateForm = FALSE;
   page.ParseContent(&options);
-  CPDF_TextStream textstream(buffer, FALSE, NULL);
+  CPDF_TextStream textstream(buffer, FALSE);
   FX_POSITION pos = page.GetFirstObjectPosition();
   while (pos) {
     CPDF_PageObject* pObject = page.GetNextObject(pos);

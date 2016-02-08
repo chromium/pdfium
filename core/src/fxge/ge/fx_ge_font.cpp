@@ -6,7 +6,7 @@
 
 #include "core/include/fxge/fx_freetype.h"
 #include "core/include/fxge/fx_ge.h"
-#include "text_int.h"
+#include "core/src/fxge/ge/fx_text_int.h"
 
 #define EM_ADJUST(em, a) (em == 0 ? (a) : (a)*1000 / em)
 
