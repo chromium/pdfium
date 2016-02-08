@@ -49,7 +49,7 @@ FX_DWORD A85Decode(const uint8_t* src_buf,
                    uint8_t*& dest_buf,
                    FX_DWORD& dest_size) {
   dest_size = 0;
-  dest_buf = NULL;
+  dest_buf = nullptr;
   if (src_size == 0) {
     return 0;
   }
@@ -241,7 +241,7 @@ ICodec_ScanlineDecoder* FPDFAPI_CreateFaxDecoder(
       Rows = 0;
     }
     if (Columns <= 0 || Rows < 0 || Columns > USHRT_MAX || Rows > USHRT_MAX) {
-      return NULL;
+      return nullptr;
     }
   }
   return CPDF_ModuleMgr::Get()->GetFaxModule()->CreateDecoder(
@@ -285,7 +285,7 @@ ICodec_ScanlineDecoder* FPDFAPI_CreateFlateDecoder(
     BitsPerComponent = pParams->GetIntegerBy("BitsPerComponent", 8);
     Columns = pParams->GetIntegerBy("Columns", 1);
     if (!CheckFlateDecodeParams(Colors, BitsPerComponent, Columns)) {
-      return NULL;
+      return nullptr;
     }
   }
   return CPDF_ModuleMgr::Get()->GetFlateModule()->CreateDecoder(
@@ -353,7 +353,7 @@ FX_BOOL PDF_DataDecode(const uint8_t* src_buf,
     int estimated_size =
         i == DecoderList.GetSize() - 1 ? last_estimated_size : 0;
     CFX_ByteString decoder = DecoderList[i];
-    // Use ToDictionary here because we can push NULL into the ParamList.
+    // Use ToDictionary here because we can push nullptr into the ParamList.
     CPDF_Dictionary* pParam = ToDictionary(ParamList[i]);
     uint8_t* new_buf = nullptr;
     FX_DWORD new_size = (FX_DWORD)-1;
