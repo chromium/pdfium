@@ -431,7 +431,7 @@
     ],
   },
   'xcode_settings': {
-    'SDKROOT': 'macosx10.10'  # -isysroot
+    'SDKROOT': 'macosx10.10',  # -isysroot
     # See comment in Chromium's common.gypi for why this is needed.
     'SYMROOT': '<(DEPTH)/xcodebuild',
   },
