@@ -18,6 +18,35 @@
 
 namespace pdfium {
 
+#define STR_TEST_CASE(input_literal, expected_literal)                       \
+  {                                                                          \
+    (const unsigned char*) input_literal, sizeof(input_literal) - 1,         \
+        (const unsigned char*)expected_literal, sizeof(expected_literal) - 1 \
+  }
+
+#define DECODE_TEST_CASE(input_literal, expected_literal, processed_size)     \
+  {                                                                           \
+    (const unsigned char*) input_literal, sizeof(input_literal) - 1,          \
+        (const unsigned char*)expected_literal, sizeof(expected_literal) - 1, \
+        processed_size                                                        \
+  }
+
+struct StrFuncTestData {
+  const unsigned char* input;
+  unsigned int input_size;
+  const unsigned char* expected;
+  unsigned int expected_size;
+};
+
+struct DecodeTestData {
+  const unsigned char* input;
+  unsigned int input_size;
+  const unsigned char* expected;
+  unsigned int expected_size;
+  // The size of input string being processed.
+  unsigned int processed_size;
+};
+
 // Used with std::unique_ptr to free() objects that can't be deleted.
 struct FreeDeleter {
   inline void operator()(void* ptr) const { free(ptr); }

@@ -10,30 +10,20 @@
 #include "testing/embedder_test.h"
 #include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "testing/test_support.h"
 
 class FPDFParserDecodeEmbeddertest : public EmbedderTest {};
 
 // NOTE: python's zlib.compress() and zlib.decompress() may be useful for
 // external validation of the FlateEncode/FlateDecode test cases.
 
-#define TEST_CASE(input_literal, expected_literal)                           \
-  {                                                                          \
-    (const unsigned char*) input_literal, sizeof(input_literal) - 1,         \
-        (const unsigned char*)expected_literal, sizeof(expected_literal) - 1 \
-  }
-
 TEST_F(FPDFParserDecodeEmbeddertest, FlateEncode) {
-  struct FlateEncodeCase {
-    const unsigned char* input;
-    unsigned int input_size;
-    const unsigned char* expected;
-    unsigned int expected_size;
-  } flate_encode_cases[] = {
-      TEST_CASE("", "\x78\x9c\x03\x00\x00\x00\x00\x01"),
-      TEST_CASE(" ", "\x78\x9c\x53\x00\x00\x00\x21\x00\x21"),
-      TEST_CASE("123", "\x78\x9c\x33\x34\x32\x06\x00\01\x2d\x00\x97"),
-      TEST_CASE("\x00\xff", "\x78\x9c\x63\xf8\x0f\x00\x01\x01\x01\x00"),
-      TEST_CASE(
+  pdfium::StrFuncTestData flate_encode_cases[] = {
+      STR_TEST_CASE("", "\x78\x9c\x03\x00\x00\x00\x00\x01"),
+      STR_TEST_CASE(" ", "\x78\x9c\x53\x00\x00\x00\x21\x00\x21"),
+      STR_TEST_CASE("123", "\x78\x9c\x33\x34\x32\x06\x00\01\x2d\x00\x97"),
+      STR_TEST_CASE("\x00\xff", "\x78\x9c\x63\xf8\x0f\x00\x01\x01\x01\x00"),
+      STR_TEST_CASE(
           "1 0 0 -1 29 763 cm\n0 0 555 735 re\nW n\nq\n0 0 555 734.394 re\n"
           "W n\nq\n0.8009 0 0 0.8009 0 0 cm\n1 1 1 RG 1 1 1 rg\n/G0 gs\n"
           "0 0 693 917 re\nf\nQ\nQ\n",
@@ -46,12 +36,12 @@ TEST_F(FPDFParserDecodeEmbeddertest, FlateEncode) {
   };
 
   for (size_t i = 0; i < FX_ArraySize(flate_encode_cases); ++i) {
-    FlateEncodeCase* ptr = &flate_encode_cases[i];
+    const pdfium::StrFuncTestData& data = flate_encode_cases[i];
     unsigned char* result;
     unsigned int result_size;
-    FlateEncode(ptr->input, ptr->input_size, result, result_size);
+    FlateEncode(data.input, data.input_size, result, result_size);
     ASSERT_TRUE(result);
-    EXPECT_EQ(std::string((const char*)ptr->expected, ptr->expected_size),
+    EXPECT_EQ(std::string((const char*)data.expected, data.expected_size),
               std::string((const char*)result, result_size))
         << " for case " << i;
     FX_Free(result);
@@ -59,18 +49,16 @@ TEST_F(FPDFParserDecodeEmbeddertest, FlateEncode) {
 }
 
 TEST_F(FPDFParserDecodeEmbeddertest, FlateDecode) {
-  struct FlateDecodeCase {
-    const unsigned char* input;
-    unsigned int input_size;
-    const unsigned char* expected;
-    unsigned int expected_size;
-  } flate_decode_cases[] = {
-      TEST_CASE("", ""), TEST_CASE("preposterous nonsense", ""),
-      TEST_CASE("\x78\x9c\x03\x00\x00\x00\x00\x01", ""),
-      TEST_CASE("\x78\x9c\x53\x00\x00\x00\x21\x00\x21", " "),
-      TEST_CASE("\x78\x9c\x33\x34\x32\x06\x00\01\x2d\x00\x97", "123"),
-      TEST_CASE("\x78\x9c\x63\xf8\x0f\x00\x01\x01\x01\x00", "\x00\xff"),
-      TEST_CASE(
+  pdfium::DecodeTestData flate_decode_cases[] = {
+      DECODE_TEST_CASE("", "", 0),
+      DECODE_TEST_CASE("preposterous nonsense", "", 2),
+      DECODE_TEST_CASE("\x78\x9c\x03\x00\x00\x00\x00\x01", "", 8),
+      DECODE_TEST_CASE("\x78\x9c\x53\x00\x00\x00\x21\x00\x21", " ", 9),
+      DECODE_TEST_CASE("\x78\x9c\x33\x34\x32\x06\x00\01\x2d\x00\x97", "123",
+                       11),
+      DECODE_TEST_CASE("\x78\x9c\x63\xf8\x0f\x00\x01\x01\x01\x00", "\x00\xff",
+                       10),
+      DECODE_TEST_CASE(
           "\x78\x9c\x33\x54\x30\x00\x42\x5d\x43\x05\x23\x4b\x05\x73\x33\x63"
           "\x85\xe4\x5c\x2e\x90\x80\xa9\xa9\xa9\x82\xb9\xb1\xa9\x42\x51\x2a"
           "\x57\xb8\x42\x1e\x57\x21\x92\xa0\x89\x9e\xb1\xa5\x09\x92\x84\x9e"
@@ -79,16 +67,19 @@ TEST_F(FPDFParserDecodeEmbeddertest, FlateDecode) {
           "\x2b\x58\x1a\x9a\x83\x8c\x49\xe3\x0a\x04\x42\x00\x37\x4c\x1b\x42",
           "1 0 0 -1 29 763 cm\n0 0 555 735 re\nW n\nq\n0 0 555 734.394 re\n"
           "W n\nq\n0.8009 0 0 0.8009 0 0 cm\n1 1 1 RG 1 1 1 rg\n/G0 gs\n"
-          "0 0 693 917 re\nf\nQ\nQ\n"),
+          "0 0 693 917 re\nf\nQ\nQ\n",
+          96),
   };
 
   for (size_t i = 0; i < FX_ArraySize(flate_decode_cases); ++i) {
-    FlateDecodeCase* ptr = &flate_decode_cases[i];
+    const pdfium::DecodeTestData& data = flate_decode_cases[i];
     unsigned char* result;
     unsigned int result_size;
-    FlateDecode(ptr->input, ptr->input_size, result, result_size);
+    EXPECT_EQ(data.processed_size,
+              FlateDecode(data.input, data.input_size, result, result_size))
+        << " for case " << i;
     ASSERT_TRUE(result);
-    EXPECT_EQ(std::string((const char*)ptr->expected, ptr->expected_size),
+    EXPECT_EQ(std::string((const char*)data.expected, data.expected_size),
               std::string((const char*)result, result_size))
         << " for case " << i;
     FX_Free(result);
@@ -115,4 +106,3 @@ TEST_F(FPDFParserDecodeEmbeddertest, Bug_555784) {
   UnloadPage(page);
 }
 
-#undef TEST_CASE
