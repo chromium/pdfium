@@ -45,9 +45,6 @@ class CXFA_FFApp : public IXFA_App, public IFWL_AdapterNative {
       IFWL_WidgetMgrDelegate* pDelegate) override;
   IFWL_AdapterThreadMgr* GetThreadMgr() override;
   IFWL_AdapterTimerMgr* GetTimerMgr() override;
-  IFWL_AdapterCursorMgr* GetCursorMgr() override;
-  IFWL_AdapterMonitorMgr* GetMonitorMgr() override;
-  IFWL_AdapterClipboardMgr* GetClipboardMgr() override;
 
   CXFA_FontMgr* GetXFAFontMgr();
   IFX_FontMgr* GetFDEFontMgr();

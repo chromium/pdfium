@@ -23,9 +23,6 @@
       ],
       "sources":[
         "xfa/include/foxitxfa.h",
-        "xfa/include/fwl/adapter/fwl_adapterclipboardmgr.h",
-        "xfa/include/fwl/adapter/fwl_adaptercursormgr.h",
-        "xfa/include/fwl/adapter/fwl_adaptermonitormgr.h",
         "xfa/include/fwl/adapter/fwl_adapternative.h",
         "xfa/include/fwl/adapter/fwl_adapterthreadmgr.h",
         "xfa/include/fwl/adapter/fwl_adaptertimermgr.h",

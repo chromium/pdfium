@@ -33,13 +33,6 @@ CFWL_WidgetMgr::CFWL_WidgetMgr(IFWL_AdapterNative* pAdapterNative)
   m_mapWidgetItem.SetAt(NULL, pRoot);
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_)
   m_rtScreen.Reset();
-  IFWL_AdapterMonitorMgr* pMonitorMgr = pAdapterNative->GetMonitorMgr();
-  if (pMonitorMgr) {
-    FWL_HMONITOR monitor = pMonitorMgr->GetCurrentMonitor();
-    if (monitor) {
-      pMonitorMgr->GetMonitorSize(monitor, m_rtScreen.width, m_rtScreen.height);
-    }
-  }
 #endif
 }
 CFWL_WidgetMgr::~CFWL_WidgetMgr() {

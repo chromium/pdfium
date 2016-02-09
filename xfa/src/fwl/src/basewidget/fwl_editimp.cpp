@@ -648,56 +648,7 @@ FWL_ERR CFWL_EditImp::DoClipboard(int32_t iCmd) {
       (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)) {
     return FWL_ERR_Succeeded;
   }
-  IFWL_AdapterNative* pNative = FWL_GetAdapterNative();
-  if (!pNative)
-    return FWL_ERR_Indefinite;
-  IFWL_AdapterClipboardMgr* pClipBorder = pNative->GetClipboardMgr();
-  if (!pClipBorder)
-    return FWL_ERR_Indefinite;
-  CFX_WideString wsText;
-  switch (iCmd) {
-    case 1: {
-      int32_t nStart;
-      int32_t nCount = m_pEdtEngine->GetSelRange(0, nStart);
-      if (nCount < 1) {
-        break;
-      }
-      m_pEdtEngine->GetText(wsText, nStart, nCount);
-      pClipBorder->SetStringData(wsText);
-      break;
-    }
-    case 2: {
-      int32_t nStart;
-      int32_t nCount = m_pEdtEngine->GetSelRange(0, nStart);
-      if (nCount < 1) {
-        break;
-      }
-      m_pEdtEngine->GetText(wsText, nStart, nCount);
-      m_pEdtEngine->DeleteRange(nStart, nCount);
-      m_pEdtEngine->ClearSelection();
-      pClipBorder->SetStringData(wsText);
-      break;
-    }
-    case 3: {
-      pClipBorder->GetStringData(wsText);
-      int32_t iLen = wsText.GetLength();
-      if (iLen < 0) {
-        break;
-      }
-      if (wsText[iLen] == L'\0') {
-        if (iLen == 1) {
-          break;
-        }
-        iLen--;
-        wsText = wsText.Left(iLen);
-      }
-      int32_t nPos = m_pEdtEngine->GetCaretPos();
-      m_pEdtEngine->Insert(nPos, wsText, iLen);
-      break;
-    }
-    default: {}
-  }
-  return FWL_ERR_Succeeded;
+  return FWL_ERR_Indefinite;
 }
 FX_BOOL CFWL_EditImp::Copy(CFX_WideString& wsCopy) {
   if (!m_pEdtEngine)
@@ -2205,14 +2156,4 @@ FX_BOOL CFWL_EditImpDelegate::OnScroll(IFWL_ScrollBar* pScrollBar,
   return TRUE;
 }
 void CFWL_EditImpDelegate::DoCursor(CFWL_MsgMouse* pMsg) {
-  if (m_pOwner->m_rtClient.Contains(pMsg->m_fx, pMsg->m_fy)) {
-    IFWL_AdapterNative* pNative = FWL_GetAdapterNative();
-    IFWL_AdapterCursorMgr* pCursorMgr = pNative->GetCursorMgr();
-    if (NULL != pCursorMgr) {
-      FWL_HCURSOR hCursor =
-          pCursorMgr->GetSystemCursor(FWL_CURSORTYPE_InputBeam);
-      pCursorMgr->SetCursor(hCursor);
-      pCursorMgr->ShowCursor(TRUE);
-    }
-  }
 }

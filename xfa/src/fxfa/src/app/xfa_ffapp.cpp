@@ -204,12 +204,3 @@ IFWL_AdapterThreadMgr* CXFA_FFApp::GetThreadMgr() {
 IFWL_AdapterTimerMgr* CXFA_FFApp::GetTimerMgr() {
   return m_pProvider->GetTimerMgr();
 }
-IFWL_AdapterCursorMgr* CXFA_FFApp::GetCursorMgr() {
-  return NULL;
-}
-IFWL_AdapterMonitorMgr* CXFA_FFApp::GetMonitorMgr() {
-  return NULL;
-}
-IFWL_AdapterClipboardMgr* CXFA_FFApp::GetClipboardMgr() {
-  return NULL;
-}

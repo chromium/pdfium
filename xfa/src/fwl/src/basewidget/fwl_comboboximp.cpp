@@ -1786,15 +1786,7 @@ void CFWL_ComboProxyImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
     m_bLButtonDown = FALSE;
     pDriver->SetGrab(m_pForm, FALSE);
     m_pComboBox->ShowDropList(FALSE);
-    return;
   }
-  IFWL_AdapterNative* pNative = FWL_GetAdapterNative();
-  IFWL_AdapterCursorMgr* pCursorMgr = pNative->GetCursorMgr();
-  FWL_HCURSOR hCursor = pCursorMgr->GetSystemCursor(FWL_CURSORTYPE_SizeNS);
-  pCursorMgr->SetCursor(hCursor);
-  pCursorMgr->ShowCursor(TRUE);
-  m_pForm->TransformTo(NULL, pMsg->m_fx, pMsg->m_fy);
-  m_fStartPos = pMsg->m_fy;
 }
 void CFWL_ComboProxyImpDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
   m_bLButtonDown = FALSE;
@@ -1817,41 +1809,6 @@ void CFWL_ComboProxyImpDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
   }
 }
 void CFWL_ComboProxyImpDelegate::OnMouseMove(CFWL_MsgMouse* pMsg) {
-  IFWL_AdapterNative* pNative = FWL_GetAdapterNative();
-  IFWL_AdapterCursorMgr* pCursorMgr = pNative->GetCursorMgr();
-  FWL_CURSORTYPE cursorType = FWL_CURSORTYPE_Arrow;
-  if (m_pComboBox->m_rtHandler.Contains(pMsg->m_fx, pMsg->m_fy)) {
-    cursorType = FWL_CURSORTYPE_SizeNS;
-  }
-  FWL_HCURSOR hCursor = pCursorMgr->GetSystemCursor(cursorType);
-  pCursorMgr->SetCursor(hCursor);
-  pCursorMgr->ShowCursor(TRUE);
-  if (!m_bLButtonDown) {
-    return;
-  }
-  m_pForm->TransformTo(NULL, pMsg->m_fx, pMsg->m_fy);
-  FX_FLOAT fChanged = pMsg->m_fy - m_fStartPos;
-  if (m_pComboBox->m_bUpFormHandler) {
-    fChanged = m_fStartPos - pMsg->m_fy;
-  }
-  if (m_pComboBox->m_rtList.height + fChanged < m_pComboBox->m_fItemHeight) {
-    return;
-  }
-  m_pComboBox->m_rtList.height += fChanged;
-  m_pComboBox->m_rtProxy.height += fChanged;
-  if (m_pComboBox->m_bUpFormHandler) {
-    m_pComboBox->m_rtProxy.top -= fChanged;
-    m_pComboBox->m_rtHandler.Set(0, 0, m_pComboBox->m_rtList.width,
-                                 m_pComboBox->m_fComboFormHandler);
-  } else {
-    m_pComboBox->m_rtHandler.Set(0, m_pComboBox->m_rtList.height,
-                                 m_pComboBox->m_rtList.width,
-                                 m_pComboBox->m_fComboFormHandler);
-  }
-  m_pForm->SetWidgetRect(m_pComboBox->m_rtProxy);
-  m_pComboBox->m_pListBox->SetWidgetRect(m_pComboBox->m_rtList);
-  m_pComboBox->m_pListBox->Update();
-  m_fStartPos = pMsg->m_fy;
 }
 void CFWL_ComboProxyImpDelegate::OnDeactive(CFWL_MsgDeactivate* pMsg) {
   m_pComboBox->ShowDropList(FALSE);

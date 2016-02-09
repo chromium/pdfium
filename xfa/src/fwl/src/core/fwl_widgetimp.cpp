@@ -803,13 +803,7 @@ FX_BOOL CFWL_WidgetImp::GetPopupPosGeneral(FX_FLOAT fMinHeight,
   return TRUE;
 }
 FX_BOOL CFWL_WidgetImp::GetScreenSize(FX_FLOAT& fx, FX_FLOAT& fy) {
-  IFWL_AdapterNative* pNative = FWL_GetAdapterNative();
-  IFWL_AdapterMonitorMgr* pMonitorMgr = pNative->GetMonitorMgr();
-  if (!pMonitorMgr)
-    return FALSE;
-  FWL_HMONITOR hMonitor = pMonitorMgr->GetMonitorByPoint(fx, fy);
-  pMonitorMgr->GetMonitorSize(hMonitor, fx, fy);
-  return TRUE;
+  return FALSE;
 }
 void CFWL_WidgetImp::RegisterEventTarget(IFWL_Widget* pEventSource,
                                          FX_DWORD dwFilter) {

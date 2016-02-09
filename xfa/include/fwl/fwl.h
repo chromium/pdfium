@@ -71,8 +71,5 @@
 #include "xfa/include/fwl/adapter/fwl_adapterthreadmgr.h"
 #include "xfa/include/fwl/adapter/fwl_adaptertimermgr.h"
 #include "xfa/include/fwl/adapter/fwl_adapterwidgetmgr.h"
-#include "xfa/include/fwl/adapter/fwl_adaptercursormgr.h"
-#include "xfa/include/fwl/adapter/fwl_adaptermonitormgr.h"
-#include "xfa/include/fwl/adapter/fwl_adapterclipboardmgr.h"
 #include "xfa/include/fwl/adapter/fwl_sdadapterimp.h"
 #endif
