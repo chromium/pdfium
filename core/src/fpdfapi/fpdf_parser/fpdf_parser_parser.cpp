@@ -973,7 +973,7 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, FX_BOOL bMainXRef) {
   if (bMainXRef) {
     m_pTrailer = ToDictionary(pStream->GetDict()->Clone());
     ShrinkObjectMap(size);
-    for (auto it : m_ObjectInfo)
+    for (auto& it : m_ObjectInfo)
       it.second.type = 0;
   } else {
     m_Trailers.Add(ToDictionary(pStream->GetDict()->Clone()));
