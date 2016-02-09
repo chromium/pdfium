@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "fpdfsdk/include/fsdk_define.h"
+#include "third_party/base/stl_util.h"
 
 class CPDF_PageOrganizer {
  public:
@@ -18,7 +19,7 @@ class CPDF_PageOrganizer {
 
   FX_BOOL PDFDocInit(CPDF_Document* pDestPDFDoc, CPDF_Document* pSrcPDFDoc);
   FX_BOOL ExportPage(CPDF_Document* pSrcPDFDoc,
-                     CFX_WordArray* nPageNum,
+                     std::vector<FX_WORD>* pPageNums,
                      CPDF_Document* pDestPDFDoc,
                      int nIndex);
   CPDF_Object* PageDictGetInheritableTag(CPDF_Dictionary* pDict,
@@ -87,16 +88,15 @@ FX_BOOL CPDF_PageOrganizer::PDFDocInit(CPDF_Document* pDestPDFDoc,
 }
 
 FX_BOOL CPDF_PageOrganizer::ExportPage(CPDF_Document* pSrcPDFDoc,
-                                       CFX_WordArray* nPageNum,
+                                       std::vector<FX_WORD>* pPageNums,
                                        CPDF_Document* pDestPDFDoc,
                                        int nIndex) {
   int curpage = nIndex;
-
   std::unique_ptr<ObjectNumberMap> pObjNumberMap(new ObjectNumberMap);
-
-  for (int i = 0; i < nPageNum->GetSize(); ++i) {
+  int nSize = pdfium::CollectionSize<int>(*pPageNums);
+  for (int i = 0; i < nSize; ++i) {
     CPDF_Dictionary* pCurPageDict = pDestPDFDoc->CreateNewPage(curpage);
-    CPDF_Dictionary* pSrcPageDict = pSrcPDFDoc->GetPage(nPageNum->GetAt(i) - 1);
+    CPDF_Dictionary* pSrcPageDict = pSrcPDFDoc->GetPage(pPageNums->at(i) - 1);
     if (!pSrcPageDict || !pCurPageDict)
       return FALSE;
 
@@ -306,7 +306,7 @@ FX_DWORD CPDF_PageOrganizer::GetNewObjId(CPDF_Document* pDoc,
 }
 
 FPDF_BOOL ParserPageRangeString(CFX_ByteString rangstring,
-                                CFX_WordArray* pageArray,
+                                std::vector<FX_WORD>* pageArray,
                                 int nCount) {
   if (rangstring.GetLength() != 0) {
     rangstring.Remove(' ');
@@ -329,7 +329,7 @@ FPDF_BOOL ParserPageRangeString(CFX_ByteString rangstring,
         long lPageNum = atol(cbMidRange);
         if (lPageNum <= 0 || lPageNum > nCount)
           return FALSE;
-        pageArray->Add((FX_WORD)lPageNum);
+        pageArray->push_back((FX_WORD)lPageNum);
       } else {
         int nStartPageNum = atol(cbMidRange.Mid(0, nMid));
         if (nStartPageNum == 0)
@@ -346,7 +346,7 @@ FPDF_BOOL ParserPageRangeString(CFX_ByteString rangstring,
           return FALSE;
         }
         for (int i = nStartPageNum; i <= nEndPageNum; ++i) {
-          pageArray->Add(i);
+          pageArray->push_back(i);
         }
       }
       nStringFrom = nStringTo + 1;
@@ -367,14 +367,14 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_ImportPages(FPDF_DOCUMENT dest_doc,
   if (!pSrcDoc)
     return FALSE;
 
-  CFX_WordArray pageArray;
+  std::vector<FX_WORD> pageArray;
   int nCount = pSrcDoc->GetPageCount();
   if (pagerange) {
     if (!ParserPageRangeString(pagerange, &pageArray, nCount))
       return FALSE;
   } else {
     for (int i = 1; i <= nCount; ++i) {
-      pageArray.Add(i);
+      pageArray.push_back(i);
     }
   }
 

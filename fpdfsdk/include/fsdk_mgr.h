@@ -9,6 +9,7 @@
 
 #include <map>
 #include <memory>
+#include <vector>
 
 #include "core/include/fpdftext/fpdf_text.h"
 #include "fsdk_actionhandler.h"
@@ -519,14 +520,14 @@ class CPDFSDK_Document {
   FX_BOOL SetFocusAnnot(CPDFSDK_Annot* pAnnot, FX_UINT nFlag = 0);
   FX_BOOL KillFocusAnnot(FX_UINT nFlag = 0);
 
-  FX_BOOL ExtractPages(const CFX_WordArray& arrExtraPages,
+  FX_BOOL ExtractPages(const std::vector<FX_WORD>& arrExtraPages,
                        CPDF_Document* pDstDoc);
   FX_BOOL InsertPages(int nInsertAt,
                       const CPDF_Document* pSrcDoc,
-                      const CFX_WordArray& arrSrcPages);
+                      const std::vector<FX_WORD>& arrSrcPages);
   FX_BOOL ReplacePages(int nPage,
                        const CPDF_Document* pSrcDoc,
-                       const CFX_WordArray& arrSrcPages);
+                       const std::vector<FX_WORD>& arrSrcPages);
 
   void OnCloseDocument();
 

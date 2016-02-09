@@ -7,6 +7,7 @@
 #include <cctype>
 #include <cwctype>
 #include <memory>
+#include <vector>
 
 #include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fpdfapi/fpdf_pageobj.h"
@@ -16,6 +17,7 @@
 #include "core/include/fxcrt/fx_ucd.h"
 #include "core/src/fpdftext/text_int.h"
 #include "core/src/fpdftext/txtproc.h"
+#include "third_party/base/stl_util.h"
 
 CFX_ByteString CharFromUnicodeAlt(FX_WCHAR unicode,
                                   int destcp,
@@ -309,22 +311,23 @@ void NormalizeCompositeChar(FX_WCHAR wChar, CFX_WideString& sDest) {
   }
   delete[] pDst;
 }
+
 void NormalizeString(CFX_WideString& str) {
   if (str.GetLength() <= 0) {
     return;
   }
   CFX_WideString sBuffer;
   std::unique_ptr<CFX_BidiChar> pBidiChar(new CFX_BidiChar);
-  CFX_WordArray order;
+  std::vector<FX_WORD> order;
   FX_BOOL bR2L = FALSE;
   int32_t start = 0, count = 0, i = 0;
   int nR2L = 0, nL2R = 0;
   for (i = 0; i < str.GetLength(); i++) {
     if (pBidiChar->AppendChar(str.GetAt(i))) {
       CFX_BidiChar::Direction ret = pBidiChar->GetBidiInfo(&start, &count);
-      order.Add(start);
-      order.Add(count);
-      order.Add(ret);
+      order.push_back(start);
+      order.push_back(count);
+      order.push_back(ret);
       if (!bR2L) {
         if (ret == CFX_BidiChar::RIGHT) {
           nR2L++;
@@ -336,9 +339,9 @@ void NormalizeString(CFX_WideString& str) {
   }
   if (pBidiChar->EndChar()) {
     CFX_BidiChar::Direction ret = pBidiChar->GetBidiInfo(&start, &count);
-    order.Add(start);
-    order.Add(count);
-    order.Add(ret);
+    order.push_back(start);
+    order.push_back(count);
+    order.push_back(ret);
     if (!bR2L) {
       if (ret == CFX_BidiChar::RIGHT) {
         nR2L++;
@@ -351,11 +354,11 @@ void NormalizeString(CFX_WideString& str) {
     bR2L = TRUE;
   }
   if (bR2L) {
-    int count = order.GetSize();
+    int count = pdfium::CollectionSize<int>(order);
     for (int j = count - 1; j > 0; j -= 3) {
-      int ret = order.GetAt(j);
-      int start = order.GetAt(j - 2);
-      int count1 = order.GetAt(j - 1);
+      int ret = order[j];
+      int count1 = order[j - 1];
+      int start = order[j - 2];
       if (ret == 2 || ret == 0) {
         for (int i = start + count1 - 1; i >= start; i--) {
           NormalizeCompositeChar(str[i], sBuffer);
@@ -363,8 +366,8 @@ void NormalizeString(CFX_WideString& str) {
       } else {
         i = j;
         FX_BOOL bSymbol = FALSE;
-        while (i > 0 && order.GetAt(i) != 2) {
-          bSymbol = !order.GetAt(i);
+        while (i > 0 && order[i] != 2) {
+          bSymbol = !order[i];
           i -= 3;
         }
         int end = start + count1;
@@ -382,8 +385,8 @@ void NormalizeString(CFX_WideString& str) {
           i = j;
           j = n;
           for (; n <= i; n += 3) {
-            int start = order.GetAt(n - 2);
-            int count1 = order.GetAt(n - 1);
+            int start = order[n - 2];
+            int count1 = order[n - 1];
             int end = start + count1;
             for (int m = start; m < end; m++) {
               sBuffer += str[m];
@@ -393,16 +396,16 @@ void NormalizeString(CFX_WideString& str) {
       }
     }
   } else {
-    int count = order.GetSize();
+    int count = pdfium::CollectionSize<int>(order);
     FX_BOOL bL2R = FALSE;
     for (int j = 0; j < count; j += 3) {
-      int ret = order.GetAt(j + 2);
-      int start = order.GetAt(j);
-      int count1 = order.GetAt(j + 1);
+      int start = order[j];
+      int count1 = order[j + 1];
+      int ret = order[j + 2];
       if (ret == 2 || (j == 0 && ret == 0 && !bL2R)) {
         int i = j + 3;
         while (bR2L && i < count) {
-          if (order.GetAt(i + 2) == 1) {
+          if (order[i + 2] == 1) {
             break;
           } else {
             i += 3;
@@ -415,7 +418,7 @@ void NormalizeString(CFX_WideString& str) {
         }
         int end = str.GetLength() - 1;
         if (i < count) {
-          end = order.GetAt(i) - 1;
+          end = order[i] - 1;
         }
         j = i - 3;
         for (int n = end; n >= start; n--) {

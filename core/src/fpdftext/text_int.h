@@ -8,6 +8,7 @@
 #define CORE_SRC_FPDFTEXT_TEXT_INT_H_
 
 #include <deque>
+#include <vector>
 
 #include "core/include/fpdftext/fpdf_text.h"
 #include "core/include/fxcrt/fx_basic.h"
@@ -130,7 +131,7 @@ class CPDF_TextPage : public IPDF_TextPage {
                         const CPDF_Font* pFont,
                         int nItems) const;
 
-  CFX_WordArray m_CharIndex;
+  std::vector<FX_WORD> m_CharIndex;
   const CPDF_PageObjectList* const m_pPage;
   std::deque<PAGECHAR_INFO> m_CharList;
   std::deque<PAGECHAR_INFO> m_TempCharList;
@@ -180,7 +181,7 @@ class CPDF_TextPageFind : public IPDF_TextPageFind {
   int GetCharIndex(int index) const;
 
  private:
-  CFX_WordArray m_CharIndex;
+  std::vector<FX_WORD> m_CharIndex;
   const IPDF_TextPage* m_pTextPage;
   CFX_WideString m_strText;
   CFX_WideString m_findWhat;
