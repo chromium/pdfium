@@ -5,7 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "core/include/fxcrt/fx_ext.h"
-#include "fx_fpf.h"
+#include "core/src/fxge/android/fx_fpf.h"
 
 #if _FX_OS_ == _FX_ANDROID_
 #define FPF_SKIAMATCHWEIGHT_NAME1 62
@@ -217,19 +217,15 @@ static FX_BOOL FPF_SkiaMaybeArabic(const CFX_ByteStringC& bsFacename) {
 }
 CFPF_SkiaFontMgr::CFPF_SkiaFontMgr() : m_bLoaded(FALSE), m_FTLibrary(NULL) {}
 CFPF_SkiaFontMgr::~CFPF_SkiaFontMgr() {
-  void* pkey = NULL;
-  CFPF_SkiaFont* pValue = NULL;
   for (const auto& pair : m_FamilyFonts) {
     if (pair.second)
       pair.second->Release();
   }
   m_FamilyFonts.clear();
-  for (int32_t i = m_FontFaces.GetUpperBound(); i >= 0; i--) {
-    CFPF_SkiaFontDescriptor* pFont =
-        (CFPF_SkiaFontDescriptor*)m_FontFaces.ElementAt(i);
-    delete pFont;
+  for (auto it = m_FontFaces.rbegin(); it != m_FontFaces.end(); ++it) {
+    delete *it;
   }
-  m_FontFaces.RemoveAll();
+  m_FontFaces.clear();
   if (m_FTLibrary) {
     FXFT_Done_FreeType(m_FTLibrary);
   }
@@ -275,8 +271,8 @@ IFPF_Font* CFPF_SkiaFontMgr::CreateFont(const CFX_ByteStringC& bsFamilyname,
   int32_t nItem = -1;
   int32_t nMax = -1;
   int32_t nGlyphNum = 0;
-  for (int32_t i = m_FontFaces.GetUpperBound(); i >= 0; i--) {
-    CFPF_SkiaPathFont* pFontDes = (CFPF_SkiaPathFont*)m_FontFaces.ElementAt(i);
+  for (auto it = m_FontFaces.rbegin(); it != m_FontFaces.rend(); ++it) {
+    CFPF_SkiaPathFont* pFontDes = *it;
     if (!(pFontDes->m_dwCharsets & FPF_SkiaGetCharset(uCharset))) {
       continue;
     }
@@ -326,8 +322,7 @@ IFPF_Font* CFPF_SkiaFontMgr::CreateFont(const CFX_ByteStringC& bsFamilyname,
     }
   }
   if (nItem > -1) {
-    CFPF_SkiaFontDescriptor* pFontDes =
-        (CFPF_SkiaFontDescriptor*)m_FontFaces.ElementAt(nItem);
+    CFPF_SkiaFontDescriptor* pFontDes = m_FontFaces[nItem];
     CFPF_SkiaFont* pFont = new CFPF_SkiaFont;
     if (pFont->InitFont(this, pFontDes, bsFamilyname, dwStyle, uCharset)) {
       m_FamilyFonts[dwHash] = pFont;
@@ -438,7 +433,7 @@ void CFPF_SkiaFontMgr::ScanFile(const CFX_ByteStringC& file) {
     CFPF_SkiaPathFont* pFontDesc = new CFPF_SkiaPathFont;
     pFontDesc->SetPath(file.GetCStr());
     ReportFace(face, pFontDesc);
-    m_FontFaces.Add(pFontDesc);
+    m_FontFaces.push_back(pFontDesc);
     FXFT_Done_Face(face);
   }
 }

@@ -68,7 +68,7 @@ class CPDF_PSProc {
   ~CPDF_PSProc();
   FX_BOOL Parse(CPDF_SimpleParser& parser);
   FX_BOOL Execute(CPDF_PSEngine* pEngine);
-  CFX_PtrArray m_Operators;
+  std::vector<void*> m_Operators;
 };
 #define PSENGINE_STACKSIZE 100
 class CPDF_PSEngine {
@@ -90,8 +90,7 @@ class CPDF_PSEngine {
   CPDF_PSProc m_MainProc;
 };
 CPDF_PSProc::~CPDF_PSProc() {
-  int size = m_Operators.GetSize();
-  for (int i = 0; i < size; i++) {
+  for (size_t i = 0; i < m_Operators.size(); i++) {
     if (m_Operators[i] == (void*)PSOP_PROC) {
       delete (CPDF_PSProc*)m_Operators[i + 1];
       i++;
@@ -102,8 +101,7 @@ CPDF_PSProc::~CPDF_PSProc() {
   }
 }
 FX_BOOL CPDF_PSProc::Execute(CPDF_PSEngine* pEngine) {
-  int size = m_Operators.GetSize();
-  for (int i = 0; i < size; i++) {
+  for (size_t i = 0; i < m_Operators.size(); i++) {
     PDF_PSOP op = (PDF_PSOP)(uintptr_t)m_Operators[i];
     if (op == PSOP_PROC) {
       i++;
@@ -193,8 +191,8 @@ FX_BOOL CPDF_PSProc::Parse(CPDF_SimpleParser& parser) {
     }
     if (word == "{") {
       CPDF_PSProc* pProc = new CPDF_PSProc;
-      m_Operators.Add((void*)PSOP_PROC);
-      m_Operators.Add(pProc);
+      m_Operators.push_back((void*)PSOP_PROC);
+      m_Operators.push_back(pProc);
       if (!pProc->Parse(parser)) {
         return FALSE;
       }
@@ -202,7 +200,7 @@ FX_BOOL CPDF_PSProc::Parse(CPDF_SimpleParser& parser) {
       int i = 0;
       while (_PDF_PSOpNames[i].name) {
         if (word == CFX_ByteStringC(_PDF_PSOpNames[i].name)) {
-          m_Operators.Add((void*)_PDF_PSOpNames[i].op);
+          m_Operators.push_back((void*)_PDF_PSOpNames[i].op);
           break;
         }
         i++;
@@ -210,8 +208,8 @@ FX_BOOL CPDF_PSProc::Parse(CPDF_SimpleParser& parser) {
       if (!_PDF_PSOpNames[i].name) {
         FX_FLOAT* pd = FX_Alloc(FX_FLOAT, 1);
         *pd = FX_atof(word);
-        m_Operators.Add((void*)PSOP_CONST);
-        m_Operators.Add(pd);
+        m_Operators.push_back((void*)PSOP_CONST);
+        m_Operators.push_back(pd);
       }
     }
   }

@@ -10,6 +10,7 @@
 #if _FX_OS_ == _FX_ANDROID_
 
 #include <map>
+#include <vector>
 
 #include "core/include/fxge/fpf.h"
 
@@ -111,9 +112,10 @@ class CFPF_SkiaFontMgr : public IFPF_FontMgr {
   void ScanFile(const CFX_ByteStringC& file);
   void ReportFace(FXFT_Face face, CFPF_SkiaFontDescriptor* pFontDesc);
   void OutputSystemFonts();
+
   FX_BOOL m_bLoaded;
-  CFX_PtrArray m_FontFaces;
   FXFT_Library m_FTLibrary;
+  std::vector<CFPF_SkiaFontDescriptor*> m_FontFaces;
   std::map<FX_DWORD, CFPF_SkiaFont*> m_FamilyFonts;
 };
 
