@@ -237,10 +237,5 @@ class CPDF_LinkExtract : public IPDF_LinkExtract {
 };
 
 FX_STRSIZE FX_Unicode_GetNormalization(FX_WCHAR wch, FX_WCHAR* pDst);
-void NormalizeString(CFX_WideString& str);
-void NormalizeCompositeChar(FX_WCHAR wChar, CFX_WideString& sDest);
-void GetTextStream_Unicode(CFX_WideTextBuf& buffer,
-                           CPDF_PageObjectList* pPage,
-                           FX_BOOL bUseLF);
 
 #endif  // CORE_SRC_FPDFTEXT_TEXT_INT_H_

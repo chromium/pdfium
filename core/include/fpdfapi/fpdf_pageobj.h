@@ -455,7 +455,6 @@ class CPDF_TextObject : public CPDF_PageObject {
   friend class CPDF_RenderStatus;
   friend class CPDF_StreamContentParser;
   friend class CPDF_TextRenderer;
-  friend class CTextPage;
 
   // CPDF_PageObject:
   void CopyData(const CPDF_PageObject* pSrcObject) override;

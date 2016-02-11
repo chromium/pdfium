@@ -330,11 +330,8 @@
       'type': 'static_library',
       'sources': [
         'core/include/fpdftext/fpdf_text.h',
-        'core/src/fpdftext/fpdf_text.cpp',
         'core/src/fpdftext/fpdf_text_int.cpp',
-        'core/src/fpdftext/fpdf_text_search.cpp',
         'core/src/fpdftext/text_int.h',
-        'core/src/fpdftext/txtproc.h',
         'core/src/fpdftext/unicodenormalization.cpp',
         'core/src/fpdftext/unicodenormalizationdata.cpp',
         'core/src/fpdftext/unicodenormalizationdata.h',
