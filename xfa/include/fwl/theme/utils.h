@@ -4,8 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_THEME_UTILS_H
-#define _FWL_THEME_UTILS_H
+#ifndef FWL_THEME_UTILS_H_
+#define FWL_THEME_UTILS_H_
+
+#include "core/include/fxcrt/fx_system.h"
+
 #define THEME_XPSimilar
 enum FWLTHEME_EDGE {
   FWLTHEME_EDGE_Flat = 0,
@@ -43,10 +46,10 @@ typedef struct _FWLCOLOR {
 
   operator FX_DWORD() { return color; }
 } FWLCOLOR;
-#define FWLTHEME_BEZIER 0.5522847498308f
-#define FWLTHEME_PI 3.141592f
-#define FWLTHEME_PI_2_1 1.570796f
-#define FWLTHEME_PI_2_3 4.712388f
+#define FWLTHEME_BEZIER FX_BEZIER
+#define FWLTHEME_PI FX_PI
+#define FWLTHEME_PI_2_1 (FX_PI / 2.0f)
+#define FWLTHEME_PI_2_3 (3.0f * FX_PI / 2.0f)
 #define FWLTHEME_COLOR_EDGELT1 (ArgbEncode(255, 172, 168, 153))
 #define FWLTHEME_COLOR_EDGELT2 (ArgbEncode(255, 113, 111, 100))
 #define FWLTHEME_COLOR_EDGERB1 (ArgbEncode(255, 241, 239, 226))

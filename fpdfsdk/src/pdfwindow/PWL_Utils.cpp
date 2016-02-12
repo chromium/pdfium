@@ -174,10 +174,10 @@ CFX_ByteString CPWL_Utils::GetAP_Check(const CPDF_Rect& crBBox) {
     FX_FLOAT px2 = pts[i][2].x - pts[nNext][0].x;
     FX_FLOAT py2 = pts[i][2].y - pts[nNext][0].y;
 
-    csAP << pts[i][0].x + px1 * PWL_BEZIER << " "
-         << pts[i][0].y + py1 * PWL_BEZIER << " "
-         << pts[nNext][0].x + px2 * PWL_BEZIER << " "
-         << pts[nNext][0].y + py2 * PWL_BEZIER << " " << pts[nNext][0].x << " "
+    csAP << pts[i][0].x + px1 * FX_BEZIER << " "
+         << pts[i][0].y + py1 * FX_BEZIER << " "
+         << pts[nNext][0].x + px2 * FX_BEZIER << " "
+         << pts[nNext][0].y + py2 * FX_BEZIER << " " << pts[nNext][0].x << " "
          << pts[nNext][0].y << " c\n";
   }
 
@@ -200,28 +200,28 @@ CFX_ByteString CPWL_Utils::GetAP_Circle(const CPDF_Rect& crBBox) {
   FX_FLOAT px = pt2.x - pt1.x;
   FX_FLOAT py = pt2.y - pt1.y;
 
-  csAP << pt1.x << " " << pt1.y + py * PWL_BEZIER << " "
-       << pt2.x - px * PWL_BEZIER << " " << pt2.y << " " << pt2.x << " "
-       << pt2.y << " c\n";
+  csAP << pt1.x << " " << pt1.y + py * FX_BEZIER << " "
+       << pt2.x - px * FX_BEZIER << " " << pt2.y << " " << pt2.x << " " << pt2.y
+       << " c\n";
 
   px = pt3.x - pt2.x;
   py = pt2.y - pt3.y;
 
-  csAP << pt2.x + px * PWL_BEZIER << " " << pt2.y << " " << pt3.x << " "
-       << pt3.y + py * PWL_BEZIER << " " << pt3.x << " " << pt3.y << " c\n";
+  csAP << pt2.x + px * FX_BEZIER << " " << pt2.y << " " << pt3.x << " "
+       << pt3.y + py * FX_BEZIER << " " << pt3.x << " " << pt3.y << " c\n";
 
   px = pt3.x - pt4.x;
   py = pt3.y - pt4.y;
 
-  csAP << pt3.x << " " << pt3.y - py * PWL_BEZIER << " "
-       << pt4.x + px * PWL_BEZIER << " " << pt4.y << " " << pt4.x << " "
-       << pt4.y << " c\n";
+  csAP << pt3.x << " " << pt3.y - py * FX_BEZIER << " "
+       << pt4.x + px * FX_BEZIER << " " << pt4.y << " " << pt4.x << " " << pt4.y
+       << " c\n";
 
   px = pt4.x - pt1.x;
   py = pt1.y - pt4.y;
 
-  csAP << pt4.x - px * PWL_BEZIER << " " << pt4.y << " " << pt1.x << " "
-       << pt1.y - py * PWL_BEZIER << " " << pt1.x << " " << pt1.y << " c\n";
+  csAP << pt4.x - px * FX_BEZIER << " " << pt4.y << " " << pt1.x << " "
+       << pt1.y - py * FX_BEZIER << " " << pt1.x << " " << pt1.y << " c\n";
 
   return csAP.GetByteString();
 }
@@ -273,19 +273,19 @@ CFX_ByteString CPWL_Utils::GetAP_Star(const CPDF_Rect& crBBox) {
   CFX_ByteTextBuf csAP;
 
   FX_FLOAT fRadius =
-      (crBBox.top - crBBox.bottom) / (1 + (FX_FLOAT)cos(PWL_PI / 5.0f));
+      (crBBox.top - crBBox.bottom) / (1 + (FX_FLOAT)cos(FX_PI / 5.0f));
   CPDF_Point ptCenter = CPDF_Point((crBBox.left + crBBox.right) / 2.0f,
                                    (crBBox.top + crBBox.bottom) / 2.0f);
 
   FX_FLOAT px[5], py[5];
 
-  FX_FLOAT fAngel = PWL_PI / 10.0f;
+  FX_FLOAT fAngel = FX_PI / 10.0f;
 
   for (int32_t i = 0; i < 5; i++) {
     px[i] = ptCenter.x + fRadius * (FX_FLOAT)cos(fAngel);
     py[i] = ptCenter.y + fRadius * (FX_FLOAT)sin(fAngel);
 
-    fAngel += PWL_PI * 2 / 5.0f;
+    fAngel += FX_PI * 2 / 5.0f;
   }
 
   csAP << px[0] << " " << py[0] << " m\n";
@@ -323,15 +323,15 @@ CFX_ByteString CPWL_Utils::GetAP_HalfCircle(const CPDF_Rect& crBBox,
   px = pt2.x - pt1.x;
   py = pt2.y - pt1.y;
 
-  csAP << pt1.x << " " << pt1.y + py * PWL_BEZIER << " "
-       << pt2.x - px * PWL_BEZIER << " " << pt2.y << " " << pt2.x << " "
-       << pt2.y << " c\n";
+  csAP << pt1.x << " " << pt1.y + py * FX_BEZIER << " "
+       << pt2.x - px * FX_BEZIER << " " << pt2.y << " " << pt2.x << " " << pt2.y
+       << " c\n";
 
   px = pt3.x - pt2.x;
   py = pt2.y - pt3.y;
 
-  csAP << pt2.x + px * PWL_BEZIER << " " << pt2.y << " " << pt3.x << " "
-       << pt3.y + py * PWL_BEZIER << " " << pt3.x << " " << pt3.y << " c\n";
+  csAP << pt2.x + px * FX_BEZIER << " " << pt2.y << " " << pt3.x << " "
+       << pt3.y + py * FX_BEZIER << " " << pt3.x << " " << pt3.y << " c\n";
 
   return csAP.GetByteString();
 }
@@ -1025,7 +1025,7 @@ CFX_ByteString CPWL_Utils::GetCircleBorderAppStream(
           sAppStream << "q\n" << fHalfWidth << " w\n" << sColor
                      << CPWL_Utils::GetAP_HalfCircle(
                             CPWL_Utils::DeflateRect(rect, fHalfWidth * 0.75f),
-                            PWL_PI / 4.0f)
+                            FX_PI / 4.0f)
                      << " S\nQ\n";
         }
 
@@ -1034,7 +1034,7 @@ CFX_ByteString CPWL_Utils::GetCircleBorderAppStream(
           sAppStream << "q\n" << fHalfWidth << " w\n" << sColor
                      << CPWL_Utils::GetAP_HalfCircle(
                             CPWL_Utils::DeflateRect(rect, fHalfWidth * 0.75f),
-                            PWL_PI * 5 / 4.0f)
+                            FX_PI * 5 / 4.0f)
                      << " S\nQ\n";
         }
       } break;
@@ -1052,7 +1052,7 @@ CFX_ByteString CPWL_Utils::GetCircleBorderAppStream(
           sAppStream << "q\n" << fHalfWidth << " w\n" << sColor
                      << CPWL_Utils::GetAP_HalfCircle(
                             CPWL_Utils::DeflateRect(rect, fHalfWidth * 0.75f),
-                            PWL_PI / 4.0f)
+                            FX_PI / 4.0f)
                      << " S\nQ\n";
         }
 
@@ -1061,7 +1061,7 @@ CFX_ByteString CPWL_Utils::GetCircleBorderAppStream(
           sAppStream << "q\n" << fHalfWidth << " w\n" << sColor
                      << CPWL_Utils::GetAP_HalfCircle(
                             CPWL_Utils::DeflateRect(rect, fHalfWidth * 0.75f),
-                            PWL_PI * 5 / 4.0f)
+                            FX_PI * 5 / 4.0f)
                      << " S\nQ\n";
         }
       } break;
@@ -1988,41 +1988,40 @@ void CPWL_Utils::GetGraphics_Checkmark(CFX_ByteString& sPathData,
                                crBBox.bottom + fHeight * 2 / 5.0f),
                     PWLPT_MOVETO),
       CPWL_PathData(
-          CPWL_Point(
-              crBBox.left + fWidth / 15.0f +
-                  PWL_BEZIER * (fWidth / 7.0f - fWidth / 15.0f),
-              crBBox.bottom + fHeight * 2 / 5.0f +
-                  PWL_BEZIER * (fHeight * 2 / 7.0f - fHeight * 2 / 5.0f)),
+          CPWL_Point(crBBox.left + fWidth / 15.0f +
+                         FX_BEZIER * (fWidth / 7.0f - fWidth / 15.0f),
+                     crBBox.bottom + fHeight * 2 / 5.0f +
+                         FX_BEZIER * (fHeight * 2 / 7.0f - fHeight * 2 / 5.0f)),
           PWLPT_BEZIERTO),
       CPWL_PathData(
           CPWL_Point(crBBox.left + fWidth / 4.5f +
-                         PWL_BEZIER * (fWidth / 5.0f - fWidth / 4.5f),
+                         FX_BEZIER * (fWidth / 5.0f - fWidth / 4.5f),
                      crBBox.bottom + fHeight / 16.0f +
-                         PWL_BEZIER * (fHeight / 5.0f - fHeight / 16.0f)),
+                         FX_BEZIER * (fHeight / 5.0f - fHeight / 16.0f)),
           PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 4.5f,
                                crBBox.bottom + fHeight / 16.0f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 4.5f +
-                                   PWL_BEZIER * (fWidth / 4.4f - fWidth / 4.5f),
+                                   FX_BEZIER * (fWidth / 4.4f - fWidth / 4.5f),
                                crBBox.bottom + fHeight / 16.0f -
-                                   PWL_BEZIER * fHeight / 16.0f),
+                                   FX_BEZIER * fHeight / 16.0f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 3.0f +
-                                   PWL_BEZIER * (fWidth / 4.0f - fWidth / 3.0f),
+                                   FX_BEZIER * (fWidth / 4.0f - fWidth / 3.0f),
                                crBBox.bottom),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 3.0f, crBBox.bottom),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 3.0f +
-                                   PWL_BEZIER * fWidth * (1 / 7.0f + 2 / 15.0f),
-                               crBBox.bottom + PWL_BEZIER * fHeight * 4 / 5.0f),
+                                   FX_BEZIER * fWidth * (1 / 7.0f + 2 / 15.0f),
+                               crBBox.bottom + FX_BEZIER * fHeight * 4 / 5.0f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 14 / 15.0f +
-                                   PWL_BEZIER * fWidth * (1 / 7.0f - 7 / 15.0f),
+                                   FX_BEZIER * fWidth * (1 / 7.0f - 7 / 15.0f),
                                crBBox.bottom + fHeight * 15 / 16.0f +
-                                   PWL_BEZIER * (fHeight * 4 / 5.0f -
-                                                 fHeight * 15 / 16.0f)),
+                                   FX_BEZIER * (fHeight * 4 / 5.0f -
+                                                fHeight * 15 / 16.0f)),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 14 / 15.0f,
                                crBBox.bottom + fHeight * 15 / 16.0f),
@@ -2030,15 +2029,15 @@ void CPWL_Utils::GetGraphics_Checkmark(CFX_ByteString& sPathData,
       CPWL_PathData(
           CPWL_Point(
               crBBox.left + fWidth * 14 / 15.0f +
-                  PWL_BEZIER * (fWidth * 7 / 15.0f - fWidth * 14 / 15.0f),
+                  FX_BEZIER * (fWidth * 7 / 15.0f - fWidth * 14 / 15.0f),
               crBBox.bottom + fHeight * 15 / 16.0f +
-                  PWL_BEZIER * (fHeight * 8 / 7.0f - fHeight * 15 / 16.0f)),
+                  FX_BEZIER * (fHeight * 8 / 7.0f - fHeight * 15 / 16.0f)),
           PWLPT_BEZIERTO),
       CPWL_PathData(
           CPWL_Point(crBBox.left + fWidth / 3.6f +
-                         PWL_BEZIER * (fWidth / 3.4f - fWidth / 3.6f),
+                         FX_BEZIER * (fWidth / 3.4f - fWidth / 3.6f),
                      crBBox.bottom + fHeight / 3.5f +
-                         PWL_BEZIER * (fHeight / 3.5f - fHeight / 3.5f)),
+                         FX_BEZIER * (fHeight / 3.5f - fHeight / 3.5f)),
           PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 3.6f,
                                crBBox.bottom + fHeight / 3.5f),
@@ -2046,15 +2045,14 @@ void CPWL_Utils::GetGraphics_Checkmark(CFX_ByteString& sPathData,
       CPWL_PathData(
           CPWL_Point(crBBox.left + fWidth / 3.6f,
                      crBBox.bottom + fHeight / 3.5f +
-                         PWL_BEZIER * (fHeight / 4.0f - fHeight / 3.5f)),
+                         FX_BEZIER * (fHeight / 4.0f - fHeight / 3.5f)),
           PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(
-              crBBox.left + fWidth / 15.0f +
-                  PWL_BEZIER * (fWidth / 3.5f - fWidth / 15.0f),
-              crBBox.bottom + fHeight * 2 / 5.0f +
-                  PWL_BEZIER * (fHeight * 3.5f / 5.0f - fHeight * 2 / 5.0f)),
-          PWLPT_BEZIERTO),
+      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 15.0f +
+                                   FX_BEZIER * (fWidth / 3.5f - fWidth / 15.0f),
+                               crBBox.bottom + fHeight * 2 / 5.0f +
+                                   FX_BEZIER * (fHeight * 3.5f / 5.0f -
+                                                fHeight * 2 / 5.0f)),
+                    PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 15.0f,
                                crBBox.bottom + fHeight * 2 / 5.0f),
                     PWLPT_BEZIERTO)};
@@ -2079,25 +2077,24 @@ void CPWL_Utils::GetGraphics_Circle(CFX_ByteString& sPathData,
       CPWL_PathData(
           CPWL_Point(crBBox.left + fWidth / 15.0f,
                      crBBox.bottom + fHeight / 2.0f +
-                         PWL_BEZIER * (fHeight * 14 / 15.0f - fHeight / 2.0f)),
+                         FX_BEZIER * (fHeight * 14 / 15.0f - fHeight / 2.0f)),
           PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 2.0f -
-                         PWL_BEZIER * (fWidth / 2.0f - fWidth / 15.0f),
-                     crBBox.top - fHeight / 15.0f),
-          PWLPT_BEZIERTO),
+      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 2.0f -
+                                   FX_BEZIER * (fWidth / 2.0f - fWidth / 15.0f),
+                               crBBox.top - fHeight / 15.0f),
+                    PWLPT_BEZIERTO),
       CPWL_PathData(
           CPWL_Point(crBBox.left + fWidth / 2.0f, crBBox.top - fHeight / 15.0f),
           PWLPT_BEZIERTO),
       CPWL_PathData(
           CPWL_Point(crBBox.left + fWidth / 2.0f +
-                         PWL_BEZIER * (fWidth * 14 / 15.0f - fWidth / 2.0f),
+                         FX_BEZIER * (fWidth * 14 / 15.0f - fWidth / 2.0f),
                      crBBox.top - fHeight / 15.0f),
           PWLPT_BEZIERTO),
       CPWL_PathData(
           CPWL_Point(crBBox.right - fWidth / 15.0f,
                      crBBox.bottom + fHeight / 2.0f +
-                         PWL_BEZIER * (fHeight * 14 / 15.0f - fHeight / 2.0f)),
+                         FX_BEZIER * (fHeight * 14 / 15.0f - fHeight / 2.0f)),
           PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 15.0f,
                                crBBox.bottom + fHeight / 2.0f),
@@ -2105,25 +2102,24 @@ void CPWL_Utils::GetGraphics_Circle(CFX_ByteString& sPathData,
       CPWL_PathData(
           CPWL_Point(crBBox.right - fWidth / 15.0f,
                      crBBox.bottom + fHeight / 2.0f -
-                         PWL_BEZIER * (fHeight / 2.0f - fHeight / 15.0f)),
+                         FX_BEZIER * (fHeight / 2.0f - fHeight / 15.0f)),
           PWLPT_BEZIERTO),
       CPWL_PathData(
           CPWL_Point(crBBox.left + fWidth / 2.0f +
-                         PWL_BEZIER * (fWidth * 14 / 15.0f - fWidth / 2.0f),
+                         FX_BEZIER * (fWidth * 14 / 15.0f - fWidth / 2.0f),
                      crBBox.bottom + fHeight / 15.0f),
           PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 2.0f,
                                crBBox.bottom + fHeight / 15.0f),
                     PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 2.0f -
-                         PWL_BEZIER * (fWidth / 2.0f - fWidth / 15.0f),
-                     crBBox.bottom + fHeight / 15.0f),
-          PWLPT_BEZIERTO),
+      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 2.0f -
+                                   FX_BEZIER * (fWidth / 2.0f - fWidth / 15.0f),
+                               crBBox.bottom + fHeight / 15.0f),
+                    PWLPT_BEZIERTO),
       CPWL_PathData(
           CPWL_Point(crBBox.left + fWidth / 15.0f,
                      crBBox.bottom + fHeight / 2.0f -
-                         PWL_BEZIER * (fHeight / 2.0f - fHeight / 15.0f)),
+                         FX_BEZIER * (fHeight / 2.0f - fHeight / 15.0f)),
           PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 15.0f,
                                crBBox.bottom + fHeight / 2.0f),
@@ -2134,11 +2130,11 @@ void CPWL_Utils::GetGraphics_Circle(CFX_ByteString& sPathData,
       CPWL_PathData(
           CPWL_Point(crBBox.left + fWidth * 3 / 15.0f,
                      crBBox.bottom + fHeight / 2.0f +
-                         PWL_BEZIER * (fHeight * 4 / 5.0f - fHeight / 2.0f)),
+                         FX_BEZIER * (fHeight * 4 / 5.0f - fHeight / 2.0f)),
           PWLPT_BEZIERTO),
       CPWL_PathData(
           CPWL_Point(crBBox.left + fWidth / 2.0f -
-                         PWL_BEZIER * (fWidth / 2.0f - fWidth * 3 / 15.0f),
+                         FX_BEZIER * (fWidth / 2.0f - fWidth * 3 / 15.0f),
                      crBBox.top - fHeight * 3 / 15.0f),
           PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 2.0f,
@@ -2146,13 +2142,13 @@ void CPWL_Utils::GetGraphics_Circle(CFX_ByteString& sPathData,
                     PWLPT_BEZIERTO),
       CPWL_PathData(
           CPWL_Point(crBBox.left + fWidth / 2.0f +
-                         PWL_BEZIER * (fWidth * 4 / 5.0f - fWidth / 2.0f),
+                         FX_BEZIER * (fWidth * 4 / 5.0f - fWidth / 2.0f),
                      crBBox.top - fHeight * 3 / 15.0f),
           PWLPT_BEZIERTO),
       CPWL_PathData(
           CPWL_Point(crBBox.right - fWidth * 3 / 15.0f,
                      crBBox.bottom + fHeight / 2.0f +
-                         PWL_BEZIER * (fHeight * 4 / 5.0f - fHeight / 2.0f)),
+                         FX_BEZIER * (fHeight * 4 / 5.0f - fHeight / 2.0f)),
           PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 3 / 15.0f,
                                crBBox.bottom + fHeight / 2.0f),
@@ -2160,11 +2156,11 @@ void CPWL_Utils::GetGraphics_Circle(CFX_ByteString& sPathData,
       CPWL_PathData(
           CPWL_Point(crBBox.right - fWidth * 3 / 15.0f,
                      crBBox.bottom + fHeight / 2.0f -
-                         PWL_BEZIER * (fHeight * 4 / 5.0f - fHeight / 2.0f)),
+                         FX_BEZIER * (fHeight * 4 / 5.0f - fHeight / 2.0f)),
           PWLPT_BEZIERTO),
       CPWL_PathData(
           CPWL_Point(crBBox.left + fWidth / 2.0f +
-                         PWL_BEZIER * (fWidth * 4 / 5.0f - fWidth / 2.0f),
+                         FX_BEZIER * (fWidth * 4 / 5.0f - fWidth / 2.0f),
                      crBBox.bottom + fHeight * 3 / 15.0f),
           PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 2.0f,
@@ -2172,13 +2168,13 @@ void CPWL_Utils::GetGraphics_Circle(CFX_ByteString& sPathData,
                     PWLPT_BEZIERTO),
       CPWL_PathData(
           CPWL_Point(crBBox.left + fWidth / 2.0f -
-                         PWL_BEZIER * (fWidth * 4 / 5.0f - fWidth / 2.0f),
+                         FX_BEZIER * (fWidth * 4 / 5.0f - fWidth / 2.0f),
                      crBBox.bottom + fHeight * 3 / 15.0f),
           PWLPT_BEZIERTO),
       CPWL_PathData(
           CPWL_Point(crBBox.left + fWidth * 3 / 15.0f,
                      crBBox.bottom + fHeight / 2.0f -
-                         PWL_BEZIER * (fHeight * 4 / 5.0f - fHeight / 2.0f)),
+                         FX_BEZIER * (fHeight * 4 / 5.0f - fHeight / 2.0f)),
           PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 3 / 15.0f,
                                crBBox.bottom + fHeight / 2.0f),
@@ -2204,10 +2200,10 @@ void CPWL_Utils::GetGraphics_Comment(CFX_ByteString& sPathData,
       CPWL_PathData(
           CPWL_Point(crBBox.left + fWidth / 15.0f,
                      crBBox.top - fHeight / 6.0f +
-                         PWL_BEZIER * (fHeight / 6.0f - fHeight / 10.0f)),
+                         FX_BEZIER * (fHeight / 6.0f - fHeight / 10.0f)),
           PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 2 / 15.0f -
-                                   PWL_BEZIER * fWidth / 15.0f,
+                                   FX_BEZIER * fWidth / 15.0f,
                                crBBox.top - fHeight / 10.0f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 2 / 15.0f,
@@ -2217,13 +2213,13 @@ void CPWL_Utils::GetGraphics_Comment(CFX_ByteString& sPathData,
                                crBBox.top - fHeight / 10.0f),
                     PWLPT_LINETO),
       CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 2 / 15.0f +
-                                   PWL_BEZIER * fWidth / 15.0f,
+                                   FX_BEZIER * fWidth / 15.0f,
                                crBBox.top - fHeight / 10.0f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(
           CPWL_Point(crBBox.right - fWidth / 15.0f,
                      crBBox.top - fHeight / 6 +
-                         PWL_BEZIER * (fHeight / 6.0f - fHeight / 10.0f)),
+                         FX_BEZIER * (fHeight / 6.0f - fHeight / 10.0f)),
           PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 15.0f,
                                crBBox.top - fHeight / 6.0f),
@@ -2233,10 +2229,10 @@ void CPWL_Utils::GetGraphics_Comment(CFX_ByteString& sPathData,
                     PWLPT_LINETO),
       CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 15.0f,
                                crBBox.bottom + fHeight * 4 / 15.0f +
-                                   PWL_BEZIER * fHeight / 15.0f),
+                                   FX_BEZIER * fHeight / 15.0f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 2 / 15.0f +
-                                   PWL_BEZIER * fWidth / 15.0f,
+                                   FX_BEZIER * fWidth / 15.0f,
                                crBBox.bottom + fHeight * 4 / 15.0f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 2 / 15.0f,
@@ -2247,22 +2243,22 @@ void CPWL_Utils::GetGraphics_Comment(CFX_ByteString& sPathData,
                     PWLPT_LINETO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 5 / 15.0f,
                                crBBox.bottom + fHeight * 2 / 15 +
-                                   PWL_BEZIER * fHeight * 2 / 15.0f),
+                                   FX_BEZIER * fHeight * 2 / 15.0f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 5 / 15.0f -
-                                   PWL_BEZIER * fWidth * 2 / 15.0f,
+                                   FX_BEZIER * fWidth * 2 / 15.0f,
                                crBBox.bottom + fHeight * 2 / 15.0f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 6 / 30.0f,
                                crBBox.bottom + fHeight * 2 / 15.0f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 7 / 30.0f +
-                                   PWL_BEZIER * fWidth / 30.0f,
+                                   FX_BEZIER * fWidth / 30.0f,
                                crBBox.bottom + fHeight * 2 / 15.0f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 7 / 30.0f,
                                crBBox.bottom + fHeight * 2 / 15.0f +
-                                   PWL_BEZIER * fHeight * 2 / 15.0f),
+                                   FX_BEZIER * fHeight * 2 / 15.0f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 7 / 30.0f,
                                crBBox.bottom + fHeight * 4 / 15.0f),
@@ -2271,12 +2267,12 @@ void CPWL_Utils::GetGraphics_Comment(CFX_ByteString& sPathData,
                                crBBox.bottom + fHeight * 4 / 15.0f),
                     PWLPT_LINETO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 2 / 15.0f -
-                                   PWL_BEZIER * fWidth / 15.0f,
+                                   FX_BEZIER * fWidth / 15.0f,
                                crBBox.bottom + fHeight * 4 / 15.0f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 15.0f,
                                crBBox.bottom + fHeight / 3.0f -
-                                   PWL_BEZIER * fHeight / 15.0f),
+                                   FX_BEZIER * fHeight / 15.0f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 15.0f,
                                crBBox.bottom + fHeight / 3.0f),
@@ -2380,46 +2376,45 @@ void CPWL_Utils::GetGraphics_Help(CFX_ByteString& sPathData,
       CPWL_PathData(
           CPWL_Point(crBBox.left + fWidth / 60.0f,
                      crBBox.bottom + fHeight / 2.0f +
-                         PWL_BEZIER * (fHeight / 60.0f - fHeight / 2.0f)),
+                         FX_BEZIER * (fHeight / 60.0f - fHeight / 2.0f)),
           PWLPT_BEZIERTO),
-      CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth / 2.0f -
-                         PWL_BEZIER * (fWidth / 2.0f - fWidth / 60.0f),
-                     crBBox.bottom + fHeight / 60.0f),
-          PWLPT_BEZIERTO),
+      CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 2.0f -
+                                   FX_BEZIER * (fWidth / 2.0f - fWidth / 60.0f),
+                               crBBox.bottom + fHeight / 60.0f),
+                    PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 2.0f,
                                crBBox.bottom + fHeight / 60.0f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 2.0f +
-                                   PWL_BEZIER * fWidth * 29 / 60.0f,
+                                   FX_BEZIER * fWidth * 29 / 60.0f,
                                crBBox.bottom + fHeight / 60.0f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(
           CPWL_Point(crBBox.right - fWidth / 60.0f,
                      crBBox.bottom + fHeight / 2.0f +
-                         PWL_BEZIER * (fHeight / 60.0f - fHeight / 2.0f)),
+                         FX_BEZIER * (fHeight / 60.0f - fHeight / 2.0f)),
           PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 60.0f,
                                crBBox.bottom + fHeight / 2.0f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.right - fWidth / 60.0f,
                                crBBox.bottom + fHeight / 2.0f +
-                                   PWL_BEZIER * fHeight * 29 / 60.0f),
+                                   FX_BEZIER * fHeight * 29 / 60.0f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 2.0f +
-                                   PWL_BEZIER * fWidth * 29 / 60.0f,
+                                   FX_BEZIER * fWidth * 29 / 60.0f,
                                crBBox.top - fHeight / 60.0f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(
           CPWL_Point(crBBox.left + fWidth / 2.0f, crBBox.top - fHeight / 60.0f),
           PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 2.0f -
-                                   PWL_BEZIER * fWidth * 29 / 60.0f,
+                                   FX_BEZIER * fWidth * 29 / 60.0f,
                                crBBox.top - fHeight / 60.0f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 60.0f,
                                crBBox.bottom + fHeight / 2.0f +
-                                   PWL_BEZIER * fHeight * 29 / 60.0f),
+                                   FX_BEZIER * fHeight * 29 / 60.0f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth / 60.0f,
                                crBBox.bottom + fHeight / 2.0f),
@@ -2429,22 +2424,22 @@ void CPWL_Utils::GetGraphics_Help(CFX_ByteString& sPathData,
                     PWLPT_MOVETO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.27f,
                                crBBox.top - fHeight * 0.36f +
-                                   PWL_BEZIER * fHeight * 0.23f),
+                                   FX_BEZIER * fHeight * 0.23f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.5f - PWL_BEZIER * fWidth * 0.23f,
+          CPWL_Point(crBBox.left + fWidth * 0.5f - FX_BEZIER * fWidth * 0.23f,
                      crBBox.bottom + fHeight * 0.87f),
           PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.5f,
                                crBBox.bottom + fHeight * 0.87f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.5f + PWL_BEZIER * fWidth * 0.23f,
+          CPWL_Point(crBBox.left + fWidth * 0.5f + FX_BEZIER * fWidth * 0.23f,
                      crBBox.bottom + fHeight * 0.87f),
           PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.27f,
                                crBBox.top - fHeight * 0.36f +
-                                   PWL_BEZIER * fHeight * 0.23f),
+                                   FX_BEZIER * fHeight * 0.23f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.27f,
                                crBBox.top - fHeight * 0.36f),
@@ -2512,22 +2507,22 @@ void CPWL_Utils::GetGraphics_Help(CFX_ByteString& sPathData,
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.37f,
                                crBBox.top - fHeight * 0.36f +
-                                   PWL_BEZIER * fHeight * 0.13f),
+                                   FX_BEZIER * fHeight * 0.13f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.5f + PWL_BEZIER * fWidth * 0.13f,
+          CPWL_Point(crBBox.left + fWidth * 0.5f + FX_BEZIER * fWidth * 0.13f,
                      crBBox.bottom + fHeight * 0.77f),
           PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.5f,
                                crBBox.bottom + fHeight * 0.77f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(
-          CPWL_Point(crBBox.left + fWidth * 0.5f - PWL_BEZIER * fWidth * 0.13f,
+          CPWL_Point(crBBox.left + fWidth * 0.5f - FX_BEZIER * fWidth * 0.13f,
                      crBBox.bottom + fHeight * 0.77f),
           PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.37f,
                                crBBox.top - fHeight * 0.36f +
-                                   PWL_BEZIER * fHeight * 0.13f),
+                                   FX_BEZIER * fHeight * 0.13f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.left + fWidth * 0.37f,
                                crBBox.top - fHeight * 0.36f),
@@ -2548,44 +2543,44 @@ void CPWL_Utils::GetGraphics_Help(CFX_ByteString& sPathData,
                     PWLPT_MOVETO),
       CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.56f,
                                crBBox.bottom + fHeight * 0.13f +
-                                   PWL_BEZIER * fHeight * 0.055f),
+                                   FX_BEZIER * fHeight * 0.055f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.505f -
-                                   PWL_BEZIER * fWidth * 0.095f,
+                                   FX_BEZIER * fWidth * 0.095f,
                                crBBox.bottom + fHeight * 0.185f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.505f,
                                crBBox.bottom + fHeight * 0.185f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.505f +
-                                   PWL_BEZIER * fWidth * 0.065f,
+                                   FX_BEZIER * fWidth * 0.065f,
                                crBBox.bottom + fHeight * 0.185f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.44f,
                                crBBox.bottom + fHeight * 0.13f +
-                                   PWL_BEZIER * fHeight * 0.055f),
+                                   FX_BEZIER * fHeight * 0.055f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.44f,
                                crBBox.bottom + fHeight * 0.13f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.44f,
                                crBBox.bottom + fHeight * 0.13f -
-                                   PWL_BEZIER * fHeight * 0.055f),
+                                   FX_BEZIER * fHeight * 0.055f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.505f +
-                                   PWL_BEZIER * fWidth * 0.065f,
+                                   FX_BEZIER * fWidth * 0.065f,
                                crBBox.bottom + fHeight * 0.075f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.505f,
                                crBBox.bottom + fHeight * 0.075f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.505f -
-                                   PWL_BEZIER * fWidth * 0.065f,
+                                   FX_BEZIER * fWidth * 0.065f,
                                crBBox.bottom + fHeight * 0.075f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.56f,
                                crBBox.bottom + fHeight * 0.13f -
-                                   PWL_BEZIER * fHeight * 0.055f),
+                                   FX_BEZIER * fHeight * 0.055f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crBBox.right - fWidth * 0.56f,
                                crBBox.bottom + fHeight * 0.13f),
@@ -3056,7 +3051,7 @@ void CPWL_Utils::GetGraphics_Star(CFX_ByteString& sPathData,
                                   const CPDF_Rect& crBBox,
                                   const PWL_PATH_TYPE type) {
   FX_FLOAT fLongRadius =
-      (crBBox.top - crBBox.bottom) / (1 + (FX_FLOAT)cos(PWL_PI / 5.0f));
+      (crBBox.top - crBBox.bottom) / (1 + (FX_FLOAT)cos(FX_PI / 5.0f));
   fLongRadius = fLongRadius * 0.7f;
   FX_FLOAT fShortRadius = fLongRadius * 0.55f;
   CPDF_Point ptCenter = CPDF_Point((crBBox.left + crBBox.right) / 2.0f,
@@ -3065,22 +3060,22 @@ void CPWL_Utils::GetGraphics_Star(CFX_ByteString& sPathData,
   FX_FLOAT px1[5], py1[5];
   FX_FLOAT px2[5], py2[5];
 
-  FX_FLOAT fAngel = PWL_PI / 10.0f;
+  FX_FLOAT fAngel = FX_PI / 10.0f;
 
   for (int32_t i = 0; i < 5; i++) {
     px1[i] = ptCenter.x + fLongRadius * (FX_FLOAT)cos(fAngel);
     py1[i] = ptCenter.y + fLongRadius * (FX_FLOAT)sin(fAngel);
 
-    fAngel += PWL_PI * 2 / 5.0f;
+    fAngel += FX_PI * 2 / 5.0f;
   }
 
-  fAngel = PWL_PI / 5.0f + PWL_PI / 10.0f;
+  fAngel = FX_PI / 5.0f + FX_PI / 10.0f;
 
   for (int32_t j = 0; j < 5; j++) {
     px2[j] = ptCenter.x + fShortRadius * (FX_FLOAT)cos(fAngel);
     py2[j] = ptCenter.y + fShortRadius * (FX_FLOAT)sin(fAngel);
 
-    fAngel += PWL_PI * 2 / 5.0f;
+    fAngel += FX_PI * 2 / 5.0f;
   }
 
   CPWL_PathData PathArray[11];
@@ -3585,12 +3580,12 @@ void CPWL_Utils::GetGraphics_Foxit(CFX_ByteString& sPathData,
       CPWL_PathData(CPWL_Point(crInBox.left + fWidth * 0.45f, crInBox.top),
                     PWLPT_LINETO),
       CPWL_PathData(CPWL_Point(crInBox.left + fWidth * 0.45f,
-                               crInBox.top - PWL_BEZIER * fHeight * 0.4f),
+                               crInBox.top - FX_BEZIER * fHeight * 0.4f),
                     PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crInBox.left + fWidth * 0.45f -
-                                   PWL_BEZIER * fWidth * 0.45f,
-                               crInBox.top - fHeight * 0.4f),
-                    PWLPT_BEZIERTO),
+      CPWL_PathData(
+          CPWL_Point(crInBox.left + fWidth * 0.45f - FX_BEZIER * fWidth * 0.45f,
+                     crInBox.top - fHeight * 0.4f),
+          PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crInBox.left, crInBox.top - fHeight * 0.4f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crInBox.left, crInBox.top), PWLPT_LINETO),
@@ -3600,21 +3595,21 @@ void CPWL_Utils::GetGraphics_Foxit(CFX_ByteString& sPathData,
       CPWL_PathData(CPWL_Point(crInBox.left + fWidth * 0.75f, crInBox.top),
                     PWLPT_LINETO),
       CPWL_PathData(CPWL_Point(crInBox.left + fWidth * 0.75f,
-                               crInBox.top - PWL_BEZIER * fHeight * 0.7f),
+                               crInBox.top - FX_BEZIER * fHeight * 0.7f),
                     PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crInBox.left + fWidth * 0.75f -
-                                   PWL_BEZIER * fWidth * 0.75f,
-                               crInBox.top - fHeight * 0.7f),
-                    PWLPT_BEZIERTO),
+      CPWL_PathData(
+          CPWL_Point(crInBox.left + fWidth * 0.75f - FX_BEZIER * fWidth * 0.75f,
+                     crInBox.top - fHeight * 0.7f),
+          PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crInBox.left, crInBox.top - fHeight * 0.7f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crInBox.left, crInBox.top - fHeight * 0.55f),
                     PWLPT_LINETO),
-      CPWL_PathData(CPWL_Point(crInBox.left + PWL_BEZIER * fWidth * 0.60f,
+      CPWL_PathData(CPWL_Point(crInBox.left + FX_BEZIER * fWidth * 0.60f,
                                crInBox.top - fHeight * 0.55f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crInBox.left + fWidth * 0.60f,
-                               crInBox.top - PWL_BEZIER * fHeight * 0.55f),
+                               crInBox.top - FX_BEZIER * fHeight * 0.55f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crInBox.left + fWidth * 0.60f, crInBox.top),
                     PWLPT_BEZIERTO),
@@ -3622,12 +3617,12 @@ void CPWL_Utils::GetGraphics_Foxit(CFX_ByteString& sPathData,
       CPWL_PathData(CPWL_Point(crInBox.left + fWidth * 0.90f, crInBox.top),
                     PWLPT_MOVETO),
       CPWL_PathData(CPWL_Point(crInBox.left + fWidth * 0.90f,
-                               crInBox.top - PWL_BEZIER * fHeight * 0.85f),
+                               crInBox.top - FX_BEZIER * fHeight * 0.85f),
                     PWLPT_BEZIERTO),
-      CPWL_PathData(CPWL_Point(crInBox.left + fWidth * 0.90f -
-                                   PWL_BEZIER * fWidth * 0.90f,
-                               crInBox.top - fHeight * 0.85f),
-                    PWLPT_BEZIERTO),
+      CPWL_PathData(
+          CPWL_Point(crInBox.left + fWidth * 0.90f - FX_BEZIER * fWidth * 0.90f,
+                     crInBox.top - fHeight * 0.85f),
+          PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crInBox.left, crInBox.top - fHeight * 0.85f),
                     PWLPT_BEZIERTO),
       CPWL_PathData(CPWL_Point(crInBox.left, crInBox.bottom), PWLPT_LINETO),

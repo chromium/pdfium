@@ -110,7 +110,9 @@ static_assert(FALSE == false, "false_needs_to_be_false");
 #endif
 #endif
 
+// M_PI not universally present on all platforms.
 #define FX_PI 3.1415926535897932384626433832795f
+#define FX_BEZIER 0.5522847498308f
 
 // NOTE: prevent use of the return value from snprintf() since some platforms
 // have different return values (e.g. windows _vsnprintf()), and provide

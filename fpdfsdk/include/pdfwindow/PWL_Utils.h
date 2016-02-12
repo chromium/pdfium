@@ -65,9 +65,6 @@ T PWL_MAX(const T& i, const T& j) {
 #define PCS_SQUARE 4
 #define PCS_STAR 5
 
-#define PWL_PI 3.14159265358979f
-#define PWL_BEZIER 0.5522847498308f
-
 // pushbutton layout style
 #define PPBL_LABEL 0
 #define PPBL_ICON 1
