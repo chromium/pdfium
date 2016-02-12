@@ -7,15 +7,23 @@
 #ifndef CORE_INCLUDE_FXCRT_FX_BIDI_H_
 #define CORE_INCLUDE_FXCRT_FX_BIDI_H_
 
+#include <memory>
+#include <vector>
+
+#include "fx_string.h"
 #include "fx_system.h"
 
 // Processes characters and group them into segments based on text direction.
 class CFX_BidiChar {
  public:
   enum Direction { NEUTRAL, LEFT, RIGHT };
+  struct Segment {
+    int32_t start;        // Start position.
+    int32_t count;        // Character count.
+    Direction direction;  // Segment direction.
+  };
 
   CFX_BidiChar();
-  ~CFX_BidiChar();
 
   // Append a character and classify it as left, right, or neutral.
   // Returns true if the character has a different direction than the
@@ -27,33 +35,39 @@ class CFX_BidiChar {
   // Returns true if there is still a segment to process.
   bool EndChar();
 
-  // Get information about the segment to process.
-  // The segment's start position and character count is returned in |iStart|
-  // and |iCount|, respectively. Pass in null pointers if the information is
-  // not needed.
-  // Returns the segment direction.
-  Direction GetBidiInfo(int32_t* iStart, int32_t* iCount) const;
+  // Call after a change in direction is indicated by the above to get
+  // information about the segment to process.
+  Segment GetSegmentInfo() const { return m_LastSegment; }
 
  private:
-  void SaveCurrentStateToLastState();
+  void StartNewSegment(CFX_BidiChar::Direction direction);
 
-  // Position of the current segment.
-  int32_t m_iCurStart;
+  Segment m_CurrentSegment;
+  Segment m_LastSegment;
+};
 
-  // Number of characters in the current segment.
-  int32_t m_iCurCount;
+class CFX_BidiString {
+ public:
+  using const_iterator = std::vector<CFX_BidiChar::Segment>::const_iterator;
+  explicit CFX_BidiString(const CFX_WideString& str);
 
-  // Direction of the current segment.
-  Direction m_CurBidi;
+  // Overall direction is always LEFT or RIGHT, never NEUTRAL.
+  CFX_BidiChar::Direction OverallDirection() const {
+    return m_eOverallDirection;
+  }
 
-  // Number of characters in the last segment.
-  int32_t m_iLastStart;
+  // Force the overall direction to be R2L regardless of what was detected.
+  void SetOverallDirectionRight();
 
-  // Number of characters in the last segment.
-  int32_t m_iLastCount;
+  FX_WCHAR CharAt(size_t x) const { return m_Str[x]; }
+  const_iterator begin() const { return m_Order.begin(); }
+  const_iterator end() const { return m_Order.end(); }
 
-  // Direction of the last segment.
-  Direction m_LastBidi;
+ private:
+  const CFX_WideString m_Str;
+  std::unique_ptr<CFX_BidiChar> m_pBidiChar;
+  std::vector<CFX_BidiChar::Segment> m_Order;
+  CFX_BidiChar::Direction m_eOverallDirection;
 };
 
 #endif  // CORE_INCLUDE_FXCRT_FX_BIDI_H_

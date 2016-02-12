@@ -121,8 +121,8 @@ class CPDF_TextPage : public IPDF_TextPage {
   void ProcessMarkedContent(PDFTEXT_Obj pObj);
   void CheckMarkedContentObject(int32_t& start, int32_t& nCount) const;
   void FindPreviousTextObject(void);
-  void AddCharInfoByLRDirection(CFX_WideString& str, int i);
-  void AddCharInfoByRLDirection(CFX_WideString& str, int i);
+  void AddCharInfoByLRDirection(FX_WCHAR wChar, PAGECHAR_INFO info);
+  void AddCharInfoByRLDirection(FX_WCHAR wChar, PAGECHAR_INFO info);
   int32_t GetTextObjectWritingMode(const CPDF_TextObject* pTextObj);
   int32_t FindTextlineFlowDirection();
 

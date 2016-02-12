@@ -914,24 +914,21 @@ int CPDF_TextPage::GetCharWidth(FX_DWORD charCode, CPDF_Font* pFont) const {
   return w;
 }
 void CPDF_TextPage::OnPiece(CFX_BidiChar* pBidi, CFX_WideString& str) {
-  int32_t start, count;
-  CFX_BidiChar::Direction ret = pBidi->GetBidiInfo(&start, &count);
-  if (ret == CFX_BidiChar::RIGHT) {
-    for (int i = start + count - 1; i >= start; i--) {
-      m_TextBuf.AppendChar(str.GetAt(i));
-      m_CharList.push_back(m_TempCharList[i]);
+  CFX_BidiChar::Segment seg = pBidi->GetSegmentInfo();
+  if (seg.direction == CFX_BidiChar::RIGHT) {
+    for (int i = seg.start + seg.count; i > seg.start; i--) {
+      m_TextBuf.AppendChar(str.GetAt(i - i));
+      m_CharList.push_back(m_TempCharList[i - 1]);
     }
   } else {
-    int end = start + count;
-    for (int i = start; i < end; i++) {
+    for (int i = seg.start; i < seg.start + seg.count; i++) {
       m_TextBuf.AppendChar(str.GetAt(i));
       m_CharList.push_back(m_TempCharList[i]);
     }
   }
 }
-void CPDF_TextPage::AddCharInfoByLRDirection(CFX_WideString& str, int i) {
-  PAGECHAR_INFO info = m_TempCharList[i];
-  FX_WCHAR wChar = str.GetAt(i);
+void CPDF_TextPage::AddCharInfoByLRDirection(FX_WCHAR wChar,
+                                             PAGECHAR_INFO info) {
   if (!IsControlChar(info)) {
     info.m_Index = m_TextBuf.GetLength();
     if (wChar >= 0xFB00 && wChar <= 0xFB06) {
@@ -957,11 +954,11 @@ void CPDF_TextPage::AddCharInfoByLRDirection(CFX_WideString& str, int i) {
   }
   m_CharList.push_back(info);
 }
-void CPDF_TextPage::AddCharInfoByRLDirection(CFX_WideString& str, int i) {
-  PAGECHAR_INFO info = m_TempCharList[i];
+void CPDF_TextPage::AddCharInfoByRLDirection(FX_WCHAR wChar,
+                                             PAGECHAR_INFO info) {
   if (!IsControlChar(info)) {
     info.m_Index = m_TextBuf.GetLength();
-    FX_WCHAR wChar = FX_GetMirrorChar(str.GetAt(i), TRUE, FALSE);
+    wChar = FX_GetMirrorChar(wChar, TRUE, FALSE);
     FX_WCHAR* pDst = NULL;
     FX_STRSIZE nCount = FX_Unicode_GetNormalization(wChar, pDst);
     if (nCount >= 1) {
@@ -984,140 +981,47 @@ void CPDF_TextPage::AddCharInfoByRLDirection(CFX_WideString& str, int i) {
   }
   m_CharList.push_back(info);
 }
+
 void CPDF_TextPage::CloseTempLine() {
-  if (m_TempCharList.empty()) {
+  if (m_TempCharList.empty())
     return;
-  }
-  std::unique_ptr<CFX_BidiChar> pBidiChar(new CFX_BidiChar);
+
   CFX_WideString str = m_TempTextBuf.GetWideString();
-  std::vector<FX_WORD> order;
-  FX_BOOL bR2L = FALSE;
-  int32_t start = 0, count = 0;
-  int nR2L = 0, nL2R = 0;
   FX_BOOL bPrevSpace = FALSE;
   for (int i = 0; i < str.GetLength(); i++) {
-    if (str.GetAt(i) == 32) {
-      if (bPrevSpace) {
-        m_TempTextBuf.Delete(i, 1);
-        m_TempCharList.erase(m_TempCharList.begin() + i);
-        str.Delete(i);
-        i--;
-        continue;
-      }
-      bPrevSpace = TRUE;
-    } else {
+    if (str.GetAt(i) != ' ') {
       bPrevSpace = FALSE;
+      continue;
     }
-    if (pBidiChar->AppendChar(str.GetAt(i))) {
-      CFX_BidiChar::Direction ret = pBidiChar->GetBidiInfo(&start, &count);
-      order.push_back(start);
-      order.push_back(count);
-      order.push_back(ret);
-      if (!bR2L) {
-        if (ret == CFX_BidiChar::RIGHT) {
-          nR2L++;
-        } else if (ret == CFX_BidiChar::LEFT) {
-          nL2R++;
-        }
-      }
+    if (bPrevSpace) {
+      m_TempTextBuf.Delete(i, 1);
+      m_TempCharList.erase(m_TempCharList.begin() + i);
+      str.Delete(i);
+      i--;
     }
+    bPrevSpace = TRUE;
   }
-  if (pBidiChar->EndChar()) {
-    CFX_BidiChar::Direction ret = pBidiChar->GetBidiInfo(&start, &count);
-    order.push_back(start);
-    order.push_back(count);
-    order.push_back(ret);
-    if (!bR2L) {
-      if (ret == CFX_BidiChar::RIGHT) {
-        nR2L++;
-      } else if (ret == CFX_BidiChar::LEFT) {
-        nL2R++;
-      }
-    }
-  }
-  if (nR2L > 0 && nR2L >= nL2R) {
-    bR2L = TRUE;
-  }
-  if (m_parserflag == FPDFTEXT_RLTB || bR2L) {
-    int count = pdfium::CollectionSize<int>(order);
-    for (int i = count - 1; i > 0; i -= 3) {
-      int ret = order[i];
-      int count1 = order[i - 1];
-      int start = order[i - 2];
-      if (ret == 2 || ret == 0) {
-        for (int j = start + count1 - 1; j >= start; j--) {
-          AddCharInfoByRLDirection(str, j);
-        }
-      } else {
-        int j = i;
-        FX_BOOL bSymbol = FALSE;
-        while (j > 0 && order[j] != 2) {
-          bSymbol = !order[j];
-          j -= 3;
-        }
-        int end = start + count1;
-        int n = 0;
-        if (bSymbol) {
-          n = j + 6;
-        } else {
-          n = j + 3;
-        }
-        if (n >= i) {
-          for (int m = start; m < end; m++) {
-            AddCharInfoByLRDirection(str, m);
-          }
-        } else {
-          j = i;
-          i = n;
-          for (; n <= j; n += 3) {
-            int start = order[n - 2];
-            int count1 = order[n - 1];
-            int end = start + count1;
-            for (int m = start; m < end; m++) {
-              AddCharInfoByLRDirection(str, m);
-            }
-          }
-        }
-      }
-    }
-  } else {
-    int count = pdfium::CollectionSize<int>(order);
-    FX_BOOL bL2R = FALSE;
-    for (int i = 0; i < count; i += 3) {
-      int start = order[i];
-      int count1 = order[i + 1];
-      int ret = order[i + 2];
-      if (ret == 2 || (i == 0 && ret == 0 && !bL2R)) {
-        int j = i + 3;
-        while (bR2L && j < count) {
-          if (order[j + 2] == 1)
-            break;
-          j += 3;
-        }
-        if (j == 3) {
-          i = -3;
-          bL2R = TRUE;
-          continue;
-        }
-        int end = pdfium::CollectionSize<int>(m_TempCharList) - 1;
-        if (j < count) {
-          end = order[j] - 1;
-        }
-        i = j - 3;
-        for (int n = end; n >= start; n--) {
-          AddCharInfoByRLDirection(str, n);
-        }
-      } else {
-        int end = start + count1;
-        for (int n = start; n < end; n++) {
-          AddCharInfoByLRDirection(str, n);
-        }
-      }
+  CFX_BidiString bidi(str);
+  if (m_parserflag == FPDFTEXT_RLTB)
+    bidi.SetOverallDirectionRight();
+  CFX_BidiChar::Direction eCurrentDirection = bidi.OverallDirection();
+  for (const auto& segment : bidi) {
+    if (segment.direction == CFX_BidiChar::RIGHT ||
+        (segment.direction == CFX_BidiChar::NEUTRAL &&
+         eCurrentDirection == CFX_BidiChar::RIGHT)) {
+      eCurrentDirection = CFX_BidiChar::RIGHT;
+      for (int m = segment.start + segment.count; m > segment.start; --m)
+        AddCharInfoByRLDirection(bidi.CharAt(m - 1), m_TempCharList[m - 1]);
+    } else {
+      eCurrentDirection = CFX_BidiChar::LEFT;
+      for (int m = segment.start; m < segment.start + segment.count; m++)
+        AddCharInfoByLRDirection(bidi.CharAt(m), m_TempCharList[m]);
     }
   }
   m_TempCharList.clear();
   m_TempTextBuf.Delete(0, m_TempTextBuf.GetLength());
 }
+
 void CPDF_TextPage::ProcessTextObject(CPDF_TextObject* pTextObj,
                                       const CFX_Matrix& formMatrix,
                                       FX_POSITION ObjPos) {
@@ -1360,15 +1264,13 @@ void CPDF_TextPage::SwapTempTextBuf(int32_t iCharListStartAppend,
     std::swap(pTempBuffer[i], pTempBuffer[j]);
   }
 }
+
 FX_BOOL CPDF_TextPage::IsRightToLeft(const CPDF_TextObject* pTextObj,
                                      const CPDF_Font* pFont,
                                      int nItems) const {
-  std::unique_ptr<CFX_BidiChar> pBidiChar(new CFX_BidiChar);
-  int32_t nR2L = 0;
-  int32_t nL2R = 0;
-  int32_t start = 0, count = 0;
-  CPDF_TextObjectItem item;
+  CFX_WideString str;
   for (int32_t i = 0; i < nItems; i++) {
+    CPDF_TextObjectItem item;
     pTextObj->GetItemInfo(i, &item);
     if (item.m_CharCode == (FX_DWORD)-1) {
       continue;
@@ -1378,28 +1280,12 @@ FX_BOOL CPDF_TextPage::IsRightToLeft(const CPDF_TextObject* pTextObj,
     if ((wstrItem.IsEmpty() || wChar == 0) && item.m_CharCode) {
       wChar = (FX_WCHAR)item.m_CharCode;
     }
-    if (!wChar) {
-      continue;
-    }
-    if (pBidiChar->AppendChar(wChar)) {
-      CFX_BidiChar::Direction ret = pBidiChar->GetBidiInfo(&start, &count);
-      if (ret == CFX_BidiChar::RIGHT) {
-        nR2L++;
-      } else if (ret == CFX_BidiChar::LEFT) {
-        nL2R++;
-      }
-    }
+    if (wChar)
+      str += wChar;
   }
-  if (pBidiChar->EndChar()) {
-    CFX_BidiChar::Direction ret = pBidiChar->GetBidiInfo(&start, &count);
-    if (ret == CFX_BidiChar::RIGHT) {
-      nR2L++;
-    } else if (ret == CFX_BidiChar::LEFT) {
-      nL2R++;
-    }
-  }
-  return (nR2L > 0 && nR2L >= nL2R);
+  return CFX_BidiString(str).OverallDirection() == CFX_BidiChar::RIGHT;
 }
+
 void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
   CPDF_TextObject* pTextObj = Obj.m_pTextObj;
   if (FXSYS_fabs(pTextObj->m_Right - pTextObj->m_Left) < 0.01f) {

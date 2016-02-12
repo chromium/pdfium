@@ -7,60 +7,75 @@
 #include "core/include/fxcrt/fx_bidi.h"
 #include "core/include/fxcrt/fx_ucd.h"
 
-CFX_BidiChar::CFX_BidiChar()
-    : m_iCurStart(0),
-      m_iCurCount(0),
-      m_CurBidi(NEUTRAL),
-      m_iLastStart(0),
-      m_iLastCount(0),
-      m_LastBidi(NEUTRAL) {
-}
+#include <algorithm>
 
-CFX_BidiChar::~CFX_BidiChar() {
-}
+CFX_BidiChar::CFX_BidiChar()
+    : m_CurrentSegment({0, 0, NEUTRAL}), m_LastSegment({0, 0, NEUTRAL}) {}
 
 bool CFX_BidiChar::AppendChar(FX_WCHAR wch) {
   FX_DWORD dwProps = FX_GetUnicodeProperties(wch);
   int32_t iBidiCls = (dwProps & FX_BIDICLASSBITSMASK) >> FX_BIDICLASSBITS;
-  Direction bidi = NEUTRAL;
+  Direction direction = NEUTRAL;
   switch (iBidiCls) {
     case FX_BIDICLASS_L:
     case FX_BIDICLASS_AN:
     case FX_BIDICLASS_EN:
-      bidi = LEFT;
+      direction = LEFT;
       break;
     case FX_BIDICLASS_R:
     case FX_BIDICLASS_AL:
-      bidi = RIGHT;
+      direction = RIGHT;
       break;
   }
 
-  bool bRet = (bidi != m_CurBidi);
-  if (bRet) {
-    SaveCurrentStateToLastState();
-    m_CurBidi = bidi;
-  }
-  m_iCurCount++;
-  return bRet;
+  bool bChangeDirection = (direction != m_CurrentSegment.direction);
+  if (bChangeDirection)
+    StartNewSegment(direction);
+
+  m_CurrentSegment.count++;
+  return bChangeDirection;
 }
 
 bool CFX_BidiChar::EndChar() {
-  SaveCurrentStateToLastState();
-  return m_iLastCount > 0;
+  StartNewSegment(NEUTRAL);
+  return m_LastSegment.count > 0;
 }
 
-CFX_BidiChar::Direction CFX_BidiChar::GetBidiInfo(int32_t* iStart,
-                                                  int32_t* iCount) const {
-  if (iStart)
-    *iStart = m_iLastStart;
-  if (iCount)
-    *iCount = m_iLastCount;
-  return m_LastBidi;
+void CFX_BidiChar::StartNewSegment(CFX_BidiChar::Direction direction) {
+  m_LastSegment = m_CurrentSegment;
+  m_CurrentSegment.start += m_CurrentSegment.count;
+  m_CurrentSegment.count = 0;
+  m_CurrentSegment.direction = direction;
 }
 
-void CFX_BidiChar::SaveCurrentStateToLastState() {
-  m_LastBidi = m_CurBidi;
-  m_iLastStart = m_iCurStart;
-  m_iCurStart = m_iCurCount;
-  m_iLastCount = m_iCurCount - m_iLastStart;
+CFX_BidiString::CFX_BidiString(const CFX_WideString& str)
+    : m_Str(str),
+      m_pBidiChar(new CFX_BidiChar),
+      m_eOverallDirection(CFX_BidiChar::LEFT) {
+  for (int i = 0; i < m_Str.GetLength(); ++i) {
+    if (m_pBidiChar->AppendChar(m_Str.GetAt(i)))
+      m_Order.push_back(m_pBidiChar->GetSegmentInfo());
+  }
+  if (m_pBidiChar->EndChar())
+    m_Order.push_back(m_pBidiChar->GetSegmentInfo());
+
+  size_t nR2L = std::count_if(m_Order.begin(), m_Order.end(),
+                              [](const CFX_BidiChar::Segment& seg) {
+                                return seg.direction == CFX_BidiChar::RIGHT;
+                              });
+
+  size_t nL2R = std::count_if(m_Order.begin(), m_Order.end(),
+                              [](const CFX_BidiChar::Segment& seg) {
+                                return seg.direction == CFX_BidiChar::LEFT;
+                              });
+
+  if (nR2L > 0 && nR2L >= nL2R)
+    SetOverallDirectionRight();
+}
+
+void CFX_BidiString::SetOverallDirectionRight() {
+  if (m_eOverallDirection != CFX_BidiChar::RIGHT) {
+    std::reverse(m_Order.begin(), m_Order.end());
+    m_eOverallDirection = CFX_BidiChar::RIGHT;
+  }
 }
