@@ -1302,7 +1302,7 @@ class GpStream final : public IStream {
       return HRESULT_FROM_WIN32(ERROR_END_OF_MEDIA);
     }
     bytes_left = m_InterStream.GetLength() - m_ReadPos;
-    bytes_out = FX_MIN(cb, bytes_left);
+    bytes_out = std::min(pdfium::base::checked_cast<size_t>(cb), bytes_left);
     FXSYS_memcpy(Output, m_InterStream.GetBuffer() + m_ReadPos, bytes_out);
     m_ReadPos += (int32_t)bytes_out;
     if (pcbRead) {

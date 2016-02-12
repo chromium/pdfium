@@ -6,6 +6,7 @@
 
 #include "codec_int.h"
 
+#include <algorithm>
 #include <memory>
 
 #include "core/include/fxcodec/fx_codec.h"
@@ -565,7 +566,8 @@ void TIFF_PredictLine(uint8_t* dest_buf,
                       int Colors,
                       int Columns) {
   if (BitsPerComponent == 1) {
-    int row_bits = FX_MIN(BitsPerComponent * Colors * Columns, row_size * 8);
+    int row_bits = std::min(BitsPerComponent * Colors * Columns,
+                            pdfium::base::checked_cast<int>(row_size * 8));
     int index_pre = 0;
     int col_pre = 0;
     for (int i = 1; i < row_bits; i++) {
