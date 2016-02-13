@@ -265,7 +265,7 @@ class CPDF_GeneralState : public CFX_CountRef<CPDF_GeneralStateData> {
 };
 class CPDF_ContentMarkItem {
  public:
-  typedef enum { None, PropertiesDict, DirectDict, MCID } ParamType;
+  enum ParamType { None, PropertiesDict, DirectDict };
 
   CPDF_ContentMarkItem();
 
@@ -277,13 +277,13 @@ class CPDF_ContentMarkItem {
 
   inline ParamType GetParamType() const { return m_ParamType; }
 
-  inline void* GetParam() const { return m_pParam; }
+  inline CPDF_Dictionary* GetParam() const { return m_pParam; }
 
   inline FX_BOOL HasMCID() const;
 
   inline void SetName(const CFX_ByteString& name) { m_MarkName = name; }
 
-  inline void SetParam(ParamType type, void* param) {
+  inline void SetParam(ParamType type, CPDF_Dictionary* param) {
     m_ParamType = type;
     m_pParam = param;
   }
@@ -293,7 +293,7 @@ class CPDF_ContentMarkItem {
 
   ParamType m_ParamType;
 
-  void* m_pParam;
+  CPDF_Dictionary* m_pParam;
 };
 class CPDF_ContentMarkData {
  public:
