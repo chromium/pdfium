@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_ADAPTER_NATIVE_H
-#define _FWL_ADAPTER_NATIVE_H
+#ifndef FWL_ADAPTERNATIVE_H_
+#define FWL_ADAPTERNATIVE_H_
 
 class IFWL_WidgetMgrDelegate;
 class IFWL_AdapterWidgetMgr;
@@ -20,6 +20,5 @@ class IFWL_AdapterNative {
   virtual IFWL_AdapterThreadMgr* GetThreadMgr() = 0;
   virtual IFWL_AdapterTimerMgr* GetTimerMgr() = 0;
 };
-IFWL_AdapterNative* FWL_CreateFuelAdapterNative();
-void FWL_ReleaseFuelAdapterNative(IFWL_AdapterNative* pAdapterNative);
-#endif
+
+#endif  // FWL_ADAPTERNATIVE_H_

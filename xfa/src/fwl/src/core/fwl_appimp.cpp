@@ -39,46 +39,33 @@ FWL_ERR IFWL_App::Exit(int32_t iExitCode) {
 }
 
 CFWL_AppImp::CFWL_AppImp(IFWL_App* pIface, IFWL_AdapterNative* pAdapter)
-    : CFWL_NoteThreadImp(pIface), m_pWidgetMgr(NULL), m_pThemeProvider(NULL) {
-  if (!pAdapter) {
-    pAdapter = FWL_CreateFuelAdapterNative();
-    m_bFuelAdapter = TRUE;
-  } else {
-    m_bFuelAdapter = FALSE;
-  }
-  m_pAdapterNative = pAdapter;
-}
+    : CFWL_NoteThreadImp(pIface),
+      m_pAdapterNative(pAdapter),
+      m_pThemeProvider(nullptr) {}
+
 CFWL_AppImp::~CFWL_AppImp() {
   CFWL_ToolTipContainer::DeleteInstance();
-  if (m_bFuelAdapter) {
-    FWL_ReleaseFuelAdapterNative(m_pAdapterNative);
-    m_pAdapterNative = NULL;
-  }
-  if (m_pWidgetMgr) {
-    delete m_pWidgetMgr;
-    m_pWidgetMgr = NULL;
-  }
 }
+
 FWL_ERR CFWL_AppImp::Initialize() {
   if (!m_pWidgetMgr) {
-    m_pWidgetMgr = new CFWL_WidgetMgr(m_pAdapterNative);
+    m_pWidgetMgr.reset(new CFWL_WidgetMgr(m_pAdapterNative));
   }
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_AppImp::Finalize() {
-  delete m_pWidgetMgr;
-  m_pWidgetMgr = NULL;
+  m_pWidgetMgr.reset();
   return FWL_ERR_Succeeded;
 }
-IFWL_AdapterNative* CFWL_AppImp::GetAdapterNative() {
+IFWL_AdapterNative* CFWL_AppImp::GetAdapterNative() const {
   return m_pAdapterNative;
 }
 IFWL_AdapterWidgetMgr* FWL_GetAdapterWidgetMgr() {
   return static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr())
       ->GetAdapterWidgetMgr();
 }
-IFWL_WidgetMgr* CFWL_AppImp::GetWidgetMgr() {
-  return m_pWidgetMgr;
+IFWL_WidgetMgr* CFWL_AppImp::GetWidgetMgr() const {
+  return m_pWidgetMgr.get();
 }
 FWL_ERR CFWL_AppImp::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
   m_pThemeProvider = pThemeProvider;
@@ -89,7 +76,7 @@ FWL_ERR CFWL_AppImp::Exit(int32_t iExitCode) {
     ;
   return m_pWidgetMgr->GetAdapterWidgetMgr()->Exit(0);
 }
-IFWL_ThemeProvider* CFWL_AppImp::GetThemeProvider() {
+IFWL_ThemeProvider* CFWL_AppImp::GetThemeProvider() const {
   return m_pThemeProvider;
 }
 IFWL_AdapterNative* FWL_GetAdapterNative() {

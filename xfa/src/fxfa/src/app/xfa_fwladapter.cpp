@@ -10,10 +10,7 @@
 #include "xfa_ffwidget.h"
 #include "xfa_fffield.h"
 #include "xfa_ffdoc.h"
-IFWL_AdapterNative* FWL_CreateFuelAdapterNative() {
-  return NULL;
-}
-void FWL_ReleaseFuelAdapterNative(IFWL_AdapterNative* native) {}
+
 void FWL_PostMessageToMainRoop(CFWL_Message* pMessage) {}
 FX_BOOL FWL_ShowCaret(IFWL_Widget* pWidget,
                       FX_BOOL bVisible,

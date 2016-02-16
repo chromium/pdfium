@@ -7,6 +7,8 @@
 #ifndef FWL_APPIMP_H_
 #define FWL_APPIMP_H_
 
+#include <memory>
+
 #include "xfa/src/fwl/src/core/include/fwl_threadimp.h"
 
 class CFWL_WidgetMgr;
@@ -21,17 +23,16 @@ class CFWL_AppImp : public CFWL_NoteThreadImp {
   virtual ~CFWL_AppImp();
   virtual FWL_ERR Initialize();
   virtual FWL_ERR Finalize();
-  virtual IFWL_AdapterNative* GetAdapterNative();
-  virtual IFWL_WidgetMgr* GetWidgetMgr();
-  virtual IFWL_ThemeProvider* GetThemeProvider();
+  virtual IFWL_AdapterNative* GetAdapterNative() const;
+  virtual IFWL_WidgetMgr* GetWidgetMgr() const;
+  virtual IFWL_ThemeProvider* GetThemeProvider() const;
   virtual FWL_ERR SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
   virtual FWL_ERR Exit(int32_t iExitCode = 0);
 
  protected:
-  CFWL_WidgetMgr* m_pWidgetMgr;
-  IFWL_AdapterNative* m_pAdapterNative;
+  IFWL_AdapterNative* const m_pAdapterNative;
+  std::unique_ptr<CFWL_WidgetMgr> m_pWidgetMgr;
   IFWL_ThemeProvider* m_pThemeProvider;
-  FX_BOOL m_bFuelAdapter;
 };
 
 #endif  // FWL_APPIMP_H_
