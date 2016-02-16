@@ -35,7 +35,8 @@
     ],
   },
   'conditions': [
-    ['pdf_enable_xfa==1 and OS!="win"', {
+    # FIXME(ochang): Make this work on Mac/Windows.
+    ['pdf_enable_xfa==1 and OS=="linux"', {
       'targets': [
         {
           'target_name': 'pdf_fm2js_fuzzer',
@@ -61,5 +62,12 @@
         },
       ],
     }],
-  ]
+  ],
+  # Empty target so that nonxfa builds work.
+  'targets': [
+    {
+      'target_name': 'empty_target',
+      'type': 'none',
+    }
+  ],
 }
