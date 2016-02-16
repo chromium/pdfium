@@ -18,6 +18,12 @@
 
 namespace pdfium {
 
+#define STR_IN_TEST_CASE(input_literal, ...)                         \
+  {                                                                  \
+    (const unsigned char*) input_literal, sizeof(input_literal) - 1, \
+        __VA_ARGS__                                                  \
+  }
+
 #define STR_IN_OUT_CASE(input_literal, expected_literal, ...)                 \
   {                                                                           \
     (const unsigned char*) input_literal, sizeof(input_literal) - 1,          \

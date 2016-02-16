@@ -212,28 +212,16 @@ class CPDF_Document : public CFX_PrivateData, public CPDF_IndirectObjectHolder {
 class CPDF_SimpleParser {
  public:
   CPDF_SimpleParser(const uint8_t* pData, FX_DWORD dwSize);
-
   CPDF_SimpleParser(const CFX_ByteStringC& str);
 
   CFX_ByteStringC GetWord();
 
-  FX_BOOL SearchToken(const CFX_ByteStringC& token);
+  // Find the token and its |nParams| parameters from the start of data,
+  // and move the current position to the start of those parameters.
+  bool FindTagParamFromStart(const CFX_ByteStringC& token, int nParams);
 
-  FX_BOOL SkipWord(const CFX_ByteStringC& token);
-
-  FX_BOOL FindTagPair(const CFX_ByteStringC& start_token,
-                      const CFX_ByteStringC& end_token,
-                      FX_DWORD& start_pos,
-                      FX_DWORD& end_pos);
-
-  FX_BOOL FindTagParam(const CFX_ByteStringC& token, int nParams);
-
-  FX_DWORD GetPos() { return m_dwCurPos; }
-
-  void SetPos(FX_DWORD pos) {
-    ASSERT(pos <= m_dwSize);
-    m_dwCurPos = pos;
-  }
+  // For testing only.
+  FX_DWORD GetCurPos() const { return m_dwCurPos; }
 
  private:
   void ParseWord(const uint8_t*& pStart, FX_DWORD& dwSize);

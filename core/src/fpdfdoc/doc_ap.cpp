@@ -228,19 +228,16 @@ static CFX_ByteString GetFontSetString(IPVT_FontMap* pFontMap,
 }
 static CPVT_Color ParseColor(const CFX_ByteString& str) {
   CPDF_SimpleParser syntax(str);
-  syntax.SetPos(0);
-  if (syntax.FindTagParam("g", 1)) {
+  if (syntax.FindTagParamFromStart("g", 1)) {
     return CPVT_Color(CPVT_Color::kGray, FX_atof(syntax.GetWord()));
   }
-  syntax.SetPos(0);
-  if (syntax.FindTagParam("rg", 3)) {
+  if (syntax.FindTagParamFromStart("rg", 3)) {
     FX_FLOAT f1 = FX_atof(syntax.GetWord());
     FX_FLOAT f2 = FX_atof(syntax.GetWord());
     FX_FLOAT f3 = FX_atof(syntax.GetWord());
     return CPVT_Color(CPVT_Color::kRGB, f1, f2, f3);
   }
-  syntax.SetPos(0);
-  if (syntax.FindTagParam("k", 4)) {
+  if (syntax.FindTagParamFromStart("k", 4)) {
     FX_FLOAT f1 = FX_atof(syntax.GetWord());
     FX_FLOAT f2 = FX_atof(syntax.GetWord());
     FX_FLOAT f3 = FX_atof(syntax.GetWord());
@@ -288,7 +285,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
     return FALSE;
   }
   CPDF_SimpleParser syntax(DA);
-  syntax.FindTagParam("Tf", 2);
+  syntax.FindTagParamFromStart("Tf", 2);
   CFX_ByteString sFontName = syntax.GetWord();
   sFontName = PDF_NameDecode(sFontName);
   if (sFontName.IsEmpty()) {

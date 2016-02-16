@@ -233,7 +233,7 @@ CPDF_Font* CBA_FontMap::GetAnnotDefaultFont(CFX_ByteString& sAlias) {
 
   if (!sDA.IsEmpty()) {
     CPDF_SimpleParser syntax(sDA);
-    syntax.FindTagParam("Tf", 2);
+    syntax.FindTagParamFromStart("Tf", 2);
     CFX_ByteString sFontName = syntax.GetWord();
     sAlias = PDF_NameDecode(sFontName).Mid(1);
 
