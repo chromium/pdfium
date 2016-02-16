@@ -136,10 +136,12 @@ class CPDF_ProgressiveRenderer {
   Status GetStatus() const { return m_Status; }
   void Start(IFX_Pause* pPause);
   void Continue(IFX_Pause* pPause);
-  int EstimateProgress();
 
  private:
   void RenderStep();
+
+  // Maximum page objects to render before checking for pause.
+  static const int kStepLimit = 100;
 
   Status m_Status;
   CPDF_RenderContext* const m_pContext;
@@ -148,9 +150,8 @@ class CPDF_ProgressiveRenderer {
   std::unique_ptr<CPDF_RenderStatus> m_pRenderStatus;
   CFX_FloatRect m_ClipRect;
   FX_DWORD m_LayerIndex;
-  FX_DWORD m_ObjectIndex;
-  FX_POSITION m_ObjectPos;
-  FX_POSITION m_PrevLastPos;
+  CPDF_RenderContext::Layer* m_pCurrentLayer;
+  FX_POSITION m_LastObjectRendered;
 };
 
 class CPDF_TextRenderer {
@@ -260,13 +261,6 @@ class CPDF_PageRenderCache {
   FX_DWORD m_nTimeCount;
   FX_DWORD m_nCacheSize;
   FX_BOOL m_bCurFindCache;
-};
-class CPDF_RenderConfig {
- public:
-  CPDF_RenderConfig();
-  ~CPDF_RenderConfig();
-  int m_HalftoneLimit;
-  int m_RenderStepLimit;
 };
 
 FX_BOOL IsAvailableMatrix(const CFX_Matrix& matrix);

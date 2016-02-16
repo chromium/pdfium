@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "render_int.h"
+#include "core/src/fpdfapi/fpdf_render/render_int.h"
 
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_render.h"
@@ -87,10 +87,7 @@ class CPDF_RenderModule : public IPDF_RenderModule {
 
   void DestroyPageCache(CPDF_PageRenderCache* pCache) override;
 
-  CPDF_RenderConfig* GetConfig() override { return &m_RenderConfig; }
-
   CPDF_DocRenderData m_RenderData;
-  CPDF_RenderConfig m_RenderConfig;
 };
 
 CPDF_DocRenderData* CPDF_RenderModule::CreateDocData(CPDF_Document* pDoc) {
@@ -1038,10 +1035,8 @@ CPDF_ProgressiveRenderer::CPDF_ProgressiveRenderer(
       m_pDevice(pDevice),
       m_pOptions(pOptions),
       m_LayerIndex(0),
-      m_ObjectIndex(0),
-      m_ObjectPos(nullptr),
-      m_PrevLastPos(nullptr) {
-}
+      m_pCurrentLayer(nullptr),
+      m_LastObjectRendered(nullptr) {}
 
 CPDF_ProgressiveRenderer::~CPDF_ProgressiveRenderer() {
   if (m_pRenderStatus)
@@ -1058,66 +1053,41 @@ void CPDF_ProgressiveRenderer::Start(IFX_Pause* pPause) {
 }
 
 void CPDF_ProgressiveRenderer::Continue(IFX_Pause* pPause) {
-  if (m_Status != ToBeContinued) {
-    return;
-  }
-  FX_DWORD nLayers = m_pContext->CountLayers();
-  for (; m_LayerIndex < nLayers; m_LayerIndex++) {
-    CPDF_RenderContext::Layer* pLayer = m_pContext->GetLayer(m_LayerIndex);
-    FX_POSITION LastPos = pLayer->m_pObjectList->GetLastObjectPosition();
-    if (!m_ObjectPos) {
-      if (LastPos == m_PrevLastPos) {
-        if (!pLayer->m_pObjectList->IsParsed()) {
-          pLayer->m_pObjectList->ContinueParse(pPause);
-          if (!pLayer->m_pObjectList->IsParsed()) {
-            return;
-          }
-          LastPos = pLayer->m_pObjectList->GetLastObjectPosition();
-        }
+  while (m_Status == ToBeContinued) {
+    if (!m_pCurrentLayer) {
+      if (m_LayerIndex >= m_pContext->CountLayers()) {
+        m_Status = Done;
+        return;
       }
-      if (LastPos == m_PrevLastPos) {
-        if (m_pRenderStatus) {
-          m_pRenderStatus.reset();
-          m_pDevice->RestoreState();
-          m_ObjectPos = NULL;
-          m_PrevLastPos = NULL;
-        }
-        continue;
-      }
-      if (m_PrevLastPos) {
-        m_ObjectPos = m_PrevLastPos;
-        pLayer->m_pObjectList->GetNextObject(m_ObjectPos);
-      } else {
-        m_ObjectPos = pLayer->m_pObjectList->GetFirstObjectPosition();
-      }
-      m_PrevLastPos = LastPos;
-    }
-    if (!m_pRenderStatus) {
-      m_ObjectPos = pLayer->m_pObjectList->GetFirstObjectPosition();
-      m_ObjectIndex = 0;
+      m_pCurrentLayer = m_pContext->GetLayer(m_LayerIndex);
+      m_LastObjectRendered = nullptr;
       m_pRenderStatus.reset(new CPDF_RenderStatus());
       m_pRenderStatus->Initialize(
           m_pContext, m_pDevice, NULL, NULL, NULL, NULL, m_pOptions,
-          pLayer->m_pObjectList->m_Transparency, FALSE, NULL);
+          m_pCurrentLayer->m_pObjectList->m_Transparency, FALSE, NULL);
       m_pDevice->SaveState();
       m_ClipRect = m_pDevice->GetClipBox();
       CFX_Matrix device2object;
-      device2object.SetReverse(pLayer->m_Matrix);
+      device2object.SetReverse(m_pCurrentLayer->m_Matrix);
       device2object.TransformRect(m_ClipRect);
     }
-    int objs_to_go = CPDF_ModuleMgr::Get()
-                         ->GetRenderModule()
-                         ->GetConfig()
-                         ->m_RenderStepLimit;
-    while (m_ObjectPos) {
+    FX_POSITION pos;
+    if (m_LastObjectRendered) {
+      pos = m_LastObjectRendered;
+      m_pCurrentLayer->m_pObjectList->GetNextObject(pos);
+    } else {
+      pos = m_pCurrentLayer->m_pObjectList->GetFirstObjectPosition();
+    }
+    int nObjsToGo = kStepLimit;
+    while (pos) {
       CPDF_PageObject* pCurObj =
-          pLayer->m_pObjectList->GetObjectAt(m_ObjectPos);
+          m_pCurrentLayer->m_pObjectList->GetObjectAt(pos);
       if (pCurObj && pCurObj->m_Left <= m_ClipRect.right &&
           pCurObj->m_Right >= m_ClipRect.left &&
           pCurObj->m_Bottom <= m_ClipRect.top &&
           pCurObj->m_Top >= m_ClipRect.bottom) {
-        if (m_pRenderStatus->ContinueSingleObject(pCurObj, &pLayer->m_Matrix,
-                                                  pPause)) {
+        if (m_pRenderStatus->ContinueSingleObject(
+                pCurObj, &m_pCurrentLayer->m_Matrix, pPause)) {
           return;
         }
         if (pCurObj->m_Type == CPDF_PageObject::IMAGE &&
@@ -1127,59 +1097,36 @@ void CPDF_ProgressiveRenderer::Continue(IFX_Pause* pPause) {
         }
         if (pCurObj->m_Type == CPDF_PageObject::FORM ||
             pCurObj->m_Type == CPDF_PageObject::SHADING) {
-          objs_to_go = 0;
+          nObjsToGo = 0;
         } else {
-          objs_to_go--;
+          --nObjsToGo;
         }
       }
-      m_ObjectIndex++;
-      pLayer->m_pObjectList->GetNextObject(m_ObjectPos);
-      if (objs_to_go == 0) {
-        if (pPause && pPause->NeedToPauseNow()) {
+      m_LastObjectRendered = pos;
+      if (nObjsToGo == 0) {
+        if (pPause && pPause->NeedToPauseNow())
           return;
-        }
-        objs_to_go = CPDF_ModuleMgr::Get()
-                         ->GetRenderModule()
-                         ->GetConfig()
-                         ->m_RenderStepLimit;
+        nObjsToGo = kStepLimit;
       }
+      m_pCurrentLayer->m_pObjectList->GetNextObject(pos);
     }
-    if (!pLayer->m_pObjectList->IsParsed()) {
-      return;
-    }
-    m_pRenderStatus.reset();
-    m_pDevice->RestoreState();
-    m_ObjectPos = NULL;
-    m_PrevLastPos = NULL;
-    if (pPause && pPause->NeedToPauseNow()) {
+    if (m_pCurrentLayer->m_pObjectList->IsParsed()) {
+      m_pRenderStatus.reset();
+      m_pDevice->RestoreState();
+      m_pCurrentLayer = nullptr;
+      m_LastObjectRendered = nullptr;
       m_LayerIndex++;
-      return;
+      if (pPause && pPause->NeedToPauseNow()) {
+        return;
+      }
+    } else {
+      m_pCurrentLayer->m_pObjectList->ContinueParse(pPause);
+      if (!m_pCurrentLayer->m_pObjectList->IsParsed())
+        return;
     }
   }
-  m_Status = Done;
 }
-int CPDF_ProgressiveRenderer::EstimateProgress() {
-  if (!m_pContext) {
-    return 0;
-  }
-  FX_DWORD nLayers = m_pContext->CountLayers();
-  int nTotal = 0;
-  int nRendered = 0;
-  for (FX_DWORD layer = 0; layer < nLayers; layer++) {
-    CPDF_RenderContext::Layer* pLayer = m_pContext->GetLayer(layer);
-    int nObjs = pLayer->m_pObjectList->CountObjects();
-    if (layer == m_LayerIndex) {
-      nRendered += m_ObjectIndex;
-    } else if (layer < m_LayerIndex) {
-      nRendered += nObjs;
-    }
-    nTotal += nObjs;
-  }
-  if (nTotal == 0) {
-    return 0;
-  }
-  return 100 * nRendered / nTotal;
-}
+
 CPDF_TransferFunc* CPDF_DocRenderData::GetTransferFunc(CPDF_Object* pObj) {
   if (!pObj)
     return nullptr;
@@ -1252,11 +1199,6 @@ void CPDF_DocRenderData::ReleaseTransferFunc(CPDF_Object* pObj) {
   if (it != m_TransferFuncMap.end())
     it->second->RemoveRef();
 }
-CPDF_RenderConfig::CPDF_RenderConfig() {
-  m_HalftoneLimit = 0;
-  m_RenderStepLimit = 100;
-}
-CPDF_RenderConfig::~CPDF_RenderConfig() {}
 
 CPDF_DeviceBuffer::CPDF_DeviceBuffer()
     : m_pDevice(nullptr), m_pContext(nullptr), m_pObject(nullptr) {}

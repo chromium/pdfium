@@ -26,7 +26,6 @@ class CPDF_Image;
 class CPDF_Page;
 class CPDF_PageObjectList;
 class CPDF_PageRenderCache;
-class CPDF_RenderConfig;
 class CPDF_RenderOptions;
 class CPDF_Stream;
 class ICodec_FaxModule;
@@ -107,7 +106,6 @@ class IPDF_RenderModule {
   virtual CPDF_DocRenderData* GetRenderData() = 0;
   virtual CPDF_PageRenderCache* CreatePageCache(CPDF_Page* pPage) = 0;
   virtual void DestroyPageCache(CPDF_PageRenderCache*) = 0;
-  virtual CPDF_RenderConfig* GetConfig() = 0;
 };
 
 #endif  // CORE_INCLUDE_FPDFAPI_FPDF_MODULE_H_
