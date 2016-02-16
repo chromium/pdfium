@@ -19,11 +19,11 @@ class FPDFParserDecodeEmbeddertest : public EmbedderTest {};
 
 TEST_F(FPDFParserDecodeEmbeddertest, FlateEncode) {
   pdfium::StrFuncTestData flate_encode_cases[] = {
-      STR_TEST_CASE("", "\x78\x9c\x03\x00\x00\x00\x00\x01"),
-      STR_TEST_CASE(" ", "\x78\x9c\x53\x00\x00\x00\x21\x00\x21"),
-      STR_TEST_CASE("123", "\x78\x9c\x33\x34\x32\x06\x00\01\x2d\x00\x97"),
-      STR_TEST_CASE("\x00\xff", "\x78\x9c\x63\xf8\x0f\x00\x01\x01\x01\x00"),
-      STR_TEST_CASE(
+      STR_IN_OUT_CASE("", "\x78\x9c\x03\x00\x00\x00\x00\x01"),
+      STR_IN_OUT_CASE(" ", "\x78\x9c\x53\x00\x00\x00\x21\x00\x21"),
+      STR_IN_OUT_CASE("123", "\x78\x9c\x33\x34\x32\x06\x00\01\x2d\x00\x97"),
+      STR_IN_OUT_CASE("\x00\xff", "\x78\x9c\x63\xf8\x0f\x00\x01\x01\x01\x00"),
+      STR_IN_OUT_CASE(
           "1 0 0 -1 29 763 cm\n0 0 555 735 re\nW n\nq\n0 0 555 734.394 re\n"
           "W n\nq\n0.8009 0 0 0.8009 0 0 cm\n1 1 1 RG 1 1 1 rg\n/G0 gs\n"
           "0 0 693 917 re\nf\nQ\nQ\n",
@@ -50,15 +50,14 @@ TEST_F(FPDFParserDecodeEmbeddertest, FlateEncode) {
 
 TEST_F(FPDFParserDecodeEmbeddertest, FlateDecode) {
   pdfium::DecodeTestData flate_decode_cases[] = {
-      DECODE_TEST_CASE("", "", 0),
-      DECODE_TEST_CASE("preposterous nonsense", "", 2),
-      DECODE_TEST_CASE("\x78\x9c\x03\x00\x00\x00\x00\x01", "", 8),
-      DECODE_TEST_CASE("\x78\x9c\x53\x00\x00\x00\x21\x00\x21", " ", 9),
-      DECODE_TEST_CASE("\x78\x9c\x33\x34\x32\x06\x00\01\x2d\x00\x97", "123",
-                       11),
-      DECODE_TEST_CASE("\x78\x9c\x63\xf8\x0f\x00\x01\x01\x01\x00", "\x00\xff",
-                       10),
-      DECODE_TEST_CASE(
+      STR_IN_OUT_CASE("", "", 0),
+      STR_IN_OUT_CASE("preposterous nonsense", "", 2),
+      STR_IN_OUT_CASE("\x78\x9c\x03\x00\x00\x00\x00\x01", "", 8),
+      STR_IN_OUT_CASE("\x78\x9c\x53\x00\x00\x00\x21\x00\x21", " ", 9),
+      STR_IN_OUT_CASE("\x78\x9c\x33\x34\x32\x06\x00\01\x2d\x00\x97", "123", 11),
+      STR_IN_OUT_CASE("\x78\x9c\x63\xf8\x0f\x00\x01\x01\x01\x00", "\x00\xff",
+                      10),
+      STR_IN_OUT_CASE(
           "\x78\x9c\x33\x54\x30\x00\x42\x5d\x43\x05\x23\x4b\x05\x73\x33\x63"
           "\x85\xe4\x5c\x2e\x90\x80\xa9\xa9\xa9\x82\xb9\xb1\xa9\x42\x51\x2a"
           "\x57\xb8\x42\x1e\x57\x21\x92\xa0\x89\x9e\xb1\xa5\x09\x92\x84\x9e"

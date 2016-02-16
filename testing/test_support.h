@@ -18,17 +18,11 @@
 
 namespace pdfium {
 
-#define STR_TEST_CASE(input_literal, expected_literal)                       \
-  {                                                                          \
-    (const unsigned char*) input_literal, sizeof(input_literal) - 1,         \
-        (const unsigned char*)expected_literal, sizeof(expected_literal) - 1 \
-  }
-
-#define DECODE_TEST_CASE(input_literal, expected_literal, processed_size)     \
+#define STR_IN_OUT_CASE(input_literal, expected_literal, ...)                 \
   {                                                                           \
     (const unsigned char*) input_literal, sizeof(input_literal) - 1,          \
         (const unsigned char*)expected_literal, sizeof(expected_literal) - 1, \
-        processed_size                                                        \
+        __VA_ARGS__                                                           \
   }
 
 struct StrFuncTestData {

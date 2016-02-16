@@ -9,21 +9,21 @@
 TEST(fpdf_parser_decode, A85Decode) {
   pdfium::DecodeTestData test_data[] = {
       // Empty src string.
-      DECODE_TEST_CASE("", "", 0),
+      STR_IN_OUT_CASE("", "", 0),
       // Empty content in src string.
-      DECODE_TEST_CASE("~>", "", 0),
+      STR_IN_OUT_CASE("~>", "", 0),
       // Regular conversion.
-      DECODE_TEST_CASE("FCfN8~>", "test", 7),
+      STR_IN_OUT_CASE("FCfN8~>", "test", 7),
       // End at the ending mark.
-      DECODE_TEST_CASE("FCfN8~>FCfN8", "test", 7),
+      STR_IN_OUT_CASE("FCfN8~>FCfN8", "test", 7),
       // Skip whitespaces.
-      DECODE_TEST_CASE("\t F C\r\n \tf N 8 ~>", "test", 17),
+      STR_IN_OUT_CASE("\t F C\r\n \tf N 8 ~>", "test", 17),
       // No ending mark.
-      DECODE_TEST_CASE("@3B0)DJj_BF*)>@Gp#-s", "a funny story :)", 20),
+      STR_IN_OUT_CASE("@3B0)DJj_BF*)>@Gp#-s", "a funny story :)", 20),
       // Non-multiple length.
-      DECODE_TEST_CASE("12A", "2k", 3),
+      STR_IN_OUT_CASE("12A", "2k", 3),
       // Stop at unknown characters.
-      DECODE_TEST_CASE("FCfN8FCfN8vw", "testtest", 11),
+      STR_IN_OUT_CASE("FCfN8FCfN8vw", "testtest", 11),
   };
   for (size_t i = 0; i < FX_ArraySize(test_data); ++i) {
     pdfium::DecodeTestData* ptr = &test_data[i];
@@ -44,21 +44,21 @@ TEST(fpdf_parser_decode, A85Decode) {
 TEST(fpdf_parser_decode, HexDecode) {
   pdfium::DecodeTestData test_data[] = {
       // Empty src string.
-      DECODE_TEST_CASE("", "", 0),
+      STR_IN_OUT_CASE("", "", 0),
       // Empty content in src string.
-      DECODE_TEST_CASE(">", "", 1),
+      STR_IN_OUT_CASE(">", "", 1),
       // Only whitespaces in src string.
-      DECODE_TEST_CASE("\t   \r\n>", "", 7),
+      STR_IN_OUT_CASE("\t   \r\n>", "", 7),
       // Regular conversion.
-      DECODE_TEST_CASE("12Ac>zzz", "\x12\xac", 5),
+      STR_IN_OUT_CASE("12Ac>zzz", "\x12\xac", 5),
       // Skip whitespaces.
-      DECODE_TEST_CASE("12 Ac\t02\r\nBF>zzz>", "\x12\xac\x02\xbf", 13),
+      STR_IN_OUT_CASE("12 Ac\t02\r\nBF>zzz>", "\x12\xac\x02\xbf", 13),
       // Non-multiple length.
-      DECODE_TEST_CASE("12A>zzz", "\x12\xa0", 4),
+      STR_IN_OUT_CASE("12A>zzz", "\x12\xa0", 4),
       // Skips unknown characters.
-      DECODE_TEST_CASE("12tk  \tAc>zzz", "\x12\xac", 10),
+      STR_IN_OUT_CASE("12tk  \tAc>zzz", "\x12\xac", 10),
       // No ending mark.
-      DECODE_TEST_CASE("12AcED3c3456", "\x12\xac\xed\x3c\x34\x56", 12),
+      STR_IN_OUT_CASE("12AcED3c3456", "\x12\xac\xed\x3c\x34\x56", 12),
   };
   for (size_t i = 0; i < FX_ArraySize(test_data); ++i) {
     pdfium::DecodeTestData* ptr = &test_data[i];
