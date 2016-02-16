@@ -12,41 +12,41 @@
 TEST(SimpleParserTest, GetWord) {
   pdfium::StrFuncTestData test_data[] = {
       // Empty src string.
-      STR_TEST_CASE("", ""),
+      STR_IN_OUT_CASE("", ""),
       // Content with whitespaces only.
-      STR_TEST_CASE(" \t \0 \n", ""),
+      STR_IN_OUT_CASE(" \t \0 \n", ""),
       // Content with comments only.
-      STR_TEST_CASE("%this is a test case\r\n%2nd line", ""),
+      STR_IN_OUT_CASE("%this is a test case\r\n%2nd line", ""),
       // Mixed whitespaces and comments.
-      STR_TEST_CASE(" \t \0%try()%haha\n %another line \aa", ""),
+      STR_IN_OUT_CASE(" \t \0%try()%haha\n %another line \aa", ""),
       // Name.
-      STR_TEST_CASE(" /Tester ", "/Tester"),
+      STR_IN_OUT_CASE(" /Tester ", "/Tester"),
       // String.
-      STR_TEST_CASE("\t(nice day)!\n ", "(nice day)"),
+      STR_IN_OUT_CASE("\t(nice day)!\n ", "(nice day)"),
       // String with nested braces.
-      STR_TEST_CASE("\t(It is a (long) day)!\n ", "(It is a (long) day)"),
+      STR_IN_OUT_CASE("\t(It is a (long) day)!\n ", "(It is a (long) day)"),
       // String with escaped chars.
-      STR_TEST_CASE("\t(It is a \\(long\\) day!)hi\n ",
-                    "(It is a \\(long\\) day!)"),
+      STR_IN_OUT_CASE("\t(It is a \\(long\\) day!)hi\n ",
+                      "(It is a \\(long\\) day!)"),
       // Hex string.
-      STR_TEST_CASE(" \n<4545acdfedertt>abc ", "<4545acdfedertt>"),
-      STR_TEST_CASE(" \n<4545a<ed>ertt>abc ", "<4545a<ed>"),
+      STR_IN_OUT_CASE(" \n<4545acdfedertt>abc ", "<4545acdfedertt>"),
+      STR_IN_OUT_CASE(" \n<4545a<ed>ertt>abc ", "<4545a<ed>"),
       // Dictionary.
-      STR_TEST_CASE("<</oc 234 /color 2 3 R>>", "<<"),
-      STR_TEST_CASE("\t\t<< /abc>>", "<<"),
+      STR_IN_OUT_CASE("<</oc 234 /color 2 3 R>>", "<<"),
+      STR_IN_OUT_CASE("\t\t<< /abc>>", "<<"),
       // Handling ending delimiters.
-      STR_TEST_CASE("> little bear", ">"),
-      STR_TEST_CASE(") another bear", ")"),
-      STR_TEST_CASE(">> end ", ">>"),
+      STR_IN_OUT_CASE("> little bear", ">"),
+      STR_IN_OUT_CASE(") another bear", ")"),
+      STR_IN_OUT_CASE(">> end ", ">>"),
       // No ending delimiters.
-      STR_TEST_CASE("(sdfgfgbcv", "(sdfgfgbcv"),
+      STR_IN_OUT_CASE("(sdfgfgbcv", "(sdfgfgbcv"),
       // Regular cases.
-      STR_TEST_CASE("apple pear", "apple"),
-      STR_TEST_CASE(" pi=3.1415 ", "pi=3.1415"),
-      STR_TEST_CASE(" p t x c ", "p"),
-      STR_TEST_CASE(" pt\0xc ", "pt"),
-      STR_TEST_CASE(" $^&&*\t\0sdff ", "$^&&*"),
-      STR_TEST_CASE("\n\r+3.5656 -11.0", "+3.5656"),
+      STR_IN_OUT_CASE("apple pear", "apple"),
+      STR_IN_OUT_CASE(" pi=3.1415 ", "pi=3.1415"),
+      STR_IN_OUT_CASE(" p t x c ", "p"),
+      STR_IN_OUT_CASE(" pt\0xc ", "pt"),
+      STR_IN_OUT_CASE(" $^&&*\t\0sdff ", "$^&&*"),
+      STR_IN_OUT_CASE("\n\r+3.5656 -11.0", "+3.5656"),
   };
   for (size_t i = 0; i < FX_ArraySize(test_data); ++i) {
     const pdfium::StrFuncTestData& data = test_data[i];
