@@ -10,6 +10,7 @@
       'dependencies': [
         '../pdfium.gyp:*',
         '../samples/samples.gyp:*',
+        '../testing/libfuzzer/fuzzers.gyp:*',
       ],
     }
   ]
