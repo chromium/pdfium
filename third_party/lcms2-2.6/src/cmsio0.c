@@ -719,7 +719,8 @@ cmsBool _cmsReadHeader(_cmsICCPROFILE* Icc)
         for (j=0; j < Icc ->TagCount; j++) {
 
             if ((Icc ->TagOffsets[j] == Tag.offset) &&
-                (Icc ->TagSizes[j]   == Tag.size)) {
+                (Icc ->TagSizes[j]   == Tag.size) &&
+                (Icc ->TagNames[j]   == Tag.sig)) {
 
                 Icc ->TagLinked[Icc ->TagCount] = Icc ->TagNames[j];
             }
