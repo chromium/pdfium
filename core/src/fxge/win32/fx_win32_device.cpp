@@ -15,8 +15,9 @@
 #include "core/src/fxge/agg/include/fx_agg_driver.h"
 #include "core/src/fxge/dib/dib_int.h"
 #include "core/src/fxge/ge/fx_text_int.h"
-#include "dwrite_int.h"
-#include "win32_int.h"
+#include "core/src/fxge/win32/dwrite_int.h"
+#include "core/src/fxge/win32/win32_int.h"
+#include "third_party/base/stl_util.h"
 
 class CFX_Win32FallbackFontInfo final : public CFX_FolderFontInfo {
  public:
@@ -195,7 +196,7 @@ CFX_ByteString CFX_Win32FontInfo::FindFont(const CFX_ByteString& name) {
   if (!m_pMapper) {
     return name;
   }
-  int nFonts = m_pMapper->m_InstalledTTFonts.GetSize();
+  int nFonts = pdfium::CollectionSize<int>(m_pMapper->m_InstalledTTFonts);
   for (int i = 0; i < nFonts; i++) {
     CFX_ByteString thisname = m_pMapper->m_InstalledTTFonts[i];
     if (thisname[0] == ' ') {
