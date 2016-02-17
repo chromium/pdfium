@@ -7,6 +7,8 @@
 #ifndef FPDFXFA_DOC_H_
 #define FPDFXFA_DOC_H_
 
+#include <vector>
+
 #include "public/fpdfview.h"
 #include "xfa/include/fxfa/fxfa.h"
 
@@ -161,7 +163,7 @@ class CPDFXFA_Document : public IXFA_DocProvider {
   }
   virtual FX_BOOL GetSuggestWords(IXFA_Doc* hDoc,
                                   const CFX_ByteStringC& sWord,
-                                  CFX_ByteStringArray& sSuggest) {
+                                  std::vector<CFX_ByteString>& sSuggest) {
     return FALSE;
   }
 

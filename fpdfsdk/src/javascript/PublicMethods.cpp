@@ -1201,19 +1201,19 @@ FX_BOOL CJS_PublicMethods::AFDate_FormatEx(IJS_Context* cc,
 }
 
 double CJS_PublicMethods::MakeInterDate(CFX_WideString strValue) {
-  CFX_WideStringArray wsArray;
+  std::vector<CFX_WideString> wsArray;
   CFX_WideString sTemp = L"";
   for (int i = 0; i < strValue.GetLength(); ++i) {
     FX_WCHAR c = strValue.GetAt(i);
     if (c == L' ' || c == L':') {
-      wsArray.Add(sTemp);
+      wsArray.push_back(sTemp);
       sTemp = L"";
       continue;
     }
     sTemp += c;
   }
-  wsArray.Add(sTemp);
-  if (wsArray.GetSize() != 8)
+  wsArray.push_back(sTemp);
+  if (wsArray.size() != 8)
     return 0;
 
   int nMonth = 1;

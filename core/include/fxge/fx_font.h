@@ -9,9 +9,10 @@
 
 #include <map>
 #include <memory>
+#include <vector>
 
 #include "core/include/fxcrt/fx_system.h"
-#include "fx_dib.h"
+#include "core/include/fxge/fx_dib.h"
 
 typedef struct FT_FaceRec_* FXFT_Face;
 typedef void* FXFT_Library;
@@ -306,7 +307,7 @@ class CFX_FontMapper {
   IFX_SystemFontInfo* GetSystemFontInfo() { return m_pFontInfo; }
   void AddInstalledFont(const CFX_ByteString& name, int charset);
   void LoadInstalledFonts();
-  CFX_ByteStringArray m_InstalledTTFonts;
+  std::vector<CFX_ByteString> m_InstalledTTFonts;
   void SetFontEnumerator(IFX_FontEnumerator* pFontEnumerator) {
     m_pFontEnumerator = pFontEnumerator;
   }
@@ -325,7 +326,7 @@ class CFX_FontMapper {
                                    int italic_angle);
 #endif  // PDF_ENABLE_XFA
   FX_BOOL IsBuiltinFace(const FXFT_Face face) const;
-  int GetFaceSize() const { return m_FaceArray.GetSize(); }
+  int GetFaceSize() const;
   CFX_ByteString GetFaceName(int index) const { return m_FaceArray[index]; }
 
  private:
@@ -344,7 +345,7 @@ class CFX_FontMapper {
   FXFT_Face m_MMFaces[MM_FACE_COUNT];
   CFX_ByteString m_LastFamily;
   CFX_DWordArray m_CharsetArray;
-  CFX_ByteStringArray m_FaceArray;
+  std::vector<CFX_ByteString> m_FaceArray;
   IFX_SystemFontInfo* m_pFontInfo;
   FXFT_Face m_FoxitFaces[FOXIT_FACE_COUNT];
   IFX_FontEnumerator* m_pFontEnumerator;
@@ -417,12 +418,9 @@ class CFX_FolderFontInfo : public IFX_SystemFontInfo {
   FX_BOOL GetFontCharset(void* hFont, int& charset) override;
 
  protected:
-  std::map<CFX_ByteString, CFX_FontFaceInfo*> m_FontList;
-  CFX_ByteStringArray m_PathList;
-  CFX_FontMapper* m_pMapper;
-  void ScanPath(CFX_ByteString& path);
-  void ScanFile(CFX_ByteString& path);
-  void ReportFace(CFX_ByteString& path,
+  void ScanPath(const CFX_ByteString& path);
+  void ScanFile(const CFX_ByteString& path);
+  void ReportFace(const CFX_ByteString& path,
                   FXSYS_FILE* pFile,
                   FX_DWORD filesize,
                   FX_DWORD offset);
@@ -433,7 +431,12 @@ class CFX_FolderFontInfo : public IFX_SystemFontInfo {
                  int pitch_family,
                  const FX_CHAR* family,
                  FX_BOOL bMatchName);
+
+  std::map<CFX_ByteString, CFX_FontFaceInfo*> m_FontList;
+  std::vector<CFX_ByteString> m_PathList;
+  CFX_FontMapper* m_pMapper;
 };
+
 class CFX_CountedFaceCache {
  public:
   CFX_FaceCache* m_Obj;

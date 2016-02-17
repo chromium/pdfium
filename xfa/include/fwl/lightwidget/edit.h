@@ -4,11 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_EDIT_LIGHT_H
-#define _FWL_EDIT_LIGHT_H
-class CFWL_Widget;
+#ifndef FWL_LIGHTWIDGET_EDIT_H_
+#define FWL_LIGHTWIDGET_EDIT_H_
+
+#include <vector>
+
+#include "xfa/include/fwl/lightwidget/widget.h"
+
 class CFWL_WidgetProperties;
-class CFWL_Edit;
+
 class CFWL_Edit : public CFWL_Widget {
  public:
   static CFWL_Edit* Create();
@@ -52,10 +56,12 @@ class CFWL_Edit : public CFWL_Widget {
   FX_BOOL Paste(const CFX_WideString& wsPaste);
   FX_BOOL Delete();
   void SetScrollOffset(FX_FLOAT fScrollOffset);
-  FX_BOOL GetSuggestWords(CFX_PointF pointf, CFX_ByteStringArray& sSuggest);
+  FX_BOOL GetSuggestWords(CFX_PointF pointf,
+                          std::vector<CFX_ByteString>& sSuggest);
   FX_BOOL ReplaceSpellCheckWord(CFX_PointF pointf,
                                 const CFX_ByteStringC& bsReplace);
   CFWL_Edit();
   virtual ~CFWL_Edit();
 };
-#endif
+
+#endif  // FWL_LIGHTWIDGET_EDIT_H_

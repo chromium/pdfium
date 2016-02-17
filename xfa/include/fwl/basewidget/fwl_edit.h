@@ -4,12 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_EDIT_H
-#define _FWL_EDIT_H
+#ifndef FWL_EDIT_H_
+#define FWL_EDIT_H_
+
+#include <vector>
+
+#include "xfa/include/fwl/lightwidget/widget.h"
+
 class CFWL_WidgetImpProperties;
-class IFWL_Widget;
-class IFWL_EditDP;
 class IFWL_Edit;
+
 #define FWL_CLASS_Edit L"FWL_EDIT"
 #define FWL_CLASSHASH_Edit 2893987822
 #define FWL_STYLEEXT_EDT_ReadOnly (1L << 0)
@@ -99,7 +103,7 @@ END_FWL_EVENT_DEF
 BEGIN_FWL_EVENT_DEF(CFWL_EvtEdtGetSuggestWords, FWL_EVTHASH_EDT_GetSuggestWords)
 FX_BOOL bSuggestWords;
 CFX_ByteString bsWord;
-CFX_ByteStringArray bsArraySuggestWords;
+std::vector<CFX_ByteString> bsArraySuggestWords;
 END_FWL_EVENT_DEF
 class IFWL_EditDP : public IFWL_DataProvider {};
 #define FWL_EDT_FIND_FLAGS_Prev (0L << 0)
@@ -107,6 +111,7 @@ class IFWL_EditDP : public IFWL_DataProvider {};
 #define FWL_EDT_FIND_FLAGS_WholeWord (1L << 1)
 #define FWL_EDT_FIND_FLAGS_NoCase (1L << 2)
 typedef struct _FWL_HEDTFIND { void* pData; } * FWL_HEDTFIND;
+
 class IFWL_Edit : public IFWL_Widget {
  public:
   static IFWL_Edit* Create(const CFWL_WidgetImpProperties& properties,
@@ -154,11 +159,13 @@ class IFWL_Edit : public IFWL_Widget {
   FWL_ERR SetBackColor(FX_DWORD dwColor);
   FWL_ERR SetFont(const CFX_WideString& wsFont, FX_FLOAT fSize);
   void SetScrollOffset(FX_FLOAT fScrollOffset);
-  FX_BOOL GetSuggestWords(CFX_PointF pointf, CFX_ByteStringArray& sSuggest);
+  FX_BOOL GetSuggestWords(CFX_PointF pointf,
+                          std::vector<CFX_ByteString>& sSuggest);
   FX_BOOL ReplaceSpellCheckWord(CFX_PointF pointf,
                                 const CFX_ByteStringC& bsReplace);
 
  protected:
   IFWL_Edit();
 };
-#endif
+
+#endif  // FWL_EDIT_H_

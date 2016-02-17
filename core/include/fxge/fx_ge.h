@@ -7,8 +7,8 @@
 #ifndef CORE_INCLUDE_FXGE_FX_GE_H_
 #define CORE_INCLUDE_FXGE_FX_GE_H_
 
-#include "fx_dib.h"
-#include "fx_font.h"
+#include "core/include/fxge/fx_dib.h"
+#include "core/include/fxge/fx_font.h"
 
 class CFX_Font;
 class CFX_FontMgr;

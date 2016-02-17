@@ -4,8 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXFA_FORMFILLER_WIDGET_IMP_H
-#define _FXFA_FORMFILLER_WIDGET_IMP_H
+#ifndef XFA_FFWIDGET_H_
+#define XFA_FFWIDGET_H_
+
+#include <vector>
 
 #include "xfa/include/fxfa/fxfa.h"
 
@@ -102,7 +104,7 @@ class CXFA_FFWidget : public IXFA_Widget,
   virtual FX_BOOL Delete() { return FALSE; }
   virtual FX_BOOL DeSelect() { return FALSE; }
   virtual FX_BOOL GetSuggestWords(CFX_PointF pointf,
-                                  CFX_ByteStringArray& sSuggest) {
+                                  std::vector<CFX_ByteString>& sSuggest) {
     return FALSE;
   }
   virtual FX_BOOL ReplaceSpellCheckWord(CFX_PointF pointf,
@@ -183,4 +185,5 @@ void XFA_DrawBox(CXFA_Box box,
                  const CFX_RectF& rtWidget,
                  CFX_Matrix* pMatrix,
                  FX_DWORD dwFlags = 0);
-#endif
+
+#endif  // XFA_FFWIDGET_H_

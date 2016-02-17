@@ -176,14 +176,11 @@ FX_BOOL CFX_SystemHandler::FindNativeTrueTypeFont(
   if (!pFontMapper)
     return FALSE;
 
-  int nSize = pFontMapper->m_InstalledTTFonts.GetSize();
-  if (nSize == 0) {
+  if (pFontMapper->m_InstalledTTFonts.empty())
     pFontMapper->LoadInstalledFonts();
-    nSize = pFontMapper->m_InstalledTTFonts.GetSize();
-  }
 
-  for (int i = 0; i < nSize; ++i) {
-    if (pFontMapper->m_InstalledTTFonts[i].Compare(sFontFaceName))
+  for (const auto& font : pFontMapper->m_InstalledTTFonts) {
+    if (font.Compare(sFontFaceName))
       return TRUE;
   }
 

@@ -663,17 +663,6 @@ CPDF_FormField* CPDF_InterForm::GetField(FX_DWORD index,
   CFieldTree::_Node* pNode = m_pFieldTree->FindNode(csFieldName);
   return pNode ? pNode->GetField(index) : nullptr;
 }
-void CPDF_InterForm::GetAllFieldNames(CFX_WideStringArray& allFieldNames) {
-  allFieldNames.RemoveAll();
-  int nCount = m_pFieldTree->m_Root.CountFields();
-  for (int i = 0; i < nCount; i++) {
-    CPDF_FormField* pField = m_pFieldTree->m_Root.GetField(i);
-    if (pField) {
-      CFX_WideString full_name = GetFullName(pField->GetFieldDict());
-      allFieldNames.Add(full_name);
-    }
-  }
-}
 
 CPDF_FormField* CPDF_InterForm::GetFieldByDict(
     CPDF_Dictionary* pFieldDict) const {

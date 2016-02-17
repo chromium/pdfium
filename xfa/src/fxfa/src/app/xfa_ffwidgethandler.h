@@ -4,9 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXFA_FORMFILLER_ANNOTHANDLER_IMP_H
-#define _FXFA_FORMFILLER_ANNOTHANDLER_IMP_H
+#ifndef XFA_FFWIDGETHANDLER_H_
+#define XFA_FFWIDGETHANDLER_H_
+
+#include <vector>
+
+#include "xfa/include/fxfa/fxfa.h"
+
 class CXFA_FFDocView;
+
 class CXFA_FFWidgetHandler : public IXFA_WidgetHandler {
  public:
   CXFA_FFWidgetHandler(CXFA_FFDocView* pDocView);
@@ -137,6 +143,7 @@ class CXFA_FFWidgetHandler : public IXFA_WidgetHandler {
 
   CXFA_FFDocView* m_pDocView;
 };
+
 class CXFA_FFMenuHandler : public IXFA_MenuHandler {
  public:
   CXFA_FFMenuHandler();
@@ -159,9 +166,10 @@ class CXFA_FFMenuHandler : public IXFA_MenuHandler {
   virtual FX_BOOL Redo(IXFA_Widget* hWidget);
   virtual FX_BOOL GetSuggestWords(IXFA_Widget* hWidget,
                                   CFX_PointF pointf,
-                                  CFX_ByteStringArray& sSuggest);
+                                  std::vector<CFX_ByteString>& sSuggest);
   virtual FX_BOOL ReplaceSpellCheckWord(IXFA_Widget* hWidget,
                                         CFX_PointF pointf,
                                         const CFX_ByteStringC& bsReplace);
 };
-#endif
+
+#endif  //  XFA_FFWIDGETHANDLER_H_

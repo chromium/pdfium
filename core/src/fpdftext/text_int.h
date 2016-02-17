@@ -186,7 +186,7 @@ class CPDF_TextPageFind : public IPDF_TextPageFind {
   CFX_WideString m_strText;
   CFX_WideString m_findWhat;
   int m_flags;
-  CFX_WideStringArray m_csFindWhatArray;
+  std::vector<CFX_WideString> m_csFindWhatArray;
   int m_findNextStart;
   int m_findPreStart;
   FX_BOOL m_bMatchCase;

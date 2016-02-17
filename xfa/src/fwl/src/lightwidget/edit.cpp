@@ -201,7 +201,7 @@ void CFWL_Edit::SetScrollOffset(FX_FLOAT fScrollOffset) {
   return static_cast<IFWL_Edit*>(m_pIface)->SetScrollOffset(fScrollOffset);
 }
 FX_BOOL CFWL_Edit::GetSuggestWords(CFX_PointF pointf,
-                                   CFX_ByteStringArray& sSuggest) {
+                                   std::vector<CFX_ByteString>& sSuggest) {
   return static_cast<IFWL_Edit*>(m_pIface)->GetSuggestWords(pointf, sSuggest);
 }
 FX_BOOL CFWL_Edit::ReplaceSpellCheckWord(CFX_PointF pointf,

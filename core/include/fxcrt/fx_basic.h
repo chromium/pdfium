@@ -545,9 +545,9 @@ class CFX_ObjectArray : public CFX_BasicArray {
     CFX_BasicArray::SetSize(0);
   }
 };
+#ifdef PDF_ENABLE_XFA
 typedef CFX_ObjectArray<CFX_ByteString> CFX_ByteStringArray;
 typedef CFX_ObjectArray<CFX_WideString> CFX_WideStringArray;
-#ifdef PDF_ENABLE_XFA
 class CFX_BaseSegmentedArray {
  public:
   CFX_BaseSegmentedArray(int unit_size = 1,

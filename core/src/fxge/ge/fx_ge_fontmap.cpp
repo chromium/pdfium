@@ -724,7 +724,7 @@ void CFX_FontMapper::AddInstalledFont(const CFX_ByteString& name, int charset) {
   }
   if (m_CharsetArray.Find((FX_DWORD)charset) == -1) {
     m_CharsetArray.Add((FX_DWORD)charset);
-    m_FaceArray.Add(name);
+    m_FaceArray.push_back(name);
   }
   if (name == m_LastFamily) {
     return;
@@ -749,11 +749,11 @@ void CFX_FontMapper::AddInstalledFont(const CFX_ByteString& name, int charset) {
     CFX_ByteString new_name = GetPSNameFromTT(hFont);
     if (!new_name.IsEmpty()) {
       new_name.Insert(0, ' ');
-      m_InstalledTTFonts.Add(new_name);
+      m_InstalledTTFonts.push_back(new_name);
     }
     m_pFontInfo->DeleteFont(hFont);
   }
-  m_InstalledTTFonts.Add(name);
+  m_InstalledTTFonts.push_back(name);
   m_LastFamily = name;
 }
 void CFX_FontMapper::LoadInstalledFonts() {
@@ -773,7 +773,7 @@ CFX_ByteString CFX_FontMapper::MatchInstalledFonts(
     const CFX_ByteString& norm_name) {
   LoadInstalledFonts();
   int i;
-  for (i = m_InstalledTTFonts.GetSize() - 1; i >= 0; i--) {
+  for (i = pdfium::CollectionSize<int>(m_InstalledTTFonts) - 1; i >= 0; i--) {
     CFX_ByteString norm1 = TT_NormalizeName(m_InstalledTTFonts[i]);
     if (norm1 == norm_name) {
       break;
@@ -1288,6 +1288,10 @@ FXFT_Face CFX_FontMapper::FindSubstFontByUnicode(FX_DWORD dwUnicode,
 }
 #endif  // PDF_ENABLE_XFA
 
+int CFX_FontMapper::GetFaceSize() const {
+  return pdfium::CollectionSize<int>(m_FaceArray);
+}
+
 FX_BOOL CFX_FontMapper::IsBuiltinFace(const FXFT_Face face) const {
   for (int i = 0; i < MM_FACE_COUNT; ++i) {
     if (m_MMFaces[i] == face) {
@@ -1321,19 +1325,19 @@ CFX_FolderFontInfo::~CFX_FolderFontInfo() {
   }
 }
 void CFX_FolderFontInfo::AddPath(const CFX_ByteStringC& path) {
-  m_PathList.Add(path);
+  m_PathList.push_back(path);
 }
 void CFX_FolderFontInfo::Release() {
   delete this;
 }
 FX_BOOL CFX_FolderFontInfo::EnumFontList(CFX_FontMapper* pMapper) {
   m_pMapper = pMapper;
-  for (int i = 0; i < m_PathList.GetSize(); i++) {
-    ScanPath(m_PathList[i]);
+  for (const auto& path : m_PathList) {
+    ScanPath(path);
   }
   return TRUE;
 }
-void CFX_FolderFontInfo::ScanPath(CFX_ByteString& path) {
+void CFX_FolderFontInfo::ScanPath(const CFX_ByteString& path) {
   void* handle = FX_OpenFolder(path);
   if (!handle) {
     return;
@@ -1367,7 +1371,7 @@ void CFX_FolderFontInfo::ScanPath(CFX_ByteString& path) {
   }
   FX_CloseFolder(handle);
 }
-void CFX_FolderFontInfo::ScanFile(CFX_ByteString& path) {
+void CFX_FolderFontInfo::ScanFile(const CFX_ByteString& path) {
   FXSYS_FILE* pFile = FXSYS_fopen(path, "rb");
   if (!pFile) {
     return;
@@ -1406,7 +1410,7 @@ void CFX_FolderFontInfo::ScanFile(CFX_ByteString& path) {
   }
   FXSYS_fclose(pFile);
 }
-void CFX_FolderFontInfo::ReportFace(CFX_ByteString& path,
+void CFX_FolderFontInfo::ReportFace(const CFX_ByteString& path,
                                     FXSYS_FILE* pFile,
                                     FX_DWORD filesize,
                                     FX_DWORD offset) {

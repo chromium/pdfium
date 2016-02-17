@@ -378,7 +378,7 @@ class CPDFDoc_Environment final {
 
   FPDF_BOOL FFI_ShowFileDialog(const FX_WCHAR* wsTitle,
                                const FX_WCHAR* wsFilter,
-                               CFX_WideStringArray& wsPathArr,
+                               std::vector<CFX_WideString>& wsPathArr,
                                FX_BOOL bOpen) {
     return FALSE;
   }

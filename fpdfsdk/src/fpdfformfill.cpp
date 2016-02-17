@@ -7,10 +7,12 @@
 #include "public/fpdf_formfill.h"
 
 #include <memory>
+#include <vector>
 
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
 #include "public/fpdfview.h"
+#include "third_party/base/stl_util.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/include/fpdfxfa/fpdfxfa_app.h"
@@ -34,6 +36,16 @@ CPDFSDK_PageView* FormHandleToPageView(FPDF_FORMHANDLE hHandle,
   CPDFSDK_Document* pSDKDoc = CPDFSDK_Document::FromFPDFFormHandle(hHandle);
   return pSDKDoc ? pSDKDoc->GetPageView(pPage, TRUE) : nullptr;
 }
+
+#ifdef PDF_ENABLE_XFA
+std::vector<CFX_ByteString>* FromFPDFStringHandle(FPDF_STRINGHANDLE handle) {
+  return reinterpret_cast<std::vector<CFX_ByteString>*>(handle);
+}
+
+FPDF_STRINGHANDLE ToFPDFStringHandle(std::vector<CFX_ByteString>* strings) {
+  return reinterpret_cast<FPDF_STRINGHANDLE>(strings);
+}
+#endif  // PDF_ENABLE_XFA
 
 }  // namespace
 
@@ -467,6 +479,7 @@ DLLEXPORT void STDCALL FPDF_Widget_Copy(FPDF_DOCUMENT document,
   }
   *size = real_size;
 }
+
 DLLEXPORT void STDCALL FPDF_Widget_Cut(FPDF_DOCUMENT document,
                                        FPDF_WIDGET hWidget,
                                        FPDF_WIDESTRING wsText,
@@ -502,6 +515,7 @@ DLLEXPORT void STDCALL FPDF_Widget_Cut(FPDF_DOCUMENT document,
   }
   *size = real_size;
 }
+
 DLLEXPORT void STDCALL FPDF_Widget_Paste(FPDF_DOCUMENT document,
                                          FPDF_WIDGET hWidget,
                                          FPDF_WIDESTRING wsText,
@@ -522,6 +536,7 @@ DLLEXPORT void STDCALL FPDF_Widget_Paste(FPDF_DOCUMENT document,
   CFX_WideString wstr = CFX_WideString::FromUTF16LE(wsText, size);
   pXFAMenuHander->Paste((IXFA_Widget*)hWidget, wstr);
 }
+
 DLLEXPORT void STDCALL
 FPDF_Widget_ReplaceSpellCheckWord(FPDF_DOCUMENT document,
                                   FPDF_WIDGET hWidget,
@@ -547,13 +562,14 @@ FPDF_Widget_ReplaceSpellCheckWord(FPDF_DOCUMENT document,
   CFX_ByteStringC bs(bsText);
   pXFAMenuHander->ReplaceSpellCheckWord((IXFA_Widget*)hWidget, ptPopup, bs);
 }
+
 DLLEXPORT void STDCALL
 FPDF_Widget_GetSpellCheckWords(FPDF_DOCUMENT document,
                                FPDF_WIDGET hWidget,
                                float x,
                                float y,
                                FPDF_STRINGHANDLE* stringHandle) {
-  if (NULL == hWidget || NULL == document)
+  if (!hWidget || !document)
     return;
 
   CPDFXFA_Document* pDocument = (CPDFXFA_Document*)document;
@@ -563,69 +579,63 @@ FPDF_Widget_GetSpellCheckWords(FPDF_DOCUMENT document,
 
   IXFA_MenuHandler* pXFAMenuHander =
       CPDFXFA_App::GetInstance()->GetXFAApp()->GetMenuHandler();
-  if (pXFAMenuHander == NULL)
+  if (!pXFAMenuHander)
     return;
 
-  CFX_ByteStringArray* sSuggestWords = new CFX_ByteStringArray;
+  std::vector<CFX_ByteString>* sSuggestWords = new std::vector<CFX_ByteString>;
   CFX_PointF ptPopup;
   ptPopup.x = x;
   ptPopup.y = y;
-  pXFAMenuHander->GetSuggestWords((IXFA_Widget*)hWidget, ptPopup,
-                                  *sSuggestWords);
-  *stringHandle = (FPDF_STRINGHANDLE)sSuggestWords;
+  pXFAMenuHander->GetSuggestWords(reinterpret_cast<IXFA_Widget*>(hWidget),
+                                  ptPopup, *sSuggestWords);
+  *stringHandle = ToFPDFStringHandle(sSuggestWords);
 }
-DLLEXPORT int STDCALL FPDF_StringHandleCounts(FPDF_STRINGHANDLE stringHandle) {
-  if (stringHandle == NULL)
-    return -1;
-  CFX_ByteStringArray* sSuggestWords = (CFX_ByteStringArray*)stringHandle;
-  return sSuggestWords->GetSize();
+
+DLLEXPORT int STDCALL FPDF_StringHandleCounts(FPDF_STRINGHANDLE sHandle) {
+  std::vector<CFX_ByteString>* sSuggestWords = FromFPDFStringHandle(sHandle);
+  return sSuggestWords ? pdfium::CollectionSize<int>(*sSuggestWords) : -1;
 }
+
 DLLEXPORT FPDF_BOOL STDCALL
-FPDF_StringHandleGetStringByIndex(FPDF_STRINGHANDLE stringHandle,
+FPDF_StringHandleGetStringByIndex(FPDF_STRINGHANDLE sHandle,
                                   int index,
                                   FPDF_BYTESTRING bsText,
                                   FPDF_DWORD* size) {
-  if (stringHandle == NULL || size == NULL)
+  if (!sHandle || !size)
     return FALSE;
-  int count = FPDF_StringHandleCounts(stringHandle);
+
+  int count = FPDF_StringHandleCounts(sHandle);
   if (index < 0 || index >= count)
     return FALSE;
 
-  CFX_ByteStringArray sSuggestWords = *(CFX_ByteStringArray*)stringHandle;
-  int len = sSuggestWords[index].GetLength();
-
-  if (bsText == NULL) {
+  std::vector<CFX_ByteString>* sSuggestWords = FromFPDFStringHandle(sHandle);
+  int len = (*sSuggestWords)[index].GetLength();
+  if (!bsText) {
     *size = len;
     return TRUE;
   }
 
   int real_size = len < *size ? len : *size;
   if (real_size > 0)
-    FXSYS_memcpy((void*)bsText, (const FX_CHAR*)(sSuggestWords[index]),
+    FXSYS_memcpy((void*)bsText, (const FX_CHAR*)(*sSuggestWords)[index],
                  real_size);
   *size = real_size;
-
   return TRUE;
 }
+
 DLLEXPORT void STDCALL
 FPDF_StringHandleRelease(FPDF_STRINGHANDLE stringHandle) {
-  if (stringHandle == NULL)
-    return;
-  CFX_ByteStringArray* sSuggestWords = (CFX_ByteStringArray*)stringHandle;
-  delete sSuggestWords;
+  delete FromFPDFStringHandle(stringHandle);
 }
 
 DLLEXPORT FPDF_BOOL STDCALL
 FPDF_StringHandleAddString(FPDF_STRINGHANDLE stringHandle,
                            FPDF_BYTESTRING bsText,
                            FPDF_DWORD size) {
-  if (stringHandle == NULL || bsText == NULL || size <= 0)
+  if (!stringHandle || !bsText || size == 0)
     return FALSE;
 
-  CFX_ByteStringArray* stringArr = (CFX_ByteStringArray*)stringHandle;
-  CFX_ByteString bsStr(bsText, size);
-
-  stringArr->Add(bsStr);
+  FromFPDFStringHandle(stringHandle)->push_back(CFX_ByteString(bsText, size));
   return TRUE;
 }
 #endif  // PDF_ENABLE_XFA

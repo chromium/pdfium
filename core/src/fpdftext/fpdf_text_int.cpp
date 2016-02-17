@@ -1988,7 +1988,7 @@ FX_BOOL CPDF_TextPageFind::FindFirst(const CFX_WideString& findwhat,
   } else {
     m_findPreStart = startPos;
   }
-  m_csFindWhatArray.RemoveAll();
+  m_csFindWhatArray.clear();
   int i = 0;
   while (i < len) {
     if (findwhatStr.GetAt(i) != ' ') {
@@ -1999,9 +1999,9 @@ FX_BOOL CPDF_TextPageFind::FindFirst(const CFX_WideString& findwhat,
   if (i < len) {
     ExtractFindWhat(findwhatStr);
   } else {
-    m_csFindWhatArray.Add(findwhatStr);
+    m_csFindWhatArray.push_back(findwhatStr);
   }
-  if (m_csFindWhatArray.GetSize() <= 0) {
+  if (m_csFindWhatArray.empty()) {
     return FALSE;
   }
   m_IsFind = TRUE;
@@ -2027,7 +2027,7 @@ FX_BOOL CPDF_TextPageFind::FindNext() {
     m_IsFind = FALSE;
     return m_IsFind;
   }
-  int nCount = m_csFindWhatArray.GetSize();
+  int nCount = pdfium::CollectionSize<int>(m_csFindWhatArray);
   int nResultPos = 0;
   int nStartPos = 0;
   nStartPos = m_findNextStart;
@@ -2102,8 +2102,7 @@ FX_BOOL CPDF_TextPageFind::FindNext() {
       }
     }
   }
-  m_resEnd = nResultPos +
-             m_csFindWhatArray[m_csFindWhatArray.GetSize() - 1].GetLength() - 1;
+  m_resEnd = nResultPos + m_csFindWhatArray.back().GetLength() - 1;
   m_IsFind = TRUE;
   int resStart = GetCharIndex(m_resStart);
   int resEnd = GetCharIndex(m_resEnd);
@@ -2175,7 +2174,7 @@ void CPDF_TextPageFind::ExtractFindWhat(const CFX_WideString& findwhat) {
         ExtractSubString(csWord, findwhat.c_str(), index, TEXT_BLANK_CHAR);
     if (csWord.IsEmpty()) {
       if (ret) {
-        m_csFindWhatArray.Add(CFX_WideString(L""));
+        m_csFindWhatArray.push_back(L"");
         index++;
         continue;
       } else {
@@ -2192,10 +2191,9 @@ void CPDF_TextPageFind::ExtractFindWhat(const CFX_WideString& findwhat) {
           continue;
         }
         if (pos > 0) {
-          CFX_WideString preStr = csWord.Mid(0, pos);
-          m_csFindWhatArray.Add(preStr);
+          m_csFindWhatArray.push_back(csWord.Mid(0, pos));
         }
-        m_csFindWhatArray.Add(curStr);
+        m_csFindWhatArray.push_back(curStr);
         if (pos == csWord.GetLength() - 1) {
           csWord.Empty();
           break;
@@ -2207,7 +2205,7 @@ void CPDF_TextPageFind::ExtractFindWhat(const CFX_WideString& findwhat) {
       pos++;
     }
     if (!csWord.IsEmpty()) {
-      m_csFindWhatArray.Add(csWord);
+      m_csFindWhatArray.push_back(csWord);
     }
     index++;
   }

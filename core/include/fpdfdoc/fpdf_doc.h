@@ -563,8 +563,6 @@ class CPDF_InterForm : public CFX_PrivateData {
   CPDF_FormField* GetField(FX_DWORD index,
                            const CFX_WideString& csFieldName = L"");
 
-  void GetAllFieldNames(CFX_WideStringArray& allFieldNames);
-
   CPDF_FormField* GetFieldByDict(CPDF_Dictionary* pFieldDict) const;
 
   CPDF_FormControl* GetControlAtPoint(CPDF_Page* pPage,

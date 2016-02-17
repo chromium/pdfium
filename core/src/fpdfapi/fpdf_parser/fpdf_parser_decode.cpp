@@ -10,6 +10,7 @@
 #include "core/include/fpdfapi/fpdf_parser.h"
 #include "core/include/fxcodec/fx_codec.h"
 #include "core/include/fxcrt/fx_ext.h"
+#include "third_party/base/stl_util.h"
 
 #define _STREAM_MAX_SIZE_ 20 * 1024 * 1024
 
@@ -339,7 +340,7 @@ FX_BOOL PDF_DataDecode(const uint8_t* src_buf,
 
   CPDF_Object* pParams =
       pDict ? pDict->GetElementValue("DecodeParms") : nullptr;
-  CFX_ByteStringArray DecoderList;
+  std::vector<CFX_ByteString> DecoderList;
   CFX_ArrayTemplate<CPDF_Object*> ParamList;
   if (CPDF_Array* pDecoders = pDecoder->AsArray()) {
     CPDF_Array* pParamsArray = ToArray(pParams);
@@ -347,19 +348,18 @@ FX_BOOL PDF_DataDecode(const uint8_t* src_buf,
       pParams = nullptr;
 
     for (FX_DWORD i = 0; i < pDecoders->GetCount(); i++) {
-      CFX_ByteStringC str = pDecoders->GetConstStringAt(i);
-      DecoderList.Add(str);
+      DecoderList.push_back(pDecoders->GetConstStringAt(i));
       ParamList.Add(pParams ? pParamsArray->GetDictAt(i) : nullptr);
     }
   } else {
-    DecoderList.Add(pDecoder->GetConstString());
+    DecoderList.push_back(pDecoder->GetConstString());
     ParamList.Add(pParams ? pParams->GetDict() : nullptr);
   }
   uint8_t* last_buf = (uint8_t*)src_buf;
   FX_DWORD last_size = src_size;
-  for (int i = 0; i < DecoderList.GetSize(); i++) {
-    int estimated_size =
-        i == DecoderList.GetSize() - 1 ? last_estimated_size : 0;
+  int nSize = pdfium::CollectionSize<int>(DecoderList);
+  for (int i = 0; i < nSize; i++) {
+    int estimated_size = i == nSize - 1 ? last_estimated_size : 0;
     CFX_ByteString decoder = DecoderList[i];
     // Use ToDictionary here because we can push nullptr into the ParamList.
     CPDF_Dictionary* pParam = ToDictionary(ParamList[i]);
@@ -367,7 +367,7 @@ FX_BOOL PDF_DataDecode(const uint8_t* src_buf,
     FX_DWORD new_size = (FX_DWORD)-1;
     int offset = -1;
     if (decoder == "FlateDecode" || decoder == "Fl") {
-      if (bImageAcc && i == DecoderList.GetSize() - 1) {
+      if (bImageAcc && i == nSize - 1) {
         ImageEncoding = "FlateDecode";
         dest_buf = (uint8_t*)last_buf;
         dest_size = last_size;
@@ -384,7 +384,7 @@ FX_BOOL PDF_DataDecode(const uint8_t* src_buf,
     } else if (decoder == "ASCIIHexDecode" || decoder == "AHx") {
       offset = HexDecode(last_buf, last_size, new_buf, new_size);
     } else if (decoder == "RunLengthDecode" || decoder == "RL") {
-      if (bImageAcc && i == DecoderList.GetSize() - 1) {
+      if (bImageAcc && i == nSize - 1) {
         ImageEncoding = "RunLengthDecode";
         dest_buf = (uint8_t*)last_buf;
         dest_size = last_size;

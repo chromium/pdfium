@@ -620,13 +620,10 @@ FX_BOOL CXFA_FFMenuHandler::Undo(IXFA_Widget* hWidget) {
 FX_BOOL CXFA_FFMenuHandler::Redo(IXFA_Widget* hWidget) {
   return static_cast<CXFA_FFWidget*>(hWidget)->Redo();
 }
-#define FX_EDIT_ISLATINWORD(u)                                     \
-  (u == 0x2D || (u <= 0x005A && u >= 0x0041) ||                    \
-   (u <= 0x007A && u >= 0x0061) || (u <= 0x02AF && u >= 0x00C0) || \
-   u == 0x0027)
-FX_BOOL CXFA_FFMenuHandler::GetSuggestWords(IXFA_Widget* hWidget,
-                                            CFX_PointF pointf,
-                                            CFX_ByteStringArray& sSuggest) {
+FX_BOOL CXFA_FFMenuHandler::GetSuggestWords(
+    IXFA_Widget* hWidget,
+    CFX_PointF pointf,
+    std::vector<CFX_ByteString>& sSuggest) {
   return static_cast<CXFA_FFWidget*>(hWidget)
       ->GetSuggestWords(pointf, sSuggest);
 }

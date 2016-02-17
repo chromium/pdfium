@@ -4,12 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_EDIT_IMP_H
-#define _FWL_EDIT_IMP_H
+#ifndef FWL_EDITIMP_H_
+#define FWL_EDITIMP_H_
 
 #include <memory>
+#include <vector>
 
-class CFWL_WidgetImp;
+#include "xfa/src/fee/include/ifde_txtedtengine.h"
+#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+
 class CFWL_WidgetImpProperties;
 class CFWL_WidgetImpDelegate;
 class CFWL_ScrollBarImp;
@@ -17,6 +20,7 @@ class IFWL_Caret;
 class IFWL_AdapterTextField;
 class CFWL_EditImp;
 class CFWL_EditImpDelegate;
+
 class CFWL_EditImp : public CFWL_WidgetImp, public IFDE_TxtEdtEventSink {
  public:
   CFWL_EditImp(const CFWL_WidgetImpProperties& properties, IFWL_Widget* pOuter);
@@ -106,7 +110,8 @@ class CFWL_EditImp : public CFWL_WidgetImp, public IFDE_TxtEdtEventSink {
   virtual FWL_ERR SetBackgroundColor(FX_DWORD color);
   virtual FWL_ERR SetFont(const CFX_WideString& wsFont, FX_FLOAT fSize);
   void SetScrollOffset(FX_FLOAT fScrollOffset);
-  FX_BOOL GetSuggestWords(CFX_PointF pointf, CFX_ByteStringArray& sSuggest);
+  FX_BOOL GetSuggestWords(CFX_PointF pointf,
+                          std::vector<CFX_ByteString>& sSuggest);
   FX_BOOL ReplaceSpellCheckWord(CFX_PointF pointf,
                                 const CFX_ByteStringC& bsReplace);
 
@@ -177,6 +182,7 @@ class CFWL_EditImp : public CFWL_WidgetImp, public IFDE_TxtEdtEventSink {
   int32_t m_iCurRecord;
   int32_t m_iMaxRecord;
 };
+
 class CFWL_EditImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_EditImpDelegate(CFWL_EditImp* pOwner);
@@ -200,4 +206,5 @@ class CFWL_EditImpDelegate : public CFWL_WidgetImpDelegate {
   void DoCursor(CFWL_MsgMouse* pMsg);
   CFWL_EditImp* m_pOwner;
 };
-#endif
+
+#endif  // FWL_EDITIMP_H_

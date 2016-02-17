@@ -320,8 +320,9 @@ FX_BOOL CXFA_FFTextEdit::Delete() {
 FX_BOOL CXFA_FFTextEdit::DeSelect() {
   return ((CFWL_Edit*)m_pNormalWidget)->ClearSelections();
 }
-FX_BOOL CXFA_FFTextEdit::GetSuggestWords(CFX_PointF pointf,
-                                         CFX_ByteStringArray& sSuggest) {
+FX_BOOL CXFA_FFTextEdit::GetSuggestWords(
+    CFX_PointF pointf,
+    std::vector<CFX_ByteString>& sSuggest) {
   if (m_pDataAcc->GetUIType() != XFA_ELEMENT_TextEdit) {
     return FALSE;
   }
@@ -377,8 +378,9 @@ FX_BOOL CXFA_FFTextEdit::CheckWord(const CFX_ByteStringC& sWord) {
   }
   return GetDoc()->GetDocProvider()->CheckWord(GetDoc(), sWord);
 }
-FX_BOOL CXFA_FFTextEdit::GetSuggestWords(const CFX_ByteStringC& sWord,
-                                         CFX_ByteStringArray& sSuggest) {
+FX_BOOL CXFA_FFTextEdit::GetSuggestWords(
+    const CFX_ByteStringC& sWord,
+    std::vector<CFX_ByteString>& sSuggest) {
   if (m_pDataAcc->GetUIType() != XFA_ELEMENT_TextEdit) {
     return FALSE;
   }

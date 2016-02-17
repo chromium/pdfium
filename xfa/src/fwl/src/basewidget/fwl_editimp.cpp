@@ -155,7 +155,7 @@ void IFWL_Edit::SetScrollOffset(FX_FLOAT fScrollOffset) {
   return static_cast<CFWL_EditImp*>(GetImpl())->SetScrollOffset(fScrollOffset);
 }
 FX_BOOL IFWL_Edit::GetSuggestWords(CFX_PointF pointf,
-                                   CFX_ByteStringArray& sSuggest) {
+                                   std::vector<CFX_ByteString>& sSuggest) {
   return static_cast<CFWL_EditImp*>(GetImpl())
       ->GetSuggestWords(pointf, sSuggest);
 }
@@ -357,7 +357,7 @@ int32_t CFWL_EditImp::GetWordAtPoint(CFX_PointF pointf, int32_t& nCount) {
   return 0;
 }
 FX_BOOL CFWL_EditImp::GetSuggestWords(CFX_PointF pointf,
-                                      CFX_ByteStringArray& sSuggest) {
+                                      std::vector<CFX_ByteString>& sSuggest) {
   int32_t nWordCount = 0;
   int32_t nWordStart = GetWordAtPoint(pointf, nWordCount);
   if (nWordCount < 1) {

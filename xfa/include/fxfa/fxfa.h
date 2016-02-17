@@ -7,6 +7,8 @@
 #ifndef FXFA_H_
 #define FXFA_H_
 
+#include <vector>
+
 class CFX_Graphics;
 class CPDF_Document;
 class CXFA_Node;
@@ -338,7 +340,7 @@ class IXFA_MenuHandler {
   virtual FX_BOOL Redo(IXFA_Widget* hWidget) = 0;
   virtual FX_BOOL GetSuggestWords(IXFA_Widget* hWidget,
                                   CFX_PointF pointf,
-                                  CFX_ByteStringArray& sSuggest) = 0;
+                                  std::vector<CFX_ByteString>& sSuggest) = 0;
   virtual FX_BOOL ReplaceSpellCheckWord(IXFA_Widget* hWidget,
                                         CFX_PointF pointf,
                                         const CFX_ByteStringC& bsReplace) = 0;
@@ -442,7 +444,7 @@ class IXFA_DocProvider {
   virtual FX_BOOL CheckWord(IXFA_Doc* hDoc, const CFX_ByteStringC& sWord) = 0;
   virtual FX_BOOL GetSuggestWords(IXFA_Doc* hDoc,
                                   const CFX_ByteStringC& sWord,
-                                  CFX_ByteStringArray& sSuggest) = 0;
+                                  std::vector<CFX_ByteString>& sSuggest) = 0;
   virtual FX_BOOL GetPDFScriptObject(IXFA_Doc* hDoc,
                                      const CFX_ByteStringC& utf8Name,
                                      FXJSE_HVALUE hValue) = 0;

@@ -7,6 +7,8 @@
 #ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_WND_H_
 #define FPDFSDK_INCLUDE_PDFWINDOW_PWL_WND_H_
 
+#include <vector>
+
 #include "core/include/fpdfdoc/fpdf_doc.h"
 #include "core/include/fxcrt/fx_basic.h"
 #include "fpdfsdk/include/fx_systemhandler.h"
@@ -171,7 +173,7 @@ class IPWL_SpellCheck {
   virtual ~IPWL_SpellCheck() {}
   virtual FX_BOOL CheckWord(const FX_CHAR* sWord) = 0;
   virtual void SuggestWords(const FX_CHAR* sWord,
-                            CFX_ByteStringArray& sSuggest) = 0;
+                            std::vector<CFX_ByteString>& sSuggest) = 0;
 };
 
 class IPWL_Provider {
