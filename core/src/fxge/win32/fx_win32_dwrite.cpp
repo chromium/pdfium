@@ -10,7 +10,7 @@
 #include <dwrite.h>
 
 #include "core/include/fxge/fx_ge_win32.h"
-#include "dwrite_int.h"
+#include "core/src/fxge/win32/dwrite_int.h"
 
 typedef HRESULT(__stdcall* FuncType_DWriteCreateFactory)(
     __in DWRITE_FACTORY_TYPE,

@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "cmaps_cns1.h"
+#include "core/src/fpdfapi/fpdf_cmaps/CNS1/cmaps_cns1.h"
 
 const FX_WORD g_FXCMAP_ETen_B5_H_0[254 * 3] = {
     0x0020, 0x007E, 0x3550, 0xA140, 0xA158, 0x0063, 0xA159, 0xA15C, 0x35AF,

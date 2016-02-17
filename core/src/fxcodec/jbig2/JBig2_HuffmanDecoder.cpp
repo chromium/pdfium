@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "JBig2_HuffmanDecoder.h"
+#include "core/src/fxcodec/jbig2/JBig2_HuffmanDecoder.h"
 
-#include "JBig2_Define.h"
+#include "core/src/fxcodec/jbig2/JBig2_Define.h"
 
 CJBig2_HuffmanDecoder::CJBig2_HuffmanDecoder(CJBig2_BitStream* pStream)
     : m_pStream(pStream) {

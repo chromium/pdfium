@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "ttgsubtable.h"
+#include "core/src/fpdfapi/fpdf_font/ttgsubtable.h"
 
 #include <memory>
 

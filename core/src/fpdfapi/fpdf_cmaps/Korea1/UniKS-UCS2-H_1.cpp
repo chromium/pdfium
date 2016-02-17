@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "cmaps_korea1.h"
+#include "core/src/fpdfapi/fpdf_cmaps/Korea1/cmaps_korea1.h"
 
 const FX_WORD g_FXCMAP_UniKS_UCS2_H_1[8394 * 3] = {
     0x0020, 0x007E, 0x0001, 0x00A1, 0x00A1, 0x00D0, 0x00A4, 0x00A4, 0x00D6,

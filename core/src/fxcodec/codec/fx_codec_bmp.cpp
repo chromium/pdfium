@@ -6,7 +6,7 @@
 
 #include "core/include/fxcodec/fx_codec.h"
 #include "core/include/fxge/fx_dib.h"
-#include "codec_int.h"
+#include "core/src/fxcodec/codec/codec_int.h"
 #include "core/src/fxcodec/lbmp/fx_bmp.h"
 struct FXBMP_Context {
   bmp_decompress_struct_p bmp_ptr;

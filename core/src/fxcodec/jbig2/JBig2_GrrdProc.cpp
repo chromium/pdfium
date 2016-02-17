@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "JBig2_GrrdProc.h"
+#include "core/src/fxcodec/jbig2/JBig2_GrrdProc.h"
 
 #include <memory>
 
-#include "JBig2_ArithDecoder.h"
-#include "JBig2_BitStream.h"
-#include "JBig2_Image.h"
+#include "core/src/fxcodec/jbig2/JBig2_ArithDecoder.h"
+#include "core/src/fxcodec/jbig2/JBig2_BitStream.h"
+#include "core/src/fxcodec/jbig2/JBig2_Image.h"
 
 CJBig2_Image* CJBig2_GRRDProc::decode(CJBig2_ArithDecoder* pArithDecoder,
                                       JBig2ArithCtx* grContext) {

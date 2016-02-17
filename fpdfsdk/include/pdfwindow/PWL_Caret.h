@@ -7,7 +7,7 @@
 #ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_CARET_H_
 #define FPDFSDK_INCLUDE_PDFWINDOW_PWL_CARET_H_
 
-#include "PWL_Wnd.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
 
 struct PWL_CARET_INFO {
  public:

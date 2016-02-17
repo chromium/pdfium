@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "JS_GlobalData.h"
+#include "fpdfsdk/src/javascript/JS_GlobalData.h"
 
 #include "core/include/fdrm/fx_crypt.h"
 #include "fpdfsdk/include/javascript/IJavaScript.h"

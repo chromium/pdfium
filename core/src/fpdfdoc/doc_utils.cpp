@@ -7,7 +7,7 @@
 #include <algorithm>
 
 #include "core/include/fpdfdoc/fpdf_doc.h"
-#include "doc_utils.h"
+#include "core/src/fpdfdoc/doc_utils.h"
 
 static const int FPDFDOC_UTILS_MAXRECURSION = 32;
 

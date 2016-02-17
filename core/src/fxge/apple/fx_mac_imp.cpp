@@ -5,7 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "core/include/fxge/fx_ge.h"
-#include "apple_int.h"
+#include "core/src/fxge/apple/apple_int.h"
 
 #if _FX_OS_ == _FX_MACOSX_
 static const struct {

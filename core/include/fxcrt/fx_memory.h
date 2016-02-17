@@ -7,7 +7,7 @@
 #ifndef CORE_INCLUDE_FXCRT_FX_MEMORY_H_
 #define CORE_INCLUDE_FXCRT_FX_MEMORY_H_
 
-#include "fx_system.h"
+#include "core/include/fxcrt/fx_system.h"
 
 #ifdef __cplusplus
 extern "C" {

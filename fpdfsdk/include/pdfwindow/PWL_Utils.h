@@ -7,10 +7,10 @@
 #ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_UTILS_H_
 #define FPDFSDK_INCLUDE_PDFWINDOW_PWL_UTILS_H_
 
-#include "PWL_Wnd.h"
 #include "core/include/fpdfapi/fpdf_parser.h"  // For CPDF_Point.
 #include "core/include/fpdfdoc/fpdf_vt.h"      // For CPVT_WordRange.
 #include "fpdfsdk/include/fxedit/fx_edit.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
 
 class CFX_PathData;
 struct CPWL_Color;

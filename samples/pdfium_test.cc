@@ -13,13 +13,13 @@
 #include <utility>
 #include <vector>
 
-#include "image_diff_png.h"
 #include "public/fpdf_dataavail.h"
 #include "public/fpdf_edit.h"
 #include "public/fpdf_ext.h"
 #include "public/fpdf_formfill.h"
 #include "public/fpdf_text.h"
 #include "public/fpdfview.h"
+#include "samples/image_diff_png.h"
 #include "testing/test_support.h"
 
 #ifdef PDF_ENABLE_V8

@@ -9,9 +9,9 @@
 #include <cmath>
 #include <utility>
 
-#include "codec_int.h"
 #include "core/include/fxcrt/fx_ext.h"
 #include "core/include/fxcrt/fx_safe_types.h"
+#include "core/src/fxcodec/codec/codec_int.h"
 #include "third_party/base/logging.h"
 
 CCodec_ModuleMgr::CCodec_ModuleMgr()

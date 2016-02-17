@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "JBig2_GrdProc.h"
+#include "core/src/fxcodec/jbig2/JBig2_GrdProc.h"
 
 #include <memory>
 
-#include "JBig2_ArithDecoder.h"
-#include "JBig2_BitStream.h"
-#include "JBig2_Image.h"
 #include "core/include/fxcodec/fx_codec.h"
+#include "core/src/fxcodec/jbig2/JBig2_ArithDecoder.h"
+#include "core/src/fxcodec/jbig2/JBig2_BitStream.h"
+#include "core/src/fxcodec/jbig2/JBig2_Image.h"
 
 CJBig2_GRDProc::CJBig2_GRDProc()
     : m_loopIndex(0),

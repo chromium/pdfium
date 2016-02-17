@@ -7,8 +7,8 @@
 
 #include <stdlib.h>  // For size_t.
 
-#include "fx_stream.h"  // for FX_FILESIZE.
-#include "fx_system.h"
+#include "core/include/fxcrt/fx_stream.h"  // for FX_FILESIZE.
+#include "core/include/fxcrt/fx_system.h"
 #include "third_party/base/numerics/safe_math.h"
 
 typedef pdfium::base::CheckedNumeric<FX_DWORD> FX_SAFE_DWORD;

@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fx_fpf.h"
+#include "core/src/fxge/android/fx_fpf.h"
 #if _FX_OS_ == _FX_ANDROID_
 void CFX_GEModule::InitPlatform() {
   IFPF_DeviceModule* pDeviceModule = FPF_GetDeviceModule();

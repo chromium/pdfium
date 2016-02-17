@@ -4,23 +4,23 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "PublicMethods.h"
+#include "fpdfsdk/src/javascript/PublicMethods.h"
 
 #include <algorithm>
 
-#include "Field.h"
-#include "JS_Context.h"
-#include "JS_Define.h"
-#include "JS_EventHandler.h"
-#include "JS_Object.h"
-#include "JS_Runtime.h"
-#include "JS_Value.h"
-#include "color.h"
 #include "core/include/fxcrt/fx_ext.h"
 #include "fpdfsdk/include/fsdk_mgr.h"  // For CPDFDoc_Environment.
 #include "fpdfsdk/include/javascript/IJavaScript.h"
-#include "resource.h"
-#include "util.h"
+#include "fpdfsdk/src/javascript/Field.h"
+#include "fpdfsdk/src/javascript/JS_Context.h"
+#include "fpdfsdk/src/javascript/JS_Define.h"
+#include "fpdfsdk/src/javascript/JS_EventHandler.h"
+#include "fpdfsdk/src/javascript/JS_Object.h"
+#include "fpdfsdk/src/javascript/JS_Runtime.h"
+#include "fpdfsdk/src/javascript/JS_Value.h"
+#include "fpdfsdk/src/javascript/color.h"
+#include "fpdfsdk/src/javascript/resource.h"
+#include "fpdfsdk/src/javascript/util.h"
 
 #define DOUBLE_CORRECT 0.000000000000001
 

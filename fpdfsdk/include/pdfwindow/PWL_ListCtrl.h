@@ -7,7 +7,7 @@
 #ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_LISTCTRL_H_
 #define FPDFSDK_INCLUDE_PDFWINDOW_PWL_LISTCTRL_H_
 
-#include "PWL_Wnd.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
 
 class CPWL_ListCtrl : public CPWL_Wnd {
  public:

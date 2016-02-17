@@ -7,7 +7,7 @@
 #ifndef CORE_SRC_FXCRT_FXCRT_WINDOWS_H_
 #define CORE_SRC_FXCRT_FXCRT_WINDOWS_H_
 
-#include "extension.h"
+#include "core/src/fxcrt/extension.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 class CFXCRT_FileAccess_Win64 : public IFXCRT_FileAccess {

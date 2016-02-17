@@ -7,7 +7,7 @@
 #ifndef CORE_INCLUDE_FXCRT_FX_COORDINATES_H_
 #define CORE_INCLUDE_FXCRT_FX_COORDINATES_H_
 
-#include "fx_basic.h"
+#include "core/include/fxcrt/fx_basic.h"
 
 template <class baseType>
 class CFX_PSVTemplate;

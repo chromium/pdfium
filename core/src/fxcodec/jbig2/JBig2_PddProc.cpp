@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "JBig2_PddProc.h"
+#include "core/src/fxcodec/jbig2/JBig2_PddProc.h"
 
 #include <memory>
 
-#include "JBig2_GrdProc.h"
-#include "JBig2_Image.h"
-#include "JBig2_PatternDict.h"
+#include "core/src/fxcodec/jbig2/JBig2_GrdProc.h"
+#include "core/src/fxcodec/jbig2/JBig2_Image.h"
+#include "core/src/fxcodec/jbig2/JBig2_PatternDict.h"
 
 CJBig2_PatternDict* CJBig2_PDDProc::decode_Arith(
     CJBig2_ArithDecoder* pArithDecoder,

@@ -7,7 +7,7 @@
 
 #include <stdio.h>
 
-#include "fpdfview_c_api_test.h"
+#include "fpdfsdk/src/fpdfview_c_api_test.h"
 
 #include "public/fpdf_dataavail.h"
 #include "public/fpdf_doc.h"

@@ -5,7 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "core/include/fxcrt/fx_basic.h"
-#include "plex.h"
+#include "core/src/fxcrt/plex.h"
 
 CFX_MapPtrToPtr::CFX_MapPtrToPtr(int nBlockSize)
     : m_pHashTable(NULL),

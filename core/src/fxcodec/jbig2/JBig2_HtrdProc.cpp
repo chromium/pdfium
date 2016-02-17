@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "JBig2_HtrdProc.h"
+#include "core/src/fxcodec/jbig2/JBig2_HtrdProc.h"
 
 #include <memory>
 
-#include "JBig2_GsidProc.h"
 #include "core/include/fxcrt/fx_basic.h"
+#include "core/src/fxcodec/jbig2/JBig2_GsidProc.h"
 
 CJBig2_Image* CJBig2_HTRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
                                             JBig2ArithCtx* gbContext,

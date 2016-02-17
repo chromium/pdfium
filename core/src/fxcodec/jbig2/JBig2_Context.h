@@ -11,11 +11,11 @@
 #include <memory>
 #include <utility>
 
-#include "JBig2_List.h"
-#include "JBig2_Page.h"
-#include "JBig2_Segment.h"
 #include "core/include/fpdfapi/fpdf_objects.h"
 #include "core/include/fxcodec/fx_codec_def.h"
+#include "core/src/fxcodec/jbig2/JBig2_List.h"
+#include "core/src/fxcodec/jbig2/JBig2_Page.h"
+#include "core/src/fxcodec/jbig2/JBig2_Segment.h"
 
 class CJBig2_ArithDecoder;
 class CJBig2_GRDProc;

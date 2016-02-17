@@ -7,11 +7,11 @@
 #ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_NOTE_H_
 #define FPDFSDK_INCLUDE_PDFWINDOW_PWL_NOTE_H_
 
-#include "PWL_Button.h"
-#include "PWL_Edit.h"
-#include "PWL_ListCtrl.h"
-#include "PWL_ScrollBar.h"
-#include "PWL_Wnd.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Button.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Edit.h"
+#include "fpdfsdk/include/pdfwindow/PWL_ListCtrl.h"
+#include "fpdfsdk/include/pdfwindow/PWL_ScrollBar.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
 
 class CPWL_Label;
 class CPWL_Note;

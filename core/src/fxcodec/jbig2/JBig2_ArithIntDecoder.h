@@ -9,8 +9,8 @@
 
 #include <vector>
 
-#include "JBig2_ArithDecoder.h"
 #include "core/include/fxcrt/fx_system.h"
+#include "core/src/fxcodec/jbig2/JBig2_ArithDecoder.h"
 
 class CJBig2_ArithIntDecoder {
  public:

@@ -7,10 +7,10 @@
 #ifndef _JBIG2_SEGMENT_H_
 #define _JBIG2_SEGMENT_H_
 
-#include "JBig2_Define.h"
-#include "JBig2_HuffmanTable.h"
-#include "JBig2_PatternDict.h"
-#include "JBig2_SymbolDict.h"
+#include "core/src/fxcodec/jbig2/JBig2_Define.h"
+#include "core/src/fxcodec/jbig2/JBig2_HuffmanTable.h"
+#include "core/src/fxcodec/jbig2/JBig2_PatternDict.h"
+#include "core/src/fxcodec/jbig2/JBig2_SymbolDict.h"
 
 #define JBIG2_GET_INT32(buf) \
   (((buf)[0] << 24) | ((buf)[1] << 16) | ((buf)[2] << 8) | (buf)[3])

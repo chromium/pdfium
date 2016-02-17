@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "codec_int.h"
 #include "core/include/fxcodec/fx_codec.h"
+#include "core/src/fxcodec/codec/codec_int.h"
 #include "third_party/lcms2-2.6/include/lcms2.h"
 
 const FX_DWORD N_COMPONENT_LAB = 3;

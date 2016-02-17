@@ -5,7 +5,7 @@
 #ifndef TESTING_EMBEDDER_TEST_MOCK_DELEGATE_H_
 #define TESTING_EMBEDDER_TEST_MOCK_DELEGATE_H_
 
-#include "embedder_test.h"
+#include "testing/embedder_test.h"
 #include "testing/gmock/include/gmock/gmock.h"
 
 class EmbedderTestMockDelegate : public EmbedderTest::Delegate {

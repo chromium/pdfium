@@ -6,8 +6,8 @@
 
 #ifndef _JBIG2_HUFFMAN_DECODER_H_
 #define _JBIG2_HUFFMAN_DECODER_H_
-#include "JBig2_BitStream.h"
-#include "JBig2_HuffmanTable.h"
+#include "core/src/fxcodec/jbig2/JBig2_BitStream.h"
+#include "core/src/fxcodec/jbig2/JBig2_HuffmanTable.h"
 class CJBig2_HuffmanDecoder {
  public:
   explicit CJBig2_HuffmanDecoder(CJBig2_BitStream* pStream);

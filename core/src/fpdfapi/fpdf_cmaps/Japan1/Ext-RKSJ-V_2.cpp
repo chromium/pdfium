@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "cmaps_japan1.h"
+#include "core/src/fpdfapi/fpdf_cmaps/Japan1/cmaps_japan1.h"
 
 const FX_WORD g_FXCMAP_Ext_RKSJ_V_2[39 * 3] = {
     0x8141, 0x8142, 0x1ECF, 0x8143, 0x8143, 0x204C, 0x8144, 0x8144, 0x2052,

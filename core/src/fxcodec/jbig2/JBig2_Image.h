@@ -7,7 +7,7 @@
 #ifndef CORE_SRC_FXCODEC_JBIG2_JBIG2_IMAGE_H_
 #define CORE_SRC_FXCODEC_JBIG2_JBIG2_IMAGE_H_
 
-#include "JBig2_Define.h"
+#include "core/src/fxcodec/jbig2/JBig2_Define.h"
 
 enum JBig2ComposeOp {
   JBIG2_COMPOSE_OR = 0,

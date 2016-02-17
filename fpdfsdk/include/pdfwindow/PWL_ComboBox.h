@@ -7,9 +7,9 @@
 #ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_COMBOBOX_H_
 #define FPDFSDK_INCLUDE_PDFWINDOW_PWL_COMBOBOX_H_
 
-#include "PWL_Edit.h"
-#include "PWL_ListBox.h"
-#include "PWL_Wnd.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Edit.h"
+#include "fpdfsdk/include/pdfwindow/PWL_ListBox.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
 
 class CPWL_CBEdit : public CPWL_Edit {
  public:

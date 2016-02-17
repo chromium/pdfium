@@ -12,7 +12,7 @@
 
 #include "core/include/fpdfdoc/fpdf_doc.h"
 #include "core/include/fxcrt/fx_string.h"
-#include "fsdk_baseform.h"
+#include "fpdfsdk/include/fsdk_baseform.h"
 
 class CPDFSDK_Annot;
 class CPDFSDK_Document;

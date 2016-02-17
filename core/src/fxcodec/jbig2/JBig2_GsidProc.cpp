@@ -4,15 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "JBig2_GsidProc.h"
+#include "core/src/fxcodec/jbig2/JBig2_GsidProc.h"
 
 #include <memory>
 
-#include "JBig2_BitStream.h"
-#include "JBig2_GrdProc.h"
-#include "JBig2_Image.h"
-#include "JBig2_List.h"
 #include "core/include/fxcrt/fx_basic.h"
+#include "core/src/fxcodec/jbig2/JBig2_BitStream.h"
+#include "core/src/fxcodec/jbig2/JBig2_GrdProc.h"
+#include "core/src/fxcodec/jbig2/JBig2_Image.h"
+#include "core/src/fxcodec/jbig2/JBig2_List.h"
 
 FX_DWORD* CJBig2_GSIDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
                                         JBig2ArithCtx* gbContext,

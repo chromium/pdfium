@@ -10,6 +10,6 @@
 #include "core/include/fxge/fpf.h"
 #include "core/include/fxge/fx_freetype.h"
 #include "core/include/fxge/fx_ge.h"
-#include "fx_android_font.h"
+#include "core/src/fxge/android/fx_android_font.h"
 
 #endif  // CORE_SRC_FXGE_ANDROID_FX_FPF_H_

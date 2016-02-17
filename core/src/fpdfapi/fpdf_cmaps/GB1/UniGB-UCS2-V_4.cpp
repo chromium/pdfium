@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "cmaps_gb1.h"
+#include "core/src/fpdfapi/fpdf_cmaps/GB1/cmaps_gb1.h"
 
 const FX_WORD g_FXCMAP_UniGB_UCS2_V_4[24 * 3] = {
     0x2014, 0x2014, 0x0256, 0x2026, 0x2026, 0x0257, 0x2225, 0x2225, 0x1E1C,

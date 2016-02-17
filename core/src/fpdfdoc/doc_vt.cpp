@@ -8,7 +8,7 @@
 
 #include "core/include/fpdfdoc/fpdf_doc.h"
 #include "core/include/fpdfdoc/fpdf_vt.h"
-#include "pdf_vt.h"
+#include "core/src/fpdfdoc/pdf_vt.h"
 
 const uint8_t gFontSizeSteps[] = {4,  6,  8,   9,   10,  12,  14, 18, 20,
                                   25, 30, 35,  40,  45,  50,  55, 60, 70,

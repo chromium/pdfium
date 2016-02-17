@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "dib_int.h"
+#include "core/src/fxge/dib/dib_int.h"
 
 #include "core/include/fxge/fx_dib.h"
 

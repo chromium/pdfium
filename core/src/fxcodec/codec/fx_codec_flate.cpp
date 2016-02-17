@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "codec_int.h"
+#include "core/src/fxcodec/codec/codec_int.h"
 
 #include <algorithm>
 #include <memory>

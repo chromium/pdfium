@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xml_int.h"
+#include "core/src/fxcrt/xml_int.h"
 
 #include "core/include/fxcrt/fx_xml.h"
 

@@ -6,8 +6,8 @@
 
 #ifndef _JBIG2_PATTERN_DICT_H_
 #define _JBIG2_PATTERN_DICT_H_
-#include "JBig2_Define.h"
-#include "JBig2_Image.h"
+#include "core/src/fxcodec/jbig2/JBig2_Define.h"
+#include "core/src/fxcodec/jbig2/JBig2_Image.h"
 class CJBig2_PatternDict {
  public:
   CJBig2_PatternDict();

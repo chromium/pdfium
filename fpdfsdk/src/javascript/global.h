@@ -9,7 +9,7 @@
 
 #include <map>
 
-#include "JS_Define.h"
+#include "fpdfsdk/src/javascript/JS_Define.h"
 
 class CJS_GlobalData;
 class CJS_GlobalVariableArray;

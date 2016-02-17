@@ -19,7 +19,7 @@
 #include <string>
 #include <vector>
 
-#include "image_diff_png.h"
+#include "samples/image_diff_png.h"
 #include "third_party/base/logging.h"
 #include "third_party/base/numerics/safe_conversions.h"
 

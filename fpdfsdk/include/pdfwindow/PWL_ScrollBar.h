@@ -7,7 +7,7 @@
 #ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_SCROLLBAR_H_
 #define FPDFSDK_INCLUDE_PDFWINDOW_PWL_SCROLLBAR_H_
 
-#include "PWL_Wnd.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
 
 class CPWL_SBButton;
 class CPWL_ScrollBar;

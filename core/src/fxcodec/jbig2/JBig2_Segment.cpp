@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "JBig2_Segment.h"
+#include "core/src/fxcodec/jbig2/JBig2_Segment.h"
 
 #include "core/include/fxcrt/fx_memory.h"
 

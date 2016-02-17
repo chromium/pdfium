@@ -7,7 +7,7 @@
 #ifndef FPDFSDK_INCLUDE_FORMFILLER_FFL_CHECKBOX_H_
 #define FPDFSDK_INCLUDE_FORMFILLER_FFL_CHECKBOX_H_
 
-#include "FFL_FormFiller.h"
+#include "fpdfsdk/include/formfiller/FFL_FormFiller.h"
 
 class CFFL_CheckBox : public CFFL_Button {
  public:

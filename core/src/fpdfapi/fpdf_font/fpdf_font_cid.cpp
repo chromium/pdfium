@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "font_int.h"
+#include "core/src/fpdfapi/fpdf_font/font_int.h"
 
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_page.h"
@@ -13,6 +13,7 @@
 #include "core/include/fxge/fx_freetype.h"
 #include "core/include/fxge/fx_ge.h"
 #include "core/src/fpdfapi/fpdf_cmaps/cmap_int.h"
+#include "core/src/fpdfapi/fpdf_font/ttgsubtable.h"
 
 namespace {
 
@@ -1037,7 +1038,6 @@ void CPDF_CID2UnicodeMap::Load(CPDF_CMapManager* pMgr,
   FPDFAPI_LoadCID2UnicodeMap(charset, m_pEmbeddedMap, m_EmbeddedCount);
 }
 
-#include "ttgsubtable.h"
 CPDF_CIDFont::CPDF_CIDFont() : CPDF_Font(PDFFONT_CIDFONT) {
   m_pCMap = NULL;
   m_pAllocatedCMap = NULL;

@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "JBig2_ArithDecoder.h"
+#include "core/src/fxcodec/jbig2/JBig2_ArithDecoder.h"
 
-#include "JBig2_BitStream.h"
 #include "core/include/fxcrt/fx_basic.h"
+#include "core/src/fxcodec/jbig2/JBig2_BitStream.h"
 
 namespace {
 

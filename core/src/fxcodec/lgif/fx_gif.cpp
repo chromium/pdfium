@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fx_gif.h"
+#include "core/src/fxcodec/lgif/fx_gif.h"
 void CGifLZWDecoder::Input(uint8_t* src_buf, FX_DWORD src_size) {
   next_in = src_buf;
   avail_in = src_size;

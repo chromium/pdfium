@@ -8,7 +8,7 @@
 
 #include "core/include/fxcodec/fx_codec.h"
 #include "core/include/fxge/fx_dib.h"
-#include "codec_int.h"
+#include "core/src/fxcodec/codec/codec_int.h"
 
 extern "C" {
 #undef FAR

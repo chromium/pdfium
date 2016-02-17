@@ -10,7 +10,7 @@
 #include <windows.h>
 
 #include "core/include/fxge/fx_ge_win32.h"
-#include "win32_int.h"
+#include "core/src/fxge/win32/win32_int.h"
 
 CFX_ByteString CFX_WindowsDIB::GetBitmapInfo(const CFX_DIBitmap* pBitmap) {
   CFX_ByteString result;

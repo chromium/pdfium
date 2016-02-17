@@ -8,8 +8,7 @@
 #define CORE_SRC_FXCODEC_JBIG2_JBIG2_HTRDPROC_H_
 
 #include "core/include/fxcrt/fx_system.h"
-
-#include "JBig2_Image.h"
+#include "core/src/fxcodec/jbig2/JBig2_Image.h"
 
 class CJBig2_ArithDecoder;
 class CJBig2_BitStream;

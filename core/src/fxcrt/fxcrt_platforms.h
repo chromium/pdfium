@@ -7,7 +7,7 @@
 #ifndef CORE_SRC_FXCRT_FXCRT_PLATFORMS_H_
 #define CORE_SRC_FXCRT_FXCRT_PLATFORMS_H_
 
-#include "extension.h"
+#include "core/src/fxcrt/extension.h"
 
 #if _FX_OS_ == _FX_ANDROID_
 void FXCRT_GetFileModeString(FX_DWORD dwModes, CFX_ByteString& bsMode);

@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "cmaps_korea1.h"
+#include "core/src/fpdfapi/fpdf_cmaps/Korea1/cmaps_korea1.h"
 
 const FX_WORD g_FXCMAP_KSC_EUC_V_0[16 * 3] = {
     0xA1A2, 0xA1A3, 0x1F78, 0xA1A5, 0xA1A5, 0x1F7A, 0xA1A6, 0xA1A6,

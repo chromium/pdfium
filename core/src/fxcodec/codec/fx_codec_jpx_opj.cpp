@@ -8,10 +8,10 @@
 #include <limits>
 #include <vector>
 
-#include "codec_int.h"
 #include "core/include/fpdfapi/fpdf_resource.h"
 #include "core/include/fxcodec/fx_codec.h"
 #include "core/include/fxcrt/fx_safe_types.h"
+#include "core/src/fxcodec/codec/codec_int.h"
 #include "third_party/lcms2-2.6/include/lcms2.h"
 #include "third_party/libopenjpeg20/openjpeg.h"
 

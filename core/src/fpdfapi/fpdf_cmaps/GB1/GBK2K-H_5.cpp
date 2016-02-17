@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "cmaps_gb1.h"
+#include "core/src/fpdfapi/fpdf_cmaps/GB1/cmaps_gb1.h"
 
 const FX_WORD g_FXCMAP_GBK2K_H_5[4071 * 3] = {
     0x0020, 0x007E, 0x0001, 0x8140, 0x8178, 0x2758, 0x8179, 0x8179, 0x2059,

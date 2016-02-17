@@ -8,7 +8,7 @@
 #if defined(_SKIA_SUPPORT_)
 #include "SkBlitter.h"
 #include "core/include/fxcodec/fx_codec.h"
-#include "fx_skia_blitter_new.h"
+#include "core/src/fxge/skia/fx_skia_blitter_new.h"
 
 // We use our own renderer here to make it simple
 void CFX_SkiaRenderer::blitAntiH(int x,

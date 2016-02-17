@@ -7,8 +7,8 @@
 #ifndef CORE_SRC_FXCODEC_JBIG2_JBIG2_TRDPROC_H_
 #define CORE_SRC_FXCODEC_JBIG2_JBIG2_TRDPROC_H_
 
-#include "JBig2_Image.h"
 #include "core/include/fxcrt/fx_system.h"
+#include "core/src/fxcodec/jbig2/JBig2_Image.h"
 
 class CJBig2_ArithDecoder;
 class CJBig2_ArithIaidDecoder;

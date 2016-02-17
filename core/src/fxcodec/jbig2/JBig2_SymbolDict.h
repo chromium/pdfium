@@ -10,9 +10,9 @@
 #include <memory>
 #include <vector>
 
-#include "JBig2_ArithDecoder.h"
-#include "JBig2_List.h"
 #include "core/include/fxcrt/fx_basic.h"
+#include "core/src/fxcodec/jbig2/JBig2_ArithDecoder.h"
+#include "core/src/fxcodec/jbig2/JBig2_List.h"
 
 class CJBig2_Image;
 

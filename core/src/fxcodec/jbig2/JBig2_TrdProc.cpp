@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "JBig2_TrdProc.h"
+#include "core/src/fxcodec/jbig2/JBig2_TrdProc.h"
 
 #include <memory>
 
-#include "JBig2_ArithDecoder.h"
-#include "JBig2_ArithIntDecoder.h"
-#include "JBig2_GrrdProc.h"
-#include "JBig2_HuffmanDecoder.h"
+#include "core/src/fxcodec/jbig2/JBig2_ArithDecoder.h"
+#include "core/src/fxcodec/jbig2/JBig2_ArithIntDecoder.h"
+#include "core/src/fxcodec/jbig2/JBig2_GrrdProc.h"
+#include "core/src/fxcodec/jbig2/JBig2_HuffmanDecoder.h"
 
 CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
                                              JBig2ArithCtx* grContext) {

@@ -9,10 +9,10 @@
 
 #include <algorithm>
 
-#include "fx_memory.h"
-#include "fx_stream.h"
-#include "fx_string.h"
-#include "fx_system.h"
+#include "core/include/fxcrt/fx_memory.h"
+#include "core/include/fxcrt/fx_stream.h"
+#include "core/include/fxcrt/fx_string.h"
+#include "core/include/fxcrt/fx_system.h"
 
 // The FX_ArraySize(arr) macro returns the # of elements in an array arr.
 // The expression is a compile-time constant, and therefore can be

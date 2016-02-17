@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "cmaps_japan1.h"
+#include "core/src/fpdfapi/fpdf_cmaps/Japan1/cmaps_japan1.h"
 
 const FX_WORD g_FXCMAP_UniJIS_UCS2_H_4[9772 * 2] = {
     0x0020, 0x0001, 0x0021, 0x0002, 0x0022, 0x0003, 0x0023, 0x0004, 0x0024,

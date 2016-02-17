@@ -4,7 +4,7 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "chromefontdata.h"
+#include "core/src/fxge/fontdata/chromefontdata/chromefontdata.h"
 
 const unsigned char g_FoxitSerifMMFontData [113417] = {
     0x80, 0x01, 0xD6, 0x29, 0x00, 0x00, 0x25, 0x21, 0x50, 0x53, 0x2D, 0x41, 0x64, 0x6F, 0x62, 0x65,

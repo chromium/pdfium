@@ -8,6 +8,7 @@
 #define CORE_SRC_FXGE_WIN32_WIN32_INT_H_
 
 #include "core/include/fxge/fx_ge.h"
+#include "core/src/fxge/win32/dwrite_int.h"
 
 struct WINDIB_Open_Args_;
 class CGdiplusExt {
@@ -97,7 +98,6 @@ class CGdiplusExt {
   HMODULE m_hModule;
   HMODULE m_GdiModule;
 };
-#include "dwrite_int.h"
 class CWin32Platform {
  public:
   FX_BOOL m_bHalfTone;

@@ -6,7 +6,7 @@
 
 #include <limits>
 
-#include "codec_int.h"
+#include "core/src/fxcodec/codec/codec_int.h"
 #include "testing/fx_string_testhelpers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 

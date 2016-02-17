@@ -7,8 +7,8 @@
 #ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_SIGNATURE_H_
 #define FPDFSDK_INCLUDE_PDFWINDOW_PWL_SIGNATURE_H_
 
-#include "PWL_Icon.h"
-#include "PWL_Wnd.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Icon.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
 
 class CFX_DIBSource;
 class CPWL_Label;

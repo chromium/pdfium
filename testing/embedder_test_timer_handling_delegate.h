@@ -10,8 +10,8 @@
 #include <utility>
 #include <vector>
 
-#include "embedder_test.h"
-#include "test_support.h"
+#include "testing/embedder_test.h"
+#include "testing/test_support.h"
 
 class EmbedderTestTimerHandlingDelegate : public EmbedderTest::Delegate {
  public:

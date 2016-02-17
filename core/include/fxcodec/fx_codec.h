@@ -14,7 +14,6 @@
 #include "core/include/fxcodec/fx_codec_def.h"
 #include "core/include/fxcrt/fx_basic.h"
 #include "core/include/fxcrt/fx_coordinates.h"  // For FX_RECT.
-#include "fx_codec_def.h"
 
 class CFX_DIBSource;
 class CJPX_Decoder;

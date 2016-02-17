@@ -12,13 +12,13 @@
 #include <vector>
 
 #include "core/include/fpdftext/fpdf_text.h"
-#include "fsdk_actionhandler.h"
-#include "fsdk_annothandler.h"
-#include "fsdk_baseannot.h"
-#include "fsdk_baseform.h"
-#include "fsdk_common.h"
-#include "fsdk_define.h"
-#include "fx_systemhandler.h"
+#include "fpdfsdk/include/fsdk_actionhandler.h"
+#include "fpdfsdk/include/fsdk_annothandler.h"
+#include "fpdfsdk/include/fsdk_baseannot.h"
+#include "fpdfsdk/include/fsdk_baseform.h"
+#include "fpdfsdk/include/fsdk_common.h"
+#include "fpdfsdk/include/fsdk_define.h"
+#include "fpdfsdk/include/fx_systemhandler.h"
 #include "javascript/IJavaScript.h"
 #include "public/fpdf_formfill.h"
 #include "public/fpdf_fwlevent.h"  // cross platform keycode and events define.

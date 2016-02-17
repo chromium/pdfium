@@ -17,7 +17,7 @@ using std::max;
 
 #include <gdiplus.h>
 #include "core/include/fxge/fx_ge_win32.h"
-#include "win32_int.h"
+#include "core/src/fxge/win32/win32_int.h"
 
 using namespace Gdiplus;
 using namespace Gdiplus::DllExports;

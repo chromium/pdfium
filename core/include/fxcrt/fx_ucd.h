@@ -7,7 +7,7 @@
 #ifndef CORE_INCLUDE_FXCRT_FX_UCD_H_
 #define CORE_INCLUDE_FXCRT_FX_UCD_H_
 
-#include "fx_basic.h"
+#include "core/include/fxcrt/fx_basic.h"
 
 #define FX_BIDICLASSBITS 6
 #define FX_BIDICLASSBITSMASK (31 << FX_BIDICLASSBITS)

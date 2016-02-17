@@ -4,24 +4,24 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "Field.h"
+#include "fpdfsdk/src/javascript/Field.h"
 
 #include <algorithm>
 #include <memory>
 #include <vector>
 
-#include "Document.h"
-#include "Icon.h"
-#include "JS_Context.h"
-#include "JS_Define.h"
-#include "JS_EventHandler.h"
-#include "JS_Object.h"
-#include "JS_Runtime.h"
-#include "JS_Value.h"
-#include "PublicMethods.h"
-#include "color.h"
 #include "fpdfsdk/include/fsdk_mgr.h"  // For CPDFDoc_Environment.
 #include "fpdfsdk/include/javascript/IJavaScript.h"
+#include "fpdfsdk/src/javascript/Document.h"
+#include "fpdfsdk/src/javascript/Icon.h"
+#include "fpdfsdk/src/javascript/JS_Context.h"
+#include "fpdfsdk/src/javascript/JS_Define.h"
+#include "fpdfsdk/src/javascript/JS_EventHandler.h"
+#include "fpdfsdk/src/javascript/JS_Object.h"
+#include "fpdfsdk/src/javascript/JS_Runtime.h"
+#include "fpdfsdk/src/javascript/JS_Value.h"
+#include "fpdfsdk/src/javascript/PublicMethods.h"
+#include "fpdfsdk/src/javascript/color.h"
 
 BEGIN_JS_STATIC_CONST(CJS_Field)
 END_JS_STATIC_CONST()

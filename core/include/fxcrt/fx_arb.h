@@ -7,8 +7,8 @@
 #ifndef CORE_INCLUDE_FXCRT_FX_ARB_H_
 #define CORE_INCLUDE_FXCRT_FX_ARB_H_
 
-#include "fx_system.h"
-#include "fx_ucd.h"
+#include "core/include/fxcrt/fx_system.h"
+#include "core/include/fxcrt/fx_ucd.h"
 
 class IFX_ArabicChar;
 

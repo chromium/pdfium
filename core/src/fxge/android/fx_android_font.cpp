@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fx_fpf.h"
+#include "core/src/fxge/android/fx_fpf.h"
 #if _FX_OS_ == _FX_ANDROID_
 CFX_AndroidFontInfo::CFX_AndroidFontInfo() : m_pFontMgr(NULL) {}
 FX_BOOL CFX_AndroidFontInfo::Init(IFPF_FontMgr* pFontMgr) {

@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "cmaps_japan1.h"
+#include "core/src/fpdfapi/fpdf_cmaps/Japan1/cmaps_japan1.h"
 
 const FX_WORD g_FXCMAP_EUC_V_1[27 * 3] = {
     0xA1A2, 0xA1A3, 0x1ECF, 0xA1B1, 0xA1B2, 0x1ED1, 0xA1BC, 0xA1BE, 0x1ED3,

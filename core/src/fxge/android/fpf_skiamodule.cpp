@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fx_fpf.h"
+#include "core/src/fxge/android/fx_fpf.h"
 #if _FX_OS_ == _FX_ANDROID_
-#include "fpf_skiamodule.h"
-#include "fpf_skiafontmgr.h"
+#include "core/src/fxge/android/fpf_skiamodule.h"
+#include "core/src/fxge/android/fpf_skiafontmgr.h"
 static IFPF_DeviceModule* gs_pPFModule = NULL;
 IFPF_DeviceModule* FPF_GetDeviceModule() {
   if (!gs_pPFModule) {

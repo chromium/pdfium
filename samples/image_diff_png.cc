@@ -9,7 +9,7 @@
 // This is a duplicate of ui/gfx/codec/png_codec.cc, after removing code related
 // to Skia, that we can use when running layout tests with minimal dependencies.
 
-#include "image_diff_png.h"
+#include "samples/image_diff_png.h"
 
 #include <stdlib.h>
 #include <string.h>

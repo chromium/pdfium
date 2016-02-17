@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "Consts.h"
+#include "fpdfsdk/src/javascript/Consts.h"
 
-#include "JS_Define.h"
-#include "JS_Object.h"
-#include "JS_Value.h"
 #include "fpdfsdk/include/javascript/IJavaScript.h"
+#include "fpdfsdk/src/javascript/JS_Define.h"
+#include "fpdfsdk/src/javascript/JS_Object.h"
+#include "fpdfsdk/src/javascript/JS_Value.h"
 
 /* ------------------------------ border ------------------------------ */
 

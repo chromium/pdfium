@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "JS_Context.h"
+#include "fpdfsdk/src/javascript/JS_Context.h"
 
-#include "JS_EventHandler.h"
-#include "JS_Runtime.h"
 #include "fpdfsdk/include/javascript/IJavaScript.h"
-#include "resource.h"
+#include "fpdfsdk/src/javascript/JS_EventHandler.h"
+#include "fpdfsdk/src/javascript/JS_Runtime.h"
+#include "fpdfsdk/src/javascript/resource.h"
 
 /* -------------------------- CJS_Context -------------------------- */
 

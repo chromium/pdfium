@@ -7,7 +7,7 @@
 #ifndef FPDFSDK_SRC_JAVASCRIPT_CONSTS_H_
 #define FPDFSDK_SRC_JAVASCRIPT_CONSTS_H_
 
-#include "JS_Define.h"
+#include "fpdfsdk/src/javascript/JS_Define.h"
 
 /* ------------------------------ border ------------------------------ */
 

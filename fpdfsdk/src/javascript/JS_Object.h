@@ -10,9 +10,9 @@
 #include <map>
 #include <memory>
 
-#include "JS_Runtime.h"
 #include "fpdfsdk/include/fsdk_define.h"  // For FX_UINT
 #include "fpdfsdk/include/jsapi/fxjs_v8.h"
+#include "fpdfsdk/src/javascript/JS_Runtime.h"
 
 class CJS_Context;
 class CJS_Object;

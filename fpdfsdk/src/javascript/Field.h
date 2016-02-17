@@ -9,8 +9,8 @@
 
 #include <string>  // For std::wstring.
 
-#include "JS_Define.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"  // For CPWL_Color.
+#include "fpdfsdk/src/javascript/JS_Define.h"
 
 class CPDFSDK_Widget;
 class Document;

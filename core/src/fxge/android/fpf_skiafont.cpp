@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fx_fpf.h"
+#include "core/src/fxge/android/fx_fpf.h"
 
 #include <algorithm>
 
 #if _FX_OS_ == _FX_ANDROID_
-#include "fpf_skiafont.h"
-#include "fpf_skiafontmgr.h"
+#include "core/src/fxge/android/fpf_skiafont.h"
+#include "core/src/fxge/android/fpf_skiafontmgr.h"
 #define FPF_EM_ADJUST(em, a) (em == 0 ? (a) : (a)*1000 / em)
 CFPF_SkiaFont::CFPF_SkiaFont()
     : m_pFontMgr(NULL),

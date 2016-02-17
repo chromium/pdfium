@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fxcrt_posix.h"
+#include "core/src/fxcrt/fxcrt_posix.h"
 
 #include "core/include/fxcrt/fx_basic.h"
 

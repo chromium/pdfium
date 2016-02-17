@@ -7,7 +7,7 @@
 #ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_SPECIALBUTTON_H_
 #define FPDFSDK_INCLUDE_PDFWINDOW_PWL_SPECIALBUTTON_H_
 
-#include "PWL_Button.h"
+#include "fpdfsdk/include/pdfwindow/PWL_Button.h"
 
 class CPWL_PushButton : public CPWL_Button {
  public:

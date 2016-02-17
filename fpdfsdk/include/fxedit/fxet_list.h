@@ -8,7 +8,7 @@
 #define FPDFSDK_INCLUDE_FXEDIT_FXET_LIST_H_
 
 #include "core/include/fpdfapi/fpdf_parser.h"  // For CPDF_Point.
-#include "fx_edit.h"
+#include "fpdfsdk/include/fxedit/fx_edit.h"
 
 class IFX_Edit;
 

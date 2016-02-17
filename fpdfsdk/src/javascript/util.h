@@ -9,7 +9,7 @@
 
 #include <string>  // For std::wstring.
 
-#include "JS_Define.h"
+#include "fpdfsdk/src/javascript/JS_Define.h"
 
 class util : public CJS_EmbedObj {
  public:

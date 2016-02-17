@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "JBig2_SymbolDict.h"
+#include "core/src/fxcodec/jbig2/JBig2_SymbolDict.h"
 
-#include "JBig2_Image.h"
 #include "core/include/fxcrt/fx_memory.h"
+#include "core/src/fxcodec/jbig2/JBig2_Image.h"
 
 CJBig2_SymbolDict::CJBig2_SymbolDict() {
 }

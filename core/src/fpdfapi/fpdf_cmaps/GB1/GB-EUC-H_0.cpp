@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "cmaps_gb1.h"
+#include "core/src/fpdfapi/fpdf_cmaps/GB1/cmaps_gb1.h"
 
 const FX_WORD g_FXCMAP_GB_EUC_H_0[90 * 3] = {
     0x0020, 0x0020, 0x1E24, 0x0021, 0x007E, 0x032E, 0xA1A1, 0xA1FE, 0x0060,

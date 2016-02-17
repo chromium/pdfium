@@ -6,7 +6,7 @@
 
 #include "core/include/fxcodec/fx_codec.h"
 #include "core/include/fxge/fx_dib.h"
-#include "codec_int.h"
+#include "core/src/fxcodec/codec/codec_int.h"
 #include "core/src/fxcodec/lgif/fx_gif.h"
 struct FXGIF_Context {
   gif_decompress_struct_p gif_ptr;

@@ -5,7 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "core/include/fxcrt/fx_string.h"
-#include "unicodenormalizationdata.h"
+#include "core/src/fpdftext/unicodenormalizationdata.h"
 
 const FX_WCHAR* const g_UnicodeData_Normalization_Maps[5] = {
     nullptr,

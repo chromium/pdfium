@@ -5,7 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "core/include/fpdfdoc/fpdf_doc.h"
-#include "doc_utils.h"
+#include "core/src/fpdfdoc/doc_utils.h"
 
 FX_BOOL PDF_FormField_IsUnison(CPDF_FormField* pField) {
   FX_BOOL bUnison = FALSE;

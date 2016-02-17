@@ -7,8 +7,8 @@
 #include "core/include/fpdfdoc/fpdf_ap.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
 #include "core/include/fpdfdoc/fpdf_vt.h"
-#include "doc_utils.h"
-#include "pdf_vt.h"
+#include "core/src/fpdfdoc/doc_utils.h"
+#include "core/src/fpdfdoc/pdf_vt.h"
 
 #define PBS_SOLID 0
 #define PBS_DASH 1

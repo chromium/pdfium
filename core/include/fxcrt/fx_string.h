@@ -10,8 +10,8 @@
 #include <stdint.h>  // For intptr_t.
 #include <algorithm>
 
-#include "fx_memory.h"
-#include "fx_system.h"
+#include "core/include/fxcrt/fx_memory.h"
+#include "core/include/fxcrt/fx_system.h"
 
 class CFX_BinaryBuf;
 class CFX_ByteString;

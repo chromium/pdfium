@@ -4,7 +4,7 @@
  
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "chromefontdata.h"
+#include "core/src/fxge/fontdata/chromefontdata/chromefontdata.h"
 
 const unsigned char g_FoxitSerifBoldItalicFontData [20733] = {0x1,
                                                               0x0, 0x4, 0x2, 0x0, 0x1, 0x1, 0x1, 0x19,

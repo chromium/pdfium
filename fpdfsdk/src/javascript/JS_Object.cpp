@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "JS_Object.h"
+#include "fpdfsdk/src/javascript/JS_Object.h"
 
-#include "JS_Context.h"
-#include "JS_Define.h"
 #include "fpdfsdk/include/fsdk_mgr.h"  // For CPDFDoc_Environment.
+#include "fpdfsdk/src/javascript/JS_Context.h"
+#include "fpdfsdk/src/javascript/JS_Define.h"
 #include "fpdfsdk/include/javascript/IJavaScript.h"
 
 namespace {

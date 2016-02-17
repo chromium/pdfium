@@ -7,7 +7,7 @@
 #ifndef FPDFSDK_SRC_JAVASCRIPT_REPORT_H_
 #define FPDFSDK_SRC_JAVASCRIPT_REPORT_H_
 
-#include "JS_Define.h"
+#include "fpdfsdk/src/javascript/JS_Define.h"
 
 class Report : public CJS_EmbedObj {
  public:

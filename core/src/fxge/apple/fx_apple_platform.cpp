@@ -9,7 +9,7 @@
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
 
-#include "apple_int.h"
+#include "core/src/fxge/apple/apple_int.h"
 #include "core/include/fxge/fx_freetype.h"
 #include "core/include/fxge/fx_ge_apple.h"
 #include "core/src/fxge/agg/include/fx_agg_driver.h"

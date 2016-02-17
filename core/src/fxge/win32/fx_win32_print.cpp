@@ -14,7 +14,7 @@
 #include "core/include/fxge/fx_ge_win32.h"
 #include "core/src/fxge/dib/dib_int.h"
 #include "core/src/fxge/ge/fx_text_int.h"
-#include "win32_int.h"
+#include "core/src/fxge/win32/win32_int.h"
 
 #define SIZETHRESHOLD 1000
 #define OUTPUTPSLEN 4096

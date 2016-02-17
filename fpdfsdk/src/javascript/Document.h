@@ -10,7 +10,7 @@
 #include <list>
 #include <memory>
 
-#include "JS_Define.h"
+#include "fpdfsdk/src/javascript/JS_Define.h"
 
 class PrintParamsObj : public CJS_EmbedObj {
  public:
