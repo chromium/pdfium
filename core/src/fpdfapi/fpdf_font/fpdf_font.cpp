@@ -1706,7 +1706,7 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(FX_DWORD charcode, int level) {
   ASSERT(!pdfium::ContainsKey(m_CacheMap, charcode));
   CPDF_Type3Char* pCachedChar = pNewChar.release();
   m_CacheMap[charcode] = pCachedChar;
-  if (pCachedChar->m_pForm->CountObjects() == 0) {
+  if (pCachedChar->m_pForm->GetPageObjectList()->GetCount() == 0) {
     delete pCachedChar->m_pForm;
     pCachedChar->m_pForm = nullptr;
   }

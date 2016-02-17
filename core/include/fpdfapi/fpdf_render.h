@@ -74,7 +74,7 @@ class CPDF_RenderContext {
  public:
   class Layer {
    public:
-    CPDF_PageObjectList* m_pObjectList;
+    CPDF_PageObjectHolder* m_pObjectHolder;
     CFX_Matrix m_Matrix;
   };
 
@@ -82,7 +82,7 @@ class CPDF_RenderContext {
   CPDF_RenderContext(CPDF_Document* pDoc, CPDF_PageRenderCache* pPageCache);
   ~CPDF_RenderContext();
 
-  void AppendLayer(CPDF_PageObjectList* pObjectList,
+  void AppendLayer(CPDF_PageObjectHolder* pObjectHolder,
                    const CFX_Matrix* pObject2Device);
 
   void Render(CFX_RenderDevice* pDevice,

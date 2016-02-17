@@ -22,50 +22,46 @@ class CPDF_StreamFilter;
 class CPDF_AllStates;
 class CPDF_ContentParser;
 class CPDF_StreamContentParser;
+
 #define PDFTRANS_GROUP 0x0100
 #define PDFTRANS_ISOLATED 0x0200
 #define PDFTRANS_KNOCKOUT 0x0400
 
-class CPDF_PageObjectList {
+class CPDF_PageObjectList : public CFX_PtrList {
  public:
-  CPDF_PageObjectList();
-  ~CPDF_PageObjectList();
-
-  void ContinueParse(IFX_Pause* pPause);
-
-  FX_BOOL IsParsed() const { return m_ParseState == CONTENT_PARSED; }
-
-  FX_POSITION GetFirstObjectPosition() const {
-    return m_ObjectList.GetHeadPosition();
-  }
-
-  FX_POSITION GetLastObjectPosition() const {
-    return m_ObjectList.GetTailPosition();
-  }
+  explicit CPDF_PageObjectList(int nBlockSize) : CFX_PtrList(nBlockSize) {}
 
   CPDF_PageObject* GetNextObject(FX_POSITION& pos) const {
-    return (CPDF_PageObject*)m_ObjectList.GetNext(pos);
+    return static_cast<CPDF_PageObject*>(GetNext(pos));
   }
 
   CPDF_PageObject* GetPrevObject(FX_POSITION& pos) const {
-    return (CPDF_PageObject*)m_ObjectList.GetPrev(pos);
+    return static_cast<CPDF_PageObject*>(GetPrev(pos));
   }
 
   CPDF_PageObject* GetObjectAt(FX_POSITION pos) const {
-    return (CPDF_PageObject*)m_ObjectList.GetAt(pos);
+    return static_cast<CPDF_PageObject*>(GetAt(pos));
   }
 
-  void AddTail(CPDF_PageObject* obj) { m_ObjectList.AddTail(obj); }
-  FX_DWORD CountObjects() const { return m_ObjectList.GetCount(); }
-
-  int GetObjectIndex(CPDF_PageObject* pObj) const;
-
+  // Linear complexity, to be avoided except as needed by public APIs.
   CPDF_PageObject* GetObjectByIndex(int index) const;
 
   FX_POSITION InsertObject(FX_POSITION posInsertAfter,
                            CPDF_PageObject* pNewObject);
+};
 
-  void Transform(const CFX_Matrix& matrix);
+class CPDF_PageObjectHolder {
+ public:
+  CPDF_PageObjectHolder();
+  ~CPDF_PageObjectHolder();
+
+  void ContinueParse(IFX_Pause* pPause);
+  FX_BOOL IsParsed() const { return m_ParseState == CONTENT_PARSED; }
+
+  CPDF_PageObjectList* GetPageObjectList() { return &m_PageObjectList; }
+  const CPDF_PageObjectList* GetPageObjectList() const {
+    return &m_PageObjectList;
+  }
 
   FX_BOOL BackgroundAlphaNeeded() const { return m_bBackgroundAlphaNeeded; }
   void SetBackgroundAlphaNeeded(FX_BOOL needed) {
@@ -74,6 +70,8 @@ class CPDF_PageObjectList {
 
   FX_BOOL HasImageMask() const { return m_bHasImageMask; }
   void SetHasImageMask(FX_BOOL value) { m_bHasImageMask = value; }
+
+  void Transform(const CFX_Matrix& matrix);
   CFX_FloatRect CalcBoundingBox() const;
 
   CPDF_Dictionary* m_pFormDict;
@@ -93,10 +91,10 @@ class CPDF_PageObjectList {
   FX_BOOL m_bHasImageMask;
   ParseState m_ParseState;
   std::unique_ptr<CPDF_ContentParser> m_pParser;
-  CFX_PtrList m_ObjectList;
+  CPDF_PageObjectList m_PageObjectList;
 };
 
-class CPDF_Page : public CPDF_PageObjectList, public CFX_PrivateData {
+class CPDF_Page : public CPDF_PageObjectHolder, public CFX_PrivateData {
  public:
   CPDF_Page();
   ~CPDF_Page();
@@ -142,7 +140,7 @@ class CPDF_ParseOptions {
 
   FX_BOOL m_bDecodeInlineImage;
 };
-class CPDF_Form : public CPDF_PageObjectList {
+class CPDF_Form : public CPDF_PageObjectHolder {
  public:
   CPDF_Form(CPDF_Document* pDocument,
             CPDF_Dictionary* pPageResources,

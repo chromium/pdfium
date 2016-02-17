@@ -670,7 +670,7 @@ void CPDF_FormObject::CalcBoundingBox() {
   m_Right = form_rect.right;
   m_Top = form_rect.top;
 }
-CPDF_PageObjectList::CPDF_PageObjectList()
+CPDF_PageObjectHolder::CPDF_PageObjectHolder()
     : m_pFormDict(nullptr),
       m_pFormStream(nullptr),
       m_pDocument(nullptr),
@@ -680,14 +680,15 @@ CPDF_PageObjectList::CPDF_PageObjectList()
       m_bBackgroundAlphaNeeded(FALSE),
       m_bHasImageMask(FALSE),
       m_ParseState(CONTENT_NOT_PARSED),
-      m_ObjectList(128) {}
-CPDF_PageObjectList::~CPDF_PageObjectList() {
-  FX_POSITION pos = m_ObjectList.GetHeadPosition();
+      m_PageObjectList(128) {}
+
+CPDF_PageObjectHolder::~CPDF_PageObjectHolder() {
+  FX_POSITION pos = m_PageObjectList.GetHeadPosition();
   while (pos) {
-    delete (CPDF_PageObject*)m_ObjectList.GetNext(pos);
+    delete m_PageObjectList.GetNextObject(pos);
   }
 }
-void CPDF_PageObjectList::ContinueParse(IFX_Pause* pPause) {
+void CPDF_PageObjectHolder::ContinueParse(IFX_Pause* pPause) {
   if (!m_pParser) {
     return;
   }
@@ -700,43 +701,30 @@ void CPDF_PageObjectList::ContinueParse(IFX_Pause* pPause) {
 FX_POSITION CPDF_PageObjectList::InsertObject(FX_POSITION posInsertAfter,
                                               CPDF_PageObject* pNewObject) {
   if (!posInsertAfter) {
-    return m_ObjectList.AddHead(pNewObject);
+    return AddHead(pNewObject);
   }
-  return m_ObjectList.InsertAfter(posInsertAfter, pNewObject);
-}
-int CPDF_PageObjectList::GetObjectIndex(CPDF_PageObject* pObj) const {
-  int index = 0;
-  FX_POSITION pos = m_ObjectList.GetHeadPosition();
-  while (pos) {
-    CPDF_PageObject* pThisObj = (CPDF_PageObject*)m_ObjectList.GetNext(pos);
-    if (pThisObj == pObj) {
-      return index;
-    }
-    index++;
-  }
-  return -1;
+  return InsertAfter(posInsertAfter, pNewObject);
 }
 CPDF_PageObject* CPDF_PageObjectList::GetObjectByIndex(int index) const {
-  FX_POSITION pos = m_ObjectList.FindIndex(index);
-  return pos ? static_cast<CPDF_PageObject*>(m_ObjectList.GetAt(pos)) : nullptr;
+  FX_POSITION pos = FindIndex(index);
+  return pos ? GetObjectAt(pos) : nullptr;
 }
-void CPDF_PageObjectList::Transform(const CFX_Matrix& matrix) {
-  FX_POSITION pos = m_ObjectList.GetHeadPosition();
+void CPDF_PageObjectHolder::Transform(const CFX_Matrix& matrix) {
+  FX_POSITION pos = m_PageObjectList.GetHeadPosition();
   while (pos) {
-    CPDF_PageObject* pObj = (CPDF_PageObject*)m_ObjectList.GetNext(pos);
-    pObj->Transform(matrix);
+    m_PageObjectList.GetNextObject(pos)->Transform(matrix);
   }
 }
-CFX_FloatRect CPDF_PageObjectList::CalcBoundingBox() const {
-  if (m_ObjectList.GetCount() == 0) {
+CFX_FloatRect CPDF_PageObjectHolder::CalcBoundingBox() const {
+  if (m_PageObjectList.GetCount() == 0) {
     return CFX_FloatRect(0, 0, 0, 0);
   }
   FX_FLOAT left, right, top, bottom;
   left = bottom = 1000000 * 1.0f;
   right = top = -1000000 * 1.0f;
-  FX_POSITION pos = m_ObjectList.GetHeadPosition();
+  FX_POSITION pos = m_PageObjectList.GetHeadPosition();
   while (pos) {
-    CPDF_PageObject* pObj = (CPDF_PageObject*)m_ObjectList.GetNext(pos);
+    CPDF_PageObject* pObj = (CPDF_PageObject*)m_PageObjectList.GetNext(pos);
     if (left > pObj->m_Left) {
       left = pObj->m_Left;
     }
@@ -752,7 +740,7 @@ CFX_FloatRect CPDF_PageObjectList::CalcBoundingBox() const {
   }
   return CFX_FloatRect(left, bottom, right, top);
 }
-void CPDF_PageObjectList::LoadTransInfo() {
+void CPDF_PageObjectHolder::LoadTransInfo() {
   if (!m_pFormDict) {
     return;
   }
@@ -926,10 +914,10 @@ void CPDF_Form::ParseContent(CPDF_AllStates* pGraphicStates,
 CPDF_Form* CPDF_Form::Clone() const {
   CPDF_Form* pClone =
       new CPDF_Form(m_pDocument, m_pPageResources, m_pFormStream, m_pResources);
-  FX_POSITION pos = m_ObjectList.GetHeadPosition();
+  FX_POSITION pos = m_PageObjectList.GetHeadPosition();
   while (pos) {
-    CPDF_PageObject* pObj = (CPDF_PageObject*)m_ObjectList.GetNext(pos);
-    pClone->m_ObjectList.AddTail(pObj->Clone());
+    CPDF_PageObject* pObj = (CPDF_PageObject*)m_PageObjectList.GetNext(pos);
+    pClone->m_PageObjectList.AddTail(pObj->Clone());
   }
   return pClone;
 }

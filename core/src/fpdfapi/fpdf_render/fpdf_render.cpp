@@ -237,17 +237,19 @@ FX_BOOL CPDF_RenderStatus::Initialize(CPDF_RenderContext* pContext,
   m_Transparency = transparency;
   return TRUE;
 }
-void CPDF_RenderStatus::RenderObjectList(const CPDF_PageObjectList* pObjs,
-                                         const CFX_Matrix* pObj2Device) {
+void CPDF_RenderStatus::RenderObjectList(
+    const CPDF_PageObjectHolder* pObjectHolder,
+    const CFX_Matrix* pObj2Device) {
   CFX_FloatRect clip_rect = m_pDevice->GetClipBox();
   CFX_Matrix device2object;
   device2object.SetReverse(*pObj2Device);
   device2object.TransformRect(clip_rect);
   int index = 0;
-  FX_POSITION pos = pObjs->GetFirstObjectPosition();
+  FX_POSITION pos = pObjectHolder->GetPageObjectList()->GetHeadPosition();
   while (pos) {
     index++;
-    CPDF_PageObject* pCurObj = pObjs->GetNextObject(pos);
+    CPDF_PageObject* pCurObj =
+        pObjectHolder->GetPageObjectList()->GetNextObject(pos);
     if (pCurObj == m_pStopObj) {
       m_bStopped = TRUE;
       return;
@@ -971,10 +973,10 @@ CPDF_RenderContext::CPDF_RenderContext(CPDF_Document* pDoc,
 
 CPDF_RenderContext::~CPDF_RenderContext() {}
 
-void CPDF_RenderContext::AppendLayer(CPDF_PageObjectList* pObjs,
+void CPDF_RenderContext::AppendLayer(CPDF_PageObjectHolder* pObjectHolder,
                                      const CFX_Matrix* pObject2Device) {
   Layer* pLayer = m_Layers.AddSpace();
-  pLayer->m_pObjectList = pObjs;
+  pLayer->m_pObjectHolder = pObjectHolder;
   if (pObject2Device) {
     pLayer->m_Matrix = *pObject2Device;
   } else {
@@ -999,9 +1001,9 @@ void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
       FinalMatrix.Concat(*pLastMatrix);
       CPDF_RenderStatus status;
       status.Initialize(this, pDevice, pLastMatrix, pStopObj, NULL, NULL,
-                        pOptions, pLayer->m_pObjectList->m_Transparency, FALSE,
-                        NULL);
-      status.RenderObjectList(pLayer->m_pObjectList, &FinalMatrix);
+                        pOptions, pLayer->m_pObjectHolder->m_Transparency,
+                        FALSE, NULL);
+      status.RenderObjectList(pLayer->m_pObjectHolder, &FinalMatrix);
       if (status.m_Options.m_Flags & RENDER_LIMITEDIMAGECACHE) {
         m_pPageCache->CacheOptimization(status.m_Options.m_dwLimitCacheSize);
       }
@@ -1012,8 +1014,8 @@ void CPDF_RenderContext::Render(CFX_RenderDevice* pDevice,
     } else {
       CPDF_RenderStatus status;
       status.Initialize(this, pDevice, NULL, pStopObj, NULL, NULL, pOptions,
-                        pLayer->m_pObjectList->m_Transparency, FALSE, NULL);
-      status.RenderObjectList(pLayer->m_pObjectList, &pLayer->m_Matrix);
+                        pLayer->m_pObjectHolder->m_Transparency, FALSE, NULL);
+      status.RenderObjectList(pLayer->m_pObjectHolder, &pLayer->m_Matrix);
       if (status.m_Options.m_Flags & RENDER_LIMITEDIMAGECACHE) {
         m_pPageCache->CacheOptimization(status.m_Options.m_dwLimitCacheSize);
       }
@@ -1064,7 +1066,7 @@ void CPDF_ProgressiveRenderer::Continue(IFX_Pause* pPause) {
       m_pRenderStatus.reset(new CPDF_RenderStatus());
       m_pRenderStatus->Initialize(
           m_pContext, m_pDevice, NULL, NULL, NULL, NULL, m_pOptions,
-          m_pCurrentLayer->m_pObjectList->m_Transparency, FALSE, NULL);
+          m_pCurrentLayer->m_pObjectHolder->m_Transparency, FALSE, NULL);
       m_pDevice->SaveState();
       m_ClipRect = m_pDevice->GetClipBox();
       CFX_Matrix device2object;
@@ -1074,14 +1076,16 @@ void CPDF_ProgressiveRenderer::Continue(IFX_Pause* pPause) {
     FX_POSITION pos;
     if (m_LastObjectRendered) {
       pos = m_LastObjectRendered;
-      m_pCurrentLayer->m_pObjectList->GetNextObject(pos);
+      m_pCurrentLayer->m_pObjectHolder->GetPageObjectList()->GetNextObject(pos);
     } else {
-      pos = m_pCurrentLayer->m_pObjectList->GetFirstObjectPosition();
+      pos = m_pCurrentLayer->m_pObjectHolder->GetPageObjectList()
+                ->GetHeadPosition();
     }
     int nObjsToGo = kStepLimit;
     while (pos) {
       CPDF_PageObject* pCurObj =
-          m_pCurrentLayer->m_pObjectList->GetObjectAt(pos);
+          m_pCurrentLayer->m_pObjectHolder->GetPageObjectList()->GetObjectAt(
+              pos);
       if (pCurObj && pCurObj->m_Left <= m_ClipRect.right &&
           pCurObj->m_Right >= m_ClipRect.left &&
           pCurObj->m_Bottom <= m_ClipRect.top &&
@@ -1108,9 +1112,9 @@ void CPDF_ProgressiveRenderer::Continue(IFX_Pause* pPause) {
           return;
         nObjsToGo = kStepLimit;
       }
-      m_pCurrentLayer->m_pObjectList->GetNextObject(pos);
+      m_pCurrentLayer->m_pObjectHolder->GetPageObjectList()->GetNextObject(pos);
     }
-    if (m_pCurrentLayer->m_pObjectList->IsParsed()) {
+    if (m_pCurrentLayer->m_pObjectHolder->IsParsed()) {
       m_pRenderStatus.reset();
       m_pDevice->RestoreState();
       m_pCurrentLayer = nullptr;
@@ -1120,8 +1124,8 @@ void CPDF_ProgressiveRenderer::Continue(IFX_Pause* pPause) {
         return;
       }
     } else {
-      m_pCurrentLayer->m_pObjectList->ContinueParse(pPause);
-      if (!m_pCurrentLayer->m_pObjectList->IsParsed())
+      m_pCurrentLayer->m_pObjectHolder->ContinueParse(pPause);
+      if (!m_pCurrentLayer->m_pObjectHolder->IsParsed())
         return;
     }
   }

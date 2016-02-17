@@ -135,15 +135,13 @@ bool CPDF_TextPage::IsControlChar(const PAGECHAR_INFO& charInfo) {
   }
 }
 
-FX_BOOL CPDF_TextPage::ParseTextPage() {
+void CPDF_TextPage::ParseTextPage() {
   m_bIsParsed = false;
-  if (!m_pPage)
-    return FALSE;
-
   m_TextBuf.Clear();
   m_CharList.clear();
   m_pPreTextObj = NULL;
   ProcessObject();
+
   m_bIsParsed = true;
   m_CharIndex.clear();
   int nCount = pdfium::CollectionSize<int>(m_CharList);
@@ -185,7 +183,6 @@ FX_BOOL CPDF_TextPage::ParseTextPage() {
   if (indexSize % 2) {
     m_CharIndex.erase(m_CharIndex.begin() + indexSize - 1);
   }
-  return TRUE;
 }
 
 int CPDF_TextPage::CountChars() const {
@@ -756,11 +753,8 @@ int CPDF_TextPage::GetWordBreak(int index, int direction) const {
 }
 
 int32_t CPDF_TextPage::FindTextlineFlowDirection() {
-  if (!m_pPage) {
-    return -1;
-  }
-  const int32_t nPageWidth = (int32_t)((CPDF_Page*)m_pPage)->GetPageWidth();
-  const int32_t nPageHeight = (int32_t)((CPDF_Page*)m_pPage)->GetPageHeight();
+  const int32_t nPageWidth = static_cast<int32_t>(m_pPage->GetPageWidth());
+  const int32_t nPageHeight = static_cast<int32_t>(m_pPage->GetPageHeight());
   std::vector<uint8_t> nHorizontalMask(nPageWidth);
   std::vector<uint8_t> nVerticalMask(nPageHeight);
   uint8_t* pDataH = nHorizontalMask.data();
@@ -769,13 +763,13 @@ int32_t CPDF_TextPage::FindTextlineFlowDirection() {
   FX_FLOAT fLineHeight = 0.0f;
   CPDF_PageObject* pPageObj = NULL;
   FX_POSITION pos = NULL;
-  pos = m_pPage->GetFirstObjectPosition();
+  pos = m_pPage->GetPageObjectList()->GetHeadPosition();
   if (!pos) {
     return -1;
   }
   while (pos) {
-    pPageObj = m_pPage->GetNextObject(pos);
-    if (NULL == pPageObj) {
+    pPageObj = m_pPage->GetPageObjectList()->GetNextObject(pos);
+    if (!pPageObj) {
       continue;
     }
     if (CPDF_PageObject::TEXT != pPageObj->m_Type) {
@@ -854,19 +848,15 @@ int32_t CPDF_TextPage::FindTextlineFlowDirection() {
 }
 
 void CPDF_TextPage::ProcessObject() {
-  CPDF_PageObject* pPageObj = NULL;
-  if (!m_pPage) {
-    return;
-  }
-  FX_POSITION pos;
-  pos = m_pPage->GetFirstObjectPosition();
+  FX_POSITION pos = m_pPage->GetPageObjectList()->GetHeadPosition();
   if (!pos) {
     return;
   }
   m_TextlineDir = FindTextlineFlowDirection();
   int nCount = 0;
   while (pos) {
-    pPageObj = m_pPage->GetNextObject(pos);
+    CPDF_PageObject* pPageObj =
+        m_pPage->GetPageObjectList()->GetNextObject(pos);
     if (pPageObj) {
       if (pPageObj->m_Type == CPDF_PageObject::TEXT) {
         CFX_Matrix matrix;
@@ -877,7 +867,6 @@ void CPDF_TextPage::ProcessObject() {
         ProcessFormObject((CPDF_FormObject*)pPageObj, formMatrix);
       }
     }
-    pPageObj = NULL;
   }
   int count = m_LineObj.GetSize();
   for (int i = 0; i < count; i++) {
@@ -894,7 +883,7 @@ void CPDF_TextPage::ProcessFormObject(CPDF_FormObject* pFormObj,
   if (!pFormObj) {
     return;
   }
-  pos = pFormObj->m_pForm->GetFirstObjectPosition();
+  pos = pFormObj->m_pForm->GetPageObjectList()->GetHeadPosition();
   if (!pos) {
     return;
   }
@@ -902,7 +891,7 @@ void CPDF_TextPage::ProcessFormObject(CPDF_FormObject* pFormObj,
   curFormMatrix.Copy(pFormObj->m_FormMatrix);
   curFormMatrix.Concat(formMatrix);
   while (pos) {
-    pPageObj = pFormObj->m_pForm->GetNextObject(pos);
+    pPageObj = pFormObj->m_pForm->GetPageObjectList()->GetNextObject(pos);
     if (pPageObj) {
       if (pPageObj->m_Type == CPDF_PageObject::TEXT) {
         ProcessTextObject((CPDF_TextObject*)pPageObj, curFormMatrix, pos);
@@ -1851,11 +1840,11 @@ FX_BOOL CPDF_TextPage::IsSameAsPreTextObject(CPDF_TextObject* pTextObj,
   }
   int i = 0;
   if (!ObjPos) {
-    ObjPos = m_pPage->GetLastObjectPosition();
+    ObjPos = m_pPage->GetPageObjectList()->GetTailPosition();
   }
-  CPDF_PageObject* pObj = m_pPage->GetPrevObject(ObjPos);
+  CPDF_PageObject* pObj = m_pPage->GetPageObjectList()->GetPrevObject(ObjPos);
   while (i < 5 && ObjPos) {
-    pObj = m_pPage->GetPrevObject(ObjPos);
+    pObj = m_pPage->GetPageObjectList()->GetPrevObject(ObjPos);
     if (pObj == pTextObj) {
       continue;
     }

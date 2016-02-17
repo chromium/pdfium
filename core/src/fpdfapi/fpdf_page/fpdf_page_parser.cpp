@@ -114,7 +114,7 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
     CPDF_Dictionary* pPageResources,
     CPDF_Dictionary* pParentResources,
     CFX_Matrix* pmtContentToUser,
-    CPDF_PageObjectList* pObjList,
+    CPDF_PageObjectHolder* pObjHolder,
     CPDF_Dictionary* pResources,
     CPDF_Rect* pBBox,
     CPDF_ParseOptions* pOptions,
@@ -124,7 +124,7 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
       m_pPageResources(pPageResources),
       m_pParentResources(pParentResources),
       m_pResources(pResources),
-      m_pObjectList(pObjList),
+      m_pObjectHolder(pObjHolder),
       m_Level(level),
       m_ParamStartPos(0),
       m_ParamCount(0),
@@ -738,8 +738,8 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
     CPDF_ImageObject* pObj = AddImage(pXObject, NULL, FALSE);
     m_LastImageName = name;
     m_pLastImage = pObj->m_pImage;
-    if (!m_pObjectList->HasImageMask())
-      m_pObjectList->SetHasImageMask(m_pLastImage->IsMask());
+    if (!m_pObjectHolder->HasImageMask())
+      m_pObjectHolder->SetHasImageMask(m_pLastImage->IsMask());
   } else if (type == "Form") {
     AddForm(pXObject);
   } else {
@@ -764,7 +764,7 @@ void CPDF_StreamContentParser::AddForm(CPDF_Stream* pStream) {
       form_bbox.Transform(&form_matrix);
     }
     CPDF_StreamContentParser parser(m_pDocument, m_pPageResources, m_pResources,
-                                    &m_mtContentToUser, m_pObjectList,
+                                    &m_mtContentToUser, m_pObjectHolder,
                                     pResources, &form_bbox, &m_Options,
                                     m_pCurStates.get(), m_Level + 1);
     parser.m_pCurStates->m_CTM = form_matrix;
@@ -791,13 +791,13 @@ void CPDF_StreamContentParser::AddForm(CPDF_Stream* pStream) {
   status.m_ColorState = m_pCurStates->m_ColorState;
   status.m_TextState = m_pCurStates->m_TextState;
   pFormObj->m_pForm->ParseContent(&status, NULL, NULL, &m_Options, m_Level + 1);
-  if (!m_pObjectList->BackgroundAlphaNeeded() &&
+  if (!m_pObjectHolder->BackgroundAlphaNeeded() &&
       pFormObj->m_pForm->BackgroundAlphaNeeded()) {
-    m_pObjectList->SetBackgroundAlphaNeeded(TRUE);
+    m_pObjectHolder->SetBackgroundAlphaNeeded(TRUE);
   }
   pFormObj->CalcBoundingBox();
   SetGraphicStates(pFormObj, TRUE, TRUE, TRUE);
-  m_pObjectList->AddTail(pFormObj);
+  m_pObjectHolder->GetPageObjectList()->AddTail(pFormObj);
 }
 
 CPDF_ImageObject* CPDF_StreamContentParser::AddImage(CPDF_Stream* pStream,
@@ -822,7 +822,7 @@ CPDF_ImageObject* CPDF_StreamContentParser::AddImage(CPDF_Stream* pStream,
   SetGraphicStates(pImageObj, pImageObj->m_pImage->IsMask(), FALSE, FALSE);
   pImageObj->m_Matrix = ImageMatrix;
   pImageObj->CalcBoundingBox();
-  m_pObjectList->AddTail(pImageObj);
+  m_pObjectHolder->GetPageObjectList()->AddTail(pImageObj);
   return pImageObj;
 }
 
@@ -1211,7 +1211,7 @@ void CPDF_StreamContentParser::Handle_ShadeFill() {
   pObj->m_Right = bbox.right;
   pObj->m_Top = bbox.top;
   pObj->m_Bottom = bbox.bottom;
-  m_pObjectList->AddTail(pObj);
+  m_pObjectHolder->GetPageObjectList()->AddTail(pObj);
 }
 
 void CPDF_StreamContentParser::Handle_SetCharSpace() {
@@ -1389,7 +1389,7 @@ void CPDF_StreamContentParser::AddTextObject(CFX_ByteString* pStrs,
     pCopy->Copy(pText);
     m_ClipTextList.Add(pCopy);
   }
-  m_pObjectList->AddTail(pText);
+  m_pObjectHolder->GetPageObjectList()->AddTail(pText);
   if (pKerning && pKerning[nsegs - 1] != 0) {
     if (!pFont->IsVertWriting()) {
       m_pCurStates->m_TextX -=
@@ -1624,7 +1624,7 @@ void CPDF_StreamContentParser::AddPathObject(int FillType, FX_BOOL bStroke) {
     pPathObj->m_Matrix = matrix;
     SetGraphicStates(pPathObj, TRUE, FALSE, TRUE);
     pPathObj->CalcBoundingBox();
-    m_pObjectList->AddTail(pPathObj);
+    m_pObjectHolder->GetPageObjectList()->AddTail(pPathObj);
   }
   if (PathClipType) {
     if (!matrix.IsIdentity()) {
@@ -1641,12 +1641,13 @@ FX_DWORD CPDF_StreamContentParser::Parse(const uint8_t* pData,
   if (m_Level > _FPDF_MAX_FORM_LEVEL_) {
     return dwSize;
   }
-  FX_DWORD InitObjCount = m_pObjectList->CountObjects();
+  FX_DWORD InitObjCount = m_pObjectHolder->GetPageObjectList()->GetCount();
   CPDF_StreamParser syntax(pData, dwSize);
   CPDF_StreamParserAutoClearer auto_clearer(&m_pSyntax, &syntax);
   m_CompatCount = 0;
   while (1) {
-    FX_DWORD cost = m_pObjectList->CountObjects() - InitObjCount;
+    FX_DWORD cost =
+        m_pObjectHolder->GetPageObjectList()->GetCount() - InitObjCount;
     if (max_cost && cost >= max_cost) {
       break;
     }

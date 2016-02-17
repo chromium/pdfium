@@ -135,9 +135,9 @@ DLLEXPORT void STDCALL FPDFPage_InsertObject(FPDF_PAGE page,
   CPDF_PageObject* pPageObj = (CPDF_PageObject*)page_obj;
   if (!pPageObj)
     return;
-  FX_POSITION LastPersition = pPage->GetLastObjectPosition();
+  FX_POSITION LastPersition = pPage->GetPageObjectList()->GetTailPosition();
 
-  pPage->InsertObject(LastPersition, pPageObj);
+  pPage->GetPageObjectList()->InsertObject(LastPersition, pPageObj);
   switch (pPageObj->m_Type) {
     case FPDF_PAGEOBJ_PATH: {
       CPDF_PathObject* pPathObj = (CPDF_PathObject*)pPageObj;
@@ -177,7 +177,7 @@ DLLEXPORT int STDCALL FPDFPage_CountObject(FPDF_PAGE page) {
           "Page")) {
     return -1;
   }
-  return pPage->CountObjects();
+  return pPage->GetPageObjectList()->GetCount();
 }
 
 DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFPage_GetObject(FPDF_PAGE page,
@@ -188,7 +188,7 @@ DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFPage_GetObject(FPDF_PAGE page,
           "Page")) {
     return NULL;
   }
-  return pPage->GetObjectByIndex(index);
+  return pPage->GetPageObjectList()->GetObjectByIndex(index);
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDFPage_HasTransparency(FPDF_PAGE page) {

@@ -1168,7 +1168,7 @@ CPVT_WordRange CPWL_Edit::GetSameWordsRange(const CPVT_WordPlace& place,
 }
 
 void CPWL_Edit::GeneratePageObjects(
-    CPDF_PageObjectList* pPageObjects,
+    CPDF_PageObjectHolder* pPageObjects,
     const CPDF_Point& ptOffset,
     CFX_ArrayTemplate<CPDF_TextObject*>& ObjArray) {
   IFX_Edit::GeneratePageObjects(
@@ -1177,7 +1177,7 @@ void CPWL_Edit::GeneratePageObjects(
       ObjArray);
 }
 
-void CPWL_Edit::GeneratePageObjects(CPDF_PageObjectList* pPageObjects,
+void CPWL_Edit::GeneratePageObjects(CPDF_PageObjectHolder* pPageObjects,
                                     const CPDF_Point& ptOffset) {
   CFX_ArrayTemplate<CPDF_TextObject*> ObjArray;
   IFX_Edit::GeneratePageObjects(

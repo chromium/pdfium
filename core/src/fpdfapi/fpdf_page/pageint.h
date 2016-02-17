@@ -94,7 +94,7 @@ class CPDF_StreamContentParser {
                            CPDF_Dictionary* pPageResources,
                            CPDF_Dictionary* pParentResources,
                            CFX_Matrix* pmtContentToUser,
-                           CPDF_PageObjectList* pObjList,
+                           CPDF_PageObjectHolder* pObjHolder,
                            CPDF_Dictionary* pResources,
                            CFX_FloatRect* pBBox,
                            CPDF_ParseOptions* pOptions,
@@ -102,7 +102,7 @@ class CPDF_StreamContentParser {
                            int level);
   ~CPDF_StreamContentParser();
 
-  CPDF_PageObjectList* GetObjectList() const { return m_pObjectList; }
+  CPDF_PageObjectHolder* GetPageObjectHolder() const { return m_pObjectHolder; }
   CPDF_AllStates* GetCurStates() const { return m_pCurStates.get(); }
   FX_BOOL IsColored() const { return m_bColored; }
   const FX_FLOAT* GetType3Data() const { return m_Type3Data; }
@@ -236,7 +236,7 @@ class CPDF_StreamContentParser {
   CPDF_Dictionary* m_pPageResources;
   CPDF_Dictionary* m_pParentResources;
   CPDF_Dictionary* m_pResources;
-  CPDF_PageObjectList* m_pObjectList;
+  CPDF_PageObjectHolder* m_pObjectHolder;
   int m_Level;
   CFX_Matrix m_mtContentToUser;
   CFX_FloatRect m_BBox;
@@ -298,7 +298,7 @@ class CPDF_ContentParser {
 
   ParseStatus m_Status;
   InternalStage m_InternalStage;
-  CPDF_PageObjectList* m_pObjects;
+  CPDF_PageObjectHolder* m_pObjects;
   FX_BOOL m_bForm;
   CPDF_ParseOptions m_Options;
   CPDF_Type3Char* m_pType3Char;

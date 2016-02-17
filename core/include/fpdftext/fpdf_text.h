@@ -10,7 +10,6 @@
 #include "core/include/fpdfapi/fpdf_parser.h"
 
 class CPDF_Page;
-class CPDF_PageObjectList;
 class CPDF_TextObject;
 class IPDF_LinkExtract;
 class IPDF_ReflowedPage;
@@ -50,7 +49,7 @@ class IPDF_TextPage {
   static IPDF_TextPage* CreateReflowTextPage(IPDF_ReflowedPage* pRefPage);
   virtual ~IPDF_TextPage() {}
 
-  virtual FX_BOOL ParseTextPage() = 0;
+  virtual void ParseTextPage() = 0;
   virtual bool IsParsed() const = 0;
   virtual int CharIndexFromTextIndex(int TextIndex) const = 0;
   virtual int TextIndexFromCharIndex(int CharIndex) const = 0;

@@ -24,7 +24,6 @@ class CPDF_Document;
 class CPDF_FontGlobals;
 class CPDF_Image;
 class CPDF_Page;
-class CPDF_PageObjectList;
 class CPDF_PageRenderCache;
 class CPDF_RenderOptions;
 class CPDF_Stream;

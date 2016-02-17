@@ -124,7 +124,7 @@ class CPDF_RenderStatus {
                      FX_ARGB fill_color = 0,
                      FX_DWORD GroupFamily = 0,
                      FX_BOOL bLoadMask = FALSE);
-  void RenderObjectList(const CPDF_PageObjectList* pObjs,
+  void RenderObjectList(const CPDF_PageObjectHolder* pObjectHolder,
                         const CFX_Matrix* pObj2Device);
   void RenderSingleObject(const CPDF_PageObject* pObj,
                           const CFX_Matrix* pObj2Device);

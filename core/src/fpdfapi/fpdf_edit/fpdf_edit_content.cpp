@@ -20,9 +20,9 @@ CPDF_PageContentGenerator::CPDF_PageContentGenerator(CPDF_Page* pPage)
   if (m_pPage) {
     m_pDocument = m_pPage->m_pDocument;
   }
-  FX_POSITION pos = pPage->GetFirstObjectPosition();
+  FX_POSITION pos = pPage->GetPageObjectList()->GetHeadPosition();
   while (pos) {
-    InsertPageObject(pPage->GetNextObject(pos));
+    InsertPageObject(pPage->GetPageObjectList()->GetNextObject(pos));
   }
 }
 CPDF_PageContentGenerator::~CPDF_PageContentGenerator() {}

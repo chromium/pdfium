@@ -42,9 +42,10 @@ FX_BOOL GetContentsRect(CPDF_Document* pDoc,
   pPDFPage->Load(pDoc, pDict, FALSE);
   pPDFPage->ParseContent(nullptr);
 
-  FX_POSITION pos = pPDFPage->GetFirstObjectPosition();
+  FX_POSITION pos = pPDFPage->GetPageObjectList()->GetHeadPosition();
   while (pos) {
-    CPDF_PageObject* pPageObject = pPDFPage->GetNextObject(pos);
+    CPDF_PageObject* pPageObject =
+        pPDFPage->GetPageObjectList()->GetNextObject(pos);
     if (!pPageObject)
       continue;
 

@@ -57,7 +57,7 @@ class CPDF_TextPage : public IPDF_TextPage {
   ~CPDF_TextPage() override {}
 
   // IPDF_TextPage:
-  FX_BOOL ParseTextPage() override;
+  void ParseTextPage() override;
   bool IsParsed() const override { return m_bIsParsed; }
   int CharIndexFromTextIndex(int TextIndex) const override;
   int TextIndexFromCharIndex(int CharIndex) const override;
@@ -131,8 +131,8 @@ class CPDF_TextPage : public IPDF_TextPage {
                         const CPDF_Font* pFont,
                         int nItems) const;
 
+  const CPDF_Page* const m_pPage;
   std::vector<FX_WORD> m_CharIndex;
-  const CPDF_PageObjectList* const m_pPage;
   std::deque<PAGECHAR_INFO> m_CharList;
   std::deque<PAGECHAR_INFO> m_TempCharList;
   CFX_WideTextBuf m_TextBuf;
