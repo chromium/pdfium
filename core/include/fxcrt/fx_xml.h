@@ -7,12 +7,15 @@
 #ifndef CORE_INCLUDE_FXCRT_FX_XML_H_
 #define CORE_INCLUDE_FXCRT_FX_XML_H_
 
+#include <memory>
 #include <vector>
 
 #include "core/include/fxcrt/fx_basic.h"
 
 class CXML_AttrItem {
  public:
+  bool Matches(const CFX_ByteStringC& space, const CFX_ByteStringC& name) const;
+
   CFX_ByteString m_QSpaceName;
   CFX_ByteString m_AttrName;
   CFX_WideString m_Value;
@@ -20,18 +23,15 @@ class CXML_AttrItem {
 
 class CXML_AttrMap {
  public:
-  CXML_AttrMap() { m_pMap = NULL; }
-  ~CXML_AttrMap() { RemoveAll(); }
   const CFX_WideString* Lookup(const CFX_ByteStringC& space,
                                const CFX_ByteStringC& name) const;
   void SetAt(const CFX_ByteStringC& space,
              const CFX_ByteStringC& name,
              const CFX_WideStringC& value);
-  void RemoveAt(const CFX_ByteStringC& space, const CFX_ByteStringC& name);
-  void RemoveAll();
   int GetSize() const;
   CXML_AttrItem& GetAt(int index) const;
-  CFX_ObjectArray<CXML_AttrItem>* m_pMap;
+
+  std::unique_ptr<std::vector<CXML_AttrItem>> m_pMap;
 };
 
 class CXML_Content {
@@ -41,6 +41,7 @@ class CXML_Content {
     m_bCDATA = bCDATA;
     m_Content = content;
   }
+
   FX_BOOL m_bCDATA;
   CFX_WideString m_Content;
 };

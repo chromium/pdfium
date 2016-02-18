@@ -444,6 +444,7 @@ typedef CFX_ArrayTemplate<int32_t> CFX_Int32Array;
 typedef CFX_ArrayTemplate<void*> CFX_PtrArray;
 #endif  // PDF_ENABLE_XFA
 
+#ifdef PDF_ENABLE_XFA
 template <class ObjectClass>
 class CFX_ObjectArray : public CFX_BasicArray {
  public:
@@ -545,7 +546,6 @@ class CFX_ObjectArray : public CFX_BasicArray {
     CFX_BasicArray::SetSize(0);
   }
 };
-#ifdef PDF_ENABLE_XFA
 typedef CFX_ObjectArray<CFX_ByteString> CFX_ByteStringArray;
 typedef CFX_ObjectArray<CFX_WideString> CFX_WideStringArray;
 class CFX_BaseSegmentedArray {

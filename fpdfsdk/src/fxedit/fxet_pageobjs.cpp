@@ -413,7 +413,7 @@ static void AddRectToPageObjects(CPDF_PageObjectHolder* pObjectHolder,
                                  FX_COLORREF crFill,
                                  const CPDF_Rect& rcFill) {
   std::unique_ptr<CPDF_PathObject> pPathObj(new CPDF_PathObject);
-  CPDF_PathData* pPathData = pPathObj->m_Path.GetModify();
+  CFX_PathData* pPathData = pPathObj->m_Path.GetModify();
   pPathData->AppendRect(rcFill.left, rcFill.bottom, rcFill.right, rcFill.top);
 
   FX_FLOAT rgb[3];

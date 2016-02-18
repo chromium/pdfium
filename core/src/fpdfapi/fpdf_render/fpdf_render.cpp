@@ -1332,7 +1332,7 @@ FX_BOOL IPDF_OCContext::CheckObjectVisible(const CPDF_PageObject* pObj) {
   const CPDF_ContentMarkData* pData = pObj->m_ContentMark;
   int nItems = pData->CountItems();
   for (int i = 0; i < nItems; i++) {
-    CPDF_ContentMarkItem& item = pData->GetItem(i);
+    const CPDF_ContentMarkItem& item = pData->GetItem(i);
     if (item.GetName() == "OC" &&
         item.GetParamType() == CPDF_ContentMarkItem::PropertiesDict &&
         !CheckOCGVisible(item.GetParam())) {

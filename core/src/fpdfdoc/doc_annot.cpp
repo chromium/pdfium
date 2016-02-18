@@ -310,7 +310,7 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
     int B = (int32_t)(pColor->GetNumberAt(2) * 255);
     argb = ArgbEncode(0xff, R, G, B);
   }
-  CPDF_GraphStateData graph_state;
+  CFX_GraphStateData graph_state;
   graph_state.m_LineWidth = width;
   if (style_char == 'D') {
     if (pDashArray) {
@@ -335,7 +335,7 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
   }
   CFX_FloatRect rect;
   GetRect(rect);
-  CPDF_PathData path;
+  CFX_PathData path;
   width /= 2;
   path.AppendRect(rect.left + width, rect.bottom + width, rect.right - width,
                   rect.top - width);

@@ -7,6 +7,8 @@
 #ifndef CORE_INCLUDE_FPDFAPI_FPDF_PAGEOBJ_H_
 #define CORE_INCLUDE_FPDFAPI_FPDF_PAGEOBJ_H_
 
+#include <vector>
+
 #include "core/include/fpdfapi/fpdf_resource.h"
 #include "core/include/fxge/fx_ge.h"
 
@@ -31,42 +33,36 @@ class CPDF_TextState;
 class CPDF_TextStateData;
 class CPDF_TransferFunc;
 
-typedef CFX_PathData CPDF_PathData;
-
 class CPDF_Path : public CFX_CountRef<CFX_PathData> {
  public:
-  int GetPointCount() { return m_pObject->m_PointCount; }
-
-  int GetFlag(int index) { return m_pObject->m_pPoints[index].m_Flag; }
-
-  FX_FLOAT GetPointX(int index) { return m_pObject->m_pPoints[index].m_PointX; }
-
-  FX_FLOAT GetPointY(int index) { return m_pObject->m_pPoints[index].m_PointY; }
-
-  FX_PATHPOINT* GetPoints() { return m_pObject->m_pPoints; }
-
+  int GetPointCount() const { return m_pObject->m_PointCount; }
+  int GetFlag(int index) const { return m_pObject->m_pPoints[index].m_Flag; }
+  FX_FLOAT GetPointX(int index) const {
+    return m_pObject->m_pPoints[index].m_PointX;
+  }
+  FX_FLOAT GetPointY(int index) const {
+    return m_pObject->m_pPoints[index].m_PointY;
+  }
+  FX_PATHPOINT* GetPoints() const { return m_pObject->m_pPoints; }
   CFX_FloatRect GetBoundingBox() const { return m_pObject->GetBoundingBox(); }
-
   CFX_FloatRect GetBoundingBox(FX_FLOAT line_width,
                                FX_FLOAT miter_limit) const {
     return m_pObject->GetBoundingBox(line_width, miter_limit);
   }
+  FX_BOOL IsRect() const { return m_pObject->IsRect(); }
 
   void Transform(const CFX_Matrix* pMatrix) { GetModify()->Transform(pMatrix); }
-
   void Append(CPDF_Path src, const CFX_Matrix* pMatrix) {
     m_pObject->Append(src.m_pObject, pMatrix);
   }
-
   void AppendRect(FX_FLOAT left,
                   FX_FLOAT bottom,
                   FX_FLOAT right,
                   FX_FLOAT top) {
     m_pObject->AppendRect(left, bottom, right, top);
   }
-
-  FX_BOOL IsRect() const { return m_pObject->IsRect(); }
 };
+
 class CPDF_ClipPathData {
  public:
   CPDF_ClipPathData();
@@ -75,72 +71,53 @@ class CPDF_ClipPathData {
 
   void SetCount(int path_count, int text_count);
 
- public:
   int m_PathCount;
-
   CPDF_Path* m_pPathList;
-
   uint8_t* m_pTypeList;
-
   int m_TextCount;
-
   CPDF_TextObject** m_pTextList;
 };
 
 class CPDF_ClipPath : public CFX_CountRef<CPDF_ClipPathData> {
  public:
   FX_DWORD GetPathCount() const { return m_pObject->m_PathCount; }
-
   CPDF_Path GetPath(int i) const { return m_pObject->m_pPathList[i]; }
-
   int GetClipType(int i) const { return m_pObject->m_pTypeList[i]; }
-
   FX_DWORD GetTextCount() const { return m_pObject->m_TextCount; }
-
   CPDF_TextObject* GetText(int i) const { return m_pObject->m_pTextList[i]; }
-
   CFX_FloatRect GetClipBox() const;
-
   void AppendPath(CPDF_Path path, int type, FX_BOOL bAutoMerge);
-
   void DeletePath(int layer_index);
-
   void AppendTexts(CPDF_TextObject** pTexts, int count);
-
   void Transform(const CFX_Matrix& matrix);
 };
+
 class CPDF_ColorStateData {
  public:
   CPDF_ColorStateData() : m_FillRGB(0), m_StrokeRGB(0) {}
-
   CPDF_ColorStateData(const CPDF_ColorStateData& src);
 
   void Default();
 
   CPDF_Color m_FillColor;
-
   FX_DWORD m_FillRGB;
-
   CPDF_Color m_StrokeColor;
-
   FX_DWORD m_StrokeRGB;
 };
+
 class CPDF_ColorState : public CFX_CountRef<CPDF_ColorStateData> {
  public:
   CPDF_Color* GetFillColor() const {
-    return m_pObject ? &m_pObject->m_FillColor : NULL;
+    return m_pObject ? &m_pObject->m_FillColor : nullptr;
   }
 
   CPDF_Color* GetStrokeColor() const {
-    return m_pObject ? &m_pObject->m_StrokeColor : NULL;
+    return m_pObject ? &m_pObject->m_StrokeColor : nullptr;
   }
 
   void SetFillColor(CPDF_ColorSpace* pCS, FX_FLOAT* pValue, int nValues);
-
   void SetStrokeColor(CPDF_ColorSpace* pCS, FX_FLOAT* pValue, int nValues);
-
   void SetFillPattern(CPDF_Pattern* pattern, FX_FLOAT* pValue, int nValues);
-
   void SetStrokePattern(CPDF_Pattern* pattern, FX_FLOAT* pValue, int nValues);
 
  private:
@@ -150,104 +127,69 @@ class CPDF_ColorState : public CFX_CountRef<CPDF_ColorStateData> {
                 FX_FLOAT* pValue,
                 int nValues);
 };
-typedef CFX_GraphStateData CPDF_GraphStateData;
+
 class CPDF_GraphState : public CFX_CountRef<CFX_GraphStateData> {
- public:
 };
+
 class CPDF_TextStateData {
  public:
   CPDF_TextStateData();
-
   CPDF_TextStateData(const CPDF_TextStateData& src);
-
   ~CPDF_TextStateData();
 
   CPDF_Font* m_pFont;
-
   CPDF_Document* m_pDocument;
-
   FX_FLOAT m_FontSize;
-
   FX_FLOAT m_CharSpace;
-
   FX_FLOAT m_WordSpace;
-
   FX_FLOAT m_Matrix[4];
-
   int m_TextMode;
-
   FX_FLOAT m_CTM[4];
 };
+
 class CPDF_TextState : public CFX_CountRef<CPDF_TextStateData> {
  public:
   CPDF_Font* GetFont() const { return m_pObject->m_pFont; }
-
   void SetFont(CPDF_Font* pFont);
-
   FX_FLOAT GetFontSize() const { return m_pObject->m_FontSize; }
-
   FX_FLOAT* GetMatrix() const { return m_pObject->m_Matrix; }
-
   FX_FLOAT GetFontSizeV() const;
-
   FX_FLOAT GetFontSizeH() const;
-
   FX_FLOAT GetBaselineAngle() const;
-
   FX_FLOAT GetShearAngle() const;
 };
 
 class CPDF_GeneralStateData {
  public:
   CPDF_GeneralStateData();
-
   CPDF_GeneralStateData(const CPDF_GeneralStateData& src);
   ~CPDF_GeneralStateData();
 
   void SetBlendMode(const CFX_ByteStringC& blend_mode);
 
   char m_BlendMode[16];
-
   int m_BlendType;
-
   CPDF_Object* m_pSoftMask;
-
   FX_FLOAT m_SMaskMatrix[6];
-
   FX_FLOAT m_StrokeAlpha;
-
   FX_FLOAT m_FillAlpha;
-
   CPDF_Object* m_pTR;
-
   CPDF_TransferFunc* m_pTransferFunc;
-
   CFX_Matrix m_Matrix;
-
   int m_RenderIntent;
-
   FX_BOOL m_StrokeAdjust;
-
   FX_BOOL m_AlphaSource;
-
   FX_BOOL m_TextKnockout;
-
   FX_BOOL m_StrokeOP;
-
   FX_BOOL m_FillOP;
-
   int m_OPMode;
-
   CPDF_Object* m_pBG;
-
   CPDF_Object* m_pUCR;
-
   CPDF_Object* m_pHT;
-
   FX_FLOAT m_Flatness;
-
   FX_FLOAT m_Smoothness;
 };
+
 class CPDF_GeneralState : public CFX_CountRef<CPDF_GeneralStateData> {
  public:
   void SetRenderIntent(const CFX_ByteString& ri);
@@ -263,61 +205,52 @@ class CPDF_GeneralState : public CFX_CountRef<CPDF_GeneralStateData> {
                      : 255;
   }
 };
+
 class CPDF_ContentMarkItem {
  public:
   enum ParamType { None, PropertiesDict, DirectDict };
 
   CPDF_ContentMarkItem();
-
   CPDF_ContentMarkItem(const CPDF_ContentMarkItem& src);
-
   ~CPDF_ContentMarkItem();
 
-  inline const CFX_ByteString& GetName() const { return m_MarkName; }
-
-  inline ParamType GetParamType() const { return m_ParamType; }
-
-  inline CPDF_Dictionary* GetParam() const { return m_pParam; }
-
-  inline FX_BOOL HasMCID() const;
-
-  inline void SetName(const CFX_ByteString& name) { m_MarkName = name; }
-
-  inline void SetParam(ParamType type, CPDF_Dictionary* param) {
+  const CFX_ByteString& GetName() const { return m_MarkName; }
+  ParamType GetParamType() const { return m_ParamType; }
+  CPDF_Dictionary* GetParam() const { return m_pParam; }
+  FX_BOOL HasMCID() const;
+  void SetName(const CFX_ByteString& name) { m_MarkName = name; }
+  void SetParam(ParamType type, CPDF_Dictionary* param) {
     m_ParamType = type;
     m_pParam = param;
   }
 
  private:
   CFX_ByteString m_MarkName;
-
   ParamType m_ParamType;
-
   CPDF_Dictionary* m_pParam;
 };
+
 class CPDF_ContentMarkData {
  public:
   CPDF_ContentMarkData() {}
-
   CPDF_ContentMarkData(const CPDF_ContentMarkData& src);
 
-  inline int CountItems() const { return m_Marks.GetSize(); }
-
-  inline CPDF_ContentMarkItem& GetItem(int index) const {
+  int CountItems() const;
+  CPDF_ContentMarkItem& GetItem(int index) { return m_Marks[index]; }
+  const CPDF_ContentMarkItem& GetItem(int index) const {
     return m_Marks[index];
   }
 
   int GetMCID() const;
-
   void AddMark(const CFX_ByteString& name,
                CPDF_Dictionary* pDict,
                FX_BOOL bDictNeedClone);
-
   void DeleteLastMark();
 
  private:
-  CFX_ObjectArray<CPDF_ContentMarkItem> m_Marks;
+  std::vector<CPDF_ContentMarkItem> m_Marks;
 };
+
 class CPDF_ContentMark : public CFX_CountRef<CPDF_ContentMarkData> {
  public:
   int GetMCID() const { return m_pObject ? m_pObject->GetMCID() : -1; }

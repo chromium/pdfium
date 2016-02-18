@@ -8,6 +8,7 @@
 
 #include "core/include/fxcrt/fx_ext.h"
 #include "core/include/fxcrt/fx_xml.h"
+#include "third_party/base/stl_util.h"
 
 CXML_Parser::~CXML_Parser() {
   if (m_bOwnedStream) {
@@ -748,67 +749,44 @@ FX_DWORD CXML_Element::FindElement(CXML_Element* pChild) const {
   }
   return (FX_DWORD)-1;
 }
+
+bool CXML_AttrItem::Matches(const CFX_ByteStringC& space,
+                            const CFX_ByteStringC& name) const {
+  return (space.IsEmpty() || m_QSpaceName == space) && m_AttrName == name;
+}
+
 const CFX_WideString* CXML_AttrMap::Lookup(const CFX_ByteStringC& space,
                                            const CFX_ByteStringC& name) const {
-  if (!m_pMap) {
-    return NULL;
-  }
-  for (int i = 0; i < m_pMap->GetSize(); i++) {
-    CXML_AttrItem& item = GetAt(i);
-    if ((space.IsEmpty() || item.m_QSpaceName == space) &&
-        item.m_AttrName == name) {
+  if (!m_pMap)
+    return nullptr;
+
+  for (const auto& item : *m_pMap) {
+    if (item.Matches(space, name))
       return &item.m_Value;
-    }
   }
-  return NULL;
+  return nullptr;
 }
+
 void CXML_AttrMap::SetAt(const CFX_ByteStringC& space,
                          const CFX_ByteStringC& name,
                          const CFX_WideStringC& value) {
-  for (int i = 0; i < GetSize(); i++) {
-    CXML_AttrItem& item = GetAt(i);
-    if ((space.IsEmpty() || item.m_QSpaceName == space) &&
-        item.m_AttrName == name) {
+  if (!m_pMap)
+    m_pMap.reset(new std::vector<CXML_AttrItem>);
+
+  for (CXML_AttrItem& item : *m_pMap) {
+    if (item.Matches(space, name)) {
       item.m_Value = value;
       return;
     }
   }
-  if (!m_pMap) {
-    m_pMap = new CFX_ObjectArray<CXML_AttrItem>;
-  }
-  CXML_AttrItem* pItem = (CXML_AttrItem*)m_pMap->AddSpace();
-  if (!pItem) {
-    return;
-  }
-  pItem->m_QSpaceName = space;
-  pItem->m_AttrName = name;
-  pItem->m_Value = value;
+
+  m_pMap->push_back({space, name, value});
 }
-void CXML_AttrMap::RemoveAt(const CFX_ByteStringC& space,
-                            const CFX_ByteStringC& name) {
-  if (!m_pMap) {
-    return;
-  }
-  for (int i = 0; i < m_pMap->GetSize(); i++) {
-    CXML_AttrItem& item = GetAt(i);
-    if ((space.IsEmpty() || item.m_QSpaceName == space) &&
-        item.m_AttrName == name) {
-      m_pMap->RemoveAt(i);
-      return;
-    }
-  }
-}
+
 int CXML_AttrMap::GetSize() const {
-  return m_pMap ? m_pMap->GetSize() : 0;
+  return m_pMap ? pdfium::CollectionSize<int>(*m_pMap) : 0;
 }
+
 CXML_AttrItem& CXML_AttrMap::GetAt(int index) const {
   return (*m_pMap)[index];
-}
-void CXML_AttrMap::RemoveAll() {
-  if (!m_pMap) {
-    return;
-  }
-  m_pMap->RemoveAll();
-  delete m_pMap;
-  m_pMap = NULL;
 }
