@@ -582,7 +582,9 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
     m_pTrailer->Release();
     m_pTrailer = NULL;
   }
-  int32_t status = 0;
+
+  ParserState state = ParserState::kDefault;
+
   int32_t inside_index = 0;
   FX_DWORD objnum = 0;
   FX_DWORD gennum = 0;
@@ -604,98 +606,106 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
 
     for (FX_DWORD i = 0; i < size; i++) {
       uint8_t byte = buffer[i];
-      switch (status) {
-        case 0:
+      switch (state) {
+        case ParserState::kDefault:
           if (PDFCharIsWhitespace(byte))
-            status = 1;
+            state = ParserState::kWhitespace;
 
           if (std::isdigit(byte)) {
             --i;
-            status = 1;
+            state = ParserState::kWhitespace;
           }
 
           if (byte == '%') {
             inside_index = 0;
-            status = 9;
+            state = ParserState::kComment;
           }
 
           if (byte == '(') {
-            status = 10;
+            state = ParserState::kString;
             depth = 1;
           }
 
           if (byte == '<') {
             inside_index = 1;
-            status = 11;
+            state = ParserState::kHexString;
           }
 
           if (byte == '\\')
-            status = 13;
+            state = ParserState::kEscapedString;
 
           if (byte == 't') {
-            status = 7;
+            state = ParserState::kTrailer;
             inside_index = 1;
           }
           break;
-        case 1:
+
+        case ParserState::kWhitespace:
           if (PDFCharIsWhitespace(byte)) {
             break;
           } else if (std::isdigit(byte)) {
             start_pos = pos + i;
-            status = 2;
+            state = ParserState::kObjNum;
             objnum = FXSYS_toDecimalDigit(byte);
+
           } else if (byte == 't') {
-            status = 7;
+            state = ParserState::kTrailer;
             inside_index = 1;
+
           } else if (byte == 'x') {
-            status = 8;
+            state = ParserState::kXref;
             inside_index = 1;
+
           } else {
             --i;
-            status = 0;
+            state = ParserState::kDefault;
           }
           break;
-        case 2:
+
+        case ParserState::kObjNum:
           if (std::isdigit(byte)) {
             objnum = objnum * 10 + FXSYS_toDecimalDigit(byte);
             break;
           } else if (PDFCharIsWhitespace(byte)) {
-            status = 3;
+            state = ParserState::kPostObjNum;
           } else {
             --i;
-            status = 14;
+            state = ParserState::kEndObj;
             inside_index = 0;
           }
           break;
-        case 3:
+
+        case ParserState::kPostObjNum:
           if (std::isdigit(byte)) {
             start_pos1 = pos + i;
-            status = 4;
+            state = ParserState::kGenNum;
             gennum = FXSYS_toDecimalDigit(byte);
           } else if (PDFCharIsWhitespace(byte)) {
             break;
           } else if (byte == 't') {
-            status = 7;
+            state = ParserState::kTrailer;
             inside_index = 1;
           } else {
             --i;
-            status = 0;
+            state = ParserState::kDefault;
           }
           break;
-        case 4:
+
+        case ParserState::kGenNum:
           if (std::isdigit(byte)) {
             gennum = gennum * 10 + FXSYS_toDecimalDigit(byte);
             break;
           } else if (PDFCharIsWhitespace(byte)) {
-            status = 5;
+            state = ParserState::kPostGenNum;
           } else {
             --i;
-            status = 0;
+            state = ParserState::kDefault;
           }
           break;
-        case 5:
+
+        case ParserState::kPostGenNum:
           if (byte == 'o') {
-            status = 6;
+            state = ParserState::kBeginObj;
             inside_index = 1;
           } else if (PDFCharIsWhitespace(byte)) {
             break;
@@ -704,21 +714,22 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
             gennum = FXSYS_toDecimalDigit(byte);
             start_pos = start_pos1;
             start_pos1 = pos + i;
-            status = 4;
+            state = ParserState::kGenNum;
           } else if (byte == 't') {
-            status = 7;
+            state = ParserState::kTrailer;
             inside_index = 1;
           } else {
             --i;
-            status = 0;
+            state = ParserState::kDefault;
           }
           break;
-        case 6:
+
+        case ParserState::kBeginObj:
           switch (inside_index) {
             case 1:
               if (byte != 'b') {
                 --i;
-                status = 0;
+                state = ParserState::kDefault;
               } else {
                 inside_index++;
               }
@@ -726,7 +737,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
             case 2:
               if (byte != 'j') {
                 --i;
-                status = 0;
+                state = ParserState::kDefault;
               } else {
                 inside_index++;
               }
@@ -734,7 +745,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
             case 3:
               if (PDFCharIsWhitespace(byte) || PDFCharIsDelimiter(byte)) {
                 if (objnum > 0x1000000) {
-                  status = 0;
+                  state = ParserState::kDefault;
                   break;
                 }
                 FX_FILESIZE obj_pos = start_pos - m_Syntax.m_HeaderOffset;
@@ -793,11 +804,12 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
                 }
               }
               --i;
-              status = 0;
+              state = ParserState::kDefault;
               break;
           }
           break;
-        case 7:
+
+        case ParserState::kTrailer:
           if (inside_index == 7) {
             if (PDFCharIsWhitespace(byte) || PDFCharIsDelimiter(byte)) {
               last_trailer = pos + i - 7;
@@ -860,31 +872,34 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
               }
             }
             --i;
-            status = 0;
+            state = ParserState::kDefault;
           } else if (byte == "trailer"[inside_index]) {
             inside_index++;
           } else {
             --i;
-            status = 0;
+            state = ParserState::kDefault;
           }
           break;
-        case 8:
+
+        case ParserState::kXref:
           if (inside_index == 4) {
             last_xref = pos + i - 4;
-            status = 1;
+            state = ParserState::kWhitespace;
           } else if (byte == "xref"[inside_index]) {
             inside_index++;
           } else {
             --i;
-            status = 0;
+            state = ParserState::kDefault;
           }
           break;
-        case 9:
+
+        case ParserState::kComment:
           if (byte == '\r' || byte == '\n') {
-            status = 0;
+            state = ParserState::kDefault;
           }
           break;
-        case 10:
+
+        case ParserState::kString:
           if (byte == ')') {
             if (depth > 0) {
               depth--;
@@ -893,29 +908,32 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
             depth++;
           }
           if (!depth) {
-            status = 0;
+            state = ParserState::kDefault;
           }
           break;
-        case 11:
+
+        case ParserState::kHexString:
           if (byte == '>' || (byte == '<' && inside_index == 1))
-            status = 0;
+            state = ParserState::kDefault;
           inside_index = 0;
           break;
-        case 13:
+
+        case ParserState::kEscapedString:
           if (PDFCharIsDelimiter(byte) || PDFCharIsWhitespace(byte)) {
             --i;
-            status = 0;
+            state = ParserState::kDefault;
           }
           break;
-        case 14:
+
+        case ParserState::kEndObj:
           if (PDFCharIsWhitespace(byte)) {
-            status = 0;
+            state = ParserState::kDefault;
           } else if (byte == '%' || byte == '(' || byte == '<' ||
                      byte == '\\') {
-            status = 0;
+            state = ParserState::kDefault;
             --i;
           } else if (inside_index == 6) {
-            status = 0;
+            state = ParserState::kDefault;
             --i;
           } else if (byte == "endobj"[inside_index]) {
             inside_index++;

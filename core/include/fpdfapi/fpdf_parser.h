@@ -450,6 +450,24 @@ class CPDF_Parser {
   std::set<FX_DWORD> m_ParsingObjNums;
 
   friend class CPDF_DataAvail;
+
+ private:
+  enum class ParserState {
+    kDefault,
+    kComment,
+    kWhitespace,
+    kString,
+    kHexString,
+    kEscapedString,
+    kXref,
+    kObjNum,
+    kPostObjNum,
+    kGenNum,
+    kPostGenNum,
+    kTrailer,
+    kBeginObj,
+    kEndObj
+  };
 };
 
 #define FXCIPHER_NONE 0
