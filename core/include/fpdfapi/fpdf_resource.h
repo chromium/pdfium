@@ -181,12 +181,6 @@ class CPDF_Font {
 
   FX_DWORD CharCodeFromUnicode(FX_WCHAR Unicode) const;
 
-  CFX_CharMap* GetCharMap() { return m_pCharMap; }
-
-  CFX_ByteString EncodeString(const CFX_WideString& str) const;
-
-  CFX_WideString DecodeString(const CFX_ByteString& str) const;
-
   void GetFontBBox(FX_RECT& rect) const { rect = m_FontBBox; }
 
   int GetTypeAscent() const { return m_Ascent; }
@@ -237,8 +231,6 @@ class CPDF_Font {
   void LoadCharWidths(FX_WORD* pWidths);
 
   void CheckFontMetrics();
-
-  CFX_CharMap* m_pCharMap;
 
   CFX_ByteString m_BaseFont;
 

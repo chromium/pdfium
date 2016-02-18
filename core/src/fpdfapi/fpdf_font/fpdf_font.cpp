@@ -88,12 +88,8 @@ CPDF_Font::CPDF_Font(int fonttype) : m_FontType(fonttype) {
   m_Flags = 0;
   m_pToUnicodeMap = NULL;
   m_bToUnicodeLoaded = FALSE;
-  m_pCharMap = new CPDF_FontCharMap(this);
 }
 CPDF_Font::~CPDF_Font() {
-  delete m_pCharMap;
-  m_pCharMap = NULL;
-
   delete m_pToUnicodeMap;
   m_pToUnicodeMap = NULL;
 
@@ -161,36 +157,6 @@ FX_DWORD CPDF_Font::CharCodeFromUnicode(FX_WCHAR unicode) const {
     }
   }
   return _CharCodeFromUnicode(unicode);
-}
-CFX_WideString CPDF_Font::DecodeString(const CFX_ByteString& str) const {
-  CFX_WideString result;
-  int src_len = str.GetLength();
-  result.Reserve(src_len);
-  const FX_CHAR* src_buf = str;
-  int src_pos = 0;
-  while (src_pos < src_len) {
-    FX_DWORD charcode = GetNextChar(src_buf, src_len, src_pos);
-    CFX_WideString unicode = UnicodeFromCharCode(charcode);
-    if (!unicode.IsEmpty()) {
-      result += unicode;
-    } else {
-      result += (FX_WCHAR)charcode;
-    }
-  }
-  return result;
-}
-CFX_ByteString CPDF_Font::EncodeString(const CFX_WideString& str) const {
-  CFX_ByteString result;
-  int src_len = str.GetLength();
-  FX_CHAR* dest_buf = result.GetBuffer(src_len * 2);
-  const FX_WCHAR* src_buf = str.c_str();
-  int dest_pos = 0;
-  for (int src_pos = 0; src_pos < src_len; src_pos++) {
-    FX_DWORD charcode = CharCodeFromUnicode(src_buf[src_pos]);
-    dest_pos += AppendChar(dest_buf + dest_pos, charcode);
-  }
-  result.ReleaseBuffer(dest_pos);
-  return result;
 }
 
 void CPDF_Font::LoadFontDescriptor(CPDF_Dictionary* pFontDesc) {
@@ -439,19 +405,7 @@ FX_BOOL CPDF_Font::Load() {
   }
   return _Load();
 }
-static CFX_WideString _FontMap_GetWideString(CFX_CharMap* pMap,
-                                             const CFX_ByteString& bytestr) {
-  return ((CPDF_FontCharMap*)pMap)->m_pFont->DecodeString(bytestr);
-}
-static CFX_ByteString _FontMap_GetByteString(CFX_CharMap* pMap,
-                                             const CFX_WideString& widestr) {
-  return ((CPDF_FontCharMap*)pMap)->m_pFont->EncodeString(widestr);
-}
-CPDF_FontCharMap::CPDF_FontCharMap(CPDF_Font* pFont) {
-  m_GetByteString = _FontMap_GetByteString;
-  m_GetWideString = _FontMap_GetWideString;
-  m_pFont = pFont;
-}
+
 CFX_WideString CPDF_ToUnicodeMap::Lookup(FX_DWORD charcode) {
   auto it = m_Map.find(charcode);
   if (it != m_Map.end()) {

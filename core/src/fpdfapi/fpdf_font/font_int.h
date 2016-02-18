@@ -207,11 +207,6 @@ class CPDF_ToUnicodeMap {
   static FX_DWORD StringToCode(const CFX_ByteStringC& str);
   static CFX_WideString StringToWideString(const CFX_ByteStringC& str);
 };
-class CPDF_FontCharMap : public CFX_CharMap {
- public:
-  CPDF_FontCharMap(CPDF_Font* pFont);
-  CPDF_Font* m_pFont;
-};
 
 void FPDFAPI_LoadCID2UnicodeMap(CIDSet charset,
                                 const FX_WORD*& pMap,
