@@ -47,6 +47,11 @@ struct DecodeTestData {
   unsigned int processed_size;
 };
 
+struct NullTermWstrFuncTestData {
+  const wchar_t* input;
+  const wchar_t* expected;
+};
+
 // Used with std::unique_ptr to free() objects that can't be deleted.
 struct FreeDeleter {
   inline void operator()(void* ptr) const { free(ptr); }

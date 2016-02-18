@@ -755,6 +755,7 @@
         'core/src/fpdfapi/fpdf_parser/fpdf_parser_objects_unittest.cpp',
         'core/src/fpdfapi/fpdf_parser/fpdf_parser_parser_unittest.cpp',
         'core/src/fpdfapi/fpdf_parser/fpdf_parser_utility_unittest.cpp',
+        'core/src/fpdfdoc/doc_basic_unittest.cpp',
         'core/src/fpdftext/fpdf_text_int_unittest.cpp',
         'core/src/fxcodec/codec/fx_codec_jpx_unittest.cpp',
         'core/src/fxcrt/fx_basic_bstring_unittest.cpp',

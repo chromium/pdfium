@@ -66,7 +66,7 @@ CFX_WideString CPDF_Action::GetFilePath() const {
     return path;
   }
   CPDF_FileSpec filespec(pFile);
-  filespec.GetFileName(path);
+  filespec.GetFileName(&path);
   return path;
 }
 CFX_ByteString CPDF_Action::GetURI(CPDF_Document* pDoc) const {

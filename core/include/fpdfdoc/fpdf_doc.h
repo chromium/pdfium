@@ -317,21 +317,23 @@ class CPDF_DocJSActions {
  protected:
   CPDF_Document* const m_pDocument;
 };
+
 class CPDF_FileSpec {
  public:
   CPDF_FileSpec();
-
   explicit CPDF_FileSpec(CPDF_Object* pObj) { m_pObj = pObj; }
 
-  operator CPDF_Object*() const { return m_pObj; }
+  // Convert a platform dependent file name into pdf format.
+  static CFX_WideString EncodeFileName(const CFX_WideStringC& filepath);
 
-  FX_BOOL IsURL() const;
+  // Convert a pdf file name into platform dependent format.
+  static CFX_WideString DecodeFileName(const CFX_WideStringC& filepath);
 
-  FX_BOOL GetFileName(CFX_WideString& wsFileName) const;
+  CPDF_Object* GetObj() const { return m_pObj; }
+  bool GetFileName(CFX_WideString* wsFileName) const;
 
-  CPDF_Stream* GetFileStream() const;
-
-  void SetFileName(const CFX_WideStringC& wsFileName, FX_BOOL bURL = FALSE);
+  // Set this file spec to refer to a file name (not a url).
+  void SetFileName(const CFX_WideStringC& wsFileName);
 
  protected:
   CPDF_Object* m_pObj;

@@ -1041,13 +1041,13 @@ CFDF_Document* CPDF_InterForm::ExportToFDF(
   CPDF_Dictionary* pMainDict = pDoc->GetRoot()->GetDictBy("FDF");
   if (!pdf_path.IsEmpty()) {
     if (bSimpleFileSpec) {
-      CFX_WideString wsFilePath = FILESPEC_EncodeFileName(pdf_path);
+      CFX_WideString wsFilePath = CPDF_FileSpec::EncodeFileName(pdf_path);
       pMainDict->SetAtString("F", CFX_ByteString::FromUnicode(wsFilePath));
       pMainDict->SetAtString("UF", PDF_EncodeText(wsFilePath));
     } else {
       CPDF_FileSpec filespec;
       filespec.SetFileName(pdf_path);
-      pMainDict->SetAt("F", static_cast<CPDF_Object*>(filespec));
+      pMainDict->SetAt("F", filespec.GetObj());
     }
   }
   CPDF_Array* pFields = new CPDF_Array;
