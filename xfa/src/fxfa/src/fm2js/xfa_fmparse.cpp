@@ -5,33 +5,16 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "xfa_fm2js.h"
-CXFA_FMParse::CXFA_FMParse() {
-  m_pScript = 0;
-  m_uLength = 0;
-  m_pErrorInfo = 0;
-  m_lexer = 0;
-  m_pToken = 0;
-}
-CXFA_FMParse::~CXFA_FMParse() {
-  if (m_lexer) {
-    delete m_lexer;
-  }
-  m_lexer = 0;
-  m_pErrorInfo = 0;
-  m_pScript = 0;
-  m_pToken = 0;
-}
+
+CXFA_FMParse::CXFA_FMParse() : m_pToken(nullptr), m_pErrorInfo(0) {}
+
 int32_t CXFA_FMParse::Init(const CFX_WideStringC& wsFormcalc,
                            CXFA_FMErrorInfo* pErrorInfo) {
-  m_pScript = wsFormcalc.GetPtr();
-  m_uLength = wsFormcalc.GetLength();
   m_pErrorInfo = pErrorInfo;
-  m_lexer = new CXFA_FMLexer(wsFormcalc, m_pErrorInfo);
-  if (m_lexer == 0) {
-    return -1;
-  }
+  m_lexer.reset(new CXFA_FMLexer(wsFormcalc, m_pErrorInfo));
   return 0;
 }
+
 void CXFA_FMParse::NextToken() {
   m_pToken = m_lexer->NextToken();
   while (m_pToken->m_type == TOKreserver) {
@@ -41,6 +24,7 @@ void CXFA_FMParse::NextToken() {
     m_pToken = m_lexer->NextToken();
   }
 }
+
 void CXFA_FMParse::Check(XFA_FM_TOKEN op) {
   if (m_pToken->m_type != op) {
     CFX_WideString ws_TempString = m_pToken->m_wstring;
@@ -49,6 +33,7 @@ void CXFA_FMParse::Check(XFA_FM_TOKEN op) {
   }
   NextToken();
 }
+
 void CXFA_FMParse::Error(FX_DWORD lineNum, XFA_FM_ERRMSG msg, ...) {
   m_pErrorInfo->linenum = lineNum;
   const FX_WCHAR* lpMessageInfo = XFA_FM_ErrorMsg(msg);
@@ -57,25 +42,17 @@ void CXFA_FMParse::Error(FX_DWORD lineNum, XFA_FM_ERRMSG msg, ...) {
   m_pErrorInfo->message.FormatV(lpMessageInfo, ap);
   va_end(ap);
 }
+
 CFX_PtrArray* CXFA_FMParse::ParseTopExpression() {
   CXFA_FMExpression* e = 0;
   CFX_PtrArray* expression = new CFX_PtrArray();
   while (1) {
-    if (m_pToken->m_type == TOKeof) {
+    if (m_pToken->m_type == TOKeof || m_pToken->m_type == TOKendfunc ||
+        m_pToken->m_type == TOKendif || m_pToken->m_type == TOKelseif ||
+        m_pToken->m_type == TOKelse || m_pToken->m_type == TOKreserver) {
       return expression;
     }
-    if (m_pToken->m_type == TOKendfunc) {
-      return expression;
-    }
-    if (m_pToken->m_type == TOKendif) {
-      return expression;
-    }
-    if (m_pToken->m_type == TOKelseif) {
-      return expression;
-    }
-    if (m_pToken->m_type == TOKelse) {
-      return expression;
-    }
+
     if (m_pToken->m_type == TOKfunc) {
       e = ParseFunction();
       if (e) {
@@ -94,6 +71,7 @@ CFX_PtrArray* CXFA_FMParse::ParseTopExpression() {
   }
   return expression;
 }
+
 CXFA_FMExpression* CXFA_FMParse::ParseFunction() {
   CXFA_FMExpression* e = 0;
   CFX_WideStringC ident;
@@ -172,6 +150,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseFunction() {
   }
   return e;
 }
+
 CXFA_FMExpression* CXFA_FMParse::ParseExpression() {
   CXFA_FMExpression* e = 0;
   FX_DWORD line = m_pToken->m_uLinenum;
@@ -221,6 +200,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseExpression() {
   }
   return e;
 }
+
 CXFA_FMExpression* CXFA_FMParse::ParseVarExpression() {
   CXFA_FMExpression* e = 0;
   CFX_WideStringC ident;
@@ -246,6 +226,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseVarExpression() {
   }
   return e;
 }
+
 CXFA_FMSimpleExpression* CXFA_FMParse::ParseSimpleExpression() {
   FX_DWORD line = m_pToken->m_uLinenum;
   CXFA_FMSimpleExpression *pExp1 = 0, *pExp2 = 0;
@@ -262,6 +243,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseSimpleExpression() {
   }
   return pExp1;
 }
+
 CXFA_FMExpression* CXFA_FMParse::ParseExpExpression() {
   CXFA_FMExpression* e = 0;
   FX_DWORD line = m_pToken->m_uLinenum;
@@ -275,6 +257,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseExpExpression() {
   }
   return e;
 }
+
 CXFA_FMSimpleExpression* CXFA_FMParse::ParseLogicalOrExpression() {
   CXFA_FMSimpleExpression *e1 = 0, *e2 = 0;
   FX_DWORD line = m_pToken->m_uLinenum;
@@ -299,6 +282,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseLogicalOrExpression() {
   }
   return e1;
 }
+
 CXFA_FMSimpleExpression* CXFA_FMParse::ParseLogicalAndExpression() {
   CXFA_FMSimpleExpression *e1 = 0, *e2 = 0;
   FX_DWORD line = m_pToken->m_uLinenum;
@@ -323,6 +307,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseLogicalAndExpression() {
   }
   return e1;
 }
+
 CXFA_FMSimpleExpression* CXFA_FMParse::ParseEqualityExpression() {
   CXFA_FMSimpleExpression *e1 = 0, *e2 = 0;
   FX_DWORD line = m_pToken->m_uLinenum;
@@ -358,6 +343,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseEqualityExpression() {
   }
   return e1;
 }
+
 CXFA_FMSimpleExpression* CXFA_FMParse::ParseRelationalExpression() {
   CXFA_FMSimpleExpression *e1 = 0, *e2 = 0;
   FX_DWORD line = m_pToken->m_uLinenum;
@@ -415,6 +401,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseRelationalExpression() {
   }
   return e1;
 }
+
 CXFA_FMSimpleExpression* CXFA_FMParse::ParseAddtiveExpression() {
   CXFA_FMSimpleExpression *e1 = 0, *e2 = 0;
   FX_DWORD line = m_pToken->m_uLinenum;
@@ -448,6 +435,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseAddtiveExpression() {
   }
   return e1;
 }
+
 CXFA_FMSimpleExpression* CXFA_FMParse::ParseMultiplicativeExpression() {
   CXFA_FMSimpleExpression *e1 = 0, *e2 = 0;
   FX_DWORD line = m_pToken->m_uLinenum;
@@ -481,6 +469,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseMultiplicativeExpression() {
   }
   return e1;
 }
+
 CXFA_FMSimpleExpression* CXFA_FMParse::ParseUnaryExpression() {
   CXFA_FMSimpleExpression* e = 0;
   FX_DWORD line = m_pToken->m_uLinenum;
@@ -518,6 +507,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseUnaryExpression() {
   }
   return e;
 }
+
 CXFA_FMSimpleExpression* CXFA_FMParse::ParsePrimaryExpression() {
   CXFA_FMSimpleExpression* e = 0;
   FX_DWORD line = m_pToken->m_uLinenum;
@@ -569,6 +559,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePrimaryExpression() {
   }
   return e;
 }
+
 CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
     CXFA_FMSimpleExpression* e) {
   FX_DWORD line = m_pToken->m_uLinenum;
@@ -586,7 +577,8 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
             }
             if (m_pToken->m_type == TOKcomma) {
               NextToken();
-            } else if (m_pToken->m_type == TOKeof) {
+            } else if (m_pToken->m_type == TOKeof ||
+                       m_pToken->m_type == TOKreserver) {
               break;
             }
           }
@@ -641,7 +633,8 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
                 pArray->Add(exp);
                 if (m_pToken->m_type == TOKcomma) {
                   NextToken();
-                } else if (m_pToken->m_type == TOKeof) {
+                } else if (m_pToken->m_type == TOKeof ||
+                           m_pToken->m_type == TOKreserver) {
                   break;
                 }
               }
@@ -791,6 +784,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
   }
   return e;
 }
+
 CXFA_FMSimpleExpression* CXFA_FMParse::ParseIndexExpression() {
   CXFA_FMSimpleExpression* pExp = 0;
   FX_DWORD line = m_pToken->m_uLinenum;
@@ -831,6 +825,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseIndexExpression() {
   }
   return pExp;
 }
+
 CXFA_FMSimpleExpression* CXFA_FMParse::ParseParenExpression() {
   CXFA_FMSimpleExpression *pExp1 = 0, *pExp2 = 0;
   FX_DWORD line = m_pToken->m_uLinenum;
@@ -853,6 +848,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseParenExpression() {
   }
   return pExp1;
 }
+
 CXFA_FMExpression* CXFA_FMParse::ParseBlockExpression() {
   FX_DWORD line = m_pToken->m_uLinenum;
   CXFA_FMExpression* e = 0;
@@ -867,6 +863,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseBlockExpression() {
       case TOKendfor:
       case TOKend:
       case TOKendfunc:
+      case TOKreserver:
         break;
       case TOKfunc:
         e = ParseFunction();
@@ -900,6 +897,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseBlockExpression() {
   }
   return pExp;
 }
+
 CXFA_FMExpression* CXFA_FMParse::ParseIfExpression() {
   CXFA_FMSimpleExpression* pExpression = 0;
   CXFA_FMExpression* pIfExpression = 0;
@@ -974,6 +972,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseIfExpression() {
   }
   return pExp;
 }
+
 CXFA_FMExpression* CXFA_FMParse::ParseWhileExpression() {
   CXFA_FMExpression* e = 0;
   CXFA_FMSimpleExpression* pCondition = 0;
@@ -998,6 +997,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseWhileExpression() {
   }
   return e;
 }
+
 CXFA_FMSimpleExpression* CXFA_FMParse::ParseSubassignmentInForExpression() {
   CXFA_FMSimpleExpression* e = 0;
   switch (m_pToken->m_type) {
@@ -1013,6 +1013,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseSubassignmentInForExpression() {
   }
   return e;
 }
+
 CXFA_FMExpression* CXFA_FMParse::ParseForExpression() {
   CXFA_FMExpression* e = 0;
   CFX_WideStringC wsVariant;
@@ -1075,6 +1076,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseForExpression() {
   }
   return e;
 }
+
 CXFA_FMExpression* CXFA_FMParse::ParseForeachExpression() {
   CXFA_FMExpression* e = 0;
   CFX_WideStringC wsIdentifier;
@@ -1136,6 +1138,7 @@ CXFA_FMExpression* CXFA_FMParse::ParseForeachExpression() {
   }
   return e;
 }
+
 CXFA_FMExpression* CXFA_FMParse::ParseDoExpression() {
   CXFA_FMExpression* e = 0;
   FX_DWORD line = m_pToken->m_uLinenum;

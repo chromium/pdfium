@@ -5,6 +5,9 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "xfa_fm2js.h"
+
+namespace {
+
 struct XFA_FMDChar {
   static const FX_WCHAR* inc(const FX_WCHAR*& p) {
     ++p;
@@ -43,6 +46,7 @@ struct XFA_FMDChar {
                                const FX_WCHAR*& pEnd);
   static FX_BOOL isUnicodeAlpha(uint16_t ch);
 };
+
 inline FX_BOOL XFA_FMDChar::isAvalid(const FX_WCHAR* p, FX_BOOL flag) {
   if (*p == 0) {
     return 1;
@@ -58,6 +62,7 @@ inline FX_BOOL XFA_FMDChar::isAvalid(const FX_WCHAR* p, FX_BOOL flag) {
   }
   return 0;
 }
+
 inline FX_BOOL XFA_FMDChar::string2number(const FX_WCHAR* s,
                                           FX_DOUBLE* pValue,
                                           const FX_WCHAR*& pEnd) {
@@ -66,6 +71,7 @@ inline FX_BOOL XFA_FMDChar::string2number(const FX_WCHAR* s,
   }
   return 0;
 }
+
 inline FX_BOOL XFA_FMDChar::isUnicodeAlpha(uint16_t ch) {
   if (ch == 0 || ch == 0x0A || ch == 0x0D || ch == 0x09 || ch == 0x0B ||
       ch == 0x0C || ch == 0x20 || ch == '.' || ch == ';' || ch == '"' ||
@@ -73,11 +79,11 @@ inline FX_BOOL XFA_FMDChar::isUnicodeAlpha(uint16_t ch) {
       ch == ')' || ch == ']' || ch == '[' || ch == '&' || ch == '|' ||
       ch == '+' || ch == '-' || ch == '*' || ch == '/') {
     return FALSE;
-  } else {
-    return TRUE;
   }
+  return TRUE;
 }
-static XFA_FMKeyword keyWords[] = {
+
+XFA_FMKeyword keyWords[] = {
     {TOKand, 0x00000026, L"&"},
     {TOKlparen, 0x00000028, L"("},
     {TOKrparen, 0x00000029, L")"},
@@ -138,48 +144,30 @@ static XFA_FMKeyword keyWords[] = {
     {TOKfunc, 0xcdce60ec, L"func"},
     {TOKendif, 0xe0e8fee6, L"endif"},
 };
-static const FX_WORD KEYWORD_START = TOKdo;
-static const FX_WORD KEYWORD_END = TOKendif;
+
+const FX_WORD KEYWORD_START = TOKdo;
+const FX_WORD KEYWORD_END = TOKendif;
+
+}  // namespace
+
 const FX_WCHAR* XFA_FM_KeywordToString(XFA_FM_TOKEN op) {
   return keyWords[op].m_keword;
 }
-CXFA_FMToken::CXFA_FMToken() {
-  m_type = TOKreserver;
-  m_uLinenum = 1;
-  m_pNext = 0;
-}
-CXFA_FMToken::CXFA_FMToken(FX_DWORD uLineNum) {
-  m_type = TOKreserver;
-  m_uLinenum = uLineNum;
-  m_pNext = 0;
-}
-CXFA_FMToken::~CXFA_FMToken() {}
+
+CXFA_FMToken::CXFA_FMToken() : m_type(TOKreserver), m_uLinenum(1) {}
+
+CXFA_FMToken::CXFA_FMToken(FX_DWORD uLineNum)
+    : m_type(TOKreserver), m_uLinenum(uLineNum) {}
+
 CXFA_FMLexer::CXFA_FMLexer(const CFX_WideStringC& wsFormCalc,
-                           CXFA_FMErrorInfo* pErrorInfo) {
-  m_pScript = wsFormCalc.GetPtr();
-  m_uLength = wsFormCalc.GetLength();
-  m_uCurrentLine = 1;
-  m_ptr = m_pScript;
-  m_pToken = 0;
-  m_pErrorInfo = pErrorInfo;
-}
+                           CXFA_FMErrorInfo* pErrorInfo)
+    : m_ptr(wsFormCalc.GetPtr()), m_uCurrentLine(1), m_pErrorInfo(pErrorInfo) {}
+
 CXFA_FMToken* CXFA_FMLexer::NextToken() {
-  CXFA_FMToken* t = 0;
-  if (!m_pToken) {
-    m_pToken = Scan();
-  } else {
-    if (m_pToken->m_pNext) {
-      t = m_pToken->m_pNext;
-      delete m_pToken;
-      m_pToken = t;
-    } else {
-      t = m_pToken;
-      m_pToken = Scan();
-      delete t;
-    }
-  }
-  return m_pToken;
+  m_pToken.reset(Scan());
+  return m_pToken.get();
 }
+
 CXFA_FMToken* CXFA_FMLexer::Scan() {
   uint16_t ch = 0;
   CXFA_FMToken* p = new CXFA_FMToken(m_uCurrentLine);
@@ -217,9 +205,6 @@ CXFA_FMToken* CXFA_FMLexer::Scan() {
         const FX_WCHAR* pTemp = 0;
         p->m_type = TOKstring;
         iRet = String(p, m_ptr, pTemp);
-        if (iRet) {
-          return p;
-        }
         m_ptr = pTemp;
       }
         return p;
@@ -414,6 +399,7 @@ CXFA_FMToken* CXFA_FMLexer::Scan() {
     }
   }
 }
+
 FX_DWORD CXFA_FMLexer::Number(CXFA_FMToken* t,
                               const FX_WCHAR* p,
                               const FX_WCHAR*& pEnd) {
@@ -427,6 +413,7 @@ FX_DWORD CXFA_FMLexer::Number(CXFA_FMToken* t,
   t->m_wstring = CFX_WideStringC(p, (pEnd - p));
   return 0;
 }
+
 FX_DWORD CXFA_FMLexer::String(CXFA_FMToken* t,
                               const FX_WCHAR* p,
                               const FX_WCHAR*& pEnd) {
@@ -466,6 +453,7 @@ FX_DWORD CXFA_FMLexer::String(CXFA_FMToken* t,
   t->m_wstring = CFX_WideStringC(pStart, (pEnd - pStart));
   return 0;
 }
+
 FX_DWORD CXFA_FMLexer::Identifiers(CXFA_FMToken* t,
                                    const FX_WCHAR* p,
                                    const FX_WCHAR*& pEnd) {
@@ -500,6 +488,7 @@ FX_DWORD CXFA_FMLexer::Identifiers(CXFA_FMToken* t,
   t->m_wstring = CFX_WideStringC(pStart, (pEnd - pStart));
   return 0;
 }
+
 void CXFA_FMLexer::Comment(const FX_WCHAR* p, const FX_WCHAR*& pEnd) {
   unsigned ch = 0;
   XFA_FMDChar::inc(p);
@@ -521,6 +510,7 @@ void CXFA_FMLexer::Comment(const FX_WCHAR* p, const FX_WCHAR*& pEnd) {
   }
   pEnd = p;
 }
+
 XFA_FM_TOKEN CXFA_FMLexer::IsKeyword(const CFX_WideStringC& str) {
   int32_t iLength = str.GetLength();
   uint32_t uHash = FX_HashCode_String_GetW(str.GetPtr(), iLength, TRUE);
@@ -540,22 +530,7 @@ XFA_FM_TOKEN CXFA_FMLexer::IsKeyword(const CFX_WideStringC& str) {
   } while (iStart <= iEnd);
   return TOKidentifier;
 }
-CXFA_FMLexer::~CXFA_FMLexer() {
-  m_pScript = 0;
-  m_ptr = m_pScript;
-  if (m_pToken) {
-    CXFA_FMToken* t1 = m_pToken;
-    CXFA_FMToken* t2 = t1->m_pNext;
-    while (t2) {
-      delete t1;
-      t1 = t2;
-      t2 = t2->m_pNext;
-    }
-    delete m_pToken;
-    m_pToken = 0;
-  }
-  m_pErrorInfo = 0;
-}
+
 void CXFA_FMLexer::Error(XFA_FM_ERRMSG msg, ...) {
   m_pErrorInfo->linenum = m_uCurrentLine;
   const FX_WCHAR* lpMessageInfo = XFA_FM_ErrorMsg(msg);
@@ -564,6 +539,7 @@ void CXFA_FMLexer::Error(XFA_FM_ERRMSG msg, ...) {
   m_pErrorInfo->message.FormatV(lpMessageInfo, ap);
   va_end(ap);
 }
+
 FX_BOOL CXFA_FMLexer::HasError() const {
   if (m_pErrorInfo->message.IsEmpty()) {
     return FALSE;

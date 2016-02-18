@@ -6,10 +6,14 @@
 
 #ifndef _XFA_FM_PARSE_H
 #define _XFA_FM_PARSE_H
+
+#include <memory>
+
+#include "xfa/src/fxfa/src/fm2js/xfa_lexer.h"
+
 class CXFA_FMParse {
  public:
   CXFA_FMParse();
-  ~CXFA_FMParse();
   int32_t Init(const CFX_WideStringC& wsFormcalc, CXFA_FMErrorInfo* pErrorInfo);
   void NextToken();
   void Check(XFA_FM_TOKEN op);
@@ -40,10 +44,9 @@ class CXFA_FMParse {
   CXFA_FMSimpleExpression* ParseIndexExpression();
 
  private:
-  const FX_WCHAR* m_pScript;
-  FX_STRSIZE m_uLength;
-  CXFA_FMLexer* m_lexer;
+  std::unique_ptr<CXFA_FMLexer> m_lexer;
   CXFA_FMToken* m_pToken;
   CXFA_FMErrorInfo* m_pErrorInfo;
 };
+
 #endif
