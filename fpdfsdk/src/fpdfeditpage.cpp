@@ -8,6 +8,7 @@
 
 #include "fpdfsdk/include/fsdk_define.h"
 #include "public/fpdf_formfill.h"
+#include "third_party/base/stl_util.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/include/fpdfxfa/fpdfxfa_app.h"
@@ -135,9 +136,10 @@ DLLEXPORT void STDCALL FPDFPage_InsertObject(FPDF_PAGE page,
   CPDF_PageObject* pPageObj = (CPDF_PageObject*)page_obj;
   if (!pPageObj)
     return;
-  FX_POSITION LastPersition = pPage->GetPageObjectList()->GetTailPosition();
 
-  pPage->GetPageObjectList()->InsertObject(LastPersition, pPageObj);
+  pPage->GetPageObjectList()->push_back(
+      std::unique_ptr<CPDF_PageObject>(pPageObj));
+
   switch (pPageObj->m_Type) {
     case FPDF_PAGEOBJ_PATH: {
       CPDF_PathObject* pPathObj = (CPDF_PathObject*)pPageObj;
@@ -145,8 +147,6 @@ DLLEXPORT void STDCALL FPDFPage_InsertObject(FPDF_PAGE page,
       break;
     }
     case FPDF_PAGEOBJ_TEXT: {
-      //	CPDF_PathObject* pPathObj = (CPDF_PathObject*)pPageObj;
-      //	pPathObj->CalcBoundingBox();
       break;
     }
     case FPDF_PAGEOBJ_IMAGE: {
@@ -177,7 +177,7 @@ DLLEXPORT int STDCALL FPDFPage_CountObject(FPDF_PAGE page) {
           "Page")) {
     return -1;
   }
-  return pPage->GetPageObjectList()->GetCount();
+  return pdfium::CollectionSize<int>(*pPage->GetPageObjectList());
 }
 
 DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFPage_GetObject(FPDF_PAGE page,
@@ -186,9 +186,9 @@ DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFPage_GetObject(FPDF_PAGE page,
   if (!pPage || !pPage->m_pFormDict || !pPage->m_pFormDict->KeyExist("Type") ||
       pPage->m_pFormDict->GetElement("Type")->GetDirect()->GetString().Compare(
           "Page")) {
-    return NULL;
+    return nullptr;
   }
-  return pPage->GetPageObjectList()->GetObjectByIndex(index);
+  return pPage->GetPageObjectList()->GetPageObjectByIndex(index);
 }
 
 DLLEXPORT FPDF_BOOL STDCALL FPDFPage_HasTransparency(FPDF_PAGE page) {

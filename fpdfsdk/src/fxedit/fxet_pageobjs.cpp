@@ -409,10 +409,10 @@ void IFX_Edit::DrawRichEdit(CFX_RenderDevice* pDevice,
   pDevice->RestoreState();
 }
 
-static void AddRectToPageObjects(CPDF_PageObjectHolder* pPageObjs,
+static void AddRectToPageObjects(CPDF_PageObjectHolder* pObjectHolder,
                                  FX_COLORREF crFill,
                                  const CPDF_Rect& rcFill) {
-  CPDF_PathObject* pPathObj = new CPDF_PathObject;
+  std::unique_ptr<CPDF_PathObject> pPathObj(new CPDF_PathObject);
   CPDF_PathData* pPathData = pPathObj->m_Path.GetModify();
   pPathData->AppendRect(rcFill.left, rcFill.bottom, rcFill.right, rcFill.top);
 
@@ -425,12 +425,11 @@ static void AddRectToPageObjects(CPDF_PageObjectHolder* pPageObjs,
 
   pPathObj->m_FillType = FXFILL_ALTERNATE;
   pPathObj->m_bStroke = FALSE;
-  pPageObjs->GetPageObjectList()->InsertObject(
-      pPageObjs->GetPageObjectList()->GetTailPosition(), pPathObj);
+  pObjectHolder->GetPageObjectList()->push_back(std::move(pPathObj));
 }
 
 static CPDF_TextObject* AddTextObjToPageObjects(
-    CPDF_PageObjectHolder* pPageObjs,
+    CPDF_PageObjectHolder* pObjectHolder,
     FX_COLORREF crText,
     CPDF_Font* pFont,
     FX_FLOAT fFontSize,
@@ -438,8 +437,7 @@ static CPDF_TextObject* AddTextObjToPageObjects(
     int32_t nHorzScale,
     const CPDF_Point& point,
     const CFX_ByteString& text) {
-  CPDF_TextObject* pTxtObj = new CPDF_TextObject;
-
+  std::unique_ptr<CPDF_TextObject> pTxtObj(new CPDF_TextObject);
   CPDF_TextStateData* pTextStateData = pTxtObj->m_TextState.GetModify();
   pTextStateData->m_pFont = pFont;
   pTextStateData->m_FontSize = fFontSize;
@@ -462,14 +460,14 @@ static CPDF_TextObject* AddTextObjToPageObjects(
 
   pTxtObj->SetPosition(point.x, point.y);
   pTxtObj->SetText(text);
-  pPageObjs->GetPageObjectList()->InsertObject(
-      pPageObjs->GetPageObjectList()->GetTailPosition(), pTxtObj);
 
-  return pTxtObj;
+  CPDF_TextObject* pRet = pTxtObj.get();
+  pObjectHolder->GetPageObjectList()->push_back(std::move(pTxtObj));
+  return pRet;
 }
 
 void IFX_Edit::GeneratePageObjects(
-    CPDF_PageObjectHolder* pPageObjects,
+    CPDF_PageObjectHolder* pObjectHolder,
     IFX_Edit* pEdit,
     const CPDF_Point& ptOffset,
     const CPVT_WordRange* pRange,
@@ -504,7 +502,7 @@ void IFX_Edit::GeneratePageObjects(
               nOldFontIndex != word.nFontIndex) {
             if (sTextBuf.GetLength() > 0) {
               ObjArray.Add(AddTextObjToPageObjects(
-                  pPageObjects, crText, pFontMap->GetPDFFont(nOldFontIndex),
+                  pObjectHolder, crText, pFontMap->GetPDFFont(nOldFontIndex),
                   fFontSize, 0.0f, 100,
                   CPDF_Point(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
                   sTextBuf.GetByteString()));
@@ -523,7 +521,7 @@ void IFX_Edit::GeneratePageObjects(
 
       if (sTextBuf.GetLength() > 0) {
         ObjArray.Add(AddTextObjToPageObjects(
-            pPageObjects, crText, pFontMap->GetPDFFont(nOldFontIndex),
+            pObjectHolder, crText, pFontMap->GetPDFFont(nOldFontIndex),
             fFontSize, 0.0f, 100,
             CPDF_Point(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
             sTextBuf.GetByteString()));
@@ -533,7 +531,7 @@ void IFX_Edit::GeneratePageObjects(
 }
 
 void IFX_Edit::GenerateRichPageObjects(
-    CPDF_PageObjectHolder* pPageObjects,
+    CPDF_PageObjectHolder* pObjectHolder,
     IFX_Edit* pEdit,
     const CPDF_Point& ptOffset,
     const CPVT_WordRange* pRange,
@@ -574,7 +572,7 @@ void IFX_Edit::GenerateRichPageObjects(
               crOld != crCurText) {
             if (sTextBuf.GetLength() > 0) {
               ObjArray.Add(AddTextObjToPageObjects(
-                  pPageObjects, crOld, pFontMap->GetPDFFont(wp.nFontIndex),
+                  pObjectHolder, crOld, pFontMap->GetPDFFont(wp.nFontIndex),
                   wp.fFontSize, wp.fCharSpace, wp.nHorzScale,
                   CPDF_Point(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
                   sTextBuf.GetByteString()));
@@ -597,7 +595,7 @@ void IFX_Edit::GenerateRichPageObjects(
             rcUnderline.top += ptOffset.y;
             rcUnderline.bottom += ptOffset.y;
 
-            AddRectToPageObjects(pPageObjects, crCurText, rcUnderline);
+            AddRectToPageObjects(pObjectHolder, crCurText, rcUnderline);
           }
 
           if (word.WordProps.nWordStyle & PVTWORD_STYLE_CROSSOUT) {
@@ -607,7 +605,7 @@ void IFX_Edit::GenerateRichPageObjects(
             rcCrossout.top += ptOffset.y;
             rcCrossout.bottom += ptOffset.y;
 
-            AddRectToPageObjects(pPageObjects, crCurText, rcCrossout);
+            AddRectToPageObjects(pObjectHolder, crCurText, rcCrossout);
           }
 
           oldplace = place;
@@ -616,7 +614,7 @@ void IFX_Edit::GenerateRichPageObjects(
 
       if (sTextBuf.GetLength() > 0) {
         ObjArray.Add(AddTextObjToPageObjects(
-            pPageObjects, crOld, pFontMap->GetPDFFont(wp.nFontIndex),
+            pObjectHolder, crOld, pFontMap->GetPDFFont(wp.nFontIndex),
             wp.fFontSize, wp.fCharSpace, wp.nHorzScale,
             CPDF_Point(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
             sTextBuf.GetByteString()));
@@ -625,7 +623,7 @@ void IFX_Edit::GenerateRichPageObjects(
   }
 }
 
-void IFX_Edit::GenerateUnderlineObjects(CPDF_PageObjectHolder* pPageObjects,
+void IFX_Edit::GenerateUnderlineObjects(CPDF_PageObjectHolder* pObjectHolder,
                                         IFX_Edit* pEdit,
                                         const CPDF_Point& ptOffset,
                                         const CPVT_WordRange* pRange,
@@ -651,7 +649,7 @@ void IFX_Edit::GenerateUnderlineObjects(CPDF_PageObjectHolder* pPageObjects,
           rcUnderline.right += ptOffset.x;
           rcUnderline.top += ptOffset.y;
           rcUnderline.bottom += ptOffset.y;
-          AddRectToPageObjects(pPageObjects, color, rcUnderline);
+          AddRectToPageObjects(pObjectHolder, color, rcUnderline);
         }
       }
     }

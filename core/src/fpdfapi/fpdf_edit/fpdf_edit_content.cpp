@@ -14,25 +14,18 @@ CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& ar, CFX_Matrix& matrix) {
      << matrix.e << " " << matrix.f;
   return ar;
 }
+
 CPDF_PageContentGenerator::CPDF_PageContentGenerator(CPDF_Page* pPage)
-    : m_pPage(pPage) {
-  m_pDocument = NULL;
-  if (m_pPage) {
-    m_pDocument = m_pPage->m_pDocument;
-  }
-  FX_POSITION pos = pPage->GetPageObjectList()->GetHeadPosition();
-  while (pos) {
-    InsertPageObject(pPage->GetPageObjectList()->GetNextObject(pos));
-  }
+    : m_pPage(pPage), m_pDocument(m_pPage->m_pDocument) {
+  for (const auto& pObj : *pPage->GetPageObjectList())
+    InsertPageObject(pObj.get());
 }
-CPDF_PageContentGenerator::~CPDF_PageContentGenerator() {}
+
 FX_BOOL CPDF_PageContentGenerator::InsertPageObject(
     CPDF_PageObject* pPageObject) {
-  if (!pPageObject) {
-    return FALSE;
-  }
-  return m_pageObjects.Add(pPageObject);
+  return pPageObject && m_pageObjects.Add(pPageObject);
 }
+
 void CPDF_PageContentGenerator::GenerateContent() {
   CFX_ByteTextBuf buf;
   CPDF_Dictionary* pPageDict = m_pPage->m_pFormDict;

@@ -244,29 +244,24 @@ void CPDF_RenderStatus::RenderObjectList(
   CFX_Matrix device2object;
   device2object.SetReverse(*pObj2Device);
   device2object.TransformRect(clip_rect);
-  int index = 0;
-  FX_POSITION pos = pObjectHolder->GetPageObjectList()->GetHeadPosition();
-  while (pos) {
-    index++;
-    CPDF_PageObject* pCurObj =
-        pObjectHolder->GetPageObjectList()->GetNextObject(pos);
-    if (pCurObj == m_pStopObj) {
+
+  for (const auto& pCurObj : *pObjectHolder->GetPageObjectList()) {
+    if (pCurObj.get() == m_pStopObj) {
       m_bStopped = TRUE;
       return;
     }
-    if (!pCurObj) {
+    if (!pCurObj)
       continue;
-    }
-    if (!pCurObj || pCurObj->m_Left > clip_rect.right ||
+
+    if (pCurObj->m_Left > clip_rect.right ||
         pCurObj->m_Right < clip_rect.left ||
         pCurObj->m_Bottom > clip_rect.top ||
         pCurObj->m_Top < clip_rect.bottom) {
       continue;
     }
-    RenderSingleObject(pCurObj, pObj2Device);
-    if (m_bStopped) {
+    RenderSingleObject(pCurObj.get(), pObj2Device);
+    if (m_bStopped)
       return;
-    }
   }
 }
 void CPDF_RenderStatus::RenderSingleObject(const CPDF_PageObject* pObj,
@@ -1037,8 +1032,7 @@ CPDF_ProgressiveRenderer::CPDF_ProgressiveRenderer(
       m_pDevice(pDevice),
       m_pOptions(pOptions),
       m_LayerIndex(0),
-      m_pCurrentLayer(nullptr),
-      m_LastObjectRendered(nullptr) {}
+      m_pCurrentLayer(nullptr) {}
 
 CPDF_ProgressiveRenderer::~CPDF_ProgressiveRenderer() {
   if (m_pRenderStatus)
@@ -1062,7 +1056,8 @@ void CPDF_ProgressiveRenderer::Continue(IFX_Pause* pPause) {
         return;
       }
       m_pCurrentLayer = m_pContext->GetLayer(m_LayerIndex);
-      m_LastObjectRendered = nullptr;
+      m_LastObjectRendered =
+          m_pCurrentLayer->m_pObjectHolder->GetPageObjectList()->end();
       m_pRenderStatus.reset(new CPDF_RenderStatus());
       m_pRenderStatus->Initialize(
           m_pContext, m_pDevice, NULL, NULL, NULL, NULL, m_pOptions,
@@ -1073,19 +1068,18 @@ void CPDF_ProgressiveRenderer::Continue(IFX_Pause* pPause) {
       device2object.SetReverse(m_pCurrentLayer->m_Matrix);
       device2object.TransformRect(m_ClipRect);
     }
-    FX_POSITION pos;
-    if (m_LastObjectRendered) {
-      pos = m_LastObjectRendered;
-      m_pCurrentLayer->m_pObjectHolder->GetPageObjectList()->GetNextObject(pos);
+    CPDF_PageObjectList::iterator iter;
+    CPDF_PageObjectList::iterator iterEnd =
+        m_pCurrentLayer->m_pObjectHolder->GetPageObjectList()->end();
+    if (m_LastObjectRendered != iterEnd) {
+      iter = m_LastObjectRendered;
+      ++iter;
     } else {
-      pos = m_pCurrentLayer->m_pObjectHolder->GetPageObjectList()
-                ->GetHeadPosition();
+      iter = m_pCurrentLayer->m_pObjectHolder->GetPageObjectList()->begin();
     }
     int nObjsToGo = kStepLimit;
-    while (pos) {
-      CPDF_PageObject* pCurObj =
-          m_pCurrentLayer->m_pObjectHolder->GetPageObjectList()->GetObjectAt(
-              pos);
+    while (iter != iterEnd) {
+      CPDF_PageObject* pCurObj = iter->get();
       if (pCurObj && pCurObj->m_Left <= m_ClipRect.right &&
           pCurObj->m_Right >= m_ClipRect.left &&
           pCurObj->m_Bottom <= m_ClipRect.top &&
@@ -1106,19 +1100,18 @@ void CPDF_ProgressiveRenderer::Continue(IFX_Pause* pPause) {
           --nObjsToGo;
         }
       }
-      m_LastObjectRendered = pos;
+      m_LastObjectRendered = iter;
       if (nObjsToGo == 0) {
         if (pPause && pPause->NeedToPauseNow())
           return;
         nObjsToGo = kStepLimit;
       }
-      m_pCurrentLayer->m_pObjectHolder->GetPageObjectList()->GetNextObject(pos);
+      ++iter;
     }
     if (m_pCurrentLayer->m_pObjectHolder->IsParsed()) {
       m_pRenderStatus.reset();
       m_pDevice->RestoreState();
       m_pCurrentLayer = nullptr;
-      m_LastObjectRendered = nullptr;
       m_LayerIndex++;
       if (pPause && pPause->NeedToPauseNow()) {
         return;

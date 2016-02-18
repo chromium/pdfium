@@ -1166,20 +1166,20 @@ CPVT_WordRange CPWL_Edit::GetSameWordsRange(const CPVT_WordPlace& place,
 }
 
 void CPWL_Edit::GeneratePageObjects(
-    CPDF_PageObjectHolder* pPageObjects,
+    CPDF_PageObjectHolder* pObjectHolder,
     const CPDF_Point& ptOffset,
     CFX_ArrayTemplate<CPDF_TextObject*>& ObjArray) {
   IFX_Edit::GeneratePageObjects(
-      pPageObjects, m_pEdit, ptOffset, NULL,
+      pObjectHolder, m_pEdit, ptOffset, NULL,
       CPWL_Utils::PWLColorToFXColor(GetTextColor(), GetTransparency()),
       ObjArray);
 }
 
-void CPWL_Edit::GeneratePageObjects(CPDF_PageObjectHolder* pPageObjects,
+void CPWL_Edit::GeneratePageObjects(CPDF_PageObjectHolder* pObjectHolder,
                                     const CPDF_Point& ptOffset) {
   CFX_ArrayTemplate<CPDF_TextObject*> ObjArray;
   IFX_Edit::GeneratePageObjects(
-      pPageObjects, m_pEdit, ptOffset, NULL,
+      pObjectHolder, m_pEdit, ptOffset, NULL,
       CPWL_Utils::PWLColorToFXColor(GetTextColor(), GetTransparency()),
       ObjArray);
 }

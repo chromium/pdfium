@@ -10,6 +10,7 @@
 #include <deque>
 #include <vector>
 
+#include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fpdftext/fpdf_text.h"
 #include "core/include/fxcrt/fx_basic.h"
 
@@ -107,11 +108,14 @@ class CPDF_TextPage : public IPDF_TextPage {
   void ProcessTextObject(PDFTEXT_Obj pObj);
   void ProcessTextObject(CPDF_TextObject* pTextObj,
                          const CFX_Matrix& formMatrix,
-                         FX_POSITION ObjPos);
+                         const CPDF_PageObjectList* pObjList,
+                         CPDF_PageObjectList::const_iterator ObjPos);
   int ProcessInsertObject(const CPDF_TextObject* pObj,
                           const CFX_Matrix& formMatrix);
   FX_BOOL GenerateCharInfo(FX_WCHAR unicode, PAGECHAR_INFO& info);
-  FX_BOOL IsSameAsPreTextObject(CPDF_TextObject* pTextObj, FX_POSITION ObjPos);
+  FX_BOOL IsSameAsPreTextObject(CPDF_TextObject* pTextObj,
+                                const CPDF_PageObjectList* pObjList,
+                                CPDF_PageObjectList::const_iterator ObjPos);
   FX_BOOL IsSameTextObject(CPDF_TextObject* pTextObj1,
                            CPDF_TextObject* pTextObj2);
   int GetCharWidth(FX_DWORD charCode, CPDF_Font* pFont) const;

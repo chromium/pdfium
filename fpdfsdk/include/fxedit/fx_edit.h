@@ -458,19 +458,19 @@ class IFX_Edit {
                            const CPDF_Point& ptOffset,
                            const CPVT_WordRange* pRange);
   static void GeneratePageObjects(
-      CPDF_PageObjectHolder* pPageObjects,
+      CPDF_PageObjectHolder* pObjectHolder,
       IFX_Edit* pEdit,
       const CPDF_Point& ptOffset,
       const CPVT_WordRange* pRange,
       FX_COLORREF crText,
       CFX_ArrayTemplate<CPDF_TextObject*>& ObjArray);
   static void GenerateRichPageObjects(
-      CPDF_PageObjectHolder* pPageObjects,
+      CPDF_PageObjectHolder* pObjectHolder,
       IFX_Edit* pEdit,
       const CPDF_Point& ptOffset,
       const CPVT_WordRange* pRange,
       CFX_ArrayTemplate<CPDF_TextObject*>& ObjArray);
-  static void GenerateUnderlineObjects(CPDF_PageObjectHolder* pPageObjects,
+  static void GenerateUnderlineObjects(CPDF_PageObjectHolder* pObjectHolder,
                                        IFX_Edit* pEdit,
                                        const CPDF_Point& ptOffset,
                                        const CPVT_WordRange* pRange,

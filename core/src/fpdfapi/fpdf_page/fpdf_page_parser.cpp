@@ -780,7 +780,7 @@ void CPDF_StreamContentParser::AddForm(CPDF_Stream* pStream) {
     parser.Parse(stream.GetData(), stream.GetSize(), 0);
     return;
   }
-  CPDF_FormObject* pFormObj = new CPDF_FormObject;
+  std::unique_ptr<CPDF_FormObject> pFormObj(new CPDF_FormObject);
   pFormObj->m_pForm =
       new CPDF_Form(m_pDocument, m_pPageResources, pStream, m_pResources);
   pFormObj->m_FormMatrix = m_pCurStates->m_CTM;
@@ -796,8 +796,8 @@ void CPDF_StreamContentParser::AddForm(CPDF_Stream* pStream) {
     m_pObjectHolder->SetBackgroundAlphaNeeded(TRUE);
   }
   pFormObj->CalcBoundingBox();
-  SetGraphicStates(pFormObj, TRUE, TRUE, TRUE);
-  m_pObjectHolder->GetPageObjectList()->AddTail(pFormObj);
+  SetGraphicStates(pFormObj.get(), TRUE, TRUE, TRUE);
+  m_pObjectHolder->GetPageObjectList()->push_back(std::move(pFormObj));
 }
 
 CPDF_ImageObject* CPDF_StreamContentParser::AddImage(CPDF_Stream* pStream,
@@ -809,7 +809,8 @@ CPDF_ImageObject* CPDF_StreamContentParser::AddImage(CPDF_Stream* pStream,
   CFX_Matrix ImageMatrix;
   ImageMatrix.Copy(m_pCurStates->m_CTM);
   ImageMatrix.Concat(m_mtContentToUser);
-  CPDF_ImageObject* pImageObj = new CPDF_ImageObject;
+
+  std::unique_ptr<CPDF_ImageObject> pImageObj(new CPDF_ImageObject);
   if (pImage) {
     pImageObj->m_pImage =
         m_pDocument->GetPageData()->GetImage(pImage->GetStream());
@@ -819,11 +820,13 @@ CPDF_ImageObject* CPDF_StreamContentParser::AddImage(CPDF_Stream* pStream,
     pImageObj->m_pImage = new CPDF_Image(m_pDocument);
     pImageObj->m_pImage->LoadImageF(pStream, bInline);
   }
-  SetGraphicStates(pImageObj, pImageObj->m_pImage->IsMask(), FALSE, FALSE);
+  SetGraphicStates(pImageObj.get(), pImageObj->m_pImage->IsMask(), FALSE,
+                   FALSE);
   pImageObj->m_Matrix = ImageMatrix;
   pImageObj->CalcBoundingBox();
-  m_pObjectHolder->GetPageObjectList()->AddTail(pImageObj);
-  return pImageObj;
+  CPDF_ImageObject* pRet = pImageObj.get();
+  m_pObjectHolder->GetPageObjectList()->push_back(std::move(pImageObj));
+  return pRet;
 }
 
 void CPDF_StreamContentParser::Handle_MarkPlace_Dictionary() {}
@@ -1190,9 +1193,9 @@ void CPDF_StreamContentParser::Handle_ShadeFill() {
   if (!pShading->Load()) {
     return;
   }
-  CPDF_ShadingObject* pObj = new CPDF_ShadingObject;
+  std::unique_ptr<CPDF_ShadingObject> pObj(new CPDF_ShadingObject);
   pObj->m_pShading = pShading;
-  SetGraphicStates(pObj, FALSE, FALSE, FALSE);
+  SetGraphicStates(pObj.get(), FALSE, FALSE, FALSE);
   pObj->m_Matrix = m_pCurStates->m_CTM;
   pObj->m_Matrix.Concat(m_mtContentToUser);
   CFX_FloatRect bbox;
@@ -1211,7 +1214,7 @@ void CPDF_StreamContentParser::Handle_ShadeFill() {
   pObj->m_Right = bbox.right;
   pObj->m_Top = bbox.top;
   pObj->m_Bottom = bbox.bottom;
-  m_pObjectHolder->GetPageObjectList()->AddTail(pObj);
+  m_pObjectHolder->GetPageObjectList()->push_back(std::move(pObj));
 }
 
 void CPDF_StreamContentParser::Handle_SetCharSpace() {
@@ -1365,31 +1368,34 @@ void CPDF_StreamContentParser::AddTextObject(CFX_ByteString* pStrs,
   } else {
     textmode = m_pCurStates->m_TextState.GetObject()->m_TextMode;
   }
-  CPDF_TextObject* pText = new CPDF_TextObject;
-  m_pLastTextObject = pText;
-  SetGraphicStates(pText, TRUE, TRUE, TRUE);
-  if (textmode && textmode != 3 && textmode != 4 && textmode != 7) {
-    FX_FLOAT* pCTM = pText->m_TextState.GetModify()->m_CTM;
-    pCTM[0] = m_pCurStates->m_CTM.a;
-    pCTM[1] = m_pCurStates->m_CTM.c;
-    pCTM[2] = m_pCurStates->m_CTM.b;
-    pCTM[3] = m_pCurStates->m_CTM.d;
+  {
+    std::unique_ptr<CPDF_TextObject> pText(new CPDF_TextObject);
+    m_pLastTextObject = pText.get();
+    SetGraphicStates(m_pLastTextObject, TRUE, TRUE, TRUE);
+    if (textmode && textmode != 3 && textmode != 4 && textmode != 7) {
+      FX_FLOAT* pCTM = pText->m_TextState.GetModify()->m_CTM;
+      pCTM[0] = m_pCurStates->m_CTM.a;
+      pCTM[1] = m_pCurStates->m_CTM.c;
+      pCTM[2] = m_pCurStates->m_CTM.b;
+      pCTM[3] = m_pCurStates->m_CTM.d;
+    }
+    pText->SetSegments(pStrs, pKerning, nsegs);
+    pText->m_PosX = m_pCurStates->m_TextX;
+    pText->m_PosY = m_pCurStates->m_TextY + m_pCurStates->m_TextRise;
+    ConvertTextSpace(pText->m_PosX, pText->m_PosY);
+    FX_FLOAT x_advance;
+    FX_FLOAT y_advance;
+    pText->CalcPositionData(&x_advance, &y_advance,
+                            m_pCurStates->m_TextHorzScale, m_Level);
+    m_pCurStates->m_TextX += x_advance;
+    m_pCurStates->m_TextY += y_advance;
+    if (textmode > 3) {
+      CPDF_TextObject* pCopy = new CPDF_TextObject;
+      pCopy->Copy(pText.get());
+      m_ClipTextList.Add(pCopy);
+    }
+    m_pObjectHolder->GetPageObjectList()->push_back(std::move(pText));
   }
-  pText->SetSegments(pStrs, pKerning, nsegs);
-  pText->m_PosX = m_pCurStates->m_TextX;
-  pText->m_PosY = m_pCurStates->m_TextY + m_pCurStates->m_TextRise;
-  ConvertTextSpace(pText->m_PosX, pText->m_PosY);
-  FX_FLOAT x_advance, y_advance;
-  pText->CalcPositionData(&x_advance, &y_advance, m_pCurStates->m_TextHorzScale,
-                          m_Level);
-  m_pCurStates->m_TextX += x_advance;
-  m_pCurStates->m_TextY += y_advance;
-  if (textmode > 3) {
-    CPDF_TextObject* pCopy = new CPDF_TextObject;
-    pCopy->Copy(pText);
-    m_ClipTextList.Add(pCopy);
-  }
-  m_pObjectHolder->GetPageObjectList()->AddTail(pText);
   if (pKerning && pKerning[nsegs - 1] != 0) {
     if (!pFont->IsVertWriting()) {
       m_pCurStates->m_TextX -=
@@ -1617,14 +1623,14 @@ void CPDF_StreamContentParser::AddPathObject(int FillType, FX_BOOL bStroke) {
   CFX_Matrix matrix = m_pCurStates->m_CTM;
   matrix.Concat(m_mtContentToUser);
   if (bStroke || FillType) {
-    CPDF_PathObject* pPathObj = new CPDF_PathObject;
+    std::unique_ptr<CPDF_PathObject> pPathObj(new CPDF_PathObject);
     pPathObj->m_bStroke = bStroke;
     pPathObj->m_FillType = FillType;
     pPathObj->m_Path = Path;
     pPathObj->m_Matrix = matrix;
-    SetGraphicStates(pPathObj, TRUE, FALSE, TRUE);
+    SetGraphicStates(pPathObj.get(), TRUE, FALSE, TRUE);
     pPathObj->CalcBoundingBox();
-    m_pObjectHolder->GetPageObjectList()->AddTail(pPathObj);
+    m_pObjectHolder->GetPageObjectList()->push_back(std::move(pPathObj));
   }
   if (PathClipType) {
     if (!matrix.IsIdentity()) {
@@ -1641,13 +1647,12 @@ FX_DWORD CPDF_StreamContentParser::Parse(const uint8_t* pData,
   if (m_Level > _FPDF_MAX_FORM_LEVEL_) {
     return dwSize;
   }
-  FX_DWORD InitObjCount = m_pObjectHolder->GetPageObjectList()->GetCount();
+  FX_DWORD InitObjCount = m_pObjectHolder->GetPageObjectList()->size();
   CPDF_StreamParser syntax(pData, dwSize);
   CPDF_StreamParserAutoClearer auto_clearer(&m_pSyntax, &syntax);
   m_CompatCount = 0;
   while (1) {
-    FX_DWORD cost =
-        m_pObjectHolder->GetPageObjectList()->GetCount() - InitObjCount;
+    FX_DWORD cost = m_pObjectHolder->GetPageObjectList()->size() - InitObjCount;
     if (max_cost && cost >= max_cost) {
       break;
     }

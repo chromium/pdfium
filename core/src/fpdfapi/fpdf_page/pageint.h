@@ -94,7 +94,7 @@ class CPDF_StreamContentParser {
                            CPDF_Dictionary* pPageResources,
                            CPDF_Dictionary* pParentResources,
                            CFX_Matrix* pmtContentToUser,
-                           CPDF_PageObjectHolder* pObjHolder,
+                           CPDF_PageObjectHolder* pObjectHolder,
                            CPDF_Dictionary* pResources,
                            CFX_FloatRect* pBBox,
                            CPDF_ParseOptions* pOptions,
@@ -298,7 +298,7 @@ class CPDF_ContentParser {
 
   ParseStatus m_Status;
   InternalStage m_InternalStage;
-  CPDF_PageObjectHolder* m_pObjects;
+  CPDF_PageObjectHolder* m_pObjectHolder;
   FX_BOOL m_bForm;
   CPDF_ParseOptions m_Options;
   CPDF_Type3Char* m_pType3Char;

@@ -6,8 +6,11 @@
 
 #include "core/src/fpdfapi/fpdf_page/pageint.h"
 
+#include <algorithm>
+
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_page.h"
+#include "third_party/base/stl_util.h"
 
 CPDF_PageObject* CPDF_PageObject::Create(int type) {
   switch (type) {
@@ -670,6 +673,19 @@ void CPDF_FormObject::CalcBoundingBox() {
   m_Right = form_rect.right;
   m_Top = form_rect.top;
 }
+
+CPDF_PageObject* CPDF_PageObjectList::GetPageObjectByIndex(int index) {
+  if (index < 0 || index >= pdfium::CollectionSize<int>(*this))
+    return nullptr;
+  int current = 0;
+  for (const auto& pObj : *this) {
+    if (index == current)
+      return pObj.get();
+    ++current;
+  }
+  return nullptr;
+}
+
 CPDF_PageObjectHolder::CPDF_PageObjectHolder()
     : m_pFormDict(nullptr),
       m_pFormStream(nullptr),
@@ -679,15 +695,8 @@ CPDF_PageObjectHolder::CPDF_PageObjectHolder()
       m_Transparency(0),
       m_bBackgroundAlphaNeeded(FALSE),
       m_bHasImageMask(FALSE),
-      m_ParseState(CONTENT_NOT_PARSED),
-      m_PageObjectList(128) {}
+      m_ParseState(CONTENT_NOT_PARSED) {}
 
-CPDF_PageObjectHolder::~CPDF_PageObjectHolder() {
-  FX_POSITION pos = m_PageObjectList.GetHeadPosition();
-  while (pos) {
-    delete m_PageObjectList.GetNextObject(pos);
-  }
-}
 void CPDF_PageObjectHolder::ContinueParse(IFX_Pause* pPause) {
   if (!m_pParser) {
     return;
@@ -698,48 +707,29 @@ void CPDF_PageObjectHolder::ContinueParse(IFX_Pause* pPause) {
     m_pParser.reset();
   }
 }
-FX_POSITION CPDF_PageObjectList::InsertObject(FX_POSITION posInsertAfter,
-                                              CPDF_PageObject* pNewObject) {
-  if (!posInsertAfter) {
-    return AddHead(pNewObject);
-  }
-  return InsertAfter(posInsertAfter, pNewObject);
-}
-CPDF_PageObject* CPDF_PageObjectList::GetObjectByIndex(int index) const {
-  FX_POSITION pos = FindIndex(index);
-  return pos ? GetObjectAt(pos) : nullptr;
-}
+
 void CPDF_PageObjectHolder::Transform(const CFX_Matrix& matrix) {
-  FX_POSITION pos = m_PageObjectList.GetHeadPosition();
-  while (pos) {
-    m_PageObjectList.GetNextObject(pos)->Transform(matrix);
-  }
+  for (auto& pObj : m_PageObjectList)
+    pObj->Transform(matrix);
 }
+
 CFX_FloatRect CPDF_PageObjectHolder::CalcBoundingBox() const {
-  if (m_PageObjectList.GetCount() == 0) {
+  if (m_PageObjectList.empty())
     return CFX_FloatRect(0, 0, 0, 0);
-  }
-  FX_FLOAT left, right, top, bottom;
-  left = bottom = 1000000 * 1.0f;
-  right = top = -1000000 * 1.0f;
-  FX_POSITION pos = m_PageObjectList.GetHeadPosition();
-  while (pos) {
-    CPDF_PageObject* pObj = (CPDF_PageObject*)m_PageObjectList.GetNext(pos);
-    if (left > pObj->m_Left) {
-      left = pObj->m_Left;
-    }
-    if (right < pObj->m_Right) {
-      right = pObj->m_Right;
-    }
-    if (top < pObj->m_Top) {
-      top = pObj->m_Top;
-    }
-    if (bottom > pObj->m_Bottom) {
-      bottom = pObj->m_Bottom;
-    }
+
+  FX_FLOAT left = 1000000.0f;
+  FX_FLOAT right = -1000000.0f;
+  FX_FLOAT bottom = 1000000.0f;
+  FX_FLOAT top = -1000000.0f;
+  for (const auto& pObj : m_PageObjectList) {
+    left = std::min(left, pObj->m_Left);
+    right = std::max(right, pObj->m_Right);
+    bottom = std::min(bottom, pObj->m_Bottom);
+    top = std::max(top, pObj->m_Top);
   }
   return CFX_FloatRect(left, bottom, right, top);
 }
+
 void CPDF_PageObjectHolder::LoadTransInfo() {
   if (!m_pFormDict) {
     return;
@@ -889,7 +879,9 @@ CPDF_Form::CPDF_Form(CPDF_Document* pDoc,
   m_Transparency = 0;
   LoadTransInfo();
 }
+
 CPDF_Form::~CPDF_Form() {}
+
 void CPDF_Form::StartParse(CPDF_AllStates* pGraphicStates,
                            CFX_Matrix* pParentMatrix,
                            CPDF_Type3Char* pType3Char,
@@ -903,6 +895,7 @@ void CPDF_Form::StartParse(CPDF_AllStates* pGraphicStates,
                    level);
   m_ParseState = CONTENT_PARSING;
 }
+
 void CPDF_Form::ParseContent(CPDF_AllStates* pGraphicStates,
                              CFX_Matrix* pParentMatrix,
                              CPDF_Type3Char* pType3Char,
@@ -911,16 +904,16 @@ void CPDF_Form::ParseContent(CPDF_AllStates* pGraphicStates,
   StartParse(pGraphicStates, pParentMatrix, pType3Char, pOptions, level);
   ContinueParse(NULL);
 }
+
 CPDF_Form* CPDF_Form::Clone() const {
-  CPDF_Form* pClone =
+  CPDF_Form* pCloneForm =
       new CPDF_Form(m_pDocument, m_pPageResources, m_pFormStream, m_pResources);
-  FX_POSITION pos = m_PageObjectList.GetHeadPosition();
-  while (pos) {
-    CPDF_PageObject* pObj = (CPDF_PageObject*)m_PageObjectList.GetNext(pos);
-    pClone->m_PageObjectList.AddTail(pObj->Clone());
-  }
-  return pClone;
+  for (const auto& pObj : m_PageObjectList)
+    pCloneForm->m_PageObjectList.emplace_back(pObj->Clone());
+
+  return pCloneForm;
 }
+
 void CPDF_Page::GetDisplayMatrix(CFX_Matrix& matrix,
                                  int xPos,
                                  int yPos,

@@ -35,17 +35,14 @@ FX_BOOL IsValiableRect(CPDF_Rect rect, CPDF_Rect rcPage) {
   return TRUE;
 }
 
-FX_BOOL GetContentsRect(CPDF_Document* pDoc,
-                        CPDF_Dictionary* pDict,
-                        CPDF_RectArray* pRectArray) {
-  CPDF_Page* pPDFPage = new CPDF_Page;
+void GetContentsRect(CPDF_Document* pDoc,
+                     CPDF_Dictionary* pDict,
+                     CPDF_RectArray* pRectArray) {
+  std::unique_ptr<CPDF_Page> pPDFPage(new CPDF_Page);
   pPDFPage->Load(pDoc, pDict, FALSE);
   pPDFPage->ParseContent(nullptr);
 
-  FX_POSITION pos = pPDFPage->GetPageObjectList()->GetHeadPosition();
-  while (pos) {
-    CPDF_PageObject* pPageObject =
-        pPDFPage->GetPageObjectList()->GetNextObject(pos);
+  for (auto& pPageObject : *pPDFPage->GetPageObjectList()) {
     if (!pPageObject)
       continue;
 
@@ -54,14 +51,9 @@ FX_BOOL GetContentsRect(CPDF_Document* pDoc,
     rc.right = pPageObject->m_Right;
     rc.bottom = pPageObject->m_Bottom;
     rc.top = pPageObject->m_Top;
-
-    if (IsValiableRect(rc, pDict->GetRectBy("MediaBox"))) {
+    if (IsValiableRect(rc, pDict->GetRectBy("MediaBox")))
       pRectArray->Add(rc);
-    }
   }
-
-  delete pPDFPage;
-  return TRUE;
 }
 
 void ParserStream(CPDF_Dictionary* pPageDic,

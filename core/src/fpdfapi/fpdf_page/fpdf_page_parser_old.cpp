@@ -666,7 +666,7 @@ bool CPDF_StreamParser::PositionIsInBounds() const {
 CPDF_ContentParser::CPDF_ContentParser()
     : m_Status(Ready),
       m_InternalStage(STAGE_GETCONTENT),
-      m_pObjects(nullptr),
+      m_pObjectHolder(nullptr),
       m_bForm(false),
       m_pType3Char(nullptr),
       m_pData(nullptr),
@@ -684,7 +684,7 @@ void CPDF_ContentParser::Start(CPDF_Page* pPage, CPDF_ParseOptions* pOptions) {
     m_Status = Done;
     return;
   }
-  m_pObjects = pPage;
+  m_pObjectHolder = pPage;
   m_bForm = FALSE;
   if (pOptions) {
     m_Options = *pOptions;
@@ -720,7 +720,7 @@ void CPDF_ContentParser::Start(CPDF_Form* pForm,
                                CPDF_ParseOptions* pOptions,
                                int level) {
   m_pType3Char = pType3Char;
-  m_pObjects = pForm;
+  m_pObjectHolder = pForm;
   m_bForm = TRUE;
   CFX_Matrix form_matrix = pForm->m_pFormDict->GetMatrixBy("Matrix");
   if (pGraphicStates) {
@@ -803,7 +803,8 @@ void CPDF_ContentParser::Continue(IFX_Pause* pPause) {
         m_InternalStage = STAGE_PARSE;
         m_CurrentOffset = 0;
       } else {
-        CPDF_Array* pContent = m_pObjects->m_pFormDict->GetArrayBy("Contents");
+        CPDF_Array* pContent =
+            m_pObjectHolder->m_pFormDict->GetArrayBy("Contents");
         m_StreamArray[m_CurrentOffset].reset(new CPDF_StreamAcc);
         CPDF_Stream* pStreamObj = ToStream(
             pContent ? pContent->GetElementValue(m_CurrentOffset) : nullptr);
@@ -814,9 +815,9 @@ void CPDF_ContentParser::Continue(IFX_Pause* pPause) {
     if (m_InternalStage == STAGE_PARSE) {
       if (!m_pParser) {
         m_pParser.reset(new CPDF_StreamContentParser(
-            m_pObjects->m_pDocument, m_pObjects->m_pPageResources, nullptr,
-            nullptr, m_pObjects, m_pObjects->m_pResources, &m_pObjects->m_BBox,
-            &m_Options, nullptr, 0));
+            m_pObjectHolder->m_pDocument, m_pObjectHolder->m_pPageResources,
+            nullptr, nullptr, m_pObjectHolder, m_pObjectHolder->m_pResources,
+            &m_pObjectHolder->m_BBox, &m_Options, nullptr, 0));
         m_pParser->GetCurStates()->m_ColorState.GetModify()->Default();
       }
       if (m_CurrentOffset >= m_Size) {
@@ -841,10 +842,7 @@ void CPDF_ContentParser::Continue(IFX_Pause* pPause) {
         m_pType3Char->m_BBox.top =
             FXSYS_round(m_pParser->GetType3Data()[5] * 1000);
       }
-      FX_POSITION pos = m_pObjects->GetPageObjectList()->GetHeadPosition();
-      while (pos) {
-        CPDF_PageObject* pObj =
-            m_pObjects->GetPageObjectList()->GetNextObject(pos);
+      for (auto& pObj : *m_pObjectHolder->GetPageObjectList()) {
         if (pObj->m_ClipPath.IsNull()) {
           continue;
         }

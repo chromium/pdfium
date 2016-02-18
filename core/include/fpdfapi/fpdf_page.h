@@ -7,6 +7,7 @@
 #ifndef CORE_INCLUDE_FPDFAPI_FPDF_PAGE_H_
 #define CORE_INCLUDE_FPDFAPI_FPDF_PAGE_H_
 
+#include <list>
 #include <memory>
 
 #include "core/include/fpdfapi/fpdf_parser.h"
@@ -27,33 +28,15 @@ class CPDF_StreamContentParser;
 #define PDFTRANS_ISOLATED 0x0200
 #define PDFTRANS_KNOCKOUT 0x0400
 
-class CPDF_PageObjectList : public CFX_PtrList {
+class CPDF_PageObjectList : public std::list<std::unique_ptr<CPDF_PageObject>> {
  public:
-  explicit CPDF_PageObjectList(int nBlockSize) : CFX_PtrList(nBlockSize) {}
-
-  CPDF_PageObject* GetNextObject(FX_POSITION& pos) const {
-    return static_cast<CPDF_PageObject*>(GetNext(pos));
-  }
-
-  CPDF_PageObject* GetPrevObject(FX_POSITION& pos) const {
-    return static_cast<CPDF_PageObject*>(GetPrev(pos));
-  }
-
-  CPDF_PageObject* GetObjectAt(FX_POSITION pos) const {
-    return static_cast<CPDF_PageObject*>(GetAt(pos));
-  }
-
   // Linear complexity, to be avoided except as needed by public APIs.
-  CPDF_PageObject* GetObjectByIndex(int index) const;
-
-  FX_POSITION InsertObject(FX_POSITION posInsertAfter,
-                           CPDF_PageObject* pNewObject);
+  CPDF_PageObject* GetPageObjectByIndex(int index);
 };
 
 class CPDF_PageObjectHolder {
  public:
   CPDF_PageObjectHolder();
-  ~CPDF_PageObjectHolder();
 
   void ContinueParse(IFX_Pause* pPause);
   FX_BOOL IsParsed() const { return m_ParseState == CONTENT_PARSED; }
@@ -165,8 +148,8 @@ class CPDF_Form : public CPDF_PageObjectHolder {
 };
 class CPDF_PageContentGenerator {
  public:
-  CPDF_PageContentGenerator(CPDF_Page* pPage);
-  ~CPDF_PageContentGenerator();
+  explicit CPDF_PageContentGenerator(CPDF_Page* pPage);
+
   FX_BOOL InsertPageObject(CPDF_PageObject* pPageObject);
   void GenerateContent();
   void TransformContent(CFX_Matrix& matrix);

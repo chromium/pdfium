@@ -761,20 +761,13 @@ int32_t CPDF_TextPage::FindTextlineFlowDirection() {
   uint8_t* pDataV = nVerticalMask.data();
   int32_t index = 0;
   FX_FLOAT fLineHeight = 0.0f;
-  CPDF_PageObject* pPageObj = NULL;
-  FX_POSITION pos = NULL;
-  pos = m_pPage->GetPageObjectList()->GetHeadPosition();
-  if (!pos) {
+  if (m_pPage->GetPageObjectList()->empty())
     return -1;
-  }
-  while (pos) {
-    pPageObj = m_pPage->GetPageObjectList()->GetNextObject(pos);
-    if (!pPageObj) {
+
+  for (auto& pPageObj : *m_pPage->GetPageObjectList()) {
+    if (!pPageObj || pPageObj->m_Type != CPDF_PageObject::TEXT)
       continue;
-    }
-    if (CPDF_PageObject::TEXT != pPageObj->m_Type) {
-      continue;
-    }
+
     int32_t minH =
         (int32_t)pPageObj->m_Left < 0 ? 0 : (int32_t)pPageObj->m_Left;
     int32_t maxH = (int32_t)pPageObj->m_Right > nPageWidth
@@ -785,28 +778,26 @@ int32_t CPDF_TextPage::FindTextlineFlowDirection() {
     int32_t maxV = (int32_t)pPageObj->m_Top > nPageHeight
                        ? nPageHeight
                        : (int32_t)pPageObj->m_Top;
-    if (minH >= maxH || minV >= maxV) {
+    if (minH >= maxH || minV >= maxV)
       continue;
-    }
+
     FXSYS_memset(pDataH + minH, 1, maxH - minH);
     FXSYS_memset(pDataV + minV, 1, maxV - minV);
-    if (fLineHeight <= 0.0f) {
+    if (fLineHeight <= 0.0f)
       fLineHeight = pPageObj->m_Top - pPageObj->m_Bottom;
-    }
-    pPageObj = NULL;
   }
   int32_t nStartH = 0;
   int32_t nEndH = 0;
   FX_FLOAT nSumH = 0.0f;
-  for (index = 0; index < nPageWidth; index++)
-    if (1 == nHorizontalMask[index]) {
+  for (index = 0; index < nPageWidth; index++) {
+    if (1 == nHorizontalMask[index])
       break;
-    }
+  }
   nStartH = index;
-  for (index = nPageWidth; index > 0; index--)
-    if (1 == nHorizontalMask[index - 1]) {
+  for (index = nPageWidth; index > 0; index--) {
+    if (1 == nHorizontalMask[index - 1])
       break;
-    }
+  }
   nEndH = index;
   for (index = nStartH; index < nEndH; index++) {
     nSumH += nHorizontalMask[index];
@@ -815,15 +806,15 @@ int32_t CPDF_TextPage::FindTextlineFlowDirection() {
   int32_t nStartV = 0;
   int32_t nEndV = 0;
   FX_FLOAT nSumV = 0.0f;
-  for (index = 0; index < nPageHeight; index++)
-    if (1 == nVerticalMask[index]) {
+  for (index = 0; index < nPageHeight; index++) {
+    if (1 == nVerticalMask[index])
       break;
-    }
+  }
   nStartV = index;
-  for (index = nPageHeight; index > 0; index--)
-    if (1 == nVerticalMask[index - 1]) {
+  for (index = nPageHeight; index > 0; index--) {
+    if (1 == nVerticalMask[index - 1])
       break;
-    }
+  }
   nEndV = index;
   for (index = nStartV; index < nEndV; index++) {
     nSumV += nVerticalMask[index];
@@ -848,58 +839,50 @@ int32_t CPDF_TextPage::FindTextlineFlowDirection() {
 }
 
 void CPDF_TextPage::ProcessObject() {
-  FX_POSITION pos = m_pPage->GetPageObjectList()->GetHeadPosition();
-  if (!pos) {
+  if (m_pPage->GetPageObjectList()->empty())
     return;
-  }
+
   m_TextlineDir = FindTextlineFlowDirection();
-  int nCount = 0;
-  while (pos) {
-    CPDF_PageObject* pPageObj =
-        m_pPage->GetPageObjectList()->GetNextObject(pos);
-    if (pPageObj) {
-      if (pPageObj->m_Type == CPDF_PageObject::TEXT) {
+  const CPDF_PageObjectList* pObjList = m_pPage->GetPageObjectList();
+  for (auto it = pObjList->begin(); it != pObjList->end(); ++it) {
+    if (CPDF_PageObject* pObj = it->get()) {
+      if (pObj->m_Type == CPDF_PageObject::TEXT) {
         CFX_Matrix matrix;
-        ProcessTextObject((CPDF_TextObject*)pPageObj, matrix, pos);
-        nCount++;
-      } else if (pPageObj->m_Type == CPDF_PageObject::FORM) {
+        ProcessTextObject(static_cast<CPDF_TextObject*>(pObj), matrix, pObjList,
+                          it);
+      } else if (pObj->m_Type == CPDF_PageObject::FORM) {
         CFX_Matrix formMatrix(1, 0, 0, 1, 0, 0);
-        ProcessFormObject((CPDF_FormObject*)pPageObj, formMatrix);
+        ProcessFormObject(static_cast<CPDF_FormObject*>(pObj), formMatrix);
       }
     }
   }
-  int count = m_LineObj.GetSize();
-  for (int i = 0; i < count; i++) {
+  for (int i = 0; i < m_LineObj.GetSize(); i++)
     ProcessTextObject(m_LineObj.GetAt(i));
-  }
+
   m_LineObj.RemoveAll();
   CloseTempLine();
 }
 
 void CPDF_TextPage::ProcessFormObject(CPDF_FormObject* pFormObj,
                                       const CFX_Matrix& formMatrix) {
-  CPDF_PageObject* pPageObj = NULL;
-  FX_POSITION pos;
-  if (!pFormObj) {
+  CPDF_PageObjectList* pObjectList = pFormObj->m_pForm->GetPageObjectList();
+  if (pObjectList->empty())
     return;
-  }
-  pos = pFormObj->m_pForm->GetPageObjectList()->GetHeadPosition();
-  if (!pos) {
-    return;
-  }
+
   CFX_Matrix curFormMatrix;
   curFormMatrix.Copy(pFormObj->m_FormMatrix);
   curFormMatrix.Concat(formMatrix);
-  while (pos) {
-    pPageObj = pFormObj->m_pForm->GetPageObjectList()->GetNextObject(pos);
-    if (pPageObj) {
+
+  for (auto it = pObjectList->begin(); it != pObjectList->end(); ++it) {
+    if (CPDF_PageObject* pPageObj = it->get()) {
       if (pPageObj->m_Type == CPDF_PageObject::TEXT) {
-        ProcessTextObject((CPDF_TextObject*)pPageObj, curFormMatrix, pos);
+        ProcessTextObject(static_cast<CPDF_TextObject*>(pPageObj),
+                          curFormMatrix, pObjectList, it);
       } else if (pPageObj->m_Type == CPDF_PageObject::FORM) {
-        ProcessFormObject((CPDF_FormObject*)pPageObj, curFormMatrix);
+        ProcessFormObject(static_cast<CPDF_FormObject*>(pPageObj),
+                          curFormMatrix);
       }
     }
-    pPageObj = NULL;
   }
 }
 
@@ -1032,9 +1015,11 @@ void CPDF_TextPage::CloseTempLine() {
   m_TempTextBuf.Delete(0, m_TempTextBuf.GetLength());
 }
 
-void CPDF_TextPage::ProcessTextObject(CPDF_TextObject* pTextObj,
-                                      const CFX_Matrix& formMatrix,
-                                      FX_POSITION ObjPos) {
+void CPDF_TextPage::ProcessTextObject(
+    CPDF_TextObject* pTextObj,
+    const CFX_Matrix& formMatrix,
+    const CPDF_PageObjectList* pObjList,
+    CPDF_PageObjectList::const_iterator ObjPos) {
   CFX_FloatRect re(pTextObj->m_Left, pTextObj->m_Bottom, pTextObj->m_Right,
                    pTextObj->m_Top);
   if (FXSYS_fabs(pTextObj->m_Right - pTextObj->m_Left) < 0.01f) {
@@ -1048,7 +1033,7 @@ void CPDF_TextPage::ProcessTextObject(CPDF_TextObject* pTextObj,
     m_LineObj.Add(Obj);
     return;
   }
-  if (IsSameAsPreTextObject(pTextObj, ObjPos)) {
+  if (IsSameAsPreTextObject(pTextObj, pObjList, ObjPos)) {
     return;
   }
   PDFTEXT_Obj prev_Obj = m_LineObj.GetAt(count - 1);
@@ -1832,29 +1817,19 @@ FX_BOOL CPDF_TextPage::IsSameTextObject(CPDF_TextObject* pTextObj1,
   }
   return TRUE;
 }
-
-FX_BOOL CPDF_TextPage::IsSameAsPreTextObject(CPDF_TextObject* pTextObj,
-                                             FX_POSITION ObjPos) {
-  if (!pTextObj) {
-    return FALSE;
-  }
+FX_BOOL CPDF_TextPage::IsSameAsPreTextObject(
+    CPDF_TextObject* pTextObj,
+    const CPDF_PageObjectList* pObjList,
+    CPDF_PageObjectList::const_iterator iter) {
   int i = 0;
-  if (!ObjPos) {
-    ObjPos = m_pPage->GetPageObjectList()->GetTailPosition();
-  }
-  CPDF_PageObject* pObj = m_pPage->GetPageObjectList()->GetPrevObject(ObjPos);
-  while (i < 5 && ObjPos) {
-    pObj = m_pPage->GetPageObjectList()->GetPrevObject(ObjPos);
-    if (pObj == pTextObj) {
+  while (i < 5 && iter != pObjList->begin()) {
+    --iter;
+    CPDF_PageObject* pOtherObj = iter->get();
+    if (pOtherObj == pTextObj || pOtherObj->m_Type != CPDF_PageObject::TEXT)
       continue;
-    }
-    if (pObj->m_Type != CPDF_PageObject::TEXT) {
-      continue;
-    }
-    if (IsSameTextObject((CPDF_TextObject*)pObj, pTextObj)) {
+    if (IsSameTextObject(static_cast<CPDF_TextObject*>(pOtherObj), pTextObj))
       return TRUE;
-    }
-    i++;
+    ++i;
   }
   return FALSE;
 }

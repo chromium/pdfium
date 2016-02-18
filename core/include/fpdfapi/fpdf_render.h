@@ -151,7 +151,7 @@ class CPDF_ProgressiveRenderer {
   CFX_FloatRect m_ClipRect;
   FX_DWORD m_LayerIndex;
   CPDF_RenderContext::Layer* m_pCurrentLayer;
-  FX_POSITION m_LastObjectRendered;
+  CPDF_PageObjectList::iterator m_LastObjectRendered;
 };
 
 class CPDF_TextRenderer {
