@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FWL_EDIT_H_
-#define FWL_EDIT_H_
+#ifndef XFA_INCLUDE_FWL_BASEWIDGET_FWL_EDIT_H_
+#define XFA_INCLUDE_FWL_BASEWIDGET_FWL_EDIT_H_
 
 #include <vector>
 
@@ -168,4 +168,4 @@ class IFWL_Edit : public IFWL_Widget {
   IFWL_Edit();
 };
 
-#endif  // FWL_EDIT_H_
+#endif  // XFA_INCLUDE_FWL_BASEWIDGET_FWL_EDIT_H_

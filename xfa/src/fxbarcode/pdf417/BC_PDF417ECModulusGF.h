@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_PDF417ECMODULUSGF_H_
-#define _BC_PDF417ECMODULUSGF_H_
+#ifndef XFA_SRC_FXBARCODE_PDF417_BC_PDF417ECMODULUSGF_H_
+#define XFA_SRC_FXBARCODE_PDF417_BC_PDF417ECMODULUSGF_H_
+
 class CBC_PDF417ECModulusPoly;
 class CBC_PDF417Common;
 class CBC_PDF417ECModulusGF {
@@ -35,4 +36,5 @@ class CBC_PDF417ECModulusGF {
   CBC_PDF417ECModulusPoly* m_one;
   int32_t m_modulus;
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_PDF417_BC_PDF417ECMODULUSGF_H_

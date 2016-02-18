@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FFWIDGETHANDLER_H_
-#define XFA_FFWIDGETHANDLER_H_
+#ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFWIDGETHANDLER_H_
+#define XFA_SRC_FXFA_SRC_APP_XFA_FFWIDGETHANDLER_H_
 
 #include <vector>
 
@@ -172,4 +172,4 @@ class CXFA_FFMenuHandler : public IXFA_MenuHandler {
                                         const CFX_ByteStringC& bsReplace);
 };
 
-#endif  //  XFA_FFWIDGETHANDLER_H_
+#endif  //  XFA_SRC_FXFA_SRC_APP_XFA_FFWIDGETHANDLER_H_

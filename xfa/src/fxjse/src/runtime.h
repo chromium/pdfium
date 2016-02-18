@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJSE_RUNTIME_H_
-#define FXJSE_RUNTIME_H_
+#ifndef XFA_SRC_FXJSE_SRC_RUNTIME_H_
+#define XFA_SRC_FXJSE_SRC_RUNTIME_H_
+
 class CFXJSE_RuntimeList;
 class CFXJSE_RuntimeData {
  protected:
@@ -41,4 +42,5 @@ class CFXJSE_RuntimeList {
  protected:
   CFX_ArrayTemplate<v8::Isolate*> m_RuntimeList;
 };
-#endif
+
+#endif  // XFA_SRC_FXJSE_SRC_RUNTIME_H_

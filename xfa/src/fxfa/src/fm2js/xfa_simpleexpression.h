@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _XFA_FM_SIMPLEEXPRESSION_H
-#define _XFA_FM_SIMPLEEXPRESSION_H
+#ifndef XFA_SRC_FXFA_SRC_FM2JS_XFA_SIMPLEEXPRESSION_H_
+#define XFA_SRC_FXFA_SRC_FM2JS_XFA_SIMPLEEXPRESSION_H_
+
 enum XFA_FM_SimpleExpressionType {
   ASSIGN,
   LOGICALOR,
@@ -266,4 +267,5 @@ class CXFA_FMMethodCallExpression : public CXFA_FMBinExpression {
 
  protected:
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_FM2JS_XFA_SIMPLEEXPRESSION_H_

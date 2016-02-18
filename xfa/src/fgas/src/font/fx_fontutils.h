@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FGAS_FONTUTIL_H_
-#define _FGAS_FONTUTIL_H_
+#ifndef XFA_SRC_FGAS_SRC_FONT_FX_FONTUTILS_H_
+#define XFA_SRC_FGAS_SRC_FONT_FX_FONTUTILS_H_
+
 typedef struct _FGAS_FONTUSB {
   FX_WCHAR wStartUnicode;
   FX_WCHAR wEndUnicode;
@@ -18,4 +19,5 @@ FX_DWORD FGAS_GetFontFamilyHash(const FX_WCHAR* pszFontFamily,
                                 FX_DWORD dwFontStyles,
                                 FX_WORD wCodePage);
 FGAS_LPCFONTUSB FGAS_GetUnicodeBitField(FX_WCHAR wUnicode);
-#endif
+
+#endif  // XFA_SRC_FGAS_SRC_FONT_FX_FONTUTILS_H_

@@ -4,14 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _XFA_BASIC_IMP
-#define _XFA_BASIC_IMP
+#ifndef XFA_SRC_FXFA_SRC_PARSER_XFA_BASIC_IMP_H_
+#define XFA_SRC_FXFA_SRC_PARSER_XFA_BASIC_IMP_H_
+
 typedef struct _XFA_NOTSUREATTRIBUTE {
   XFA_ELEMENT eElement;
   XFA_ATTRIBUTE eAttribute;
   XFA_ATTRIBUTETYPE eType;
   void* pValue;
 } XFA_NOTSUREATTRIBUTE, *XFA_LPNOTSUREATTRIBUTE;
+
 typedef XFA_NOTSUREATTRIBUTE const* XFA_LPCNOTSUREATTRIBUTE;
 XFA_LPCNOTSUREATTRIBUTE XFA_GetNotsureAttribute(
     XFA_ELEMENT eElement,
@@ -63,4 +65,5 @@ class CXFA_WideTextRead : public IFX_Stream {
   int32_t m_iPosition;
   int32_t m_iRefCount;
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_PARSER_XFA_BASIC_IMP_H_

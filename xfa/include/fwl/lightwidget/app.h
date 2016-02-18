@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FWL_LIGHTWIDGET_APP_H_
-#define FWL_LIGHTWIDGET_APP_H_
+#ifndef XFA_INCLUDE_FWL_LIGHTWIDGET_APP_H_
+#define XFA_INCLUDE_FWL_LIGHTWIDGET_APP_H_
 
 class CFWL_Theme;
 class IFWL_App;
@@ -25,4 +25,5 @@ class CFWL_App {
   IFWL_App* m_pIface;
   CFWL_Theme* m_pTheme;
 };
-#endif  // FWL_LIGHTWIDGET_APP_H_
+
+#endif  // XFA_INCLUDE_FWL_LIGHTWIDGET_APP_H_

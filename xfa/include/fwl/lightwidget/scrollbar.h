@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_SCROLLBAR_LIGHT_H
-#define _FWL_SCROLLBAR_LIGHT_H
+#ifndef XFA_INCLUDE_FWL_LIGHTWIDGET_SCROLLBAR_H_
+#define XFA_INCLUDE_FWL_LIGHTWIDGET_SCROLLBAR_H_
+
 class CFWL_Widget;
 class CFWL_WidgetProperties;
 class CFWL_ScrollBar;
@@ -28,4 +29,5 @@ class CFWL_ScrollBar : public CFWL_Widget {
   CFWL_ScrollBar();
   virtual ~CFWL_ScrollBar();
 };
-#endif
+
+#endif  // XFA_INCLUDE_FWL_LIGHTWIDGET_SCROLLBAR_H_

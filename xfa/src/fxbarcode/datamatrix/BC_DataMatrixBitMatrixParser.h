@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_DATAMATRIXBITMATRIXPARSER_H_
-#define _BC_DATAMATRIXBITMATRIXPARSER_H_
+#ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXBITMATRIXPARSER_H_
+#define XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXBITMATRIXPARSER_H_
+
 class CBC_CommonBitMatrix;
 class CBC_DataMatrixVersion;
 class CBC_DataMatrixBitMatrixParser {
@@ -37,4 +38,5 @@ class CBC_DataMatrixBitMatrixParser {
   CBC_CommonBitMatrix* m_readMappingMatrix;
   CBC_DataMatrixVersion* m_version;
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXBITMATRIXPARSER_H_

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_WIDGET_H
-#define _FWL_WIDGET_H
+#ifndef XFA_INCLUDE_FWL_CORE_FWL_WIDGET_H_
+#define XFA_INCLUDE_FWL_CORE_FWL_WIDGET_H_
+
 class IFWL_Target;
 class IFWL_ThemeProvider;
 class CFWL_WidgetImpProperties;
@@ -120,4 +121,5 @@ FWL_ERR FWL_Accelerator_SetThread(CFX_MapAccelerators* pMapAccel);
 FWL_ERR FWL_Accelerator_SetForm(IFWL_Form* pFrom,
                                 CFX_MapAccelerators* pMapAccel);
 FWL_ERR FWL_EnabelWidget(IFWL_Widget* widget, FX_BOOL bEnable);
-#endif
+
+#endif  // XFA_INCLUDE_FWL_CORE_FWL_WIDGET_H_

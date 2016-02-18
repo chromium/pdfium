@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_BASE256ENCODER_H_
-#define _BC_BASE256ENCODER_H_
+#ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_BASE256ENCODER_H_
+#define XFA_SRC_FXBARCODE_DATAMATRIX_BC_BASE256ENCODER_H_
+
 class CBC_Encoder;
 class CBC_Base256Encoder;
 class CBC_Base256Encoder : public CBC_Encoder {
@@ -18,4 +19,5 @@ class CBC_Base256Encoder : public CBC_Encoder {
  private:
   static FX_WCHAR randomize255State(FX_WCHAR ch, int32_t codewordPosition);
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_DATAMATRIX_BC_BASE256ENCODER_H_

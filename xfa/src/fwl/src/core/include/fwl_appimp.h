@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FWL_APPIMP_H_
-#define FWL_APPIMP_H_
+#ifndef XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_APPIMP_H_
+#define XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_APPIMP_H_
 
 #include <memory>
 
@@ -35,4 +35,4 @@ class CFWL_AppImp : public CFWL_NoteThreadImp {
   IFWL_ThemeProvider* m_pThemeProvider;
 };
 
-#endif  // FWL_APPIMP_H_
+#endif  // XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_APPIMP_H_

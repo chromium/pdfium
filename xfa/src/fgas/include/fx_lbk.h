@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_LINEBREAK
-#define _FX_LINEBREAK
+#ifndef XFA_SRC_FGAS_INCLUDE_FX_LBK_H_
+#define XFA_SRC_FGAS_INCLUDE_FX_LBK_H_
 
 #include "core/include/fxcrt/fx_system.h"
 #include "xfa/src/fgas/include/fx_utl.h"
@@ -36,4 +36,5 @@ void FX_GetLineBreakPositions(const FX_WCHAR* pwsText,
 void FX_GetLineBreakPositions(const FX_WCHAR* pwsText,
                               int32_t iLength,
                               CFX_Int32MassArray& bp);
-#endif
+
+#endif  // XFA_SRC_FGAS_INCLUDE_FX_LBK_H_

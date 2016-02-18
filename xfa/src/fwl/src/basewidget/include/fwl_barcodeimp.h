@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_BARCODE_IMP_H
-#define _FWL_BARCODE_IMP_H
+#ifndef XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_BARCODEIMP_H_
+#define XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_BARCODEIMP_H_
+
 class CFWL_WidgetImp;
 class CFWL_WidgetImpProperties;
 class CFWL_WidgetImpDelegate;
@@ -48,4 +49,5 @@ class CFWL_BarcodeImpDelegate : public CFWL_EditImpDelegate {
   CFWL_BarcodeImpDelegate(CFWL_BarcodeImp* pOwner);
   FWL_ERR OnProcessEvent(CFWL_Event* pEvent) override;
 };
-#endif
+
+#endif  // XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_BARCODEIMP_H_

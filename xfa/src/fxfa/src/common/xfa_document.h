@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _XFA_DOCUMENT_H
-#define _XFA_DOCUMENT_H
+#ifndef XFA_SRC_FXFA_SRC_COMMON_XFA_DOCUMENT_H_
+#define XFA_SRC_FXFA_SRC_COMMON_XFA_DOCUMENT_H_
 
 class CXFA_Document;
 class CXFA_LayoutItem;
@@ -193,4 +193,5 @@ class CXFA_Document : public IXFA_ObjFactory {
   FX_DWORD m_dwDocFlags;
   friend class CXFA_SimpleParser;
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_COMMON_XFA_DOCUMENT_H_

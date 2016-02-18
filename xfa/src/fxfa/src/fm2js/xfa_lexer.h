@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _XFA_FM_LEXER_H
-#define _XFA_FM_LEXER_H
+#ifndef XFA_SRC_FXFA_SRC_FM2JS_XFA_LEXER_H_
+#define XFA_SRC_FXFA_SRC_FM2JS_XFA_LEXER_H_
 
 #include <memory>
 
@@ -128,4 +128,4 @@ class CXFA_FMLexer {
   CXFA_FMErrorInfo* m_pErrorInfo;
 };
 
-#endif
+#endif  // XFA_SRC_FXFA_SRC_FM2JS_XFA_LEXER_H_

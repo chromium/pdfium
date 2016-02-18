@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FDE_TEXTOUT_IMP
-#define _FDE_TEXTOUT_IMP
+#ifndef XFA_SRC_FDP_SRC_TTO_FDE_TEXTOUT_H_
+#define XFA_SRC_FDP_SRC_TTO_FDE_TEXTOUT_H_
+
 struct FDE_TTOPIECE {
  public:
   int32_t iStartChar;
@@ -164,4 +165,5 @@ class CFDE_TextOut : public IFDE_TextOut, public CFX_Target {
   CFX_Int32Array m_hotKeys;
   CFX_RectFArray m_rectArray;
 };
-#endif
+
+#endif  // XFA_SRC_FDP_SRC_TTO_FDE_TEXTOUT_H_

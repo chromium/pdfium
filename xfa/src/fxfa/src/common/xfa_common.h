@@ -6,8 +6,9 @@
 
 // TODO(thestig): Remove this file and do IWYU.
 
-#ifndef _XFA_COMMON_H_
-#define _XFA_COMMON_H_
+#ifndef XFA_SRC_FXFA_SRC_COMMON_XFA_COMMON_H_
+#define XFA_SRC_FXFA_SRC_COMMON_XFA_COMMON_H_
+
 #include "xfa_utils.h"
 #include "xfa_object.h"
 #include "xfa_document.h"
@@ -17,4 +18,5 @@
 #include "xfa_doclayout.h"
 #include "xfa_localemgr.h"
 #include "xfa_fm2jsapi.h"
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_COMMON_XFA_COMMON_H_

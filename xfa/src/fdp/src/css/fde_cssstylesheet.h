@@ -4,9 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FDE_CSSSTYLESHEET
-#define _FDE_CSSSTYLESHEET
+#ifndef XFA_SRC_FDP_SRC_CSS_FDE_CSSSTYLESHEET_H_
+#define XFA_SRC_FDP_SRC_CSS_FDE_CSSSTYLESHEET_H_
+
 #include "fde_cssdeclaration.h"
+
 class CFDE_CSSSelector : public IFDE_CSSSelector, public CFX_Target {
  public:
   CFDE_CSSSelector(FDE_CSSSELECTORTYPE eType,
@@ -134,4 +136,5 @@ class CFDE_CSSStyleSheet : public IFDE_CSSStyleSheet, public CFX_Target {
   CFDE_CSSSelectorArray m_Selectors;
   CFX_MapPtrToPtr m_StringCache;
 };
-#endif
+
+#endif  // XFA_SRC_FDP_SRC_CSS_FDE_CSSSTYLESHEET_H_

@@ -6,8 +6,9 @@
 
 // TODO(thestig): Remove this file and do IWYU.
 
-#ifndef _FDE
-#define _FDE
+#ifndef XFA_SRC_FDP_INCLUDE_FDE_H_
+#define XFA_SRC_FDP_INCLUDE_FDE_H_
+
 #include "fde_mem.h"
 #include "fde_xml.h"
 #include "fde_img.h"
@@ -19,4 +20,5 @@
 #include "fde_css.h"
 #include "fde_rdv.h"
 #include "fde_rdr.h"
-#endif
+
+#endif  // XFA_SRC_FDP_INCLUDE_FDE_H_

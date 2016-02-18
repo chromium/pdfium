@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_SYSTEM
-#define _FX_SYSTEM
+#ifndef XFA_SRC_FGAS_INCLUDE_FX_SYS_H_
+#define XFA_SRC_FGAS_INCLUDE_FX_SYS_H_
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -62,4 +63,5 @@ typedef FX_VERSION const* FX_LPCVERSION;
 #ifdef __cplusplus
 };
 #endif
-#endif
+
+#endif  // XFA_SRC_FGAS_INCLUDE_FX_SYS_H_

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_ONEDCODABARWRITER_H_
-#define _BC_ONEDCODABARWRITER_H_
+#ifndef XFA_SRC_FXBARCODE_ONED_BC_ONEDCODABARWRITER_H_
+#define XFA_SRC_FXBARCODE_ONED_BC_ONEDCODABARWRITER_H_
+
 enum BC_TEXT_LOC;
 class CBC_OneDimWriter;
 class CBC_OnedCodaBarWriter;
@@ -49,4 +50,5 @@ class CBC_OnedCodaBarWriter : public CBC_OneDimWriter {
   FX_CHAR m_chEnd;
   int32_t m_iWideNarrRatio;
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_ONED_BC_ONEDCODABARWRITER_H_

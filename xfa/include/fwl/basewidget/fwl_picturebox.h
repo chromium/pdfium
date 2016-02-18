@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_PICTUREBOX_H
-#define _FWL_PICTUREBOX_H
+#ifndef XFA_INCLUDE_FWL_BASEWIDGET_FWL_PICTUREBOX_H_
+#define XFA_INCLUDE_FWL_BASEWIDGET_FWL_PICTUREBOX_H_
+
 class CFWL_WidgetImpProperties;
 class IFWL_Widget;
 class IFWL_PictureBoxDP;
@@ -49,4 +50,5 @@ class IFWL_PictureBox : public IFWL_Widget {
  protected:
   IFWL_PictureBox();
 };
-#endif
+
+#endif  // XFA_INCLUDE_FWL_BASEWIDGET_FWL_PICTUREBOX_H_

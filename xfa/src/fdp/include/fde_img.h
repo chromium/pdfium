@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FDE_IMAGE
-#define _FDE_IMAGE
+#ifndef XFA_SRC_FDP_INCLUDE_FDE_IMG_H_
+#define XFA_SRC_FDP_INCLUDE_FDE_IMG_H_
+
 class IFDE_Image;
 #define FDE_IMAGEFORMAT_Unknown -1
 #define FDE_IMAGEFORMAT_BMP 0
@@ -82,4 +83,5 @@ typedef struct _FDE_CONTRASTPARAMS : public FDE_IMAGEFILTERPARAMS {
   int32_t iContrast;
 } FDE_CONTRASTPARAMS, *FDE_LPCONTRASTPARAMS;
 typedef FDE_CONTRASTPARAMS const* FDE_LPCCONTRASTPARAMS;
-#endif
+
+#endif  // XFA_SRC_FDP_INCLUDE_FDE_IMG_H_

@@ -6,8 +6,9 @@
 
 // TODO(thestig): Remove this file and do IWYU.
 
-#ifndef _FGAS_
-#define _FGAS_
+#ifndef XFA_SRC_FGAS_INCLUDE_FGAS_H_
+#define XFA_SRC_FGAS_INCLUDE_FGAS_H_
+
 #include "fx_sys.h"
 #include "fx_mem.h"
 #include "fx_lgg.h"
@@ -23,4 +24,5 @@
 #include "fx_lbk.h"
 #include "fx_tbk.h"
 #include "fx_rbk.h"
-#endif
+
+#endif  // XFA_SRC_FGAS_INCLUDE_FGAS_H_

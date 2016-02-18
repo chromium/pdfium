@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_PDF417_H_
-#define _BC_PDF417_H_
+#ifndef XFA_SRC_FXBARCODE_PDF417_BC_PDF417_H_
+#define XFA_SRC_FXBARCODE_PDF417_BC_PDF417_H_
+
 class CBC_Compaction;
 class CBC_BarcodeRow;
 class CBC_BarcodeMatrix;
@@ -56,4 +57,5 @@ class CBC_PDF417 {
                                       int32_t errorCorrectionCodeWords,
                                       int32_t& e);
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_PDF417_BC_PDF417_H_

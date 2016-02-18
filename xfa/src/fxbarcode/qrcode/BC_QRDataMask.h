@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_QRDATAMASK_H_
-#define _BC_QRDATAMASK_H_
+#ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRDATAMASK_H_
+#define XFA_SRC_FXBARCODE_QRCODE_BC_QRDATAMASK_H_
+
 class CBC_CommonBitMatrix;
 class CBC_QRDataMask {
  public:
@@ -20,4 +21,5 @@ class CBC_QRDataMask {
   static int32_t BuildDataMasks();
   static void Destroy();
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_QRCODE_BC_QRDATAMASK_H_

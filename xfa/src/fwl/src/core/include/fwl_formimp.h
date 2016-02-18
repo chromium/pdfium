@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_FORM_IMP_H
-#define _FWL_FORM_IMP_H
+#ifndef XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_FORMIMP_H_
+#define XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_FORMIMP_H_
+
 class CFWL_NoteLoop;
 class CFWL_PanelImp;
 class CFWL_WidgetImpProperties;
@@ -185,4 +186,5 @@ class CFWL_FormImpDelegate : public CFWL_WidgetImpDelegate {
   void OnClose(CFWL_MsgClose* pMsg);
   CFWL_FormImp* m_pOwner;
 };
-#endif
+
+#endif  // XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_FORMIMP_H_

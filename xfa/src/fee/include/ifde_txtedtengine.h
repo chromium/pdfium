@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _IFDE_TXTEDTENGINE_H
-#define _IFDE_TXTEDTENGINE_H
+#ifndef XFA_SRC_FEE_INCLUDE_IFDE_TXTEDTENGINE_H_
+#define XFA_SRC_FEE_INCLUDE_IFDE_TXTEDTENGINE_H_
+
 class IFDE_TxtEdtBuf;
 class IFDE_TxtEdtPage;
 class IFDE_TxtEdtEngine;
@@ -256,4 +257,5 @@ class IFDE_TxtEdtParag {
                             int32_t& nStart,
                             int32_t& nCount) const = 0;
 };
-#endif
+
+#endif  // XFA_SRC_FEE_INCLUDE_IFDE_TXTEDTENGINE_H_

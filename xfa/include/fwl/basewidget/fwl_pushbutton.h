@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_PUSHBUTTON_H
-#define _FWL_PUSHBUTTON_H
+#ifndef XFA_INCLUDE_FWL_BASEWIDGET_FWL_PUSHBUTTON_H_
+#define XFA_INCLUDE_FWL_BASEWIDGET_FWL_PUSHBUTTON_H_
+
 class CFWL_WidgetImpProperties;
 class IFWL_Widget;
 class IFWL_PushButtonDP;
@@ -51,4 +52,5 @@ class IFWL_PushButton : public IFWL_Widget {
  protected:
   IFWL_PushButton();
 };
-#endif
+
+#endif  // XFA_INCLUDE_FWL_BASEWIDGET_FWL_PUSHBUTTON_H_

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_ONEDEAN8WRITER_H_
-#define _BC_ONEDEAN8WRITER_H_
+#ifndef XFA_SRC_FXBARCODE_ONED_BC_ONEDEAN8WRITER_H_
+#define XFA_SRC_FXBARCODE_ONED_BC_ONEDEAN8WRITER_H_
+
 enum BC_TEXT_LOC;
 class CBC_OneDimWriter;
 class CBC_OnedEAN8Writer;
@@ -50,4 +51,5 @@ class CBC_OnedEAN8Writer : public CBC_OneDimWriter {
                  int32_t multiple,
                  int32_t& e);
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_ONED_BC_ONEDEAN8WRITER_H_

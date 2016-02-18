@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_ONEDEAN13READER_H_
-#define _BC_ONEDEAN13READER_H_
+#ifndef XFA_SRC_FXBARCODE_ONED_BC_ONEDEAN13READER_H_
+#define XFA_SRC_FXBARCODE_ONED_BC_ONEDEAN13READER_H_
 class CBC_OneDimReader;
 class CBC_CommonBitArray;
 class CBC_OnedEAN13Reader;
@@ -27,4 +27,5 @@ class CBC_OnedEAN13Reader : public CBC_OneDimReader {
                        int32_t& e);
   friend class CBC_OnedUPCAReader;
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_ONED_BC_ONEDEAN13READER_H_

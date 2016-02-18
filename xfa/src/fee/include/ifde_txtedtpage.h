@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _IFDE_TXTEDTPAGE_H
-#define _IFDE_TXTEDTPAGE_H
+#ifndef XFA_SRC_FEE_INCLUDE_IFDE_TXTEDTPAGE_H_
+#define XFA_SRC_FEE_INCLUDE_IFDE_TXTEDTPAGE_H_
+
 class IFDE_TxtEdtEngine;
 class IFDE_TxtEdtPage;
 class IFDE_TxtEdtPage : public IFDE_CanvasSet, public IFX_TxtAccess {
@@ -35,4 +36,5 @@ class IFDE_TxtEdtPage : public IFDE_CanvasSet, public IFX_TxtAccess {
   virtual void UnloadPage(FX_LPCRECTF pClipBox = NULL) = 0;
   virtual const CFX_RectF& GetContentsBox() = 0;
 };
-#endif
+
+#endif  // XFA_SRC_FEE_INCLUDE_IFDE_TXTEDTPAGE_H_

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_ONEDCODABARREADER_H_
-#define _BC_ONEDCODABARREADER_H_
+#ifndef XFA_SRC_FXBARCODE_ONED_BC_ONEDCODABARREADER_H_
+#define XFA_SRC_FXBARCODE_ONED_BC_ONEDCODABARREADER_H_
+
 class CBC_CommonBitArray;
 class CBC_OneDReader;
 class CBC_OnedCodaBarReader;
@@ -28,4 +29,5 @@ class CBC_OnedCodaBarReader : public CBC_OneDReader {
 
   const static FX_CHAR STARTEND_ENCODING[8];
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_ONED_BC_ONEDCODABARREADER_H_

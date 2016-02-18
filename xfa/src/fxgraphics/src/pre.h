@@ -4,6 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#ifndef XFA_SRC_FXGRAPHICS_SRC_PRE_H_
+#define XFA_SRC_FXGRAPHICS_SRC_PRE_H_
+
 #include "xfa/src/foxitlib.h"
 #ifndef FXSYS_Mul
 #define FXSYS_Mul(a, b) ((a) * (b))
@@ -583,3 +586,5 @@ static const FX_HATCHDATA hatchBitmapData[FX_HATCHSTYLE_Total] = {
   printf("duration is %f millisecond\n", duration * 1000);
 #else
 #endif
+
+#endif  // XFA_SRC_FXGRAPHICS_SRC_PRE_H_

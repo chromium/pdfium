@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _XFA_DOCDATA_H
-#define _XFA_DOCDATA_H
+#ifndef XFA_SRC_FXFA_SRC_COMMON_XFA_DOCDATA_H_
+#define XFA_SRC_FXFA_SRC_COMMON_XFA_DOCDATA_H_
+
 enum XFA_DATAFORMAT {
   XFA_DATAFORMAT_XDP,
 };
@@ -28,4 +29,5 @@ class IXFA_PacketImport {
   virtual void Release() = 0;
   virtual FX_BOOL ImportData(IFX_FileRead* pDataDocument) = 0;
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_COMMON_XFA_DOCDATA_H_

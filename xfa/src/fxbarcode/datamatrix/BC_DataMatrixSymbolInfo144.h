@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_DATAMATRIXSYMBOLINFO144_H_
-#define _BC_DATAMATRIXSYMBOLINFO144_H_
+#ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXSYMBOLINFO144_H_
+#define XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXSYMBOLINFO144_H_
+
 class CBC_SymbolInfo;
 class CBC_DataMatrixSymbolInfo144;
 class CBC_DataMatrixSymbolInfo144 : public CBC_SymbolInfo {
@@ -15,4 +16,5 @@ class CBC_DataMatrixSymbolInfo144 : public CBC_SymbolInfo {
   int32_t getInterleavedBlockCount();
   int32_t getDataLengthForInterleavedBlock(int32_t index);
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXSYMBOLINFO144_H_

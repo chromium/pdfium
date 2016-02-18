@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_DETECTIONRESULTCOLUMN_H_
-#define _BC_DETECTIONRESULTCOLUMN_H_
+#ifndef XFA_SRC_FXBARCODE_PDF417_BC_PDF417DETECTIONRESULTCOLUMN_H_
+#define XFA_SRC_FXBARCODE_PDF417_BC_PDF417DETECTIONRESULTCOLUMN_H_
+
 class CBC_Codeword;
 class CBC_BoundingBox;
 class CBC_DetectionResultColumn {
@@ -28,4 +29,5 @@ class CBC_DetectionResultColumn {
  private:
   static int32_t MAX_NEARBY_DISTANCE;
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_PDF417_BC_PDF417DETECTIONRESULTCOLUMN_H_

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_CODEPAGE
-#define _FX_CODEPAGE
+#ifndef XFA_SRC_FGAS_INCLUDE_FX_CPG_H_
+#define XFA_SRC_FGAS_INCLUDE_FX_CPG_H_
+
 class IFX_CodePage;
 #define FX_CODEPAGE_DefANSI 0
 #define FX_CODEPAGE_DefOEM 1
@@ -245,4 +246,5 @@ class IFX_CodePage {
   virtual FX_BOOL IsValidUnicode(FX_WCHAR wUnicode) const = 0;
   virtual FX_WORD GetCharcode(FX_WCHAR wUnicode) const = 0;
 };
-#endif
+
+#endif  // XFA_SRC_FGAS_INCLUDE_FX_CPG_H_

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _XFA_LAYOUT_PAGEMGR_H_
-#define _XFA_LAYOUT_PAGEMGR_H_
+#ifndef XFA_SRC_FXFA_SRC_PARSER_XFA_LAYOUT_PAGEMGR_NEW_H_
+#define XFA_SRC_FXFA_SRC_PARSER_XFA_LAYOUT_PAGEMGR_NEW_H_
+
 class CXFA_ContainerRecord {
  public:
   CXFA_ContainerRecord(CXFA_ContainerLayoutItem* pPageSet = NULL,
@@ -149,4 +150,5 @@ class CXFA_LayoutPageMgr {
   CFX_MapPtrToPtr m_NodeToContent;
 #endif
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_PARSER_XFA_LAYOUT_PAGEMGR_NEW_H_

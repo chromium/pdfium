@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _XFA_FM2JS_CONTEXT_H
-#define _XFA_FM2JS_CONTEXT_H
+#ifndef XFA_SRC_FXFA_SRC_FM2JS_XFA_FM2JSCONTEXT_H_
+#define XFA_SRC_FXFA_SRC_FM2JS_XFA_FM2JSCONTEXT_H_
+
 class CXFA_FM2JSContext {
  public:
   static void Abs(FXJSE_HOBJECT hThis,
@@ -446,4 +447,5 @@ class CXFA_FM2JSContext {
   FXJSE_HVALUE m_hValue;
   CXFA_Document* m_pDocument;
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_FM2JS_XFA_FM2JSCONTEXT_H_

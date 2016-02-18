@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FFAPP_H_
-#define XFA_FFAPP_H_
+#ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFAPP_H_
+#define XFA_SRC_FXFA_SRC_APP_XFA_FFAPP_H_
 
 class CXFA_FileRead : public IFX_FileRead {
  public:
@@ -69,4 +69,4 @@ class CXFA_FFApp : public IXFA_App, public IFWL_AdapterNative {
   CFWL_SDAdapterThreadMgr* m_pAdapterThreadMgr;
 };
 
-#endif  // XFA_FFAPP_H_
+#endif  // XFA_SRC_FXFA_SRC_APP_XFA_FFAPP_H_

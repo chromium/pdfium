@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_WORDBREAK_IMPL_H
-#define _FX_WORDBREAK_IMPL_H
+#ifndef XFA_SRC_FEE_SRC_FX_WORDBREAK_FX_WORDBREAK_IMPL_H_
+#define XFA_SRC_FEE_SRC_FX_WORDBREAK_FX_WORDBREAK_IMPL_H_
+
 extern const FX_WORD gs_FX_WordBreak_Table[16];
 extern const uint8_t gs_FX_WordBreak_CodePointProperties[(0xFFFF - 1) / 2 + 1];
 enum FX_WordBreakProp {
@@ -65,4 +66,5 @@ class CFX_WordBreak : public IFX_WordBreak {
   IFX_CharIter* m_pPreIter;
   IFX_CharIter* m_pCurIter;
 };
-#endif
+
+#endif  // XFA_SRC_FEE_SRC_FX_WORDBREAK_FX_WORDBREAK_IMPL_H_

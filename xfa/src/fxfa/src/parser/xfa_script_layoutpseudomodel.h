@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _SCRIPT_LAYOUTPSEUDOMODEL_H_
-#define _SCRIPT_LAYOUTPSEUDOMODEL_H_
+#ifndef XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_LAYOUTPSEUDOMODEL_H_
+#define XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_LAYOUTPSEUDOMODEL_H_
+
 enum XFA_LAYOUTMODEL_HWXY {
   XFA_LAYOUTMODEL_H,
   XFA_LAYOUTMODEL_W,
@@ -55,4 +56,5 @@ class CScript_LayoutPseudoModel : public CXFA_OrdinaryObject {
   void Script_LayoutPseudoModel_PageImp(CFXJSE_Arguments* pArguments,
                                         FX_BOOL bAbsPage);
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_LAYOUTPSEUDOMODEL_H_

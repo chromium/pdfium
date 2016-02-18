@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_LANGUAGE
-#define _FX_LANGUAGE
+#ifndef XFA_SRC_FGAS_INCLUDE_FX_LGG_H_
+#define XFA_SRC_FGAS_INCLUDE_FX_LGG_H_
+
 #define FX_LANG_Neutral 0x0000
 #define FX_LANG_Invariant 0x007f
 #define FX_LANG_UserDefault 0x0400
@@ -264,4 +265,5 @@
 #define FX_LANG_YiPRC 0x0478
 #define FX_LANG_Yiddish 0x043d
 #define FX_LANG_Yoruba_Nigeria 0x046a
-#endif
+
+#endif  // XFA_SRC_FGAS_INCLUDE_FX_LGG_H_

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_QRFINDERPATTERN_H_
-#define _BC_QRFINDERPATTERN_H_
+#ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRFINDERPATTERN_H_
+#define XFA_SRC_FXBARCODE_QRCODE_BC_QRFINDERPATTERN_H_
+
 class CBC_ResultPoint;
 class CBC_QRFinderPattern;
 class CBC_QRFinderPattern : public CBC_ResultPoint {
@@ -26,4 +27,5 @@ class CBC_QRFinderPattern : public CBC_ResultPoint {
   CBC_QRFinderPattern* Clone();
 };
 typedef CBC_QRFinderPattern FinderPattern;
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_QRCODE_BC_QRFINDERPATTERN_H_

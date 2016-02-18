@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FDE_PATH
-#define _FDE_PATH
+#ifndef XFA_SRC_FDP_INCLUDE_FDE_PTH_H_
+#define XFA_SRC_FDP_INCLUDE_FDE_PTH_H_
+
 class IFDE_Path;
 class IFDE_Path {
  public:
@@ -30,4 +31,5 @@ class IFDE_Path {
                        FX_FLOAT fLineWidth,
                        FX_FLOAT fMiterLimit) const = 0;
 };
-#endif
+
+#endif  // XFA_SRC_FDP_INCLUDE_FDE_PTH_H_

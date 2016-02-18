@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _IFDE_TXTEDTBUF_H
-#define _IFDE_TXTEDTBUF_H
+#ifndef XFA_SRC_FEE_INCLUDE_IFDE_TXTEDTBUF_H_
+#define XFA_SRC_FEE_INCLUDE_IFDE_TXTEDTBUF_H_
+
 #define FDE_DEFCHUNKLENGTH (1024)
 
 class IFDE_TxtEdtBuf {
@@ -32,4 +33,5 @@ class IFDE_TxtEdtBuf {
 
   virtual FX_BOOL Optimize(IFX_Pause* pPause = NULL) = 0;
 };
-#endif
+
+#endif  // XFA_SRC_FEE_INCLUDE_IFDE_TXTEDTBUF_H_

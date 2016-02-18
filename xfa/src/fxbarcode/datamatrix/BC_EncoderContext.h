@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_ENCODERCONTEXT_H_
-#define _BC_ENCODERCONTEXT_H_
+#ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_ENCODERCONTEXT_H_
+#define XFA_SRC_FXBARCODE_DATAMATRIX_BC_ENCODERCONTEXT_H_
+
 class CBC_SymbolShapeHint;
 class CBC_SymbolInfo;
 class CBC_Dimension;
@@ -49,4 +50,5 @@ class CBC_EncoderContext : public CBC_SymbolShapeHint {
   CBC_Dimension* m_maxSize;
   int32_t m_skipAtEnd;
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_DATAMATRIX_BC_ENCODERCONTEXT_H_

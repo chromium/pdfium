@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _XFA_FM_PROGRAM_H
-#define _XFA_FM_PROGRAM_H
+#ifndef XFA_SRC_FXFA_SRC_FM2JS_XFA_PROGRAM_H_
+#define XFA_SRC_FXFA_SRC_FM2JS_XFA_PROGRAM_H_
+
 class CXFA_FMProgram {
  public:
   CXFA_FMProgram();
@@ -20,4 +21,5 @@ class CXFA_FMProgram {
   CXFA_FMParse m_parse;
   CXFA_FMFunctionDefinition* m_globalFunction;
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_FM2JS_XFA_PROGRAM_H_

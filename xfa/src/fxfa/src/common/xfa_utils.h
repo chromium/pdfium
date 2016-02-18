@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _XFA_UTILS_H_
-#define _XFA_UTILS_H_
+#ifndef XFA_SRC_FXFA_SRC_COMMON_XFA_UTILS_H_
+#define XFA_SRC_FXFA_SRC_COMMON_XFA_UTILS_H_
+
 FX_BOOL XFA_FDEExtension_ResolveNamespaceQualifier(
     IFDE_XMLElement* pNode,
     const CFX_WideStringC& wsQualifier,
@@ -211,4 +212,5 @@ void XFA_DataExporter_RegenerateFormFile(CXFA_Node* pNode,
                                          IFX_Stream* pStream,
                                          const FX_CHAR* pChecksum = NULL,
                                          FX_BOOL bSaveXML = FALSE);
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_COMMON_XFA_UTILS_H_

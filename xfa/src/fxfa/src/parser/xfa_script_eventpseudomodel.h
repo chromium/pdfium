@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _SCRIPT_EVENTPSEUDOMODEL_H_
-#define _SCRIPT_EVENTPSEUDOMODEL_H_
+#ifndef XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_EVENTPSEUDOMODEL_H_
+#define XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_EVENTPSEUDOMODEL_H_
+
 #define XFA_EVENT_CHANGE 0
 #define XFA_EVENT_COMMITKEY 1
 #define XFA_EVENT_FULLTEXT 2
@@ -88,4 +89,5 @@ class CScript_EventPseudoModel : public CXFA_OrdinaryObject {
                                         FX_DWORD dwFlag,
                                         FX_BOOL bSetting);
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_EVENTPSEUDOMODEL_H_

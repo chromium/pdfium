@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_WIDGETDEF_H
-#define _FWL_WIDGETDEF_H
+#ifndef XFA_INCLUDE_FWL_CORE_FWL_WIDGETDEF_H_
+#define XFA_INCLUDE_FWL_CORE_FWL_WIDGETDEF_H_
+
 #define FWL_WGTSTYLE_OverLapper (0L << 0)
 #define FWL_WGTSTYLE_Popup (1L << 0)
 #define FWL_WGTSTYLE_Child (2L << 0)
@@ -244,4 +245,5 @@
 #define FWL_VKEY_Unknown 0
 #define FWL_VKEYSTATE_Toggled 0x0001
 #define FWL_VKEYSTATE_Down 0x0100
-#endif
+
+#endif  // XFA_INCLUDE_FWL_CORE_FWL_WIDGETDEF_H_

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXFA_LOCALE_H
-#define _FXFA_LOCALE_H
+#ifndef XFA_SRC_FXFA_SRC_PARSER_XFA_LOCALE_H_
+#define XFA_SRC_FXFA_SRC_PARSER_XFA_LOCALE_H_
+
 class CXFA_XMLLocale : public IFX_Locale {
  public:
   CXFA_XMLLocale(CXML_Element* pLocaleData);
@@ -85,4 +86,5 @@ class CXFA_NodeLocale : public IFX_Locale {
 
   CXFA_Node* m_pLocale;
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_PARSER_XFA_LOCALE_H_

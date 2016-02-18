@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_BARCODE_LIGHT_H
-#define _FWL_BARCODE_LIGHT_H
+#ifndef XFA_INCLUDE_FWL_LIGHTWIDGET_BARCODE_H_
+#define XFA_INCLUDE_FWL_LIGHTWIDGET_BARCODE_H_
+
 class CFWL_Widget;
 class CFWL_WidgetProperties;
 class IFWL_BarcodeDP;
@@ -114,4 +115,5 @@ class CFWL_Barcode : public CFWL_Edit {
   };
   CFWL_BarcodeDP m_barcodeData;
 };
-#endif
+
+#endif  // XFA_INCLUDE_FWL_LIGHTWIDGET_BARCODE_H_

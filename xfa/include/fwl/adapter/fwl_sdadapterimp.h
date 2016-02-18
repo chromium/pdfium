@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_SDAPATER_IMP_H
-#define _FWL_SDAPATER_IMP_H
+#ifndef XFA_INCLUDE_FWL_ADAPTER_FWL_SDAPATERIMP_H_
+#define XFA_INCLUDE_FWL_ADAPTER_FWL_SDAPATERIMP_H_
+
 class IFWL_AdapterNative;
 class IFWL_AdapterWidgetMgr;
 class IFWL_AdapterThreadMgr;
@@ -88,4 +89,5 @@ class CFWL_SDAdapterThreadMgr : public IFWL_AdapterThreadMgr {
   virtual FWL_ERR Stop(FWL_HTHREAD hThread, int32_t iExitCode);
   virtual IFWL_Thread* GetCurrentThread();
 };
-#endif
+
+#endif  // XFA_INCLUDE_FWL_ADAPTER_FWL_SDAPATERIMP_H_

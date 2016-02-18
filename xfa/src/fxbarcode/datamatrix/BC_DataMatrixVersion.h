@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_DATAMATRIXVERSION_H_
-#define _BC_DATAMATRIXVERSION_H_
+#ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXVERSION_H_
+#define XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXVERSION_H_
+
 class ECBlocks;
 class CBC_DataMatrixVersion;
 class ECB {
@@ -83,4 +84,5 @@ class CBC_DataMatrixVersion {
   int32_t m_totalCodewords;
   static CFX_PtrArray* VERSIONS;
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXVERSION_H_

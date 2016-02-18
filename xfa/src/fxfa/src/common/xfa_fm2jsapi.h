@@ -4,12 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _XFA_FM2JS_API_H
-#define _XFA_FM2JS_API_H
+#ifndef XFA_SRC_FXFA_SRC_COMMON_XFA_FM2JSAPI_H_
+#define XFA_SRC_FXFA_SRC_COMMON_XFA_FM2JSAPI_H_
+
 #define FOXIT_XFA_FM2JS_FORMCALC_RUNTIME "foxit_xfa_formcalc_runtime"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 typedef struct XFA_HFM2JSCONTEXT_ { void** pData; } * XFA_HFM2JSCONTEXT;
 int32_t XFA_FM2JS_Translate(const CFX_WideStringC& wsFormcalc,
                             CFX_WideTextBuf& wsJavascript,
@@ -22,7 +25,9 @@ void XFA_FM2JS_ContextInitialize(XFA_HFM2JSCONTEXT hFM2JSContext,
 void XFA_FM2JS_GlobalPropertyGetter(XFA_HFM2JSCONTEXT hFM2JSContext,
                                     FXJSE_HVALUE hValue);
 void XFA_FM2JS_ContextRelease(XFA_HFM2JSCONTEXT hFM2JSContext);
+
 #ifdef __cplusplus
 }
 #endif
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_COMMON_XFA_FM2JSAPI_H_

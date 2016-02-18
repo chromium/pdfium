@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_ONEDREADER_H_
-#define _BC_ONEDREADER_H_
+#ifndef XFA_SRC_FXBARCODE_ONED_BC_ONEDREADER_H_
+#define XFA_SRC_FXBARCODE_ONED_BC_ONEDREADER_H_
+
 class CBC_Reader;
 class CBC_BinaryBitmap;
 class CBC_CommonBitArray;
@@ -43,4 +44,5 @@ class CBC_OneDReader : public CBC_Reader {
                                const int32_t* pattern,
                                int32_t maxIndividualVariance);
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_ONED_BC_ONEDREADER_H_

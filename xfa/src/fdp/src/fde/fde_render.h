@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FDE_RENDER_IMP
-#define _FDE_RENDER_IMP
+#ifndef XFA_SRC_FDP_SRC_FDE_FDE_RENDER_H_
+#define XFA_SRC_FDP_SRC_FDE_FDE_RENDER_H_
+
 class CFDE_RenderContext;
 class CFDE_RenderContext : public IFDE_RenderContext,
                            public CFX_ThreadLock,
@@ -36,4 +37,5 @@ class CFDE_RenderContext : public IFDE_RenderContext,
   int32_t m_iCharPosCount;
   IFDE_VisualSetIterator* m_pIterator;
 };
-#endif
+
+#endif  // XFA_SRC_FDP_SRC_FDE_FDE_RENDER_H_

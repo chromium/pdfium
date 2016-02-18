@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFXFA_APP_H_
-#define FPDFXFA_APP_H_
+#ifndef FPDFSDK_INCLUDE_FPDFXFA_FPDFXFA_APP_H_
+#define FPDFSDK_INCLUDE_FPDFXFA_FPDFXFA_APP_H_
 
 #include "xfa/include/fxfa/fxfa.h"
 
@@ -95,4 +95,4 @@ class CPDFXFA_App : public IXFA_AppProvider {
   bool m_bOwnedRuntime;
 };
 
-#endif  // FPDFXFA_APP_H_
+#endif  // FPDFSDK_INCLUDE_FPDFXFA_FPDFXFA_APP_H_

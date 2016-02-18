@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXFA_FORMFILLER_IMAGEEDIT_IMP_H
-#define _FXFA_FORMFILLER_IMAGEEDIT_IMP_H
+#ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFIMAGEEDIT_H_
+#define XFA_SRC_FXFA_SRC_APP_XFA_FFIMAGEEDIT_H_
+
 class CXFA_FFImageEdit : public CXFA_FFField {
  public:
   CXFA_FFImageEdit(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
@@ -29,4 +30,5 @@ class CXFA_FFImageEdit : public CXFA_FFField {
   virtual FX_BOOL CommitData();
   IFWL_WidgetDelegate* m_pOldDelegate;
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_APP_XFA_FFIMAGEEDIT_H_

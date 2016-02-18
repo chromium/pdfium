@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_READER_H_
-#define _BC_READER_H_
+#ifndef XFA_SRC_FXBARCODE_BC_READER_H_
+#define XFA_SRC_FXBARCODE_BC_READER_H_
+
 class CBC_BinaryBitmap;
 class CBC_Reader;
 class CBC_Reader {
@@ -17,4 +18,5 @@ class CBC_Reader {
                                 int32_t hints,
                                 int32_t& e) = 0;
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_BC_READER_H_

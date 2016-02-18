@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_QRCODER_H_
-#define _BC_QRCODER_H_
+#ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRCODER_H_
+#define XFA_SRC_FXBARCODE_QRCODE_BC_QRCODER_H_
+
 class CBC_QRCoderErrorCorrectionLevel;
 class CBC_QRCoderMode;
 class CBC_CommonByteMatrix;
@@ -52,4 +53,5 @@ class CBC_QRCoder {
   void SetMatrix(CBC_CommonByteMatrix* value);
   static FX_BOOL IsValidMaskPattern(int32_t maskPattern);
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_QRCODE_BC_QRCODER_H_

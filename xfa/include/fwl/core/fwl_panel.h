@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_PANEL_H
-#define _FWL_PANEL_H
+#ifndef XFA_INCLUDE_FWL_CORE_FWL_PANEL_H_
+#define XFA_INCLUDE_FWL_CORE_FWL_PANEL_H_
+
 class IFWL_Widget;
 class IFWL_Content;
 class IFWL_Panel;
@@ -37,4 +38,5 @@ class IFWL_CustomPanel : public IFWL_Widget {
  protected:
   IFWL_CustomPanel();
 };
-#endif
+
+#endif  // XFA_INCLUDE_FWL_CORE_FWL_PANEL_H_

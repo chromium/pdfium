@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJSE_CLASS_H_
-#define FXJSE_CLASS_H_
+#ifndef XFA_SRC_FXJSE_SRC_CLASS_H_
+#define XFA_SRC_FXJSE_SRC_CLASS_H_
+
 class CFXJSE_Context;
 class CFXJSE_Value;
 class CFXJSE_Class {
@@ -43,4 +44,5 @@ struct CFXJSE_ArgumentsImpl {
   const v8::FunctionCallbackInfo<v8::Value>* m_pInfo;
   CFXJSE_Value* m_pRetValue;
 };
-#endif
+
+#endif  // XFA_SRC_FXJSE_SRC_CLASS_H_

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _XFA_DOCUMENT_DATAMERGER_IMP_H_
-#define _XFA_DOCUMENT_DATAMERGER_IMP_H_
+#ifndef XFA_SRC_FXFA_SRC_PARSER_XFA_DOCUMENT_DATAMERGER_IMP_H_
+#define XFA_SRC_FXFA_SRC_PARSER_XFA_DOCUMENT_DATAMERGER_IMP_H_
+
 CXFA_Node* XFA_NodeMerge_CloneOrMergeContainer(
     CXFA_Document* pDocument,
     CXFA_Node* pFormParent,
@@ -17,4 +18,5 @@ CXFA_Node* XFA_DataMerge_FindFormDOMInstance(CXFA_Document* pDocument,
                                              XFA_ELEMENT eClassID,
                                              FX_DWORD dwNameHash,
                                              CXFA_Node* pFormParent);
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_PARSER_XFA_DOCUMENT_DATAMERGER_IMP_H_

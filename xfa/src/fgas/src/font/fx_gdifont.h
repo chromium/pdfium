@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_GDIOBJECT_IMP
-#define _FX_GDIOBJECT_IMP
+#ifndef XFA_SRC_FGAS_SRC_FONT_FX_GDIFONT_H_
+#define XFA_SRC_FGAS_SRC_FONT_FX_GDIFONT_H_
+
 #ifdef _FXPLUS
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN32_MOBILE_ || \
     _FX_OS_ == _FX_WIN64_
@@ -103,4 +104,5 @@ class CFX_GdiFont : public IFX_Font, public CFX_ThreadLock {
 };
 #endif
 #endif
-#endif
+
+#endif  // XFA_SRC_FGAS_SRC_FONT_FX_GDIFONT_H_

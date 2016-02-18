@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FWL_THREAD_H_
-#define FWL_THREAD_H_
+#ifndef XFA_INCLUDE_FWL_CORE_FWL_THREAD_H_
+#define XFA_INCLUDE_FWL_CORE_FWL_THREAD_H_
 
 // The FWL thread/app code contains three parallel inheritance hierarchies,
 // which reference each other via pointers as follows:
@@ -48,4 +48,4 @@ class IFWL_NoteThread : public IFWL_Thread {
   IFWL_NoteDriver* GetNoteDriver();
 };
 
-#endif  // FWL_THREAD_H_
+#endif  // XFA_INCLUDE_FWL_CORE_FWL_THREAD_H_

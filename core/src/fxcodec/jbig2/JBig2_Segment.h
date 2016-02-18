@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _JBIG2_SEGMENT_H_
-#define _JBIG2_SEGMENT_H_
+#ifndef CORE_SRC_FXCODEC_JBIG2_JBIG2_SEGMENT_H_
+#define CORE_SRC_FXCODEC_JBIG2_JBIG2_SEGMENT_H_
 
 #include "core/src/fxcodec/jbig2/JBig2_Define.h"
 #include "core/src/fxcodec/jbig2/JBig2_HuffmanTable.h"
@@ -62,4 +62,5 @@ class CJBig2_Segment {
     void* vd;
   } m_Result;
 };
-#endif
+
+#endif  // CORE_SRC_FXCODEC_JBIG2_JBIG2_SEGMENT_H_

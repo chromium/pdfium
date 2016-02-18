@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_SAX_IMP_
-#define _FX_SAX_IMP_
+#ifndef XFA_SRC_FGAS_SRC_XML_FX_SAX_IMP_H_
+#define XFA_SRC_FGAS_SRC_XML_FX_SAX_IMP_H_
 
 class CFX_SAXFile {
  public:
@@ -131,4 +131,5 @@ class CFX_SAXReader : public IFX_SAXReader {
   void ReallocNameBuffer();
   void ParseChar(uint8_t ch);
 };
-#endif
+
+#endif  // XFA_SRC_FGAS_SRC_XML_FX_SAX_IMP_H_

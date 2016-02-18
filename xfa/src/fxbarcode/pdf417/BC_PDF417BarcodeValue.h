@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_BARCODEVALUE_H_
-#define _BC_BARCODEVALUE_H_
+#ifndef XFA_SRC_FXBARCODE_PDF417_BC_PDF417BARCODEVALUE_H_
+#define XFA_SRC_FXBARCODE_PDF417_BC_PDF417BARCODEVALUE_H_
+
 class CBC_BarcodeValue {
  public:
   CBC_BarcodeValue();
@@ -18,4 +19,5 @@ class CBC_BarcodeValue {
   CFX_Int32Array m_keys;
   CFX_Int32Array m_values;
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_PDF417_BC_PDF417BARCODEVALUE_H_

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_STREAM
-#define _FX_STREAM
+#ifndef XFA_SRC_FGAS_INCLUDE_FX_STM_H_
+#define XFA_SRC_FGAS_INCLUDE_FX_STM_H_
+
 class IFX_Stream;
 IFX_FileRead* FX_CreateFileRead(IFX_Stream* pBaseStream,
                                 FX_BOOL bReleaseStream = FALSE);
@@ -69,4 +70,5 @@ class IFX_Stream {
                                          int32_t iOffset,
                                          int32_t iLength) = 0;
 };
-#endif
+
+#endif  // XFA_SRC_FGAS_INCLUDE_FX_STM_H_

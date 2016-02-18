@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_COMMONBITMATRIX_H_
-#define _BC_COMMONBITMATRIX_H_
+#ifndef XFA_SRC_FXBARCODE_COMMON_BC_COMMONBITMATRIX_H_
+#define XFA_SRC_FXBARCODE_COMMON_BC_COMMONBITMATRIX_H_
+
 class CBC_CommonBitArray;
 class CBC_CommonBitMatrix {
  public:
@@ -38,4 +39,5 @@ class CBC_CommonBitMatrix {
   int32_t m_rowSize;
   int32_t* m_bits;
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_COMMON_BC_COMMONBITMATRIX_H_

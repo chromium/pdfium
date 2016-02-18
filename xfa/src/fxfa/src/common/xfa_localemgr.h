@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXFA_LOCALEMGR_H
-#define _FXFA_LOCALEMGR_H
+#ifndef XFA_SRC_FXFA_SRC_COMMON_XFA_LOCALEMGR_H_
+#define XFA_SRC_FXFA_SRC_COMMON_XFA_LOCALEMGR_H_
+
 class CXFA_Node;
 class IFX_Locale;
 class IFX_LocaleMgr;
@@ -67,4 +68,5 @@ class CXFA_TimeZoneProvider : public IXFA_TimeZoneProvider {
  private:
   FX_TIMEZONE m_tz;
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_COMMON_XFA_LOCALEMGR_H_

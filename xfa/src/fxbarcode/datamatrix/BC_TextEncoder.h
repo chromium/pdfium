@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_TEXTENCODER_H_
-#define _BC_TEXTENCODER_H_
+#ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_TEXTENCODER_H_
+#define XFA_SRC_FXBARCODE_DATAMATRIX_BC_TEXTENCODER_H_
+
 class CBC_TextEncoder;
 class CBC_TextEncoder : public CBC_C40Encoder {
  public:
@@ -14,4 +15,5 @@ class CBC_TextEncoder : public CBC_C40Encoder {
   int32_t getEncodingMode();
   int32_t encodeChar(FX_WCHAR c, CFX_WideString& sb, int32_t& e);
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_DATAMATRIX_BC_TEXTENCODER_H_

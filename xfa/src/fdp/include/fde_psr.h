@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FDE_PARSER
-#define _FDE_PARSER
+#ifndef XFA_SRC_FDP_INCLUDE_FDE_PSR_H_
+#define XFA_SRC_FDP_INCLUDE_FDE_PSR_H_
+
 enum FDE_VISUALOBJTYPE {
   FDE_VISUALOBJ_Canvas = 0x00,
   FDE_VISUALOBJ_Text = 0x01,
@@ -102,4 +103,5 @@ class IFDE_VisualSetIterator {
                                  FDE_HVISUALOBJ* phCanvasObj = NULL,
                                  IFDE_CanvasSet** ppCanvasSet = NULL) = 0;
 };
-#endif
+
+#endif  // XFA_SRC_FDP_INCLUDE_FDE_PSR_H_

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_QRCODERFORMATINFORMATION_H_
-#define _BC_QRCODERFORMATINFORMATION_H_
+#ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERFORMATINFORMATION_H_
+#define XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERFORMATINFORMATION_H_
+
 class CBC_QRCoderErrorCorrectionLevel;
 class CBC_QRCoderFormatInformation {
  private:
@@ -27,4 +28,5 @@ class CBC_QRCoderFormatInformation {
   static CBC_QRCoderFormatInformation* DoDecodeFormatInformation(
       int32_t maskedFormatInfo);
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERFORMATINFORMATION_H_

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FWL_THREADIMP_H_
-#define FWL_THREADIMP_H_
+#ifndef XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_THREADIMP_H_
+#define XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_THREADIMP_H_
 
 #include "xfa/include/fwl/core/fwl_thread.h"  // For FWL_HTHREAD.
 
@@ -37,4 +37,4 @@ class CFWL_NoteThreadImp : public CFWL_ThreadImp {
   CFWL_NoteDriver* const m_pNoteDriver;
 };
 
-#endif  // FWL_THREADIMP_H_
+#endif  // XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_THREADIMP_H_

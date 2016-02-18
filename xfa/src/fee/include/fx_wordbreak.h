@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_WORDBREAK_H
-#define _FX_WORDBREAK_H
+#ifndef XFA_SRC_FEE_INCLUDE_FX_WORDBREAK_H_
+#define XFA_SRC_FEE_INCLUDE_FX_WORDBREAK_H_
+
 class IFX_CharIter;
 
 class IFX_WordBreak {
@@ -22,4 +23,5 @@ class IFX_WordBreak {
   virtual FX_BOOL IsEOF(FX_BOOL bTail = TRUE) const = 0;
 };
 IFX_WordBreak* FX_WordBreak_Create();
-#endif
+
+#endif  // XFA_SRC_FEE_INCLUDE_FX_WORDBREAK_H_

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _XFA_FWL_ADAPTER_IMP_H
-#define _XFA_FWL_ADAPTER_IMP_H
+#ifndef XFA_SRC_FXFA_SRC_APP_XFA_FWLADAPTER_H_
+#define XFA_SRC_FXFA_SRC_APP_XFA_FWLADAPTER_H_
+
 class CXFA_FWLAdapterWidgetMgr : public CFWL_SDAdapterWidgetMgr {
  public:
   virtual FWL_ERR RepaintWidget(IFWL_Widget* pWidget, const CFX_RectF* pRect);
@@ -15,4 +16,5 @@ class CXFA_FWLAdapterWidgetMgr : public CFWL_SDAdapterWidgetMgr {
                               const CFX_RectF& rtAnchor,
                               CFX_RectF& rtPopup);
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_APP_XFA_FWLADAPTER_H_

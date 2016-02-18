@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_SCROLLBAR_H
-#define _FWL_SCROLLBAR_H
+#ifndef XFA_INCLUDE_FWL_BASEWIDGET_FWL_SCROLLBAR_H_
+#define XFA_INCLUDE_FWL_BASEWIDGET_FWL_SCROLLBAR_H_
+
 class CFWL_WidgetImpProperties;
 class IFWL_Widget;
 class IFWL_ScrollBarDP;
@@ -66,4 +67,5 @@ class IFWL_ScrollBar : public IFWL_Widget {
  protected:
   IFWL_ScrollBar();
 };
-#endif
+
+#endif  // XFA_INCLUDE_FWL_BASEWIDGET_FWL_SCROLLBAR_H_

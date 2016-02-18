@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_LOCALEMGR_IMP_H_
-#define _FX_LOCALEMGR_IMP_H_
+#ifndef XFA_SRC_FGAS_SRC_LOCALIZATION_FX_LOCALEMGR_H_
+#define XFA_SRC_FGAS_SRC_LOCALIZATION_FX_LOCALEMGR_H_
+
 class CFX_LocaleMgr : public IFX_LocaleMgr {
  public:
   CFX_LocaleMgr(FX_WORD wDefLCID);
@@ -21,4 +22,5 @@ class CFX_LocaleMgr : public IFX_LocaleMgr {
   CFX_MapPtrToPtr m_lcid2locale;
   FX_WORD m_wDefLCID;
 };
-#endif
+
+#endif  // XFA_SRC_FGAS_SRC_LOCALIZATION_FX_LOCALEMGR_H_

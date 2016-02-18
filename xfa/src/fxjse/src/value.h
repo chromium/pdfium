@@ -4,9 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJSE_VALUE_H_
-#define FXJSE_VALUE_H_
+#ifndef XFA_SRC_FXJSE_SRC_VALUE_H_
+#define XFA_SRC_FXJSE_SRC_VALUE_H_
+
 #include "scope_inline.h"
+
 class CFXJSE_Value {
  public:
   CFXJSE_Value(v8::Isolate* pIsolate) : m_pIsolate(pIsolate) {}
@@ -235,4 +237,5 @@ class CFXJSE_Value {
   friend class CFXJSE_Context;
   friend class CFXJSE_Class;
 };
-#endif
+
+#endif  // XFA_SRC_FXJSE_SRC_VALUE_H_

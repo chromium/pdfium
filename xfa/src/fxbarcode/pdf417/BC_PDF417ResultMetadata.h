@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_PDF417READER_H_
-#define _BC_PDF417READER_H_
+#ifndef XFA_SRC_FXBARCODE_PDF417_BC_PDF417RESULTMETADATA_H_
+#define XFA_SRC_FXBARCODE_PDF417_BC_PDF417RESULTMETADATA_H_
+
 class CBC_PDF417ResultMetadata {
  public:
   CBC_PDF417ResultMetadata();
@@ -25,4 +26,5 @@ class CBC_PDF417ResultMetadata {
   CFX_Int32Array m_optionalData;
   FX_BOOL m_lastSegment;
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_PDF417_BC_PDF417RESULTMETADATA_H_

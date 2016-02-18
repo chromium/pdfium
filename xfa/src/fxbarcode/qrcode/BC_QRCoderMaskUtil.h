@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_QRCODERMASKUTIL_H_
-#define _BC_QRCODERMASKUTIL_H_
+#ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERMASKUTIL_H_
+#define XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERMASKUTIL_H_
 class CBC_CommonByteMatrix;
 class CBC_QRCoderMaskUtil {
  public:
@@ -23,4 +23,5 @@ class CBC_QRCoderMaskUtil {
   static int32_t ApplyMaskPenaltyRule1Internal(CBC_CommonByteMatrix* matrix,
                                                FX_BOOL isHorizontal);
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERMASKUTIL_H_

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXFA_SCRIPT_H
-#define _FXFA_SCRIPT_H
+#ifndef XFA_SRC_FXFA_SRC_COMMON_XFA_SCRIPT_H
+#define XFA_SRC_FXFA_SRC_COMMON_XFA_SCRIPT_H
+
 #define XFA_RESOLVENODE_Children 0x0001
 #define XFA_RESOLVENODE_Attributes 0x0004
 #define XFA_RESOLVENODE_Properties 0x0008
@@ -106,4 +107,5 @@ class IXFA_ScriptContext {
   virtual FX_BOOL IsRunAtClient() = 0;
 };
 IXFA_ScriptContext* XFA_ScriptContext_Create(CXFA_Document* pDocument);
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_COMMON_XFA_SCRIPT_H

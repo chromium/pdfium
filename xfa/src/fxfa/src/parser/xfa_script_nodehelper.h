@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _XFA_NODEHELPER_H_
-#define _XFA_NODEHELPER_H_
+#ifndef XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_NODEHELPER_H_
+#define XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_NODEHELPER_H_
+
 class CXFA_ScriptContext;
 enum XFA_LOGIC_TYPE {
   XFA_LOGIC_NoTransparent,
@@ -62,4 +63,5 @@ class CXFA_NodeHelper {
   int32_t m_iCurAllStart;
   CXFA_Node* m_pAllStartParent;
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_NODEHELPER_H_

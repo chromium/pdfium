@@ -4,9 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_QRCODERWRITER_H_
-#define _BC_QRCODERWRITER_H_
+#ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERWRITER_H_
+#define XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERWRITER_H_
+
 #include "xfa/src/fxbarcode/BC_TwoDimWriter.h"
+
 class CBC_TwoDimWriter;
 class CBC_MultiBarCodes;
 class CBC_QRCoderWriter;
@@ -37,4 +39,5 @@ class CBC_QRCodeWriter : public CBC_TwoDimWriter {
  private:
   int32_t m_iVersion;
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERWRITER_H_

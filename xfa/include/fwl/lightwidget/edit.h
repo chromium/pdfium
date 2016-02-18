@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FWL_LIGHTWIDGET_EDIT_H_
-#define FWL_LIGHTWIDGET_EDIT_H_
+#ifndef XFA_INCLUDE_FWL_LIGHTWIDGET_EDIT_H_
+#define XFA_INCLUDE_FWL_LIGHTWIDGET_EDIT_H_
 
 #include <vector>
 
@@ -64,4 +64,4 @@ class CFWL_Edit : public CFWL_Widget {
   virtual ~CFWL_Edit();
 };
 
-#endif  // FWL_LIGHTWIDGET_EDIT_H_
+#endif  // XFA_INCLUDE_FWL_LIGHTWIDGET_EDIT_H_

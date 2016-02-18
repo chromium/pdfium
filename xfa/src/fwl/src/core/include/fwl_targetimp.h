@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FWL_TARGETIMP_H_
-#define FWL_TARGETIMP_H_
+#ifndef XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_TARGETIMP_H_
+#define XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_TARGETIMP_H_
 
 #include "core/include/fxcrt/fx_basic.h"
 #include "xfa/include/fwl/core/fwl_target.h"
@@ -24,4 +24,4 @@ class CFWL_TargetImp {
   CFWL_TargetImp();
 };
 
-#endif  // FWL_TARGETIMP_H_
+#endif  // XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_TARGETIMP_H_

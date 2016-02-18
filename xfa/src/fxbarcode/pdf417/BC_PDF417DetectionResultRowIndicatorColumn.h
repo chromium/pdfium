@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_DETECTIONRESULTROWINDICATORCOLUMN_H_
-#define _BC_DETECTIONRESULTROWINDICATORCOLUMN_H_
+#ifndef XFA_SRC_FXBARCODE_PDF417_BC_PDF417DETECTIONRESULTROWINDICATORCOLUMN_H_
+#define XFA_SRC_FXBARCODE_PDF417_BC_PDF417DETECTIONRESULTROWINDICATORCOLUMN_H_
+
 class CBC_BarcodeMetadata;
 class CBC_BoundingBox;
 class CBC_DetectionResultRowIndicatorColumn;
@@ -29,4 +30,5 @@ class CBC_DetectionResultRowIndicatorColumn : public CBC_DetectionResultColumn {
   void removeIncorrectCodewords(CFX_PtrArray* codewords,
                                 CBC_BarcodeMetadata barcodeMetadata);
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_PDF417_BC_PDF417DETECTIONRESULTROWINDICATORCOLUMN_H_

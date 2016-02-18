@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXFA_FORMFILLER_CHOICELIST_IMP_H
-#define _FXFA_FORMFILLER_CHOICELIST_IMP_H
+#ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFCHOICELIST_H_
+#define XFA_SRC_FXFA_SRC_APP_XFA_FFCHOICELIST_H_
+
 class CXFA_FFListBox : public CXFA_FFField {
  public:
   CXFA_FFListBox(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
@@ -88,4 +89,5 @@ class CXFA_FFComboBox : public CXFA_FFField {
  protected:
   IFWL_WidgetDelegate* m_pOldDelegate;
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_APP_XFA_FFCHOICELIST_H_

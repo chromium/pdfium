@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FDE_CSS
-#define _FDE_CSS
+#ifndef XFA_SRC_FDP_INCLUDE_FDE_CSS_H_
+#define XFA_SRC_FDP_INCLUDE_FDE_CSS_H_
+
 class IFDE_HTMNotify;
 class IFDE_CSSValue;
 class IFDE_CSSPrimitiveValue;
@@ -1082,4 +1083,5 @@ class IFDE_CSSStyleSelector {
                             int32_t iDeclCount,
                             IFDE_CSSComputedStyle* pDestStyle) = 0;
 };
-#endif
+
+#endif  // XFA_SRC_FDP_INCLUDE_FDE_CSS_H_

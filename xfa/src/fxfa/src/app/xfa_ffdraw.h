@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXFA_FORMFILLER_DRAW_IMP_H
-#define _FXFA_FORMFILLER_DRAW_IMP_H
+#ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFDRAW_H_
+#define XFA_SRC_FXFA_SRC_APP_XFA_FFDRAW_H_
+
 class CXFA_FFDraw : public CXFA_FFWidget {
  public:
   CXFA_FFDraw(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
@@ -13,4 +14,5 @@ class CXFA_FFDraw : public CXFA_FFWidget {
 
  protected:
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_APP_XFA_FFDRAW_H_

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_PDF417COMMON_H_
-#define _BC_PDF417COMMON_H_
+#ifndef XFA_SRC_FXBARCODE_PDF417_BC_PDF417COMMON_H_
+#define XFA_SRC_FXBARCODE_PDF417_BC_PDF417COMMON_H_
+
 class CBC_PDF417Common {
  public:
   CBC_PDF417Common();
@@ -27,4 +28,5 @@ class CBC_PDF417Common {
   static CFX_Int32Array* EMPTY_INT_ARRAY;
   static int32_t findCodewordIndex(FX_DWORD symbol);
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_PDF417_BC_PDF417COMMON_H_

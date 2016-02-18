@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_QRCODERERRORCORRECTIONLEVEL_H_
-#define _BC_QRCODERERRORCORRECTIONLEVEL_H_
+#ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERERRORCORRECTIONLEVEL_H_
+#define XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERERRORCORRECTIONLEVEL_H_
+
 class CBC_QRCoderErrorCorrectionLevel {
  private:
   int32_t m_ordinal;
@@ -28,4 +29,5 @@ class CBC_QRCoderErrorCorrectionLevel {
   static void Destroy();
   static CBC_QRCoderErrorCorrectionLevel* ForBits(int32_t bits);
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERERRORCORRECTIONLEVEL_H_

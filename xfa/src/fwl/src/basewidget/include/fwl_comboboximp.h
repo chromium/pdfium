@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_COMBOBOX_IMP_H
-#define _FWL_COMBOBOX_IMP_H
+#ifndef XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_COMBOBOXIMP_H_
+#define XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_COMBOBOXIMP_H_
 
 #include <memory>
 
@@ -233,4 +233,5 @@ class CFWL_ComboProxyImpDelegate : public CFWL_WidgetImpDelegate {
   IFWL_Form* m_pForm;
   CFWL_ComboBoxImp* m_pComboBox;
 };
-#endif
+
+#endif  // XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_COMBOBOXIMP_H_

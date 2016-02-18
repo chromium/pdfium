@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_QRALIGNMENTPATTERN_H_
-#define _BC_QRALIGNMENTPATTERN_H_
+#ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRALIGNMENTPATTERN_H_
+#define XFA_SRC_FXBARCODE_QRCODE_BC_QRALIGNMENTPATTERN_H_
 class CBC_CommonBitArray;
 class CBC_ResultPoint;
 class CBC_REAI013x0x1xDecoder;
@@ -23,4 +23,5 @@ class CBC_QRAlignmentPattern : public CBC_ResultPoint {
   FX_FLOAT GetY();
   CBC_QRAlignmentPattern* Clone();
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_QRCODE_BC_QRALIGNMENTPATTERN_H_

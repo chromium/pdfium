@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_PDF417ERRORCORRECTION_H_
-#define _BC_PDF417ERRORCORRECTION_H_
+#ifndef XFA_SRC_FXBARCODE_PDF417_BC_PDF417ERRORCORRECTION_H_
+#define XFA_SRC_FXBARCODE_PDF417_BC_PDF417ERRORCORRECTION_H_
+
 class CBC_PDF417ErrorCorrection {
  public:
   CBC_PDF417ErrorCorrection();
@@ -21,4 +22,5 @@ class CBC_PDF417ErrorCorrection {
  private:
   static int32_t EC_COEFFICIENTS[][2500];
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_PDF417_BC_PDF417ERRORCORRECTION_H_

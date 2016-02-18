@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FDE_GDIPLUSDEVICE_IMP
-#define _FDE_GDIPLUSDEVICE_IMP
+#ifndef XFA_SRC_FDP_SRC_FDE_FDE_GDIDEVICE_H_
+#define XFA_SRC_FDP_SRC_FDE_FDE_GDIDEVICE_H_
+
 #ifdef _FDEPLUS
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN32_MOBILE_ || \
     _FX_OS_ == _FX_WIN64_
@@ -154,4 +155,5 @@ class CFDE_GdiDevice : public IFDE_RenderDevice, public CFX_Target {
 };
 #endif
 #endif
-#endif
+
+#endif  // XFA_SRC_FDP_SRC_FDE_FDE_GDIDEVICE_H_

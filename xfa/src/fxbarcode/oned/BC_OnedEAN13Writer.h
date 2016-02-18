@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_ONEDEAN13WRITER_H_
-#define _BC_ONEDEAN13WRITER_H_
+#ifndef XFA_SRC_FXBARCODE_ONED_BC_ONEDEAN13WRITER_H_
+#define XFA_SRC_FXBARCODE_ONED_BC_ONEDEAN13WRITER_H_
+
 class CBC_OneDimWriter;
 class CBC_OnedEAN13Writer;
 class CBC_OnedEAN13Writer : public CBC_OneDimWriter {
@@ -48,4 +49,5 @@ class CBC_OnedEAN13Writer : public CBC_OneDimWriter {
                  int32_t multiple,
                  int32_t& e);
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_ONED_BC_ONEDEAN13WRITER_H_

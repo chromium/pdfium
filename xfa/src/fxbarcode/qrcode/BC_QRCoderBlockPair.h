@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_QRCODERBLOCKPAIR_H_
-#define _BC_QRCODERBLOCKPAIR_H_
+#ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERBLOCKPAIR_H_
+#define XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERBLOCKPAIR_H_
+
 class CBC_CommonByteArray;
 class CBC_QRCoderBlockPair {
  private:
@@ -20,4 +21,5 @@ class CBC_QRCoderBlockPair {
   CBC_CommonByteArray* GetDataBytes();
   CBC_CommonByteArray* GetErrorCorrectionBytes();
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERBLOCKPAIR_H_

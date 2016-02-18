@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_ONEDCODA128WRITER_H_
-#define _BC_ONEDCODA128WRITER_H_
+#ifndef XFA_SRC_FXBARCODE_ONED_BC_ONEDCODA128WRITER_H_
+#define XFA_SRC_FXBARCODE_ONED_BC_ONEDCODA128WRITER_H_
+
 class CBC_OneDimWriter;
 class CBC_OnedCoda128Writer;
 class CBC_OnedCode128Writer : public CBC_OneDimWriter {
@@ -45,4 +46,5 @@ class CBC_OnedCode128Writer : public CBC_OneDimWriter {
   const static int32_t CODE_CODE_C;
   const static int32_t CODE_STOP;
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_ONED_BC_ONEDCODA128WRITER_H_

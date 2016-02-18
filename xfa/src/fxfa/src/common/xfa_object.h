@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_OBJECT_H_
-#define XFA_OBJECT_H_
+#ifndef XFA_SRC_FXFA_SRC_COMMON_XFA_OBJECT_H_
+#define XFA_SRC_FXFA_SRC_COMMON_XFA_OBJECT_H_
 
 class CXFA_ArrayNodeList;
 class CXFA_AttachNodeList;
@@ -798,4 +798,4 @@ inline const CXFA_NodeList* ToNodeList(const CXFA_Object* pObj) {
   return pObj ? pObj->AsNodeList() : nullptr;
 }
 
-#endif  // XFA_OBJECT_H_
+#endif  // XFA_SRC_FXFA_SRC_COMMON_XFA_OBJECT_H_

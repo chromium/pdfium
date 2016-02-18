@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _XFA_DOCUMENT_DATADESCRIPTION_IMP_H_
-#define _XFA_DOCUMENT_DATADESCRIPTION_IMP_H_
+#ifndef XFA_SRC_FXFA_SRC_PARSER_XFA_DOCUMENT_DATADESCRIPTION_IMP_H_
+#define XFA_SRC_FXFA_SRC_PARSER_XFA_DOCUMENT_DATADESCRIPTION_IMP_H_
+
 void XFA_DataDescription_UpdateDataRelation(CXFA_Node* pDataNode,
                                             CXFA_Node* pDataDescriptionNode);
 CXFA_Node* XFA_DataDescription_MaybeCreateDataNode(
@@ -13,4 +14,5 @@ CXFA_Node* XFA_DataDescription_MaybeCreateDataNode(
     CXFA_Node* pDataParent,
     XFA_ELEMENT eNodeType,
     const CFX_WideStringC& wsName);
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_PARSER_XFA_DOCUMENT_DATADESCRIPTION_IMP_H_

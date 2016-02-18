@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _XFA_FM_EXPRESSION_H
-#define _XFA_FM_EXPRESSION_H
+#ifndef XFA_SRC_FXFA_SRC_FM2JS_XFA_EXPRESSION_H_
+#define XFA_SRC_FXFA_SRC_FM2JS_XFA_EXPRESSION_H_
+
 enum XFA_FM_EXPTYPE {
   XFA_FM_EXPTYPE_UNKNOWN,
   XFA_FM_EXPTYPE_FUNC,
@@ -175,4 +176,5 @@ class CXFA_FMForeachExpression : public CXFA_FMLoopExpression {
   CFX_PtrArray* m_pAccessors;
   CXFA_FMExpression* m_pList;
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_FM2JS_XFA_EXPRESSION_H_

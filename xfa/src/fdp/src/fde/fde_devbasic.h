@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FDE_DEVICE_BASIC_IMP
-#define _FDE_DEVICE_BASIC_IMP
+#ifndef XFA_SRC_FDP_SRC_FDE_FDE_DEVBASIC_H_
+#define XFA_SRC_FDP_SRC_FDE_FDE_DEVBASIC_H_
+
 struct FDE_HATCHDATA {
   int32_t iWidth;
   int32_t iHeight;
@@ -13,4 +14,5 @@ struct FDE_HATCHDATA {
 };
 typedef FDE_HATCHDATA const* FDE_LPCHATCHDATA;
 FDE_LPCHATCHDATA FDE_DEVGetHatchData(int32_t iHatchStyle);
-#endif
+
+#endif  // XFA_SRC_FDP_SRC_FDE_FDE_DEVBASIC_H_

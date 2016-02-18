@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_PICTUREBOX_IMP_H
-#define _FWL_PICTUREBOX_IMP_H
+#ifndef XFA_SRC_FWL_BASEWIDGET_INCLUDE_FWL_PICTUREBOXIMP_H_
+#define XFA_SRC_FWL_BASEWIDGET_INCLUDE_FWL_PICTUREBOXIMP_H_
+
 class CFWL_WidgetImp;
 class CFWL_WidgetImpProperties;
 class CFWL_WidgetImpDelegate;
@@ -48,4 +49,5 @@ class CFWL_PictureBoxImpDelegate : public CFWL_WidgetImpDelegate {
  protected:
   CFWL_PictureBoxImp* m_pOwner;
 };
-#endif
+
+#endif  // XFA_SRC_FWL_BASEWIDGET_INCLUDE_FWL_PICTUREBOXIMP_H_

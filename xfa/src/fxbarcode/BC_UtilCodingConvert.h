@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_UTILCODINGCONVERT_H_
-#define _BC_UTILCODINGCONVERT_H_
+#ifndef XFA_SRC_FXBARCODE_BC_UTILCODINGCONVERT_H_
+#define XFA_SRC_FXBARCODE_BC_UTILCODINGCONVERT_H_
+
 class CBC_UtilCodingConvert;
 class CBC_UtilCodingConvert {
  public:
@@ -23,4 +24,5 @@ class CBC_UtilCodingConvert {
   static void UnicodeToUTF8(const CFX_WideString& source,
                             CFX_ByteString& result);
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_BC_UTILCODINGCONVERT_H_

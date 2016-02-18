@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_PDF417WRITER_H_
-#define _BC_PDF417WRITER_H_
+#ifndef XFA_SRC_FXBARCODE_PDF417_BC_PDF417WRITER_H_
+#define XFA_SRC_FXBARCODE_PDF417_BC_PDF417WRITER_H_
+
 class CBC_TwoDimWriter;
 class CBC_PDF417Writer;
 class CBC_PDF417Writer : public CBC_TwoDimWriter {
@@ -23,4 +24,5 @@ class CBC_PDF417Writer : public CBC_TwoDimWriter {
   void rotateArray(CFX_ByteArray& bitarray, int32_t width, int32_t height);
   FX_BOOL m_bTruncated;
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_PDF417_BC_PDF417WRITER_H_

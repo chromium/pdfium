@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_BUFFEREDIMAGELUMINANCESOURCE_H_
-#define _BC_BUFFEREDIMAGELUMINANCESOURCE_H_
+#ifndef XFA_SRC_FXBARCODE_BC_BUFFEREDIMAGELUMINANCESOURCE_H_
+#define XFA_SRC_FXBARCODE_BC_BUFFEREDIMAGELUMINANCESOURCE_H_
+
 class CBC_LuminanceSource;
 class CBC_BufferedImageLuminanceSource;
 class CBC_BufferedImageLuminanceSource : public CBC_LuminanceSource {
@@ -26,4 +27,5 @@ class CBC_BufferedImageLuminanceSource : public CBC_LuminanceSource {
   CFX_DIBitmap* m_pBitmap;
   const CFX_WideString m_filename;
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_BC_BUFFEREDIMAGELUMINANCESOURCE_H_

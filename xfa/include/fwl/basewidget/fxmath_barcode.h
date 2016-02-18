@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXMATH_BARCODE_H_
-#define _FXMATH_BARCODE_H_
+#ifndef XFA_INCLUDE_FWL_BASEWIDGET_FXMATH_BARCODE_H_
+#define XFA_INCLUDE_FWL_BASEWIDGET_FXMATH_BARCODE_H_
+
 class IFX_Barcode {
  public:
   virtual ~IFX_Barcode() {}
@@ -45,4 +46,5 @@ class IFX_Barcode {
   virtual FX_BOOL SetTruncated(FX_BOOL truncated) = 0;
 };
 IFX_Barcode* FX_Barcode_Create(BC_TYPE type);
-#endif
+
+#endif  // XFA_INCLUDE_FWL_BASEWIDGET_FXMATH_BARCODE_H_

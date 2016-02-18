@@ -4,6 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#ifndef CORE_SRC_FXCODEC_LBMP_FX_BMP_H_
+#define CORE_SRC_FXCODEC_LBMP_FX_BMP_H_
+
 #include <setjmp.h>
 
 #include "core/include/fxcrt/fx_basic.h"
@@ -60,6 +63,7 @@ typedef struct tagBmpInfoHeader {
   FX_DWORD biClrImportant;
 } BmpInfoHeader, *BmpInfoHeaderPtr;
 #pragma pack()
+
 typedef struct tag_bmp_decompress_struct bmp_decompress_struct;
 typedef bmp_decompress_struct* bmp_decompress_struct_p;
 typedef bmp_decompress_struct_p* bmp_decompress_struct_pp;
@@ -148,8 +152,11 @@ struct tag_bmp_compress_struct {
   uint8_t bit_type;
 #endif
 };
+
 bmp_compress_struct_p _bmp_create_compress();
 void _bmp_destroy_compress(bmp_compress_struct_p bmp_ptr);
 FX_BOOL _bmp_encode_image(bmp_compress_struct_p bmp_ptr,
                           uint8_t*& dst_buf,
                           FX_DWORD& dst_size);
+
+#endif  // CORE_SRC_FXCODEC_LBMP_FX_BMP_H_

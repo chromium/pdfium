@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FDE_PEN
-#define _FDE_PEN
+#ifndef XFA_SRC_FDP_INCLUDE_FDE_PEN_H_
+#define XFA_SRC_FDP_INCLUDE_FDE_PEN_H_
+
 class IFDE_Pen;
 #define FDE_PENTYPE_Unknown FDE_BRUSHTYPE_Unknown
 #define FDE_PENTYPE_SolidColor FDE_BRUSHTYPE_Solid
@@ -61,4 +62,5 @@ class IFDE_Pen {
   virtual FX_BOOL SetCompoundPatterns(
       const CFDE_CompoundPatterns& compoundPatterns) = 0;
 };
-#endif
+
+#endif  // XFA_SRC_FDP_INCLUDE_FDE_PEN_H_

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _XFA_FWL_THEME_IMP_H
-#define _XFA_FWL_THEME_IMP_H
+#ifndef XFA_SRC_FXFA_SRC_APP_XFA_FWLTHEME_H_
+#define XFA_SRC_FXFA_SRC_APP_XFA_FWLTHEME_H_
+
 class CXFA_FWLTheme : public IFWL_ThemeProvider {
  public:
   CXFA_FWLTheme(CXFA_FFApp* pApp);
@@ -89,4 +90,5 @@ class CXFA_FWLEditTP : public CFWL_EditTP {
  public:
   virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams);
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_APP_XFA_FWLTHEME_H_

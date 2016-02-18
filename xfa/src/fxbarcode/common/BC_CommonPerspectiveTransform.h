@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_COMMONPERSPECTIVETRANSFORM_H_
-#define _BC_COMMONPERSPECTIVETRANSFORM_H_
+#ifndef XFA_SRC_FXBARCODE_COMMON_BC_COMMONPERSPECTIVETRANSFORM_H_
+#define XFA_SRC_FXBARCODE_COMMON_BC_COMMONPERSPECTIVETRANSFORM_H_
+
 class CBC_CommonPerspectiveTransform {
  public:
   CBC_CommonPerspectiveTransform(FX_FLOAT a11,
@@ -58,4 +59,5 @@ class CBC_CommonPerspectiveTransform {
  private:
   FX_FLOAT m_a11, m_a12, m_a13, m_a21, m_a22, m_a23, m_a31, m_a32, m_a33;
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_COMMON_BC_COMMONPERSPECTIVETRANSFORM_H_

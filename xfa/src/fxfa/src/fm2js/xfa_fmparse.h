@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _XFA_FM_PARSE_H
-#define _XFA_FM_PARSE_H
+#ifndef XFA_SRC_FXFA_SRC_FM2JS_XFA_FMPARSE_H_
+#define XFA_SRC_FXFA_SRC_FM2JS_XFA_FMPARSE_H_
 
 #include <memory>
 
@@ -49,4 +49,4 @@ class CXFA_FMParse {
   CXFA_FMErrorInfo* m_pErrorInfo;
 };
 
-#endif
+#endif  // XFA_SRC_FXFA_SRC_FM2JS_XFA_FMPARSE_H_

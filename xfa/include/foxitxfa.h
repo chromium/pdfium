@@ -6,8 +6,9 @@
 
 // TODO(thestig): Remove this file and do IWYU.
 
-#ifndef _FOXIT_XFA_H_
-#define _FOXIT_XFA_H_
+#ifndef XFA_INCLUDE_FOXITXFA_H_
+#define XFA_INCLUDE_FOXITXFA_H_
+
 #include "core/include/fxcrt/fx_ext.h"
 #include "core/include/fxge/fx_ge.h"
 #include "core/include/fxcodec/fx_codec.h"
@@ -18,4 +19,5 @@
 #include "xfa/include/fwl/fwl.h"
 #include "xfa/include/fxjse/fxjse.h"
 #include "xfa/include/fxfa/fxfa.h"
-#endif
+
+#endif  // XFA_INCLUDE_FOXITXFA_H_

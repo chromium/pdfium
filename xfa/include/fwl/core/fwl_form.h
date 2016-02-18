@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_FORM_H
-#define _FWL_FORM_H
+#ifndef XFA_INCLUDE_FWL_CORE_FWL_FORM_H_
+#define XFA_INCLUDE_FWL_CORE_FWL_FORM_H_
+
 class IFWL_Widget;
 class IFWL_Panel;
 class IFWL_Form;
@@ -80,4 +81,5 @@ class IFWL_Form : public IFWL_Panel {
  protected:
   IFWL_Form();
 };
-#endif
+
+#endif  // XFA_INCLUDE_FWL_CORE_FWL_FORM_H_

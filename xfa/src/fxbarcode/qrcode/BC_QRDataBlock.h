@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_QRDATABLOCK_H_
-#define _BC_QRDATABLOCK_H_
+#ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRDATABLOCK_H_
+#define XFA_SRC_FXBARCODE_QRCODE_BC_QRDATABLOCK_H_
+
 class CBC_QRCoderVersion;
 class CBC_QRCoderECBlocks;
 class CBC_QRCoderECB;
@@ -25,4 +26,5 @@ class CBC_QRDataBlock {
                                      CBC_QRCoderErrorCorrectionLevel* ecLevel,
                                      int32_t& e);
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_QRCODE_BC_QRDATABLOCK_H_

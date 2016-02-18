@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXFA_H_
-#define FXFA_H_
+#ifndef XFA_INCLUDE_FXFA_FXFA_H_
+#define XFA_INCLUDE_FXFA_FXFA_H_
 
 #include <vector>
 
@@ -843,4 +843,4 @@ class IXFA_ChecksumContext {
 };
 IXFA_ChecksumContext* XFA_Checksum_Create();
 
-#endif  // FXFA_H_
+#endif  // XFA_INCLUDE_FXFA_FXFA_H_

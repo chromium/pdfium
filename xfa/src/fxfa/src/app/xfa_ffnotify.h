@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXFA_FFNOTIFY_H_
-#define _FXFA_FFNOTIFY_H_
+#ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFNOTIFY_H_
+#define XFA_SRC_FXFA_SRC_APP_XFA_FFNOTIFY_H_
+
 class CXFA_FFNotify : public IXFA_Notify {
  public:
   CXFA_FFNotify(CXFA_FFDoc* pDoc);
@@ -92,4 +93,5 @@ class CXFA_FFNotify : public IXFA_Notify {
                                   void* pParam2);
   CXFA_FFDoc* m_pDoc;
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_APP_XFA_FFNOTIFY_H_

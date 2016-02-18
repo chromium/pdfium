@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXFA_FORMFILLER_SIGNATURE_IMP_H
-#define _FXFA_FORMFILLER_SIGNATURE_IMP_H
+#ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFSIGNATURE_H_
+#define XFA_SRC_FXFA_SRC_APP_XFA_FFSIGNATURE_H_
+
 class CXFA_FFSignature final : public CXFA_FFField {
  public:
   CXFA_FFSignature(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
@@ -38,4 +39,5 @@ class CXFA_FFSignature final : public CXFA_FFField {
 
  protected:
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_APP_XFA_FFSIGNATURE_H_

@@ -4,9 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FDE_CSSDECLARATION
-#define _FDE_CSSDECLARATION
+#ifndef XFA_SRC_FDP_SRC_CSS_FDE_CSSDECLARATION_H_
+#define XFA_SRC_FDP_SRC_CSS_FDE_CSSDECLARATION_H_
+
 #include "fde_cssdatatable.h"
+
 typedef struct _FDE_CSSPROPERTYHOLDER : public CFX_Target {
   int16_t eProperty;
   int16_t bImportant;
@@ -148,4 +150,5 @@ class CFDE_CSSDeclaration : public IFDE_CSSDeclaration, public CFX_Target {
   FDE_LPCSSCUSTOMPROPERTY m_pFirstCustom;
   FDE_LPCSSCUSTOMPROPERTY m_pLastCustom;
 };
-#endif
+
+#endif  // XFA_SRC_FDP_SRC_CSS_FDE_CSSDECLARATION_H_

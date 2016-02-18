@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_COMMONCHARACTERSETECI_H_
-#define _BC_COMMONCHARACTERSETECI_H_
+#ifndef XFA_SRC_FXBARCODE_COMMON_BC_COMMONCHARACTERSETECI_H_
+#define XFA_SRC_FXBARCODE_COMMON_BC_COMMONCHARACTERSETECI_H_
+
 class CBC_CommonECI;
 class CBC_CommonCharacterSetECI;
 class CBC_CommonCharacterSetECI : public CBC_CommonECI {
@@ -23,4 +24,5 @@ class CBC_CommonCharacterSetECI : public CBC_CommonECI {
   CFX_ByteString m_encodingName;
   static void initialize();
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_COMMON_BC_COMMONCHARACTERSETECI_H_

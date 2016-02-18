@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_MEMORY_IMP
-#define _FX_MEMORY_IMP
+#ifndef XFA_SRC_FGAS_SRC_CRT_FX_MEMORY_H_
+#define XFA_SRC_FGAS_SRC_CRT_FX_MEMORY_H_
+
 class CFX_DefStore;
 class CFX_StaticStore;
 class CFX_FixedStore;
@@ -132,4 +133,5 @@ class CFX_DynamicStore : public IFX_MEMAllocator, public CFX_Target {
   FX_LPDYNAMICSTORECHUNK m_pChunk;
   FX_LPDYNAMICSTORECHUNK AllocChunk(size_t size);
 };
-#endif
+
+#endif  // XFA_SRC_FGAS_SRC_CRT_FX_MEMORY_H_

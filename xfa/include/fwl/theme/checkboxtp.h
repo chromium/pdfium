@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_CHECKBOXTP_H
-#define _FWL_CHECKBOXTP_H
+#ifndef XFA_INCLUDE_FWL_THEME_CHECKBOXTP_H_
+#define XFA_INCLUDE_FWL_THEME_CHECKBOXTP_H_
+
 class CFWL_WidgetTP;
 class CFWL_CheckBoxTP;
 class CFWL_CheckBoxTP : public CFWL_WidgetTP {
@@ -78,4 +79,5 @@ class CFWL_CheckBoxTP : public CFWL_WidgetTP {
   } * m_pThemeData;
   CFX_Path* m_pCheckPath;
 };
-#endif
+
+#endif  // XFA_INCLUDE_FWL_THEME_CHECKBOXTP_H_

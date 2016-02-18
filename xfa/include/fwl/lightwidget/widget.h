@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_WIDGET_LIGHT_H
-#define _FWL_WIDGET_LIGHT_H
+#ifndef XFA_INCLUDE_FWL_LIGHTWIDGET_WIDGET_H_
+#define XFA_INCLUDE_FWL_LIGHTWIDGET_WIDGET_H_
 
 #include "xfa/include/fwl/core/fwl_widget.h"
 
@@ -104,4 +104,5 @@ class CFWL_WidgetDelegate {
   virtual FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
                                const CFX_Matrix* pMatrix = NULL);
 };
-#endif
+
+#endif  // XFA_INCLUDE_FWL_LIGHTWIDGET_WIDGET_H_

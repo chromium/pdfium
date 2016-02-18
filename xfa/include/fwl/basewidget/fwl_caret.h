@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_CARET_H
-#define _FWL_CARET_H
+#ifndef XFA_INCLUDE_FWL_BASEWIDGET_FWL_CARET_H_
+#define XFA_INCLUDE_FWL_BASEWIDGET_FWL_CARET_H_
+
 class CFWL_WidgetImpProperties;
 class IFWL_Widget;
 class IFWL_Caret;
@@ -28,4 +29,5 @@ class IFWL_Caret : public IFWL_Widget {
  protected:
   IFWL_Caret();
 };
-#endif
+
+#endif  // XFA_INCLUDE_FWL_BASEWIDGET_FWL_CARET_H_

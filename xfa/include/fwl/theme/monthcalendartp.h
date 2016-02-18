@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_MONTHCALENDARTP_H
-#define _FWL_MONTHCALENDARTP_H
+#ifndef XFA_INCLUDE_FWL_THEME_MONTHCALENDARTP_H_
+#define XFA_INCLUDE_FWL_THEME_MONTHCALENDARTP_H_
+
 class CFWL_WidgetTP;
 class CFWL_MonthCalendarTP;
 class CFWL_MonthCalendarTP : public CFWL_WidgetTP {
@@ -46,4 +47,5 @@ class CFWL_MonthCalendarTP : public CFWL_WidgetTP {
   } * m_pThemeData;
   CFX_WideString wsResource;
 };
-#endif
+
+#endif  // XFA_INCLUDE_FWL_THEME_MONTHCALENDARTP_H_

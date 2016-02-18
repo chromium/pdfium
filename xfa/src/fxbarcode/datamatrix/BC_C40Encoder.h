@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_C40ENCODER_H_
-#define _BC_C40ENCODER_H_
+#ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_C40ENCODER_H_
+#define XFA_SRC_FXBARCODE_DATAMATRIX_BC_C40ENCODER_H_
+
 class CBC_C40Encoder;
 class CBC_C40Encoder : public CBC_Encoder {
  public:
@@ -28,4 +29,5 @@ class CBC_C40Encoder : public CBC_Encoder {
                                 int32_t& e);
   static CFX_WideString encodeToCodewords(CFX_WideString sb, int32_t startPos);
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_DATAMATRIX_BC_C40ENCODER_H_

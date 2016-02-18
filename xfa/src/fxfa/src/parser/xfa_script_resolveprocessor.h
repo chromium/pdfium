@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _XFA_RESOLVEPROCESSOR_H_
-#define _XFA_RESOLVEPROCESSOR_H_
+#ifndef XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_RESOLVEPROCESSOR_H_
+#define XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_RESOLVEPROCESSOR_H_
+
 class CXFA_NodeHelper;
 class CXFA_ScriptContext;
 class CXFA_ResolveNodesData {
@@ -76,4 +77,5 @@ class CXFA_ResolveProcessor {
  public:
   int32_t m_iCurStart;
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_RESOLVEPROCESSOR_H_

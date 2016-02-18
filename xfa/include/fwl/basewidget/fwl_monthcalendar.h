@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_MONTHCALENDAR_H
-#define _FWL_MONTHCALENDAR_H
+#ifndef XFA_INCLUDE_FWL_BASEWIDGET_FWL_MONTHCALENDAR_H_
+#define XFA_INCLUDE_FWL_BASEWIDGET_FWL_MONTHCALENDAR_H_
+
 class IFWL_MonthCalendarDP;
 class IFWL_MonthCalendar;
 #define FWL_CLASS_MonthCalendar L"FWL_MONTHCALENDAR"
@@ -127,4 +128,5 @@ class IFWL_MonthCalendar : public IFWL_Widget {
  protected:
   IFWL_MonthCalendar();
 };
-#endif
+
+#endif  // XFA_INCLUDE_FWL_BASEWIDGET_FWL_MONTHCALENDAR_H_

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FONTMGR_H_
-#define XFA_FONTMGR_H_
+#ifndef XFA_SRC_FXFA_SRC_APP_XFA_FONTMGR_H_
+#define XFA_SRC_FXFA_SRC_APP_XFA_FONTMGR_H_
 
 #include <map>
 
@@ -90,4 +90,4 @@ class CXFA_FontMgr {
   std::map<CFX_ByteString, IFX_Font*> m_FontMap;
 };
 
-#endif  //  XFA_FONTMGR_H_
+#endif  //  XFA_SRC_FXFA_SRC_APP_XFA_FONTMGR_H_

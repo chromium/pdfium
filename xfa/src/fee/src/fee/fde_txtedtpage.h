@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FDE_TXTEDTPAGE_H
-#define _FDE_TXTEDTPAGE_H
+#ifndef XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTPAGE_H_
+#define XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTPAGE_H_
+
 class CFDE_TxtEdtEngine;
 class IFX_CharIter;
 class CFDE_TxtEdtPage;
@@ -151,4 +152,5 @@ class CFDE_TxtEdtPage : public IFDE_TxtEdtPage {
   CFX_RectF m_rtPageCanvas;
   int32_t* m_pCharWidth;
 };
-#endif
+
+#endif  // XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTPAGE_H_

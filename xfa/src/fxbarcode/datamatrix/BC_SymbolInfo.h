@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_SYMBOLINFO_H_
-#define _BC_SYMBOLINFO_H_
+#ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_SYMBOLINFO_H_
+#define XFA_SRC_FXBARCODE_DATAMATRIX_BC_SYMBOLINFO_H_
+
 class CBC_SymbolShapeHint;
 class CBC_Dimension;
 class CBC_SymbolInfo;
@@ -75,4 +76,5 @@ class CBC_SymbolInfo : public CBC_SymbolShapeHint {
                  int32_t rsBlockData,
                  int32_t rsBlockError);
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_DATAMATRIX_BC_SYMBOLINFO_H_

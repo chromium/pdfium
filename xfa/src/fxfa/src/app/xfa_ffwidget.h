@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FFWIDGET_H_
-#define XFA_FFWIDGET_H_
+#ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFWIDGET_H_
+#define XFA_SRC_FXFA_SRC_APP_XFA_FFWIDGET_H_
 
 #include <vector>
 
@@ -186,4 +186,4 @@ void XFA_DrawBox(CXFA_Box box,
                  CFX_Matrix* pMatrix,
                  FX_DWORD dwFlags = 0);
 
-#endif  // XFA_FFWIDGET_H_
+#endif  // XFA_SRC_FXFA_SRC_APP_XFA_FFWIDGET_H_

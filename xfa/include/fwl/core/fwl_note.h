@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_NOTE_H
-#define _FWL_NOTE_H
+#ifndef XFA_INCLUDE_FWL_CORE_FWL_NOTE_H_
+#define XFA_INCLUDE_FWL_CORE_FWL_NOTE_H_
+
 class IFWL_Target;
 class IFWL_Widget;
 class IFWL_NoteThread;
@@ -373,4 +374,5 @@ typedef FX_BOOL (*FWLMessageHookCallback)(CFWL_Message* msg, void* info);
 FWL_ERR FWL_SetHook(IFWL_NoteDriver* driver,
                     FWLMessageHookCallback callback,
                     void* info);
-#endif
+
+#endif  // XFA_INCLUDE_FWL_CORE_FWL_NOTE_H_

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_DATAMATRIXDATABLOCK_H_
-#define _BC_DATAMATRIXDATABLOCK_H_
+#ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXDATABLOCK_H_
+#define XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXDATABLOCK_H_
+
 class CBC_DataMatrixVersion;
 class CBC_DataMatrixDataBlock {
  public:
@@ -24,4 +25,5 @@ class CBC_DataMatrixDataBlock {
 
   CBC_DataMatrixDataBlock(int32_t numDataCodewords, CFX_ByteArray* codewords);
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXDATABLOCK_H_

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXFA_SRC_APP_XFA_FFDOC_H_
-#define FXFA_SRC_APP_XFA_FFDOC_H_
+#ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFDOC_H_
+#define XFA_SRC_FXFA_SRC_APP_XFA_FFDOC_H_
 
 #include "xfa/include/fxfa/fxfa.h"
 
@@ -61,4 +61,4 @@ class CXFA_FFDoc : public IXFA_Doc {
   FX_BOOL m_bOwnStream;
 };
 
-#endif  // FXFA_SRC_APP_XFA_FFDOC_H_
+#endif  // XFA_SRC_FXFA_SRC_APP_XFA_FFDOC_H_

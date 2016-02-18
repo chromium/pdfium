@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_REEDSOLOMONGF256_H_
-#define _BC_REEDSOLOMONGF256_H_
+#ifndef XFA_SRC_FXBARCODE_COMMON_REEDSOLOMON_BC_REEDSOLOMONGF256_H_
+#define XFA_SRC_FXBARCODE_COMMON_REEDSOLOMON_BC_REEDSOLOMONGF256_H_
+
 class CBC_ReedSolomonGF256Poly;
 class CBC_ReedSolomonGF256 {
  public:
@@ -33,4 +34,5 @@ class CBC_ReedSolomonGF256 {
   CBC_ReedSolomonGF256Poly* m_zero;
   CBC_ReedSolomonGF256Poly* m_one;
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_COMMON_REEDSOLOMON_BC_REEDSOLOMONGF256_H_

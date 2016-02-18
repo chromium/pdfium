@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FDE_XML_H_
-#define FDE_XML_H_
+#ifndef XFA_SRC_FDP_INCLUDE_FDE_XML_H_
+#define XFA_SRC_FDP_INCLUDE_FDE_XML_H_
 
 class IFDE_XMLNode;
 class IFDE_XMLInstruction;
@@ -230,4 +230,4 @@ class IFDE_XMLSyntaxParser {
   virtual void GetTargetData(CFX_WideString& wsData) const = 0;
 };
 
-#endif  // FDE_XML_H_
+#endif  // XFA_SRC_FDP_INCLUDE_FDE_XML_H_

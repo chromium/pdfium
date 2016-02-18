@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FDE_CSSDATATABLE
-#define _FDE_CSSDATATABLE
+#ifndef XFA_SRC_FDP_SRC_CSS_FDE_CSSDATATABLE_H_
+#define XFA_SRC_FDP_SRC_CSS_FDE_CSSDATATABLE_H_
+
 class CFDE_CSSFunction : public CFX_Target {
  public:
   CFDE_CSSFunction(const FX_WCHAR* pszFuncName, IFDE_CSSValueList* pArgList)
@@ -192,4 +193,4 @@ FX_BOOL FDE_ParseCSSURI(const FX_WCHAR* pszValue,
                         int32_t& iOffset,
                         int32_t& iLength);
 
-#endif
+#endif  // XFA_SRC_FDP_SRC_CSS_FDE_CSSDATATABLE_H_

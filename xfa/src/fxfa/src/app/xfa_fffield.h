@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXFA_FORMFILLER_FIELD_IMP_H
-#define _FXFA_FORMFILLER_FIELD_IMP_H
+#ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFFIELD_H_
+#define XFA_SRC_FXFA_SRC_APP_XFA_FFFIELD_H_
+
 #define XFA_MINUI_HEIGHT 4.32f
 #define XFA_DEFAULTUI_HEIGHT 2.0f
 class CXFA_TextLayout;
@@ -89,4 +90,5 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   CFX_RectF m_rtUI;
   CFX_RectF m_rtCaption;
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_APP_XFA_FFFIELD_H_

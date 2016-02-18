@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FDE_CSSCACHE
-#define _FDE_CSSCACHE
+#ifndef XFA_SRC_FDP_SRC_CSS_FDE_CSSCACHE_H_
+#define XFA_SRC_FDP_SRC_CSS_FDE_CSSCACHE_H_
+
 typedef struct _FDE_CSSCACHEITEM : public CFX_Target {
   _FDE_CSSCACHEITEM(IFDE_CSSStyleSheet* p);
   ~_FDE_CSSCACHEITEM();
@@ -71,4 +72,5 @@ class CFDE_CSSAccelerator : public IFDE_CSSAccelerator, public CFX_Target {
  protected:
   CFDE_CSSTagStack m_Stack;
 };
-#endif
+
+#endif  // XFA_SRC_FDP_SRC_CSS_FDE_CSSCACHE_H_

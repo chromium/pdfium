@@ -6,5 +6,10 @@
 
 // TODO(thestig): Remove this file and do IWYU.
 
+#ifndef XFA_SRC_FXBARCODE_BARCODE_H_
+#define XFA_SRC_FXBARCODE_BARCODE_H_
+
 #include "xfa/src/foxitlib.h"
 #include "utils.h"
+
+#endif  // XFA_SRC_FXBARCODE_BARCODE_H_

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _SCRIPT_HOSTPSEUDOMODEL_H_
-#define _SCRIPT_HOSTPSEUDOMODEL_H_
+#ifndef XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_HOSTPSEUDOMODEL_H_
+#define XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_HOSTPSEUDOMODEL_H_
+
 class CScript_HostPseudoModel : public CXFA_OrdinaryObject {
  public:
   CScript_HostPseudoModel(CXFA_Document* pDocument);
@@ -81,4 +82,5 @@ class CScript_HostPseudoModel : public CXFA_OrdinaryObject {
       int32_t iArgIndex,
       CFX_WideString& wsValue);
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_HOSTPSEUDOMODEL_H_

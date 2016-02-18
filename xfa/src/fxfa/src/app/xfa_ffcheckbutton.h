@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXFA_FORMFILLER_CHECKBUTTON_IMP_H
-#define _FXFA_FORMFILLER_CHECKBUTTON_IMP_H
+#ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFCHECKBUTTON_H_
+#define XFA_SRC_FXFA_SRC_APP_XFA_FFCHECKBUTTON_H_
+
 class CXFA_FFExclGroup;
 class CXFA_FFCheckButton : public CXFA_FFField {
  public:
@@ -36,4 +37,5 @@ class CXFA_FFCheckButton : public CXFA_FFField {
   IFWL_WidgetDelegate* m_pOldDelegate;
   CFX_RectF m_rtCheckBox;
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_APP_XFA_FFCHECKBUTTON_H_

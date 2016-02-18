@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FFTEXTEDIT_H_
-#define XFA_FFTEXTEDIT_H_
+#ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFTEXTEDIT_H_
+#define XFA_SRC_FXFA_SRC_APP_XFA_FFTEXTEDIT_H_
 
 class CXFA_FFTextEdit : public CXFA_FFField {
  public:
@@ -131,4 +131,4 @@ class CXFA_FFDateTimeEdit : public CXFA_FFTextEdit {
   virtual FWL_ERR OnProcessEvent(CFWL_Event* pEvent);
 };
 
-#endif  // XFA_FFTEXTEDIT_H_
+#endif  // XFA_SRC_FXFA_SRC_APP_XFA_FFTEXTEDIT_H_

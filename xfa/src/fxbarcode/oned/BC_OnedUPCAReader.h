@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_ONEDUPCAREADER_H_
-#define _BC_ONEDUPCAREADER_H_
+#ifndef XFA_SRC_FXBARCODE_ONED_BC_ONEDUPCAREADER_H_
+#define XFA_SRC_FXBARCODE_ONED_BC_ONEDUPCAREADER_H_
+
 class CBC_BinaryBitmap;
 class CBC_CommonBitArray;
 class CBC_OneDimReader;
@@ -38,4 +39,5 @@ class CBC_OnedUPCAReader : public CBC_OneDimReader {
                        int32_t& e);
   CFX_ByteString MaybeReturnResult(CFX_ByteString& result, int32_t& e);
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_ONED_BC_ONEDUPCAREADER_H_

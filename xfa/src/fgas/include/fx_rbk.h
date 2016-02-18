@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_RTFBREAK
-#define _FX_RTFBREAK
+#ifndef XFA_SRC_FGAS_INCLUDE_FX_RBK_H_
+#define XFA_SRC_FGAS_INCLUDE_FX_RBK_H_
+
 class IFX_Unknown;
 class IFX_Font;
 class CFX_Char;
@@ -225,4 +226,5 @@ class IFX_RTFBreak {
                                CFX_RectFArray& rtArray,
                                FX_BOOL bCharBBox = FALSE) const = 0;
 };
-#endif
+
+#endif  // XFA_SRC_FGAS_INCLUDE_FX_RBK_H_

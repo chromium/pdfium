@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FDE_TXTEDTENGINE_H
-#define _FDE_TXTEDTENGINE_H
+#ifndef XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTENGINE_H_
+#define XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTENGINE_H_
+
 class CFDE_TxtEdtBuf;
 class CFDE_TxtEdtPage;
 class IFX_TxtBreak;
@@ -369,4 +370,5 @@ class CFDE_TxtEdtDoRecord_FieldReplace : public IFDE_TxtEdtDoRecord {
   FX_BOOL m_bSel;
 };
 #endif
-#endif
+
+#endif  // XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTENGINE_H_

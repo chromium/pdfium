@@ -4,10 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _JBIG2_PATTERN_DICT_H_
-#define _JBIG2_PATTERN_DICT_H_
+#ifndef CORE_SRC_FXCODEC_JBIG2_JBIG2_PATTERNDICT_H_
+#define CORE_SRC_FXCODEC_JBIG2_JBIG2_PATTERNDICT_H_
+
 #include "core/src/fxcodec/jbig2/JBig2_Define.h"
 #include "core/src/fxcodec/jbig2/JBig2_Image.h"
+
 class CJBig2_PatternDict {
  public:
   CJBig2_PatternDict();
@@ -17,4 +19,5 @@ class CJBig2_PatternDict {
   FX_DWORD NUMPATS;
   CJBig2_Image** HDPATS;
 };
-#endif
+
+#endif  // CORE_SRC_FXCODEC_JBIG2_JBIG2_PATTERNDICT_H_

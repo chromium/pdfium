@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXFA_TEXTLAYOUT_H
-#define _FXFA_TEXTLAYOUT_H
+#ifndef XFA_SRC_FXFA_SRC_APP_XFA_TEXTLAYOUT_H_
+#define XFA_SRC_FXFA_SRC_APP_XFA_TEXTLAYOUT_H_
+
 #define XFA_LOADERCNTXTFLG_FILTERSPACE 0x001
 class CXFA_TextTabstopsContext;
 class IXFA_TextProvider {
@@ -403,4 +404,5 @@ class CXFA_TextLayout {
   CXFA_TextTabstopsContext* m_pTabstopContext;
   FX_BOOL m_bBlockContinue;
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_APP_XFA_TEXTLAYOUT_H_

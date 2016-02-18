@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_ERRORCORRECTION_H_
-#define _BC_ERRORCORRECTION_H_
+#ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_ERRORCORRECTION_H_
+#define XFA_SRC_FXBARCODE_DATAMATRIX_BC_ERRORCORRECTION_H_
+
 class CBC_SymbolInfo;
 class CBC_ErrorCorrection {
  public:
@@ -34,4 +35,5 @@ class CBC_ErrorCorrection {
                                        int32_t numECWords,
                                        int32_t& e);
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_DATAMATRIX_BC_ERRORCORRECTION_H_

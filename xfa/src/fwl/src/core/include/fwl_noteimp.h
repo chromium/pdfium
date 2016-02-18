@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_NOTE_IMP_H
-#define _FWL_NOTE_IMP_H
+#ifndef XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_NOTEIMP_H_
+#define XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_NOTEIMP_H_
 
 #include "xfa/include/fwl/core/fwl_note.h"
 
@@ -155,4 +155,5 @@ class CFWL_ToolTipContainer {
  private:
   static CFWL_ToolTipContainer* s_pInstance;
 };
-#endif
+
+#endif  // XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_NOTEIMP_H_

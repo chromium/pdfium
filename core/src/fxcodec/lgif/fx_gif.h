@@ -4,6 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#ifndef CORE_SRC_FXCODEC_LGIF_FX_GIF_H_
+#define CORE_SRC_FXCODEC_LGIF_FX_GIF_H_
+
 #include <setjmp.h>
 
 #include "core/include/fxcrt/fx_basic.h"
@@ -298,6 +301,7 @@ struct tag_gif_compress_struct {
   FX_DWORD pte_data_len;
 #endif
 };
+
 void _gif_error(gif_decompress_struct_p gif_ptr, const FX_CHAR* err_msg);
 void _gif_warn(gif_decompress_struct_p gif_ptr, const FX_CHAR* err_msg);
 gif_decompress_struct_p _gif_create_decompress();
@@ -330,3 +334,5 @@ FX_BOOL _gif_encode(gif_compress_struct_p gif_ptr,
     _gif_error(gif_ptr, "Out Of Memory"); \
     return 0;                             \
   }
+
+#endif  // CORE_SRC_FXCODEC_LGIF_FX_GIF_H_

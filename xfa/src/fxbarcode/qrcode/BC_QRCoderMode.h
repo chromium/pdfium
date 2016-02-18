@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_QRCODERMODE_H_
-#define _BC_QRCODERMODE_H_
+#ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERMODE_H_
+#define XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERMODE_H_
+
 class CBC_QRCoderVersion;
 class CBC_QRCoderMode {
  private:
@@ -41,4 +42,5 @@ class CBC_QRCoderMode {
   CFX_ByteString GetName();
   static void Destroy();
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERMODE_H_

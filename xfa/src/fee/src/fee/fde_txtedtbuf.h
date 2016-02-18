@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FDE_TXTEDTBUF_H
-#define _FDE_TXTEDTBUF_H
+#ifndef XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTBUF_H_
+#define XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTBUF_H_
+
 class IFX_CharIter;
 class CFDE_TxtEdtBufIter;
 class CFDE_TxtEdtBuf;
@@ -91,4 +92,5 @@ class CFDE_TxtEdtBuf : public IFDE_TxtEdtBuf {
   CFX_PtrArray m_Chunks;
   IFX_MEMAllocator* m_pAllocator;
 };
-#endif
+
+#endif  // XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTBUF_H_

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _XFA_DRAW_PATH_IMP_H
-#define _XFA_DRAW_PATH_IMP_H
+#ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFPATH_H_
+#define XFA_SRC_FXFA_SRC_APP_XFA_FFPATH_H_
+
 class CXFA_FFLine : public CXFA_FFDraw {
  public:
   CXFA_FFLine(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
@@ -36,4 +37,5 @@ class CXFA_FFRectangle : public CXFA_FFDraw {
                             FX_DWORD dwStatus = 0,
                             int32_t iRotate = 0);
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_APP_XFA_FFPATH_H_

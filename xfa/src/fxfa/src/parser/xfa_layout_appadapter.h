@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _XFA_LAYOUT_APPADAPTER_H_
-#define _XFA_LAYOUT_APPADAPTER_H_
+#ifndef XFA_SRC_FXFA_SRC_PARSER_XFA_LAYOUT_APPADAPTER_H_
+#define XFA_SRC_FXFA_SRC_PARSER_XFA_LAYOUT_APPADAPTER_H_
+
 class CXFA_TraverseStrategy_PageAreaContainerLayoutItem {
  public:
   static inline CXFA_ContainerLayoutItem* GetFirstChild(
@@ -70,4 +71,5 @@ class CXFA_TraverseStrategy_ContentLayoutItem {
 };
 FX_DWORD XFA_GetRelevant(CXFA_Node* pFormItem, FX_DWORD dwParentRelvant);
 void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem);
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_PARSER_XFA_LAYOUT_APPADAPTER_H_

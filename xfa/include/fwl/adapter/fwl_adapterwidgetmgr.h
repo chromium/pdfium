@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_ADAPTER_WIDGETMGR_H
-#define _FWL_ADAPTER_WIDGETMGR_H
+#ifndef XFA_INCLUDE_FWL_ADAPTER_FWL_ADAPTERWIDGETMGR_H_
+#define XFA_INCLUDE_FWL_ADAPTER_FWL_ADAPTERWIDGETMGR_H_
+
 class IFWL_Widget;
 class IFWL_Menu;
 class IFWL_MenuDP;
@@ -73,4 +74,5 @@ class IFWL_AdapterWidgetMgr {
                               const CFX_RectF& rtAnchor,
                               CFX_RectF& rtPopup) = 0;
 };
-#endif
+
+#endif  // XFA_INCLUDE_FWL_ADAPTER_FWL_ADAPTERWIDGETMGR_H_

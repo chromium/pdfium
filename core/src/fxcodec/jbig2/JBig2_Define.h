@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _JBIG2_DEFINE_H_
-#define _JBIG2_DEFINE_H_
+#ifndef CORE_SRC_FXCODEC_JBIG2_JBIG2_DEFINE_H_
+#define CORE_SRC_FXCODEC_JBIG2_JBIG2_DEFINE_H_
 
 #include "core/include/fxcrt/fx_system.h"
 
@@ -33,4 +33,4 @@ struct JBig2HuffmanCode {
 #define JBIG2_MAX_PATTERN_INDEX 65535
 #define JBIG2_MAX_IMAGE_SIZE 65535
 
-#endif
+#endif  // CORE_SRC_FXCODEC_JBIG2_JBIG2_DEFINE_H_

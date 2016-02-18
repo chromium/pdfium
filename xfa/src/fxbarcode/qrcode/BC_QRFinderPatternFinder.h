@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_QRFINDERPATTERNFINDER_H_
-#define _BC_QRFINDERPATTERNFINDER_H_
+#ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRFINDERPATTERNFINDER_H_
+#define XFA_SRC_FXBARCODE_QRCODE_BC_QRFINDERPATTERNFINDER_H_
+
 class CBC_CommonBitMatrix;
 class CBC_QRFinderPattern;
 class CBC_ResultPoint;
@@ -50,4 +51,5 @@ class CBC_QRFinderPatternFinder {
   static FX_BOOL FoundPatternCross(const CFX_Int32Array& stateCount);
   static FX_FLOAT Distance(CBC_ResultPoint* point1, CBC_ResultPoint* point2);
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_QRCODE_BC_QRFINDERPATTERNFINDER_H_

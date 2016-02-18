@@ -6,8 +6,9 @@
 
 // TODO(thestig): Remove this file and do IWYU.
 
-#ifndef _FWL_H
-#define _FWL_H
+#ifndef XFA_INCLUDE_FWL_FWL_H_
+#define XFA_INCLUDE_FWL_FWL_H_
+
 #include "xfa/include/fwl/core/fwl_error.h"
 #include "xfa/include/fwl/core/fwl_target.h"
 #include "xfa/include/fwl/core/fwl_thread.h"
@@ -72,4 +73,5 @@
 #include "xfa/include/fwl/adapter/fwl_adaptertimermgr.h"
 #include "xfa/include/fwl/adapter/fwl_adapterwidgetmgr.h"
 #include "xfa/include/fwl/adapter/fwl_sdadapterimp.h"
-#endif
+
+#endif  // XFA_INCLUDE_FWL_FWL_H_

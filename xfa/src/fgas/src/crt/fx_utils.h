@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_UTILS_IMP
-#define _FX_UTILS_IMP
+#ifndef XFA_SRC_FGAS_SRC_CRT_FX_UTILS_H_
+#define XFA_SRC_FGAS_SRC_CRT_FX_UTILS_H_
+
 class CFX_BaseMassArrayImp : public CFX_Target {
  public:
   CFX_BaseMassArrayImp(int32_t iChunkSize, int32_t iBlockSize);
@@ -33,4 +34,5 @@ class CFX_BaseMassArrayImp : public CFX_Target {
               int32_t iSrcStart = 0,
               int32_t iSrcCount = -1);
 };
-#endif
+
+#endif  // XFA_SRC_FGAS_SRC_CRT_FX_UTILS_H_

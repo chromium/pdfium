@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_BARCODEMATRIX_H_
-#define _BC_BARCODEMATRIX_H_
+#ifndef XFA_SRC_FXBARCODE_PDF417_BC_PDF417BARCODEMATRIX_H_
+#define XFA_SRC_FXBARCODE_PDF417_BC_PDF417BARCODEMATRIX_H_
+
 class CBC_BarcodeRow;
 class CBC_BarcodeMatrix {
  public:
@@ -31,4 +32,5 @@ class CBC_BarcodeMatrix {
   int32_t m_outWidth;
   int32_t m_outHeight;
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_PDF417_BC_PDF417BARCODEMATRIX_H_

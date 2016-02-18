@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_CHECKBOX_IMP_H
-#define _FWL_CHECKBOX_IMP_H
+#ifndef XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_CHECKBOXIMP_H_
+#define XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_CHECKBOXIMP_H_
+
 class CFWL_WidgetImp;
 class CFWL_WidgetImpProperties;
 class CFWL_WidgetImpDelegate;
@@ -59,4 +60,5 @@ class CFWL_CheckBoxImpDelegate : public CFWL_WidgetImpDelegate {
   void OnKeyDown(CFWL_MsgKey* pMsg);
   CFWL_CheckBoxImp* m_pOwner;
 };
-#endif
+
+#endif  // XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_CHECKBOXIMP_H_

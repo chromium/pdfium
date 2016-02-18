@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_WIDGETMGR_H
-#define _FWL_WIDGETMGR_H
+#ifndef XFA_INCLUDE_FWL_CORE_FWL_WIDGETMGR_H_
+#define XFA_INCLUDE_FWL_CORE_FWL_WIDGETMGR_H_
+
 class IFWL_Widget;
 class IFWL_WidgetMgr;
 class IFWL_WidgetMgrDelegate;
@@ -51,4 +52,5 @@ class IFWL_WidgetMgrDelegate {
 FWL_ERR FWL_WidgetMgrSnapshot(IFWL_Widget* pWidget,
                               const CFX_WideString* saveFile,
                               const CFX_Matrix* pMatrix = NULL);
-#endif
+
+#endif  // XFA_INCLUDE_FWL_CORE_FWL_WIDGETMGR_H_

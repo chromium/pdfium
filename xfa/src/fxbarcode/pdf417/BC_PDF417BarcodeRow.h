@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_BARCODEROW_H_
-#define _BC_BARCODEROW_H_
+#ifndef XFA_SRC_FXBARCODE_PDF417_BC_PDF417BARCODEROW_H_
+#define XFA_SRC_FXBARCODE_PDF417_BC_PDF417BARCODEROW_H_
+
 class CBC_BarcodeRow {
  public:
   CBC_BarcodeRow(int32_t width);
@@ -21,4 +22,5 @@ class CBC_BarcodeRow {
   CFX_ByteArray m_output;
   int32_t m_currentLocation;
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_PDF417_BC_PDF417BARCODEROW_H_

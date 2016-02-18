@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_QRDECODEDBITSTREAMPARSER_H_
-#define _BC_QRDECODEDBITSTREAMPARSER_H_
+#ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRDECODEDBITSTREAMPARSER_H_
+#define XFA_SRC_FXBARCODE_QRCODE_BC_QRDECODEDBITSTREAMPARSER_H_
+
 class CBC_CommonDecoderResult;
 class CBC_QRCoderErrorCorrectionLevel;
 class CBC_CommonBitSource;
@@ -54,4 +55,5 @@ class CBC_QRDecodedBitStreamParser {
       int32_t byteModeDecode,
       int32_t& e);
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_QRCODE_BC_QRDECODEDBITSTREAMPARSER_H_

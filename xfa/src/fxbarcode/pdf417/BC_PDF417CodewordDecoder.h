@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_PDF417CODEWORDDECODER_H_
-#define _BC_PDF417CODEWORDDECODER_H_
+#ifndef XFA_SRC_FXBARCODE_PDF417_BC_PDF417CODEWORDDECODER_H_
+#define XFA_SRC_FXBARCODE_PDF417_BC_PDF417CODEWORDDECODER_H_
+
 class CBC_PDF417CodewordDecoder;
 #define column 8
 class CBC_PDF417Common;
@@ -24,4 +25,5 @@ class CBC_PDF417CodewordDecoder {
   static int32_t getBitValue(CFX_Int32Array& moduleBitCount);
   static int32_t getClosestDecodedValue(CFX_Int32Array& moduleBitCount);
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_PDF417_BC_PDF417CODEWORDDECODER_H_

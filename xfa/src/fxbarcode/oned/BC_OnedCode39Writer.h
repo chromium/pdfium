@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_ONEDCODA39WRITER_H_
-#define _BC_ONEDCODA39WRITER_H_
+#ifndef XFA_SRC_FXBARCODE_ONED_BC_ONEDCODA39WRITER_H_
+#define XFA_SRC_FXBARCODE_ONED_BC_ONEDCODA39WRITER_H_
+
 enum BC_TEXT_LOC;
 class CBC_OneDimWriter;
 class CBC_OnedCoda39Writer;
@@ -49,4 +50,5 @@ class CBC_OnedCode39Writer : public CBC_OneDimWriter {
   int32_t m_iWideNarrRatio;
   FX_BOOL m_extendedMode;
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_ONED_BC_ONEDCODA39WRITER_H_

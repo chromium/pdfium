@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FDE_CSSSTYLESELECTOR
-#define _FDE_CSSSTYLESELECTOR
+#ifndef XFA_SRC_FDP_SRC_CSS_FDE_CSSSTYLESELECTOR_H_
+#define XFA_SRC_FDP_SRC_CSS_FDE_CSSSTYLESELECTOR_H_
+
 #define FDE_CSSUNIVERSALHASH ('*')
 typedef struct _FDE_CSSRULEDATA : public CFX_Target {
  public:
@@ -883,4 +884,5 @@ class CFDE_CSSComputedStyle : public IFDE_CSSComputedStyle,
   CFDE_CSSNonInheritedData m_NonInheritedData;
   CFX_WideStringArray m_CustomProperties;
 };
-#endif
+
+#endif  // XFA_SRC_FDP_SRC_CSS_FDE_CSSSTYLESELECTOR_H_

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_MONTHCALENDAR_IMP_H
-#define _FWL_MONTHCALENDAR_IMP_H
+#ifndef XFA_SRC_FWL_BASEWIDGET_INCLUDE_FWL_MONTHCALENDARIMP_H_
+#define XFA_SRC_FWL_BASEWIDGET_INCLUDE_FWL_MONTHCALENDARIMP_H_
+
 class CFWL_WidgetImp;
 class CFWL_WidgetImpProperties;
 class CFWL_WidgetImpDelegate;
@@ -245,4 +246,5 @@ class CFWL_MonthCalendarImpDelegate : public CFWL_WidgetImpDelegate {
   void OnMouseLeave(CFWL_MsgMouse* pMsg);
   CFWL_MonthCalendarImp* m_pOwner;
 };
-#endif
+
+#endif  // XFA_SRC_FWL_BASEWIDGET_INCLUDE_FWL_MONTHCALENDARIMP_H_

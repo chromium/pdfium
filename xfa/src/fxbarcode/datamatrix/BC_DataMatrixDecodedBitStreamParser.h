@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_DATAMATRIXDECODEDBITSTREAMPARSER_H_
-#define _BC_DATAMATRIXDECODEDBITSTREAMPARSER_H_
+#ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXDECODEDBITSTREAMPARSER_H_
+#define XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXDECODEDBITSTREAMPARSER_H_
 class CBC_CommonDecoderResult;
 class CBC_CommonBitSource;
 class CBC_DataMatrixDecodedBitStreamParser {
@@ -54,4 +54,5 @@ class CBC_DataMatrixDecodedBitStreamParser {
   const static int32_t EDIFACT_ENCODE;
   const static int32_t BASE256_ENCODE;
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXDECODEDBITSTREAMPARSER_H_

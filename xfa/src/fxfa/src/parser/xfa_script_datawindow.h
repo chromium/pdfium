@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _SCRIPT_DATAWINDOW_H_
-#define _SCRIPT_DATAWINDOW_H_
+#ifndef XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_DATAWINDOW_H_
+#define XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_DATAWINDOW_H_
+
 class CScript_DataWindow : public CXFA_OrdinaryObject {
  public:
   CScript_DataWindow(CXFA_Document* pDocument);
@@ -27,4 +28,5 @@ class CScript_DataWindow : public CXFA_OrdinaryObject {
                                    FX_BOOL bSetting,
                                    XFA_ATTRIBUTE eAttribute);
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_DATAWINDOW_H_

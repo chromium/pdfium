@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_CARET_IMP_H
-#define _FWL_CARET_IMP_H
+#ifndef XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_CARETIMP_H
+#define XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_CARETIMP_H
 
 #include "xfa/include/fwl/core/fwl_timer.h"
 
@@ -64,4 +64,5 @@ class CFWL_CaretImpDelegate : public CFWL_WidgetImpDelegate {
  protected:
   CFWL_CaretImp* m_pOwner;
 };
-#endif
+
+#endif  // XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_CARETIMP_H

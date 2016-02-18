@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_DATETIMEPICKER_IMP_H
-#define _FWL_DATETIMEPICKER_IMP_H
+#ifndef XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_DATETIMEPICKERIMP_H_
+#define XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_DATETIMEPICKERIMP_H_
 
 #include <memory>
 
@@ -228,4 +228,5 @@ class CFWL_DateTimePickerImpDelegate : public CFWL_WidgetImpDelegate {
  private:
   void DisForm_OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet = TRUE);
 };
-#endif
+
+#endif  // XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_DATETIMEPICKERIMP_H_

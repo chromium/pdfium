@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXFA_WIDGETVALUE_H
-#define _FXFA_WIDGETVALUE_H
+#ifndef XFA_SRC_FXFA_SRC_COMMON_FXFA_LOCALVALUE_H_
+#define XFA_SRC_FXFA_SRC_COMMON_FXFA_LOCALVALUE_H_
+
 class IFX_Locale;
 class CFX_Unitime;
 class CXFA_LocaleMgr;
@@ -103,4 +104,5 @@ class CXFA_LocaleValue {
   FX_DWORD m_dwType;
   FX_BOOL m_bValid;
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_COMMON_FXFA_LOCALVALUE_H_

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_SPINBUTTON_H
-#define _FWL_SPINBUTTON_H
+#ifndef XFA_INCLUDE_FWL_BASEWIDGET_FWL_SPINBUTTON_H_
+#define XFA_INCLUDE_FWL_BASEWIDGET_FWL_SPINBUTTON_H_
+
 class CFWL_WidgetImpProperties;
 class IFWL_Widget;
 class IFWL_SpinButton;
@@ -39,4 +40,5 @@ class IFWL_SpinButton : public IFWL_Widget {
  protected:
   IFWL_SpinButton();
 };
-#endif
+
+#endif  // XFA_INCLUDE_FWL_BASEWIDGET_FWL_SPINBUTTON_H_

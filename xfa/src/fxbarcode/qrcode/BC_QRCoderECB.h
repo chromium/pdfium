@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_QRCODERECB_H_
-#define _BC_QRCODERECB_H_
+#ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERECB_H_
+#define XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERECB_H_
+
 class CBC_QRCoderECB {
  private:
   int32_t m_count;
@@ -17,4 +18,5 @@ class CBC_QRCoderECB {
   int32_t GetCount();
   int32_t GetDataCodeWords();
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERECB_H_

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FDE_TXTEDTPARAG_H
-#define _FDE_TXTEDTPARAG_H
+#ifndef XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTPARAG_H_
+#define XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTPARAG_H_
+
 class CFDE_TxtEdtEngine;
 class CFDE_TxtEdtParag;
 class CFDE_TxtEdtParag : public IFDE_TxtEdtParag {
@@ -29,4 +30,5 @@ class CFDE_TxtEdtParag : public IFDE_TxtEdtParag {
   void* m_lpData;
   CFDE_TxtEdtEngine* m_pEngine;
 };
-#endif
+
+#endif  // XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTPARAG_H_

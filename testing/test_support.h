@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef TESTING_EMBEDDER_TEST_SUPPORT_H_
-#define TESTING_EMBEDDER_TEST_SUPPORT_H_
+#ifndef TESTING_TEST_SUPPORT_H_
+#define TESTING_TEST_SUPPORT_H_
 
 #include <stdlib.h>
 #include <memory>
@@ -107,4 +107,4 @@ class TestSaver : public FPDF_FILEWRITE {
   std::string m_String;
 };
 
-#endif  // TESTING_EMBEDDER_TEST_SUPPORT_H_
+#endif  // TESTING_TEST_SUPPORT_H_

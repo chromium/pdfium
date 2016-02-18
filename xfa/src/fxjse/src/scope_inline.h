@@ -4,10 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXJSE_SCOPE_INLINE_H_
-#define FXJSE_SCOPE_INLINE_H_
+#ifndef XFA_SRC_FXJSE_SRC_SCOPE_INLINE_H_
+#define XFA_SRC_FXJSE_SRC_SCOPE_INLINE_H_
+
 #include "runtime.h"
 #include "context.h"
+
 class CFXJSE_ScopeUtil_IsolateHandle {
  protected:
   v8::Isolate* m_isolate;
@@ -102,4 +104,5 @@ class CFXJSE_ScopeUtil_IsolateHandleRootOrNormalContext {
   void* operator new(size_t size);
   void operator delete(void*, size_t);
 };
-#endif
+
+#endif  // XFA_SRC_FXJSE_SRC_SCOPE_INLINE_H_

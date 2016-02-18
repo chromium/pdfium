@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_ALGORITHM
-#define _FX_ALGORITHM
+#ifndef XFA_SRC_FGAS_INCLUDE_FX_ALG_H_
+#define XFA_SRC_FGAS_INCLUDE_FX_ALG_H_
+
 #define FX_IsOdd(a) ((a)&1)
 #ifdef __cplusplus
 extern "C" {
@@ -44,4 +45,5 @@ class CFX_DSPATemplate {
     return -1;
   }
 };
-#endif
+
+#endif  // XFA_SRC_FGAS_INCLUDE_FX_ALG_H_

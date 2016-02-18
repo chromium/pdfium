@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_DATETIMEPICKER_H
-#define _FWL_DATETIMEPICKER_H
+#ifndef XFA_INCLUDE_FWL_BASEWIDGET_FWL_DATETIMEPICKER_H_
+#define XFA_INCLUDE_FWL_BASEWIDGET_FWL_DATETIMEPICKER_H_
+
 class CFWL_WidgetImpProperties;
 class IFWL_Widget;
 class IFWL_DateTimePickerDP;
@@ -102,4 +103,5 @@ class IFWL_DateTimePicker : public IFWL_Widget {
  protected:
   IFWL_DateTimePicker();
 };
-#endif
+
+#endif  // XFA_INCLUDE_FWL_BASEWIDGET_FWL_DATETIMEPICKER_H_

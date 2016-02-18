@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _XFA_FM2JS_H
-#define _XFA_FM2JS_H
+#ifndef XFA_SRC_FXFA_SRC_FM2JS_XFA_FM2JS_H_
+#define XFA_SRC_FXFA_SRC_FM2JS_XFA_FM2JS_H_
+
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/common/xfa_utils.h"
 #include "xfa/src/fxfa/src/common/xfa_object.h"
@@ -28,4 +29,5 @@ typedef CFX_ArrayTemplate<CFX_WideStringC> CFX_WideStringCArray;
 #include "xfa_fmparse.h"
 #include "xfa_program.h"
 #include "xfa_fm2jscontext.h"
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_FM2JS_XFA_FM2JS_H_

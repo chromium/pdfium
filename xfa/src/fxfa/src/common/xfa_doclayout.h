@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _XFA_DOCLAYOUT_H_
-#define _XFA_DOCLAYOUT_H_
+#ifndef XFA_SRC_FXFA_SRC_COMMON_XFA_DOCLAYOUT_H_
+#define XFA_SRC_FXFA_SRC_COMMON_XFA_DOCLAYOUT_H_
+
 #define _XFA_LAYOUTITEM_ProcessCACHE_
 
 class CXFA_ContainerLayoutItem;
@@ -130,4 +131,5 @@ class IXFA_DocLayout {
   virtual IXFA_LayoutPage* GetPage(int32_t index) const = 0;
   virtual CXFA_LayoutItem* GetLayoutItem(CXFA_Node* pFormItem) = 0;
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_COMMON_XFA_DOCLAYOUT_H_

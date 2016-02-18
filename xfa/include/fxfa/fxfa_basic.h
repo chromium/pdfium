@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXFA_BASIC_H
-#define _FXFA_BASIC_H
+#ifndef XFA_INCLUDE_FXFA_FXFA_BASIC_H_
+#define XFA_INCLUDE_FXFA_FXFA_BASIC_H_
 
 #include "xfa/include/fxjse/fxjse.h"
 
@@ -1081,4 +1081,5 @@ typedef XFA_SCRIPTATTRIBUTEINFO const* XFA_LPCSCRIPTATTRIBUTEINFO;
 XFA_LPCSCRIPTATTRIBUTEINFO XFA_GetScriptAttributeByName(
     XFA_ELEMENT eElement,
     const CFX_WideStringC& wsAttributeName);
-#endif
+
+#endif  // XFA_INCLUDE_FXFA_FXFA_BASIC_H_

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FGAS_UNICODE_
-#define _FGAS_UNICODE_
+#ifndef XFA_SRC_FGAS_INCLUDE_FX_UCD_H_
+#define XFA_SRC_FGAS_INCLUDE_FX_UCD_H_
+
 #define FX_JAPCHARPROPERTYEX_Left 0x01
 #define FX_JAPCHARPROPERTYEX_Center 0x02
 #define FX_JAPCHARPROPERTYEX_Right 0x03
@@ -30,4 +31,5 @@ FX_BOOL FX_AdjustJapCharDisplayPos(FX_WCHAR wch,
                                    FX_FLOAT fFontSize,
                                    FX_BOOL bVertical,
                                    CFX_PointF& ptOffset);
-#endif
+
+#endif  // XFA_SRC_FGAS_INCLUDE_FX_UCD_H_

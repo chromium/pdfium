@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_QRCODERDECODER_H_
-#define _BC_QRCODERDECODER_H_
+#ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERDECODER_H_
+#define XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERDECODER_H_
+
 class CBC_CommonBitMatrix;
 class CBC_ReedSolomonDecoder;
 class CBC_CommonDecoderResult;
@@ -32,4 +33,5 @@ class CBC_QRCoderDecoder {
                      int32_t& e);
   virtual void Init();
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERDECODER_H_

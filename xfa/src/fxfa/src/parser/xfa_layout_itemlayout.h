@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _XFA_LAYOUT_ITEMLAYOUT_H_
-#define _XFA_LAYOUT_ITEMLAYOUT_H_
+#ifndef XFA_SRC_FXFA_SRC_PARSER_XFA_LAYOUT_ITEMLAYOUT_H_
+#define XFA_SRC_FXFA_SRC_PARSER_XFA_LAYOUT_ITEMLAYOUT_H_
+
 #define XFA_LAYOUT_INVALIDNODE ((CXFA_Node*)(intptr_t)-1)
 #define XFA_LAYOUT_FLOAT_PERCISION (0.0005f)
 #include "float.h"
@@ -183,4 +184,5 @@ class CXFA_ItemLayoutProcessor {
   FX_BOOL m_bHasAvailHeight;
 };
 FX_BOOL XFA_ItemLayoutProcessor_IsTakingSpace(CXFA_Node* pNode);
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_PARSER_XFA_LAYOUT_ITEMLAYOUT_H_

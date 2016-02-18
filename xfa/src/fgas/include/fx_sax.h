@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_SAX_
-#define _FX_SAX_
+#ifndef XFA_SRC_FGAS_INCLUDE_FX_SAX_H_
+#define XFA_SRC_FGAS_INCLUDE_FX_SAX_H_
+
 class IFX_SAXReaderHandler;
 class IFX_SAXReader;
 #define FX_SAXPARSEMODE_NotConvert_amp 0x0001
@@ -60,4 +61,5 @@ class IFX_SAXReader {
   virtual void SetHandler(IFX_SAXReaderHandler* pHandler) = 0;
 };
 IFX_SAXReader* FX_SAXReader_Create();
-#endif
+
+#endif  // XFA_SRC_FGAS_INCLUDE_FX_SAX_H_

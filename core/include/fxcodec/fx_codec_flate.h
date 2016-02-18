@@ -4,6 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#ifndef CORE_INCLUDE_FXCODEC_FX_CODEC_FLATE_H_
+#define CORE_INCLUDE_FXCODEC_FX_CODEC_FLATE_H_
+
 #include "third_party/zlib_v128/zlib.h"
 
 #ifdef __cplusplus
@@ -26,3 +29,5 @@ void FPDFAPI_FlateEnd(void* context);
 #ifdef __cplusplus
 }  // extern "C"
 #endif
+
+#endif  // CORE_INCLUDE_FXCODEC_FX_CODEC_FLATE_H_

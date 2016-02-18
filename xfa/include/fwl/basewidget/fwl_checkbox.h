@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_CHECKBOX_H
-#define _FWL_CHECKBOX_H
+#ifndef XFA_INCLUDE_FWL_BASEWIDGET_FWL_CHECKBOX_H_
+#define XFA_INCLUDE_FWL_BASEWIDGET_FWL_CHECKBOX_H_
+
 class CFWL_WidgetImpProperties;
 class IFWL_Widget;
 class IFWL_CheckBoxDP;
@@ -78,4 +79,4 @@ class IFWL_CheckBox : public IFWL_Widget {
   IFWL_CheckBox();
 };
 
-#endif
+#endif  // XFA_INCLUDE_FWL_BASEWIDGET_FWL_CHECKBOX_H_

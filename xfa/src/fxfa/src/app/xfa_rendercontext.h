@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXFA_FORMFILLER_RENDERCONTEXT_IMP_H
-#define _FXFA_FORMFILLER_RENDERCONTEXT_IMP_H
+#ifndef XFA_SRC_FXFA_SRC_APP_XFA_RENDERCONTEXT_H_
+#define XFA_SRC_FXFA_SRC_APP_XFA_RENDERCONTEXT_H_
+
 class CXFA_RenderContext : public IXFA_RenderContext {
  public:
   CXFA_RenderContext();
@@ -28,4 +29,5 @@ class CXFA_RenderContext : public IXFA_RenderContext {
   FX_DWORD m_dwStatus;
   CFX_RectF m_rtClipRect;
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_APP_XFA_RENDERCONTEXT_H_

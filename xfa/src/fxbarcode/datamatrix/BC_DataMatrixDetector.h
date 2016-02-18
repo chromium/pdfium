@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_DATAMATRIXDETECTOR_H_
-#define _BC_DATAMATRIXDETECTOR_H_
+#ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXDETECTOR_H_
+#define XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXDETECTOR_H_
+
 class CBC_CommonBitMatrix;
 class CBC_WhiteRectangleDetector;
 class CBC_ResultPoint;
@@ -70,4 +71,5 @@ class CBC_DataMatrixDetector {
   CBC_WhiteRectangleDetector* m_rectangleDetector;
   const static int32_t INTEGERS[5];
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXDETECTOR_H_

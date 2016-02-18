@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXFA_FORMFILLERCONFIGACC_IMP_H
-#define _FXFA_FORMFILLERCONFIGACC_IMP_H
+#ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFCONFIGACC_H_
+#define XFA_SRC_FXFA_SRC_APP_XFA_FFCONFIGACC_H_
+
 class CXFA_FFConfigAcc {
  public:
   CXFA_FFConfigAcc(CXFA_Node* pNode);
@@ -22,4 +23,5 @@ class CXFA_FFConfigAcc {
   CXFA_Node* m_pNode;
   CXFA_Node* m_pPsMapNode;
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_APP_XFA_FFCONFIGACC_H_

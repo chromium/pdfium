@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_QRCODEREADER_H_
-#define _BC_QRCODEREADER_H_
+#ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRCODEREADER_H_
+#define XFA_SRC_FXBARCODE_QRCODE_BC_QRCODEREADER_H_
+
 class CBC_QRDetector;
 class CBC_BinaryBitmap;
 class CBC_QRCoderDecoder;
@@ -38,4 +39,5 @@ class CBC_QRCodeReader : public CBC_Reader {
   CFX_ByteString Decode(CBC_BinaryBitmap* image, int32_t& e);
   virtual void Init();
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_QRCODE_BC_QRCODEREADER_H_

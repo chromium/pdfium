@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FXFA_OBJECTACC_H_
-#define FXFA_OBJECTACC_H_
+#ifndef XFA_INCLUDE_FXFA_FXFA_OBJECTACC_H_
+#define XFA_INCLUDE_FXFA_FXFA_OBJECTACC_H_
 
 #include "core/include/fxge/fx_dib.h"  // For FX_ARGB.
 
@@ -853,4 +853,4 @@ class CXFA_Manifest : public CXFA_Data {
   CFX_WideString GetRefContent(int32_t nIndex);
 };
 
-#endif  // FXFA_OBJECTACC_H_
+#endif  // XFA_INCLUDE_FXFA_FXFA_OBJECTACC_H_

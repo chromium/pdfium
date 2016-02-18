@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_FONTMGR_IMP
-#define _FX_FONTMGR_IMP
+#ifndef XFA_SRC_FGAS_SRC_FONT_FX_STDFONTMGR_H_
+#define XFA_SRC_FGAS_SRC_FONT_FX_STDFONTMGR_H_
+
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 int32_t FX_GetSimilarValue(FX_LPCFONTDESCRIPTOR pFont, FX_DWORD dwFontStyles);
 FX_LPCFONTDESCRIPTOR FX_DefFontMatcher(FX_LPFONTMATCHPARAMS pParams,
@@ -231,4 +232,5 @@ class CFX_FontMgrImp : public IFX_FontMgr {
   void* m_pUserData;
 };
 #endif
-#endif
+
+#endif  // XFA_SRC_FGAS_SRC_FONT_FX_STDFONTMGR_H_

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FDE_CSSSYNTAX
-#define _FDE_CSSSYNTAX
+#ifndef XFA_SRC_FDP_SRC_CSS_FDE_CSSSYNTAX_H_
+#define XFA_SRC_FDP_SRC_CSS_FDE_CSSSYNTAX_H_
+
 class CFDE_CSSTextBuf : public CFX_Target {
  public:
   CFDE_CSSTextBuf();
@@ -107,4 +108,5 @@ class CFDE_CSSSyntaxParser : public IFDE_CSSSyntaxParser, public CFX_Target {
   FDE_CSSSYNTAXSTATUS m_eStatus;
   CFX_StackTemplate<FDE_CSSSYNTAXMODE> m_ModeStack;
 };
-#endif
+
+#endif  // XFA_SRC_FDP_SRC_CSS_FDE_CSSSYNTAX_H_

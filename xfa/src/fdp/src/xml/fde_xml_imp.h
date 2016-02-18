@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FDE_XML_IMP_H_
-#define FDE_XML_IMP_H_
+#ifndef XFA_SRC_FDP_SRC_XML_FDE_XML_IMP_H_
+#define XFA_SRC_FDP_SRC_XML_FDE_XML_IMP_H_
 
 #define _FDE_BLOCK_BUFFER
 #ifdef _FDE_BLOCK_BUFFER
@@ -372,4 +372,4 @@ class CFDE_XMLSyntaxParser : public IFDE_XMLSyntaxParser, public CFX_Target {
 #endif
 };
 
-#endif  // FDE_XML_IMP_H_
+#endif  // XFA_SRC_FDP_SRC_XML_FDE_XML_IMP_H_

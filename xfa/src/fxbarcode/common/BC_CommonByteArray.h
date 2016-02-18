@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_COMMONBYTEARRAY_H_
-#define _BC_COMMONBYTEARRAY_H_
+#ifndef XFA_SRC_FXBARCODE_COMMON_BC_COMMONBYTEARRAY_H_
+#define XFA_SRC_FXBARCODE_COMMON_BC_COMMONBYTEARRAY_H_
+
 class CBC_CommonByteArray {
  private:
   int32_t m_size;
@@ -26,4 +27,5 @@ class CBC_CommonByteArray {
   void Set(uint8_t* source, int32_t offset, int32_t count);
   void Set(CFX_ByteArray* source, int32_t offset, int32_t count);
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_COMMON_BC_COMMONBYTEARRAY_H_

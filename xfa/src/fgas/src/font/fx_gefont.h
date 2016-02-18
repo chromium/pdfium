@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_GRAPHOBJS_IMP
-#define _FX_GRAPHOBJS_IMP
+#ifndef XFA_SRC_FGAS_SRC_FONT_FX_GEFONT_H_
+#define XFA_SRC_FGAS_SRC_FONT_FX_GEFONT_H_
+
 #ifndef _FXPLUS
 class CFX_GEFontMgr;
 #ifndef FXFONT_SUBST_ITALIC
@@ -87,4 +88,5 @@ class CFX_GEFont : public IFX_Font, public CFX_ThreadLock {
                         FX_BOOL bCharCode = FALSE);
 };
 #endif
-#endif
+
+#endif  // XFA_SRC_FGAS_SRC_FONT_FX_GEFONT_H_

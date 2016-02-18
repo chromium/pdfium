@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FDE_BRUSH
-#define _FDE_BRUSH
+#ifndef XFA_SRC_FDP_INCLUDE_FDE_BRS_H_
+#define XFA_SRC_FDP_INCLUDE_FDE_BRS_H_
+
 class IFDE_Image;
 class IFDE_Path;
 class IFDE_Brush;
@@ -140,4 +141,5 @@ class IFDE_LinearGradientBrush : public IFDE_Brush {
   virtual int32_t GetWrapMode() const = 0;
   virtual void SetWrapMode(int32_t iWrapMode) = 0;
 };
-#endif
+
+#endif  // XFA_SRC_FDP_INCLUDE_FDE_BRS_H_

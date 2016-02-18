@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_SYMBOLSHAPEHINT_H_
-#define _BC_SYMBOLSHAPEHINT_H_
+#ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_SYMBOLSHAPEHINT_H_
+#define XFA_SRC_FXBARCODE_DATAMATRIX_BC_SYMBOLSHAPEHINT_H_
+
 class CBC_SymbolShapeHint {
  public:
   CBC_SymbolShapeHint();
@@ -16,4 +17,5 @@ class CBC_SymbolShapeHint {
     FORCE_RECTANGLE,
   };
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_DATAMATRIX_BC_SYMBOLSHAPEHINT_H_

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_DATETIME_H_
-#define _FX_DATETIME_H_
+#ifndef XFA_SRC_FGAS_INCLUDE_FX_DATETIME_H_
+#define XFA_SRC_FGAS_INCLUDE_FX_DATETIME_H_
+
 class CFX_Unitime;
 class CFX_DateTime;
 typedef int64_t FX_UNITIME;
@@ -389,4 +390,5 @@ class CFX_DateTime {
  private:
   FX_DATETIME m_DateTime;
 };
-#endif
+
+#endif  // XFA_SRC_FGAS_INCLUDE_FX_DATETIME_H_

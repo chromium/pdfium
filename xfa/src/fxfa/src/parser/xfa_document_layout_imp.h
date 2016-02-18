@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _XFA_DOCUMENT_LAYOUT_IMP_H_
-#define _XFA_DOCUMENT_LAYOUT_IMP_H_
+#ifndef XFA_SRC_FXFA_SRC_PARSER_XFA_DOCUMENT_LAYOUT_IMP_H_
+#define XFA_SRC_FXFA_SRC_PARSER_XFA_DOCUMENT_LAYOUT_IMP_H_
+
 class CXFA_ItemLayoutProcessor;
 class CXFA_LayoutPageMgr;
 class CXFA_LayoutAppAdapter;
@@ -42,4 +43,5 @@ class CXFA_LayoutProcessor : public IXFA_DocLayout {
   uint32_t m_nProgressCounter;
   FX_BOOL m_bNeeLayout;
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_PARSER_XFA_DOCUMENT_LAYOUT_IMP_H_

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_GRID_H
-#define _FWL_GRID_H
+#ifndef XFA_INCLUDE_FWL_CORE_FWL_GRID_H_
+#define XFA_INCLUDE_FWL_CORE_FWL_GRID_H_
+
 class IFWL_Widget;
 class IFWL_Content;
 #define FWL_CLASS_Grid L"FWL_GRID"
@@ -80,4 +81,5 @@ class IFWL_Grid : public IFWL_Content {
  protected:
   IFWL_Grid();
 };
-#endif
+
+#endif  // XFA_INCLUDE_FWL_CORE_FWL_GRID_H_

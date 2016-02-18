@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _SCRIPT_LOGPSEUDOMODEL_H_
-#define _SCRIPT_LOGPSEUDOMODEL_H_
+#ifndef XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_LOGPSEUDOMODEL_H_
+#define XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_LOGPSEUDOMODEL_H_
+
 class CScript_LogPseudoModel : public CXFA_OrdinaryObject {
  public:
   CScript_LogPseudoModel(CXFA_Document* pDocument);
@@ -17,4 +18,5 @@ class CScript_LogPseudoModel : public CXFA_OrdinaryObject {
   void Script_LogPseudoModel_TraceDeactivate(CFXJSE_Arguments* pArguments);
   void Script_LogPseudoModel_Trace(CFXJSE_Arguments* pArguments);
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_LOGPSEUDOMODEL_H_

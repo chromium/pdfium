@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_PDF417SCANNINGDECODER_H_
-#define _BC_PDF417SCANNINGDECODER_H_
+#ifndef XFA_SRC_FXBARCODE_PDF417_BC_PDF417SCANNINGDECODER_H_
+#define XFA_SRC_FXBARCODE_PDF417_BC_PDF417SCANNINGDECODER_H_
+
 class CBC_CommonDecoderResult;
 class CBC_CommonBitMatrix;
 class CBC_ErrorCorrection;
@@ -116,4 +117,5 @@ class CBC_PDF417ScanningDecoder {
   static int32_t getCodewordBucketNumber(int32_t codeword);
   static int32_t getCodewordBucketNumber(CFX_Int32Array& moduleBitCount);
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_PDF417_BC_PDF417SCANNINGDECODER_H_

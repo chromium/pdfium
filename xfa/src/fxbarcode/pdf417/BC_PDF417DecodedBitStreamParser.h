@@ -59,4 +59,5 @@ class CBC_DecodedBitStreamPaser {
                                               int32_t count,
                                               int32_t& e);
 };
+
 #endif  // XFA_SRC_FXBARCODE_PDF417_BC_PDF417DECODEDBITSTREAMPARSER_H_

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FDE_RENDERDEVICE
-#define _FDE_RENDERDEVICE
+#ifndef XFA_SRC_FDP_INCLUDE_FDE_RDV_H_
+#define XFA_SRC_FDP_INCLUDE_FDE_RDV_H_
+
 class IFDE_Pen;
 class IFDE_Brush;
 class IFDE_Image;
@@ -100,4 +101,5 @@ class IFDE_RenderDevice {
                                 const CFX_RectF& rect,
                                 const CFX_Matrix* pMatrix = NULL) = 0;
 };
-#endif
+
+#endif  // XFA_SRC_FDP_INCLUDE_FDE_RDV_H_

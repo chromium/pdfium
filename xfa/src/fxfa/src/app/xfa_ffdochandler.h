@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FFDOCHANDLER_H_
-#define XFA_FFDOCHANDLER_H_
+#ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFDOCHANDLER_H_
+#define XFA_SRC_FXFA_SRC_APP_XFA_FFDOCHANDLER_H_
 
 class CXFA_FFDocHandler : public IXFA_DocHandler {
  public:
@@ -45,4 +45,4 @@ class CXFA_FFDocHandler : public IXFA_DocHandler {
  protected:
 };
 
-#endif  // XFA_FFDOCHANDLER_H_
+#endif  // XFA_SRC_FXFA_SRC_APP_XFA_FFDOCHANDLER_H_

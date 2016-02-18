@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FXFA_FORMFILLER_PAGEVIEW_IMP_H
-#define _FXFA_FORMFILLER_PAGEVIEW_IMP_H
+#ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFPAGEVIEW_H_
+#define XFA_SRC_FXFA_SRC_APP_XFA_FFPAGEVIEW_H_
+
 class CXFA_FFWidget;
 class CXFA_FFDocView;
 class CXFA_FFPageView : public CXFA_ContainerLayoutItem, public IXFA_PageView {
@@ -104,4 +105,5 @@ class CXFA_FFTabOrderPageWidgetIterator : public IXFA_WidgetIterator {
                       FX_BOOL& bContentArea,
                       FX_BOOL bMarsterPage = FALSE);
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_APP_XFA_FFPAGEVIEW_H_

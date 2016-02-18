@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_GLOBALHISTOGRAMBINARIZER_H_
-#define _BC_GLOBALHISTOGRAMBINARIZER_H_
+#ifndef XFA_SRC_FXBARCODE_COMMON_BC_GLOBALHISTOGRAMBINARIZER_H_
+#define XFA_SRC_FXBARCODE_COMMON_BC_GLOBALHISTOGRAMBINARIZER_H_
+
 class CBC_CommonBinarizer;
 class CBC_CommonBitArray;
 class CBC_CommonBitMatrix;
@@ -27,4 +28,5 @@ class CBC_GlobalHistogramBinarizer : public CBC_Binarizer {
   CFX_ByteArray m_luminance;
   CFX_Int32Array m_buckets;
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_COMMON_BC_GLOBALHISTOGRAMBINARIZER_H_

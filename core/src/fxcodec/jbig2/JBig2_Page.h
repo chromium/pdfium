@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _JBIG2_PAGE_H_
-#define _JBIG2_PAGE_H_
+#ifndef CORE_SRC_FXCODEC_JBIG2_JBIG2_PAGE_H_
+#define CORE_SRC_FXCODEC_JBIG2_JBIG2_PAGE_H_
 
 #include "core/include/fxcrt/fx_system.h"
 
@@ -19,4 +19,4 @@ struct JBig2PageInfo {
   FX_WORD m_wMaxStripeSize;
 };
 
-#endif
+#endif  // CORE_SRC_FXCODEC_JBIG2_JBIG2_PAGE_H_

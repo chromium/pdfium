@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _JBIG2_HUFFMAN_DECODER_H_
-#define _JBIG2_HUFFMAN_DECODER_H_
+#ifndef CORE_SRC_FXCODEC_JBIG2_JBIG2_HUFFMANDECODER_H_
+#define CORE_SRC_FXCODEC_JBIG2_JBIG2_HUFFMANDECODER_H_
+
 #include "core/src/fxcodec/jbig2/JBig2_BitStream.h"
 #include "core/src/fxcodec/jbig2/JBig2_HuffmanTable.h"
 class CJBig2_HuffmanDecoder {
@@ -19,4 +20,5 @@ class CJBig2_HuffmanDecoder {
  private:
   CJBig2_BitStream* const m_pStream;
 };
-#endif
+
+#endif  // CORE_SRC_FXCODEC_JBIG2_JBIG2_HUFFMANDECODER_H_

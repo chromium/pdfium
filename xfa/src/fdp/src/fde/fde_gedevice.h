@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FDE_FXGEDEVICE_IMP
-#define _FDE_FXGEDEVICE_IMP
+#ifndef XFA_SRC_FDP_SRC_FDE_FDE_GEDEVICE_H_
+#define XFA_SRC_FDP_SRC_FDE_FDE_GEDEVICE_H_
+
 #ifndef _FDEPLUS
 class CFDE_FxgeDevice : public IFDE_RenderDevice, public CFX_Target {
  public:
@@ -130,4 +131,5 @@ class CFDE_FxgeDevice : public IFDE_RenderDevice, public CFX_Target {
   int32_t m_iCharCount;
 };
 #endif
-#endif
+
+#endif  // XFA_SRC_FDP_SRC_FDE_FDE_GEDEVICE_H_

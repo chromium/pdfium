@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFXFA_DOC_H_
-#define FPDFXFA_DOC_H_
+#ifndef FPDFSDK_INCLUDE_FPDFXFA_FPDFXFA_DOC_H_
+#define FPDFSDK_INCLUDE_FPDFXFA_FPDFXFA_DOC_H_
 
 #include <vector>
 
@@ -227,4 +227,4 @@ class CPDFXFA_Document : public IXFA_DocProvider {
   CFX_ArrayTemplate<CPDFXFA_Page*> m_XFAPageList;
 };
 
-#endif  // FPDFXFA_DOC_H_
+#endif  // FPDFSDK_INCLUDE_FPDFXFA_FPDFXFA_DOC_H_

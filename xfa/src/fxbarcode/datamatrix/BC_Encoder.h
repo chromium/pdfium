@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_ENCODER_H_
-#define _BC_ENCODER_H_
+#ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_ENCODER_H_
+#define XFA_SRC_FXBARCODE_DATAMATRIX_BC_ENCODER_H_
+
 class CBC_EncoderContext;
 class CBC_Encoder {
  public:
@@ -14,4 +15,5 @@ class CBC_Encoder {
   virtual int32_t getEncodingMode() = 0;
   virtual void Encode(CBC_EncoderContext& context, int32_t& e) = 0;
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_DATAMATRIX_BC_ENCODER_H_

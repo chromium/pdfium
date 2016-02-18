@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _XFA_FM_ERROR_H
-#define _XFA_FM_ERROR_H
+#ifndef XFA_SRC_FXFA_SRC_FM2JS_XFA_ERROR_H_
+#define XFA_SRC_FXFA_SRC_FM2JS_XFA_ERROR_H_
+
 enum XFA_FM_ERRMSG {
   FMERR_UNSUPPORTED_CHAR,
   FMERR_BAD_SUFFIX_NUMBER,
@@ -25,4 +26,5 @@ class CXFA_FMErrorInfo {
   CFX_WideString message;
 };
 const FX_WCHAR* XFA_FM_ErrorMsg(XFA_FM_ERRMSG msg);
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_FM2JS_XFA_ERROR_H_

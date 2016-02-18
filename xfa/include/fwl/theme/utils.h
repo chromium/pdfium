@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FWL_THEME_UTILS_H_
-#define FWL_THEME_UTILS_H_
+#ifndef XFA_INCLUDE_FWL_THEME_UTILS_H_
+#define XFA_INCLUDE_FWL_THEME_UTILS_H_
 
 #include "core/include/fxcrt/fx_system.h"
 
@@ -72,4 +72,5 @@ typedef struct _FWLCOLOR {
 #define FWLTHEME_CAPACITY_ScrollBarWidth 17.0f
 #define FWLTHEME_CAPACITY_CXBorder 1.0f
 #define FWLTHEME_CAPACITY_CYBorder 1.0f
-#endif
+
+#endif  // XFA_INCLUDE_FWL_THEME_UTILS_H_

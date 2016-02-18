@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_RTFBREAK_IMP
-#define _FX_RTFBREAK_IMP
+#ifndef XFA_SRC_FGAS_SRC_LAYOUT_FX_RTFBREAK_H_
+#define XFA_SRC_FGAS_SRC_LAYOUT_FX_RTFBREAK_H_
 
 #include "core/include/fxcrt/fx_arb.h"
 
@@ -171,4 +171,5 @@ class CFX_RTFBreak : public IFX_RTFBreak {
                           FX_BOOL bAllChars,
                           FX_DWORD dwStatus);
 };
-#endif
+
+#endif  // XFA_SRC_FGAS_SRC_LAYOUT_FX_RTFBREAK_H_

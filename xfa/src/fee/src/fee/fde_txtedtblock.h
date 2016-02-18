@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FDE_TXTEDTBLOCK_H
-#define _FDE_TXTEDTBLOCK_H
+#ifndef XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTBLOCK_H_
+#define XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTBLOCK_H_
+
 #ifdef FDE_USEFORMATBLOCK
 class CFDE_TxtEdtEngine;
 class CFDE_TxtEdtBlock;
@@ -234,4 +235,5 @@ class CFDE_TxtEdtField_Fixed : public CFDE_TxtEdtField {
   virtual ~CFDE_TxtEdtField_Fixed() {}
 };
 #endif
-#endif
+
+#endif  // XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTBLOCK_H_

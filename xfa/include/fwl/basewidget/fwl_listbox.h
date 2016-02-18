@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_LISTBOX_H
-#define _FWL_LISTBOX_H
+#ifndef XFA_INCLUDE_FWL_BASEWIDGET_FWL_LISTBOX_H_
+#define XFA_INCLUDE_FWL_BASEWIDGET_FWL_LISTBOX_H_
+
 class CFWL_WidgetImpProperties;
 class IFWL_Widget;
 class IFWL_ListBoxDP;
@@ -126,4 +127,5 @@ class IFWL_ListBox : public IFWL_Widget {
  protected:
   IFWL_ListBox();
 };
-#endif
+
+#endif  // XFA_INCLUDE_FWL_BASEWIDGET_FWL_LISTBOX_H_

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_CARET_LIGHT_H
-#define _FWL_CARET_LIGHT_H
+#ifndef XFA_INCLUDE_FWL_LIGHTWIDGET_CARET_H_
+#define XFA_INCLUDE_FWL_LIGHTWIDGET_CARET_H_
+
 class CFWL_Widget;
 class CFWL_WidgetProperties;
 class CFWL_Caret;
@@ -22,4 +23,5 @@ class CFWL_Caret : public CFWL_Widget {
   CFWL_Caret();
   virtual ~CFWL_Caret();
 };
-#endif
+
+#endif  // XFA_INCLUDE_FWL_LIGHTWIDGET_CARET_H_

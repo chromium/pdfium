@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _XFA_PARSER_IMP
-#define _XFA_PARSER_IMP
+#ifndef XFA_SRC_FXFA_SRC_PARSER_XFA_PARSER_IMP_H_
+#define XFA_SRC_FXFA_SRC_PARSER_XFA_PARSER_IMP_H_
+
 #define _XFA_VERIFY_Checksum_
 class CXFA_XMLParser;
 class CXFA_SimpleParser : public IXFA_Parser {
@@ -131,4 +132,5 @@ class CXFA_XMLParser : public IFDE_XMLParser {
   CFX_WideString m_ws2;
   FX_DWORD m_dwStatus;
 };
-#endif
+
+#endif  // XFA_SRC_FXFA_SRC_PARSER_XFA_PARSER_IMP_H_

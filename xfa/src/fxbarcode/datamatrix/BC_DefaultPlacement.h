@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_DEFAULTPLACEMENT_H_
-#define _BC_DEFAULTPLACEMENT_H_
+#ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_DEFAULTPLACEMENT_H_
+#define XFA_SRC_FXBARCODE_DATAMATRIX_BC_DEFAULTPLACEMENT_H_
+
 class CBC_DefaultPlacement {
  public:
   CBC_DefaultPlacement(CFX_WideString codewords,
@@ -33,4 +34,5 @@ class CBC_DefaultPlacement {
   void corner3(int32_t pos);
   void corner4(int32_t pos);
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_DATAMATRIX_BC_DEFAULTPLACEMENT_H_

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_FONT
-#define _FX_FONT
+#ifndef XFA_SRC_FGAS_INCLUDE_FX_FNT_H_
+#define XFA_SRC_FGAS_INCLUDE_FX_FNT_H_
+
 class IFX_Font;
 class IFX_FontMgr;
 #define FX_FONTSTYLE_Normal 0x00
@@ -261,4 +262,5 @@ class IFX_FontMgr {
   virtual void RemoveFont(IFX_Font* pFont) = 0;
 };
 #endif
-#endif
+
+#endif  // XFA_SRC_FGAS_INCLUDE_FX_FNT_H_

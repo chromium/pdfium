@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FWL_TOOLTIP_H
-#define _FWL_TOOLTIP_H
+#ifndef XFA_INCLUDE_FWL_BASEWIDGET_FWL_TOOLTIPCTRL_H_
+#define XFA_INCLUDE_FWL_BASEWIDGET_FWL_TOOLTIPCTRL_H_
+
 class CFWL_WidgetImpProperties;
 class IFWL_Form;
 class IFWL_ToolTipDP;
@@ -41,4 +42,5 @@ class IFWL_ToolTip : public IFWL_Form {
  protected:
   IFWL_ToolTip();
 };
-#endif
+
+#endif  // XFA_INCLUDE_FWL_BASEWIDGET_FWL_TOOLTIPCTRL_H_

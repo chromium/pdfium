@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_TEXTBREAK_IMP
-#define _FX_TEXTBREAK_IMP
+#ifndef XFA_SRC_FGAS_SRC_LAYOUT_FX_TEXTBREAK_H_
+#define XFA_SRC_FGAS_SRC_LAYOUT_FX_TEXTBREAK_H_
 
 #include "core/include/fxcrt/fx_memory.h"
 
@@ -168,4 +168,5 @@ class CFX_TxtBreak : public IFX_TxtBreak {
                      CFX_TxtLine* pNextLine,
                      FX_BOOL bAllChars = FALSE);
 };
-#endif
+
+#endif  // XFA_SRC_FGAS_SRC_LAYOUT_FX_TEXTBREAK_H_

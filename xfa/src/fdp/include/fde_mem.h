@@ -6,12 +6,12 @@
 
 // TODO(thestig): Remove this file and do IWYU.
 
-#ifndef FDE_MEM_H_
-#define FDE_MEM_H_
+#ifndef XFA_SRC_FDP_INCLUDE_FDE_MEM_H_
+#define XFA_SRC_FDP_INCLUDE_FDE_MEM_H_
 
 #include "core/include/fxcrt/fx_memory.h"
 
 #define FDE_NewWith FXTARGET_NewWith
 #define FDE_DeleteWith FXTARGET_DeleteWith
 
-#endif  // FDE_MEM_H_
+#endif  // XFA_SRC_FDP_INCLUDE_FDE_MEM_H_

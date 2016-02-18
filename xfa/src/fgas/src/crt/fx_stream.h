@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_STREAM_IMP
-#define _FX_STREAM_IMP
+#ifndef XFA_SRC_FGAS_SRC_CRT_FX_STREAM_H_
+#define XFA_SRC_FGAS_SRC_CRT_FX_STREAM_H_
+
 class CFX_StreamImp;
 class CFX_FileStreamImp;
 class CFX_BufferStreamImp;
@@ -308,4 +309,4 @@ class CFGAS_FileWrite : public IFX_FileWrite {
   FX_BOOL m_bReleaseStream;
 };
 
-#endif
+#endif  // XFA_SRC_FGAS_SRC_CRT_FX_STREAM_H_

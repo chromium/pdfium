@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FWL_ADAPTERNATIVE_H_
-#define FWL_ADAPTERNATIVE_H_
+#ifndef XFA_INCLUDE_FWL_ADAPTER_FWL_ADAPTERNATIVE_H_
+#define XFA_INCLUDE_FWL_ADAPTER_FWL_ADAPTERNATIVE_H_
 
 class IFWL_WidgetMgrDelegate;
 class IFWL_AdapterWidgetMgr;
@@ -21,4 +21,4 @@ class IFWL_AdapterNative {
   virtual IFWL_AdapterTimerMgr* GetTimerMgr() = 0;
 };
 
-#endif  // FWL_ADAPTERNATIVE_H_
+#endif  // XFA_INCLUDE_FWL_ADAPTER_FWL_ADAPTERNATIVE_H_

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_UTILS
-#define _FX_UTILS
+#ifndef XFA_SRC_FGAS_INCLUDE_FX_UTL_H_
+#define XFA_SRC_FGAS_INCLUDE_FX_UTL_H_
 
 #include "fx_mem.h"
 #include "core/include/fxcrt/fx_coordinates.h"  // For CFX_Rect.
@@ -721,4 +721,5 @@ class CFX_CPLTree {
  protected:
   CPLTreeNode m_Root;
 };
-#endif
+
+#endif  // XFA_SRC_FGAS_INCLUDE_FX_UTL_H_

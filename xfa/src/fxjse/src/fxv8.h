@@ -4,8 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_V8_H_
-#define _FX_V8_H_
+// TODO(thestig): Remove this file and do IWYU.
+
+#ifndef XFA_SRC_FXJSE_SRC_FXV8_H_
+#define XFA_SRC_FXJSE_SRC_FXV8_H_
+
 #include <v8.h>
 #include <libplatform/libplatform.h>
-#endif
+
+#endif  // XFA_SRC_FXJSE_SRC_FXV8_H_

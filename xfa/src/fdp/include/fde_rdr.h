@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FDE_RENDERCONTEXT
-#define _FDE_RENDERCONTEXT
+#ifndef XFA_SRC_FDP_INCLUDE_FDE_RDR_H_
+#define XFA_SRC_FDP_INCLUDE_FDE_RDR_H_
+
 class IFDE_Page;
 class IFDE_RenderDevice;
 
@@ -33,4 +34,5 @@ class IFDE_RenderContext {
   virtual FDE_RENDERSTATUS DoRender(IFX_Pause* pPause = NULL) = 0;
   virtual void StopRender() = 0;
 };
-#endif
+
+#endif  // XFA_SRC_FDP_INCLUDE_FDE_RDR_H_

@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _FX_CODEC_PROGRESS_H_
-#define _FX_CODEC_PROGRESS_H_
+#ifndef CORE_SRC_FXCODEC_CODEC_FX_CODEC_PROGRESS_H_
+#define CORE_SRC_FXCODEC_CODEC_FX_CODEC_PROGRESS_H_
+
 #define FXCODEC_BLOCK_SIZE 4096
 #define FXCODEC_PNG_GAMMA 2.2
 #if _FX_OS_ == _FX_MACOSX_ || _FX_OS_ == _FX_IOS_
@@ -220,4 +221,5 @@ class CCodec_ProgressiveDecoder : public ICodec_ProgressiveDecoder {
   FX_BOOL m_BmpIsTopBottom;
   FXCODEC_STATUS m_status;
 };
-#endif
+
+#endif  // CORE_SRC_FXCODEC_CODEC_FX_CODEC_PROGRESS_H_

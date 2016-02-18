@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_HIGHLEVALENCODER_H_
-#define _BC_HIGHLEVALENCODER_H_
+#ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_HIGHLEVALENCODER_H_
+#define XFA_SRC_FXBARCODE_DATAMATRIX_BC_HIGHLEVALENCODER_H_
+
 class CBC_SymbolShapeHint;
 class CBC_HighLevelEncoder;
 #define ASCII_ENCODATION 0
@@ -70,4 +71,5 @@ class CBC_HighLevelEncoder : public CBC_SymbolShapeHint {
   static FX_BOOL isNativeEDIFACT(FX_WCHAR ch);
   static FX_BOOL isSpecialB256(FX_WCHAR ch);
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_DATAMATRIX_BC_HIGHLEVALENCODER_H_

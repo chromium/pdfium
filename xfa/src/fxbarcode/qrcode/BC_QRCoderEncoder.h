@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_QRCODERENCODER_H_
-#define _BC_QRCODERENCODER_H_
+#ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERENCODER_H_
+#define XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERENCODER_H_
+
 class Make_Pair;
 class CBC_QRCoder;
 class CBC_QRCoderErrorCorrectionLevel;
@@ -126,4 +127,5 @@ class CBC_QRCoderEncoder {
                                       CFX_ByteString& encoding,
                                       int32_t& e);
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERENCODER_H_

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FWL_TARGET_H_
-#define FWL_TARGET_H_
+#ifndef XFA_INCLUDE_FWL_CORE_FWL_TARGET_H_
+#define XFA_INCLUDE_FWL_CORE_FWL_TARGET_H_
 
 #include "core/include/fxcrt/fx_basic.h"
 
@@ -48,4 +48,4 @@ class IFWL_Target {
   CFWL_TargetImp* m_pImpl;
 };
 
-#endif  // FWL_TARGET_H_
+#endif  // XFA_INCLUDE_FWL_CORE_FWL_TARGET_H_

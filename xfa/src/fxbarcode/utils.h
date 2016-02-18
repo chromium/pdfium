@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_UTILS_H_
-#define _BC_UTILS_H_
+#ifndef XFA_SRC_FXBARCODE_UTILS_H_
+#define XFA_SRC_FXBARCODE_UTILS_H_
+
 typedef CFX_MapPtrTemplate<void*, int32_t> CFX_PtrToInt32;
 FX_BOOL BC_FX_ByteString_Replace(CFX_ByteString& dst,
                                  FX_DWORD first,
@@ -213,4 +214,5 @@ enum BCFORMAT {
 #define BC_EXCEPTION_CHECK_ReturnValue(e, v) \
   if (e != BCExceptionNO)                    \
     return v;
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_UTILS_H_

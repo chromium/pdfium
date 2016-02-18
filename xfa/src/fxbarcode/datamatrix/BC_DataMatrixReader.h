@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef _BC_DATAMATRIXREADER_H_
-#define _BC_DATAMATRIXREADER_H_
+#ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXREADER_H_
+#define XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXREADER_H_
+
 class CBC_BinaryBitmap;
 class CBC_DataMatrixDecoder;
 class CBC_Reader;
@@ -22,4 +23,5 @@ class CBC_DataMatrixReader : public CBC_Reader {
  private:
   CBC_DataMatrixDecoder* m_decoder;
 };
-#endif
+
+#endif  // XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXREADER_H_
