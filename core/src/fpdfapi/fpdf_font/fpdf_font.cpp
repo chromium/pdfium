@@ -6,13 +6,13 @@
 
 #include "core/src/fpdfapi/fpdf_font/font_int.h"
 
-#include "core/src/fpdfapi/fpdf_page/pageint.h"
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fpdfapi/fpdf_pageobj.h"
 #include "core/include/fpdfapi/fpdf_resource.h"
 #include "core/include/fxcrt/fx_ext.h"
 #include "core/include/fxge/fx_freetype.h"
+#include "core/src/fpdfapi/fpdf_page/pageint.h"
 #include "third_party/base/stl_util.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_

@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include <limits>
 #include <cctype>
 #include <cwctype>
+#include <limits>
 
 #include "core/include/fxcrt/fx_ext.h"
 #include "core/include/fxcrt/fx_string.h"

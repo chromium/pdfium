@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/include/fxge/fx_ge.h"
 #include "core/include/fxcodec/fx_codec.h"
+#include "core/include/fxge/fx_ge.h"
 #include "core/src/fxge/dib/dib_int.h"
 
 const uint8_t _color_sqrt[256] = {

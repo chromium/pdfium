@@ -8,9 +8,9 @@
 
 #include <vector>
 
-#include "core/include/fxcrt/fx_ext.h"
-#include "core/include/fpdfapi/fpdf_serial.h"
 #include "core/include/fpdfapi/fpdf_parser.h"
+#include "core/include/fpdfapi/fpdf_serial.h"
+#include "core/include/fxcrt/fx_ext.h"
 #include "third_party/base/stl_util.h"
 
 #define PDF_OBJECTSTREAM_MAXLENGTH (256 * 1024)

@@ -23,8 +23,8 @@ FX_WCHAR FX_GetFolderSeparator();
 #define FX_FILESIZE int32_t
 #else
 #include <fcntl.h>
-#include <unistd.h>
 #include <sys/stat.h>
+#include <unistd.h>
 #ifndef O_BINARY
 #define O_BINARY 0
 #endif

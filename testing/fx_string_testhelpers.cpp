@@ -4,8 +4,8 @@
 
 #include "testing/fx_string_testhelpers.h"
 
-#include <ios>
 #include <iomanip>
+#include <ios>
 
 namespace {
 

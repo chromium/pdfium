@@ -55,13 +55,13 @@
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 #define _CRT_SECURE_NO_WARNINGS
-#include <sal.h>
 #include <windows.h>
+#include <sal.h>
 #endif
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-#include <libkern/OSAtomic.h>
 #include <Carbon/Carbon.h>
+#include <libkern/OSAtomic.h>
 #endif
 
 #ifdef __cplusplus

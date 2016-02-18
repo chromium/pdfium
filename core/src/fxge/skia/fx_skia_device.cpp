@@ -8,10 +8,10 @@
 #include "core/include/fxcodec/fx_codec.h"
 
 #include "SkDashPathEffect.h"
-#include "SkTLazy.h"
-#include "SkScan.h"
 #include "SkRasterClip.h"
+#include "SkScan.h"
 #include "SkStroke.h"
+#include "SkTLazy.h"
 
 #include "core/src/fxge/agg/include/fx_agg_driver.h"
 #include "core/src/fxge/skia/fx_skia_blitter_new.h"

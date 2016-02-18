@@ -10,8 +10,8 @@
 #include <cctype>
 
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-#include <sys/types.h>
 #include <dirent.h>
+#include <sys/types.h>
 #else
 #include <direct.h>
 #endif

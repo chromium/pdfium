@@ -10,8 +10,8 @@
 
 #include <algorithm>
 
-#include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fpdfapi/fpdf_module.h"
+#include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fxcodec/fx_codec.h"
 
 namespace {

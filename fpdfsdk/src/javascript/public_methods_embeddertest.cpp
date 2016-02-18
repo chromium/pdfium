@@ -6,8 +6,8 @@
 
 #include "core/include/fxcrt/fx_string.h"
 #include "fpdfsdk/src/javascript/PublicMethods.h"
-#include "testing/js_embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "testing/js_embedder_test.h"
 
 namespace {
 

@@ -28,8 +28,8 @@
 #endif  // PDF_ENABLE_XFA
 
 #ifdef _WIN32
-#include <tchar.h>
 #include <math.h>
+#include <tchar.h>
 #endif
 
 // Convert a #FX_ARGB to a #FX_COLORREF.

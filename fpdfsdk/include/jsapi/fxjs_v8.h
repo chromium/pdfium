@@ -14,8 +14,8 @@
 #ifndef FPDFSDK_INCLUDE_JSAPI_FXJS_V8_H_
 #define FPDFSDK_INCLUDE_JSAPI_FXJS_V8_H_
 
-#include <v8.h>
 #include <v8-util.h>
+#include <v8.h>
 
 #include <vector>
 

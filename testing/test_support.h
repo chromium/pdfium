@@ -9,8 +9,8 @@
 #include <memory>
 #include <string>
 
-#include "public/fpdfview.h"
 #include "public/fpdf_save.h"
+#include "public/fpdfview.h"
 
 #ifdef PDF_ENABLE_V8
 #include "v8/include/v8.h"

@@ -12,8 +12,8 @@
 #define FPF_SKIAMATCHWEIGHT_NAME2 60
 #define FPF_SKIAMATCHWEIGHT_1 16
 #define FPF_SKIAMATCHWEIGHT_2 8
-#include "core/src/fxge/android/fpf_skiafontmgr.h"
 #include "core/src/fxge/android/fpf_skiafont.h"
+#include "core/src/fxge/android/fpf_skiafontmgr.h"
 #ifdef __cplusplus
 extern "C" {
 #endif

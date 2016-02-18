@@ -20,8 +20,8 @@
 #include "testing/utils/path_service.h"
 
 #ifdef PDF_ENABLE_V8
-#include "v8/include/v8.h"
 #include "v8/include/v8-platform.h"
+#include "v8/include/v8.h"
 #endif  // PDF_ENABLE_V8
 
 namespace {

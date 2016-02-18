@@ -9,6 +9,7 @@
 
 #include <vector>
 
+#include "fpdfsdk/include/fpdfxfa/fpdfxfa_doc.h"
 #include "xfa/include/fwl/adapter/fwl_adaptertimermgr.h"
 
 #define JS_STR_VIEWERTYPE_STANDARD L"Exchange"

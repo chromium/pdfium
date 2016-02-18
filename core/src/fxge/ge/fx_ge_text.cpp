@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/include/fxge/fx_ge.h"
-#include "core/include/fxge/fx_freetype.h"
 #include "core/include/fxcodec/fx_codec.h"
+#include "core/include/fxge/fx_freetype.h"
+#include "core/include/fxge/fx_ge.h"
 #include "core/src/fxge/ge/fx_text_int.h"
 
 #undef FX_GAMMA
