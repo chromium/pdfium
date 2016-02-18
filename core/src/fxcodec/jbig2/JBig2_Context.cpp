@@ -940,7 +940,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
         new CJBig2_ArithDecoder(m_pStream.get()));
     pSegment->m_nResultType = JBIG2_IMAGE_POINTER;
     pSegment->m_Result.im =
-        pTRD->decode_Arith(pArithDecoder.get(), grContext.get());
+        pTRD->decode_Arith(pArithDecoder.get(), grContext.get(), nullptr);
     if (!pSegment->m_Result.im)
       return JBIG2_ERROR_FATAL;
     m_pStream->alignByte();

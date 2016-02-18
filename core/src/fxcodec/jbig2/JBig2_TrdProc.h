@@ -45,7 +45,7 @@ class CJBig2_TRDProc {
 
   CJBig2_Image* decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
                              JBig2ArithCtx* grContext,
-                             JBig2IntDecoderState* pIDS = NULL);
+                             JBig2IntDecoderState* pIDS);
 
  public:
   FX_BOOL SBHUFF;

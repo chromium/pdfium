@@ -215,103 +215,124 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
 CJBig2_Image* CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
                                            JBig2ArithCtx* grContext,
                                            JBig2IntDecoderState* pIDS) {
-  int32_t STRIPT, FIRSTS;
-  FX_DWORD NINSTANCES;
-  int32_t DT, DFS, CURS;
-  int32_t SI, TI;
-  CJBig2_Image* IBI;
-  FX_DWORD WI, HI;
-  int32_t IDS;
-  int RI;
-  int32_t RDWI, RDHI, RDXI, RDYI;
-  CJBig2_Image* IBOI;
-  FX_DWORD WOI, HOI;
-  FX_BOOL bFirst;
-  int32_t bRetained;
-  CJBig2_ArithIntDecoder* IADT, *IAFS, *IADS, *IAIT, *IARI, *IARDW, *IARDH,
-      *IARDX, *IARDY;
-  CJBig2_ArithIaidDecoder* IAID;
+  std::unique_ptr<CJBig2_ArithIntDecoder> IADT;
+  std::unique_ptr<CJBig2_ArithIntDecoder> IAFS;
+  std::unique_ptr<CJBig2_ArithIntDecoder> IADS;
+  std::unique_ptr<CJBig2_ArithIntDecoder> IAIT;
+  std::unique_ptr<CJBig2_ArithIntDecoder> IARI;
+  std::unique_ptr<CJBig2_ArithIntDecoder> IARDW;
+  std::unique_ptr<CJBig2_ArithIntDecoder> IARDH;
+  std::unique_ptr<CJBig2_ArithIntDecoder> IARDX;
+  std::unique_ptr<CJBig2_ArithIntDecoder> IARDY;
+  std::unique_ptr<CJBig2_ArithIaidDecoder> IAID;
+  CJBig2_ArithIntDecoder* pIADT;
+  CJBig2_ArithIntDecoder* pIAFS;
+  CJBig2_ArithIntDecoder* pIADS;
+  CJBig2_ArithIntDecoder* pIAIT;
+  CJBig2_ArithIntDecoder* pIARI;
+  CJBig2_ArithIntDecoder* pIARDW;
+  CJBig2_ArithIntDecoder* pIARDH;
+  CJBig2_ArithIntDecoder* pIARDX;
+  CJBig2_ArithIntDecoder* pIARDY;
+  CJBig2_ArithIaidDecoder* pIAID;
   if (pIDS) {
-    IADT = pIDS->IADT;
-    IAFS = pIDS->IAFS;
-    IADS = pIDS->IADS;
-    IAIT = pIDS->IAIT;
-    IARI = pIDS->IARI;
-    IARDW = pIDS->IARDW;
-    IARDH = pIDS->IARDH;
-    IARDX = pIDS->IARDX;
-    IARDY = pIDS->IARDY;
-    IAID = pIDS->IAID;
-    bRetained = TRUE;
+    pIADT = pIDS->IADT;
+    pIAFS = pIDS->IAFS;
+    pIADS = pIDS->IADS;
+    pIAIT = pIDS->IAIT;
+    pIARI = pIDS->IARI;
+    pIARDW = pIDS->IARDW;
+    pIARDH = pIDS->IARDH;
+    pIARDX = pIDS->IARDX;
+    pIARDY = pIDS->IARDY;
+    pIAID = pIDS->IAID;
   } else {
-    IADT = new CJBig2_ArithIntDecoder();
-    IAFS = new CJBig2_ArithIntDecoder();
-    IADS = new CJBig2_ArithIntDecoder();
-    IAIT = new CJBig2_ArithIntDecoder();
-    IARI = new CJBig2_ArithIntDecoder();
-    IARDW = new CJBig2_ArithIntDecoder();
-    IARDH = new CJBig2_ArithIntDecoder();
-    IARDX = new CJBig2_ArithIntDecoder();
-    IARDY = new CJBig2_ArithIntDecoder();
-    IAID = new CJBig2_ArithIaidDecoder(SBSYMCODELEN);
-    bRetained = FALSE;
+    IADT.reset(new CJBig2_ArithIntDecoder());
+    IAFS.reset(new CJBig2_ArithIntDecoder());
+    IADS.reset(new CJBig2_ArithIntDecoder());
+    IAIT.reset(new CJBig2_ArithIntDecoder());
+    IARI.reset(new CJBig2_ArithIntDecoder());
+    IARDW.reset(new CJBig2_ArithIntDecoder());
+    IARDH.reset(new CJBig2_ArithIntDecoder());
+    IARDX.reset(new CJBig2_ArithIntDecoder());
+    IARDY.reset(new CJBig2_ArithIntDecoder());
+    IAID.reset(new CJBig2_ArithIaidDecoder(SBSYMCODELEN));
+    pIADT = IADT.get();
+    pIAFS = IAFS.get();
+    pIADS = IADS.get();
+    pIAIT = IAIT.get();
+    pIARI = IARI.get();
+    pIARDW = IARDW.get();
+    pIARDH = IARDH.get();
+    pIARDX = IARDX.get();
+    pIARDY = IARDY.get();
+    pIAID = IAID.get();
   }
   std::unique_ptr<CJBig2_Image> SBREG(new CJBig2_Image(SBW, SBH));
   SBREG->fill(SBDEFPIXEL);
-  IADT->decode(pArithDecoder, &STRIPT);
+  int32_t STRIPT;
+  pIADT->decode(pArithDecoder, &STRIPT);
   STRIPT *= SBSTRIPS;
   STRIPT = -STRIPT;
-  FIRSTS = 0;
-  NINSTANCES = 0;
+  int32_t FIRSTS = 0;
+  FX_DWORD NINSTANCES = 0;
   while (NINSTANCES < SBNUMINSTANCES) {
-    IADT->decode(pArithDecoder, &DT);
+    int32_t CURS;
+    int32_t DT;
+    pIADT->decode(pArithDecoder, &DT);
     DT *= SBSTRIPS;
-    STRIPT = STRIPT + DT;
-    bFirst = TRUE;
+    STRIPT += DT;
+    bool bFirst = true;
     for (;;) {
       if (bFirst) {
-        IAFS->decode(pArithDecoder, &DFS);
-        FIRSTS = FIRSTS + DFS;
+        int32_t DFS;
+        pIAFS->decode(pArithDecoder, &DFS);
+        FIRSTS += DFS;
         CURS = FIRSTS;
-        bFirst = FALSE;
+        bFirst = false;
       } else {
-        if (!IADS->decode(pArithDecoder, &IDS))
+        int32_t IDS;
+        if (!pIADS->decode(pArithDecoder, &IDS))
           break;
-        CURS = CURS + IDS + SBDSOFFSET;
+        CURS += IDS + SBDSOFFSET;
       }
       if (NINSTANCES >= SBNUMINSTANCES) {
         break;
       }
       int CURT = 0;
       if (SBSTRIPS != 1)
-        IAIT->decode(pArithDecoder, &CURT);
+        pIAIT->decode(pArithDecoder, &CURT);
 
-      TI = STRIPT + CURT;
+      int32_t TI = STRIPT + CURT;
       FX_DWORD IDI;
-      IAID->decode(pArithDecoder, &IDI);
+      pIAID->decode(pArithDecoder, &IDI);
       if (IDI >= SBNUMSYMS)
-        goto failed;
+        return nullptr;
 
+      int RI;
       if (SBREFINE == 0)
         RI = 0;
       else
-        IARI->decode(pArithDecoder, &RI);
+        pIARI->decode(pArithDecoder, &RI);
 
-      if (!SBSYMS[IDI])
-        goto failed;
-
+      std::unique_ptr<CJBig2_Image> IBI;
+      CJBig2_Image* pIBI;
       if (RI == 0) {
-        IBI = SBSYMS[IDI];
+        pIBI = SBSYMS[IDI];
       } else {
-        IARDW->decode(pArithDecoder, &RDWI);
-        IARDH->decode(pArithDecoder, &RDHI);
-        IARDX->decode(pArithDecoder, &RDXI);
-        IARDY->decode(pArithDecoder, &RDYI);
-        IBOI = SBSYMS[IDI];
-        WOI = IBOI->m_nWidth;
-        HOI = IBOI->m_nHeight;
+        int32_t RDWI;
+        int32_t RDHI;
+        int32_t RDXI;
+        int32_t RDYI;
+        pIARDW->decode(pArithDecoder, &RDWI);
+        pIARDH->decode(pArithDecoder, &RDHI);
+        pIARDX->decode(pArithDecoder, &RDXI);
+        pIARDY->decode(pArithDecoder, &RDYI);
+        CJBig2_Image* IBOI = SBSYMS[IDI];
+        FX_DWORD WOI = IBOI->m_nWidth;
+        FX_DWORD HOI = IBOI->m_nHeight;
         if ((int)(WOI + RDWI) < 0 || (int)(HOI + RDHI) < 0) {
-          goto failed;
+          return nullptr;
         }
         std::unique_ptr<CJBig2_GRRDProc> pGRRD(new CJBig2_GRRDProc());
         pGRRD->GRW = WOI + RDWI;
@@ -325,89 +346,62 @@ CJBig2_Image* CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
         pGRRD->GRAT[1] = SBRAT[1];
         pGRRD->GRAT[2] = SBRAT[2];
         pGRRD->GRAT[3] = SBRAT[3];
-        IBI = pGRRD->decode(pArithDecoder, grContext);
-        if (!IBI)
-          goto failed;
+        IBI.reset(pGRRD->decode(pArithDecoder, grContext));
+        pIBI = IBI.get();
       }
-      WI = IBI->m_nWidth;
-      HI = IBI->m_nHeight;
+      if (!pIBI)
+        return nullptr;
+
+      FX_DWORD WI = pIBI->m_nWidth;
+      FX_DWORD HI = pIBI->m_nHeight;
       if (TRANSPOSED == 0 && ((REFCORNER == JBIG2_CORNER_TOPRIGHT) ||
                               (REFCORNER == JBIG2_CORNER_BOTTOMRIGHT))) {
-        CURS = CURS + WI - 1;
+        CURS += WI - 1;
       } else if (TRANSPOSED == 1 && ((REFCORNER == JBIG2_CORNER_BOTTOMLEFT) ||
                                      (REFCORNER == JBIG2_CORNER_BOTTOMRIGHT))) {
-        CURS = CURS + HI - 1;
+        CURS += HI - 1;
       }
-      SI = CURS;
+      int32_t SI = CURS;
       if (TRANSPOSED == 0) {
         switch (REFCORNER) {
           case JBIG2_CORNER_TOPLEFT:
-            SBREG->composeFrom(SI, TI, IBI, SBCOMBOP);
+            SBREG->composeFrom(SI, TI, pIBI, SBCOMBOP);
             break;
           case JBIG2_CORNER_TOPRIGHT:
-            SBREG->composeFrom(SI - WI + 1, TI, IBI, SBCOMBOP);
+            SBREG->composeFrom(SI - WI + 1, TI, pIBI, SBCOMBOP);
             break;
           case JBIG2_CORNER_BOTTOMLEFT:
-            SBREG->composeFrom(SI, TI - HI + 1, IBI, SBCOMBOP);
+            SBREG->composeFrom(SI, TI - HI + 1, pIBI, SBCOMBOP);
             break;
           case JBIG2_CORNER_BOTTOMRIGHT:
-            SBREG->composeFrom(SI - WI + 1, TI - HI + 1, IBI, SBCOMBOP);
+            SBREG->composeFrom(SI - WI + 1, TI - HI + 1, pIBI, SBCOMBOP);
             break;
         }
       } else {
         switch (REFCORNER) {
           case JBIG2_CORNER_TOPLEFT:
-            SBREG->composeFrom(TI, SI, IBI, SBCOMBOP);
+            SBREG->composeFrom(TI, SI, pIBI, SBCOMBOP);
             break;
           case JBIG2_CORNER_TOPRIGHT:
-            SBREG->composeFrom(TI - WI + 1, SI, IBI, SBCOMBOP);
+            SBREG->composeFrom(TI - WI + 1, SI, pIBI, SBCOMBOP);
             break;
           case JBIG2_CORNER_BOTTOMLEFT:
-            SBREG->composeFrom(TI, SI - HI + 1, IBI, SBCOMBOP);
+            SBREG->composeFrom(TI, SI - HI + 1, pIBI, SBCOMBOP);
             break;
           case JBIG2_CORNER_BOTTOMRIGHT:
-            SBREG->composeFrom(TI - WI + 1, SI - HI + 1, IBI, SBCOMBOP);
+            SBREG->composeFrom(TI - WI + 1, SI - HI + 1, pIBI, SBCOMBOP);
             break;
         }
       }
-      if (RI != 0) {
-        delete IBI;
-      }
       if (TRANSPOSED == 0 && ((REFCORNER == JBIG2_CORNER_TOPLEFT) ||
                               (REFCORNER == JBIG2_CORNER_BOTTOMLEFT))) {
-        CURS = CURS + WI - 1;
+        CURS += WI - 1;
       } else if (TRANSPOSED == 1 && ((REFCORNER == JBIG2_CORNER_TOPLEFT) ||
                                      (REFCORNER == JBIG2_CORNER_TOPRIGHT))) {
-        CURS = CURS + HI - 1;
+        CURS += HI - 1;
       }
-      NINSTANCES = NINSTANCES + 1;
+      ++NINSTANCES;
     }
   }
-  if (bRetained == FALSE) {
-    delete IADT;
-    delete IAFS;
-    delete IADS;
-    delete IAIT;
-    delete IARI;
-    delete IARDW;
-    delete IARDH;
-    delete IARDX;
-    delete IARDY;
-    delete IAID;
-  }
   return SBREG.release();
-failed:
-  if (bRetained == FALSE) {
-    delete IADT;
-    delete IAFS;
-    delete IADS;
-    delete IAIT;
-    delete IARI;
-    delete IARDW;
-    delete IARDH;
-    delete IARDX;
-    delete IARDY;
-    delete IAID;
-  }
-  return nullptr;
 }
