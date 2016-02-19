@@ -3760,8 +3760,9 @@ void CXFA_FM2JSContext::DecodeURL(const CFX_ByteStringC& szURLString,
     ++i;
   }
   wsResultBuf.AppendChar(0);
-  szResultString =
-      FX_UTF8Encode(wsResultBuf.GetBuffer(), wsResultBuf.GetLength());
+  szResultString.Clear();
+  szResultString << FX_UTF8Encode(wsResultBuf.GetBuffer(),
+                                  wsResultBuf.GetLength());
 }
 void CXFA_FM2JSContext::DecodeHTML(const CFX_ByteStringC& szHTMLString,
                                    CFX_ByteTextBuf& szResultString) {
@@ -3833,8 +3834,9 @@ void CXFA_FM2JSContext::DecodeHTML(const CFX_ByteStringC& szHTMLString,
     ++i;
   }
   wsResultBuf.AppendChar(0);
-  szResultString =
-      FX_UTF8Encode(wsResultBuf.GetBuffer(), wsResultBuf.GetLength());
+  szResultString.Clear();
+  szResultString << FX_UTF8Encode(wsResultBuf.GetBuffer(),
+                                  wsResultBuf.GetLength());
 }
 void CXFA_FM2JSContext::DecodeXML(const CFX_ByteStringC& szXMLString,
                                   CFX_ByteTextBuf& szResultString) {
@@ -3930,7 +3932,8 @@ void CXFA_FM2JSContext::DecodeXML(const CFX_ByteStringC& szXMLString,
     iCode = 0;
   }
   wsXMLBuf.AppendChar(0);
-  szResultString = FX_UTF8Encode(wsXMLBuf.GetBuffer(), wsXMLBuf.GetLength());
+  szResultString.Clear();
+  szResultString << FX_UTF8Encode(wsXMLBuf.GetBuffer(), wsXMLBuf.GetLength());
 }
 void CXFA_FM2JSContext::Encode(FXJSE_HOBJECT hThis,
                                const CFX_ByteStringC& szFuncName,
@@ -4083,7 +4086,9 @@ void CXFA_FM2JSContext::EncodeURL(const CFX_ByteStringC& szURLString,
     }
   }
   wsResultBuf.AppendChar(0);
-  szResultBuf = FX_UTF8Encode(wsResultBuf.GetBuffer(), wsResultBuf.GetLength());
+  szResultBuf.Clear();
+  szResultBuf << FX_UTF8Encode(wsResultBuf.GetBuffer(),
+                               wsResultBuf.GetLength());
 }
 void CXFA_FM2JSContext::EncodeHTML(const CFX_ByteStringC& szHTMLString,
                                    CFX_ByteTextBuf& szResultBuf) {
@@ -4135,7 +4140,9 @@ void CXFA_FM2JSContext::EncodeHTML(const CFX_ByteStringC& szHTMLString,
     ++i;
   }
   wsResultBuf.AppendChar(0);
-  szResultBuf = FX_UTF8Encode(wsResultBuf.GetBuffer(), wsResultBuf.GetLength());
+  szResultBuf.Clear();
+  szResultBuf << FX_UTF8Encode(wsResultBuf.GetBuffer(),
+                               wsResultBuf.GetLength());
 }
 void CXFA_FM2JSContext::EncodeXML(const CFX_ByteStringC& szXMLString,
                                   CFX_ByteTextBuf& szResultBuf) {
@@ -4215,7 +4222,9 @@ void CXFA_FM2JSContext::EncodeXML(const CFX_ByteStringC& szXMLString,
     }
   }
   wsResultBuf.AppendChar(0);
-  szResultBuf = FX_UTF8Encode(wsResultBuf.GetBuffer(), wsResultBuf.GetLength());
+  szResultBuf.Clear();
+  szResultBuf << FX_UTF8Encode(wsResultBuf.GetBuffer(),
+                               wsResultBuf.GetLength());
 }
 FX_BOOL CXFA_FM2JSContext::HTMLSTR2Code(const CFX_WideStringC& pData,
                                         uint32_t& iCode) {
