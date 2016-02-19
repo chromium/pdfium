@@ -190,10 +190,12 @@ class CFX_FontMgrImp : public IFX_FontMgr {
   FX_BOOL EnumFontsFromFiles();
 
  protected:
-  void ReportFace(FXFT_Face pFace,
-                  CFX_FontDescriptors& Fonts,
-                  IFX_FileAccess* pFontAccess);
-  void ReportFaces(IFX_FileRead* pFontStream);
+  void RegisterFace(FXFT_Face pFace,
+                    CFX_FontDescriptors& Fonts,
+                    const CFX_WideString* pFaceName,
+                    IFX_FileAccess* pFontAccess);
+  void RegisterFaces(IFX_FileRead* pFontStream,
+                     const CFX_WideString* pFaceName);
   void GetNames(const uint8_t* name_table, CFX_WideStringArray& Names);
   void GetCharsets(FXFT_Face pFace, CFX_WordArray& Charsets);
   void GetUSBCSB(FXFT_Face pFace, FX_DWORD* USB, FX_DWORD* CSB);
