@@ -83,7 +83,7 @@ inline FX_BOOL XFA_FMDChar::isUnicodeAlpha(uint16_t ch) {
   return TRUE;
 }
 
-XFA_FMKeyword keyWords[] = {
+const XFA_FMKeyword keyWords[] = {
     {TOKand, 0x00000026, L"&"},
     {TOKlparen, 0x00000028, L"("},
     {TOKrparen, 0x00000029, L")"},
@@ -145,13 +145,15 @@ XFA_FMKeyword keyWords[] = {
     {TOKendif, 0xe0e8fee6, L"endif"},
 };
 
-const FX_WORD KEYWORD_START = TOKdo;
-const FX_WORD KEYWORD_END = TOKendif;
+const XFA_FM_TOKEN KEYWORD_START = TOKdo;
+const XFA_FM_TOKEN KEYWORD_END = TOKendif;
 
 }  // namespace
 
 const FX_WCHAR* XFA_FM_KeywordToString(XFA_FM_TOKEN op) {
-  return keyWords[op].m_keword;
+  if (op < KEYWORD_START || op > KEYWORD_END)
+    return L"";
+  return keyWords[op].m_keyword;
 }
 
 CXFA_FMToken::CXFA_FMToken() : m_type(TOKreserver), m_uLinenum(1) {}

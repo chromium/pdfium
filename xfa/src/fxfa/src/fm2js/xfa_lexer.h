@@ -83,7 +83,7 @@ enum XFA_FM_TOKEN {
 struct XFA_FMKeyword {
   XFA_FM_TOKEN m_type;
   uint32_t m_uHash;
-  const FX_WCHAR* m_keword;
+  const FX_WCHAR* m_keyword;
 };
 
 const FX_WCHAR* XFA_FM_KeywordToString(XFA_FM_TOKEN op);
