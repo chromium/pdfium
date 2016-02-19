@@ -912,19 +912,19 @@ void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern,
   buffer.OutputToDevice();
 }
 void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern,
-                                           CPDF_PageObject* pPageObj,
+                                           const CPDF_PageObject* pPageObj,
                                            const CFX_Matrix* pObj2Device,
                                            FX_BOOL bStroke) {
   if (!pattern->Load()) {
     return;
   }
   m_pDevice->SaveState();
-  if (pPageObj->m_Type == CPDF_PageObject::PATH) {
-    if (!SelectClipPath((CPDF_PathObject*)pPageObj, pObj2Device, bStroke)) {
+  if (pPageObj->IsPath()) {
+    if (!SelectClipPath(pPageObj->AsPath(), pObj2Device, bStroke)) {
       m_pDevice->RestoreState();
       return;
     }
-  } else if (pPageObj->m_Type == CPDF_PageObject::IMAGE) {
+  } else if (pPageObj->IsImage()) {
     FX_RECT rect = pPageObj->GetBBox(pObj2Device);
     m_pDevice->SetClip_Rect(&rect);
   } else {
@@ -943,7 +943,7 @@ void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern,
               m_Options.m_ColorMode == RENDER_COLOR_ALPHA);
   m_pDevice->RestoreState();
 }
-FX_BOOL CPDF_RenderStatus::ProcessShading(CPDF_ShadingObject* pShadingObj,
+FX_BOOL CPDF_RenderStatus::ProcessShading(const CPDF_ShadingObject* pShadingObj,
                                           const CFX_Matrix* pObj2Device) {
   FX_RECT rect = pShadingObj->GetBBox(pObj2Device);
   FX_RECT clip_box = m_pDevice->GetClipBox();
@@ -994,19 +994,19 @@ static CFX_DIBitmap* DrawPatternBitmap(CPDF_Document* pDoc,
   return pBitmap;
 }
 void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
-                                          CPDF_PageObject* pPageObj,
+                                          const CPDF_PageObject* pPageObj,
                                           const CFX_Matrix* pObj2Device,
                                           FX_BOOL bStroke) {
   if (!pPattern->Load()) {
     return;
   }
   m_pDevice->SaveState();
-  if (pPageObj->m_Type == CPDF_PageObject::PATH) {
-    if (!SelectClipPath((CPDF_PathObject*)pPageObj, pObj2Device, bStroke)) {
+  if (pPageObj->IsPath()) {
+    if (!SelectClipPath(pPageObj->AsPath(), pObj2Device, bStroke)) {
       m_pDevice->RestoreState();
       return;
     }
-  } else if (pPageObj->m_Type == CPDF_PageObject::IMAGE) {
+  } else if (pPageObj->IsImage()) {
     FX_RECT rect = pPageObj->GetBBox(pObj2Device);
     m_pDevice->SetClip_Rect(&rect);
   } else {
@@ -1179,7 +1179,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
   m_pDevice->RestoreState();
   delete pPatternBitmap;
 }
-void CPDF_RenderStatus::DrawPathWithPattern(CPDF_PathObject* pPathObj,
+void CPDF_RenderStatus::DrawPathWithPattern(const CPDF_PathObject* pPathObj,
                                             const CFX_Matrix* pObj2Device,
                                             CPDF_Color* pColor,
                                             FX_BOOL bStroke) {
@@ -1195,7 +1195,7 @@ void CPDF_RenderStatus::DrawPathWithPattern(CPDF_PathObject* pPathObj,
                        pObj2Device, bStroke);
   }
 }
-void CPDF_RenderStatus::ProcessPathPattern(CPDF_PathObject* pPathObj,
+void CPDF_RenderStatus::ProcessPathPattern(const CPDF_PathObject* pPathObj,
                                            const CFX_Matrix* pObj2Device,
                                            int& filltype,
                                            FX_BOOL& bStroke) {

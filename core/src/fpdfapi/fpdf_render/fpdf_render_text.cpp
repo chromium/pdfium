@@ -318,10 +318,9 @@ FX_BOOL CPDF_Type3Char::LoadBitmap(CPDF_RenderContext* pContext) {
   }
   if (m_pForm->GetPageObjectList()->size() == 1 && !m_bColored) {
     auto& pPageObj = m_pForm->GetPageObjectList()->front();
-    if (pPageObj->m_Type == CPDF_PageObject::IMAGE) {
-      CPDF_ImageObject* pImage = static_cast<CPDF_ImageObject*>(pPageObj.get());
-      m_ImageMatrix = pImage->m_Matrix;
-      const CFX_DIBSource* pSource = pImage->m_pImage->LoadDIBSource();
+    if (pPageObj->IsImage()) {
+      const CFX_DIBSource* pSource =
+          pPageObj->AsImage()->m_pImage->LoadDIBSource();
       if (pSource) {
         m_pBitmap = pSource->Clone();
         delete pSource;

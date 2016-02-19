@@ -94,7 +94,7 @@ class CPDF_DocRenderData {
 
 class IPDF_ObjectRenderer {
  public:
-  static IPDF_ObjectRenderer* Create(int type);
+  static IPDF_ObjectRenderer* Create();
   virtual ~IPDF_ObjectRenderer() {}
   virtual FX_BOOL Start(CPDF_RenderStatus* pRenderStatus,
                         const CPDF_PageObject* pObj,
@@ -151,27 +151,28 @@ class CPDF_RenderStatus {
                              const CFX_Matrix* pObj2Device);
   FX_BOOL DrawObjWithBlend(const CPDF_PageObject* pObj,
                            const CFX_Matrix* pObj2Device);
-  FX_BOOL ProcessPath(CPDF_PathObject* pPathObj, const CFX_Matrix* pObj2Device);
-  void ProcessPathPattern(CPDF_PathObject* pPathObj,
+  FX_BOOL ProcessPath(const CPDF_PathObject* pPathObj,
+                      const CFX_Matrix* pObj2Device);
+  void ProcessPathPattern(const CPDF_PathObject* pPathObj,
                           const CFX_Matrix* pObj2Device,
                           int& filltype,
                           FX_BOOL& bStroke);
-  void DrawPathWithPattern(CPDF_PathObject* pPathObj,
+  void DrawPathWithPattern(const CPDF_PathObject* pPathObj,
                            const CFX_Matrix* pObj2Device,
                            CPDF_Color* pColor,
                            FX_BOOL bStroke);
   void DrawTilingPattern(CPDF_TilingPattern* pPattern,
-                         CPDF_PageObject* pPageObj,
+                         const CPDF_PageObject* pPageObj,
                          const CFX_Matrix* pObj2Device,
                          FX_BOOL bStroke);
   void DrawShadingPattern(CPDF_ShadingPattern* pPattern,
-                          CPDF_PageObject* pPageObj,
+                          const CPDF_PageObject* pPageObj,
                           const CFX_Matrix* pObj2Device,
                           FX_BOOL bStroke);
-  FX_BOOL SelectClipPath(CPDF_PathObject* pPathObj,
+  FX_BOOL SelectClipPath(const CPDF_PathObject* pPathObj,
                          const CFX_Matrix* pObj2Device,
                          FX_BOOL bStroke);
-  FX_BOOL ProcessImage(CPDF_ImageObject* pImageObj,
+  FX_BOOL ProcessImage(const CPDF_ImageObject* pImageObj,
                        const CFX_Matrix* pObj2Device);
   FX_BOOL OutputBitmapAlpha(CPDF_ImageObject* pImageObj,
                             const CFX_Matrix* pImage2Device);
@@ -190,7 +191,7 @@ class CPDF_RenderStatus {
                          int bitmap_alpha,
                          int blend_mode,
                          int bIsolated);
-  FX_BOOL ProcessShading(CPDF_ShadingObject* pShadingObj,
+  FX_BOOL ProcessShading(const CPDF_ShadingObject* pShadingObj,
                          const CFX_Matrix* pObj2Device);
   void DrawShading(CPDF_ShadingPattern* pPattern,
                    CFX_Matrix* pMatrix,
@@ -209,7 +210,8 @@ class CPDF_RenderStatus {
                                const CFX_Matrix* pTextMatrix,
                                FX_BOOL bFill,
                                FX_BOOL bStroke);
-  FX_BOOL ProcessForm(CPDF_FormObject* pFormObj, const CFX_Matrix* pObj2Device);
+  FX_BOOL ProcessForm(const CPDF_FormObject* pFormObj,
+                      const CFX_Matrix* pObj2Device);
   CFX_DIBitmap* GetBackdrop(const CPDF_PageObject* pObj,
                             const FX_RECT& rect,
                             int& left,

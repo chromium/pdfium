@@ -1383,8 +1383,8 @@ FX_BOOL Document::getPageNthWord(IJS_Context* cc,
   int nWords = 0;
   CFX_WideString swRet;
   for (auto& pPageObj : *page.GetPageObjectList()) {
-    if (pPageObj->m_Type == CPDF_PageObject::TEXT) {
-      CPDF_TextObject* pTextObj = static_cast<CPDF_TextObject*>(pPageObj.get());
+    if (pPageObj->IsText()) {
+      CPDF_TextObject* pTextObj = pPageObj->AsText();
       int nObjWords = CountWords(pTextObj);
       if (nWords + nObjWords >= nWordNo) {
         swRet = GetObjWordStr(pTextObj, nWordNo - nWords);
@@ -1438,8 +1438,8 @@ FX_BOOL Document::getPageNumWords(IJS_Context* cc,
 
   int nWords = 0;
   for (auto& pPageObj : *page.GetPageObjectList()) {
-    if (pPageObj->m_Type == CPDF_PageObject::TEXT)
-      nWords += CountWords(static_cast<CPDF_TextObject*>(pPageObj.get()));
+    if (pPageObj->IsText())
+      nWords += CountWords(pPageObj->AsText());
   }
 
   vRet = nWords;

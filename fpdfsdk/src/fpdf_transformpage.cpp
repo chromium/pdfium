@@ -200,7 +200,7 @@ FPDFPageObj_TransformClipPath(FPDF_PAGEOBJECT page_object,
 
   // Special treatment to shading object, because the ClipPath for shading
   // object is already transformed.
-  if (pPageObj->m_Type != CPDF_PageObject::SHADING)
+  if (!pPageObj->IsShading())
     pPageObj->TransformClipPath(matrix);
   pPageObj->TransformGeneralState(matrix);
 }

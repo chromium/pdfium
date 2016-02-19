@@ -140,9 +140,9 @@ DLLEXPORT void STDCALL FPDFPage_InsertObject(FPDF_PAGE page,
   pPage->GetPageObjectList()->push_back(
       std::unique_ptr<CPDF_PageObject>(pPageObj));
 
-  switch (pPageObj->m_Type) {
+  switch (pPageObj->GetType()) {
     case FPDF_PAGEOBJ_PATH: {
-      CPDF_PathObject* pPathObj = (CPDF_PathObject*)pPageObj;
+      CPDF_PathObject* pPathObj = pPageObj->AsPath();
       pPathObj->CalcBoundingBox();
       break;
     }
@@ -150,17 +150,17 @@ DLLEXPORT void STDCALL FPDFPage_InsertObject(FPDF_PAGE page,
       break;
     }
     case FPDF_PAGEOBJ_IMAGE: {
-      CPDF_ImageObject* pImageObj = (CPDF_ImageObject*)pPageObj;
+      CPDF_ImageObject* pImageObj = pPageObj->AsImage();
       pImageObj->CalcBoundingBox();
       break;
     }
     case FPDF_PAGEOBJ_SHADING: {
-      CPDF_ShadingObject* pShadingObj = (CPDF_ShadingObject*)pPageObj;
+      CPDF_ShadingObject* pShadingObj = pPageObj->AsShading();
       pShadingObj->CalcBoundingBox();
       break;
     }
     case FPDF_PAGEOBJ_FORM: {
-      CPDF_FormObject* pFormObj = (CPDF_FormObject*)pPageObj;
+      CPDF_FormObject* pFormObj = pPageObj->AsForm();
       pFormObj->CalcBoundingBox();
       break;
     }
@@ -216,13 +216,13 @@ FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT pageObject) {
   if (pGeneralState && pGeneralState->m_FillAlpha != 1.0f)
     return TRUE;
 
-  if (pPageObj->m_Type == CPDF_PageObject::PATH) {
+  if (pPageObj->IsPath()) {
     if (pGeneralState && pGeneralState->m_StrokeAlpha != 1.0f)
       return TRUE;
   }
 
-  if (pPageObj->m_Type == CPDF_PageObject::FORM) {
-    CPDF_FormObject* pFormObj = (CPDF_FormObject*)pPageObj;
+  if (pPageObj->IsForm()) {
+    CPDF_FormObject* pFormObj = pPageObj->AsForm();
     if (pFormObj->m_pForm &&
         (pFormObj->m_pForm->m_Transparency & PDFTRANS_ISOLATED))
       return TRUE;

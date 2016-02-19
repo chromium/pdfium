@@ -12,7 +12,7 @@
 #include "core/include/fpdfapi/fpdf_page.h"
 #include "third_party/base/stl_util.h"
 
-CPDF_PageObject* CPDF_PageObject::Create(int type) {
+CPDF_PageObject* CPDF_PageObject::Create(Type type) {
   switch (type) {
     case TEXT:
       return new CPDF_TextObject;
@@ -29,12 +29,12 @@ CPDF_PageObject* CPDF_PageObject::Create(int type) {
 }
 CPDF_PageObject::~CPDF_PageObject() {}
 CPDF_PageObject* CPDF_PageObject::Clone() const {
-  CPDF_PageObject* pObj = Create(m_Type);
+  CPDF_PageObject* pObj = Create(GetType());
   pObj->Copy(this);
   return pObj;
 }
 void CPDF_PageObject::Copy(const CPDF_PageObject* pSrc) {
-  if (m_Type != pSrc->m_Type) {
+  if (GetType() != pSrc->GetType()) {
     return;
   }
   CopyData(pSrc);
@@ -56,7 +56,7 @@ void CPDF_PageObject::RemoveClipPath() {
   m_ClipPath.SetNull();
 }
 void CPDF_PageObject::RecalcBBox() {
-  switch (m_Type) {
+  switch (GetType()) {
     case TEXT:
       ((CPDF_TextObject*)this)->RecalcPositionData();
       break;
@@ -93,8 +93,7 @@ FX_RECT CPDF_PageObject::GetBBox(const CFX_Matrix* pMatrix) const {
 }
 
 CPDF_TextObject::CPDF_TextObject()
-    : CPDF_PageObject(TEXT),
-      m_PosX(0),
+    : m_PosX(0),
       m_PosY(0),
       m_nChars(0),
       m_pCharCodes(nullptr),
@@ -611,8 +610,7 @@ void CPDF_TextObject::SetTextState(CPDF_TextState TextState) {
   CalcPositionData(nullptr, nullptr, 0);
 }
 
-CPDF_ShadingObject::CPDF_ShadingObject()
-    : CPDF_PageObject(SHADING), m_pShading(nullptr) {}
+CPDF_ShadingObject::CPDF_ShadingObject() : m_pShading(nullptr) {}
 
 CPDF_ShadingObject::~CPDF_ShadingObject() {}
 

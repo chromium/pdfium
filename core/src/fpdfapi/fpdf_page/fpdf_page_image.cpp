@@ -9,8 +9,7 @@
 #include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fpdfapi/fpdf_pageobj.h"
 
-CPDF_ImageObject::CPDF_ImageObject()
-    : CPDF_PageObject(IMAGE), m_pImage(nullptr) {}
+CPDF_ImageObject::CPDF_ImageObject() : m_pImage(nullptr) {}
 CPDF_ImageObject::~CPDF_ImageObject() {
   if (!m_pImage) {
     return;

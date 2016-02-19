@@ -17,7 +17,7 @@
 #include "core/include/fxge/fx_ge.h"
 #include "core/src/fpdfapi/fpdf_page/pageint.h"
 
-FX_BOOL CPDF_RenderStatus::ProcessImage(CPDF_ImageObject* pImageObj,
+FX_BOOL CPDF_RenderStatus::ProcessImage(const CPDF_ImageObject* pImageObj,
                                         const CFX_Matrix* pObj2Device) {
   CPDF_ImageRenderer render;
   if (render.Start(this, pImageObj, pObj2Device, m_bStdCS, m_curBlend)) {

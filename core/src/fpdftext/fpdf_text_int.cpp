@@ -765,7 +765,7 @@ int32_t CPDF_TextPage::FindTextlineFlowDirection() {
     return -1;
 
   for (auto& pPageObj : *m_pPage->GetPageObjectList()) {
-    if (!pPageObj || pPageObj->m_Type != CPDF_PageObject::TEXT)
+    if (!pPageObj || !pPageObj->IsText())
       continue;
 
     int32_t minH =
@@ -846,13 +846,12 @@ void CPDF_TextPage::ProcessObject() {
   const CPDF_PageObjectList* pObjList = m_pPage->GetPageObjectList();
   for (auto it = pObjList->begin(); it != pObjList->end(); ++it) {
     if (CPDF_PageObject* pObj = it->get()) {
-      if (pObj->m_Type == CPDF_PageObject::TEXT) {
+      if (pObj->IsText()) {
         CFX_Matrix matrix;
-        ProcessTextObject(static_cast<CPDF_TextObject*>(pObj), matrix, pObjList,
-                          it);
-      } else if (pObj->m_Type == CPDF_PageObject::FORM) {
+        ProcessTextObject(pObj->AsText(), matrix, pObjList, it);
+      } else if (pObj->IsForm()) {
         CFX_Matrix formMatrix(1, 0, 0, 1, 0, 0);
-        ProcessFormObject(static_cast<CPDF_FormObject*>(pObj), formMatrix);
+        ProcessFormObject(pObj->AsForm(), formMatrix);
       }
     }
   }
@@ -875,12 +874,10 @@ void CPDF_TextPage::ProcessFormObject(CPDF_FormObject* pFormObj,
 
   for (auto it = pObjectList->begin(); it != pObjectList->end(); ++it) {
     if (CPDF_PageObject* pPageObj = it->get()) {
-      if (pPageObj->m_Type == CPDF_PageObject::TEXT) {
-        ProcessTextObject(static_cast<CPDF_TextObject*>(pPageObj),
-                          curFormMatrix, pObjectList, it);
-      } else if (pPageObj->m_Type == CPDF_PageObject::FORM) {
-        ProcessFormObject(static_cast<CPDF_FormObject*>(pPageObj),
-                          curFormMatrix);
+      if (pPageObj->IsText()) {
+        ProcessTextObject(pPageObj->AsText(), curFormMatrix, pObjectList, it);
+      } else if (pPageObj->IsForm()) {
+        ProcessFormObject(pPageObj->AsForm(), curFormMatrix);
       }
     }
   }
@@ -1825,9 +1822,9 @@ FX_BOOL CPDF_TextPage::IsSameAsPreTextObject(
   while (i < 5 && iter != pObjList->begin()) {
     --iter;
     CPDF_PageObject* pOtherObj = iter->get();
-    if (pOtherObj == pTextObj || pOtherObj->m_Type != CPDF_PageObject::TEXT)
+    if (pOtherObj == pTextObj || !pOtherObj->IsText())
       continue;
-    if (IsSameTextObject(static_cast<CPDF_TextObject*>(pOtherObj), pTextObj))
+    if (IsSameTextObject(pOtherObj->AsText(), pTextObj))
       return TRUE;
     ++i;
   }
