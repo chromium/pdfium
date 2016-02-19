@@ -13,6 +13,24 @@
 #include "core/include/fxcrt/fx_ext.h"
 #include "third_party/base/numerics/safe_math.h"
 
+namespace {
+
+bool IsValidCodePage(FX_WORD codepage) {
+  switch (codepage) {
+    case 0:
+    case 932:
+    case 936:
+    case 949:
+    case 950:
+      return true;
+
+    default:
+      return false;
+  }
+}
+
+}  // namespace
+
 // static
 CFX_WideString::StringData* CFX_WideString::StringData::Create(int nLen) {
   // TODO(palmer): |nLen| should really be declared as |size_t|, or
@@ -349,8 +367,7 @@ CFX_WideString CFX_WideString::FromLocal(const CFX_ByteString& str) {
 // static
 CFX_WideString CFX_WideString::FromCodePage(const CFX_ByteString& str,
                                             FX_WORD codepage) {
-  CFX_CharMap* pCharMap = CFX_CharMap::GetDefaultMapper(codepage);
-  return pCharMap->m_GetWideString(pCharMap, str);
+  return CFX_CharMap::GetWideString(codepage, str);
 }
 
 // static
@@ -997,71 +1014,36 @@ int CFX_WideString::GetInteger() const {
 FX_FLOAT CFX_WideString::GetFloat() const {
   return m_pData ? FX_wtof(m_pData->m_String, m_pData->m_nDataLength) : 0.0f;
 }
-static CFX_ByteString _DefMap_GetByteString(CFX_CharMap* pCharMap,
-                                            const CFX_WideString& widestr) {
-  int src_len = widestr.GetLength();
-  int codepage = pCharMap->m_GetCodePage ? pCharMap->m_GetCodePage() : 0;
-  int dest_len = FXSYS_WideCharToMultiByte(codepage, 0, widestr.c_str(),
-                                           src_len, NULL, 0, NULL, NULL);
-  if (dest_len == 0) {
-    return CFX_ByteString();
+
+// static
+CFX_ByteString CFX_CharMap::GetByteString(FX_WORD codepage,
+                                          const CFX_WideString& wstr) {
+  FXSYS_assert(IsValidCodePage(codepage));
+  int src_len = wstr.GetLength();
+  int dest_len = FXSYS_WideCharToMultiByte(codepage, 0, wstr.c_str(), src_len,
+                                           nullptr, 0, nullptr, nullptr);
+  CFX_ByteString bstr;
+  if (dest_len) {
+    FX_CHAR* dest_buf = bstr.GetBuffer(dest_len);
+    FXSYS_WideCharToMultiByte(codepage, 0, wstr.c_str(), src_len, dest_buf,
+                              dest_len, nullptr, nullptr);
+    bstr.ReleaseBuffer(dest_len);
   }
-  CFX_ByteString bytestr;
-  FX_CHAR* dest_buf = bytestr.GetBuffer(dest_len);
-  FXSYS_WideCharToMultiByte(codepage, 0, widestr.c_str(), src_len, dest_buf,
-                            dest_len, NULL, NULL);
-  bytestr.ReleaseBuffer(dest_len);
-  return bytestr;
+  return bstr;
 }
-static CFX_WideString _DefMap_GetWideString(CFX_CharMap* pCharMap,
-                                            const CFX_ByteString& bytestr) {
-  int src_len = bytestr.GetLength();
-  int codepage = pCharMap->m_GetCodePage ? pCharMap->m_GetCodePage() : 0;
+
+// static
+CFX_WideString CFX_CharMap::GetWideString(FX_WORD codepage,
+                                          const CFX_ByteString& bstr) {
+  FXSYS_assert(IsValidCodePage(codepage));
+  int src_len = bstr.GetLength();
   int dest_len =
-      FXSYS_MultiByteToWideChar(codepage, 0, bytestr, src_len, NULL, 0);
-  if (dest_len == 0) {
-    return CFX_WideString();
+      FXSYS_MultiByteToWideChar(codepage, 0, bstr, src_len, nullptr, 0);
+  CFX_WideString wstr;
+  if (dest_len) {
+    FX_WCHAR* dest_buf = wstr.GetBuffer(dest_len);
+    FXSYS_MultiByteToWideChar(codepage, 0, bstr, src_len, dest_buf, dest_len);
+    wstr.ReleaseBuffer(dest_len);
   }
-  CFX_WideString widestr;
-  FX_WCHAR* dest_buf = widestr.GetBuffer(dest_len);
-  FXSYS_MultiByteToWideChar(codepage, 0, bytestr, src_len, dest_buf, dest_len);
-  widestr.ReleaseBuffer(dest_len);
-  return widestr;
-}
-static int _DefMap_GetGBKCodePage() {
-  return 936;
-}
-static int _DefMap_GetUHCCodePage() {
-  return 949;
-}
-static int _DefMap_GetJISCodePage() {
-  return 932;
-}
-static int _DefMap_GetBig5CodePage() {
-  return 950;
-}
-static const CFX_CharMap g_DefaultMapper = {&_DefMap_GetWideString,
-                                            &_DefMap_GetByteString, NULL};
-static const CFX_CharMap g_DefaultGBKMapper = {
-    &_DefMap_GetWideString, &_DefMap_GetByteString, &_DefMap_GetGBKCodePage};
-static const CFX_CharMap g_DefaultJISMapper = {
-    &_DefMap_GetWideString, &_DefMap_GetByteString, &_DefMap_GetJISCodePage};
-static const CFX_CharMap g_DefaultUHCMapper = {
-    &_DefMap_GetWideString, &_DefMap_GetByteString, &_DefMap_GetUHCCodePage};
-static const CFX_CharMap g_DefaultBig5Mapper = {
-    &_DefMap_GetWideString, &_DefMap_GetByteString, &_DefMap_GetBig5CodePage};
-CFX_CharMap* CFX_CharMap::GetDefaultMapper(int32_t codepage) {
-  switch (codepage) {
-    case 0:
-      return (CFX_CharMap*)&g_DefaultMapper;
-    case 932:
-      return (CFX_CharMap*)&g_DefaultJISMapper;
-    case 936:
-      return (CFX_CharMap*)&g_DefaultGBKMapper;
-    case 949:
-      return (CFX_CharMap*)&g_DefaultUHCMapper;
-    case 950:
-      return (CFX_CharMap*)&g_DefaultBig5Mapper;
-  }
-  return NULL;
+  return wstr;
 }

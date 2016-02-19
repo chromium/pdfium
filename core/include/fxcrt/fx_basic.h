@@ -221,17 +221,17 @@ class CFX_FileBufferArchive : public IFX_BufferArchive {
   FX_BOOL m_bTakeover;
 };
 
-struct CFX_CharMap {
-  static CFX_CharMap* GetDefaultMapper(int32_t codepage = 0);
+class CFX_CharMap {
+ public:
+  static CFX_ByteString GetByteString(FX_WORD codepage,
+                                      const CFX_WideString& wstr);
 
-  CFX_WideString (*m_GetWideString)(CFX_CharMap* pMap,
-                                    const CFX_ByteString& bstr);
+  static CFX_WideString GetWideString(FX_WORD codepage,
+                                      const CFX_ByteString& bstr);
 
-  CFX_ByteString (*m_GetByteString)(CFX_CharMap* pMap,
-                                    const CFX_WideString& wstr);
-
-  int32_t (*m_GetCodePage)();
+  CFX_CharMap() = delete;
 };
+
 class CFX_UTF8Decoder {
  public:
   CFX_UTF8Decoder() { m_PendingBytes = 0; }

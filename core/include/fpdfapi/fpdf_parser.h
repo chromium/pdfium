@@ -697,21 +697,11 @@ CFX_ByteString PDF_NameDecode(const CFX_ByteString& orig);
 CFX_ByteString PDF_NameEncode(const CFX_ByteString& orig);
 CFX_ByteString PDF_EncodeString(const CFX_ByteString& src,
                                 FX_BOOL bHex = FALSE);
-CFX_WideString PDF_DecodeText(const uint8_t* pData,
-                              FX_DWORD size,
-                              CFX_CharMap* pCharMap = NULL);
-inline CFX_WideString PDF_DecodeText(const CFX_ByteString& bstr,
-                                     CFX_CharMap* pCharMap = NULL) {
-  return PDF_DecodeText((const uint8_t*)bstr.c_str(), bstr.GetLength(),
-                        pCharMap);
-}
-CFX_ByteString PDF_EncodeText(const FX_WCHAR* pString,
-                              int len = -1,
-                              CFX_CharMap* pCharMap = NULL);
-inline CFX_ByteString PDF_EncodeText(const CFX_WideString& str,
-                                     CFX_CharMap* pCharMap = NULL) {
-  return PDF_EncodeText(str.c_str(), str.GetLength(), pCharMap);
-}
+CFX_WideString PDF_DecodeText(const uint8_t* pData, FX_DWORD size);
+CFX_WideString PDF_DecodeText(const CFX_ByteString& bstr);
+CFX_ByteString PDF_EncodeText(const FX_WCHAR* pString, int len = -1);
+CFX_ByteString PDF_EncodeText(const CFX_WideString& str);
+
 FX_FLOAT PDF_ClipFloat(FX_FLOAT f);
 class CFDF_Document : public CPDF_IndirectObjectHolder {
  public:

@@ -16,7 +16,6 @@
 class CFX_BinaryBuf;
 class CFX_ByteString;
 class CFX_WideString;
-struct CFX_CharMap;
 
 // An immutable string with caller-provided storage which must outlive the
 // string itself.

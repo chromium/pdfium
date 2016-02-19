@@ -58,9 +58,7 @@ class CPDF_Object {
 
   virtual CFX_ByteString GetString() const { return CFX_ByteString(); }
   virtual CFX_ByteStringC GetConstString() const { return CFX_ByteStringC(); }
-  virtual CFX_WideString GetUnicodeText(CFX_CharMap* pCharMap = nullptr) const {
-    return CFX_WideString();
-  }
+  virtual CFX_WideString GetUnicodeText() const { return CFX_WideString(); }
   virtual FX_FLOAT GetNumber() const { return 0; }
   virtual int GetInteger() const { return 0; }
   virtual CPDF_Dictionary* GetDict() const { return nullptr; }
@@ -207,7 +205,7 @@ class CPDF_String : public CPDF_Object {
   CFX_ByteStringC GetConstString() const override {
     return CFX_ByteStringC(m_String);
   }
-  CFX_WideString GetUnicodeText(CFX_CharMap* pCharMap = nullptr) const override;
+  CFX_WideString GetUnicodeText() const override;
   void SetString(const CFX_ByteString& str) override { m_String = str; }
   bool IsString() const override { return true; }
   CPDF_String* AsString() override { return this; }
@@ -245,7 +243,7 @@ class CPDF_Name : public CPDF_Object {
   CFX_ByteStringC GetConstString() const override {
     return CFX_ByteStringC(m_Name);
   }
-  CFX_WideString GetUnicodeText(CFX_CharMap* pCharMap = nullptr) const override;
+  CFX_WideString GetUnicodeText() const override;
   void SetString(const CFX_ByteString& str) override { m_Name = str; }
   bool IsName() const override { return true; }
   CPDF_Name* AsName() override { return this; }
@@ -355,8 +353,7 @@ class CPDF_Dictionary : public CPDF_Object {
                              const CFX_ByteStringC& default_str) const;
   CFX_ByteStringC GetConstStringBy(const CFX_ByteStringC& key,
                                    const CFX_ByteStringC& default_str) const;
-  CFX_WideString GetUnicodeTextBy(const CFX_ByteStringC& key,
-                                  CFX_CharMap* pCharMap = NULL) const;
+  CFX_WideString GetUnicodeTextBy(const CFX_ByteStringC& key) const;
   int GetIntegerBy(const CFX_ByteStringC& key) const;
   int GetIntegerBy(const CFX_ByteStringC& key, int default_int) const;
   FX_BOOL GetBooleanBy(const CFX_ByteStringC& key,
@@ -428,7 +425,7 @@ class CPDF_Stream : public CPDF_Object {
   Type GetType() const override { return STREAM; }
   CPDF_Object* Clone(FX_BOOL bDirect = FALSE) const override;
   CPDF_Dictionary* GetDict() const override { return m_pDict; }
-  CFX_WideString GetUnicodeText(CFX_CharMap* pCharMap = nullptr) const override;
+  CFX_WideString GetUnicodeText() const override;
   bool IsStream() const override { return true; }
   CPDF_Stream* AsStream() override { return this; }
   const CPDF_Stream* AsStream() const override { return this; }

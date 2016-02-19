@@ -36,12 +36,12 @@ CPDF_String::CPDF_String(const CFX_WideString& str) : m_bHex(FALSE) {
   m_String = PDF_EncodeText(str);
 }
 
-CFX_WideString CPDF_String::GetUnicodeText(CFX_CharMap* pCharMap) const {
-  return PDF_DecodeText(m_String, pCharMap);
+CFX_WideString CPDF_String::GetUnicodeText() const {
+  return PDF_DecodeText(m_String);
 }
 
-CFX_WideString CPDF_Name::GetUnicodeText(CFX_CharMap* pCharMap) const {
-  return PDF_DecodeText(m_Name, pCharMap);
+CFX_WideString CPDF_Name::GetUnicodeText() const {
+  return PDF_DecodeText(m_Name);
 }
 
 CPDF_Array::~CPDF_Array() {
@@ -256,12 +256,12 @@ CFX_ByteStringC CPDF_Dictionary::GetConstStringBy(
   return CFX_ByteStringC();
 }
 
-CFX_WideString CPDF_Dictionary::GetUnicodeTextBy(const CFX_ByteStringC& key,
-                                                 CFX_CharMap* pCharMap) const {
+CFX_WideString CPDF_Dictionary::GetUnicodeTextBy(
+    const CFX_ByteStringC& key) const {
   CPDF_Object* p = GetElement(key);
   if (CPDF_Reference* pRef = ToReference(p))
     p = pRef->GetDirect();
-  return p ? p->GetUnicodeText(pCharMap) : CFX_WideString();
+  return p ? p->GetUnicodeText() : CFX_WideString();
 }
 
 CFX_ByteString CPDF_Dictionary::GetStringBy(const CFX_ByteStringC& key,
@@ -562,10 +562,10 @@ void CPDF_Stream::InitStreamFromFile(IFX_FileRead* pFile,
   }
 }
 
-CFX_WideString CPDF_Stream::GetUnicodeText(CFX_CharMap* pCharMap) const {
+CFX_WideString CPDF_Stream::GetUnicodeText() const {
   CPDF_StreamAcc stream;
   stream.LoadAllData(this, FALSE);
-  return PDF_DecodeText(stream.GetData(), stream.GetSize(), pCharMap);
+  return PDF_DecodeText(stream.GetData(), stream.GetSize());
 }
 
 CPDF_StreamAcc::CPDF_StreamAcc() {

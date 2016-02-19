@@ -920,8 +920,7 @@ CFX_ByteString CFX_ByteString::FromUnicode(const FX_WCHAR* str,
 
 // static
 CFX_ByteString CFX_ByteString::FromUnicode(const CFX_WideString& str) {
-  CFX_CharMap* pCharMap = CFX_CharMap::GetDefaultMapper();
-  return (*pCharMap->m_GetByteString)(pCharMap, str);
+  return CFX_CharMap::GetByteString(0, str);
 }
 
 int CFX_ByteString::Compare(const CFX_ByteStringC& str) const {
