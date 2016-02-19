@@ -232,8 +232,6 @@ class CPDFDoc_Environment final {
     wsURL = CFX_WideString();
   }
 
-  void FFI_PageEvent(FPDF_PAGE page, FPDF_DWORD flag) {}
-
   void FFI_GetPageViewRect(FPDF_PAGE page, FS_RECTF& dstRect) {
     if (m_pInfo && m_pInfo->FFI_GetPageViewRect) {
       double left;
@@ -405,9 +403,10 @@ class CPDFDoc_Environment final {
     }
     return L"";
   }
-  void FFI_PageEvent(int iPageIndex, int iEventType) const {
-    // Todo: call a call-back function when it's implemented
-    // in applicaiton's side.
+
+  void FFI_PageEvent(int iPageIndex, FX_DWORD dwEventType) const {
+    if (m_pInfo && m_pInfo->FFI_PageEvent)
+      m_pInfo->FFI_PageEvent(m_pInfo, iPageIndex, dwEventType);
   }
 #endif  // PDF_ENABLE_XFA
 

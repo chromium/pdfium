@@ -818,6 +818,25 @@ typedef struct _FPDF_FORMFILLINFO {
                               double* top,
                               double* right,
                               double* bottom);
+
+  /**
+  * Method: FFI_PageEvent
+  *     This method fires when pages have been added or deleted.
+  * Interface Version:
+  *     2
+  * Implementation Required:
+  *     yes
+  * Parameters:
+  *     pThis       -   Pointer to the interface structure itself.
+  *     page_index  -   0-based page number.
+  *     event_type  -   See FXFA_PAGEVIEWEVENT_* above.
+  * Return value:
+  *       None.
+  **/
+  void (*FFI_PageEvent)(struct _FPDF_FORMFILLINFO* pThis,
+                        int page_index,
+                        FPDF_DWORD event_type);
+
   /**
   * Method: FFI_PopupMenu
   *           This method will track the right context menu for XFA fields.
