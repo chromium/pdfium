@@ -519,10 +519,6 @@ void DropContext(void* data) {
   delete (CRenderContext*)data;
 }
 
-#if defined(_DEBUG) || defined(DEBUG)
-#define DEBUG_TRACE
-#endif
-
 #if defined(_WIN32)
 DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
                                        FPDF_PAGE page,
@@ -539,7 +535,7 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
   CRenderContext* pContext = new CRenderContext;
   pPage->SetPrivateData((void*)1, pContext, DropContext);
 
-#ifndef _WIN32_WCE
+#if !defined(_WIN32_WCE)
   CFX_DIBitmap* pBitmap = nullptr;
   FX_BOOL bBackgroundAlphaNeeded = pPage->BackgroundAlphaNeeded();
   FX_BOOL bHasImageMask = pPage->HasImageMask();
@@ -591,16 +587,6 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
   int width = rect.right - rect.left;
   int height = rect.bottom - rect.top;
 
-#ifdef DEBUG_TRACE
-  {
-    char str[128];
-    memset(str, 0, sizeof(str));
-    FXSYS_snprintf(str, sizeof(str) - 1, "Rendering DIB %d x %d", width,
-                   height);
-    CPDF_ModuleMgr::Get()->ReportError(999, str);
-  }
-#endif
-
   // Create a DIB section
   LPVOID pBuffer;
   BITMAPINFOHEADER bmih;
@@ -612,23 +598,7 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
   bmih.biWidth = width;
   pContext->m_hBitmap = CreateDIBSection(dc, (BITMAPINFO*)&bmih, DIB_RGB_COLORS,
                                          &pBuffer, NULL, 0);
-  if (!pContext->m_hBitmap) {
-#if defined(DEBUG) || defined(_DEBUG)
-    char str[128];
-    memset(str, 0, sizeof(str));
-    FXSYS_snprintf(str, sizeof(str) - 1,
-                   "Error CreateDIBSection: %d x %d, error code = %d", width,
-                   height, GetLastError());
-    CPDF_ModuleMgr::Get()->ReportError(FPDFERR_OUT_OF_MEMORY, str);
-#else
-    CPDF_ModuleMgr::Get()->ReportError(FPDFERR_OUT_OF_MEMORY, NULL);
-#endif
-  }
   FXSYS_memset(pBuffer, 0xff, height * ((width * 3 + 3) / 4 * 4));
-
-#ifdef DEBUG_TRACE
-  { CPDF_ModuleMgr::Get()->ReportError(999, "DIBSection created"); }
-#endif
 
   // Create a device with this external buffer
   pContext->m_pBitmap = new CFX_DIBitmap;
@@ -636,54 +606,26 @@ DLLEXPORT void STDCALL FPDF_RenderPage(HDC dc,
   pContext->m_pDevice = new CPDF_FxgeDevice;
   ((CPDF_FxgeDevice*)pContext->m_pDevice)->Attach(pContext->m_pBitmap);
 
-#ifdef DEBUG_TRACE
-  CPDF_ModuleMgr::Get()->ReportError(999, "Ready for PDF rendering");
-#endif
-
   // output to bitmap device
   FPDF_RenderPage_Retail(pContext, page, start_x - rect.left,
                          start_y - rect.top, size_x, size_y, rotate, flags);
 
-#ifdef DEBUG_TRACE
-  CPDF_ModuleMgr::Get()->ReportError(999, "Finished PDF rendering");
-#endif
-
   // Now output to real device
   HDC hMemDC = CreateCompatibleDC(dc);
-  if (!hMemDC) {
-#if defined(DEBUG) || defined(_DEBUG)
-    char str[128];
-    memset(str, 0, sizeof(str));
-    FXSYS_snprintf(str, sizeof(str) - 1,
-                   "Error CreateCompatibleDC. Error code = %d", GetLastError());
-    CPDF_ModuleMgr::Get()->ReportError(FPDFERR_OUT_OF_MEMORY, str);
-#else
-    CPDF_ModuleMgr::Get()->ReportError(FPDFERR_OUT_OF_MEMORY, NULL);
-#endif
-  }
-
   HGDIOBJ hOldBitmap = SelectObject(hMemDC, pContext->m_hBitmap);
-
-#ifdef DEBUG_TRACE
-  CPDF_ModuleMgr::Get()->ReportError(999, "Ready for screen rendering");
-#endif
 
   BitBlt(dc, rect.left, rect.top, width, height, hMemDC, 0, 0, SRCCOPY);
   SelectObject(hMemDC, hOldBitmap);
   DeleteDC(hMemDC);
 
-#ifdef DEBUG_TRACE
-  CPDF_ModuleMgr::Get()->ReportError(999, "Finished screen rendering");
-#endif
-
-#endif
+#endif  // !defined(_WIN32_WCE)
   if (bBackgroundAlphaNeeded || bHasImageMask)
     delete pBitmap;
 
   delete pContext;
   pPage->RemovePrivateData((void*)1);
 }
-#endif
+#endif  // defined(_WIN32)
 
 DLLEXPORT void STDCALL FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
                                              FPDF_PAGE page,

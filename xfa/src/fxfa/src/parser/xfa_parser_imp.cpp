@@ -962,15 +962,13 @@ void XFA_ConvertRichTextToPlainText(IFDE_XMLElement* pRichTextXMLNode,
   wsOutput = wsPlainTextBuf.GetWideString();
 }
 #endif
+
 void XFA_ConvertXMLToPlainText(IFDE_XMLElement* pRootXMLNode,
                                CFX_WideString& wsOutput) {
   for (IFDE_XMLNode* pXMLChild =
            pRootXMLNode->GetNodeItem(IFDE_XMLNode::FirstChild);
        pXMLChild;
        pXMLChild = pXMLChild->GetNodeItem(IFDE_XMLNode::NextSibling)) {
-#ifdef _DEBUG
-    FDE_XMLNODETYPE nodeType = pXMLChild->GetType();
-#endif
     switch (pXMLChild->GetType()) {
       case FDE_XMLNODE_Element: {
         CFX_WideString wsTextData;
@@ -1002,6 +1000,7 @@ void XFA_ConvertXMLToPlainText(IFDE_XMLElement* pRootXMLNode,
     }
   }
 }
+
 void CXFA_SimpleParser::ParseContentNode(CXFA_Node* pXFANode,
                                          IFDE_XMLNode* pXMLNode,
                                          XFA_XDPPACKET ePacketID) {

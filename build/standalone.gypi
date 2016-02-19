@@ -82,6 +82,7 @@
           '-fdata-sections',
           '-ffunction-sections',
         ],
+        'defines': ['_DEBUG=1',],
         'msvs_settings': {
           'VCCLCompilerTool': {
             'Optimization': '0',
