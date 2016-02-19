@@ -2461,6 +2461,7 @@ FX_BOOL CPDFSDK_InterForm::FDFToURLEncodedData(uint8_t*& pBuf,
       return FALSE;
 
     CFX_ByteTextBuf fdfEncodedData;
+
     for (FX_DWORD i = 0; i < pFields->GetCount(); i++) {
       CPDF_Dictionary* pField = pFields->GetDictAt(i);
       if (!pField)
@@ -2472,13 +2473,14 @@ FX_BOOL CPDFSDK_InterForm::FDFToURLEncodedData(uint8_t*& pBuf,
       CFX_WideString csWValue = PDF_DecodeText(csBValue);
       CFX_ByteString csValue_b = CFX_ByteString::FromUnicode(csWValue);
 
-      fdfEncodedData << name_b.GetBuffer(name_b.GetLength());
+      fdfEncodedData = fdfEncodedData << name_b.GetBuffer(name_b.GetLength());
       name_b.ReleaseBuffer();
-      fdfEncodedData << "=";
-      fdfEncodedData << csValue_b.GetBuffer(csValue_b.GetLength());
+      fdfEncodedData = fdfEncodedData << "=";
+      fdfEncodedData = fdfEncodedData
+                       << csValue_b.GetBuffer(csValue_b.GetLength());
       csValue_b.ReleaseBuffer();
       if (i != pFields->GetCount() - 1)
-        fdfEncodedData << "&";
+        fdfEncodedData = fdfEncodedData << "&";
     }
 
     nBufSize = fdfEncodedData.GetLength();

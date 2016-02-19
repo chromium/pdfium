@@ -8,7 +8,6 @@
 #define CORE_INCLUDE_FXCRT_FX_BASIC_H_
 
 #include <algorithm>
-#include <memory>
 
 #include "core/include/fxcrt/fx_memory.h"
 #include "core/include/fxcrt/fx_stream.h"
@@ -30,90 +29,109 @@
 template <typename T, size_t N>
 char(&ArraySizeHelper(T(&array)[N]))[N];
 
-// Used with std::unique_ptr to FX_Free raw memory.
-struct FxFreeDeleter {
-  inline void operator()(void* ptr) const { FX_Free(ptr); }
-};
-
-// Used with std::unique_ptr to Release() objects that can't be deleted.
-template <class T>
-struct ReleaseDeleter {
-  inline void operator()(T* ptr) const { ptr->Release(); }
-};
-
 class CFX_BinaryBuf {
  public:
   CFX_BinaryBuf();
-  explicit CFX_BinaryBuf(FX_STRSIZE size);
+  CFX_BinaryBuf(FX_STRSIZE size);
 
-  uint8_t* GetBuffer() const { return m_pBuffer.get(); }
-  FX_STRSIZE GetSize() const { return m_DataSize; }
+  ~CFX_BinaryBuf();
 
   void Clear();
+
   void EstimateSize(FX_STRSIZE size, FX_STRSIZE alloc_step = 0);
+
   void AppendBlock(const void* pBuf, FX_STRSIZE size);
+
+  void AppendFill(uint8_t byte, FX_STRSIZE count);
+
   void AppendString(const CFX_ByteStringC& str) {
     AppendBlock(str.GetPtr(), str.GetLength());
   }
 
-  void AppendByte(uint8_t byte) {
-    ExpandBuf(1);
-    m_pBuffer.get()[m_DataSize++] = byte;
+  inline void AppendByte(uint8_t byte) {
+    if (m_AllocSize <= m_DataSize) {
+      ExpandBuf(1);
+    }
+    m_pBuffer[m_DataSize++] = byte;
   }
 
   void InsertBlock(FX_STRSIZE pos, const void* pBuf, FX_STRSIZE size);
+
+  void AttachData(void* pBuf, FX_STRSIZE size);
+
+  void CopyData(const void* pBuf, FX_STRSIZE size);
+
+  void TakeOver(CFX_BinaryBuf& other);
+
   void Delete(int start_index, int count);
 
-  // Takes ownership of |pBuf|.
-  void AttachData(uint8_t* pBuf, FX_STRSIZE size);
+  uint8_t* GetBuffer() const { return m_pBuffer; }
 
-  // Releases ownership of |m_pBuffer| and returns it.
-  uint8_t* DetachBuffer();
+  FX_STRSIZE GetSize() const { return m_DataSize; }
 
- protected:
-  void ExpandBuf(FX_STRSIZE size);
-
-  FX_STRSIZE m_AllocStep;
-  FX_STRSIZE m_AllocSize;
-  FX_STRSIZE m_DataSize;
-  std::unique_ptr<uint8_t, FxFreeDeleter> m_pBuffer;
-};
-
-class CFX_ByteTextBuf : public CFX_BinaryBuf {
- public:
-  void AppendChar(int ch) { AppendByte((uint8_t)ch); }
-  FX_STRSIZE GetLength() const { return m_DataSize; }
   CFX_ByteStringC GetByteString() const;
 
-  CFX_ByteTextBuf& operator<<(int i);
-  CFX_ByteTextBuf& operator<<(FX_DWORD i);
-  CFX_ByteTextBuf& operator<<(double f);
-  CFX_ByteTextBuf& operator<<(const CFX_ByteStringC& lpsz);
-  CFX_ByteTextBuf& operator<<(const CFX_ByteTextBuf& buf);
-};
+  void DetachBuffer();
 
+ protected:
+  FX_STRSIZE m_AllocStep;
+
+  uint8_t* m_pBuffer;
+
+  FX_STRSIZE m_DataSize;
+
+  FX_STRSIZE m_AllocSize;
+
+  void ExpandBuf(FX_STRSIZE size);
+};
+class CFX_ByteTextBuf : public CFX_BinaryBuf {
+ public:
+  void operator=(const CFX_ByteStringC& str);
+
+  void AppendChar(int ch) { AppendByte((uint8_t)ch); }
+
+  CFX_ByteTextBuf& operator<<(int i);
+
+  CFX_ByteTextBuf& operator<<(FX_DWORD i);
+
+  CFX_ByteTextBuf& operator<<(double f);
+
+  CFX_ByteTextBuf& operator<<(const CFX_ByteStringC& lpsz);
+
+  CFX_ByteTextBuf& operator<<(const CFX_ByteTextBuf& buf);
+
+  FX_STRSIZE GetLength() const { return m_DataSize; }
+};
 class CFX_WideTextBuf : public CFX_BinaryBuf {
  public:
+  void operator=(const FX_WCHAR* lpsz);
+
+  void operator=(const CFX_WideStringC& str);
+
   void AppendChar(FX_WCHAR wch);
+
+  CFX_WideTextBuf& operator<<(int i);
+
+  CFX_WideTextBuf& operator<<(double f);
+
+  CFX_WideTextBuf& operator<<(const FX_WCHAR* lpsz);
+
+  CFX_WideTextBuf& operator<<(const CFX_WideStringC& str);
+  CFX_WideTextBuf& operator<<(const CFX_WideString& str);
+
+  CFX_WideTextBuf& operator<<(const CFX_WideTextBuf& buf);
+
   FX_STRSIZE GetLength() const { return m_DataSize / sizeof(FX_WCHAR); }
-  FX_WCHAR* GetBuffer() const {
-    return reinterpret_cast<FX_WCHAR*>(m_pBuffer.get());
-  }
-  CFX_WideStringC GetWideString() const;
+
+  FX_WCHAR* GetBuffer() const { return (FX_WCHAR*)m_pBuffer; }
 
   void Delete(int start_index, int count) {
     CFX_BinaryBuf::Delete(start_index * sizeof(FX_WCHAR),
                           count * sizeof(FX_WCHAR));
   }
 
-  CFX_WideTextBuf& operator<<(int i);
-  CFX_WideTextBuf& operator<<(double f);
-  CFX_WideTextBuf& operator<<(const FX_WCHAR* lpsz);
-  CFX_WideTextBuf& operator<<(const CFX_WideStringC& str);
-  CFX_WideTextBuf& operator<<(const CFX_WideString& str);
-  CFX_WideTextBuf& operator<<(const CFX_WideTextBuf& buf);
+  CFX_WideStringC GetWideString() const;
 };
-
 #ifdef PDF_ENABLE_XFA
 class CFX_ArchiveSaver {
  public:
@@ -1011,6 +1029,16 @@ class CFX_AutoRestorer {
  private:
   T* const m_Location;
   const T m_OldValue;
+};
+
+struct FxFreeDeleter {
+  inline void operator()(void* ptr) const { FX_Free(ptr); }
+};
+
+// Used with std::unique_ptr to Release() objects that can't be deleted.
+template <class T>
+struct ReleaseDeleter {
+  inline void operator()(T* ptr) const { ptr->Release(); }
 };
 
 #define FX_DATALIST_LENGTH 1024

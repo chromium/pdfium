@@ -447,8 +447,8 @@ CXFA_FMCallExpression::~CXFA_FMCallExpression() {
   }
 }
 FX_BOOL CXFA_FMCallExpression::IsBuildInFunc(CFX_WideTextBuf& funcName) {
-  uint32_t uHash =
-      FX_HashCode_String_GetW(funcName.GetBuffer(), funcName.GetLength(), TRUE);
+  int32_t iLength = funcName.GetLength();
+  uint32_t uHash = FX_HashCode_String_GetW(funcName.GetBuffer(), iLength, TRUE);
   XFA_FMBuildInFunc buildinfunction;
   int32_t iStart = 0,
           iEnd = (sizeof(buildInFuncs) / sizeof(buildInFuncs[0])) - 1;

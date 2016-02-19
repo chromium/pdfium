@@ -15,6 +15,5 @@ typedef pdfium::base::CheckedNumeric<FX_DWORD> FX_SAFE_DWORD;
 typedef pdfium::base::CheckedNumeric<int32_t> FX_SAFE_INT32;
 typedef pdfium::base::CheckedNumeric<size_t> FX_SAFE_SIZE_T;
 typedef pdfium::base::CheckedNumeric<FX_FILESIZE> FX_SAFE_FILESIZE;
-typedef pdfium::base::CheckedNumeric<FX_STRSIZE> FX_SAFE_STRSIZE;
 
 #endif  // CORE_INCLUDE_FXCRT_FX_SAFE_TYPES_H_
