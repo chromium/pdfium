@@ -5,6 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include <algorithm>
+#include <memory>
 
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/common/xfa_utils.h"
@@ -1752,14 +1753,14 @@ static void XFA_ItemLayoutProcessor_AddPendingNode(
     CXFA_ItemLayoutProcessor* pProcessor,
     CXFA_Node* pPendingNode,
     FX_BOOL bBreakPending) {
-  pProcessor->m_rgPendingNodes.AddTail(pPendingNode);
+  pProcessor->m_PendingNodes.push_back(pPendingNode);
   pProcessor->m_bBreakPending = bBreakPending;
 }
 static FX_FLOAT XFA_ItemLayoutProcessor_InsertPendingItems(
     CXFA_ItemLayoutProcessor* pProcessor,
     CXFA_Node* pCurChildNode) {
   FX_FLOAT fTotalHeight = 0;
-  if (pProcessor->m_rgPendingNodes.GetCount() < 1) {
+  if (pProcessor->m_PendingNodes.empty()) {
     return fTotalHeight;
   }
   if (pProcessor->m_pLayoutItem == NULL) {
@@ -1767,22 +1768,19 @@ static FX_FLOAT XFA_ItemLayoutProcessor_InsertPendingItems(
         pProcessor->CreateContentLayoutItem(pCurChildNode);
     pProcessor->m_pLayoutItem->m_sSize.Set(0, 0);
   }
-  while (pProcessor->m_rgPendingNodes.GetCount() > 0) {
-    FX_POSITION pos = pProcessor->m_rgPendingNodes.GetHeadPosition();
-    CXFA_Node* pPendingNode =
-        reinterpret_cast<CXFA_Node*>(pProcessor->m_rgPendingNodes.GetAt(pos));
-    pProcessor->m_rgPendingNodes.RemoveAt(pos);
-    CXFA_ContentLayoutItem* pPendingLayoutItem = NULL;
-    CXFA_ItemLayoutProcessor* pPendingProcessor =
-        new CXFA_ItemLayoutProcessor(pPendingNode, NULL);
+  while (!pProcessor->m_PendingNodes.empty()) {
+    std::unique_ptr<CXFA_ItemLayoutProcessor> pPendingProcessor(
+        new CXFA_ItemLayoutProcessor(pProcessor->m_PendingNodes.front(),
+                                     nullptr));
+    pProcessor->m_PendingNodes.pop_front();
 #ifndef _XFA_LAYOUTITEM_ProcessCACHE_
     pPendingProcessor->m_pPageMgrCreateItem = pProcessor->m_pPageMgrCreateItem;
 #endif
     pPendingProcessor->DoLayout(FALSE, XFA_LAYOUT_FLOAT_MAX);
-    pPendingLayoutItem = pPendingProcessor->HasLayoutItem()
-                             ? pPendingProcessor->ExtractLayoutItem()
-                             : NULL;
-    delete pPendingProcessor;
+    CXFA_ContentLayoutItem* pPendingLayoutItem =
+        pPendingProcessor->HasLayoutItem()
+            ? pPendingProcessor->ExtractLayoutItem()
+            : nullptr;
     if (pPendingLayoutItem) {
       XFA_ItemLayoutProcessor_AddLeaderAfterSplit(pProcessor,
                                                   pPendingLayoutItem);
@@ -2715,8 +2713,8 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
     }
   }
   FX_BOOL bRetValue =
-      (m_nCurChildNodeStage == XFA_ItemLayoutProcessorStages_Done &&
-       m_rgPendingNodes.GetCount() == 0);
+      m_nCurChildNodeStage == XFA_ItemLayoutProcessorStages_Done &&
+      m_PendingNodes.empty();
   if (bBreakDone) {
     bRetValue = FALSE;
   }
