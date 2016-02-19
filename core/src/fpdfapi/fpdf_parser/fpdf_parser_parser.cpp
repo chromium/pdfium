@@ -1873,7 +1873,7 @@ CFX_ByteString CPDF_SyntaxParser::ReadHexString() {
   if (!GetNextChar(ch))
     return CFX_ByteString();
 
-  CFX_BinaryBuf buf;
+  CFX_ByteTextBuf buf;
   bool bFirst = true;
   uint8_t code = 0;
   while (1) {
@@ -1886,7 +1886,7 @@ CFX_ByteString CPDF_SyntaxParser::ReadHexString() {
         code = val * 16;
       } else {
         code += val;
-        buf.AppendByte((uint8_t)code);
+        buf.AppendByte(code);
       }
       bFirst = !bFirst;
     }
@@ -1895,7 +1895,7 @@ CFX_ByteString CPDF_SyntaxParser::ReadHexString() {
       break;
   }
   if (!bFirst)
-    buf.AppendByte((uint8_t)code);
+    buf.AppendByte(code);
 
   return buf.GetByteString();
 }
