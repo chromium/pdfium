@@ -8,7 +8,34 @@
 #include "core/src/fpdfdoc/doc_utils.h"
 #include "third_party/base/stl_util.h"
 
+namespace {
+
 const int nMaxRecursion = 32;
+
+const struct SupportFieldEncoding {
+  const FX_CHAR* m_name;
+  FX_WORD m_codePage;
+} g_fieldEncoding[] = {
+    {"BigFive", 950},
+    {"GBK", 936},
+    {"Shift-JIS", 932},
+    {"UHC", 949},
+};
+
+CFX_WideString FPDFDOC_FDF_GetFieldValue(const CPDF_Dictionary& pFieldDict,
+                                         const CFX_ByteString& bsEncoding) {
+  const CFX_ByteString csBValue = pFieldDict.GetStringBy("V");
+  for (const auto& encoding : g_fieldEncoding) {
+    if (bsEncoding == encoding.m_name)
+      return CFX_WideString::FromCodePage(csBValue, encoding.m_codePage);
+  }
+  CFX_ByteString csTemp = csBValue.Left(2);
+  if (csTemp == "\xFF\xFE" || csTemp == "\xFE\xFF")
+    return PDF_DecodeText(csBValue);
+  return CFX_WideString::FromLocal(csBValue);
+}
+
+}  // namespace
 
 class CFieldNameExtractor {
  public:
@@ -1088,39 +1115,7 @@ CFDF_Document* CPDF_InterForm::ExportToFDF(
   }
   return pDoc;
 }
-const struct _SupportFieldEncoding {
-  const FX_CHAR* m_name;
-  int32_t m_codePage;
-} g_fieldEncoding[] = {
-    {"BigFive", 950},
-    {"GBK", 936},
-    {"Shift-JIS", 932},
-    {"UHC", 949},
-};
-static void FPDFDOC_FDF_GetFieldValue(CPDF_Dictionary* pFieldDict,
-                                      CFX_WideString& csValue,
-                                      CFX_ByteString& bsEncoding) {
-  CFX_ByteString csBValue = pFieldDict->GetStringBy("V");
-  int32_t iCount = sizeof(g_fieldEncoding) / sizeof(g_fieldEncoding[0]);
-  int32_t i = 0;
-  for (; i < iCount; ++i)
-    if (bsEncoding == g_fieldEncoding[i].m_name) {
-      break;
-    }
-  if (i < iCount) {
-    CFX_CharMap* pCharMap =
-        CFX_CharMap::GetDefaultMapper(g_fieldEncoding[i].m_codePage);
-    FXSYS_assert(pCharMap);
-    csValue.ConvertFrom(csBValue, pCharMap);
-    return;
-  }
-  CFX_ByteString csTemp = csBValue.Left(2);
-  if (csTemp == "\xFF\xFE" || csTemp == "\xFE\xFF") {
-    csValue = PDF_DecodeText(csBValue);
-  } else {
-    csValue = CFX_WideString::FromLocal(csBValue);
-  }
-}
+
 void CPDF_InterForm::FDF_ImportField(CPDF_Dictionary* pFieldDict,
                                      const CFX_WideString& parent_name,
                                      FX_BOOL bNotify,
@@ -1150,8 +1145,8 @@ void CPDF_InterForm::FDF_ImportField(CPDF_Dictionary* pFieldDict,
   if (!pField) {
     return;
   }
-  CFX_WideString csWValue;
-  FPDFDOC_FDF_GetFieldValue(pFieldDict, csWValue, m_bsEncoding);
+  CFX_WideString csWValue =
+      FPDFDOC_FDF_GetFieldValue(*pFieldDict, m_bsEncoding);
   int iType = pField->GetFieldType();
   if (bNotify && m_pFormNotify) {
     int iRet = 0;

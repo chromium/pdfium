@@ -4828,11 +4828,11 @@ CFX_Decimal::CFX_Decimal(const CFX_WideStringC& strObj) {
   }
   m_uFlags = FXMATH_DECIMAL_MAKEFLAGS(negmet && IsNotZero(), scale);
 }
+
 CFX_Decimal::CFX_Decimal(const CFX_ByteStringC& strObj) {
-  CFX_WideString wstrObj;
-  wstrObj.ConvertFrom(strObj);
-  *this = CFX_Decimal(wstrObj);
+  *this = CFX_Decimal(CFX_WideString::FromLocal(strObj));
 }
+
 CFX_Decimal::operator CFX_WideString() const {
   CFX_WideString retString;
   CFX_WideString tmpbuf;

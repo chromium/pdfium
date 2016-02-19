@@ -910,25 +910,20 @@ CFX_WideString CFX_ByteString::UTF8Decode() const {
   }
   return decoder.GetResult();
 }
+
+// static
 CFX_ByteString CFX_ByteString::FromUnicode(const FX_WCHAR* str,
                                            FX_STRSIZE len) {
-  if (len < 0) {
-    len = FXSYS_wcslen(str);
-  }
-  CFX_ByteString bstr;
-  bstr.ConvertFrom(CFX_WideString(str, len));
-  return bstr;
+  FX_STRSIZE str_len = len >= 0 ? len : FXSYS_wcslen(str);
+  return FromUnicode(CFX_WideString(str, str_len));
 }
+
+// static
 CFX_ByteString CFX_ByteString::FromUnicode(const CFX_WideString& str) {
-  return FromUnicode(str.c_str(), str.GetLength());
+  CFX_CharMap* pCharMap = CFX_CharMap::GetDefaultMapper();
+  return (*pCharMap->m_GetByteString)(pCharMap, str);
 }
-void CFX_ByteString::ConvertFrom(const CFX_WideString& str,
-                                 CFX_CharMap* pCharMap) {
-  if (!pCharMap) {
-    pCharMap = CFX_CharMap::GetDefaultMapper();
-  }
-  *this = (*pCharMap->m_GetByteString)(pCharMap, str);
-}
+
 int CFX_ByteString::Compare(const CFX_ByteStringC& str) const {
   if (!m_pData) {
     return str.IsEmpty() ? 0 : -1;

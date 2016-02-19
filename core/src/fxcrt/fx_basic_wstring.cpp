@@ -303,13 +303,7 @@ CFX_ByteString CFX_WideString::UTF16LE_Encode() const {
   result.ReleaseBuffer(len * 2 + 2);
   return result;
 }
-void CFX_WideString::ConvertFrom(const CFX_ByteString& str,
-                                 CFX_CharMap* pCharMap) {
-  if (!pCharMap) {
-    pCharMap = CFX_CharMap::GetDefaultMapper();
-  }
-  *this = pCharMap->m_GetWideString(pCharMap, str);
-}
+
 void CFX_WideString::Reserve(FX_STRSIZE len) {
   GetBuffer(len);
   ReleaseBuffer(GetLength());
@@ -346,11 +340,20 @@ FX_WCHAR* CFX_WideString::GetBuffer(FX_STRSIZE nMinBufLength) {
   pOldData->Release();
   return m_pData->m_String;
 }
-CFX_WideString CFX_WideString::FromLocal(const char* str, FX_STRSIZE len) {
-  CFX_WideString result;
-  result.ConvertFrom(CFX_ByteString(str, len));
-  return result;
+
+// static
+CFX_WideString CFX_WideString::FromLocal(const CFX_ByteString& str) {
+  return FromCodePage(str, 0);
 }
+
+// static
+CFX_WideString CFX_WideString::FromCodePage(const CFX_ByteString& str,
+                                            FX_WORD codepage) {
+  CFX_CharMap* pCharMap = CFX_CharMap::GetDefaultMapper(codepage);
+  return pCharMap->m_GetWideString(pCharMap, str);
+}
+
+// static
 CFX_WideString CFX_WideString::FromUTF8(const char* str, FX_STRSIZE len) {
   if (!str || 0 == len) {
     return CFX_WideString();
@@ -362,6 +365,8 @@ CFX_WideString CFX_WideString::FromUTF8(const char* str, FX_STRSIZE len) {
   }
   return decoder.GetResult();
 }
+
+// static
 CFX_WideString CFX_WideString::FromUTF16LE(const unsigned short* wstr,
                                            FX_STRSIZE wlen) {
   if (!wstr || 0 == wlen) {
@@ -376,6 +381,7 @@ CFX_WideString CFX_WideString::FromUTF16LE(const unsigned short* wstr,
   result.ReleaseBuffer(wlen);
   return result;
 }
+
 FX_STRSIZE CFX_WideString::WStringLength(const unsigned short* str) {
   FX_STRSIZE len = 0;
   if (str)

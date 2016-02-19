@@ -86,8 +86,8 @@ FX_FLOAT FX_strtof(const FX_CHAR* pcsStr, int32_t iLength, int32_t* pUsedLen) {
   if (iLength < 0) {
     iLength = FXSYS_strlen(pcsStr);
   }
-  return FX_wcstof(CFX_WideString::FromLocal(pcsStr, iLength), iLength,
-                   pUsedLen);
+  return FX_wcstof(CFX_WideString::FromLocal(CFX_ByteString(pcsStr, iLength)),
+                   iLength, pUsedLen);
 }
 FX_FLOAT FX_wcstof(const FX_WCHAR* pwsStr, int32_t iLength, int32_t* pUsedLen) {
   FXSYS_assert(pwsStr != NULL);

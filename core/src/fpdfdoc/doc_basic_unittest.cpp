@@ -145,8 +145,7 @@ TEST(doc_basic_filespec, SetFileName) {
   CPDF_FileSpec file_spec1(str_obj.get());
   file_spec1.SetFileName(test_data.input);
   // Check internal object value.
-  CFX_ByteString str;
-  str.ConvertFrom(test_data.expected);
+  CFX_ByteString str = CFX_ByteString::FromUnicode(test_data.expected);
   EXPECT_TRUE(str == str_obj->GetString());
   // Check we can get the file name back.
   CFX_WideString file_name;

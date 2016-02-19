@@ -289,8 +289,6 @@ class CFX_ByteString {
 
   CFX_WideString UTF8Decode() const;
 
-  void ConvertFrom(const CFX_WideString& str, CFX_CharMap* pCharMap = NULL);
-
   FX_DWORD GetID(FX_STRSIZE start_pos = 0) const;
 
 #define FXFORMAT_SIGNED 1
@@ -561,7 +559,10 @@ class CFX_WideString {
 
   ~CFX_WideString();
 
-  static CFX_WideString FromLocal(const char* str, FX_STRSIZE len = -1);
+  static CFX_WideString FromLocal(const CFX_ByteString& str);
+
+  static CFX_WideString FromCodePage(const CFX_ByteString& str,
+                                     FX_WORD codepage);
 
   static CFX_WideString FromUTF8(const char* str, FX_STRSIZE len);
 
@@ -684,8 +685,6 @@ class CFX_WideString {
   CFX_ByteString UTF8Encode() const;
 
   CFX_ByteString UTF16LE_Encode() const;
-
-  void ConvertFrom(const CFX_ByteString& str, CFX_CharMap* pCharMap = NULL);
 
  protected:
   class StringData {
