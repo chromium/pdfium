@@ -9,6 +9,7 @@
 
 #include "core/include/fxcrt/fx_basic.h"
 #include "core/include/fxcrt/fx_safe_types.h"
+#include "third_party/base/numerics/safe_conversions.h"
 
 CFX_BinaryBuf::CFX_BinaryBuf()
     : m_AllocStep(0), m_AllocSize(0), m_DataSize(0) {}
@@ -359,32 +360,40 @@ FX_DWORD CFX_BitStream::GetBits(FX_DWORD nBits) {
   m_BitPos += nBits;
   return result;
 }
-IFX_BufferArchive::IFX_BufferArchive(FX_STRSIZE size)
-    : m_BufSize(size), m_pBuffer(NULL), m_Length(0) {}
-void IFX_BufferArchive::Clear() {
+
+CFX_FileBufferArchive::CFX_FileBufferArchive()
+    : m_Length(0), m_pFile(nullptr) {}
+
+void CFX_FileBufferArchive::Clear() {
   m_Length = 0;
-  FX_Free(m_pBuffer);
-  m_pBuffer = NULL;
+  m_pBuffer.reset();
+  m_pFile = nullptr;
 }
-FX_BOOL IFX_BufferArchive::Flush() {
-  FX_BOOL bRet = DoWork(m_pBuffer, m_Length);
+
+bool CFX_FileBufferArchive::Flush() {
+  size_t nRemaining = m_Length;
   m_Length = 0;
-  return bRet;
+  if (!m_pFile)
+    return false;
+  if (!m_pBuffer || !nRemaining)
+    return true;
+  return m_pFile->WriteBlock(m_pBuffer.get(), nRemaining);
 }
-int32_t IFX_BufferArchive::AppendBlock(const void* pBuf, size_t size) {
+
+int32_t CFX_FileBufferArchive::AppendBlock(const void* pBuf, size_t size) {
   if (!pBuf || size < 1) {
     return 0;
   }
   if (!m_pBuffer) {
-    m_pBuffer = FX_Alloc(uint8_t, m_BufSize);
+    m_pBuffer.reset(FX_Alloc(uint8_t, kBufSize));
   }
-  uint8_t* buffer = (uint8_t*)pBuf;
-  FX_STRSIZE temp_size = (FX_STRSIZE)size;
-  while (temp_size > 0) {
-    FX_STRSIZE buf_size = std::min(m_BufSize - m_Length, (FX_STRSIZE)temp_size);
-    FXSYS_memcpy(m_pBuffer + m_Length, buffer, buf_size);
+  const uint8_t* buffer = reinterpret_cast<const uint8_t*>(pBuf);
+  size_t temp_size = size;
+  while (temp_size) {
+    size_t buf_size = std::min(kBufSize - m_Length, temp_size);
+    FXSYS_memcpy(m_pBuffer.get() + m_Length, buffer, buf_size);
     m_Length += buf_size;
-    if (m_Length == m_BufSize) {
+    if (m_Length == kBufSize) {
       if (!Flush()) {
         return -1;
       }
@@ -392,50 +401,24 @@ int32_t IFX_BufferArchive::AppendBlock(const void* pBuf, size_t size) {
     temp_size -= buf_size;
     buffer += buf_size;
   }
-  return (int32_t)size;
+  return pdfium::base::checked_cast<int32_t>(size);
 }
-int32_t IFX_BufferArchive::AppendByte(uint8_t byte) {
+
+int32_t CFX_FileBufferArchive::AppendByte(uint8_t byte) {
   return AppendBlock(&byte, 1);
 }
-int32_t IFX_BufferArchive::AppendDWord(FX_DWORD i) {
+
+int32_t CFX_FileBufferArchive::AppendDWord(FX_DWORD i) {
   char buf[32];
   FXSYS_itoa(i, buf, 10);
   return AppendBlock(buf, (size_t)FXSYS_strlen(buf));
 }
-int32_t IFX_BufferArchive::AppendString(const CFX_ByteStringC& lpsz) {
+
+int32_t CFX_FileBufferArchive::AppendString(const CFX_ByteStringC& lpsz) {
   return AppendBlock(lpsz.GetPtr(), lpsz.GetLength());
 }
-CFX_FileBufferArchive::CFX_FileBufferArchive(FX_STRSIZE size)
-    : IFX_BufferArchive(size), m_pFile(NULL), m_bTakeover(FALSE) {}
-CFX_FileBufferArchive::~CFX_FileBufferArchive() {
-  Clear();
-}
-void CFX_FileBufferArchive::Clear() {
-  if (m_pFile && m_bTakeover) {
-    m_pFile->Release();
-  }
-  m_pFile = NULL;
-  m_bTakeover = FALSE;
-  IFX_BufferArchive::Clear();
-}
-FX_BOOL CFX_FileBufferArchive::AttachFile(IFX_StreamWrite* pFile,
-                                          FX_BOOL bTakeover) {
-  if (!pFile) {
-    return FALSE;
-  }
-  if (m_pFile && m_bTakeover) {
-    m_pFile->Release();
-  }
+
+void CFX_FileBufferArchive::AttachFile(IFX_StreamWrite* pFile) {
+  FXSYS_assert(pFile);
   m_pFile = pFile;
-  m_bTakeover = bTakeover;
-  return TRUE;
-}
-FX_BOOL CFX_FileBufferArchive::DoWork(const void* pBuf, size_t size) {
-  if (!m_pFile) {
-    return FALSE;
-  }
-  if (!pBuf || size < 1) {
-    return TRUE;
-  }
-  return m_pFile->WriteBlock(pBuf, size);
 }

@@ -1945,12 +1945,7 @@ void CPDF_Creator::Clear() {
   }
 }
 FX_BOOL CPDF_Creator::Create(IFX_StreamWrite* pFile, FX_DWORD flags) {
-  if (!pFile) {
-    return FALSE;
-  }
-  if (!m_File.AttachFile(pFile, FALSE)) {
-    return FALSE;
-  }
+  m_File.AttachFile(pFile);
   return Create(flags);
 }
 FX_BOOL CPDF_Creator::Create(FX_DWORD flags) {

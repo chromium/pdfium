@@ -179,46 +179,26 @@ class CFX_ArchiveLoader {
 };
 #endif  // PDF_ENABLE_XFA
 
-class IFX_BufferArchive {
+class CFX_FileBufferArchive {
  public:
-  IFX_BufferArchive(FX_STRSIZE size);
-  virtual ~IFX_BufferArchive() {}
+  CFX_FileBufferArchive();
 
-  virtual void Clear();
-
-  FX_BOOL Flush();
-
+  void Clear();
+  bool Flush();
   int32_t AppendBlock(const void* pBuf, size_t size);
-
   int32_t AppendByte(uint8_t byte);
-
   int32_t AppendDWord(FX_DWORD i);
-
   int32_t AppendString(const CFX_ByteStringC& lpsz);
 
- protected:
-  virtual FX_BOOL DoWork(const void* pBuf, size_t size) = 0;
-
-  FX_STRSIZE m_BufSize;
-
-  uint8_t* m_pBuffer;
-
-  FX_STRSIZE m_Length;
-};
-
-class CFX_FileBufferArchive : public IFX_BufferArchive {
- public:
-  CFX_FileBufferArchive(FX_STRSIZE size = 32768);
-  ~CFX_FileBufferArchive() override;
-
-  void Clear() override;
-  FX_BOOL AttachFile(IFX_StreamWrite* pFile, FX_BOOL bTakeover = FALSE);
+  // |pFile| must outlive the CFX_FileBufferArchive.
+  void AttachFile(IFX_StreamWrite* pFile);
 
  private:
-  FX_BOOL DoWork(const void* pBuf, size_t size) override;
+  static const size_t kBufSize = 32768;
 
+  size_t m_Length;
+  std::unique_ptr<uint8_t, FxFreeDeleter> m_pBuffer;
   IFX_StreamWrite* m_pFile;
-  FX_BOOL m_bTakeover;
 };
 
 class CFX_CharMap {
