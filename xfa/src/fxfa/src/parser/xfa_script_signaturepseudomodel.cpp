@@ -90,6 +90,8 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Enumerate(
   }
   IXFA_Doc* hDoc = pNotify->GetHDOC();
   CXFA_NodeList* pList = pNotify->GetDocProvider()->Enumerate(hDoc);
+  if (!pList)
+    return;
   FXJSE_Value_Set(pArguments->GetReturnValue(),
                   m_pDocument->GetScriptContext()->GetJSValueFromMap(pList));
 }
