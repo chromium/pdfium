@@ -259,6 +259,13 @@ FX_BOOL CXFA_FFTextEdit::UpdateFWLData() {
       bUpdate = TRUE;
     }
   }
+  if (m_pDataAcc->GetUIType() == XFA_ELEMENT_Barcode) {
+    int32_t nDataLen = 0;
+    if (eType == XFA_VALUEPICTURE_Edit)
+      m_pDataAcc->GetBarcodeAttribute_DataLength(nDataLen);
+    static_cast<CFWL_Edit*>(m_pNormalWidget)->SetLimit(nDataLen);
+    bUpdate = TRUE;
+  }
   CFX_WideString wsText;
   m_pDataAcc->GetValue(wsText, eType);
   CFX_WideString wsOldText;
