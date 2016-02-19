@@ -78,7 +78,7 @@ class IXFA_ScriptContext {
   virtual void Release() = 0;
   virtual void Initialize(FXJSE_HRUNTIME hRuntime) = 0;
 
-  virtual void SetEventParam(CXFA_EventParam* pEventParam) = 0;
+  virtual void SetEventParam(CXFA_EventParam param) = 0;
   virtual CXFA_EventParam* GetEventParam() = 0;
   virtual FX_BOOL RunScript(XFA_SCRIPTLANGTYPE eScriptType,
                             const CFX_WideStringC& wsScript,

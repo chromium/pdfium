@@ -23,7 +23,6 @@ CXFA_ScriptContext::CXFA_ScriptContext(CXFA_Document* pDocument)
       m_hJsRuntime(nullptr),
       m_hJsClass(nullptr),
       m_eScriptType(XFA_SCRIPTLANGTYPE_Unkown),
-      m_pEventParam(nullptr),
       m_pScriptNodeArray(nullptr),
       m_pResolveProcessor(nullptr),
       m_hFM2JSContext(nullptr),

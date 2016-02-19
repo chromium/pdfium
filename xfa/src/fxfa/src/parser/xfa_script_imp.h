@@ -18,10 +18,8 @@ class CXFA_ScriptContext : public IXFA_ScriptContext {
   ~CXFA_ScriptContext();
   virtual void Release();
   virtual void Initialize(FXJSE_HRUNTIME hRuntime);
-  virtual void SetEventParam(CXFA_EventParam* pEventParam) {
-    m_pEventParam = pEventParam;
-  }
-  virtual CXFA_EventParam* GetEventParam() { return m_pEventParam; }
+  virtual void SetEventParam(CXFA_EventParam param) { m_eventParam = param; }
+  virtual CXFA_EventParam* GetEventParam() { return &m_eventParam; }
   virtual FX_BOOL RunScript(XFA_SCRIPTLANGTYPE eScriptType,
                             const CFX_WideStringC& wsScript,
                             FXJSE_HVALUE hRetValue,
@@ -109,7 +107,7 @@ class CXFA_ScriptContext : public IXFA_ScriptContext {
   CFX_MapPtrTemplate<CXFA_Object*, FXJSE_HVALUE> m_mapXFAToHValue;
   FXJSE_CLASS m_JsGlobalVariablesClass;
   CFX_MapPtrTemplate<CXFA_Object*, FXJSE_HCONTEXT> m_mapVariableToHValue;
-  CXFA_EventParam* m_pEventParam;
+  CXFA_EventParam m_eventParam;
   CXFA_NodeArray m_upObjectArray;
   CFX_PtrArray m_CacheListArray;
   CXFA_NodeArray* m_pScriptNodeArray;

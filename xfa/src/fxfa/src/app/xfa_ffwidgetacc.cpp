@@ -655,7 +655,7 @@ int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
   }
   CXFA_FFDoc* pDoc = GetDoc();
   IXFA_ScriptContext* pContext = pDoc->GetXFADoc()->GetScriptContext();
-  pContext->SetEventParam(pEventParam);
+  pContext->SetEventParam(*pEventParam);
   pContext->SetRunAtType((XFA_ATTRIBUTEENUM)script.GetRunAt());
   CXFA_NodeArray refNodes;
   if (pEventParam->m_eType == XFA_EVENT_InitCalculate ||
