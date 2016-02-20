@@ -576,33 +576,24 @@ class CFX_SegmentedArray : public CFX_BaseSegmentedArray {
   }
 };
 #endif  // PDF_ENABLE_XFA
+
 template <class DataType, int FixedSize>
 class CFX_FixedBufGrow {
  public:
-  CFX_FixedBufGrow() : m_pData(NULL) {}
-  CFX_FixedBufGrow(int data_size) : m_pData(NULL) {
+  explicit CFX_FixedBufGrow(int data_size) {
     if (data_size > FixedSize) {
-      m_pData = FX_Alloc(DataType, data_size);
-    } else {
-      FXSYS_memset(m_Data, 0, sizeof(DataType) * FixedSize);
+      m_pGrowData.reset(FX_Alloc(DataType, data_size));
+      return;
     }
+    FXSYS_memset(m_FixedData, 0, sizeof(DataType) * FixedSize);
   }
-  void SetDataSize(int data_size) {
-    FX_Free(m_pData);
-    m_pData = NULL;
-    if (data_size > FixedSize) {
-      m_pData = FX_Alloc(DataType, data_size);
-    } else {
-      FXSYS_memset(m_Data, 0, sizeof(DataType) * FixedSize);
-    }
-  }
-  ~CFX_FixedBufGrow() { FX_Free(m_pData); }
-  operator DataType*() { return m_pData ? m_pData : m_Data; }
+  operator DataType*() { return m_pGrowData ? m_pGrowData.get() : m_FixedData; }
 
  private:
-  DataType m_Data[FixedSize];
-  DataType* m_pData;
+  DataType m_FixedData[FixedSize];
+  std::unique_ptr<DataType, FxFreeDeleter> m_pGrowData;
 };
+
 #ifdef PDF_ENABLE_XFA
 class CFX_MapPtrToPtr {
  protected:
