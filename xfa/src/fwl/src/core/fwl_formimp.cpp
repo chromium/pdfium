@@ -414,11 +414,11 @@ FWL_ERR CFWL_FormImp::EndDoModal() {
   m_pNoteLoop->EndModalLoop();
   IFWL_NoteThread* pThread = GetOwnerThread();
   if (!pThread)
-    return NULL;
+    return FWL_ERR_Indefinite;
   CFWL_NoteDriver* pDriver =
       static_cast<CFWL_NoteDriver*>(pThread->GetNoteDriver());
   if (!pDriver)
-    return NULL;
+    return FWL_ERR_Indefinite;
   pDriver->PopNoteLoop();
   SetStates(FWL_WGTSTATE_Invisible, TRUE);
   return FWL_ERR_Succeeded;
@@ -878,7 +878,6 @@ int32_t CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return 0;
   FX_DWORD dwMsgCode = pMessage->GetClassID();
-  int32_t iRet = 1;
   switch (dwMsgCode) {
     case FWL_MSGHASH_Activate: {
       m_pOwner->m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Deactivated;
