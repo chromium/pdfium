@@ -102,7 +102,7 @@ CFX_GdiFont::CFX_GdiFont(IFX_FontMgr* pFontMgr)
       m_FontMapper(16),
       m_FontCache(FX_GDIFONT_FONTCACHESIZE) {
   m_hDC = ::CreateCompatibleDC(NULL);
-  FX_memset(&m_LogFont, 0, sizeof(m_LogFont));
+  FXSYS_memset(&m_LogFont, 0, sizeof(m_LogFont));
   FXSYS_assert(m_hDC != NULL);
 }
 CFX_GdiFont::~CFX_GdiFont() {
@@ -163,7 +163,7 @@ FX_BOOL CFX_GdiFont::LoadFont(const FX_WCHAR* pszFontFamily,
                               FX_WORD wCodePage) {
   FXSYS_assert(m_hFont == NULL);
   LOGFONTW lf;
-  FX_memset(&lf, 0, sizeof(lf));
+  FXSYS_memset(&lf, 0, sizeof(lf));
   lf.lfHeight = -1000;
   lf.lfWeight = (dwFontStyles & FX_FONTSTYLE_Bold) ? FW_BOLD : FW_NORMAL;
   lf.lfItalic = (dwFontStyles & FX_FONTSTYLE_Italic) != 0;
@@ -287,7 +287,7 @@ int32_t CFX_GdiFont::GetFontFamilies(Gdiplus::FontCollection& fc) {
 }
 void CFX_GdiFont::RetrieveFontStyles() {
   FXSYS_assert(m_hFont != NULL);
-  FX_memset(&m_LogFont, 0, sizeof(m_LogFont));
+  FXSYS_memset(&m_LogFont, 0, sizeof(m_LogFont));
   ::GetObjectW(m_hFont, sizeof(m_LogFont), &m_LogFont);
   m_dwStyles = FX_GetGdiFontStyles(m_LogFont);
 }

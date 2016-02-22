@@ -327,7 +327,7 @@ FX_LPCFONTDESCRIPTOR CFX_StdFontMgrImp::FindFont(const FX_WCHAR* pszFontFamily,
     return NULL;
   }
   FX_FONTMATCHPARAMS params;
-  FX_memset(&params, 0, sizeof(params));
+  FXSYS_memset(&params, 0, sizeof(params));
   params.dwUSB = dwUSB;
   params.wUnicode = wUnicode;
   params.wCodePage = wCodePage;
@@ -472,8 +472,8 @@ static int32_t CALLBACK FX_GdiFontEnumProc(ENUMLOGFONTEX* lpelfe,
   pFont->dwFontStyles = FX_GetGdiFontStyles(lf);
   FXSYS_wcsncpy(pFont->wsFontFace, (const FX_WCHAR*)lf.lfFaceName, 31);
   pFont->wsFontFace[31] = 0;
-  FX_memcpy(&pFont->FontSignature, &lpntme->ntmFontSig,
-            sizeof(lpntme->ntmFontSig));
+  FXSYS_memcpy(&pFont->FontSignature, &lpntme->ntmFontSig,
+               sizeof(lpntme->ntmFontSig));
   ((CFX_FontDescriptors*)lParam)->Add(*pFont);
   FX_Free(pFont);
   return 1;
@@ -484,7 +484,7 @@ static void FX_EnumGdiFonts(CFX_FontDescriptors& fonts,
                             FX_WCHAR wUnicode) {
   HDC hDC = ::GetDC(NULL);
   LOGFONTW lfFind;
-  FX_memset(&lfFind, 0, sizeof(lfFind));
+  FXSYS_memset(&lfFind, 0, sizeof(lfFind));
   lfFind.lfCharSet = DEFAULT_CHARSET;
   if (pwsFaceName) {
     FXSYS_wcsncpy((FX_WCHAR*)lfFind.lfFaceName, pwsFaceName, 31);
