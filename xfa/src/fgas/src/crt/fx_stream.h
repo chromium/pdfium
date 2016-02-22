@@ -18,7 +18,7 @@ class CFX_TextStream;
 class CFX_FileRead;
 class CFX_FileWrite;
 class CFX_BufferAccImp;
-class CFX_StreamImp : public CFX_ThreadLock {
+class CFX_StreamImp {
  public:
   virtual void Release() { delete this; }
   virtual FX_DWORD GetAccessModes() const { return m_dwAccess; }
@@ -170,7 +170,7 @@ enum FX_STREAMTYPE {
   FX_STREAMTYPE_Stream,
   FX_STREAMTYPE_BufferRead,
 };
-class CFX_Stream : public IFX_Stream, public CFX_ThreadLock {
+class CFX_Stream : public IFX_Stream {
  public:
   CFX_Stream();
   ~CFX_Stream();
@@ -201,8 +201,6 @@ class CFX_Stream : public IFX_Stream, public CFX_ThreadLock {
   virtual int32_t GetBOM(uint8_t bom[4]) const;
   virtual FX_WORD GetCodePage() const;
   virtual FX_WORD SetCodePage(FX_WORD wCodePage);
-  virtual void Lock() { CFX_ThreadLock::Lock(); }
-  virtual void Unlock() { CFX_ThreadLock::Unlock(); }
   virtual IFX_Stream* CreateSharedStream(FX_DWORD dwAccess,
                                          int32_t iOffset,
                                          int32_t iLength);
@@ -217,7 +215,7 @@ class CFX_Stream : public IFX_Stream, public CFX_ThreadLock {
   int32_t m_iLength;
   int32_t m_iRefCount;
 };
-class CFX_TextStream : public IFX_Stream, public CFX_ThreadLock {
+class CFX_TextStream : public IFX_Stream {
  public:
   CFX_TextStream(IFX_Stream* pStream, FX_BOOL bDelStream);
   ~CFX_TextStream();
@@ -243,9 +241,6 @@ class CFX_TextStream : public IFX_Stream, public CFX_ThreadLock {
   virtual int32_t GetBOM(uint8_t bom[4]) const;
   virtual FX_WORD GetCodePage() const;
   virtual FX_WORD SetCodePage(FX_WORD wCodePage);
-
-  virtual void Lock() { CFX_ThreadLock::Lock(); }
-  virtual void Unlock() { CFX_ThreadLock::Unlock(); }
 
   virtual IFX_Stream* CreateSharedStream(FX_DWORD dwAccess,
                                          int32_t iOffset,

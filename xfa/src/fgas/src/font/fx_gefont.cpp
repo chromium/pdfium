@@ -87,7 +87,7 @@ IFX_Font* IFX_Font::LoadFont(CFX_Font* pExtFont,
   return pFont;
 }
 CFX_GEFont::CFX_GEFont(IFX_FontMgr* pFontMgr)
-    : CFX_ThreadLock(),
+    :
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
       m_bUseLogFontStyle(FALSE),
       m_dwLogFontStyle(0),
@@ -109,7 +109,7 @@ CFX_GEFont::CFX_GEFont(IFX_FontMgr* pFontMgr)
 }
 
 CFX_GEFont::CFX_GEFont(const CFX_GEFont& src, FX_DWORD dwFontStyles)
-    : CFX_ThreadLock(),
+    :
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
       m_bUseLogFontStyle(FALSE),
       m_dwLogFontStyle(0),
@@ -192,7 +192,6 @@ FX_BOOL CFX_GEFont::LoadFont(const FX_WCHAR* pszFontFamily,
   if (m_pFont) {
     return FALSE;
   }
-  Lock();
   CFX_ByteString csFontFamily;
   if (pszFontFamily != NULL) {
     csFontFamily = CFX_ByteString::FromUnicode(pszFontFamily);
@@ -239,28 +238,24 @@ FX_BOOL CFX_GEFont::LoadFont(const FX_WCHAR* pszFontFamily,
   if (bRet) {
     bRet = InitFont();
   }
-  Unlock();
   return bRet;
 }
 FX_BOOL CFX_GEFont::LoadFont(const uint8_t* pBuffer, int32_t length) {
   if (m_pFont) {
     return FALSE;
   }
-  Lock();
   m_pFont = new CFX_Font;
   FX_BOOL bRet = m_pFont->LoadEmbedded(pBuffer, length);
   if (bRet) {
     bRet = InitFont();
   }
   m_wCharSet = 0xFFFF;
-  Unlock();
   return bRet;
 }
 FX_BOOL CFX_GEFont::LoadFont(const FX_WCHAR* pszFileName) {
   if (m_pFont || m_pStream || m_pFileRead) {
     return FALSE;
   }
-  Lock();
   m_pStream = IFX_Stream::CreateStream(
       pszFileName, FX_STREAMACCESS_Binary | FX_STREAMACCESS_Read);
   m_pFileRead = FX_CreateFileRead(m_pStream);
@@ -276,14 +271,12 @@ FX_BOOL CFX_GEFont::LoadFont(const FX_WCHAR* pszFileName) {
     }
   }
   m_wCharSet = 0xFFFF;
-  Unlock();
   return bRet;
 }
 FX_BOOL CFX_GEFont::LoadFont(IFX_Stream* pFontStream, FX_BOOL bSaveStream) {
   if (m_pFont || m_pFileRead || !pFontStream || pFontStream->GetLength() < 1) {
     return FALSE;
   }
-  Lock();
   if (bSaveStream) {
     m_pStream = pFontStream;
   }
@@ -297,14 +290,12 @@ FX_BOOL CFX_GEFont::LoadFont(IFX_Stream* pFontStream, FX_BOOL bSaveStream) {
     m_pFileRead = nullptr;
   }
   m_wCharSet = 0xFFFF;
-  Unlock();
   return bRet;
 }
 FX_BOOL CFX_GEFont::LoadFont(CFX_Font* pExtFont, FX_BOOL bTakeOver) {
   if (m_pFont || !pExtFont) {
     return FALSE;
   }
-  Lock();
   m_pFont = pExtFont;
   FX_BOOL bRet = !!m_pFont;
   if (bRet) {
@@ -314,7 +305,6 @@ FX_BOOL CFX_GEFont::LoadFont(CFX_Font* pExtFont, FX_BOOL bTakeOver) {
     m_bExtFont = TRUE;
   }
   m_wCharSet = 0xFFFF;
-  Unlock();
   return bRet;
 }
 FX_BOOL CFX_GEFont::InitFont() {
@@ -419,9 +409,7 @@ FX_BOOL CFX_GEFont::GetCharWidth(FX_WCHAR wUnicode,
         iWidth = -1;
       }
     }
-    Lock();
     m_pCharWidthMap->SetAtGrow(wUnicode, (int16_t)iWidth);
-    Unlock();
   } else if (iWidth == 65535) {
     iWidth = -1;
   }
@@ -446,13 +434,11 @@ FX_BOOL CFX_GEFont::GetCharBBox(FX_WCHAR wUnicode,
       if (pFont == (IFX_Font*)this) {
         FX_RECT rtBBox;
         if (m_pFont->GetGlyphBBox(iGlyph, rtBBox)) {
-          Lock();
           CFX_Rect rt;
           rt.Set(rtBBox.left, rtBBox.top, rtBBox.Width(), rtBBox.Height());
           int32_t index = m_pRectArray->Add(rt);
           pRect = m_pRectArray->GetPtrAt(index);
           m_pBBoxMap->SetAt((void*)(uintptr_t)wUnicode, pRect);
-          Unlock();
         }
       } else if (((CFX_GEFont*)pFont)
                      ->GetCharBBox(wUnicode, bbox, FALSE, bCharCode)) {
@@ -563,7 +549,6 @@ int32_t CFX_GEFont::GetDescent() const {
   return m_pFont->GetDescent();
 }
 void CFX_GEFont::Reset() {
-  Lock();
   int32_t iCount = m_SubstFonts.GetSize();
   for (int32_t i = 0; i < iCount; i++) {
     IFX_Font* pFont = (IFX_Font*)m_SubstFonts[i];
@@ -578,7 +563,6 @@ void CFX_GEFont::Reset() {
   if (m_pRectArray != NULL) {
     m_pRectArray->RemoveAll();
   }
-  Unlock();
 }
 IFX_Font* CFX_GEFont::GetSubstFont(int32_t iGlyphIndex) const {
   iGlyphIndex = ((FX_DWORD)iGlyphIndex) >> 24;

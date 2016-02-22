@@ -1515,14 +1515,12 @@ FX_DWORD CFDE_XMLSyntaxParser::DoSyntaxParse() {
       }
       m_iParsedChars += (m_pEnd - m_pBuffer);
       m_iParsedBytes = m_iCurrentPos;
-      m_pStream->Lock();
       if (m_pStream->GetPosition() != m_iCurrentPos) {
         m_pStream->Seek(FX_STREAMSEEK_Begin, m_iCurrentPos);
       }
       m_iBufferChars =
           m_pStream->ReadString(m_pBuffer, m_iXMLPlaneSize, m_bEOS);
       iPos = m_pStream->GetPosition();
-      m_pStream->Unlock();
       if (m_iBufferChars < 1) {
         m_iCurrentPos = iStreamLength;
         m_dwStatus = FDE_XMLSYNTAXSTATUS_EOS;

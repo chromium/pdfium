@@ -10,7 +10,6 @@
 #include "xfa/src/fgas/include/fx_mem.h"
 #include "core/include/fxcrt/fx_coordinates.h"  // For CFX_Rect.
 
-class CFX_ThreadLock;
 class CFX_BaseArray;
 template <class baseType>
 class CFX_BaseArrayTemplate;
@@ -36,13 +35,6 @@ template <class baseType>
 class CFX_CPLTree;
 class FX_BASEARRAYDATA;
 
-class CFX_ThreadLock {
- public:
-  CFX_ThreadLock();
-  virtual ~CFX_ThreadLock();
-  void Lock();
-  void Unlock();
-};
 class CFX_BaseArray : public CFX_Target {
  protected:
   CFX_BaseArray(int32_t iGrowSize, int32_t iBlockSize);

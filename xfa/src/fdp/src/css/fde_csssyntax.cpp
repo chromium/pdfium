@@ -444,12 +444,10 @@ int32_t CFDE_CSSTextBuf::LoadFromStream(IFX_Stream* pTxtStream,
   if (!ExpandBuf(iMaxChars)) {
     return 0;
   }
-  pTxtStream->Lock();
   if (pTxtStream->GetPosition() != iStreamOffset) {
     pTxtStream->Seek(FX_STREAMSEEK_Begin, iStreamOffset);
   }
   m_iDatLen = pTxtStream->ReadString(m_pBuffer, iMaxChars, bEOS);
-  pTxtStream->Unlock();
   return m_iDatLen;
 }
 FX_BOOL CFDE_CSSTextBuf::ExpandBuf(int32_t iDesiredSize) {

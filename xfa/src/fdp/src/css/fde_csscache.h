@@ -14,7 +14,6 @@ typedef struct _FDE_CSSCACHEITEM : public CFX_Target {
   FX_DWORD dwActivity;
 } FDE_CSSCACHEITEM, *FDE_LPCSSCACHEITEM;
 class CFDE_CSSStyleSheetCache : public IFDE_CSSStyleSheetCache,
-                                public CFX_ThreadLock,
                                 public CFX_Target {
  public:
   CFDE_CSSStyleSheetCache();

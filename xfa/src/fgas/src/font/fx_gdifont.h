@@ -27,7 +27,7 @@ class CFX_GdiFontCache {
  protected:
   CFX_MapPtrToPtr m_GlyphMap;
 };
-class CFX_GdiFont : public IFX_Font, public CFX_ThreadLock {
+class CFX_GdiFont : public IFX_Font {
  public:
   CFX_GdiFont(IFX_FontMgr* pFontMgr);
   ~CFX_GdiFont();

@@ -58,8 +58,7 @@ IFDE_RenderContext* IFDE_RenderContext::Create() {
   return new CFDE_RenderContext;
 }
 CFDE_RenderContext::CFDE_RenderContext()
-    : CFX_ThreadLock(),
-      m_eStatus(FDE_RENDERSTATUS_Reset),
+    : m_eStatus(FDE_RENDERSTATUS_Reset),
       m_pRenderDevice(NULL),
       m_pSolidBrush(NULL),
       m_Transform(),
@@ -83,7 +82,7 @@ FX_BOOL CFDE_RenderContext::StartRender(IFDE_RenderDevice* pRenderDevice,
   if (pCanvasSet == NULL) {
     return FALSE;
   }
-  Lock();
+
   m_eStatus = FDE_RENDERSTATUS_Paused;
   m_pRenderDevice = pRenderDevice;
   m_Transform = tmDoc2Device;
@@ -91,10 +90,7 @@ FX_BOOL CFDE_RenderContext::StartRender(IFDE_RenderDevice* pRenderDevice,
     m_pIterator = IFDE_VisualSetIterator::Create();
     FXSYS_assert(m_pIterator != NULL);
   }
-  FX_BOOL bAttach =
-      m_pIterator->AttachCanvas(pCanvasSet) && m_pIterator->FilterObjects();
-  Unlock();
-  return bAttach;
+  return m_pIterator->AttachCanvas(pCanvasSet) && m_pIterator->FilterObjects();
 }
 FDE_RENDERSTATUS CFDE_RenderContext::DoRender(IFX_Pause* pPause) {
   if (m_pRenderDevice == NULL) {
@@ -103,7 +99,6 @@ FDE_RENDERSTATUS CFDE_RenderContext::DoRender(IFX_Pause* pPause) {
   if (m_pIterator == NULL) {
     return FDE_RENDERSTATUS_Failed;
   }
-  Lock();
   FDE_RENDERSTATUS eStatus = FDE_RENDERSTATUS_Paused;
   CFX_Matrix rm;
   rm.SetReverse(m_Transform);
@@ -152,11 +147,9 @@ FDE_RENDERSTATUS CFDE_RenderContext::DoRender(IFX_Pause* pPause) {
       break;
     }
   }
-  Unlock();
   return m_eStatus = eStatus;
 }
 void CFDE_RenderContext::StopRender() {
-  Lock();
   m_eStatus = FDE_RENDERSTATUS_Reset;
   m_pRenderDevice = nullptr;
   m_Transform.SetIdentity();
@@ -171,7 +164,6 @@ void CFDE_RenderContext::StopRender() {
   FX_Free(m_pCharPos);
   m_pCharPos = nullptr;
   m_iCharPosCount = 0;
-  Unlock();
 }
 void CFDE_RenderContext::RenderText(IFDE_TextSet* pTextSet,
                                     FDE_HVISUALOBJ hText) {

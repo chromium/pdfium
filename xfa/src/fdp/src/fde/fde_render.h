@@ -7,9 +7,7 @@
 #ifndef XFA_SRC_FDP_SRC_FDE_FDE_RENDER_H_
 #define XFA_SRC_FDP_SRC_FDE_FDE_RENDER_H_
 
-class CFDE_RenderContext;
 class CFDE_RenderContext : public IFDE_RenderContext,
-                           public CFX_ThreadLock,
                            public CFX_Target {
  public:
   CFDE_RenderContext();

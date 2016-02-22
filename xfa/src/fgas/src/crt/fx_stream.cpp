@@ -72,7 +72,7 @@ IFX_Stream* IFX_Stream::CreateStream(uint8_t* pData,
   }
   return pSR;
 }
-CFX_StreamImp::CFX_StreamImp() : CFX_ThreadLock(), m_dwAccess(0) {}
+CFX_StreamImp::CFX_StreamImp() : m_dwAccess(0) {}
 CFX_FileStreamImp::CFX_FileStreamImp()
     : CFX_StreamImp(), m_hFile(NULL), m_iLength(0) {}
 CFX_FileStreamImp::~CFX_FileStreamImp() {
@@ -771,9 +771,7 @@ int32_t CFX_TextStream::ReadString(FX_WCHAR* pStr,
   if (m_wCodePage == FX_CODEPAGE_UTF16LE ||
       m_wCodePage == FX_CODEPAGE_UTF16BE) {
     int32_t iBytes = pByteSize == NULL ? iMaxLength * 2 : *pByteSize;
-    m_pStreamImp->Lock();
     iLen = m_pStreamImp->ReadData((uint8_t*)pStr, iBytes);
-    m_pStreamImp->Unlock();
     iMaxLength = iLen / 2;
     if (sizeof(FX_WCHAR) > 2) {
       FX_UTF16ToWChar(pStr, iMaxLength);
@@ -799,13 +797,11 @@ int32_t CFX_TextStream::ReadString(FX_WCHAR* pStr,
         m_pBuf = FX_Realloc(uint8_t, m_pBuf, iBytes);
         m_iBufSize = iBytes;
       }
-      m_pStreamImp->Lock();
       iLen = m_pStreamImp->ReadData(m_pBuf, iBytes);
       int32_t iSrc = iLen;
       int32_t iDecode = FX_DecodeString(m_wCodePage, (const FX_CHAR*)m_pBuf,
                                         &iSrc, pStr, &iMaxLength, TRUE);
       m_pStreamImp->Seek(FX_STREAMSEEK_Current, iSrc - iLen);
-      m_pStreamImp->Unlock();
       if (iDecode < 1) {
         return -1;
       }
@@ -828,10 +824,8 @@ int32_t CFX_TextStream::WriteString(const FX_WCHAR* pStr, int32_t iLength) {
       encoder.Input(*pStr++);
     }
     CFX_ByteStringC bsResult = encoder.GetResult();
-    m_pStreamImp->Lock();
     m_pStreamImp->WriteData((const uint8_t*)bsResult.GetCStr(),
                             bsResult.GetLength());
-    m_pStreamImp->Unlock();
   }
   return iLength;
 }
@@ -1030,13 +1024,11 @@ int32_t CFX_Stream::ReadData(uint8_t* pBuffer, int32_t iBufferSize) {
   if (iLen <= 0) {
     return 0;
   }
-  m_pStreamImp->Lock();
   if (m_pStreamImp->GetPosition() != m_iPosition) {
     m_pStreamImp->Seek(FX_STREAMSEEK_Begin, m_iPosition);
   }
   iLen = m_pStreamImp->ReadData(pBuffer, iLen);
   m_iPosition = m_pStreamImp->GetPosition();
-  m_pStreamImp->Unlock();
   return iLen;
 }
 int32_t CFX_Stream::ReadString(FX_WCHAR* pStr,
@@ -1056,7 +1048,6 @@ int32_t CFX_Stream::ReadString(FX_WCHAR* pStr,
   if (iLen <= 0) {
     return 0;
   }
-  m_pStreamImp->Lock();
   if (m_pStreamImp->GetPosition() != m_iPosition) {
     m_pStreamImp->Seek(FX_STREAMSEEK_Begin, m_iPosition);
   }
@@ -1065,7 +1056,6 @@ int32_t CFX_Stream::ReadString(FX_WCHAR* pStr,
   if (iLen > 0 && m_iPosition >= iEnd) {
     bEOS = TRUE;
   }
-  m_pStreamImp->Unlock();
   return iLen;
 }
 int32_t CFX_Stream::WriteData(const uint8_t* pBuffer, int32_t iBufferSize) {
@@ -1083,7 +1073,6 @@ int32_t CFX_Stream::WriteData(const uint8_t* pBuffer, int32_t iBufferSize) {
       return 0;
     }
   }
-  m_pStreamImp->Lock();
   int32_t iEnd = m_iStart + m_iLength;
   if (m_pStreamImp->GetPosition() != m_iPosition) {
     m_pStreamImp->Seek(FX_STREAMSEEK_Begin, m_iPosition);
@@ -1093,7 +1082,6 @@ int32_t CFX_Stream::WriteData(const uint8_t* pBuffer, int32_t iBufferSize) {
   if (m_iPosition > iEnd) {
     m_iLength = m_iPosition - m_iStart;
   }
-  m_pStreamImp->Unlock();
   return iLen;
 }
 int32_t CFX_Stream::WriteString(const FX_WCHAR* pStr, int32_t iLength) {
@@ -1111,7 +1099,6 @@ int32_t CFX_Stream::WriteString(const FX_WCHAR* pStr, int32_t iLength) {
       return 0;
     }
   }
-  m_pStreamImp->Lock();
   int32_t iEnd = m_iStart + m_iLength;
   if (m_pStreamImp->GetPosition() != m_iPosition) {
     m_pStreamImp->Seek(FX_STREAMSEEK_Begin, m_iPosition);
@@ -1121,7 +1108,6 @@ int32_t CFX_Stream::WriteString(const FX_WCHAR* pStr, int32_t iLength) {
   if (m_iPosition > iEnd) {
     m_iLength = m_iPosition - m_iStart;
   }
-  m_pStreamImp->Unlock();
   return iLen;
 }
 void CFX_Stream::Flush() {
@@ -1219,10 +1205,8 @@ FX_FILESIZE CFGAS_FileRead::GetSize() {
 FX_BOOL CFGAS_FileRead::ReadBlock(void* buffer,
                                   FX_FILESIZE offset,
                                   size_t size) {
-  m_pStream->Lock();
   m_pStream->Seek(FX_STREAMSEEK_Begin, (int32_t)offset);
   int32_t iLen = m_pStream->ReadData((uint8_t*)buffer, (int32_t)size);
-  m_pStream->Unlock();
   return iLen == (int32_t)size;
 }
 
@@ -1349,9 +1333,7 @@ FX_BOOL CFGAS_FileWrite::WriteBlock(const void* pData, size_t size) {
 FX_BOOL CFGAS_FileWrite::WriteBlock(const void* pData,
                                     FX_FILESIZE offset,
                                     size_t size) {
-  m_pStream->Lock();
   m_pStream->Seek(FX_STREAMSEEK_Begin, offset);
   int32_t iLen = m_pStream->WriteData((uint8_t*)pData, (int32_t)size);
-  m_pStream->Unlock();
   return iLen == (int32_t)size;
 }

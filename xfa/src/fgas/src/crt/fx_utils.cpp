@@ -10,11 +10,6 @@
 #include "xfa/src/fgas/src/fgas_base.h"
 #include "xfa/src/fgas/src/crt/fx_utils.h"
 
-CFX_ThreadLock::CFX_ThreadLock() {
-}
-CFX_ThreadLock::~CFX_ThreadLock() {}
-void CFX_ThreadLock::Lock() {}
-void CFX_ThreadLock::Unlock() {}
 class FX_BASEARRAYDATA : public CFX_Target {
  public:
   FX_BASEARRAYDATA(int32_t growsize, int32_t blocksize)
