@@ -7,6 +7,8 @@
 #ifndef XFA_INCLUDE_FXFA_FXFA_WIDGET_H_
 #define XFA_INCLUDE_FXFA_FXFA_WIDGET_H_
 
+#include "xfa/include/fxfa/fxfa_objectacc.h"
+
 class CXFA_Node;
 class CXFA_FFDocView;
 class CXFA_FFDoc;
@@ -19,7 +21,7 @@ class CXFA_TextProvider;
 class CXFA_WidgetLayoutData;
 class IFX_Font;
 class CXFA_WidgetAcc;
-#include "fxfa_objectacc.h"
+
 class CXFA_WidgetAcc : public CXFA_WidgetData {
  public:
   CXFA_WidgetAcc(CXFA_FFDocView* pDocView, CXFA_Node* pNode);

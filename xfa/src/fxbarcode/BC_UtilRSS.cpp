@@ -20,8 +20,8 @@
  * limitations under the License.
  */
 
-#include "barcode.h"
-#include "BC_UtilRSS.h"
+#include "xfa/src/fxbarcode/barcode.h"
+#include "xfa/src/fxbarcode/BC_UtilRSS.h"
 CBC_UtilRSS::CBC_UtilRSS() {}
 CBC_UtilRSS::~CBC_UtilRSS() {}
 CFX_Int32Array* CBC_UtilRSS::GetRssWidths(int32_t val,

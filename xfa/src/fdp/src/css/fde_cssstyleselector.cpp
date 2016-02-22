@@ -5,9 +5,9 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "xfa/src/foxitlib.h"
-#include "fde_csscache.h"
-#include "fde_cssdeclaration.h"
-#include "fde_cssstyleselector.h"
+#include "xfa/src/fdp/src/css/fde_csscache.h"
+#include "xfa/src/fdp/src/css/fde_cssdeclaration.h"
+#include "xfa/src/fdp/src/css/fde_cssstyleselector.h"
 int32_t CFDE_CSSCounterStyle::FindIndex(const FX_WCHAR* pszIdentifier) {
   int32_t iCount = m_arrCounterData.GetSize();
   for (int32_t i = 0; i < iCount; i++) {

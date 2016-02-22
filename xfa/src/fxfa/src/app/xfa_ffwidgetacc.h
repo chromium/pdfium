@@ -7,7 +7,7 @@
 #ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFWIDGETACC_H_
 #define XFA_SRC_FXFA_SRC_APP_XFA_FFWIDGETACC_H_
 
-#include "xfa_textlayout.h"
+#include "xfa/src/fxfa/src/app/xfa_textlayout.h"
 
 enum XFA_TEXTPROVIDERTYPE {
   XFA_TEXTPROVIDERTYPE_Text,

@@ -21,8 +21,8 @@
  */
 
 #include "xfa/src/fxbarcode/barcode.h"
-#include "BC_QRCoderErrorCorrectionLevel.h"
-#include "BC_QRCoderFormatInformation.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderFormatInformation.h"
 const int32_t CBC_QRCoderFormatInformation::FORMAT_INFO_MASK_QR = 0X5412;
 const int32_t CBC_QRCoderFormatInformation::FORMAT_INFO_DECODE_LOOKUP[32][2] = {
     {0x5412, 0x00}, {0x5125, 0x01}, {0x5E7C, 0x02}, {0x5B4B, 0x03},

@@ -6,9 +6,9 @@
 
 #include "fpdfsdk/include/jsapi/fxjs_v8.h"  // For per-isolate data.
 #include "xfa/src/foxitlib.h"
-#include "fxv8.h"
-#include "runtime.h"
-#include "scope_inline.h"
+#include "xfa/src/fxjse/src/fxv8.h"
+#include "xfa/src/fxjse/src/runtime.h"
+#include "xfa/src/fxjse/src/scope_inline.h"
 
 // Duplicates fpdfsdk's JS_Runtime.h, but keeps XFA from depending on it.
 // TODO(tsepez): make a single version of this.

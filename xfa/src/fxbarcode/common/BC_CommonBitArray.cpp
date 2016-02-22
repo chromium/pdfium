@@ -21,7 +21,7 @@
  */
 
 #include "xfa/src/fxbarcode/barcode.h"
-#include "BC_CommonBitArray.h"
+#include "xfa/src/fxbarcode/common/BC_CommonBitArray.h"
 CBC_CommonBitArray::CBC_CommonBitArray(CBC_CommonBitArray* array) {
   m_size = array->GetSize();
   m_bits.Copy(array->GetBits());

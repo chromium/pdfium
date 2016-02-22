@@ -23,9 +23,9 @@
 #include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/BC_ResultPoint.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
-#include "BC_QRFinderPatternFinder.h"
-#include "BC_FinderPatternInfo.h"
-#include "BC_QRFinderPattern.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRFinderPatternFinder.h"
+#include "xfa/src/fxbarcode/qrcode/BC_FinderPatternInfo.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRFinderPattern.h"
 const int32_t CBC_QRFinderPatternFinder::CENTER_QUORUM = 2;
 const int32_t CBC_QRFinderPatternFinder::MIN_SKIP = 3;
 const int32_t CBC_QRFinderPatternFinder::MAX_MODULES = 57;

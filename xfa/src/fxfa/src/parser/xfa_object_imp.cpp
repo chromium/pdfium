@@ -14,8 +14,8 @@
 #include "xfa/src/fxfa/src/common/xfa_doclayout.h"
 #include "xfa/src/fxfa/src/common/xfa_localemgr.h"
 #include "xfa/src/fxfa/src/common/xfa_fm2jsapi.h"
-#include "xfa_basic_imp.h"
-#include "xfa_document_layout_imp.h"
+#include "xfa/src/fxfa/src/parser/xfa_basic_imp.h"
+#include "xfa/src/fxfa/src/parser/xfa_document_layout_imp.h"
 CXFA_Object::CXFA_Object(CXFA_Document* pDocument, FX_DWORD uFlags)
     : m_pDocument(pDocument), m_uFlags(uFlags) {}
 void CXFA_Object::GetClassName(CFX_WideStringC& wsName) const {

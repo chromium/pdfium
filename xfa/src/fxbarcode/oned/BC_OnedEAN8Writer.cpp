@@ -24,10 +24,10 @@
 #include "xfa/src/fxbarcode/BC_Writer.h"
 #include "xfa/src/fxbarcode/BC_Reader.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
-#include "BC_OneDReader.h"
-#include "BC_OneDimWriter.h"
-#include "BC_OneDimReader.h"
-#include "BC_OnedEAN8Writer.h"
+#include "xfa/src/fxbarcode/oned/BC_OneDReader.h"
+#include "xfa/src/fxbarcode/oned/BC_OneDimWriter.h"
+#include "xfa/src/fxbarcode/oned/BC_OneDimReader.h"
+#include "xfa/src/fxbarcode/oned/BC_OnedEAN8Writer.h"
 CBC_OnedEAN8Writer::CBC_OnedEAN8Writer() {
   m_iDataLenth = 8;
   m_codeWidth = 3 + (7 * 4) + 5 + (7 * 4) + 3;

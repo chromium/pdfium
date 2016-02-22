@@ -21,9 +21,9 @@
  */
 
 #include "xfa/src/fxbarcode/barcode.h"
-#include "BC_ReedSolomonGF256.h"
-#include "BC_ReedSolomonGF256Poly.h"
-#include "BC_ReedSolomonDecoder.h"
+#include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"
+#include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomonGF256Poly.h"
+#include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomonDecoder.h"
 CBC_ReedSolomonDecoder::CBC_ReedSolomonDecoder(CBC_ReedSolomonGF256* field) {
   m_field = field;
 }

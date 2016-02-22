@@ -23,7 +23,7 @@
 #include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/BC_ResultPoint.h"
-#include "BC_PDF417DetectorResult.h"
+#include "xfa/src/fxbarcode/pdf417/BC_PDF417DetectorResult.h"
 CBC_PDF417DetectorResult::CBC_PDF417DetectorResult(CBC_CommonBitMatrix* bits,
                                                    CFX_PtrArray* points) {
   m_bits = bits;

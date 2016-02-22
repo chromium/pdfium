@@ -21,7 +21,7 @@
  */
 
 #include "xfa/src/fxbarcode/barcode.h"
-#include "BC_PDF417BarcodeMetadata.h"
+#include "xfa/src/fxbarcode/pdf417/BC_PDF417BarcodeMetadata.h"
 CBC_BarcodeMetadata::CBC_BarcodeMetadata(int32_t columnCount,
                                          int32_t rowCountUpperPart,
                                          int32_t rowCountLowerPart,

@@ -14,9 +14,9 @@
 #include "xfa/src/fxfa/src/common/xfa_doclayout.h"
 #include "xfa/src/fxfa/src/common/xfa_localemgr.h"
 #include "xfa/src/fxfa/src/common/xfa_fm2jsapi.h"
-#include "xfa_script_resolveprocessor.h"
-#include "xfa_script_nodehelper.h"
-#include "xfa_script_imp.h"
+#include "xfa/src/fxfa/src/parser/xfa_script_resolveprocessor.h"
+#include "xfa/src/fxfa/src/parser/xfa_script_nodehelper.h"
+#include "xfa/src/fxfa/src/parser/xfa_script_imp.h"
 CXFA_ResolveProcessor::CXFA_ResolveProcessor(void)
     : m_pNodeHelper(NULL), m_iCurStart(0) {
   m_pNodeHelper = new CXFA_NodeHelper;

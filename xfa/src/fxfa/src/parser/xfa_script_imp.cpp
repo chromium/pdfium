@@ -14,9 +14,9 @@
 #include "xfa/src/fxfa/src/common/xfa_doclayout.h"
 #include "xfa/src/fxfa/src/common/xfa_localemgr.h"
 #include "xfa/src/fxfa/src/common/xfa_fm2jsapi.h"
-#include "xfa_script_imp.h"
-#include "xfa_script_resolveprocessor.h"
-#include "xfa_script_nodehelper.h"
+#include "xfa/src/fxfa/src/parser/xfa_script_imp.h"
+#include "xfa/src/fxfa/src/parser/xfa_script_resolveprocessor.h"
+#include "xfa/src/fxfa/src/parser/xfa_script_nodehelper.h"
 CXFA_ScriptContext::CXFA_ScriptContext(CXFA_Document* pDocument)
     : m_pDocument(pDocument),
       m_hJsContext(nullptr),

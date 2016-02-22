@@ -7,7 +7,7 @@
 #ifndef XFA_INCLUDE_FWL_BASEWIDGET_FWL_BARCODE_H_
 #define XFA_INCLUDE_FWL_BASEWIDGET_FWL_BARCODE_H_
 
-#include "fwl_edit.h"
+#include "xfa/include/fwl/basewidget/fwl_edit.h"
 
 class CFWL_WidgetImpProperties;
 class IFWL_Widget;

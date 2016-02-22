@@ -14,7 +14,7 @@
 #include "xfa/src/fxfa/src/common/xfa_doclayout.h"
 #include "xfa/src/fxfa/src/common/xfa_localemgr.h"
 #include "xfa/src/fxfa/src/common/xfa_fm2jsapi.h"
-#include "xfa_basic_imp.h"
+#include "xfa/src/fxfa/src/parser/xfa_basic_imp.h"
 extern const XFA_PACKETINFO g_XFAPacketData[];
 extern const int32_t g_iXFAPacketCount;
 extern const XFA_ATTRIBUTEENUMINFO g_XFAEnumData[];

@@ -23,10 +23,10 @@
 #include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/BC_Dimension.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
-#include "BC_Encoder.h"
-#include "BC_SymbolShapeHint.h"
-#include "BC_SymbolInfo.h"
-#include "BC_DataMatrixSymbolInfo144.h"
+#include "xfa/src/fxbarcode/datamatrix/BC_Encoder.h"
+#include "xfa/src/fxbarcode/datamatrix/BC_SymbolShapeHint.h"
+#include "xfa/src/fxbarcode/datamatrix/BC_SymbolInfo.h"
+#include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixSymbolInfo144.h"
 #define SYMBOLS_COUNT 30
 CBC_SymbolInfo* CBC_SymbolInfo::m_PROD_SYMBOLS[30] = {
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,

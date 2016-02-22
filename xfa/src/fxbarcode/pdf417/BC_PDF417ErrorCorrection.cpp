@@ -21,7 +21,7 @@
  */
 
 #include "xfa/src/fxbarcode/barcode.h"
-#include "BC_PDF417ErrorCorrection.h"
+#include "xfa/src/fxbarcode/pdf417/BC_PDF417ErrorCorrection.h"
 int32_t CBC_PDF417ErrorCorrection::EC_COEFFICIENTS[][2500] = {
     {27, 917},
     {522, 568, 723, 809},

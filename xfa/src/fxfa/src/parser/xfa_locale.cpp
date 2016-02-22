@@ -15,7 +15,7 @@
 #include "xfa/src/fxfa/src/common/xfa_doclayout.h"
 #include "xfa/src/fxfa/src/common/xfa_localemgr.h"
 #include "xfa/src/fxfa/src/common/xfa_fm2jsapi.h"
-#include "xfa_locale.h"
+#include "xfa/src/fxfa/src/parser/xfa_locale.h"
 
 static const FX_WCHAR* g_FX_Percent = L"z,zzz,zzz,zzz,zzz,zzz%";
 static const FX_WCHAR* g_FX_Currency = L"$z,zzz,zzz,zzz,zzz,zz9.99";

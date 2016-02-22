@@ -22,11 +22,11 @@
 
 #include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonByteMatrix.h"
-#include "BC_QRCoderErrorCorrectionLevel.h"
-#include "BC_QRCoder.h"
-#include "BC_QRCoderMaskUtil.h"
-#include "BC_QRCoderMatrixUtil.h"
-#include "BC_QRCoderBitVector.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoder.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderMaskUtil.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderMatrixUtil.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderBitVector.h"
 const int32_t CBC_QRCoderMatrixUtil::POSITION_DETECTION_PATTERN[7][7] = {
     {1, 1, 1, 1, 1, 1, 1},
     {1, 0, 0, 0, 0, 0, 1},

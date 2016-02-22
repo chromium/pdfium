@@ -24,11 +24,11 @@
 #include "xfa/src/fxbarcode/BC_TwoDimWriter.h"
 #include "xfa/src/fxbarcode/BC_Reader.h"
 #include "xfa/src/fxbarcode/common/BC_CommonByteMatrix.h"
-#include "BC_QRCodeWriter.h"
-#include "BC_QRCoderEncoder.h"
-#include "BC_QRCoder.h"
-#include "BC_QRCodeReader.h"
-#include "BC_QRCoderErrorCorrectionLevel.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCodeWriter.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderEncoder.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoder.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCodeReader.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
 CBC_QRCodeWriter::CBC_QRCodeWriter() {
   m_bFixedSize = TRUE;
   m_iCorrectLevel = 1;

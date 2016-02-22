@@ -9,14 +9,14 @@
 #ifndef XFA_SRC_FXFA_SRC_COMMON_XFA_COMMON_H_
 #define XFA_SRC_FXFA_SRC_COMMON_XFA_COMMON_H_
 
-#include "xfa_utils.h"
-#include "xfa_object.h"
-#include "xfa_document.h"
-#include "xfa_parser.h"
-#include "xfa_script.h"
-#include "xfa_docdata.h"
-#include "xfa_doclayout.h"
-#include "xfa_localemgr.h"
-#include "xfa_fm2jsapi.h"
+#include "xfa/src/fxfa/src/common/xfa_utils.h"
+#include "xfa/src/fxfa/src/common/xfa_object.h"
+#include "xfa/src/fxfa/src/common/xfa_document.h"
+#include "xfa/src/fxfa/src/common/xfa_parser.h"
+#include "xfa/src/fxfa/src/common/xfa_script.h"
+#include "xfa/src/fxfa/src/common/xfa_docdata.h"
+#include "xfa/src/fxfa/src/common/xfa_doclayout.h"
+#include "xfa/src/fxfa/src/common/xfa_localemgr.h"
+#include "xfa/src/fxfa/src/common/xfa_fm2jsapi.h"
 
 #endif  // XFA_SRC_FXFA_SRC_COMMON_XFA_COMMON_H_

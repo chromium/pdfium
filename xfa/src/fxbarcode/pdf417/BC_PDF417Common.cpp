@@ -21,7 +21,7 @@
  */
 
 #include "xfa/src/fxbarcode/barcode.h"
-#include "BC_PDF417Common.h"
+#include "xfa/src/fxbarcode/pdf417/BC_PDF417Common.h"
 int32_t CBC_PDF417Common::NUMBER_OF_CODEWORDS = 929;
 int32_t CBC_PDF417Common::MAX_CODEWORDS_IN_BARCODE = NUMBER_OF_CODEWORDS - 1;
 int32_t CBC_PDF417Common::MIN_ROWS_IN_BARCODE = 3;

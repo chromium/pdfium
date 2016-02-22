@@ -8,7 +8,7 @@
 
 #include "core/include/fxcrt/fx_xml.h"
 #include "xfa/src/fgas/src/fgas_base.h"
-#include "fx_localeimp.h"
+#include "xfa/src/fgas/src/localization/fx_localeimp.h"
 
 #define FX_LOCALECATEGORY_DateHash 0xbde9abde
 #define FX_LOCALECATEGORY_TimeHash 0x2d71b00f

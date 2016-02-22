@@ -4,8 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa_fm2js.h"
 #include <time.h>
+
+#include "xfa/src/fxfa/src/fm2js/xfa_fm2js.h"
+
 #define FINANCIAL_PRECISION 0.00000001
 struct XFA_FMHtmlReserveCode {
   uint32_t m_uCode;

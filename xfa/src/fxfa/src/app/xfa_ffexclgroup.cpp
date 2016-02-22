@@ -6,11 +6,11 @@
 
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/common/xfa_common.h"
-#include "xfa_ffwidget.h"
-#include "xfa_ffexclgroup.h"
-#include "xfa_ffpageview.h"
-#include "xfa_ffapp.h"
-#include "xfa_ffdoc.h"
+#include "xfa/src/fxfa/src/app/xfa_ffwidget.h"
+#include "xfa/src/fxfa/src/app/xfa_ffexclgroup.h"
+#include "xfa/src/fxfa/src/app/xfa_ffpageview.h"
+#include "xfa/src/fxfa/src/app/xfa_ffapp.h"
+#include "xfa/src/fxfa/src/app/xfa_ffdoc.h"
 CXFA_FFExclGroup::CXFA_FFExclGroup(CXFA_FFPageView* pPageView,
                                    CXFA_WidgetAcc* pDataAcc)
     : CXFA_FFWidget(pPageView, pDataAcc) {}

@@ -23,8 +23,8 @@
 #include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/BC_Reader.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitArray.h"
-#include "BC_OneDReader.h"
-#include "BC_OneDimReader.h"
+#include "xfa/src/fxbarcode/oned/BC_OneDReader.h"
+#include "xfa/src/fxbarcode/oned/BC_OneDimReader.h"
 const int32_t CBC_OneDimReader::MAX_AVG_VARIANCE = (int32_t)(256 * 0.48f);
 const int32_t CBC_OneDimReader::MAX_INDIVIDUAL_VARIANCE = (int32_t)(256 * 0.7f);
 const int32_t CBC_OneDimReader::START_END_PATTERN[3] = {1, 1, 1};

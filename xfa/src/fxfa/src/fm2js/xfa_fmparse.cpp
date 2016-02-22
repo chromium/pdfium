@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa_fm2js.h"
+#include "xfa/src/fxfa/src/fm2js/xfa_fm2js.h"
 
 CXFA_FMParse::CXFA_FMParse() : m_pToken(nullptr), m_pErrorInfo(0) {}
 

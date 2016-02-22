@@ -7,7 +7,7 @@
 #ifndef XFA_SRC_FXJSE_SRC_VALUE_H_
 #define XFA_SRC_FXJSE_SRC_VALUE_H_
 
-#include "scope_inline.h"
+#include "xfa/src/fxjse/src/scope_inline.h"
 
 class CFXJSE_Value {
  public:

@@ -26,8 +26,8 @@
 #include "xfa/src/fxbarcode/common/BC_CommonECI.h"
 #include "xfa/src/fxbarcode/common/BC_CommonCharacterSetECI.h"
 #include "xfa/src/fxbarcode/common/BC_CommonDecoderResult.h"
-#include "BC_QRCoderMode.h"
-#include "BC_QRDecodedBitStreamParser.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderMode.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRDecodedBitStreamParser.h"
 const FX_CHAR* CBC_QRDecodedBitStreamParser::UTF_8 = "utf8";
 const FX_CHAR CBC_QRDecodedBitStreamParser::ALPHANUMERIC_CHARS[45] = {
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E',

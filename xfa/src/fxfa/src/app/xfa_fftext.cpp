@@ -6,13 +6,13 @@
 
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/common/xfa_common.h"
-#include "xfa_ffwidget.h"
-#include "xfa_ffdraw.h"
-#include "xfa_fftext.h"
-#include "xfa_textlayout.h"
-#include "xfa_ffpageview.h"
-#include "xfa_ffdoc.h"
-#include "xfa_ffapp.h"
+#include "xfa/src/fxfa/src/app/xfa_ffwidget.h"
+#include "xfa/src/fxfa/src/app/xfa_ffdraw.h"
+#include "xfa/src/fxfa/src/app/xfa_fftext.h"
+#include "xfa/src/fxfa/src/app/xfa_textlayout.h"
+#include "xfa/src/fxfa/src/app/xfa_ffpageview.h"
+#include "xfa/src/fxfa/src/app/xfa_ffdoc.h"
+#include "xfa/src/fxfa/src/app/xfa_ffapp.h"
 CXFA_FFText::CXFA_FFText(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc)
     : CXFA_FFDraw(pPageView, pDataAcc) {}
 CXFA_FFText::~CXFA_FFText() {}

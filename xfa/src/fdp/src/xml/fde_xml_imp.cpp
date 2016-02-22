@@ -7,7 +7,7 @@
 #include <algorithm>
 
 #include "xfa/src/foxitlib.h"
-#include "fde_xml_imp.h"
+#include "xfa/src/fdp/src/xml/fde_xml_imp.h"
 #ifdef __cplusplus
 extern "C" {
 #endif

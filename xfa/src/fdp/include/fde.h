@@ -9,16 +9,16 @@
 #ifndef XFA_SRC_FDP_INCLUDE_FDE_H_
 #define XFA_SRC_FDP_INCLUDE_FDE_H_
 
-#include "fde_mem.h"
-#include "fde_xml.h"
-#include "fde_img.h"
-#include "fde_brs.h"
-#include "fde_pen.h"
-#include "fde_pth.h"
-#include "fde_tto.h"
-#include "fde_psr.h"
-#include "fde_css.h"
-#include "fde_rdv.h"
-#include "fde_rdr.h"
+#include "xfa/src/fdp/include/fde_mem.h"
+#include "xfa/src/fdp/include/fde_xml.h"
+#include "xfa/src/fdp/include/fde_img.h"
+#include "xfa/src/fdp/include/fde_brs.h"
+#include "xfa/src/fdp/include/fde_pen.h"
+#include "xfa/src/fdp/include/fde_pth.h"
+#include "xfa/src/fdp/include/fde_tto.h"
+#include "xfa/src/fdp/include/fde_psr.h"
+#include "xfa/src/fdp/include/fde_css.h"
+#include "xfa/src/fdp/include/fde_rdv.h"
+#include "xfa/src/fdp/include/fde_rdr.h"
 
 #endif  // XFA_SRC_FDP_INCLUDE_FDE_H_

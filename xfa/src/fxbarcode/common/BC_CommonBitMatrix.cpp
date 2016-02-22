@@ -21,8 +21,8 @@
  */
 
 #include "xfa/src/fxbarcode/barcode.h"
-#include "BC_CommonBitArray.h"
-#include "BC_CommonBitMatrix.h"
+#include "xfa/src/fxbarcode/common/BC_CommonBitArray.h"
+#include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 CBC_CommonBitMatrix::CBC_CommonBitMatrix() {
   m_width = 0;
   m_height = 0;

@@ -15,7 +15,7 @@
 #include "xfa/src/fxfa/src/common/xfa_doclayout.h"
 #include "xfa/src/fxfa/src/common/xfa_localemgr.h"
 #include "xfa/src/fxfa/src/common/xfa_fm2jsapi.h"
-#include "xfa_locale.h"
+#include "xfa/src/fxfa/src/parser/xfa_locale.h"
 
 const uint8_t g_enUS_Locale[] = {
     0x78, 0x9C, 0x95, 0x56, 0xD1, 0x6E, 0x9B, 0x30, 0x14, 0x7D, 0x9F, 0xB4,

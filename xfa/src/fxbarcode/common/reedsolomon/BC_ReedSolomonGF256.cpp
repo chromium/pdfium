@@ -21,8 +21,8 @@
  */
 
 #include "xfa/src/fxbarcode/barcode.h"
-#include "BC_ReedSolomonGF256Poly.h"
-#include "BC_ReedSolomonGF256.h"
+#include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomonGF256Poly.h"
+#include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"
 CBC_ReedSolomonGF256* CBC_ReedSolomonGF256::QRCodeFild = NULL;
 CBC_ReedSolomonGF256* CBC_ReedSolomonGF256::DataMatrixField = NULL;
 void CBC_ReedSolomonGF256::Initialize() {

@@ -47,8 +47,8 @@ class IXFA_Widget {
   IXFA_Widget() {}
 };
 
-#include "fxfa_basic.h"
-#include "fxfa_widget.h"
+#include "xfa/include/fxfa/fxfa_basic.h"
+#include "xfa/include/fxfa/fxfa_widget.h"
 #define XFA_MBICON_Error 0
 #define XFA_MBICON_Warning 1
 #define XFA_MBICON_Question 2

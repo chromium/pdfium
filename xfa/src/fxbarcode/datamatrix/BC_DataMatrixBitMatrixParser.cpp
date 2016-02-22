@@ -22,8 +22,8 @@
 
 #include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
-#include "BC_DataMatrixVersion.h"
-#include "BC_DataMatrixBitMatrixParser.h"
+#include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixVersion.h"
+#include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixBitMatrixParser.h"
 CBC_DataMatrixBitMatrixParser::CBC_DataMatrixBitMatrixParser() {
   m_mappingBitMatrix = NULL;
   m_version = NULL;

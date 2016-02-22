@@ -6,12 +6,12 @@
 
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/common/xfa_common.h"
-#include "xfa_fwladapter.h"
-#include "xfa_ffwidget.h"
-#include "xfa_fffield.h"
-#include "xfa_ffpageview.h"
-#include "xfa_fftextedit.h"
-#include "xfa_ffbarcode.h"
+#include "xfa/src/fxfa/src/app/xfa_fwladapter.h"
+#include "xfa/src/fxfa/src/app/xfa_ffwidget.h"
+#include "xfa/src/fxfa/src/app/xfa_fffield.h"
+#include "xfa/src/fxfa/src/app/xfa_ffpageview.h"
+#include "xfa/src/fxfa/src/app/xfa_fftextedit.h"
+#include "xfa/src/fxfa/src/app/xfa_ffbarcode.h"
 static XFA_LPCBARCODETYPEENUMINFO XFA_GetBarcodeTypeByName(
     const CFX_WideStringC& wsName);
 CXFA_FFBarcode::CXFA_FFBarcode(CXFA_FFPageView* pPageView,

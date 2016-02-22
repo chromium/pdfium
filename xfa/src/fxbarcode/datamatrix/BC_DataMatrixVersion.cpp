@@ -21,7 +21,7 @@
  */
 
 #include "xfa/src/fxbarcode/barcode.h"
-#include "BC_DataMatrixVersion.h"
+#include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixVersion.h"
 CFX_PtrArray* CBC_DataMatrixVersion::VERSIONS = NULL;
 void CBC_DataMatrixVersion::Initialize() {
   VERSIONS = new CFX_PtrArray();

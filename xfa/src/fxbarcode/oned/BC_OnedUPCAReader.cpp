@@ -22,10 +22,10 @@
 
 #include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/BC_Reader.h"
-#include "BC_OneDReader.h"
-#include "BC_OneDimReader.h"
-#include "BC_OnedEAN13Reader.h"
-#include "BC_OnedUPCAReader.h"
+#include "xfa/src/fxbarcode/oned/BC_OneDReader.h"
+#include "xfa/src/fxbarcode/oned/BC_OneDimReader.h"
+#include "xfa/src/fxbarcode/oned/BC_OnedEAN13Reader.h"
+#include "xfa/src/fxbarcode/oned/BC_OnedUPCAReader.h"
 CBC_OnedUPCAReader::CBC_OnedUPCAReader() {
   m_ean13Reader = NULL;
 }

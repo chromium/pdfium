@@ -21,8 +21,8 @@
  */
 
 #include "xfa/src/fxbarcode/barcode.h"
-#include "BC_Encoder.h"
-#include "BC_DefaultPlacement.h"
+#include "xfa/src/fxbarcode/datamatrix/BC_Encoder.h"
+#include "xfa/src/fxbarcode/datamatrix/BC_DefaultPlacement.h"
 CBC_DefaultPlacement::CBC_DefaultPlacement(CFX_WideString codewords,
                                            int32_t numcols,
                                            int32_t numrows) {

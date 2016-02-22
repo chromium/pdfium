@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa_fm2js.h"
+#include "xfa/src/fxfa/src/fm2js/xfa_fm2js.h"
 static const FX_WCHAR* gs_lpStrErrorMsgInfo[] = {
     L"unsupported char '%c'",         L"bad suffix on number",
     L"invalidate char '%c'",          L"expected identifier instead of '%s'",

@@ -6,8 +6,8 @@
 
 #include <memory>
 
-#include "fx_path_generator.h"
-#include "pre.h"
+#include "xfa/src/fxgraphics/src/fx_path_generator.h"
+#include "xfa/src/fxgraphics/src/pre.h"
 
 class CAGG_Graphics {
  public:

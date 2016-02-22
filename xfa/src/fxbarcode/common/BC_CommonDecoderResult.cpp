@@ -23,7 +23,7 @@
 #include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417ResultMetadata.h"
-#include "BC_CommonDecoderResult.h"
+#include "xfa/src/fxbarcode/common/BC_CommonDecoderResult.h"
 CBC_CommonDecoderResult::CBC_CommonDecoderResult() {}
 void CBC_CommonDecoderResult::Init(const CFX_ByteArray& rawBytes,
                                    const CFX_ByteString& text,

@@ -8,13 +8,13 @@
 
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/common/xfa_common.h"
-#include "xfa_ffdochandler.h"
-#include "xfa_fwladapter.h"
-#include "xfa_ffdoc.h"
-#include "xfa_ffapp.h"
-#include "xfa_fwltheme.h"
-#include "xfa_fontmgr.h"
-#include "xfa_ffwidgethandler.h"
+#include "xfa/src/fxfa/src/app/xfa_ffdochandler.h"
+#include "xfa/src/fxfa/src/app/xfa_fwladapter.h"
+#include "xfa/src/fxfa/src/app/xfa_ffdoc.h"
+#include "xfa/src/fxfa/src/app/xfa_ffapp.h"
+#include "xfa/src/fxfa/src/app/xfa_fwltheme.h"
+#include "xfa/src/fxfa/src/app/xfa_fontmgr.h"
+#include "xfa/src/fxfa/src/app/xfa_ffwidgethandler.h"
 
 CXFA_FileRead::CXFA_FileRead(const CFX_ArrayTemplate<CPDF_Stream*>& streams) {
   int32_t iCount = streams.GetSize();

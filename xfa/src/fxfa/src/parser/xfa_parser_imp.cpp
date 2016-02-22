@@ -14,8 +14,8 @@
 #include "xfa/src/fxfa/src/common/xfa_doclayout.h"
 #include "xfa/src/fxfa/src/common/xfa_localemgr.h"
 #include "xfa/src/fxfa/src/common/xfa_fm2jsapi.h"
-#include "xfa_basic_imp.h"
-#include "xfa_parser_imp.h"
+#include "xfa/src/fxfa/src/parser/xfa_basic_imp.h"
+#include "xfa/src/fxfa/src/parser/xfa_parser_imp.h"
 IXFA_Parser* IXFA_Parser::Create(IXFA_ObjFactory* pFactory,
                                  FX_BOOL bDocumentParser) {
   return new CXFA_SimpleParser(pFactory, bDocumentParser);

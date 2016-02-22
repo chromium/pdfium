@@ -24,11 +24,11 @@
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomonDecoder.h"
 #include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"
-#include "BC_DataMatrixDecoder.h"
-#include "BC_DataMatrixBitMatrixParser.h"
-#include "BC_DataMatrixVersion.h"
-#include "BC_DataMatrixDataBlock.h"
-#include "BC_DataMatrixDecodedBitStreamParser.h"
+#include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixDecoder.h"
+#include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixBitMatrixParser.h"
+#include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixVersion.h"
+#include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixDataBlock.h"
+#include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixDecodedBitStreamParser.h"
 CBC_DataMatrixDecoder::CBC_DataMatrixDecoder() {
   m_rsDecoder = NULL;
 }

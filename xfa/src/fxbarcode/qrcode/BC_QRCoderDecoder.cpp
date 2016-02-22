@@ -25,12 +25,12 @@
 #include "xfa/src/fxbarcode/common/BC_CommonDecoderResult.h"
 #include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomonDecoder.h"
 #include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"
-#include "BC_QRBitMatrixParser.h"
-#include "BC_QRDataBlock.h"
-#include "BC_QRDecodedBitStreamParser.h"
-#include "BC_QRCoderVersion.h"
-#include "BC_QRCoderFormatInformation.h"
-#include "BC_QRCoderDecoder.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRBitMatrixParser.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRDataBlock.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRDecodedBitStreamParser.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderVersion.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderFormatInformation.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderDecoder.h"
 CBC_QRCoderDecoder::CBC_QRCoderDecoder() {
   m_rsDecoder = NULL;
 }

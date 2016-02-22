@@ -6,15 +6,15 @@
 
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/common/xfa_common.h"
-#include "xfa_fwladapter.h"
-#include "xfa_ffwidget.h"
-#include "xfa_fffield.h"
-#include "xfa_ffpageview.h"
-#include "xfa_fftextedit.h"
-#include "xfa_textlayout.h"
-#include "xfa_ffapp.h"
-#include "xfa_ffdocview.h"
-#include "xfa_ffdoc.h"
+#include "xfa/src/fxfa/src/app/xfa_fwladapter.h"
+#include "xfa/src/fxfa/src/app/xfa_ffwidget.h"
+#include "xfa/src/fxfa/src/app/xfa_fffield.h"
+#include "xfa/src/fxfa/src/app/xfa_ffpageview.h"
+#include "xfa/src/fxfa/src/app/xfa_fftextedit.h"
+#include "xfa/src/fxfa/src/app/xfa_textlayout.h"
+#include "xfa/src/fxfa/src/app/xfa_ffapp.h"
+#include "xfa/src/fxfa/src/app/xfa_ffdocview.h"
+#include "xfa/src/fxfa/src/app/xfa_ffdoc.h"
 CXFA_FFTextEdit::CXFA_FFTextEdit(CXFA_FFPageView* pPageView,
                                  CXFA_WidgetAcc* pDataAcc)
     : CXFA_FFField(pPageView, pDataAcc), m_pOldDelegate(NULL) {}

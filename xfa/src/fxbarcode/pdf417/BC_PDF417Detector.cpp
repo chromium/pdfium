@@ -25,8 +25,8 @@
 #include "xfa/src/fxbarcode/BC_BinaryBitmap.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitArray.h"
-#include "BC_PDF417DetectorResult.h"
-#include "BC_PDF417Detector.h"
+#include "xfa/src/fxbarcode/pdf417/BC_PDF417DetectorResult.h"
+#include "xfa/src/fxbarcode/pdf417/BC_PDF417Detector.h"
 #define INTERGER_MAX 2147483647
 int32_t CBC_Detector::INDEXES_START_PATTERN[] = {0, 4, 1, 5};
 int32_t CBC_Detector::INDEXES_STOP_PATTERN[] = {6, 2, 7, 3};

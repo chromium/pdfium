@@ -21,9 +21,9 @@
  */
 
 #include "xfa/src/fxbarcode/barcode.h"
-#include "BC_PDF417Codeword.h"
-#include "BC_PDF417BoundingBox.h"
-#include "BC_PDF417DetectionResultColumn.h"
+#include "xfa/src/fxbarcode/pdf417/BC_PDF417Codeword.h"
+#include "xfa/src/fxbarcode/pdf417/BC_PDF417BoundingBox.h"
+#include "xfa/src/fxbarcode/pdf417/BC_PDF417DetectionResultColumn.h"
 int32_t CBC_DetectionResultColumn::MAX_NEARBY_DISTANCE = 5;
 CBC_DetectionResultColumn::CBC_DetectionResultColumn(
     CBC_BoundingBox* boundingBox) {

@@ -5,8 +5,8 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "xfa/src/fgas/src/fgas_base.h"
-#include "fx_gdifont.h"
-#include "fx_stdfontmgr.h"
+#include "xfa/src/fgas/src/font/fx_gdifont.h"
+#include "xfa/src/fgas/src/font/fx_stdfontmgr.h"
 #ifdef _FXPLUS
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN32_MOBILE_ || \
     _FX_OS_ == _FX_WIN64_

@@ -5,7 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "xfa/src/foxitlib.h"
-#include "fde_iterator.h"
+#include "xfa/src/fdp/src/fde/fde_iterator.h"
 IFDE_VisualSetIterator* IFDE_VisualSetIterator::Create() {
   return new CFDE_VisualSetIterator;
 }

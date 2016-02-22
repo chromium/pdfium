@@ -21,7 +21,7 @@
  */
 
 #include "xfa/src/fxbarcode/barcode.h"
-#include "BC_PDF417Codeword.h"
+#include "xfa/src/fxbarcode/pdf417/BC_PDF417Codeword.h"
 int32_t CBC_Codeword::BARCODE_ROW_UNKNOWN = -1;
 CBC_Codeword::CBC_Codeword(int32_t startX,
                            int32_t endX,

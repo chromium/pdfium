@@ -6,14 +6,14 @@
 
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/common/xfa_common.h"
-#include "xfa_ffwidget.h"
-#include "xfa_fffield.h"
-#include "xfa_ffpageview.h"
-#include "xfa_ffapp.h"
-#include "xfa_ffdoc.h"
-#include "xfa_fwltheme.h"
-#include "xfa_textlayout.h"
-#include "xfa_ffdocview.h"
+#include "xfa/src/fxfa/src/app/xfa_ffwidget.h"
+#include "xfa/src/fxfa/src/app/xfa_fffield.h"
+#include "xfa/src/fxfa/src/app/xfa_ffpageview.h"
+#include "xfa/src/fxfa/src/app/xfa_ffapp.h"
+#include "xfa/src/fxfa/src/app/xfa_ffdoc.h"
+#include "xfa/src/fxfa/src/app/xfa_fwltheme.h"
+#include "xfa/src/fxfa/src/app/xfa_textlayout.h"
+#include "xfa/src/fxfa/src/app/xfa_ffdocview.h"
 CXFA_FFField::CXFA_FFField(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc)
     : CXFA_FFWidget(pPageView, pDataAcc), m_pNormalWidget(NULL) {
   m_rtUI.Set(0, 0, 0, 0);

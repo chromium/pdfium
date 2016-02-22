@@ -8,10 +8,10 @@
 
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/common/xfa_common.h"
-#include "xfa_fontmgr.h"
-#include "xfa_ffdoc.h"
-#include "xfa_ffConfigAcc.h"
-#include "xfa_ffapp.h"
+#include "xfa/src/fxfa/src/app/xfa_fontmgr.h"
+#include "xfa/src/fxfa/src/app/xfa_ffdoc.h"
+#include "xfa/src/fxfa/src/app/xfa_ffConfigAcc.h"
+#include "xfa/src/fxfa/src/app/xfa_ffapp.h"
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 static const XFA_FONTINFO g_XFAFontsMap[] = {
     {0x01d5d33e, L"SimSun", L"Arial", 0, 936},

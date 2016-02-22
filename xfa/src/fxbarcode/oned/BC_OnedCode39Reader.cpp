@@ -25,8 +25,8 @@
 #include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/BC_Reader.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitArray.h"
-#include "BC_OneDReader.h"
-#include "BC_OnedCode39Reader.h"
+#include "xfa/src/fxbarcode/oned/BC_OneDReader.h"
+#include "xfa/src/fxbarcode/oned/BC_OnedCode39Reader.h"
 const FX_CHAR* CBC_OnedCode39Reader::ALPHABET_STRING =
     "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. *$/+%";
 const FX_CHAR* CBC_OnedCode39Reader::CHECKSUM_STRING =

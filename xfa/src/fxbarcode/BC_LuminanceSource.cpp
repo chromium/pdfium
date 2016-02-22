@@ -20,8 +20,8 @@
  * limitations under the License.
  */
 
-#include "barcode.h"
-#include "BC_LuminanceSource.h"
+#include "xfa/src/fxbarcode/barcode.h"
+#include "xfa/src/fxbarcode/BC_LuminanceSource.h"
 CBC_LuminanceSource::CBC_LuminanceSource(int32_t width, int32_t height)
     : m_width(width), m_height(height) {}
 CBC_LuminanceSource::~CBC_LuminanceSource() {}

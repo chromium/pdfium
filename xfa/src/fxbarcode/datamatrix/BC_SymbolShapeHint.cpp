@@ -21,6 +21,6 @@
  */
 
 #include "xfa/src/fxbarcode/barcode.h"
-#include "BC_SymbolShapeHint.h"
+#include "xfa/src/fxbarcode/datamatrix/BC_SymbolShapeHint.h"
 CBC_SymbolShapeHint::CBC_SymbolShapeHint() {}
 CBC_SymbolShapeHint::~CBC_SymbolShapeHint() {}

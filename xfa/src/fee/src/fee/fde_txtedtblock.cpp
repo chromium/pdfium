@@ -5,7 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "xfa/src/foxitlib.h"
-#include "fde_txtedtblock.h"
+#include "xfa/src/fee/src/fee/fde_txtedtblock.h"
 #ifdef FDE_USEFORMATBLOCK
 #define FDE_TXTEDT_FORMATBLOCK_BGN 0xFFF9
 #define FDE_TXTEDT_FORMATBLOCK_END 0xFFFB

@@ -5,7 +5,7 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "core/include/fxcrt/fx_basic.h"
 #include "testing/fx_string_testhelpers.h"
-#include "BC_PDF417HighLevelEncoder.h"
+#include "xfa/src/fxbarcode/pdf417/BC_PDF417HighLevelEncoder.h"
 
 TEST(PDF417HighLevelEncoder, EncodeHighLevel) {
   // TODO(tsepez): implement test cases.

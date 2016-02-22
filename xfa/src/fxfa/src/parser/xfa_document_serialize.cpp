@@ -14,7 +14,7 @@
 #include "xfa/src/fxfa/src/common/xfa_doclayout.h"
 #include "xfa/src/fxfa/src/common/xfa_localemgr.h"
 #include "xfa/src/fxfa/src/common/xfa_fm2jsapi.h"
-#include "xfa_document_serialize.h"
+#include "xfa/src/fxfa/src/parser/xfa_document_serialize.h"
 IXFA_PacketImport* IXFA_PacketImport::Create(CXFA_Document* pDocument) {
   return new CXFA_DataImporter(pDocument);
 }

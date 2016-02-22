@@ -23,9 +23,9 @@
 #include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/BC_Binarizer.h"
 #include "xfa/src/fxbarcode/BC_LuminanceSource.h"
-#include "BC_CommonBitMatrix.h"
-#include "BC_CommonBitArray.h"
-#include "BC_GlobalHistogramBinarizer.h"
+#include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
+#include "xfa/src/fxbarcode/common/BC_CommonBitArray.h"
+#include "xfa/src/fxbarcode/common/BC_GlobalHistogramBinarizer.h"
 const int32_t LUMINANCE_BITS = 5;
 const int32_t LUMINANCE_SHIFT = 8 - LUMINANCE_BITS;
 const int32_t LUMINANCE_BUCKETS = 1 << LUMINANCE_BITS;

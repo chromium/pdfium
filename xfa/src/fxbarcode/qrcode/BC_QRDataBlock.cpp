@@ -21,10 +21,10 @@
  */
 
 #include "xfa/src/fxbarcode/barcode.h"
-#include "BC_QRCoderECBlocks.h"
-#include "BC_QRCoderECB.h"
-#include "BC_QRDataBlock.h"
-#include "BC_QRCoderVersion.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderECBlocks.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderECB.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRDataBlock.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderVersion.h"
 CBC_QRDataBlock::CBC_QRDataBlock(int32_t numDataCodewords,
                                  CFX_ByteArray* codewords)
     : m_numDataCodewords(numDataCodewords), m_codewords(codewords) {}

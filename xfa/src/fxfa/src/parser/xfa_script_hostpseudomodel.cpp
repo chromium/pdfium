@@ -14,7 +14,7 @@
 #include "xfa/src/fxfa/src/common/xfa_doclayout.h"
 #include "xfa/src/fxfa/src/common/xfa_localemgr.h"
 #include "xfa/src/fxfa/src/common/xfa_fm2jsapi.h"
-#include "xfa_script_hostpseudomodel.h"
+#include "xfa/src/fxfa/src/parser/xfa_script_hostpseudomodel.h"
 CScript_HostPseudoModel::CScript_HostPseudoModel(CXFA_Document* pDocument)
     : CXFA_OrdinaryObject(pDocument, XFA_ELEMENT_HostPseudoModel) {
   m_uScriptHash = XFA_HASHCODE_Host;

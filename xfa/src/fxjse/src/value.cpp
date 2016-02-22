@@ -4,12 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/foxitlib.h"
-#include "fxv8.h"
-#include "value.h"
-#include "class.h"
 #include <math.h>
-#include "util_inline.h"
+
+#include "xfa/src/foxitlib.h"
+#include "xfa/src/fxjse/src/fxv8.h"
+#include "xfa/src/fxjse/src/value.h"
+#include "xfa/src/fxjse/src/class.h"
+#include "xfa/src/fxjse/src/util_inline.h"
+
 FX_BOOL FXJSE_Value_IsUndefined(FXJSE_HVALUE hValue) {
   CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);
   return lpValue && lpValue->IsUndefined();

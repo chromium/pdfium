@@ -5,7 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "xfa/src/foxitlib.h"
-#include "fde_cssdatatable.h"
+#include "xfa/src/fdp/src/css/fde_cssdatatable.h"
 
 FX_BOOL FDE_CSSLengthToFloat(const FDE_CSSLENGTH& len,
                              FX_FLOAT fPercentBase,

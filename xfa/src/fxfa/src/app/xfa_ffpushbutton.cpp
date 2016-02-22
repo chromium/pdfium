@@ -6,13 +6,13 @@
 
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/common/xfa_common.h"
-#include "xfa_ffwidget.h"
-#include "xfa_ffwidgetacc.h"
-#include "xfa_fffield.h"
-#include "xfa_ffpageview.h"
-#include "xfa_ffpushbutton.h"
-#include "xfa_textlayout.h"
-#include "xfa_ffapp.h"
+#include "xfa/src/fxfa/src/app/xfa_ffwidget.h"
+#include "xfa/src/fxfa/src/app/xfa_ffwidgetacc.h"
+#include "xfa/src/fxfa/src/app/xfa_fffield.h"
+#include "xfa/src/fxfa/src/app/xfa_ffpageview.h"
+#include "xfa/src/fxfa/src/app/xfa_ffpushbutton.h"
+#include "xfa/src/fxfa/src/app/xfa_textlayout.h"
+#include "xfa/src/fxfa/src/app/xfa_ffapp.h"
 CXFA_FFPushButton::CXFA_FFPushButton(CXFA_FFPageView* pPageView,
                                      CXFA_WidgetAcc* pDataAcc)
     : CXFA_FFField(pPageView, pDataAcc),

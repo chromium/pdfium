@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa_fm2js.h"
+#include "xfa/src/fxfa/src/fm2js/xfa_fm2js.h"
 static CFX_WideStringC RUNTIMEBLOCKTEMPARRAY =
     FX_WSTRC(L"foxit_xfa_formcalc_runtime_block_temp_array");
 static CFX_WideStringC RUNTIMEBLOCKTEMPARRAYINDEX =

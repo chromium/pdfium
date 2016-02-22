@@ -14,14 +14,14 @@
 #include "xfa/src/fxfa/src/common/xfa_doclayout.h"
 #include "xfa/src/fxfa/src/common/xfa_localemgr.h"
 #include "xfa/src/fxfa/src/common/xfa_fm2jsapi.h"
-#include "xfa_basic_imp.h"
-#include "xfa_document_layout_imp.h"
-#include "xfa_script_datawindow.h"
-#include "xfa_script_eventpseudomodel.h"
-#include "xfa_script_hostpseudomodel.h"
-#include "xfa_script_logpseudomodel.h"
-#include "xfa_script_layoutpseudomodel.h"
-#include "xfa_script_signaturepseudomodel.h"
+#include "xfa/src/fxfa/src/parser/xfa_basic_imp.h"
+#include "xfa/src/fxfa/src/parser/xfa_document_layout_imp.h"
+#include "xfa/src/fxfa/src/parser/xfa_script_datawindow.h"
+#include "xfa/src/fxfa/src/parser/xfa_script_eventpseudomodel.h"
+#include "xfa/src/fxfa/src/parser/xfa_script_hostpseudomodel.h"
+#include "xfa/src/fxfa/src/parser/xfa_script_logpseudomodel.h"
+#include "xfa/src/fxfa/src/parser/xfa_script_layoutpseudomodel.h"
+#include "xfa/src/fxfa/src/parser/xfa_script_signaturepseudomodel.h"
 CXFA_Document::CXFA_Document(IXFA_DocParser* pParser)
     : m_pParser(pParser),
       m_pScriptContext(nullptr),

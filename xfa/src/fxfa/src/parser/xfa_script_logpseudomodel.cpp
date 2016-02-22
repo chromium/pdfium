@@ -14,7 +14,7 @@
 #include "xfa/src/fxfa/src/common/xfa_doclayout.h"
 #include "xfa/src/fxfa/src/common/xfa_localemgr.h"
 #include "xfa/src/fxfa/src/common/xfa_fm2jsapi.h"
-#include "xfa_script_logpseudomodel.h"
+#include "xfa/src/fxfa/src/parser/xfa_script_logpseudomodel.h"
 CScript_LogPseudoModel::CScript_LogPseudoModel(CXFA_Document* pDocument)
     : CXFA_OrdinaryObject(pDocument, XFA_ELEMENT_LogPseudoModel) {
   m_uScriptHash = XFA_HASHCODE_Log;

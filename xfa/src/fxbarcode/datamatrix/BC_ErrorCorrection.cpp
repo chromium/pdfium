@@ -21,10 +21,10 @@
  */
 
 #include "xfa/src/fxbarcode/barcode.h"
-#include "BC_Encoder.h"
-#include "BC_SymbolShapeHint.h"
-#include "BC_SymbolInfo.h"
-#include "BC_ErrorCorrection.h"
+#include "xfa/src/fxbarcode/datamatrix/BC_Encoder.h"
+#include "xfa/src/fxbarcode/datamatrix/BC_SymbolShapeHint.h"
+#include "xfa/src/fxbarcode/datamatrix/BC_SymbolInfo.h"
+#include "xfa/src/fxbarcode/datamatrix/BC_ErrorCorrection.h"
 int32_t CBC_ErrorCorrection::FACTOR_SETS[] = {5,  7,  10, 11, 12, 14, 18, 20,
                                               24, 28, 36, 42, 48, 56, 62, 68};
 int32_t CBC_ErrorCorrection::FACTORS[][100] = {

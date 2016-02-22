@@ -5,8 +5,8 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "xfa/src/fgas/src/fgas_base.h"
-#include "fx_gefont.h"
-#include "fx_fontutils.h"
+#include "xfa/src/fgas/src/font/fx_gefont.h"
+#include "xfa/src/fgas/src/font/fx_fontutils.h"
 #ifndef _FXPLUS
 IFX_Font* IFX_Font::LoadFont(const FX_WCHAR* pszFontFamily,
                              FX_DWORD dwFontStyles,

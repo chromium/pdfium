@@ -8,9 +8,9 @@
 #include "xfa/src/fee/include/ifde_txtedtbuf.h"
 #include "xfa/src/fee/include/ifde_txtedtengine.h"
 #include "xfa/src/fee/include/fx_wordbreak.h"
-#include "fde_txtedtparag.h"
-#include "fde_txtedtengine.h"
-#include "fde_txtedtbuf.h"
+#include "xfa/src/fee/src/fee/fde_txtedtparag.h"
+#include "xfa/src/fee/src/fee/fde_txtedtengine.h"
+#include "xfa/src/fee/src/fee/fde_txtedtbuf.h"
 CFDE_TxtEdtParag::CFDE_TxtEdtParag(CFDE_TxtEdtEngine* pEngine)
     : m_nCharStart(0),
       m_nCharCount(0),

@@ -7,7 +7,7 @@
 #include <algorithm>
 
 #include "xfa/src/fgas/src/fgas_base.h"
-#include "fx_sax_imp.h"
+#include "xfa/src/fgas/src/xml/fx_sax_imp.h"
 
 namespace {
 

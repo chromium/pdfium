@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXFA_SRC_COMMON_XFA_UTILS_H_
 #define XFA_SRC_FXFA_SRC_COMMON_XFA_UTILS_H_
 
+#include "xfa/src/fxfa/src/common/fxfa_localevalue.h"
+
 FX_BOOL XFA_FDEExtension_ResolveNamespaceQualifier(
     IFDE_XMLElement* pNode,
     const CFX_WideStringC& wsQualifier,
@@ -185,7 +187,7 @@ class CXFA_PtrSetTemplate : private CFX_MapPtrToPtr {
 };
 class CXFA_Node;
 class CXFA_WidgetData;
-#include "fxfa_localevalue.h"
+
 CXFA_Node* XFA_CreateUIChild(CXFA_Node* pNode, XFA_ELEMENT& eWidgetType);
 CXFA_LocaleValue XFA_GetLocaleValue(CXFA_WidgetData* pWidgetData);
 CFX_WideString XFA_NumericLimit(const CFX_WideString& wsValue,

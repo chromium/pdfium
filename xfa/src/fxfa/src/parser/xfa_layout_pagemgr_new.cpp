@@ -14,11 +14,11 @@
 #include "xfa/src/fxfa/src/common/xfa_doclayout.h"
 #include "xfa/src/fxfa/src/common/xfa_localemgr.h"
 #include "xfa/src/fxfa/src/common/xfa_fm2jsapi.h"
-#include "xfa_document_datamerger_imp.h"
-#include "xfa_document_layout_imp.h"
-#include "xfa_layout_itemlayout.h"
-#include "xfa_layout_pagemgr_new.h"
-#include "xfa_layout_appadapter.h"
+#include "xfa/src/fxfa/src/parser/xfa_document_datamerger_imp.h"
+#include "xfa/src/fxfa/src/parser/xfa_document_layout_imp.h"
+#include "xfa/src/fxfa/src/parser/xfa_layout_itemlayout.h"
+#include "xfa/src/fxfa/src/parser/xfa_layout_pagemgr_new.h"
+#include "xfa/src/fxfa/src/parser/xfa_layout_appadapter.h"
 CXFA_LayoutPageMgr::CXFA_LayoutPageMgr(CXFA_LayoutProcessor* pLayoutProcessor)
     : m_pLayoutProcessor(pLayoutProcessor),
       m_pTemplatePageSetRoot(nullptr),

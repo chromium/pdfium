@@ -14,7 +14,7 @@
 #include "xfa/src/fxfa/src/common/xfa_doclayout.h"
 #include "xfa/src/fxfa/src/common/xfa_localemgr.h"
 #include "xfa/src/fxfa/src/common/xfa_fm2jsapi.h"
-#include "xfa_script_datawindow.h"
+#include "xfa/src/fxfa/src/parser/xfa_script_datawindow.h"
 CScript_DataWindow::CScript_DataWindow(CXFA_Document* pDocument)
     : CXFA_OrdinaryObject(pDocument, XFA_ELEMENT_DataWindow) {
   m_uScriptHash = XFA_HASHCODE_DataWindow;

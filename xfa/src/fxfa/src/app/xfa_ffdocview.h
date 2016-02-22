@@ -7,7 +7,7 @@
 #ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFDOCVIEW_H_
 #define XFA_SRC_FXFA_SRC_APP_XFA_FFDOCVIEW_H_
 
-#include "xfa_ffdoc.h"
+#include "xfa/src/fxfa/src/app/xfa_ffdoc.h"
 
 class CXFA_FFPageView;
 class CXFA_FFWidgetHandler;

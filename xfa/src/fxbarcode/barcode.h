@@ -10,6 +10,6 @@
 #define XFA_SRC_FXBARCODE_BARCODE_H_
 
 #include "xfa/src/foxitlib.h"
-#include "utils.h"
+#include "xfa/src/fxbarcode/utils.h"
 
 #endif  // XFA_SRC_FXBARCODE_BARCODE_H_

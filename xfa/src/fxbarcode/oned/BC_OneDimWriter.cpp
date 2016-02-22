@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-#include "BC_OneDimWriter.h"
+#include "xfa/src/fxbarcode/oned/BC_OneDimWriter.h"
 
 #include <algorithm>
 #include <memory>

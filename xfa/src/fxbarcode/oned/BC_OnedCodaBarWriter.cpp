@@ -25,10 +25,10 @@
 #include "xfa/src/fxbarcode/BC_Reader.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitArray.h"
-#include "BC_OneDReader.h"
-#include "BC_OneDimWriter.h"
-#include "BC_OnedCodaBarReader.h"
-#include "BC_OnedCodaBarWriter.h"
+#include "xfa/src/fxbarcode/oned/BC_OneDReader.h"
+#include "xfa/src/fxbarcode/oned/BC_OneDimWriter.h"
+#include "xfa/src/fxbarcode/oned/BC_OnedCodaBarReader.h"
+#include "xfa/src/fxbarcode/oned/BC_OnedCodaBarWriter.h"
 const FX_CHAR CBC_OnedCodaBarWriter::START_END_CHARS[] = {
     'A', 'B', 'C', 'D', 'T', 'N', '*', 'E', 'a', 'b', 'c', 'd', 't', 'n', 'e'};
 const FX_CHAR CBC_OnedCodaBarWriter::CONTENT_CHARS[] = {

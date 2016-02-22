@@ -21,8 +21,8 @@
  */
 
 #include "xfa/src/fxbarcode/barcode.h"
-#include "BC_CommonECI.h"
-#include "BC_CommonCharacterSetECI.h"
+#include "xfa/src/fxbarcode/common/BC_CommonECI.h"
+#include "xfa/src/fxbarcode/common/BC_CommonCharacterSetECI.h"
 CBC_CommonECI::CBC_CommonECI(int32_t value) {
   m_value = value;
 }

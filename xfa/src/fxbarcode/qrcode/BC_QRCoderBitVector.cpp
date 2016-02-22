@@ -21,7 +21,7 @@
  */
 
 #include "xfa/src/fxbarcode/barcode.h"
-#include "BC_QRCoderBitVector.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderBitVector.h"
 CBC_QRCoderBitVector::CBC_QRCoderBitVector() {
   m_sizeInBits = 0;
   m_size = 32;

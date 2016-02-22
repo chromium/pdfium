@@ -6,9 +6,9 @@
 
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/common/xfa_common.h"
-#include "xfa_fwltheme.h"
-#include "xfa_ffwidget.h"
-#include "xfa_ffapp.h"
+#include "xfa/src/fxfa/src/app/xfa_fwltheme.h"
+#include "xfa/src/fxfa/src/app/xfa_ffwidget.h"
+#include "xfa/src/fxfa/src/app/xfa_ffapp.h"
 CXFA_FFWidget* XFA_ThemeGetOuterWidget(IFWL_Widget* pWidget) {
   IFWL_Widget* pOuter = pWidget;
   while (pOuter->GetOuter()) {

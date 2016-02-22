@@ -10,11 +10,11 @@
 #include "xfa/src/fee/include/ifde_txtedtengine.h"
 #include "xfa/src/fee/include/ifde_txtedtbuf.h"
 #include "xfa/src/fee/include/ifde_txtedtpage.h"
-#include "fde_txtedtengine.h"
-#include "fde_txtedtparag.h"
-#include "fde_txtedtbuf.h"
+#include "xfa/src/fee/src/fee/fde_txtedtengine.h"
+#include "xfa/src/fee/src/fee/fde_txtedtparag.h"
+#include "xfa/src/fee/src/fee/fde_txtedtbuf.h"
 #ifdef FDE_USEFORMATBLOCK
-#include "fde_txtedtblock.h"
+#include "xfa/src/fee/src/fee/fde_txtedtblock.h"
 #endif
 #define FDE_PAGEWIDTH_MAX 0xFFFF
 #define FDE_TXTPLATESIZE (1024 * 12)

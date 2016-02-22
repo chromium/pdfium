@@ -21,7 +21,7 @@
  */
 
 #include "xfa/src/fxbarcode/barcode.h"
-#include "BC_PDF417ResultMetadata.h"
+#include "xfa/src/fxbarcode/pdf417/BC_PDF417ResultMetadata.h"
 CBC_PDF417ResultMetadata::CBC_PDF417ResultMetadata() {}
 CBC_PDF417ResultMetadata::~CBC_PDF417ResultMetadata() {}
 int32_t CBC_PDF417ResultMetadata::getSegmentIndex() {

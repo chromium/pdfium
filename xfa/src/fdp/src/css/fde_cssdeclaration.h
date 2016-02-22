@@ -7,7 +7,7 @@
 #ifndef XFA_SRC_FDP_SRC_CSS_FDE_CSSDECLARATION_H_
 #define XFA_SRC_FDP_SRC_CSS_FDE_CSSDECLARATION_H_
 
-#include "fde_cssdatatable.h"
+#include "xfa/src/fdp/src/css/fde_cssdatatable.h"
 
 typedef struct _FDE_CSSPROPERTYHOLDER : public CFX_Target {
   int16_t eProperty;

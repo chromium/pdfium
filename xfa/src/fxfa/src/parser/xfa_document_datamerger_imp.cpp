@@ -14,10 +14,10 @@
 #include "xfa/src/fxfa/src/common/xfa_doclayout.h"
 #include "xfa/src/fxfa/src/common/xfa_localemgr.h"
 #include "xfa/src/fxfa/src/common/xfa_fm2jsapi.h"
-#include "xfa_basic_imp.h"
-#include "xfa_document_datadescription_imp.h"
-#include "xfa_document_datamerger_imp.h"
-#include "xfa_document_layout_imp.h"
+#include "xfa/src/fxfa/src/parser/xfa_basic_imp.h"
+#include "xfa/src/fxfa/src/parser/xfa_document_datadescription_imp.h"
+#include "xfa/src/fxfa/src/parser/xfa_document_datamerger_imp.h"
+#include "xfa/src/fxfa/src/parser/xfa_document_layout_imp.h"
 static FX_BOOL XFA_GetOccurInfo(CXFA_Node* pOccurNode,
                                 int32_t& iMin,
                                 int32_t& iMax,

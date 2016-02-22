@@ -5,8 +5,8 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "stdafx.h"
-#include "fde_gdidevice.h"
-#include "fde_gdiobject.h"
+#include "xfa/src/fdp/src/fde/fde_gdidevice.h"
+
 #ifdef _FDEPLUS
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN32_MOBILE_ || \
     _FX_OS_ == _FX_WIN64_

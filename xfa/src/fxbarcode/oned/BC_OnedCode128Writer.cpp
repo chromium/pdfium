@@ -23,10 +23,10 @@
 #include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/BC_Writer.h"
 #include "xfa/src/fxbarcode/BC_Reader.h"
-#include "BC_OneDReader.h"
-#include "BC_OneDimWriter.h"
-#include "BC_OnedCode128Reader.h"
-#include "BC_OnedCode128Writer.h"
+#include "xfa/src/fxbarcode/oned/BC_OneDReader.h"
+#include "xfa/src/fxbarcode/oned/BC_OneDimWriter.h"
+#include "xfa/src/fxbarcode/oned/BC_OnedCode128Reader.h"
+#include "xfa/src/fxbarcode/oned/BC_OnedCode128Writer.h"
 const int32_t CBC_OnedCode128Writer::CODE_CODE_B = 100;
 const int32_t CBC_OnedCode128Writer::CODE_CODE_C = 99;
 const int32_t CBC_OnedCode128Writer::CODE_START_B = 104;

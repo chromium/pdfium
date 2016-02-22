@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa_fm2js.h"
+#include "xfa/src/fxfa/src/fm2js/xfa_fm2js.h"
 CXFA_FMProgram::CXFA_FMProgram() : m_globalFunction(0) {}
 CXFA_FMProgram::~CXFA_FMProgram() {
   if (m_globalFunction != 0) {

@@ -11,10 +11,10 @@
 #include "xfa/src/fee/include/ifde_txtedtengine.h"
 #include "xfa/src/fee/include/ifde_txtedtpage.h"
 #include "xfa/src/fee/include/fx_wordbreak.h"
-#include "fde_txtedtpage.h"
-#include "fde_txtedtengine.h"
-#include "fde_txtedtparag.h"
-#include "fde_txtedtbuf.h"
+#include "xfa/src/fee/src/fee/fde_txtedtpage.h"
+#include "xfa/src/fee/src/fee/fde_txtedtengine.h"
+#include "xfa/src/fee/src/fee/fde_txtedtparag.h"
+#include "xfa/src/fee/src/fee/fde_txtedtbuf.h"
 #define FDE_TXTEDT_TOLERANCE 0.1f
 IFDE_TxtEdtPage* IFDE_TxtEdtPage::Create(IFDE_TxtEdtEngine* pEngine,
                                          int32_t nIndex) {

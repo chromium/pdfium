@@ -6,17 +6,17 @@
 
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/common/xfa_common.h"
-#include "xfa_fwladapter.h"
-#include "xfa_ffpageview.h"
-#include "xfa_ffwidget.h"
-#include "xfa_ffdoc.h"
-#include "xfa_ffdocview.h"
-#include "xfa_fffield.h"
-#include "xfa_ffpushbutton.h"
-#include "xfa_ffcheckbutton.h"
-#include "xfa_ffchoicelist.h"
-#include "xfa_ffimageedit.h"
-#include "xfa_fftextedit.h"
+#include "xfa/src/fxfa/src/app/xfa_fwladapter.h"
+#include "xfa/src/fxfa/src/app/xfa_ffpageview.h"
+#include "xfa/src/fxfa/src/app/xfa_ffwidget.h"
+#include "xfa/src/fxfa/src/app/xfa_ffdoc.h"
+#include "xfa/src/fxfa/src/app/xfa_ffdocview.h"
+#include "xfa/src/fxfa/src/app/xfa_fffield.h"
+#include "xfa/src/fxfa/src/app/xfa_ffpushbutton.h"
+#include "xfa/src/fxfa/src/app/xfa_ffcheckbutton.h"
+#include "xfa/src/fxfa/src/app/xfa_ffchoicelist.h"
+#include "xfa/src/fxfa/src/app/xfa_ffimageedit.h"
+#include "xfa/src/fxfa/src/app/xfa_fftextedit.h"
 CXFA_FFPageView::CXFA_FFPageView(CXFA_FFDocView* pDocView, CXFA_Node* pPageArea)
     : CXFA_ContainerLayoutItem(pPageArea),
       m_pDocView(pDocView),

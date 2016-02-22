@@ -20,14 +20,14 @@
  * limitations under the License.
  */
 
-#include "BC_PDF417DecodedBitStreamParser.h"
+#include "xfa/src/fxbarcode/pdf417/BC_PDF417DecodedBitStreamParser.h"
 
 #include <stdlib.h>
 
 #include "xfa/src/fxbarcode/BC_DecoderResult.h"
 #include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonDecoderResult.h"
-#include "BC_PDF417ResultMetadata.h"
+#include "xfa/src/fxbarcode/pdf417/BC_PDF417ResultMetadata.h"
 #include "third_party/bigint/BigIntegerLibrary.hh"
 
 #define TEXT_COMPACTION_MODE_LATCH 900
