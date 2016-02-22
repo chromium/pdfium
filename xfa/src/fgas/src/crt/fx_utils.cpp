@@ -88,8 +88,8 @@ int32_t CFX_BaseArray::Append(const CFX_BaseArray& src,
   }
   uint8_t* pDst = m_pData->pBuffer + iBlockCount * iBlockSize;
   AddSpaceTo(iBlockCount + iCount - 1);
-  FX_memcpy(pDst, src.m_pData->pBuffer + iStart * iBlockSize,
-            iCount * iBlockSize);
+  FXSYS_memcpy(pDst, src.m_pData->pBuffer + iStart * iBlockSize,
+               iCount * iBlockSize);
   return iCount;
 }
 int32_t CFX_BaseArray::Copy(const CFX_BaseArray& src,
@@ -110,8 +110,8 @@ int32_t CFX_BaseArray::Copy(const CFX_BaseArray& src,
   }
   RemoveAll(TRUE);
   AddSpaceTo(iCount - 1);
-  FX_memcpy(m_pData->pBuffer, src.m_pData->pBuffer + iStart * iBlockSize,
-            iCount * iBlockSize);
+  FXSYS_memcpy(m_pData->pBuffer, src.m_pData->pBuffer + iStart * iBlockSize,
+               iCount * iBlockSize);
   return iCount;
 }
 int32_t CFX_BaseArray::RemoveLast(int32_t iCount) {

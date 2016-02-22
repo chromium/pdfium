@@ -7172,7 +7172,7 @@ static FXJSE_FUNCTION formcalc_fm2js_functions[] = {
 };
 CXFA_FM2JSContext::CXFA_FM2JSContext()
     : m_hFMClass(nullptr), m_pDocument(nullptr) {
-  FX_memset(&m_fmClass, 0, sizeof(FXJSE_CLASS));
+  FXSYS_memset(&m_fmClass, 0, sizeof(FXJSE_CLASS));
 }
 CXFA_FM2JSContext::~CXFA_FM2JSContext() {
   m_pDocument = NULL;

@@ -3931,13 +3931,13 @@ FX_BOOL CXFA_Node::TryMeasure(XFA_ATTRIBUTE eAttr,
   void* pValue;
   int32_t iBytes;
   if (GetMapModuleBuffer(pKey, pValue, iBytes) && iBytes == sizeof(mValue)) {
-    FX_memcpy(&mValue, pValue, sizeof(mValue));
+    FXSYS_memcpy(&mValue, pValue, sizeof(mValue));
     return TRUE;
   }
   if (bUseDefault &&
       XFA_GetAttributeDefaultValue(pValue, GetClassID(), eAttr,
                                    XFA_ATTRIBUTETYPE_Measure, m_ePacket)) {
-    FX_memcpy(&mValue, pValue, sizeof(mValue));
+    FXSYS_memcpy(&mValue, pValue, sizeof(mValue));
     return TRUE;
   }
   return FALSE;

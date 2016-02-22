@@ -52,8 +52,8 @@ void CXFA_TextParseContext::SetDecls(const IFDE_CSSDeclaration** ppDeclArray,
   }
   m_dwMatchedDecls = iDeclCount;
   m_ppMatchedDecls = FX_Alloc(IFDE_CSSDeclaration*, iDeclCount);
-  FX_memcpy(m_ppMatchedDecls, ppDeclArray,
-            iDeclCount * sizeof(IFDE_CSSDeclaration*));
+  FXSYS_memcpy(m_ppMatchedDecls, ppDeclArray,
+               iDeclCount * sizeof(IFDE_CSSDeclaration*));
 }
 CXFA_TextParser::~CXFA_TextParser() {
   if (m_pUASheet != NULL) {

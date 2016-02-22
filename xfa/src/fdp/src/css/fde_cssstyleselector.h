@@ -179,7 +179,7 @@ class CFDE_CSSStyleSelector : public IFDE_CSSStyleSelector, public CFX_Target {
 };
 typedef struct _FDE_CSSCOUNTERDATA {
  public:
-  _FDE_CSSCOUNTERDATA() { FX_memset(this, 0, sizeof(_FDE_CSSCOUNTERDATA)); }
+  _FDE_CSSCOUNTERDATA() { FXSYS_memset(this, 0, sizeof(_FDE_CSSCOUNTERDATA)); }
   FX_BOOL GetCounterIncrement(int32_t& iValue) {
     iValue = m_iIncVal;
     return m_bIncrement;
@@ -234,7 +234,7 @@ class CFDE_CSSCounterStyle {
 class CFDE_CSSInheritedData {
  public:
   void Reset() {
-    FX_memset(this, 0, sizeof(CFDE_CSSInheritedData));
+    FXSYS_memset(this, 0, sizeof(CFDE_CSSInheritedData));
     m_LetterSpacing.Set(FDE_CSSLENGTHUNIT_Normal);
     m_WordSpacing.Set(FDE_CSSLENGTHUNIT_Normal);
     m_TextIndent.Set(FDE_CSSLENGTHUNIT_Point, 0);
@@ -283,7 +283,7 @@ class CFDE_CSSInheritedData {
 class CFDE_CSSNonInheritedData {
  public:
   void Reset() {
-    FX_memset(this, 0, sizeof(CFDE_CSSNonInheritedData));
+    FXSYS_memset(this, 0, sizeof(CFDE_CSSNonInheritedData));
     m_MarginWidth = m_BorderWidth =
         m_PaddingWidth.Set(FDE_CSSLENGTHUNIT_Point, 0);
     m_MinBoxSize.Set(FDE_CSSLENGTHUNIT_Point, 0);
