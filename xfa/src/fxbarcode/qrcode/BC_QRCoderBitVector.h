@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRECODERBITVECTOR_H_
-#define XFA_SRC_FXBARCODE_QRCODE_BC_QRECODERBITVECTOR_H_
+#ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERBITVECTOR_H_
+#define XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERBITVECTOR_H_
 
 class CBC_QRCoderBitVector {
  private:
@@ -30,4 +30,4 @@ class CBC_QRCoderBitVector {
   virtual void Init();
 };
 
-#endif  // XFA_SRC_FXBARCODE_QRCODE_BC_QRECODERBITVECTOR_H_
+#endif  // XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERBITVECTOR_H_

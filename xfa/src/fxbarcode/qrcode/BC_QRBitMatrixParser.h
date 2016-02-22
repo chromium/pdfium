@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRABITMATRIXPARSER_H_
-#define XFA_SRC_FXBARCODE_QRCODE_BC_QRABITMATRIXPARSER_H_
+#ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRBITMATRIXPARSER_H_
+#define XFA_SRC_FXBARCODE_QRCODE_BC_QRBITMATRIXPARSER_H_
 
 class CBC_CommonBitMatrix;
 class CBC_QRCoderVersion;
@@ -29,4 +29,4 @@ class CBC_QRBitMatrixParser {
   virtual void Init(CBC_CommonBitMatrix* bitMatrix, int32_t& e);
 };
 
-#endif  // XFA_SRC_FXBARCODE_QRCODE_BC_QRABITMATRIXPARSER_H_
+#endif  // XFA_SRC_FXBARCODE_QRCODE_BC_QRBITMATRIXPARSER_H_

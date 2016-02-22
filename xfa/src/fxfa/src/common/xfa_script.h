@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FXFA_SRC_COMMON_XFA_SCRIPT_H
-#define XFA_SRC_FXFA_SRC_COMMON_XFA_SCRIPT_H
+#ifndef XFA_SRC_FXFA_SRC_COMMON_XFA_SCRIPT_H_
+#define XFA_SRC_FXFA_SRC_COMMON_XFA_SCRIPT_H_
 
 #define XFA_RESOLVENODE_Children 0x0001
 #define XFA_RESOLVENODE_Attributes 0x0004
@@ -108,4 +108,4 @@ class IXFA_ScriptContext {
 };
 IXFA_ScriptContext* XFA_ScriptContext_Create(CXFA_Document* pDocument);
 
-#endif  // XFA_SRC_FXFA_SRC_COMMON_XFA_SCRIPT_H
+#endif  // XFA_SRC_FXFA_SRC_COMMON_XFA_SCRIPT_H_

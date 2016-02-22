@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FXBARCODE_PDF417_BC_CODEWORD_H_
-#define XFA_SRC_FXBARCODE_PDF417_BC_CODEWORD_H_
+#ifndef XFA_SRC_FXBARCODE_PDF417_BC_PDF417CODEWORD_H_
+#define XFA_SRC_FXBARCODE_PDF417_BC_PDF417CODEWORD_H_
 
 class CBC_Codeword {
  public:
@@ -32,4 +32,4 @@ class CBC_Codeword {
   int32_t m_rowNumber;
 };
 
-#endif  // XFA_SRC_FXBARCODE_PDF417_BC_CODEWORD_H_
+#endif  // XFA_SRC_FXBARCODE_PDF417_BC_PDF417CODEWORD_H_

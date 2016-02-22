@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FWL_BASEWIDGET_INCLUDE_FWL_TOOLTIP_CTRLIMP_H_
-#define XFA_SRC_FWL_BASEWIDGET_INCLUDE_FWL_TOOLTIP_CTRLIMP_H_
+#ifndef XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_TOOLTIPCTRLIMP_H_
+#define XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_TOOLTIPCTRLIMP_H_
 
 class CFWL_WidgetImp;
 class CFWL_WidgetImpProperties;
@@ -82,4 +82,4 @@ class CFWL_ToolTipImpDelegate : public CFWL_WidgetImpDelegate {
   CFWL_ToolTipImp* m_pOwner;
 };
 
-#endif  // XFA_SRC_FWL_BASEWIDGET_INCLUDE_FWL_TOOLTIP_CTRLIMP_H_
+#endif  // XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_TOOLTIPCTRLIMP_H_

@@ -14,4 +14,4 @@
 #define FWL_STYLEEXT_MNU_Dock (1L << 1)
 #define FWL_STYLEEXT_MNU_OwnerDraw (1L << 2)
 
-#endif  // XFA_INCLUDE_FWL_BASEWIDGET_
+#endif  // XFA_INCLUDE_FWL_BASEWIDGET_FWL_MENU_H_

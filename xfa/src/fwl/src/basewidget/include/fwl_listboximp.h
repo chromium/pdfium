@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FWL_BASEWIDGET_INCLUDE_FWL_LISTBOXIMP_H_
-#define XFA_SRC_FWL_BASEWIDGET_INCLUDE_FWL_LISTBOXIMP_H_
+#ifndef XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_LISTBOXIMP_H_
+#define XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_LISTBOXIMP_H_
 
 #include <memory>
 
@@ -117,4 +117,4 @@ class CFWL_ListBoxImpDelegate : public CFWL_WidgetImpDelegate {
   CFWL_ListBoxImp* m_pOwner;
 };
 
-#endif  // XFA_SRC_FWL_BASEWIDGET_INCLUDE_FWL_LISTBOXIMP_H_
+#endif  // XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_LISTBOXIMP_H_

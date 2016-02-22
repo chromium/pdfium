@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FXBARCODE_ONED_BC_ONEDCODA128READER_H_
-#define XFA_SRC_FXBARCODE_ONED_BC_ONEDCODA128READER_H_
+#ifndef XFA_SRC_FXBARCODE_ONED_BC_ONEDCODE128READER_H_
+#define XFA_SRC_FXBARCODE_ONED_BC_ONEDCODE128READER_H_
 
 class CBC_OneDReader;
 class CBC_CommonBitArray;
@@ -45,4 +45,4 @@ class CBC_OnedCode128Reader : public CBC_OneDReader {
                      int32_t& e);
 };
 
-#endif  // XFA_SRC_FXBARCODE_ONED_BC_ONEDCODA128READER_H_
+#endif  // XFA_SRC_FXBARCODE_ONED_BC_ONEDCODE128READER_H_

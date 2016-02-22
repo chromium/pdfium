@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_INCLUDE_FWL_LIGHTWIDGET_TOOLTIP_CTRL_H_
-#define XFA_INCLUDE_FWL_LIGHTWIDGET_TOOLTIP_CTRL_H_
+#ifndef XFA_INCLUDE_FWL_LIGHTWIDGET_TOOLTIPCTRL_H_
+#define XFA_INCLUDE_FWL_LIGHTWIDGET_TOOLTIPCTRL_H_
 
 class CFWL_Widget;
 class CFWL_WidgetProperties;
@@ -52,4 +52,4 @@ class CFWL_ToolTip : public CFWL_Widget {
   CFWL_ToolTipDP m_tooltipData;
 };
 
-#endif  // XFA_INCLUDE_FWL_LIGHTWIDGET_TOOLTIP_CTRL_H_
+#endif  // XFA_INCLUDE_FWL_LIGHTWIDGET_TOOLTIPCTRL_H_

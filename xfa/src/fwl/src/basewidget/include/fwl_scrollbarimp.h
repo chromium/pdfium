@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FWL_BASEWIDGET_INCLUDE_FWL_SCROLLBARIMP_H_
-#define XFA_SRC_FWL_BASEWIDGET_INCLUDE_FWL_SCROLLBARIMP_H_
+#ifndef XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_SCROLLBARIMP_H_
+#define XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_SCROLLBARIMP_H_
 
 class CFWL_WidgetImp;
 class CFWL_WidgetImpProperties;
@@ -137,4 +137,4 @@ class CFWL_ScrollBarImpDelegate : public CFWL_WidgetImpDelegate {
   CFWL_ScrollBarImp* m_pOwner;
 };
 
-#endif  // XFA_SRC_FWL_BASEWIDGET_INCLUDE_FWL_SCROLLBARIMP_H_
+#endif  // XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_SCROLLBARIMP_H_

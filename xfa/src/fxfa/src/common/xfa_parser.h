@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FXFA_SRC_COMMON_XFA_PARSER_H
-#define XFA_SRC_FXFA_SRC_COMMON_XFA_PARSER_H
+#ifndef XFA_SRC_FXFA_SRC_COMMON_XFA_PARSER_H_
+#define XFA_SRC_FXFA_SRC_COMMON_XFA_PARSER_H_
 
 class IFX_Stream;
 class IXFA_Parser {
@@ -34,4 +34,4 @@ class IXFA_DocParser : public IXFA_Parser {
   virtual IXFA_Notify* GetNotify() const = 0;
 };
 
-#endif  // XFA_SRC_FXFA_SRC_COMMON_XFA_PARSER_H
+#endif  // XFA_SRC_FXFA_SRC_COMMON_XFA_PARSER_H_

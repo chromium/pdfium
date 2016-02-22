@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FXBARCODE_PDF417_BC_BOUNDINGBOX_H_
-#define XFA_SRC_FXBARCODE_PDF417_BC_BOUNDINGBOX_H_
+#ifndef XFA_SRC_FXBARCODE_PDF417_BC_PDF417BOUNDINGBOX_H_
+#define XFA_SRC_FXBARCODE_PDF417_BC_PDF417BOUNDINGBOX_H_
 
 class CBC_CommonBitMatrix;
 class CBC_ResultPoint;
@@ -55,4 +55,4 @@ class CBC_BoundingBox {
   void calculateMinMaxValues();
 };
 
-#endif  // XFA_SRC_FXBARCODE_PDF417_BC_BOUNDINGBOX_H_
+#endif  // XFA_SRC_FXBARCODE_PDF417_BC_PDF417BOUNDINGBOX_H_

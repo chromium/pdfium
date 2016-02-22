@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_FPDFXFA_FPDFXFA_PAGEVIEW_H_
-#define FPDFSDK_INCLUDE_FPDFXFA_FPDFXFA_PAGEVIEW_H_
+#ifndef FPDFSDK_INCLUDE_FPDFXFA_FPDFXFA_PAGE_H_
+#define FPDFSDK_INCLUDE_FPDFXFA_FPDFXFA_PAGE_H_
 
 class CPDFXFA_Page {
  public:
@@ -63,4 +63,4 @@ class CPDFXFA_Page {
   int m_iRef;
 };
 
-#endif  // FPDFSDK_INCLUDE_FPDFXFA_FPDFXFA_PAGEVIEW_H_
+#endif  // FPDFSDK_INCLUDE_FPDFXFA_FPDFXFA_PAGE_H_

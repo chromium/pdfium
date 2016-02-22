@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_INCLUDE_FWL_ADAPTER_FWL_SDAPATERIMP_H_
-#define XFA_INCLUDE_FWL_ADAPTER_FWL_SDAPATERIMP_H_
+#ifndef XFA_INCLUDE_FWL_ADAPTER_FWL_SDADAPTERIMP_H_
+#define XFA_INCLUDE_FWL_ADAPTER_FWL_SDADAPTERIMP_H_
 
 class IFWL_AdapterNative;
 class IFWL_AdapterWidgetMgr;
@@ -90,4 +90,4 @@ class CFWL_SDAdapterThreadMgr : public IFWL_AdapterThreadMgr {
   virtual IFWL_Thread* GetCurrentThread();
 };
 
-#endif  // XFA_INCLUDE_FWL_ADAPTER_FWL_SDAPATERIMP_H_
+#endif  // XFA_INCLUDE_FWL_ADAPTER_FWL_SDADAPTERIMP_H_

@@ -8,7 +8,14 @@ See http://dev.chromium.org/developers/how-tos/depottools/presubmit-scripts
 for more details about the presubmit API built into depot_tools.
 """
 
+LINT_FILTERS = [
+  '-',
+  '+build/header_guard',
+]
+
 def CheckChangeOnUpload(input_api, output_api):
   results = []
   results += input_api.canned_checks.CheckPatchFormatted(input_api, output_api)
+  results += input_api.canned_checks.CheckChangeLintsClean(
+      input_api, output_api, None, LINT_FILTERS)
   return results
