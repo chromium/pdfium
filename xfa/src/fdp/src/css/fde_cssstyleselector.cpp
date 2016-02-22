@@ -428,8 +428,8 @@ void CFDE_CSSStyleSelector::ComputeStyle(
     const IFDE_CSSDeclaration** ppDeclArray,
     int32_t iDeclCount,
     IFDE_CSSComputedStyle* pDestStyle) {
-  CFDE_CSSComputedStyle* pComputedStyle = (CFDE_CSSComputedStyle*)pDestStyle;
-  FXSYS_assert(pTag && iDeclCount >= 0 && pComputedStyle != NULL);
+  FXSYS_assert(iDeclCount >= 0);
+  FXSYS_assert(pDestStyle);
   FX_POSITION pos = pTag->GetFirstAttribute();
   if (pos != NULL) {
     if (m_pInlineStyleStore == NULL) {

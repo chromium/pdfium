@@ -141,7 +141,7 @@ void CFDE_CSSAccelerator::OnEnterTag(IFDE_CSSTagProvider* pTag) {
   m_Stack.Push(item);
 }
 void CFDE_CSSAccelerator::OnLeaveTag(IFDE_CSSTagProvider* pTag) {
-  FDE_CSSTAGCACHE* pItem = m_Stack.GetTopElement();
-  FXSYS_assert(pItem && pItem->GetTag() == pTag);
+  FXSYS_assert(m_Stack.GetTopElement());
+  FXSYS_assert(m_Stack.GetTopElement()->GetTag() == pTag);
   m_Stack.Pop();
 }

@@ -9,6 +9,9 @@
 #include "xfa/src/fxfa/src/fm2js/xfa_fm2js.h"
 
 #define FINANCIAL_PRECISION 0.00000001
+
+namespace {
+
 struct XFA_FMHtmlReserveCode {
   uint32_t m_uCode;
   const FX_WCHAR* m_htmlReserve;
@@ -18,7 +21,8 @@ struct XFA_FMHtmlHashedReserveCode {
   const FX_WCHAR* m_htmlReserve;
   uint32_t m_uCode;
 };
-static XFA_FMHtmlHashedReserveCode reservesForDecode[] = {
+
+const XFA_FMHtmlHashedReserveCode reservesForDecode[] = {
     {0x00018b62, L"Mu", 924},       {0x00019083, L"Nu", 925},
     {0x00019ab9, L"Pi", 928},       {0x0001c3c1, L"Xi", 926},
     {0x000210ac, L"ge", 8805},      {0x000210bb, L"gt", 62},
@@ -146,7 +150,8 @@ static XFA_FMHtmlHashedReserveCode reservesForDecode[] = {
     {0xf88c8430, L"ocirc", 244},    {0xf9676178, L"frasl", 8260},
     {0xfd01885e, L"igrave", 236},   {0xff3281da, L"egrave", 232},
 };
-static XFA_FMHtmlReserveCode reservesForEncode[] = {
+
+const XFA_FMHtmlReserveCode reservesForEncode[] = {
     {34, L"quot"},     {38, L"amp"},      {39, L"apos"},
     {60, L"lt"},       {62, L"gt"},       {160, L"nbsp"},
     {161, L"iexcl"},   {162, L"cent"},    {163, L"pund"},
@@ -232,6 +237,9 @@ static XFA_FMHtmlReserveCode reservesForEncode[] = {
     {9002, L"rang"},   {9674, L"loz"},    {9824, L"spades"},
     {9827, L"clubs"},  {9829, L"hearts"}, {9830, L"diams"},
 };
+
+}  // namespace
+
 void CXFA_FM2JSContext::Abs(FXJSE_HOBJECT hThis,
                             const CFX_ByteStringC& szFuncName,
                             CFXJSE_Arguments& args) {
@@ -3269,11 +3277,12 @@ void CXFA_FM2JSContext::Ref(FXJSE_HOBJECT hThis,
         FXJSE_Value_Release(rgValues[i]);
       }
     } else if (FXJSE_Value_IsArray(argOne)) {
+#if defined(_DEBUG)
       FXJSE_HVALUE lengthValue = FXJSE_Value_Create(hruntime);
       FXJSE_Value_GetObjectProp(argOne, "length", lengthValue);
-      int32_t iLength = FXJSE_Value_ToInteger(lengthValue);
+      FXSYS_assert(FXJSE_Value_ToInteger(lengthValue) >= 3);
       FXJSE_Value_Release(lengthValue);
-      FXSYS_assert(iLength >= 3);
+#endif
       FXJSE_HVALUE propertyValue = FXJSE_Value_Create(hruntime);
       FXJSE_HVALUE jsObjectValue = FXJSE_Value_Create(hruntime);
       FXJSE_Value_GetObjectPropByIdx(argOne, 1, propertyValue);
@@ -6444,17 +6453,18 @@ void CXFA_FM2JSContext::get_fm_jsobj(FXJSE_HOBJECT hThis,
                                      const CFX_ByteStringC& szFuncName,
                                      CFXJSE_Arguments& args) {
   CXFA_FM2JSContext* pContext =
-      (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);
-  FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
+      static_cast<CXFA_FM2JSContext*>(FXJSE_Value_ToObject(hThis, nullptr));
   int32_t argc = args.GetLength();
   if (argc == 1) {
     FXJSE_HVALUE argOne = args.GetValue(0);
     if (FXJSE_Value_IsArray(argOne)) {
+#if defined(_DEBUG)
+      FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
       FXJSE_HVALUE lengthValue = FXJSE_Value_Create(hruntime);
       FXJSE_Value_GetObjectProp(argOne, "length", lengthValue);
-      int32_t iLength = FXJSE_Value_ToInteger(lengthValue);
-      FXSYS_assert(iLength >= 3);
+      FXSYS_assert(FXJSE_Value_ToInteger(lengthValue) >= 3);
       FXJSE_Value_Release(lengthValue);
+#endif
       FXJSE_Value_GetObjectPropByIdx(argOne, 2, args.GetReturnValue());
     } else {
       FXJSE_Value_Set(args.GetReturnValue(), argOne);
@@ -6474,11 +6484,12 @@ void CXFA_FM2JSContext::fm_var_filter(FXJSE_HOBJECT hThis,
   if (argc == 1) {
     FXJSE_HVALUE argOne = args.GetValue(0);
     if (FXJSE_Value_IsArray(argOne)) {
+#if defined(_DEBUG)
       FXJSE_HVALUE lengthValue = FXJSE_Value_Create(hruntime);
       FXJSE_Value_GetObjectProp(argOne, "length", lengthValue);
-      int32_t iLength = FXJSE_Value_ToInteger(lengthValue);
-      FXSYS_assert(iLength >= 3);
+      FXSYS_assert(FXJSE_Value_ToInteger(lengthValue) >= 3);
       FXJSE_Value_Release(lengthValue);
+#endif
       FXJSE_HVALUE flagsValue = FXJSE_Value_Create(hruntime);
       FXJSE_Value_GetObjectPropByIdx(argOne, 0, flagsValue);
       int32_t iFlags = FXJSE_Value_ToInteger(flagsValue);

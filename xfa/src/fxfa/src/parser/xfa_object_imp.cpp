@@ -4611,10 +4611,12 @@ CXFA_Node* CXFA_Node::GetChild(int32_t index,
   return NULL;
 }
 int32_t CXFA_Node::InsertChild(int32_t index, CXFA_Node* pNode) {
-  ASSERT(pNode != NULL && pNode->m_pNext == NULL);
+  ASSERT(!pNode->m_pNext);
   pNode->m_pParent = this;
   FX_BOOL bWasPurgeNode = m_pDocument->RemovePurgeNode(pNode);
-  FXSYS_assert(bWasPurgeNode == TRUE);
+  if (!bWasPurgeNode)
+    FXSYS_assert(false);
+
   if (m_pChild == NULL || index == 0) {
     if (index > 0) {
       return -1;
@@ -4654,13 +4656,15 @@ int32_t CXFA_Node::InsertChild(int32_t index, CXFA_Node* pNode) {
   return index;
 }
 FX_BOOL CXFA_Node::InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode) {
-  if (!pNode || pNode->m_pParent != NULL ||
+  if (!pNode || pNode->m_pParent ||
       (pBeforeNode && pBeforeNode->m_pParent != this)) {
-    FXSYS_assert(FALSE);
+    FXSYS_assert(false);
     return FALSE;
   }
   FX_BOOL bWasPurgeNode = m_pDocument->RemovePurgeNode(pNode);
-  FXSYS_assert(bWasPurgeNode == TRUE);
+  if (!bWasPurgeNode)
+    FXSYS_assert(false);
+
   int32_t nIndex = -1;
   pNode->m_pParent = this;
   if (m_pChild == NULL || pBeforeNode == m_pChild) {

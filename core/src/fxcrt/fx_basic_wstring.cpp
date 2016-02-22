@@ -15,6 +15,7 @@
 
 namespace {
 
+#if defined(_DEBUG)
 bool IsValidCodePage(FX_WORD codepage) {
   switch (codepage) {
     case 0:
@@ -28,6 +29,7 @@ bool IsValidCodePage(FX_WORD codepage) {
       return false;
   }
 }
+#endif
 
 }  // namespace
 

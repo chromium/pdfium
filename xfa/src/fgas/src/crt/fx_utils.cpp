@@ -227,15 +227,20 @@ int32_t CFX_BaseMassArrayImp::Copy(const CFX_BaseMassArrayImp& src,
   Append(0, src, iStart, iCount);
   return m_iBlockCount;
 }
+
 void CFX_BaseMassArrayImp::Append(int32_t iDstStart,
                                   const CFX_BaseMassArrayImp& src,
                                   int32_t iSrcStart,
                                   int32_t iSrcCount) {
-  FXSYS_assert(iDstStart > -1 && m_iBlockSize == src.m_iBlockSize);
-  int32_t iSrcTotal = src.m_iBlockCount;
-  FXSYS_assert(iSrcTotal > 0 && m_iBlockCount >= iDstStart + iSrcCount);
-  FXSYS_assert(iSrcStart > -1 && iSrcStart < iSrcTotal && iSrcCount > 0 &&
-               iSrcStart + iSrcCount <= iSrcTotal);
+  FXSYS_assert(iDstStart > -1);
+  FXSYS_assert(m_iBlockSize == src.m_iBlockSize);
+  FXSYS_assert(src.m_iBlockCount > 0);
+  FXSYS_assert(m_iBlockCount >= iDstStart + iSrcCount);
+  FXSYS_assert(iSrcStart > -1);
+  FXSYS_assert(iSrcStart < src.m_iBlockCount);
+  FXSYS_assert(iSrcCount > 0);
+  FXSYS_assert(iSrcStart + iSrcCount <= src.m_iBlockCount);
+
   int32_t iDstChunkIndex = iDstStart / m_iChunkSize;
   int32_t iSrcChunkIndex = iSrcStart / src.m_iChunkSize;
   uint8_t* pDstChunk = (uint8_t*)GetAt(iDstStart);

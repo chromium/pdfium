@@ -82,7 +82,7 @@
           '-fdata-sections',
           '-ffunction-sections',
         ],
-        'defines': ['_DEBUG=1',],
+        'defines': ['_DEBUG'],
         'msvs_settings': {
           'VCCLCompilerTool': {
             'Optimization': '0',
@@ -112,6 +112,7 @@
         'cflags': [
           '-fno-strict-aliasing',
         ],
+        'defines': ['NDEBUG'],
         'xcode_settings': {
           'GCC_OPTIMIZATION_LEVEL': '3',  # -O3
           'GCC_STRICT_ALIASING': 'NO',
