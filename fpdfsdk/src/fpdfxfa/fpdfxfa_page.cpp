@@ -118,8 +118,6 @@ FX_BOOL CPDFXFA_Page::LoadPDFPage(CPDF_Dictionary* pageDict) {
 }
 
 FX_FLOAT CPDFXFA_Page::GetPageWidth() {
-  ASSERT(m_pDocument != NULL);
-
   if (!m_pPDFPage && !m_pXFAPageView)
     return 0.0f;
 
@@ -145,8 +143,6 @@ FX_FLOAT CPDFXFA_Page::GetPageWidth() {
 }
 
 FX_FLOAT CPDFXFA_Page::GetPageHeight() {
-  ASSERT(m_pDocument != NULL);
-
   if (!m_pPDFPage && !m_pXFAPageView)
     return 0.0f;
 
@@ -180,8 +176,6 @@ void CPDFXFA_Page::DeviceToPage(int start_x,
                                 int device_y,
                                 double* page_x,
                                 double* page_y) {
-  ASSERT(m_pDocument != NULL);
-
   if (!m_pPDFPage && !m_pXFAPageView)
     return;
 
@@ -229,8 +223,6 @@ void CPDFXFA_Page::GetDisplayMatrix(CFX_Matrix& matrix,
                                     int xSize,
                                     int ySize,
                                     int iRotate) const {
-  ASSERT(m_pDocument != NULL);
-
   if (!m_pPDFPage && !m_pXFAPageView)
     return;
 

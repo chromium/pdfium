@@ -260,15 +260,11 @@ void CPDFSDK_Widget::Synchronize(FX_BOOL bSynchronizeElse) {
   if (IXFA_Widget* hWidget = this->GetMixXFAWidget()) {
     if (IXFA_WidgetHandler* pXFAWidgetHandler = this->GetXFAWidgetHandler()) {
       CPDF_FormField* pFormField = GetFormField();
-      ASSERT(pFormField != NULL);
-
       if (CXFA_WidgetAcc* pWidgetAcc = pXFAWidgetHandler->GetDataAcc(hWidget)) {
         switch (GetFieldType()) {
           case FIELDTYPE_CHECKBOX:
           case FIELDTYPE_RADIOBUTTON: {
             CPDF_FormControl* pFormCtrl = GetFormControl();
-            ASSERT(pFormCtrl != NULL);
-
             XFA_CHECKSTATE eCheckState =
                 pFormCtrl->IsChecked() ? XFA_CHECKSTATE_On : XFA_CHECKSTATE_Off;
             pWidgetAcc->SetCheckState(eCheckState);
@@ -340,12 +336,10 @@ void CPDFSDK_Widget::SynchronizeXFAValue(IXFA_DocView* pXFADocView,
                                          IXFA_Widget* hWidget,
                                          CPDF_FormField* pFormField,
                                          CPDF_FormControl* pFormControl) {
-  ASSERT(pXFADocView != NULL);
-  ASSERT(hWidget != NULL);
+  ASSERT(hWidget);
 
   if (IXFA_WidgetHandler* pXFAWidgetHandler = pXFADocView->GetWidgetHandler()) {
-    ASSERT(pFormField != NULL);
-    ASSERT(pFormControl != NULL);
+    ASSERT(pFormControl);
 
     switch (pFormField->GetFieldType()) {
       case FIELDTYPE_CHECKBOX: {
@@ -414,12 +408,9 @@ void CPDFSDK_Widget::SynchronizeXFAItems(IXFA_DocView* pXFADocView,
                                          IXFA_Widget* hWidget,
                                          CPDF_FormField* pFormField,
                                          CPDF_FormControl* pFormControl) {
-  ASSERT(pXFADocView != NULL);
-  ASSERT(hWidget != NULL);
+  ASSERT(hWidget);
 
   if (IXFA_WidgetHandler* pXFAWidgetHandler = pXFADocView->GetWidgetHandler()) {
-    ASSERT(pFormField != NULL);
-
     switch (pFormField->GetFieldType()) {
       case FIELDTYPE_LISTBOX: {
         pFormField->ClearSelection(FALSE);
@@ -2500,17 +2491,14 @@ FX_BOOL CPDFSDK_InterForm::ExportFieldsToFDFTextBuf(
 #ifdef PDF_ENABLE_XFA
 void CPDFSDK_InterForm::SynchronizeField(CPDF_FormField* pFormField,
                                          FX_BOOL bSynchronizeElse) {
-  ASSERT(pFormField != NULL);
-
   int x = 0;
   if (m_FieldSynchronizeMap.Lookup(pFormField, x))
     return;
 
   for (int i = 0, sz = pFormField->CountControls(); i < sz; i++) {
     CPDF_FormControl* pFormCtrl = pFormField->GetControl(i);
-    ASSERT(pFormCtrl != NULL);
-
-    ASSERT(m_pInterForm != NULL);
+    ASSERT(pFormCtrl);
+    ASSERT(m_pInterForm);
     if (CPDFSDK_Widget* pWidget = GetWidget(pFormCtrl)) {
       pWidget->Synchronize(bSynchronizeElse);
     }

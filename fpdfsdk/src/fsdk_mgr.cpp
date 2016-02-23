@@ -1073,10 +1073,7 @@ void CPDFSDK_PageView::LoadFXAnnots() {
 #ifdef PDF_ENABLE_XFA
   m_page->AddRef();
   if (m_pSDKDoc->GetXFADocument()->GetDocType() == DOCTYPE_DYNAMIC_XFA) {
-    IXFA_PageView* pageView = NULL;
-    pageView = m_page->GetXFAPageView();
-    ASSERT(pageView != NULL);
-
+    IXFA_PageView* pageView = m_page->GetXFAPageView();
     IXFA_WidgetIterator* pWidgetHander = pageView->CreateWidgetIterator(
         XFA_TRAVERSEWAY_Form, XFA_WIDGETFILTER_Visible |
                                   XFA_WIDGETFILTER_Viewable |
@@ -1098,7 +1095,7 @@ void CPDFSDK_PageView::LoadFXAnnots() {
     pWidgetHander->Release();
   } else {
     CPDF_Page* pPage = m_page->GetPDFPage();
-    ASSERT(pPage != NULL);
+    ASSERT(pPage);
     FX_BOOL enableAPUpdate = CPDF_InterForm::UpdatingAPEnabled();
     // Disable the default AP construction.
     CPDF_InterForm::EnableUpdateAP(FALSE);

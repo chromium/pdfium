@@ -21,9 +21,7 @@ static void* _bmp_alloc_func(unsigned int size) {
   return FX_Alloc(char, size);
 }
 static void _bmp_free_func(void* p) {
-  if (p != NULL) {
-    FX_Free(p);
-  }
+  FX_Free(p);
 }
 };
 static void _bmp_error_data(bmp_decompress_struct_p bmp_ptr,
@@ -72,7 +70,7 @@ void* CCodec_BmpModule::Start(void* pModule) {
 }
 void CCodec_BmpModule::Finish(void* pContext) {
   FXBMP_Context* p = (FXBMP_Context*)pContext;
-  if (p != NULL) {
+  if (p) {
     _bmp_destroy_decompress(&p->bmp_ptr);
     p->m_FreeFunc(p);
   }

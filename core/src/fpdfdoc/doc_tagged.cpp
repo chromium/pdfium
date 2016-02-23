@@ -13,7 +13,7 @@ const int nMaxRecursion = 32;
 static FX_BOOL IsTagged(const CPDF_Document* pDoc) {
   CPDF_Dictionary* pCatalog = pDoc->GetRoot();
   CPDF_Dictionary* pMarkInfo = pCatalog->GetDictBy("MarkInfo");
-  return pMarkInfo != NULL && pMarkInfo->GetIntegerBy("Marked");
+  return pMarkInfo && pMarkInfo->GetIntegerBy("Marked");
 }
 CPDF_StructTree* CPDF_StructTree::LoadPage(const CPDF_Document* pDoc,
                                            const CPDF_Dictionary* pPageDict) {

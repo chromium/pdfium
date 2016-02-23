@@ -59,7 +59,7 @@ void CBA_FontMap::Initialize() {
 
 void CBA_FontMap::SetDefaultFont(CPDF_Font* pFont,
                                  const CFX_ByteString& sFontName) {
-  ASSERT(pFont != NULL);
+  ASSERT(pFont);
 
   if (m_pDefaultFont)
     return;
@@ -75,12 +75,8 @@ void CBA_FontMap::SetDefaultFont(CPDF_Font* pFont,
 
 CPDF_Font* CBA_FontMap::FindFontSameCharset(CFX_ByteString& sFontAlias,
                                             int32_t nCharset) {
-  ASSERT(m_pAnnotDict != NULL);
-
   if (m_pAnnotDict->GetStringBy("Subtype") == "Widget") {
     CPDF_Document* pDocument = GetDocument();
-    ASSERT(pDocument != NULL);
-
     CPDF_Dictionary* pRootDict = pDocument->GetRoot();
     if (!pRootDict)
       return NULL;
@@ -109,15 +105,12 @@ CPDF_Font* CBA_FontMap::FindResFontSameCharset(CPDF_Dictionary* pResDict,
   if (!pResDict)
     return NULL;
 
-  CPDF_Document* pDocument = GetDocument();
-  ASSERT(pDocument != NULL);
-
   CPDF_Dictionary* pFonts = pResDict->GetDictBy("Font");
   if (!pFonts)
     return NULL;
 
+  CPDF_Document* pDocument = GetDocument();
   CPDF_Font* pFind = NULL;
-
   for (const auto& it : *pFonts) {
     const CFX_ByteString& csKey = it.first;
     CPDF_Object* pObj = it.second;
@@ -153,9 +146,6 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
                                      const CFX_ByteString& sAlias) {
   if (!pFont)
     return;
-
-  ASSERT(m_pAnnotDict != NULL);
-  ASSERT(m_pDocument != NULL);
 
   CPDF_Dictionary* pAPDict = m_pAnnotDict->GetDictBy("AP");
 
@@ -205,9 +195,6 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
 }
 
 CPDF_Font* CBA_FontMap::GetAnnotDefaultFont(CFX_ByteString& sAlias) {
-  ASSERT(m_pAnnotDict != NULL);
-  ASSERT(m_pDocument != NULL);
-
   CPDF_Dictionary* pAcroFormDict = NULL;
 
   FX_BOOL bWidget = (m_pAnnotDict->GetStringBy("Subtype") == "Widget");

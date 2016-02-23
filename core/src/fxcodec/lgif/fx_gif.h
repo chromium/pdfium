@@ -329,10 +329,5 @@ void interlace_buf(const uint8_t* buf, FX_DWORD width, FX_DWORD height);
 FX_BOOL _gif_encode(gif_compress_struct_p gif_ptr,
                     uint8_t*& dst_buf,
                     FX_DWORD& dst_len);
-#define GIF_PTR_NOT_NULL(ptr, gif_ptr)    \
-  if (ptr == NULL) {                      \
-    _gif_error(gif_ptr, "Out Of Memory"); \
-    return 0;                             \
-  }
 
 #endif  // CORE_SRC_FXCODEC_LGIF_FX_GIF_H_

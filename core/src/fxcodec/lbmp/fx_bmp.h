@@ -129,11 +129,6 @@ void _bmp_input_buffer(bmp_decompress_struct_p bmp_ptr,
                        FX_DWORD src_size);
 FX_DWORD _bmp_get_avail_input(bmp_decompress_struct_p bmp_ptr,
                               uint8_t** avial_buf_ptr);
-#define BMP_PTR_NOT_NULL(ptr, bmp_ptr)    \
-  if (ptr == NULL) {                      \
-    _bmp_error(bmp_ptr, "Out Of Memory"); \
-    return 0;                             \
-  }
 typedef struct tag_bmp_compress_struct bmp_compress_struct;
 typedef bmp_compress_struct* bmp_compress_struct_p;
 typedef bmp_compress_struct_p* bmp_compress_struct_pp;

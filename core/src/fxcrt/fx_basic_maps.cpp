@@ -39,7 +39,7 @@ void CFX_MapPtrToPtr::GetNextAssoc(FX_POSITION& rNextPosition,
   ASSERT(pAssocRet);
   if (pAssocRet == (CAssoc*)-1) {
     for (FX_DWORD nBucket = 0; nBucket < m_nHashTableSize; nBucket++) {
-      if ((pAssocRet = m_pHashTable[nBucket]) != NULL)
+      if ((pAssocRet = m_pHashTable[nBucket]))
         break;
     }
     ASSERT(pAssocRet);
@@ -48,7 +48,7 @@ void CFX_MapPtrToPtr::GetNextAssoc(FX_POSITION& rNextPosition,
   if ((pAssocNext = pAssocRet->pNext) == NULL) {
     for (FX_DWORD nBucket = (HashKey(pAssocRet->key) % m_nHashTableSize) + 1;
          nBucket < m_nHashTableSize; nBucket++) {
-      if ((pAssocNext = m_pHashTable[nBucket]) != NULL) {
+      if ((pAssocNext = m_pHashTable[nBucket])) {
         break;
       }
     }

@@ -393,7 +393,7 @@ static FX_BOOL RetrieveStockFont(int iFontObject,
                                  uint8_t charSet,
                                  LOGFONTA& lf) {
   HFONT hFont = (HFONT)::GetStockObject(iFontObject);
-  if (hFont != NULL) {
+  if (hFont) {
     memset(&lf, 0, sizeof(LOGFONTA));
     int iRet = ::GetObject(hFont, sizeof(LOGFONTA), &lf);
     if (iRet > 0 && (lf.lfCharSet == charSet || charSet == 255)) {

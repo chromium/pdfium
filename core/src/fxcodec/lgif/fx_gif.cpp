@@ -376,27 +376,16 @@ void _gif_destroy_decompress(gif_decompress_struct_pp gif_ptr_ptr) {
   }
   gif_decompress_struct_p gif_ptr = *gif_ptr_ptr;
   *gif_ptr_ptr = NULL;
-  if (gif_ptr->global_pal_ptr != NULL) {
-    FX_Free(gif_ptr->global_pal_ptr);
-  }
-  if (gif_ptr->img_decoder_ptr != NULL) {
-    delete gif_ptr->img_decoder_ptr;
-  }
-  if (gif_ptr->img_ptr_arr_ptr != NULL) {
+  FX_Free(gif_ptr->global_pal_ptr);
+  delete gif_ptr->img_decoder_ptr;
+  if (gif_ptr->img_ptr_arr_ptr) {
     int32_t size_img_arr = gif_ptr->img_ptr_arr_ptr->GetSize();
     for (int32_t i = 0; i < size_img_arr; i++) {
       GifImage* p = gif_ptr->img_ptr_arr_ptr->GetAt(i);
-      if (p->image_info_ptr != NULL) {
-        FX_Free(p->image_info_ptr);
-      }
-      if (p->image_gce_ptr != NULL) {
-        FX_Free(p->image_gce_ptr);
-      }
-      if (p->image_row_buf != NULL) {
-        FX_Free(p->image_row_buf);
-      }
-      if (p->local_pal_ptr != NULL &&
-          p->local_pal_ptr != gif_ptr->global_pal_ptr) {
+      FX_Free(p->image_info_ptr);
+      FX_Free(p->image_gce_ptr);
+      FX_Free(p->image_row_buf);
+      if (p->local_pal_ptr && p->local_pal_ptr != gif_ptr->global_pal_ptr) {
         FX_Free(p->local_pal_ptr);
       }
       FX_Free(p);
@@ -405,34 +394,22 @@ void _gif_destroy_decompress(gif_decompress_struct_pp gif_ptr_ptr) {
     delete gif_ptr->img_ptr_arr_ptr;
   }
 #ifdef GIF_SUPPORT_APPLICATION_EXTENSION
-  if (gif_ptr->app_data != NULL) {
-    FX_Free(gif_ptr->app_data);
-  }
+  FX_Free(gif_ptr->app_data);
 #endif
 #ifdef GIF_SUPPORT_COMMENT_EXTENSION
-  if (gif_ptr->cmt_data_ptr != NULL) {
-    delete gif_ptr->cmt_data_ptr;
-  }
+  delete gif_ptr->cmt_data_ptr;
 #endif
 #ifdef GIF_SUPPORT_GRAPHIC_CONTROL_EXTENSION
-  if (gif_ptr->gce_ptr != NULL) {
-    FX_Free(gif_ptr->gce_ptr);
-  }
+  FX_Free(gif_ptr->gce_ptr);
 #endif
 #ifdef GIF_SUPPORT_PLAIN_TEXT_EXTENSION
-  if (gif_ptr->pt_ptr_arr_ptr != NULL) {
+  if (gif_ptr->pt_ptr_arr_ptr) {
     int32_t size_pt_arr = gif_ptr->pt_ptr_arr_ptr->GetSize();
     for (int32_t i = 0; i < size_pt_arr; i++) {
       GifPlainText* p = gif_ptr->pt_ptr_arr_ptr->GetAt(i);
-      if (p->gce_ptr != NULL) {
-        FX_Free(p->gce_ptr);
-      }
-      if (p->pte_ptr != NULL) {
-        FX_Free(p->pte_ptr);
-      }
-      if (p->string_ptr != NULL) {
-        delete p->string_ptr;
-      }
+      FX_Free(p->gce_ptr);
+      FX_Free(p->pte_ptr);
+      delete p->string_ptr;
     }
     gif_ptr->pt_ptr_arr_ptr->RemoveAll();
     delete gif_ptr->pt_ptr_arr_ptr;
@@ -511,48 +488,28 @@ void _gif_destroy_compress(gif_compress_struct_pp gif_ptr_ptr) {
   }
   gif_compress_struct_p gif_ptr = *gif_ptr_ptr;
   *gif_ptr_ptr = NULL;
-  if (gif_ptr->header_ptr != NULL) {
-    FX_Free(gif_ptr->header_ptr);
-  }
-  if (gif_ptr->lsd_ptr != NULL) {
-    FX_Free(gif_ptr->lsd_ptr);
-  }
-  if (gif_ptr->global_pal != NULL) {
-    FX_Free(gif_ptr->global_pal);
-  }
-  if (gif_ptr->image_info_ptr != NULL) {
-    FX_Free(gif_ptr->image_info_ptr);
-  }
-  if (gif_ptr->local_pal != NULL) {
-    FX_Free(gif_ptr->local_pal);
-  }
-  if (gif_ptr->img_encoder_ptr != NULL) {
-    delete gif_ptr->img_encoder_ptr;
-  }
+  FX_Free(gif_ptr->header_ptr);
+  FX_Free(gif_ptr->lsd_ptr);
+  FX_Free(gif_ptr->global_pal);
+  FX_Free(gif_ptr->image_info_ptr);
+  FX_Free(gif_ptr->local_pal);
+  delete gif_ptr->img_encoder_ptr;
 #ifdef GIF_SUPPORT_APPLICATION_EXTENSION
-  if (gif_ptr->app_data != NULL) {
-    FX_Free(gif_ptr->app_data);
-  }
+  FX_Free(gif_ptr->app_data);
 #endif
 #ifdef GIF_SUPPORT_GRAPHIC_CONTROL_EXTENSION
-  if (gif_ptr->gce_ptr != NULL) {
-    FX_Free(gif_ptr->gce_ptr);
-  }
+  FX_Free(gif_ptr->gce_ptr);
 #endif
 #ifdef GIF_SUPPORT_COMMENT_EXTENSION
-  if (gif_ptr->cmt_data_ptr != NULL) {
-    FX_Free(gif_ptr->cmt_data_ptr);
-  }
+  FX_Free(gif_ptr->cmt_data_ptr);
 #endif
 #ifdef GIF_SUPPORT_PLAIN_TEXT_EXTENSION
-  if (gif_ptr->pte_ptr != NULL) {
-    FX_Free(gif_ptr->pte_ptr);
-  }
+  FX_Free(gif_ptr->pte_ptr);
 #endif
   FX_Free(gif_ptr);
 }
 void _gif_error(gif_decompress_struct_p gif_ptr, const FX_CHAR* err_msg) {
-  if (gif_ptr != NULL && gif_ptr->_gif_error_fn != NULL) {
+  if (gif_ptr && gif_ptr->_gif_error_fn) {
     gif_ptr->_gif_error_fn(gif_ptr, err_msg);
   }
 }
@@ -591,12 +548,8 @@ int32_t _gif_read_header(gif_decompress_struct_p gif_ptr) {
     gif_ptr->global_sort_flag = ((GifGF*)&gif_lsd_ptr->global_flag)->sort_flag;
     gif_ptr->global_color_resolution =
         ((GifGF*)&gif_lsd_ptr->global_flag)->color_resolution;
-    if (gif_ptr->global_pal_ptr != NULL) {
-      FX_Free(gif_ptr->global_pal_ptr);
-    }
-    gif_ptr->global_pal_ptr = NULL;
+    FX_Free(gif_ptr->global_pal_ptr);
     gif_ptr->global_pal_ptr = (GifPalette*)FX_Alloc(uint8_t, global_pal_size);
-    GIF_PTR_NOT_NULL(gif_ptr->global_pal_ptr, gif_ptr);
     FXSYS_memcpy(gif_ptr->global_pal_ptr, global_pal_ptr, global_pal_size);
   }
   gif_ptr->width = (int)_GetWord_LSBFirst((uint8_t*)&gif_lsd_ptr->width);
@@ -720,7 +673,7 @@ void _gif_takeover_gce_ptr(gif_decompress_struct_p gif_ptr,
                            GifGCE** gce_ptr_ptr) {
   *gce_ptr_ptr = NULL;
 #ifdef GIF_SUPPORT_GRAPHIC_CONTROL_EXTENSION
-  if (gif_ptr->gce_ptr != NULL && gce_ptr_ptr != NULL) {
+  if (gif_ptr->gce_ptr && gce_ptr_ptr) {
     *gce_ptr_ptr = gif_ptr->gce_ptr;
     gif_ptr->gce_ptr = NULL;
   }
@@ -756,12 +709,8 @@ int32_t _gif_decode_extension(gif_decompress_struct_p gif_ptr) {
       FXSYS_memcpy(gif_ptr->app_authentication, gif_ae_ptr->app_authentication,
                    3);
       gif_ptr->app_data_size = gif_ae_data_str.GetLength();
-      if (gif_ptr->app_data != NULL) {
-        FX_Free(gif_ptr->app_data);
-        gif_ptr->app_data = NULL;
-      }
+      FX_Free(gif_ptr->app_data);
       gif_ptr->app_data = FX_Alloc(uint8_t, gif_ptr->app_data_size);
-      GIF_PTR_NOT_NULL(gif_ptr->app_data, gif_ptr);
       FXSYS_memcpy(gif_ptr->app_data, const uint8_t*(gif_ae_data_str),
                    gif_ptr->app_data_size);
     } break;
@@ -793,13 +742,10 @@ int32_t _gif_decode_extension(gif_decompress_struct_p gif_ptr) {
         return 2;
       }
       GifPlainText* gif_pt_ptr = FX_Alloc(GifPlainText, 1);
-      GIF_PTR_NOT_NULL(gif_pt_ptr, gif_ptr);
       FXSYS_memset(gif_pt_ptr, 0, sizeof(GifPlainText));
       _gif_takeover_gce_ptr(gif_ptr, &gif_pt_ptr->gce_ptr);
       gif_pt_ptr->pte_ptr = (GifPTE*)FX_Alloc(uint8_t, sizeof(GifPTE));
-      GIF_PTR_NOT_NULL(gif_pt_ptr->pte_ptr, gif_ptr);
       gif_pt_ptr->string_ptr = new CFX_ByteString;
-      GIF_PTR_NOT_NULL(gif_pt_ptr->string_ptr, gif_ptr);
       gif_pt_ptr->pte_ptr->block_size = gif_pte_ptr->block_size;
       gif_pt_ptr->pte_ptr->grid_left =
           _GetWord_LSBFirst((uint8_t*)&gif_pte_ptr->grid_left);
@@ -815,16 +761,10 @@ int32_t _gif_decode_extension(gif_decompress_struct_p gif_ptr) {
       gif_pt_ptr->pte_ptr->bc_index = gif_pte_ptr->bc_index;
       if (_gif_read_data(gif_ptr, &data_size_ptr, 1) == NULL) {
         gif_ptr->skip_size = skip_size_org;
-        if (gif_pt_ptr != NULL) {
-          if (gif_pt_ptr->gce_ptr != NULL) {
-            FX_Free(gif_pt_ptr->gce_ptr);
-          }
-          if (gif_pt_ptr->pte_ptr != NULL) {
-            FX_Free(gif_pt_ptr->pte_ptr);
-          }
-          if (gif_pt_ptr->string_ptr != NULL) {
-            delete gif_pt_ptr->string_ptr;
-          }
+        if (gif_pt_ptr) {
+          FX_Free(gif_pt_ptr->gce_ptr);
+          FX_Free(gif_pt_ptr->pte_ptr);
+          delete gif_pt_ptr->string_ptr;
           FX_Free(gif_pt_ptr);
         }
         return 2;
@@ -834,16 +774,10 @@ int32_t _gif_decode_extension(gif_decompress_struct_p gif_ptr) {
         if (_gif_read_data(gif_ptr, &data_ptr, *data_size_ptr) == NULL ||
             _gif_read_data(gif_ptr, &data_size_ptr, 1) == NULL) {
           gif_ptr->skip_size = skip_size_org;
-          if (gif_pt_ptr != NULL) {
-            if (gif_pt_ptr->gce_ptr != NULL) {
-              FX_Free(gif_pt_ptr->gce_ptr);
-            }
-            if (gif_pt_ptr->pte_ptr != NULL) {
-              FX_Free(gif_pt_ptr->pte_ptr);
-            }
-            if (gif_pt_ptr->string_ptr != NULL) {
-              delete gif_pt_ptr->string_ptr;
-            }
+          if (gif_pt_ptr) {
+            FX_Free(gif_pt_ptr->gce_ptr);
+            FX_Free(gif_pt_ptr->pte_ptr);
+            delete gif_pt_ptr->string_ptr;
             FX_Free(gif_pt_ptr);
           }
           return 2;
@@ -863,7 +797,6 @@ int32_t _gif_decode_extension(gif_decompress_struct_p gif_ptr) {
       }
       if (gif_ptr->gce_ptr == NULL) {
         gif_ptr->gce_ptr = (GifGCE*)FX_Alloc(uint8_t, sizeof(GifGCE));
-        GIF_PTR_NOT_NULL(gif_ptr->gce_ptr, gif_ptr);
       }
       gif_ptr->gce_ptr->block_size = gif_gce_ptr->block_size;
       gif_ptr->gce_ptr->gce_flag = gif_gce_ptr->gce_flag;
@@ -874,14 +807,12 @@ int32_t _gif_decode_extension(gif_decompress_struct_p gif_ptr) {
 #endif
     default: {
 #ifndef GIF_SUPPORT_PLAIN_TEXT_EXTENSION
-      if (gif_ptr->decode_status == GIF_D_STATUS_EXT_PTE) {
 #ifdef GIF_SUPPORT_GRAPHIC_CONTROL_EXTENSION
-        if (gif_ptr->gce_ptr != NULL) {
-          FX_Free(gif_ptr->gce_ptr);
-          gif_ptr->gce_ptr = NULL;
-        }
-#endif
+      if (gif_ptr->decode_status == GIF_D_STATUS_EXT_PTE) {
+        FX_Free(gif_ptr->gce_ptr);
+        gif_ptr->gce_ptr = NULL;
       }
+#endif
 #endif
       if (_gif_read_data(gif_ptr, &data_size_ptr, 1) == NULL) {
         return 2;
@@ -910,11 +841,9 @@ int32_t _gif_decode_image_info(gif_decompress_struct_p gif_ptr) {
     return 2;
   }
   GifImage* gif_image_ptr = (GifImage*)FX_Alloc(uint8_t, sizeof(GifImage));
-  GIF_PTR_NOT_NULL(gif_image_ptr, gif_ptr);
   FXSYS_memset(gif_image_ptr, 0, sizeof(GifImage));
   gif_image_ptr->image_info_ptr =
       (GifImageInfo*)FX_Alloc(uint8_t, sizeof(GifImageInfo));
-  GIF_PTR_NOT_NULL(gif_image_ptr->image_info_ptr, gif_ptr);
   gif_image_ptr->image_info_ptr->left =
       _GetWord_LSBFirst((uint8_t*)&gif_img_info_ptr->left);
   gif_image_ptr->image_info_ptr->top =
@@ -930,12 +859,8 @@ int32_t _gif_decode_image_info(gif_decompress_struct_p gif_ptr) {
       gif_image_ptr->image_info_ptr->top +
               gif_image_ptr->image_info_ptr->height >
           gif_ptr->height) {
-    if (gif_image_ptr->image_info_ptr != NULL) {
-      FX_Free(gif_image_ptr->image_info_ptr);
-    }
-    if (gif_image_ptr->image_row_buf != NULL) {
-      FX_Free(gif_image_ptr->image_row_buf);
-    }
+    FX_Free(gif_image_ptr->image_info_ptr);
+    FX_Free(gif_image_ptr->image_row_buf);
     FX_Free(gif_image_ptr);
     _gif_error(gif_ptr, "Image Data Out Of LSD, The File May Be Corrupt");
     return 0;
@@ -947,18 +872,14 @@ int32_t _gif_decode_image_info(gif_decompress_struct_p gif_ptr) {
     uint8_t* loc_pal_ptr = NULL;
     if (_gif_read_data(gif_ptr, &loc_pal_ptr, loc_pal_size) == NULL) {
       gif_ptr->skip_size = skip_size_org;
-      if (gif_image_ptr->image_info_ptr != NULL) {
-        FX_Free(gif_image_ptr->image_info_ptr);
-      }
-      if (gif_image_ptr->image_row_buf != NULL) {
-        FX_Free(gif_image_ptr->image_row_buf);
-      }
+      FX_Free(gif_image_ptr->image_info_ptr);
+      FX_Free(gif_image_ptr->image_row_buf);
       FX_Free(gif_image_ptr);
       return 2;
     }
     gif_image_ptr->local_pal_ptr =
         (GifPalette*)gif_ptr->_gif_ask_buf_for_pal_fn(gif_ptr, loc_pal_size);
-    if (gif_image_ptr->local_pal_ptr != NULL) {
+    if (gif_image_ptr->local_pal_ptr) {
       FXSYS_memcpy((uint8_t*)gif_image_ptr->local_pal_ptr, loc_pal_ptr,
                    loc_pal_size);
     }
@@ -966,15 +887,9 @@ int32_t _gif_decode_image_info(gif_decompress_struct_p gif_ptr) {
   uint8_t* code_size_ptr = NULL;
   if (_gif_read_data(gif_ptr, &code_size_ptr, 1) == NULL) {
     gif_ptr->skip_size = skip_size_org;
-    if (gif_image_ptr->image_info_ptr != NULL) {
-      FX_Free(gif_image_ptr->image_info_ptr);
-    }
-    if (gif_image_ptr->local_pal_ptr != NULL) {
-      FX_Free(gif_image_ptr->local_pal_ptr);
-    }
-    if (gif_image_ptr->image_row_buf != NULL) {
-      FX_Free(gif_image_ptr->image_row_buf);
-    }
+    FX_Free(gif_image_ptr->image_info_ptr);
+    FX_Free(gif_image_ptr->local_pal_ptr);
+    FX_Free(gif_image_ptr->image_row_buf);
     FX_Free(gif_image_ptr);
     return 2;
   }
@@ -1003,7 +918,6 @@ int32_t _gif_load_frame(gif_decompress_struct_p gif_ptr, int32_t frame_num) {
       gif_image_ptr->image_row_buf = NULL;
     }
     gif_image_ptr->image_row_buf = FX_Alloc(uint8_t, gif_img_row_bytes);
-    GIF_PTR_NOT_NULL(gif_image_ptr->image_row_buf, gif_ptr);
     GifGCE* gif_img_gce_ptr = gif_image_ptr->image_gce_ptr;
     int32_t loc_pal_num =
         ((GifLF*)&gif_image_ptr->image_info_ptr->local_flag)->local_pal
@@ -1054,7 +968,6 @@ int32_t _gif_load_frame(gif_decompress_struct_p gif_ptr, int32_t frame_num) {
     }
     if (gif_ptr->img_decoder_ptr == NULL) {
       gif_ptr->img_decoder_ptr = new CGifLZWDecoder(gif_ptr->err_ptr);
-      GIF_PTR_NOT_NULL(gif_ptr->img_decoder_ptr, gif_ptr);
     }
     gif_ptr->img_decoder_ptr->InitTable(gif_image_ptr->image_code_size);
     gif_ptr->img_row_offset = 0;
@@ -1179,7 +1092,7 @@ void _gif_input_buffer(gif_decompress_struct_p gif_ptr,
 }
 FX_DWORD _gif_get_avail_input(gif_decompress_struct_p gif_ptr,
                               uint8_t** avial_buf_ptr) {
-  if (avial_buf_ptr != NULL) {
+  if (avial_buf_ptr) {
     *avial_buf_ptr = NULL;
     if (gif_ptr->avail_in > 0) {
       *avial_buf_ptr = gif_ptr->next_in;

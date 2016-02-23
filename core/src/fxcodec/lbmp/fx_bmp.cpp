@@ -32,7 +32,7 @@ void _SetWord_LSBFirst(uint8_t* p, FX_WORD v) {
   p[1] = (uint8_t)(v >> 8);
 }
 void _bmp_error(bmp_decompress_struct_p bmp_ptr, const FX_CHAR* err_msg) {
-  if (bmp_ptr != NULL && bmp_ptr->_bmp_error_fn != NULL) {
+  if (bmp_ptr && bmp_ptr->_bmp_error_fn) {
     bmp_ptr->_bmp_error_fn(bmp_ptr, err_msg);
   }
 }
@@ -52,15 +52,11 @@ void _bmp_destroy_decompress(bmp_decompress_struct_pp bmp_ptr_ptr) {
   }
   bmp_decompress_struct_p bmp_ptr = *bmp_ptr_ptr;
   *bmp_ptr_ptr = NULL;
-  if (bmp_ptr->out_row_buffer != NULL) {
+  if (bmp_ptr->out_row_buffer) {
     FX_Free(bmp_ptr->out_row_buffer);
   }
-  if (bmp_ptr->pal_ptr != NULL) {
-    FX_Free(bmp_ptr->pal_ptr);
-  }
-  if (bmp_ptr->bmp_header_ptr != NULL) {
-    FX_Free(bmp_ptr->bmp_header_ptr);
-  }
+  FX_Free(bmp_ptr->pal_ptr);
+  FX_Free(bmp_ptr->bmp_header_ptr);
   FX_Free(bmp_ptr);
 }
 int32_t _bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
@@ -218,12 +214,8 @@ int32_t _bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
         bmp_ptr->components = 4;
         break;
     }
-    if (bmp_ptr->out_row_buffer != NULL) {
-      FX_Free(bmp_ptr->out_row_buffer);
-      bmp_ptr->out_row_buffer = NULL;
-    }
+    FX_Free(bmp_ptr->out_row_buffer);
     bmp_ptr->out_row_buffer = FX_Alloc(uint8_t, bmp_ptr->out_row_bytes);
-    BMP_PTR_NOT_NULL(bmp_ptr->out_row_buffer, bmp_ptr);
     FXSYS_memset(bmp_ptr->out_row_buffer, 0, bmp_ptr->out_row_bytes);
     _bmp_save_decoding_status(bmp_ptr, BMP_D_STATUS_PAL);
   }
@@ -279,12 +271,8 @@ int32_t _bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
         bmp_ptr->skip_size = skip_size_org;
         return 2;
       }
-      if (bmp_ptr->pal_ptr != NULL) {
-        FX_Free(bmp_ptr->pal_ptr);
-        bmp_ptr->pal_ptr = NULL;
-      }
+      FX_Free(bmp_ptr->pal_ptr);
       bmp_ptr->pal_ptr = FX_Alloc(FX_DWORD, bmp_ptr->pal_num);
-      BMP_PTR_NOT_NULL(bmp_ptr->pal_ptr, bmp_ptr);
       int32_t src_pal_index = 0;
       if (bmp_ptr->pal_type == BMP_PAL_OLD) {
         while (src_pal_index < bmp_ptr->pal_num) {
@@ -652,7 +640,7 @@ void _bmp_input_buffer(bmp_decompress_struct_p bmp_ptr,
 }
 FX_DWORD _bmp_get_avail_input(bmp_decompress_struct_p bmp_ptr,
                               uint8_t** avial_buf_ptr) {
-  if (avial_buf_ptr != NULL) {
+  if (avial_buf_ptr) {
     *avial_buf_ptr = NULL;
     if (bmp_ptr->avail_in > 0) {
       *avial_buf_ptr = bmp_ptr->next_in;

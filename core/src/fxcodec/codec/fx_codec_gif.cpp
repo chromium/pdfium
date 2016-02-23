@@ -21,9 +21,7 @@ static void* _gif_alloc_func(unsigned int size) {
   return FX_Alloc(char, size);
 }
 static void _gif_free_func(void* p) {
-  if (p != NULL) {
-    FX_Free(p);
-  }
+  FX_Free(p);
 }
 };
 static void _gif_error_data(gif_decompress_struct_p gif_ptr,
@@ -98,7 +96,7 @@ void* CCodec_GifModule::Start(void* pModule) {
 }
 void CCodec_GifModule::Finish(void* pContext) {
   FXGIF_Context* p = (FXGIF_Context*)pContext;
-  if (p != NULL) {
+  if (p) {
     _gif_destroy_decompress(&p->gif_ptr);
     p->m_FreeFunc(p);
   }

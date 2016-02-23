@@ -105,9 +105,7 @@ static void* _png_alloc_func(unsigned int size) {
   return FX_Alloc(char, size);
 }
 static void _png_free_func(void* p) {
-  if (p != NULL) {
-    FX_Free(p);
-  }
+  FX_Free(p);
 }
 };
 static void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
@@ -192,7 +190,7 @@ static void _png_get_row_func(png_structp png_ptr,
   if (!pModule->AskScanlineBufCallback(p->child_ptr, row_num, src_buf)) {
     png_error(png_ptr, "Ask Scanline buffer Callback Error");
   }
-  if (src_buf != NULL) {
+  if (src_buf) {
     png_progressive_combine_row(png_ptr, src_buf, new_row);
   }
   pModule->FillScanlineBufCompletedCallback(p->child_ptr, pass, row_num);
@@ -220,7 +218,7 @@ void* CCodec_PngModule::Start(void* pModule) {
     return NULL;
   }
   if (setjmp(png_jmpbuf(p->png_ptr))) {
-    if (p != NULL) {
+    if (p) {
       png_destroy_read_struct(&(p->png_ptr), &(p->info_ptr), (png_infopp)NULL);
       FX_Free(p);
     }
@@ -234,7 +232,7 @@ void* CCodec_PngModule::Start(void* pModule) {
 }
 void CCodec_PngModule::Finish(void* pContext) {
   FXPNG_Context* p = (FXPNG_Context*)pContext;
-  if (p != NULL) {
+  if (p) {
     png_destroy_read_struct(&(p->png_ptr), &(p->info_ptr), (png_infopp)NULL);
     p->m_FreeFunc(p);
   }
