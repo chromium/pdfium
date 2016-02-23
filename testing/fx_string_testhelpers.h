@@ -15,4 +15,4 @@ std::ostream& operator<<(std::ostream& out, const CFX_ByteString& str);
 std::ostream& operator<<(std::ostream& out, const CFX_WideStringC& str);
 std::ostream& operator<<(std::ostream& out, const CFX_WideString& str);
 
-#endif  // TESTING_FX_STR_TESTHELPERS_H_
+#endif  // TESTING_FX_STRING_TESTHELPERS_H_
