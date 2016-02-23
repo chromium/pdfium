@@ -56,73 +56,60 @@ DLLEXPORT int STDCALL FPDFPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
   if (!hHandle)
     return -1;
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
-#ifdef PDF_ENABLE_XFA
   if (pPage) {
     CPDF_InterForm interform(pPage->m_pDocument, FALSE);
-    CPDF_FormControl* pFormCtrl = interform.GetControlAtPoint(
-        pPage, (FX_FLOAT)page_x, (FX_FLOAT)page_y, nullptr);
+    CPDF_FormControl* pFormCtrl =
+        interform.GetControlAtPoint(pPage, static_cast<FX_FLOAT>(page_x),
+                                    static_cast<FX_FLOAT>(page_y), nullptr);
     if (!pFormCtrl)
       return -1;
-
     CPDF_FormField* pFormField = pFormCtrl->GetField();
-    if (!pFormField)
-      return -1;
-
-    int nType = pFormField->GetFieldType();
-    return nType;
+    return pFormField ? pFormField->GetFieldType() : -1;
   }
 
-  IXFA_PageView* pPageView = ((CPDFXFA_Page*)page)->GetXFAPageView();
-  if (pPageView) {
-    IXFA_WidgetHandler* pWidgetHandler = NULL;
-    IXFA_DocView* pDocView = pPageView->GetDocView();
-    if (!pDocView)
-      return -1;
+#ifdef PDF_ENABLE_XFA
+  CPDFXFA_Page* pXFAPage = UnderlyingFromFPDFPage(page);
+  if (!pXFAPage)
+    return -1;
 
-    pWidgetHandler = pDocView->GetWidgetHandler();
-    if (!pWidgetHandler)
-      return -1;
+  IXFA_PageView* pPageView = pXFAPage->GetXFAPageView();
+  if (!pPageView)
+    return -1;
 
-    IXFA_Widget* pXFAAnnot = NULL;
-    IXFA_WidgetIterator* pWidgetIterator = pPageView->CreateWidgetIterator(
-        XFA_TRAVERSEWAY_Form,
-        XFA_WIDGETFILTER_Viewable | XFA_WIDGETFILTER_AllType);
-    if (!pWidgetIterator)
-      return -1;
-    pXFAAnnot = pWidgetIterator->MoveToNext();
-    while (pXFAAnnot) {
-      CFX_RectF rcBBox;
-      pWidgetHandler->GetBBox(pXFAAnnot, rcBBox, 0);
-      CFX_FloatRect rcWidget(rcBBox.left, rcBBox.top,
-                             rcBBox.left + rcBBox.width,
-                             rcBBox.top + rcBBox.height);
-      rcWidget.left -= 1.0f;
-      rcWidget.right += 1.0f;
-      rcWidget.bottom -= 1.0f;
-      rcWidget.top += 1.0f;
+  IXFA_DocView* pDocView = pPageView->GetDocView();
+  if (!pDocView)
+    return -1;
 
-      if (rcWidget.Contains(static_cast<FX_FLOAT>(page_x),
-                            static_cast<FX_FLOAT>(page_y))) {
-        pWidgetIterator->Release();
-        return FPDF_FORMFIELD_XFA;
-      }
-      pXFAAnnot = pWidgetIterator->MoveToNext();
+  IXFA_WidgetHandler* pWidgetHandler = pDocView->GetWidgetHandler();
+  if (!pWidgetHandler)
+    return -1;
+
+  std::unique_ptr<IXFA_WidgetIterator, ReleaseDeleter<IXFA_WidgetIterator>>
+      pWidgetIterator(pPageView->CreateWidgetIterator(
+          XFA_TRAVERSEWAY_Form,
+          XFA_WIDGETFILTER_Viewable | XFA_WIDGETFILTER_AllType));
+  if (!pWidgetIterator)
+    return -1;
+
+  IXFA_Widget* pXFAAnnot = pWidgetIterator->MoveToNext();
+  while (pXFAAnnot) {
+    CFX_RectF rcBBox;
+    pWidgetHandler->GetBBox(pXFAAnnot, rcBBox, 0);
+    CFX_FloatRect rcWidget(rcBBox.left, rcBBox.top, rcBBox.left + rcBBox.width,
+                           rcBBox.top + rcBBox.height);
+    rcWidget.left -= 1.0f;
+    rcWidget.right += 1.0f;
+    rcWidget.bottom -= 1.0f;
+    rcWidget.top += 1.0f;
+
+    if (rcWidget.Contains(static_cast<FX_FLOAT>(page_x),
+                          static_cast<FX_FLOAT>(page_y))) {
+      return FPDF_FORMFIELD_XFA;
     }
-
-    pWidgetIterator->Release();
+    pXFAAnnot = pWidgetIterator->MoveToNext();
   }
-  return -1;
-#else   // PDF_ENABLE_XFA
-  if (!pPage)
-    return -1;
-  CPDF_InterForm interform(pPage->m_pDocument, FALSE);
-  CPDF_FormControl* pFormCtrl = interform.GetControlAtPoint(
-      pPage, (FX_FLOAT)page_x, (FX_FLOAT)page_y, nullptr);
-  if (!pFormCtrl)
-    return -1;
-  CPDF_FormField* pFormField = pFormCtrl->GetField();
-  return pFormField ? pFormField->GetFieldType() : -1;
 #endif  // PDF_ENABLE_XFA
+  return -1;
 }
 
 DLLEXPORT int STDCALL FPDPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
