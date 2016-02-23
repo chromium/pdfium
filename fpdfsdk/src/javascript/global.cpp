@@ -57,7 +57,7 @@ static unsigned JS_CalcHash(const wchar_t* main) {
   return (unsigned)FX_HashCode_String_GetW(main, FXSYS_wcslen(main));
 }
 
-#ifdef _DEBUG
+#ifndef NDEBUG
 class HashVerify {
  public:
   HashVerify();

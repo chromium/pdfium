@@ -3277,7 +3277,7 @@ void CXFA_FM2JSContext::Ref(FXJSE_HOBJECT hThis,
         FXJSE_Value_Release(rgValues[i]);
       }
     } else if (FXJSE_Value_IsArray(argOne)) {
-#if defined(_DEBUG)
+#ifndef NDEBUG
       FXJSE_HVALUE lengthValue = FXJSE_Value_Create(hruntime);
       FXJSE_Value_GetObjectProp(argOne, "length", lengthValue);
       FXSYS_assert(FXJSE_Value_ToInteger(lengthValue) >= 3);
@@ -6458,7 +6458,7 @@ void CXFA_FM2JSContext::get_fm_jsobj(FXJSE_HOBJECT hThis,
   if (argc == 1) {
     FXJSE_HVALUE argOne = args.GetValue(0);
     if (FXJSE_Value_IsArray(argOne)) {
-#if defined(_DEBUG)
+#ifndef NDEBUG
       FXJSE_HRUNTIME hruntime = pContext->GetScriptRuntime();
       FXJSE_HVALUE lengthValue = FXJSE_Value_Create(hruntime);
       FXJSE_Value_GetObjectProp(argOne, "length", lengthValue);
@@ -6484,7 +6484,7 @@ void CXFA_FM2JSContext::fm_var_filter(FXJSE_HOBJECT hThis,
   if (argc == 1) {
     FXJSE_HVALUE argOne = args.GetValue(0);
     if (FXJSE_Value_IsArray(argOne)) {
-#if defined(_DEBUG)
+#ifndef NDEBUG
       FXJSE_HVALUE lengthValue = FXJSE_Value_Create(hruntime);
       FXJSE_Value_GetObjectProp(argOne, "length", lengthValue);
       FXSYS_assert(FXJSE_Value_ToInteger(lengthValue) >= 3);

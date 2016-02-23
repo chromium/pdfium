@@ -81,10 +81,6 @@ typedef wchar_t FX_WCHAR;        // Keep, maybe bad platform wchars.
 // TODO(palmer): it should be a |size_t|, or at least unsigned.
 typedef int FX_STRSIZE;
 
-#if defined(DEBUG) && !defined(_DEBUG)
-#define _DEBUG
-#endif
-
 #ifndef TRUE
 #define TRUE 1
 #endif
@@ -104,7 +100,7 @@ static_assert(FALSE == false, "false_needs_to_be_false");
 
 #define FXSYS_assert assert
 #ifndef ASSERT
-#ifdef _DEBUG
+#ifndef NDEBUG
 #define ASSERT FXSYS_assert
 #else
 #define ASSERT(a)
