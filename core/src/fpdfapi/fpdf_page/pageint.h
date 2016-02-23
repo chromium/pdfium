@@ -9,6 +9,7 @@
 
 #include <map>
 #include <memory>
+#include <unordered_map>
 #include <vector>
 
 #include "core/include/fpdfapi/fpdf_page.h"
@@ -117,7 +118,7 @@ class CPDF_StreamContentParser {
   FX_FLOAT GetNumber(FX_DWORD index);
   FX_FLOAT GetNumber16(FX_DWORD index);
   int GetInteger(FX_DWORD index) { return (int32_t)(GetNumber(index)); }
-  FX_BOOL OnOperator(const FX_CHAR* op);
+  void OnOperator(const FX_CHAR* op);
   void BigCaseCaller(int index);
   FX_DWORD GetParsePos() { return m_pSyntax->GetPos(); }
   void AddTextObject(CFX_ByteString* pText,
@@ -151,11 +152,9 @@ class CPDF_StreamContentParser {
                                const CFX_ByteString& name);
 
  protected:
-  struct OpCode {
-    FX_DWORD m_OpId;
-    void (CPDF_StreamContentParser::*m_OpHandler)();
-  };
-  static const OpCode g_OpCodes[];
+  using OpCodes =
+      std::unordered_map<FX_DWORD, void (CPDF_StreamContentParser::*)()>;
+  static const OpCodes s_OpCodes;
 
   void Handle_CloseFillStrokePath();
   void Handle_FillStrokePath();
@@ -165,7 +164,6 @@ class CPDF_StreamContentParser {
   void Handle_BeginImage();
   void Handle_BeginMarkedContent();
   void Handle_BeginText();
-  void Handle_BeginSectionUndefined();
   void Handle_CurveTo_123();
   void Handle_ConcatMatrix();
   void Handle_SetColorSpace_Fill();
@@ -178,7 +176,6 @@ class CPDF_StreamContentParser {
   void Handle_EndImage();
   void Handle_EndMarkedContent();
   void Handle_EndText();
-  void Handle_EndSectionUndefined();
   void Handle_FillPath();
   void Handle_FillPathOld();
   void Handle_EOFillPath();
@@ -250,7 +247,6 @@ class CPDF_StreamContentParser {
   CFX_ArrayTemplate<CPDF_TextObject*> m_ClipTextList;
   CPDF_TextObject* m_pLastTextObject;
   FX_FLOAT m_DefFontSize;
-  int m_CompatCount;
   FX_PATHPOINT* m_pPathPoints;
   int m_PathPointCount;
   int m_PathAllocSize;

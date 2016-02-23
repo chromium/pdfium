@@ -340,7 +340,7 @@ void CPDF_StreamContentParser::SetGraphicStates(CPDF_PageObject* pObj,
   }
 }
 
-const CPDF_StreamContentParser::OpCode CPDF_StreamContentParser::g_OpCodes[] = {
+const CPDF_StreamContentParser::OpCodes CPDF_StreamContentParser::s_OpCodes = {
     {FXBSTR_ID('"', 0, 0, 0),
      &CPDF_StreamContentParser::Handle_NextLineShowText_Space},
     {FXBSTR_ID('\'', 0, 0, 0),
@@ -354,8 +354,6 @@ const CPDF_StreamContentParser::OpCode CPDF_StreamContentParser::g_OpCodes[] = {
     {FXBSTR_ID('B', 'M', 'C', 0),
      &CPDF_StreamContentParser::Handle_BeginMarkedContent},
     {FXBSTR_ID('B', 'T', 0, 0), &CPDF_StreamContentParser::Handle_BeginText},
-    {FXBSTR_ID('B', 'X', 0, 0),
-     &CPDF_StreamContentParser::Handle_BeginSectionUndefined},
     {FXBSTR_ID('C', 'S', 0, 0),
      &CPDF_StreamContentParser::Handle_SetColorSpace_Stroke},
     {FXBSTR_ID('D', 'P', 0, 0),
@@ -366,8 +364,6 @@ const CPDF_StreamContentParser::OpCode CPDF_StreamContentParser::g_OpCodes[] = {
     {FXBSTR_ID('E', 'M', 'C', 0),
      &CPDF_StreamContentParser::Handle_EndMarkedContent},
     {FXBSTR_ID('E', 'T', 0, 0), &CPDF_StreamContentParser::Handle_EndText},
-    {FXBSTR_ID('E', 'X', 0, 0),
-     &CPDF_StreamContentParser::Handle_EndSectionUndefined},
     {FXBSTR_ID('F', 0, 0, 0), &CPDF_StreamContentParser::Handle_FillPathOld},
     {FXBSTR_ID('G', 0, 0, 0), &CPDF_StreamContentParser::Handle_SetGray_Stroke},
     {FXBSTR_ID('I', 'D', 0, 0),
@@ -451,7 +447,7 @@ const CPDF_StreamContentParser::OpCode CPDF_StreamContentParser::g_OpCodes[] = {
     {FXBSTR_ID('y', 0, 0, 0), &CPDF_StreamContentParser::Handle_CurveTo_13},
 };
 
-FX_BOOL CPDF_StreamContentParser::OnOperator(const FX_CHAR* op) {
+void CPDF_StreamContentParser::OnOperator(const FX_CHAR* op) {
   int i = 0;
   FX_DWORD opid = 0;
   while (i < 4 && op[i]) {
@@ -462,21 +458,10 @@ FX_BOOL CPDF_StreamContentParser::OnOperator(const FX_CHAR* op) {
     opid <<= 8;
     i++;
   }
-  int low = 0, high = sizeof g_OpCodes / sizeof(OpCode) - 1;
-  while (low <= high) {
-    int middle = (low + high) / 2;
-    int compare = opid - g_OpCodes[middle].m_OpId;
-    if (compare == 0) {
-      (this->*g_OpCodes[middle].m_OpHandler)();
-      return TRUE;
-    }
-    if (compare < 0) {
-      high = middle - 1;
-    } else {
-      low = middle + 1;
-    }
-  }
-  return m_CompatCount != 0;
+
+  auto it = s_OpCodes.find(opid);
+  if (it != s_OpCodes.end())
+    (this->*it->second)();
 }
 
 void CPDF_StreamContentParser::Handle_CloseFillStrokePath() {
@@ -623,10 +608,6 @@ void CPDF_StreamContentParser::Handle_BeginText() {
   m_pCurStates->m_TextY = 0;
   m_pCurStates->m_TextLineX = 0;
   m_pCurStates->m_TextLineY = 0;
-}
-
-void CPDF_StreamContentParser::Handle_BeginSectionUndefined() {
-  m_CompatCount++;
 }
 
 void CPDF_StreamContentParser::Handle_CurveTo_123() {
@@ -861,12 +842,6 @@ void CPDF_StreamContentParser::Handle_EndText() {
     m_pCurStates->m_ClipPath.AppendTexts(m_ClipTextList.GetData(), count);
   }
   m_ClipTextList.RemoveAll();
-}
-
-void CPDF_StreamContentParser::Handle_EndSectionUndefined() {
-  if (m_CompatCount) {
-    m_CompatCount--;
-  }
 }
 
 void CPDF_StreamContentParser::Handle_FillPath() {
@@ -1642,7 +1617,6 @@ FX_DWORD CPDF_StreamContentParser::Parse(const uint8_t* pData,
   FX_DWORD InitObjCount = m_pObjectHolder->GetPageObjectList()->size();
   CPDF_StreamParser syntax(pData, dwSize);
   CPDF_StreamParserAutoClearer auto_clearer(&m_pSyntax, &syntax);
-  m_CompatCount = 0;
   while (1) {
     FX_DWORD cost = m_pObjectHolder->GetPageObjectList()->size() - InitObjCount;
     if (max_cost && cost >= max_cost) {
