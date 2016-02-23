@@ -1389,11 +1389,8 @@ void CPDF_StreamContentParser::AddTextObject(CFX_ByteString* pStrs,
                             m_pCurStates->m_TextHorzScale, m_Level);
     m_pCurStates->m_TextX += x_advance;
     m_pCurStates->m_TextY += y_advance;
-    if (textmode > 3) {
-      CPDF_TextObject* pCopy = new CPDF_TextObject;
-      pCopy->Copy(pText.get());
-      m_ClipTextList.Add(pCopy);
-    }
+    if (textmode > 3)
+      m_ClipTextList.Add(pText->Clone());
     m_pObjectHolder->GetPageObjectList()->push_back(std::move(pText));
   }
   if (pKerning && pKerning[nsegs - 1] != 0) {

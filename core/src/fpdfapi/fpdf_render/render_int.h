@@ -340,7 +340,7 @@ class CPDF_ImageRenderer : public IPDF_ObjectRenderer {
 
  protected:
   CPDF_RenderStatus* m_pRenderStatus;
-  CPDF_ImageObject* m_pImageObject;
+  const CPDF_ImageObject* m_pImageObject;
   int m_Status;
   const CFX_Matrix* m_pObj2Device;
   CFX_Matrix m_ImageMatrix;

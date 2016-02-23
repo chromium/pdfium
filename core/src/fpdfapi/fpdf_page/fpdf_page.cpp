@@ -12,64 +12,18 @@
 #include "core/include/fpdfapi/fpdf_page.h"
 #include "third_party/base/stl_util.h"
 
-CPDF_PageObject* CPDF_PageObject::Create(Type type) {
-  switch (type) {
-    case TEXT:
-      return new CPDF_TextObject;
-    case IMAGE:
-      return new CPDF_ImageObject;
-    case PATH:
-      return new CPDF_PathObject;
-    case SHADING:
-      return new CPDF_ShadingObject;
-    case FORM:
-      return new CPDF_FormObject;
-  }
-  return NULL;
-}
+CPDF_PageObject::CPDF_PageObject() {}
+
 CPDF_PageObject::~CPDF_PageObject() {}
-CPDF_PageObject* CPDF_PageObject::Clone() const {
-  CPDF_PageObject* pObj = Create(GetType());
-  pObj->Copy(this);
-  return pObj;
-}
-void CPDF_PageObject::Copy(const CPDF_PageObject* pSrc) {
-  if (GetType() != pSrc->GetType()) {
-    return;
-  }
-  CopyData(pSrc);
+
+void CPDF_PageObject::CopyData(const CPDF_PageObject* pSrc) {
   CopyStates(*pSrc);
   m_Left = pSrc->m_Left;
   m_Right = pSrc->m_Right;
   m_Top = pSrc->m_Top;
   m_Bottom = pSrc->m_Bottom;
 }
-void CPDF_PageObject::AppendClipPath(CPDF_Path path,
-                                     int type,
-                                     FX_BOOL bAutoMerge) {
-  m_ClipPath.AppendPath(path, type, bAutoMerge);
-}
-void CPDF_PageObject::CopyClipPath(CPDF_PageObject* pObj) {
-  m_ClipPath = pObj->m_ClipPath;
-}
-void CPDF_PageObject::RemoveClipPath() {
-  m_ClipPath.SetNull();
-}
-void CPDF_PageObject::RecalcBBox() {
-  switch (GetType()) {
-    case TEXT:
-      ((CPDF_TextObject*)this)->RecalcPositionData();
-      break;
-    case PATH:
-      ((CPDF_PathObject*)this)->CalcBoundingBox();
-      break;
-    case SHADING:
-      ((CPDF_ShadingObject*)this)->CalcBoundingBox();
-      break;
-    default:
-      break;
-  }
-}
+
 void CPDF_PageObject::TransformClipPath(CFX_Matrix& matrix) {
   if (m_ClipPath.IsNull()) {
     return;
@@ -77,6 +31,7 @@ void CPDF_PageObject::TransformClipPath(CFX_Matrix& matrix) {
   m_ClipPath.GetModify();
   m_ClipPath.Transform(matrix);
 }
+
 void CPDF_PageObject::TransformGeneralState(CFX_Matrix& matrix) {
   if (m_GeneralState.IsNull()) {
     return;
@@ -84,6 +39,7 @@ void CPDF_PageObject::TransformGeneralState(CFX_Matrix& matrix) {
   CPDF_GeneralStateData* pGS = m_GeneralState.GetModify();
   pGS->m_Matrix.Concat(matrix);
 }
+
 FX_RECT CPDF_PageObject::GetBBox(const CFX_Matrix* pMatrix) const {
   CFX_FloatRect rect(m_Left, m_Bottom, m_Right, m_Top);
   if (pMatrix) {
@@ -187,29 +143,23 @@ void CPDF_TextObject::GetCharInfo(int index, CPDF_TextObjectItem* pInfo) const {
   }
 }
 
-void CPDF_TextObject::CopyData(const CPDF_PageObject* pSrc) {
-  const CPDF_TextObject* pSrcObj = (const CPDF_TextObject*)pSrc;
+CPDF_TextObject* CPDF_TextObject::Clone() const {
+  CPDF_TextObject* obj = new CPDF_TextObject;
+  obj->CopyData(this);
+
+  obj->m_nChars = m_nChars;
   if (m_nChars > 1) {
-    FX_Free(m_pCharCodes);
-    m_pCharCodes = nullptr;
-  }
-  FX_Free(m_pCharPos);
-  m_pCharPos = nullptr;
-  m_nChars = pSrcObj->m_nChars;
-  if (m_nChars > 1) {
-    m_pCharCodes = FX_Alloc(FX_DWORD, m_nChars);
-    m_pCharPos = FX_Alloc(FX_FLOAT, m_nChars - 1);
-    for (int i = 0; i < m_nChars; ++i) {
-      m_pCharCodes[i] = pSrcObj->m_pCharCodes[i];
-    }
-    for (int i = 0; i < m_nChars - 1; ++i) {
-      m_pCharPos[i] = pSrcObj->m_pCharPos[i];
-    }
+    obj->m_pCharCodes = FX_Alloc(FX_DWORD, m_nChars);
+    FXSYS_memcpy(obj->m_pCharCodes, m_pCharCodes, m_nChars * sizeof(FX_DWORD));
+    obj->m_pCharPos = FX_Alloc(FX_FLOAT, m_nChars - 1);
+    FXSYS_memcpy(obj->m_pCharPos, m_pCharPos,
+                 (m_nChars - 1) * sizeof(FX_FLOAT));
   } else {
-    m_pCharCodes = pSrcObj->m_pCharCodes;
+    obj->m_pCharCodes = m_pCharCodes;
   }
-  m_PosX = pSrcObj->m_PosX;
-  m_PosY = pSrcObj->m_PosY;
+  obj->m_PosX = m_PosX;
+  obj->m_PosY = m_PosY;
+  return obj;
 }
 
 void CPDF_TextObject::GetTextMatrix(CFX_Matrix* pMatrix) const {
@@ -260,61 +210,6 @@ void CPDF_TextObject::SetText(const CFX_ByteString& str) {
   RecalcPositionData();
 }
 
-void CPDF_TextObject::SetEmpty() {
-  if (m_nChars > 1) {
-    FX_Free(m_pCharCodes);
-  }
-  if (m_nChars > 1) {
-    FX_Free(m_pCharPos);
-  }
-  m_nChars = 0;
-  m_pCharCodes = nullptr;
-  m_pCharPos = nullptr;
-  m_Left = m_Right = m_PosX;
-  m_Top = m_Bottom = m_PosY;
-}
-
-void CPDF_TextObject::SetText(CFX_ByteString* pStrs,
-                              FX_FLOAT* pKerning,
-                              int nSegs) {
-  SetSegments(pStrs, pKerning, nSegs);
-  RecalcPositionData();
-}
-
-void CPDF_TextObject::SetText(int nChars,
-                              FX_DWORD* pCharCodes,
-                              FX_FLOAT* pKernings) {
-  if (m_nChars > 1) {
-    FX_Free(m_pCharCodes);
-    m_pCharCodes = nullptr;
-  }
-  FX_Free(m_pCharPos);
-  m_pCharPos = nullptr;
-  int nKernings = 0;
-  int i;
-  for (i = 0; i < nChars - 1; ++i) {
-    if (pKernings[i] != 0) {
-      ++nKernings;
-    }
-  }
-  m_nChars = nChars + nKernings;
-  if (m_nChars > 1) {
-    m_pCharCodes = FX_Alloc(FX_DWORD, m_nChars);
-    m_pCharPos = FX_Alloc(FX_FLOAT, m_nChars - 1);
-    for (int i = 0, index = 0; i < nChars; ++i) {
-      m_pCharCodes[index++] = pCharCodes[i];
-      if (pKernings[i] != 0 && i != nChars - 1) {
-        m_pCharCodes[index] = (FX_DWORD)-1;
-        m_pCharPos[index - 1] = pKernings[i];
-        ++index;
-      }
-    }
-  } else {
-    m_pCharCodes = (FX_DWORD*)(uintptr_t)pCharCodes[0];
-  }
-  RecalcPositionData();
-}
-
 FX_FLOAT CPDF_TextObject::GetCharWidth(FX_DWORD charcode) const {
   FX_FLOAT fontsize = m_TextState.GetFontSize() / 1000;
   CPDF_Font* pFont = m_TextState.GetFont();
@@ -328,69 +223,6 @@ FX_FLOAT CPDF_TextObject::GetCharWidth(FX_DWORD charcode) const {
 
   FX_WORD CID = pCIDFont->CIDFromCharCode(charcode);
   return pCIDFont->GetVertWidth(CID) * fontsize;
-}
-
-FX_FLOAT CPDF_TextObject::GetSpaceCharWidth() const {
-  CPDF_Font* pFont = m_TextState.GetFont();
-  FX_DWORD charCode = m_TextState.GetFont()->CharCodeFromUnicode(32);
-  if (charCode != (FX_DWORD)-1) {
-    return GetCharWidth(charCode);
-  }
-  FX_FLOAT fontSize = m_TextState.GetFontSize() / 4000.0f;
-  FX_BOOL bVertWriting = FALSE;
-  CPDF_CIDFont* pCIDFont = pFont->GetCIDFont();
-  if (pCIDFont) {
-    bVertWriting = pCIDFont->IsVertWriting();
-  }
-  FX_RECT fontRect;
-  pFont->GetFontBBox(fontRect);
-  fontSize *=
-      bVertWriting ? (FX_FLOAT)fontRect.Height() : (FX_FLOAT)fontRect.Width();
-  return fontSize;
-}
-
-void CPDF_TextObject::GetCharRect(int index, CFX_FloatRect& rect) const {
-  CPDF_Font* pFont = m_TextState.GetFont();
-  FX_BOOL bVertWriting = FALSE;
-  CPDF_CIDFont* pCIDFont = pFont->GetCIDFont();
-  if (pCIDFont) {
-    bVertWriting = pCIDFont->IsVertWriting();
-  }
-  FX_FLOAT fontsize = m_TextState.GetFontSize() / 1000;
-  int count = 0;
-  for (int i = 0; i < m_nChars; ++i) {
-    FX_DWORD charcode =
-        m_nChars == 1 ? (FX_DWORD)(uintptr_t)m_pCharCodes : m_pCharCodes[i];
-    if (charcode == (FX_DWORD)-1) {
-      continue;
-    }
-    if (count != index) {
-      ++count;
-      continue;
-    }
-    FX_FLOAT curpos = i > 0 ? m_pCharPos[i - 1] : 0;
-    FX_RECT char_rect;
-    pFont->GetCharBBox(charcode, char_rect, 0);
-    if (!bVertWriting) {
-      rect.left = curpos + char_rect.left * fontsize;
-      rect.right = curpos + char_rect.right * fontsize;
-      rect.top = char_rect.top * fontsize;
-      rect.bottom = char_rect.bottom * fontsize;
-    } else {
-      FX_WORD CID = pCIDFont->CIDFromCharCode(charcode);
-      short vx, vy;
-      pCIDFont->GetVertOrigin(CID, vx, vy);
-      char_rect.left -= vx;
-      char_rect.right -= vx;
-      char_rect.top -= vy;
-      char_rect.bottom -= vy;
-      rect.left = char_rect.left * fontsize;
-      rect.right = char_rect.right * fontsize;
-      rect.top = curpos + char_rect.top * fontsize;
-      rect.bottom = curpos + char_rect.bottom * fontsize;
-    }
-    return;
-  }
 }
 
 void CPDF_TextObject::CalcPositionData(FX_FLOAT* pTextAdvanceX,
@@ -529,33 +361,6 @@ void CPDF_TextObject::CalcPositionData(FX_FLOAT* pTextAdvanceX,
   }
 }
 
-void CPDF_TextObject::CalcCharPos(FX_FLOAT* pPosArray) const {
-  CPDF_Font* pFont = m_TextState.GetFont();
-  FX_BOOL bVertWriting = FALSE;
-  CPDF_CIDFont* pCIDFont = pFont->GetCIDFont();
-  if (pCIDFont) {
-    bVertWriting = pCIDFont->IsVertWriting();
-  }
-  FX_FLOAT fontsize = m_TextState.GetFontSize();
-  for (int i = 0, index = 0; i < m_nChars; ++i) {
-    FX_DWORD charcode =
-        m_nChars == 1 ? (FX_DWORD)(uintptr_t)m_pCharCodes : m_pCharCodes[i];
-    if (charcode == (FX_DWORD)-1) {
-      continue;
-    }
-    pPosArray[index++] = i ? m_pCharPos[i - 1] : 0;
-    FX_FLOAT charwidth;
-    if (bVertWriting) {
-      FX_WORD CID = pCIDFont->CIDFromCharCode(charcode);
-      charwidth = pCIDFont->GetVertWidth(CID) * fontsize / 1000;
-    } else {
-      charwidth = pFont->GetCharWidthF(charcode) * fontsize / 1000;
-    }
-    pPosArray[index] = pPosArray[index - 1] + charwidth;
-    index++;
-  }
-}
-
 void CPDF_TextObject::Transform(const CFX_Matrix& matrix) {
   m_TextState.GetModify();
   CFX_Matrix text_matrix;
@@ -582,48 +387,24 @@ void CPDF_TextObject::SetPosition(FX_FLOAT x, FX_FLOAT y) {
   m_Bottom += dy;
 }
 
-void CPDF_TextObject::SetData(int nChars,
-                              FX_DWORD* pCharCodes,
-                              FX_FLOAT* pCharPos,
-                              FX_FLOAT x,
-                              FX_FLOAT y) {
-  ASSERT(m_nChars == 0);
-  m_nChars = nChars;
-  m_PosX = x;
-  m_PosY = y;
-  if (nChars == 0) {
-    return;
-  }
-  if (nChars == 1) {
-    m_pCharCodes = (FX_DWORD*)(uintptr_t)*pCharCodes;
-  } else {
-    m_pCharCodes = FX_Alloc(FX_DWORD, nChars);
-    FXSYS_memcpy(m_pCharCodes, pCharCodes, sizeof(FX_DWORD) * nChars);
-    m_pCharPos = FX_Alloc(FX_FLOAT, nChars - 1);
-    FXSYS_memcpy(m_pCharPos, pCharPos, sizeof(FX_FLOAT) * (nChars - 1));
-  }
-  RecalcPositionData();
-}
-
-void CPDF_TextObject::SetTextState(CPDF_TextState TextState) {
-  m_TextState = TextState;
-  CalcPositionData(nullptr, nullptr, 0);
-}
-
 CPDF_ShadingObject::CPDF_ShadingObject() : m_pShading(nullptr) {}
 
 CPDF_ShadingObject::~CPDF_ShadingObject() {}
 
-void CPDF_ShadingObject::CopyData(const CPDF_PageObject* pSrc) {
-  CPDF_ShadingObject* pSrcObj = (CPDF_ShadingObject*)pSrc;
-  m_pShading = pSrcObj->m_pShading;
-  if (m_pShading && m_pShading->m_pDocument) {
-    CPDF_DocPageData* pDocPageData = m_pShading->m_pDocument->GetPageData();
-    m_pShading = (CPDF_ShadingPattern*)pDocPageData->GetPattern(
-        m_pShading->m_pShadingObj, m_pShading->m_bShadingObj,
-        &m_pShading->m_ParentMatrix);
+CPDF_ShadingObject* CPDF_ShadingObject::Clone() const {
+  CPDF_ShadingObject* obj = new CPDF_ShadingObject;
+  obj->CopyData(this);
+
+  obj->m_pShading = m_pShading;
+  if (obj->m_pShading && obj->m_pShading->m_pDocument) {
+    CPDF_DocPageData* pDocPageData =
+        obj->m_pShading->m_pDocument->GetPageData();
+    obj->m_pShading = (CPDF_ShadingPattern*)pDocPageData->GetPattern(
+        obj->m_pShading->m_pShadingObj, m_pShading->m_bShadingObj,
+        &obj->m_pShading->m_ParentMatrix);
   }
-  m_Matrix = pSrcObj->m_Matrix;
+  obj->m_Matrix = m_Matrix;
+  return obj;
 }
 
 void CPDF_ShadingObject::Transform(const CFX_Matrix& matrix) {
@@ -650,19 +431,26 @@ void CPDF_ShadingObject::CalcBoundingBox() {
   m_Top = rect.top;
 }
 
+CPDF_FormObject::CPDF_FormObject() : m_pForm(nullptr) {}
+
 CPDF_FormObject::~CPDF_FormObject() {
   delete m_pForm;
 }
+
 void CPDF_FormObject::Transform(const CFX_Matrix& matrix) {
   m_FormMatrix.Concat(matrix);
   CalcBoundingBox();
 }
-void CPDF_FormObject::CopyData(const CPDF_PageObject* pSrc) {
-  const CPDF_FormObject* pSrcObj = (const CPDF_FormObject*)pSrc;
-  delete m_pForm;
-  m_pForm = pSrcObj->m_pForm->Clone();
-  m_FormMatrix = pSrcObj->m_FormMatrix;
+
+CPDF_FormObject* CPDF_FormObject::Clone() const {
+  CPDF_FormObject* obj = new CPDF_FormObject;
+  obj->CopyData(this);
+
+  obj->m_pForm = m_pForm->Clone();
+  obj->m_FormMatrix = m_FormMatrix;
+  return obj;
 }
+
 void CPDF_FormObject::CalcBoundingBox() {
   CFX_FloatRect form_rect = m_pForm->CalcBoundingBox();
   form_rect.Transform(&m_FormMatrix);
@@ -819,6 +607,7 @@ void CPDF_Page::Load(CPDF_Document* pDocument,
   m_Transparency = PDFTRANS_ISOLATED;
   LoadTransInfo();
 }
+
 void CPDF_Page::StartParse(CPDF_ParseOptions* pOptions) {
   if (m_ParseState == CONTENT_PARSED || m_ParseState == CONTENT_PARSING) {
     return;
@@ -827,16 +616,19 @@ void CPDF_Page::StartParse(CPDF_ParseOptions* pOptions) {
   m_pParser->Start(this, pOptions);
   m_ParseState = CONTENT_PARSING;
 }
+
 void CPDF_Page::ParseContent(CPDF_ParseOptions* pOptions) {
   StartParse(pOptions);
   ContinueParse(nullptr);
 }
+
 CPDF_Page::~CPDF_Page() {
   if (m_pPageRender) {
     IPDF_RenderModule* pModule = CPDF_ModuleMgr::Get()->GetRenderModule();
     pModule->DestroyPageCache(m_pPageRender);
   }
 }
+
 CPDF_Object* FPDFAPI_GetPageAttr(CPDF_Dictionary* pPageDict,
                                  const CFX_ByteStringC& name) {
   int level = 0;
@@ -856,9 +648,11 @@ CPDF_Object* FPDFAPI_GetPageAttr(CPDF_Dictionary* pPageDict,
     }
   }
 }
+
 CPDF_Object* CPDF_Page::GetPageAttr(const CFX_ByteStringC& name) const {
   return FPDFAPI_GetPageAttr(m_pFormDict, name);
 }
+
 CPDF_Form::CPDF_Form(CPDF_Document* pDoc,
                      CPDF_Dictionary* pPageResources,
                      CPDF_Stream* pFormStream,
@@ -966,6 +760,7 @@ void CPDF_Page::GetDisplayMatrix(CFX_Matrix& matrix,
   matrix = m_PageMatrix;
   matrix.Concat(display_matrix);
 }
+
 CPDF_ParseOptions::CPDF_ParseOptions() {
   m_bTextOnly = FALSE;
   m_bMarkedContent = TRUE;

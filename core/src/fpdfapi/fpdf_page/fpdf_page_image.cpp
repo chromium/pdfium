@@ -10,6 +10,7 @@
 #include "core/include/fpdfapi/fpdf_pageobj.h"
 
 CPDF_ImageObject::CPDF_ImageObject() : m_pImage(nullptr) {}
+
 CPDF_ImageObject::~CPDF_ImageObject() {
   if (!m_pImage) {
     return;
@@ -21,14 +22,16 @@ CPDF_ImageObject::~CPDF_ImageObject() {
     m_pImage->GetDocument()->GetPageData()->ReleaseImage(m_pImage->GetStream());
   }
 }
-void CPDF_ImageObject::CopyData(const CPDF_PageObject* pSrc) {
-  const CPDF_ImageObject* pSrcObj = (const CPDF_ImageObject*)pSrc;
-  if (m_pImage) {
-    m_pImage->Release();
-  }
-  m_pImage = pSrcObj->m_pImage->Clone();
-  m_Matrix = pSrcObj->m_Matrix;
+
+CPDF_ImageObject* CPDF_ImageObject::Clone() const {
+  CPDF_ImageObject* obj = new CPDF_ImageObject;
+  obj->CopyData(this);
+
+  obj->m_pImage = m_pImage->Clone();
+  obj->m_Matrix = m_Matrix;
+  return obj;
 }
+
 void CPDF_ImageObject::Transform(const CFX_Matrix& matrix) {
   m_Matrix.Concat(matrix);
   CalcBoundingBox();

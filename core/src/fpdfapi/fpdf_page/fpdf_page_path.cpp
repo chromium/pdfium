@@ -10,21 +10,26 @@
 #include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fpdfapi/fpdf_pageobj.h"
 
-void CPDF_PathObject::CopyData(const CPDF_PageObject* pSrc) {
-  const CPDF_PathObject* pSrcObj = (const CPDF_PathObject*)pSrc;
-  m_Path = pSrcObj->m_Path;
-  m_FillType = pSrcObj->m_FillType;
-  m_bStroke = pSrcObj->m_bStroke;
-  m_Matrix = pSrcObj->m_Matrix;
+CPDF_PathObject::CPDF_PathObject() {}
+
+CPDF_PathObject::~CPDF_PathObject() {}
+
+CPDF_PathObject* CPDF_PathObject::Clone() const {
+  CPDF_PathObject* obj = new CPDF_PathObject;
+  obj->CopyData(this);
+
+  obj->m_Path = m_Path;
+  obj->m_FillType = m_FillType;
+  obj->m_bStroke = m_bStroke;
+  obj->m_Matrix = m_Matrix;
+  return obj;
 }
+
 void CPDF_PathObject::Transform(const CFX_Matrix& matrix) {
   m_Matrix.Concat(matrix);
   CalcBoundingBox();
 }
-void CPDF_PathObject::SetGraphState(CPDF_GraphState GraphState) {
-  m_GraphState = GraphState;
-  CalcBoundingBox();
-}
+
 void CPDF_PathObject::CalcBoundingBox() {
   if (m_Path.IsNull()) {
     return;

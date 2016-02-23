@@ -731,8 +731,7 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
                                                 FX_BOOL bStroke) {
   if (!bStroke) {
     CPDF_PathObject path;
-    CPDF_TextObject* pCopy = new CPDF_TextObject;
-    pCopy->Copy(textobj);
+    CPDF_TextObject* pCopy = textobj->Clone();
     path.m_bStroke = FALSE;
     path.m_FillType = FXFILL_WINDING;
     path.m_ClipPath.AppendTexts(&pCopy, 1);

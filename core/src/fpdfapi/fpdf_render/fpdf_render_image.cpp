@@ -462,7 +462,7 @@ FX_BOOL CPDF_ImageRenderer::Start(CPDF_RenderStatus* pStatus,
                                   int blendType) {
   m_pRenderStatus = pStatus;
   m_bStdCS = bStdCS;
-  m_pImageObject = (CPDF_ImageObject*)pObj;
+  m_pImageObject = pObj->AsImage();
   m_BlendType = blendType;
   m_pObj2Device = pObj2Device;
   CPDF_Dictionary* pOC = m_pImageObject->m_pImage->GetOC();
