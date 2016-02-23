@@ -63,18 +63,10 @@ FX_BOOL CFWL_ListBox::DeleteString(FWL_HLISTITEM hItem) {
     pSel->m_dwStates |= FWL_ITEMSTATE_LTB_Selected;
   }
   m_ListBoxDP.m_ItemArray.erase(m_ListBoxDP.m_ItemArray.begin() + nIndex);
-  delete pDelItem;
   return TRUE;
 }
-FX_BOOL CFWL_ListBox::DeleteAll() {
-  size_t iCount = m_ListBoxDP.CountItems(m_pIface);
-  for (size_t i = 0; i < iCount; ++i) {
-    CFWL_ListItem* pItem =
-        reinterpret_cast<CFWL_ListItem*>(m_ListBoxDP.GetItem(m_pIface, i));
-    delete pItem;
-  }
+void CFWL_ListBox::DeleteAll() {
   m_ListBoxDP.m_ItemArray.clear();
-  return TRUE;
 }
 int32_t CFWL_ListBox::CountSelItems() {
   if (!m_pIface)

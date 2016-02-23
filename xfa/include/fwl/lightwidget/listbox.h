@@ -26,7 +26,7 @@ class CFWL_ListBox : public CFWL_Widget {
   FWL_HLISTITEM AddString(const CFX_WideStringC& wsAdd,
                           FX_BOOL bSelect = FALSE);
   FX_BOOL DeleteString(FWL_HLISTITEM hItem);
-  FX_BOOL DeleteAll();
+  void DeleteAll();
   int32_t CountSelItems();
   FWL_HLISTITEM GetSelItem(int32_t nIndexSel);
   int32_t GetSelIndex(int32_t nIndex);
