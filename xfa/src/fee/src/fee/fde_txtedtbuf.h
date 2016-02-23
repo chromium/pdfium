@@ -7,9 +7,11 @@
 #ifndef XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTBUF_H_
 #define XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTBUF_H_
 
+#include "xfa/src/fgas/include/fx_mem.h"
+
 class IFX_CharIter;
-class CFDE_TxtEdtBufIter;
 class CFDE_TxtEdtBuf;
+
 class CFDE_TxtEdtBufIter : public IFX_CharIter {
  public:
 #ifdef FDE_USEFORMATBLOCK

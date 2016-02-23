@@ -8,6 +8,7 @@
 #define XFA_SRC_FXFA_SRC_APP_XFA_FFDOC_H_
 
 #include "xfa/include/fxfa/fxfa.h"
+#include "xfa/src/fxfa/src/common/xfa_document.h"
 
 class CXFA_FFApp;
 class CXFA_FFNotify;

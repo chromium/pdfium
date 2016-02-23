@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXJSE_SRC_UTIL_INLINE_H_
 #define XFA_SRC_FXJSE_SRC_UTIL_INLINE_H_
 
+#include "xfa/src/fxjse/src/context.h"
+
 static V8_INLINE v8::Local<v8::Object> FXJSE_GetGlobalObjectFromContext(
     const v8::Local<v8::Context>& hContext) {
   return hContext->Global()->GetPrototype().As<v8::Object>();

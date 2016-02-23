@@ -22,9 +22,9 @@
 
 #include <algorithm>
 
-#include "xfa/src/fxbarcode/barcode.h"
-#include "xfa/src/fxbarcode/BC_Reader.h"
 #include "xfa/src/fxbarcode/BC_BinaryBitmap.h"
+#include "xfa/src/fxbarcode/BC_Reader.h"
+#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitArray.h"
 #include "xfa/src/fxbarcode/oned/BC_OneDReader.h"
 const int32_t CBC_OneDReader::INTEGER_MATH_SHIFT = 8;

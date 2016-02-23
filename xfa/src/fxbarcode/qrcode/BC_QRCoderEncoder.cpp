@@ -22,22 +22,22 @@
 
 #include <algorithm>
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/BC_UtilCodingConvert.h"
+#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonByteArray.h"
 #include "xfa/src/fxbarcode/common/BC_CommonByteMatrix.h"
 #include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomon.h"
 #include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoder.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRCoderEncoder.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRCoderMode.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRCoderEncoder.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRCoderECBlocks.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRCoderVersion.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderBitVector.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderBlockPair.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderECBlocks.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderEncoder.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderEncoder.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderMaskUtil.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderMatrixUtil.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRCoderBitVector.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderMode.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderVersion.h"
 const int32_t CBC_QRCoderEncoder::m_alphaNumbericTable[] = {
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,

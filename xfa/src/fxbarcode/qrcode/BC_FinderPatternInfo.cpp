@@ -20,10 +20,10 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/BC_ResultPoint.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRFinderPattern.h"
+#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/qrcode/BC_FinderPatternInfo.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRFinderPattern.h"
 CBC_QRFinderPatternInfo::CBC_QRFinderPatternInfo(CFX_PtrArray* patternCenters) {
   m_bottomLeft = (CBC_QRFinderPattern*)(*patternCenters)[0];
   m_topLeft = (CBC_QRFinderPattern*)(*patternCenters)[1];

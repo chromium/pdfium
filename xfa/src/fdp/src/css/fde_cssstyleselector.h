@@ -7,6 +7,9 @@
 #ifndef XFA_SRC_FDP_SRC_CSS_FDE_CSSSTYLESELECTOR_H_
 #define XFA_SRC_FDP_SRC_CSS_FDE_CSSSTYLESELECTOR_H_
 
+#include "xfa/src/fdp/include/fde_mem.h"
+#include "xfa/src/fgas/include/fx_sys.h"
+
 #define FDE_CSSUNIVERSALHASH ('*')
 typedef struct _FDE_CSSRULEDATA : public CFX_Target {
  public:

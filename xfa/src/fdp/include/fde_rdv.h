@@ -7,6 +7,12 @@
 #ifndef XFA_SRC_FDP_INCLUDE_FDE_RDV_H_
 #define XFA_SRC_FDP_INCLUDE_FDE_RDV_H_
 
+#include "core/include/fxcrt/fx_coordinates.h"
+#include "core/include/fxge/fx_font.h"
+#include "core/include/fxge/fx_ge.h"
+#include "xfa/src/fdp/include/fde_pth.h"
+#include "xfa/src/fgas/include/fx_fnt.h"
+
 class IFDE_Pen;
 class IFDE_Brush;
 class IFDE_Image;

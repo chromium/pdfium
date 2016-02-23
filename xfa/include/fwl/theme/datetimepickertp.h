@@ -7,8 +7,8 @@
 #ifndef XFA_INCLUDE_FWL_THEME_DATETIMEPICKERTP_H_
 #define XFA_INCLUDE_FWL_THEME_DATETIMEPICKERTP_H_
 
-class CFWL_WidgetTP;
-class CFWL_DateTimePickerTP;
+#include "xfa/include/fwl/theme/widgettp.h"
+
 class CFWL_DateTimePickerTP : public CFWL_WidgetTP {
  public:
   CFWL_DateTimePickerTP();

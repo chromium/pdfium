@@ -8,13 +8,12 @@
 #define XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_CARETIMP_H_
 
 #include "xfa/include/fwl/core/fwl_timer.h"
+#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
 
-class CFWL_WidgetImp;
 class CFWL_WidgetImpProperties;
-class CFWL_WidgetImpDelegate;
 class IFWL_Widget;
-class CFWL_CaretImp;
 class CFWL_CaretImpDelegate;
+
 class CFWL_CaretImp : public CFWL_WidgetImp {
  public:
   CFWL_CaretImp(const CFWL_WidgetImpProperties& properties,

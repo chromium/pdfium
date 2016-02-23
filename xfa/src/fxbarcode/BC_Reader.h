@@ -7,8 +7,10 @@
 #ifndef XFA_SRC_FXBARCODE_BC_READER_H_
 #define XFA_SRC_FXBARCODE_BC_READER_H_
 
+#include "core/include/fxcrt/fx_string.h"
+
 class CBC_BinaryBitmap;
-class CBC_Reader;
+
 class CBC_Reader {
  public:
   CBC_Reader();

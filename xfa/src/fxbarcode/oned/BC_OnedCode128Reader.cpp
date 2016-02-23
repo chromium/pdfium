@@ -22,8 +22,8 @@
 
 #include <algorithm>
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/BC_Reader.h"
+#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitArray.h"
 #include "xfa/src/fxbarcode/oned/BC_OneDReader.h"
 #include "xfa/src/fxbarcode/oned/BC_OnedCode128Reader.h"

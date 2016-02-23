@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/foxitlib.h"
 #include "xfa/src/fdp/src/css/fde_cssdeclaration.h"
+#include "xfa/src/foxitlib.h"
 IFDE_CSSValue* CFDE_CSSDeclaration::GetProperty(FDE_CSSPROPERTY eProperty,
                                                 FX_BOOL& bImportant) const {
   for (FDE_LPCSSPROPERTYHOLDER pHolder = m_pFirstProperty; pHolder;

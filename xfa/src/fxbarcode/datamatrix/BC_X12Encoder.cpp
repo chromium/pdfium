@@ -20,15 +20,15 @@
  * limitations under the License.
  */
 
+#include "xfa/src/fxbarcode/BC_Dimension.h"
 #include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
-#include "xfa/src/fxbarcode/BC_Dimension.h"
+#include "xfa/src/fxbarcode/datamatrix/BC_C40Encoder.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_Encoder.h"
-#include "xfa/src/fxbarcode/datamatrix/BC_SymbolShapeHint.h"
-#include "xfa/src/fxbarcode/datamatrix/BC_SymbolInfo.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_EncoderContext.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_HighLevelEncoder.h"
-#include "xfa/src/fxbarcode/datamatrix/BC_C40Encoder.h"
+#include "xfa/src/fxbarcode/datamatrix/BC_SymbolInfo.h"
+#include "xfa/src/fxbarcode/datamatrix/BC_SymbolShapeHint.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_X12Encoder.h"
 CBC_X12Encoder::CBC_X12Encoder() {}
 CBC_X12Encoder::~CBC_X12Encoder() {}

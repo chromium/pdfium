@@ -7,14 +7,14 @@
 #include <algorithm>
 
 #include "xfa/src/foxitlib.h"
-#include "xfa/src/fxfa/src/common/xfa_common.h"
-#include "xfa/src/fxfa/src/app/xfa_ffdochandler.h"
-#include "xfa/src/fxfa/src/app/xfa_fwladapter.h"
-#include "xfa/src/fxfa/src/app/xfa_ffdoc.h"
 #include "xfa/src/fxfa/src/app/xfa_ffapp.h"
-#include "xfa/src/fxfa/src/app/xfa_fwltheme.h"
-#include "xfa/src/fxfa/src/app/xfa_fontmgr.h"
+#include "xfa/src/fxfa/src/app/xfa_ffdoc.h"
+#include "xfa/src/fxfa/src/app/xfa_ffdochandler.h"
 #include "xfa/src/fxfa/src/app/xfa_ffwidgethandler.h"
+#include "xfa/src/fxfa/src/app/xfa_fontmgr.h"
+#include "xfa/src/fxfa/src/app/xfa_fwladapter.h"
+#include "xfa/src/fxfa/src/app/xfa_fwltheme.h"
+#include "xfa/src/fxfa/src/common/xfa_common.h"
 
 CXFA_FileRead::CXFA_FileRead(const CFX_ArrayTemplate<CPDF_Stream*>& streams) {
   int32_t iCount = streams.GetSize();

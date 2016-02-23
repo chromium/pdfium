@@ -6,8 +6,8 @@
 
 #include <algorithm>
 
-#include "xfa/src/foxitlib.h"
 #include "xfa/src/fdp/src/tto/fde_textout.h"
+#include "xfa/src/foxitlib.h"
 IFDE_TextOut* IFDE_TextOut::Create() {
   return new CFDE_TextOut;
 }

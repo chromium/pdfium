@@ -7,11 +7,12 @@
 #ifndef XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_PANELIMP_H_
 #define XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_PANELIMP_H_
 
-class CFWL_WidgetImp;
+#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+
 class CFWL_WidgetImpProperties;
 class IFWL_Widget;
 class IFWL_Content;
-class CFWL_PanelImp;
+
 class CFWL_PanelImp : public CFWL_WidgetImp {
  public:
   CFWL_PanelImp(const CFWL_WidgetImpProperties& properties,

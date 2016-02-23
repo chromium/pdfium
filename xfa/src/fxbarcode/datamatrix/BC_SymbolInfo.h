@@ -7,9 +7,10 @@
 #ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_SYMBOLINFO_H_
 #define XFA_SRC_FXBARCODE_DATAMATRIX_BC_SYMBOLINFO_H_
 
-class CBC_SymbolShapeHint;
+#include "xfa/src/fxbarcode/datamatrix/BC_SymbolShapeHint.h"
+
 class CBC_Dimension;
-class CBC_SymbolInfo;
+
 class CBC_SymbolInfo : public CBC_SymbolShapeHint {
  public:
   CBC_SymbolInfo(FX_BOOL rectangular,

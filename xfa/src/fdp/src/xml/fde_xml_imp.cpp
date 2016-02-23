@@ -6,8 +6,8 @@
 
 #include <algorithm>
 
-#include "xfa/src/foxitlib.h"
 #include "xfa/src/fdp/src/xml/fde_xml_imp.h"
+#include "xfa/src/foxitlib.h"
 #ifdef __cplusplus
 extern "C" {
 #endif

@@ -7,10 +7,16 @@
 #ifndef XFA_SRC_FGAS_INCLUDE_FX_ALG_H_
 #define XFA_SRC_FGAS_INCLUDE_FX_ALG_H_
 
+#include <cstdint>
+
+#include "core/include/fxcrt/fx_basic.h"
+
 #define FX_IsOdd(a) ((a)&1)
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 int32_t FX_Base64EncodeA(const uint8_t* pSrc, int32_t iSrcLen, FX_CHAR* pDst);
 int32_t FX_Base64DecodeA(const FX_CHAR* pSrc, int32_t iSrcLen, uint8_t* pDst);
 int32_t FX_Base64DecodeW(const FX_WCHAR* pSrc, int32_t iSrcLen, uint8_t* pDst);
@@ -22,6 +28,7 @@ int32_t FX_SeparateStringW(const FX_WCHAR* pStr,
 #ifdef __cplusplus
 };
 #endif
+
 template <class baseType>
 class CFX_DSPATemplate {
  public:

@@ -21,8 +21,8 @@
  */
 
 #include "xfa/src/fxbarcode/barcode.h"
-#include "xfa/src/fxbarcode/common/BC_CommonPerspectiveTransform.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
+#include "xfa/src/fxbarcode/common/BC_CommonPerspectiveTransform.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRGridSampler.h"
 CBC_QRGridSampler CBC_QRGridSampler::m_gridSampler;
 CBC_QRGridSampler::CBC_QRGridSampler() {}

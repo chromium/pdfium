@@ -7,9 +7,12 @@
 #ifndef XFA_SRC_FXBARCODE_PDF417_BC_PDF417_H_
 #define XFA_SRC_FXBARCODE_PDF417_BC_PDF417_H_
 
+#include "xfa/src/fxbarcode/pdf417/BC_PDF417Compaction.h"
+
 class CBC_Compaction;
 class CBC_BarcodeRow;
 class CBC_BarcodeMatrix;
+
 class CBC_PDF417 {
  public:
   CBC_PDF417();

@@ -7,7 +7,10 @@
 #ifndef XFA_SRC_FXBARCODE_BC_DIMENSION_H_
 #define XFA_SRC_FXBARCODE_BC_DIMENSION_H_
 
-class CBC_Dimension;
+#include <cstdint>
+
+#include "core/include/fxcrt/fx_string.h"
+
 class CBC_Dimension {
  public:
   CBC_Dimension();

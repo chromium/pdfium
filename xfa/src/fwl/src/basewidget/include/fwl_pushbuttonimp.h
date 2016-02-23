@@ -7,12 +7,12 @@
 #ifndef XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_PUSHBUTTONIMP_H_
 #define XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_PUSHBUTTONIMP_H_
 
-class CFWL_WidgetImp;
+#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+
 class CFWL_WidgetImpProperties;
-class CFWL_WidgetImpDelegate;
 class IFWL_Widget;
-class CFWL_PushButtonImp;
 class CFWL_PushButtonImpDelegate;
+
 class CFWL_PushButtonImp : public CFWL_WidgetImp {
  public:
   CFWL_PushButtonImp(const CFWL_WidgetImpProperties& properties,

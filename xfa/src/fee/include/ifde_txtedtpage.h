@@ -7,8 +7,11 @@
 #ifndef XFA_SRC_FEE_INCLUDE_IFDE_TXTEDTPAGE_H_
 #define XFA_SRC_FEE_INCLUDE_IFDE_TXTEDTPAGE_H_
 
+#include "core/include/fxge/fx_ge.h"
+#include "xfa/src/fdp/include/fde_psr.h"
+#include "xfa/src/fgas/include/fx_tbk.h"
+
 class IFDE_TxtEdtEngine;
-class IFDE_TxtEdtPage;
 class IFDE_TxtEdtPage : public IFDE_CanvasSet, public IFX_TxtAccess {
  public:
   static IFDE_TxtEdtPage* Create(IFDE_TxtEdtEngine* pEngine, int32_t nIndex);

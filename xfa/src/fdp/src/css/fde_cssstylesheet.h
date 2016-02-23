@@ -7,6 +7,7 @@
 #ifndef XFA_SRC_FDP_SRC_CSS_FDE_CSSSTYLESHEET_H_
 #define XFA_SRC_FDP_SRC_CSS_FDE_CSSSTYLESHEET_H_
 
+#include "core/include/fxcrt/fx_ext.h"
 #include "xfa/src/fdp/src/css/fde_cssdeclaration.h"
 
 class CFDE_CSSSelector : public IFDE_CSSSelector, public CFX_Target {

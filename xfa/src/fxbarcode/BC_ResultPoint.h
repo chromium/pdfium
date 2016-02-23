@@ -7,7 +7,8 @@
 #ifndef XFA_SRC_FXBARCODE_BC_RESULTPOINT_H_
 #define XFA_SRC_FXBARCODE_BC_RESULTPOINT_H_
 
-class CBC_ResultPoint;
+#include "core/include/fxcrt/fx_system.h"
+
 class CBC_ResultPoint {
  public:
   CBC_ResultPoint();

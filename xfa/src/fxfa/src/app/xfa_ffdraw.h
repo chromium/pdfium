@@ -7,12 +7,13 @@
 #ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFDRAW_H_
 #define XFA_SRC_FXFA_SRC_APP_XFA_FFDRAW_H_
 
+#include "xfa/src/fxfa/src/app/xfa_ffpageview.h"
+#include "xfa/src/fxfa/src/app/xfa_ffwidget.h"
+
 class CXFA_FFDraw : public CXFA_FFWidget {
  public:
   CXFA_FFDraw(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
   virtual ~CXFA_FFDraw();
-
- protected:
 };
 
 #endif  // XFA_SRC_FXFA_SRC_APP_XFA_FFDRAW_H_

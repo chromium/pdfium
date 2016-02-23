@@ -7,6 +7,9 @@
 #ifndef XFA_SRC_FDP_INCLUDE_FDE_XML_H_
 #define XFA_SRC_FDP_INCLUDE_FDE_XML_H_
 
+#include "xfa/src/fgas/include/fx_stm.h"
+#include "xfa/src/fgas/include/fx_utl.h"
+
 class IFDE_XMLNode;
 class IFDE_XMLInstruction;
 class IFDE_XMLDeclaration;
@@ -22,6 +25,7 @@ class IFDE_XMLText;
 class IFDE_XMLDoc;
 class IFDE_XMLParser;
 class IFDE_XMLSyntaxParser;
+
 #ifdef __cplusplus
 extern "C" {
 #endif

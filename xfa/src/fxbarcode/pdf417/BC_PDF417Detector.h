@@ -11,6 +11,7 @@ class CBC_PDF417DetectorResult;
 class CBC_BinaryBitmap;
 class CBC_CommonBitMatrix;
 class CBC_CommonBitArray;
+
 class CBC_Detector {
  public:
   CBC_Detector();

@@ -24,11 +24,11 @@
 
 #include <stdlib.h>
 
+#include "third_party/bigint/BigIntegerLibrary.hh"
 #include "xfa/src/fxbarcode/BC_DecoderResult.h"
 #include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonDecoderResult.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417ResultMetadata.h"
-#include "third_party/bigint/BigIntegerLibrary.hh"
 
 #define TEXT_COMPACTION_MODE_LATCH 900
 #define BYTE_COMPACTION_MODE_LATCH 901

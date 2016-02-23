@@ -5,9 +5,9 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "xfa/src/foxitlib.h"
+#include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_threadimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_widgetmgrimp.h"
 CFWL_SDAdapterWidgetMgr::CFWL_SDAdapterWidgetMgr() {}
 CFWL_SDAdapterWidgetMgr::~CFWL_SDAdapterWidgetMgr() {}

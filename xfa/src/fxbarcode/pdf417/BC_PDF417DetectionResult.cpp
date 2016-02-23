@@ -21,13 +21,13 @@
  */
 
 #include "xfa/src/fxbarcode/barcode.h"
-#include "xfa/src/fxbarcode/pdf417/BC_PDF417Codeword.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417BarcodeMetadata.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417BoundingBox.h"
-#include "xfa/src/fxbarcode/pdf417/BC_PDF417DetectionResultColumn.h"
+#include "xfa/src/fxbarcode/pdf417/BC_PDF417Codeword.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417Common.h"
-#include "xfa/src/fxbarcode/pdf417/BC_PDF417DetectionResultRowIndicatorColumn.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417DetectionResult.h"
+#include "xfa/src/fxbarcode/pdf417/BC_PDF417DetectionResultColumn.h"
+#include "xfa/src/fxbarcode/pdf417/BC_PDF417DetectionResultRowIndicatorColumn.h"
 int32_t CBC_DetectionResult::ADJUST_ROW_NUMBER_SKIP = 2;
 CBC_DetectionResult::CBC_DetectionResult(CBC_BarcodeMetadata* barcodeMetadata,
                                          CBC_BoundingBox* boundingBox) {

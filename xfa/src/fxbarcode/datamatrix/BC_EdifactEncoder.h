@@ -7,8 +7,8 @@
 #ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_EDIFACTENCODER_H_
 #define XFA_SRC_FXBARCODE_DATAMATRIX_BC_EDIFACTENCODER_H_
 
-class CBC_EncoderContext;
-class CBC_EdifactEncoder;
+#include "xfa/src/fxbarcode/datamatrix/BC_Encoder.h"
+
 class CBC_EdifactEncoder : public CBC_Encoder {
  public:
   CBC_EdifactEncoder();

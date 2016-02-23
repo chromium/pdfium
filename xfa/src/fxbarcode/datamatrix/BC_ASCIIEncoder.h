@@ -7,9 +7,10 @@
 #ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_ASCIIENCODER_H_
 #define XFA_SRC_FXBARCODE_DATAMATRIX_BC_ASCIIENCODER_H_
 
-class CBC_Encoder;
+#include "xfa/src/fxbarcode/datamatrix/BC_Encoder.h"
+
 class CBC_EncoderContext;
-class CBC_ASCIIEncoder;
+
 class CBC_ASCIIEncoder : public CBC_Encoder {
  public:
   CBC_ASCIIEncoder();

@@ -20,8 +20,8 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/BC_Reader.h"
+#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/oned/BC_OneDReader.h"
 #include "xfa/src/fxbarcode/oned/BC_OneDimReader.h"
 #include "xfa/src/fxbarcode/oned/BC_OnedEAN13Reader.h"

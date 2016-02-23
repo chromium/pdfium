@@ -9,13 +9,12 @@
 
 #include <memory>
 
+#include "xfa/src/fwl/src/basewidget/include/fwl_editimp.h"
+#include "xfa/src/fwl/src/basewidget/include/fwl_monthcalendarimp.h"
+
 class CFWL_WidgetImp;
 class CFWL_WidgetImpProperties;
 class CFWL_WidgetImpDelegate;
-class CFWL_EditImp;
-class CFWL_EditImpDelegate;
-class CFWL_MonthCalendarImp;
-class CFWL_MonthCalendarImpDelegate;
 class CFWL_FormProxyImp;
 class CFWL_DateTimeEdit;
 class CFWL_DateTimeEditImpDelegate;

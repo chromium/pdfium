@@ -7,6 +7,10 @@
 #ifndef XFA_SRC_FDP_SRC_CSS_FDE_CSSDATATABLE_H_
 #define XFA_SRC_FDP_SRC_CSS_FDE_CSSDATATABLE_H_
 
+#include "core/include/fxcrt/fx_system.h"
+#include "xfa/src/fdp/include/fde_css.h"
+#include "xfa/src/fgas/include/fx_mem.h"
+
 class CFDE_CSSFunction : public CFX_Target {
  public:
   CFDE_CSSFunction(const FX_WCHAR* pszFuncName, IFDE_CSSValueList* pArgList)

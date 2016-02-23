@@ -7,8 +7,8 @@
 #ifndef XFA_INCLUDE_FWL_THEME_EDITTP_H_
 #define XFA_INCLUDE_FWL_THEME_EDITTP_H_
 
-class CFWL_WidgetTP;
-class CFWL_EditTP;
+#include "xfa/include/fwl/theme/widgettp.h"
+
 class CFWL_EditTP : public CFWL_WidgetTP {
  public:
   CFWL_EditTP();

@@ -7,6 +7,9 @@
 #ifndef XFA_SRC_FEE_INCLUDE_FX_WORDBREAK_H_
 #define XFA_SRC_FEE_INCLUDE_FX_WORDBREAK_H_
 
+#include "core/include/fxcrt/fx_string.h"
+#include "core/include/fxcrt/fx_system.h"
+
 class IFX_CharIter;
 
 class IFX_WordBreak {

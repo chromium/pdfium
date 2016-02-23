@@ -7,9 +7,12 @@
 #ifndef XFA_SRC_FXFA_SRC_COMMON_XFA_DOCDATA_H_
 #define XFA_SRC_FXFA_SRC_COMMON_XFA_DOCDATA_H_
 
+#include "xfa/src/fxfa/src/common/xfa_document.h"
+
 enum XFA_DATAFORMAT {
   XFA_DATAFORMAT_XDP,
 };
+
 class IXFA_PacketExport {
  public:
   static IXFA_PacketExport* Create(CXFA_Document* pDocument,

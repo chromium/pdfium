@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXFA_SRC_FM2JS_XFA_SIMPLEEXPRESSION_H_
 #define XFA_SRC_FXFA_SRC_FM2JS_XFA_SIMPLEEXPRESSION_H_
 
+#include "xfa/src/fxfa/src/fm2js/xfa_lexer.h"
+
 enum XFA_FM_SimpleExpressionType {
   ASSIGN,
   LOGICALOR,

@@ -7,12 +7,13 @@
 #ifndef XFA_INCLUDE_FWL_LIGHTWIDGET_BARCODE_H_
 #define XFA_INCLUDE_FWL_LIGHTWIDGET_BARCODE_H_
 
+#include "xfa/include/fwl/lightwidget/edit.h"
+
 class CFWL_Widget;
 class CFWL_WidgetProperties;
 class IFWL_BarcodeDP;
-class CFWL_Edit;
-class CFWL_Barcode;
 class CFWL_BarcodeDP;
+
 class CFWL_Barcode : public CFWL_Edit {
  public:
   static CFWL_Barcode* Create();

@@ -21,12 +21,12 @@
  */
 
 #include "xfa/src/fxbarcode/barcode.h"
-#include "xfa/src/fxbarcode/pdf417/BC_PDF417Compaction.h"
-#include "xfa/src/fxbarcode/pdf417/BC_PDF417BarcodeRow.h"
+#include "xfa/src/fxbarcode/pdf417/BC_PDF417.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417BarcodeMatrix.h"
+#include "xfa/src/fxbarcode/pdf417/BC_PDF417BarcodeRow.h"
+#include "xfa/src/fxbarcode/pdf417/BC_PDF417Compaction.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417ErrorCorrection.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417HighLevelEncoder.h"
-#include "xfa/src/fxbarcode/pdf417/BC_PDF417.h"
 int32_t CBC_PDF417::START_PATTERN = 0x1fea8;
 int32_t CBC_PDF417::STOP_PATTERN = 0x3fa29;
 int32_t CBC_PDF417::CODEWORD_TABLE[][1000] = {

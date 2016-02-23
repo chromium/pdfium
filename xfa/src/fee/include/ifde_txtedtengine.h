@@ -7,11 +7,15 @@
 #ifndef XFA_SRC_FEE_INCLUDE_IFDE_TXTEDTENGINE_H_
 #define XFA_SRC_FEE_INCLUDE_IFDE_TXTEDTENGINE_H_
 
+#include "core/include/fxge/fx_dib.h"
+#include "xfa/src/fgas/include/fx_fnt.h"
+
 class IFDE_TxtEdtBuf;
 class IFDE_TxtEdtPage;
 class IFDE_TxtEdtEngine;
 class IFDE_TxtEdtEventSink;
 class IFDE_TxtEdtParag;
+
 #define FDE_TXTEDT_FIND_FLAGS_Prev (0L << 0)
 #define FDE_TXTEDT_FIND_FLAGS_Next (1L << 0)
 #define FDE_TXTEDT_FIND_FLAGS_WholeWord (1L << 1)

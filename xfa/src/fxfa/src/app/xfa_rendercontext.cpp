@@ -5,9 +5,9 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "xfa/src/foxitlib.h"
-#include "xfa/src/fxfa/src/common/xfa_common.h"
-#include "xfa/src/fxfa/src/app/xfa_rendercontext.h"
 #include "xfa/src/fxfa/src/app/xfa_ffwidget.h"
+#include "xfa/src/fxfa/src/app/xfa_rendercontext.h"
+#include "xfa/src/fxfa/src/common/xfa_common.h"
 #define XFA_RENDERCONTEXT_MaxCount 30
 IXFA_RenderContext* XFA_RenderContext_Create() {
   return new CXFA_RenderContext;

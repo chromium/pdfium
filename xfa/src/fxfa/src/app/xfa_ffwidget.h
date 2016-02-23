@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "xfa/include/fxfa/fxfa.h"
+#include "xfa/src/fxfa/src/common/xfa_doclayout.h"
 
 class CXFA_FFPageView;
 class CXFA_FFDocView;

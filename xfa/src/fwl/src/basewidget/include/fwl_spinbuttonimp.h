@@ -7,9 +7,9 @@
 #ifndef XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_SPINBUTTONIMP_H_
 #define XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_SPINBUTTONIMP_H_
 
-class CFWL_WidgetImp;
+#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+
 class CFWL_WidgetImpProperties;
-class CFWL_WidgetImpDelegate;
 class IFWL_Widget;
 class IFWL_Timer;
 class CFWL_SpinButtonImp;

@@ -7,8 +7,8 @@
 #ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXSYMBOLINFO144_H_
 #define XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXSYMBOLINFO144_H_
 
-class CBC_SymbolInfo;
-class CBC_DataMatrixSymbolInfo144;
+#include "xfa/src/fxbarcode/datamatrix/BC_SymbolInfo.h"
+
 class CBC_DataMatrixSymbolInfo144 : public CBC_SymbolInfo {
  public:
   CBC_DataMatrixSymbolInfo144();

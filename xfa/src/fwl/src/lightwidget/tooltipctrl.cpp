@@ -7,12 +7,12 @@
 #include <memory>
 
 #include "xfa/src/foxitlib.h"
-#include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_panelimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_formimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_panelimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_threadimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
 
 CFWL_ToolTip* CFWL_ToolTip::Create() {
   return new CFWL_ToolTip;

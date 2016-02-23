@@ -9,8 +9,8 @@
 #ifndef XFA_SRC_FGAS_SRC_FGAS_BASE_H_
 #define XFA_SRC_FGAS_SRC_FGAS_BASE_H_
 
-#include "xfa/src/foxitlib.h"
 #include "core/include/fxge/fx_freetype.h"
 #include "xfa/src/fgas/include/fgas.h"
+#include "xfa/src/foxitlib.h"
 
 #endif  // XFA_SRC_FGAS_SRC_FGAS_BASE_H_

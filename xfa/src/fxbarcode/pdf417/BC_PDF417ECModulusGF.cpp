@@ -22,8 +22,8 @@
 
 #include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417Common.h"
-#include "xfa/src/fxbarcode/pdf417/BC_PDF417ECModulusPoly.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417ECModulusGF.h"
+#include "xfa/src/fxbarcode/pdf417/BC_PDF417ECModulusPoly.h"
 CBC_PDF417ECModulusGF* CBC_PDF417ECModulusGF::PDF417_GF = NULL;
 void CBC_PDF417ECModulusGF::Initialize(int32_t& e) {
   PDF417_GF =

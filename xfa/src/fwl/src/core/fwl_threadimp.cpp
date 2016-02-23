@@ -5,10 +5,10 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "xfa/src/foxitlib.h"
-#include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_threadimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_appimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_threadimp.h"
 
 void IFWL_Thread::Release() {
   delete m_pImpl;

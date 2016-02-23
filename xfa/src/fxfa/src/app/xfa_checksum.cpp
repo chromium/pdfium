@@ -5,8 +5,8 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "xfa/src/foxitlib.h"
-#include "xfa/src/fxfa/src/common/xfa_common.h"
 #include "xfa/src/fxfa/src/app/xfa_checksum.h"
+#include "xfa/src/fxfa/src/common/xfa_common.h"
 CXFA_SAXReaderHandler::CXFA_SAXReaderHandler(CXFA_ChecksumContext* pContext)
     : m_pContext(pContext) {
   FXSYS_assert(m_pContext);

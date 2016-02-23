@@ -12,10 +12,12 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 // For external C libraries to malloc through PDFium. These may return NULL.
 void* FXMEM_DefaultAlloc(size_t byte_size, int flags);
 void* FXMEM_DefaultRealloc(void* pointer, size_t new_size, int flags);
 void FXMEM_DefaultFree(void* pointer, int flags);
+
 #ifdef __cplusplus
 }  // extern "C"
 

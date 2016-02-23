@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFPAGEVIEW_H_
 #define XFA_SRC_FXFA_SRC_APP_XFA_FFPAGEVIEW_H_
 
+#include "xfa/src/fxfa/src/common/xfa_doclayout.h"
+
 class CXFA_FFWidget;
 class CXFA_FFDocView;
 class CXFA_FFPageView : public CXFA_ContainerLayoutItem, public IXFA_PageView {

@@ -4,8 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/foxitlib.h"
+#include <cstdint>
+
 #include "xfa/src/fdp/src/fde/fde_devbasic.h"
+#include "xfa/src/foxitlib.h"
+
 static const FDE_HATCHDATA gs_HatchBitmapData[FDE_HATCHSTYLE_Total] = {
     {16,
      16,

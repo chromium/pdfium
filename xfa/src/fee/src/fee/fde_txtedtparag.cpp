@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/foxitlib.h"
+#include "xfa/src/fee/include/fx_wordbreak.h"
 #include "xfa/src/fee/include/ifde_txtedtbuf.h"
 #include "xfa/src/fee/include/ifde_txtedtengine.h"
-#include "xfa/src/fee/include/fx_wordbreak.h"
-#include "xfa/src/fee/src/fee/fde_txtedtparag.h"
-#include "xfa/src/fee/src/fee/fde_txtedtengine.h"
 #include "xfa/src/fee/src/fee/fde_txtedtbuf.h"
+#include "xfa/src/fee/src/fee/fde_txtedtengine.h"
+#include "xfa/src/fee/src/fee/fde_txtedtparag.h"
+#include "xfa/src/foxitlib.h"
 CFDE_TxtEdtParag::CFDE_TxtEdtParag(CFDE_TxtEdtEngine* pEngine)
     : m_nCharStart(0),
       m_nCharCount(0),

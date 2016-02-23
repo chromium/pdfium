@@ -7,7 +7,8 @@
 #ifndef XFA_SRC_FXBARCODE_BC_LUMINANCESOURCE_H_
 #define XFA_SRC_FXBARCODE_BC_LUMINANCESOURCE_H_
 
-class CBC_LuminanceSource;
+#include "core/include/fxcrt/fx_basic.h"
+
 class CBC_LuminanceSource {
  public:
   CBC_LuminanceSource(int32_t width, int32_t height);

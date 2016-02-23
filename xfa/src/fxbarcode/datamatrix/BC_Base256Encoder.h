@@ -7,8 +7,8 @@
 #ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_BASE256ENCODER_H_
 #define XFA_SRC_FXBARCODE_DATAMATRIX_BC_BASE256ENCODER_H_
 
-class CBC_Encoder;
-class CBC_Base256Encoder;
+#include "xfa/src/fxbarcode/datamatrix/BC_Encoder.h"
+
 class CBC_Base256Encoder : public CBC_Encoder {
  public:
   CBC_Base256Encoder();

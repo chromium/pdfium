@@ -7,7 +7,9 @@
 #ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFBARCODE_H_
 #define XFA_SRC_FXFA_SRC_APP_XFA_FFBARCODE_H_
 
-class CXFA_FFTextEdit;
+#include "xfa/src/fxfa/src/app/xfa_ffpageview.h"
+#include "xfa/src/fxfa/src/app/xfa_fftextedit.h"
+
 class CXFA_FFBarcode : public CXFA_FFTextEdit {
  public:
   CXFA_FFBarcode(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
@@ -21,6 +23,7 @@ class CXFA_FFBarcode : public CXFA_FFTextEdit {
   virtual FX_BOOL OnLButtonDown(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
   virtual FX_BOOL OnRButtonDown(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
 };
+
 enum XFA_BARCODETYPEENUM {
   XFA_BARCODETYPE_aztec,
   XFA_BARCODETYPE_codabar,

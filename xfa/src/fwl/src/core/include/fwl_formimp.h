@@ -7,16 +7,18 @@
 #ifndef XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_FORMIMP_H_
 #define XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_FORMIMP_H_
 
+#include "xfa/src/fwl/src/core/include/fwl_panelimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+
 class CFWL_NoteLoop;
-class CFWL_PanelImp;
 class CFWL_WidgetImpProperties;
-class CFWL_WidgetImpDelegate;
 class CFWL_MsgMouse;
 class IFWL_Widget;
 class IFWL_ThemeProvider;
 class CFWL_SysBtn;
 class CFWL_FormImp;
 class CFWL_FormImpDelegate;
+
 #define FWL_SYSBUTTONSTATE_Hover 0x0001
 #define FWL_SYSBUTTONSTATE_Pressed 0x0002
 #define FWL_SYSBUTTONSTATE_Disabled 0x0010

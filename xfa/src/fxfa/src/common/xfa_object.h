@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXFA_SRC_COMMON_XFA_OBJECT_H_
 #define XFA_SRC_FXFA_SRC_COMMON_XFA_OBJECT_H_
 
+#include "xfa/src/fxfa/src/common/xfa_utils.h"
+
 class CXFA_ArrayNodeList;
 class CXFA_AttachNodeList;
 class CXFA_Document;

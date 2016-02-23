@@ -7,12 +7,12 @@
 #ifndef XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_CHECKBOXIMP_H_
 #define XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_CHECKBOXIMP_H_
 
-class CFWL_WidgetImp;
+#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+
 class CFWL_WidgetImpProperties;
-class CFWL_WidgetImpDelegate;
 class IFWL_Widget;
-class CFWL_CheckBoxImp;
 class CFWL_CheckBoxImpDelegate;
+
 class CFWL_CheckBoxImp : public CFWL_WidgetImp {
  public:
   CFWL_CheckBoxImp(const CFWL_WidgetImpProperties& properties,

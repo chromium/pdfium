@@ -8,6 +8,9 @@
 #define XFA_SRC_FGAS_INCLUDE_FX_TBK_H_
 
 #include "core/include/fxcrt/fx_ucd.h"
+#include "core/include/fxge/fx_ge.h"
+#include "xfa/src/fgas/include/fx_ucd.h"
+#include "xfa/src/fgas/include/fx_utl.h"
 
 class IFX_Font;
 class CFX_Char;
@@ -15,6 +18,7 @@ class IFX_TxtAccess;
 class CFX_TxtChar;
 class CFX_TxtPiece;
 class IFX_TxtBreak;
+
 #define FX_TXTBREAKPOLICY_None 0x00
 #define FX_TXTBREAKPOLICY_Pagination 0x01
 #define FX_TXTBREAKPOLICY_SpaceBreak 0x02

@@ -5,10 +5,10 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "xfa/src/foxitlib.h"
-#include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
 #include "xfa/src/fwl/src/basewidget/include/fwl_monthcalendarimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
 #define MONTHCAL_HSEP_HEIGHT 1
 #define MONTHCAL_VSEP_WIDTH 1
 #define MONTHCAL_HMARGIN 3

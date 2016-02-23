@@ -9,7 +9,7 @@
 #ifndef XFA_SRC_FXJSE_SRC_FXV8_H_
 #define XFA_SRC_FXJSE_SRC_FXV8_H_
 
-#include <v8.h>
 #include <libplatform/libplatform.h>
+#include <v8.h>
 
 #endif  // XFA_SRC_FXJSE_SRC_FXV8_H_

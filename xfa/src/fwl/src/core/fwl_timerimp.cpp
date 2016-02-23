@@ -5,9 +5,9 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "xfa/src/foxitlib.h"
+#include "xfa/src/fwl/src/core/include/fwl_appimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_threadimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_appimp.h"
 FWL_HTIMER FWL_StartTimer(IFWL_Timer* pTimer,
                           FX_DWORD dwElapse,
                           FX_BOOL bImmediately) {

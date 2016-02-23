@@ -5,8 +5,8 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "xfa/src/foxitlib.h"
-#include "xfa/src/fxfa/src/common/xfa_common.h"
 #include "xfa/src/fxfa/src/app/xfa_ffConfigAcc.h"
+#include "xfa/src/fxfa/src/common/xfa_common.h"
 CXFA_FFConfigAcc::CXFA_FFConfigAcc(CXFA_Node* pNode)
     : m_pNode(pNode), m_pPsMapNode(NULL) {}
 CXFA_FFConfigAcc::~CXFA_FFConfigAcc() {}

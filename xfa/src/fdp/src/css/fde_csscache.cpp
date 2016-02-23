@@ -6,8 +6,8 @@
 
 #include <algorithm>
 
-#include "xfa/src/foxitlib.h"
 #include "xfa/src/fdp/src/css/fde_csscache.h"
+#include "xfa/src/foxitlib.h"
 _FDE_CSSCACHEITEM::_FDE_CSSCACHEITEM(IFDE_CSSStyleSheet* p)
     : pStylesheet(p), dwActivity(0) {
   FXSYS_assert(pStylesheet);

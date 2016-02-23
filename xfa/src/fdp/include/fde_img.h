@@ -7,7 +7,10 @@
 #ifndef XFA_SRC_FDP_INCLUDE_FDE_IMG_H_
 #define XFA_SRC_FDP_INCLUDE_FDE_IMG_H_
 
-class IFDE_Image;
+#include "xfa/src/fgas/include/fx_mem.h"
+#include "xfa/src/fgas/include/fx_stm.h"
+#include "xfa/src/fgas/include/fx_utl.h"
+
 #define FDE_IMAGEFORMAT_Unknown -1
 #define FDE_IMAGEFORMAT_BMP 0
 #define FDE_IMAGEFORMAT_GIF 1
@@ -16,6 +19,7 @@ class IFDE_Image;
 #define FDE_IMAGEFORMAT_TIFF 4
 #define FDE_IMAGEFORMAT_JPEG2000 5
 #define FDE_IMAGEFORMAT_JBig2 6
+
 class IFDE_Image {
  public:
   static IFDE_Image* Create(IFX_Stream* pStream,

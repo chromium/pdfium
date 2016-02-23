@@ -47,6 +47,7 @@ class CFX_Target {
   void* operator new(size_t size, void* place) { return place; }
   void operator delete(void* p, void* place) {}
 };
+
 #define FXTARGET_NewWith(__allocator__) new (__allocator__)
 #define FXTARGET_DeleteWith(__class__, __allocator__, pointer) \
   {                                                            \

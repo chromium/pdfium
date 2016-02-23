@@ -6,10 +6,10 @@
 
 #include <algorithm>
 
-#include "xfa/src/foxitlib.h"
+#include "xfa/src/fdp/src/fde/fde_devbasic.h"
 #include "xfa/src/fdp/src/fde/fde_gedevice.h"
 #include "xfa/src/fdp/src/fde/fde_geobject.h"
-#include "xfa/src/fdp/src/fde/fde_devbasic.h"
+#include "xfa/src/foxitlib.h"
 #ifndef _FDEPLUS
 #ifdef _cplusplus
 exten "C" {

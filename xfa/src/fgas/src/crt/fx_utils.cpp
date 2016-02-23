@@ -7,8 +7,8 @@
 #include <algorithm>
 
 #include "xfa/src/fgas/include/fx_utl.h"
-#include "xfa/src/fgas/src/fgas_base.h"
 #include "xfa/src/fgas/src/crt/fx_utils.h"
+#include "xfa/src/fgas/src/fgas_base.h"
 
 class FX_BASEARRAYDATA : public CFX_Target {
  public:

@@ -7,10 +7,11 @@
 #ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_ENCODERCONTEXT_H_
 #define XFA_SRC_FXBARCODE_DATAMATRIX_BC_ENCODERCONTEXT_H_
 
-class CBC_SymbolShapeHint;
+#include "xfa/src/fxbarcode/datamatrix/BC_SymbolShapeHint.h"
+
 class CBC_SymbolInfo;
 class CBC_Dimension;
-class CBC_EncoderContext;
+
 class CBC_EncoderContext : public CBC_SymbolShapeHint {
  public:
   CBC_EncoderContext(const CFX_WideString msg,

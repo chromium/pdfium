@@ -7,11 +7,11 @@
 #include <algorithm>
 
 #include "xfa/src/foxitlib.h"
-#include "xfa/src/fxfa/src/common/xfa_common.h"
-#include "xfa/src/fxfa/src/app/xfa_textlayout.h"
 #include "xfa/src/fxfa/src/app/xfa_ffapp.h"
 #include "xfa/src/fxfa/src/app/xfa_ffdoc.h"
 #include "xfa/src/fxfa/src/app/xfa_fontmgr.h"
+#include "xfa/src/fxfa/src/app/xfa_textlayout.h"
+#include "xfa/src/fxfa/src/common/xfa_common.h"
 CXFA_CSSTagProvider::~CXFA_CSSTagProvider() {
   FX_POSITION pos = m_Attributes.GetStartPosition();
   while (pos) {

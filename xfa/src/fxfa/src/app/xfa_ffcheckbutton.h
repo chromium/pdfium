@@ -7,6 +7,9 @@
 #ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFCHECKBUTTON_H_
 #define XFA_SRC_FXFA_SRC_APP_XFA_FFCHECKBUTTON_H_
 
+#include "xfa/src/fxfa/src/app/xfa_fffield.h"
+#include "xfa/src/fxfa/src/app/xfa_ffpageview.h"
+
 class CXFA_FFExclGroup;
 class CXFA_FFCheckButton : public CXFA_FFField {
  public:

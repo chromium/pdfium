@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FEE_INCLUDE_IFDE_TXTEDTBUF_H_
 #define XFA_SRC_FEE_INCLUDE_IFDE_TXTEDTBUF_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+
 #define FDE_DEFCHUNKLENGTH (1024)
 
 class IFDE_TxtEdtBuf {

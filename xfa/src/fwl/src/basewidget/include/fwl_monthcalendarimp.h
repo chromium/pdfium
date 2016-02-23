@@ -7,15 +7,15 @@
 #ifndef XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_MONTHCALENDARIMP_H_
 #define XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_MONTHCALENDARIMP_H_
 
-class CFWL_WidgetImp;
+#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+
 class CFWL_WidgetImpProperties;
-class CFWL_WidgetImpDelegate;
 class IFWL_Widget;
 class IFDE_DateTime;
 class CFDE_DateTime;
 extern uint8_t FX_DaysInMonth(int32_t iYear, uint8_t iMonth);
-class CFWL_MonthCalendarImp;
 class CFWL_MonthCalendarImpDelegate;
+
 class CFWL_MonthCalendarImp : public CFWL_WidgetImp {
  public:
   CFWL_MonthCalendarImp(const CFWL_WidgetImpProperties& properties,

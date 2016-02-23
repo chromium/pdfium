@@ -7,6 +7,8 @@
 #ifndef XFA_INCLUDE_FWL_CORE_FWL_NOTE_H_
 #define XFA_INCLUDE_FWL_CORE_FWL_NOTE_H_
 
+#include "xfa/include/fxgraphics/fx_graphics.h"
+
 class IFWL_Target;
 class IFWL_Widget;
 class IFWL_NoteThread;

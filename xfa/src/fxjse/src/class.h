@@ -7,8 +7,11 @@
 #ifndef XFA_SRC_FXJSE_SRC_CLASS_H_
 #define XFA_SRC_FXJSE_SRC_CLASS_H_
 
+#include <v8.h>
+
 class CFXJSE_Context;
 class CFXJSE_Value;
+
 class CFXJSE_Class {
  protected:
   CFXJSE_Class(CFXJSE_Context* lpContext)

@@ -22,9 +22,9 @@
 
 #include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonByteMatrix.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoder.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderMode.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRCoder.h"
 CBC_QRCoder::CBC_QRCoder() {
   m_mode = NULL;
   m_ecLevel = NULL;

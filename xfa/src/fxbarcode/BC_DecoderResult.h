@@ -7,7 +7,8 @@
 #ifndef XFA_SRC_FXBARCODE_BC_DECODERRESULT_H_
 #define XFA_SRC_FXBARCODE_BC_DECODERRESULT_H_
 
-class CBC_DecoderResult;
+#include "core/include/fxcrt/fx_basic.h"
+
 class CBC_DecoderResult {
  public:
   CBC_DecoderResult(CFX_ByteArray* rawBytes,

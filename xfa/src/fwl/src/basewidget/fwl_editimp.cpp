@@ -7,16 +7,16 @@
 #include <algorithm>
 
 #include "xfa/src/foxitlib.h"
-#include "xfa/src/fwl/src/core/include/fwl_threadimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_appimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_widgetmgrimp.h"
 #include "xfa/src/fwl/src/basewidget/include/fwl_caretimp.h"
 #include "xfa/src/fwl/src/basewidget/include/fwl_comboboximp.h"
 #include "xfa/src/fwl/src/basewidget/include/fwl_editimp.h"
 #include "xfa/src/fwl/src/basewidget/include/fwl_scrollbarimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_appimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_threadimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_widgetmgrimp.h"
 
 // static
 IFWL_Edit* IFWL_Edit::Create(const CFWL_WidgetImpProperties& properties,

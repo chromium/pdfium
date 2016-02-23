@@ -7,10 +7,13 @@
 #ifndef XFA_SRC_FXFA_SRC_COMMON_XFA_DOCLAYOUT_H_
 #define XFA_SRC_FXFA_SRC_COMMON_XFA_DOCLAYOUT_H_
 
+#include "xfa/src/fxfa/src/common/xfa_document.h"
+
 #define _XFA_LAYOUTITEM_ProcessCACHE_
 
 class CXFA_ContainerLayoutItem;
 class CXFA_ContentLayoutItem;
+class IXFA_DocLayout;
 
 class IXFA_LayoutPage {
  public:

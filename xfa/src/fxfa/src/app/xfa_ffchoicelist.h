@@ -7,6 +7,9 @@
 #ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFCHOICELIST_H_
 #define XFA_SRC_FXFA_SRC_APP_XFA_FFCHOICELIST_H_
 
+#include "xfa/src/fxfa/src/app/xfa_fffield.h"
+#include "xfa/src/fxfa/src/app/xfa_ffpageview.h"
+
 class CXFA_FFListBox : public CXFA_FFField {
  public:
   CXFA_FFListBox(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);

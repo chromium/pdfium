@@ -7,14 +7,13 @@
 #ifndef XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_SCROLLBARIMP_H_
 #define XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_SCROLLBARIMP_H_
 
-class CFWL_WidgetImp;
+#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+
 class CFWL_WidgetImpProperties;
-class CFWL_WidgetImpDelegate;
 class IFWL_Widget;
-class IFWL_Timer;
 class IFWL_TimerDelegate;
-class CFWL_ScrollBarImp;
 class CFWL_ScrollBarImpDelegate;
+
 class CFWL_ScrollBarImp : public CFWL_WidgetImp, public IFWL_Timer {
  public:
   CFWL_ScrollBarImp(const CFWL_WidgetImpProperties& properties,

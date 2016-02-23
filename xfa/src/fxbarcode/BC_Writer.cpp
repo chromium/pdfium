@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/BC_Writer.h"
+#include "xfa/src/fxbarcode/barcode.h"
 CBC_Writer::CBC_Writer() {
   m_CharEncoding = 0;
   m_ModuleHeight = 1;

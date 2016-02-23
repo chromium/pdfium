@@ -7,9 +7,6 @@
 #ifndef XFA_SRC_FXBARCODE_PDF417_BC_PDF417CODEWORDDECODER_H_
 #define XFA_SRC_FXBARCODE_PDF417_BC_PDF417CODEWORDDECODER_H_
 
-class CBC_PDF417CodewordDecoder;
-#define column 8
-class CBC_PDF417Common;
 class CBC_PDF417CodewordDecoder {
  public:
   CBC_PDF417CodewordDecoder();

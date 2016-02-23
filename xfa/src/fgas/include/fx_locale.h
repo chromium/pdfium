@@ -7,10 +7,13 @@
 #ifndef XFA_SRC_FGAS_INCLUDE_FX_LOCALE_H_
 #define XFA_SRC_FGAS_INCLUDE_FX_LOCALE_H_
 
+#include "core/include/fxcrt/fx_xml.h"
+
 class CFX_Unitime;
 class IFX_Locale;
 class IFX_FormatString;
 class IFX_LocaleMgr;
+
 enum FX_LOCALENUMSYMBOL {
   FX_LOCALENUMSYMBOL_Decimal,
   FX_LOCALENUMSYMBOL_Grouping,

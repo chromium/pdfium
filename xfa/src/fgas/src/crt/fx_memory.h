@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FGAS_SRC_CRT_FX_MEMORY_H_
 #define XFA_SRC_FGAS_SRC_CRT_FX_MEMORY_H_
 
+#include "xfa/src/fgas/include/fx_mem.h"
+
 class CFX_DefStore;
 class CFX_StaticStore;
 class CFX_FixedStore;

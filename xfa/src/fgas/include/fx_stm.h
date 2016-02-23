@@ -7,7 +7,10 @@
 #ifndef XFA_SRC_FGAS_INCLUDE_FX_STM_H_
 #define XFA_SRC_FGAS_INCLUDE_FX_STM_H_
 
+#include "core/include/fxcrt/fx_stream.h"
+
 class IFX_Stream;
+
 IFX_FileRead* FX_CreateFileRead(IFX_Stream* pBaseStream,
                                 FX_BOOL bReleaseStream = FALSE);
 IFX_FileRead* FX_CreateFileRead(IFX_BufferRead* pBufferRead,

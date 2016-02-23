@@ -7,6 +7,9 @@
 #ifndef XFA_SRC_FXFA_SRC_COMMON_XFA_DOCUMENT_H_
 #define XFA_SRC_FXFA_SRC_COMMON_XFA_DOCUMENT_H_
 
+#include "xfa/src/fxfa/src/common/xfa_localemgr.h"
+#include "xfa/src/fxfa/src/common/xfa_object.h"
+
 class CXFA_Document;
 class CXFA_LayoutItem;
 class CXFA_LayoutProcessor;
@@ -64,6 +67,7 @@ enum XFA_LAYOUTRESULT {
 };
 #define XFA_LAYOUTNOTIFY_StrictHeight 0x0001
 #define XFA_LAYOUTNOTIFY_NoParentBreak 0x0002
+
 class IXFA_Notify {
  public:
   virtual ~IXFA_Notify() {}

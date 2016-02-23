@@ -7,6 +7,7 @@
 #ifndef XFA_SRC_FXBARCODE_BC_TWODIMWRITER_H_
 #define XFA_SRC_FXBARCODE_BC_TWODIMWRITER_H_
 
+#include "core/include/fxge/fx_ge.h"
 #include "xfa/src/fxbarcode/BC_Writer.h"
 
 class CBC_CommonBitMatrix;

@@ -7,8 +7,8 @@
 #ifndef XFA_SRC_FXBARCODE_COMMON_BC_COMMONCHARACTERSETECI_H_
 #define XFA_SRC_FXBARCODE_COMMON_BC_COMMONCHARACTERSETECI_H_
 
-class CBC_CommonECI;
-class CBC_CommonCharacterSetECI;
+#include "xfa/src/fxbarcode/common/BC_CommonECI.h"
+
 class CBC_CommonCharacterSetECI : public CBC_CommonECI {
  public:
   CBC_CommonCharacterSetECI(int32_t value, CFX_ByteString encodingName);

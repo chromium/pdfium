@@ -7,8 +7,8 @@
 #ifndef XFA_INCLUDE_FWL_THEME_CARETTP_H_
 #define XFA_INCLUDE_FWL_THEME_CARETTP_H_
 
-class CFWL_WidgetTP;
-class CFWL_CaretTP;
+#include "xfa/include/fwl/theme/widgettp.h"
+
 class CFWL_CaretTP : public CFWL_WidgetTP {
  public:
   CFWL_CaretTP();

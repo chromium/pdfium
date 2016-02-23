@@ -7,8 +7,8 @@
 #ifndef XFA_SRC_FXJSE_SRC_SCOPE_INLINE_H_
 #define XFA_SRC_FXJSE_SRC_SCOPE_INLINE_H_
 
-#include "xfa/src/fxjse/src/runtime.h"
 #include "xfa/src/fxjse/src/context.h"
+#include "xfa/src/fxjse/src/runtime.h"
 
 class CFXJSE_ScopeUtil_IsolateHandle {
  protected:

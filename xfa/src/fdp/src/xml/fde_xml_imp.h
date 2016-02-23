@@ -7,11 +7,16 @@
 #ifndef XFA_SRC_FDP_SRC_XML_FDE_XML_IMP_H_
 #define XFA_SRC_FDP_SRC_XML_FDE_XML_IMP_H_
 
+#include "core/include/fxcrt/fx_system.h"
+#include "xfa/src/fdp/include/fde_xml.h"
+#include "xfa/src/fgas/include/fx_mem.h"
+#include "xfa/src/fgas/include/fx_stm.h"
+
 #define _FDE_BLOCK_BUFFER
 #ifdef _FDE_BLOCK_BUFFER
 class CFDE_BlockBuffer;
-#endif
-class CFDE_XMLNode;
+#endif  // _FDE_BLOCK_BUFFER
+
 class CFDE_XMLInstruction;
 class CFDE_XMLElement;
 class CFDE_XMLText;
@@ -20,6 +25,7 @@ class IFDE_XMLParser;
 class CFDE_XMLDOMParser;
 class CFDE_XMLSAXParser;
 class CFDE_XMLSyntaxParser;
+
 class CFDE_XMLNode : public CFX_Target {
  public:
   CFDE_XMLNode();

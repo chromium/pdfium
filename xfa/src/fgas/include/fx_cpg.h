@@ -7,7 +7,8 @@
 #ifndef XFA_SRC_FGAS_INCLUDE_FX_CPG_H_
 #define XFA_SRC_FGAS_INCLUDE_FX_CPG_H_
 
-class IFX_CodePage;
+#include "core/include/fxcrt/fx_basic.h"
+
 #define FX_CODEPAGE_DefANSI 0
 #define FX_CODEPAGE_DefOEM 1
 #define FX_CODEPAGE_DefMAC 2

@@ -20,7 +20,7 @@ class CXFA_TextLayout;
 class CXFA_TextProvider;
 class CXFA_WidgetLayoutData;
 class IFX_Font;
-class CXFA_WidgetAcc;
+class IXFA_AppProvider;
 
 class CXFA_WidgetAcc : public CXFA_WidgetData {
  public:

@@ -7,12 +7,12 @@
 #ifndef XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_FORMPROXYIMP_H_
 #define XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_FORMPROXYIMP_H_
 
-class CFWL_WidgetImp;
+#include "xfa/src/fwl/src/core/include/fwl_formimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+
 class CFWL_WidgetImpProperties;
-class CFWL_WidgetImpDelegate;
-class CFWL_FormImp;
-class CFWL_FormProxyImp;
 class CFWL_FormProxyImpDelegate;
+
 class CFWL_FormProxyImp : public CFWL_FormImp {
  public:
   CFWL_FormProxyImp(const CFWL_WidgetImpProperties& properties,

@@ -7,8 +7,9 @@
 #ifndef XFA_INCLUDE_FWL_THEME_BARCODETP_H_
 #define XFA_INCLUDE_FWL_THEME_BARCODETP_H_
 
-class CFWL_WidgetTP;
-class CFWL_BarcodeTP;
+#include "xfa/include/fwl/theme/utils.h"
+#include "xfa/include/fwl/theme/widgettp.h"
+
 class CFWL_BarcodeTP : public CFWL_WidgetTP {
  public:
   CFWL_BarcodeTP();

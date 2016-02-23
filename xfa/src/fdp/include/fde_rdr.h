@@ -7,6 +7,9 @@
 #ifndef XFA_SRC_FDP_INCLUDE_FDE_RDR_H_
 #define XFA_SRC_FDP_INCLUDE_FDE_RDR_H_
 
+#include "core/include/fxcrt/fx_coordinates.h"
+#include "xfa/src/fdp/include/fde_psr.h"
+
 class IFDE_Page;
 class IFDE_RenderDevice;
 

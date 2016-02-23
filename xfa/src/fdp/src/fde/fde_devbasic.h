@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FDP_SRC_FDE_FDE_DEVBASIC_H_
 #define XFA_SRC_FDP_SRC_FDE_FDE_DEVBASIC_H_
 
+#include <cstdint>
+
 struct FDE_HATCHDATA {
   int32_t iWidth;
   int32_t iHeight;

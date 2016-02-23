@@ -7,10 +7,10 @@
 #include <math.h>
 
 #include "xfa/src/foxitlib.h"
-#include "xfa/src/fxjse/src/fxv8.h"
-#include "xfa/src/fxjse/src/value.h"
 #include "xfa/src/fxjse/src/class.h"
+#include "xfa/src/fxjse/src/fxv8.h"
 #include "xfa/src/fxjse/src/util_inline.h"
+#include "xfa/src/fxjse/src/value.h"
 
 FX_BOOL FXJSE_Value_IsUndefined(FXJSE_HVALUE hValue) {
   CFXJSE_Value* lpValue = reinterpret_cast<CFXJSE_Value*>(hValue);

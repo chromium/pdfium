@@ -21,14 +21,14 @@
  */
 
 #include "xfa/src/fxbarcode/barcode.h"
-#include "xfa/src/fxbarcode/utils.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRCoderECB.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRCoderFormatInformation.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderBitVector.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderECB.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderECBlocks.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderFormatInformation.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderVersion.h"
+#include "xfa/src/fxbarcode/utils.h"
 const int32_t CBC_QRCoderVersion::VERSION_DECODE_INFO[] = {
     0x07C94, 0x085BC, 0x09A99, 0x0A4D3, 0x0BBF6, 0x0C762, 0x0D847,
     0x0E60D, 0x0F928, 0x10B78, 0x1145D, 0x12A17, 0x13532, 0x149A6,

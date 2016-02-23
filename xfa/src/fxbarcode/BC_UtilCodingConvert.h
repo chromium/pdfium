@@ -7,7 +7,8 @@
 #ifndef XFA_SRC_FXBARCODE_BC_UTILCODINGCONVERT_H_
 #define XFA_SRC_FXBARCODE_BC_UTILCODINGCONVERT_H_
 
-class CBC_UtilCodingConvert;
+#include "core/include/fxcrt/fx_basic.h"
+
 class CBC_UtilCodingConvert {
  public:
   CBC_UtilCodingConvert();

@@ -20,26 +20,26 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
-#include "xfa/src/fxbarcode/BC_Reader.h"
-#include "xfa/src/fxbarcode/BC_LuminanceSource.h"
-#include "xfa/src/fxbarcode/BC_BufferedImageLuminanceSource.h"
 #include "xfa/src/fxbarcode/BC_Binarizer.h"
 #include "xfa/src/fxbarcode/BC_BinaryBitmap.h"
+#include "xfa/src/fxbarcode/BC_BufferedImageLuminanceSource.h"
+#include "xfa/src/fxbarcode/BC_LuminanceSource.h"
+#include "xfa/src/fxbarcode/BC_Reader.h"
 #include "xfa/src/fxbarcode/BC_ResultPoint.h"
-#include "xfa/src/fxbarcode/common/BC_GlobalHistogramBinarizer.h"
+#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonDecoderResult.h"
+#include "xfa/src/fxbarcode/common/BC_GlobalHistogramBinarizer.h"
 #include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCodeReader.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCodeReader.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRCoderMode.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCodeReader.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderDecoder.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderMode.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderVersion.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRDataMask.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRDetector.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRDetectorResult.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRDataMask.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRCodeReader.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRCoderVersion.h"
 CBC_QRCodeReader::CBC_QRCodeReader() : m_decoder(NULL) {}
 void CBC_QRCodeReader::Init() {
   m_decoder = new CBC_QRCoderDecoder;

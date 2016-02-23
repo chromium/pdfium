@@ -7,8 +7,11 @@
 #ifndef XFA_SRC_FXBARCODE_BC_BUFFEREDIMAGELUMINANCESOURCE_H_
 #define XFA_SRC_FXBARCODE_BC_BUFFEREDIMAGELUMINANCESOURCE_H_
 
-class CBC_LuminanceSource;
-class CBC_BufferedImageLuminanceSource;
+#include "core/include/fxcrt/fx_basic.h"
+#include "core/include/fxcrt/fx_string.h"
+#include "core/include/fxge/fx_dib.h"
+#include "xfa/src/fxbarcode/BC_LuminanceSource.h"
+
 class CBC_BufferedImageLuminanceSource : public CBC_LuminanceSource {
  public:
   explicit CBC_BufferedImageLuminanceSource(const CFX_WideString& filename);

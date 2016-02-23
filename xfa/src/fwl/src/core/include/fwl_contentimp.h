@@ -7,9 +7,10 @@
 #ifndef XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_CONTENTIMP_H_
 #define XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_CONTENTIMP_H_
 
-class CFWL_WidgetImp;
+#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+
 class IFWL_Widget;
-class CFWL_ContentImp;
+
 class CFWL_ContentImp : public CFWL_WidgetImp {
  public:
   CFWL_ContentImp(const CFWL_WidgetImpProperties& properties,

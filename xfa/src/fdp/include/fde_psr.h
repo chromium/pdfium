@@ -7,6 +7,16 @@
 #ifndef XFA_SRC_FDP_INCLUDE_FDE_PSR_H_
 #define XFA_SRC_FDP_INCLUDE_FDE_PSR_H_
 
+#include "core/include/fxcrt/fx_coordinates.h"
+#include "core/include/fxcrt/fx_system.h"
+#include "core/include/fxge/fx_dib.h"
+#include "core/include/fxge/fx_ge.h"
+#include "xfa/src/fdp/include/fde_brs.h"
+#include "xfa/src/fdp/include/fde_img.h"
+#include "xfa/src/fdp/include/fde_pen.h"
+#include "xfa/src/fdp/include/fde_pth.h"
+#include "xfa/src/fgas/include/fx_fnt.h"
+
 enum FDE_VISUALOBJTYPE {
   FDE_VISUALOBJ_Canvas = 0x00,
   FDE_VISUALOBJ_Text = 0x01,
@@ -14,7 +24,9 @@ enum FDE_VISUALOBJTYPE {
   FDE_VISUALOBJ_Path = 0x04,
   FDE_VISUALOBJ_Widget = 0x08,
 };
+
 typedef struct _FDE_HVISUALOBJ { void* pData; } const* FDE_HVISUALOBJ;
+
 class IFDE_VisualSet {
  public:
   virtual ~IFDE_VisualSet() {}
@@ -24,6 +36,7 @@ class IFDE_VisualSet {
   virtual FX_BOOL GetRect(FDE_HVISUALOBJ hVisualObj, CFX_RectF& rt) = 0;
   virtual FX_BOOL GetClip(FDE_HVISUALOBJ hVisualObj, CFX_RectF& rt) = 0;
 };
+
 class IFDE_CanvasSet : public IFDE_VisualSet {
  public:
   virtual FX_POSITION GetFirstPosition(FDE_HVISUALOBJ hCanvas) = 0;

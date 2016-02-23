@@ -7,13 +7,14 @@
 #ifndef XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_TOOLTIPCTRLIMP_H_
 #define XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_TOOLTIPCTRLIMP_H_
 
-class CFWL_WidgetImp;
+#include "xfa/src/fwl/src/core/include/fwl_formimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+
 class CFWL_WidgetImpProperties;
-class CFWL_WidgetImpDelegate;
 class IFWL_Widget;
 class IFWL_Timer;
-class CFWL_ToolTipImp;
 class CFWL_ToolTipImpDelegate;
+
 class CFWL_ToolTipImp : public CFWL_FormImp {
  public:
   CFWL_ToolTipImp(const CFWL_WidgetImpProperties& properties,

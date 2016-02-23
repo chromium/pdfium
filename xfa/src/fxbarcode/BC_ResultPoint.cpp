@@ -20,8 +20,8 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/BC_ResultPoint.h"
+#include "xfa/src/fxbarcode/barcode.h"
 CBC_ResultPoint::CBC_ResultPoint(FX_FLOAT x, FX_FLOAT y) : m_x(x), m_y(y) {}
 FX_FLOAT CBC_ResultPoint::GetX() {
   return m_x;

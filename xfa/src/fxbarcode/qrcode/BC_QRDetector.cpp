@@ -22,17 +22,17 @@
 
 #include <algorithm>
 
+#include "xfa/src/fxbarcode/BC_ResultPoint.h"
 #include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
-#include "xfa/src/fxbarcode/BC_ResultPoint.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRFinderPattern.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRCoderVersion.h"
 #include "xfa/src/fxbarcode/qrcode/BC_FinderPatternInfo.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRGridSampler.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRAlignmentPatternFinder.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRFinderPatternFinder.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRDetectorResult.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderVersion.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRDetector.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRDetectorResult.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRFinderPattern.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRFinderPatternFinder.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRGridSampler.h"
 CBC_QRDetector::CBC_QRDetector(CBC_CommonBitMatrix* image) : m_image(image) {}
 CBC_QRDetector::~CBC_QRDetector() {}
 CBC_QRDetectorResult* CBC_QRDetector::Detect(int32_t hints, int32_t& e) {

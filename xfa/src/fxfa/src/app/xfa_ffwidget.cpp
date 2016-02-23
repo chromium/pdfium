@@ -7,13 +7,13 @@
 #include <algorithm>
 
 #include "xfa/src/foxitlib.h"
-#include "xfa/src/fxfa/src/common/xfa_common.h"
 #include "xfa/src/fxfa/src/app/xfa_ffapp.h"
 #include "xfa/src/fxfa/src/app/xfa_ffdoc.h"
 #include "xfa/src/fxfa/src/app/xfa_ffdocview.h"
-#include "xfa/src/fxfa/src/app/xfa_ffwidget.h"
 #include "xfa/src/fxfa/src/app/xfa_ffpageview.h"
+#include "xfa/src/fxfa/src/app/xfa_ffwidget.h"
 #include "xfa/src/fxfa/src/app/xfa_textlayout.h"
+#include "xfa/src/fxfa/src/common/xfa_common.h"
 CXFA_FFWidget::CXFA_FFWidget(CXFA_FFPageView* pPageView,
                              CXFA_WidgetAcc* pDataAcc)
     : CXFA_ContentLayoutItem(pDataAcc->GetNode()),

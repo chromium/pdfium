@@ -5,11 +5,11 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "xfa/src/foxitlib.h"
-#include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_widgetmgrimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_threadimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_appimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_threadimp.h"
+#include "xfa/src/fwl/src/core/include/fwl_widgetmgrimp.h"
 
 FX_BOOL FWL_UseOffscreen(IFWL_Widget* pWidget) {
 #if (_FX_OS_ == _FX_MACOSX_)

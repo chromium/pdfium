@@ -7,6 +7,13 @@
 #ifndef XFA_SRC_FDP_SRC_FDE_FDE_OBJECT_H_
 #define XFA_SRC_FDP_SRC_FDE_FDE_OBJECT_H_
 
+#include <cstdint>
+
+#include "core/include/fxge/fx_dib.h"
+#include "xfa/src/fdp/include/fde_brs.h"
+#include "xfa/src/fdp/include/fde_pen.h"
+#include "xfa/src/fgas/include/fx_mem.h"
+
 class CFDE_Pen : public IFDE_Pen, public CFX_Target {
  public:
   CFDE_Pen()

@@ -7,8 +7,8 @@
 #ifndef XFA_INCLUDE_FWL_THEME_COMBOBOXTP_H_
 #define XFA_INCLUDE_FWL_THEME_COMBOBOXTP_H_
 
-class CFWL_WidgetTP;
-class CFWL_ComboBoxTP;
+#include "xfa/include/fwl/theme/widgettp.h"
+
 class CFWL_ComboBoxTP : public CFWL_WidgetTP {
  public:
   CFWL_ComboBoxTP();

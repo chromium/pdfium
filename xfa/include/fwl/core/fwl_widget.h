@@ -7,7 +7,11 @@
 #ifndef XFA_INCLUDE_FWL_CORE_FWL_WIDGET_H_
 #define XFA_INCLUDE_FWL_CORE_FWL_WIDGET_H_
 
-class IFWL_Target;
+#include "xfa/include/fwl/core/fwl_note.h"
+#include "xfa/include/fwl/core/fwl_target.h"
+#include "xfa/include/fwl/core/fwl_widgetdef.h"
+#include "xfa/include/fxgraphics/fx_graphics.h"
+
 class IFWL_ThemeProvider;
 class CFWL_WidgetImpProperties;
 class IFWL_DataProvider;

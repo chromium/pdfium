@@ -7,8 +7,8 @@
 #ifndef XFA_SRC_FGAS_INCLUDE_FX_UTL_H_
 #define XFA_SRC_FGAS_INCLUDE_FX_UTL_H_
 
-#include "xfa/src/fgas/include/fx_mem.h"
 #include "core/include/fxcrt/fx_coordinates.h"  // For CFX_Rect.
+#include "xfa/src/fgas/include/fx_mem.h"
 
 class CFX_BaseArray;
 template <class baseType>

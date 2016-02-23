@@ -6,10 +6,10 @@
 
 #include <algorithm>
 
-#include "xfa/src/foxitlib.h"
 #include "xfa/src/fee/include/ifde_txtedtbuf.h"
 #include "xfa/src/fee/include/ifde_txtedtengine.h"
 #include "xfa/src/fee/src/fee/fde_txtedtbuf.h"
+#include "xfa/src/foxitlib.h"
 #define FDE_DEFCHUNKCOUNT 2
 #define FDE_TXTEDT_FORMATBLOCK_BGN 0xFFF9
 #define FDE_TXTEDT_FORMATBLOCK_END 0xFFFB

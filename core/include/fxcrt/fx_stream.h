@@ -8,6 +8,7 @@
 #define CORE_INCLUDE_FXCRT_FX_STREAM_H_
 
 #include "core/include/fxcrt/fx_string.h"
+#include "core/include/fxcrt/fx_system.h"
 
 void* FX_OpenFolder(const FX_CHAR* path);
 void* FX_OpenFolder(const FX_WCHAR* path);

@@ -7,12 +7,12 @@
 #ifndef XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_PICTUREBOXIMP_H_
 #define XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_PICTUREBOXIMP_H_
 
-class CFWL_WidgetImp;
+#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+
 class CFWL_WidgetImpProperties;
-class CFWL_WidgetImpDelegate;
 class IFWL_Widget;
-class CFWL_PictureBoxImp;
 class CFWL_PictureBoxImpDelegate;
+
 class CFWL_PictureBoxImp : public CFWL_WidgetImp {
  public:
   CFWL_PictureBoxImp(const CFWL_WidgetImpProperties& properties,

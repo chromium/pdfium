@@ -7,6 +7,18 @@
 #ifndef XFA_SRC_FDP_SRC_TTO_FDE_TEXTOUT_H_
 #define XFA_SRC_FDP_SRC_TTO_FDE_TEXTOUT_H_
 
+#include "core/include/fxcrt/fx_coordinates.h"
+#include "core/include/fxcrt/fx_system.h"
+#include "core/include/fxge/fx_dib.h"
+#include "xfa/src/fdp/include/fde_brs.h"
+#include "xfa/src/fdp/include/fde_pen.h"
+#include "xfa/src/fdp/include/fde_rdv.h"
+#include "xfa/src/fdp/include/fde_tto.h"
+#include "xfa/src/fgas/include/fx_fnt.h"
+#include "xfa/src/fgas/include/fx_mem.h"
+#include "xfa/src/fgas/include/fx_tbk.h"
+#include "xfa/src/fgas/include/fx_utl.h"
+
 struct FDE_TTOPIECE {
  public:
   int32_t iStartChar;

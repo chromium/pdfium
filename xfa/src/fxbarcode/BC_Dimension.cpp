@@ -20,8 +20,8 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/BC_Dimension.h"
+#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_Encoder.h"
 CBC_Dimension::CBC_Dimension() {}
 CBC_Dimension::CBC_Dimension(int32_t width, int32_t height, int32_t& e) {

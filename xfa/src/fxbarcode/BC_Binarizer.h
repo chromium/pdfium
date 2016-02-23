@@ -7,10 +7,13 @@
 #ifndef XFA_SRC_FXBARCODE_BC_BINARIZER_H_
 #define XFA_SRC_FXBARCODE_BC_BINARIZER_H_
 
+#include <cstdint>
+
 class CBC_LuminanceSource;
 class CBC_CommonBitMatrix;
 class CBC_CommonBitArray;
 class CBC_BinaryBitmap;
+
 class CBC_Binarizer {
  public:
   CBC_Binarizer(CBC_LuminanceSource* source);

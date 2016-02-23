@@ -7,12 +7,16 @@
 #ifndef XFA_SRC_FGAS_INCLUDE_FX_RBK_H_
 #define XFA_SRC_FGAS_INCLUDE_FX_RBK_H_
 
+#include "core/include/fxcrt/fx_ucd.h"
+#include "core/include/fxge/fx_ge.h"
+#include "xfa/src/fgas/include/fx_ucd.h"
+
 class IFX_Unknown;
 class IFX_Font;
 class CFX_Char;
-class CFX_RTFChar;
 class CFX_RTFBreakPiece;
 class IFX_RTFBreak;
+
 #define FX_RTFBREAKPOLICY_None 0x00
 #define FX_RTFBREAKPOLICY_SpaceBreak 0x01
 #define FX_RTFBREAKPOLICY_NumberBreak 0x02

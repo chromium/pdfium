@@ -7,9 +7,8 @@
 #ifndef XFA_INCLUDE_FWL_BASEWIDGET_FWL_SPINBUTTON_H_
 #define XFA_INCLUDE_FWL_BASEWIDGET_FWL_SPINBUTTON_H_
 
-class CFWL_WidgetImpProperties;
-class IFWL_Widget;
-class IFWL_SpinButton;
+#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+
 #define FWL_CLASS_SpinButton L"FWL_SPINBUTTON"
 #define FWL_CLASSHASH_SpinButton 3793043646
 #define FWL_STYLEEXE_SPB_Vert (1L << 0)

@@ -7,7 +7,10 @@
 #ifndef XFA_SRC_FDP_INCLUDE_FDE_TTO_H_
 #define XFA_SRC_FDP_INCLUDE_FDE_TTO_H_
 
-class IFDE_TextOut;
+#include "core/include/fxge/fx_dib.h"
+#include "core/include/fxge/fx_ge.h"
+#include "xfa/src/fgas/include/fx_fnt.h"
+
 #define FDE_TTOSTYLE_Underline 0x0001
 #define FDE_TTOSTYLE_Strikeout 0x0002
 #define FDE_TTOSTYLE_VerticalLayout 0x0004

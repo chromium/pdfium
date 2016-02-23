@@ -7,7 +7,9 @@
 #ifndef XFA_SRC_FGAS_SRC_CRT_FX_STREAM_H_
 #define XFA_SRC_FGAS_SRC_CRT_FX_STREAM_H_
 
-class CFX_StreamImp;
+#include "core/include/fxcrt/fx_system.h"
+#include "xfa/src/fgas/include/fx_stm.h"
+
 class CFX_FileStreamImp;
 class CFX_BufferStreamImp;
 class CFX_FileReadStreamImp;
@@ -18,6 +20,7 @@ class CFX_TextStream;
 class CFX_FileRead;
 class CFX_FileWrite;
 class CFX_BufferAccImp;
+
 class CFX_StreamImp {
  public:
   virtual void Release() { delete this; }

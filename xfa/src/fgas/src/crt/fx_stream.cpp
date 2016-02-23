@@ -6,8 +6,8 @@
 
 #include <algorithm>
 
-#include "xfa/src/fgas/src/fgas_base.h"
 #include "xfa/src/fgas/src/crt/fx_stream.h"
+#include "xfa/src/fgas/src/fgas_base.h"
 IFX_Stream* IFX_Stream::CreateStream(IFX_BufferRead* pBufferRead,
                                      FX_DWORD dwAccess,
                                      int32_t iFileSize,

@@ -22,10 +22,10 @@
 
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417HighLevelEncoder.h"
 
+#include "third_party/bigint/BigIntegerLibrary.hh"
 #include "xfa/src/fxbarcode/BC_UtilCodingConvert.h"
 #include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417Compaction.h"
-#include "third_party/bigint/BigIntegerLibrary.hh"
 
 #define SUBMODE_ALPHA 0
 #define SUBMODE_LOWER 1

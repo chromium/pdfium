@@ -21,8 +21,8 @@
  */
 
 #include "xfa/src/fxbarcode/barcode.h"
-#include "xfa/src/fxbarcode/pdf417/BC_PDF417BarcodeRow.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417BarcodeMatrix.h"
+#include "xfa/src/fxbarcode/pdf417/BC_PDF417BarcodeRow.h"
 CBC_BarcodeMatrix::CBC_BarcodeMatrix(int32_t height, int32_t width) {
   m_matrix.SetSize(height + 2);
   for (int32_t i = 0, matrixLength = m_matrix.GetSize(); i < matrixLength;

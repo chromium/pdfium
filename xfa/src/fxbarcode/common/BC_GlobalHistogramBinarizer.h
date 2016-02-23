@@ -7,11 +7,13 @@
 #ifndef XFA_SRC_FXBARCODE_COMMON_BC_GLOBALHISTOGRAMBINARIZER_H_
 #define XFA_SRC_FXBARCODE_COMMON_BC_GLOBALHISTOGRAMBINARIZER_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+
 class CBC_CommonBinarizer;
 class CBC_CommonBitArray;
 class CBC_CommonBitMatrix;
 class CBC_LuminanceSource;
-class CBC_GlobalHistogramBinarizer;
+
 class CBC_GlobalHistogramBinarizer : public CBC_Binarizer {
  public:
   CBC_GlobalHistogramBinarizer(CBC_LuminanceSource* source);

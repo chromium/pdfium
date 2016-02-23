@@ -7,8 +7,12 @@
 #ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFFIELD_H_
 #define XFA_SRC_FXFA_SRC_APP_XFA_FFFIELD_H_
 
+#include "xfa/src/fxfa/src/app/xfa_ffpageview.h"
+#include "xfa/src/fxfa/src/app/xfa_ffwidget.h"
+
 #define XFA_MINUI_HEIGHT 4.32f
 #define XFA_DEFAULTUI_HEIGHT 2.0f
+
 class CXFA_TextLayout;
 class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
  public:

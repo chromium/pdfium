@@ -20,10 +20,10 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
-#include "xfa/src/fxbarcode/common/BC_WhiteRectangleDetector.h"
-#include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/BC_ResultPoint.h"
+#include "xfa/src/fxbarcode/barcode.h"
+#include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
+#include "xfa/src/fxbarcode/common/BC_WhiteRectangleDetector.h"
 const int32_t CBC_WhiteRectangleDetector::INIT_SIZE = 30;
 const int32_t CBC_WhiteRectangleDetector::CORR = 1;
 CBC_WhiteRectangleDetector::CBC_WhiteRectangleDetector(

@@ -22,8 +22,8 @@
 
 #include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonByteMatrix.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoder.h"
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderMaskUtil.h"
 CBC_QRCoderMaskUtil::CBC_QRCoderMaskUtil() {}
 CBC_QRCoderMaskUtil::~CBC_QRCoderMaskUtil() {}
