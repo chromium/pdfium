@@ -12,11 +12,7 @@
 #include "xfa/src/fgas/include/fx_mem.h"
 #include "xfa/src/fgas/include/fx_stm.h"
 
-#define _FDE_BLOCK_BUFFER
-#ifdef _FDE_BLOCK_BUFFER
 class CFDE_BlockBuffer;
-#endif  // _FDE_BLOCK_BUFFER
-
 class CFDE_XMLInstruction;
 class CFDE_XMLElement;
 class CFDE_XMLText;
@@ -234,7 +230,7 @@ class CFDE_XMLSAXParser : public IFDE_XMLParser, public CFX_Target {
   CFX_WideString m_ws1;
   CFX_WideString m_ws2;
 };
-#ifdef _FDE_BLOCK_BUFFER
+
 class CFDE_BlockBuffer : public CFX_Target {
  public:
   CFDE_BlockBuffer(int32_t iAllocStep = 1024 * 1024);
@@ -269,7 +265,7 @@ class CFDE_BlockBuffer : public CFX_Target {
   int32_t m_iAllocStep;
   int32_t m_iStartPosition;
 };
-#endif
+
 #define FDE_XMLSYNTAXMODE_Text 0
 #define FDE_XMLSYNTAXMODE_Node 1
 #define FDE_XMLSYNTAXMODE_Target 2
@@ -305,7 +301,7 @@ class CFDE_XMLSyntaxParser : public IFDE_XMLSyntaxParser, public CFX_Target {
   virtual FX_FILESIZE GetCurrentBinaryPos() const;
   virtual int32_t GetCurrentNodeNumber() const { return m_iCurrentNodeNum; }
   virtual int32_t GetLastNodeNumber() const { return m_iLastNodeNum; }
-#ifdef _FDE_BLOCK_BUFFER
+
   virtual void GetTargetName(CFX_WideString& wsTarget) const {
     m_BlockBuffer.GetTextData(wsTarget, 0, m_iTextDataLength);
   }
@@ -324,20 +320,7 @@ class CFDE_XMLSyntaxParser : public IFDE_XMLSyntaxParser, public CFX_Target {
   virtual void GetTargetData(CFX_WideString& wsData) const {
     m_BlockBuffer.GetTextData(wsData, 0, m_iTextDataLength);
   }
-#else
-  virtual void GetTargetName(CFX_WideString& wsTarget) const {
-    GetData(wsTarget);
-  }
-  virtual void GetTagName(CFX_WideString& wsTag) const { GetData(wsTag); }
-  virtual void GetAttributeName(CFX_WideString& wsAttriName) const {
-    GetData(wsAttriName);
-  }
-  virtual void GetAttributeValue(CFX_WideString& wsAttriValue) const {
-    GetData(wsAttriValue);
-  }
-  virtual void GetTextData(CFX_WideString& wsText) const { GetData(wsText); }
-  virtual void GetTargetData(CFX_WideString& wsData) const { GetData(wsData); }
-#endif
+
  protected:
   IFX_Stream* m_pStream;
   int32_t m_iXMLPlaneSize;
@@ -353,17 +336,11 @@ class CFDE_XMLSyntaxParser : public IFDE_XMLSyntaxParser, public CFX_Target {
   FX_WCHAR* m_pEnd;
   FDE_XMLNODE m_CurNode;
   CFDE_XMLNodeStack m_XMLNodeStack;
-#ifdef _FDE_BLOCK_BUFFER
   CFDE_BlockBuffer m_BlockBuffer;
   int32_t m_iAllocStep;
   int32_t& m_iDataLength;
   FX_WCHAR* m_pCurrentBlock;
   int32_t m_iIndexInBlock;
-#else
-  int32_t m_iTextDataSize;
-  FX_WCHAR* m_pwsTextData;
-  int32_t m_iDataPos;
-#endif
   int32_t m_iTextDataLength;
   FX_DWORD m_dwStatus;
   FX_DWORD m_dwMode;
@@ -372,10 +349,6 @@ class CFDE_XMLSyntaxParser : public IFDE_XMLSyntaxParser, public CFX_Target {
   CFX_DWordStack m_SkipStack;
   FX_WCHAR m_SkipChar;
   inline void ParseTextChar(FX_WCHAR ch);
-#ifndef _FDE_BLOCK_BUFFER
-  void ReallocTextDataBuffer();
-  void GetData(CFX_WideString& wsData) const;
-#endif
 };
 
 #endif  // XFA_SRC_FDP_SRC_XML_FDE_XML_IMP_H_
