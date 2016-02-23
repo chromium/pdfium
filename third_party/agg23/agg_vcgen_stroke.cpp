@@ -68,14 +68,13 @@ static inline void calc_butt_cap(FX_FLOAT* cap,
                                  const vertex_dist& v0,
                                  const vertex_dist& v1,
                                  FX_FLOAT len,
-                                 FX_FLOAT width)
-{
-    FX_FLOAT dx = FXSYS_MulDiv(v1.y - v0.y, width, len);
-    FX_FLOAT dy = FXSYS_MulDiv(v1.x - v0.x, width, len);
-    cap[0] = v0.x - dx;
-    cap[1] = v0.y + dy;
-    cap[2] = v0.x + dx;
-    cap[3] = v0.y - dy;
+                                 FX_FLOAT width) {
+  FX_FLOAT dx = (v1.y - v0.y) * width / len;
+  FX_FLOAT dy = (v1.x - v0.x) * width / len;
+  cap[0] = v0.x - dx;
+  cap[1] = v0.y + dy;
+  cap[2] = v0.x + dx;
+  cap[3] = v0.y - dy;
 }
 void vcgen_stroke::rewind(unsigned)
 {

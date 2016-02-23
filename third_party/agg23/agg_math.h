@@ -44,7 +44,7 @@ AGG_INLINE FX_FLOAT calc_line_point_distance(FX_FLOAT x1, FX_FLOAT y1,
     if(d < intersection_epsilon) {
         return calc_distance(x1, y1, x, y);
     }
-    return FXSYS_MulDiv(x - x2, dy, d) - FXSYS_MulDiv(y - y2, dx, d);
+    return ((x - x2) * dy / d) - ((y - y2) * dx / d);
 }
 AGG_INLINE bool calc_intersection(FX_FLOAT ax, FX_FLOAT ay, FX_FLOAT bx, FX_FLOAT by,
                                   FX_FLOAT cx, FX_FLOAT cy, FX_FLOAT dx, FX_FLOAT dy,
@@ -55,8 +55,8 @@ AGG_INLINE bool calc_intersection(FX_FLOAT ax, FX_FLOAT ay, FX_FLOAT bx, FX_FLOA
     if (FXSYS_fabs(den) < intersection_epsilon) {
         return false;
     }
-    *x = ax + FXSYS_MulDiv(bx - ax, num, den);
-    *y = ay + FXSYS_MulDiv(by - ay, num, den);
+    *x = ax + ((bx - ax) * num / den);
+    *y = ay + ((by - ay) * num / den);
     return true;
 }
 }

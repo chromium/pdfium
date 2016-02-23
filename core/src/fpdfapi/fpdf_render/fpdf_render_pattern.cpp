@@ -319,7 +319,7 @@ FX_BOOL _GetScanlineIntersect(int y,
       return FALSE;
     }
   }
-  x = x1 + FXSYS_MulDiv(x2 - x1, y - y1, y2 - y1);
+  x = x1 + ((x2 - x1) * (y - y1) / (y2 - y1));
   return TRUE;
 }
 static void DrawGouraud(CFX_DIBitmap* pBitmap,
@@ -355,15 +355,11 @@ static void DrawGouraud(CFX_DIBitmap* pBitmap,
       if (!bIntersect) {
         continue;
       }
-      r[nIntersects] =
-          vertex1.r + FXSYS_MulDiv(vertex2.r - vertex1.r, y - vertex1.y,
-                                   vertex2.y - vertex1.y);
-      g[nIntersects] =
-          vertex1.g + FXSYS_MulDiv(vertex2.g - vertex1.g, y - vertex1.y,
-                                   vertex2.y - vertex1.y);
-      b[nIntersects] =
-          vertex1.b + FXSYS_MulDiv(vertex2.b - vertex1.b, y - vertex1.y,
-                                   vertex2.y - vertex1.y);
+
+      FX_FLOAT y_dist = (y - vertex1.y) / (vertex2.y - vertex1.y);
+      r[nIntersects] = vertex1.r + ((vertex2.r - vertex1.r) * y_dist);
+      g[nIntersects] = vertex1.g + ((vertex2.g - vertex1.g) * y_dist);
+      b[nIntersects] = vertex1.b + ((vertex2.b - vertex1.b) * y_dist);
       nIntersects++;
     }
     if (nIntersects != 2) {

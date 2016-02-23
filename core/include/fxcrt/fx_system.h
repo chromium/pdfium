@@ -269,7 +269,6 @@ int64_t FXSYS_atoi64(const FX_CHAR* str);
 int64_t FXSYS_wtoi64(const FX_WCHAR* str);
 const FX_CHAR* FXSYS_i64toa(int64_t value, FX_CHAR* str, int radix);
 int FXSYS_round(FX_FLOAT f);
-#define FXSYS_MulDiv(a, b, c) ((a) * (b) / (c))
 #define FXSYS_sqrt2(a, b) (FX_FLOAT) FXSYS_sqrt((a) * (a) + (b) * (b))
 #ifdef __cplusplus
 };

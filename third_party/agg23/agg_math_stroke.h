@@ -198,10 +198,10 @@ void stroke_calc_join(VertexConsumer& out_vertices,
 {
     typedef typename VertexConsumer::value_type coord_type;
     FX_FLOAT dx1, dy1, dx2, dy2;
-    dx1 = FXSYS_MulDiv(width, v1.y - v0.y, len1);
-    dy1 = FXSYS_MulDiv(width, v1.x - v0.x, len1);
-    dx2 = FXSYS_MulDiv(width, v2.y - v1.y, len2);
-    dy2 = FXSYS_MulDiv(width, v2.x - v1.x, len2);
+    dx1 = width * (v1.y - v0.y) / len1;
+    dy1 = width * (v1.x - v0.x) / len1;
+    dx2 = width * (v2.y - v1.y) / len2;
+    dy2 = width * (v2.x - v1.x) / len2;
     out_vertices.remove_all();
     if(calc_point_location(v0.x, v0.y, v1.x, v1.y, v2.x, v2.y) > 0) {
         switch(inner_join) {

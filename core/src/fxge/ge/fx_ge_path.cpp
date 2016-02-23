@@ -266,15 +266,14 @@ static void _UpdateLineJoinPoints(CFX_FloatRect& rect,
     start_k = (middle_y - start_y) / (middle_x - start_x);
     start_c = middle_y - (start_k * middle_x);
     start_len = FXSYS_sqrt2(start_x - middle_x, start_y - middle_y);
-    start_dc = (FX_FLOAT)FXSYS_fabs(
-        FXSYS_MulDiv(half_width, start_len, start_x - middle_x));
+    start_dc =
+        (FX_FLOAT)FXSYS_fabs(half_width * start_len / (start_x - middle_x));
   }
   if (!bEndVert) {
     end_k = (end_y - middle_y) / (end_x - middle_x);
     end_c = middle_y - (end_k * middle_x);
     end_len = FXSYS_sqrt2(end_x - middle_x, end_y - middle_y);
-    end_dc = (FX_FLOAT)FXSYS_fabs(
-        FXSYS_MulDiv(half_width, end_len, end_x - middle_x));
+    end_dc = (FX_FLOAT)FXSYS_fabs(half_width * end_len / (end_x - middle_x));
   }
   if (bStartVert) {
     FX_FLOAT outside_x = start_x;
