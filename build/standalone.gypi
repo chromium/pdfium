@@ -416,6 +416,15 @@
             'xcode_settings': {'OTHER_LDFLAGS': ['-Wl,-search_paths_first']},
           }],
         ],  # target_conditions
+        'variables': {
+          'mac_sdk_min': '10.10',
+          'mac_sdk%': '<!(python <(DEPTH)/build/gyp/tools/mac_find_sdk.py <(mac_sdk_min))',
+        },
+        'xcode_settings': {
+          'SDKROOT': 'macosx<(mac_sdk)',  # -isysroot
+          # See comment in Chromium's common.gypi for why this is needed.
+          'SYMROOT': '<(DEPTH)/xcodebuild',
+        },
       }],  # OS=="mac"
       ['v8_use_external_startup_data==1', {
         'defines': [
@@ -431,11 +440,6 @@
         'defines': ['CR_CLANG_REVISION=<!(python <(DEPTH)/tools/clang/scripts/update.py --print-revision)'],
       }],
     ],
-  },
-  'xcode_settings': {
-    'SDKROOT': 'macosx10.10',  # -isysroot
-    # See comment in Chromium's common.gypi for why this is needed.
-    'SYMROOT': '<(DEPTH)/xcodebuild',
   },
   'conditions': [
     ['OS=="linux" or OS=="mac"', {
