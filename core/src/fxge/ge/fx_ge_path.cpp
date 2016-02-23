@@ -263,14 +263,14 @@ static void _UpdateLineJoinPoints(CFX_FloatRect& rect,
     return;
   }
   if (!bStartVert) {
-    start_k = FXSYS_Div(middle_y - start_y, middle_x - start_x);
+    start_k = (middle_y - start_y) / (middle_x - start_x);
     start_c = middle_y - (start_k * middle_x);
     start_len = FXSYS_sqrt2(start_x - middle_x, start_y - middle_y);
     start_dc = (FX_FLOAT)FXSYS_fabs(
         FXSYS_MulDiv(half_width, start_len, start_x - middle_x));
   }
   if (!bEndVert) {
-    end_k = FXSYS_Div(end_y - middle_y, end_x - middle_x);
+    end_k = (end_y - middle_y) / (end_x - middle_x);
     end_c = middle_y - (end_k * middle_x);
     end_len = FXSYS_sqrt2(end_x - middle_x, end_y - middle_y);
     end_dc = (FX_FLOAT)FXSYS_fabs(
@@ -331,7 +331,7 @@ static void _UpdateLineJoinPoints(CFX_FloatRect& rect,
   } else {
     end_outside_c -= end_dc;
   }
-  FX_FLOAT join_x = FXSYS_Div(end_outside_c - start_outside_c, start_k - end_k);
+  FX_FLOAT join_x = (end_outside_c - start_outside_c) / (start_k - end_k);
   FX_FLOAT join_y = (start_k * join_x) + start_outside_c;
   rect.UpdateRect(join_x, join_y);
 }

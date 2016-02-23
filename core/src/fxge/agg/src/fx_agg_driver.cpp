@@ -144,8 +144,8 @@ static void RasterizeStroke(agg::rasterizer_scanline_aa& rasterizer,
   FX_FLOAT width = pGraphState->m_LineWidth * scale;
   FX_FLOAT unit = 1.f;
   if (pObject2Device) {
-    unit = FXSYS_Div(
-        1.0f, (pObject2Device->GetXUnit() + pObject2Device->GetYUnit()) / 2);
+    unit =
+        1.0f / ((pObject2Device->GetXUnit() + pObject2Device->GetYUnit()) / 2);
   }
   if (width < unit) {
     width = unit;

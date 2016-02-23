@@ -752,11 +752,10 @@ void CPDF_Page::GetDisplayMatrix(CFX_Matrix& matrix,
       y2 = yPos;
       break;
   }
-  display_matrix.Set(FXSYS_Div((FX_FLOAT)(x2 - x0), m_PageWidth),
-                     FXSYS_Div((FX_FLOAT)(y2 - y0), m_PageWidth),
-                     FXSYS_Div((FX_FLOAT)(x1 - x0), m_PageHeight),
-                     FXSYS_Div((FX_FLOAT)(y1 - y0), m_PageHeight), (FX_FLOAT)x0,
-                     (FX_FLOAT)y0);
+  display_matrix.Set(
+      ((FX_FLOAT)(x2 - x0)) / m_PageWidth, ((FX_FLOAT)(y2 - y0)) / m_PageWidth,
+      ((FX_FLOAT)(x1 - x0)) / m_PageHeight,
+      ((FX_FLOAT)(y1 - y0)) / m_PageHeight, (FX_FLOAT)x0, (FX_FLOAT)y0);
   matrix = m_PageMatrix;
   matrix.Concat(display_matrix);
 }

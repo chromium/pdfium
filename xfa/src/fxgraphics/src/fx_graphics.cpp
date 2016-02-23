@@ -978,8 +978,8 @@ FX_ERR CFX_Graphics::FillPathWithShading(CFX_Path* path,
           FX_FLOAT x = (FX_FLOAT)(column);
           FX_FLOAT y = (FX_FLOAT)(row);
           FX_FLOAT scale =
-              FXSYS_Div(((x - start_x) * x_span) + ((y - start_y) * y_span),
-                        axis_len_square);
+              (((x - start_x) * x_span) + ((y - start_y) * y_span)) /
+              axis_len_square;
           if (scale < 0) {
             if (!_info._fillColor->_shading->_isExtendedBegin) {
               continue;
@@ -1016,7 +1016,7 @@ FX_ERR CFX_Graphics::FillPathWithShading(CFX_Path* path,
                        ((y - start_y) * (y - start_y)) - (start_r * start_r);
           FX_FLOAT s;
           if (a == 0) {
-            s = (FXSYS_Div(-c, b));
+            s = -c / b;
           } else {
             FX_FLOAT b2_4ac = (b * b) - 4 * (a * c);
             if (b2_4ac < 0) {
@@ -1025,11 +1025,11 @@ FX_ERR CFX_Graphics::FillPathWithShading(CFX_Path* path,
             FX_FLOAT root = (FXSYS_sqrt(b2_4ac));
             FX_FLOAT s1, s2;
             if (a > 0) {
-              s1 = FXSYS_Div(-b - root, 2 * a);
-              s2 = FXSYS_Div(-b + root, 2 * a);
+              s1 = (-b - root) / (2 * a);
+              s2 = (-b + root) / (2 * a);
             } else {
-              s2 = FXSYS_Div(-b - root, 2 * a);
-              s1 = FXSYS_Div(-b + root, 2 * a);
+              s2 = (-b - root) / (2 * a);
+              s1 = (-b + root) / (2 * a);
             }
             if (s2 <= 1.0f || _info._fillColor->_shading->_isExtendedEnd) {
               s = (s2);

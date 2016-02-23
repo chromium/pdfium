@@ -20,7 +20,7 @@ void CWeightTable::Calc(int dest_len,
   FX_Free(m_pWeightTables);
   m_pWeightTables = NULL;
   double scale, base;
-  scale = FXSYS_Div((FX_FLOAT)(src_len), (FX_FLOAT)(dest_len));
+  scale = (FX_FLOAT)src_len / (FX_FLOAT)dest_len;
   if (dest_len < 0) {
     base = (FX_FLOAT)(src_len);
   } else {
@@ -188,8 +188,8 @@ void CWeightTable::Calc(int dest_len,
     pixel_weights.m_SrcStart = start_i;
     pixel_weights.m_SrcEnd = end_i;
     for (int j = start_i; j <= end_i; j++) {
-      double dest_start = FXSYS_Div((FX_FLOAT)(j)-base, scale);
-      double dest_end = FXSYS_Div((FX_FLOAT)(j + 1) - base, scale);
+      double dest_start = ((FX_FLOAT)j - base) / scale;
+      double dest_end = ((FX_FLOAT)(j + 1) - base) / scale;
       if (dest_start > dest_end) {
         double temp = dest_start;
         dest_start = dest_end;
@@ -270,8 +270,8 @@ CStretchEngine::CStretchEngine(IFX_ScanlineComposer* pDestBitmap,
       m_Flags |= FXDIB_DOWNSAMPLE;
     }
   }
-  double scale_x = FXSYS_Div((FX_FLOAT)(m_SrcWidth), (FX_FLOAT)(m_DestWidth));
-  double scale_y = FXSYS_Div((FX_FLOAT)(m_SrcHeight), (FX_FLOAT)(m_DestHeight));
+  double scale_x = (FX_FLOAT)m_SrcWidth / (FX_FLOAT)m_DestWidth;
+  double scale_y = (FX_FLOAT)m_SrcHeight / (FX_FLOAT)m_DestHeight;
   double base_x = m_DestWidth > 0 ? 0.0f : (FX_FLOAT)(m_DestWidth);
   double base_y = m_DestHeight > 0 ? 0.0f : (FX_FLOAT)(m_DestHeight);
   double src_left = scale_x * ((FX_FLOAT)(clip_rect.left) + base_x);

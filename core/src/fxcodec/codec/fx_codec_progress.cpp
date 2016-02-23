@@ -18,7 +18,7 @@ void CFXCODEC_WeightTable::Calc(int dest_len,
     FX_Free(m_pWeightTables);
   }
   double scale, base;
-  scale = FXSYS_Div((FX_FLOAT)(src_len), (FX_FLOAT)(dest_len));
+  scale = (FX_FLOAT)src_len / (FX_FLOAT)dest_len;
   if (dest_len < 0) {
     base = (FX_FLOAT)(src_len);
   } else {
@@ -88,8 +88,8 @@ void CFXCODEC_WeightTable::Calc(int dest_len,
     pixel_weights.m_SrcStart = start_i;
     pixel_weights.m_SrcEnd = end_i;
     for (int j = start_i; j <= end_i; j++) {
-      double dest_start = FXSYS_Div((FX_FLOAT)(j)-base, scale);
-      double dest_end = FXSYS_Div((FX_FLOAT)(j + 1) - base, scale);
+      double dest_start = ((FX_FLOAT)j - base) / scale;
+      double dest_end = ((FX_FLOAT)(j + 1) - base) / scale;
       if (dest_start > dest_end) {
         double temp = dest_start;
         dest_start = dest_end;

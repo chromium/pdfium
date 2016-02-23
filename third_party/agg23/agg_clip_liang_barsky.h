@@ -50,7 +50,7 @@ inline unsigned clip_liang_barsky(T x1, T y1, T x2, T y2,
         xin  = (FX_FLOAT)clip_box.x2;
         xout = (FX_FLOAT)clip_box.x1;
     }
-    FX_FLOAT tinx = FXSYS_Div(xin - x1, deltax);
+    FX_FLOAT tinx = (xin - x1) / deltax;
     if(deltay == 0) {
         deltay = (y1 > clip_box.y1) ? -nearzero : nearzero;
     }
@@ -62,7 +62,7 @@ inline unsigned clip_liang_barsky(T x1, T y1, T x2, T y2,
         yin  = (FX_FLOAT)clip_box.y2;
         yout = (FX_FLOAT)clip_box.y1;
     }
-    FX_FLOAT tiny = FXSYS_Div(yin - y1, deltay);
+    FX_FLOAT tiny = (yin - y1) / deltay;
     FX_FLOAT tin1, tin2;
     if (tinx < tiny) {
         tin1 = tinx;
@@ -78,10 +78,10 @@ inline unsigned clip_liang_barsky(T x1, T y1, T x2, T y2,
             ++np;
         }
         if(tin2 <= 1.0f) {
-            FX_FLOAT toutx = FXSYS_Div(xout - x1, deltax);
-            FX_FLOAT touty = FXSYS_Div(yout - y1, deltay);
-            FX_FLOAT tout1 = (toutx < touty) ? toutx : touty;
-            if(tin2 > 0 || tout1 > 0) {
+          FX_FLOAT toutx = (xout - x1) / deltax;
+          FX_FLOAT touty = (yout - y1) / deltay;
+          FX_FLOAT tout1 = (toutx < touty) ? toutx : touty;
+          if (tin2 > 0 || tout1 > 0) {
                 if(tin2 <= tout1) {
                     if(tin2 > 0) {
                         if(tinx > tiny) {
@@ -116,7 +116,7 @@ inline unsigned clip_liang_barsky(T x1, T y1, T x2, T y2,
                     }
                     ++np;
                 }
-            }
+          }
         }
     }
     return np;

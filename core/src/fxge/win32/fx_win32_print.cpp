@@ -149,8 +149,7 @@ static CFX_DIBitmap* Transform1bppBitmap(const CFX_DIBSource* pSrc,
   uint8_t* src_buf = pSrcBitmap->GetBuffer();
   FX_DWORD src_pitch = pSrcBitmap->GetPitch();
   FX_FLOAT dest_area = pDestMatrix->GetUnitArea();
-  FX_FLOAT area_scale =
-      FXSYS_Div((FX_FLOAT)(src_width * src_height), dest_area);
+  FX_FLOAT area_scale = ((FX_FLOAT)(src_width * src_height)) / dest_area;
   FX_FLOAT size_scale = FXSYS_sqrt(area_scale);
   CFX_Matrix adjusted_matrix(*pDestMatrix);
   adjusted_matrix.Scale(size_scale, size_scale);

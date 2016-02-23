@@ -83,8 +83,8 @@ static void DrawAxialShading(CFX_DIBitmap* pBitmap,
     for (int column = 0; column < width; column++) {
       FX_FLOAT x = (FX_FLOAT)column, y = (FX_FLOAT)row;
       matrix.Transform(x, y);
-      FX_FLOAT scale = FXSYS_Div(
-          ((x - start_x) * x_span) + ((y - start_y) * y_span), axis_len_square);
+      FX_FLOAT scale = (((x - start_x) * x_span) + ((y - start_y) * y_span)) /
+                       axis_len_square;
       int index = (int32_t)(scale * (SHADING_STEPS - 1));
       if (index < 0) {
         if (!bStartExtend) {
@@ -189,7 +189,7 @@ static void DrawRadialShading(CFX_DIBitmap* pBitmap,
                    ((y - start_y) * (y - start_y)) - (start_r * start_r);
       FX_FLOAT s;
       if (a == 0) {
-        s = FXSYS_Div(-c, b);
+        s = -c / b;
       } else {
         FX_FLOAT b2_4ac = (b * b) - 4 * (a * c);
         if (b2_4ac < 0) {
@@ -198,11 +198,11 @@ static void DrawRadialShading(CFX_DIBitmap* pBitmap,
         FX_FLOAT root = FXSYS_sqrt(b2_4ac);
         FX_FLOAT s1, s2;
         if (a > 0) {
-          s1 = FXSYS_Div(-b - root, 2 * a);
-          s2 = FXSYS_Div(-b + root, 2 * a);
+          s1 = (-b - root) / (2 * a);
+          s2 = (-b + root) / (2 * a);
         } else {
-          s2 = FXSYS_Div(-b - root, 2 * a);
-          s1 = FXSYS_Div(-b + root, 2 * a);
+          s2 = (-b - root) / (2 * a);
+          s1 = (-b + root) / (2 * a);
         }
         if (bDecreasing) {
           if (s1 >= 0 || bStartExtend) {
@@ -1044,14 +1044,16 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
   mtDevice2Pattern.SetReverse(mtPattern2Device);
   CFX_FloatRect clip_box_p(clip_box);
   clip_box_p.Transform(&mtDevice2Pattern);
-  min_col = (int)FXSYS_ceil(
-      FXSYS_Div(clip_box_p.left - pPattern->m_BBox.right, pPattern->m_XStep));
-  max_col = (int)FXSYS_floor(
-      FXSYS_Div(clip_box_p.right - pPattern->m_BBox.left, pPattern->m_XStep));
-  min_row = (int)FXSYS_ceil(
-      FXSYS_Div(clip_box_p.bottom - pPattern->m_BBox.top, pPattern->m_YStep));
-  max_row = (int)FXSYS_floor(
-      FXSYS_Div(clip_box_p.top - pPattern->m_BBox.bottom, pPattern->m_YStep));
+
+  min_col = (int)FXSYS_ceil((clip_box_p.left - pPattern->m_BBox.right) /
+                            pPattern->m_XStep);
+  max_col = (int)FXSYS_floor((clip_box_p.right - pPattern->m_BBox.left) /
+                             pPattern->m_XStep);
+  min_row = (int)FXSYS_ceil((clip_box_p.bottom - pPattern->m_BBox.top) /
+                            pPattern->m_YStep);
+  max_row = (int)FXSYS_floor((clip_box_p.top - pPattern->m_BBox.bottom) /
+                             pPattern->m_YStep);
+
   if (width > clip_box.Width() || height > clip_box.Height() ||
       width * height > clip_box.Width() * clip_box.Height()) {
     CPDF_GraphicStates* pStates = NULL;

@@ -119,8 +119,8 @@ void CFX_PathGenerator::ArcTo(FX_FLOAT x,
                               FX_FLOAT sweep_angle) {
   FX_FLOAT x0 = FXSYS_cos(sweep_angle / 2);
   FX_FLOAT y0 = FXSYS_sin(sweep_angle / 2);
-  FX_FLOAT tx = FXSYS_Div((1.0f - x0) * 4, 3 * 1.0f);
-  FX_FLOAT ty = y0 - FXSYS_Div(tx * x0, y0);
+  FX_FLOAT tx = ((1.0f - x0) * 4) / (3 * 1.0f);
+  FX_FLOAT ty = y0 - ((tx * x0) / y0);
   FX_FLOAT px[3], py[3];
   px[0] = x0 + tx;
   py[0] = -ty;

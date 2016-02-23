@@ -973,9 +973,8 @@ static GpPen* _GdipCreatePen(const CFX_GraphStateData* pGraphState,
   FX_FLOAT width = pGraphState ? pGraphState->m_LineWidth : 1.0f;
   if (!bTextMode) {
     FX_FLOAT unit =
-        pMatrix
-            ? FXSYS_Div(1.0f, (pMatrix->GetXUnit() + pMatrix->GetYUnit()) / 2)
-            : 1.0f;
+        pMatrix ? 1.0f / ((pMatrix->GetXUnit() + pMatrix->GetYUnit()) / 2)
+                : 1.0f;
     if (width < unit) {
       width = unit;
     }
