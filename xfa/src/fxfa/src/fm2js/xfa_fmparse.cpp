@@ -567,7 +567,7 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
     switch (m_pToken->m_type) {
       case TOKlparen: {
         NextToken();
-        CFX_PtrArray* pArray = 0;
+        CFX_PtrArray* pArray = nullptr;
         if (m_pToken->m_type != TOKrparen) {
           pArray = new CFX_PtrArray();
           while (m_pToken->m_type != TOKrparen) {
@@ -603,15 +603,13 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParsePostExpression(
             e = 0;
           }
         } else {
-          int32_t iSize = pArray->GetSize();
-          for (int32_t i = 0; i < iSize; ++i) {
-            CXFA_FMSimpleExpression* pTemp =
-                (CXFA_FMSimpleExpression*)pArray->GetAt(i);
-            delete pTemp;
+          int32_t nSize = pArray ? pArray->GetSize() : 0;
+          for (int32_t i = 0; i < nSize; ++i) {
+            delete static_cast<CXFA_FMSimpleExpression*>(pArray->GetAt(i));
           }
           delete pArray;
           delete e;
-          e = 0;
+          e = nullptr;
         }
       } break;
       case TOKdot:
