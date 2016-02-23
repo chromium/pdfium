@@ -1521,15 +1521,16 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
         }
       }
       if (bMoreColumns) {
-        FX_FLOAT fFinalColumnWidth = m_rgSpecifiedColumnWidths[iColCount];
-        for (int32_t i = 0; i < iRowCount; i++) {
-          if (!rgRowItems[i]) {
+        FX_FLOAT fFinalColumnWidth = 0.0f;
+        if (iColCount < m_rgSpecifiedColumnWidths.GetSize())
+          fFinalColumnWidth = m_rgSpecifiedColumnWidths[iColCount];
+        for (int32_t i = 0; i < iRowCount; ++i) {
+          if (!rgRowItems[i])
             continue;
-          }
-          rgRowItemsSpan[i]--;
+          --rgRowItemsSpan[i];
           rgRowItemsWidth[i] -= fFinalColumnWidth;
         }
-        iColCount++;
+        ++iColCount;
       }
     }
   }
