@@ -9,23 +9,25 @@
 
 #include "xfa/src/fdp/src/css/fde_cssdatatable.h"
 
-typedef struct _FDE_CSSPROPERTYHOLDER : public CFX_Target {
+struct FDE_CSSPROPERTYHOLDER : public CFX_Target {
   int16_t eProperty;
   int16_t bImportant;
   IFDE_CSSValue* pValue;
-  _FDE_CSSPROPERTYHOLDER* pNext;
-} FDE_CSSPROPERTYHOLDER, *FDE_LPCSSPROPERTYHOLDER;
-typedef struct _FDE_CSSCUSTOMPROPERTY : public CFX_Target {
+  FDE_CSSPROPERTYHOLDER* pNext;
+};
+
+struct FDE_CSSCUSTOMPROPERTY : public CFX_Target {
   const FX_WCHAR* pwsName;
   const FX_WCHAR* pwsValue;
-  _FDE_CSSCUSTOMPROPERTY* pNext;
-} FDE_CSSCUSTOMPROPERTY, *FDE_LPCSSCUSTOMPROPERTY;
-typedef struct _FDE_CSSPROPERTYARGS : public CFX_Target {
+  FDE_CSSCUSTOMPROPERTY* pNext;
+};
+
+struct FDE_CSSPROPERTYARGS : public CFX_Target {
   IFX_MEMAllocator* pStaticStore;
   CFX_MapPtrToPtr* pStringCache;
   FDE_LPCCSSPROPERTYTABLE pProperty;
-} FDE_CSSPROPERTYARGS;
-typedef FDE_CSSPROPERTYARGS const* FDE_LPCCSSPROPERTYARGS;
+};
+
 class CFDE_CSSDeclaration : public IFDE_CSSDeclaration, public CFX_Target {
  public:
   CFDE_CSSDeclaration()
@@ -44,41 +46,41 @@ class CFDE_CSSDeclaration : public IFDE_CSSDeclaration, public CFX_Target {
   virtual void GetNextCustom(FX_POSITION& pos,
                              CFX_WideString& wsName,
                              CFX_WideString& wsValue) const;
-  FX_BOOL AddProperty(FDE_LPCCSSPROPERTYARGS pArgs,
+  FX_BOOL AddProperty(const FDE_CSSPROPERTYARGS* pArgs,
                       const FX_WCHAR* pszValue,
                       int32_t iValueLen);
-  FX_BOOL AddProperty(FDE_LPCCSSPROPERTYARGS pArgs,
+  FX_BOOL AddProperty(const FDE_CSSPROPERTYARGS* pArgs,
                       const FX_WCHAR* pszName,
                       int32_t iNameLen,
                       const FX_WCHAR* pszValue,
                       int32_t iValueLen);
 
  protected:
-  FX_BOOL ParseTextEmphasisProperty(FDE_LPCCSSPROPERTYARGS pArgs,
+  FX_BOOL ParseTextEmphasisProperty(FDE_CSSPROPERTYARGS* pArgs,
                                     const FX_WCHAR* pszValue,
                                     int32_t iValueLen,
                                     FX_BOOL bImportant);
-  FX_BOOL ParseColumnsProperty(FDE_LPCCSSPROPERTYARGS pArgs,
+  FX_BOOL ParseColumnsProperty(const FDE_CSSPROPERTYARGS* pArgs,
                                const FX_WCHAR* pszValue,
                                int32_t iValueLen,
                                FX_BOOL bImportant);
-  FX_BOOL ParseColumnRuleProperty(FDE_LPCCSSPROPERTYARGS pArgs,
+  FX_BOOL ParseColumnRuleProperty(const FDE_CSSPROPERTYARGS* pArgs,
                                   const FX_WCHAR* pszValue,
                                   int32_t iValueLen,
                                   FX_BOOL bImportant);
-  FX_BOOL ParseOverflowProperty(FDE_LPCCSSPROPERTYARGS pArgs,
+  FX_BOOL ParseOverflowProperty(const FDE_CSSPROPERTYARGS* pArgs,
                                 const FX_WCHAR* pszValue,
                                 int32_t iValueLen,
                                 FX_BOOL bImportant);
-  FX_BOOL ParseFontProperty(FDE_LPCCSSPROPERTYARGS pArgs,
+  FX_BOOL ParseFontProperty(const FDE_CSSPROPERTYARGS* pArgs,
                             const FX_WCHAR* pszValue,
                             int32_t iValueLen,
                             FX_BOOL bImportant);
-  FX_BOOL ParseBackgroundProperty(FDE_LPCCSSPROPERTYARGS pArgs,
+  FX_BOOL ParseBackgroundProperty(const FDE_CSSPROPERTYARGS* pArgs,
                                   const FX_WCHAR* pszValue,
                                   int32_t iValueLen,
                                   FX_BOOL bImportant);
-  FX_BOOL ParseListStyleProperty(FDE_LPCCSSPROPERTYARGS pArgs,
+  FX_BOOL ParseListStyleProperty(const FDE_CSSPROPERTYARGS* pArgs,
                                  const FX_WCHAR* pszValue,
                                  int32_t iValueLen,
                                  FX_BOOL bImportant);
@@ -96,15 +98,15 @@ class CFDE_CSSDeclaration : public IFDE_CSSDeclaration, public CFX_Target {
                          FDE_CSSPROPERTY eColor,
                          FDE_CSSPROPERTY eStyle,
                          FDE_CSSPROPERTY eWidth);
-  FX_BOOL ParseContentProperty(FDE_LPCCSSPROPERTYARGS pArgs,
+  FX_BOOL ParseContentProperty(const FDE_CSSPROPERTYARGS* pArgs,
                                const FX_WCHAR* pszValue,
                                int32_t iValueLen,
                                FX_BOOL bImportant);
-  FX_BOOL ParseCounterProperty(FDE_LPCCSSPROPERTYARGS pArgs,
+  FX_BOOL ParseCounterProperty(const FDE_CSSPROPERTYARGS* pArgs,
                                const FX_WCHAR* pszValue,
                                int32_t iValueLen,
                                FX_BOOL bImportant);
-  FX_BOOL ParseValueListProperty(FDE_LPCCSSPROPERTYARGS pArgs,
+  FX_BOOL ParseValueListProperty(const FDE_CSSPROPERTYARGS* pArgs,
                                  const FX_WCHAR* pszValue,
                                  int32_t iValueLen,
                                  FX_BOOL bImportant);
@@ -115,25 +117,25 @@ class CFDE_CSSDeclaration : public IFDE_CSSDeclaration, public CFX_Target {
                              FDE_CSSPROPERTY eTop,
                              FDE_CSSPROPERTY eRight,
                              FDE_CSSPROPERTY eBottom);
-  IFDE_CSSValue* ParseNumber(FDE_LPCCSSPROPERTYARGS pArgs,
+  IFDE_CSSValue* ParseNumber(const FDE_CSSPROPERTYARGS* pArgs,
                              const FX_WCHAR* pszValue,
                              int32_t iValueLen);
-  IFDE_CSSValue* ParseEnum(FDE_LPCCSSPROPERTYARGS pArgs,
+  IFDE_CSSValue* ParseEnum(const FDE_CSSPROPERTYARGS* pArgs,
                            const FX_WCHAR* pszValue,
                            int32_t iValueLen);
-  IFDE_CSSValue* ParseColor(FDE_LPCCSSPROPERTYARGS pArgs,
+  IFDE_CSSValue* ParseColor(const FDE_CSSPROPERTYARGS* pArgs,
                             const FX_WCHAR* pszValue,
                             int32_t iValueLen);
-  IFDE_CSSValue* ParseURI(FDE_LPCCSSPROPERTYARGS pArgs,
+  IFDE_CSSValue* ParseURI(const FDE_CSSPROPERTYARGS* pArgs,
                           const FX_WCHAR* pszValue,
                           int32_t iValueLen);
-  IFDE_CSSValue* ParseString(FDE_LPCCSSPROPERTYARGS pArgs,
+  IFDE_CSSValue* ParseString(const FDE_CSSPROPERTYARGS* pArgs,
                              const FX_WCHAR* pszValue,
                              int32_t iValueLen);
-  IFDE_CSSValue* ParseFunction(FDE_LPCCSSPROPERTYARGS pArgs,
+  IFDE_CSSValue* ParseFunction(const FDE_CSSPROPERTYARGS* pArgs,
                                const FX_WCHAR* pszValue,
                                int32_t iValueLen);
-  const FX_WCHAR* CopyToLocal(FDE_LPCCSSPROPERTYARGS pArgs,
+  const FX_WCHAR* CopyToLocal(const FDE_CSSPROPERTYARGS* pArgs,
                               const FX_WCHAR* pszValue,
                               int32_t iValueLen);
   void AddPropertyHolder(IFX_MEMAllocator* pStaticStore,
@@ -145,10 +147,10 @@ class CFDE_CSSDeclaration : public IFDE_CSSDeclaration, public CFX_Target {
                                          FX_FLOAT fValue) const;
   IFDE_CSSPrimitiveValue* NewEnumValue(IFX_MEMAllocator* pStaticStore,
                                        FDE_CSSPROPERTYVALUE eValue) const;
-  FDE_LPCSSPROPERTYHOLDER m_pFirstProperty;
-  FDE_LPCSSPROPERTYHOLDER m_pLastProperty;
-  FDE_LPCSSCUSTOMPROPERTY m_pFirstCustom;
-  FDE_LPCSSCUSTOMPROPERTY m_pLastCustom;
+  FDE_CSSPROPERTYHOLDER* m_pFirstProperty;
+  FDE_CSSPROPERTYHOLDER* m_pLastProperty;
+  FDE_CSSCUSTOMPROPERTY* m_pFirstCustom;
+  FDE_CSSCUSTOMPROPERTY* m_pLastCustom;
 };
 
 #endif  // XFA_SRC_FDP_SRC_CSS_FDE_CSSDECLARATION_H_

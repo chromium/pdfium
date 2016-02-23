@@ -11,17 +11,20 @@
 #include "xfa/src/fgas/include/fx_sys.h"
 
 #define FDE_CSSUNIVERSALHASH ('*')
-typedef struct _FDE_CSSRULEDATA : public CFX_Target {
+
+struct FDE_CSSRULEDATA : public CFX_Target {
  public:
-  _FDE_CSSRULEDATA(IFDE_CSSSelector* pSel,
-                   IFDE_CSSDeclaration* pDecl,
-                   FX_DWORD dwPos);
+  FDE_CSSRULEDATA(IFDE_CSSSelector* pSel,
+                  IFDE_CSSDeclaration* pDecl,
+                  FX_DWORD dwPos);
+
   IFDE_CSSSelector* pSelector;
   IFDE_CSSDeclaration* pDeclaration;
   FX_DWORD dwPriority;
-  _FDE_CSSRULEDATA* pNext;
-} FDE_CSSRULEDATA, *FDE_LPCSSRULEDATA;
-typedef CFX_ArrayTemplate<FDE_LPCSSRULEDATA> CFDE_CSSRuleDataArray;
+  FDE_CSSRULEDATA* pNext;
+};
+typedef CFX_ArrayTemplate<FDE_CSSRULEDATA*> CFDE_CSSRuleDataArray;
+
 class CFDE_CSSRuleCollection : public CFX_Target {
  public:
   CFDE_CSSRuleCollection()
@@ -36,26 +39,26 @@ class CFDE_CSSRuleCollection : public CFX_Target {
   void Clear();
 
   int32_t CountSelectors() const { return m_iSelectors; }
-  FDE_LPCSSRULEDATA GetIDRuleData(FX_DWORD dwIDHash) {
+  FDE_CSSRULEDATA* GetIDRuleData(FX_DWORD dwIDHash) {
     void* pData;
     return m_IDRules.Lookup((void*)(uintptr_t)dwIDHash, pData)
-               ? (FDE_LPCSSRULEDATA)pData
+               ? (FDE_CSSRULEDATA*)pData
                : NULL;
   }
-  FDE_LPCSSRULEDATA GetTagRuleData(FX_DWORD dwTagHasn) {
+  FDE_CSSRULEDATA* GetTagRuleData(FX_DWORD dwTagHasn) {
     void* pData;
     return m_TagRules.Lookup((void*)(uintptr_t)dwTagHasn, pData)
-               ? (FDE_LPCSSRULEDATA)pData
+               ? (FDE_CSSRULEDATA*)pData
                : NULL;
   }
-  FDE_LPCSSRULEDATA GetClassRuleData(FX_DWORD dwIDHash) {
+  FDE_CSSRULEDATA* GetClassRuleData(FX_DWORD dwIDHash) {
     void* pData;
     return m_ClassRules.Lookup((void*)(uintptr_t)dwIDHash, pData)
-               ? (FDE_LPCSSRULEDATA)pData
+               ? (FDE_CSSRULEDATA*)pData
                : NULL;
   }
-  FDE_LPCSSRULEDATA GetUniversalRuleData() { return m_pUniversalRules; }
-  FDE_LPCSSRULEDATA GetPersudoRuleData() { return m_pPersudoRules; }
+  FDE_CSSRULEDATA* GetUniversalRuleData() { return m_pUniversalRules; }
+  FDE_CSSRULEDATA* GetPersudoRuleData() { return m_pPersudoRules; }
   IFX_MEMAllocator* m_pStaticStore;
 
  protected:
@@ -67,14 +70,14 @@ class CFDE_CSSRuleCollection : public CFX_Target {
                  FX_DWORD dwKey,
                  IFDE_CSSSelector* pSel,
                  IFDE_CSSDeclaration* pDecl);
-  FX_BOOL AddRuleTo(FDE_LPCSSRULEDATA& pList, FDE_LPCSSRULEDATA pData);
-  FDE_LPCSSRULEDATA NewRuleData(IFDE_CSSSelector* pSel,
-                                IFDE_CSSDeclaration* pDecl);
+  FX_BOOL AddRuleTo(FDE_CSSRULEDATA*& pList, FDE_CSSRULEDATA* pData);
+  FDE_CSSRULEDATA* NewRuleData(IFDE_CSSSelector* pSel,
+                               IFDE_CSSDeclaration* pDecl);
   CFX_MapPtrToPtr m_IDRules;
   CFX_MapPtrToPtr m_TagRules;
   CFX_MapPtrToPtr m_ClassRules;
-  FDE_LPCSSRULEDATA m_pUniversalRules;
-  FDE_LPCSSRULEDATA m_pPersudoRules;
+  FDE_CSSRULEDATA* m_pUniversalRules;
+  FDE_CSSRULEDATA* m_pPersudoRules;
   int32_t m_iSelectors;
 };
 class CFDE_CSSAccelerator;
@@ -109,11 +112,11 @@ class CFDE_CSSStyleSelector : public IFDE_CSSStyleSelector, public CFX_Target {
 
  protected:
   void Reset();
-  void MatchRules(FDE_LPCSSTAGCACHE pCache,
-                  FDE_LPCSSRULEDATA pList,
+  void MatchRules(FDE_CSSTAGCACHE* pCache,
+                  FDE_CSSRULEDATA* pList,
                   FDE_CSSPERSUDO ePersudoType);
   void SortRulesTo(CFDE_CSSDeclarationArray& matchDecls);
-  FX_BOOL MatchSelector(FDE_LPCSSTAGCACHE pCache,
+  FX_BOOL MatchSelector(FDE_CSSTAGCACHE* pCache,
                         IFDE_CSSSelector* pSel,
                         FDE_CSSPERSUDO ePersudoType);
   void AppendInlineStyle(CFDE_CSSDeclaration* pDecl,
@@ -180,9 +183,10 @@ class CFDE_CSSStyleSelector : public IFDE_CSSStyleSelector, public CFX_Target {
   CFDE_CSSAccelerator* m_pAccelerator;
   CFDE_CSSRuleDataArray m_MatchedRules;
 };
-typedef struct _FDE_CSSCOUNTERDATA {
+
+struct FDE_CSSCOUNTERDATA {
  public:
-  _FDE_CSSCOUNTERDATA() { FXSYS_memset(this, 0, sizeof(_FDE_CSSCOUNTERDATA)); }
+  FDE_CSSCOUNTERDATA() { FXSYS_memset(this, 0, sizeof(FDE_CSSCOUNTERDATA)); }
   FX_BOOL GetCounterIncrement(int32_t& iValue) {
     iValue = m_iIncVal;
     return m_bIncrement;
@@ -191,12 +195,14 @@ typedef struct _FDE_CSSCOUNTERDATA {
     iValue = m_iResetVal;
     return m_bReset;
   }
+
   const FX_WCHAR* m_pszIdent;
   FX_BOOL m_bIncrement;
   FX_BOOL m_bReset;
   int32_t m_iIncVal;
   int32_t m_iResetVal;
-} FDE_CSSCOUNTERDATA, *FDE_LPCSSCOUNTERDATA;
+};
+
 class CFDE_CSSCounterStyle {
  public:
   CFDE_CSSCounterStyle() : m_pCounterInc(NULL), m_pCounterReset(NULL) {}

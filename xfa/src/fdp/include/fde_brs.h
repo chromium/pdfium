@@ -25,11 +25,10 @@ class IFDE_LinearGradientBrush;
 #define FDE_WRAPMODE_TileFlipY 2
 #define FDE_WRAPMODE_TileFlipXY 3
 #define FDE_WRAPMODE_Clamp 4
-typedef struct _FDE_GRADIENTCOLOR {
+struct FDE_GRADIENTCOLOR {
   FX_FLOAT pos;
   FX_ARGB color;
-} FDE_GRADIENTCOLOR, *FDE_LPGRADIENTCOLOR;
-typedef FDE_GRADIENTCOLOR const* FDE_LPCGRADIENTCOLOR;
+};
 typedef CFX_ArrayTemplate<FDE_GRADIENTCOLOR> CFDE_GradientColors;
 class IFDE_Brush {
  public:

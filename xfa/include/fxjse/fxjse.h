@@ -13,19 +13,20 @@
 
 class CPDFDoc_Environment;
 class CPDF_Page;
+struct FXJSE_CLASS;
 
 typedef struct FXJSE_HRUNTIME_ { void* pData; } * FXJSE_HRUNTIME;
 typedef struct FXJSE_HCONTEXT_ { void* pData; } * FXJSE_HCONTEXT;
 typedef struct FXJSE_HCLASS_ { void* pData; } * FXJSE_HCLASS;
 typedef struct FXJSE_HVALUE_ { void* pData; } * FXJSE_HVALUE;
 typedef struct FXJSE_HOBJECT_ : public FXJSE_HVALUE_{} * FXJSE_HOBJECT;
-
 typedef double FXJSE_DOUBLE;
+
 void FXJSE_Initialize();
 void FXJSE_Finalize();
 FXJSE_HRUNTIME FXJSE_Runtime_Create();
 void FXJSE_Runtime_Release(FXJSE_HRUNTIME hRuntime, bool bOwnedRuntime);
-typedef struct _FXJSE_CLASS FXJSE_CLASS;
+
 FXJSE_HCONTEXT FXJSE_Context_Create(FXJSE_HRUNTIME hRuntime,
                                     const FXJSE_CLASS* lpGlobalClass = nullptr,
                                     void* lpGlobalObject = nullptr);
@@ -61,26 +62,26 @@ typedef int32_t (*FXJSE_PropTypeGetter)(FXJSE_HOBJECT hObject,
                                         FX_BOOL bQueryIn);
 typedef FX_BOOL (*FXJSE_PropDeleter)(FXJSE_HOBJECT hObject,
                                      const CFX_ByteStringC& szPropName);
-typedef struct _FXJSE_FUNCTION {
+struct FXJSE_FUNCTION {
   const FX_CHAR* name;
   FXJSE_FuncCallback callbackProc;
-} FXJSE_FUNCTION;
+};
 #define FXJSE_DEF_FUNCTION(functionName, functionCallback) \
   { functionName, functionCallback }
 void FXJSE_DefineFunctions(FXJSE_HCONTEXT hContext,
                            const FXJSE_FUNCTION* lpFunctions,
                            int nNum);
-typedef struct _FXJSE_PROPERTY {
+struct FXJSE_PROPERTY {
   const FX_CHAR* name;
   FXJSE_PropAccessor getProc;
   FXJSE_PropAccessor setProc;
-} FXJSE_PROPERTY;
+};
 enum FXJSE_ClassPropTypes {
   FXJSE_ClassPropType_None,
   FXJSE_ClassPropType_Property,
   FXJSE_ClassPropType_Method
 };
-typedef struct _FXJSE_CLASS {
+struct FXJSE_CLASS {
   const FX_CHAR* name;
   FXJSE_FuncCallback constructor;
   FXJSE_PROPERTY* properties;
@@ -92,7 +93,7 @@ typedef struct _FXJSE_CLASS {
   FXJSE_PropAccessor dynPropSetter;
   FXJSE_PropDeleter dynPropDeleter;
   FXJSE_FuncCallback dynMethodCall;
-} FXJSE_CLASS;
+};
 FXJSE_HCLASS FXJSE_DefineClass(FXJSE_HCONTEXT hContext,
                                const FXJSE_CLASS* lpClass);
 FXJSE_HCLASS FXJSE_GetClass(FXJSE_HCONTEXT hContext,

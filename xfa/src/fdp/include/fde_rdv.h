@@ -19,7 +19,7 @@ class IFDE_Image;
 class CFX_DIBitmap;
 class CFX_DIBSource;
 
-typedef struct _FDE_HDEVICESTATE { void* pData; } * FDE_HDEVICESTATE;
+typedef struct FDE_HDEVICESTATE_ { void* pData; } * FDE_HDEVICESTATE;
 
 class IFDE_RenderDevice {
  public:

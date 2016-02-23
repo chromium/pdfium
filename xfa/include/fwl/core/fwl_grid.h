@@ -36,7 +36,7 @@ enum FWL_GRIDSIZE {
   FWL_GRIDSIZE_MaxWidth,
   FWL_GRIDSIZE_MaxHeight,
 };
-typedef struct _FWL_HGRIDCOLROW { void* pData; } * FWL_HGRIDCOLROW;
+typedef struct FWL_HGRIDCOLROW_ { void* pData; } * FWL_HGRIDCOLROW;
 class IFWL_Grid : public IFWL_Content {
  public:
   static IFWL_Grid* Create(const CFWL_WidgetImpProperties& properties);

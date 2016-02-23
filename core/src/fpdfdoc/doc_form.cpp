@@ -348,7 +348,7 @@ CFX_ByteString CPDF_InterForm::GenerateNewResourceName(
   return csTmp;
 }
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-typedef struct _PDF_FONTDATA {
+typedef struct PDF_FONTDATA_ {
   FX_BOOL bFind;
   LOGFONTA lf;
 } PDF_FONTDATA, FAR* LPDF_FONTDATA;

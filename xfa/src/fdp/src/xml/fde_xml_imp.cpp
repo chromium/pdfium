@@ -33,11 +33,13 @@ FX_BOOL FDE_IsXMLValidChar(FX_WCHAR ch) {
 FX_BOOL FDE_IsXMLWhiteSpace(FX_WCHAR ch) {
   return ch == L' ' || ch == 0x0A || ch == 0x0D || ch == 0x09;
 }
-typedef struct _FDE_XMLNAMECHAR {
+
+struct FDE_XMLNAMECHAR {
   FX_WCHAR wStart;
   FX_WCHAR wEnd;
   FX_BOOL bStartChar;
-} FDE_XMLNAMECHAR;
+};
+
 #define FDE_XMLNAMECHARSNUM 20
 static FDE_XMLNAMECHAR g_XMLNameChars[FDE_XMLNAMECHARSNUM] = {
     {L'-', L'.', FALSE},    {L'0', L'9', FALSE},     {L':', L':', FALSE},
@@ -48,6 +50,7 @@ static FDE_XMLNAMECHAR g_XMLNameChars[FDE_XMLNAMECHARSNUM] = {
     {0x2070, 0x218F, TRUE}, {0x2C00, 0x2FEF, TRUE},  {0x3001, 0xD7FF, TRUE},
     {0xF900, 0xFDCF, TRUE}, {0xFDF0, 0xFFFD, TRUE},
 };
+
 FX_BOOL FDE_IsXMLNameChar(FX_WCHAR ch, FX_BOOL bFirstChar) {
   int32_t iStart = 0, iEnd = FDE_XMLNAMECHARSNUM - 1, iMid;
   while (iStart <= iEnd) {
@@ -886,7 +889,7 @@ void CFDE_XMLDoc::ReleaseParser() {
 FX_BOOL CFDE_XMLDoc::LoadXML(IFX_Stream* pXMLStream,
                              int32_t iXMLPlaneSize,
                              int32_t iTextDataSize,
-                             FDE_LPXMLREADERHANDLER pHandler) {
+                             FDE_XMLREADERHANDLER* pHandler) {
   if (pXMLStream == NULL) {
     return FALSE;
   }
@@ -1200,7 +1203,7 @@ int32_t CFDE_XMLDOMParser::DoParser(IFX_Pause* pPause) {
   }
   return m_pParser->GetStatus();
 }
-CFDE_XMLSAXParser::CFDE_XMLSAXParser(FDE_LPXMLREADERHANDLER pHandler,
+CFDE_XMLSAXParser::CFDE_XMLSAXParser(FDE_XMLREADERHANDLER* pHandler,
                                      IFDE_XMLSyntaxParser* pParser)
     : m_pHandler(pHandler),
       m_pParser(pParser),
@@ -1720,7 +1723,7 @@ FX_DWORD CFDE_XMLSyntaxParser::DoSyntaxParse() {
             dwStatus = FDE_XMLSYNTAXSTATUS_TargetData;
           } else {
             m_pStart++;
-            FDE_LPXMLNODE pXMLNode = m_XMLNodeStack.GetTopElement();
+            FDE_XMLNODE* pXMLNode = m_XMLNodeStack.GetTopElement();
             if (pXMLNode == NULL) {
               m_dwStatus = FDE_XMLSYNTAXSTATUS_Error;
               return m_dwStatus;
@@ -1755,7 +1758,7 @@ FX_DWORD CFDE_XMLSyntaxParser::DoSyntaxParse() {
         case FDE_XMLSYNTAXMODE_CloseElement:
           if (!FDE_IsXMLNameChar(ch, m_iDataLength < 1)) {
             if (ch == L'>') {
-              FDE_LPXMLNODE pXMLNode = m_XMLNodeStack.GetTopElement();
+              FDE_XMLNODE* pXMLNode = m_XMLNodeStack.GetTopElement();
               if (pXMLNode == NULL) {
                 m_dwStatus = FDE_XMLSYNTAXSTATUS_Error;
                 return m_dwStatus;

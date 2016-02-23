@@ -25,7 +25,7 @@ enum FDE_VISUALOBJTYPE {
   FDE_VISUALOBJ_Widget = 0x08,
 };
 
-typedef struct _FDE_HVISUALOBJ { void* pData; } const* FDE_HVISUALOBJ;
+typedef struct FDE_HVISUALOBJ_ { void* pData; } const* FDE_HVISUALOBJ;
 
 class IFDE_VisualSet {
  public:
@@ -63,8 +63,8 @@ class IFDE_ImageSet : public IFDE_VisualSet {
  public:
   virtual IFDE_Image* GetImage(FDE_HVISUALOBJ hImage) = 0;
   virtual FX_POSITION GetFirstFilterPosition(FDE_HVISUALOBJ hImage) = 0;
-  virtual FDE_LPCIMAGEFILTERPARAMS GetNextFilter(FDE_HVISUALOBJ hImage,
-                                                 FX_POSITION& pos) = 0;
+  virtual const FDE_IMAGEFILTERPARAMS* GetNextFilter(FDE_HVISUALOBJ hImage,
+                                                     FX_POSITION& pos) = 0;
 };
 #define FDE_FILLMODE_Alternate 1
 #define FDE_FILLMODE_Winding 2

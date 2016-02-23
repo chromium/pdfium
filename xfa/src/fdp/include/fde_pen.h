@@ -8,29 +8,33 @@
 #define XFA_SRC_FDP_INCLUDE_FDE_PEN_H_
 
 class IFDE_Pen;
+
 #define FDE_PENTYPE_Unknown FDE_BRUSHTYPE_Unknown
 #define FDE_PENTYPE_SolidColor FDE_BRUSHTYPE_Solid
 #define FDE_PENTYPE_HatchBrush FDE_BRUSHTYPE_Hatch
 #define FDE_PENTYPE_TextureBrush FDE_BRUSHTYPE_Texture
 #define FDE_PENTYPE_LinearGradient FDE_BRUSHTYPE_LinearGradient
 #define FDE_PENTYPE_MAX FDE_BRUSHTYPE_MAX
+
 #define FDE_DASHSTYLE_Solid 0
 #define FDE_DASHSTYLE_Dash 1
 #define FDE_DASHSTYLE_Dot 2
 #define FDE_DASHSTYLE_DashDot 3
 #define FDE_DASHSTYLE_DashDotDot 4
 #define FDE_DASHSTYLE_Customized 5
+
 #define FDE_LINEJOIN_Miter 0
 #define FDE_LINEJOIN_Round 1
 #define FDE_LINEJOIN_Bevel 2
+
 #define FDE_LINECAP_Flat 0
 #define FDE_LINECAP_Round 1
 #define FDE_LINECAP_Square 2
-typedef struct _FDE_COMPOUNDPATTERN {
+
+struct FDE_COMPOUNDPATTERN {
   FX_FLOAT pos;
   FX_FLOAT width;
-} FDE_COMPOUNDPATTERN, *FDE_LPCOMPOUNDPATTERN;
-typedef FDE_COMPOUNDPATTERN const* FDE_LPCCOMPOUNDPATTERN;
+};
 typedef CFX_ArrayTemplate<FDE_COMPOUNDPATTERN> CFDE_CompoundPatterns;
 
 class IFDE_Pen {

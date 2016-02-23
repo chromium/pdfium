@@ -8,12 +8,12 @@
 
 #include "xfa/src/fdp/src/css/fde_csscache.h"
 #include "xfa/src/foxitlib.h"
-_FDE_CSSCACHEITEM::_FDE_CSSCACHEITEM(IFDE_CSSStyleSheet* p)
+FDE_CSSCACHEITEM::FDE_CSSCACHEITEM(IFDE_CSSStyleSheet* p)
     : pStylesheet(p), dwActivity(0) {
   FXSYS_assert(pStylesheet);
   pStylesheet->AddRef();
 }
-_FDE_CSSCACHEITEM::~_FDE_CSSCACHEITEM() {
+FDE_CSSCACHEITEM::~FDE_CSSCACHEITEM() {
   pStylesheet->Release();
 }
 IFDE_CSSStyleSheetCache* IFDE_CSSStyleSheetCache::Create() {
@@ -43,7 +43,7 @@ void CFDE_CSSStyleSheetCache::AddStyleSheet(const CFX_ByteStringC& szKey,
   }
   auto it = m_Stylesheets.find(szKey);
   if (it != m_Stylesheets.end()) {
-    FDE_LPCSSCACHEITEM pItem = it->second;
+    FDE_CSSCACHEITEM* pItem = it->second;
     if (pItem->pStylesheet != pStyleSheet) {
       pItem->pStylesheet->Release();
       pItem->pStylesheet = pStyleSheet;
@@ -64,7 +64,7 @@ IFDE_CSSStyleSheet* CFDE_CSSStyleSheetCache::GetStyleSheet(
   if (it == m_Stylesheets.end()) {
     return nullptr;
   }
-  FDE_LPCSSCACHEITEM pItem = it->second;
+  FDE_CSSCACHEITEM* pItem = it->second;
   pItem->dwActivity++;
   pItem->pStylesheet->AddRef();
   return pItem->pStylesheet;
@@ -95,8 +95,8 @@ void CFDE_CSSStyleSheetCache::RemoveLowestActivityItem() {
     m_Stylesheets.erase(found);
   }
 }
-_FDE_CSSTAGCACHE::_FDE_CSSTAGCACHE(_FDE_CSSTAGCACHE* parent,
-                                   IFDE_CSSTagProvider* tag)
+FDE_CSSTAGCACHE::FDE_CSSTAGCACHE(FDE_CSSTAGCACHE* parent,
+                                 IFDE_CSSTagProvider* tag)
     : pTag(tag),
       pParent(parent),
       dwIDHash(0),
@@ -124,7 +124,7 @@ _FDE_CSSTAGCACHE::_FDE_CSSTAGCACHE(_FDE_CSSTAGCACHE* parent,
     }
   }
 }
-_FDE_CSSTAGCACHE::_FDE_CSSTAGCACHE(const _FDE_CSSTAGCACHE& it)
+FDE_CSSTAGCACHE::FDE_CSSTAGCACHE(const FDE_CSSTAGCACHE& it)
     : pTag(it.pTag),
       pParent(it.pParent),
       dwIDHash(it.dwIDHash),

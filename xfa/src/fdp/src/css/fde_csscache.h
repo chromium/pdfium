@@ -10,12 +10,14 @@
 #include "xfa/src/fdp/include/fde_css.h"
 #include "xfa/src/fgas/include/fx_mem.h"
 
-typedef struct _FDE_CSSCACHEITEM : public CFX_Target {
-  _FDE_CSSCACHEITEM(IFDE_CSSStyleSheet* p);
-  ~_FDE_CSSCACHEITEM();
+struct FDE_CSSCACHEITEM : public CFX_Target {
+  FDE_CSSCACHEITEM(IFDE_CSSStyleSheet* p);
+  ~FDE_CSSCACHEITEM();
+
   IFDE_CSSStyleSheet* pStylesheet;
   FX_DWORD dwActivity;
-} FDE_CSSCACHEITEM, *FDE_LPCSSCACHEITEM;
+};
+
 class CFDE_CSSStyleSheetCache : public IFDE_CSSStyleSheetCache,
                                 public CFX_Target {
  public:
@@ -35,15 +37,16 @@ class CFDE_CSSStyleSheetCache : public IFDE_CSSStyleSheetCache,
 
  protected:
   void RemoveLowestActivityItem();
-  std::map<CFX_ByteString, FDE_LPCSSCACHEITEM> m_Stylesheets;
+  std::map<CFX_ByteString, FDE_CSSCACHEITEM*> m_Stylesheets;
   IFX_MEMAllocator* m_pFixedStore;
   int32_t m_iMaxItems;
 };
-typedef struct _FDE_CSSTAGCACHE : public CFX_Target {
+
+struct FDE_CSSTAGCACHE : public CFX_Target {
  public:
-  _FDE_CSSTAGCACHE(_FDE_CSSTAGCACHE* parent, IFDE_CSSTagProvider* tag);
-  _FDE_CSSTAGCACHE(const _FDE_CSSTAGCACHE& it);
-  _FDE_CSSTAGCACHE* GetParent() const { return pParent; }
+  FDE_CSSTAGCACHE(FDE_CSSTAGCACHE* parent, IFDE_CSSTagProvider* tag);
+  FDE_CSSTAGCACHE(const FDE_CSSTAGCACHE& it);
+  FDE_CSSTAGCACHE* GetParent() const { return pParent; }
   IFDE_CSSTagProvider* GetTag() const { return pTag; }
   FX_DWORD HashID() const { return dwIDHash; }
   FX_DWORD HashTag() const { return dwTagHash; }
@@ -57,19 +60,20 @@ typedef struct _FDE_CSSTAGCACHE : public CFX_Target {
 
  protected:
   IFDE_CSSTagProvider* pTag;
-  _FDE_CSSTAGCACHE* pParent;
+  FDE_CSSTAGCACHE* pParent;
   FX_DWORD dwIDHash;
   FX_DWORD dwTagHash;
   int32_t iClassIndex;
   CFDE_DWordArray dwClassHashs;
-} FDE_CSSTAGCACHE, *FDE_LPCSSTAGCACHE;
+};
 typedef CFX_ObjectStackTemplate<FDE_CSSTAGCACHE> CFDE_CSSTagStack;
+
 class CFDE_CSSAccelerator : public IFDE_CSSAccelerator, public CFX_Target {
  public:
   virtual void OnEnterTag(IFDE_CSSTagProvider* pTag);
   virtual void OnLeaveTag(IFDE_CSSTagProvider* pTag);
   void Clear() { m_Stack.RemoveAll(); }
-  FDE_LPCSSTAGCACHE GetTopElement() const { return m_Stack.GetTopElement(); }
+  FDE_CSSTAGCACHE* GetTopElement() const { return m_Stack.GetTopElement(); }
 
  protected:
   CFDE_CSSTagStack m_Stack;

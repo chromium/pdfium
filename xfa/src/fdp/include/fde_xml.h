@@ -26,9 +26,6 @@ class IFDE_XMLDoc;
 class IFDE_XMLParser;
 class IFDE_XMLSyntaxParser;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 enum FDE_XMLNODETYPE {
   FDE_XMLNODE_Unknown = 0,
   FDE_XMLNODE_Instruction,
@@ -36,18 +33,16 @@ enum FDE_XMLNODETYPE {
   FDE_XMLNODE_Text,
   FDE_XMLNODE_CharData,
 };
-typedef struct _FDE_XMLNODE {
+
+struct FDE_XMLNODE {
   int32_t iNodeNum;
   FDE_XMLNODETYPE eNodeType;
-} FDE_XMLNODE, *FDE_LPXMLNODE;
-typedef FDE_XMLNODE const* FDE_LPCXMLNODE;
+};
 typedef CFX_StackTemplate<FDE_XMLNODE> CFDE_XMLNodeStack;
+
 FX_BOOL FDE_IsXMLValidChar(FX_WCHAR ch);
 FX_BOOL FDE_IsXMLWhiteSpace(FX_WCHAR ch);
 FX_BOOL FDE_IsXMLNameChar(FX_WCHAR ch, FX_BOOL bFirstChar);
-#ifdef __cplusplus
-}
-#endif
 
 class IFDE_XMLNode {
  public:
@@ -157,23 +152,24 @@ class IFDE_XMLCharData : public IFDE_XMLDeclaration {
   virtual void GetCharData(CFX_WideString& wsCData) const = 0;
   virtual void SetCharData(const CFX_WideString& wsCData) = 0;
 };
-typedef struct _FDE_XMLREADERHANDLER {
-  void* pData;
 
-  void (*OnTagEnter)(_FDE_XMLREADERHANDLER* pThis,
+struct FDE_XMLREADERHANDLER {
+  void* pData;
+  void (*OnTagEnter)(FDE_XMLREADERHANDLER* pThis,
                      FDE_XMLNODETYPE eType,
                      const CFX_WideString& wsTagName);
-  void (*OnTagBreak)(_FDE_XMLREADERHANDLER* pThis,
+  void (*OnTagBreak)(FDE_XMLREADERHANDLER* pThis,
                      const CFX_WideString& wsTagName);
-  void (*OnTagClose)(_FDE_XMLREADERHANDLER* pThis,
+  void (*OnTagClose)(FDE_XMLREADERHANDLER* pThis,
                      const CFX_WideString& wsTagName);
-  void (*OnAttribute)(_FDE_XMLREADERHANDLER* pThis,
+  void (*OnAttribute)(FDE_XMLREADERHANDLER* pThis,
                       const CFX_WideString& wsName,
                       const CFX_WideString& wsValue);
-  void (*OnData)(_FDE_XMLREADERHANDLER* pThis,
+  void (*OnData)(FDE_XMLREADERHANDLER* pThis,
                  FDE_XMLNODETYPE eType,
                  const CFX_WideString& wsValue);
-} FDE_XMLREADERHANDLER, *FDE_LPXMLREADERHANDLER;
+};
+
 class IFDE_XMLDoc {
  public:
   static IFDE_XMLDoc* Create();
@@ -182,7 +178,7 @@ class IFDE_XMLDoc {
   virtual FX_BOOL LoadXML(IFX_Stream* pXMLStream,
                           int32_t iXMLPlaneSize = 8192,
                           int32_t iTextDataSize = 256,
-                          FDE_LPXMLREADERHANDLER pHandler = NULL) = 0;
+                          FDE_XMLREADERHANDLER* pHandler = NULL) = 0;
   virtual FX_BOOL LoadXML(IFDE_XMLParser* pXMLParser) = 0;
   virtual int32_t DoLoad(IFX_Pause* pPause = NULL) = 0;
   virtual void CloseXML() = 0;

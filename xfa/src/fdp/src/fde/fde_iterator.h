@@ -10,11 +10,12 @@
 #include "xfa/src/fdp/include/fde_psr.h"
 #include "xfa/src/fgas/include/fx_mem.h"
 
-typedef struct _FDE_CANVASITEM : public CFX_Target {
+struct FDE_CANVASITEM : public CFX_Target {
   IFDE_CanvasSet* pCanvas;
   FDE_HVISUALOBJ hCanvas;
   FX_POSITION hPos;
-} FDE_CANVASITEM, *FDE_LPCANVASITEM;
+};
+
 class CFDE_VisualSetIterator : public IFDE_VisualSetIterator,
                                public CFX_Target {
  public:

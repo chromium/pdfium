@@ -52,14 +52,16 @@ inline FDE_TXTEDT_CHARTYPE FDE_GetEditSelCharType(FX_WCHAR wChar) {
     return FDE_TXTEDT_CHARTYPE_Char;
   }
 }
-typedef struct _FDE_TXTEDTPIECE {
+
+struct FDE_TEXTEDITPIECE {
   int32_t nStart;
   int32_t nCount;
   int32_t nBidiLevel;
   CFX_RectF rtPiece;
   FX_DWORD dwCharStyles;
-} FDE_TEXTEDITPIECE, *FDE_LPTEXTEDITPIECE;
+};
 typedef CFX_MassArrayTemplate<FDE_TEXTEDITPIECE> CFDE_TXTEDTPieceMassArray;
+
 class CFDE_TxtEdtTextSet : public IFDE_TextSet {
  public:
   CFDE_TxtEdtTextSet(CFDE_TxtEdtPage* pPage);

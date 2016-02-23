@@ -168,7 +168,7 @@ class CFDE_XMLDoc : public CFX_Target {
   virtual FX_BOOL LoadXML(IFX_Stream* pXMLStream,
                           int32_t iXMLPlaneSize = 8192,
                           int32_t iTextDataSize = 256,
-                          FDE_LPXMLREADERHANDLER pHandler = NULL);
+                          FDE_XMLREADERHANDLER* pHandler = NULL);
   virtual FX_BOOL LoadXML(IFDE_XMLParser* pXMLParser);
   virtual int32_t DoLoad(IFX_Pause* pPause = NULL);
   virtual void CloseXML();
@@ -213,7 +213,7 @@ class CFDE_XMLTAG : public CFX_Target {
 typedef CFX_ObjectStackTemplate<CFDE_XMLTAG> CFDE_XMLTagStack;
 class CFDE_XMLSAXParser : public IFDE_XMLParser, public CFX_Target {
  public:
-  CFDE_XMLSAXParser(FDE_LPXMLREADERHANDLER pHandler,
+  CFDE_XMLSAXParser(FDE_XMLREADERHANDLER* pHandler,
                     IFDE_XMLSyntaxParser* pParser);
   ~CFDE_XMLSAXParser();
 
@@ -223,7 +223,7 @@ class CFDE_XMLSAXParser : public IFDE_XMLParser, public CFX_Target {
  private:
   void Push(const CFDE_XMLTAG& xmlTag);
   void Pop();
-  FDE_LPXMLREADERHANDLER m_pHandler;
+  FDE_XMLREADERHANDLER* m_pHandler;
   IFDE_XMLSyntaxParser* m_pParser;
   CFDE_XMLTagStack m_TagStack;
   CFDE_XMLTAG* m_pTagTop;

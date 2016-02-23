@@ -110,7 +110,7 @@ class IFWL_EditDP : public IFWL_DataProvider {};
 #define FWL_EDT_FIND_FLAGS_Next (1L << 0)
 #define FWL_EDT_FIND_FLAGS_WholeWord (1L << 1)
 #define FWL_EDT_FIND_FLAGS_NoCase (1L << 2)
-typedef struct _FWL_HEDTFIND { void* pData; } * FWL_HEDTFIND;
+typedef struct FWL_HEDTFIND_ { void* pData; } * FWL_HEDTFIND;
 
 class IFWL_Edit : public IFWL_Widget {
  public:

@@ -8,7 +8,7 @@
 #include "xfa/src/foxitlib.h"
 IFDE_CSSValue* CFDE_CSSDeclaration::GetProperty(FDE_CSSPROPERTY eProperty,
                                                 FX_BOOL& bImportant) const {
-  for (FDE_LPCSSPROPERTYHOLDER pHolder = m_pFirstProperty; pHolder;
+  for (const FDE_CSSPROPERTYHOLDER* pHolder = m_pFirstProperty; pHolder;
        pHolder = pHolder->pNext) {
     if (pHolder->eProperty == eProperty) {
       bImportant = pHolder->bImportant;
@@ -24,7 +24,7 @@ void CFDE_CSSDeclaration::GetNextProperty(FX_POSITION& pos,
                                           FDE_CSSPROPERTY& eProperty,
                                           IFDE_CSSValue*& pValue,
                                           FX_BOOL& bImportant) const {
-  FDE_LPCSSPROPERTYHOLDER pHolder = (FDE_LPCSSPROPERTYHOLDER)pos;
+  const FDE_CSSPROPERTYHOLDER* pHolder = (const FDE_CSSPROPERTYHOLDER*)pos;
   FXSYS_assert(pHolder != NULL);
   bImportant = pHolder->bImportant;
   eProperty = (FDE_CSSPROPERTY)pHolder->eProperty;
@@ -37,7 +37,7 @@ FX_POSITION CFDE_CSSDeclaration::GetStartCustom() const {
 void CFDE_CSSDeclaration::GetNextCustom(FX_POSITION& pos,
                                         CFX_WideString& wsName,
                                         CFX_WideString& wsValue) const {
-  FDE_LPCSSCUSTOMPROPERTY pProperty = (FDE_LPCSSCUSTOMPROPERTY)pos;
+  const FDE_CSSCUSTOMPROPERTY* pProperty = (const FDE_CSSCUSTOMPROPERTY*)pos;
   if (pProperty == NULL) {
     return;
   }
@@ -45,9 +45,10 @@ void CFDE_CSSDeclaration::GetNextCustom(FX_POSITION& pos,
   wsValue = pProperty->pwsValue;
   pos = (FX_POSITION)pProperty->pNext;
 }
-const FX_WCHAR* CFDE_CSSDeclaration::CopyToLocal(FDE_LPCCSSPROPERTYARGS pArgs,
-                                                 const FX_WCHAR* pszValue,
-                                                 int32_t iValueLen) {
+const FX_WCHAR* CFDE_CSSDeclaration::CopyToLocal(
+    const FDE_CSSPROPERTYARGS* pArgs,
+    const FX_WCHAR* pszValue,
+    int32_t iValueLen) {
   FXSYS_assert(iValueLen > 0);
   CFX_MapPtrToPtr* pCache = pArgs->pStringCache;
   void* pKey = NULL;
@@ -90,7 +91,7 @@ void CFDE_CSSDeclaration::AddPropertyHolder(IFX_MEMAllocator* pStaticStore,
                                             FDE_CSSPROPERTY eProperty,
                                             IFDE_CSSValue* pValue,
                                             FX_BOOL bImportant) {
-  FDE_LPCSSPROPERTYHOLDER pHolder =
+  FDE_CSSPROPERTYHOLDER* pHolder =
       FDE_NewWith(pStaticStore) FDE_CSSPROPERTYHOLDER;
   pHolder->bImportant = bImportant;
   pHolder->eProperty = eProperty;
@@ -103,7 +104,7 @@ void CFDE_CSSDeclaration::AddPropertyHolder(IFX_MEMAllocator* pStaticStore,
     m_pLastProperty = pHolder;
   }
 }
-FX_BOOL CFDE_CSSDeclaration::AddProperty(FDE_LPCCSSPROPERTYARGS pArgs,
+FX_BOOL CFDE_CSSDeclaration::AddProperty(const FDE_CSSPROPERTYARGS* pArgs,
                                          const FX_WCHAR* pszValue,
                                          int32_t iValueLen) {
   FXSYS_assert(iValueLen > 0);
@@ -261,12 +262,12 @@ FX_BOOL CFDE_CSSDeclaration::AddProperty(FDE_LPCCSSPROPERTYARGS pArgs,
   }
   return FALSE;
 }
-FX_BOOL CFDE_CSSDeclaration::AddProperty(FDE_LPCCSSPROPERTYARGS pArgs,
+FX_BOOL CFDE_CSSDeclaration::AddProperty(const FDE_CSSPROPERTYARGS* pArgs,
                                          const FX_WCHAR* pszName,
                                          int32_t iNameLen,
                                          const FX_WCHAR* pszValue,
                                          int32_t iValueLen) {
-  FDE_LPCSSCUSTOMPROPERTY pProperty =
+  FDE_CSSCUSTOMPROPERTY* pProperty =
       FDE_NewWith(pArgs->pStaticStore) FDE_CSSCUSTOMPROPERTY;
   pProperty->pwsName = CopyToLocal(pArgs, pszName, iNameLen);
   pProperty->pwsValue = CopyToLocal(pArgs, pszValue, iValueLen);
@@ -279,9 +280,10 @@ FX_BOOL CFDE_CSSDeclaration::AddProperty(FDE_LPCCSSPROPERTYARGS pArgs,
   }
   return TRUE;
 }
-IFDE_CSSValue* CFDE_CSSDeclaration::ParseNumber(FDE_LPCCSSPROPERTYARGS pArgs,
-                                                const FX_WCHAR* pszValue,
-                                                int32_t iValueLen) {
+IFDE_CSSValue* CFDE_CSSDeclaration::ParseNumber(
+    const FDE_CSSPROPERTYARGS* pArgs,
+    const FX_WCHAR* pszValue,
+    int32_t iValueLen) {
   FX_FLOAT fValue;
   FDE_CSSPRIMITIVETYPE eUnit;
   if (!FDE_ParseCSSNumber(pszValue, iValueLen, fValue, eUnit)) {
@@ -289,14 +291,14 @@ IFDE_CSSValue* CFDE_CSSDeclaration::ParseNumber(FDE_LPCCSSPROPERTYARGS pArgs,
   }
   return NewNumberValue(pArgs->pStaticStore, eUnit, fValue);
 }
-IFDE_CSSValue* CFDE_CSSDeclaration::ParseEnum(FDE_LPCCSSPROPERTYARGS pArgs,
+IFDE_CSSValue* CFDE_CSSDeclaration::ParseEnum(const FDE_CSSPROPERTYARGS* pArgs,
                                               const FX_WCHAR* pszValue,
                                               int32_t iValueLen) {
-  FDE_LPCCSSPROPERTYVALUETABLE pValue =
+  const FDE_CSSPROPERTYVALUETABLE* pValue =
       FDE_GetCSSPropertyValueByName(pszValue, iValueLen);
   return pValue ? NewEnumValue(pArgs->pStaticStore, pValue->eName) : NULL;
 }
-IFDE_CSSValue* CFDE_CSSDeclaration::ParseColor(FDE_LPCCSSPROPERTYARGS pArgs,
+IFDE_CSSValue* CFDE_CSSDeclaration::ParseColor(const FDE_CSSPROPERTYARGS* pArgs,
                                                const FX_WCHAR* pszValue,
                                                int32_t iValueLen) {
   FX_ARGB dwColor;
@@ -305,7 +307,7 @@ IFDE_CSSValue* CFDE_CSSDeclaration::ParseColor(FDE_LPCCSSPROPERTYARGS pArgs,
   }
   return FDE_NewWith(pArgs->pStaticStore) CFDE_CSSPrimitiveValue(dwColor);
 }
-IFDE_CSSValue* CFDE_CSSDeclaration::ParseURI(FDE_LPCCSSPROPERTYARGS pArgs,
+IFDE_CSSValue* CFDE_CSSDeclaration::ParseURI(const FDE_CSSPROPERTYARGS* pArgs,
                                              const FX_WCHAR* pszValue,
                                              int32_t iValueLen) {
   int32_t iOffset;
@@ -321,9 +323,10 @@ IFDE_CSSValue* CFDE_CSSDeclaration::ParseURI(FDE_LPCCSSPROPERTYARGS pArgs,
                    CFDE_CSSPrimitiveValue(FDE_CSSPRIMITIVETYPE_URI, pszValue)
              : NULL;
 }
-IFDE_CSSValue* CFDE_CSSDeclaration::ParseString(FDE_LPCCSSPROPERTYARGS pArgs,
-                                                const FX_WCHAR* pszValue,
-                                                int32_t iValueLen) {
+IFDE_CSSValue* CFDE_CSSDeclaration::ParseString(
+    const FDE_CSSPROPERTYARGS* pArgs,
+    const FX_WCHAR* pszValue,
+    int32_t iValueLen) {
   int32_t iOffset;
   if (!FDE_ParseCSSString(pszValue, iValueLen, iOffset, iValueLen)) {
     return NULL;
@@ -337,9 +340,10 @@ IFDE_CSSValue* CFDE_CSSDeclaration::ParseString(FDE_LPCCSSPROPERTYARGS pArgs,
                    CFDE_CSSPrimitiveValue(FDE_CSSPRIMITIVETYPE_String, pszValue)
              : NULL;
 }
-IFDE_CSSValue* CFDE_CSSDeclaration::ParseFunction(FDE_LPCCSSPROPERTYARGS pArgs,
-                                                  const FX_WCHAR* pszValue,
-                                                  int32_t iValueLen) {
+IFDE_CSSValue* CFDE_CSSDeclaration::ParseFunction(
+    const FDE_CSSPROPERTYARGS* pArgs,
+    const FX_WCHAR* pszValue,
+    int32_t iValueLen) {
   if (pszValue[iValueLen - 1] != ')') {
     return NULL;
   }
@@ -363,7 +367,7 @@ IFDE_CSSValue* CFDE_CSSDeclaration::ParseFunction(FDE_LPCCSSPROPERTYARGS pArgs,
   while (parser.NextValue(ePrimitiveType, pszValue, iValueLen)) {
     switch (ePrimitiveType) {
       case FDE_CSSPRIMITIVETYPE_String: {
-        FDE_LPCCSSPROPERTYVALUETABLE pPropertyValue =
+        const FDE_CSSPROPERTYVALUETABLE* pPropertyValue =
             FDE_GetCSSPropertyValueByName(pszValue, iValueLen);
         if (pPropertyValue != NULL) {
           argumentArr.Add(
@@ -400,10 +404,11 @@ IFDE_CSSValue* CFDE_CSSDeclaration::ParseFunction(FDE_LPCCSSPROPERTYARGS pArgs,
       CFDE_CSSFunction(pszFuncName, pArgumentList);
   return FDE_NewWith(pArgs->pStaticStore) CFDE_CSSPrimitiveValue(pFunction);
 }
-FX_BOOL CFDE_CSSDeclaration::ParseContentProperty(FDE_LPCCSSPROPERTYARGS pArgs,
-                                                  const FX_WCHAR* pszValue,
-                                                  int32_t iValueLen,
-                                                  FX_BOOL bImportant) {
+FX_BOOL CFDE_CSSDeclaration::ParseContentProperty(
+    const FDE_CSSPROPERTYARGS* pArgs,
+    const FX_WCHAR* pszValue,
+    int32_t iValueLen,
+    FX_BOOL bImportant) {
   IFX_MEMAllocator* pStaticStore = (IFX_MEMAllocator*)pArgs->pStaticStore;
   CFDE_CSSValueListParser parser(pszValue, iValueLen, ' ');
   FDE_CSSPRIMITIVETYPE eType;
@@ -417,7 +422,7 @@ FX_BOOL CFDE_CSSDeclaration::ParseContentProperty(FDE_LPCCSSPROPERTYARGS pArgs,
       case FDE_CSSPRIMITIVETYPE_Number:
         return FALSE;
       case FDE_CSSPRIMITIVETYPE_String: {
-        FDE_LPCCSSPROPERTYVALUETABLE pValue =
+        const FDE_CSSPROPERTYVALUETABLE* pValue =
             FDE_GetCSSPropertyValueByName(pszValue, iValueLen);
         if (pValue != NULL) {
           switch (pValue->eName) {
@@ -463,10 +468,11 @@ FX_BOOL CFDE_CSSDeclaration::ParseContentProperty(FDE_LPCCSSPROPERTYARGS pArgs,
                     bImportant);
   return TRUE;
 }
-FX_BOOL CFDE_CSSDeclaration::ParseCounterProperty(FDE_LPCCSSPROPERTYARGS pArgs,
-                                                  const FX_WCHAR* pszValue,
-                                                  int32_t iValueLen,
-                                                  FX_BOOL bImportant) {
+FX_BOOL CFDE_CSSDeclaration::ParseCounterProperty(
+    const FDE_CSSPROPERTYARGS* pArgs,
+    const FX_WCHAR* pszValue,
+    int32_t iValueLen,
+    FX_BOOL bImportant) {
   IFX_MEMAllocator* pStaticStore = pArgs->pStaticStore;
   CFDE_CSSValueListParser parser(pszValue, iValueLen, ' ');
   CFDE_CSSValueArray list;
@@ -519,7 +525,7 @@ FX_BOOL CFDE_CSSDeclaration::ParseCounterProperty(FDE_LPCCSSPROPERTYARGS pArgs,
   return TRUE;
 }
 FX_BOOL CFDE_CSSDeclaration::ParseValueListProperty(
-    FDE_LPCCSSPROPERTYARGS pArgs,
+    const FDE_CSSPROPERTYARGS* pArgs,
     const FX_WCHAR* pszValue,
     int32_t iValueLen,
     FX_BOOL bImportant) {
@@ -549,7 +555,7 @@ FX_BOOL CFDE_CSSDeclaration::ParseValueListProperty(
           }
         }
         if (dwType & FDE_CSSVALUETYPE_MaybeEnum) {
-          FDE_LPCCSSPROPERTYVALUETABLE pValue =
+          const FDE_CSSPROPERTYVALUETABLE* pValue =
               FDE_GetCSSPropertyValueByName(pszValue, iValueLen);
           if (pValue != NULL) {
             list.Add(NewEnumValue(pStaticStore, pValue->eName));
@@ -679,7 +685,7 @@ FX_BOOL CFDE_CSSDeclaration::ParseBorderPropoerty(
         }
         break;
       case FDE_CSSPRIMITIVETYPE_String: {
-        FDE_LPCCSSCOLORTABLE pColorItem =
+        const FDE_CSSCOLORTABLE* pColorItem =
             FDE_GetCSSColorByName(pszValue, iValueLen);
         if (pColorItem != NULL) {
           if (pColor == NULL) {
@@ -688,7 +694,7 @@ FX_BOOL CFDE_CSSDeclaration::ParseBorderPropoerty(
           }
           continue;
         }
-        FDE_LPCCSSPROPERTYVALUETABLE pValue =
+        const FDE_CSSPROPERTYVALUETABLE* pValue =
             FDE_GetCSSPropertyValueByName(pszValue, iValueLen);
         if (pValue == NULL) {
           continue;
@@ -753,7 +759,7 @@ void CFDE_CSSDeclaration::AddBorderProperty(IFX_MEMAllocator* pStaticStore,
   AddPropertyHolder(pStaticStore, eColor, pColor, bImportant);
 }
 FX_BOOL CFDE_CSSDeclaration::ParseListStyleProperty(
-    FDE_LPCCSSPROPERTYARGS pArgs,
+    const FDE_CSSPROPERTYARGS* pArgs,
     const FX_WCHAR* pszValue,
     int32_t iValueLen,
     FX_BOOL bImportant) {
@@ -770,7 +776,7 @@ FX_BOOL CFDE_CSSDeclaration::ParseListStyleProperty(
         }
         break;
       case FDE_CSSPRIMITIVETYPE_String: {
-        FDE_LPCCSSPROPERTYVALUETABLE pValue =
+        const FDE_CSSPROPERTYVALUETABLE* pValue =
             FDE_GetCSSPropertyValueByName(pszValue, iValueLen);
         if (pValue == NULL) {
           break;
@@ -833,7 +839,7 @@ FX_BOOL CFDE_CSSDeclaration::ParseListStyleProperty(
   return TRUE;
 }
 FX_BOOL CFDE_CSSDeclaration::ParseBackgroundProperty(
-    FDE_LPCCSSPROPERTYARGS pArgs,
+    const FDE_CSSPROPERTYARGS* pArgs,
     const FX_WCHAR* pszValue,
     int32_t iValueLen,
     FX_BOOL bImportant) {
@@ -862,7 +868,7 @@ FX_BOOL CFDE_CSSDeclaration::ParseBackgroundProperty(
         }
       } break;
       case FDE_CSSPRIMITIVETYPE_String: {
-        FDE_LPCCSSPROPERTYVALUETABLE pValue =
+        const FDE_CSSPROPERTYVALUETABLE* pValue =
             FDE_GetCSSPropertyValueByName(pszValue, iValueLen);
         if (pValue != NULL) {
           switch (pValue->eName) {
@@ -915,7 +921,7 @@ FX_BOOL CFDE_CSSDeclaration::ParseBackgroundProperty(
           }
           break;
         }
-        FDE_LPCCSSCOLORTABLE pColorItem =
+        const FDE_CSSCOLORTABLE* pColorItem =
             FDE_GetCSSColorByName(pszValue, iValueLen);
         if (pColorItem != NULL)
           if (pColor == NULL) {
@@ -970,7 +976,7 @@ FX_BOOL CFDE_CSSDeclaration::ParseBackgroundProperty(
                     pAttachment, bImportant);
   return TRUE;
 }
-FX_BOOL CFDE_CSSDeclaration::ParseFontProperty(FDE_LPCCSSPROPERTYARGS pArgs,
+FX_BOOL CFDE_CSSDeclaration::ParseFontProperty(const FDE_CSSPROPERTYARGS* pArgs,
                                                const FX_WCHAR* pszValue,
                                                int32_t iValueLen,
                                                FX_BOOL bImportant) {
@@ -983,7 +989,7 @@ FX_BOOL CFDE_CSSDeclaration::ParseFontProperty(FDE_LPCCSSPROPERTYARGS pArgs,
   while (parser.NextValue(eType, pszValue, iValueLen)) {
     switch (eType) {
       case FDE_CSSPRIMITIVETYPE_String: {
-        FDE_LPCCSSPROPERTYVALUETABLE pValue =
+        const FDE_CSSPROPERTYVALUETABLE* pValue =
             FDE_GetCSSPropertyValueByName(pszValue, iValueLen);
         if (pValue != NULL) {
           switch (pValue->eName) {
@@ -1108,7 +1114,7 @@ FX_BOOL CFDE_CSSDeclaration::ParseFontProperty(FDE_LPCCSSPROPERTYARGS pArgs,
   return TRUE;
 }
 FX_BOOL CFDE_CSSDeclaration::ParseColumnRuleProperty(
-    FDE_LPCCSSPROPERTYARGS pArgs,
+    const FDE_CSSPROPERTYARGS* pArgs,
     const FX_WCHAR* pszValue,
     int32_t iValueLen,
     FX_BOOL bImportant) {
@@ -1121,7 +1127,7 @@ FX_BOOL CFDE_CSSDeclaration::ParseColumnRuleProperty(
   while (parser.NextValue(eType, pszValue, iValueLen)) {
     switch (eType) {
       case FDE_CSSPRIMITIVETYPE_String: {
-        FDE_LPCCSSPROPERTYVALUETABLE pValue =
+        const FDE_CSSPROPERTYVALUETABLE* pValue =
             FDE_GetCSSPropertyValueByName(pszValue, iValueLen);
         if (pValue != NULL) {
           switch (pValue->eName) {
@@ -1206,7 +1212,7 @@ FX_BOOL CFDE_CSSDeclaration::ParseColumnRuleProperty(
   return TRUE;
 }
 FX_BOOL CFDE_CSSDeclaration::ParseTextEmphasisProperty(
-    FDE_LPCCSSPROPERTYARGS pArgs,
+    FDE_CSSPROPERTYARGS* pArgs,
     const FX_WCHAR* pszValue,
     int32_t iValueLen,
     FX_BOOL bImportant) {
@@ -1218,7 +1224,7 @@ FX_BOOL CFDE_CSSDeclaration::ParseTextEmphasisProperty(
   while (parser.NextValue(eType, pszValue, iValueLen)) {
     switch (eType) {
       case FDE_CSSPRIMITIVETYPE_String: {
-        FDE_LPCCSSPROPERTYVALUETABLE pValue =
+        const FDE_CSSPROPERTYVALUETABLE* pValue =
             FDE_GetCSSPropertyValueByName(pszValue, iValueLen);
         if (pValue != NULL) {
           arrEmphasisStyle.Add(NewEnumValue(pStaticStore, pValue->eName));
@@ -1257,10 +1263,11 @@ FX_BOOL CFDE_CSSDeclaration::ParseTextEmphasisProperty(
   }
   return TRUE;
 }
-FX_BOOL CFDE_CSSDeclaration::ParseColumnsProperty(FDE_LPCCSSPROPERTYARGS pArgs,
-                                                  const FX_WCHAR* pszValue,
-                                                  int32_t iValueLen,
-                                                  FX_BOOL bImportant) {
+FX_BOOL CFDE_CSSDeclaration::ParseColumnsProperty(
+    const FDE_CSSPROPERTYARGS* pArgs,
+    const FX_WCHAR* pszValue,
+    int32_t iValueLen,
+    FX_BOOL bImportant) {
   IFX_MEMAllocator* pStaticStore = pArgs->pStaticStore;
   CFDE_CSSValueListParser parser(pszValue, iValueLen, ' ');
   IFDE_CSSPrimitiveValue* pColumnWidth = NULL;
@@ -1269,7 +1276,7 @@ FX_BOOL CFDE_CSSDeclaration::ParseColumnsProperty(FDE_LPCCSSPROPERTYARGS pArgs,
   while (parser.NextValue(eType, pszValue, iValueLen)) {
     switch (eType) {
       case FDE_CSSPRIMITIVETYPE_String: {
-        FDE_LPCCSSPROPERTYVALUETABLE pValue =
+        const FDE_CSSPROPERTYVALUETABLE* pValue =
             FDE_GetCSSPropertyValueByName(pszValue, iValueLen);
         if (pValue == NULL && pValue->eName == FDE_CSSPROPERTYVALUE_Auto) {
           pColumnWidth = NewEnumValue(pStaticStore, pValue->eName);
@@ -1309,10 +1316,11 @@ FX_BOOL CFDE_CSSDeclaration::ParseColumnsProperty(FDE_LPCCSSPROPERTYARGS pArgs,
                     bImportant);
   return TRUE;
 }
-FX_BOOL CFDE_CSSDeclaration::ParseOverflowProperty(FDE_LPCCSSPROPERTYARGS pArgs,
-                                                   const FX_WCHAR* pszValue,
-                                                   int32_t iValueLen,
-                                                   FX_BOOL bImportant) {
+FX_BOOL CFDE_CSSDeclaration::ParseOverflowProperty(
+    const FDE_CSSPROPERTYARGS* pArgs,
+    const FX_WCHAR* pszValue,
+    int32_t iValueLen,
+    FX_BOOL bImportant) {
   IFX_MEMAllocator* pStaticStore = pArgs->pStaticStore;
   CFDE_CSSValueListParser parser(pszValue, iValueLen, ' ');
   IFDE_CSSPrimitiveValue* pOverflowX = NULL;
@@ -1320,7 +1328,7 @@ FX_BOOL CFDE_CSSDeclaration::ParseOverflowProperty(FDE_LPCCSSPROPERTYARGS pArgs,
   FDE_CSSPRIMITIVETYPE eType;
   while (parser.NextValue(eType, pszValue, iValueLen)) {
     if (eType == FDE_CSSPRIMITIVETYPE_String) {
-      FDE_LPCCSSPROPERTYVALUETABLE pValue =
+      const FDE_CSSPROPERTYVALUETABLE* pValue =
           FDE_GetCSSPropertyValueByName(pszValue, iValueLen);
       if (pValue != NULL) {
         switch (pValue->eName) {

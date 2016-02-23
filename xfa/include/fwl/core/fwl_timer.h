@@ -9,7 +9,7 @@
 
 #include "core/include/fxcrt/fx_system.h"
 
-typedef struct _FWL_HTIMER { void* pData; } * FWL_HTIMER;
+typedef struct FWL_HTIMER_ { void* pData; } * FWL_HTIMER;
 
 class IFWL_Timer {
  public:

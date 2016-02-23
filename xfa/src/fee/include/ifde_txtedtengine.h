@@ -16,11 +16,13 @@ class IFDE_TxtEdtEngine;
 class IFDE_TxtEdtEventSink;
 class IFDE_TxtEdtParag;
 
+typedef struct FDE_HTXTEDTFIND_ { void* pData; } * FDE_HTXTEDTFIND;
+
 #define FDE_TXTEDT_FIND_FLAGS_Prev (0L << 0)
 #define FDE_TXTEDT_FIND_FLAGS_Next (1L << 0)
 #define FDE_TXTEDT_FIND_FLAGS_WholeWord (1L << 1)
 #define FDE_TXTEDT_FIND_FLAGS_NoCase (1L << 2)
-typedef struct _FDE_HTXTEDTFIND { void* pData; } * FDE_HTXTEDTFIND;
+
 #define FDE_TEXTEDITMODE_MultiLines (1L << 0)
 #define FDE_TEXTEDITMODE_AutoLineWrap (1L << 1)
 #define FDE_TEXTEDITMODE_ReadOnly (1L << 2)
@@ -31,12 +33,14 @@ typedef struct _FDE_HTXTEDTFIND { void* pData; } * FDE_HTXTEDTFIND;
 #define FDE_TEXTEDITMODE_FIELD_AUTO (1L << 7)
 #define FDE_TEXTEDITMODE_Validate (1L << 8)
 #define FDE_TEXTEDITMODE_Password (1L << 9)
+
 #define FDE_TEXTEDITALIGN_Left (0L << 0)
 #define FDE_TEXTEDITALIGN_Center (1L << 0)
 #define FDE_TEXTEDITALIGN_Right (2L << 0)
 #define FDE_TEXTEDITALIGN_Normal (1L << 3)
 #define FDE_TEXTEDITALIGN_Justified (1L << 4)
 #define FDE_TEXTEDITALIGN_Distributed (1L << 5)
+
 #define FDE_TEXTEDITLAYOUT_DocVertical (1L << 0)
 #define FDE_TEXTEDITLAYOUT_CharVertial (1L << 1)
 #define FDE_TEXTEDITLAYOUT_LineReserve (1L << 2)
@@ -46,6 +50,7 @@ typedef struct _FDE_HTXTEDTFIND { void* pData; } * FDE_HTXTEDTFIND;
 #define FDE_TEXTEDITLAYOUT_ArabicContext (1L << 6)
 #define FDE_TEXTEDITLAYOUT_ArabicShapes (1L << 7)
 #define FDE_TEXTEDITLAYOUT_LastLineHeight (1L << 8)
+
 enum FDE_TXTEDTMOVECARET {
   MC_MoveNone = 0,
   MC_Left,

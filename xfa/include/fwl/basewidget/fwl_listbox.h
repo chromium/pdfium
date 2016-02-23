@@ -58,7 +58,7 @@ CFX_Matrix m_matrix;
 int32_t m_index;
 CFX_RectF m_rect;
 END_FWL_EVENT_DEF
-typedef struct _FWL_HLISTITEM { void* pData; } * FWL_HLISTITEM;
+typedef struct FWL_HLISTITEM_ { void* pData; } * FWL_HLISTITEM;
 struct FWL_ListBoxItemData {
   IFWL_ListBoxDP* pDataProvider;
   int32_t iIndex;

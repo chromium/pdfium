@@ -38,7 +38,7 @@ FX_BOOL CFDE_VisualSetIterator::FilterObjects(FX_DWORD dwObjects) {
   if (dwObjects & FDE_VISUALOBJ_Widget) {
     m_dwFilter |= 0xFF00;
   }
-  FDE_LPCANVASITEM pCanvas = m_CanvasStack.GetTopElement();
+  FDE_CANVASITEM* pCanvas = m_CanvasStack.GetTopElement();
   FXSYS_assert(pCanvas != NULL && pCanvas->pCanvas != NULL);
   pCanvas->hPos = pCanvas->pCanvas->GetFirstPosition(NULL);
   return pCanvas->hPos != NULL;
@@ -50,7 +50,7 @@ FDE_HVISUALOBJ CFDE_VisualSetIterator::GetNext(IFDE_VisualSet*& pVisualSet,
                                                FDE_HVISUALOBJ* phCanvasObj,
                                                IFDE_CanvasSet** ppCanvasSet) {
   while (m_CanvasStack.GetSize() > 0) {
-    FDE_LPCANVASITEM pCanvas = m_CanvasStack.GetTopElement();
+    FDE_CANVASITEM* pCanvas = m_CanvasStack.GetTopElement();
     FXSYS_assert(pCanvas != NULL && pCanvas->pCanvas != NULL);
     if (pCanvas->hPos == NULL) {
       if (m_CanvasStack.GetSize() == 1) {

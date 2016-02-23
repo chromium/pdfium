@@ -40,7 +40,7 @@ typedef enum eFXIOSFONTFLAG {
   eFXFontFlagSerif = 1 << 3,
   eFXFontFlagScript = 1 << 4,
 } FX_IOSFONTFLAG;
-typedef struct _IOS_FONTDATA {
+typedef struct IOS_FONTDATA_ {
   FX_DWORD nHashCode;
   const char* psName;
   FX_DWORD charsets;

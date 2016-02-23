@@ -25,7 +25,7 @@
 class CFWL_ThreadImp;
 class IFWL_NoteDriver;
 
-typedef struct _FWL_HTHREAD { void* pData; } * FWL_HTHREAD;
+typedef struct FWL_HTHREAD_ { void* pData; } * FWL_HTHREAD;
 
 class IFWL_Thread {
  public:
