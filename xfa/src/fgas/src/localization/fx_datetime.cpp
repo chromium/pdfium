@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/src/fgas/src/fgas_base.h"
+
 #if _FX_OS_ == _FX_LINUX_DESKTOP_ || _FX_OS_ == _FX_ANDROID_ || \
     _FX_OS_ == _FX_MACOSX_ || _FX_OS_ == _FX_IOS_
 #include <sys/time.h>
 #include <time.h>
 #endif
-
-#include "xfa/src/fgas/src/fgas_base.h"
 
 const uint8_t g_FXDaysPerMonth[12] = {31, 28, 31, 30, 31, 30,
                                       31, 31, 30, 31, 30, 31};
