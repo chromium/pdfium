@@ -1129,17 +1129,15 @@ void CXFA_ItemLayoutProcessor::DoLayoutPositionedContainer(
           pContext->m_prgSpecifiedColumnWidths->GetSize() - iColIndex) {
         pContext->m_fCurColumnWidth = 0;
         pContext->m_bCurColumnWidthAvaiable = TRUE;
-        if (iColSpan == -1) {
+        if (iColSpan == -1)
           iColSpan = pContext->m_prgSpecifiedColumnWidths->GetSize();
-        }
-        for (int32_t i = 0; i < iColSpan; i++) {
+        for (int32_t i = 0; iColIndex + i < iColSpan; ++i) {
           pContext->m_fCurColumnWidth +=
               pContext->m_prgSpecifiedColumnWidths->GetAt(iColIndex + i);
         }
-        if (pContext->m_fCurColumnWidth == 0) {
+        if (pContext->m_fCurColumnWidth == 0)
           pContext->m_bCurColumnWidthAvaiable = FALSE;
-        }
-        iColIndex += iColSpan;
+        iColIndex += iColSpan >= 0 ? iColSpan : 0;
       }
     }
     pProcessor->DoLayout(FALSE, XFA_LAYOUT_FLOAT_MAX, XFA_LAYOUT_FLOAT_MAX,
