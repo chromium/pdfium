@@ -4299,7 +4299,7 @@ int CPDF_DataAvail::GetPageCount() const {
   return m_pDocument ? m_pDocument->GetPageCount() : 0;
 }
 CPDF_Dictionary* CPDF_DataAvail::GetPage(int index) {
-  if (!m_pDocument || index < 0 || index >= this->GetPageCount()) {
+  if (!m_pDocument || index < 0 || index >= GetPageCount()) {
     return nullptr;
   }
   if (m_pLinearized) {

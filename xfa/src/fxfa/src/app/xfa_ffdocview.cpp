@@ -176,16 +176,16 @@ void CXFA_FFDocView::UpdateDocView() {
     ExecEventActivityByDeepFirst(pNode, XFA_EVENT_Ready, TRUE);
   }
   m_NewAddedNodes.RemoveAll();
-  this->RunSubformIndexChange();
-  this->RunCalculateWidgets();
-  this->RunValidate();
+  RunSubformIndexChange();
+  RunCalculateWidgets();
+  RunValidate();
   ShowNullTestMsg();
   if (RunLayout() && m_bLayoutEvent) {
     RunEventLayoutReady();
   }
   m_bLayoutEvent = FALSE;
   m_CalculateAccs.RemoveAll();
-  this->RunInvalidate();
+  RunInvalidate();
   UnlockUpdate();
 }
 int32_t CXFA_FFDocView::CountPageViews() {
@@ -622,7 +622,7 @@ void CXFA_FFDocView::RunSubformIndexChange() {
 }
 void CXFA_FFDocView::AddNewFormNode(CXFA_Node* pNode) {
   m_NewAddedNodes.Add(pNode);
-  this->InitLayout(pNode);
+  InitLayout(pNode);
 }
 void CXFA_FFDocView::AddIndexChangedSubform(CXFA_Node* pNode) {
   FXSYS_assert(pNode->GetClassID() == XFA_ELEMENT_Subform);

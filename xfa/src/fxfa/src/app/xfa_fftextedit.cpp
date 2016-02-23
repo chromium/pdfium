@@ -181,7 +181,7 @@ FX_BOOL CXFA_FFTextEdit::CommitData() {
   return FALSE;
 }
 void CXFA_FFTextEdit::ValidateNumberField(const CFX_WideString& wsText) {
-  CXFA_WidgetAcc* pAcc = this->GetDataAcc();
+  CXFA_WidgetAcc* pAcc = GetDataAcc();
   if (pAcc && pAcc->GetUIType() == XFA_ELEMENT_NumericEdit) {
     IXFA_AppProvider* pAppProvider = GetApp()->GetAppProvider();
     if (pAppProvider) {
@@ -777,8 +777,7 @@ void CXFA_FFDateTimeEdit::OnSelectChanged(IFWL_Widget* pWidget,
                                           int32_t iDay) {
   CFX_WideString wsPicture;
   m_pDataAcc->GetPictureContent(wsPicture, XFA_VALUEPICTURE_Edit);
-  CXFA_LocaleValue date(XFA_VT_DATE,
-                        this->GetDoc()->GetXFADoc()->GetLocalMgr());
+  CXFA_LocaleValue date(XFA_VT_DATE, GetDoc()->GetXFADoc()->GetLocalMgr());
   CFX_Unitime dt;
   dt.Set(iYear, iMonth, iDay);
   date.SetDate(dt);

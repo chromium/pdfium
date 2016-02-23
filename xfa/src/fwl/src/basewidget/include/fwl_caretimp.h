@@ -40,10 +40,10 @@ class CFWL_CaretImp : public CFWL_WidgetImp {
                       const CFX_Matrix* pMatrix);
   class CFWL_CaretTimer : public IFWL_Timer {
    public:
-    CFWL_CaretTimer(CFWL_CaretImp* m_pCaret);
+    explicit CFWL_CaretTimer(CFWL_CaretImp* pCaret);
     ~CFWL_CaretTimer() override {}
     int32_t Run(FWL_HTIMER hTimer) override;
-    CFWL_CaretImp* m_pCaret;
+    CFWL_CaretImp* const m_pCaret;
   };
   CFWL_CaretTimer* m_pTimer;
   FWL_HTIMER m_hTimer;

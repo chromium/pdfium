@@ -106,7 +106,7 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::AddOrSubtract(
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   }
   if (other->IsZero()) {
-    return this->Clone(e);
+    return Clone(e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   }
   CFX_Int32Array smallerCoefficients;
@@ -172,7 +172,7 @@ CBC_ReedSolomonGF256Poly* CBC_ReedSolomonGF256Poly::Multiply(int32_t scalar,
     return temp;
   }
   if (scalar == 1) {
-    return this->Clone(e);
+    return Clone(e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   }
   int32_t size = m_coefficients.GetSize();
@@ -219,7 +219,7 @@ CFX_PtrArray* CBC_ReedSolomonGF256Poly::Divide(CBC_ReedSolomonGF256Poly* other,
   CBC_ReedSolomonGF256Poly* rsg1 = m_field->GetZero()->Clone(e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   CBC_AutoPtr<CBC_ReedSolomonGF256Poly> quotient(rsg1);
-  CBC_ReedSolomonGF256Poly* rsg2 = this->Clone(e);
+  CBC_ReedSolomonGF256Poly* rsg2 = Clone(e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   CBC_AutoPtr<CBC_ReedSolomonGF256Poly> remainder(rsg2);
   int32_t denominatorLeadingTerm = other->GetCoefficients(other->GetDegree());

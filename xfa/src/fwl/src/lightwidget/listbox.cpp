@@ -47,8 +47,6 @@ FX_BOOL CFWL_ListBox::DeleteString(FWL_HLISTITEM hItem) {
       static_cast<size_t>(nIndex) >= m_ListBoxDP.m_ItemArray.size()) {
     return FALSE;
   }
-  CFWL_ListItem* pDelItem =
-      reinterpret_cast<CFWL_ListItem*>(m_ListBoxDP.GetItem(m_pIface, nIndex));
   int32_t iCount = m_ListBoxDP.CountItems(m_pIface);
   int32_t iSel = nIndex + 1;
   if (iSel >= iCount) {

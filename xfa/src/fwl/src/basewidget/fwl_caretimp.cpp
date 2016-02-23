@@ -128,9 +128,10 @@ FX_BOOL CFWL_CaretImp::DrawCaretBK(CFX_Graphics* pGraphics,
   pTheme->DrawBackground(&param);
   return FWL_ERR_Succeeded;
 }
-CFWL_CaretImp::CFWL_CaretTimer::CFWL_CaretTimer(CFWL_CaretImp* m_pCaret) {
-  this->m_pCaret = m_pCaret;
-}
+
+CFWL_CaretImp::CFWL_CaretTimer::CFWL_CaretTimer(CFWL_CaretImp* pCaret)
+    : m_pCaret(pCaret) {}
+
 int32_t CFWL_CaretImp::CFWL_CaretTimer::Run(FWL_HTIMER hTimer) {
   if (m_pCaret->GetStates() & FWL_STATE_CAT_HightLight) {
     m_pCaret->SetStates(FWL_STATE_CAT_HightLight, FALSE);

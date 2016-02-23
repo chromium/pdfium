@@ -821,8 +821,7 @@ void CFFL_IFormFiller::OnPopupPreOpen(void* pPrivateData,
 
   FX_BOOL bTempReset = FALSE;
   FX_BOOL bTempExit = FALSE;
-  this->OnPreOpen(pData->pWidget, pData->pPageView, bTempReset, bTempExit,
-                  nFlag);
+  OnPreOpen(pData->pWidget, pData->pPageView, bTempReset, bTempExit, nFlag);
 
   if (bTempReset || bTempExit) {
     bExit = TRUE;
@@ -838,8 +837,7 @@ void CFFL_IFormFiller::OnPopupPostOpen(void* pPrivateData,
 
   FX_BOOL bTempReset = FALSE;
   FX_BOOL bTempExit = FALSE;
-  this->OnPostOpen(pData->pWidget, pData->pPageView, bTempReset, bTempExit,
-                   nFlag);
+  OnPostOpen(pData->pWidget, pData->pPageView, bTempReset, bTempExit, nFlag);
 
   if (bTempReset || bTempExit) {
     bExit = TRUE;

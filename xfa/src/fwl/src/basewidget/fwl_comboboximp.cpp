@@ -1324,7 +1324,7 @@ void CFWL_ComboBoxImp::DisForm_Layout() {
   FX_FLOAT borderWidth = 0;
   { borderWidth = FWL_PART_CMB_Border; }
   FX_FLOAT fBtn = *pFWidth;
-  if (!(this->GetStylesEx() & FWL_STYLEEXT_CMB_ReadOnly)) {
+  if (!(GetStylesEx() & FWL_STYLEEXT_CMB_ReadOnly)) {
     m_rtBtn.Set(m_rtClient.right() - fBtn, m_rtClient.top + borderWidth,
                 fBtn - borderWidth, m_rtClient.height - 2 * borderWidth);
   }

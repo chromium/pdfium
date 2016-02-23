@@ -1536,8 +1536,8 @@ FX_BOOL CPDF_DIBSource::TransMask() const {
 void CPDF_DIBSource::SetDownSampleSize(int dest_width, int dest_height) {
   if (m_pDecoder) {
     m_pDecoder->DownScale(dest_width, dest_height);
-    this->m_Width = m_pDecoder->GetWidth();
-    this->m_Height = m_pDecoder->GetHeight();
+    m_Width = m_pDecoder->GetWidth();
+    m_Height = m_pDecoder->GetHeight();
   }
 }
 

@@ -828,8 +828,8 @@ CXFA_Node* CXFA_LayoutPageMgr::BreakOverflow(CXFA_Node* pOverflowNode,
         !wsOverflowTarget.IsEmpty()) {
       if (!wsOverflowTarget.IsEmpty() && bCreatePage &&
           !m_bCreateOverFlowPage) {
-        CXFA_Node* pTarget = XFA_ResolveBreakTarget(
-            this->m_pTemplatePageSetRoot, TRUE, wsOverflowTarget);
+        CXFA_Node* pTarget = XFA_ResolveBreakTarget(m_pTemplatePageSetRoot,
+                                                    TRUE, wsOverflowTarget);
         if (pTarget) {
           m_bCreateOverFlowPage = TRUE;
           switch (pTarget->GetClassID()) {
@@ -861,8 +861,8 @@ CXFA_Node* CXFA_LayoutPageMgr::BreakOverflow(CXFA_Node* pOverflowNode,
     pOverflowNode->TryCData(XFA_ATTRIBUTE_Trailer, wsOverflowTrailer);
     pOverflowNode->TryCData(XFA_ATTRIBUTE_Target, wsOverflowTarget);
     if (!wsOverflowTarget.IsEmpty() && bCreatePage && !m_bCreateOverFlowPage) {
-      CXFA_Node* pTarget = XFA_ResolveBreakTarget(this->m_pTemplatePageSetRoot,
-                                                  TRUE, wsOverflowTarget);
+      CXFA_Node* pTarget = XFA_ResolveBreakTarget(m_pTemplatePageSetRoot, TRUE,
+                                                  wsOverflowTarget);
       if (pTarget) {
         m_bCreateOverFlowPage = TRUE;
         switch (pTarget->GetClassID()) {
@@ -1629,7 +1629,7 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
   CXFA_Document* pDocument = m_pTemplatePageSetRoot->GetDocument();
   IXFA_Notify* pNotify = pDocument->GetParser()->GetNotify();
   IXFA_DocLayout* pDocLayout = pDocument->GetDocLayout();
-  CXFA_ContainerLayoutItem* pRootLayout = this->GetRootLayoutItem();
+  CXFA_ContainerLayoutItem* pRootLayout = GetRootLayoutItem();
   {
     for (int32_t iIndex = 0; iIndex < pDocument->m_pPendingPageSet.GetSize();
          iIndex++) {
@@ -1817,7 +1817,7 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
   }
 }
 void CXFA_LayoutPageMgr::LayoutPageSetContents() {
-  CXFA_ContainerLayoutItem* pRootLayoutItem = this->GetRootLayoutItem();
+  CXFA_ContainerLayoutItem* pRootLayoutItem = GetRootLayoutItem();
   for (; pRootLayoutItem;
        pRootLayoutItem =
            (CXFA_ContainerLayoutItem*)pRootLayoutItem->m_pNextSibling) {
@@ -1877,7 +1877,7 @@ void CXFA_LayoutPageMgr::SyncLayoutData() {
   IXFA_Notify* pNotify =
       m_pTemplatePageSetRoot->GetDocument()->GetParser()->GetNotify();
   int32_t nPageIdx = -1;
-  CXFA_ContainerLayoutItem* pRootLayoutItem = this->GetRootLayoutItem();
+  CXFA_ContainerLayoutItem* pRootLayoutItem = GetRootLayoutItem();
   for (; pRootLayoutItem;
        pRootLayoutItem =
            (CXFA_ContainerLayoutItem*)pRootLayoutItem->m_pNextSibling) {

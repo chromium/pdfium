@@ -433,7 +433,7 @@ void CFWL_EditImp::DrawSpellCheck(CFX_Graphics* pGraphics,
   FX_FLOAT fOffSetX = m_rtEngine.left - m_fScrollOffsetX;
   FX_FLOAT fOffSetY = m_rtEngine.top - m_fScrollOffsetY + m_fVAlignOffset;
   CFX_WideString wsSpell;
-  this->GetText(wsSpell);
+  GetText(wsSpell);
   int32_t nContentLen = wsSpell.GetLength();
   for (int i = 0; i < nContentLen; i++) {
     if (FX_EDIT_ISLATINWORD(wsSpell[i])) {

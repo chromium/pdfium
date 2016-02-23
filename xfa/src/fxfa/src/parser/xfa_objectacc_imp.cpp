@@ -2848,8 +2848,8 @@ FX_BOOL CXFA_WidgetData::SetValue(const CFX_WideString& wsValue,
     SyncValue(wsValue, TRUE);
     return TRUE;
   }
-  this->m_bPreNull = this->m_bIsNull;
-  this->m_bIsNull = FALSE;
+  m_bPreNull = m_bIsNull;
+  m_bIsNull = FALSE;
   CFX_WideString wsNewText(wsValue);
   CFX_WideString wsPicture;
   GetPictureContent(wsPicture, eValueType);
