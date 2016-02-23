@@ -7,7 +7,7 @@
 #include "xfa/src/fdp/src/fde/fde_geobject.h"
 #include "xfa/src/fdp/src/fde/fde_object.h"
 #include "xfa/src/foxitlib.h"
-#ifndef _FDEPLUS
+
 IFDE_Path* IFDE_Path::Create() {
   return new CFDE_Path;
 }
@@ -264,4 +264,3 @@ void CFDE_Path::GetBBox(CFX_RectF& bbox,
   bbox.Set(rect.left, rect.top, rect.Width(), rect.Height());
   bbox.Normalize();
 }
-#endif

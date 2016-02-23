@@ -10,7 +10,6 @@
 #include "xfa/src/fdp/include/fde_rdv.h"
 #include "xfa/src/fgas/include/fx_mem.h"
 
-#ifndef _FDEPLUS
 class CFDE_FxgeDevice : public IFDE_RenderDevice, public CFX_Target {
  public:
   CFDE_FxgeDevice(CFX_RenderDevice* pDevice, FX_BOOL bOwnerDevice);
@@ -133,6 +132,5 @@ class CFDE_FxgeDevice : public IFDE_RenderDevice, public CFX_Target {
   FXTEXT_CHARPOS* m_pCharPos;
   int32_t m_iCharCount;
 };
-#endif
 
 #endif  // XFA_SRC_FDP_SRC_FDE_FDE_GEDEVICE_H_

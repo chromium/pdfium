@@ -7,8 +7,8 @@
 #ifndef XFA_SRC_FDP_SRC_FDE_FDE_GEOBJECT_H_
 #define XFA_SRC_FDP_SRC_FDE_FDE_GEOBJECT_H_
 
-#ifndef _FDEPLUS
 #include "xfa/src/foxitlib.h"
+
 class CFDE_GEFontMgr;
 class CFDE_Path : public IFDE_Path, public CFX_Target {
  public:
@@ -52,6 +52,5 @@ class CFDE_Path : public IFDE_Path, public CFX_Target {
                         FX_FLOAT fTension) const;
   CFX_PathData m_Path;
 };
-#endif
 
 #endif  // XFA_SRC_FDP_SRC_FDE_FDE_GEOBJECT_H_
