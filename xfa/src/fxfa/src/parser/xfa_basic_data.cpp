@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/src/fxfa/src/parser/xfa_basic_data.h"
+
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/common/xfa_docdata.h"
 #include "xfa/src/fxfa/src/common/xfa_doclayout.h"
@@ -21,7 +23,7 @@
 #include "xfa/src/fxfa/src/parser/xfa_script_layoutpseudomodel.h"
 #include "xfa/src/fxfa/src/parser/xfa_script_logpseudomodel.h"
 #include "xfa/src/fxfa/src/parser/xfa_script_signaturepseudomodel.h"
-extern const XFA_ATTRIBUTEENUMINFO g_XFAEnumData[] = {
+const XFA_ATTRIBUTEENUMINFO g_XFAEnumData[] = {
     {0x2a, L"*", XFA_ATTRIBUTEENUM_Asterisk},
     {0x2f, L"/", XFA_ATTRIBUTEENUM_Slash},
     {0x5c, L"\\", XFA_ATTRIBUTEENUM_Backslash},
@@ -290,7 +292,7 @@ extern const XFA_ATTRIBUTEENUMINFO g_XFAEnumData[] = {
     {0xfefc4885, L"urlencoded", XFA_ATTRIBUTEENUM_Urlencoded},
     {0xff795ad2, L"lowered", XFA_ATTRIBUTEENUM_Lowered},
 };
-extern const int32_t g_iXFAEnumCount =
+const int32_t g_iXFAEnumCount =
     sizeof(g_XFAEnumData) / sizeof(XFA_ATTRIBUTEENUMINFO);
 static const CXFA_Measurement g_XFAMeasurementData[] = {
     CXFA_Measurement(0, XFA_UNIT_In),
@@ -303,7 +305,7 @@ static const CXFA_Measurement g_XFAMeasurementData[] = {
     CXFA_Measurement(360, XFA_UNIT_Angle),
     CXFA_Measurement(0.5, XFA_UNIT_Pt),
 };
-extern const XFA_ATTRIBUTEINFO g_XFAAttributeData[] = {
+const XFA_ATTRIBUTEINFO g_XFAAttributeData[] = {
     {0x68, L"h", XFA_ATTRIBUTE_H, XFA_ATTRIBUTETYPE_Measure,
      XFA_XDPPACKET_Template | XFA_XDPPACKET_Form,
      (void*)(g_XFAMeasurementData + 0)},
@@ -966,9 +968,9 @@ extern const XFA_ATTRIBUTEINFO g_XFAAttributeData[] = {
      XFA_ATTRIBUTETYPE_Cdata, XFA_XDPPACKET_Template | XFA_XDPPACKET_Form,
      (void*)NULL},
 };
-extern const int32_t g_iXFAAttributeCount =
+const int32_t g_iXFAAttributeCount =
     sizeof(g_XFAAttributeData) / sizeof(XFA_ATTRIBUTEINFO);
-extern const XFA_NOTSUREATTRIBUTE g_XFANotsureAttributes[] = {
+const XFA_NOTSUREATTRIBUTE g_XFANotsureAttributes[] = {
     {XFA_ELEMENT_SubformSet, XFA_ATTRIBUTE_Relation, XFA_ATTRIBUTETYPE_Enum,
      (void*)XFA_ATTRIBUTEENUM_Ordered},
     {XFA_ELEMENT_NumberPattern, XFA_ATTRIBUTE_Name, XFA_ATTRIBUTETYPE_Enum,
@@ -1065,9 +1067,9 @@ extern const XFA_NOTSUREATTRIBUTE g_XFANotsureAttributes[] = {
     {XFA_ELEMENT_NumberSymbol, XFA_ATTRIBUTE_Name, XFA_ATTRIBUTETYPE_Enum,
      (void*)XFA_ATTRIBUTEENUM_Decimal},
 };
-extern const int32_t g_iXFANotsureCount =
+const int32_t g_iXFANotsureCount =
     sizeof(g_XFANotsureAttributes) / sizeof(XFA_NOTSUREATTRIBUTE);
-extern const XFA_ELEMENTINFO g_XFAElementData[] = {
+const XFA_ELEMENTINFO g_XFAElementData[] = {
     {0x23ee3, L"ps", XFA_ELEMENT_Ps, XFA_XDPPACKET_Config, XFA_OBJECTTYPE_Node},
     {0x25363, L"to", XFA_ELEMENT_To, XFA_XDPPACKET_Config,
      XFA_OBJECTTYPE_ContentNode},
@@ -1715,9 +1717,9 @@ extern const XFA_ELEMENTINFO g_XFAElementData[] = {
     {0xff063802, L"items", XFA_ELEMENT_Items,
      XFA_XDPPACKET_Template | XFA_XDPPACKET_Form, XFA_OBJECTTYPE_Node},
 };
-extern const int32_t g_iXFAElementCount =
+const int32_t g_iXFAElementCount =
     sizeof(g_XFAElementData) / sizeof(XFA_ELEMENTINFO);
-extern const XFA_ELEMENTHIERARCHY g_XFAElementPropertyIndex[] = {
+const XFA_ELEMENTHIERARCHY g_XFAElementPropertyIndex[] = {
     {0, 8},    {8, 0},   {8, 14},   {22, 0},   {22, 0},   {22, 6},   {28, 0},
     {28, 0},   {28, 1},  {29, 3},   {32, 0},   {32, 0},   {32, 0},   {32, 3},
     {35, 1},   {36, 0},  {36, 0},   {36, 2},   {38, 0},   {38, 0},   {38, 0},
@@ -1764,7 +1766,7 @@ extern const XFA_ELEMENTHIERARCHY g_XFAElementPropertyIndex[] = {
     {423, 0},  {423, 1}, {424, 1},  {425, 0},  {425, 1},  {426, 0},  {426, 0},
     {426, 0},  {426, 0}, {426, 0},  {426, 0},
 };
-extern const XFA_PROPERTY g_XFAElementPropertyData[] = {
+const XFA_PROPERTY g_XFAElementPropertyData[] = {
     {XFA_ELEMENT_FontInfo, 1, 0},
     {XFA_ELEMENT_Jog, 1, 0},
     {XFA_ELEMENT_Xdc, 1, 0},
@@ -2193,7 +2195,7 @@ extern const XFA_PROPERTY g_XFAElementPropertyData[] = {
     {XFA_ELEMENT_Extras, 1, 0},
     {XFA_ELEMENT_Month, 12, 0},
 };
-extern const XFA_ELEMENTHIERARCHY g_XFAElementChildrenIndex[] = {
+const XFA_ELEMENTHIERARCHY g_XFAElementChildrenIndex[] = {
     {0, 0},   {0, 0},   {0, 0},   {0, 1},    {1, 0},   {1, 4},    {5, 0},
     {5, 0},   {5, 0},   {5, 3},   {8, 0},    {8, 0},   {8, 0},    {8, 0},
     {8, 0},   {8, 1},   {9, 0},   {9, 0},    {9, 0},   {9, 0},    {9, 0},
@@ -2240,7 +2242,7 @@ extern const XFA_ELEMENTHIERARCHY g_XFAElementChildrenIndex[] = {
     {228, 0}, {228, 2}, {230, 0}, {230, 0},  {230, 0}, {230, 0},  {230, 0},
     {230, 0}, {230, 0}, {230, 0}, {230, 10},
 };
-extern const FX_WORD g_XFAElementChildrenData[] = {
+const FX_WORD g_XFAElementChildrenData[] = {
     XFA_ELEMENT_Extras,
     XFA_ELEMENT_SubformSet,
     XFA_ELEMENT_BreakBefore,
@@ -2482,7 +2484,7 @@ extern const FX_WORD g_XFAElementChildrenData[] = {
     XFA_ELEMENT_Date,
     XFA_ELEMENT_Float,
 };
-extern const XFA_ELEMENTHIERARCHY g_XFAElementAttributeIndex[] = {
+const XFA_ELEMENTHIERARCHY g_XFAElementAttributeIndex[] = {
     {0, 3},    {3, 2},    {5, 3},    {8, 10},   {18, 2},   {20, 6},   {26, 2},
     {28, 1},   {29, 13},  {42, 2},   {44, 1},   {45, 2},   {47, 2},   {49, 7},
     {56, 0},   {56, 4},   {60, 2},   {62, 7},   {69, 0},   {69, 0},   {69, 2},
@@ -2529,7 +2531,7 @@ extern const XFA_ELEMENTHIERARCHY g_XFAElementAttributeIndex[] = {
     {1096, 0}, {1096, 4}, {1100, 6}, {1106, 2}, {1108, 1}, {1109, 2}, {1111, 2},
     {1113, 2}, {1115, 1}, {1116, 2}, {1118, 7},
 };
-extern const uint8_t g_XFAElementAttributeData[] = {
+const uint8_t g_XFAElementAttributeData[] = {
     XFA_ATTRIBUTE_Name,
     XFA_ATTRIBUTE_Desc,
     XFA_ATTRIBUTE_Lock,
@@ -3656,7 +3658,7 @@ extern const uint8_t g_XFAElementAttributeData[] = {
     XFA_ATTRIBUTE_Save,
     XFA_ATTRIBUTE_Usehref,
 };
-extern const XFA_PACKETINFO g_XFAPacketData[] = {
+const XFA_PACKETINFO g_XFAPacketData[] = {
     {0x0, NULL, XFA_XDPPACKET_USER, NULL,
      XFA_XDPPACKET_FLAGS_NOMATCH | XFA_XDPPACKET_FLAGS_SUPPORTMANY},
     {0x811929d, L"sourceSet", XFA_XDPPACKET_SourceSet,
@@ -3698,9 +3700,9 @@ extern const XFA_PACKETINFO g_XFAPacketData[] = {
      L"http://www.xfa.org/schema/xfa-connection-set/",
      XFA_XDPPACKET_FLAGS_NOMATCH | XFA_XDPPACKET_FLAGS_SUPPORTONE},
 };
-extern const int32_t g_iXFAPacketCount =
+const int32_t g_iXFAPacketCount =
     sizeof(g_XFAPacketData) / sizeof(XFA_PACKETINFO);
-extern const XFA_SCRIPTHIERARCHY g_XFAScriptIndex[] = {
+const XFA_SCRIPTHIERARCHY g_XFAScriptIndex[] = {
     {0, 0, 0, 2, 316},      {0, 0, 2, 2, 316},       {0, 0, 4, 2, 316},
     {0, 0, 6, 8, 316},      {0, 0, 14, 4, 316},      {0, 0, 18, 5, 317},
     {0, 0, 23, 2, 316},     {0, 0, 25, 1, 316},      {0, 0, 26, 12, 316},
@@ -3809,7 +3811,7 @@ extern const XFA_SCRIPTHIERARCHY g_XFAScriptIndex[] = {
     {120, 2, 1060, 8, 312}, {122, 11, 1068, 6, 315}, {133, 2, 1074, 0, 316},
     {135, 0, 1074, 0, 316}, {135, 3, 1074, 2, 316},  {138, 0, 1076, 2, 316},
 };
-extern const XFA_METHODINFO g_SomMethodData[] = {
+const XFA_METHODINFO g_SomMethodData[] = {
     {0x3c752495, L"verify", (XFA_METHOD_CALLBACK)&CScript_SignaturePseudoModel::
                                 Script_SignaturePseudoModel_Verify},
     {0xa68635f1, L"sign", (XFA_METHOD_CALLBACK)&CScript_SignaturePseudoModel::
@@ -4100,9 +4102,9 @@ extern const XFA_METHODINFO g_SomMethodData[] = {
     {0x83a6411d, L"isCompatibleNS",
      (XFA_METHOD_CALLBACK)&CXFA_Node::Script_ModelClass_IsCompatibleNS},
 };
-extern const int32_t g_iSomMethodCount =
+const int32_t g_iSomMethodCount =
     sizeof(g_SomMethodData) / sizeof(XFA_METHODINFO);
-extern const _XFA_SCRIPTATTRIBUTEINFO g_SomAttributeData[] = {
+const XFA_SCRIPTATTRIBUTEINFO g_SomAttributeData[] = {
     {0xbe52dfbf, L"desc",
      (XFA_ATTRIBUTE_CALLBACK)&CXFA_Node::Script_Attribute_String,
      XFA_ATTRIBUTE_Desc, XFA_SCRIPT_Basic},
@@ -7327,5 +7329,5 @@ extern const _XFA_SCRIPTATTRIBUTEINFO g_SomAttributeData[] = {
      (XFA_ATTRIBUTE_CALLBACK)&CXFA_Node::Script_Som_DefaultValue, -1,
      XFA_SCRIPT_Basic},
 };
-extern const int32_t g_iSomAttributeCount =
+const int32_t g_iSomAttributeCount =
     sizeof(g_SomAttributeData) / sizeof(XFA_ATTRIBUTEINFO);

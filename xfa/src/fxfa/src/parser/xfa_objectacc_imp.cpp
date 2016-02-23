@@ -1006,7 +1006,7 @@ int32_t CXFA_Validate::GetFormatTest() {
 FX_BOOL CXFA_Validate::SetTestValue(int32_t iType,
                                     CFX_WideString& wsValue,
                                     XFA_ATTRIBUTEENUM eName) {
-  XFA_LPCATTRIBUTEENUMINFO pInfo = XFA_GetAttributeEnumByName(wsValue);
+  const XFA_ATTRIBUTEENUMINFO* pInfo = XFA_GetAttributeEnumByName(wsValue);
   if (pInfo) {
     eName = pInfo->eName;
   }

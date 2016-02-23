@@ -37,11 +37,10 @@ static void FPF_SkiaStream_Close(FXFT_Stream stream) {}
 #ifdef __cplusplus
 };
 #endif
-typedef struct _FPF_SKIAFONTMAP {
+struct FPF_SKIAFONTMAP {
   FX_DWORD dwFamily;
   FX_DWORD dwSubSt;
-} FPF_SKIAFONTMAP, *FPF_LPSKIAFONTMAP;
-typedef FPF_SKIAFONTMAP const* FPF_LPCSKIAFONTMAP;
+};
 static const FPF_SKIAFONTMAP g_SkiaFontmap[] = {
     {0x58c5083, 0xc8d2e345},  {0x5dfade2, 0xe1633081},
     {0x684317d, 0xe1633081},  {0x14ee2d13, 0xc8d2e345},
@@ -60,7 +59,7 @@ FX_DWORD FPF_SkiaGetSubstFont(FX_DWORD dwHash) {
   int32_t iEnd = sizeof(g_SkiaFontmap) / sizeof(FPF_SKIAFONTMAP);
   while (iStart <= iEnd) {
     int32_t iMid = (iStart + iEnd) / 2;
-    FPF_LPCSKIAFONTMAP pItem = &g_SkiaFontmap[iMid];
+    const FPF_SKIAFONTMAP* pItem = &g_SkiaFontmap[iMid];
     if (dwHash < pItem->dwFamily) {
       iEnd = iMid - 1;
     } else if (dwHash > pItem->dwFamily) {
@@ -81,7 +80,7 @@ FX_DWORD FPF_SkiaGetSansFont(FX_DWORD dwHash) {
   int32_t iEnd = sizeof(g_SkiaSansFontMap) / sizeof(FPF_SKIAFONTMAP);
   while (iStart <= iEnd) {
     int32_t iMid = (iStart + iEnd) / 2;
-    FPF_LPCSKIAFONTMAP pItem = &g_SkiaSansFontMap[iMid];
+    const FPF_SKIAFONTMAP* pItem = &g_SkiaSansFontMap[iMid];
     if (dwHash < pItem->dwFamily) {
       iEnd = iMid - 1;
     } else if (dwHash > pItem->dwFamily) {

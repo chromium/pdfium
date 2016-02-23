@@ -315,16 +315,15 @@ extern "C" {
 #define MT_Matrix_A 0x9908b0df
 #define MT_Upper_Mask 0x80000000
 #define MT_Lower_Mask 0x7fffffff
-typedef struct _FX_MTRANDOMCONTEXT {
-  _FX_MTRANDOMCONTEXT() {
+struct FX_MTRANDOMCONTEXT {
+  FX_MTRANDOMCONTEXT() {
     mti = MT_N + 1;
     bHaveSeed = FALSE;
   }
   FX_DWORD mti;
   FX_BOOL bHaveSeed;
   FX_DWORD mt[MT_N];
-} FX_MTRANDOMCONTEXT, *FX_LPMTRANDOMCONTEXT;
-typedef FX_MTRANDOMCONTEXT const* FX_LPCMTRANDOMCONTEXT;
+};
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 FX_BOOL FX_GenerateCryptoRandom(FX_DWORD* pBuffer, int32_t iCount);
 #endif

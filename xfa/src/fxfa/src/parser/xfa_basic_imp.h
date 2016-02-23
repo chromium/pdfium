@@ -7,18 +7,20 @@
 #ifndef XFA_SRC_FXFA_SRC_PARSER_XFA_BASIC_IMP_H_
 #define XFA_SRC_FXFA_SRC_PARSER_XFA_BASIC_IMP_H_
 
-typedef struct _XFA_NOTSUREATTRIBUTE {
+#include "xfa/include/fxfa/fxfa_basic.h"
+#include "xfa/src/fgas/include/fx_stm.h"
+
+struct XFA_NOTSUREATTRIBUTE {
   XFA_ELEMENT eElement;
   XFA_ATTRIBUTE eAttribute;
   XFA_ATTRIBUTETYPE eType;
   void* pValue;
-} XFA_NOTSUREATTRIBUTE, *XFA_LPNOTSUREATTRIBUTE;
-
-typedef XFA_NOTSUREATTRIBUTE const* XFA_LPCNOTSUREATTRIBUTE;
-XFA_LPCNOTSUREATTRIBUTE XFA_GetNotsureAttribute(
+};
+const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(
     XFA_ELEMENT eElement,
     XFA_ATTRIBUTE eAttribute,
     XFA_ATTRIBUTETYPE eType = XFA_ATTRIBUTETYPE_NOTSURE);
+
 class CXFA_WideTextRead : public IFX_Stream {
  public:
   CXFA_WideTextRead(const CFX_WideString& wsBuffer);

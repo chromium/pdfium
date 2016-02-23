@@ -415,7 +415,8 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_XDP(
              pXMLDocumentNode->GetNodeItem(IFDE_XMLNode::FirstChild);
          pChildItem;
          pChildItem = pChildItem->GetNodeItem(IFDE_XMLNode::NextSibling)) {
-      XFA_LPCPACKETINFO pPacketInfo = XFA_GetPacketByIndex(XFA_PACKET_Config);
+      const XFA_PACKETINFO* pPacketInfo =
+          XFA_GetPacketByIndex(XFA_PACKET_Config);
       if (!XFA_FDEExtension_MatchNodeName(pChildItem, pPacketInfo->pName,
                                           pPacketInfo->pURI,
                                           pPacketInfo->eFlags)) {
@@ -448,7 +449,7 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_XDP(
           reinterpret_cast<IFDE_XMLElement*>(pChildItem);
       CFX_WideString wsPacketName;
       pElement->GetLocalTagName(wsPacketName);
-      XFA_LPCPACKETINFO pPacketInfo = XFA_GetPacketByName(wsPacketName);
+      const XFA_PACKETINFO* pPacketInfo = XFA_GetPacketByName(wsPacketName);
       if (pPacketInfo && pPacketInfo->pURI) {
         if (!XFA_FDEExtension_MatchNodeName(pElement, pPacketInfo->pName,
                                             pPacketInfo->pURI,
@@ -835,11 +836,11 @@ CXFA_Node* CXFA_SimpleParser::NormalLoader(CXFA_Node* pXFANode,
         IFDE_XMLElement* pXMLElement = (IFDE_XMLElement*)pXMLChild;
         CFX_WideString wsTagName;
         pXMLElement->GetLocalTagName(wsTagName);
-        XFA_LPCELEMENTINFO pElemInfo = XFA_GetElementByName(wsTagName);
+        const XFA_ELEMENTINFO* pElemInfo = XFA_GetElementByName(wsTagName);
         if (!pElemInfo) {
           continue;
         }
-        XFA_LPCPROPERTY pPropertyInfo = XFA_GetPropertyOfElement(
+        const XFA_PROPERTY* pPropertyInfo = XFA_GetPropertyOfElement(
             pXFANode->GetClassID(), pElemInfo->eName, ePacketID);
         if (pPropertyInfo &&
             ((pPropertyInfo->uFlags &
@@ -870,7 +871,8 @@ CXFA_Node* CXFA_SimpleParser::NormalLoader(CXFA_Node* pXFANode,
               wsAttrValue == FX_WSTRC(L"true")) {
             IsNeedValue = FALSE;
           }
-          XFA_LPCATTRIBUTEINFO lpAttrInfo = XFA_GetAttributeByName(wsAttrName);
+          const XFA_ATTRIBUTEINFO* lpAttrInfo =
+              XFA_GetAttributeByName(wsAttrName);
           if (!lpAttrInfo) {
             continue;
           }

@@ -603,6 +603,7 @@
         "xfa/src/fxfa/src/fm2js/xfa_simpleexpression.cpp",
         "xfa/src/fxfa/src/fm2js/xfa_simpleexpression.h",
         "xfa/src/fxfa/src/parser/xfa_basic_data.cpp",
+        "xfa/src/fxfa/src/parser/xfa_basic_data.h",
         "xfa/src/fxfa/src/parser/xfa_basic_imp.cpp",
         "xfa/src/fxfa/src/parser/xfa_basic_imp.h",
         "xfa/src/fxfa/src/parser/xfa_document_datadescription_imp.cpp",

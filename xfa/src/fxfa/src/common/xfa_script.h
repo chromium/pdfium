@@ -64,7 +64,7 @@ typedef struct _XFA_RESOLVENODE_RS {
   }
   CXFA_ObjArray nodes;
   XFA_RESOVENODE_RSTYPE dwFlags;
-  XFA_LPCSCRIPTATTRIBUTEINFO pScriptAttribute;
+  const XFA_SCRIPTATTRIBUTEINFO* pScriptAttribute;
 } XFA_RESOLVENODE_RS, *XFA_LPRESOLVENODE_RS;
 typedef struct _XFA_JSBUILTININFO {
   uint32_t uUnicodeHash;

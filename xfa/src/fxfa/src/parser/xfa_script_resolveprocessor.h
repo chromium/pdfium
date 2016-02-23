@@ -31,7 +31,7 @@ class CXFA_ResolveNodesData {
   int32_t m_nLevel;
   CXFA_ObjArray m_Nodes;
   FX_DWORD m_dwStyles;
-  XFA_LPCSCRIPTATTRIBUTEINFO m_pScriptAttribute;
+  const XFA_SCRIPTATTRIBUTEINFO* m_pScriptAttribute;
   XFA_RESOVENODE_RSTYPE m_dwFlag;
 };
 class CXFA_ResolveProcessor {

@@ -59,10 +59,10 @@ int32_t m_index;
 CFX_RectF m_rect;
 END_FWL_EVENT_DEF
 typedef struct _FWL_HLISTITEM { void* pData; } * FWL_HLISTITEM;
-typedef struct _FWL_ListBoxItemData {
+struct FWL_ListBoxItemData {
   IFWL_ListBoxDP* pDataProvider;
   int32_t iIndex;
-} FWL_ListBoxItemData;
+};
 class IFWL_ListBoxDP : public IFWL_DataProvider {
  public:
   virtual int32_t CountItems(IFWL_Widget* pWidget) = 0;

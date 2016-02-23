@@ -211,7 +211,7 @@ static void XFA_DataExporter_RegenerateFormFile_Changed(
   int32_t iAttrs = 0;
   const uint8_t* pAttrs = XFA_GetElementAttributes(pNode->GetClassID(), iAttrs);
   while (iAttrs--) {
-    XFA_LPCATTRIBUTEINFO pAttr =
+    const XFA_ATTRIBUTEINFO* pAttr =
         XFA_GetAttributeByID((XFA_ATTRIBUTE)pAttrs[iAttrs]);
     if (pAttr->eName == XFA_ATTRIBUTE_Name ||
         (XFA_DataExporter_AttributeSaveInDataModel(pNode, pAttr->eName) &&
@@ -396,7 +396,7 @@ static void XFA_DataExporter_RegenerateFormFile_Container(
   int32_t iAttrs = 0;
   const uint8_t* pAttrs = XFA_GetElementAttributes(pNode->GetClassID(), iAttrs);
   while (iAttrs--) {
-    XFA_LPCATTRIBUTEINFO pAttr =
+    const XFA_ATTRIBUTEINFO* pAttr =
         XFA_GetAttributeByID((XFA_ATTRIBUTE)pAttrs[iAttrs]);
     if (pAttr->eName == XFA_ATTRIBUTE_Name) {
       continue;

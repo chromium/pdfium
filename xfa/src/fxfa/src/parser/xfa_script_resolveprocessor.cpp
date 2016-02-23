@@ -194,7 +194,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_ForAttributeRs(
     CXFA_Object* curNode,
     CXFA_ResolveNodesData& rnd,
     const CFX_WideStringC& strAttr) {
-  XFA_LPCSCRIPTATTRIBUTEINFO lpScriptAttribute =
+  const XFA_SCRIPTATTRIBUTEINFO* lpScriptAttribute =
       XFA_GetScriptAttributeByName(curNode->GetClassID(), strAttr);
   if (lpScriptAttribute) {
     rnd.m_pScriptAttribute = lpScriptAttribute;
@@ -240,7 +240,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
       pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling);
       continue;
     } else {
-      XFA_LPCPROPERTY pPropert = XFA_GetPropertyOfElement(
+      const XFA_PROPERTY* pPropert = XFA_GetPropertyOfElement(
           curNode->GetClassID(), pChild->GetClassID(), XFA_XDPPACKET_UNKNOWN);
       if (pPropert) {
         properties.Add(pChild);
@@ -362,7 +362,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
         pProp = pInstanceManager->GetProperty(0, XFA_ELEMENT_Occur, TRUE);
       }
     } else {
-      XFA_LPCELEMENTINFO pElement = XFA_GetElementByName(wsName);
+      const XFA_ELEMENTINFO* pElement = XFA_GetElementByName(wsName);
       if (pElement) {
         pProp = curNode->AsNode()->GetProperty(
             0, pElement->eName, pElement->eName != XFA_ELEMENT_PageSet);
@@ -423,7 +423,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
       } else if (child->GetNameHash() == uNameHash) {
         nodes.Add(child);
       }
-      XFA_LPCPROPERTY pPropert = XFA_GetPropertyOfElement(
+      const XFA_PROPERTY* pPropert = XFA_GetPropertyOfElement(
           parentNode->GetClassID(), child->GetClassID(), XFA_XDPPACKET_UNKNOWN);
       FX_BOOL bInnerSearch = FALSE;
       if (pPropert) {

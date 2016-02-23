@@ -111,14 +111,6 @@ class IFWL_Proxy {
   virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) = 0;
   virtual FWL_ERR Update() = 0;
 };
-#define FWL_ACCEL_Control (1L << 0)
-#define FWL_ACCEL_Alt (1L << 1)
-#define FWL_ACCEL_Shift (1L << 2)
-#define FWL_ACCEL_VirtKey (1L << 3)
-typedef struct _FWL_ACCEL {
-  FX_DWORD dwKey;
-  FX_DWORD dwCmd;
-} FWL_ACCEL;
 typedef CFX_MapPtrTemplate<FX_DWORD, FX_DWORD> CFX_MapAccelerators;
 FWL_ERR FWL_Accelerator_SetApp(CFX_MapAccelerators* pMapAccel);
 FWL_ERR FWL_Accelerator_SetThread(CFX_MapAccelerators* pMapAccel);

@@ -41,8 +41,8 @@ typedef enum _PDFSDK_XFAAActionType {
 } PDFSDK_XFAAActionType;
 #endif  // PDF_ENABLE_XFA
 
-typedef struct _PDFSDK_FieldAction {
-  _PDFSDK_FieldAction() {
+struct PDFSDK_FieldAction {
+  PDFSDK_FieldAction() {
     bModifier = FALSE;
     bShift = FALSE;
     nCommitKey = 0;
@@ -65,7 +65,7 @@ typedef struct _PDFSDK_FieldAction {
   FX_BOOL bWillCommit;       // in
   FX_BOOL bFieldFull;        // in
   FX_BOOL bRC;               // in[out]
-} PDFSDK_FieldAction;
+};
 
 class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
  public:

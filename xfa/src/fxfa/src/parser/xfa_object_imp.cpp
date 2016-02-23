@@ -19,14 +19,10 @@
 CXFA_Object::CXFA_Object(CXFA_Document* pDocument, FX_DWORD uFlags)
     : m_pDocument(pDocument), m_uFlags(uFlags) {}
 void CXFA_Object::GetClassName(CFX_WideStringC& wsName) const {
-  XFA_LPCELEMENTINFO pElement = XFA_GetElementByID(GetClassID());
-  ASSERT(pElement != NULL);
-  wsName = pElement->pName;
+  wsName = XFA_GetElementByID(GetClassID())->pName;
 }
 uint32_t CXFA_Object::GetClassHashCode() const {
-  XFA_LPCELEMENTINFO pElement = XFA_GetElementByID(GetClassID());
-  ASSERT(pElement != NULL);
-  return pElement->uHash;
+  return XFA_GetElementByID(GetClassID())->uHash;
 }
 XFA_ELEMENT CXFA_Object::GetClassID() const {
   if (IsNode()) {
@@ -82,9 +78,7 @@ static void XFA_CopyWideString(void*& pData) {
 static XFA_MAPDATABLOCKCALLBACKINFO deleteWideStringCallBack = {
     XFA_DeleteWideString, XFA_CopyWideString};
 static XFA_OBJECTTYPE XFA_GetElementObjectType(XFA_ELEMENT eElement) {
-  XFA_LPCELEMENTINFO pElement = XFA_GetElementByID(eElement);
-  ASSERT(pElement != NULL);
-  return (XFA_OBJECTTYPE)pElement->eObjectType;
+  return (XFA_OBJECTTYPE)XFA_GetElementByID(eElement)->eObjectType;
 }
 CXFA_Node::CXFA_Node(CXFA_Document* pDoc, FX_WORD ePacket, XFA_ELEMENT eElement)
     : CXFA_Object(pDoc, XFA_GetElementObjectType(eElement)),
@@ -252,13 +246,13 @@ int32_t CXFA_Node::GetNodeList(CXFA_NodeArray& nodes,
         (dwTypeFilter & XFA_NODEFILTER_OneOfProperty) != 0;
     CXFA_Node* pChild = m_pChild;
     while (pChild) {
-      XFA_LPCPROPERTY pPropert = XFA_GetPropertyOfElement(
+      const XFA_PROPERTY* pProperty = XFA_GetPropertyOfElement(
           GetClassID(), pChild->GetClassID(), XFA_XDPPACKET_UNKNOWN);
-      if (pPropert) {
+      if (pProperty) {
         if (bFilterProperties) {
           nodes.Add(pChild);
         } else if (bFilterOneOfProperties &&
-                   (pPropert->uFlags & XFA_PROPERTYFLAG_OneOf)) {
+                   (pProperty->uFlags & XFA_PROPERTYFLAG_OneOf)) {
           nodes.Add(pChild);
         } else if (bFilterChildren &&
                    (pChild->GetClassID() == XFA_ELEMENT_Variables ||
@@ -274,7 +268,7 @@ int32_t CXFA_Node::GetNodeList(CXFA_NodeArray& nodes,
     }
     if (bFilterOneOfProperties && nodes.GetSize() < 1) {
       int32_t iProperties = 0;
-      XFA_LPCPROPERTY pProperty =
+      const XFA_PROPERTY* pProperty =
           XFA_GetElementProperties(GetClassID(), iProperties);
       if (pProperty == NULL || iProperties < 1) {
         return 0;
@@ -282,7 +276,7 @@ int32_t CXFA_Node::GetNodeList(CXFA_NodeArray& nodes,
       for (int32_t i = 0; i < iProperties; i++) {
         if (pProperty[i].uFlags & XFA_PROPERTYFLAG_DefaultOneOf) {
           IXFA_ObjFactory* pFactory = m_pDocument->GetParser()->GetFactory();
-          XFA_LPCPACKETINFO pPacket = XFA_GetPacketByID(GetPacketID());
+          const XFA_PACKETINFO* pPacket = XFA_GetPacketByID(GetPacketID());
           CXFA_Node* pNewNode =
               pFactory->CreateNode(pPacket, (XFA_ELEMENT)pProperty[i].eName);
           if (!pNewNode) {
@@ -647,7 +641,8 @@ void CXFA_Node::Script_TreeClass_ResolveNode(CFXJSE_Arguments* pArguments) {
     hValue = pScriptContext->GetJSValueFromMap(pNode);
     FXJSE_Value_Set(pArguments->GetReturnValue(), hValue);
   } else {
-    XFA_LPCSCRIPTATTRIBUTEINFO lpAttributeInfo = resoveNodeRS.pScriptAttribute;
+    const XFA_SCRIPTATTRIBUTEINFO* lpAttributeInfo =
+        resoveNodeRS.pScriptAttribute;
     if (lpAttributeInfo && lpAttributeInfo->eValueType == XFA_SCRIPT_Object) {
       hValue = FXJSE_Value_Create(pScriptContext->GetRuntime());
       (resoveNodeRS.nodes[0]->*(lpAttributeInfo->lpfnCallback))(
@@ -886,7 +881,7 @@ void CXFA_Node::Script_NodeClass_GetElement(CFXJSE_Arguments* pArguments) {
   if (iLength >= 2) {
     iValue = pArguments->GetInt32(1);
   }
-  XFA_LPCELEMENTINFO pElementInfo = XFA_GetElementByName(wsExpression);
+  const XFA_ELEMENTINFO* pElementInfo = XFA_GetElementByName(wsExpression);
   CXFA_Node* pNode = this->GetProperty(iValue, pElementInfo->eName);
   FXJSE_Value_Set(pArguments->GetReturnValue(),
                   m_pDocument->GetScriptContext()->GetJSValueFromMap(pNode));
@@ -914,13 +909,14 @@ void CXFA_Node::Script_NodeClass_IsPropertySpecified(
     iIndex = pArguments->GetInt32(2);
   }
   FX_BOOL bHas = FALSE;
-  XFA_LPCATTRIBUTEINFO pAttributeInfo = XFA_GetAttributeByName(wsExpression);
+  const XFA_ATTRIBUTEINFO* pAttributeInfo =
+      XFA_GetAttributeByName(wsExpression);
   CFX_WideString wsValue;
   if (pAttributeInfo) {
     bHas = this->HasAttribute(pAttributeInfo->eName);
   }
   if (!bHas) {
-    XFA_LPCELEMENTINFO pElementInfo = XFA_GetElementByName(wsExpression);
+    const XFA_ELEMENTINFO* pElementInfo = XFA_GetElementByName(wsExpression);
     bHas = (this->GetProperty(iIndex, pElementInfo->eName) != NULL);
   }
   FXJSE_HVALUE hValue = pArguments->GetReturnValue();
@@ -2113,7 +2109,7 @@ void CXFA_Node::Script_Som_Mandatory(FXJSE_HVALUE hValue,
     validate.SetNullTest(wsValue);
   } else {
     int32_t iValue = validate.GetNullTest();
-    XFA_LPCATTRIBUTEENUMINFO pInfo =
+    const XFA_ATTRIBUTEENUMINFO* pInfo =
         XFA_GetAttributeEnumByID((XFA_ATTRIBUTEENUM)iValue);
     if (pInfo) {
       wsValue = pInfo->pName;
@@ -2718,7 +2714,7 @@ void CXFA_Node::Script_Template_CreateNode(CFXJSE_Arguments* pArguments) {
             CFX_WideString::FromUTF8(bsNameSpace, bsNameSpace.GetLength());
       }
     }
-    XFA_LPCELEMENTINFO pElement = XFA_GetElementByName(strTagName);
+    const XFA_ELEMENTINFO* pElement = XFA_GetElementByName(strTagName);
     CXFA_Node* pNewNode = CreateSamePacketNode(pElement->eName);
     if (!pNewNode) {
       FXJSE_Value_SetNull(pArguments->GetReturnValue());
@@ -3756,19 +3752,19 @@ FX_BOOL CXFA_Node::HasAttribute(XFA_ATTRIBUTE eAttr, FX_BOOL bCanInherit) {
 FX_BOOL CXFA_Node::SetAttribute(XFA_ATTRIBUTE eAttr,
                                 const CFX_WideStringC& wsValue,
                                 FX_BOOL bNotify) {
-  XFA_LPCATTRIBUTEINFO pAttr = XFA_GetAttributeByID(eAttr);
+  const XFA_ATTRIBUTEINFO* pAttr = XFA_GetAttributeByID(eAttr);
   if (pAttr == NULL) {
     return FALSE;
   }
   XFA_ATTRIBUTETYPE eType = pAttr->eType;
   if (eType == XFA_ATTRIBUTETYPE_NOTSURE) {
-    XFA_LPCNOTSUREATTRIBUTE pNotsure =
+    const XFA_NOTSUREATTRIBUTE* pNotsure =
         XFA_GetNotsureAttribute(GetClassID(), pAttr->eName);
     eType = pNotsure ? pNotsure->eType : XFA_ATTRIBUTETYPE_Cdata;
   }
   switch (eType) {
     case XFA_ATTRIBUTETYPE_Enum: {
-      XFA_LPCATTRIBUTEENUMINFO pEnum = XFA_GetAttributeEnumByName(wsValue);
+      const XFA_ATTRIBUTEENUMINFO* pEnum = XFA_GetAttributeEnumByName(wsValue);
       return SetEnum(pAttr->eName,
                      pEnum ? pEnum->eName
                            : (XFA_ATTRIBUTEENUM)(intptr_t)(pAttr->pDefValue),
@@ -3793,13 +3789,13 @@ FX_BOOL CXFA_Node::SetAttribute(XFA_ATTRIBUTE eAttr,
 FX_BOOL CXFA_Node::GetAttribute(XFA_ATTRIBUTE eAttr,
                                 CFX_WideString& wsValue,
                                 FX_BOOL bUseDefault) {
-  XFA_LPCATTRIBUTEINFO pAttr = XFA_GetAttributeByID(eAttr);
+  const XFA_ATTRIBUTEINFO* pAttr = XFA_GetAttributeByID(eAttr);
   if (pAttr == NULL) {
     return FALSE;
   }
   XFA_ATTRIBUTETYPE eType = pAttr->eType;
   if (eType == XFA_ATTRIBUTETYPE_NOTSURE) {
-    XFA_LPCNOTSUREATTRIBUTE pNotsure =
+    const XFA_NOTSUREATTRIBUTE* pNotsure =
         XFA_GetNotsureAttribute(GetClassID(), pAttr->eName);
     eType = pNotsure ? pNotsure->eType : XFA_ATTRIBUTETYPE_Cdata;
   }
@@ -3852,7 +3848,7 @@ FX_BOOL CXFA_Node::GetAttribute(XFA_ATTRIBUTE eAttr,
 FX_BOOL CXFA_Node::SetAttribute(const CFX_WideStringC& wsAttr,
                                 const CFX_WideStringC& wsValue,
                                 FX_BOOL bNotify) {
-  XFA_LPCATTRIBUTEINFO pAttributeInfo = XFA_GetAttributeByName(wsValue);
+  const XFA_ATTRIBUTEINFO* pAttributeInfo = XFA_GetAttributeByName(wsValue);
   if (pAttributeInfo) {
     return SetAttribute(pAttributeInfo->eName, wsValue, bNotify);
   }
@@ -3863,7 +3859,7 @@ FX_BOOL CXFA_Node::SetAttribute(const CFX_WideStringC& wsAttr,
 FX_BOOL CXFA_Node::GetAttribute(const CFX_WideStringC& wsAttr,
                                 CFX_WideString& wsValue,
                                 FX_BOOL bUseDefault) {
-  XFA_LPCATTRIBUTEINFO pAttributeInfo = XFA_GetAttributeByName(wsAttr);
+  const XFA_ATTRIBUTEINFO* pAttributeInfo = XFA_GetAttributeByName(wsAttr);
   if (pAttributeInfo) {
     return GetAttribute(pAttributeInfo->eName, wsValue, bUseDefault);
   }
@@ -4002,7 +3998,7 @@ FX_BOOL CXFA_Node::SetCData(XFA_ATTRIBUTE eAttr,
       }
       return TRUE;
     }
-    XFA_LPCATTRIBUTEINFO pInfo = XFA_GetAttributeByID(eAttr);
+    const XFA_ATTRIBUTEINFO* pInfo = XFA_GetAttributeByID(eAttr);
     if (pInfo) {
       FXSYS_assert(m_pXMLNode->GetType() == FDE_XMLNODE_Element);
       CFX_WideString wsAttrName = pInfo->pName;
@@ -4155,7 +4151,7 @@ FX_BOOL CXFA_Node::SetValue(XFA_ATTRIBUTE eAttr,
   OnChanged(eAttr, pValue, bNotify);
   if (IsNeedSavingXMLNode()) {
     FXSYS_assert(m_pXMLNode->GetType() == FDE_XMLNODE_Element);
-    XFA_LPCATTRIBUTEINFO pInfo = XFA_GetAttributeByID(eAttr);
+    const XFA_ATTRIBUTEINFO* pInfo = XFA_GetAttributeByID(eAttr);
     if (pInfo) {
       switch (eType) {
         case XFA_ATTRIBUTETYPE_Enum:
@@ -4529,7 +4525,7 @@ CXFA_Node* CXFA_Node::GetProperty(int32_t index,
                                   FX_BOOL bCreateProperty) {
   XFA_ELEMENT eElement = GetClassID();
   FX_DWORD dwPacket = GetPacketID();
-  XFA_LPCPROPERTY pProperty =
+  const XFA_PROPERTY* pProperty =
       XFA_GetPropertyOfElement(eElement, eProperty, dwPacket);
   if (pProperty == NULL || index >= pProperty->uOccur) {
     return NULL;
@@ -4550,15 +4546,15 @@ CXFA_Node* CXFA_Node::GetProperty(int32_t index,
   if (pProperty->uFlags & XFA_PROPERTYFLAG_OneOf) {
     pNode = m_pChild;
     for (; pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-      XFA_LPCPROPERTY pExistProterty =
+      const XFA_PROPERTY* pExistProperty =
           XFA_GetPropertyOfElement(eElement, pNode->GetClassID(), dwPacket);
-      if (pExistProterty && (pExistProterty->uFlags & XFA_PROPERTYFLAG_OneOf)) {
+      if (pExistProperty && (pExistProperty->uFlags & XFA_PROPERTYFLAG_OneOf)) {
         return NULL;
       }
     }
   }
   IXFA_ObjFactory* pFactory = m_pDocument->GetParser()->GetFactory();
-  XFA_LPCPACKETINFO pPacket = XFA_GetPacketByID(dwPacket);
+  const XFA_PACKETINFO* pPacket = XFA_GetPacketByID(dwPacket);
   CXFA_Node* pNewNode;
   for (; iCount <= index; iCount++) {
     pNewNode = pFactory->CreateNode(pPacket, eProperty);
@@ -4576,9 +4572,9 @@ int32_t CXFA_Node::CountChildren(XFA_ELEMENT eElement, FX_BOOL bOnlyChild) {
   for (; pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     if (pNode->GetClassID() == eElement || eElement == XFA_ELEMENT_UNKNOWN) {
       if (bOnlyChild) {
-        XFA_LPCPROPERTY pPropert = XFA_GetPropertyOfElement(
+        const XFA_PROPERTY* pProperty = XFA_GetPropertyOfElement(
             GetClassID(), pNode->GetClassID(), XFA_XDPPACKET_UNKNOWN);
-        if (pPropert) {
+        if (pProperty) {
           continue;
         }
       }
@@ -4596,9 +4592,9 @@ CXFA_Node* CXFA_Node::GetChild(int32_t index,
   for (; pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     if (pNode->GetClassID() == eElement || eElement == XFA_ELEMENT_UNKNOWN) {
       if (bOnlyChild) {
-        XFA_LPCPROPERTY pPropert = XFA_GetPropertyOfElement(
+        const XFA_PROPERTY* pProperty = XFA_GetPropertyOfElement(
             GetClassID(), pNode->GetClassID(), XFA_XDPPACKET_UNKNOWN);
-        if (pPropert) {
+        if (pProperty) {
           continue;
         }
       }
@@ -4987,7 +4983,7 @@ int32_t CXFA_Node::execSingleEventByName(const CFX_WideStringC& wsEventName,
   return iRet;
 }
 void CXFA_Node::UpdateNameHash() {
-  XFA_LPCNOTSUREATTRIBUTE pNotsure =
+  const XFA_NOTSUREATTRIBUTE* pNotsure =
       XFA_GetNotsureAttribute(GetClassID(), XFA_ATTRIBUTE_Name);
   if (!pNotsure || pNotsure->eType == XFA_ATTRIBUTETYPE_Cdata) {
     CFX_WideStringC wsName = GetCData(XFA_ATTRIBUTE_Name);

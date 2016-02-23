@@ -65,9 +65,9 @@ CXFA_Node* XFA_CreateUIChild(CXFA_Node* pNode, XFA_ELEMENT& eWidgetType) {
     if (eChild == XFA_ELEMENT_Extras || eChild == XFA_ELEMENT_Picture) {
       continue;
     }
-    XFA_LPCPROPERTY pProterty =
+    const XFA_PROPERTY* pProperty =
         XFA_GetPropertyOfElement(XFA_ELEMENT_Ui, eChild, XFA_XDPPACKET_Form);
-    if (pProterty && (pProterty->uFlags & XFA_PROPERTYFLAG_OneOf)) {
+    if (pProperty && (pProperty->uFlags & XFA_PROPERTYFLAG_OneOf)) {
       pUIChild = pChild;
       break;
     }

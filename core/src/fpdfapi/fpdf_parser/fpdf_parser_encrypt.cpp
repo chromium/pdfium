@@ -60,12 +60,12 @@ CPDF_CryptoHandler* CPDF_StandardSecurityHandler::CreateCryptoHandler() {
   return new CPDF_StandardCryptoHandler;
 }
 
-typedef struct _PDF_CRYPTOITEM {
+struct PDF_CRYPTOITEM {
   int32_t m_Cipher;
   int32_t m_KeyLen;
   FX_BOOL m_bChecked;
   CPDF_StandardCryptoHandler* m_pCryptoHandler;
-} PDF_CRYPTOITEM;
+};
 
 CPDF_StandardSecurityHandler::CPDF_StandardSecurityHandler() {
   m_Version = 0;
@@ -775,12 +775,14 @@ void CPDF_StandardCryptoHandler::CryptBlock(FX_BOOL bEncrypt,
     CRYPT_ArcFourCryptBlock(dest_buf, dest_size, realkey, realkeylen);
   }
 }
-typedef struct _AESCryptContext {
+
+struct AESCryptContext {
   uint8_t m_Context[2048];
   FX_BOOL m_bIV;
   uint8_t m_Block[16];
   FX_DWORD m_BlockOffset;
-} AESCryptContext;
+};
+
 void* CPDF_StandardCryptoHandler::CryptStart(FX_DWORD objnum,
                                              FX_DWORD gennum,
                                              FX_BOOL bEncrypt) {

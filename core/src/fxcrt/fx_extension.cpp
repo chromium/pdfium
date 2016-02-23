@@ -259,7 +259,7 @@ FX_DWORD FX_HashCode_String_GetW(const FX_WCHAR* pStr,
 }
 
 void* FX_Random_MT_Start(FX_DWORD dwSeed) {
-  FX_LPMTRANDOMCONTEXT pContext = FX_Alloc(FX_MTRANDOMCONTEXT, 1);
+  FX_MTRANDOMCONTEXT* pContext = FX_Alloc(FX_MTRANDOMCONTEXT, 1);
   pContext->mt[0] = dwSeed;
   FX_DWORD& i = pContext->mti;
   FX_DWORD* pBuf = pContext->mt;
@@ -271,7 +271,7 @@ void* FX_Random_MT_Start(FX_DWORD dwSeed) {
 }
 FX_DWORD FX_Random_MT_Generate(void* pContext) {
   FXSYS_assert(pContext);
-  FX_LPMTRANDOMCONTEXT pMTC = (FX_LPMTRANDOMCONTEXT)pContext;
+  FX_MTRANDOMCONTEXT* pMTC = static_cast<FX_MTRANDOMCONTEXT*>(pContext);
   FX_DWORD v;
   static FX_DWORD mag[2] = {0, MT_Matrix_A};
   FX_DWORD& mti = pMTC->mti;

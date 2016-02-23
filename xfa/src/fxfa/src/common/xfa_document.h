@@ -124,7 +124,7 @@ class IXFA_ObjFactory {
  public:
   virtual ~IXFA_ObjFactory() {}
   virtual CXFA_Node* CreateNode(FX_DWORD dwPacket, XFA_ELEMENT eElement) = 0;
-  virtual CXFA_Node* CreateNode(XFA_LPCPACKETINFO pPacket,
+  virtual CXFA_Node* CreateNode(const XFA_PACKETINFO* pPacket,
                                 XFA_ELEMENT eElement) = 0;
 };
 #define XFA_DOCFLAG_StrictScoping 0x0001
@@ -157,7 +157,7 @@ class CXFA_Document : public IXFA_ObjFactory {
   XFA_VERSION RecognizeXFAVersionNumber(CFX_WideString& wsTemplateNS);
   CXFA_LocaleMgr* GetLocalMgr();
   virtual CXFA_Node* CreateNode(FX_DWORD dwPacket, XFA_ELEMENT eElement);
-  virtual CXFA_Node* CreateNode(XFA_LPCPACKETINFO pPacket,
+  virtual CXFA_Node* CreateNode(const XFA_PACKETINFO* pPacket,
                                 XFA_ELEMENT eElement);
   void DoProtoMerge();
   CXFA_Node* GetNodeByID(CXFA_Node* pRoot, const CFX_WideStringC& wsID);

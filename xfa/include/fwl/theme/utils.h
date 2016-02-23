@@ -27,7 +27,7 @@ enum FWLTHEME_DIRECTION {
   FWLTHEME_DIRECTION_Left,
   FWLTHEME_DIRECTION_Right
 };
-typedef struct _FWLCOLOR {
+struct FWLCOLOR {
   union {
     FX_DWORD color;
     struct {
@@ -38,14 +38,13 @@ typedef struct _FWLCOLOR {
     };
   };
 
-  _FWLCOLOR() { color = 0; }
-  _FWLCOLOR(FX_DWORD c) { color = c; }
-  _FWLCOLOR(const _FWLCOLOR& c) { color = c.color; }
+  FWLCOLOR() : color(0) {}
+  FWLCOLOR(FX_DWORD c) : color(c) {}
+  FWLCOLOR(const FWLCOLOR& c) : color(c.color) {}
 
-  bool operator==(const _FWLCOLOR& frColor) { return color == frColor.color; }
-
+  bool operator==(const FWLCOLOR& frColor) { return color == frColor.color; }
   operator FX_DWORD() { return color; }
-} FWLCOLOR;
+};
 #define FWLTHEME_BEZIER FX_BEZIER
 #define FWLTHEME_PI FX_PI
 #define FWLTHEME_PI_2_1 (FX_PI / 2.0f)

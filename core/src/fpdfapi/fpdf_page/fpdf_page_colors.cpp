@@ -964,13 +964,15 @@ void CPDF_IndexedCS::EnableStdConversion(FX_BOOL bEnabled) {
     m_pBaseCS->EnableStdConversion(bEnabled);
   }
 }
+
 #define MAX_PATTERN_COLORCOMPS 16
-typedef struct _PatternValue {
+struct PatternValue {
   CPDF_Pattern* m_pPattern;
   CPDF_CountedPattern* m_pCountedPattern;
   int m_nComps;
   FX_FLOAT m_Comps[MAX_PATTERN_COLORCOMPS];
-} PatternValue;
+};
+
 CPDF_PatternCS::~CPDF_PatternCS() {
   CPDF_ColorSpace* pCS = m_pCountedBaseCS ? m_pCountedBaseCS->get() : NULL;
   if (pCS && m_pDocument) {

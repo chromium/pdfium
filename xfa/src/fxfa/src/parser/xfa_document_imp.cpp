@@ -168,15 +168,14 @@ CXFA_Object* CXFA_Document::GetXFAObject(FX_DWORD dwNodeNameHash) {
   }
 }
 CXFA_Node* CXFA_Document::CreateNode(FX_DWORD dwPacket, XFA_ELEMENT eElement) {
-  XFA_LPCPACKETINFO pPacket = XFA_GetPacketByID(dwPacket);
-  return CreateNode(pPacket, eElement);
+  return CreateNode(XFA_GetPacketByID(dwPacket), eElement);
 }
-CXFA_Node* CXFA_Document::CreateNode(XFA_LPCPACKETINFO pPacket,
+CXFA_Node* CXFA_Document::CreateNode(const XFA_PACKETINFO* pPacket,
                                      XFA_ELEMENT eElement) {
   if (pPacket == NULL) {
     return NULL;
   }
-  XFA_LPCELEMENTINFO pElement = XFA_GetElementByID(eElement);
+  const XFA_ELEMENTINFO* pElement = XFA_GetElementByID(eElement);
   if (pElement && (pElement->dwPackets & pPacket->eName)) {
     CXFA_Node* pNode = new CXFA_Node(this, pPacket->eName, pElement->eName);
     if (pNode) {

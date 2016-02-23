@@ -18,8 +18,8 @@ typedef void* FX_HWND;
 typedef void* FX_HMENU;
 typedef void (*TimerCallback)(int32_t idEvent);
 
-typedef struct _FX_SYSTEMTIME {
-  _FX_SYSTEMTIME()
+struct FX_SYSTEMTIME {
+  FX_SYSTEMTIME()
       : wYear(0),
         wMonth(0),
         wDayOfWeek(0),
@@ -36,7 +36,7 @@ typedef struct _FX_SYSTEMTIME {
   FX_WORD wMinute;
   FX_WORD wSecond;
   FX_WORD wMilliseconds;
-} FX_SYSTEMTIME;
+};
 
 // cursor style
 #define FXCT_ARROW 0

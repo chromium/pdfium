@@ -153,7 +153,7 @@ FX_BOOL CXFA_ScriptContext::QueryNodeByFlag(CXFA_Node* refNode,
     return true;
   }
   if (resolveRs.dwFlags == XFA_RESOVENODE_RSTYPE_Attribute) {
-    XFA_LPCSCRIPTATTRIBUTEINFO lpAttributeInfo = resolveRs.pScriptAttribute;
+    const XFA_SCRIPTATTRIBUTEINFO* lpAttributeInfo = resolveRs.pScriptAttribute;
     if (lpAttributeInfo) {
       (resolveRs.nodes[0]->*(lpAttributeInfo->lpfnCallback))(
           hValue, bSetting, (XFA_ATTRIBUTE)lpAttributeInfo->eAttribute);
@@ -277,7 +277,7 @@ void CXFA_ScriptContext::NormalPropertySetter(FXJSE_HOBJECT hObject,
   CXFA_Object* pObject = lpScriptContext->GetVariablesThis(pOrginalObject);
   CFX_WideString wsPropName = CFX_WideString::FromUTF8(
       (const FX_CHAR*)szPropName.GetPtr(), szPropName.GetLength());
-  XFA_LPCSCRIPTATTRIBUTEINFO lpAttributeInfo =
+  const XFA_SCRIPTATTRIBUTEINFO* lpAttributeInfo =
       XFA_GetScriptAttributeByName(pObject->GetClassID(), wsPropName);
   if (lpAttributeInfo) {
     (pObject->*(lpAttributeInfo->lpfnCallback))(
@@ -289,7 +289,7 @@ void CXFA_ScriptContext::NormalPropertySetter(FXJSE_HOBJECT hObject,
       }
       CXFA_Node* pNode = ToNode(pObject);
       CXFA_Node* pPropOrChild = NULL;
-      XFA_LPCELEMENTINFO lpElementInfo = XFA_GetElementByName(wsPropName);
+      const XFA_ELEMENTINFO* lpElementInfo = XFA_GetElementByName(wsPropName);
       if (lpElementInfo) {
         pPropOrChild = pNode->GetProperty(0, lpElementInfo->eName);
       } else {
@@ -297,7 +297,7 @@ void CXFA_ScriptContext::NormalPropertySetter(FXJSE_HOBJECT hObject,
       }
       if (pPropOrChild) {
         CFX_WideString wsDefaultName = FX_WSTRC(L"{default}");
-        XFA_LPCSCRIPTATTRIBUTEINFO lpAttributeInfo =
+        const XFA_SCRIPTATTRIBUTEINFO* lpAttributeInfo =
             XFA_GetScriptAttributeByName(pPropOrChild->GetClassID(),
                                          wsDefaultName);
         if (lpAttributeInfo) {
@@ -368,7 +368,7 @@ void CXFA_ScriptContext::NormalMethodCall(FXJSE_HOBJECT hThis,
   pObject = lpScriptContext->GetVariablesThis(pObject);
   CFX_WideString wsFunName = CFX_WideString::FromUTF8(
       (const FX_CHAR*)szFuncName.GetPtr(), szFuncName.GetLength());
-  XFA_LPCMETHODINFO lpMethodInfo =
+  const XFA_METHODINFO* lpMethodInfo =
       XFA_GetMethodByName(pObject->GetClassID(), wsFunName);
   if (NULL == lpMethodInfo) {
     return;

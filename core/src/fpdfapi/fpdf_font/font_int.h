@@ -162,18 +162,6 @@ class CPDF_CMap {
   CPDF_CMap* m_pUseMap;
 };
 
-typedef struct _FileHeader {
-  uint8_t btTag[4];
-  uint8_t btVersion;
-  uint8_t btFormat;
-  uint8_t btReserved1[2];
-  FX_DWORD dwStartIndex;
-  FX_DWORD dwEndIndex;
-  FX_DWORD dwDataSize;
-  FX_DWORD dwDataOffset;
-  FX_DWORD dwRecordSize;
-} FXMP_FILEHEADER;
-
 class CPDF_CID2UnicodeMap {
  public:
   CPDF_CID2UnicodeMap();

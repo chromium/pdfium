@@ -49,9 +49,9 @@ int32_t CXFA_NodeHelper::XFA_CountSiblings(CXFA_Node* pNode,
       XFA_ResolveNodes_GetParent(pNode, XFA_LOGIC_NoTransparent);
   if (!parent)
     return 0;
-  XFA_LPCPROPERTY pPropert = XFA_GetPropertyOfElement(
+  const XFA_PROPERTY* pProperty = XFA_GetPropertyOfElement(
       parent->GetClassID(), pNode->GetClassID(), XFA_XDPPACKET_UNKNOWN);
-  if (!pPropert && eLogicType == XFA_LOGIC_Transparent) {
+  if (!pProperty && eLogicType == XFA_LOGIC_Transparent) {
     parent = XFA_ResolveNodes_GetParent(pNode, XFA_LOGIC_Transparent);
     if (parent == NULL) {
       return 0;
@@ -365,7 +365,7 @@ FX_BOOL CXFA_NodeHelper::XFA_ResolveNodes_CreateNode(
     XFA_CreateNode_ForCondition(wsCondition);
   }
   if (bIsClassName) {
-    XFA_LPCELEMENTINFO lpElement = XFA_GetElementByName(wsName);
+    const XFA_ELEMENTINFO* lpElement = XFA_GetElementByName(wsName);
     if (lpElement == NULL) {
       return FALSE;
     }
@@ -418,15 +418,9 @@ void CXFA_NodeHelper::XFA_SetCreateNodeType(CXFA_Node* refNode) {
   }
 }
 FX_BOOL CXFA_NodeHelper::XFA_NodeIsProperty(CXFA_Node* refNode) {
-  FX_BOOL bRes = FALSE;
   CXFA_Node* parent =
       XFA_ResolveNodes_GetParent(refNode, XFA_LOGIC_NoTransparent);
-  if (parent != NULL && refNode != NULL) {
-    XFA_LPCPROPERTY pPropert = XFA_GetPropertyOfElement(
-        parent->GetClassID(), refNode->GetClassID(), XFA_XDPPACKET_UNKNOWN);
-    if (pPropert) {
-      bRes = TRUE;
-    }
-  }
-  return bRes;
+  return parent && refNode &&
+         XFA_GetPropertyOfElement(parent->GetClassID(), refNode->GetClassID(),
+                                  XFA_XDPPACKET_UNKNOWN);
 }
