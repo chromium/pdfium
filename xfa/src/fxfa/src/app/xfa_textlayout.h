@@ -225,7 +225,14 @@ class CXFA_TextUserData : public IFX_Unknown, public CFX_Target {
   IFX_MEMAllocator* m_pAllocator;
   FX_DWORD m_dwRefCount;
 };
-typedef struct _XFA_TEXTPIECE : public CFX_Target {
+
+struct XFA_TEXTPIECE : public CFX_Target {
+  XFA_TEXTPIECE() : pszText(nullptr), pFont(nullptr), pLinkData(nullptr) {}
+  ~XFA_TEXTPIECE() {
+    if (pLinkData)
+      pLinkData->Release();
+  }
+
   FX_WCHAR* pszText;
   int32_t iChars;
   int32_t* pWidths;
@@ -240,20 +247,9 @@ typedef struct _XFA_TEXTPIECE : public CFX_Target {
   FX_FLOAT fFontSize;
   CFX_RectF rtPiece;
   CXFA_LinkUserData* pLinkData;
+};
+typedef CFX_ArrayTemplate<XFA_TEXTPIECE*> CXFA_PieceArray;
 
-  _XFA_TEXTPIECE() : pszText(NULL), pFont(NULL), pLinkData(NULL) {
-    pszText = NULL;
-  }
-  ~_XFA_TEXTPIECE() {
-    pszText = NULL;
-    if (NULL != pLinkData) {
-      pLinkData->Release();
-      pLinkData = NULL;
-    }
-  }
-} XFA_TEXTPIECE, *XFA_LPTEXTPIECE;
-typedef XFA_TEXTPIECE const* XFA_LPCTEXTPIECE;
-typedef CFX_ArrayTemplate<XFA_LPTEXTPIECE> CXFA_PieceArray;
 class CXFA_PieceLine : public CFX_Target {
  public:
   CXFA_PieceLine() {}
@@ -383,10 +379,10 @@ class CXFA_TextLayout {
                   int32_t iPiece,
                   FXTEXT_CHARPOS* pCharPos,
                   const CFX_Matrix& tmDoc2Device);
-  int32_t GetDisplayPos(XFA_LPCTEXTPIECE pPiece,
+  int32_t GetDisplayPos(const XFA_TEXTPIECE* pPiece,
                         FXTEXT_CHARPOS* pCharPos,
                         FX_BOOL bCharCode = FALSE);
-  FX_BOOL ToRun(XFA_LPCTEXTPIECE pPiece, FX_RTFTEXTOBJ& tr);
+  FX_BOOL ToRun(const XFA_TEXTPIECE* pPiece, FX_RTFTEXTOBJ& tr);
   void DoTabstops(IFDE_CSSComputedStyle* pStyle, CXFA_PieceLine* pPieceLine);
   FX_BOOL Layout(int32_t iBlock);
   int32_t CountBlocks() const;

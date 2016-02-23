@@ -1268,7 +1268,7 @@ FX_BOOL CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
     int32_t iPieces = pPieceLine->m_textPieces.GetSize();
     int32_t j = 0;
     for (j = 0; j < iPieces; j++) {
-      XFA_LPCTEXTPIECE pPiece = pPieceLine->m_textPieces.GetAt(j);
+      const XFA_TEXTPIECE* pPiece = pPieceLine->m_textPieces.GetAt(j);
       int32_t iChars = pPiece->iChars;
       if (iCharCount < iChars) {
         FX_Free(pCharPos);
@@ -1308,7 +1308,7 @@ void CXFA_TextLayout::UpdateAlign(FX_FLOAT fHeight, FX_FLOAT fBottom) {
     CXFA_PieceLine* pPieceLine = m_pieceLines.GetAt(i);
     int32_t iPieces = pPieceLine->m_textPieces.GetSize();
     for (int32_t j = 0; j < iPieces; j++) {
-      XFA_LPTEXTPIECE pPiece = pPieceLine->m_textPieces.GetAt(j);
+      XFA_TEXTPIECE* pPiece = pPieceLine->m_textPieces.GetAt(j);
       CFX_RectF& rect = pPiece->rtPiece;
       rect.top += fHeight;
     }
@@ -1669,7 +1669,7 @@ void CXFA_TextLayout::DoTabstops(IFDE_CSSComputedStyle* pStyle,
   if (iPieces == 0) {
     return;
   }
-  XFA_LPTEXTPIECE pPiece = pPieceLine->m_textPieces.GetAt(iPieces - 1);
+  XFA_TEXTPIECE* pPiece = pPieceLine->m_textPieces.GetAt(iPieces - 1);
   int32_t& iTabstopsIndex = m_pTabstopContext->m_iTabIndex;
   int32_t iCount = m_textParser.CountTabs(pStyle);
   if (iTabstopsIndex > m_pTabstopContext->m_iTabCount - 1) {
@@ -1680,7 +1680,7 @@ void CXFA_TextLayout::DoTabstops(IFDE_CSSComputedStyle* pStyle,
     m_pTabstopContext->m_bTabstops = TRUE;
     FX_FLOAT fRight = 0;
     if (iPieces > 1) {
-      XFA_LPTEXTPIECE p = pPieceLine->m_textPieces.GetAt(iPieces - 2);
+      XFA_TEXTPIECE* p = pPieceLine->m_textPieces.GetAt(iPieces - 2);
       fRight = p->rtPiece.right();
     }
     m_pTabstopContext->m_fTabWidth =
@@ -1737,8 +1737,8 @@ void CXFA_TextLayout::AppendTextLine(FX_DWORD dwStatus,
         pStyle = pUserData->m_pStyle;
       }
       FX_FLOAT fVerScale = pPiece->m_iVerticalScale / 100.0f;
-      XFA_LPTEXTPIECE pTP =
-          (XFA_LPTEXTPIECE)m_pAllocator->Alloc(sizeof(XFA_TEXTPIECE));
+      XFA_TEXTPIECE* pTP =
+          (XFA_TEXTPIECE*)m_pAllocator->Alloc(sizeof(XFA_TEXTPIECE));
       pTP->pszText =
           (FX_WCHAR*)m_pAllocator->Alloc(pPiece->m_iChars * sizeof(FX_WCHAR));
       pTP->pWidths =
@@ -1784,7 +1784,7 @@ void CXFA_TextLayout::AppendTextLine(FX_DWORD dwStatus,
       DoTabstops(pStyle, pPieceLine);
     }
     for (i = 0; i < iPieces; i++) {
-      XFA_LPTEXTPIECE pTP = pPieceLine->m_textPieces.GetAt(i);
+      XFA_TEXTPIECE* pTP = pPieceLine->m_textPieces.GetAt(i);
       FX_FLOAT& fTop = pTP->rtPiece.top;
       FX_FLOAT fBaseLineTemp = fTop;
       fTop = fLinePos + fLineStep - pTP->rtPiece.height - fBaseLineTemp;
@@ -1867,7 +1867,7 @@ void CXFA_TextLayout::RenderString(IFDE_RenderDevice* pDevice,
                                    int32_t iPiece,
                                    FXTEXT_CHARPOS* pCharPos,
                                    const CFX_Matrix& tmDoc2Device) {
-  XFA_LPCTEXTPIECE pPiece = pPieceLine->m_textPieces.GetAt(iPiece);
+  const XFA_TEXTPIECE* pPiece = pPieceLine->m_textPieces.GetAt(iPiece);
   int32_t iCount = GetDisplayPos(pPiece, pCharPos);
   if (iCount > 0) {
     pBrush->SetColor(pPiece->dwColor);
@@ -1989,7 +1989,7 @@ void CXFA_TextLayout::RenderPath(IFDE_RenderDevice* pDevice,
 XFA_RenderPathRet:
   pPath->Release();
 }
-int32_t CXFA_TextLayout::GetDisplayPos(XFA_LPCTEXTPIECE pPiece,
+int32_t CXFA_TextLayout::GetDisplayPos(const XFA_TEXTPIECE* pPiece,
                                        FXTEXT_CHARPOS* pCharPos,
                                        FX_BOOL bCharCode) {
   if (pPiece == NULL) {
@@ -2001,7 +2001,7 @@ int32_t CXFA_TextLayout::GetDisplayPos(XFA_LPCTEXTPIECE pPiece,
   }
   return m_pBreak->GetDisplayPos(&tr, pCharPos, bCharCode);
 }
-FX_BOOL CXFA_TextLayout::ToRun(XFA_LPCTEXTPIECE pPiece, FX_RTFTEXTOBJ& tr) {
+FX_BOOL CXFA_TextLayout::ToRun(const XFA_TEXTPIECE* pPiece, FX_RTFTEXTOBJ& tr) {
   int32_t iLength = pPiece->iChars;
   if (iLength < 1) {
     return FALSE;

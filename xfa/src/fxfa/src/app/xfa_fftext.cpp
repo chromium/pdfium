@@ -161,7 +161,7 @@ const FX_WCHAR* CXFA_FFText::GetLinkURLAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
     CXFA_PieceLine* pPieceLine = pPieceLines->GetAt(i);
     int32_t iPieces = pPieceLine->m_textPieces.GetSize();
     for (int32_t j = 0; j < iPieces; j++) {
-      XFA_LPTEXTPIECE pPiece = pPieceLine->m_textPieces.GetAt(j);
+      XFA_TEXTPIECE* pPiece = pPieceLine->m_textPieces.GetAt(j);
       if (pPiece->pLinkData && pPiece->rtPiece.Contains(x, y)) {
         return pPiece->pLinkData->GetLinkURL();
       }

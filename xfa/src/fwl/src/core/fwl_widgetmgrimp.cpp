@@ -856,13 +856,15 @@ void CFWL_WidgetMgrDelegate::DrawWidgetAfter(IFWL_Widget* pWidget,
   CFWL_WidgetMgrItem* pItem = m_pWidgetMgr->GetWidgetMgrItem(pWidget);
   pItem->iRedrawCounter = 0;
 }
+
 #define FWL_NEEDREPAINTHIT_Point 12
 #define FWL_NEEDREPAINTHIT_Piece 3
-typedef struct _FWL_NeedRepaintHitData {
+struct FWL_NEEDREPAINTHITDATA {
   CFX_PointF hitPoint;
   FX_BOOL bNotNeedRepaint;
   FX_BOOL bNotContainByDirty;
-} FWL_NeedRepaintHitData;
+};
+
 FX_BOOL CFWL_WidgetMgrDelegate::IsNeedRepaint(IFWL_Widget* pWidget,
                                               CFX_Matrix* pMatrix,
                                               const CFX_RectF& rtDirty) {
@@ -900,8 +902,8 @@ FX_BOOL CFWL_WidgetMgrDelegate::IsNeedRepaint(IFWL_Widget* pWidget,
   FX_BOOL bOrginPtIntersectWidthChild = FALSE;
   FX_BOOL bOrginPtIntersectWidthDirty =
       rtDirty.Contains(rtWidget.left, rtWidget.top);
-  static FWL_NeedRepaintHitData hitPoint[FWL_NEEDREPAINTHIT_Point];
-  static int32_t iSize = sizeof(FWL_NeedRepaintHitData);
+  static FWL_NEEDREPAINTHITDATA hitPoint[FWL_NEEDREPAINTHIT_Point];
+  int32_t iSize = sizeof(FWL_NEEDREPAINTHITDATA);
   FXSYS_memset(hitPoint, 0, iSize);
   FX_FLOAT fxPiece = rtWidget.width / FWL_NEEDREPAINTHIT_Piece;
   FX_FLOAT fyPiece = rtWidget.height / FWL_NEEDREPAINTHIT_Piece;

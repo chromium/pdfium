@@ -15,11 +15,11 @@ class CXFA_FFNotify;
 class CXFA_FFDocView;
 class IXFA_Locale;
 
-typedef struct _FX_IMAGEDIB_AND_DPI {
+struct FX_IMAGEDIB_AND_DPI {
   CFX_DIBSource* pDibSource;
   int32_t iImageXDpi;
   int32_t iImageYDpi;
-} FX_IMAGEDIB_AND_DPI;
+};
 
 class CXFA_FFDoc : public IXFA_Doc {
  public:

@@ -46,10 +46,11 @@ class CXFA_HVALUEArray : public CFX_ArrayTemplate<FXJSE_HVALUE> {
   }
   FXJSE_HRUNTIME m_hRunTime;
 };
-typedef struct _XFA_RESOLVENODE_RS {
-  _XFA_RESOLVENODE_RS()
+
+struct XFA_RESOLVENODE_RS {
+  XFA_RESOLVENODE_RS()
       : dwFlags(XFA_RESOVENODE_RSTYPE_Nodes), pScriptAttribute(NULL) {}
-  ~_XFA_RESOLVENODE_RS() { nodes.RemoveAll(); }
+  ~XFA_RESOLVENODE_RS() { nodes.RemoveAll(); }
   int32_t GetAttributeResult(CXFA_HVALUEArray& hValueArray) const {
     if (pScriptAttribute && pScriptAttribute->eValueType == XFA_SCRIPT_Object) {
       FXJSE_HRUNTIME hRunTime = hValueArray.m_hRunTime;
@@ -62,16 +63,19 @@ typedef struct _XFA_RESOLVENODE_RS {
     }
     return hValueArray.GetSize();
   }
+
   CXFA_ObjArray nodes;
   XFA_RESOVENODE_RSTYPE dwFlags;
   const XFA_SCRIPTATTRIBUTEINFO* pScriptAttribute;
-} XFA_RESOLVENODE_RS, *XFA_LPRESOLVENODE_RS;
-typedef struct _XFA_JSBUILTININFO {
+};
+
+struct XFA_JSBUILTININFO {
   uint32_t uUnicodeHash;
   const FX_CHAR* pName;
-} XFA_JSBUILTININFO, *XFA_LPJSBUILTININFO;
-typedef XFA_JSBUILTININFO const* XFA_LPCJSBUILTININFO;
-XFA_LPCJSBUILTININFO XFA_GetJSBuiltinByHash(uint32_t uHashCode);
+};
+
+const XFA_JSBUILTININFO* XFA_GetJSBuiltinByHash(uint32_t uHashCode);
+
 class IXFA_ScriptContext {
  public:
   virtual ~IXFA_ScriptContext() {}

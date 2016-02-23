@@ -107,21 +107,23 @@ enum XFA_SOM_MESSAGETYPE {
 typedef CFX_StackTemplate<CXFA_Node*> CXFA_NodeStack;
 typedef CXFA_PtrSetTemplate<CXFA_Node*> CXFA_NodeSet;
 typedef void (*PD_CALLBACK_DUPLICATEDATA)(void*& pData);
-typedef struct _XFA_MAPDATABLOCKCALLBACKINFO {
+
+struct XFA_MAPDATABLOCKCALLBACKINFO {
   PD_CALLBACK_FREEDATA pFree;
   PD_CALLBACK_DUPLICATEDATA pCopy;
-} XFA_MAPDATABLOCKCALLBACKINFO;
-typedef struct _XFA_MAPDATABLOCK {
-  uint8_t* GetData() const {
-    return (uint8_t*)this + sizeof(_XFA_MAPDATABLOCK);
-  }
+};
+
+struct XFA_MAPDATABLOCK {
+  uint8_t* GetData() const { return (uint8_t*)this + sizeof(XFA_MAPDATABLOCK); }
   XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo;
   int32_t iBytes;
-} XFA_MAPDATABLOCK, *XFA_LPMAPDATABLOCK;
-typedef struct _XFA_MAPMODULEDATA {
+};
+
+struct XFA_MAPMODULEDATA {
   CFX_MapPtrToPtr m_ValueMap;
-  CFX_MapPtrTemplate<void*, XFA_LPMAPDATABLOCK> m_BufferMap;
-} XFA_MAPMODULEDATA, *XFA_LPMAPMODULEDATA;
+  CFX_MapPtrTemplate<void*, XFA_MAPDATABLOCK*> m_BufferMap;
+};
+
 #define XFA_CalcRefCount (void*)(uintptr_t) FXBSTR_ID('X', 'F', 'A', 'R')
 #define XFA_CalcData (void*)(uintptr_t) FXBSTR_ID('X', 'F', 'A', 'C')
 #define XFA_LAYOUTITEMKEY (void*)(uintptr_t) FXBSTR_ID('L', 'Y', 'I', 'M')
@@ -611,7 +613,7 @@ class CXFA_Node : public CXFA_Object {
                            FX_BOOL bScriptModify = FALSE,
                            FX_BOOL bSyncData = TRUE);
   CFX_WideString GetScriptContent(FX_BOOL bScriptModify = FALSE);
-  XFA_LPMAPMODULEDATA GetMapModuleData(FX_BOOL bCreateNew);
+  XFA_MAPMODULEDATA* GetMapModuleData(FX_BOOL bCreateNew);
   void SetMapModuleValue(void* pKey, void* pValue);
   FX_BOOL GetMapModuleValue(void* pKey, void*& pValue);
   void SetMapModuleString(void* pKey, const CFX_WideStringC& wsValue);
@@ -642,7 +644,7 @@ class CXFA_Node : public CXFA_Object {
   FX_WORD m_ePacket;
   FX_DWORD m_dwNameHash;
   CXFA_Node* m_pAuxNode;
-  XFA_LPMAPMODULEDATA m_pMapModuleData;
+  XFA_MAPMODULEDATA* m_pMapModuleData;
 };
 class CXFA_OrdinaryObject : public CXFA_Object {
  public:

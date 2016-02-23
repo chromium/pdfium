@@ -37,6 +37,39 @@ class CFWL_MonthCalendarImp : public CFWL_WidgetImp {
   virtual FX_BOOL SetSelect(int32_t iYear, int32_t iMonth, int32_t iDay);
 
  protected:
+  struct DATE {
+    DATE() : iYear(0), iMonth(0), iDay(0) {}
+    DATE(int32_t year, int32_t month, int32_t day)
+        : iYear(year), iMonth(month), iDay(day) {}
+    FX_BOOL operator<(const DATE& right) {
+      if (iYear < right.iYear) {
+        return TRUE;
+      } else if (iYear == right.iYear) {
+        if (iMonth < right.iMonth) {
+          return TRUE;
+        } else if (iMonth == right.iMonth) {
+          return iDay < right.iDay;
+        }
+      }
+      return FALSE;
+    }
+    FX_BOOL operator>(const DATE& right) {
+      if (iYear > right.iYear) {
+        return TRUE;
+      } else if (iYear == right.iYear) {
+        if (iMonth > right.iMonth) {
+          return TRUE;
+        } else if (iMonth == right.iMonth) {
+          return iDay > right.iDay;
+        }
+      }
+      return FALSE;
+    }
+    int32_t iYear;
+    int32_t iMonth;
+    int32_t iDay;
+  };
+
   void DrawBkground(CFX_Graphics* pGraphics,
                     IFWL_ThemeProvider* pTheme,
                     const CFX_Matrix* pMatrix);
@@ -89,7 +122,6 @@ class CFWL_MonthCalendarImp : public CFWL_WidgetImp {
   void CalDateItem();
   void GetCapValue();
   int32_t CalWeekNumber(int32_t iYear, int32_t iMonth, int32_t iDay);
-
   FX_BOOL GetMinDate(int32_t& iYear, int32_t& iMonth, int32_t& iDay);
   FX_BOOL SetMinDate(int32_t iYear, int32_t iMonth, int32_t iDay);
   FX_BOOL GetMaxDate(int32_t& iYear, int32_t& iMonth, int32_t& iDay);
@@ -110,43 +142,7 @@ class CFWL_MonthCalendarImp : public CFWL_WidgetImp {
                     CFX_WideString& wsToday);
   int32_t GetDayAtPoint(FX_FLOAT x, FX_FLOAT y);
   FX_BOOL GetDayRect(int32_t iDay, CFX_RectF& rtDay);
-  typedef struct _DATE {
-    _DATE() {
-      iYear = 0;
-      iMonth = 0;
-      iDay = 0;
-    }
-    _DATE(int32_t year, int32_t month, int32_t day)
-        : iYear(year), iMonth(month), iDay(day) {}
-    FX_BOOL operator<(const _DATE& right) {
-      if (iYear < right.iYear) {
-        return TRUE;
-      } else if (iYear == right.iYear) {
-        if (iMonth < right.iMonth) {
-          return TRUE;
-        } else if (iMonth == right.iMonth) {
-          return iDay < right.iDay;
-        }
-      }
-      return FALSE;
-    }
-    FX_BOOL operator>(const _DATE& right) {
-      if (iYear > right.iYear) {
-        return TRUE;
-      } else if (iYear == right.iYear) {
-        if (iMonth > right.iMonth) {
-          return TRUE;
-        } else if (iMonth == right.iMonth) {
-          return iDay > right.iDay;
-        }
-      }
-      return FALSE;
-    }
-    int32_t iYear;
-    int32_t iMonth;
-    int32_t iDay;
 
-  } DATE, *LPDATE;
   FX_BOOL m_bInit;
   CFX_RectF m_rtHead;
   CFX_RectF m_rtWeek;
@@ -177,8 +173,7 @@ class CFWL_MonthCalendarImp : public CFWL_WidgetImp {
   CFX_SizeF m_szHead;
   CFX_SizeF m_szCell;
   CFX_SizeF m_szToday;
-  typedef CFX_ArrayTemplate<int32_t> CFWL_Int32Array;
-  CFWL_Int32Array m_arrSelDays;
+  CFX_ArrayTemplate<int32_t> m_arrSelDays;
   int32_t m_iMaxSel;
   CFX_RectF m_rtClient;
   FX_FLOAT m_fHeadWid;
@@ -193,32 +188,29 @@ class CFWL_MonthCalendarImp : public CFWL_WidgetImp {
   FX_FLOAT m_fHeadTextVMargin;
   FX_FLOAT m_fHSepWid;
   FX_FLOAT m_fHSepHei;
-
   FX_FLOAT m_fWeekNumWid;
   FX_FLOAT m_fSepDOffset;
   FX_FLOAT m_fSepX;
   FX_FLOAT m_fSepY;
-
   FX_FLOAT m_fWeekNumHeigh;
   FX_FLOAT m_fWeekWid;
   FX_FLOAT m_fWeekHei;
   FX_FLOAT m_fDateCellWid;
   FX_FLOAT m_fDateCellHei;
-
   FX_FLOAT m_fTodayWid;
   FX_FLOAT m_fTodayHei;
   FX_FLOAT m_fTodayFlagWid;
-
   FX_FLOAT m_fMCWid;
   FX_FLOAT m_fMCHei;
   friend class CFWL_MonthCalendarImpDelegate;
 };
-typedef struct _DATEINFO {
-  _DATEINFO(int32_t day,
-            int32_t dayofweek,
-            FX_DWORD dwSt,
-            CFX_RectF rc,
-            CFX_WideString& wsday)
+
+struct FWL_DATEINFO {
+  FWL_DATEINFO(int32_t day,
+               int32_t dayofweek,
+               FX_DWORD dwSt,
+               CFX_RectF rc,
+               CFX_WideString& wsday)
       : iDay(day),
         iDayOfWeek(dayofweek),
         dwStates(dwSt),
@@ -229,7 +221,8 @@ typedef struct _DATEINFO {
   FX_DWORD dwStates;
   CFX_RectF rect;
   CFX_WideString wsDay;
-} DATEINFO, *LPDATEINFO;
+};
+
 class CFWL_MonthCalendarImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_MonthCalendarImpDelegate(CFWL_MonthCalendarImp* pOwner);

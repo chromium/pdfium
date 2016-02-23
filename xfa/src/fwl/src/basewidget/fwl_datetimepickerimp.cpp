@@ -301,11 +301,11 @@ void CFWL_DateTimeCalendarImpDelegate::OnLButtonUpEx(CFWL_MsgMouse* pMsg) {
   pPicker->m_pForm->GetWidgetRect(rt);
   rt.Set(0, 0, rt.width, rt.height);
   if (iCurSel > 0) {
-    LPDATEINFO lpDatesInfo =
-        (LPDATEINFO)m_pOwner->m_arrDates.GetAt(iCurSel - 1);
+    FWL_DATEINFO* lpDatesInfo =
+        (FWL_DATEINFO*)m_pOwner->m_arrDates.GetAt(iCurSel - 1);
     CFX_RectF rtInvalidate(lpDatesInfo->rect);
     if (iOldSel > 0 && iOldSel <= m_pOwner->m_arrDates.GetSize()) {
-      lpDatesInfo = (LPDATEINFO)m_pOwner->m_arrDates.GetAt(iOldSel - 1);
+      lpDatesInfo = (FWL_DATEINFO*)m_pOwner->m_arrDates.GetAt(iOldSel - 1);
       rtInvalidate.Union(lpDatesInfo->rect);
     }
     m_pOwner->AddSelDay(iCurSel);
@@ -394,11 +394,11 @@ void CFWL_DateTimeCalendarImpDelegate::DisForm_OnLButtonUpEx(
   }
   int32_t iCurSel = m_pOwner->GetDayAtPoint(pMsg->m_fx, pMsg->m_fy);
   if (iCurSel > 0) {
-    LPDATEINFO lpDatesInfo =
-        (LPDATEINFO)m_pOwner->m_arrDates.GetAt(iCurSel - 1);
+    FWL_DATEINFO* lpDatesInfo =
+        (FWL_DATEINFO*)m_pOwner->m_arrDates.GetAt(iCurSel - 1);
     CFX_RectF rtInvalidate(lpDatesInfo->rect);
     if (iOldSel > 0 && iOldSel <= m_pOwner->m_arrDates.GetSize()) {
-      lpDatesInfo = (LPDATEINFO)m_pOwner->m_arrDates.GetAt(iOldSel - 1);
+      lpDatesInfo = (FWL_DATEINFO*)m_pOwner->m_arrDates.GetAt(iOldSel - 1);
       rtInvalidate.Union(lpDatesInfo->rect);
     }
     m_pOwner->AddSelDay(iCurSel);
