@@ -8,12 +8,7 @@
 #define XFA_SRC_FXGRAPHICS_SRC_PRE_H_
 
 #include "xfa/src/foxitlib.h"
-#ifndef FXSYS_Mul
-#define FXSYS_Mul(a, b) ((a) * (b))
-#define FXSYS_Div(a, b) ((a) / (b))
-#define FXSYS_MulDiv(a, b, c) ((a) * (b) / (c))
-#define FXSYS_sqrt2(a, b) (FX_FLOAT) FXSYS_sqrt((a) * (a) + (b) * (b))
-#endif
+
 enum {
   FX_CONTEXT_None = 0,
   FX_CONTEXT_Device,

@@ -971,16 +971,15 @@ FX_ERR CFX_Graphics::FillPathWithShading(CFX_Path* path,
     case FX_SHADING_Axial: {
       FX_FLOAT x_span = end_x - start_x;
       FX_FLOAT y_span = end_y - start_y;
-      FX_FLOAT axis_len_square =
-          FXSYS_Mul(x_span, x_span) + FXSYS_Mul(y_span, y_span);
+      FX_FLOAT axis_len_square = (x_span * x_span) + (y_span * y_span);
       for (int32_t row = 0; row < height; row++) {
         FX_DWORD* dib_buf = (FX_DWORD*)(bmp.GetBuffer() + row * pitch);
         for (int32_t column = 0; column < width; column++) {
           FX_FLOAT x = (FX_FLOAT)(column);
           FX_FLOAT y = (FX_FLOAT)(row);
-          FX_FLOAT scale = FXSYS_Div(
-              FXSYS_Mul(x - start_x, x_span) + FXSYS_Mul(y - start_y, y_span),
-              axis_len_square);
+          FX_FLOAT scale =
+              FXSYS_Div(((x - start_x) * x_span) + ((y - start_y) * y_span),
+                        axis_len_square);
           if (scale < 0) {
             if (!_info._fillColor->_shading->_isExtendedBegin) {
               continue;
@@ -1002,25 +1001,24 @@ FX_ERR CFX_Graphics::FillPathWithShading(CFX_Path* path,
     case FX_SHADING_Radial: {
       FX_FLOAT start_r = _info._fillColor->_shading->_beginRadius;
       FX_FLOAT end_r = _info._fillColor->_shading->_endRadius;
-      FX_FLOAT a = FXSYS_Mul(start_x - end_x, start_x - end_x) +
-                   FXSYS_Mul(start_y - end_y, start_y - end_y) -
-                   FXSYS_Mul(start_r - end_r, start_r - end_r);
+      FX_FLOAT a = ((start_x - end_x) * (start_x - end_x)) +
+                   ((start_y - end_y) * (start_y - end_y)) -
+                   ((start_r - end_r) * (start_r - end_r));
       for (int32_t row = 0; row < height; row++) {
         FX_DWORD* dib_buf = (FX_DWORD*)(bmp.GetBuffer() + row * pitch);
         for (int32_t column = 0; column < width; column++) {
           FX_FLOAT x = (FX_FLOAT)(column);
           FX_FLOAT y = (FX_FLOAT)(row);
-          FX_FLOAT b = -2 * (FXSYS_Mul(x - start_x, end_x - start_x) +
-                             FXSYS_Mul(y - start_y, end_y - start_y) +
-                             FXSYS_Mul(start_r, end_r - start_r));
-          FX_FLOAT c = FXSYS_Mul(x - start_x, x - start_x) +
-                       FXSYS_Mul(y - start_y, y - start_y) -
-                       FXSYS_Mul(start_r, start_r);
+          FX_FLOAT b = -2 * (((x - start_x) * (end_x - start_x)) +
+                             ((y - start_y) * (end_y - start_y)) +
+                             (start_r * (end_r - start_r)));
+          FX_FLOAT c = ((x - start_x) * (x - start_x)) +
+                       ((y - start_y) * (y - start_y)) - (start_r * start_r);
           FX_FLOAT s;
           if (a == 0) {
             s = (FXSYS_Div(-c, b));
           } else {
-            FX_FLOAT b2_4ac = FXSYS_Mul(b, b) - 4 * FXSYS_Mul(a, c);
+            FX_FLOAT b2_4ac = (b * b) - 4 * (a * c);
             if (b2_4ac < 0) {
               continue;
             }

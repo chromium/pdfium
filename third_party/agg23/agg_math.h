@@ -26,7 +26,7 @@ AGG_INLINE FX_FLOAT calc_point_location(FX_FLOAT x1, FX_FLOAT y1,
                                         FX_FLOAT x2, FX_FLOAT y2,
                                         FX_FLOAT x,  FX_FLOAT y)
 {
-    return FXSYS_Mul(x - x2, y2 - y1) - FXSYS_Mul(y - y2, x2 - x1);
+  return ((x - x2) * (y2 - y1)) - ((y - y2) * (x2 - x1));
 }
 AGG_INLINE FX_FLOAT calc_distance(FX_FLOAT x1, FX_FLOAT y1, FX_FLOAT x2, FX_FLOAT y2)
 {
@@ -50,8 +50,8 @@ AGG_INLINE bool calc_intersection(FX_FLOAT ax, FX_FLOAT ay, FX_FLOAT bx, FX_FLOA
                                   FX_FLOAT cx, FX_FLOAT cy, FX_FLOAT dx, FX_FLOAT dy,
                                   FX_FLOAT* x, FX_FLOAT* y)
 {
-    FX_FLOAT num = FXSYS_Mul(ay - cy, dx - cx) - FXSYS_Mul(ax - cx, dy - cy);
-    FX_FLOAT den = FXSYS_Mul(bx - ax, dy - cy) - FXSYS_Mul(by - ay, dx - cx);
+  FX_FLOAT num = ((ay - cy) * (dx - cx)) - ((ax - cx) * (dy - cy));
+  FX_FLOAT den = ((bx - ax) * (dy - cy)) - ((by - ay) * (dx - cx));
     if (FXSYS_fabs(den) < intersection_epsilon) {
         return false;
     }

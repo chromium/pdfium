@@ -1569,13 +1569,10 @@ FX_BOOL CPDF_Type3Font::_Load() {
   }
   CPDF_Array* pBBox = m_pFontDict->GetArrayBy("FontBBox");
   if (pBBox) {
-    m_FontBBox.left =
-        (int32_t)(FXSYS_Mul(pBBox->GetNumberAt(0), xscale) * 1000);
-    m_FontBBox.bottom =
-        (int32_t)(FXSYS_Mul(pBBox->GetNumberAt(1), yscale) * 1000);
-    m_FontBBox.right =
-        (int32_t)(FXSYS_Mul(pBBox->GetNumberAt(2), xscale) * 1000);
-    m_FontBBox.top = (int32_t)(FXSYS_Mul(pBBox->GetNumberAt(3), yscale) * 1000);
+    m_FontBBox.left = (int32_t)(pBBox->GetNumberAt(0) * xscale * 1000);
+    m_FontBBox.bottom = (int32_t)(pBBox->GetNumberAt(1) * yscale * 1000);
+    m_FontBBox.right = (int32_t)(pBBox->GetNumberAt(2) * xscale * 1000);
+    m_FontBBox.top = (int32_t)(pBBox->GetNumberAt(3) * yscale * 1000);
   }
   int StartChar = m_pFontDict->GetIntegerBy("FirstChar");
   CPDF_Array* pWidthArray = m_pFontDict->GetArrayBy("Widths");
@@ -1589,7 +1586,7 @@ FX_BOOL CPDF_Type3Font::_Load() {
     }
     for (FX_DWORD i = 0; i < count; i++) {
       m_CharWidthL[StartChar + i] =
-          FXSYS_round(FXSYS_Mul(pWidthArray->GetNumberAt(i), xscale) * 1000);
+          FXSYS_round(pWidthArray->GetNumberAt(i) * xscale * 1000);
     }
   }
   m_pCharProcs = m_pFontDict->GetDictBy("CharProcs");

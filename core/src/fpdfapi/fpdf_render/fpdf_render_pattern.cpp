@@ -44,8 +44,7 @@ static void DrawAxialShading(CFX_DIBitmap* pBitmap,
   int height = pBitmap->GetHeight();
   FX_FLOAT x_span = end_x - start_x;
   FX_FLOAT y_span = end_y - start_y;
-  FX_FLOAT axis_len_square =
-      FXSYS_Mul(x_span, x_span) + FXSYS_Mul(y_span, y_span);
+  FX_FLOAT axis_len_square = (x_span * x_span) + (y_span * y_span);
   CFX_Matrix matrix;
   matrix.SetReverse(*pObject2Bitmap);
   int total_results = 0;
@@ -85,8 +84,7 @@ static void DrawAxialShading(CFX_DIBitmap* pBitmap,
       FX_FLOAT x = (FX_FLOAT)column, y = (FX_FLOAT)row;
       matrix.Transform(x, y);
       FX_FLOAT scale = FXSYS_Div(
-          FXSYS_Mul(x - start_x, x_span) + FXSYS_Mul(y - start_y, y_span),
-          axis_len_square);
+          ((x - start_x) * x_span) + ((y - start_y) * y_span), axis_len_square);
       int index = (int32_t)(scale * (SHADING_STEPS - 1));
       if (index < 0) {
         if (!bStartExtend) {
@@ -165,16 +163,16 @@ static void DrawRadialShading(CFX_DIBitmap* pBitmap,
         FXARGB_TODIB(FXARGB_MAKE(alpha, FXSYS_round(R * 255),
                                  FXSYS_round(G * 255), FXSYS_round(B * 255)));
   }
-  FX_FLOAT a = FXSYS_Mul(start_x - end_x, start_x - end_x) +
-               FXSYS_Mul(start_y - end_y, start_y - end_y) -
-               FXSYS_Mul(start_r - end_r, start_r - end_r);
+  FX_FLOAT a = ((start_x - end_x) * (start_x - end_x)) +
+               ((start_y - end_y) * (start_y - end_y)) -
+               ((start_r - end_r) * (start_r - end_r));
   int width = pBitmap->GetWidth();
   int height = pBitmap->GetHeight();
   int pitch = pBitmap->GetPitch();
   FX_BOOL bDecreasing = FALSE;
   if (start_r > end_r) {
-    int length = (int)FXSYS_sqrt((FXSYS_Mul(start_x - end_x, start_x - end_x) +
-                                  FXSYS_Mul(start_y - end_y, start_y - end_y)));
+    int length = (int)FXSYS_sqrt((((start_x - end_x) * (start_x - end_x)) +
+                                  ((start_y - end_y) * (start_y - end_y))));
     if (length < start_r - end_r) {
       bDecreasing = TRUE;
     }
@@ -184,17 +182,16 @@ static void DrawRadialShading(CFX_DIBitmap* pBitmap,
     for (int column = 0; column < width; column++) {
       FX_FLOAT x = (FX_FLOAT)column, y = (FX_FLOAT)row;
       matrix.Transform(x, y);
-      FX_FLOAT b = -2 * (FXSYS_Mul(x - start_x, end_x - start_x) +
-                         FXSYS_Mul(y - start_y, end_y - start_y) +
-                         FXSYS_Mul(start_r, end_r - start_r));
-      FX_FLOAT c = FXSYS_Mul(x - start_x, x - start_x) +
-                   FXSYS_Mul(y - start_y, y - start_y) -
-                   FXSYS_Mul(start_r, start_r);
+      FX_FLOAT b = -2 * (((x - start_x) * (end_x - start_x)) +
+                         ((y - start_y) * (end_y - start_y)) +
+                         (start_r * (end_r - start_r)));
+      FX_FLOAT c = ((x - start_x) * (x - start_x)) +
+                   ((y - start_y) * (y - start_y)) - (start_r * start_r);
       FX_FLOAT s;
       if (a == 0) {
         s = FXSYS_Div(-c, b);
       } else {
-        FX_FLOAT b2_4ac = FXSYS_Mul(b, b) - 4 * FXSYS_Mul(a, c);
+        FX_FLOAT b2_4ac = (b * b) - 4 * (a * c);
         if (b2_4ac < 0) {
           continue;
         }

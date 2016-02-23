@@ -246,7 +246,7 @@ void CPDF_TextObject::CalcPositionData(FX_FLOAT* pTextAdvanceX,
         m_nChars == 1 ? (FX_DWORD)(uintptr_t)m_pCharCodes : m_pCharCodes[i];
     if (i > 0) {
       if (charcode == (FX_DWORD)-1) {
-        curpos -= FXSYS_Mul(m_pCharPos[i - 1], fontsize) / 1000;
+        curpos -= (m_pCharPos[i - 1] * fontsize) / 1000;
         continue;
       }
       m_pCharPos[i - 1] = curpos;
@@ -336,7 +336,7 @@ void CPDF_TextObject::CalcPositionData(FX_FLOAT* pTextAdvanceX,
     max_x = max_x * fontsize / 1000;
   } else {
     if (pTextAdvanceX) {
-      *pTextAdvanceX = FXSYS_Mul(curpos, horz_scale);
+      *pTextAdvanceX = curpos * horz_scale;
     }
     if (pTextAdvanceY) {
       *pTextAdvanceY = 0;

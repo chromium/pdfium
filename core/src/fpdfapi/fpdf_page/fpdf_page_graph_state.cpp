@@ -315,13 +315,13 @@ void CPDF_TextState::SetFont(CPDF_Font* pFont) {
 FX_FLOAT CPDF_TextState::GetFontSizeV() const {
   FX_FLOAT* pMatrix = GetMatrix();
   FX_FLOAT unit = FXSYS_sqrt2(pMatrix[1], pMatrix[3]);
-  FX_FLOAT size = FXSYS_Mul(unit, GetFontSize());
+  FX_FLOAT size = unit * GetFontSize();
   return (FX_FLOAT)FXSYS_fabs(size);
 }
 FX_FLOAT CPDF_TextState::GetFontSizeH() const {
   FX_FLOAT* pMatrix = GetMatrix();
   FX_FLOAT unit = FXSYS_sqrt2(pMatrix[0], pMatrix[2]);
-  FX_FLOAT size = FXSYS_Mul(unit, GetFontSize());
+  FX_FLOAT size = unit * GetFontSize();
   return (FX_FLOAT)FXSYS_fabs(size);
 }
 FX_FLOAT CPDF_TextState::GetBaselineAngle() const {
@@ -449,10 +449,10 @@ void CPDF_AllStates::SetLineDash(CPDF_Array* pArray,
                                  FX_FLOAT phase,
                                  FX_FLOAT scale) {
   CFX_GraphStateData* pData = m_GraphState.GetModify();
-  pData->m_DashPhase = FXSYS_Mul(phase, scale);
+  pData->m_DashPhase = phase * scale;
   pData->SetDashCount(pArray->GetCount());
   for (FX_DWORD i = 0; i < pArray->GetCount(); i++) {
-    pData->m_DashArray[i] = FXSYS_Mul(pArray->GetNumberAt(i), scale);
+    pData->m_DashArray[i] = pArray->GetNumberAt(i) * scale;
   }
 }
 void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,

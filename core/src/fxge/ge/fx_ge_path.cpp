@@ -264,14 +264,14 @@ static void _UpdateLineJoinPoints(CFX_FloatRect& rect,
   }
   if (!bStartVert) {
     start_k = FXSYS_Div(middle_y - start_y, middle_x - start_x);
-    start_c = middle_y - FXSYS_Mul(start_k, middle_x);
+    start_c = middle_y - (start_k * middle_x);
     start_len = FXSYS_sqrt2(start_x - middle_x, start_y - middle_y);
     start_dc = (FX_FLOAT)FXSYS_fabs(
         FXSYS_MulDiv(half_width, start_len, start_x - middle_x));
   }
   if (!bEndVert) {
     end_k = FXSYS_Div(end_y - middle_y, end_x - middle_x);
-    end_c = middle_y - FXSYS_Mul(end_k, middle_x);
+    end_c = middle_y - (end_k * middle_x);
     end_len = FXSYS_sqrt2(end_x - middle_x, end_y - middle_y);
     end_dc = (FX_FLOAT)FXSYS_fabs(
         FXSYS_MulDiv(half_width, end_len, end_x - middle_x));
@@ -284,10 +284,10 @@ static void _UpdateLineJoinPoints(CFX_FloatRect& rect,
       outside_x -= half_width;
     }
     FX_FLOAT outside_y;
-    if (start_y < FXSYS_Mul(end_k, start_x) + end_c) {
-      outside_y = FXSYS_Mul(end_k, outside_x) + end_c + end_dc;
+    if (start_y < (end_k * start_x) + end_c) {
+      outside_y = (end_k * outside_x) + end_c + end_dc;
     } else {
-      outside_y = FXSYS_Mul(end_k, outside_x) + end_c - end_dc;
+      outside_y = (end_k * outside_x) + end_c - end_dc;
     }
     rect.UpdateRect(outside_x, outside_y);
     return;
@@ -300,10 +300,10 @@ static void _UpdateLineJoinPoints(CFX_FloatRect& rect,
       outside_x -= half_width;
     }
     FX_FLOAT outside_y;
-    if (end_y < FXSYS_Mul(start_k, end_x) + start_c) {
-      outside_y = FXSYS_Mul(start_k, outside_x) + start_c + start_dc;
+    if (end_y < (start_k * end_x) + start_c) {
+      outside_y = (start_k * outside_x) + start_c + start_dc;
     } else {
-      outside_y = FXSYS_Mul(start_k, outside_x) + start_c - start_dc;
+      outside_y = (start_k * outside_x) + start_c - start_dc;
     }
     rect.UpdateRect(outside_x, outside_y);
     return;
@@ -320,19 +320,19 @@ static void _UpdateLineJoinPoints(CFX_FloatRect& rect,
     return;
   }
   FX_FLOAT start_outside_c = start_c;
-  if (end_y < FXSYS_Mul(start_k, end_x) + start_c) {
+  if (end_y < (start_k * end_x) + start_c) {
     start_outside_c += start_dc;
   } else {
     start_outside_c -= start_dc;
   }
   FX_FLOAT end_outside_c = end_c;
-  if (start_y < FXSYS_Mul(end_k, start_x) + end_c) {
+  if (start_y < (end_k * start_x) + end_c) {
     end_outside_c += end_dc;
   } else {
     end_outside_c -= end_dc;
   }
   FX_FLOAT join_x = FXSYS_Div(end_outside_c - start_outside_c, start_k - end_k);
-  FX_FLOAT join_y = FXSYS_Mul(start_k, join_x) + start_outside_c;
+  FX_FLOAT join_y = (start_k * join_x) + start_outside_c;
   rect.UpdateRect(join_x, join_y);
 }
 CFX_FloatRect CFX_PathData::GetBoundingBox(FX_FLOAT line_width,

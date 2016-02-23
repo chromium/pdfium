@@ -1351,12 +1351,10 @@ void CPDF_StreamContentParser::AddTextObject(CFX_ByteString* pStrs,
   if (fInitKerning != 0) {
     if (!pFont->IsVertWriting()) {
       m_pCurStates->m_TextX -=
-          FXSYS_Mul(fInitKerning, m_pCurStates->m_TextState.GetFontSize()) /
-          1000;
+          (fInitKerning * m_pCurStates->m_TextState.GetFontSize()) / 1000;
     } else {
       m_pCurStates->m_TextY -=
-          FXSYS_Mul(fInitKerning, m_pCurStates->m_TextState.GetFontSize()) /
-          1000;
+          (fInitKerning * m_pCurStates->m_TextState.GetFontSize()) / 1000;
     }
   }
   if (nsegs == 0) {
@@ -1396,13 +1394,11 @@ void CPDF_StreamContentParser::AddTextObject(CFX_ByteString* pStrs,
   if (pKerning && pKerning[nsegs - 1] != 0) {
     if (!pFont->IsVertWriting()) {
       m_pCurStates->m_TextX -=
-          FXSYS_Mul(pKerning[nsegs - 1],
-                    m_pCurStates->m_TextState.GetFontSize()) /
+          (pKerning[nsegs - 1] * m_pCurStates->m_TextState.GetFontSize()) /
           1000;
     } else {
       m_pCurStates->m_TextY -=
-          FXSYS_Mul(pKerning[nsegs - 1],
-                    m_pCurStates->m_TextState.GetFontSize()) /
+          (pKerning[nsegs - 1] * m_pCurStates->m_TextState.GetFontSize()) /
           1000;
     }
   }
@@ -1430,8 +1426,7 @@ void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
   if (nsegs == 0) {
     for (int i = 0; i < n; i++) {
       m_pCurStates->m_TextX -=
-          FXSYS_Mul(pArray->GetNumberAt(i),
-                    m_pCurStates->m_TextState.GetFontSize()) /
+          (pArray->GetNumberAt(i) * m_pCurStates->m_TextState.GetFontSize()) /
           1000;
     }
     return;

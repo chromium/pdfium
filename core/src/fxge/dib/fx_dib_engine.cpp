@@ -274,10 +274,10 @@ CStretchEngine::CStretchEngine(IFX_ScanlineComposer* pDestBitmap,
   double scale_y = FXSYS_Div((FX_FLOAT)(m_SrcHeight), (FX_FLOAT)(m_DestHeight));
   double base_x = m_DestWidth > 0 ? 0.0f : (FX_FLOAT)(m_DestWidth);
   double base_y = m_DestHeight > 0 ? 0.0f : (FX_FLOAT)(m_DestHeight);
-  double src_left = FXSYS_Mul(scale_x, (FX_FLOAT)(clip_rect.left) + base_x);
-  double src_right = FXSYS_Mul(scale_x, (FX_FLOAT)(clip_rect.right) + base_x);
-  double src_top = FXSYS_Mul(scale_y, (FX_FLOAT)(clip_rect.top) + base_y);
-  double src_bottom = FXSYS_Mul(scale_y, (FX_FLOAT)(clip_rect.bottom) + base_y);
+  double src_left = scale_x * ((FX_FLOAT)(clip_rect.left) + base_x);
+  double src_right = scale_x * ((FX_FLOAT)(clip_rect.right) + base_x);
+  double src_top = scale_y * ((FX_FLOAT)(clip_rect.top) + base_y);
+  double src_bottom = scale_y * ((FX_FLOAT)(clip_rect.bottom) + base_y);
   if (src_left > src_right) {
     double temp = src_left;
     src_left = src_right;

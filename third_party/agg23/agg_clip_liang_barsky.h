@@ -85,21 +85,21 @@ inline unsigned clip_liang_barsky(T x1, T y1, T x2, T y2,
                 if(tin2 <= tout1) {
                     if(tin2 > 0) {
                         if(tinx > tiny) {
-                            *x++ = (T)xin;
-                            *y++ = (T)(y1 + FXSYS_Mul(deltay, tinx));
+                          *x++ = (T)xin;
+                          *y++ = (T)(y1 + (deltay * tinx));
                         } else {
-                            *x++ = (T)(x1 + FXSYS_Mul(deltax, tiny));
-                            *y++ = (T)yin;
+                          *x++ = (T)(x1 + (deltax * tiny));
+                          *y++ = (T)yin;
                         }
                         ++np;
                     }
                     if(tout1 < 1.0f) {
                         if(toutx < touty) {
-                            *x++ = (T)xout;
-                            *y++ = (T)(y1 + FXSYS_Mul(deltay, toutx));
+                          *x++ = (T)xout;
+                          *y++ = (T)(y1 + (deltay * toutx));
                         } else {
-                            *x++ = (T)(x1 + FXSYS_Mul(deltax, touty));
-                            *y++ = (T)yout;
+                          *x++ = (T)(x1 + (deltax * touty));
+                          *y++ = (T)yout;
                         }
                     } else {
                         *x++ = x2;

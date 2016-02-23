@@ -1087,7 +1087,7 @@ static FX_BOOL IsSmallTriangle(PointF* points,
     }
     FX_FLOAT dx = x1 - x2;
     FX_FLOAT dy = y1 - y2;
-    FX_FLOAT distance_square = FXSYS_Mul(dx, dx) + FXSYS_Mul(dy, dy);
+    FX_FLOAT distance_square = (dx * dx) + (dy * dy);
     if (distance_square < (1.0f * 2 + 1.0f / 4)) {
       v1 = i;
       v2 = pair1;

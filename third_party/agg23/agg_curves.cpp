@@ -61,8 +61,8 @@ void curve4_div::recursive_bezier(FX_FLOAT x1, FX_FLOAT y1,
     FX_FLOAT y1234 = (y123 + y234) / 2;
     FX_FLOAT dx = x4 - x1;
     FX_FLOAT dy = y4 - y1;
-    FX_FLOAT d2 = FXSYS_fabs(FXSYS_Mul(x2 - x4, dy) - FXSYS_Mul(y2 - y4, dx));
-    FX_FLOAT d3 = FXSYS_fabs(FXSYS_Mul(x3 - x4, dy) - FXSYS_Mul(y3 - y4, dx));
+    FX_FLOAT d2 = FXSYS_fabs(((x2 - x4) * dy) - ((y2 - y4) * dx));
+    FX_FLOAT d3 = FXSYS_fabs(((x3 - x4) * dy) - ((y3 - y4) * dx));
     switch((int(d2 > curve_collinearity_epsilon) << 1) +
             int(d3 > curve_collinearity_epsilon)) {
         case 0:
@@ -75,22 +75,22 @@ void curve4_div::recursive_bezier(FX_FLOAT x1, FX_FLOAT y1,
             }
             break;
         case 1:
-            if(FXSYS_Mul(d3, d3) <= FXSYS_Mul(m_distance_tolerance_square,
-                                              FXSYS_Mul(dx, dx) + FXSYS_Mul(dy, dy))) {
+          if ((d3 * d3) <=
+              (m_distance_tolerance_square * ((dx * dx) + (dy * dy)))) {
                 m_points.add(point_type(x23, y23, path_flags_jr));
                 return;
             }
             break;
         case 2:
-            if(FXSYS_Mul(d2, d2) <= FXSYS_Mul(m_distance_tolerance_square,
-                                              FXSYS_Mul(dx, dx) + FXSYS_Mul(dy, dy))) {
+          if ((d2 * d2) <=
+              (m_distance_tolerance_square * ((dx * dx) + (dy * dy)))) {
                 m_points.add(point_type(x23, y23, path_flags_jr));
                 return;
             }
             break;
         case 3:
-            if(FXSYS_Mul(d2 + d3, d2 + d3) <= FXSYS_Mul(m_distance_tolerance_square,
-                    FXSYS_Mul(dx, dx) + FXSYS_Mul(dy, dy))) {
+          if (((d2 + d3) * (d2 + d3)) <=
+              (m_distance_tolerance_square * ((dx * dx) + (dy * dy)))) {
                 m_points.add(point_type(x23, y23, path_flags_jr));
                 return;
             }
