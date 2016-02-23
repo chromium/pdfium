@@ -251,19 +251,19 @@ void CXFA_LayoutPageMgr::SubmitContentItem(
   }
 }
 FX_FLOAT CXFA_LayoutPageMgr::GetAvailHeight() {
+  CXFA_ContainerLayoutItem* pLayoutItem =
+      GetCurrentContainerRecord()->pCurContentArea;
+  if (!pLayoutItem || !pLayoutItem->m_pFormNode)
+    return 0.0f;
   FX_FLOAT fAvailHeight =
-      GetCurrentContainerRecord()
-          ->pCurContentArea->m_pFormNode->GetMeasure(XFA_ATTRIBUTE_H)
-          .ToUnit(XFA_UNIT_Pt);
-  if (fAvailHeight < XFA_LAYOUT_FLOAT_PERCISION) {
-    if (m_pCurrentContainerRecord ==
-        m_rgProposedContainerRecord.GetHeadPosition()) {
-      fAvailHeight = 0;
-    } else {
-      fAvailHeight = XFA_LAYOUT_FLOAT_MAX;
-    }
+      pLayoutItem->m_pFormNode->GetMeasure(XFA_ATTRIBUTE_H).ToUnit(XFA_UNIT_Pt);
+  if (fAvailHeight >= XFA_LAYOUT_FLOAT_PERCISION)
+    return fAvailHeight;
+  if (m_pCurrentContainerRecord ==
+      m_rgProposedContainerRecord.GetHeadPosition()) {
+    return 0.0f;
   }
-  return fAvailHeight;
+  return XFA_LAYOUT_FLOAT_MAX;
 }
 static CXFA_Node* XFA_ResolveBreakTarget(CXFA_Node* pPageSetRoot,
                                          FX_BOOL bNewExprStyle,
