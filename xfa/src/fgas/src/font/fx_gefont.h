@@ -54,6 +54,7 @@ class CFX_GEFont : public IFX_Font {
     m_dwLogFontStyle = dwLogFontStyle;
   };
 #endif
+
  protected:
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
   FX_BOOL m_bUseLogFontStyle;

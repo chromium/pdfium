@@ -37,9 +37,7 @@ CBC_QRAlignmentPatternFinder::CBC_QRAlignmentPatternFinder(
       m_startY(startY),
       m_width(width),
       m_height(height),
-      m_moduleSize(moduleSize)
-
-{
+      m_moduleSize(moduleSize) {
   m_crossCheckStateCount.SetSize(3);
 }
 CBC_QRAlignmentPatternFinder::~CBC_QRAlignmentPatternFinder() {

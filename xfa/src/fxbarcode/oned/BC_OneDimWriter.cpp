@@ -36,7 +36,6 @@ CBC_OneDimWriter::CBC_OneDimWriter() {
   m_bCalcChecksum = FALSE;
   m_pFont = NULL;
   m_fFontSize = 10;
-  ;
   m_iFontStyle = 0;
   m_fontColor = 0xff000000;
   m_iContentLen = 0;

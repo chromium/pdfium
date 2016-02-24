@@ -103,7 +103,8 @@ struct tag_bmp_decompress_struct {
   FX_DWORD mask_blue;
 #endif
 
-  FX_BOOL			(*_bmp_get_data_position_fn)(bmp_decompress_struct_p bmp_ptr, FX_DWORD cur_pos);
+  FX_BOOL (*_bmp_get_data_position_fn)(bmp_decompress_struct_p bmp_ptr,
+                                       FX_DWORD cur_pos);
   void (*_bmp_get_row_fn)(bmp_decompress_struct_p bmp_ptr,
                           int32_t row_num,
                           uint8_t* row_buf);

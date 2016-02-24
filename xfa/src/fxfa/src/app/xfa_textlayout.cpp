@@ -1460,11 +1460,10 @@ FX_BOOL CXFA_TextLayout::LoadRichText(IFDE_XMLNode* pXMLNode,
             wsText = 0x00B7 + FX_WSTRC(L"  ");
           }
         } else if (!bContentNode) {
-          if (iTabCount > 0)
-            while (iTabCount-- > 0) {
+          if (iTabCount > 0) {
+            while (iTabCount-- > 0)
               wsText += L'\t';
-            }
-          else {
+          } else {
             m_textParser.GetEmbbedObj(m_pTextProvider, pXMLNode, wsText);
           }
         }
@@ -1485,9 +1484,7 @@ FX_BOOL CXFA_TextLayout::LoadRichText(IFDE_XMLNode* pXMLNode,
           } else if (wsText.GetLength() > 0 &&
                      (0x20 == wsText.GetAt(wsText.GetLength() - 1))) {
             m_pLoader->m_dwFlags |= XFA_LOADERCNTXTFLG_FILTERSPACE;
-          } else if (wsText.GetLength() == 0)
-            ;
-          else {
+          } else if (wsText.GetLength() != 0) {
             m_pLoader->m_dwFlags &= ~XFA_LOADERCNTXTFLG_FILTERSPACE;
           }
         }

@@ -42,8 +42,10 @@ CFDE_TxtEdtBlock::CFDE_TxtEdtBlock(CFDE_TxtEdtEngine* pEngine,
             wsFix.Empty();
           }
           int32_t nPos = i - 1;
-          while (lpBuf[i++] != L')')
-            ;
+          while (lpBuf[i++] != L')') {
+            continue;
+          }
+
           i++;
           CFX_WideStringC wsField(lpBuf + nPos, i - nPos);
           CFDE_TxtEdtField* pField = CFDE_TxtEdtField::Create(wsField, j, this);

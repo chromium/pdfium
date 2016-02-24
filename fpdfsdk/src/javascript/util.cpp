@@ -53,23 +53,23 @@ const stru_TbConvert fcTable[] = {
     {L"mmmm", L"%B"},
     {L"mmm", L"%b"},
     {L"mm", L"%m"},
-    //"m"
+    // "m"
     {L"dddd", L"%A"},
     {L"ddd", L"%a"},
     {L"dd", L"%d"},
-    //"d",   "%w",
+    // "d",   "%w",
     {L"yyyy", L"%Y"},
     {L"yy", L"%y"},
     {L"HH", L"%H"},
-    //"H"
+    // "H"
     {L"hh", L"%I"},
-    //"h"
+    // "h"
     {L"MM", L"%M"},
-    //"M"
+    // "M"
     {L"ss", L"%S"},
-    //"s
+    // "s
     {L"TT", L"%p"},
-//"t"
+// "t"
 #if defined(_WIN32)
     {L"tt", L"%p"},
     {L"h", L"%#I"},

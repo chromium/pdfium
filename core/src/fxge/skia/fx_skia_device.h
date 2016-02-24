@@ -26,16 +26,14 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
   virtual FX_BOOL SetClip_PathFill(
       const CFX_PathData* pPathData,     // path info
       const CFX_Matrix* pObject2Device,  // optional transformation
-      int fill_mode                      // fill mode, WINDING or ALTERNATE
-      );
+      int fill_mode);                    // fill mode, WINDING or ALTERNATE
 
   /** Set clipping path using stroked region */
   virtual FX_BOOL SetClip_PathStroke(
       const CFX_PathData* pPathData,     // path info
       const CFX_Matrix* pObject2Device,  // optional transformation
       const CFX_GraphStateData*
-          pGraphState  // graphic state, for pen attributes
-      );
+          pGraphState);  // graphic state, for pen attributes
 
   /** Draw a path */
   virtual FX_BOOL DrawPath(const CFX_PathData* pPathData,

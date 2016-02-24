@@ -134,9 +134,11 @@ class CFX_Font {
   FX_BOOL m_bVertical;
 
 #ifdef PDF_ENABLE_XFA
+
  protected:
   FX_BOOL m_bLogic;
   void* m_pOwnedStream;
+
 #endif  // PDF_ENABLE_XFA
 };
 

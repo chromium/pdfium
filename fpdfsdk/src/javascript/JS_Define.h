@@ -44,7 +44,7 @@ struct JSMethodSpec {
 #define END_JS_STATIC_CONST() \
   { 0, 0, 0, 0 }              \
   }                           \
-  ;
+  ;  // NOLINT
 
 #define BEGIN_JS_STATIC_PROP(js_class_name) \
   JSPropertySpec js_class_name::JS_Class_Properties[] = {
@@ -58,7 +58,7 @@ struct JSMethodSpec {
 #define END_JS_STATIC_PROP() \
   { 0, 0, 0 }                \
   }                          \
-  ;
+  ;  // NOLINT
 
 #define BEGIN_JS_STATIC_METHOD(js_class_name) \
   JSMethodSpec js_class_name::JS_Class_Methods[] = {
@@ -69,7 +69,7 @@ struct JSMethodSpec {
 #define END_JS_STATIC_METHOD() \
   { 0, 0 }                     \
   }                            \
-  ;
+  ;  // NOLINT
 
 template <class C,
           FX_BOOL (C::*M)(IJS_Context*, CJS_PropValue&, CFX_WideString&)>

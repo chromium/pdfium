@@ -955,7 +955,8 @@ FX_BOOL _bmp_encode_image(bmp_compress_struct_p bmp_ptr,
     case BMP_RLE4:
       _bmp_encode_rle4(bmp_ptr, dst_buf, dst_size);
       break;
-    default:;
+    default:
+      break;
   }
   bmp_ptr->file_header.bfSize = dst_size;
   WriteFileHeader(&bmp_ptr->file_header, dst_buf);

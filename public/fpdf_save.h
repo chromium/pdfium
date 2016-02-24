@@ -39,7 +39,6 @@ typedef struct FPDF_FILEWRITE_ {
   int (*WriteBlock)(struct FPDF_FILEWRITE_* pThis,
                     const void* pData,
                     unsigned long size);
-
 } FPDF_FILEWRITE;
 
 /** @brief Incremental. */

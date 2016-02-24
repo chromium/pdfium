@@ -19,6 +19,7 @@ typedef struct FXJSE_HRUNTIME_ { void* pData; } * FXJSE_HRUNTIME;
 typedef struct FXJSE_HCONTEXT_ { void* pData; } * FXJSE_HCONTEXT;
 typedef struct FXJSE_HCLASS_ { void* pData; } * FXJSE_HCLASS;
 typedef struct FXJSE_HVALUE_ { void* pData; } * FXJSE_HVALUE;
+// NOLINTNEXTLINE
 typedef struct FXJSE_HOBJECT_ : public FXJSE_HVALUE_{} * FXJSE_HOBJECT;
 typedef double FXJSE_DOUBLE;
 

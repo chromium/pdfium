@@ -424,11 +424,13 @@ void* CCodec_IccModule::CreateProfile(ICodec_IccModule::IccParam* pIccParam,
         case IccCS_Gray:
           text.Format("%lf", pIccParam->Gamma);
           break;
-        default:;
+        default:
+          break;
       }
       MD5ComputeID(text.GetBuffer(0), text.GetLength(), ID);
       break;
-    default:;
+    default:
+      break;
   }
   key.AppendBlock(ID, 16);
   CFX_ByteString ProfileKey(key.GetBuffer(), key.GetSize());

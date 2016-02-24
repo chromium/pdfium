@@ -659,19 +659,22 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
     }
   }
   CFX_Matrix matrix;
-  if (pMatrix) {
+  if (pMatrix)
     matrix = *pMatrix;
-  }
+
   matrix.e = origin_x;
   matrix.f = origin_y;
-  if (pFont->GetFontType() == PDFFONT_TYPE3)
-    ;
-  else if (stroke_argb == 0) {
-    DrawNormalText(pDevice, nChars, pCharCodes, pCharPos, pFont, font_size,
-                   &matrix, fill_argb, pOptions);
-  } else
-    DrawTextPath(pDevice, nChars, pCharCodes, pCharPos, pFont, font_size,
-                 &matrix, NULL, pGraphState, fill_argb, stroke_argb, NULL);
+
+  if (pFont->GetFontType() != PDFFONT_TYPE3) {
+    if (stroke_argb == 0) {
+      DrawNormalText(pDevice, nChars, pCharCodes, pCharPos, pFont, font_size,
+                     &matrix, fill_argb, pOptions);
+    } else {
+      DrawTextPath(pDevice, nChars, pCharCodes, pCharPos, pFont, font_size,
+                   &matrix, NULL, pGraphState, fill_argb, stroke_argb, NULL);
+    }
+  }
+
   if (nChars > 1) {
     FX_Free(pCharCodes);
     FX_Free(pCharPos);

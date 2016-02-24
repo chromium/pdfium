@@ -5,7 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 // NOTE: External docs refer to this file as "fpdfview.h", so do not rename
-// despite lack of consitency with other public files.
+// despite lack of consistency with other public files.
 
 #ifndef PUBLIC_FPDFVIEW_H_
 #define PUBLIC_FPDFVIEW_H_
@@ -15,7 +15,7 @@
 #endif
 
 #ifdef PDF_ENABLE_XFA
-//  TODO: remove the #define when XFA is officially in pdfium
+// TODO: remove the #define when XFA is officially in pdfium
 #define PDF_USE_XFA
 #endif  // PDF_ENABLE_XFA
 
@@ -348,7 +348,6 @@ typedef struct _FPDF_FILEHANDLER {
    * @return 0 for success, other value for failure.
    */
   FPDF_RESULT (*Truncate)(FPDF_LPVOID clientData, FPDF_DWORD size);
-
 } FPDF_FILEHANDLER, *FPDF_LPFILEHANDLER;
 
 #endif

@@ -32,19 +32,8 @@ LINT_FILTERS = [
   '-runtime/printf',
   '-runtime/references',
   '-runtime/threadsafe_fn',
-  '-whitespace/blank_line',
-  '-whitespace/braces',
-  '-whitespace/comments',
-  '-whitespace/end_of_line',
-  '-whitespace/ending_newline',
   '-whitespace/indent',
   '-whitespace/line_length',
-  '-whitespace/newline',
-  '-whitespace/operators',
-  '-whitespace/parens',
-  '-whitespace/semicolon',
-  '-whitespace/tab',
-  '-whitespace/todo',
 ]
 
 def CheckChangeOnUpload(input_api, output_api):

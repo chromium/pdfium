@@ -183,7 +183,7 @@ DLLEXPORT int STDCALL FPDFText_GetBoundedText(FPDF_TEXTPAGE text_page,
 }
 
 // Search
-//-1 for end
+// -1 for end
 DLLEXPORT FPDF_SCHHANDLE STDCALL FPDFText_FindStart(FPDF_TEXTPAGE text_page,
                                                     FPDF_WIDESTRING findwhat,
                                                     unsigned long flags,

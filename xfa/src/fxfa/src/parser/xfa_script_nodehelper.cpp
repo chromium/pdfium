@@ -307,8 +307,8 @@ FX_BOOL CXFA_NodeHelper::XFA_CreateNode_ForCondition(
     CFX_WideString& wsCondition) {
   int32_t iLen = wsCondition.GetLength();
   CFX_WideString wsIndex = FX_WSTRC(L"0");
-  ;
   FX_BOOL bAll = FALSE;
+
   if (iLen == 0) {
     m_iCreateFlag = XFA_RESOLVENODE_RSTYPE_CreateNodeOne;
     return FALSE;

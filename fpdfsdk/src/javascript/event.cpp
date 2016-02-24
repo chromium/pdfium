@@ -172,32 +172,17 @@ FX_BOOL event::richChange(IJS_Context* cc,
                           CJS_PropValue& vp,
                           CFX_WideString& sError) {
   return TRUE;
-  if (vp.IsSetting()) {
-  } else {
-    ;
-  }
-  return TRUE;
 }
 
 FX_BOOL event::richChangeEx(IJS_Context* cc,
                             CJS_PropValue& vp,
                             CFX_WideString& sError) {
   return TRUE;
-  if (vp.IsSetting()) {
-  } else {
-    ;
-  }
-  return TRUE;
 }
 
 FX_BOOL event::richValue(IJS_Context* cc,
                          CJS_PropValue& vp,
                          CFX_WideString& sError) {
-  return TRUE;
-  if (vp.IsSetting()) {
-  } else {
-    ;
-  }
   return TRUE;
 }
 

@@ -1258,7 +1258,8 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::LoadImageInfo(
     case FXCODEC_STATUS_DECODE_READY:
     case FXCODEC_STATUS_DECODE_TOBECONTINUE:
       return FXCODEC_STATUS_ERROR;
-    default:;
+    default:
+      break;
   }
   if (pFile == NULL) {
     m_status = FXCODEC_STATUS_ERR_PARAMS;
@@ -1821,7 +1822,8 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::GetFrames(int32_t& frames,
         return m_status = FXCODEC_STATUS_ERROR;
       }
     } break;
-    default:;
+    default:
+      break;
   }
   return FXCODEC_STATUS_ERROR;
 }
@@ -2219,7 +2221,8 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause) {
           case FXDIB_Argb:
             pFormatBitmap = pClipBitmap;
             break;
-          default:;
+          default:
+            break;
         }
         switch (m_pDeviceBitmap->GetFormat()) {
           case FXDIB_8bppRgb:
@@ -2257,7 +2260,8 @@ FXCODEC_STATUS CCodec_ProgressiveDecoder::ContinueDecode(IFX_Pause* pPause) {
               }
             }
           } break;
-          default:;
+          default:
+            break;
         }
         if (pClipBitmap != pFormatBitmap) {
           delete pClipBitmap;

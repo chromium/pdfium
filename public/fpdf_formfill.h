@@ -305,7 +305,6 @@ typedef struct _IPDF_JsPlatform {
 
   /* Version 3. */
   /* Version 3 moves m_Isolate and m_v8EmbedderSlot to FPDF_LIBRARY_CONFIG. */
-
 } IPDF_JSPLATFORM;
 
 // Flags for Cursor type
@@ -1031,7 +1030,6 @@ typedef struct _FPDF_FORMFILLINFO {
   **/
   FPDF_BOOL   (*FFI_PutRequestURL)(struct _FPDF_FORMFILLINFO* pThis, FPDF_WIDESTRING wsURL, FPDF_WIDESTRING wsData, FPDF_WIDESTRING wsEncode);
 #endif  // PDF_ENABLE_XFA
-
 } FPDF_FORMFILLINFO;
 
 /**

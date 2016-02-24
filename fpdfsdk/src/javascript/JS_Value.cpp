@@ -274,12 +274,6 @@ FX_BOOL CJS_Value::ConvertToArray(CJS_Array& array) const {
 }
 
 FX_BOOL CJS_Value::ConvertToDate(CJS_Date& date) const {
-  // 	if (GetType() == VT_date)
-  // 	{
-  // 		date = (double)(*this);
-  // 		return TRUE;
-  // 	}
-
   if (IsDateObject()) {
     date.Attach(m_pValue);
     return TRUE;

@@ -94,7 +94,7 @@ int32_t CBC_PDF417ECErrorCorrection::decode(CFX_Int32Array& received,
   }
   for (int32_t i = 0; i < errorLocations->GetSize(); i++) {
     int32_t log = m_field->log(errorLocations->GetAt(i), e);
-    ;
+
     BC_EXCEPTION_CHECK_ReturnValue(e, -1);
     int32_t position = received.GetSize() - 1 - log;
     if (position < 0) {

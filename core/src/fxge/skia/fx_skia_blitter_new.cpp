@@ -4,7 +4,6 @@
 
 #include "core/include/fxge/fx_ge.h"
 
-//#define _SKIA_SUPPORT_
 #if defined(_SKIA_SUPPORT_)
 #include "SkBlitter.h"
 #include "core/include/fxcodec/fx_codec.h"
@@ -390,17 +389,7 @@ void CFX_SkiaRenderer::CompositeSpanARGB_2(uint8_t* dest_scan,
     FXSYS_memset(dest_scan, m_Color, (col_end - col_start) << 2);
     return;
   }
-  int src_alpha;
-#if 0
-        if (m_bFullCover) {
-            if (m_Alpha == 255) {
-                FXSYS_memset(dest_scan, m_Color, (col_end - col_start)<<2);
-                return;
-            }
-        }
-        else
-#endif
-  src_alpha = m_Alpha * cover_scan / 255;
+  int src_alpha = m_Alpha * cover_scan / 255;
   for (int col = col_start; col < col_end; col++) {
     // Dest format: Argb
     // calculate destination alpha (it's union of source and dest alpha)
@@ -691,13 +680,7 @@ void CFX_SkiaRenderer::CompositeSpanRGB32_2(uint8_t* dest_scan,
     FXSYS_memset(dest_scan, m_Color, (col_end - col_start) << 2);
     return;
   }
-  int src_alpha;
-#if 0
-        if (m_bFullCover)
-            src_alpha = m_Alpha;
-        else
-#endif
-  src_alpha = m_Alpha * cover_scan / 255;
+  int src_alpha = m_Alpha * cover_scan / 255;
   for (int col = col_start; col < col_end; col++) {
     // Dest format:  Rgb32
     *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, m_Blue, src_alpha);
@@ -735,15 +718,6 @@ void CFX_SkiaRenderer::CompositeSpanRGB32_3(uint8_t* dest_scan,
   }
   int src_alpha = m_Alpha;
   for (int col = col_start; col < col_end; col++) {
-#if 0
-            if (m_bFullCover) {
-                *dest_scan++ = FXDIB_ALPHA_MERGE(*ori_scan++, m_Blue, src_alpha);
-                *dest_scan++ = FXDIB_ALPHA_MERGE(*ori_scan++, m_Green, src_alpha);
-                *dest_scan = FXDIB_ALPHA_MERGE(*ori_scan, m_Red, src_alpha);
-                dest_scan += 2; ori_scan += 2;
-                continue;
-            }
-#endif
     int b = FXDIB_ALPHA_MERGE(*ori_scan++, m_Blue, src_alpha);
     int g = FXDIB_ALPHA_MERGE(*ori_scan++, m_Green, src_alpha);
     int r = FXDIB_ALPHA_MERGE(*ori_scan, m_Red, src_alpha);
@@ -954,13 +928,7 @@ void CFX_SkiaRenderer::CompositeSpanRGB24_2(uint8_t* dest_scan,
   if (col_end < col_start)
     return;  // do nothing.
   dest_scan += (col_start << 1) + col_start;
-  int src_alpha;
-#if 0
-        if (m_bFullCover)
-            src_alpha = m_Alpha;
-        else
-#endif
-  src_alpha = m_Alpha * cover_scan / 255;
+  int src_alpha = m_Alpha * cover_scan / 255;
   if (src_alpha == 255) {
     for (int col = col_start; col < col_end; col++) {
       *dest_scan++ = m_Blue;
@@ -1011,14 +979,6 @@ void CFX_SkiaRenderer::CompositeSpanRGB24_3(uint8_t* dest_scan,
     return;
   }
   for (int col = col_start; col < col_end; col++) {
-#if 0
-            if (m_bFullCover) {
-                *dest_scan++ = FXDIB_ALPHA_MERGE(*ori_scan++, m_Blue, m_Alpha);
-                *dest_scan++ = FXDIB_ALPHA_MERGE(*ori_scan++, m_Green, m_Alpha);
-                *dest_scan++ = FXDIB_ALPHA_MERGE(*ori_scan++, m_Red, m_Alpha);
-                continue;
-            }
-#endif
     int b = FXDIB_ALPHA_MERGE(*ori_scan++, m_Blue, m_Alpha);
     int g = FXDIB_ALPHA_MERGE(*ori_scan++, m_Green, m_Alpha);
     int r = FXDIB_ALPHA_MERGE(*ori_scan++, m_Red, m_Alpha);
@@ -1530,8 +1490,7 @@ FX_BOOL CFX_SkiaRenderer::Init(
     FX_BOOL bFullCover,
     FX_BOOL bRgbByteOrder,
     int alpha_flag,
-    void* pIccTransform)  // The alpha flag must be fill_flag if exist.
-{
+    void* pIccTransform) {  // The alpha flag must be fill_flag if exist.
   m_pDevice = pDevice;
   m_pClipRgn = pClipRgn;
   m_bRgbByteOrder = bRgbByteOrder;
@@ -1603,7 +1562,7 @@ FX_BOOL CFX_SkiaRenderer::Init(
   } else {
     if (bDeviceCMYK) {  // Cmyk(a) Device
       ASSERT(!m_bRgbByteOrder);
-      // TODO... opt for cmyk
+      // TODO ... opt for cmyk
       composite_span = &CFX_SkiaRenderer::CompositeSpanCMYK;
       if (bObjectCMYK) {
         m_Color = FXCMYK_TODIB(color);
@@ -1729,7 +1688,7 @@ FX_BOOL CFX_SkiaRenderer::Init(
     case 12:
     case 13:
     case 15:
-      // TODO...
+      // TODO ...
       break;
     case 10:
       composite_span = &CFX_SkiaRenderer::CompositeSpanRGB24_10;

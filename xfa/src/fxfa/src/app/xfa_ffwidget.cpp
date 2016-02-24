@@ -1060,7 +1060,6 @@ CFX_DIBitmap* XFA_LoadImageFromBuffer(IFX_FileRead* pImageFileRead,
       dibAttr.m_nXDPI = (int32_t)(dibAttr.m_nXDPI / (FX_FLOAT)100 * 2.54f);
       dibAttr.m_nYDPI = (int32_t)(dibAttr.m_nYDPI / (FX_FLOAT)100 * 2.54f);
       break;
-      ;
     default:
       break;
   }

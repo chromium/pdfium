@@ -40,15 +40,31 @@ FXJSE_HRUNTIME FXJSE_Context_GetRuntime(FXJSE_HCONTEXT hContext) {
                   : NULL;
 }
 static const FX_CHAR* szCompatibleModeScripts[] = {
-    "(function (global, list) { 'use strict'; var objname; for (objname in list) { var globalobj = global[objname];\n\
-			if (globalobj) { list[objname].forEach( function (name) { if (!globalobj[name]) { Object.defineProperty(globalobj, name, {writable: true, enumerable: false, value: \n\
-			(function (obj) {\n\
-	if (arguments.length === 0) {\n\
-		throw new TypeError('missing argument 0 when calling function ' + objname + '.' + name);\n\
-	}\n\
-	return globalobj.prototype[name].apply(obj, Array.prototype.slice.call(arguments, 1));\n\
-})});}});}}}(this, {String: ['substr', 'toUpperCase']}));",
-};
+    "(function(global, list) {\n"
+    "  'use strict';\n"
+    "  var objname;\n"
+    "  for (objname in list) {\n"
+    "    var globalobj = global[objname];\n"
+    "    if (globalobj) {\n"
+    "      list[objname].forEach(function(name) {\n"
+    "        if (!globalobj[name]) {\n"
+    "          Object.defineProperty(globalobj, name, {\n"
+    "            writable: true,\n"
+    "            enumerable: false,\n"
+    "            value: (function(obj) {\n"
+    "              if (arguments.length === 0) {\n"
+    "                throw new TypeError('missing argument 0 when calling "
+    "                    function ' + objname + '.' + name);\n"
+    "              }\n"
+    "              return globalobj.prototype[name].apply(obj, "
+    "                  Array.prototype.slice.call(arguments, 1));\n"
+    "            })\n"
+    "          });\n"
+    "        }\n"
+    "      });\n"
+    "    }\n"
+    "  }\n"
+    "}(this, {String: ['substr', 'toUpperCase']}));"};
 void FXJSE_Context_EnableCompatibleMode(FXJSE_HCONTEXT hContext,
                                         FX_DWORD dwCompatibleFlags) {
   for (uint32_t i = 0; i < (uint32_t)FXJSE_COMPATIBLEMODEFLAGCOUNT; i++) {

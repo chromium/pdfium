@@ -186,7 +186,7 @@ class CFWL_Message : public CFWL_Note {
     virtual FX_DWORD GetClassID() const { return msghashcode; }
 #define END_FWL_MESSAGE_DEF \
   }                         \
-  ;
+  ;  // NOLINT
 BEGIN_FWL_MESSAGE_DEF(CFWL_MsgActivate, FWL_MSGHASH_Activate)
 END_FWL_MESSAGE_DEF
 BEGIN_FWL_MESSAGE_DEF(CFWL_MsgDeactivate, FWL_MSGHASH_Deactivate)
@@ -261,7 +261,7 @@ class CFWL_Event : public CFWL_Note {
     virtual FX_DWORD GetClassID() const { return eventhashcode; }
 #define END_FWL_EVENT_DEF \
   }                       \
-  ;
+  ;  // NOLINT
 BEGIN_FWL_EVENT_DEF(CFWL_EvtMouse, FWL_EVTHASH_Mouse)
 FX_FLOAT m_fx;
 FX_FLOAT m_fy;

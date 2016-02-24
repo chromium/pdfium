@@ -47,7 +47,6 @@ CXFA_Node* XFA_CreateUIChild(CXFA_Node* pNode, XFA_ELEMENT& eWidgetType) {
       eUIType = XFA_ELEMENT_ImageEdit;
       eWidgetType = XFA_ELEMENT_Image;
       break;
-      ;
     case XFA_ELEMENT_Arc:
     case XFA_ELEMENT_Line:
     case XFA_ELEMENT_Rectangle:

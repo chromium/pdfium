@@ -383,67 +383,12 @@ int32_t FX_BidiResolveExplicit(int32_t iBaseLevel,
   if (iCount < 1) {
     return 0;
   }
-#if 0
-    int32_t iLastNest = iNest;
-#endif
+
   int32_t iSize = classes.GetSize();
   int32_t i = iStart, iCur, iCls;
   for (; i < iSize && iCount > 0; i++, iCount--) {
     iCur = iCls = classes.GetAt(i);
-#if 0
-        switch (iCls) {
-            case FX_BIDICLASS_LRO:
-            case FX_BIDICLASS_LRE:
-                classes.SetAt(i, FX_BIDICLASS_BN);
-                iCls = FX_BIDICLASS_BN;
-                iNest ++;
-                if (FX_BidiGreaterEven(iBaseLevel) <= MAX_LEVEL) {
-                    int32_t iLevel = FX_BidiGreaterEven(iBaseLevel);
-                    levels.SetAt(i, iLevel);
-                    i += FX_BidiResolveExplicit(iLevel,
-                                                (iCls == FX_BIDICLASS_LRE ? FX_BIDICLASS_N : FX_BIDICLASS_L),
-                                                classes,
-                                                levels,
-                                                i + 1,
-                                                iCount - 1,
-                                                iNest);
-                    iNest --;
-                    continue;
-                }
-                break;
-            case FX_BIDICLASS_RLO:
-            case FX_BIDICLASS_RLE:
-                classes.SetAt(i, FX_BIDICLASS_BN);
-                iCls = FX_BIDICLASS_BN;
-                iNest ++;
-                if (FX_BidiGreaterOdd(iBaseLevel) <= MAX_LEVEL) {
-                    int32_t iLevel = FX_BidiGreaterOdd(iBaseLevel);
-                    levels.SetAt(i, iLevel);
-                    i += FX_BidiResolveExplicit(iLevel,
-                                                (iCls == FX_BIDICLASS_RLE ? FX_BIDICLASS_N : FX_BIDICLASS_R),
-                                                classes,
-                                                levels,
-                                                i + 1,
-                                                iCount - 1,
-                                                iNest);
-                    iNest --;
-                    continue;
-                }
-                break;
-            case FX_BIDICLASS_PDF:
-                classes.SetAt(i, FX_BIDICLASS_BN);
-                iCls = FX_BIDICLASS_BN;
-                if (iNest) {
-                    if (iLastNest < iNest) {
-                        iNest --;
-                    } else {
-                        iSize = i;
-                    }
-                }
-                break;
-        }
-        iCur = iCls;
-#endif
+
     if (iDirection != FX_BIDICLASS_N) {
       iCls = iDirection;
     }
@@ -553,39 +498,7 @@ void FX_BidiResolveWeak(int32_t iBaseLevel,
   int32_t i = 0, iCount = 0, iClsCur, iClsRun, iClsNew, iAction;
   for (; i <= iSize; i++) {
     iClsCur = classes.GetAt(i);
-#if 0
-        if (iClsCur == FX_BIDICLASS_BN) {
-            levels.SetAt(i, iLevelCur);
-            if (i == iSize && iLevelCur != iBaseLevel) {
-                iClsCur = FX_BidiDirection(iLevelCur);
-                classes.SetAt(i, iClsCur);
-            } else if (i < iSize) {
-                int32_t iLevelNext, iLevelNew;
-                iClsNew = classes.GetAt(i + 1);
-                iLevelNext = levels.GetAt(i + 1);
-                if (iClsNew != FX_BIDICLASS_BN && iLevelCur != iLevelNext) {
-                    iLevelNew = iLevelNext;
-                    if (iLevelCur > iLevelNew) {
-                        iLevelNew = iLevelCur;
-                    }
-                    levels.SetAt(i, iLevelNew);
-                    iClsCur = FX_BidiDirection(iLevelNew);
-                    classes.SetAt(i, iClsCur);
-                    iLevelCur = iLevelNext;
-                } else {
-                    if (iCount) {
-                        iCount ++;
-                    }
-                    continue;
-                }
-            } else {
-                if (iCount) {
-                    iCount ++;
-                }
-                continue;
-            }
-        }
-#endif
+
     FXSYS_assert(iClsCur <= FX_BIDICLASS_BN);
     iAction = gc_FX_BidiWeakActions[iState][iClsCur];
     iClsRun = FX_BidiGetDeferredType(iAction);

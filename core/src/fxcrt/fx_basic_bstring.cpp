@@ -486,9 +486,7 @@ void CFX_ByteString::FormatV(const FX_CHAR* lpszFormat, va_list argList) {
         nMaxLen += 2;
       } else if (*lpsz == '*') {
         nWidth = va_arg(argList, int);
-      } else if (*lpsz == '-' || *lpsz == '+' || *lpsz == '0' || *lpsz == ' ')
-        ;
-      else {
+      } else if (*lpsz != '-' && *lpsz != '+' && *lpsz != '0' && *lpsz != ' ') {
         break;
       }
     }

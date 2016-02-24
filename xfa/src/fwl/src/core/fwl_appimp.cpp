@@ -72,8 +72,9 @@ FWL_ERR CFWL_AppImp::SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) {
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_AppImp::Exit(int32_t iExitCode) {
-  while (m_pNoteDriver->PopNoteLoop())
-    ;
+  while (m_pNoteDriver->PopNoteLoop()) {
+    continue;
+  }
   return m_pWidgetMgr->GetAdapterWidgetMgr()->Exit(0);
 }
 IFWL_ThemeProvider* CFWL_AppImp::GetThemeProvider() const {

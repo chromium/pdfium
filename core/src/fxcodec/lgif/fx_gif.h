@@ -240,7 +240,8 @@ struct tag_gif_decompress_struct {
   void (*_gif_get_row_fn)(gif_decompress_struct_p gif_ptr,
                           int32_t row_num,
                           uint8_t* row_buf);
-  FX_BOOL			(*_gif_get_record_position_fn)(gif_decompress_struct_p gif_ptr, FX_DWORD cur_pos,
+  FX_BOOL (*_gif_get_record_position_fn)(gif_decompress_struct_p gif_ptr,
+            FX_DWORD cur_pos,
             int32_t left, int32_t top, int32_t width, int32_t height,
             int32_t pal_num, void* pal_ptr,
             int32_t delay_time, FX_BOOL user_input,

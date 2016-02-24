@@ -521,7 +521,6 @@ void CXFA_LayoutPageMgr::FinishPaginatedPageSets() {
               CXFA_ContainerRecord* pRecord = CreateContainerRecord();
               AddPageAreaLayoutItem(pRecord, pNode);
               break;
-              ;
             }
           }
           FX_BOOL bUsable = TRUE;
@@ -670,7 +669,6 @@ FX_BOOL CXFA_LayoutPageMgr::RunBreak(XFA_ELEMENT eBreakType,
     case XFA_ATTRIBUTEENUM_Auto:
     default:
       break;
-      ;
   }
   return bRet;
 }

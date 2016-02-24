@@ -332,9 +332,12 @@ void FX_Random_GenerateBase(FX_DWORD* pBuffer, int32_t iCount) {
       FX_HashCode_String_GetA((const FX_CHAR*)&st2, sizeof(st2), TRUE);
   ::srand((dwHash1 << 16) | (FX_DWORD)dwHash2);
 #else
-  time_t tmLast = time(NULL), tmCur;
-  while ((tmCur = time(NULL)) == tmLast)
-    ;
+  time_t tmLast = time(NULL);
+  time_t tmCur;
+  while ((tmCur = time(NULL)) == tmLast) {
+    continue;
+  }
+
   ::srand((tmCur << 16) | (tmLast & 0xFFFF));
 #endif
   while (iCount-- > 0) {

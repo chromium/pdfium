@@ -869,7 +869,6 @@ void CFDE_TextOut::DrawLine(const FDE_LPTTOPIECE pPiece, IFDE_Pen*& pPen) {
     if (bVertical) {
       pt1.x = rtText.left + rtText.width * 2.0f / 5.0f;
       pt1.y = rtText.top;
-      ;
       pt2.x = pt1.x;
       pt2.y = rtText.bottom();
     } else {

@@ -82,7 +82,7 @@ void CPWL_Edit::RePosChildWnd() {
 
   if (m_pEditCaret && !HasFlag(PES_TEXTOVERFLOW))
     m_pEditCaret->SetClipRect(CPWL_Utils::InflateRect(
-        GetClientRect(), 1.0f));  //+1 for caret beside border
+        GetClientRect(), 1.0f));  // +1 for caret beside border
 
   CPWL_EditCtrl::RePosChildWnd();
 }
@@ -239,7 +239,7 @@ void CPWL_Edit::SetParamByFlag() {
   } else {
     if (m_pEditCaret) {
       m_pEditCaret->SetClipRect(CPWL_Utils::InflateRect(
-          GetClientRect(), 1.0f));  //+1 for caret beside border
+          GetClientRect(), 1.0f));  // +1 for caret beside border
     }
   }
 

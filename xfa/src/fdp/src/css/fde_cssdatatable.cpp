@@ -843,16 +843,20 @@ int32_t CFDE_CSSValueListParser::SkipTo(FX_WCHAR wch,
                                         FX_BOOL bBrContinue) {
   const FX_WCHAR* pStart = m_pCur;
   if (!bBrContinue) {
-    if (bWSSeparator)
-      while (++m_pCur<m_pEnd&& * m_pCur != wch&& * m_pCur> ' ')
-        ;
-    else
-      while (++m_pCur < m_pEnd && *m_pCur != wch)
-        ;
+    if (bWSSeparator) {
+      while ((++m_pCur < m_pEnd) && (*m_pCur != wch) && (*m_pCur > ' ')) {
+        continue;
+      }
+    } else {
+      while (++m_pCur < m_pEnd && *m_pCur != wch) {
+        continue;
+      }
+    }
+
   } else {
     int32_t iBracketCount = 0;
     if (bWSSeparator) {
-      while (m_pCur<m_pEnd&& * m_pCur != wch&& * m_pCur> ' ') {
+      while ((m_pCur < m_pEnd) && (*m_pCur != wch) && (*m_pCur > ' ')) {
         if (*m_pCur == '(') {
           iBracketCount++;
         } else if (*m_pCur == ')') {

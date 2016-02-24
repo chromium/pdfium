@@ -264,7 +264,6 @@ void JSGlobalAlternate::UpdateGlobalPersistentVariables() {
                            false, "", pObj, pData->bPersistent == 1);
         FXJS_PutObjectObject(NULL, m_pJSObject->ToV8Object(),
                              pData->data.sKey.UTF8Decode().c_str(), pObj);
-
       } break;
       case JS_GLOBALDATA_TYPE_NULL:
         SetGlobalVariables(pData->data.sKey, JS_GLOBALDATA_TYPE_NULL, 0, false,

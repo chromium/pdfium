@@ -210,9 +210,7 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
 
   FX_BOOL HitTest(FX_FLOAT pageX, FX_FLOAT pageY);
 
-#ifndef PDF_ENABLE_XFA
  private:
-#endif  // PDF_ENABLE_XFA
   CPDFSDK_InterForm* m_pInterForm;
   FX_BOOL m_bAppModified;
   int32_t m_nAppAge;

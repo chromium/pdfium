@@ -334,8 +334,7 @@ bool ParseCommandLine(const std::vector<std::string>& args,
         return false;
       }
       options->output_format = OUTPUT_EMF;
-    }
-    else if (cur_arg == "--bmp") {
+    } else if (cur_arg == "--bmp") {
       if (options->output_format != OUTPUT_NONE) {
         fprintf(stderr, "Duplicate or conflicting --bmp argument\n");
         return false;
