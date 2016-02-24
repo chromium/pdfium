@@ -230,6 +230,9 @@
         'libjpeg/jversion.h',
         'libjpeg/transupp.h',
       ],
+      'cflags': [
+        '-Wno-shift-negative-value',
+      ],
       'conditions': [
         ['os_posix==1', {
           'cflags': [
@@ -313,6 +316,11 @@
         'zlib_v128/uncompr.c',
         'zlib_v128/zutil.c',
       ],
+      'cflags': [
+        # TODO(dsinclair): Remove if fixed upstream. https://crbug.com/507712
+        '-Wno-shift-negative-value',
+      ],
+
     },
     {
       'target_name': 'pdfium_base',
