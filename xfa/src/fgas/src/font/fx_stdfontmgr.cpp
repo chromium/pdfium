@@ -93,7 +93,7 @@ IFX_Font* CFX_StdFontMgrImp::GetDefFontByUnicode(
     FX_WCHAR wUnicode,
     FX_DWORD dwFontStyles,
     const FX_WCHAR* pszFontFamily) {
-  FGAS_LPCFONTUSB pRet = FGAS_GetUnicodeBitField(wUnicode);
+  const FGAS_FONTUSB* pRet = FGAS_GetUnicodeBitField(wUnicode);
   if (pRet->wBitField == 999) {
     return NULL;
   }
