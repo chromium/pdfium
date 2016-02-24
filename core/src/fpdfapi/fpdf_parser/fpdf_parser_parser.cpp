@@ -608,55 +608,40 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
       uint8_t byte = buffer[i];
       switch (state) {
         case ParserState::kDefault:
-          if (PDFCharIsWhitespace(byte))
+          if (PDFCharIsWhitespace(byte)) {
             state = ParserState::kWhitespace;
-
-          if (std::isdigit(byte)) {
+          } else if (std::isdigit(byte)) {
             --i;
             state = ParserState::kWhitespace;
-          }
-
-          if (byte == '%') {
+          } else if (byte == '%') {
             inside_index = 0;
             state = ParserState::kComment;
-          }
-
-          if (byte == '(') {
+          } else if (byte == '(') {
             state = ParserState::kString;
             depth = 1;
-          }
-
-          if (byte == '<') {
+          } else if (byte == '<') {
             inside_index = 1;
             state = ParserState::kHexString;
-          }
-
-          if (byte == '\\')
+          } else if (byte == '\\') {
             state = ParserState::kEscapedString;
-
-          if (byte == 't') {
+          } else if (byte == 't') {
             state = ParserState::kTrailer;
             inside_index = 1;
           }
           break;
 
         case ParserState::kWhitespace:
-          if (PDFCharIsWhitespace(byte)) {
-            break;
-          } else if (std::isdigit(byte)) {
+          if (std::isdigit(byte)) {
             start_pos = pos + i;
             state = ParserState::kObjNum;
             objnum = FXSYS_toDecimalDigit(byte);
-
           } else if (byte == 't') {
             state = ParserState::kTrailer;
             inside_index = 1;
-
           } else if (byte == 'x') {
             state = ParserState::kXref;
             inside_index = 1;
-
-          } else {
+          } else if (!PDFCharIsWhitespace(byte)) {
             --i;
             state = ParserState::kDefault;
           }
@@ -665,7 +650,6 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
         case ParserState::kObjNum:
           if (std::isdigit(byte)) {
             objnum = objnum * 10 + FXSYS_toDecimalDigit(byte);
-            break;
           } else if (PDFCharIsWhitespace(byte)) {
             state = ParserState::kPostObjNum;
           } else {
@@ -680,12 +664,10 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
             start_pos1 = pos + i;
             state = ParserState::kGenNum;
             gennum = FXSYS_toDecimalDigit(byte);
-          } else if (PDFCharIsWhitespace(byte)) {
-            break;
           } else if (byte == 't') {
             state = ParserState::kTrailer;
             inside_index = 1;
-          } else {
+          } else if (!PDFCharIsWhitespace(byte)) {
             --i;
             state = ParserState::kDefault;
           }
@@ -694,7 +676,6 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
         case ParserState::kGenNum:
           if (std::isdigit(byte)) {
             gennum = gennum * 10 + FXSYS_toDecimalDigit(byte);
-            break;
           } else if (PDFCharIsWhitespace(byte)) {
             state = ParserState::kPostGenNum;
           } else {
@@ -707,8 +688,6 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
           if (byte == 'o') {
             state = ParserState::kBeginObj;
             inside_index = 1;
-          } else if (PDFCharIsWhitespace(byte)) {
-            break;
           } else if (std::isdigit(byte)) {
             objnum = gennum;
             gennum = FXSYS_toDecimalDigit(byte);
@@ -718,7 +697,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
           } else if (byte == 't') {
             state = ParserState::kTrailer;
             inside_index = 1;
-          } else {
+          } else if (!PDFCharIsWhitespace(byte)) {
             --i;
             state = ParserState::kDefault;
           }
@@ -3016,7 +2995,7 @@ CPDF_Object* CPDF_DataAvail::GetObject(FX_DWORD objnum,
 
   if (m_pDocument) {
     size = GetObjectSize(objnum, offset);
-    pParser = (CPDF_Parser*)(m_pDocument->GetParser());
+    pParser = m_pDocument->GetParser();
   } else {
     size = (FX_DWORD)m_parser.GetObjectSize(objnum);
     offset = m_parser.GetObjectOffset(objnum);
@@ -3116,7 +3095,7 @@ FX_BOOL CPDF_DataAvail::PreparePageItem() {
   }
 
   m_PagesObjNum = pRef->GetRefObjNum();
-  m_pCurrentParser = (CPDF_Parser*)m_pDocument->GetParser();
+  m_pCurrentParser = m_pDocument->GetParser();
   m_docStatus = PDF_DATAAVAIL_PAGETREE;
   return TRUE;
 }
@@ -4187,7 +4166,7 @@ IPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
       if (!LoadAllFile(pHints)) {
         return DataNotAvailable;
       }
-      ((CPDF_Parser*)m_pDocument->GetParser())->RebuildCrossRef();
+      m_pDocument->GetParser()->RebuildCrossRef();
       ResetFirstCheck(iPage);
       return DataAvailable;
     }
