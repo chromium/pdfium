@@ -7,7 +7,7 @@
 #include "xfa/src/fgas/src/fgas_base.h"
 #include "xfa/src/fgas/src/font/fx_fontutils.h"
 #include "xfa/src/fgas/src/font/fx_gefont.h"
-#ifndef _FXPLUS
+
 IFX_Font* IFX_Font::LoadFont(const FX_WCHAR* pszFontFamily,
                              FX_DWORD dwFontStyles,
                              FX_WORD wCodePage,
@@ -569,4 +569,3 @@ IFX_Font* CFX_GEFont::GetSubstFont(int32_t iGlyphIndex) const {
   return iGlyphIndex == 0 ? (IFX_Font*)this
                           : (IFX_Font*)m_SubstFonts[iGlyphIndex - 1];
 }
-#endif

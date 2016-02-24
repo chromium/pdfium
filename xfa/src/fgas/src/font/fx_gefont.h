@@ -7,7 +7,6 @@
 #ifndef XFA_SRC_FGAS_SRC_FONT_FX_GEFONT_H_
 #define XFA_SRC_FGAS_SRC_FONT_FX_GEFONT_H_
 
-#ifndef _FXPLUS
 class CFX_GEFontMgr;
 #ifndef FXFONT_SUBST_ITALIC
 #define FXFONT_SUBST_ITALIC 0x02
@@ -88,6 +87,5 @@ class CFX_GEFont : public IFX_Font {
                         IFX_Font** ppFont,
                         FX_BOOL bCharCode = FALSE);
 };
-#endif
 
 #endif  // XFA_SRC_FGAS_SRC_FONT_FX_GEFONT_H_
