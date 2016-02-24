@@ -25,7 +25,6 @@
 #include "xfa/src/fxbarcode/BC_TwoDimWriter.h"
 #include "xfa/src/fxbarcode/BC_UtilCodingConvert.h"
 #include "xfa/src/fxbarcode/BC_Writer.h"
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/common/BC_CommonByteMatrix.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_ASCIIEncoder.h"
@@ -43,6 +42,7 @@
 #include "xfa/src/fxbarcode/datamatrix/BC_SymbolShapeHint.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_TextEncoder.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_X12Encoder.h"
+
 CBC_DataMatrixWriter::CBC_DataMatrixWriter() {}
 CBC_DataMatrixWriter::~CBC_DataMatrixWriter() {}
 FX_BOOL CBC_DataMatrixWriter::SetErrorCorrectionLevel(int32_t level) {

@@ -22,7 +22,6 @@
 
 #include "xfa/src/fxbarcode/BC_Dimension.h"
 #include "xfa/src/fxbarcode/BC_UtilCodingConvert.h"
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_ASCIIEncoder.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_Base256Encoder.h"
@@ -35,7 +34,10 @@
 #include "xfa/src/fxbarcode/datamatrix/BC_SymbolShapeHint.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_TextEncoder.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_X12Encoder.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 #define Integer_MAX_VALUE 2147483647
+
 FX_WCHAR CBC_HighLevelEncoder::LATCH_TO_C40 = 230;
 FX_WCHAR CBC_HighLevelEncoder::LATCH_TO_BASE256 = 231;
 FX_WCHAR CBC_HighLevelEncoder::UPPER_SHIFT = 235;
@@ -50,6 +52,7 @@ FX_WCHAR CBC_HighLevelEncoder::MACRO_06 = 237;
 const wchar_t* CBC_HighLevelEncoder::MACRO_05_HEADER = L"[)>05";
 const wchar_t* CBC_HighLevelEncoder::MACRO_06_HEADER = L"[)>06";
 const wchar_t CBC_HighLevelEncoder::MACRO_TRAILER = 0x0004;
+
 CBC_HighLevelEncoder::CBC_HighLevelEncoder() {}
 CBC_HighLevelEncoder::~CBC_HighLevelEncoder() {}
 CFX_ByteArray& CBC_HighLevelEncoder::getBytesForMessage(CFX_WideString msg) {

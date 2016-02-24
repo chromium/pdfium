@@ -26,9 +26,9 @@
 
 #include "third_party/bigint/BigIntegerLibrary.hh"
 #include "xfa/src/fxbarcode/BC_DecoderResult.h"
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonDecoderResult.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417ResultMetadata.h"
+#include "xfa/src/fxbarcode/utils.h"
 
 #define TEXT_COMPACTION_MODE_LATCH 900
 #define BYTE_COMPACTION_MODE_LATCH 901
@@ -55,6 +55,7 @@ FX_CHAR CBC_DecodedBitStreamPaser::PUNCT_CHARS[29] = {
 FX_CHAR CBC_DecodedBitStreamPaser::MIXED_CHARS[30] = {
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '&', '\r', '\t',
     ',', ':', '#', '-', '.', '$', '/', '+', '%', '*', '=', '^'};
+
 void CBC_DecodedBitStreamPaser::Initialize() {}
 void CBC_DecodedBitStreamPaser::Finalize() {}
 CBC_DecodedBitStreamPaser::CBC_DecodedBitStreamPaser() {}

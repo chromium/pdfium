@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417Compaction.h"
+
 CBC_Compaction::CBC_Compaction() {}
 CBC_Compaction::~CBC_Compaction() {}

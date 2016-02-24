@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXBARCODE_COMMON_BC_COMMONBITARRAY_H_
 #define XFA_SRC_FXBARCODE_COMMON_BC_COMMONBITARRAY_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+
 class CBC_CommonBitArray {
  public:
   CBC_CommonBitArray(CBC_CommonBitArray* array);

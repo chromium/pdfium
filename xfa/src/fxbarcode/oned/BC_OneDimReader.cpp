@@ -21,10 +21,11 @@
  */
 
 #include "xfa/src/fxbarcode/BC_Reader.h"
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitArray.h"
 #include "xfa/src/fxbarcode/oned/BC_OneDReader.h"
 #include "xfa/src/fxbarcode/oned/BC_OneDimReader.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 const int32_t CBC_OneDimReader::MAX_AVG_VARIANCE = (int32_t)(256 * 0.48f);
 const int32_t CBC_OneDimReader::MAX_INDIVIDUAL_VARIANCE = (int32_t)(256 * 0.7f);
 const int32_t CBC_OneDimReader::START_END_PATTERN[3] = {1, 1, 1};
@@ -37,6 +38,7 @@ const int32_t CBC_OneDimReader::L_AND_G_PATTERNS[20][4] = {
     {1, 2, 3, 1}, {1, 1, 1, 4}, {1, 3, 1, 2}, {1, 2, 1, 3}, {3, 1, 1, 2},
     {1, 1, 2, 3}, {1, 2, 2, 2}, {2, 2, 1, 2}, {1, 1, 4, 1}, {2, 3, 1, 1},
     {1, 3, 2, 1}, {4, 1, 1, 1}, {2, 1, 3, 1}, {3, 1, 2, 1}, {2, 1, 1, 3}};
+
 CBC_OneDimReader::CBC_OneDimReader() {}
 CBC_OneDimReader::~CBC_OneDimReader() {}
 CFX_Int32Array* CBC_OneDimReader::FindStartGuardPattern(CBC_CommonBitArray* row,

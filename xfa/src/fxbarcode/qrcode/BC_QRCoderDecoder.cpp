@@ -20,7 +20,6 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/common/BC_CommonDecoderResult.h"
 #include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomonDecoder.h"
@@ -31,6 +30,7 @@
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderVersion.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRDataBlock.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRDecodedBitStreamParser.h"
+
 CBC_QRCoderDecoder::CBC_QRCoderDecoder() {
   m_rsDecoder = NULL;
 }

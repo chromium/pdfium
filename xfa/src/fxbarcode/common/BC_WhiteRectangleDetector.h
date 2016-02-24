@@ -7,8 +7,11 @@
 #ifndef XFA_SRC_FXBARCODE_COMMON_BC_WHITERECTANGLEDETECTOR_H_
 #define XFA_SRC_FXBARCODE_COMMON_BC_WHITERECTANGLEDETECTOR_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+
 class CBC_CommonBitMatrix;
 class CBC_ResultPoint;
+
 class CBC_WhiteRectangleDetector {
  public:
   CBC_WhiteRectangleDetector(CBC_CommonBitMatrix* image);

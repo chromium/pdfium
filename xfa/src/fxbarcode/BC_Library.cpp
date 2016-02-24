@@ -17,7 +17,6 @@
 #include "xfa/src/fxbarcode/BC_UtilCodingConvert.h"
 #include "xfa/src/fxbarcode/BC_UtilCodingConvert.h"
 #include "xfa/src/fxbarcode/BC_Writer.h"
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitArray.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
@@ -86,6 +85,7 @@
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderVersion.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRDataMask.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRDecodedBitStreamParser.h"
+
 void BC_Library_Init() {
   CBC_QRCoderErrorCorrectionLevel::Initialize();
   CBC_QRCoderMode::Initialize();

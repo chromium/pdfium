@@ -20,10 +20,10 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomon.h"
 #include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"
 #include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomonGF256Poly.h"
+
 CBC_ReedSolomonEncoder::CBC_ReedSolomonEncoder(CBC_ReedSolomonGF256* field) {
   m_field = field;
 }

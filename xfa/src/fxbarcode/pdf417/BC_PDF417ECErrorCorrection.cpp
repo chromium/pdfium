@@ -20,12 +20,14 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417Common.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417ECErrorCorrection.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417ECModulusGF.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417ECModulusPoly.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 CBC_PDF417ECModulusGF* CBC_PDF417ECErrorCorrection::m_field = NULL;
+
 void CBC_PDF417ECErrorCorrection::Initialize(int32_t& e) {
   m_field =
       new CBC_PDF417ECModulusGF(CBC_PDF417Common::NUMBER_OF_CODEWORDS, 3, e);

@@ -22,12 +22,12 @@
 
 #include "xfa/src/fxbarcode/BC_Reader.h"
 #include "xfa/src/fxbarcode/BC_Writer.h"
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/oned/BC_OneDReader.h"
 #include "xfa/src/fxbarcode/oned/BC_OneDimWriter.h"
 #include "xfa/src/fxbarcode/oned/BC_OnedCode39Reader.h"
 #include "xfa/src/fxbarcode/oned/BC_OnedCode39Writer.h"
+
 CBC_OnedCode39Writer::CBC_OnedCode39Writer() {
   m_extendedMode = FALSE;
   m_iWideNarrRatio = 3;

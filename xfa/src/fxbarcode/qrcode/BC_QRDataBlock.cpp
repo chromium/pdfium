@@ -20,11 +20,12 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderECB.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderECBlocks.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderVersion.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRDataBlock.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 CBC_QRDataBlock::CBC_QRDataBlock(int32_t numDataCodewords,
                                  CFX_ByteArray* codewords)
     : m_numDataCodewords(numDataCodewords), m_codewords(codewords) {}

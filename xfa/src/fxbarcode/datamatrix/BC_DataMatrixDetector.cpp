@@ -23,13 +23,14 @@
 #include <algorithm>
 
 #include "xfa/src/fxbarcode/BC_ResultPoint.h"
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/common/BC_WhiteRectangleDetector.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixDetector.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRDetectorResult.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRFinderPatternFinder.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRGridSampler.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 const int32_t CBC_DataMatrixDetector::INTEGERS[5] = {0, 1, 2, 3, 4};
 CBC_DataMatrixDetector::CBC_DataMatrixDetector(CBC_CommonBitMatrix* image)
     : m_image(image), m_rectangleDetector(NULL) {}

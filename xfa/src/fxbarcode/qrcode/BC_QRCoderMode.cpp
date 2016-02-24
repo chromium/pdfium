@@ -20,9 +20,10 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderMode.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderVersion.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 CBC_QRCoderMode* CBC_QRCoderMode::sBYTE = NULL;
 CBC_QRCoderMode* CBC_QRCoderMode::sNUMERIC = NULL;
 CBC_QRCoderMode* CBC_QRCoderMode::sALPHANUMERIC = NULL;
@@ -33,6 +34,7 @@ CBC_QRCoderMode* CBC_QRCoderMode::sTERMINATOR = NULL;
 CBC_QRCoderMode* CBC_QRCoderMode::sFNC1_FIRST_POSITION = NULL;
 CBC_QRCoderMode* CBC_QRCoderMode::sFNC1_SECOND_POSITION = NULL;
 CBC_QRCoderMode* CBC_QRCoderMode::sSTRUCTURED_APPEND = NULL;
+
 CBC_QRCoderMode::CBC_QRCoderMode(int32_t* characterCountBitsForVersions,
                                  int32_t x1,
                                  int32_t x2,

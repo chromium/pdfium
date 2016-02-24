@@ -20,10 +20,11 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417Common.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417ECModulusGF.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417ECModulusPoly.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 CBC_PDF417ECModulusPoly::CBC_PDF417ECModulusPoly(CBC_PDF417ECModulusGF* field,
                                                  CFX_Int32Array& coefficients,
                                                  int32_t& e) {

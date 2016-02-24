@@ -7,7 +7,10 @@
 #ifndef XFA_SRC_FXBARCODE_QRCODE_BC_FINDERPATTERNINFO_H_
 #define XFA_SRC_FXBARCODE_QRCODE_BC_FINDERPATTERNINFO_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+
 class CBC_QRFinderPattern;
+
 class CBC_QRFinderPatternInfo {
  private:
   CBC_QRFinderPattern* m_bottomLeft;

@@ -20,9 +20,9 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderECB.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderECBlocks.h"
+
 CBC_QRCoderECBlocks::CBC_QRCoderECBlocks(int32_t ecCodeWordsPerBlock,
                                          CBC_QRCoderECB* ecBlocks) {
   m_ecCodeWordsPerBlock = ecCodeWordsPerBlock;

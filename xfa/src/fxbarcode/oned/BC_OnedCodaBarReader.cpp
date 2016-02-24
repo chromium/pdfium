@@ -22,12 +22,14 @@
 
 #include <algorithm>
 
+#include "core/include/fxcrt/fx_basic.h"
 #include "xfa/src/fxbarcode/BC_Reader.h"
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitArray.h"
 #include "xfa/src/fxbarcode/oned/BC_OneDReader.h"
 #include "xfa/src/fxbarcode/oned/BC_OnedCodaBarReader.h"
 #include "xfa/src/fxbarcode/oned/BC_OnedCode39Reader.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 const FX_CHAR* CBC_OnedCodaBarReader::ALPHABET_STRING =
     "0123456789-$:/.+ABCDTN";
 const int32_t CBC_OnedCodaBarReader::CHARACTER_ENCODINGS[22] = {
@@ -37,6 +39,7 @@ const int32_t CBC_OnedCodaBarReader::CHARACTER_ENCODINGS[22] = {
 const int32_t CBC_OnedCodaBarReader::minCharacterLength = 3;
 const FX_CHAR CBC_OnedCodaBarReader::STARTEND_ENCODING[8] = {
     'E', '*', 'A', 'B', 'C', 'D', 'T', 'N'};
+
 CBC_OnedCodaBarReader::CBC_OnedCodaBarReader() {}
 CBC_OnedCodaBarReader::~CBC_OnedCodaBarReader() {}
 CFX_ByteString CBC_OnedCodaBarReader::DecodeRow(int32_t rowNumber,

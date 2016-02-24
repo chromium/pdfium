@@ -4,7 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/fxbarcode/barcode.h"
+#include "core/include/fxcrt/fx_basic.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 FX_BOOL BC_FX_ByteString_Replace(CFX_ByteString& dst,
                                  FX_DWORD first,
                                  FX_DWORD last,

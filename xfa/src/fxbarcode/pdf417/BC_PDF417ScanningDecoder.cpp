@@ -22,7 +22,6 @@
 
 #include "xfa/src/fxbarcode/BC_DecoderResult.h"
 #include "xfa/src/fxbarcode/BC_ResultPoint.h"
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417BarcodeMetadata.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417BarcodeValue.h"
@@ -40,10 +39,13 @@
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417ECModulusGF.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417ECModulusPoly.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417ScanningDecoder.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 int32_t CBC_PDF417ScanningDecoder::CODEWORD_SKEW_SIZE = 2;
 int32_t CBC_PDF417ScanningDecoder::MAX_ERRORS = 3;
 int32_t CBC_PDF417ScanningDecoder::MAX_EC_CODEWORDS = 512;
 CBC_PDF417ECErrorCorrection* CBC_PDF417ScanningDecoder::errorCorrection = NULL;
+
 CBC_PDF417ScanningDecoder::CBC_PDF417ScanningDecoder() {}
 CBC_PDF417ScanningDecoder::~CBC_PDF417ScanningDecoder() {}
 void CBC_PDF417ScanningDecoder::Initialize() {

@@ -20,16 +20,19 @@
  * limitations under the License.
  */
 
+#include "core/include/fxcrt/fx_basic.h"
 #include "xfa/src/fxbarcode/BC_ResultPoint.h"
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/qrcode/BC_FinderPatternInfo.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRFinderPattern.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRFinderPatternFinder.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 const int32_t CBC_QRFinderPatternFinder::CENTER_QUORUM = 2;
 const int32_t CBC_QRFinderPatternFinder::MIN_SKIP = 3;
 const int32_t CBC_QRFinderPatternFinder::MAX_MODULES = 57;
 const int32_t CBC_QRFinderPatternFinder::INTEGER_MATH_SHIFT = 8;
+
 CBC_QRFinderPatternFinder::CBC_QRFinderPatternFinder(
     CBC_CommonBitMatrix* image) {
   m_image = image;

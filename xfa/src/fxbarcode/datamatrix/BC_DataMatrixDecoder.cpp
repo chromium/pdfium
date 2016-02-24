@@ -20,7 +20,6 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomonDecoder.h"
 #include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"
@@ -29,6 +28,7 @@
 #include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixDecodedBitStreamParser.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixDecoder.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixVersion.h"
+
 CBC_DataMatrixDecoder::CBC_DataMatrixDecoder() {
   m_rsDecoder = NULL;
 }

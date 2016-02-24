@@ -1054,7 +1054,6 @@ if (pdf_enable_xfa) {
       "xfa/src/fxbarcode/BC_Utils.cpp",
       "xfa/src/fxbarcode/BC_Writer.cpp",
       "xfa/src/fxbarcode/BC_Writer.h",
-      "xfa/src/fxbarcode/barcode.h",
       "xfa/src/fxbarcode/common/BC_CommonBitArray.cpp",
       "xfa/src/fxbarcode/common/BC_CommonBitArray.h",
       "xfa/src/fxbarcode/common/BC_CommonBitMatrix.cpp",

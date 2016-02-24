@@ -20,12 +20,14 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417CodewordDecoder.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417Common.h"
+
 #define SYMBOL_TABLE_Length 2787
 #define Float_MAX_VALUE 2147483647
+
 FX_FLOAT CBC_PDF417CodewordDecoder::RATIOS_TABLE[2787][8] = {{0}};
+
 CBC_PDF417CodewordDecoder::CBC_PDF417CodewordDecoder() {}
 CBC_PDF417CodewordDecoder::~CBC_PDF417CodewordDecoder() {}
 void CBC_PDF417CodewordDecoder::Initialize() {

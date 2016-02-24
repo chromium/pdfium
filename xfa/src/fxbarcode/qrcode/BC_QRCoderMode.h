@@ -7,7 +7,12 @@
 #ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERMODE_H_
 #define XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERMODE_H_
 
+#include <stdint.h>
+
+#include "core/include/fxcrt/fx_string.h"
+
 class CBC_QRCoderVersion;
+
 class CBC_QRCoderMode {
  private:
   int32_t* m_characterCountBitsForVersions;

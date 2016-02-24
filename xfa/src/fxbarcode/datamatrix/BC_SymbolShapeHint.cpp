@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_SymbolShapeHint.h"
+
 CBC_SymbolShapeHint::CBC_SymbolShapeHint() {}
 CBC_SymbolShapeHint::~CBC_SymbolShapeHint() {}

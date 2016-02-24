@@ -9,7 +9,6 @@
 #include "third_party/base/numerics/safe_math.h"
 #include "xfa/src/fxbarcode/BC_TwoDimWriter.h"
 #include "xfa/src/fxbarcode/BC_Writer.h"
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 
 CBC_TwoDimWriter::CBC_TwoDimWriter() {

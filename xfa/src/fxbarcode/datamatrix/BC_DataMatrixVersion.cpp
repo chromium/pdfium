@@ -20,9 +20,13 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
+#include <stdint.h>
+
 #include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixVersion.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 CFX_PtrArray* CBC_DataMatrixVersion::VERSIONS = NULL;
+
 void CBC_DataMatrixVersion::Initialize() {
   VERSIONS = new CFX_PtrArray();
 }

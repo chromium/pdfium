@@ -20,11 +20,13 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRDataMask.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 static int32_t N_DATA_MASKS = 0;
 CFX_PtrArray* CBC_QRDataMask::DATA_MASKS = NULL;
+
 void CBC_QRDataMask::Initialize() {
   DATA_MASKS = new CFX_PtrArray();
   N_DATA_MASKS = BuildDataMasks();

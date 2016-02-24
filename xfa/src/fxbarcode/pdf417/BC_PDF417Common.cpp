@@ -20,8 +20,8 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417Common.h"
+
 int32_t CBC_PDF417Common::NUMBER_OF_CODEWORDS = 929;
 int32_t CBC_PDF417Common::MAX_CODEWORDS_IN_BARCODE = NUMBER_OF_CODEWORDS - 1;
 int32_t CBC_PDF417Common::MIN_ROWS_IN_BARCODE = 3;
@@ -615,6 +615,7 @@ int32_t CBC_PDF417Common::CODEWORD_TABLE[] = {
     934,  931,  1879, 1876, 1873, 1870, 945,  1885, 1882, 1323, 1273, 1270,
     2105, 1202, 1199, 1196, 1211, 2061, 2057, 1576, 1543, 1540, 1484, 1481,
     1478, 1491, 1700};
+
 CBC_PDF417Common::CBC_PDF417Common() {}
 CBC_PDF417Common::~CBC_PDF417Common() {}
 int32_t CBC_PDF417Common::getBitCountSum(CFX_Int32Array& moduleBitCount) {

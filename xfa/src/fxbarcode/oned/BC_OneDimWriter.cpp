@@ -26,7 +26,6 @@
 #include <memory>
 
 #include "xfa/src/fxbarcode/BC_Writer.h"
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 
 CBC_OneDimWriter::CBC_OneDimWriter() {

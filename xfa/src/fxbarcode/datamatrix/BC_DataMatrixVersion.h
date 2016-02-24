@@ -7,8 +7,10 @@
 #ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXVERSION_H_
 #define XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXVERSION_H_
 
-class ECBlocks;
+#include "core/include/fxcrt/fx_basic.h"
+
 class CBC_DataMatrixVersion;
+
 class ECB {
  public:
   ECB(int32_t count, int32_t dataCodewords) {
@@ -24,6 +26,7 @@ class ECB {
   int32_t m_count;
   int32_t m_dataCodewords;
 };
+
 class ECBlocks {
  public:
   ECBlocks(int32_t ecCodewords, ECB* ecBlocks) {
@@ -51,6 +54,7 @@ class ECBlocks {
   int32_t m_ecCodewords;
   CFX_PtrArray m_ecBlocks;
 };
+
 class CBC_DataMatrixVersion {
  public:
   CBC_DataMatrixVersion(int32_t versionNumber,

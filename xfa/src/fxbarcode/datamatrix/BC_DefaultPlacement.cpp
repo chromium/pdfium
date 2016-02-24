@@ -20,9 +20,9 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_DefaultPlacement.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_Encoder.h"
+
 CBC_DefaultPlacement::CBC_DefaultPlacement(CFX_WideString codewords,
                                            int32_t numcols,
                                            int32_t numrows) {

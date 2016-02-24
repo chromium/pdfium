@@ -23,7 +23,6 @@
 #include <algorithm>
 
 #include "xfa/src/fxbarcode/BC_UtilCodingConvert.h"
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonByteArray.h"
 #include "xfa/src/fxbarcode/common/BC_CommonByteMatrix.h"
 #include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomon.h"
@@ -38,6 +37,7 @@
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderMatrixUtil.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderMode.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderVersion.h"
+
 const int32_t CBC_QRCoderEncoder::m_alphaNumbericTable[] = {
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -45,6 +45,7 @@ const int32_t CBC_QRCoderEncoder::m_alphaNumbericTable[] = {
     0,  1,  2,  3,  4,  5,  6,  7,  8,  9,  44, -1, -1, -1, -1, -1,
     -1, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
     25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, -1, -1, -1, -1, -1};
+
 CBC_QRCoderEncoder::CBC_QRCoderEncoder() {}
 CBC_QRCoderEncoder::~CBC_QRCoderEncoder() {}
 class Make_Pair {

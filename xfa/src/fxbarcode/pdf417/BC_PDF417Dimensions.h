@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXBARCODE_PDF417_BC_PDF417DIMENSIONS_H_
 #define XFA_SRC_FXBARCODE_PDF417_BC_PDF417DIMENSIONS_H_
 
+#include <stdint.h>
+
 class CBC_Dimensions {
  public:
   CBC_Dimensions(int32_t minCols,

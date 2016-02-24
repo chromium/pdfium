@@ -7,8 +7,11 @@
 #ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRDETECTORRESULT_H_
 #define XFA_SRC_FXBARCODE_QRCODE_BC_QRDETECTORRESULT_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+
 class CBC_CommonBitMatrix;
 class CBC_ResultPoint;
+
 class CBC_QRDetectorResult {
  private:
   CBC_CommonBitMatrix* m_bits;

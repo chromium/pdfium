@@ -7,6 +7,10 @@
 #ifndef XFA_SRC_FXBARCODE_PDF417_BC_PDF417ERRORCORRECTION_H_
 #define XFA_SRC_FXBARCODE_PDF417_BC_PDF417ERRORCORRECTION_H_
 
+#include <stdint.h>
+
+#include "core/include/fxcrt/fx_string.h"
+
 class CBC_PDF417ErrorCorrection {
  public:
   CBC_PDF417ErrorCorrection();

@@ -7,6 +7,9 @@
 #ifndef XFA_SRC_FXBARCODE_COMMON_BC_COMMONBITSOURCE_H_
 #define XFA_SRC_FXBARCODE_COMMON_BC_COMMONBITSOURCE_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 class CBC_CommonBitSource {
  public:
   CBC_CommonBitSource(CFX_ByteArray* bytes);

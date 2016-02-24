@@ -24,12 +24,13 @@
 
 #include "third_party/bigint/BigIntegerLibrary.hh"
 #include "xfa/src/fxbarcode/BC_UtilCodingConvert.h"
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417Compaction.h"
+#include "xfa/src/fxbarcode/utils.h"
 
 #define SUBMODE_ALPHA 0
 #define SUBMODE_LOWER 1
 #define SUBMODE_MIXED 2
+
 int32_t CBC_PDF417HighLevelEncoder::TEXT_COMPACTION = 0;
 int32_t CBC_PDF417HighLevelEncoder::BYTE_COMPACTION = 1;
 int32_t CBC_PDF417HighLevelEncoder::NUMERIC_COMPACTION = 2;
@@ -47,6 +48,7 @@ uint8_t CBC_PDF417HighLevelEncoder::TEXT_PUNCTUATION_RAW[] = {
     10, 45, 46, 36, 47, 34, 124, 42, 40, 41,  63, 123, 125, 39, 0};
 int32_t CBC_PDF417HighLevelEncoder::MIXED[128] = {0};
 int32_t CBC_PDF417HighLevelEncoder::PUNCTUATION[128] = {0};
+
 void CBC_PDF417HighLevelEncoder::Initialize() {
   Inverse();
 }

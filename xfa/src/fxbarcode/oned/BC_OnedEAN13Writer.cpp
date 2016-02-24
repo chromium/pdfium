@@ -22,12 +22,12 @@
 
 #include "xfa/src/fxbarcode/BC_Reader.h"
 #include "xfa/src/fxbarcode/BC_Writer.h"
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/oned/BC_OneDReader.h"
 #include "xfa/src/fxbarcode/oned/BC_OneDimReader.h"
 #include "xfa/src/fxbarcode/oned/BC_OneDimWriter.h"
 #include "xfa/src/fxbarcode/oned/BC_OnedEAN13Reader.h"
 #include "xfa/src/fxbarcode/oned/BC_OnedEAN13Writer.h"
+
 CBC_OnedEAN13Writer::CBC_OnedEAN13Writer() {
   m_bLeftPadding = TRUE;
   m_codeWidth = 3 + (7 * 6) + 5 + (7 * 6) + 3;

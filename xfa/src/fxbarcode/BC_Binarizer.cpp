@@ -22,9 +22,9 @@
 
 #include "xfa/src/fxbarcode/BC_Binarizer.h"
 #include "xfa/src/fxbarcode/BC_LuminanceSource.h"
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitArray.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
+
 CBC_Binarizer::CBC_Binarizer(CBC_LuminanceSource* source) {
   m_source = source;
 }

@@ -31,7 +31,6 @@
 #include "xfa/src/fxbarcode/BC_TwoDimWriter.h"
 #include "xfa/src/fxbarcode/BC_UtilCodingConvert.h"
 #include "xfa/src/fxbarcode/BC_Writer.h"
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitArray.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
@@ -80,6 +79,7 @@
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417Writer.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCodeReader.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCodeWriter.h"
+
 CBC_CodeBase::CBC_CodeBase() {}
 CBC_CodeBase::~CBC_CodeBase() {}
 FX_BOOL CBC_CodeBase::SetCharEncoding(int32_t encoding) {

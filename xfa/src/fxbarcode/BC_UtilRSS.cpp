@@ -21,7 +21,10 @@
  */
 
 #include "xfa/src/fxbarcode/BC_UtilRSS.h"
-#include "xfa/src/fxbarcode/barcode.h"
+
+#include "core/include/fxcrt/fx_basic.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 CBC_UtilRSS::CBC_UtilRSS() {}
 CBC_UtilRSS::~CBC_UtilRSS() {}
 CFX_Int32Array* CBC_UtilRSS::GetRssWidths(int32_t val,

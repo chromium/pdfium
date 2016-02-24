@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_DEFAULTPLACEMENT_H_
 #define XFA_SRC_FXBARCODE_DATAMATRIX_BC_DEFAULTPLACEMENT_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+
 class CBC_DefaultPlacement {
  public:
   CBC_DefaultPlacement(CFX_WideString codewords,

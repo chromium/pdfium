@@ -20,8 +20,8 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitSource.h"
+
 CBC_CommonBitSource::CBC_CommonBitSource(CFX_ByteArray* bytes) {
   m_bytes.Copy((*bytes));
   m_bitOffset = 0;

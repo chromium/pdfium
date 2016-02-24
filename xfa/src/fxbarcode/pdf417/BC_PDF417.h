@@ -7,6 +7,7 @@
 #ifndef XFA_SRC_FXBARCODE_PDF417_BC_PDF417_H_
 #define XFA_SRC_FXBARCODE_PDF417_BC_PDF417_H_
 
+#include "core/include/fxcrt/fx_basic.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417Compaction.h"
 
 class CBC_Compaction;

@@ -20,9 +20,9 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417BarcodeValue.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417Common.h"
+
 CBC_BarcodeValue::CBC_BarcodeValue() {}
 CBC_BarcodeValue::~CBC_BarcodeValue() {}
 void CBC_BarcodeValue::setValue(int32_t value) {

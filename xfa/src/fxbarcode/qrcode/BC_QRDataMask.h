@@ -7,7 +7,10 @@
 #ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRDATAMASK_H_
 #define XFA_SRC_FXBARCODE_QRCODE_BC_QRDATAMASK_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+
 class CBC_CommonBitMatrix;
+
 class CBC_QRDataMask {
  public:
   static CFX_PtrArray* DATA_MASKS;

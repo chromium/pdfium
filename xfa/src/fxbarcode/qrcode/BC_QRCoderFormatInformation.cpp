@@ -20,9 +20,10 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderFormatInformation.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 const int32_t CBC_QRCoderFormatInformation::FORMAT_INFO_MASK_QR = 0X5412;
 const int32_t CBC_QRCoderFormatInformation::FORMAT_INFO_DECODE_LOOKUP[32][2] = {
     {0x5412, 0x00}, {0x5125, 0x01}, {0x5E7C, 0x02}, {0x5B4B, 0x03},
@@ -36,6 +37,7 @@ const int32_t CBC_QRCoderFormatInformation::FORMAT_INFO_DECODE_LOOKUP[32][2] = {
 };
 const int32_t CBC_QRCoderFormatInformation::BITS_SET_IN_HALF_BYTE[] = {
     0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4};
+
 CBC_QRCoderFormatInformation::CBC_QRCoderFormatInformation(int32_t formatInfo) {
   m_errorCorrectLevl =
       CBC_QRCoderErrorCorrectionLevel::ForBits((formatInfo >> 3) & 0x03);

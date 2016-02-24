@@ -20,8 +20,8 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417Dimensions.h"
+
 CBC_Dimensions::CBC_Dimensions(int32_t minCols,
                                int32_t maxCols,
                                int32_t minRows,

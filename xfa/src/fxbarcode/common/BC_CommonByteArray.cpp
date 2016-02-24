@@ -22,8 +22,8 @@
 
 #include <algorithm>
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonByteArray.h"
+
 CBC_CommonByteArray::CBC_CommonByteArray() {
   m_bytes = NULL;
   m_size = 0;

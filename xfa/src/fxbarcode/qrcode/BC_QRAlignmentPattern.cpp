@@ -21,8 +21,8 @@
  */
 
 #include "xfa/src/fxbarcode/BC_ResultPoint.h"
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRAlignmentPattern.h"
+
 CBC_QRAlignmentPattern::CBC_QRAlignmentPattern(FX_FLOAT posX,
                                                FX_FLOAT posY,
                                                FX_FLOAT estimateModuleSize)

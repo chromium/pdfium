@@ -20,8 +20,8 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderECB.h"
+
 CBC_QRCoderECB::CBC_QRCoderECB(int32_t count, int32_t dataCodeWords) {
   m_dataCodeWords = dataCodeWords;
   m_count = count;

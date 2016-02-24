@@ -513,7 +513,6 @@
         "xfa/src/fxbarcode/BC_UtilCodingConvert.h",
         "xfa/src/fxbarcode/BC_UtilRSS.h",
         "xfa/src/fxbarcode/BC_Writer.h",
-        "xfa/src/fxbarcode/barcode.h",
         "xfa/src/fxbarcode/utils.h",
         "xfa/src/fxfa/src/app/xfa_checksum.cpp",
         "xfa/src/fxfa/src/app/xfa_checksum.h",

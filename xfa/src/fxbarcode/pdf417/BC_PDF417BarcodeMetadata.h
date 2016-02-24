@@ -7,7 +7,8 @@
 #ifndef XFA_SRC_FXBARCODE_PDF417_BC_PDF417BARCODEMETADATA_H_
 #define XFA_SRC_FXBARCODE_PDF417_BC_PDF417BARCODEMETADATA_H_
 
-class CBC_BarcodeMetadata;
+#include <stdint.h>
+
 class CBC_BarcodeMetadata {
  public:
   CBC_BarcodeMetadata(int32_t columnCount,

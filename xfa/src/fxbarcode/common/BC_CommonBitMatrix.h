@@ -7,7 +7,10 @@
 #ifndef XFA_SRC_FXBARCODE_COMMON_BC_COMMONBITMATRIX_H_
 #define XFA_SRC_FXBARCODE_COMMON_BC_COMMONBITMATRIX_H_
 
+#include "core/include/fxcrt/fx_system.h"
+
 class CBC_CommonBitArray;
+
 class CBC_CommonBitMatrix {
  public:
   CBC_CommonBitMatrix();

@@ -20,9 +20,9 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonCharacterSetECI.h"
 #include "xfa/src/fxbarcode/common/BC_CommonECI.h"
+
 void CBC_CommonCharacterSetECI::initialize() {}
 CBC_CommonCharacterSetECI::CBC_CommonCharacterSetECI(
     int32_t value,

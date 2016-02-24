@@ -20,12 +20,14 @@
  * limitations under the License.
  */
 
+#include "core/include/fxcrt/fx_basic.h"
 #include "xfa/src/fxbarcode/BC_Reader.h"
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/oned/BC_OneDReader.h"
 #include "xfa/src/fxbarcode/oned/BC_OneDimReader.h"
 #include "xfa/src/fxbarcode/oned/BC_OnedEAN13Reader.h"
 #include "xfa/src/fxbarcode/oned/BC_OnedUPCAReader.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 CBC_OnedUPCAReader::CBC_OnedUPCAReader() {
   m_ean13Reader = NULL;
 }

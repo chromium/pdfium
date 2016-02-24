@@ -20,8 +20,8 @@
  * limitations under the License.
  */
 
+#include "core/include/fxcrt/fx_basic.h"
 #include "xfa/src/fxbarcode/BC_ResultPoint.h"
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417BarcodeMetadata.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417BarcodeValue.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417BoundingBox.h"
@@ -29,6 +29,8 @@
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417Common.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417DetectionResultColumn.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417DetectionResultRowIndicatorColumn.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 CBC_DetectionResultRowIndicatorColumn::CBC_DetectionResultRowIndicatorColumn(
     CBC_BoundingBox* boundingBox,
     FX_BOOL isLeft)

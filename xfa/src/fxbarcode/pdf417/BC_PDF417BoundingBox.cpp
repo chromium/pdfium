@@ -21,9 +21,10 @@
  */
 
 #include "xfa/src/fxbarcode/BC_ResultPoint.h"
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417BoundingBox.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 CBC_BoundingBox::CBC_BoundingBox(CBC_CommonBitMatrix* image,
                                  CBC_ResultPoint* topLeft,
                                  CBC_ResultPoint* bottomLeft,

@@ -22,12 +22,14 @@
 
 #include "xfa/src/fxbarcode/BC_BinaryBitmap.h"
 #include "xfa/src/fxbarcode/BC_ResultPoint.h"
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitArray.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417Detector.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417DetectorResult.h"
-#define INTERGER_MAX 2147483647
+#include "xfa/src/fxbarcode/utils.h"
+
+#define INTEGER_MAX 2147483647
+
 int32_t CBC_Detector::INDEXES_START_PATTERN[] = {0, 4, 1, 5};
 int32_t CBC_Detector::INDEXES_STOP_PATTERN[] = {6, 2, 7, 3};
 int32_t CBC_Detector::INTEGER_MATH_SHIFT = 8;
@@ -44,6 +46,7 @@ int32_t CBC_Detector::MAX_PATTERN_DRIFT = 5;
 int32_t CBC_Detector::SKIPPED_ROW_COUNT_MAX = 25;
 int32_t CBC_Detector::ROW_STEP = 5;
 int32_t CBC_Detector::BARCODE_MIN_HEIGHT = 10;
+
 CBC_Detector::CBC_Detector() {}
 CBC_Detector::~CBC_Detector() {}
 CBC_PDF417DetectorResult* CBC_Detector::detect(CBC_BinaryBitmap* image,
@@ -330,7 +333,7 @@ int32_t CBC_Detector::patternMatchVariance(CFX_Int32Array& counters,
     patternLength += pattern[i];
   }
   if (total < patternLength) {
-    return INTERGER_MAX;
+    return INTEGER_MAX;
   }
   int32_t unitBarWidth = (total << INTEGER_MATH_SHIFT) / patternLength;
   maxIndividualVariance =
@@ -342,7 +345,7 @@ int32_t CBC_Detector::patternMatchVariance(CFX_Int32Array& counters,
     int32_t variance = counter > scaledPattern ? counter - scaledPattern
                                                : scaledPattern - counter;
     if (variance > maxIndividualVariance) {
-      return INTERGER_MAX;
+      return INTEGER_MAX;
     }
     totalVariance += variance;
   }

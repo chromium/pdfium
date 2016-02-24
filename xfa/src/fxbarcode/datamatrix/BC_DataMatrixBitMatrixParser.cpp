@@ -20,10 +20,11 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixBitMatrixParser.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixVersion.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 CBC_DataMatrixBitMatrixParser::CBC_DataMatrixBitMatrixParser() {
   m_mappingBitMatrix = NULL;
   m_version = NULL;

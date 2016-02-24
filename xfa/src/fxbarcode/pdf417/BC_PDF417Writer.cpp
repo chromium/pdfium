@@ -21,13 +21,13 @@
  */
 
 #include "xfa/src/fxbarcode/BC_TwoDimWriter.h"
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitArray.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417BarcodeMatrix.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417Compaction.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417Writer.h"
+
 CBC_PDF417Writer::CBC_PDF417Writer() {
   m_bFixedSize = FALSE;
 }

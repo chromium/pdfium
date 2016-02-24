@@ -25,7 +25,6 @@
 #include "xfa/src/fxbarcode/BC_DecoderResult.h"
 #include "xfa/src/fxbarcode/BC_Reader.h"
 #include "xfa/src/fxbarcode/BC_ResultPoint.h"
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitArray.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
@@ -50,7 +49,10 @@
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417ECModulusPoly.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417Reader.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417ScanningDecoder.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 #define Integer_MAX_VALUE 2147483647
+
 CBC_PDF417Reader::CBC_PDF417Reader() {}
 CBC_PDF417Reader::~CBC_PDF417Reader() {}
 CFX_ByteString CBC_PDF417Reader::Decode(CBC_BinaryBitmap* image, int32_t& e) {

@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXBARCODE_PDF417_BC_PDF417BARCODEMATRIX_H_
 #define XFA_SRC_FXBARCODE_PDF417_BC_PDF417BARCODEMATRIX_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+
 class CBC_BarcodeRow;
 class CBC_BarcodeMatrix {
  public:

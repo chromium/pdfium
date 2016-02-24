@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXBARCODE_COMMON_BC_COMMONBYTEARRAY_H_
 #define XFA_SRC_FXBARCODE_COMMON_BC_COMMONBYTEARRAY_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+
 class CBC_CommonByteArray {
  private:
   int32_t m_size;

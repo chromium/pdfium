@@ -20,8 +20,10 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
+#include "core/include/fxcrt/fx_memory.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderBitVector.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 CBC_QRCoderBitVector::CBC_QRCoderBitVector() {
   m_sizeInBits = 0;
   m_size = 32;

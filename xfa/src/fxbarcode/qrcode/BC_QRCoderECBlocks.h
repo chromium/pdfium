@@ -7,7 +7,10 @@
 #ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERECBLOCKS_H_
 #define XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERECBLOCKS_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+
 class CBC_QRCoderECB;
+
 class CBC_QRCoderECBlocks {
  private:
   int32_t m_ecCodeWordsPerBlock;

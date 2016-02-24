@@ -20,8 +20,9 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417ErrorCorrection.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 int32_t CBC_PDF417ErrorCorrection::EC_COEFFICIENTS[][2500] = {
     {27, 917},
     {522, 568, 723, 809},
@@ -96,6 +97,7 @@ int32_t CBC_PDF417ErrorCorrection::EC_COEFFICIENTS[][2500] = {
      284, 736, 138, 646, 411, 877, 669, 141, 919, 45, 780, 407, 164, 332, 899,
      165, 726, 600, 325, 498, 655, 357, 752, 768, 223, 849, 647, 63, 310, 863,
      251, 366, 304, 282, 738, 675, 410, 389, 244, 31, 121, 303, 263}};
+
 CBC_PDF417ErrorCorrection::CBC_PDF417ErrorCorrection() {}
 CBC_PDF417ErrorCorrection::~CBC_PDF417ErrorCorrection() {}
 int32_t CBC_PDF417ErrorCorrection::getErrorCorrectionCodewordCount(

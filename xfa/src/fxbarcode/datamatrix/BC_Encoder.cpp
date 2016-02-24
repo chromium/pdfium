@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_Encoder.h"
+
 CBC_Encoder::CBC_Encoder() {}
 CBC_Encoder::~CBC_Encoder() {}

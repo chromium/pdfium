@@ -7,9 +7,12 @@
 #ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERVERSION_H_
 #define XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERVERSION_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+
 class CBC_QRCoderECBlocks;
 class CBC_CommonBitMatrix;
 class CBC_QRCoderErrorCorrectionLevel;
+
 class CBC_QRCoderVersion {
  private:
   const static int32_t VERSION_DECODE_INFO[34];

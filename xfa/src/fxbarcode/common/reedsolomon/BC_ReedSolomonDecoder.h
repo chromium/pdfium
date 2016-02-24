@@ -7,8 +7,11 @@
 #ifndef XFA_SRC_FXBARCODE_COMMON_REEDSOLOMON_BC_REEDSOLOMONDECODER_H_
 #define XFA_SRC_FXBARCODE_COMMON_REEDSOLOMON_BC_REEDSOLOMONDECODER_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+
 class CBC_ReedSolomonGF256;
 class CBC_ReedSolomonGF256Poly;
+
 class CBC_ReedSolomonDecoder {
  private:
   CBC_ReedSolomonGF256* m_field;

@@ -20,9 +20,10 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitArray.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 CBC_CommonBitMatrix::CBC_CommonBitMatrix() {
   m_width = 0;
   m_height = 0;

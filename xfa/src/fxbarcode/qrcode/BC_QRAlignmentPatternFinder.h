@@ -7,8 +7,12 @@
 #ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRALIGNMENTPATTERNFINDER_H_
 #define XFA_SRC_FXBARCODE_QRCODE_BC_QRALIGNMENTPATTERNFINDER_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 class CBC_CommonBitMatrix;
 class CBC_QRAlignmentPattern;
+
 class CBC_QRAlignmentPatternFinder {
  private:
   CBC_CommonBitMatrix* m_image;

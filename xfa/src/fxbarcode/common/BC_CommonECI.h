@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXBARCODE_COMMON_BC_COMMONECI_H_
 #define XFA_SRC_FXBARCODE_COMMON_BC_COMMONECI_H_
 
+#include <stdint.h>
+
 class CBC_CommonECI {
  public:
   CBC_CommonECI(int32_t value);

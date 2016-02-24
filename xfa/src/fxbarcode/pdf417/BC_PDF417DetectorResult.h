@@ -7,7 +7,10 @@
 #ifndef XFA_SRC_FXBARCODE_PDF417_BC_PDF417DETECTORRESULT_H_
 #define XFA_SRC_FXBARCODE_PDF417_BC_PDF417DETECTORRESULT_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+
 class CBC_CommonBitMatrix;
+
 class CBC_PDF417DetectorResult {
  public:
   CBC_PDF417DetectorResult(CBC_CommonBitMatrix* bits, CFX_PtrArray* points);

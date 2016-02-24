@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERECB_H_
 #define XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERECB_H_
 
+#include <stdint.h>
+
 class CBC_QRCoderECB {
  private:
   int32_t m_count;

@@ -7,6 +7,9 @@
 #ifndef XFA_SRC_FXBARCODE_COMMON_REEDSOLOMON_BC_REEDSOLOMONGF256_H_
 #define XFA_SRC_FXBARCODE_COMMON_REEDSOLOMON_BC_REEDSOLOMONGF256_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 class CBC_ReedSolomonGF256Poly;
 class CBC_ReedSolomonGF256 {
  public:

@@ -21,13 +21,13 @@
  */
 
 #include "xfa/src/fxbarcode/BC_Dimension.h"
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_ASCIIEncoder.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_Encoder.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_EncoderContext.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_HighLevelEncoder.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_SymbolInfo.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_SymbolShapeHint.h"
+
 CBC_ASCIIEncoder::CBC_ASCIIEncoder() {}
 CBC_ASCIIEncoder::~CBC_ASCIIEncoder() {}
 int32_t CBC_ASCIIEncoder::getEncodingMode() {

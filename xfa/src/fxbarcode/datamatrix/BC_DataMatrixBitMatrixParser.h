@@ -7,8 +7,11 @@
 #ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXBITMATRIXPARSER_H_
 #define XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXBITMATRIXPARSER_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+
 class CBC_CommonBitMatrix;
 class CBC_DataMatrixVersion;
+
 class CBC_DataMatrixBitMatrixParser {
  public:
   CBC_DataMatrixBitMatrixParser();

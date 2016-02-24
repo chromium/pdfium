@@ -7,7 +7,10 @@
 #ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXDATABLOCK_H_
 #define XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXDATABLOCK_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+
 class CBC_DataMatrixVersion;
+
 class CBC_DataMatrixDataBlock {
  public:
   virtual ~CBC_DataMatrixDataBlock();

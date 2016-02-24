@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERERRORCORRECTIONLEVEL_H_
 #define XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERERRORCORRECTIONLEVEL_H_
 
+#include "core/include/fxcrt/fx_string.h"
+
 class CBC_QRCoderErrorCorrectionLevel {
  private:
   int32_t m_ordinal;

@@ -21,13 +21,15 @@
  */
 
 #include "xfa/src/fxbarcode/BC_Reader.h"
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitArray.h"
 #include "xfa/src/fxbarcode/oned/BC_OneDReader.h"
 #include "xfa/src/fxbarcode/oned/BC_OneDimReader.h"
 #include "xfa/src/fxbarcode/oned/BC_OnedEAN13Reader.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 const int32_t CBC_OnedEAN13Reader::FIRST_DIGIT_ENCODINGS[10] = {
     0x00, 0x0B, 0x0D, 0xE, 0x13, 0x19, 0x1C, 0x15, 0x16, 0x1A};
+
 CBC_OnedEAN13Reader::CBC_OnedEAN13Reader() {}
 CBC_OnedEAN13Reader::~CBC_OnedEAN13Reader() {}
 void CBC_OnedEAN13Reader::DetermineFirstDigit(CFX_ByteString& result,

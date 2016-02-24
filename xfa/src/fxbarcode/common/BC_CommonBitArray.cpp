@@ -20,8 +20,9 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitArray.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 CBC_CommonBitArray::CBC_CommonBitArray(CBC_CommonBitArray* array) {
   m_size = array->GetSize();
   m_bits.Copy(array->GetBits());

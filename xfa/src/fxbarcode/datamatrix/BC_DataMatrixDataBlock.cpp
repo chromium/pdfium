@@ -20,9 +20,10 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixDataBlock.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixVersion.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 CBC_DataMatrixDataBlock::~CBC_DataMatrixDataBlock() {}
 CBC_DataMatrixDataBlock::CBC_DataMatrixDataBlock(int32_t numDataCodewords,
                                                  CFX_ByteArray* codewords) {

@@ -5,7 +5,6 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "xfa/src/fxbarcode/BC_UtilCodingConvert.h"
-#include "xfa/src/fxbarcode/barcode.h"
 
 CBC_UtilCodingConvert::CBC_UtilCodingConvert() {}
 

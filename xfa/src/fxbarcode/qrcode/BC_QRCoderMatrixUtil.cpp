@@ -20,13 +20,14 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/barcode.h"
 #include "xfa/src/fxbarcode/common/BC_CommonByteMatrix.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoder.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderBitVector.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderMaskUtil.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderMatrixUtil.h"
+#include "xfa/src/fxbarcode/utils.h"
+
 const int32_t CBC_QRCoderMatrixUtil::POSITION_DETECTION_PATTERN[7][7] = {
     {1, 1, 1, 1, 1, 1, 1},
     {1, 0, 0, 0, 0, 0, 1},
@@ -77,6 +78,7 @@ const int32_t CBC_QRCoderMatrixUtil::TYPE_INFO_COORDINATES[15][2] = {
 const int32_t CBC_QRCoderMatrixUtil::VERSION_INFO_POLY = 0x1f25;
 const int32_t CBC_QRCoderMatrixUtil::TYPE_INFO_POLY = 0x0537;
 const int32_t CBC_QRCoderMatrixUtil::TYPE_INFO_MASK_PATTERN = 0x5412;
+
 void CBC_QRCoderMatrixUtil::ClearMatrix(CBC_CommonByteMatrix* matrix,
                                         int32_t& e) {
   if (matrix == NULL) {
