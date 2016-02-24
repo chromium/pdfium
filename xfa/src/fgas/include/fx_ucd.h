@@ -13,12 +13,13 @@
 #define FX_JAPCHARPROPERTYEX_Top 0x10
 #define FX_JAPCHARPROPERTYEX_Middle 0x20
 #define FX_JAPCHARPROPERTYEX_Bottom 0x30
-typedef struct _FX_JAPCHARPROPERTYEX {
+
+struct FX_JAPCHARPROPERTYEX {
   FX_WCHAR wChar;
   uint8_t uAlign;
-} FX_JAPCHARPROPERTYEX, *FX_LPJAPCHARPROPERTYEX;
-typedef FX_JAPCHARPROPERTYEX const* FX_LPCJAPCHARPROPERTYEX;
-FX_LPCJAPCHARPROPERTYEX FX_GetJapCharPropertyEx(FX_WCHAR wch);
+};
+
+const FX_JAPCHARPROPERTYEX* FX_GetJapCharPropertyEx(FX_WCHAR wch);
 typedef FX_BOOL (*FX_AdjustCharDisplayPos)(FX_WCHAR wch,
                                            FX_BOOL bMBCSCode,
                                            IFX_Font* pFont,

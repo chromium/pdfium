@@ -63,8 +63,9 @@ class IFX_RTFBreak;
   (FX_RTFLINEALIGNMENT_Right | FX_RTFLINEALIGNMENT_Distributed)
 #define FX_RTFLINEALIGNMENT_LowerMask 0x03
 #define FX_RTFLINEALIGNMENT_HigherMask 0x0C
-typedef struct _FX_RTFTEXTOBJ {
-  _FX_RTFTEXTOBJ() {
+
+struct FX_RTFTEXTOBJ {
+  FX_RTFTEXTOBJ() {
     pStr = NULL;
     pWidths = NULL;
     iLength = 0;
@@ -78,6 +79,7 @@ typedef struct _FX_RTFTEXTOBJ {
     iHorizontalScale = 100;
     iVerticalScale = 100;
   }
+
   const FX_WCHAR* pStr;
   int32_t* pWidths;
   int32_t iLength;
@@ -90,8 +92,8 @@ typedef struct _FX_RTFTEXTOBJ {
   FX_WCHAR wLineBreakChar;
   int32_t iHorizontalScale;
   int32_t iVerticalScale;
-} FX_RTFTEXTOBJ, *FX_LPRTFTEXTOBJ;
-typedef FX_RTFTEXTOBJ const* FX_LPCRTFTEXTOBJ;
+};
+
 class CFX_RTFPiece : public CFX_Target {
  public:
   CFX_RTFPiece()
@@ -221,12 +223,12 @@ class IFX_RTFBreak {
   virtual void ClearBreakPieces() = 0;
   virtual void Reset() = 0;
   virtual int32_t GetDisplayPos(
-      FX_LPCRTFTEXTOBJ pText,
+      const FX_RTFTEXTOBJ* pText,
       FXTEXT_CHARPOS* pCharPos,
       FX_BOOL bCharCode = FALSE,
       CFX_WideString* pWSForms = NULL,
       FX_AdjustCharDisplayPos pAdjustPos = NULL) const = 0;
-  virtual int32_t GetCharRects(FX_LPCRTFTEXTOBJ pText,
+  virtual int32_t GetCharRects(const FX_RTFTEXTOBJ* pText,
                                CFX_RectFArray& rtArray,
                                FX_BOOL bCharBBox = FALSE) const = 0;
 };

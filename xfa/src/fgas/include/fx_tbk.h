@@ -77,8 +77,9 @@ class IFX_TxtAccess {
   virtual FX_WCHAR GetChar(void* pIdentity, int32_t index) const = 0;
   virtual int32_t GetWidth(void* pIdentity, int32_t index) const = 0;
 };
-typedef struct _FX_TXTRUN {
-  _FX_TXTRUN() {
+
+struct FX_TXTRUN {
+  FX_TXTRUN() {
     pAccess = NULL;
     pIdentity = NULL;
     pStr = NULL;
@@ -95,6 +96,7 @@ typedef struct _FX_TXTRUN {
     wLineBreakChar = L'\n';
     bSkipSpace = TRUE;
   }
+
   IFX_TxtAccess* pAccess;
   void* pIdentity;
   const FX_WCHAR* pStr;
@@ -110,8 +112,8 @@ typedef struct _FX_TXTRUN {
   FX_LPCRECTF pRect;
   FX_WCHAR wLineBreakChar;
   FX_BOOL bSkipSpace;
-} FX_TXTRUN, *FX_LPTXTRUN;
-typedef FX_TXTRUN const* FX_LPCTXTRUN;
+};
+
 class CFX_TxtPiece : public CFX_Target {
  public:
   CFX_TxtPiece()
@@ -206,12 +208,12 @@ class IFX_TxtBreak {
   virtual void ClearBreakPieces() = 0;
   virtual void Reset() = 0;
   virtual int32_t GetDisplayPos(
-      FX_LPCTXTRUN pTxtRun,
+      const FX_TXTRUN* pTxtRun,
       FXTEXT_CHARPOS* pCharPos,
       FX_BOOL bCharCode = FALSE,
       CFX_WideString* pWSForms = NULL,
       FX_AdjustCharDisplayPos pAdjustPos = NULL) const = 0;
-  virtual int32_t GetCharRects(FX_LPCTXTRUN pTxtRun,
+  virtual int32_t GetCharRects(const FX_TXTRUN* pTxtRun,
                                CFX_RectFArray& rtArray,
                                FX_BOOL bCharBBox = FALSE) const = 0;
 };

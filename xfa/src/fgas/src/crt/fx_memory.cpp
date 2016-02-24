@@ -35,17 +35,16 @@ CFX_StaticStore::CFX_StaticStore(size_t iDefChunkSize)
   FXSYS_assert(m_iDefChunkSize != 0);
 }
 CFX_StaticStore::~CFX_StaticStore() {
-  FX_LPSTATICSTORECHUNK pChunk, pNext;
-  pChunk = m_pChunk;
-  while (pChunk != NULL) {
-    pNext = pChunk->pNextChunk;
+  FX_STATICSTORECHUNK* pChunk = m_pChunk;
+  while (pChunk) {
+    FX_STATICSTORECHUNK* pNext = pChunk->pNextChunk;
     FX_Free(pChunk);
     pChunk = pNext;
   }
 }
-FX_LPSTATICSTORECHUNK CFX_StaticStore::AllocChunk(size_t size) {
+FX_STATICSTORECHUNK* CFX_StaticStore::AllocChunk(size_t size) {
   FXSYS_assert(size != 0);
-  FX_LPSTATICSTORECHUNK pChunk = (FX_LPSTATICSTORECHUNK)FX_Alloc(
+  FX_STATICSTORECHUNK* pChunk = (FX_STATICSTORECHUNK*)FX_Alloc(
       uint8_t, sizeof(FX_STATICSTORECHUNK) + size);
   pChunk->iChunkSize = size;
   pChunk->iFreeSize = size;
@@ -58,7 +57,7 @@ FX_LPSTATICSTORECHUNK CFX_StaticStore::AllocChunk(size_t size) {
   m_pLastChunk = pChunk;
   return pChunk;
 }
-FX_LPSTATICSTORECHUNK CFX_StaticStore::FindChunk(size_t size) {
+FX_STATICSTORECHUNK* CFX_StaticStore::FindChunk(size_t size) {
   FXSYS_assert(size != 0);
   if (m_pLastChunk == NULL || m_pLastChunk->iFreeSize < size) {
     return AllocChunk(std::max(m_iDefChunkSize, size));
@@ -68,8 +67,8 @@ FX_LPSTATICSTORECHUNK CFX_StaticStore::FindChunk(size_t size) {
 void* CFX_StaticStore::Alloc(size_t size) {
   size = FX_4BYTEALIGN(size);
   FXSYS_assert(size != 0);
-  FX_LPSTATICSTORECHUNK pChunk = FindChunk(size);
-  FXSYS_assert(pChunk != NULL && pChunk->iFreeSize >= size);
+  FX_STATICSTORECHUNK* pChunk = FindChunk(size);
+  FXSYS_assert(pChunk->iFreeSize >= size);
   uint8_t* p = (uint8_t*)pChunk;
   p += sizeof(FX_STATICSTORECHUNK) + pChunk->iChunkSize - pChunk->iFreeSize;
   pChunk->iFreeSize -= size;
@@ -89,19 +88,18 @@ CFX_FixedStore::CFX_FixedStore(size_t iBlockSize, size_t iBlockNumsInChunk)
   FXSYS_assert(m_iBlockSize != 0 && m_iDefChunkSize != 0);
 }
 CFX_FixedStore::~CFX_FixedStore() {
-  FX_LPFIXEDSTORECHUNK pChunk, pNext;
-  pChunk = m_pChunk;
-  while (pChunk != NULL) {
-    pNext = pChunk->pNextChunk;
+  FX_FIXEDSTORECHUNK* pChunk = m_pChunk;
+  while (pChunk) {
+    FX_FIXEDSTORECHUNK* pNext = pChunk->pNextChunk;
     FX_Free(pChunk);
     pChunk = pNext;
   }
 }
-FX_LPFIXEDSTORECHUNK CFX_FixedStore::AllocChunk() {
+FX_FIXEDSTORECHUNK* CFX_FixedStore::AllocChunk() {
   int32_t iTotalSize = sizeof(FX_FIXEDSTORECHUNK) + m_iDefChunkSize +
                        m_iBlockSize * m_iDefChunkSize;
-  FX_LPFIXEDSTORECHUNK pChunk =
-      (FX_LPFIXEDSTORECHUNK)FX_Alloc(uint8_t, iTotalSize);
+  FX_FIXEDSTORECHUNK* pChunk =
+      (FX_FIXEDSTORECHUNK*)FX_Alloc(uint8_t, iTotalSize);
   if (pChunk == NULL) {
     return NULL;
   }
@@ -116,7 +114,7 @@ void* CFX_FixedStore::Alloc(size_t size) {
   if (size > m_iBlockSize) {
     return NULL;
   }
-  FX_LPFIXEDSTORECHUNK pChunk = m_pChunk;
+  FX_FIXEDSTORECHUNK* pChunk = m_pChunk;
   while (pChunk != NULL) {
     if (pChunk->iFreeNum > 0) {
       break;
@@ -140,8 +138,8 @@ void* CFX_FixedStore::Alloc(size_t size) {
 }
 void CFX_FixedStore::Free(void* pBlock) {
   FXSYS_assert(pBlock != NULL);
-  FX_LPFIXEDSTORECHUNK pPrior, pChunk;
-  pPrior = NULL, pChunk = m_pChunk;
+  FX_FIXEDSTORECHUNK* pPrior = NULL;
+  FX_FIXEDSTORECHUNK* pChunk = m_pChunk;
   uint8_t* pStart = NULL;
   uint8_t* pEnd;
   while (pChunk != NULL) {
@@ -184,17 +182,16 @@ CFX_DynamicStore::CFX_DynamicStore(size_t iDefChunkSize)
   FXSYS_assert(m_iDefChunkSize != 0);
 }
 CFX_DynamicStore::~CFX_DynamicStore() {
-  FX_LPDYNAMICSTORECHUNK pChunk, pNext;
-  pChunk = m_pChunk;
-  while (pChunk != NULL) {
-    pNext = pChunk->pNextChunk;
+  FX_DYNAMICSTORECHUNK* pChunk = m_pChunk;
+  while (pChunk) {
+    FX_DYNAMICSTORECHUNK* pNext = pChunk->pNextChunk;
     FX_Free(pChunk);
     pChunk = pNext;
   }
 }
-FX_LPDYNAMICSTORECHUNK CFX_DynamicStore::AllocChunk(size_t size) {
+FX_DYNAMICSTORECHUNK* CFX_DynamicStore::AllocChunk(size_t size) {
   FXSYS_assert(size != 0);
-  FX_LPDYNAMICSTORECHUNK pChunk = (FX_LPDYNAMICSTORECHUNK)FX_Alloc(
+  FX_DYNAMICSTORECHUNK* pChunk = (FX_DYNAMICSTORECHUNK*)FX_Alloc(
       uint8_t,
       sizeof(FX_DYNAMICSTORECHUNK) + sizeof(FX_DYNAMICSTOREBLOCK) * 2 + size);
   if (pChunk == NULL) {
@@ -202,14 +199,14 @@ FX_LPDYNAMICSTORECHUNK CFX_DynamicStore::AllocChunk(size_t size) {
   }
   pChunk->iChunkSize = size;
   pChunk->iFreeSize = size;
-  FX_LPDYNAMICSTOREBLOCK pBlock = pChunk->FirstBlock();
+  FX_DYNAMICSTOREBLOCK* pBlock = pChunk->FirstBlock();
   pBlock->iBlockSize = size;
   pBlock->bUsed = FALSE;
   pBlock = pBlock->NextBlock();
   pBlock->iBlockSize = 0;
   pBlock->bUsed = TRUE;
   if (m_pChunk != NULL && size >= m_iDefChunkSize) {
-    FX_LPDYNAMICSTORECHUNK pLast = m_pChunk;
+    FX_DYNAMICSTORECHUNK* pLast = m_pChunk;
     while (pLast->pNextChunk != NULL) {
       pLast = pLast->pNextChunk;
     }
@@ -224,8 +221,8 @@ FX_LPDYNAMICSTORECHUNK CFX_DynamicStore::AllocChunk(size_t size) {
 void* CFX_DynamicStore::Alloc(size_t size) {
   size = FX_4BYTEALIGN(size);
   FXSYS_assert(size != 0);
-  FX_LPDYNAMICSTORECHUNK pChunk = m_pChunk;
-  FX_LPDYNAMICSTOREBLOCK pBlock = NULL;
+  FX_DYNAMICSTORECHUNK* pChunk = m_pChunk;
+  FX_DYNAMICSTOREBLOCK* pBlock = NULL;
   while (pChunk != NULL) {
     if (pChunk->iFreeSize >= size) {
       pBlock = pChunk->FirstBlock();
@@ -253,7 +250,7 @@ void* CFX_DynamicStore::Alloc(size_t size) {
   if (pBlock->iBlockSize > m) {
     size_t n = pBlock->iBlockSize;
     pBlock->iBlockSize = size;
-    FX_LPDYNAMICSTOREBLOCK pNextBlock = pBlock->NextBlock();
+    FX_DYNAMICSTOREBLOCK* pNextBlock = pBlock->NextBlock();
     pNextBlock->bUsed = FALSE;
     pNextBlock->iBlockSize = n - size - sizeof(FX_DYNAMICSTOREBLOCK);
     pChunk->iFreeSize -= size + sizeof(FX_DYNAMICSTOREBLOCK);
@@ -264,8 +261,8 @@ void* CFX_DynamicStore::Alloc(size_t size) {
 }
 void CFX_DynamicStore::Free(void* pBlock) {
   FXSYS_assert(pBlock != NULL);
-  FX_LPDYNAMICSTORECHUNK pPriorChunk, pChunk;
-  pPriorChunk = NULL, pChunk = m_pChunk;
+  FX_DYNAMICSTORECHUNK* pPriorChunk = NULL;
+  FX_DYNAMICSTORECHUNK* pChunk = m_pChunk;
   while (pChunk != NULL) {
     if (pBlock > pChunk &&
         pBlock <= ((uint8_t*)pChunk + sizeof(FX_DYNAMICSTORECHUNK) +
@@ -275,8 +272,8 @@ void CFX_DynamicStore::Free(void* pBlock) {
     pPriorChunk = pChunk, pChunk = pChunk->pNextChunk;
   }
   FXSYS_assert(pChunk != NULL);
-  FX_LPDYNAMICSTOREBLOCK pPriorBlock, pFindBlock;
-  pPriorBlock = NULL, pFindBlock = pChunk->FirstBlock();
+  FX_DYNAMICSTOREBLOCK* pPriorBlock = NULL;
+  FX_DYNAMICSTOREBLOCK* pFindBlock = pChunk->FirstBlock();
   while (pFindBlock->iBlockSize != 0) {
     if (pBlock == (void*)pFindBlock->Data()) {
       break;

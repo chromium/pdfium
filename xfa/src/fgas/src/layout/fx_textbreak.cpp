@@ -1165,7 +1165,7 @@ typedef struct _FX_FORMCHAR {
   int32_t iWidth;
 } FX_FORMCHAR, *FX_LPFORMCHAR;
 typedef FX_FORMCHAR const* FX_LPCFORMCHAR;
-int32_t CFX_TxtBreak::GetDisplayPos(FX_LPCTXTRUN pTxtRun,
+int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
                                     FXTEXT_CHARPOS* pCharPos,
                                     FX_BOOL bCharCode,
                                     CFX_WideString* pWSForms,
@@ -1548,7 +1548,7 @@ int32_t CFX_TxtBreak::GetDisplayPos(FX_LPCTXTRUN pTxtRun,
   }
   return iCount;
 }
-int32_t CFX_TxtBreak::GetCharRects(FX_LPCTXTRUN pTxtRun,
+int32_t CFX_TxtBreak::GetCharRects(const FX_TXTRUN* pTxtRun,
                                    CFX_RectFArray& rtArray,
                                    FX_BOOL bCharBBox) const {
   if (pTxtRun == NULL || pTxtRun->iLength < 1) {

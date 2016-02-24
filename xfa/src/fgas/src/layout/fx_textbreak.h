@@ -89,12 +89,12 @@ class CFX_TxtBreak : public IFX_TxtBreak {
   virtual void ClearBreakPieces();
   virtual void Reset();
   virtual int32_t GetDisplayPos(
-      FX_LPCTXTRUN pTxtRun,
+      const FX_TXTRUN* pTxtRun,
       FXTEXT_CHARPOS* pCharPos,
       FX_BOOL bCharCode = FALSE,
       CFX_WideString* pWSForms = NULL,
       FX_AdjustCharDisplayPos pAdjustPos = NULL) const;
-  virtual int32_t GetCharRects(FX_LPCTXTRUN pTxtRun,
+  virtual int32_t GetCharRects(const FX_TXTRUN* pTxtRun,
                                CFX_RectFArray& rtArray,
                                FX_BOOL bCharBBox = FALSE) const;
   void AppendChar_PageLoad(CFX_Char* pCurChar, FX_DWORD dwProps);

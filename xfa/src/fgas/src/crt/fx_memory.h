@@ -25,18 +25,19 @@ class CFX_DefStore : public IFX_MEMAllocator, public CFX_Target {
   virtual size_t SetDefChunkSize(size_t size) { return 0; }
   virtual size_t GetCurrentDataSize() const { return 0; }
 };
+
 #if _FX_OS_ != _FX_ANDROID_
 #pragma pack(push, 1)
 #endif
-typedef struct _FX_STATICSTORECHUNK {
-  _FX_STATICSTORECHUNK* pNextChunk;
+struct FX_STATICSTORECHUNK {
+  FX_STATICSTORECHUNK* pNextChunk;
   size_t iChunkSize;
   size_t iFreeSize;
-} FX_STATICSTORECHUNK, *FX_LPSTATICSTORECHUNK;
-typedef FX_STATICSTORECHUNK const* FX_LPCSTATICSTORECHUNK;
+};
 #if _FX_OS_ != _FX_ANDROID_
 #pragma pack(pop)
 #endif
+
 class CFX_StaticStore : public IFX_MEMAllocator, public CFX_Target {
  public:
   CFX_StaticStore(size_t iDefChunkSize = 4096);
@@ -52,27 +53,27 @@ class CFX_StaticStore : public IFX_MEMAllocator, public CFX_Target {
  protected:
   size_t m_iAllocatedSize;
   size_t m_iDefChunkSize;
-  FX_LPSTATICSTORECHUNK m_pChunk;
-  FX_LPSTATICSTORECHUNK m_pLastChunk;
-  FX_LPSTATICSTORECHUNK AllocChunk(size_t size);
-  FX_LPSTATICSTORECHUNK FindChunk(size_t size);
+  FX_STATICSTORECHUNK* m_pChunk;
+  FX_STATICSTORECHUNK* m_pLastChunk;
+  FX_STATICSTORECHUNK* AllocChunk(size_t size);
+  FX_STATICSTORECHUNK* FindChunk(size_t size);
 };
+
 #if _FX_OS_ != _FX_ANDROID_
 #pragma pack(push, 1)
 #endif
-typedef struct _FX_FIXEDSTORECHUNK {
-  uint8_t* FirstFlag() const {
-    return (uint8_t*)this + sizeof(_FX_FIXEDSTORECHUNK);
-  }
-  uint8_t* FirstBlock() const { return FirstFlag() + iChunkSize; }
-  _FX_FIXEDSTORECHUNK* pNextChunk;
+struct FX_FIXEDSTORECHUNK {
+  uint8_t* FirstFlag() { return reinterpret_cast<uint8_t*>(this + 1); }
+  uint8_t* FirstBlock() { return FirstFlag() + iChunkSize; }
+
+  FX_FIXEDSTORECHUNK* pNextChunk;
   size_t iChunkSize;
   size_t iFreeNum;
-} FX_FIXEDSTORECHUNK, *FX_LPFIXEDSTORECHUNK;
-typedef FX_FIXEDSTORECHUNK const* FX_LPCFIXEDSTORECHUNK;
+};
 #if _FX_OS_ != _FX_ANDROID_
 #pragma pack(pop)
 #endif
+
 class CFX_FixedStore : public IFX_MEMAllocator, public CFX_Target {
  public:
   CFX_FixedStore(size_t iBlockSize, size_t iBlockNumsInChunk);
@@ -86,38 +87,37 @@ class CFX_FixedStore : public IFX_MEMAllocator, public CFX_Target {
   virtual size_t GetCurrentDataSize() const { return 0; }
 
  protected:
+  FX_FIXEDSTORECHUNK* AllocChunk();
+
   size_t m_iBlockSize;
   size_t m_iDefChunkSize;
-  FX_LPFIXEDSTORECHUNK m_pChunk;
-  FX_LPFIXEDSTORECHUNK AllocChunk();
+  FX_FIXEDSTORECHUNK* m_pChunk;
 };
+
 #if _FX_OS_ != _FX_ANDROID_
 #pragma pack(push, 1)
 #endif
-typedef struct _FX_DYNAMICSTOREBLOCK {
-  _FX_DYNAMICSTOREBLOCK* NextBlock() const {
-    return (_FX_DYNAMICSTOREBLOCK*)(Data() + iBlockSize);
-  }
-  uint8_t* Data() const {
-    return (uint8_t*)this + sizeof(_FX_DYNAMICSTOREBLOCK);
+struct FX_DYNAMICSTOREBLOCK {
+  uint8_t* Data() { return reinterpret_cast<uint8_t*>(this + 1); }
+  FX_DYNAMICSTOREBLOCK* NextBlock() {
+    return reinterpret_cast<FX_DYNAMICSTOREBLOCK*>(Data() + iBlockSize);
   }
   size_t iBlockSize;
   FX_BOOL bUsed;
-} FX_DYNAMICSTOREBLOCK, *FX_LPDYNAMICSTOREBLOCK;
-typedef FX_DYNAMICSTOREBLOCK const* FX_LPCDYNAMICSTOREBLOCK;
-typedef struct _FX_DYNAMICSTORECHUNK {
-  FX_LPDYNAMICSTOREBLOCK FirstBlock() const {
-    return (FX_LPDYNAMICSTOREBLOCK)((uint8_t*)this +
-                                    sizeof(_FX_DYNAMICSTORECHUNK));
+};
+
+struct FX_DYNAMICSTORECHUNK {
+  FX_DYNAMICSTOREBLOCK* FirstBlock() {
+    return reinterpret_cast<FX_DYNAMICSTOREBLOCK*>(this + 1);
   }
-  _FX_DYNAMICSTORECHUNK* pNextChunk;
+  FX_DYNAMICSTORECHUNK* pNextChunk;
   size_t iChunkSize;
   size_t iFreeSize;
-} FX_DYNAMICSTORECHUNK, *FX_LPDYNAMICSTORECHUNK;
-typedef FX_DYNAMICSTORECHUNK const* FX_LPCDYNAMICSTORECHUNK;
+};
 #if _FX_OS_ != _FX_ANDROID_
 #pragma pack(pop)
 #endif
+
 class CFX_DynamicStore : public IFX_MEMAllocator, public CFX_Target {
  public:
   CFX_DynamicStore(size_t iDefChunkSize = 4096);
@@ -131,9 +131,10 @@ class CFX_DynamicStore : public IFX_MEMAllocator, public CFX_Target {
   virtual size_t GetCurrentDataSize() const { return 0; }
 
  protected:
+  FX_DYNAMICSTORECHUNK* AllocChunk(size_t size);
+
   size_t m_iDefChunkSize;
-  FX_LPDYNAMICSTORECHUNK m_pChunk;
-  FX_LPDYNAMICSTORECHUNK AllocChunk(size_t size);
+  FX_DYNAMICSTORECHUNK* m_pChunk;
 };
 
 #endif  // XFA_SRC_FGAS_SRC_CRT_FX_MEMORY_H_

@@ -329,18 +329,19 @@ int32_t CFX_BaseMassArray::RemoveLast(int32_t iCount) {
 void CFX_BaseMassArray::RemoveAll(FX_BOOL bLeaveMemory) {
   m_pData->RemoveAll(bLeaveMemory);
 }
-typedef struct _FX_BASEDISCRETEARRAYDATA {
+
+struct FX_BASEDISCRETEARRAYDATA {
   int32_t iBlockSize;
   int32_t iChunkSize;
   int32_t iChunkCount;
   CFX_PtrArray ChunkBuffer;
-} FX_BASEDISCRETEARRAYDATA, *FX_LPBASEDISCRETEARRAYDATA;
-typedef FX_BASEDISCRETEARRAYDATA const* FX_LPCBASEDISCRETEARRAYDATA;
+};
+
 CFX_BaseDiscreteArray::CFX_BaseDiscreteArray(int32_t iChunkSize,
                                              int32_t iBlockSize) {
   FXSYS_assert(iChunkSize > 0 && iBlockSize > 0);
-  FX_LPBASEDISCRETEARRAYDATA pData;
-  m_pData = pData = new FX_BASEDISCRETEARRAYDATA;
+  FX_BASEDISCRETEARRAYDATA* pData = new FX_BASEDISCRETEARRAYDATA;
+  m_pData = pData;
   pData->ChunkBuffer.SetSize(16);
   pData->iChunkCount = 0;
   pData->iChunkSize = iChunkSize;
@@ -348,11 +349,11 @@ CFX_BaseDiscreteArray::CFX_BaseDiscreteArray(int32_t iChunkSize,
 }
 CFX_BaseDiscreteArray::~CFX_BaseDiscreteArray() {
   RemoveAll();
-  delete (FX_LPBASEDISCRETEARRAYDATA) m_pData;
+  delete static_cast<FX_BASEDISCRETEARRAYDATA*>(m_pData);
 }
 uint8_t* CFX_BaseDiscreteArray::AddSpaceTo(int32_t index) {
   FXSYS_assert(index > -1);
-  FX_LPBASEDISCRETEARRAYDATA pData = (FX_LPBASEDISCRETEARRAYDATA)m_pData;
+  FX_BASEDISCRETEARRAYDATA* pData = (FX_BASEDISCRETEARRAYDATA*)m_pData;
   int32_t& iChunkCount = pData->iChunkCount;
   int32_t iChunkSize = pData->iChunkSize;
   uint8_t* pChunk = NULL;
@@ -372,7 +373,7 @@ uint8_t* CFX_BaseDiscreteArray::AddSpaceTo(int32_t index) {
 }
 uint8_t* CFX_BaseDiscreteArray::GetAt(int32_t index) const {
   FXSYS_assert(index > -1);
-  FX_LPBASEDISCRETEARRAYDATA pData = (FX_LPBASEDISCRETEARRAYDATA)m_pData;
+  FX_BASEDISCRETEARRAYDATA* pData = (FX_BASEDISCRETEARRAYDATA*)m_pData;
   int32_t iChunkSize = pData->iChunkSize;
   int32_t iChunk = index / iChunkSize;
   if (iChunk >= pData->iChunkCount) {
@@ -385,7 +386,7 @@ uint8_t* CFX_BaseDiscreteArray::GetAt(int32_t index) const {
   return pChunk + (index % iChunkSize) * pData->iBlockSize;
 }
 void CFX_BaseDiscreteArray::RemoveAll() {
-  FX_LPBASEDISCRETEARRAYDATA pData = (FX_LPBASEDISCRETEARRAYDATA)m_pData;
+  FX_BASEDISCRETEARRAYDATA* pData = (FX_BASEDISCRETEARRAYDATA*)m_pData;
   CFX_PtrArray& ChunkBuffer = pData->ChunkBuffer;
   int32_t& iChunkCount = pData->iChunkCount;
   for (int32_t i = 0; i < iChunkCount; i++) {

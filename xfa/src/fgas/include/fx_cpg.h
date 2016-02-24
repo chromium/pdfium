@@ -164,7 +164,8 @@ enum FX_CODESYSTEM {
   FX_SBCS,
   FX_DBCS,
 };
-typedef struct _FX_CODEPAGE_HEADER {
+
+struct FX_CODEPAGE_HEADER {
   uint16_t uCPID;
   uint8_t uMinCharBytes;
   uint8_t uMaxCharBytes;
@@ -176,54 +177,63 @@ typedef struct _FX_CODEPAGE_HEADER {
   FX_WCHAR wMinUnicode;
   FX_WCHAR wMaxUnicode;
   FX_WCHAR wDefUnicode;
-} FX_CODEPAGE_HEADER;
+};
+
 #define FX_CPMAPTYPE_Consecution 1
 #define FX_CPMAPTYPE_Strict 2
 #define FX_CPMAPTYPE_NoMapping 3
 #define FX_CPMAPTYPE_Delta 4
-typedef struct _FX_CPCU_MAPTABLE1 {
+
+struct FX_CPCU_MAPTABLE1 {
   uint16_t uMapType;
   uint16_t uUniocde;
-} FX_CPCU_MAPTABLE1;
-typedef struct _FX_CPCU_MAPTABLE2 {
+};
+
+struct FX_CPCU_MAPTABLE2 {
   uint8_t uTrailByte;
   uint8_t uMapType;
   uint16_t uOffset;
-} FX_CPCU_MAPTABLE2;
-typedef struct _FX_CPCU_MAPINFO {
+};
+
+struct FX_CPCU_MAPINFO {
   FX_CPCU_MAPTABLE1* pMapTable1;
   FX_CPCU_MAPTABLE2* pMapTable2;
   const uint8_t* pMapData;
-} FX_CPCU_MAPINFO;
-typedef struct _FX_CPUC_MAPTABLE {
+};
+
+struct FX_CPUC_MAPTABLE {
   uint16_t uStartUnicode;
   uint16_t uEndUnicode;
   uint16_t uMapType;
   uint16_t uOffset;
-} FX_CPUC_MAPTABLE;
-typedef struct _FX_CPUC_MAPINFO {
+};
+
+struct FX_CPUC_MAPINFO {
   uint32_t uMapCount;
   FX_CPUC_MAPTABLE* pMapTable;
   const uint8_t* pMapData;
-} FX_CPUC_MAPINFO;
-typedef struct _FX_CODEPAGE {
+};
+
+struct FX_CODEPAGE {
   FX_CODEPAGE_HEADER const* pCPHeader;
   FX_CPCU_MAPINFO const* pCPCUMapInfo;
   FX_CPUC_MAPINFO const* pCPUCMapInfo;
-} FX_CODEPAGE, *FX_LPCODEPAGE;
-typedef FX_CODEPAGE const* FX_LPCCODEPAGE;
-typedef struct _FX_STR2CPHASH {
+};
+
+struct FX_STR2CPHASH {
   uint32_t uHash;
   uint32_t uCodePage;
-} FX_STR2CPHASH;
-typedef struct _FX_CHARSET_MAP {
+};
+
+struct FX_CHARSET_MAP {
   uint16_t charset;
   uint16_t codepage;
-} FX_CHARSET_MAP;
-typedef struct _FX_LANG2CPMAP {
+};
+
+struct FX_LANG2CPMAP {
   FX_WORD wLanguage;
   FX_WORD wCodepage;
-} FX_LANG2CPMAP;
+};
 
 class IFX_CodePage {
  public:

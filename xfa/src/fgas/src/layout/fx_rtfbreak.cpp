@@ -1174,7 +1174,7 @@ void CFX_RTFBreak::Reset() {
   m_RTFLine1.RemoveAll(TRUE);
   m_RTFLine2.RemoveAll(TRUE);
 }
-int32_t CFX_RTFBreak::GetDisplayPos(FX_LPCRTFTEXTOBJ pText,
+int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
                                     FXTEXT_CHARPOS* pCharPos,
                                     FX_BOOL bCharCode,
                                     CFX_WideString* pWSForms,
@@ -1418,7 +1418,7 @@ int32_t CFX_RTFBreak::GetDisplayPos(FX_LPCRTFTEXTOBJ pText,
   }
   return iCount;
 }
-int32_t CFX_RTFBreak::GetCharRects(FX_LPCRTFTEXTOBJ pText,
+int32_t CFX_RTFBreak::GetCharRects(const FX_RTFTEXTOBJ* pText,
                                    CFX_RectFArray& rtArray,
                                    FX_BOOL bCharBBox) const {
   if (pText == NULL || pText->iLength < 1) {

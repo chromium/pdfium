@@ -15,7 +15,8 @@ const static FX_CHAR g_FXBase64EncoderMap[64] = {
     'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '/',
 };
-typedef struct _FX_BASE64DATA {
+
+struct FX_BASE64DATA {
   FX_DWORD data1 : 2;
   FX_DWORD data2 : 6;
   FX_DWORD data3 : 4;
@@ -23,8 +24,8 @@ typedef struct _FX_BASE64DATA {
   FX_DWORD data5 : 6;
   FX_DWORD data6 : 2;
   FX_DWORD data7 : 8;
-} FX_BASE64DATA, *FX_LPBASE64ENCODEDATA;
-typedef FX_BASE64DATA const* FX_LPCBASE64DATA;
+};
+
 static void FX_Base64EncodePiece(const FX_BASE64DATA& src,
                                  int32_t iBytes,
                                  FX_CHAR dst[4]) {

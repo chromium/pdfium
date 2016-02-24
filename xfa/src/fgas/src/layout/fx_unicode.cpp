@@ -60,7 +60,7 @@ static const FX_JAPCHARPROPERTYEX gs_FX_JapCharPropertysEx[] = {
     {0x31F9, 0x23}, {0x31FA, 0x23}, {0x31FB, 0x23}, {0x31FC, 0x23},
     {0x31FD, 0x23}, {0x31FE, 0x23}, {0x31FF, 0x23},
 };
-FX_LPCJAPCHARPROPERTYEX FX_GetJapCharPropertyEx(FX_WCHAR wch) {
+const FX_JAPCHARPROPERTYEX* FX_GetJapCharPropertyEx(FX_WCHAR wch) {
   int32_t iStart = 0;
   int32_t iEnd =
       sizeof(gs_FX_JapCharPropertysEx) / sizeof(FX_JAPCHARPROPERTYEX);
@@ -89,7 +89,7 @@ FX_BOOL FX_AdjustJapCharDisplayPos(FX_WCHAR wch,
   if (wch < 0x3001 || wch > 0x31FF) {
     return FALSE;
   }
-  FX_LPCJAPCHARPROPERTYEX pJapChar = FX_GetJapCharPropertyEx(wch);
+  const FX_JAPCHARPROPERTYEX* pJapChar = FX_GetJapCharPropertyEx(wch);
   if (pJapChar == NULL) {
     return FALSE;
   }

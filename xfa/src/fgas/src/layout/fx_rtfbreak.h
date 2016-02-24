@@ -97,12 +97,12 @@ class CFX_RTFBreak : public IFX_RTFBreak {
   void ClearBreakPieces() override;
   void Reset() override;
   int32_t GetDisplayPos(
-      FX_LPCRTFTEXTOBJ pText,
+      const FX_RTFTEXTOBJ* pText,
       FXTEXT_CHARPOS* pCharPos,
       FX_BOOL bCharCode = FALSE,
       CFX_WideString* pWSForms = NULL,
       FX_AdjustCharDisplayPos pAdjustPos = NULL) const override;
-  int32_t GetCharRects(FX_LPCRTFTEXTOBJ pText,
+  int32_t GetCharRects(const FX_RTFTEXTOBJ* pText,
                        CFX_RectFArray& rtArray,
                        FX_BOOL bCharBBox = FALSE) const override;
   FX_DWORD AppendChar_CharCode(FX_WCHAR wch);
