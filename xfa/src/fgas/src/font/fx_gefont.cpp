@@ -484,7 +484,7 @@ int32_t CFX_GEFont::GetGlyphIndex(FX_WCHAR wUnicode,
     }
     return iGlyphIndex;
   }
-  FGAS_LPCFONTUSB pFontUSB = FGAS_GetUnicodeBitField(wUnicode);
+  const FGAS_FONTUSB* pFontUSB = FGAS_GetUnicodeBitField(wUnicode);
   if (pFontUSB == NULL) {
     return 0xFFFF;
   }

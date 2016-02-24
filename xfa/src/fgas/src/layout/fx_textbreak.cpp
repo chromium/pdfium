@@ -1159,12 +1159,13 @@ void CFX_TxtBreak::Reset() {
   m_pTxtLine1->RemoveAll(TRUE);
   m_pTxtLine2->RemoveAll(TRUE);
 }
-typedef struct _FX_FORMCHAR {
+
+struct FX_FORMCHAR {
   FX_WORD wch;
   FX_WORD wForm;
   int32_t iWidth;
-} FX_FORMCHAR, *FX_LPFORMCHAR;
-typedef FX_FORMCHAR const* FX_LPCFORMCHAR;
+};
+
 int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
                                     FXTEXT_CHARPOS* pCharPos,
                                     FX_BOOL bCharCode,

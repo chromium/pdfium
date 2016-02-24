@@ -130,7 +130,7 @@ static void FX_DaysToDate(int64_t iDays,
   iDay += (uint8_t)iDays;
 }
 
-typedef struct _FXUT_SYSTEMTIME {
+struct FXUT_SYSTEMTIME {
   FX_WORD wYear;
   FX_WORD wMonth;
   FX_WORD wDayOfWeek;
@@ -139,7 +139,8 @@ typedef struct _FXUT_SYSTEMTIME {
   FX_WORD wMinute;
   FX_WORD wSecond;
   FX_WORD wMilliseconds;
-} FXUT_SYSTEMTIME;
+};
+
 void CFX_Unitime::Now() {
   FXUT_SYSTEMTIME utLocal;
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN32_MOBILE_ || \

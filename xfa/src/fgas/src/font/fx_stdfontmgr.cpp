@@ -789,7 +789,7 @@ IFX_Font* CFX_FontMgrImp::GetFontByUnicode(FX_WCHAR wUnicode,
   IFX_Font* pFont = nullptr;
   if (m_FailedUnicodes2NULL.Lookup(wUnicode, pFont))
     return nullptr;
-  FGAS_LPCFONTUSB x = FGAS_GetUnicodeBitField(wUnicode);
+  const FGAS_FONTUSB* x = FGAS_GetUnicodeBitField(wUnicode);
   FX_WORD wCodePage = x ? x->wCodePage : 0xFFFF;
   FX_WORD wBitField = x ? x->wBitField : 0x03E7;
   CFX_ByteString bsHash;
@@ -1140,6 +1140,7 @@ static const FX_BitCodePage g_Bit2CodePage[] = {
     {54, 861}, {55, 860}, {56, 857}, {57, 855},  {58, 852}, {59, 775},
     {60, 737}, {61, 708}, {62, 850}, {63, 437},
 };
+
 FX_WORD FX_GetCodePageBit(FX_WORD wCodePage) {
   for (int32_t i = 0; i < sizeof(g_Bit2CodePage) / sizeof(FX_BitCodePage);
        i++) {
@@ -1149,13 +1150,12 @@ FX_WORD FX_GetCodePageBit(FX_WORD wCodePage) {
   }
   return (FX_WORD)-1;
 }
+
 FX_WORD FX_GetUnicodeBit(FX_WCHAR wcUnicode) {
-  FGAS_LPCFONTUSB x = FGAS_GetUnicodeBitField(wcUnicode);
-  if (NULL == x) {
-    return 999;
-  }
-  return x->wBitField;
+  const FGAS_FONTUSB* x = FGAS_GetUnicodeBitField(wcUnicode);
+  return x ? x->wBitField : 999;
 }
+
 int32_t CFX_FontMgrImp::CalcPenalty(CFX_FontDescriptor* pInstalled,
                                     FX_WORD wCodePage,
                                     FX_DWORD dwFontStyles,

@@ -7,17 +7,17 @@
 #ifndef XFA_SRC_FGAS_SRC_FONT_FX_FONTUTILS_H_
 #define XFA_SRC_FGAS_SRC_FONT_FX_FONTUTILS_H_
 
-typedef struct _FGAS_FONTUSB {
+struct FGAS_FONTUSB {
   FX_WCHAR wStartUnicode;
   FX_WCHAR wEndUnicode;
   FX_WORD wBitField;
   FX_WORD wCodePage;
-} FGAS_FONTUSB, *FGAS_LPFONTUSB;
-typedef FGAS_FONTUSB const* FGAS_LPCFONTUSB;
+};
+
 FX_DWORD FGAS_GetFontHashCode(FX_WORD wCodePage, FX_DWORD dwFontStyles);
 FX_DWORD FGAS_GetFontFamilyHash(const FX_WCHAR* pszFontFamily,
                                 FX_DWORD dwFontStyles,
                                 FX_WORD wCodePage);
-FGAS_LPCFONTUSB FGAS_GetUnicodeBitField(FX_WCHAR wUnicode);
+const FGAS_FONTUSB* FGAS_GetUnicodeBitField(FX_WCHAR wUnicode);
 
 #endif  // XFA_SRC_FGAS_SRC_FONT_FX_FONTUTILS_H_

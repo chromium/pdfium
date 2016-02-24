@@ -7,11 +7,12 @@
 #ifndef XFA_SRC_FGAS_SRC_LAYOUT_FX_UNICODE_H_
 #define XFA_SRC_FGAS_SRC_LAYOUT_FX_UNICODE_H_
 
-typedef struct _FX_TPO {
+struct FX_TPO {
   int32_t index;
   int32_t pos;
-} FX_TPO;
+};
 typedef CFX_MassArrayTemplate<FX_TPO> CFX_TPOArray;
+
 void FX_TEXTLAYOUT_PieceSort(CFX_TPOArray& tpos, int32_t iStart, int32_t iEnd);
 
 #endif  // XFA_SRC_FGAS_SRC_LAYOUT_FX_UNICODE_H_
