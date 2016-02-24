@@ -62,9 +62,7 @@ def main():
   sdks = [s for s in sdks  # ['10.5', '10.6'] => ['10.6']
           if parse_version(s) >= parse_version(min_sdk_version)]
   if not sdks:
-    # Not raising an exception to allow older version to run.
-    # TODO(weili): remove this once we no longer support older versions.
-    return min_sdk_version
+    raise Exception('No %s+ SDK found' % min_sdk_version)
   best_sdk = sorted(sdks, key=parse_version)[0]
 
   if options.verify and best_sdk != min_sdk_version and not options.sdk_path:
