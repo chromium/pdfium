@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FDP_SRC_CSS_FDE_CSSSTYLESELECTOR_H_
 #define XFA_SRC_FDP_SRC_CSS_FDE_CSSSTYLESELECTOR_H_
 
+#include <vector>
+
 #include "xfa/src/fdp/include/fde_mem.h"
 #include "xfa/src/fgas/include/fx_sys.h"
 
@@ -23,7 +25,6 @@ struct FDE_CSSRULEDATA : public CFX_Target {
   FX_DWORD dwPriority;
   FDE_CSSRULEDATA* pNext;
 };
-typedef CFX_ArrayTemplate<FDE_CSSRULEDATA*> CFDE_CSSRuleDataArray;
 
 class CFDE_CSSRuleCollection : public CFX_Target {
  public:
@@ -115,7 +116,6 @@ class CFDE_CSSStyleSelector : public IFDE_CSSStyleSelector, public CFX_Target {
   void MatchRules(FDE_CSSTAGCACHE* pCache,
                   FDE_CSSRULEDATA* pList,
                   FDE_CSSPERSUDO ePersudoType);
-  void SortRulesTo(CFDE_CSSDeclarationArray& matchDecls);
   FX_BOOL MatchSelector(FDE_CSSTAGCACHE* pCache,
                         IFDE_CSSSelector* pSel,
                         FDE_CSSPERSUDO ePersudoType);
@@ -181,7 +181,7 @@ class CFDE_CSSStyleSelector : public IFDE_CSSStyleSelector, public CFX_Target {
   IFX_MEMAllocator* m_pInlineStyleStore;
   IFX_MEMAllocator* m_pFixedStyleStore;
   CFDE_CSSAccelerator* m_pAccelerator;
-  CFDE_CSSRuleDataArray m_MatchedRules;
+  std::vector<FDE_CSSRULEDATA*> m_MatchedRules;
 };
 
 struct FDE_CSSCOUNTERDATA {
