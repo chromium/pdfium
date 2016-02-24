@@ -68,8 +68,8 @@
 extern "C" {
 #endif
 typedef void* FX_POSITION;       // Keep until fxcrt containers gone
-typedef unsigned short FX_WORD;  // Keep - "an efficient small type"
-typedef unsigned int FX_DWORD;   // Keep - "an efficient type"
+typedef uint16_t FX_WORD;        // Keep - "an efficient small type"
+typedef uint32_t FX_DWORD;       // Keep - "an efficient type"
 typedef float FX_FLOAT;          // Keep, allow upgrade to doubles.
 typedef double FX_DOUBLE;        // Keep, allow downgrade to floats.
 typedef int FX_BOOL;             // Keep, sadly not always 0 or 1.
