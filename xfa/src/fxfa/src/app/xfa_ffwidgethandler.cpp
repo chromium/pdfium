@@ -498,26 +498,22 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateSubform(CXFA_Node* pParent,
 CXFA_Node* CXFA_FFWidgetHandler::CreateFormItem(XFA_ELEMENT eElement,
                                                 CXFA_Node* pParent,
                                                 CXFA_Node* pBefore) const {
-  CXFA_Node* pTemplateParent =
-      pParent != NULL ? pParent->GetTemplateNode() : NULL;
+  CXFA_Node* pTemplateParent = pParent ? pParent->GetTemplateNode() : NULL;
   CXFA_Node* pNewFormItem = pTemplateParent->CloneTemplateToForm(FALSE);
-  if (pParent != NULL) {
+  if (pParent)
     pParent->InsertChild(pNewFormItem, pBefore);
-  }
   return pNewFormItem;
 }
 CXFA_Node* CXFA_FFWidgetHandler::CreateCopyNode(XFA_ELEMENT eElement,
                                                 CXFA_Node* pParent,
                                                 CXFA_Node* pBefore) const {
-  CXFA_Node* pTemplateParent =
-      pParent != NULL ? pParent->GetTemplateNode() : NULL;
+  CXFA_Node* pTemplateParent = pParent ? pParent->GetTemplateNode() : NULL;
   CXFA_Node* pNewNode =
       CreateTemplateNode(eElement, pTemplateParent,
                          pBefore ? pBefore->GetTemplateNode() : NULL)
           ->Clone(FALSE);
-  if (pParent != NULL) {
+  if (pParent)
     pParent->InsertChild(pNewNode, pBefore);
-  }
   return pNewNode;
 }
 CXFA_Node* CXFA_FFWidgetHandler::CreateTemplateNode(XFA_ELEMENT eElement,
@@ -526,9 +522,8 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateTemplateNode(XFA_ELEMENT eElement,
   CXFA_Document* pXFADoc = GetXFADoc();
   CXFA_Node* pNewTemplateNode = pXFADoc->GetParser()->GetFactory()->CreateNode(
       XFA_XDPPACKET_Template, eElement);
-  if (pParent != NULL) {
+  if (pParent)
     pParent->InsertChild(pNewTemplateNode, pBefore);
-  }
   return pNewTemplateNode;
 }
 CXFA_Node* CXFA_FFWidgetHandler::CreateFontNode(CXFA_Node* pParent) const {

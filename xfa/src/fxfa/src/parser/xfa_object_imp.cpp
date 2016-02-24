@@ -2518,8 +2518,8 @@ void CXFA_Node::Script_Som_InstanceIndex(FXJSE_HVALUE hValue,
     int32_t iTo = FXJSE_Value_ToInteger(hValue);
     int32_t iFrom = Subform_and_SubformSet_InstanceIndex();
     CXFA_Node* pManagerNode = NULL;
-    for (CXFA_Node* pNode = GetNodeItem(XFA_NODEITEM_PrevSibling);
-         pNode != NULL; pNode = pNode->GetNodeItem(XFA_NODEITEM_PrevSibling)) {
+    for (CXFA_Node* pNode = GetNodeItem(XFA_NODEITEM_PrevSibling); pNode;
+         pNode = pNode->GetNodeItem(XFA_NODEITEM_PrevSibling)) {
       if (pNode->GetClassID() == XFA_ELEMENT_InstanceManager) {
         pManagerNode = pNode;
         break;
@@ -2552,8 +2552,8 @@ void CXFA_Node::Script_Subform_InstanceManager(FXJSE_HVALUE hValue,
   if (!bSetting) {
     CFX_WideStringC wsName = GetCData(XFA_ATTRIBUTE_Name);
     CXFA_Node* pInstanceMgr = NULL;
-    for (CXFA_Node* pNode = GetNodeItem(XFA_NODEITEM_PrevSibling);
-         pNode != NULL; pNode = pNode->GetNodeItem(XFA_NODEITEM_PrevSibling)) {
+    for (CXFA_Node* pNode = GetNodeItem(XFA_NODEITEM_PrevSibling); pNode;
+         pNode = pNode->GetNodeItem(XFA_NODEITEM_PrevSibling)) {
       if (pNode->GetClassID() == XFA_ELEMENT_InstanceManager) {
         CFX_WideStringC wsInstMgrName = pNode->GetCData(XFA_ATTRIBUTE_Name);
         if (wsInstMgrName.GetLength() >= 1 && wsInstMgrName.GetAt(0) == '_' &&
@@ -2653,7 +2653,7 @@ void CXFA_Node::Script_Subform_GetInvalidObjects(CFXJSE_Arguments* pArguments) {
 }
 int32_t CXFA_Node::Subform_and_SubformSet_InstanceIndex() {
   int32_t index = 0;
-  for (CXFA_Node* pNode = GetNodeItem(XFA_NODEITEM_PrevSibling); pNode != NULL;
+  for (CXFA_Node* pNode = GetNodeItem(XFA_NODEITEM_PrevSibling); pNode;
        pNode = pNode->GetNodeItem(XFA_NODEITEM_PrevSibling)) {
     if ((pNode->GetClassID() == XFA_ELEMENT_Subform) ||
         (pNode->GetClassID() == XFA_ELEMENT_SubformSet)) {
@@ -4635,7 +4635,8 @@ int32_t CXFA_Node::InsertChild(int32_t index, CXFA_Node* pNode) {
   if (pNode->m_pNext == NULL) {
     m_pLastChild = pNode;
   }
-  ASSERT(m_pLastChild != NULL && m_pLastChild->m_pNext == NULL);
+  ASSERT(m_pLastChild);
+  ASSERT(m_pLastChild->m_pNext == NULL);
   pNode->SetFlag(XFA_NODEFLAG_HasRemoved, FALSE);
   IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
   if (pNotify) {
@@ -4680,7 +4681,8 @@ FX_BOOL CXFA_Node::InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode) {
   if (pNode->m_pNext == NULL) {
     m_pLastChild = pNode;
   }
-  ASSERT(m_pLastChild != NULL && m_pLastChild->m_pNext == NULL);
+  ASSERT(m_pLastChild);
+  ASSERT(m_pLastChild->m_pNext == NULL);
   pNode->SetFlag(XFA_NODEFLAG_HasRemoved, FALSE);
   IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
   if (pNotify) {
@@ -4832,8 +4834,8 @@ CXFA_Node* CXFA_Node::GetInstanceMgrOfSubform() {
     if (!pParentNode || pParentNode->GetClassID() == XFA_ELEMENT_Area) {
       return pInstanceMgr;
     }
-    for (CXFA_Node* pNode = GetNodeItem(XFA_NODEITEM_PrevSibling);
-         pNode != NULL; pNode = pNode->GetNodeItem(XFA_NODEITEM_PrevSibling)) {
+    for (CXFA_Node* pNode = GetNodeItem(XFA_NODEITEM_PrevSibling); pNode;
+         pNode = pNode->GetNodeItem(XFA_NODEITEM_PrevSibling)) {
       XFA_ELEMENT eType = pNode->GetClassID();
       if ((eType == XFA_ELEMENT_Subform || eType == XFA_ELEMENT_SubformSet) &&
           pNode->m_dwNameHash != m_dwNameHash) {
@@ -4892,7 +4894,7 @@ FX_BOOL CXFA_Node::IsAttributeInXML() {
 void CXFA_Node::OnRemoved(CXFA_Node* pParent,
                           CXFA_Node* pRemoved,
                           FX_BOOL bNotify) {
-  if (bNotify && (pParent != NULL)) {
+  if (bNotify && pParent) {
     IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
     if (pNotify) {
       pNotify->OnNodeEvent(pParent, XFA_NODEEVENT_ChildRemoved, pRemoved);

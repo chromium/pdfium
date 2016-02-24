@@ -20,7 +20,7 @@ IXFA_PacketImport* IXFA_PacketImport::Create(CXFA_Document* pDocument) {
 }
 CXFA_DataImporter::CXFA_DataImporter(CXFA_Document* pDocument)
     : m_pDocument(pDocument) {
-  ASSERT(m_pDocument != NULL);
+  ASSERT(m_pDocument);
 }
 FX_BOOL CXFA_DataImporter::ImportData(IFX_FileRead* pDataDocument) {
   IXFA_Parser* pDataDocumentParser = IXFA_Parser::Create(m_pDocument);
@@ -431,7 +431,7 @@ void XFA_DataExporter_RegenerateFormFile(CXFA_Node* pNode,
     static const FX_WCHAR* s_pwsTagName = L"<form";
     static const FX_WCHAR* s_pwsClose = L"</form\n>";
     pStream->WriteString(s_pwsTagName, FXSYS_wcslen(s_pwsTagName));
-    if (pChecksum != NULL) {
+    if (pChecksum) {
       static const FX_WCHAR* s_pwChecksum = L" checksum=\"";
       CFX_WideString wsChecksum =
           CFX_WideString::FromUTF8(pChecksum, FXSYS_strlen(pChecksum));
@@ -468,7 +468,7 @@ IXFA_PacketExport* IXFA_PacketExport::Create(CXFA_Document* pDocument,
 }
 CXFA_DataExporter::CXFA_DataExporter(CXFA_Document* pDocument)
     : m_pDocument(pDocument) {
-  ASSERT(m_pDocument != NULL);
+  ASSERT(m_pDocument);
 }
 FX_BOOL CXFA_DataExporter::Export(IFX_FileWrite* pWrite) {
   return Export(pWrite, m_pDocument->GetRoot());
@@ -477,8 +477,8 @@ FX_BOOL CXFA_DataExporter::Export(IFX_FileWrite* pWrite,
                                   CXFA_Node* pNode,
                                   FX_DWORD dwFlag,
                                   const FX_CHAR* pChecksum) {
-  ASSERT(pWrite != NULL);
-  if (pWrite == NULL) {
+  if (!pWrite) {
+    ASSERT(false);
     return FALSE;
   }
   IFX_Stream* pStream = IFX_Stream::CreateStream(
@@ -517,7 +517,7 @@ FX_BOOL CXFA_DataExporter::Export(IFX_Stream* pStream,
           return FALSE;
         }
         CXFA_Node* pDataNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
-        FXSYS_assert(pDataNode != NULL);
+        FXSYS_assert(pDataNode);
         XFA_DataExporter_DealWithDataGroupNode(pDataNode);
         pXMLDoc->SaveXMLNode(pStream, pElement);
       } break;

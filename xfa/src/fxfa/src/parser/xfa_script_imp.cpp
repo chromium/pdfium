@@ -585,11 +585,7 @@ int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode,
   int32_t nRet = -1;
   rndFind.m_pSC = this;
   CXFA_ObjArray findNodes;
-  if (refNode != NULL) {
-    findNodes.Add(refNode);
-  } else {
-    findNodes.Add(m_pDocument->GetRoot());
-  }
+  findNodes.Add(refNode ? refNode : m_pDocument->GetRoot());
   int32_t nNodes = 0;
   while (TRUE) {
     nNodes = findNodes.GetSize();

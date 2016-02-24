@@ -1609,7 +1609,7 @@ int32_t CXFA_XMLParser::DoParser(IFX_Pause* pPause) {
         m_dwStatus == FDE_XMLSYNTAXSTATUS_EOS) {
       break;
     }
-    if (pPause != NULL && iCount > 500 && pPause->NeedToPauseNow()) {
+    if (pPause && iCount > 500 && pPause->NeedToPauseNow()) {
       break;
     }
   }

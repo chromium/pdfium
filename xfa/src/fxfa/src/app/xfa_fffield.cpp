@@ -118,7 +118,7 @@ void CXFA_FFField::SetFWLThemeProvider() {
   }
 }
 FX_BOOL CXFA_FFField::IsLoaded() {
-  return m_pNormalWidget != NULL && CXFA_FFWidget::IsLoaded();
+  return m_pNormalWidget && CXFA_FFWidget::IsLoaded();
 }
 FX_BOOL CXFA_FFField::LoadWidget() {
   SetFWLThemeProvider();

@@ -162,7 +162,7 @@ FX_BOOL CXFA_ChecksumContext::UpdateChecksum(IFX_FileRead* pSrcFile,
   return m_pSAXReader->ContinueParse(NULL) > 99;
 }
 void CXFA_ChecksumContext::FinishChecksum() {
-  if (m_pSAXReader != NULL) {
+  if (m_pSAXReader) {
     m_pSAXReader->Release();
     m_pSAXReader = NULL;
   }
@@ -182,7 +182,7 @@ void CXFA_ChecksumContext::GetChecksum(CFX_ByteString& bsChecksum) {
   bsChecksum = m_bsChecksum;
 }
 void CXFA_ChecksumContext::Update(const CFX_ByteStringC& bsText) {
-  if (m_pByteContext != NULL) {
+  if (m_pByteContext) {
     CRYPT_SHA1Update(m_pByteContext, bsText.GetPtr(), bsText.GetLength());
   }
 }

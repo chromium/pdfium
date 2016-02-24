@@ -443,7 +443,7 @@ void CXFA_FFNotify::OnValueChanging(CXFA_Node* pSender,
         return;
       }
       CXFA_FFWidget* pWidget = NULL;
-      while ((pWidget = pWidgetAcc->GetNextWidget(pWidget)) != NULL) {
+      while ((pWidget = pWidgetAcc->GetNextWidget(pWidget))) {
         if (pWidget->IsLoaded()) {
           pWidget->AddInvalidateRect();
         }
@@ -522,7 +522,7 @@ void CXFA_FFNotify::OnValueChanged(CXFA_Node* pSender,
       }
     }
     CXFA_FFWidget* pWidget = NULL;
-    while ((pWidget = pWidgetAcc->GetNextWidget(pWidget)) != NULL) {
+    while ((pWidget = pWidgetAcc->GetNextWidget(pWidget))) {
       if (!pWidget->IsLoaded()) {
         continue;
       }

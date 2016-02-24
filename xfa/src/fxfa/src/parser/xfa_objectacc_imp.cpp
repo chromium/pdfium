@@ -2112,7 +2112,7 @@ FX_BOOL CXFA_WidgetData::GetChoiceListItem(CFX_WideString& wsText,
   }
   if (pItems) {
     CXFA_Node* pItem = pItems->GetChild(nIndex, XFA_ELEMENT_UNKNOWN);
-    if (pItem != NULL) {
+    if (pItem) {
       pItem->TryContent(wsText);
       return TRUE;
     }

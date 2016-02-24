@@ -1773,7 +1773,7 @@ IFX_Font* CXFA_DefFontMgr::GetFont(IXFA_Doc* hDoc,
     if (bGetFontInfo) {
       pCurFont = XFA_GetFontINFOByFontName(wsFontName);
     }
-    if (pCurFont != NULL && pCurFont->pReplaceFont != NULL) {
+    if (pCurFont && pCurFont->pReplaceFont) {
       FX_DWORD dwStyle = 0;
       if (dwFontStyles & FX_FONTSTYLE_Bold) {
         dwStyle |= FX_FONTSTYLE_Bold;
@@ -1792,7 +1792,7 @@ IFX_Font* CXFA_DefFontMgr::GetFont(IXFA_Doc* hDoc,
         CFX_WideString wsReplace =
             CFX_WideString(pReplace, pNameText - pReplace);
         pFont = pFDEFontMgr->LoadFont(wsReplace, dwStyle, wCodePage);
-        if (pFont != NULL) {
+        if (pFont) {
           break;
         }
         iLength--;
@@ -1816,7 +1816,7 @@ IFX_Font* CXFA_DefFontMgr::GetDefaultFont(IXFA_Doc* hDoc,
   if (!pFont)
     pFont =
         pFDEFontMgr->LoadFont((const FX_WCHAR*)NULL, dwFontStyles, wCodePage);
-  FXSYS_assert(pFont != NULL);
+  FXSYS_assert(pFont);
   if (pFont) {
     m_CacheFonts.Add(pFont);
   }
@@ -2069,9 +2069,7 @@ void CXFA_FontMgr::LoadDocFonts(IXFA_Doc* hDoc) {
 void CXFA_FontMgr::ReleaseDocFonts(IXFA_Doc* hDoc) {
   CXFA_PDFFontMgr* pMgr = NULL;
   if (m_PDFFontMgrArray.Lookup(hDoc, (void*&)pMgr)) {
-    if (pMgr != NULL) {
-      delete pMgr;
-    }
+    delete pMgr;
     m_PDFFontMgrArray.RemoveKey(hDoc);
   }
 }
@@ -2081,9 +2079,7 @@ void CXFA_FontMgr::DelAllMgrMap() {
     IXFA_Doc* hDoc = NULL;
     CXFA_PDFFontMgr* pMgr = NULL;
     m_PDFFontMgrArray.GetNextAssoc(ps, (void*&)hDoc, (void*&)pMgr);
-    if (pMgr != NULL) {
-      delete pMgr;
-    }
+    delete pMgr;
   }
   m_PDFFontMgrArray.RemoveAll();
   m_FontMap.clear();

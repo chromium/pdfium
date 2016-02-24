@@ -17,12 +17,8 @@ CXFA_CSSTagProvider::~CXFA_CSSTagProvider() {
   while (pos) {
     CFX_WideString *pName = NULL, *pValue = NULL;
     m_Attributes.GetNextAssoc(pos, (void*&)pName, (void*&)pValue);
-    if (pName != NULL) {
-      delete pName;
-    }
-    if (pValue != NULL) {
-      delete pValue;
-    }
+    delete pName;
+    delete pValue;
   }
 }
 void CXFA_CSSTagProvider::GetNextAttribute(FX_POSITION& pos,
@@ -56,23 +52,19 @@ void CXFA_TextParseContext::SetDecls(const IFDE_CSSDeclaration** ppDeclArray,
                iDeclCount * sizeof(IFDE_CSSDeclaration*));
 }
 CXFA_TextParser::~CXFA_TextParser() {
-  if (m_pUASheet != NULL) {
+  if (m_pUASheet)
     m_pUASheet->Release();
-  }
-  if (m_pSelector != NULL) {
+  if (m_pSelector)
     m_pSelector->Release();
-  }
-  if (m_pAllocator != NULL) {
+  if (m_pAllocator)
     m_pAllocator->Release();
-  }
   FX_POSITION ps = m_mapXMLNodeToParseContext.GetStartPosition();
   while (ps) {
     IFDE_XMLNode* pXMLNode;
     CXFA_TextParseContext* pParseContext;
     m_mapXMLNodeToParseContext.GetNextAssoc(ps, pXMLNode, pParseContext);
-    if (pParseContext != NULL) {
+    if (pParseContext)
       FDE_DeleteWith(CXFA_TextParseContext, m_pAllocator, pParseContext);
-    }
   }
   m_mapXMLNodeToParseContext.RemoveAll();
 }
@@ -82,12 +74,11 @@ void CXFA_TextParser::Reset() {
     IFDE_XMLNode* pXMLNode;
     CXFA_TextParseContext* pParseContext;
     m_mapXMLNodeToParseContext.GetNextAssoc(ps, pXMLNode, pParseContext);
-    if (pParseContext != NULL) {
+    if (pParseContext)
       FDE_DeleteWith(CXFA_TextParseContext, m_pAllocator, pParseContext);
-    }
   }
   m_mapXMLNodeToParseContext.RemoveAll();
-  if (m_pAllocator != NULL) {
+  if (m_pAllocator) {
     m_pAllocator->Release();
     m_pAllocator = NULL;
   }
@@ -99,7 +90,7 @@ void CXFA_TextParser::InitCSSData(IXFA_TextProvider* pTextProvider) {
   if (m_pSelector == NULL) {
     CXFA_FFDoc* pDoc = pTextProvider->GetDocNode();
     IFX_FontMgr* pFontMgr = pDoc->GetApp()->GetFDEFontMgr();
-    FXSYS_assert(pFontMgr != NULL);
+    FXSYS_assert(pFontMgr);
     m_pSelector = IFDE_CSSStyleSelector::Create();
     m_pSelector->SetFontMgr(pFontMgr);
     FX_FLOAT fFontSize = 10;
@@ -194,7 +185,7 @@ IFDE_CSSComputedStyle* CXFA_TextParser::CreateStyle(
     IFDE_CSSComputedStyle* pParentStyle) {
   IFDE_CSSComputedStyle* pNewStyle =
       m_pSelector->CreateComputedStyle(pParentStyle);
-  FXSYS_assert(pNewStyle != NULL);
+  FXSYS_assert(pNewStyle);
   if (pParentStyle) {
     IFDE_CSSParagraphStyle* pParaStyle = pParentStyle->GetParagraphStyles();
     FX_DWORD dwDecoration = pParaStyle->GetTextDecoration();
@@ -207,7 +198,7 @@ IFDE_CSSComputedStyle* CXFA_TextParser::CreateStyle(
     pParaStyle->SetNumberVerticalAlign(fBaseLine);
     IFDE_CSSBoundaryStyle* pBoundarytyle = pParentStyle->GetBoundaryStyles();
     const FDE_CSSRECT* pRect = pBoundarytyle->GetMarginWidth();
-    if (pRect != NULL) {
+    if (pRect) {
       pBoundarytyle = pNewStyle->GetBoundaryStyles();
       pBoundarytyle->SetMarginWidth(*pRect);
     }
@@ -237,7 +228,7 @@ IFDE_CSSComputedStyle* CXFA_TextParser::ComputeStyle(
 }
 void CXFA_TextParser::DoParse(IFDE_XMLNode* pXMLContainer,
                               IXFA_TextProvider* pTextProvider) {
-  if (pXMLContainer == NULL || pTextProvider == NULL || m_pAllocator != NULL) {
+  if (pXMLContainer == NULL || pTextProvider == NULL || m_pAllocator) {
     return;
   }
   m_pAllocator =
@@ -289,9 +280,8 @@ void CXFA_TextParser::ParseRichText(IFDE_XMLNode* pXMLNode,
        pXMLChild = pXMLChild->GetNodeItem(IFDE_XMLNode::NextSibling)) {
     ParseRichText(pXMLChild, pNewStyle);
   }
-  if (pNewStyle != NULL) {
+  if (pNewStyle)
     pNewStyle->Release();
-  }
 }
 void CXFA_TextParser::ParseTagInfo(IFDE_XMLNode* pXMLNode,
                                    CXFA_CSSTagProvider& tagProvider) {
@@ -381,15 +371,14 @@ IFX_Font* CXFA_TextParser::GetFont(IXFA_TextProvider* pTextProvider,
     }
   }
   CXFA_FFDoc* pDoc = pTextProvider->GetDocNode();
-  FXSYS_assert(pDoc != NULL);
   CXFA_FontMgr* pFontMgr = pDoc->GetApp()->GetXFAFontMgr();
   return pFontMgr->GetFont(pDoc, wsFamily, dwStyle);
 }
 FX_FLOAT CXFA_TextParser::GetFontSize(IXFA_TextProvider* pTextProvider,
                                       IFDE_CSSComputedStyle* pStyle) const {
-  if (pStyle != NULL) {
+  if (pStyle)
     return pStyle->GetFontStyles()->GetFontSize();
-  }
+
   CXFA_Font font = pTextProvider->GetFontNode();
   if (font) {
     return font.GetFontSize();
@@ -423,7 +412,7 @@ int32_t CXFA_TextParser::GetHorScale(IXFA_TextProvider* pTextProvider,
 }
 int32_t CXFA_TextParser::GetVerScale(IXFA_TextProvider* pTextProvider,
                                      IFDE_CSSComputedStyle* pStyle) const {
-  if (pStyle != NULL) {
+  if (pStyle) {
     CFX_WideString wsValue;
     if (pStyle->GetCustomStyle(FX_WSTRC(L"xfa-font-vertical-scale"), wsValue)) {
       return wsValue.GetInteger();
@@ -478,17 +467,17 @@ void CXFA_TextParser::GetLinethrough(IXFA_TextProvider* pTextProvider,
 }
 FX_ARGB CXFA_TextParser::GetColor(IXFA_TextProvider* pTextProvider,
                                   IFDE_CSSComputedStyle* pStyle) const {
-  if (pStyle != NULL) {
+  if (pStyle)
     return pStyle->GetFontStyles()->GetColor();
-  }
-  if (CXFA_Font font = pTextProvider->GetFontNode()) {
+
+  if (CXFA_Font font = pTextProvider->GetFontNode())
     return font.GetColor();
-  }
+
   return 0xFF000000;
 }
 FX_FLOAT CXFA_TextParser::GetBaseline(IXFA_TextProvider* pTextProvider,
                                       IFDE_CSSComputedStyle* pStyle) const {
-  if (pStyle != NULL) {
+  if (pStyle) {
     IFDE_CSSParagraphStyle* pParaStyle = pStyle->GetParagraphStyles();
     if (pParaStyle->GetVerticalAlign() == FDE_CSSVERTICALALIGN_Number) {
       return pParaStyle->GetNumberVerticalAlign();
@@ -503,7 +492,7 @@ FX_FLOAT CXFA_TextParser::GetLineHeight(IXFA_TextProvider* pTextProvider,
                                         FX_BOOL bFirst,
                                         FX_FLOAT fVerScale) const {
   FX_FLOAT fLineHeight = 0;
-  if (pStyle != NULL) {
+  if (pStyle) {
     fLineHeight = pStyle->GetParagraphStyles()->GetLineHeight();
   } else if (CXFA_Para para = pTextProvider->GetParaNode()) {
     fLineHeight = para.GetLineHeight();
@@ -697,11 +686,11 @@ void CXFA_TextLayout::Unload() {
     FDE_DeleteWith(CXFA_PieceLine, m_pAllocator, pLine);
   }
   m_pieceLines.RemoveAll();
-  if (m_pBreak != NULL) {
+  if (m_pBreak) {
     m_pBreak->Release();
     m_pBreak = NULL;
   }
-  if (m_pAllocator != NULL) {
+  if (m_pAllocator) {
     m_pAllocator->Release();
     m_pAllocator = NULL;
   }
@@ -840,10 +829,10 @@ void CXFA_TextLayout::InitBreak(IFDE_CSSComputedStyle* pStyle,
     const FDE_CSSRECT* pRect = pStyle->GetBoundaryStyles()->GetMarginWidth();
     const FDE_CSSRECT* pPaddingRect =
         pStyle->GetBoundaryStyles()->GetPaddingWidth();
-    if (pRect != NULL) {
+    if (pRect) {
       fStart = pRect->left.GetValue();
       fLineWidth -= pRect->right.GetValue();
-      if (pPaddingRect != NULL) {
+      if (pPaddingRect) {
         fStart += pPaddingRect->left.GetValue();
         fLineWidth -= pPaddingRect->right.GetValue();
       }
@@ -852,10 +841,10 @@ void CXFA_TextLayout::InitBreak(IFDE_CSSComputedStyle* pStyle,
             pParentStyle->GetBoundaryStyles()->GetMarginWidth();
         const FDE_CSSRECT* pParPaddingRect =
             pParentStyle->GetBoundaryStyles()->GetPaddingWidth();
-        if (pParRect != NULL) {
+        if (pParRect) {
           fStart += pParRect->left.GetValue();
           fLineWidth -= pParRect->right.GetValue();
-          if (pParPaddingRect != NULL) {
+          if (pParPaddingRect) {
             fStart += pParPaddingRect->left.GetValue();
             fLineWidth -= pParPaddingRect->right.GetValue();
           }
@@ -1041,9 +1030,9 @@ FX_BOOL CXFA_TextLayout::CalcSize(const CFX_SizeF& minSize,
   if (defaultSize.x < 1) {
     defaultSize.x = 0xFFFF;
   }
-  if (m_pBreak != NULL) {
+  if (m_pBreak)
     m_pBreak->Release();
-  }
+
   m_pBreak = CreateBreak(FALSE);
   FX_FLOAT fLinePos = 0;
   m_iLines = 0;
@@ -1065,7 +1054,7 @@ FX_BOOL CXFA_TextLayout::Layout(const CFX_SizeF& size, FX_FLOAT* fHeight) {
   }
   Unload();
   m_pBreak = CreateBreak(TRUE);
-  if (m_pLoader != NULL) {
+  if (m_pLoader) {
     m_pLoader->m_iTotalLines = -1;
     m_pLoader->m_iChar = 0;
   }
@@ -1116,7 +1105,7 @@ FX_BOOL CXFA_TextLayout::Layout(int32_t iBlock) {
     if (iCount == 0 && m_pLoader->m_fStartLineOffset < 0.1f) {
       UpdateAlign(szText.y, fLinePos);
     }
-  } else if (m_pTextDataNode != NULL) {
+  } else if (m_pTextDataNode) {
     iBlock *= 2;
     if (iBlock < iCount - 2) {
       m_pLoader->m_iTotalLines = m_Blocks.ElementAt(iBlock + 1);
@@ -1174,14 +1163,10 @@ FX_BOOL CXFA_TextLayout::Layout(int32_t iBlock) {
     }
   }
   if (iBlock == iCount) {
-    if (m_pTabstopContext != NULL) {
-      delete m_pTabstopContext;
-      m_pTabstopContext = NULL;
-    }
-    if (m_pLoader != NULL) {
-      delete m_pLoader;
-      m_pLoader = NULL;
-    }
+    delete m_pTabstopContext;
+    m_pTabstopContext = nullptr;
+    delete m_pLoader;
+    m_pLoader = nullptr;
   }
   return TRUE;
 }
@@ -1239,7 +1224,9 @@ FX_BOOL CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
   IFDE_SolidBrush* pSolidBrush =
       (IFDE_SolidBrush*)IFDE_Brush::Create(FDE_BRUSHTYPE_Solid);
   IFDE_Pen* pPen = IFDE_Pen::Create();
-  FXSYS_assert(pDevice != NULL && pSolidBrush != NULL && pPen != NULL);
+  FXSYS_assert(pDevice);
+  FXSYS_assert(pSolidBrush);
+  FXSYS_assert(pPen);
   if (m_pieceLines.GetSize() == 0) {
     int32_t iBlockCount = CountBlocks();
     for (int32_t i = 0; i < iBlockCount; i++) {
@@ -1365,7 +1352,7 @@ void CXFA_TextLayout::LoadText(CXFA_Node* pNode,
   CFX_WideString wsText = pNode->GetContent();
   wsText.TrimRight(L" ");
   FX_BOOL bRet = AppendChar(wsText, fLinePos, fSpaceAbove, bSavePieces);
-  if (bRet && m_pLoader != NULL) {
+  if (bRet && m_pLoader) {
     m_pLoader->m_pNode = pNode;
   } else {
     EndBreak(FX_RTFBREAK_ParagraphBreak, fLinePos, bSavePieces);
@@ -1394,7 +1381,7 @@ FX_BOOL CXFA_TextLayout::LoadRichText(IFDE_XMLNode* pXMLNode,
     FX_BOOL bCurOl = FALSE;
     FX_BOOL bCurLi = FALSE;
     IFDE_XMLElement* pElement = NULL;
-    if (pContext != NULL) {
+    if (pContext) {
       if (m_bBlockContinue ||
           (m_pLoader && pXMLNode == m_pLoader->m_pXMLNode)) {
         m_bBlockContinue = TRUE;
@@ -1421,7 +1408,7 @@ FX_BOOL CXFA_TextLayout::LoadRichText(IFDE_XMLNode* pXMLNode,
                   pXMLNode, pParentStyle);
         if ((eDisplay == FDE_CSSDISPLAY_Block ||
              eDisplay == FDE_CSSDISPLAY_ListItem) &&
-            (pStyle != NULL) &&
+            pStyle &&
             (wsName.IsEmpty() ||
              (wsName != FX_WSTRC(L"body") && wsName != FX_WSTRC(L"html") &&
               wsName != FX_WSTRC(L"ol") && wsName != FX_WSTRC(L"ul")))) {
@@ -1508,9 +1495,8 @@ FX_BOOL CXFA_TextLayout::LoadRichText(IFDE_XMLNode* pXMLNode,
                 m_pLoader->m_pXMLNode = pXMLNode;
                 m_pLoader->m_pParentStyle = pParentStyle;
               }
-              if (pStyle != NULL) {
+              if (pStyle)
                 pStyle->Release();
-              }
               return FALSE;
             }
             return TRUE;
@@ -1542,12 +1528,12 @@ FX_BOOL CXFA_TextLayout::LoadRichText(IFDE_XMLNode* pXMLNode,
       EndBreak(FX_RTFBREAK_LineBreak, fLinePos, bSavePieces);
     }
   } else {
-    if (pContext != NULL) {
+    if (pContext) {
       eDisplay = pContext->GetDisplay();
     }
   }
   if (m_bBlockContinue) {
-    if (pContext != NULL && !bContentNode) {
+    if (pContext && !bContentNode) {
       FX_DWORD dwStatus = (eDisplay == FDE_CSSDISPLAY_Block)
                               ? FX_RTFBREAK_ParagraphBreak
                               : FX_RTFBREAK_PieceBreak;
@@ -1577,9 +1563,8 @@ FX_BOOL CXFA_TextLayout::LoadRichText(IFDE_XMLNode* pXMLNode,
       }
     }
   }
-  if (pStyle != NULL) {
+  if (pStyle)
     pStyle->Release();
-  }
   return TRUE;
 }
 FX_BOOL CXFA_TextLayout::AppendChar(const CFX_WideString& wsText,
@@ -1600,9 +1585,8 @@ FX_BOOL CXFA_TextLayout::AppendChar(const CFX_WideString& wsText,
     if ((dwStatus = m_pBreak->AppendChar(wch)) > FX_RTFBREAK_PieceBreak) {
       AppendTextLine(dwStatus, fLinePos, bSavePieces);
       if (IsEnd(bSavePieces)) {
-        if (m_pLoader != NULL) {
+        if (m_pLoader)
           m_pLoader->m_iChar = i;
-        }
         return TRUE;
       }
       if (dwStatus == FX_RTFBREAK_ParagraphBreak && m_bRichText) {
@@ -1730,9 +1714,8 @@ void CXFA_TextLayout::AppendTextLine(FX_DWORD dwStatus,
     for (i = 0; i < iPieces; i++) {
       const CFX_RTFPiece* pPiece = m_pBreak->GetBreakPiece(i);
       CXFA_TextUserData* pUserData = (CXFA_TextUserData*)pPiece->m_pUserData;
-      if (pUserData != NULL) {
+      if (pUserData)
         pStyle = pUserData->m_pStyle;
-      }
       FX_FLOAT fVerScale = pPiece->m_iVerticalScale / 100.0f;
       XFA_TEXTPIECE* pTP =
           (XFA_TEXTPIECE*)m_pAllocator->Alloc(sizeof(XFA_TEXTPIECE));
@@ -1772,7 +1755,7 @@ void CXFA_TextLayout::AppendTextLine(FX_DWORD dwStatus,
         fBaseLine = -fBaseLineTemp;
       }
       fLineStep = std::max(fLineStep, fLineHeight);
-      if (pUserData != NULL && pUserData->m_pLinkData != NULL) {
+      if (pUserData && pUserData->m_pLinkData) {
         pUserData->m_pLinkData->AddRef();
         pTP->pLinkData = pUserData->m_pLinkData;
       } else {
@@ -1794,9 +1777,8 @@ void CXFA_TextLayout::AppendTextLine(FX_DWORD dwStatus,
     for (int32_t i = 0; i < iPieces; i++) {
       const CFX_RTFPiece* pPiece = m_pBreak->GetBreakPiece(i);
       CXFA_TextUserData* pUserData = (CXFA_TextUserData*)pPiece->m_pUserData;
-      if (pUserData != NULL) {
+      if (pUserData)
         pStyle = pUserData->m_pStyle;
-      }
       FX_FLOAT fVerScale = pPiece->m_iVerticalScale / 100.0f;
       FX_FLOAT fBaseLine = m_textParser.GetBaseline(m_pTextProvider, pStyle);
       FX_FLOAT fLineHeight = m_textParser.GetLineHeight(

@@ -175,7 +175,7 @@ FX_BOOL CXFA_LayoutPageMgr::AppendNewPage(FX_BOOL bFirstTemPage) {
   if (bFirstTemPage && m_pCurrentContainerRecord == NULL) {
     m_pCurrentContainerRecord = m_rgProposedContainerRecord.GetHeadPosition();
   }
-  return !bFirstTemPage || m_pCurrentContainerRecord != NULL;
+  return !bFirstTemPage || m_pCurrentContainerRecord;
 }
 static void XFA_LayoutItemMgr_ReorderLayoutItemToTail(
     CXFA_ContainerLayoutItem* pLayoutItem) {
@@ -1711,7 +1711,7 @@ void CXFA_LayoutPageMgr::MergePageSetContents() {
           }
           if (bIsExistForm) {
             CXFA_Node* pNewSubform = pFormLayout->m_pFormNode;
-            if (pContainerItem->m_pOldSubform != NULL &&
+            if (pContainerItem->m_pOldSubform &&
                 pContainerItem->m_pOldSubform != pNewSubform) {
               CXFA_Node* pExistingNode = XFA_DataMerge_FindFormDOMInstance(
                   pDocument, pContainerItem->m_pFormNode->GetClassID(),

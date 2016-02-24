@@ -66,8 +66,7 @@ FX_BOOL CXFA_FFListBox::OnKillFocus(CXFA_FFWidget* pNewFocus) {
   return TRUE;
 }
 FX_BOOL CXFA_FFListBox::CommitData() {
-  FXSYS_assert(m_pNormalWidget != NULL);
-  CFWL_ListBox* pListBox = (CFWL_ListBox*)m_pNormalWidget;
+  CFWL_ListBox* pListBox = static_cast<CFWL_ListBox*>(m_pNormalWidget);
   int32_t iSels = pListBox->CountSelItems();
   CFX_Int32Array iSelArray;
   for (int32_t i = 0; i < iSels; i++) {

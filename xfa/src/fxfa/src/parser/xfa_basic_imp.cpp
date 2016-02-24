@@ -239,10 +239,9 @@ const XFA_ATTRIBUTEINFO* XFA_GetAttributeOfElement(XFA_ELEMENT eElement,
     return NULL;
   }
   const XFA_ATTRIBUTEINFO* pInfo = XFA_GetAttributeByID(eAttribute);
-  ASSERT(pInfo != NULL);
-  if (dwPacket == XFA_XDPPACKET_UNKNOWN) {
+  ASSERT(pInfo);
+  if (dwPacket == XFA_XDPPACKET_UNKNOWN)
     return pInfo;
-  }
   return (dwPacket & pInfo->dwPackets) ? pInfo : NULL;
 }
 const XFA_ELEMENTINFO* XFA_GetChildOfElement(XFA_ELEMENT eElement,
@@ -259,10 +258,9 @@ const XFA_ELEMENTINFO* XFA_GetChildOfElement(XFA_ELEMENT eElement,
     return NULL;
   }
   const XFA_ELEMENTINFO* pInfo = XFA_GetElementByID(eChild);
-  ASSERT(pInfo != NULL);
-  if (dwPacket == XFA_XDPPACKET_UNKNOWN) {
+  ASSERT(pInfo);
+  if (dwPacket == XFA_XDPPACKET_UNKNOWN)
     return pInfo;
-  }
   return (dwPacket & pInfo->dwPackets) ? pInfo : NULL;
 }
 const XFA_PROPERTY* XFA_GetElementProperties(XFA_ELEMENT eElement,
@@ -298,10 +296,9 @@ const XFA_PROPERTY* XFA_GetPropertyOfElement(XFA_ELEMENT eElement,
     return NULL;
   }
   const XFA_ELEMENTINFO* pInfo = XFA_GetElementByID(eProperty);
-  ASSERT(pInfo != NULL);
-  if (dwPacket == XFA_XDPPACKET_UNKNOWN) {
+  ASSERT(pInfo);
+  if (dwPacket == XFA_XDPPACKET_UNKNOWN)
     return pProperty + iMid;
-  }
   return (dwPacket & pInfo->dwPackets) ? (pProperty + iMid) : NULL;
 }
 const XFA_NOTSUREATTRIBUTE* XFA_GetNotsureAttribute(XFA_ELEMENT eElement,

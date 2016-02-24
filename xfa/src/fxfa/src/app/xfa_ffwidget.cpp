@@ -213,7 +213,7 @@ FX_BOOL CXFA_FFWidget::OnRButtonDblClk(FX_DWORD dwFlags,
 
 FX_BOOL CXFA_FFWidget::OnSetFocus(CXFA_FFWidget* pOldWidget) {
   CXFA_FFWidget* pParent = GetParent();
-  if (pParent != NULL && !pParent->IsAncestorOf(pOldWidget)) {
+  if (pParent && !pParent->IsAncestorOf(pOldWidget)) {
     pParent->OnSetFocus(pOldWidget);
   }
   m_dwStatus |= XFA_WIDGETSTATUS_Focused;
@@ -226,9 +226,9 @@ FX_BOOL CXFA_FFWidget::OnSetFocus(CXFA_FFWidget* pOldWidget) {
 FX_BOOL CXFA_FFWidget::OnKillFocus(CXFA_FFWidget* pNewWidget) {
   m_dwStatus &= ~XFA_WIDGETSTATUS_Focused;
   EventKillFocus();
-  if (pNewWidget != NULL) {
+  if (pNewWidget) {
     CXFA_FFWidget* pParent = GetParent();
-    if (pParent != NULL && !pParent->IsAncestorOf(pNewWidget)) {
+    if (pParent && !pParent->IsAncestorOf(pNewWidget)) {
       pParent->OnKillFocus(pNewWidget);
     }
   }
@@ -331,10 +331,10 @@ FX_BOOL CXFA_FFWidget::IsLayoutRectEmpty() {
 CXFA_FFWidget* CXFA_FFWidget::GetParent() {
   CXFA_Node* pParentNode =
       m_pDataAcc->GetNode()->GetNodeItem(XFA_NODEITEM_Parent);
-  if (pParentNode != NULL) {
+  if (pParentNode) {
     CXFA_WidgetAcc* pParentWidgetAcc =
         (CXFA_WidgetAcc*)pParentNode->GetWidgetData();
-    if (pParentWidgetAcc != NULL) {
+    if (pParentWidgetAcc) {
       return pParentWidgetAcc->GetNextWidget(NULL);
     }
   }
@@ -551,7 +551,7 @@ FX_BOOL CXFA_ImageRenderer::StartDIBSource() {
   if (m_pDevice->StartDIBits(m_pDIBSource, m_BitmapAlpha, m_FillArgb,
                              &m_ImageMatrix, m_Flags, m_DeviceHandle, 0, NULL,
                              m_BlendType)) {
-    if (m_DeviceHandle != NULL) {
+    if (m_DeviceHandle) {
       m_Status = 3;
       return TRUE;
     }
@@ -996,7 +996,7 @@ CFX_DIBitmap* XFA_LoadImageData(CXFA_FFDoc* pDoc,
         wsURL.Left(6) != FX_WSTRC(L"ftp://")) {
       CFX_DIBitmap* pBitmap =
           pDoc->GetPDFNamedImage(wsURL, iImageXDpi, iImageYDpi);
-      if (pBitmap != NULL) {
+      if (pBitmap) {
         bNameImage = TRUE;
         return pBitmap;
       }

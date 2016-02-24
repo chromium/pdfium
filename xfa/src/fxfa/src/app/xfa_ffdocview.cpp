@@ -512,7 +512,7 @@ CXFA_WidgetAcc* CXFA_FFDocView::GetWidgetAccByName(
     return NULL;
   }
   CXFA_Node* refNode = NULL;
-  if (pRefWidgetAcc != NULL) {
+  if (pRefWidgetAcc) {
     refNode = pRefWidgetAcc->GetNode();
     wsExpression = wsName;
   } else {
@@ -812,9 +812,8 @@ void CXFA_FFDocView::RunBindItems() {
           wsLabel = refNode->GetContent();
         } else {
           CXFA_Node* nodeLabel = refNode->GetFirstChildByName(wsLabelRef);
-          if (nodeLabel != NULL) {
+          if (nodeLabel)
             wsLabel = nodeLabel->GetContent();
-          }
         }
       } else {
         wsLabel = wsValue;
@@ -860,7 +859,7 @@ IXFA_Widget* CXFA_FFDocWidgetIterator::MoveToNext() {
                                   : m_ContentIterator.GetCurrent();
   while (pItem) {
     if (CXFA_WidgetAcc* pAcc = (CXFA_WidgetAcc*)pItem->GetWidgetData()) {
-      while ((m_pCurWidget = pAcc->GetNextWidget(NULL)) != NULL) {
+      while ((m_pCurWidget = pAcc->GetNextWidget(NULL))) {
         if (!m_pCurWidget->IsLoaded() &&
             (m_pCurWidget->GetStatus() & XFA_WIDGETSTATUS_Visible)) {
           m_pCurWidget->LoadWidget();
@@ -911,7 +910,7 @@ CXFA_WidgetAcc* CXFA_WidgetAccIterator::MoveToNext() {
   CXFA_Node* pItem = m_pCurWidgetAcc ? m_ContentIterator.MoveToNext()
                                      : m_ContentIterator.GetCurrent();
   while (pItem) {
-    if ((m_pCurWidgetAcc = (CXFA_WidgetAcc*)pItem->GetWidgetData()) != NULL) {
+    if ((m_pCurWidgetAcc = (CXFA_WidgetAcc*)pItem->GetWidgetData())) {
       return m_pCurWidgetAcc;
     }
     pItem = m_ContentIterator.MoveToNext();

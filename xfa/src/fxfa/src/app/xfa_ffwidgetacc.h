@@ -22,7 +22,7 @@ class CXFA_TextProvider : public IXFA_TextProvider {
                     XFA_TEXTPROVIDERTYPE eType,
                     CXFA_Node* pTextNode = NULL)
       : m_pWidgetAcc(pWidgetAcc), m_eType(eType), m_pTextNode(pTextNode) {
-    FXSYS_assert(m_pWidgetAcc != NULL);
+    FXSYS_assert(m_pWidgetAcc);
   }
   virtual ~CXFA_TextProvider() {}
   virtual CXFA_Node* GetTextNode(FX_BOOL& bRichText);

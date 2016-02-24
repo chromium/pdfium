@@ -1589,7 +1589,7 @@ void CXFA_FM2JSContext::Time2Num(FXJSE_HOBJECT hThis,
         int32_t milSecond = uniTime.GetMillisecond();
         int32_t mins = hour * 60 + min;
         IXFA_TimeZoneProvider* pProvider = IXFA_TimeZoneProvider::Get();
-        if (pProvider != NULL) {
+        if (pProvider) {
           FX_TIMEZONE tz;
           pProvider->GetTimeZone(tz);
           mins -= (tz.tzHour * 60);

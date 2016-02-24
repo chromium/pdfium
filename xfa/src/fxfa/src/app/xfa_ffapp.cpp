@@ -85,41 +85,25 @@ CXFA_FFApp::CXFA_FFApp(IXFA_AppProvider* pProvider)
   IXFA_TimeZoneProvider::Create();
 }
 CXFA_FFApp::~CXFA_FFApp() {
-  if (m_pDocHandler) {
-    delete m_pDocHandler;
-  }
+  delete m_pDocHandler;
   if (m_pFWLApp) {
     m_pFWLApp->Finalize();
     m_pFWLApp->Release();
     delete m_pFWLApp;
   }
-  if (m_pFWLTheme) {
+  if (m_pFWLTheme)
     m_pFWLTheme->Release();
-  }
-  if (m_pAdapterWidgetMgr) {
-    delete m_pAdapterWidgetMgr;
-  }
-  if (m_pAdapterThreadMgr) {
-    delete m_pAdapterThreadMgr;
-    m_pAdapterThreadMgr = NULL;
-  }
-  if (m_pMenuHandler) {
-    delete m_pMenuHandler;
-    m_pMenuHandler = NULL;
-  }
+  delete m_pAdapterWidgetMgr;
+  delete m_pAdapterThreadMgr;
+  delete m_pMenuHandler;
   IXFA_TimeZoneProvider::Destroy();
-  if (m_pFontMgr != NULL) {
-    delete m_pFontMgr;
-    m_pFontMgr = NULL;
-  }
+  delete m_pFontMgr;
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-  if (m_pFontSource != NULL) {
+  if (m_pFontSource)
     m_pFontSource->Release();
-  }
 #endif
-  if (m_pFDEFontMgr) {
+  if (m_pFDEFontMgr)
     m_pFDEFontMgr->Release();
-  }
 }
 IXFA_MenuHandler* CXFA_FFApp::GetMenuHandler() {
   if (!m_pMenuHandler) {

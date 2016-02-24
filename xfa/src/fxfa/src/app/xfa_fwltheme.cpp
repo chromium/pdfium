@@ -216,7 +216,7 @@ void* CXFA_FWLTheme::GetCapacity(CFWL_ThemePart* pThemePart,
           }
         }
         if (pItem->GetPrev() == NULL) {
-          if (pItem->GetNext() != NULL) {
+          if (pItem->GetNext()) {
             m_Rect.height = 0;
           }
         } else if (pItem->GetNext() == NULL) {

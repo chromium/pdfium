@@ -704,7 +704,7 @@ static CXFA_Node* XFA_DataMerge_FindMatchingDataNode(
       default:
         break;
     }
-    if (pCurTemplateNode == pTemplateNode && pResult != NULL) {
+    if (pCurTemplateNode == pTemplateNode && pResult) {
       bSelfMatch = TRUE;
     }
     break;
@@ -774,7 +774,7 @@ static CXFA_Node* XFA_DataMerge_CopyContainer_SubformSet(
             : NULL;
     if (CXFA_Node* pOccurTemplateNode =
             pTemplateNode->GetFirstChildByClass(XFA_ELEMENT_Occur)) {
-      pOccurNode = pInstMgrNode != NULL
+      pOccurNode = pInstMgrNode
                        ? XFA_NodeMerge_CloneOrMergeContainer(
                              pDocument, pInstMgrNode, pOccurTemplateNode, FALSE)
                        : pOccurTemplateNode;

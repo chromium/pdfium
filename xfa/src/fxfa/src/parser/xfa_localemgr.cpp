@@ -1157,9 +1157,8 @@ IFX_Locale* CXFA_LocaleMgr::GetDefLocale() {
     return (IFX_Locale*)m_XMLLocaleArray[0];
   }
   m_pDefLocale = GetLocale(m_dwDeflcid);
-  if (m_pDefLocale != NULL) {
+  if (m_pDefLocale)
     m_XMLLocaleArray.Add(m_pDefLocale);
-  }
   return m_pDefLocale;
 }
 IFX_Locale* CXFA_LocaleMgr::GetLocale(FX_WORD lcid) {
@@ -1237,9 +1236,8 @@ IFX_Locale* CXFA_LocaleMgr::GetLocaleByName(
   }
   FX_WORD dwLangueID = XFA_GetLanguage(wsLocaleName);
   IFX_Locale* pLocale = GetLocale(dwLangueID);
-  if (pLocale != NULL) {
+  if (pLocale)
     m_XMLLocaleArray.Add(pLocale);
-  }
   return pLocale;
 }
 void CXFA_LocaleMgr::SetDefLocale(IFX_Locale* pLocale) {

@@ -233,10 +233,8 @@ FX_BOOL CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
     CPDF_Array* pXFAArray = (CPDF_Array*)pElementXFA;
     FX_DWORD count = pXFAArray->GetCount() / 2;
     for (FX_DWORD i = 0; i < count; i++) {
-      CPDF_Stream* pStream = pXFAArray->GetStreamAt(i * 2 + 1);
-      if (pStream != NULL) {
+      if (CPDF_Stream* pStream = pXFAArray->GetStreamAt(i * 2 + 1))
         xfaStreams.Add(pStream);
-      }
     }
   } else if (pElementXFA->IsStream()) {
     xfaStreams.Add((CPDF_Stream*)pElementXFA);

@@ -62,7 +62,7 @@ void CXFA_FFText::RenderWidget(CFX_Graphics* pGS,
 }
 FX_BOOL CXFA_FFText::IsLoaded() {
   CXFA_TextLayout* pTextLayout = m_pDataAcc->GetTextLayout();
-  return pTextLayout != NULL && !pTextLayout->m_bHasBlock;
+  return pTextLayout && !pTextLayout->m_bHasBlock;
 }
 FX_BOOL CXFA_FFText::PerformLayout() {
   CXFA_FFDraw::PerformLayout();
