@@ -11,7 +11,7 @@
 #include "xfa/src/fxfa/src/app/xfa_ffpageview.h"
 #include "xfa/src/fxfa/src/app/xfa_ffpath.h"
 #include "xfa/src/fxfa/src/app/xfa_ffwidget.h"
-#include "xfa/src/fxfa/src/common/xfa_common.h"
+
 CXFA_FFLine::CXFA_FFLine(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc)
     : CXFA_FFDraw(pPageView, pDataAcc) {}
 CXFA_FFLine::~CXFA_FFLine() {}

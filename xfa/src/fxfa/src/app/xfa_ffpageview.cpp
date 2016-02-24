@@ -16,7 +16,7 @@
 #include "xfa/src/fxfa/src/app/xfa_fftextedit.h"
 #include "xfa/src/fxfa/src/app/xfa_ffwidget.h"
 #include "xfa/src/fxfa/src/app/xfa_fwladapter.h"
-#include "xfa/src/fxfa/src/common/xfa_common.h"
+
 CXFA_FFPageView::CXFA_FFPageView(CXFA_FFDocView* pDocView, CXFA_Node* pPageArea)
     : CXFA_ContainerLayoutItem(pPageArea),
       m_pDocView(pDocView),

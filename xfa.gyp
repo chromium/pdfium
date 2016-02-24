@@ -576,7 +576,6 @@
         "xfa/src/fxfa/src/app/xfa_textlayout.cpp",
         "xfa/src/fxfa/src/app/xfa_textlayout.h",
         "xfa/src/fxfa/src/common/fxfa_localevalue.h",
-        "xfa/src/fxfa/src/common/xfa_common.h",
         "xfa/src/fxfa/src/common/xfa_docdata.h",
         "xfa/src/fxfa/src/common/xfa_doclayout.h",
         "xfa/src/fxfa/src/common/xfa_document.h",

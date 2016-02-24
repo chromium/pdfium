@@ -9,7 +9,6 @@
 #include "xfa/src/fxfa/src/app/xfa_fffield.h"
 #include "xfa/src/fxfa/src/app/xfa_ffwidget.h"
 #include "xfa/src/fxfa/src/app/xfa_fwladapter.h"
-#include "xfa/src/fxfa/src/common/xfa_common.h"
 
 void FWL_PostMessageToMainRoop(CFWL_Message* pMessage) {}
 FX_BOOL FWL_ShowCaret(IFWL_Widget* pWidget,

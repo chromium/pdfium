@@ -28,7 +28,8 @@
 #include "xfa/src/fxfa/src/app/xfa_ffwidgethandler.h"
 #include "xfa/src/fxfa/src/app/xfa_fwladapter.h"
 #include "xfa/src/fxfa/src/app/xfa_textlayout.h"
-#include "xfa/src/fxfa/src/common/xfa_common.h"
+#include "xfa/src/fxfa/src/common/xfa_script.h"
+
 extern const XFA_ATTRIBUTEENUM gs_EventActivity[] = {
     XFA_ATTRIBUTEENUM_Click,      XFA_ATTRIBUTEENUM_Change,
     XFA_ATTRIBUTEENUM_DocClose,   XFA_ATTRIBUTEENUM_DocReady,

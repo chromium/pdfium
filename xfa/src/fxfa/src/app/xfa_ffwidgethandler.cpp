@@ -12,7 +12,8 @@
 #include "xfa/src/fxfa/src/app/xfa_ffwidget.h"
 #include "xfa/src/fxfa/src/app/xfa_ffwidgethandler.h"
 #include "xfa/src/fxfa/src/app/xfa_fwladapter.h"
-#include "xfa/src/fxfa/src/common/xfa_common.h"
+#include "xfa/src/fxfa/src/common/xfa_parser.h"
+
 CXFA_FFWidgetHandler::CXFA_FFWidgetHandler(CXFA_FFDocView* pDocView)
     : m_pDocView(pDocView) {}
 CXFA_FFWidgetHandler::~CXFA_FFWidgetHandler() {}

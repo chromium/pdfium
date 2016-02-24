@@ -29,7 +29,6 @@
 #include "xfa/src/fxfa/src/app/xfa_ffwidgethandler.h"
 #include "xfa/src/fxfa/src/app/xfa_fwladapter.h"
 #include "xfa/src/fxfa/src/app/xfa_textlayout.h"
-#include "xfa/src/fxfa/src/common/xfa_common.h"
 
 static void XFA_FFDeleteWidgetAcc(void* pData) {
   delete static_cast<CXFA_WidgetAcc*>(pData);

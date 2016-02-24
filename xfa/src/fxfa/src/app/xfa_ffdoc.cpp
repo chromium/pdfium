@@ -11,7 +11,9 @@
 #include "xfa/src/fxfa/src/app/xfa_ffnotify.h"
 #include "xfa/src/fxfa/src/app/xfa_ffwidget.h"
 #include "xfa/src/fxfa/src/app/xfa_fontmgr.h"
-#include "xfa/src/fxfa/src/common/xfa_common.h"
+#include "xfa/src/fxfa/src/common/xfa_docdata.h"
+#include "xfa/src/fxfa/src/common/xfa_parser.h"
+
 CXFA_FFDoc::CXFA_FFDoc(CXFA_FFApp* pApp, IXFA_DocProvider* pDocProvider)
     : m_pDocProvider(pDocProvider),
       m_pDocument(nullptr),

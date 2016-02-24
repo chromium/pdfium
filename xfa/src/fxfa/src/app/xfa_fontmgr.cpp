@@ -11,7 +11,7 @@
 #include "xfa/src/fxfa/src/app/xfa_ffapp.h"
 #include "xfa/src/fxfa/src/app/xfa_ffdoc.h"
 #include "xfa/src/fxfa/src/app/xfa_fontmgr.h"
-#include "xfa/src/fxfa/src/common/xfa_common.h"
+
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 static const XFA_FONTINFO g_XFAFontsMap[] = {
     {0x01d5d33e, L"SimSun", L"Arial", 0, 936},

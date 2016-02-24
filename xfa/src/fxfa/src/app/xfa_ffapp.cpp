@@ -14,7 +14,6 @@
 #include "xfa/src/fxfa/src/app/xfa_fontmgr.h"
 #include "xfa/src/fxfa/src/app/xfa_fwladapter.h"
 #include "xfa/src/fxfa/src/app/xfa_fwltheme.h"
-#include "xfa/src/fxfa/src/common/xfa_common.h"
 
 CXFA_FileRead::CXFA_FileRead(const CFX_ArrayTemplate<CPDF_Stream*>& streams) {
   int32_t iCount = streams.GetSize();
