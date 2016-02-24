@@ -33,8 +33,7 @@ CBC_BoundingBox::CBC_BoundingBox(CBC_CommonBitMatrix* image,
                                  int32_t& e) {
   if ((topLeft == NULL && topRight == NULL) ||
       (bottomLeft == NULL && bottomRight == NULL) ||
-      (topLeft != NULL && bottomLeft == NULL) ||
-      (topRight != NULL && bottomRight == NULL)) {
+      (topLeft && bottomLeft == NULL) || (topRight && bottomRight == NULL)) {
     e = BCExceptionNotFoundInstance;
   }
   init(image, topLeft, bottomLeft, topRight, bottomRight);

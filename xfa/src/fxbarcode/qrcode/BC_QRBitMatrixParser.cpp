@@ -41,15 +41,11 @@ void CBC_QRBitMatrixParser::Init(CBC_CommonBitMatrix* bitMatrix, int32_t& e) {
   m_version = NULL;
 }
 CBC_QRBitMatrixParser::~CBC_QRBitMatrixParser() {
-  if (m_parsedFormatInfo != NULL) {
-    delete m_parsedFormatInfo;
-    m_parsedFormatInfo = NULL;
-  }
-  m_version = NULL;
+  delete m_parsedFormatInfo;
 }
 CBC_QRCoderFormatInformation* CBC_QRBitMatrixParser::ReadFormatInformation(
     int32_t& e) {
-  if (m_parsedFormatInfo != NULL) {
+  if (m_parsedFormatInfo) {
     return m_parsedFormatInfo;
   }
   int32_t formatInfoBits = 0;
@@ -65,7 +61,7 @@ CBC_QRCoderFormatInformation* CBC_QRBitMatrixParser::ReadFormatInformation(
   }
   m_parsedFormatInfo =
       CBC_QRCoderFormatInformation::DecodeFormatInformation(formatInfoBits);
-  if (m_parsedFormatInfo != NULL) {
+  if (m_parsedFormatInfo) {
     return m_parsedFormatInfo;
   }
   int32_t dimension = m_bitMatrix->GetDimension(e);
@@ -80,7 +76,7 @@ CBC_QRCoderFormatInformation* CBC_QRBitMatrixParser::ReadFormatInformation(
   }
   m_parsedFormatInfo =
       CBC_QRCoderFormatInformation::DecodeFormatInformation(formatInfoBits);
-  if (m_parsedFormatInfo != NULL) {
+  if (m_parsedFormatInfo) {
     return m_parsedFormatInfo;
   }
   e = BCExceptionRead;
@@ -88,7 +84,7 @@ CBC_QRCoderFormatInformation* CBC_QRBitMatrixParser::ReadFormatInformation(
   return NULL;
 }
 CBC_QRCoderVersion* CBC_QRBitMatrixParser::ReadVersion(int32_t& e) {
-  if (m_version != NULL) {
+  if (m_version) {
     return m_version;
   }
   int32_t dimension = m_bitMatrix->GetDimension(e);
@@ -109,7 +105,7 @@ CBC_QRCoderVersion* CBC_QRBitMatrixParser::ReadVersion(int32_t& e) {
   }
   m_version = CBC_QRCoderVersion::DecodeVersionInformation(versionBits, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-  if (m_version != NULL && m_version->GetDimensionForVersion() == dimension) {
+  if (m_version && m_version->GetDimensionForVersion() == dimension) {
     return m_version;
   }
   versionBits = 0;
@@ -121,7 +117,7 @@ CBC_QRCoderVersion* CBC_QRBitMatrixParser::ReadVersion(int32_t& e) {
   }
   m_version = CBC_QRCoderVersion::DecodeVersionInformation(versionBits, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-  if (m_version != NULL && m_version->GetDimensionForVersion() == dimension) {
+  if (m_version && m_version->GetDimensionForVersion() == dimension) {
     return m_version;
   }
   e = BCExceptionRead;

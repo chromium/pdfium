@@ -40,10 +40,7 @@ void CBC_DataMatrixDetector::Init(int32_t& e) {
   BC_EXCEPTION_CHECK_ReturnVoid(e);
 }
 CBC_DataMatrixDetector::~CBC_DataMatrixDetector() {
-  if (m_rectangleDetector != NULL) {
-    delete m_rectangleDetector;
-  }
-  m_rectangleDetector = NULL;
+  delete m_rectangleDetector;
 }
 inline FX_BOOL ResultPointsAndTransitionsComparator(void* a, void* b) {
   return ((CBC_ResultPointsAndTransitions*)b)->GetTransitions() >
@@ -82,7 +79,7 @@ CBC_QRDetectorResult* CBC_DataMatrixDetector::Detect(int32_t& e) {
   CBC_ResultPoint* bottomLeft = NULL;
   CBC_ResultPoint* maybeBottomRight = NULL;
   FX_POSITION itBegin = pointCount.GetStartPosition();
-  while (itBegin != NULL) {
+  while (itBegin) {
     CBC_ResultPoint* key = 0;
     int32_t value = 0;
     pointCount.GetNextAssoc(itBegin, key, value);

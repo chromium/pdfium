@@ -73,7 +73,7 @@ CBC_QRAlignmentPattern* CBC_QRAlignmentPatternFinder::Find(int32_t& e) {
             if (FoundPatternCross(stateCount)) {
               CBC_QRAlignmentPattern* confirmed =
                   HandlePossibleCenter(stateCount, i, j);
-              if (confirmed != NULL) {
+              if (confirmed) {
                 return confirmed;
               }
             }
@@ -96,7 +96,7 @@ CBC_QRAlignmentPattern* CBC_QRAlignmentPatternFinder::Find(int32_t& e) {
     if (FoundPatternCross(stateCount)) {
       CBC_QRAlignmentPattern* confirmed =
           HandlePossibleCenter(stateCount, i, maxJ);
-      if (confirmed != NULL) {
+      if (confirmed) {
         return confirmed;
       }
     }

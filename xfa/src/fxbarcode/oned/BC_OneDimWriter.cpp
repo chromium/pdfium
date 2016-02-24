@@ -43,10 +43,7 @@ CBC_OneDimWriter::CBC_OneDimWriter() {
   m_output = NULL;
 }
 CBC_OneDimWriter::~CBC_OneDimWriter() {
-  if (m_output != NULL) {
-    delete m_output;
-    m_output = NULL;
-  }
+  delete m_output;
 }
 void CBC_OneDimWriter::SetPrintChecksum(FX_BOOL checksum) {
   m_bPrintChecksum = checksum;
@@ -196,7 +193,7 @@ void CBC_OneDimWriter::ShowDeviceChars(CFX_RenderDevice* device,
   device->FillRect(&re, m_backgroundColor);
   CFX_Matrix affine_matrix(1.0, 0.0, 0.0, -1.0, (FX_FLOAT)locX,
                            (FX_FLOAT)(locY + iFontSize));
-  if (matrix != NULL) {
+  if (matrix) {
     affine_matrix.Concat(*matrix);
   }
   device->DrawNormalText(str.GetLength(), pCharPos, m_pFont,
@@ -284,7 +281,7 @@ void CBC_OneDimWriter::ShowChars(const CFX_WideStringC& contents,
       geWidth = (FX_FLOAT)barWidth;
       break;
   }
-  if (device != NULL) {
+  if (device) {
     ShowDeviceChars(device, matrix, str, geWidth, pCharPos, (FX_FLOAT)locX,
                     (FX_FLOAT)locY, barWidth);
   } else {

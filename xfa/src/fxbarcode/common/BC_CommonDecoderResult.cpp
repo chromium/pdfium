@@ -61,9 +61,7 @@ void CBC_CommonDecoderResult::setOther(CBC_PDF417ResultMetadata* other) {
   m_other = other;
 }
 CBC_CommonDecoderResult::~CBC_CommonDecoderResult() {
-  if (m_other != NULL) {
-    delete m_other;
-  }
+  delete m_other;
 }
 const CFX_ByteArray& CBC_CommonDecoderResult::GetRawBytes() {
   return m_rawBytes;

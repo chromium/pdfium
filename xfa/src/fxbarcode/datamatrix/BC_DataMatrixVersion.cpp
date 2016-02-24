@@ -59,10 +59,7 @@ CBC_DataMatrixVersion::CBC_DataMatrixVersion(int32_t versionNumber,
   m_totalCodewords = total;
 }
 CBC_DataMatrixVersion::~CBC_DataMatrixVersion() {
-  if (m_ecBlocks != NULL) {
-    delete m_ecBlocks;
-  }
-  m_ecBlocks = NULL;
+  delete m_ecBlocks;
 }
 int32_t CBC_DataMatrixVersion::GetVersionNumber() {
   return m_versionNumber;

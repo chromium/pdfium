@@ -150,15 +150,13 @@ CBC_SymbolInfo* CBC_SymbolInfo::lookup(int32_t dataCodewords,
     if (shape == FORCE_RECTANGLE && !symbol->m_rectangular) {
       continue;
     }
-    if (minSize != NULL &&
-        (symbol->getSymbolWidth(e) < minSize->getWidth() ||
-         symbol->getSymbolHeight(e) < minSize->getHeight())) {
+    if (minSize && (symbol->getSymbolWidth(e) < minSize->getWidth() ||
+                    symbol->getSymbolHeight(e) < minSize->getHeight())) {
       BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
       continue;
     }
-    if (maxSize != NULL &&
-        (symbol->getSymbolWidth(e) > maxSize->getWidth() ||
-         symbol->getSymbolHeight(e) > maxSize->getHeight())) {
+    if (maxSize && (symbol->getSymbolWidth(e) > maxSize->getWidth() ||
+                    symbol->getSymbolHeight(e) > maxSize->getHeight())) {
       BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
       continue;
     }

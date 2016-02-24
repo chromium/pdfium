@@ -46,14 +46,8 @@ void CBC_DataMatrixBitMatrixParser::Init(CBC_CommonBitMatrix* bitMatrix,
                             m_mappingBitMatrix->GetHeight());
 }
 CBC_DataMatrixBitMatrixParser::~CBC_DataMatrixBitMatrixParser() {
-  if (m_mappingBitMatrix != NULL) {
-    delete m_mappingBitMatrix;
-  }
-  m_mappingBitMatrix = NULL;
-  if (m_readMappingMatrix != NULL) {
-    delete m_readMappingMatrix;
-  }
-  m_readMappingMatrix = NULL;
+  delete m_mappingBitMatrix;
+  delete m_readMappingMatrix;
 }
 CBC_DataMatrixVersion* CBC_DataMatrixBitMatrixParser::GetVersion() {
   return m_version;

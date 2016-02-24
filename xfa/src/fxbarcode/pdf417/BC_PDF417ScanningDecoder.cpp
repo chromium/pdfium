@@ -70,12 +70,12 @@ CBC_CommonDecoderResult* CBC_PDF417ScanningDecoder::decode(
   CBC_DetectionResultRowIndicatorColumn* rightRowIndicatorColumn = NULL;
   CBC_DetectionResult* detectionResult = NULL;
   for (int32_t i = 0; i < 2; i++) {
-    if (imageTopLeft != NULL) {
+    if (imageTopLeft) {
       leftRowIndicatorColumn =
           getRowIndicatorColumn(image, boundingBox, *imageTopLeft, TRUE,
                                 minCodewordWidth, maxCodewordWidth);
     }
-    if (imageTopRight != NULL) {
+    if (imageTopRight) {
       rightRowIndicatorColumn =
           getRowIndicatorColumn(image, boundingBox, *imageTopRight, FALSE,
                                 minCodewordWidth, maxCodewordWidth);
@@ -108,7 +108,7 @@ CBC_CommonDecoderResult* CBC_PDF417ScanningDecoder::decode(
        barcodeColumnCount++) {
     int32_t barcodeColumn = leftToRight ? barcodeColumnCount
                                         : maxBarcodeColumn - barcodeColumnCount;
-    if (detectionResult->getDetectionResultColumn(barcodeColumn) != NULL) {
+    if (detectionResult->getDetectionResultColumn(barcodeColumn)) {
       continue;
     }
     CBC_DetectionResultColumn* detectionResultColumn = NULL;
@@ -135,7 +135,7 @@ CBC_CommonDecoderResult* CBC_PDF417ScanningDecoder::decode(
       CBC_Codeword* codeword = detectCodeword(
           image, boundingBox->getMinX(), boundingBox->getMaxX(), leftToRight,
           startColumn, imageRow, minCodewordWidth, maxCodewordWidth);
-      if (codeword != NULL) {
+      if (codeword) {
         detectionResultColumn->setCodeword(imageRow, codeword);
         previousStartColumn = startColumn;
         minCodewordWidth = minCodewordWidth < codeword->getWidth()
@@ -310,7 +310,7 @@ CBC_PDF417ScanningDecoder::getRowIndicatorColumn(CBC_CommonBitMatrix* image,
       CBC_Codeword* codeword =
           detectCodeword(image, 0, image->GetWidth(), leftToRight, startColumn,
                          imageRow, minCodewordWidth, maxCodewordWidth);
-      if (codeword != NULL) {
+      if (codeword) {
         rowIndicatorColumn->setCodeword(imageRow, codeword);
         if (leftToRight) {
           startColumn = codeword->getStartX();
@@ -515,19 +515,19 @@ int32_t CBC_PDF417ScanningDecoder::getStartColumn(
     codeword = detectionResult->getDetectionResultColumn(barcodeColumn - offset)
                    ->getCodeword(imageRow);
   }
-  if (codeword != NULL) {
+  if (codeword) {
     return leftToRight ? codeword->getEndX() : codeword->getStartX();
   }
   codeword = detectionResult->getDetectionResultColumn(barcodeColumn)
                  ->getCodewordNearby(imageRow);
-  if (codeword != NULL) {
+  if (codeword) {
     return leftToRight ? codeword->getStartX() : codeword->getEndX();
   }
   if (isValidBarcodeColumn(detectionResult, barcodeColumn - offset)) {
     codeword = detectionResult->getDetectionResultColumn(barcodeColumn - offset)
                    ->getCodewordNearby(imageRow);
   }
-  if (codeword != NULL) {
+  if (codeword) {
     return leftToRight ? codeword->getEndX() : codeword->getStartX();
   }
   int32_t skippedColumns = 0;
@@ -543,7 +543,7 @@ int32_t CBC_PDF417ScanningDecoder::getStartColumn(
                                             barcodeColumn)
               ->getCodewords()
               ->GetAt(i);
-      if (previousRowCodeword != NULL) {
+      if (previousRowCodeword) {
         return (leftToRight ? previousRowCodeword->getEndX()
                             : previousRowCodeword->getStartX()) +
                offset * skippedColumns * (previousRowCodeword->getEndX() -

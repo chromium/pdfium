@@ -17,10 +17,7 @@ CBC_TwoDimWriter::CBC_TwoDimWriter() {
   m_output = NULL;
 }
 CBC_TwoDimWriter::~CBC_TwoDimWriter() {
-  if (m_output != NULL) {
-    delete m_output;
-    m_output = NULL;
-  }
+  delete m_output;
 }
 void CBC_TwoDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
                                           const CFX_Matrix* matrix) {

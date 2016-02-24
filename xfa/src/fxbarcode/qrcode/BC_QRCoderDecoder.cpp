@@ -39,10 +39,7 @@ void CBC_QRCoderDecoder::Init() {
   m_rsDecoder = new CBC_ReedSolomonDecoder(CBC_ReedSolomonGF256::QRCodeFild);
 }
 CBC_QRCoderDecoder::~CBC_QRCoderDecoder() {
-  if (m_rsDecoder != NULL) {
-    delete m_rsDecoder;
-  }
-  m_rsDecoder = NULL;
+  delete m_rsDecoder;
 }
 CBC_CommonDecoderResult* CBC_QRCoderDecoder::Decode(FX_BOOL* image,
                                                     int32_t width,

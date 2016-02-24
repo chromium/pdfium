@@ -42,7 +42,7 @@ CBC_DetectionResultRowIndicatorColumn::
 void CBC_DetectionResultRowIndicatorColumn::setRowNumbers() {
   for (int32_t i = 0; i < m_codewords->GetSize(); i++) {
     CBC_Codeword* codeword = (CBC_Codeword*)m_codewords->GetAt(i);
-    if (codeword != NULL) {
+    if (codeword) {
       codeword->setRowNumberAsRowIndicatorColumn();
     }
   }
@@ -119,7 +119,7 @@ CFX_Int32Array* CBC_DetectionResultRowIndicatorColumn::getRowHeights(
   result->SetSize(barcodeMetadata->getRowCount());
   for (int32_t i = 0; i < getCodewords()->GetSize(); i++) {
     CBC_Codeword* codeword = (CBC_Codeword*)getCodewords()->GetAt(i);
-    if (codeword != NULL) {
+    if (codeword) {
       result->SetAt(codeword->getRowNumber(),
                     result->GetAt(codeword->getRowNumber()) + 1);
     }

@@ -30,14 +30,8 @@ CBC_QRCoderBlockPair::CBC_QRCoderBlockPair(
   m_errorCorrectionBytes = errorCorrection;
 }
 CBC_QRCoderBlockPair::~CBC_QRCoderBlockPair() {
-  if (m_dataBytes != NULL) {
-    delete m_dataBytes;
-    m_dataBytes = NULL;
-  }
-  if (m_errorCorrectionBytes != NULL) {
-    delete m_errorCorrectionBytes;
-    m_errorCorrectionBytes = NULL;
-  }
+  delete m_dataBytes;
+  delete m_errorCorrectionBytes;
 }
 CBC_CommonByteArray* CBC_QRCoderBlockPair::GetDataBytes() {
   return m_dataBytes;

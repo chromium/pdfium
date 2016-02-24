@@ -67,9 +67,8 @@ CBC_QRCoderFormatInformation::DecodeFormatInformation(
     int32_t maskedFormatInfo) {
   CBC_QRCoderFormatInformation* formatInfo =
       DoDecodeFormatInformation(maskedFormatInfo);
-  if (formatInfo != NULL) {
+  if (formatInfo)
     return formatInfo;
-  }
   return DoDecodeFormatInformation(maskedFormatInfo ^ FORMAT_INFO_MASK_QR);
 }
 CBC_QRCoderFormatInformation*

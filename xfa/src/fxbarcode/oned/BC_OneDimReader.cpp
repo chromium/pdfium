@@ -52,10 +52,7 @@ CFX_Int32Array* CBC_OneDimReader::FindStartGuardPattern(CBC_CommonBitArray* row,
   startEndPattern[2] = START_END_PATTERN[2];
   int32_t nextStart = 0;
   while (!foundStart) {
-    if (startRange != NULL) {
-      delete startRange;
-      startRange = NULL;
-    }
+    delete startRange;
     startRange = FindGuardPattern(row, nextStart, FALSE, &startEndPattern, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     int32_t start = (*startRange)[0];

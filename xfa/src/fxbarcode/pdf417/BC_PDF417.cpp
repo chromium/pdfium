@@ -553,7 +553,7 @@ CFX_Int32Array* CBC_PDF417::determineDimensions(
     }
     FX_FLOAT newRatio =
         ((17 * cols + 69) * DEFAULT_MODULE_WIDTH) / (rows * HEIGHT);
-    if (dimension != NULL &&
+    if (dimension &&
         fabsf(newRatio - PREFERRED_RATIO) > fabsf(ratio - PREFERRED_RATIO)) {
       continue;
     }

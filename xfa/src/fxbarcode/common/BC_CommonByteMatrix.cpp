@@ -33,10 +33,7 @@ void CBC_CommonByteMatrix::Init() {
   FXSYS_memset(m_bytes, 0xff, m_height * m_width);
 }
 CBC_CommonByteMatrix::~CBC_CommonByteMatrix() {
-  if (m_bytes != NULL) {
-    FX_Free(m_bytes);
-    m_bytes = NULL;
-  }
+  FX_Free(m_bytes);
 }
 int32_t CBC_CommonByteMatrix::GetHeight() {
   return m_height;

@@ -115,7 +115,7 @@ CBC_CommonBitMatrix* CBC_QRDetector::SampleGrid(
   FX_FLOAT bottomRightY;
   FX_FLOAT sourceBottomRightX;
   FX_FLOAT sourceBottomRightY;
-  if (alignmentPattern != NULL) {
+  if (alignmentPattern) {
     bottomRightX = alignmentPattern->GetX();
     bottomRightY = alignmentPattern->GetY();
     sourceBottomRightX = sourceBottomRightY = dimMinusThree - 3.0f;

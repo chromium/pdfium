@@ -30,10 +30,7 @@ CBC_QRDataBlock::CBC_QRDataBlock(int32_t numDataCodewords,
                                  CFX_ByteArray* codewords)
     : m_numDataCodewords(numDataCodewords), m_codewords(codewords) {}
 CBC_QRDataBlock::~CBC_QRDataBlock() {
-  if (m_codewords != NULL) {
-    delete m_codewords;
-    m_codewords = NULL;
-  }
+  delete m_codewords;
 }
 int32_t CBC_QRDataBlock::GetNumDataCodewords() {
   return m_numDataCodewords;

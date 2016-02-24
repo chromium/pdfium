@@ -190,7 +190,7 @@ CFX_ByteString CBC_OnedCode128Reader::DecodeRow(int32_t rowNumber,
       codeSet = CODE_CODE_C;
       break;
     default:
-      if (startPatternInfo != NULL) {
+      if (startPatternInfo) {
         startPatternInfo->RemoveAll();
         delete startPatternInfo;
         startPatternInfo = NULL;
@@ -203,7 +203,7 @@ CFX_ByteString CBC_OnedCode128Reader::DecodeRow(int32_t rowNumber,
   CFX_ByteString result;
   int32_t lastStart = (*startPatternInfo)[0];
   int32_t nextStart = (*startPatternInfo)[1];
-  if (startPatternInfo != NULL) {
+  if (startPatternInfo) {
     startPatternInfo->RemoveAll();
     delete startPatternInfo;
     startPatternInfo = NULL;

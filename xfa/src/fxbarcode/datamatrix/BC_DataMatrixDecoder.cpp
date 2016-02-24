@@ -37,10 +37,7 @@ void CBC_DataMatrixDecoder::Init() {
       new CBC_ReedSolomonDecoder(CBC_ReedSolomonGF256::DataMatrixField);
 }
 CBC_DataMatrixDecoder::~CBC_DataMatrixDecoder() {
-  if (m_rsDecoder != NULL) {
-    delete m_rsDecoder;
-  }
-  m_rsDecoder = NULL;
+  delete m_rsDecoder;
 }
 CBC_CommonDecoderResult* CBC_DataMatrixDecoder::Decode(
     CBC_CommonBitMatrix* bits,

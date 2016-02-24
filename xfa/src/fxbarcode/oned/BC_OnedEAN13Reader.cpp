@@ -81,10 +81,7 @@ int32_t CBC_OnedEAN13Reader::DecodeMiddle(CBC_CommonBitArray* row,
       FindGuardPattern(row, rowOffset, TRUE, &result, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, 0);
   rowOffset = (*middleRange)[1];
-  if (middleRange != NULL) {
-    delete middleRange;
-    middleRange = NULL;
-  }
+  delete middleRange;
   for (int32_t Y = 0; Y < 6 && rowOffset < end; Y++) {
     int32_t bestMatch =
         DecodeDigit(row, &counters, rowOffset,

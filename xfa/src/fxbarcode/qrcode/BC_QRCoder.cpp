@@ -39,19 +39,7 @@ CBC_QRCoder::CBC_QRCoder() {
   m_matrix = NULL;
 }
 CBC_QRCoder::~CBC_QRCoder() {
-  if (m_matrix != NULL) {
-    delete m_matrix;
-    m_matrix = NULL;
-  }
-  m_mode = NULL;
-  m_ecLevel = NULL;
-  m_version = -1;
-  m_matrixWidth = -1;
-  m_maskPattern = -1;
-  m_numTotalBytes = -1;
-  m_numDataBytes = -1;
-  m_numECBytes = -1;
-  m_numRSBlocks = -1;
+  delete m_matrix;
 }
 CBC_QRCoderMode* CBC_QRCoder::GetMode() {
   return m_mode;
@@ -92,11 +80,11 @@ int32_t CBC_QRCoder::At(int32_t x, int32_t y, int32_t& e) {
   return value;
 }
 FX_BOOL CBC_QRCoder::IsValid() {
-  return m_mode != NULL && m_ecLevel != NULL && m_version != -1 &&
-         m_matrixWidth != -1 && m_maskPattern != -1 && m_numTotalBytes != -1 &&
-         m_numDataBytes != -1 && m_numECBytes != -1 && m_numRSBlocks != -1 &&
+  return m_mode && m_ecLevel && m_version != -1 && m_matrixWidth != -1 &&
+         m_maskPattern != -1 && m_numTotalBytes != -1 && m_numDataBytes != -1 &&
+         m_numECBytes != -1 && m_numRSBlocks != -1 &&
          IsValidMaskPattern(m_maskPattern) &&
-         m_numTotalBytes == m_numDataBytes + m_numECBytes && m_matrix != NULL &&
+         m_numTotalBytes == m_numDataBytes + m_numECBytes && m_matrix &&
          m_matrixWidth == m_matrix->GetWidth() &&
          m_matrix->GetWidth() == m_matrix->GetHeight();
 }

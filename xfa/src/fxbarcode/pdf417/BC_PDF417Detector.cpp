@@ -124,10 +124,10 @@ CFX_PtrArray* CBC_Detector::detect(FX_BOOL multiple,
       for (int32_t i = 0; i < barcodeCoordinates->GetSize(); i++) {
         CFX_PtrArray* barcodeCoordinate =
             (CFX_PtrArray*)barcodeCoordinates->GetAt(i);
-        if (barcodeCoordinate->GetAt(1) != NULL) {
+        if (barcodeCoordinate->GetAt(1)) {
           row = row > ((CBC_ResultPoint*)barcodeCoordinate->GetAt(1))->GetY();
         }
-        if (barcodeCoordinate->GetAt(3) != NULL) {
+        if (barcodeCoordinate->GetAt(3)) {
           row = row > ((CBC_ResultPoint*)barcodeCoordinate->GetAt(3))->GetY();
         }
       }
@@ -142,7 +142,7 @@ CFX_PtrArray* CBC_Detector::detect(FX_BOOL multiple,
     if (!multiple) {
       break;
     }
-    if (vertices->GetAt(2) != NULL) {
+    if (vertices->GetAt(2)) {
       column = (int32_t)((CBC_ResultPoint*)vertices->GetAt(2))->GetX();
       row = (int32_t)((CBC_ResultPoint*)vertices->GetAt(2))->GetY();
     } else {
@@ -167,7 +167,7 @@ CFX_PtrArray* CBC_Detector::findVertices(CBC_CommonBitMatrix* matrix,
       sizeof(INDEXES_START_PATTERN) / sizeof(INDEXES_START_PATTERN[0]));
   startptr->RemoveAll();
   delete startptr;
-  if (result->GetAt(4) != NULL) {
+  if (result->GetAt(4)) {
     startColumn = (int32_t)((CBC_ResultPoint*)result->GetAt(4))->GetX();
     startRow = (int32_t)((CBC_ResultPoint*)result->GetAt(4))->GetY();
   }
@@ -204,12 +204,12 @@ CFX_PtrArray* CBC_Detector::findRowsWithPattern(CBC_CommonBitMatrix* matrix,
     CFX_Int32Array* loc =
         findGuardPattern(matrix, startColumn, startRow, width, FALSE, pattern,
                          patternLength, counters);
-    if (loc != NULL) {
+    if (loc) {
       while (startRow > 0) {
         CFX_Int32Array* previousRowLoc =
             findGuardPattern(matrix, startColumn, --startRow, width, FALSE,
                              pattern, patternLength, counters);
-        if (previousRowLoc != NULL) {
+        if (previousRowLoc) {
           delete loc;
           loc = previousRowLoc;
         } else {
@@ -236,8 +236,7 @@ CFX_PtrArray* CBC_Detector::findRowsWithPattern(CBC_CommonBitMatrix* matrix,
       CFX_Int32Array* loc =
           findGuardPattern(matrix, previousRowLoc[0], stopRow, width, FALSE,
                            pattern, patternLength, counters);
-      if (loc != NULL &&
-          abs(previousRowLoc[0] - loc->GetAt(0)) < MAX_PATTERN_DRIFT &&
+      if (loc && abs(previousRowLoc[0] - loc->GetAt(0)) < MAX_PATTERN_DRIFT &&
           abs(previousRowLoc[1] - loc->GetAt(1)) < MAX_PATTERN_DRIFT) {
         previousRowLoc.Copy(*loc);
         skippedRowCount = 0;

@@ -37,10 +37,7 @@ void CBC_DataMatrixReader::Init() {
   m_decoder->Init();
 }
 CBC_DataMatrixReader::~CBC_DataMatrixReader() {
-  if (m_decoder != NULL) {
-    delete m_decoder;
-  }
-  m_decoder = NULL;
+  delete m_decoder;
 }
 CFX_ByteString CBC_DataMatrixReader::Decode(CBC_BinaryBitmap* image,
                                             int32_t hints,

@@ -30,10 +30,7 @@
 CBC_BinaryBitmap::CBC_BinaryBitmap(CBC_Binarizer* binarizer)
     : m_binarizer(binarizer), m_matrix(NULL) {}
 CBC_BinaryBitmap::~CBC_BinaryBitmap() {
-  if (m_matrix != NULL) {
-    delete m_matrix;
-  }
-  m_matrix = NULL;
+  delete m_matrix;
 }
 int32_t CBC_BinaryBitmap::GetHeight() {
   return m_binarizer->GetLuminanceSource()->GetHeight();

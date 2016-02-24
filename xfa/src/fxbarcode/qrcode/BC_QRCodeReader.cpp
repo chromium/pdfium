@@ -46,10 +46,7 @@ void CBC_QRCodeReader::Init() {
   m_decoder->Init();
 }
 CBC_QRCodeReader::~CBC_QRCodeReader() {
-  if (m_decoder != NULL) {
-    delete m_decoder;
-  }
-  m_decoder = NULL;
+  delete m_decoder;
 }
 CFX_ByteString CBC_QRCodeReader::Decode(CBC_BinaryBitmap* image,
                                         int32_t hints,

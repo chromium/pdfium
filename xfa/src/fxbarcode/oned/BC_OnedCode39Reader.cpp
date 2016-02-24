@@ -58,10 +58,7 @@ CFX_ByteString CBC_OnedCode39Reader::DecodeRow(int32_t rowNumber,
   CFX_Int32Array* start = FindAsteriskPattern(row, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, "");
   int32_t nextStart = (*start)[1];
-  if (start != NULL) {
-    delete start;
-    start = NULL;
-  }
+  delete start;
   int32_t end = row->GetSize();
   while (nextStart < end && !row->Get(nextStart)) {
     nextStart++;

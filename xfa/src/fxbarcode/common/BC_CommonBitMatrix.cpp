@@ -47,11 +47,7 @@ void CBC_CommonBitMatrix::Init(int32_t width, int32_t height) {
   FXSYS_memset(m_bits, 0, m_rowSize * m_height * sizeof(int32_t));
 }
 CBC_CommonBitMatrix::~CBC_CommonBitMatrix() {
-  if (m_bits != NULL) {
-    FX_Free(m_bits);
-  }
-  m_bits = NULL;
-  m_height = m_width = m_rowSize = 0;
+  FX_Free(m_bits);
 }
 FX_BOOL CBC_CommonBitMatrix::Get(int32_t x, int32_t y) {
   int32_t offset = y * m_rowSize + (x >> 5);

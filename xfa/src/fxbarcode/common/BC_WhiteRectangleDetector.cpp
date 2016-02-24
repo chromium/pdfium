@@ -129,7 +129,7 @@ CFX_PtrArray* CBC_WhiteRectangleDetector::Detect(int32_t& e) {
       z = CBC_AutoPtr<CBC_ResultPoint>(
           GetBlackPointOnSegment((FX_FLOAT)left, (FX_FLOAT)(down - i),
                                  (FX_FLOAT)(left + i), (FX_FLOAT)(down)));
-      if (z.get() != NULL) {
+      if (z.get()) {
         break;
       }
     }
@@ -142,7 +142,7 @@ CFX_PtrArray* CBC_WhiteRectangleDetector::Detect(int32_t& e) {
       t = CBC_AutoPtr<CBC_ResultPoint>(
           GetBlackPointOnSegment((FX_FLOAT)left, (FX_FLOAT)(up + j),
                                  (FX_FLOAT)(left + j), (FX_FLOAT)up));
-      if (t.get() != NULL) {
+      if (t.get()) {
         break;
       }
     }
@@ -155,7 +155,7 @@ CFX_PtrArray* CBC_WhiteRectangleDetector::Detect(int32_t& e) {
       x = CBC_AutoPtr<CBC_ResultPoint>(
           GetBlackPointOnSegment((FX_FLOAT)right, (FX_FLOAT)(up + k),
                                  (FX_FLOAT)(right - k), (FX_FLOAT)up));
-      if (x.get() != NULL) {
+      if (x.get()) {
         break;
       }
     }
@@ -168,7 +168,7 @@ CFX_PtrArray* CBC_WhiteRectangleDetector::Detect(int32_t& e) {
       y = CBC_AutoPtr<CBC_ResultPoint>(
           GetBlackPointOnSegment((FX_FLOAT)right, (FX_FLOAT)(down - m),
                                  (FX_FLOAT)(right - m), (FX_FLOAT)down));
-      if (y.get() != NULL) {
+      if (y.get()) {
         break;
       }
     }

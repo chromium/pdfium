@@ -33,11 +33,7 @@ CBC_QRDetectorResult::~CBC_QRDetectorResult() {
   }
   m_points->RemoveAll();
   delete m_points;
-  m_points = NULL;
-  if (m_bits != NULL) {
-    delete m_bits;
-  }
-  m_bits = NULL;
+  delete m_bits;
 }
 CBC_CommonBitMatrix* CBC_QRDetectorResult::GetBits() {
   return m_bits;
