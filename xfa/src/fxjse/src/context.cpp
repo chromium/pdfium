@@ -7,10 +7,10 @@
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fxjse/src/class.h"
 #include "xfa/src/fxjse/src/context.h"
-#include "xfa/src/fxjse/src/fxv8.h"
 #include "xfa/src/fxjse/src/scope_inline.h"
 #include "xfa/src/fxjse/src/util_inline.h"
 #include "xfa/src/fxjse/src/value.h"
+
 FXJSE_HCONTEXT FXJSE_Context_Create(FXJSE_HRUNTIME hRuntime,
                                     const FXJSE_CLASS* lpGlobalClass,
                                     void* lpGlobalObject) {
@@ -18,12 +18,14 @@ FXJSE_HCONTEXT FXJSE_Context_Create(FXJSE_HRUNTIME hRuntime,
       reinterpret_cast<v8::Isolate*>(hRuntime), lpGlobalClass, lpGlobalObject);
   return reinterpret_cast<FXJSE_HCONTEXT>(pContext);
 }
+
 void FXJSE_Context_Release(FXJSE_HCONTEXT hContext) {
   CFXJSE_Context* pContext = reinterpret_cast<CFXJSE_Context*>(hContext);
   if (pContext) {
     delete pContext;
   }
 }
+
 FXJSE_HVALUE FXJSE_Context_GetGlobalObject(FXJSE_HCONTEXT hContext) {
   CFXJSE_Context* pContext = reinterpret_cast<CFXJSE_Context*>(hContext);
   if (!pContext) {
@@ -34,11 +36,13 @@ FXJSE_HVALUE FXJSE_Context_GetGlobalObject(FXJSE_HCONTEXT hContext) {
   pContext->GetGlobalObject(lpValue);
   return reinterpret_cast<FXJSE_HVALUE>(lpValue);
 }
+
 FXJSE_HRUNTIME FXJSE_Context_GetRuntime(FXJSE_HCONTEXT hContext) {
   CFXJSE_Context* pContext = reinterpret_cast<CFXJSE_Context*>(hContext);
   return pContext ? reinterpret_cast<FXJSE_HRUNTIME>(pContext->GetRuntime())
                   : NULL;
 }
+
 static const FX_CHAR* szCompatibleModeScripts[] = {
     "(function(global, list) {\n"
     "  'use strict';\n"
@@ -73,6 +77,7 @@ void FXJSE_Context_EnableCompatibleMode(FXJSE_HCONTEXT hContext,
     }
   }
 }
+
 FX_BOOL FXJSE_ExecuteScript(FXJSE_HCONTEXT hContext,
                             const FX_CHAR* szScript,
                             FXJSE_HVALUE hRetValue,
@@ -83,6 +88,7 @@ FX_BOOL FXJSE_ExecuteScript(FXJSE_HCONTEXT hContext,
       szScript, reinterpret_cast<CFXJSE_Value*>(hRetValue),
       reinterpret_cast<CFXJSE_Value*>(hNewThisObject));
 }
+
 v8::Local<v8::Object> FXJSE_CreateReturnValue(v8::Isolate* pIsolate,
                                               v8::TryCatch& trycatch) {
   v8::Local<v8::Object> hReturnValue = v8::Object::New(pIsolate);
@@ -118,6 +124,7 @@ v8::Local<v8::Object> FXJSE_CreateReturnValue(v8::Isolate* pIsolate,
   }
   return hReturnValue;
 }
+
 FX_BOOL FXJSE_ReturnValue_GetMessage(FXJSE_HVALUE hRetValue,
                                      CFX_ByteString& utf8Name,
                                      CFX_ByteString& utf8Message) {
@@ -140,6 +147,7 @@ FX_BOOL FXJSE_ReturnValue_GetMessage(FXJSE_HVALUE hRetValue,
   utf8Message = *hStringVal1;
   return TRUE;
 }
+
 FX_BOOL FXJSE_ReturnValue_GetLineInfo(FXJSE_HVALUE hRetValue,
                                       int32_t& nLine,
                                       int32_t& nCol) {
@@ -158,6 +166,7 @@ FX_BOOL FXJSE_ReturnValue_GetLineInfo(FXJSE_HVALUE hRetValue,
   nCol = hValue.As<v8::Object>()->Get(5)->ToInt32()->Value();
   return TRUE;
 }
+
 CFXJSE_Context* CFXJSE_Context::Create(v8::Isolate* pIsolate,
                                        const FXJSE_CLASS* lpGlobalClass,
                                        void* lpGlobalObject) {
@@ -187,6 +196,7 @@ CFXJSE_Context* CFXJSE_Context::Create(v8::Isolate* pIsolate,
   pContext->m_hContext.Reset(pIsolate, hNewContext);
   return pContext;
 }
+
 CFXJSE_Context::~CFXJSE_Context() {
   for (int32_t i = 0, count = m_rgClasses.GetSize(); i < count; i++) {
     CFXJSE_Class* pClass = m_rgClasses[i];
@@ -196,6 +206,7 @@ CFXJSE_Context::~CFXJSE_Context() {
   }
   m_rgClasses.RemoveAll();
 }
+
 void CFXJSE_Context::GetGlobalObject(CFXJSE_Value* pValue) {
   ASSERT(pValue);
   CFXJSE_ScopeUtil_IsolateHandleContext scope(this);
@@ -204,6 +215,7 @@ void CFXJSE_Context::GetGlobalObject(CFXJSE_Value* pValue) {
   v8::Local<v8::Object> hGlobalObject = hContext->Global();
   pValue->ForceSetValue(hGlobalObject);
 }
+
 FX_BOOL CFXJSE_Context::ExecuteScript(const FX_CHAR* szScript,
                                       CFXJSE_Value* lpRetValue,
                                       CFXJSE_Value* lpNewThisObject) {

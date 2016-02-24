@@ -6,8 +6,8 @@
 
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fxjse/src/class.h"
-#include "xfa/src/fxjse/src/fxv8.h"
 #include "xfa/src/fxjse/src/value.h"
+
 static void FXJSE_DynPropGetterAdapter_MethodCallback(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
   v8::Local<v8::Object> hCallBackInfo = info.Data().As<v8::Object>();
@@ -33,6 +33,7 @@ static void FXJSE_DynPropGetterAdapter_MethodCallback(
   delete lpThisValue;
   lpThisValue = nullptr;
 }
+
 static void FXJSE_DynPropGetterAdapter(const FXJSE_CLASS* lpClass,
                                        FXJSE_HOBJECT hObject,
                                        const CFX_ByteStringC& szPropName,
@@ -68,6 +69,7 @@ static void FXJSE_DynPropGetterAdapter(const FXJSE_CLASS* lpClass,
     }
   }
 }
+
 static void FXJSE_DynPropSetterAdapter(const FXJSE_CLASS* lpClass,
                                        FXJSE_HOBJECT hObject,
                                        const CFX_ByteStringC& szPropName,
@@ -83,6 +85,7 @@ static void FXJSE_DynPropSetterAdapter(const FXJSE_CLASS* lpClass,
     }
   }
 }
+
 static FX_BOOL FXJSE_DynPropQueryAdapter(const FXJSE_CLASS* lpClass,
                                          FXJSE_HOBJECT hObject,
                                          const CFX_ByteStringC& szPropName) {
@@ -93,6 +96,7 @@ static FX_BOOL FXJSE_DynPropQueryAdapter(const FXJSE_CLASS* lpClass,
           : lpClass->dynPropTypeGetter(hObject, szPropName, TRUE);
   return nPropType != FXJSE_ClassPropType_None;
 }
+
 static FX_BOOL FXJSE_DynPropDeleterAdapter(const FXJSE_CLASS* lpClass,
                                            FXJSE_HOBJECT hObject,
                                            const CFX_ByteStringC& szPropName) {
@@ -110,6 +114,7 @@ static FX_BOOL FXJSE_DynPropDeleterAdapter(const FXJSE_CLASS* lpClass,
   }
   return FALSE;
 }
+
 static void FXJSE_V8ProxyCallback_getOwnPropertyDescriptor_getter(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
   v8::Local<v8::Object> hCallBackInfo = info.Data().As<v8::Object>();
@@ -132,6 +137,7 @@ static void FXJSE_V8ProxyCallback_getOwnPropertyDescriptor_getter(
   delete lpNewValue;
   lpNewValue = nullptr;
 }
+
 static void FXJSE_V8ProxyCallback_getOwnPropertyDescriptor_setter(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
   v8::Local<v8::Object> hCallBackInfo = info.Data().As<v8::Object>();
@@ -154,6 +160,7 @@ static void FXJSE_V8ProxyCallback_getOwnPropertyDescriptor_setter(
   delete lpNewValue;
   lpNewValue = nullptr;
 }
+
 static void FXJSE_V8ProxyCallback_getOwnPropertyDescriptor(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
   const FXJSE_CLASS* lpClass =
@@ -190,6 +197,7 @@ static void FXJSE_V8ProxyCallback_getOwnPropertyDescriptor(
                             v8::Boolean::New(pIsolate, true));
   info.GetReturnValue().Set(hPropDescriptor);
 }
+
 static void FXJSE_V8ProxyCallback_getPropertyDescriptor(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
   v8::Isolate* pIsolate = info.GetIsolate();
@@ -209,12 +217,14 @@ static void FXJSE_V8ProxyCallback_getPropertyDescriptor(
     FXJSE_V8ProxyCallback_getOwnPropertyDescriptor(info);
   }
 }
+
 static void FXJSE_V8ProxyCallback_getOwnPropertyNames(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
   v8::Isolate* pIsolate = info.GetIsolate();
   v8::HandleScope scope(pIsolate);
   info.GetReturnValue().Set(v8::Array::New(pIsolate));
 }
+
 static void FXJSE_V8ProxyCallback_getPropertyNames(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
   v8::Local<v8::Object> hChainObj =
@@ -222,6 +232,7 @@ static void FXJSE_V8ProxyCallback_getPropertyNames(
   v8::Local<v8::Value> hChainPropertyNames = hChainObj->GetPropertyNames();
   info.GetReturnValue().Set(hChainPropertyNames);
 }
+
 static void FXJSE_V8ProxyCallback_defineProperty(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
   const FXJSE_CLASS* lpClass =
@@ -252,6 +263,7 @@ static void FXJSE_V8ProxyCallback_defineProperty(
   delete lpPropValue;
   lpPropValue = nullptr;
 }
+
 static void FXJSE_V8ProxyCallback_delete(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
   info.GetReturnValue().Set(true);
@@ -275,10 +287,12 @@ static void FXJSE_V8ProxyCallback_delete(
   delete lpThisValue;
   lpThisValue = nullptr;
 }
+
 static void FXJSE_V8ProxyCallback_fix(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
   info.GetReturnValue().SetUndefined();
 }
+
 static void FXJSE_V8_GenericNamedPropertyQueryCallback(
     v8::Local<v8::Name> property,
     const v8::PropertyCallbackInfo<v8::Integer>& info) {
@@ -302,6 +316,7 @@ static void FXJSE_V8_GenericNamedPropertyQueryCallback(
   delete lpThisValue;
   lpThisValue = nullptr;
 }
+
 static void FXJSE_V8_GenericNamedPropertyDeleterCallback(
     v8::Local<v8::Name> property,
     const v8::PropertyCallbackInfo<v8::Boolean>& info) {
@@ -322,6 +337,7 @@ static void FXJSE_V8_GenericNamedPropertyDeleterCallback(
   delete lpThisValue;
   lpThisValue = nullptr;
 }
+
 static void FXJSE_V8_GenericNamedPropertyGetterCallback(
     v8::Local<v8::Name> property,
     const v8::PropertyCallbackInfo<v8::Value>& info) {
@@ -340,6 +356,7 @@ static void FXJSE_V8_GenericNamedPropertyGetterCallback(
   delete lpThisValue;
   lpThisValue = nullptr;
 }
+
 static void FXJSE_V8_GenericNamedPropertySetterCallback(
     v8::Local<v8::Name> property,
     v8::Local<v8::Value> value,
@@ -360,6 +377,7 @@ static void FXJSE_V8_GenericNamedPropertySetterCallback(
   delete lpThisValue;
   lpThisValue = nullptr;
 }
+
 static void FXJSE_V8_GenericNamedPropertyEnumeratorCallback(
     const v8::PropertyCallbackInfo<v8::Array>& info) {
   const FXJSE_CLASS* lpClass =
@@ -433,6 +451,7 @@ void CFXJSE_Class::SetUpDynPropHandler(CFXJSE_Context* pContext,
       hHarmonyProxyCreateFn->Call(hHarmonyProxyObj, 2, rgArgs);
   hObject->SetPrototype(hNewPrototype);
 }
+
 void CFXJSE_Class::SetUpNamedPropHandler(
     v8::Isolate* pIsolate,
     v8::Local<v8::ObjectTemplate>& hObjectTemplate,

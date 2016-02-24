@@ -7,10 +7,10 @@
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fxjse/src/class.h"
 #include "xfa/src/fxjse/src/context.h"
-#include "xfa/src/fxjse/src/fxv8.h"
 #include "xfa/src/fxjse/src/scope_inline.h"
 #include "xfa/src/fxjse/src/util_inline.h"
 #include "xfa/src/fxjse/src/value.h"
+
 static void FXJSE_V8ConstructorCallback_Wrapper(
     const v8::FunctionCallbackInfo<v8::Value>& info);
 static void FXJSE_V8FunctionCallback_Wrapper(
@@ -22,6 +22,7 @@ static void FXJSE_V8SetterCallback_Wrapper(
     v8::Local<v8::String> property,
     v8::Local<v8::Value> value,
     const v8::PropertyCallbackInfo<void>& info);
+
 void FXJSE_DefineFunctions(FXJSE_HCONTEXT hContext,
                            const FXJSE_FUNCTION* lpFunctions,
                            int nNum) {
@@ -41,6 +42,7 @@ void FXJSE_DefineFunctions(FXJSE_HCONTEXT hContext,
         static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete));
   }
 }
+
 FXJSE_HCLASS FXJSE_DefineClass(FXJSE_HCONTEXT hContext,
                                const FXJSE_CLASS* lpClass) {
   CFXJSE_Context* lpContext = reinterpret_cast<CFXJSE_Context*>(hContext);
@@ -48,11 +50,13 @@ FXJSE_HCLASS FXJSE_DefineClass(FXJSE_HCONTEXT hContext,
   return reinterpret_cast<FXJSE_HCLASS>(
       CFXJSE_Class::Create(lpContext, lpClass, FALSE));
 }
+
 FXJSE_HCLASS FXJSE_GetClass(FXJSE_HCONTEXT hContext,
                             const CFX_ByteStringC& szName) {
   return reinterpret_cast<FXJSE_HCLASS>(CFXJSE_Class::GetClassFromContext(
       reinterpret_cast<CFXJSE_Context*>(hContext), szName));
 }
+
 static void FXJSE_V8FunctionCallback_Wrapper(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
   const FXJSE_FUNCTION* lpFunctionInfo =
@@ -76,6 +80,7 @@ static void FXJSE_V8FunctionCallback_Wrapper(
   delete lpThisValue;
   lpThisValue = NULL;
 }
+
 static void FXJSE_V8ClassGlobalConstructorCallback_Wrapper(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
   const FXJSE_CLASS* lpClassDefinition =
@@ -99,6 +104,7 @@ static void FXJSE_V8ClassGlobalConstructorCallback_Wrapper(
   delete lpThisValue;
   lpThisValue = NULL;
 }
+
 static void FXJSE_V8GetterCallback_Wrapper(
     v8::Local<v8::String> property,
     const v8::PropertyCallbackInfo<v8::Value>& info) {
@@ -120,6 +126,7 @@ static void FXJSE_V8GetterCallback_Wrapper(
   delete lpPropValue;
   lpPropValue = NULL;
 }
+
 static void FXJSE_V8SetterCallback_Wrapper(
     v8::Local<v8::String> property,
     v8::Local<v8::Value> value,
@@ -142,6 +149,7 @@ static void FXJSE_V8SetterCallback_Wrapper(
   delete lpPropValue;
   lpPropValue = NULL;
 }
+
 static void FXJSE_V8ConstructorCallback_Wrapper(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
   const FXJSE_CLASS* lpClassDefinition =
@@ -152,17 +160,20 @@ static void FXJSE_V8ConstructorCallback_Wrapper(
   FXSYS_assert(info.This()->InternalFieldCount());
   info.This()->SetAlignedPointerInInternalField(0, NULL);
 }
+
 FXJSE_HRUNTIME CFXJSE_Arguments::GetRuntime() const {
   const CFXJSE_ArgumentsImpl* lpArguments =
       reinterpret_cast<const CFXJSE_ArgumentsImpl* const>(this);
   return reinterpret_cast<FXJSE_HRUNTIME>(
       lpArguments->m_pRetValue->GetIsolate());
 }
+
 int32_t CFXJSE_Arguments::GetLength() const {
   const CFXJSE_ArgumentsImpl* lpArguments =
       reinterpret_cast<const CFXJSE_ArgumentsImpl* const>(this);
   return lpArguments->m_pInfo->Length();
 }
+
 FXJSE_HVALUE CFXJSE_Arguments::GetValue(int32_t index) const {
   const CFXJSE_ArgumentsImpl* lpArguments =
       reinterpret_cast<const CFXJSE_ArgumentsImpl* const>(this);
@@ -171,21 +182,25 @@ FXJSE_HVALUE CFXJSE_Arguments::GetValue(int32_t index) const {
   lpArgValue->ForceSetValue((*lpArguments->m_pInfo)[index]);
   return reinterpret_cast<FXJSE_HVALUE>(lpArgValue);
 }
+
 FX_BOOL CFXJSE_Arguments::GetBoolean(int32_t index) const {
   const CFXJSE_ArgumentsImpl* lpArguments =
       reinterpret_cast<const CFXJSE_ArgumentsImpl* const>(this);
   return (*lpArguments->m_pInfo)[index]->BooleanValue();
 }
+
 int32_t CFXJSE_Arguments::GetInt32(int32_t index) const {
   const CFXJSE_ArgumentsImpl* lpArguments =
       reinterpret_cast<const CFXJSE_ArgumentsImpl* const>(this);
   return static_cast<int32_t>((*lpArguments->m_pInfo)[index]->NumberValue());
 }
+
 FX_FLOAT CFXJSE_Arguments::GetFloat(int32_t index) const {
   const CFXJSE_ArgumentsImpl* lpArguments =
       reinterpret_cast<const CFXJSE_ArgumentsImpl* const>(this);
   return static_cast<FX_FLOAT>((*lpArguments->m_pInfo)[index]->NumberValue());
 }
+
 CFX_ByteString CFXJSE_Arguments::GetUTF8String(int32_t index) const {
   const CFXJSE_ArgumentsImpl* lpArguments =
       reinterpret_cast<const CFXJSE_ArgumentsImpl* const>(this);
@@ -193,6 +208,7 @@ CFX_ByteString CFXJSE_Arguments::GetUTF8String(int32_t index) const {
   v8::String::Utf8Value szStringVal(hString);
   return CFX_ByteString(*szStringVal);
 }
+
 void* CFXJSE_Arguments::GetObject(int32_t index, FXJSE_HCLASS hClass) const {
   const CFXJSE_ArgumentsImpl* lpArguments =
       reinterpret_cast<const CFXJSE_ArgumentsImpl* const>(this);
@@ -204,6 +220,7 @@ void* CFXJSE_Arguments::GetObject(int32_t index, FXJSE_HCLASS hClass) const {
   CFXJSE_Class* lpClass = reinterpret_cast<CFXJSE_Class*>(hClass);
   return FXJSE_RetrieveObjectBinding(hValue.As<v8::Object>(), lpClass);
 }
+
 FXJSE_HVALUE CFXJSE_Arguments::GetReturnValue() {
   const CFXJSE_ArgumentsImpl* lpArguments =
       reinterpret_cast<const CFXJSE_ArgumentsImpl* const>(this);
@@ -226,6 +243,7 @@ static void FXJSE_Context_GlobalObjToString(
     info.GetReturnValue().Set(info.This()->ObjectProtoToString());
   }
 }
+
 CFXJSE_Class* CFXJSE_Class::Create(CFXJSE_Context* lpContext,
                                    const FXJSE_CLASS* lpClassDefinition,
                                    FX_BOOL bIsJSGlobal) {

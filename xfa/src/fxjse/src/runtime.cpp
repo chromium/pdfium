@@ -6,7 +6,6 @@
 
 #include "fpdfsdk/include/jsapi/fxjs_v8.h"  // For per-isolate data.
 #include "xfa/src/foxitlib.h"
-#include "xfa/src/fxjse/src/fxv8.h"
 #include "xfa/src/fxjse/src/runtime.h"
 #include "xfa/src/fxjse/src/scope_inline.h"
 
@@ -21,6 +20,7 @@ class FXJSE_ArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
 static void FXJSE_KillV8() {
   v8::V8::Dispose();
 }
+
 void FXJSE_Initialize() {
   if (!CFXJSE_RuntimeData::g_RuntimeList) {
     CFXJSE_RuntimeData::g_RuntimeList = new CFXJSE_RuntimeList;
@@ -32,6 +32,7 @@ void FXJSE_Initialize() {
   bV8Initialized = TRUE;
   atexit(FXJSE_KillV8);
 }
+
 static void FXJSE_Runtime_DisposeCallback(v8::Isolate* pIsolate) {
   {
     v8::Locker locker(pIsolate);
@@ -42,6 +43,7 @@ static void FXJSE_Runtime_DisposeCallback(v8::Isolate* pIsolate) {
   }
   pIsolate->Dispose();
 }
+
 void FXJSE_Finalize() {
   if (CFXJSE_RuntimeData::g_RuntimeList) {
     CFXJSE_RuntimeData::g_RuntimeList->RemoveAllRuntimes(
@@ -50,6 +52,7 @@ void FXJSE_Finalize() {
     CFXJSE_RuntimeData::g_RuntimeList = NULL;
   }
 }
+
 FXJSE_HRUNTIME FXJSE_Runtime_Create() {
   v8::Isolate::CreateParams params;
   params.array_buffer_allocator = new FXJSE_ArrayBufferAllocator();
@@ -58,6 +61,7 @@ FXJSE_HRUNTIME FXJSE_Runtime_Create() {
   CFXJSE_RuntimeData::g_RuntimeList->AppendRuntime(pIsolate);
   return reinterpret_cast<FXJSE_HRUNTIME>(pIsolate);
 }
+
 void FXJSE_Runtime_Release(FXJSE_HRUNTIME hRuntime, bool bOwnedRuntime) {
   v8::Isolate* pIsolate = reinterpret_cast<v8::Isolate*>(hRuntime);
   if (!pIsolate)
@@ -73,6 +77,7 @@ void FXJSE_Runtime_Release(FXJSE_HRUNTIME hRuntime, bool bOwnedRuntime) {
     }
   }
 }
+
 CFXJSE_RuntimeData* CFXJSE_RuntimeData::Create(v8::Isolate* pIsolate) {
   CFXJSE_RuntimeData* pRuntimeData = new CFXJSE_RuntimeData(pIsolate);
   CFXJSE_ScopeUtil_IsolateHandle scope(pIsolate);
@@ -85,6 +90,7 @@ CFXJSE_RuntimeData* CFXJSE_RuntimeData::Create(v8::Isolate* pIsolate) {
   pRuntimeData->m_hRootContext.Reset(pIsolate, hContext);
   return pRuntimeData;
 }
+
 CFXJSE_RuntimeData* CFXJSE_RuntimeData::Get(v8::Isolate* pIsolate) {
   FXJS_PerIsolateData::SetUp(pIsolate);
   FXJS_PerIsolateData* pData = FXJS_PerIsolateData::Get(pIsolate);
@@ -92,10 +98,12 @@ CFXJSE_RuntimeData* CFXJSE_RuntimeData::Get(v8::Isolate* pIsolate) {
     pData->m_pFXJSERuntimeData = CFXJSE_RuntimeData::Create(pIsolate);
   return pData->m_pFXJSERuntimeData;
 }
+
 CFXJSE_RuntimeList* CFXJSE_RuntimeData::g_RuntimeList = NULL;
 void CFXJSE_RuntimeList::AppendRuntime(v8::Isolate* pIsolate) {
   m_RuntimeList.Add(pIsolate);
 }
+
 void CFXJSE_RuntimeList::RemoveRuntime(
     v8::Isolate* pIsolate,
     CFXJSE_RuntimeList::RuntimeDisposeCallback lpfnDisposeCallback) {
@@ -107,6 +115,7 @@ void CFXJSE_RuntimeList::RemoveRuntime(
     lpfnDisposeCallback(pIsolate);
   }
 }
+
 void CFXJSE_RuntimeList::RemoveAllRuntimes(
     CFXJSE_RuntimeList::RuntimeDisposeCallback lpfnDisposeCallback) {
   int32_t iSize = m_RuntimeList.GetSize();
