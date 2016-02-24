@@ -221,7 +221,7 @@ CFPF_SkiaFontMgr::~CFPF_SkiaFontMgr() {
       pair.second->Release();
   }
   m_FamilyFonts.clear();
-  for (auto it = m_FontFaces.rbegin(); it != m_FontFaces.end(); ++it) {
+  for (auto it = m_FontFaces.rbegin(); it != m_FontFaces.rend(); ++it) {
     delete *it;
   }
   m_FontFaces.clear();
@@ -271,7 +271,7 @@ IFPF_Font* CFPF_SkiaFontMgr::CreateFont(const CFX_ByteStringC& bsFamilyname,
   int32_t nMax = -1;
   int32_t nGlyphNum = 0;
   for (auto it = m_FontFaces.rbegin(); it != m_FontFaces.rend(); ++it) {
-    CFPF_SkiaPathFont* pFontDes = *it;
+    CFPF_SkiaPathFont* pFontDes = static_cast<CFPF_SkiaPathFont*>(*it);
     if (!(pFontDes->m_dwCharsets & FPF_SkiaGetCharset(uCharset))) {
       continue;
     }
@@ -304,19 +304,19 @@ IFPF_Font* CFPF_SkiaFontMgr::CreateFont(const CFX_ByteStringC& bsFamilyname,
     if (uCharset == FXFONT_DEFAULT_CHARSET || bMaybeSymbol) {
       if (nFind > nMax && bMatchedName) {
         nMax = nFind;
-        nItem = i;
+        nItem = it - m_FontFaces.rbegin();
       }
     } else if (FPF_SkiaIsCJK(uCharset)) {
       if (bMatchedName || pFontDes->m_iGlyphNum > nGlyphNum) {
-        nItem = i;
+        nItem = it - m_FontFaces.rbegin();
         nGlyphNum = pFontDes->m_iGlyphNum;
       }
     } else if (nFind > nMax) {
       nMax = nFind;
-      nItem = i;
+      nItem = it - m_FontFaces.rbegin();
     }
     if (nExpectVal <= nFind) {
-      nItem = i;
+      nItem = it - m_FontFaces.rbegin();
       break;
     }
   }
