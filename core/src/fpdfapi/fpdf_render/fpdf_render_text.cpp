@@ -198,7 +198,7 @@ FX_BOOL CPDF_RenderStatus::ProcessText(const CPDF_TextObject* textobj,
     return TRUE;
   }
   CPDF_Font* pFont = textobj->m_TextState.GetFont();
-  if (pFont->GetFontType() == PDFFONT_TYPE3) {
+  if (pFont->IsType3Font()) {
     return ProcessType3Text(textobj, pObj2Device);
   }
   FX_BOOL bFill = FALSE, bStroke = FALSE, bClip = FALSE;
@@ -348,7 +348,7 @@ class CPDF_RefType3Cache {
 };
 FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj,
                                             const CFX_Matrix* pObj2Device) {
-  CPDF_Type3Font* pType3Font = textobj->m_TextState.GetFont()->GetType3Font();
+  CPDF_Type3Font* pType3Font = textobj->m_TextState.GetFont()->AsType3Font();
   for (int j = 0; j < m_Type3FontCache.GetSize(); j++) {
     if (m_Type3FontCache.GetAt(j) == pType3Font)
       return TRUE;
@@ -531,7 +531,7 @@ void CPDF_CharPosList::Load(int nChars,
                             FX_FLOAT FontSize) {
   m_pCharPos = FX_Alloc(FXTEXT_CHARPOS, nChars);
   m_nChars = 0;
-  CPDF_CIDFont* pCIDFont = pFont->GetCIDFont();
+  CPDF_CIDFont* pCIDFont = pFont->AsCIDFont();
   FX_BOOL bVertWriting = pCIDFont && pCIDFont->IsVertWriting();
   for (int iChar = 0; iChar < nChars; iChar++) {
     FX_DWORD CharCode =
@@ -548,7 +548,7 @@ void CPDF_CharPosList::Load(int nChars,
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
     charpos.m_ExtGID = pFont->GlyphFromCharCodeExt(CharCode);
 #endif
-    if (!pFont->IsEmbedded() && pFont->GetFontType() != PDFFONT_CIDFONT) {
+    if (!pFont->IsEmbedded() && !pFont->IsCIDFont()) {
       charpos.m_FontCharWidth = pFont->GetCharWidthF(CharCode);
     } else {
       charpos.m_FontCharWidth = 0;
@@ -665,7 +665,7 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
   matrix.e = origin_x;
   matrix.f = origin_y;
 
-  if (pFont->GetFontType() != PDFFONT_TYPE3) {
+  if (!pFont->IsType3Font()) {
     if (stroke_argb == 0) {
       DrawNormalText(pDevice, nChars, pCharCodes, pCharPos, pFont, font_size,
                      &matrix, fill_argb, pOptions);
@@ -718,7 +718,7 @@ FX_BOOL CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
   } else {
     FXGE_flags = FXTEXT_CLEARTYPE;
   }
-  if (pFont->GetFontType() & PDFFONT_CIDFONT) {
+  if (pFont->IsCIDFont()) {
     FXGE_flags |= FXFONT_CIDFONT;
   }
   return pDevice->DrawNormalText(CharPosList.m_nChars, CharPosList.m_pCharPos,
@@ -784,9 +784,3 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
   }
 }
 
-CFX_PathData* CPDF_Font::LoadGlyphPath(FX_DWORD charcode, int dest_width) {
-  int glyph_index = GlyphFromCharCode(charcode);
-  if (!m_Font.GetFace())
-    return nullptr;
-  return m_Font.LoadGlyphPath(glyph_index, dest_width);
-}

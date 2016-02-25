@@ -1038,17 +1038,18 @@ void CPDF_CID2UnicodeMap::Load(CPDF_CMapManager* pMgr,
   FPDFAPI_LoadCID2UnicodeMap(charset, m_pEmbeddedMap, m_EmbeddedCount);
 }
 
-CPDF_CIDFont::CPDF_CIDFont() : CPDF_Font(PDFFONT_CIDFONT) {
-  m_pCMap = NULL;
-  m_pAllocatedCMap = NULL;
-  m_pCID2UnicodeMap = NULL;
-  m_pAnsiWidths = NULL;
-  m_pCIDToGIDMap = NULL;
-  m_bCIDIsGID = FALSE;
-  m_bAdobeCourierStd = FALSE;
-  m_pTTGSUBTable = NULL;
+CPDF_CIDFont::CPDF_CIDFont()
+    : m_pCMap(nullptr),
+      m_pAllocatedCMap(nullptr),
+      m_pCID2UnicodeMap(nullptr),
+      m_pCIDToGIDMap(nullptr),
+      m_bCIDIsGID(FALSE),
+      m_pAnsiWidths(nullptr),
+      m_bAdobeCourierStd(FALSE),
+      m_pTTGSUBTable(nullptr) {
   FXSYS_memset(m_CharBBox, 0xff, 256 * sizeof(FX_SMALL_RECT));
 }
+
 CPDF_CIDFont::~CPDF_CIDFont() {
   if (m_pAnsiWidths) {
     FX_Free(m_pAnsiWidths);
@@ -1057,17 +1058,29 @@ CPDF_CIDFont::~CPDF_CIDFont() {
   delete m_pCIDToGIDMap;
   delete m_pTTGSUBTable;
 }
+
 FX_WORD CPDF_CIDFont::CIDFromCharCode(FX_DWORD charcode) const {
   if (!m_pCMap) {
     return (FX_WORD)charcode;
   }
   return m_pCMap->CIDFromCharCode(charcode);
 }
+
 FX_BOOL CPDF_CIDFont::IsVertWriting() const {
   return m_pCMap ? m_pCMap->IsVertWriting() : FALSE;
 }
 
-FX_WCHAR CPDF_CIDFont::_UnicodeFromCharCode(FX_DWORD charcode) const {
+CFX_WideString CPDF_CIDFont::UnicodeFromCharCode(FX_DWORD charcode) const {
+  CFX_WideString str = CPDF_Font::UnicodeFromCharCode(charcode);
+  if (!str.IsEmpty())
+    return str;
+  FX_WCHAR ret = GetUnicodeFromCharCode(charcode);
+  if (ret == 0)
+    return CFX_WideString();
+  return ret;
+}
+
+FX_WCHAR CPDF_CIDFont::GetUnicodeFromCharCode(FX_DWORD charcode) const {
   switch (m_pCMap->m_Coding) {
     case CIDCODING_UCS2:
     case CIDCODING_UTF16:
@@ -1103,7 +1116,11 @@ FX_WCHAR CPDF_CIDFont::_UnicodeFromCharCode(FX_DWORD charcode) const {
   }
   return m_pCID2UnicodeMap->UnicodeFromCID(CIDFromCharCode(charcode));
 }
-FX_DWORD CPDF_CIDFont::_CharCodeFromUnicode(FX_WCHAR unicode) const {
+
+FX_DWORD CPDF_CIDFont::CharCodeFromUnicode(FX_WCHAR unicode) const {
+  FX_DWORD charcode = CPDF_Font::CharCodeFromUnicode(unicode);
+  if (charcode)
+    return charcode;
   switch (m_pCMap->m_Coding) {
     case CIDCODING_UNKNOWN:
       return 0;
@@ -1152,7 +1169,7 @@ FX_DWORD CPDF_CIDFont::_CharCodeFromUnicode(FX_WCHAR unicode) const {
   return 0;
 }
 
-FX_BOOL CPDF_CIDFont::_Load() {
+FX_BOOL CPDF_CIDFont::Load() {
   if (m_pFontDict->GetStringBy("Subtype") == "TrueType") {
     return LoadGB2312();
   }
@@ -1479,7 +1496,7 @@ int CPDF_CIDFont::GlyphFromCharCode(FX_DWORD charcode, FX_BOOL* pVertGlyph) {
         unicode = m_pCID2UnicodeMap->UnicodeFromCID(cid);
       }
       if (unicode == 0) {
-        unicode = _UnicodeFromCharCode(charcode);
+        unicode = GetUnicodeFromCharCode(charcode);
       }
       if (unicode == 0 && !(m_Flags & PDFFONT_SYMBOLIC)) {
         unicode = UnicodeFromCharCode(charcode).GetAt(0);

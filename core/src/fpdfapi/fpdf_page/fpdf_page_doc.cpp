@@ -261,12 +261,12 @@ CPDF_Font* CPDF_DocPageData::GetStandardFont(const CFX_ByteStringC& fontName,
       continue;
     if (pFont->IsEmbedded())
       continue;
-    if (pFont->GetFontType() != PDFFONT_TYPE1)
+    if (!pFont->IsType1Font())
       continue;
     if (pFont->GetFontDict()->KeyExist("Widths"))
       continue;
 
-    CPDF_Type1Font* pT1Font = pFont->GetType1Font();
+    CPDF_Type1Font* pT1Font = pFont->AsType1Font();
     if (pEncoding && !pT1Font->GetEncoding()->IsIdentical(pEncoding))
       continue;
 

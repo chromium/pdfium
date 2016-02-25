@@ -1258,9 +1258,9 @@ CPDF_Font* CPDF_StreamContentParser::FindFont(const CFX_ByteString& name) {
   }
 
   CPDF_Font* pFont = m_pDocument->LoadFont(pFontDict);
-  if (pFont && pFont->GetType3Font()) {
-    pFont->GetType3Font()->SetPageResources(m_pResources);
-    pFont->GetType3Font()->CheckType3FontMetrics();
+  if (pFont && pFont->IsType3Font()) {
+    pFont->AsType3Font()->SetPageResources(m_pResources);
+    pFont->AsType3Font()->CheckType3FontMetrics();
   }
   return pFont;
 }
@@ -1336,7 +1336,7 @@ void CPDF_StreamContentParser::AddTextObject(CFX_ByteString* pStrs,
     return;
   }
   int textmode;
-  if (pFont->GetFontType() == PDFFONT_TYPE3) {
+  if (pFont->IsType3Font()) {
     textmode = 0;
   } else {
     textmode = m_pCurStates->m_TextState.GetObject()->m_TextMode;

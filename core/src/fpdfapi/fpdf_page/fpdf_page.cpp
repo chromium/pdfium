@@ -71,17 +71,17 @@ void CPDF_TextObject::GetItemInfo(int index, CPDF_TextObjectItem* pInfo) const {
     return;
   }
   CPDF_Font* pFont = m_TextState.GetFont();
-  if (pFont->GetFontType() != PDFFONT_CIDFONT) {
+  if (!pFont->IsCIDFont()) {
     return;
   }
-  if (!((CPDF_CIDFont*)pFont)->IsVertWriting()) {
+  if (!pFont->AsCIDFont()->IsVertWriting()) {
     return;
   }
-  FX_WORD CID = ((CPDF_CIDFont*)pFont)->CIDFromCharCode(pInfo->m_CharCode);
+  FX_WORD CID = pFont->AsCIDFont()->CIDFromCharCode(pInfo->m_CharCode);
   pInfo->m_OriginY = pInfo->m_OriginX;
   pInfo->m_OriginX = 0;
   short vx, vy;
-  ((CPDF_CIDFont*)pFont)->GetVertOrigin(CID, vx, vy);
+  pFont->AsCIDFont()->GetVertOrigin(CID, vx, vy);
   FX_FLOAT fontsize = m_TextState.GetFontSize();
   pInfo->m_OriginX -= fontsize * vx / 1000;
   pInfo->m_OriginY -= fontsize * vy / 1000;
@@ -214,7 +214,7 @@ FX_FLOAT CPDF_TextObject::GetCharWidth(FX_DWORD charcode) const {
   FX_FLOAT fontsize = m_TextState.GetFontSize() / 1000;
   CPDF_Font* pFont = m_TextState.GetFont();
   FX_BOOL bVertWriting = FALSE;
-  CPDF_CIDFont* pCIDFont = pFont->GetCIDFont();
+  CPDF_CIDFont* pCIDFont = pFont->AsCIDFont();
   if (pCIDFont) {
     bVertWriting = pCIDFont->IsVertWriting();
   }
@@ -236,7 +236,7 @@ void CPDF_TextObject::CalcPositionData(FX_FLOAT* pTextAdvanceX,
   FX_FLOAT max_y = -10000 * 1.0f;
   CPDF_Font* pFont = m_TextState.GetFont();
   FX_BOOL bVertWriting = FALSE;
-  CPDF_CIDFont* pCIDFont = pFont->GetCIDFont();
+  CPDF_CIDFont* pCIDFont = pFont->AsCIDFont();
   if (pCIDFont) {
     bVertWriting = pCIDFont->IsVertWriting();
   }
