@@ -20,9 +20,12 @@
  * limitations under the License.
  */
 
+#include "xfa/src/fxbarcode/qrcode/BC_QRGridSampler.h"
+
+#include <memory>
+
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/common/BC_CommonPerspectiveTransform.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRGridSampler.h"
 #include "xfa/src/fxbarcode/utils.h"
 
 CBC_QRGridSampler CBC_QRGridSampler::m_gridSampler;
@@ -107,13 +110,12 @@ CBC_CommonBitMatrix* CBC_QRGridSampler::SampleGrid(CBC_CommonBitMatrix* image,
                                                    FX_FLOAT p4FromX,
                                                    FX_FLOAT p4FromY,
                                                    int32_t& e) {
-  CBC_AutoPtr<CBC_CommonPerspectiveTransform> transform(
+  std::unique_ptr<CBC_CommonPerspectiveTransform> transform(
       CBC_CommonPerspectiveTransform::QuadrilateralToQuadrilateral(
           p1ToX, p1ToY, p2ToX, p2ToY, p3ToX, p3ToY, p4ToX, p4ToY, p1FromX,
           p1FromY, p2FromX, p2FromY, p3FromX, p3FromY, p4FromX, p4FromY));
-  CBC_CommonBitMatrix* tempBitM = new CBC_CommonBitMatrix();
-  tempBitM->Init(dimensionX, dimensionY);
-  CBC_AutoPtr<CBC_CommonBitMatrix> bits(tempBitM);
+  std::unique_ptr<CBC_CommonBitMatrix> bits(new CBC_CommonBitMatrix());
+  bits->Init(dimensionX, dimensionY);
   CFX_FloatArray points;
   points.SetSize(dimensionX << 1);
   for (int32_t y = 0; y < dimensionY; y++) {

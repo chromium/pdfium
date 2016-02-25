@@ -20,12 +20,15 @@
  * limitations under the License.
  */
 
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderDecoder.h"
+
+#include <memory>
+
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/common/BC_CommonDecoderResult.h"
 #include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomonDecoder.h"
 #include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRBitMatrixParser.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRCoderDecoder.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderFormatInformation.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderVersion.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRDataBlock.h"
@@ -69,9 +72,8 @@ CBC_CommonDecoderResult* CBC_QRCoderDecoder::Decode(CBC_CommonBitMatrix* bits,
   CBC_QRCoderFormatInformation* temp = parser.ReadFormatInformation(e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   CBC_QRCoderErrorCorrectionLevel* ecLevel = temp->GetErrorCorrectionLevel();
-  CFX_ByteArray* ba = parser.ReadCodewords(e);
+  std::unique_ptr<CFX_ByteArray> codewords(parser.ReadCodewords(e));
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-  CBC_AutoPtr<CFX_ByteArray> codewords(ba);
   CFX_PtrArray* dataBlocks =
       CBC_QRDataBlock::GetDataBlocks(codewords.get(), version, ecLevel, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);

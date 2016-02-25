@@ -7,10 +7,11 @@
 #ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXREADER_H_
 #define XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXREADER_H_
 
+#include "xfa/src/fxbarcode/BC_Reader.h"
+
 class CBC_BinaryBitmap;
 class CBC_DataMatrixDecoder;
-class CBC_Reader;
-class CBC_DataMatrixReader;
+
 class CBC_DataMatrixReader : public CBC_Reader {
  public:
   CBC_DataMatrixReader();

@@ -20,7 +20,10 @@
  * limitations under the License.
  */
 
+#include "xfa/src/fxbarcode/qrcode/BC_QRCoderEncoder.h"
+
 #include <algorithm>
+#include <memory>
 
 #include "xfa/src/fxbarcode/BC_UtilCodingConvert.h"
 #include "xfa/src/fxbarcode/common/BC_CommonByteArray.h"
@@ -31,8 +34,6 @@
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderBitVector.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderBlockPair.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderECBlocks.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRCoderEncoder.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRCoderEncoder.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderMaskUtil.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderMatrixUtil.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderMode.h"
@@ -408,10 +409,9 @@ void CBC_QRCoderEncoder::EncodeWithSpecifyVersion(
                         qrCode->GetNumDataBytes(), qrCode->GetNumRSBlocks(),
                         &finalBits, e);
   BC_EXCEPTION_CHECK_ReturnVoid(e);
-  CBC_CommonByteMatrix* pDecoder = new CBC_CommonByteMatrix(
-      qrCode->GetMatrixWidth(), qrCode->GetMatrixWidth());
-  pDecoder->Init();
-  CBC_AutoPtr<CBC_CommonByteMatrix> matrix(pDecoder);
+  std::unique_ptr<CBC_CommonByteMatrix> matrix(new CBC_CommonByteMatrix(
+      qrCode->GetMatrixWidth(), qrCode->GetMatrixWidth()));
+  matrix->Init();
   int32_t maskPattern = ChooseMaskPattern(
       &finalBits, qrCode->GetECLevel(), qrCode->GetVersion(), matrix.get(), e);
   BC_EXCEPTION_CHECK_ReturnVoid(e);
@@ -499,10 +499,9 @@ catchException:
                         qrCode->GetNumDataBytes(), qrCode->GetNumRSBlocks(),
                         &finalBits, e);
   BC_EXCEPTION_CHECK_ReturnVoid(e);
-  CBC_CommonByteMatrix* pDecoder = new CBC_CommonByteMatrix(
-      qrCode->GetMatrixWidth(), qrCode->GetMatrixWidth());
-  pDecoder->Init();
-  CBC_AutoPtr<CBC_CommonByteMatrix> matrix(pDecoder);
+  std::unique_ptr<CBC_CommonByteMatrix> matrix(new CBC_CommonByteMatrix(
+      qrCode->GetMatrixWidth(), qrCode->GetMatrixWidth()));
+  matrix->Init();
   int32_t maskPattern = ChooseMaskPattern(
       &finalBits, qrCode->GetECLevel(), qrCode->GetVersion(), matrix.get(), e);
   BC_EXCEPTION_CHECK_ReturnVoid(e);
@@ -550,10 +549,9 @@ void CBC_QRCoderEncoder::Encode(const CFX_WideString& content,
                         qrCode->GetNumDataBytes(), qrCode->GetNumRSBlocks(),
                         &finalBits, e);
   BC_EXCEPTION_CHECK_ReturnVoid(e);
-  CBC_CommonByteMatrix* pDecoder = new CBC_CommonByteMatrix(
-      qrCode->GetMatrixWidth(), qrCode->GetMatrixWidth());
-  pDecoder->Init();
-  CBC_AutoPtr<CBC_CommonByteMatrix> matrix(pDecoder);
+  std::unique_ptr<CBC_CommonByteMatrix> matrix(new CBC_CommonByteMatrix(
+      qrCode->GetMatrixWidth(), qrCode->GetMatrixWidth()));
+  matrix->Init();
   int32_t maskPattern = ChooseMaskPattern(
       &finalBits, qrCode->GetECLevel(), qrCode->GetVersion(), matrix.get(), e);
   BC_EXCEPTION_CHECK_ReturnVoid(e);

@@ -20,9 +20,12 @@
  * limitations under the License.
  */
 
+#include "xfa/src/fxbarcode/common/BC_WhiteRectangleDetector.h"
+
+#include <memory>
+
 #include "xfa/src/fxbarcode/BC_ResultPoint.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
-#include "xfa/src/fxbarcode/common/BC_WhiteRectangleDetector.h"
 #include "xfa/src/fxbarcode/utils.h"
 
 const int32_t CBC_WhiteRectangleDetector::INIT_SIZE = 30;
@@ -124,53 +127,45 @@ CFX_PtrArray* CBC_WhiteRectangleDetector::Detect(int32_t& e) {
   }
   if (!sizeExceeded && atLeastOneBlackPointFoundOnBorder) {
     int32_t maxSize = right - left;
-    CBC_AutoPtr<CBC_ResultPoint> z(NULL);
+    std::unique_ptr<CBC_ResultPoint> z;
     for (int32_t i = 1; i < maxSize; i++) {
-      z = CBC_AutoPtr<CBC_ResultPoint>(
-          GetBlackPointOnSegment((FX_FLOAT)left, (FX_FLOAT)(down - i),
-                                 (FX_FLOAT)(left + i), (FX_FLOAT)(down)));
-      if (z.get()) {
+      z.reset(GetBlackPointOnSegment((FX_FLOAT)left, (FX_FLOAT)(down - i),
+                                     (FX_FLOAT)(left + i), (FX_FLOAT)(down)));
+      if (z)
         break;
-      }
     }
     if (z.get() == NULL) {
       e = BCExceptionNotFound;
       BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     }
-    CBC_AutoPtr<CBC_ResultPoint> t(NULL);
+    std::unique_ptr<CBC_ResultPoint> t;
     for (int32_t j = 1; j < maxSize; j++) {
-      t = CBC_AutoPtr<CBC_ResultPoint>(
-          GetBlackPointOnSegment((FX_FLOAT)left, (FX_FLOAT)(up + j),
-                                 (FX_FLOAT)(left + j), (FX_FLOAT)up));
-      if (t.get()) {
+      t.reset(GetBlackPointOnSegment((FX_FLOAT)left, (FX_FLOAT)(up + j),
+                                     (FX_FLOAT)(left + j), (FX_FLOAT)up));
+      if (t)
         break;
-      }
     }
     if (t.get() == NULL) {
       e = BCExceptionNotFound;
       BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     }
-    CBC_AutoPtr<CBC_ResultPoint> x(NULL);
+    std::unique_ptr<CBC_ResultPoint> x;
     for (int32_t k = 1; k < maxSize; k++) {
-      x = CBC_AutoPtr<CBC_ResultPoint>(
-          GetBlackPointOnSegment((FX_FLOAT)right, (FX_FLOAT)(up + k),
-                                 (FX_FLOAT)(right - k), (FX_FLOAT)up));
-      if (x.get()) {
+      x.reset(GetBlackPointOnSegment((FX_FLOAT)right, (FX_FLOAT)(up + k),
+                                     (FX_FLOAT)(right - k), (FX_FLOAT)up));
+      if (x)
         break;
-      }
     }
     if (x.get() == NULL) {
       e = BCExceptionNotFound;
       BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
     }
-    CBC_AutoPtr<CBC_ResultPoint> y(NULL);
+    std::unique_ptr<CBC_ResultPoint> y;
     for (int32_t m = 1; m < maxSize; m++) {
-      y = CBC_AutoPtr<CBC_ResultPoint>(
-          GetBlackPointOnSegment((FX_FLOAT)right, (FX_FLOAT)(down - m),
-                                 (FX_FLOAT)(right - m), (FX_FLOAT)down));
-      if (y.get()) {
+      y.reset(GetBlackPointOnSegment((FX_FLOAT)right, (FX_FLOAT)(down - m),
+                                     (FX_FLOAT)(right - m), (FX_FLOAT)down));
+      if (y)
         break;
-      }
     }
     if (y.get() == NULL) {
       e = BCExceptionNotFound;

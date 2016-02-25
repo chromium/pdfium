@@ -7,6 +7,11 @@
 #ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRCODEREADER_H_
 #define XFA_SRC_FXBARCODE_QRCODE_BC_QRCODEREADER_H_
 
+#include <stdint.h>
+
+#include "core/include/fxcrt/fx_string.h"
+#include "xfa/src/fxbarcode/BC_Reader.h"
+
 class CBC_QRDetector;
 class CBC_BinaryBitmap;
 class CBC_QRCoderDecoder;
@@ -18,7 +23,8 @@ class CBC_QRDetectorResult;
 class CBC_QRCoderErrorCorrectionLevel;
 class CBC_QRCoderMode;
 class CBC_QRDataMask;
-class CBC_QRCodeReader;
+class CFX_DIBitmap;
+
 class CBC_QRCodeReader : public CBC_Reader {
  private:
   CBC_QRCoderDecoder* m_decoder;

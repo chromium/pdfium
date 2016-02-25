@@ -20,13 +20,15 @@
  * limitations under the License.
  */
 
+#include "xfa/src/fxbarcode/oned/BC_OnedCodaBarReader.h"
+
 #include <algorithm>
+#include <memory>
 
 #include "core/include/fxcrt/fx_basic.h"
 #include "xfa/src/fxbarcode/BC_Reader.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitArray.h"
 #include "xfa/src/fxbarcode/oned/BC_OneDReader.h"
-#include "xfa/src/fxbarcode/oned/BC_OnedCodaBarReader.h"
 #include "xfa/src/fxbarcode/oned/BC_OnedCode39Reader.h"
 #include "xfa/src/fxbarcode/utils.h"
 
@@ -46,9 +48,8 @@ CFX_ByteString CBC_OnedCodaBarReader::DecodeRow(int32_t rowNumber,
                                                 CBC_CommonBitArray* row,
                                                 int32_t hints,
                                                 int32_t& e) {
-  CFX_Int32Array* int32Ptr = FindAsteriskPattern(row, e);
+  std::unique_ptr<CFX_Int32Array> start(FindAsteriskPattern(row, e));
   BC_EXCEPTION_CHECK_ReturnValue(e, "");
-  CBC_AutoPtr<CFX_Int32Array> start(int32Ptr);
   (*start)[1] = 0;
   int32_t nextStart = (*start)[1];
   int32_t end = row->GetSize();

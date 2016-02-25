@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXDETECTOR_H_
 #define XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXDETECTOR_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+
 class CBC_CommonBitMatrix;
 class CBC_WhiteRectangleDetector;
 class CBC_ResultPoint;

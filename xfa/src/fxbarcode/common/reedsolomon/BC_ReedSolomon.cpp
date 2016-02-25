@@ -21,6 +21,9 @@
  */
 
 #include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomon.h"
+
+#include <memory>
+
 #include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"
 #include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomonGF256Poly.h"
 
@@ -74,12 +77,11 @@ void CBC_ReedSolomonEncoder::Encode(CFX_Int32Array* toEncode,
   CBC_ReedSolomonGF256Poly info;
   info.Init(m_field, &infoCoefficients, e);
   BC_EXCEPTION_CHECK_ReturnVoid(e);
-  CBC_ReedSolomonGF256Poly* rsg = info.MultiplyByMonomial(ecBytes, 1, e);
+  std::unique_ptr<CBC_ReedSolomonGF256Poly> infoTemp(
+      info.MultiplyByMonomial(ecBytes, 1, e));
   BC_EXCEPTION_CHECK_ReturnVoid(e);
-  CBC_AutoPtr<CBC_ReedSolomonGF256Poly> infoTemp(rsg);
-  CFX_PtrArray* pa = infoTemp->Divide(generator, e);
+  std::unique_ptr<CFX_PtrArray> temp(infoTemp->Divide(generator, e));
   BC_EXCEPTION_CHECK_ReturnVoid(e);
-  CBC_AutoPtr<CFX_PtrArray> temp(pa);
   CBC_ReedSolomonGF256Poly* remainder =
       (CBC_ReedSolomonGF256Poly*)(temp->operator[](1));
   CFX_Int32Array* coefficients = remainder->GetCoefficients();

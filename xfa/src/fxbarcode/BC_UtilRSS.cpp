@@ -22,6 +22,8 @@
 
 #include "xfa/src/fxbarcode/BC_UtilRSS.h"
 
+#include <memory>
+
 #include "core/include/fxcrt/fx_basic.h"
 #include "xfa/src/fxbarcode/utils.h"
 
@@ -32,9 +34,8 @@ CFX_Int32Array* CBC_UtilRSS::GetRssWidths(int32_t val,
                                           int32_t elements,
                                           int32_t maxWidth,
                                           FX_BOOL noNarrow) {
-  CFX_Int32Array* iTemp = new CFX_Int32Array;
-  iTemp->SetSize(elements);
-  CBC_AutoPtr<CFX_Int32Array> widths(iTemp);
+  std::unique_ptr<CFX_Int32Array> widths(new CFX_Int32Array);
+  widths->SetSize(elements);
   int32_t bar;
   int32_t narrowMask = 0;
   for (bar = 0; bar < elements - 1; bar++) {

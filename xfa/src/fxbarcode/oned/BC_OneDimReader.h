@@ -7,9 +7,11 @@
 #ifndef XFA_SRC_FXBARCODE_ONED_BC_ONEDIMREADER_H_
 #define XFA_SRC_FXBARCODE_ONED_BC_ONEDIMREADER_H_
 
-class CBC_OneDReader;
+#include "core/include/fxcrt/fx_basic.h"
+#include "xfa/src/fxbarcode/oned/BC_OneDReader.h"
+
 class CBC_CommonBitArray;
-class CBC_OneDimReader;
+
 class CBC_OneDimReader : public CBC_OneDReader {
  private:
   const static int32_t MAX_AVG_VARIANCE;

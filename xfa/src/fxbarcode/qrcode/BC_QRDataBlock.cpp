@@ -20,10 +20,13 @@
  * limitations under the License.
  */
 
+#include "xfa/src/fxbarcode/qrcode/BC_QRDataBlock.h"
+
+#include <memory>
+
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderECB.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderECBlocks.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderVersion.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRDataBlock.h"
 #include "xfa/src/fxbarcode/utils.h"
 
 CBC_QRDataBlock::CBC_QRDataBlock(int32_t numDataCodewords,
@@ -54,9 +57,8 @@ CFX_PtrArray* CBC_QRDataBlock::GetDataBlocks(
   for (i = 0; i < ecBlockArray->GetSize(); i++) {
     totalBlocks += ((CBC_QRCoderECB*)(*ecBlockArray)[i])->GetCount();
   }
-  CFX_PtrArray* datablock = new CFX_PtrArray();
-  datablock->SetSize(totalBlocks);
-  CBC_AutoPtr<CFX_PtrArray> result(datablock);
+  std::unique_ptr<CFX_PtrArray> result(new CFX_PtrArray());
+  result->SetSize(totalBlocks);
   int32_t numResultBlocks = 0;
   for (int32_t j = 0; j < ecBlockArray->GetSize(); j++) {
     CBC_QRCoderECB* ecBlock = (CBC_QRCoderECB*)(*ecBlockArray)[j];

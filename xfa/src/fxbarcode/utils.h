@@ -19,44 +19,7 @@ void BC_FX_ByteString_Append(CFX_ByteString& dst, int32_t count, FX_CHAR c);
 void BC_FX_ByteString_Append(CFX_ByteString& dst, const CFX_ByteArray& ba);
 typedef FX_BOOL (*BC_PtrArrayCompareCallback)(void* l, void* r);
 void BC_FX_PtrArray_Sort(CFX_PtrArray& src, BC_PtrArrayCompareCallback fun);
-template <class _Ty>
-class CBC_AutoPtr {
- public:
-  typedef _Ty element_type;
-  explicit CBC_AutoPtr(_Ty* _P = 0) : _Owns(_P != 0), _Ptr(_P) {}
-  CBC_AutoPtr(const CBC_AutoPtr<_Ty>& _Y)
-      : _Owns(_Y._Owns), _Ptr(_Y.release()) {}
-  CBC_AutoPtr<_Ty>& operator=(const CBC_AutoPtr<_Ty>& _Y) {
-    if (this != &_Y) {
-      if (_Ptr != _Y.get()) {
-        if (_Owns) {
-          delete _Ptr;
-        }
-        _Owns = _Y._Owns;
-      } else if (_Y._Owns) {
-        _Owns = TRUE;
-      }
-      _Ptr = _Y.release();
-    }
-    return (*this);
-  }
-  ~CBC_AutoPtr() {
-    if (_Owns) {
-      delete _Ptr;
-    }
-  }
-  _Ty& operator*() const { return (*get()); }
-  _Ty* operator->() const { return (get()); }
-  _Ty* get() const { return (_Ptr); }
-  _Ty* release() const {
-    ((CBC_AutoPtr<_Ty>*)this)->_Owns = FALSE;
-    return (_Ptr);
-  }
 
- private:
-  FX_BOOL _Owns;
-  _Ty* _Ptr;
-};
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_)
 #include <limits>
 #elif(_FX_OS_ == _FX_MACOSX_ || _FX_OS_ == _FX_LINUX_DESKTOP_ || \

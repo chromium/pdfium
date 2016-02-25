@@ -7,7 +7,10 @@
 #ifndef XFA_SRC_FXBARCODE_COMMON_REEDSOLOMON_BC_REEDSOLOMONGF256POLY_H_
 #define XFA_SRC_FXBARCODE_COMMON_REEDSOLOMON_BC_REEDSOLOMONGF256POLY_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+
 class CBC_ReedSolomonGF256;
+
 class CBC_ReedSolomonGF256Poly {
  public:
   CBC_ReedSolomonGF256Poly(CBC_ReedSolomonGF256* field, int32_t coefficients);

@@ -7,9 +7,12 @@
 #ifndef XFA_SRC_FXBARCODE_ONED_BC_ONEDCODABARREADER_H_
 #define XFA_SRC_FXBARCODE_ONED_BC_ONEDCODABARREADER_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+#include "xfa/src/fxbarcode/oned/BC_OneDReader.h"
+
 class CBC_CommonBitArray;
 class CBC_OneDReader;
-class CBC_OnedCodaBarReader;
+
 class CBC_OnedCodaBarReader : public CBC_OneDReader {
  public:
   CBC_OnedCodaBarReader();

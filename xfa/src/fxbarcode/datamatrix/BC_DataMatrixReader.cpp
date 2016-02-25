@@ -20,12 +20,15 @@
  * limitations under the License.
  */
 
+#include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixReader.h"
+
+#include <memory>
+
 #include "xfa/src/fxbarcode/BC_BinaryBitmap.h"
 #include "xfa/src/fxbarcode/BC_Reader.h"
 #include "xfa/src/fxbarcode/common/BC_CommonDecoderResult.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixDecoder.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixDetector.h"
-#include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixReader.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRDetectorResult.h"
 #include "xfa/src/fxbarcode/utils.h"
 
@@ -47,13 +50,11 @@ CFX_ByteString CBC_DataMatrixReader::Decode(CBC_BinaryBitmap* image,
   CBC_DataMatrixDetector detector(cdr);
   detector.Init(e);
   BC_EXCEPTION_CHECK_ReturnValue(e, "");
-  CBC_QRDetectorResult* ddr = detector.Detect(e);
+  std::unique_ptr<CBC_QRDetectorResult> detectorResult(detector.Detect(e));
   BC_EXCEPTION_CHECK_ReturnValue(e, "");
-  CBC_AutoPtr<CBC_QRDetectorResult> detectorResult(ddr);
-  CBC_CommonDecoderResult* ResultTemp =
-      m_decoder->Decode(detectorResult->GetBits(), e);
+  std::unique_ptr<CBC_CommonDecoderResult> decodeResult(
+      m_decoder->Decode(detectorResult->GetBits(), e));
   BC_EXCEPTION_CHECK_ReturnValue(e, "");
-  CBC_AutoPtr<CBC_CommonDecoderResult> decodeResult(ResultTemp);
   return decodeResult->GetText();
 }
 CFX_ByteString CBC_DataMatrixReader::Decode(CBC_BinaryBitmap* image,

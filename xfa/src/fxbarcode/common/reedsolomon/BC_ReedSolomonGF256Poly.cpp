@@ -20,8 +20,11 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"
 #include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomonGF256Poly.h"
+
+#include <memory>
+
+#include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"
 
 CBC_ReedSolomonGF256Poly::CBC_ReedSolomonGF256Poly(CBC_ReedSolomonGF256* field,
                                                    int32_t coefficients) {
@@ -216,12 +219,11 @@ CFX_PtrArray* CBC_ReedSolomonGF256Poly::Divide(CBC_ReedSolomonGF256Poly* other,
     e = BCExceptionDivideByZero;
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   }
-  CBC_ReedSolomonGF256Poly* rsg1 = m_field->GetZero()->Clone(e);
+  std::unique_ptr<CBC_ReedSolomonGF256Poly> quotient(
+      m_field->GetZero()->Clone(e));
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-  CBC_AutoPtr<CBC_ReedSolomonGF256Poly> quotient(rsg1);
-  CBC_ReedSolomonGF256Poly* rsg2 = Clone(e);
+  std::unique_ptr<CBC_ReedSolomonGF256Poly> remainder(Clone(e));
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-  CBC_AutoPtr<CBC_ReedSolomonGF256Poly> remainder(rsg2);
   int32_t denominatorLeadingTerm = other->GetCoefficients(other->GetDegree());
   int32_t inverseDenominatorLeadingTeam =
       m_field->Inverse(denominatorLeadingTerm, e);
@@ -231,23 +233,16 @@ CFX_PtrArray* CBC_ReedSolomonGF256Poly::Divide(CBC_ReedSolomonGF256Poly* other,
     int32_t scale =
         m_field->Multiply(remainder->GetCoefficients((remainder->GetDegree())),
                           inverseDenominatorLeadingTeam);
-    CBC_ReedSolomonGF256Poly* rsg3 =
-        other->MultiplyByMonomial(degreeDifference, scale, e);
+    std::unique_ptr<CBC_ReedSolomonGF256Poly> term(
+        other->MultiplyByMonomial(degreeDifference, scale, e));
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-    CBC_AutoPtr<CBC_ReedSolomonGF256Poly> term(rsg3);
-    CBC_ReedSolomonGF256Poly* rsg4 =
-        m_field->BuildMonomial(degreeDifference, scale, e);
+    std::unique_ptr<CBC_ReedSolomonGF256Poly> iteratorQuotient(
+        m_field->BuildMonomial(degreeDifference, scale, e));
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-    CBC_AutoPtr<CBC_ReedSolomonGF256Poly> iteratorQuotient(rsg4);
-    CBC_ReedSolomonGF256Poly* rsg5 =
-        quotient->AddOrSubtract(iteratorQuotient.get(), e);
+    quotient.reset(quotient->AddOrSubtract(iteratorQuotient.get(), e));
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-    CBC_AutoPtr<CBC_ReedSolomonGF256Poly> temp(rsg5);
-    quotient = temp;
-    CBC_ReedSolomonGF256Poly* rsg6 = remainder->AddOrSubtract(term.get(), e);
+    remainder.reset(remainder->AddOrSubtract(term.get(), e));
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-    CBC_AutoPtr<CBC_ReedSolomonGF256Poly> temp1(rsg6);
-    remainder = temp1;
   }
   CFX_PtrArray* tempPtrA = new CFX_PtrArray;
   tempPtrA->Add(quotient.release());

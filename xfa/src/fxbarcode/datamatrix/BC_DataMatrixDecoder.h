@@ -7,9 +7,12 @@
 #ifndef XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXDECODER_H_
 #define XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXDECODER_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+
 class CBC_ReedSolomonDecoder;
 class CBC_CommonDecoderResult;
 class CBC_CommonBitMatrix;
+
 class CBC_DataMatrixDecoder {
  public:
   CBC_DataMatrixDecoder();

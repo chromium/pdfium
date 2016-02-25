@@ -7,10 +7,12 @@
 #ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRGRIDSAMPLER_H_
 #define XFA_SRC_FXBARCODE_QRCODE_BC_QRGRIDSAMPLER_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+
 class CBC_CommonBitMatrix;
 class CBC_CommonPerspectiveTransform;
 class CBC_CommonDefaultGridSampler;
-class CBC_QRGridSampler;
+
 class CBC_QRGridSampler {
  private:
   static CBC_QRGridSampler m_gridSampler;

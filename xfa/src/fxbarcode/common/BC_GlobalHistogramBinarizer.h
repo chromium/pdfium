@@ -8,6 +8,7 @@
 #define XFA_SRC_FXBARCODE_COMMON_BC_GLOBALHISTOGRAMBINARIZER_H_
 
 #include "core/include/fxcrt/fx_basic.h"
+#include "xfa/src/fxbarcode/BC_Binarizer.h"
 
 class CBC_CommonBinarizer;
 class CBC_CommonBitArray;

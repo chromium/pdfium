@@ -7,12 +7,12 @@
 #ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERDECODER_H_
 #define XFA_SRC_FXBARCODE_QRCODE_BC_QRCODERDECODER_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+
 class CBC_CommonBitMatrix;
 class CBC_ReedSolomonDecoder;
 class CBC_CommonDecoderResult;
-class CBC_QRBitMatrixParser;
-class CBC_QRCoderVersion;
-class CBC_QRDataBlock;
+
 class CBC_QRCoderDecoder {
  private:
   CBC_ReedSolomonDecoder* m_rsDecoder;

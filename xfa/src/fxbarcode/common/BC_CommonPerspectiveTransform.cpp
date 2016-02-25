@@ -20,8 +20,11 @@
  * limitations under the License.
  */
 
-#include "core/include/fxcrt/fx_basic.h"
 #include "xfa/src/fxbarcode/common/BC_CommonPerspectiveTransform.h"
+
+#include <memory>
+
+#include "core/include/fxcrt/fx_basic.h"
 #include "xfa/src/fxbarcode/utils.h"
 
 CBC_CommonPerspectiveTransform::CBC_CommonPerspectiveTransform(FX_FLOAT a11,
@@ -61,9 +64,9 @@ CBC_CommonPerspectiveTransform::QuadrilateralToQuadrilateral(FX_FLOAT x0,
                                                              FX_FLOAT y2p,
                                                              FX_FLOAT x3p,
                                                              FX_FLOAT y3p) {
-  CBC_AutoPtr<CBC_CommonPerspectiveTransform> qToS(
+  std::unique_ptr<CBC_CommonPerspectiveTransform> qToS(
       QuadrilateralToSquare(x0, y0, x1, y1, x2, y2, x3, y3));
-  CBC_AutoPtr<CBC_CommonPerspectiveTransform> sToQ(
+  std::unique_ptr<CBC_CommonPerspectiveTransform> sToQ(
       SquareToQuadrilateral(x0p, y0p, x1p, y1p, x2p, y2p, x3p, y3p));
   return sToQ->Times(*(qToS.get()));
 }
@@ -123,7 +126,7 @@ CBC_CommonPerspectiveTransform::QuadrilateralToSquare(FX_FLOAT x0,
                                                       FX_FLOAT y2,
                                                       FX_FLOAT x3,
                                                       FX_FLOAT y3) {
-  CBC_AutoPtr<CBC_CommonPerspectiveTransform> temp1(
+  std::unique_ptr<CBC_CommonPerspectiveTransform> temp1(
       SquareToQuadrilateral(x0, y0, x1, y1, x2, y2, x3, y3));
   return temp1->BuildAdjoint();
 }

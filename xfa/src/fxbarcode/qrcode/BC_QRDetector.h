@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRDETECTOR_H_
 #define XFA_SRC_FXBARCODE_QRCODE_BC_QRDETECTOR_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+
 class CBC_ResultPoint;
 class CBC_CommonBitMatrix;
 class CBC_QRDetectorResult;
@@ -17,7 +19,7 @@ class CBC_QRCoderVersion;
 class CBC_QRGridSampler;
 class CBC_QRAlignmentPatternFinder;
 class CBC_QRAlignmentPattern;
-class CBC_QRDetector;
+
 class CBC_QRDetector {
  private:
   CBC_CommonBitMatrix* m_image;

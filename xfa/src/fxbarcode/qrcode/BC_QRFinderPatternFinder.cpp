@@ -20,12 +20,15 @@
  * limitations under the License.
  */
 
+#include "xfa/src/fxbarcode/qrcode/BC_QRFinderPatternFinder.h"
+
+#include <memory>
+
 #include "core/include/fxcrt/fx_basic.h"
 #include "xfa/src/fxbarcode/BC_ResultPoint.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/qrcode/BC_FinderPatternInfo.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRFinderPattern.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRFinderPatternFinder.h"
 #include "xfa/src/fxbarcode/utils.h"
 
 const int32_t CBC_QRFinderPatternFinder::CENTER_QUORUM = 2;
@@ -158,9 +161,8 @@ CBC_QRFinderPatternInfo* CBC_QRFinderPatternFinder::Find(int32_t hint,
       }
     }
   }
-  CFX_PtrArray* ptr = SelectBestpatterns(e);
+  std::unique_ptr<CFX_PtrArray> patternInfo(SelectBestpatterns(e));
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-  CBC_AutoPtr<CFX_PtrArray> patternInfo(ptr);
   OrderBestPatterns(patternInfo.get());
   return new CBC_QRFinderPatternInfo(patternInfo.get());
 }

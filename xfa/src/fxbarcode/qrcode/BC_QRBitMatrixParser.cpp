@@ -20,8 +20,11 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRBitMatrixParser.h"
+
+#include <memory>
+
+#include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderFormatInformation.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderVersion.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRDataMask.h"
@@ -140,13 +143,12 @@ CFX_ByteArray* CBC_QRBitMatrixParser::ReadCodewords(int32_t& e) {
   int32_t dimension = m_bitMatrix->GetDimension(e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   dataMask->UnmaskBitMatirx(m_bitMatrix, dimension);
-  CBC_CommonBitMatrix* cbm = version->BuildFunctionPattern(e);
+  std::unique_ptr<CBC_CommonBitMatrix> functionPattern(
+      version->BuildFunctionPattern(e));
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-  CBC_AutoPtr<CBC_CommonBitMatrix> functionPattern(cbm);
   FX_BOOL readingUp = TRUE;
-  CFX_ByteArray* temp = new CFX_ByteArray;
-  temp->SetSize(version->GetTotalCodeWords());
-  CBC_AutoPtr<CFX_ByteArray> result(temp);
+  std::unique_ptr<CFX_ByteArray> result(new CFX_ByteArray);
+  result->SetSize(version->GetTotalCodeWords());
   int32_t resultOffset = 0;
   int32_t currentByte = 0;
   int32_t bitsRead = 0;

@@ -20,8 +20,11 @@
  * limitations under the License.
  */
 
-#include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixBitMatrixParser.h"
+
+#include <memory>
+
+#include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixVersion.h"
 #include "xfa/src/fxbarcode/utils.h"
 
@@ -63,7 +66,7 @@ CBC_DataMatrixVersion* CBC_DataMatrixBitMatrixParser::ReadVersion(
   return temp;
 }
 CFX_ByteArray* CBC_DataMatrixBitMatrixParser::ReadCodewords(int32_t& e) {
-  CBC_AutoPtr<CFX_ByteArray> result(new CFX_ByteArray());
+  std::unique_ptr<CFX_ByteArray> result(new CFX_ByteArray());
   result->SetSize(m_version->GetTotalCodewords());
   int32_t resultOffset = 0;
   int32_t row = 4;

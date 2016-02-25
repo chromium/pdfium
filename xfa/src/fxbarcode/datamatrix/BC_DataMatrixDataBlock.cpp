@@ -21,6 +21,9 @@
  */
 
 #include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixDataBlock.h"
+
+#include <memory>
+
 #include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixVersion.h"
 #include "xfa/src/fxbarcode/utils.h"
 
@@ -41,7 +44,7 @@ CFX_PtrArray* CBC_DataMatrixDataBlock::GetDataBlocks(
   for (i = 0; i < ecBlockArray.GetSize(); i++) {
     totalBlocks += ((ECB*)ecBlockArray[i])->GetCount();
   }
-  CBC_AutoPtr<CFX_PtrArray> result(new CFX_PtrArray());
+  std::unique_ptr<CFX_PtrArray> result(new CFX_PtrArray());
   result->SetSize(totalBlocks);
   int32_t numResultBlocks = 0;
   int32_t j;

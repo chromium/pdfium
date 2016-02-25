@@ -20,14 +20,16 @@
  * limitations under the License.
  */
 
+#include "xfa/src/fxbarcode/qrcode/BC_QRDetector.h"
+
 #include <algorithm>
+#include <memory>
 
 #include "xfa/src/fxbarcode/BC_ResultPoint.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/qrcode/BC_FinderPatternInfo.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRAlignmentPatternFinder.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderVersion.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRDetector.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRDetectorResult.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRFinderPattern.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRFinderPatternFinder.h"
@@ -37,9 +39,8 @@ CBC_QRDetector::CBC_QRDetector(CBC_CommonBitMatrix* image) : m_image(image) {}
 CBC_QRDetector::~CBC_QRDetector() {}
 CBC_QRDetectorResult* CBC_QRDetector::Detect(int32_t hints, int32_t& e) {
   CBC_QRFinderPatternFinder finder(m_image);
-  CBC_QRFinderPatternInfo* qpi = finder.Find(hints, e);
+  std::unique_ptr<CBC_QRFinderPatternInfo> info(finder.Find(hints, e));
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-  CBC_AutoPtr<CBC_QRFinderPatternInfo> info(qpi);
   CBC_QRDetectorResult* qdr = ProcessFinderPatternInfo(info.get(), e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   return qdr;
@@ -47,9 +48,9 @@ CBC_QRDetectorResult* CBC_QRDetector::Detect(int32_t hints, int32_t& e) {
 CBC_QRDetectorResult* CBC_QRDetector::ProcessFinderPatternInfo(
     CBC_QRFinderPatternInfo* info,
     int32_t& e) {
-  CBC_AutoPtr<CBC_QRFinderPattern> topLeft(info->GetTopLeft());
-  CBC_AutoPtr<CBC_QRFinderPattern> topRight(info->GetTopRight());
-  CBC_AutoPtr<CBC_QRFinderPattern> bottomLeft(info->GetBottomLeft());
+  std::unique_ptr<CBC_QRFinderPattern> topLeft(info->GetTopLeft());
+  std::unique_ptr<CBC_QRFinderPattern> topRight(info->GetTopRight());
+  std::unique_ptr<CBC_QRFinderPattern> bottomLeft(info->GetBottomLeft());
   FX_FLOAT moduleSize =
       CalculateModuleSize(topLeft.get(), topRight.get(), bottomLeft.get());
   if (moduleSize < 1.0f) {

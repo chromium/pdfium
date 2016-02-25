@@ -20,13 +20,16 @@
  * limitations under the License.
  */
 
+#include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixDecoder.h"
+
+#include <memory>
+
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomonDecoder.h"
 #include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixBitMatrixParser.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixDataBlock.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixDecodedBitStreamParser.h"
-#include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixDecoder.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixVersion.h"
 
 CBC_DataMatrixDecoder::CBC_DataMatrixDecoder() {
@@ -46,9 +49,8 @@ CBC_CommonDecoderResult* CBC_DataMatrixDecoder::Decode(
   parser.Init(bits, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   CBC_DataMatrixVersion* version = parser.GetVersion();
-  CFX_ByteArray* byteTemp = parser.ReadCodewords(e);
+  std::unique_ptr<CFX_ByteArray> codewords(parser.ReadCodewords(e));
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-  CBC_AutoPtr<CFX_ByteArray> codewords(byteTemp);
   CFX_PtrArray* dataBlocks =
       CBC_DataMatrixDataBlock::GetDataBlocks(codewords.get(), version, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);

@@ -20,6 +20,10 @@
  * limitations under the License.
  */
 
+#include "xfa/src/fxbarcode/qrcode/BC_QRCodeReader.h"
+
+#include <memory>
+
 #include "xfa/src/fxbarcode/BC_Binarizer.h"
 #include "xfa/src/fxbarcode/BC_BinaryBitmap.h"
 #include "xfa/src/fxbarcode/BC_BufferedImageLuminanceSource.h"
@@ -29,9 +33,6 @@
 #include "xfa/src/fxbarcode/common/BC_CommonDecoderResult.h"
 #include "xfa/src/fxbarcode/common/BC_GlobalHistogramBinarizer.h"
 #include "xfa/src/fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRCodeReader.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRCodeReader.h"
-#include "xfa/src/fxbarcode/qrcode/BC_QRCodeReader.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderDecoder.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRCoderMode.h"
@@ -54,13 +55,12 @@ CFX_ByteString CBC_QRCodeReader::Decode(CBC_BinaryBitmap* image,
   CBC_CommonBitMatrix* matrix = image->GetMatrix(e);
   BC_EXCEPTION_CHECK_ReturnValue(e, "");
   CBC_QRDetector detector(matrix);
-  CBC_QRDetectorResult* qdr = detector.Detect(hints, e);
+  std::unique_ptr<CBC_QRDetectorResult> detectorResult(
+      detector.Detect(hints, e));
   BC_EXCEPTION_CHECK_ReturnValue(e, "");
-  CBC_AutoPtr<CBC_QRDetectorResult> detectorResult(qdr);
-  CBC_CommonDecoderResult* qdr2 =
-      m_decoder->Decode(detectorResult->GetBits(), 0, e);
+  std::unique_ptr<CBC_CommonDecoderResult> decodeResult(
+      m_decoder->Decode(detectorResult->GetBits(), 0, e));
   BC_EXCEPTION_CHECK_ReturnValue(e, "");
-  CBC_AutoPtr<CBC_CommonDecoderResult> decodeResult(qdr2);
   return (decodeResult->GetText());
 }
 CFX_ByteString CBC_QRCodeReader::Decode(const CFX_WideString& filename,

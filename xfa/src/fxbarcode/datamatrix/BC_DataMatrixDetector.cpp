@@ -20,12 +20,14 @@
  * limitations under the License.
  */
 
+#include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixDetector.h"
+
 #include <algorithm>
+#include <memory>
 
 #include "xfa/src/fxbarcode/BC_ResultPoint.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/common/BC_WhiteRectangleDetector.h"
-#include "xfa/src/fxbarcode/datamatrix/BC_DataMatrixDetector.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRDetectorResult.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRFinderPatternFinder.h"
 #include "xfa/src/fxbarcode/qrcode/BC_QRGridSampler.h"
@@ -121,10 +123,10 @@ CBC_QRDetectorResult* CBC_DataMatrixDetector::Detect(int32_t& e) {
   } else {
     topRight = pointD;
   }
-  int32_t dimensionTop = CBC_AutoPtr<CBC_ResultPointsAndTransitions>(
+  int32_t dimensionTop = std::unique_ptr<CBC_ResultPointsAndTransitions>(
                              TransitionsBetween(topLeft, topRight))
                              ->GetTransitions();
-  int32_t dimensionRight = CBC_AutoPtr<CBC_ResultPointsAndTransitions>(
+  int32_t dimensionRight = std::unique_ptr<CBC_ResultPointsAndTransitions>(
                                TransitionsBetween(bottomRight, topRight))
                                ->GetTransitions();
   if ((dimensionTop & 0x01) == 1) {
@@ -135,24 +137,24 @@ CBC_QRDetectorResult* CBC_DataMatrixDetector::Detect(int32_t& e) {
     dimensionRight++;
   }
   dimensionRight += 2;
-  CBC_AutoPtr<CBC_CommonBitMatrix> bits(NULL);
-  CBC_AutoPtr<CBC_ResultPoint> correctedTopRight(NULL);
+  std::unique_ptr<CBC_CommonBitMatrix> bits;
+  std::unique_ptr<CBC_ResultPoint> correctedTopRight;
   if (4 * dimensionTop >= 7 * dimensionRight ||
       4 * dimensionRight >= 7 * dimensionTop) {
-    correctedTopRight = CBC_AutoPtr<CBC_ResultPoint>(
+    correctedTopRight.reset(
         CorrectTopRightRectangular(bottomLeft, bottomRight, topLeft, topRight,
                                    dimensionTop, dimensionRight));
     if (correctedTopRight.get() == NULL) {
-      correctedTopRight = CBC_AutoPtr<CBC_ResultPoint>(topRight);
+      correctedTopRight.reset(topRight);
     } else {
       delete topRight;
       topRight = NULL;
     }
-    dimensionTop = CBC_AutoPtr<CBC_ResultPointsAndTransitions>(
+    dimensionTop = std::unique_ptr<CBC_ResultPointsAndTransitions>(
                        TransitionsBetween(topLeft, correctedTopRight.get()))
                        ->GetTransitions();
     dimensionRight =
-        CBC_AutoPtr<CBC_ResultPointsAndTransitions>(
+        std::unique_ptr<CBC_ResultPointsAndTransitions>(
             TransitionsBetween(bottomRight, correctedTopRight.get()))
             ->GetTransitions();
     if ((dimensionTop & 0x01) == 1) {
@@ -161,34 +163,34 @@ CBC_QRDetectorResult* CBC_DataMatrixDetector::Detect(int32_t& e) {
     if ((dimensionRight & 0x01) == 1) {
       dimensionRight++;
     }
-    bits = CBC_AutoPtr<CBC_CommonBitMatrix>(
-        SampleGrid(m_image, topLeft, bottomLeft, bottomRight,
-                   correctedTopRight.get(), dimensionTop, dimensionRight, e));
+    bits.reset(SampleGrid(m_image, topLeft, bottomLeft, bottomRight,
+                          correctedTopRight.get(), dimensionTop, dimensionRight,
+                          e));
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   } else {
     int32_t dimension = std::min(dimensionRight, dimensionTop);
-    correctedTopRight = CBC_AutoPtr<CBC_ResultPoint>(
+    correctedTopRight.reset(
         CorrectTopRight(bottomLeft, bottomRight, topLeft, topRight, dimension));
     if (correctedTopRight.get() == NULL) {
-      correctedTopRight = CBC_AutoPtr<CBC_ResultPoint>(topRight);
+      correctedTopRight.reset(topRight);
     } else {
       delete topRight;
       topRight = NULL;
     }
     int32_t dimensionCorrected =
-        std::max(CBC_AutoPtr<CBC_ResultPointsAndTransitions>(
+        std::max(std::unique_ptr<CBC_ResultPointsAndTransitions>(
                      TransitionsBetween(topLeft, correctedTopRight.get()))
                      ->GetTransitions(),
-                 CBC_AutoPtr<CBC_ResultPointsAndTransitions>(
+                 std::unique_ptr<CBC_ResultPointsAndTransitions>(
                      TransitionsBetween(bottomRight, correctedTopRight.get()))
                      ->GetTransitions());
     dimensionCorrected++;
     if ((dimensionCorrected & 0x01) == 1) {
       dimensionCorrected++;
     }
-    bits = CBC_AutoPtr<CBC_CommonBitMatrix>(SampleGrid(
-        m_image, topLeft, bottomLeft, bottomRight, correctedTopRight.get(),
-        dimensionCorrected, dimensionCorrected, e));
+    bits.reset(SampleGrid(m_image, topLeft, bottomLeft, bottomRight,
+                          correctedTopRight.get(), dimensionCorrected,
+                          dimensionCorrected, e));
     BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
   }
   CFX_PtrArray* result = new CFX_PtrArray;
@@ -210,13 +212,13 @@ CBC_ResultPoint* CBC_DataMatrixDetector::CorrectTopRightRectangular(
   int32_t norm = Distance(topLeft, topRight);
   FX_FLOAT cos = (topRight->GetX() - topLeft->GetX()) / norm;
   FX_FLOAT sin = (topRight->GetY() - topLeft->GetY()) / norm;
-  CBC_AutoPtr<CBC_ResultPoint> c1(new CBC_ResultPoint(
+  std::unique_ptr<CBC_ResultPoint> c1(new CBC_ResultPoint(
       topRight->GetX() + corr * cos, topRight->GetY() + corr * sin));
   corr = Distance(bottomLeft, topLeft) / (FX_FLOAT)dimensionRight;
   norm = Distance(bottomRight, topRight);
   cos = (topRight->GetX() - bottomRight->GetX()) / norm;
   sin = (topRight->GetY() - bottomRight->GetY()) / norm;
-  CBC_AutoPtr<CBC_ResultPoint> c2(new CBC_ResultPoint(
+  std::unique_ptr<CBC_ResultPoint> c2(new CBC_ResultPoint(
       topRight->GetX() + corr * cos, topRight->GetY() + corr * sin));
   if (!IsValid(c1.get())) {
     if (IsValid(c2.get())) {
@@ -227,19 +229,19 @@ CBC_ResultPoint* CBC_DataMatrixDetector::CorrectTopRightRectangular(
     return c1.release();
   }
   int32_t l1 = FXSYS_abs(dimensionTop -
-                         CBC_AutoPtr<CBC_ResultPointsAndTransitions>(
+                         std::unique_ptr<CBC_ResultPointsAndTransitions>(
                              TransitionsBetween(topLeft, c1.get()))
                              ->GetTransitions()) +
                FXSYS_abs(dimensionRight -
-                         CBC_AutoPtr<CBC_ResultPointsAndTransitions>(
+                         std::unique_ptr<CBC_ResultPointsAndTransitions>(
                              TransitionsBetween(bottomRight, c1.get()))
                              ->GetTransitions());
   int32_t l2 = FXSYS_abs(dimensionTop -
-                         CBC_AutoPtr<CBC_ResultPointsAndTransitions>(
+                         std::unique_ptr<CBC_ResultPointsAndTransitions>(
                              TransitionsBetween(topLeft, c2.get()))
                              ->GetTransitions()) +
                FXSYS_abs(dimensionRight -
-                         CBC_AutoPtr<CBC_ResultPointsAndTransitions>(
+                         std::unique_ptr<CBC_ResultPointsAndTransitions>(
                              TransitionsBetween(bottomRight, c2.get()))
                              ->GetTransitions());
   if (l1 <= l2) {
@@ -257,13 +259,13 @@ CBC_ResultPoint* CBC_DataMatrixDetector::CorrectTopRight(
   int32_t norm = Distance(topLeft, topRight);
   FX_FLOAT cos = (topRight->GetX() - topLeft->GetX()) / norm;
   FX_FLOAT sin = (topRight->GetY() - topLeft->GetY()) / norm;
-  CBC_AutoPtr<CBC_ResultPoint> c1(new CBC_ResultPoint(
+  std::unique_ptr<CBC_ResultPoint> c1(new CBC_ResultPoint(
       topRight->GetX() + corr * cos, topRight->GetY() + corr * sin));
   corr = Distance(bottomLeft, bottomRight) / (FX_FLOAT)dimension;
   norm = Distance(bottomRight, topRight);
   cos = (topRight->GetX() - bottomRight->GetX()) / norm;
   sin = (topRight->GetY() - bottomRight->GetY()) / norm;
-  CBC_AutoPtr<CBC_ResultPoint> c2(new CBC_ResultPoint(
+  std::unique_ptr<CBC_ResultPoint> c2(new CBC_ResultPoint(
       topRight->GetX() + corr * cos, topRight->GetY() + corr * sin));
   if (!IsValid(c1.get())) {
     if (IsValid(c2.get())) {
@@ -273,16 +275,16 @@ CBC_ResultPoint* CBC_DataMatrixDetector::CorrectTopRight(
   } else if (!IsValid(c2.get())) {
     return c1.release();
   }
-  int32_t l1 = FXSYS_abs(CBC_AutoPtr<CBC_ResultPointsAndTransitions>(
+  int32_t l1 = FXSYS_abs(std::unique_ptr<CBC_ResultPointsAndTransitions>(
                              TransitionsBetween(topLeft, c1.get()))
                              ->GetTransitions() -
-                         CBC_AutoPtr<CBC_ResultPointsAndTransitions>(
+                         std::unique_ptr<CBC_ResultPointsAndTransitions>(
                              TransitionsBetween(bottomRight, c1.get()))
                              ->GetTransitions());
-  int32_t l2 = FXSYS_abs(CBC_AutoPtr<CBC_ResultPointsAndTransitions>(
+  int32_t l2 = FXSYS_abs(std::unique_ptr<CBC_ResultPointsAndTransitions>(
                              TransitionsBetween(topLeft, c2.get()))
                              ->GetTransitions() -
-                         CBC_AutoPtr<CBC_ResultPointsAndTransitions>(
+                         std::unique_ptr<CBC_ResultPointsAndTransitions>(
                              TransitionsBetween(bottomRight, c2.get()))
                              ->GetTransitions());
   return l1 <= l2 ? c1.release() : c2.release();

@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRFINDERPATTERNFINDER_H_
 #define XFA_SRC_FXBARCODE_QRCODE_BC_QRFINDERPATTERNFINDER_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+
 class CBC_CommonBitMatrix;
 class CBC_QRFinderPattern;
 class CBC_ResultPoint;

@@ -20,11 +20,14 @@
  * limitations under the License.
  */
 
+#include "xfa/src/fxbarcode/common/BC_GlobalHistogramBinarizer.h"
+
+#include <memory>
+
 #include "xfa/src/fxbarcode/BC_Binarizer.h"
 #include "xfa/src/fxbarcode/BC_LuminanceSource.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitArray.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
-#include "xfa/src/fxbarcode/common/BC_GlobalHistogramBinarizer.h"
 #include "xfa/src/fxbarcode/utils.h"
 
 const int32_t LUMINANCE_BITS = 5;
@@ -41,7 +44,7 @@ CBC_CommonBitArray* CBC_GlobalHistogramBinarizer::GetBlackRow(
     int32_t& e) {
   CBC_LuminanceSource* source = GetLuminanceSource();
   int32_t width = source->GetWidth();
-  CBC_AutoPtr<CBC_CommonBitArray> result(new CBC_CommonBitArray(width));
+  std::unique_ptr<CBC_CommonBitArray> result(new CBC_CommonBitArray(width));
   InitArrays(width);
   CFX_ByteArray* localLuminances = source->GetRow(y, m_luminance, e);
   if (e != BCExceptionNO) {
@@ -75,9 +78,8 @@ CBC_CommonBitMatrix* CBC_GlobalHistogramBinarizer::GetBlackMatrix(int32_t& e) {
   CBC_LuminanceSource* source = GetLuminanceSource();
   int32_t width = source->GetWidth();
   int32_t height = source->GetHeight();
-  CBC_CommonBitMatrix* BitMatrixTemp = new CBC_CommonBitMatrix();
-  BitMatrixTemp->Init(width, height);
-  CBC_AutoPtr<CBC_CommonBitMatrix> matrix(BitMatrixTemp);
+  std::unique_ptr<CBC_CommonBitMatrix> matrix(new CBC_CommonBitMatrix());
+  matrix->Init(width, height);
   InitArrays(width);
   CFX_Int32Array localBuckets;
   localBuckets.Copy(m_buckets);
@@ -95,7 +97,7 @@ CBC_CommonBitMatrix* CBC_GlobalHistogramBinarizer::GetBlackMatrix(int32_t& e) {
   }
   int32_t blackPoint = EstimateBlackPoint(localBuckets, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
-  CBC_AutoPtr<CFX_ByteArray> localLuminances(source->GetMatrix());
+  std::unique_ptr<CFX_ByteArray> localLuminances(source->GetMatrix());
   for (y = 0; y < height; y++) {
     int32_t offset = y * width;
     for (int32_t x = 0; x < width; x++) {
