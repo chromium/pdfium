@@ -6,6 +6,7 @@
 
 #include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
 
+#include "xfa/include/fwl/adapter/fwl_adapterwidgetmgr.h"
 #include "xfa/include/fwl/basewidget/fwl_tooltipctrl.h"
 #include "xfa/include/fwl/core/fwl_app.h"
 #include "xfa/include/fwl/core/fwl_grid.h"
