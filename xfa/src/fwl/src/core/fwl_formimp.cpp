@@ -83,15 +83,10 @@ CFWL_FormImp::CFWL_FormImp(const CFWL_WidgetImpProperties& properties,
   m_rtRestore.Reset();
   m_rtCaptionText.Reset();
   m_rtIcon.Reset();
-  m_InfoStart.m_ptStart.Reset();
-  m_InfoStart.m_szStart.Reset();
 }
 CFWL_FormImp::~CFWL_FormImp() {
   RemoveSysButtons();
-  if (m_pNoteLoop) {
-    delete m_pNoteLoop;
-    m_pNoteLoop = NULL;
-  }
+  delete m_pNoteLoop;
 }
 FWL_ERR CFWL_FormImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_Form;
@@ -1036,10 +1031,10 @@ void CFWL_FormImpDelegate::OnLButtonDown(CFWL_MsgMouse* pMsg) {
              !m_pOwner->m_bMaximized) {
     m_pOwner->SetCursor(pMsg->m_fx, pMsg->m_fy);
   }
-  m_pOwner->m_InfoStart.m_ptStart.Set(pMsg->m_fx, pMsg->m_fy);
-  m_pOwner->m_InfoStart.m_szStart.Set(
-      m_pOwner->m_pProperties->m_rtWidget.width,
-      m_pOwner->m_pProperties->m_rtWidget.height);
+  m_pOwner->m_InfoStart.m_ptStart = CFX_PointF(pMsg->m_fx, pMsg->m_fy);
+  m_pOwner->m_InfoStart.m_szStart =
+      CFX_SizeF(m_pOwner->m_pProperties->m_rtWidget.width,
+                m_pOwner->m_pProperties->m_rtWidget.height);
 }
 void CFWL_FormImpDelegate::OnLButtonUp(CFWL_MsgMouse* pMsg) {
   m_pOwner->SetGrab(FALSE);

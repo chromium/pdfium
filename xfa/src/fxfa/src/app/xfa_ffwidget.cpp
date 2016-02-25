@@ -1510,26 +1510,27 @@ static void XFA_BOX_Fill_Linear(CXFA_Box box,
                                 CFX_RectF rtFill,
                                 CFX_Matrix* pMatrix) {
   CXFA_Fill fill = box.GetFill();
-  FX_ARGB crStart, crEnd;
-  crStart = fill.GetColor();
+  FX_ARGB crStart = fill.GetColor();
+  FX_ARGB crEnd;
   int32_t iType = fill.GetLinear(crEnd);
-  CFX_PointF ptStart, ptEnd;
+  CFX_PointF ptStart;
+  CFX_PointF ptEnd;
   switch (iType) {
     case XFA_ATTRIBUTEENUM_ToRight:
-      ptStart.Set(rtFill.left, rtFill.top);
-      ptEnd.Set(rtFill.right(), rtFill.top);
+      ptStart = CFX_PointF(rtFill.left, rtFill.top);
+      ptEnd = CFX_PointF(rtFill.right(), rtFill.top);
       break;
     case XFA_ATTRIBUTEENUM_ToBottom:
-      ptStart.Set(rtFill.left, rtFill.top);
-      ptEnd.Set(rtFill.left, rtFill.bottom());
+      ptStart = CFX_PointF(rtFill.left, rtFill.top);
+      ptEnd = CFX_PointF(rtFill.left, rtFill.bottom());
       break;
     case XFA_ATTRIBUTEENUM_ToLeft:
-      ptStart.Set(rtFill.right(), rtFill.top);
-      ptEnd.Set(rtFill.left, rtFill.top);
+      ptStart = CFX_PointF(rtFill.right(), rtFill.top);
+      ptEnd = CFX_PointF(rtFill.left, rtFill.top);
       break;
     case XFA_ATTRIBUTEENUM_ToTop:
-      ptStart.Set(rtFill.left, rtFill.bottom());
-      ptEnd.Set(rtFill.left, rtFill.top);
+      ptStart = CFX_PointF(rtFill.left, rtFill.bottom());
+      ptEnd = CFX_PointF(rtFill.left, rtFill.top);
       break;
     default:
       break;

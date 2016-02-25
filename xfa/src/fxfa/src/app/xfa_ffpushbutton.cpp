@@ -162,8 +162,7 @@ void CXFA_FFPushButton::LoadHighlightCaption() {
   }
 }
 void CXFA_FFPushButton::LayoutHighlightCaption() {
-  CFX_SizeF sz;
-  sz.Set(m_rtCaption.width, m_rtCaption.height);
+  CFX_SizeF sz(m_rtCaption.width, m_rtCaption.height);
   LayoutCaption();
   if (m_pRolloverTextLayout) {
     m_pRolloverTextLayout->Layout(sz);

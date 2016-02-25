@@ -652,10 +652,9 @@ CFX_SizeF CFWL_WidgetImp::CalcTextSize(const CFX_WideString& wsText,
                                        IFWL_ThemeProvider* pTheme,
                                        FX_BOOL bMultiLine,
                                        int32_t iLineWidth) {
-  CFX_SizeF sz;
-  sz.Set(0, 0);
   if (!pTheme)
-    return sz;
+    return CFX_SizeF();
+
   CFWL_ThemeText calPart;
   calPart.m_pWidget = m_pInterface;
   calPart.m_wsText = wsText;
@@ -669,9 +668,7 @@ CFX_SizeF CFWL_WidgetImp::CalcTextSize(const CFX_WideString& wsText,
                         : FWL_WGT_CalcWidth;
   rect.Set(0, 0, fWidth, FWL_WGT_CalcHeight);
   pTheme->CalcTextRect(&calPart, rect);
-  sz.x = rect.width;
-  sz.y = rect.height;
-  return sz;
+  return CFX_SizeF(rect.width, rect.height);
 }
 void CFWL_WidgetImp::CalcTextRect(const CFX_WideString& wsText,
                                   IFWL_ThemeProvider* pTheme,
@@ -930,22 +927,21 @@ void CFWL_WidgetImp::NotifyDriver() {
   pDriver->NotifyTargetDestroy(m_pInterface);
 }
 CFX_SizeF CFWL_WidgetImp::GetOffsetFromParent(IFWL_Widget* pParent) {
-  CFX_SizeF szRet;
-  szRet.Set(0, 0);
-  if (pParent == GetInterface()) {
-    return szRet;
-  }
+  if (pParent == GetInterface())
+    return CFX_SizeF();
+
   IFWL_WidgetMgr* pWidgetMgr = FWL_GetWidgetMgr();
   if (!pWidgetMgr)
-    return szRet;
-  szRet.x += m_pProperties->m_rtWidget.left;
-  szRet.y += m_pProperties->m_rtWidget.top;
+    return CFX_SizeF();
+
+  CFX_SizeF szRet(m_pProperties->m_rtWidget.left,
+                  m_pProperties->m_rtWidget.top);
+
   IFWL_Widget* pDstWidget = GetParent();
   while (pDstWidget && pDstWidget != pParent) {
     CFX_RectF rtDst;
     pDstWidget->GetWidgetRect(rtDst);
-    szRet.x += rtDst.left;
-    szRet.y += rtDst.top;
+    szRet += CFX_SizeF(rtDst.left, rtDst.top);
     pDstWidget = pWidgetMgr->GetWidget(pDstWidget, FWL_WGTRELATION_Parent);
   }
   return szRet;

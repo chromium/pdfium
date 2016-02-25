@@ -9,187 +9,123 @@
 
 #include "core/include/fxcrt/fx_basic.h"
 
-template <class baseType>
-class CFX_PSVTemplate;
-template <class baseType>
-class CFX_VTemplate;
-template <class baseType>
-class CFX_PRLTemplate;
-template <class baseType>
-class CFX_RTemplate;
-template <class baseType>
-class CFX_ETemplate;
-template <class baseType>
-class CFX_ATemplate;
-template <class baseType>
-class CFX_RRTemplate;
 class CFX_Matrix;
-template <class baseType>
-class CFX_PSVTemplate {
+
+template <class BaseType>
+class CFX_PSTemplate {
  public:
-  typedef CFX_PSVTemplate<baseType> FXT_PSV;
-  typedef CFX_PSVTemplate<baseType> FXT_POINT;
-  typedef CFX_PSVTemplate<baseType> FXT_SIZE;
-  void Set(baseType x, baseType y) { FXT_PSV::x = x, FXT_PSV::y = y; }
-  void Set(const FXT_PSV& psv) { FXT_PSV::x = psv.x, FXT_PSV::y = psv.y; }
-  void Add(baseType x, baseType y) { FXT_PSV::x += x, FXT_PSV::y += y; }
-  void Subtract(baseType x, baseType y) { FXT_PSV::x -= x, FXT_PSV::y -= y; }
-  void Reset() { FXT_PSV::x = FXT_PSV::y = 0; }
-  FXT_PSV& operator+=(const FXT_PSV& obj) {
+  CFX_PSTemplate() : x(0), y(0) {}
+  CFX_PSTemplate(BaseType new_x, BaseType new_y) : x(new_x), y(new_y) {}
+  CFX_PSTemplate(const CFX_PSTemplate& other) : x(other.x), y(other.y) {}
+  void clear() {
+    x = 0;
+    y = 0;
+  }
+  CFX_PSTemplate operator=(const CFX_PSTemplate& other) {
+    if (this != &other) {
+      x = other.x;
+      y = other.y;
+    }
+    return *this;
+  }
+  bool operator==(const CFX_PSTemplate& other) const {
+    return x == other.x && y == other.y;
+  }
+  bool operator!=(const CFX_PSTemplate& other) const {
+    return !(*this == other);
+  }
+  CFX_PSTemplate& operator+=(const CFX_PSTemplate<BaseType>& obj) {
     x += obj.x;
     y += obj.y;
     return *this;
   }
-  FXT_PSV& operator-=(const FXT_PSV& obj) {
+  CFX_PSTemplate& operator-=(const CFX_PSTemplate<BaseType>& obj) {
     x -= obj.x;
     y -= obj.y;
     return *this;
   }
-  FXT_PSV& operator*=(baseType lamda) {
-    x *= lamda;
-    y *= lamda;
+  CFX_PSTemplate& operator*=(BaseType factor) {
+    x *= factor;
+    y *= factor;
     return *this;
   }
-  FXT_PSV& operator/=(baseType lamda) {
-    x /= lamda;
-    y /= lamda;
+  CFX_PSTemplate& operator/=(BaseType divisor) {
+    x /= divisor;
+    y /= divisor;
     return *this;
   }
-  friend FX_BOOL operator==(const FXT_PSV& obj1, const FXT_PSV& obj2) {
-    return obj1.x == obj2.x && obj1.y == obj2.y;
+  CFX_PSTemplate operator+(const CFX_PSTemplate& other) {
+    return CFX_PSTemplate(x + other.x, y + other.y);
   }
-  friend FX_BOOL operator!=(const FXT_PSV& obj1, const FXT_PSV& obj2) {
-    return obj1.x != obj2.x || obj1.y != obj2.y;
+  CFX_PSTemplate operator-(const CFX_PSTemplate& other) {
+    return CFX_PSTemplate(x - other.x, y - other.y);
   }
-  friend FXT_PSV operator+(const FXT_PSV& obj1, const FXT_PSV& obj2) {
-    CFX_PSVTemplate obj;
-    obj.x = obj1.x + obj2.x;
-    obj.y = obj1.y + obj2.y;
-    return obj;
+  CFX_PSTemplate operator*(BaseType factor) {
+    return CFX_PSTemplate(x * factor, y * factor);
   }
-  friend FXT_PSV operator-(const FXT_PSV& obj1, const FXT_PSV& obj2) {
-    CFX_PSVTemplate obj;
-    obj.x = obj1.x - obj2.x;
-    obj.y = obj1.y - obj2.y;
-    return obj;
+  CFX_PSTemplate operator/(BaseType divisor) {
+    return CFX_PSTemplate(x / divisor, y / divisor);
   }
-  friend FXT_PSV operator*(const FXT_PSV& obj, baseType lamda) {
-    CFX_PSVTemplate t;
-    t.x = obj.x * lamda;
-    t.y = obj.y * lamda;
-    return t;
-  }
-  friend FXT_PSV operator*(baseType lamda, const FXT_PSV& obj) {
-    CFX_PSVTemplate t;
-    t.x = lamda * obj.x;
-    t.y = lamda * obj.y;
-    return t;
-  }
-  friend FXT_PSV operator/(const FXT_PSV& obj, baseType lamda) {
-    CFX_PSVTemplate t;
-    t.x = obj.x / lamda;
-    t.y = obj.y / lamda;
-    return t;
-  }
-  baseType x, y;
+
+  BaseType x;
+  BaseType y;
 };
-typedef CFX_PSVTemplate<int32_t> CFX_Point;
-typedef CFX_PSVTemplate<FX_FLOAT> CFX_PointF;
-typedef CFX_PSVTemplate<int32_t> CFX_Size;
-typedef CFX_PSVTemplate<FX_FLOAT> CFX_SizeF;
+typedef CFX_PSTemplate<int32_t> CFX_Point;
+typedef CFX_PSTemplate<FX_FLOAT> CFX_PointF;
+typedef CFX_PSTemplate<int32_t> CFX_Size;
+typedef CFX_PSTemplate<FX_FLOAT> CFX_SizeF;
 typedef CFX_ArrayTemplate<CFX_Point> CFX_Points;
 typedef CFX_ArrayTemplate<CFX_PointF> CFX_PointsF;
-typedef CFX_PSVTemplate<int32_t>* FX_LPPOINT;
-typedef CFX_PSVTemplate<FX_FLOAT>* FX_LPPOINTF;
-typedef CFX_PSVTemplate<int32_t> const* FX_LPCPOINT;
-typedef CFX_PSVTemplate<FX_FLOAT> const* FX_LPCPOINTF;
-#define CFX_FloatPoint CFX_PointF
-template <class baseType>
-class CFX_VTemplate : public CFX_PSVTemplate<baseType> {
+
+template <class BaseType>
+class CFX_VTemplate : public CFX_PSTemplate<BaseType> {
  public:
-  typedef CFX_PSVTemplate<baseType> FXT_PSV;
-  typedef CFX_PSVTemplate<baseType> FXT_POINT;
-  typedef CFX_PSVTemplate<baseType> FXT_SIZE;
-  typedef CFX_VTemplate<baseType> FXT_VECTOR;
-  void Set(baseType newx, baseType newy) {
-    FXT_PSV::x = newx;
-    FXT_PSV::y = newy;
-  }
-  void Set(const FXT_PSV& psv) { FXT_PSV::x = psv.x, FXT_PSV::y = psv.y; }
-  void Set(const FXT_POINT& p1, const FXT_POINT& p2) {
-    FXT_PSV::x = p2.x - p1.x, FXT_PSV::y = p2.y - p1.y;
-  }
-  void Reset() { FXT_PSV::x = FXT_PSV::y = 0; }
-  baseType SquareLength() const {
-    return FXT_PSV::x * FXT_PSV::x + FXT_PSV::y * FXT_PSV::y;
-  }
-  baseType Length() const {
-    return FXSYS_sqrt(FXT_PSV::x * FXT_PSV::x + FXT_PSV::y * FXT_PSV::y);
-  }
+  using CFX_PSTemplate<BaseType>::x;
+  using CFX_PSTemplate<BaseType>::y;
+
+  CFX_VTemplate() : CFX_PSTemplate<BaseType>() {}
+  CFX_VTemplate(BaseType new_x, BaseType new_y)
+      : CFX_PSTemplate<BaseType>(new_x, new_y) {}
+
+  CFX_VTemplate(const CFX_VTemplate& other) : CFX_PSTemplate<BaseType>(other) {}
+
+  CFX_VTemplate(const CFX_PSTemplate<BaseType>& point1,
+                const CFX_PSTemplate<BaseType>& point2)
+      : CFX_PSTemplate<BaseType>(point2.x - point1.x, point2.y - point1.y) {}
+
+  FX_FLOAT Length() const { return FXSYS_sqrt(x * x + y * y); }
   void Normalize() {
-    FX_FLOAT fLen =
-        FXSYS_sqrt(FXT_PSV::x * FXT_PSV::x + FXT_PSV::y * FXT_PSV::y);
-    if (fLen < 0.0001f) {
+    FX_FLOAT fLen = Length();
+    if (fLen < 0.0001f)
       return;
-    }
-    FXT_PSV::x = ((baseType)FXT_PSV::x) / fLen;
-    FXT_PSV::y = ((baseType)FXT_PSV::y) / fLen;
+
+    x /= fLen;
+    y /= fLen;
   }
-  baseType DotProduct(baseType otherx, baseType othery) const {
-    return FXT_PSV::x * otherx + FXT_PSV::y * othery;
+  void Translate(BaseType dx, BaseType dy) {
+    x += dx;
+    y += dy;
   }
-  baseType DotProduct(const FXT_VECTOR& v) const {
-    return FXT_PSV::x * v.x + FXT_PSV::y * v.y;
+  void Scale(BaseType sx, BaseType sy) {
+    x *= sx;
+    y *= sy;
   }
-  FX_BOOL IsParallel(baseType otherx, baseType othery) const {
-    baseType t = FXT_PSV::x * othery - FXT_PSV::y * otherx;
-    return FXSYS_fabs(t) < 0x0001f;
-  }
-  FX_BOOL IsParallel(const FXT_VECTOR& v) const { return IsParallel(v.x, v.y); }
-  FX_BOOL IsPerpendicular(baseType otherx, baseType othery) const {
-    baseType t = DotProduct(otherx, othery);
-    return FXSYS_fabs(t) < 0x0001f;
-  }
-  FX_BOOL IsPerpendicular(const FXT_VECTOR& v) const {
-    return IsPerpendicular(v.x, v.y);
-  }
-  void Translate(baseType dx, baseType dy) {
-    FXT_PSV::x += dx, FXT_PSV::y += dy;
-  }
-  void Scale(baseType sx, baseType sy) { FXT_PSV::x *= sx, FXT_PSV::y *= sy; }
   void Rotate(FX_FLOAT fRadian) {
-    FX_FLOAT xx = (FX_FLOAT)FXT_PSV::x;
-    FX_FLOAT yy = (FX_FLOAT)FXT_PSV::y;
     FX_FLOAT cosValue = FXSYS_cos(fRadian);
     FX_FLOAT sinValue = FXSYS_sin(fRadian);
-    FXT_PSV::x = xx * cosValue - yy * sinValue;
-    FXT_PSV::y = xx * sinValue + yy * cosValue;
-  }
-  friend FX_FLOAT Cosine(const FXT_VECTOR& v1, const FXT_VECTOR& v2) {
-    FXSYS_assert(v1.SquareLength() != 0 && v2.SquareLength() != 0);
-    FX_FLOAT dotProduct = v1.DotProduct(v2);
-    return dotProduct /
-           (FX_FLOAT)FXSYS_sqrt(v1.SquareLength() * v2.SquareLength());
-  }
-  friend FX_FLOAT ArcCosine(const FXT_VECTOR& v1, const FXT_VECTOR& v2) {
-    return (FX_FLOAT)FXSYS_acos(Cosine(v1, v2));
-  }
-  friend FX_FLOAT SlopeAngle(const FXT_VECTOR& v) {
-    CFX_VTemplate vx;
-    vx.Set(1, 0);
-    FX_FLOAT fSlope = ArcCosine(v, vx);
-    return v.y < 0 ? -fSlope : fSlope;
+    x = x * cosValue - y * sinValue;
+    y = x * sinValue + y * cosValue;
   }
 };
 typedef CFX_VTemplate<int32_t> CFX_Vector;
 typedef CFX_VTemplate<FX_FLOAT> CFX_VectorF;
+
 template <class baseType>
 class CFX_RTemplate {
  public:
-  typedef CFX_PSVTemplate<baseType> FXT_POINT;
-  typedef CFX_PSVTemplate<baseType> FXT_SIZE;
+  typedef CFX_PSTemplate<baseType> FXT_POINT;
+  typedef CFX_PSTemplate<baseType> FXT_SIZE;
   typedef CFX_VTemplate<baseType> FXT_VECTOR;
-  typedef CFX_PRLTemplate<baseType> FXT_PARAL;
   typedef CFX_RTemplate<baseType> FXT_RECT;
   void Set(baseType left, baseType top, baseType width, baseType height) {
     FXT_RECT::left = left, FXT_RECT::top = top, FXT_RECT::width = width,
@@ -334,11 +270,6 @@ class CFX_RTemplate {
     p.x = left + width / 2;
     p.y = top + height / 2;
     return p;
-  }
-  void GetParallelogram(FXT_PARAL& pg) const {
-    pg.x = left, pg.y = top;
-    pg.x1 = width, pg.y1 = 0;
-    pg.x2 = 0, pg.y2 = height;
   }
   void Union(baseType x, baseType y) {
     baseType r = right(), b = bottom();
@@ -595,16 +526,14 @@ class CFX_FloatRect {
     bottom += f;
   }
 
-  static CFX_FloatRect GetBBox(const CFX_FloatPoint* pPoints, int nPoints);
+  static CFX_FloatRect GetBBox(const CFX_PointF* pPoints, int nPoints);
 
   FX_FLOAT left;
-
   FX_FLOAT right;
-
   FX_FLOAT bottom;
-
   FX_FLOAT top;
 };
+
 class CFX_Matrix {
  public:
   CFX_Matrix() { SetIdentity(); }
@@ -694,19 +623,17 @@ class CFX_Matrix {
   int32_t TransformYDistance(int32_t dy) const;
   FX_FLOAT TransformDistance(FX_FLOAT dx, FX_FLOAT dy) const;
   int32_t TransformDistance(int32_t dx, int32_t dy) const;
-
   FX_FLOAT TransformDistance(FX_FLOAT distance) const;
+
   void TransformPoint(FX_FLOAT& x, FX_FLOAT& y) const;
   void TransformPoint(int32_t& x, int32_t& y) const;
-  void TransformPoints(CFX_PointF* points, int32_t iCount) const;
-  void TransformPoints(CFX_Point* points, int32_t iCount) const;
 
   void Transform(FX_FLOAT& x, FX_FLOAT& y) const { TransformPoint(x, y); }
-
   void Transform(FX_FLOAT x, FX_FLOAT y, FX_FLOAT& x1, FX_FLOAT& y1) const {
     x1 = x, y1 = y;
     TransformPoint(x1, y1);
   }
+
   void TransformVector(CFX_VectorF& v) const;
   void TransformVector(CFX_Vector& v) const;
   void TransformRect(CFX_RectF& rect) const;
@@ -716,21 +643,15 @@ class CFX_Matrix {
                      FX_FLOAT& right,
                      FX_FLOAT& top,
                      FX_FLOAT& bottom) const;
-
   void TransformRect(CFX_FloatRect& rect) const {
     TransformRect(rect.left, rect.right, rect.top, rect.bottom);
   }
 
   FX_FLOAT GetA() const { return a; }
-
   FX_FLOAT GetB() const { return b; }
-
   FX_FLOAT GetC() const { return c; }
-
   FX_FLOAT GetD() const { return d; }
-
   FX_FLOAT GetE() const { return e; }
-
   FX_FLOAT GetF() const { return f; }
 
  public:

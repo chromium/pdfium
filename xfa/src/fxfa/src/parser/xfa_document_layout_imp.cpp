@@ -96,7 +96,7 @@ int32_t CXFA_LayoutProcessor::DoLayout(IFX_Pause* pPause) {
     CXFA_ContentLayoutItem* pLayoutItem =
         m_pRootItemLayoutProcessor->ExtractLayoutItem();
     if (pLayoutItem) {
-      pLayoutItem->m_sPos.Set(fPosX, fPosY);
+      pLayoutItem->m_sPos = CFX_PointF(fPosX, fPosY);
     }
     m_pLayoutPageMgr->SubmitContentItem(pLayoutItem, eStatus);
   } while (eStatus != XFA_ItemLayoutProcessorResult_Done &&
@@ -186,15 +186,16 @@ int32_t CXFA_ContainerLayoutItem::GetPageIndex() const {
       ->GetPageIndex(this);
 }
 void CXFA_ContainerLayoutItem::GetPageSize(CFX_SizeF& size) {
-  size.Set(0, 0);
+  size.clear();
   CXFA_Node* pMedium = m_pFormNode->GetFirstChildByClass(XFA_ELEMENT_Medium);
-  if (pMedium) {
-    size.x = pMedium->GetMeasure(XFA_ATTRIBUTE_Short).ToUnit(XFA_UNIT_Pt);
-    size.y = pMedium->GetMeasure(XFA_ATTRIBUTE_Long).ToUnit(XFA_UNIT_Pt);
-    if (pMedium->GetEnum(XFA_ATTRIBUTE_Orientation) ==
-        XFA_ATTRIBUTEENUM_Landscape) {
-      size.Set(size.y, size.x);
-    }
+  if (!pMedium)
+    return;
+
+  size = CFX_SizeF(pMedium->GetMeasure(XFA_ATTRIBUTE_Short).ToUnit(XFA_UNIT_Pt),
+                   pMedium->GetMeasure(XFA_ATTRIBUTE_Long).ToUnit(XFA_UNIT_Pt));
+  if (pMedium->GetEnum(XFA_ATTRIBUTE_Orientation) ==
+      XFA_ATTRIBUTEENUM_Landscape) {
+    size = CFX_SizeF(size.y, size.x);
   }
 }
 CXFA_Node* CXFA_ContainerLayoutItem::GetMasterPage() const {

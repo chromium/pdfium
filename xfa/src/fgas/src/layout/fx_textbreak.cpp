@@ -1448,7 +1448,6 @@ int32_t CFX_TxtBreak::GetDisplayPos(const FX_TXTRUN* pTxtRun,
           }
         }
         CFX_PointF ptOffset;
-        ptOffset.Reset();
         FX_BOOL bAdjusted = FALSE;
         if (pAdjustPos) {
           bAdjusted = pAdjustPos(wForm, bCharCode, pFont, fFontSize,

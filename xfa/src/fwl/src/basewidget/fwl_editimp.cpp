@@ -1816,8 +1816,7 @@ void CFWL_EditImpDelegate::DoButtonDown(CFWL_MsgMouse* pMsg) {
   IFDE_TxtEdtPage* pPage = m_pOwner->m_pEdtEngine->GetPage(0);
   if (!pPage)
     return;
-  CFX_PointF pt;
-  pt.Set(pMsg->m_fx, pMsg->m_fy);
+  CFX_PointF pt(pMsg->m_fx, pMsg->m_fy);
   m_pOwner->DeviceToEngine(pt);
   FX_BOOL bBefore = TRUE;
   int32_t nIndex = pPage->GetCharIndex(pt, bBefore);
@@ -1900,8 +1899,7 @@ void CFWL_EditImpDelegate::OnButtonDblClk(CFWL_MsgMouse* pMsg) {
   IFDE_TxtEdtPage* pPage = m_pOwner->m_pEdtEngine->GetPage(0);
   if (!pPage)
     return;
-  CFX_PointF pt;
-  pt.Set(pMsg->m_fx, pMsg->m_fy);
+  CFX_PointF pt(pMsg->m_fx, pMsg->m_fy);
   m_pOwner->DeviceToEngine(pt);
   int32_t nCount = 0;
   int32_t nIndex = pPage->SelectWord(pt, nCount);
@@ -1922,8 +1920,7 @@ void CFWL_EditImpDelegate::OnMouseMove(CFWL_MsgMouse* pMsg) {
   IFDE_TxtEdtPage* pPage = m_pOwner->m_pEdtEngine->GetPage(0);
   if (!pPage)
     return;
-  CFX_PointF pt;
-  pt.Set(pMsg->m_fx, pMsg->m_fy);
+  CFX_PointF pt(pMsg->m_fx, pMsg->m_fy);
   m_pOwner->DeviceToEngine(pt);
   FX_BOOL bBefore = TRUE;
   int32_t nIndex = pPage->GetCharIndex(pt, bBefore);

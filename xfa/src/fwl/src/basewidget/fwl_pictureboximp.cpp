@@ -122,9 +122,9 @@ void CFWL_PictureBoxImp::DrawBkground(CFX_Graphics* pGraphics,
   if (fy > m_rtClient.height) {
     fy = m_rtClient.height;
   }
-  CFX_PointF pt;
-  pt.Set((m_rtClient.width - fx) / 2, (m_rtClient.height - fy) / 2);
-  pGraphics->DrawImage(pPicture, pt, &matrix);
+  pGraphics->DrawImage(pPicture, CFX_PointF((m_rtClient.width - fx) / 2,
+                                            (m_rtClient.height - fy) / 2),
+                       &matrix);
 }
 FX_BOOL CFWL_PictureBoxImp::VStyle(FX_BOOL dwStyle) {
   switch (dwStyle & FWL_STYLEEXT_PTB_VAlignMask) {

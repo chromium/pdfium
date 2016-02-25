@@ -36,7 +36,6 @@ CXFA_FWLTheme::CXFA_FWLTheme(CXFA_FFApp* pApp) : m_pApp(pApp) {
   m_fCapacity = 0;
   m_pCalendarFont = NULL;
   m_Rect.Set(0, 0, 0, 0);
-  m_SizeAboveBelow.Set(0, 0);
   m_pCheckBoxTP = new CXFA_FWLCheckBoxTP;
   m_pListBoxTP = new CFWL_ListBoxTP;
   m_pPictureBoxTP = new CFWL_PictureBoxTP;

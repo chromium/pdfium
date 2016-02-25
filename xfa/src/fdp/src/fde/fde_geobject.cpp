@@ -94,26 +94,21 @@ void CFDE_Path::ArcTo(FX_BOOL bStart,
   FX_FLOAT sin_beta = FXSYS_sin(beta);
   FX_FLOAT cos_alpha = FXSYS_cos(alpha);
   FX_FLOAT cos_beta = FXSYS_cos(beta);
-  if (bStart) {
-    CFX_PointF p0;
-    p0.Set(cx + rx * cos_alpha, cy + ry * sin_alpha);
-    MoveTo(p0);
-  }
-  CFX_PointF p1;
-  p1.Set(cx + rx * (cos_alpha - bcp * sin_alpha),
-         cy + ry * (sin_alpha + bcp * cos_alpha));
-  CFX_PointF p2;
-  p2.Set(cx + rx * (cos_beta + bcp * sin_beta),
-         cy + ry * (sin_beta - bcp * cos_beta));
-  CFX_PointF p3;
-  p3.Set(cx + rx * cos_beta, cy + ry * sin_beta);
-  BezierTo(p1, p2, p3);
+  if (bStart)
+    MoveTo(CFX_PointF(cx + rx * cos_alpha, cy + ry * sin_alpha));
+
+  BezierTo(CFX_PointF(cx + rx * (cos_alpha - bcp * sin_alpha),
+                      cy + ry * (sin_alpha + bcp * cos_alpha)),
+           CFX_PointF(cx + rx * (cos_beta + bcp * sin_beta),
+                      cy + ry * (sin_beta - bcp * cos_beta)),
+           CFX_PointF(cx + rx * cos_beta, cy + ry * sin_beta));
 }
+
 void CFDE_Path::AddBezier(const CFX_PointsF& points) {
   if (points.GetSize() != 4) {
     return;
   }
-  FX_LPCPOINTF p = points.GetData();
+  const CFX_PointF* p = points.GetData();
   MoveTo(p[0]);
   BezierTo(p[1], p[2], p[3]);
 }
@@ -122,8 +117,8 @@ void CFDE_Path::AddBeziers(const CFX_PointsF& points) {
   if (iCount < 4) {
     return;
   }
-  FX_LPCPOINTF p = points.GetData();
-  FX_LPCPOINTF pEnd = p + iCount;
+  const CFX_PointF* p = points.GetData();
+  const CFX_PointF* pEnd = p + iCount;
   MoveTo(p[0]);
   for (++p; p <= pEnd - 3; p += 3) {
     BezierTo(p[0], p[1], p[2]);
@@ -139,8 +134,8 @@ void CFDE_Path::GetCurveTangents(const CFX_PointsF& points,
     return;
   }
   FX_FLOAT fCoefficient = fTension / 3.0f;
-  FX_LPCPOINTF pPoints = points.GetData();
-  FX_LPPOINTF pTangents = tangents.GetData();
+  const CFX_PointF* pPoints = points.GetData();
+  CFX_PointF* pTangents = tangents.GetData();
   for (int32_t i = 0; i < iCount; ++i) {
     int32_t r = i + 1;
     int32_t s = i - 1;
@@ -163,28 +158,22 @@ void CFDE_Path::AddCurve(const CFX_PointsF& points,
   }
   CFX_PointsF tangents;
   GetCurveTangents(points, tangents, bClosed, fTension);
-  FX_LPCPOINTF pPoints = points.GetData();
-  FX_LPPOINTF pTangents = tangents.GetData();
+  const CFX_PointF* pPoints = points.GetData();
+  CFX_PointF* pTangents = tangents.GetData();
   MoveTo(pPoints[0]);
   for (int32_t i = 0; i < iLast; ++i) {
-    int32_t j = i + 1;
-    CFX_PointF p1;
-    p1.Set(pPoints[i].x + pTangents[i].x, pPoints[i].y + pTangents[i].y);
-    CFX_PointF p2;
-    p2.Set(pPoints[j].x - pTangents[j].x, pPoints[j].y - pTangents[j].y);
-    CFX_PointF p3;
-    p3.Set(pPoints[j].x, pPoints[j].y);
-    BezierTo(p1, p2, p3);
+    BezierTo(CFX_PointF(pPoints[i].x + pTangents[i].x,
+                        pPoints[i].y + pTangents[i].y),
+             CFX_PointF(pPoints[i + 1].x - pTangents[i + 1].x,
+                        pPoints[i + 1].y - pTangents[i + 1].y),
+             CFX_PointF(pPoints[i + 1].x, pPoints[i + 1].y));
   }
   if (bClosed) {
-    CFX_PointF p1;
-    p1.Set(pPoints[iLast].x + pTangents[iLast].x,
-           pPoints[iLast].y + pTangents[iLast].y);
-    CFX_PointF p2;
-    p2.Set(pPoints[0].x - pTangents[0].x, pPoints[0].y - pTangents[0].y);
-    CFX_PointF p3;
-    p3.Set(pPoints[0].x, pPoints[0].y);
-    BezierTo(p1, p2, p3);
+    BezierTo(CFX_PointF(pPoints[iLast].x + pTangents[iLast].x,
+                        pPoints[iLast].y + pTangents[iLast].y),
+             CFX_PointF(pPoints[0].x - pTangents[0].x,
+                        pPoints[0].y - pTangents[0].y),
+             CFX_PointF(pPoints[0].x, pPoints[0].y));
     CloseFigure();
   }
 }
@@ -226,7 +215,7 @@ void CFDE_Path::AddPolygon(const CFX_PointsF& points) {
     return;
   }
   AddLines(points);
-  FX_LPCPOINTF p = points.GetData();
+  const CFX_PointF* p = points.GetData();
   if (FXSYS_fabs(p[0].x - p[iCount - 1].x) < 0.01f ||
       FXSYS_fabs(p[0].y - p[iCount - 1].y) < 0.01f) {
     LineTo(p[0]);
@@ -238,8 +227,8 @@ void CFDE_Path::AddLines(const CFX_PointsF& points) {
   if (iCount < 2) {
     return;
   }
-  FX_LPCPOINTF p = points.GetData();
-  FX_LPCPOINTF pEnd = p + iCount;
+  const CFX_PointF* p = points.GetData();
+  const CFX_PointF* pEnd = p + iCount;
   MoveTo(p[0]);
   for (++p; p < pEnd; ++p) {
     LineTo(*p);

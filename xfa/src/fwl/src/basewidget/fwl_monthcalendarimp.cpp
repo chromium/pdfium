@@ -6,6 +6,8 @@
 
 #include "xfa/src/fwl/src/basewidget/include/fwl_monthcalendarimp.h"
 
+#include <algorithm>
+
 #include "xfa/include/fwl/basewidget/fwl_monthcalendar.h"
 #include "xfa/include/fwl/core/fwl_theme.h"
 #include "xfa/src/foxitlib.h"
@@ -75,9 +77,6 @@ CFWL_MonthCalendarImp::CFWL_MonthCalendarImp(
   m_rtClient.Reset();
   m_rtWeekNum.Reset();
   m_rtWeekNumSep.Reset();
-  m_szHead.Reset();
-  m_szCell.Reset();
-  m_szToday.Reset();
   m_pDateTime = new CFX_DateTime;
   m_bInit = FALSE;
   m_iMaxSel = 1;
@@ -498,72 +497,70 @@ void CFWL_MonthCalendarImp::DrawTodayCircle(CFX_Graphics* pGraphics,
   pTheme->DrawBackground(&params);
 }
 CFX_SizeF CFWL_MonthCalendarImp::CalcSize(FX_BOOL bAutoSize) {
-  CFX_SizeF fs;
-  fs.Set(0, 0);
   if (!m_pProperties->m_pThemeProvider)
-    return fs;
-  if (bAutoSize) {
-    CFWL_ThemePart params;
-    params.m_pWidget = m_pInterface;
-    IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
-    CFX_WideString* wsText = NULL;
-    FX_FLOAT fMaxWeekW = 0.0f;
-    FX_FLOAT fMaxWeekH = 0.0f;
-    for (FX_DWORD week = FWL_MCCAPACITY_Sun; week <= FWL_MCCAPACITY_Sat;
-         week++) {
-      wsText = static_cast<CFX_WideString*>(pTheme->GetCapacity(&params, week));
-      CFX_SizeF sz = CalcTextSize(*wsText, m_pProperties->m_pThemeProvider);
-      fMaxWeekW = (fMaxWeekW >= sz.x) ? fMaxWeekW : sz.x;
-      fMaxWeekH = (fMaxWeekH >= sz.y) ? fMaxWeekH : sz.y;
-    }
-    FX_FLOAT fDayMaxW = 0.0f;
-    FX_FLOAT fDayMaxH = 0.0f;
-    for (int day = 10; day <= 31; day++) {
-      CFX_WideString wsDay;
-      wsDay.Format(L"%d", day);
-      CFX_SizeF sz = CalcTextSize(wsDay, m_pProperties->m_pThemeProvider);
-      fDayMaxW = (fDayMaxW >= sz.x) ? fDayMaxW : sz.x;
-      fDayMaxH = (fDayMaxH >= sz.y) ? fDayMaxH : sz.y;
-    }
-    m_szCell.x = FX_FLOAT((fMaxWeekW >= fDayMaxW) ? (int)(fMaxWeekW + 0.5)
-                                                  : (int)(fDayMaxW + 0.5));
-    m_szCell.y = (fMaxWeekH >= fDayMaxH) ? fMaxWeekH : fDayMaxH;
-    fs.x = m_szCell.x * MONTHCAL_COLUMNS +
-           MONTHCAL_HMARGIN * MONTHCAL_COLUMNS * 2 +
-           MONTHCAL_HEADER_BTN_HMARGIN * 2;
-    FX_FLOAT fMonthMaxW = 0.0f;
-    FX_FLOAT fMonthMaxH = 0.0f;
-    for (FX_DWORD month = FWL_MCCAPACITY_January;
-         month <= FWL_MCCAPACITY_December; month++) {
-      wsText =
-          static_cast<CFX_WideString*>(pTheme->GetCapacity(&params, month));
-      CFX_SizeF sz = CalcTextSize(*wsText, m_pProperties->m_pThemeProvider);
-      fMonthMaxW = (fMonthMaxW >= sz.x) ? fMonthMaxW : sz.x;
-      fMonthMaxH = (fMonthMaxH >= sz.y) ? fMonthMaxH : sz.y;
-    }
-    CFX_WideString wsYear;
-    GetHeadText(m_iYear, m_iMonth, wsYear);
-    CFX_SizeF szYear = CalcTextSize(wsYear, m_pProperties->m_pThemeProvider);
-    fMonthMaxH = (fMonthMaxH >= szYear.y) ? fMonthMaxH : szYear.y;
-    m_szHead.Set(fMonthMaxW + szYear.x, fMonthMaxH);
-    fMonthMaxW = m_szHead.x + MONTHCAL_HEADER_BTN_HMARGIN * 2 + m_szCell.x * 2;
-    fs.x = (fs.x >= fMonthMaxW) ? fs.x : fMonthMaxW;
-    CFX_WideString wsToday;
-    GetTodayText(m_iYear, m_iMonth, m_iDay, wsToday);
-    wsText = static_cast<CFX_WideString*>(
-        pTheme->GetCapacity(&params, FWL_MCCAPACITY_Today));
-    m_wsToday = *wsText + wsToday;
-    m_szToday = CalcTextSize(wsToday, m_pProperties->m_pThemeProvider);
-    m_szToday.y = (m_szToday.y >= m_szCell.y) ? m_szToday.y : m_szCell.y;
-    fs.y = m_szCell.x + m_szCell.y * (MONTHCAL_ROWS - 2) + m_szToday.y +
-           MONTHCAL_VMARGIN * MONTHCAL_ROWS * 2 +
-           MONTHCAL_HEADER_BTN_VMARGIN * 4;
-  } else {
+    return CFX_SizeF();
+
+  if (!bAutoSize) {
     GetClientRect(m_rtClient);
-    fs.Set(m_rtClient.width, m_rtClient.height);
+    return CFX_SizeF(m_rtClient.width, m_rtClient.height);
   }
+
+  CFX_SizeF fs;
+  CFWL_ThemePart params;
+  params.m_pWidget = m_pInterface;
+  IFWL_ThemeProvider* pTheme = m_pProperties->m_pThemeProvider;
+  CFX_WideString* wsText = NULL;
+  FX_FLOAT fMaxWeekW = 0.0f;
+  FX_FLOAT fMaxWeekH = 0.0f;
+  for (FX_DWORD week = FWL_MCCAPACITY_Sun; week <= FWL_MCCAPACITY_Sat; week++) {
+    wsText = static_cast<CFX_WideString*>(pTheme->GetCapacity(&params, week));
+    CFX_SizeF sz = CalcTextSize(*wsText, m_pProperties->m_pThemeProvider);
+    fMaxWeekW = (fMaxWeekW >= sz.x) ? fMaxWeekW : sz.x;
+    fMaxWeekH = (fMaxWeekH >= sz.y) ? fMaxWeekH : sz.y;
+  }
+  FX_FLOAT fDayMaxW = 0.0f;
+  FX_FLOAT fDayMaxH = 0.0f;
+  for (int day = 10; day <= 31; day++) {
+    CFX_WideString wsDay;
+    wsDay.Format(L"%d", day);
+    CFX_SizeF sz = CalcTextSize(wsDay, m_pProperties->m_pThemeProvider);
+    fDayMaxW = (fDayMaxW >= sz.x) ? fDayMaxW : sz.x;
+    fDayMaxH = (fDayMaxH >= sz.y) ? fDayMaxH : sz.y;
+  }
+  m_szCell.x = FX_FLOAT((fMaxWeekW >= fDayMaxW) ? (int)(fMaxWeekW + 0.5)
+                                                : (int)(fDayMaxW + 0.5));
+  m_szCell.y = (fMaxWeekH >= fDayMaxH) ? fMaxWeekH : fDayMaxH;
+  fs.x = m_szCell.x * MONTHCAL_COLUMNS +
+         MONTHCAL_HMARGIN * MONTHCAL_COLUMNS * 2 +
+         MONTHCAL_HEADER_BTN_HMARGIN * 2;
+  FX_FLOAT fMonthMaxW = 0.0f;
+  FX_FLOAT fMonthMaxH = 0.0f;
+  for (FX_DWORD month = FWL_MCCAPACITY_January;
+       month <= FWL_MCCAPACITY_December; month++) {
+    wsText = static_cast<CFX_WideString*>(pTheme->GetCapacity(&params, month));
+    CFX_SizeF sz = CalcTextSize(*wsText, m_pProperties->m_pThemeProvider);
+    fMonthMaxW = (fMonthMaxW >= sz.x) ? fMonthMaxW : sz.x;
+    fMonthMaxH = (fMonthMaxH >= sz.y) ? fMonthMaxH : sz.y;
+  }
+  CFX_WideString wsYear;
+  GetHeadText(m_iYear, m_iMonth, wsYear);
+  CFX_SizeF szYear = CalcTextSize(wsYear, m_pProperties->m_pThemeProvider);
+  fMonthMaxH = std::max(fMonthMaxH, szYear.y);
+  m_szHead = CFX_SizeF(fMonthMaxW + szYear.x, fMonthMaxH);
+  fMonthMaxW = m_szHead.x + MONTHCAL_HEADER_BTN_HMARGIN * 2 + m_szCell.x * 2;
+  fs.x = std::max(fs.x, fMonthMaxW);
+  CFX_WideString wsToday;
+  GetTodayText(m_iYear, m_iMonth, m_iDay, wsToday);
+  wsText = static_cast<CFX_WideString*>(
+      pTheme->GetCapacity(&params, FWL_MCCAPACITY_Today));
+  m_wsToday = *wsText + wsToday;
+  m_szToday = CalcTextSize(wsToday, m_pProperties->m_pThemeProvider);
+  m_szToday.y = (m_szToday.y >= m_szCell.y) ? m_szToday.y : m_szCell.y;
+  fs.y = m_szCell.x + m_szCell.y * (MONTHCAL_ROWS - 2) + m_szToday.y +
+         MONTHCAL_VMARGIN * MONTHCAL_ROWS * 2 + MONTHCAL_HEADER_BTN_VMARGIN * 4;
   return fs;
 }
+
 void CFWL_MonthCalendarImp::CalcHeadSize() {
   FX_FLOAT fHeadHMargin = (m_rtClient.width - m_szHead.x) / 2;
   FX_FLOAT fHeadVMargin = (m_szCell.x - m_szHead.y) / 2;

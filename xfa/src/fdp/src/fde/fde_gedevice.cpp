@@ -445,13 +445,12 @@ FX_BOOL CFDE_FxgeDevice::FillTexturePath(IFDE_Brush* pBrush,
                                          const CFX_PathData* pPath,
                                          const CFX_Matrix* pMatrix) {
   FXSYS_assert(pPath && pBrush && pBrush->GetType() == FDE_BRUSHTYPE_Texture);
-  IFDE_TextureBrush* pTextureBrush = (IFDE_TextureBrush*)pBrush;
-  IFDE_Image* pImage = (IFDE_Image*)pTextureBrush->GetImage();
-  if (pImage == NULL) {
+  IFDE_TextureBrush* pTextureBrush = static_cast<IFDE_TextureBrush*>(pBrush);
+  IFDE_Image* pImage = pTextureBrush->GetImage();
+  if (!pImage)
     return FALSE;
-  }
-  CFX_Size size;
-  size.Set(pImage->GetImageWidth(), pImage->GetImageHeight());
+
+  CFX_Size size(pImage->GetImageWidth(), pImage->GetImageHeight());
   CFX_DIBitmap bmp;
   bmp.Create(size.x, size.y, FXDIB_Argb);
   if (!pImage->StartLoadImage(&bmp, 0, 0, size.x, size.y, 0, 0, size.x,
@@ -532,8 +531,7 @@ FX_BOOL CFDE_FxgeDevice::FillLinearGradientPath(IFDE_Brush* pBrush,
   IFDE_LinearGradientBrush* pLinearBrush = (IFDE_LinearGradientBrush*)pBrush;
   CFX_PointF pt0, pt1;
   pLinearBrush->GetLinearPoints(pt0, pt1);
-  CFX_VectorF fDiagonal;
-  fDiagonal.Set(pt0, pt1);
+  CFX_VectorF fDiagonal(pt0, pt1);
   FX_FLOAT fTheta = FXSYS_atan2(fDiagonal.y, fDiagonal.x);
   FX_FLOAT fLength = fDiagonal.Length();
   FX_FLOAT fTotalX = fLength / FXSYS_cos(fTheta);

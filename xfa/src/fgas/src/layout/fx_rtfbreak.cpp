@@ -1314,7 +1314,6 @@ int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
         }
         if (!bEmptyChar) {
           CFX_PointF ptOffset;
-          ptOffset.Reset();
           FX_BOOL bAdjusted = FALSE;
           if (pAdjustPos) {
             bAdjusted = pAdjustPos(wForm, bMBCSCode, pFont, fFontSize,

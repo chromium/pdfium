@@ -839,9 +839,7 @@ CFX_DIBitmap* CFWL_CoreToopTipDP::GetToolTipIcon(IFWL_Widget* pWidget) {
   return NULL;
 }
 CFX_SizeF CFWL_CoreToopTipDP::GetToolTipIconSize(IFWL_Widget* pWidget) {
-  CFX_SizeF sz;
-  sz.Set(0, 0);
-  return sz;
+  return CFX_SizeF();
 }
 CFX_RectF CFWL_CoreToopTipDP::GetAnchor() {
   return m_fAnchor;
@@ -1007,9 +1005,7 @@ FX_BOOL CFWL_ToolTipContainer::ProcessEnter(CFWL_EvtMouse* pEvt,
         m_ToolTipDp->m_wsCaption = wsCaption;
       }
       CFX_RectF rt;
-      rt.Reset();
       CFX_SizeF sz;
-      sz.Reset();
       pCurTarget->GetToolTipSize(sz);
       if (sz.x > 0 && sz.y > 0) {
         rt.width = sz.x;
@@ -1020,8 +1016,7 @@ FX_BOOL CFWL_ToolTipContainer::ProcessEnter(CFWL_EvtMouse* pEvt,
         rt.width = r.width;
         rt.height = r.height;
       }
-      CFX_PointF pt;
-      pt.Set(pEvt->m_fx, pEvt->m_fy);
+      CFX_PointF pt(pEvt->m_fx, pEvt->m_fy);
       if (pCurTarget->GetToolTipPos(pt) == FWL_ERR_Succeeded) {
         rt.left = pt.x;
         rt.top = pt.y;

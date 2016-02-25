@@ -446,13 +446,11 @@ void CFWL_WidgetTP::DrawAxialShading(CFX_Graphics* pGraphics,
                                      CFX_Path* path,
                                      int32_t fillMode,
                                      CFX_Matrix* pMatrix) {
-  if (!pGraphics)
+  if (!pGraphics || !path)
     return;
-  if (!path)
-    return;
-  CFX_PointF begPoint, endPoint;
-  begPoint.Set(fx1, fy1);
-  endPoint.Set(fx2, fy2);
+
+  CFX_PointF begPoint(fx1, fy1);
+  CFX_PointF endPoint(fx2, fy2);
   CFX_Shading shading;
   shading.CreateAxial(begPoint, endPoint, FALSE, FALSE, beginColor, endColor);
   pGraphics->SaveGraphState();

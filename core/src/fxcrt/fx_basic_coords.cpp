@@ -217,8 +217,7 @@ void CFX_FloatRect::UpdateRect(FX_FLOAT x, FX_FLOAT y) {
     top = y;
   }
 }
-CFX_FloatRect CFX_FloatRect::GetBBox(const CFX_FloatPoint* pPoints,
-                                     int nPoints) {
+CFX_FloatRect CFX_FloatRect::GetBBox(const CFX_PointF* pPoints, int nPoints) {
   if (nPoints == 0) {
     return CFX_FloatRect();
   }
@@ -453,27 +452,6 @@ void CFX_Matrix::TransformVector(CFX_Vector& v) const {
   FX_FLOAT fy = b * v.x + d * v.y;
   v.x = FXSYS_round(fx);
   v.y = FXSYS_round(fy);
-}
-void CFX_Matrix::TransformPoints(CFX_Point* points, int32_t iCount) const {
-  FXSYS_assert(iCount > 0);
-  FX_FLOAT fx, fy;
-  for (int32_t i = 0; i < iCount; i++) {
-    fx = a * points->x + c * points->y + e;
-    fy = b * points->x + d * points->y + f;
-    points->x = FXSYS_round(fx);
-    points->y = FXSYS_round(fy);
-    points++;
-  }
-}
-void CFX_Matrix::TransformPoints(CFX_PointF* points, int32_t iCount) const {
-  FXSYS_assert(iCount > 0);
-  FX_FLOAT fx, fy;
-  for (int32_t i = 0; i < iCount; i++) {
-    fx = a * points->x + c * points->y + e;
-    fy = b * points->x + d * points->y + f;
-    points->x = fx, points->y = fy;
-    points++;
-  }
 }
 void CFX_Matrix::TransformPoint(FX_FLOAT& x, FX_FLOAT& y) const {
   FX_FLOAT fx = a * x + c * y + e;

@@ -723,9 +723,9 @@ void CFWL_ListBoxImp::DrawItem(CFX_Graphics* pGraphics,
 }
 CFX_SizeF CFWL_ListBoxImp::CalcSize(FX_BOOL bAutoSize) {
   CFX_SizeF fs;
-  fs.Set(0, 0);
   if (!m_pProperties->m_pThemeProvider)
     return fs;
+
   GetClientRect(m_rtClient);
   m_rtConent = m_rtClient;
   CFX_RectF rtUIMargin;

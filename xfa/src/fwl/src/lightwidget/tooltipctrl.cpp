@@ -86,7 +86,6 @@ CFWL_ToolTip::CFWL_ToolTipDP::CFWL_ToolTipDP() : m_pBitmap(NULL) {
   m_wsCaption = L"";
   m_nInitDelayTime = 500;
   m_nAutoPopDelayTime = 50000;
-  m_fIconSize.Set(0.0, 0.0);
   m_fAnchor.Set(0.0, 0.0, 0.0, 0.0);
 }
 FWL_ERR CFWL_ToolTip::CFWL_ToolTipDP::GetCaption(IFWL_Widget* pWidget,

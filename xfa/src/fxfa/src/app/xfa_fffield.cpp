@@ -217,11 +217,8 @@ void CXFA_FFField::CapPlacement() {
       CXFA_TextLayout* pCapTextLayout = m_pDataAcc->GetCaptionTextLayout();
       if (fCapReserve <= 0 && pCapTextLayout) {
         CFX_SizeF size;
-        size.Set(0, 0);
         CFX_SizeF minSize;
-        minSize.Set(0, 0);
         CFX_SizeF maxSize;
-        maxSize.Set(0, 0);
         pCapTextLayout->CalcSize(minSize, maxSize, size);
         if (iCapPlacement == XFA_ATTRIBUTEENUM_Top ||
             iCapPlacement == XFA_ATTRIBUTEENUM_Bottom) {
@@ -646,16 +643,14 @@ FX_BOOL CXFA_FFField::PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy) {
 }
 void CXFA_FFField::LayoutCaption() {
   CXFA_TextLayout* pCapTextLayout = m_pDataAcc->GetCaptionTextLayout();
-  if (!pCapTextLayout) {
+  if (!pCapTextLayout)
     return;
-  }
-  CFX_SizeF size;
-  size.Set(m_rtCaption.width, m_rtCaption.height);
+
   FX_FLOAT fHeight = 0;
-  pCapTextLayout->Layout(size, &fHeight);
-  if (m_rtCaption.height < fHeight) {
+  pCapTextLayout->Layout(CFX_SizeF(m_rtCaption.width, m_rtCaption.height),
+                         &fHeight);
+  if (m_rtCaption.height < fHeight)
     m_rtCaption.height = fHeight;
-  }
 }
 void CXFA_FFField::RenderCaption(CFX_Graphics* pGS, CFX_Matrix* pMatrix) {
   CXFA_TextLayout* pCapTextLayout = m_pDataAcc->GetCaptionTextLayout();
@@ -665,9 +660,7 @@ void CXFA_FFField::RenderCaption(CFX_Graphics* pGS, CFX_Matrix* pMatrix) {
   CXFA_Caption caption = m_pDataAcc->GetCaption();
   if (caption && caption.GetPresence() == XFA_ATTRIBUTEENUM_Visible) {
     if (!pCapTextLayout->IsLoaded()) {
-      CFX_SizeF size;
-      size.Set(m_rtCaption.width, m_rtCaption.height);
-      pCapTextLayout->Layout(size);
+      pCapTextLayout->Layout(CFX_SizeF(m_rtCaption.width, m_rtCaption.height));
     }
     CFX_RectF rtWidget;
     GetRectWithoutRotate(rtWidget);

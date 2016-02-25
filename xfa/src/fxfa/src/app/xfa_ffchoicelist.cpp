@@ -293,12 +293,10 @@ void CXFA_FFComboBox::UpdateWidgetProperty() {
 FX_BOOL CXFA_FFComboBox::OnRButtonUp(FX_DWORD dwFlags,
                                      FX_FLOAT fx,
                                      FX_FLOAT fy) {
-  if (!CXFA_FFField::OnRButtonUp(dwFlags, fx, fy)) {
+  if (!CXFA_FFField::OnRButtonUp(dwFlags, fx, fy))
     return FALSE;
-  }
-  CFX_PointF pt;
-  pt.Set(fx, fy);
-  GetDoc()->GetDocProvider()->PopupMenu(this, pt, NULL);
+
+  GetDoc()->GetDocProvider()->PopupMenu(this, CFX_PointF(fx, fy), nullptr);
   return TRUE;
 }
 FX_BOOL CXFA_FFComboBox::OnKillFocus(CXFA_FFWidget* pNewWidget) {

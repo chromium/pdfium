@@ -1552,8 +1552,7 @@ int32_t CPDF_TextPage::GetTextObjectWritingMode(
   if (dX <= 0.0001f && dY <= 0.0001f) {
     return -1;
   }
-  CFX_VectorF v;
-  v.Set(dX, dY);
+  CFX_VectorF v(dX, dY);
   v.Normalize();
   if (v.y <= 0.0872f) {
     return v.x <= 0.0872f ? m_TextlineDir : 0;

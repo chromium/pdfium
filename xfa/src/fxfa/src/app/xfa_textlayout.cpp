@@ -897,9 +897,8 @@ FX_FLOAT CXFA_TextLayout::GetLayoutHeight() {
   }
   int32_t iCount = m_pLoader->m_lineHeights.GetSize();
   if (iCount == 0 && m_pLoader->m_fWidth > 0) {
-    CFX_SizeF szMax, szDef;
-    szMax.Set(m_pLoader->m_fWidth, m_pLoader->m_fHeight);
-    szDef.Set(0, 0);
+    CFX_SizeF szMax(m_pLoader->m_fWidth, m_pLoader->m_fHeight);
+    CFX_SizeF szDef;
     m_pLoader->m_bSaveLineHeight = TRUE;
     m_pLoader->m_fLastPos = 0;
     CalcSize(szMax, szMax, szDef);
@@ -928,9 +927,8 @@ FX_FLOAT CXFA_TextLayout::StartLayout(FX_FLOAT fWidth) {
   }
   m_pLoader->m_fWidth = fWidth;
   if (fWidth < 0) {
-    CFX_SizeF szMax, szDef;
-    szMax.Set(0, 0);
-    szDef.Set(0, 0);
+    CFX_SizeF szMax;
+    CFX_SizeF szDef;
     m_pLoader->m_bSaveLineHeight = TRUE;
     m_pLoader->m_fLastPos = 0;
     CalcSize(szMax, szMax, szDef);
@@ -1045,7 +1043,7 @@ FX_BOOL CXFA_TextLayout::CalcSize(const CFX_SizeF& minSize,
     delete m_pTabstopContext;
     m_pTabstopContext = NULL;
   }
-  defaultSize.Set(m_fMaxWidth, fLinePos);
+  defaultSize = CFX_SizeF(m_fMaxWidth, fLinePos);
   return TRUE;
 }
 FX_BOOL CXFA_TextLayout::Layout(const CFX_SizeF& size, FX_FLOAT* fHeight) {
@@ -1082,8 +1080,7 @@ FX_BOOL CXFA_TextLayout::Layout(int32_t iBlock) {
   m_iLines = 0;
   FX_FLOAT fLinePos = 0;
   CXFA_Node* pNode = NULL;
-  CFX_SizeF szText;
-  szText.Set(m_pLoader->m_fWidth, m_pLoader->m_fHeight);
+  CFX_SizeF szText(m_pLoader->m_fWidth, m_pLoader->m_fHeight);
   int32_t iCount = m_Blocks.GetSize();
   int32_t iBlocksHeightCount = m_pLoader->m_BlocksHeight.GetSize();
   iBlocksHeightCount /= 2;

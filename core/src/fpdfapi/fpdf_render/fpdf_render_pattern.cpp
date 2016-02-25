@@ -768,11 +768,7 @@ static void DrawCoonPatchMeshes(FX_BOOL bTensor,
   for (int i = 1; i < 13; i++) {
     pPoints[i].m_Flag = FXPT_BEZIERTO;
   }
-  CFX_FloatPoint coords[16];
-  for (int i = 0; i < 16; i++) {
-    coords[i].Set(0.0f, 0.0f);
-  }
-
+  CFX_PointF coords[16];
   int point_count = bTensor ? 16 : 12;
   while (!stream.m_BitStream.IsEOF()) {
     FX_DWORD flag = stream.GetFlag();
@@ -780,11 +776,11 @@ static void DrawCoonPatchMeshes(FX_BOOL bTensor,
     if (flag) {
       iStartPoint = 4;
       iStartColor = 2;
-      CFX_FloatPoint tempCoords[4];
+      CFX_PointF tempCoords[4];
       for (i = 0; i < 4; i++) {
         tempCoords[i] = coords[(flag * 3 + i) % 12];
       }
-      FXSYS_memcpy(coords, tempCoords, sizeof(CFX_FloatPoint) * 4);
+      FXSYS_memcpy(coords, tempCoords, sizeof(tempCoords));
       Coon_Color tempColors[2];
       tempColors[0] = patch.patch_colors[flag];
       tempColors[1] = patch.patch_colors[(flag + 1) % 4];

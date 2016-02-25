@@ -778,7 +778,6 @@ void CXFA_WidgetAcc::CalcCaptionSize(CFX_SizeF& szCap) {
       szCap.x = fCapReserve;
     }
     CFX_SizeF minSize;
-    minSize.Set(0, 0);
     pCapTextLayout->CalcSize(minSize, szCap, szCap);
     if (bReserveExit) {
       bVert ? szCap.y = fCapReserve : szCap.x = fCapReserve;
@@ -814,7 +813,6 @@ void CXFA_WidgetAcc::CalcCaptionSize(CFX_SizeF& szCap) {
 }
 FX_BOOL CXFA_WidgetAcc::CalculateFieldAutoSize(CFX_SizeF& size) {
   CFX_SizeF szCap;
-  szCap.Set(0, 0);
   CalcCaptionSize(szCap);
   CFX_RectF rtUIMargin;
   GetUIMargin(rtUIMargin);
@@ -913,7 +911,6 @@ FX_BOOL CXFA_WidgetAcc::CalculateTextEditAutoSize(CFX_SizeF& size) {
   if (size.x > 0) {
     CFX_SizeF szOrz = size;
     CFX_SizeF szCap;
-    szCap.Set(0, 0);
     CalcCaptionSize(szCap);
     FX_BOOL bCapExit = szCap.x > 0.01 && szCap.y > 0.01;
     int32_t iCapPlacement = XFA_ATTRIBUTEENUM_Unknown;
@@ -975,7 +972,7 @@ FX_BOOL CXFA_WidgetAcc::CalculateImageAutoSize(CFX_SizeF& size) {
   if (!GetImageImage()) {
     LoadImageImage();
   }
-  size.Set(0, 0);
+  size.clear();
   if (CFX_DIBitmap* pBitmap = GetImageImage()) {
     CFX_RectF rtImage, rtFit;
     rtImage.Set(0, 0, 0, 0);
@@ -1006,7 +1003,7 @@ FX_BOOL CXFA_WidgetAcc::CalculateImageEditAutoSize(CFX_SizeF& size) {
   if (!GetImageEditImage()) {
     LoadImageEditImage();
   }
-  size.Set(0, 0);
+  size.clear();
   if (CFX_DIBitmap* pBitmap = GetImageEditImage()) {
     CFX_RectF rtImage, rtFit;
     rtImage.Set(0, 0, 0, 0);
@@ -1150,8 +1147,7 @@ void CXFA_WidgetAcc::StartWidgetLayout(FX_FLOAT& fCalcWidth,
 void CXFA_WidgetAcc::CalculateAccWidthAndHeight(XFA_ELEMENT eUIType,
                                                 FX_FLOAT& fWidth,
                                                 FX_FLOAT& fCalcHeight) {
-  CFX_SizeF sz;
-  sz.Set(fWidth, m_pLayoutData->m_fWidgetHeight);
+  CFX_SizeF sz(fWidth, m_pLayoutData->m_fWidgetHeight);
   switch (eUIType) {
     case XFA_ELEMENT_Barcode:
     case XFA_ELEMENT_ChoiceList:
