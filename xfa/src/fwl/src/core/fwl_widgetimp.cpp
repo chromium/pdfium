@@ -10,6 +10,7 @@
 
 #include "xfa/include/fwl/adapter/fwl_adapternative.h"
 #include "xfa/include/fwl/adapter/fwl_adapterthreadmgr.h"
+#include "xfa/include/fwl/adapter/fwl_adapterwidgetmgr.h"
 #include "xfa/include/fwl/basewidget/fwl_combobox.h"
 #include "xfa/include/fwl/basewidget/fwl_datetimepicker.h"
 #include "xfa/include/fwl/basewidget/fwl_menu.h"
