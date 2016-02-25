@@ -154,7 +154,7 @@ class CPDF_StreamContentParser {
  protected:
   using OpCodes =
       std::unordered_map<FX_DWORD, void (CPDF_StreamContentParser::*)()>;
-  static const OpCodes s_OpCodes;
+  static OpCodes InitializeOpCodes();
 
   void Handle_CloseFillStrokePath();
   void Handle_FillStrokePath();

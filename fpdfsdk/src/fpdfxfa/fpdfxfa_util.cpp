@@ -8,7 +8,7 @@
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
 
-std::vector<CFWL_TimerInfo*> CXFA_FWLAdapterTimerMgr::s_TimerArray;
+std::vector<CFWL_TimerInfo*>* CXFA_FWLAdapterTimerMgr::s_TimerArray = nullptr;
 
 FWL_ERR CXFA_FWLAdapterTimerMgr::Start(IFWL_Timer* pTimer,
                                        FX_DWORD dwElapse,
@@ -18,8 +18,10 @@ FWL_ERR CXFA_FWLAdapterTimerMgr::Start(IFWL_Timer* pTimer,
     return FWL_ERR_Indefinite;
 
   uint32_t uIDEvent = m_pEnv->FFI_SetTimer(dwElapse, TimerProc);
-  s_TimerArray.push_back(new CFWL_TimerInfo(uIDEvent, pTimer));
-  hTimer = reinterpret_cast<FWL_HTIMER>(s_TimerArray.back());
+  if (!s_TimerArray)
+    s_TimerArray = new std::vector<CFWL_TimerInfo*>;
+  s_TimerArray->push_back(new CFWL_TimerInfo(uIDEvent, pTimer));
+  hTimer = reinterpret_cast<FWL_HTIMER>(s_TimerArray->back());
   return FWL_ERR_Succeeded;
 }
 
@@ -29,16 +31,22 @@ FWL_ERR CXFA_FWLAdapterTimerMgr::Stop(FWL_HTIMER hTimer) {
 
   CFWL_TimerInfo* pInfo = reinterpret_cast<CFWL_TimerInfo*>(hTimer);
   m_pEnv->FFI_KillTimer(pInfo->uIDEvent);
-  auto it = std::find(s_TimerArray.begin(), s_TimerArray.end(), pInfo);
-  if (it != s_TimerArray.end()) {
-    s_TimerArray.erase(it);
-    delete pInfo;
+  if (s_TimerArray) {
+    auto it = std::find(s_TimerArray->begin(), s_TimerArray->end(), pInfo);
+    if (it != s_TimerArray->end()) {
+      s_TimerArray->erase(it);
+      delete pInfo;
+    }
   }
   return FWL_ERR_Succeeded;
 }
 
+// static
 void CXFA_FWLAdapterTimerMgr::TimerProc(int32_t idEvent) {
-  for (CFWL_TimerInfo* pInfo : s_TimerArray) {
+  if (!s_TimerArray)
+    return;
+
+  for (CFWL_TimerInfo* pInfo : *s_TimerArray) {
     if (pInfo->uIDEvent == idEvent) {
       pInfo->pTimer->Run(reinterpret_cast<FWL_HTIMER>(pInfo));
       break;

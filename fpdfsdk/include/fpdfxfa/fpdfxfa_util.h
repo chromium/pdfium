@@ -31,7 +31,7 @@ class CXFA_FWLAdapterTimerMgr : public IFWL_AdapterTimerMgr {
  protected:
   static void TimerProc(int32_t idEvent);
 
-  static std::vector<CFWL_TimerInfo*> s_TimerArray;
+  static std::vector<CFWL_TimerInfo*>* s_TimerArray;
   CPDFDoc_Environment* const m_pEnv;
 };
 
