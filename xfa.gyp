@@ -148,7 +148,6 @@
         "xfa/src/fee/src/fx_wordbreak/fx_wordbreakdata.cpp",
         "xfa/src/fee/src/fx_wordbreak/fx_wordbreak_impl.cpp",
         "xfa/src/fee/src/fx_wordbreak/fx_wordbreak_impl.h",
-        "xfa/src/fgas/include/fgas.h",
         "xfa/src/fgas/include/fx_alg.h",
         "xfa/src/fgas/include/fx_cpg.h",
         "xfa/src/fgas/include/fx_datetime.h",

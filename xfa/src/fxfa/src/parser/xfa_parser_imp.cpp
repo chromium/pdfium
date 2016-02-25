@@ -4,6 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/src/fxfa/src/parser/xfa_parser_imp.h"
+
+#include "xfa/src/fgas/include/fx_cpg.h"
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/common/xfa_docdata.h"
 #include "xfa/src/fxfa/src/common/xfa_doclayout.h"
@@ -15,7 +18,7 @@
 #include "xfa/src/fxfa/src/common/xfa_script.h"
 #include "xfa/src/fxfa/src/common/xfa_utils.h"
 #include "xfa/src/fxfa/src/parser/xfa_basic_imp.h"
-#include "xfa/src/fxfa/src/parser/xfa_parser_imp.h"
+
 IXFA_Parser* IXFA_Parser::Create(IXFA_ObjFactory* pFactory,
                                  FX_BOOL bDocumentParser) {
   return new CXFA_SimpleParser(pFactory, bDocumentParser);

@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/src/fxfa/src/app/xfa_fwltheme.h"
+
 #include "xfa/include/fwl/basewidget/fwl_barcode.h"
 #include "xfa/include/fwl/basewidget/fwl_caret.h"
 #include "xfa/include/fwl/basewidget/fwl_checkbox.h"
@@ -16,10 +18,10 @@
 #include "xfa/include/fwl/basewidget/fwl_pushbutton.h"
 #include "xfa/include/fwl/basewidget/fwl_scrollbar.h"
 #include "xfa/src/fdp/include/fde_tto.h"
+#include "xfa/src/fgas/include/fx_cpg.h"
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/app/xfa_ffapp.h"
 #include "xfa/src/fxfa/src/app/xfa_ffwidget.h"
-#include "xfa/src/fxfa/src/app/xfa_fwltheme.h"
 
 CXFA_FFWidget* XFA_ThemeGetOuterWidget(IFWL_Widget* pWidget) {
   IFWL_Widget* pOuter = pWidget;

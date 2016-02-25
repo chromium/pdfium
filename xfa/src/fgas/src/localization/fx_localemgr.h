@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FGAS_SRC_LOCALIZATION_FX_LOCALEMGR_H_
 #define XFA_SRC_FGAS_SRC_LOCALIZATION_FX_LOCALEMGR_H_
 
+#include "xfa/src/fgas/include/fx_locale.h"
+
 class CFX_LocaleMgr : public IFX_LocaleMgr {
  public:
   CFX_LocaleMgr(FX_WORD wDefLCID);

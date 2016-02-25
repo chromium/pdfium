@@ -4,10 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/src/fdp/src/css/fde_cssstylesheet.h"
+
 #include "xfa/src/fdp/include/fde_mem.h"
 #include "xfa/src/fdp/src/css/fde_cssdatatable.h"
-#include "xfa/src/fdp/src/css/fde_cssstylesheet.h"
 #include "xfa/src/fdp/src/css/fde_csssyntax.h"
+#include "xfa/src/fgas/include/fx_cpg.h"
 #include "xfa/src/foxitlib.h"
 
 IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadHTMLStandardStyleSheet() {

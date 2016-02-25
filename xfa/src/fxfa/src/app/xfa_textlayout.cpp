@@ -4,13 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/src/fxfa/src/app/xfa_textlayout.h"
+
 #include <algorithm>
 
+#include "xfa/src/fgas/include/fx_alg.h"
+#include "xfa/src/fgas/include/fx_cpg.h"
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/app/xfa_ffapp.h"
 #include "xfa/src/fxfa/src/app/xfa_ffdoc.h"
 #include "xfa/src/fxfa/src/app/xfa_fontmgr.h"
-#include "xfa/src/fxfa/src/app/xfa_textlayout.h"
 
 CXFA_CSSTagProvider::~CXFA_CSSTagProvider() {
   FX_POSITION pos = m_Attributes.GetStartPosition();

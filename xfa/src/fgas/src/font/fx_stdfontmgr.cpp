@@ -4,10 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/src/fgas/src/font/fx_stdfontmgr.h"
+
 #include "core/include/fxcrt/fx_stream.h"
+#include "xfa/src/fgas/include/fx_cpg.h"
 #include "xfa/src/fgas/src/fgas_base.h"
 #include "xfa/src/fgas/src/font/fx_fontutils.h"
-#include "xfa/src/fgas/src/font/fx_stdfontmgr.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 IFX_FontMgr* IFX_FontMgr::Create(FX_LPEnumAllFonts pEnumerator,

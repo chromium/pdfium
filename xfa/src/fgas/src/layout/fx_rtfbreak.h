@@ -8,6 +8,7 @@
 #define XFA_SRC_FGAS_SRC_LAYOUT_FX_RTFBREAK_H_
 
 #include "core/include/fxcrt/fx_arb.h"
+#include "xfa/src/fgas/include/fx_rbk.h"
 #include "xfa/src/fgas/src/layout/fx_unicode.h"
 
 class CFX_RTFLine;

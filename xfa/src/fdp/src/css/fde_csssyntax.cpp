@@ -4,19 +4,25 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/fdp/src/css/fde_cssdatatable.h"
 #include "xfa/src/fdp/src/css/fde_csssyntax.h"
+
+#include "xfa/src/fdp/src/css/fde_cssdatatable.h"
+#include "xfa/src/fgas/include/fx_cpg.h"
 #include "xfa/src/foxitlib.h"
+
 #ifdef _cplusplus
 extern "C" {
 #endif
+
 inline FX_BOOL FDE_IsSelectorStart(FX_WCHAR wch) {
   return wch == '.' || wch == '#' || wch == '*' || (wch >= 'a' && wch <= 'z') ||
          (wch >= 'A' && wch <= 'Z');
 }
+
 #ifdef _cplusplus
 };
 #endif
+
 IFDE_CSSSyntaxParser* IFDE_CSSSyntaxParser::Create() {
   return new CFDE_CSSSyntaxParser;
 }

@@ -4,9 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/src/fgas/src/font/fx_gefont.h"
+
+#include "xfa/src/fgas/include/fx_cpg.h"
 #include "xfa/src/fgas/src/fgas_base.h"
 #include "xfa/src/fgas/src/font/fx_fontutils.h"
-#include "xfa/src/fgas/src/font/fx_gefont.h"
 
 IFX_Font* IFX_Font::LoadFont(const FX_WCHAR* pszFontFamily,
                              FX_DWORD dwFontStyles,

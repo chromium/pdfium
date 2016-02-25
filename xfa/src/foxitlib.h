@@ -13,6 +13,5 @@
 #include "xfa/src/fee/include/fx_wordbreak.h"
 #include "xfa/src/fee/include/ifde_txtedtengine.h"
 #include "xfa/src/fee/include/ifde_txtedtpage.h"
-#include "xfa/src/fgas/include/fgas.h"
 
 #endif  // XFA_SRC_FOXITLIB_H_

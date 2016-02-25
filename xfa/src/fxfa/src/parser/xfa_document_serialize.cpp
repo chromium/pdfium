@@ -4,6 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/src/fxfa/src/parser/xfa_document_serialize.h"
+
+#include "xfa/src/fgas/include/fx_cpg.h"
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/common/xfa_docdata.h"
 #include "xfa/src/fxfa/src/common/xfa_doclayout.h"
@@ -14,7 +17,7 @@
 #include "xfa/src/fxfa/src/common/xfa_parser.h"
 #include "xfa/src/fxfa/src/common/xfa_script.h"
 #include "xfa/src/fxfa/src/common/xfa_utils.h"
-#include "xfa/src/fxfa/src/parser/xfa_document_serialize.h"
+
 IXFA_PacketImport* IXFA_PacketImport::Create(CXFA_Document* pDocument) {
   return new CXFA_DataImporter(pDocument);
 }

@@ -7,7 +7,10 @@
 #ifndef XFA_SRC_FGAS_SRC_LOCALIZATION_FX_LOCALEIMP_H_
 #define XFA_SRC_FGAS_SRC_LOCALIZATION_FX_LOCALEIMP_H_
 
+#include "xfa/src/fgas/include/fx_locale.h"
+
 class CFX_LCNumeric;
+
 class CFX_Locale : public IFX_Locale {
  public:
   CFX_Locale(CXML_Element* pLocaleData);
@@ -40,6 +43,7 @@ class CFX_Locale : public IFX_Locale {
   virtual ~CFX_Locale();
   CXML_Element* m_pElement;
 };
+
 class CFX_FormatString : public IFX_FormatString {
  public:
   CFX_FormatString(IFX_LocaleMgr* pLocaleMgr, FX_BOOL bUseLCID);

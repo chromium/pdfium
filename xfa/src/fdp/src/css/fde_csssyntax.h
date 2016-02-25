@@ -7,6 +7,10 @@
 #ifndef XFA_SRC_FDP_SRC_CSS_FDE_CSSSYNTAX_H_
 #define XFA_SRC_FDP_SRC_CSS_FDE_CSSSYNTAX_H_
 
+#include "xfa/src/fdp/include/fde_css.h"
+#include "xfa/src/fgas/include/fx_mem.h"
+#include "xfa/src/fgas/include/fx_stm.h"
+
 class CFDE_CSSTextBuf : public CFX_Target {
  public:
   CFDE_CSSTextBuf();
@@ -51,8 +55,10 @@ class CFDE_CSSTextBuf : public CFX_Target {
   int32_t m_iDatLen;
   int32_t m_iDatPos;
 };
+
 #define FDE_CSSSYNTAXCHECK_AllowCharset 1
 #define FDE_CSSSYNTAXCHECK_AllowImport 2
+
 enum FDE_CSSSYNTAXMODE {
   FDE_CSSSYNTAXMODE_RuleSet,
   FDE_CSSSYNTAXMODE_Comment,
@@ -67,6 +73,7 @@ enum FDE_CSSSYNTAXMODE {
   FDE_CSSSYNTAXMODE_PropertyName,
   FDE_CSSSYNTAXMODE_PropertyValue,
 };
+
 class CFDE_CSSSyntaxParser : public IFDE_CSSSyntaxParser, public CFX_Target {
  public:
   CFDE_CSSSyntaxParser();

@@ -7,9 +7,13 @@
 #ifndef XFA_SRC_FXFA_SRC_PARSER_XFA_LAYOUT_ITEMLAYOUT_H_
 #define XFA_SRC_FXFA_SRC_PARSER_XFA_LAYOUT_ITEMLAYOUT_H_
 
-#include "float.h"
+#include <float.h>
 
 #include <list>
+
+#include "core/include/fxcrt/fx_basic.h"
+#include "xfa/src/fxfa/src/common/xfa_doclayout.h"
+#include "xfa/src/fxfa/src/parser/xfa_document_layout_imp.h"
 
 #define XFA_LAYOUT_INVALIDNODE ((CXFA_Node*)(intptr_t)-1)
 #define XFA_LAYOUT_FLOAT_PERCISION (0.0005f)

@@ -4,7 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/src/fgas/include/fx_cpg.h"
+#include "xfa/src/fgas/include/fx_lgg.h"
 #include "xfa/src/fgas/src/fgas_base.h"
+
 static const FX_CHARSET_MAP g_FXCharset2CodePageTable[] = {
     {0, 1252},   {1, 0},      {2, 42},     {77, 10000}, {78, 10001},
     {79, 10003}, {80, 10008}, {81, 10002}, {83, 10005}, {84, 10004},

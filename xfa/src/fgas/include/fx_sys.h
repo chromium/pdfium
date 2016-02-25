@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FGAS_INCLUDE_FX_SYS_H_
 #define XFA_SRC_FGAS_INCLUDE_FX_SYS_H_
 
+#include "core/include/fxcrt/fx_system.h"
+
 #define FX_RAD2DEG(r) ((r)*180.0f / FX_PI)
 #define FX_DEG2RAD(a) ((a)*FX_PI / 180.0f)
 

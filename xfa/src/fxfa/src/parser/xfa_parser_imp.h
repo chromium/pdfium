@@ -7,8 +7,12 @@
 #ifndef XFA_SRC_FXFA_SRC_PARSER_XFA_PARSER_IMP_H_
 #define XFA_SRC_FXFA_SRC_PARSER_XFA_PARSER_IMP_H_
 
+#include "xfa/src/fxfa/src/common/xfa_parser.h"
+
 #define _XFA_VERIFY_Checksum_
+
 class CXFA_XMLParser;
+
 class CXFA_SimpleParser : public IXFA_Parser {
  public:
   CXFA_SimpleParser(IXFA_ObjFactory* pFactory, FX_BOOL bDocumentParser = FALSE);
@@ -77,6 +81,7 @@ class CXFA_SimpleParser : public IXFA_Parser {
   FX_BOOL m_bDocumentParser;
   friend class CXFA_DocumentParser;
 };
+
 class CXFA_DocumentParser : public IXFA_DocParser {
  public:
   CXFA_DocumentParser(IXFA_Notify* pNotify);
@@ -104,6 +109,7 @@ class CXFA_DocumentParser : public IXFA_DocParser {
   CXFA_Document* m_pDocument;
 };
 typedef CFX_StackTemplate<IFDE_XMLNode*> CXFA_XMLNodeStack;
+
 class CXFA_XMLParser : public IFDE_XMLParser {
  public:
   CXFA_XMLParser(IFDE_XMLNode* pRoot, IFX_Stream* pStream);

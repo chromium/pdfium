@@ -21,6 +21,7 @@
 #include "xfa/include/fwl/theme/pushbuttontp.h"
 #include "xfa/include/fwl/theme/scrollbartp.h"
 #include "xfa/include/fwl/theme/widgettp.h"
+#include "xfa/src/fxfa/src/app/xfa_ffapp.h"
 
 class CXFA_FWLTheme : public IFWL_ThemeProvider {
  public:

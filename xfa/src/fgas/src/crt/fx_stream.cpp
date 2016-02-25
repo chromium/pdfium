@@ -4,10 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/src/fgas/src/crt/fx_stream.h"
+
 #include <algorithm>
 
-#include "xfa/src/fgas/src/crt/fx_stream.h"
+#include "xfa/src/fgas/include/fx_cpg.h"
+#include "xfa/src/fgas/include/fx_sys.h"
 #include "xfa/src/fgas/src/fgas_base.h"
+
 IFX_Stream* IFX_Stream::CreateStream(IFX_BufferRead* pBufferRead,
                                      FX_DWORD dwAccess,
                                      int32_t iFileSize,

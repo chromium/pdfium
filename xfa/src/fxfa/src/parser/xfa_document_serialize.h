@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXFA_SRC_PARSER_XFA_DOCUMENT_SERIALIZE_H_
 #define XFA_SRC_FXFA_SRC_PARSER_XFA_DOCUMENT_SERIALIZE_H_
 
+#include "xfa/src/fxfa/src/common/xfa_docdata.h"
+
 class CXFA_DataImporter : public IXFA_PacketImport {
  public:
   CXFA_DataImporter(CXFA_Document* pDocument);
@@ -16,6 +18,7 @@ class CXFA_DataImporter : public IXFA_PacketImport {
  protected:
   CXFA_Document* m_pDocument;
 };
+
 class CXFA_DataExporter : public IXFA_PacketExport {
  public:
   CXFA_DataExporter(CXFA_Document* pDocument);

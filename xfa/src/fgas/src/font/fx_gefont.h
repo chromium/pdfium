@@ -7,10 +7,11 @@
 #ifndef XFA_SRC_FGAS_SRC_FONT_FX_GEFONT_H_
 #define XFA_SRC_FGAS_SRC_FONT_FX_GEFONT_H_
 
-class CFX_GEFontMgr;
-#ifndef FXFONT_SUBST_ITALIC
+#include "xfa/src/fgas/include/fx_fnt.h"
+#include "xfa/src/fgas/include/fx_utl.h"
+
 #define FXFONT_SUBST_ITALIC 0x02
-#endif
+
 class CFX_GEFont : public IFX_Font {
  public:
   CFX_GEFont(const CFX_GEFont& src, FX_DWORD dwFontStyles);
