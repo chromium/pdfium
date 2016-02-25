@@ -13,30 +13,32 @@ namespace {
 const size_t kBmpCoreHeaderSize = 12;
 const size_t kBmpInfoHeaderSize = 40;
 
-}  // namespace
-
-FX_DWORD _GetDWord_LSBFirst(uint8_t* p) {
+// TODO(thestig): Replace with FXDWORD_GET_LSBFIRST?
+FX_DWORD GetDWord_LSBFirst(uint8_t* p) {
   return p[0] | (p[1] << 8) | (p[2] << 16) | (p[3] << 24);
 }
-FX_WORD _GetWord_LSBFirst(uint8_t* p) {
-  return p[0] | (p[1] << 8);
-}
-void _SetDWord_LSBFirst(uint8_t* p, FX_DWORD v) {
+
+void SetDWord_LSBFirst(uint8_t* p, FX_DWORD v) {
   p[0] = (uint8_t)v;
   p[1] = (uint8_t)(v >> 8);
   p[2] = (uint8_t)(v >> 16);
   p[3] = (uint8_t)(v >> 24);
 }
-void _SetWord_LSBFirst(uint8_t* p, FX_WORD v) {
+}  // namespace
+
+FX_WORD GetWord_LSBFirst(uint8_t* p) {
+  return p[0] | (p[1] << 8);
+}
+void SetWord_LSBFirst(uint8_t* p, FX_WORD v) {
   p[0] = (uint8_t)v;
   p[1] = (uint8_t)(v >> 8);
 }
-void _bmp_error(bmp_decompress_struct_p bmp_ptr, const FX_CHAR* err_msg) {
-  if (bmp_ptr && bmp_ptr->_bmp_error_fn) {
-    bmp_ptr->_bmp_error_fn(bmp_ptr, err_msg);
+void bmp_error(bmp_decompress_struct_p bmp_ptr, const FX_CHAR* err_msg) {
+  if (bmp_ptr && bmp_ptr->bmp_error_fn) {
+    bmp_ptr->bmp_error_fn(bmp_ptr, err_msg);
   }
 }
-bmp_decompress_struct_p _bmp_create_decompress() {
+bmp_decompress_struct_p bmp_create_decompress() {
   bmp_decompress_struct_p bmp_ptr = FX_Alloc(bmp_decompress_struct, 1);
   if (bmp_ptr == NULL) {
     return NULL;
@@ -46,7 +48,7 @@ bmp_decompress_struct_p _bmp_create_decompress() {
   bmp_ptr->bmp_header_ptr = FX_Alloc(BmpFileHeader, 1);
   return bmp_ptr;
 }
-void _bmp_destroy_decompress(bmp_decompress_struct_pp bmp_ptr_ptr) {
+void bmp_destroy_decompress(bmp_decompress_struct_pp bmp_ptr_ptr) {
   if (bmp_ptr_ptr == NULL || *bmp_ptr_ptr == NULL) {
     return;
   }
@@ -59,7 +61,7 @@ void _bmp_destroy_decompress(bmp_decompress_struct_pp bmp_ptr_ptr) {
   FX_Free(bmp_ptr->bmp_header_ptr);
   FX_Free(bmp_ptr);
 }
-int32_t _bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
+int32_t bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
   if (bmp_ptr == NULL) {
     return 0;
   }
@@ -67,16 +69,16 @@ int32_t _bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
   if (bmp_ptr->decode_status == BMP_D_STATUS_HEADER) {
     ASSERT(sizeof(BmpFileHeader) == 14);
     BmpFileHeader* bmp_header_ptr = NULL;
-    if (_bmp_read_data(bmp_ptr, (uint8_t**)&bmp_header_ptr, 14) == NULL) {
+    if (bmp_read_data(bmp_ptr, (uint8_t**)&bmp_header_ptr, 14) == NULL) {
       return 2;
     }
     bmp_ptr->bmp_header_ptr->bfType =
-        _GetWord_LSBFirst((uint8_t*)&bmp_header_ptr->bfType);
+        GetWord_LSBFirst((uint8_t*)&bmp_header_ptr->bfType);
     bmp_ptr->bmp_header_ptr->bfOffBits =
-        _GetDWord_LSBFirst((uint8_t*)&bmp_header_ptr->bfOffBits);
-    bmp_ptr->data_size = _GetDWord_LSBFirst((uint8_t*)&bmp_header_ptr->bfSize);
+        GetDWord_LSBFirst((uint8_t*)&bmp_header_ptr->bfOffBits);
+    bmp_ptr->data_size = GetDWord_LSBFirst((uint8_t*)&bmp_header_ptr->bfSize);
     if (bmp_ptr->bmp_header_ptr->bfType != BMP_SIGNATURE) {
-      _bmp_error(bmp_ptr, "Not A Bmp Image");
+      bmp_error(bmp_ptr, "Not A Bmp Image");
       return 0;
     }
     if (bmp_ptr->avail_in < sizeof(FX_DWORD)) {
@@ -84,7 +86,7 @@ int32_t _bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
       return 2;
     }
     bmp_ptr->img_ifh_size =
-        _GetDWord_LSBFirst(bmp_ptr->next_in + bmp_ptr->skip_size);
+        GetDWord_LSBFirst(bmp_ptr->next_in + bmp_ptr->skip_size);
     bmp_ptr->pal_type = 0;
     static_assert(sizeof(BmpCoreHeader) == kBmpCoreHeaderSize,
                   "BmpCoreHeader has wrong size");
@@ -94,40 +96,40 @@ int32_t _bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
       case kBmpCoreHeaderSize: {
         bmp_ptr->pal_type = 1;
         BmpCoreHeaderPtr bmp_core_header_ptr = NULL;
-        if (_bmp_read_data(bmp_ptr, (uint8_t**)&bmp_core_header_ptr,
-                           bmp_ptr->img_ifh_size) == NULL) {
+        if (bmp_read_data(bmp_ptr, (uint8_t**)&bmp_core_header_ptr,
+                          bmp_ptr->img_ifh_size) == NULL) {
           bmp_ptr->skip_size = skip_size_org;
           return 2;
         }
-        bmp_ptr->width = (FX_DWORD)_GetWord_LSBFirst(
-            (uint8_t*)&bmp_core_header_ptr->bcWidth);
-        bmp_ptr->height = (FX_DWORD)_GetWord_LSBFirst(
-            (uint8_t*)&bmp_core_header_ptr->bcHeight);
+        bmp_ptr->width =
+            GetWord_LSBFirst((uint8_t*)&bmp_core_header_ptr->bcWidth);
+        bmp_ptr->height =
+            GetWord_LSBFirst((uint8_t*)&bmp_core_header_ptr->bcHeight);
         bmp_ptr->bitCounts =
-            _GetWord_LSBFirst((uint8_t*)&bmp_core_header_ptr->bcBitCount);
+            GetWord_LSBFirst((uint8_t*)&bmp_core_header_ptr->bcBitCount);
         bmp_ptr->compress_flag = BMP_RGB;
         bmp_ptr->imgTB_flag = FALSE;
       } break;
       case kBmpInfoHeaderSize: {
         BmpInfoHeaderPtr bmp_info_header_ptr = NULL;
-        if (_bmp_read_data(bmp_ptr, (uint8_t**)&bmp_info_header_ptr,
-                           bmp_ptr->img_ifh_size) == NULL) {
+        if (bmp_read_data(bmp_ptr, (uint8_t**)&bmp_info_header_ptr,
+                          bmp_ptr->img_ifh_size) == NULL) {
           bmp_ptr->skip_size = skip_size_org;
           return 2;
         }
         bmp_ptr->width =
-            _GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biWidth);
+            GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biWidth);
         bmp_ptr->height =
-            _GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biHeight);
+            GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biHeight);
         bmp_ptr->bitCounts =
-            _GetWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biBitCount);
+            GetWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biBitCount);
         bmp_ptr->compress_flag =
-            _GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biCompression);
+            GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biCompression);
         bmp_ptr->color_used =
-            _GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biClrUsed);
-        bmp_ptr->dpi_x = (int32_t)_GetDWord_LSBFirst(
+            GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biClrUsed);
+        bmp_ptr->dpi_x = (int32_t)GetDWord_LSBFirst(
             (uint8_t*)&bmp_info_header_ptr->biXPelsPerMeter);
-        bmp_ptr->dpi_y = (int32_t)_GetDWord_LSBFirst(
+        bmp_ptr->dpi_y = (int32_t)GetDWord_LSBFirst(
             (uint8_t*)&bmp_info_header_ptr->biYPelsPerMeter);
         if (bmp_ptr->height < 0) {
           bmp_ptr->height = -bmp_ptr->height;
@@ -138,27 +140,26 @@ int32_t _bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
         if (bmp_ptr->img_ifh_size >
             std::min(kBmpInfoHeaderSize, sizeof(BmpInfoHeader))) {
           BmpInfoHeaderPtr bmp_info_header_ptr = NULL;
-          if (_bmp_read_data(bmp_ptr, (uint8_t**)&bmp_info_header_ptr,
-                             bmp_ptr->img_ifh_size) == NULL) {
+          if (bmp_read_data(bmp_ptr, (uint8_t**)&bmp_info_header_ptr,
+                            bmp_ptr->img_ifh_size) == NULL) {
             bmp_ptr->skip_size = skip_size_org;
             return 2;
           }
           FX_WORD biPlanes;
           bmp_ptr->width =
-              _GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biWidth);
+              GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biWidth);
           bmp_ptr->height =
-              _GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biHeight);
+              GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biHeight);
           bmp_ptr->bitCounts =
-              _GetWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biBitCount);
+              GetWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biBitCount);
           bmp_ptr->compress_flag =
-              _GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biCompression);
+              GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biCompression);
           bmp_ptr->color_used =
-              _GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biClrUsed);
-          biPlanes =
-              _GetWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biPlanes);
-          bmp_ptr->dpi_x = _GetDWord_LSBFirst(
+              GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biClrUsed);
+          biPlanes = GetWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biPlanes);
+          bmp_ptr->dpi_x = GetDWord_LSBFirst(
               (uint8_t*)&bmp_info_header_ptr->biXPelsPerMeter);
-          bmp_ptr->dpi_y = _GetDWord_LSBFirst(
+          bmp_ptr->dpi_y = GetDWord_LSBFirst(
               (uint8_t*)&bmp_info_header_ptr->biYPelsPerMeter);
           if (bmp_ptr->height < 0) {
             bmp_ptr->height = -bmp_ptr->height;
@@ -169,7 +170,7 @@ int32_t _bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
             break;
           }
         }
-        _bmp_error(bmp_ptr, "Unsupported Bmp File");
+        bmp_error(bmp_ptr, "Unsupported Bmp File");
         return 0;
       }
     }
@@ -182,18 +183,18 @@ int32_t _bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
       case 16:
       case 24: {
         if (bmp_ptr->color_used > ((FX_DWORD)1) << bmp_ptr->bitCounts) {
-          _bmp_error(bmp_ptr, "The Bmp File Is Corrupt");
+          bmp_error(bmp_ptr, "The Bmp File Is Corrupt");
           return 0;
         }
       }
       case 32: {
         if (bmp_ptr->width <= 0 || bmp_ptr->compress_flag > BMP_BITFIELDS) {
-          _bmp_error(bmp_ptr, "The Bmp File Is Corrupt");
+          bmp_error(bmp_ptr, "The Bmp File Is Corrupt");
           return 0;
         }
       } break;
       default:
-        _bmp_error(bmp_ptr, "The Bmp File Is Corrupt");
+        bmp_error(bmp_ptr, "The Bmp File Is Corrupt");
         return 0;
     }
     bmp_ptr->src_row_bytes = BMP_WIDTHBYTES(bmp_ptr->width, bmp_ptr->bitCounts);
@@ -217,47 +218,40 @@ int32_t _bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
     FX_Free(bmp_ptr->out_row_buffer);
     bmp_ptr->out_row_buffer = FX_Alloc(uint8_t, bmp_ptr->out_row_bytes);
     FXSYS_memset(bmp_ptr->out_row_buffer, 0, bmp_ptr->out_row_bytes);
-    _bmp_save_decoding_status(bmp_ptr, BMP_D_STATUS_PAL);
+    bmp_save_decoding_status(bmp_ptr, BMP_D_STATUS_PAL);
   }
   if (bmp_ptr->decode_status == BMP_D_STATUS_PAL) {
     skip_size_org = bmp_ptr->skip_size;
-#ifdef BMP_SUPPORT_BITFIELD
     if (bmp_ptr->compress_flag == BMP_BITFIELDS) {
       if (bmp_ptr->bitCounts != 16 && bmp_ptr->bitCounts != 32) {
-        _bmp_error(bmp_ptr, "The Bmp File Is Corrupt");
+        bmp_error(bmp_ptr, "The Bmp File Is Corrupt");
         return 0;
       }
       FX_DWORD* mask;
-      if (_bmp_read_data(bmp_ptr, (uint8_t**)&mask, 3 * sizeof(FX_DWORD)) ==
+      if (bmp_read_data(bmp_ptr, (uint8_t**)&mask, 3 * sizeof(FX_DWORD)) ==
           NULL) {
         bmp_ptr->skip_size = skip_size_org;
         return 2;
       }
-      bmp_ptr->mask_red = _GetDWord_LSBFirst((uint8_t*)&mask[0]);
-      bmp_ptr->mask_green = _GetDWord_LSBFirst((uint8_t*)&mask[1]);
-      bmp_ptr->mask_blue = _GetDWord_LSBFirst((uint8_t*)&mask[2]);
+      bmp_ptr->mask_red = GetDWord_LSBFirst((uint8_t*)&mask[0]);
+      bmp_ptr->mask_green = GetDWord_LSBFirst((uint8_t*)&mask[1]);
+      bmp_ptr->mask_blue = GetDWord_LSBFirst((uint8_t*)&mask[2]);
       if (bmp_ptr->mask_red & bmp_ptr->mask_green ||
           bmp_ptr->mask_red & bmp_ptr->mask_blue ||
           bmp_ptr->mask_green & bmp_ptr->mask_blue) {
-        _bmp_error(bmp_ptr, "The Bitfield Bmp File Is Corrupt");
+        bmp_error(bmp_ptr, "The Bitfield Bmp File Is Corrupt");
         return 0;
       }
       if (bmp_ptr->bmp_header_ptr->bfOffBits < 26 + bmp_ptr->img_ifh_size) {
         bmp_ptr->bmp_header_ptr->bfOffBits = 26 + bmp_ptr->img_ifh_size;
       }
-      _bmp_save_decoding_status(bmp_ptr, BMP_D_STATUS_DATA_PRE);
+      bmp_save_decoding_status(bmp_ptr, BMP_D_STATUS_DATA_PRE);
       return 1;
     } else if (bmp_ptr->bitCounts == 16) {
       bmp_ptr->mask_red = 0x7C00;
       bmp_ptr->mask_green = 0x03E0;
       bmp_ptr->mask_blue = 0x001F;
     }
-#else
-    if (bmp_ptr->compress_flag == BMP_BITFIELDS || bmp_ptr->bitCounts == 16) {
-      _bmp_error(bmp_ptr, "Unsupported Bitfield Bmp File");
-      return 0;
-    }
-#endif
     bmp_ptr->pal_num = 0;
     if (bmp_ptr->bitCounts < 16) {
       bmp_ptr->pal_num = 1 << bmp_ptr->bitCounts;
@@ -266,7 +260,7 @@ int32_t _bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
       }
       uint8_t* src_pal_ptr = NULL;
       FX_DWORD src_pal_size = bmp_ptr->pal_num * (bmp_ptr->pal_type ? 3 : 4);
-      if (_bmp_read_data(bmp_ptr, (uint8_t**)&src_pal_ptr, src_pal_size) ==
+      if (bmp_read_data(bmp_ptr, (uint8_t**)&src_pal_ptr, src_pal_size) ==
           NULL) {
         bmp_ptr->skip_size = skip_size_org;
         return 2;
@@ -295,44 +289,44 @@ int32_t _bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
           14 + bmp_ptr->img_ifh_size +
           bmp_ptr->pal_num * (bmp_ptr->pal_type ? 3 : 4);
     }
-    _bmp_save_decoding_status(bmp_ptr, BMP_D_STATUS_DATA_PRE);
+    bmp_save_decoding_status(bmp_ptr, BMP_D_STATUS_DATA_PRE);
   }
   return 1;
 }
-int32_t _bmp_decode_image(bmp_decompress_struct_p bmp_ptr) {
+int32_t bmp_decode_image(bmp_decompress_struct_p bmp_ptr) {
   if (bmp_ptr->decode_status == BMP_D_STATUS_DATA_PRE) {
     bmp_ptr->avail_in = 0;
-    if (!bmp_ptr->_bmp_get_data_position_fn(
+    if (!bmp_ptr->bmp_get_data_position_fn(
             bmp_ptr, bmp_ptr->bmp_header_ptr->bfOffBits)) {
       bmp_ptr->decode_status = BMP_D_STATUS_TAIL;
-      _bmp_error(bmp_ptr, "The Bmp File Is Corrupt, Unexpected Stream Offset");
+      bmp_error(bmp_ptr, "The Bmp File Is Corrupt, Unexpected Stream Offset");
       return 0;
     }
     bmp_ptr->row_num = 0;
-    _bmp_save_decoding_status(bmp_ptr, BMP_D_STATUS_DATA);
+    bmp_save_decoding_status(bmp_ptr, BMP_D_STATUS_DATA);
   }
   if (bmp_ptr->decode_status == BMP_D_STATUS_DATA) {
     switch (bmp_ptr->compress_flag) {
       case BMP_RGB:
       case BMP_BITFIELDS:
-        return _bmp_decode_rgb(bmp_ptr);
+        return bmp_decode_rgb(bmp_ptr);
       case BMP_RLE8:
-        return _bmp_decode_rle8(bmp_ptr);
+        return bmp_decode_rle8(bmp_ptr);
       case BMP_RLE4:
-        return _bmp_decode_rle4(bmp_ptr);
+        return bmp_decode_rle4(bmp_ptr);
     }
   }
-  _bmp_error(bmp_ptr, "Any Uncontrol Error");
+  bmp_error(bmp_ptr, "Any Uncontrol Error");
   return 0;
 }
-int32_t _bmp_decode_rgb(bmp_decompress_struct_p bmp_ptr) {
+int32_t bmp_decode_rgb(bmp_decompress_struct_p bmp_ptr) {
   uint8_t* row_buf = bmp_ptr->out_row_buffer;
   uint8_t* des_buf = NULL;
   while (bmp_ptr->row_num < bmp_ptr->height) {
-    if (_bmp_read_data(bmp_ptr, &des_buf, bmp_ptr->src_row_bytes) == NULL) {
+    if (bmp_read_data(bmp_ptr, &des_buf, bmp_ptr->src_row_bytes) == NULL) {
       return 2;
     }
-    _bmp_save_decoding_status(bmp_ptr, BMP_D_STATUS_DATA);
+    bmp_save_decoding_status(bmp_ptr, BMP_D_STATUS_DATA);
     switch (bmp_ptr->bitCounts) {
       case 1: {
         for (int32_t col = 0; col < bmp_ptr->width; col++) {
@@ -345,7 +339,6 @@ int32_t _bmp_decode_rgb(bmp_decompress_struct_p bmp_ptr) {
                                     : ((des_buf[col >> 1] & 0xF0) >> 4);
         }
       } break;
-#ifdef BMP_SUPPORT_BITFIELD
       case 16: {
         FX_WORD* buf = (FX_WORD*)des_buf;
         uint8_t blue_bits = 0;
@@ -368,13 +361,12 @@ int32_t _bmp_decode_rgb(bmp_decompress_struct_p bmp_ptr) {
         green_bits -= 8;
         red_bits -= 8;
         for (int32_t col = 0; col < bmp_ptr->width; col++) {
-          *buf = _GetWord_LSBFirst((uint8_t*)buf);
+          *buf = GetWord_LSBFirst((uint8_t*)buf);
           *row_buf++ = (uint8_t)((*buf & bmp_ptr->mask_blue) << blue_bits);
           *row_buf++ = (uint8_t)((*buf & bmp_ptr->mask_green) >> green_bits);
           *row_buf++ = (uint8_t)((*buf++ & bmp_ptr->mask_red) >> red_bits);
         }
       } break;
-#endif
       case 8:
       case 24:
       case 32:
@@ -382,61 +374,61 @@ int32_t _bmp_decode_rgb(bmp_decompress_struct_p bmp_ptr) {
         break;
     }
     row_buf = bmp_ptr->out_row_buffer;
-    bmp_ptr->_bmp_get_row_fn(bmp_ptr,
-                             bmp_ptr->imgTB_flag
-                                 ? bmp_ptr->row_num++
-                                 : (bmp_ptr->height - 1 - bmp_ptr->row_num++),
-                             bmp_ptr->out_row_buffer);
+    bmp_ptr->bmp_get_row_fn(bmp_ptr,
+                            bmp_ptr->imgTB_flag
+                                ? bmp_ptr->row_num++
+                                : (bmp_ptr->height - 1 - bmp_ptr->row_num++),
+                            bmp_ptr->out_row_buffer);
   }
-  _bmp_save_decoding_status(bmp_ptr, BMP_D_STATUS_TAIL);
+  bmp_save_decoding_status(bmp_ptr, BMP_D_STATUS_TAIL);
   return 1;
 }
-int32_t _bmp_decode_rle8(bmp_decompress_struct_p bmp_ptr) {
+int32_t bmp_decode_rle8(bmp_decompress_struct_p bmp_ptr) {
   uint8_t* first_byte_ptr = NULL;
   uint8_t* second_byte_ptr = NULL;
   bmp_ptr->col_num = 0;
   while (TRUE) {
     FX_DWORD skip_size_org = bmp_ptr->skip_size;
-    if (_bmp_read_data(bmp_ptr, &first_byte_ptr, 1) == NULL) {
+    if (bmp_read_data(bmp_ptr, &first_byte_ptr, 1) == NULL) {
       return 2;
     }
     switch (*first_byte_ptr) {
       case RLE_MARKER: {
-        if (_bmp_read_data(bmp_ptr, &first_byte_ptr, 1) == NULL) {
+        if (bmp_read_data(bmp_ptr, &first_byte_ptr, 1) == NULL) {
           bmp_ptr->skip_size = skip_size_org;
           return 2;
         }
         switch (*first_byte_ptr) {
           case RLE_EOL: {
             if (bmp_ptr->row_num >= bmp_ptr->height) {
-              _bmp_save_decoding_status(bmp_ptr, BMP_D_STATUS_TAIL);
-              _bmp_error(bmp_ptr, "The Bmp File Is Corrupt");
+              bmp_save_decoding_status(bmp_ptr, BMP_D_STATUS_TAIL);
+              bmp_error(bmp_ptr, "The Bmp File Is Corrupt");
               return 0;
             }
-            bmp_ptr->_bmp_get_row_fn(
+            bmp_ptr->bmp_get_row_fn(
                 bmp_ptr, bmp_ptr->imgTB_flag
                              ? bmp_ptr->row_num++
                              : (bmp_ptr->height - 1 - bmp_ptr->row_num++),
                 bmp_ptr->out_row_buffer);
             bmp_ptr->col_num = 0;
             FXSYS_memset(bmp_ptr->out_row_buffer, 0, bmp_ptr->out_row_bytes);
-            _bmp_save_decoding_status(bmp_ptr, BMP_D_STATUS_DATA);
+            bmp_save_decoding_status(bmp_ptr, BMP_D_STATUS_DATA);
             continue;
           }
           case RLE_EOI: {
             if (bmp_ptr->row_num < bmp_ptr->height) {
-              bmp_ptr->_bmp_get_row_fn(
+              bmp_ptr->bmp_get_row_fn(
                   bmp_ptr, bmp_ptr->imgTB_flag
                                ? bmp_ptr->row_num++
                                : (bmp_ptr->height - 1 - bmp_ptr->row_num++),
                   bmp_ptr->out_row_buffer);
             }
-            _bmp_save_decoding_status(bmp_ptr, BMP_D_STATUS_TAIL);
+            bmp_save_decoding_status(bmp_ptr, BMP_D_STATUS_TAIL);
             return 1;
           }
           case RLE_DELTA: {
             uint8_t* delta_ptr;
-            if (_bmp_read_data(bmp_ptr, &delta_ptr, 2) == NULL) {
+            if (bmp_read_data(bmp_ptr, &delta_ptr, 2) == NULL) {
               bmp_ptr->skip_size = skip_size_org;
               return 2;
             }
@@ -444,12 +436,12 @@ int32_t _bmp_decode_rle8(bmp_decompress_struct_p bmp_ptr) {
             int32_t bmp_row_num_next = bmp_ptr->row_num + (int32_t)delta_ptr[1];
             if (bmp_ptr->col_num >= bmp_ptr->out_row_bytes ||
                 bmp_row_num_next >= bmp_ptr->height) {
-              _bmp_error(bmp_ptr, "The Bmp File Is Corrupt Or Not Supported");
+              bmp_error(bmp_ptr, "The Bmp File Is Corrupt Or Not Supported");
               return 0;
             }
             while (bmp_ptr->row_num < bmp_row_num_next) {
               FXSYS_memset(bmp_ptr->out_row_buffer, 0, bmp_ptr->out_row_bytes);
-              bmp_ptr->_bmp_get_row_fn(
+              bmp_ptr->bmp_get_row_fn(
                   bmp_ptr, bmp_ptr->imgTB_flag
                                ? bmp_ptr->row_num++
                                : (bmp_ptr->height - 1 - bmp_ptr->row_num++),
@@ -459,12 +451,12 @@ int32_t _bmp_decode_rle8(bmp_decompress_struct_p bmp_ptr) {
           default: {
             if ((int32_t)(*first_byte_ptr) >
                 bmp_ptr->src_row_bytes - bmp_ptr->col_num) {
-              _bmp_error(bmp_ptr, "The Bmp File Is Corrupt");
+              bmp_error(bmp_ptr, "The Bmp File Is Corrupt");
               return 0;
             }
-            if (_bmp_read_data(bmp_ptr, &second_byte_ptr,
-                               *first_byte_ptr & 1 ? *first_byte_ptr + 1
-                                                   : *first_byte_ptr) == NULL) {
+            if (bmp_read_data(bmp_ptr, &second_byte_ptr,
+                              *first_byte_ptr & 1 ? *first_byte_ptr + 1
+                                                  : *first_byte_ptr) == NULL) {
               bmp_ptr->skip_size = skip_size_org;
               return 2;
             }
@@ -475,13 +467,13 @@ int32_t _bmp_decode_rle8(bmp_decompress_struct_p bmp_ptr) {
         }
       } break;
       default: {
-        if (_bmp_read_data(bmp_ptr, &second_byte_ptr, 1) == NULL) {
+        if (bmp_read_data(bmp_ptr, &second_byte_ptr, 1) == NULL) {
           bmp_ptr->skip_size = skip_size_org;
           return 2;
         }
         if ((int32_t)(*first_byte_ptr) >
             bmp_ptr->src_row_bytes - bmp_ptr->col_num) {
-          _bmp_error(bmp_ptr, "The Bmp File Is Corrupt");
+          bmp_error(bmp_ptr, "The Bmp File Is Corrupt");
           return 0;
         }
         FXSYS_memset(bmp_ptr->out_row_buffer + bmp_ptr->col_num,
@@ -490,55 +482,55 @@ int32_t _bmp_decode_rle8(bmp_decompress_struct_p bmp_ptr) {
       }
     }
   }
-  _bmp_error(bmp_ptr, "Any Uncontrol Error");
+  bmp_error(bmp_ptr, "Any Uncontrol Error");
   return 0;
 }
-int32_t _bmp_decode_rle4(bmp_decompress_struct_p bmp_ptr) {
+int32_t bmp_decode_rle4(bmp_decompress_struct_p bmp_ptr) {
   uint8_t* first_byte_ptr = NULL;
   uint8_t* second_byte_ptr = NULL;
   bmp_ptr->col_num = 0;
   while (TRUE) {
     FX_DWORD skip_size_org = bmp_ptr->skip_size;
-    if (_bmp_read_data(bmp_ptr, &first_byte_ptr, 1) == NULL) {
+    if (bmp_read_data(bmp_ptr, &first_byte_ptr, 1) == NULL) {
       return 2;
     }
     switch (*first_byte_ptr) {
       case RLE_MARKER: {
-        if (_bmp_read_data(bmp_ptr, &first_byte_ptr, 1) == NULL) {
+        if (bmp_read_data(bmp_ptr, &first_byte_ptr, 1) == NULL) {
           bmp_ptr->skip_size = skip_size_org;
           return 2;
         }
         switch (*first_byte_ptr) {
           case RLE_EOL: {
             if (bmp_ptr->row_num >= bmp_ptr->height) {
-              _bmp_save_decoding_status(bmp_ptr, BMP_D_STATUS_TAIL);
-              _bmp_error(bmp_ptr, "The Bmp File Is Corrupt");
+              bmp_save_decoding_status(bmp_ptr, BMP_D_STATUS_TAIL);
+              bmp_error(bmp_ptr, "The Bmp File Is Corrupt");
               return 0;
             }
-            bmp_ptr->_bmp_get_row_fn(
+            bmp_ptr->bmp_get_row_fn(
                 bmp_ptr, bmp_ptr->imgTB_flag
                              ? bmp_ptr->row_num++
                              : (bmp_ptr->height - 1 - bmp_ptr->row_num++),
                 bmp_ptr->out_row_buffer);
             bmp_ptr->col_num = 0;
             FXSYS_memset(bmp_ptr->out_row_buffer, 0, bmp_ptr->out_row_bytes);
-            _bmp_save_decoding_status(bmp_ptr, BMP_D_STATUS_DATA);
+            bmp_save_decoding_status(bmp_ptr, BMP_D_STATUS_DATA);
             continue;
           }
           case RLE_EOI: {
             if (bmp_ptr->row_num < bmp_ptr->height) {
-              bmp_ptr->_bmp_get_row_fn(
+              bmp_ptr->bmp_get_row_fn(
                   bmp_ptr, bmp_ptr->imgTB_flag
                                ? bmp_ptr->row_num++
                                : (bmp_ptr->height - 1 - bmp_ptr->row_num++),
                   bmp_ptr->out_row_buffer);
             }
-            _bmp_save_decoding_status(bmp_ptr, BMP_D_STATUS_TAIL);
+            bmp_save_decoding_status(bmp_ptr, BMP_D_STATUS_TAIL);
             return 1;
           }
           case RLE_DELTA: {
             uint8_t* delta_ptr;
-            if (_bmp_read_data(bmp_ptr, &delta_ptr, 2) == NULL) {
+            if (bmp_read_data(bmp_ptr, &delta_ptr, 2) == NULL) {
               bmp_ptr->skip_size = skip_size_org;
               return 2;
             }
@@ -546,12 +538,12 @@ int32_t _bmp_decode_rle4(bmp_decompress_struct_p bmp_ptr) {
             int32_t bmp_row_num_next = bmp_ptr->row_num + (int32_t)delta_ptr[1];
             if (bmp_ptr->col_num >= bmp_ptr->out_row_bytes ||
                 bmp_row_num_next >= bmp_ptr->height) {
-              _bmp_error(bmp_ptr, "The Bmp File Is Corrupt Or Not Supported");
+              bmp_error(bmp_ptr, "The Bmp File Is Corrupt Or Not Supported");
               return 0;
             }
             while (bmp_ptr->row_num < bmp_row_num_next) {
               FXSYS_memset(bmp_ptr->out_row_buffer, 0, bmp_ptr->out_row_bytes);
-              bmp_ptr->_bmp_get_row_fn(
+              bmp_ptr->bmp_get_row_fn(
                   bmp_ptr, bmp_ptr->imgTB_flag
                                ? bmp_ptr->row_num++
                                : (bmp_ptr->height - 1 - bmp_ptr->row_num++),
@@ -563,13 +555,13 @@ int32_t _bmp_decode_rle4(bmp_decompress_struct_p bmp_ptr) {
             if ((int32_t)*first_byte_ptr >=
                 bmp_ptr->out_row_bytes - bmp_ptr->col_num) {
               if (size + (bmp_ptr->col_num >> 1) > bmp_ptr->src_row_bytes) {
-                _bmp_error(bmp_ptr, "The Bmp File Is Corrupt");
+                bmp_error(bmp_ptr, "The Bmp File Is Corrupt");
                 return 0;
               }
               *first_byte_ptr = bmp_ptr->out_row_bytes - bmp_ptr->col_num - 1;
             }
-            if (_bmp_read_data(bmp_ptr, &second_byte_ptr,
-                               size & 1 ? size + 1 : size) == NULL) {
+            if (bmp_read_data(bmp_ptr, &second_byte_ptr,
+                              size & 1 ? size + 1 : size) == NULL) {
               bmp_ptr->skip_size = skip_size_org;
               return 2;
             }
@@ -586,7 +578,7 @@ int32_t _bmp_decode_rle4(bmp_decompress_struct_p bmp_ptr) {
         }
       } break;
       default: {
-        if (_bmp_read_data(bmp_ptr, &second_byte_ptr, 1) == NULL) {
+        if (bmp_read_data(bmp_ptr, &second_byte_ptr, 1) == NULL) {
           bmp_ptr->skip_size = skip_size_org;
           return 2;
         }
@@ -594,7 +586,7 @@ int32_t _bmp_decode_rle4(bmp_decompress_struct_p bmp_ptr) {
             bmp_ptr->out_row_bytes - bmp_ptr->col_num) {
           uint8_t size = (uint8_t)(((FX_WORD)(*first_byte_ptr) + 1) >> 1);
           if (size + (bmp_ptr->col_num >> 1) > bmp_ptr->src_row_bytes) {
-            _bmp_error(bmp_ptr, "The Bmp File Is Corrupt");
+            bmp_error(bmp_ptr, "The Bmp File Is Corrupt");
             return 0;
           }
           *first_byte_ptr = bmp_ptr->out_row_bytes - bmp_ptr->col_num - 1;
@@ -611,12 +603,12 @@ int32_t _bmp_decode_rle4(bmp_decompress_struct_p bmp_ptr) {
       }
     }
   }
-  _bmp_error(bmp_ptr, "Any Uncontrol Error");
+  bmp_error(bmp_ptr, "Any Uncontrol Error");
   return 0;
 }
-uint8_t* _bmp_read_data(bmp_decompress_struct_p bmp_ptr,
-                        uint8_t** des_buf_pp,
-                        FX_DWORD data_size) {
+uint8_t* bmp_read_data(bmp_decompress_struct_p bmp_ptr,
+                       uint8_t** des_buf_pp,
+                       FX_DWORD data_size) {
   if (bmp_ptr == NULL || bmp_ptr->avail_in < bmp_ptr->skip_size + data_size) {
     return NULL;
   }
@@ -624,22 +616,21 @@ uint8_t* _bmp_read_data(bmp_decompress_struct_p bmp_ptr,
   bmp_ptr->skip_size += data_size;
   return *des_buf_pp;
 }
-void _bmp_save_decoding_status(bmp_decompress_struct_p bmp_ptr,
-                               int32_t status) {
+void bmp_save_decoding_status(bmp_decompress_struct_p bmp_ptr, int32_t status) {
   bmp_ptr->decode_status = status;
   bmp_ptr->next_in += bmp_ptr->skip_size;
   bmp_ptr->avail_in -= bmp_ptr->skip_size;
   bmp_ptr->skip_size = 0;
 }
-void _bmp_input_buffer(bmp_decompress_struct_p bmp_ptr,
-                       uint8_t* src_buf,
-                       FX_DWORD src_size) {
+void bmp_input_buffer(bmp_decompress_struct_p bmp_ptr,
+                      uint8_t* src_buf,
+                      FX_DWORD src_size) {
   bmp_ptr->next_in = src_buf;
   bmp_ptr->avail_in = src_size;
   bmp_ptr->skip_size = 0;
 }
-FX_DWORD _bmp_get_avail_input(bmp_decompress_struct_p bmp_ptr,
-                              uint8_t** avial_buf_ptr) {
+FX_DWORD bmp_get_avail_input(bmp_decompress_struct_p bmp_ptr,
+                             uint8_t** avial_buf_ptr) {
   if (avial_buf_ptr) {
     *avial_buf_ptr = NULL;
     if (bmp_ptr->avail_in > 0) {
@@ -648,7 +639,7 @@ FX_DWORD _bmp_get_avail_input(bmp_decompress_struct_p bmp_ptr,
   }
   return bmp_ptr->avail_in;
 }
-bmp_compress_struct_p _bmp_create_compress() {
+bmp_compress_struct_p bmp_create_compress() {
   bmp_compress_struct_p bmp_ptr;
   bmp_ptr = FX_Alloc(bmp_compress_struct, 1);
   if (bmp_ptr) {
@@ -656,7 +647,7 @@ bmp_compress_struct_p _bmp_create_compress() {
   }
   return bmp_ptr;
 }
-void _bmp_destroy_compress(bmp_compress_struct_p bmp_ptr) {
+void bmp_destroy_compress(bmp_compress_struct_p bmp_ptr) {
   if (bmp_ptr) {
     if (bmp_ptr->src_free && bmp_ptr->src_buf) {
       FX_Free(bmp_ptr->src_buf);
@@ -667,49 +658,46 @@ void _bmp_destroy_compress(bmp_compress_struct_p bmp_ptr) {
 static void WriteFileHeader(BmpFileHeaderPtr head_ptr, uint8_t* dst_buf) {
   FX_DWORD offset;
   offset = 0;
-  _SetWord_LSBFirst(&dst_buf[offset], head_ptr->bfType);
+  SetWord_LSBFirst(&dst_buf[offset], head_ptr->bfType);
   offset += 2;
-  _SetDWord_LSBFirst(&dst_buf[offset], head_ptr->bfSize);
+  SetDWord_LSBFirst(&dst_buf[offset], head_ptr->bfSize);
   offset += 4;
-  _SetWord_LSBFirst(&dst_buf[offset], head_ptr->bfReserved1);
+  SetWord_LSBFirst(&dst_buf[offset], head_ptr->bfReserved1);
   offset += 2;
-  _SetWord_LSBFirst(&dst_buf[offset], head_ptr->bfReserved2);
+  SetWord_LSBFirst(&dst_buf[offset], head_ptr->bfReserved2);
   offset += 2;
-  _SetDWord_LSBFirst(&dst_buf[offset], head_ptr->bfOffBits);
+  SetDWord_LSBFirst(&dst_buf[offset], head_ptr->bfOffBits);
   offset += 4;
 }
 static void WriteInfoHeader(BmpInfoHeaderPtr info_head_ptr, uint8_t* dst_buf) {
   FX_DWORD offset;
   offset = sizeof(BmpFileHeader);
-  _SetDWord_LSBFirst(&dst_buf[offset], info_head_ptr->biSize);
+  SetDWord_LSBFirst(&dst_buf[offset], info_head_ptr->biSize);
   offset += 4;
-  _SetDWord_LSBFirst(&dst_buf[offset], (FX_DWORD)info_head_ptr->biWidth);
+  SetDWord_LSBFirst(&dst_buf[offset], info_head_ptr->biWidth);
   offset += 4;
-  _SetDWord_LSBFirst(&dst_buf[offset], (FX_DWORD)info_head_ptr->biHeight);
+  SetDWord_LSBFirst(&dst_buf[offset], info_head_ptr->biHeight);
   offset += 4;
-  _SetWord_LSBFirst(&dst_buf[offset], info_head_ptr->biPlanes);
+  SetWord_LSBFirst(&dst_buf[offset], info_head_ptr->biPlanes);
   offset += 2;
-  _SetWord_LSBFirst(&dst_buf[offset], info_head_ptr->biBitCount);
+  SetWord_LSBFirst(&dst_buf[offset], info_head_ptr->biBitCount);
   offset += 2;
-  _SetDWord_LSBFirst(&dst_buf[offset], info_head_ptr->biCompression);
+  SetDWord_LSBFirst(&dst_buf[offset], info_head_ptr->biCompression);
   offset += 4;
-  _SetDWord_LSBFirst(&dst_buf[offset], info_head_ptr->biSizeImage);
+  SetDWord_LSBFirst(&dst_buf[offset], info_head_ptr->biSizeImage);
   offset += 4;
-  _SetDWord_LSBFirst(&dst_buf[offset],
-                     (FX_DWORD)info_head_ptr->biXPelsPerMeter);
+  SetDWord_LSBFirst(&dst_buf[offset], info_head_ptr->biXPelsPerMeter);
   offset += 4;
-  _SetDWord_LSBFirst(&dst_buf[offset],
-                     (FX_DWORD)info_head_ptr->biYPelsPerMeter);
+  SetDWord_LSBFirst(&dst_buf[offset], info_head_ptr->biYPelsPerMeter);
   offset += 4;
-  _SetDWord_LSBFirst(&dst_buf[offset], info_head_ptr->biClrUsed);
+  SetDWord_LSBFirst(&dst_buf[offset], info_head_ptr->biClrUsed);
   offset += 4;
-  _SetDWord_LSBFirst(&dst_buf[offset], info_head_ptr->biClrImportant);
+  SetDWord_LSBFirst(&dst_buf[offset], info_head_ptr->biClrImportant);
   offset += 4;
 }
-#ifdef BMP_SUPPORT_BITFIELD
-static void _bmp_encode_bitfields(bmp_compress_struct_p bmp_ptr,
-                                  uint8_t*& dst_buf,
-                                  FX_DWORD& dst_size) {
+static void bmp_encode_bitfields(bmp_compress_struct_p bmp_ptr,
+                                 uint8_t*& dst_buf,
+                                 FX_DWORD& dst_size) {
   if (bmp_ptr->info_header.biBitCount != 16 &&
       bmp_ptr->info_header.biBitCount != 32) {
     return;
@@ -741,11 +729,11 @@ static void _bmp_encode_bitfields(bmp_compress_struct_p bmp_ptr,
       mask_green = 0x00FF00;
       mask_blue = 0x0000FF;
     }
-    _SetDWord_LSBFirst(&dst_buf[dst_pos], mask_red);
+    SetDWord_LSBFirst(&dst_buf[dst_pos], mask_red);
     dst_pos += 4;
-    _SetDWord_LSBFirst(&dst_buf[dst_pos], mask_green);
+    SetDWord_LSBFirst(&dst_buf[dst_pos], mask_green);
     dst_pos += 4;
-    _SetDWord_LSBFirst(&dst_buf[dst_pos], mask_blue);
+    SetDWord_LSBFirst(&dst_buf[dst_pos], mask_blue);
     dst_pos += 4;
     bmp_ptr->file_header.bfOffBits = dst_pos;
   }
@@ -782,24 +770,22 @@ static void _bmp_encode_bitfields(bmp_compress_struct_p bmp_ptr,
       pix_val |= (g << green_bits) & mask_green;
       pix_val |= (r << red_bits) & mask_red;
       if (bmp_ptr->info_header.biBitCount == 16) {
-        _SetWord_LSBFirst(&dst_buf[dst_pos], (FX_WORD)pix_val);
+        SetWord_LSBFirst(&dst_buf[dst_pos], pix_val);
         dst_pos += 2;
       } else {
-        _SetDWord_LSBFirst(&dst_buf[dst_pos], pix_val);
+        SetDWord_LSBFirst(&dst_buf[dst_pos], pix_val);
         dst_pos += 4;
       }
     }
   }
   dst_size = dst_pos;
 }
-#endif
-static void _bmp_encode_rgb(bmp_compress_struct_p bmp_ptr,
-                            uint8_t*& dst_buf,
-                            FX_DWORD& dst_size) {
+
+static void bmp_encode_rgb(bmp_compress_struct_p bmp_ptr,
+                           uint8_t*& dst_buf,
+                           FX_DWORD& dst_size) {
   if (bmp_ptr->info_header.biBitCount == 16) {
-#ifdef BMP_SUPPORT_BITFIELD
-    _bmp_encode_bitfields(bmp_ptr, dst_buf, dst_size);
-#endif
+    bmp_encode_bitfields(bmp_ptr, dst_buf, dst_size);
     return;
   }
   FX_DWORD size, dst_pos;
@@ -821,7 +807,7 @@ static void _bmp_encode_rgb(bmp_compress_struct_p bmp_ptr,
   }
   dst_size = dst_pos;
 }
-static uint8_t _bmp_rle8_search(const uint8_t* buf, int32_t len) {
+static uint8_t bmp_rle8_search(const uint8_t* buf, int32_t len) {
   uint8_t num;
   num = 1;
   while (num < len) {
@@ -832,9 +818,9 @@ static uint8_t _bmp_rle8_search(const uint8_t* buf, int32_t len) {
   }
   return num;
 }
-static void _bmp_encode_rle8(bmp_compress_struct_p bmp_ptr,
-                             uint8_t*& dst_buf,
-                             FX_DWORD& dst_size) {
+static void bmp_encode_rle8(bmp_compress_struct_p bmp_ptr,
+                            uint8_t*& dst_buf,
+                            FX_DWORD& dst_size) {
   FX_DWORD size, dst_pos, index;
   uint8_t rle[2] = {0};
   size = bmp_ptr->src_pitch * bmp_ptr->src_row * 2;
@@ -847,7 +833,7 @@ static void _bmp_encode_rle8(bmp_compress_struct_p bmp_ptr,
   FXSYS_memset(&dst_buf[dst_pos], 0, size);
   for (int32_t row_num = bmp_ptr->src_row - 1, i = 0; row_num > -1;) {
     index = row_num * bmp_ptr->src_pitch;
-    rle[0] = _bmp_rle8_search(&bmp_ptr->src_buf[index + i], size - index - i);
+    rle[0] = bmp_rle8_search(&bmp_ptr->src_buf[index + i], size - index - i);
     rle[1] = bmp_ptr->src_buf[index + i];
     if (i + rle[0] >= (int32_t)bmp_ptr->src_pitch) {
       rle[0] = uint8_t(bmp_ptr->src_pitch - i);
@@ -869,7 +855,7 @@ static void _bmp_encode_rle8(bmp_compress_struct_p bmp_ptr,
   dst_buf[dst_pos++] = RLE_EOI;
   dst_size = dst_pos;
 }
-static uint8_t _bmp_rle4_search(const uint8_t* buf, int32_t len) {
+static uint8_t bmp_rle4_search(const uint8_t* buf, int32_t len) {
   uint8_t num;
   num = 2;
   while (num < len) {
@@ -880,9 +866,9 @@ static uint8_t _bmp_rle4_search(const uint8_t* buf, int32_t len) {
   }
   return num;
 }
-static void _bmp_encode_rle4(bmp_compress_struct_p bmp_ptr,
-                             uint8_t*& dst_buf,
-                             FX_DWORD& dst_size) {
+static void bmp_encode_rle4(bmp_compress_struct_p bmp_ptr,
+                            uint8_t*& dst_buf,
+                            FX_DWORD& dst_size) {
   FX_DWORD size, dst_pos, index;
   uint8_t rle[2] = {0};
   size = bmp_ptr->src_pitch * bmp_ptr->src_row;
@@ -896,7 +882,7 @@ static void _bmp_encode_rle4(bmp_compress_struct_p bmp_ptr,
   for (int32_t row_num = bmp_ptr->src_row - 1, i = 0; row_num > -1;
        rle[1] = 0) {
     index = row_num * bmp_ptr->src_pitch;
-    rle[0] = _bmp_rle4_search(&bmp_ptr->src_buf[index + i], size - index - i);
+    rle[0] = bmp_rle4_search(&bmp_ptr->src_buf[index + i], size - index - i);
     rle[1] |= (bmp_ptr->src_buf[index + i] & 0x0f) << 4;
     rle[1] |= bmp_ptr->src_buf[index + i + 1] & 0x0f;
     if (i + rle[0] >= (int32_t)bmp_ptr->src_pitch) {
@@ -919,9 +905,9 @@ static void _bmp_encode_rle4(bmp_compress_struct_p bmp_ptr,
   dst_buf[dst_pos++] = RLE_EOI;
   dst_size = dst_pos;
 }
-FX_BOOL _bmp_encode_image(bmp_compress_struct_p bmp_ptr,
-                          uint8_t*& dst_buf,
-                          FX_DWORD& dst_size) {
+FX_BOOL bmp_encode_image(bmp_compress_struct_p bmp_ptr,
+                         uint8_t*& dst_buf,
+                         FX_DWORD& dst_size) {
   FX_DWORD head_size = sizeof(BmpFileHeader) + sizeof(BmpInfoHeader);
   FX_DWORD pal_size = sizeof(FX_DWORD) * bmp_ptr->pal_num;
   if (bmp_ptr->info_header.biClrUsed > 0 &&
@@ -942,18 +928,16 @@ FX_BOOL _bmp_encode_image(bmp_compress_struct_p bmp_ptr,
   WriteInfoHeader(&bmp_ptr->info_header, dst_buf);
   switch (bmp_ptr->info_header.biCompression) {
     case BMP_RGB:
-      _bmp_encode_rgb(bmp_ptr, dst_buf, dst_size);
+      bmp_encode_rgb(bmp_ptr, dst_buf, dst_size);
       break;
     case BMP_BITFIELDS:
-#ifdef BMP_SUPPORT_BITFIELD
-      _bmp_encode_bitfields(bmp_ptr, dst_buf, dst_size);
-#endif
+      bmp_encode_bitfields(bmp_ptr, dst_buf, dst_size);
       break;
     case BMP_RLE8:
-      _bmp_encode_rle8(bmp_ptr, dst_buf, dst_size);
+      bmp_encode_rle8(bmp_ptr, dst_buf, dst_size);
       break;
     case BMP_RLE4:
-      _bmp_encode_rle4(bmp_ptr, dst_buf, dst_size);
+      bmp_encode_rle4(bmp_ptr, dst_buf, dst_size);
       break;
     default:
       break;

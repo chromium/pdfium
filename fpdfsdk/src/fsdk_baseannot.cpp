@@ -15,7 +15,7 @@
 #include "fpdfsdk/include/fpdfxfa/fpdfxfa_doc.h"
 #endif  // PDF_ENABLE_XFA
 
-int _gAfxGetTimeZoneInSeconds(FX_CHAR tzhour, uint8_t tzminute) {
+int gAfxGetTimeZoneInSeconds(int8_t tzhour, uint8_t tzminute) {
   return (int)tzhour * 3600 + (int)tzminute * (tzhour >= 0 ? 60 : -60);
 }
 
@@ -404,7 +404,7 @@ void CPDFSDK_DateTime::ToSystemTime(FX_SYSTEMTIME& st) {
 
 CPDFSDK_DateTime CPDFSDK_DateTime::ToGMT() {
   CPDFSDK_DateTime dt = *this;
-  dt.AddSeconds(-_gAfxGetTimeZoneInSeconds(dt.dt.tzHour, dt.dt.tzMinute));
+  dt.AddSeconds(-gAfxGetTimeZoneInSeconds(dt.dt.tzHour, dt.dt.tzMinute));
   dt.dt.tzHour = 0;
   dt.dt.tzMinute = 0;
   return dt;
