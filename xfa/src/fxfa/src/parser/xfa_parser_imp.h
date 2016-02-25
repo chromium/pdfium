@@ -9,8 +9,6 @@
 
 #include "xfa/src/fxfa/src/common/xfa_parser.h"
 
-#define _XFA_VERIFY_Checksum_
-
 class CXFA_XMLParser;
 
 class CXFA_SimpleParser : public IXFA_Parser {
@@ -118,13 +116,11 @@ class CXFA_XMLParser : public IFDE_XMLParser {
   virtual void Release() { delete this; }
   virtual int32_t DoParser(IFX_Pause* pPause);
 
-#ifdef _XFA_VERIFY_Checksum_
   FX_FILESIZE m_nStart[2];
   size_t m_nSize[2];
   FX_FILESIZE m_nElementStart;
   FX_WORD m_dwCheckStatus;
   FX_WORD m_dwCurrentCheckStatus;
-#endif
 
  protected:
   IFDE_XMLNode* m_pRoot;

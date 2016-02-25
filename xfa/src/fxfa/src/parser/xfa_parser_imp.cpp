@@ -135,9 +135,8 @@ int32_t CXFA_SimpleParser::ParseXMLData(const CFX_WideString& wsXML,
   if (pParser == NULL) {
     return XFA_PARSESTATUS_StatusErr;
   }
-#ifdef _XFA_VERIFY_Checksum_
+
   pParser->m_dwCheckStatus = 0x03;
-#endif
   if (!m_pXMLDoc->LoadXML(pParser)) {
     return XFA_PARSESTATUS_StatusErr;
   }
@@ -579,7 +578,6 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_TemplateForm(
       IFDE_XMLElement* pXMLDocumentElement = (IFDE_XMLElement*)pXMLDocumentNode;
       CFX_WideString wsChecksum;
       pXMLDocumentElement->GetString(L"checksum", wsChecksum);
-#ifdef _XFA_VERIFY_Checksum_
       if (wsChecksum.GetLength() != 28 ||
           m_pXMLParser->m_dwCheckStatus != 0x03) {
         return NULL;
@@ -597,7 +595,7 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_TemplateForm(
       if (bsCheck != wsChecksum.UTF8Encode()) {
         return NULL;
       }
-#endif
+
       pNode = m_pFactory->CreateNode(XFA_XDPPACKET_Form, XFA_ELEMENT_Form);
       if (!pNode) {
         return NULL;
@@ -1448,11 +1446,9 @@ void CXFA_DocumentParser::CloseParser() {
 }
 CXFA_XMLParser::CXFA_XMLParser(IFDE_XMLNode* pRoot, IFX_Stream* pStream)
     :
-#ifdef _XFA_VERIFY_Checksum_
       m_nElementStart(0),
       m_dwCheckStatus(0),
       m_dwCurrentCheckStatus(0),
-#endif
       m_pRoot(pRoot),
       m_pStream(pStream),
       m_pParser(nullptr),
@@ -1496,11 +1492,9 @@ int32_t CXFA_XMLParser::DoParser(IFX_Pause* pPause) {
         m_pChild = m_pParent;
         break;
       case FDE_XMLSYNTAXSTATUS_ElementOpen:
-#ifdef _XFA_VERIFY_Checksum_
         if (m_dwCheckStatus != 0x03 && m_NodeStack.GetSize() == 2) {
           m_nElementStart = m_pParser->GetCurrentPos() - 1;
         }
-#endif
         break;
       case FDE_XMLSYNTAXSTATUS_ElementBreak:
         break;
@@ -1519,15 +1513,13 @@ int32_t CXFA_XMLParser::DoParser(IFX_Pause* pPause) {
         if (m_NodeStack.GetSize() < 1) {
           m_dwStatus = FDE_XMLSYNTAXSTATUS_Error;
           break;
-        }
-#ifdef _XFA_VERIFY_Checksum_
-        else if (m_dwCurrentCheckStatus != 0 && m_NodeStack.GetSize() == 2) {
+        } else if (m_dwCurrentCheckStatus != 0 && m_NodeStack.GetSize() == 2) {
           m_nSize[m_dwCurrentCheckStatus - 1] =
               m_pParser->GetCurrentBinaryPos() -
               m_nStart[m_dwCurrentCheckStatus - 1];
           m_dwCurrentCheckStatus = 0;
         }
-#endif
+
         m_pParent = (IFDE_XMLNode*)*m_NodeStack.GetTopElement();
         m_pChild = m_pParent;
         iCount++;
@@ -1549,7 +1541,7 @@ int32_t CXFA_XMLParser::DoParser(IFX_Pause* pPause) {
         m_pParent->InsertChildNode(m_pChild);
         m_NodeStack.Push(m_pChild);
         m_pParent = m_pChild;
-#ifdef _XFA_VERIFY_Checksum_
+
         if (m_dwCheckStatus != 0x03 && m_NodeStack.GetSize() == 3) {
           CFX_WideString wsTag;
           ((IFDE_XMLElement*)m_pChild)->GetLocalTagName(wsTag);
@@ -1565,7 +1557,6 @@ int32_t CXFA_XMLParser::DoParser(IFX_Pause* pPause) {
                           (m_pParser->GetCurrentPos() - m_nElementStart);
           }
         }
-#endif
         break;
       case FDE_XMLSYNTAXSTATUS_AttriName:
         m_pParser->GetAttributeName(m_ws1);
