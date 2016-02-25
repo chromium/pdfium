@@ -7,10 +7,8 @@
 #ifndef XFA_INCLUDE_FWL_BASEWIDGET_FWL_PICTUREBOX_H_
 #define XFA_INCLUDE_FWL_BASEWIDGET_FWL_PICTUREBOX_H_
 
-class CFWL_WidgetImpProperties;
-class IFWL_Widget;
-class IFWL_PictureBoxDP;
-class IFWL_PictureBox;
+#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+
 #define FWL_CLASS_PictureBox L"FWL_PICTUREBOX"
 #define FWL_CLASSHASH_PictureBox 2974721741
 #define FWL_STYLEEXT_PTB_Left 0L << 0
@@ -32,6 +30,7 @@ class IFWL_PictureBox;
 #define FWL_PART_PTB_Image 3
 #define FWL_PARTSTATE_PTB_Normal (0L << 0)
 #define FWL_PARTSTATE_PTB_Disabled (1L << 0)
+
 class IFWL_PictureBoxDP : public IFWL_DataProvider {
  public:
   virtual CFX_DIBitmap* GetPicture(IFWL_Widget* pWidget) = 0;

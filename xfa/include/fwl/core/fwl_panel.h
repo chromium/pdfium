@@ -7,10 +7,10 @@
 #ifndef XFA_INCLUDE_FWL_CORE_FWL_PANEL_H_
 #define XFA_INCLUDE_FWL_CORE_FWL_PANEL_H_
 
-class IFWL_Widget;
+#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+
 class IFWL_Content;
-class IFWL_Panel;
-class IFWL_CustomPanel;
+
 #define FWL_CLASS_Panel L"FWL_Panel"
 #define FWL_CLASSHASH_Panel 881567292
 

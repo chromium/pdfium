@@ -4,11 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/src/fxfa/src/app/xfa_ffimageedit.h"
+
+#include "xfa/include/fwl/core/fwl_app.h"
+#include "xfa/include/fwl/lightwidget/picturebox.h"
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/app/xfa_ffdoc.h"
 #include "xfa/src/fxfa/src/app/xfa_ffdocview.h"
 #include "xfa/src/fxfa/src/app/xfa_fffield.h"
-#include "xfa/src/fxfa/src/app/xfa_ffimageedit.h"
 #include "xfa/src/fxfa/src/app/xfa_ffpageview.h"
 #include "xfa/src/fxfa/src/app/xfa_ffwidget.h"
 

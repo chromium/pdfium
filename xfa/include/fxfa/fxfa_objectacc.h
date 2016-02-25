@@ -7,13 +7,11 @@
 #ifndef XFA_INCLUDE_FXFA_FXFA_OBJECTACC_H_
 #define XFA_INCLUDE_FXFA_FXFA_OBJECTACC_H_
 
-#include "core/include/fxge/fx_dib.h"  // For FX_ARGB.
+#include "core/include/fxge/fx_dib.h"
+#include "xfa/src/fxfa/src/common/xfa_object.h"
 
 class CXFA_Node;
 class IFX_Locale;
-class CXFA_Data;
-class CXFA_Font;
-class CXFA_Fill;
 class CXFA_Margin;
 class CXFA_Caption;
 class CXFA_Para;
@@ -59,7 +57,6 @@ inline FX_BOOL XFA_IsSpace(FX_WCHAR c) {
 inline FX_BOOL XFA_IsDigit(FX_WCHAR c) {
   return c >= '0' && c <= '9';
 }
-typedef CFX_ArrayTemplate<CXFA_Node*> CXFA_NodeArray;
 typedef CFX_ArrayTemplate<CXFA_Object*> CXFA_ObjArray;
 
 class CXFA_Data {

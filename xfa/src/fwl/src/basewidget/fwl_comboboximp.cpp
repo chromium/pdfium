@@ -4,8 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/foxitlib.h"
 #include "xfa/src/fwl/src/basewidget/include/fwl_comboboximp.h"
+
+#include "xfa/include/fwl/core/fwl_theme.h"
+#include "xfa/src/foxitlib.h"
 #include "xfa/src/fwl/src/basewidget/include/fwl_editimp.h"
 #include "xfa/src/fwl/src/basewidget/include/fwl_formproxyimp.h"
 #include "xfa/src/fwl/src/basewidget/include/fwl_listboximp.h"

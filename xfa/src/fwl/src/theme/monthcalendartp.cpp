@@ -4,7 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/include/fwl/theme/monthcalendartp.h"
+
+#include "xfa/include/fwl/basewidget/fwl_monthcalendar.h"
+#include "xfa/include/fwl/core/fwl_widget.h"
 #include "xfa/src/foxitlib.h"
+
 #define FWL_THEMECAPACITY_MC_HEADER_WIDTH 200
 #define FWL_THEMECAPACITY_MC_HEADER_HEIGHT 30
 #define FWL_THEMECAPACITY_MC_HEADER_BTN_WIDTH 18
@@ -48,6 +53,7 @@
   FWL_THEMECAPACITY_MC_DATES_CELL_WIDTH
 #define FWL_MC_WIDTH 200
 #define FWL_MC_HEIGHT 160
+
 CFWL_MonthCalendarTP::CFWL_MonthCalendarTP() {
   m_pThemeData = new MCThemeData;
   SetThemeData(0);

@@ -7,8 +7,8 @@
 #ifndef XFA_INCLUDE_FWL_THEME_PUSHBUTTONTP_H_
 #define XFA_INCLUDE_FWL_THEME_PUSHBUTTONTP_H_
 
-class CFWL_WidgetTP;
-class CFWL_PushButtonTP;
+#include "xfa/include/fwl/theme/widgettp.h"
+
 class CFWL_PushButtonTP : public CFWL_WidgetTP {
  public:
   CFWL_PushButtonTP();

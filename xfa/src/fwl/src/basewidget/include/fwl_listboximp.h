@@ -9,13 +9,14 @@
 
 #include <memory>
 
-class CFWL_WidgetImp;
-class CFWL_WidgetImpProperties;
-class CFWL_WidgetImpDelegate;
-class CFWL_ScrollBarImp;
-class IFWL_Widget;
-class CFWL_ListBoxImp;
+#include "xfa/include/fwl/basewidget/fwl_combobox.h"
+#include "xfa/include/fwl/basewidget/fwl_edit.h"
+#include "xfa/include/fwl/basewidget/fwl_listbox.h"
+#include "xfa/include/fwl/basewidget/fwl_scrollbar.h"
+#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+
 class CFWL_ListBoxImpDelegate;
+
 class CFWL_ListBoxImp : public CFWL_WidgetImp {
  public:
   CFWL_ListBoxImp(const CFWL_WidgetImpProperties& properties,

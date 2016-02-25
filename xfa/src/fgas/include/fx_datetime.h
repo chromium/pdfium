@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FGAS_INCLUDE_FX_DATETIME_H_
 #define XFA_SRC_FGAS_INCLUDE_FX_DATETIME_H_
 
+#include "core/include/fxcrt/fx_system.h"
+
 class CFX_Unitime;
 class CFX_DateTime;
 typedef int64_t FX_UNITIME;

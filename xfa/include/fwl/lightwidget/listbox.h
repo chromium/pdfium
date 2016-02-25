@@ -10,12 +10,11 @@
 #include <memory>
 #include <vector>
 
+#include "xfa/include/fwl/basewidget/fwl_listbox.h"
+#include "xfa/include/fwl/core/fwl_error.h"
+#include "xfa/include/fwl/core/fwl_widget.h"
 #include "xfa/include/fwl/lightwidget/widget.h"
 
-class CFWL_Widget;
-class CFWL_WidgetProperties;
-class IFWL_ListBoxDP;
-class CFWL_ListBox;
 class CFWL_ListItem;
 
 class CFWL_ListBox : public CFWL_Widget {

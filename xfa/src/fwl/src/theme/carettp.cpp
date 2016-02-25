@@ -4,9 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/include/fwl/theme/carettp.h"
+
+#include "xfa/include/fwl/basewidget/fwl_caret.h"
+#include "xfa/include/fwl/core/fwl_widget.h"
 #include "xfa/src/foxitlib.h"
+
 CFWL_CaretTP::CFWL_CaretTP() {}
 CFWL_CaretTP::~CFWL_CaretTP() {}
+
 FX_BOOL CFWL_CaretTP::IsValidWidget(IFWL_Widget* pWidget) {
   if (!pWidget)
     return FALSE;

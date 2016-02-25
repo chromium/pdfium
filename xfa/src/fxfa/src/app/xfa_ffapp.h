@@ -7,6 +7,19 @@
 #ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFAPP_H_
 #define XFA_SRC_FXFA_SRC_APP_XFA_FFAPP_H_
 
+#include "core/include/fpdfapi/fpdf_objects.h"
+#include "xfa/include/fwl/adapter/fwl_adapternative.h"
+#include "xfa/include/fwl/adapter/fwl_sdadapterimp.h"
+#include "xfa/include/fwl/core/fwl_app.h"
+#include "xfa/include/fxfa/fxfa.h"
+#include "xfa/src/fgas/include/fx_fnt.h"
+
+class CXFA_FWLAdapterWidgetMgr;
+class CXFA_FWLTheme;
+class CXFA_FFDocHandler;
+class CXFA_FFMenuHandler;
+class CXFA_FontMgr;
+
 class CXFA_FileRead : public IFX_FileRead {
  public:
   explicit CXFA_FileRead(const CFX_ArrayTemplate<CPDF_Stream*>& streams);
@@ -19,11 +32,7 @@ class CXFA_FileRead : public IFX_FileRead {
  protected:
   CFX_ObjectArray<CPDF_StreamAcc> m_Data;
 };
-class CXFA_FWLAdapterWidgetMgr;
-class CXFA_FWLTheme;
-class CXFA_FFDocHandler;
-class CXFA_FFMenuHandler;
-class CXFA_FontMgr;
+
 class CXFA_FFApp : public IXFA_App, public IFWL_AdapterNative {
  public:
   CXFA_FFApp(IXFA_AppProvider* pProvider);

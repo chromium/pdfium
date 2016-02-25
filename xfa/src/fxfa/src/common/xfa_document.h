@@ -7,6 +7,7 @@
 #ifndef XFA_SRC_FXFA_SRC_COMMON_XFA_DOCUMENT_H_
 #define XFA_SRC_FXFA_SRC_COMMON_XFA_DOCUMENT_H_
 
+#include "xfa/include/fxfa/fxfa.h"
 #include "xfa/src/fxfa/src/common/xfa_localemgr.h"
 #include "xfa/src/fxfa/src/common/xfa_object.h"
 

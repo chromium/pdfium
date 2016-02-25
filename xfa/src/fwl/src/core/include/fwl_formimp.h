@@ -7,6 +7,7 @@
 #ifndef XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_FORMIMP_H_
 #define XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_FORMIMP_H_
 
+#include "xfa/include/fwl/core/fwl_form.h"
 #include "xfa/src/fwl/src/core/include/fwl_panelimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
 

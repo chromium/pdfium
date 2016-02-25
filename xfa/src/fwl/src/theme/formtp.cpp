@@ -4,7 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/include/fwl/theme/formtp.h"
+
+#include "xfa/include/fwl/core/fwl_form.h"
+#include "xfa/include/fwl/core/fwl_widget.h"
 #include "xfa/src/foxitlib.h"
+
 #define FWLTHEME_CAPACITY_CXFormBorder 3
 #define FWLTHEME_CAPACITY_CYFormBorder 3
 #define FWLTHEME_CAPACITY_CYNarrowCaption 18
@@ -15,6 +20,7 @@
 #define FWLTHEME_FORMBTN_Margin 5
 #define FWLTHEME_FORMBTN_Span 2
 #define FWLTHEME_FORMBTN_Size 21
+
 CFWL_FormTP::CFWL_FormTP() : m_pActiveBitmap(NULL), m_pDeactivebitmap(NULL) {
   m_pThemeData = new SBThemeData;
   SetThemeData(0);

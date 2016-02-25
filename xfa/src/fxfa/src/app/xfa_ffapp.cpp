@@ -4,10 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/src/fxfa/src/app/xfa_ffapp.h"
+
 #include <algorithm>
 
+#include "xfa/include/fwl/core/fwl_widgetmgr.h"
 #include "xfa/src/foxitlib.h"
-#include "xfa/src/fxfa/src/app/xfa_ffapp.h"
 #include "xfa/src/fxfa/src/app/xfa_ffdoc.h"
 #include "xfa/src/fxfa/src/app/xfa_ffdochandler.h"
 #include "xfa/src/fxfa/src/app/xfa_ffwidgethandler.h"

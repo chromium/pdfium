@@ -7,12 +7,10 @@
 #ifndef XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_GRIDIMP_H_
 #define XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_GRIDIMP_H_
 
-class CFWL_Content;
-class IFWL_Widget;
-class CFWL_GridLength;
-class CFWL_GridColRow;
-class CFWL_GridWidgetInfo;
-class CFWL_GridImp;
+#include "xfa/include/fwl/core/fwl_app.h"
+#include "xfa/include/fwl/core/fwl_content.h"
+#include "xfa/include/fwl/core/fwl_grid.h"
+
 class CFWL_GridLength {
  public:
   CFWL_GridLength() : fLength(0), eUnit(FWL_GRIDUNIT_Fixed) {}

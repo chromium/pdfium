@@ -4,9 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/include/fwl/theme/barcodetp.h"
+
 #include "xfa/src/foxitlib.h"
+#include "xfa/include/fwl/basewidget/fwl_barcode.h"
+#include "xfa/include/fwl/core/fwl_theme.h"
+#include "xfa/include/fwl/core/fwl_widget.h"
+
 CFWL_BarcodeTP::CFWL_BarcodeTP() {}
 CFWL_BarcodeTP::~CFWL_BarcodeTP() {}
+
 FX_BOOL CFWL_BarcodeTP::IsValidWidget(IFWL_Widget* pWidget) {
   if (!pWidget)
     return FALSE;

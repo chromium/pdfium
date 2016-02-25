@@ -7,9 +7,8 @@
 #ifndef XFA_INCLUDE_FWL_BASEWIDGET_FWL_CARET_H_
 #define XFA_INCLUDE_FWL_BASEWIDGET_FWL_CARET_H_
 
-class CFWL_WidgetImpProperties;
-class IFWL_Widget;
-class IFWL_Caret;
+#include "xfa/include/fwl/core/fwl_widget.h"
+
 #define FWL_CLASS_Caret L"FWL_CARET"
 #define FWL_CLASSHASH_Caret 671181879
 #define FWL_STATE_CAT_HightLight 1

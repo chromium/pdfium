@@ -7,14 +7,9 @@
 #ifndef XFA_INCLUDE_FWL_ADAPTER_FWL_SDADAPTERIMP_H_
 #define XFA_INCLUDE_FWL_ADAPTER_FWL_SDADAPTERIMP_H_
 
-class IFWL_AdapterNative;
-class IFWL_AdapterWidgetMgr;
-class IFWL_AdapterThreadMgr;
-class IFWL_AdapterTimerMgr;
-class IFWL_WidgetMgrDelegate;
-class CFWL_SDAdatperNative;
-class CFWL_SDAdapterWidgetMgr;
-class CFWL_SDAdapterTimerMgr;
+#include "xfa/include/fwl/adapter/fwl_adapterthreadmgr.h"
+#include "xfa/include/fwl/adapter/fwl_adapterwidgetmgr.h"
+
 class CFWL_SDAdapterWidgetMgr : public IFWL_AdapterWidgetMgr {
  public:
   CFWL_SDAdapterWidgetMgr();
@@ -74,6 +69,7 @@ class CFWL_SDAdapterWidgetMgr : public IFWL_AdapterWidgetMgr {
                                   FX_FLOAT& r,
                                   FX_FLOAT& b);
 };
+
 class CFWL_SDAdapterThreadMgr : public IFWL_AdapterThreadMgr {
  public:
   CFWL_SDAdapterThreadMgr();

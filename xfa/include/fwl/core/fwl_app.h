@@ -7,7 +7,9 @@
 #ifndef XFA_INCLUDE_FWL_CORE_FWL_APP_H_
 #define XFA_INCLUDE_FWL_CORE_FWL_APP_H_
 
-class IFWL_NoteThread;
+#include "core/include/fxcrt/fx_string.h"
+#include "xfa/include/fwl/core/fwl_thread.h"
+
 class IFWL_AdapterNative;
 class IFWL_Widget;
 class IFWL_WidgetMgr;

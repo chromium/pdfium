@@ -4,16 +4,21 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
+
+#include "xfa/include/fwl/basewidget/fwl_tooltipctrl.h"
+#include "xfa/include/fwl/core/fwl_app.h"
+#include "xfa/include/fwl/core/fwl_grid.h"
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fwl/src/basewidget/include/fwl_tooltipctrlimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_appimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_formimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_panelimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_threadimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_widgetmgrimp.h"
+
 CFWL_NoteLoop::CFWL_NoteLoop(CFWL_WidgetImp* pForm)
     : m_pForm(pForm), m_bContinueModal(TRUE) {}
 FX_BOOL CFWL_NoteLoop::PreProcessMessage(CFWL_Message* pMessage) {

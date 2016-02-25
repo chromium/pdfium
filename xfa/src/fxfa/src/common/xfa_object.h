@@ -7,16 +7,13 @@
 #ifndef XFA_SRC_FXFA_SRC_COMMON_XFA_OBJECT_H_
 #define XFA_SRC_FXFA_SRC_COMMON_XFA_OBJECT_H_
 
+#include "xfa/src/fdp/include/fde_xml.h"
 #include "xfa/src/fxfa/src/common/xfa_utils.h"
 
-class CXFA_ArrayNodeList;
-class CXFA_AttachNodeList;
 class CXFA_Document;
 class CXFA_Node;
 class CXFA_NodeList;
 class CXFA_OrdinaryObject;
-class IXFA_Notify;
-class IXFA_ObjFactory;
 
 enum XFA_OBJECTTYPE {
   XFA_OBJECTTYPE_OrdinaryObject = 0x0,
@@ -89,6 +86,7 @@ class CXFA_Object {
   CXFA_Document* const m_pDocument;
   FX_DWORD m_uFlags;
 };
+
 #define XFA_NODEFILTER_Children 0x01
 #define XFA_NODEFILTER_Properties 0x02
 #define XFA_NODEFILTER_OneOfProperty 0x04
@@ -104,6 +102,8 @@ enum XFA_SOM_MESSAGETYPE {
   XFA_SOM_FormatMessage,
   XFA_SOM_MandatoryMessage
 };
+
+typedef CFX_ArrayTemplate<CXFA_Node*> CXFA_NodeArray;
 typedef CFX_StackTemplate<CXFA_Node*> CXFA_NodeStack;
 typedef CXFA_PtrSetTemplate<CXFA_Node*> CXFA_NodeSet;
 typedef void (*PD_CALLBACK_DUPLICATEDATA)(void*& pData);

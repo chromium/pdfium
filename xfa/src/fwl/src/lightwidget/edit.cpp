@@ -4,8 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/include/fwl/lightwidget/edit.h"
+
 #include <memory>
 
+#include "xfa/include/fwl/basewidget/fwl_edit.h"
 #include "xfa/src/foxitlib.h"
 
 CFWL_Edit* CFWL_Edit::Create() {

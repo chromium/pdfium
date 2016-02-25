@@ -7,13 +7,14 @@
 #ifndef XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_WIDGETMGRIMP_H_
 #define XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_WIDGETMGRIMP_H_
 
+#include "xfa/include/fwl/core/fwl_widgetmgr.h"
+
 class CFWL_TargetImp;
 class IFWL_Widget;
 class IFWL_AdapterWidgetMgr;
-class CFWL_WidgetMgrItem;
-class CFWL_WidgetMgr;
 class CFWL_WidgetMgrDelegate;
 class IFWL_AdapterNative;
+
 class CFWL_WidgetMgrItem {
  public:
   CFWL_WidgetMgrItem()

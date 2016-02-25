@@ -7,15 +7,14 @@
 #ifndef XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_BARCODEIMP_H_
 #define XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_BARCODEIMP_H_
 
+#include "xfa/include/fwl/basewidget/fwl_barcode.h"
+#include "xfa/include/fwl/basewidget/fwl_scrollbar.h"
+#include "xfa/include/fwl/basewidget/fxmath_barcode.h"
 #include "xfa/src/fwl/src/basewidget/include/fwl_editimp.h"
 
-class CFWL_WidgetImp;
 class CFWL_WidgetImpProperties;
-class CFWL_WidgetImpDelegate;
-class IFWL_Widget;
-class CFWL_BarcodeEdit;
-class CFWL_BarcodeEditDelegate;
 class CFWL_BarcodeImpDelegate;
+class IFWL_Widget;
 
 #define XFA_BCS_NeedUpdate 0x0001
 #define XFA_BCS_EncodeSuccess 0x0002
@@ -45,6 +44,7 @@ class CFWL_BarcodeImp : public CFWL_EditImp {
   BC_TYPE m_type;
   friend class CFWL_BarcodeImpDelegate;
 };
+
 class CFWL_BarcodeImpDelegate : public CFWL_EditImpDelegate {
  public:
   CFWL_BarcodeImpDelegate(CFWL_BarcodeImp* pOwner);

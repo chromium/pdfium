@@ -7,8 +7,8 @@
 #ifndef XFA_INCLUDE_FWL_THEME_PICTUREBOXTP_H_
 #define XFA_INCLUDE_FWL_THEME_PICTUREBOXTP_H_
 
-class CFWL_WidgetTP;
-class CFWL_PictureBoxTP;
+#include "xfa/include/fwl/theme/widgettp.h"
+
 class CFWL_PictureBoxTP : public CFWL_WidgetTP {
  public:
   CFWL_PictureBoxTP();

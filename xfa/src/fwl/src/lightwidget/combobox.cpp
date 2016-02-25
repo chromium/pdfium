@@ -4,8 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/include/fwl/lightwidget/combobox.h"
+
 #include <utility>
 
+#include "xfa/include/fwl/core/fwl_error.h"
+#include "xfa/include/fwl/core/fwl_widget.h"
 #include "xfa/src/foxitlib.h"
 
 CFWL_ComboBox* CFWL_ComboBox::Create() {

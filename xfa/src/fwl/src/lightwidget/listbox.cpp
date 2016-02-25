@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/include/fwl/lightwidget/listbox.h"
+
 #include <memory>
 
 #include "third_party/base/stl_util.h"

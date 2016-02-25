@@ -14,7 +14,6 @@
 #include "core/include/fxcodec/fx_codec.h"
 #include "core/include/fxcrt/fx_ext.h"
 #include "core/include/fxge/fx_ge.h"
-#include "xfa/include/fwl/fwl.h"
 #include "xfa/include/fxbarcode/BC_BarCode.h"
 #include "xfa/include/fxfa/fxfa.h"
 #include "xfa/include/fxgraphics/fx_graphics.h"

@@ -7,6 +7,7 @@
 #ifndef XFA_INCLUDE_FWL_ADAPTER_FWL_ADAPTERTHREADMGR_H_
 #define XFA_INCLUDE_FWL_ADAPTER_FWL_ADAPTERTHREADMGR_H_
 
+#include "core/include/fxcrt/fx_system.h"
 #include "xfa/include/fwl/core/fwl_error.h"
 #include "xfa/include/fwl/core/fwl_thread.h"
 

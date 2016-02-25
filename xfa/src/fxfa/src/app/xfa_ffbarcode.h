@@ -7,6 +7,7 @@
 #ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFBARCODE_H_
 #define XFA_SRC_FXFA_SRC_APP_XFA_FFBARCODE_H_
 
+#include "xfa/include/fxbarcode/BC_BarCode.h"
 #include "xfa/src/fxfa/src/app/xfa_ffpageview.h"
 #include "xfa/src/fxfa/src/app/xfa_fftextedit.h"
 

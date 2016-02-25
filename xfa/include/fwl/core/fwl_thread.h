@@ -22,6 +22,8 @@
 //      CFWL_App --------------> IFWL_App                CFWL_AppImp
 //
 
+#include "xfa/include/fwl/core/fwl_error.h"
+
 class CFWL_ThreadImp;
 class IFWL_NoteDriver;
 

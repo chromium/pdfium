@@ -4,7 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/include/fwl/lightwidget/app.h"
+
+#include "core/include/fxcrt/fx_coordinates.h"
+#include "xfa/include/fwl/core/fwl_app.h"
+#include "xfa/include/fwl/core/fwl_error.h"
+#include "xfa/include/fwl/lightwidget/theme.h"
 #include "xfa/src/foxitlib.h"
+
 CFWL_App::CFWL_App() : m_pIface(IFWL_App::Create(nullptr)), m_pTheme(nullptr) {}
 CFWL_App::~CFWL_App() {
   if (m_pTheme) {

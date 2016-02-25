@@ -9,6 +9,11 @@
 
 #include <memory>
 
+#include "xfa/include/fwl/core/fwl_form.h"
+#include "xfa/include/fwl/core/fwl_theme.h"
+#include "xfa/include/fwl/basewidget/fwl_datetimepicker.h"
+#include "xfa/include/fwl/basewidget/fwl_edit.h"
+#include "xfa/include/fwl/basewidget/fwl_monthcalendar.h"
 #include "xfa/src/fwl/src/basewidget/include/fwl_editimp.h"
 #include "xfa/src/fwl/src/basewidget/include/fwl_monthcalendarimp.h"
 

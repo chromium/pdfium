@@ -4,6 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/include/fwl/lightwidget/widget.h"
+
+#include "xfa/include/fwl/core/fwl_theme.h"
+#include "xfa/include/fwl/core/fwl_thread.h"
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_noteimp.h"

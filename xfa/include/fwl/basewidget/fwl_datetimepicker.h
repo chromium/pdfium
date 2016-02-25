@@ -7,10 +7,9 @@
 #ifndef XFA_INCLUDE_FWL_BASEWIDGET_FWL_DATETIMEPICKER_H_
 #define XFA_INCLUDE_FWL_BASEWIDGET_FWL_DATETIMEPICKER_H_
 
-class CFWL_WidgetImpProperties;
-class IFWL_Widget;
-class IFWL_DateTimePickerDP;
-class IFWL_DateTimePicker;
+#include "xfa/include/fwl/core/fwl_note.h"
+#include "xfa/include/fwl/core/fwl_widget.h"
+
 #define FWL_CLASS_DateTimePicker L"FWL_DATETIMEPICKER"
 #define FWL_CLASSHASH_DateTimePicker 3851176257
 #define FWL_STYLEEXT_DTP_AllowEdit (1L << 0)
@@ -47,21 +46,27 @@ class IFWL_DateTimePicker;
 #define FWL_EVTHASH_DTP_HoverChanged 686674750
 #define FWL_EVT_DTP_SelectChanged L"FWL_EVENT_DTP_SelectChanged"
 #define FWL_EVTHASH_DTP_SelectChanged 1589616858
+
 BEGIN_FWL_EVENT_DEF(CFWL_Event_DtpDropDown, FWL_EVTHASH_DTP_DropDown)
 END_FWL_EVENT_DEF
+
 BEGIN_FWL_EVENT_DEF(CFWL_Event_DtpCloseUp, FWL_EVTHASH_DTP_CloseUp)
 END_FWL_EVENT_DEF
+
 BEGIN_FWL_EVENT_DEF(CFWL_Event_DtpEditChanged, FWL_EVTHASH_DTP_EditChanged)
 CFX_WideString m_wsText;
 END_FWL_EVENT_DEF
+
 BEGIN_FWL_EVENT_DEF(CFWL_Event_DtpHoverChanged, FWL_EVTHASH_DTP_HoverChanged)
 int32_t hoverday;
 END_FWL_EVENT_DEF
+
 BEGIN_FWL_EVENT_DEF(CFWL_Event_DtpSelectChanged, FWL_EVTHASH_DTP_SelectChanged)
 int32_t iYear;
 int32_t iMonth;
 int32_t iDay;
 END_FWL_EVENT_DEF
+
 class IFWL_DateTimePickerDP : public IFWL_DataProvider {
  public:
   virtual FWL_ERR GetToday(IFWL_Widget* pWidget,

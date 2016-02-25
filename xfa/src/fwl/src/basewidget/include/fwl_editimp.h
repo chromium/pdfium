@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 
+#include "xfa/include/fwl/basewidget/fwl_scrollbar.h"
 #include "xfa/src/fee/include/ifde_txtedtengine.h"
 #include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
 

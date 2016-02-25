@@ -4,8 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/include/fwl/lightwidget/scrollbar.h"
+
 #include <memory>
 
+#include "xfa/include/fwl/basewidget/fwl_scrollbar.h"
 #include "xfa/src/foxitlib.h"
 
 CFWL_ScrollBar* CFWL_ScrollBar::Create() {

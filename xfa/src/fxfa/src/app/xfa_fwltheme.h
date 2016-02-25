@@ -7,6 +7,21 @@
 #ifndef XFA_SRC_FXFA_SRC_APP_XFA_FWLTHEME_H_
 #define XFA_SRC_FXFA_SRC_APP_XFA_FWLTHEME_H_
 
+#include "xfa/include/fwl/core/fwl_target.h"
+#include "xfa/include/fwl/core/fwl_theme.h"
+#include "xfa/include/fwl/theme/barcodetp.h"
+#include "xfa/include/fwl/theme/carettp.h"
+#include "xfa/include/fwl/theme/checkboxtp.h"
+#include "xfa/include/fwl/theme/comboboxtp.h"
+#include "xfa/include/fwl/theme/datetimepickertp.h"
+#include "xfa/include/fwl/theme/edittp.h"
+#include "xfa/include/fwl/theme/listboxtp.h"
+#include "xfa/include/fwl/theme/monthcalendartp.h"
+#include "xfa/include/fwl/theme/pictureboxtp.h"
+#include "xfa/include/fwl/theme/pushbuttontp.h"
+#include "xfa/include/fwl/theme/scrollbartp.h"
+#include "xfa/include/fwl/theme/widgettp.h"
+
 class CXFA_FWLTheme : public IFWL_ThemeProvider {
  public:
   CXFA_FWLTheme(CXFA_FFApp* pApp);

@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFIMAGEEDIT_H_
 #define XFA_SRC_FXFA_SRC_APP_XFA_FFIMAGEEDIT_H_
 
+#include "xfa/src/fxfa/src/app/xfa_fffield.h"
+
 class CXFA_FFImageEdit : public CXFA_FFField {
  public:
   CXFA_FFImageEdit(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);

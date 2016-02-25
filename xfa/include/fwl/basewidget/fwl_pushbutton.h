@@ -7,10 +7,9 @@
 #ifndef XFA_INCLUDE_FWL_BASEWIDGET_FWL_PUSHBUTTON_H_
 #define XFA_INCLUDE_FWL_BASEWIDGET_FWL_PUSHBUTTON_H_
 
-class CFWL_WidgetImpProperties;
-class IFWL_Widget;
-class IFWL_PushButtonDP;
-class IFWL_PushButton;
+#include "xfa/include/fwl/core/fwl_theme.h"
+#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+
 #define FWL_CLASS_PushButton L"FWL_PUSHBUTTON"
 #define FWL_CLASSHASH_PushButton 3521614244
 #define FWL_STYLEEXT_PSB_Left (0L << 0)
@@ -40,6 +39,7 @@ class IFWL_PushButton;
 #define FWL_PARTSTATE_PSB_Disabled (4L << 0)
 #define FWL_PARTSTATE_PSB_Focused (1L << 3)
 #define FWL_PARTSTATE_PSB_Mask (7L << 0)
+
 class IFWL_PushButtonDP : public IFWL_DataProvider {
  public:
   virtual CFX_DIBitmap* GetPicture(IFWL_Widget* pWidget) = 0;

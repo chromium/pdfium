@@ -7,8 +7,8 @@
 #ifndef XFA_INCLUDE_FWL_CORE_FWL_CONTENT_H_
 #define XFA_INCLUDE_FWL_CORE_FWL_CONTENT_H_
 
-class IFWL_Widget;
-class IFWL_Content;
+#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+
 class IFWL_Content : public IFWL_Widget {
  public:
   static IFWL_Content* Create();

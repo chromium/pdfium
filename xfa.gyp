@@ -57,7 +57,6 @@
         "xfa/include/fwl/core/fwl_widget.h",
         "xfa/include/fwl/core/fwl_widgetdef.h",
         "xfa/include/fwl/core/fwl_widgetmgr.h",
-        "xfa/include/fwl/fwl.h",
         "xfa/include/fwl/lightwidget/app.h",
         "xfa/include/fwl/lightwidget/barcode.h",
         "xfa/include/fwl/lightwidget/caret.h",

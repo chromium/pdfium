@@ -19,6 +19,7 @@
 #include "xfa/src/fxfa/src/app/xfa_fontmgr.h"
 #include "xfa/src/fxfa/src/app/xfa_fwladapter.h"
 #include "xfa/src/fxfa/src/app/xfa_textlayout.h"
+#include "xfa/src/fxfa/src/common/fxfa_localevalue.h"
 #include "xfa/src/fxfa/src/common/xfa_script.h"
 
 static void XFA_FFDeleteCalcData(void* pData) {

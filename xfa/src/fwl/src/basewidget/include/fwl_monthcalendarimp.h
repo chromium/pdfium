@@ -7,6 +7,7 @@
 #ifndef XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_MONTHCALENDARIMP_H_
 #define XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_MONTHCALENDARIMP_H_
 
+#include "xfa/src/fgas/include/fx_datetime.h"
 #include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
 
 class CFWL_WidgetImpProperties;

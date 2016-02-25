@@ -6,6 +6,7 @@
 
 #include <time.h>
 
+#include "xfa/src/fxfa/src/common/fxfa_localevalue.h"
 #include "xfa/src/fxfa/src/fm2js/xfa_fm2js.h"
 
 #define FINANCIAL_PRECISION 0.00000001

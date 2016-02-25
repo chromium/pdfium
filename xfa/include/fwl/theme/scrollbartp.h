@@ -7,8 +7,8 @@
 #ifndef XFA_INCLUDE_FWL_THEME_SCROLLBARTP_H_
 #define XFA_INCLUDE_FWL_THEME_SCROLLBARTP_H_
 
-class CFWL_WidgetTP;
-class CFWL_ScrollBarTP;
+#include "xfa/include/fwl/theme/widgettp.h"
+
 class CFWL_ScrollBarTP : public CFWL_WidgetTP {
  public:
   CFWL_ScrollBarTP();

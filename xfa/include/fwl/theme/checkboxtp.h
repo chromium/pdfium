@@ -7,6 +7,7 @@
 #ifndef XFA_INCLUDE_FWL_THEME_CHECKBOXTP_H_
 #define XFA_INCLUDE_FWL_THEME_CHECKBOXTP_H_
 
+#include "xfa/include/fwl/theme/utils.h"
 #include "xfa/include/fwl/theme/widgettp.h"
 
 class CFWL_CheckBoxTP : public CFWL_WidgetTP {

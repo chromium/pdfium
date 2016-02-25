@@ -4,15 +4,26 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+
 #include <algorithm>
 
+#include "xfa/include/fwl/adapter/fwl_adapternative.h"
+#include "xfa/include/fwl/adapter/fwl_adapterthreadmgr.h"
+#include "xfa/include/fwl/basewidget/fwl_combobox.h"
+#include "xfa/include/fwl/basewidget/fwl_datetimepicker.h"
+#include "xfa/include/fwl/basewidget/fwl_menu.h"
+#include "xfa/include/fwl/core/fwl_app.h"
+#include "xfa/include/fwl/core/fwl_content.h"
+#include "xfa/include/fwl/core/fwl_form.h"
+#include "xfa/include/fwl/core/fwl_theme.h"
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fwl/src/core/include/fwl_appimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_threadimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_widgetmgrimp.h"
+
 FWL_ERR IFWL_Widget::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
   return static_cast<CFWL_WidgetImp*>(GetImpl())
       ->GetWidgetRect(rect, bAutoSize);

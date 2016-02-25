@@ -7,11 +7,14 @@
 #ifndef XFA_INCLUDE_FWL_CORE_FWL_GRID_H_
 #define XFA_INCLUDE_FWL_CORE_FWL_GRID_H_
 
+#include "xfa/include/fwl/core/fwl_content.h"
+
 class IFWL_Widget;
-class IFWL_Content;
+
 #define FWL_CLASS_Grid L"FWL_GRID"
 #define FWL_CLASSHASH_Grid 3150298670
 #define FWL_GRIDSTYLEEXT_ShowGridLines (1L << 0)
+
 struct FWL_LAYOUTDATA {
   FX_FLOAT fWidth;
   FX_FLOAT fHeight;
@@ -36,6 +39,7 @@ enum FWL_GRIDSIZE {
   FWL_GRIDSIZE_MaxWidth,
   FWL_GRIDSIZE_MaxHeight,
 };
+
 typedef struct FWL_HGRIDCOLROW_ { void* pData; } * FWL_HGRIDCOLROW;
 class IFWL_Grid : public IFWL_Content {
  public:

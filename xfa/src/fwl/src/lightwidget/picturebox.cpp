@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/include/fwl/lightwidget/picturebox.h"
+
 #include <memory>
 
 #include "xfa/src/foxitlib.h"

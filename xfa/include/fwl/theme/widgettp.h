@@ -10,16 +10,23 @@
 #include <memory>
 #include <vector>
 
+#include "core/include/fxcrt/fx_coordinates.h"
+#include "core/include/fxcrt/fx_system.h"
+#include "xfa/include/fwl/core/fwl_error.h"
+#include "xfa/include/fwl/core/fwl_theme.h"
+#include "xfa/include/fwl/core/fwl_widget.h"
+#include "xfa/include/fwl/theme/utils.h"
+
 class IFWL_ThemeProvider;
 class IFWL_Widget;
 class IFDE_TextOut;
 class IFX_Font;
 class IFX_FontMgr;
+class CFWL_ArrowData;
+
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
 class IFX_FontSourceEnum;
 #endif
-class CFWL_WidgetTP;
-class CFWL_ArrowData;
 
 class CFWL_WidgetTP {
  public:

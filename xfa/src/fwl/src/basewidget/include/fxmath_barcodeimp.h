@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FXMATH_BARCODEIMP_H_
 #define XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FXMATH_BARCODEIMP_H_
 
+#include "xfa/include/fwl/basewidget/fxmath_barcode.h"
+
 class CFX_Barcode : public IFX_Barcode {
  public:
   CFX_Barcode();

@@ -7,7 +7,9 @@
 #ifndef XFA_SRC_FXFA_SRC_COMMON_XFA_UTILS_H_
 #define XFA_SRC_FXFA_SRC_COMMON_XFA_UTILS_H_
 
-#include "xfa/src/fxfa/src/common/fxfa_localevalue.h"
+#include "xfa/include/fxfa/fxfa_basic.h"
+
+class CXFA_LocaleValue;
 
 FX_BOOL XFA_FDEExtension_ResolveNamespaceQualifier(
     IFDE_XMLElement* pNode,

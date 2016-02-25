@@ -7,10 +7,8 @@
 #ifndef XFA_INCLUDE_FWL_BASEWIDGET_FWL_SCROLLBAR_H_
 #define XFA_INCLUDE_FWL_BASEWIDGET_FWL_SCROLLBAR_H_
 
-class CFWL_WidgetImpProperties;
-class IFWL_Widget;
-class IFWL_ScrollBarDP;
-class IFWL_ScrollBar;
+#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+
 #define FWL_CLASS_ScrollBar L"FWL_SCROLLBAR"
 #define FWL_CLASSHASH_ScrollBar 2826584844
 #define FWL_STYLEEXT_SCB_Horz (0L << 0)
@@ -33,6 +31,7 @@ class IFWL_ScrollBar;
 #define FWL_WGTHITTEST_SCB_UpperTrack FWL_WGTHITTEST_MAX + 4
 #define FWL_WGTHITTEST_SCB_Thumb FWL_WGTHITTEST_MAX + 5
 #define FWL_CAPACITY_SCB_Size FWL_WGTCAPACITY_MAX
+
 enum FWL_SCBCODE {
   FWL_SCBCODE_None = 1,
   FWL_SCBCODE_Min,
@@ -45,7 +44,9 @@ enum FWL_SCBCODE {
   FWL_SCBCODE_TrackPos,
   FWL_SCBCODE_EndScroll,
 };
+
 class IFWL_ScrollBarDP : public IFWL_DataProvider {};
+
 class IFWL_ScrollBar : public IFWL_Widget {
  public:
   static IFWL_ScrollBar* Create(const CFWL_WidgetImpProperties& properties,

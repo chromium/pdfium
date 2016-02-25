@@ -7,9 +7,12 @@
 #ifndef XFA_SRC_FXFA_SRC_COMMON_FXFA_LOCALEVALUE_H_
 #define XFA_SRC_FXFA_SRC_COMMON_FXFA_LOCALEVALUE_H_
 
+#include "xfa/include/fxfa/fxfa_objectacc.h"
+
 class IFX_Locale;
 class CFX_Unitime;
 class CXFA_LocaleMgr;
+
 #define XFA_VT_NULL 0
 #define XFA_VT_BOOLEAN 1
 #define XFA_VT_INTEGER 2
@@ -19,6 +22,7 @@ class CXFA_LocaleMgr;
 #define XFA_VT_DATE 32
 #define XFA_VT_TIME 64
 #define XFA_VT_DATETIME 128
+
 class CXFA_LocaleValue {
  public:
   CXFA_LocaleValue();

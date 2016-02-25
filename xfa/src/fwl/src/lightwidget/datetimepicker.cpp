@@ -4,8 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/include/fwl/lightwidget/datetimepicker.h"
+
 #include <memory>
 
+#include "xfa/include/fwl/core/fwl_error.h"
+#include "xfa/include/fwl/core/fwl_note.h"
+#include "xfa/include/fwl/core/fwl_widget.h"
+#include "xfa/include/fwl/basewidget/fwl_datetimepicker.h"
 #include "xfa/src/foxitlib.h"
 
 CFWL_DateTimePicker* CFWL_DateTimePicker::Create() {

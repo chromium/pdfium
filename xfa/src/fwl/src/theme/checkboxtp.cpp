@@ -4,7 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/include/fwl/theme/checkboxtp.h"
+
+#include "xfa/include/fwl/basewidget/fwl_checkbox.h"
+#include "xfa/include/fwl/core/fwl_widget.h"
 #include "xfa/src/foxitlib.h"
+
 #define CHECKBOX_SIZE_SIGNMARGIN 3
 #define CHECKBOX_SIZE_SIGNBORDER 2
 #define CHECKBOX_SIZE_SIGNPATH 100
@@ -13,6 +18,7 @@
 #define CHECKBOX_COLOR_BOXRB1 (ArgbEncode(255, 241, 239, 226))
 #define CHECKBOX_COLOR_BOXRB2 (ArgbEncode(255, 255, 255, 255))
 #define CHECKBOX_FXGE_CoordinatesAdjust
+
 CFWL_CheckBoxTP::CFWL_CheckBoxTP() : m_pCheckPath(NULL) {
   m_pThemeData = new CKBThemeData;
   SetThemeData(0);

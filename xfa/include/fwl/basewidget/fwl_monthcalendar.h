@@ -7,8 +7,9 @@
 #ifndef XFA_INCLUDE_FWL_BASEWIDGET_FWL_MONTHCALENDAR_H_
 #define XFA_INCLUDE_FWL_BASEWIDGET_FWL_MONTHCALENDAR_H_
 
-class IFWL_MonthCalendarDP;
-class IFWL_MonthCalendar;
+#include "xfa/include/fwl/core/fwl_note.h"
+#include "xfa/include/fwl/core/fwl_widget.h"
+
 #define FWL_CLASS_MonthCalendar L"FWL_MONTHCALENDAR"
 #define FWL_CLASSHASH_MonthCalendar 2733931374
 #define FWL_STYLEEXT_MCD_MultiSelect (1L << 0)
@@ -97,22 +98,26 @@ class IFWL_MonthCalendar;
 #define FWL_EVT_MCD_DateChanged L"FWL_EVENT_MCD_DateChanged"
 #define FWL_NOTEHASH_MCD_DATASELECTED 1085596932
 #define FWL_EVTHASH_MCD_DateChanged 54212227
+
 BEGIN_FWL_EVENT_DEF(CFWL_Event_McdDateSelected, FWL_NOTEHASH_MCD_DATASELECTED)
 int32_t m_iStartDay;
 int32_t m_iEndDay;
 END_FWL_EVENT_DEF
+
 BEGIN_FWL_EVENT_DEF(CFWL_EventMcdDateChanged, FWL_EVTHASH_MCD_DateChanged)
 int32_t m_iOldYear;
 int32_t m_iOldMonth;
 int32_t m_iStartDay;
 int32_t m_iEndDay;
 END_FWL_EVENT_DEF
+
 class IFWL_MonthCalendarDP : public IFWL_DataProvider {
  public:
   virtual int32_t GetCurDay(IFWL_Widget* pWidget) = 0;
   virtual int32_t GetCurMonth(IFWL_Widget* pWidget) = 0;
   virtual int32_t GetCurYear(IFWL_Widget* pWidget) = 0;
 };
+
 class IFWL_MonthCalendar : public IFWL_Widget {
  public:
   static IFWL_MonthCalendar* Create(const CFWL_WidgetImpProperties& properties,

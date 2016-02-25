@@ -7,7 +7,10 @@
 #ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFTEXT_H_
 #define XFA_SRC_FXFA_SRC_APP_XFA_FFTEXT_H_
 
+#include "xfa/src/fxfa/src/app/xfa_ffdraw.h"
+
 class CXFA_TextLayout;
+
 class CXFA_FFText : public CXFA_FFDraw {
  public:
   CXFA_FFText(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);

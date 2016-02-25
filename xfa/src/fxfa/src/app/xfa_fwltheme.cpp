@@ -4,6 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/include/fwl/basewidget/fwl_barcode.h"
+#include "xfa/include/fwl/basewidget/fwl_caret.h"
+#include "xfa/include/fwl/basewidget/fwl_checkbox.h"
+#include "xfa/include/fwl/basewidget/fwl_combobox.h"
+#include "xfa/include/fwl/basewidget/fwl_datetimepicker.h"
+#include "xfa/include/fwl/basewidget/fwl_edit.h"
+#include "xfa/include/fwl/basewidget/fwl_listbox.h"
+#include "xfa/include/fwl/basewidget/fwl_monthcalendar.h"
+#include "xfa/include/fwl/basewidget/fwl_picturebox.h"
+#include "xfa/include/fwl/basewidget/fwl_pushbutton.h"
+#include "xfa/include/fwl/basewidget/fwl_scrollbar.h"
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/app/xfa_ffapp.h"
 #include "xfa/src/fxfa/src/app/xfa_ffwidget.h"

@@ -7,10 +7,9 @@
 #ifndef XFA_INCLUDE_FWL_BASEWIDGET_FWL_CHECKBOX_H_
 #define XFA_INCLUDE_FWL_BASEWIDGET_FWL_CHECKBOX_H_
 
-class CFWL_WidgetImpProperties;
-class IFWL_Widget;
-class IFWL_CheckBoxDP;
-class IFWL_CheckBox;
+#include "xfa/include/fwl/core/fwl_note.h"
+#include "xfa/include/fwl/core/fwl_widget.h"
+
 #define FWL_CLASS_CheckBox L"FWL_CHECKBOX"
 #define FWL_CLASSHASH_CheckBox 4107183823
 #define FWL_STYLEEXT_CKB_Left (0L << 0)
@@ -60,6 +59,7 @@ class IFWL_CheckBox;
 #define FWL_PARTSTATE_CKB_Mask2 (3L << 2)
 #define FWL_EVT_CKB_CheckStateChanged L"FWL_EVENT_CKB_CheckStateChanged"
 #define FWL_EVTHASH_CKB_CheckStateChanged 2503252963
+
 BEGIN_FWL_EVENT_DEF(CFWL_EvtCkbCheckStateChanged,
                     FWL_EVTHASH_CKB_CheckStateChanged)
 END_FWL_EVENT_DEF

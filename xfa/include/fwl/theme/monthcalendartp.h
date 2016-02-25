@@ -7,8 +7,8 @@
 #ifndef XFA_INCLUDE_FWL_THEME_MONTHCALENDARTP_H_
 #define XFA_INCLUDE_FWL_THEME_MONTHCALENDARTP_H_
 
-class CFWL_WidgetTP;
-class CFWL_MonthCalendarTP;
+#include "xfa/include/fwl/theme/widgettp.h"
+
 class CFWL_MonthCalendarTP : public CFWL_WidgetTP {
  public:
   CFWL_MonthCalendarTP();

@@ -4,8 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/app/xfa_ffchoicelist.h"
+
+#include "xfa/include/fwl/basewidget/fwl_edit.h"
+#include "xfa/include/fwl/core/fwl_app.h"
+#include "xfa/include/fwl/lightwidget/combobox.h"
+#include "xfa/include/fwl/lightwidget/listbox.h"
+#include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/app/xfa_ffdoc.h"
 #include "xfa/src/fxfa/src/app/xfa_ffdocview.h"
 #include "xfa/src/fxfa/src/app/xfa_fffield.h"

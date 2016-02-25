@@ -4,8 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/foxitlib.h"
 #include "xfa/src/fwl/src/basewidget/include/fwl_datetimepickerimp.h"
+
+#include "xfa/include/fwl/basewidget/fwl_spinbutton.h"
+#include "xfa/src/foxitlib.h"
 #include "xfa/src/fwl/src/basewidget/include/fwl_editimp.h"
 #include "xfa/src/fwl/src/basewidget/include/fwl_formproxyimp.h"
 #include "xfa/src/fwl/src/basewidget/include/fwl_monthcalendarimp.h"
@@ -15,6 +17,7 @@
 #include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_widgetmgrimp.h"
+
 #define FWL_DTP_WIDTH 100
 #define FWL_DTP_HEIGHT 20
 

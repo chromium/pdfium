@@ -4,8 +4,22 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/include/fwl/lightwidget/theme.h"
+
 #include <algorithm>
 
+#include "xfa/include/fwl/theme/barcodetp.h"
+#include "xfa/include/fwl/theme/carettp.h"
+#include "xfa/include/fwl/theme/checkboxtp.h"
+#include "xfa/include/fwl/theme/comboboxtp.h"
+#include "xfa/include/fwl/theme/datetimepickertp.h"
+#include "xfa/include/fwl/theme/edittp.h"
+#include "xfa/include/fwl/theme/formtp.h"
+#include "xfa/include/fwl/theme/listboxtp.h"
+#include "xfa/include/fwl/theme/monthcalendartp.h"
+#include "xfa/include/fwl/theme/pictureboxtp.h"
+#include "xfa/include/fwl/theme/pushbuttontp.h"
+#include "xfa/include/fwl/theme/scrollbartp.h"
 #include "xfa/src/foxitlib.h"
 
 CFWL_Theme::CFWL_Theme() {

@@ -4,8 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/include/fwl/lightwidget/checkbox.h"
+
 #include <memory>
 
+#include "xfa/include/fwl/core/fwl_error.h"
 #include "xfa/src/foxitlib.h"
 
 CFWL_CheckBox* CFWL_CheckBox::Create() {

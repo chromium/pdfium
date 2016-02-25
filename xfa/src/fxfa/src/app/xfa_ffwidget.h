@@ -9,6 +9,8 @@
 
 #include <vector>
 
+#include "core/include/fxcodec/fx_codec_def.h"
+#include "core/include/fxge/fx_ge.h"
 #include "xfa/include/fxfa/fxfa.h"
 #include "xfa/src/fxfa/src/common/xfa_doclayout.h"
 
