@@ -235,11 +235,8 @@ class CXFA_Node : public CXFA_Object {
                      FX_BOOL bNotify = FALSE);
   FX_BOOL TryMeasure(XFA_ATTRIBUTE eAttr,
                      CXFA_Measurement& mValue,
-                     FX_BOOL bUseDefault = TRUE);
-  CXFA_Measurement GetMeasure(XFA_ATTRIBUTE eAttr) {
-    CXFA_Measurement mValue;
-    return TryMeasure(eAttr, mValue, TRUE) ? mValue : CXFA_Measurement();
-  }
+                     FX_BOOL bUseDefault = TRUE) const;
+  CXFA_Measurement GetMeasure(XFA_ATTRIBUTE eAttr) const;
   FX_BOOL SetObject(XFA_ATTRIBUTE eAttr,
                     void* pData,
                     XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo = NULL);
@@ -277,7 +274,7 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* CreateSamePacketNode(XFA_ELEMENT eElement,
                                   FX_DWORD dwFlags = XFA_NODEFLAG_Initialized);
   CXFA_Node* CloneTemplateToForm(FX_BOOL bRecursive);
-  CXFA_Node* GetTemplateNode();
+  CXFA_Node* GetTemplateNode() const;
   void SetTemplateNode(CXFA_Node* pTemplateNode);
   CXFA_Node* GetDataDescriptionNode();
   void SetDataDescriptionNode(CXFA_Node* pDataDescriptionNode);
@@ -613,7 +610,8 @@ class CXFA_Node : public CXFA_Object {
                            FX_BOOL bScriptModify = FALSE,
                            FX_BOOL bSyncData = TRUE);
   CFX_WideString GetScriptContent(FX_BOOL bScriptModify = FALSE);
-  XFA_MAPMODULEDATA* GetMapModuleData(FX_BOOL bCreateNew);
+  XFA_MAPMODULEDATA* CreateMapModuleData();
+  XFA_MAPMODULEDATA* GetMapModuleData() const;
   void SetMapModuleValue(void* pKey, void* pValue);
   FX_BOOL GetMapModuleValue(void* pKey, void*& pValue);
   void SetMapModuleString(void* pKey, const CFX_WideStringC& wsValue);
@@ -625,7 +623,7 @@ class CXFA_Node : public CXFA_Object {
   FX_BOOL GetMapModuleBuffer(void* pKey,
                              void*& pValue,
                              int32_t& iBytes,
-                             FX_BOOL bProtoAlso = TRUE);
+                             FX_BOOL bProtoAlso = TRUE) const;
   FX_BOOL HasMapModuleKey(void* pKey, FX_BOOL bProtoAlso = FALSE);
   void RemoveMapModuleKey(void* pKey = NULL);
   void MergeAllData(void* pDstModule, FX_BOOL bUseSrcAttr = TRUE);

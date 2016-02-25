@@ -64,11 +64,11 @@ void CXFA_Object::ThrowScriptErrorMessage(int32_t iStringID, ...) {
   va_end(arg_ptr);
   FXJSE_ThrowMessage("", FX_UTF8Encode(wsMessage, wsMessage.GetLength()));
 }
+
 static void XFA_DeleteWideString(void* pData) {
-  if (pData) {
-    delete (CFX_WideString*)pData;
-  }
+  delete static_cast<CFX_WideString*>(pData);
 }
+
 static void XFA_CopyWideString(void*& pData) {
   if (pData) {
     CFX_WideString* pNewData = new CFX_WideString(*(CFX_WideString*)pData);
@@ -318,9 +318,11 @@ CXFA_Node* CXFA_Node::CloneTemplateToForm(FX_BOOL bRecursive) {
   pClone->SetFlag(XFA_NODEFLAG_Initialized);
   return pClone;
 }
-CXFA_Node* CXFA_Node::GetTemplateNode() {
+
+CXFA_Node* CXFA_Node::GetTemplateNode() const {
   return m_pAuxNode;
 }
+
 void CXFA_Node::SetTemplateNode(CXFA_Node* pTemplateNode) {
   m_pAuxNode = pTemplateNode;
 }
@@ -342,11 +344,11 @@ int32_t CXFA_Node::GetBindItems(CXFA_NodeArray& formItems) {
   }
   return formItems.GetSize();
 }
+
 static void XFA_DataNodeDeleteBindItem(void* pData) {
-  if (pData) {
-    delete ((CXFA_NodeArray*)pData);
-  }
+  delete static_cast<CXFA_NodeArray*>(pData);
 }
+
 static XFA_MAPDATABLOCKCALLBACKINFO deleteBindItemCallBack = {
     XFA_DataNodeDeleteBindItem, NULL};
 int32_t CXFA_Node::AddBindItem(CXFA_Node* pFormNode) {
@@ -3730,17 +3732,8 @@ void* XFA_GetMapKey_Element(XFA_ELEMENT eElement, XFA_ATTRIBUTE eAttribute) {
   return (void*)(uintptr_t)((eElement << 16) | (eAttribute << 8) |
                             XFA_KEYTYPE_Element);
 }
-static inline FX_BOOL XFA_NodeData_PrepareKey(XFA_ELEMENT eElem,
-                                              XFA_ATTRIBUTE eAttr,
-                                              void*& pKey) {
-  pKey = XFA_GetMapKey_Element(eElem, eAttr);
-  return TRUE;
-}
 FX_BOOL CXFA_Node::HasAttribute(XFA_ATTRIBUTE eAttr, FX_BOOL bCanInherit) {
-  void* pKey = NULL;
-  if (!XFA_NodeData_PrepareKey(GetClassID(), eAttr, pKey)) {
-    return FALSE;
-  }
+  void* pKey = XFA_GetMapKey_Element(GetClassID(), eAttr);
   return HasMapModuleKey(pKey, bCanInherit);
 }
 FX_BOOL CXFA_Node::SetAttribute(XFA_ATTRIBUTE eAttr,
@@ -3902,10 +3895,7 @@ FX_BOOL CXFA_Node::TryEnum(XFA_ATTRIBUTE eAttr,
 FX_BOOL CXFA_Node::SetMeasure(XFA_ATTRIBUTE eAttr,
                               CXFA_Measurement mValue,
                               FX_BOOL bNotify) {
-  void* pKey = NULL;
-  if (!XFA_NodeData_PrepareKey(GetClassID(), eAttr, pKey)) {
-    return FALSE;
-  }
+  void* pKey = XFA_GetMapKey_Element(GetClassID(), eAttr);
   OnChanging(eAttr, &mValue, bNotify);
   SetMapModuleBuffer(pKey, &mValue, sizeof(CXFA_Measurement));
   OnChanged(eAttr, &mValue, bNotify);
@@ -3913,11 +3903,8 @@ FX_BOOL CXFA_Node::SetMeasure(XFA_ATTRIBUTE eAttr,
 }
 FX_BOOL CXFA_Node::TryMeasure(XFA_ATTRIBUTE eAttr,
                               CXFA_Measurement& mValue,
-                              FX_BOOL bUseDefault) {
-  void* pKey = NULL;
-  if (!XFA_NodeData_PrepareKey(GetClassID(), eAttr, pKey)) {
-    return FALSE;
-  }
+                              FX_BOOL bUseDefault) const {
+  void* pKey = XFA_GetMapKey_Element(GetClassID(), eAttr);
   void* pValue;
   int32_t iBytes;
   if (GetMapModuleBuffer(pKey, pValue, iBytes) && iBytes == sizeof(mValue)) {
@@ -3932,14 +3919,17 @@ FX_BOOL CXFA_Node::TryMeasure(XFA_ATTRIBUTE eAttr,
   }
   return FALSE;
 }
+
+CXFA_Measurement CXFA_Node::GetMeasure(XFA_ATTRIBUTE eAttr) const {
+  CXFA_Measurement mValue;
+  return TryMeasure(eAttr, mValue, TRUE) ? mValue : CXFA_Measurement();
+}
+
 FX_BOOL CXFA_Node::SetCData(XFA_ATTRIBUTE eAttr,
                             const CFX_WideString& wsValue,
                             FX_BOOL bNotify,
                             FX_BOOL bScriptModify) {
-  void* pKey = NULL;
-  if (!XFA_NodeData_PrepareKey(GetClassID(), eAttr, pKey)) {
-    return FALSE;
-  }
+  void* pKey = XFA_GetMapKey_Element(GetClassID(), eAttr);
   OnChanging(eAttr, (void*)(const FX_WCHAR*)wsValue, bNotify);
   if (eAttr == XFA_ATTRIBUTE_Value) {
     CFX_WideString* pClone = new CFX_WideString(wsValue);
@@ -4008,10 +3998,7 @@ FX_BOOL CXFA_Node::SetAttributeValue(const CFX_WideString& wsValue,
                                      const CFX_WideString& wsXMLValue,
                                      FX_BOOL bNotify,
                                      FX_BOOL bScriptModify) {
-  void* pKey = NULL;
-  if (!XFA_NodeData_PrepareKey(GetClassID(), XFA_ATTRIBUTE_Value, pKey)) {
-    return FALSE;
-  }
+  void* pKey = XFA_GetMapKey_Element(GetClassID(), XFA_ATTRIBUTE_Value);
   OnChanging(XFA_ATTRIBUTE_Value, (void*)(const FX_WCHAR*)wsValue, bNotify);
   CFX_WideString* pClone = new CFX_WideString(wsValue);
   SetUserData(pKey, pClone, &deleteWideStringCallBack);
@@ -4057,10 +4044,7 @@ FX_BOOL CXFA_Node::TryCData(XFA_ATTRIBUTE eAttr,
                             CFX_WideString& wsValue,
                             FX_BOOL bUseDefault,
                             FX_BOOL bProto) {
-  void* pKey = NULL;
-  if (!XFA_NodeData_PrepareKey(GetClassID(), eAttr, pKey)) {
-    return FALSE;
-  }
+  void* pKey = XFA_GetMapKey_Element(GetClassID(), eAttr);
   if (eAttr == XFA_ATTRIBUTE_Value) {
     CFX_WideString* pStr = (CFX_WideString*)GetUserData(pKey, bProto);
     if (pStr) {
@@ -4089,10 +4073,7 @@ FX_BOOL CXFA_Node::TryCData(XFA_ATTRIBUTE eAttr,
                             CFX_WideStringC& wsValue,
                             FX_BOOL bUseDefault,
                             FX_BOOL bProto) {
-  void* pKey = NULL;
-  if (!XFA_NodeData_PrepareKey(GetClassID(), eAttr, pKey)) {
-    return FALSE;
-  }
+  void* pKey = XFA_GetMapKey_Element(GetClassID(), eAttr);
   if (eAttr == XFA_ATTRIBUTE_Value) {
     CFX_WideString* pStr = (CFX_WideString*)GetUserData(pKey, bProto);
     if (pStr) {
@@ -4118,17 +4099,11 @@ FX_BOOL CXFA_Node::TryCData(XFA_ATTRIBUTE eAttr,
 FX_BOOL CXFA_Node::SetObject(XFA_ATTRIBUTE eAttr,
                              void* pData,
                              XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo) {
-  void* pKey = NULL;
-  if (!XFA_NodeData_PrepareKey(GetClassID(), eAttr, pKey)) {
-    return FALSE;
-  }
+  void* pKey = XFA_GetMapKey_Element(GetClassID(), eAttr);
   return SetUserData(pKey, pData, pCallbackInfo);
 }
 FX_BOOL CXFA_Node::TryObject(XFA_ATTRIBUTE eAttr, void*& pData) {
-  void* pKey = NULL;
-  if (!XFA_NodeData_PrepareKey(GetClassID(), eAttr, pKey)) {
-    return FALSE;
-  }
+  void* pKey = XFA_GetMapKey_Element(GetClassID(), eAttr);
   pData = GetUserData(pKey);
   return pData != NULL;
 }
@@ -4136,10 +4111,7 @@ FX_BOOL CXFA_Node::SetValue(XFA_ATTRIBUTE eAttr,
                             XFA_ATTRIBUTETYPE eType,
                             void* pValue,
                             FX_BOOL bNotify) {
-  void* pKey = NULL;
-  if (!XFA_NodeData_PrepareKey(GetClassID(), eAttr, pKey)) {
-    return FALSE;
-  }
+  void* pKey = XFA_GetMapKey_Element(GetClassID(), eAttr);
   OnChanging(eAttr, pValue, bNotify);
   SetMapModuleValue(pKey, pValue);
   OnChanged(eAttr, pValue, bNotify);
@@ -4175,10 +4147,7 @@ FX_BOOL CXFA_Node::GetValue(XFA_ATTRIBUTE eAttr,
                             XFA_ATTRIBUTETYPE eType,
                             FX_BOOL bUseDefault,
                             void*& pValue) {
-  void* pKey = NULL;
-  if (!XFA_NodeData_PrepareKey(GetClassID(), eAttr, pKey)) {
-    return FALSE;
-  }
+  void* pKey = XFA_GetMapKey_Element(GetClassID(), eAttr);
   if (GetMapModuleValue(pKey, pValue)) {
     return TRUE;
   }
@@ -5006,21 +4975,26 @@ FX_BOOL CXFA_Node::IsNeedSavingXMLNode() {
   return m_pXMLNode && (GetPacketID() == XFA_XDPPACKET_Datasets ||
                         GetClassID() == XFA_ELEMENT_Xfa);
 }
-XFA_MAPMODULEDATA* CXFA_Node::GetMapModuleData(FX_BOOL bCreateNew) {
-  if (!m_pMapModuleData && bCreateNew) {
+
+XFA_MAPMODULEDATA* CXFA_Node::CreateMapModuleData() {
+  if (!m_pMapModuleData)
     m_pMapModuleData = new XFA_MAPMODULEDATA;
-  }
   return m_pMapModuleData;
 }
-void CXFA_Node::SetMapModuleValue(void* pKey, void* pValue) {
-  XFA_MAPMODULEDATA* pModule = GetMapModuleData(TRUE);
-  if (pModule)
-    pModule->m_ValueMap.SetAt(pKey, pValue);
+
+XFA_MAPMODULEDATA* CXFA_Node::GetMapModuleData() const {
+  return m_pMapModuleData;
 }
+
+void CXFA_Node::SetMapModuleValue(void* pKey, void* pValue) {
+  XFA_MAPMODULEDATA* pModule = CreateMapModuleData();
+  pModule->m_ValueMap.SetAt(pKey, pValue);
+}
+
 FX_BOOL CXFA_Node::GetMapModuleValue(void* pKey, void*& pValue) {
   CXFA_Node* pNode = this;
   while (pNode) {
-    XFA_MAPMODULEDATA* pModule = pNode->GetMapModuleData(FALSE);
+    XFA_MAPMODULEDATA* pModule = pNode->GetMapModuleData();
     if (pModule && pModule->m_ValueMap.Lookup(pKey, pValue)) {
       return TRUE;
     }
@@ -5048,10 +5022,7 @@ void CXFA_Node::SetMapModuleBuffer(
     void* pValue,
     int32_t iBytes,
     XFA_MAPDATABLOCKCALLBACKINFO* pCallbackInfo) {
-  XFA_MAPMODULEDATA* pModule = GetMapModuleData(TRUE);
-  if (!pModule)
-    return;
-
+  XFA_MAPMODULEDATA* pModule = CreateMapModuleData();
   XFA_MAPDATABLOCK*& pBuffer = pModule->m_BufferMap[pKey];
   if (pBuffer == NULL) {
     pBuffer =
@@ -5075,11 +5046,11 @@ void CXFA_Node::SetMapModuleBuffer(
 FX_BOOL CXFA_Node::GetMapModuleBuffer(void* pKey,
                                       void*& pValue,
                                       int32_t& iBytes,
-                                      FX_BOOL bProtoAlso) {
+                                      FX_BOOL bProtoAlso) const {
   XFA_MAPDATABLOCK* pBuffer = NULL;
-  CXFA_Node* pNode = this;
+  const CXFA_Node* pNode = this;
   while (pNode) {
-    XFA_MAPMODULEDATA* pModule = pNode->GetMapModuleData(FALSE);
+    XFA_MAPMODULEDATA* pModule = pNode->GetMapModuleData();
     if (pModule && pModule->m_BufferMap.Lookup(pKey, pBuffer)) {
       break;
     }
@@ -5098,7 +5069,7 @@ FX_BOOL CXFA_Node::HasMapModuleKey(void* pKey, FX_BOOL bProtoAlso) {
   CXFA_Node* pNode = this;
   while (pNode) {
     void* pVal;
-    XFA_MAPMODULEDATA* pModule = pNode->GetMapModuleData(FALSE);
+    XFA_MAPMODULEDATA* pModule = pNode->GetMapModuleData();
     if (pModule &&
         (pModule->m_ValueMap.Lookup(pKey, pVal) ||
          pModule->m_BufferMap.Lookup(pKey, (XFA_MAPDATABLOCK*&)pVal))) {
@@ -5111,7 +5082,7 @@ FX_BOOL CXFA_Node::HasMapModuleKey(void* pKey, FX_BOOL bProtoAlso) {
   return FALSE;
 }
 void CXFA_Node::RemoveMapModuleKey(void* pKey) {
-  XFA_MAPMODULEDATA* pModule = GetMapModuleData(FALSE);
+  XFA_MAPMODULEDATA* pModule = GetMapModuleData();
   if (!pModule)
     return;
 
@@ -5145,11 +5116,8 @@ void CXFA_Node::RemoveMapModuleKey(void* pKey) {
 }
 void CXFA_Node::MergeAllData(void* pDstModule, FX_BOOL bUseSrcAttr) {
   XFA_MAPMODULEDATA* pDstModuleData =
-      static_cast<CXFA_Node*>(pDstModule)->GetMapModuleData(TRUE);
-  if (!pDstModuleData) {
-    return;
-  }
-  XFA_MAPMODULEDATA* pSrcModuleData = this->GetMapModuleData(FALSE);
+      static_cast<CXFA_Node*>(pDstModule)->CreateMapModuleData();
+  XFA_MAPMODULEDATA* pSrcModuleData = GetMapModuleData();
   if (!pSrcModuleData) {
     return;
   }
@@ -5216,14 +5184,11 @@ void CXFA_Node::MoveBufferMapData(CXFA_Node* pDstModule, void* pKey) {
   XFA_MAPMODULEDATA* pSrcModuleData = NULL;
   XFA_MAPMODULEDATA* pDstModuleData = NULL;
   if (bNeedMove) {
-    pSrcModuleData = GetMapModuleData(FALSE);
+    pSrcModuleData = GetMapModuleData();
     if (!pSrcModuleData) {
       bNeedMove = FALSE;
     }
-    pDstModuleData = pDstModule->GetMapModuleData(TRUE);
-    if (!pDstModuleData) {
-      bNeedMove = FALSE;
-    }
+    pDstModuleData = pDstModule->CreateMapModuleData();
   }
   if (bNeedMove) {
     void* pBufferBlockData = pSrcModuleData->m_BufferMap.GetValueAt(pKey);
