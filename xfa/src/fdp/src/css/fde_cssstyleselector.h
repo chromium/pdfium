@@ -9,7 +9,6 @@
 
 #include <vector>
 
-#include "xfa/src/fdp/include/fde_mem.h"
 #include "xfa/src/fgas/include/fx_sys.h"
 
 #define FDE_CSSUNIVERSALHASH ('*')
@@ -386,7 +385,7 @@ class CFDE_CSSComputedStyle : public IFDE_CSSComputedStyle,
       if (m_NonInheritedData.m_pCounterStyle != NULL) {
         delete m_NonInheritedData.m_pCounterStyle;
       }
-      FDE_DeleteWith(CFDE_CSSComputedStyle, m_pAllocator, this);
+      FXTARGET_DeleteWith(CFDE_CSSComputedStyle, m_pAllocator, this);
     }
     return dwRefCount;
   }

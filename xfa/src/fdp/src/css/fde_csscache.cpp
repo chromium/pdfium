@@ -6,7 +6,6 @@
 
 #include <algorithm>
 
-#include "xfa/src/fdp/include/fde_mem.h"
 #include "xfa/src/fdp/src/css/fde_csscache.h"
 #include "xfa/src/foxitlib.h"
 
@@ -27,7 +26,7 @@ CFDE_CSSStyleSheetCache::CFDE_CSSStyleSheetCache()
 
 CFDE_CSSStyleSheetCache::~CFDE_CSSStyleSheetCache() {
   for (const auto& pair : m_Stylesheets) {
-    FDE_DeleteWith(FDE_CSSCACHEITEM, m_pFixedStore, pair.second);
+    FXTARGET_DeleteWith(FDE_CSSCACHEITEM, m_pFixedStore, pair.second);
   }
   m_Stylesheets.clear();
   if (m_pFixedStore) {
@@ -57,7 +56,7 @@ void CFDE_CSSStyleSheetCache::AddStyleSheet(const CFX_ByteStringC& szKey,
       RemoveLowestActivityItem();
     }
     m_Stylesheets[szKey] =
-        FDE_NewWith(m_pFixedStore) FDE_CSSCACHEITEM(pStyleSheet);
+        FXTARGET_NewWith(m_pFixedStore) FDE_CSSCACHEITEM(pStyleSheet);
   }
 }
 IFDE_CSSStyleSheet* CFDE_CSSStyleSheetCache::GetStyleSheet(
@@ -76,7 +75,7 @@ void CFDE_CSSStyleSheetCache::RemoveStyleSheet(const CFX_ByteStringC& szKey) {
   if (it == m_Stylesheets.end()) {
     return;
   }
-  FDE_DeleteWith(FDE_CSSCACHEITEM, m_pFixedStore, it->second);
+  FXTARGET_DeleteWith(FDE_CSSCACHEITEM, m_pFixedStore, it->second);
   m_Stylesheets.erase(it);
 }
 void CFDE_CSSStyleSheetCache::RemoveLowestActivityItem() {
@@ -93,7 +92,7 @@ void CFDE_CSSStyleSheetCache::RemoveLowestActivityItem() {
     }
   }
   if (found != m_Stylesheets.end()) {
-    FDE_DeleteWith(FDE_CSSCACHEITEM, m_pFixedStore, found->second);
+    FXTARGET_DeleteWith(FDE_CSSCACHEITEM, m_pFixedStore, found->second);
     m_Stylesheets.erase(found);
   }
 }

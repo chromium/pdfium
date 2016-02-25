@@ -6,7 +6,6 @@
 
 #include "xfa/src/fdp/src/css/fde_cssstylesheet.h"
 
-#include "xfa/src/fdp/include/fde_mem.h"
 #include "xfa/src/fdp/src/css/fde_cssdatatable.h"
 #include "xfa/src/fdp/src/css/fde_csssyntax.h"
 #include "xfa/src/fgas/include/fx_cpg.h"
@@ -216,7 +215,8 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::LoadMediaRule(
         break;
       case FDE_CSSSYNTAXSTATUS_DeclOpen:
         if ((dwMediaList & m_dwMediaList) > 0 && pMediaRule == NULL) {
-          pMediaRule = FDE_NewWith(m_pAllocator) CFDE_CSSMediaRule(dwMediaList);
+          pMediaRule =
+              FXTARGET_NewWith(m_pAllocator) CFDE_CSSMediaRule(dwMediaList);
           m_RuleArray.Add(pMediaRule);
         }
         break;
@@ -272,7 +272,7 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::LoadStyleRule(
         break;
       case FDE_CSSSYNTAXSTATUS_DeclOpen:
         if (pStyleRule == NULL && m_Selectors.GetSize() > 0) {
-          pStyleRule = FDE_NewWith(m_pAllocator) CFDE_CSSStyleRule;
+          pStyleRule = FXTARGET_NewWith(m_pAllocator) CFDE_CSSStyleRule;
           pStyleRule->SetSelector(m_pAllocator, m_Selectors);
           ruleArray.Add(pStyleRule);
         } else {
@@ -318,7 +318,7 @@ FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::LoadFontFaceRule(
         break;
       case FDE_CSSSYNTAXSTATUS_DeclOpen:
         if (pFontFaceRule == NULL) {
-          pFontFaceRule = FDE_NewWith(m_pAllocator) CFDE_CSSFontFaceRule;
+          pFontFaceRule = FXTARGET_NewWith(m_pAllocator) CFDE_CSSFontFaceRule;
           ruleArray.Add(pFontFaceRule);
         }
         break;
@@ -433,7 +433,7 @@ IFDE_CSSSelector* CFDE_CSSSelector::FromString(IFX_MEMAllocator* pStaticStore,
     FX_WCHAR wch = *psz;
     if (wch == '.' || wch == '#') {
       if (psz == pStart || psz[-1] == ' ') {
-        CFDE_CSSSelector* p = FDE_NewWith(pStaticStore)
+        CFDE_CSSSelector* p = FXTARGET_NewWith(pStaticStore)
             CFDE_CSSSelector(FDE_CSSSELECTORTYPE_Element, L"*", 1, TRUE);
         if (p == NULL) {
           return NULL;
@@ -451,7 +451,7 @@ IFDE_CSSSelector* CFDE_CSSSelector::FromString(IFX_MEMAllocator* pStaticStore,
       }
       FDE_CSSSELECTORTYPE eType =
           wch == '.' ? FDE_CSSSELECTORTYPE_Class : FDE_CSSSELECTORTYPE_ID;
-      CFDE_CSSSelector* p = FDE_NewWith(pStaticStore)
+      CFDE_CSSSelector* p = FXTARGET_NewWith(pStaticStore)
           CFDE_CSSSelector(eType, psz, iNameLen, FALSE);
       if (p == NULL) {
         return NULL;
@@ -465,7 +465,7 @@ IFDE_CSSSelector* CFDE_CSSSelector::FromString(IFX_MEMAllocator* pStaticStore,
       if (iNameLen == 0) {
         return NULL;
       }
-      CFDE_CSSSelector* p = FDE_NewWith(pStaticStore)
+      CFDE_CSSSelector* p = FXTARGET_NewWith(pStaticStore)
           CFDE_CSSSelector(FDE_CSSSELECTORTYPE_Element, psz, iNameLen, TRUE);
       if (p == NULL) {
         return NULL;
@@ -483,7 +483,7 @@ IFDE_CSSSelector* CFDE_CSSSelector::FromString(IFX_MEMAllocator* pStaticStore,
       if (iNameLen == 0) {
         return NULL;
       }
-      CFDE_CSSSelector* p = FDE_NewWith(pStaticStore)
+      CFDE_CSSSelector* p = FXTARGET_NewWith(pStaticStore)
           CFDE_CSSSelector(FDE_CSSSELECTORTYPE_Persudo, psz, iNameLen, TRUE);
       if (p == NULL) {
         return NULL;

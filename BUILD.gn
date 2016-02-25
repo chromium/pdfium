@@ -846,7 +846,6 @@ if (pdf_enable_xfa) {
       "xfa/src/fdp/include/fde_brs.h",
       "xfa/src/fdp/include/fde_css.h",
       "xfa/src/fdp/include/fde_img.h",
-      "xfa/src/fdp/include/fde_mem.h",
       "xfa/src/fdp/include/fde_pen.h",
       "xfa/src/fdp/include/fde_psr.h",
       "xfa/src/fdp/include/fde_pth.h",

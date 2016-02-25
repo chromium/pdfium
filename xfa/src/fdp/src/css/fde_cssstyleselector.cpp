@@ -205,7 +205,7 @@ FX_BOOL CFDE_CSSRuleCollection::AddRuleTo(FDE_CSSRULEDATA*& pList,
 FDE_CSSRULEDATA* CFDE_CSSRuleCollection::NewRuleData(
     IFDE_CSSSelector* pSel,
     IFDE_CSSDeclaration* pDecl) {
-  return FDE_NewWith(m_pStaticStore)
+  return FXTARGET_NewWith(m_pStaticStore)
       FDE_CSSRULEDATA(pSel, pDecl, ++m_iSelectors);
 }
 
@@ -258,8 +258,8 @@ IFDE_CSSComputedStyle* CFDE_CSSStyleSelector::CreateComputedStyle(
                                             sizeof(CFDE_CSSComputedStyle));
     FXSYS_assert(m_pFixedStyleStore != NULL);
   }
-  CFDE_CSSComputedStyle* pStyle =
-      FDE_NewWith(m_pFixedStyleStore) CFDE_CSSComputedStyle(m_pFixedStyleStore);
+  CFDE_CSSComputedStyle* pStyle = FXTARGET_NewWith(m_pFixedStyleStore)
+      CFDE_CSSComputedStyle(m_pFixedStyleStore);
   if (pParentStyle) {
     pStyle->m_InheritedData =
         ((CFDE_CSSComputedStyle*)pParentStyle)->m_InheritedData;
@@ -442,12 +442,12 @@ void CFDE_CSSStyleSelector::ComputeStyle(
           FX_HashCode_String_GetW(L"align", 5, TRUE);
       if (dwAttriHash == s_dwStyleHash) {
         if (pDecl == NULL) {
-          pDecl = FDE_NewWith(m_pInlineStyleStore) CFDE_CSSDeclaration;
+          pDecl = FXTARGET_NewWith(m_pInlineStyleStore) CFDE_CSSDeclaration;
         }
         AppendInlineStyle(pDecl, wsValue.GetPtr(), wsValue.GetLength());
       } else if (dwAttriHash == s_dwAlignHash) {
         if (pDecl == NULL) {
-          pDecl = FDE_NewWith(m_pInlineStyleStore) CFDE_CSSDeclaration;
+          pDecl = FXTARGET_NewWith(m_pInlineStyleStore) CFDE_CSSDeclaration;
         }
         FDE_CSSPROPERTYARGS args;
         args.pStringCache = NULL;

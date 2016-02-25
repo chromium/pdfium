@@ -9,7 +9,6 @@
 
 #include "xfa/src/fdp/include/fde_brs.h"
 #include "xfa/src/fdp/include/fde_css.h"
-#include "xfa/src/fdp/include/fde_mem.h"
 #include "xfa/src/fdp/include/fde_rdv.h"
 #include "xfa/src/fgas/include/fx_rbk.h"
 #include "xfa/src/fxfa/src/app/xfa_ffdoc.h"
@@ -184,7 +183,7 @@ class CXFA_LinkUserData : public IFX_Unknown, public CFX_Target {
   virtual FX_DWORD Release() {
     FX_DWORD dwRefCount = --m_dwRefCount;
     if (dwRefCount <= 0) {
-      FDE_DeleteWith(CXFA_LinkUserData, m_pAllocator, this);
+      FXTARGET_DeleteWith(CXFA_LinkUserData, m_pAllocator, this);
     }
     return dwRefCount;
   }
@@ -230,7 +229,7 @@ class CXFA_TextUserData : public IFX_Unknown, public CFX_Target {
   virtual FX_DWORD Release() {
     FX_DWORD dwRefCount = --m_dwRefCount;
     if (dwRefCount == 0) {
-      FDE_DeleteWith(CXFA_TextUserData, m_pAllocator, this);
+      FXTARGET_DeleteWith(CXFA_TextUserData, m_pAllocator, this);
     }
     return dwRefCount;
   }

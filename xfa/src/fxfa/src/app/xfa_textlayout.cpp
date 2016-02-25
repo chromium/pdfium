@@ -67,7 +67,7 @@ CXFA_TextParser::~CXFA_TextParser() {
     CXFA_TextParseContext* pParseContext;
     m_mapXMLNodeToParseContext.GetNextAssoc(ps, pXMLNode, pParseContext);
     if (pParseContext)
-      FDE_DeleteWith(CXFA_TextParseContext, m_pAllocator, pParseContext);
+      FXTARGET_DeleteWith(CXFA_TextParseContext, m_pAllocator, pParseContext);
   }
   m_mapXMLNodeToParseContext.RemoveAll();
 }
@@ -78,7 +78,7 @@ void CXFA_TextParser::Reset() {
     CXFA_TextParseContext* pParseContext;
     m_mapXMLNodeToParseContext.GetNextAssoc(ps, pXMLNode, pParseContext);
     if (pParseContext)
-      FDE_DeleteWith(CXFA_TextParseContext, m_pAllocator, pParseContext);
+      FXTARGET_DeleteWith(CXFA_TextParseContext, m_pAllocator, pParseContext);
   }
   m_mapXMLNodeToParseContext.RemoveAll();
   if (m_pAllocator) {
@@ -255,7 +255,7 @@ void CXFA_TextParser::ParseRichText(IFDE_XMLNode* pXMLNode,
   if ((tagProvider.GetTagName() != FX_WSTRC(L"body")) ||
       (tagProvider.GetTagName() != FX_WSTRC(L"html"))) {
     CXFA_TextParseContext* pTextContext =
-        FDE_NewWith(m_pAllocator) CXFA_TextParseContext;
+        FXTARGET_NewWith(m_pAllocator) CXFA_TextParseContext;
     FDE_CSSDISPLAY eDisplay = FDE_CSSDISPLAY_Inline;
     if (!tagProvider.m_bContent) {
       pNewStyle = CreateStyle(pParentStyle);
@@ -686,7 +686,7 @@ void CXFA_TextLayout::Unload() {
   int32_t iCount = m_pieceLines.GetSize();
   for (int32_t i = 0; i < iCount; i++) {
     CXFA_PieceLine* pLine = m_pieceLines.GetAt(i);
-    FDE_DeleteWith(CXFA_PieceLine, m_pAllocator, pLine);
+    FXTARGET_DeleteWith(CXFA_PieceLine, m_pAllocator, pLine);
   }
   m_pieceLines.RemoveAll();
   if (m_pBreak) {
@@ -1424,7 +1424,7 @@ FX_BOOL CXFA_TextLayout::LoadRichText(IFDE_XMLNode* pXMLNode,
           FXSYS_assert(pElement);
           pElement->GetString(FX_WSTRC(L"href").GetPtr(), wsLinkContent);
           if (!wsLinkContent.IsEmpty()) {
-            pLinkData = FDE_NewWith(m_pAllocator) CXFA_LinkUserData(
+            pLinkData = FXTARGET_NewWith(m_pAllocator) CXFA_LinkUserData(
                 m_pAllocator,
                 wsLinkContent.GetBuffer(wsLinkContent.GetLength()));
             wsLinkContent.ReleaseBuffer(wsLinkContent.GetLength());
@@ -1480,7 +1480,7 @@ FX_BOOL CXFA_TextLayout::LoadRichText(IFDE_XMLNode* pXMLNode,
             if (pLinkData) {
               pLinkData->AddRef();
             }
-            CXFA_TextUserData* pUserData = FDE_NewWith(m_pAllocator)
+            CXFA_TextUserData* pUserData = FXTARGET_NewWith(m_pAllocator)
                 CXFA_TextUserData(m_pAllocator,
                                   bContentNode ? pParentStyle : pStyle,
                                   pLinkData);
@@ -1704,7 +1704,7 @@ void CXFA_TextLayout::AppendTextLine(FX_DWORD dwStatus,
   }
   IFDE_CSSComputedStyle* pStyle = NULL;
   if (bSavePieces) {
-    CXFA_PieceLine* pPieceLine = FDE_NewWith(m_pAllocator) CXFA_PieceLine;
+    CXFA_PieceLine* pPieceLine = FXTARGET_NewWith(m_pAllocator) CXFA_PieceLine;
     m_pieceLines.Add(pPieceLine);
     if (m_pTabstopContext) {
       m_pTabstopContext->Reset();
