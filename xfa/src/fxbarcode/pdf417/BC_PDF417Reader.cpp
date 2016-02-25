@@ -20,6 +20,8 @@
  * limitations under the License.
  */
 
+#include <limits>
+
 #include "xfa/src/fxbarcode/BC_BinaryBitmap.h"
 #include "xfa/src/fxbarcode/BC_BinaryBitmap.h"
 #include "xfa/src/fxbarcode/BC_DecoderResult.h"
@@ -51,10 +53,9 @@
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417ScanningDecoder.h"
 #include "xfa/src/fxbarcode/utils.h"
 
-#define Integer_MAX_VALUE 2147483647
-
 CBC_PDF417Reader::CBC_PDF417Reader() {}
 CBC_PDF417Reader::~CBC_PDF417Reader() {}
+
 CFX_ByteString CBC_PDF417Reader::Decode(CBC_BinaryBitmap* image, int32_t& e) {
   return Decode(image, 0, e);
 }
@@ -100,9 +101,8 @@ int32_t CBC_PDF417Reader::getMaxWidth(CBC_ResultPoint* p1,
 }
 int32_t CBC_PDF417Reader::getMinWidth(CBC_ResultPoint* p1,
                                       CBC_ResultPoint* p2) {
-  if (p1 == NULL || p2 == NULL) {
-    return Integer_MAX_VALUE;
-  }
+  if (!p1 || !p2)
+    return std::numeric_limits<int32_t>::max();
   return (int32_t)FXSYS_fabs(p1->GetX() - p2->GetX());
 }
 int32_t CBC_PDF417Reader::getMaxCodewordWidth(CFX_PtrArray& p) {

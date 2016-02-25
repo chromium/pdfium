@@ -20,6 +20,8 @@
  * limitations under the License.
  */
 
+#include <limits>
+
 #include "xfa/src/fxbarcode/BC_Dimension.h"
 #include "xfa/src/fxbarcode/BC_UtilCodingConvert.h"
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
@@ -35,8 +37,6 @@
 #include "xfa/src/fxbarcode/datamatrix/BC_TextEncoder.h"
 #include "xfa/src/fxbarcode/datamatrix/BC_X12Encoder.h"
 #include "xfa/src/fxbarcode/utils.h"
-
-#define Integer_MAX_VALUE 2147483647
 
 FX_WCHAR CBC_HighLevelEncoder::LATCH_TO_C40 = 230;
 FX_WCHAR CBC_HighLevelEncoder::LATCH_TO_BASE256 = 231;
@@ -166,7 +166,7 @@ int32_t CBC_HighLevelEncoder::lookAheadTest(CFX_WideString msg,
   int32_t charsProcessed = 0;
   while (TRUE) {
     if ((startpos + charsProcessed) == msg.GetLength()) {
-      FX_DWORD min = Integer_MAX_VALUE;
+      FX_DWORD min = std::numeric_limits<int32_t>::max();
       CFX_ByteArray mins;
       mins.SetSize(6);
       CFX_Int32Array intCharCounts;
@@ -241,7 +241,8 @@ int32_t CBC_HighLevelEncoder::lookAheadTest(CFX_WideString msg,
       intCharCounts.SetSize(6);
       CFX_ByteArray mins;
       mins.SetSize(6);
-      findMinimums(charCounts, intCharCounts, Integer_MAX_VALUE, mins);
+      findMinimums(charCounts, intCharCounts,
+                   std::numeric_limits<int32_t>::max(), mins);
       int32_t minCount = getMinimumCount(mins);
       if (intCharCounts[ASCII_ENCODATION] < intCharCounts[BASE256_ENCODATION] &&
           intCharCounts[ASCII_ENCODATION] < intCharCounts[C40_ENCODATION] &&

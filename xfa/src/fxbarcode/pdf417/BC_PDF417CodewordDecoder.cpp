@@ -20,11 +20,12 @@
  * limitations under the License.
  */
 
+#include <limits>
+
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417CodewordDecoder.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417Common.h"
 
 #define SYMBOL_TABLE_Length 2787
-#define Float_MAX_VALUE 2147483647
 
 FX_FLOAT CBC_PDF417CodewordDecoder::RATIOS_TABLE[2787][8] = {{0}};
 
@@ -99,7 +100,7 @@ int32_t CBC_PDF417CodewordDecoder::getClosestDecodedValue(
   for (int32_t i = 0; i < bitCountRatios.GetSize(); i++) {
     bitCountRatios[i] = moduleBitCount.GetAt(i) / (FX_FLOAT)bitCountSum;
   }
-  FX_FLOAT bestMatchError = (FX_FLOAT)Float_MAX_VALUE;
+  FX_FLOAT bestMatchError = std::numeric_limits<int32_t>::max();
   int32_t bestMatch = -1;
   for (int32_t j = 0; j < SYMBOL_TABLE_Length; j++) {
     FX_FLOAT error = 0.0f;
