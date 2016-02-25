@@ -85,9 +85,6 @@ FWL_ERR IFWL_Edit::SetLimit(int32_t nLimit) {
 FWL_ERR IFWL_Edit::SetAliasChar(FX_WCHAR wAlias) {
   return static_cast<CFWL_EditImp*>(GetImpl())->SetAliasChar(wAlias);
 }
-FWL_ERR IFWL_Edit::SetFormatString(const CFX_WideString& wsFormat) {
-  return static_cast<CFWL_EditImp*>(GetImpl())->SetFormatString(wsFormat);
-}
 FWL_ERR IFWL_Edit::Insert(int32_t nStart,
                           const FX_WCHAR* lpText,
                           int32_t nLen) {
@@ -593,12 +590,6 @@ FWL_ERR CFWL_EditImp::SetAliasChar(FX_WCHAR wAlias) {
   if (!m_pEdtEngine)
     return FWL_ERR_Indefinite;
   m_pEdtEngine->SetAliasChar(wAlias);
-  return FWL_ERR_Succeeded;
-}
-FWL_ERR CFWL_EditImp::SetFormatString(const CFX_WideString& wsFormat) {
-  if (!m_pEdtEngine)
-    return FWL_ERR_Succeeded;
-  m_pEdtEngine->SetFormatBlock(0, wsFormat);
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_EditImp::Insert(int32_t nStart,

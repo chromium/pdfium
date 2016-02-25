@@ -56,7 +56,6 @@ class CFWL_EditImp : public CFWL_WidgetImp, public IFDE_TxtEdtEventSink {
   virtual int32_t GetLimit();
   virtual FWL_ERR SetLimit(int32_t nLimit);
   virtual FWL_ERR SetAliasChar(FX_WCHAR wAlias);
-  virtual FWL_ERR SetFormatString(const CFX_WideString& wsFormat);
   virtual FWL_ERR Insert(int32_t nStart, const FX_WCHAR* lpText, int32_t nLen);
   virtual FWL_ERR DeleteSelections();
   virtual FWL_ERR DeleteRange(int32_t nStart, int32_t nCount = -1);

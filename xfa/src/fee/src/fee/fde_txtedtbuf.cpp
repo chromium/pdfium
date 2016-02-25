@@ -14,20 +14,12 @@
 #define FDE_TXTEDT_FORMATBLOCK_BGN 0xFFF9
 #define FDE_TXTEDT_FORMATBLOCK_END 0xFFFB
 #define FDE_TXTEDT_ZEROWIDTHSPACE 0x200B
-#ifdef FDE_USEFORMATBLOCK
-CFDE_TxtEdtBufIter::CFDE_TxtEdtBufIter(CFDE_TxtEdtBuf* pBuf,
-                                       FX_BOOL bForDisplay)
-#else
+
 CFDE_TxtEdtBufIter::CFDE_TxtEdtBufIter(CFDE_TxtEdtBuf* pBuf, FX_WCHAR wcAlias)
-#endif
     : m_pBuf(pBuf),
       m_nCurChunk(0),
       m_nCurIndex(0),
       m_nIndex(0),
-#ifdef FDE_USEFORMATBLOCK
-      m_bForDisplay(bForDisplay),
-      m_nAliasCount(0),
-#endif
       m_Alias(wcAlias) {
   FXSYS_assert(m_pBuf);
 }
@@ -96,34 +88,6 @@ int32_t CFDE_TxtEdtBufIter::GetAt() const {
 }
 FX_WCHAR CFDE_TxtEdtBufIter::GetChar() {
   FXSYS_assert(m_nIndex >= 0 && m_nIndex < m_pBuf->m_nTotal);
-#ifdef FDE_USEFORMATBLOCK
-  if (m_bForDisplay) {
-    if (m_bInField) {
-      FXSYS_assert(m_nAliasCount >= 0 && m_nAliasCount <= 2);
-      if (m_nAliasCount > 0) {
-        m_nAliasCount--;
-        return FDE_TXTEDT_ZEROWIDTHSPACE;
-      }
-      FX_WCHAR wc =
-          ((CFDE_TxtEdtBuf::FDE_LPCHUNKHEADER)m_pBuf->m_Chunks[m_nCurChunk])
-              ->wChars[m_nCurIndex];
-      if (wc == FDE_TXTEDT_FORMATBLOCK_END) {
-        m_nAliasCount = 0;
-        m_bInField = FALSE;
-      }
-      return wc;
-    } else {
-      FX_WCHAR wc =
-          ((CFDE_TxtEdtBuf::FDE_LPCHUNKHEADER)m_pBuf->m_Chunks[m_nCurChunk])
-              ->wChars[m_nCurIndex];
-      if (wc == FDE_TXTEDT_FORMATBLOCK_BGN) {
-        m_nAliasCount = 2;
-        m_bInField = TRUE;
-      }
-      return wc;
-    }
-  }
-#endif
   if (m_Alias == 0 || m_nIndex == (m_pBuf->m_nTotal - 1)) {
     return ((CFDE_TxtEdtBuf::FDE_LPCHUNKHEADER)m_pBuf->m_Chunks[m_nCurChunk])
         ->wChars[m_nCurIndex];

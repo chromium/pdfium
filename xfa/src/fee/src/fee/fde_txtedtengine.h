@@ -19,14 +19,7 @@ class IFX_CharIter;
 class CFDE_TxtEdtEngine;
 class CFDE_TxtEdtDoRecord_Insert;
 class CFDE_TxtEdtDoRecord_DeleteRange;
-#ifdef FDE_USEFORMATBLOCK
-class CFDE_TxtEdtDoRecord_FormatInsert;
-class CFDE_TxtEdtDoRecord_FormatDelete;
-class CFDE_TxtEdtDoRecord_FormatReplace;
-class CFDE_TxtEdtDoRecord_FieldInsert;
-class CFDE_TxtEdtDoRecord_FieldDelete;
-class CFDE_TxtEdtDoRecord_FieldReplace;
-#endif
+
 class IFDE_TxtEdtDoRecord {
  public:
   static IFDE_TxtEdtDoRecord* Create(const CFX_ByteStringC& bsDoRecord);
@@ -40,12 +33,6 @@ class CFDE_TxtEdtEngine : public IFDE_TxtEdtEngine {
   friend class CFDE_TxtEdtDoRecord_Insert;
   friend class CFDE_TxtEdtDoRecord_DeleteRange;
   friend class CFDE_TxtEdtPage;
-#ifdef FDE_USEFORMATBLOCK
-  friend class CFDE_TxtEdtDoRecord_FormatInsert;
-  friend class CFDE_TxtEdtDoRecord_FormatDelete;
-  friend class CFDE_TxtEdtDoRecord_FormatReplace;
-  friend class CFDE_TxtEdtBlock;
-#endif
   struct _FDE_TXTEDTSELRANGE {
     int32_t nStart;
     int32_t nCount;
@@ -99,17 +86,6 @@ class CFDE_TxtEdtEngine : public IFDE_TxtEdtEngine {
 
   virtual void SetLimit(int32_t nLimit);
   virtual void SetAliasChar(FX_WCHAR wcAlias);
-  virtual void SetFormatBlock(int32_t nIndex,
-                              const CFX_WideString& wsBlockFormat);
-  virtual int32_t CountEditBlocks() const;
-  virtual void GetEditBlockText(int32_t nIndex,
-                                CFX_WideString& wsBlockText) const;
-  virtual int32_t CountEditFields(int32_t nBlockIndex) const;
-  virtual void GetEditFieldText(int32_t nBlockIndex,
-                                int32_t nFieldIndex,
-                                CFX_WideString& wsFieldText) const;
-  virtual void StartEdit();
-  virtual void EndEdit();
 
   void RemoveSelRange(int32_t nStart, int32_t nCount = -1);
 
@@ -146,9 +122,6 @@ class CFDE_TxtEdtEngine : public IFDE_TxtEdtEngine {
 
  private:
   void Inner_Insert(int32_t nStart, const FX_WCHAR* lpText, int32_t nLength);
-#ifdef FDE_USEFORMATBLOCK
-  void RawInsert(int32_t nStart, const FX_WCHAR* lpText, int32_t nLength);
-#endif
   void GetPreDeleteText(CFX_WideString& wsText,
                         int32_t nIndex,
                         int32_t nLength);
@@ -270,105 +243,5 @@ class CFDE_TxtEdtDoRecord_DeleteRange : public IFDE_TxtEdtDoRecord {
   int32_t m_nCaret;
   CFX_WideString m_wsRange;
 };
-#ifdef FDE_USEFORMATBLOCK
-class CFDE_TxtEdtDoRecord_FieldInsert : public IFDE_TxtEdtDoRecord {
- public:
-  CFDE_TxtEdtDoRecord_FieldInsert(const CFX_ByteStringC& bsDoRecord);
-  CFDE_TxtEdtDoRecord_FieldInsert(CFDE_TxtEdtEngine* pEngine,
-                                  int32_t nCaret,
-                                  CFDE_TxtEdtField* pField,
-                                  int32_t nIndexInField,
-                                  int32_t nFieldBgn,
-                                  int32_t nOldFieldLength,
-                                  int32_t nNewFieldLength,
-                                  const CFX_WideString& wsIns,
-                                  FX_BOOL bSel = FALSE);
-  virtual void Release();
-  virtual FX_BOOL Undo();
-  virtual FX_BOOL Redo();
-  virtual void Serialize(CFX_ByteString& bsDoRecord) const;
-
- protected:
-  ~CFDE_TxtEdtDoRecord_FieldInsert();
-  void Deserialize(const CFX_ByteStringC& bsDoRecord);
-
- private:
-  CFDE_TxtEdtEngine* m_pEngine;
-  int32_t m_nCaret;
-  CFDE_TxtEdtField* m_pField;
-  int32_t m_nIndexInField;
-  int32_t m_nFieldBgn;
-  int32_t m_nOldFieldLength;
-  int32_t m_nNewFieldLength;
-  CFX_WideString m_wsIns;
-  FX_BOOL m_bSel;
-};
-class CFDE_TxtEdtDoRecord_FieldDelete : public IFDE_TxtEdtDoRecord {
- public:
-  CFDE_TxtEdtDoRecord_FieldDelete(const CFX_ByteStringC& bsDoRecord);
-  CFDE_TxtEdtDoRecord_FieldDelete(CFDE_TxtEdtEngine* pEngine,
-                                  int32_t nCaret,
-                                  CFDE_TxtEdtField* pField,
-                                  int32_t nIndexInField,
-                                  int32_t nFieldBgn,
-                                  int32_t nOldLength,
-                                  int32_t nNewLength,
-                                  const CFX_WideString& wsDel,
-                                  FX_BOOL bSel = FALSE);
-  virtual void Release();
-  virtual FX_BOOL Undo();
-  virtual FX_BOOL Redo();
-  virtual void Serialize(CFX_ByteString& bsDoRecord) const;
-
- protected:
-  ~CFDE_TxtEdtDoRecord_FieldDelete();
-  void Deserialize(const CFX_ByteStringC& bsDoRecord);
-
- private:
-  CFDE_TxtEdtEngine* m_pEngine;
-  int32_t m_nCaret;
-  CFDE_TxtEdtField* m_pField;
-  int32_t m_nIndexInField;
-  int32_t m_nFieldBgn;
-  int32_t m_nOldFieldLength;
-  int32_t m_nNewFieldLength;
-  CFX_WideString m_wsDel;
-  FX_BOOL m_bSel;
-};
-class CFDE_TxtEdtDoRecord_FieldReplace : public IFDE_TxtEdtDoRecord {
- public:
-  CFDE_TxtEdtDoRecord_FieldReplace(const CFX_ByteStringC& bsDoRecord);
-  CFDE_TxtEdtDoRecord_FieldReplace(CFDE_TxtEdtEngine* pEngine,
-                                   int32_t nCaret,
-                                   int32_t nNewCaret,
-                                   CFDE_TxtEdtField* pField,
-                                   int32_t nIndexInField,
-                                   int32_t nFieldBgn,
-                                   int32_t nFieldNewLength,
-                                   const CFX_WideString& wsDel,
-                                   const CFX_WideString& wsIns,
-                                   FX_BOOL bSel);
-  virtual void Release();
-  virtual FX_BOOL Undo();
-  virtual FX_BOOL Redo();
-  virtual void Serialize(CFX_ByteString& bsDoRecord) const;
-
- protected:
-  ~CFDE_TxtEdtDoRecord_FieldReplace();
-  void Deserialize(const CFX_ByteStringC& bsDoRecord);
-
- private:
-  CFDE_TxtEdtEngine* m_pEngine;
-  int32_t m_nCaret;
-  int32_t m_nNewCaret;
-  CFDE_TxtEdtField* m_pField;
-  int32_t m_nIndexInField;
-  int32_t m_nFieldBgn;
-  int32_t m_nFieldNewLength;
-  CFX_WideString m_wsDel;
-  CFX_WideString m_wsIns;
-  FX_BOOL m_bSel;
-};
-#endif
 
 #endif  // XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTENGINE_H_

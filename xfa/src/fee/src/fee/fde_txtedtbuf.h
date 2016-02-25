@@ -14,11 +14,7 @@ class CFDE_TxtEdtBuf;
 
 class CFDE_TxtEdtBufIter : public IFX_CharIter {
  public:
-#ifdef FDE_USEFORMATBLOCK
-  CFDE_TxtEdtBufIter(CFDE_TxtEdtBuf* pBuf, FX_BOOL bForDisplay = TRUE);
-#else
   CFDE_TxtEdtBufIter(CFDE_TxtEdtBuf* pBuf, FX_WCHAR wcAlias = 0);
-#endif
 
   virtual void Release();
   virtual FX_BOOL Next(FX_BOOL bPrev = FALSE);
@@ -36,10 +32,6 @@ class CFDE_TxtEdtBufIter : public IFX_CharIter {
   int32_t m_nCurChunk;
   int32_t m_nCurIndex;
   int32_t m_nIndex;
-#ifdef FDE_USEFORMATBLOCK
-  FX_BOOL m_bForDisplay;
-  int32_t m_nAliasCount;
-#endif
   FX_WCHAR m_Alias;
 };
 class CFDE_TxtEdtBuf : public IFDE_TxtEdtBuf {

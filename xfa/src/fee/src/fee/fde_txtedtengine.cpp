@@ -15,23 +15,11 @@
 #include "xfa/src/fdp/include/fde_tto.h"
 #include "xfa/src/foxitlib.h"
 
-#ifdef FDE_USEFORMATBLOCK
-#include "xfa/src/fee/src/fee/fde_txtedtblock.h"
-#endif
-
 #define FDE_PAGEWIDTH_MAX 0xFFFF
 #define FDE_TXTPLATESIZE (1024 * 12)
 #define FDE_UNICODE_PARAGRAPH_SPERATOR (0x2029)
 #define FDE_TXTEDT_DORECORD_INS 0
 #define FDE_TXTEDT_DORECORD_DEL 1
-
-#ifdef FDE_USEFORMATBLOCK
-#define FDE_TXTEDT_DORECORD_FORMATINS 3
-#define FDE_TXTEDT_DORECORD_FORMATDEL 4
-#define FDE_TXTEDT_DORECORD_FORMATREP 5
-#define FDE_TXTEDT_FORMATBLOCK_BGN 0xFFF9
-#define FDE_TXTEDT_FORMATBLOCK_END 0xFFFB
-#endif
 
 IFDE_TxtEdtEngine* IFDE_TxtEdtEngine::Create() {
   return new CFDE_TxtEdtEngine();
@@ -50,9 +38,6 @@ CFDE_TxtEdtEngine::CFDE_TxtEdtEngine()
       m_bLock(FALSE),
       m_nLimit(0),
       m_wcAliasChar(L'*'),
-#ifdef FDE_USEFORMATBLOCK
-      m_nFixLength(-1),  // FIXME: no such member => USEFORMATBLOCK can't work.
-#endif
       m_nFirstLineEnd(FDE_TXTEDIT_LINEEND_Auto),
       m_bAutoLineEnd(TRUE),
       m_wLineEnd(FDE_UNICODE_PARAGRAPH_SPERATOR) {
@@ -69,17 +54,6 @@ CFDE_TxtEdtEngine::~CFDE_TxtEdtEngine() {
     m_pTextBreak->Release();
     m_pTextBreak = NULL;
   }
-#ifdef FDE_USEFORMATBLOCK
-  int32_t nBlockCount = m_BlockArray.GetSize();
-  if (nBlockCount > 0) {
-    int32_t i = 0;
-    for (; i < nBlockCount; i++) {
-      CFDE_TxtEdtBlock* pBlock = m_BlockArray[i];
-      delete pBlock;
-    }
-    m_BlockArray.RemoveAll();
-  }
-#endif
   RemoveAllParags();
   RemoveAllPages();
   m_Param.pEventSink = NULL;
@@ -172,50 +146,8 @@ void CFDE_TxtEdtEngine::GetText(CFX_WideString& wsText,
   if (nCount == -1) {
     nCount = nTextBufLength - nStart;
   }
-#ifdef FDE_USEFORMATBLOCK
-  int32_t nBlockCount = m_BlockArray.GetSize();
-  if (nBlockCount == 0 || m_wsFixText.IsEmpty()) {
-    m_pTxtBuf->GetRange(wsText, nStart, nCount);
-    return;
-  }
-  CFX_WideString wsTemp;
-  const FX_WCHAR* lpFixBuffer = const FX_WCHAR * (m_wsFixText);
-  FX_WCHAR* lpBuffer = wsTemp.GetBuffer(nTextBufLength);
-  int32_t nRealLength = 0;
-  int32_t nPrePos = 0;
-  for (int32_t i = 0; i < nBlockCount; i++) {
-    CFDE_TxtEdtBlock* pBlock = m_BlockArray[i];
-    int32_t nPos = pBlock->GetPos();
-    int32_t nCopyLength = nPos - nPrePos;
-    FXSYS_memcpy(lpBuffer + nRealLength, lpFixBuffer + nPrePos,
-                 nCopyLength * sizeof(FX_WCHAR));
-    nRealLength += nCopyLength;
-    nPrePos = nPos;
-    CFX_WideString wsBlock;
-    pBlock->GetRealText(wsBlock);
-    nCopyLength = wsBlock.GetLength();
-    FXSYS_memcpy(lpBuffer + nRealLength, const FX_WCHAR*(wsBlock),
-                 nCopyLength * sizeof(FX_WCHAR));
-    nRealLength += nCopyLength;
-  }
-  int32_t nLeftLength = m_wsFixText.GetLength() - nPrePos;
-  if (nLeftLength > 0) {
-    FXSYS_memcpy(lpBuffer + nRealLength, lpFixBuffer + nPrePos,
-                 nLeftLength * sizeof(FX_WCHAR));
-    nRealLength += nLeftLength;
-  }
-  wsTemp.ReleaseBuffer(nRealLength);
-  int32_t nRealBgn = GetRealIndex(nStart);
-  int32_t nRealEnd = GetRealIndex(nStart + nCount - 1);
-  int32_t nRealCount = nRealEnd - nRealBgn;
-  FX_WCHAR* lpDestBuf = wsText.GetBuffer(nRealCount);
-  FXSYS_memcpy(lpDestBuf, const FX_WCHAR*(wsTemp) + nRealBgn,
-               nRealCount * sizeof(FX_WCHAR));
-  wsText.ReleaseBuffer();
-#else
   m_pTxtBuf->GetRange(wsText, nStart, nCount);
   RecoverParagEnd(wsText);
-#endif
 }
 
 void CFDE_TxtEdtEngine::ClearText() {
@@ -239,11 +171,6 @@ int32_t CFDE_TxtEdtEngine::SetCaretPos(int32_t nIndex, FX_BOOL bBefore) {
   if (m_PagePtrArray.GetSize() <= m_nCaretPage) {
     return 0;
   }
-#ifdef FDE_USEFORMATBLOCK
-  if (m_BlockArray.GetSize() > 0) {
-    nIndex = NormalizeCaretPos(nIndex, FDE_FORMAT_CARET_MIDDLE, bBefore);
-  }
-#endif
   m_bBefore = bBefore;
   m_nCaret = nIndex;
   MovePage2Char(m_nCaret);
@@ -291,15 +218,6 @@ int32_t CFDE_TxtEdtEngine::MoveCaretPos(FDE_TXTEDTMOVECARET eMoveCaret,
       } else {
         FX_BOOL bBefore = TRUE;
         int32_t nIndex = MoveBackward(bBefore);
-#ifdef FDE_USEFORMATBLOCK
-        if (m_BlockArray.GetSize()) {
-          nIndex =
-              NormalizeCaretPos(nIndex, FDE_FORMAT_CARET_BACKWARD, bBefore);
-          if (nIndex < 0) {
-            return m_nCaret;
-          }
-        }
-#endif
         if (nIndex >= 0) {
           UpdateCaretRect(nIndex, bBefore);
         }
@@ -314,14 +232,6 @@ int32_t CFDE_TxtEdtEngine::MoveCaretPos(FDE_TXTEDTMOVECARET eMoveCaret,
       } else {
         FX_BOOL bBefore = TRUE;
         int32_t nIndex = MoveForward(bBefore);
-#ifdef FDE_USEFORMATBLOCK
-        if (m_BlockArray.GetSize()) {
-          if (nIndex == -1) {
-            nIndex = GetTextBufLength();
-          }
-          nIndex = NormalizeCaretPos(nIndex, FDE_FORMAT_CARET_FORWARD, bBefore);
-        }
-#endif
         if (nIndex >= 0) {
           UpdateCaretRect(nIndex, bBefore);
         }
@@ -331,12 +241,6 @@ int32_t CFDE_TxtEdtEngine::MoveCaretPos(FDE_TXTEDTMOVECARET eMoveCaret,
       if (bVertical) {
         FX_BOOL bBefore = TRUE;
         int32_t nIndex = MoveBackward(bBefore);
-#ifdef FDE_USEFORMATBLOCK
-        if (m_BlockArray.GetSize()) {
-          nIndex =
-              NormalizeCaretPos(nIndex, FDE_FORMAT_CARET_BACKWARD, bBefore);
-        }
-#endif
         if (nIndex >= 0) {
           UpdateCaretRect(nIndex, bBefore);
         }
@@ -351,11 +255,6 @@ int32_t CFDE_TxtEdtEngine::MoveCaretPos(FDE_TXTEDTMOVECARET eMoveCaret,
       if (bVertical) {
         FX_BOOL bBefore = TRUE;
         int32_t nIndex = MoveForward(bBefore);
-#ifdef FDE_USEFORMATBLOCK
-        if (m_BlockArray.GetSize()) {
-          nIndex = NormalizeCaretPos(nIndex, FDE_FORMAT_CARET_FORWARD, bBefore);
-        }
-#endif
         if (nIndex >= 0) {
           UpdateCaretRect(nIndex, bBefore);
         }
@@ -420,154 +319,6 @@ int32_t CFDE_TxtEdtEngine::Insert(int32_t nStart,
   if (IsLocked()) {
     return FDE_TXTEDT_MODIFY_RET_F_Locked;
   }
-#ifdef FDE_USEFORMATBLOCK
-  int32_t nBlockCount = m_BlockArray.GetSize();
-  if (nBlockCount) {
-    if (m_Param.dwMode & FDE_TEXTEDITMODE_FIELD_TAB && nLength == 1 &&
-        lpText[0] == L'\t') {
-      return Move2NextEditableField(nStart) ? FDE_TXTEDT_MODIFY_RET_T_Tab
-                                            : FDE_TXTEDT_MODIFY_RET_F_Tab;
-    }
-    int32_t nSelRangeCount = CountSelRanges();
-    if (nSelRangeCount > 0) {
-      if (nSelRangeCount > 1) {
-        return FDE_TXTEDT_MODIFY_RET_F_Boundary;
-      }
-      int32_t nSelStart;
-      int32_t nSelCount;
-      nSelCount = GetSelRange(0, nSelStart);
-      int32_t nSelEnd = nSelStart + nSelCount;
-      int32_t nBgn = 0;
-      int32_t nEnd = 0;
-      CFDE_TxtEdtField* pField = NULL;
-      FX_BOOL bInField = GetFieldBoundary(nSelStart, nBgn, nEnd, pField);
-      if (nSelEnd > nEnd) {
-        return FDE_TXTEDT_MODIFY_RET_F_Boundary;
-      }
-      if (bInField) {
-        pField->Backup();
-        FX_BOOL bBefore = FALSE;
-        CFX_WideString wsDel;
-        int32_t nCaret;
-        int32_t nIndexInField = nSelStart - nBgn;
-        int32_t nRet = pField->Replace(nSelStart - nBgn, nSelCount,
-                                       CFX_WideStringC(lpText, nLength), wsDel,
-                                       nCaret, bBefore);
-        switch (nRet) {
-          case FDE_FORMAT_FIELD_INSERT_RET_F_FULL:
-            pField->Restore();
-            return FDE_TXTEDT_MODIFY_RET_F_Full;
-          case FDE_FORMAT_FIELD_INSERT_RET_F_INVALIDATE:
-            pField->Restore();
-            return FDE_TXTEDT_MODIFY_RET_F_Invalidate;
-          default:
-            break;
-        }
-        CFX_WideString wsField;
-        pField->GetFieldText(wsField);
-        if (!m_Param.pEventSink->On_ValidateField(this, pField->GetBlockIndex(),
-                                                  pField->GetIndex(), wsField,
-                                                  0)) {
-          pField->Restore();
-          return FDE_TXTEDT_MODIFY_RET_F_Invalidate;
-        }
-        CFX_WideString wsDisplay;
-        pField->GetDisplayText(wsDisplay);
-        if ((m_Param.dwMode & FDE_TEXTEDITMODE_LimitArea_Vert) ||
-            (m_Param.dwMode & FDE_TEXTEDITMODE_LimitArea_Horz)) {
-          CFX_WideString wsText;
-          GetPreReplaceText(wsText, nBgn, nEnd - nBgn + 1,
-                            const FX_WCHAR*(wsDisplay), wsDisplay.GetLength());
-          if (!IsFitArea(wsText)) {
-            pField->Restore();
-            return FDE_TXTEDT_MODIFY_RET_F_Full;
-          }
-        }
-        Replace(nBgn, nEnd - nBgn + 1, wsDisplay);
-        int32_t nNewCaret = nBgn + nCaret;
-        if (!(m_Param.dwMode & FDE_TEXTEDITMODE_NoRedoUndo)) {
-          IFDE_TxtEdtDoRecord* pRecord = new CFDE_TxtEdtDoRecord_FieldReplace(
-              this, m_nCaret, nNewCaret, pField, nIndexInField, nBgn,
-              wsDisplay.GetLength(), wsDel, CFX_WideStringC(lpText, nLength),
-              TRUE);
-          CFX_ByteString bsDoRecord;
-          pRecord->Serialize(bsDoRecord);
-          m_Param.pEventSink->On_AddDoRecord(this, bsDoRecord);
-          pRecord->Release();
-        }
-        SetCaretPos(nBgn + nCaret, bBefore);
-        return FDE_TXTEDT_MODIFY_RET_S_Normal;
-      }
-    }
-    int32_t nBgn = 0;
-    int32_t nEnd = 0;
-    CFDE_TxtEdtField* pField = NULL;
-    FX_BOOL bInField = GetFieldBoundary(m_nCaret, nBgn, nEnd, pField);
-    int32_t nCaretInField = m_nCaret - nBgn;
-    FX_BOOL bBefore = FALSE;
-    if (bInField) {
-      pField->Backup();
-      CFX_WideStringC wsIns(lpText, nLength);
-      int32_t nRet =
-          pField->Insert(nCaretInField, wsIns, nCaretInField, bBefore);
-      FX_BOOL bFull = FALSE;
-      switch (nRet) {
-        case FDE_FORMAT_FIELD_INSERT_RET_S_NORMAL:
-          break;
-        case FDE_FORMAT_FIELD_INSERT_RET_S_FULL:
-          bFull = TRUE;
-          break;
-        case FDE_FORMAT_FIELD_INSERT_RET_F_FULL:
-          return FDE_TXTEDT_MODIFY_RET_F_Full;
-        case FDE_FORMAT_FIELD_INSERT_RET_F_INVALIDATE:
-          return FDE_TXTEDT_MODIFY_RET_F_Invalidate;
-        default:
-          return FDE_TXTEDT_MODIFY_RET_F_Normal;
-      }
-      CFX_WideString wsField;
-      pField->GetFieldText(wsField);
-      if (!m_Param.pEventSink->On_ValidateField(
-              this, pField->GetBlockIndex(), pField->GetIndex(), wsField, 0)) {
-        pField->Restore();
-        return FDE_TXTEDT_MODIFY_RET_F_Invalidate;
-      }
-      CFX_WideString wsDisplay;
-      pField->GetDisplayText(wsDisplay);
-      if ((m_Param.dwMode & FDE_TEXTEDITMODE_LimitArea_Vert) ||
-          (m_Param.dwMode & FDE_TEXTEDITMODE_LimitArea_Horz)) {
-        CFX_WideString wsText;
-        GetPreReplaceText(wsText, nBgn, nEnd - nBgn + 1,
-                          const FX_WCHAR*(wsDisplay), wsDisplay.GetLength());
-        if (!IsFitArea(wsText)) {
-          pField->Restore();
-          return FDE_TXTEDT_MODIFY_RET_F_Full;
-        }
-      }
-      Replace(nBgn, nEnd - nBgn + 1, wsDisplay);
-      if (!(m_Param.dwMode & FDE_TEXTEDITMODE_NoRedoUndo)) {
-        IFDE_TxtEdtDoRecord* pRecord = new CFDE_TxtEdtDoRecord_FieldInsert(
-            this, m_nCaret, pField, m_nCaret - nBgn, nBgn, nEnd - nBgn + 1,
-            wsDisplay.GetLength(), CFX_WideStringC(lpText, nLength), FALSE);
-        CFX_ByteString bsDoRecord;
-        pRecord->Serialize(bsDoRecord);
-        m_Param.pEventSink->On_AddDoRecord(this, bsDoRecord);
-        pRecord->Release();
-      }
-      int32_t nCaretPos = nBgn + nCaretInField;
-      if (m_Param.dwMode & FDE_TEXTEDITMODE_FIELD_AUTO && bFull &&
-          nCaretPos == nEnd) {
-        if (Move2NextEditableField(nEnd, TRUE, FALSE)) {
-          return TRUE;
-        }
-      }
-      SetCaretPos(nCaretPos, bBefore);
-      return bFull ? FDE_TXTEDT_MODIFY_RET_S_Full
-                   : FDE_TXTEDT_MODIFY_RET_S_Normal;
-    }
-    FXSYS_assert(0);
-    return FDE_TXTEDT_MODIFY_RET_F_Normal;
-  }
-#endif
   CFX_WideString wsTemp;
   FX_WCHAR* lpBuffer = wsTemp.GetBuffer(nLength);
   FXSYS_memcpy(lpBuffer, lpText, nLength * sizeof(FX_WCHAR));
@@ -667,62 +418,7 @@ int32_t CFDE_TxtEdtEngine::Delete(int32_t nStart, FX_BOOL bBackspace) {
     DeleteSelect();
     return FDE_TXTEDT_MODIFY_RET_S_Normal;
   }
-#ifdef FDE_USEFORMATBLOCK
-  int32_t nBlockCount = m_BlockArray.GetSize();
-  if (nBlockCount > 0) {
-    if (bBackspace) {
-      nStart--;
-    }
-    int32_t nCount = 1;
-    int32_t nBgn = 0;
-    int32_t nEnd = 0;
-    CFDE_TxtEdtField* pField = NULL;
-    FX_BOOL bInField = GetFieldBoundary(nStart, nBgn, nEnd, pField);
-    int32_t nCaretInField = nStart - nBgn;
-    FX_BOOL bBefore = FALSE;
-    if (bInField && !pField->IsFix()) {
-      pField->Backup();
-      CFX_WideString wsDel;
-      int32_t nCaret = 0;
-      int32_t nRet =
-          pField->Delete(nCaretInField, nCount, wsDel, nCaret, bBefore);
-      nCaret += nBgn;
-      switch (nRet) {
-        case FDE_FORMAT_FIELD_DELETE_RET_S:
-          break;
-        case FDE_FORMAT_FIELD_DELETE_RET_F_INVALIDATE:
-          return FDE_TXTEDT_MODIFY_RET_F_Invalidate;
-        case FDE_FORMAT_FIELD_DELETE_RET_F_BOUNDARY:
-          return FDE_TXTEDT_MODIFY_RET_F_Boundary;
-        default:
-          FXSYS_assert(0);
-          break;
-      }
-      CFX_WideString wsField;
-      pField->GetFieldText(wsField);
-      if (!m_Param.pEventSink->On_ValidateField(
-              this, pField->GetBlockIndex(), pField->GetIndex(), wsField, 0)) {
-        pField->Restore();
-        return FDE_TXTEDT_MODIFY_RET_F_Invalidate;
-      }
-      CFX_WideString wsDisplay;
-      pField->GetDisplayText(wsDisplay);
-      Replace(nBgn, nEnd - nBgn + 1, wsDisplay);
-      if (!(m_Param.dwMode & FDE_TEXTEDITMODE_NoRedoUndo)) {
-        IFDE_TxtEdtDoRecord* pRecord = new CFDE_TxtEdtDoRecord_FieldDelete(
-            this, nStart, pField, nCaretInField, nBgn, nEnd - nBgn + 1,
-            wsDisplay.GetLength(), wsDel, FALSE);
-        CFX_ByteString bsDoRecord;
-        pRecord->Serialize(bsDoRecord);
-        m_Param.pEventSink->On_AddDoRecord(this, bsDoRecord);
-        pRecord->Release();
-      }
-      SetCaretPos(nStart, bBefore);
-      return FDE_TXTEDT_MODIFY_RET_S_Normal;
-    }
-    return FDE_TXTEDT_MODIFY_RET_F_Boundary;
-  }
-#endif
+
   int32_t nCount = 1;
   if (bBackspace) {
     if (nStart == 0) {
@@ -840,93 +536,7 @@ void CFDE_TxtEdtEngine::SetLimit(int32_t nLimit) {
 void CFDE_TxtEdtEngine::SetAliasChar(FX_WCHAR wcAlias) {
   m_wcAliasChar = wcAlias;
 }
-void CFDE_TxtEdtEngine::SetFormatBlock(int32_t nIndex,
-                                       const CFX_WideString& wsBlockFormat) {
-#ifdef FDE_USEFORMATBLOCK
-  if (m_nFixLength == -1) {
-    m_nFixLength = GetTextLength();
-    FXSYS_assert(m_wsFixText.IsEmpty());
-    GetText(m_wsFixText, 0, -1);
-  }
-  FX_BOOL bInBlock = FALSE;
-  int32_t nCharIndex = 0;
-  int32_t nBlockIndex = 0;
-  int32_t nBlockPos = -1;
-  FX_WCHAR wc;
-  CFDE_TxtEdtBufIter* pIter =
-      new CFDE_TxtEdtBufIter((CFDE_TxtEdtBuf*)m_pTxtBuf, FALSE);
-  pIter->SetAt(0);
-  do {
-    wc = pIter->GetChar();
-    if (bInBlock) {
-      if (wc == FDE_TXTEDT_FORMATBLOCK_END) {
-        nBlockIndex++;
-        bInBlock = FALSE;
-      }
-    } else {
-      if (wc == FDE_TXTEDT_FORMATBLOCK_BGN) {
-        bInBlock = TRUE;
-      } else {
-        if (nCharIndex++ == nIndex) {
-          nBlockPos = pIter->GetAt();
-          break;
-        }
-      }
-    }
-  } while (pIter->Next());
-  pIter->Release();
-  if (nBlockPos == -1) {
-    nBlockPos = GetTextBufLength();
-  }
-  CFDE_TxtEdtBlock* pEditBlock =
-      new CFDE_TxtEdtBlock(this, wsBlockFormat, nIndex);
-  m_BlockArray.InsertAt(m_BlockArray.GetSize(), pEditBlock);
-  CFX_WideString wsDisplay;
-  pEditBlock->GetDisplayText(wsDisplay);
-  m_nCaret = nBlockPos;
-  if (wsDisplay.GetLength() > 0) {
-    RawInsert(nBlockPos, const FX_WCHAR*(wsDisplay), wsDisplay.GetLength());
-  }
-#endif
-}
-int32_t CFDE_TxtEdtEngine::CountEditBlocks() const {
-#ifdef FDE_USEFORMATBLOCK
-  return m_BlockArray.GetSize();
-#else
-  return 0;
-#endif
-}
-void CFDE_TxtEdtEngine::GetEditBlockText(int32_t nIndex,
-                                         CFX_WideString& wsBlockText) const {
-#ifdef FDE_USEFORMATBLOCK
-  CFDE_TxtEdtBlock* pBlock = m_BlockArray[nIndex];
-  pBlock->GetBlockText(wsBlockText);
-#endif
-}
-int32_t CFDE_TxtEdtEngine::CountEditFields(int32_t nBlockIndex) const {
-#ifdef FDE_USEFORMATBLOCK
-  CFDE_TxtEdtBlock* pBlock = m_BlockArray[nBlockIndex];
-  return pBlock->CountField();
-#else
-  return 0;
-#endif
-}
-void CFDE_TxtEdtEngine::GetEditFieldText(int32_t nBlockIndex,
-                                         int32_t nFieldIndex,
-                                         CFX_WideString& wsFieldText) const {
-#ifdef FDE_USEFORMATBLOCK
-  CFDE_TxtEdtBlock* pBlock = m_BlockArray[nBlockIndex];
-  pBlock->GetFieldText(nFieldIndex, wsFieldText);
-#endif
-}
-void CFDE_TxtEdtEngine::StartEdit() {
-#ifdef FDE_USEFORMATBLOCK
-#endif
-}
-void CFDE_TxtEdtEngine::EndEdit() {
-#ifdef FDE_USEFORMATBLOCK
-#endif
-}
+
 void CFDE_TxtEdtEngine::RemoveSelRange(int32_t nStart, int32_t nCount) {
   FDE_LPTXTEDTSELRANGE lpTemp = NULL;
   int32_t nRangeCount = m_SelRangePtrArr.GetSize();
@@ -1262,61 +872,7 @@ void CFDE_TxtEdtEngine::Inner_Insert(int32_t nStart,
   m_Param.pEventSink->On_PageLoad(this, m_nCaretPage, 0);
   UpdatePages();
 }
-#ifdef FDE_USEFORMATBLOCK
-void CFDE_TxtEdtEngine::RawInsert(int32_t nStart,
-                                  const FX_WCHAR* lpText,
-                                  int32_t nLength) {
-  FXSYS_assert(nLength > 0);
-  FDE_TXTEDTPARAGPOS ParagPos;
-  TextPos2ParagPos(nStart, ParagPos);
-  int32_t nParagCount = m_ParagPtrArray.GetSize();
-  int32_t i = 0;
-  for (i = ParagPos.nParagIndex + 1; i < nParagCount; i++) {
-    m_ParagPtrArray[i]->m_nCharStart += nLength;
-  }
-  CFDE_TxtEdtParag* pParag = m_ParagPtrArray[ParagPos.nParagIndex];
-  int32_t nReserveLineCount = pParag->m_nLineCount;
-  int32_t nReserveCharStart = pParag->m_nCharStart;
-  int32_t nLeavePart = ParagPos.nCharIndex;
-  int32_t nCutPart = pParag->m_nCharCount - ParagPos.nCharIndex;
-  int32_t nTextStart = 0;
-  FX_WCHAR wCurChar = L' ';
-  const FX_WCHAR* lpPos = lpText;
-  FX_BOOL bFirst = TRUE;
-  int32_t nParagIndex = ParagPos.nParagIndex;
-  for (i = 0; i < nLength; i++, lpPos++) {
-    wCurChar = *lpPos;
-    if (wCurChar == m_wLineEnd) {
-      if (bFirst) {
-        pParag->m_nCharCount = nLeavePart + (i - nTextStart + 1);
-        pParag->m_nLineCount = -1;
-        nReserveCharStart += pParag->m_nCharCount;
-        bFirst = FALSE;
-      } else {
-        pParag = new CFDE_TxtEdtParag(this);
-        pParag->m_nLineCount = -1;
-        pParag->m_nCharCount = i - nTextStart + 1;
-        pParag->m_nCharStart = nReserveCharStart;
-        m_ParagPtrArray.InsertAt(++nParagIndex, pParag);
-        nReserveCharStart += pParag->m_nCharCount;
-      }
-      nTextStart = i + 1;
-    }
-  }
-  if (bFirst) {
-    pParag->m_nCharCount += nLength;
-    pParag->m_nLineCount = -1;
-    bFirst = FALSE;
-  } else {
-    pParag = new CFDE_TxtEdtParag(this);
-    pParag->m_nLineCount = -1;
-    pParag->m_nCharCount = nLength - nTextStart + nCutPart;
-    pParag->m_nCharStart = nReserveCharStart;
-    m_ParagPtrArray.InsertAt(++nParagIndex, pParag);
-  }
-  m_pTxtBuf->Insert(nStart, lpText, nLength);
-}
-#endif
+
 void CFDE_TxtEdtEngine::Inner_DeleteRange(int32_t nStart, int32_t nCount) {
   if (nCount == -1) {
     nCount = m_pTxtBuf->GetTextLength() - nStart;
@@ -1380,11 +936,7 @@ void CFDE_TxtEdtEngine::DeleteRange_DoRecord(int32_t nStart,
     nCount = GetTextLength() - nStart;
   }
   FXSYS_assert((nStart + nCount) <= m_pTxtBuf->GetTextLength());
-#ifdef FDE_USEFORMATBLOCK
-  int32_t nBlockCount = m_BlockArray.GetSize();
-  if (nBlockCount > 0) {
-  }
-#endif
+
   if (!(m_Param.dwMode & FDE_TEXTEDITMODE_NoRedoUndo)) {
     CFX_WideString wsRange;
     m_pTxtBuf->GetRange(wsRange, nStart, nCount);
@@ -1955,285 +1507,7 @@ FX_BOOL CFDE_TxtEdtEngine::MoveEnd() {
   UpdateCaretRect(GetTextBufLength(), TRUE);
   return TRUE;
 }
-#ifdef FDE_USEFORMATBLOCK
-int32_t CFDE_TxtEdtEngine::NormalizeCaretPos(int32_t nIndex,
-                                             int32_t nFlags,
-                                             FX_BOOL& bBefore) {
-  bBefore = TRUE;
-  int32_t nBgn = 0, nEnd = 0;
-  int32_t nRecord = -1;
-  CFDE_TxtEdtField* pField = NULL;
-  FX_BOOL bRet = GetFieldBoundary(nIndex, nBgn, nEnd, pField);
-  int32_t nDelta = 0;
-  if (bRet && !pField->IsFix()) {
-    if (nIndex - nBgn < FDE_FORMAT_EDIT_FIELD_HADERSIZE) {
-      if (nFlags == FDE_FORMAT_CARET_BACKWARD) {
-        CFDE_TxtEdtField* pEditableField = NULL;
-        if (FindEditableField(nIndex, nBgn, nEnd, pEditableField, FALSE)) {
-          return pEditableField->NormalizeCaretPos(nEnd - nBgn,
-                                                   FDE_FORMAT_CARET_BACKWARD) +
-                 nBgn;
-        }
-      }
-      nIndex = nBgn + FDE_FORMAT_EDIT_FIELD_HADERSIZE;
-    }
-    int32_t nRet = pField->NormalizeCaretPos(
-        nIndex - nBgn, (FDE_FORMAT_CARET_DIRECTION)nFlags);
-    if (nRet >= 0) {
-      return nRet + nBgn;
-    }
-    if (nRet == -2) {
-      int32_t nEditablePosBgn = 0, nEditablePosEnd = 0;
-      pField->GetEditableRange(nEditablePosBgn, nEditablePosEnd);
-      nRecord = nBgn + nEditablePosBgn;
-      nFlags = FDE_FORMAT_CARET_BACKWARD;
-    } else {
-      FXSYS_assert(nRet == -1);
-      int32_t nEditablePosBgn = 0, nEditablePosEnd = 0;
-      pField->GetEditableRange(nEditablePosBgn, nEditablePosEnd);
-      nRecord = nBgn + nEditablePosEnd;
-      nFlags = FDE_FORMAT_CARET_FORWARD;
-    }
-  } else if (!bRet) {
-    nDelta = FDE_FORMAT_EDIT_FIELD_HADERSIZE - FDE_FORMAT_EDIT_FIELD_TAILSIZE;
-  }
-  switch (nFlags) {
-    case FDE_FORMAT_CARET_FORWARD: {
-      if (FindEditableField(nIndex, nBgn, nEnd, pField)) {
-        return pField->NormalizeCaretPos(FDE_FORMAT_EDIT_FIELD_HADERSIZE,
-                                         FDE_FORMAT_CARET_FORWARD) +
-               nBgn;
-      } else {
-        if (nRecord != -1) {
-          return nRecord;
-        }
-        bRet = FindEditableField(nIndex, nBgn, nEnd, pField, FALSE);
-        FXSYS_assert(bRet);
-        return pField->NormalizeCaretPos(nEnd - nBgn,
-                                         FDE_FORMAT_CARET_BACKWARD) +
-               nBgn;
-      }
-    } break;
-    case FDE_FORMAT_CARET_MIDDLE: {
-      int32_t nBgn1 = 0, nEnd1 = 0, nBgn2 = 0, nEnd2 = 0;
-      CFDE_TxtEdtField* pEditableField1 = NULL;
-      CFDE_TxtEdtField* pEditableField2 = NULL;
-      FX_BOOL bRet1 =
-          FindEditableField(nIndex, nBgn1, nEnd1, pEditableField1, FALSE);
-      FX_BOOL bRet2 = FindEditableField(nIndex, nBgn2, nEnd2, pEditableField2);
-      if (bRet1 == FALSE) {
-        FXSYS_assert(bRet2);
-        return pEditableField2->NormalizeCaretPos(
-                   FDE_FORMAT_EDIT_FIELD_HADERSIZE, FDE_FORMAT_CARET_FORWARD) +
-               nBgn2;
-      } else if (bRet2 == FALSE) {
-        FXSYS_assert(bRet1);
-        return pEditableField1->NormalizeCaretPos(nEnd1 - nBgn1,
-                                                  FDE_FORMAT_CARET_BACKWARD) +
-               nBgn1;
-      } else {
-        int32_t nEditablePosBgn = 0, nEditablePosEnd = 0;
-        if (nIndex - nEnd1 < nBgn2 + nDelta - nIndex) {
-          pEditableField1->GetEditableRange(nEditablePosBgn, nEditablePosEnd);
-          return nEditablePosEnd + nBgn1;
-        } else {
-          pEditableField2->GetEditableRange(nEditablePosBgn, nEditablePosEnd);
-          return nEditablePosBgn + nBgn2;
-        }
-      }
-    } break;
-    case FDE_FORMAT_CARET_BACKWARD: {
-      if (FindEditableField(nIndex, nBgn, nEnd, pField, FALSE)) {
-        return pField->NormalizeCaretPos(nEnd - nBgn,
-                                         FDE_FORMAT_CARET_BACKWARD) +
-               nBgn;
-      } else {
-        if (nRecord != -1) {
-          return nRecord;
-        }
-        bRet = FindEditableField(nIndex, nBgn, nEnd, pField);
-        FXSYS_assert(bRet);
-        return pField->NormalizeCaretPos(FDE_FORMAT_EDIT_FIELD_HADERSIZE,
-                                         FDE_FORMAT_CARET_FORWARD) +
-               nBgn;
-      }
-    } break;
-    default:
-      FXSYS_assert(0);
-      return nIndex;
-  }
-}
-FX_BOOL CFDE_TxtEdtEngine::GetFieldBoundary(int32_t nIndex,
-                                            int32_t& nBgn,
-                                            int32_t& nEnd,
-                                            CFDE_TxtEdtField*& pField) {
-  CFDE_TxtEdtBufIter* pIter =
-      new CFDE_TxtEdtBufIter((CFDE_TxtEdtBuf*)m_pTxtBuf, FALSE);
-  pIter->SetAt(nIndex);
-  FX_BOOL bFind = FALSE;
-  do {
-    FX_WCHAR wc = pIter->GetChar();
-    if (wc == FDE_TXTEDT_FORMATBLOCK_END) {
-      nEnd = pIter->GetAt();
-      bFind = TRUE;
-      nIndex--;
-      break;
-    }
-    if (wc == FDE_TXTEDT_FORMATBLOCK_BGN) {
-      pIter->Release();
-      return FALSE;
-    }
-  } while (pIter->Next());
-  if (!bFind) {
-    pIter->Release();
-    return FALSE;
-  }
-  pIter->SetAt(nIndex);
-  do {
-    FX_WCHAR wc = pIter->GetChar();
-    if (wc == FDE_TXTEDT_FORMATBLOCK_BGN) {
-      nBgn = pIter->GetAt();
-      pIter->Next();
-      FX_DWORD dwPre = (FX_DWORD)pIter->GetChar();
-      pIter->Next();
-      FX_DWORD dwCur = (FX_DWORD)pIter->GetChar();
-      pField = (CFDE_TxtEdtField*)((dwCur << 16) | dwPre);
-      pIter->Release();
-      return TRUE;
-    }
-    if (wc == FDE_TXTEDT_FORMATBLOCK_END) {
-      pIter->Release();
-      return FALSE;
-    }
-  } while (pIter->Next(TRUE));
-  pIter->Release();
-  return FALSE;
-}
-FX_BOOL CFDE_TxtEdtEngine::FindEditableField(int32_t nIndex,
-                                             int32_t& nBgn,
-                                             int32_t& nEnd,
-                                             CFDE_TxtEdtField*& pField,
-                                             FX_BOOL bForward) {
-  FX_WCHAR wcFirst = FDE_TXTEDT_FORMATBLOCK_BGN;
-  FX_WCHAR wcSecond = FDE_TXTEDT_FORMATBLOCK_END;
-  if (!bForward) {
-    wcFirst = FDE_TXTEDT_FORMATBLOCK_END;
-    wcSecond = FDE_TXTEDT_FORMATBLOCK_BGN;
-  }
-  CFDE_TxtEdtBufIter* pIter =
-      new CFDE_TxtEdtBufIter((CFDE_TxtEdtBuf*)m_pTxtBuf, FALSE);
-  pIter->SetAt(nIndex);
-  int32_t bFind = FALSE;
-  do {
-    FX_WCHAR wc = pIter->GetChar();
-    if (wc == wcFirst) {
-      nBgn = pIter->GetAt();
-      bFind = TRUE;
-      break;
-    }
-  } while (pIter->Next(!bForward));
-  if (!bFind) {
-    pIter->Release();
-    return FALSE;
-  }
-  bFind = FALSE;
-  do {
-    FX_WCHAR wc = pIter->GetChar();
-    if (wc == wcSecond) {
-      nEnd = pIter->GetAt();
-      bFind = TRUE;
-      break;
-    }
-  } while (pIter->Next(!bForward));
-  FXSYS_assert(bFind);
-  if (!bForward) {
-    int32_t nTemp = nBgn;
-    nBgn = nEnd;
-    nEnd = nTemp;
-  }
-  pIter->SetAt(nBgn + 1);
-  FX_DWORD dwPre = (FX_DWORD)pIter->GetChar();
-  pIter->Next();
-  FX_DWORD dwCur = (FX_DWORD)pIter->GetChar();
-  pField = (CFDE_TxtEdtField*)((dwCur << 16) | dwPre);
-  pIter->Release();
-  if (!pField->IsFix()) {
-    return TRUE;
-  }
-  return FindEditableField((bForward ? nEnd : nBgn), nBgn, nEnd, pField,
-                           bForward);
-}
-FX_BOOL CFDE_TxtEdtEngine::Move2NextEditableField(int32_t nIndex,
-                                                  FX_BOOL bForward,
-                                                  FX_BOOL bSelect) {
-  if (m_SelRangePtrArr.GetSize() > 0) {
-    ClearSelection();
-    m_Param.pEventSink->On_SelChanged(this);
-  }
-  int32_t nBgn = 0, nEnd = 0;
-  CFDE_TxtEdtField* pField = NULL;
-  FX_BOOL bRet = FindEditableField(nIndex, nBgn, nEnd, pField, bForward);
-  if (!bRet) {
-    return FALSE;
-  }
-  int32_t nEditableBgn = 0, nEditableEnd = 0;
-  pField->GetEditableRange(nEditableBgn, nEditableEnd);
-  nEditableBgn += nBgn;
-  nEditableEnd += nBgn;
-  if (bSelect) {
-    int32_t nRangeCount = nEditableEnd - nEditableBgn;
-    if (nRangeCount > 0) {
-      AddSelRange(nEditableBgn, nEditableEnd - nEditableBgn);
-    }
-  }
-  SetCaretPos(nEditableEnd, TRUE);
-  return TRUE;
-}
-int32_t CFDE_TxtEdtEngine::GetRealIndex(int32_t nIndex) const {
-  CFDE_TxtEdtBufIter* pIter =
-      new CFDE_TxtEdtBufIter((CFDE_TxtEdtBuf*)m_pTxtBuf, FALSE);
-  pIter->SetAt(0);
-  FX_BOOL bInField = FALSE;
-  int32_t nFieldBgn = 0;
-  int32_t nRealIndex = 0;
-  for (int32_t i = 0; i <= nIndex; i++) {
-    FX_WCHAR wc = pIter->GetChar();
-    if (bInField) {
-      if (wc == FDE_TXTEDT_FORMATBLOCK_END) {
-        FX_DWORD dwPre = (FX_DWORD)m_pTxtBuf->GetCharByIndex(nFieldBgn + 1);
-        FX_DWORD dwCur = (FX_DWORD)m_pTxtBuf->GetCharByIndex(nFieldBgn + 2);
-        CFDE_TxtEdtField* pField = (CFDE_TxtEdtField*)((dwCur << 16) | dwPre);
-        nRealIndex += pField->GetFieldTextLength();
-        bInField = FALSE;
-      }
-    } else {
-      if (wc == FDE_TXTEDT_FORMATBLOCK_BGN) {
-        bInField = TRUE;
-        nFieldBgn = pIter->GetAt();
-      } else {
-        nRealIndex++;
-      }
-    }
-    pIter->Next();
-  }
-  if (!bInField) {
-    pIter->Release();
-    return nRealIndex;
-  }
-  pIter->SetAt(nFieldBgn + 1);
-  FX_DWORD dwPre = (FX_DWORD)pIter->GetChar();
-  pIter->Next();
-  FX_DWORD dwCur = (FX_DWORD)pIter->GetChar();
-  CFDE_TxtEdtField* pField = (CFDE_TxtEdtField*)((dwCur << 16) | dwPre);
-  pIter->Release();
-  if (pField->IsFix()) {
-    int32_t nDelta = nIndex - nFieldBgn - FDE_FORMAT_EDIT_FIELD_HADERSIZE + 1;
-    return nRealIndex + (nDelta > 0 ? nDelta : 0);
-  } else {
-    return nRealIndex + pField->GetRealIndex(nIndex - nFieldBgn);
-  }
-}
-#endif
+
 FX_BOOL CFDE_TxtEdtEngine::IsFitArea(CFX_WideString& wsText) {
   IFDE_TextOut* pTextOut = IFDE_TextOut::Create();
   pTextOut->SetLineSpace(m_Param.fLineSpace);
@@ -2332,64 +1606,6 @@ FX_BOOL CFDE_TxtEdtEngine::IsSelect() {
 void CFDE_TxtEdtEngine::DeleteSelect() {
   int32_t nCountRange = CountSelRanges();
   if (nCountRange > 0) {
-#ifdef FDE_USEFORMATBLOCK
-    int32_t nBlockCount = m_BlockArray.GetSize();
-    if (nBlockCount > 0) {
-      if (nCountRange > 1) {
-        return;
-      }
-      int32_t nSelStart;
-      int32_t nSelCount;
-      nSelCount = GetSelRange(0, nSelStart);
-      int32_t nSelEnd = nSelStart + nSelCount;
-      int32_t nBgn = 0;
-      int32_t nEnd = 0;
-      CFDE_TxtEdtField* pField = NULL;
-      FX_BOOL bInField = GetFieldBoundary(nSelStart, nBgn, nEnd, pField);
-      int32_t nCaretInField = nSelStart - nBgn;
-      FX_BOOL bBefore = FALSE;
-      if (!bInField || pField->IsFix() || nSelEnd > nEnd) {
-        return;
-      }
-      pField->Backup();
-      CFX_WideString wsDel;
-      int32_t nCaret = 0;
-      int32_t nRet =
-          pField->Delete(nCaretInField, nSelCount, wsDel, nCaret, bBefore);
-      nCaret += nBgn;
-      switch (nRet) {
-        case FDE_FORMAT_FIELD_DELETE_RET_S:
-          break;
-        case FDE_FORMAT_FIELD_DELETE_RET_F_INVALIDATE:
-        case FDE_FORMAT_FIELD_DELETE_RET_F_BOUNDARY:
-          return;
-        default:
-          FXSYS_assert(0);
-          break;
-      }
-      CFX_WideString wsField;
-      pField->GetFieldText(wsField);
-      if (!m_Param.pEventSink->On_ValidateField(
-              this, pField->GetBlockIndex(), pField->GetIndex(), wsField, 0)) {
-        pField->Restore();
-        return;
-      }
-      CFX_WideString wsDisplay;
-      pField->GetDisplayText(wsDisplay);
-      Replace(nBgn, nEnd - nBgn + 1, wsDisplay);
-      if (!(m_Param.dwMode & FDE_TEXTEDITMODE_NoRedoUndo)) {
-        IFDE_TxtEdtDoRecord* pRecord = new CFDE_TxtEdtDoRecord_FieldDelete(
-            this, nSelStart, pField, nCaretInField, nBgn, nEnd - nBgn + 1,
-            wsDisplay.GetLength(), wsDel, FALSE);
-        CFX_ByteString bsDoRecord;
-        pRecord->Serialize(bsDoRecord);
-        m_Param.pEventSink->On_AddDoRecord(this, bsDoRecord);
-        pRecord->Release();
-      }
-      SetCaretPos(nSelStart, bBefore);
-      return;
-    }
-#endif
     int32_t nSelStart;
     int32_t nSelCount;
     while (nCountRange > 0) {
@@ -2415,14 +1631,6 @@ IFDE_TxtEdtDoRecord* IFDE_TxtEdtDoRecord::Create(
       return new CFDE_TxtEdtDoRecord_Insert(bsDoRecord);
     case FDE_TXTEDT_DORECORD_DEL:
       return new CFDE_TxtEdtDoRecord_DeleteRange(bsDoRecord);
-#ifdef FDE_USEFORMATBLOCK
-    case FDE_TXTEDT_DORECORD_FORMATINS:
-      return new CFDE_TxtEdtDoRecord_FieldInsert(bsDoRecord);
-    case FDE_TXTEDT_DORECORD_FORMATDEL:
-      return new CFDE_TxtEdtDoRecord_FieldDelete(bsDoRecord);
-    case FDE_TXTEDT_DORECORD_FORMATREP:
-      return new CFDE_TxtEdtDoRecord_FieldReplace(bsDoRecord);
-#endif
     default:
       break;
   }
@@ -2573,299 +1781,3 @@ void CFDE_TxtEdtDoRecord_DeleteRange::Deserialize(
   ArchiveLoader >> m_nCaret;
   ArchiveLoader >> m_wsRange;
 }
-#ifdef FDE_USEFORMATBLOCK
-CFDE_TxtEdtDoRecord_FieldInsert::CFDE_TxtEdtDoRecord_FieldInsert(
-    const CFX_ByteStringC& bsDoRecord) {
-  Deserialize(bsDoRecord);
-}
-CFDE_TxtEdtDoRecord_FieldInsert::CFDE_TxtEdtDoRecord_FieldInsert(
-    CFDE_TxtEdtEngine* pEngine,
-    int32_t nCaret,
-    CFDE_TxtEdtField* pField,
-    int32_t nIndexInField,
-    int32_t nFieldBgn,
-    int32_t nOldFieldLength,
-    int32_t nNewFieldLength,
-    const CFX_WideString& wsIns,
-    FX_BOOL bSel)
-    : m_pEngine(pEngine),
-      m_nCaret(nCaret),
-      m_pField(pField),
-      m_nIndexInField(nIndexInField),
-      m_nFieldBgn(nFieldBgn),
-      m_nOldFieldLength(nOldFieldLength),
-      m_nNewFieldLength(nNewFieldLength),
-      m_wsIns(wsIns),
-      m_bSel(bSel) {
-  FXSYS_assert(pEngine);
-  FXSYS_assert(pField);
-}
-CFDE_TxtEdtDoRecord_FieldInsert::~CFDE_TxtEdtDoRecord_FieldInsert() {}
-void CFDE_TxtEdtDoRecord_FieldInsert::Release() {
-  delete this;
-}
-FX_BOOL CFDE_TxtEdtDoRecord_FieldInsert::Undo() {
-  CFX_WideString wsDel;
-  int32_t nCaret = 0;
-  FX_BOOL bBefore = FALSE;
-  int32_t nRet = m_pField->Delete(m_nIndexInField, m_wsIns.GetLength(), wsDel,
-                                  nCaret, bBefore);
-  FXSYS_assert(nRet != FDE_FORMAT_FIELD_DELETE_RET_F_INVALIDATE &&
-               nRet != FDE_FORMAT_FIELD_DELETE_RET_F_BOUNDARY);
-  CFX_WideString wsDisplay;
-  m_pField->GetDisplayText(wsDisplay);
-  m_pEngine->Replace(m_nFieldBgn, m_nNewFieldLength, wsDisplay);
-  m_pEngine->SetCaretPos(m_nCaret, TRUE);
-  return TRUE;
-}
-FX_BOOL CFDE_TxtEdtDoRecord_FieldInsert::Redo() {
-  int32_t nCaret = 0;
-  FX_BOOL bBefore = FALSE;
-  int32_t nRet = m_pField->Insert(m_nIndexInField, m_wsIns, nCaret, bBefore);
-  FXSYS_assert(nRet != FDE_FORMAT_FIELD_INSERT_RET_F_FULL &&
-               nRet != FDE_FORMAT_FIELD_INSERT_RET_F_INVALIDATE);
-  CFX_WideString wsDisplay;
-  m_pField->GetDisplayText(wsDisplay);
-  m_pEngine->Replace(m_nFieldBgn, m_nOldFieldLength, wsDisplay);
-  m_pEngine->SetCaretPos(m_nCaret + m_wsIns.GetLength(), TRUE);
-  return TRUE;
-}
-void CFDE_TxtEdtDoRecord_FieldInsert::Serialize(
-    CFX_ByteString& bsDoRecord) const {
-  CFX_ArchiveSaver ArchiveSaver;
-  ArchiveSaver << int32_t(FDE_TXTEDT_DORECORD_FORMATINS);
-  ArchiveSaver << int32_t(m_pEngine);
-  ArchiveSaver << m_nCaret;
-  ArchiveSaver << int32_t(m_pField);
-  ArchiveSaver << m_nIndexInField;
-  ArchiveSaver << m_nFieldBgn;
-  ArchiveSaver << m_nOldFieldLength;
-  ArchiveSaver << m_nNewFieldLength;
-  ArchiveSaver << m_wsIns;
-  ArchiveSaver << m_bSel;
-  int32_t nLength = ArchiveSaver.GetLength();
-  const uint8_t* lpSrcBuf = ArchiveSaver.GetBuffer();
-  FX_CHAR* lpDstBuf = bsDoRecord.GetBuffer(nLength);
-  FXSYS_memcpy(lpDstBuf, lpSrcBuf, nLength);
-  bsDoRecord.ReleaseBuffer(nLength);
-}
-void CFDE_TxtEdtDoRecord_FieldInsert::Deserialize(
-    const CFX_ByteStringC& bsDoRecord) {
-  CFX_ArchiveLoader ArchiveLoader((const uint8_t*)bsDoRecord.GetCStr(),
-                                  bsDoRecord.GetLength());
-  int32_t nType = 0;
-  ArchiveLoader >> nType;
-  FXSYS_assert(nType == FDE_TXTEDT_DORECORD_FORMATINS);
-  int32_t nEngine = 0;
-  ArchiveLoader >> nEngine;
-  m_pEngine = (CFDE_TxtEdtEngine*)(uintptr_t)nEngine;
-  ArchiveLoader >> m_nCaret;
-  int32_t nField = 0;
-  ArchiveLoader >> nField;
-  m_pField = (CFDE_TxtEdtField*)nField;
-  ArchiveLoader >> m_nIndexInField;
-  ArchiveLoader >> m_nFieldBgn;
-  ArchiveLoader >> m_nOldFieldLength;
-  ArchiveLoader >> m_nNewFieldLength;
-  ArchiveLoader >> m_wsIns;
-  ArchiveLoader >> m_bSel;
-}
-CFDE_TxtEdtDoRecord_FieldDelete::CFDE_TxtEdtDoRecord_FieldDelete(
-    const CFX_ByteStringC& bsDoRecord) {
-  Deserialize(bsDoRecord);
-}
-CFDE_TxtEdtDoRecord_FieldDelete::CFDE_TxtEdtDoRecord_FieldDelete(
-    CFDE_TxtEdtEngine* pEngine,
-    int32_t nCaret,
-    CFDE_TxtEdtField* pField,
-    int32_t nIndexInField,
-    int32_t nFieldBgn,
-    int32_t nOldLength,
-    int32_t nNewLength,
-    const CFX_WideString& wsDel,
-    FX_BOOL bSel)
-    : m_pEngine(pEngine),
-      m_nCaret(nCaret),
-      m_pField(pField),
-      m_nIndexInField(nIndexInField),
-      m_nFieldBgn(nFieldBgn),
-      m_nOldFieldLength(nOldLength),
-      m_nNewFieldLength(nNewLength),
-      m_wsDel(wsDel),
-      m_bSel(bSel) {
-  FXSYS_assert(m_pEngine);
-  FXSYS_assert(m_pField);
-}
-CFDE_TxtEdtDoRecord_FieldDelete::~CFDE_TxtEdtDoRecord_FieldDelete() {}
-void CFDE_TxtEdtDoRecord_FieldDelete::Release() {
-  delete this;
-}
-FX_BOOL CFDE_TxtEdtDoRecord_FieldDelete::Undo() {
-  int32_t nCaret = 0;
-  FX_BOOL bBefore = FALSE;
-  int32_t nRet = m_pField->Insert(m_nIndexInField, m_wsDel, nCaret, bBefore);
-  FXSYS_assert(nRet != FDE_FORMAT_FIELD_INSERT_RET_F_FULL &&
-               nRet != FDE_FORMAT_FIELD_INSERT_RET_F_INVALIDATE);
-  CFX_WideString wsDisplay;
-  m_pField->GetDisplayText(wsDisplay);
-  m_pEngine->Replace(m_nFieldBgn, m_nNewFieldLength, wsDisplay);
-  m_pEngine->SetCaretPos(m_nCaret, TRUE);
-  return TRUE;
-}
-FX_BOOL CFDE_TxtEdtDoRecord_FieldDelete::Redo() {
-  int32_t nCaret = 0;
-  FX_BOOL bBefore = 0;
-  CFX_WideString wsDel;
-  int32_t nRet = m_pField->Delete(m_nIndexInField, m_wsDel.GetLength(), wsDel,
-                                  nCaret, bBefore);
-  FXSYS_assert(nRet != FDE_FORMAT_FIELD_DELETE_RET_F_INVALIDATE &&
-               nRet != FDE_FORMAT_FIELD_DELETE_RET_F_BOUNDARY);
-  CFX_WideString wsDisplay;
-  m_pField->GetDisplayText(wsDisplay);
-  m_pEngine->Replace(m_nFieldBgn, m_nOldFieldLength, wsDisplay);
-  m_pEngine->SetCaretPos(m_nCaret - m_wsDel.GetLength(), TRUE);
-  return TRUE;
-}
-void CFDE_TxtEdtDoRecord_FieldDelete::Serialize(
-    CFX_ByteString& bsDoRecord) const {
-  CFX_ArchiveSaver ArchiveSaver;
-  ArchiveSaver << int32_t(FDE_TXTEDT_DORECORD_FORMATDEL);
-  ArchiveSaver << int32_t(m_pEngine);
-  ArchiveSaver << m_nCaret;
-  ArchiveSaver << int32_t(m_pField);
-  ArchiveSaver << m_nIndexInField;
-  ArchiveSaver << m_nFieldBgn;
-  ArchiveSaver << m_nOldFieldLength;
-  ArchiveSaver << m_nNewFieldLength;
-  ArchiveSaver << m_wsDel;
-  ArchiveSaver << m_bSel;
-  int32_t nLength = ArchiveSaver.GetLength();
-  const uint8_t* lpSrcBuf = ArchiveSaver.GetBuffer();
-  FX_CHAR* lpDstBuf = bsDoRecord.GetBuffer(nLength);
-  FXSYS_memcpy(lpDstBuf, lpSrcBuf, nLength);
-  bsDoRecord.ReleaseBuffer(nLength);
-}
-void CFDE_TxtEdtDoRecord_FieldDelete::Deserialize(
-    const CFX_ByteStringC& bsDoRecord) {
-  CFX_ArchiveLoader ArchiveLoader((const uint8_t*)bsDoRecord.GetCStr(),
-                                  bsDoRecord.GetLength());
-  int32_t nType = 0;
-  ArchiveLoader >> nType;
-  FXSYS_assert(nType == FDE_TXTEDT_DORECORD_FORMATDEL);
-  int32_t nEngine = 0;
-  ArchiveLoader >> nEngine;
-  m_pEngine = (CFDE_TxtEdtEngine*)(uintptr_t)nEngine;
-  ArchiveLoader >> m_nCaret;
-  int32_t nField = 0;
-  ArchiveLoader >> nField;
-  m_pField = (CFDE_TxtEdtField*)nField;
-  ArchiveLoader >> m_nIndexInField;
-  ArchiveLoader >> m_nFieldBgn;
-  ArchiveLoader >> m_nOldFieldLength;
-  ArchiveLoader >> m_nNewFieldLength;
-  ArchiveLoader >> m_wsDel;
-  ArchiveLoader >> m_bSel;
-}
-CFDE_TxtEdtDoRecord_FieldReplace::CFDE_TxtEdtDoRecord_FieldReplace(
-    const CFX_ByteStringC& bsDoRecord) {
-  Deserialize(bsDoRecord);
-}
-CFDE_TxtEdtDoRecord_FieldReplace::CFDE_TxtEdtDoRecord_FieldReplace(
-    CFDE_TxtEdtEngine* pEngine,
-    int32_t nCaret,
-    int32_t nNewCaret,
-    CFDE_TxtEdtField* pField,
-    int32_t nIndexInField,
-    int32_t nFieldBgn,
-    int32_t nFieldNewLength,
-    const CFX_WideString& wsDel,
-    const CFX_WideString& wsIns,
-    FX_BOOL bSel)
-    : m_pEngine(pEngine),
-      m_nCaret(nCaret),
-      m_nNewCaret(nNewCaret),
-      m_pField(pField),
-      m_nIndexInField(nIndexInField),
-      m_nFieldBgn(nFieldBgn),
-      m_nFieldNewLength(nFieldNewLength),
-      m_wsDel(wsDel),
-      m_wsIns(wsIns),
-      m_bSel(bSel) {
-  FXSYS_assert(m_pEngine);
-  FXSYS_assert(m_pField);
-}
-CFDE_TxtEdtDoRecord_FieldReplace::~CFDE_TxtEdtDoRecord_FieldReplace() {}
-void CFDE_TxtEdtDoRecord_FieldReplace::Release() {
-  delete this;
-}
-FX_BOOL CFDE_TxtEdtDoRecord_FieldReplace::Undo() {
-  CFX_WideString wsDel;
-  int32_t nCaret = 0;
-  FX_BOOL bBefore = FALSE;
-  int32_t nRet = m_pField->Replace(m_nIndexInField, m_wsIns.GetLength(),
-                                   m_wsDel, wsDel, nCaret, bBefore);
-  FXSYS_assert(nRet != FDE_FORMAT_FIELD_DELETE_RET_F_INVALIDATE &&
-               nRet != FDE_FORMAT_FIELD_DELETE_RET_F_BOUNDARY);
-  CFX_WideString wsDisplay;
-  m_pField->GetDisplayText(wsDisplay);
-  m_pEngine->Replace(m_nFieldBgn, m_nFieldNewLength, wsDisplay);
-  m_pEngine->SetCaretPos(m_nCaret, TRUE);
-  return TRUE;
-}
-FX_BOOL CFDE_TxtEdtDoRecord_FieldReplace::Redo() {
-  CFX_WideString wsDel;
-  int32_t nCaret = 0;
-  FX_BOOL bBefore = FALSE;
-  int32_t nRet = m_pField->Replace(m_nIndexInField, m_wsDel.GetLength(),
-                                   m_wsIns, wsDel, nCaret, bBefore);
-  FXSYS_assert(nRet != FDE_FORMAT_FIELD_DELETE_RET_F_INVALIDATE &&
-               nRet != FDE_FORMAT_FIELD_DELETE_RET_F_BOUNDARY);
-  CFX_WideString wsDisplay;
-  m_pField->GetDisplayText(wsDisplay);
-  m_pEngine->Replace(m_nFieldBgn, m_nFieldNewLength, wsDisplay);
-  m_pEngine->SetCaretPos(m_nNewCaret, TRUE);
-  return TRUE;
-}
-void CFDE_TxtEdtDoRecord_FieldReplace::Serialize(
-    CFX_ByteString& bsDoRecord) const {
-  CFX_ArchiveSaver ArchiveSaver;
-  ArchiveSaver << int32_t(FDE_TXTEDT_DORECORD_FORMATREP);
-  ArchiveSaver << int32_t(m_pEngine);
-  ArchiveSaver << m_nCaret;
-  ArchiveSaver << m_nNewCaret;
-  ArchiveSaver << int32_t(m_pField);
-  ArchiveSaver << m_nIndexInField;
-  ArchiveSaver << m_nFieldBgn;
-  ArchiveSaver << m_nFieldNewLength;
-  ArchiveSaver << m_wsDel;
-  ArchiveSaver << m_wsIns;
-  ArchiveSaver << m_bSel;
-  int32_t nLength = ArchiveSaver.GetLength();
-  const uint8_t* lpSrcBuf = ArchiveSaver.GetBuffer();
-  FX_CHAR* lpDstBuf = bsDoRecord.GetBuffer(nLength);
-  FXSYS_memcpy(lpDstBuf, lpSrcBuf, nLength);
-  bsDoRecord.ReleaseBuffer(nLength);
-}
-void CFDE_TxtEdtDoRecord_FieldReplace::Deserialize(
-    const CFX_ByteStringC& bsDoRecord) {
-  CFX_ArchiveLoader ArchiveLoader((const uint8_t*)bsDoRecord.GetCStr(),
-                                  bsDoRecord.GetLength());
-  int32_t nType = 0;
-  ArchiveLoader >> nType;
-  FXSYS_assert(nType == FDE_TXTEDT_DORECORD_FORMATREP);
-  int32_t nEngine = 0;
-  ArchiveLoader >> nEngine;
-  m_pEngine = (CFDE_TxtEdtEngine*)(uintptr_t)nEngine;
-  ArchiveLoader >> m_nCaret;
-  ArchiveLoader >> m_nNewCaret;
-  int32_t nField = 0;
-  ArchiveLoader >> nField;
-  m_pField = (CFDE_TxtEdtField*)nField;
-  ArchiveLoader >> m_nIndexInField;
-  ArchiveLoader >> m_nFieldBgn;
-  ArchiveLoader >> m_nFieldNewLength;
-  ArchiveLoader >> m_wsDel;
-  ArchiveLoader >> m_wsIns;
-  ArchiveLoader >> m_bSel;
-}
-#endif

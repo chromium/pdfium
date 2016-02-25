@@ -134,8 +134,6 @@
         "xfa/src/fee/include/ifde_txtedtbuf.h",
         "xfa/src/fee/include/ifde_txtedtengine.h",
         "xfa/src/fee/include/ifde_txtedtpage.h",
-        "xfa/src/fee/src/fee/fde_txtedtblock.cpp",
-        "xfa/src/fee/src/fee/fde_txtedtblock.h",
         "xfa/src/fee/src/fee/fde_txtedtbuf.cpp",
         "xfa/src/fee/src/fee/fde_txtedtbuf.h",
         "xfa/src/fee/src/fee/fde_txtedtengine.cpp",

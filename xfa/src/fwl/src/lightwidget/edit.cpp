@@ -105,11 +105,6 @@ FWL_ERR CFWL_Edit::SetAliasChar(FX_WCHAR wAlias) {
     return FWL_ERR_Indefinite;
   return static_cast<IFWL_Edit*>(m_pIface)->SetAliasChar(wAlias);
 }
-FWL_ERR CFWL_Edit::SetFormatString(const CFX_WideString& wsFormat) {
-  if (!m_pIface)
-    return FWL_ERR_Indefinite;
-  return static_cast<IFWL_Edit*>(m_pIface)->SetFormatString(wsFormat);
-}
 FWL_ERR CFWL_Edit::Insert(int32_t nStart,
                           const FX_WCHAR* lpText,
                           int32_t nLen) {

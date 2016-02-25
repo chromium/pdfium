@@ -228,17 +228,6 @@ class IFDE_TxtEdtEngine {
                           const CFX_WideString& wsReplace) = 0;
   virtual void SetLimit(int32_t nLimit) = 0;
   virtual void SetAliasChar(FX_WCHAR wAlias) = 0;
-  virtual void SetFormatBlock(int32_t nIndex,
-                              const CFX_WideString& wsBlockFormat) = 0;
-  virtual int32_t CountEditBlocks() const = 0;
-  virtual void GetEditBlockText(int32_t nIndex,
-                                CFX_WideString& wsBlockText) const = 0;
-  virtual int32_t CountEditFields(int32_t nBlockIndex) const = 0;
-  virtual void GetEditFieldText(int32_t nBlockIndex,
-                                int32_t nFieldIndex,
-                                CFX_WideString& wsFieldText) const = 0;
-  virtual void StartEdit() = 0;
-  virtual void EndEdit() = 0;
   virtual void AddSelRange(int32_t nStart, int32_t nCount = -1) = 0;
   virtual int32_t CountSelRanges() = 0;
   virtual int32_t GetSelRange(int32_t nIndex, int32_t& nStart) = 0;
