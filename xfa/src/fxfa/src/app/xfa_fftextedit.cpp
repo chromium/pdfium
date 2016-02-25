@@ -601,11 +601,9 @@ FX_BOOL CXFA_FFDateTimeEdit::LoadWidget() {
   CFX_WideString wsText;
   m_pDataAcc->GetValue(wsText, XFA_VALUEPICTURE_Display);
   pWidget->SetEditText(wsText);
-  XFA_DATETIMETYPE eType = XFA_DATETIMETYPE_DateAndTime;
   if (CXFA_Value value = m_pDataAcc->GetFormValue()) {
     switch (value.GetChildValueClassID()) {
       case XFA_ELEMENT_Date: {
-        eType = XFA_DATETIMETYPE_Date;
         if (!wsText.IsEmpty()) {
           CXFA_LocaleValue lcValue = XFA_GetLocaleValue(m_pDataAcc);
           CFX_Unitime date = lcValue.GetDate();
@@ -614,11 +612,7 @@ FX_BOOL CXFA_FFDateTimeEdit::LoadWidget() {
           }
         }
       } break;
-      case XFA_ELEMENT_Time:
-        eType = XFA_DATETIMETYPE_Time;
-        break;
       default:
-        eType = XFA_DATETIMETYPE_DateAndTime;
         break;
     }
   }

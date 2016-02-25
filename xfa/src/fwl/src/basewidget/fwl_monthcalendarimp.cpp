@@ -322,8 +322,6 @@ void CFWL_MonthCalendarImp::DrawWeek(CFX_Graphics* pGraphics,
   params.m_pGraphics = pGraphics;
   params.m_dwStates = FWL_PARTSTATE_MCD_Normal;
   params.m_iTTOAlign = FDE_TTOALIGNMENT_Center;
-  int32_t iWeek;
-  iWeek = m_pDateTime->GetDayOfWeek();
   CFX_RectF rtDayOfWeek;
   if (pMatrix) {
     params.m_matrix.Concat(*pMatrix);

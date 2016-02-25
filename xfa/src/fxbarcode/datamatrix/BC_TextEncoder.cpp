@@ -50,7 +50,7 @@ int32_t CBC_TextEncoder::encodeChar(FX_WCHAR c,
     sb += (FX_WCHAR)(c - 97 + 14);
     return 1;
   }
-  if (c >= '\0' && c <= 0x1f) {
+  if (c <= 0x1f) {
     sb += (FX_WCHAR)'\0';
     sb += c;
     return 2;

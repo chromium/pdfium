@@ -523,8 +523,6 @@
         "xfa/src/fxfa/src/app/xfa_ffcheckbutton.h",
         "xfa/src/fxfa/src/app/xfa_ffchoicelist.cpp",
         "xfa/src/fxfa/src/app/xfa_ffchoicelist.h",
-        "xfa/src/fxfa/src/app/xfa_ffConfigAcc.cpp",
-        "xfa/src/fxfa/src/app/xfa_ffConfigAcc.h",
         "xfa/src/fxfa/src/app/xfa_ffdoc.cpp",
         "xfa/src/fxfa/src/app/xfa_ffdoc.h",
         "xfa/src/fxfa/src/app/xfa_ffdochandler.cpp",

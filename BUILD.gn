@@ -1266,8 +1266,6 @@ if (pdf_enable_xfa) {
       "xfa/src/fxbarcode/utils.h",
       "xfa/src/fxfa/src/app/xfa_checksum.cpp",
       "xfa/src/fxfa/src/app/xfa_checksum.h",
-      "xfa/src/fxfa/src/app/xfa_ffConfigAcc.cpp",
-      "xfa/src/fxfa/src/app/xfa_ffConfigAcc.h",
       "xfa/src/fxfa/src/app/xfa_ffapp.cpp",
       "xfa/src/fxfa/src/app/xfa_ffapp.h",
       "xfa/src/fxfa/src/app/xfa_ffbarcode.cpp",

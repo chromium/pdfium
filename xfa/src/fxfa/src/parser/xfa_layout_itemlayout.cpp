@@ -1384,16 +1384,13 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
   FX_FLOAT fContentCalculatedWidth = 0, fContentCalculatedHeight = 0;
   CXFA_Node* pMarginNode =
       m_pFormNode->GetFirstChildByClass(XFA_ELEMENT_Margin);
-  FX_FLOAT fLeftInset = 0, fTopInset = 0, fRightInset = 0, fBottomInset = 0;
+  FX_FLOAT fLeftInset = 0;
+  FX_FLOAT fRightInset = 0;
   if (pMarginNode) {
     fLeftInset =
         pMarginNode->GetMeasure(XFA_ATTRIBUTE_LeftInset).ToUnit(XFA_UNIT_Pt);
-    fTopInset =
-        pMarginNode->GetMeasure(XFA_ATTRIBUTE_TopInset).ToUnit(XFA_UNIT_Pt);
     fRightInset =
         pMarginNode->GetMeasure(XFA_ATTRIBUTE_RightInset).ToUnit(XFA_UNIT_Pt);
-    fBottomInset =
-        pMarginNode->GetMeasure(XFA_ATTRIBUTE_BottomInset).ToUnit(XFA_UNIT_Pt);
   }
   FX_FLOAT fContentWidthLimit =
       bContainerWidthAutoSize ? XFA_LAYOUT_FLOAT_MAX
@@ -1711,16 +1708,13 @@ static void XFA_ItemLayoutProcessor_AddLeaderAfterSplit(
   XFA_ItemLayoutProcessor_UpdatePendedItemLayout(pProcessor, pLeaderLayoutItem);
   CXFA_Node* pMarginNode =
       pProcessor->m_pFormNode->GetFirstChildByClass(XFA_ELEMENT_Margin);
-  FX_FLOAT fLeftInset = 0, fTopInset = 0, fRightInset = 0, fBottomInset = 0;
+  FX_FLOAT fLeftInset = 0;
+  FX_FLOAT fRightInset = 0;
   if (pMarginNode) {
     fLeftInset =
         pMarginNode->GetMeasure(XFA_ATTRIBUTE_LeftInset).ToUnit(XFA_UNIT_Pt);
-    fTopInset =
-        pMarginNode->GetMeasure(XFA_ATTRIBUTE_TopInset).ToUnit(XFA_UNIT_Pt);
     fRightInset =
         pMarginNode->GetMeasure(XFA_ATTRIBUTE_RightInset).ToUnit(XFA_UNIT_Pt);
-    fBottomInset =
-        pMarginNode->GetMeasure(XFA_ATTRIBUTE_BottomInset).ToUnit(XFA_UNIT_Pt);
   }
   FX_FLOAT fHeight = pLeaderLayoutItem->m_sSize.y;
   for (CXFA_ContentLayoutItem* pChildItem =
@@ -2510,7 +2504,6 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
           }
         } break;
         case XFA_ItemLayoutProcessorStages_BreakAfter: {
-          XFA_ItemLayoutProcessorResult eResult;
           CXFA_Node *pLeaderNode = NULL, *pTrailerNode = NULL;
           FX_BOOL bCreatePage = FALSE;
           if (bUseBreakControl && m_pPageMgr &&
@@ -2524,7 +2517,7 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
 #ifndef _XFA_LAYOUTITEM_ProcessCACHE_
               pProcessor->m_pPageMgrCreateItem = m_pPageMgrCreateItem;
 #endif
-              eResult = XFA_ItemLayoutProcessor_InsertFlowedItem(
+              XFA_ItemLayoutProcessor_InsertFlowedItem(
                   this, pProcessor, bContainerWidthAutoSize,
                   bContainerHeightAutoSize, fContainerHeight, eFlowStrategy,
                   uCurHAlignState, rgCurLineLayoutItems, FALSE,

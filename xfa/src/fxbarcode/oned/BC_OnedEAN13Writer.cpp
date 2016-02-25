@@ -207,7 +207,6 @@ void CBC_OnedEAN13Writer::ShowChars(const CFX_WideStringC& contents,
     device->FillRect(&re, m_backgroundColor);
   }
   FX_FLOAT blank = 0.0;
-  FX_FLOAT charsWidth = 0;
   iLen = tempStr.GetLength();
   if (pOutBitmap == NULL) {
     strWidth = (int32_t)(strWidth * m_outputHScale);
@@ -239,7 +238,6 @@ void CBC_OnedEAN13Writer::ShowChars(const CFX_WideStringC& contents,
   }
   tempStr = str.Mid(7, 6);
   iLen = tempStr.GetLength();
-  charsWidth = 0.0f;
   CalcTextInfo(tempStr, pCharPos + 7, m_pFont, (FX_FLOAT)strWidth, iFontSize,
                blank);
   if (pOutBitmap) {

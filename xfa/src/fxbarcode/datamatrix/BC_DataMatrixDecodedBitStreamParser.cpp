@@ -83,7 +83,6 @@ CBC_CommonDecoderResult* CBC_DataMatrixDecodedBitStreamParser::Decode(
           BC_EXCEPTION_CHECK_ReturnValue(e, NULL);
           break;
         default:
-          NULL;
           e = BCExceptionFormatException;
           return NULL;
       }

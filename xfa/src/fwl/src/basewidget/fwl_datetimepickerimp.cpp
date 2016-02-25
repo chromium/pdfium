@@ -1020,7 +1020,6 @@ int32_t CFWL_DateTimePickerImpDelegate::OnProcessMessage(
   if (!pMessage)
     return 0;
   FX_DWORD dwMsgCode = pMessage->GetClassID();
-  int32_t iRet = 1;
   switch (dwMsgCode) {
     case FWL_MSGHASH_SetFocus:
     case FWL_MSGHASH_KillFocus: {
@@ -1051,7 +1050,8 @@ int32_t CFWL_DateTimePickerImpDelegate::OnProcessMessage(
       }
       break;
     }
-    default: { iRet = 0; }
+    default:
+      break;
   }
   if (dwMsgCode == FWL_MSGHASH_Key &&
       m_pOwner->m_pEdit->GetStates() & FWL_WGTSTATE_Focused) {

@@ -7,7 +7,6 @@
 #include <algorithm>
 
 #include "xfa/src/foxitlib.h"
-#include "xfa/src/fxfa/src/app/xfa_ffConfigAcc.h"
 #include "xfa/src/fxfa/src/app/xfa_ffapp.h"
 #include "xfa/src/fxfa/src/app/xfa_ffdoc.h"
 #include "xfa/src/fxfa/src/app/xfa_fontmgr.h"
@@ -1759,20 +1758,17 @@ CXFA_DefFontMgr::~CXFA_DefFontMgr() {
   }
   m_CacheFonts.RemoveAll();
 }
+
 IFX_Font* CXFA_DefFontMgr::GetFont(IXFA_Doc* hDoc,
                                    const CFX_WideStringC& wsFontFamily,
                                    FX_DWORD dwFontStyles,
                                    FX_WORD wCodePage) {
   CFX_WideString wsFontName = wsFontFamily;
-  IFX_FontMgr* pFDEFontMgr = ((CXFA_FFDoc*)hDoc)->GetApp()->GetFDEFontMgr();
-  const XFA_FONTINFO* pCurFont = NULL;
-  FX_BOOL bGetFontInfo = TRUE;
-  IFX_Font* pFont = pFDEFontMgr->LoadFont((const FX_WCHAR*)wsFontName,
-                                          dwFontStyles, wCodePage);
-  if (!pFont && hDoc) {
-    if (bGetFontInfo) {
-      pCurFont = XFA_GetFontINFOByFontName(wsFontName);
-    }
+  IFX_FontMgr* pFDEFontMgr =
+      static_cast<CXFA_FFDoc*>(hDoc)->GetApp()->GetFDEFontMgr();
+  IFX_Font* pFont = pFDEFontMgr->LoadFont(wsFontName, dwFontStyles, wCodePage);
+  if (!pFont) {
+    const XFA_FONTINFO* pCurFont = XFA_GetFontINFOByFontName(wsFontName);
     if (pCurFont && pCurFont->pReplaceFont) {
       FX_DWORD dwStyle = 0;
       if (dwFontStyles & FX_FONTSTYLE_Bold) {
@@ -1806,6 +1802,7 @@ IFX_Font* CXFA_DefFontMgr::GetFont(IXFA_Doc* hDoc,
   }
   return pFont;
 }
+
 IFX_Font* CXFA_DefFontMgr::GetDefaultFont(IXFA_Doc* hDoc,
                                           const CFX_WideStringC& wsFontFamily,
                                           FX_DWORD dwFontStyles,

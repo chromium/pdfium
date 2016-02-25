@@ -182,7 +182,6 @@ void CBC_OnedEAN8Writer::ShowChars(const CFX_WideStringC& contents,
   if (pOutBitmap) {
     geBitmap.Attach(pOutBitmap);
   }
-  FX_FLOAT charsWidth = 0;
   int32_t iFontSize = (int32_t)fabs(m_fFontSize);
   int32_t iTextHeight = iFontSize + 1;
   if (pOutBitmap == NULL) {
@@ -233,7 +232,6 @@ void CBC_OnedEAN8Writer::ShowChars(const CFX_WideStringC& contents,
   }
   tempStr = str.Mid(4, 4);
   iLen = tempStr.GetLength();
-  charsWidth = 0.0f;
   CalcTextInfo(tempStr, pCharPos + 4, m_pFont, (FX_FLOAT)strWidth, iFontSize,
                blank);
   if (pOutBitmap) {

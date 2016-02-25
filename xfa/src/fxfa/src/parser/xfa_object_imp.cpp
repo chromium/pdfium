@@ -2948,14 +2948,11 @@ static void XFA_ScriptInstanceManager_ReorderDataNodes(CXFA_NodeSet& sSet1,
             pDualNodeArray->firstNodeList, rgNodeArray1, rgIdxArray1);
         XFA_ScriptInstanceManager_ReorderDataNodes_SortNodeArrayByDocumentIdx(
             pDualNodeArray->secondNodeList, rgNodeArray2, rgIdxArray2);
-        int32_t iLimit;
         CXFA_Node *pParentNode = NULL, *pBeforeNode = NULL;
         if (bInsertBefore) {
-          iLimit = rgIdxArray2[0];
           pBeforeNode = rgNodeArray2[0];
           pParentNode = pBeforeNode->GetNodeItem(XFA_NODEITEM_Parent);
         } else {
-          iLimit = rgIdxArray2[rgIdxArray2.GetSize() - 1];
           CXFA_Node* pLastNode = rgNodeArray2[rgIdxArray2.GetSize() - 1];
           pParentNode = pLastNode->GetNodeItem(XFA_NODEITEM_Parent);
           pBeforeNode = pLastNode->GetNodeItem(XFA_NODEITEM_NextSibling);

@@ -4058,7 +4058,7 @@ void CXFA_FM2JSContext::EncodeURL(const CFX_ByteStringC& szURLString,
       strEncode[1] = strCode[iIndex];
       strEncode[2] = strCode[ch - iIndex * 16];
       wsResultBuf << FX_WSTRC(strEncode);
-    } else if ((ch >= 0x0 && ch <= 0x1f) || ch == 0x7f) {
+    } else if (ch <= 0x1f || ch == 0x7f) {
       int32_t iIndex = ch / 16;
       strEncode[1] = strCode[iIndex];
       strEncode[2] = strCode[ch - iIndex * 16];
@@ -4718,16 +4718,13 @@ void CXFA_FM2JSContext::Replace(FXJSE_HOBJECT hThis,
                                 CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if ((argc == 2) || (argc == 3)) {
-    FX_BOOL bFlags = FALSE;
     FXJSE_HVALUE argOne = GetSimpleHValue(hThis, args, 0);
     FXJSE_HVALUE argTwo = GetSimpleHValue(hThis, args, 1);
     FXJSE_HVALUE argThree = 0;
     CFX_ByteString oneString;
     CFX_ByteString twoString;
     CFX_ByteString threeString;
-    if ((HValueIsNull(hThis, argOne)) || (HValueIsNull(hThis, argTwo))) {
-      bFlags = TRUE;
-    } else {
+    if (!HValueIsNull(hThis, argOne) && !HValueIsNull(hThis, argTwo)) {
       HValueToUTF8String(argOne, oneString);
       HValueToUTF8String(argTwo, twoString);
     }
@@ -4995,7 +4992,6 @@ void CXFA_FM2JSContext::Stuff(FXJSE_HOBJECT hThis,
                               CFXJSE_Arguments& args) {
   int32_t argc = args.GetLength();
   if ((argc == 3) || (argc == 4)) {
-    FX_BOOL bFlags = FALSE;
     CFX_ByteString sourceString;
     CFX_ByteString insertString;
     int32_t iLength = 0;
@@ -5005,10 +5001,8 @@ void CXFA_FM2JSContext::Stuff(FXJSE_HOBJECT hThis,
     FXJSE_HVALUE startValue = GetSimpleHValue(hThis, args, 1);
     FXJSE_HVALUE deleteValue = GetSimpleHValue(hThis, args, 2);
     FXJSE_HVALUE insertValue = 0;
-    if ((FXJSE_Value_IsNull(sourceValue)) || (FXJSE_Value_IsNull(startValue)) ||
-        (FXJSE_Value_IsNull(deleteValue))) {
-      bFlags = TRUE;
-    } else {
+    if (!FXJSE_Value_IsNull(sourceValue) && !FXJSE_Value_IsNull(startValue) &&
+        !FXJSE_Value_IsNull(deleteValue)) {
       HValueToUTF8String(sourceValue, sourceString);
       iLength = sourceString.GetLength();
       iStart = (int32_t)HValueToFloat(hThis, startValue);

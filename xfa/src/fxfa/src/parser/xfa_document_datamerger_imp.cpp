@@ -141,11 +141,10 @@ static void XFA_DataMerge_CreateDataBinding(CXFA_Node* pFormNode,
           int32_t iSize = wsSelTextArray.GetSize();
           if (iSize >= 1) {
             CXFA_Node* pValue = NULL;
-            IFDE_XMLNode* pValueXMLNode = NULL;
             for (int32_t i = 0; i < iSize; i++) {
               pValue = pDataNode->CreateSamePacketNode(XFA_ELEMENT_DataValue);
               pValue->SetCData(XFA_ATTRIBUTE_Name, FX_WSTRC(L"value"));
-              pValueXMLNode = pValue->CreateXMLMappingNode();
+              pValue->CreateXMLMappingNode();
               pDataNode->InsertChild(pValue);
               pValue->SetCData(XFA_ATTRIBUTE_Value, wsSelTextArray[i]);
             }
@@ -170,7 +169,6 @@ static void XFA_DataMerge_CreateDataBinding(CXFA_Node* pFormNode,
         break;
       case XFA_ELEMENT_ExclGroup: {
         CXFA_Node* pChecked = NULL;
-        XFA_ELEMENT eValueType = XFA_ELEMENT_UNKNOWN;
         CXFA_Node* pChild = pFormNode->GetNodeItem(XFA_NODEITEM_FirstChild);
         for (; pChild; pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
           if (pChild->GetClassID() != XFA_ELEMENT_Field) {
@@ -196,7 +194,6 @@ static void XFA_DataMerge_CreateDataBinding(CXFA_Node* pFormNode,
           CFX_WideString wsContent;
           if (pText->TryContent(wsContent) && (wsContent == wsValue)) {
             pChecked = pChild;
-            eValueType = pText->GetClassID();
             wsFormatedValue = wsValue;
             pDataNode->SetAttributeValue(wsValue, wsFormatedValue);
             pFormNode->SetCData(XFA_ATTRIBUTE_Value, wsContent);

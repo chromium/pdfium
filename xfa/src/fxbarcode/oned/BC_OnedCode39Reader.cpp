@@ -67,7 +67,6 @@ CFX_ByteString CBC_OnedCode39Reader::DecodeRow(int32_t rowNumber,
   CFX_Int32Array counters;
   counters.SetSize(9);
   FX_CHAR decodedChar;
-  int32_t lastStart;
   do {
     RecordPattern(row, nextStart, &counters, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, "");
@@ -79,7 +78,6 @@ CFX_ByteString CBC_OnedCode39Reader::DecodeRow(int32_t rowNumber,
     decodedChar = PatternToChar(pattern, e);
     BC_EXCEPTION_CHECK_ReturnValue(e, "");
     result += decodedChar;
-    lastStart = nextStart;
     for (int32_t i = 0; i < counters.GetSize(); i++) {
       nextStart += counters[i];
     }

@@ -138,7 +138,7 @@ int32_t CBC_C40Encoder::encodeChar(FX_WCHAR c, CFX_WideString& sb, int32_t& e) {
   } else if ((c >= 'A') && (c <= 'Z')) {
     sb += (FX_WCHAR)(c - 65 + 14);
     return 1;
-  } else if ((c >= '\0') && (c <= 0x1f)) {
+  } else if (c <= 0x1f) {
     sb += (FX_WCHAR)'\0';
     sb += c;
     return 2;

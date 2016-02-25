@@ -130,7 +130,6 @@ void CBC_OnedUPCAWriter::ShowChars(const CFX_WideStringC& contents,
   if (pOutBitmap) {
     geBitmap.Attach(pOutBitmap);
   }
-  FX_FLOAT charsWidth = 0;
   iLen = tempStr.GetLength();
   int32_t iFontSize = (int32_t)fabs(m_fFontSize);
   int32_t iTextHeight = iFontSize + 1;
@@ -200,7 +199,6 @@ void CBC_OnedUPCAWriter::ShowChars(const CFX_WideStringC& contents,
   }
   tempStr = str.Mid(6, 5);
   iLen = tempStr.GetLength();
-  charsWidth = 0.0f;
   CalcTextInfo(tempStr, pCharPos + 6, m_pFont, strWidth, iFontSize, blank);
   if (pOutBitmap) {
     FX_RECT rect2(0, 0, (int)strWidth, iTextHeight);
