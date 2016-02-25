@@ -6,8 +6,10 @@
 
 #include <algorithm>
 
+#include "xfa/src/fdp/include/fde_mem.h"
 #include "xfa/src/fdp/src/css/fde_csscache.h"
 #include "xfa/src/foxitlib.h"
+
 FDE_CSSCACHEITEM::FDE_CSSCACHEITEM(IFDE_CSSStyleSheet* p)
     : pStylesheet(p), dwActivity(0) {
   FXSYS_assert(pStylesheet);

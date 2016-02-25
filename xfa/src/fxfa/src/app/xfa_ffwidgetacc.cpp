@@ -4,8 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/src/fxfa/src/app/xfa_ffwidgetacc.h"
+
 #include <algorithm>
 
+#include "xfa/src/fdp/include/fde_tto.h"
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/app/xfa_ffapp.h"
 #include "xfa/src/fxfa/src/app/xfa_ffcheckbutton.h"
@@ -15,7 +18,6 @@
 #include "xfa/src/fxfa/src/app/xfa_fffield.h"
 #include "xfa/src/fxfa/src/app/xfa_ffpageview.h"
 #include "xfa/src/fxfa/src/app/xfa_ffwidget.h"
-#include "xfa/src/fxfa/src/app/xfa_ffwidgetacc.h"
 #include "xfa/src/fxfa/src/app/xfa_fontmgr.h"
 #include "xfa/src/fxfa/src/app/xfa_fwladapter.h"
 #include "xfa/src/fxfa/src/app/xfa_textlayout.h"

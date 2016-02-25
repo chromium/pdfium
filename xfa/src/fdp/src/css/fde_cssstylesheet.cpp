@@ -4,10 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/src/fdp/include/fde_mem.h"
 #include "xfa/src/fdp/src/css/fde_cssdatatable.h"
 #include "xfa/src/fdp/src/css/fde_cssstylesheet.h"
 #include "xfa/src/fdp/src/css/fde_csssyntax.h"
 #include "xfa/src/foxitlib.h"
+
 IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadHTMLStandardStyleSheet() {
   static const FX_WCHAR* s_pStyle =
       L"html,address,blockquote,body,dd,div,dl,dt,fieldset,form,frame,frameset,"
@@ -42,6 +44,7 @@ IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadHTMLStandardStyleSheet() {
   return IFDE_CSSStyleSheet::LoadFromBuffer(
       CFX_WideString(), s_pStyle, FXSYS_wcslen(s_pStyle), FX_CODEPAGE_UTF8);
 }
+
 IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadFromStream(
     const CFX_WideString& szUrl,
     IFX_Stream* pStream,

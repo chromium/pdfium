@@ -92,7 +92,6 @@
         "xfa/include/fxfa/fxfa_widget.h",
         "xfa/include/fxgraphics/fx_graphics.h",
         "xfa/include/fxjse/fxjse.h",
-        "xfa/src/fdp/include/fde.h",
         "xfa/src/fdp/include/fde_brs.h",
         "xfa/src/fdp/include/fde_css.h",
         "xfa/src/fdp/include/fde_img.h",

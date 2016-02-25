@@ -4,8 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/src/fdp/include/fde_mem.h"
 #include "xfa/src/fdp/src/css/fde_cssdeclaration.h"
 #include "xfa/src/foxitlib.h"
+
 IFDE_CSSValue* CFDE_CSSDeclaration::GetProperty(FDE_CSSPROPERTY eProperty,
                                                 FX_BOOL& bImportant) const {
   for (const FDE_CSSPROPERTYHOLDER* pHolder = m_pFirstProperty; pHolder;

@@ -10,7 +10,6 @@
 #define XFA_SRC_FOXITLIB_H_
 
 #include "xfa/include/foxitxfa.h"
-#include "xfa/src/fdp/include/fde.h"
 #include "xfa/src/fee/include/fx_wordbreak.h"
 #include "xfa/src/fee/include/ifde_txtedtengine.h"
 #include "xfa/src/fee/include/ifde_txtedtpage.h"

@@ -8,6 +8,7 @@
 
 #include "xfa/include/fwl/basewidget/fwl_checkbox.h"
 #include "xfa/include/fwl/core/fwl_widget.h"
+#include "xfa/src/fdp/include/fde_tto.h"
 #include "xfa/src/foxitlib.h"
 
 #define CHECKBOX_SIZE_SIGNMARGIN 3

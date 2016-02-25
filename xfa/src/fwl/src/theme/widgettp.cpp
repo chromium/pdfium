@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "xfa/include/fwl/core/fwl_widgetmgr.h"
+#include "xfa/src/fdp/include/fde_tto.h"
 #include "xfa/src/foxitlib.h"
 
 static void FWL_SetChildThemeID(IFWL_Widget* pParent, FX_DWORD dwThemeID) {

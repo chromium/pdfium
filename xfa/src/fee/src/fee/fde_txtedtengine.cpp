@@ -12,15 +12,19 @@
 #include "xfa/src/fee/src/fee/fde_txtedtbuf.h"
 #include "xfa/src/fee/src/fee/fde_txtedtengine.h"
 #include "xfa/src/fee/src/fee/fde_txtedtparag.h"
+#include "xfa/src/fdp/include/fde_tto.h"
 #include "xfa/src/foxitlib.h"
+
 #ifdef FDE_USEFORMATBLOCK
 #include "xfa/src/fee/src/fee/fde_txtedtblock.h"
 #endif
+
 #define FDE_PAGEWIDTH_MAX 0xFFFF
 #define FDE_TXTPLATESIZE (1024 * 12)
 #define FDE_UNICODE_PARAGRAPH_SPERATOR (0x2029)
 #define FDE_TXTEDT_DORECORD_INS 0
 #define FDE_TXTEDT_DORECORD_DEL 1
+
 #ifdef FDE_USEFORMATBLOCK
 #define FDE_TXTEDT_DORECORD_FORMATINS 3
 #define FDE_TXTEDT_DORECORD_FORMATDEL 4
@@ -28,6 +32,7 @@
 #define FDE_TXTEDT_FORMATBLOCK_BGN 0xFFF9
 #define FDE_TXTEDT_FORMATBLOCK_END 0xFFFB
 #endif
+
 IFDE_TxtEdtEngine* IFDE_TxtEdtEngine::Create() {
   return new CFDE_TxtEdtEngine();
 }

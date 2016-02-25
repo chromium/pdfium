@@ -11,6 +11,8 @@
 #include "xfa/include/fwl/basewidget/fwl_caret.h"
 #include "xfa/include/fwl/basewidget/fwl_datetimepicker.h"
 #include "xfa/include/fwl/core/fwl_theme.h"
+#include "xfa/src/fdp/include/fde_rdr.h"
+#include "xfa/src/fdp/include/fde_rdv.h"
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fwl/src/basewidget/include/fwl_caretimp.h"
 #include "xfa/src/fwl/src/basewidget/include/fwl_comboboximp.h"

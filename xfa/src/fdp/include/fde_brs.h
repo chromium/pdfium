@@ -7,13 +7,12 @@
 #ifndef XFA_SRC_FDP_INCLUDE_FDE_BRS_H_
 #define XFA_SRC_FDP_INCLUDE_FDE_BRS_H_
 
+#include "core/include/fxcrt/fx_system.h"
+#include "core/include/fxge/fx_dib.h"
+
 class IFDE_Image;
 class IFDE_Path;
-class IFDE_Brush;
-class IFDE_SolidBrush;
-class IFDE_HatchBrush;
-class IFDE_TextureBrush;
-class IFDE_LinearGradientBrush;
+
 #define FDE_BRUSHTYPE_Unknown -1
 #define FDE_BRUSHTYPE_Solid 0
 #define FDE_BRUSHTYPE_Hatch 1
@@ -25,11 +24,13 @@ class IFDE_LinearGradientBrush;
 #define FDE_WRAPMODE_TileFlipY 2
 #define FDE_WRAPMODE_TileFlipXY 3
 #define FDE_WRAPMODE_Clamp 4
+
 struct FDE_GRADIENTCOLOR {
   FX_FLOAT pos;
   FX_ARGB color;
 };
 typedef CFX_ArrayTemplate<FDE_GRADIENTCOLOR> CFDE_GradientColors;
+
 class IFDE_Brush {
  public:
   static IFDE_Brush* Create(int32_t iType);
@@ -37,6 +38,7 @@ class IFDE_Brush {
   virtual void Release() = 0;
   virtual int32_t GetType() const = 0;
 };
+
 class IFDE_SolidBrush : public IFDE_Brush {
  public:
   virtual FX_ARGB GetColor() const = 0;
@@ -49,6 +51,7 @@ class IFDE_SolidBrush : public IFDE_Brush {
   virtual void ConcatMatrix(const CFX_Matrix& matrix) = 0;
   virtual void SetMatrix(const CFX_Matrix& matrix) = 0;
 };
+
 #define FDE_HATCHSTYLE_Horizontal 0
 #define FDE_HATCHSTYLE_Vertical 1
 #define FDE_HATCHSTYLE_ForwardDiagonal 2
@@ -106,6 +109,7 @@ class IFDE_SolidBrush : public IFDE_Brush {
 #define FDE_HATCHSTYLE_LargeGrid FDE_HATCHSTYLE_Cross
 #define FDE_HATCHSTYLE_Min FDE_HATCHSTYLE_Horizontal
 #define FDE_HATCHSTYLE_Max (FDE_HATCHSTYLE_Total - 1)
+
 class IFDE_HatchBrush : public IFDE_Brush {
  public:
   virtual FX_ARGB GetColor(FX_BOOL bForegroundColor) const = 0;
@@ -113,6 +117,7 @@ class IFDE_HatchBrush : public IFDE_Brush {
   virtual int32_t GetHatchStyle() const = 0;
   virtual FX_BOOL SetHatchStyle(int32_t iHatchStyle) = 0;
 };
+
 class IFDE_TextureBrush : public IFDE_Brush {
  public:
   virtual IFDE_Image* GetImage() const = 0;
@@ -120,10 +125,12 @@ class IFDE_TextureBrush : public IFDE_Brush {
   virtual int32_t GetWrapMode() const = 0;
   virtual void SetWrapMode(int32_t iWrapMode) = 0;
 };
+
 #define FDE_LINEARGRADIENTMODE_Horizontal 0
 #define FDE_LINEARGRADIENTMODE_Vertical 1
 #define FDE_LINEARGRADIENTMODE_ForwardDiagonal 2
 #define FDE_LINEARGRADIENTMODE_BackwardDiagonal 3
+
 class IFDE_LinearGradientBrush : public IFDE_Brush {
  public:
   virtual void GetLinearPoints(CFX_PointF& startingPoint,

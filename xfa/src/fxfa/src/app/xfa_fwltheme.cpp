@@ -15,6 +15,7 @@
 #include "xfa/include/fwl/basewidget/fwl_picturebox.h"
 #include "xfa/include/fwl/basewidget/fwl_pushbutton.h"
 #include "xfa/include/fwl/basewidget/fwl_scrollbar.h"
+#include "xfa/src/fdp/include/fde_tto.h"
 #include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/app/xfa_ffapp.h"
 #include "xfa/src/fxfa/src/app/xfa_ffwidget.h"
