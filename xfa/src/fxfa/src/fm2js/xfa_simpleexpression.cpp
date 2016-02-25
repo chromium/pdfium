@@ -5,7 +5,10 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "xfa/src/fxfa/src/fm2js/xfa_fm2js.h"
-static CFX_WideStringC gs_lpStrExpFuncName[] = {
+
+namespace {
+
+const CFX_WideStringC gs_lpStrExpFuncName[] = {
     FX_WSTRC(L"foxit_xfa_formcalc_runtime.assign_value_operator"),
     FX_WSTRC(L"foxit_xfa_formcalc_runtime.logical_or_operator"),
     FX_WSTRC(L"foxit_xfa_formcalc_runtime.logical_and_operator"),
@@ -32,11 +35,12 @@ static CFX_WideStringC gs_lpStrExpFuncName[] = {
     FX_WSTRC(L"foxit_xfa_formcalc_runtime.get_fm_jsobj"),
     FX_WSTRC(L"foxit_xfa_formcalc_runtime.fm_var_filter"),
 };
-CFX_WideStringC XFA_FM_EXPTypeToString(
-    XFA_FM_SimpleExpressionType simpleExpType) {
-  return gs_lpStrExpFuncName[simpleExpType];
-}
-static XFA_FMBuildInFunc buildInFuncs[] = {
+
+struct XFA_FMBuildInFunc {
+  uint32_t m_uHash;
+  const FX_WCHAR* m_buildinfunc;
+};
+const XFA_FMBuildInFunc g_BuildInFuncs[] = {
     {0x0001f1f5, L"At"},           {0x00020b9c, L"FV"},
     {0x00021aef, L"If"},           {0x00023ee6, L"PV"},
     {0x04b5c9ee, L"Encode"},       {0x08e96685, L"DateFmt"},
@@ -71,7 +75,13 @@ static XFA_FMBuildInFunc buildInFuncs[] = {
     {0xea18d121, L"Choose"},       {0xebfef69c, L"Replace"},
     {0xf5ad782b, L"Left"},         {0xf7bb2248, L"Ltrim"},
 };
-static const XFA_FMSOMMethod gs_FMSomMethods[] = {
+
+struct XFA_FMSOMMethod {
+  uint32_t m_uHash;
+  const FX_WCHAR* m_wsSomMethodName;
+  FX_DWORD m_dParameters;
+};
+const XFA_FMSOMMethod gs_FMSomMethods[] = {
     {0x00000068, L"h", 0x01},
     {0x00000077, L"w", 0x01},
     {0x00000078, L"x", 0x01},
@@ -94,6 +104,14 @@ static const XFA_FMSOMMethod gs_FMSomMethods[] = {
     {0xda12e518, L"append", 0x01},
     {0xe74f0653, L"absPage", 0x01},
 };
+
+}  // namespace
+
+CFX_WideStringC XFA_FM_EXPTypeToString(
+    XFA_FM_SimpleExpressionType simpleExpType) {
+  return gs_lpStrExpFuncName[simpleExpType];
+}
+
 CXFA_FMSimpleExpression::CXFA_FMSimpleExpression(FX_DWORD line, XFA_FM_TOKEN op)
     : m_line(line), m_op(op) {}
 void CXFA_FMSimpleExpression::ToJavaScript(CFX_WideTextBuf& javascript) {}
@@ -174,10 +192,7 @@ CXFA_FMUnaryExpression::CXFA_FMUnaryExpression(FX_DWORD line,
                                                CXFA_FMSimpleExpression* pExp)
     : CXFA_FMSimpleExpression(line, op), m_pExp(pExp) {}
 CXFA_FMUnaryExpression::~CXFA_FMUnaryExpression() {
-  if (m_pExp != 0) {
-    delete m_pExp;
-    m_pExp = 0;
-  }
+  delete m_pExp;
 }
 void CXFA_FMUnaryExpression::ToJavaScript(CFX_WideTextBuf& javascript) {}
 CXFA_FMBinExpression::CXFA_FMBinExpression(FX_DWORD line,
@@ -186,14 +201,8 @@ CXFA_FMBinExpression::CXFA_FMBinExpression(FX_DWORD line,
                                            CXFA_FMSimpleExpression* pExp2)
     : CXFA_FMSimpleExpression(line, op), m_pExp1(pExp1), m_pExp2(pExp2) {}
 CXFA_FMBinExpression::~CXFA_FMBinExpression() {
-  if (m_pExp1 != 0) {
-    delete m_pExp1;
-    m_pExp1 = 0;
-  }
-  if (m_pExp2 != 0) {
-    delete m_pExp2;
-    m_pExp2 = 0;
-  }
+  delete m_pExp1;
+  delete m_pExp2;
 }
 void CXFA_FMBinExpression::ToJavaScript(CFX_WideTextBuf& javascript) {}
 CXFA_FMAssignExpression::CXFA_FMAssignExpression(FX_DWORD line,
@@ -446,29 +455,25 @@ CXFA_FMCallExpression::~CXFA_FMCallExpression() {
     m_pArguments = 0;
   }
 }
-FX_BOOL CXFA_FMCallExpression::IsBuildInFunc(CFX_WideTextBuf& funcName) {
-  uint32_t uHash =
-      FX_HashCode_String_GetW(funcName.GetBuffer(), funcName.GetLength(), TRUE);
-  XFA_FMBuildInFunc buildinfunction;
-  int32_t iStart = 0,
-          iEnd = (sizeof(buildInFuncs) / sizeof(buildInFuncs[0])) - 1;
-  int32_t iMid = (iStart + iEnd) / 2;
-  do {
-    iMid = (iStart + iEnd) / 2;
-    buildinfunction = buildInFuncs[iMid];
-    if (uHash == buildinfunction.m_uHash) {
-      funcName.Clear();
-      funcName << buildinfunction.m_buildinfunc;
-      return TRUE;
-    } else if (uHash < buildinfunction.m_uHash) {
-      iEnd = iMid - 1;
-    } else {
-      iStart = iMid + 1;
-    }
-  } while (iStart <= iEnd);
-  return FALSE;
+
+bool CXFA_FMCallExpression::IsBuildInFunc(CFX_WideTextBuf* funcName) {
+  uint32_t uHash = FX_HashCode_String_GetW(funcName->GetBuffer(),
+                                           funcName->GetLength(), TRUE);
+  const XFA_FMBuildInFunc* pEnd = g_BuildInFuncs + FX_ArraySize(g_BuildInFuncs);
+  const XFA_FMBuildInFunc* pFunc =
+      std::lower_bound(g_BuildInFuncs, pEnd, uHash,
+                       [](const XFA_FMBuildInFunc& func, uint32_t hash) {
+                         return func.m_uHash < hash;
+                       });
+  if (pFunc < pEnd && uHash == pFunc->m_uHash) {
+    funcName->Clear();
+    *funcName << pFunc->m_buildinfunc;
+    return true;
+  }
+  return false;
 }
-FX_DWORD CXFA_FMCallExpression::IsSomMethodWithObjPara(
+
+FX_DWORD CXFA_FMCallExpression::IsMethodWithObjParam(
     const CFX_WideStringC& methodName) {
   int32_t iLength = methodName.GetLength();
   uint32_t uHash = FX_HashCode_String_GetW(methodName.GetPtr(), iLength);
@@ -500,7 +505,7 @@ void CXFA_FMCallExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
     if (m_pArguments) {
       int32_t argc = m_pArguments->GetSize();
       int32_t index = 0;
-      FX_DWORD methodPara = IsSomMethodWithObjPara(funcName.GetWideString());
+      FX_DWORD methodPara = IsMethodWithObjParam(funcName.GetWideString());
       if (methodPara > 0) {
         CXFA_FMSimpleExpression* e = 0;
         while (index < argc) {
@@ -535,16 +540,16 @@ void CXFA_FMCallExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
     }
     javascript << FX_WSTRC(L")");
   } else {
-    FX_BOOL isEvalFunc = FALSE;
-    FX_BOOL isExistsFunc = FALSE;
-    if (IsBuildInFunc(funcName)) {
+    bool isEvalFunc = false;
+    bool isExistsFunc = false;
+    if (IsBuildInFunc(&funcName)) {
       if (funcName.GetWideString() == FX_WSTRC(L"Eval")) {
-        isEvalFunc = TRUE;
+        isEvalFunc = true;
         javascript << FX_WSTRC(L"eval.call(this, ");
         javascript << gs_lpStrExpFuncName[CALL];
         javascript << FX_WSTRC(L"Translate");
       } else if (funcName.GetWideString() == FX_WSTRC(L"Exists")) {
-        isExistsFunc = TRUE;
+        isExistsFunc = true;
         javascript << gs_lpStrExpFuncName[CALL];
         javascript << funcName;
       } else {

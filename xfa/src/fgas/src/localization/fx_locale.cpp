@@ -55,8 +55,6 @@ static const FX_LOCALETIMEZONEINFO g_FXLocaleTimeZoneData[] = {
     {FXBSTR_ID(0, 'M', 'D', 'T'), -6, 0}, {FXBSTR_ID(0, 'M', 'S', 'T'), -7, 0},
     {FXBSTR_ID(0, 'P', 'D', 'T'), -7, 0}, {FXBSTR_ID(0, 'P', 'S', 'T'), -8, 0},
 };
-static const int32_t g_iFXLocaleTimeZoneCount =
-    sizeof(g_FXLocaleTimeZoneData) / sizeof(FX_LOCALETIMEZONEINFO);
 
 static const CFX_WideStringC gs_wsTextSymbols = FX_WSTRC(L"AXO09");
 static const CFX_WideStringC gs_wsTimeSymbols = FX_WSTRC(L"hHkKMSFAzZ");
@@ -2771,22 +2769,13 @@ static FX_BOOL FX_ParseLocaleTime(const CFX_WideString& wsTime,
         }
         FX_ResolveZone(hour, minute, tzDiff, pLocale);
       } else {
-        const FX_LOCALETIMEZONEINFO* pTimeZoneInfo = NULL;
-        int32_t iStart = 0;
-        int32_t iEnd = g_iFXLocaleTimeZoneCount - 1;
-        do {
-          int32_t iMid = (iStart + iEnd) / 2;
-          const FX_LOCALETIMEZONEINFO* pInfo = g_FXLocaleTimeZoneData + iMid;
-          if (dwHash == pInfo->uHash) {
-            pTimeZoneInfo = pInfo;
-            break;
-          } else if (dwHash < pInfo->uHash) {
-            iEnd = iMid - 1;
-          } else {
-            iStart = iMid + 1;
-          }
-        } while (iStart <= iEnd);
-        if (pTimeZoneInfo) {
+        const FX_LOCALETIMEZONEINFO* pEnd =
+            g_FXLocaleTimeZoneData + FX_ArraySize(g_FXLocaleTimeZoneData);
+        const FX_LOCALETIMEZONEINFO* pTimeZoneInfo =
+            std::lower_bound(g_FXLocaleTimeZoneData, pEnd, dwHash,
+                             [](const FX_LOCALETIMEZONEINFO& info,
+                                FX_DWORD hash) { return info.uHash < hash; });
+        if (pTimeZoneInfo < pEnd && dwHash == pTimeZoneInfo->uHash) {
           hour += pTimeZoneInfo->iHour;
           minute += pTimeZoneInfo->iHour > 0 ? pTimeZoneInfo->iMinute
                                              : -pTimeZoneInfo->iMinute;
