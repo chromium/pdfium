@@ -179,7 +179,9 @@ source_set("fx_lcms2") {
 # This is only used for standalone builds.
 config("jpeg_warnings") {
   visibility = [ ":*" ]
-  cflags = [ "-Wno-shift-negative-value" ]
+  if (is_clang) {
+    cflags = [ "-Wno-shift-negative-value" ]
+  }
 }
 
 source_set("jpeg") {
@@ -364,7 +366,9 @@ if (pdf_enable_xfa) {
 # TODO(dsinclair): Remove if fixed upstream. https://crbug.com/507712
 config("fx_zlib_warnings") {
   visibility = [ ":*" ]
-  cflags = [ "-Wno-shift-negative-value" ]
+  if (is_clang) {
+    cflags = [ "-Wno-shift-negative-value" ]
+  }
 }
 
 source_set("fx_zlib") {

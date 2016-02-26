@@ -230,14 +230,12 @@
         'libjpeg/jversion.h',
         'libjpeg/transupp.h',
       ],
-      'cflags': [
-        '-Wno-shift-negative-value',
-      ],
       'conditions': [
         ['os_posix==1', {
           'cflags': [
             '-Wno-main',
             '-Wno-missing-braces',
+            '-Wno-shift-negative-value',
             '-Wno-unused',
           ],
         }],
@@ -316,9 +314,13 @@
         'zlib_v128/uncompr.c',
         'zlib_v128/zutil.c',
       ],
-      'cflags': [
-        # TODO(dsinclair): Remove if fixed upstream. https://crbug.com/507712
-        '-Wno-shift-negative-value',
+      'conditions': [
+        ['os_posix==1', {
+          'cflags': [
+            # TODO(dsinclair): Remove if fixed upstream. https://crbug.com/507712
+            '-Wno-shift-negative-value',
+          ],
+        }],
       ],
 
     },
