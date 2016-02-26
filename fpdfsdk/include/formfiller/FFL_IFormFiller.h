@@ -26,7 +26,7 @@ class CFFL_IFormFiller : public IPWL_Filler_Notify {
 
   virtual FX_BOOL Annot_HitTest(CPDFSDK_PageView* pPageView,
                                 CPDFSDK_Annot* pAnnot,
-                                CPDF_Point point);
+                                CFX_FloatPoint point);
   virtual FX_RECT GetViewBBox(CPDFSDK_PageView* pPageView,
                               CPDFSDK_Annot* pAnnot);
   virtual void OnDraw(CPDFSDK_PageView* pPageView,
@@ -49,32 +49,32 @@ class CFFL_IFormFiller : public IPWL_Filler_Notify {
   virtual FX_BOOL OnLButtonDown(CPDFSDK_PageView* pPageView,
                                 CPDFSDK_Annot* pAnnot,
                                 FX_UINT nFlags,
-                                const CPDF_Point& point);
+                                const CFX_FloatPoint& point);
   virtual FX_BOOL OnLButtonUp(CPDFSDK_PageView* pPageView,
                               CPDFSDK_Annot* pAnnot,
                               FX_UINT nFlags,
-                              const CPDF_Point& point);
+                              const CFX_FloatPoint& point);
   virtual FX_BOOL OnLButtonDblClk(CPDFSDK_PageView* pPageView,
                                   CPDFSDK_Annot* pAnnot,
                                   FX_UINT nFlags,
-                                  const CPDF_Point& point);
+                                  const CFX_FloatPoint& point);
   virtual FX_BOOL OnMouseMove(CPDFSDK_PageView* pPageView,
                               CPDFSDK_Annot* pAnnot,
                               FX_UINT nFlags,
-                              const CPDF_Point& point);
+                              const CFX_FloatPoint& point);
   virtual FX_BOOL OnMouseWheel(CPDFSDK_PageView* pPageView,
                                CPDFSDK_Annot* pAnnot,
                                FX_UINT nFlags,
                                short zDelta,
-                               const CPDF_Point& point);
+                               const CFX_FloatPoint& point);
   virtual FX_BOOL OnRButtonDown(CPDFSDK_PageView* pPageView,
                                 CPDFSDK_Annot* pAnnot,
                                 FX_UINT nFlags,
-                                const CPDF_Point& point);
+                                const CFX_FloatPoint& point);
   virtual FX_BOOL OnRButtonUp(CPDFSDK_PageView* pPageView,
                               CPDFSDK_Annot* pAnnot,
                               FX_UINT nFlags,
-                              const CPDF_Point& point);
+                              const CFX_FloatPoint& point);
 
   virtual FX_BOOL OnKeyDown(CPDFSDK_Annot* pAnnot,
                             FX_UINT nKeyCode,

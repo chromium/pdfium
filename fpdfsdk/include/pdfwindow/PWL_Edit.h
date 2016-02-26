@@ -52,19 +52,19 @@ class CPWL_Edit : public CPWL_EditCtrl, public IFX_Edit_OprNotify {
   void OnDestroy() override;
   void OnCreated() override;
   void RePosChildWnd() override;
-  CPDF_Rect GetClientRect() const override;
+  CFX_FloatRect GetClientRect() const override;
   void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           CFX_Matrix* pUser2Device) override;
-  FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag) override;
-  FX_BOOL OnLButtonDblClk(const CPDF_Point& point, FX_DWORD nFlag) override;
-  FX_BOOL OnRButtonUp(const CPDF_Point& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonDblClk(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
+  FX_BOOL OnRButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
   FX_BOOL OnMouseWheel(short zDelta,
-                       const CPDF_Point& point,
+                       const CFX_FloatPoint& point,
                        FX_DWORD nFlag) override;
   FX_BOOL OnKeyDown(FX_WORD nChar, FX_DWORD nFlag) override;
   FX_BOOL OnChar(FX_WORD nChar, FX_DWORD nFlag) override;
-  CPDF_Rect GetFocusRect() const override;
+  CFX_FloatRect GetFocusRect() const override;
   void OnSetFocus() override;
   void OnKillFocus() override;
 
@@ -96,14 +96,15 @@ class CPWL_Edit : public CPWL_EditCtrl, public IFX_Edit_OprNotify {
   virtual void SetText(const FX_WCHAR* csText);
   void ReplaceSel(const FX_WCHAR* csText);
 
-  CFX_ByteString GetTextAppearanceStream(const CPDF_Point& ptOffset) const;
-  CFX_ByteString GetCaretAppearanceStream(const CPDF_Point& ptOffset) const;
-  CFX_ByteString GetSelectAppearanceStream(const CPDF_Point& ptOffset) const;
+  CFX_ByteString GetTextAppearanceStream(const CFX_FloatPoint& ptOffset) const;
+  CFX_ByteString GetCaretAppearanceStream(const CFX_FloatPoint& ptOffset) const;
+  CFX_ByteString GetSelectAppearanceStream(
+      const CFX_FloatPoint& ptOffset) const;
 
   FX_BOOL IsTextFull() const;
 
   static FX_FLOAT GetCharArrayAutoFontSize(CPDF_Font* pFont,
-                                           const CPDF_Rect& rcPlate,
+                                           const CFX_FloatRect& rcPlate,
                                            int32_t nCharArray);
 
   void SetFillerNotify(IPWL_Filler_Notify* pNotify) {
@@ -111,10 +112,10 @@ class CPWL_Edit : public CPWL_EditCtrl, public IFX_Edit_OprNotify {
   }
 
   void GeneratePageObjects(CPDF_PageObjectHolder* pObjectHolder,
-                           const CPDF_Point& ptOffset,
+                           const CFX_FloatPoint& ptOffset,
                            CFX_ArrayTemplate<CPDF_TextObject*>& ObjArray);
   void GeneratePageObjects(CPDF_PageObjectHolder* pObjectHolder,
-                           const CPDF_Point& ptOffset);
+                           const CFX_FloatPoint& ptOffset);
 
  protected:
   // IFX_Edit_OprNotify
@@ -141,11 +142,11 @@ class CPWL_Edit : public CPWL_EditCtrl, public IFX_Edit_OprNotify {
   void SetParamByFlag();
 
   FX_FLOAT GetCharArrayAutoFontSize(int32_t nCharArray);
-  CPDF_Point GetWordRightBottomPoint(const CPVT_WordPlace& wpWord);
+  CFX_FloatPoint GetWordRightBottomPoint(const CPVT_WordPlace& wpWord);
 
   CPVT_WordRange CombineWordRange(const CPVT_WordRange& wr1,
                                   const CPVT_WordRange& wr2);
-  CPVT_WordRange GetLatinWordsRange(const CPDF_Point& point) const;
+  CPVT_WordRange GetLatinWordsRange(const CFX_FloatPoint& point) const;
   CPVT_WordRange GetLatinWordsRange(const CPVT_WordPlace& place) const;
   CPVT_WordRange GetArabicWordsRange(const CPVT_WordPlace& place) const;
   CPVT_WordRange GetSameWordsRange(const CPVT_WordPlace& place,
@@ -159,7 +160,7 @@ class CPWL_Edit : public CPWL_EditCtrl, public IFX_Edit_OprNotify {
   IPWL_Filler_Notify* m_pFillerNotify;
   IPWL_SpellCheck* m_pSpellCheck;
   FX_BOOL m_bFocus;
-  CPDF_Rect m_rcOldWindow;
+  CFX_FloatRect m_rcOldWindow;
 
  public:
   void AttachFFLData(void* pData) { m_pFormFiller = pData; }

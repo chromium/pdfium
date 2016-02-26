@@ -24,7 +24,7 @@ class CFFL_CheckBox : public CFFL_Button {
   FX_BOOL OnLButtonUp(CPDFSDK_PageView* pPageView,
                       CPDFSDK_Annot* pAnnot,
                       FX_UINT nFlags,
-                      const CPDF_Point& point) override;
+                      const CFX_FloatPoint& point) override;
   FX_BOOL IsDataChanged(CPDFSDK_PageView* pPageView) override;
   void SaveData(CPDFSDK_PageView* pPageView) override;
 };

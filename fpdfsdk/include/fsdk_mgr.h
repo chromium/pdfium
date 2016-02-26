@@ -603,20 +603,20 @@ class CPDFSDK_PageView final {
 
   CPDF_Document* GetPDFDocument();
   CPDFSDK_Document* GetSDKDocument() { return m_pSDKDoc; }
-  FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_UINT nFlag);
-  FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_UINT nFlag);
+  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, FX_UINT nFlag);
+  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, FX_UINT nFlag);
 #ifdef PDF_ENABLE_XFA
-  FX_BOOL OnRButtonDown(const CPDF_Point& point, FX_UINT nFlag);
-  FX_BOOL OnRButtonUp(const CPDF_Point& point, FX_UINT nFlag);
+  FX_BOOL OnRButtonDown(const CFX_FloatPoint& point, FX_UINT nFlag);
+  FX_BOOL OnRButtonUp(const CFX_FloatPoint& point, FX_UINT nFlag);
 #endif  // PDF_ENABLE_XFA
   FX_BOOL OnChar(int nChar, FX_UINT nFlag);
   FX_BOOL OnKeyDown(int nKeyCode, int nFlag);
   FX_BOOL OnKeyUp(int nKeyCode, int nFlag);
 
-  FX_BOOL OnMouseMove(const CPDF_Point& point, int nFlag);
+  FX_BOOL OnMouseMove(const CFX_FloatPoint& point, int nFlag);
   FX_BOOL OnMouseWheel(double deltaX,
                        double deltaY,
-                       const CPDF_Point& point,
+                       const CFX_FloatPoint& point,
                        int nFlag);
   bool IsValidAnnot(const CPDF_Annot* p) const;
   void GetCurrentMatrix(CFX_Matrix& matrix) { matrix = m_curMatrix; }

@@ -43,7 +43,7 @@ CPDF_Link CPDF_LinkList::GetLinkAtPoint(CPDF_Page* pPage,
       continue;
 
     CPDF_Link link(pAnnot);
-    CPDF_Rect rect = link.GetRect();
+    CFX_FloatRect rect = link.GetRect();
     if (!rect.Contains(pdf_x, pdf_y))
       continue;
 
@@ -68,7 +68,7 @@ void CPDF_LinkList::LoadPageLinks(CPDF_Page* pPage,
   }
 }
 
-CPDF_Rect CPDF_Link::GetRect() {
+CFX_FloatRect CPDF_Link::GetRect() {
   return m_pDict->GetRectBy("Rect");
 }
 CPDF_Dest CPDF_Link::GetDest(CPDF_Document* pDoc) {

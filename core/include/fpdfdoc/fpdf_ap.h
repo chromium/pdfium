@@ -81,12 +81,12 @@ class CPVT_GenerateAP {
 
   static CFX_ByteString GenerateEditAP(IPVT_FontMap* pFontMap,
                                        IPDF_VariableText_Iterator* pIterator,
-                                       const CPDF_Point& ptOffset,
+                                       const CFX_FloatPoint& ptOffset,
                                        FX_BOOL bContinuous,
                                        FX_WORD SubWord = 0,
                                        const CPVT_WordRange* pVisible = NULL);
 
-  static CFX_ByteString GenerateBorderAP(const CPDF_Rect& rect,
+  static CFX_ByteString GenerateBorderAP(const CFX_FloatRect& rect,
                                          FX_FLOAT fWidth,
                                          const CPVT_Color& color,
                                          const CPVT_Color& crLeftTop,

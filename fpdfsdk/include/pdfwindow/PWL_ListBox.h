@@ -35,11 +35,11 @@ class CPWL_List_Notify : public IFX_List_Notify {
                          FX_FLOAT fBigStep) override;
   void IOnSetScrollPosX(FX_FLOAT fx) override {}
   void IOnSetScrollPosY(FX_FLOAT fy) override;
-  void IOnInvalidateRect(CPDF_Rect* pRect) override;
+  void IOnInvalidateRect(CFX_FloatRect* pRect) override;
 
   void IOnSetCaret(FX_BOOL bVisible,
-                   const CPDF_Point& ptHead,
-                   const CPDF_Point& ptFoot,
+                   const CFX_FloatPoint& ptHead,
+                   const CFX_FloatPoint& ptFoot,
                    const CPVT_WordPlace& place);
   void IOnCaretChange(const CPVT_SecProps& secProps,
                       const CPVT_WordProps& wordProps);
@@ -62,11 +62,11 @@ class CPWL_ListBox : public CPWL_Wnd {
                           CFX_Matrix* pUser2Device) override;
   FX_BOOL OnKeyDown(FX_WORD nChar, FX_DWORD nFlag) override;
   FX_BOOL OnChar(FX_WORD nChar, FX_DWORD nFlag) override;
-  FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag) override;
-  FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag) override;
-  FX_BOOL OnMouseMove(const CPDF_Point& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
+  FX_BOOL OnMouseMove(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
   FX_BOOL OnMouseWheel(short zDelta,
-                       const CPDF_Point& point,
+                       const CFX_FloatPoint& point,
                        FX_DWORD nFlag) override;
   void KillFocus() override;
   void OnNotify(CPWL_Wnd* pWnd,
@@ -74,7 +74,7 @@ class CPWL_ListBox : public CPWL_Wnd {
                 intptr_t wParam = 0,
                 intptr_t lParam = 0) override;
   void RePosChildWnd() override;
-  CPDF_Rect GetFocusRect() const override;
+  CFX_FloatRect GetFocusRect() const override;
   void SetFontSize(FX_FLOAT fFontSize) override;
   FX_FLOAT GetFontSize() const override;
 
@@ -98,9 +98,9 @@ class CPWL_ListBox : public CPWL_Wnd {
   FX_BOOL IsItemSelected(int32_t nItemIndex) const;
   int32_t GetTopVisibleIndex() const;
   int32_t FindNext(int32_t nIndex, FX_WCHAR nChar) const;
-  CPDF_Rect GetContentRect() const;
+  CFX_FloatRect GetContentRect() const;
   FX_FLOAT GetFirstHeight() const;
-  CPDF_Rect GetListRect() const;
+  CFX_FloatRect GetListRect() const;
 
   void SetFillerNotify(IPWL_Filler_Notify* pNotify) {
     m_pFillerNotify = pNotify;

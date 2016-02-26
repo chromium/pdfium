@@ -27,7 +27,7 @@ void CPWL_Signature_Image::DrawThisAppearance(CFX_RenderDevice* pDevice,
   CPWL_Wnd::DrawThisAppearance(pDevice, pUser2Device);
 
   if (m_pImage) {
-    CPDF_Rect rcClient = GetClientRect();
+    CFX_FloatRect rcClient = GetClientRect();
 
     FX_FLOAT x, y;
     pUser2Device->Transform(rcClient.left, rcClient.top, x, y);
@@ -48,7 +48,7 @@ void CPWL_Signature_Image::GetScale(FX_FLOAT& fHScale, FX_FLOAT& fVScale) {
 
   GetImageSize(fImageW, fImageH);
 
-  CPDF_Rect rcClient = GetClientRect();
+  CFX_FloatRect rcClient = GetClientRect();
 
   fHScale = rcClient.Width() / fImageW;
   fVScale = rcClient.Height() / fImageH;
@@ -107,10 +107,10 @@ void CPWL_Signature::SetImageStream(CPDF_Stream* pStream,
 }
 
 void CPWL_Signature::RePosChildWnd() {
-  CPDF_Rect rcClient = GetClientRect();
+  CFX_FloatRect rcClient = GetClientRect();
 
-  CPDF_Rect rcText = rcClient;
-  CPDF_Rect rcDescription = rcClient;
+  CFX_FloatRect rcText = rcClient;
+  CFX_FloatRect rcDescription = rcClient;
 
   FX_BOOL bTextVisible = m_bTextExist && m_pText->GetText().GetLength() > 0;
 

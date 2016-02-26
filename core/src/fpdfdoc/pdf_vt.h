@@ -44,7 +44,7 @@ class CPVT_FloatRect : public CFX_FloatRect {
     right = other_right;
     bottom = other_bottom;
   }
-  explicit CPVT_FloatRect(const CPDF_Rect& rect) {
+  explicit CPVT_FloatRect(const CFX_FloatRect& rect) {
     left = rect.left;
     top = rect.top;
     right = rect.right;
@@ -257,7 +257,7 @@ class CSection {
   CPVT_WordPlace GetPrevWordPlace(const CPVT_WordPlace& place) const;
   CPVT_WordPlace GetNextWordPlace(const CPVT_WordPlace& place) const;
   void UpdateWordPlace(CPVT_WordPlace& place) const;
-  CPVT_WordPlace SearchWordPlace(const CPDF_Point& point) const;
+  CPVT_WordPlace SearchWordPlace(const CFX_FloatPoint& point) const;
   CPVT_WordPlace SearchWordPlace(FX_FLOAT fx,
                                  const CPVT_WordPlace& lineplace) const;
   CPVT_WordPlace SearchWordPlace(FX_FLOAT fx,
@@ -296,44 +296,46 @@ class CPDF_EditContainer {
  public:
   CPDF_EditContainer() : m_rcPlate(0, 0, 0, 0), m_rcContent(0, 0, 0, 0) {}
   virtual ~CPDF_EditContainer() {}
-  virtual void SetPlateRect(const CPDF_Rect& rect) { m_rcPlate = rect; }
-  virtual const CPDF_Rect& GetPlateRect() const { return m_rcPlate; }
+  virtual void SetPlateRect(const CFX_FloatRect& rect) { m_rcPlate = rect; }
+  virtual const CFX_FloatRect& GetPlateRect() const { return m_rcPlate; }
   virtual void SetContentRect(const CPVT_FloatRect& rect) {
     m_rcContent = rect;
   }
-  virtual CPDF_Rect GetContentRect() const { return m_rcContent; }
+  virtual CFX_FloatRect GetContentRect() const { return m_rcContent; }
   FX_FLOAT GetPlateWidth() const { return m_rcPlate.right - m_rcPlate.left; }
   FX_FLOAT GetPlateHeight() const { return m_rcPlate.top - m_rcPlate.bottom; }
   CPVT_Size GetPlateSize() const {
     return CPVT_Size(GetPlateWidth(), GetPlateHeight());
   }
-  CPDF_Point GetBTPoint() const {
-    return CPDF_Point(m_rcPlate.left, m_rcPlate.top);
+  CFX_FloatPoint GetBTPoint() const {
+    return CFX_FloatPoint(m_rcPlate.left, m_rcPlate.top);
   }
-  CPDF_Point GetETPoint() const {
-    return CPDF_Point(m_rcPlate.right, m_rcPlate.bottom);
+  CFX_FloatPoint GetETPoint() const {
+    return CFX_FloatPoint(m_rcPlate.right, m_rcPlate.bottom);
   }
-  inline CPDF_Point InToOut(const CPDF_Point& point) const {
-    return CPDF_Point(point.x + GetBTPoint().x, GetBTPoint().y - point.y);
+  inline CFX_FloatPoint InToOut(const CFX_FloatPoint& point) const {
+    return CFX_FloatPoint(point.x + GetBTPoint().x, GetBTPoint().y - point.y);
   }
-  inline CPDF_Point OutToIn(const CPDF_Point& point) const {
-    return CPDF_Point(point.x - GetBTPoint().x, GetBTPoint().y - point.y);
+  inline CFX_FloatPoint OutToIn(const CFX_FloatPoint& point) const {
+    return CFX_FloatPoint(point.x - GetBTPoint().x, GetBTPoint().y - point.y);
   }
-  inline CPDF_Rect InToOut(const CPVT_FloatRect& rect) const {
-    CPDF_Point ptLeftTop = InToOut(CPDF_Point(rect.left, rect.top));
-    CPDF_Point ptRightBottom = InToOut(CPDF_Point(rect.right, rect.bottom));
-    return CPDF_Rect(ptLeftTop.x, ptRightBottom.y, ptRightBottom.x,
-                     ptLeftTop.y);
+  inline CFX_FloatRect InToOut(const CPVT_FloatRect& rect) const {
+    CFX_FloatPoint ptLeftTop = InToOut(CFX_FloatPoint(rect.left, rect.top));
+    CFX_FloatPoint ptRightBottom =
+        InToOut(CFX_FloatPoint(rect.right, rect.bottom));
+    return CFX_FloatRect(ptLeftTop.x, ptRightBottom.y, ptRightBottom.x,
+                         ptLeftTop.y);
   }
-  inline CPVT_FloatRect OutToIn(const CPDF_Rect& rect) const {
-    CPDF_Point ptLeftTop = OutToIn(CPDF_Point(rect.left, rect.top));
-    CPDF_Point ptRightBottom = OutToIn(CPDF_Point(rect.right, rect.bottom));
+  inline CPVT_FloatRect OutToIn(const CFX_FloatRect& rect) const {
+    CFX_FloatPoint ptLeftTop = OutToIn(CFX_FloatPoint(rect.left, rect.top));
+    CFX_FloatPoint ptRightBottom =
+        OutToIn(CFX_FloatPoint(rect.right, rect.bottom));
     return CPVT_FloatRect(ptLeftTop.x, ptLeftTop.y, ptRightBottom.x,
                           ptRightBottom.y);
   }
 
  private:
-  CPDF_Rect m_rcPlate;
+  CFX_FloatRect m_rcPlate;
   CPVT_FloatRect m_rcContent;
 };
 
@@ -350,7 +352,7 @@ class CPDF_VariableText : public IPDF_VariableText, private CPDF_EditContainer {
   IPDF_VariableText_Provider* SetProvider(
       IPDF_VariableText_Provider* pProvider) override;
   IPDF_VariableText_Iterator* GetIterator() override;
-  void SetPlateRect(const CPDF_Rect& rect) override {
+  void SetPlateRect(const CFX_FloatRect& rect) override {
     CPDF_EditContainer::SetPlateRect(rect);
   }
   void SetAlignment(int32_t nFormat = 0) override { m_nAlignment = nFormat; }
@@ -407,10 +409,10 @@ class CPDF_VariableText : public IPDF_VariableText, private CPDF_EditContainer {
   CPVT_WordPlace DeleteWords(const CPVT_WordRange& PlaceRange) override;
   CPVT_WordPlace DeleteWord(const CPVT_WordPlace& place) override;
   CPVT_WordPlace BackSpaceWord(const CPVT_WordPlace& place) override;
-  const CPDF_Rect& GetPlateRect() const override {
+  const CFX_FloatRect& GetPlateRect() const override {
     return CPDF_EditContainer::GetPlateRect();
   }
-  CPDF_Rect GetContentRect() const override;
+  CFX_FloatRect GetContentRect() const override;
   int32_t GetTotalWords() const override;
   FX_FLOAT GetFontSize() const override { return m_fFontSize; }
   int32_t GetAlignment() const override { return m_nAlignment; }
@@ -424,11 +426,11 @@ class CPDF_VariableText : public IPDF_VariableText, private CPDF_EditContainer {
   CPVT_WordPlace GetEndWordPlace() const override;
   CPVT_WordPlace GetPrevWordPlace(const CPVT_WordPlace& place) const override;
   CPVT_WordPlace GetNextWordPlace(const CPVT_WordPlace& place) const override;
-  CPVT_WordPlace SearchWordPlace(const CPDF_Point& point) const override;
+  CPVT_WordPlace SearchWordPlace(const CFX_FloatPoint& point) const override;
   CPVT_WordPlace GetUpWordPlace(const CPVT_WordPlace& place,
-                                const CPDF_Point& point) const override;
+                                const CFX_FloatPoint& point) const override;
   CPVT_WordPlace GetDownWordPlace(const CPVT_WordPlace& place,
-                                  const CPDF_Point& point) const override;
+                                  const CFX_FloatPoint& point) const override;
   CPVT_WordPlace GetLineBeginPlace(const CPVT_WordPlace& place) const override;
   CPVT_WordPlace GetLineEndPlace(const CPVT_WordPlace& place) const override;
   CPVT_WordPlace GetSectionBeginPlace(

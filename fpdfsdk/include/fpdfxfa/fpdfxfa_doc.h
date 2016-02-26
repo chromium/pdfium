@@ -40,7 +40,7 @@ class CPDFXFA_Document : public IXFA_DocProvider {
 
   CPDFSDK_Document* GetSDKDocument(CPDFDoc_Environment* pFormFillEnv);
 
-  void FXRect2PDFRect(const CFX_RectF& fxRectF, CPDF_Rect& pdfRect);
+  void FXRect2PDFRect(const CFX_RectF& fxRectF, CFX_FloatRect& pdfRect);
 
   virtual void SetChangeMark(IXFA_Doc* hDoc);
   virtual FX_BOOL GetChangeMark(IXFA_Doc* hDoc);

@@ -69,8 +69,9 @@ void CPWL_Utils::GetPathDataFromArray(CFX_PathData& path,
   }
 }
 
-CPDF_Rect CPWL_Utils::MaxRect(const CPDF_Rect& rect1, const CPDF_Rect& rect2) {
-  CPDF_Rect rcRet;
+CFX_FloatRect CPWL_Utils::MaxRect(const CFX_FloatRect& rect1,
+                                  const CFX_FloatRect& rect2) {
+  CFX_FloatRect rcRet;
 
   rcRet.left = PWL_MIN(rect1.left, rect2.left);
   rcRet.bottom = PWL_MIN(rect1.bottom, rect2.bottom);
@@ -80,21 +81,21 @@ CPDF_Rect CPWL_Utils::MaxRect(const CPDF_Rect& rect1, const CPDF_Rect& rect2) {
   return rcRet;
 }
 
-CPDF_Rect CPWL_Utils::OffsetRect(const CPDF_Rect& rect,
-                                 FX_FLOAT x,
-                                 FX_FLOAT y) {
-  return CPDF_Rect(rect.left + x, rect.bottom + y, rect.right + x,
-                   rect.top + y);
+CFX_FloatRect CPWL_Utils::OffsetRect(const CFX_FloatRect& rect,
+                                     FX_FLOAT x,
+                                     FX_FLOAT y) {
+  return CFX_FloatRect(rect.left + x, rect.bottom + y, rect.right + x,
+                       rect.top + y);
 }
 
-FX_BOOL CPWL_Utils::ContainsRect(const CPDF_Rect& rcParent,
-                                 const CPDF_Rect& rcChild) {
+FX_BOOL CPWL_Utils::ContainsRect(const CFX_FloatRect& rcParent,
+                                 const CFX_FloatRect& rcChild) {
   return rcChild.left >= rcParent.left && rcChild.bottom >= rcParent.bottom &&
          rcChild.right <= rcParent.right && rcChild.top <= rcParent.top;
 }
 
-FX_BOOL CPWL_Utils::IntersectRect(const CPDF_Rect& rect1,
-                                  const CPDF_Rect& rect2) {
+FX_BOOL CPWL_Utils::IntersectRect(const CFX_FloatRect& rect1,
+                                  const CFX_FloatRect& rect2) {
   FX_FLOAT left = rect1.left > rect2.left ? rect1.left : rect2.left;
   FX_FLOAT right = rect1.right < rect2.right ? rect1.right : rect2.right;
   FX_FLOAT bottom = rect1.bottom > rect2.bottom ? rect1.bottom : rect2.bottom;
@@ -103,10 +104,10 @@ FX_BOOL CPWL_Utils::IntersectRect(const CPDF_Rect& rect1,
   return left < right && bottom < top;
 }
 
-CPDF_Point CPWL_Utils::OffsetPoint(const CPDF_Point& point,
-                                   FX_FLOAT x,
-                                   FX_FLOAT y) {
-  return CPDF_Point(point.x + x, point.y + y);
+CFX_FloatPoint CPWL_Utils::OffsetPoint(const CFX_FloatPoint& point,
+                                       FX_FLOAT x,
+                                       FX_FLOAT y) {
+  return CFX_FloatPoint(point.x + x, point.y + y);
 }
 
 CPVT_WordRange CPWL_Utils::OverlapWordRange(const CPVT_WordRange& wr1,
@@ -135,7 +136,7 @@ CPVT_WordRange CPWL_Utils::OverlapWordRange(const CPVT_WordRange& wr1,
   return wrRet;
 }
 
-CFX_ByteString CPWL_Utils::GetAP_Check(const CPDF_Rect& crBBox) {
+CFX_ByteString CPWL_Utils::GetAP_Check(const CFX_FloatRect& crBBox) {
   const FX_FLOAT fWidth = crBBox.right - crBBox.left;
   const FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
 
@@ -184,16 +185,16 @@ CFX_ByteString CPWL_Utils::GetAP_Check(const CPDF_Rect& crBBox) {
   return csAP.GetByteString();
 }
 
-CFX_ByteString CPWL_Utils::GetAP_Circle(const CPDF_Rect& crBBox) {
+CFX_ByteString CPWL_Utils::GetAP_Circle(const CFX_FloatRect& crBBox) {
   CFX_ByteTextBuf csAP;
 
   FX_FLOAT fWidth = crBBox.right - crBBox.left;
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
 
-  CPDF_Point pt1(crBBox.left, crBBox.bottom + fHeight / 2);
-  CPDF_Point pt2(crBBox.left + fWidth / 2, crBBox.top);
-  CPDF_Point pt3(crBBox.right, crBBox.bottom + fHeight / 2);
-  CPDF_Point pt4(crBBox.left + fWidth / 2, crBBox.bottom);
+  CFX_FloatPoint pt1(crBBox.left, crBBox.bottom + fHeight / 2);
+  CFX_FloatPoint pt2(crBBox.left + fWidth / 2, crBBox.top);
+  CFX_FloatPoint pt3(crBBox.right, crBBox.bottom + fHeight / 2);
+  CFX_FloatPoint pt4(crBBox.left + fWidth / 2, crBBox.bottom);
 
   csAP << pt1.x << " " << pt1.y << " m\n";
 
@@ -226,7 +227,7 @@ CFX_ByteString CPWL_Utils::GetAP_Circle(const CPDF_Rect& crBBox) {
   return csAP.GetByteString();
 }
 
-CFX_ByteString CPWL_Utils::GetAP_Cross(const CPDF_Rect& crBBox) {
+CFX_ByteString CPWL_Utils::GetAP_Cross(const CFX_FloatRect& crBBox) {
   CFX_ByteTextBuf csAP;
 
   csAP << crBBox.left << " " << crBBox.top << " m\n";
@@ -237,16 +238,16 @@ CFX_ByteString CPWL_Utils::GetAP_Cross(const CPDF_Rect& crBBox) {
   return csAP.GetByteString();
 }
 
-CFX_ByteString CPWL_Utils::GetAP_Diamond(const CPDF_Rect& crBBox) {
+CFX_ByteString CPWL_Utils::GetAP_Diamond(const CFX_FloatRect& crBBox) {
   CFX_ByteTextBuf csAP;
 
   FX_FLOAT fWidth = crBBox.right - crBBox.left;
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
 
-  CPDF_Point pt1(crBBox.left, crBBox.bottom + fHeight / 2);
-  CPDF_Point pt2(crBBox.left + fWidth / 2, crBBox.top);
-  CPDF_Point pt3(crBBox.right, crBBox.bottom + fHeight / 2);
-  CPDF_Point pt4(crBBox.left + fWidth / 2, crBBox.bottom);
+  CFX_FloatPoint pt1(crBBox.left, crBBox.bottom + fHeight / 2);
+  CFX_FloatPoint pt2(crBBox.left + fWidth / 2, crBBox.top);
+  CFX_FloatPoint pt3(crBBox.right, crBBox.bottom + fHeight / 2);
+  CFX_FloatPoint pt4(crBBox.left + fWidth / 2, crBBox.bottom);
 
   csAP << pt1.x << " " << pt1.y << " m\n";
   csAP << pt2.x << " " << pt2.y << " l\n";
@@ -257,7 +258,7 @@ CFX_ByteString CPWL_Utils::GetAP_Diamond(const CPDF_Rect& crBBox) {
   return csAP.GetByteString();
 }
 
-CFX_ByteString CPWL_Utils::GetAP_Square(const CPDF_Rect& crBBox) {
+CFX_ByteString CPWL_Utils::GetAP_Square(const CFX_FloatRect& crBBox) {
   CFX_ByteTextBuf csAP;
 
   csAP << crBBox.left << " " << crBBox.top << " m\n";
@@ -269,13 +270,13 @@ CFX_ByteString CPWL_Utils::GetAP_Square(const CPDF_Rect& crBBox) {
   return csAP.GetByteString();
 }
 
-CFX_ByteString CPWL_Utils::GetAP_Star(const CPDF_Rect& crBBox) {
+CFX_ByteString CPWL_Utils::GetAP_Star(const CFX_FloatRect& crBBox) {
   CFX_ByteTextBuf csAP;
 
   FX_FLOAT fRadius =
       (crBBox.top - crBBox.bottom) / (1 + (FX_FLOAT)cos(FX_PI / 5.0f));
-  CPDF_Point ptCenter = CPDF_Point((crBBox.left + crBBox.right) / 2.0f,
-                                   (crBBox.top + crBBox.bottom) / 2.0f);
+  CFX_FloatPoint ptCenter = CFX_FloatPoint((crBBox.left + crBBox.right) / 2.0f,
+                                           (crBBox.top + crBBox.bottom) / 2.0f);
 
   FX_FLOAT px[5], py[5];
 
@@ -301,16 +302,16 @@ CFX_ByteString CPWL_Utils::GetAP_Star(const CPDF_Rect& crBBox) {
   return csAP.GetByteString();
 }
 
-CFX_ByteString CPWL_Utils::GetAP_HalfCircle(const CPDF_Rect& crBBox,
+CFX_ByteString CPWL_Utils::GetAP_HalfCircle(const CFX_FloatRect& crBBox,
                                             FX_FLOAT fRotate) {
   CFX_ByteTextBuf csAP;
 
   FX_FLOAT fWidth = crBBox.right - crBBox.left;
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
 
-  CPDF_Point pt1(-fWidth / 2, 0);
-  CPDF_Point pt2(0, fHeight / 2);
-  CPDF_Point pt3(fWidth / 2, 0);
+  CFX_FloatPoint pt1(-fWidth / 2, 0);
+  CFX_FloatPoint pt2(0, fHeight / 2);
+  CFX_FloatPoint pt3(fWidth / 2, 0);
 
   FX_FLOAT px, py;
 
@@ -336,39 +337,42 @@ CFX_ByteString CPWL_Utils::GetAP_HalfCircle(const CPDF_Rect& crBBox,
   return csAP.GetByteString();
 }
 
-CPDF_Rect CPWL_Utils::InflateRect(const CPDF_Rect& rcRect, FX_FLOAT fSize) {
+CFX_FloatRect CPWL_Utils::InflateRect(const CFX_FloatRect& rcRect,
+                                      FX_FLOAT fSize) {
   if (rcRect.IsEmpty())
     return rcRect;
 
-  CPDF_Rect rcNew(rcRect.left - fSize, rcRect.bottom - fSize,
-                  rcRect.right + fSize, rcRect.top + fSize);
+  CFX_FloatRect rcNew(rcRect.left - fSize, rcRect.bottom - fSize,
+                      rcRect.right + fSize, rcRect.top + fSize);
   rcNew.Normalize();
   return rcNew;
 }
 
-CPDF_Rect CPWL_Utils::DeflateRect(const CPDF_Rect& rcRect, FX_FLOAT fSize) {
+CFX_FloatRect CPWL_Utils::DeflateRect(const CFX_FloatRect& rcRect,
+                                      FX_FLOAT fSize) {
   if (rcRect.IsEmpty())
     return rcRect;
 
-  CPDF_Rect rcNew(rcRect.left + fSize, rcRect.bottom + fSize,
-                  rcRect.right - fSize, rcRect.top - fSize);
+  CFX_FloatRect rcNew(rcRect.left + fSize, rcRect.bottom + fSize,
+                      rcRect.right - fSize, rcRect.top - fSize);
   rcNew.Normalize();
   return rcNew;
 }
 
-CPDF_Rect CPWL_Utils::ScaleRect(const CPDF_Rect& rcRect, FX_FLOAT fScale) {
+CFX_FloatRect CPWL_Utils::ScaleRect(const CFX_FloatRect& rcRect,
+                                    FX_FLOAT fScale) {
   FX_FLOAT fHalfWidth = (rcRect.right - rcRect.left) / 2.0f;
   FX_FLOAT fHalfHeight = (rcRect.top - rcRect.bottom) / 2.0f;
 
-  CPDF_Point ptCenter = CPDF_Point((rcRect.left + rcRect.right) / 2,
-                                   (rcRect.top + rcRect.bottom) / 2);
+  CFX_FloatPoint ptCenter = CFX_FloatPoint((rcRect.left + rcRect.right) / 2,
+                                           (rcRect.top + rcRect.bottom) / 2);
 
-  return CPDF_Rect(
+  return CFX_FloatRect(
       ptCenter.x - fHalfWidth * fScale, ptCenter.y - fHalfHeight * fScale,
       ptCenter.x + fHalfWidth * fScale, ptCenter.y + fHalfHeight * fScale);
 }
 
-CFX_ByteString CPWL_Utils::GetRectFillAppStream(const CPDF_Rect& rect,
+CFX_ByteString CPWL_Utils::GetRectFillAppStream(const CFX_FloatRect& rect,
                                                 const CPWL_Color& color) {
   CFX_ByteTextBuf sAppStream;
 
@@ -383,7 +387,7 @@ CFX_ByteString CPWL_Utils::GetRectFillAppStream(const CPDF_Rect& rect,
   return sAppStream.GetByteString();
 }
 
-CFX_ByteString CPWL_Utils::GetCircleFillAppStream(const CPDF_Rect& rect,
+CFX_ByteString CPWL_Utils::GetCircleFillAppStream(const CFX_FloatRect& rect,
                                                   const CPWL_Color& color) {
   CFX_ByteTextBuf sAppStream;
 
@@ -395,7 +399,7 @@ CFX_ByteString CPWL_Utils::GetCircleFillAppStream(const CPDF_Rect& rect,
   return sAppStream.GetByteString();
 }
 
-CPDF_Rect CPWL_Utils::GetCenterSquare(const CPDF_Rect& rect) {
+CFX_FloatRect CPWL_Utils::GetCenterSquare(const CFX_FloatRect& rect) {
   FX_FLOAT fWidth = rect.right - rect.left;
   FX_FLOAT fHeight = rect.top - rect.bottom;
 
@@ -404,12 +408,12 @@ CPDF_Rect CPWL_Utils::GetCenterSquare(const CPDF_Rect& rect) {
 
   FX_FLOAT fRadius = (fWidth > fHeight) ? fHeight / 2 : fWidth / 2;
 
-  return CPDF_Rect(fCenterX - fRadius, fCenterY - fRadius, fCenterX + fRadius,
-                   fCenterY + fRadius);
+  return CFX_FloatRect(fCenterX - fRadius, fCenterY - fRadius,
+                       fCenterX + fRadius, fCenterY + fRadius);
 }
 
 CFX_ByteString CPWL_Utils::GetEditAppStream(IFX_Edit* pEdit,
-                                            const CPDF_Point& ptOffset,
+                                            const CFX_FloatPoint& ptOffset,
                                             const CPVT_WordRange* pRange,
                                             FX_BOOL bContinuous,
                                             FX_WORD SubWord) {
@@ -418,7 +422,7 @@ CFX_ByteString CPWL_Utils::GetEditAppStream(IFX_Edit* pEdit,
 }
 
 CFX_ByteString CPWL_Utils::GetEditSelAppStream(IFX_Edit* pEdit,
-                                               const CPDF_Point& ptOffset,
+                                               const CFX_FloatPoint& ptOffset,
                                                const CPVT_WordRange* pRange) {
   return IFX_Edit::GetSelectAppearanceStream(pEdit, ptOffset, pRange);
 }
@@ -445,7 +449,7 @@ static CFX_ByteString GetSquigglyAppearanceStream(FX_FLOAT fStartX,
 
 static CFX_ByteString GetWordSpellCheckAppearanceStream(
     IFX_Edit_Iterator* pIterator,
-    const CPDF_Point& ptOffset,
+    const CFX_FloatPoint& ptOffset,
     const CPVT_WordRange& wrWord) {
   CFX_ByteTextBuf sRet;
 
@@ -504,7 +508,7 @@ static CFX_ByteString GetWordSpellCheckAppearanceStream(
 CFX_ByteString CPWL_Utils::GetSpellCheckAppStream(
     IFX_Edit* pEdit,
     IPWL_SpellCheck* pSpellCheck,
-    const CPDF_Point& ptOffset,
+    const CFX_FloatPoint& ptOffset,
     const CPVT_WordRange* pRange) {
   CFX_ByteTextBuf sRet;
 
@@ -569,7 +573,7 @@ CFX_ByteString CPWL_Utils::GetSpellCheckAppStream(
   return sRet.GetByteString();
 }
 
-CFX_ByteString CPWL_Utils::GetTextAppStream(const CPDF_Rect& rcBBox,
+CFX_ByteString CPWL_Utils::GetTextAppStream(const CFX_FloatRect& rcBBox,
                                             IFX_Edit_FontMap* pFontMap,
                                             const CFX_WideString& sText,
                                             int32_t nAlignmentH,
@@ -596,7 +600,7 @@ CFX_ByteString CPWL_Utils::GetTextAppStream(const CPDF_Rect& rcBBox,
     pEdit->SetText(sText.c_str());
 
     CFX_ByteString sEdit =
-        CPWL_Utils::GetEditAppStream(pEdit, CPDF_Point(0.0f, 0.0f));
+        CPWL_Utils::GetEditAppStream(pEdit, CFX_FloatPoint(0.0f, 0.0f));
     if (sEdit.GetLength() > 0) {
       sRet << "BT\n" << CPWL_Utils::GetColorAppStream(crText) << sEdit
            << "ET\n";
@@ -607,7 +611,7 @@ CFX_ByteString CPWL_Utils::GetTextAppStream(const CPDF_Rect& rcBBox,
   return sRet.GetByteString();
 }
 
-CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CPDF_Rect& rcBBox,
+CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
                                                   IFX_Edit_FontMap* pFontMap,
                                                   CPDF_Stream* pIconStream,
                                                   CPDF_IconFit& IconFit,
@@ -631,7 +635,7 @@ CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CPDF_Rect& rcBBox,
     pEdit->Initialize();
     pEdit->SetText(sLabel.c_str());
 
-    CPDF_Rect rcLabelContent = pEdit->GetContentRect();
+    CFX_FloatRect rcLabelContent = pEdit->GetContentRect();
     CPWL_Icon Icon;
     PWL_CREATEPARAM cp;
     cp.dwFlags = PWS_VISIBLE;
@@ -639,45 +643,45 @@ CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CPDF_Rect& rcBBox,
     Icon.SetIconFit(&IconFit);
     Icon.SetPDFStream(pIconStream);
 
-    CPDF_Rect rcLabel = CPDF_Rect(0, 0, 0, 0);
-    CPDF_Rect rcIcon = CPDF_Rect(0, 0, 0, 0);
+    CFX_FloatRect rcLabel = CFX_FloatRect(0, 0, 0, 0);
+    CFX_FloatRect rcIcon = CFX_FloatRect(0, 0, 0, 0);
     FX_FLOAT fWidth = 0.0f;
     FX_FLOAT fHeight = 0.0f;
 
     switch (nLayOut) {
       case PPBL_LABEL:
         rcLabel = rcBBox;
-        rcIcon = CPDF_Rect(0, 0, 0, 0);
+        rcIcon = CFX_FloatRect(0, 0, 0, 0);
         break;
       case PPBL_ICON:
         rcIcon = rcBBox;
-        rcLabel = CPDF_Rect(0, 0, 0, 0);
+        rcLabel = CFX_FloatRect(0, 0, 0, 0);
         break;
       case PPBL_ICONTOPLABELBOTTOM:
 
         if (pIconStream) {
           if (IsFloatZero(fFontSize)) {
             fHeight = rcBBox.top - rcBBox.bottom;
-            rcLabel = CPDF_Rect(rcBBox.left, rcBBox.bottom, rcBBox.right,
-                                rcBBox.bottom + fHeight * fAutoFontScale);
-            rcIcon =
-                CPDF_Rect(rcBBox.left, rcLabel.top, rcBBox.right, rcBBox.top);
+            rcLabel = CFX_FloatRect(rcBBox.left, rcBBox.bottom, rcBBox.right,
+                                    rcBBox.bottom + fHeight * fAutoFontScale);
+            rcIcon = CFX_FloatRect(rcBBox.left, rcLabel.top, rcBBox.right,
+                                   rcBBox.top);
           } else {
             fHeight = rcLabelContent.Height();
 
             if (rcBBox.bottom + fHeight > rcBBox.top) {
-              rcIcon = CPDF_Rect(0, 0, 0, 0);
+              rcIcon = CFX_FloatRect(0, 0, 0, 0);
               rcLabel = rcBBox;
             } else {
-              rcLabel = CPDF_Rect(rcBBox.left, rcBBox.bottom, rcBBox.right,
-                                  rcBBox.bottom + fHeight);
-              rcIcon =
-                  CPDF_Rect(rcBBox.left, rcLabel.top, rcBBox.right, rcBBox.top);
+              rcLabel = CFX_FloatRect(rcBBox.left, rcBBox.bottom, rcBBox.right,
+                                      rcBBox.bottom + fHeight);
+              rcIcon = CFX_FloatRect(rcBBox.left, rcLabel.top, rcBBox.right,
+                                     rcBBox.top);
             }
           }
         } else {
           rcLabel = rcBBox;
-          rcIcon = CPDF_Rect(0, 0, 0, 0);
+          rcIcon = CFX_FloatRect(0, 0, 0, 0);
         }
 
         break;
@@ -686,27 +690,27 @@ CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CPDF_Rect& rcBBox,
         if (pIconStream) {
           if (IsFloatZero(fFontSize)) {
             fHeight = rcBBox.top - rcBBox.bottom;
-            rcLabel =
-                CPDF_Rect(rcBBox.left, rcBBox.top - fHeight * fAutoFontScale,
-                          rcBBox.right, rcBBox.top);
-            rcIcon = CPDF_Rect(rcBBox.left, rcBBox.bottom, rcBBox.right,
-                               rcLabel.bottom);
+            rcLabel = CFX_FloatRect(rcBBox.left,
+                                    rcBBox.top - fHeight * fAutoFontScale,
+                                    rcBBox.right, rcBBox.top);
+            rcIcon = CFX_FloatRect(rcBBox.left, rcBBox.bottom, rcBBox.right,
+                                   rcLabel.bottom);
           } else {
             fHeight = rcLabelContent.Height();
 
             if (rcBBox.bottom + fHeight > rcBBox.top) {
-              rcIcon = CPDF_Rect(0, 0, 0, 0);
+              rcIcon = CFX_FloatRect(0, 0, 0, 0);
               rcLabel = rcBBox;
             } else {
-              rcLabel = CPDF_Rect(rcBBox.left, rcBBox.top - fHeight,
-                                  rcBBox.right, rcBBox.top);
-              rcIcon = CPDF_Rect(rcBBox.left, rcBBox.bottom, rcBBox.right,
-                                 rcLabel.bottom);
+              rcLabel = CFX_FloatRect(rcBBox.left, rcBBox.top - fHeight,
+                                      rcBBox.right, rcBBox.top);
+              rcIcon = CFX_FloatRect(rcBBox.left, rcBBox.bottom, rcBBox.right,
+                                     rcLabel.bottom);
             }
           }
         } else {
           rcLabel = rcBBox;
-          rcIcon = CPDF_Rect(0, 0, 0, 0);
+          rcIcon = CFX_FloatRect(0, 0, 0, 0);
         }
 
         break;
@@ -715,21 +719,22 @@ CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CPDF_Rect& rcBBox,
         if (pIconStream) {
           if (IsFloatZero(fFontSize)) {
             fWidth = rcBBox.right - rcBBox.left;
-            rcLabel = CPDF_Rect(rcBBox.right - fWidth * fAutoFontScale,
-                                rcBBox.bottom, rcBBox.right, rcBBox.top);
-            rcIcon =
-                CPDF_Rect(rcBBox.left, rcBBox.bottom, rcLabel.left, rcBBox.top);
+            rcLabel = CFX_FloatRect(rcBBox.right - fWidth * fAutoFontScale,
+                                    rcBBox.bottom, rcBBox.right, rcBBox.top);
+            rcIcon = CFX_FloatRect(rcBBox.left, rcBBox.bottom, rcLabel.left,
+                                   rcBBox.top);
 
             if (rcLabelContent.Width() < fWidth * fAutoFontScale) {
             } else {
               if (rcLabelContent.Width() < fWidth) {
-                rcLabel = CPDF_Rect(rcBBox.right - rcLabelContent.Width(),
-                                    rcBBox.bottom, rcBBox.right, rcBBox.top);
-                rcIcon = CPDF_Rect(rcBBox.left, rcBBox.bottom, rcLabel.left,
-                                   rcBBox.top);
+                rcLabel =
+                    CFX_FloatRect(rcBBox.right - rcLabelContent.Width(),
+                                  rcBBox.bottom, rcBBox.right, rcBBox.top);
+                rcIcon = CFX_FloatRect(rcBBox.left, rcBBox.bottom, rcLabel.left,
+                                       rcBBox.top);
               } else {
                 rcLabel = rcBBox;
-                rcIcon = CPDF_Rect(0, 0, 0, 0);
+                rcIcon = CFX_FloatRect(0, 0, 0, 0);
               }
             }
           } else {
@@ -737,17 +742,17 @@ CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CPDF_Rect& rcBBox,
 
             if (rcBBox.left + fWidth > rcBBox.right) {
               rcLabel = rcBBox;
-              rcIcon = CPDF_Rect(0, 0, 0, 0);
+              rcIcon = CFX_FloatRect(0, 0, 0, 0);
             } else {
-              rcLabel = CPDF_Rect(rcBBox.right - fWidth, rcBBox.bottom,
-                                  rcBBox.right, rcBBox.top);
-              rcIcon = CPDF_Rect(rcBBox.left, rcBBox.bottom, rcLabel.left,
-                                 rcBBox.top);
+              rcLabel = CFX_FloatRect(rcBBox.right - fWidth, rcBBox.bottom,
+                                      rcBBox.right, rcBBox.top);
+              rcIcon = CFX_FloatRect(rcBBox.left, rcBBox.bottom, rcLabel.left,
+                                     rcBBox.top);
             }
           }
         } else {
           rcLabel = rcBBox;
-          rcIcon = CPDF_Rect(0, 0, 0, 0);
+          rcIcon = CFX_FloatRect(0, 0, 0, 0);
         }
 
         break;
@@ -756,23 +761,23 @@ CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CPDF_Rect& rcBBox,
         if (pIconStream) {
           if (IsFloatZero(fFontSize)) {
             fWidth = rcBBox.right - rcBBox.left;
-            rcLabel =
-                CPDF_Rect(rcBBox.left, rcBBox.bottom,
-                          rcBBox.left + fWidth * fAutoFontScale, rcBBox.top);
-            rcIcon = CPDF_Rect(rcLabel.right, rcBBox.bottom, rcBBox.right,
-                               rcBBox.top);
+            rcLabel = CFX_FloatRect(rcBBox.left, rcBBox.bottom,
+                                    rcBBox.left + fWidth * fAutoFontScale,
+                                    rcBBox.top);
+            rcIcon = CFX_FloatRect(rcLabel.right, rcBBox.bottom, rcBBox.right,
+                                   rcBBox.top);
 
             if (rcLabelContent.Width() < fWidth * fAutoFontScale) {
             } else {
               if (rcLabelContent.Width() < fWidth) {
-                rcLabel =
-                    CPDF_Rect(rcBBox.left, rcBBox.bottom,
-                              rcBBox.left + rcLabelContent.Width(), rcBBox.top);
-                rcIcon = CPDF_Rect(rcLabel.right, rcBBox.bottom, rcBBox.right,
-                                   rcBBox.top);
+                rcLabel = CFX_FloatRect(rcBBox.left, rcBBox.bottom,
+                                        rcBBox.left + rcLabelContent.Width(),
+                                        rcBBox.top);
+                rcIcon = CFX_FloatRect(rcLabel.right, rcBBox.bottom,
+                                       rcBBox.right, rcBBox.top);
               } else {
                 rcLabel = rcBBox;
-                rcIcon = CPDF_Rect(0, 0, 0, 0);
+                rcIcon = CFX_FloatRect(0, 0, 0, 0);
               }
             }
           } else {
@@ -780,17 +785,17 @@ CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CPDF_Rect& rcBBox,
 
             if (rcBBox.left + fWidth > rcBBox.right) {
               rcLabel = rcBBox;
-              rcIcon = CPDF_Rect(0, 0, 0, 0);
+              rcIcon = CFX_FloatRect(0, 0, 0, 0);
             } else {
-              rcLabel = CPDF_Rect(rcBBox.left, rcBBox.bottom,
-                                  rcBBox.left + fWidth, rcBBox.top);
-              rcIcon = CPDF_Rect(rcLabel.right, rcBBox.bottom, rcBBox.right,
-                                 rcBBox.top);
+              rcLabel = CFX_FloatRect(rcBBox.left, rcBBox.bottom,
+                                      rcBBox.left + fWidth, rcBBox.top);
+              rcIcon = CFX_FloatRect(rcLabel.right, rcBBox.bottom, rcBBox.right,
+                                     rcBBox.top);
             }
           }
         } else {
           rcLabel = rcBBox;
-          rcIcon = CPDF_Rect(0, 0, 0, 0);
+          rcIcon = CFX_FloatRect(0, 0, 0, 0);
         }
 
         break;
@@ -812,7 +817,7 @@ CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CPDF_Rect& rcBBox,
     if (!rcLabel.IsEmpty()) {
       pEdit->SetPlateRect(rcLabel);
       CFX_ByteString sEdit =
-          CPWL_Utils::GetEditAppStream(pEdit, CPDF_Point(0.0f, 0.0f));
+          CPWL_Utils::GetEditAppStream(pEdit, CFX_FloatPoint(0.0f, 0.0f));
       if (sEdit.GetLength() > 0) {
         sTemp << "BT\n" << CPWL_Utils::GetColorAppStream(crText) << sEdit
               << "ET\n";
@@ -858,7 +863,7 @@ CFX_ByteString CPWL_Utils::GetColorAppStream(const CPWL_Color& color,
   return sColorStream.GetByteString();
 }
 
-CFX_ByteString CPWL_Utils::GetBorderAppStream(const CPDF_Rect& rect,
+CFX_ByteString CPWL_Utils::GetBorderAppStream(const CFX_FloatRect& rect,
                                               FX_FLOAT fWidth,
                                               const CPWL_Color& color,
                                               const CPWL_Color& crLeftTop,
@@ -975,7 +980,7 @@ CFX_ByteString CPWL_Utils::GetBorderAppStream(const CPDF_Rect& rect,
 }
 
 CFX_ByteString CPWL_Utils::GetCircleBorderAppStream(
-    const CPDF_Rect& rect,
+    const CFX_FloatRect& rect,
     FX_FLOAT fWidth,
     const CPWL_Color& color,
     const CPWL_Color& crLeftTop,
@@ -1124,7 +1129,7 @@ CPWL_Color CPWL_Utils::DevideColor(const CPWL_Color& sColor,
   return sRet;
 }
 
-CFX_ByteString CPWL_Utils::GetAppStream_Check(const CPDF_Rect& rcBBox,
+CFX_ByteString CPWL_Utils::GetAppStream_Check(const CFX_FloatRect& rcBBox,
                                               const CPWL_Color& crText) {
   CFX_ByteTextBuf sAP;
   sAP << "q\n" << CPWL_Utils::GetColorAppStream(crText, TRUE)
@@ -1132,7 +1137,7 @@ CFX_ByteString CPWL_Utils::GetAppStream_Check(const CPDF_Rect& rcBBox,
   return sAP.GetByteString();
 }
 
-CFX_ByteString CPWL_Utils::GetAppStream_Circle(const CPDF_Rect& rcBBox,
+CFX_ByteString CPWL_Utils::GetAppStream_Circle(const CFX_FloatRect& rcBBox,
                                                const CPWL_Color& crText) {
   CFX_ByteTextBuf sAP;
   sAP << "q\n" << CPWL_Utils::GetColorAppStream(crText, TRUE)
@@ -1140,7 +1145,7 @@ CFX_ByteString CPWL_Utils::GetAppStream_Circle(const CPDF_Rect& rcBBox,
   return sAP.GetByteString();
 }
 
-CFX_ByteString CPWL_Utils::GetAppStream_Cross(const CPDF_Rect& rcBBox,
+CFX_ByteString CPWL_Utils::GetAppStream_Cross(const CFX_FloatRect& rcBBox,
                                               const CPWL_Color& crText) {
   CFX_ByteTextBuf sAP;
   sAP << "q\n" << CPWL_Utils::GetColorAppStream(crText, FALSE)
@@ -1148,7 +1153,7 @@ CFX_ByteString CPWL_Utils::GetAppStream_Cross(const CPDF_Rect& rcBBox,
   return sAP.GetByteString();
 }
 
-CFX_ByteString CPWL_Utils::GetAppStream_Diamond(const CPDF_Rect& rcBBox,
+CFX_ByteString CPWL_Utils::GetAppStream_Diamond(const CFX_FloatRect& rcBBox,
                                                 const CPWL_Color& crText) {
   CFX_ByteTextBuf sAP;
   sAP << "q\n1 w\n" << CPWL_Utils::GetColorAppStream(crText, TRUE)
@@ -1156,7 +1161,7 @@ CFX_ByteString CPWL_Utils::GetAppStream_Diamond(const CPDF_Rect& rcBBox,
   return sAP.GetByteString();
 }
 
-CFX_ByteString CPWL_Utils::GetAppStream_Square(const CPDF_Rect& rcBBox,
+CFX_ByteString CPWL_Utils::GetAppStream_Square(const CFX_FloatRect& rcBBox,
                                                const CPWL_Color& crText) {
   CFX_ByteTextBuf sAP;
   sAP << "q\n" << CPWL_Utils::GetColorAppStream(crText, TRUE)
@@ -1164,7 +1169,7 @@ CFX_ByteString CPWL_Utils::GetAppStream_Square(const CPDF_Rect& rcBBox,
   return sAP.GetByteString();
 }
 
-CFX_ByteString CPWL_Utils::GetAppStream_Star(const CPDF_Rect& rcBBox,
+CFX_ByteString CPWL_Utils::GetAppStream_Star(const CFX_FloatRect& rcBBox,
                                              const CPWL_Color& crText) {
   CFX_ByteTextBuf sAP;
   sAP << "q\n" << CPWL_Utils::GetColorAppStream(crText, TRUE)
@@ -1172,10 +1177,10 @@ CFX_ByteString CPWL_Utils::GetAppStream_Star(const CPDF_Rect& rcBBox,
   return sAP.GetByteString();
 }
 
-CFX_ByteString CPWL_Utils::GetCheckBoxAppStream(const CPDF_Rect& rcBBox,
+CFX_ByteString CPWL_Utils::GetCheckBoxAppStream(const CFX_FloatRect& rcBBox,
                                                 int32_t nStyle,
                                                 const CPWL_Color& crText) {
-  CPDF_Rect rcCenter = GetCenterSquare(rcBBox);
+  CFX_FloatRect rcCenter = GetCenterSquare(rcBBox);
   switch (nStyle) {
     default:
     case PCS_CHECK:
@@ -1193,10 +1198,10 @@ CFX_ByteString CPWL_Utils::GetCheckBoxAppStream(const CPDF_Rect& rcBBox,
   }
 }
 
-CFX_ByteString CPWL_Utils::GetRadioButtonAppStream(const CPDF_Rect& rcBBox,
+CFX_ByteString CPWL_Utils::GetRadioButtonAppStream(const CFX_FloatRect& rcBBox,
                                                    int32_t nStyle,
                                                    const CPWL_Color& crText) {
-  CPDF_Rect rcCenter = GetCenterSquare(rcBBox);
+  CFX_FloatRect rcCenter = GetCenterSquare(rcBBox);
   switch (nStyle) {
     default:
     case PCS_CHECK:
@@ -1214,7 +1219,7 @@ CFX_ByteString CPWL_Utils::GetRadioButtonAppStream(const CPDF_Rect& rcBBox,
   }
 }
 
-CFX_ByteString CPWL_Utils::GetDropButtonAppStream(const CPDF_Rect& rcBBox) {
+CFX_ByteString CPWL_Utils::GetDropButtonAppStream(const CFX_FloatRect& rcBBox) {
   CFX_ByteTextBuf sAppStream;
 
   if (!rcBBox.IsEmpty()) {
@@ -1234,8 +1239,8 @@ CFX_ByteString CPWL_Utils::GetDropButtonAppStream(const CPDF_Rect& rcBBox) {
                                CPWL_Dash(3, 0, 0))
                << "Q\n";
 
-    CPDF_Point ptCenter = CPDF_Point((rcBBox.left + rcBBox.right) / 2,
-                                     (rcBBox.top + rcBBox.bottom) / 2);
+    CFX_FloatPoint ptCenter = CFX_FloatPoint((rcBBox.left + rcBBox.right) / 2,
+                                             (rcBBox.top + rcBBox.bottom) / 2);
     if (IsFloatBigger(rcBBox.right - rcBBox.left, 6) &&
         IsFloatBigger(rcBBox.top - rcBBox.bottom, 6)) {
       sAppStream << "q\n"
@@ -1365,17 +1370,17 @@ FX_COLORREF CPWL_Utils::PWLColorToFXColor(const CPWL_Color& color,
 
 void CPWL_Utils::DrawFillRect(CFX_RenderDevice* pDevice,
                               CFX_Matrix* pUser2Device,
-                              const CPDF_Rect& rect,
+                              const CFX_FloatRect& rect,
                               const FX_COLORREF& color) {
   CFX_PathData path;
-  CPDF_Rect rcTemp(rect);
+  CFX_FloatRect rcTemp(rect);
   path.AppendRect(rcTemp.left, rcTemp.bottom, rcTemp.right, rcTemp.top);
   pDevice->DrawPath(&path, pUser2Device, NULL, color, 0, FXFILL_WINDING);
 }
 
 void CPWL_Utils::DrawFillArea(CFX_RenderDevice* pDevice,
                               CFX_Matrix* pUser2Device,
-                              const CPDF_Point* pPts,
+                              const CFX_FloatPoint* pPts,
                               int32_t nCount,
                               const FX_COLORREF& color) {
   CFX_PathData path;
@@ -1390,11 +1395,11 @@ void CPWL_Utils::DrawFillArea(CFX_RenderDevice* pDevice,
 
 void CPWL_Utils::DrawStrokeRect(CFX_RenderDevice* pDevice,
                                 CFX_Matrix* pUser2Device,
-                                const CPDF_Rect& rect,
+                                const CFX_FloatRect& rect,
                                 const FX_COLORREF& color,
                                 FX_FLOAT fWidth) {
   CFX_PathData path;
-  CPDF_Rect rcTemp(rect);
+  CFX_FloatRect rcTemp(rect);
   path.AppendRect(rcTemp.left, rcTemp.bottom, rcTemp.right, rcTemp.top);
 
   CFX_GraphStateData gsd;
@@ -1405,8 +1410,8 @@ void CPWL_Utils::DrawStrokeRect(CFX_RenderDevice* pDevice,
 
 void CPWL_Utils::DrawStrokeLine(CFX_RenderDevice* pDevice,
                                 CFX_Matrix* pUser2Device,
-                                const CPDF_Point& ptMoveTo,
-                                const CPDF_Point& ptLineTo,
+                                const CFX_FloatPoint& ptMoveTo,
+                                const CFX_FloatPoint& ptLineTo,
                                 const FX_COLORREF& color,
                                 FX_FLOAT fWidth) {
   CFX_PathData path;
@@ -1422,7 +1427,7 @@ void CPWL_Utils::DrawStrokeLine(CFX_RenderDevice* pDevice,
 
 void CPWL_Utils::DrawFillRect(CFX_RenderDevice* pDevice,
                               CFX_Matrix* pUser2Device,
-                              const CPDF_Rect& rect,
+                              const CFX_FloatRect& rect,
                               const CPWL_Color& color,
                               int32_t nTransparancy) {
   CPWL_Utils::DrawFillRect(pDevice, pUser2Device, rect,
@@ -1433,7 +1438,7 @@ void CPWL_Utils::DrawShadow(CFX_RenderDevice* pDevice,
                             CFX_Matrix* pUser2Device,
                             FX_BOOL bVertical,
                             FX_BOOL bHorizontal,
-                            CPDF_Rect rect,
+                            CFX_FloatRect rect,
                             int32_t nTransparancy,
                             int32_t nStartGray,
                             int32_t nEndGray) {
@@ -1445,8 +1450,8 @@ void CPWL_Utils::DrawShadow(CFX_RenderDevice* pDevice,
     for (FX_FLOAT fy = rect.bottom + 0.5f; fy <= rect.top - 0.5f; fy += 1.0f) {
       int32_t nGray = nStartGray + (int32_t)(fStepGray * (fy - rect.bottom));
       CPWL_Utils::DrawStrokeLine(
-          pDevice, pUser2Device, CPDF_Point(rect.left, fy),
-          CPDF_Point(rect.right, fy),
+          pDevice, pUser2Device, CFX_FloatPoint(rect.left, fy),
+          CFX_FloatPoint(rect.right, fy),
           ArgbEncode(nTransparancy, nGray, nGray, nGray), 1.5f);
     }
   }
@@ -1457,8 +1462,8 @@ void CPWL_Utils::DrawShadow(CFX_RenderDevice* pDevice,
     for (FX_FLOAT fx = rect.left + 0.5f; fx <= rect.right - 0.5f; fx += 1.0f) {
       int32_t nGray = nStartGray + (int32_t)(fStepGray * (fx - rect.left));
       CPWL_Utils::DrawStrokeLine(
-          pDevice, pUser2Device, CPDF_Point(fx, rect.bottom),
-          CPDF_Point(fx, rect.top),
+          pDevice, pUser2Device, CFX_FloatPoint(fx, rect.bottom),
+          CFX_FloatPoint(fx, rect.top),
           ArgbEncode(nTransparancy, nGray, nGray, nGray), 1.5f);
     }
   }
@@ -1466,7 +1471,7 @@ void CPWL_Utils::DrawShadow(CFX_RenderDevice* pDevice,
 
 void CPWL_Utils::DrawBorder(CFX_RenderDevice* pDevice,
                             CFX_Matrix* pUser2Device,
-                            const CPDF_Rect& rect,
+                            const CFX_FloatRect& rect,
                             FX_FLOAT fWidth,
                             const CPWL_Color& color,
                             const CPWL_Color& crLeftTop,
@@ -1673,8 +1678,8 @@ static void AddSpellCheckObj(CFX_PathData& PathData,
 void CPWL_Utils::DrawEditSpellCheck(CFX_RenderDevice* pDevice,
                                     CFX_Matrix* pUser2Device,
                                     IFX_Edit* pEdit,
-                                    const CPDF_Rect& rcClip,
-                                    const CPDF_Point& ptOffset,
+                                    const CFX_FloatRect& rcClip,
+                                    const CFX_FloatPoint& ptOffset,
                                     const CPVT_WordRange* pRange,
                                     IPWL_SpellCheck* pSpellCheck) {
   const FX_COLORREF crSpell = ArgbEncode(255, 255, 0, 0);
@@ -1689,7 +1694,7 @@ void CPWL_Utils::DrawEditSpellCheck(CFX_RenderDevice* pDevice,
   pDevice->SaveState();
 
   if (!rcClip.IsEmpty()) {
-    CPDF_Rect rcTemp = rcClip;
+    CFX_FloatRect rcTemp = rcClip;
     pUser2Device->TransformRect(rcTemp);
     FX_RECT rcDevClip;
     rcDevClip.left = (int32_t)rcTemp.left;
@@ -1812,7 +1817,7 @@ CPWL_Color CPWL_Utils::GetReverseColor(const CPWL_Color& color) {
 }
 
 CFX_ByteString CPWL_Utils::GetIconAppStream(int32_t nType,
-                                            const CPDF_Rect& rect,
+                                            const CFX_FloatRect& rect,
                                             const CPWL_Color& crFill,
                                             const CPWL_Color& crStroke) {
   CFX_ByteString sAppStream = CPWL_Utils::GetColorAppStream(crStroke, FALSE);
@@ -1896,7 +1901,7 @@ CFX_ByteString CPWL_Utils::GetIconAppStream(int32_t nType,
 void CPWL_Utils::DrawIconAppStream(CFX_RenderDevice* pDevice,
                                    CFX_Matrix* pUser2Device,
                                    int32_t nType,
-                                   const CPDF_Rect& rect,
+                                   const CFX_FloatRect& rect,
                                    const CPWL_Color& crFill,
                                    const CPWL_Color& crStroke,
                                    const int32_t nTransparancy) {
@@ -1978,7 +1983,7 @@ void CPWL_Utils::DrawIconAppStream(CFX_RenderDevice* pDevice,
 
 void CPWL_Utils::GetGraphics_Checkmark(CFX_ByteString& sPathData,
                                        CFX_PathData& path,
-                                       const CPDF_Rect& crBBox,
+                                       const CFX_FloatRect& crBBox,
                                        const PWL_PATH_TYPE type) {
   FX_FLOAT fWidth = crBBox.right - crBBox.left;
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
@@ -2065,7 +2070,7 @@ void CPWL_Utils::GetGraphics_Checkmark(CFX_ByteString& sPathData,
 
 void CPWL_Utils::GetGraphics_Circle(CFX_ByteString& sPathData,
                                     CFX_PathData& path,
-                                    const CPDF_Rect& crBBox,
+                                    const CFX_FloatRect& crBBox,
                                     const PWL_PATH_TYPE type) {
   FX_FLOAT fWidth = crBBox.right - crBBox.left;
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
@@ -2188,7 +2193,7 @@ void CPWL_Utils::GetGraphics_Circle(CFX_ByteString& sPathData,
 
 void CPWL_Utils::GetGraphics_Comment(CFX_ByteString& sPathData,
                                      CFX_PathData& path,
-                                     const CPDF_Rect& crBBox,
+                                     const CFX_FloatRect& crBBox,
                                      const PWL_PATH_TYPE type) {
   FX_FLOAT fWidth = crBBox.right - crBBox.left;
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
@@ -2307,7 +2312,7 @@ void CPWL_Utils::GetGraphics_Comment(CFX_ByteString& sPathData,
 
 void CPWL_Utils::GetGraphics_Cross(CFX_ByteString& sPathData,
                                    CFX_PathData& path,
-                                   const CPDF_Rect& crBBox,
+                                   const CFX_FloatRect& crBBox,
                                    const PWL_PATH_TYPE type) {
   FX_FLOAT fWidth = crBBox.right - crBBox.left;
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
@@ -2364,7 +2369,7 @@ void CPWL_Utils::GetGraphics_Cross(CFX_ByteString& sPathData,
 
 void CPWL_Utils::GetGraphics_Help(CFX_ByteString& sPathData,
                                   CFX_PathData& path,
-                                  const CPDF_Rect& crBBox,
+                                  const CFX_FloatRect& crBBox,
                                   const PWL_PATH_TYPE type) {
   FX_FLOAT fWidth = crBBox.right - crBBox.left;
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
@@ -2594,7 +2599,7 @@ void CPWL_Utils::GetGraphics_Help(CFX_ByteString& sPathData,
 
 void CPWL_Utils::GetGraphics_InsertText(CFX_ByteString& sPathData,
                                         CFX_PathData& path,
-                                        const CPDF_Rect& crBBox,
+                                        const CFX_FloatRect& crBBox,
                                         const PWL_PATH_TYPE type) {
   FX_FLOAT fWidth = crBBox.right - crBBox.left;
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
@@ -2621,7 +2626,7 @@ void CPWL_Utils::GetGraphics_InsertText(CFX_ByteString& sPathData,
 
 void CPWL_Utils::GetGraphics_Key(CFX_ByteString& sPathData,
                                  CFX_PathData& path,
-                                 const CPDF_Rect& crBBox,
+                                 const CFX_FloatRect& crBBox,
                                  const PWL_PATH_TYPE type) {
   FX_FLOAT fWidth = crBBox.right - crBBox.left;
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
@@ -2752,7 +2757,7 @@ void CPWL_Utils::GetGraphics_Key(CFX_ByteString& sPathData,
 
 void CPWL_Utils::GetGraphics_NewParagraph(CFX_ByteString& sPathData,
                                           CFX_PathData& path,
-                                          const CPDF_Rect& crBBox,
+                                          const CFX_FloatRect& crBBox,
                                           const PWL_PATH_TYPE type) {
   FX_FLOAT fWidth = crBBox.right - crBBox.left;
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
@@ -2856,7 +2861,7 @@ void CPWL_Utils::GetGraphics_NewParagraph(CFX_ByteString& sPathData,
 
 void CPWL_Utils::GetGraphics_TextNote(CFX_ByteString& sPathData,
                                       CFX_PathData& path,
-                                      const CPDF_Rect& crBBox,
+                                      const CFX_FloatRect& crBBox,
                                       const PWL_PATH_TYPE type) {
   FX_FLOAT fWidth = crBBox.right - crBBox.left;
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
@@ -2922,7 +2927,7 @@ void CPWL_Utils::GetGraphics_TextNote(CFX_ByteString& sPathData,
 
 void CPWL_Utils::GetGraphics_Paragraph(CFX_ByteString& sPathData,
                                        CFX_PathData& path,
-                                       const CPDF_Rect& crBBox,
+                                       const CFX_FloatRect& crBBox,
                                        const PWL_PATH_TYPE type) {
   FX_FLOAT fWidth = crBBox.right - crBBox.left;
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
@@ -2973,7 +2978,7 @@ void CPWL_Utils::GetGraphics_Paragraph(CFX_ByteString& sPathData,
 
 void CPWL_Utils::GetGraphics_RightArrow(CFX_ByteString& sPathData,
                                         CFX_PathData& path,
-                                        const CPDF_Rect& crBBox,
+                                        const CFX_FloatRect& crBBox,
                                         const PWL_PATH_TYPE type) {
   FX_FLOAT fWidth = crBBox.right - crBBox.left;
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
@@ -3018,7 +3023,7 @@ void CPWL_Utils::GetGraphics_RightArrow(CFX_ByteString& sPathData,
 
 void CPWL_Utils::GetGraphics_RightPointer(CFX_ByteString& sPathData,
                                           CFX_PathData& path,
-                                          const CPDF_Rect& crBBox,
+                                          const CFX_FloatRect& crBBox,
                                           const PWL_PATH_TYPE type) {
   FX_FLOAT fWidth = crBBox.right - crBBox.left;
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
@@ -3048,14 +3053,14 @@ void CPWL_Utils::GetGraphics_RightPointer(CFX_ByteString& sPathData,
 
 void CPWL_Utils::GetGraphics_Star(CFX_ByteString& sPathData,
                                   CFX_PathData& path,
-                                  const CPDF_Rect& crBBox,
+                                  const CFX_FloatRect& crBBox,
                                   const PWL_PATH_TYPE type) {
   FX_FLOAT fLongRadius =
       (crBBox.top - crBBox.bottom) / (1 + (FX_FLOAT)cos(FX_PI / 5.0f));
   fLongRadius = fLongRadius * 0.7f;
   FX_FLOAT fShortRadius = fLongRadius * 0.55f;
-  CPDF_Point ptCenter = CPDF_Point((crBBox.left + crBBox.right) / 2.0f,
-                                   (crBBox.top + crBBox.bottom) / 2.0f);
+  CFX_FloatPoint ptCenter = CFX_FloatPoint((crBBox.left + crBBox.right) / 2.0f,
+                                           (crBBox.top + crBBox.bottom) / 2.0f);
 
   FX_FLOAT px1[5], py1[5];
   FX_FLOAT px2[5], py2[5];
@@ -3099,7 +3104,7 @@ void CPWL_Utils::GetGraphics_Star(CFX_ByteString& sPathData,
 
 void CPWL_Utils::GetGraphics_UpArrow(CFX_ByteString& sPathData,
                                      CFX_PathData& path,
-                                     const CPDF_Rect& crBBox,
+                                     const CFX_FloatRect& crBBox,
                                      const PWL_PATH_TYPE type) {
   FX_FLOAT fWidth = crBBox.right - crBBox.left;
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
@@ -3138,7 +3143,7 @@ void CPWL_Utils::GetGraphics_UpArrow(CFX_ByteString& sPathData,
 
 void CPWL_Utils::GetGraphics_UpLeftArrow(CFX_ByteString& sPathData,
                                          CFX_PathData& path,
-                                         const CPDF_Rect& crBBox,
+                                         const CFX_FloatRect& crBBox,
                                          const PWL_PATH_TYPE type) {
   FX_FLOAT fWidth = crBBox.right - crBBox.left;
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
@@ -3193,7 +3198,7 @@ void CPWL_Utils::GetGraphics_UpLeftArrow(CFX_ByteString& sPathData,
 
 void CPWL_Utils::GetGraphics_Graph(CFX_ByteString& sPathData,
                                    CFX_PathData& path,
-                                   const CPDF_Rect& crBBox,
+                                   const CFX_FloatRect& crBBox,
                                    const PWL_PATH_TYPE type) {
   FX_FLOAT fWidth = crBBox.right - crBBox.left;
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
@@ -3271,7 +3276,7 @@ void CPWL_Utils::GetGraphics_Graph(CFX_ByteString& sPathData,
 
 void CPWL_Utils::GetGraphics_Paperclip(CFX_ByteString& sPathData,
                                        CFX_PathData& path,
-                                       const CPDF_Rect& crBBox,
+                                       const CFX_FloatRect& crBBox,
                                        const PWL_PATH_TYPE type) {
   FX_FLOAT fWidth = crBBox.right - crBBox.left;
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
@@ -3414,7 +3419,7 @@ void CPWL_Utils::GetGraphics_Paperclip(CFX_ByteString& sPathData,
 
 void CPWL_Utils::GetGraphics_Attachment(CFX_ByteString& sPathData,
                                         CFX_PathData& path,
-                                        const CPDF_Rect& crBBox,
+                                        const CFX_FloatRect& crBBox,
                                         const PWL_PATH_TYPE type) {
   FX_FLOAT fWidth = crBBox.right - crBBox.left;
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
@@ -3510,7 +3515,7 @@ void CPWL_Utils::GetGraphics_Attachment(CFX_ByteString& sPathData,
 
 void CPWL_Utils::GetGraphics_Tag(CFX_ByteString& sPathData,
                                  CFX_PathData& path,
-                                 const CPDF_Rect& crBBox,
+                                 const CFX_FloatRect& crBBox,
                                  const PWL_PATH_TYPE type) {
   FX_FLOAT fWidth = crBBox.right - crBBox.left;
   FX_FLOAT fHeight = crBBox.top - crBBox.bottom;
@@ -3561,12 +3566,12 @@ void CPWL_Utils::GetGraphics_Tag(CFX_ByteString& sPathData,
 
 void CPWL_Utils::GetGraphics_Foxit(CFX_ByteString& sPathData,
                                    CFX_PathData& path,
-                                   const CPDF_Rect& crBBox,
+                                   const CFX_FloatRect& crBBox,
                                    const PWL_PATH_TYPE type) {
   FX_FLOAT fOutWidth = crBBox.right - crBBox.left;
   FX_FLOAT fOutHeight = crBBox.top - crBBox.bottom;
 
-  CPDF_Rect crInBox = crBBox;
+  CFX_FloatRect crInBox = crBBox;
   crInBox.left = crBBox.left + fOutWidth * 0.08f;
   crInBox.right = crBBox.right - fOutWidth * 0.08f;
   crInBox.top = crBBox.top - fOutHeight * 0.08f;

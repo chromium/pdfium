@@ -20,7 +20,8 @@
 #define IsFloatSmaller(fa, fb) ((fa) < (fb) && !IsFloatZero((fa) - (fb)))
 #define IsFloatEqual(fa, fb) IsFloatZero((fa) - (fb))
 
-FX_BOOL CPWL_CBListBox::OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag) {
+FX_BOOL CPWL_CBListBox::OnLButtonUp(const CFX_FloatPoint& point,
+                                    FX_DWORD nFlag) {
   CPWL_Wnd::OnLButtonUp(point, nFlag);
 
   if (m_bMouseDown) {
@@ -110,19 +111,19 @@ FX_BOOL CPWL_CBListBox::OnCharWithExit(FX_WORD nChar,
 void CPWL_CBButton::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
   CPWL_Wnd::GetThisAppearanceStream(sAppStream);
 
-  CPDF_Rect rectWnd = CPWL_Wnd::GetWindowRect();
+  CFX_FloatRect rectWnd = CPWL_Wnd::GetWindowRect();
 
   if (IsVisible() && !rectWnd.IsEmpty()) {
     CFX_ByteTextBuf sButton;
 
-    CPDF_Point ptCenter = GetCenterPoint();
+    CFX_FloatPoint ptCenter = GetCenterPoint();
 
-    CPDF_Point pt1(ptCenter.x - PWL_CBBUTTON_TRIANGLE_HALFLEN,
-                   ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
-    CPDF_Point pt2(ptCenter.x + PWL_CBBUTTON_TRIANGLE_HALFLEN,
-                   ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
-    CPDF_Point pt3(ptCenter.x,
-                   ptCenter.y - PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
+    CFX_FloatPoint pt1(ptCenter.x - PWL_CBBUTTON_TRIANGLE_HALFLEN,
+                       ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
+    CFX_FloatPoint pt2(ptCenter.x + PWL_CBBUTTON_TRIANGLE_HALFLEN,
+                       ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
+    CFX_FloatPoint pt3(ptCenter.x,
+                       ptCenter.y - PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
 
     if (IsFloatBigger(rectWnd.right - rectWnd.left,
                       PWL_CBBUTTON_TRIANGLE_HALFLEN * 2) &&
@@ -143,17 +144,17 @@ void CPWL_CBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
                                        CFX_Matrix* pUser2Device) {
   CPWL_Wnd::DrawThisAppearance(pDevice, pUser2Device);
 
-  CPDF_Rect rectWnd = CPWL_Wnd::GetWindowRect();
+  CFX_FloatRect rectWnd = CPWL_Wnd::GetWindowRect();
 
   if (IsVisible() && !rectWnd.IsEmpty()) {
-    CPDF_Point ptCenter = GetCenterPoint();
+    CFX_FloatPoint ptCenter = GetCenterPoint();
 
-    CPDF_Point pt1(ptCenter.x - PWL_CBBUTTON_TRIANGLE_HALFLEN,
-                   ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
-    CPDF_Point pt2(ptCenter.x + PWL_CBBUTTON_TRIANGLE_HALFLEN,
-                   ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
-    CPDF_Point pt3(ptCenter.x,
-                   ptCenter.y - PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
+    CFX_FloatPoint pt1(ptCenter.x - PWL_CBBUTTON_TRIANGLE_HALFLEN,
+                       ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
+    CFX_FloatPoint pt2(ptCenter.x + PWL_CBBUTTON_TRIANGLE_HALFLEN,
+                       ptCenter.y + PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
+    CFX_FloatPoint pt3(ptCenter.x,
+                       ptCenter.y - PWL_CBBUTTON_TRIANGLE_HALFLEN * 0.5f);
 
     if (IsFloatBigger(rectWnd.right - rectWnd.left,
                       PWL_CBBUTTON_TRIANGLE_HALFLEN * 2) &&
@@ -175,7 +176,8 @@ void CPWL_CBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
   }
 }
 
-FX_BOOL CPWL_CBButton::OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag) {
+FX_BOOL CPWL_CBButton::OnLButtonDown(const CFX_FloatPoint& point,
+                                     FX_DWORD nFlag) {
   CPWL_Wnd::OnLButtonDown(point, nFlag);
 
   SetCapture();
@@ -188,7 +190,8 @@ FX_BOOL CPWL_CBButton::OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag) {
   return TRUE;
 }
 
-FX_BOOL CPWL_CBButton::OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag) {
+FX_BOOL CPWL_CBButton::OnLButtonUp(const CFX_FloatPoint& point,
+                                   FX_DWORD nFlag) {
   CPWL_Wnd::OnLButtonUp(point, nFlag);
 
   ReleaseCapture();
@@ -297,7 +300,7 @@ void CPWL_ComboBox::CreateEdit(const PWL_CREATEPARAM& cp) {
     if (!HasFlag(PCBS_ALLOWCUSTOMTEXT))
       ecp.dwFlags |= PWS_READONLY;
 
-    ecp.rcRectWnd = CPDF_Rect(0, 0, 0, 0);
+    ecp.rcRectWnd = CFX_FloatRect(0, 0, 0, 0);
     ecp.dwBorderWidth = 0;
     ecp.nBorderStyle = PBS_SOLID;
 
@@ -333,7 +336,7 @@ void CPWL_ComboBox::CreateListBox(const PWL_CREATEPARAM& cp) {
     lcp.nBorderStyle = PBS_SOLID;
     lcp.dwBorderWidth = 1;
     lcp.eCursorType = FXCT_ARROW;
-    lcp.rcRectWnd = CPDF_Rect(0, 0, 0, 0);
+    lcp.rcRectWnd = CFX_FloatRect(0, 0, 0, 0);
 
     if (cp.dwFlags & PWS_AUTOFONTSIZE)
       lcp.fFontSize = PWLCB_DEFAULTFONTSIZE;
@@ -351,13 +354,13 @@ void CPWL_ComboBox::CreateListBox(const PWL_CREATEPARAM& cp) {
 }
 
 void CPWL_ComboBox::RePosChildWnd() {
-  CPDF_Rect rcClient = GetClientRect();
+  CFX_FloatRect rcClient = GetClientRect();
 
   if (m_bPopup) {
-    CPDF_Rect rclient = GetClientRect();
-    CPDF_Rect rcButton = rclient;
-    CPDF_Rect rcEdit = rcClient;
-    CPDF_Rect rcList = CPWL_Wnd::GetWindowRect();
+    CFX_FloatRect rclient = GetClientRect();
+    CFX_FloatRect rcButton = rclient;
+    CFX_FloatRect rcEdit = rcClient;
+    CFX_FloatRect rcList = CPWL_Wnd::GetWindowRect();
 
     FX_FLOAT fOldWindowHeight = m_rcOldWindow.Height();
     FX_FLOAT fOldClientHeight = fOldWindowHeight - GetBorderWidth() * 2;
@@ -419,7 +422,7 @@ void CPWL_ComboBox::RePosChildWnd() {
       m_pList->ScrollToListItem(m_nSelectItem);
     }
   } else {
-    CPDF_Rect rcButton = rcClient;
+    CFX_FloatRect rcButton = rcClient;
 
     rcButton.left = rcButton.right - PWL_COMBOBOX_BUTTON_WIDTH;
 
@@ -429,7 +432,7 @@ void CPWL_ComboBox::RePosChildWnd() {
     if (m_pButton)
       m_pButton->Move(rcButton, TRUE, FALSE);
 
-    CPDF_Rect rcEdit = rcClient;
+    CFX_FloatRect rcEdit = rcClient;
     rcEdit.right = rcButton.left - 1.0f;
 
     if (rcEdit.left < rcClient.left)
@@ -451,8 +454,8 @@ void CPWL_ComboBox::SelectAll() {
     m_pEdit->SelectAll();
 }
 
-CPDF_Rect CPWL_ComboBox::GetFocusRect() const {
-  return CPDF_Rect();
+CFX_FloatRect CPWL_ComboBox::GetFocusRect() const {
+  return CFX_FloatRect();
 }
 
 void CPWL_ComboBox::SetPopup(FX_BOOL bPopup) {
@@ -485,7 +488,7 @@ void CPWL_ComboBox::SetPopup(FX_BOOL bPopup) {
       if (IsFloatBigger(fPopupRet, 0.0f)) {
         m_bPopup = bPopup;
 
-        CPDF_Rect rcWindow = CPWL_Wnd::GetWindowRect();
+        CFX_FloatRect rcWindow = CPWL_Wnd::GetWindowRect();
         m_rcOldWindow = rcWindow;
         switch (nWhere) {
           default:

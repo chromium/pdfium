@@ -672,26 +672,11 @@ class CPDF_StandardCryptoHandler : public CPDF_CryptoHandler {
                               FX_BOOL bEncrypt);
 
   uint8_t m_EncryptKey[32];
-
   int m_KeyLen;
-
   int m_Cipher;
-
   uint8_t* m_pAESContext;
 };
-class CPDF_Point {
- public:
-  CPDF_Point(FX_FLOAT xx, FX_FLOAT yy) {
-    x = xx;
-    y = yy;
-  }
 
-  FX_FLOAT x;
-
-  FX_FLOAT y;
-};
-
-#define CPDF_Rect CFX_FloatRect
 CFX_ByteString PDF_NameDecode(const CFX_ByteStringC& orig);
 CFX_ByteString PDF_NameDecode(const CFX_ByteString& orig);
 CFX_ByteString PDF_NameEncode(const CFX_ByteString& orig);
@@ -702,23 +687,21 @@ CFX_WideString PDF_DecodeText(const CFX_ByteString& bstr);
 CFX_ByteString PDF_EncodeText(const FX_WCHAR* pString, int len = -1);
 CFX_ByteString PDF_EncodeText(const CFX_WideString& str);
 
-FX_FLOAT PDF_ClipFloat(FX_FLOAT f);
 class CFDF_Document : public CPDF_IndirectObjectHolder {
  public:
   static CFDF_Document* CreateNewDoc();
   static CFDF_Document* ParseFile(IFX_FileRead* pFile,
                                   FX_BOOL bOwnFile = FALSE);
   static CFDF_Document* ParseMemory(const uint8_t* pData, FX_DWORD size);
-
   ~CFDF_Document();
 
   FX_BOOL WriteBuf(CFX_ByteTextBuf& buf) const;
-
   CPDF_Dictionary* GetRoot() const { return m_pRootDict; }
 
  protected:
   CFDF_Document();
   void ParseStream(IFX_FileRead* pFile, FX_BOOL bOwnFile);
+
   CPDF_Dictionary* m_pRootDict;
   IFX_FileRead* m_pFile;
   FX_BOOL m_bOwnFile;
