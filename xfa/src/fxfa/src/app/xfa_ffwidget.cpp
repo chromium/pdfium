@@ -1882,10 +1882,10 @@ static void XFA_BOX_Stroke(CXFA_Box box,
     XFA_BOX_StrokeArc(box, pGS, rtWidget, pMatrix, dwFlags);
     return;
   }
-  FX_BOOL bVisible = FALSE;
+  bool bVisible = false;
   for (int32_t j = 0; j < 4; j++) {
-    bVisible |= strokes[j * 2 + 1].IsVisible();
-    if (bVisible) {
+    if (strokes[j * 2 + 1].IsVisible()) {
+      bVisible = true;
       break;
     }
   }
