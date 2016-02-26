@@ -363,16 +363,6 @@ CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& buf, const CPDF_Object* pObj) {
   return buf;
 }
 
-FX_FLOAT PDF_ClipFloat(FX_FLOAT f) {
-  if (f < 0) {
-    return 0;
-  }
-  if (f > 1.0f) {
-    return 1.0f;
-  }
-  return f;
-}
-
 static CPDF_Object* SearchNumberNode(CPDF_Dictionary* pNode, int num) {
   CPDF_Array* pLimits = pNode->GetArrayBy("Limits");
   if (pLimits &&

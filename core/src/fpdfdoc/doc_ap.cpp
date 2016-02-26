@@ -327,33 +327,33 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
   if (!pDefFont) {
     return FALSE;
   }
-  CPDF_Rect rcAnnot = pAnnotDict->GetRectBy("Rect");
+  CFX_FloatRect rcAnnot = pAnnotDict->GetRectBy("Rect");
   int32_t nRotate = 0;
   if (CPDF_Dictionary* pMKDict = pAnnotDict->GetDictBy("MK")) {
     nRotate = pMKDict->GetIntegerBy("R");
   }
-  CPDF_Rect rcBBox;
+  CFX_FloatRect rcBBox;
   CFX_Matrix matrix;
   switch (nRotate % 360) {
     case 0:
-      rcBBox = CPDF_Rect(0, 0, rcAnnot.right - rcAnnot.left,
-                         rcAnnot.top - rcAnnot.bottom);
+      rcBBox = CFX_FloatRect(0, 0, rcAnnot.right - rcAnnot.left,
+                             rcAnnot.top - rcAnnot.bottom);
       break;
     case 90:
       matrix = CFX_Matrix(0, 1, -1, 0, rcAnnot.right - rcAnnot.left, 0);
-      rcBBox = CPDF_Rect(0, 0, rcAnnot.top - rcAnnot.bottom,
-                         rcAnnot.right - rcAnnot.left);
+      rcBBox = CFX_FloatRect(0, 0, rcAnnot.top - rcAnnot.bottom,
+                             rcAnnot.right - rcAnnot.left);
       break;
     case 180:
       matrix = CFX_Matrix(-1, 0, 0, -1, rcAnnot.right - rcAnnot.left,
                           rcAnnot.top - rcAnnot.bottom);
-      rcBBox = CPDF_Rect(0, 0, rcAnnot.right - rcAnnot.left,
-                         rcAnnot.top - rcAnnot.bottom);
+      rcBBox = CFX_FloatRect(0, 0, rcAnnot.right - rcAnnot.left,
+                             rcAnnot.top - rcAnnot.bottom);
       break;
     case 270:
       matrix = CFX_Matrix(0, -1, 1, 0, 0, rcAnnot.top - rcAnnot.bottom);
-      rcBBox = CPDF_Rect(0, 0, rcAnnot.top - rcAnnot.bottom,
-                         rcAnnot.right - rcAnnot.left);
+      rcBBox = CFX_FloatRect(0, 0, rcAnnot.top - rcAnnot.bottom,
+                             rcAnnot.right - rcAnnot.left);
       break;
   }
   int32_t nBorderStyle = PBS_SOLID;
@@ -414,9 +414,9 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
   if (sBorderStream.GetLength() > 0) {
     sAppStream << "q\n" << sBorderStream << "Q\n";
   }
-  CPDF_Rect rcBody =
-      CPDF_Rect(rcBBox.left + fBorderWidth, rcBBox.bottom + fBorderWidth,
-                rcBBox.right - fBorderWidth, rcBBox.top - fBorderWidth);
+  CFX_FloatRect rcBody =
+      CFX_FloatRect(rcBBox.left + fBorderWidth, rcBBox.bottom + fBorderWidth,
+                    rcBBox.right - fBorderWidth, rcBBox.top - fBorderWidth);
   rcBody.Normalize();
   CPDF_Dictionary* pAPDict = pAnnotDict->GetDictBy("AP");
   if (!pAPDict) {
@@ -496,11 +496,11 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
       vt.Initialize();
       vt.SetText(swValue.c_str());
       vt.RearrangeAll();
-      CPDF_Rect rcContent = vt.GetContentRect();
-      CPDF_Point ptOffset(0.0f, 0.0f);
+      CFX_FloatRect rcContent = vt.GetContentRect();
+      CFX_FloatPoint ptOffset(0.0f, 0.0f);
       if (!bMultiLine) {
         ptOffset =
-            CPDF_Point(0.0f, (rcContent.Height() - rcBody.Height()) / 2.0f);
+            CFX_FloatPoint(0.0f, (rcContent.Height() - rcBody.Height()) / 2.0f);
       }
       CFX_ByteString sBody = CPVT_GenerateAP::GenerateEditAP(
           &map, vt.GetIterator(), ptOffset, !bCharArray, subWord);
@@ -529,10 +529,10 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
       CPVT_Provider prd(&map);
       CPDF_VariableText vt;
       vt.SetProvider(&prd);
-      CPDF_Rect rcButton = rcBody;
+      CFX_FloatRect rcButton = rcBody;
       rcButton.left = rcButton.right - 13;
       rcButton.Normalize();
-      CPDF_Rect rcEdit = rcBody;
+      CFX_FloatRect rcEdit = rcBody;
       rcEdit.right = rcButton.left;
       rcEdit.Normalize();
       vt.SetPlateRect(rcEdit);
@@ -544,9 +544,9 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
       vt.Initialize();
       vt.SetText(swValue.c_str());
       vt.RearrangeAll();
-      CPDF_Rect rcContent = vt.GetContentRect();
-      CPDF_Point ptOffset =
-          CPDF_Point(0.0f, (rcContent.Height() - rcEdit.Height()) / 2.0f);
+      CFX_FloatRect rcContent = vt.GetContentRect();
+      CFX_FloatPoint ptOffset =
+          CFX_FloatPoint(0.0f, (rcContent.Height() - rcEdit.Height()) / 2.0f);
       CFX_ByteString sEdit = CPVT_GenerateAP::GenerateEditAP(
           &map, vt.GetIterator(), ptOffset, TRUE, 0);
       if (sEdit.GetLength() > 0) {
@@ -575,8 +575,9 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
         if (sButtonBorder.GetLength() > 0) {
           sAppStream << "q\n" << sButtonBorder << "Q\n";
         }
-        CPDF_Point ptCenter = CPDF_Point((rcButton.left + rcButton.right) / 2,
-                                         (rcButton.top + rcButton.bottom) / 2);
+        CFX_FloatPoint ptCenter =
+            CFX_FloatPoint((rcButton.left + rcButton.right) / 2,
+                           (rcButton.top + rcButton.bottom) / 2);
         if (IsFloatBigger(rcButton.Width(), 6) &&
             IsFloatBigger(rcButton.Height(), 6)) {
           sAppStream << "q\n"
@@ -628,7 +629,8 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
             }
             CPDF_VariableText vt;
             vt.SetProvider(&prd);
-            vt.SetPlateRect(CPDF_Rect(rcBody.left, 0.0f, rcBody.right, 0.0f));
+            vt.SetPlateRect(
+                CFX_FloatRect(rcBody.left, 0.0f, rcBody.right, 0.0f));
             if (IsFloatZero(fFontSize)) {
               vt.SetFontSize(12.0f);
             } else {
@@ -639,8 +641,8 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
             vt.RearrangeAll();
             FX_FLOAT fItemHeight = vt.GetContentRect().Height();
             if (bSelected) {
-              CPDF_Rect rcItem =
-                  CPDF_Rect(rcBody.left, fy - fItemHeight, rcBody.right, fy);
+              CFX_FloatRect rcItem = CFX_FloatRect(
+                  rcBody.left, fy - fItemHeight, rcBody.right, fy);
               sBody << "q\n" << CPVT_GenerateAP::GenerateColorAP(
                                     CPVT_Color(CPVT_Color::kRGB, 0,
                                                51.0f / 255.0f, 113.0f / 255.0f),
@@ -651,13 +653,13 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
               sBody << "BT\n" << CPVT_GenerateAP::GenerateColorAP(
                                      CPVT_Color(CPVT_Color::kGray, 1), TRUE)
                     << CPVT_GenerateAP::GenerateEditAP(&map, vt.GetIterator(),
-                                                       CPDF_Point(0.0f, fy),
+                                                       CFX_FloatPoint(0.0f, fy),
                                                        TRUE, 0)
                     << "ET\n";
             } else {
               sBody << "BT\n" << CPVT_GenerateAP::GenerateColorAP(crText, TRUE)
                     << CPVT_GenerateAP::GenerateEditAP(&map, vt.GetIterator(),
-                                                       CPDF_Point(0.0f, fy),
+                                                       CFX_FloatPoint(0.0f, fy),
                                                        TRUE, 0)
                     << "ET\n";
             }
@@ -714,12 +716,12 @@ FX_BOOL CPVT_GenerateAP::GenerateListBoxAP(CPDF_Document* pDoc,
 CFX_ByteString CPVT_GenerateAP::GenerateEditAP(
     IPVT_FontMap* pFontMap,
     IPDF_VariableText_Iterator* pIterator,
-    const CPDF_Point& ptOffset,
+    const CFX_FloatPoint& ptOffset,
     FX_BOOL bContinuous,
     FX_WORD SubWord,
     const CPVT_WordRange* pVisible) {
   CFX_ByteTextBuf sEditStream, sLineStream, sWords;
-  CPDF_Point ptOld(0.0f, 0.0f), ptNew(0.0f, 0.0f);
+  CFX_FloatPoint ptOld(0.0f, 0.0f), ptNew(0.0f, 0.0f);
   int32_t nCurFontIndex = -1;
   if (pIterator) {
     if (pVisible) {
@@ -743,13 +745,13 @@ CFX_ByteString CPVT_GenerateAP::GenerateEditAP(
           }
           CPVT_Word word;
           if (pIterator->GetWord(word)) {
-            ptNew = CPDF_Point(word.ptWord.x + ptOffset.x,
-                               word.ptWord.y + ptOffset.y);
+            ptNew = CFX_FloatPoint(word.ptWord.x + ptOffset.x,
+                                   word.ptWord.y + ptOffset.y);
           } else {
             CPVT_Line line;
             pIterator->GetLine(line);
-            ptNew = CPDF_Point(line.ptLine.x + ptOffset.x,
-                               line.ptLine.y + ptOffset.y);
+            ptNew = CFX_FloatPoint(line.ptLine.x + ptOffset.x,
+                                   line.ptLine.y + ptOffset.y);
           }
           if (ptNew.x != ptOld.x || ptNew.y != ptOld.y) {
             sLineStream << ptNew.x - ptOld.x << " " << ptNew.y - ptOld.y
@@ -775,8 +777,8 @@ CFX_ByteString CPVT_GenerateAP::GenerateEditAP(
       } else {
         CPVT_Word word;
         if (pIterator->GetWord(word)) {
-          ptNew = CPDF_Point(word.ptWord.x + ptOffset.x,
-                             word.ptWord.y + ptOffset.y);
+          ptNew = CFX_FloatPoint(word.ptWord.x + ptOffset.x,
+                                 word.ptWord.y + ptOffset.y);
           if (ptNew.x != ptOld.x || ptNew.y != ptOld.y) {
             sEditStream << ptNew.x - ptOld.x << " " << ptNew.y - ptOld.y
                         << " Td\n";
@@ -801,7 +803,7 @@ CFX_ByteString CPVT_GenerateAP::GenerateEditAP(
   return sEditStream.GetByteString();
 }
 CFX_ByteString CPVT_GenerateAP::GenerateBorderAP(
-    const CPDF_Rect& rect,
+    const CFX_FloatRect& rect,
     FX_FLOAT fWidth,
     const CPVT_Color& color,
     const CPVT_Color& crLeftTop,

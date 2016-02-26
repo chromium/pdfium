@@ -60,7 +60,7 @@ void CPWL_List_Notify::IOnSetScrollPosY(FX_FLOAT fy) {
   m_pList->OnNotify(m_pList, PNM_SETSCROLLPOS, SBT_VSCROLL, (intptr_t)&fy);
 }
 
-void CPWL_List_Notify::IOnInvalidateRect(CPDF_Rect* pRect) {
+void CPWL_List_Notify::IOnInvalidateRect(CFX_FloatRect* pRect) {
   m_pList->InvalidateRect(pRect);
 }
 
@@ -109,14 +109,14 @@ void CPWL_ListBox::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
   CFX_ByteTextBuf sListItems;
 
   if (m_pList) {
-    CPDF_Rect rcPlate = m_pList->GetPlateRect();
+    CFX_FloatRect rcPlate = m_pList->GetPlateRect();
     for (int32_t i = 0, sz = m_pList->GetCount(); i < sz; i++) {
-      CPDF_Rect rcItem = m_pList->GetItemRect(i);
+      CFX_FloatRect rcItem = m_pList->GetItemRect(i);
 
       if (rcItem.bottom > rcPlate.top || rcItem.top < rcPlate.bottom)
         continue;
 
-      CPDF_Point ptOffset(rcItem.left, (rcItem.top + rcItem.bottom) * 0.5f);
+      CFX_FloatPoint ptOffset(rcItem.left, (rcItem.top + rcItem.bottom) * 0.5f);
       if (m_pList->IsItemSelected(i)) {
         sListItems << CPWL_Utils::GetRectFillAppStream(
             rcItem, PWL_DEFAULT_SELBACKCOLOR);
@@ -140,7 +140,7 @@ void CPWL_ListBox::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
 
   if (sListItems.GetLength() > 0) {
     CFX_ByteTextBuf sClip;
-    CPDF_Rect rcClient = GetClientRect();
+    CFX_FloatRect rcClient = GetClientRect();
 
     sClip << "q\n";
     sClip << rcClient.left << " " << rcClient.bottom << " "
@@ -158,18 +158,18 @@ void CPWL_ListBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
   CPWL_Wnd::DrawThisAppearance(pDevice, pUser2Device);
 
   if (m_pList) {
-    CPDF_Rect rcPlate = m_pList->GetPlateRect();
-    CPDF_Rect rcList = GetListRect();
-    CPDF_Rect rcClient = GetClientRect();
+    CFX_FloatRect rcPlate = m_pList->GetPlateRect();
+    CFX_FloatRect rcList = GetListRect();
+    CFX_FloatRect rcClient = GetClientRect();
 
     for (int32_t i = 0, sz = m_pList->GetCount(); i < sz; i++) {
-      CPDF_Rect rcItem = m_pList->GetItemRect(i);
+      CFX_FloatRect rcItem = m_pList->GetItemRect(i);
       if (rcItem.bottom > rcPlate.top || rcItem.top < rcPlate.bottom)
         continue;
 
-      CPDF_Point ptOffset(rcItem.left, (rcItem.top + rcItem.bottom) * 0.5f);
+      CFX_FloatPoint ptOffset(rcItem.left, (rcItem.top + rcItem.bottom) * 0.5f);
       if (IFX_Edit* pEdit = m_pList->GetItemEdit(i)) {
-        CPDF_Rect rcContent = pEdit->GetContentRect();
+        CFX_FloatRect rcContent = pEdit->GetContentRect();
         if (rcContent.Width() > rcClient.Width())
           rcItem.Intersect(rcList);
         else
@@ -265,7 +265,8 @@ FX_BOOL CPWL_ListBox::OnChar(FX_WORD nChar, FX_DWORD nFlag) {
   return TRUE;
 }
 
-FX_BOOL CPWL_ListBox::OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag) {
+FX_BOOL CPWL_ListBox::OnLButtonDown(const CFX_FloatPoint& point,
+                                    FX_DWORD nFlag) {
   CPWL_Wnd::OnLButtonDown(point, nFlag);
 
   if (ClientHitTest(point)) {
@@ -280,7 +281,7 @@ FX_BOOL CPWL_ListBox::OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag) {
   return TRUE;
 }
 
-FX_BOOL CPWL_ListBox::OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag) {
+FX_BOOL CPWL_ListBox::OnLButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) {
   CPWL_Wnd::OnLButtonUp(point, nFlag);
 
   if (m_bMouseDown) {
@@ -298,7 +299,7 @@ void CPWL_ListBox::SetHoverSel(FX_BOOL bHoverSel) {
   m_bHoverSel = bHoverSel;
 }
 
-FX_BOOL CPWL_ListBox::OnMouseMove(const CPDF_Point& point, FX_DWORD nFlag) {
+FX_BOOL CPWL_ListBox::OnMouseMove(const CFX_FloatPoint& point, FX_DWORD nFlag) {
   CPWL_Wnd::OnMouseMove(point, nFlag);
 
   if (m_bHoverSel && !IsCaptureMouse() && ClientHitTest(point)) {
@@ -346,7 +347,7 @@ void CPWL_ListBox::OnNotify(CPWL_Wnd* pWnd,
       switch (wParam) {
         case SBT_VSCROLL:
           if (m_pList)
-            m_pList->SetScrollPos(CPDF_Point(0, fPos));
+            m_pList->SetScrollPos(CFX_FloatPoint(0, fPos));
           break;
       }
       break;
@@ -380,9 +381,9 @@ void CPWL_ListBox::OnNotifySelChanged(FX_BOOL bKeyDown,
                                      nFlag);
 }
 
-CPDF_Rect CPWL_ListBox::GetFocusRect() const {
+CFX_FloatRect CPWL_ListBox::GetFocusRect() const {
   if (m_pList && m_pList->IsMultipleSel()) {
-    CPDF_Rect rcCaret = m_pList->GetItemRect(m_pList->GetCaret());
+    CFX_FloatRect rcCaret = m_pList->GetItemRect(m_pList->GetCaret());
     rcCaret.Intersect(GetClientRect());
     return rcCaret;
   }
@@ -495,11 +496,11 @@ int32_t CPWL_ListBox::FindNext(int32_t nIndex, FX_WCHAR nChar) const {
   return nIndex;
 }
 
-CPDF_Rect CPWL_ListBox::GetContentRect() const {
+CFX_FloatRect CPWL_ListBox::GetContentRect() const {
   if (m_pList)
     return m_pList->GetContentRect();
 
-  return CPDF_Rect();
+  return CFX_FloatRect();
 }
 
 FX_FLOAT CPWL_ListBox::GetFirstHeight() const {
@@ -509,13 +510,13 @@ FX_FLOAT CPWL_ListBox::GetFirstHeight() const {
   return 0.0f;
 }
 
-CPDF_Rect CPWL_ListBox::GetListRect() const {
+CFX_FloatRect CPWL_ListBox::GetListRect() const {
   return CPWL_Utils::DeflateRect(
       GetWindowRect(), (FX_FLOAT)(GetBorderWidth() + GetInnerBorderWidth()));
 }
 
 FX_BOOL CPWL_ListBox::OnMouseWheel(short zDelta,
-                                   const CPDF_Point& point,
+                                   const CFX_FloatPoint& point,
                                    FX_DWORD nFlag) {
   if (!m_pList)
     return FALSE;

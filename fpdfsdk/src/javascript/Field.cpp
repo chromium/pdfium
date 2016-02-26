@@ -2095,7 +2095,7 @@ FX_BOOL Field::rect(IJS_Context* cc,
     pArray[2] = (FX_FLOAT)Lower_Rightx.ToInt();
     pArray[3] = (FX_FLOAT)Upper_Lefty.ToInt();
 
-    CPDF_Rect crRect(pArray);
+    CFX_FloatRect crRect(pArray);
     if (m_bDelay) {
       AddDelay_Rect(FP_RECT, crRect);
     } else {
@@ -2133,7 +2133,7 @@ FX_BOOL Field::rect(IJS_Context* cc,
 void Field::SetRect(CPDFSDK_Document* pDocument,
                     const CFX_WideString& swFieldName,
                     int nControlIndex,
-                    const CPDF_Rect& rect) {
+                    const CFX_FloatRect& rect) {
   CPDFSDK_InterForm* pInterForm = (CPDFSDK_InterForm*)pDocument->GetInterForm();
 
   std::vector<CPDF_FormField*> FieldArray =
@@ -2146,13 +2146,13 @@ void Field::SetRect(CPDFSDK_Document* pDocument,
         ASSERT(pFormControl);
 
         if (CPDFSDK_Widget* pWidget = pInterForm->GetWidget(pFormControl)) {
-          CPDF_Rect crRect = rect;
+          CFX_FloatRect crRect = rect;
 
           CPDF_Page* pPDFPage = pWidget->GetPDFPage();
           crRect.Intersect(pPDFPage->GetPageBBox());
 
           if (!crRect.IsEmpty()) {
-            CPDF_Rect rcOld = pWidget->GetRect();
+            CFX_FloatRect rcOld = pWidget->GetRect();
             if (crRect.left != rcOld.left || crRect.right != rcOld.right ||
                 crRect.top != rcOld.top || crRect.bottom != rcOld.bottom) {
               pWidget->SetRect(crRect);
@@ -2170,13 +2170,13 @@ void Field::SetRect(CPDFSDK_Document* pDocument,
       if (CPDF_FormControl* pFormControl =
               pFormField->GetControl(nControlIndex)) {
         if (CPDFSDK_Widget* pWidget = pInterForm->GetWidget(pFormControl)) {
-          CPDF_Rect crRect = rect;
+          CFX_FloatRect crRect = rect;
 
           CPDF_Page* pPDFPage = pWidget->GetPDFPage();
           crRect.Intersect(pPDFPage->GetPageBBox());
 
           if (!crRect.IsEmpty()) {
-            CPDF_Rect rcOld = pWidget->GetRect();
+            CFX_FloatRect rcOld = pWidget->GetRect();
             if (crRect.left != rcOld.left || crRect.right != rcOld.right ||
                 crRect.top != rcOld.top || crRect.bottom != rcOld.bottom) {
               pWidget->SetRect(crRect);
@@ -3402,7 +3402,7 @@ void Field::AddDelay_WideString(enum FIELD_PROP prop,
   m_pJSDoc->AddDelayData(pNewData);
 }
 
-void Field::AddDelay_Rect(enum FIELD_PROP prop, const CPDF_Rect& rect) {
+void Field::AddDelay_Rect(enum FIELD_PROP prop, const CFX_FloatRect& rect) {
   CJS_DelayData* pNewData = new CJS_DelayData;
   pNewData->sFieldName = m_FieldName;
   pNewData->nControlIndex = m_nFormControlIndex;
@@ -3592,6 +3592,6 @@ void Field::AddField(CPDFSDK_Document* pDocument,
                      int nPageIndex,
                      int nFieldType,
                      const CFX_WideString& sName,
-                     const CPDF_Rect& rcCoords) {
+                     const CFX_FloatRect& rcCoords) {
   // Not supported.
 }

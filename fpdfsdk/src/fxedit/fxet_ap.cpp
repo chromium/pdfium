@@ -60,13 +60,13 @@ static CFX_ByteString GetFontSetString(IFX_Edit_FontMap* pFontMap,
 
 CFX_ByteString IFX_Edit::GetEditAppearanceStream(
     IFX_Edit* pEdit,
-    const CPDF_Point& ptOffset,
+    const CFX_FloatPoint& ptOffset,
     const CPVT_WordRange* pRange /* = NULL*/,
     FX_BOOL bContinuous /* = TRUE*/,
     FX_WORD SubWord /* = 0*/) {
   CFX_ByteTextBuf sEditStream, sWords;
 
-  CPDF_Point ptOld(0.0f, 0.0f), ptNew(0.0f, 0.0f);
+  CFX_FloatPoint ptOld(0.0f, 0.0f), ptNew(0.0f, 0.0f);
   int32_t nCurFontIndex = -1;
 
   if (IFX_Edit_Iterator* pIterator = pEdit->GetIterator()) {
@@ -92,13 +92,13 @@ CFX_ByteString IFX_Edit::GetEditAppearanceStream(
 
           CPVT_Word word;
           if (pIterator->GetWord(word)) {
-            ptNew = CPDF_Point(word.ptWord.x + ptOffset.x,
-                               word.ptWord.y + ptOffset.y);
+            ptNew = CFX_FloatPoint(word.ptWord.x + ptOffset.x,
+                                   word.ptWord.y + ptOffset.y);
           } else {
             CPVT_Line line;
             pIterator->GetLine(line);
-            ptNew = CPDF_Point(line.ptLine.x + ptOffset.x,
-                               line.ptLine.y + ptOffset.y);
+            ptNew = CFX_FloatPoint(line.ptLine.x + ptOffset.x,
+                                   line.ptLine.y + ptOffset.y);
           }
 
           if (ptNew.x != ptOld.x || ptNew.y != ptOld.y) {
@@ -129,8 +129,8 @@ CFX_ByteString IFX_Edit::GetEditAppearanceStream(
       } else {
         CPVT_Word word;
         if (pIterator->GetWord(word)) {
-          ptNew = CPDF_Point(word.ptWord.x + ptOffset.x,
-                             word.ptWord.y + ptOffset.y);
+          ptNew = CFX_FloatPoint(word.ptWord.x + ptOffset.x,
+                                 word.ptWord.y + ptOffset.y);
 
           if (ptNew.x != ptOld.x || ptNew.y != ptOld.y) {
             sEditStream << ptNew.x - ptOld.x << " " << ptNew.y - ptOld.y
@@ -176,7 +176,7 @@ CFX_ByteString IFX_Edit::GetEditAppearanceStream(
 
 CFX_ByteString IFX_Edit::GetSelectAppearanceStream(
     IFX_Edit* pEdit,
-    const CPDF_Point& ptOffset,
+    const CFX_FloatPoint& ptOffset,
     const CPVT_WordRange* pRange) {
   CFX_ByteTextBuf sRet;
 

@@ -156,7 +156,7 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonDown(
     CPDFSDK_PageView* pPageView,
     CPDFSDK_Annot* pAnnot,
     FX_DWORD nFlags,
-    const CPDF_Point& point) {
+    const CFX_FloatPoint& point) {
   ASSERT(pAnnot);
 
   if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot)) {
@@ -164,10 +164,11 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonDown(
   }
   return FALSE;
 }
-FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonUp(CPDFSDK_PageView* pPageView,
-                                                   CPDFSDK_Annot* pAnnot,
-                                                   FX_DWORD nFlags,
-                                                   const CPDF_Point& point) {
+FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonUp(
+    CPDFSDK_PageView* pPageView,
+    CPDFSDK_Annot* pAnnot,
+    FX_DWORD nFlags,
+    const CFX_FloatPoint& point) {
   ASSERT(pAnnot);
 
   if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot)) {
@@ -179,7 +180,7 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonDblClk(
     CPDFSDK_PageView* pPageView,
     CPDFSDK_Annot* pAnnot,
     FX_DWORD nFlags,
-    const CPDF_Point& point) {
+    const CFX_FloatPoint& point) {
   ASSERT(pAnnot);
 
   if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot)) {
@@ -187,10 +188,11 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnLButtonDblClk(
   }
   return FALSE;
 }
-FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnMouseMove(CPDFSDK_PageView* pPageView,
-                                                   CPDFSDK_Annot* pAnnot,
-                                                   FX_DWORD nFlags,
-                                                   const CPDF_Point& point) {
+FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnMouseMove(
+    CPDFSDK_PageView* pPageView,
+    CPDFSDK_Annot* pAnnot,
+    FX_DWORD nFlags,
+    const CFX_FloatPoint& point) {
   ASSERT(pAnnot);
 
   if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot)) {
@@ -198,11 +200,12 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnMouseMove(CPDFSDK_PageView* pPageView,
   }
   return FALSE;
 }
-FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnMouseWheel(CPDFSDK_PageView* pPageView,
-                                                    CPDFSDK_Annot* pAnnot,
-                                                    FX_DWORD nFlags,
-                                                    short zDelta,
-                                                    const CPDF_Point& point) {
+FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnMouseWheel(
+    CPDFSDK_PageView* pPageView,
+    CPDFSDK_Annot* pAnnot,
+    FX_DWORD nFlags,
+    short zDelta,
+    const CFX_FloatPoint& point) {
   ASSERT(pAnnot);
 
   if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot)) {
@@ -215,7 +218,7 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnRButtonDown(
     CPDFSDK_PageView* pPageView,
     CPDFSDK_Annot* pAnnot,
     FX_DWORD nFlags,
-    const CPDF_Point& point) {
+    const CFX_FloatPoint& point) {
   ASSERT(pAnnot);
 
   if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot)) {
@@ -223,10 +226,11 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnRButtonDown(
   }
   return FALSE;
 }
-FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnRButtonUp(CPDFSDK_PageView* pPageView,
-                                                   CPDFSDK_Annot* pAnnot,
-                                                   FX_DWORD nFlags,
-                                                   const CPDF_Point& point) {
+FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnRButtonUp(
+    CPDFSDK_PageView* pPageView,
+    CPDFSDK_Annot* pAnnot,
+    FX_DWORD nFlags,
+    const CFX_FloatPoint& point) {
   ASSERT(pAnnot);
 
   if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot)) {
@@ -331,7 +335,7 @@ FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnChangeFocus(
 }
 #endif  // PDF_ENABLE_XFA
 
-CPDF_Rect CPDFSDK_AnnotHandlerMgr::Annot_OnGetViewBBox(
+CFX_FloatRect CPDFSDK_AnnotHandlerMgr::Annot_OnGetViewBBox(
     CPDFSDK_PageView* pPageView,
     CPDFSDK_Annot* pAnnot) {
   ASSERT(pAnnot);
@@ -343,7 +347,7 @@ CPDF_Rect CPDFSDK_AnnotHandlerMgr::Annot_OnGetViewBBox(
 
 FX_BOOL CPDFSDK_AnnotHandlerMgr::Annot_OnHitTest(CPDFSDK_PageView* pPageView,
                                                  CPDFSDK_Annot* pAnnot,
-                                                 const CPDF_Point& point) {
+                                                 const CFX_FloatPoint& point) {
   ASSERT(pAnnot);
   if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot)) {
     if (pAnnotHandler->CanAnswer(pAnnot))
@@ -493,7 +497,7 @@ void CPDFSDK_BFAnnotHandler::OnMouseExit(CPDFSDK_PageView* pPageView,
 FX_BOOL CPDFSDK_BFAnnotHandler::OnLButtonDown(CPDFSDK_PageView* pPageView,
                                               CPDFSDK_Annot* pAnnot,
                                               FX_DWORD nFlags,
-                                              const CPDF_Point& point) {
+                                              const CFX_FloatPoint& point) {
   CFX_ByteString sSubType = pAnnot->GetSubType();
 
   if (sSubType == BFFT_SIGNATURE) {
@@ -508,7 +512,7 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnLButtonDown(CPDFSDK_PageView* pPageView,
 FX_BOOL CPDFSDK_BFAnnotHandler::OnLButtonUp(CPDFSDK_PageView* pPageView,
                                             CPDFSDK_Annot* pAnnot,
                                             FX_DWORD nFlags,
-                                            const CPDF_Point& point) {
+                                            const CFX_FloatPoint& point) {
   CFX_ByteString sSubType = pAnnot->GetSubType();
 
   if (sSubType == BFFT_SIGNATURE) {
@@ -523,7 +527,7 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnLButtonUp(CPDFSDK_PageView* pPageView,
 FX_BOOL CPDFSDK_BFAnnotHandler::OnLButtonDblClk(CPDFSDK_PageView* pPageView,
                                                 CPDFSDK_Annot* pAnnot,
                                                 FX_DWORD nFlags,
-                                                const CPDF_Point& point) {
+                                                const CFX_FloatPoint& point) {
   CFX_ByteString sSubType = pAnnot->GetSubType();
 
   if (sSubType == BFFT_SIGNATURE) {
@@ -538,7 +542,7 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnLButtonDblClk(CPDFSDK_PageView* pPageView,
 FX_BOOL CPDFSDK_BFAnnotHandler::OnMouseMove(CPDFSDK_PageView* pPageView,
                                             CPDFSDK_Annot* pAnnot,
                                             FX_DWORD nFlags,
-                                            const CPDF_Point& point) {
+                                            const CFX_FloatPoint& point) {
   CFX_ByteString sSubType = pAnnot->GetSubType();
 
   if (sSubType == BFFT_SIGNATURE) {
@@ -554,7 +558,7 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnMouseWheel(CPDFSDK_PageView* pPageView,
                                              CPDFSDK_Annot* pAnnot,
                                              FX_DWORD nFlags,
                                              short zDelta,
-                                             const CPDF_Point& point) {
+                                             const CFX_FloatPoint& point) {
   CFX_ByteString sSubType = pAnnot->GetSubType();
 
   if (sSubType == BFFT_SIGNATURE) {
@@ -570,7 +574,7 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnMouseWheel(CPDFSDK_PageView* pPageView,
 FX_BOOL CPDFSDK_BFAnnotHandler::OnRButtonDown(CPDFSDK_PageView* pPageView,
                                               CPDFSDK_Annot* pAnnot,
                                               FX_DWORD nFlags,
-                                              const CPDF_Point& point) {
+                                              const CFX_FloatPoint& point) {
   CFX_ByteString sSubType = pAnnot->GetSubType();
 
   if (sSubType == BFFT_SIGNATURE) {
@@ -584,7 +588,7 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnRButtonDown(CPDFSDK_PageView* pPageView,
 FX_BOOL CPDFSDK_BFAnnotHandler::OnRButtonUp(CPDFSDK_PageView* pPageView,
                                             CPDFSDK_Annot* pAnnot,
                                             FX_DWORD nFlags,
-                                            const CPDF_Point& point) {
+                                            const CFX_FloatPoint& point) {
   CFX_ByteString sSubType = pAnnot->GetSubType();
 
   if (sSubType == BFFT_SIGNATURE) {
@@ -694,8 +698,8 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnKillFocus(CPDFSDK_Annot* pAnnot,
   return TRUE;
 }
 
-CPDF_Rect CPDFSDK_BFAnnotHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
-                                              CPDFSDK_Annot* pAnnot) {
+CFX_FloatRect CPDFSDK_BFAnnotHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
+                                                  CPDFSDK_Annot* pAnnot) {
   CFX_ByteString sSubType = pAnnot->GetSubType();
 
   if (sSubType == BFFT_SIGNATURE) {
@@ -704,16 +708,16 @@ CPDF_Rect CPDFSDK_BFAnnotHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
       return m_pFormFiller->GetViewBBox(pPageView, pAnnot);
   }
 
-  return CPDF_Rect(0, 0, 0, 0);
+  return CFX_FloatRect(0, 0, 0, 0);
 }
 
 FX_BOOL CPDFSDK_BFAnnotHandler::HitTest(CPDFSDK_PageView* pPageView,
                                         CPDFSDK_Annot* pAnnot,
-                                        const CPDF_Point& point) {
+                                        const CFX_FloatPoint& point) {
   ASSERT(pPageView);
   ASSERT(pAnnot);
 
-  CPDF_Rect rect = GetViewBBox(pPageView, pAnnot);
+  CFX_FloatRect rect = GetViewBBox(pPageView, pAnnot);
   return rect.Contains(point.x, point.y);
 }
 
@@ -777,8 +781,8 @@ void CPDFSDK_XFAAnnotHandler::ReleaseAnnot(CPDFSDK_Annot* pAnnot) {
   delete pWidget;
 }
 
-CPDF_Rect CPDFSDK_XFAAnnotHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
-                                               CPDFSDK_Annot* pAnnot) {
+CFX_FloatRect CPDFSDK_XFAAnnotHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
+                                                   CPDFSDK_Annot* pAnnot) {
   ASSERT(pAnnot);
 
   IXFA_WidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
@@ -803,7 +807,7 @@ CPDF_Rect CPDFSDK_XFAAnnotHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
 
 FX_BOOL CPDFSDK_XFAAnnotHandler::HitTest(CPDFSDK_PageView* pPageView,
                                          CPDFSDK_Annot* pAnnot,
-                                         const CPDF_Point& point) {
+                                         const CFX_FloatPoint& point) {
   if (!pPageView || !pAnnot)
     return FALSE;
 
@@ -850,7 +854,7 @@ void CPDFSDK_XFAAnnotHandler::OnMouseExit(CPDFSDK_PageView* pPageView,
 FX_BOOL CPDFSDK_XFAAnnotHandler::OnLButtonDown(CPDFSDK_PageView* pPageView,
                                                CPDFSDK_Annot* pAnnot,
                                                FX_DWORD nFlags,
-                                               const CPDF_Point& point) {
+                                               const CFX_FloatPoint& point) {
   if (!pPageView || !pAnnot)
     return FALSE;
 
@@ -862,7 +866,7 @@ FX_BOOL CPDFSDK_XFAAnnotHandler::OnLButtonDown(CPDFSDK_PageView* pPageView,
 FX_BOOL CPDFSDK_XFAAnnotHandler::OnLButtonUp(CPDFSDK_PageView* pPageView,
                                              CPDFSDK_Annot* pAnnot,
                                              FX_DWORD nFlags,
-                                             const CPDF_Point& point) {
+                                             const CFX_FloatPoint& point) {
   if (!pPageView || !pAnnot)
     return FALSE;
 
@@ -874,7 +878,7 @@ FX_BOOL CPDFSDK_XFAAnnotHandler::OnLButtonUp(CPDFSDK_PageView* pPageView,
 FX_BOOL CPDFSDK_XFAAnnotHandler::OnLButtonDblClk(CPDFSDK_PageView* pPageView,
                                                  CPDFSDK_Annot* pAnnot,
                                                  FX_DWORD nFlags,
-                                                 const CPDF_Point& point) {
+                                                 const CFX_FloatPoint& point) {
   if (!pPageView || !pAnnot)
     return FALSE;
 
@@ -886,7 +890,7 @@ FX_BOOL CPDFSDK_XFAAnnotHandler::OnLButtonDblClk(CPDFSDK_PageView* pPageView,
 FX_BOOL CPDFSDK_XFAAnnotHandler::OnMouseMove(CPDFSDK_PageView* pPageView,
                                              CPDFSDK_Annot* pAnnot,
                                              FX_DWORD nFlags,
-                                             const CPDF_Point& point) {
+                                             const CFX_FloatPoint& point) {
   if (!pPageView || !pAnnot)
     return FALSE;
 
@@ -899,7 +903,7 @@ FX_BOOL CPDFSDK_XFAAnnotHandler::OnMouseWheel(CPDFSDK_PageView* pPageView,
                                               CPDFSDK_Annot* pAnnot,
                                               FX_DWORD nFlags,
                                               short zDelta,
-                                              const CPDF_Point& point) {
+                                              const CFX_FloatPoint& point) {
   if (!pPageView || !pAnnot)
     return FALSE;
 
@@ -911,7 +915,7 @@ FX_BOOL CPDFSDK_XFAAnnotHandler::OnMouseWheel(CPDFSDK_PageView* pPageView,
 FX_BOOL CPDFSDK_XFAAnnotHandler::OnRButtonDown(CPDFSDK_PageView* pPageView,
                                                CPDFSDK_Annot* pAnnot,
                                                FX_DWORD nFlags,
-                                               const CPDF_Point& point) {
+                                               const CFX_FloatPoint& point) {
   if (!pPageView || !pAnnot)
     return FALSE;
 
@@ -923,7 +927,7 @@ FX_BOOL CPDFSDK_XFAAnnotHandler::OnRButtonDown(CPDFSDK_PageView* pPageView,
 FX_BOOL CPDFSDK_XFAAnnotHandler::OnRButtonUp(CPDFSDK_PageView* pPageView,
                                              CPDFSDK_Annot* pAnnot,
                                              FX_DWORD nFlags,
-                                             const CPDF_Point& point) {
+                                             const CFX_FloatPoint& point) {
   if (!pPageView || !pAnnot)
     return FALSE;
 
@@ -935,7 +939,7 @@ FX_BOOL CPDFSDK_XFAAnnotHandler::OnRButtonUp(CPDFSDK_PageView* pPageView,
 FX_BOOL CPDFSDK_XFAAnnotHandler::OnRButtonDblClk(CPDFSDK_PageView* pPageView,
                                                  CPDFSDK_Annot* pAnnot,
                                                  FX_DWORD nFlags,
-                                                 const CPDF_Point& point) {
+                                                 const CFX_FloatPoint& point) {
   if (!pPageView || !pAnnot)
     return FALSE;
 

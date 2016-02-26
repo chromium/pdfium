@@ -89,8 +89,8 @@ class CPDFSDK_Annot {
   virtual CFX_ByteString GetType() const { return ""; }
   virtual CFX_ByteString GetSubType() const { return ""; }
 
-  virtual void SetRect(const CPDF_Rect& rect) {}
-  virtual CPDF_Rect GetRect() const { return CPDF_Rect(); }
+  virtual void SetRect(const CFX_FloatRect& rect) {}
+  virtual CFX_FloatRect GetRect() const { return CFX_FloatRect(); }
 
   virtual void Annot_OnDraw(CFX_RenderDevice* pDevice,
                             CFX_Matrix* pUser2Device,
@@ -130,8 +130,8 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
 
   CFX_ByteString GetType() const override;
   CFX_ByteString GetSubType() const override;
-  void SetRect(const CPDF_Rect& rect) override;
-  CPDF_Rect GetRect() const override;
+  void SetRect(const CFX_FloatRect& rect) override;
+  CFX_FloatRect GetRect() const override;
   CPDF_Annot* GetPDFAnnot() const override;
   void Annot_OnDraw(CFX_RenderDevice* pDevice,
                     CFX_Matrix* pUser2Device,
@@ -207,7 +207,7 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
   void ClearCachedAP();
 
   void WriteAppearance(const CFX_ByteString& sAPType,
-                       const CPDF_Rect& rcBBox,
+                       const CFX_FloatRect& rcBBox,
                        const CFX_Matrix& matrix,
                        const CFX_ByteString& sContents,
                        const CFX_ByteString& sAPState = "");

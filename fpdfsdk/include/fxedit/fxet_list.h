@@ -7,7 +7,7 @@
 #ifndef FPDFSDK_INCLUDE_FXEDIT_FXET_LIST_H_
 #define FPDFSDK_INCLUDE_FXEDIT_FXET_LIST_H_
 
-#include "core/include/fpdfapi/fpdf_parser.h"  // For CPDF_Point.
+#include "core/include/fpdfapi/fpdf_parser.h"  // For CFX_FloatPoint.
 #include "fpdfsdk/include/fxedit/fx_edit.h"
 
 class IFX_Edit;
@@ -33,7 +33,7 @@ class CLST_Size {
   FX_FLOAT x, y;
 };
 
-class CLST_Rect : public CPDF_Rect {
+class CLST_Rect : public CFX_FloatRect {
  public:
   CLST_Rect() { left = top = right = bottom = 0.0f; }
 
@@ -47,7 +47,7 @@ class CLST_Rect : public CPDF_Rect {
     bottom = other_bottom;
   }
 
-  CLST_Rect(const CPDF_Rect& rect) {
+  CLST_Rect(const CFX_FloatRect& rect) {
     left = rect.left;
     top = rect.top;
     right = rect.right;
@@ -58,7 +58,7 @@ class CLST_Rect : public CPDF_Rect {
 
   void Default() { left = top = right = bottom = 0.0f; }
 
-  const CLST_Rect operator=(const CPDF_Rect& rect) {
+  const CLST_Rect operator=(const CFX_FloatRect& rect) {
     left = rect.left;
     top = rect.top;
     right = rect.right;
@@ -83,11 +83,11 @@ class CLST_Rect : public CPDF_Rect {
     return bottom - top;
   }
 
-  CPDF_Point LeftTop() const { return CPDF_Point(left, top); }
+  CFX_FloatPoint LeftTop() const { return CFX_FloatPoint(left, top); }
 
-  CPDF_Point RightBottom() const { return CPDF_Point(right, bottom); }
+  CFX_FloatPoint RightBottom() const { return CFX_FloatPoint(right, bottom); }
 
-  const CLST_Rect operator+=(const CPDF_Point& point) {
+  const CLST_Rect operator+=(const CFX_FloatPoint& point) {
     left += point.x;
     right += point.x;
     top += point.y;
@@ -96,7 +96,7 @@ class CLST_Rect : public CPDF_Rect {
     return *this;
   }
 
-  const CLST_Rect operator-=(const CPDF_Point& point) {
+  const CLST_Rect operator-=(const CFX_FloatPoint& point) {
     left -= point.x;
     right -= point.x;
     top -= point.y;
@@ -105,12 +105,12 @@ class CLST_Rect : public CPDF_Rect {
     return *this;
   }
 
-  CLST_Rect operator+(const CPDF_Point& point) const {
+  CLST_Rect operator+(const CFX_FloatPoint& point) const {
     return CLST_Rect(left + point.x, top + point.y, right + point.x,
                      bottom + point.y);
   }
 
-  CLST_Rect operator-(const CPDF_Point& point) const {
+  CLST_Rect operator-(const CFX_FloatPoint& point) const {
     return CLST_Rect(left - point.x, top - point.y, right - point.x,
                      bottom - point.y);
   }
@@ -152,41 +152,43 @@ class CFX_ListContainer {
       : m_rcPlate(0.0f, 0.0f, 0.0f, 0.0f),
         m_rcContent(0.0f, 0.0f, 0.0f, 0.0f) {}
   virtual ~CFX_ListContainer() {}
-  virtual void SetPlateRect(const CPDF_Rect& rect) { m_rcPlate = rect; }
-  CPDF_Rect GetPlateRect() const { return m_rcPlate; }
+  virtual void SetPlateRect(const CFX_FloatRect& rect) { m_rcPlate = rect; }
+  CFX_FloatRect GetPlateRect() const { return m_rcPlate; }
   void SetContentRect(const CLST_Rect& rect) { m_rcContent = rect; }
   CLST_Rect GetContentRect() const { return m_rcContent; }
-  CPDF_Point GetBTPoint() const {
-    return CPDF_Point(m_rcPlate.left, m_rcPlate.top);
+  CFX_FloatPoint GetBTPoint() const {
+    return CFX_FloatPoint(m_rcPlate.left, m_rcPlate.top);
   }
-  CPDF_Point GetETPoint() const {
-    return CPDF_Point(m_rcPlate.right, m_rcPlate.bottom);
+  CFX_FloatPoint GetETPoint() const {
+    return CFX_FloatPoint(m_rcPlate.right, m_rcPlate.bottom);
   }
 
  public:
-  CPDF_Point InnerToOuter(const CPDF_Point& point) const {
-    return CPDF_Point(point.x + GetBTPoint().x, GetBTPoint().y - point.y);
+  CFX_FloatPoint InnerToOuter(const CFX_FloatPoint& point) const {
+    return CFX_FloatPoint(point.x + GetBTPoint().x, GetBTPoint().y - point.y);
   }
-  CPDF_Point OuterToInner(const CPDF_Point& point) const {
-    return CPDF_Point(point.x - GetBTPoint().x, GetBTPoint().y - point.y);
+  CFX_FloatPoint OuterToInner(const CFX_FloatPoint& point) const {
+    return CFX_FloatPoint(point.x - GetBTPoint().x, GetBTPoint().y - point.y);
   }
-  CPDF_Rect InnerToOuter(const CLST_Rect& rect) const {
-    CPDF_Point ptLeftTop = InnerToOuter(CPDF_Point(rect.left, rect.top));
-    CPDF_Point ptRightBottom =
-        InnerToOuter(CPDF_Point(rect.right, rect.bottom));
-    return CPDF_Rect(ptLeftTop.x, ptRightBottom.y, ptRightBottom.x,
-                     ptLeftTop.y);
+  CFX_FloatRect InnerToOuter(const CLST_Rect& rect) const {
+    CFX_FloatPoint ptLeftTop =
+        InnerToOuter(CFX_FloatPoint(rect.left, rect.top));
+    CFX_FloatPoint ptRightBottom =
+        InnerToOuter(CFX_FloatPoint(rect.right, rect.bottom));
+    return CFX_FloatRect(ptLeftTop.x, ptRightBottom.y, ptRightBottom.x,
+                         ptLeftTop.y);
   }
-  CLST_Rect OuterToInner(const CPDF_Rect& rect) const {
-    CPDF_Point ptLeftTop = OuterToInner(CPDF_Point(rect.left, rect.top));
-    CPDF_Point ptRightBottom =
-        OuterToInner(CPDF_Point(rect.right, rect.bottom));
+  CLST_Rect OuterToInner(const CFX_FloatRect& rect) const {
+    CFX_FloatPoint ptLeftTop =
+        OuterToInner(CFX_FloatPoint(rect.left, rect.top));
+    CFX_FloatPoint ptRightBottom =
+        OuterToInner(CFX_FloatPoint(rect.right, rect.bottom));
     return CLST_Rect(ptLeftTop.x, ptLeftTop.y, ptRightBottom.x,
                      ptRightBottom.y);
   }
 
  private:
-  CPDF_Rect m_rcPlate;
+  CFX_FloatRect m_rcPlate;
   CLST_Rect m_rcContent;  // positive forever!
 };
 
@@ -213,8 +215,8 @@ class CFX_List : protected CFX_ListContainer, public IFX_List {
   // IFX_List:
   void SetFontMap(IFX_Edit_FontMap* pFontMap) override;
   void SetFontSize(FX_FLOAT fFontSize) override;
-  CPDF_Rect GetPlateRect() const override;
-  CPDF_Rect GetContentRect() const override;
+  CFX_FloatRect GetPlateRect() const override;
+  CFX_FloatRect GetContentRect() const override;
   FX_FLOAT GetFontSize() const override;
   IFX_Edit* GetItemEdit(int32_t nIndex) const override;
   int32_t GetCount() const override;
@@ -225,8 +227,8 @@ class CFX_List : protected CFX_ListContainer, public IFX_List {
   FX_BOOL IsValid(int32_t nItemIndex) const override;
   int32_t FindNext(int32_t nIndex, FX_WCHAR nChar) const override;
   void Empty() override;
-  CPDF_Rect GetItemRect(int32_t nIndex) const override;
-  int32_t GetItemIndex(const CPDF_Point& point) const override;
+  CFX_FloatRect GetItemRect(int32_t nIndex) const override;
+  int32_t GetItemIndex(const CFX_FloatPoint& point) const override;
   int32_t GetFirstSelected() const override;
 
  protected:
@@ -284,10 +286,10 @@ class CFX_ListCtrl : public CFX_List {
 
   // CFX_List
   void SetNotify(IFX_List_Notify* pNotify) override;
-  void OnMouseDown(const CPDF_Point& point,
+  void OnMouseDown(const CFX_FloatPoint& point,
                    FX_BOOL bShift,
                    FX_BOOL bCtrl) override;
-  void OnMouseMove(const CPDF_Point& point,
+  void OnMouseMove(const CFX_FloatPoint& point,
                    FX_BOOL bShift,
                    FX_BOOL bCtrl) override;
   void OnVK_UP(FX_BOOL bShift, FX_BOOL bCtrl) override;
@@ -298,15 +300,15 @@ class CFX_ListCtrl : public CFX_List {
   void OnVK_END(FX_BOOL bShift, FX_BOOL bCtrl) override;
   void OnVK(int32_t nItemIndex, FX_BOOL bShift, FX_BOOL bCtrl) override;
   FX_BOOL OnChar(FX_WORD nChar, FX_BOOL bShift, FX_BOOL bCtrl) override;
-  void SetPlateRect(const CPDF_Rect& rect) override;
-  void SetScrollPos(const CPDF_Point& point) override;
+  void SetPlateRect(const CFX_FloatRect& rect) override;
+  void SetScrollPos(const CFX_FloatPoint& point) override;
   void ScrollToListItem(int32_t nItemIndex) override;
-  CPDF_Rect GetItemRect(int32_t nIndex) const override;
+  CFX_FloatRect GetItemRect(int32_t nIndex) const override;
   int32_t GetCaret() const override { return m_nCaretIndex; }
   int32_t GetSelect() const override { return m_nSelItem; }
   int32_t GetTopItem() const override;
-  CPDF_Rect GetContentRect() const override;
-  int32_t GetItemIndex(const CPDF_Point& point) const override;
+  CFX_FloatRect GetContentRect() const override;
+  int32_t GetItemIndex(const CFX_FloatPoint& point) const override;
   void AddString(const FX_WCHAR* string) override;
   void SetTopItem(int32_t nIndex) override;
   void Select(int32_t nItemIndex) override;
@@ -316,10 +318,10 @@ class CFX_ListCtrl : public CFX_List {
   CFX_WideString GetText() const override;
   void ReArrange(int32_t nItemIndex) override;
 
-  virtual CPDF_Point InToOut(const CPDF_Point& point) const;
-  virtual CPDF_Point OutToIn(const CPDF_Point& point) const;
-  virtual CPDF_Rect InToOut(const CPDF_Rect& rect) const;
-  virtual CPDF_Rect OutToIn(const CPDF_Rect& rect) const;
+  virtual CFX_FloatPoint InToOut(const CFX_FloatPoint& point) const;
+  virtual CFX_FloatPoint OutToIn(const CFX_FloatPoint& point) const;
+  virtual CFX_FloatRect InToOut(const CFX_FloatRect& rect) const;
+  virtual CFX_FloatRect OutToIn(const CFX_FloatRect& rect) const;
 
  private:
   void SetMultipleSelect(int32_t nItemIndex, FX_BOOL bSelected);
@@ -333,7 +335,7 @@ class CFX_ListCtrl : public CFX_List {
  private:
   IFX_List_Notify* m_pNotify;
   FX_BOOL m_bNotifyFlag;
-  CPDF_Point m_ptScrollPos;
+  CFX_FloatPoint m_ptScrollPos;
   CPLST_Select m_aSelItems;  // for multiple
   int32_t m_nSelItem;        // for single
   int32_t m_nFootIndex;      // for multiple

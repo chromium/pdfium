@@ -13,7 +13,7 @@
 
 namespace {
 
-void CheckRect(const CPDF_Rect& actual, const CPDF_Rect& expected) {
+void CheckRect(const CFX_FloatRect& actual, const CFX_FloatRect& expected) {
   EXPECT_EQ(expected.left, actual.left);
   EXPECT_EQ(expected.bottom, actual.bottom);
   EXPECT_EQ(expected.right, actual.right);
@@ -30,10 +30,10 @@ TEST_F(FSDKBaseFormEmbeddertest, CBA_AnnotIterator) {
   EXPECT_TRUE(LoadPage(1));
   EXPECT_TRUE(LoadPage(2));
 
-  CPDF_Rect LeftBottom(200, 200, 220, 220);
-  CPDF_Rect RightBottom(400, 201, 420, 221);
-  CPDF_Rect LeftTop(201, 400, 221, 420);
-  CPDF_Rect RightTop(401, 401, 421, 421);
+  CFX_FloatRect LeftBottom(200, 200, 220, 220);
+  CFX_FloatRect RightBottom(400, 201, 420, 221);
+  CFX_FloatRect LeftTop(201, 400, 221, 420);
+  CFX_FloatRect RightTop(401, 401, 421, 421);
 
   CPDFSDK_Document* pSDKDoc =
       CPDFSDK_Document::FromFPDFFormHandle(form_handle());

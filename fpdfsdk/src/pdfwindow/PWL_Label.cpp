@@ -29,7 +29,7 @@ void CPWL_Label::OnCreated() {
   m_pEdit->Initialize();
 
   if (HasFlag(PES_TEXTOVERFLOW)) {
-    SetClipRect(CPDF_Rect(0.0f, 0.0f, 0.0f, 0.0f));
+    SetClipRect(CFX_FloatRect(0.0f, 0.0f, 0.0f, 0.0f));
     m_pEdit->SetTextOverflow(TRUE);
   }
 }
@@ -87,7 +87,7 @@ void CPWL_Label::DrawThisAppearance(CFX_RenderDevice* pDevice,
 
   GetClientRect();
 
-  CPDF_Rect rcClip;
+  CFX_FloatRect rcClip;
   CPVT_WordRange wrRange = m_pEdit->GetVisibleWordRange();
   CPVT_WordRange* pRange = NULL;
 
@@ -100,7 +100,7 @@ void CPWL_Label::DrawThisAppearance(CFX_RenderDevice* pDevice,
       pDevice, pUser2Device, m_pEdit,
       CPWL_Utils::PWLColorToFXColor(GetTextColor(), GetTransparency()),
       CPWL_Utils::PWLColorToFXColor(GetTextStrokeColor(), GetTransparency()),
-      rcClip, CPDF_Point(0.0f, 0.0f), pRange, pSysHandler, NULL);
+      rcClip, CFX_FloatPoint(0.0f, 0.0f), pRange, pSysHandler, NULL);
 }
 
 void CPWL_Label::SetHorzScale(int32_t nHorzScale) {
@@ -111,18 +111,18 @@ void CPWL_Label::SetCharSpace(FX_FLOAT fCharSpace) {
   m_pEdit->SetCharSpace(fCharSpace);
 }
 
-CPDF_Rect CPWL_Label::GetContentRect() const {
+CFX_FloatRect CPWL_Label::GetContentRect() const {
   return m_pEdit->GetContentRect();
 }
 
 void CPWL_Label::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
   CPWL_Wnd::GetThisAppearanceStream(sAppStream);
 
-  sAppStream << GetTextAppearanceStream(CPDF_Point(0.0f, 0.0f));
+  sAppStream << GetTextAppearanceStream(CFX_FloatPoint(0.0f, 0.0f));
 }
 
 CFX_ByteString CPWL_Label::GetTextAppearanceStream(
-    const CPDF_Point& ptOffset) const {
+    const CFX_FloatPoint& ptOffset) const {
   CFX_ByteTextBuf sRet;
   CFX_ByteString sEdit = CPWL_Utils::GetEditAppStream(m_pEdit, ptOffset);
 

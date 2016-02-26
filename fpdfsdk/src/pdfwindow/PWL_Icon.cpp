@@ -16,7 +16,7 @@ CFX_ByteString CPWL_Image::GetImageAppStream() {
   CFX_ByteTextBuf sAppStream;
 
   CFX_ByteString sAlias = GetImageAlias();
-  CPDF_Rect rcPlate = GetClientRect();
+  CFX_FloatRect rcPlate = GetClientRect();
   CFX_Matrix mt;
   mt.SetReverse(GetImageMatrix());
 
@@ -60,7 +60,7 @@ void CPWL_Image::GetImageSize(FX_FLOAT& fWidth, FX_FLOAT& fHeight) {
 
   if (m_pPDFStream) {
     if (CPDF_Dictionary* pDict = m_pPDFStream->GetDict()) {
-      CPDF_Rect rect = pDict->GetRectBy("BBox");
+      CFX_FloatRect rect = pDict->GetRectBy("BBox");
 
       fWidth = rect.right - rect.left;
       fHeight = rect.top - rect.bottom;
@@ -157,7 +157,7 @@ void CPWL_Icon::GetScale(FX_FLOAT& fHScale, FX_FLOAT& fVScale) {
     FX_FLOAT fImageWidth, fImageHeight;
     FX_FLOAT fPlateWidth, fPlateHeight;
 
-    CPDF_Rect rcPlate = GetClientRect();
+    CFX_FloatRect rcPlate = GetClientRect();
     fPlateWidth = rcPlate.right - rcPlate.left;
     fPlateHeight = rcPlate.top - rcPlate.bottom;
 
@@ -213,7 +213,7 @@ void CPWL_Icon::GetImageOffset(FX_FLOAT& x, FX_FLOAT& y) {
   FX_FLOAT fImageFactHeight = fImageHeight * fVScale;
 
   FX_FLOAT fPlateWidth, fPlateHeight;
-  CPDF_Rect rcPlate = GetClientRect();
+  CFX_FloatRect rcPlate = GetClientRect();
   fPlateWidth = rcPlate.right - rcPlate.left;
   fPlateHeight = rcPlate.top - rcPlate.bottom;
 

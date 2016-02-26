@@ -7,7 +7,7 @@
 #ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_UTILS_H_
 #define FPDFSDK_INCLUDE_PDFWINDOW_PWL_UTILS_H_
 
-#include "core/include/fpdfapi/fpdf_parser.h"  // For CPDF_Point.
+#include "core/include/fpdfapi/fpdf_parser.h"  // For CFX_FloatPoint.
 #include "core/include/fpdfdoc/fpdf_vt.h"      // For CPVT_WordRange.
 #include "fpdfsdk/include/fxedit/fx_edit.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
@@ -74,11 +74,11 @@ T PWL_MAX(const T& i, const T& j) {
 #define PPBL_LABELLEFTICONRIGHT 5
 #define PPBL_LABELOVERICON 6
 
-class CPWL_Point : public CPDF_Point {
+class CPWL_Point : public CFX_FloatPoint {
  public:
-  CPWL_Point() : CPDF_Point(0.0f, 0.0f) {}
-  CPWL_Point(FX_FLOAT fx, FX_FLOAT fy) : CPDF_Point(fx, fy) {}
-  CPWL_Point(const CPWL_Point& point) : CPDF_Point(point.x, point.y) {}
+  CPWL_Point() : CFX_FloatPoint(0.0f, 0.0f) {}
+  CPWL_Point(FX_FLOAT fx, FX_FLOAT fy) : CFX_FloatPoint(fx, fy) {}
+  CPWL_Point(const CPWL_Point& point) : CFX_FloatPoint(point.x, point.y) {}
 };
 
 enum PWL_PATHDATA_TYPE {
@@ -104,24 +104,28 @@ class IPWL_SpellCheck;
 
 class CPWL_Utils {
  public:
-  static CPDF_Rect InflateRect(const CPDF_Rect& rcRect, FX_FLOAT fSize);
-  static CPDF_Rect DeflateRect(const CPDF_Rect& rcRect, FX_FLOAT fSize);
-  static FX_BOOL IntersectRect(const CPDF_Rect& rect1, const CPDF_Rect& rect2);
-  static FX_BOOL ContainsRect(const CPDF_Rect& rcParent,
-                              const CPDF_Rect& rcChild);
-  static CPDF_Rect ScaleRect(const CPDF_Rect& rcRect, FX_FLOAT fScale);
+  static CFX_FloatRect InflateRect(const CFX_FloatRect& rcRect, FX_FLOAT fSize);
+  static CFX_FloatRect DeflateRect(const CFX_FloatRect& rcRect, FX_FLOAT fSize);
+  static FX_BOOL IntersectRect(const CFX_FloatRect& rect1,
+                               const CFX_FloatRect& rect2);
+  static FX_BOOL ContainsRect(const CFX_FloatRect& rcParent,
+                              const CFX_FloatRect& rcChild);
+  static CFX_FloatRect ScaleRect(const CFX_FloatRect& rcRect, FX_FLOAT fScale);
   static CPVT_WordRange OverlapWordRange(const CPVT_WordRange& wr1,
                                          const CPVT_WordRange& wr2);
-  static CPDF_Rect GetCenterSquare(const CPDF_Rect& rect);
+  static CFX_FloatRect GetCenterSquare(const CFX_FloatRect& rect);
   static CPWL_Color SubstractColor(const CPWL_Color& sColor,
                                    FX_FLOAT fColorSub);
   static CPWL_Color DevideColor(const CPWL_Color& sColor,
                                 FX_FLOAT fColorDevide);
-  static CPDF_Rect MaxRect(const CPDF_Rect& rect1, const CPDF_Rect& rect2);
-  static CPDF_Rect OffsetRect(const CPDF_Rect& rect, FX_FLOAT x, FX_FLOAT y);
-  static CPDF_Point OffsetPoint(const CPDF_Point& point,
-                                FX_FLOAT x,
-                                FX_FLOAT y);
+  static CFX_FloatRect MaxRect(const CFX_FloatRect& rect1,
+                               const CFX_FloatRect& rect2);
+  static CFX_FloatRect OffsetRect(const CFX_FloatRect& rect,
+                                  FX_FLOAT x,
+                                  FX_FLOAT y);
+  static CFX_FloatPoint OffsetPoint(const CFX_FloatPoint& point,
+                                    FX_FLOAT x,
+                                    FX_FLOAT y);
   static FX_COLORREF PWLColorToFXColor(const CPWL_Color& color,
                                        int32_t nTransparancy = 255);
   static FX_BOOL IsBlackOrWhite(const CPWL_Color& color);
@@ -129,7 +133,7 @@ class CPWL_Utils {
 
   static CFX_ByteString GetColorAppStream(const CPWL_Color& color,
                                           const FX_BOOL& bFillOrStroke = TRUE);
-  static CFX_ByteString GetBorderAppStream(const CPDF_Rect& rect,
+  static CFX_ByteString GetBorderAppStream(const CFX_FloatRect& rect,
                                            FX_FLOAT fWidth,
                                            const CPWL_Color& color,
                                            const CPWL_Color& crLeftTop,
@@ -137,19 +141,19 @@ class CPWL_Utils {
                                            int32_t nStyle,
                                            const CPWL_Dash& dash);
   static CFX_ByteString GetCircleBorderAppStream(
-      const CPDF_Rect& rect,
+      const CFX_FloatRect& rect,
       FX_FLOAT fWidth,
       const CPWL_Color& color,
       const CPWL_Color& crLeftTop,
       const CPWL_Color& crRightBottom,
       int32_t nStyle,
       const CPWL_Dash& dash);
-  static CFX_ByteString GetRectFillAppStream(const CPDF_Rect& rect,
+  static CFX_ByteString GetRectFillAppStream(const CFX_FloatRect& rect,
                                              const CPWL_Color& color);
-  static CFX_ByteString GetCircleFillAppStream(const CPDF_Rect& rect,
+  static CFX_ByteString GetCircleFillAppStream(const CFX_FloatRect& rect,
                                                const CPWL_Color& color);
 
-  static CFX_ByteString GetPushButtonAppStream(const CPDF_Rect& rcBBox,
+  static CFX_ByteString GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
                                                IFX_Edit_FontMap* pFontMap,
                                                CPDF_Stream* pIconStream,
                                                CPDF_IconFit& IconFit,
@@ -157,28 +161,28 @@ class CPWL_Utils {
                                                const CPWL_Color& crText,
                                                FX_FLOAT fFontSize,
                                                int32_t nLayOut);
-  static CFX_ByteString GetCheckBoxAppStream(const CPDF_Rect& rcBBox,
+  static CFX_ByteString GetCheckBoxAppStream(const CFX_FloatRect& rcBBox,
                                              int32_t nStyle,
                                              const CPWL_Color& crText);
-  static CFX_ByteString GetRadioButtonAppStream(const CPDF_Rect& rcBBox,
+  static CFX_ByteString GetRadioButtonAppStream(const CFX_FloatRect& rcBBox,
                                                 int32_t nStyle,
                                                 const CPWL_Color& crText);
 
   static CFX_ByteString GetEditAppStream(IFX_Edit* pEdit,
-                                         const CPDF_Point& ptOffset,
+                                         const CFX_FloatPoint& ptOffset,
                                          const CPVT_WordRange* pRange = NULL,
                                          FX_BOOL bContinuous = TRUE,
                                          FX_WORD SubWord = 0);
   static CFX_ByteString GetEditSelAppStream(
       IFX_Edit* pEdit,
-      const CPDF_Point& ptOffset,
+      const CFX_FloatPoint& ptOffset,
       const CPVT_WordRange* pRange = NULL);
   static CFX_ByteString GetSpellCheckAppStream(
       IFX_Edit* pEdit,
       IPWL_SpellCheck* pSpellCheck,
-      const CPDF_Point& ptOffset,
+      const CFX_FloatPoint& ptOffset,
       const CPVT_WordRange* pRange = NULL);
-  static CFX_ByteString GetTextAppStream(const CPDF_Rect& rcBBox,
+  static CFX_ByteString GetTextAppStream(const CFX_FloatRect& rcBBox,
                                          IFX_Edit_FontMap* pFontMap,
                                          const CFX_WideString& sText,
                                          int32_t nAlignmentH,
@@ -187,31 +191,31 @@ class CPWL_Utils {
                                          FX_BOOL bMultiLine,
                                          FX_BOOL bAutoReturn,
                                          const CPWL_Color& crText);
-  static CFX_ByteString GetDropButtonAppStream(const CPDF_Rect& rcBBox);
+  static CFX_ByteString GetDropButtonAppStream(const CFX_FloatRect& rcBBox);
 
   static void DrawFillRect(CFX_RenderDevice* pDevice,
                            CFX_Matrix* pUser2Device,
-                           const CPDF_Rect& rect,
+                           const CFX_FloatRect& rect,
                            const CPWL_Color& color,
                            int32_t nTransparancy);
   static void DrawFillRect(CFX_RenderDevice* pDevice,
                            CFX_Matrix* pUser2Device,
-                           const CPDF_Rect& rect,
+                           const CFX_FloatRect& rect,
                            const FX_COLORREF& color);
   static void DrawStrokeRect(CFX_RenderDevice* pDevice,
                              CFX_Matrix* pUser2Device,
-                             const CPDF_Rect& rect,
+                             const CFX_FloatRect& rect,
                              const FX_COLORREF& color,
                              FX_FLOAT fWidth);
   static void DrawStrokeLine(CFX_RenderDevice* pDevice,
                              CFX_Matrix* pUser2Device,
-                             const CPDF_Point& ptMoveTo,
-                             const CPDF_Point& ptLineTo,
+                             const CFX_FloatPoint& ptMoveTo,
+                             const CFX_FloatPoint& ptLineTo,
                              const FX_COLORREF& color,
                              FX_FLOAT fWidth);
   static void DrawBorder(CFX_RenderDevice* pDevice,
                          CFX_Matrix* pUser2Device,
-                         const CPDF_Rect& rect,
+                         const CFX_FloatRect& rect,
                          FX_FLOAT fWidth,
                          const CPWL_Color& color,
                          const CPWL_Color& crLeftTop,
@@ -220,22 +224,22 @@ class CPWL_Utils {
                          int32_t nTransparancy);
   static void DrawFillArea(CFX_RenderDevice* pDevice,
                            CFX_Matrix* pUser2Device,
-                           const CPDF_Point* pPts,
+                           const CFX_FloatPoint* pPts,
                            int32_t nCount,
                            const FX_COLORREF& color);
   static void DrawShadow(CFX_RenderDevice* pDevice,
                          CFX_Matrix* pUser2Device,
                          FX_BOOL bVertical,
                          FX_BOOL bHorizontal,
-                         CPDF_Rect rect,
+                         CFX_FloatRect rect,
                          int32_t nTransparancy,
                          int32_t nStartGray,
                          int32_t nEndGray);
   static void DrawEditSpellCheck(CFX_RenderDevice* pDevice,
                                  CFX_Matrix* pUser2Device,
                                  IFX_Edit* pEdit,
-                                 const CPDF_Rect& rcClip,
-                                 const CPDF_Point& ptOffset,
+                                 const CFX_FloatRect& rcClip,
+                                 const CFX_FloatPoint& ptOffset,
                                  const CPVT_WordRange* pRange,
                                  IPWL_SpellCheck* pSpellCheck);
 
@@ -284,13 +288,13 @@ class CPWL_Utils {
  public:
   static CFX_ByteString GetIconAppStream(
       int32_t nType,
-      const CPDF_Rect& rect,
+      const CFX_FloatRect& rect,
       const CPWL_Color& crFill,
       const CPWL_Color& crStroke = PWL_DEFAULT_BLACKCOLOR);
   static void DrawIconAppStream(CFX_RenderDevice* pDevice,
                                 CFX_Matrix* pUser2Device,
                                 int32_t nType,
-                                const CPDF_Rect& rect,
+                                const CFX_FloatRect& rect,
                                 const CPWL_Color& crFill,
                                 const CPWL_Color& crStroke,
                                 const int32_t nTransparancy);
@@ -302,107 +306,107 @@ class CPWL_Utils {
                                    const CPWL_PathData* pPathData,
                                    int32_t nCount);
 
-  static CFX_ByteString GetAppStream_Check(const CPDF_Rect& rcBBox,
+  static CFX_ByteString GetAppStream_Check(const CFX_FloatRect& rcBBox,
                                            const CPWL_Color& crText);
-  static CFX_ByteString GetAppStream_Circle(const CPDF_Rect& rcBBox,
+  static CFX_ByteString GetAppStream_Circle(const CFX_FloatRect& rcBBox,
                                             const CPWL_Color& crText);
-  static CFX_ByteString GetAppStream_Cross(const CPDF_Rect& rcBBox,
+  static CFX_ByteString GetAppStream_Cross(const CFX_FloatRect& rcBBox,
                                            const CPWL_Color& crText);
-  static CFX_ByteString GetAppStream_Diamond(const CPDF_Rect& rcBBox,
+  static CFX_ByteString GetAppStream_Diamond(const CFX_FloatRect& rcBBox,
                                              const CPWL_Color& crText);
-  static CFX_ByteString GetAppStream_Square(const CPDF_Rect& rcBBox,
+  static CFX_ByteString GetAppStream_Square(const CFX_FloatRect& rcBBox,
                                             const CPWL_Color& crText);
-  static CFX_ByteString GetAppStream_Star(const CPDF_Rect& rcBBox,
+  static CFX_ByteString GetAppStream_Star(const CFX_FloatRect& rcBBox,
                                           const CPWL_Color& crText);
 
-  static CFX_ByteString GetAP_Check(const CPDF_Rect& crBBox);
-  static CFX_ByteString GetAP_Circle(const CPDF_Rect& crBBox);
-  static CFX_ByteString GetAP_Cross(const CPDF_Rect& crBBox);
-  static CFX_ByteString GetAP_Diamond(const CPDF_Rect& crBBox);
-  static CFX_ByteString GetAP_Square(const CPDF_Rect& crBBox);
-  static CFX_ByteString GetAP_Star(const CPDF_Rect& crBBox);
-  static CFX_ByteString GetAP_HalfCircle(const CPDF_Rect& crBBox,
+  static CFX_ByteString GetAP_Check(const CFX_FloatRect& crBBox);
+  static CFX_ByteString GetAP_Circle(const CFX_FloatRect& crBBox);
+  static CFX_ByteString GetAP_Cross(const CFX_FloatRect& crBBox);
+  static CFX_ByteString GetAP_Diamond(const CFX_FloatRect& crBBox);
+  static CFX_ByteString GetAP_Square(const CFX_FloatRect& crBBox);
+  static CFX_ByteString GetAP_Star(const CFX_FloatRect& crBBox);
+  static CFX_ByteString GetAP_HalfCircle(const CFX_FloatRect& crBBox,
                                          FX_FLOAT fRotate);
 
   static void GetGraphics_Checkmark(CFX_ByteString& sPathData,
                                     CFX_PathData& path,
-                                    const CPDF_Rect& crBBox,
+                                    const CFX_FloatRect& crBBox,
                                     const PWL_PATH_TYPE type);
   static void GetGraphics_Circle(CFX_ByteString& sPathData,
                                  CFX_PathData& path,
-                                 const CPDF_Rect& crBBox,
+                                 const CFX_FloatRect& crBBox,
                                  const PWL_PATH_TYPE type);
   static void GetGraphics_Comment(CFX_ByteString& sPathData,
                                   CFX_PathData& path,
-                                  const CPDF_Rect& crBBox,
+                                  const CFX_FloatRect& crBBox,
                                   const PWL_PATH_TYPE type);
   static void GetGraphics_Cross(CFX_ByteString& sPathData,
                                 CFX_PathData& path,
-                                const CPDF_Rect& crBBox,
+                                const CFX_FloatRect& crBBox,
                                 const PWL_PATH_TYPE type);
   static void GetGraphics_Help(CFX_ByteString& sPathData,
                                CFX_PathData& path,
-                               const CPDF_Rect& crBBox,
+                               const CFX_FloatRect& crBBox,
                                const PWL_PATH_TYPE type);
   static void GetGraphics_InsertText(CFX_ByteString& sPathData,
                                      CFX_PathData& path,
-                                     const CPDF_Rect& crBBox,
+                                     const CFX_FloatRect& crBBox,
                                      const PWL_PATH_TYPE type);
   static void GetGraphics_Key(CFX_ByteString& sPathData,
                               CFX_PathData& path,
-                              const CPDF_Rect& crBBox,
+                              const CFX_FloatRect& crBBox,
                               const PWL_PATH_TYPE type);
   static void GetGraphics_NewParagraph(CFX_ByteString& sPathData,
                                        CFX_PathData& path,
-                                       const CPDF_Rect& crBBox,
+                                       const CFX_FloatRect& crBBox,
                                        const PWL_PATH_TYPE type);
   static void GetGraphics_TextNote(CFX_ByteString& sPathData,
                                    CFX_PathData& path,
-                                   const CPDF_Rect& crBBox,
+                                   const CFX_FloatRect& crBBox,
                                    const PWL_PATH_TYPE type);
   static void GetGraphics_Paragraph(CFX_ByteString& sPathData,
                                     CFX_PathData& path,
-                                    const CPDF_Rect& crBBox,
+                                    const CFX_FloatRect& crBBox,
                                     const PWL_PATH_TYPE type);
   static void GetGraphics_RightArrow(CFX_ByteString& sPathData,
                                      CFX_PathData& path,
-                                     const CPDF_Rect& crBBox,
+                                     const CFX_FloatRect& crBBox,
                                      const PWL_PATH_TYPE type);
   static void GetGraphics_RightPointer(CFX_ByteString& sPathData,
                                        CFX_PathData& path,
-                                       const CPDF_Rect& crBBox,
+                                       const CFX_FloatRect& crBBox,
                                        const PWL_PATH_TYPE type);
   static void GetGraphics_Star(CFX_ByteString& sPathData,
                                CFX_PathData& path,
-                               const CPDF_Rect& crBBox,
+                               const CFX_FloatRect& crBBox,
                                const PWL_PATH_TYPE type);
   static void GetGraphics_UpArrow(CFX_ByteString& sPathData,
                                   CFX_PathData& path,
-                                  const CPDF_Rect& crBBox,
+                                  const CFX_FloatRect& crBBox,
                                   const PWL_PATH_TYPE type);
   static void GetGraphics_UpLeftArrow(CFX_ByteString& sPathData,
                                       CFX_PathData& path,
-                                      const CPDF_Rect& crBBox,
+                                      const CFX_FloatRect& crBBox,
                                       const PWL_PATH_TYPE type);
   static void GetGraphics_Graph(CFX_ByteString& sPathData,
                                 CFX_PathData& path,
-                                const CPDF_Rect& crBBox,
+                                const CFX_FloatRect& crBBox,
                                 const PWL_PATH_TYPE type);
   static void GetGraphics_Paperclip(CFX_ByteString& sPathData,
                                     CFX_PathData& path,
-                                    const CPDF_Rect& crBBox,
+                                    const CFX_FloatRect& crBBox,
                                     const PWL_PATH_TYPE type);
   static void GetGraphics_Attachment(CFX_ByteString& sPathData,
                                      CFX_PathData& path,
-                                     const CPDF_Rect& crBBox,
+                                     const CFX_FloatRect& crBBox,
                                      const PWL_PATH_TYPE type);
   static void GetGraphics_Tag(CFX_ByteString& sPathData,
                               CFX_PathData& path,
-                              const CPDF_Rect& crBBox,
+                              const CFX_FloatRect& crBBox,
                               const PWL_PATH_TYPE type);
   static void GetGraphics_Foxit(CFX_ByteString& sPathData,
                                 CFX_PathData& path,
-                                const CPDF_Rect& crBBox,
+                                const CFX_FloatRect& crBBox,
                                 const PWL_PATH_TYPE type);
 };
 

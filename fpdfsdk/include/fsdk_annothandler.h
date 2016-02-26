@@ -23,7 +23,7 @@ class CPDFSDK_Annot;
 class CPDFSDK_PageView;
 class CPDF_Annot;
 class CFX_Matrix;
-class CPDF_Point;
+class CFX_FloatPoint;
 
 class IPDFSDK_AnnotHandler {
  public:
@@ -47,12 +47,12 @@ class IPDFSDK_AnnotHandler {
 
   virtual void DeleteAnnot(CPDFSDK_Annot* pAnnot) = 0;
 
-  virtual CPDF_Rect GetViewBBox(CPDFSDK_PageView* pPageView,
-                                CPDFSDK_Annot* pAnnot) = 0;
+  virtual CFX_FloatRect GetViewBBox(CPDFSDK_PageView* pPageView,
+                                    CPDFSDK_Annot* pAnnot) = 0;
 
   virtual FX_BOOL HitTest(CPDFSDK_PageView* pPageView,
                           CPDFSDK_Annot* pAnnot,
-                          const CPDF_Point& point) = 0;
+                          const CFX_FloatPoint& point) = 0;
 
   virtual void OnDraw(CPDFSDK_PageView* pPageView,
                       CPDFSDK_Annot* pAnnot,
@@ -64,7 +64,7 @@ class IPDFSDK_AnnotHandler {
                            CPDFSDK_Annot* pAnnot,
                            CFX_RenderDevice* pDevice,
                            CFX_Matrix* pUser2Device,
-                           const CPDF_Rect& rcWindow,
+                           const CFX_FloatRect& rcWindow,
                            FX_DWORD dwFlags) = 0;
 
   virtual void OnCreate(CPDFSDK_Annot* pAnnot) = 0;
@@ -85,36 +85,36 @@ class IPDFSDK_AnnotHandler {
   virtual FX_BOOL OnLButtonDown(CPDFSDK_PageView* pPageView,
                                 CPDFSDK_Annot* pAnnot,
                                 FX_DWORD nFlags,
-                                const CPDF_Point& point) = 0;
+                                const CFX_FloatPoint& point) = 0;
   virtual FX_BOOL OnLButtonUp(CPDFSDK_PageView* pPageView,
                               CPDFSDK_Annot* pAnnot,
                               FX_DWORD nFlags,
-                              const CPDF_Point& point) = 0;
+                              const CFX_FloatPoint& point) = 0;
   virtual FX_BOOL OnLButtonDblClk(CPDFSDK_PageView* pPageView,
                                   CPDFSDK_Annot* pAnnot,
                                   FX_DWORD nFlags,
-                                  const CPDF_Point& point) = 0;
+                                  const CFX_FloatPoint& point) = 0;
   virtual FX_BOOL OnMouseMove(CPDFSDK_PageView* pPageView,
                               CPDFSDK_Annot* pAnnot,
                               FX_DWORD nFlags,
-                              const CPDF_Point& point) = 0;
+                              const CFX_FloatPoint& point) = 0;
   virtual FX_BOOL OnMouseWheel(CPDFSDK_PageView* pPageView,
                                CPDFSDK_Annot* pAnnot,
                                FX_DWORD nFlags,
                                short zDelta,
-                               const CPDF_Point& point) = 0;
+                               const CFX_FloatPoint& point) = 0;
   virtual FX_BOOL OnRButtonDown(CPDFSDK_PageView* pPageView,
                                 CPDFSDK_Annot* pAnnot,
                                 FX_DWORD nFlags,
-                                const CPDF_Point& point) = 0;
+                                const CFX_FloatPoint& point) = 0;
   virtual FX_BOOL OnRButtonUp(CPDFSDK_PageView* pPageView,
                               CPDFSDK_Annot* pAnnot,
                               FX_DWORD nFlags,
-                              const CPDF_Point& point) = 0;
+                              const CFX_FloatPoint& point) = 0;
   virtual FX_BOOL OnRButtonDblClk(CPDFSDK_PageView* pPageView,
                                   CPDFSDK_Annot* pAnnot,
                                   FX_DWORD nFlags,
-                                  const CPDF_Point& point) = 0;
+                                  const CFX_FloatPoint& point) = 0;
   // by wjm.
   virtual FX_BOOL OnChar(CPDFSDK_Annot* pAnnot,
                          FX_DWORD nChar,
@@ -150,11 +150,11 @@ class CPDFSDK_BFAnnotHandler : public IPDFSDK_AnnotHandler {
 #endif  // PDF_ENABLE_XFA
   void ReleaseAnnot(CPDFSDK_Annot* pAnnot) override;
   void DeleteAnnot(CPDFSDK_Annot* pAnnot) override {}
-  CPDF_Rect GetViewBBox(CPDFSDK_PageView* pPageView,
-                        CPDFSDK_Annot* pAnnot) override;
+  CFX_FloatRect GetViewBBox(CPDFSDK_PageView* pPageView,
+                            CPDFSDK_Annot* pAnnot) override;
   FX_BOOL HitTest(CPDFSDK_PageView* pPageView,
                   CPDFSDK_Annot* pAnnot,
-                  const CPDF_Point& point) override;
+                  const CFX_FloatPoint& point) override;
   void OnDraw(CPDFSDK_PageView* pPageView,
               CPDFSDK_Annot* pAnnot,
               CFX_RenderDevice* pDevice,
@@ -164,7 +164,7 @@ class CPDFSDK_BFAnnotHandler : public IPDFSDK_AnnotHandler {
                    CPDFSDK_Annot* pAnnot,
                    CFX_RenderDevice* pDevice,
                    CFX_Matrix* pUser2Device,
-                   const CPDF_Rect& rcWindow,
+                   const CFX_FloatRect& rcWindow,
                    FX_DWORD dwFlags) override {}
   void OnCreate(CPDFSDK_Annot* pAnnot) override;
   void OnLoad(CPDFSDK_Annot* pAnnot) override;
@@ -179,36 +179,36 @@ class CPDFSDK_BFAnnotHandler : public IPDFSDK_AnnotHandler {
   FX_BOOL OnLButtonDown(CPDFSDK_PageView* pPageView,
                         CPDFSDK_Annot* pAnnot,
                         FX_DWORD nFlags,
-                        const CPDF_Point& point) override;
+                        const CFX_FloatPoint& point) override;
   FX_BOOL OnLButtonUp(CPDFSDK_PageView* pPageView,
                       CPDFSDK_Annot* pAnnot,
                       FX_DWORD nFlags,
-                      const CPDF_Point& point) override;
+                      const CFX_FloatPoint& point) override;
   FX_BOOL OnLButtonDblClk(CPDFSDK_PageView* pPageView,
                           CPDFSDK_Annot* pAnnot,
                           FX_DWORD nFlags,
-                          const CPDF_Point& point) override;
+                          const CFX_FloatPoint& point) override;
   FX_BOOL OnMouseMove(CPDFSDK_PageView* pPageView,
                       CPDFSDK_Annot* pAnnot,
                       FX_DWORD nFlags,
-                      const CPDF_Point& point) override;
+                      const CFX_FloatPoint& point) override;
   FX_BOOL OnMouseWheel(CPDFSDK_PageView* pPageView,
                        CPDFSDK_Annot* pAnnot,
                        FX_DWORD nFlags,
                        short zDelta,
-                       const CPDF_Point& point) override;
+                       const CFX_FloatPoint& point) override;
   FX_BOOL OnRButtonDown(CPDFSDK_PageView* pPageView,
                         CPDFSDK_Annot* pAnnot,
                         FX_DWORD nFlags,
-                        const CPDF_Point& point) override;
+                        const CFX_FloatPoint& point) override;
   FX_BOOL OnRButtonUp(CPDFSDK_PageView* pPageView,
                       CPDFSDK_Annot* pAnnot,
                       FX_DWORD nFlags,
-                      const CPDF_Point& point) override;
+                      const CFX_FloatPoint& point) override;
   FX_BOOL OnRButtonDblClk(CPDFSDK_PageView* pPageView,
                           CPDFSDK_Annot* pAnnot,
                           FX_DWORD nFlags,
-                          const CPDF_Point& point) override {
+                          const CFX_FloatPoint& point) override {
     return FALSE;
   }
   FX_BOOL OnChar(CPDFSDK_Annot* pAnnot,
@@ -258,12 +258,12 @@ class CPDFSDK_XFAAnnotHandler : public IPDFSDK_AnnotHandler {
 
   virtual void DeleteAnnot(CPDFSDK_Annot* pAnnot) {}
 
-  virtual CPDF_Rect GetViewBBox(CPDFSDK_PageView* pPageView,
-                                CPDFSDK_Annot* pAnnot);
+  virtual CFX_FloatRect GetViewBBox(CPDFSDK_PageView* pPageView,
+                                    CPDFSDK_Annot* pAnnot);
 
   virtual FX_BOOL HitTest(CPDFSDK_PageView* pPageView,
                           CPDFSDK_Annot* pAnnot,
-                          const CPDF_Point& point);
+                          const CFX_FloatPoint& point);
 
   virtual void OnDraw(CPDFSDK_PageView* pPageView,
                       CPDFSDK_Annot* pAnnot,
@@ -275,7 +275,7 @@ class CPDFSDK_XFAAnnotHandler : public IPDFSDK_AnnotHandler {
                            CPDFSDK_Annot* pAnnot,
                            CFX_RenderDevice* pDevice,
                            CFX_Matrix* pUser2Device,
-                           const CPDF_Rect& rcWindow,
+                           const CFX_FloatRect& rcWindow,
                            FX_DWORD dwFlags) {}
 
   virtual void OnCreate(CPDFSDK_Annot* pAnnot) {}
@@ -296,36 +296,36 @@ class CPDFSDK_XFAAnnotHandler : public IPDFSDK_AnnotHandler {
   virtual FX_BOOL OnLButtonDown(CPDFSDK_PageView* pPageView,
                                 CPDFSDK_Annot* pAnnot,
                                 FX_DWORD nFlags,
-                                const CPDF_Point& point);
+                                const CFX_FloatPoint& point);
   virtual FX_BOOL OnLButtonUp(CPDFSDK_PageView* pPageView,
                               CPDFSDK_Annot* pAnnot,
                               FX_DWORD nFlags,
-                              const CPDF_Point& point);
+                              const CFX_FloatPoint& point);
   virtual FX_BOOL OnLButtonDblClk(CPDFSDK_PageView* pPageView,
                                   CPDFSDK_Annot* pAnnot,
                                   FX_DWORD nFlags,
-                                  const CPDF_Point& point);
+                                  const CFX_FloatPoint& point);
   virtual FX_BOOL OnMouseMove(CPDFSDK_PageView* pPageView,
                               CPDFSDK_Annot* pAnnot,
                               FX_DWORD nFlags,
-                              const CPDF_Point& point);
+                              const CFX_FloatPoint& point);
   virtual FX_BOOL OnMouseWheel(CPDFSDK_PageView* pPageView,
                                CPDFSDK_Annot* pAnnot,
                                FX_DWORD nFlags,
                                short zDelta,
-                               const CPDF_Point& point);
+                               const CFX_FloatPoint& point);
   virtual FX_BOOL OnRButtonDown(CPDFSDK_PageView* pPageView,
                                 CPDFSDK_Annot* pAnnot,
                                 FX_DWORD nFlags,
-                                const CPDF_Point& point);
+                                const CFX_FloatPoint& point);
   virtual FX_BOOL OnRButtonUp(CPDFSDK_PageView* pPageView,
                               CPDFSDK_Annot* pAnnot,
                               FX_DWORD nFlags,
-                              const CPDF_Point& point);
+                              const CFX_FloatPoint& point);
   virtual FX_BOOL OnRButtonDblClk(CPDFSDK_PageView* pPageView,
                                   CPDFSDK_Annot* pAnnot,
                                   FX_DWORD nFlags,
-                                  const CPDF_Point& point);
+                                  const CFX_FloatPoint& point);
   // by wjm.
   virtual FX_BOOL OnChar(CPDFSDK_Annot* pAnnot,
                          FX_DWORD nChar,
@@ -390,33 +390,33 @@ class CPDFSDK_AnnotHandlerMgr {
   virtual FX_BOOL Annot_OnLButtonDown(CPDFSDK_PageView* pPageView,
                                       CPDFSDK_Annot* pAnnot,
                                       FX_DWORD nFlags,
-                                      const CPDF_Point& point);
+                                      const CFX_FloatPoint& point);
   virtual FX_BOOL Annot_OnLButtonUp(CPDFSDK_PageView* pPageView,
                                     CPDFSDK_Annot* pAnnot,
                                     FX_DWORD nFlags,
-                                    const CPDF_Point& point);
+                                    const CFX_FloatPoint& point);
   virtual FX_BOOL Annot_OnLButtonDblClk(CPDFSDK_PageView* pPageView,
                                         CPDFSDK_Annot* pAnnot,
                                         FX_DWORD nFlags,
-                                        const CPDF_Point& point);
+                                        const CFX_FloatPoint& point);
 
   virtual FX_BOOL Annot_OnMouseMove(CPDFSDK_PageView* pPageView,
                                     CPDFSDK_Annot* pAnnot,
                                     FX_DWORD nFlags,
-                                    const CPDF_Point& point);
+                                    const CFX_FloatPoint& point);
   virtual FX_BOOL Annot_OnMouseWheel(CPDFSDK_PageView* pPageView,
                                      CPDFSDK_Annot* pAnnot,
                                      FX_DWORD nFlags,
                                      short zDelta,
-                                     const CPDF_Point& point);
+                                     const CFX_FloatPoint& point);
   virtual FX_BOOL Annot_OnRButtonDown(CPDFSDK_PageView* pPageView,
                                       CPDFSDK_Annot* pAnnot,
                                       FX_DWORD nFlags,
-                                      const CPDF_Point& point);
+                                      const CFX_FloatPoint& point);
   virtual FX_BOOL Annot_OnRButtonUp(CPDFSDK_PageView* pPageView,
                                     CPDFSDK_Annot* pAnnot,
                                     FX_DWORD nFlags,
-                                    const CPDF_Point& point);
+                                    const CFX_FloatPoint& point);
 
   virtual FX_BOOL Annot_OnChar(CPDFSDK_Annot* pAnnot,
                                FX_DWORD nChar,
@@ -434,11 +434,11 @@ class CPDFSDK_AnnotHandlerMgr {
                                       CPDFSDK_Annot* pKillAnnot);
 #endif  // PDF_ENABLE_XFA
 
-  virtual CPDF_Rect Annot_OnGetViewBBox(CPDFSDK_PageView* pPageView,
-                                        CPDFSDK_Annot* pAnnot);
+  virtual CFX_FloatRect Annot_OnGetViewBBox(CPDFSDK_PageView* pPageView,
+                                            CPDFSDK_Annot* pAnnot);
   virtual FX_BOOL Annot_OnHitTest(CPDFSDK_PageView* pPageView,
                                   CPDFSDK_Annot* pAnnot,
-                                  const CPDF_Point& point);
+                                  const CFX_FloatPoint& point);
 
  private:
   IPDFSDK_AnnotHandler* GetAnnotHandler(const CFX_ByteString& sType) const;

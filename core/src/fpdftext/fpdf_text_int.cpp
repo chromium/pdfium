@@ -301,7 +301,7 @@ void CPDF_TextPage::GetRectArray(int start,
   rectArray.Add(rect);
 }
 
-int CPDF_TextPage::GetIndexAtPos(CPDF_Point point,
+int CPDF_TextPage::GetIndexAtPos(CFX_FloatPoint point,
                                  FX_FLOAT xTolerance,
                                  FX_FLOAT yTolerance) const {
   if (!m_bIsParsed)
@@ -424,7 +424,7 @@ int CPDF_TextPage::GetIndexAtPos(FX_FLOAT x,
                                  FX_FLOAT y,
                                  FX_FLOAT xTolerance,
                                  FX_FLOAT yTolerance) const {
-  CPDF_Point point(x, y);
+  CFX_FloatPoint point(x, y);
   return GetIndexAtPos(point, xTolerance, yTolerance);
 }
 

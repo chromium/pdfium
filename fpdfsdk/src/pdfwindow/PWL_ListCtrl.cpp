@@ -16,7 +16,7 @@ CPWL_ListCtrl::CPWL_ListCtrl()
 
 CPWL_ListCtrl::~CPWL_ListCtrl() {}
 
-void CPWL_ListCtrl::SetScrollPos(const CPDF_Point& point) {
+void CPWL_ListCtrl::SetScrollPos(const CFX_FloatPoint& point) {
   m_ptScroll = point;
 
   if (m_ptScroll.x < m_rcContent.left)
@@ -32,11 +32,11 @@ void CPWL_ListCtrl::SetScrollPos(const CPDF_Point& point) {
     m_ptScroll.y = m_rcContent.bottom;
 }
 
-CPDF_Point CPWL_ListCtrl::GetScrollPos() const {
+CFX_FloatPoint CPWL_ListCtrl::GetScrollPos() const {
   return m_ptScroll;
 }
 
-CPDF_Rect CPWL_ListCtrl::GetScrollArea() const {
+CFX_FloatRect CPWL_ListCtrl::GetScrollArea() const {
   return m_rcContent;
 }
 
@@ -77,7 +77,7 @@ FX_FLOAT CPWL_ListCtrl::GetContentsHeight(FX_FLOAT fLimitWidth) {
 }
 
 void CPWL_ListCtrl::ResetAll(FX_BOOL bMove, int32_t nStart) {
-  CPDF_Rect rcClient = GetClientRect();
+  CFX_FloatRect rcClient = GetClientRect();
 
   FX_FLOAT fWidth = rcClient.Width();
 
@@ -98,8 +98,9 @@ void CPWL_ListCtrl::ResetAll(FX_BOOL bMove, int32_t nStart) {
 
       if (bMove) {
         FX_FLOAT fItemHeight = pChild->GetItemHeight(fWidth - fLeft - fRight);
-        pChild->Move(CPDF_Rect(fLeft, fy - fItemHeight, fWidth - fRight, fy),
-                     TRUE, FALSE);
+        pChild->Move(
+            CFX_FloatRect(fLeft, fy - fItemHeight, fWidth - fRight, fy), TRUE,
+            FALSE);
         fy -= fItemHeight;
         fy -= m_fItemSpace;
       }
@@ -137,8 +138,8 @@ void CPWL_ListCtrl::RePosChildWnd() {
 void CPWL_ListCtrl::DrawChildAppearance(CFX_RenderDevice* pDevice,
                                         CFX_Matrix* pUser2Device) {
   pDevice->SaveState();
-  CPDF_Rect rcClient = GetClientRect();
-  CPDF_Rect rcTemp = rcClient;
+  CFX_FloatRect rcClient = GetClientRect();
+  CFX_FloatRect rcTemp = rcClient;
   pUser2Device->TransformRect(rcTemp);
   FX_RECT rcClip((int32_t)rcTemp.left, (int32_t)rcTemp.bottom,
                  (int32_t)rcTemp.right, (int32_t)rcTemp.top);
@@ -147,7 +148,7 @@ void CPWL_ListCtrl::DrawChildAppearance(CFX_RenderDevice* pDevice,
 
   for (int32_t i = 0, sz = m_aChildren.GetSize(); i < sz; i++) {
     if (CPWL_Wnd* pChild = m_aChildren.GetAt(i)) {
-      CPDF_Rect rcChild = pChild->ChildToParent(pChild->GetWindowRect());
+      CFX_FloatRect rcChild = pChild->ChildToParent(pChild->GetWindowRect());
       if (!(rcChild.top < rcClient.bottom || rcChild.bottom > rcClient.top)) {
         CFX_Matrix mt = pChild->GetChildMatrix();
         if (mt.IsIdentity()) {
@@ -172,34 +173,34 @@ int32_t CPWL_ListCtrl::GetItemIndex(CPWL_Wnd* pItem) {
   return -1;
 }
 
-CPDF_Point CPWL_ListCtrl::InToOut(const CPDF_Point& point) const {
-  CPDF_Rect rcClient = GetClientRect();
+CFX_FloatPoint CPWL_ListCtrl::InToOut(const CFX_FloatPoint& point) const {
+  CFX_FloatRect rcClient = GetClientRect();
 
-  return CPDF_Point(point.x + rcClient.left - m_ptScroll.x,
-                    point.y + rcClient.top - m_ptScroll.y);
+  return CFX_FloatPoint(point.x + rcClient.left - m_ptScroll.x,
+                        point.y + rcClient.top - m_ptScroll.y);
 }
 
-CPDF_Point CPWL_ListCtrl::OutToIn(const CPDF_Point& point) const {
-  CPDF_Rect rcClient = GetClientRect();
+CFX_FloatPoint CPWL_ListCtrl::OutToIn(const CFX_FloatPoint& point) const {
+  CFX_FloatRect rcClient = GetClientRect();
 
-  return CPDF_Point(point.x - rcClient.left + m_ptScroll.x,
-                    point.y - rcClient.top + m_ptScroll.y);
+  return CFX_FloatPoint(point.x - rcClient.left + m_ptScroll.x,
+                        point.y - rcClient.top + m_ptScroll.y);
 }
 
-CPDF_Rect CPWL_ListCtrl::InToOut(const CPDF_Rect& rect) const {
-  CPDF_Rect rcClient = GetClientRect();
+CFX_FloatRect CPWL_ListCtrl::InToOut(const CFX_FloatRect& rect) const {
+  CFX_FloatRect rcClient = GetClientRect();
 
-  return CPDF_Rect(rect.left + rcClient.left - m_ptScroll.x,
-                   rect.bottom + rcClient.top - m_ptScroll.y,
-                   rect.right + rcClient.left - m_ptScroll.x,
-                   rect.top + rcClient.top - m_ptScroll.y);
+  return CFX_FloatRect(rect.left + rcClient.left - m_ptScroll.x,
+                       rect.bottom + rcClient.top - m_ptScroll.y,
+                       rect.right + rcClient.left - m_ptScroll.x,
+                       rect.top + rcClient.top - m_ptScroll.y);
 }
 
-CPDF_Rect CPWL_ListCtrl::OutToIn(const CPDF_Rect& rect) const {
-  CPDF_Rect rcClient = GetClientRect();
+CFX_FloatRect CPWL_ListCtrl::OutToIn(const CFX_FloatRect& rect) const {
+  CFX_FloatRect rcClient = GetClientRect();
 
-  return CPDF_Rect(rect.left - rcClient.left + m_ptScroll.x,
-                   rect.bottom - rcClient.top + m_ptScroll.y,
-                   rect.right - rcClient.left + m_ptScroll.x,
-                   rect.top - rcClient.top + m_ptScroll.y);
+  return CFX_FloatRect(rect.left - rcClient.left + m_ptScroll.x,
+                       rect.bottom - rcClient.top + m_ptScroll.y,
+                       rect.right - rcClient.left + m_ptScroll.x,
+                       rect.top - rcClient.top + m_ptScroll.y);
 }

@@ -494,7 +494,7 @@ FX_BOOL Document::removeField(IJS_Context* cc,
     return TRUE;
 
   for (CPDFSDK_Widget* pWidget : widgets) {
-    CPDF_Rect rcAnnot = pWidget->GetRect();
+    CFX_FloatRect rcAnnot = pWidget->GetRect();
     --rcAnnot.left;
     --rcAnnot.bottom;
     ++rcAnnot.right;

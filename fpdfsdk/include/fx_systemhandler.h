@@ -50,7 +50,7 @@ class IFX_SystemHandler {
  public:
   virtual ~IFX_SystemHandler() {}
   virtual void InvalidateRect(FX_HWND hWnd, FX_RECT rect) = 0;
-  virtual void OutputSelectedRect(void* pFormFiller, CPDF_Rect& rect) = 0;
+  virtual void OutputSelectedRect(void* pFormFiller, CFX_FloatRect& rect) = 0;
 
   virtual FX_BOOL IsSelectionImplemented() = 0;
 
