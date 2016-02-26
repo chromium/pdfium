@@ -39,7 +39,7 @@ class CPDF_PageObjectHolder {
   CPDF_PageObjectHolder();
 
   void ContinueParse(IFX_Pause* pPause);
-  FX_BOOL IsParsed() const { return m_ParseState == CONTENT_PARSED; }
+  bool IsParsed() const { return m_ParseState == CONTENT_PARSED; }
 
   CPDF_PageObjectList* GetPageObjectList() { return &m_PageObjectList; }
   const CPDF_PageObjectList* GetPageObjectList() const {

@@ -151,10 +151,8 @@ void IFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
                         const CPVT_WordRange* pRange,
                         IFX_SystemHandler* pSystemHandler,
                         void* pFFLData) {
-  FX_BOOL bContinuous = pEdit->GetCharArray() == 0;
-  if (pEdit->GetCharSpace() > 0.0f)
-    bContinuous = FALSE;
-
+  const bool bContinuous =
+      pEdit->GetCharArray() == 0 && pEdit->GetCharSpace() <= 0.0f;
   FX_WORD SubWord = pEdit->GetPasswordChar();
   FX_FLOAT fFontSize = pEdit->GetFontSize();
   CPVT_WordRange wrSelect = pEdit->GetSelectWordRange();

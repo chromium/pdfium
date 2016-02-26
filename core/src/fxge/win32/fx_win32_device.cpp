@@ -1103,8 +1103,7 @@ FX_BOOL CGdiDisplayDriver::SetDIBits(const CFX_DIBSource* pSource,
     int alpha = FXGETFLAG_COLORTYPE(alpha_flag)
                     ? FXGETFLAG_ALPHA_FILL(alpha_flag)
                     : FXARGB_A(color);
-    FX_BOOL bGDI = pSource->GetBPP() == 1 && alpha == 255;
-    if (!bGDI) {
+    if (pSource->GetBPP() != 1 || alpha != 255) {
       CFX_DIBitmap background;
       if (!background.Create(width, height, FXDIB_Rgb32) ||
           !GetDIBits(&background, left, top, NULL) ||

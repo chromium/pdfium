@@ -85,9 +85,7 @@ void CPDFSDK_DateTime::ResetDateTime() {
 
   time_t curTime;
   time(&curTime);
-  struct tm* newtime;
-  // newtime = gmtime(&curTime);
-  newtime = localtime(&curTime);
+  struct tm* newtime = localtime(&curTime);
 
   dt.year = newtime->tm_year + 1900;
   dt.month = newtime->tm_mon + 1;
@@ -95,8 +93,6 @@ void CPDFSDK_DateTime::ResetDateTime() {
   dt.hour = newtime->tm_hour;
   dt.minute = newtime->tm_min;
   dt.second = newtime->tm_sec;
-  //  dt.tzHour = _timezone / 3600 * -1;
-  //  dt.tzMinute = (abs(_timezone) % 3600) / 60;
 }
 
 CPDFSDK_DateTime& CPDFSDK_DateTime::operator=(
@@ -114,20 +110,18 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::operator=(const FX_SYSTEMTIME& st) {
   dt.hour = (uint8_t)st.wHour;
   dt.minute = (uint8_t)st.wMinute;
   dt.second = (uint8_t)st.wSecond;
-  //  dt.tzHour = _timezone / 3600 * -1;
-  //  dt.tzMinute = (abs(_timezone) % 3600) / 60;
   return *this;
 }
 
-FX_BOOL CPDFSDK_DateTime::operator==(CPDFSDK_DateTime& datetime) {
+bool CPDFSDK_DateTime::operator==(const CPDFSDK_DateTime& datetime) const {
   return (FXSYS_memcmp(&dt, &datetime.dt, sizeof(FX_DATETIME)) == 0);
 }
 
-FX_BOOL CPDFSDK_DateTime::operator!=(CPDFSDK_DateTime& datetime) {
-  return (FXSYS_memcmp(&dt, &datetime.dt, sizeof(FX_DATETIME)) != 0);
+bool CPDFSDK_DateTime::operator!=(const CPDFSDK_DateTime& datetime) const {
+  return !(*this == datetime);
 }
 
-FX_BOOL CPDFSDK_DateTime::operator>(CPDFSDK_DateTime& datetime) {
+bool CPDFSDK_DateTime::operator>(const CPDFSDK_DateTime& datetime) const {
   CPDFSDK_DateTime dt1 = ToGMT();
   CPDFSDK_DateTime dt2 = datetime.ToGMT();
   int d1 =
@@ -139,14 +133,10 @@ FX_BOOL CPDFSDK_DateTime::operator>(CPDFSDK_DateTime& datetime) {
   int d4 = (((int)dt2.dt.hour) << 16) | (((int)dt2.dt.minute) << 8) |
            (int)dt2.dt.second;
 
-  if (d1 > d3)
-    return TRUE;
-  if (d2 > d4)
-    return TRUE;
-  return FALSE;
+  return d1 > d3 || d2 > d4;
 }
 
-FX_BOOL CPDFSDK_DateTime::operator>=(CPDFSDK_DateTime& datetime) {
+bool CPDFSDK_DateTime::operator>=(const CPDFSDK_DateTime& datetime) const {
   CPDFSDK_DateTime dt1 = ToGMT();
   CPDFSDK_DateTime dt2 = datetime.ToGMT();
   int d1 =
@@ -158,14 +148,10 @@ FX_BOOL CPDFSDK_DateTime::operator>=(CPDFSDK_DateTime& datetime) {
   int d4 = (((int)dt2.dt.hour) << 16) | (((int)dt2.dt.minute) << 8) |
            (int)dt2.dt.second;
 
-  if (d1 >= d3)
-    return TRUE;
-  if (d2 >= d4)
-    return TRUE;
-  return FALSE;
+  return d1 >= d3 || d2 >= d4;
 }
 
-FX_BOOL CPDFSDK_DateTime::operator<(CPDFSDK_DateTime& datetime) {
+bool CPDFSDK_DateTime::operator<(const CPDFSDK_DateTime& datetime) const {
   CPDFSDK_DateTime dt1 = ToGMT();
   CPDFSDK_DateTime dt2 = datetime.ToGMT();
   int d1 =
@@ -177,14 +163,10 @@ FX_BOOL CPDFSDK_DateTime::operator<(CPDFSDK_DateTime& datetime) {
   int d4 = (((int)dt2.dt.hour) << 16) | (((int)dt2.dt.minute) << 8) |
            (int)dt2.dt.second;
 
-  if (d1 < d3)
-    return TRUE;
-  if (d2 < d4)
-    return TRUE;
-  return FALSE;
+  return d1 < d3 || d2 < d4;
 }
 
-FX_BOOL CPDFSDK_DateTime::operator<=(CPDFSDK_DateTime& datetime) {
+bool CPDFSDK_DateTime::operator<=(const CPDFSDK_DateTime& datetime) const {
   CPDFSDK_DateTime dt1 = ToGMT();
   CPDFSDK_DateTime dt2 = datetime.ToGMT();
   int d1 =
@@ -196,11 +178,7 @@ FX_BOOL CPDFSDK_DateTime::operator<=(CPDFSDK_DateTime& datetime) {
   int d4 = (((int)dt2.dt.hour) << 16) | (((int)dt2.dt.minute) << 8) |
            (int)dt2.dt.second;
 
-  if (d1 <= d3)
-    return TRUE;
-  if (d2 <= d4)
-    return TRUE;
-  return FALSE;
+  return d1 <= d3 || d2 <= d4;
 }
 
 CPDFSDK_DateTime::operator time_t() {
@@ -402,7 +380,7 @@ void CPDFSDK_DateTime::ToSystemTime(FX_SYSTEMTIME& st) {
   }
 }
 
-CPDFSDK_DateTime CPDFSDK_DateTime::ToGMT() {
+CPDFSDK_DateTime CPDFSDK_DateTime::ToGMT() const {
   CPDFSDK_DateTime dt = *this;
   dt.AddSeconds(-gAfxGetTimeZoneInSeconds(dt.dt.tzHour, dt.dt.tzMinute));
   dt.dt.tzHour = 0;

@@ -333,13 +333,12 @@ class CFX_RTemplate {
     rect.Intersect(*this);
     return !rect.IsEmpty(fEpsilon);
   }
-  friend FX_BOOL operator==(const FXT_RECT& rc1, const FXT_RECT& rc2) {
+  friend bool operator==(const FXT_RECT& rc1, const FXT_RECT& rc2) {
     return rc1.left == rc2.left && rc1.top == rc2.top &&
            rc1.width == rc2.width && rc1.height == rc2.height;
   }
-  friend FX_BOOL operator!=(const FXT_RECT& rc1, const FXT_RECT& rc2) {
-    return rc1.left != rc2.left || rc1.top != rc2.top ||
-           rc1.width != rc2.width || rc1.height != rc2.height;
+  friend bool operator!=(const FXT_RECT& rc1, const FXT_RECT& rc2) {
+    return !(rc1 == rc2);
   }
   baseType left, top;
   baseType width, height;
@@ -385,7 +384,7 @@ struct FX_RECT {
 
   void Union(const FX_RECT& other_rect);
 
-  FX_BOOL operator==(const FX_RECT& src) const {
+  bool operator==(const FX_RECT& src) const {
     return left == src.left && right == src.right && top == src.top &&
            bottom == src.bottom;
   }

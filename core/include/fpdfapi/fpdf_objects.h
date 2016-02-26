@@ -445,7 +445,7 @@ class CPDF_Stream : public CPDF_Object {
                       uint8_t* pBuf,
                       FX_DWORD buf_size) const;
 
-  FX_BOOL IsMemoryBased() const { return m_GenNum == kMemoryBasedGenNum; }
+  bool IsMemoryBased() const { return m_GenNum == kMemoryBasedGenNum; }
 
  protected:
   static const FX_DWORD kMemoryBasedGenNum = (FX_DWORD)-1;

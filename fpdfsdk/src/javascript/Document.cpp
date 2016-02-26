@@ -622,8 +622,7 @@ FX_BOOL Document::submitForm(IJS_Context* cc,
   CPDFSDK_InterForm* pInterForm =
       (CPDFSDK_InterForm*)m_pDocument->GetInterForm();
   CPDF_InterForm* pPDFInterForm = pInterForm->GetInterForm();
-  FX_BOOL bAll = (aFields.GetLength() == 0);
-  if (bAll && bEmpty) {
+  if (aFields.GetLength() == 0 && bEmpty) {
     if (pPDFInterForm->CheckRequiredFields(nullptr, true)) {
       pRuntime->BeginBlock();
       pInterForm->SubmitForm(strURL, FALSE);

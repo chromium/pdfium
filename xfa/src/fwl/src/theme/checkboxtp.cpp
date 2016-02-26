@@ -49,11 +49,10 @@ FX_DWORD CFWL_CheckBoxTP::SetThemeID(IFWL_Widget* pWidget,
 FX_BOOL CFWL_CheckBoxTP::DrawText(CFWL_ThemeText* pParams) {
   if (!m_pTextOut)
     return FALSE;
-  FX_BOOL bDisable = (pParams->m_dwStates & FWL_PARTSTATE_CKB_Mask1) ==
-                     FWL_PARTSTATE_CKB_Disabled;
-  FX_ARGB argText =
-      bDisable ? FWLTHEME_CAPACITY_TextDisColor : FWLTHEME_CAPACITY_TextColor;
-  m_pTextOut->SetTextColor(argText);
+  m_pTextOut->SetTextColor((pParams->m_dwStates & FWL_PARTSTATE_CKB_Mask1) ==
+                                   FWL_PARTSTATE_CKB_Disabled
+                               ? FWLTHEME_CAPACITY_TextDisColor
+                               : FWLTHEME_CAPACITY_TextColor);
   return CFWL_WidgetTP::DrawText(pParams);
 }
 FX_BOOL CFWL_CheckBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {

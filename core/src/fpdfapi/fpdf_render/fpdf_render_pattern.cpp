@@ -723,18 +723,18 @@ struct CPDF_PatchDrawer {
   }
 };
 
-FX_BOOL _CheckCoonTensorPara(const CPDF_MeshStream& stream) {
-  FX_BOOL bCoorBits = (stream.m_nCoordBits == 1 || stream.m_nCoordBits == 2 ||
-                       stream.m_nCoordBits == 4 || stream.m_nCoordBits == 8 ||
-                       stream.m_nCoordBits == 12 || stream.m_nCoordBits == 16 ||
-                       stream.m_nCoordBits == 24 || stream.m_nCoordBits == 32);
+bool _CheckCoonTensorPara(const CPDF_MeshStream& stream) {
+  bool bCoorBits = (stream.m_nCoordBits == 1 || stream.m_nCoordBits == 2 ||
+                    stream.m_nCoordBits == 4 || stream.m_nCoordBits == 8 ||
+                    stream.m_nCoordBits == 12 || stream.m_nCoordBits == 16 ||
+                    stream.m_nCoordBits == 24 || stream.m_nCoordBits == 32);
 
-  FX_BOOL bCompBits = (stream.m_nCompBits == 1 || stream.m_nCompBits == 2 ||
-                       stream.m_nCompBits == 4 || stream.m_nCompBits == 8 ||
-                       stream.m_nCompBits == 12 || stream.m_nCompBits == 16);
+  bool bCompBits = (stream.m_nCompBits == 1 || stream.m_nCompBits == 2 ||
+                    stream.m_nCompBits == 4 || stream.m_nCompBits == 8 ||
+                    stream.m_nCompBits == 12 || stream.m_nCompBits == 16);
 
-  FX_BOOL bFlagBits = (stream.m_nFlagBits == 2 || stream.m_nFlagBits == 4 ||
-                       stream.m_nFlagBits == 8);
+  bool bFlagBits = (stream.m_nFlagBits == 2 || stream.m_nFlagBits == 4 ||
+                    stream.m_nFlagBits == 8);
 
   return bCoorBits && bCompBits && bFlagBits;
 }

@@ -196,9 +196,7 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
 
 CPDF_Font* CBA_FontMap::GetAnnotDefaultFont(CFX_ByteString& sAlias) {
   CPDF_Dictionary* pAcroFormDict = NULL;
-
-  FX_BOOL bWidget = (m_pAnnotDict->GetStringBy("Subtype") == "Widget");
-
+  const bool bWidget = (m_pAnnotDict->GetStringBy("Subtype") == "Widget");
   if (bWidget) {
     if (CPDF_Dictionary* pRootDict = m_pDocument->GetRoot())
       pAcroFormDict = pRootDict->GetDictBy("AcroForm");

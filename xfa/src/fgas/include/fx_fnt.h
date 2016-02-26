@@ -123,8 +123,8 @@ typedef struct _FX_FONTDESCRIPTOR : public CFX_Target {
 } FX_FONTDESCRIPTOR, *FX_LPFONTDESCRIPTOR;
 typedef FX_FONTDESCRIPTOR const* FX_LPCFONTDESCRIPTOR;
 typedef CFX_MassArrayTemplate<FX_FONTDESCRIPTOR> CFX_FontDescriptors;
-inline FX_BOOL operator==(const FX_FONTDESCRIPTOR& left,
-                          const FX_FONTDESCRIPTOR& right) {
+inline bool operator==(const FX_FONTDESCRIPTOR& left,
+                       const FX_FONTDESCRIPTOR& right) {
   return left.uCharSet == right.uCharSet &&
          left.dwFontStyles == right.dwFontStyles &&
          FXSYS_wcscmp(left.wsFontFace, right.wsFontFace) == 0 &&

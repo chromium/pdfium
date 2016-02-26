@@ -783,10 +783,10 @@ void CXFA_FFDocView::RunBindItems() {
     CFX_WideStringC wsValueRef, wsLabelRef;
     binditems.GetValueRef(wsValueRef);
     binditems.GetLabelRef(wsLabelRef);
-    FX_BOOL bUseValue = wsLabelRef.IsEmpty() || wsLabelRef == wsValueRef;
-    FX_BOOL bLabelUseContent =
+    const bool bUseValue = wsLabelRef.IsEmpty() || wsLabelRef == wsValueRef;
+    const bool bLabelUseContent =
         wsLabelRef.IsEmpty() || wsLabelRef == FX_WSTRC(L"$");
-    FX_BOOL bValueUseContent =
+    const bool bValueUseContent =
         wsValueRef.IsEmpty() || wsValueRef == FX_WSTRC(L"$");
     CFX_WideString wsValue, wsLabel;
     FX_DWORD uValueHash = FX_HashCode_String_GetW(CFX_WideString(wsValueRef),

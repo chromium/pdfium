@@ -664,7 +664,7 @@ class CFX_CPLTreeNode : public CFX_Target {
     }
     return iLevel;
   }
-  FX_BOOL IsRootNode() const { return m_pParentNode == NULL; }
+  bool IsRootNode() const { return !m_pParentNode; }
   baseType GetData() const { return m_Data; }
   void SetData(baseType data) { m_Data = data; }
 

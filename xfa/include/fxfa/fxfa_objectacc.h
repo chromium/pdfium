@@ -458,13 +458,10 @@ class CXFA_Stroke : public CXFA_Data {
  public:
   explicit CXFA_Stroke(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
-  FX_BOOL IsCorner() const { return GetClassID() == XFA_ELEMENT_Corner; }
-  FX_BOOL IsEdge() const { return GetClassID() == XFA_ELEMENT_Edge; }
+  bool IsCorner() const { return GetClassID() == XFA_ELEMENT_Corner; }
+  bool IsEdge() const { return GetClassID() == XFA_ELEMENT_Edge; }
+  bool IsVisible() const { return GetPresence() == XFA_ATTRIBUTEENUM_Visible; }
   int32_t GetPresence() const;
-  FX_BOOL IsVisible() const {
-    return GetPresence() == XFA_ATTRIBUTEENUM_Visible;
-  }
-
   int32_t GetCapType() const;
   int32_t GetStrokeType() const;
   FX_FLOAT GetThickness() const;
@@ -497,9 +494,9 @@ class CXFA_Box : public CXFA_Data {
  public:
   explicit CXFA_Box(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 
-  FX_BOOL IsArc() const { return GetClassID() == XFA_ELEMENT_Arc; }
-  FX_BOOL IsBorder() const { return GetClassID() == XFA_ELEMENT_Border; }
-  FX_BOOL IsRectangle() const { return GetClassID() == XFA_ELEMENT_Rectangle; }
+  bool IsArc() const { return GetClassID() == XFA_ELEMENT_Arc; }
+  bool IsBorder() const { return GetClassID() == XFA_ELEMENT_Border; }
+  bool IsRectangle() const { return GetClassID() == XFA_ELEMENT_Rectangle; }
   int32_t GetBreak() const;
   int32_t GetHand() const;
   int32_t GetPresence() const;

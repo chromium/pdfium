@@ -1526,15 +1526,13 @@ void CFWL_ComboBoxImpDelegate::OnKey(CFWL_MsgKey* pMsg) {
     m_pOwner->DispatchKeyEvent(pMsg);
     return;
   }
-  FX_BOOL bSubCtrlKey = pMsg->m_pDstTarget == m_pOwner->m_pInterface;
-  if (bSubCtrlKey) {
+  if (pMsg->m_pDstTarget == m_pOwner->m_pInterface)
     DoSubCtrlKey(pMsg);
-  }
 }
 void CFWL_ComboBoxImpDelegate::DoSubCtrlKey(CFWL_MsgKey* pMsg) {
   FX_DWORD dwKeyCode = pMsg->m_dwKeyCode;
-  FX_BOOL bUp = dwKeyCode == FWL_VKEY_Up;
-  FX_BOOL bDown = dwKeyCode == FWL_VKEY_Down;
+  const bool bUp = dwKeyCode == FWL_VKEY_Up;
+  const bool bDown = dwKeyCode == FWL_VKEY_Down;
   if (bUp || bDown) {
     int32_t iCount = static_cast<CFWL_ComboListImp*>(
                          m_pOwner->m_pListBox->GetImpl())->CountItems();
@@ -1684,8 +1682,8 @@ void CFWL_ComboBoxImpDelegate::DisForm_OnFocusChanged(CFWL_Message* pMsg,
 }
 void CFWL_ComboBoxImpDelegate::DisForm_OnKey(CFWL_MsgKey* pMsg) {
   FX_DWORD dwKeyCode = pMsg->m_dwKeyCode;
-  FX_BOOL bUp = dwKeyCode == FWL_VKEY_Up;
-  FX_BOOL bDown = dwKeyCode == FWL_VKEY_Down;
+  const bool bUp = dwKeyCode == FWL_VKEY_Up;
+  const bool bDown = dwKeyCode == FWL_VKEY_Down;
   if (bUp || bDown) {
     CFWL_ComboListImp* pComboList =
         static_cast<CFWL_ComboListImp*>(m_pOwner->m_pListBox->GetImpl());

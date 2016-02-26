@@ -151,7 +151,7 @@ class CXFA_Document : public IXFA_ObjFactory {
   void AddPurgeNode(CXFA_Node* pNode);
   FX_BOOL RemovePurgeNode(CXFA_Node* pNode);
   void PurgeNodes();
-  FX_BOOL HasFlag(FX_DWORD dwFlag) { return (m_dwDocFlags & dwFlag) == dwFlag; }
+  bool HasFlag(FX_DWORD dwFlag) { return (m_dwDocFlags & dwFlag) == dwFlag; }
   void SetFlag(FX_DWORD dwFlag, FX_BOOL bOn = TRUE);
   FX_BOOL IsInteractive();
   XFA_VERSION GetCurVersionMode() { return m_eCurVersionMode; }

@@ -710,7 +710,7 @@ void CCodec_ProgressiveDecoder::GifReadScanlineCallback(void* pModule,
     pal_index = pCodec->m_GifTransIndex;
   }
   FXSYS_memset(pCodec->m_pDecodeBuf, pal_index, pCodec->m_SrcWidth);
-  FX_BOOL bLastPass = (row_num % 2) == 1;
+  bool bLastPass = (row_num % 2) == 1;
   int32_t line = row_num + pCodec->m_GifFrameRect.top;
   int32_t left = pCodec->m_GifFrameRect.left;
   FXSYS_memcpy(pCodec->m_pDecodeBuf + left, row_buf, img_width);

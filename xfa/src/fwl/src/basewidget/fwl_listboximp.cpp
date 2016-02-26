@@ -332,9 +332,9 @@ FWL_HLISTITEM CFWL_ListBoxImp::GetItem(FWL_HLISTITEM hItem,
     case FWL_VKEY_Down:
     case FWL_VKEY_Home:
     case FWL_VKEY_End: {
-      FX_BOOL bUp = dwKeyCode == FWL_VKEY_Up;
-      FX_BOOL bDown = dwKeyCode == FWL_VKEY_Down;
-      FX_BOOL bHome = dwKeyCode == FWL_VKEY_Home;
+      const bool bUp = dwKeyCode == FWL_VKEY_Up;
+      const bool bDown = dwKeyCode == FWL_VKEY_Down;
+      const bool bHome = dwKeyCode == FWL_VKEY_Home;
       IFWL_ListBoxDP* pData =
           static_cast<IFWL_ListBoxDP*>(m_pProperties->m_pDataProvider);
       int32_t iDstItem = -1;

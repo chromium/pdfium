@@ -1173,7 +1173,7 @@ CFX_FontCache::~CFX_FontCache() {
 
 CFX_FaceCache* CFX_FontCache::GetCachedFace(CFX_Font* pFont) {
   FXFT_Face internal_face = pFont->GetFace();
-  const FX_BOOL bExternal = internal_face == nullptr;
+  const bool bExternal = !internal_face;
   FXFT_Face face =
       bExternal ? (FXFT_Face)pFont->GetSubstFont()->m_ExtHandle : internal_face;
   CFX_FTCacheMap& map = bExternal ? m_ExtFaceMap : m_FTFaceMap;
@@ -1194,7 +1194,7 @@ CFX_FaceCache* CFX_FontCache::GetCachedFace(CFX_Font* pFont) {
 
 void CFX_FontCache::ReleaseCachedFace(CFX_Font* pFont) {
   FXFT_Face internal_face = pFont->GetFace();
-  const FX_BOOL bExternal = internal_face == nullptr;
+  const bool bExternal = !internal_face;
   FXFT_Face face =
       bExternal ? (FXFT_Face)pFont->GetSubstFont()->m_ExtHandle : internal_face;
   CFX_FTCacheMap& map = bExternal ? m_ExtFaceMap : m_FTFaceMap;

@@ -662,10 +662,8 @@ FX_BOOL CPDFSDK_Widget::IsChecked() const {
 #ifdef PDF_ENABLE_XFA
   if (IXFA_WidgetHandler* pXFAWidgetHandler = GetXFAWidgetHandler()) {
     if (IXFA_Widget* hWidget = GetMixXFAWidget()) {
-      if (CXFA_WidgetAcc* pWidgetAcc = pXFAWidgetHandler->GetDataAcc(hWidget)) {
-        FX_BOOL bChecked = pWidgetAcc->GetCheckState() == XFA_CHECKSTATE_On;
-        return bChecked;
-      }
+      if (CXFA_WidgetAcc* pWidgetAcc = pXFAWidgetHandler->GetDataAcc(hWidget))
+        return pWidgetAcc->GetCheckState() == XFA_CHECKSTATE_On;
     }
   }
 #endif  // PDF_ENABLE_XFA

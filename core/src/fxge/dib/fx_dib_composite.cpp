@@ -4907,7 +4907,7 @@ FX_BOOL CFX_DIBitmap::CompositeRect(int left,
   }
   int Bpp = m_bpp / 8;
   FX_BOOL bAlpha = HasAlpha();
-  FX_BOOL bArgb = GetFormat() == FXDIB_Argb;
+  bool bArgb = GetFormat() == FXDIB_Argb;
   if (src_alpha == 255) {
     for (int row = rect.top; row < rect.bottom; row++) {
       uint8_t* dest_scan = m_pBuffer + row * m_Pitch + rect.left * Bpp;

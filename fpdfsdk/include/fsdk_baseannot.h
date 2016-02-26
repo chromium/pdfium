@@ -36,19 +36,19 @@ class CPDFSDK_DateTime {
 
   CPDFSDK_DateTime& operator=(const CPDFSDK_DateTime& datetime);
   CPDFSDK_DateTime& operator=(const FX_SYSTEMTIME& st);
-  FX_BOOL operator==(CPDFSDK_DateTime& datetime);
-  FX_BOOL operator!=(CPDFSDK_DateTime& datetime);
-  FX_BOOL operator>(CPDFSDK_DateTime& datetime);
-  FX_BOOL operator>=(CPDFSDK_DateTime& datetime);
-  FX_BOOL operator<(CPDFSDK_DateTime& datetime);
-  FX_BOOL operator<=(CPDFSDK_DateTime& datetime);
+  bool operator==(const CPDFSDK_DateTime& datetime) const;
+  bool operator!=(const CPDFSDK_DateTime& datetime) const;
+  bool operator>(const CPDFSDK_DateTime& datetime) const;
+  bool operator>=(const CPDFSDK_DateTime& datetime) const;
+  bool operator<(const CPDFSDK_DateTime& datetime) const;
+  bool operator<=(const CPDFSDK_DateTime& datetime) const;
   operator time_t();
 
   CPDFSDK_DateTime& FromPDFDateTimeString(const CFX_ByteString& dtStr);
   CFX_ByteString ToCommonDateTimeString();
   CFX_ByteString ToPDFDateTimeString();
   void ToSystemTime(FX_SYSTEMTIME& st);
-  CPDFSDK_DateTime ToGMT();
+  CPDFSDK_DateTime ToGMT() const;
   CPDFSDK_DateTime& AddDays(short days);
   CPDFSDK_DateTime& AddSeconds(int seconds);
 

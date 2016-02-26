@@ -134,7 +134,7 @@ struct CPWL_Color {
   FX_FLOAT fColor1, fColor2, fColor3, fColor4;
 };
 
-inline FX_BOOL operator==(const CPWL_Color& c1, const CPWL_Color& c2) {
+inline bool operator==(const CPWL_Color& c1, const CPWL_Color& c2) {
   return c1.nColorType == c2.nColorType && c1.fColor1 - c2.fColor1 < 0.0001 &&
          c1.fColor1 - c2.fColor1 > -0.0001 &&
          c1.fColor2 - c2.fColor2 < 0.0001 &&
@@ -144,8 +144,8 @@ inline FX_BOOL operator==(const CPWL_Color& c1, const CPWL_Color& c2) {
          c1.fColor4 - c2.fColor4 < 0.0001 && c1.fColor4 - c2.fColor4 > -0.0001;
 }
 
-inline FX_BOOL operator!=(const CPWL_Color& c1, const CPWL_Color& c2) {
-  return !operator==(c1, c2);
+inline bool operator!=(const CPWL_Color& c1, const CPWL_Color& c2) {
+  return !(c1 == c2);
 }
 
 #define PWL_SCROLLBAR_WIDTH 12.0f

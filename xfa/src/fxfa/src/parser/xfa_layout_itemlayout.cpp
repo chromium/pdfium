@@ -817,12 +817,12 @@ FX_BOOL CXFA_ItemLayoutProcessor::ProcessKeepNodesForCheckNext(
     XFA_ItemLayoutProcessorStages& nCurStage,
     CXFA_Node*& pNextContainer,
     FX_BOOL& bLastKeepNode) {
-  FX_BOOL bCanSplite = pNextContainer->GetIntact() == XFA_ATTRIBUTEENUM_None;
+  const bool bCanSplit = pNextContainer->GetIntact() == XFA_ATTRIBUTEENUM_None;
   FX_BOOL bNextKeep = FALSE;
   if (XFA_ExistContainerKeep(pNextContainer, FALSE)) {
     bNextKeep = TRUE;
   }
-  if (bNextKeep && !bCanSplite) {
+  if (bNextKeep && !bCanSplit) {
     if (!m_bIsProcessKeep && !m_bKeepBreakFinish) {
       m_pKeepHeadNode = pNextContainer;
       m_bIsProcessKeep = TRUE;

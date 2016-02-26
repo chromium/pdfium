@@ -67,13 +67,11 @@ class CLST_Rect : public CFX_FloatRect {
     return *this;
   }
 
-  FX_BOOL operator==(const CLST_Rect& rect) const {
+  bool operator==(const CLST_Rect& rect) const {
     return FXSYS_memcmp(this, &rect, sizeof(CLST_Rect)) == 0;
   }
 
-  FX_BOOL operator!=(const CLST_Rect& rect) const {
-    return FXSYS_memcmp(this, &rect, sizeof(CLST_Rect)) != 0;
-  }
+  bool operator!=(const CLST_Rect& rect) const { return !(*this == rect); }
 
   FX_FLOAT Width() const { return right - left; }
 

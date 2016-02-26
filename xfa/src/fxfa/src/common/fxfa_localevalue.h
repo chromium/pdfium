@@ -95,9 +95,9 @@ class CXFA_LocaleValue {
   FX_BOOL SetDateTime(const CFX_WideString& wsDateTime,
                       const CFX_WideString& wsFormat,
                       IFX_Locale* pLocale);
-  inline FX_BOOL IsNull() const { return m_dwType == XFA_VT_NULL; }
-  inline FX_BOOL IsEmpty() const { return m_wsValue.IsEmpty(); }
-  inline FX_BOOL IsValid() const { return m_bValid; }
+  bool IsNull() const { return m_dwType == XFA_VT_NULL; }
+  FX_BOOL IsEmpty() const { return m_wsValue.IsEmpty(); }
+  FX_BOOL IsValid() const { return m_bValid; }
 
  protected:
   FX_BOOL ParsePatternValue(const CFX_WideString& wsValue,

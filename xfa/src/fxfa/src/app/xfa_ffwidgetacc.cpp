@@ -374,7 +374,7 @@ int32_t CXFA_WidgetAcc::ProcessCalculate() {
   int32_t iRet = ExecuteScript(script, &EventParam);
   if (iRet == XFA_EVENTERROR_Sucess) {
     if (GetRawValue() != EventParam.m_wsResult) {
-      FX_BOOL bNotify = GetDoc()->GetDocType() == XFA_DOCTYPE_Static;
+      const bool bNotify = GetDoc()->GetDocType() == XFA_DOCTYPE_Static;
       SetValue(EventParam.m_wsResult, XFA_VALUEPICTURE_Raw);
       UpdateUIDisplay();
       if (bNotify) {
@@ -770,9 +770,9 @@ void CXFA_WidgetAcc::CalcCaptionSize(CFX_SizeF& szCap) {
   XFA_ELEMENT eUIType = (XFA_ELEMENT)GetUIType();
   int32_t iCapPlacement = caption.GetPlacementType();
   FX_FLOAT fCapReserve = caption.GetReserve();
-  FX_BOOL bVert = iCapPlacement == XFA_ATTRIBUTEENUM_Top ||
-                  iCapPlacement == XFA_ATTRIBUTEENUM_Bottom;
-  FX_BOOL bReserveExit = fCapReserve > 0.01;
+  const bool bVert = iCapPlacement == XFA_ATTRIBUTEENUM_Top ||
+                     iCapPlacement == XFA_ATTRIBUTEENUM_Bottom;
+  const bool bReserveExit = fCapReserve > 0.01;
   CXFA_TextLayout* pCapTextLayout =
       ((CXFA_FieldLayoutData*)m_pLayoutData)->m_pCapTextLayout;
   if (pCapTextLayout) {

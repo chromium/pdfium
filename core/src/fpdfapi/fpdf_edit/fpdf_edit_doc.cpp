@@ -263,10 +263,10 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
   if ((pLogFont->lfPitchAndFamily & 0xf8) == FF_SCRIPT) {
     flags |= PDFFONT_SCRIPT;
   }
-  FX_BOOL bCJK = pLogFont->lfCharSet == CHINESEBIG5_CHARSET ||
-                 pLogFont->lfCharSet == GB2312_CHARSET ||
-                 pLogFont->lfCharSet == HANGEUL_CHARSET ||
-                 pLogFont->lfCharSet == SHIFTJIS_CHARSET;
+  bool bCJK = pLogFont->lfCharSet == CHINESEBIG5_CHARSET ||
+              pLogFont->lfCharSet == GB2312_CHARSET ||
+              pLogFont->lfCharSet == HANGEUL_CHARSET ||
+              pLogFont->lfCharSet == SHIFTJIS_CHARSET;
   CFX_ByteString basefont;
   if (bTranslateName && bCJK) {
     basefont = _FPDF_GetPSNameFromTT(hDC);
@@ -828,10 +828,10 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert) {
   if (!pFont) {
     return NULL;
   }
-  FX_BOOL bCJK = charset == FXFONT_CHINESEBIG5_CHARSET ||
-                 charset == FXFONT_GB2312_CHARSET ||
-                 charset == FXFONT_HANGEUL_CHARSET ||
-                 charset == FXFONT_SHIFTJIS_CHARSET;
+  bool bCJK = charset == FXFONT_CHINESEBIG5_CHARSET ||
+              charset == FXFONT_GB2312_CHARSET ||
+              charset == FXFONT_HANGEUL_CHARSET ||
+              charset == FXFONT_SHIFTJIS_CHARSET;
   CFX_ByteString basefont = pFont->GetFamilyName();
   basefont.Replace(" ", "");
   int flags = 0;

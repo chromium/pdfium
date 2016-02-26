@@ -280,7 +280,7 @@ IFPF_Font* CFPF_SkiaFontMgr::CreateFont(const CFX_ByteStringC& bsFamilyname,
     if (dwFaceName == dwSysFontName) {
       nFind += FPF_SKIAMATCHWEIGHT_NAME1;
     }
-    FX_BOOL bMatchedName = (nFind == FPF_SKIAMATCHWEIGHT_NAME1);
+    bool bMatchedName = (nFind == FPF_SKIAMATCHWEIGHT_NAME1);
     if ((dwStyle & FXFONT_BOLD) == (pFontDes->m_dwStyle & FXFONT_BOLD)) {
       nFind += FPF_SKIAMATCHWEIGHT_1;
     }
@@ -299,7 +299,7 @@ IFPF_Font* CFPF_SkiaFontMgr::CreateFont(const CFX_ByteStringC& bsFamilyname,
     }
     if (dwSubst == dwSysFontName || dwSubstSans == dwSysFontName) {
       nFind += FPF_SKIAMATCHWEIGHT_NAME2;
-      bMatchedName = TRUE;
+      bMatchedName = true;
     }
     if (uCharset == FXFONT_DEFAULT_CHARSET || bMaybeSymbol) {
       if (nFind > nMax && bMatchedName) {

@@ -2319,8 +2319,7 @@ void CXFA_Node::Script_Field_SetItemState(CFXJSE_Arguments* pArguments) {
     return;
   }
   int32_t iIndex = pArguments->GetInt32(0);
-  FX_BOOL bAdd = pArguments->GetInt32(1) == 0 ? FALSE : TRUE;
-  if (bAdd) {
+  if (pArguments->GetInt32(1) != 0) {
     pWidgetData->SetItemState(iIndex, TRUE, TRUE, TRUE);
   } else {
     if (pWidgetData->GetItemState(iIndex)) {
@@ -3431,7 +3430,7 @@ void CXFA_Node::Script_Form_Recalculate(CFXJSE_Arguments* pArguments) {
   }
   int32_t argc = pArguments->GetLength();
   if (argc == 1) {
-    FX_BOOL bScriptFlags = pArguments->GetInt32(0) == 0 ? FALSE : TRUE;
+    const bool bScriptFlags = pArguments->GetInt32(0) != 0;
     IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
     if (!pNotify) {
       return;

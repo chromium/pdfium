@@ -1270,7 +1270,7 @@ int32_t CPDF_Creator::WriteOldIndirectObject(FX_DWORD objnum) {
   FX_BOOL bExistInMap =
       pdfium::ContainsKey(m_pDocument->m_IndirectObjs, objnum);
   const uint8_t object_type = m_pParser->GetObjectType(objnum);
-  FX_BOOL bObjStm = (object_type == 2) && m_pEncryptDict && !m_pXRefStream;
+  bool bObjStm = (object_type == 2) && m_pEncryptDict && !m_pXRefStream;
   if (m_pParser->IsVersionUpdated() || m_bSecurityChanged || bExistInMap ||
       bObjStm) {
     CPDF_Object* pObj = m_pDocument->GetIndirectObject(objnum);
@@ -1547,7 +1547,7 @@ int32_t CPDF_Creator::WriteDoc_Stage1(IFX_Pause* pPause) {
         m_pParser->GetLastXRefOffset() == 0) {
       InitOldObjNumOffsets();
       FX_DWORD dwEnd = m_pParser->GetLastObjNum();
-      FX_BOOL bObjStm = (m_dwFlags & FPDFCREATE_OBJECTSTREAM) != 0;
+      bool bObjStm = (m_dwFlags & FPDFCREATE_OBJECTSTREAM) != 0;
       for (FX_DWORD objnum = 0; objnum <= dwEnd; objnum++) {
         if (m_pParser->IsObjectFreeOrNull(objnum))
           continue;

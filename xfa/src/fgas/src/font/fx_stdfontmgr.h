@@ -102,13 +102,13 @@ struct FX_FontDescriptorInfo {
  public:
   CFX_FontDescriptor* pFont;
   int32_t nPenalty;
-  FX_BOOL operator>(const FX_FontDescriptorInfo& x) {
+  bool operator>(const FX_FontDescriptorInfo& x) {
     return nPenalty > x.nPenalty;
   };
-  FX_BOOL operator<(const FX_FontDescriptorInfo& x) {
+  bool operator<(const FX_FontDescriptorInfo& x) {
     return nPenalty < x.nPenalty;
   };
-  FX_BOOL operator==(const FX_FontDescriptorInfo& x) {
+  bool operator==(const FX_FontDescriptorInfo& x) {
     return nPenalty == x.nPenalty;
   };
 };

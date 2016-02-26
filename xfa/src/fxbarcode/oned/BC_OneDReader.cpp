@@ -61,7 +61,7 @@ CFX_ByteString CBC_OneDReader::DeDecode(CBC_BinaryBitmap* image,
   }
   for (int32_t x = 0; x < maxLines; x++) {
     int32_t rowStepsAboveOrBelow = (x + 1) >> 1;
-    FX_BOOL isAbove = (x & 0x01) == 0;
+    const bool isAbove = (x & 0x01) == 0;
     int32_t rowNumber =
         middle +
         rowStep * (isAbove ? rowStepsAboveOrBelow : -rowStepsAboveOrBelow);

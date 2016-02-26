@@ -76,7 +76,7 @@ CFX_PtrArray* CBC_DataMatrixDataBlock::GetDataBlocks(
       }
     }
   }
-  FX_BOOL specialVersion = version->GetVersionNumber() == 24;
+  const bool specialVersion = version->GetVersionNumber() == 24;
   int32_t numLongerBlocks = specialVersion ? 8 : numResultBlocks;
   for (j = 0; j < numLongerBlocks; j++) {
     if (rawCodewordsOffset < rawCodewords->GetSize()) {

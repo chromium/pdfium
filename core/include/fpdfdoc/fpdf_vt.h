@@ -32,15 +32,12 @@ struct CPVT_WordPlace {
 
   void Default() { nSecIndex = nLineIndex = nWordIndex = -1; }
 
-  FX_BOOL operator==(const CPVT_WordPlace& wp) const {
+  bool operator==(const CPVT_WordPlace& wp) const {
     return wp.nSecIndex == nSecIndex && wp.nLineIndex == nLineIndex &&
            wp.nWordIndex == nWordIndex;
   }
 
-  FX_BOOL operator!=(const CPVT_WordPlace& wp) const {
-    return wp.nSecIndex != nSecIndex || wp.nLineIndex != nLineIndex ||
-           wp.nWordIndex != nWordIndex;
-  }
+  FX_BOOL operator!=(const CPVT_WordPlace& wp) const { return !(*this == wp); }
 
   inline int32_t WordCmp(const CPVT_WordPlace& wp) const {
     if (nSecIndex > wp.nSecIndex) {

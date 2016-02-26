@@ -102,58 +102,58 @@ class CFX_Unitime {
   friend CFX_Unitime operator-(FX_UNITIME t1, const CFX_Unitime& t2) {
     return CFX_Unitime(t1 + t2.m_iUnitime);
   }
-  friend FX_BOOL operator==(const CFX_Unitime& t1, const CFX_Unitime& t2) {
+  friend bool operator==(const CFX_Unitime& t1, const CFX_Unitime& t2) {
     return t1.m_iUnitime == t2.m_iUnitime;
   }
-  friend FX_BOOL operator==(const CFX_Unitime& t1, FX_UNITIME t2) {
+  friend bool operator==(const CFX_Unitime& t1, FX_UNITIME t2) {
     return t1.m_iUnitime == t2;
   }
-  friend FX_BOOL operator==(FX_UNITIME t1, const CFX_Unitime& t2) {
+  friend bool operator==(FX_UNITIME t1, const CFX_Unitime& t2) {
     return t1 == t2.m_iUnitime;
   }
-  friend FX_BOOL operator!=(const CFX_Unitime& t1, const CFX_Unitime& t2) {
+  friend bool operator!=(const CFX_Unitime& t1, const CFX_Unitime& t2) {
     return t1.m_iUnitime != t2.m_iUnitime;
   }
-  friend FX_BOOL operator!=(const CFX_Unitime& t1, FX_UNITIME t2) {
+  friend bool operator!=(const CFX_Unitime& t1, FX_UNITIME t2) {
     return t1.m_iUnitime != t2;
   }
-  friend FX_BOOL operator!=(FX_UNITIME t1, const CFX_Unitime& t2) {
+  friend bool operator!=(FX_UNITIME t1, const CFX_Unitime& t2) {
     return t1 != t2.m_iUnitime;
   }
-  friend FX_BOOL operator>(const CFX_Unitime& t1, const CFX_Unitime& t2) {
+  friend bool operator>(const CFX_Unitime& t1, const CFX_Unitime& t2) {
     return t1.m_iUnitime > t2.m_iUnitime;
   }
-  friend FX_BOOL operator>(const CFX_Unitime& t1, FX_UNITIME t2) {
+  friend bool operator>(const CFX_Unitime& t1, FX_UNITIME t2) {
     return t1.m_iUnitime > t2;
   }
-  friend FX_BOOL operator>(FX_UNITIME t1, const CFX_Unitime& t2) {
+  friend bool operator>(FX_UNITIME t1, const CFX_Unitime& t2) {
     return t1 > t2.m_iUnitime;
   }
-  friend FX_BOOL operator>=(const CFX_Unitime& t1, const CFX_Unitime& t2) {
+  friend bool operator>=(const CFX_Unitime& t1, const CFX_Unitime& t2) {
     return t1.m_iUnitime >= t2.m_iUnitime;
   }
-  friend FX_BOOL operator>=(const CFX_Unitime& t1, FX_UNITIME t2) {
+  friend bool operator>=(const CFX_Unitime& t1, FX_UNITIME t2) {
     return t1.m_iUnitime >= t2;
   }
-  friend FX_BOOL operator>=(FX_UNITIME t1, const CFX_Unitime& t2) {
+  friend bool operator>=(FX_UNITIME t1, const CFX_Unitime& t2) {
     return t1 >= t2.m_iUnitime;
   }
-  friend FX_BOOL operator<(const CFX_Unitime& t1, const CFX_Unitime& t2) {
+  friend bool operator<(const CFX_Unitime& t1, const CFX_Unitime& t2) {
     return t1.m_iUnitime < t2.m_iUnitime;
   }
-  friend FX_BOOL operator<(const CFX_Unitime& t1, FX_UNITIME t2) {
+  friend bool operator<(const CFX_Unitime& t1, FX_UNITIME t2) {
     return t1.m_iUnitime < t2;
   }
-  friend FX_BOOL operator<(FX_UNITIME t1, const CFX_Unitime& t2) {
+  friend bool operator<(FX_UNITIME t1, const CFX_Unitime& t2) {
     return t1 < t2.m_iUnitime;
   }
-  friend FX_BOOL operator<=(const CFX_Unitime& t1, const CFX_Unitime& t2) {
+  friend bool operator<=(const CFX_Unitime& t1, const CFX_Unitime& t2) {
     return t1.m_iUnitime <= t2.m_iUnitime;
   }
-  friend FX_BOOL operator<=(const CFX_Unitime& t1, FX_UNITIME t2) {
+  friend bool operator<=(const CFX_Unitime& t1, FX_UNITIME t2) {
     return t1.m_iUnitime <= t2;
   }
-  friend FX_BOOL operator<=(FX_UNITIME t1, const CFX_Unitime& t2) {
+  friend bool operator<=(FX_UNITIME t1, const CFX_Unitime& t2) {
     return t1 <= t2.m_iUnitime;
   }
 

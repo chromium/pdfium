@@ -597,8 +597,10 @@ FX_BOOL CXFA_LocaleValue::ValidateCanonicalDate(const CFX_WideString& wsDate,
   if (nLen < wCountY || nLen > wCountY + wCountM + wCountD + 2) {
     return FALSE;
   }
-  FX_BOOL bSymbol = (wsDate.Find(0x2D) == -1) ? FALSE : TRUE;
-  FX_WORD wYear = 0, wMonth = 0, wDay = 0;
+  const bool bSymbol = wsDate.Find(0x2D) != -1;
+  FX_WORD wYear = 0;
+  FX_WORD wMonth = 0;
+  FX_WORD wDay = 0;
   const FX_WCHAR* pDate = (const FX_WCHAR*)wsDate;
   int nIndex = 0, nStart = 0;
   while (pDate[nIndex] != '\0' && nIndex < wCountY) {
@@ -680,7 +682,7 @@ FX_BOOL CXFA_LocaleValue::ValidateCanonicalTime(const CFX_WideString& wsTime) {
   const FX_WORD wCountM = 2;
   const FX_WORD wCountS = 2;
   const FX_WORD wCountF = 3;
-  FX_BOOL bSymbol = (wsTime.Find(':') == -1) ? FALSE : TRUE;
+  const bool bSymbol = wsTime.Find(':') != -1;
   FX_WORD wHour = 0;
   FX_WORD wMinute = 0;
   FX_WORD wSecond = 0;

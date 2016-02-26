@@ -55,7 +55,7 @@ void CPDF_AnnotList::DisplayPass(CPDF_Page* pPage,
                                  CPDF_RenderOptions* pOptions,
                                  FX_RECT* clip_rect) {
   for (CPDF_Annot* pAnnot : m_AnnotList) {
-    FX_BOOL bWidget = pAnnot->GetSubType() == "Widget";
+    bool bWidget = pAnnot->GetSubType() == "Widget";
     if ((bWidgetPass && !bWidget) || (!bWidgetPass && bWidget))
       continue;
 
@@ -255,8 +255,8 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
   if (annot_flags & ANNOTFLAG_HIDDEN) {
     return;
   }
-  FX_BOOL bPrinting = pDevice->GetDeviceClass() == FXDC_PRINTER ||
-                      (pOptions && (pOptions->m_Flags & RENDER_PRINTPREVIEW));
+  bool bPrinting = pDevice->GetDeviceClass() == FXDC_PRINTER ||
+                   (pOptions && (pOptions->m_Flags & RENDER_PRINTPREVIEW));
   if (bPrinting && (annot_flags & ANNOTFLAG_PRINT) == 0) {
     return;
   }

@@ -141,8 +141,8 @@ class CXFA_Node : public CXFA_Object {
   IFDE_XMLNode* GetXMLMappingNode() const { return m_pXMLNode; }
   IFDE_XMLNode* CreateXMLMappingNode();
   FX_BOOL IsNeedSavingXMLNode();
-  inline FX_DWORD GetNameHash() const { return m_dwNameHash; }
-  inline FX_BOOL IsUnnamed() const { return m_dwNameHash == 0; }
+  FX_DWORD GetNameHash() const { return m_dwNameHash; }
+  bool IsUnnamed() const { return m_dwNameHash == 0; }
   CXFA_Node* GetModelNode();
   void UpdateNameHash();
   FX_BOOL HasAttribute(XFA_ATTRIBUTE eAttr, FX_BOOL bCanInherit = FALSE);

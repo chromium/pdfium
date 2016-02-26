@@ -271,9 +271,9 @@ CFX_FloatRect GetShadingBBox(CPDF_Stream* pStream,
     return CFX_FloatRect(0, 0, 0, 0);
 
   CFX_FloatRect rect;
-  FX_BOOL bStarted = FALSE;
-  FX_BOOL bGouraud = type == kFreeFormGouraudTriangleMeshShading ||
-                     type == kLatticeFormGouraudTriangleMeshShading;
+  bool bStarted = false;
+  bool bGouraud = type == kFreeFormGouraudTriangleMeshShading ||
+                  type == kLatticeFormGouraudTriangleMeshShading;
 
   int point_count = kSingleCoordinatePair;
   if (type == kTensorProductPatchMeshShading)

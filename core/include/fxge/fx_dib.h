@@ -199,13 +199,10 @@ class CFX_DIBSource {
   // TODO(thestig): Investigate this. Given the possible values of FXDIB_Format,
   // it feels as though this should be implemented as !!(m_AlphaFlag & 1) and
   // IsOpaqueImage() below should never be able to return TRUE.
-  FX_BOOL IsAlphaMask() const { return m_AlphaFlag == 1; }
-
-  FX_BOOL HasAlpha() const { return !!(m_AlphaFlag & 2); }
-
-  FX_BOOL IsOpaqueImage() const { return !(m_AlphaFlag & 3); }
-
-  FX_BOOL IsCmykImage() const { return !!(m_AlphaFlag & 4); }
+  bool IsAlphaMask() const { return m_AlphaFlag == 1; }
+  bool HasAlpha() const { return !!(m_AlphaFlag & 2); }
+  bool IsOpaqueImage() const { return !(m_AlphaFlag & 3); }
+  bool IsCmykImage() const { return !!(m_AlphaFlag & 4); }
 
   int GetPaletteSize() const {
     return IsAlphaMask() ? 0 : (m_bpp == 1 ? 2 : (m_bpp == 8 ? 256 : 0));

@@ -164,12 +164,12 @@ class CFX_Decimal {
   CFX_Decimal(const CFX_ByteStringC& str);
   operator CFX_WideString() const;
   operator double() const;
-  FX_BOOL operator==(const CFX_Decimal& val) const;
-  FX_BOOL operator<=(const CFX_Decimal& val) const;
-  FX_BOOL operator>=(const CFX_Decimal& val) const;
-  FX_BOOL operator!=(const CFX_Decimal& val) const;
-  FX_BOOL operator<(const CFX_Decimal& val) const;
-  FX_BOOL operator>(const CFX_Decimal& val) const;
+  bool operator==(const CFX_Decimal& val) const;
+  bool operator<=(const CFX_Decimal& val) const;
+  bool operator>=(const CFX_Decimal& val) const;
+  bool operator!=(const CFX_Decimal& val) const;
+  bool operator<(const CFX_Decimal& val) const;
+  bool operator>(const CFX_Decimal& val) const;
   CFX_Decimal operator+(const CFX_Decimal& val) const;
   CFX_Decimal operator-(const CFX_Decimal& val) const;
   CFX_Decimal operator*(const CFX_Decimal& val) const;

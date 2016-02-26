@@ -601,20 +601,16 @@ class CFX_MapPtrToPtr {
  protected:
   struct CAssoc {
     CAssoc* pNext;
-
     void* key;
-
     void* value;
   };
 
  public:
   CFX_MapPtrToPtr(int nBlockSize = 10);
-
   ~CFX_MapPtrToPtr();
 
   int GetCount() const { return m_nCount; }
-
-  FX_BOOL IsEmpty() const { return m_nCount == 0; }
+  bool IsEmpty() const { return m_nCount == 0; }
 
   FX_BOOL Lookup(void* key, void*& rValue) const;
 
@@ -961,9 +957,7 @@ class CFX_CountRef {
     m_pObject = NULL;
   }
 
-  FX_BOOL operator==(const Ref& ref) const {
-    return m_pObject == ref.m_pObject;
-  }
+  bool operator==(const Ref& ref) const { return m_pObject == ref.m_pObject; }
 
  protected:
   CountedObj* m_pObject;

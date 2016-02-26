@@ -4980,9 +4980,8 @@ CFX_Decimal CFX_Decimal::AddOrMinus(const CFX_Decimal& val,
   if (!isAdding) {
     rhs.SetNegate();
   }
-  FX_BOOL doRawAdd = (FXMATH_DECIMAL_FLAGS2NEG(lhs.m_uFlags) ==
-                      FXMATH_DECIMAL_FLAGS2NEG(rhs.m_uFlags));
-  if (doRawAdd) {
+  if (FXMATH_DECIMAL_FLAGS2NEG(lhs.m_uFlags) ==
+      FXMATH_DECIMAL_FLAGS2NEG(rhs.m_uFlags)) {
     uint64_t phi = lhs.m_uHi, pmid = lhs.m_uMid, plo = lhs.m_uLo;
     phi += rhs.m_uHi;
     pmid += rhs.m_uMid;
@@ -5087,22 +5086,22 @@ CFX_Decimal CFX_Decimal::Modulus(const CFX_Decimal& val) const {
   }
   return lhs;
 }
-FX_BOOL CFX_Decimal::operator==(const CFX_Decimal& val) const {
+bool CFX_Decimal::operator==(const CFX_Decimal& val) const {
   return Compare(val) == 0;
 }
-FX_BOOL CFX_Decimal::operator<=(const CFX_Decimal& val) const {
+bool CFX_Decimal::operator<=(const CFX_Decimal& val) const {
   return Compare(val) <= 0;
 }
-FX_BOOL CFX_Decimal::operator>=(const CFX_Decimal& val) const {
+bool CFX_Decimal::operator>=(const CFX_Decimal& val) const {
   return Compare(val) >= 0;
 }
-FX_BOOL CFX_Decimal::operator!=(const CFX_Decimal& val) const {
+bool CFX_Decimal::operator!=(const CFX_Decimal& val) const {
   return Compare(val) != 0;
 }
-FX_BOOL CFX_Decimal::operator<(const CFX_Decimal& val) const {
+bool CFX_Decimal::operator<(const CFX_Decimal& val) const {
   return Compare(val) < 0;
 }
-FX_BOOL CFX_Decimal::operator>(const CFX_Decimal& val) const {
+bool CFX_Decimal::operator>(const CFX_Decimal& val) const {
   return Compare(val) > 0;
 }
 CFX_Decimal CFX_Decimal::operator+(const CFX_Decimal& val) const {

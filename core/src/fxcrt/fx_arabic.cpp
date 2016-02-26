@@ -276,7 +276,7 @@ FX_WCHAR CFX_ArabicChar::GetFormChar(const CFX_Char* cur,
   FX_CHARTYPE eNext;
   FX_WCHAR wNext;
   ParseChar(next, wNext, eNext);
-  FX_BOOL bAlef = (eNext == FX_CHARTYPE_ArabicAlef && wCur == 0x644);
+  bool bAlef = (eNext == FX_CHARTYPE_ArabicAlef && wCur == 0x644);
   if (ePrev < FX_CHARTYPE_ArabicAlef) {
     if (bAlef) {
       return FX_GetArabicFromAlefTable(wNext);
