@@ -273,11 +273,9 @@ void CPWL_Wnd::Destroy() {
   m_pVScrollBar = NULL;
 }
 
-void CPWL_Wnd::Move(const CFX_FloatRect& rcNew,
-                    FX_BOOL bReset,
-                    FX_BOOL bRefresh) {
+void CPWL_Wnd::Move(const CPDF_Rect& rcNew, FX_BOOL bReset, FX_BOOL bRefresh) {
   if (IsValid()) {
-    CFX_FloatRect rcOld = GetWindowRect();
+    CPDF_Rect rcOld = GetWindowRect();
 
     m_rcWindow = rcNew;
     m_rcWindow.Normalize();
@@ -296,9 +294,9 @@ void CPWL_Wnd::Move(const CFX_FloatRect& rcNew,
   }
 }
 
-void CPWL_Wnd::InvalidateRectMove(const CFX_FloatRect& rcOld,
-                                  const CFX_FloatRect& rcNew) {
-  CFX_FloatRect rcUnion = rcOld;
+void CPWL_Wnd::InvalidateRectMove(const CPDF_Rect& rcOld,
+                                  const CPDF_Rect& rcNew) {
+  CPDF_Rect rcUnion = rcOld;
   rcUnion.Union(rcNew);
 
   InvalidateRect(&rcUnion);
@@ -313,7 +311,7 @@ void CPWL_Wnd::GetAppearanceStream(CFX_ByteTextBuf& sAppStream) {
 
 // if don't set,Get default apperance stream
 void CPWL_Wnd::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
-  CFX_FloatRect rectWnd = GetWindowRect();
+  CPDF_Rect rectWnd = GetWindowRect();
   if (!rectWnd.IsEmpty()) {
     CFX_ByteTextBuf sThis;
 
@@ -350,10 +348,10 @@ void CPWL_Wnd::DrawAppearance(CFX_RenderDevice* pDevice,
 
 void CPWL_Wnd::DrawThisAppearance(CFX_RenderDevice* pDevice,
                                   CFX_Matrix* pUser2Device) {
-  CFX_FloatRect rectWnd = GetWindowRect();
+  CPDF_Rect rectWnd = GetWindowRect();
   if (!rectWnd.IsEmpty()) {
     if (HasFlag(PWS_BACKGROUND)) {
-      CFX_FloatRect rcClient = CPWL_Utils::DeflateRect(
+      CPDF_Rect rcClient = CPWL_Utils::DeflateRect(
           rectWnd, (FX_FLOAT)(GetBorderWidth() + GetInnerBorderWidth()));
       CPWL_Utils::DrawFillRect(pDevice, pUser2Device, rcClient,
                                GetBackgroundColor(), GetTransparency());
@@ -383,12 +381,12 @@ void CPWL_Wnd::DrawChildAppearance(CFX_RenderDevice* pDevice,
   }
 }
 
-void CPWL_Wnd::InvalidateRect(CFX_FloatRect* pRect) {
+void CPWL_Wnd::InvalidateRect(CPDF_Rect* pRect) {
   if (IsValid()) {
-    CFX_FloatRect rcRefresh = pRect ? *pRect : GetWindowRect();
+    CPDF_Rect rcRefresh = pRect ? *pRect : GetWindowRect();
 
     if (!HasFlag(PWS_NOREFRESHCLIP)) {
-      CFX_FloatRect rcClip = GetClipRect();
+      CPDF_Rect rcClip = GetClipRect();
       if (!rcClip.IsEmpty()) {
         rcRefresh.Intersect(rcClip);
       }
@@ -425,7 +423,7 @@ void CPWL_Wnd::InvalidateRect(CFX_FloatRect* pRect) {
   }
 
 #define PWL_IMPLEMENT_MOUSE_METHOD(mouse_method_name)                        \
-  FX_BOOL CPWL_Wnd::mouse_method_name(const CFX_FloatPoint& point,           \
+  FX_BOOL CPWL_Wnd::mouse_method_name(const CPDF_Point& point,               \
                                       FX_DWORD nFlag) {                      \
     if (IsValid() && IsVisible() && IsEnabled()) {                           \
       if (IsWndCaptureMouse(this)) {                                         \
@@ -469,7 +467,7 @@ PWL_IMPLEMENT_MOUSE_METHOD(OnRButtonUp)
 PWL_IMPLEMENT_MOUSE_METHOD(OnMouseMove)
 
 FX_BOOL CPWL_Wnd::OnMouseWheel(short zDelta,
-                               const CFX_FloatPoint& point,
+                               const CPDF_Point& point,
                                FX_DWORD nFlag) {
   if (IsValid() && IsVisible() && IsEnabled()) {
     SetCursor();
@@ -530,25 +528,25 @@ CPWL_Wnd* CPWL_Wnd::GetParentWindow() const {
   return m_sPrivateParam.pParentWnd;
 }
 
-CFX_FloatRect CPWL_Wnd::GetWindowRect() const {
+CPDF_Rect CPWL_Wnd::GetWindowRect() const {
   return m_rcWindow;
 }
 
-CFX_FloatRect CPWL_Wnd::GetClientRect() const {
-  CFX_FloatRect rcWindow = GetWindowRect();
-  CFX_FloatRect rcClient = CPWL_Utils::DeflateRect(
+CPDF_Rect CPWL_Wnd::GetClientRect() const {
+  CPDF_Rect rcWindow = GetWindowRect();
+  CPDF_Rect rcClient = CPWL_Utils::DeflateRect(
       rcWindow, (FX_FLOAT)(GetBorderWidth() + GetInnerBorderWidth()));
   if (CPWL_ScrollBar* pVSB = GetVScrollBar())
     rcClient.right -= pVSB->GetScrollBarWidth();
 
   rcClient.Normalize();
-  return rcWindow.Contains(rcClient) ? rcClient : CFX_FloatRect();
+  return rcWindow.Contains(rcClient) ? rcClient : CPDF_Rect();
 }
 
-CFX_FloatPoint CPWL_Wnd::GetCenterPoint() const {
-  CFX_FloatRect rcClient = GetClientRect();
-  return CFX_FloatPoint((rcClient.left + rcClient.right) * 0.5f,
-                        (rcClient.top + rcClient.bottom) * 0.5f);
+CPDF_Point CPWL_Wnd::GetCenterPoint() const {
+  CPDF_Rect rcClient = GetClientRect();
+  return CPDF_Point((rcClient.left + rcClient.right) * 0.5f,
+                    (rcClient.top + rcClient.bottom) * 0.5f);
 }
 
 FX_BOOL CPWL_Wnd::HasFlag(FX_DWORD dwFlags) const {
@@ -684,11 +682,11 @@ void CPWL_Wnd::OnSetFocus() {}
 
 void CPWL_Wnd::OnKillFocus() {}
 
-FX_BOOL CPWL_Wnd::WndHitTest(const CFX_FloatPoint& point) const {
+FX_BOOL CPWL_Wnd::WndHitTest(const CPDF_Point& point) const {
   return IsValid() && IsVisible() && GetWindowRect().Contains(point.x, point.y);
 }
 
-FX_BOOL CPWL_Wnd::ClientHitTest(const CFX_FloatPoint& point) const {
+FX_BOOL CPWL_Wnd::ClientHitTest(const CPDF_Point& point) const {
   return IsValid() && IsVisible() && GetClientRect().Contains(point.x, point.y);
 }
 
@@ -715,12 +713,12 @@ void CPWL_Wnd::SetVisible(FX_BOOL bVisible) {
   }
 }
 
-void CPWL_Wnd::SetClipRect(const CFX_FloatRect& rect) {
+void CPWL_Wnd::SetClipRect(const CPDF_Rect& rect) {
   m_rcClip = rect;
   m_rcClip.Normalize();
 }
 
-const CFX_FloatRect& CPWL_Wnd::GetClipRect() const {
+const CPDF_Rect& CPWL_Wnd::GetClipRect() const {
   return m_rcClip;
 }
 
@@ -729,14 +727,14 @@ FX_BOOL CPWL_Wnd::IsReadOnly() const {
 }
 
 void CPWL_Wnd::RePosChildWnd() {
-  CFX_FloatRect rcContent = CPWL_Utils::DeflateRect(
+  CPDF_Rect rcContent = CPWL_Utils::DeflateRect(
       GetWindowRect(), (FX_FLOAT)(GetBorderWidth() + GetInnerBorderWidth()));
 
   CPWL_ScrollBar* pVSB = GetVScrollBar();
 
-  CFX_FloatRect rcVScroll =
-      CFX_FloatRect(rcContent.right - PWL_SCROLLBAR_WIDTH, rcContent.bottom,
-                    rcContent.right - 1.0f, rcContent.top);
+  CPDF_Rect rcVScroll =
+      CPDF_Rect(rcContent.right - PWL_SCROLLBAR_WIDTH, rcContent.bottom,
+                rcContent.right - 1.0f, rcContent.top);
 
   if (pVSB)
     pVSB->Move(rcVScroll, TRUE, FALSE);
@@ -793,7 +791,7 @@ FX_BOOL CPWL_Wnd::IsFocused() const {
   return FALSE;
 }
 
-CFX_FloatRect CPWL_Wnd::GetFocusRect() const {
+CPDF_Rect CPWL_Wnd::GetFocusRect() const {
   return CPWL_Utils::InflateRect(GetWindowRect(), 1);
 }
 
@@ -888,18 +886,16 @@ CFX_Matrix CPWL_Wnd::GetWindowMatrix() const {
   return mt;
 }
 
-void CPWL_Wnd::PWLtoWnd(const CFX_FloatPoint& point,
-                        int32_t& x,
-                        int32_t& y) const {
+void CPWL_Wnd::PWLtoWnd(const CPDF_Point& point, int32_t& x, int32_t& y) const {
   CFX_Matrix mt = GetWindowMatrix();
-  CFX_FloatPoint pt = point;
+  CPDF_Point pt = point;
   mt.Transform(pt.x, pt.y);
   x = (int32_t)(pt.x + 0.5);
   y = (int32_t)(pt.y + 0.5);
 }
 
-FX_RECT CPWL_Wnd::PWLtoWnd(const CFX_FloatRect& rect) const {
-  CFX_FloatRect rcTemp = rect;
+FX_RECT CPWL_Wnd::PWLtoWnd(const CPDF_Rect& rect) const {
+  CPDF_Rect rcTemp = rect;
   CFX_Matrix mt = GetWindowMatrix();
   mt.TransformRect(rcTemp);
   return FX_RECT((int32_t)(rcTemp.left + 0.5), (int32_t)(rcTemp.bottom + 0.5),
@@ -910,44 +906,44 @@ FX_HWND CPWL_Wnd::GetAttachedHWnd() const {
   return m_sPrivateParam.hAttachedWnd;
 }
 
-CFX_FloatPoint CPWL_Wnd::ChildToParent(const CFX_FloatPoint& point) const {
+CPDF_Point CPWL_Wnd::ChildToParent(const CPDF_Point& point) const {
   CFX_Matrix mt = GetChildMatrix();
   if (mt.IsIdentity())
     return point;
 
-  CFX_FloatPoint pt = point;
+  CPDF_Point pt = point;
   mt.Transform(pt.x, pt.y);
   return pt;
 }
 
-CFX_FloatRect CPWL_Wnd::ChildToParent(const CFX_FloatRect& rect) const {
+CPDF_Rect CPWL_Wnd::ChildToParent(const CPDF_Rect& rect) const {
   CFX_Matrix mt = GetChildMatrix();
   if (mt.IsIdentity())
     return rect;
 
-  CFX_FloatRect rc = rect;
+  CPDF_Rect rc = rect;
   mt.TransformRect(rc);
   return rc;
 }
 
-CFX_FloatPoint CPWL_Wnd::ParentToChild(const CFX_FloatPoint& point) const {
+CPDF_Point CPWL_Wnd::ParentToChild(const CPDF_Point& point) const {
   CFX_Matrix mt = GetChildMatrix();
   if (mt.IsIdentity())
     return point;
 
   mt.SetReverse(mt);
-  CFX_FloatPoint pt = point;
+  CPDF_Point pt = point;
   mt.Transform(pt.x, pt.y);
   return pt;
 }
 
-CFX_FloatRect CPWL_Wnd::ParentToChild(const CFX_FloatRect& rect) const {
+CPDF_Rect CPWL_Wnd::ParentToChild(const CPDF_Rect& rect) const {
   CFX_Matrix mt = GetChildMatrix();
   if (mt.IsIdentity())
     return rect;
 
   mt.SetReverse(mt);
-  CFX_FloatRect rc = rect;
+  CPDF_Rect rc = rect;
   mt.TransformRect(rc);
   return rc;
 }

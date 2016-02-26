@@ -192,7 +192,7 @@ CPDFSDK_Document* CPDFXFA_Document::GetSDKDocument(
 }
 
 void CPDFXFA_Document::FXRect2PDFRect(const CFX_RectF& fxRectF,
-                                      CFX_FloatRect& pdfRect) {
+                                      CPDF_Rect& pdfRect) {
   pdfRect.left = fxRectF.left;
   pdfRect.top = fxRectF.bottom();
   pdfRect.right = fxRectF.right();
@@ -220,7 +220,7 @@ void CPDFXFA_Document::InvalidateRect(IXFA_PageView* pPageView,
   if (m_iDocType != DOCTYPE_DYNAMIC_XFA)
     return;
 
-  CFX_FloatRect rcPage;
+  CPDF_Rect rcPage;
   FXRect2PDFRect(rt, rcPage);
 
   CPDFXFA_Page* pPage = GetPage(pPageView);
@@ -285,7 +285,7 @@ void CPDFXFA_Document::DisplayCaret(IXFA_Widget* hWidget,
   if (pPage == NULL)
     return;
 
-  CFX_FloatRect rcCaret;
+  CPDF_Rect rcCaret;
   FXRect2PDFRect(*pRtAnchor, rcCaret);
 
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
@@ -327,7 +327,7 @@ FX_BOOL CPDFXFA_Document::GetPopupPos(IXFA_Widget* hWidget,
   FS_RECTF pageViewRect;
   pEnv->FFI_GetPageViewRect(pPage, pageViewRect);
 
-  CFX_FloatRect rcAnchor;
+  CPDF_Rect rcAnchor;
 
   rcAnchor.left = rtAnchor.left;
   rcAnchor.top = rtAnchor.bottom();

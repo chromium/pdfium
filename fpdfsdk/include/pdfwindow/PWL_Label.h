@@ -21,9 +21,9 @@ class CPWL_Label : public CPWL_Wnd {
   void SetLimitChar(int32_t nLimitChar);
   void SetHorzScale(int32_t nHorzScale);
   void SetCharSpace(FX_FLOAT fCharSpace);
-  CFX_FloatRect GetContentRect() const;
+  CPDF_Rect GetContentRect() const;
   int32_t GetTotalWords();
-  CFX_ByteString GetTextAppearanceStream(const CFX_FloatPoint& ptOffset) const;
+  CFX_ByteString GetTextAppearanceStream(const CPDF_Point& ptOffset) const;
 
  protected:
   // CPWL_Wnd

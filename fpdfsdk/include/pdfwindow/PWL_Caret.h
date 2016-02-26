@@ -14,8 +14,8 @@ struct PWL_CARET_INFO {
   PWL_CARET_INFO() : bVisible(FALSE), ptHead(0, 0), ptFoot(0, 0) {}
 
   FX_BOOL bVisible;
-  CFX_FloatPoint ptHead;
-  CFX_FloatPoint ptFoot;
+  CPDF_Point ptHead;
+  CPDF_Point ptFoot;
 };
 
 class CPWL_Caret : public CPWL_Wnd {
@@ -28,26 +28,26 @@ class CPWL_Caret : public CPWL_Wnd {
   void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           CFX_Matrix* pUser2Device) override;
-  void InvalidateRect(CFX_FloatRect* pRect = NULL) override;
+  void InvalidateRect(CPDF_Rect* pRect = NULL) override;
   void SetVisible(FX_BOOL bVisible) override {}
   void TimerProc() override;
 
   void SetCaret(FX_BOOL bVisible,
-                const CFX_FloatPoint& ptHead,
-                const CFX_FloatPoint& ptFoot);
-  CFX_ByteString GetCaretAppearanceStream(const CFX_FloatPoint& ptOffset);
-  void SetInvalidRect(CFX_FloatRect rc) { m_rcInvalid = rc; }
+                const CPDF_Point& ptHead,
+                const CPDF_Point& ptFoot);
+  CFX_ByteString GetCaretAppearanceStream(const CPDF_Point& ptOffset);
+  void SetInvalidRect(CPDF_Rect rc) { m_rcInvalid = rc; }
 
  private:
-  void GetCaretApp(CFX_ByteTextBuf& sAppStream, const CFX_FloatPoint& ptOffset);
-  CFX_FloatRect GetCaretRect() const;
+  void GetCaretApp(CFX_ByteTextBuf& sAppStream, const CPDF_Point& ptOffset);
+  CPDF_Rect GetCaretRect() const;
 
   FX_BOOL m_bFlash;
-  CFX_FloatPoint m_ptHead;
-  CFX_FloatPoint m_ptFoot;
+  CPDF_Point m_ptHead;
+  CPDF_Point m_ptFoot;
   FX_FLOAT m_fWidth;
   int32_t m_nDelay;
-  CFX_FloatRect m_rcInvalid;
+  CPDF_Rect m_rcInvalid;
 };
 
 #endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_CARET_H_

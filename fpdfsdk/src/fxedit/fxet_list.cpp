@@ -155,11 +155,11 @@ int32_t CFX_List::GetCount() const {
   return m_aListItems.GetSize();
 }
 
-CFX_FloatRect CFX_List::GetPlateRect() const {
+CPDF_Rect CFX_List::GetPlateRect() const {
   return CFX_ListContainer::GetPlateRect();
 }
 
-CFX_FloatRect CFX_List::GetContentRect() const {
+CPDF_Rect CFX_List::GetContentRect() const {
   return InnerToOuter(CFX_ListContainer::GetContentRect());
 }
 
@@ -167,8 +167,8 @@ FX_FLOAT CFX_List::GetFontSize() const {
   return m_fFontSize;
 }
 
-int32_t CFX_List::GetItemIndex(const CFX_FloatPoint& point) const {
-  CFX_FloatPoint pt = OuterToInner(point);
+int32_t CFX_List::GetItemIndex(const CPDF_Point& point) const {
+  CPDF_Point pt = OuterToInner(point);
 
   FX_BOOL bFirst = TRUE;
   FX_BOOL bLast = TRUE;
@@ -250,15 +250,15 @@ int32_t CFX_List::FindNext(int32_t nIndex, FX_WCHAR nChar) const {
   return nCircleIndex;
 }
 
-CFX_FloatRect CFX_List::GetItemRect(int32_t nIndex) const {
+CPDF_Rect CFX_List::GetItemRect(int32_t nIndex) const {
   if (CFX_ListItem* pListItem = m_aListItems.GetAt(nIndex)) {
-    CFX_FloatRect rcItem = pListItem->GetRect();
+    CPDF_Rect rcItem = pListItem->GetRect();
     rcItem.left = 0.0f;
     rcItem.right = GetPlateRect().Width();
     return InnerToOuter(rcItem);
   }
 
-  return CFX_FloatRect();
+  return CPDF_Rect();
 }
 
 FX_BOOL CFX_List::IsItemSelected(int32_t nIndex) const {
@@ -423,37 +423,35 @@ void CFX_ListCtrl::SetNotify(IFX_List_Notify* pNotify) {
   m_pNotify = pNotify;
 }
 
-CFX_FloatPoint CFX_ListCtrl::InToOut(const CFX_FloatPoint& point) const {
-  CFX_FloatRect rcPlate = GetPlateRect();
+CPDF_Point CFX_ListCtrl::InToOut(const CPDF_Point& point) const {
+  CPDF_Rect rcPlate = GetPlateRect();
 
-  return CFX_FloatPoint(point.x - (m_ptScrollPos.x - rcPlate.left),
-                        point.y - (m_ptScrollPos.y - rcPlate.top));
+  return CPDF_Point(point.x - (m_ptScrollPos.x - rcPlate.left),
+                    point.y - (m_ptScrollPos.y - rcPlate.top));
 }
 
-CFX_FloatPoint CFX_ListCtrl::OutToIn(const CFX_FloatPoint& point) const {
-  CFX_FloatRect rcPlate = GetPlateRect();
+CPDF_Point CFX_ListCtrl::OutToIn(const CPDF_Point& point) const {
+  CPDF_Rect rcPlate = GetPlateRect();
 
-  return CFX_FloatPoint(point.x + (m_ptScrollPos.x - rcPlate.left),
-                        point.y + (m_ptScrollPos.y - rcPlate.top));
+  return CPDF_Point(point.x + (m_ptScrollPos.x - rcPlate.left),
+                    point.y + (m_ptScrollPos.y - rcPlate.top));
 }
 
-CFX_FloatRect CFX_ListCtrl::InToOut(const CFX_FloatRect& rect) const {
-  CFX_FloatPoint ptLeftBottom = InToOut(CFX_FloatPoint(rect.left, rect.bottom));
-  CFX_FloatPoint ptRightTop = InToOut(CFX_FloatPoint(rect.right, rect.top));
+CPDF_Rect CFX_ListCtrl::InToOut(const CPDF_Rect& rect) const {
+  CPDF_Point ptLeftBottom = InToOut(CPDF_Point(rect.left, rect.bottom));
+  CPDF_Point ptRightTop = InToOut(CPDF_Point(rect.right, rect.top));
 
-  return CFX_FloatRect(ptLeftBottom.x, ptLeftBottom.y, ptRightTop.x,
-                       ptRightTop.y);
+  return CPDF_Rect(ptLeftBottom.x, ptLeftBottom.y, ptRightTop.x, ptRightTop.y);
 }
 
-CFX_FloatRect CFX_ListCtrl::OutToIn(const CFX_FloatRect& rect) const {
-  CFX_FloatPoint ptLeftBottom = OutToIn(CFX_FloatPoint(rect.left, rect.bottom));
-  CFX_FloatPoint ptRightTop = OutToIn(CFX_FloatPoint(rect.right, rect.top));
+CPDF_Rect CFX_ListCtrl::OutToIn(const CPDF_Rect& rect) const {
+  CPDF_Point ptLeftBottom = OutToIn(CPDF_Point(rect.left, rect.bottom));
+  CPDF_Point ptRightTop = OutToIn(CPDF_Point(rect.right, rect.top));
 
-  return CFX_FloatRect(ptLeftBottom.x, ptLeftBottom.y, ptRightTop.x,
-                       ptRightTop.y);
+  return CPDF_Rect(ptLeftBottom.x, ptLeftBottom.y, ptRightTop.x, ptRightTop.y);
 }
 
-void CFX_ListCtrl::OnMouseDown(const CFX_FloatPoint& point,
+void CFX_ListCtrl::OnMouseDown(const CPDF_Point& point,
                                FX_BOOL bShift,
                                FX_BOOL bCtrl) {
   int32_t nHitIndex = GetItemIndex(point);
@@ -492,7 +490,7 @@ void CFX_ListCtrl::OnMouseDown(const CFX_FloatPoint& point,
     ScrollToListItem(nHitIndex);
 }
 
-void CFX_ListCtrl::OnMouseMove(const CFX_FloatPoint& point,
+void CFX_ListCtrl::OnMouseMove(const CPDF_Point& point,
                                FX_BOOL bShift,
                                FX_BOOL bCtrl) {
   int32_t nHitIndex = GetItemIndex(point);
@@ -580,15 +578,15 @@ FX_BOOL CFX_ListCtrl::OnChar(FX_WORD nChar, FX_BOOL bShift, FX_BOOL bCtrl) {
   return FALSE;
 }
 
-void CFX_ListCtrl::SetPlateRect(const CFX_FloatRect& rect) {
+void CFX_ListCtrl::SetPlateRect(const CPDF_Rect& rect) {
   CFX_ListContainer::SetPlateRect(rect);
   m_ptScrollPos.x = rect.left;
-  SetScrollPos(CFX_FloatPoint(rect.left, rect.top));
+  SetScrollPos(CPDF_Point(rect.left, rect.top));
   ReArrange(0);
   InvalidateItem(-1);
 }
 
-CFX_FloatRect CFX_ListCtrl::GetItemRect(int32_t nIndex) const {
+CPDF_Rect CFX_ListCtrl::GetItemRect(int32_t nIndex) const {
   return InToOut(CFX_List::GetItemRect(nIndex));
 }
 
@@ -652,14 +650,14 @@ void CFX_ListCtrl::InvalidateItem(int32_t nItemIndex) {
     if (nItemIndex == -1) {
       if (!m_bNotifyFlag) {
         m_bNotifyFlag = TRUE;
-        CFX_FloatRect rcRefresh = GetPlateRect();
+        CPDF_Rect rcRefresh = GetPlateRect();
         m_pNotify->IOnInvalidateRect(&rcRefresh);
         m_bNotifyFlag = FALSE;
       }
     } else {
       if (!m_bNotifyFlag) {
         m_bNotifyFlag = TRUE;
-        CFX_FloatRect rcRefresh = GetItemRect(nItemIndex);
+        CPDF_Rect rcRefresh = GetItemRect(nItemIndex);
         rcRefresh.left -= 1.0f;
         rcRefresh.right += 1.0f;
         rcRefresh.bottom -= 1.0f;
@@ -703,8 +701,8 @@ void CFX_ListCtrl::Select(int32_t nItemIndex) {
 }
 
 FX_BOOL CFX_ListCtrl::IsItemVisible(int32_t nItemIndex) const {
-  CFX_FloatRect rcPlate = GetPlateRect();
-  CFX_FloatRect rcItem = GetItemRect(nItemIndex);
+  CPDF_Rect rcPlate = GetPlateRect();
+  CPDF_Rect rcItem = GetItemRect(nItemIndex);
 
   return rcItem.bottom >= rcPlate.bottom && rcItem.top <= rcPlate.top;
 }
@@ -713,9 +711,9 @@ void CFX_ListCtrl::ScrollToListItem(int32_t nItemIndex) {
   if (!IsValid(nItemIndex))
     return;
 
-  CFX_FloatRect rcPlate = GetPlateRect();
-  CFX_FloatRect rcItem = CFX_List::GetItemRect(nItemIndex);
-  CFX_FloatRect rcItemCtrl = GetItemRect(nItemIndex);
+  CPDF_Rect rcPlate = GetPlateRect();
+  CPDF_Rect rcItem = CFX_List::GetItemRect(nItemIndex);
+  CPDF_Rect rcItemCtrl = GetItemRect(nItemIndex);
 
   if (FX_EDIT_IsFloatSmaller(rcItemCtrl.bottom, rcPlate.bottom)) {
     if (FX_EDIT_IsFloatSmaller(rcItemCtrl.top, rcPlate.top)) {
@@ -730,8 +728,8 @@ void CFX_ListCtrl::ScrollToListItem(int32_t nItemIndex) {
 
 void CFX_ListCtrl::SetScrollInfo() {
   if (m_pNotify) {
-    CFX_FloatRect rcPlate = GetPlateRect();
-    CFX_FloatRect rcContent = CFX_List::GetContentRect();
+    CPDF_Rect rcPlate = GetPlateRect();
+    CPDF_Rect rcContent = CFX_List::GetContentRect();
 
     if (!m_bNotifyFlag) {
       m_bNotifyFlag = TRUE;
@@ -743,14 +741,14 @@ void CFX_ListCtrl::SetScrollInfo() {
   }
 }
 
-void CFX_ListCtrl::SetScrollPos(const CFX_FloatPoint& point) {
+void CFX_ListCtrl::SetScrollPos(const CPDF_Point& point) {
   SetScrollPosY(point.y);
 }
 
 void CFX_ListCtrl::SetScrollPosY(FX_FLOAT fy) {
   if (!FX_EDIT_IsFloatEqual(m_ptScrollPos.y, fy)) {
-    CFX_FloatRect rcPlate = GetPlateRect();
-    CFX_FloatRect rcContent = CFX_List::GetContentRect();
+    CPDF_Rect rcPlate = GetPlateRect();
+    CPDF_Rect rcContent = CFX_List::GetContentRect();
 
     if (rcPlate.Height() > rcContent.Height()) {
       fy = rcPlate.top;
@@ -775,7 +773,7 @@ void CFX_ListCtrl::SetScrollPosY(FX_FLOAT fy) {
   }
 }
 
-CFX_FloatRect CFX_ListCtrl::GetContentRect() const {
+CPDF_Rect CFX_ListCtrl::GetContentRect() const {
   return InToOut(CFX_List::GetContentRect());
 }
 
@@ -787,7 +785,7 @@ void CFX_ListCtrl::ReArrange(int32_t nItemIndex) {
 void CFX_ListCtrl::SetTopItem(int32_t nIndex) {
   if (IsValid(nIndex)) {
     GetPlateRect();
-    CFX_FloatRect rcItem = CFX_List::GetItemRect(nIndex);
+    CPDF_Rect rcItem = CFX_List::GetItemRect(nIndex);
     SetScrollPosY(rcItem.top);
   }
 }
@@ -810,7 +808,7 @@ void CFX_ListCtrl::Cancel() {
   m_aSelItems.DeselectAll();
 }
 
-int32_t CFX_ListCtrl::GetItemIndex(const CFX_FloatPoint& point) const {
+int32_t CFX_ListCtrl::GetItemIndex(const CPDF_Point& point) const {
   return CFX_List::GetItemIndex(OutToIn(point));
 }
 

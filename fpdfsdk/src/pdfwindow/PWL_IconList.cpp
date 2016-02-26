@@ -33,7 +33,7 @@ FX_FLOAT CPWL_IconList_Item::GetItemHeight(FX_FLOAT fLimitWidth) {
 
 void CPWL_IconList_Item::DrawThisAppearance(CFX_RenderDevice* pDevice,
                                             CFX_Matrix* pUser2Device) {
-  CFX_FloatRect rcClient = GetClientRect();
+  CPDF_Rect rcClient = GetClientRect();
 
   if (m_bSelected) {
     if (IsEnabled()) {
@@ -49,7 +49,7 @@ void CPWL_IconList_Item::DrawThisAppearance(CFX_RenderDevice* pDevice,
     }
   }
 
-  CFX_FloatRect rcIcon = rcClient;
+  CPDF_Rect rcIcon = rcClient;
   rcIcon.left += PWL_IconList_ITEM_ICON_LEFTMARGIN;
   rcIcon.right = rcIcon.left + PWL_IconList_ITEM_WIDTH;
 
@@ -99,7 +99,7 @@ CFX_WideString CPWL_IconList_Item::GetText() const {
 }
 
 void CPWL_IconList_Item::RePosChildWnd() {
-  CFX_FloatRect rcClient = GetClientRect();
+  CPDF_Rect rcClient = GetClientRect();
 
   rcClient.left +=
       (PWL_IconList_ITEM_ICON_LEFTMARGIN + PWL_IconList_ITEM_WIDTH +
@@ -150,7 +150,7 @@ void CPWL_IconList_Content::CreateChildWnd(const PWL_CREATEPARAM& cp) {
   ResetContent(0);
 
   if (CPWL_Wnd* pParent = GetParentWindow()) {
-    CFX_FloatRect rcScroll = GetScrollArea();
+    CPDF_Rect rcScroll = GetScrollArea();
     GetScrollPos();
 
     PWL_SCROLL_INFO sInfo;
@@ -164,7 +164,7 @@ void CPWL_IconList_Content::CreateChildWnd(const PWL_CREATEPARAM& cp) {
   }
 }
 
-FX_BOOL CPWL_IconList_Content::OnLButtonDown(const CFX_FloatPoint& point,
+FX_BOOL CPWL_IconList_Content::OnLButtonDown(const CPDF_Point& point,
                                              FX_DWORD nFlag) {
   SetFocus();
 
@@ -178,7 +178,7 @@ FX_BOOL CPWL_IconList_Content::OnLButtonDown(const CFX_FloatPoint& point,
   return TRUE;
 }
 
-FX_BOOL CPWL_IconList_Content::OnLButtonUp(const CFX_FloatPoint& point,
+FX_BOOL CPWL_IconList_Content::OnLButtonUp(const CPDF_Point& point,
                                            FX_DWORD nFlag) {
   m_bMouseDown = FALSE;
   ReleaseCapture();
@@ -186,7 +186,7 @@ FX_BOOL CPWL_IconList_Content::OnLButtonUp(const CFX_FloatPoint& point,
   return TRUE;
 }
 
-FX_BOOL CPWL_IconList_Content::OnMouseMove(const CFX_FloatPoint& point,
+FX_BOOL CPWL_IconList_Content::OnMouseMove(const CPDF_Point& point,
                                            FX_DWORD nFlag) {
   if (m_bMouseDown) {
     int32_t nItemIndex = FindItemIndex(point);
@@ -218,11 +218,11 @@ FX_BOOL CPWL_IconList_Content::OnKeyDown(FX_WORD nChar, FX_DWORD nFlag) {
   return FALSE;
 }
 
-int32_t CPWL_IconList_Content::FindItemIndex(const CFX_FloatPoint& point) {
+int32_t CPWL_IconList_Content::FindItemIndex(const CPDF_Point& point) {
   int32_t nIndex = 0;
   for (int32_t i = 0, sz = m_aChildren.GetSize(); i < sz; i++) {
     if (CPWL_Wnd* pChild = m_aChildren.GetAt(i)) {
-      CFX_FloatRect rcWnd = pChild->ChildToParent(pChild->GetWindowRect());
+      CPDF_Rect rcWnd = pChild->ChildToParent(pChild->GetWindowRect());
 
       if (point.y < rcWnd.top) {
         nIndex = i;
@@ -234,14 +234,14 @@ int32_t CPWL_IconList_Content::FindItemIndex(const CFX_FloatPoint& point) {
 }
 
 void CPWL_IconList_Content::ScrollToItem(int32_t nItemIndex) {
-  CFX_FloatRect rcClient = GetClientRect();
+  CPDF_Rect rcClient = GetClientRect();
 
   if (CPWL_IconList_Item* pItem = GetListItem(nItemIndex)) {
-    CFX_FloatRect rcOrigin = pItem->GetWindowRect();
-    CFX_FloatRect rcWnd = pItem->ChildToParent(rcOrigin);
+    CPDF_Rect rcOrigin = pItem->GetWindowRect();
+    CPDF_Rect rcWnd = pItem->ChildToParent(rcOrigin);
 
     if (!(rcWnd.bottom > rcClient.bottom && rcWnd.top < rcClient.top)) {
-      CFX_FloatPoint ptScroll = GetScrollPos();
+      CPDF_Point ptScroll = GetScrollPos();
 
       if (rcWnd.top > rcClient.top) {
         ptScroll.y = rcOrigin.top;
@@ -398,7 +398,7 @@ void CPWL_IconList::OnNotify(CPWL_Wnd* pWnd,
               }
 
               if (m_pListContent)
-                m_pListContent->SetScrollPos(CFX_FloatPoint(0.0f, 0.0f));
+                m_pListContent->SetScrollPos(CPDF_Point(0.0f, 0.0f));
             }
 
             pScrollBar->OnNotify(pWnd, PNM_SETSCROLLINFO, wParam, lParam);
@@ -407,8 +407,7 @@ void CPWL_IconList::OnNotify(CPWL_Wnd* pWnd,
         return;
       case PNM_SCROLLWINDOW:
         if (m_pListContent) {
-          m_pListContent->SetScrollPos(
-              CFX_FloatPoint(0.0f, *(FX_FLOAT*)lParam));
+          m_pListContent->SetScrollPos(CPDF_Point(0.0f, *(FX_FLOAT*)lParam));
           m_pListContent->ResetFace();
           m_pListContent->InvalidateRect(NULL);
         }
@@ -463,14 +462,14 @@ void CPWL_IconList::SetIconFillColor(const CPWL_Color& color) {
 }
 
 FX_BOOL CPWL_IconList::OnMouseWheel(short zDelta,
-                                    const CFX_FloatPoint& point,
+                                    const CPDF_Point& point,
                                     FX_DWORD nFlag) {
-  CFX_FloatPoint ptScroll = m_pListContent->GetScrollPos();
-  CFX_FloatRect rcScroll = m_pListContent->GetScrollArea();
-  CFX_FloatRect rcContents = m_pListContent->GetClientRect();
+  CPDF_Point ptScroll = m_pListContent->GetScrollPos();
+  CPDF_Rect rcScroll = m_pListContent->GetScrollArea();
+  CPDF_Rect rcContents = m_pListContent->GetClientRect();
 
   if (rcScroll.top - rcScroll.bottom > rcContents.Height()) {
-    CFX_FloatPoint ptNew = ptScroll;
+    CPDF_Point ptNew = ptScroll;
 
     if (zDelta > 0)
       ptNew.y += 30;

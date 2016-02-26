@@ -288,7 +288,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFLink_GetAnnotRect(FPDF_LINK linkAnnot,
     return FALSE;
   CPDF_Dictionary* pAnnotDict =
       ToDictionary(static_cast<CPDF_Object*>(linkAnnot));
-  CFX_FloatRect rt = pAnnotDict->GetRectBy("Rect");
+  CPDF_Rect rt = pAnnotDict->GetRectBy("Rect");
   rect->left = rt.left;
   rect->bottom = rt.bottom;
   rect->right = rt.right;

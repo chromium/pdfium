@@ -187,7 +187,7 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_OnMouseMove(FPDF_FORMHANDLE hHandle,
   if (!pPageView)
     return FALSE;
 
-  CFX_FloatPoint pt((FX_FLOAT)page_x, (FX_FLOAT)page_y);
+  CPDF_Point pt((FX_FLOAT)page_x, (FX_FLOAT)page_y);
   return pPageView->OnMouseMove(pt, modifier);
 }
 
@@ -200,7 +200,7 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_OnLButtonDown(FPDF_FORMHANDLE hHandle,
   if (!pPageView)
     return FALSE;
 
-  CFX_FloatPoint pt((FX_FLOAT)page_x, (FX_FLOAT)page_y);
+  CPDF_Point pt((FX_FLOAT)page_x, (FX_FLOAT)page_y);
   return pPageView->OnLButtonDown(pt, modifier);
 }
 
@@ -213,7 +213,7 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_OnLButtonUp(FPDF_FORMHANDLE hHandle,
   if (!pPageView)
     return FALSE;
 
-  CFX_FloatPoint pt((FX_FLOAT)page_x, (FX_FLOAT)page_y);
+  CPDF_Point pt((FX_FLOAT)page_x, (FX_FLOAT)page_y);
   return pPageView->OnLButtonUp(pt, modifier);
 }
 
@@ -227,7 +227,7 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_OnRButtonDown(FPDF_FORMHANDLE hHandle,
   if (!pPageView)
     return FALSE;
 
-  CFX_FloatPoint pt((FX_FLOAT)page_x, (FX_FLOAT)page_y);
+  CPDF_Point pt((FX_FLOAT)page_x, (FX_FLOAT)page_y);
   return pPageView->OnRButtonDown(pt, modifier);
 }
 
@@ -240,7 +240,7 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_OnRButtonUp(FPDF_FORMHANDLE hHandle,
   if (!pPageView)
     return FALSE;
 
-  CFX_FloatPoint pt((FX_FLOAT)page_x, (FX_FLOAT)page_y);
+  CPDF_Point pt((FX_FLOAT)page_x, (FX_FLOAT)page_y);
   return pPageView->OnRButtonUp(pt, modifier);
 }
 #endif  // PDF_ENABLE_XFA

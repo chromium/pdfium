@@ -816,7 +816,7 @@ void CPDFSDK_Widget::DrawAppearance(CFX_RenderDevice* pDevice,
       !IsWidgetAppearanceValid(CPDF_Annot::Normal)) {
     CFX_PathData pathData;
 
-    CFX_FloatRect rcAnnot = GetRect();
+    CPDF_Rect rcAnnot = GetRect();
 
     pathData.AppendRect(rcAnnot.left, rcAnnot.bottom, rcAnnot.right,
                         rcAnnot.top);
@@ -841,7 +841,7 @@ void CPDFSDK_Widget::DrawShadow(CFX_RenderDevice* pDevice,
                                 CPDFSDK_PageView* pPageView) {
   int nFieldType = GetFieldType();
   if (m_pInterForm->IsNeedHighLight(nFieldType)) {
-    CFX_FloatRect rc = GetRect();
+    CPDF_Rect rc = GetRect();
     FX_COLORREF color = m_pInterForm->GetHighlightColor(nFieldType);
     uint8_t alpha = m_pInterForm->GetHighlightAlpha();
 
@@ -868,7 +868,7 @@ void CPDFSDK_Widget::DrawShadow(CFX_RenderDevice* pDevice,
 
 void CPDFSDK_Widget::ResetAppearance_PushButton() {
   CPDF_FormControl* pControl = GetFormControl();
-  CFX_FloatRect rcWindow = GetRotatedRect();
+  CPDF_Rect rcWindow = GetRotatedRect();
   int32_t nLayout = 0;
   switch (pControl->GetTextPosition()) {
     case TEXTPOS_ICON:
@@ -937,7 +937,7 @@ void CPDFSDK_Widget::ResetAppearance_PushButton() {
       break;
   }
 
-  CFX_FloatRect rcClient = CPWL_Utils::DeflateRect(rcWindow, fBorderWidth);
+  CPDF_Rect rcClient = CPWL_Utils::DeflateRect(rcWindow, fBorderWidth);
 
   CPWL_Color crText(COLORTYPE_GRAY, 0);
 
@@ -1125,8 +1125,8 @@ void CPDFSDK_Widget::ResetAppearance_CheckBox() {
       break;
   }
 
-  CFX_FloatRect rcWindow = GetRotatedRect();
-  CFX_FloatRect rcClient = CPWL_Utils::DeflateRect(rcWindow, fBorderWidth);
+  CPDF_Rect rcWindow = GetRotatedRect();
+  CPDF_Rect rcClient = CPWL_Utils::DeflateRect(rcWindow, fBorderWidth);
 
   CPDF_DefaultAppearance da = pControl->GetDefaultAppearance();
   if (da.HasColor()) {
@@ -1251,8 +1251,8 @@ void CPDFSDK_Widget::ResetAppearance_RadioButton() {
       break;
   }
 
-  CFX_FloatRect rcWindow = GetRotatedRect();
-  CFX_FloatRect rcClient = CPWL_Utils::DeflateRect(rcWindow, fBorderWidth);
+  CPDF_Rect rcWindow = GetRotatedRect();
+  CPDF_Rect rcClient = CPWL_Utils::DeflateRect(rcWindow, fBorderWidth);
 
   CPDF_DefaultAppearance da = pControl->GetDefaultAppearance();
   if (da.HasColor()) {
@@ -1290,7 +1290,7 @@ void CPDFSDK_Widget::ResetAppearance_RadioButton() {
 
   CFX_ByteString csAP_N_ON;
 
-  CFX_FloatRect rcCenter =
+  CPDF_Rect rcCenter =
       CPWL_Utils::DeflateRect(CPWL_Utils::GetCenterSquare(rcWindow), 1.0f);
 
   if (nStyle == PCS_CIRCLE) {
@@ -1375,8 +1375,8 @@ void CPDFSDK_Widget::ResetAppearance_ComboBox(const FX_WCHAR* sValue) {
   CPDF_FormField* pField = pControl->GetField();
   CFX_ByteTextBuf sBody, sLines;
 
-  CFX_FloatRect rcClient = GetClientRect();
-  CFX_FloatRect rcButton = rcClient;
+  CPDF_Rect rcClient = GetClientRect();
+  CPDF_Rect rcButton = rcClient;
   rcButton.left = rcButton.right - 13;
   rcButton.Normalize();
 
@@ -1388,7 +1388,7 @@ void CPDFSDK_Widget::ResetAppearance_ComboBox(const FX_WCHAR* sValue) {
     CBA_FontMap font_map(this, pEnv->GetSysHandler());
     pEdit->SetFontMap(&font_map);
 
-    CFX_FloatRect rcEdit = rcClient;
+    CPDF_Rect rcEdit = rcClient;
     rcEdit.right = rcButton.left;
     rcEdit.Normalize();
 
@@ -1414,10 +1414,10 @@ void CPDFSDK_Widget::ResetAppearance_ComboBox(const FX_WCHAR* sValue) {
         pEdit->SetText(pField->GetOptionLabel(nCurSel).c_str());
     }
 
-    CFX_FloatRect rcContent = pEdit->GetContentRect();
+    CPDF_Rect rcContent = pEdit->GetContentRect();
 
     CFX_ByteString sEdit =
-        CPWL_Utils::GetEditAppStream(pEdit, CFX_FloatPoint(0.0f, 0.0f));
+        CPWL_Utils::GetEditAppStream(pEdit, CPDF_Point(0.0f, 0.0f));
     if (sEdit.GetLength() > 0) {
       sBody << "/Tx BMC\n"
             << "q\n";
@@ -1447,7 +1447,7 @@ void CPDFSDK_Widget::ResetAppearance_ComboBox(const FX_WCHAR* sValue) {
 void CPDFSDK_Widget::ResetAppearance_ListBox() {
   CPDF_FormControl* pControl = GetFormControl();
   CPDF_FormField* pField = pControl->GetField();
-  CFX_FloatRect rcClient = GetClientRect();
+  CPDF_Rect rcClient = GetClientRect();
   CFX_ByteTextBuf sBody, sLines;
 
   if (IFX_Edit* pEdit = IFX_Edit::NewEdit()) {
@@ -1459,8 +1459,7 @@ void CPDFSDK_Widget::ResetAppearance_ListBox() {
     CBA_FontMap font_map(this, pEnv->GetSysHandler());
     pEdit->SetFontMap(&font_map);
 
-    pEdit->SetPlateRect(
-        CFX_FloatRect(rcClient.left, 0.0f, rcClient.right, 0.0f));
+    pEdit->SetPlateRect(CPDF_Rect(rcClient.left, 0.0f, rcClient.right, 0.0f));
 
     FX_FLOAT fFontSize = GetFontSize();
 
@@ -1489,12 +1488,12 @@ void CPDFSDK_Widget::ResetAppearance_ListBox() {
 
       pEdit->SetText(pField->GetOptionLabel(i).c_str());
 
-      CFX_FloatRect rcContent = pEdit->GetContentRect();
+      CPDF_Rect rcContent = pEdit->GetContentRect();
       FX_FLOAT fItemHeight = rcContent.Height();
 
       if (bSelected) {
-        CFX_FloatRect rcItem =
-            CFX_FloatRect(rcClient.left, fy - fItemHeight, rcClient.right, fy);
+        CPDF_Rect rcItem =
+            CPDF_Rect(rcClient.left, fy - fItemHeight, rcClient.right, fy);
         sList << "q\n" << CPWL_Utils::GetColorAppStream(
                               CPWL_Color(COLORTYPE_RGB, 0, 51.0f / 255.0f,
                                          113.0f / 255.0f),
@@ -1505,12 +1504,12 @@ void CPDFSDK_Widget::ResetAppearance_ListBox() {
 
         sList << "BT\n" << CPWL_Utils::GetColorAppStream(
                                CPWL_Color(COLORTYPE_GRAY, 1), TRUE)
-              << CPWL_Utils::GetEditAppStream(pEdit, CFX_FloatPoint(0.0f, fy))
+              << CPWL_Utils::GetEditAppStream(pEdit, CPDF_Point(0.0f, fy))
               << "ET\n";
       } else {
         CPWL_Color crText = GetTextPWLColor();
         sList << "BT\n" << CPWL_Utils::GetColorAppStream(crText, TRUE)
-              << CPWL_Utils::GetEditAppStream(pEdit, CFX_FloatPoint(0.0f, fy))
+              << CPWL_Utils::GetEditAppStream(pEdit, CPDF_Point(0.0f, fy))
               << "ET\n";
       }
 
@@ -1547,7 +1546,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const FX_WCHAR* sValue) {
     CBA_FontMap font_map(this, pEnv->GetSysHandler());
     pEdit->SetFontMap(&font_map);
 
-    CFX_FloatRect rcClient = GetClientRect();
+    CPDF_Rect rcClient = GetClientRect();
     pEdit->SetPlateRect(rcClient);
     pEdit->SetAlignmentH(pControl->GetControlAlignment());
 
@@ -1606,10 +1605,10 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const FX_WCHAR* sValue) {
     else
       pEdit->SetText(pField->GetValue().c_str());
 
-    CFX_FloatRect rcContent = pEdit->GetContentRect();
+    CPDF_Rect rcContent = pEdit->GetContentRect();
 
     CFX_ByteString sEdit = CPWL_Utils::GetEditAppStream(
-        pEdit, CFX_FloatPoint(0.0f, 0.0f), NULL, !bCharArray, subWord);
+        pEdit, CPDF_Point(0.0f, 0.0f), NULL, !bCharArray, subWord);
 
     if (sEdit.GetLength() > 0) {
       sBody << "/Tx BMC\n"
@@ -1681,8 +1680,8 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const FX_WCHAR* sValue) {
   WriteAppearance("N", GetRotatedRect(), GetMatrix(), sAP);
 }
 
-CFX_FloatRect CPDFSDK_Widget::GetClientRect() const {
-  CFX_FloatRect rcWindow = GetRotatedRect();
+CPDF_Rect CPDFSDK_Widget::GetClientRect() const {
+  CPDF_Rect rcWindow = GetRotatedRect();
   FX_FLOAT fBorderWidth = (FX_FLOAT)GetBorderWidth();
   switch (GetBorderStyle()) {
     case BBS_BEVELED:
@@ -1694,22 +1693,22 @@ CFX_FloatRect CPDFSDK_Widget::GetClientRect() const {
   return CPWL_Utils::DeflateRect(rcWindow, fBorderWidth);
 }
 
-CFX_FloatRect CPDFSDK_Widget::GetRotatedRect() const {
-  CFX_FloatRect rectAnnot = GetRect();
+CPDF_Rect CPDFSDK_Widget::GetRotatedRect() const {
+  CPDF_Rect rectAnnot = GetRect();
   FX_FLOAT fWidth = rectAnnot.right - rectAnnot.left;
   FX_FLOAT fHeight = rectAnnot.top - rectAnnot.bottom;
 
   CPDF_FormControl* pControl = GetFormControl();
-  CFX_FloatRect rcPDFWindow;
+  CPDF_Rect rcPDFWindow;
   switch (abs(pControl->GetRotation() % 360)) {
     case 0:
     case 180:
     default:
-      rcPDFWindow = CFX_FloatRect(0, 0, fWidth, fHeight);
+      rcPDFWindow = CPDF_Rect(0, 0, fWidth, fHeight);
       break;
     case 90:
     case 270:
-      rcPDFWindow = CFX_FloatRect(0, 0, fHeight, fWidth);
+      rcPDFWindow = CPDF_Rect(0, 0, fHeight, fWidth);
       break;
   }
 
@@ -1725,7 +1724,7 @@ CFX_ByteString CPDFSDK_Widget::GetBackgroundAppStream() const {
 }
 
 CFX_ByteString CPDFSDK_Widget::GetBorderAppStream() const {
-  CFX_FloatRect rcWindow = GetRotatedRect();
+  CPDF_Rect rcWindow = GetRotatedRect();
   CPWL_Color crBorder = GetBorderPWLColor();
   CPWL_Color crBackground = GetFillPWLColor();
   CPWL_Color crLeftTop, crRightBottom;
@@ -1767,7 +1766,7 @@ CFX_ByteString CPDFSDK_Widget::GetBorderAppStream() const {
 CFX_Matrix CPDFSDK_Widget::GetMatrix() const {
   CFX_Matrix mt;
   CPDF_FormControl* pControl = GetFormControl();
-  CFX_FloatRect rcAnnot = GetRect();
+  CPDF_Rect rcAnnot = GetRect();
   FX_FLOAT fWidth = rcAnnot.right - rcAnnot.left;
   FX_FLOAT fHeight = rcAnnot.top - rcAnnot.bottom;
 
@@ -2786,7 +2785,7 @@ void CBA_AnnotIterator::GenerateResults() {
         int nLeftTopIndex = -1;
         FX_FLOAT fTop = 0.0f;
         for (int i = sa.size() - 1; i >= 0; i--) {
-          CFX_FloatRect rcAnnot = GetAnnotRect(sa[i]);
+          CPDF_Rect rcAnnot = GetAnnotRect(sa[i]);
           if (rcAnnot.top > fTop) {
             nLeftTopIndex = i;
             fTop = rcAnnot.top;
@@ -2794,13 +2793,13 @@ void CBA_AnnotIterator::GenerateResults() {
         }
         if (nLeftTopIndex >= 0) {
           CPDFSDK_Annot* pLeftTopAnnot = sa[nLeftTopIndex];
-          CFX_FloatRect rcLeftTop = GetAnnotRect(pLeftTopAnnot);
+          CPDF_Rect rcLeftTop = GetAnnotRect(pLeftTopAnnot);
           m_Annots.push_back(pLeftTopAnnot);
           sa.erase(sa.begin() + nLeftTopIndex);
 
           std::vector<int> aSelect;
           for (int i = 0; i < sa.size(); ++i) {
-            CFX_FloatRect rcAnnot = GetAnnotRect(sa[i]);
+            CPDF_Rect rcAnnot = GetAnnotRect(sa[i]);
             FX_FLOAT fCenterY = (rcAnnot.top + rcAnnot.bottom) / 2.0f;
             if (fCenterY > rcLeftTop.bottom && fCenterY < rcLeftTop.top)
               aSelect.push_back(i);
@@ -2826,7 +2825,7 @@ void CBA_AnnotIterator::GenerateResults() {
         int nLeftTopIndex = -1;
         FX_FLOAT fLeft = -1.0f;
         for (int i = sa.size() - 1; i >= 0; --i) {
-          CFX_FloatRect rcAnnot = GetAnnotRect(sa[i]);
+          CPDF_Rect rcAnnot = GetAnnotRect(sa[i]);
           if (fLeft < 0) {
             nLeftTopIndex = 0;
             fLeft = rcAnnot.left;
@@ -2838,13 +2837,13 @@ void CBA_AnnotIterator::GenerateResults() {
 
         if (nLeftTopIndex >= 0) {
           CPDFSDK_Annot* pLeftTopAnnot = sa[nLeftTopIndex];
-          CFX_FloatRect rcLeftTop = GetAnnotRect(pLeftTopAnnot);
+          CPDF_Rect rcLeftTop = GetAnnotRect(pLeftTopAnnot);
           m_Annots.push_back(pLeftTopAnnot);
           sa.erase(sa.begin() + nLeftTopIndex);
 
           std::vector<int> aSelect;
           for (int i = 0; i < sa.size(); ++i) {
-            CFX_FloatRect rcAnnot = GetAnnotRect(sa[i]);
+            CPDF_Rect rcAnnot = GetAnnotRect(sa[i]);
             FX_FLOAT fCenterX = (rcAnnot.left + rcAnnot.right) / 2.0f;
             if (fCenterX > rcLeftTop.left && fCenterX < rcLeftTop.right)
               aSelect.push_back(i);
@@ -2861,8 +2860,8 @@ void CBA_AnnotIterator::GenerateResults() {
   }
 }
 
-CFX_FloatRect CBA_AnnotIterator::GetAnnotRect(const CPDFSDK_Annot* pAnnot) {
-  CFX_FloatRect rcAnnot;
+CPDF_Rect CBA_AnnotIterator::GetAnnotRect(const CPDFSDK_Annot* pAnnot) {
+  CPDF_Rect rcAnnot;
   pAnnot->GetPDFAnnot()->GetRect(rcAnnot);
   return rcAnnot;
 }

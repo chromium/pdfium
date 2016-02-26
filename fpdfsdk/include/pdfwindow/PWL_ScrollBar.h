@@ -43,9 +43,9 @@ class CPWL_SBButton : public CPWL_Wnd {
   void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           CFX_Matrix* pUser2Device) override;
-  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
-  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
-  FX_BOOL OnMouseMove(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag) override;
+  FX_BOOL OnMouseMove(const CPDF_Point& point, FX_DWORD nFlag) override;
 
  protected:
   PWL_SCROLLBAR_TYPE m_eScrollBarType;
@@ -101,8 +101,8 @@ class CPWL_ScrollBar : public CPWL_Wnd {
   void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           CFX_Matrix* pUser2Device) override;
-  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
-  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag) override;
   void OnNotify(CPWL_Wnd* pWnd,
                 FX_DWORD msg,
                 intptr_t wParam = 0,
@@ -121,22 +121,22 @@ class CPWL_ScrollBar : public CPWL_Wnd {
   void MovePosButton(FX_BOOL bRefresh);
   void SetScrollStep(FX_FLOAT fBigStep, FX_FLOAT fSmallStep);
   void NotifyScrollWindow();
-  CFX_FloatRect GetScrollArea() const;
+  CPDF_Rect GetScrollArea() const;
 
  private:
   void CreateButtons(const PWL_CREATEPARAM& cp);
 
-  void OnMinButtonLBDown(const CFX_FloatPoint& point);
-  void OnMinButtonLBUp(const CFX_FloatPoint& point);
-  void OnMinButtonMouseMove(const CFX_FloatPoint& point);
+  void OnMinButtonLBDown(const CPDF_Point& point);
+  void OnMinButtonLBUp(const CPDF_Point& point);
+  void OnMinButtonMouseMove(const CPDF_Point& point);
 
-  void OnMaxButtonLBDown(const CFX_FloatPoint& point);
-  void OnMaxButtonLBUp(const CFX_FloatPoint& point);
-  void OnMaxButtonMouseMove(const CFX_FloatPoint& point);
+  void OnMaxButtonLBDown(const CPDF_Point& point);
+  void OnMaxButtonLBUp(const CPDF_Point& point);
+  void OnMaxButtonMouseMove(const CPDF_Point& point);
 
-  void OnPosButtonLBDown(const CFX_FloatPoint& point);
-  void OnPosButtonLBUp(const CFX_FloatPoint& point);
-  void OnPosButtonMouseMove(const CFX_FloatPoint& point);
+  void OnPosButtonLBDown(const CPDF_Point& point);
+  void OnPosButtonLBUp(const CPDF_Point& point);
+  void OnPosButtonMouseMove(const CPDF_Point& point);
 
   FX_FLOAT TrueToFace(FX_FLOAT);
   FX_FLOAT FaceToTrue(FX_FLOAT);

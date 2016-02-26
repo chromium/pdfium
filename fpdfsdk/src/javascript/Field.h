@@ -81,7 +81,7 @@ struct CJS_DelayData {
   bool b;
   CFX_ByteString string;
   CFX_WideString widestring;
-  CFX_FloatRect rect;
+  CPDF_Rect rect;
   CPWL_Color color;
   CFX_DWordArray wordarray;
   CJS_WideStringArray widestringarray;
@@ -390,7 +390,7 @@ class Field : public CJS_EmbedObj {
   static void SetRect(CPDFSDK_Document* pDocument,
                       const CFX_WideString& swFieldName,
                       int nControlIndex,
-                      const CFX_FloatRect& rect);
+                      const CPDF_Rect& rect);
   static void SetRichText(CPDFSDK_Document* pDocument,
                           const CFX_WideString& swFieldName,
                           int nControlIndex,
@@ -435,7 +435,7 @@ class Field : public CJS_EmbedObj {
                        int nPageIndex,
                        int nFieldType,
                        const CFX_WideString& sName,
-                       const CFX_FloatRect& rcCoords);
+                       const CPDF_Rect& rcCoords);
 
   static void UpdateFormField(CPDFSDK_Document* pDocument,
                               CPDF_FormField* pFormField,
@@ -473,7 +473,7 @@ class Field : public CJS_EmbedObj {
   void AddDelay_Bool(enum FIELD_PROP prop, bool b);
   void AddDelay_String(enum FIELD_PROP prop, const CFX_ByteString& string);
   void AddDelay_WideString(enum FIELD_PROP prop, const CFX_WideString& string);
-  void AddDelay_Rect(enum FIELD_PROP prop, const CFX_FloatRect& rect);
+  void AddDelay_Rect(enum FIELD_PROP prop, const CPDF_Rect& rect);
   void AddDelay_Color(enum FIELD_PROP prop, const CPWL_Color& color);
   void AddDelay_WordArray(enum FIELD_PROP prop, const CFX_DWordArray& array);
   void AddDelay_WideStringArray(enum FIELD_PROP prop,

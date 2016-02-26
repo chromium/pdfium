@@ -42,14 +42,14 @@ void CPWL_Note_Options::SetTextColor(const CPWL_Color& color) {
 
 void CPWL_Note_Options::RePosChildWnd() {
   if (IsValid()) {
-    CFX_FloatRect rcClient = GetClientRect();
+    CPDF_Rect rcClient = GetClientRect();
 
     if (rcClient.Width() > 15.0f) {
       rcClient.right -= 15.0f;
       m_pText->Move(rcClient, TRUE, FALSE);
       m_pText->SetVisible(TRUE);
     } else {
-      m_pText->Move(CFX_FloatRect(0, 0, 0, 0), TRUE, FALSE);
+      m_pText->Move(CPDF_Rect(0, 0, 0, 0), TRUE, FALSE);
       m_pText->SetVisible(FALSE);
     }
   }
@@ -71,16 +71,15 @@ void CPWL_Note_Options::DrawThisAppearance(CFX_RenderDevice* pDevice,
                                            CFX_Matrix* pUser2Device) {
   CPWL_Wnd::DrawThisAppearance(pDevice, pUser2Device);
 
-  CFX_FloatRect rcClient = GetClientRect();
+  CPDF_Rect rcClient = GetClientRect();
   rcClient.left = rcClient.right - 15.0f;
 
-  CFX_FloatPoint ptCenter =
-      CFX_FloatPoint((rcClient.left + rcClient.right) * 0.5f,
-                     (rcClient.top + rcClient.bottom) * 0.5f);
+  CPDF_Point ptCenter = CPDF_Point((rcClient.left + rcClient.right) * 0.5f,
+                                   (rcClient.top + rcClient.bottom) * 0.5f);
 
-  CFX_FloatPoint pt1(ptCenter.x - 2.0f, ptCenter.y + 2.0f * 0.5f);
-  CFX_FloatPoint pt2(ptCenter.x + 2.0f, ptCenter.y + 2.0f * 0.5f);
-  CFX_FloatPoint pt3(ptCenter.x, ptCenter.y - 3.0f * 0.5f);
+  CPDF_Point pt1(ptCenter.x - 2.0f, ptCenter.y + 2.0f * 0.5f);
+  CPDF_Point pt2(ptCenter.x + 2.0f, ptCenter.y + 2.0f * 0.5f);
+  CPDF_Point pt3(ptCenter.x, ptCenter.y - 3.0f * 0.5f);
 
   CFX_PathData path;
 
@@ -96,8 +95,8 @@ void CPWL_Note_Options::DrawThisAppearance(CFX_RenderDevice* pDevice,
       FXFILL_ALTERNATE);
 }
 
-CFX_FloatRect CPWL_Note_Options::GetContentRect() const {
-  CFX_FloatRect rcText = m_pText->GetContentRect();
+CPDF_Rect CPWL_Note_Options::GetContentRect() const {
+  CPDF_Rect rcText = m_pText->GetContentRect();
   rcText.right += 15.0f;
   return rcText;
 }
@@ -206,7 +205,7 @@ FX_FLOAT CPWL_Note_Edit::GetItemHeight(FX_FLOAT fLimitWidth) {
     EnableRefresh(FALSE);
     m_pEdit->EnableNotify(FALSE);
 
-    Move(CFX_FloatRect(0, 0, fLimitWidth, 0), TRUE, FALSE);
+    Move(CPDF_Rect(0, 0, fLimitWidth, 0), TRUE, FALSE);
     FX_FLOAT fRet = GetContentRect().Height();
 
     m_pEdit->EnableNotify(TRUE);
@@ -233,7 +232,7 @@ CPWL_Note_LBBox::~CPWL_Note_LBBox() {}
 
 void CPWL_Note_LBBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
                                          CFX_Matrix* pUser2Device) {
-  CFX_FloatRect rcClient = GetClientRect();
+  CPDF_Rect rcClient = GetClientRect();
 
   CFX_GraphStateData gsd;
   gsd.m_LineWidth = 1.0f;
@@ -260,7 +259,7 @@ CPWL_Note_RBBox::~CPWL_Note_RBBox() {}
 
 void CPWL_Note_RBBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
                                          CFX_Matrix* pUser2Device) {
-  CFX_FloatRect rcClient = GetClientRect();
+  CPDF_Rect rcClient = GetClientRect();
 
   CFX_GraphStateData gsd;
   gsd.m_LineWidth = 1.0f;
@@ -304,7 +303,7 @@ void CPWL_Note_CloseBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
                                             CFX_Matrix* pUser2Device) {
   CPWL_Button::DrawThisAppearance(pDevice, pUser2Device);
 
-  CFX_FloatRect rcClient = GetClientRect();
+  CPDF_Rect rcClient = GetClientRect();
   rcClient = CPWL_Utils::DeflateRect(rcClient, 2.0f);
 
   CFX_GraphStateData gsd;
@@ -331,7 +330,7 @@ void CPWL_Note_CloseBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
       FXFILL_ALTERNATE);
 }
 
-FX_BOOL CPWL_Note_CloseBox::OnLButtonDown(const CFX_FloatPoint& point,
+FX_BOOL CPWL_Note_CloseBox::OnLButtonDown(const CPDF_Point& point,
                                           FX_DWORD nFlag) {
   SetBorderStyle(PBS_INSET);
   InvalidateRect(NULL);
@@ -341,7 +340,7 @@ FX_BOOL CPWL_Note_CloseBox::OnLButtonDown(const CFX_FloatPoint& point,
   return CPWL_Button::OnLButtonDown(point, nFlag);
 }
 
-FX_BOOL CPWL_Note_CloseBox::OnLButtonUp(const CFX_FloatPoint& point,
+FX_BOOL CPWL_Note_CloseBox::OnLButtonUp(const CPDF_Point& point,
                                         FX_DWORD nFlag) {
   m_bMouseDown = FALSE;
 
@@ -449,8 +448,8 @@ void CPWL_Note_Contents::DeleteSubItem(IPWL_NoteItem* pNoteItem) {
   }
 }
 
-IPWL_NoteItem* CPWL_Note_Contents::GetHitNoteItem(const CFX_FloatPoint& point) {
-  CFX_FloatPoint pt = ParentToChild(point);
+IPWL_NoteItem* CPWL_Note_Contents::GetHitNoteItem(const CPDF_Point& point) {
+  CPDF_Point pt = ParentToChild(point);
 
   for (int32_t i = 0, sz = m_aChildren.GetSize(); i < sz; i++) {
     if (CPWL_Wnd* pChild = m_aChildren.GetAt(i)) {
@@ -489,7 +488,7 @@ void CPWL_Note_Contents::OnNotify(CPWL_Wnd* pWnd,
     }
       return;
     case PNM_SCROLLWINDOW:
-      SetScrollPos(CFX_FloatPoint(0.0f, *(FX_FLOAT*)lParam));
+      SetScrollPos(CPDF_Point(0.0f, *(FX_FLOAT*)lParam));
       ResetFace();
       InvalidateRect(NULL);
       return;
@@ -525,7 +524,7 @@ void CPWL_Note_Contents::OnNotify(CPWL_Wnd* pWnd,
   CPWL_Wnd::OnNotify(pWnd, msg, wParam, lParam);
 }
 
-FX_BOOL CPWL_Note_Contents::OnLButtonDown(const CFX_FloatPoint& point,
+FX_BOOL CPWL_Note_Contents::OnLButtonDown(const CPDF_Point& point,
                                           FX_DWORD nFlag) {
   if (CPWL_Wnd::OnLButtonDown(point, nFlag))
     return TRUE;
@@ -632,9 +631,9 @@ void CPWL_NoteItem::CreateChildWnd(const PWL_CREATEPARAM& cp) {
 
 void CPWL_NoteItem::RePosChildWnd() {
   if (IsValid()) {
-    CFX_FloatRect rcClient = GetClientRect();
+    CPDF_Rect rcClient = GetClientRect();
 
-    CFX_FloatRect rcSubject = rcClient;
+    CPDF_Rect rcSubject = rcClient;
     rcSubject.left += POPUP_ITEM_TEXT_INDENT;
     rcSubject.top = rcClient.top;
     rcSubject.right =
@@ -645,7 +644,7 @@ void CPWL_NoteItem::RePosChildWnd() {
     m_pSubject->Move(rcSubject, TRUE, FALSE);
     m_pSubject->SetVisible(CPWL_Utils::ContainsRect(rcClient, rcSubject));
 
-    CFX_FloatRect rcDate = rcClient;
+    CPDF_Rect rcDate = rcClient;
     rcDate.right -= POPUP_ITEM_TEXT_INDENT;
     rcDate.left =
         PWL_MAX(rcDate.right - m_pDateTime->GetContentRect().Width() - 1.0f,
@@ -655,7 +654,7 @@ void CPWL_NoteItem::RePosChildWnd() {
     m_pDateTime->Move(rcDate, TRUE, FALSE);
     m_pDateTime->SetVisible(CPWL_Utils::ContainsRect(rcClient, rcDate));
 
-    CFX_FloatRect rcContents = rcClient;
+    CPDF_Rect rcContents = rcClient;
     rcContents.left += 1.0f;
     rcContents.right -= 1.0f;
     rcContents.top = rcDate.bottom - POPUP_ITEM_HEAD_BOTTOM;
@@ -851,8 +850,8 @@ void CPWL_NoteItem::DeleteSubItem(IPWL_NoteItem* pNoteItem) {
     m_pContents->DeleteSubItem(pNoteItem);
 }
 
-IPWL_NoteItem* CPWL_NoteItem::GetHitNoteItem(const CFX_FloatPoint& point) {
-  CFX_FloatPoint pt = ParentToChild(point);
+IPWL_NoteItem* CPWL_NoteItem::GetHitNoteItem(const CPDF_Point& point) {
+  CPDF_Point pt = ParentToChild(point);
 
   if (WndHitTest(pt)) {
     if (m_pContents) {
@@ -910,8 +909,7 @@ FX_FLOAT CPWL_NoteItem::GetItemRightMargin() {
   return POPUP_ITEM_SIDEMARGIN;
 }
 
-FX_BOOL CPWL_NoteItem::OnLButtonDown(const CFX_FloatPoint& point,
-                                     FX_DWORD nFlag) {
+FX_BOOL CPWL_NoteItem::OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag) {
   if (!m_pContents->WndHitTest(m_pContents->ParentToChild(point))) {
     SetNoteFocus(FALSE);
   }
@@ -921,8 +919,7 @@ FX_BOOL CPWL_NoteItem::OnLButtonDown(const CFX_FloatPoint& point,
   return TRUE;
 }
 
-FX_BOOL CPWL_NoteItem::OnRButtonUp(const CFX_FloatPoint& point,
-                                   FX_DWORD nFlag) {
+FX_BOOL CPWL_NoteItem::OnRButtonUp(const CPDF_Point& point, FX_DWORD nFlag) {
   if (!m_pContents->WndHitTest(m_pContents->ParentToChild(point))) {
     SetNoteFocus(FALSE);
     PopupNoteItemMenu(point);
@@ -967,7 +964,7 @@ void CPWL_NoteItem::OnNotify(CPWL_Wnd* pWnd,
   CPWL_Wnd::OnNotify(pWnd, msg, wParam, lParam);
 }
 
-void CPWL_NoteItem::PopupNoteItemMenu(const CFX_FloatPoint& point) {
+void CPWL_NoteItem::PopupNoteItemMenu(const CPDF_Point& point) {
   if (IPWL_NoteNotify* pNotify = GetNoteNotify()) {
     int32_t x, y;
     PWLtoWnd(point, x, y);
@@ -1080,13 +1077,13 @@ FX_BOOL CPWL_Note::ResetScrollBar() {
   }
 
   if (bScrollChanged) {
-    CFX_FloatRect rcNote = GetClientRect();
-    CFX_FloatRect rcContents = m_pContents->GetWindowRect();
+    CPDF_Rect rcNote = GetClientRect();
+    CPDF_Rect rcContents = m_pContents->GetWindowRect();
     rcContents.right = rcNote.right - 3.0f;
     if (m_pContentsBar->IsVisible())
       rcContents.right -= PWL_SCROLLBAR_WIDTH;
     m_pContents->Move(rcContents, TRUE, TRUE);
-    m_pContents->SetScrollPos(CFX_FloatPoint(0.0f, 0.0f));
+    m_pContents->SetScrollPos(CPDF_Point(0.0f, 0.0f));
     m_pContents->InvalidateRect(NULL);
   }
 
@@ -1094,8 +1091,8 @@ FX_BOOL CPWL_Note::ResetScrollBar() {
 }
 
 FX_BOOL CPWL_Note::ScrollBarShouldVisible() {
-  CFX_FloatRect rcContentsFact = m_pContents->GetScrollArea();
-  CFX_FloatRect rcContentsClient = m_pContents->GetClientRect();
+  CPDF_Rect rcContentsFact = m_pContents->GetScrollArea();
+  CPDF_Rect rcContentsClient = m_pContents->GetClientRect();
 
   return rcContentsFact.Height() > rcContentsClient.Height();
 }
@@ -1114,9 +1111,9 @@ void CPWL_Note::RePosNoteChildren() {
   m_bResizing = TRUE;
 
   if (IsValid()) {
-    CFX_FloatRect rcClient = GetClientRect();
+    CPDF_Rect rcClient = GetClientRect();
 
-    CFX_FloatRect rcIcon = rcClient;
+    CPDF_Rect rcIcon = rcClient;
     rcIcon.top -= 2.0f;
     rcIcon.right = rcIcon.left + 14.0f;
     rcIcon.bottom = rcIcon.top - 14.0f;
@@ -1124,7 +1121,7 @@ void CPWL_Note::RePosNoteChildren() {
     m_pIcon->Move(rcIcon, TRUE, FALSE);
     m_pIcon->SetVisible(CPWL_Utils::ContainsRect(rcClient, rcIcon));
 
-    CFX_FloatRect rcCloseBox = rcClient;
+    CPDF_Rect rcCloseBox = rcClient;
     rcCloseBox.right -= 1.0f;
     rcCloseBox.top -= 1.0f;
     rcCloseBox.left = rcCloseBox.right - 14.0f;
@@ -1133,7 +1130,7 @@ void CPWL_Note::RePosNoteChildren() {
     m_pCloseBox->Move(rcCloseBox, TRUE, FALSE);
     m_pCloseBox->SetVisible(CPWL_Utils::ContainsRect(rcClient, rcCloseBox));
 
-    CFX_FloatRect rcDate = rcClient;
+    CPDF_Rect rcDate = rcClient;
     rcDate.right = rcCloseBox.left - POPUP_ITEM_TEXT_INDENT;
     rcDate.left =
         PWL_MAX(rcDate.right - m_pDateTime->GetContentRect().Width() - 1.0f,
@@ -1144,7 +1141,7 @@ void CPWL_Note::RePosNoteChildren() {
     m_pDateTime->Move(rcDate, TRUE, FALSE);
     m_pDateTime->SetVisible(CPWL_Utils::ContainsRect(rcClient, rcDate));
 
-    CFX_FloatRect rcSubject = rcClient;
+    CPDF_Rect rcSubject = rcClient;
     rcSubject.top = rcClient.top - 2.0f;
     rcSubject.left = rcIcon.right + POPUP_ITEM_TEXT_INDENT;
     rcSubject.right =
@@ -1155,7 +1152,7 @@ void CPWL_Note::RePosNoteChildren() {
     m_pSubject->Move(rcSubject, TRUE, FALSE);
     m_pSubject->SetVisible(CPWL_Utils::ContainsRect(rcClient, rcSubject));
 
-    CFX_FloatRect rcOptions = rcClient;
+    CPDF_Rect rcOptions = rcClient;
     rcOptions.left =
         PWL_MAX(rcOptions.right - m_pOptions->GetContentRect().Width(),
                 rcIcon.right + 1.0f);
@@ -1165,7 +1162,7 @@ void CPWL_Note::RePosNoteChildren() {
     m_pOptions->Move(rcOptions, TRUE, FALSE);
     m_pOptions->SetVisible(CPWL_Utils::ContainsRect(rcClient, rcOptions));
 
-    CFX_FloatRect rcAuthor = rcClient;
+    CPDF_Rect rcAuthor = rcClient;
     rcAuthor.top = rcSubject.bottom - 4.0f;
     rcAuthor.left = rcSubject.left;
     rcAuthor.right =
@@ -1176,21 +1173,21 @@ void CPWL_Note::RePosNoteChildren() {
     m_pAuthor->Move(rcAuthor, TRUE, FALSE);
     m_pAuthor->SetVisible(CPWL_Utils::ContainsRect(rcClient, rcAuthor));
 
-    CFX_FloatRect rcLBBox = rcClient;
+    CPDF_Rect rcLBBox = rcClient;
     rcLBBox.top = rcLBBox.bottom + 7.0f;
     rcLBBox.right = rcLBBox.left + 7.0f;
     rcLBBox.Normalize();
     m_pLBBox->Move(rcLBBox, TRUE, FALSE);
     m_pLBBox->SetVisible(CPWL_Utils::ContainsRect(rcClient, rcLBBox));
 
-    CFX_FloatRect rcRBBox = rcClient;
+    CPDF_Rect rcRBBox = rcClient;
     rcRBBox.top = rcRBBox.bottom + 7.0f;
     rcRBBox.left = rcRBBox.right - 7.0f;
     rcRBBox.Normalize();
     m_pRBBox->Move(rcRBBox, TRUE, FALSE);
     m_pRBBox->SetVisible(CPWL_Utils::ContainsRect(rcClient, rcRBBox));
 
-    CFX_FloatRect rcContents = rcClient;
+    CPDF_Rect rcContents = rcClient;
     rcContents.top = rcAuthor.bottom - POPUP_ITEM_HEAD_BOTTOM;
     rcContents.left += 3.0f;
     rcContents.right -= 3.0f;
@@ -1201,7 +1198,7 @@ void CPWL_Note::RePosNoteChildren() {
     m_pContents->Move(rcContents, FALSE, FALSE);
     m_pContents->SetVisible(CPWL_Utils::ContainsRect(rcClient, rcContents));
 
-    CFX_FloatRect rcContentsBar = rcContents;
+    CPDF_Rect rcContentsBar = rcContents;
     rcContentsBar.right = rcClient.right - 3.0f;
     rcContentsBar.left = rcContentsBar.right - PWL_SCROLLBAR_WIDTH;
     rcContentsBar.Normalize();
@@ -1300,14 +1297,14 @@ CFX_WideString CPWL_Note::GetAuthorName() const {
 }
 
 FX_BOOL CPWL_Note::OnMouseWheel(short zDelta,
-                                const CFX_FloatPoint& point,
+                                const CPDF_Point& point,
                                 FX_DWORD nFlag) {
-  CFX_FloatPoint ptScroll = m_pContents->GetScrollPos();
-  CFX_FloatRect rcScroll = m_pContents->GetScrollArea();
-  CFX_FloatRect rcContents = m_pContents->GetClientRect();
+  CPDF_Point ptScroll = m_pContents->GetScrollPos();
+  CPDF_Rect rcScroll = m_pContents->GetScrollArea();
+  CPDF_Rect rcContents = m_pContents->GetClientRect();
 
   if (rcScroll.top - rcScroll.bottom > rcContents.Height()) {
-    CFX_FloatPoint ptNew = ptScroll;
+    CPDF_Point ptNew = ptScroll;
 
     if (zDelta > 0)
       ptNew.y += 30;
@@ -1341,7 +1338,7 @@ void CPWL_Note::OnNotify(CPWL_Wnd* pWnd,
                          intptr_t lParam) {
   switch (msg) {
     case PNM_NOTEEDITCHANGED: {
-      CFX_FloatRect rcScroll = m_pContents->GetScrollArea();
+      CPDF_Rect rcScroll = m_pContents->GetScrollArea();
 
       PWL_SCROLL_INFO sInfo;
       sInfo.fContentMin = rcScroll.bottom;
@@ -1369,8 +1366,8 @@ void CPWL_Note::OnNotify(CPWL_Wnd* pWnd,
                                      (intptr_t)&sInfo);
             m_OldScrollInfo = sInfo;
 
-            CFX_FloatPoint ptScroll = m_pContents->GetScrollPos();
-            CFX_FloatPoint ptOld = ptScroll;
+            CPDF_Point ptScroll = m_pContents->GetScrollPos();
+            CPDF_Point ptOld = ptScroll;
 
             if (ptScroll.y > sInfo.fContentMax)
               ptScroll.y = sInfo.fContentMax;
@@ -1407,13 +1404,13 @@ void CPWL_Note::OnNotify(CPWL_Wnd* pWnd,
   if (msg == PNM_SETCARETINFO && IsValid()) {
     if (PWL_CARET_INFO* pInfo = (PWL_CARET_INFO*)wParam) {
       if (m_pContents) {
-        CFX_FloatRect rcClient = m_pContents->GetClientRect();
+        CPDF_Rect rcClient = m_pContents->GetClientRect();
         if (pInfo->ptHead.y > rcClient.top) {
-          CFX_FloatPoint pt = m_pContents->OutToIn(pInfo->ptHead);
+          CPDF_Point pt = m_pContents->OutToIn(pInfo->ptHead);
           m_pContents->OnNotify(this, PNM_SCROLLWINDOW, SBT_VSCROLL,
                                 (intptr_t)&pt.y);
 
-          CFX_FloatPoint ptScroll = m_pContents->GetScrollPos();
+          CPDF_Point ptScroll = m_pContents->GetScrollPos();
           m_pContentsBar->OnNotify(this, PNM_SETSCROLLPOS, SBT_VSCROLL,
                                    (intptr_t)&ptScroll.y);
 
@@ -1421,12 +1418,12 @@ void CPWL_Note::OnNotify(CPWL_Wnd* pWnd,
         }
 
         if (pInfo->ptFoot.y < rcClient.bottom) {
-          CFX_FloatPoint pt = m_pContents->OutToIn(pInfo->ptFoot);
+          CPDF_Point pt = m_pContents->OutToIn(pInfo->ptFoot);
           pt.y += rcClient.Height();
           m_pContents->OnNotify(this, PNM_SCROLLWINDOW, SBT_VSCROLL,
                                 (intptr_t)&pt.y);
 
-          CFX_FloatPoint ptScroll = m_pContents->GetScrollPos();
+          CPDF_Point ptScroll = m_pContents->GetScrollPos();
           m_pContentsBar->OnNotify(this, PNM_SETSCROLLPOS, SBT_VSCROLL,
                                    (intptr_t)&ptScroll.y);
 
@@ -1461,7 +1458,7 @@ void CPWL_Note::SetBkColor(const CPWL_Color& color) {
     m_pRBBox->SetTextColor(sTextColor);
 }
 
-FX_BOOL CPWL_Note::OnLButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag) {
+FX_BOOL CPWL_Note::OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag) {
   if (m_pOptions->WndHitTest(m_pOptions->ParentToChild(point))) {
     if (IPWL_NoteNotify* pNotify = GetNoteNotify()) {
       int32_t x, y;
@@ -1478,7 +1475,7 @@ FX_BOOL CPWL_Note::OnLButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag) {
   return CPWL_Wnd::OnLButtonDown(point, nFlag);
 }
 
-FX_BOOL CPWL_Note::OnRButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) {
+FX_BOOL CPWL_Note::OnRButtonUp(const CPDF_Point& point, FX_DWORD nFlag) {
   return CPWL_Wnd::OnRButtonUp(point, nFlag);
 }
 

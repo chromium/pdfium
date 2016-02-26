@@ -226,7 +226,7 @@ struct CPVT_Word {
 
   CPVT_WordPlace WordPlace;
 
-  CFX_FloatPoint ptWord;
+  CPDF_Point ptWord;
 
   FX_FLOAT fAscent;
 
@@ -248,7 +248,7 @@ struct CPVT_Line {
 
   CPVT_WordPlace lineEnd;
 
-  CFX_FloatPoint ptLine;
+  CPDF_Point ptLine;
 
   FX_FLOAT fLineWidth;
 
@@ -259,7 +259,7 @@ struct CPVT_Line {
 struct CPVT_Section {
   CPVT_WordPlace secplace;
 
-  CFX_FloatRect rcSection;
+  CPDF_Rect rcSection;
 
   CPVT_SecProps SecProps;
 
@@ -328,7 +328,7 @@ class IPDF_VariableText {
 
   virtual IPDF_VariableText_Iterator* GetIterator() = 0;
 
-  virtual void SetPlateRect(const CFX_FloatRect& rect) = 0;
+  virtual void SetPlateRect(const CPDF_Rect& rect) = 0;
 
   virtual void SetAlignment(int32_t nFormat = 0) = 0;
 
@@ -395,9 +395,9 @@ class IPDF_VariableText {
 
   virtual CPVT_WordPlace BackSpaceWord(const CPVT_WordPlace& place) = 0;
 
-  virtual const CFX_FloatRect& GetPlateRect() const = 0;
+  virtual const CPDF_Rect& GetPlateRect() const = 0;
 
-  virtual CFX_FloatRect GetContentRect() const = 0;
+  virtual CPDF_Rect GetContentRect() const = 0;
 
   virtual int32_t GetTotalWords() const = 0;
 
@@ -427,14 +427,13 @@ class IPDF_VariableText {
   virtual CPVT_WordPlace GetNextWordPlace(
       const CPVT_WordPlace& place) const = 0;
 
-  virtual CPVT_WordPlace SearchWordPlace(const CFX_FloatPoint& point) const = 0;
+  virtual CPVT_WordPlace SearchWordPlace(const CPDF_Point& point) const = 0;
 
   virtual CPVT_WordPlace GetUpWordPlace(const CPVT_WordPlace& place,
-                                        const CFX_FloatPoint& point) const = 0;
+                                        const CPDF_Point& point) const = 0;
 
-  virtual CPVT_WordPlace GetDownWordPlace(
-      const CPVT_WordPlace& place,
-      const CFX_FloatPoint& point) const = 0;
+  virtual CPVT_WordPlace GetDownWordPlace(const CPVT_WordPlace& place,
+                                          const CPDF_Point& point) const = 0;
 
   virtual CPVT_WordPlace GetLineBeginPlace(
       const CPVT_WordPlace& place) const = 0;

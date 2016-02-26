@@ -415,15 +415,6 @@ struct FX_SMALL_RECT {
 
   int16_t Bottom;
 };
-
-class CFX_FloatPoint {
- public:
-  CFX_FloatPoint(FX_FLOAT xx, FX_FLOAT yy) : x(xx), y(xx) {}
-
-  FX_FLOAT x;
-  FX_FLOAT y;
-};
-
 class CFX_FloatRect {
  public:
   CFX_FloatRect() { left = right = bottom = top = 0; }

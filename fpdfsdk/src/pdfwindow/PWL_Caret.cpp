@@ -24,14 +24,14 @@ CFX_ByteString CPWL_Caret::GetClassName() const {
 }
 
 void CPWL_Caret::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
-  GetCaretApp(sAppStream, CFX_FloatPoint(0.0f, 0.0f));
+  GetCaretApp(sAppStream, CPDF_Point(0.0f, 0.0f));
 }
 
 void CPWL_Caret::DrawThisAppearance(CFX_RenderDevice* pDevice,
                                     CFX_Matrix* pUser2Device) {
   if (IsVisible() && m_bFlash) {
-    CFX_FloatRect rcRect = GetCaretRect();
-    CFX_FloatRect rcClip = GetClipRect();
+    CPDF_Rect rcRect = GetCaretRect();
+    CPDF_Rect rcClip = GetClipRect();
 
     CFX_PathData path;
 
@@ -65,12 +65,12 @@ void CPWL_Caret::DrawThisAppearance(CFX_RenderDevice* pDevice,
 }
 
 void CPWL_Caret::GetCaretApp(CFX_ByteTextBuf& sAppStream,
-                             const CFX_FloatPoint& ptOffset) {
+                             const CPDF_Point& ptOffset) {
   if (IsVisible() && m_bFlash) {
     CFX_ByteTextBuf sCaret;
 
-    CFX_FloatRect rcRect = GetCaretRect();
-    CFX_FloatRect rcClip = GetClipRect();
+    CPDF_Rect rcRect = GetCaretRect();
+    CPDF_Rect rcClip = GetClipRect();
 
     rcRect = CPWL_Utils::OffsetRect(rcRect, ptOffset.x, ptOffset.y);
     rcClip = CPWL_Utils::OffsetRect(rcClip, ptOffset.x, ptOffset.y);
@@ -90,7 +90,7 @@ void CPWL_Caret::GetCaretApp(CFX_ByteTextBuf& sAppStream,
 }
 
 CFX_ByteString CPWL_Caret::GetCaretAppearanceStream(
-    const CFX_FloatPoint& ptOffset) {
+    const CPDF_Point& ptOffset) {
   CFX_ByteTextBuf sCaret;
   GetCaretApp(sCaret, ptOffset);
   return sCaret.GetByteString();
@@ -105,14 +105,13 @@ void CPWL_Caret::TimerProc() {
   }
 }
 
-CFX_FloatRect CPWL_Caret::GetCaretRect() const {
-  return CFX_FloatRect(m_ptFoot.x, m_ptFoot.y, m_ptHead.x + m_fWidth,
-                       m_ptHead.y);
+CPDF_Rect CPWL_Caret::GetCaretRect() const {
+  return CPDF_Rect(m_ptFoot.x, m_ptFoot.y, m_ptHead.x + m_fWidth, m_ptHead.y);
 }
 
 void CPWL_Caret::SetCaret(FX_BOOL bVisible,
-                          const CFX_FloatPoint& ptHead,
-                          const CFX_FloatPoint& ptFoot) {
+                          const CPDF_Point& ptHead,
+                          const CPDF_Point& ptFoot) {
   if (bVisible) {
     if (IsVisible()) {
       if (m_ptHead.x != ptHead.x || m_ptHead.y != ptHead.y ||
@@ -136,8 +135,8 @@ void CPWL_Caret::SetCaret(FX_BOOL bVisible,
       Move(m_rcInvalid, FALSE, TRUE);
     }
   } else {
-    m_ptHead = CFX_FloatPoint(0, 0);
-    m_ptFoot = CFX_FloatPoint(0, 0);
+    m_ptHead = CPDF_Point(0, 0);
+    m_ptFoot = CPDF_Point(0, 0);
 
     m_bFlash = FALSE;
     if (IsVisible()) {
@@ -147,9 +146,9 @@ void CPWL_Caret::SetCaret(FX_BOOL bVisible,
   }
 }
 
-void CPWL_Caret::InvalidateRect(CFX_FloatRect* pRect) {
+void CPWL_Caret::InvalidateRect(CPDF_Rect* pRect) {
   if (pRect) {
-    CFX_FloatRect rcRefresh = CPWL_Utils::InflateRect(*pRect, 0.5f);
+    CPDF_Rect rcRefresh = CPWL_Utils::InflateRect(*pRect, 0.5f);
     rcRefresh.top += 1;
     rcRefresh.bottom -= 1;
 

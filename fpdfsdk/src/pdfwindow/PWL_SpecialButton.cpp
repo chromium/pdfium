@@ -17,7 +17,7 @@ CFX_ByteString CPWL_PushButton::GetClassName() const {
   return "CPWL_PushButton";
 }
 
-CFX_FloatRect CPWL_PushButton::GetFocusRect() const {
+CPDF_Rect CPWL_PushButton::GetFocusRect() const {
   return CPWL_Utils::DeflateRect(GetWindowRect(), (FX_FLOAT)GetBorderWidth());
 }
 
@@ -37,8 +37,7 @@ FX_BOOL CPWL_CheckBox::IsChecked() const {
   return m_bChecked;
 }
 
-FX_BOOL CPWL_CheckBox::OnLButtonUp(const CFX_FloatPoint& point,
-                                   FX_DWORD nFlag) {
+FX_BOOL CPWL_CheckBox::OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag) {
   if (IsReadOnly())
     return FALSE;
 
@@ -59,8 +58,7 @@ CFX_ByteString CPWL_RadioButton::GetClassName() const {
   return "CPWL_RadioButton";
 }
 
-FX_BOOL CPWL_RadioButton::OnLButtonUp(const CFX_FloatPoint& point,
-                                      FX_DWORD nFlag) {
+FX_BOOL CPWL_RadioButton::OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag) {
   if (IsReadOnly())
     return FALSE;
 

@@ -13,22 +13,22 @@
 #define FX_EDIT_UNDERLINEHALFWIDTH 0.5f
 #define FX_EDIT_CROSSOUTHALFWIDTH 0.5f
 
-CFX_FloatRect GetUnderLineRect(const CPVT_Word& word) {
-  return CFX_FloatRect(word.ptWord.x, word.ptWord.y + word.fDescent * 0.5f,
-                       word.ptWord.x + word.fWidth,
-                       word.ptWord.y + word.fDescent * 0.25f);
+CPDF_Rect GetUnderLineRect(const CPVT_Word& word) {
+  return CPDF_Rect(word.ptWord.x, word.ptWord.y + word.fDescent * 0.5f,
+                   word.ptWord.x + word.fWidth,
+                   word.ptWord.y + word.fDescent * 0.25f);
 }
 
-CFX_FloatRect GetCrossoutRect(const CPVT_Word& word) {
-  return CFX_FloatRect(word.ptWord.x,
-                       word.ptWord.y + (word.fAscent + word.fDescent) * 0.5f +
-                           word.fDescent * 0.25f,
-                       word.ptWord.x + word.fWidth,
-                       word.ptWord.y + (word.fAscent + word.fDescent) * 0.5f);
+CPDF_Rect GetCrossoutRect(const CPVT_Word& word) {
+  return CPDF_Rect(word.ptWord.x,
+                   word.ptWord.y + (word.fAscent + word.fDescent) * 0.5f +
+                       word.fDescent * 0.25f,
+                   word.ptWord.x + word.fWidth,
+                   word.ptWord.y + (word.fAscent + word.fDescent) * 0.5f);
 }
 
 static void DrawTextString(CFX_RenderDevice* pDevice,
-                           const CFX_FloatPoint& pt,
+                           const CPDF_Point& pt,
                            CPDF_Font* pFont,
                            FX_FLOAT fFontSize,
                            CFX_Matrix* pUser2Device,
@@ -49,7 +49,7 @@ static void DrawTextString(CFX_RenderDevice* pDevice,
       ro.m_ColorMode = RENDER_COLOR_NORMAL;
 
       if (crTextStroke != 0) {
-        CFX_FloatPoint pt1(0, 0), pt2(1, 0);
+        CPDF_Point pt1(0, 0), pt2(1, 0);
         pUser2Device->Transform(pt1.x, pt1.y);
         pUser2Device->Transform(pt2.x, pt2.y);
         CFX_GraphStateData gsd;
@@ -69,7 +69,7 @@ static void DrawTextString(CFX_RenderDevice* pDevice,
       ro.m_ColorMode = RENDER_COLOR_NORMAL;
 
       if (crTextStroke != 0) {
-        CFX_FloatPoint pt1(0, 0), pt2(1, 0);
+        CPDF_Point pt1(0, 0), pt2(1, 0);
         pUser2Device->Transform(pt1.x, pt1.y);
         pUser2Device->Transform(pt2.x, pt2.y);
         CFX_GraphStateData gsd;
@@ -92,13 +92,13 @@ void IFX_Edit::DrawUnderline(CFX_RenderDevice* pDevice,
                              CFX_Matrix* pUser2Device,
                              IFX_Edit* pEdit,
                              FX_COLORREF color,
-                             const CFX_FloatRect& rcClip,
-                             const CFX_FloatPoint& ptOffset,
+                             const CPDF_Rect& rcClip,
+                             const CPDF_Point& ptOffset,
                              const CPVT_WordRange* pRange) {
   pDevice->SaveState();
 
   if (!rcClip.IsEmpty()) {
-    CFX_FloatRect rcTemp = rcClip;
+    CPDF_Rect rcTemp = rcClip;
     pUser2Device->TransformRect(rcTemp);
     FX_RECT rcDevClip;
     rcDevClip.left = (int32_t)rcTemp.left;
@@ -123,7 +123,7 @@ void IFX_Edit::DrawUnderline(CFX_RenderDevice* pDevice,
         CPVT_Word word;
         if (pIterator->GetWord(word)) {
           CFX_PathData pathUnderline;
-          CFX_FloatRect rcUnderline = GetUnderLineRect(word);
+          CPDF_Rect rcUnderline = GetUnderLineRect(word);
           rcUnderline.left += ptOffset.x;
           rcUnderline.right += ptOffset.x;
           rcUnderline.top += ptOffset.y;
@@ -146,8 +146,8 @@ void IFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
                         IFX_Edit* pEdit,
                         FX_COLORREF crTextFill,
                         FX_COLORREF crTextStroke,
-                        const CFX_FloatRect& rcClip,
-                        const CFX_FloatPoint& ptOffset,
+                        const CPDF_Rect& rcClip,
+                        const CPDF_Point& ptOffset,
                         const CPVT_WordRange* pRange,
                         IFX_SystemHandler* pSystemHandler,
                         void* pFFLData) {
@@ -169,12 +169,12 @@ void IFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
 
   CFX_ByteTextBuf sTextBuf;
   int32_t nFontIndex = -1;
-  CFX_FloatPoint ptBT(0.0f, 0.0f);
+  CPDF_Point ptBT(0.0f, 0.0f);
 
   pDevice->SaveState();
 
   if (!rcClip.IsEmpty()) {
-    CFX_FloatRect rcTemp = rcClip;
+    CPDF_Rect rcTemp = rcClip;
     pUser2Device->TransformRect(rcTemp);
     FX_RECT rcDevClip;
     rcDevClip.left = (int32_t)rcTemp.left;
@@ -218,9 +218,9 @@ void IFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
             pIterator->GetLine(line);
 
             if (pSystemHandler && pSystemHandler->IsSelectionImplemented()) {
-              CFX_FloatRect rc(word.ptWord.x, line.ptLine.y + line.fLineDescent,
-                               word.ptWord.x + word.fWidth,
-                               line.ptLine.y + line.fLineAscent);
+              CPDF_Rect rc(word.ptWord.x, line.ptLine.y + line.fLineDescent,
+                           word.ptWord.x + word.fWidth,
+                           line.ptLine.y + line.fLineAscent);
               rc.Intersect(rcClip);
               pSystemHandler->OutputSelectedRect(pFFLData, rc);
             } else {
@@ -239,8 +239,8 @@ void IFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
             if (place.LineCmp(oldplace) != 0 || word.nFontIndex != nFontIndex ||
                 crOldFill != crCurFill) {
               if (sTextBuf.GetLength() > 0) {
-                DrawTextString(pDevice, CFX_FloatPoint(ptBT.x + ptOffset.x,
-                                                       ptBT.y + ptOffset.y),
+                DrawTextString(pDevice, CPDF_Point(ptBT.x + ptOffset.x,
+                                                   ptBT.y + ptOffset.y),
                                pFontMap->GetPDFFont(nFontIndex), fFontSize,
                                pUser2Device, sTextBuf.GetByteString(),
                                crOldFill, crTextStroke, nHorzScale);
@@ -256,8 +256,8 @@ void IFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
                                          SubWord);
           } else {
             DrawTextString(
-                pDevice, CFX_FloatPoint(word.ptWord.x + ptOffset.x,
-                                        word.ptWord.y + ptOffset.y),
+                pDevice, CPDF_Point(word.ptWord.x + ptOffset.x,
+                                    word.ptWord.y + ptOffset.y),
                 pFontMap->GetPDFFont(word.nFontIndex), fFontSize, pUser2Device,
                 GetPDFWordString(pFontMap, word.nFontIndex, word.Word, SubWord),
                 crCurFill, crTextStroke, nHorzScale);
@@ -268,7 +268,7 @@ void IFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
 
       if (sTextBuf.GetLength() > 0) {
         DrawTextString(
-            pDevice, CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
+            pDevice, CPDF_Point(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
             pFontMap->GetPDFFont(nFontIndex), fFontSize, pUser2Device,
             sTextBuf.GetByteString(), crOldFill, crTextStroke, nHorzScale);
       }
@@ -281,8 +281,8 @@ void IFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
 void IFX_Edit::DrawRichEdit(CFX_RenderDevice* pDevice,
                             CFX_Matrix* pUser2Device,
                             IFX_Edit* pEdit,
-                            const CFX_FloatRect& rcClip,
-                            const CFX_FloatPoint& ptOffset,
+                            const CPDF_Rect& rcClip,
+                            const CPDF_Point& ptOffset,
                             const CPVT_WordRange* pRange) {
   CPVT_WordRange wrSelect = pEdit->GetSelectWordRange();
 
@@ -294,12 +294,12 @@ void IFX_Edit::DrawRichEdit(CFX_RenderDevice* pDevice,
 
   CFX_ByteTextBuf sTextBuf;
   CPVT_WordProps wp;
-  CFX_FloatPoint ptBT(0.0f, 0.0f);
+  CPDF_Point ptBT(0.0f, 0.0f);
 
   pDevice->SaveState();
 
   if (!rcClip.IsEmpty()) {
-    CFX_FloatRect rcTemp = rcClip;
+    CPDF_Rect rcTemp = rcClip;
     pUser2Device->TransformRect(rcTemp);
     FX_RECT rcDevClip;
     rcDevClip.left = (int32_t)rcTemp.left;
@@ -357,11 +357,11 @@ void IFX_Edit::DrawRichEdit(CFX_RenderDevice* pDevice,
               FXSYS_memcmp(&word.WordProps, &wp, sizeof(CPVT_WordProps)) != 0 ||
               crOld != crCurText) {
             if (sTextBuf.GetLength() > 0) {
-              DrawTextString(pDevice, CFX_FloatPoint(ptBT.x + ptOffset.x,
-                                                     ptBT.y + ptOffset.y),
-                             pFontMap->GetPDFFont(wp.nFontIndex), wp.fFontSize,
-                             pUser2Device, sTextBuf.GetByteString(), crOld, 0,
-                             wp.nHorzScale);
+              DrawTextString(
+                  pDevice, CPDF_Point(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
+                  pFontMap->GetPDFFont(wp.nFontIndex), wp.fFontSize,
+                  pUser2Device, sTextBuf.GetByteString(), crOld, 0,
+                  wp.nHorzScale);
 
               sTextBuf.Clear();
             }
@@ -375,7 +375,7 @@ void IFX_Edit::DrawRichEdit(CFX_RenderDevice* pDevice,
 
           if (word.WordProps.nWordStyle & PVTWORD_STYLE_UNDERLINE) {
             CFX_PathData pathUnderline;
-            CFX_FloatRect rcUnderline = GetUnderLineRect(word);
+            CPDF_Rect rcUnderline = GetUnderLineRect(word);
             pathUnderline.AppendRect(rcUnderline.left, rcUnderline.bottom,
                                      rcUnderline.right, rcUnderline.top);
 
@@ -385,7 +385,7 @@ void IFX_Edit::DrawRichEdit(CFX_RenderDevice* pDevice,
 
           if (word.WordProps.nWordStyle & PVTWORD_STYLE_CROSSOUT) {
             CFX_PathData pathCrossout;
-            CFX_FloatRect rcCrossout = GetCrossoutRect(word);
+            CPDF_Rect rcCrossout = GetCrossoutRect(word);
             pathCrossout.AppendRect(rcCrossout.left, rcCrossout.bottom,
                                     rcCrossout.right, rcCrossout.top);
 
@@ -399,7 +399,7 @@ void IFX_Edit::DrawRichEdit(CFX_RenderDevice* pDevice,
 
       if (sTextBuf.GetLength() > 0) {
         DrawTextString(
-            pDevice, CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
+            pDevice, CPDF_Point(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
             pFontMap->GetPDFFont(wp.nFontIndex), wp.fFontSize, pUser2Device,
             sTextBuf.GetByteString(), crOld, 0, wp.nHorzScale);
       }
@@ -411,7 +411,7 @@ void IFX_Edit::DrawRichEdit(CFX_RenderDevice* pDevice,
 
 static void AddRectToPageObjects(CPDF_PageObjectHolder* pObjectHolder,
                                  FX_COLORREF crFill,
-                                 const CFX_FloatRect& rcFill) {
+                                 const CPDF_Rect& rcFill) {
   std::unique_ptr<CPDF_PathObject> pPathObj(new CPDF_PathObject);
   CFX_PathData* pPathData = pPathObj->m_Path.GetModify();
   pPathData->AppendRect(rcFill.left, rcFill.bottom, rcFill.right, rcFill.top);
@@ -435,7 +435,7 @@ static CPDF_TextObject* AddTextObjToPageObjects(
     FX_FLOAT fFontSize,
     FX_FLOAT fCharSpace,
     int32_t nHorzScale,
-    const CFX_FloatPoint& point,
+    const CPDF_Point& point,
     const CFX_ByteString& text) {
   std::unique_ptr<CPDF_TextObject> pTxtObj(new CPDF_TextObject);
   CPDF_TextStateData* pTextStateData = pTxtObj->m_TextState.GetModify();
@@ -469,7 +469,7 @@ static CPDF_TextObject* AddTextObjToPageObjects(
 void IFX_Edit::GeneratePageObjects(
     CPDF_PageObjectHolder* pObjectHolder,
     IFX_Edit* pEdit,
-    const CFX_FloatPoint& ptOffset,
+    const CPDF_Point& ptOffset,
     const CPVT_WordRange* pRange,
     FX_COLORREF crText,
     CFX_ArrayTemplate<CPDF_TextObject*>& ObjArray) {
@@ -478,7 +478,7 @@ void IFX_Edit::GeneratePageObjects(
   int32_t nOldFontIndex = -1;
 
   CFX_ByteTextBuf sTextBuf;
-  CFX_FloatPoint ptBT(0.0f, 0.0f);
+  CPDF_Point ptBT(0.0f, 0.0f);
 
   ObjArray.RemoveAll();
 
@@ -504,7 +504,7 @@ void IFX_Edit::GeneratePageObjects(
               ObjArray.Add(AddTextObjToPageObjects(
                   pObjectHolder, crText, pFontMap->GetPDFFont(nOldFontIndex),
                   fFontSize, 0.0f, 100,
-                  CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
+                  CPDF_Point(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
                   sTextBuf.GetByteString()));
 
               sTextBuf.Clear();
@@ -523,7 +523,7 @@ void IFX_Edit::GeneratePageObjects(
         ObjArray.Add(AddTextObjToPageObjects(
             pObjectHolder, crText, pFontMap->GetPDFFont(nOldFontIndex),
             fFontSize, 0.0f, 100,
-            CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
+            CPDF_Point(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
             sTextBuf.GetByteString()));
       }
     }
@@ -533,7 +533,7 @@ void IFX_Edit::GeneratePageObjects(
 void IFX_Edit::GenerateRichPageObjects(
     CPDF_PageObjectHolder* pObjectHolder,
     IFX_Edit* pEdit,
-    const CFX_FloatPoint& ptOffset,
+    const CPDF_Point& ptOffset,
     const CPVT_WordRange* pRange,
     CFX_ArrayTemplate<CPDF_TextObject*>& ObjArray) {
   FX_COLORREF crCurText = ArgbEncode(255, 0, 0, 0);
@@ -541,7 +541,7 @@ void IFX_Edit::GenerateRichPageObjects(
 
   CFX_ByteTextBuf sTextBuf;
   CPVT_WordProps wp;
-  CFX_FloatPoint ptBT(0.0f, 0.0f);
+  CPDF_Point ptBT(0.0f, 0.0f);
 
   ObjArray.RemoveAll();
 
@@ -574,7 +574,7 @@ void IFX_Edit::GenerateRichPageObjects(
               ObjArray.Add(AddTextObjToPageObjects(
                   pObjectHolder, crOld, pFontMap->GetPDFFont(wp.nFontIndex),
                   wp.fFontSize, wp.fCharSpace, wp.nHorzScale,
-                  CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
+                  CPDF_Point(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
                   sTextBuf.GetByteString()));
 
               sTextBuf.Clear();
@@ -589,7 +589,7 @@ void IFX_Edit::GenerateRichPageObjects(
                                        word.Word, 0);
 
           if (word.WordProps.nWordStyle & PVTWORD_STYLE_UNDERLINE) {
-            CFX_FloatRect rcUnderline = GetUnderLineRect(word);
+            CPDF_Rect rcUnderline = GetUnderLineRect(word);
             rcUnderline.left += ptOffset.x;
             rcUnderline.right += ptOffset.x;
             rcUnderline.top += ptOffset.y;
@@ -599,7 +599,7 @@ void IFX_Edit::GenerateRichPageObjects(
           }
 
           if (word.WordProps.nWordStyle & PVTWORD_STYLE_CROSSOUT) {
-            CFX_FloatRect rcCrossout = GetCrossoutRect(word);
+            CPDF_Rect rcCrossout = GetCrossoutRect(word);
             rcCrossout.left += ptOffset.x;
             rcCrossout.right += ptOffset.x;
             rcCrossout.top += ptOffset.y;
@@ -616,7 +616,7 @@ void IFX_Edit::GenerateRichPageObjects(
         ObjArray.Add(AddTextObjToPageObjects(
             pObjectHolder, crOld, pFontMap->GetPDFFont(wp.nFontIndex),
             wp.fFontSize, wp.fCharSpace, wp.nHorzScale,
-            CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
+            CPDF_Point(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
             sTextBuf.GetByteString()));
       }
     }
@@ -625,7 +625,7 @@ void IFX_Edit::GenerateRichPageObjects(
 
 void IFX_Edit::GenerateUnderlineObjects(CPDF_PageObjectHolder* pObjectHolder,
                                         IFX_Edit* pEdit,
-                                        const CFX_FloatPoint& ptOffset,
+                                        const CPDF_Point& ptOffset,
                                         const CPVT_WordRange* pRange,
                                         FX_COLORREF color) {
   if (IFX_Edit_Iterator* pIterator = pEdit->GetIterator()) {
@@ -644,7 +644,7 @@ void IFX_Edit::GenerateUnderlineObjects(CPDF_PageObjectHolder* pObjectHolder,
 
         CPVT_Word word;
         if (pIterator->GetWord(word)) {
-          CFX_FloatRect rcUnderline = GetUnderLineRect(word);
+          CPDF_Rect rcUnderline = GetUnderLineRect(word);
           rcUnderline.left += ptOffset.x;
           rcUnderline.right += ptOffset.x;
           rcUnderline.top += ptOffset.y;

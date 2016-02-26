@@ -67,7 +67,7 @@ class CPDF_TextPage : public IPDF_TextPage {
   void GetRectArray(int start,
                     int nCount,
                     CFX_RectArray& rectArray) const override;
-  int GetIndexAtPos(CFX_FloatPoint point,
+  int GetIndexAtPos(CPDF_Point point,
                     FX_FLOAT xTolerance,
                     FX_FLOAT yTolerance) const override;
   int GetIndexAtPos(FX_FLOAT x,

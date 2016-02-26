@@ -15,7 +15,7 @@ class CFX_RenderDevice;
 class CPDF_Font;
 class CFX_Matrix;
 class CPDF_PageObjectHolder;
-class CFX_FloatPoint;
+class CPDF_Point;
 class CPDF_TextObject;
 class IFX_Edit;
 class IFX_Edit_FontMap;
@@ -92,17 +92,17 @@ class IFX_Edit_Notify {
   virtual void IOnSetScrollPosY(FX_FLOAT fy) = 0;
   // set the caret information.
   virtual void IOnSetCaret(FX_BOOL bVisible,
-                           const CFX_FloatPoint& ptHead,
-                           const CFX_FloatPoint& ptFoot,
+                           const CPDF_Point& ptHead,
+                           const CPDF_Point& ptFoot,
                            const CPVT_WordPlace& place) = 0;
   // if the caret position is changed ,send the information of current postion
   // to user.
   virtual void IOnCaretChange(const CPVT_SecProps& secProps,
                               const CPVT_WordProps& wordProps) = 0;
   // if the text area is changed, send the information to user.
-  virtual void IOnContentChange(const CFX_FloatRect& rcContent) = 0;
+  virtual void IOnContentChange(const CPDF_Rect& rcContent) = 0;
   // Invalidate the rectangle relative to the bounding box of edit.
-  virtual void IOnInvalidateRect(CFX_FloatRect* pRect) = 0;
+  virtual void IOnInvalidateRect(CPDF_Rect* pRect) = 0;
 };
 
 class IFX_Edit_OprNotify {
@@ -204,10 +204,9 @@ class IFX_Edit {
   virtual void Initialize() = 0;
 
   // set the bounding box of the text area.
-  virtual void SetPlateRect(const CFX_FloatRect& rect,
-                            FX_BOOL bPaint = TRUE) = 0;
+  virtual void SetPlateRect(const CPDF_Rect& rect, FX_BOOL bPaint = TRUE) = 0;
   // set the scroll origin
-  virtual void SetScrollPos(const CFX_FloatPoint& point) = 0;
+  virtual void SetScrollPos(const CPDF_Point& point) = 0;
 
   // set the horizontal text alignment in text box, nFormat (0:left 1:middle
   // 2:right).
@@ -297,11 +296,11 @@ class IFX_Edit {
   // query if any text is selected.
   virtual FX_BOOL IsSelected() const = 0;
   // get the scroll origin
-  virtual CFX_FloatPoint GetScrollPos() const = 0;
+  virtual CPDF_Point GetScrollPos() const = 0;
   // get the bounding box of the text area.
-  virtual CFX_FloatRect GetPlateRect() const = 0;
+  virtual CPDF_Rect GetPlateRect() const = 0;
   // get the fact area of the text.
-  virtual CFX_FloatRect GetContentRect() const = 0;
+  virtual CPDF_Rect GetContentRect() const = 0;
   // get the visible word range
   virtual CPVT_WordRange GetVisibleWordRange() const = 0;
   // get the whole word range
@@ -311,11 +310,11 @@ class IFX_Edit {
 
   // send the mousedown message to edit for response.
   // if Shift key is hold, bShift is TRUE, is Ctrl key is hold, bCtrl is TRUE.
-  virtual void OnMouseDown(const CFX_FloatPoint& point,
+  virtual void OnMouseDown(const CPDF_Point& point,
                            FX_BOOL bShift,
                            FX_BOOL bCtrl) = 0;
   // send the mousemove message to edit when mouse down is TRUE.
-  virtual void OnMouseMove(const CFX_FloatPoint& point,
+  virtual void OnMouseMove(const CPDF_Point& point,
                            FX_BOOL bShift,
                            FX_BOOL bCtrl) = 0;
   // send the UP key message to edit.
@@ -400,7 +399,7 @@ class IFX_Edit {
       const CPVT_WordPlace& place) const = 0;
 
   // search a wordplace form point
-  virtual CPVT_WordPlace SearchWordPlace(const CFX_FloatPoint& point) const = 0;
+  virtual CPVT_WordPlace SearchWordPlace(const CPDF_Point& point) const = 0;
 
   // get the font size of non_rich text or default font size of richtext.
   virtual FX_FLOAT GetFontSize() const = 0;
@@ -427,21 +426,21 @@ class IFX_Edit {
 
   static CFX_ByteString GetEditAppearanceStream(
       IFX_Edit* pEdit,
-      const CFX_FloatPoint& ptOffset,
+      const CPDF_Point& ptOffset,
       const CPVT_WordRange* pRange = NULL,
       FX_BOOL bContinuous = TRUE,
       FX_WORD SubWord = 0);
   static CFX_ByteString GetSelectAppearanceStream(
       IFX_Edit* pEdit,
-      const CFX_FloatPoint& ptOffset,
+      const CPDF_Point& ptOffset,
       const CPVT_WordRange* pRange = NULL);
   static void DrawEdit(CFX_RenderDevice* pDevice,
                        CFX_Matrix* pUser2Device,
                        IFX_Edit* pEdit,
                        FX_COLORREF crTextFill,
                        FX_COLORREF crTextStroke,
-                       const CFX_FloatRect& rcClip,
-                       const CFX_FloatPoint& ptOffset,
+                       const CPDF_Rect& rcClip,
+                       const CPDF_Point& ptOffset,
                        const CPVT_WordRange* pRange,
                        IFX_SystemHandler* pSystemHandler,
                        void* pFFLData);
@@ -449,31 +448,31 @@ class IFX_Edit {
                             CFX_Matrix* pUser2Device,
                             IFX_Edit* pEdit,
                             FX_COLORREF color,
-                            const CFX_FloatRect& rcClip,
-                            const CFX_FloatPoint& ptOffset,
+                            const CPDF_Rect& rcClip,
+                            const CPDF_Point& ptOffset,
                             const CPVT_WordRange* pRange);
   static void DrawRichEdit(CFX_RenderDevice* pDevice,
                            CFX_Matrix* pUser2Device,
                            IFX_Edit* pEdit,
-                           const CFX_FloatRect& rcClip,
-                           const CFX_FloatPoint& ptOffset,
+                           const CPDF_Rect& rcClip,
+                           const CPDF_Point& ptOffset,
                            const CPVT_WordRange* pRange);
   static void GeneratePageObjects(
       CPDF_PageObjectHolder* pObjectHolder,
       IFX_Edit* pEdit,
-      const CFX_FloatPoint& ptOffset,
+      const CPDF_Point& ptOffset,
       const CPVT_WordRange* pRange,
       FX_COLORREF crText,
       CFX_ArrayTemplate<CPDF_TextObject*>& ObjArray);
   static void GenerateRichPageObjects(
       CPDF_PageObjectHolder* pObjectHolder,
       IFX_Edit* pEdit,
-      const CFX_FloatPoint& ptOffset,
+      const CPDF_Point& ptOffset,
       const CPVT_WordRange* pRange,
       CFX_ArrayTemplate<CPDF_TextObject*>& ObjArray);
   static void GenerateUnderlineObjects(CPDF_PageObjectHolder* pObjectHolder,
                                        IFX_Edit* pEdit,
-                                       const CFX_FloatPoint& ptOffset,
+                                       const CPDF_Point& ptOffset,
                                        const CPVT_WordRange* pRange,
                                        FX_COLORREF color);
 
@@ -502,7 +501,7 @@ class IFX_List_Notify {
   // set the position of vertical scrollbar.
   virtual void IOnSetScrollPosY(FX_FLOAT fy) = 0;
   // Invalidate the rectangle relative to the bounding box of edit.
-  virtual void IOnInvalidateRect(CFX_FloatRect* pRect) = 0;
+  virtual void IOnInvalidateRect(CPDF_Rect* pRect) = 0;
 
  protected:
   virtual ~IFX_List_Notify() {}
@@ -516,11 +515,11 @@ class IFX_List {
   virtual void SetFontMap(IFX_Edit_FontMap* pFontMap) = 0;
   virtual void SetNotify(IFX_List_Notify* pNotify) = 0;
 
-  virtual void SetPlateRect(const CFX_FloatRect& rect) = 0;
+  virtual void SetPlateRect(const CPDF_Rect& rect) = 0;
   virtual void SetFontSize(FX_FLOAT fFontSize) = 0;
 
-  virtual CFX_FloatRect GetPlateRect() const = 0;
-  virtual CFX_FloatRect GetContentRect() const = 0;
+  virtual CPDF_Rect GetPlateRect() const = 0;
+  virtual CPDF_Rect GetContentRect() const = 0;
 
   virtual FX_FLOAT GetFontSize() const = 0;
   virtual IFX_Edit* GetItemEdit(int32_t nIndex) const = 0;
@@ -533,13 +532,13 @@ class IFX_List {
   virtual FX_BOOL IsValid(int32_t nItemIndex) const = 0;
   virtual int32_t FindNext(int32_t nIndex, FX_WCHAR nChar) const = 0;
 
-  virtual void SetScrollPos(const CFX_FloatPoint& point) = 0;
+  virtual void SetScrollPos(const CPDF_Point& point) = 0;
   virtual void ScrollToListItem(int32_t nItemIndex) = 0;
-  virtual CFX_FloatRect GetItemRect(int32_t nIndex) const = 0;
+  virtual CPDF_Rect GetItemRect(int32_t nIndex) const = 0;
   virtual int32_t GetCaret() const = 0;
   virtual int32_t GetSelect() const = 0;
   virtual int32_t GetTopItem() const = 0;
-  virtual int32_t GetItemIndex(const CFX_FloatPoint& point) const = 0;
+  virtual int32_t GetItemIndex(const CPDF_Point& point) const = 0;
   virtual int32_t GetFirstSelected() const = 0;
 
   virtual void AddString(const FX_WCHAR* string) = 0;
@@ -550,10 +549,10 @@ class IFX_List {
   virtual void Cancel() = 0;
   virtual CFX_WideString GetText() const = 0;
 
-  virtual void OnMouseDown(const CFX_FloatPoint& point,
+  virtual void OnMouseDown(const CPDF_Point& point,
                            FX_BOOL bShift,
                            FX_BOOL bCtrl) = 0;
-  virtual void OnMouseMove(const CFX_FloatPoint& point,
+  virtual void OnMouseMove(const CPDF_Point& point,
                            FX_BOOL bShift,
                            FX_BOOL bCtrl) = 0;
   virtual void OnVK_UP(FX_BOOL bShift, FX_BOOL bCtrl) = 0;

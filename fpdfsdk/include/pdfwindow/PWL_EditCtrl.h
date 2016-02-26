@@ -27,7 +27,7 @@ class IPWL_Edit_Notify {
   virtual ~IPWL_Edit_Notify() {}
   // when the position of caret is changed in edit
   virtual void OnCaretMove(int32_t x1, int32_t y1, int32_t x2, int32_t y2) {}
-  virtual void OnContentChange(const CFX_FloatRect& rcContent) {}
+  virtual void OnContentChange(const CPDF_Rect& rcContent) {}
   // OprType: 0 InsertWord
   // 1 InsertReturn
   // 2 BackSpace
@@ -59,13 +59,13 @@ class CPWL_EditCtrl : public CPWL_Wnd, public IFX_Edit_Notify {
   CPWL_EditCtrl();
   ~CPWL_EditCtrl() override;
 
-  CFX_FloatRect GetContentRect() const;
+  CPDF_Rect GetContentRect() const;
   void GetCaretPos(int32_t& x, int32_t& y) const;
 
   CFX_WideString GetText() const;
   void SetSel(int32_t nStartChar, int32_t nEndChar);
   void GetSel(int32_t& nStartChar, int32_t& nEndChar) const;
-  void GetTextRange(const CFX_FloatRect& rect,
+  void GetTextRange(const CPDF_Rect& rect,
                     int32_t& nStartChar,
                     int32_t& nEndChar) const;
   CFX_WideString GetText(int32_t& nStartChar, int32_t& nEndChar) const;
@@ -79,8 +79,8 @@ class CPWL_EditCtrl : public CPWL_Wnd, public IFX_Edit_Notify {
   void Paint();
 
   void EnableRefresh(FX_BOOL bRefresh);
-  CFX_FloatPoint GetScrollPos() const;
-  void SetScrollPos(const CFX_FloatPoint& point);
+  CPDF_Point GetScrollPos() const;
+  void SetScrollPos(const CPDF_Point& point);
 
   void SetEditNotify(IPWL_Edit_Notify* pNotify) { m_pEditNotify = pNotify; }
 
@@ -105,9 +105,9 @@ class CPWL_EditCtrl : public CPWL_Wnd, public IFX_Edit_Notify {
   void OnCreated() override;
   FX_BOOL OnKeyDown(FX_WORD nChar, FX_DWORD nFlag) override;
   FX_BOOL OnChar(FX_WORD nChar, FX_DWORD nFlag) override;
-  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
-  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
-  FX_BOOL OnMouseMove(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag) override;
+  FX_BOOL OnMouseMove(const CPDF_Point& point, FX_DWORD nFlag) override;
   void OnNotify(CPWL_Wnd* pWnd,
                 FX_DWORD msg,
                 intptr_t wParam = 0,
@@ -135,13 +135,13 @@ class CPWL_EditCtrl : public CPWL_Wnd, public IFX_Edit_Notify {
   void IOnSetScrollPosX(FX_FLOAT fx) override {}
   void IOnSetScrollPosY(FX_FLOAT fy) override;
   void IOnSetCaret(FX_BOOL bVisible,
-                   const CFX_FloatPoint& ptHead,
-                   const CFX_FloatPoint& ptFoot,
+                   const CPDF_Point& ptHead,
+                   const CPDF_Point& ptFoot,
                    const CPVT_WordPlace& place) override;
   void IOnCaretChange(const CPVT_SecProps& secProps,
                       const CPVT_WordProps& wordProps) override;
-  void IOnContentChange(const CFX_FloatRect& rcContent) override;
-  void IOnInvalidateRect(CFX_FloatRect* pRect) override;
+  void IOnContentChange(const CPDF_Rect& rcContent) override;
+  void IOnInvalidateRect(CPDF_Rect* pRect) override;
 
   void InsertText(const FX_WCHAR* csText);
   void SetText(const FX_WCHAR* csText);
@@ -157,10 +157,10 @@ class CPWL_EditCtrl : public CPWL_Wnd, public IFX_Edit_Notify {
   void Delete();
   void Backspace();
 
-  void GetCaretInfo(CFX_FloatPoint& ptHead, CFX_FloatPoint& ptFoot) const;
+  void GetCaretInfo(CPDF_Point& ptHead, CPDF_Point& ptFoot) const;
   void SetCaret(FX_BOOL bVisible,
-                const CFX_FloatPoint& ptHead,
-                const CFX_FloatPoint& ptFoot);
+                const CPDF_Point& ptHead,
+                const CPDF_Point& ptFoot);
 
   void SetEditCaret(FX_BOOL bVisible);
 

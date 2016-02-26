@@ -23,7 +23,7 @@ class CPWL_CBListBox : public CPWL_ListBox {
   ~CPWL_CBListBox() override {}
 
   // CPWL_ListBox
-  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag) override;
 
   FX_BOOL OnKeyDownWithExit(FX_WORD nChar, FX_BOOL& bExit, FX_DWORD nFlag);
   FX_BOOL OnCharWithExit(FX_WORD nChar, FX_BOOL& bExit, FX_DWORD nFlag);
@@ -40,8 +40,8 @@ class CPWL_CBButton : public CPWL_Wnd {
   void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           CFX_Matrix* pUser2Device) override;
-  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
-  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag) override;
 };
 
 class CPWL_ComboBox : public CPWL_Wnd {
@@ -62,7 +62,7 @@ class CPWL_ComboBox : public CPWL_Wnd {
                 intptr_t lParam = 0) override;
   void CreateChildWnd(const PWL_CREATEPARAM& cp) override;
   void RePosChildWnd() override;
-  CFX_FloatRect GetFocusRect() const override;
+  CPDF_Rect GetFocusRect() const override;
   void SetFocus() override;
   void KillFocus() override;
 
@@ -95,7 +95,7 @@ class CPWL_ComboBox : public CPWL_Wnd {
   CPWL_CBButton* m_pButton;
   CPWL_CBListBox* m_pList;
   FX_BOOL m_bPopup;
-  CFX_FloatRect m_rcOldWindow;
+  CPDF_Rect m_rcOldWindow;
   int32_t m_nPopupWhere;
   int32_t m_nSelectItem;
   IPWL_Filler_Notify* m_pFillerNotify;

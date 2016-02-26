@@ -166,7 +166,7 @@ void CSection::UpdateWordPlace(CPVT_WordPlace& place) const {
     }
   }
 }
-CPVT_WordPlace CSection::SearchWordPlace(const CFX_FloatPoint& point) const {
+CPVT_WordPlace CSection::SearchWordPlace(const CPDF_Point& point) const {
   ASSERT(m_pVT);
   CPVT_WordPlace place = GetBeginWordPlace();
   FX_BOOL bUp = TRUE;
@@ -1135,8 +1135,8 @@ CPVT_WordPlace CPDF_VariableText::GetNextWordPlace(
   return place;
 }
 CPVT_WordPlace CPDF_VariableText::SearchWordPlace(
-    const CFX_FloatPoint& point) const {
-  CFX_FloatPoint pt = OutToIn(point);
+    const CPDF_Point& point) const {
+  CPDF_Point pt = OutToIn(point);
   CPVT_WordPlace place = GetBeginWordPlace();
   int32_t nLeft = 0;
   int32_t nRight = m_SectionArray.GetSize() - 1;
@@ -1161,8 +1161,8 @@ CPVT_WordPlace CPDF_VariableText::SearchWordPlace(
         continue;
       } else {
         place = pSection->SearchWordPlace(
-            CFX_FloatPoint(pt.x - pSection->m_SecInfo.rcSection.left,
-                           pt.y - pSection->m_SecInfo.rcSection.top));
+            CPDF_Point(pt.x - pSection->m_SecInfo.rcSection.left,
+                       pt.y - pSection->m_SecInfo.rcSection.top));
         place.nSecIndex = nMid;
         return place;
       }
@@ -1180,10 +1180,10 @@ CPVT_WordPlace CPDF_VariableText::SearchWordPlace(
 }
 CPVT_WordPlace CPDF_VariableText::GetUpWordPlace(
     const CPVT_WordPlace& place,
-    const CFX_FloatPoint& point) const {
+    const CPDF_Point& point) const {
   if (CSection* pSection = m_SectionArray.GetAt(place.nSecIndex)) {
     CPVT_WordPlace temp = place;
-    CFX_FloatPoint pt = OutToIn(point);
+    CPDF_Point pt = OutToIn(point);
     if (temp.nLineIndex-- > 0) {
       return pSection->SearchWordPlace(
           pt.x - pSection->m_SecInfo.rcSection.left, temp);
@@ -1200,10 +1200,10 @@ CPVT_WordPlace CPDF_VariableText::GetUpWordPlace(
 }
 CPVT_WordPlace CPDF_VariableText::GetDownWordPlace(
     const CPVT_WordPlace& place,
-    const CFX_FloatPoint& point) const {
+    const CPDF_Point& point) const {
   if (CSection* pSection = m_SectionArray.GetAt(place.nSecIndex)) {
     CPVT_WordPlace temp = place;
-    CFX_FloatPoint pt = OutToIn(point);
+    CPDF_Point pt = OutToIn(point);
     if (temp.nLineIndex++ < pSection->m_LineArray.GetSize() - 1) {
       return pSection->SearchWordPlace(
           pt.x - pSection->m_SecInfo.rcSection.left, temp);
@@ -1333,7 +1333,7 @@ FX_BOOL CPDF_VariableText::GetSectionInfo(const CPVT_WordPlace& place,
   }
   return FALSE;
 }
-CFX_FloatRect CPDF_VariableText::GetContentRect() const {
+CPDF_Rect CPDF_VariableText::GetContentRect() const {
   return InToOut(CPVT_FloatRect(CPDF_EditContainer::GetContentRect()));
 }
 FX_FLOAT CPDF_VariableText::GetWordFontSize(const CPVT_WordInfo& WordInfo,
@@ -1753,8 +1753,8 @@ FX_BOOL CPDF_VariableText_Iterator::GetWord(CPVT_Word& word) const {
         word.nCharset = pWord->nCharset;
         word.fWidth = m_pVT->GetWordWidth(*pWord);
         word.ptWord = m_pVT->InToOut(
-            CFX_FloatPoint(pWord->fWordX + pSection->m_SecInfo.rcSection.left,
-                           pWord->fWordY + pSection->m_SecInfo.rcSection.top));
+            CPDF_Point(pWord->fWordX + pSection->m_SecInfo.rcSection.left,
+                       pWord->fWordY + pSection->m_SecInfo.rcSection.top));
         word.fAscent = m_pVT->GetWordAscent(*pWord);
         word.fDescent = m_pVT->GetWordDescent(*pWord);
         if (pWord->pWordProps) {
@@ -1785,7 +1785,7 @@ FX_BOOL CPDF_VariableText_Iterator::GetLine(CPVT_Line& line) const {
   line.lineplace = CPVT_WordPlace(m_CurPos.nSecIndex, m_CurPos.nLineIndex, -1);
   if (CSection* pSection = m_pVT->m_SectionArray.GetAt(m_CurPos.nSecIndex)) {
     if (CLine* pLine = pSection->m_LineArray.GetAt(m_CurPos.nLineIndex)) {
-      line.ptLine = m_pVT->InToOut(CFX_FloatPoint(
+      line.ptLine = m_pVT->InToOut(CPDF_Point(
           pLine->m_LineInfo.fLineX + pSection->m_SecInfo.rcSection.left,
           pLine->m_LineInfo.fLineY + pSection->m_SecInfo.rcSection.top));
       line.fLineWidth = pLine->m_LineInfo.fLineWidth;

@@ -6,22 +6,12 @@
 
 #include "core/src/fpdfapi/fpdf_page/pageint.h"
 
-#include <algorithm>
-
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fpdfapi/fpdf_pageobj.h"
 #include "core/include/fpdfapi/fpdf_render.h"
 #include "core/src/fpdfapi/fpdf_render/render_int.h"
 #include "third_party/base/stl_util.h"
-
-namespace {
-
-FX_FLOAT ClipFloat(FX_FLOAT f) {
-  return std::max(0.0f, std::min(1.0f, f));
-}
-
-}  // namespace
 
 void CPDF_GraphicStates::DefaultStates() {
   m_ColorState.New()->Default();
@@ -95,21 +85,21 @@ void CPDF_ClipPathData::SetCount(int path_count, int text_count) {
     m_pTextList = FX_Alloc(CPDF_TextObject*, text_count);
   }
 }
-CFX_FloatRect CPDF_ClipPath::GetClipBox() const {
-  CFX_FloatRect rect;
+CPDF_Rect CPDF_ClipPath::GetClipBox() const {
+  CPDF_Rect rect;
   FX_BOOL bStarted = FALSE;
   int count = GetPathCount();
   if (count) {
     rect = GetPath(0).GetBoundingBox();
     for (int i = 1; i < count; i++) {
-      CFX_FloatRect path_rect = GetPath(i).GetBoundingBox();
+      CPDF_Rect path_rect = GetPath(i).GetBoundingBox();
       rect.Intersect(path_rect);
     }
     bStarted = TRUE;
   }
   count = GetTextCount();
   if (count) {
-    CFX_FloatRect layer_rect;
+    CPDF_Rect layer_rect;
     FX_BOOL bLayerStarted = FALSE;
     for (int i = 0; i < count; i++) {
       CPDF_TextObject* pTextObj = GetText(i);
@@ -138,9 +128,9 @@ void CPDF_ClipPath::AppendPath(CPDF_Path path, int type, FX_BOOL bAutoMerge) {
   if (pData->m_PathCount && bAutoMerge) {
     CPDF_Path old_path = pData->m_pPathList[pData->m_PathCount - 1];
     if (old_path.IsRect()) {
-      CFX_FloatRect old_rect(old_path.GetPointX(0), old_path.GetPointY(0),
-                             old_path.GetPointX(2), old_path.GetPointY(2));
-      CFX_FloatRect new_rect = path.GetBoundingBox();
+      CPDF_Rect old_rect(old_path.GetPointX(0), old_path.GetPointY(0),
+                         old_path.GetPointX(2), old_path.GetPointY(2));
+      CPDF_Rect new_rect = path.GetBoundingBox();
       if (old_rect.Contains(new_rect)) {
         pData->m_PathCount--;
         pData->m_pPathList[pData->m_PathCount].SetNull();
@@ -544,10 +534,10 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
         }
         break;
       case FXBSTR_ID('C', 'A', 0, 0):
-        pGeneralState->m_StrokeAlpha = ClipFloat(pObject->GetNumber());
+        pGeneralState->m_StrokeAlpha = PDF_ClipFloat(pObject->GetNumber());
         break;
       case FXBSTR_ID('c', 'a', 0, 0):
-        pGeneralState->m_FillAlpha = ClipFloat(pObject->GetNumber());
+        pGeneralState->m_FillAlpha = PDF_ClipFloat(pObject->GetNumber());
         break;
       case FXBSTR_ID('O', 'P', 0, 0):
         pGeneralState->m_StrokeOP = pObject->GetInteger();

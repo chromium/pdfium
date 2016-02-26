@@ -228,7 +228,7 @@ struct PWL_CREATEPARAM {
         eCursorType(FXCT_ARROW),
         mtChild(1, 0, 0, 1, 0, 0) {}
 
-  CFX_FloatRect rcRectWnd;            // required
+  CPDF_Rect rcRectWnd;                // required
   IFX_SystemHandler* pSystemHandler;  // required
   IFX_Edit_FontMap* pFontMap;         // required for text window
   IPWL_Provider* pProvider;           // required for self coordinate
@@ -293,25 +293,25 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   void InvalidateFocusHandler(IPWL_FocusHandler* handler);
   void InvalidateProvider(IPWL_Provider* provider);
   void Destroy();
-  void Move(const CFX_FloatRect& rcNew, FX_BOOL bReset, FX_BOOL bRefresh);
-  virtual void InvalidateRect(CFX_FloatRect* pRect = NULL);
+  void Move(const CPDF_Rect& rcNew, FX_BOOL bReset, FX_BOOL bRefresh);
+  virtual void InvalidateRect(CPDF_Rect* pRect = NULL);
 
   void DrawAppearance(CFX_RenderDevice* pDevice, CFX_Matrix* pUser2Device);
 
   virtual FX_BOOL OnKeyDown(FX_WORD nChar, FX_DWORD nFlag);
   virtual FX_BOOL OnKeyUp(FX_WORD nChar, FX_DWORD nFlag);
   virtual FX_BOOL OnChar(FX_WORD nChar, FX_DWORD nFlag);
-  virtual FX_BOOL OnLButtonDblClk(const CFX_FloatPoint& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnMButtonDblClk(const CFX_FloatPoint& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnMButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnMButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnRButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnRButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnMouseMove(const CFX_FloatPoint& point, FX_DWORD nFlag);
+  virtual FX_BOOL OnLButtonDblClk(const CPDF_Point& point, FX_DWORD nFlag);
+  virtual FX_BOOL OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag);
+  virtual FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag);
+  virtual FX_BOOL OnMButtonDblClk(const CPDF_Point& point, FX_DWORD nFlag);
+  virtual FX_BOOL OnMButtonDown(const CPDF_Point& point, FX_DWORD nFlag);
+  virtual FX_BOOL OnMButtonUp(const CPDF_Point& point, FX_DWORD nFlag);
+  virtual FX_BOOL OnRButtonDown(const CPDF_Point& point, FX_DWORD nFlag);
+  virtual FX_BOOL OnRButtonUp(const CPDF_Point& point, FX_DWORD nFlag);
+  virtual FX_BOOL OnMouseMove(const CPDF_Point& point, FX_DWORD nFlag);
   virtual FX_BOOL OnMouseWheel(short zDelta,
-                               const CFX_FloatPoint& point,
+                               const CPDF_Point& point,
                                FX_DWORD nFlag);
 
   virtual void SetFocus();
@@ -327,7 +327,7 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   virtual void SetTextStrokeColor(const CPWL_Color& color);
   virtual void SetVisible(FX_BOOL bVisible);
 
-  virtual CFX_FloatRect GetFocusRect() const;
+  virtual CPDF_Rect GetFocusRect() const;
   virtual CPWL_Color GetBackgroundColor() const;
   virtual CPWL_Color GetBorderColor() const;
   virtual CPWL_Color GetTextColor() const;
@@ -340,25 +340,25 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   virtual void SetFontSize(FX_FLOAT fFontSize);
 
   void SetBackgroundColor(const CPWL_Color& color);
-  void SetClipRect(const CFX_FloatRect& rect);
+  void SetClipRect(const CPDF_Rect& rect);
   void SetBorderStyle(int32_t eBorderStyle);
 
-  virtual CFX_FloatRect GetWindowRect() const;
-  virtual CFX_FloatRect GetClientRect() const;
-  CFX_FloatPoint GetCenterPoint() const;
+  virtual CPDF_Rect GetWindowRect() const;
+  virtual CPDF_Rect GetClientRect() const;
+  CPDF_Point GetCenterPoint() const;
   int32_t GetBorderWidth() const;
   FX_BOOL IsVisible() const { return m_bVisible; }
   FX_BOOL HasFlag(FX_DWORD dwFlags) const;
   void AddFlag(FX_DWORD dwFlags);
   void RemoveFlag(FX_DWORD dwFlags);
-  const CFX_FloatRect& GetClipRect() const;
+  const CPDF_Rect& GetClipRect() const;
   CPWL_Wnd* GetParentWindow() const;
   int32_t GetBorderStyle() const;
   const CPWL_Dash& GetBorderDash() const;
   void* GetAttachedData() const;
 
-  FX_BOOL WndHitTest(const CFX_FloatPoint& point) const;
-  FX_BOOL ClientHitTest(const CFX_FloatPoint& point) const;
+  FX_BOOL WndHitTest(const CPDF_Point& point) const;
+  FX_BOOL ClientHitTest(const CPDF_Point& point) const;
   FX_BOOL IsCaptureMouse() const;
 
   const CPWL_Wnd* GetFocused() const;
@@ -378,10 +378,10 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   void SetChildMatrix(const CFX_Matrix& mt);
   CFX_Matrix GetWindowMatrix() const;
 
-  virtual CFX_FloatPoint ChildToParent(const CFX_FloatPoint& point) const;
-  virtual CFX_FloatRect ChildToParent(const CFX_FloatRect& rect) const;
-  virtual CFX_FloatPoint ParentToChild(const CFX_FloatPoint& point) const;
-  virtual CFX_FloatRect ParentToChild(const CFX_FloatRect& rect) const;
+  virtual CPDF_Point ChildToParent(const CPDF_Point& point) const;
+  virtual CPDF_Rect ChildToParent(const CPDF_Rect& rect) const;
+  virtual CPDF_Point ParentToChild(const CPDF_Point& point) const;
+  virtual CPDF_Rect ParentToChild(const CPDF_Rect& rect) const;
 
   // those methods only implemented by listctrl item
   virtual FX_FLOAT GetItemHeight(FX_FLOAT fLimitWidth) { return 0; }
@@ -423,11 +423,10 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   const PWL_CREATEPARAM& GetCreationParam() const;
   FX_BOOL IsNotifying() const { return m_bNotifying; }
 
-  void InvalidateRectMove(const CFX_FloatRect& rcOld,
-                          const CFX_FloatRect& rcNew);
+  void InvalidateRectMove(const CPDF_Rect& rcOld, const CPDF_Rect& rcNew);
 
-  void PWLtoWnd(const CFX_FloatPoint& point, int32_t& x, int32_t& y) const;
-  FX_RECT PWLtoWnd(const CFX_FloatRect& rect) const;
+  void PWLtoWnd(const CPDF_Point& point, int32_t& x, int32_t& y) const;
+  FX_RECT PWLtoWnd(const CPDF_Rect& rect) const;
   FX_HWND GetAttachedHWnd() const;
 
   FX_BOOL IsWndCaptureMouse(const CPWL_Wnd* pWnd) const;
@@ -460,8 +459,8 @@ class CPWL_Wnd : public CPWL_TimerHandler {
 
   CPWL_ScrollBar* m_pVScrollBar;
 
-  CFX_FloatRect m_rcWindow;
-  CFX_FloatRect m_rcClip;
+  CPDF_Rect m_rcWindow;
+  CPDF_Rect m_rcClip;
 
   FX_BOOL m_bCreated;
   FX_BOOL m_bVisible;

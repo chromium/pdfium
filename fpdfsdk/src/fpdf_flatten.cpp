@@ -11,12 +11,12 @@
 #include "fpdfsdk/include/fsdk_define.h"
 
 typedef CFX_ArrayTemplate<CPDF_Dictionary*> CPDF_ObjectArray;
-typedef CFX_ArrayTemplate<CFX_FloatRect> CPDF_RectArray;
+typedef CFX_ArrayTemplate<CPDF_Rect> CPDF_RectArray;
 
 enum FPDF_TYPE { MAX, MIN };
 enum FPDF_VALUE { TOP, LEFT, RIGHT, BOTTOM };
 
-FX_BOOL IsValiableRect(CFX_FloatRect rect, CFX_FloatRect rcPage) {
+FX_BOOL IsValiableRect(CPDF_Rect rect, CPDF_Rect rcPage) {
   if (rect.left - rect.right > 0.000001f || rect.bottom - rect.top > 0.000001f)
     return FALSE;
 
@@ -46,7 +46,7 @@ void GetContentsRect(CPDF_Document* pDoc,
     if (!pPageObject)
       continue;
 
-    CFX_FloatRect rc;
+    CPDF_Rect rc;
     rc.left = pPageObject->m_Left;
     rc.right = pPageObject->m_Right;
     rc.bottom = pPageObject->m_Bottom;
@@ -62,7 +62,7 @@ void ParserStream(CPDF_Dictionary* pPageDic,
                   CPDF_ObjectArray* pObjectArray) {
   if (!pStream)
     return;
-  CFX_FloatRect rect;
+  CPDF_Rect rect;
   if (pStream->KeyExist("Rect"))
     rect = pStream->GetRectBy("Rect");
   else if (pStream->KeyExist("BBox"))
@@ -127,25 +127,25 @@ FX_FLOAT GetMinMaxValue(CPDF_RectArray& array,
   switch (value) {
     case LEFT: {
       for (int i = 0; i < nRects; i++)
-        pArray[i] = CFX_FloatRect(array.GetAt(i)).left;
+        pArray[i] = CPDF_Rect(array.GetAt(i)).left;
 
       break;
     }
     case TOP: {
       for (int i = 0; i < nRects; i++)
-        pArray[i] = CFX_FloatRect(array.GetAt(i)).top;
+        pArray[i] = CPDF_Rect(array.GetAt(i)).top;
 
       break;
     }
     case RIGHT: {
       for (int i = 0; i < nRects; i++)
-        pArray[i] = CFX_FloatRect(array.GetAt(i)).right;
+        pArray[i] = CPDF_Rect(array.GetAt(i)).right;
 
       break;
     }
     case BOTTOM: {
       for (int i = 0; i < nRects; i++)
-        pArray[i] = CFX_FloatRect(array.GetAt(i)).bottom;
+        pArray[i] = CPDF_Rect(array.GetAt(i)).bottom;
 
       break;
     }
@@ -166,8 +166,8 @@ FX_FLOAT GetMinMaxValue(CPDF_RectArray& array,
   return fRet;
 }
 
-CFX_FloatRect CalculateRect(CPDF_RectArray* pRectArray) {
-  CFX_FloatRect rcRet;
+CPDF_Rect CalculateRect(CPDF_RectArray* pRectArray) {
+  CPDF_Rect rcRet;
 
   rcRet.left = GetMinMaxValue(*pRectArray, MIN, LEFT);
   rcRet.top = GetMinMaxValue(*pRectArray, MAX, TOP);
@@ -245,8 +245,8 @@ void SetPageContents(CFX_ByteString key,
   }
 }
 
-CFX_Matrix GetMatrix(CFX_FloatRect rcAnnot,
-                     CFX_FloatRect rcStream,
+CFX_Matrix GetMatrix(CPDF_Rect rcAnnot,
+                     CPDF_Rect rcStream,
                      const CFX_Matrix& matrix) {
   if (rcStream.IsEmpty())
     return CFX_Matrix();
@@ -266,8 +266,8 @@ void GetOffset(FX_FLOAT& fa,
                FX_FLOAT& fd,
                FX_FLOAT& fe,
                FX_FLOAT& ff,
-               CFX_FloatRect rcAnnot,
-               CFX_FloatRect rcStream,
+               CPDF_Rect rcAnnot,
+               CPDF_Rect rcStream,
                const CFX_Matrix& matrix) {
   FX_FLOAT fStreamWidth = 0.0f;
   FX_FLOAT fStreamHeight = 0.0f;
@@ -323,15 +323,15 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
   if (iRet == FLATTEN_NOTHINGTODO || iRet == FLATTEN_FAIL)
     return iRet;
 
-  CFX_FloatRect rcOriginalCB;
-  CFX_FloatRect rcMerger = CalculateRect(&RectArray);
-  CFX_FloatRect rcOriginalMB = pPageDict->GetRectBy("MediaBox");
+  CPDF_Rect rcOriginalCB;
+  CPDF_Rect rcMerger = CalculateRect(&RectArray);
+  CPDF_Rect rcOriginalMB = pPageDict->GetRectBy("MediaBox");
 
   if (pPageDict->KeyExist("CropBox"))
     rcOriginalMB = pPageDict->GetRectBy("CropBox");
 
   if (rcOriginalMB.IsEmpty()) {
-    rcOriginalMB = CFX_FloatRect(0.0f, 0.0f, 612.0f, 792.0f);
+    rcOriginalMB = CPDF_Rect(0.0f, 0.0f, 612.0f, 792.0f);
   }
 
   rcMerger.left =
@@ -407,7 +407,7 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     pNewOXbjectDic->SetAtName("Subtype", "Form");
     pNewOXbjectDic->SetAtInteger("FormType", 1);
     pNewOXbjectDic->SetAtName("Name", "FRM");
-    CFX_FloatRect rcBBox = pPageDict->GetRectBy("ArtBox");
+    CPDF_Rect rcBBox = pPageDict->GetRectBy("ArtBox");
     pNewOXbjectDic->SetAtRect("BBox", rcBBox);
   }
 
@@ -416,7 +416,7 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     if (!pAnnotDic)
       continue;
 
-    CFX_FloatRect rcAnnot = pAnnotDic->GetRectBy("Rect");
+    CPDF_Rect rcAnnot = pAnnotDic->GetRectBy("Rect");
     rcAnnot.Normalize();
 
     CFX_ByteString sAnnotState = pAnnotDic->GetStringBy("AS");
@@ -452,7 +452,7 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     CPDF_Dictionary* pAPDic = pAPStream->GetDict();
     CFX_Matrix matrix = pAPDic->GetMatrixBy("Matrix");
 
-    CFX_FloatRect rcStream;
+    CPDF_Rect rcStream;
     if (pAPDic->KeyExist("Rect"))
       rcStream = pAPDic->GetRectBy("Rect");
     else if (pAPDic->KeyExist("BBox"))

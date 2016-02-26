@@ -58,7 +58,7 @@ class IPDF_TextPage {
   virtual void GetRectArray(int start,
                             int nCount,
                             CFX_RectArray& rectArray) const = 0;
-  virtual int GetIndexAtPos(CFX_FloatPoint point,
+  virtual int GetIndexAtPos(CPDF_Point point,
                             FX_FLOAT xTolerance,
                             FX_FLOAT yTolerance) const = 0;
   virtual int GetIndexAtPos(FX_FLOAT x,

@@ -16,7 +16,7 @@ class CPWL_PushButton : public CPWL_Button {
 
   // CPWL_Button
   CFX_ByteString GetClassName() const override;
-  CFX_FloatRect GetFocusRect() const override;
+  CPDF_Rect GetFocusRect() const override;
 };
 
 class CPWL_CheckBox : public CPWL_Button {
@@ -26,7 +26,7 @@ class CPWL_CheckBox : public CPWL_Button {
 
   // CPWL_Button
   CFX_ByteString GetClassName() const override;
-  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag) override;
   FX_BOOL OnChar(FX_WORD nChar, FX_DWORD nFlag) override;
 
   void SetCheck(FX_BOOL bCheck);
@@ -43,7 +43,7 @@ class CPWL_RadioButton : public CPWL_Button {
 
   // CPWL_Button
   CFX_ByteString GetClassName() const override;
-  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag) override;
   FX_BOOL OnChar(FX_WORD nChar, FX_DWORD nFlag) override;
 
   void SetCheck(FX_BOOL bCheck);

@@ -73,7 +73,7 @@ FX_BOOL CFFL_CheckBox::OnChar(CPDFSDK_Annot* pAnnot,
 FX_BOOL CFFL_CheckBox::OnLButtonUp(CPDFSDK_PageView* pPageView,
                                    CPDFSDK_Annot* pAnnot,
                                    FX_UINT nFlags,
-                                   const CFX_FloatPoint& point) {
+                                   const CPDF_Point& point) {
   CFFL_Button::OnLButtonUp(pPageView, pAnnot, nFlags, point);
 
   if (IsValid()) {

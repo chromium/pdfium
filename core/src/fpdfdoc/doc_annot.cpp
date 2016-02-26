@@ -77,7 +77,7 @@ void CPDF_AnnotList::DisplayPass(CPDF_Page* pPage,
         continue;
       }
     }
-    CFX_FloatRect annot_rect_f;
+    CPDF_Rect annot_rect_f;
     pAnnot->GetRect(annot_rect_f);
     CFX_Matrix matrix = *pMatrix;
     if (clip_rect) {
@@ -132,7 +132,7 @@ CFX_ByteString CPDF_Annot::GetSubType() const {
   return m_sSubtype;
 }
 
-void CPDF_Annot::GetRect(CFX_FloatRect& rect) const {
+void CPDF_Annot::GetRect(CPDF_Rect& rect) const {
   if (!m_pAnnotDict) {
     return;
   }
@@ -210,7 +210,7 @@ static CPDF_Form* FPDFDOC_Annot_GetMatrix(const CPDF_Page* pPage,
   CFX_FloatRect form_bbox = pForm->m_pFormDict->GetRectBy("BBox");
   CFX_Matrix form_matrix = pForm->m_pFormDict->GetMatrixBy("Matrix");
   form_matrix.TransformRect(form_bbox);
-  CFX_FloatRect arect;
+  CPDF_Rect arect;
   pAnnot->GetRect(arect);
   matrix.MatchRect(arect, form_bbox);
   matrix.Concat(*pUser2Device);

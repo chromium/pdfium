@@ -14,9 +14,9 @@ class CPWL_ListCtrl : public CPWL_Wnd {
   CPWL_ListCtrl();
   ~CPWL_ListCtrl() override;
 
-  void SetScrollPos(const CFX_FloatPoint& point);
-  CFX_FloatPoint GetScrollPos() const;
-  CFX_FloatRect GetScrollArea() const;
+  void SetScrollPos(const CPDF_Point& point);
+  CPDF_Point GetScrollPos() const;
+  CPDF_Rect GetScrollArea() const;
   void SetItemSpace(FX_FLOAT fSpace);
   void SetTopSpace(FX_FLOAT fSpace);
   void SetBottomSpace(FX_FLOAT fSpace);
@@ -24,10 +24,10 @@ class CPWL_ListCtrl : public CPWL_Wnd {
   void ResetContent(int32_t nStart);
   int32_t GetItemIndex(CPWL_Wnd* pItem);
   FX_FLOAT GetContentsHeight(FX_FLOAT fLimitWidth);
-  CFX_FloatPoint InToOut(const CFX_FloatPoint& point) const;
-  CFX_FloatPoint OutToIn(const CFX_FloatPoint& point) const;
-  CFX_FloatRect InToOut(const CFX_FloatRect& rect) const;
-  CFX_FloatRect OutToIn(const CFX_FloatRect& rect) const;
+  CPDF_Point InToOut(const CPDF_Point& point) const;
+  CPDF_Point OutToIn(const CPDF_Point& point) const;
+  CPDF_Rect InToOut(const CPDF_Rect& rect) const;
+  CPDF_Rect OutToIn(const CPDF_Rect& rect) const;
 
  protected:
   // CPWL_Wnd
@@ -38,8 +38,8 @@ class CPWL_ListCtrl : public CPWL_Wnd {
  private:
   void ResetAll(FX_BOOL bMove, int32_t nStart);
 
-  CFX_FloatRect m_rcContent;
-  CFX_FloatPoint m_ptScroll;
+  CPDF_Rect m_rcContent;
+  CPDF_Point m_ptScroll;
   FX_FLOAT m_fItemSpace;
   FX_FLOAT m_fTopSpace;
   FX_FLOAT m_fBottomSpace;

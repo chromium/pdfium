@@ -187,8 +187,8 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
   void ResetAppearance_ListBox();
   void ResetAppearance_TextField(const FX_WCHAR* sValue);
 
-  CFX_FloatRect GetClientRect() const;
-  CFX_FloatRect GetRotatedRect() const;
+  CPDF_Rect GetClientRect() const;
+  CPDF_Rect GetRotatedRect() const;
 
   CFX_ByteString GetBackgroundAppStream() const;
   CFX_ByteString GetBorderAppStream() const;
@@ -384,7 +384,7 @@ class CBA_AnnotIterator {
 
  private:
   void GenerateResults();
-  static CFX_FloatRect GetAnnotRect(const CPDFSDK_Annot* pAnnot);
+  static CPDF_Rect GetAnnotRect(const CPDFSDK_Annot* pAnnot);
 
   // Function signature compatible with std::sort().
   static bool CompareByLeftAscending(const CPDFSDK_Annot* p1,

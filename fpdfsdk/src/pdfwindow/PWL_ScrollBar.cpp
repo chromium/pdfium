@@ -132,25 +132,24 @@ void CPWL_SBButton::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
 
   CFX_ByteTextBuf sButton;
 
-  CFX_FloatRect rectWnd = GetWindowRect();
+  CPDF_Rect rectWnd = GetWindowRect();
 
   if (rectWnd.IsEmpty())
     return;
 
   sAppStream << "q\n";
 
-  CFX_FloatPoint ptCenter = GetCenterPoint();
+  CPDF_Point ptCenter = GetCenterPoint();
 
   switch (m_eScrollBarType) {
     case SBT_HSCROLL:
       switch (m_eSBButtonType) {
         case PSBT_MIN: {
-          CFX_FloatPoint pt1(ptCenter.x - PWL_TRIANGLE_HALFLEN * 0.5f,
-                             ptCenter.y);
-          CFX_FloatPoint pt2(ptCenter.x + PWL_TRIANGLE_HALFLEN * 0.5f,
-                             ptCenter.y + PWL_TRIANGLE_HALFLEN);
-          CFX_FloatPoint pt3(ptCenter.x + PWL_TRIANGLE_HALFLEN * 0.5f,
-                             ptCenter.y - PWL_TRIANGLE_HALFLEN);
+          CPDF_Point pt1(ptCenter.x - PWL_TRIANGLE_HALFLEN * 0.5f, ptCenter.y);
+          CPDF_Point pt2(ptCenter.x + PWL_TRIANGLE_HALFLEN * 0.5f,
+                         ptCenter.y + PWL_TRIANGLE_HALFLEN);
+          CPDF_Point pt3(ptCenter.x + PWL_TRIANGLE_HALFLEN * 0.5f,
+                         ptCenter.y - PWL_TRIANGLE_HALFLEN);
 
           if (rectWnd.right - rectWnd.left > PWL_TRIANGLE_HALFLEN * 2 &&
               rectWnd.top - rectWnd.bottom > PWL_TRIANGLE_HALFLEN) {
@@ -164,12 +163,11 @@ void CPWL_SBButton::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
           }
         } break;
         case PSBT_MAX: {
-          CFX_FloatPoint pt1(ptCenter.x + PWL_TRIANGLE_HALFLEN * 0.5f,
-                             ptCenter.y);
-          CFX_FloatPoint pt2(ptCenter.x - PWL_TRIANGLE_HALFLEN * 0.5f,
-                             ptCenter.y + PWL_TRIANGLE_HALFLEN);
-          CFX_FloatPoint pt3(ptCenter.x - PWL_TRIANGLE_HALFLEN * 0.5f,
-                             ptCenter.y - PWL_TRIANGLE_HALFLEN);
+          CPDF_Point pt1(ptCenter.x + PWL_TRIANGLE_HALFLEN * 0.5f, ptCenter.y);
+          CPDF_Point pt2(ptCenter.x - PWL_TRIANGLE_HALFLEN * 0.5f,
+                         ptCenter.y + PWL_TRIANGLE_HALFLEN);
+          CPDF_Point pt3(ptCenter.x - PWL_TRIANGLE_HALFLEN * 0.5f,
+                         ptCenter.y - PWL_TRIANGLE_HALFLEN);
 
           if (rectWnd.right - rectWnd.left > PWL_TRIANGLE_HALFLEN * 2 &&
               rectWnd.top - rectWnd.bottom > PWL_TRIANGLE_HALFLEN) {
@@ -189,12 +187,11 @@ void CPWL_SBButton::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
     case SBT_VSCROLL:
       switch (m_eSBButtonType) {
         case PSBT_MIN: {
-          CFX_FloatPoint pt1(ptCenter.x - PWL_TRIANGLE_HALFLEN,
-                             ptCenter.y - PWL_TRIANGLE_HALFLEN * 0.5f);
-          CFX_FloatPoint pt2(ptCenter.x + PWL_TRIANGLE_HALFLEN,
-                             ptCenter.y - PWL_TRIANGLE_HALFLEN * 0.5f);
-          CFX_FloatPoint pt3(ptCenter.x,
-                             ptCenter.y + PWL_TRIANGLE_HALFLEN * 0.5f);
+          CPDF_Point pt1(ptCenter.x - PWL_TRIANGLE_HALFLEN,
+                         ptCenter.y - PWL_TRIANGLE_HALFLEN * 0.5f);
+          CPDF_Point pt2(ptCenter.x + PWL_TRIANGLE_HALFLEN,
+                         ptCenter.y - PWL_TRIANGLE_HALFLEN * 0.5f);
+          CPDF_Point pt3(ptCenter.x, ptCenter.y + PWL_TRIANGLE_HALFLEN * 0.5f);
 
           if (rectWnd.right - rectWnd.left > PWL_TRIANGLE_HALFLEN * 2 &&
               rectWnd.top - rectWnd.bottom > PWL_TRIANGLE_HALFLEN) {
@@ -208,12 +205,11 @@ void CPWL_SBButton::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
           }
         } break;
         case PSBT_MAX: {
-          CFX_FloatPoint pt1(ptCenter.x - PWL_TRIANGLE_HALFLEN,
-                             ptCenter.y + PWL_TRIANGLE_HALFLEN * 0.5f);
-          CFX_FloatPoint pt2(ptCenter.x + PWL_TRIANGLE_HALFLEN,
-                             ptCenter.y + PWL_TRIANGLE_HALFLEN * 0.5f);
-          CFX_FloatPoint pt3(ptCenter.x,
-                             ptCenter.y - PWL_TRIANGLE_HALFLEN * 0.5f);
+          CPDF_Point pt1(ptCenter.x - PWL_TRIANGLE_HALFLEN,
+                         ptCenter.y + PWL_TRIANGLE_HALFLEN * 0.5f);
+          CPDF_Point pt2(ptCenter.x + PWL_TRIANGLE_HALFLEN,
+                         ptCenter.y + PWL_TRIANGLE_HALFLEN * 0.5f);
+          CPDF_Point pt3(ptCenter.x, ptCenter.y - PWL_TRIANGLE_HALFLEN * 0.5f);
 
           if (rectWnd.right - rectWnd.left > PWL_TRIANGLE_HALFLEN * 2 &&
               rectWnd.top - rectWnd.bottom > PWL_TRIANGLE_HALFLEN) {
@@ -242,11 +238,11 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
   if (!IsVisible())
     return;
 
-  CFX_FloatRect rectWnd = GetWindowRect();
+  CPDF_Rect rectWnd = GetWindowRect();
   if (rectWnd.IsEmpty())
     return;
 
-  CFX_FloatPoint ptCenter = GetCenterPoint();
+  CPDF_Point ptCenter = GetCenterPoint();
   int32_t nTransparancy = GetTransparency();
 
   switch (m_eScrollBarType) {
@@ -254,12 +250,11 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
       CPWL_Wnd::DrawThisAppearance(pDevice, pUser2Device);
       switch (m_eSBButtonType) {
         case PSBT_MIN: {
-          CFX_FloatPoint pt1(ptCenter.x - PWL_TRIANGLE_HALFLEN * 0.5f,
-                             ptCenter.y);
-          CFX_FloatPoint pt2(ptCenter.x + PWL_TRIANGLE_HALFLEN * 0.5f,
-                             ptCenter.y + PWL_TRIANGLE_HALFLEN);
-          CFX_FloatPoint pt3(ptCenter.x + PWL_TRIANGLE_HALFLEN * 0.5f,
-                             ptCenter.y - PWL_TRIANGLE_HALFLEN);
+          CPDF_Point pt1(ptCenter.x - PWL_TRIANGLE_HALFLEN * 0.5f, ptCenter.y);
+          CPDF_Point pt2(ptCenter.x + PWL_TRIANGLE_HALFLEN * 0.5f,
+                         ptCenter.y + PWL_TRIANGLE_HALFLEN);
+          CPDF_Point pt3(ptCenter.x + PWL_TRIANGLE_HALFLEN * 0.5f,
+                         ptCenter.y - PWL_TRIANGLE_HALFLEN);
 
           if (rectWnd.right - rectWnd.left > PWL_TRIANGLE_HALFLEN * 2 &&
               rectWnd.top - rectWnd.bottom > PWL_TRIANGLE_HALFLEN) {
@@ -278,12 +273,11 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
           }
         } break;
         case PSBT_MAX: {
-          CFX_FloatPoint pt1(ptCenter.x + PWL_TRIANGLE_HALFLEN * 0.5f,
-                             ptCenter.y);
-          CFX_FloatPoint pt2(ptCenter.x - PWL_TRIANGLE_HALFLEN * 0.5f,
-                             ptCenter.y + PWL_TRIANGLE_HALFLEN);
-          CFX_FloatPoint pt3(ptCenter.x - PWL_TRIANGLE_HALFLEN * 0.5f,
-                             ptCenter.y - PWL_TRIANGLE_HALFLEN);
+          CPDF_Point pt1(ptCenter.x + PWL_TRIANGLE_HALFLEN * 0.5f, ptCenter.y);
+          CPDF_Point pt2(ptCenter.x - PWL_TRIANGLE_HALFLEN * 0.5f,
+                         ptCenter.y + PWL_TRIANGLE_HALFLEN);
+          CPDF_Point pt3(ptCenter.x - PWL_TRIANGLE_HALFLEN * 0.5f,
+                         ptCenter.y - PWL_TRIANGLE_HALFLEN);
 
           if (rectWnd.right - rectWnd.left > PWL_TRIANGLE_HALFLEN * 2 &&
               rectWnd.top - rectWnd.bottom > PWL_TRIANGLE_HALFLEN) {
@@ -309,7 +303,7 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
       switch (m_eSBButtonType) {
         case PSBT_MIN: {
           // draw border
-          CFX_FloatRect rcDraw = rectWnd;
+          CPDF_Rect rcDraw = rectWnd;
           CPWL_Utils::DrawStrokeRect(pDevice, pUser2Device, rcDraw,
                                      ArgbEncode(nTransparancy, 100, 100, 100),
                                      0.0f);
@@ -336,13 +330,13 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
           if (rectWnd.top - rectWnd.bottom > 6.0f) {
             FX_FLOAT fX = rectWnd.left + 1.5f;
             FX_FLOAT fY = rectWnd.bottom;
-            CFX_FloatPoint pts[7] = {CFX_FloatPoint(fX + 2.5f, fY + 4.0f),
-                                     CFX_FloatPoint(fX + 2.5f, fY + 3.0f),
-                                     CFX_FloatPoint(fX + 4.5f, fY + 5.0f),
-                                     CFX_FloatPoint(fX + 6.5f, fY + 3.0f),
-                                     CFX_FloatPoint(fX + 6.5f, fY + 4.0f),
-                                     CFX_FloatPoint(fX + 4.5f, fY + 6.0f),
-                                     CFX_FloatPoint(fX + 2.5f, fY + 4.0f)};
+            CPDF_Point pts[7] = {CPDF_Point(fX + 2.5f, fY + 4.0f),
+                                 CPDF_Point(fX + 2.5f, fY + 3.0f),
+                                 CPDF_Point(fX + 4.5f, fY + 5.0f),
+                                 CPDF_Point(fX + 6.5f, fY + 3.0f),
+                                 CPDF_Point(fX + 6.5f, fY + 4.0f),
+                                 CPDF_Point(fX + 4.5f, fY + 6.0f),
+                                 CPDF_Point(fX + 2.5f, fY + 4.0f)};
 
             if (IsEnabled())
               CPWL_Utils::DrawFillArea(
@@ -356,7 +350,7 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
         } break;
         case PSBT_MAX: {
           // draw border
-          CFX_FloatRect rcDraw = rectWnd;
+          CPDF_Rect rcDraw = rectWnd;
           CPWL_Utils::DrawStrokeRect(pDevice, pUser2Device, rcDraw,
                                      ArgbEncode(nTransparancy, 100, 100, 100),
                                      0.0f);
@@ -382,13 +376,13 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
             FX_FLOAT fX = rectWnd.left + 1.5f;
             FX_FLOAT fY = rectWnd.bottom;
 
-            CFX_FloatPoint pts[7] = {CFX_FloatPoint(fX + 2.5f, fY + 5.0f),
-                                     CFX_FloatPoint(fX + 2.5f, fY + 6.0f),
-                                     CFX_FloatPoint(fX + 4.5f, fY + 4.0f),
-                                     CFX_FloatPoint(fX + 6.5f, fY + 6.0f),
-                                     CFX_FloatPoint(fX + 6.5f, fY + 5.0f),
-                                     CFX_FloatPoint(fX + 4.5f, fY + 3.0f),
-                                     CFX_FloatPoint(fX + 2.5f, fY + 5.0f)};
+            CPDF_Point pts[7] = {CPDF_Point(fX + 2.5f, fY + 5.0f),
+                                 CPDF_Point(fX + 2.5f, fY + 6.0f),
+                                 CPDF_Point(fX + 4.5f, fY + 4.0f),
+                                 CPDF_Point(fX + 6.5f, fY + 6.0f),
+                                 CPDF_Point(fX + 6.5f, fY + 5.0f),
+                                 CPDF_Point(fX + 4.5f, fY + 3.0f),
+                                 CPDF_Point(fX + 2.5f, fY + 5.0f)};
 
             if (IsEnabled())
               CPWL_Utils::DrawFillArea(
@@ -402,7 +396,7 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
         } break;
         case PSBT_POS: {
           // draw border
-          CFX_FloatRect rcDraw = rectWnd;
+          CPDF_Rect rcDraw = rectWnd;
           CPWL_Utils::DrawStrokeRect(pDevice, pUser2Device, rcDraw,
                                      ArgbEncode(nTransparancy, 100, 100, 100),
                                      0.0f);
@@ -416,10 +410,9 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
           if (IsEnabled()) {
             // draw shadow effect
 
-            CFX_FloatPoint ptTop =
-                CFX_FloatPoint(rectWnd.left, rectWnd.top - 1.0f);
-            CFX_FloatPoint ptBottom =
-                CFX_FloatPoint(rectWnd.left, rectWnd.bottom + 1.0f);
+            CPDF_Point ptTop = CPDF_Point(rectWnd.left, rectWnd.top - 1.0f);
+            CPDF_Point ptBottom =
+                CPDF_Point(rectWnd.left, rectWnd.bottom + 1.0f);
 
             ptTop.x += 1.5f;
             ptBottom.x += 1.5f;
@@ -506,12 +499,12 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
             FX_FLOAT nFrictionWidth = 5.0f;
             FX_FLOAT nFrictionHeight = 5.5f;
 
-            CFX_FloatPoint ptLeft =
-                CFX_FloatPoint(ptCenter.x - nFrictionWidth / 2.0f,
-                               ptCenter.y - nFrictionHeight / 2.0f + 0.5f);
-            CFX_FloatPoint ptRight =
-                CFX_FloatPoint(ptCenter.x + nFrictionWidth / 2.0f,
-                               ptCenter.y - nFrictionHeight / 2.0f + 0.5f);
+            CPDF_Point ptLeft =
+                CPDF_Point(ptCenter.x - nFrictionWidth / 2.0f,
+                           ptCenter.y - nFrictionHeight / 2.0f + 0.5f);
+            CPDF_Point ptRight =
+                CPDF_Point(ptCenter.x + nFrictionWidth / 2.0f,
+                           ptCenter.y - nFrictionHeight / 2.0f + 0.5f);
 
             CPWL_Utils::DrawStrokeLine(pDevice, pUser2Device, ptLeft, ptRight,
                                        crStroke, 1.0f);
@@ -538,8 +531,7 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
   }
 }
 
-FX_BOOL CPWL_SBButton::OnLButtonDown(const CFX_FloatPoint& point,
-                                     FX_DWORD nFlag) {
+FX_BOOL CPWL_SBButton::OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag) {
   CPWL_Wnd::OnLButtonDown(point, nFlag);
 
   if (CPWL_Wnd* pParent = GetParentWindow())
@@ -551,8 +543,7 @@ FX_BOOL CPWL_SBButton::OnLButtonDown(const CFX_FloatPoint& point,
   return TRUE;
 }
 
-FX_BOOL CPWL_SBButton::OnLButtonUp(const CFX_FloatPoint& point,
-                                   FX_DWORD nFlag) {
+FX_BOOL CPWL_SBButton::OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag) {
   CPWL_Wnd::OnLButtonUp(point, nFlag);
 
   if (CPWL_Wnd* pParent = GetParentWindow())
@@ -564,8 +555,7 @@ FX_BOOL CPWL_SBButton::OnLButtonUp(const CFX_FloatPoint& point,
   return TRUE;
 }
 
-FX_BOOL CPWL_SBButton::OnMouseMove(const CFX_FloatPoint& point,
-                                   FX_DWORD nFlag) {
+FX_BOOL CPWL_SBButton::OnMouseMove(const CPDF_Point& point, FX_DWORD nFlag) {
   CPWL_Wnd::OnMouseMove(point, nFlag);
 
   if (CPWL_Wnd* pParent = GetParentWindow()) {
@@ -595,8 +585,8 @@ void CPWL_ScrollBar::OnCreate(PWL_CREATEPARAM& cp) {
 }
 
 void CPWL_ScrollBar::RePosChildWnd() {
-  CFX_FloatRect rcClient = GetClientRect();
-  CFX_FloatRect rcMinButton, rcMaxButton;
+  CPDF_Rect rcClient = GetClientRect();
+  CPDF_Rect rcMinButton, rcMaxButton;
   FX_FLOAT fBWidth = 0;
 
   switch (m_sbType) {
@@ -604,22 +594,21 @@ void CPWL_ScrollBar::RePosChildWnd() {
       if (rcClient.right - rcClient.left >
           PWL_SCROLLBAR_BUTTON_WIDTH * 2 + PWL_SCROLLBAR_POSBUTTON_MINWIDTH +
               2) {
-        rcMinButton = CFX_FloatRect(rcClient.left, rcClient.bottom,
-                                    rcClient.left + PWL_SCROLLBAR_BUTTON_WIDTH,
-                                    rcClient.top);
-        rcMaxButton =
-            CFX_FloatRect(rcClient.right - PWL_SCROLLBAR_BUTTON_WIDTH,
-                          rcClient.bottom, rcClient.right, rcClient.top);
+        rcMinButton =
+            CPDF_Rect(rcClient.left, rcClient.bottom,
+                      rcClient.left + PWL_SCROLLBAR_BUTTON_WIDTH, rcClient.top);
+        rcMaxButton = CPDF_Rect(rcClient.right - PWL_SCROLLBAR_BUTTON_WIDTH,
+                                rcClient.bottom, rcClient.right, rcClient.top);
       } else {
         fBWidth = (rcClient.right - rcClient.left -
                    PWL_SCROLLBAR_POSBUTTON_MINWIDTH - 2) /
                   2;
 
         if (fBWidth > 0) {
-          rcMinButton = CFX_FloatRect(rcClient.left, rcClient.bottom,
-                                      rcClient.left + fBWidth, rcClient.top);
-          rcMaxButton = CFX_FloatRect(rcClient.right - fBWidth, rcClient.bottom,
-                                      rcClient.right, rcClient.top);
+          rcMinButton = CPDF_Rect(rcClient.left, rcClient.bottom,
+                                  rcClient.left + fBWidth, rcClient.top);
+          rcMaxButton = CPDF_Rect(rcClient.right - fBWidth, rcClient.bottom,
+                                  rcClient.right, rcClient.top);
         } else {
           SetVisible(FALSE);
         }
@@ -629,23 +618,21 @@ void CPWL_ScrollBar::RePosChildWnd() {
       if (IsFloatBigger(rcClient.top - rcClient.bottom,
                         PWL_SCROLLBAR_BUTTON_WIDTH * 2 +
                             PWL_SCROLLBAR_POSBUTTON_MINWIDTH + 2)) {
-        rcMinButton = CFX_FloatRect(rcClient.left,
-                                    rcClient.top - PWL_SCROLLBAR_BUTTON_WIDTH,
-                                    rcClient.right, rcClient.top);
-        rcMaxButton =
-            CFX_FloatRect(rcClient.left, rcClient.bottom, rcClient.right,
-                          rcClient.bottom + PWL_SCROLLBAR_BUTTON_WIDTH);
+        rcMinButton =
+            CPDF_Rect(rcClient.left, rcClient.top - PWL_SCROLLBAR_BUTTON_WIDTH,
+                      rcClient.right, rcClient.top);
+        rcMaxButton = CPDF_Rect(rcClient.left, rcClient.bottom, rcClient.right,
+                                rcClient.bottom + PWL_SCROLLBAR_BUTTON_WIDTH);
       } else {
         fBWidth = (rcClient.top - rcClient.bottom -
                    PWL_SCROLLBAR_POSBUTTON_MINWIDTH - 2) /
                   2;
 
         if (IsFloatBigger(fBWidth, 0)) {
-          rcMinButton = CFX_FloatRect(rcClient.left, rcClient.top - fBWidth,
-                                      rcClient.right, rcClient.top);
-          rcMaxButton =
-              CFX_FloatRect(rcClient.left, rcClient.bottom, rcClient.right,
-                            rcClient.bottom + fBWidth);
+          rcMinButton = CPDF_Rect(rcClient.left, rcClient.top - fBWidth,
+                                  rcClient.right, rcClient.top);
+          rcMaxButton = CPDF_Rect(rcClient.left, rcClient.bottom,
+                                  rcClient.right, rcClient.bottom + fBWidth);
         } else {
           SetVisible(FALSE);
         }
@@ -661,7 +648,7 @@ void CPWL_ScrollBar::RePosChildWnd() {
 }
 
 void CPWL_ScrollBar::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
-  CFX_FloatRect rectWnd = GetWindowRect();
+  CPDF_Rect rectWnd = GetWindowRect();
 
   if (IsVisible() && !rectWnd.IsEmpty()) {
     CFX_ByteTextBuf sButton;
@@ -679,7 +666,7 @@ void CPWL_ScrollBar::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
 
 void CPWL_ScrollBar::DrawThisAppearance(CFX_RenderDevice* pDevice,
                                         CFX_Matrix* pUser2Device) {
-  CFX_FloatRect rectWnd = GetWindowRect();
+  CPDF_Rect rectWnd = GetWindowRect();
 
   if (IsVisible() && !rectWnd.IsEmpty()) {
     CPWL_Utils::DrawFillRect(pDevice, pUser2Device, rectWnd,
@@ -687,20 +674,19 @@ void CPWL_ScrollBar::DrawThisAppearance(CFX_RenderDevice* pDevice,
 
     CPWL_Utils::DrawStrokeLine(
         pDevice, pUser2Device,
-        CFX_FloatPoint(rectWnd.left + 2.0f, rectWnd.top - 2.0f),
-        CFX_FloatPoint(rectWnd.left + 2.0f, rectWnd.bottom + 2.0f),
+        CPDF_Point(rectWnd.left + 2.0f, rectWnd.top - 2.0f),
+        CPDF_Point(rectWnd.left + 2.0f, rectWnd.bottom + 2.0f),
         ArgbEncode(GetTransparency(), 100, 100, 100), 1.0f);
 
     CPWL_Utils::DrawStrokeLine(
         pDevice, pUser2Device,
-        CFX_FloatPoint(rectWnd.right - 2.0f, rectWnd.top - 2.0f),
-        CFX_FloatPoint(rectWnd.right - 2.0f, rectWnd.bottom + 2.0f),
+        CPDF_Point(rectWnd.right - 2.0f, rectWnd.top - 2.0f),
+        CPDF_Point(rectWnd.right - 2.0f, rectWnd.bottom + 2.0f),
         ArgbEncode(GetTransparency(), 100, 100, 100), 1.0f);
   }
 }
 
-FX_BOOL CPWL_ScrollBar::OnLButtonDown(const CFX_FloatPoint& point,
-                                      FX_DWORD nFlag) {
+FX_BOOL CPWL_ScrollBar::OnLButtonDown(const CPDF_Point& point, FX_DWORD nFlag) {
   CPWL_Wnd::OnLButtonDown(point, nFlag);
 
   if (HasFlag(PWS_AUTOTRANSPARENT)) {
@@ -710,29 +696,27 @@ FX_BOOL CPWL_ScrollBar::OnLButtonDown(const CFX_FloatPoint& point,
     }
   }
 
-  CFX_FloatRect rcMinArea, rcMaxArea;
+  CPDF_Rect rcMinArea, rcMaxArea;
 
   if (m_pPosButton && m_pPosButton->IsVisible()) {
-    CFX_FloatRect rcClient = GetClientRect();
-    CFX_FloatRect rcPosButton = m_pPosButton->GetWindowRect();
+    CPDF_Rect rcClient = GetClientRect();
+    CPDF_Rect rcPosButton = m_pPosButton->GetWindowRect();
 
     switch (m_sbType) {
       case SBT_HSCROLL:
-        rcMinArea =
-            CFX_FloatRect(rcClient.left + PWL_SCROLLBAR_BUTTON_WIDTH,
-                          rcClient.bottom, rcPosButton.left, rcClient.top);
-        rcMaxArea = CFX_FloatRect(rcPosButton.right, rcClient.bottom,
-                                  rcClient.right - PWL_SCROLLBAR_BUTTON_WIDTH,
-                                  rcClient.top);
+        rcMinArea = CPDF_Rect(rcClient.left + PWL_SCROLLBAR_BUTTON_WIDTH,
+                              rcClient.bottom, rcPosButton.left, rcClient.top);
+        rcMaxArea = CPDF_Rect(rcPosButton.right, rcClient.bottom,
+                              rcClient.right - PWL_SCROLLBAR_BUTTON_WIDTH,
+                              rcClient.top);
 
         break;
       case SBT_VSCROLL:
-        rcMinArea =
-            CFX_FloatRect(rcClient.left, rcPosButton.top, rcClient.right,
-                          rcClient.top - PWL_SCROLLBAR_BUTTON_WIDTH);
-        rcMaxArea = CFX_FloatRect(rcClient.left,
-                                  rcClient.bottom + PWL_SCROLLBAR_BUTTON_WIDTH,
-                                  rcClient.right, rcPosButton.bottom);
+        rcMinArea = CPDF_Rect(rcClient.left, rcPosButton.top, rcClient.right,
+                              rcClient.top - PWL_SCROLLBAR_BUTTON_WIDTH);
+        rcMaxArea = CPDF_Rect(rcClient.left,
+                              rcClient.bottom + PWL_SCROLLBAR_BUTTON_WIDTH,
+                              rcClient.right, rcPosButton.bottom);
         break;
     }
 
@@ -755,8 +739,7 @@ FX_BOOL CPWL_ScrollBar::OnLButtonDown(const CFX_FloatPoint& point,
   return TRUE;
 }
 
-FX_BOOL CPWL_ScrollBar::OnLButtonUp(const CFX_FloatPoint& point,
-                                    FX_DWORD nFlag) {
+FX_BOOL CPWL_ScrollBar::OnLButtonUp(const CPDF_Point& point, FX_DWORD nFlag) {
   CPWL_Wnd::OnLButtonUp(point, nFlag);
 
   if (HasFlag(PWS_AUTOTRANSPARENT)) {
@@ -781,41 +764,41 @@ void CPWL_ScrollBar::OnNotify(CPWL_Wnd* pWnd,
   switch (msg) {
     case PNM_LBUTTONDOWN:
       if (pWnd == m_pMinButton) {
-        OnMinButtonLBDown(*(CFX_FloatPoint*)lParam);
+        OnMinButtonLBDown(*(CPDF_Point*)lParam);
       }
 
       if (pWnd == m_pMaxButton) {
-        OnMaxButtonLBDown(*(CFX_FloatPoint*)lParam);
+        OnMaxButtonLBDown(*(CPDF_Point*)lParam);
       }
 
       if (pWnd == m_pPosButton) {
-        OnPosButtonLBDown(*(CFX_FloatPoint*)lParam);
+        OnPosButtonLBDown(*(CPDF_Point*)lParam);
       }
       break;
     case PNM_LBUTTONUP:
       if (pWnd == m_pMinButton) {
-        OnMinButtonLBUp(*(CFX_FloatPoint*)lParam);
+        OnMinButtonLBUp(*(CPDF_Point*)lParam);
       }
 
       if (pWnd == m_pMaxButton) {
-        OnMaxButtonLBUp(*(CFX_FloatPoint*)lParam);
+        OnMaxButtonLBUp(*(CPDF_Point*)lParam);
       }
 
       if (pWnd == m_pPosButton) {
-        OnPosButtonLBUp(*(CFX_FloatPoint*)lParam);
+        OnPosButtonLBUp(*(CPDF_Point*)lParam);
       }
       break;
     case PNM_MOUSEMOVE:
       if (pWnd == m_pMinButton) {
-        OnMinButtonMouseMove(*(CFX_FloatPoint*)lParam);
+        OnMinButtonMouseMove(*(CPDF_Point*)lParam);
       }
 
       if (pWnd == m_pMaxButton) {
-        OnMaxButtonMouseMove(*(CFX_FloatPoint*)lParam);
+        OnMaxButtonMouseMove(*(CPDF_Point*)lParam);
       }
 
       if (pWnd == m_pPosButton) {
-        OnPosButtonMouseMove(*(CFX_FloatPoint*)lParam);
+        OnPosButtonMouseMove(*(CPDF_Point*)lParam);
       }
       break;
     case PNM_SETSCROLLINFO: {
@@ -913,8 +896,8 @@ void CPWL_ScrollBar::MovePosButton(FX_BOOL bRefresh) {
   ASSERT(m_pMaxButton);
 
   if (m_pPosButton->IsVisible()) {
-    CFX_FloatRect rcClient;
-    CFX_FloatRect rcPosArea, rcPosButton;
+    CPDF_Rect rcClient;
+    CPDF_Rect rcPosArea, rcPosButton;
 
     rcClient = GetClientRect();
     rcPosArea = GetScrollArea();
@@ -934,8 +917,7 @@ void CPWL_ScrollBar::MovePosButton(FX_BOOL bRefresh) {
           fLeft = fRight - PWL_SCROLLBAR_POSBUTTON_MINWIDTH;
         }
 
-        rcPosButton =
-            CFX_FloatRect(fLeft, rcPosArea.bottom, fRight, rcPosArea.top);
+        rcPosButton = CPDF_Rect(fLeft, rcPosArea.bottom, fRight, rcPosArea.top);
 
         break;
       case SBT_VSCROLL:
@@ -950,8 +932,7 @@ void CPWL_ScrollBar::MovePosButton(FX_BOOL bRefresh) {
           fTop = fBottom + PWL_SCROLLBAR_POSBUTTON_MINWIDTH;
         }
 
-        rcPosButton =
-            CFX_FloatRect(rcPosArea.left, fBottom, rcPosArea.right, fTop);
+        rcPosButton = CPDF_Rect(rcPosArea.left, fBottom, rcPosArea.right, fTop);
 
         break;
     }
@@ -960,7 +941,7 @@ void CPWL_ScrollBar::MovePosButton(FX_BOOL bRefresh) {
   }
 }
 
-void CPWL_ScrollBar::OnMinButtonLBDown(const CFX_FloatPoint& point) {
+void CPWL_ScrollBar::OnMinButtonLBDown(const CPDF_Point& point) {
   m_sData.SubSmall();
   MovePosButton(TRUE);
   NotifyScrollWindow();
@@ -971,11 +952,11 @@ void CPWL_ScrollBar::OnMinButtonLBDown(const CFX_FloatPoint& point) {
   BeginTimer(100);
 }
 
-void CPWL_ScrollBar::OnMinButtonLBUp(const CFX_FloatPoint& point) {}
+void CPWL_ScrollBar::OnMinButtonLBUp(const CPDF_Point& point) {}
 
-void CPWL_ScrollBar::OnMinButtonMouseMove(const CFX_FloatPoint& point) {}
+void CPWL_ScrollBar::OnMinButtonMouseMove(const CPDF_Point& point) {}
 
-void CPWL_ScrollBar::OnMaxButtonLBDown(const CFX_FloatPoint& point) {
+void CPWL_ScrollBar::OnMaxButtonLBDown(const CPDF_Point& point) {
   m_sData.AddSmall();
   MovePosButton(TRUE);
   NotifyScrollWindow();
@@ -986,15 +967,15 @@ void CPWL_ScrollBar::OnMaxButtonLBDown(const CFX_FloatPoint& point) {
   BeginTimer(100);
 }
 
-void CPWL_ScrollBar::OnMaxButtonLBUp(const CFX_FloatPoint& point) {}
+void CPWL_ScrollBar::OnMaxButtonLBUp(const CPDF_Point& point) {}
 
-void CPWL_ScrollBar::OnMaxButtonMouseMove(const CFX_FloatPoint& point) {}
+void CPWL_ScrollBar::OnMaxButtonMouseMove(const CPDF_Point& point) {}
 
-void CPWL_ScrollBar::OnPosButtonLBDown(const CFX_FloatPoint& point) {
+void CPWL_ScrollBar::OnPosButtonLBDown(const CPDF_Point& point) {
   m_bMouseDown = TRUE;
 
   if (m_pPosButton) {
-    CFX_FloatRect rcPosButton = m_pPosButton->GetWindowRect();
+    CPDF_Rect rcPosButton = m_pPosButton->GetWindowRect();
 
     switch (m_sbType) {
       case SBT_HSCROLL:
@@ -1009,7 +990,7 @@ void CPWL_ScrollBar::OnPosButtonLBDown(const CFX_FloatPoint& point) {
   }
 }
 
-void CPWL_ScrollBar::OnPosButtonLBUp(const CFX_FloatPoint& point) {
+void CPWL_ScrollBar::OnPosButtonLBUp(const CPDF_Point& point) {
   if (m_bMouseDown) {
     if (!m_bNotifyForever)
       NotifyScrollWindow();
@@ -1017,7 +998,7 @@ void CPWL_ScrollBar::OnPosButtonLBUp(const CFX_FloatPoint& point) {
   m_bMouseDown = FALSE;
 }
 
-void CPWL_ScrollBar::OnPosButtonMouseMove(const CFX_FloatPoint& point) {
+void CPWL_ScrollBar::OnPosButtonMouseMove(const CPDF_Point& point) {
   FX_FLOAT fOldScrollPos = m_sData.fScrollPos;
 
   FX_FLOAT fNewPos = 0;
@@ -1090,15 +1071,15 @@ void CPWL_ScrollBar::NotifyScrollWindow() {
   }
 }
 
-CFX_FloatRect CPWL_ScrollBar::GetScrollArea() const {
-  CFX_FloatRect rcClient = GetClientRect();
-  CFX_FloatRect rcArea;
+CPDF_Rect CPWL_ScrollBar::GetScrollArea() const {
+  CPDF_Rect rcClient = GetClientRect();
+  CPDF_Rect rcArea;
 
   if (!m_pMinButton || !m_pMaxButton)
     return rcClient;
 
-  CFX_FloatRect rcMin = m_pMinButton->GetWindowRect();
-  CFX_FloatRect rcMax = m_pMaxButton->GetWindowRect();
+  CPDF_Rect rcMin = m_pMinButton->GetWindowRect();
+  CPDF_Rect rcMax = m_pMaxButton->GetWindowRect();
 
   FX_FLOAT fMinWidth = rcMin.right - rcMin.left;
   FX_FLOAT fMinHeight = rcMin.top - rcMin.bottom;
@@ -1108,21 +1089,20 @@ CFX_FloatRect CPWL_ScrollBar::GetScrollArea() const {
   switch (m_sbType) {
     case SBT_HSCROLL:
       if (rcClient.right - rcClient.left > fMinWidth + fMaxWidth + 2) {
-        rcArea = CFX_FloatRect(rcClient.left + fMinWidth + 1, rcClient.bottom,
-                               rcClient.right - fMaxWidth - 1, rcClient.top);
+        rcArea = CPDF_Rect(rcClient.left + fMinWidth + 1, rcClient.bottom,
+                           rcClient.right - fMaxWidth - 1, rcClient.top);
       } else {
-        rcArea = CFX_FloatRect(rcClient.left + fMinWidth + 1, rcClient.bottom,
-                               rcClient.left + fMinWidth + 1, rcClient.top);
+        rcArea = CPDF_Rect(rcClient.left + fMinWidth + 1, rcClient.bottom,
+                           rcClient.left + fMinWidth + 1, rcClient.top);
       }
       break;
     case SBT_VSCROLL:
       if (rcClient.top - rcClient.bottom > fMinHeight + fMaxHeight + 2) {
-        rcArea = CFX_FloatRect(rcClient.left, rcClient.bottom + fMinHeight + 1,
-                               rcClient.right, rcClient.top - fMaxHeight - 1);
+        rcArea = CPDF_Rect(rcClient.left, rcClient.bottom + fMinHeight + 1,
+                           rcClient.right, rcClient.top - fMaxHeight - 1);
       } else {
-        rcArea =
-            CFX_FloatRect(rcClient.left, rcClient.bottom + fMinHeight + 1,
-                          rcClient.right, rcClient.bottom + fMinHeight + 1);
+        rcArea = CPDF_Rect(rcClient.left, rcClient.bottom + fMinHeight + 1,
+                           rcClient.right, rcClient.bottom + fMinHeight + 1);
       }
       break;
   }
@@ -1133,7 +1113,7 @@ CFX_FloatRect CPWL_ScrollBar::GetScrollArea() const {
 }
 
 FX_FLOAT CPWL_ScrollBar::TrueToFace(FX_FLOAT fTrue) {
-  CFX_FloatRect rcPosArea;
+  CPDF_Rect rcPosArea;
   rcPosArea = GetScrollArea();
 
   FX_FLOAT fFactWidth = m_sData.ScrollRange.GetWidth() + m_sData.fClientWidth;
@@ -1156,7 +1136,7 @@ FX_FLOAT CPWL_ScrollBar::TrueToFace(FX_FLOAT fTrue) {
 }
 
 FX_FLOAT CPWL_ScrollBar::FaceToTrue(FX_FLOAT fFace) {
-  CFX_FloatRect rcPosArea;
+  CPDF_Rect rcPosArea;
   rcPosArea = GetScrollArea();
 
   FX_FLOAT fFactWidth = m_sData.ScrollRange.GetWidth() + m_sData.fClientWidth;

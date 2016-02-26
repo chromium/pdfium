@@ -537,15 +537,15 @@ CPDF_Dictionary* CPDFSDK_BAAnnot::GetAnnotDict() const {
   return m_pAnnot->GetAnnotDict();
 }
 
-void CPDFSDK_BAAnnot::SetRect(const CFX_FloatRect& rect) {
+void CPDFSDK_BAAnnot::SetRect(const CPDF_Rect& rect) {
   ASSERT(rect.right - rect.left >= GetMinWidth());
   ASSERT(rect.top - rect.bottom >= GetMinHeight());
 
   m_pAnnot->GetAnnotDict()->SetAtRect("Rect", rect);
 }
 
-CFX_FloatRect CPDFSDK_BAAnnot::GetRect() const {
-  CFX_FloatRect rect;
+CPDF_Rect CPDFSDK_BAAnnot::GetRect() const {
+  CPDF_Rect rect;
   m_pAnnot->GetRect(rect);
   return rect;
 }
@@ -835,7 +835,7 @@ FX_BOOL CPDFSDK_BAAnnot::GetColor(FX_COLORREF& color) const {
 }
 
 void CPDFSDK_BAAnnot::WriteAppearance(const CFX_ByteString& sAPType,
-                                      const CFX_FloatRect& rcBBox,
+                                      const CPDF_Rect& rcBBox,
                                       const CFX_Matrix& matrix,
                                       const CFX_ByteString& sContents,
                                       const CFX_ByteString& sAPState) {
