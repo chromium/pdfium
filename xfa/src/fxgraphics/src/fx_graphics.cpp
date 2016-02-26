@@ -39,7 +39,8 @@ CFX_Graphics::CFX_Graphics() {
 }
 FX_ERR CFX_Graphics::Create(CFX_RenderDevice* renderDevice,
                             FX_BOOL isAntialiasing) {
-  _FX_RETURN_VALUE_IF_FAIL(renderDevice, FX_ERR_Parameter_Invalid);
+  if (!renderDevice)
+    return FX_ERR_Parameter_Invalid;
   if (_type != FX_CONTEXT_None) {
     return FX_ERR_Property_Invalid;
   }
@@ -78,7 +79,8 @@ CFX_Graphics::~CFX_Graphics() {
 FX_ERR CFX_Graphics::GetDeviceCap(const int32_t capID, FX_DeviceCap& capVal) {
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       capVal = _renderDevice->GetDeviceCaps(capID);
       return FX_ERR_Succeeded;
     }
@@ -88,7 +90,8 @@ FX_ERR CFX_Graphics::GetDeviceCap(const int32_t capID, FX_DeviceCap& capVal) {
 FX_ERR CFX_Graphics::IsPrinterDevice(FX_BOOL& isPrinter) {
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       int32_t deviceClass = _renderDevice->GetDeviceClass();
       if (deviceClass == FXDC_PRINTER) {
         isPrinter = TRUE;
@@ -103,7 +106,8 @@ FX_ERR CFX_Graphics::IsPrinterDevice(FX_BOOL& isPrinter) {
 FX_ERR CFX_Graphics::EnableAntialiasing(FX_BOOL isAntialiasing) {
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       _info._isAntialiasing = isAntialiasing;
       return FX_ERR_Succeeded;
     }
@@ -113,7 +117,8 @@ FX_ERR CFX_Graphics::EnableAntialiasing(FX_BOOL isAntialiasing) {
 FX_ERR CFX_Graphics::SaveGraphState() {
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       _renderDevice->SaveState();
       TInfo* info = new TInfo;
       info->_graphState.Copy(_info._graphState);
@@ -136,7 +141,8 @@ FX_ERR CFX_Graphics::SaveGraphState() {
 FX_ERR CFX_Graphics::RestoreGraphState() {
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       _renderDevice->RestoreState();
       int32_t size = _infoStack.GetSize();
       if (size <= 0) {
@@ -144,7 +150,8 @@ FX_ERR CFX_Graphics::RestoreGraphState() {
       }
       int32_t topIndex = size - 1;
       TInfo* info = (TInfo*)_infoStack.GetAt(topIndex);
-      _FX_RETURN_VALUE_IF_FAIL(info, FX_ERR_Intermediate_Value_Invalid);
+      if (!info)
+        return FX_ERR_Intermediate_Value_Invalid;
       _info._graphState.Copy(info->_graphState);
       _info._isAntialiasing = info->_isAntialiasing;
       _info._strokeAlignment = info->_strokeAlignment;
@@ -167,7 +174,8 @@ FX_ERR CFX_Graphics::RestoreGraphState() {
 FX_ERR CFX_Graphics::GetLineCap(CFX_GraphStateData::LineCap& lineCap) {
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       lineCap = _info._graphState.m_LineCap;
       return FX_ERR_Succeeded;
     }
@@ -177,7 +185,8 @@ FX_ERR CFX_Graphics::GetLineCap(CFX_GraphStateData::LineCap& lineCap) {
 FX_ERR CFX_Graphics::SetLineCap(CFX_GraphStateData::LineCap lineCap) {
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       _info._graphState.m_LineCap = lineCap;
       return FX_ERR_Succeeded;
     }
@@ -187,7 +196,8 @@ FX_ERR CFX_Graphics::SetLineCap(CFX_GraphStateData::LineCap lineCap) {
 FX_ERR CFX_Graphics::GetDashCount(int32_t& dashCount) {
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       dashCount = _info._graphState.m_DashCount;
       return FX_ERR_Succeeded;
     }
@@ -195,10 +205,12 @@ FX_ERR CFX_Graphics::GetDashCount(int32_t& dashCount) {
   }
 }
 FX_ERR CFX_Graphics::GetLineDash(FX_FLOAT& dashPhase, FX_FLOAT* dashArray) {
-  _FX_RETURN_VALUE_IF_FAIL(dashArray, FX_ERR_Parameter_Invalid);
+  if (!dashArray)
+    return FX_ERR_Parameter_Invalid;
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       dashPhase = _info._graphState.m_DashPhase;
       FXSYS_memcpy(dashArray, _info._graphState.m_DashArray,
                    _info._graphState.m_DashCount * sizeof(FX_FLOAT));
@@ -216,7 +228,8 @@ FX_ERR CFX_Graphics::SetLineDash(FX_FLOAT dashPhase,
   dashCount = dashCount < 0 ? 0 : dashCount;
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       FX_FLOAT scale = 1.0;
       if (_info._isActOnDash) {
         scale = _info._graphState.m_LineWidth;
@@ -234,7 +247,8 @@ FX_ERR CFX_Graphics::SetLineDash(FX_FLOAT dashPhase,
 FX_ERR CFX_Graphics::SetLineDash(FX_DashStyle dashStyle) {
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       return RenderDeviceSetLineDash(dashStyle);
     }
     default: { return FX_ERR_Property_Invalid; }
@@ -243,7 +257,8 @@ FX_ERR CFX_Graphics::SetLineDash(FX_DashStyle dashStyle) {
 FX_ERR CFX_Graphics::GetLineJoin(CFX_GraphStateData::LineJoin& lineJoin) {
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       lineJoin = _info._graphState.m_LineJoin;
       return FX_ERR_Succeeded;
     }
@@ -253,7 +268,8 @@ FX_ERR CFX_Graphics::GetLineJoin(CFX_GraphStateData::LineJoin& lineJoin) {
 FX_ERR CFX_Graphics::SetLineJoin(CFX_GraphStateData::LineJoin lineJoin) {
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       _info._graphState.m_LineJoin = lineJoin;
       return FX_ERR_Succeeded;
     }
@@ -263,7 +279,8 @@ FX_ERR CFX_Graphics::SetLineJoin(CFX_GraphStateData::LineJoin lineJoin) {
 FX_ERR CFX_Graphics::GetMiterLimit(FX_FLOAT& miterLimit) {
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       miterLimit = _info._graphState.m_MiterLimit;
       return FX_ERR_Succeeded;
     }
@@ -273,7 +290,8 @@ FX_ERR CFX_Graphics::GetMiterLimit(FX_FLOAT& miterLimit) {
 FX_ERR CFX_Graphics::SetMiterLimit(FX_FLOAT miterLimit) {
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       _info._graphState.m_MiterLimit = miterLimit;
       return FX_ERR_Succeeded;
     }
@@ -283,7 +301,8 @@ FX_ERR CFX_Graphics::SetMiterLimit(FX_FLOAT miterLimit) {
 FX_ERR CFX_Graphics::GetLineWidth(FX_FLOAT& lineWidth) {
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       lineWidth = _info._graphState.m_LineWidth;
       return FX_ERR_Succeeded;
     }
@@ -293,7 +312,8 @@ FX_ERR CFX_Graphics::GetLineWidth(FX_FLOAT& lineWidth) {
 FX_ERR CFX_Graphics::SetLineWidth(FX_FLOAT lineWidth, FX_BOOL isActOnDash) {
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       _info._graphState.m_LineWidth = lineWidth;
       _info._isActOnDash = isActOnDash;
       return FX_ERR_Succeeded;
@@ -304,7 +324,8 @@ FX_ERR CFX_Graphics::SetLineWidth(FX_FLOAT lineWidth, FX_BOOL isActOnDash) {
 FX_ERR CFX_Graphics::GetStrokeAlignment(FX_StrokeAlignment& strokeAlignment) {
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       strokeAlignment = _info._strokeAlignment;
       return FX_ERR_Succeeded;
     }
@@ -314,7 +335,8 @@ FX_ERR CFX_Graphics::GetStrokeAlignment(FX_StrokeAlignment& strokeAlignment) {
 FX_ERR CFX_Graphics::SetStrokeAlignment(FX_StrokeAlignment strokeAlignment) {
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       _info._strokeAlignment = strokeAlignment;
       return FX_ERR_Succeeded;
     }
@@ -322,10 +344,12 @@ FX_ERR CFX_Graphics::SetStrokeAlignment(FX_StrokeAlignment strokeAlignment) {
   }
 }
 FX_ERR CFX_Graphics::SetStrokeColor(CFX_Color* color) {
-  _FX_RETURN_VALUE_IF_FAIL(color, FX_ERR_Parameter_Invalid);
+  if (!color)
+    return FX_ERR_Parameter_Invalid;
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       _info._strokeColor = color;
       return FX_ERR_Succeeded;
     }
@@ -333,10 +357,12 @@ FX_ERR CFX_Graphics::SetStrokeColor(CFX_Color* color) {
   }
 }
 FX_ERR CFX_Graphics::SetFillColor(CFX_Color* color) {
-  _FX_RETURN_VALUE_IF_FAIL(color, FX_ERR_Parameter_Invalid);
+  if (!color)
+    return FX_ERR_Parameter_Invalid;
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       _info._fillColor = color;
       return FX_ERR_Succeeded;
     }
@@ -344,10 +370,12 @@ FX_ERR CFX_Graphics::SetFillColor(CFX_Color* color) {
   }
 }
 FX_ERR CFX_Graphics::StrokePath(CFX_Path* path, CFX_Matrix* matrix) {
-  _FX_RETURN_VALUE_IF_FAIL(path, FX_ERR_Parameter_Invalid);
+  if (!path)
+    return FX_ERR_Parameter_Invalid;
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       return RenderDeviceStrokePath(path, matrix);
     }
     default: { return FX_ERR_Property_Invalid; }
@@ -356,10 +384,12 @@ FX_ERR CFX_Graphics::StrokePath(CFX_Path* path, CFX_Matrix* matrix) {
 FX_ERR CFX_Graphics::FillPath(CFX_Path* path,
                               FX_FillMode fillMode,
                               CFX_Matrix* matrix) {
-  _FX_RETURN_VALUE_IF_FAIL(path, FX_ERR_Parameter_Invalid);
+  if (!path)
+    return FX_ERR_Parameter_Invalid;
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       return RenderDeviceFillPath(path, fillMode, matrix);
     }
     default: { return FX_ERR_Property_Invalid; }
@@ -368,13 +398,16 @@ FX_ERR CFX_Graphics::FillPath(CFX_Path* path,
 FX_ERR CFX_Graphics::ClipPath(CFX_Path* path,
                               FX_FillMode fillMode,
                               CFX_Matrix* matrix) {
-  _FX_RETURN_VALUE_IF_FAIL(path, FX_ERR_Parameter_Invalid);
+  if (!path)
+    return FX_ERR_Parameter_Invalid;
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       FX_BOOL result = _renderDevice->SetClip_PathFill(
           path->GetPathData(), (CFX_Matrix*)matrix, fillMode);
-      _FX_RETURN_VALUE_IF_FAIL(result, FX_ERR_Indefinite);
+      if (!result)
+        return FX_ERR_Indefinite;
       return FX_ERR_Succeeded;
     }
     default: { return FX_ERR_Property_Invalid; }
@@ -383,10 +416,12 @@ FX_ERR CFX_Graphics::ClipPath(CFX_Path* path,
 FX_ERR CFX_Graphics::DrawImage(CFX_DIBSource* source,
                                const CFX_PointF& point,
                                CFX_Matrix* matrix) {
-  _FX_RETURN_VALUE_IF_FAIL(source, FX_ERR_Parameter_Invalid);
+  if (!source)
+    return FX_ERR_Parameter_Invalid;
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       return RenderDeviceDrawImage(source, point, matrix);
     }
     default: { return FX_ERR_Property_Invalid; }
@@ -395,20 +430,24 @@ FX_ERR CFX_Graphics::DrawImage(CFX_DIBSource* source,
 FX_ERR CFX_Graphics::StretchImage(CFX_DIBSource* source,
                                   const CFX_RectF& rect,
                                   CFX_Matrix* matrix) {
-  _FX_RETURN_VALUE_IF_FAIL(source, FX_ERR_Parameter_Invalid);
+  if (!source)
+    return FX_ERR_Parameter_Invalid;
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       return RenderDeviceStretchImage(source, rect, matrix);
     }
     default: { return FX_ERR_Property_Invalid; }
   }
 }
 FX_ERR CFX_Graphics::ConcatMatrix(const CFX_Matrix* matrix) {
-  _FX_RETURN_VALUE_IF_FAIL(matrix, FX_ERR_Parameter_Invalid);
+  if (!matrix)
+    return FX_ERR_Parameter_Invalid;
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       _info._CTM.Concat(*matrix);
       return FX_ERR_Succeeded;
     }
@@ -418,7 +457,8 @@ FX_ERR CFX_Graphics::ConcatMatrix(const CFX_Matrix* matrix) {
 CFX_Matrix* CFX_Graphics::GetMatrix() {
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, NULL);
+      if (!_renderDevice)
+        return NULL;
       return &_info._CTM;
     }
     default: { return NULL; }
@@ -427,7 +467,8 @@ CFX_Matrix* CFX_Graphics::GetMatrix() {
 FX_ERR CFX_Graphics::GetClipRect(CFX_RectF& rect) {
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       FX_RECT r = _renderDevice->GetClipBox();
       rect.left = (FX_FLOAT)r.left;
       rect.top = (FX_FLOAT)r.top;
@@ -441,11 +482,13 @@ FX_ERR CFX_Graphics::GetClipRect(CFX_RectF& rect) {
 FX_ERR CFX_Graphics::SetClipRect(const CFX_RectF& rect) {
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       FX_RECT r(FXSYS_round(rect.left), FXSYS_round(rect.top),
                 FXSYS_round(rect.right()), FXSYS_round(rect.bottom()));
       FX_BOOL result = _renderDevice->SetClip_Rect(&r);
-      _FX_RETURN_VALUE_IF_FAIL(result, FX_ERR_Method_Not_Supported);
+      if (!result)
+        return FX_ERR_Method_Not_Supported;
       return FX_ERR_Succeeded;
     }
     default: { return FX_ERR_Property_Invalid; }
@@ -454,19 +497,20 @@ FX_ERR CFX_Graphics::SetClipRect(const CFX_RectF& rect) {
 FX_ERR CFX_Graphics::ClearClip() {
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
-      FX_BOOL result = FX_ERR_Succeeded;
-      _FX_RETURN_VALUE_IF_FAIL(result, FX_ERR_Method_Not_Supported);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       return FX_ERR_Succeeded;
     }
     default: { return FX_ERR_Property_Invalid; }
   }
 }
 FX_ERR CFX_Graphics::SetFont(CFX_Font* font) {
-  _FX_RETURN_VALUE_IF_FAIL(font, FX_ERR_Parameter_Invalid);
+  if (!font)
+    return FX_ERR_Parameter_Invalid;
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       _info._font = font;
       return FX_ERR_Succeeded;
     }
@@ -477,7 +521,8 @@ FX_ERR CFX_Graphics::SetFontSize(const FX_FLOAT size) {
   FX_FLOAT fontSize = size <= 0 ? 1.0f : size;
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       _info._fontSize = fontSize;
       return FX_ERR_Succeeded;
     }
@@ -488,7 +533,8 @@ FX_ERR CFX_Graphics::SetFontHScale(const FX_FLOAT scale) {
   FX_FLOAT fontHScale = scale <= 0 ? 1.0f : scale;
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       _info._fontHScale = fontHScale;
       return FX_ERR_Succeeded;
     }
@@ -499,7 +545,8 @@ FX_ERR CFX_Graphics::SetCharSpacing(const FX_FLOAT spacing) {
   FX_FLOAT fontSpacing = spacing < 0 ? 0 : spacing;
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       _info._fontSpacing = fontSpacing;
       return FX_ERR_Succeeded;
     }
@@ -509,7 +556,8 @@ FX_ERR CFX_Graphics::SetCharSpacing(const FX_FLOAT spacing) {
 FX_ERR CFX_Graphics::SetTextDrawingMode(const int32_t mode) {
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       return FX_ERR_Succeeded;
     }
     default: { return FX_ERR_Property_Invalid; }
@@ -520,7 +568,8 @@ FX_ERR CFX_Graphics::ShowText(const CFX_PointF& point,
                               CFX_Matrix* matrix) {
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       return RenderDeviceShowText(point, text, matrix);
     }
     default: { return FX_ERR_Property_Invalid; }
@@ -532,7 +581,8 @@ FX_ERR CFX_Graphics::CalcTextRect(CFX_RectF& rect,
                                   CFX_Matrix* matrix) {
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       int32_t length = text.GetLength();
       FX_DWORD* charCodes = FX_Alloc(FX_DWORD, length);
       FXTEXT_CHARPOS* charPos = FX_Alloc(FXTEXT_CHARPOS, length);
@@ -546,7 +596,8 @@ FX_ERR CFX_Graphics::CalcTextRect(CFX_RectF& rect,
 }
 FX_ERR CFX_Graphics::Transfer(CFX_Graphics* graphics,
                               const CFX_Matrix* matrix) {
-  _FX_RETURN_VALUE_IF_FAIL(graphics, FX_ERR_Parameter_Invalid);
+  if (!graphics)
+    return FX_ERR_Parameter_Invalid;
   CFX_Matrix m;
   m.Set(_info._CTM.a, _info._CTM.b, _info._CTM.c, _info._CTM.d, _info._CTM.e,
         _info._CTM.f);
@@ -555,13 +606,15 @@ FX_ERR CFX_Graphics::Transfer(CFX_Graphics* graphics,
   }
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       {
-        _FX_RETURN_VALUE_IF_FAIL(graphics->_renderDevice,
-                                 FX_ERR_Parameter_Invalid);
+        if (!graphics->_renderDevice)
+          return FX_ERR_Parameter_Invalid;
         CFX_DIBitmap* bitmap = graphics->_renderDevice->GetBitmap();
         FX_BOOL result = _renderDevice->SetDIBits(bitmap, 0, 0);
-        _FX_RETURN_VALUE_IF_FAIL(result, FX_ERR_Method_Not_Supported);
+        if (!result)
+          return FX_ERR_Method_Not_Supported;
       }
     }
     default: { return FX_ERR_Property_Invalid; }
@@ -572,7 +625,8 @@ FX_ERR CFX_Graphics::Transfer(CFX_Graphics* graphics,
                               FX_FLOAT srcTop,
                               const CFX_RectF& dstRect,
                               const CFX_Matrix* matrix) {
-  _FX_RETURN_VALUE_IF_FAIL(graphics, FX_ERR_Parameter_Invalid);
+  if (!graphics)
+    return FX_ERR_Parameter_Invalid;
   CFX_Matrix m;
   m.Set(_info._CTM.a, _info._CTM.b, _info._CTM.c, _info._CTM.d, _info._CTM.e,
         _info._CTM.f);
@@ -581,22 +635,26 @@ FX_ERR CFX_Graphics::Transfer(CFX_Graphics* graphics,
   }
   switch (_type) {
     case FX_CONTEXT_Device: {
-      _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+      if (!_renderDevice)
+        return FX_ERR_Property_Invalid;
       {
-        _FX_RETURN_VALUE_IF_FAIL(graphics->_renderDevice,
-                                 FX_ERR_Parameter_Invalid);
+        if (!graphics->_renderDevice)
+          return FX_ERR_Parameter_Invalid;
         CFX_DIBitmap* bitmap = graphics->_renderDevice->GetBitmap();
-        FX_BOOL result = FX_ERR_Indefinite;
         CFX_DIBitmap bmp;
-        result = bmp.Create((int32_t)dstRect.width, (int32_t)dstRect.height,
-                            bitmap->GetFormat());
-        _FX_RETURN_VALUE_IF_FAIL(result, FX_ERR_Intermediate_Value_Invalid);
+        FX_BOOL result =
+            bmp.Create((int32_t)dstRect.width, (int32_t)dstRect.height,
+                       bitmap->GetFormat());
+        if (!result)
+          return FX_ERR_Intermediate_Value_Invalid;
         result = graphics->_renderDevice->GetDIBits(&bmp, (int32_t)srcLeft,
                                                     (int32_t)srcTop);
-        _FX_RETURN_VALUE_IF_FAIL(result, FX_ERR_Method_Not_Supported);
+        if (!result)
+          return FX_ERR_Method_Not_Supported;
         result = _renderDevice->SetDIBits(&bmp, (int32_t)dstRect.left,
                                           (int32_t)dstRect.top);
-        _FX_RETURN_VALUE_IF_FAIL(result, FX_ERR_Method_Not_Supported);
+        if (!result)
+          return FX_ERR_Method_Not_Supported;
         return FX_ERR_Succeeded;
       }
     }
@@ -607,9 +665,11 @@ CFX_RenderDevice* CFX_Graphics::GetRenderDevice() {
   return _renderDevice;
 }
 FX_ERR CFX_Graphics::InverseRect(const CFX_RectF& rect) {
-  _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+  if (!_renderDevice)
+    return FX_ERR_Property_Invalid;
   CFX_DIBitmap* bitmap = _renderDevice->GetBitmap();
-  _FX_RETURN_VALUE_IF_FAIL(bitmap, FX_ERR_Property_Invalid);
+  if (!bitmap)
+    return FX_ERR_Property_Invalid;
   CFX_RectF temp(rect);
   _info._CTM.TransformRect(temp);
   CFX_RectF r;
@@ -634,9 +694,11 @@ FX_ERR CFX_Graphics::InverseRect(const CFX_RectF& rect) {
 }
 FX_ERR CFX_Graphics::XorDIBitmap(const CFX_DIBitmap* srcBitmap,
                                  const CFX_RectF& rect) {
-  _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+  if (!_renderDevice)
+    return FX_ERR_Property_Invalid;
   CFX_DIBitmap* dst = _renderDevice->GetBitmap();
-  _FX_RETURN_VALUE_IF_FAIL(dst, FX_ERR_Property_Invalid);
+  if (!dst)
+    return FX_ERR_Property_Invalid;
   CFX_RectF temp(rect);
   _info._CTM.TransformRect(temp);
   CFX_RectF r;
@@ -667,9 +729,11 @@ FX_ERR CFX_Graphics::XorDIBitmap(const CFX_DIBitmap* srcBitmap,
 }
 FX_ERR CFX_Graphics::EqvDIBitmap(const CFX_DIBitmap* srcBitmap,
                                  const CFX_RectF& rect) {
-  _FX_RETURN_VALUE_IF_FAIL(_renderDevice, FX_ERR_Property_Invalid);
+  if (!_renderDevice)
+    return FX_ERR_Property_Invalid;
   CFX_DIBitmap* dst = _renderDevice->GetBitmap();
-  _FX_RETURN_VALUE_IF_FAIL(dst, FX_ERR_Property_Invalid);
+  if (!dst)
+    return FX_ERR_Property_Invalid;
   CFX_RectF temp(rect);
   _info._CTM.TransformRect(temp);
   CFX_RectF r;
@@ -729,7 +793,8 @@ FX_ERR CFX_Graphics::RenderDeviceSetLineDash(FX_DashStyle dashStyle) {
 }
 FX_ERR CFX_Graphics::RenderDeviceStrokePath(CFX_Path* path,
                                             CFX_Matrix* matrix) {
-  _FX_RETURN_VALUE_IF_FAIL(_info._strokeColor, FX_ERR_Property_Invalid);
+  if (!_info._strokeColor)
+    return FX_ERR_Property_Invalid;
   CFX_Matrix m;
   m.Set(_info._CTM.a, _info._CTM.b, _info._CTM.c, _info._CTM.d, _info._CTM.e,
         _info._CTM.f);
@@ -741,7 +806,8 @@ FX_ERR CFX_Graphics::RenderDeviceStrokePath(CFX_Path* path,
       FX_BOOL result = _renderDevice->DrawPath(
           path->GetPathData(), (CFX_Matrix*)&m, &_info._graphState, 0x0,
           _info._strokeColor->_argb, 0);
-      _FX_RETURN_VALUE_IF_FAIL(result, FX_ERR_Indefinite);
+      if (!result)
+        return FX_ERR_Indefinite;
       return FX_ERR_Succeeded;
     }
     case FX_COLOR_Pattern: {
@@ -756,7 +822,8 @@ FX_ERR CFX_Graphics::RenderDeviceStrokePath(CFX_Path* path,
 FX_ERR CFX_Graphics::RenderDeviceFillPath(CFX_Path* path,
                                           FX_FillMode fillMode,
                                           CFX_Matrix* matrix) {
-  _FX_RETURN_VALUE_IF_FAIL(_info._fillColor, FX_ERR_Property_Invalid);
+  if (!_info._fillColor)
+    return FX_ERR_Property_Invalid;
   CFX_Matrix m;
   m.Set(_info._CTM.a, _info._CTM.b, _info._CTM.c, _info._CTM.d, _info._CTM.e,
         _info._CTM.f);
@@ -768,7 +835,8 @@ FX_ERR CFX_Graphics::RenderDeviceFillPath(CFX_Path* path,
       FX_BOOL result = _renderDevice->DrawPath(
           path->GetPathData(), (CFX_Matrix*)&m, &_info._graphState,
           _info._fillColor->_argb, 0x0, fillMode);
-      _FX_RETURN_VALUE_IF_FAIL(result, FX_ERR_Indefinite);
+      if (!result)
+        return FX_ERR_Indefinite;
       return FX_ERR_Succeeded;
     }
     case FX_COLOR_Pattern: {
@@ -882,7 +950,8 @@ FX_ERR CFX_Graphics::RenderDeviceShowText(const CFX_PointF& point,
       length, charPos, _info._font, CFX_GEModule::Get()->GetFontCache(),
       -_info._fontSize * _info._fontHScale, (CFX_Matrix*)&m,
       _info._fillColor->_argb, FXTEXT_CLEARTYPE);
-  _FX_RETURN_VALUE_IF_FAIL(result, FX_ERR_Indefinite);
+  if (!result)
+    return FX_ERR_Indefinite;
   FX_Free(charPos);
   FX_Free(charCodes);
   return FX_ERR_Succeeded;
@@ -1182,12 +1251,14 @@ CFX_Path::~CFX_Path() {
   }
 }
 FX_ERR CFX_Path::MoveTo(FX_FLOAT x, FX_FLOAT y) {
-  _FX_RETURN_VALUE_IF_FAIL(_generator, FX_ERR_Property_Invalid);
+  if (!_generator)
+    return FX_ERR_Property_Invalid;
   _generator->MoveTo(x, y);
   return FX_ERR_Succeeded;
 }
 FX_ERR CFX_Path::LineTo(FX_FLOAT x, FX_FLOAT y) {
-  _FX_RETURN_VALUE_IF_FAIL(_generator, FX_ERR_Property_Invalid);
+  if (!_generator)
+    return FX_ERR_Property_Invalid;
   _generator->LineTo(x, y);
   return FX_ERR_Succeeded;
 }
@@ -1197,7 +1268,8 @@ FX_ERR CFX_Path::BezierTo(FX_FLOAT ctrlX1,
                           FX_FLOAT ctrlY2,
                           FX_FLOAT toX,
                           FX_FLOAT toY) {
-  _FX_RETURN_VALUE_IF_FAIL(_generator, FX_ERR_Property_Invalid);
+  if (!_generator)
+    return FX_ERR_Property_Invalid;
   _generator->BezierTo(ctrlX1, ctrlY1, ctrlX2, ctrlY2, toX, toY);
   return FX_ERR_Succeeded;
 }
@@ -1207,18 +1279,21 @@ FX_ERR CFX_Path::ArcTo(FX_FLOAT left,
                        FX_FLOAT height,
                        FX_FLOAT startAngle,
                        FX_FLOAT sweepAngle) {
-  _FX_RETURN_VALUE_IF_FAIL(_generator, FX_ERR_Property_Invalid);
+  if (!_generator)
+    return FX_ERR_Property_Invalid;
   _generator->ArcTo(left + width / 2, top + height / 2, width / 2, height / 2,
                     startAngle, sweepAngle);
   return FX_ERR_Succeeded;
 }
 FX_ERR CFX_Path::Close() {
-  _FX_RETURN_VALUE_IF_FAIL(_generator, FX_ERR_Property_Invalid);
+  if (!_generator)
+    return FX_ERR_Property_Invalid;
   _generator->Close();
   return FX_ERR_Succeeded;
 }
 FX_ERR CFX_Path::AddLine(FX_FLOAT x1, FX_FLOAT y1, FX_FLOAT x2, FX_FLOAT y2) {
-  _FX_RETURN_VALUE_IF_FAIL(_generator, FX_ERR_Property_Invalid);
+  if (!_generator)
+    return FX_ERR_Property_Invalid;
   _generator->AddLine(x1, y1, x2, y2);
   return FX_ERR_Succeeded;
 }
@@ -1230,7 +1305,8 @@ FX_ERR CFX_Path::AddBezier(FX_FLOAT startX,
                            FX_FLOAT ctrlY2,
                            FX_FLOAT endX,
                            FX_FLOAT endY) {
-  _FX_RETURN_VALUE_IF_FAIL(_generator, FX_ERR_Property_Invalid);
+  if (!_generator)
+    return FX_ERR_Property_Invalid;
   _generator->AddBezier(startX, startY, ctrlX1, ctrlY1, ctrlX2, ctrlY2, endX,
                         endY);
   return FX_ERR_Succeeded;
@@ -1239,7 +1315,8 @@ FX_ERR CFX_Path::AddRectangle(FX_FLOAT left,
                               FX_FLOAT top,
                               FX_FLOAT width,
                               FX_FLOAT height) {
-  _FX_RETURN_VALUE_IF_FAIL(_generator, FX_ERR_Property_Invalid);
+  if (!_generator)
+    return FX_ERR_Property_Invalid;
   _generator->AddRectangle(left, top, left + width, top + height);
   return FX_ERR_Succeeded;
 }
@@ -1247,13 +1324,15 @@ FX_ERR CFX_Path::AddEllipse(FX_FLOAT left,
                             FX_FLOAT top,
                             FX_FLOAT width,
                             FX_FLOAT height) {
-  _FX_RETURN_VALUE_IF_FAIL(_generator, FX_ERR_Property_Invalid);
+  if (!_generator)
+    return FX_ERR_Property_Invalid;
   _generator->AddEllipse(left + width / 2, top + height / 2, width / 2,
                          height / 2);
   return FX_ERR_Succeeded;
 }
 FX_ERR CFX_Path::AddEllipse(const CFX_RectF& rect) {
-  _FX_RETURN_VALUE_IF_FAIL(_generator, FX_ERR_Property_Invalid);
+  if (!_generator)
+    return FX_ERR_Property_Invalid;
   _generator->AddEllipse(rect.left + rect.Width() / 2,
                          rect.top + rect.Height() / 2, rect.Width() / 2,
                          rect.Height() / 2);
@@ -1265,7 +1344,8 @@ FX_ERR CFX_Path::AddArc(FX_FLOAT left,
                         FX_FLOAT height,
                         FX_FLOAT startAngle,
                         FX_FLOAT sweepAngle) {
-  _FX_RETURN_VALUE_IF_FAIL(_generator, FX_ERR_Property_Invalid);
+  if (!_generator)
+    return FX_ERR_Property_Invalid;
   _generator->AddArc(left + width / 2, top + height / 2, width / 2, height / 2,
                      startAngle, sweepAngle);
   return FX_ERR_Succeeded;
@@ -1276,30 +1356,35 @@ FX_ERR CFX_Path::AddPie(FX_FLOAT left,
                         FX_FLOAT height,
                         FX_FLOAT startAngle,
                         FX_FLOAT sweepAngle) {
-  _FX_RETURN_VALUE_IF_FAIL(_generator, FX_ERR_Property_Invalid);
+  if (!_generator)
+    return FX_ERR_Property_Invalid;
   _generator->AddPie(left + width / 2, top + height / 2, width / 2, height / 2,
                      startAngle, sweepAngle);
   return FX_ERR_Succeeded;
 }
 FX_ERR CFX_Path::AddSubpath(CFX_Path* path) {
-  _FX_RETURN_VALUE_IF_FAIL(_generator, FX_ERR_Property_Invalid);
+  if (!_generator)
+    return FX_ERR_Property_Invalid;
   _generator->AddPathData(path->GetPathData());
   return FX_ERR_Succeeded;
 }
 FX_ERR CFX_Path::Clear() {
-  _FX_RETURN_VALUE_IF_FAIL(_generator, FX_ERR_Property_Invalid);
+  if (!_generator)
+    return FX_ERR_Property_Invalid;
   _generator->GetPathData()->SetPointCount(0);
   return FX_ERR_Succeeded;
 }
 FX_BOOL CFX_Path::IsEmpty() {
-  _FX_RETURN_VALUE_IF_FAIL(_generator, FX_ERR_Property_Invalid);
+  if (!_generator)
+    return FX_ERR_Property_Invalid;
   if (_generator->GetPathData()->GetPointCount() == 0) {
     return TRUE;
   }
   return FALSE;
 }
 CFX_PathData* CFX_Path::GetPathData() {
-  _FX_RETURN_VALUE_IF_FAIL(_generator, NULL);
+  if (!_generator)
+    return NULL;
   return _generator->GetPathData();
 }
 CFX_Color::CFX_Color() {
@@ -1327,14 +1412,16 @@ FX_ERR CFX_Color::Set(const FX_ARGB argb) {
   return FX_ERR_Succeeded;
 }
 FX_ERR CFX_Color::Set(CFX_Pattern* pattern, const FX_ARGB argb) {
-  _FX_RETURN_VALUE_IF_FAIL(pattern, FX_ERR_Parameter_Invalid);
+  if (!pattern)
+    return FX_ERR_Parameter_Invalid;
   _type = FX_COLOR_Pattern;
   _argb = argb;
   _pattern = pattern;
   return FX_ERR_Succeeded;
 }
 FX_ERR CFX_Color::Set(CFX_Shading* shading) {
-  _FX_RETURN_VALUE_IF_FAIL(shading, FX_ERR_Parameter_Invalid);
+  if (!shading)
+    return FX_ERR_Parameter_Invalid;
   _type = FX_COLOR_Shading;
   _shading = shading;
   return FX_ERR_Succeeded;
@@ -1347,7 +1434,8 @@ FX_ERR CFX_Pattern::Create(CFX_DIBitmap* bitmap,
                            const FX_FLOAT xStep,
                            const FX_FLOAT yStep,
                            CFX_Matrix* matrix) {
-  _FX_RETURN_VALUE_IF_FAIL(bitmap, FX_ERR_Parameter_Invalid);
+  if (!bitmap)
+    return FX_ERR_Parameter_Invalid;
   if (_type != FX_PATTERN_None) {
     return FX_ERR_Property_Invalid;
   }

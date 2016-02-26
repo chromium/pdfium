@@ -19,11 +19,6 @@ class CXFA_FFDocView;
 class CXFA_FFDoc;
 class CXFA_FFApp;
 
-#define XFA_GOTO_POSITION_IF_FAIL(arg, pos) \
-  {                                         \
-    if (!(arg))                             \
-      goto pos;                             \
-  }
 inline FX_FLOAT XFA_UnitPx2Pt(FX_FLOAT fPx, FX_FLOAT fDpi) {
   return fPx * 72.0f / fDpi;
 }

@@ -17,36 +17,6 @@ typedef int FX_ERR;
 #define FX_ERR_Intermediate_Value_Invalid -300
 #define FX_ERR_Method_Not_Supported -400
 #define FX_ERR_Out_Of_Memory -500
-#define _FX_RETURN_IF_FAIL(arg) \
-  {                             \
-    if (!(arg))                 \
-      return;                   \
-  }
-#define _FX_RETURN_VALUE_IF_FAIL(arg, val) \
-  {                                        \
-    if (!(arg))                            \
-      return val;                          \
-  }
-#define _FX_GOTO_POSITION_IF_FAIL(arg, pos) \
-  {                                         \
-    if (!(arg))                             \
-      goto pos;                             \
-  }
-#define _FX_ERR_CHECK_RETURN_IF_FAIL(arg) \
-  {                                       \
-    if ((arg) != FX_ERR_Succeeded)        \
-      return;                             \
-  }
-#define _FX_ERR_CHECK_RETURN_VALUE_IF_FAIL(arg, val) \
-  {                                                  \
-    if ((arg) != FX_ERR_Succeeded)                   \
-      return val;                                    \
-  }
-#define _FX_ERR_CHECK_GOTO_POSITION_IF_FAIL(arg, pos) \
-  {                                                   \
-    if ((arg) != FX_ERR_Succeeded)                    \
-      goto pos;                                       \
-  }
 
 #define FX_SHADING_Steps 256
 typedef int32_t FX_DashStyle;
