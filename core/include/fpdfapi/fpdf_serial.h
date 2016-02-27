@@ -10,7 +10,6 @@
 #include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fpdfapi/fpdf_pageobj.h"
 
-class CPDF_ObjectStream;
 class CPDF_XRefStream;
 
 CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& buf, const CPDF_Object* pObj);

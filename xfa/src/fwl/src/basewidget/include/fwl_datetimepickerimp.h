@@ -20,7 +20,6 @@
 class CFWL_WidgetImp;
 class CFWL_WidgetImpProperties;
 class CFWL_WidgetImpDelegate;
-class CFWL_FormProxyImp;
 class CFWL_DateTimeEdit;
 class CFWL_DateTimeEditImpDelegate;
 class CFWL_DateTimeCalendar;

@@ -13,7 +13,6 @@
 class CXFA_FFApp;
 class CXFA_FFNotify;
 class CXFA_FFDocView;
-class IXFA_Locale;
 
 struct FX_IMAGEDIB_AND_DPI {
   CFX_DIBSource* pDibSource;

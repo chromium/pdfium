@@ -11,7 +11,6 @@
 
 #include "core/include/fxcrt/fx_basic.h"
 
-class CBC_RssPair;
 class CBC_UtilRSS {
  public:
   virtual ~CBC_UtilRSS();

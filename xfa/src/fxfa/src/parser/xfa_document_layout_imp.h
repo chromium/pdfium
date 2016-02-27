@@ -9,7 +9,6 @@
 
 class CXFA_ItemLayoutProcessor;
 class CXFA_LayoutPageMgr;
-class CXFA_LayoutAppAdapter;
 class CXFA_ContainerLayoutItem;
 class CXFA_LayoutProcessor : public IXFA_DocLayout {
  public:

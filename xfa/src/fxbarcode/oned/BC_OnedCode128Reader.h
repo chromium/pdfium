@@ -9,7 +9,6 @@
 
 class CBC_OneDReader;
 class CBC_CommonBitArray;
-class CBC_OnedCoda128Reader;
 class CBC_OnedCode128Reader : public CBC_OneDReader {
  public:
   CBC_OnedCode128Reader();

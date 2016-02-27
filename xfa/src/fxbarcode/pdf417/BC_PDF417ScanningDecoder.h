@@ -9,12 +9,10 @@
 
 class CBC_CommonDecoderResult;
 class CBC_CommonBitMatrix;
-class CBC_ErrorCorrection;
 class CBC_Codeword;
 class CBC_BoundingBox;
 class CBC_ResultPoint;
 class CBC_BarcodeMetadata;
-class CBC_BarcodeValue;
 class CBC_DetectionResult;
 class CBC_DetectionResultRowIndicatorColumn;
 

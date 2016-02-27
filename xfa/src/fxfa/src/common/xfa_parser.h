@@ -9,7 +9,6 @@
 
 #include "xfa/src/fxfa/src/common/xfa_document.h"
 
-class IFX_Stream;
 
 class IXFA_Parser {
  public:

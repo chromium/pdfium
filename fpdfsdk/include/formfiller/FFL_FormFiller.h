@@ -13,7 +13,6 @@
 
 class CPDFDoc_Environment;
 class CPDFSDK_Annot;
-class CPDFSDK_Document;
 class CPDFSDK_PageView;
 class CPDFSDK_Widget;
 

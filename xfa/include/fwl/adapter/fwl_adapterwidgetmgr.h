@@ -17,7 +17,6 @@ class IFWL_MenuDP;
 class CFX_Path;
 class CFX_DIBitmap;
 class IFWL_AdapterMessageHook;
-class IFWL_AppDelegate;
 
 class IFWL_AdapterWidgetMgr {
  public:

@@ -10,7 +10,6 @@
 #include "fpdfsdk/include/fxedit/fx_edit.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
 
-class CPDF_ListCtrl;
 class CPWL_List_Notify;
 class CPWL_ListBox;
 class IPWL_Filler_Notify;

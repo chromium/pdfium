@@ -10,7 +10,6 @@
 class CFDE_TxtEdtEngine;
 class IFX_CharIter;
 class CFDE_TxtEdtPage;
-class CFDE_TxtEdtLineExt;
 class CFDE_TxtEdtTextSet;
 class CFDE_TxtEdtParag;
 enum FDE_TXTEDT_CHARTYPE {

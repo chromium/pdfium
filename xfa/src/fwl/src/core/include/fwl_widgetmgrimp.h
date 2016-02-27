@@ -9,7 +9,6 @@
 
 #include "xfa/include/fwl/core/fwl_widgetmgr.h"
 
-class CFWL_TargetImp;
 class IFWL_Widget;
 class IFWL_AdapterWidgetMgr;
 class CFWL_WidgetMgrDelegate;

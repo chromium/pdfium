@@ -18,7 +18,6 @@
 class CFX_DIBSource;
 class CJPX_Decoder;
 class CPDF_ColorSpace;
-class CPDF_PrivateData;
 class CPDF_StreamAcc;
 class ICodec_BasicModule;
 class ICodec_FaxModule;

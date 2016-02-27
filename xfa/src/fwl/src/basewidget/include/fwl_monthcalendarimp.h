@@ -12,8 +12,6 @@
 
 class CFWL_WidgetImpProperties;
 class IFWL_Widget;
-class IFDE_DateTime;
-class CFDE_DateTime;
 class CFWL_MonthCalendarImpDelegate;
 
 extern uint8_t FX_DaysInMonth(int32_t iYear, uint8_t iMonth);

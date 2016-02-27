@@ -10,7 +10,6 @@
 #include "core/include/fxcrt/fx_basic.h"
 #include "core/include/fxcrt/fx_string.h"
 
-class Make_Pair;
 class CBC_QRCoder;
 class CBC_QRCoderErrorCorrectionLevel;
 class CBC_QRCoderMode;

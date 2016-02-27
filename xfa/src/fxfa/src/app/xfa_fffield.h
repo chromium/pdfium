@@ -16,7 +16,6 @@
 #define XFA_MINUI_HEIGHT 4.32f
 #define XFA_DEFAULTUI_HEIGHT 2.0f
 
-class CXFA_TextLayout;
 
 class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
  public:

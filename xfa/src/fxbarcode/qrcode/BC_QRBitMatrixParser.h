@@ -12,7 +12,6 @@
 class CBC_CommonBitMatrix;
 class CBC_QRCoderVersion;
 class CBC_QRCoderFormatInformation;
-class CBC_QRDataMask;
 
 class CBC_QRBitMatrixParser {
  private:

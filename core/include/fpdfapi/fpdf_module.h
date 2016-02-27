@@ -13,27 +13,19 @@
 #include "core/include/fxcrt/fx_system.h"
 
 class CCodec_ModuleMgr;
-class CFX_BitmapDevice;
-class CFX_DIBSource;
-class CFX_Matrix;
 class CPDF_ColorSpace;
-class CPDF_Dictionary;
 class CPDF_DocPageData;
 class CPDF_DocRenderData;
 class CPDF_Document;
 class CPDF_FontGlobals;
-class CPDF_Image;
 class CPDF_Page;
 class CPDF_PageRenderCache;
-class CPDF_RenderOptions;
-class CPDF_Stream;
 class ICodec_FaxModule;
 class ICodec_FlateModule;
 class ICodec_IccModule;
 class ICodec_Jbig2Module;
 class ICodec_JpegModule;
 class ICodec_JpxModule;
-class IPDF_FontMapper;
 class IPDF_PageModule;
 class IPDF_RenderModule;
 

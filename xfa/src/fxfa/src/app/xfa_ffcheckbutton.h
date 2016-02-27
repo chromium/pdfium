@@ -10,7 +10,6 @@
 #include "xfa/src/fxfa/src/app/xfa_fffield.h"
 #include "xfa/src/fxfa/src/app/xfa_ffpageview.h"
 
-class CXFA_FFExclGroup;
 class CXFA_FFCheckButton : public CXFA_FFField {
  public:
   CXFA_FFCheckButton(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);

@@ -10,8 +10,6 @@
 #include "core/include/fxcrt/fx_basic.h"
 
 class CBC_QRCoderVersion;
-class CBC_QRCoderECBlocks;
-class CBC_QRCoderECB;
 class CBC_QRCoderErrorCorrectionLevel;
 class CBC_QRDataBlock {
  private:

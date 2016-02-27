@@ -12,17 +12,8 @@
 #include "core/include/fxcrt/fx_string.h"
 #include "xfa/src/fxbarcode/BC_Reader.h"
 
-class CBC_QRDetector;
 class CBC_BinaryBitmap;
 class CBC_QRCoderDecoder;
-class CBC_ResultPoint;
-class CBC_ReedSolomonGF256;
-class CBC_QRCoderVersion;
-class CBC_QRDetector;
-class CBC_QRDetectorResult;
-class CBC_QRCoderErrorCorrectionLevel;
-class CBC_QRCoderMode;
-class CBC_QRDataMask;
 class CFX_DIBitmap;
 
 class CBC_QRCodeReader : public CBC_Reader {

@@ -13,13 +13,6 @@
 class IFDE_XMLNode;
 class IFDE_XMLInstruction;
 class IFDE_XMLDeclaration;
-class IFDE_XMLDeclComment;
-class IFDE_XMLDeclCharData;
-class IFDE_XMLDeclDocType;
-class IFDE_XMLDeclElement;
-class IFDE_XMLDeclAttriList;
-class IFDE_XMLDeclNotition;
-class IFDE_XMLDeclEntity;
 class IFDE_XMLElement;
 class IFDE_XMLText;
 class IFDE_XMLDoc;

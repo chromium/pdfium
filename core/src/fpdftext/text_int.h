@@ -15,7 +15,6 @@
 #include "core/include/fxcrt/fx_basic.h"
 
 class CFX_BidiChar;
-class CPDF_DocProgressiveSearch;
 class CPDF_FormObject;
 class CPDF_LinkExtract;
 class CPDF_TextPageFind;

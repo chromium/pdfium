@@ -8,7 +8,6 @@
 #define XFA_SRC_FXBARCODE_ONED_BC_ONEDCODE128WRITER_H_
 
 class CBC_OneDimWriter;
-class CBC_OnedCoda128Writer;
 class CBC_OnedCode128Writer : public CBC_OneDimWriter {
  public:
   CBC_OnedCode128Writer();

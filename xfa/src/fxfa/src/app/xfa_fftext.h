@@ -9,7 +9,6 @@
 
 #include "xfa/src/fxfa/src/app/xfa_ffdraw.h"
 
-class CXFA_TextLayout;
 
 class CXFA_FFText : public CXFA_FFDraw {
  public:

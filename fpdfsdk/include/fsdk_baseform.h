@@ -22,9 +22,7 @@
 #include "core/include/fxge/fx_dib.h"
 #include "fpdfsdk/include/fsdk_baseannot.h"
 
-class CFFL_FormFiller;
 class CPDFSDK_Annot;
-class CPDFSDK_DateTime;
 class CPDFSDK_Document;
 class CPDFSDK_InterForm;
 class CPDFSDK_PageView;

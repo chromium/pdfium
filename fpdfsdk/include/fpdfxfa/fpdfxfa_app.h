@@ -9,6 +9,7 @@
 
 #include "xfa/include/fxfa/fxfa.h"
 
+class CPDFDoc_Environment;
 class IFXJS_Runtime;
 
 class CPDFXFA_App : public IXFA_AppProvider {

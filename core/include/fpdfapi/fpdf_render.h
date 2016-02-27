@@ -16,13 +16,8 @@
 class CFX_GraphStateData;
 class CFX_PathData;
 class CFX_RenderDevice;
-class CPDF_FormObject;
 class CPDF_ImageCacheEntry;
-class CPDF_ImageObject;
-class CPDF_PathObject;
 class CPDF_RenderStatus;
-class CPDF_ShadingObject;
-class CPDF_TextObject;
 class IFX_Pause;
 
 class IPDF_OCContext {

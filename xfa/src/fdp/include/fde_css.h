@@ -12,16 +12,11 @@
 #include "xfa/src/fgas/include/fx_stm.h"
 #include "xfa/src/fgas/include/fx_utl.h"
 
-class IFDE_HTMNotify;
 class IFDE_CSSValue;
-class IFDE_CSSPrimitiveValue;
 class IFDE_CSSValueList;
 class IFDE_CSSDeclaration;
 class IFDE_CSSSelector;
 class IFDE_CSSRule;
-class IFDE_CSSStyleRule;
-class IFDE_CSSMediaRule;
-class IFDE_CSSFontFaceRule;
 class IFDE_CSSStyleSheet;
 class IFDE_CSSStyleSheetCache;
 class IFDE_CSSSyntaxParser;
@@ -40,12 +35,6 @@ class IFDE_CSSComputedStyle;
 class IFDE_CSSTagProvider;
 class IFDE_CSSAccelerator;
 class IFDE_CSSStyleSelector;
-class IFDE_CSSCounterContext;
-class IFDE_CSSCounterManager;
-class IFDE_CSSQuoteContext;
-class IFDE_CSSContentContext;
-class IFDE_CSSMultiColumnContext;
-class IFDE_CSSFloatContext;
 
 enum FDE_CSSVALUETYPE {
   FDE_CSSVALUETYPE_Primitive = 1,

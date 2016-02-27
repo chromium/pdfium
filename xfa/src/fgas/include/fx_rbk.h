@@ -13,8 +13,6 @@
 
 class IFX_Unknown;
 class IFX_Font;
-class CFX_Char;
-class CFX_RTFBreakPiece;
 class IFX_RTFBreak;
 
 #define FX_RTFBREAKPOLICY_None 0x00

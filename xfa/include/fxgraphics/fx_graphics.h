@@ -100,7 +100,6 @@ class CFX_DIBSource;
 class CFX_DIBitmap;
 class CFX_Font;
 class CFX_WideString;
-class IFX_FileRead;
 class CFX_PathGenerator;
 class CAGG_Graphics;
 class CFX_Graphics;

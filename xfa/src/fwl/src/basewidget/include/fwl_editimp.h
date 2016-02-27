@@ -16,9 +16,7 @@
 
 class CFWL_WidgetImpProperties;
 class CFWL_WidgetImpDelegate;
-class CFWL_ScrollBarImp;
 class IFWL_Caret;
-class IFWL_AdapterTextField;
 class CFWL_EditImp;
 class CFWL_EditImpDelegate;
 

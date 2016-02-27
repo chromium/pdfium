@@ -9,7 +9,6 @@
 
 enum BC_TEXT_LOC;
 class CBC_OneDimWriter;
-class CBC_OnedCoda39Writer;
 class CBC_OnedCode39Writer : public CBC_OneDimWriter {
  public:
   CBC_OnedCode39Writer();

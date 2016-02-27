@@ -7,6 +7,8 @@
 #ifndef FPDFSDK_INCLUDE_FPDFXFA_FPDFXFA_PAGE_H_
 #define FPDFSDK_INCLUDE_FPDFXFA_FPDFXFA_PAGE_H_
 
+class CPDF_Page;
+
 class CPDFXFA_Page {
  public:
   CPDFXFA_Page(CPDFXFA_Document* pDoc, int page_index);

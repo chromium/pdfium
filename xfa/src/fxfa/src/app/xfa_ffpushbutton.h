@@ -14,6 +14,8 @@
 #define XFA_FWL_PSBSTYLEEXT_HilitePush (2L << 0)
 #define XFA_FWL_PSBSTYLEEXT_HiliteOutLine (4L << 0)
 
+class CXFA_TextProvider;
+
 class CXFA_FFPushButton : public CXFA_FFField {
  public:
   CXFA_FFPushButton(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);

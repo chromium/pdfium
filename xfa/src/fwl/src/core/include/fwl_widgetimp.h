@@ -10,7 +10,6 @@
 #include "xfa/include/fwl/core/fwl_widget.h"
 #include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
 
-class CFWL_NoteTarget;
 class CFWL_NoteThreadImp;
 class CFWL_WidgetImpProperties;
 class CFWL_WidgetMgr;

@@ -7,14 +7,8 @@
 #ifndef XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTENGINE_H_
 #define XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTENGINE_H_
 
-class CFDE_TxtEdtBuf;
-class CFDE_TxtEdtPage;
 class IFX_TxtBreak;
 class CFDE_TxtEdtParag;
-class CFDE_TxtEdtKMPMatch;
-class IFDE_TxtEdtFormator;
-class CFDE_TxtEdtField;
-class CFDE_TxtEdtBlock;
 class IFX_CharIter;
 class CFDE_TxtEdtEngine;
 class CFDE_TxtEdtDoRecord_Insert;

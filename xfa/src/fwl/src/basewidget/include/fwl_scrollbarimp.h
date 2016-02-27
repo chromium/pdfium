@@ -12,7 +12,6 @@
 
 class CFWL_WidgetImpProperties;
 class IFWL_Widget;
-class IFWL_TimerDelegate;
 class CFWL_ScrollBarImpDelegate;
 
 class CFWL_ScrollBarImp : public CFWL_WidgetImp, public IFWL_Timer {

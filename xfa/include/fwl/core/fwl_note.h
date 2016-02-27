@@ -10,10 +10,8 @@
 #include "xfa/include/fwl/core/fwl_error.h"
 #include "xfa/include/fxgraphics/fx_graphics.h"
 
-class IFWL_Target;
 class IFWL_Widget;
 class IFWL_NoteThread;
-class IFWL_ThemeProvider;
 class CFWL_Note;
 class CFWL_Message;
 class CFWL_MsgActivate;

@@ -24,7 +24,6 @@ class CFX_PathData;
 class CFX_SizeGlyphCache;
 class CFX_SubstFont;
 class CTTFontDesc;
-class IFX_FontEncoding;
 class IFX_SystemFontInfo;
 
 #define FXFONT_FIXED_PITCH 0x01

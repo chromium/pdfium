@@ -6,9 +6,7 @@
 
 #ifndef XFA_SRC_FXBARCODE_QRCODE_BC_QRALIGNMENTPATTERN_H_
 #define XFA_SRC_FXBARCODE_QRCODE_BC_QRALIGNMENTPATTERN_H_
-class CBC_CommonBitArray;
 class CBC_ResultPoint;
-class CBC_REAI013x0x1xDecoder;
 class CBC_QRAlignmentPattern : public CBC_ResultPoint {
  private:
   FX_FLOAT m_moduleSize;

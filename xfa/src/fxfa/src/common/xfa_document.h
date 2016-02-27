@@ -20,7 +20,6 @@ class IXFA_DocParser;
 class IXFA_LayoutPage;
 class IXFA_Notify;
 class IXFA_ObjFactory;
-class IXFA_PageContent;
 class IXFA_ScriptContext;
 
 enum XFA_VERSION {

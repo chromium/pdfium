@@ -34,11 +34,9 @@ class CPDF_IconFit;
 class CPDF_InterForm;
 class CPDF_Link;
 class CPDF_Metadata;
-class CPDF_NumberTree;
 class CPDF_OCContext;
 class CPDF_Page;
 class CPDF_RenderOptions;
-class CPDF_TextObject;
 class CPDF_ViewerPreferences;
 class CXML_Element;
 

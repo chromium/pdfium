@@ -10,7 +10,6 @@
 #include "core/include/fxge/fx_dib.h"
 #include "xfa/src/fgas/include/fx_fnt.h"
 
-class IFDE_TxtEdtBuf;
 class IFDE_TxtEdtPage;
 class IFDE_TxtEdtEngine;
 class IFDE_TxtEdtEventSink;

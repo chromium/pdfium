@@ -11,7 +11,6 @@
 #include "core/include/fxge/fx_dib.h"
 
 class IFDE_Image;
-class IFDE_Path;
 
 #define FDE_BRUSHTYPE_Unknown -1
 #define FDE_BRUSHTYPE_Solid 0

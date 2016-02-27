@@ -14,11 +14,6 @@ class CBC_CommonBitMatrix;
 class CBC_QRDetectorResult;
 class CBC_QRFinderPatternInfo;
 class CBC_QRAlignmentPattern;
-class CBC_QRFinderPatternFinder;
-class CBC_QRCoderVersion;
-class CBC_QRGridSampler;
-class CBC_QRAlignmentPatternFinder;
-class CBC_QRAlignmentPattern;
 
 class CBC_QRDetector {
  private:

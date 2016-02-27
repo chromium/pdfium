@@ -10,8 +10,6 @@
 #include "xfa/src/fxbarcode/BC_TwoDimWriter.h"
 
 class CBC_TwoDimWriter;
-class CBC_MultiBarCodes;
-class CBC_QRCoderWriter;
 class CBC_QRCodeWriter : public CBC_TwoDimWriter {
  public:
   CBC_QRCodeWriter();

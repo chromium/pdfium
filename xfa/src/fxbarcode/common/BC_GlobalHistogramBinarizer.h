@@ -10,7 +10,6 @@
 #include "core/include/fxcrt/fx_basic.h"
 #include "xfa/src/fxbarcode/BC_Binarizer.h"
 
-class CBC_CommonBinarizer;
 class CBC_CommonBitArray;
 class CBC_CommonBitMatrix;
 class CBC_LuminanceSource;

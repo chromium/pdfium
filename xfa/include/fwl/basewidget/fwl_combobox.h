@@ -10,7 +10,6 @@
 #include "xfa/include/fwl/basewidget/fwl_listbox.h"
 
 class CFWL_WidgetImpProperties;
-class IFWL_ComboBoxDP;
 class IFWL_ComboBox;
 
 #define FWL_CLASS_ComboBox L"FWL_COMBOBOX"

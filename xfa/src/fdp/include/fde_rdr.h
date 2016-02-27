@@ -10,7 +10,6 @@
 #include "core/include/fxcrt/fx_coordinates.h"
 #include "xfa/src/fdp/include/fde_psr.h"
 
-class IFDE_Page;
 class IFDE_RenderDevice;
 
 void FDE_GetPageMatrix(CFX_Matrix& pageMatrix,

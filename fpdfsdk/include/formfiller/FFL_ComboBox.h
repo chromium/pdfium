@@ -11,7 +11,6 @@
 #include "fpdfsdk/include/formfiller/FFL_FormFiller.h"
 
 class CBA_FontMap;
-class CPDFSDK_Document;
 
 struct FFL_ComboBoxState {
   int nIndex;

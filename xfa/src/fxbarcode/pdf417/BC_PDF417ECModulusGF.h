@@ -8,7 +8,6 @@
 #define XFA_SRC_FXBARCODE_PDF417_BC_PDF417ECMODULUSGF_H_
 
 class CBC_PDF417ECModulusPoly;
-class CBC_PDF417Common;
 class CBC_PDF417ECModulusGF {
  public:
   CBC_PDF417ECModulusGF(int32_t modulus, int32_t generator, int32_t& e);

@@ -17,7 +17,6 @@
 #include "xfa/include/fwl/core/fwl_widget.h"
 #include "xfa/include/fwl/theme/utils.h"
 
-class IFWL_ThemeProvider;
 class IFWL_Widget;
 class IFDE_TextOut;
 class IFX_Font;

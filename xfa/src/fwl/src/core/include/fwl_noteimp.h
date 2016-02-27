@@ -9,9 +9,7 @@
 
 #include "xfa/include/fwl/core/fwl_note.h"
 
-class CFWL_TargetImp;
 class CFWL_WidgetImp;
-class CFWL_NoteThreadImp;
 class CFWL_ToolTipImp;
 class CFWL_CoreToopTipDP;
 class CFWL_NoteDriver;

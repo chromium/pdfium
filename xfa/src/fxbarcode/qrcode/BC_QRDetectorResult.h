@@ -10,7 +10,6 @@
 #include "core/include/fxcrt/fx_basic.h"
 
 class CBC_CommonBitMatrix;
-class CBC_ResultPoint;
 
 class CBC_QRDetectorResult {
  private:

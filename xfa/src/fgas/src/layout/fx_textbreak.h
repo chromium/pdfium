@@ -11,7 +11,6 @@
 #include "xfa/src/fgas/src/layout/fx_unicode.h"
 
 class IFX_ArabicChar;
-class CFX_Txtbreak;
 
 class CFX_TxtLine {
  public:

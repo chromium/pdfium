@@ -11,7 +11,6 @@
 
 class CJBig2_ArithDecoder;
 class CJBig2_Image;
-class IFX_Pause;
 struct JBig2ArithCtx;
 
 class CJBig2_GRRDProc {

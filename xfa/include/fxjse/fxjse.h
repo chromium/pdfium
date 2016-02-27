@@ -11,8 +11,6 @@
 #include "core/include/fxcrt/fx_string.h"
 #include "core/include/fxcrt/fx_system.h"
 
-class CPDFDoc_Environment;
-class CPDF_Page;
 struct FXJSE_CLASS;
 
 typedef struct FXJSE_HRUNTIME_ { void* pData; } * FXJSE_HRUNTIME;

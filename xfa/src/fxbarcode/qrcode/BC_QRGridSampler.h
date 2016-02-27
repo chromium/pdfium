@@ -10,8 +10,6 @@
 #include "core/include/fxcrt/fx_basic.h"
 
 class CBC_CommonBitMatrix;
-class CBC_CommonPerspectiveTransform;
-class CBC_CommonDefaultGridSampler;
 
 class CBC_QRGridSampler {
  private:

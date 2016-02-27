@@ -9,7 +9,6 @@
 
 class CBC_OneDReader;
 class CBC_CommonBitArray;
-class CBC_OnedCoda39Reader;
 class CBC_OnedCode39Reader : public CBC_OneDReader {
  public:
   static const FX_CHAR* ALPHABET_STRING;

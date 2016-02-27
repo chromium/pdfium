@@ -10,7 +10,6 @@
 #include "xfa/include/fwl/core/fwl_form.h"
 
 class CFWL_WidgetImpProperties;
-class IFWL_ToolTipDP;
 class IFWL_ToolTip;
 
 #define FWL_CLASS_ToolTip L"FWL_TOOLTIP"

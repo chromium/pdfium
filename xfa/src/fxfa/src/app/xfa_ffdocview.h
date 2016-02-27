@@ -9,7 +9,6 @@
 
 #include "xfa/src/fxfa/src/app/xfa_ffdoc.h"
 
-class CXFA_FFPageView;
 class CXFA_FFWidgetHandler;
 class CXFA_FFDoc;
 class CXFA_FFWidget;

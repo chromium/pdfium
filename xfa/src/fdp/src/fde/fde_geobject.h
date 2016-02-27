@@ -9,7 +9,6 @@
 
 #include "xfa/src/foxitlib.h"
 
-class CFDE_GEFontMgr;
 class CFDE_Path : public IFDE_Path, public CFX_Target {
  public:
   virtual void Release() { delete this; }

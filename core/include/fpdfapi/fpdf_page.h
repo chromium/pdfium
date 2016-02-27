@@ -19,10 +19,9 @@ class CPDF_Form;
 class CPDF_ParseOptions;
 class CPDF_PageObject;
 class CPDF_PageRenderCache;
-class CPDF_StreamFilter;
 class CPDF_AllStates;
 class CPDF_ContentParser;
-class CPDF_StreamContentParser;
+class CPDF_ImageObject;
 
 #define PDFTRANS_GROUP 0x0100
 #define PDFTRANS_ISOLATED 0x0200

@@ -11,8 +11,6 @@
 #include "xfa/include/fxbarcode/BC_BarCode.h"
 
 class CFWL_WidgetImpProperties;
-class IFWL_Widget;
-class IFWL_BarcodeDP;
 class IFWL_Barcode;
 #define FWL_CLASS_Barcode L"FWL_BARCODE"
 #define FWL_CLASSHASH_Barcode 366886968

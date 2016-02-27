@@ -15,9 +15,7 @@
 
 class CPDF_Array;
 class CPDF_Boolean;
-class CPDF_CryptoHandler;
 class CPDF_Dictionary;
-class CPDF_Document;
 class CPDF_IndirectObjectHolder;
 class CPDF_Name;
 class CPDF_Null;
@@ -26,7 +24,6 @@ class CPDF_Parser;
 class CPDF_Reference;
 class CPDF_Stream;
 class CPDF_StreamAcc;
-class CPDF_StreamFilter;
 class CPDF_String;
 class IFX_FileRead;
 

@@ -7,7 +7,6 @@
 #ifndef XFA_SRC_FXBARCODE_ONED_BC_ONEDUPCAWRITER_H_
 #define XFA_SRC_FXBARCODE_ONED_BC_ONEDUPCAWRITER_H_
 
-class CBC_Writer;
 class CBC_OnedEAN13Writer;
 class CBC_OnedUPCAWriter;
 class CBC_OnedUPCAWriter : public CBC_OneDimWriter {

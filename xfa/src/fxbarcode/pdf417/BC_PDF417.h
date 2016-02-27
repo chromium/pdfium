@@ -10,7 +10,6 @@
 #include "core/include/fxcrt/fx_basic.h"
 #include "xfa/src/fxbarcode/pdf417/BC_PDF417Compaction.h"
 
-class CBC_Compaction;
 class CBC_BarcodeRow;
 class CBC_BarcodeMatrix;
 

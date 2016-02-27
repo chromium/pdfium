@@ -15,7 +15,6 @@
 
 class IFDE_Pen;
 class IFDE_Brush;
-class IFDE_Image;
 class CFX_DIBitmap;
 class CFX_DIBSource;
 

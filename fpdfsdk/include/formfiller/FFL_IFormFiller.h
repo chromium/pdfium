@@ -13,7 +13,6 @@
 #include "fpdfsdk/include/pdfwindow/PWL_Edit.h"
 
 class CFFL_FormFiller;
-class CFFL_PrivateData;
 class CPDFDoc_Environment;
 class CPDFSDK_Annot;
 class CPDFSDK_PageView;
