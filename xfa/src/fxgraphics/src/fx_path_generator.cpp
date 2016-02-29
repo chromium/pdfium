@@ -95,21 +95,7 @@ void CFX_PathGenerator::AddEllipse(FX_FLOAT x,
                                    FX_FLOAT y,
                                    FX_FLOAT width,
                                    FX_FLOAT height) {
-#if 0
-    FX_FIXFLOAT16 k;
-    k = fix16_to_8(fixsqrt_32_to_16(fixmul_8_8_to_32(width, width) + fixmul_8_8_to_32(height, height)) / 2);
-    int old_count = m_pPathData->GetPointCount();
-    m_pPathData->AddPointCount(7);
-    m_pPathData->SetPoint(old_count, x, y - height / 2, FXPT_MOVETO);
-    m_pPathData->SetPoint(old_count + 1, x + k, y - height / 2, FXPT_BEZIERTO);
-    m_pPathData->SetPoint(old_count + 2, x + k, y + height / 2, FXPT_BEZIERTO);
-    m_pPathData->SetPoint(old_count + 3, x, y + height / 2, FXPT_BEZIERTO);
-    m_pPathData->SetPoint(old_count + 4, x - k, y + height / 2, FXPT_BEZIERTO);
-    m_pPathData->SetPoint(old_count + 5, x - k, y - height / 2, FXPT_BEZIERTO);
-    m_pPathData->SetPoint(old_count + 6, x, y - height / 2, FXPT_BEZIERTO);
-#else
   AddArc(x, y, width, height, 0, FX_PI * 2);
-#endif
 }
 void CFX_PathGenerator::ArcTo(FX_FLOAT x,
                               FX_FLOAT y,
@@ -147,34 +133,11 @@ void CFX_PathGenerator::AddArc(FX_FLOAT x,
                                FX_FLOAT height,
                                FX_FLOAT start_angle,
                                FX_FLOAT sweep_angle) {
-#if 0
-    FX_FIXFLOAT32 sweep = sweep_angle;
-    while (sweep > FIXFLOAT32_PI * 2) {
-        sweep -= FIXFLOAT32_PI * 2;
-    }
-    if (sweep == 0) {
-        return;
-    }
-    m_pPathData->AddPointCount(1);
-    m_pPathData->SetPoint(m_pPathData->GetPointCount() - 1,
-                          x + fixmul_8_32_to_8(width, fixcos(start_angle)),
-                          y + fixmul_8_32_to_8(height, fixsin(start_angle)), FXPT_MOVETO);
-    FX_FIXFLOAT32 angle1 = 0, angle2;
-    FX_BOOL bDone = FALSE;
-    do {
-        angle2 = angle1 + FIXFLOAT32_PI / 2;
-        if (angle2 >= sweep) {
-            angle2 = sweep;
-            bDone = TRUE;
-        }
-        ArcTo(x, y, width, height, start_angle + angle1, angle2 - angle1);
-        angle1 = angle2;
-    } while (!bDone);
-#else
   if (sweep_angle == 0) {
     return;
   }
-  static const FX_FLOAT bezier_arc_angle_epsilon = (FX_FLOAT)(0.01f);
+
+  const FX_FLOAT bezier_arc_angle_epsilon = 0.01f;
   while (start_angle > FX_PI * 2) {
     start_angle -= FX_PI * 2;
   }
@@ -214,7 +177,6 @@ void CFX_PathGenerator::AddArc(FX_FLOAT x,
     ArcTo(x, y, width, height, start_angle, local_sweep);
     start_angle += local_sweep;
   } while (!done);
-#endif
 }
 void CFX_PathGenerator::AddPie(FX_FLOAT x,
                                FX_FLOAT y,
