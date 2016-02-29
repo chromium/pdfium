@@ -143,8 +143,8 @@ struct FX_RECT {
 
   FX_RECT(int l, int t, int r, int b) : left(l), top(t), right(r), bottom(b) {}
 
-  explicit FX_RECT(const FX_SMALL_RECT& small)
-      : FX_RECT(small.left, small.top, small.right, small.bottom) {}
+  explicit FX_RECT(const FX_SMALL_RECT& other)
+      : FX_RECT(other.left, other.top, other.right, other.bottom) {}
 
   int Width() const { return right - left; }
   int Height() const { return bottom - top; }
