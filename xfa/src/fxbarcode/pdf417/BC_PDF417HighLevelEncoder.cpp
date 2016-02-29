@@ -124,30 +124,27 @@ CFX_WideString CBC_PDF417HighLevelEncoder::encodeHighLevel(
   }
   return sb;
 }
+
 void CBC_PDF417HighLevelEncoder::Inverse() {
-  uint8_t i = 0;
-  int32_t l = 0;
-  for (l = 0; l < sizeof(MIXED) / sizeof(MIXED[0]); l++) {
+  for (size_t l = 0; l < FX_ArraySize(MIXED); ++l)
     MIXED[l] = -1;
-  }
-  for (i = 0; i < sizeof(TEXT_MIXED_RAW) / sizeof(TEXT_MIXED_RAW[0]); i++) {
+
+  for (uint8_t i = 0; i < FX_ArraySize(TEXT_MIXED_RAW); ++i) {
     uint8_t b = TEXT_MIXED_RAW[i];
-    if (b > 0) {
+    if (b != 0)
       MIXED[b] = i;
-    }
   }
-  for (l = 0; l < sizeof(PUNCTUATION) / sizeof(PUNCTUATION[0]); l++) {
+
+  for (size_t l = 0; l < FX_ArraySize(PUNCTUATION); ++l)
     PUNCTUATION[l] = -1;
-  }
-  for (i = 0;
-       i < sizeof(TEXT_PUNCTUATION_RAW) / sizeof(TEXT_PUNCTUATION_RAW[0]);
-       i++) {
+
+  for (uint8_t i = 0; i < FX_ArraySize(TEXT_PUNCTUATION_RAW); ++i) {
     uint8_t b = TEXT_PUNCTUATION_RAW[i];
-    if (b > 0) {
+    if (b != 0)
       PUNCTUATION[b] = i;
-    }
   }
 }
+
 int32_t CBC_PDF417HighLevelEncoder::encodeText(CFX_WideString msg,
                                                int32_t startpos,
                                                int32_t count,

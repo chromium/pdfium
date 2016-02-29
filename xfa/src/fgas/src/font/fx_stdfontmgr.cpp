@@ -485,11 +485,12 @@ const FX_CHAR* g_FontFolders[] = {
     "/system/fonts",
 #endif
 };
+
 CFX_FontSourceEnum_File::CFX_FontSourceEnum_File() {
-  for (int32_t i = 0; i < sizeof(g_FontFolders) / sizeof(const FX_CHAR*); i++) {
+  for (size_t i = 0; i < FX_ArraySize(g_FontFolders); ++i)
     m_FolderPaths.Add(g_FontFolders[i]);
-  }
 }
+
 CFX_ByteString CFX_FontSourceEnum_File::GetNextFile() {
 Restart:
   void* pCurHandle =
@@ -1119,11 +1120,9 @@ static const FX_BitCodePage g_Bit2CodePage[] = {
 };
 
 FX_WORD FX_GetCodePageBit(FX_WORD wCodePage) {
-  for (int32_t i = 0; i < sizeof(g_Bit2CodePage) / sizeof(FX_BitCodePage);
-       i++) {
-    if (g_Bit2CodePage[i].wCodePage == wCodePage) {
+  for (size_t i = 0; i < FX_ArraySize(g_Bit2CodePage); ++i) {
+    if (g_Bit2CodePage[i].wCodePage == wCodePage)
       return g_Bit2CodePage[i].wBit;
-    }
   }
   return (FX_WORD)-1;
 }

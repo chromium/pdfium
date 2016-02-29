@@ -42,7 +42,7 @@ CBC_OnedCodaBarWriter::CBC_OnedCodaBarWriter() {
 }
 CBC_OnedCodaBarWriter::~CBC_OnedCodaBarWriter() {}
 FX_BOOL CBC_OnedCodaBarWriter::SetStartChar(FX_CHAR start) {
-  for (int32_t i = 0; i < sizeof(START_END_CHARS) / sizeof(FX_CHAR); i++) {
+  for (size_t i = 0; i < FX_ArraySize(START_END_CHARS); ++i) {
     if (START_END_CHARS[i] == start) {
       m_chStart = start;
       return TRUE;
@@ -50,8 +50,9 @@ FX_BOOL CBC_OnedCodaBarWriter::SetStartChar(FX_CHAR start) {
   }
   return FALSE;
 }
+
 FX_BOOL CBC_OnedCodaBarWriter::SetEndChar(FX_CHAR end) {
-  for (int32_t i = 0; i < sizeof(START_END_CHARS) / sizeof(FX_CHAR); i++) {
+  for (size_t i = 0; i < FX_ArraySize(START_END_CHARS); ++i) {
     if (START_END_CHARS[i] == end) {
       m_chEnd = end;
       return TRUE;
@@ -78,19 +79,19 @@ FX_BOOL CBC_OnedCodaBarWriter::SetWideNarrowRatio(int32_t ratio) {
 }
 FX_BOOL CBC_OnedCodaBarWriter::FindChar(FX_WCHAR ch, FX_BOOL isContent) {
   if (isContent) {
-    for (int32_t i = 0; i < sizeof(CONTENT_CHARS) / sizeof(FX_CHAR); i++) {
+    for (size_t i = 0; i < FX_ArraySize(CONTENT_CHARS); ++i) {
       if (ch == (FX_WCHAR)CONTENT_CHARS[i]) {
         return TRUE;
       }
     }
-    for (int32_t j = 0; j < sizeof(START_END_CHARS) / sizeof(FX_CHAR); j++) {
+    for (size_t j = 0; j < FX_ArraySize(START_END_CHARS); ++j) {
       if (ch == (FX_WCHAR)START_END_CHARS[j]) {
         return TRUE;
       }
     }
     return FALSE;
   } else {
-    for (int32_t i = 0; i < sizeof(CONTENT_CHARS) / sizeof(FX_CHAR); i++) {
+    for (size_t i = 0; i < FX_ArraySize(CONTENT_CHARS); ++i) {
       if (ch == (FX_WCHAR)CONTENT_CHARS[i]) {
         return TRUE;
       }
