@@ -311,35 +311,35 @@ void CXFA_FFDoc::SetDocType(FX_DWORD dwType) {
 CPDF_Document* CXFA_FFDoc::GetPDFDoc() {
   return m_pPDFDoc;
 }
-#define _FXLIB_NEW_VERSION_
+
 CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(const CFX_WideStringC& wsName,
                                            int32_t& iImageXDpi,
                                            int32_t& iImageYDpi) {
-  if (!m_pPDFDoc) {
-    return NULL;
-  }
+  if (!m_pPDFDoc)
+    return nullptr;
+
   FX_DWORD dwHash =
       FX_HashCode_String_GetW(wsName.GetPtr(), wsName.GetLength(), FALSE);
-  FX_IMAGEDIB_AND_DPI* imageDIBDpi = NULL;
+  FX_IMAGEDIB_AND_DPI* imageDIBDpi = nullptr;
   if (m_mapNamedImages.Lookup((void*)(uintptr_t)dwHash, (void*&)imageDIBDpi)) {
     iImageXDpi = imageDIBDpi->iImageXDpi;
     iImageYDpi = imageDIBDpi->iImageYDpi;
-    return (CFX_DIBitmap*)imageDIBDpi->pDibSource;
+    return static_cast<CFX_DIBitmap*>(imageDIBDpi->pDibSource);
   }
+
   CPDF_Dictionary* pRoot = m_pPDFDoc->GetRoot();
-  if (pRoot == NULL) {
-    return NULL;
-  }
+  if (!pRoot)
+    return nullptr;
+
   CPDF_Dictionary* pNames = pRoot->GetDictBy("Names");
-  if (!pNames) {
-    return NULL;
-  }
+  if (!pNames)
+    return nullptr;
+
   CPDF_Dictionary* pXFAImages = pNames->GetDictBy("XFAImages");
-  if (!pXFAImages) {
-    return NULL;
-  }
+  if (!pXFAImages)
+    return nullptr;
+
   CPDF_NameTree nametree(pXFAImages);
-#ifdef _FXLIB_NEW_VERSION_
   CFX_ByteString bsName = PDF_EncodeText(wsName.GetPtr(), wsName.GetLength());
   CPDF_Object* pObject = nametree.LookupValue(bsName);
   if (!pObject) {
@@ -353,26 +353,13 @@ CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(const CFX_WideStringC& wsName,
       }
     }
   }
-#else
-  CPDF_Object* pObject = nametree.LookupValue(wsName);
-  if (!pObject) {
-    int32_t iCount = nametree.GetCount();
-    for (int32_t i = 0; i < iCount; i++) {
-      CFX_WideString wsTemp;
-      CPDF_Object* pTempObject = nametree.LookupValue(i, wsTemp);
-      if (wsTemp == wsName) {
-        pObject = pTempObject;
-        break;
-      }
-    }
-  }
-#endif
-  if (!pObject || !pObject->IsStream()) {
-    return NULL;
-  }
+
+  if (!pObject || !pObject->IsStream())
+    return nullptr;
+
   if (!imageDIBDpi) {
     imageDIBDpi = FX_Alloc(FX_IMAGEDIB_AND_DPI, 1);
-    imageDIBDpi->pDibSource = NULL;
+    imageDIBDpi->pDibSource = nullptr;
     imageDIBDpi->iImageXDpi = 0;
     imageDIBDpi->iImageYDpi = 0;
     CPDF_StreamAcc streamAcc;
@@ -388,6 +375,7 @@ CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(const CFX_WideStringC& wsName,
   m_mapNamedImages.SetAt((void*)(uintptr_t)dwHash, imageDIBDpi);
   return (CFX_DIBitmap*)imageDIBDpi->pDibSource;
 }
+
 IFDE_XMLElement* CXFA_FFDoc::GetPackageData(const CFX_WideStringC& wsPackage) {
   FX_DWORD packetHash =
       FX_HashCode_String_GetW(wsPackage.GetPtr(), wsPackage.GetLength());
