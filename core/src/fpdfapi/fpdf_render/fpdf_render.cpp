@@ -240,7 +240,7 @@ FX_BOOL CPDF_RenderStatus::Initialize(CPDF_RenderContext* pContext,
 void CPDF_RenderStatus::RenderObjectList(
     const CPDF_PageObjectHolder* pObjectHolder,
     const CFX_Matrix* pObj2Device) {
-  CFX_FloatRect clip_rect = m_pDevice->GetClipBox();
+  CFX_FloatRect clip_rect(m_pDevice->GetClipBox());
   CFX_Matrix device2object;
   device2object.SetReverse(*pObj2Device);
   device2object.TransformRect(clip_rect);
@@ -1059,7 +1059,7 @@ void CPDF_ProgressiveRenderer::Continue(IFX_Pause* pPause) {
           m_pContext, m_pDevice, NULL, NULL, NULL, NULL, m_pOptions,
           m_pCurrentLayer->m_pObjectHolder->m_Transparency, FALSE, NULL);
       m_pDevice->SaveState();
-      m_ClipRect = m_pDevice->GetClipBox();
+      m_ClipRect = CFX_FloatRect(m_pDevice->GetClipBox());
       CFX_Matrix device2object;
       device2object.SetReverse(m_pCurrentLayer->m_Matrix);
       device2object.TransformRect(m_ClipRect);
@@ -1295,18 +1295,16 @@ FX_BOOL CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext,
     dibFormat = FXDIB_Argb;
     bpp = 32;
   }
-  CFX_FloatRect rect;
-  int32_t iWidth, iHeight, iPitch;
   while (1) {
-    rect = pRect;
+    CFX_FloatRect rect(pRect);
     m_Matrix.TransformRect(rect);
     FX_RECT bitmap_rect = rect.GetOutterRect();
-    iWidth = bitmap_rect.Width();
-    iHeight = bitmap_rect.Height();
-    iPitch = (iWidth * bpp + 31) / 32 * 4;
-    if (iWidth * iHeight < 1) {
+    int32_t iWidth = bitmap_rect.Width();
+    int32_t iHeight = bitmap_rect.Height();
+    int32_t iPitch = (iWidth * bpp + 31) / 32 * 4;
+    if (iWidth * iHeight < 1)
       return FALSE;
-    }
+
     if (iPitch * iHeight <= _FPDFAPI_IMAGESIZE_LIMIT_ &&
         m_pBitmapDevice->Create(iWidth, iHeight, dibFormat)) {
       break;

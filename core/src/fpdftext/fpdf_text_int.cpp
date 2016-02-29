@@ -884,21 +884,18 @@ void CPDF_TextPage::ProcessFormObject(CPDF_FormObject* pFormObj,
 }
 
 int CPDF_TextPage::GetCharWidth(FX_DWORD charCode, CPDF_Font* pFont) const {
-  if (charCode == -1) {
+  if (charCode == -1)
     return 0;
-  }
-  int w = pFont->GetCharWidthF(charCode);
-  if (w == 0) {
-    CFX_ByteString str;
-    pFont->AppendChar(str, charCode);
-    w = pFont->GetStringWidth(str, 1);
-    if (w == 0) {
-      FX_RECT BBox;
-      pFont->GetCharBBox(charCode, BBox);
-      w = BBox.right - BBox.left;
-    }
-  }
-  return w;
+
+  if (int w = pFont->GetCharWidthF(charCode))
+    return w;
+
+  CFX_ByteString str;
+  pFont->AppendChar(str, charCode);
+  if (int w = pFont->GetStringWidth(str, 1))
+    return w;
+
+  return pFont->GetCharBBox(charCode).Width();
 }
 
 void CPDF_TextPage::OnPiece(CFX_BidiChar* pBidi, CFX_WideString& str) {
@@ -1464,9 +1461,8 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
     charinfo.m_OriginX = 0, charinfo.m_OriginY = 0;
     matrix.Transform(item.m_OriginX, item.m_OriginY, charinfo.m_OriginX,
                      charinfo.m_OriginY);
-    FX_RECT rect(0, 0, 0, 0);
-    rect.Intersect(0, 0, 0, 0);
-    charinfo.m_pTextObj->GetFont()->GetCharBBox(charinfo.m_CharCode, rect);
+    FX_RECT rect =
+        charinfo.m_pTextObj->GetFont()->GetCharBBox(charinfo.m_CharCode);
     charinfo.m_CharBox.top =
         rect.top * pTextObj->GetFontSize() / 1000 + item.m_OriginY;
     charinfo.m_CharBox.left =

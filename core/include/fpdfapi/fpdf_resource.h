@@ -149,7 +149,7 @@ class CPDF_Font {
   int GetStringWidth(const FX_CHAR* pString, int size);
 
   virtual int GetCharWidthF(FX_DWORD charcode, int level = 0) = 0;
-  virtual void GetCharBBox(FX_DWORD charcode, FX_RECT& rect, int level = 0) = 0;
+  virtual FX_RECT GetCharBBox(FX_DWORD charcode, int level = 0) = 0;
 
   CPDF_Document* m_pDocument;
   CFX_Font m_Font;
@@ -226,7 +226,7 @@ class CPDF_SimpleFont : public CPDF_Font {
 
   // CPDF_Font:
   int GetCharWidthF(FX_DWORD charcode, int level = 0) override;
-  void GetCharBBox(FX_DWORD charcode, FX_RECT& rect, int level = 0) override;
+  FX_RECT GetCharBBox(FX_DWORD charcode, int level = 0) override;
   int GlyphFromCharCode(FX_DWORD charcode, FX_BOOL* pVertGlyph = NULL) override;
   FX_BOOL IsUnicodeCompatible() const override;
   CFX_WideString UnicodeFromCharCode(FX_DWORD charcode) const override;
@@ -317,7 +317,7 @@ class CPDF_Type3Font : public CPDF_SimpleFont {
   const CPDF_Type3Font* AsType3Font() const override { return this; }
   CPDF_Type3Font* AsType3Font() override { return this; }
   int GetCharWidthF(FX_DWORD charcode, int level = 0) override;
-  void GetCharBBox(FX_DWORD charcode, FX_RECT& rect, int level = 0) override;
+  FX_RECT GetCharBBox(FX_DWORD charcode, int level = 0) override;
 
   void SetPageResources(CPDF_Dictionary* pResources) {
     m_pPageResources = pResources;
@@ -367,7 +367,7 @@ class CPDF_CIDFont : public CPDF_Font {
   CPDF_CIDFont* AsCIDFont() override { return this; }
   int GlyphFromCharCode(FX_DWORD charcode, FX_BOOL* pVertGlyph = NULL) override;
   int GetCharWidthF(FX_DWORD charcode, int level = 0) override;
-  void GetCharBBox(FX_DWORD charcode, FX_RECT& rect, int level = 0) override;
+  FX_RECT GetCharBBox(FX_DWORD charcode, int level = 0) override;
   FX_DWORD GetNextChar(const FX_CHAR* pString,
                        int nStrLen,
                        int& offset) const override;

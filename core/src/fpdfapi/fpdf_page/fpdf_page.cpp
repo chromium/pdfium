@@ -251,8 +251,7 @@ void CPDF_TextObject::CalcPositionData(FX_FLOAT* pTextAdvanceX,
       }
       m_pCharPos[i - 1] = curpos;
     }
-    FX_RECT char_rect;
-    pFont->GetCharBBox(charcode, char_rect, level);
+    FX_RECT char_rect = pFont->GetCharBBox(charcode, level);
     FX_FLOAT charwidth;
     if (!bVertWriting) {
       if (min_y > char_rect.top) {

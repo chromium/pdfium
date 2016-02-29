@@ -123,10 +123,10 @@ CFX_FloatRect CPDF_ClipPath::GetClipBox() const {
         bLayerStarted = FALSE;
       } else {
         if (!bLayerStarted) {
-          layer_rect = pTextObj->GetBBox(NULL);
+          layer_rect = CFX_FloatRect(pTextObj->GetBBox(nullptr));
           bLayerStarted = TRUE;
         } else {
-          layer_rect.Union(pTextObj->GetBBox(NULL));
+          layer_rect.Union(CFX_FloatRect(pTextObj->GetBBox(nullptr)));
         }
       }
     }

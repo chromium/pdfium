@@ -306,8 +306,7 @@ void CPDF_Font::CheckFontMetrics() {
     } else {
       FX_BOOL bFirst = TRUE;
       for (int i = 0; i < 256; i++) {
-        FX_RECT rect;
-        GetCharBBox(i, rect);
+        FX_RECT rect = GetCharBBox(i);
         if (rect.left == rect.right) {
           continue;
         }
@@ -332,19 +331,10 @@ void CPDF_Font::CheckFontMetrics() {
     }
   }
   if (m_Ascent == 0 && m_Descent == 0) {
-    FX_RECT rect;
-    GetCharBBox('A', rect);
-    if (rect.bottom == rect.top) {
-      m_Ascent = m_FontBBox.top;
-    } else {
-      m_Ascent = rect.top;
-    }
-    GetCharBBox('g', rect);
-    if (rect.bottom == rect.top) {
-      m_Descent = m_FontBBox.bottom;
-    } else {
-      m_Descent = rect.bottom;
-    }
+    FX_RECT rect = GetCharBBox('A');
+    m_Ascent = rect.bottom == rect.top ? m_FontBBox.top : rect.top;
+    rect = GetCharBBox('g');
+    m_Descent = rect.bottom == rect.top ? m_FontBBox.bottom : rect.bottom;
   }
 }
 
@@ -743,13 +733,11 @@ FX_BOOL CPDF_Font::IsStandardFont() const {
   return TRUE;
 }
 
-CPDF_SimpleFont::CPDF_SimpleFont() {
-  FXSYS_memset(m_CharBBox, 0xff, sizeof m_CharBBox);
+CPDF_SimpleFont::CPDF_SimpleFont()
+    : m_pCharNames(nullptr), m_BaseEncoding(PDFFONT_ENCODING_BUILTIN) {
   FXSYS_memset(m_CharWidth, 0xff, sizeof m_CharWidth);
   FXSYS_memset(m_GlyphIndex, 0xff, sizeof m_GlyphIndex);
   FXSYS_memset(m_ExtGID, 0xff, sizeof m_ExtGID);
-  m_pCharNames = NULL;
-  m_BaseEncoding = PDFFONT_ENCODING_BUILTIN;
 }
 
 CPDF_SimpleFont::~CPDF_SimpleFont() {
@@ -795,21 +783,23 @@ void CPDF_SimpleFont::LoadCharMetrics(int charcode) {
   if (err) {
     return;
   }
-  m_CharBBox[charcode].Left = TT2PDF(FXFT_Get_Glyph_HoriBearingX(face), face);
-  m_CharBBox[charcode].Right = TT2PDF(
-      FXFT_Get_Glyph_HoriBearingX(face) + FXFT_Get_Glyph_Width(face), face);
-  m_CharBBox[charcode].Top = TT2PDF(FXFT_Get_Glyph_HoriBearingY(face), face);
-  m_CharBBox[charcode].Bottom = TT2PDF(
-      FXFT_Get_Glyph_HoriBearingY(face) - FXFT_Get_Glyph_Height(face), face);
+  m_CharBBox[charcode] = FX_SMALL_RECT(
+      TT2PDF(FXFT_Get_Glyph_HoriBearingX(face), face),
+      TT2PDF(FXFT_Get_Glyph_HoriBearingY(face), face),
+      TT2PDF(FXFT_Get_Glyph_HoriBearingX(face) + FXFT_Get_Glyph_Width(face),
+             face),
+      TT2PDF(FXFT_Get_Glyph_HoriBearingY(face) - FXFT_Get_Glyph_Height(face),
+             face));
+
   if (m_bUseFontWidth) {
     int TT_Width = TT2PDF(FXFT_Get_Glyph_HoriAdvance(face), face);
     if (m_CharWidth[charcode] == 0xffff) {
       m_CharWidth[charcode] = TT_Width;
     } else if (TT_Width && !IsEmbedded()) {
-      m_CharBBox[charcode].Right =
-          m_CharBBox[charcode].Right * m_CharWidth[charcode] / TT_Width;
-      m_CharBBox[charcode].Left =
-          m_CharBBox[charcode].Left * m_CharWidth[charcode] / TT_Width;
+      m_CharBBox[charcode].right =
+          m_CharBBox[charcode].right * m_CharWidth[charcode] / TT_Width;
+      m_CharBBox[charcode].left =
+          m_CharBBox[charcode].left * m_CharWidth[charcode] / TT_Width;
     }
   }
 }
@@ -827,17 +817,14 @@ int CPDF_SimpleFont::GetCharWidthF(FX_DWORD charcode, int level) {
   return (int16_t)m_CharWidth[charcode];
 }
 
-void CPDF_SimpleFont::GetCharBBox(FX_DWORD charcode, FX_RECT& rect, int level) {
-  if (charcode > 0xff) {
+FX_RECT CPDF_SimpleFont::GetCharBBox(FX_DWORD charcode, int level) {
+  if (charcode > 0xff)
     charcode = 0;
-  }
-  if (m_CharBBox[charcode].Left == (int16_t)0xffff) {
+
+  if (m_CharBBox[charcode].left == FX_SMALL_RECT::kInvalid)
     LoadCharMetrics(charcode);
-  }
-  rect.left = m_CharBBox[charcode].Left;
-  rect.right = m_CharBBox[charcode].Right;
-  rect.bottom = m_CharBBox[charcode].Bottom;
-  rect.top = m_CharBBox[charcode].Top;
+
+  return FX_RECT(m_CharBBox[charcode]);
 }
 
 const FX_CHAR* GetAdobeCharName(int iBaseEncoding,
@@ -1704,16 +1691,9 @@ int CPDF_Type3Font::GetCharWidthF(FX_DWORD charcode, int level) {
   return pChar ? pChar->m_Width : 0;
 }
 
-void CPDF_Type3Font::GetCharBBox(FX_DWORD charcode, FX_RECT& rect, int level) {
+FX_RECT CPDF_Type3Font::GetCharBBox(FX_DWORD charcode, int level) {
   const CPDF_Type3Char* pChar = LoadChar(charcode, level);
-  if (!pChar) {
-    rect.left = 0;
-    rect.right = 0;
-    rect.top = 0;
-    rect.bottom = 0;
-    return;
-  }
-  rect = pChar->m_BBox;
+  return pChar ? pChar->m_BBox : FX_RECT();
 }
 
 CPDF_Type3Char::CPDF_Type3Char(CPDF_Form* pForm)

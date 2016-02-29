@@ -1057,7 +1057,6 @@ CPDF_CIDFont::CPDF_CIDFont()
       m_pAnsiWidths(nullptr),
       m_bAdobeCourierStd(FALSE),
       m_pTTGSUBTable(nullptr) {
-  FXSYS_memset(m_CharBBox, 0xff, 256 * sizeof(FX_SMALL_RECT));
 }
 
 CPDF_CIDFont::~CPDF_CIDFont() {
@@ -1299,19 +1298,15 @@ FX_BOOL CPDF_CIDFont::Load() {
   return TRUE;
 }
 
-void CPDF_CIDFont::GetCharBBox(FX_DWORD charcode, FX_RECT& rect, int level) {
-  if (charcode < 256 && m_CharBBox[charcode].Right != -1) {
-    rect.bottom = m_CharBBox[charcode].Bottom;
-    rect.left = m_CharBBox[charcode].Left;
-    rect.right = m_CharBBox[charcode].Right;
-    rect.top = m_CharBBox[charcode].Top;
-    return;
-  }
+FX_RECT CPDF_CIDFont::GetCharBBox(FX_DWORD charcode, int level) {
+  if (charcode < 256 && m_CharBBox[charcode].right != FX_SMALL_RECT::kInvalid)
+    return FX_RECT(m_CharBBox[charcode]);
+
+  FX_RECT rect;
   FX_BOOL bVert = FALSE;
   int glyph_index = GlyphFromCharCode(charcode, &bVert);
   FXFT_Face face = m_Font.GetFace();
   if (face) {
-    rect.left = rect.bottom = rect.right = rect.top = 0;
     if (FXFT_Is_Face_Tricky(face)) {
       int err = FXFT_Load_Glyph(face, glyph_index,
                                 FXFT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH);
@@ -1324,15 +1319,12 @@ void CPDF_CIDFont::GetCharBBox(FX_DWORD charcode, FX_RECT& rect, int level) {
           int pixel_size_x = ((FXFT_Face)face)->size->metrics.x_ppem;
           int pixel_size_y = ((FXFT_Face)face)->size->metrics.y_ppem;
           if (pixel_size_x == 0 || pixel_size_y == 0) {
-            rect.left = cbox.xMin;
-            rect.right = cbox.xMax;
-            rect.top = cbox.yMax;
-            rect.bottom = cbox.yMin;
+            rect = FX_RECT(cbox.xMin, cbox.yMax, cbox.xMax, cbox.yMin);
           } else {
-            rect.left = cbox.xMin * 1000 / pixel_size_x;
-            rect.right = cbox.xMax * 1000 / pixel_size_x;
-            rect.top = cbox.yMax * 1000 / pixel_size_y;
-            rect.bottom = cbox.yMin * 1000 / pixel_size_y;
+            rect = FX_RECT(cbox.xMin * 1000 / pixel_size_x,
+                           cbox.yMax * 1000 / pixel_size_y,
+                           cbox.xMax * 1000 / pixel_size_x,
+                           cbox.yMin * 1000 / pixel_size_y);
           }
           if (rect.top > FXFT_Get_Face_Ascender(face)) {
             rect.top = FXFT_Get_Face_Ascender(face);
@@ -1346,19 +1338,17 @@ void CPDF_CIDFont::GetCharBBox(FX_DWORD charcode, FX_RECT& rect, int level) {
     } else {
       int err = FXFT_Load_Glyph(face, glyph_index, FXFT_LOAD_NO_SCALE);
       if (err == 0) {
-        rect.left = TT2PDF(FXFT_Get_Glyph_HoriBearingX(face), face);
-        rect.right = TT2PDF(
-            FXFT_Get_Glyph_HoriBearingX(face) + FXFT_Get_Glyph_Width(face),
-            face);
-        rect.top = TT2PDF(FXFT_Get_Glyph_HoriBearingY(face), face);
+        rect = FX_RECT(TT2PDF(FXFT_Get_Glyph_HoriBearingX(face), face),
+                       TT2PDF(FXFT_Get_Glyph_HoriBearingY(face), face),
+                       TT2PDF(FXFT_Get_Glyph_HoriBearingX(face) +
+                                  FXFT_Get_Glyph_Width(face),
+                              face),
+                       TT2PDF(FXFT_Get_Glyph_HoriBearingY(face) -
+                                  FXFT_Get_Glyph_Height(face),
+                              face));
         rect.top += rect.top / 64;
-        rect.bottom = TT2PDF(
-            FXFT_Get_Glyph_HoriBearingY(face) - FXFT_Get_Glyph_Height(face),
-            face);
       }
     }
-  } else {
-    rect = FX_RECT(0, 0, 0, 0);
   }
   if (!m_pFontFile && m_Charset == CIDSET_JAPAN1) {
     FX_WORD CID = CIDFromCharCode(charcode);
@@ -1375,12 +1365,10 @@ void CPDF_CIDFont::GetCharBBox(FX_DWORD charcode, FX_RECT& rect, int level) {
       rect = rect_f.GetOutterRect();
     }
   }
-  if (charcode < 256) {
-    m_CharBBox[charcode].Bottom = (short)rect.bottom;
-    m_CharBBox[charcode].Left = (short)rect.left;
-    m_CharBBox[charcode].Right = (short)rect.right;
-    m_CharBBox[charcode].Top = (short)rect.top;
-  }
+  if (charcode < 256)
+    m_CharBBox[charcode] = rect.ToSmallRect();
+
+  return rect;
 }
 int CPDF_CIDFont::GetCharWidthF(FX_DWORD charcode, int level) {
   if (m_pAnsiWidths && charcode < 0x80) {

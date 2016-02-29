@@ -701,12 +701,8 @@ FX_BOOL CPDFSDK_BFAnnotHandler::OnKillFocus(CPDFSDK_Annot* pAnnot,
 CFX_FloatRect CPDFSDK_BFAnnotHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
                                                   CPDFSDK_Annot* pAnnot) {
   CFX_ByteString sSubType = pAnnot->GetSubType();
-
-  if (sSubType == BFFT_SIGNATURE) {
-  } else {
-    if (m_pFormFiller)
-      return m_pFormFiller->GetViewBBox(pPageView, pAnnot);
-  }
+  if (sSubType != BFFT_SIGNATURE && m_pFormFiller)
+    return CFX_FloatRect(m_pFormFiller->GetViewBBox(pPageView, pAnnot));
 
   return CFX_FloatRect(0, 0, 0, 0);
 }
