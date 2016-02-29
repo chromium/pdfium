@@ -90,60 +90,35 @@ IFX_Font* CFX_StdFontMgrImp::GetDefFontByCharset(
   return GetDefFontByCodePage(FX_GetCodePageFromCharset(nCharset), dwFontStyles,
                               pszFontFamily);
 }
-#define _FX_USEGASFONTMGR_
+
 IFX_Font* CFX_StdFontMgrImp::GetDefFontByUnicode(
     FX_WCHAR wUnicode,
     FX_DWORD dwFontStyles,
     const FX_WCHAR* pszFontFamily) {
   const FGAS_FONTUSB* pRet = FGAS_GetUnicodeBitField(wUnicode);
-  if (pRet->wBitField == 999) {
-    return NULL;
-  }
+  if (pRet->wBitField == 999)
+    return nullptr;
+
   FX_DWORD dwHash =
       FGAS_GetFontFamilyHash(pszFontFamily, dwFontStyles, pRet->wBitField);
-  IFX_Font* pFont = NULL;
-  if (m_UnicodeFonts.Lookup((void*)(uintptr_t)dwHash, (void*&)pFont)) {
-    return pFont ? LoadFont(pFont, dwFontStyles, pRet->wCodePage) : NULL;
-  }
-#ifdef _FX_USEGASFONTMGR_
+  IFX_Font* pFont = nullptr;
+  if (m_UnicodeFonts.Lookup((void*)(uintptr_t)dwHash, (void*&)pFont))
+    return pFont ? LoadFont(pFont, dwFontStyles, pRet->wCodePage) : nullptr;
+
   FX_LPCFONTDESCRIPTOR pFD =
       FindFont(pszFontFamily, dwFontStyles, FALSE, pRet->wCodePage,
                pRet->wBitField, wUnicode);
-  if (pFD == NULL && pszFontFamily) {
-    pFD = FindFont(NULL, dwFontStyles, FALSE, pRet->wCodePage, pRet->wBitField,
-                   wUnicode);
+  if (!pFD && pszFontFamily) {
+    pFD = FindFont(nullptr, dwFontStyles, FALSE, pRet->wCodePage,
+                   pRet->wBitField, wUnicode);
   }
-  if (pFD == NULL) {
-    return NULL;
-  }
-  FXSYS_assert(pFD);
+  if (!pFD)
+    return nullptr;
+
   FX_WORD wCodePage = FX_GetCodePageFromCharset(pFD->uCharSet);
   const FX_WCHAR* pFontFace = pFD->wsFontFace;
   pFont = IFX_Font::LoadFont(pFontFace, dwFontStyles, wCodePage, this);
-#else
-  CFX_FontMapper* pBuiltinMapper =
-      CFX_GEModule::Get()->GetFontMgr()->m_pBuiltinMapper;
-  if (pBuiltinMapper == NULL) {
-    return NULL;
-  }
-  int32_t iWeight =
-      (dwFontStyles & FX_FONTSTYLE_Bold) ? FXFONT_FW_BOLD : FXFONT_FW_NORMAL;
-  int italic_angle = 0;
-  FXFT_Face ftFace = pBuiltinMapper->FindSubstFontByUnicode(
-      wUnicode, dwFontStyles, iWeight, italic_angle);
-  if (ftFace == NULL) {
-    return NULL;
-  }
-  CFX_Font* pFXFont = new CFX_Font;
-  pFXFont->m_Face = ftFace;
-  pFXFont->m_pFontData = FXFT_Get_Face_Stream_Base(ftFace);
-  pFXFont->m_dwSize = FXFT_Get_Face_Stream_Size(ftFace);
-  pFont = IFX_Font::LoadFont(pFXFont, this);
-  FX_WORD wCodePage = pRet->wCodePage;
-  CFX_WideString wsPsName = pFXFont->GetPsName();
-  const FX_WCHAR* pFontFace = wsPsName;
-#endif
-  if (pFont != NULL) {
+  if (pFont) {
     m_Fonts.Add(pFont);
     m_UnicodeFonts.SetAt((void*)(uintptr_t)dwHash, (void*)pFont);
     dwHash = FGAS_GetFontHashCode(wCodePage, dwFontStyles);
@@ -152,8 +127,9 @@ IFX_Font* CFX_StdFontMgrImp::GetDefFontByUnicode(
     m_FamilyFonts.SetAt((void*)(uintptr_t)dwHash, (void*)pFont);
     return LoadFont(pFont, dwFontStyles, wCodePage);
   }
-  return NULL;
+  return nullptr;
 }
+
 IFX_Font* CFX_StdFontMgrImp::GetDefFontByLanguage(
     FX_WORD wLanguage,
     FX_DWORD dwFontStyles,
