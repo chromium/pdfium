@@ -7,12 +7,15 @@
 #ifndef CORE_SRC_FXGE_ANDROID_FPF_SKIAFONTMGR_H_
 #define CORE_SRC_FXGE_ANDROID_FPF_SKIAFONTMGR_H_
 
+#include "core/include/fxcrt/fx_system.h"
+
 #if _FX_OS_ == _FX_ANDROID_
 
 #include <map>
 #include <vector>
 
 #include "core/include/fxge/fpf.h"
+#include "core/include/fxge/fx_font.h"
 
 #define FPF_SKIAFONTTYPE_Unknown 0
 #define FPF_SKIAFONTTYPE_Path 1

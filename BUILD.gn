@@ -530,7 +530,6 @@ static_library("fxge") {
     "core/src/fxge/android/fx_android_font.cpp",
     "core/src/fxge/android/fx_android_font.h",
     "core/src/fxge/android/fx_android_imp.cpp",
-    "core/src/fxge/android/fx_fpf.h",
     "core/src/fxge/apple/apple_int.h",
     "core/src/fxge/apple/fx_apple_platform.cpp",
     "core/src/fxge/apple/fx_mac_imp.cpp",

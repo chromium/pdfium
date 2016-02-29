@@ -7,8 +7,14 @@
 #ifndef CORE_SRC_FXGE_ANDROID_FX_ANDROID_FONT_H_
 #define CORE_SRC_FXGE_ANDROID_FX_ANDROID_FONT_H_
 
+#include "core/include/fxcrt/fx_system.h"
+
 #if _FX_OS_ == _FX_ANDROID_
+
+#include "core/include/fxge/fx_font.h"
+
 class IFPF_FontMgr;
+
 class CFX_AndroidFontInfo : public IFX_SystemFontInfo {
  public:
   CFX_AndroidFontInfo();

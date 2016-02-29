@@ -4,8 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/src/fxge/android/fx_fpf.h"
+#include "core/include/fxcrt/fx_system.h"
+
 #if _FX_OS_ == _FX_ANDROID_
+
+#include "core/include/fxge/fpf.h"
+#include "core/include/fxge/fx_ge.h"
+#include "core/src/fxge/android/fx_android_font.h"
+
 void CFX_GEModule::InitPlatform() {
   IFPF_DeviceModule* pDeviceModule = FPF_GetDeviceModule();
   if (!pDeviceModule) {
@@ -24,4 +30,5 @@ void CFX_GEModule::DestroyPlatform() {
     ((IFPF_DeviceModule*)m_pPlatformData)->Destroy();
   }
 }
+
 #endif
