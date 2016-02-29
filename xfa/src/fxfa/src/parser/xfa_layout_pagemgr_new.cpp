@@ -1491,55 +1491,9 @@ void CXFA_LayoutPageMgr::ClearRecordList() {
 }
 CXFA_LayoutItem* CXFA_LayoutPageMgr::FindOrCreateLayoutItem(
     CXFA_Node* pFormNode) {
-#if defined(_XFA_LAYOUTITEM_MAPCACHE_)
-  if (m_NodeToContent.GetCount() > 0) {
-    CXFA_ContentLayoutItem* pLayoutItem = NULL;
-    if (m_NodeToContent.Lookup(pFormNode, (void*&)pLayoutItem)) {
-      if (pLayoutItem->m_pNext) {
-        m_NodeToContent.SetAt(pFormNode, pLayoutItem->m_pNext);
-        pLayoutItem->m_pNext->m_pPrev = NULL;
-        pLayoutItem->m_pNext = NULL;
-      } else {
-        m_NodeToContent.RemoveKey(pFormNode);
-      }
-      pLayoutItem->m_pFormNode = pFormNode;
-      return pLayoutItem;
-    }
-  }
-#endif
-  return (CXFA_LayoutItem*)pFormNode->GetDocument()
-      ->GetParser()
-      ->GetNotify()
-      ->OnCreateLayoutItem(pFormNode);
+  return pFormNode->GetDocument()->GetParser()->GetNotify()->OnCreateLayoutItem(
+      pFormNode);
 }
-#if defined(_XFA_LAYOUTITEM_MAPCACHE_)
-void CXFA_LayoutPageMgr::SaveLayoutItem(CXFA_LayoutItem* pParentLayoutItem) {
-  CXFA_LayoutItem* pNextLayoutItem,
-      * pCurLayoutItem = pParentLayoutItem->m_pFirstChild;
-  while (pCurLayoutItem) {
-    pNextLayoutItem = pCurLayoutItem->m_pNextSibling;
-    if (pCurLayoutItem->m_pFirstChild) {
-      SaveLayoutItem(pCurLayoutItem);
-    }
-    if (pCurLayoutItem->IsContentLayoutItem()) {
-      if (m_NodeToContent.GetValueAt(pCurLayoutItem->m_pFormNode) == NULL) {
-        pCurLayoutItem->m_pFormNode->SetUserData(XFA_LAYOUTITEMKEY, NULL);
-        m_NodeToContent.SetAt(pCurLayoutItem->m_pFormNode, pCurLayoutItem);
-      }
-    } else if (pCurLayoutItem->m_pFormNode->GetClassID() !=
-               XFA_ELEMENT_PageArea) {
-      delete pCurLayoutItem;
-      pCurLayoutItem = NULL;
-    }
-    if (pCurLayoutItem) {
-      pCurLayoutItem->m_pParent = NULL;
-      pCurLayoutItem->m_pNextSibling = NULL;
-      pCurLayoutItem->m_pFirstChild = NULL;
-    }
-    pCurLayoutItem = pNextLayoutItem;
-  }
-}
-#elif defined(_XFA_LAYOUTITEM_ProcessCACHE_)
 static void XFA_SyncRemoveLayoutItem(CXFA_LayoutItem* pParentLayoutItem,
                                      IXFA_Notify* pNotify,
                                      IXFA_DocLayout* pDocLayout) {
@@ -1599,7 +1553,6 @@ void CXFA_LayoutPageMgr::SaveLayoutItem(CXFA_LayoutItem* pParentLayoutItem) {
     pCurLayoutItem = pNextLayoutItem;
   }
 }
-#endif
 CXFA_Node* CXFA_LayoutPageMgr::QueryOverflow(
     CXFA_Node* pFormNode,
     CXFA_LayoutContext* pLayoutContext) {
@@ -1967,7 +1920,6 @@ void CXFA_LayoutPageMgr::PrepareLayout() {
       pPageSetFormNode = pNextPageSet;
     }
   }
-#if defined(_XFA_LAYOUTITEM_MAPCACHE_) || defined(_XFA_LAYOUTITEM_ProcessCACHE_)
   pRootLayoutItem = m_pPageSetLayoutItemRoot;
   CXFA_ContainerLayoutItem* pNextLayout = NULL;
   for (; pRootLayoutItem; pRootLayoutItem = pNextLayout) {
@@ -1976,41 +1928,4 @@ void CXFA_LayoutPageMgr::PrepareLayout() {
     delete pRootLayoutItem;
   }
   m_pPageSetLayoutItemRoot = NULL;
-#else
-  IXFA_Notify* pNotify =
-      m_pLayoutProcessor->GetDocument()->GetParser()->GetNotify();
-  pRootLayoutItem = m_pPageSetLayoutItemRoot;
-  for (; pRootLayoutItem;
-       pRootLayoutItem =
-           (CXFA_ContainerLayoutItem*)pRootLayoutItem->m_pNextSibling) {
-    CXFA_NodeIteratorTemplate<CXFA_ContainerLayoutItem,
-                              CXFA_TraverseStrategy_PageAreaContainerLayoutItem>
-        iterator(pRootLayoutItem);
-    for (CXFA_ContainerLayoutItem* pContainerItem = iterator.GetCurrent();
-         pContainerItem; pContainerItem = iterator.MoveToNext()) {
-      if (pContainerItem->m_pFormNode->GetClassID() != XFA_ELEMENT_PageArea) {
-        continue;
-      }
-      CXFA_NodeIteratorTemplate<CXFA_LayoutItem,
-                                CXFA_TraverseStrategy_LayoutItem>
-          iterator(pContainerItem);
-      for (CXFA_LayoutItem* pLayoutItem = iterator.GetCurrent(); pLayoutItem;
-           pLayoutItem = iterator.MoveToNext()) {
-        if (!pLayoutItem->IsContentLayoutItem()) {
-          continue;
-        }
-        pNotify->OnLayoutEvent(m_pLayoutProcessor, pLayoutItem,
-                               XFA_LAYOUTEVENT_ItemRemoving);
-      }
-      pNotify->OnPageEvent(pContainerItem, XFA_PAGEEVENT_PageRemoved);
-    }
-  }
-  pRootLayoutItem = m_pPageSetLayoutItemRoot;
-  CXFA_ContainerLayoutItem* pNextLayout = NULL;
-  for (; pRootLayoutItem; pRootLayoutItem = pNextLayout) {
-    pNextLayout = (CXFA_ContainerLayoutItem*)pRootLayoutItem->m_pNextSibling;
-    XFA_ReleaseLayoutItem_NoPageArea(pRootLayoutItem);
-  }
-  m_pPageSetLayoutItemRoot = NULL;
-#endif
 }

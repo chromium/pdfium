@@ -32,11 +32,7 @@ CXFA_ItemLayoutProcessor::CXFA_ItemLayoutProcessor(CXFA_Node* pNode,
       m_pKeepTailNode(nullptr),
       m_pFormNode(pNode),
       m_pLayoutItem(nullptr),
-#ifdef _XFA_LAYOUTITEM_ProcessCACHE_
       m_pOldLayoutItem(nullptr),
-#else
-      m_pPageMgrCreateItem(nullptr),
-#endif
       m_pCurChildNode(XFA_LAYOUT_INVALIDNODE),
       m_pCurChildPreprocessor(nullptr),
       m_nCurChildNodeStage(XFA_ItemLayoutProcessorStages_None),
@@ -51,10 +47,8 @@ CXFA_ItemLayoutProcessor::CXFA_ItemLayoutProcessor(CXFA_Node* pNode,
       m_bHasAvailHeight(TRUE) {
   FXSYS_assert(m_pFormNode && (m_pFormNode->IsContainerNode() ||
                                m_pFormNode->GetClassID() == XFA_ELEMENT_Form));
-#ifdef _XFA_LAYOUTITEM_ProcessCACHE_
   m_pOldLayoutItem =
       (CXFA_ContentLayoutItem*)m_pFormNode->GetUserData(XFA_LAYOUTITEMKEY);
-#endif
 }
 CXFA_ContentLayoutItem* CXFA_ItemLayoutProcessor::CreateContentLayoutItem(
     CXFA_Node* pFormNode) {
@@ -62,7 +56,6 @@ CXFA_ContentLayoutItem* CXFA_ItemLayoutProcessor::CreateContentLayoutItem(
     return NULL;
   }
   CXFA_ContentLayoutItem* pLayoutItem = NULL;
-#ifdef _XFA_LAYOUTITEM_ProcessCACHE_
   if (m_pOldLayoutItem) {
     pLayoutItem = m_pOldLayoutItem;
     m_pOldLayoutItem = m_pOldLayoutItem->m_pNext;
@@ -72,11 +65,6 @@ CXFA_ContentLayoutItem* CXFA_ItemLayoutProcessor::CreateContentLayoutItem(
                     ->GetParser()
                     ->GetNotify()
                     ->OnCreateLayoutItem(pFormNode);
-#else
-  pLayoutItem =
-      (CXFA_ContentLayoutItem*)m_pPageMgrCreateItem->FindOrCreateLayoutItem(
-          pFormNode);
-#endif
   CXFA_ContentLayoutItem* pPrevLayoutItem =
       (CXFA_ContentLayoutItem*)pFormNode->GetUserData(XFA_LAYOUTITEMKEY);
   if (pPrevLayoutItem) {
@@ -559,7 +547,6 @@ CXFA_ContentLayoutItem* CXFA_ItemLayoutProcessor::ExtractLayoutItem() {
     m_pLayoutItem = (CXFA_ContentLayoutItem*)pLayoutItem->m_pNextSibling;
     pLayoutItem->m_pNextSibling = NULL;
   }
-#ifdef _XFA_LAYOUTITEM_ProcessCACHE_
   if (m_nCurChildNodeStage == XFA_ItemLayoutProcessorStages_Done &&
       ToContentLayoutItem(m_pOldLayoutItem)) {
     if (m_pOldLayoutItem->m_pPrev) {
@@ -579,7 +566,6 @@ CXFA_ContentLayoutItem* CXFA_ItemLayoutProcessor::ExtractLayoutItem() {
     }
     m_pOldLayoutItem = NULL;
   }
-#endif
   return pLayoutItem;
 }
 static FX_BOOL XFA_ItemLayoutProcessor_FindBreakNode(
@@ -628,7 +614,6 @@ static FX_BOOL XFA_ItemLayoutProcessor_FindBreakNode(
   }
   return bFindRs;
 }
-#ifdef _XFA_LAYOUTITEM_ProcessCACHE_
 static void XFA_DeleteLayoutGeneratedNode(CXFA_Node* pGenerateNode) {
   IXFA_Notify* pNotify = pGenerateNode->GetDocument()->GetParser()->GetNotify();
   IXFA_DocLayout* pDocLayout = pGenerateNode->GetDocument()->GetDocLayout();
@@ -649,7 +634,6 @@ static void XFA_DeleteLayoutGeneratedNode(CXFA_Node* pGenerateNode) {
   }
   pGenerateNode->GetNodeItem(XFA_NODEITEM_Parent)->RemoveChild(pGenerateNode);
 }
-#endif
 void CXFA_ItemLayoutProcessor::XFA_ItemLayoutProcessor_GotoNextContainerNode(
     CXFA_Node*& pCurActionNode,
     XFA_ItemLayoutProcessorStages& nCurStage,
@@ -759,11 +743,9 @@ void CXFA_ItemLayoutProcessor::XFA_ItemLayoutProcessor_GotoNextContainerNode(
         CXFA_Node* pSaveNode = pNextChildContainer;
         pNextChildContainer = pNextChildContainer->GetNodeItem(
             XFA_NODEITEM_NextSibling, XFA_OBJECTTYPE_ContainerNode);
-#ifdef _XFA_LAYOUTITEM_ProcessCACHE_
         if (pSaveNode->HasFlag(XFA_NODEFLAG_UnusedNode)) {
           XFA_DeleteLayoutGeneratedNode(pSaveNode);
         }
-#endif
       }
       if (!pNextChildContainer) {
         goto NoMoreChildContainer;
@@ -1049,9 +1031,6 @@ void CXFA_ItemLayoutProcessor::DoLayoutPageArea(
     }
     CXFA_ItemLayoutProcessor* pProcessor =
         new CXFA_ItemLayoutProcessor(pCurChildNode, NULL);
-#ifndef _XFA_LAYOUTITEM_ProcessCACHE_
-    pProcessor->m_pPageMgrCreateItem = m_pPageMgrCreateItem;
-#endif
     pProcessor->DoLayout(FALSE, XFA_LAYOUT_FLOAT_MAX);
     if (!pProcessor->HasLayoutItem()) {
       delete pProcessor;
@@ -1124,9 +1103,6 @@ void CXFA_ItemLayoutProcessor::DoLayoutPositionedContainer(
     }
     CXFA_ItemLayoutProcessor* pProcessor =
         new CXFA_ItemLayoutProcessor(m_pCurChildNode, m_pPageMgr);
-#ifndef _XFA_LAYOUTITEM_ProcessCACHE_
-    pProcessor->m_pPageMgrCreateItem = m_pPageMgrCreateItem;
-#endif
     if (pContext && pContext->m_prgSpecifiedColumnWidths) {
       int32_t iColSpan = m_pCurChildNode->GetInteger(XFA_ATTRIBUTE_ColSpan);
       if (iColSpan <=
@@ -1433,9 +1409,6 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
     }
     CXFA_ItemLayoutProcessor* pProcessor =
         new CXFA_ItemLayoutProcessor(m_pCurChildNode, m_pPageMgr);
-#ifndef _XFA_LAYOUTITEM_ProcessCACHE_
-    pProcessor->m_pPageMgrCreateItem = m_pPageMgrCreateItem;
-#endif
     pProcessor->DoLayout(FALSE, XFA_LAYOUT_FLOAT_MAX, XFA_LAYOUT_FLOAT_MAX,
                          pLayoutContext);
     if (!pProcessor->HasLayoutItem()) {
@@ -1770,9 +1743,6 @@ static FX_FLOAT XFA_ItemLayoutProcessor_InsertPendingItems(
         new CXFA_ItemLayoutProcessor(pProcessor->m_PendingNodes.front(),
                                      nullptr));
     pProcessor->m_PendingNodes.pop_front();
-#ifndef _XFA_LAYOUTITEM_ProcessCACHE_
-    pPendingProcessor->m_pPageMgrCreateItem = pProcessor->m_pPageMgrCreateItem;
-#endif
     pPendingProcessor->DoLayout(FALSE, XFA_LAYOUT_FLOAT_MAX);
     CXFA_ContentLayoutItem* pPendingLayoutItem =
         pPendingProcessor->HasLayoutItem()
@@ -2025,10 +1995,6 @@ static XFA_ItemLayoutProcessorResult XFA_ItemLayoutProcessor_InsertFlowedItem(
           if (pOverflowTrailerNode) {
             CXFA_ItemLayoutProcessor* pOverflowLeaderProcessor =
                 new CXFA_ItemLayoutProcessor(pOverflowTrailerNode, NULL);
-#ifndef _XFA_LAYOUTITEM_ProcessCACHE_
-            pOverflowLeaderProcessor->m_pPageMgrCreateItem =
-                pProcessor->m_pPageMgrCreateItem;
-#endif
             pOverflowLeaderProcessor->DoLayout(FALSE, XFA_LAYOUT_FLOAT_MAX);
             pTrailerLayoutItem =
                 pOverflowLeaderProcessor->HasLayoutItem()
@@ -2484,9 +2450,6 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
               } else {
                 CXFA_ItemLayoutProcessor* pProcessor =
                     new CXFA_ItemLayoutProcessor(pTrailerNode, NULL);
-#ifndef _XFA_LAYOUTITEM_ProcessCACHE_
-                pProcessor->m_pPageMgrCreateItem = m_pPageMgrCreateItem;
-#endif
                 XFA_ItemLayoutProcessor_InsertFlowedItem(
                     this, pProcessor, bContainerWidthAutoSize,
                     bContainerHeightAutoSize, fContainerHeight, eFlowStrategy,
@@ -2517,9 +2480,6 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
             if (JudgeLeaderOrTrailerForOccur(pTrailerNode)) {
               CXFA_ItemLayoutProcessor* pProcessor =
                   new CXFA_ItemLayoutProcessor(pTrailerNode, NULL);
-#ifndef _XFA_LAYOUTITEM_ProcessCACHE_
-              pProcessor->m_pPageMgrCreateItem = m_pPageMgrCreateItem;
-#endif
               XFA_ItemLayoutProcessor_InsertFlowedItem(
                   this, pProcessor, bContainerWidthAutoSize,
                   bContainerHeightAutoSize, fContainerHeight, eFlowStrategy,
@@ -2541,9 +2501,6 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
                 rgCurLineLayoutItems->RemoveAll();
                 CXFA_ItemLayoutProcessor* pProcessor =
                     new CXFA_ItemLayoutProcessor(pLeaderNode, NULL);
-#ifndef _XFA_LAYOUTITEM_ProcessCACHE_
-                pProcessor->m_pPageMgrCreateItem = m_pPageMgrCreateItem;
-#endif
                 XFA_ItemLayoutProcessor_InsertFlowedItem(
                     this, pProcessor, bContainerWidthAutoSize,
                     bContainerHeightAutoSize, fContainerHeight, eFlowStrategy,
@@ -2581,9 +2538,6 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
                      m_pPageMgr->ProcessBookendLeaderOrTrailer(
                          m_pCurChildNode, TRUE, pLeaderNode)) {
             pProcessor = new CXFA_ItemLayoutProcessor(pLeaderNode, m_pPageMgr);
-#ifndef _XFA_LAYOUTITEM_ProcessCACHE_
-            pProcessor->m_pPageMgrCreateItem = m_pPageMgrCreateItem;
-#endif
           }
           if (pProcessor) {
             if (XFA_ItemLayoutProcessor_InsertFlowedItem(
@@ -2610,9 +2564,6 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
                      m_pPageMgr->ProcessBookendLeaderOrTrailer(
                          m_pCurChildNode, FALSE, pTrailerNode)) {
             pProcessor = new CXFA_ItemLayoutProcessor(pTrailerNode, m_pPageMgr);
-#ifndef _XFA_LAYOUTITEM_ProcessCACHE_
-            pProcessor->m_pPageMgrCreateItem = m_pPageMgrCreateItem;
-#endif
           }
           if (pProcessor) {
             if (XFA_ItemLayoutProcessor_InsertFlowedItem(
@@ -2649,9 +2600,6 @@ XFA_ItemLayoutProcessorResult CXFA_ItemLayoutProcessor::DoLayoutFlowedContainer(
             } else {
               pProcessor =
                   new CXFA_ItemLayoutProcessor(m_pCurChildNode, m_pPageMgr);
-#ifndef _XFA_LAYOUTITEM_ProcessCACHE_
-              pProcessor->m_pPageMgrCreateItem = m_pPageMgrCreateItem;
-#endif
             }
             XFA_ItemLayoutProcessor_InsertPendingItems(pProcessor,
                                                        m_pCurChildNode);

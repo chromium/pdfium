@@ -72,9 +72,6 @@ int32_t CXFA_LayoutProcessor::StartLayout(FX_BOOL bForceRestart) {
   }
   m_pRootItemLayoutProcessor =
       new CXFA_ItemLayoutProcessor(pFormRoot, m_pLayoutPageMgr);
-#ifndef _XFA_LAYOUTITEM_ProcessCACHE_
-  m_pRootItemLayoutProcessor->m_pPageMgrCreateItem = m_pLayoutPageMgr;
-#endif
   m_nProgressCounter = 1;
   return 0;
 }

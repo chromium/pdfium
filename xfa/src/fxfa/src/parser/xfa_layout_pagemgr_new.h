@@ -130,9 +130,7 @@ class CXFA_LayoutPageMgr {
   void MergePageSetContents();
   void LayoutPageSetContents();
   void PrepareLayout();
-#if defined(_XFA_LAYOUTITEM_MAPCACHE_) || defined(_XFA_LAYOUTITEM_ProcessCACHE_)
   void SaveLayoutItem(CXFA_LayoutItem* pParentLayoutItem);
-#endif
   CXFA_LayoutProcessor* m_pLayoutProcessor;
   CXFA_Node* m_pTemplatePageSetRoot;
   CXFA_ContainerLayoutItem* m_pPageSetLayoutItemRoot;
@@ -146,9 +144,6 @@ class CXFA_LayoutPageMgr {
   FX_BOOL m_bCreateOverFlowPage;
   CFX_MapPtrTemplate<CXFA_Node*, int32_t> m_pPageSetMap;
   CFX_ArrayTemplate<CXFA_ContainerLayoutItem*> m_PageArray;
-#ifdef _XFA_LAYOUTITEM_MAPCACHE_
-  CFX_MapPtrToPtr m_NodeToContent;
-#endif
 };
 
 #endif  // XFA_SRC_FXFA_SRC_PARSER_XFA_LAYOUT_PAGEMGR_NEW_H_

@@ -172,11 +172,7 @@ class CXFA_ItemLayoutProcessor {
   CXFA_Node* m_pKeepTailNode;
   CXFA_Node* m_pFormNode;
   CXFA_ContentLayoutItem* m_pLayoutItem;
-#ifdef _XFA_LAYOUTITEM_ProcessCACHE_
   CXFA_ContentLayoutItem* m_pOldLayoutItem;
-#else
-  CXFA_LayoutPageMgr* m_pPageMgrCreateItem;
-#endif
   CXFA_Node* m_pCurChildNode;
   CXFA_ItemLayoutProcessor* m_pCurChildPreprocessor;
   XFA_ItemLayoutProcessorStages m_nCurChildNodeStage;

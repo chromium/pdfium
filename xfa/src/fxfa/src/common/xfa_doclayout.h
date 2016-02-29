@@ -9,8 +9,6 @@
 
 #include "xfa/src/fxfa/src/common/xfa_document.h"
 
-#define _XFA_LAYOUTITEM_ProcessCACHE_
-
 class CXFA_ContainerLayoutItem;
 class CXFA_ContentLayoutItem;
 class IXFA_DocLayout;
