@@ -7,6 +7,9 @@
 #ifndef XFA_SRC_FGAS_SRC_CRT_FX_UTILS_H_
 #define XFA_SRC_FGAS_SRC_CRT_FX_UTILS_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+#include "xfa/src/fgas/include/fx_mem.h"
+
 class CFX_BaseMassArrayImp : public CFX_Target {
  public:
   CFX_BaseMassArrayImp(int32_t iChunkSize, int32_t iBlockSize);

@@ -7,6 +7,10 @@
 #ifndef XFA_SRC_FGAS_SRC_FONT_FX_STDFONTMGR_H_
 #define XFA_SRC_FGAS_SRC_FONT_FX_STDFONTMGR_H_
 
+#include "core/include/fxcrt/fx_ext.h"
+#include "core/include/fxge/fx_freetype.h"
+#include "core/include/fxge/fx_ge.h"
+#include "third_party/freetype/include/freetype/fttypes.h"
 #include "xfa/src/fgas/include/fx_fnt.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_

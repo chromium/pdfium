@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FGAS_SRC_FONT_FX_FONTUTILS_H_
 #define XFA_SRC_FGAS_SRC_FONT_FX_FONTUTILS_H_
 
+#include "core/include/fxcrt/fx_string.h"
+
 struct FGAS_FONTUSB {
   FX_WCHAR wStartUnicode;
   FX_WCHAR wEndUnicode;

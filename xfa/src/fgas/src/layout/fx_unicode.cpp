@@ -4,8 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/fgas/src/fgas_base.h"
 #include "xfa/src/fgas/src/layout/fx_unicode.h"
+
+#include "xfa/src/fgas/include/fx_ucd.h"
+
 void FX_TEXTLAYOUT_PieceSort(CFX_TPOArray& tpos, int32_t iStart, int32_t iEnd) {
   FXSYS_assert(iStart > -1 && iStart < tpos.GetSize());
   FXSYS_assert(iEnd > -1 && iEnd < tpos.GetSize());

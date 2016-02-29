@@ -11,6 +11,7 @@
 
 #define FX_BIDICLASSBITS 6
 #define FX_BIDICLASSBITSMASK (31 << FX_BIDICLASSBITS)
+
 enum FX_BIDICLASS {
   FX_BIDICLASS_ON = 0,    // Other Neutral
   FX_BIDICLASS_L = 1,     // Left Letter

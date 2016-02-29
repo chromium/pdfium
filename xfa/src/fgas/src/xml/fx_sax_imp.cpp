@@ -4,10 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include <algorithm>
-
-#include "xfa/src/fgas/src/fgas_base.h"
 #include "xfa/src/fgas/src/xml/fx_sax_imp.h"
+
+#include <algorithm>
 
 namespace {
 

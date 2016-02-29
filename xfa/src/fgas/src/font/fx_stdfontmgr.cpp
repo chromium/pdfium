@@ -8,7 +8,6 @@
 
 #include "core/include/fxcrt/fx_stream.h"
 #include "xfa/src/fgas/include/fx_cpg.h"
-#include "xfa/src/fgas/src/fgas_base.h"
 #include "xfa/src/fgas/src/font/fx_fontutils.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_

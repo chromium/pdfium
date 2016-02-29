@@ -10,7 +10,6 @@
 
 #include "xfa/src/fgas/include/fx_cpg.h"
 #include "xfa/src/fgas/include/fx_sys.h"
-#include "xfa/src/fgas/src/fgas_base.h"
 
 IFX_Stream* IFX_Stream::CreateStream(IFX_BufferRead* pBufferRead,
                                      FX_DWORD dwAccess,

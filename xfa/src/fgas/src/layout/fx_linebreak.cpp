@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/include/fxcrt/fx_ucd.h"
 #include "xfa/src/fgas/include/fx_lbk.h"
-#include "xfa/src/fgas/src/fgas_base.h"
 
 const FX_LINEBREAKTYPE gs_FX_LineBreak_PairTable[64][32] = {
     {FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB,

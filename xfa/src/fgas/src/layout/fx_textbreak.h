@@ -7,7 +7,9 @@
 #ifndef XFA_SRC_FGAS_SRC_LAYOUT_FX_TEXTBREAK_H_
 #define XFA_SRC_FGAS_SRC_LAYOUT_FX_TEXTBREAK_H_
 
+#include "core/include/fxcrt/fx_ucd.h"
 #include "core/include/fxcrt/fx_memory.h"
+#include "xfa/src/fgas/include/fx_tbk.h"
 #include "xfa/src/fgas/src/layout/fx_unicode.h"
 
 class IFX_ArabicChar;

@@ -9,7 +9,10 @@
 
 #include "core/include/fxcrt/fx_ucd.h"
 #include "core/include/fxge/fx_ge.h"
+#include "xfa/src/fgas/include/fx_mem.h"
+#include "xfa/src/fgas/include/fx_tbk.h"
 #include "xfa/src/fgas/include/fx_ucd.h"
+#include "xfa/src/fgas/include/fx_utl.h"
 
 class IFX_Unknown;
 class IFX_Font;

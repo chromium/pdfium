@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/src/fgas/src/layout/fx_rtfbreak.h"
+
 #include <algorithm>
 
 #include "xfa/src/fgas/include/fx_lbk.h"
-#include "xfa/src/fgas/src/fgas_base.h"
-#include "xfa/src/fgas/src/layout/fx_rtfbreak.h"
 #include "xfa/src/fgas/src/layout/fx_unicode.h"
 
 IFX_RTFBreak* IFX_RTFBreak::Create(FX_DWORD dwPolicies) {

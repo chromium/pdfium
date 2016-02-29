@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FGAS_INCLUDE_FX_UCD_H_
 #define XFA_SRC_FGAS_INCLUDE_FX_UCD_H_
 
+#include "xfa/src/fgas/include/fx_fnt.h"
+
 #define FX_JAPCHARPROPERTYEX_Left 0x01
 #define FX_JAPCHARPROPERTYEX_Center 0x02
 #define FX_JAPCHARPROPERTYEX_Right 0x03

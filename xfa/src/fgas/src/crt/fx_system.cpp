@@ -6,7 +6,8 @@
 
 #include <algorithm>
 
-#include "xfa/src/fgas/src/fgas_base.h"
+#include "core/include/fxcrt/fx_system.h"
+
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN32_MOBILE_ || \
     _FX_OS_ == _FX_WIN64_
 #include <io.h>

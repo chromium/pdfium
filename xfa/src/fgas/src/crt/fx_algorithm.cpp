@@ -4,10 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/fgas/src/fgas_base.h"
+#include "core/include/fxcrt/fx_basic.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 const static FX_CHAR g_FXBase64EncoderMap[64] = {
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
     'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',

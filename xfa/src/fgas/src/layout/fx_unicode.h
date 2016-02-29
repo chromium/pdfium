@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FGAS_SRC_LAYOUT_FX_UNICODE_H_
 #define XFA_SRC_FGAS_SRC_LAYOUT_FX_UNICODE_H_
 
+#include "xfa/src/fgas/include/fx_utl.h"
+
 struct FX_TPO {
   int32_t index;
   int32_t pos;

@@ -921,7 +921,6 @@ if (pdf_enable_xfa) {
       "xfa/src/fgas/src/crt/fx_system.cpp",
       "xfa/src/fgas/src/crt/fx_utils.cpp",
       "xfa/src/fgas/src/crt/fx_utils.h",
-      "xfa/src/fgas/src/fgas_base.h",
       "xfa/src/fgas/src/font/fx_fontutils.cpp",
       "xfa/src/fgas/src/font/fx_fontutils.h",
       "xfa/src/fgas/src/font/fx_gefont.cpp",

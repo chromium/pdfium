@@ -4,11 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/src/fgas/src/crt/fx_memory.h"
+
 #include <algorithm>
 
-#include "xfa/src/fgas/src/crt/fx_memory.h"
-#include "xfa/src/fgas/src/fgas_base.h"
 #define FX_4BYTEALIGN(size) (((size) + 3) / 4 * 4)
+
 IFX_MEMAllocator* FX_CreateAllocator(FX_ALLOCTYPE eType,
                                      size_t chunkSize,
                                      size_t blockSize) {

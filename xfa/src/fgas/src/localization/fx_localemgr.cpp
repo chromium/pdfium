@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/include/fxcrt/fx_xml.h"
-#include "xfa/src/fgas/src/fgas_base.h"
 #include "xfa/src/fgas/src/localization/fx_localemgr.h"
+
+#include "core/include/fxcrt/fx_xml.h"
 
 IFX_LocaleMgr* FX_LocaleMgr_Create(const FX_WCHAR* pszLocalPath,
                                    FX_WORD wDefaultLCID) {
