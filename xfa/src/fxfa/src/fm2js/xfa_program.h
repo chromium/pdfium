@@ -7,6 +7,9 @@
 #ifndef XFA_SRC_FXFA_SRC_FM2JS_XFA_PROGRAM_H_
 #define XFA_SRC_FXFA_SRC_FM2JS_XFA_PROGRAM_H_
 
+#include "xfa/src/fxfa/src/fm2js/xfa_error.h"
+#include "xfa/src/fxfa/src/fm2js/xfa_fmparse.h"
+
 class CXFA_FMProgram {
  public:
   CXFA_FMProgram();

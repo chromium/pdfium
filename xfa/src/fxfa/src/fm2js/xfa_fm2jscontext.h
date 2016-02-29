@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXFA_SRC_FM2JS_XFA_FM2JSCONTEXT_H_
 #define XFA_SRC_FXFA_SRC_FM2JS_XFA_FM2JSCONTEXT_H_
 
+#include "xfa/src/fxfa/src/common/xfa_script.h"
+
 class CXFA_FM2JSContext {
  public:
   static void Abs(FXJSE_HOBJECT hThis,

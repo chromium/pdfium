@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "xfa/src/fxfa/src/fm2js/xfa_expression.h"
 #include "xfa/src/fxfa/src/fm2js/xfa_lexer.h"
 
 class CXFA_FMParse {

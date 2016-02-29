@@ -4,11 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/fxfa/src/fm2js/xfa_fm2js.h"
+#include "xfa/src/fxfa/src/fm2js/xfa_expression.h"
+
+#include "core/include/fxcrt/fx_basic.h"
+
 static CFX_WideStringC RUNTIMEBLOCKTEMPARRAY =
     FX_WSTRC(L"foxit_xfa_formcalc_runtime_block_temp_array");
 static CFX_WideStringC RUNTIMEBLOCKTEMPARRAYINDEX =
     FX_WSTRC(L"foxit_xfa_formcalc_runtime_block_temp_array_index");
+
 CXFA_FMExpression::CXFA_FMExpression(FX_DWORD line)
     : m_type(XFA_FM_EXPTYPE_UNKNOWN), m_line(line) {
 }

@@ -7,7 +7,13 @@
 #ifndef XFA_SRC_FXFA_SRC_FM2JS_XFA_SIMPLEEXPRESSION_H_
 #define XFA_SRC_FXFA_SRC_FM2JS_XFA_SIMPLEEXPRESSION_H_
 
+#include "core/include/fxcrt/fx_basic.h"
 #include "xfa/src/fxfa/src/fm2js/xfa_lexer.h"
+
+#define RUNTIMEFUNCTIONRETURNVALUE \
+  (FX_WSTRC(L"foxit_xfa_formcalc_runtime_func_return_value"))
+#define EXCLAMATION_IN_IDENTIFIER \
+  (FX_WSTRC(L"foxit_xfa_formcalc__exclamation__"))
 
 enum XFA_FM_SimpleExpressionType {
   ASSIGN,

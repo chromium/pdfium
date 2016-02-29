@@ -9,6 +9,7 @@
 
 #include "core/include/fxcrt/fx_basic.h"
 #include "xfa/include/fxjse/fxjse.h"
+#include "xfa/src/fxfa/src/common/xfa_document.h"
 
 #define FOXIT_XFA_FM2JS_FORMCALC_RUNTIME "foxit_xfa_formcalc_runtime"
 

@@ -9,6 +9,9 @@
 
 #include <memory>
 
+#include "core/include/fxcrt/fx_string.h"
+#include "xfa/src/fxfa/src/fm2js/xfa_error.h"
+
 enum XFA_FM_TOKEN {
   TOKand,
   TOKlparen,

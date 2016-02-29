@@ -577,7 +577,6 @@
         "xfa/src/fxfa/src/fm2js/xfa_error.h",
         "xfa/src/fxfa/src/fm2js/xfa_expression.cpp",
         "xfa/src/fxfa/src/fm2js/xfa_expression.h",
-        "xfa/src/fxfa/src/fm2js/xfa_fm2js.h",
         "xfa/src/fxfa/src/fm2js/xfa_fm2jsapi.cpp",
         "xfa/src/fxfa/src/fm2js/xfa_fm2jscontext.cpp",
         "xfa/src/fxfa/src/fm2js/xfa_fm2jscontext.h",

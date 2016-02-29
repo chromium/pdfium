@@ -4,10 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/fxfa/src/fm2js/xfa_fm2js.h"
+#include "xfa/src/fxfa/src/common/xfa_fm2jsapi.h"
+
+#include "core/include/fxcrt/fx_basic.h"
+#include "xfa/src/fxfa/src/common/xfa_document.h"
+#include "xfa/src/fxfa/src/fm2js/xfa_fm2jscontext.h"
+#include "xfa/src/fxfa/src/fm2js/xfa_program.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 int32_t XFA_FM2JS_Translate(const CFX_WideStringC& wsFormcalc,
                             CFX_WideTextBuf& wsJavascript,
                             CFX_WideString& wsError) {

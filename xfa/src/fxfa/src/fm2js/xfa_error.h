@@ -7,6 +7,9 @@
 #ifndef XFA_SRC_FXFA_SRC_FM2JS_XFA_ERROR_H_
 #define XFA_SRC_FXFA_SRC_FM2JS_XFA_ERROR_H_
 
+#include "core/include/fxcrt/fx_string.h"
+#include "core/include/fxcrt/fx_system.h"
+
 enum XFA_FM_ERRMSG {
   FMERR_UNSUPPORTED_CHAR,
   FMERR_BAD_SUFFIX_NUMBER,
@@ -18,6 +21,7 @@ enum XFA_FM_ERRMSG {
   FMERR_EXPTECTED_OPERATOR,
   FMERR_MAXIMUM
 };
+
 class CXFA_FMErrorInfo {
  public:
   CXFA_FMErrorInfo() : linenum(0){};
