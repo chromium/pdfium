@@ -891,13 +891,9 @@ void FPDF_RenderPage_Retail(CRenderContext* pContext,
   CFX_Matrix matrix;
   pPage->GetDisplayMatrix(matrix, start_x, start_y, size_x, size_y, rotate);
 
-  FX_RECT clip;
-  clip.left = start_x;
-  clip.right = start_x + size_x;
-  clip.top = start_y;
-  clip.bottom = start_y + size_y;
   pContext->m_pDevice->SaveState();
-  pContext->m_pDevice->SetClip_Rect(&clip);
+  pContext->m_pDevice->SetClip_Rect(
+      FX_RECT(start_x, start_y, start_x + size_x, start_y + size_y));
 
   pContext->m_pContext = new CPDF_RenderContext(pPage);
   pContext->m_pContext->AppendLayer(pPage, &matrix);

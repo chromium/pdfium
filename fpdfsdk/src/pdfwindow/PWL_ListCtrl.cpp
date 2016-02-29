@@ -141,10 +141,8 @@ void CPWL_ListCtrl::DrawChildAppearance(CFX_RenderDevice* pDevice,
   CFX_FloatRect rcClient = GetClientRect();
   CFX_FloatRect rcTemp = rcClient;
   pUser2Device->TransformRect(rcTemp);
-  FX_RECT rcClip((int32_t)rcTemp.left, (int32_t)rcTemp.bottom,
-                 (int32_t)rcTemp.right, (int32_t)rcTemp.top);
-
-  pDevice->SetClip_Rect(&rcClip);
+  pDevice->SetClip_Rect(FX_RECT((int32_t)rcTemp.left, (int32_t)rcTemp.bottom,
+                                (int32_t)rcTemp.right, (int32_t)rcTemp.top));
 
   for (int32_t i = 0, sz = m_aChildren.GetSize(); i < sz; i++) {
     if (CPWL_Wnd* pChild = m_aChildren.GetAt(i)) {

@@ -914,8 +914,7 @@ void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern,
       return;
     }
   } else if (pPageObj->IsImage()) {
-    FX_RECT rect = pPageObj->GetBBox(pObj2Device);
-    m_pDevice->SetClip_Rect(&rect);
+    m_pDevice->SetClip_Rect(pPageObj->GetBBox(pObj2Device));
   } else {
     return;
   }
@@ -996,8 +995,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
       return;
     }
   } else if (pPageObj->IsImage()) {
-    FX_RECT rect = pPageObj->GetBBox(pObj2Device);
-    m_pDevice->SetClip_Rect(&rect);
+    m_pDevice->SetClip_Rect(pPageObj->GetBBox(pObj2Device));
   } else {
     return;
   }

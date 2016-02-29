@@ -239,36 +239,26 @@ typedef struct {
   FX_DWORD m_ExtGID;
   FX_BOOL m_bFontStyle;
 } FXTEXT_CHARPOS;
+
 class CFX_RenderDevice {
  public:
   CFX_RenderDevice();
-
   virtual ~CFX_RenderDevice();
 
   void SetDeviceDriver(IFX_RenderDeviceDriver* pDriver);
-
   IFX_RenderDeviceDriver* GetDeviceDriver() const { return m_pDeviceDriver; }
 
   FX_BOOL StartRendering();
-
   void EndRendering();
-
   void SaveState();
-
   void RestoreState(FX_BOOL bKeepSaved = FALSE);
 
   int GetWidth() const { return m_Width; }
-
   int GetHeight() const { return m_Height; }
-
   int GetDeviceClass() const { return m_DeviceClass; }
-
   int GetBPP() const { return m_bpp; }
-
   int GetRenderCaps() const { return m_RenderCaps; }
-
   int GetDeviceCaps(int id) const;
-
   CFX_Matrix GetCTM() const;
 
   CFX_DIBitmap* GetBitmap() const { return m_pBitmap; }
@@ -284,8 +274,7 @@ class CFX_RenderDevice {
                            const CFX_Matrix* pObject2Device,
                            int fill_mode);
 
-  FX_BOOL SetClip_Rect(const FX_RECT* pRect);
-
+  FX_BOOL SetClip_Rect(const FX_RECT& pRect);
   FX_BOOL SetClip_PathStroke(const CFX_PathData* pPathData,
                              const CFX_Matrix* pObject2Device,
                              const CFX_GraphStateData* pGraphState);
@@ -405,28 +394,19 @@ class CFX_RenderDevice {
   virtual void End() {}
 
  private:
-  CFX_DIBitmap* m_pBitmap;
-
-  int m_Width;
-
-  int m_Height;
-
-  int m_bpp;
-
-  int m_RenderCaps;
-
-  int m_DeviceClass;
-
-  FX_RECT m_ClipBox;
-
- protected:
-  IFX_RenderDeviceDriver* m_pDeviceDriver;
-
- private:
   void InitDeviceInfo();
-
   void UpdateClipBox();
+
+  CFX_DIBitmap* m_pBitmap;
+  int m_Width;
+  int m_Height;
+  int m_bpp;
+  int m_RenderCaps;
+  int m_DeviceClass;
+  FX_RECT m_ClipBox;
+  IFX_RenderDeviceDriver* m_pDeviceDriver;
 };
+
 class CFX_FxgeDevice : public CFX_RenderDevice {
  public:
   CFX_FxgeDevice();

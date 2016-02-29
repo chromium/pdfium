@@ -71,11 +71,10 @@ void CFDE_FxgeDevice::RestoreState(FDE_HDEVICESTATE hState) {
 }
 FX_BOOL CFDE_FxgeDevice::SetClipRect(const CFX_RectF& rtClip) {
   m_rtClip = rtClip;
-  FX_RECT rt((int32_t)FXSYS_floor(rtClip.left),
-             (int32_t)FXSYS_floor(rtClip.top),
-             (int32_t)FXSYS_ceil(rtClip.right()),
-             (int32_t)FXSYS_ceil(rtClip.bottom()));
-  return m_pDevice->SetClip_Rect(&rt);
+  return m_pDevice->SetClip_Rect(FX_RECT((int32_t)FXSYS_floor(rtClip.left),
+                                         (int32_t)FXSYS_floor(rtClip.top),
+                                         (int32_t)FXSYS_ceil(rtClip.right()),
+                                         (int32_t)FXSYS_ceil(rtClip.bottom())));
 }
 const CFX_RectF& CFDE_FxgeDevice::GetClipRect() {
   return m_rtClip;

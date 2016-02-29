@@ -485,11 +485,11 @@ FX_ERR CFX_Graphics::SetClipRect(const CFX_RectF& rect) {
     case FX_CONTEXT_Device: {
       if (!_renderDevice)
         return FX_ERR_Property_Invalid;
-      FX_RECT r(FXSYS_round(rect.left), FXSYS_round(rect.top),
-                FXSYS_round(rect.right()), FXSYS_round(rect.bottom()));
-      FX_BOOL result = _renderDevice->SetClip_Rect(&r);
-      if (!result)
+      if (!_renderDevice->SetClip_Rect(
+              FX_RECT(FXSYS_round(rect.left), FXSYS_round(rect.top),
+                      FXSYS_round(rect.right()), FXSYS_round(rect.bottom())))) {
         return FX_ERR_Method_Not_Supported;
+      }
       return FX_ERR_Succeeded;
     }
     default: { return FX_ERR_Property_Invalid; }

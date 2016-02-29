@@ -332,11 +332,7 @@ DLLEXPORT void STDCALL FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,
   CFX_Matrix matrix;
   pPage->GetDisplayMatrix(matrix, start_x, start_y, size_x, size_y, rotate);
 
-  FX_RECT clip;
-  clip.left = start_x;
-  clip.right = start_x + size_x;
-  clip.top = start_y;
-  clip.bottom = start_y + size_y;
+  FX_RECT clip(start_x, start_y, start_x + size_x, start_y + size_y);
 
 #ifdef _SKIA_SUPPORT_
   std::unique_ptr<CFX_SkiaDevice> pDevice(new CFX_SkiaDevice);
@@ -345,7 +341,7 @@ DLLEXPORT void STDCALL FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,
 #endif
   pDevice->Attach((CFX_DIBitmap*)bitmap);
   pDevice->SaveState();
-  pDevice->SetClip_Rect(&clip);
+  pDevice->SetClip_Rect(clip);
 
 #ifndef PDF_ENABLE_XFA
   if (CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, pPage))

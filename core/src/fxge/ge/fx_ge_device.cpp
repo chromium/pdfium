@@ -91,13 +91,12 @@ FX_BOOL CFX_RenderDevice::SetClip_PathStroke(
   UpdateClipBox();
   return TRUE;
 }
-FX_BOOL CFX_RenderDevice::SetClip_Rect(const FX_RECT* pRect) {
+FX_BOOL CFX_RenderDevice::SetClip_Rect(const FX_RECT& rect) {
   CFX_PathData path;
-  path.AppendRect((FX_FLOAT)(pRect->left), (FX_FLOAT)(pRect->bottom),
-                  (FX_FLOAT)(pRect->right), (FX_FLOAT)(pRect->top));
-  if (!SetClip_PathFill(&path, NULL, FXFILL_WINDING)) {
+  path.AppendRect(rect.left, rect.bottom, rect.right, rect.top);
+  if (!SetClip_PathFill(&path, nullptr, FXFILL_WINDING))
     return FALSE;
-  }
+
   UpdateClipBox();
   return TRUE;
 }
