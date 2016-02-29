@@ -970,8 +970,8 @@ CXFA_Measurement XFA_GetAttributeDefaultValue_Measure(XFA_ELEMENT eElement,
 struct XFA_ELEMENTHIERARCHY {
   FX_WORD wStart;
   FX_WORD wCount;
-  FX_WORD wParentIndex;
 };
+
 struct XFA_SCRIPTHIERARCHY {
   FX_WORD wMethodStart;
   FX_WORD wMethodCount;
@@ -979,6 +979,7 @@ struct XFA_SCRIPTHIERARCHY {
   FX_WORD wAttributeCount;
   int16_t wParentIndex;
 };
+
 typedef XFA_SCRIPTHIERARCHY const* XFA_LPCSCRIPTHIERARCHY;
 const FX_WORD* XFA_GetElementChildren(XFA_ELEMENT eElement, int32_t& iCount);
 const uint8_t* XFA_GetElementAttributes(XFA_ELEMENT eElement, int32_t& iCount);
