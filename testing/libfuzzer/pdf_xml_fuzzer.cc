@@ -9,7 +9,6 @@
 
 #include "core/include/fxcrt/fx_basic.h"
 #include "core/include/fxcrt/fx_system.h"
-#include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/common/xfa_parser.h"
 #include "xfa/src/fxfa/src/parser/xfa_parser_imp.h"
 

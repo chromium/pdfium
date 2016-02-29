@@ -7,8 +7,12 @@
 #ifndef XFA_SRC_FXJSE_SRC_CONTEXT_H_
 #define XFA_SRC_FXJSE_SRC_CONTEXT_H_
 
+#include "v8/include/v8.h"
+#include "xfa/include/fxjse/fxjse.h"
+
 class CFXJSE_Class;
 class CFXJSE_Value;
+
 class CFXJSE_Context {
  protected:
   CFXJSE_Context(v8::Isolate* pIsolate) : m_pIsolate(pIsolate) {}

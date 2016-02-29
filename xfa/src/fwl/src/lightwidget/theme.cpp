@@ -20,7 +20,6 @@
 #include "xfa/include/fwl/theme/pictureboxtp.h"
 #include "xfa/include/fwl/theme/pushbuttontp.h"
 #include "xfa/include/fwl/theme/scrollbartp.h"
-#include "xfa/src/foxitlib.h"
 
 CFWL_Theme::CFWL_Theme() {
   m_ThemesArray.push_back(std::unique_ptr<CFWL_WidgetTP>(new CFWL_FormTP));

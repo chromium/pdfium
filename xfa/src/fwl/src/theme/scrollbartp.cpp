@@ -8,7 +8,6 @@
 
 #include "xfa/include/fwl/basewidget/fwl_scrollbar.h"
 #include "xfa/include/fwl/core/fwl_widget.h"
-#include "xfa/src/foxitlib.h"
 
 #define FWL_SCROLL_PawLen 12.5f
 

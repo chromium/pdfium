@@ -8,7 +8,6 @@
 
 #include "xfa/include/fwl/basewidget/fwl_listbox.h"
 #include "xfa/include/fwl/core/fwl_widget.h"
-#include "xfa/src/foxitlib.h"
 
 CFWL_ListBoxTP::CFWL_ListBoxTP() {}
 CFWL_ListBoxTP::~CFWL_ListBoxTP() {}

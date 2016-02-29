@@ -6,7 +6,6 @@
 
 #include "xfa/src/fxfa/src/parser/xfa_basic_data.h"
 
-#include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/common/xfa_docdata.h"
 #include "xfa/src/fxfa/src/common/xfa_doclayout.h"
 #include "xfa/src/fxfa/src/common/xfa_document.h"

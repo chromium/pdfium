@@ -22,7 +22,6 @@
         'FT2_BUILD_LIBRARY',
       ],
       "sources":[
-        "xfa/include/foxitxfa.h",
         "xfa/include/fwl/adapter/fwl_adapternative.h",
         "xfa/include/fwl/adapter/fwl_adapterthreadmgr.h",
         "xfa/include/fwl/adapter/fwl_adaptertimermgr.h",
@@ -190,7 +189,6 @@
         "xfa/src/fgas/src/localization/fx_localemgr.h",
         "xfa/src/fgas/src/xml/fx_sax_imp.cpp",
         "xfa/src/fgas/src/xml/fx_sax_imp.h",
-        "xfa/src/foxitlib.h",
         "xfa/src/fwl/src/basewidget/fwl_barcodeimp.cpp",
         "xfa/src/fwl/src/basewidget/fwl_caretimp.cpp",
         "xfa/src/fwl/src/basewidget/fwl_checkboximp.cpp",

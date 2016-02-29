@@ -8,8 +8,6 @@
 
 #include <memory>
 
-#include "xfa/src/foxitlib.h"
-
 CFWL_PictureBox* CFWL_PictureBox::Create() {
   return new CFWL_PictureBox;
 }

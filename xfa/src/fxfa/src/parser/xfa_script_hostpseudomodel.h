@@ -7,6 +7,9 @@
 #ifndef XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_HOSTPSEUDOMODEL_H_
 #define XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_HOSTPSEUDOMODEL_H_
 
+#include "xfa/src/fxfa/src/common/xfa_document.h"
+#include "xfa/src/fxfa/src/common/xfa_object.h"
+
 class CScript_HostPseudoModel : public CXFA_OrdinaryObject {
  public:
   CScript_HostPseudoModel(CXFA_Document* pDocument);

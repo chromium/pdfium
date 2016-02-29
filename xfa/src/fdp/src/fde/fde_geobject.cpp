@@ -5,8 +5,8 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "xfa/src/fdp/src/fde/fde_geobject.h"
+
 #include "xfa/src/fdp/src/fde/fde_object.h"
-#include "xfa/src/foxitlib.h"
 
 IFDE_Path* IFDE_Path::Create() {
   return new CFDE_Path;

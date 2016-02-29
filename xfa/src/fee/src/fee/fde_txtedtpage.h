@@ -7,11 +7,17 @@
 #ifndef XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTPAGE_H_
 #define XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTPAGE_H_
 
-class CFDE_TxtEdtEngine;
+#include "core/include/fxcrt/fx_coordinates.h"
+#include "core/include/fxcrt/fx_string.h"
+#include "xfa/src/fdp/include/fde_psr.h"
+#include "xfa/src/fee/include/ifde_txtedtpage.h"
+#include "xfa/src/fgas/include/fx_utl.h"
+
 class IFX_CharIter;
+class CFDE_TxtEdtEngine;
 class CFDE_TxtEdtPage;
-class CFDE_TxtEdtTextSet;
 class CFDE_TxtEdtParag;
+
 enum FDE_TXTEDT_CHARTYPE {
   FDE_TXTEDT_CHARTYPE_Unknown = 0,
   FDE_TXTEDT_CHARTYPE_Tab,
@@ -22,6 +28,7 @@ enum FDE_TXTEDT_CHARTYPE {
   FDE_TXTEDT_CHARTYPE_Char,
   FDE_TXTEDT_CHARTYPE_CJK,
 };
+
 inline FDE_TXTEDT_CHARTYPE FDE_GetEditSelCharType(FX_WCHAR wChar) {
   if (wChar == 0x9) {
     return FDE_TXTEDT_CHARTYPE_Tab;
@@ -87,6 +94,7 @@ class CFDE_TxtEdtTextSet : public IFDE_TextSet {
  private:
   CFDE_TxtEdtPage* m_pPage;
 };
+
 class CFDE_TxtEdtPage : public IFDE_TxtEdtPage {
  public:
   CFDE_TxtEdtPage(IFDE_TxtEdtEngine* pEngine, int32_t nLineIndex);

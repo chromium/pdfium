@@ -6,11 +6,11 @@
 
 #include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
 
+#include "core/include/fxcrt/fx_ext.h"
 #include "xfa/include/fwl/adapter/fwl_adapterwidgetmgr.h"
 #include "xfa/include/fwl/basewidget/fwl_tooltipctrl.h"
 #include "xfa/include/fwl/core/fwl_app.h"
 #include "xfa/include/fwl/core/fwl_grid.h"
-#include "xfa/src/foxitlib.h"
 #include "xfa/src/fwl/src/basewidget/include/fwl_tooltipctrlimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_appimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_formimp.h"

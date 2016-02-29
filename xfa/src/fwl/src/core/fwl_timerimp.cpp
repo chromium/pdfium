@@ -8,7 +8,6 @@
 #include "xfa/include/fwl/adapter/fwl_adaptertimermgr.h"
 #include "xfa/include/fwl/core/fwl_app.h"
 #include "xfa/include/fwl/core/fwl_timer.h"
-#include "xfa/src/foxitlib.h"
 #include "xfa/src/fwl/src/core/include/fwl_appimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_threadimp.h"

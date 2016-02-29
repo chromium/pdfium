@@ -6,10 +6,10 @@
 
 #include "xfa/src/fdp/src/css/fde_cssdatatable.h"
 
+#include "core/include/fxcrt/fx_ext.h"
 #include "xfa/src/fgas/include/fx_alg.h"
 #include "xfa/src/fgas/include/fx_cpg.h"
 #include "xfa/src/fgas/include/fx_sys.h"
-#include "xfa/src/foxitlib.h"
 
 FX_BOOL FDE_CSSLengthToFloat(const FDE_CSSLENGTH& len,
                              FX_FLOAT fPercentBase,

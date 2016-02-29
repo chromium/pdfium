@@ -10,7 +10,6 @@
 #include <memory>
 
 #include "xfa/src/fgas/include/fx_alg.h"
-#include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/common/xfa_docdata.h"
 #include "xfa/src/fxfa/src/common/xfa_doclayout.h"
 #include "xfa/src/fxfa/src/common/xfa_document.h"

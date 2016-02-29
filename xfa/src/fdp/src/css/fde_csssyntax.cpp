@@ -8,7 +8,6 @@
 
 #include "xfa/src/fdp/src/css/fde_cssdatatable.h"
 #include "xfa/src/fgas/include/fx_cpg.h"
-#include "xfa/src/foxitlib.h"
 
 #ifdef _cplusplus
 extern "C" {

@@ -7,7 +7,6 @@
 #ifndef XFA_SRC_FXFA_SRC_FM2JS_XFA_FM2JS_H_
 #define XFA_SRC_FXFA_SRC_FM2JS_XFA_FM2JS_H_
 
-#include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/common/xfa_docdata.h"
 #include "xfa/src/fxfa/src/common/xfa_doclayout.h"
 #include "xfa/src/fxfa/src/common/xfa_document.h"

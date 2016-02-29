@@ -5,13 +5,13 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "xfa/src/fee/src/fx_wordbreak/fx_wordbreak_impl.h"
-#include "xfa/src/foxitlib.h"
-extern const FX_WORD gs_FX_WordBreak_Table[16] = {
+
+const FX_WORD gs_FX_WordBreak_Table[16] = {
     0xFFFF, 0xFFF9, 0xFFFB, 0xFFFB, 0xFFFB, 0xFFFB, 0xEFBB, 0xE77B,
     0xFFFB, 0xFFFB, 0xFFFB, 0xE77B, 0xE73B, 0xFFFB, 0xFFFB, 0xFFFB,
 };
 
-extern const uint8_t gs_FX_WordBreak_CodePointProperties[(0xFFFF - 1) / 2 + 1] =
+const uint8_t gs_FX_WordBreak_CodePointProperties[(0xFFFF - 1) / 2 + 1] =
     // NOLINTNEXTLINE
     {
         0x00, 0x00, 0x00, 0x00, 0x00, 0x23, 0x31, 0x00, 0x00, 0x00, 0x00, 0x00,

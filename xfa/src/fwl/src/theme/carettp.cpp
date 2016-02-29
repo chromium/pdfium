@@ -8,7 +8,6 @@
 
 #include "xfa/include/fwl/basewidget/fwl_caret.h"
 #include "xfa/include/fwl/core/fwl_widget.h"
-#include "xfa/src/foxitlib.h"
 
 CFWL_CaretTP::CFWL_CaretTP() {}
 CFWL_CaretTP::~CFWL_CaretTP() {}

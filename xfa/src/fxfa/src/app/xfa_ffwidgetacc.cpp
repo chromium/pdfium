@@ -9,7 +9,6 @@
 #include <algorithm>
 
 #include "xfa/src/fdp/include/fde_tto.h"
-#include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/app/xfa_ffapp.h"
 #include "xfa/src/fxfa/src/app/xfa_ffcheckbutton.h"
 #include "xfa/src/fxfa/src/app/xfa_ffchoicelist.h"

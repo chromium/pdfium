@@ -7,9 +7,11 @@
 #ifndef XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_LOGPSEUDOMODEL_H_
 #define XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_LOGPSEUDOMODEL_H_
 
+#include "xfa/src/fxfa/src/common/xfa_object.h"
+
 class CScript_LogPseudoModel : public CXFA_OrdinaryObject {
  public:
-  CScript_LogPseudoModel(CXFA_Document* pDocument);
+  explicit CScript_LogPseudoModel(CXFA_Document* pDocument);
   virtual ~CScript_LogPseudoModel();
 
   void Script_LogPseudoModel_Message(CFXJSE_Arguments* pArguments);

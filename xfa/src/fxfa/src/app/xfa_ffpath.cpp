@@ -4,12 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/foxitlib.h"
+#include "xfa/src/fxfa/src/app/xfa_ffpath.h"
+
+#include "xfa/include/fxgraphics/fx_graphics.h"
 #include "xfa/src/fxfa/src/app/xfa_ffapp.h"
 #include "xfa/src/fxfa/src/app/xfa_ffdoc.h"
 #include "xfa/src/fxfa/src/app/xfa_ffdraw.h"
 #include "xfa/src/fxfa/src/app/xfa_ffpageview.h"
-#include "xfa/src/fxfa/src/app/xfa_ffpath.h"
 #include "xfa/src/fxfa/src/app/xfa_ffwidget.h"
 
 CXFA_FFLine::CXFA_FFLine(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc)

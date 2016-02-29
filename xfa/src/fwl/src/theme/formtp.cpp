@@ -9,7 +9,6 @@
 #include "xfa/include/fwl/core/fwl_form.h"
 #include "xfa/include/fwl/core/fwl_widget.h"
 #include "xfa/src/fdp/include/fde_tto.h"
-#include "xfa/src/foxitlib.h"
 
 #define FWLTHEME_CAPACITY_CXFormBorder 3
 #define FWLTHEME_CAPACITY_CYFormBorder 3

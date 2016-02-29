@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFNOTIFY_H_
 #define XFA_SRC_FXFA_SRC_APP_XFA_FFNOTIFY_H_
 
+#include "xfa/src/fxfa/src/common/xfa_document.h"
+
 class CXFA_FFNotify : public IXFA_Notify {
  public:
   CXFA_FFNotify(CXFA_FFDoc* pDoc);

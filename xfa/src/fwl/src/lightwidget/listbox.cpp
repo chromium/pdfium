@@ -9,7 +9,6 @@
 #include <memory>
 
 #include "third_party/base/stl_util.h"
-#include "xfa/src/foxitlib.h"
 
 CFWL_ListBox* CFWL_ListBox::Create() {
   return new CFWL_ListBox;

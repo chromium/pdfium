@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTBUF_H_
 #define XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTBUF_H_
 
+#include "xfa/src/fee/include/ifde_txtedtbuf.h"
+#include "xfa/src/fee/include/ifde_txtedtengine.h"
 #include "xfa/src/fgas/include/fx_mem.h"
 
 class IFX_CharIter;

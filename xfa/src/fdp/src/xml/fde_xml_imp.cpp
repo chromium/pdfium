@@ -10,15 +10,16 @@
 
 #include "xfa/src/fgas/include/fx_cpg.h"
 #include "xfa/src/fgas/include/fx_sys.h"
-#include "xfa/src/foxitlib.h"
 
 #define FDE_XMLVALIDCHARRANGENUM 5
-static FX_WCHAR g_XMLValidCharRange[FDE_XMLVALIDCHARRANGENUM][2] = {
+
+static const FX_WCHAR g_XMLValidCharRange[FDE_XMLVALIDCHARRANGENUM][2] = {
     {0x09, 0x09},
     {0x0A, 0x0A},
     {0x0D, 0x0D},
     {0x20, 0xD7FF},
     {0xE000, 0xFFFD}};
+
 FX_BOOL FDE_IsXMLValidChar(FX_WCHAR ch) {
   int32_t iStart = 0, iEnd = FDE_XMLVALIDCHARRANGENUM - 1, iMid;
   while (iStart <= iEnd) {

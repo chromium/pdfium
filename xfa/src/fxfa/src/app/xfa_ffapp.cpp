@@ -9,7 +9,6 @@
 #include <algorithm>
 
 #include "xfa/include/fwl/core/fwl_widgetmgr.h"
-#include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/app/xfa_ffdoc.h"
 #include "xfa/src/fxfa/src/app/xfa_ffdochandler.h"
 #include "xfa/src/fxfa/src/app/xfa_ffwidgethandler.h"

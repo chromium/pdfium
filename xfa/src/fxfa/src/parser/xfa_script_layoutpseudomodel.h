@@ -7,15 +7,19 @@
 #ifndef XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_LAYOUTPSEUDOMODEL_H_
 #define XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_LAYOUTPSEUDOMODEL_H_
 
+#include "xfa/src/fxfa/src/common/xfa_doclayout.h"
+#include "xfa/src/fxfa/src/common/xfa_object.h"
+
 enum XFA_LAYOUTMODEL_HWXY {
   XFA_LAYOUTMODEL_H,
   XFA_LAYOUTMODEL_W,
   XFA_LAYOUTMODEL_X,
   XFA_LAYOUTMODEL_Y
 };
+
 class CScript_LayoutPseudoModel : public CXFA_OrdinaryObject {
  public:
-  CScript_LayoutPseudoModel(CXFA_Document* pDocument);
+  explicit CScript_LayoutPseudoModel(CXFA_Document* pDocument);
   ~CScript_LayoutPseudoModel();
 
   void Script_LayoutPseudoModel_Ready(FXJSE_HVALUE hValue,

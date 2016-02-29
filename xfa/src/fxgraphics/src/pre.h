@@ -7,8 +7,6 @@
 #ifndef XFA_SRC_FXGRAPHICS_SRC_PRE_H_
 #define XFA_SRC_FXGRAPHICS_SRC_PRE_H_
 
-#include "xfa/src/foxitlib.h"
-
 enum {
   FX_CONTEXT_None = 0,
   FX_CONTEXT_Device,
@@ -16,13 +14,16 @@ enum {
 enum { FX_COLOR_None = 0, FX_COLOR_Solid, FX_COLOR_Pattern, FX_COLOR_Shading };
 enum { FX_PATTERN_None = 0, FX_PATTERN_Bitmap, FX_PATTERN_Hatch };
 enum { FX_SHADING_None = 0, FX_SHADING_Axial, FX_SHADING_Radial };
+
 #define FX_HATCHSTYLE_Total 53
+
 struct FX_HATCHDATA {
   int32_t width;
   int32_t height;
   uint8_t maskBits[64];
 };
 typedef FX_HATCHDATA const* FX_LPCHATCHDATA;
+
 static const FX_HATCHDATA hatchBitmapData[FX_HATCHSTYLE_Total] = {
     {16,
      16,

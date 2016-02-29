@@ -7,6 +7,9 @@
 #ifndef XFA_SRC_FXFA_SRC_COMMON_XFA_FM2JSAPI_H_
 #define XFA_SRC_FXFA_SRC_COMMON_XFA_FM2JSAPI_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+#include "xfa/include/fxjse/fxjse.h"
+
 #define FOXIT_XFA_FM2JS_FORMCALC_RUNTIME "foxit_xfa_formcalc_runtime"
 
 #ifdef __cplusplus

@@ -4,6 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/include/fxcrt/fx_ext.h"
 #include "xfa/src/fxfa/src/fm2js/xfa_fm2js.h"
 
 namespace {

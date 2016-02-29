@@ -9,6 +9,11 @@
 
 #include <vector>
 
+#include "core/include/fxcrt/fx_ext.h"
+#include "xfa/src/fdp/include/fde_css.h"
+#include "xfa/src/fdp/src/css/fde_csscache.h"
+#include "xfa/src/fdp/src/css/fde_cssdeclaration.h"
+#include "xfa/src/fgas/include/fx_mem.h"
 #include "xfa/src/fgas/include/fx_sys.h"
 
 #define FDE_CSSUNIVERSALHASH ('*')

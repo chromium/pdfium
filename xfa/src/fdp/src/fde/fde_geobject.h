@@ -7,7 +7,9 @@
 #ifndef XFA_SRC_FDP_SRC_FDE_FDE_GEOBJECT_H_
 #define XFA_SRC_FDP_SRC_FDE_FDE_GEOBJECT_H_
 
-#include "xfa/src/foxitlib.h"
+#include "core/include/fxge/fx_ge.h"
+#include "xfa/src/fdp/include/fde_pth.h"
+#include "xfa/src/fgas/include/fx_mem.h"
 
 class CFDE_Path : public IFDE_Path, public CFX_Target {
  public:

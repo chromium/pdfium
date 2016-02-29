@@ -7,8 +7,13 @@
 #ifndef XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_RESOLVEPROCESSOR_H_
 #define XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_RESOLVEPROCESSOR_H_
 
+#include "xfa/include/fxfa/fxfa_objectacc.h"
+#include "xfa/src/fxfa/src/common/xfa_object.h"
+#include "xfa/src/fxfa/src/common/xfa_script.h"
+
 class CXFA_NodeHelper;
 class CXFA_ScriptContext;
+
 class CXFA_ResolveNodesData {
  public:
   CXFA_ResolveNodesData(CXFA_ScriptContext* pSC = NULL)

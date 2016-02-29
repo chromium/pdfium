@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/src/fxfa/src/parser/xfa_locale.h"
+
 #include "core/include/fxcrt/fx_xml.h"
-#include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/common/xfa_docdata.h"
 #include "xfa/src/fxfa/src/common/xfa_doclayout.h"
 #include "xfa/src/fxfa/src/common/xfa_document.h"
@@ -15,12 +16,12 @@
 #include "xfa/src/fxfa/src/common/xfa_parser.h"
 #include "xfa/src/fxfa/src/common/xfa_script.h"
 #include "xfa/src/fxfa/src/common/xfa_utils.h"
-#include "xfa/src/fxfa/src/parser/xfa_locale.h"
 
-static const FX_WCHAR* g_FX_Percent = L"z,zzz,zzz,zzz,zzz,zzz%";
-static const FX_WCHAR* g_FX_Currency = L"$z,zzz,zzz,zzz,zzz,zz9.99";
-static const FX_WCHAR* g_FX_Decimal = L"z,zzz,zzz,zzz,zzz,zz9.zzz";
-static const FX_WCHAR* g_FX_Integer = L"z,zzz,zzz,zzz,zzz,zzz";
+static const FX_WCHAR g_FX_Percent[] = L"z,zzz,zzz,zzz,zzz,zzz%";
+static const FX_WCHAR g_FX_Currency[] = L"$z,zzz,zzz,zzz,zzz,zz9.99";
+static const FX_WCHAR g_FX_Decimal[] = L"z,zzz,zzz,zzz,zzz,zz9.zzz";
+static const FX_WCHAR g_FX_Integer[] = L"z,zzz,zzz,zzz,zzz,zzz";
+
 CXFA_XMLLocale::CXFA_XMLLocale(CXML_Element* pLocaleData) {
   m_pLocaleData = pLocaleData;
 }

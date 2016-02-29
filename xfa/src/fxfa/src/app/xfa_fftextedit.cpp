@@ -10,7 +10,6 @@
 #include "xfa/include/fwl/basewidget/fwl_edit.h"
 #include "xfa/include/fwl/lightwidget/datetimepicker.h"
 #include "xfa/include/fwl/lightwidget/edit.h"
-#include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/app/xfa_ffapp.h"
 #include "xfa/src/fxfa/src/app/xfa_ffdoc.h"
 #include "xfa/src/fxfa/src/app/xfa_ffdocview.h"

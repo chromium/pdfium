@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_DATAWINDOW_H_
 #define XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_DATAWINDOW_H_
 
+#include "xfa/src/fxfa/src/common/xfa_object.h"
+
 class CScript_DataWindow : public CXFA_OrdinaryObject {
  public:
   CScript_DataWindow(CXFA_Document* pDocument);

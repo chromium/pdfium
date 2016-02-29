@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXFA_SRC_APP_XFA_FWLADAPTER_H_
 #define XFA_SRC_FXFA_SRC_APP_XFA_FWLADAPTER_H_
 
+#include "xfa/include/fwl/adapter/fwl_sdadapterimp.h"
+
 class CXFA_FWLAdapterWidgetMgr : public CFWL_SDAdapterWidgetMgr {
  public:
   virtual FWL_ERR RepaintWidget(IFWL_Widget* pWidget, const CFX_RectF* pRect);

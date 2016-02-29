@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXFA_SRC_PARSER_XFA_LAYOUT_APPADAPTER_H_
 #define XFA_SRC_FXFA_SRC_PARSER_XFA_LAYOUT_APPADAPTER_H_
 
+#include "xfa/src/fxfa/src/common/xfa_doclayout.h"
+
 class CXFA_TraverseStrategy_PageAreaContainerLayoutItem {
  public:
   static inline CXFA_ContainerLayoutItem* GetFirstChild(

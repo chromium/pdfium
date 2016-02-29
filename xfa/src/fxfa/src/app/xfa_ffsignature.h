@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFSIGNATURE_H_
 #define XFA_SRC_FXFA_SRC_APP_XFA_FFSIGNATURE_H_
 
+#include "xfa/src/fxfa/src/app/xfa_fffield.h"
+
 class CXFA_FFSignature final : public CXFA_FFField {
  public:
   CXFA_FFSignature(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
@@ -36,8 +38,6 @@ class CXFA_FFSignature final : public CXFA_FFField {
   virtual FX_BOOL OnChar(FX_DWORD dwChar, FX_DWORD dwFlags);
   virtual FX_DWORD OnHitTest(FX_FLOAT fx, FX_FLOAT fy);
   virtual FX_BOOL OnSetCursor(FX_FLOAT fx, FX_FLOAT fy);
-
- protected:
 };
 
 #endif  // XFA_SRC_FXFA_SRC_APP_XFA_FFSIGNATURE_H_

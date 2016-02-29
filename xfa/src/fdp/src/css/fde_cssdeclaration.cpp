@@ -6,8 +6,8 @@
 
 #include "xfa/src/fdp/src/css/fde_cssdeclaration.h"
 
+#include "core/include/fxcrt/fx_ext.h"
 #include "xfa/src/fgas/include/fx_sys.h"
-#include "xfa/src/foxitlib.h"
 
 IFDE_CSSValue* CFDE_CSSDeclaration::GetProperty(FDE_CSSPROPERTY eProperty,
                                                 FX_BOOL& bImportant) const {

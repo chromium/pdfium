@@ -8,7 +8,6 @@
 
 #include "xfa/include/fwl/basewidget/fwl_picturebox.h"
 #include "xfa/include/fwl/core/fwl_widget.h"
-#include "xfa/src/foxitlib.h"
 
 CFWL_PictureBoxTP::CFWL_PictureBoxTP() {}
 CFWL_PictureBoxTP::~CFWL_PictureBoxTP() {}

@@ -6,7 +6,6 @@
 
 #include "xfa/include/fwl/theme/barcodetp.h"
 
-#include "xfa/src/foxitlib.h"
 #include "xfa/include/fwl/basewidget/fwl_barcode.h"
 #include "xfa/include/fwl/core/fwl_theme.h"
 #include "xfa/include/fwl/core/fwl_widget.h"

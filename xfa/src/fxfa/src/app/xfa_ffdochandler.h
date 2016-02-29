@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFDOCHANDLER_H_
 #define XFA_SRC_FXFA_SRC_APP_XFA_FFDOCHANDLER_H_
 
+#include "xfa/include/fxfa/fxfa.h"
+
 class CXFA_FFDocHandler : public IXFA_DocHandler {
  public:
   CXFA_FFDocHandler();

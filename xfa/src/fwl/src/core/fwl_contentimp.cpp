@@ -7,7 +7,6 @@
 #include "xfa/src/fwl/src/core/include/fwl_contentimp.h"
 
 #include "xfa/include/fwl/core/fwl_content.h"
-#include "xfa/src/foxitlib.h"
 #include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_threadimp.h"

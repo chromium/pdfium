@@ -4,7 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/foxitlib.h"
+#include "xfa/src/fxfa/src/parser/xfa_script_resolveprocessor.h"
+
+#include "core/include/fxcrt/fx_ext.h"
 #include "xfa/src/fxfa/src/common/xfa_docdata.h"
 #include "xfa/src/fxfa/src/common/xfa_doclayout.h"
 #include "xfa/src/fxfa/src/common/xfa_document.h"
@@ -16,7 +18,7 @@
 #include "xfa/src/fxfa/src/common/xfa_utils.h"
 #include "xfa/src/fxfa/src/parser/xfa_script_imp.h"
 #include "xfa/src/fxfa/src/parser/xfa_script_nodehelper.h"
-#include "xfa/src/fxfa/src/parser/xfa_script_resolveprocessor.h"
+
 CXFA_ResolveProcessor::CXFA_ResolveProcessor(void)
     : m_pNodeHelper(NULL), m_iCurStart(0) {
   m_pNodeHelper = new CXFA_NodeHelper;

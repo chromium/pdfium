@@ -4,14 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/src/fxfa/src/app/xfa_ffwidget.h"
+
 #include <algorithm>
 
-#include "xfa/src/foxitlib.h"
+#include "core/include/fpdfapi/fpdf_page.h"
+#include "core/include/fxcodec/fx_codec.h"
+#include "xfa/include/fxgraphics/fx_graphics.h"
 #include "xfa/src/fxfa/src/app/xfa_ffapp.h"
 #include "xfa/src/fxfa/src/app/xfa_ffdoc.h"
 #include "xfa/src/fxfa/src/app/xfa_ffdocview.h"
 #include "xfa/src/fxfa/src/app/xfa_ffpageview.h"
-#include "xfa/src/fxfa/src/app/xfa_ffwidget.h"
 #include "xfa/src/fxfa/src/app/xfa_textlayout.h"
 
 CXFA_FFWidget::CXFA_FFWidget(CXFA_FFPageView* pPageView,

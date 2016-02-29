@@ -4,10 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/src/fxfa/src/parser/xfa_basic_imp.h"
+
+#include "core/include/fxcrt/fx_ext.h"
 #include "xfa/src/fgas/include/fx_alg.h"
 #include "xfa/src/fgas/include/fx_cpg.h"
 #include "xfa/src/fgas/include/fx_sys.h"
-#include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/common/xfa_docdata.h"
 #include "xfa/src/fxfa/src/common/xfa_doclayout.h"
 #include "xfa/src/fxfa/src/common/xfa_document.h"
@@ -18,7 +20,6 @@
 #include "xfa/src/fxfa/src/common/xfa_script.h"
 #include "xfa/src/fxfa/src/common/xfa_utils.h"
 #include "xfa/src/fxfa/src/parser/xfa_basic_data.h"
-#include "xfa/src/fxfa/src/parser/xfa_basic_imp.h"
 
 const XFA_PACKETINFO* XFA_GetPacketByName(const CFX_WideStringC& wsName) {
   int32_t iLength = wsName.GetLength();

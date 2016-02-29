@@ -4,7 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/foxitlib.h"
+#include "xfa/src/fxfa/src/parser/xfa_layout_pagemgr_new.h"
+
 #include "xfa/src/fxfa/src/common/xfa_docdata.h"
 #include "xfa/src/fxfa/src/common/xfa_doclayout.h"
 #include "xfa/src/fxfa/src/common/xfa_document.h"
@@ -18,7 +19,7 @@
 #include "xfa/src/fxfa/src/parser/xfa_document_layout_imp.h"
 #include "xfa/src/fxfa/src/parser/xfa_layout_appadapter.h"
 #include "xfa/src/fxfa/src/parser/xfa_layout_itemlayout.h"
-#include "xfa/src/fxfa/src/parser/xfa_layout_pagemgr_new.h"
+
 CXFA_LayoutPageMgr::CXFA_LayoutPageMgr(CXFA_LayoutProcessor* pLayoutProcessor)
     : m_pLayoutProcessor(pLayoutProcessor),
       m_pTemplatePageSetRoot(nullptr),

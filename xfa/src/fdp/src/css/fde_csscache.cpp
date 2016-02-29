@@ -4,10 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/src/fdp/src/css/fde_csscache.h"
+
 #include <algorithm>
 
-#include "xfa/src/fdp/src/css/fde_csscache.h"
-#include "xfa/src/foxitlib.h"
+#include "core/include/fxcrt/fx_ext.h"
 
 FDE_CSSCACHEITEM::FDE_CSSCACHEITEM(IFDE_CSSStyleSheet* p)
     : pStylesheet(p), dwActivity(0) {

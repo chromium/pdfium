@@ -4,12 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/src/fxfa/src/app/xfa_fontmgr.h"
+
 #include <algorithm>
 
-#include "xfa/src/foxitlib.h"
+#include "core/include/fpdfapi/fpdf_resource.h"
 #include "xfa/src/fxfa/src/app/xfa_ffapp.h"
 #include "xfa/src/fxfa/src/app/xfa_ffdoc.h"
-#include "xfa/src/fxfa/src/app/xfa_fontmgr.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 static const XFA_FONTINFO g_XFAFontsMap[] = {

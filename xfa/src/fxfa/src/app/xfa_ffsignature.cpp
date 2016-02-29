@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/foxitlib.h"
+#include "xfa/src/fxfa/src/app/xfa_ffsignature.h"
+
 #include "xfa/src/fxfa/src/app/xfa_ffdoc.h"
 #include "xfa/src/fxfa/src/app/xfa_fffield.h"
 #include "xfa/src/fxfa/src/app/xfa_ffpageview.h"
-#include "xfa/src/fxfa/src/app/xfa_ffsignature.h"
 #include "xfa/src/fxfa/src/app/xfa_ffwidget.h"
 
 CXFA_FFSignature::CXFA_FFSignature(CXFA_FFPageView* pPageView,

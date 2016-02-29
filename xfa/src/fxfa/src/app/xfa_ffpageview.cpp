@@ -7,7 +7,6 @@
 #include "xfa/src/fxfa/src/app/xfa_ffpageview.h"
 
 #include "xfa/src/fdp/include/fde_rdr.h"
-#include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/app/xfa_ffcheckbutton.h"
 #include "xfa/src/fxfa/src/app/xfa_ffchoicelist.h"
 #include "xfa/src/fxfa/src/app/xfa_ffdoc.h"

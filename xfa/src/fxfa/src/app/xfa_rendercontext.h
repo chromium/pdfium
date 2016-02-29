@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXFA_SRC_APP_XFA_RENDERCONTEXT_H_
 #define XFA_SRC_FXFA_SRC_APP_XFA_RENDERCONTEXT_H_
 
+#include "xfa/include/fxfa/fxfa.h"
+
 class CXFA_RenderContext : public IXFA_RenderContext {
  public:
   CXFA_RenderContext();

@@ -4,7 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/foxitlib.h"
+#include "core/include/fxcrt/fx_ext.h"
+#include "xfa/include/fxbarcode/BC_BarCode.h"
 #include "xfa/src/fxfa/src/common/fxfa_localevalue.h"
 #include "xfa/src/fxfa/src/common/xfa_docdata.h"
 #include "xfa/src/fxfa/src/common/xfa_doclayout.h"

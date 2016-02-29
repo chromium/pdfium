@@ -7,7 +7,8 @@
 #ifndef XFA_SRC_FXJSE_SRC_CLASS_H_
 #define XFA_SRC_FXJSE_SRC_CLASS_H_
 
-#include <v8.h>
+#include "v8/include/v8.h"
+#include "xfa/include/fxjse/fxjse.h"
 
 class CFXJSE_Context;
 class CFXJSE_Value;

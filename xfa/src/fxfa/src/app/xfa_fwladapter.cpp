@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/foxitlib.h"
+#include "xfa/src/fxfa/src/app/xfa_fwladapter.h"
+
 #include "xfa/src/fxfa/src/app/xfa_ffdoc.h"
 #include "xfa/src/fxfa/src/app/xfa_fffield.h"
 #include "xfa/src/fxfa/src/app/xfa_ffwidget.h"
-#include "xfa/src/fxfa/src/app/xfa_fwladapter.h"
 
 void FWL_PostMessageToMainRoop(CFWL_Message* pMessage) {}
 FX_BOOL FWL_ShowCaret(IFWL_Widget* pWidget,

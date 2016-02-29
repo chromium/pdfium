@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/foxitlib.h"
+#include "core/include/fxcrt/fx_ext.h"
 #include "xfa/src/fxfa/src/common/xfa_docdata.h"
 #include "xfa/src/fxfa/src/common/xfa_doclayout.h"
 #include "xfa/src/fxfa/src/common/xfa_document.h"
@@ -22,6 +22,7 @@
 #include "xfa/src/fxfa/src/parser/xfa_script_layoutpseudomodel.h"
 #include "xfa/src/fxfa/src/parser/xfa_script_logpseudomodel.h"
 #include "xfa/src/fxfa/src/parser/xfa_script_signaturepseudomodel.h"
+
 CXFA_Document::CXFA_Document(IXFA_DocParser* pParser)
     : m_pParser(pParser),
       m_pScriptContext(nullptr),

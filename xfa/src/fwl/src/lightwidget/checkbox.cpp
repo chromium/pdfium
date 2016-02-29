@@ -9,7 +9,6 @@
 #include <memory>
 
 #include "xfa/include/fwl/core/fwl_error.h"
-#include "xfa/src/foxitlib.h"
 
 CFWL_CheckBox* CFWL_CheckBox::Create() {
   return new CFWL_CheckBox;

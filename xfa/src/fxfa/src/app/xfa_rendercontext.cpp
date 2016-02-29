@@ -4,9 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/foxitlib.h"
-#include "xfa/src/fxfa/src/app/xfa_ffwidget.h"
 #include "xfa/src/fxfa/src/app/xfa_rendercontext.h"
+
+#include "xfa/include/fxgraphics/fx_graphics.h"
+#include "xfa/src/fxfa/src/app/xfa_ffwidget.h"
 
 #define XFA_RENDERCONTEXT_MaxCount 30
 

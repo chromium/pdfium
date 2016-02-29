@@ -9,6 +9,11 @@
 
 #include <map>
 
+#include "core/include/fxcrt/fx_ext.h"
+#include "core/include/fxcrt/fx_system.h"
+#include "xfa/include/fxfa/fxfa.h"
+#include "xfa/src/fgas/include/fx_fnt.h"
+
 struct XFA_FONTINFO {
   FX_DWORD dwFontNameHash;
   const FX_WCHAR* pPsName;

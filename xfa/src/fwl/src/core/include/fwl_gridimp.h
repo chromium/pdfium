@@ -10,6 +10,7 @@
 #include "xfa/include/fwl/core/fwl_app.h"
 #include "xfa/include/fwl/core/fwl_content.h"
 #include "xfa/include/fwl/core/fwl_grid.h"
+#include "xfa/src/fwl/src/core/include/fwl_contentimp.h"
 
 class CFWL_GridLength {
  public:
@@ -19,6 +20,7 @@ class CFWL_GridLength {
   FX_FLOAT fLength;
   FWL_GRIDUNIT eUnit;
 };
+
 class CFWL_GridColRow {
  public:
   CFWL_GridColRow()
@@ -33,6 +35,7 @@ class CFWL_GridColRow {
   FX_FLOAT m_fActualSize;
   FX_FLOAT m_fActualPos;
 };
+
 class CFWL_GridWidgetInfo {
  public:
   CFWL_GridWidgetInfo()
@@ -67,6 +70,7 @@ class CFWL_GridWidgetInfo {
   FX_FLOAT m_fActualWidth;
   FX_FLOAT m_fActualHeight;
 };
+
 class CFWL_GridImp : public CFWL_ContentImp {
  public:
   CFWL_GridImp(const CFWL_WidgetImpProperties& properties, IFWL_Widget* pOuter);
@@ -178,6 +182,7 @@ class CFWL_GridImp : public CFWL_ContentImp {
   CFWL_GridLength m_Size[6];
   friend class CFWL_GridImpDelegate;
 };
+
 class CFWL_GridImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_GridImpDelegate(CFWL_GridImp* pOwner);

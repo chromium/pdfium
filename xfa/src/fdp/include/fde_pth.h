@@ -7,7 +7,9 @@
 #ifndef XFA_SRC_FDP_INCLUDE_FDE_PTH_H_
 #define XFA_SRC_FDP_INCLUDE_FDE_PTH_H_
 
-class IFDE_Path;
+#include "core/include/fxcrt/fx_coordinates.h"
+#include "core/include/fxcrt/fx_system.h"
+
 class IFDE_Path {
  public:
   static IFDE_Path* Create();

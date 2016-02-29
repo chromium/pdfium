@@ -9,13 +9,19 @@
 
 #include <map>
 
+#include "xfa/src/fxfa/src/common/xfa_document.h"
+#include "xfa/src/fxfa/src/common/xfa_fm2jsapi.h"
+#include "xfa/src/fxfa/src/common/xfa_script.h"
+
 #define XFA_RESOLVENODE_TagName 0x0002
 
 class CXFA_ResolveProcessor;
+
 class CXFA_ScriptContext : public IXFA_ScriptContext {
  public:
-  CXFA_ScriptContext(CXFA_Document* pDocument);
+  explicit CXFA_ScriptContext(CXFA_Document* pDocument);
   ~CXFA_ScriptContext();
+
   virtual void Release();
   virtual void Initialize(FXJSE_HRUNTIME hRuntime);
   virtual void SetEventParam(CXFA_EventParam param) { m_eventParam = param; }

@@ -8,7 +8,6 @@
 
 #include <memory>
 
-#include "xfa/src/foxitlib.h"
 #include "xfa/src/fwl/src/core/include/fwl_formimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_panelimp.h"

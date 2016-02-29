@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/jsapi/fxjs_v8.h"  // For per-isolate data.
-#include "xfa/src/foxitlib.h"
 #include "xfa/src/fxjse/src/runtime.h"
+
+#include "fpdfsdk/include/jsapi/fxjs_v8.h"
 #include "xfa/src/fxjse/src/scope_inline.h"
 
 // Duplicates fpdfsdk's JS_Runtime.h, but keeps XFA from depending on it.

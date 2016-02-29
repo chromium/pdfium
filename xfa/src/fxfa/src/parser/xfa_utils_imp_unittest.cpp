@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 #include "testing/gtest/include/gtest/gtest.h"
-#include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/common/xfa_utils.h"
 
 TEST(XfaUtilsImp, XFA_MapRotation) {

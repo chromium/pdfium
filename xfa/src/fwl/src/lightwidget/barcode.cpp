@@ -8,8 +8,6 @@
 
 #include <memory>
 
-#include "xfa/src/foxitlib.h"
-
 CFWL_Barcode* CFWL_Barcode::Create() {
   return new CFWL_Barcode;
 }

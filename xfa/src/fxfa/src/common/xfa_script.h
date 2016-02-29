@@ -7,6 +7,9 @@
 #ifndef XFA_SRC_FXFA_SRC_COMMON_XFA_SCRIPT_H_
 #define XFA_SRC_FXFA_SRC_COMMON_XFA_SCRIPT_H_
 
+#include "xfa/include/fxfa/fxfa.h"
+#include "xfa/include/fxfa/fxfa_objectacc.h"
+
 #define XFA_RESOLVENODE_Children 0x0001
 #define XFA_RESOLVENODE_Attributes 0x0004
 #define XFA_RESOLVENODE_Properties 0x0008
@@ -17,11 +20,13 @@
 #define XFA_RESOLVENODE_CreateNode 0x0400
 #define XFA_RESOLVENODE_Bind 0x0800
 #define XFA_RESOLVENODE_BindNew 0x1000
+
 enum XFA_SCRIPTLANGTYPE {
   XFA_SCRIPTLANGTYPE_Formcalc = XFA_SCRIPTTYPE_Formcalc,
   XFA_SCRIPTLANGTYPE_Javascript = XFA_SCRIPTTYPE_Javascript,
   XFA_SCRIPTLANGTYPE_Unkown = XFA_SCRIPTTYPE_Unkown,
 };
+
 enum XFA_RESOVENODE_RSTYPE {
   XFA_RESOVENODE_RSTYPE_Nodes,
   XFA_RESOVENODE_RSTYPE_Attribute,
@@ -30,6 +35,7 @@ enum XFA_RESOVENODE_RSTYPE {
   XFA_RESOLVENODE_RSTYPE_CreateNodeMidAll,
   XFA_RESOVENODE_RSTYPE_ExistNodes,
 };
+
 class CXFA_HVALUEArray : public CFX_ArrayTemplate<FXJSE_HVALUE> {
  public:
   CXFA_HVALUEArray(FXJSE_HRUNTIME hRunTime) : m_hRunTime(hRunTime){};

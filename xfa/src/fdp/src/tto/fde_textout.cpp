@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/src/fdp/src/tto/fde_textout.h"
+
 #include <algorithm>
 
-#include "xfa/src/fdp/src/tto/fde_textout.h"
-#include "xfa/src/foxitlib.h"
 IFDE_TextOut* IFDE_TextOut::Create() {
   return new CFDE_TextOut;
 }

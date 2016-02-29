@@ -12,7 +12,6 @@
 #include "xfa/include/fwl/core/fwl_note.h"
 #include "xfa/include/fwl/core/fwl_widget.h"
 #include "xfa/include/fwl/basewidget/fwl_datetimepicker.h"
-#include "xfa/src/foxitlib.h"
 
 CFWL_DateTimePicker* CFWL_DateTimePicker::Create() {
   return new CFWL_DateTimePicker;

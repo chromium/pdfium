@@ -19,7 +19,6 @@
 #include "xfa/include/fwl/basewidget/fwl_scrollbar.h"
 #include "xfa/src/fdp/include/fde_tto.h"
 #include "xfa/src/fgas/include/fx_cpg.h"
-#include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/app/xfa_ffapp.h"
 #include "xfa/src/fxfa/src/app/xfa_ffwidget.h"
 

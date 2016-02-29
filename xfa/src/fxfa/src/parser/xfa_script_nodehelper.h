@@ -7,11 +7,16 @@
 #ifndef XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_NODEHELPER_H_
 #define XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_NODEHELPER_H_
 
+#include "xfa/src/fxfa/src/common/xfa_object.h"
+#include "xfa/src/fxfa/src/common/xfa_script.h"
+
 class CXFA_ScriptContext;
+
 enum XFA_LOGIC_TYPE {
   XFA_LOGIC_NoTransparent,
   XFA_LOGIC_Transparent,
 };
+
 class CXFA_NodeHelper {
  public:
   CXFA_NodeHelper(void);

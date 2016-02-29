@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXFA_SRC_PARSER_XFA_DOCUMENT_DATAMERGER_IMP_H_
 #define XFA_SRC_FXFA_SRC_PARSER_XFA_DOCUMENT_DATAMERGER_IMP_H_
 
+#include "xfa/src/fxfa/src/common/xfa_object.h"
+
 CXFA_Node* XFA_NodeMerge_CloneOrMergeContainer(
     CXFA_Document* pDocument,
     CXFA_Node* pFormParent,

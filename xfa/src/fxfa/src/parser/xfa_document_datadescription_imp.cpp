@@ -4,7 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/common/xfa_docdata.h"
 #include "xfa/src/fxfa/src/common/xfa_doclayout.h"
 #include "xfa/src/fxfa/src/common/xfa_document.h"
@@ -14,7 +13,9 @@
 #include "xfa/src/fxfa/src/common/xfa_parser.h"
 #include "xfa/src/fxfa/src/common/xfa_script.h"
 #include "xfa/src/fxfa/src/common/xfa_utils.h"
+
 #define XFA_HASHCODE_Group 0xf7f75fcd
+
 class CXFA_TraverseStrategy_DDGroup {
  public:
   static inline CXFA_Node* GetFirstChild(CXFA_Node* pDDGroupNode) {

@@ -7,9 +7,12 @@
 #ifndef XFA_SRC_FXFA_SRC_PARSER_XFA_DOCUMENT_LAYOUT_IMP_H_
 #define XFA_SRC_FXFA_SRC_PARSER_XFA_DOCUMENT_LAYOUT_IMP_H_
 
+#include "xfa/src/fxfa/src/common/xfa_doclayout.h"
+
 class CXFA_ItemLayoutProcessor;
 class CXFA_LayoutPageMgr;
 class CXFA_ContainerLayoutItem;
+
 class CXFA_LayoutProcessor : public IXFA_DocLayout {
  public:
   CXFA_LayoutProcessor(CXFA_Document* pDocument);

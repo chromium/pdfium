@@ -8,7 +8,6 @@
 
 #include "xfa/include/fwl/basewidget/fwl_pushbutton.h"
 #include "xfa/src/fdp/include/fde_tto.h"
-#include "xfa/src/foxitlib.h"
 #include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
 #include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"

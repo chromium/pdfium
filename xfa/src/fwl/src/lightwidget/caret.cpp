@@ -10,7 +10,6 @@
 
 #include "xfa/include/fwl/basewidget/fwl_caret.h"
 #include "xfa/include/fwl/lightwidget/edit.h"
-#include "xfa/src/foxitlib.h"
 #include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
 
 CFWL_Caret* CFWL_Caret::Create() {

@@ -8,7 +8,6 @@
 
 #include "xfa/include/fwl/basewidget/fwl_edit.h"
 #include "xfa/include/fwl/core/fwl_widget.h"
-#include "xfa/src/foxitlib.h"
 
 CFWL_EditTP::CFWL_EditTP() {}
 CFWL_EditTP::~CFWL_EditTP() {}

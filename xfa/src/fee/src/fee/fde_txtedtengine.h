@@ -7,10 +7,13 @@
 #ifndef XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTENGINE_H_
 #define XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTENGINE_H_
 
+#include "core/include/fxcrt/fx_string.h"
+#include "xfa/src/fee/include/ifde_txtedtbuf.h"
+#include "xfa/src/fee/include/ifde_txtedtengine.h"
+
 class IFX_TxtBreak;
-class CFDE_TxtEdtParag;
 class IFX_CharIter;
-class CFDE_TxtEdtEngine;
+class CFDE_TxtEdtParag;
 class CFDE_TxtEdtDoRecord_Insert;
 class CFDE_TxtEdtDoRecord_DeleteRange;
 
@@ -23,6 +26,7 @@ class IFDE_TxtEdtDoRecord {
   virtual FX_BOOL Undo() = 0;
   virtual void Serialize(CFX_ByteString& bsDoRecord) const = 0;
 };
+
 class CFDE_TxtEdtEngine : public IFDE_TxtEdtEngine {
   friend class CFDE_TxtEdtDoRecord_Insert;
   friend class CFDE_TxtEdtDoRecord_DeleteRange;
@@ -192,6 +196,7 @@ class CFDE_TxtEdtEngine : public IFDE_TxtEdtEngine {
   FX_WCHAR m_wLineEnd;
   FDE_TXTEDT_TEXTCHANGE_INFO m_ChangeInfo;
 };
+
 class CFDE_TxtEdtDoRecord_Insert : public IFDE_TxtEdtDoRecord {
  public:
   CFDE_TxtEdtDoRecord_Insert(const CFX_ByteStringC& bsDoRecord);
@@ -213,6 +218,7 @@ class CFDE_TxtEdtDoRecord_Insert : public IFDE_TxtEdtDoRecord {
   int32_t m_nCaret;
   CFX_WideString m_wsInsert;
 };
+
 class CFDE_TxtEdtDoRecord_DeleteRange : public IFDE_TxtEdtDoRecord {
  public:
   CFDE_TxtEdtDoRecord_DeleteRange(const CFX_ByteStringC& bsDoRecord);

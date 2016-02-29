@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_EVENTPSEUDOMODEL_H_
 #define XFA_SRC_FXFA_SRC_PARSER_XFA_SCRIPT_EVENTPSEUDOMODEL_H_
 
+#include "xfa/src/fxfa/src/common/xfa_object.h"
+
 #define XFA_EVENT_CHANGE 0
 #define XFA_EVENT_COMMITKEY 1
 #define XFA_EVENT_FULLTEXT 2
@@ -24,9 +26,10 @@
 #define XFA_EVENT_SOAPFAULTSTRING 14
 #define XFA_EVENT_TARGET 15
 #define XFA_EVENT_CANCELACTION 16
+
 class CScript_EventPseudoModel : public CXFA_OrdinaryObject {
  public:
-  CScript_EventPseudoModel(CXFA_Document* pDocument);
+  explicit CScript_EventPseudoModel(CXFA_Document* pDocument);
   virtual ~CScript_EventPseudoModel();
 
   void Script_EventPseudoModel_CancelAction(FXJSE_HVALUE hValue,

@@ -7,7 +7,11 @@
 #ifndef XFA_SRC_FXJSE_SRC_RUNTIME_H_
 #define XFA_SRC_FXJSE_SRC_RUNTIME_H_
 
+#include "core/include/fxcrt/fx_basic.h"
+#include "v8/include/v8.h"
+
 class CFXJSE_RuntimeList;
+
 class CFXJSE_RuntimeData {
  protected:
   CFXJSE_RuntimeData(v8::Isolate* pIsolate) : m_pIsolate(pIsolate){};
@@ -29,6 +33,7 @@ class CFXJSE_RuntimeData {
   CFXJSE_RuntimeData(const CFXJSE_RuntimeData&);
   CFXJSE_RuntimeData& operator=(const CFXJSE_RuntimeData&);
 };
+
 class CFXJSE_RuntimeList {
  public:
   typedef void (*RuntimeDisposeCallback)(v8::Isolate*);

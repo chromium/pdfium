@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXFA_SRC_APP_XFA_FFPATH_H_
 #define XFA_SRC_FXFA_SRC_APP_XFA_FFPATH_H_
 
+#include "xfa/src/fxfa/src/app/xfa_ffdraw.h"
+
 class CXFA_FFLine : public CXFA_FFDraw {
  public:
   CXFA_FFLine(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);

@@ -7,7 +7,6 @@
 #include "xfa/include/fwl/theme/datetimepickertp.h"
 
 #include "xfa/include/fwl/basewidget/fwl_datetimepicker.h"
-#include "xfa/src/foxitlib.h"
 
 CFWL_DateTimePickerTP::CFWL_DateTimePickerTP() {
   m_pThemeData = new DTPThemeData;

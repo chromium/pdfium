@@ -6,9 +6,10 @@
 
 #include "xfa/src/fxfa/src/app/xfa_ffdoc.h"
 
+#include "core/include/fpdfdoc/fpdf_doc.h"
+#include "core/include/fxcrt/fx_ext.h"
 #include "xfa/include/fwl/core/fwl_note.h"
 #include "xfa/src/fgas/include/fx_alg.h"
-#include "xfa/src/foxitlib.h"
 #include "xfa/src/fxfa/src/app/xfa_ffapp.h"
 #include "xfa/src/fxfa/src/app/xfa_ffdocview.h"
 #include "xfa/src/fxfa/src/app/xfa_ffnotify.h"

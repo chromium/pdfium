@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/foxitlib.h"
 #include "xfa/src/fxjse/src/class.h"
+
 #include "xfa/src/fxjse/src/context.h"
 #include "xfa/src/fxjse/src/scope_inline.h"
 #include "xfa/src/fxjse/src/util_inline.h"

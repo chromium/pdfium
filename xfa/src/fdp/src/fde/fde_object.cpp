@@ -5,7 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "xfa/src/fdp/src/fde/fde_object.h"
-#include "xfa/src/foxitlib.h"
+
 IFDE_Pen* IFDE_Pen::Create() {
   return new CFDE_Pen();
 }

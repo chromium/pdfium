@@ -4,12 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/src/fdp/src/fde/fde_gedevice.h"
+
 #include <algorithm>
 
+#include "xfa/src/fdp/include/fde_brs.h"
+#include "xfa/src/fdp/include/fde_img.h"
+#include "xfa/src/fdp/include/fde_pen.h"
 #include "xfa/src/fdp/src/fde/fde_devbasic.h"
-#include "xfa/src/fdp/src/fde/fde_gedevice.h"
 #include "xfa/src/fdp/src/fde/fde_geobject.h"
-#include "xfa/src/foxitlib.h"
 
 FX_BOOL FDE_GetStockHatchMask(int32_t iHatchStyle, CFX_DIBitmap& hatchMask) {
   FDE_LPCHATCHDATA pData = FDE_DEVGetHatchData(iHatchStyle);

@@ -6,8 +6,8 @@
 
 #include "xfa/src/fxfa/src/app/xfa_checksum.h"
 
+#include "core/include/fdrm/fx_crypt.h"
 #include "xfa/src/fgas/include/fx_alg.h"
-#include "xfa/src/foxitlib.h"
 
 CXFA_SAXReaderHandler::CXFA_SAXReaderHandler(CXFA_ChecksumContext* pContext)
     : m_pContext(pContext) {

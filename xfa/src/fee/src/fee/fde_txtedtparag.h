@@ -7,12 +7,15 @@
 #ifndef XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTPARAG_H_
 #define XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTPARAG_H_
 
+#include "xfa/src/fee/include/ifde_txtedtengine.h"
+
 class CFDE_TxtEdtEngine;
-class CFDE_TxtEdtParag;
+
 class CFDE_TxtEdtParag : public IFDE_TxtEdtParag {
  public:
-  CFDE_TxtEdtParag(CFDE_TxtEdtEngine* pEngine);
+  explicit CFDE_TxtEdtParag(CFDE_TxtEdtEngine* pEngine);
   ~CFDE_TxtEdtParag();
+
   virtual int32_t GetTextLength() const { return m_nCharCount; }
   virtual int32_t GetStartIndex() const { return m_nCharStart; }
   virtual int32_t CountLines() const { return m_nLineCount; }
