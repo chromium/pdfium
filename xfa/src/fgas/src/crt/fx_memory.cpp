@@ -13,10 +13,8 @@ IFX_MEMAllocator* FX_CreateAllocator(FX_ALLOCTYPE eType,
                                      size_t chunkSize,
                                      size_t blockSize) {
   switch (eType) {
-#ifndef _FXEMB
     case FX_ALLOCTYPE_Dynamic:
       return new CFX_DynamicStore(chunkSize);
-#endif
     case FX_ALLOCTYPE_Default:
       return new CFX_DefStore();
     case FX_ALLOCTYPE_Static:
@@ -176,7 +174,6 @@ size_t CFX_FixedStore::SetDefChunkSize(size_t iChunkSize) {
   m_iDefChunkSize = FX_4BYTEALIGN(iChunkSize);
   return v;
 }
-#ifndef _FXEMB
 CFX_DynamicStore::CFX_DynamicStore(size_t iDefChunkSize)
     : m_iDefChunkSize(iDefChunkSize), m_pChunk(NULL) {
   FXSYS_assert(m_iDefChunkSize != 0);
@@ -318,4 +315,3 @@ size_t CFX_DynamicStore::SetDefChunkSize(size_t size) {
   m_iDefChunkSize = size;
   return v;
 }
-#endif
