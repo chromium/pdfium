@@ -199,9 +199,7 @@ CFX_WideString XFA_NumericLimit(const CFX_WideString& wsValue,
 FX_DOUBLE XFA_WideStringToDouble(const CFX_WideString& wsStringVal);
 FX_DOUBLE XFA_ByteStringToDouble(const CFX_ByteStringC& szStringVal);
 int32_t XFA_MapRotation(int32_t nRotation);
-#ifndef XFA_PARSE_HAS_LINEIDENTIFIER
-#define XFA_PARSE_HAS_LINEIDENTIFIER
-#endif
+
 FX_BOOL XFA_RecognizeRichText(IFDE_XMLElement* pRichTextXMLNode);
 void XFA_GetPlainTextFromRichText(IFDE_XMLNode* pXMLNode,
                                   CFX_WideString& wsPlainText);

@@ -3055,69 +3055,20 @@ static FX_BOOL XFA_SplitDateTime(const CFX_WideString& wsDateTime,
   }
   return TRUE;
 }
-#ifndef XFA_PARSE_HAS_LINEIDENTIFIER
-FX_BOOL CXFA_FieldNode_IsRichTextEdit(CXFA_Node* pFieldNode,
-                                      IFDE_XMLNode*& pXMLNode) {
-  FX_BOOL bRichTextEdit = FALSE;
-  pXMLNode = NULL;
-  if (pFieldNode->GetClassID() == XFA_ELEMENT_Field) {
-    CXFA_Node* pValue = pFieldNode->GetChild(0, XFA_ELEMENT_Value);
-    if (!pValue) {
-      return bRichTextEdit;
-    }
-    CXFA_Node* pChildValue = pValue->GetNodeItem(XFA_NODEITEM_FirstChild);
-    if (!pChildValue) {
-      return bRichTextEdit;
-    }
-    if (pChildValue->GetClassID() == XFA_ELEMENT_ExData) {
-      CFX_WideString wsContentType;
-      pChildValue->GetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType,
-                                FALSE);
-      bRichTextEdit = wsContentType.Equal(FX_WSTRC(L"text/html"));
-      if (bRichTextEdit) {
-        FX_BOOL bXMLInData = FALSE;
-        CXFA_Node* pDataNode = pFieldNode->GetBindData();
-        if (pDataNode) {
-          IFDE_XMLNode* pBindXML = pDataNode->GetXMLMappingNode();
-          FXSYS_assert(pBindXML);
-          IFDE_XMLNode* pValueXML =
-              pBindXML->GetNodeItem(IFDE_XMLNode::FirstChild);
-          if (pValueXML && pValueXML->GetType() == FDE_XMLNODE_Element) {
-            pXMLNode = pValueXML;
-            bXMLInData = TRUE;
-          }
-        }
-        if (!bXMLInData) {
-          pXMLNode = pChildValue->GetXMLMappingNode();
-        }
-      }
-    }
-  }
-  return bRichTextEdit;
-}
-#endif
+
 FX_BOOL CXFA_WidgetData::GetValue(CFX_WideString& wsValue,
                                   XFA_VALUEPICTURE eValueType) {
-#ifdef XFA_PARSE_HAS_LINEIDENTIFIER
   wsValue = m_pNode->GetContent();
-#else
-  IFDE_XMLNode* pXMLNode = NULL;
-  FX_BOOL bRichTextEdit = CXFA_FieldNode_IsRichTextEdit(m_pNode, pXMLNode);
-  if (bRichTextEdit) {
-    XFA_GetPlainTextFromRichText(pXMLNode, wsValue);
-  } else {
-    wsValue = m_pNode->GetContent();
-  }
-#endif
-  if (eValueType == XFA_VALUEPICTURE_Display) {
+
+  if (eValueType == XFA_VALUEPICTURE_Display)
     GetItemLabel(wsValue, wsValue);
-  }
+
   CFX_WideString wsPicture;
   GetPictureContent(wsPicture, eValueType);
   CXFA_Node* pNode = GetUIChild();
-  if (!pNode) {
+  if (!pNode)
     return TRUE;
-  }
+
   XFA_ELEMENT uiType = GetUIChild()->GetClassID();
   switch (uiType) {
     case XFA_ELEMENT_ChoiceList: {
@@ -3143,9 +3094,9 @@ FX_BOOL CXFA_WidgetData::GetValue(CFX_WideString& wsValue,
     default:
       break;
   }
-  if (wsPicture.IsEmpty()) {
+  if (wsPicture.IsEmpty())
     return TRUE;
-  }
+
   if (IFX_Locale* pLocale = GetLocal()) {
     CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(this);
     CXFA_LocaleMgr* pLocalMgr = m_pNode->GetDocument()->GetLocalMgr();
@@ -3154,9 +3105,8 @@ FX_BOOL CXFA_WidgetData::GetValue(CFX_WideString& wsValue,
         CFX_WideString wsDate, wsTime;
         if (XFA_SplitDateTime(wsValue, wsDate, wsTime)) {
           CXFA_LocaleValue date(XFA_VT_DATE, wsDate, pLocalMgr);
-          if (date.FormatPatterns(wsValue, wsPicture, pLocale, eValueType)) {
+          if (date.FormatPatterns(wsValue, wsPicture, pLocale, eValueType))
             return TRUE;
-          }
         }
         break;
       }
@@ -3164,9 +3114,8 @@ FX_BOOL CXFA_WidgetData::GetValue(CFX_WideString& wsValue,
         CFX_WideString wsDate, wsTime;
         if (XFA_SplitDateTime(wsValue, wsDate, wsTime)) {
           CXFA_LocaleValue time(XFA_VT_TIME, wsTime, pLocalMgr);
-          if (time.FormatPatterns(wsValue, wsPicture, pLocale, eValueType)) {
+          if (time.FormatPatterns(wsValue, wsPicture, pLocale, eValueType))
             return TRUE;
-          }
         }
         break;
       }
@@ -3177,6 +3126,7 @@ FX_BOOL CXFA_WidgetData::GetValue(CFX_WideString& wsValue,
   }
   return TRUE;
 }
+
 FX_BOOL CXFA_WidgetData::GetNormalizeDataValue(
     const CFX_WideStringC& wsValue,
     CFX_WideString& wsNormalizeValue) {
