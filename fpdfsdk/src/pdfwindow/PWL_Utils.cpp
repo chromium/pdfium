@@ -1696,9 +1696,7 @@ void CPWL_Utils::DrawEditSpellCheck(CFX_RenderDevice* pDevice,
   if (!rcClip.IsEmpty()) {
     CFX_FloatRect rcTemp = rcClip;
     pUser2Device->TransformRect(rcTemp);
-    pDevice->SetClip_Rect(FX_RECT((int32_t)rcTemp.left, (int32_t)rcTemp.top,
-                                  (int32_t)rcTemp.right,
-                                  (int32_t)rcTemp.bottom));
+    pDevice->SetClip_Rect(rcTemp.ToFxRect());
   }
 
   if (IFX_Edit_Iterator* pIterator = pEdit->GetIterator()) {

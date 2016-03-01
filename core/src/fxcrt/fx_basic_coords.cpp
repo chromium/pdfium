@@ -187,22 +187,22 @@ FX_RECT CFX_FloatRect::GetClosestRect() const {
   rect.Normalize();
   return rect;
 }
-FX_BOOL CFX_FloatRect::Contains(const CFX_FloatRect& other_rect) const {
-  CFX_FloatRect n1 = *this;
+
+bool CFX_FloatRect::Contains(const CFX_FloatRect& other_rect) const {
+  CFX_FloatRect n1(*this);
+  CFX_FloatRect n2(other_rect);
   n1.Normalize();
-  CFX_FloatRect n2 = other_rect;
   n2.Normalize();
-  if (n2.left >= n1.left && n2.right <= n1.right && n2.bottom >= n1.bottom &&
-      n2.top <= n1.top) {
-    return TRUE;
-  }
-  return FALSE;
+  return n2.left >= n1.left && n2.right <= n1.right && n2.bottom >= n1.bottom &&
+         n2.top <= n1.top;
 }
-FX_BOOL CFX_FloatRect::Contains(FX_FLOAT x, FX_FLOAT y) const {
-  CFX_FloatRect n1 = *this;
+
+bool CFX_FloatRect::Contains(FX_FLOAT x, FX_FLOAT y) const {
+  CFX_FloatRect n1(*this);
   n1.Normalize();
   return x <= n1.right && x >= n1.left && y <= n1.top && y >= n1.bottom;
 }
+
 void CFX_FloatRect::UpdateRect(FX_FLOAT x, FX_FLOAT y) {
   if (left > x) {
     left = x;

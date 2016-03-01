@@ -185,10 +185,10 @@ struct FX_RECT {
         static_cast<uint16_t>(right), static_cast<uint16_t>(bottom));
   }
 
-  int left;
-  int top;
-  int right;
-  int bottom;
+  int32_t left;
+  int32_t top;
+  int32_t right;
+  int32_t bottom;
 };
 
 // LBRT rectangles (y-axis runs upwards).
@@ -220,9 +220,9 @@ class CFX_FloatRect {
     top = 0.0f;
   }
 
-  FX_BOOL IsEmpty() const { return left >= right || bottom >= top; }
-  FX_BOOL Contains(const CFX_FloatRect& other_rect) const;
-  FX_BOOL Contains(FX_FLOAT x, FX_FLOAT y) const;
+  bool IsEmpty() const { return left >= right || bottom >= top; }
+  bool Contains(const CFX_FloatRect& other_rect) const;
+  bool Contains(FX_FLOAT x, FX_FLOAT y) const;
 
   void Transform(const CFX_Matrix* pMatrix);
   void Intersect(const CFX_FloatRect& other_rect);
@@ -299,6 +299,11 @@ class CFX_FloatRect {
   }
 
   static CFX_FloatRect GetBBox(const CFX_PointF* pPoints, int nPoints);
+
+  FX_RECT ToFxRect() const {
+    return FX_RECT(static_cast<int32_t>(left), static_cast<int32_t>(top),
+                   static_cast<int32_t>(right), static_cast<int32_t>(bottom));
+  }
 
   FX_FLOAT left;
   FX_FLOAT bottom;
