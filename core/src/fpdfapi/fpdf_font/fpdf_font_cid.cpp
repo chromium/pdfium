@@ -1545,12 +1545,11 @@ int CPDF_CIDFont::GlyphFromCharCode(FX_DWORD charcode, FX_BOOL* pVertGlyph) {
     if (m_Charset == CIDSET_JAPAN1) {
       if (unicode == '\\') {
         unicode = '/';
-      }
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_APPLE_
-      else if (unicode == 0xa5) {
+      } else if (unicode == 0xa5) {
         unicode = 0x5c;
-      }
 #endif
+      }
     }
     if (!face)
       return unicode;

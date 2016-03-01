@@ -74,25 +74,24 @@ void CPDF_Type3Glyphs::AdjustBlue(FX_FLOAT top,
   top_line = _AdjustBlue(top, m_TopBlueCount, m_TopBlue);
   bottom_line = _AdjustBlue(bottom, m_BottomBlueCount, m_BottomBlue);
 }
+
 static FX_BOOL _IsScanLine1bpp(uint8_t* pBuf, int width) {
   int size = width / 8;
-  for (int i = 0; i < size; i++)
-    if (pBuf[i]) {
+  for (int i = 0; i < size; i++) {
+    if (pBuf[i])
       return TRUE;
-    }
-  if (width % 8)
-    if (pBuf[width / 8] & (0xff << (8 - width % 8))) {
-      return TRUE;
-    }
-  return FALSE;
+  }
+  return (width % 8) && (pBuf[width / 8] & (0xff << (8 - width % 8)));
 }
+
 static FX_BOOL _IsScanLine8bpp(uint8_t* pBuf, int width) {
-  for (int i = 0; i < width; i++)
-    if (pBuf[i] > 0x40) {
+  for (int i = 0; i < width; i++) {
+    if (pBuf[i] > 0x40)
       return TRUE;
-    }
+  }
   return FALSE;
 }
+
 static int _DetectFirstLastScan(const CFX_DIBitmap* pBitmap, FX_BOOL bFirst) {
   int height = pBitmap->GetHeight(), pitch = pBitmap->GetPitch(),
       width = pBitmap->GetWidth();

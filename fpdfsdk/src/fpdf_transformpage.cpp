@@ -240,9 +240,9 @@ void OutputPath(CFX_ByteTextBuf& buf, CPDF_Path path) {
   for (int i = 0; i < pPathData->GetPointCount(); i++) {
     buf << (pPoints[i].m_PointX) << " " << (pPoints[i].m_PointY);
     int point_type = pPoints[i].m_Flag & FXPT_TYPE;
-    if (point_type == FXPT_MOVETO)
+    if (point_type == FXPT_MOVETO) {
       buf << " m\n";
-    else if (point_type == FXPT_BEZIERTO) {
+    } else if (point_type == FXPT_BEZIERTO) {
       buf << " " << (pPoints[i + 1].m_PointX) << " "
           << (pPoints[i + 1].m_PointY) << " " << (pPoints[i + 2].m_PointX)
           << " " << (pPoints[i + 2].m_PointY);

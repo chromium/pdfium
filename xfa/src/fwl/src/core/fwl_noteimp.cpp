@@ -30,9 +30,8 @@ FX_BOOL CFWL_NoteLoop::PreProcessMessage(CFWL_Message* pMessage) {
 }
 FWL_ERR CFWL_NoteLoop::Idle(int32_t count) {
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_)
-  if (count <= 0)
+  if (count <= 0) {
 #endif
-  {
     CFWL_EvtIdle ev;
     IFWL_App* pApp = FWL_GetApp();
     if (!pApp)
@@ -41,7 +40,9 @@ FWL_ERR CFWL_NoteLoop::Idle(int32_t count) {
     if (!pDriver)
       return FWL_ERR_Indefinite;
     pDriver->SendNote(&ev);
+#if (_FX_OS_ == _FX_WIN32_DESKTOP_)
   }
+#endif
   return FWL_ERR_Indefinite;
 }
 CFWL_WidgetImp* CFWL_NoteLoop::GetForm() {

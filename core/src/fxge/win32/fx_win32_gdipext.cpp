@@ -1347,7 +1347,9 @@ class GpStream final : public IStream {
                                                  DWORD) {
     return E_NOTIMPL;
   }
-  virtual HRESULT STDMETHODCALLTYPE Clone(IStream**) { return E_NOTIMPL; }
+  virtual HRESULT STDMETHODCALLTYPE Clone(IStream** stream) {
+    return E_NOTIMPL;
+  }
   virtual HRESULT STDMETHODCALLTYPE Seek(LARGE_INTEGER liDistanceToMove,
                                          DWORD dwOrigin,
                                          ULARGE_INTEGER* lpNewFilePointer) {

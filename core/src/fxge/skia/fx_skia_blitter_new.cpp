@@ -287,9 +287,9 @@ void CFX_SkiaRenderer::CompositeSpanGray_6(uint8_t* dest_scan,
       dest_scan++;
       continue;
     }
-    if (src_alpha1 == 255)
+    if (src_alpha1 == 255) {
       *dest_scan++ = m_Gray;
-    else {
+    } else {
       *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, m_Gray, src_alpha1);
       dest_scan++;
     }
@@ -1500,9 +1500,9 @@ FX_BOOL CFX_SkiaRenderer::Init(
   m_pOriScan = NULL;
   m_pClipScan = NULL;
   composite_span = NULL;
-  if (m_pClipRgn)
+  if (m_pClipRgn) {
     m_ClipBox = m_pClipRgn->GetBox();
-  else {
+  } else {
     m_ClipBox.left = m_ClipBox.top = 0;
     m_ClipBox.right = m_pDevice->GetWidth();
     m_ClipBox.bottom = m_pDevice->GetHeight();

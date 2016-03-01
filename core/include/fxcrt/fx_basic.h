@@ -315,13 +315,12 @@ class CFX_ArrayTemplate : public CFX_BasicArray {
   TYPE* GetData() { return (TYPE*)m_pData; }
 
   FX_BOOL SetAtGrow(int nIndex, TYPE newElement) {
-    if (nIndex < 0) {
+    if (nIndex < 0)
       return FALSE;
-    }
-    if (nIndex >= m_nSize)
-      if (!SetSize(nIndex + 1)) {
-        return FALSE;
-      }
+
+    if (nIndex >= m_nSize && !SetSize(nIndex + 1))
+      return FALSE;
+
     ((TYPE*)m_pData)[nIndex] = newElement;
     return TRUE;
   }

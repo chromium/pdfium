@@ -189,7 +189,7 @@ void CFWL_ComboEditImp::FlagFocus(FX_BOOL bSet) {
     m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Focused;
     ShowCaret(FALSE);
   }
-};
+}
 void CFWL_ComboEditImp::SetComboBoxFocus(FX_BOOL bSet) {
   m_pOuter->SetFocus(bSet);
 }

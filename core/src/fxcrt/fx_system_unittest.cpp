@@ -127,7 +127,7 @@ TEST(fxcrt, FXSYS_i64toa_InvalidRadix) {
 
   FXSYS_i64toa(42, buf, -1);
   EXPECT_EQ(std::string(""), buf);
-};
+}
 
 TEST(fxcrt, FXSYS_i64toa) {
   Check64BitBase16Itoa(std::numeric_limits<int64_t>::min(),

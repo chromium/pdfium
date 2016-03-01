@@ -966,22 +966,21 @@ FX_BOOL CPDF_Type1Font::Load() {
   m_Base14Font = PDF_GetStandardFontName(&m_BaseFont);
   if (m_Base14Font >= 0) {
     CPDF_Dictionary* pFontDesc = m_pFontDict->GetDictBy("FontDescriptor");
-    if (pFontDesc && pFontDesc->KeyExist("Flags")) {
+    if (pFontDesc && pFontDesc->KeyExist("Flags"))
       m_Flags = pFontDesc->GetIntegerBy("Flags");
-    } else {
+    else
       m_Flags = m_Base14Font >= 12 ? PDFFONT_SYMBOLIC : PDFFONT_NONSYMBOLIC;
-    }
-    if (m_Base14Font < 4)
-      for (int i = 0; i < 256; i++) {
+
+    if (m_Base14Font < 4) {
+      for (int i = 0; i < 256; i++)
         m_CharWidth[i] = 600;
-      }
-    if (m_Base14Font == 12) {
-      m_BaseEncoding = PDFFONT_ENCODING_ADOBE_SYMBOL;
-    } else if (m_Base14Font == 13) {
-      m_BaseEncoding = PDFFONT_ENCODING_ZAPFDINGBATS;
-    } else if (m_Flags & PDFFONT_NONSYMBOLIC) {
-      m_BaseEncoding = PDFFONT_ENCODING_STANDARD;
     }
+    if (m_Base14Font == 12)
+      m_BaseEncoding = PDFFONT_ENCODING_ADOBE_SYMBOL;
+    else if (m_Base14Font == 13)
+      m_BaseEncoding = PDFFONT_ENCODING_ZAPFDINGBATS;
+    else if (m_Flags & PDFFONT_NONSYMBOLIC)
+      m_BaseEncoding = PDFFONT_ENCODING_STANDARD;
   }
   return LoadCommon();
 }
@@ -1302,10 +1301,10 @@ CPDF_FontEncoding::CPDF_FontEncoding(int PredefinedEncoding) {
   const FX_WORD* pSrc = PDF_UnicodesForPredefinedCharSet(PredefinedEncoding);
   if (!pSrc) {
     FXSYS_memset(m_Unicodes, 0, sizeof(m_Unicodes));
-  } else
-    for (int i = 0; i < 256; i++) {
+  } else {
+    for (int i = 0; i < 256; i++)
       m_Unicodes[i] = pSrc[i];
-    }
+  }
 }
 
 FX_BOOL CPDF_FontEncoding::IsIdentical(CPDF_FontEncoding* pAnother) const {

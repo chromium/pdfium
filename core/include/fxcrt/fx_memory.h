@@ -98,7 +98,7 @@ class CFX_GrowOnlyPool {
 
   void* Realloc(void* p, size_t new_size) { return NULL; }
 
-  void Free(void*) {}
+  void Free(void* mem) {}
 
   void FreeAll();
 

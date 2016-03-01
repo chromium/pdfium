@@ -23,7 +23,7 @@ class CXFA_FMExpression {
  public:
   CXFA_FMExpression(FX_DWORD line);
   CXFA_FMExpression(FX_DWORD line, XFA_FM_EXPTYPE type);
-  virtual ~CXFA_FMExpression(){};
+  virtual ~CXFA_FMExpression() {}
   virtual void ToJavaScript(CFX_WideTextBuf& javascript);
   virtual void ToImpliedReturnJS(CFX_WideTextBuf&);
   FX_DWORD GetLine() { return m_line; }

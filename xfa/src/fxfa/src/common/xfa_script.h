@@ -38,7 +38,7 @@ enum XFA_RESOVENODE_RSTYPE {
 
 class CXFA_HVALUEArray : public CFX_ArrayTemplate<FXJSE_HVALUE> {
  public:
-  CXFA_HVALUEArray(FXJSE_HRUNTIME hRunTime) : m_hRunTime(hRunTime){};
+  CXFA_HVALUEArray(FXJSE_HRUNTIME hRunTime) : m_hRunTime(hRunTime) {}
   ~CXFA_HVALUEArray() {
     for (int32_t i = 0; i < GetSize(); i++) {
       FXJSE_Value_Release(GetAt(i));

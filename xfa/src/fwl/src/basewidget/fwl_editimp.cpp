@@ -1996,11 +1996,10 @@ void CFWL_EditImpDelegate::OnKeyDown(CFWL_MsgKey* pMsg) {
     }
     default: {
 #if (_FX_OS_ == _FX_MACOSX_)
-      if (pMsg->m_dwFlags & FWL_KEYFLAG_Command)
+      if (pMsg->m_dwFlags & FWL_KEYFLAG_Command) {
 #else
-      if (pMsg->m_dwFlags & FWL_KEYFLAG_Ctrl)
+      if (pMsg->m_dwFlags & FWL_KEYFLAG_Ctrl) {
 #endif
-      {
         if (dwKeyCode == 0x43 || dwKeyCode == 0x63) {
           m_pOwner->DoClipboard(1);
           return;

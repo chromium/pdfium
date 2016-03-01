@@ -89,7 +89,7 @@ class CPDF_CMapParser {
  public:
   CPDF_CMapParser();
   ~CPDF_CMapParser() {}
-  FX_BOOL Initialize(CPDF_CMap*);
+  FX_BOOL Initialize(CPDF_CMap* pMap);
   void ParseWord(const CFX_ByteStringC& str);
   CFX_BinaryBuf m_AddMaps;
 

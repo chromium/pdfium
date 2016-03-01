@@ -498,7 +498,7 @@ class CPDF_DIBSource : public CFX_DIBSource {
   void SetDownSampleSize(int dest_width, int dest_height) override;
 
   CFX_DIBitmap* GetBitmap() const;
-  void ReleaseBitmap(CFX_DIBitmap*) const;
+  void ReleaseBitmap(CFX_DIBitmap* pBitmap) const;
   void ClearImageData();
   FX_DWORD GetMatteColor() const { return m_MatteColor; }
 

@@ -166,7 +166,7 @@ class CPDF_Font {
                        CFX_ByteString*& pCharNames,
                        FX_BOOL bEmbedded,
                        FX_BOOL bTrueType);
-  void LoadFontDescriptor(CPDF_Dictionary*);
+  void LoadFontDescriptor(CPDF_Dictionary* pDict);
   void CheckFontMetrics();
 
   CFX_ByteString m_BaseFont;

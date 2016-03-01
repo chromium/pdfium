@@ -678,9 +678,10 @@ int _YearFromTime(double t) {
   if (_TimeFromYear(y) <= t) {
     while (_TimeFromYear(y + 1) <= t)
       y++;
-  } else
+  } else {
     while (_TimeFromYear(y) > t)
       y--;
+  }
   return y;
 }
 

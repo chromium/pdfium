@@ -45,8 +45,8 @@ class CFWL_ToolTipImp : public CFWL_FormImp {
   void RefreshToolTipPos();
   class CFWL_ToolTipTimer : public IFWL_Timer {
    public:
-    CFWL_ToolTipTimer(){};
-    ~CFWL_ToolTipTimer(){};
+    CFWL_ToolTipTimer() {}
+    ~CFWL_ToolTipTimer() {}
     CFWL_ToolTipTimer(CFWL_ToolTipImp* pToolTip);
     virtual int32_t Run(FWL_HTIMER hTimer);
     CFWL_ToolTipImp* m_pToolTip;

@@ -106,15 +106,16 @@ struct FX_FontDescriptorInfo {
  public:
   CFX_FontDescriptor* pFont;
   int32_t nPenalty;
-  bool operator>(const FX_FontDescriptorInfo& x) {
-    return nPenalty > x.nPenalty;
-  };
-  bool operator<(const FX_FontDescriptorInfo& x) {
-    return nPenalty < x.nPenalty;
-  };
-  bool operator==(const FX_FontDescriptorInfo& x) {
-    return nPenalty == x.nPenalty;
-  };
+
+  bool operator>(const FX_FontDescriptorInfo& other) const {
+    return nPenalty > other.nPenalty;
+  }
+  bool operator<(const FX_FontDescriptorInfo& other) const {
+    return nPenalty < other.nPenalty;
+  }
+  bool operator==(const FX_FontDescriptorInfo& other) const {
+    return nPenalty == other.nPenalty;
+  }
 };
 typedef CFX_ArrayTemplate<FX_FontDescriptorInfo> CFX_FontDescriptorInfos;
 
@@ -131,7 +132,7 @@ struct FX_HandleParentPath {
 class CFX_FontSourceEnum_File : public IFX_FontSourceEnum {
  public:
   CFX_FontSourceEnum_File();
-  virtual void Release() { delete this; };
+  virtual void Release() { delete this; }
   virtual FX_POSITION GetStartPosition(void* pUserData = NULL);
   virtual IFX_FileAccess* GetNext(FX_POSITION& pos, void* pUserData = NULL);
 

@@ -932,11 +932,12 @@ FX_BOOL CFDE_CSSDeclaration::ParseBackgroundProperty(
         }
         const FDE_CSSCOLORTABLE* pColorItem =
             FDE_GetCSSColorByName(pszValue, iValueLen);
-        if (pColorItem != NULL)
+        if (pColorItem != NULL) {
           if (pColor == NULL) {
             pColor = FXTARGET_NewWith(pStaticStore)
                 CFDE_CSSPrimitiveValue(pColorItem->dwValue);
           }
+        }
       } break;
       case FDE_CSSPRIMITIVETYPE_RGB:
         if (pColor == NULL) {

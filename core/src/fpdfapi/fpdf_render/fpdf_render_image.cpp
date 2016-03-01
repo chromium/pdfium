@@ -247,12 +247,11 @@ void CPDF_DIBTransferFunc::TranslateScanline(uint8_t* dest_buf,
         *dest_buf++ = m_RampR[*(src_buf++)];
         if (!bSkip) {
           *dest_buf++ = *src_buf;
-        }
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-        else {
+        } else {
           dest_buf++;
-        }
 #endif
+        }
         src_buf++;
       }
       break;
@@ -284,7 +283,7 @@ void CPDF_DIBTransferFunc::TranslateDownSamples(uint8_t* dest_buf,
         dest_buf++;
         src_buf++;
       }
-    } else
+    } else {
 #endif
       for (int i = 0; i < pixels; i++) {
         *dest_buf++ = m_RampB[*(src_buf++)];
@@ -292,6 +291,9 @@ void CPDF_DIBTransferFunc::TranslateDownSamples(uint8_t* dest_buf,
         *dest_buf++ = m_RampR[*(src_buf++)];
         *dest_buf++ = *(src_buf++);
       }
+#if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
+    }
+#endif
   }
 }
 CPDF_ImageRenderer::CPDF_ImageRenderer() {

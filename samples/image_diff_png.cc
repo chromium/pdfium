@@ -641,4 +641,4 @@ bool EncodeBGRAPNG(const unsigned char* input,
       std::vector<Comment>(), output);
 }
 
-}  // image_diff_png
+}  // namespace image_diff_png

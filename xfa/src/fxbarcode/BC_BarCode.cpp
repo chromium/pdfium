@@ -122,7 +122,7 @@ void CBC_CodeBase::SetBarcodeColor(FX_ARGB foregroundColor) {
     m_pBCWriter->SetBarcodeColor(foregroundColor);
   }
 }
-CBC_OneCode::CBC_OneCode(){};
+CBC_OneCode::CBC_OneCode() {}
 CBC_OneCode::~CBC_OneCode() {}
 FX_BOOL CBC_OneCode::CheckContentValidity(const CFX_WideStringC& contents) {
   if (m_pBCWriter) {

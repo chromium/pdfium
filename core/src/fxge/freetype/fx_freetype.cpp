@@ -34,8 +34,9 @@ static int xyq_search_node(char* glyph_name,
     if (thiscode == (unsigned short)unicode)  // found it!
       return 1;
     table_offset += 3;
-  } else
+  } else {
     table_offset++;
+  }
 
   // now search in sub-nodes
   if (count == 0)

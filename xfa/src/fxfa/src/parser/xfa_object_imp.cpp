@@ -178,24 +178,27 @@ CXFA_Node* CXFA_Node::GetNodeItem(XFA_NODEITEM eItem,
   switch (eItem) {
     case XFA_NODEITEM_NextSibling:
       pNode = m_pNext;
-      if (eType != XFA_OBJECTTYPEMASK)
+      if (eType != XFA_OBJECTTYPEMASK) {
         while (pNode && pNode->GetObjectType() != eType) {
           pNode = pNode->m_pNext;
         }
+      }
       break;
     case XFA_NODEITEM_FirstChild:
       pNode = m_pChild;
-      if (eType != XFA_OBJECTTYPEMASK)
+      if (eType != XFA_OBJECTTYPEMASK) {
         while (pNode && pNode->GetObjectType() != eType) {
           pNode = pNode->m_pNext;
         }
+      }
       break;
     case XFA_NODEITEM_Parent:
       pNode = m_pParent;
-      if (eType != XFA_OBJECTTYPEMASK)
+      if (eType != XFA_OBJECTTYPEMASK) {
         while (pNode && pNode->GetObjectType() != eType) {
           pNode = pNode->m_pParent;
         }
+      }
       break;
     case XFA_NODEITEM_PrevSibling:
       if (m_pParent) {

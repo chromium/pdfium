@@ -138,13 +138,13 @@ class CPDF_StreamContentParser {
                              CPDF_Image* pImage,
                              FX_BOOL bInline);
   void AddDuplicateImage();
-  void AddForm(CPDF_Stream*);
+  void AddForm(CPDF_Stream* pStream);
   void SetGraphicStates(CPDF_PageObject* pObj,
                         FX_BOOL bColor,
                         FX_BOOL bText,
                         FX_BOOL bGraph);
-  void SaveStates(CPDF_AllStates*);
-  void RestoreStates(CPDF_AllStates*);
+  void SaveStates(CPDF_AllStates* pState);
+  void RestoreStates(CPDF_AllStates* pState);
   CPDF_Font* FindFont(const CFX_ByteString& name);
   CPDF_ColorSpace* FindColorSpace(const CFX_ByteString& name);
   CPDF_Pattern* FindPattern(const CFX_ByteString& name, FX_BOOL bShading);

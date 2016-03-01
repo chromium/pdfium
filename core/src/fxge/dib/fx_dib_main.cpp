@@ -470,11 +470,11 @@ FX_BOOL CFX_DIBitmap::TransferMask(int dest_left,
         CFX_GEModule::Get()->GetCodecModule()->GetIccModule();
     pIccModule->TranslateScanline(pIccTransform, color_p, color_p, 1);
   } else {
-    if (alpha_flag >> 8 && !IsCmykImage())
+    if (alpha_flag >> 8 && !IsCmykImage()) {
       AdobeCMYK_to_sRGB1(FXSYS_GetCValue(color), FXSYS_GetMValue(color),
                          FXSYS_GetYValue(color), FXSYS_GetKValue(color),
                          color_p[2], color_p[1], color_p[0]);
-    else if (!(alpha_flag >> 8) && IsCmykImage()) {
+    } else if (!(alpha_flag >> 8) && IsCmykImage()) {
       return FALSE;
     }
   }
@@ -703,11 +703,10 @@ FX_BOOL CFX_DIBitmap::LoadChannel(FXDIB_Channel destChannel,
           }
           return FALSE;
         }
-      } else
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-          if (!ConvertFormat(IsCmykImage() ? FXDIB_Cmyk : FXDIB_Rgb32)) {
+      } else if (!ConvertFormat(IsCmykImage() ? FXDIB_Cmyk : FXDIB_Rgb32)) {
 #else
-          if (!ConvertFormat(IsCmykImage() ? FXDIB_Cmyk : FXDIB_Rgb)) {
+      } else if (!ConvertFormat(IsCmykImage() ? FXDIB_Cmyk : FXDIB_Rgb)) {
 #endif
         if (pSrcClone != pSrcBitmap) {
           delete pSrcClone;
@@ -797,16 +796,13 @@ FX_BOOL CFX_DIBitmap::LoadChannel(FXDIB_Channel destChannel, int value) {
         if (!ConvertFormat(IsCmykImage() ? FXDIB_Cmyka : FXDIB_Argb)) {
           return FALSE;
         }
-      } else
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
-          if (!ConvertFormat(IsCmykImage() ? FXDIB_Cmyk : FXDIB_Rgb)) {
-        return FALSE;
-      }
+      } else if (!ConvertFormat(IsCmykImage() ? FXDIB_Cmyk : FXDIB_Rgb)) {
 #else
-          if (!ConvertFormat(IsCmykImage() ? FXDIB_Cmyk : FXDIB_Rgb32)) {
+      } else if (!ConvertFormat(IsCmykImage() ? FXDIB_Cmyk : FXDIB_Rgb32)) {
+#endif
         return FALSE;
       }
-#endif
     }
     destOffset = g_ChannelOffset[destChannel];
   }
@@ -1264,7 +1260,7 @@ FX_BOOL CFX_DIBitmap::ConvertColorScale(FX_DWORD forecolor,
             bc + (fc - bc) * gray / 255, bm + (fm - bm) * gray / 255,
             by + (fy - by) * gray / 255, bk + (fk - bk) * gray / 255);
       }
-    } else
+    } else {
       for (int i = 0; i < size; i++) {
         int gray = FXRGB2GRAY(FXARGB_R(m_pPalette[i]), FXARGB_G(m_pPalette[i]),
                               FXARGB_B(m_pPalette[i]));
@@ -1272,6 +1268,7 @@ FX_BOOL CFX_DIBitmap::ConvertColorScale(FX_DWORD forecolor,
                                     bg + (fg - bg) * gray / 255,
                                     bb + (fb - bb) * gray / 255);
       }
+    }
     return TRUE;
   }
   if (isCmykImage) {

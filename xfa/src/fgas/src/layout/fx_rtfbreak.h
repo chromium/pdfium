@@ -69,8 +69,8 @@ class CFX_RTFBreak : public IFX_RTFBreak {
   CFX_RTFBreak(FX_DWORD dwPolicies);
   ~CFX_RTFBreak();
   void Release() override { delete this; }
-  void SetLineBoundary(FX_FLOAT fLineStart, FX_FLOAT fLineEnd) override final;
-  void SetLineStartPos(FX_FLOAT fLinePos) override final;
+  void SetLineBoundary(FX_FLOAT fLineStart, FX_FLOAT fLineEnd) override;
+  void SetLineStartPos(FX_FLOAT fLinePos) override;
   FX_DWORD GetLayoutStyles() const override { return m_dwLayoutStyles; }
   void SetLayoutStyles(FX_DWORD dwLayoutStyles) override;
   void SetFont(IFX_Font* pFont) override;

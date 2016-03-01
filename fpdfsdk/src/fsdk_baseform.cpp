@@ -56,8 +56,9 @@ IXFA_Widget* CPDFSDK_Widget::GetMixXFAWidget() const {
           sName = GetAnnotName();
           if (sName.IsEmpty())
             sName = GetName();
-        } else
+        } else {
           sName = GetName();
+        }
 
         if (!sName.IsEmpty())
           m_hMixXFAWidget = pDocView->GetWidgetByName(sName);

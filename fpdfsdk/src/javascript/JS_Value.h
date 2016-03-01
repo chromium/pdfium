@@ -69,13 +69,13 @@ class CJS_Value {
 
   void operator=(int iValue);
   void operator=(bool bValue);
-  void operator=(double);
-  void operator=(float);
-  void operator=(CJS_Object*);
-  void operator=(CJS_Document*);
-  void operator=(v8::Local<v8::Object>);
-  void operator=(CJS_Array&);
-  void operator=(CJS_Date&);
+  void operator=(double val);
+  void operator=(float val);
+  void operator=(CJS_Object* val);
+  void operator=(CJS_Document* val);
+  void operator=(v8::Local<v8::Object> val);
+  void operator=(CJS_Array& val);
+  void operator=(CJS_Date& val);
   void operator=(const FX_WCHAR* pWstr);
   void operator=(const FX_CHAR* pStr);
   void operator=(CJS_Value value);
@@ -102,11 +102,11 @@ class CJS_PropValue : public CJS_Value {
   FX_BOOL IsSetting() const { return m_bIsSetting; }
   FX_BOOL IsGetting() const { return !m_bIsSetting; }
 
-  void operator<<(int);
+  void operator<<(int val);
   void operator>>(int&) const;
-  void operator<<(bool);
+  void operator<<(bool val);
   void operator>>(bool&) const;
-  void operator<<(double);
+  void operator<<(double val);
   void operator>>(double&) const;
   void operator<<(CJS_Object* pObj);
   void operator>>(CJS_Object*& ppObj) const;

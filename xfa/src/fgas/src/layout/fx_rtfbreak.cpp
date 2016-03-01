@@ -531,11 +531,12 @@ FX_DWORD CFX_RTFBreak::AppendChar_Arabic(CFX_RTFChar* pCurChar,
       if (m_bVertical != FX_IsOdd(iLastRotation)) {
         iCharWidth = 1000;
       } else {
-        if (!m_pFont->GetCharWidth(wForm, iCharWidth, m_bCharCode))
+        if (!m_pFont->GetCharWidth(wForm, iCharWidth, m_bCharCode)) {
           if (!m_pFont->GetCharWidth(pLastChar->m_wCharCode, iCharWidth,
                                      m_bCharCode)) {
             iCharWidth = m_iDefChar;
           }
+        }
       }
       iCharWidth *= m_iFontSize;
       iCharWidth = iCharWidth * m_iHorizontalScale / 100;
@@ -548,13 +549,12 @@ FX_DWORD CFX_RTFBreak::AppendChar_Arabic(CFX_RTFChar* pCurChar,
       m_pArabicChar->GetFormChar(pCurChar, (bAlef ? NULL : pLastChar), NULL);
   if (m_bVertical != FX_IsOdd(iRotation)) {
     iCharWidth = 1000;
-  } else {
-    if (!m_pFont->GetCharWidth(wForm, iCharWidth, m_bCharCode))
-      if (!m_pFont->GetCharWidth(pCurChar->m_wCharCode, iCharWidth,
-                                 m_bCharCode)) {
-        iCharWidth = m_iDefChar;
-      }
+  } else if (!m_pFont->GetCharWidth(wForm, iCharWidth, m_bCharCode) &&
+             !m_pFont->GetCharWidth(pCurChar->m_wCharCode, iCharWidth,
+                                    m_bCharCode)) {
+    iCharWidth = m_iDefChar;
   }
+
   iCharWidth *= m_iFontSize;
   iCharWidth = iCharWidth * m_iHorizontalScale / 100;
   pCurChar->m_iCharWidth = iCharWidth;

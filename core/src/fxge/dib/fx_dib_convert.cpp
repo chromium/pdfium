@@ -389,11 +389,12 @@ FX_BOOL ConvertBuffer_8bppPlt2Gray(uint8_t* dest_buf,
             FXSYS_GetYValue(src_plt[i]), FXSYS_GetKValue(src_plt[i]), r, g, b);
         gray[i] = FXRGB2GRAY(r, g, b);
       }
-    } else
+    } else {
       for (int i = 0; i < 256; i++) {
         gray[i] = FXRGB2GRAY(FXARGB_R(src_plt[i]), FXARGB_G(src_plt[i]),
                              FXARGB_B(src_plt[i]));
       }
+    }
   }
   for (int row = 0; row < height; row++) {
     uint8_t* dest_scan = dest_buf + row * dest_pitch;
@@ -1104,10 +1105,10 @@ CFX_DIBitmap* CFX_DIBSource::CloneConvert(FXDIB_Format dest_format,
     }
   }
   if (dest_format & 0x0200) {
-    if (dest_format == FXDIB_Argb)
+    if (dest_format == FXDIB_Argb) {
       ret = pSrcAlpha ? pClone->LoadChannel(FXDIB_Alpha, pSrcAlpha, FXDIB_Alpha)
                       : pClone->LoadChannel(FXDIB_Alpha, 0xff);
-    else {
+    } else {
       ret = pClone->CopyAlphaMask(pSrcAlpha);
     }
   }

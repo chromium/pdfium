@@ -21,7 +21,7 @@ class CFDE_CSSFunction : public CFX_Target {
   IFDE_CSSValue* GetArgs(int32_t index) const {
     return m_pArgList->GetValue(index);
   }
-  const FX_WCHAR* GetFuncName() const { return m_pszFuncName; };
+  const FX_WCHAR* GetFuncName() const { return m_pszFuncName; }
 
  protected:
   IFDE_CSSValueList* m_pArgList;

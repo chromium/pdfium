@@ -40,7 +40,7 @@ class CFWL_PictureBox : public CFWL_Widget {
       m_fOffSetX = 0.0f;
       m_fOffSetY = 0.0f;
       m_pBitmap = NULL;
-    };
+    }
     virtual FWL_ERR GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption);
     virtual CFX_DIBitmap* GetPicture(IFWL_Widget* pWidget);
     virtual CFX_DIBitmap* GetErrorPicture(IFWL_Widget* pWidget);

@@ -14,7 +14,7 @@ class CFXJSE_RuntimeList;
 
 class CFXJSE_RuntimeData {
  protected:
-  CFXJSE_RuntimeData(v8::Isolate* pIsolate) : m_pIsolate(pIsolate){};
+  CFXJSE_RuntimeData(v8::Isolate* pIsolate) : m_pIsolate(pIsolate) {}
 
  public:
   static CFXJSE_RuntimeData* Create(v8::Isolate* pIsolate);

@@ -1048,11 +1048,10 @@ FX_BOOL CPDFXFA_Document::_MailToInfo(CFX_WideString& csURL,
     pos = srcURL.Find(L'@', 0);
     if (pos == -1)
       return FALSE;
-    else {
-      tmp = srcURL.Right(csURL.GetLength() - 7);
-      tmp.TrimLeft();
-      tmp.TrimRight();
-    }
+
+    tmp = srcURL.Right(csURL.GetLength() - 7);
+    tmp.TrimLeft();
+    tmp.TrimRight();
   } else {
     tmp = srcURL.Left(pos);
     tmp = tmp.Right(tmp.GetLength() - 7);

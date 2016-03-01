@@ -143,7 +143,7 @@ class CFDE_HatchBrush : public IFDE_HatchBrush, public CFX_Target {
     }
   }
 
-  virtual int32_t GetHatchStyle() const { return m_iStyle; };
+  virtual int32_t GetHatchStyle() const { return m_iStyle; }
   virtual FX_BOOL SetHatchStyle(int32_t iHatchStyle) {
     m_iStyle = iHatchStyle;
     return m_iStyle >= FDE_HATCHSTYLE_Min && m_iStyle <= FDE_HATCHSTYLE_Max;

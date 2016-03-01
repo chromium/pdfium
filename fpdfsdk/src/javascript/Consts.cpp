@@ -249,17 +249,17 @@ void CJS_GlobalArrays::DefineJSObjects(CJS_Runtime* pRuntime) {
   {
     const FX_WCHAR* ArrayName = L"RE_PHONE_ENTRY";
     const FX_WCHAR* ArrayContent[] = {
-        L"\\d{0,3}(\\.|[- ])?\\d{0,3}(\\.|[- ])?\\d{0,4}", /* 555-1234 or 408
-                                                              555-1234 */
-        L"\\(\\d{0,3}",                                    /* (408 */
-        L"\\(\\d{0,3}\\)(\\.|[- ])?\\d{0,3}(\\.|[- ])?\\d{0,4}", /* (408)
-                                                                    555-1234 */
-        /* (allow the addition of parens as an afterthought) */
-        L"\\(\\d{0,3}(\\.|[- ])?\\d{0,3}(\\.|[- ])?\\d{0,4}", /* (408 555-1234
-                                                                 */
-        L"\\d{0,3}\\)(\\.|[- ])?\\d{0,3}(\\.|[- ])?\\d{0,4}", /* 408) 555-1234
-                                                                 */
-        L"011(\\.|[- \\d])*" /* international */
+        L"\\d{0,3}(\\.|[- ])?\\d{0,3}(\\.|[- ])?\\d{0,4}",  // 555-1234 or 408
+                                                            // 555-1234
+        L"\\(\\d{0,3}",                                     // (408
+        L"\\(\\d{0,3}\\)(\\.|[- ])?\\d{0,3}(\\.|[- ])?\\d{0,4}",  // (408)
+                                                                  // 555-1234
+        // (allow the addition of parens as an afterthought)
+        L"\\(\\d{0,3}(\\.|[- ])?\\d{0,3}(\\.|[- ])?\\d{0,4}",  // (408 555-1234
+
+        L"\\d{0,3}\\)(\\.|[- ])?\\d{0,3}(\\.|[- ])?\\d{0,4}",  // 408) 555-1234
+
+        L"011(\\.|[- \\d])*"  // international
     };
     DefineGlobalConstStringArray(pRuntime, ArrayName, ArrayContent,
                                  FX_ArraySize(ArrayContent));
@@ -268,10 +268,10 @@ void CJS_GlobalArrays::DefineJSObjects(CJS_Runtime* pRuntime) {
   {
     const FX_WCHAR* ArrayName = L"RE_PHONE_COMMIT";
     const FX_WCHAR* ArrayContent[] = {
-        L"\\d{3}(\\.|[- ])?\\d{4}",                        /* 555-1234 */
-        L"\\d{3}(\\.|[- ])?\\d{3}(\\.|[- ])?\\d{4}",       /* 408 555-1234 */
-        L"\\(\\d{3}\\)(\\.|[- ])?\\d{3}(\\.|[- ])?\\d{4}", /* (408) 555-1234 */
-        L"011(\\.|[- \\d])*"                               /* international */
+        L"\\d{3}(\\.|[- ])?\\d{4}",                         // 555-1234
+        L"\\d{3}(\\.|[- ])?\\d{3}(\\.|[- ])?\\d{4}",        // 408 555-1234
+        L"\\(\\d{3}\\)(\\.|[- ])?\\d{3}(\\.|[- ])?\\d{4}",  // (408) 555-1234
+        L"011(\\.|[- \\d])*"                                // international
     };
     DefineGlobalConstStringArray(pRuntime, ArrayName, ArrayContent,
                                  FX_ArraySize(ArrayContent));

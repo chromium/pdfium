@@ -328,11 +328,12 @@ FX_BOOL CFX_RenderDevice::DrawCosmeticLine(FX_FLOAT x1,
   if (((m_RenderCaps & FXRC_ALPHA_PATH) &&
        (FXGETFLAG_COLORTYPE(alpha_flag) &&
         FXGETFLAG_ALPHA_FILL(alpha_flag) == 0xff)) ||
-      color >= 0xff000000)
+      color >= 0xff000000) {
     if (m_pDeviceDriver->DrawCosmeticLine(x1, y1, x2, y2, color, alpha_flag,
                                           pIccTransform, blend_type)) {
       return TRUE;
     }
+  }
   CFX_GraphStateData graph_state;
   CFX_PathData path;
   path.SetPointCount(2);

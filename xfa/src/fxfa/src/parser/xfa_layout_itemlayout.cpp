@@ -1676,7 +1676,7 @@ static void XFA_ItemLayoutProcessor_AddTrailerBeforeSplit(
   }
   pProcessor->m_pLayoutItem->m_sSize.y += fHeight;
   pProcessor->m_pLayoutItem->AddChild(pTrailerLayoutItem);
-};
+}
 static void XFA_ItemLayoutProcessor_AddLeaderAfterSplit(
     CXFA_ItemLayoutProcessor* pProcessor,
     CXFA_ContentLayoutItem* pLeaderLayoutItem) {
@@ -1717,7 +1717,7 @@ static void XFA_ItemLayoutProcessor_AddLeaderAfterSplit(
   }
   pProcessor->m_pLayoutItem->m_sSize.y += fHeight;
   pProcessor->m_pLayoutItem->AddChild(pLeaderLayoutItem);
-};
+}
 static void XFA_ItemLayoutProcessor_AddPendingNode(
     CXFA_ItemLayoutProcessor* pProcessor,
     CXFA_Node* pPendingNode,

@@ -66,11 +66,12 @@ IFX_Font* CFX_StdFontMgrImp::GetDefFontByCodePage(
     return pFont ? LoadFont(pFont, dwFontStyles, wCodePage) : NULL;
   }
   FX_LPCFONTDESCRIPTOR pFD;
-  if ((pFD = FindFont(pszFontFamily, dwFontStyles, TRUE, wCodePage)) == NULL)
-    if ((pFD = FindFont(NULL, dwFontStyles, TRUE, wCodePage)) == NULL)
-      if ((pFD = FindFont(NULL, dwFontStyles, FALSE, wCodePage)) == NULL) {
+  if ((pFD = FindFont(pszFontFamily, dwFontStyles, TRUE, wCodePage)) == NULL) {
+    if ((pFD = FindFont(NULL, dwFontStyles, TRUE, wCodePage)) == NULL) {
+      if ((pFD = FindFont(NULL, dwFontStyles, FALSE, wCodePage)) == NULL)
         return NULL;
-      }
+    }
+  }
   FXSYS_assert(pFD != NULL);
   pFont = IFX_Font::LoadFont(pFD->wsFontFace, dwFontStyles, wCodePage, this);
   if (pFont != NULL) {
@@ -146,11 +147,12 @@ IFX_Font* CFX_StdFontMgrImp::LoadFont(const FX_WCHAR* pszFontFamily,
     return pFont ? LoadFont(pFont, dwFontStyles, wCodePage) : NULL;
   }
   FX_LPCFONTDESCRIPTOR pFD = NULL;
-  if ((pFD = FindFont(pszFontFamily, dwFontStyles, TRUE, wCodePage)) == NULL)
+  if ((pFD = FindFont(pszFontFamily, dwFontStyles, TRUE, wCodePage)) == NULL) {
     if ((pFD = FindFont(pszFontFamily, dwFontStyles, FALSE, wCodePage)) ==
         NULL) {
       return NULL;
     }
+  }
   FXSYS_assert(pFD != NULL);
   if (wCodePage == 0xFFFF) {
     wCodePage = FX_GetCodePageFromCharset(pFD->uCharSet);

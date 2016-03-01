@@ -34,7 +34,7 @@ class CBC_OneDimWriter : public CBC_Writer {
                           int32_t& outLength,
                           int32_t& e) {
     return NULL;
-  };
+  }
   virtual void RenderResult(const CFX_WideStringC& contents,
                             uint8_t* code,
                             int32_t codeLength,
@@ -49,7 +49,7 @@ class CBC_OneDimWriter : public CBC_Writer {
                                   int32_t& e);
   virtual FX_BOOL CheckContentValidity(const CFX_WideStringC& contents) {
     return TRUE;
-  };
+  }
   virtual CFX_WideString FilterContents(const CFX_WideStringC& contents) {
     return CFX_WideString();
   }

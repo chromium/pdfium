@@ -52,7 +52,7 @@ class CFX_GEFont : public IFX_Font {
   virtual void SetLogicalFontStyle(FX_DWORD dwLogFontStyle) {
     m_bUseLogFontStyle = TRUE;
     m_dwLogFontStyle = dwLogFontStyle;
-  };
+  }
 #endif
 
  protected:

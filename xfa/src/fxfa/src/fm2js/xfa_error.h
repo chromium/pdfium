@@ -24,8 +24,8 @@ enum XFA_FM_ERRMSG {
 
 class CXFA_FMErrorInfo {
  public:
-  CXFA_FMErrorInfo() : linenum(0){};
-  ~CXFA_FMErrorInfo(){};
+  CXFA_FMErrorInfo() : linenum(0) {}
+  ~CXFA_FMErrorInfo() {}
   FX_DWORD linenum;
   CFX_WideString message;
 };

@@ -326,9 +326,8 @@ bool ParseCommandLine(const std::vector<std::string>& args,
         return false;
       }
       options->font_directory = cur_arg.substr(11);
-    }
 #ifdef _WIN32
-    else if (cur_arg == "--emf") {
+    } else if (cur_arg == "--emf") {
       if (options->output_format != OUTPUT_NONE) {
         fprintf(stderr, "Duplicate or conflicting --emf argument\n");
         return false;
@@ -340,20 +339,21 @@ bool ParseCommandLine(const std::vector<std::string>& args,
         return false;
       }
       options->output_format = OUTPUT_BMP;
-    }
 #endif  // _WIN32
+
 #ifdef PDF_ENABLE_V8
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
-    else if (cur_arg.size() > 10 && cur_arg.compare(0, 10, "--bin-dir=") == 0) {
+    } else if (cur_arg.size() > 10 &&
+               cur_arg.compare(0, 10, "--bin-dir=") == 0) {
       if (!options->bin_directory.empty()) {
         fprintf(stderr, "Duplicate --bin-dir argument\n");
         return false;
       }
       options->bin_directory = cur_arg.substr(10);
-    }
 #endif  // V8_USE_EXTERNAL_STARTUP_DATA
 #endif  // PDF_ENABLE_V8
-    else if (cur_arg.size() > 8 && cur_arg.compare(0, 8, "--scale=") == 0) {
+
+    } else if (cur_arg.size() > 8 && cur_arg.compare(0, 8, "--scale=") == 0) {
       if (!options->scale_factor_as_string.empty()) {
         fprintf(stderr, "Duplicate --scale argument\n");
         return false;
@@ -362,8 +362,9 @@ bool ParseCommandLine(const std::vector<std::string>& args,
     } else if (cur_arg.size() >= 2 && cur_arg[0] == '-' && cur_arg[1] == '-') {
       fprintf(stderr, "Unrecognized argument %s\n", cur_arg.c_str());
       return false;
-    } else
+    } else {
       break;
+    }
   }
   for (size_t i = cur_idx; i < args.size(); i++) {
     files->push_back(args[i]);
