@@ -32,11 +32,10 @@ class IFDE_TxtEdtPage : public IFDE_CanvasSet, public IFX_TxtAccess {
 
   virtual int32_t GetDisplayPos(const CFX_RectF& rtClip,
                                 FXTEXT_CHARPOS*& pCharPos,
-                                FX_LPRECTF pBBox = NULL) const = 0;
-  virtual FX_BOOL IsLoaded(FX_LPCRECTF pClipBox = NULL) = 0;
-  virtual int32_t LoadPage(FX_LPCRECTF pClipBox = NULL,
-                           IFX_Pause* pPause = NULL) = 0;
-  virtual void UnloadPage(FX_LPCRECTF pClipBox = NULL) = 0;
+                                CFX_RectF* pBBox) const = 0;
+  virtual FX_BOOL IsLoaded(const CFX_RectF* pClipBox) = 0;
+  virtual int32_t LoadPage(const CFX_RectF* pClipBox, IFX_Pause* pPause) = 0;
+  virtual void UnloadPage(const CFX_RectF* pClipBox) = 0;
   virtual const CFX_RectF& GetContentsBox() = 0;
 };
 

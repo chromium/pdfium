@@ -290,7 +290,7 @@ int32_t CFDE_TxtEdtPage::GetCharCount() const {
 }
 int32_t CFDE_TxtEdtPage::GetDisplayPos(const CFX_RectF& rtClip,
                                        FXTEXT_CHARPOS*& pCharPos,
-                                       FX_LPRECTF pBBox) const {
+                                       CFX_RectF* pBBox) const {
   pCharPos = FX_Alloc(FXTEXT_CHARPOS, m_nCharCount);
   int32_t nCharPosCount = 0;
   FDE_HVISUALOBJ hVisualObj = NULL;
@@ -376,10 +376,11 @@ int32_t CFDE_TxtEdtPage::SelectWord(const CFX_PointF& fPoint, int32_t& nCount) {
   pIter->Release();
   return nRet;
 }
-FX_BOOL CFDE_TxtEdtPage::IsLoaded(FX_LPCRECTF pClipBox) {
+FX_BOOL CFDE_TxtEdtPage::IsLoaded(const CFX_RectF* pClipBox) {
   return m_bLoaded;
 }
-int32_t CFDE_TxtEdtPage::LoadPage(FX_LPCRECTF pClipBox, IFX_Pause* pPause) {
+int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
+                                  IFX_Pause* pPause) {
   if (m_nRefCount > 0) {
     m_nRefCount++;
     return m_nRefCount;
@@ -558,7 +559,7 @@ int32_t CFDE_TxtEdtPage::LoadPage(FX_LPCRECTF pClipBox, IFX_Pause* pPause) {
   m_bLoaded = TRUE;
   return 0;
 }
-void CFDE_TxtEdtPage::UnloadPage(FX_LPCRECTF pClipBox) {
+void CFDE_TxtEdtPage::UnloadPage(const CFX_RectF* pClipBox) {
   FXSYS_assert(m_nRefCount > 0);
   m_nRefCount--;
   if (m_nRefCount == 0) {

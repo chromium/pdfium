@@ -89,7 +89,7 @@ struct FX_RTFTEXTOBJ {
   FX_DWORD dwLayoutStyles;
   int32_t iCharRotation;
   int32_t iBidiLevel;
-  FX_LPCRECTF pRect;
+  const CFX_RectF* pRect;
   FX_WCHAR wLineBreakChar;
   int32_t iHorizontalScale;
   int32_t iVerticalScale;

@@ -866,7 +866,7 @@ FX_BOOL CFWL_EditImp::On_PageLoad(IFDE_TxtEdtEngine* pEdit,
   IFDE_TxtEdtPage* pPage = pEdtEngine->GetPage(nPageIndex);
   if (!pPage)
     return FALSE;
-  pPage->LoadPage();
+  pPage->LoadPage(nullptr, nullptr);
   return TRUE;
 }
 FX_BOOL CFWL_EditImp::On_PageUnload(IFDE_TxtEdtEngine* pEdit,
@@ -876,7 +876,7 @@ FX_BOOL CFWL_EditImp::On_PageUnload(IFDE_TxtEdtEngine* pEdit,
   IFDE_TxtEdtPage* pPage = pEdtEngine->GetPage(nPageIndex);
   if (!pPage)
     return FALSE;
-  pPage->UnloadPage();
+  pPage->UnloadPage(nullptr);
   return TRUE;
 }
 
@@ -1186,23 +1186,23 @@ void CFWL_EditImp::UpdateEditParams() {
   params.pEventSink = this;
   m_pEdtEngine->SetEditParams(params);
 }
+
 void CFWL_EditImp::UpdateEditLayout() {
-  if (m_pEdtEngine->GetTextLength() <= 0) {
-    m_pEdtEngine->SetTextByStream(NULL);
-  }
+  if (m_pEdtEngine->GetTextLength() <= 0)
+    m_pEdtEngine->SetTextByStream(nullptr);
+
   IFDE_TxtEdtPage* pPage = m_pEdtEngine->GetPage(0);
-  if (pPage) {
-    pPage->UnloadPage();
-    pPage = NULL;
-  }
+  if (pPage)
+    pPage->UnloadPage(nullptr);
+
   m_pEdtEngine->StartLayout();
-  m_pEdtEngine->DoLayout(NULL);
+  m_pEdtEngine->DoLayout(nullptr);
   m_pEdtEngine->EndLayout();
   pPage = m_pEdtEngine->GetPage(0);
-  if (pPage) {
-    pPage->LoadPage();
-  }
+  if (pPage)
+    pPage->LoadPage(nullptr, nullptr);
 }
+
 FX_BOOL CFWL_EditImp::UpdateOffset() {
   CFX_RectF rtCaret;
   m_pEdtEngine->GetCaretRect(rtCaret);

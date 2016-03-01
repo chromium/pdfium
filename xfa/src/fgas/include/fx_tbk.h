@@ -109,7 +109,7 @@ struct FX_TXTRUN {
   int32_t iVerticalScale;
   int32_t iCharRotation;
   FX_DWORD dwCharStyles;
-  FX_LPCRECTF pRect;
+  const CFX_RectF* pRect;
   FX_WCHAR wLineBreakChar;
   FX_BOOL bSkipSpace;
 };

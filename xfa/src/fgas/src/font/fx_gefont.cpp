@@ -447,10 +447,10 @@ FX_BOOL CFX_GEFont::GetCharBBox(FX_WCHAR wUnicode,
       }
     }
   }
-  if (pRect == NULL) {
+  if (!pRect)
     return FALSE;
-  }
-  bbox = *(FX_LPCRECT)pRect;
+
+  bbox = *static_cast<const CFX_Rect*>(pRect);
   return TRUE;
 }
 FX_BOOL CFX_GEFont::GetBBox(CFX_Rect& bbox) {

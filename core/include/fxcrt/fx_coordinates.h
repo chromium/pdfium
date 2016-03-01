@@ -537,10 +537,6 @@ class CFX_RTemplate {
 };
 typedef CFX_RTemplate<int32_t> CFX_Rect;
 typedef CFX_RTemplate<FX_FLOAT> CFX_RectF;
-typedef CFX_RTemplate<int32_t>* FX_LPRECT;
-typedef CFX_RTemplate<FX_FLOAT>* FX_LPRECTF;
-typedef CFX_RTemplate<int32_t> const* FX_LPCRECT;
-typedef CFX_RTemplate<FX_FLOAT> const* FX_LPCRECTF;
 typedef CFX_ArrayTemplate<CFX_RectF> CFX_RectFArray;
 
 class CFX_Matrix {
