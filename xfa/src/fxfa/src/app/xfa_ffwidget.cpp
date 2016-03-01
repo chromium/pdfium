@@ -68,24 +68,21 @@ void CXFA_FFWidget::GetRectWithoutRotate(CFX_RectF& rtWidget) {
 FX_DWORD CXFA_FFWidget::GetStatus() {
   return m_dwStatus;
 }
+
 void CXFA_FFWidget::ModifyStatus(FX_DWORD dwAdded, FX_DWORD dwRemoved) {
   m_dwStatus = (m_dwStatus & ~dwRemoved) | dwAdded;
 }
+
 FX_BOOL CXFA_FFWidget::GetBBox(CFX_RectF& rtBox,
                                FX_DWORD dwStatus,
                                FX_BOOL bDrawFocus) {
-  if (bDrawFocus) {
+  if (bDrawFocus)
     return FALSE;
-  }
-#ifndef _XFA_EMB
-  if (m_pPageView) {
+  if (m_pPageView)
     m_pPageView->GetPageViewRect(rtBox);
-  }
-  return TRUE;
-#endif
-  GetWidgetRect(rtBox);
   return TRUE;
 }
+
 CXFA_WidgetAcc* CXFA_FFWidget::GetDataAcc() {
   return m_pDataAcc;
 }

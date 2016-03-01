@@ -555,27 +555,17 @@ void CXFA_FFPasswordEdit::UpdateWidgetProperty() {
 CXFA_FFDateTimeEdit::CXFA_FFDateTimeEdit(CXFA_FFPageView* pPageView,
                                          CXFA_WidgetAcc* pDataAcc)
     : CXFA_FFTextEdit(pPageView, pDataAcc) {}
+
 CXFA_FFDateTimeEdit::~CXFA_FFDateTimeEdit() {}
+
 FX_BOOL CXFA_FFDateTimeEdit::GetBBox(CFX_RectF& rtBox,
                                      FX_DWORD dwStatus,
                                      FX_BOOL bDrawFocus) {
-  if (bDrawFocus) {
+  if (bDrawFocus)
     return FALSE;
-  }
-#ifndef _XFA_EMB
   return CXFA_FFWidget::GetBBox(rtBox, dwStatus);
-#endif
-  GetRectWithoutRotate(rtBox);
-  if (m_pNormalWidget) {
-    CFX_RectF rtWidget;
-    ((CFWL_DateTimePicker*)m_pNormalWidget)->GetBBox(rtWidget);
-    rtBox.Union(rtWidget);
-  }
-  CFX_Matrix mt;
-  GetRotateMatrix(mt);
-  mt.TransformRect(rtBox);
-  return TRUE;
 }
+
 FX_BOOL CXFA_FFDateTimeEdit::PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy) {
   if (!m_pNormalWidget) {
     return FALSE;

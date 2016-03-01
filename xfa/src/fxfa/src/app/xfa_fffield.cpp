@@ -26,36 +26,26 @@ CXFA_FFField::CXFA_FFField(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc)
 CXFA_FFField::~CXFA_FFField() {
   CXFA_FFField::UnloadWidget();
 }
+
 FX_BOOL CXFA_FFField::GetBBox(CFX_RectF& rtBox,
                               FX_DWORD dwStatus,
                               FX_BOOL bDrawFocus) {
-  if (bDrawFocus) {
-    XFA_ELEMENT type = (XFA_ELEMENT)m_pDataAcc->GetUIType();
-    if (type == XFA_ELEMENT_Button || type == XFA_ELEMENT_CheckButton ||
-        type == XFA_ELEMENT_ImageEdit || type == XFA_ELEMENT_Signature ||
-        type == XFA_ELEMENT_ChoiceList) {
-      rtBox = m_rtUI;
-      CFX_Matrix mt;
-      GetRotateMatrix(mt);
-      mt.TransformRect(rtBox);
-      return TRUE;
-    }
-    return FALSE;
+  if (!bDrawFocus)
+    return CXFA_FFWidget::GetBBox(rtBox, dwStatus);
+
+  XFA_ELEMENT type = (XFA_ELEMENT)m_pDataAcc->GetUIType();
+  if (type == XFA_ELEMENT_Button || type == XFA_ELEMENT_CheckButton ||
+      type == XFA_ELEMENT_ImageEdit || type == XFA_ELEMENT_Signature ||
+      type == XFA_ELEMENT_ChoiceList) {
+    rtBox = m_rtUI;
+    CFX_Matrix mt;
+    GetRotateMatrix(mt);
+    mt.TransformRect(rtBox);
+    return TRUE;
   }
-#ifndef _XFA_EMB
-  return CXFA_FFWidget::GetBBox(rtBox, dwStatus);
-#endif
-  GetRectWithoutRotate(rtBox);
-  if (m_pNormalWidget) {
-    CFX_RectF rtWidget;
-    m_pNormalWidget->GetWidgetRect(rtWidget);
-    rtBox.Union(rtWidget);
-  }
-  CFX_Matrix mt;
-  GetRotateMatrix(mt);
-  mt.TransformRect(rtBox);
-  return TRUE;
+  return FALSE;
 }
+
 void CXFA_FFField::RenderWidget(CFX_Graphics* pGS,
                                 CFX_Matrix* pMatrix,
                                 FX_DWORD dwStatus,

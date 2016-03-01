@@ -33,6 +33,7 @@ FX_BOOL FWL_ShowCaret(IFWL_Widget* pWidget,
   pDocProvider->DisplayCaret(pXFAWidget, bVisible, pRtAnchor);
   return TRUE;
 }
+
 FWL_ERR CXFA_FWLAdapterWidgetMgr::RepaintWidget(IFWL_Widget* pWidget,
                                                 const CFX_RectF* pRect) {
   if (!pWidget)
@@ -40,24 +41,10 @@ FWL_ERR CXFA_FWLAdapterWidgetMgr::RepaintWidget(IFWL_Widget* pWidget,
   CXFA_FFField* pField = (CXFA_FFField*)pWidget->GetPrivateData(pWidget);
   if (!pField)
     return FWL_ERR_Indefinite;
-#ifdef _XFA_EMB
-  CFX_RectF rtInvalidate;
-  pWidget->GetWidgetRect(rtInvalidate);
-  if (pRect) {
-    rtInvalidate.left += pRect->left;
-    rtInvalidate.top += pRect->top;
-    rtInvalidate.width = pRect->width;
-    rtInvalidate.height = pRect->height;
-  }
-  CFX_Matrix mt;
-  pField->GetRotateMatrix(mt);
-  mt.TransformRect(rtInvalidate);
-  pField->AddInvalidateRect(&rtInvalidate);
-#else
-  pField->AddInvalidateRect(NULL);
-#endif
+  pField->AddInvalidateRect(nullptr);
   return FWL_ERR_Succeeded;
 }
+
 FX_BOOL CXFA_FWLAdapterWidgetMgr::GetPopupPos(IFWL_Widget* pWidget,
                                               FX_FLOAT fMinHeight,
                                               FX_FLOAT fMaxHeight,

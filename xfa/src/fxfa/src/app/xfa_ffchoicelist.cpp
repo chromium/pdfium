@@ -199,30 +199,21 @@ FWL_ERR CXFA_FFListBox::OnDrawWidget(CFX_Graphics* pGraphics,
                                      const CFX_Matrix* pMatrix) {
   return m_pOldDelegate->OnDrawWidget(pGraphics, pMatrix);
 }
+
 CXFA_FFComboBox::CXFA_FFComboBox(CXFA_FFPageView* pPageView,
                                  CXFA_WidgetAcc* pDataAcc)
     : CXFA_FFField(pPageView, pDataAcc), m_pOldDelegate(NULL) {}
+
 CXFA_FFComboBox::~CXFA_FFComboBox() {}
+
 FX_BOOL CXFA_FFComboBox::GetBBox(CFX_RectF& rtBox,
                                  FX_DWORD dwStatus,
                                  FX_BOOL bDrawFocus) {
-  if (bDrawFocus) {
+  if (bDrawFocus)
     return FALSE;
-  }
-#ifndef _XFA_EMB
   return CXFA_FFWidget::GetBBox(rtBox, dwStatus);
-#endif
-  GetRectWithoutRotate(rtBox);
-  if (m_pNormalWidget) {
-    CFX_RectF rtWidget;
-    ((CFWL_ComboBox*)m_pNormalWidget)->GetBBox(rtWidget);
-    rtBox.Union(rtWidget);
-  }
-  CFX_Matrix mt;
-  GetRotateMatrix(mt);
-  mt.TransformRect(rtBox);
-  return TRUE;
 }
+
 FX_BOOL CXFA_FFComboBox::PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy) {
   if (!m_pNormalWidget) {
     return FALSE;
