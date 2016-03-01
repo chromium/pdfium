@@ -278,11 +278,12 @@ static const FX_FLOAT gs_fraction_scales[] = {
     0.000000001f, 0.0000000001f, 0.00000000001f};
 static const int32_t gs_fraction_count =
     sizeof(gs_fraction_scales) / sizeof(FX_FLOAT);
+
 class CFX_LCNumeric {
  public:
   CFX_LCNumeric();
   CFX_LCNumeric(int64_t integral,
-                FX_DWORD fractional = 0,
+                uint32_t fractional = 0,
                 int32_t exponent = 0);
   CFX_LCNumeric(FX_FLOAT dbRetValue);
   CFX_LCNumeric(double dbvalue);
@@ -292,63 +293,58 @@ class CFX_LCNumeric {
   double GetDouble() const;
   CFX_WideString ToString() const;
   CFX_WideString ToString(int32_t nTreading, FX_BOOL bTrimTailZeros) const;
+
   int64_t m_Integral;
-  FX_DWORD m_Fractional;
-#ifdef FX_NUM_DOUBLE
-  CFX_WideString m_wsValue;
-#endif
+  uint32_t m_Fractional;
   int32_t m_Exponent;
 };
+
 static FX_BOOL FX_WStringToNumeric(const CFX_WideString& wsValue,
                                    CFX_LCNumeric& lcnum) {
-  int64_t* pIntegral = &lcnum.m_Integral;
-  FX_DWORD* pFractional = &lcnum.m_Fractional;
-  int32_t* pExponent = &lcnum.m_Exponent;
-  *pIntegral = 0;
-  *pFractional = 0;
-  *pExponent = 0;
-#ifdef FX_NUM_DOUBLE
-  lcnum.m_wsValue.Empty();
-#endif
-  if (wsValue.IsEmpty()) {
+  lcnum.m_Integral = 0;
+  lcnum.m_Fractional = 0;
+  lcnum.m_Exponent = 0;
+
+  if (wsValue.IsEmpty())
     return FALSE;
-  }
+
   const int32_t nIntegralMaxLen = 17;
   int32_t cc = 0;
-  FX_BOOL bNegative = FALSE, bExpSign = FALSE;
+  bool bNegative = false;
+  bool bExpSign = false;
   const FX_WCHAR* str = (const FX_WCHAR*)wsValue;
   int32_t len = wsValue.GetLength();
-  while (cc < len && FX_IsSpace(str[cc])) {
+  while (cc < len && FX_IsSpace(str[cc]))
     cc++;
-  }
-  if (cc >= len) {
+
+  if (cc >= len)
     return FALSE;
-  }
+
   if (str[cc] == '+') {
     cc++;
   } else if (str[cc] == '-') {
-    bNegative = TRUE;
+    bNegative = true;
     cc++;
   }
   int32_t nIntegralLen = 0;
   while (cc < len) {
-    if (str[cc] == '.') {
+    if (str[cc] == '.')
       break;
-    }
+
     if (!FX_IsDigit(str[cc])) {
-      if ((str[cc] == 'E' || str[cc] == 'e')) {
+      if ((str[cc] == 'E' || str[cc] == 'e'))
         break;
-      } else {
+      else
         return FALSE;
-      }
     }
     if (nIntegralLen < nIntegralMaxLen) {
-      *pIntegral = *pIntegral * 10 + str[cc] - '0';
+      lcnum.m_Integral = lcnum.m_Integral * 10 + str[cc] - '0';
       nIntegralLen++;
     }
     cc++;
   }
-  *pIntegral = bNegative ? -*pIntegral : *pIntegral;
+
+  lcnum.m_Integral = bNegative ? -lcnum.m_Integral : lcnum.m_Integral;
   if (cc < len && str[cc] == '.') {
     int scale = 0;
     double fraction = 0.0;
@@ -356,24 +352,22 @@ static FX_BOOL FX_WStringToNumeric(const CFX_WideString& wsValue,
     while (cc < len) {
       if (scale >= gs_fraction_count) {
         while (cc < len) {
-          if (!FX_IsDigit(str[cc])) {
+          if (!FX_IsDigit(str[cc]))
             break;
-          }
           cc++;
         }
       }
       if (!FX_IsDigit(str[cc])) {
-        if ((str[cc] == 'E' || str[cc] == 'e')) {
+        if ((str[cc] == 'E' || str[cc] == 'e'))
           break;
-        } else {
+        else
           return FALSE;
-        }
       }
       fraction += gs_fraction_scales[scale] * (str[cc] - '0');
       scale++;
       cc++;
     }
-    *pFractional = (FX_DWORD)(fraction * 4294967296.0);
+    lcnum.m_Fractional = (FX_DWORD)(fraction * 4294967296.0);
   }
   if (cc < len && (str[cc] == 'E' || str[cc] == 'e')) {
     cc++;
@@ -381,26 +375,21 @@ static FX_BOOL FX_WStringToNumeric(const CFX_WideString& wsValue,
       if (str[cc] == '+') {
         cc++;
       } else if (str[cc] == '-') {
-        bExpSign = TRUE;
+        bExpSign = true;
         cc++;
       }
     }
     while (cc < len) {
-      if (FX_IsDigit(str[cc])) {
+      if (FX_IsDigit(str[cc]))
         return FALSE;
-      }
-      *pExponent = *pExponent * 10 + str[cc] - '0';
+      lcnum.m_Exponent = lcnum.m_Exponent * 10 + str[cc] - '0';
       cc++;
     }
-    *pExponent = bExpSign ? -*pExponent : *pExponent;
+    lcnum.m_Exponent = bExpSign ? -lcnum.m_Exponent : lcnum.m_Exponent;
   }
-#ifdef FX_NUM_DOUBLE
-  else {
-    lcnum.m_wsValue = wsValue;
-  }
-#endif
   return TRUE;
 }
+
 CFX_LCNumeric::CFX_LCNumeric() {
   m_Integral = 0;
   m_Fractional = 0;
@@ -446,94 +435,13 @@ double CFX_LCNumeric::GetDouble() const {
   }
   return value;
 }
+
 CFX_WideString CFX_LCNumeric::ToString() const {
   return ToString(8, TRUE);
 }
+
 CFX_WideString CFX_LCNumeric::ToString(int32_t nTreading,
                                        FX_BOOL bTrimTailZeros) const {
-#ifdef FX_NUM_DOUBLE
-  CFX_WideString wsResult;
-  if (!m_wsValue.IsEmpty()) {
-    const int32_t nIntegralMaxLen = 17;
-    int32_t cc = 0;
-    FX_BOOL bNegative = FALSE, bExpSign = FALSE;
-    const FX_WCHAR* str = (const FX_WCHAR*)m_wsValue;
-    int32_t len = m_wsValue.GetLength();
-    while (cc < len && FX_IsSpace(str[cc])) {
-      cc++;
-    }
-    if (cc >= len) {
-      return wsResult;
-    }
-    if (str[cc] == '+') {
-      cc++;
-    } else if (str[cc] == '-') {
-      bNegative = TRUE;
-      cc++;
-    }
-    int32_t nIntegralLen = 0;
-    while (cc < len) {
-      if (str[cc] == '.') {
-        break;
-      }
-      if (!FX_IsDigit(str[cc])) {
-        if ((str[cc] == 'E' || str[cc] == 'e')) {
-          break;
-        } else {
-          return wsResult;
-        }
-      }
-      if (nIntegralLen < nIntegralMaxLen) {
-        *pIntegral = *pIntegral * 10 + str[cc] - '0';
-        nIntegralLen++;
-      }
-      cc++;
-    }
-    *pIntegral = bNegative ? -*pIntegral : *pIntegral;
-    if (cc < len && str[cc] == '.') {
-      int scale = 0;
-      double fraction = 0.0;
-      cc++;
-      while (cc < len) {
-        if (scale >= gs_fraction_count) {
-          while (cc < len) {
-            if (!FX_IsDigit(str[cc])) {
-              break;
-            }
-            cc++;
-          }
-        }
-        if (!FX_IsDigit(str[cc])) {
-          if ((str[cc] == 'E' || str[cc] == 'e')) {
-            break;
-          } else {
-            return FALSE;
-          }
-        }
-        fraction += gs_fraction_scales[scale] * (str[cc] - '0');
-        scale++;
-        cc++;
-      }
-      *pFractional = (FX_DWORD)(fraction * 4294967296.0);
-    }
-  }
-  double dbValeu = GetDouble();
-  int64_t iInte = (int64_t)dbValeu;
-  wsResult.Format(L"%l", (int64_t)iInte);
-  if (m_Fractional) {
-    CFX_WideString wsFormat;
-    wsFormat.Format(L"%%.%dG", nTreading);
-    double dblMantissa = (dbValeu > 0) ? (dbValeu - iInte) : (iInte - dbValeu);
-    CFX_WideString wsFrac;
-    wsFrac.Format((const FX_WCHAR*)wsFormat, dblMantissa);
-    wsResult +=
-        CFX_WideStringC((const FX_WCHAR*)wsFrac + 1, wsFrac.GetLength() - 1);
-    if (bTrimTailZeros && nTreading > 0) {
-      wsResult.TrimRight(L"0");
-      wsResult.TrimRight(L".");
-    }
-  }
-#endif
   CFX_WideString wsFormat;
   wsFormat.Format(L"%%.%df", nTreading);
   CFX_WideString wsResult;
@@ -544,6 +452,7 @@ CFX_WideString CFX_LCNumeric::ToString(int32_t nTreading,
   }
   return wsResult;
 }
+
 IFX_FormatString* IFX_FormatString::Create(IFX_LocaleMgr* pLocaleMgr,
                                            FX_BOOL bUseLCID) {
   if (!pLocaleMgr) {
