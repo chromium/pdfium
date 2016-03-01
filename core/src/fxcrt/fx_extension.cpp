@@ -365,18 +365,7 @@ void FX_Random_GenerateCrypto(FX_DWORD* pBuffer, int32_t iCount) {
 
 #ifdef PDF_ENABLE_XFA
 void FX_GUID_CreateV4(FX_LPGUID pGUID) {
-#if (_FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN32_MOBILE_ || \
-     _FX_OS_ == _FX_WIN64_)
-#ifdef _FX_WINAPI_PARTITION_DESKTOP_
-  if (!FX_GenerateCryptoRandom((FX_DWORD*)pGUID, 4)) {
-    FX_Random_GenerateMT((FX_DWORD*)pGUID, 4);
-  }
-#else
   FX_Random_GenerateMT((FX_DWORD*)pGUID, 4);
-#endif
-#else
-  FX_Random_GenerateMT((FX_DWORD*)pGUID, 4);
-#endif
   uint8_t& b = ((uint8_t*)pGUID)[6];
   b = (b & 0x0F) | 0x40;
 }

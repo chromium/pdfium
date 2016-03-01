@@ -208,14 +208,9 @@ void* FX_OpenFolder(const FX_CHAR* path) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 #ifndef _WIN32_WCE
   CFindFileDataA* pData = new CFindFileDataA;
-#ifdef _FX_WINAPI_PARTITION_DESKTOP_
-  pData->m_Handle =
-      FindFirstFileA(CFX_ByteString(path) + "/*.*", &pData->m_FindData);
-#else
   pData->m_Handle =
       FindFirstFileExA(CFX_ByteString(path) + "/*.*", FindExInfoStandard,
                        &pData->m_FindData, FindExSearchNameMatch, NULL, 0);
-#endif
 #else
   CFindFileDataW* pData = new CFindFileDataW;
   pData->m_Handle = FindFirstFileW(CFX_WideString::FromLocal(path) + L"/*.*",
@@ -235,14 +230,9 @@ void* FX_OpenFolder(const FX_CHAR* path) {
 void* FX_OpenFolder(const FX_WCHAR* path) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
   CFindFileDataW* pData = new CFindFileDataW;
-#ifdef _FX_WINAPI_PARTITION_DESKTOP_
-  pData->m_Handle = FindFirstFileW((CFX_WideString(path) + L"/*.*").c_str(),
-                                   &pData->m_FindData);
-#else
   pData->m_Handle = FindFirstFileExW((CFX_WideString(path) + L"/*.*").c_str(),
                                      FindExInfoStandard, &pData->m_FindData,
                                      FindExSearchNameMatch, NULL, 0);
-#endif
   if (pData->m_Handle == INVALID_HANDLE_VALUE) {
     delete pData;
     return NULL;
