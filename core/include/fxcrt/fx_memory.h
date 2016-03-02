@@ -78,35 +78,7 @@ class CFX_DestructObject {
  public:
   virtual ~CFX_DestructObject() {}
 };
-class CFX_GrowOnlyPool {
- public:
-  CFX_GrowOnlyPool(size_t trunk_size = 16384);
 
-  ~CFX_GrowOnlyPool();
-
-  void SetTrunkSize(size_t trunk_size) { m_TrunkSize = trunk_size; }
-
-  void* AllocDebug(size_t size, const FX_CHAR* file, int line) {
-    return Alloc(size);
-  }
-
-  void* Alloc(size_t size);
-
-  void* ReallocDebug(void* p, size_t new_size, const FX_CHAR* file, int line) {
-    return NULL;
-  }
-
-  void* Realloc(void* p, size_t new_size) { return NULL; }
-
-  void Free(void* mem) {}
-
-  void FreeAll();
-
- private:
-  size_t m_TrunkSize;
-
-  void* m_pFirstTrunk;
-};
 #endif  // __cplusplus
 
 #endif  // CORE_INCLUDE_FXCRT_FX_MEMORY_H_
