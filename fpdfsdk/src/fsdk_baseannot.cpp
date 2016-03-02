@@ -892,9 +892,8 @@ CPDF_Action CPDFSDK_BAAnnot::GetAction() const {
 }
 
 void CPDFSDK_BAAnnot::SetAction(const CPDF_Action& action) {
-  ASSERT(action);
-  if ((CPDF_Action&)action !=
-      CPDF_Action(m_pAnnot->GetAnnotDict()->GetDictBy("A"))) {
+  ASSERT(action.GetDict());
+  if (action.GetDict() != m_pAnnot->GetAnnotDict()->GetDictBy("A")) {
     CPDF_Document* pDoc = m_pPageView->GetPDFDocument();
     CPDF_Dictionary* pDict = action.GetDict();
     if (pDict && pDict->GetObjNum() == 0) {
@@ -909,12 +908,12 @@ void CPDFSDK_BAAnnot::RemoveAction() {
 }
 
 CPDF_AAction CPDFSDK_BAAnnot::GetAAction() const {
-  return m_pAnnot->GetAnnotDict()->GetDictBy("AA");
+  return CPDF_AAction(m_pAnnot->GetAnnotDict()->GetDictBy("AA"));
 }
 
 void CPDFSDK_BAAnnot::SetAAction(const CPDF_AAction& aa) {
-  if ((CPDF_AAction&)aa != m_pAnnot->GetAnnotDict()->GetDictBy("AA"))
-    m_pAnnot->GetAnnotDict()->SetAt("AA", (CPDF_AAction&)aa);
+  if (aa.GetDict() != m_pAnnot->GetAnnotDict()->GetDictBy("AA"))
+    m_pAnnot->GetAnnotDict()->SetAt("AA", aa.GetDict());
 }
 
 void CPDFSDK_BAAnnot::RemoveAAction() {

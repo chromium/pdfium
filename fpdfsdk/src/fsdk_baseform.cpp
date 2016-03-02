@@ -1912,7 +1912,7 @@ FX_BOOL CPDFSDK_Widget::OnAAction(CPDF_AAction::AActionType type,
 #endif  // PDF_ENABLE_XFA
 
   CPDF_Action action = GetAAction(type);
-  if (action && action.GetType() != CPDF_Action::Unknown) {
+  if (action.GetDict() && action.GetType() != CPDF_Action::Unknown) {
     CPDFSDK_ActionHandler* pActionHandler = pEnv->GetActionHander();
     return pActionHandler->DoAction_Field(action, type, pDocument,
                                           GetFormField(), data);
@@ -1939,8 +1939,8 @@ CPDF_Action CPDFSDK_Widget::GetAAction(CPDF_AAction::AActionType eAAT) {
     case CPDF_AAction::Validate:
     case CPDF_AAction::Calculate: {
       CPDF_FormField* pField = GetFormField();
-      if (CPDF_AAction aa = pField->GetAdditionalAction())
-        return aa.GetAction(eAAT);
+      if (pField->GetAdditionalAction().GetDict())
+        return pField->GetAdditionalAction().GetAction(eAAT);
       return CPDFSDK_BAAnnot::GetAAction(eAAT);
     }
     default:
@@ -2200,9 +2200,10 @@ void CPDFSDK_InterForm::OnCalculate(CPDF_FormField* pFormField) {
         int nType = pField->GetFieldType();
         if (nType == FIELDTYPE_COMBOBOX || nType == FIELDTYPE_TEXTFIELD) {
           CPDF_AAction aAction = pField->GetAdditionalAction();
-          if (aAction && aAction.ActionExist(CPDF_AAction::Calculate)) {
+          if (aAction.GetDict() &&
+              aAction.ActionExist(CPDF_AAction::Calculate)) {
             CPDF_Action action = aAction.GetAction(CPDF_AAction::Calculate);
-            if (action) {
+            if (action.GetDict()) {
               CFX_WideString csJS = action.GetJavaScript();
               if (!csJS.IsEmpty()) {
                 IJS_Context* pContext = pRuntime->NewContext();
@@ -2256,9 +2257,9 @@ CFX_WideString CPDFSDK_InterForm::OnFormat(CPDF_FormField* pFormField,
   bFormated = FALSE;
 
   CPDF_AAction aAction = pFormField->GetAdditionalAction();
-  if (aAction && aAction.ActionExist(CPDF_AAction::Format)) {
+  if (aAction.GetDict() && aAction.ActionExist(CPDF_AAction::Format)) {
     CPDF_Action action = aAction.GetAction(CPDF_AAction::Format);
-    if (action) {
+    if (action.GetDict()) {
       CFX_WideString script = action.GetJavaScript();
       if (!script.IsEmpty()) {
         CFX_WideString Value = sValue;
@@ -2313,11 +2314,11 @@ void CPDFSDK_InterForm::UpdateField(CPDF_FormField* pFormField) {
 FX_BOOL CPDFSDK_InterForm::OnKeyStrokeCommit(CPDF_FormField* pFormField,
                                              const CFX_WideString& csValue) {
   CPDF_AAction aAction = pFormField->GetAdditionalAction();
-  if (!aAction || !aAction.ActionExist(CPDF_AAction::KeyStroke))
+  if (!aAction.GetDict() || !aAction.ActionExist(CPDF_AAction::KeyStroke))
     return TRUE;
 
   CPDF_Action action = aAction.GetAction(CPDF_AAction::KeyStroke);
-  if (!action)
+  if (!action.GetDict())
     return TRUE;
 
   CPDFDoc_Environment* pEnv = m_pDocument->GetEnv();
@@ -2334,11 +2335,11 @@ FX_BOOL CPDFSDK_InterForm::OnKeyStrokeCommit(CPDF_FormField* pFormField,
 FX_BOOL CPDFSDK_InterForm::OnValidate(CPDF_FormField* pFormField,
                                       const CFX_WideString& csValue) {
   CPDF_AAction aAction = pFormField->GetAdditionalAction();
-  if (!aAction || !aAction.ActionExist(CPDF_AAction::Validate))
+  if (!aAction.GetDict() || !aAction.ActionExist(CPDF_AAction::Validate))
     return TRUE;
 
   CPDF_Action action = aAction.GetAction(CPDF_AAction::Validate);
-  if (!action)
+  if (!action.GetDict())
     return TRUE;
 
   CPDFDoc_Environment* pEnv = m_pDocument->GetEnv();
@@ -2353,9 +2354,9 @@ FX_BOOL CPDFSDK_InterForm::OnValidate(CPDF_FormField* pFormField,
 }
 
 FX_BOOL CPDFSDK_InterForm::DoAction_Hide(const CPDF_Action& action) {
-  ASSERT(action);
+  ASSERT(action.GetDict());
 
-  CPDF_ActionFields af = action.GetWidgets();
+  CPDF_ActionFields af(&action);
   std::vector<CPDF_Object*> fieldObjects = af.GetAllFields();
   std::vector<CPDF_FormField*> fields = GetFieldFromObjects(fieldObjects);
 
@@ -2392,7 +2393,7 @@ FX_BOOL CPDFSDK_InterForm::DoAction_SubmitForm(const CPDF_Action& action) {
 
   CPDF_Dictionary* pActionDict = action.GetDict();
   if (pActionDict->KeyExist("Fields")) {
-    CPDF_ActionFields af = action.GetWidgets();
+    CPDF_ActionFields af(&action);
     FX_DWORD dwFlags = action.GetFlags();
     std::vector<CPDF_Object*> fieldObjects = af.GetAllFields();
     std::vector<CPDF_FormField*> fields = GetFieldFromObjects(fieldObjects);
@@ -2559,13 +2560,13 @@ FX_BOOL CPDFSDK_InterForm::ExportFormToFDFTextBuf(CFX_ByteTextBuf& textBuf) {
 }
 
 FX_BOOL CPDFSDK_InterForm::DoAction_ResetForm(const CPDF_Action& action) {
-  ASSERT(action);
+  ASSERT(action.GetDict());
 
   CPDF_Dictionary* pActionDict = action.GetDict();
   if (!pActionDict->KeyExist("Fields"))
     return m_pInterForm->ResetForm(true);
 
-  CPDF_ActionFields af = action.GetWidgets();
+  CPDF_ActionFields af(&action);
   FX_DWORD dwFlags = action.GetFlags();
 
   std::vector<CPDF_Object*> fieldObjects = af.GetAllFields();

@@ -11,23 +11,24 @@
 
 CPDF_Bookmark CPDF_BookmarkTree::GetFirstChild(
     const CPDF_Bookmark& parent) const {
-  if (!parent.m_pDict) {
+  if (!parent.GetDict()) {
     CPDF_Dictionary* pRoot = m_pDocument->GetRoot()->GetDictBy("Outlines");
-    if (!pRoot) {
+    if (!pRoot)
       return CPDF_Bookmark();
-    }
     return CPDF_Bookmark(pRoot->GetDictBy("First"));
   }
-  return CPDF_Bookmark(parent.m_pDict->GetDictBy("First"));
+  return CPDF_Bookmark(parent.GetDict()->GetDictBy("First"));
 }
+
 CPDF_Bookmark CPDF_BookmarkTree::GetNextSibling(
     const CPDF_Bookmark& bookmark) const {
-  if (!bookmark.m_pDict) {
+  if (!bookmark.GetDict())
     return CPDF_Bookmark();
-  }
-  CPDF_Dictionary* pNext = bookmark.m_pDict->GetDictBy("Next");
-  return pNext == bookmark.m_pDict ? CPDF_Bookmark() : CPDF_Bookmark(pNext);
+
+  CPDF_Dictionary* pNext = bookmark.GetDict()->GetDictBy("Next");
+  return pNext == bookmark.GetDict() ? CPDF_Bookmark() : CPDF_Bookmark(pNext);
 }
+
 FX_DWORD CPDF_Bookmark::GetColorRef() const {
   if (!m_pDict) {
     return 0;

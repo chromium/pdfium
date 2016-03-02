@@ -235,13 +235,12 @@ int CPDF_FormField::GetFieldType() {
   }
   return FIELDTYPE_UNKNOWN;
 }
+
 CPDF_AAction CPDF_FormField::GetAdditionalAction() {
   CPDF_Object* pObj = FPDF_GetFieldAttr(m_pDict, "AA");
-  if (!pObj) {
-    return NULL;
-  }
-  return pObj->GetDict();
+  return CPDF_AAction(pObj ? pObj->GetDict() : nullptr);
 }
+
 CFX_WideString CPDF_FormField::GetAlternateName() {
   CPDF_Object* pObj = FPDF_GetFieldAttr(m_pDict, "TU");
   if (!pObj) {

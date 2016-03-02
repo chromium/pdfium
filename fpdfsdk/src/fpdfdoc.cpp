@@ -15,16 +15,17 @@ int THISMODULE = 0;
 CPDF_Bookmark FindBookmark(const CPDF_BookmarkTree& tree,
                            CPDF_Bookmark bookmark,
                            const CFX_WideString& title) {
-  if (bookmark && bookmark.GetTitle().CompareNoCase(title.c_str()) == 0) {
+  if (bookmark.GetDict() &&
+      bookmark.GetTitle().CompareNoCase(title.c_str()) == 0) {
     // First check this item
     return bookmark;
   }
   // go into children items
   CPDF_Bookmark child = tree.GetFirstChild(bookmark);
-  while (child) {
+  while (child.GetDict()) {
     // check if this item
     CPDF_Bookmark found = FindBookmark(tree, child, title);
-    if (found)
+    if (found.GetDict())
       return found;
     child = tree.GetNextSibling(child);
   }
@@ -112,12 +113,12 @@ DLLEXPORT FPDF_DEST STDCALL FPDFBookmark_GetDest(FPDF_DOCUMENT document,
     return nullptr;
   CPDF_Bookmark bookmark(ToDictionary(static_cast<CPDF_Object*>(pDict)));
   CPDF_Dest dest = bookmark.GetDest(pDoc);
-  if (dest)
+  if (dest.GetObject())
     return dest.GetObject();
   // If this bookmark is not directly associated with a dest, we try to get
   // action
   CPDF_Action action = bookmark.GetAction();
-  if (!action)
+  if (!action.GetDict())
     return nullptr;
   return action.GetDest(pDoc).GetObject();
 }
@@ -244,7 +245,7 @@ DLLEXPORT FPDF_DEST STDCALL FPDFLink_GetDest(FPDF_DOCUMENT document,
     return dest;
   // If this link is not directly associated with a dest, we try to get action
   CPDF_Action action = link.GetAction();
-  if (!action)
+  if (!action.GetDict())
     return nullptr;
   return action.GetDest(pDoc).GetObject();
 }

@@ -246,27 +246,27 @@ CPDF_Action CPDF_FormControl::GetAction() {
   }
   return CPDF_Action(pObj->GetDict());
 }
+
 CPDF_AAction CPDF_FormControl::GetAdditionalAction() {
-  if (!m_pWidgetDict) {
-    return nullptr;
-  }
-  if (m_pWidgetDict->KeyExist("AA")) {
-    return m_pWidgetDict->GetDictBy("AA");
-  }
+  if (!m_pWidgetDict)
+    return CPDF_AAction();
+
+  if (m_pWidgetDict->KeyExist("AA"))
+    return CPDF_AAction(m_pWidgetDict->GetDictBy("AA"));
   return m_pField->GetAdditionalAction();
 }
+
 CPDF_DefaultAppearance CPDF_FormControl::GetDefaultAppearance() {
-  if (!m_pWidgetDict) {
-    return CFX_ByteString();
-  }
-  if (m_pWidgetDict->KeyExist("DA")) {
-    return m_pWidgetDict->GetStringBy("DA");
-  }
+  if (!m_pWidgetDict)
+    return CPDF_DefaultAppearance();
+
+  if (m_pWidgetDict->KeyExist("DA"))
+    return CPDF_DefaultAppearance(m_pWidgetDict->GetStringBy("DA"));
+
   CPDF_Object* pObj = FPDF_GetFieldAttr(m_pField->m_pDict, "DA");
-  if (!pObj) {
-    return m_pField->m_pForm->GetDefaultAppearance();
-  }
-  return pObj->GetString();
+  if (pObj)
+    return CPDF_DefaultAppearance(pObj->GetString());
+  return m_pField->m_pForm->GetDefaultAppearance();
 }
 
 CPDF_Font* CPDF_FormControl::GetDefaultControlFont() {
@@ -421,7 +421,7 @@ CPDF_Stream* CPDF_ApSettings::GetIcon(const CFX_ByteStringC& csEntry) const {
 }
 
 CPDF_IconFit CPDF_ApSettings::GetIconFit() const {
-  return m_pDict ? m_pDict->GetDictBy("IF") : nullptr;
+  return CPDF_IconFit(m_pDict ? m_pDict->GetDictBy("IF") : nullptr);
 }
 
 int CPDF_ApSettings::GetTextPosition() const {

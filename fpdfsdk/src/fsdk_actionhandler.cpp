@@ -421,7 +421,7 @@ FX_BOOL CPDFSDK_ActionHandler::IsValidDocView(CPDFSDK_Document* pDocument) {
 
 void CPDFSDK_ActionHandler::DoAction_GoTo(CPDFSDK_Document* pDocument,
                                           const CPDF_Action& action) {
-  ASSERT(action);
+  ASSERT(action.GetDict());
 
   CPDF_Document* pPDFDocument = pDocument->GetPDFDocument();
   ASSERT(pPDFDocument);
@@ -454,7 +454,7 @@ void CPDFSDK_ActionHandler::DoAction_Launch(CPDFSDK_Document* pDocument,
 
 void CPDFSDK_ActionHandler::DoAction_URI(CPDFSDK_Document* pDocument,
                                          const CPDF_Action& action) {
-  ASSERT(action);
+  ASSERT(action.GetDict());
 
   CPDFDoc_Environment* pApp = pDocument->GetEnv();
   CFX_ByteString sURI = action.GetURI(pDocument->GetPDFDocument());
@@ -463,7 +463,7 @@ void CPDFSDK_ActionHandler::DoAction_URI(CPDFSDK_Document* pDocument,
 
 void CPDFSDK_ActionHandler::DoAction_Named(CPDFSDK_Document* pDocument,
                                            const CPDF_Action& action) {
-  ASSERT(action);
+  ASSERT(action.GetDict());
 
   CFX_ByteString csName = action.GetNamedAction();
   pDocument->GetEnv()->FFI_ExecuteNamedAction(csName);

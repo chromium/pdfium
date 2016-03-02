@@ -691,7 +691,7 @@ DLLEXPORT void STDCALL FORM_DoDocumentAAction(FPDF_FORMHANDLE hHandle,
   if (!pDic)
     return;
 
-  CPDF_AAction aa = pDic->GetDictBy("AA");
+  CPDF_AAction aa(pDic->GetDictBy("AA"));
   if (aa.ActionExist((CPDF_AAction::AActionType)aaType)) {
     CPDF_Action action = aa.GetAction((CPDF_AAction::AActionType)aaType);
     CPDFSDK_ActionHandler* pActionHandler =
@@ -715,7 +715,7 @@ DLLEXPORT void STDCALL FORM_DoPageAAction(FPDF_PAGE page,
     CPDFDoc_Environment* pEnv = pSDKDoc->GetEnv();
     CPDFSDK_ActionHandler* pActionHandler = pEnv->GetActionHander();
     CPDF_Dictionary* pPageDict = pPDFPage->m_pFormDict;
-    CPDF_AAction aa = pPageDict->GetDictBy("AA");
+    CPDF_AAction aa(pPageDict->GetDictBy("AA"));
     if (FPDFPAGE_AACTION_OPEN == aaType) {
       if (aa.ActionExist(CPDF_AAction::OpenPage)) {
         CPDF_Action action = aa.GetAction(CPDF_AAction::OpenPage);

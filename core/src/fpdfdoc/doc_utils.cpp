@@ -615,17 +615,19 @@ void RemoveInterFormFont(CPDF_Dictionary* pFormDict, CFX_ByteString csNameTag) {
   }
   pFonts->RemoveAt(csNameTag);
 }
+
 CPDF_Font* GetDefaultInterFormFont(CPDF_Dictionary* pFormDict,
                                    CPDF_Document* pDocument) {
   if (!pFormDict) {
     return NULL;
   }
-  CPDF_DefaultAppearance cDA = pFormDict->GetStringBy("DA");
+  CPDF_DefaultAppearance cDA(pFormDict->GetStringBy("DA"));
   CFX_ByteString csFontNameTag;
   FX_FLOAT fFontSize;
   cDA.GetFont(csFontNameTag, fFontSize);
   return GetInterFormFont(pFormDict, pDocument, csFontNameTag);
 }
+
 CPDF_IconFit::ScaleMethod CPDF_IconFit::GetScaleMethod() {
   if (!m_pDict) {
     return Always;

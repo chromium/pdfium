@@ -836,14 +836,13 @@ void CPDF_InterForm::RemoveFormFont(CFX_ByteString csNameTag) {
   m_bUpdated = TRUE;
   RemoveInterFormFont(m_pFormDict, csNameTag);
 }
+
 CPDF_DefaultAppearance CPDF_InterForm::GetDefaultAppearance() {
-  CFX_ByteString csDA;
-  if (!m_pFormDict) {
-    return csDA;
-  }
-  csDA = m_pFormDict->GetStringBy("DA");
-  return csDA;
+  if (!m_pFormDict)
+    return CPDF_DefaultAppearance();
+  return CPDF_DefaultAppearance(m_pFormDict->GetStringBy("DA"));
 }
+
 CPDF_Font* CPDF_InterForm::GetDefaultFormFont() {
   return GetDefaultInterFormFont(m_pFormDict, m_pDocument);
 }
