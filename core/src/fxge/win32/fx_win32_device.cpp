@@ -438,14 +438,20 @@ FX_BOOL CFX_Win32FontInfo::GetFontCharset(void* hFont, int& charset) {
   charset = tm.tmCharSet;
   return TRUE;
 }
-IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault(const char** pUnused) {
+static FX_BOOL IsGDIEnabled() {
+  // If GDI is disabled then GetDC for the desktop will fail.
   HDC hdc = ::GetDC(NULL);
   if (hdc) {
     ::ReleaseDC(NULL, hdc);
+    return TRUE;
+  }
+  return FALSE;
+}
+IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault(const char** pUnused) {
+  if (IsGDIEnabled()) {
     return new CFX_Win32FontInfo;
   }
-  // If GDI is disabled then GetDC for the desktop will fail. Select the
-  // fallback font information class if GDI is disabled.
+  // Select the fallback font information class if GDI is disabled.
   CFX_Win32FallbackFontInfo* pInfoFallback = new CFX_Win32FallbackFontInfo;
   // Construct the font path manually, SHGetKnownFolderPath won't work under
   // a restrictive sandbox.
@@ -464,7 +470,9 @@ void CFX_GEModule::InitPlatform() {
   ver.dwOSVersionInfoSize = sizeof(ver);
   GetVersionEx(&ver);
   pPlatformData->m_bHalfTone = ver.dwMajorVersion >= 5;
-  pPlatformData->m_GdiplusExt.Load();
+  if (IsGDIEnabled()) {
+    pPlatformData->m_GdiplusExt.Load();
+  }
   m_pPlatformData = pPlatformData;
   m_pFontMgr->SetSystemFontInfo(IFX_SystemFontInfo::CreateDefault(nullptr));
 }
