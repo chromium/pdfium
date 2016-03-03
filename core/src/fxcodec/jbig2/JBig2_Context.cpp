@@ -20,6 +20,7 @@
 #include "core/src/fxcodec/jbig2/JBig2_PddProc.h"
 #include "core/src/fxcodec/jbig2/JBig2_SddProc.h"
 #include "core/src/fxcodec/jbig2/JBig2_TrdProc.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -637,9 +638,11 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
     if (m_bIsGlobal && kSymbolDictCacheMaxSize > 0) {
       std::unique_ptr<CJBig2_SymbolDict> value =
           pSegment->m_Result.sd->DeepCopy();
-      while (m_pSymbolDictCache->size() >= kSymbolDictCacheMaxSize) {
+      int size = pdfium::CollectionSize<int>(*m_pSymbolDictCache);
+      while (size >= kSymbolDictCacheMaxSize) {
         delete m_pSymbolDictCache->back().second;
         m_pSymbolDictCache->pop_back();
+        --size;
       }
       m_pSymbolDictCache->push_front(CJBig2_CachePair(key, value.release()));
     }
