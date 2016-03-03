@@ -720,7 +720,7 @@ FX_DWORD CPDF_CMapParser::CMap_GetCode(const CFX_ByteStringC& word) {
   }
 
   for (int i = 0; i < word.GetLength() && std::isdigit(word.GetAt(i)); ++i)
-    num = num * 10 + FXSYS_toDecimalDigit(word.GetAt(i));
+    num = num * 10 + FXSYS_toDecimalDigit(static_cast<FX_WCHAR>(word.GetAt(i)));
   return num;
 }
 

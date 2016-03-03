@@ -53,13 +53,21 @@ inline int FXSYS_toHexDigit(const FX_CHAR c) {
   return upchar > '9' ? upchar - 'A' + 10 : upchar - '0';
 }
 
+inline bool FXSYS_isDecimalDigit(const FX_CHAR c) {
+  return std::isdigit(c);
+}
+
+inline bool FXSYS_isDecimalDigit(const FX_WCHAR c) {
+  return std::iswdigit(c);
+}
+
 inline int FXSYS_toDecimalDigit(const FX_CHAR c) {
   if (!std::isdigit(c))
     return 0;
   return c - '0';
 }
 
-inline int FXSYS_toDecimalDigitWide(const FX_WCHAR c) {
+inline int FXSYS_toDecimalDigit(const FX_WCHAR c) {
   if (!std::iswdigit(c))
     return 0;
   return c - L'0';

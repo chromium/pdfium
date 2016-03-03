@@ -11,42 +11,19 @@
 #include "core/include/fxcrt/fx_ext.h"
 #include "core/include/fxcrt/fx_string.h"
 
-template <class T>
-T FXSYS_StrToInt(const FX_CHAR* str) {
-  bool neg = false;
+template <typename IntType, typename CharType>
+IntType FXSYS_StrToInt(const CharType* str) {
   if (!str)
     return 0;
 
-  if (std::numeric_limits<T>::is_signed && *str == '-') {
-    neg = true;
+  bool neg = std::numeric_limits<IntType>::is_signed && *str == '-';
+  if (neg)
     str++;
-  }
-  T num = 0;
-  while (*str && std::isdigit(*str)) {
-    T val = FXSYS_toDecimalDigit(*str);
-    if (num > (std::numeric_limits<T>::max() - val) / 10)
-      break;
 
-    num = num * 10 + val;
-    str++;
-  }
-  return neg ? -num : num;
-}
-
-template <class T>
-T FXSYS_StrToInt(const FX_WCHAR* str) {
-  bool neg = false;
-  if (!str)
-    return 0;
-
-  if (std::numeric_limits<T>::is_signed && *str == '-') {
-    neg = true;
-    str++;
-  }
-  T num = 0;
-  while (*str && std::iswdigit(*str)) {
-    T val = FXSYS_toDecimalDigitWide(*str);
-    if (num > (std::numeric_limits<T>::max() - val) / 10)
+  IntType num = 0;
+  while (*str && FXSYS_isDecimalDigit(*str)) {
+    IntType val = FXSYS_toDecimalDigit(*str);
+    if (num > (std::numeric_limits<IntType>::max() - val) / 10)
       break;
 
     num = num * 10 + val;
@@ -93,19 +70,19 @@ STR_T FXSYS_IntToStr(T value, STR_T string, int radix) {
 extern "C" {
 #endif
 int32_t FXSYS_atoi(const FX_CHAR* str) {
-  return FXSYS_StrToInt<int32_t>(str);
+  return FXSYS_StrToInt<int32_t, FX_CHAR>(str);
 }
 uint32_t FXSYS_atoui(const FX_CHAR* str) {
   return FXSYS_StrToInt<uint32_t>(str);
 }
 int32_t FXSYS_wtoi(const FX_WCHAR* str) {
-  return FXSYS_StrToInt<int32_t>(str);
+  return FXSYS_StrToInt<int32_t, FX_WCHAR>(str);
 }
 int64_t FXSYS_atoi64(const FX_CHAR* str) {
-  return FXSYS_StrToInt<int64_t>(str);
+  return FXSYS_StrToInt<int64_t, FX_CHAR>(str);
 }
 int64_t FXSYS_wtoi64(const FX_WCHAR* str) {
-  return FXSYS_StrToInt<int64_t>(str);
+  return FXSYS_StrToInt<int64_t, FX_WCHAR>(str);
 }
 const FX_CHAR* FXSYS_i64toa(int64_t value, FX_CHAR* str, int radix) {
   return FXSYS_IntToStr<int64_t, uint64_t, FX_CHAR*>(value, str, radix);

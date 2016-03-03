@@ -208,12 +208,12 @@ CPDF_Parser::Error CPDF_Parser::StartParse(IFX_FileRead* pFileAccess) {
   if (!m_Syntax.GetCharAt(5, ch))
     return FORMAT_ERROR;
   if (std::isdigit(ch))
-    m_FileVersion = FXSYS_toDecimalDigit(ch) * 10;
+    m_FileVersion = FXSYS_toDecimalDigit(static_cast<FX_WCHAR>(ch)) * 10;
 
   if (!m_Syntax.GetCharAt(7, ch))
     return FORMAT_ERROR;
   if (std::isdigit(ch))
-    m_FileVersion += FXSYS_toDecimalDigit(ch);
+    m_FileVersion += FXSYS_toDecimalDigit(static_cast<FX_WCHAR>(ch));
 
   if (m_Syntax.m_FileLen < m_Syntax.m_HeaderOffset + 9)
     return FORMAT_ERROR;
@@ -669,7 +669,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
           if (std::isdigit(byte)) {
             start_pos = pos + i;
             state = ParserState::kObjNum;
-            objnum = FXSYS_toDecimalDigit(byte);
+            objnum = FXSYS_toDecimalDigit(static_cast<FX_WCHAR>(byte));
           } else if (byte == 't') {
             state = ParserState::kTrailer;
             inside_index = 1;
@@ -684,7 +684,8 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
 
         case ParserState::kObjNum:
           if (std::isdigit(byte)) {
-            objnum = objnum * 10 + FXSYS_toDecimalDigit(byte);
+            objnum =
+                objnum * 10 + FXSYS_toDecimalDigit(static_cast<FX_WCHAR>(byte));
           } else if (PDFCharIsWhitespace(byte)) {
             state = ParserState::kPostObjNum;
           } else {
@@ -698,7 +699,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
           if (std::isdigit(byte)) {
             start_pos1 = pos + i;
             state = ParserState::kGenNum;
-            gennum = FXSYS_toDecimalDigit(byte);
+            gennum = FXSYS_toDecimalDigit(static_cast<FX_WCHAR>(byte));
           } else if (byte == 't') {
             state = ParserState::kTrailer;
             inside_index = 1;
@@ -710,7 +711,8 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
 
         case ParserState::kGenNum:
           if (std::isdigit(byte)) {
-            gennum = gennum * 10 + FXSYS_toDecimalDigit(byte);
+            gennum =
+                gennum * 10 + FXSYS_toDecimalDigit(static_cast<FX_WCHAR>(byte));
           } else if (PDFCharIsWhitespace(byte)) {
             state = ParserState::kPostGenNum;
           } else {
@@ -725,7 +727,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
             inside_index = 1;
           } else if (std::isdigit(byte)) {
             objnum = gennum;
-            gennum = FXSYS_toDecimalDigit(byte);
+            gennum = FXSYS_toDecimalDigit(static_cast<FX_WCHAR>(byte));
             start_pos = start_pos1;
             start_pos1 = pos + i;
             state = ParserState::kGenNum;
@@ -1876,7 +1878,7 @@ CFX_ByteString CPDF_SyntaxParser::ReadString() {
         break;
       case 1:
         if (ch >= '0' && ch <= '7') {
-          iEscCode = FXSYS_toDecimalDigit(ch);
+          iEscCode = FXSYS_toDecimalDigit(static_cast<FX_WCHAR>(ch));
           status = 2;
           break;
         }
@@ -1901,7 +1903,8 @@ CFX_ByteString CPDF_SyntaxParser::ReadString() {
         break;
       case 2:
         if (ch >= '0' && ch <= '7') {
-          iEscCode = iEscCode * 8 + FXSYS_toDecimalDigit(ch);
+          iEscCode =
+              iEscCode * 8 + FXSYS_toDecimalDigit(static_cast<FX_WCHAR>(ch));
           status = 3;
         } else {
           buf.AppendChar(iEscCode);
@@ -1911,7 +1914,8 @@ CFX_ByteString CPDF_SyntaxParser::ReadString() {
         break;
       case 3:
         if (ch >= '0' && ch <= '7') {
-          iEscCode = iEscCode * 8 + FXSYS_toDecimalDigit(ch);
+          iEscCode =
+              iEscCode * 8 + FXSYS_toDecimalDigit(static_cast<FX_WCHAR>(ch));
           buf.AppendChar(iEscCode);
           status = 0;
         } else {

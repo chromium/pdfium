@@ -242,7 +242,7 @@ int CJS_PublicMethods::ParseStringInteger(const CFX_WideString& string,
     if (!FXSYS_iswdigit(c))
       break;
 
-    nRet = nRet * 10 + FXSYS_toDecimalDigitWide(c);
+    nRet = nRet * 10 + FXSYS_toDecimalDigit(c);
     nSkip = i - nStart + 1;
     if (nSkip >= nMaxStep)
       break;

@@ -63,6 +63,4 @@ class CJS_Util : public CJS_Object {
   JS_STATIC_METHOD(byteToChar, util);
 };
 
-int64_t FX_atoi64(const char* nptr);
-
 #endif  // FPDFSDK_SRC_JAVASCRIPT_UTIL_H_

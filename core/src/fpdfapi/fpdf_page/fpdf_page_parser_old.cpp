@@ -533,10 +533,11 @@ CFX_ByteString CPDF_StreamParser::ReadString() {
   if (!PositionIsInBounds())
     return CFX_ByteString();
 
-  int ch = m_pBuf[m_Pos++];
+  uint8_t ch = m_pBuf[m_Pos++];
   CFX_ByteTextBuf buf;
   int parlevel = 0;
-  int status = 0, iEscCode = 0;
+  int status = 0;
+  int iEscCode = 0;
   while (1) {
     switch (status) {
       case 0:
@@ -560,7 +561,7 @@ CFX_ByteString CPDF_StreamParser::ReadString() {
         break;
       case 1:
         if (ch >= '0' && ch <= '7') {
-          iEscCode = FXSYS_toDecimalDigit(ch);
+          iEscCode = FXSYS_toDecimalDigit(static_cast<FX_WCHAR>(ch));
           status = 2;
           break;
         }
@@ -585,7 +586,8 @@ CFX_ByteString CPDF_StreamParser::ReadString() {
         break;
       case 2:
         if (ch >= '0' && ch <= '7') {
-          iEscCode = iEscCode * 8 + FXSYS_toDecimalDigit(ch);
+          iEscCode =
+              iEscCode * 8 + FXSYS_toDecimalDigit(static_cast<FX_WCHAR>(ch));
           status = 3;
         } else {
           buf.AppendChar(iEscCode);
@@ -595,7 +597,8 @@ CFX_ByteString CPDF_StreamParser::ReadString() {
         break;
       case 3:
         if (ch >= '0' && ch <= '7') {
-          iEscCode = iEscCode * 8 + FXSYS_toDecimalDigit(ch);
+          iEscCode =
+              iEscCode * 8 + FXSYS_toDecimalDigit(static_cast<FX_WCHAR>(ch));
           buf.AppendChar(iEscCode);
           status = 0;
         } else {
@@ -617,7 +620,7 @@ CFX_ByteString CPDF_StreamParser::ReadString() {
     ch = m_pBuf[m_Pos++];
   }
   if (PositionIsInBounds())
-    ch = m_pBuf[m_Pos++];
+    ++m_Pos;
 
   if (buf.GetLength() > MAX_STRING_LENGTH) {
     return CFX_ByteString(buf.GetBuffer(), MAX_STRING_LENGTH);

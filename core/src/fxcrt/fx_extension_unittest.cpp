@@ -16,9 +16,13 @@ TEST(fxcrt, FXSYS_toHexDigit) {
 TEST(fxcrt, FXSYS_toDecimalDigit) {
   EXPECT_EQ(7, FXSYS_toDecimalDigit('7'));
   EXPECT_EQ(0, FXSYS_toDecimalDigit('a'));
+  EXPECT_EQ(7, FXSYS_toDecimalDigit(L'7'));
+  EXPECT_EQ(0, FXSYS_toDecimalDigit(L'a'));
 }
 
-TEST(fxcrt, FXSYS_toDecimalDigitWide) {
-  EXPECT_EQ(7, FXSYS_toDecimalDigitWide(L'7'));
-  EXPECT_EQ(0, FXSYS_toDecimalDigitWide(L'a'));
+TEST(fxcrt, FXSYS_isDecimalDigit) {
+  EXPECT_TRUE(FXSYS_isDecimalDigit('7'));
+  EXPECT_TRUE(FXSYS_isDecimalDigit(L'7'));
+  EXPECT_FALSE(FXSYS_isDecimalDigit('a'));
+  EXPECT_FALSE(FXSYS_isDecimalDigit(L'a'));
 }

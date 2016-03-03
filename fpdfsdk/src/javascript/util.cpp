@@ -512,30 +512,6 @@ FX_BOOL util::scand(IJS_Context* cc,
   return TRUE;
 }
 
-int64_t FX_atoi64(const char* nptr) {
-  int c;         /* current char */
-  int64_t total; /* current total */
-  int sign;      /* if '-', then negative, otherwise positive */
-
-  /* skip whitespace */
-  while (isspace((int)(unsigned char)*nptr))
-    ++nptr;
-
-  c = (int)(unsigned char)*nptr++;
-  sign = c; /* save sign indication */
-  if (c == '-' || c == '+')
-    c = (int)(unsigned char)*nptr++; /* skip sign */
-
-  total = 0;
-
-  while (isdigit(c)) {
-    total = 10 * total + FXSYS_toDecimalDigit(c); /* accumulate digit */
-    c = (int)(unsigned char)*nptr++; /* get next char */
-  }
-
-  return sign == '-' ? -total : total;
-}
-
 FX_BOOL util::byteToChar(IJS_Context* cc,
                          const std::vector<CJS_Value>& params,
                          CJS_Value& vRet,
