@@ -782,26 +782,28 @@ CXFA_FMSimpleExpression* CXFA_FMParse::ParseIndexExpression() {
 }
 
 CXFA_FMSimpleExpression* CXFA_FMParse::ParseParenExpression() {
-  FX_DWORD line = m_pToken->m_uLinenum;
   Check(TOKlparen);
-  std::unique_ptr<CXFA_FMSimpleExpression> pExp1;
-  if (m_pToken->m_type != TOKrparen) {
-    pExp1.reset(ParseLogicalOrExpression());
-    while (m_pToken->m_type == TOKassign) {
-      NextToken();
-      std::unique_ptr<CXFA_FMSimpleExpression> pExp2(
-          ParseLogicalOrExpression());
-      if (m_pErrorInfo->message.IsEmpty()) {
-        pExp1.reset(new CXFA_FMAssignExpression(
-            line, TOKassign, pExp1.release(), pExp2.release()));
-      } else {
-        pExp1.reset();
-      }
-    }
-    Check(TOKrparen);
-  } else {
+
+  if (m_pToken->m_type == TOKrparen) {
+    Error(m_pToken->m_uLinenum, FMERR_EXPECTED_NON_EMPTY_EXPRESSION);
     NextToken();
+    return nullptr;
   }
+
+  FX_DWORD line = m_pToken->m_uLinenum;
+  std::unique_ptr<CXFA_FMSimpleExpression> pExp1(ParseLogicalOrExpression());
+
+  while (m_pToken->m_type == TOKassign) {
+    NextToken();
+    std::unique_ptr<CXFA_FMSimpleExpression> pExp2(ParseLogicalOrExpression());
+    if (m_pErrorInfo->message.IsEmpty()) {
+      pExp1.reset(new CXFA_FMAssignExpression(line, TOKassign, pExp1.release(),
+                                              pExp2.release()));
+    } else {
+      pExp1.reset();
+    }
+  }
+  Check(TOKrparen);
   return pExp1.release();
 }
 

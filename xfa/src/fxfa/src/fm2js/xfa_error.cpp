@@ -11,6 +11,7 @@ static const FX_WCHAR* const gs_lpStrErrorMsgInfo[] = {
     L"invalidate char '%c'",          L"expected identifier instead of '%s'",
     L"expected '%s' instead of '%s'", L"expected 'endif' instead of '%s'",
     L"unexpected expression '%s'",    L"expected operator '%s' instead of '%s'",
+    L"expected non-empty expression",
 };
 
 const FX_WCHAR* XFA_FM_ErrorMsg(XFA_FM_ERRMSG msg) {
