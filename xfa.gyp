@@ -640,6 +640,12 @@
         "xfa/src/fxgraphics/src/pre.h",
       ],
       "conditions": [
+        ["clang==1" , {
+          # TODO(tsepez): remove this when FX fixes warnings
+          "cflags": [
+            "-Wno-deprecated-declarations"
+          ],
+        }],
         ["pdf_enable_v8==1", {
           'dependencies': [
             '<(DEPTH)/v8/tools/gyp/v8.gyp:v8',
