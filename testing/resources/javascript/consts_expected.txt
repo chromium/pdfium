@@ -106,3 +106,7 @@ Alert: RE_SSN_ENTRY is
   \d{0,3}(\.|[- ])?\d{0,2}(\.|[- ])?\d{0,4}
 Alert: RE_SSN_COMMIT is
   \d{3}(\.|[- ])?\d{2}(\.|[- ])?\d{4}
+Alert: String equality test (==): true
+Alert: String equality test (===): true
+Alert: Array equality test (==): true
+Alert: Array equality test (===): true

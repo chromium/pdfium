@@ -66,6 +66,16 @@ function doGlobalArrayTest(props) {
   }
 }
 
+function doEqualityTests() {
+  app.alert("String equality test (==): " +
+            (IDS_GREATER_THAN == IDS_GREATER_THAN));
+  app.alert("String equality test (===): " +
+            (IDS_GREATER_THAN === IDS_GREATER_THAN));
+  app.alert("Array equality test (==): " +
+            (RE_PHONE_COMMIT == RE_PHONE_COMMIT));
+  app.alert("Array equality test (===): " +
+            (RE_PHONE_COMMIT === RE_PHONE_COMMIT));
+}
 
 try {
   doTest("border", ["s", "b", "d", "i", "u", "nonesuch"]);
@@ -112,6 +122,7 @@ try {
     "RE_SSN_COMMIT"
   ]);
 
+  doEqualityTests();
 } catch (e) {
   app.alert("ERROR: " + e.toString());
 }
