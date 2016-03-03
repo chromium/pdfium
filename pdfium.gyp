@@ -757,6 +757,7 @@
         'core/src/fpdftext/fpdf_text_int_unittest.cpp',
         'core/src/fxcodec/codec/fx_codec_jpx_unittest.cpp',
         'core/src/fxcrt/fx_basic_bstring_unittest.cpp',
+        'core/src/fxcrt/fx_basic_gcc_unittest.cpp',
         'core/src/fxcrt/fx_basic_memmgr_unittest.cpp',
         'core/src/fxcrt/fx_basic_wstring_unittest.cpp',
         'core/src/fxcrt/fx_bidi_unittest.cpp',

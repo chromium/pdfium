@@ -13,20 +13,21 @@
 
 template <class T>
 T FXSYS_StrToInt(const FX_CHAR* str) {
-  FX_BOOL neg = FALSE;
+  bool neg = false;
   if (!str)
     return 0;
 
-  if (*str == '-') {
-    neg = TRUE;
+  if (std::numeric_limits<T>::is_signed && *str == '-') {
+    neg = true;
     str++;
   }
   T num = 0;
   while (*str && std::isdigit(*str)) {
-    if (num > (std::numeric_limits<T>::max() - 9) / 10)
+    T val = FXSYS_toDecimalDigit(*str);
+    if (num > (std::numeric_limits<T>::max() - val) / 10)
       break;
 
-    num = num * 10 + FXSYS_toDecimalDigit(*str);
+    num = num * 10 + val;
     str++;
   }
   return neg ? -num : num;
@@ -34,20 +35,21 @@ T FXSYS_StrToInt(const FX_CHAR* str) {
 
 template <class T>
 T FXSYS_StrToInt(const FX_WCHAR* str) {
-  FX_BOOL neg = FALSE;
+  bool neg = false;
   if (!str)
     return 0;
 
-  if (*str == '-') {
-    neg = TRUE;
+  if (std::numeric_limits<T>::is_signed && *str == '-') {
+    neg = true;
     str++;
   }
   T num = 0;
   while (*str && std::iswdigit(*str)) {
-    if (num > (std::numeric_limits<T>::max() - 9) / 10)
+    T val = FXSYS_toDecimalDigitWide(*str);
+    if (num > (std::numeric_limits<T>::max() - val) / 10)
       break;
 
-    num = num * 10 + FXSYS_toDecimalDigitWide(*str);
+    num = num * 10 + val;
     str++;
   }
   return neg ? -num : num;
@@ -92,6 +94,9 @@ extern "C" {
 #endif
 int32_t FXSYS_atoi(const FX_CHAR* str) {
   return FXSYS_StrToInt<int32_t>(str);
+}
+uint32_t FXSYS_atoui(const FX_CHAR* str) {
+  return FXSYS_StrToInt<uint32_t>(str);
 }
 int32_t FXSYS_wtoi(const FX_WCHAR* str) {
   return FXSYS_StrToInt<int32_t>(str);

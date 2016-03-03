@@ -105,3 +105,12 @@ TEST_F(FPDFParserDecodeEmbeddertest, Bug_555784) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFParserDecodeEmbeddertest, Bug_455199) {
+  // Tests object numbers with a value > 01000000.
+  // Should open successfully.
+  EXPECT_TRUE(OpenDocument("bug_455199.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  FPDF_BITMAP bitmap = RenderPage(page);
+  FPDFBitmap_Destroy(bitmap);
+  UnloadPage(page);
+}

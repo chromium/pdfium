@@ -264,6 +264,7 @@ wchar_t* FXSYS_wcsupr(wchar_t* str);
 #define FXSYS_HIWORD(dword) ((FX_WORD)((dword) >> 16))
 #define FXSYS_LOWORD(dword) ((FX_WORD)(dword))
 int32_t FXSYS_atoi(const FX_CHAR* str);
+uint32_t FXSYS_atoui(const FX_CHAR* str);
 int32_t FXSYS_wtoi(const FX_WCHAR* str);
 int64_t FXSYS_atoi64(const FX_CHAR* str);
 int64_t FXSYS_wtoi64(const FX_WCHAR* str);
