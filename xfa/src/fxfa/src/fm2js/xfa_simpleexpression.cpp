@@ -116,25 +116,34 @@ CFX_WideStringC XFA_FM_EXPTypeToString(
 
 CXFA_FMSimpleExpression::CXFA_FMSimpleExpression(FX_DWORD line, XFA_FM_TOKEN op)
     : m_line(line), m_op(op) {}
+
 void CXFA_FMSimpleExpression::ToJavaScript(CFX_WideTextBuf& javascript) {}
+
 void CXFA_FMSimpleExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {}
+
 XFA_FM_TOKEN CXFA_FMSimpleExpression::GetOperatorToken() const {
   return m_op;
 }
+
 CXFA_FMNullExpression::CXFA_FMNullExpression(FX_DWORD line)
     : CXFA_FMSimpleExpression(line, TOKnull) {}
+
 void CXFA_FMNullExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << FX_WSTRC(L"null");
 }
+
 CXFA_FMNumberExpression::CXFA_FMNumberExpression(FX_DWORD line,
                                                  CFX_WideStringC wsNumber)
     : CXFA_FMSimpleExpression(line, TOKnumber), m_wsNumber(wsNumber) {}
+
 void CXFA_FMNumberExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << m_wsNumber;
 }
+
 CXFA_FMStringExpression::CXFA_FMStringExpression(FX_DWORD line,
                                                  CFX_WideStringC wsString)
     : CXFA_FMSimpleExpression(line, TOKstring), m_wsString(wsString) {}
+
 void CXFA_FMStringExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   CFX_WideString tempStr = m_wsString;
   if (tempStr.GetLength() > 2) {
@@ -160,11 +169,13 @@ void CXFA_FMStringExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
     javascript << tempStr;
   }
 }
+
 CXFA_FMIdentifierExpressionn::CXFA_FMIdentifierExpressionn(
     FX_DWORD line,
     CFX_WideStringC wsIdentifier)
     : CXFA_FMSimpleExpression(line, TOKidentifier),
       m_wsIdentifier(wsIdentifier) {}
+
 void CXFA_FMIdentifierExpressionn::ToJavaScript(CFX_WideTextBuf& javascript) {
   CFX_WideString tempStr = m_wsIdentifier;
   if (tempStr.Equal(FX_WSTRC(L"$"))) {
@@ -193,25 +204,23 @@ CXFA_FMUnaryExpression::CXFA_FMUnaryExpression(FX_DWORD line,
                                                XFA_FM_TOKEN op,
                                                CXFA_FMSimpleExpression* pExp)
     : CXFA_FMSimpleExpression(line, op), m_pExp(pExp) {}
-CXFA_FMUnaryExpression::~CXFA_FMUnaryExpression() {
-  delete m_pExp;
-}
+
 void CXFA_FMUnaryExpression::ToJavaScript(CFX_WideTextBuf& javascript) {}
+
 CXFA_FMBinExpression::CXFA_FMBinExpression(FX_DWORD line,
                                            XFA_FM_TOKEN op,
                                            CXFA_FMSimpleExpression* pExp1,
                                            CXFA_FMSimpleExpression* pExp2)
     : CXFA_FMSimpleExpression(line, op), m_pExp1(pExp1), m_pExp2(pExp2) {}
-CXFA_FMBinExpression::~CXFA_FMBinExpression() {
-  delete m_pExp1;
-  delete m_pExp2;
-}
+
 void CXFA_FMBinExpression::ToJavaScript(CFX_WideTextBuf& javascript) {}
+
 CXFA_FMAssignExpression::CXFA_FMAssignExpression(FX_DWORD line,
                                                  XFA_FM_TOKEN op,
                                                  CXFA_FMSimpleExpression* pExp1,
                                                  CXFA_FMSimpleExpression* pExp2)
     : CXFA_FMBinExpression(line, op, pExp1, pExp2) {}
+
 void CXFA_FMAssignExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << FX_WSTRC(L"if (");
   javascript << gs_lpStrExpFuncName[ISFMOBJECT];
@@ -239,6 +248,7 @@ void CXFA_FMAssignExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
     javascript << FX_WSTRC(L");\n}\n");
   }
 }
+
 void CXFA_FMAssignExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
   javascript << FX_WSTRC(L"if (");
   javascript << gs_lpStrExpFuncName[ISFMOBJECT];
@@ -270,12 +280,14 @@ void CXFA_FMAssignExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
     javascript << FX_WSTRC(L");\n}\n");
   }
 }
+
 CXFA_FMLogicalOrExpression::CXFA_FMLogicalOrExpression(
     FX_DWORD line,
     XFA_FM_TOKEN op,
     CXFA_FMSimpleExpression* pExp1,
     CXFA_FMSimpleExpression* pExp2)
     : CXFA_FMBinExpression(line, op, pExp1, pExp2) {}
+
 void CXFA_FMLogicalOrExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << gs_lpStrExpFuncName[LOGICALOR];
   javascript << FX_WSTRC(L"(");
@@ -284,12 +296,14 @@ void CXFA_FMLogicalOrExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   m_pExp2->ToJavaScript(javascript);
   javascript << FX_WSTRC(L")");
 }
+
 CXFA_FMLogicalAndExpression::CXFA_FMLogicalAndExpression(
     FX_DWORD line,
     XFA_FM_TOKEN op,
     CXFA_FMSimpleExpression* pExp1,
     CXFA_FMSimpleExpression* pExp2)
     : CXFA_FMBinExpression(line, op, pExp1, pExp2) {}
+
 void CXFA_FMLogicalAndExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << gs_lpStrExpFuncName[LOGICALAND];
   javascript << FX_WSTRC(L"(");
@@ -298,12 +312,14 @@ void CXFA_FMLogicalAndExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   m_pExp2->ToJavaScript(javascript);
   javascript << FX_WSTRC(L")");
 }
+
 CXFA_FMEqualityExpression::CXFA_FMEqualityExpression(
     FX_DWORD line,
     XFA_FM_TOKEN op,
     CXFA_FMSimpleExpression* pExp1,
     CXFA_FMSimpleExpression* pExp2)
     : CXFA_FMBinExpression(line, op, pExp1, pExp2) {}
+
 void CXFA_FMEqualityExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   switch (m_op) {
     case TOKeq:
@@ -324,12 +340,14 @@ void CXFA_FMEqualityExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   m_pExp2->ToJavaScript(javascript);
   javascript << FX_WSTRC(L")");
 }
+
 CXFA_FMRelationalExpression::CXFA_FMRelationalExpression(
     FX_DWORD line,
     XFA_FM_TOKEN op,
     CXFA_FMSimpleExpression* pExp1,
     CXFA_FMSimpleExpression* pExp2)
     : CXFA_FMBinExpression(line, op, pExp1, pExp2) {}
+
 void CXFA_FMRelationalExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   switch (m_op) {
     case TOKlt:
@@ -358,12 +376,14 @@ void CXFA_FMRelationalExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   m_pExp2->ToJavaScript(javascript);
   javascript << FX_WSTRC(L")");
 }
+
 CXFA_FMAdditiveExpression::CXFA_FMAdditiveExpression(
     FX_DWORD line,
     XFA_FM_TOKEN op,
     CXFA_FMSimpleExpression* pExp1,
     CXFA_FMSimpleExpression* pExp2)
     : CXFA_FMBinExpression(line, op, pExp1, pExp2) {}
+
 void CXFA_FMAdditiveExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   switch (m_op) {
     case TOKplus:
@@ -382,12 +402,14 @@ void CXFA_FMAdditiveExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   m_pExp2->ToJavaScript(javascript);
   javascript << FX_WSTRC(L")");
 }
+
 CXFA_FMMultiplicativeExpression::CXFA_FMMultiplicativeExpression(
     FX_DWORD line,
     XFA_FM_TOKEN op,
     CXFA_FMSimpleExpression* pExp1,
     CXFA_FMSimpleExpression* pExp2)
     : CXFA_FMBinExpression(line, op, pExp1, pExp2) {}
+
 void CXFA_FMMultiplicativeExpression::ToJavaScript(
     CFX_WideTextBuf& javascript) {
   switch (m_op) {
@@ -407,33 +429,40 @@ void CXFA_FMMultiplicativeExpression::ToJavaScript(
   m_pExp2->ToJavaScript(javascript);
   javascript << FX_WSTRC(L")");
 }
+
 CXFA_FMPosExpression::CXFA_FMPosExpression(FX_DWORD line,
                                            CXFA_FMSimpleExpression* pExp)
     : CXFA_FMUnaryExpression(line, TOKplus, pExp) {}
+
 void CXFA_FMPosExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << gs_lpStrExpFuncName[POSITIVE];
   javascript << FX_WSTRC(L"(");
   m_pExp->ToJavaScript(javascript);
   javascript << FX_WSTRC(L")");
 }
+
 CXFA_FMNegExpression::CXFA_FMNegExpression(FX_DWORD line,
                                            CXFA_FMSimpleExpression* pExp)
     : CXFA_FMUnaryExpression(line, TOKminus, pExp) {}
+
 void CXFA_FMNegExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << gs_lpStrExpFuncName[NEGATIVE];
   javascript << FX_WSTRC(L"(");
   m_pExp->ToJavaScript(javascript);
   javascript << FX_WSTRC(L")");
 }
+
 CXFA_FMNotExpression::CXFA_FMNotExpression(FX_DWORD line,
                                            CXFA_FMSimpleExpression* pExp)
     : CXFA_FMUnaryExpression(line, TOKksnot, pExp) {}
+
 void CXFA_FMNotExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << gs_lpStrExpFuncName[NOT];
   javascript << FX_WSTRC(L"(");
   m_pExp->ToJavaScript(javascript);
   javascript << FX_WSTRC(L")");
 }
+
 CXFA_FMCallExpression::CXFA_FMCallExpression(FX_DWORD line,
                                              CXFA_FMSimpleExpression* pExp,
                                              CFX_PtrArray* pArguments,
@@ -442,19 +471,14 @@ CXFA_FMCallExpression::CXFA_FMCallExpression(FX_DWORD line,
       m_bIsSomMethod(bIsSomMethod),
       m_pArguments(pArguments) {
 }
+
 CXFA_FMCallExpression::~CXFA_FMCallExpression() {
   if (m_pArguments) {
-    int32_t argc = m_pArguments->GetSize();
-    int32_t index = 0;
-    CXFA_FMSimpleExpression* e = 0;
-    while (index < argc) {
-      e = (CXFA_FMSimpleExpression*)m_pArguments->GetAt(index);
-      delete e;
-      index++;
+    for (int i = 0; i < m_pArguments->GetSize(); ++i) {
+      delete reinterpret_cast<CXFA_FMSimpleExpression*>(m_pArguments->GetAt(i));
     }
     m_pArguments->RemoveAll();
     delete m_pArguments;
-    m_pArguments = 0;
   }
 }
 
@@ -498,6 +522,7 @@ FX_DWORD CXFA_FMCallExpression::IsMethodWithObjParam(
   } while (iStart <= iEnd);
   return parameters;
 }
+
 void CXFA_FMCallExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   CFX_WideTextBuf funcName;
   m_pExp->ToJavaScript(funcName);
@@ -505,38 +530,36 @@ void CXFA_FMCallExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
     javascript << funcName;
     javascript << FX_WSTRC(L"(");
     if (m_pArguments) {
-      int32_t argc = m_pArguments->GetSize();
-      int32_t index = 0;
       FX_DWORD methodPara = IsMethodWithObjParam(funcName.GetWideString());
       if (methodPara > 0) {
-        CXFA_FMSimpleExpression* e = 0;
-        while (index < argc) {
-          if ((methodPara & (0x01 << index)) > 0) {
+        for (int i = 0; i < m_pArguments->GetSize(); ++i) {
+          if ((methodPara & (0x01 << i)) > 0) {
             javascript << gs_lpStrExpFuncName[GETFMJSOBJ];
           } else {
             javascript << gs_lpStrExpFuncName[GETFMVALUE];
           }
           javascript << FX_WSTRC(L"(");
-          e = (CXFA_FMSimpleExpression*)m_pArguments->GetAt(index);
+          CXFA_FMSimpleExpression* e =
+              reinterpret_cast<CXFA_FMSimpleExpression*>(
+                  m_pArguments->GetAt(i));
           e->ToJavaScript(javascript);
           javascript << FX_WSTRC(L")");
-          if (index + 1 < argc) {
+          if (i + 1 < m_pArguments->GetSize()) {
             javascript << FX_WSTRC(L", ");
           }
-          index++;
         }
       } else {
-        CXFA_FMSimpleExpression* e = 0;
-        while (index < argc) {
+        for (int i = 0; i < m_pArguments->GetSize(); ++i) {
           javascript << gs_lpStrExpFuncName[GETFMVALUE];
           javascript << FX_WSTRC(L"(");
-          e = (CXFA_FMSimpleExpression*)m_pArguments->GetAt(index);
+          CXFA_FMSimpleExpression* e =
+              reinterpret_cast<CXFA_FMSimpleExpression*>(
+                  m_pArguments->GetAt(i));
           e->ToJavaScript(javascript);
           javascript << FX_WSTRC(L")");
-          if (index + 1 < argc) {
+          if (i + 1 < m_pArguments->GetSize()) {
             javascript << FX_WSTRC(L", ");
           }
-          index++;
         }
       }
     }
@@ -566,7 +589,7 @@ void CXFA_FMCallExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
       javascript << FX_WSTRC(L"\n(\nfunction ()\n{\ntry\n{\n");
       if (m_pArguments && m_pArguments->GetSize() > 0) {
         CXFA_FMSimpleExpression* e =
-            (CXFA_FMSimpleExpression*)m_pArguments->GetAt(0);
+            reinterpret_cast<CXFA_FMSimpleExpression*>(m_pArguments->GetAt(0));
         javascript << FX_WSTRC(L"return ");
         e->ToJavaScript(javascript);
         javascript << FX_WSTRC(L";\n}\n");
@@ -576,16 +599,13 @@ void CXFA_FMCallExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
       javascript << FX_WSTRC(
           L"catch(accessExceptions)\n{\nreturn 0;\n}\n}\n).call(this)\n");
     } else if (m_pArguments) {
-      int32_t argc = m_pArguments->GetSize();
-      int32_t index = 0;
-      CXFA_FMSimpleExpression* e = 0;
-      while (index < argc) {
-        e = (CXFA_FMSimpleExpression*)m_pArguments->GetAt(index);
+      for (int i = 0; i < m_pArguments->GetSize(); ++i) {
+        CXFA_FMSimpleExpression* e =
+            reinterpret_cast<CXFA_FMSimpleExpression*>(m_pArguments->GetAt(i));
         e->ToJavaScript(javascript);
-        if (index + 1 < argc) {
+        if (i + 1 < m_pArguments->GetSize()) {
           javascript << FX_WSTRC(L", ");
         }
-        index++;
       }
     }
     javascript << FX_WSTRC(L")");
@@ -594,6 +614,7 @@ void CXFA_FMCallExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
     }
   }
 }
+
 CXFA_FMDotAccessorExpression::CXFA_FMDotAccessorExpression(
     FX_DWORD line,
     CXFA_FMSimpleExpression* pAccessor,
@@ -602,6 +623,7 @@ CXFA_FMDotAccessorExpression::CXFA_FMDotAccessorExpression(
     CXFA_FMSimpleExpression* pIndexExp)
     : CXFA_FMBinExpression(line, op, pAccessor, pIndexExp),
       m_wsIdentifier(wsIdentifier) {}
+
 void CXFA_FMDotAccessorExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << gs_lpStrExpFuncName[DOT];
   javascript << FX_WSTRC(L"(");
@@ -632,6 +654,7 @@ void CXFA_FMDotAccessorExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   m_pExp2->ToJavaScript(javascript);
   javascript << FX_WSTRC(L")");
 }
+
 CXFA_FMIndexExpression::CXFA_FMIndexExpression(
     FX_DWORD line,
     XFA_FM_AccessorIndex accessorIndex,
@@ -640,6 +663,7 @@ CXFA_FMIndexExpression::CXFA_FMIndexExpression(
     : CXFA_FMUnaryExpression(line, TOKlbracket, pIndexExp),
       m_accessorIndex(accessorIndex),
       m_bIsStarIndex(bIsStarIndex) {}
+
 void CXFA_FMIndexExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   switch (m_accessorIndex) {
     case ACCESSOR_NO_INDEX:
@@ -666,6 +690,7 @@ void CXFA_FMIndexExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
     }
   }
 }
+
 CXFA_FMDotDotAccessorExpression::CXFA_FMDotDotAccessorExpression(
     FX_DWORD line,
     CXFA_FMSimpleExpression* pAccessor,
@@ -674,6 +699,7 @@ CXFA_FMDotDotAccessorExpression::CXFA_FMDotDotAccessorExpression(
     CXFA_FMSimpleExpression* pIndexExp)
     : CXFA_FMBinExpression(line, op, pAccessor, pIndexExp),
       m_wsIdentifier(wsIdentifier) {}
+
 void CXFA_FMDotDotAccessorExpression::ToJavaScript(
     CFX_WideTextBuf& javascript) {
   javascript << gs_lpStrExpFuncName[DOTDOT];
@@ -691,11 +717,13 @@ void CXFA_FMDotDotAccessorExpression::ToJavaScript(
   m_pExp2->ToJavaScript(javascript);
   javascript << FX_WSTRC(L")");
 }
+
 CXFA_FMMethodCallExpression::CXFA_FMMethodCallExpression(
     FX_DWORD line,
     CXFA_FMSimpleExpression* pAccessorExp1,
     CXFA_FMSimpleExpression* pCallExp)
     : CXFA_FMBinExpression(line, TOKdot, pAccessorExp1, pCallExp) {}
+
 void CXFA_FMMethodCallExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << FX_WSTRC(L"(\nfunction ()\n{\n");
   javascript << FX_WSTRC(L"var method_return_value = null;\n");

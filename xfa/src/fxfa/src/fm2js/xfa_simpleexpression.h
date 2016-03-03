@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXFA_SRC_FM2JS_XFA_SIMPLEEXPRESSION_H_
 #define XFA_SRC_FXFA_SRC_FM2JS_XFA_SIMPLEEXPRESSION_H_
 
+#include <memory>
+
 #include "core/include/fxcrt/fx_basic.h"
 #include "xfa/src/fxfa/src/fm2js/xfa_lexer.h"
 
@@ -109,11 +111,10 @@ class CXFA_FMUnaryExpression : public CXFA_FMSimpleExpression {
   CXFA_FMUnaryExpression(FX_DWORD line,
                          XFA_FM_TOKEN op,
                          CXFA_FMSimpleExpression* pExp);
-  ~CXFA_FMUnaryExpression() override;
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
 
  protected:
-  CXFA_FMSimpleExpression* m_pExp;
+  std::unique_ptr<CXFA_FMSimpleExpression> m_pExp;
 };
 
 class CXFA_FMBinExpression : public CXFA_FMSimpleExpression {
@@ -122,12 +123,11 @@ class CXFA_FMBinExpression : public CXFA_FMSimpleExpression {
                        XFA_FM_TOKEN op,
                        CXFA_FMSimpleExpression* pExp1,
                        CXFA_FMSimpleExpression* pExp2);
-  ~CXFA_FMBinExpression() override;
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
 
  protected:
-  CXFA_FMSimpleExpression* m_pExp1;
-  CXFA_FMSimpleExpression* m_pExp2;
+  std::unique_ptr<CXFA_FMSimpleExpression> m_pExp1;
+  std::unique_ptr<CXFA_FMSimpleExpression> m_pExp2;
 };
 
 class CXFA_FMAssignExpression : public CXFA_FMBinExpression {
