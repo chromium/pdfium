@@ -46,52 +46,50 @@ class CPDF_Object {
   FX_DWORD GetGenNum() const { return m_GenNum; }
 
   virtual CPDF_Object* Clone(FX_BOOL bDirect = FALSE) const = 0;
-  virtual CPDF_Object* GetDirect() const {
-    return const_cast<CPDF_Object*>(this);
-  }
+  virtual CPDF_Object* GetDirect() const;
 
   FX_BOOL IsModified() const { return FALSE; }
   void Release();
 
-  virtual CFX_ByteString GetString() const { return CFX_ByteString(); }
-  virtual CFX_ByteStringC GetConstString() const { return CFX_ByteStringC(); }
-  virtual CFX_WideString GetUnicodeText() const { return CFX_WideString(); }
-  virtual FX_FLOAT GetNumber() const { return 0; }
-  virtual int GetInteger() const { return 0; }
-  virtual CPDF_Dictionary* GetDict() const { return nullptr; }
-  virtual CPDF_Array* GetArray() const { return nullptr; }
+  virtual CFX_ByteString GetString() const;
+  virtual CFX_ByteStringC GetConstString() const;
+  virtual CFX_WideString GetUnicodeText() const;
+  virtual FX_FLOAT GetNumber() const;
+  virtual int GetInteger() const;
+  virtual CPDF_Dictionary* GetDict() const;
+  virtual CPDF_Array* GetArray() const;
 
-  virtual void SetString(const CFX_ByteString& str) { ASSERT(FALSE); }
+  virtual void SetString(const CFX_ByteString& str);
 
-  virtual bool IsArray() const { return false; }
-  virtual bool IsBoolean() const { return false; }
-  virtual bool IsDictionary() const { return false; }
-  virtual bool IsName() const { return false; }
-  virtual bool IsNumber() const { return false; }
-  virtual bool IsReference() const { return false; }
-  virtual bool IsStream() const { return false; }
-  virtual bool IsString() const { return false; }
+  virtual bool IsArray() const;
+  virtual bool IsBoolean() const;
+  virtual bool IsDictionary() const;
+  virtual bool IsName() const;
+  virtual bool IsNumber() const;
+  virtual bool IsReference() const;
+  virtual bool IsStream() const;
+  virtual bool IsString() const;
 
-  virtual CPDF_Array* AsArray() { return nullptr; }
-  virtual const CPDF_Array* AsArray() const { return nullptr; }
-  virtual CPDF_Boolean* AsBoolean() { return nullptr; }
-  virtual const CPDF_Boolean* AsBoolean() const { return nullptr; }
-  virtual CPDF_Dictionary* AsDictionary() { return nullptr; }
-  virtual const CPDF_Dictionary* AsDictionary() const { return nullptr; }
-  virtual CPDF_Name* AsName() { return nullptr; }
-  virtual const CPDF_Name* AsName() const { return nullptr; }
-  virtual CPDF_Number* AsNumber() { return nullptr; }
-  virtual const CPDF_Number* AsNumber() const { return nullptr; }
-  virtual CPDF_Reference* AsReference() { return nullptr; }
-  virtual const CPDF_Reference* AsReference() const { return nullptr; }
-  virtual CPDF_Stream* AsStream() { return nullptr; }
-  virtual const CPDF_Stream* AsStream() const { return nullptr; }
-  virtual CPDF_String* AsString() { return nullptr; }
-  virtual const CPDF_String* AsString() const { return nullptr; }
+  virtual CPDF_Array* AsArray();
+  virtual const CPDF_Array* AsArray() const;
+  virtual CPDF_Boolean* AsBoolean();
+  virtual const CPDF_Boolean* AsBoolean() const;
+  virtual CPDF_Dictionary* AsDictionary();
+  virtual const CPDF_Dictionary* AsDictionary() const;
+  virtual CPDF_Name* AsName();
+  virtual const CPDF_Name* AsName() const;
+  virtual CPDF_Number* AsNumber();
+  virtual const CPDF_Number* AsNumber() const;
+  virtual CPDF_Reference* AsReference();
+  virtual const CPDF_Reference* AsReference() const;
+  virtual CPDF_Stream* AsStream();
+  virtual const CPDF_Stream* AsStream() const;
+  virtual CPDF_String* AsString();
+  virtual const CPDF_String* AsString() const;
 
  protected:
   CPDF_Object() : m_ObjNum(0), m_GenNum(0) {}
-  virtual ~CPDF_Object() {}
+  virtual ~CPDF_Object();
   void Destroy() { delete this; }
 
   FX_DWORD m_ObjNum;
@@ -111,23 +109,17 @@ class CPDF_Boolean : public CPDF_Object {
   explicit CPDF_Boolean(FX_BOOL value) : m_bValue(value) {}
 
   // CPDF_Object.
-  Type GetType() const override { return BOOLEAN; }
-  CPDF_Object* Clone(FX_BOOL bDirect = FALSE) const override {
-    return new CPDF_Boolean(m_bValue);
-  }
-  CFX_ByteString GetString() const override {
-    return m_bValue ? "true" : "false";
-  }
-  int GetInteger() const override { return m_bValue; }
-  void SetString(const CFX_ByteString& str) override {
-    m_bValue = (str == "true");
-  }
-  bool IsBoolean() const override { return true; }
-  CPDF_Boolean* AsBoolean() override { return this; }
-  const CPDF_Boolean* AsBoolean() const override { return this; }
+  Type GetType() const override;
+  CPDF_Object* Clone(FX_BOOL bDirect = FALSE) const override;
+  CFX_ByteString GetString() const override;
+  int GetInteger() const override;
+  void SetString(const CFX_ByteString& str) override;
+  bool IsBoolean() const override;
+  CPDF_Boolean* AsBoolean() override;
+  const CPDF_Boolean* AsBoolean() const override;
 
  protected:
-  ~CPDF_Boolean() {}
+  ~CPDF_Boolean() override;
 
   FX_BOOL m_bValue;
 };
@@ -148,32 +140,24 @@ class CPDF_Number : public CPDF_Object {
   explicit CPDF_Number(const CFX_ByteStringC& str);
 
   // CPDF_Object.
-  Type GetType() const override { return NUMBER; }
-  CPDF_Object* Clone(FX_BOOL bDirect = FALSE) const override {
-    return m_bInteger ? new CPDF_Number(m_Integer) : new CPDF_Number(m_Float);
-  }
+  Type GetType() const override;
+  CPDF_Object* Clone(FX_BOOL bDirect = FALSE) const override;
   CFX_ByteString GetString() const override;
-  FX_FLOAT GetNumber() const override {
-    return m_bInteger ? static_cast<FX_FLOAT>(m_Integer) : m_Float;
-  }
-  int GetInteger() const override {
-    return m_bInteger ? m_Integer : static_cast<int>(m_Float);
-  }
+  FX_FLOAT GetNumber() const override;
+  int GetInteger() const override;
   void SetString(const CFX_ByteString& str) override;
-  bool IsNumber() const override { return true; }
-  CPDF_Number* AsNumber() override { return this; }
-  const CPDF_Number* AsNumber() const override { return this; }
+  bool IsNumber() const override;
+  CPDF_Number* AsNumber() override;
+  const CPDF_Number* AsNumber() const override;
 
   FX_BOOL IsInteger() { return m_bInteger; }
 
  protected:
-  ~CPDF_Number() {}
+  ~CPDF_Number() override;
 
   FX_BOOL m_bInteger;
-
   union {
     int m_Integer;
-
     FX_FLOAT m_Float;
   };
 };
@@ -194,24 +178,20 @@ class CPDF_String : public CPDF_Object {
   explicit CPDF_String(const CFX_WideString& str);
 
   // CPDF_Object.
-  Type GetType() const override { return STRING; }
-  CPDF_Object* Clone(FX_BOOL bDirect = FALSE) const override {
-    return new CPDF_String(m_String, m_bHex);
-  }
-  CFX_ByteString GetString() const override { return m_String; }
-  CFX_ByteStringC GetConstString() const override {
-    return CFX_ByteStringC(m_String);
-  }
+  Type GetType() const override;
+  CPDF_Object* Clone(FX_BOOL bDirect = FALSE) const override;
+  CFX_ByteString GetString() const override;
+  CFX_ByteStringC GetConstString() const override;
   CFX_WideString GetUnicodeText() const override;
-  void SetString(const CFX_ByteString& str) override { m_String = str; }
-  bool IsString() const override { return true; }
-  CPDF_String* AsString() override { return this; }
-  const CPDF_String* AsString() const override { return this; }
+  void SetString(const CFX_ByteString& str) override;
+  bool IsString() const override;
+  CPDF_String* AsString() override;
+  const CPDF_String* AsString() const override;
 
   FX_BOOL IsHex() const { return m_bHex; }
 
  protected:
-  ~CPDF_String() {}
+  ~CPDF_String() override;
 
   CFX_ByteString m_String;
   FX_BOOL m_bHex;
@@ -232,22 +212,18 @@ class CPDF_Name : public CPDF_Object {
   explicit CPDF_Name(const FX_CHAR* str) : m_Name(str) {}
 
   // CPDF_Object.
-  Type GetType() const override { return NAME; }
-  CPDF_Object* Clone(FX_BOOL bDirect = FALSE) const override {
-    return new CPDF_Name(m_Name);
-  }
-  CFX_ByteString GetString() const override { return m_Name; }
-  CFX_ByteStringC GetConstString() const override {
-    return CFX_ByteStringC(m_Name);
-  }
+  Type GetType() const override;
+  CPDF_Object* Clone(FX_BOOL bDirect = FALSE) const override;
+  CFX_ByteString GetString() const override;
+  CFX_ByteStringC GetConstString() const override;
   CFX_WideString GetUnicodeText() const override;
-  void SetString(const CFX_ByteString& str) override { m_Name = str; }
-  bool IsName() const override { return true; }
-  CPDF_Name* AsName() override { return this; }
-  const CPDF_Name* AsName() const override { return this; }
+  void SetString(const CFX_ByteString& str) override;
+  bool IsName() const override;
+  CPDF_Name* AsName() override;
+  const CPDF_Name* AsName() const override;
 
  protected:
-  ~CPDF_Name() {}
+  ~CPDF_Name() override;
 
   CFX_ByteString m_Name;
 };
@@ -262,19 +238,15 @@ inline const CPDF_Name* ToName(const CPDF_Object* obj) {
 
 class CPDF_Array : public CPDF_Object {
  public:
-  CPDF_Array() {}
+  CPDF_Array();
 
   // CPDF_Object.
-  Type GetType() const override { return ARRAY; }
+  Type GetType() const override;
   CPDF_Object* Clone(FX_BOOL bDirect = FALSE) const override;
-  CPDF_Array* GetArray() const override {
-    // The method should be made non-const if we want to not be const.
-    // See bug #234.
-    return const_cast<CPDF_Array*>(this);
-  }
-  bool IsArray() const override { return true; }
-  CPDF_Array* AsArray() override { return this; }
-  const CPDF_Array* AsArray() const override { return this; }
+  CPDF_Array* GetArray() const override;
+  bool IsArray() const override;
+  CPDF_Array* AsArray() override;
+  const CPDF_Array* AsArray() const override;
 
   FX_DWORD GetCount() const { return m_Objects.GetSize(); }
   CPDF_Object* GetElement(FX_DWORD index) const;
@@ -309,7 +281,7 @@ class CPDF_Array : public CPDF_Object {
   }
 
  protected:
-  ~CPDF_Array();
+  ~CPDF_Array() override;
 
   CFX_ArrayTemplate<CPDF_Object*> m_Objects;
 };
@@ -327,19 +299,15 @@ class CPDF_Dictionary : public CPDF_Object {
   using iterator = std::map<CFX_ByteString, CPDF_Object*>::iterator;
   using const_iterator = std::map<CFX_ByteString, CPDF_Object*>::const_iterator;
 
-  CPDF_Dictionary() {}
+  CPDF_Dictionary();
 
   // CPDF_Object.
-  Type GetType() const override { return DICTIONARY; }
+  Type GetType() const override;
   CPDF_Object* Clone(FX_BOOL bDirect = FALSE) const override;
-  CPDF_Dictionary* GetDict() const override {
-    // The method should be made non-const if we want to not be const.
-    // See bug #234.
-    return const_cast<CPDF_Dictionary*>(this);
-  }
-  bool IsDictionary() const override { return true; }
-  CPDF_Dictionary* AsDictionary() override { return this; }
-  const CPDF_Dictionary* AsDictionary() const override { return this; }
+  CPDF_Dictionary* GetDict() const override;
+  bool IsDictionary() const override;
+  CPDF_Dictionary* AsDictionary() override;
+  const CPDF_Dictionary* AsDictionary() const override;
 
   size_t GetCount() const { return m_Map.size(); }
   CPDF_Object* GetElement(const CFX_ByteStringC& key) const;
@@ -401,7 +369,7 @@ class CPDF_Dictionary : public CPDF_Object {
   const_iterator end() const { return m_Map.end(); }
 
  protected:
-  ~CPDF_Dictionary();
+  ~CPDF_Dictionary() override;
 
   std::map<CFX_ByteString, CPDF_Object*> m_Map;
 };
@@ -419,13 +387,13 @@ class CPDF_Stream : public CPDF_Object {
   CPDF_Stream(uint8_t* pData, FX_DWORD size, CPDF_Dictionary* pDict);
 
   // CPDF_Object.
-  Type GetType() const override { return STREAM; }
+  Type GetType() const override;
   CPDF_Object* Clone(FX_BOOL bDirect = FALSE) const override;
-  CPDF_Dictionary* GetDict() const override { return m_pDict; }
+  CPDF_Dictionary* GetDict() const override;
   CFX_WideString GetUnicodeText() const override;
-  bool IsStream() const override { return true; }
-  CPDF_Stream* AsStream() override { return this; }
-  const CPDF_Stream* AsStream() const override { return this; }
+  bool IsStream() const override;
+  CPDF_Stream* AsStream() override;
+  const CPDF_Stream* AsStream() const override;
 
   FX_DWORD GetRawSize() const { return m_dwSize; }
   uint8_t* GetRawData() const { return m_pDataBuf; }
@@ -447,7 +415,7 @@ class CPDF_Stream : public CPDF_Object {
  protected:
   static const FX_DWORD kMemoryBasedGenNum = (FX_DWORD)-1;
 
-  ~CPDF_Stream();
+  ~CPDF_Stream() override;
 
   void InitStreamInternal(CPDF_Dictionary* pDict);
 
@@ -505,10 +473,8 @@ class CPDF_Null : public CPDF_Object {
   CPDF_Null() {}
 
   // CPDF_Object.
-  Type GetType() const override { return NULLOBJ; }
-  CPDF_Object* Clone(FX_BOOL bDirect = FALSE) const override {
-    return new CPDF_Null;
-  }
+  Type GetType() const override;
+  CPDF_Object* Clone(FX_BOOL bDirect = FALSE) const override;
 };
 
 class CPDF_Reference : public CPDF_Object {
@@ -517,33 +483,19 @@ class CPDF_Reference : public CPDF_Object {
       : m_pObjList(pDoc), m_RefObjNum(objnum) {}
 
   // CPDF_Object.
-  Type GetType() const override { return REFERENCE; }
+  Type GetType() const override;
   CPDF_Object* Clone(FX_BOOL bDirect = FALSE) const override;
   CPDF_Object* GetDirect() const override;
-  CFX_ByteString GetString() const override {
-    CPDF_Object* obj = SafeGetDirect();
-    return obj ? obj->GetString() : CFX_ByteString();
-  }
-  CFX_ByteStringC GetConstString() const override {
-    CPDF_Object* obj = SafeGetDirect();
-    return obj ? obj->GetConstString() : CFX_ByteStringC();
-  }
-  FX_FLOAT GetNumber() const override {
-    CPDF_Object* obj = SafeGetDirect();
-    return obj ? obj->GetNumber() : 0;
-  }
-  int GetInteger() const override {
-    CPDF_Object* obj = SafeGetDirect();
-    return obj ? obj->GetInteger() : 0;
-  }
-  CPDF_Dictionary* GetDict() const override {
-    CPDF_Object* obj = SafeGetDirect();
-    return obj ? obj->GetDict() : nullptr;
-  }
+  CFX_ByteString GetString() const override;
+  CFX_ByteStringC GetConstString() const override;
+  FX_FLOAT GetNumber() const override;
+  int GetInteger() const override;
+  CPDF_Dictionary* GetDict() const override;
+
   // TODO(weili): check whether GetUnicodeText() and GetArray() are needed.
-  bool IsReference() const override { return true; }
-  CPDF_Reference* AsReference() override { return this; }
-  const CPDF_Reference* AsReference() const override { return this; }
+  bool IsReference() const override;
+  CPDF_Reference* AsReference() override;
+  const CPDF_Reference* AsReference() const override;
 
   CPDF_IndirectObjectHolder* GetObjList() const { return m_pObjList; }
   FX_DWORD GetRefObjNum() const { return m_RefObjNum; }
@@ -551,7 +503,7 @@ class CPDF_Reference : public CPDF_Object {
   void SetRef(CPDF_IndirectObjectHolder* pDoc, FX_DWORD objnum);
 
  protected:
-  ~CPDF_Reference() {}
+  ~CPDF_Reference() override;
   CPDF_Object* SafeGetDirect() const {
     CPDF_Object* obj = GetDirect();
     if (!obj || obj->IsReference())

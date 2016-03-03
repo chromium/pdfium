@@ -12,6 +12,12 @@
 #include "core/include/fxcrt/fx_string.h"
 #include "third_party/base/stl_util.h"
 
+CPDF_Object::~CPDF_Object() {}
+
+CPDF_Object* CPDF_Object::GetDirect() const {
+  return const_cast<CPDF_Object*>(this);
+}
+
 void CPDF_Object::Release() {
   if (m_ObjNum) {
     return;
@@ -19,8 +25,200 @@ void CPDF_Object::Release() {
   Destroy();
 }
 
+CFX_ByteString CPDF_Object::GetString() const {
+  return CFX_ByteString();
+}
+
+CFX_ByteStringC CPDF_Object::GetConstString() const {
+  return CFX_ByteStringC();
+}
+
+CFX_WideString CPDF_Object::GetUnicodeText() const {
+  return CFX_WideString();
+}
+
+FX_FLOAT CPDF_Object::GetNumber() const {
+  return 0;
+}
+
+int CPDF_Object::GetInteger() const {
+  return 0;
+}
+
+CPDF_Dictionary* CPDF_Object::GetDict() const {
+  return nullptr;
+}
+
+CPDF_Array* CPDF_Object::GetArray() const {
+  return nullptr;
+}
+
+void CPDF_Object::SetString(const CFX_ByteString& str) {
+  ASSERT(FALSE);
+}
+
+bool CPDF_Object::IsArray() const {
+  return false;
+}
+
+bool CPDF_Object::IsBoolean() const {
+  return false;
+}
+
+bool CPDF_Object::IsDictionary() const {
+  return false;
+}
+
+bool CPDF_Object::IsName() const {
+  return false;
+}
+
+bool CPDF_Object::IsNumber() const {
+  return false;
+}
+
+bool CPDF_Object::IsReference() const {
+  return false;
+}
+
+bool CPDF_Object::IsStream() const {
+  return false;
+}
+
+bool CPDF_Object::IsString() const {
+  return false;
+}
+
+CPDF_Array* CPDF_Object::AsArray() {
+  return nullptr;
+}
+
+const CPDF_Array* CPDF_Object::AsArray() const {
+  return nullptr;
+}
+
+CPDF_Boolean* CPDF_Object::AsBoolean() {
+  return nullptr;
+}
+
+const CPDF_Boolean* CPDF_Object::AsBoolean() const {
+  return nullptr;
+}
+
+CPDF_Dictionary* CPDF_Object::AsDictionary() {
+  return nullptr;
+}
+
+const CPDF_Dictionary* CPDF_Object::AsDictionary() const {
+  return nullptr;
+}
+
+CPDF_Name* CPDF_Object::AsName() {
+  return nullptr;
+}
+
+const CPDF_Name* CPDF_Object::AsName() const {
+  return nullptr;
+}
+
+CPDF_Number* CPDF_Object::AsNumber() {
+  return nullptr;
+}
+
+const CPDF_Number* CPDF_Object::AsNumber() const {
+  return nullptr;
+}
+
+CPDF_Reference* CPDF_Object::AsReference() {
+  return nullptr;
+}
+
+const CPDF_Reference* CPDF_Object::AsReference() const {
+  return nullptr;
+}
+
+CPDF_Stream* CPDF_Object::AsStream() {
+  return nullptr;
+}
+
+const CPDF_Stream* CPDF_Object::AsStream() const {
+  return nullptr;
+}
+
+CPDF_String* CPDF_Object::AsString() {
+  return nullptr;
+}
+
+const CPDF_String* CPDF_Object::AsString() const {
+  return nullptr;
+}
+
+CPDF_Boolean::~CPDF_Boolean() {}
+
+CPDF_Object::Type CPDF_Boolean::GetType() const {
+  return BOOLEAN;
+}
+
+CPDF_Object* CPDF_Boolean::Clone(FX_BOOL bDirect) const {
+  return new CPDF_Boolean(m_bValue);
+}
+
+CFX_ByteString CPDF_Boolean::GetString() const {
+  return m_bValue ? "true" : "false";
+}
+
+int CPDF_Boolean::GetInteger() const {
+  return m_bValue;
+}
+
+void CPDF_Boolean::SetString(const CFX_ByteString& str) {
+  m_bValue = (str == "true");
+}
+
+bool CPDF_Boolean::IsBoolean() const {
+  return true;
+}
+
+CPDF_Boolean* CPDF_Boolean::AsBoolean() {
+  return this;
+}
+
+const CPDF_Boolean* CPDF_Boolean::AsBoolean() const {
+  return this;
+}
+
 CPDF_Number::CPDF_Number(const CFX_ByteStringC& str) {
   FX_atonum(str, m_bInteger, &m_Integer);
+}
+
+CPDF_Number::~CPDF_Number() {}
+
+CPDF_Object::Type CPDF_Number::GetType() const {
+  return NUMBER;
+}
+
+CPDF_Object* CPDF_Number::Clone(FX_BOOL bDirect) const {
+  return m_bInteger ? new CPDF_Number(m_Integer) : new CPDF_Number(m_Float);
+}
+
+FX_FLOAT CPDF_Number::GetNumber() const {
+  return m_bInteger ? static_cast<FX_FLOAT>(m_Integer) : m_Float;
+}
+
+int CPDF_Number::GetInteger() const {
+  return m_bInteger ? m_Integer : static_cast<int>(m_Float);
+}
+
+bool CPDF_Number::IsNumber() const {
+  return true;
+}
+
+CPDF_Number* CPDF_Number::AsNumber() {
+  return this;
+}
+
+const CPDF_Number* CPDF_Number::AsNumber() const {
+  return this;
 }
 
 void CPDF_Number::SetString(const CFX_ByteString& str) {
@@ -36,13 +234,83 @@ CPDF_String::CPDF_String(const CFX_WideString& str) : m_bHex(FALSE) {
   m_String = PDF_EncodeText(str);
 }
 
+CPDF_String::~CPDF_String() {}
+
+CPDF_Object::Type CPDF_String::GetType() const {
+  return STRING;
+}
+
+CPDF_Object* CPDF_String::Clone(FX_BOOL bDirect) const {
+  return new CPDF_String(m_String, m_bHex);
+}
+
+CFX_ByteString CPDF_String::GetString() const {
+  return m_String;
+}
+
+CFX_ByteStringC CPDF_String::GetConstString() const {
+  return CFX_ByteStringC(m_String);
+}
+
+void CPDF_String::SetString(const CFX_ByteString& str) {
+  m_String = str;
+}
+
+bool CPDF_String::IsString() const {
+  return true;
+}
+
+CPDF_String* CPDF_String::AsString() {
+  return this;
+}
+
+const CPDF_String* CPDF_String::AsString() const {
+  return this;
+}
+
 CFX_WideString CPDF_String::GetUnicodeText() const {
   return PDF_DecodeText(m_String);
+}
+
+CPDF_Name::~CPDF_Name() {}
+
+CPDF_Object::Type CPDF_Name::GetType() const {
+  return NAME;
+}
+
+CPDF_Object* CPDF_Name::Clone(FX_BOOL bDirect) const {
+  return new CPDF_Name(m_Name);
+}
+
+CFX_ByteString CPDF_Name::GetString() const {
+  return m_Name;
+}
+
+CFX_ByteStringC CPDF_Name::GetConstString() const {
+  return CFX_ByteStringC(m_Name);
+}
+
+void CPDF_Name::SetString(const CFX_ByteString& str) {
+  m_Name = str;
+}
+
+bool CPDF_Name::IsName() const {
+  return true;
+}
+
+CPDF_Name* CPDF_Name::AsName() {
+  return this;
+}
+
+const CPDF_Name* CPDF_Name::AsName() const {
+  return this;
 }
 
 CFX_WideString CPDF_Name::GetUnicodeText() const {
   return PDF_DecodeText(m_Name);
 }
+
+CPDF_Array::CPDF_Array() {}
 
 CPDF_Array::~CPDF_Array() {
   int size = m_Objects.GetSize();
@@ -51,6 +319,28 @@ CPDF_Array::~CPDF_Array() {
     if (pList[i])
       pList[i]->Release();
   }
+}
+
+CPDF_Object::Type CPDF_Array::GetType() const {
+  return ARRAY;
+}
+
+CPDF_Array* CPDF_Array::GetArray() const {
+  // The method should be made non-const if we want to not be const.
+  // See bug #234.
+  return const_cast<CPDF_Array*>(this);
+}
+
+bool CPDF_Array::IsArray() const {
+  return true;
+}
+
+CPDF_Array* CPDF_Array::AsArray() {
+  return this;
+}
+
+const CPDF_Array* CPDF_Array::AsArray() const {
+  return this;
 }
 
 CPDF_Object* CPDF_Array::Clone(FX_BOOL bDirect) const {
@@ -214,10 +504,34 @@ void CPDF_Array::AddReference(CPDF_IndirectObjectHolder* pDoc,
   Add(new CPDF_Reference(pDoc, objnum));
 }
 
+CPDF_Dictionary::CPDF_Dictionary() {}
+
 CPDF_Dictionary::~CPDF_Dictionary() {
   for (const auto& it : m_Map) {
     it.second->Release();
   }
+}
+
+CPDF_Object::Type CPDF_Dictionary::GetType() const {
+  return DICTIONARY;
+}
+
+CPDF_Dictionary* CPDF_Dictionary::GetDict() const {
+  // The method should be made non-const if we want to not be const.
+  // See bug #234.
+  return const_cast<CPDF_Dictionary*>(this);
+}
+
+bool CPDF_Dictionary::IsDictionary() const {
+  return true;
+}
+
+CPDF_Dictionary* CPDF_Dictionary::AsDictionary() {
+  return this;
+}
+
+const CPDF_Dictionary* CPDF_Dictionary::AsDictionary() const {
+  return this;
 }
 
 CPDF_Object* CPDF_Dictionary::Clone(FX_BOOL bDirect) const {
@@ -477,6 +791,26 @@ CPDF_Stream::~CPDF_Stream() {
     m_pDict->Release();
 }
 
+CPDF_Object::Type CPDF_Stream::GetType() const {
+  return STREAM;
+}
+
+CPDF_Dictionary* CPDF_Stream::GetDict() const {
+  return m_pDict;
+}
+
+bool CPDF_Stream::IsStream() const {
+  return true;
+}
+
+CPDF_Stream* CPDF_Stream::AsStream() {
+  return this;
+}
+
+const CPDF_Stream* CPDF_Stream::AsStream() const {
+  return this;
+}
+
 void CPDF_Stream::InitStreamInternal(CPDF_Dictionary* pDict) {
   if (pDict) {
     if (m_pDict)
@@ -663,6 +997,57 @@ uint8_t* CPDF_StreamAcc::DetachData() {
   uint8_t* p = FX_Alloc(uint8_t, m_dwSize);
   FXSYS_memcpy(p, m_pData, m_dwSize);
   return p;
+}
+
+CPDF_Object::Type CPDF_Null::GetType() const {
+  return NULLOBJ;
+}
+
+CPDF_Object* CPDF_Null::Clone(FX_BOOL bDirect) const {
+  return new CPDF_Null;
+}
+
+CPDF_Reference::~CPDF_Reference() {}
+
+CPDF_Object::Type CPDF_Reference::GetType() const {
+  return REFERENCE;
+}
+
+CFX_ByteString CPDF_Reference::GetString() const {
+  CPDF_Object* obj = SafeGetDirect();
+  return obj ? obj->GetString() : CFX_ByteString();
+}
+
+CFX_ByteStringC CPDF_Reference::GetConstString() const {
+  CPDF_Object* obj = SafeGetDirect();
+  return obj ? obj->GetConstString() : CFX_ByteStringC();
+}
+
+FX_FLOAT CPDF_Reference::GetNumber() const {
+  CPDF_Object* obj = SafeGetDirect();
+  return obj ? obj->GetNumber() : 0;
+}
+
+int CPDF_Reference::GetInteger() const {
+  CPDF_Object* obj = SafeGetDirect();
+  return obj ? obj->GetInteger() : 0;
+}
+
+CPDF_Dictionary* CPDF_Reference::GetDict() const {
+  CPDF_Object* obj = SafeGetDirect();
+  return obj ? obj->GetDict() : nullptr;
+}
+
+bool CPDF_Reference::IsReference() const {
+  return true;
+}
+
+CPDF_Reference* CPDF_Reference::AsReference() {
+  return this;
+}
+
+const CPDF_Reference* CPDF_Reference::AsReference() const {
+  return this;
 }
 
 CPDF_Object* CPDF_Reference::Clone(FX_BOOL bDirect) const {
