@@ -125,3 +125,14 @@ TEST_F(FPDFDocEmbeddertest, FindBookmarks) {
       GetFPDFWideString(L"A BAD Beginning");
   EXPECT_EQ(nullptr, FPDFBookmark_Find(document(), bad_title.get()));
 }
+
+// Check circular bookmarks will not cause infinite loop.
+TEST_F(FPDFDocEmbeddertest, FindBookmarks_bug420) {
+  // Open a file with circular bookmarks.
+  EXPECT_TRUE(OpenDocument("bookmarks_circular.pdf"));
+
+  // Try to find a title.
+  std::unique_ptr<unsigned short, pdfium::FreeDeleter> title =
+      GetFPDFWideString(L"anything");
+  EXPECT_EQ(nullptr, FPDFBookmark_Find(document(), title.get()));
+}

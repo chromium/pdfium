@@ -6,7 +6,10 @@
 
 #include "public/fpdf_doc.h"
 
+#include <set>
+
 #include "fpdfsdk/include/fsdk_define.h"
+#include "third_party/base/stl_util.h"
 
 namespace {
 
@@ -14,17 +17,24 @@ int THISMODULE = 0;
 
 CPDF_Bookmark FindBookmark(const CPDF_BookmarkTree& tree,
                            CPDF_Bookmark bookmark,
-                           const CFX_WideString& title) {
+                           const CFX_WideString& title,
+                           std::set<CPDF_Dictionary*>* visited) {
+  // Return if already checked to avoid circular calling.
+  if (pdfium::ContainsKey(*visited, bookmark.GetDict()))
+    return CPDF_Bookmark();
+  visited->insert(bookmark.GetDict());
+
   if (bookmark.GetDict() &&
       bookmark.GetTitle().CompareNoCase(title.c_str()) == 0) {
-    // First check this item
+    // First check this item.
     return bookmark;
   }
-  // go into children items
+
+  // Go into children items.
   CPDF_Bookmark child = tree.GetFirstChild(bookmark);
-  while (child.GetDict()) {
-    // check if this item
-    CPDF_Bookmark found = FindBookmark(tree, child, title);
+  while (child.GetDict() && !pdfium::ContainsKey(*visited, child.GetDict())) {
+    // Check this item and its children.
+    CPDF_Bookmark found = FindBookmark(tree, child, title, visited);
     if (found.GetDict())
       return found;
     child = tree.GetNextSibling(child);
@@ -101,7 +111,8 @@ DLLEXPORT FPDF_BOOKMARK STDCALL FPDFBookmark_Find(FPDF_DOCUMENT document,
   CPDF_BookmarkTree tree(pDoc);
   FX_STRSIZE len = CFX_WideString::WStringLength(title);
   CFX_WideString encodedTitle = CFX_WideString::FromUTF16LE(title, len);
-  return FindBookmark(tree, CPDF_Bookmark(), encodedTitle).GetDict();
+  std::set<CPDF_Dictionary*> visited;
+  return FindBookmark(tree, CPDF_Bookmark(), encodedTitle, &visited).GetDict();
 }
 
 DLLEXPORT FPDF_DEST STDCALL FPDFBookmark_GetDest(FPDF_DOCUMENT document,
