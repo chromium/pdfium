@@ -1421,6 +1421,9 @@ void CFX_FolderFontInfo::ReportFace(const CFX_ByteString& path,
   }
   CFX_ByteString names =
       FPDF_LoadTableFromTT(pFile, tables, nTables, 0x6e616d65);
+  if (names.IsEmpty()) {
+    return;
+  }
   CFX_ByteString facename = GetNameFromTT(names, 1);
   CFX_ByteString style = GetNameFromTT(names, 2);
   if (style != "Regular") {
