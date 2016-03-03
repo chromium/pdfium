@@ -85,8 +85,6 @@ CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::NewAnnot(IXFA_Widget* pAnnot,
 #endif  // PDF_ENABLE_XFA
 
 void CPDFSDK_AnnotHandlerMgr::ReleaseAnnot(CPDFSDK_Annot* pAnnot) {
-  pAnnot->GetPDFPage();
-
   if (IPDFSDK_AnnotHandler* pAnnotHandler = GetAnnotHandler(pAnnot)) {
     pAnnotHandler->OnRelease(pAnnot);
     pAnnotHandler->ReleaseAnnot(pAnnot);
