@@ -22,7 +22,6 @@
     'defines' : [
       'OPJ_STATIC',
       'PNG_PREFIX',
-      'PNGPREFIX_H',
       'PNG_USE_READ_MACROS',
       'V8_DEPRECATION_WARNINGS',
       '_CRT_SECURE_NO_WARNINGS',

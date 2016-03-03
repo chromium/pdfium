@@ -17,24 +17,23 @@ group("samples") {
 config("pdfium_samples_config") {
   defines = [
     "PNG_PREFIX",
-    "PNGPREFIX_H",
     "PNG_USE_READ_MACROS",
   ]
   include_dirs = [ ".." ]
   if (pdf_enable_v8) {
-    defines += [ "PDF_ENABLE_V8", ]
+    defines += [ "PDF_ENABLE_V8" ]
   }
   if (pdf_enable_xfa) {
-    defines += [ "PDF_ENABLE_XFA", ]
+    defines += [ "PDF_ENABLE_XFA" ]
   }
 }
 
 executable("pdfium_test") {
   testonly = true
   sources = [
-    "pdfium_test.cc",
     "image_diff_png.cc",
     "image_diff_png.h",
+    "pdfium_test.cc",
   ]
   deps = [
     "//build/config/sanitizers:deps",

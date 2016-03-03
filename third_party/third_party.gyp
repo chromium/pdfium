@@ -10,7 +10,6 @@
     'defines': [
       'OPJ_STATIC',
       'PNG_PREFIX',
-      'PNGPREFIX_H',
       'PNG_USE_READ_MACROS',
       '_CRT_SECURE_NO_WARNINGS',
     ],
@@ -280,6 +279,7 @@
         'libpng16/pnglibconf.h',
         'libpng16/pngmem.c',
         'libpng16/pngpread.c',
+        'libpng16/pngprefix.h',
         'libpng16/pngpriv.h',
         'libpng16/pngread.c',
         'libpng16/pngrio.c',

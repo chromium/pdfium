@@ -10,7 +10,6 @@
   'target_defaults': {
     'defines' : [
       'PNG_PREFIX',
-      'PNGPREFIX_H',
       'PNG_USE_READ_MACROS',
     ],
     'include_dirs': [
