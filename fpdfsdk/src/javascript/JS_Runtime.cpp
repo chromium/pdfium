@@ -256,6 +256,15 @@ v8::Local<v8::Context> CJS_Runtime::NewJSContext() {
   return v8::Local<v8::Context>::New(m_isolate, m_context);
 }
 
+void CJS_Runtime::SetConstArray(const CFX_WideString& name,
+                                v8::Local<v8::Array> array) {
+  m_ConstArrays[name] = v8::Global<v8::Array>(m_isolate, array);
+}
+
+v8::Local<v8::Array> CJS_Runtime::GetConstArray(const CFX_WideString& name) {
+  return v8::Local<v8::Array>::New(m_isolate, m_ConstArrays[name]);
+}
+
 #ifdef PDF_ENABLE_XFA
 CFX_WideString ChangeObjName(const CFX_WideString& str) {
   CFX_WideString sRet = str;
