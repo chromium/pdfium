@@ -701,6 +701,7 @@
           "configurations": {},
           "sources": [],
           "cflags": [ "-Wno-deprecated-declarations" ],
+          "defines!": [ "V8_DEPRECATION_WARNINGS" ],
         }],
       ]
     }
