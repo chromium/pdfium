@@ -752,6 +752,7 @@
         'core/src/fxcrt/fx_bidi_unittest.cpp',
         'core/src/fxcrt/fx_extension_unittest.cpp',
         'core/src/fxcrt/fx_system_unittest.cpp',
+        'fpdfsdk/src/fpdfdoc_unittest.cpp',
         'testing/fx_string_testhelpers.h',
         'testing/fx_string_testhelpers.cpp',
       ],
