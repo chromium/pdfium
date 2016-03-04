@@ -700,6 +700,7 @@
         ["OS == 'mac'", {
           "configurations": {},
           "sources": [],
+          "cflags": [ "-Wno-deprecated-declarations" ],
         }],
       ]
     }
