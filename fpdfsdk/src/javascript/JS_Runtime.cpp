@@ -121,6 +121,7 @@ CJS_Runtime::~CJS_Runtime() {
     delete m_ContextArray.GetAt(i);
 
   m_ContextArray.RemoveAll();
+  m_ConstArrays.clear();
   FXJS_ReleaseRuntime(GetIsolate(), &m_context, &m_StaticObjects);
 
   m_pApp = NULL;
@@ -254,6 +255,15 @@ void CJS_Runtime::RemoveEventFromSet(const FieldEvent& event) {
 
 v8::Local<v8::Context> CJS_Runtime::NewJSContext() {
   return v8::Local<v8::Context>::New(m_isolate, m_context);
+}
+
+void CJS_Runtime::SetConstArray(const CFX_WideString& name,
+                                v8::Local<v8::Array> array) {
+  m_ConstArrays[name] = v8::Global<v8::Array>(m_isolate, array);
+}
+
+v8::Local<v8::Array> CJS_Runtime::GetConstArray(const CFX_WideString& name) {
+  return v8::Local<v8::Array>::New(m_isolate, m_ConstArrays[name]);
 }
 
 #ifdef PDF_ENABLE_XFA
