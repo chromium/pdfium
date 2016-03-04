@@ -188,7 +188,7 @@ void FXJS_DefineGlobalMethod(v8::Isolate* pIsolate,
                              v8::FunctionCallback pMethodCall);
 void FXJS_DefineGlobalConst(v8::Isolate* pIsolate,
                             const wchar_t* sConstName,
-                            v8::FunctionCallback pConstGetter);
+                            v8::Local<v8::Value> pDefault);
 
 // Called after FXJS_Define* calls made.
 void FXJS_InitializeRuntime(

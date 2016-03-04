@@ -287,15 +287,14 @@ void FXJS_DefineGlobalMethod(v8::Isolate* pIsolate,
 
 void FXJS_DefineGlobalConst(v8::Isolate* pIsolate,
                             const wchar_t* sConstName,
-                            v8::FunctionCallback pConstGetter) {
+                            v8::Local<v8::Value> pDefault) {
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::HandleScope handle_scope(pIsolate);
   CFX_ByteString bsConst = CFX_WideString(sConstName).UTF8Encode();
-  GetGlobalObjectTemplate(pIsolate)
-      ->SetAccessorProperty(v8::String::NewFromUtf8(pIsolate, bsConst.c_str(),
-                                                    v8::NewStringType::kNormal)
-                                .ToLocalChecked(),
-                            v8::FunctionTemplate::New(pIsolate, pConstGetter));
+  GetGlobalObjectTemplate(pIsolate)->Set(
+      v8::String::NewFromUtf8(pIsolate, bsConst.c_str(),
+                              v8::NewStringType::kNormal).ToLocalChecked(),
+      pDefault, v8::ReadOnly);
 }
 
 void FXJS_InitializeRuntime(
