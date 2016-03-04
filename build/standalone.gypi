@@ -171,6 +171,7 @@
     },
     'cflags': [
       '-Wall',
+      '-Werror',
       '-W',
       '-Wno-missing-field-initializers',
       # Code might someday be made clean for -Wsign-compare, but for now
@@ -183,7 +184,8 @@
     ],
     'cflags_cc': [
       '-std=c++11',
-      '-Wnon-virtual-dtor',
+      # Add back when ICU is clean
+      # '-Wnon-virtual-dtor',
       '-fno-rtti',
     ],
     'ldflags': [
