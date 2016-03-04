@@ -575,18 +575,7 @@ static_library("fxge") {
 
   if (pdf_use_skia) {
     sources = [
-      "core/src/fxge/skia/fx_skia_blitter_new.cpp",
       "core/src/fxge/skia/fx_skia_device.cpp",
-    ]
-    include_dirs = [
-      "//third_party/skia/include/config",
-      "//third_party/skia/include/core",
-      "//third_party/skia/include/effects",
-      "//third_party/skia/include/images",
-      "//third_party/skia/include/lazy",
-      "//third_party/skia/include/pathops",
-      "//third_party/skia/include/utils",
-      "//third_party/skia/src/core",
     ]
     deps = [
       "//skia",

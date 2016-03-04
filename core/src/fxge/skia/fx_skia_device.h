@@ -6,6 +6,12 @@
 #define CORE_SRC_FXGE_SKIA_FX_SKIA_DEVICE_H_
 
 #if defined(_SKIA_SUPPORT_)
+
+class SkCanvas;
+class SkPaint;
+class SkPath;
+struct SkIRect;
+
 class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
  public:
   CFX_SkiaDeviceDriver(CFX_DIBitmap* pBitmap,
@@ -43,7 +49,8 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                            FX_DWORD stroke_color,
                            int fill_mode,
                            int alpha_flag = 0,
-                           void* pIccTransform = NULL);
+                           void* pIccTransform = NULL,
+                           int blend_type = FXDIB_BLEND_NORMAL);
 
   virtual FX_BOOL SetPixel(int x,
                            int y,
@@ -54,17 +61,18 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
   virtual FX_BOOL FillRect(const FX_RECT* pRect,
                            FX_DWORD fill_color,
                            int alpha_flag = 0,
-                           void* pIccTransform = NULL);
+                           void* pIccTransform = NULL,
+                           int blend_type = FXDIB_BLEND_NORMAL);
 
   /** Draw a single pixel (device dependant) line */
-  virtual FX_BOOL DrawCosmeticLine(FX_FIXFLOAT x1,
-                                   FX_FIXFLOAT y1,
-                                   FX_FIXFLOAT x2,
-                                   FX_FIXFLOAT y2,
+  virtual FX_BOOL DrawCosmeticLine(FX_FLOAT x1,
+                                   FX_FLOAT y1,
+                                   FX_FLOAT x2,
+                                   FX_FLOAT y2,
                                    FX_DWORD color,
-                                   int alpha_flag,
-                                   void* pIccTransform,
-                                   int blend_type) {
+                                   int alpha_flag = 0,
+                                   void* pIccTransform = NULL,
+                                   int blend_type = FXDIB_BLEND_NORMAL) {
     return FALSE;
   }
 
@@ -96,7 +104,8 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                                 const FX_RECT* pClipRect,
                                 FX_DWORD flags,
                                 int alpha_flag = 0,
-                                void* pIccTransform = NULL);
+                                void* pIccTransform = NULL,
+                                int blend_type = FXDIB_BLEND_NORMAL);
 
   virtual FX_BOOL StartDIBits(const CFX_DIBSource* pBitmap,
                               int bitmap_alpha,
@@ -105,7 +114,8 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                               FX_DWORD flags,
                               void*& handle,
                               int alpha_flag = 0,
-                              void* pIccTransform = NULL);
+                              void* pIccTransform = NULL,
+                              int blend_type = FXDIB_BLEND_NORMAL);
   virtual FX_BOOL ContinueDIBits(void* handle, IFX_Pause* pPause);
   virtual void CancelDIBits(void* handle);
 
@@ -114,31 +124,25 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                                  CFX_Font* pFont,
                                  CFX_FontCache* pCache,
                                  const CFX_Matrix* pObject2Device,
-                                 FX_FIXFLOAT font_size,
+                                 FX_FLOAT font_size,
                                  FX_DWORD color,
                                  int alpha_flag = 0,
                                  void* pIccTransform = NULL);
 
-  virtual FX_BOOL RenderRasterizer(rasterizer_scanline_aa& rasterizer,
+  virtual FX_BOOL RenderRasterizer(agg::rasterizer_scanline_aa& rasterizer,
                                    FX_DWORD color,
                                    FX_BOOL bFullCover,
                                    FX_BOOL bGroupKnockout,
                                    int alpha_flag,
                                    void* pIccTransform);
-  virtual FX_BOOL RenderRasterizerSkia(SkPath& skPath,
-                                       const SkPaint& origPaint,
-                                       SkIRect& rect,
-                                       FX_DWORD color,
-                                       FX_BOOL bFullCover,
-                                       FX_BOOL bGroupKnockout,
-                                       int alpha_flag,
-                                       void* pIccTransform,
-                                       FX_BOOL bFill = TRUE);
-  void SetClipMask(rasterizer_scanline_aa& rasterizer);
+  void SetClipMask(agg::rasterizer_scanline_aa& rasterizer);
   void SetClipMask(SkPath& skPath, SkPaint* spaint);
   virtual uint8_t* GetBuffer() const { return m_pAggDriver->GetBuffer(); }
+  void PaintStroke(SkPaint* spaint, const CFX_GraphStateData* pGraphState);
 
+ private:
   CFX_AggDeviceDriver* m_pAggDriver;
+  SkCanvas* m_canvas;
 };
 #endif  // defined(_SKIA_SUPPORT_)
 
