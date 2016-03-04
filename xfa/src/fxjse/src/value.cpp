@@ -515,7 +515,7 @@ FX_BOOL CFXJSE_Value::Call(CFXJSE_Value* lpReceiver,
           ? hFunctionValue.As<v8::Object>()
           : v8::Local<v8::Object>();
 
-  v8::TryCatch trycatch;
+  v8::TryCatch trycatch(m_pIsolate);
   if (hFunctionObject.IsEmpty() || !hFunctionObject->IsCallable()) {
     if (lpRetValue)
       lpRetValue->ForceSetValue(FXJSE_CreateReturnValue(m_pIsolate, trycatch));

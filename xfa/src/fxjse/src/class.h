@@ -28,9 +28,6 @@ class CFXJSE_Class {
                               FX_BOOL bIsJSGlobal = FALSE);
   static CFXJSE_Class* GetClassFromContext(CFXJSE_Context* pContext,
                                            const CFX_ByteStringC& szName);
-  static void SetUpDynPropHandler(CFXJSE_Context* pContext,
-                                  CFXJSE_Value* pValue,
-                                  const FXJSE_CLASS* lpClassDefinition);
   static void SetUpNamedPropHandler(
       v8::Isolate* pIsolate,
       v8::Local<v8::ObjectTemplate>& hObjectTemplate,

@@ -182,7 +182,7 @@ CFXJSE_Context* CFXJSE_Context::Create(v8::Isolate* pIsolate,
                                              lpGlobalClassObj->m_hTemplate);
     hObjectTemplate = hFunctionTemplate->InstanceTemplate();
   } else {
-    hObjectTemplate = v8::ObjectTemplate::New();
+    hObjectTemplate = v8::ObjectTemplate::New(pIsolate);
     hObjectTemplate->SetInternalFieldCount(1);
   }
   v8::Local<v8::Context> hNewContext =
@@ -220,7 +220,7 @@ FX_BOOL CFXJSE_Context::ExecuteScript(const FX_CHAR* szScript,
                                       CFXJSE_Value* lpRetValue,
                                       CFXJSE_Value* lpNewThisObject) {
   CFXJSE_ScopeUtil_IsolateHandleContext scope(this);
-  v8::TryCatch trycatch;
+  v8::TryCatch trycatch(m_pIsolate);
   v8::Local<v8::String> hScriptString =
       v8::String::NewFromUtf8(m_pIsolate, szScript);
   if (lpNewThisObject == NULL) {
