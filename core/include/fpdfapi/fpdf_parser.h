@@ -234,7 +234,7 @@ class CPDF_SimpleParser {
 class CPDF_SyntaxParser {
  public:
   CPDF_SyntaxParser();
-  virtual ~CPDF_SyntaxParser();
+  ~CPDF_SyntaxParser();
 
   void InitParser(IFX_FileRead* pFileAccess, FX_DWORD HeaderOffset);
 
@@ -268,7 +268,7 @@ class CPDF_SyntaxParser {
   FX_BOOL GetCharAt(FX_FILESIZE pos, uint8_t& ch);
   CFX_ByteString GetNextWord(bool* bIsNumber);
 
- protected:
+ private:
   friend class CPDF_Parser;
   friend class CPDF_DataAvail;
   friend class fpdf_parser_parser_ReadHexString_Test;
@@ -276,23 +276,19 @@ class CPDF_SyntaxParser {
   static const int kParserMaxRecursionDepth = 64;
   static int s_CurrentRecursionDepth;
 
-  virtual FX_BOOL GetNextChar(uint8_t& ch);
+  uint32_t GetDirectNum();
 
+  FX_BOOL GetNextChar(uint8_t& ch);
   FX_BOOL GetCharAtBackward(FX_FILESIZE pos, uint8_t& ch);
-
   void GetNextWordInternal(bool* bIsNumber);
-
   bool IsWholeWord(FX_FILESIZE startpos,
                    FX_FILESIZE limit,
                    const CFX_ByteStringC& tag,
                    FX_BOOL checkKeyword);
 
   CFX_ByteString ReadString();
-
   CFX_ByteString ReadHexString();
-
   unsigned int ReadEOLMarkers(FX_FILESIZE pos);
-
   CPDF_Stream* ReadStream(CPDF_Dictionary* pDict,
                           FX_DWORD objnum,
                           FX_DWORD gennum);
@@ -308,9 +304,6 @@ class CPDF_SyntaxParser {
   std::unique_ptr<CPDF_CryptoHandler> m_pCryptoHandler;
   uint8_t m_WordBuffer[257];
   FX_DWORD m_WordSize;
-
- private:
-  uint32_t GetDirectNum();
 };
 
 class CPDF_Parser {

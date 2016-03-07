@@ -97,7 +97,6 @@ class CPDF_Object {
 
   friend class CPDF_IndirectObjectHolder;
   friend class CPDF_Parser;
-  friend class CPDF_SyntaxParser;
 
  private:
   CPDF_Object(const CPDF_Object& src) {}
