@@ -56,6 +56,7 @@ void CalcEncryptKey(CPDF_Dictionary* pEncrypt,
   FXSYS_memset(key, 0, keylen);
   FXSYS_memcpy(key, digest, copy_len);
 }
+
 CPDF_CryptoHandler* CPDF_StandardSecurityHandler::CreateCryptoHandler() {
   return new CPDF_StandardCryptoHandler;
 }

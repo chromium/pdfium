@@ -11,6 +11,22 @@
 #include "xfa/src/fgas/include/fx_cpg.h"
 #include "xfa/src/fgas/include/fx_sys.h"
 
+FX_BOOL IFX_FileWrite::WriteBlock(const void* pData, size_t size) {
+  return WriteBlock(pData, GetSize(), size);
+}
+
+FX_BOOL IFX_FileRead::IsEOF() {
+  return FALSE;
+}
+
+FX_FILESIZE IFX_FileRead::GetPosition() {
+  return 0;
+}
+
+size_t IFX_FileRead::ReadBlock(void* buffer, size_t size) {
+  return 0;
+}
+
 IFX_Stream* IFX_Stream::CreateStream(IFX_BufferRead* pBufferRead,
                                      FX_DWORD dwAccess,
                                      int32_t iFileSize,
@@ -75,6 +91,11 @@ IFX_Stream* IFX_Stream::CreateStream(uint8_t* pData,
   }
   return pSR;
 }
+
+FX_BOOL IFX_FileStream::WriteBlock(const void* buffer, size_t size) {
+  return WriteBlock(buffer, GetSize(), size);
+}
+
 CFX_StreamImp::CFX_StreamImp() : m_dwAccess(0) {}
 CFX_FileStreamImp::CFX_FileStreamImp()
     : CFX_StreamImp(), m_hFile(NULL), m_iLength(0) {}

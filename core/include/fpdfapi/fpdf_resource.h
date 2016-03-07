@@ -102,39 +102,37 @@ class CPDF_Font {
 
   virtual ~CPDF_Font();
 
-  virtual bool IsType1Font() const { return false; }
-  virtual bool IsTrueTypeFont() const { return false; }
-  virtual bool IsType3Font() const { return false; }
-  virtual bool IsCIDFont() const { return false; }
-  virtual const CPDF_Type1Font* AsType1Font() const { return nullptr; }
-  virtual CPDF_Type1Font* AsType1Font() { return nullptr; }
-  virtual const CPDF_TrueTypeFont* AsTrueTypeFont() const { return nullptr; }
-  virtual CPDF_TrueTypeFont* AsTrueTypeFont() { return nullptr; }
-  virtual const CPDF_Type3Font* AsType3Font() const { return nullptr; }
-  virtual CPDF_Type3Font* AsType3Font() { return nullptr; }
-  virtual const CPDF_CIDFont* AsCIDFont() const { return nullptr; }
-  virtual CPDF_CIDFont* AsCIDFont() { return nullptr; }
+  virtual bool IsType1Font() const;
+  virtual bool IsTrueTypeFont() const;
+  virtual bool IsType3Font() const;
+  virtual bool IsCIDFont() const;
+  virtual const CPDF_Type1Font* AsType1Font() const;
+  virtual CPDF_Type1Font* AsType1Font();
+  virtual const CPDF_TrueTypeFont* AsTrueTypeFont() const;
+  virtual CPDF_TrueTypeFont* AsTrueTypeFont();
+  virtual const CPDF_Type3Font* AsType3Font() const;
+  virtual CPDF_Type3Font* AsType3Font();
+  virtual const CPDF_CIDFont* AsCIDFont() const;
+  virtual CPDF_CIDFont* AsCIDFont();
 
   virtual FX_BOOL IsVertWriting() const;
-  virtual FX_BOOL IsUnicodeCompatible() const { return FALSE; }
+  virtual FX_BOOL IsUnicodeCompatible() const;
   virtual FX_DWORD GetNextChar(const FX_CHAR* pString,
                                int nStrLen,
                                int& offset) const;
-  virtual int CountChar(const FX_CHAR* pString, int size) const { return size; }
+  virtual int CountChar(const FX_CHAR* pString, int size) const;
   virtual int AppendChar(FX_CHAR* buf, FX_DWORD charcode) const;
-  virtual int GetCharSize(FX_DWORD charcode) const { return 1; }
+  virtual int GetCharSize(FX_DWORD charcode) const;
   virtual int GlyphFromCharCode(FX_DWORD charcode,
-                                FX_BOOL* pVertGlyph = NULL) = 0;
-  virtual int GlyphFromCharCodeExt(FX_DWORD charcode) {
-    return GlyphFromCharCode(charcode);
-  }
+                                FX_BOOL* pVertGlyph = nullptr);
+  virtual int GlyphFromCharCodeExt(FX_DWORD charcode);
   virtual CFX_WideString UnicodeFromCharCode(FX_DWORD charcode) const;
   virtual FX_DWORD CharCodeFromUnicode(FX_WCHAR Unicode) const;
 
   const CFX_ByteString& GetBaseFont() const { return m_BaseFont; }
   const CFX_SubstFont* GetSubstFont() const { return m_Font.GetSubstFont(); }
   FX_DWORD GetFlags() const { return m_Flags; }
-  FX_BOOL IsEmbedded() const { return IsType3Font() || m_pFontFile != NULL; }
+  FX_BOOL IsEmbedded() const { return IsType3Font() || m_pFontFile != nullptr; }
   CPDF_StreamAcc* GetFontFile() const { return m_pFontFile; }
   CPDF_Dictionary* GetFontDict() const { return m_pFontDict; }
   FX_BOOL IsStandardFont() const;
@@ -257,9 +255,9 @@ class CPDF_Type1Font : public CPDF_SimpleFont {
   CPDF_Type1Font();
 
   // CPDF_Font:
-  bool IsType1Font() const override { return true; }
-  const CPDF_Type1Font* AsType1Font() const override { return this; }
-  CPDF_Type1Font* AsType1Font() override { return this; }
+  bool IsType1Font() const override;
+  const CPDF_Type1Font* AsType1Font() const override;
+  CPDF_Type1Font* AsType1Font() override;
   int GlyphFromCharCodeExt(FX_DWORD charcode) override;
 
   int GetBase14Font() const { return m_Base14Font; }
@@ -279,9 +277,9 @@ class CPDF_TrueTypeFont : public CPDF_SimpleFont {
   CPDF_TrueTypeFont();
 
   // CPDF_Font:
-  bool IsTrueTypeFont() const override { return true; }
-  const CPDF_TrueTypeFont* AsTrueTypeFont() const override { return this; }
-  CPDF_TrueTypeFont* AsTrueTypeFont() override { return this; }
+  bool IsTrueTypeFont() const override;
+  const CPDF_TrueTypeFont* AsTrueTypeFont() const override;
+  CPDF_TrueTypeFont* AsTrueTypeFont() override;
 
  protected:
   // CPDF_Font:
@@ -313,9 +311,9 @@ class CPDF_Type3Font : public CPDF_SimpleFont {
   ~CPDF_Type3Font() override;
 
   // CPDF_Font:
-  bool IsType3Font() const override { return true; }
-  const CPDF_Type3Font* AsType3Font() const override { return this; }
-  CPDF_Type3Font* AsType3Font() override { return this; }
+  bool IsType3Font() const override;
+  const CPDF_Type3Font* AsType3Font() const override;
+  CPDF_Type3Font* AsType3Font() override;
   int GetCharWidthF(FX_DWORD charcode, int level = 0) override;
   FX_RECT GetCharBBox(FX_DWORD charcode, int level = 0) override;
 
@@ -362,9 +360,9 @@ class CPDF_CIDFont : public CPDF_Font {
   static FX_FLOAT CIDTransformToFloat(uint8_t ch);
 
   // CPDF_Font:
-  bool IsCIDFont() const override { return true; }
-  const CPDF_CIDFont* AsCIDFont() const override { return this; }
-  CPDF_CIDFont* AsCIDFont() override { return this; }
+  bool IsCIDFont() const override;
+  const CPDF_CIDFont* AsCIDFont() const override;
+  CPDF_CIDFont* AsCIDFont() override;
   int GlyphFromCharCode(FX_DWORD charcode, FX_BOOL* pVertGlyph = NULL) override;
   int GetCharWidthF(FX_DWORD charcode, int level = 0) override;
   FX_RECT GetCharBBox(FX_DWORD charcode, int level = 0) override;
@@ -434,15 +432,10 @@ class CPDF_ColorSpace {
   void ReleaseCS();
 
   int GetBufSize() const;
-
   FX_FLOAT* CreateBuf();
-
   void GetDefaultColor(FX_FLOAT* buf) const;
-
   int CountComponents() const { return m_nComponents; }
-
   int GetFamily() const { return m_Family; }
-
   virtual void GetDefaultValue(int iComponent,
                                FX_FLOAT& value,
                                FX_FLOAT& min,
@@ -453,12 +446,10 @@ class CPDF_ColorSpace {
   }
 
   FX_BOOL sRGB() const;
-
   virtual FX_BOOL GetRGB(FX_FLOAT* pBuf,
                          FX_FLOAT& R,
                          FX_FLOAT& G,
                          FX_FLOAT& B) const = 0;
-
   virtual FX_BOOL SetRGB(FX_FLOAT* pBuf,
                          FX_FLOAT R,
                          FX_FLOAT G,
@@ -471,7 +462,6 @@ class CPDF_ColorSpace {
                   FX_FLOAT& m,
                   FX_FLOAT& y,
                   FX_FLOAT& k) const;
-
   FX_BOOL SetCMYK(FX_FLOAT* pBuf,
                   FX_FLOAT c,
                   FX_FLOAT m,
@@ -486,9 +476,7 @@ class CPDF_ColorSpace {
                                   FX_BOOL bTransMask = FALSE) const;
 
   CPDF_Array*& GetArray() { return m_pArray; }
-
   int GetMaxIndex() const;
-
   virtual CPDF_ColorSpace* GetBaseCS() const { return NULL; }
 
   virtual void EnableStdConversion(FX_BOOL bEnabled);

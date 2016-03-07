@@ -45,6 +45,7 @@ class CFX_BinaryBuf {
  public:
   CFX_BinaryBuf();
   explicit CFX_BinaryBuf(FX_STRSIZE size);
+  ~CFX_BinaryBuf();
 
   uint8_t* GetBuffer() const { return m_pBuffer.get(); }
   FX_STRSIZE GetSize() const { return m_DataSize; }
@@ -182,6 +183,7 @@ class CFX_ArchiveLoader {
 class CFX_FileBufferArchive {
  public:
   CFX_FileBufferArchive();
+  ~CFX_FileBufferArchive();
 
   void Clear();
   bool Flush();
@@ -694,13 +696,12 @@ class CFX_MapPtrTemplate : public CFX_MapPtrToPtr {
   }
 };
 #endif  // PDF_ENABLE_XFA
+
 class CFX_PtrList {
  protected:
   struct CNode {
     CNode* pNext;
-
     CNode* pPrev;
-
     void* data;
   };
 
@@ -708,7 +709,6 @@ class CFX_PtrList {
   CFX_PtrList(int nBlockSize = 10);
 
   FX_POSITION GetHeadPosition() const { return (FX_POSITION)m_pNodeHead; }
-
   FX_POSITION GetTailPosition() const { return (FX_POSITION)m_pNodeTail; }
 
   void* GetNext(FX_POSITION& rPosition) const {
@@ -737,60 +737,49 @@ class CFX_PtrList {
   }
 
   int GetCount() const { return m_nCount; }
-
   FX_POSITION AddTail(void* newElement);
-
   FX_POSITION AddHead(void* newElement);
 
   void SetAt(FX_POSITION pos, void* newElement) {
     CNode* pNode = (CNode*)pos;
     pNode->data = newElement;
   }
-
   FX_POSITION InsertAfter(FX_POSITION pos, void* newElement);
 
   FX_POSITION Find(void* searchValue, FX_POSITION startAfter = NULL) const;
-
   FX_POSITION FindIndex(int index) const;
 
   void RemoveAt(FX_POSITION pos);
-
   void RemoveAll();
 
  protected:
   CNode* m_pNodeHead;
-
   CNode* m_pNodeTail;
-
   int m_nCount;
-
   CNode* m_pNodeFree;
-
   struct CFX_Plex* m_pBlocks;
-
   int m_nBlockSize;
 
   CNode* NewNode(CNode* pPrev, CNode* pNext);
-
   void FreeNode(CNode* pNode);
 
  public:
   ~CFX_PtrList();
 };
 typedef void (*PD_CALLBACK_FREEDATA)(void* pData);
+
 struct FX_PRIVATEDATA {
   void FreeData();
 
   void* m_pModuleId;
-
   void* m_pData;
-
   PD_CALLBACK_FREEDATA m_pCallback;
-
   FX_BOOL m_bSelfDestruct;
 };
+
 class CFX_PrivateData {
  public:
+  CFX_PrivateData();
   ~CFX_PrivateData();
 
   void ClearAll();
@@ -798,11 +787,9 @@ class CFX_PrivateData {
   void SetPrivateData(void* module_id,
                       void* pData,
                       PD_CALLBACK_FREEDATA callback);
-
   void SetPrivateObj(void* module_id, CFX_DestructObject* pObj);
 
   void* GetPrivateData(void* module_id);
-
   FX_BOOL LookupPrivateData(void* module_id, void*& pData) const {
     if (!module_id) {
       return FALSE;
@@ -827,6 +814,7 @@ class CFX_PrivateData {
                PD_CALLBACK_FREEDATA callback,
                FX_BOOL bSelfDestruct);
 };
+
 class CFX_BitStream {
  public:
   void Init(const uint8_t* pData, FX_DWORD dwSize);

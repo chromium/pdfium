@@ -173,6 +173,74 @@ CPDF_Font::~CPDF_Font() {
   }
 }
 
+bool CPDF_Font::IsType1Font() const {
+  return false;
+}
+
+bool CPDF_Font::IsTrueTypeFont() const {
+  return false;
+}
+
+bool CPDF_Font::IsType3Font() const {
+  return false;
+}
+
+bool CPDF_Font::IsCIDFont() const {
+  return false;
+}
+
+const CPDF_Type1Font* CPDF_Font::AsType1Font() const {
+  return nullptr;
+}
+
+CPDF_Type1Font* CPDF_Font::AsType1Font() {
+  return nullptr;
+}
+
+const CPDF_TrueTypeFont* CPDF_Font::AsTrueTypeFont() const {
+  return nullptr;
+}
+
+CPDF_TrueTypeFont* CPDF_Font::AsTrueTypeFont() {
+  return nullptr;
+}
+
+const CPDF_Type3Font* CPDF_Font::AsType3Font() const {
+  return nullptr;
+}
+
+CPDF_Type3Font* CPDF_Font::AsType3Font() {
+  return nullptr;
+}
+
+const CPDF_CIDFont* CPDF_Font::AsCIDFont() const {
+  return nullptr;
+}
+
+CPDF_CIDFont* CPDF_Font::AsCIDFont() {
+  return nullptr;
+}
+
+FX_BOOL CPDF_Font::IsUnicodeCompatible() const {
+  return FALSE;
+}
+
+int CPDF_Font::CountChar(const FX_CHAR* pString, int size) const {
+  return size;
+}
+
+int CPDF_Font::GetCharSize(FX_DWORD charcode) const {
+  return 1;
+}
+
+int CPDF_Font::GlyphFromCharCode(FX_DWORD charcode, FX_BOOL* pVertGlyph) {
+  ASSERT(false);
+}
+
+int CPDF_Font::GlyphFromCharCodeExt(FX_DWORD charcode) {
+  return GlyphFromCharCode(charcode);
+}
+
 FX_BOOL CPDF_Font::IsVertWriting() const {
   FX_BOOL bVertWriting = FALSE;
   const CPDF_CIDFont* pCIDFont = AsCIDFont();
@@ -962,6 +1030,18 @@ FX_DWORD CPDF_SimpleFont::CharCodeFromUnicode(FX_WCHAR unicode) const {
 
 CPDF_Type1Font::CPDF_Type1Font() : m_Base14Font(-1) {}
 
+bool CPDF_Type1Font::IsType1Font() const {
+  return true;
+}
+
+const CPDF_Type1Font* CPDF_Type1Font::AsType1Font() const {
+  return this;
+}
+
+CPDF_Type1Font* CPDF_Type1Font::AsType1Font() {
+  return this;
+}
+
 FX_BOOL CPDF_Type1Font::Load() {
   m_Base14Font = PDF_GetStandardFontName(&m_BaseFont);
   if (m_Base14Font >= 0) {
@@ -1360,6 +1440,18 @@ CPDF_Object* CPDF_FontEncoding::Realize() {
 
 CPDF_TrueTypeFont::CPDF_TrueTypeFont() {}
 
+bool CPDF_TrueTypeFont::IsTrueTypeFont() const {
+  return true;
+}
+
+const CPDF_TrueTypeFont* CPDF_TrueTypeFont::AsTrueTypeFont() const {
+  return this;
+}
+
+CPDF_TrueTypeFont* CPDF_TrueTypeFont::AsTrueTypeFont() {
+  return this;
+}
+
 FX_BOOL CPDF_TrueTypeFont::Load() {
   return LoadCommon();
 }
@@ -1570,6 +1662,18 @@ CPDF_Type3Font::CPDF_Type3Font()
 CPDF_Type3Font::~CPDF_Type3Font() {
   for (auto it : m_CacheMap)
     delete it.second;
+}
+
+bool CPDF_Type3Font::IsType3Font() const {
+  return true;
+}
+
+const CPDF_Type3Font* CPDF_Type3Font::AsType3Font() const {
+  return this;
+}
+
+CPDF_Type3Font* CPDF_Type3Font::AsType3Font() {
+  return this;
 }
 
 FX_BOOL CPDF_Type3Font::Load() {

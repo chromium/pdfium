@@ -1068,6 +1068,18 @@ CPDF_CIDFont::~CPDF_CIDFont() {
   delete m_pTTGSUBTable;
 }
 
+bool CPDF_CIDFont::IsCIDFont() const {
+  return true;
+}
+
+const CPDF_CIDFont* CPDF_CIDFont::AsCIDFont() const {
+  return this;
+}
+
+CPDF_CIDFont* CPDF_CIDFont::AsCIDFont() {
+  return this;
+}
+
 FX_WORD CPDF_CIDFont::CIDFromCharCode(FX_DWORD charcode) const {
   if (!m_pCMap) {
     return (FX_WORD)charcode;
