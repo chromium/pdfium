@@ -33,7 +33,7 @@ void FXJSE_DefineFunctions(FXJSE_HCONTEXT hContext,
   v8::Local<v8::Object> hGlobalObject =
       FXJSE_GetGlobalObjectFromContext(scope.GetLocalContext());
   for (int32_t i = 0; i < nNum; i++) {
-    hGlobalObject->DefineOwnProperty(
+    v8::Maybe<bool> maybe_success = hGlobalObject->DefineOwnProperty(
         scope.GetLocalContext(),
         v8::String::NewFromUtf8(pIsolate, lpFunctions[i].name),
         v8::Function::New(
@@ -41,6 +41,8 @@ void FXJSE_DefineFunctions(FXJSE_HCONTEXT hContext,
             v8::External::New(pIsolate,
                               const_cast<FXJSE_FUNCTION*>(lpFunctions + i))),
         static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete));
+    if (!maybe_success.FromMaybe(false))
+      return;
   }
 }
 
