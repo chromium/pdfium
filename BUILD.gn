@@ -51,6 +51,9 @@ config("pdfium_config") {
       "/wd4345",
       "/wd4267",
 
+      # TODO(ochang): Investigate if this can be fixed properly.
+      "/wd4201",
+
       # TODO(thestig): Fix all instances, remove this, pdfium:29
       "/wd4245",
       "/wd4310",
