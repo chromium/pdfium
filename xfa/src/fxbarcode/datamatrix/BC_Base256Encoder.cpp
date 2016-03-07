@@ -49,12 +49,7 @@ void CBC_Base256Encoder::Encode(CBC_EncoderContext& context, int32_t& e) {
   }
   int32_t dataCount = buffer.GetLength() - 1;
   FX_CHAR buf[128];
-#if defined(_FX_WINAPI_PARTITION_APP_)
-  memset(buf, 0, sizeof(FX_CHAR) * 128);
-  _itoa_s(dataCount, buf, 128, 10);
-#else
   FXSYS_itoa(dataCount, buf, 10);
-#endif
   buffer.SetAt(0, FX_WCHAR(*buf) - '0');
   int32_t lengthFieldSize = 1;
   int32_t currentSize =

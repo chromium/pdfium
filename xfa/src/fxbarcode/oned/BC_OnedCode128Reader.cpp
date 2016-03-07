@@ -306,11 +306,7 @@ CFX_ByteString CBC_OnedCode128Reader::DecodeRow(int32_t rowNumber,
             result += '0';
           }
           FX_CHAR temp[128];
-#if defined(_FX_WINAPI_PARTITION_APP_)
-          sprintf_s(temp, 128, "%d", code);
-#else
           sprintf(temp, "%d", code);
-#endif
           result += temp;
         } else {
           if (code != CODE_STOP) {

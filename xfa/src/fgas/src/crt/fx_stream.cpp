@@ -101,35 +101,20 @@ FX_BOOL CFX_FileStreamImp::LoadFile(const FX_WCHAR* pszSrcFileName,
   } else {
     wsMode = L"rb";
   }
-#ifdef _FX_WINAPI_PARTITION_APP_
-  CFX_WideString wsSrcFileName(pszSrcFileName);
-  _wfopen_s(&m_hFile, wsSrcFileName, wsMode);
-#else
   m_hFile = FXSYS_wfopen(pszSrcFileName, wsMode);
-#endif
-  if (m_hFile == NULL) {
+
+  if (!m_hFile) {
     if (dwAccess & FX_STREAMACCESS_Write) {
-      if (dwAccess & FX_STREAMACCESS_Create) {
-#ifdef _FX_WINAPI_PARTITION_APP_
-        CFX_WideString wsSrcFileName(pszSrcFileName);
-        _wfopen_s(&m_hFile, wsSrcFileName, L"w+b");
-#else
+      if (dwAccess & FX_STREAMACCESS_Create)
         m_hFile = FXSYS_wfopen(pszSrcFileName, L"w+b");
-#endif
-      }
-      if (m_hFile == NULL) {
-#ifdef _FX_WINAPI_PARTITION_APP_
-        CFX_WideString wsSrcFileName(pszSrcFileName);
-        _wfopen_s(&m_hFile, wsSrcFileName, L"r+b");
-#else
+
+      if (!m_hFile) {
         m_hFile = FXSYS_wfopen(pszSrcFileName, L"r+b");
-#endif
-        if (m_hFile == NULL) {
+        if (!m_hFile)
           return FALSE;
-        }
-        if (dwAccess & FX_STREAMACCESS_Truncate) {
+
+        if (dwAccess & FX_STREAMACCESS_Truncate)
           FX_fsetsize(m_hFile, 0);
-        }
       }
     } else {
       return FALSE;

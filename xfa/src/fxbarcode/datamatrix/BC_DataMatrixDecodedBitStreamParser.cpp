@@ -121,12 +121,7 @@ int32_t CBC_DataMatrixDecodedBitStreamParser::DecodeAsciiSegment(
       return PAD_ENCODE;
     } else if (oneByte <= 229) {
       int32_t value = oneByte - 130;
-#if defined(_FX_WINAPI_PARTITION_APP_)
-      memset(buffer, 0, sizeof(FX_CHAR) * 128);
-      _itoa_s(value, buffer, 128, 10);
-#else
       FXSYS_itoa(value, buffer, 10);
-#endif
       if (value < 10) {
         result += '0';
         buffer[1] = '\0';
@@ -401,6 +396,7 @@ void CBC_DataMatrixDecodedBitStreamParser::ParseTwoBytes(
   result[1] = temp;
   result[2] = fullBitValue - temp * 40;
 }
+
 void CBC_DataMatrixDecodedBitStreamParser::DecodeEdifactSegment(
     CBC_CommonBitSource* bits,
     CFX_ByteString& result,
@@ -408,31 +404,24 @@ void CBC_DataMatrixDecodedBitStreamParser::DecodeEdifactSegment(
   FX_CHAR buffer[128];
   FX_BOOL unlatch = FALSE;
   do {
-    if (bits->Available() <= 16) {
+    if (bits->Available() <= 16)
       return;
-    }
-    int32_t i;
-    for (i = 0; i < 4; i++) {
+
+    for (int32_t i = 0; i < 4; i++) {
       int32_t edifactValue = bits->ReadBits(6, e);
       BC_EXCEPTION_CHECK_ReturnVoid(e);
-      if (edifactValue == 0x1F) {
+      if (edifactValue == 0x1F)
         unlatch = TRUE;
-      }
+
       if (!unlatch) {
-        if ((edifactValue & 32) == 0) {
+        if ((edifactValue & 32) == 0)
           edifactValue |= 64;
-        }
-#if defined(_FX_WINAPI_PARTITION_APP_)
-        memset(buffer, 0, sizeof(FX_CHAR) * 128);
-        _itoa_s(edifactValue, buffer, 128, 10);
-        result += buffer;
-#else
         result += FXSYS_itoa(edifactValue, buffer, 10);
-#endif
       }
     }
   } while (!unlatch && bits->Available() > 0);
 }
+
 void CBC_DataMatrixDecodedBitStreamParser::DecodeBase256Segment(
     CBC_CommonBitSource* bits,
     CFX_ByteString& result,
