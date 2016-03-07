@@ -451,7 +451,10 @@ FX_BOOL CFXJSE_Value::HasObjectOwnProperty(const CFX_ByteStringC& szPropName,
       m_pIsolate, szPropName.GetCStr(), v8::String::kNormalString,
       szPropName.GetLength());
   return hObject.As<v8::Object>()->HasRealNamedProperty(hKey) ||
-         (bUseTypeGetter && hObject.As<v8::Object>()->HasOwnProperty(hKey));
+         (bUseTypeGetter &&
+          hObject.As<v8::Object>()
+              ->HasOwnProperty(m_pIsolate->GetCurrentContext(), hKey)
+              .FromMaybe(false));
 }
 
 FX_BOOL CFXJSE_Value::SetObjectOwnProperty(const CFX_ByteStringC& szPropName,
@@ -464,11 +467,14 @@ FX_BOOL CFXJSE_Value::SetObjectOwnProperty(const CFX_ByteStringC& szPropName,
 
   v8::Local<v8::Value> hValue =
       v8::Local<v8::Value>::New(m_pIsolate, lpPropValue->m_hValue);
-  return hObject.As<v8::Object>()->ForceSet(
-      v8::String::NewFromUtf8(m_pIsolate, szPropName.GetCStr(),
-                              v8::String::kNormalString,
-                              szPropName.GetLength()),
-      hValue);
+  return hObject.As<v8::Object>()
+      ->DefineOwnProperty(
+          m_pIsolate->GetCurrentContext(),
+          v8::String::NewFromUtf8(m_pIsolate, szPropName.GetCStr(),
+                                  v8::String::kNormalString,
+                                  szPropName.GetLength()),
+          hValue)
+      .FromMaybe(false);
 }
 
 FX_BOOL CFXJSE_Value::SetFunctionBind(CFXJSE_Value* lpOldFunction,
@@ -541,7 +547,10 @@ FX_BOOL CFXJSE_Value::Call(CFXJSE_Value* lpReceiver,
 
   FX_BOOL bRetValue = TRUE;
   if (lpReceiver == FXJSE_INVALID_PTR) {
-    hReturnValue = hFunctionObject->CallAsConstructor(nArgCount, lpLocalArgs);
+    v8::MaybeLocal<v8::Value> maybe_retvalue =
+        hFunctionObject->CallAsConstructor(m_pIsolate->GetCurrentContext(),
+                                           nArgCount, lpLocalArgs);
+    hReturnValue = maybe_retvalue.FromMaybe(v8::Local<v8::Value>());
   } else {
     v8::Local<v8::Value> hReceiver;
     if (lpReceiver) {
@@ -551,8 +560,9 @@ FX_BOOL CFXJSE_Value::Call(CFXJSE_Value* lpReceiver,
     if (hReceiver.IsEmpty() || !hReceiver->IsObject())
       hReceiver = v8::Object::New(m_pIsolate);
 
-    hReturnValue =
-        hFunctionObject->CallAsFunction(hReceiver, nArgCount, lpLocalArgs);
+    v8::MaybeLocal<v8::Value> maybe_retvalue = hFunctionObject->CallAsFunction(
+        m_pIsolate->GetCurrentContext(), hReceiver, nArgCount, lpLocalArgs);
+    hReturnValue = maybe_retvalue.FromMaybe(v8::Local<v8::Value>());
   }
 
   if (trycatch.HasCaught()) {

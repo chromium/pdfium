@@ -654,10 +654,6 @@
       ],
       "conditions": [
         ["clang==1" , {
-          # TODO(tsepez): remove this when FX fixes warnings
-          "cflags": [
-            "-Wno-deprecated-declarations"
-          ],
         }],
         ["pdf_enable_v8==1", {
           'dependencies': [
@@ -708,8 +704,6 @@
         ["OS == 'mac'", {
           "configurations": {},
           "sources": [],
-          "cflags": [ "-Wno-deprecated-declarations" ],
-          "defines!": [ "V8_DEPRECATION_WARNINGS" ],
         }],
       ]
     }

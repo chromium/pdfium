@@ -118,9 +118,11 @@ v8::Local<v8::Object> FXJSE_CreateReturnValue(v8::Isolate* pIsolate,
     hReturnValue->Set(2, hException);
     hReturnValue->Set(3, v8::Integer::New(pIsolate, hMessage->GetLineNumber()));
     hReturnValue->Set(4, hMessage->GetSourceLine());
-    hReturnValue->Set(5,
-                      v8::Integer::New(pIsolate, hMessage->GetStartColumn()));
-    hReturnValue->Set(6, v8::Integer::New(pIsolate, hMessage->GetEndColumn()));
+    v8::Maybe<int32_t> maybe_int =
+        hMessage->GetStartColumn(pIsolate->GetCurrentContext());
+    hReturnValue->Set(5, v8::Integer::New(pIsolate, maybe_int.FromMaybe(0)));
+    maybe_int = hMessage->GetEndColumn(pIsolate->GetCurrentContext());
+    hReturnValue->Set(6, v8::Integer::New(pIsolate, maybe_int.FromMaybe(0)));
   }
   return hReturnValue;
 }
@@ -162,8 +164,12 @@ FX_BOOL FXJSE_ReturnValue_GetLineInfo(FXJSE_HVALUE hRetValue,
   if (!hValue->IsObject()) {
     return FALSE;
   }
-  nLine = hValue.As<v8::Object>()->Get(3)->ToInt32()->Value();
-  nCol = hValue.As<v8::Object>()->Get(5)->ToInt32()->Value();
+  v8::MaybeLocal<v8::Int32> maybe_int =
+      hValue.As<v8::Object>()->Get(3)->ToInt32(pIsolate->GetCurrentContext());
+  nLine = maybe_int.FromMaybe(v8::Local<v8::Int32>())->Value();
+  maybe_int =
+      hValue.As<v8::Object>()->Get(5)->ToInt32(pIsolate->GetCurrentContext());
+  nCol = maybe_int.FromMaybe(v8::Local<v8::Int32>())->Value();
   return TRUE;
 }
 

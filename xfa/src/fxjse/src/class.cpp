@@ -33,7 +33,8 @@ void FXJSE_DefineFunctions(FXJSE_HCONTEXT hContext,
   v8::Local<v8::Object> hGlobalObject =
       FXJSE_GetGlobalObjectFromContext(scope.GetLocalContext());
   for (int32_t i = 0; i < nNum; i++) {
-    hGlobalObject->ForceSet(
+    hGlobalObject->DefineOwnProperty(
+        scope.GetLocalContext(),
         v8::String::NewFromUtf8(pIsolate, lpFunctions[i].name),
         v8::Function::New(
             pIsolate, FXJSE_V8FunctionCallback_Wrapper,
@@ -240,7 +241,11 @@ static void FXJSE_Context_GlobalObjToString(
         info.GetIsolate(), (const FX_CHAR*)szStringVal,
         v8::String::kNormalString, szStringVal.GetLength()));
   } else {
-    info.GetReturnValue().Set(info.This()->ObjectProtoToString());
+    v8::Local<v8::String> local_str =
+        info.This()
+            ->ObjectProtoToString(info.GetIsolate()->GetCurrentContext())
+            .FromMaybe(v8::Local<v8::String>());
+    info.GetReturnValue().Set(local_str);
   }
 }
 
