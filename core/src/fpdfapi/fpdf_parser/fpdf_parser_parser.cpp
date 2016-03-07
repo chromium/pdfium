@@ -4144,7 +4144,7 @@ FX_BOOL CPDF_DataAvail::CheckPageNode(CPDF_PageNode& pageNodes,
       continue;
 
     switch (pNode->m_type) {
-      case PDF_PAGENODE_UNKNOWN:
+      case PDF_PAGENODE_UNKOWN:
         if (!CheckUnkownPageNode(pNode->m_dwPageNo, pNode, pHints)) {
           return FALSE;
         }
@@ -4585,8 +4585,6 @@ IPDF_DataAvail::DocFormStatus CPDF_DataAvail::IsFormAvail(
   }
   return FormAvailable;
 }
-
-CPDF_PageNode::CPDF_PageNode() : m_type(PDF_PAGENODE_UNKNOWN) {}
 
 CPDF_PageNode::~CPDF_PageNode() {
   for (int32_t i = 0; i < m_childNode.GetSize(); ++i)

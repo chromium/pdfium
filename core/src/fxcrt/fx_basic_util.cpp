@@ -16,8 +16,6 @@
 #include <direct.h>
 #endif
 
-CFX_PrivateData::CFX_PrivateData() {}
-
 CFX_PrivateData::~CFX_PrivateData() {
   ClearAll();
 }

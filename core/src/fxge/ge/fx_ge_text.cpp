@@ -1167,9 +1167,6 @@ FX_BOOL CFX_RenderDevice::DrawTextPath(int nChars,
   }
   return TRUE;
 }
-
-CFX_FontCache::CFX_FontCache() {}
-
 CFX_FontCache::~CFX_FontCache() {
   FreeCache(TRUE);
 }

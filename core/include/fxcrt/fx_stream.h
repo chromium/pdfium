@@ -20,25 +20,20 @@ FX_BOOL FX_GetNextFile(void* handle,
                        FX_BOOL& bFolder);
 void FX_CloseFolder(void* handle);
 FX_WCHAR FX_GetFolderSeparator();
-
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 #define FX_FILESIZE int32_t
 #else
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
-
 #ifndef O_BINARY
 #define O_BINARY 0
-#endif  // O_BINARY
-
+#endif
 #ifndef O_LARGEFILE
 #define O_LARGEFILE 0
-#endif  // O_LARGEFILE
-
+#endif
 #define FX_FILESIZE off_t
-#endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-
+#endif
 #define FX_GETBYTEOFFSET32(a) 0
 #define FX_GETBYTEOFFSET40(a) 0
 #define FX_GETBYTEOFFSET48(a) 0
@@ -61,7 +56,10 @@ class IFX_StreamWrite {
 class IFX_FileWrite : public IFX_StreamWrite {
  public:
   // IFX_StreamWrite:
-  FX_BOOL WriteBlock(const void* pData, size_t size) override;
+  FX_BOOL WriteBlock(const void* pData, size_t size) override {
+    return WriteBlock(pData, GetSize(), size);
+  }
+
   virtual FX_FILESIZE GetSize() = 0;
   virtual FX_BOOL Flush() = 0;
   virtual FX_BOOL WriteBlock(const void* pData,
@@ -83,9 +81,9 @@ class IFX_FileRead : IFX_StreamRead {
  public:
   // IFX_StreamRead:
   void Release() override = 0;
-  FX_BOOL IsEOF() override;
-  FX_FILESIZE GetPosition() override;
-  size_t ReadBlock(void* buffer, size_t size) override;
+  FX_BOOL IsEOF() override { return FALSE; }
+  FX_FILESIZE GetPosition() override { return 0; }
+  size_t ReadBlock(void* buffer, size_t size) override { return 0; }
 
   virtual FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) = 0;
   virtual FX_FILESIZE GetSize() = 0;
@@ -110,7 +108,9 @@ class IFX_FileStream : public IFX_FileRead, public IFX_FileWrite {
   FX_BOOL WriteBlock(const void* buffer,
                      FX_FILESIZE offset,
                      size_t size) override = 0;
-  FX_BOOL WriteBlock(const void* buffer, size_t size) override;
+  FX_BOOL WriteBlock(const void* buffer, size_t size) override {
+    return WriteBlock(buffer, GetSize(), size);
+  }
   FX_BOOL Flush() override = 0;
 };
 
@@ -132,19 +132,21 @@ IFX_FileAccess* FX_CreateDefaultFileAccess(const CFX_WideStringC& wsPath);
 class IFX_MemoryStream : public IFX_FileStream {
  public:
   virtual FX_BOOL IsConsecutive() const = 0;
+
   virtual void EstimateSize(size_t nInitSize, size_t nGrowSize) = 0;
+
   virtual uint8_t* GetBuffer() const = 0;
+
   virtual void AttachBuffer(uint8_t* pBuffer,
                             size_t nSize,
                             FX_BOOL bTakeOver = FALSE) = 0;
+
   virtual void DetachBuffer() = 0;
 };
-
 IFX_MemoryStream* FX_CreateMemoryStream(uint8_t* pBuffer,
                                         size_t nSize,
                                         FX_BOOL bTakeOver = FALSE);
 IFX_MemoryStream* FX_CreateMemoryStream(FX_BOOL bConsecutive = FALSE);
-
 class IFX_BufferRead : public IFX_StreamRead {
  public:
   // IFX_StreamRead:

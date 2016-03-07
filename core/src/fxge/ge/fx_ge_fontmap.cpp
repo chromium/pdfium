@@ -1281,22 +1281,7 @@ FXFT_Face CFX_FontMapper::FindSubstFontByUnicode(FX_DWORD dwUnicode,
   m_pFontInfo->DeleteFont(hFont);
   return face;
 }
-
-void* IFX_SystemFontInfo::MapFontByUnicode(FX_DWORD dwUnicode,
-                                           int weight,
-                                           FX_BOOL bItalic,
-                                           int pitch_family) {
-  return nullptr;
-}
 #endif  // PDF_ENABLE_XFA
-
-int IFX_SystemFontInfo::GetFaceIndex(void* hFont) {
-  return 0;
-}
-
-void* IFX_SystemFontInfo::RetainFont(void* hFont) {
-  return NULL;
-}
 
 int CFX_FontMapper::GetFaceSize() const {
   return pdfium::CollectionSize<int>(m_FaceArray);
@@ -1323,13 +1308,11 @@ unsigned long _FTStreamRead(FXFT_Stream stream,
                             unsigned long count);
 void _FTStreamClose(FXFT_Stream stream);
 };
-
 #if _FX_OS_ == _FX_ANDROID_
 IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault(const char** pUnused) {
   return NULL;
 }
 #endif
-
 CFX_FolderFontInfo::CFX_FolderFontInfo() {}
 CFX_FolderFontInfo::~CFX_FolderFontInfo() {
   for (const auto& pair : m_FontList) {

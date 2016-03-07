@@ -476,12 +476,16 @@ class IPDF_SecurityHandler {
                          CPDF_Dictionary* pEncryptDict) = 0;
 
   virtual FX_DWORD GetPermissions() = 0;
+
   virtual FX_BOOL GetCryptInfo(int& cipher,
                                const uint8_t*& buffer,
                                int& keylen) = 0;
 
   virtual FX_BOOL IsMetadataEncrypted() = 0;
+
   virtual CPDF_CryptoHandler* CreateCryptoHandler() = 0;
+
+  virtual CPDF_StandardSecurityHandler* GetStandardHandler() { return NULL; }
 };
 
 #define PDF_ENCRYPT_CONTENT 0
@@ -793,22 +797,19 @@ class IPDF_DataAvail {
 };
 
 enum PDF_PAGENODE_TYPE {
-  PDF_PAGENODE_UNKNOWN = 0,
+  PDF_PAGENODE_UNKOWN = 0,
   PDF_PAGENODE_PAGE,
   PDF_PAGENODE_PAGES,
   PDF_PAGENODE_ARRAY,
 };
-
 class CPDF_PageNode {
  public:
-  CPDF_PageNode();
+  CPDF_PageNode() : m_type(PDF_PAGENODE_UNKOWN) {}
   ~CPDF_PageNode();
-
   PDF_PAGENODE_TYPE m_type;
   FX_DWORD m_dwPageNo;
   CFX_ArrayTemplate<CPDF_PageNode*> m_childNode;
 };
-
 enum PDF_DATAAVAIL_STATUS {
   PDF_DATAAVAIL_HEADER = 0,
   PDF_DATAAVAIL_FIRSTPAGE,
