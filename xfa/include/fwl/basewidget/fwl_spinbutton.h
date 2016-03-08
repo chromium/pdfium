@@ -7,7 +7,7 @@
 #ifndef XFA_INCLUDE_FWL_BASEWIDGET_FWL_SPINBUTTON_H_
 #define XFA_INCLUDE_FWL_BASEWIDGET_FWL_SPINBUTTON_H_
 
-#include "xfa/src/fwl/src/core/fwl_widgetimp.h"
+#include "xfa/src/fwl/core/fwl_widgetimp.h"
 
 #define FWL_CLASS_SpinButton L"FWL_SPINBUTTON"
 #define FWL_CLASSHASH_SpinButton 3793043646

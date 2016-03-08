@@ -7,7 +7,7 @@
 #ifndef XFA_INCLUDE_FWL_CORE_FWL_PANEL_H_
 #define XFA_INCLUDE_FWL_CORE_FWL_PANEL_H_
 
-#include "xfa/src/fwl/src/core/fwl_widgetimp.h"
+#include "xfa/src/fwl/core/fwl_widgetimp.h"
 
 class IFWL_Content;
 

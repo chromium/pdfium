@@ -8,7 +8,7 @@
 #define XFA_INCLUDE_FWL_BASEWIDGET_FWL_PUSHBUTTON_H_
 
 #include "xfa/include/fwl/core/fwl_theme.h"
-#include "xfa/src/fwl/src/core/fwl_widgetimp.h"
+#include "xfa/src/fwl/core/fwl_widgetimp.h"
 
 #define FWL_CLASS_PushButton L"FWL_PUSHBUTTON"
 #define FWL_CLASSHASH_PushButton 3521614244
