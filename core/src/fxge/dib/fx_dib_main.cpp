@@ -42,6 +42,7 @@ FX_DWORD ArgbEncode(int a, FX_COLORREF rgb) {
   return FXARGB_MAKE(a, FXSYS_GetRValue(rgb), FXSYS_GetGValue(rgb),
                      FXSYS_GetBValue(rgb));
 }
+
 CFX_DIBSource::CFX_DIBSource() {
   m_bpp = 0;
   m_AlphaFlag = 0;
@@ -50,15 +51,26 @@ CFX_DIBSource::CFX_DIBSource() {
   m_pPalette = NULL;
   m_pAlphaMask = NULL;
 }
+
 CFX_DIBSource::~CFX_DIBSource() {
   FX_Free(m_pPalette);
   delete m_pAlphaMask;
 }
+
+uint8_t* CFX_DIBSource::GetBuffer() const {
+  return NULL;
+}
+
+FX_BOOL CFX_DIBSource::SkipToScanline(int line, IFX_Pause* pPause) const {
+  return FALSE;
+}
+
 CFX_DIBitmap::CFX_DIBitmap() {
   m_bExtBuf = FALSE;
   m_pBuffer = NULL;
   m_pPalette = NULL;
 }
+
 #define _MAX_OOM_LIMIT_ 12000000
 FX_BOOL CFX_DIBitmap::Create(int width,
                              int height,
@@ -113,6 +125,7 @@ FX_BOOL CFX_DIBitmap::Create(int width,
   }
   return TRUE;
 }
+
 FX_BOOL CFX_DIBitmap::Copy(const CFX_DIBSource* pSrc) {
   if (m_pBuffer) {
     return FALSE;
@@ -127,24 +140,34 @@ FX_BOOL CFX_DIBitmap::Copy(const CFX_DIBSource* pSrc) {
   }
   return TRUE;
 }
+
 CFX_DIBitmap::~CFX_DIBitmap() {
-  if (!m_bExtBuf) {
+  if (!m_bExtBuf)
     FX_Free(m_pBuffer);
-  }
-  m_pBuffer = NULL;
+
+  m_pBuffer = nullptr;
 }
+
+uint8_t* CFX_DIBitmap::GetBuffer() const {
+  return m_pBuffer;
+}
+
+const uint8_t* CFX_DIBitmap::GetScanline(int line) const {
+  return m_pBuffer ? m_pBuffer + line * m_Pitch : nullptr;
+}
+
 void CFX_DIBitmap::TakeOver(CFX_DIBitmap* pSrcBitmap) {
-  if (!m_bExtBuf) {
+  if (!m_bExtBuf)
     FX_Free(m_pBuffer);
-  }
+
   FX_Free(m_pPalette);
   delete m_pAlphaMask;
   m_pBuffer = pSrcBitmap->m_pBuffer;
   m_pPalette = pSrcBitmap->m_pPalette;
   m_pAlphaMask = pSrcBitmap->m_pAlphaMask;
-  pSrcBitmap->m_pBuffer = NULL;
-  pSrcBitmap->m_pPalette = NULL;
-  pSrcBitmap->m_pAlphaMask = NULL;
+  pSrcBitmap->m_pBuffer = nullptr;
+  pSrcBitmap->m_pPalette = nullptr;
+  pSrcBitmap->m_pAlphaMask = nullptr;
   m_bpp = pSrcBitmap->m_bpp;
   m_bExtBuf = pSrcBitmap->m_bExtBuf;
   m_AlphaFlag = pSrcBitmap->m_AlphaFlag;
@@ -152,6 +175,7 @@ void CFX_DIBitmap::TakeOver(CFX_DIBitmap* pSrcBitmap) {
   m_Height = pSrcBitmap->m_Height;
   m_Pitch = pSrcBitmap->m_Pitch;
 }
+
 CFX_DIBitmap* CFX_DIBSource::Clone(const FX_RECT* pClip) const {
   FX_RECT rect(0, 0, m_Width, m_Height);
   if (pClip) {

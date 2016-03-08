@@ -75,6 +75,7 @@ IFX_Stream* IFX_Stream::CreateStream(uint8_t* pData,
   }
   return pSR;
 }
+
 CFX_StreamImp::CFX_StreamImp() : m_dwAccess(0) {}
 CFX_FileStreamImp::CFX_FileStreamImp()
     : CFX_StreamImp(), m_hFile(NULL), m_iLength(0) {}

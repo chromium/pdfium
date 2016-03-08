@@ -19,6 +19,8 @@ CFX_BinaryBuf::CFX_BinaryBuf(FX_STRSIZE size)
   m_pBuffer.reset(FX_Alloc(uint8_t, size));
 }
 
+CFX_BinaryBuf::~CFX_BinaryBuf() {}
+
 void CFX_BinaryBuf::Delete(int start_index, int count) {
   if (!m_pBuffer || start_index < 0 || count < 0 || count > m_DataSize ||
       start_index > m_DataSize - count) {
@@ -363,6 +365,8 @@ FX_DWORD CFX_BitStream::GetBits(FX_DWORD nBits) {
 
 CFX_FileBufferArchive::CFX_FileBufferArchive()
     : m_Length(0), m_pFile(nullptr) {}
+
+CFX_FileBufferArchive::~CFX_FileBufferArchive() {}
 
 void CFX_FileBufferArchive::Clear() {
   m_Length = 0;

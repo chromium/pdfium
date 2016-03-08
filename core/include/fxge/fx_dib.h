@@ -160,30 +160,23 @@ FX_ARGB ArgbEncode(int a, FX_COLORREF rgb);
 #define FXSETFLAG_ALPHA_FILL(flag, val) flag = ((val) | (flag & 0xffffff00))
 #define FXSETFLAG_ALPHA_STROKE(flag, val) \
   flag = (((val) << 16) | (flag & 0xff00ffff))
+
 class CFX_DIBSource {
  public:
   virtual ~CFX_DIBSource();
 
   int GetWidth() const { return m_Width; }
-
   int GetHeight() const { return m_Height; }
 
   FXDIB_Format GetFormat() const {
     return (FXDIB_Format)(m_AlphaFlag * 0x100 + m_bpp);
   }
-
   FX_DWORD GetPitch() const { return m_Pitch; }
-
   FX_DWORD* GetPalette() const { return m_pPalette; }
 
-  virtual uint8_t* GetBuffer() const { return NULL; }
-
+  virtual uint8_t* GetBuffer() const;
   virtual const uint8_t* GetScanline(int line) const = 0;
-
-  virtual FX_BOOL SkipToScanline(int line, IFX_Pause* pPause) const {
-    return FALSE;
-  }
-
+  virtual FX_BOOL SkipToScanline(int line, IFX_Pause* pPause) const;
   virtual void DownSampleScanline(int line,
                                   uint8_t* dest_scan,
                                   int dest_bpp,
@@ -191,7 +184,6 @@ class CFX_DIBSource {
                                   FX_BOOL bFlipX,
                                   int clip_left,
                                   int clip_width) const = 0;
-
   virtual void SetDownSampleSize(int width, int height) {}
 
   int GetBPP() const { return m_bpp; }
@@ -219,7 +211,6 @@ class CFX_DIBSource {
   void CopyPalette(const FX_DWORD* pSrcPal, FX_DWORD size = 256);
 
   CFX_DIBitmap* Clone(const FX_RECT* pClip = NULL) const;
-
   CFX_DIBitmap* CloneConvert(FXDIB_Format format,
                              const FX_RECT* pClip = NULL,
                              void* pIccTransform = NULL) const;
@@ -228,7 +219,6 @@ class CFX_DIBSource {
                           int dest_height,
                           FX_DWORD flags = 0,
                           const FX_RECT* pClip = NULL) const;
-
   CFX_DIBitmap* TransformTo(const CFX_Matrix* pMatrix,
                             int& left,
                             int& top,
@@ -236,7 +226,6 @@ class CFX_DIBSource {
                             const FX_RECT* pClip = NULL) const;
 
   CFX_DIBitmap* GetAlphaMask(const FX_RECT* pClip = NULL) const;
-
   FX_BOOL CopyAlphaMask(const CFX_DIBSource* pAlphaMask,
                         const FX_RECT* pClip = NULL);
 
@@ -262,23 +251,15 @@ class CFX_DIBSource {
   CFX_DIBSource();
 
   int m_Width;
-
   int m_Height;
-
   int m_bpp;
-
   FX_DWORD m_AlphaFlag;
-
   FX_DWORD m_Pitch;
-
   FX_DWORD* m_pPalette;
 
   void BuildPalette();
-
   FX_BOOL BuildAlphaMask();
-
   int FindPalette(FX_DWORD color) const;
-
   void GetPalette(FX_DWORD* pal, int alpha) const;
 };
 class CFX_DIBitmap : public CFX_DIBSource {
@@ -296,10 +277,8 @@ class CFX_DIBitmap : public CFX_DIBSource {
   FX_BOOL Copy(const CFX_DIBSource* pSrc);
 
   // CFX_DIBSource
-  uint8_t* GetBuffer() const override { return m_pBuffer; }
-  const uint8_t* GetScanline(int line) const override {
-    return m_pBuffer ? m_pBuffer + line * m_Pitch : NULL;
-  }
+  uint8_t* GetBuffer() const override;
+  const uint8_t* GetScanline(int line) const override;
   void DownSampleScanline(int line,
                           uint8_t* dest_scan,
                           int dest_bpp,

@@ -487,6 +487,7 @@
         'core/src/fxcrt/fxcrt_platforms.h',
         'core/src/fxcrt/fxcrt_posix.cpp',
         'core/src/fxcrt/fxcrt_posix.h',
+        'core/src/fxcrt/fxcrt_stream.cpp',
         'core/src/fxcrt/fxcrt_windows.cpp',
         'core/src/fxcrt/fxcrt_windows.h',
         'core/src/fxcrt/fx_basic_array.cpp',

@@ -365,14 +365,14 @@ class IFX_SystemFontInfo {
                         int pitch_family,
                         const FX_CHAR* face,
                         int& iExact) = 0;
+
 #ifdef PDF_ENABLE_XFA
   virtual void* MapFontByUnicode(FX_DWORD dwUnicode,
                                  int weight,
                                  FX_BOOL bItalic,
-                                 int pitch_family) {
-    return NULL;
-  }
+                                 int pitch_family);
 #endif  // PDF_ENABLE_XFA
+
   virtual void* GetFont(const FX_CHAR* face) = 0;
   virtual FX_DWORD GetFontData(void* hFont,
                                FX_DWORD table,
@@ -380,9 +380,9 @@ class IFX_SystemFontInfo {
                                FX_DWORD size) = 0;
   virtual FX_BOOL GetFaceName(void* hFont, CFX_ByteString& name) = 0;
   virtual FX_BOOL GetFontCharset(void* hFont, int& charset) = 0;
-  virtual int GetFaceIndex(void* hFont) { return 0; }
+  virtual int GetFaceIndex(void* hFont);
   virtual void DeleteFont(void* hFont) = 0;
-  virtual void* RetainFont(void* hFont) { return NULL; }
+  virtual void* RetainFont(void* hFont);
 
  protected:
   virtual ~IFX_SystemFontInfo() {}
@@ -446,6 +446,7 @@ class CFX_CountedFaceCache {
 
 class CFX_FontCache {
  public:
+  CFX_FontCache();
   ~CFX_FontCache();
   CFX_FaceCache* GetCachedFace(CFX_Font* pFont);
   void ReleaseCachedFace(CFX_Font* pFont);
@@ -456,6 +457,7 @@ class CFX_FontCache {
   CFX_FTCacheMap m_FTFaceMap;
   CFX_FTCacheMap m_ExtFaceMap;
 };
+
 class CFX_AutoFontCache {
  public:
   CFX_AutoFontCache(CFX_FontCache* pFontCache, CFX_Font* pFont)
