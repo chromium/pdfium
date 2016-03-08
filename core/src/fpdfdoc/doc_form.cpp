@@ -388,21 +388,6 @@ static FX_BOOL RetrieveSpecificFont(uint8_t charSet,
   }
   return RetrieveSpecificFont(lf);
 }
-#ifdef PDF_ENABLE_XFA
-static FX_BOOL RetrieveStockFont(int iFontObject,
-                                 uint8_t charSet,
-                                 LOGFONTA& lf) {
-  HFONT hFont = (HFONT)::GetStockObject(iFontObject);
-  if (hFont) {
-    memset(&lf, 0, sizeof(LOGFONTA));
-    int iRet = ::GetObject(hFont, sizeof(LOGFONTA), &lf);
-    if (iRet > 0 && (lf.lfCharSet == charSet || charSet == 255)) {
-      return RetrieveSpecificFont(lf);
-    }
-  }
-  return FALSE;
-}
-#endif  // PDF_ENABLE_XFA
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
 CPDF_Font* CPDF_InterForm::AddStandardFont(CPDF_Document* pDocument,

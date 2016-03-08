@@ -102,35 +102,45 @@ class IFX_Font {
 #endif
 };
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-typedef struct _FX_FONTMATCHPARAMS {
+struct FX_FONTMATCHPARAMS {
   const FX_WCHAR* pwsFamily;
   FX_DWORD dwFontStyles;
   FX_DWORD dwUSB;
   FX_DWORD dwMatchFlags;
   FX_WCHAR wUnicode;
   FX_WORD wCodePage;
-} FX_FONTMATCHPARAMS, *FX_LPFONTMATCHPARAMS;
+} FX_FONTMATCHPARAMS;
+typedef FX_FONTMATCHPARAMS* FX_LPFONTMATCHPARAMS;
 typedef FX_FONTMATCHPARAMS const* FX_LPCFONTMATCHPARAMS;
-typedef struct _FX_FONTSIGNATURE : public CFX_Target {
+
+struct FX_FONTSIGNATURE {
   FX_DWORD fsUsb[4];
   FX_DWORD fsCsb[2];
-} FX_FONTSIGNATURE;
-typedef struct _FX_FONTDESCRIPTOR : public CFX_Target {
+};
+inline bool operator==(const FX_FONTSIGNATURE& left,
+                       const FX_FONTSIGNATURE& right) {
+  return left.fsUsb[0] == right.fsUsb[0] && left.fsUsb[1] == right.fsUsb[1] &&
+         left.fsUsb[2] == right.fsUsb[2] && left.fsUsb[3] == right.fsUsb[3] &&
+         left.fsCsb[0] == right.fsCsb[0] && left.fsCsb[1] == right.fsCsb[1];
+}
+
+struct FX_FONTDESCRIPTOR {
   FX_WCHAR wsFontFace[32];
   FX_DWORD dwFontStyles;
   uint8_t uCharSet;
   FX_FONTSIGNATURE FontSignature;
-} FX_FONTDESCRIPTOR, *FX_LPFONTDESCRIPTOR;
+};
+typedef FX_FONTDESCRIPTOR* FX_LPFONTDESCRIPTOR;
 typedef FX_FONTDESCRIPTOR const* FX_LPCFONTDESCRIPTOR;
 typedef CFX_MassArrayTemplate<FX_FONTDESCRIPTOR> CFX_FontDescriptors;
 inline bool operator==(const FX_FONTDESCRIPTOR& left,
                        const FX_FONTDESCRIPTOR& right) {
   return left.uCharSet == right.uCharSet &&
          left.dwFontStyles == right.dwFontStyles &&
-         FXSYS_wcscmp(left.wsFontFace, right.wsFontFace) == 0 &&
-         FXSYS_memcmp(&left.FontSignature, &right.FontSignature,
-                      sizeof(FX_FONTSIGNATURE)) == 0;
+         left.FontSignature == right.FontSignature &&
+         FXSYS_wcscmp(left.wsFontFace, right.wsFontFace) == 0;
 }
+
 #define FX_FONTMATCHPARA_MacthStyle 0x01
 #define FX_FONTMATCHPARA_MacthFamily 0x02
 #define FX_FONTMATCHPARA_MacthUnicode 0x04
