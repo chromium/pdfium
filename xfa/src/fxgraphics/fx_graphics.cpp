@@ -4,11 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/include/fxgraphics/fx_graphics.h"
+
 #include <memory>
 
-#include "xfa/include/fxgraphics/fx_graphics.h"
-#include "xfa/src/fxgraphics/src/fx_path_generator.h"
-#include "xfa/src/fxgraphics/src/pre.h"
+#include "xfa/src/fxgraphics/fx_path_generator.h"
+#include "xfa/src/fxgraphics/pre.h"
 
 class CAGG_Graphics {
  public:

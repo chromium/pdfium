@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FXGRAPHICS_SRC_PRE_H_
-#define XFA_SRC_FXGRAPHICS_SRC_PRE_H_
+#ifndef XFA_SRC_FXGRAPHICS_PRE_H_
+#define XFA_SRC_FXGRAPHICS_PRE_H_
 
 enum {
   FX_CONTEXT_None = 0,
@@ -583,4 +583,4 @@ static const FX_HATCHDATA hatchBitmapData[FX_HATCHSTYLE_Total] = {
 #else
 #endif
 
-#endif  // XFA_SRC_FXGRAPHICS_SRC_PRE_H_
+#endif  // XFA_SRC_FXGRAPHICS_PRE_H_

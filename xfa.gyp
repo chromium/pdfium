@@ -649,10 +649,10 @@
         "xfa/src/fxfa/parser/xfa_script_signaturepseudomodel.h",
         "xfa/src/fxfa/parser/xfa_utils.h",
         "xfa/src/fxfa/parser/xfa_utils_imp.cpp",
-        "xfa/src/fxgraphics/src/fx_graphics.cpp",
-        "xfa/src/fxgraphics/src/fx_path_generator.cpp",
-        "xfa/src/fxgraphics/src/fx_path_generator.h",
-        "xfa/src/fxgraphics/src/pre.h",
+        "xfa/src/fxgraphics/fx_graphics.cpp",
+        "xfa/src/fxgraphics/fx_path_generator.cpp",
+        "xfa/src/fxgraphics/fx_path_generator.h",
+        "xfa/src/fxgraphics/pre.h",
       ],
       "conditions": [
         ["clang==1" , {

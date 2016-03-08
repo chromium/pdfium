@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FXGRAPHICS_SRC_FX_PATH_GENERATOR_H_
-#define XFA_SRC_FXGRAPHICS_SRC_FX_PATH_GENERATOR_H_
+#ifndef XFA_SRC_FXGRAPHICS_FX_PATH_GENERATOR_H_
+#define XFA_SRC_FXGRAPHICS_FX_PATH_GENERATOR_H_
 
 #include "core/include/fxge/fx_ge.h"
 
@@ -61,4 +61,4 @@ class CFX_PathGenerator {
   CFX_PathData* m_pPathData;
 };
 
-#endif  // XFA_SRC_FXGRAPHICS_SRC_FX_PATH_GENERATOR_H_
+#endif  // XFA_SRC_FXGRAPHICS_FX_PATH_GENERATOR_H_
