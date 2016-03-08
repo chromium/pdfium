@@ -669,17 +669,17 @@
             '<(DEPTH)/v8/include',
           ],
           'sources': [
-            "xfa/src/fxjse/src/class.cpp",
-            "xfa/src/fxjse/src/class.h",
-            "xfa/src/fxjse/src/context.cpp",
-            "xfa/src/fxjse/src/context.h",
-            "xfa/src/fxjse/src/dynprop.cpp",
-            "xfa/src/fxjse/src/runtime.cpp",
-            "xfa/src/fxjse/src/runtime.h",
-            "xfa/src/fxjse/src/scope_inline.h",
-            "xfa/src/fxjse/src/util_inline.h",
-            "xfa/src/fxjse/src/value.cpp",
-            "xfa/src/fxjse/src/value.h"
+            "xfa/src/fxjse/class.cpp",
+            "xfa/src/fxjse/class.h",
+            "xfa/src/fxjse/context.cpp",
+            "xfa/src/fxjse/context.h",
+            "xfa/src/fxjse/dynprop.cpp",
+            "xfa/src/fxjse/runtime.cpp",
+            "xfa/src/fxjse/runtime.h",
+            "xfa/src/fxjse/scope_inline.h",
+            "xfa/src/fxjse/util_inline.h",
+            "xfa/src/fxjse/value.cpp",
+            "xfa/src/fxjse/value.h"
           ],
         }],
         ["OS == 'win'", {

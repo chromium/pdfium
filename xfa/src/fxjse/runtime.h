@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FXJSE_SRC_RUNTIME_H_
-#define XFA_SRC_FXJSE_SRC_RUNTIME_H_
+#ifndef XFA_SRC_FXJSE_RUNTIME_H_
+#define XFA_SRC_FXJSE_RUNTIME_H_
 
 #include "core/include/fxcrt/fx_basic.h"
 #include "v8/include/v8.h"
@@ -48,4 +48,4 @@ class CFXJSE_RuntimeList {
   CFX_ArrayTemplate<v8::Isolate*> m_RuntimeList;
 };
 
-#endif  // XFA_SRC_FXJSE_SRC_RUNTIME_H_
+#endif  // XFA_SRC_FXJSE_RUNTIME_H_

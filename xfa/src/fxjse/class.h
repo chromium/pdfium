@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FXJSE_SRC_CLASS_H_
-#define XFA_SRC_FXJSE_SRC_CLASS_H_
+#ifndef XFA_SRC_FXJSE_CLASS_H_
+#define XFA_SRC_FXJSE_CLASS_H_
 
 #include "v8/include/v8.h"
 #include "xfa/include/fxjse/fxjse.h"
@@ -46,4 +46,4 @@ struct CFXJSE_ArgumentsImpl {
   CFXJSE_Value* m_pRetValue;
 };
 
-#endif  // XFA_SRC_FXJSE_SRC_CLASS_H_
+#endif  // XFA_SRC_FXJSE_CLASS_H_

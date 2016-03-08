@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/fxjse/src/runtime.h"
+#include "xfa/src/fxjse/runtime.h"
 
 #include "fpdfsdk/include/jsapi/fxjs_v8.h"
-#include "xfa/src/fxjse/src/scope_inline.h"
+#include "xfa/src/fxjse/scope_inline.h"
 
 // Duplicates fpdfsdk's JS_Runtime.h, but keeps XFA from depending on it.
 // TODO(tsepez): make a single version of this.

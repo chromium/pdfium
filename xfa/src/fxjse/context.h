@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FXJSE_SRC_CONTEXT_H_
-#define XFA_SRC_FXJSE_SRC_CONTEXT_H_
+#ifndef XFA_SRC_FXJSE_CONTEXT_H_
+#define XFA_SRC_FXJSE_CONTEXT_H_
 
 #include "v8/include/v8.h"
 #include "xfa/include/fxjse/fxjse.h"
@@ -44,4 +44,4 @@ class CFXJSE_Context {
 v8::Local<v8::Object> FXJSE_CreateReturnValue(v8::Isolate* pIsolate,
                                               v8::TryCatch& trycatch);
 
-#endif  // XFA_SRC_FXJSE_SRC_CONTEXT_H_
+#endif  // XFA_SRC_FXJSE_CONTEXT_H_

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/fxjse/src/class.h"
-#include "xfa/src/fxjse/src/value.h"
+#include "xfa/src/fxjse/class.h"
+#include "xfa/src/fxjse/value.h"
 
 static void FXJSE_DynPropGetterAdapter_MethodCallback(
     const v8::FunctionCallbackInfo<v8::Value>& info) {

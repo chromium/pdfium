@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FXJSE_SRC_VALUE_H_
-#define XFA_SRC_FXJSE_SRC_VALUE_H_
+#ifndef XFA_SRC_FXJSE_VALUE_H_
+#define XFA_SRC_FXJSE_VALUE_H_
 
-#include "xfa/src/fxjse/src/scope_inline.h"
+#include "xfa/src/fxjse/scope_inline.h"
 
 class CFXJSE_Value {
  public:
@@ -238,4 +238,4 @@ class CFXJSE_Value {
   friend class CFXJSE_Class;
 };
 
-#endif  // XFA_SRC_FXJSE_SRC_VALUE_H_
+#endif  // XFA_SRC_FXJSE_VALUE_H_
