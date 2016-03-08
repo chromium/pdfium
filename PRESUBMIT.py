@@ -20,7 +20,6 @@ LINT_FILTERS = [
   '-readability/todo',
   '-readability/utf8',
   '-runtime/arrays',
-  '-runtime/casting',
   '-runtime/explicit',
   '-runtime/int',
   '-runtime/printf',

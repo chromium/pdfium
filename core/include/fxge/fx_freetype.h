@@ -132,7 +132,7 @@ typedef FT_CharMap FXFT_CharMap;
 #define FXFT_Get_Face_Descender(face) ((FT_Face)face)->descender
 #define FXFT_Get_Glyph_HoriAdvance(face) \
   ((FT_Face)face)->glyph->metrics.horiAdvance
-#define FXFT_Get_MM_Axis(var, index) &((FT_MM_Var*)var)->axis[index]
+#define FXFT_Get_MM_Axis(var, index) &static_cast<FT_MM_Var*>(var)->axis[index]
 #define FXFT_Get_MM_Axis_Min(axis) ((FT_Var_Axis*)axis)->minimum
 #define FXFT_Get_MM_Axis_Max(axis) ((FT_Var_Axis*)axis)->maximum
 #define FXFT_Get_MM_Axis_Def(axis) ((FT_Var_Axis*)axis)->def
@@ -140,7 +140,7 @@ typedef FT_CharMap FXFT_CharMap;
   ((FT_Library)library)->memory->alloc(((FT_Library)library)->memory, size)
 #define FXFT_Free(face, p) \
   ((FT_Face)face)->memory->free(((FT_Face)face)->memory, p)
-#define FXFT_Get_Glyph_Outline(face) &((FT_Face)face)->glyph->outline
+#define FXFT_Get_Glyph_Outline(face) &static_cast<FT_Face>(face)->glyph->outline
 #define FXFT_Get_Outline_Bbox(outline, cbox) FT_Outline_Get_CBox(outline, cbox)
 #define FXFT_Render_Glyph(face, mode) \
   FT_Render_Glyph(((FT_Face)face)->glyph, (enum FT_Render_Mode_)mode)
@@ -150,7 +150,7 @@ typedef FT_CharMap FXFT_CharMap;
 #define FXFT_Set_Pixel_Sizes(face, w, h) FT_Set_Pixel_Sizes((FT_Face)face, w, h)
 #define FXFT_Set_Transform(face, m, d) FT_Set_Transform((FT_Face)face, m, d)
 #define FXFT_Outline_Embolden(outline, s) FT_Outline_Embolden(outline, s)
-#define FXFT_Get_Glyph_Bitmap(face) &((FT_Face)face)->glyph->bitmap
+#define FXFT_Get_Glyph_Bitmap(face) &static_cast<FT_Face>(face)->glyph->bitmap
 #define FXFT_Get_Bitmap_Width(bitmap) ((FT_Bitmap*)bitmap)->width
 #define FXFT_Get_Bitmap_Rows(bitmap) ((FT_Bitmap*)bitmap)->rows
 #define FXFT_Get_Bitmap_PixelMode(bitmap) ((FT_Bitmap*)bitmap)->pixel_mode
