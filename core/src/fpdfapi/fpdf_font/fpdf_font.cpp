@@ -235,6 +235,7 @@ int CPDF_Font::GetCharSize(FX_DWORD charcode) const {
 
 int CPDF_Font::GlyphFromCharCode(FX_DWORD charcode, FX_BOOL* pVertGlyph) {
   ASSERT(false);
+  return 0;
 }
 
 int CPDF_Font::GlyphFromCharCodeExt(FX_DWORD charcode) {
