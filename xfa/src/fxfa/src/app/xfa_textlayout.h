@@ -79,8 +79,8 @@ class CXFA_TextParseContext : public CFX_Target {
 
  protected:
   IFDE_CSSDeclaration** m_ppMatchedDecls;
-  FX_DWORD m_dwMatchedDecls : 28;
-  FDE_CSSDISPLAY m_eDisplay : 4;
+  FX_DWORD m_dwMatchedDecls;
+  FDE_CSSDISPLAY m_eDisplay;
 };
 
 class CXFA_TextParser {
