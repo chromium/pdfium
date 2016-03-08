@@ -331,8 +331,6 @@ static_library("fpdfapi") {
     "core/src/fpdfapi/fpdf_page/fpdf_page_path.cpp",
     "core/src/fpdfapi/fpdf_page/fpdf_page_pattern.cpp",
     "core/src/fpdfapi/fpdf_page/pageint.h",
-    "core/src/fpdfapi/fpdf_parser/cpdf_syntax_parser.cpp",
-    "core/src/fpdfapi/fpdf_parser/cpdf_syntax_parser.h",
     "core/src/fpdfapi/fpdf_parser/fpdf_parser_decode.cpp",
     "core/src/fpdfapi/fpdf_parser/fpdf_parser_document.cpp",
     "core/src/fpdfapi/fpdf_parser/fpdf_parser_encrypt.cpp",

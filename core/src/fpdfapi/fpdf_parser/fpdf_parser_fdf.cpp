@@ -7,7 +7,6 @@
 #include "core/include/fpdfapi/fpdf_parser.h"
 
 #include "core/include/fpdfapi/fpdf_serial.h"
-#include "core/src/fpdfapi/fpdf_parser/cpdf_syntax_parser.h"
 
 CFDF_Document::CFDF_Document() : CPDF_IndirectObjectHolder(NULL) {
   m_pRootDict = NULL;
