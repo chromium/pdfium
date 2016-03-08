@@ -463,13 +463,7 @@ void CPDF_FormObject::CalcBoundingBox() {
 CPDF_PageObject* CPDF_PageObjectList::GetPageObjectByIndex(int index) {
   if (index < 0 || index >= pdfium::CollectionSize<int>(*this))
     return nullptr;
-  int current = 0;
-  for (const auto& pObj : *this) {
-    if (index == current)
-      return pObj.get();
-    ++current;
-  }
-  return nullptr;
+  return (*this)[index].get();
 }
 
 CPDF_PageObjectHolder::CPDF_PageObjectHolder()

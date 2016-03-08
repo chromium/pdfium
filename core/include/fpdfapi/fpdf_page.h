@@ -7,7 +7,7 @@
 #ifndef CORE_INCLUDE_FPDFAPI_FPDF_PAGE_H_
 #define CORE_INCLUDE_FPDFAPI_FPDF_PAGE_H_
 
-#include <list>
+#include <deque>
 #include <memory>
 
 #include "core/include/fpdfapi/fpdf_parser.h"
@@ -28,9 +28,9 @@ class CPDF_StreamContentParser;
 #define PDFTRANS_ISOLATED 0x0200
 #define PDFTRANS_KNOCKOUT 0x0400
 
-class CPDF_PageObjectList : public std::list<std::unique_ptr<CPDF_PageObject>> {
+class CPDF_PageObjectList
+    : public std::deque<std::unique_ptr<CPDF_PageObject>> {
  public:
-  // Linear complexity, to be avoided except as needed by public APIs.
   CPDF_PageObject* GetPageObjectByIndex(int index);
 };
 
