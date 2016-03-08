@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/src/fxge/agg/include/fx_agg_driver.h"
+#include "core/src/fxge/agg/fx_agg_driver.h"
 
 #include <algorithm>
 
@@ -183,6 +183,7 @@ static void RasterizeStroke(agg::rasterizer_scanline_aa& rasterizer,
     rasterizer.add_path_transformed(stroke, pObject2Device);
   }
 }
+
 IFX_RenderDeviceDriver* IFX_RenderDeviceDriver::CreateFxgeDriver(
     CFX_DIBitmap* pBitmap,
     FX_BOOL bRgbByteOrder,
@@ -191,6 +192,7 @@ IFX_RenderDeviceDriver* IFX_RenderDeviceDriver::CreateFxgeDriver(
   return new CFX_AggDeviceDriver(pBitmap, 0, bRgbByteOrder, pOriDevice,
                                  bGroupKnockout);
 }
+
 CFX_AggDeviceDriver::CFX_AggDeviceDriver(CFX_DIBitmap* pBitmap,
                                          int dither_bits,
                                          FX_BOOL bRgbByteOrder,
@@ -208,15 +210,23 @@ CFX_AggDeviceDriver::CFX_AggDeviceDriver(CFX_DIBitmap* pBitmap,
   m_FillFlags = 0;
   InitPlatform();
 }
+
 CFX_AggDeviceDriver::~CFX_AggDeviceDriver() {
   delete m_pClipRgn;
   for (int i = 0; i < m_StateStack.GetSize(); i++)
     delete m_StateStack[i];
   DestroyPlatform();
 }
+
+uint8_t* CFX_AggDeviceDriver::GetBuffer() const {
+  return m_pBitmap->GetBuffer();
+}
+
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_APPLE_
 void CFX_AggDeviceDriver::InitPlatform() {}
+
 void CFX_AggDeviceDriver::DestroyPlatform() {}
+
 FX_BOOL CFX_AggDeviceDriver::DrawDeviceText(int nChars,
                                             const FXTEXT_CHARPOS* pCharPos,
                                             CFX_Font* pFont,
@@ -227,8 +237,9 @@ FX_BOOL CFX_AggDeviceDriver::DrawDeviceText(int nChars,
                                             int alpha_flag,
                                             void* pIccTransform) {
   return FALSE;
-}
+}  // _FXM_PLATFORM_ != _FXM_PLATFORM_APPLE_
 #endif
+
 int CFX_AggDeviceDriver::GetDeviceCaps(int caps_id) {
   switch (caps_id) {
     case FXDC_DEVICE_CLASS:
@@ -264,6 +275,7 @@ int CFX_AggDeviceDriver::GetDeviceCaps(int caps_id) {
   }
   return 0;
 }
+
 void CFX_AggDeviceDriver::SaveState() {
   CFX_ClipRgn* pClip = NULL;
   if (m_pClipRgn) {
@@ -271,6 +283,7 @@ void CFX_AggDeviceDriver::SaveState() {
   }
   m_StateStack.Add(pClip);
 }
+
 void CFX_AggDeviceDriver::RestoreState(FX_BOOL bKeepSaved) {
   if (m_StateStack.GetSize() == 0) {
     delete m_pClipRgn;
@@ -289,6 +302,7 @@ void CFX_AggDeviceDriver::RestoreState(FX_BOOL bKeepSaved) {
     m_pClipRgn = pSavedClip;
   }
 }
+
 void CFX_AggDeviceDriver::SetClipMask(agg::rasterizer_scanline_aa& rasterizer) {
   FX_RECT path_rect(rasterizer.min_x(), rasterizer.min_y(),
                     rasterizer.max_x() + 1, rasterizer.max_y() + 1);
@@ -313,6 +327,7 @@ void CFX_AggDeviceDriver::SetClipMask(agg::rasterizer_scanline_aa& rasterizer) {
                         (m_FillFlags & FXFILL_NOPATHSMOOTH) != 0);
   m_pClipRgn->IntersectMaskF(path_rect.left, path_rect.top, mask);
 }
+
 FX_BOOL CFX_AggDeviceDriver::SetClip_PathFill(const CFX_PathData* pPathData,
                                               const CFX_Matrix* pObject2Device,
                                               int fill_mode) {
@@ -345,6 +360,7 @@ FX_BOOL CFX_AggDeviceDriver::SetClip_PathFill(const CFX_PathData* pPathData,
   SetClipMask(rasterizer);
   return TRUE;
 }
+
 FX_BOOL CFX_AggDeviceDriver::SetClip_PathStroke(
     const CFX_PathData* pPathData,
     const CFX_Matrix* pObject2Device,
@@ -364,6 +380,7 @@ FX_BOOL CFX_AggDeviceDriver::SetClip_PathStroke(
   SetClipMask(rasterizer);
   return TRUE;
 }
+
 class CFX_Renderer {
  private:
   int m_Alpha, m_Red, m_Green, m_Blue, m_Gray;
@@ -387,6 +404,7 @@ class CFX_Renderer {
 
  public:
   void prepare(unsigned) {}
+
   void CompositeSpan(uint8_t* dest_scan,
                      uint8_t* ori_scan,
                      int Bpp,
@@ -582,6 +600,7 @@ class CFX_Renderer {
       }
     }
   }
+
   void CompositeSpan1bpp(uint8_t* dest_scan,
                          int Bpp,
                          int span_left,
@@ -626,6 +645,7 @@ class CFX_Renderer {
       dest_scan1 = dest_scan + (span_left % 8 + col - col_start + 1) / 8;
     }
   }
+
   void CompositeSpanGray(uint8_t* dest_scan,
                          int Bpp,
                          int span_left,
@@ -693,6 +713,7 @@ class CFX_Renderer {
       }
     }
   }
+
   void CompositeSpanARGB(uint8_t* dest_scan,
                          int Bpp,
                          int span_left,
@@ -787,6 +808,7 @@ class CFX_Renderer {
       dest_scan += Bpp;
     }
   }
+
   void CompositeSpanRGB(uint8_t* dest_scan,
                         int Bpp,
                         int span_left,
@@ -913,6 +935,7 @@ class CFX_Renderer {
       }
     }
   }
+
   void CompositeSpanCMYK(uint8_t* dest_scan,
                          int Bpp,
                          int span_left,
@@ -994,6 +1017,7 @@ class CFX_Renderer {
       }
     }
   }
+
   template <class Scanline>
   void render(const Scanline& sl) {
     if (!m_pOriDevice && !composite_span) {
@@ -1184,6 +1208,7 @@ class CFX_Renderer {
     return TRUE;
   }
 };
+
 FX_BOOL CFX_AggDeviceDriver::RenderRasterizer(
     agg::rasterizer_scanline_aa& rasterizer,
     FX_DWORD color,
@@ -1202,6 +1227,7 @@ FX_BOOL CFX_AggDeviceDriver::RenderRasterizer(
                         (m_FillFlags & FXFILL_NOPATHSMOOTH) != 0);
   return TRUE;
 }
+
 FX_BOOL CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
                                       const CFX_Matrix* pObject2Device,
                                       const CFX_GraphStateData* pGraphState,
@@ -1285,6 +1311,7 @@ FX_BOOL CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
   }
   return TRUE;
 }
+
 void RgbByteOrderSetPixel(CFX_DIBitmap* pBitmap, int x, int y, FX_DWORD argb) {
   if (x < 0 || x >= pBitmap->GetWidth() || y < 0 || y >= pBitmap->GetHeight()) {
     return;
@@ -1300,6 +1327,7 @@ void RgbByteOrderSetPixel(CFX_DIBitmap* pBitmap, int x, int y, FX_DWORD argb) {
     pos[2] = (FXARGB_B(argb) * alpha + pos[2] * (255 - alpha)) / 255;
   }
 }
+
 void RgbByteOrderCompositeRect(CFX_DIBitmap* pBitmap,
                                int left,
                                int top,
@@ -1380,6 +1408,7 @@ void RgbByteOrderCompositeRect(CFX_DIBitmap* pBitmap,
     }
   }
 }
+
 void RgbByteOrderTransferBitmap(CFX_DIBitmap* pBitmap,
                                 int dest_left,
                                 int dest_top,
@@ -1483,12 +1512,14 @@ void RgbByteOrderTransferBitmap(CFX_DIBitmap* pBitmap,
     ASSERT(FALSE);
   }
 }
+
 FX_ARGB _DefaultCMYK2ARGB(FX_CMYK cmyk, uint8_t alpha) {
   uint8_t r, g, b;
   AdobeCMYK_to_sRGB1(FXSYS_GetCValue(cmyk), FXSYS_GetMValue(cmyk),
                      FXSYS_GetYValue(cmyk), FXSYS_GetKValue(cmyk), r, g, b);
   return ArgbEncode(alpha, r, g, b);
 }
+
 FX_BOOL _DibSetPixel(CFX_DIBitmap* pDevice,
                      int x,
                      int y,
@@ -1524,6 +1555,7 @@ FX_BOOL _DibSetPixel(CFX_DIBitmap* pDevice,
   }
   return TRUE;
 }
+
 FX_BOOL CFX_AggDeviceDriver::SetPixel(int x,
                                       int y,
                                       FX_DWORD color,
@@ -1570,6 +1602,7 @@ FX_BOOL CFX_AggDeviceDriver::SetPixel(int x,
   }
   return TRUE;
 }
+
 FX_BOOL CFX_AggDeviceDriver::FillRect(const FX_RECT* pRect,
                                       FX_DWORD fill_color,
                                       int alpha_flag,
@@ -1609,6 +1642,7 @@ FX_BOOL CFX_AggDeviceDriver::FillRect(const FX_RECT* pRect,
       FXDIB_BLEND_NORMAL, NULL, m_bRgbByteOrder, alpha_flag, pIccTransform);
   return TRUE;
 }
+
 FX_BOOL CFX_AggDeviceDriver::GetClipBox(FX_RECT* pRect) {
   if (!m_pClipRgn) {
     pRect->left = pRect->top = 0;
@@ -1619,6 +1653,7 @@ FX_BOOL CFX_AggDeviceDriver::GetClipBox(FX_RECT* pRect) {
   *pRect = m_pClipRgn->GetBox();
   return TRUE;
 }
+
 FX_BOOL CFX_AggDeviceDriver::GetDIBits(CFX_DIBitmap* pBitmap,
                                        int left,
                                        int top,
@@ -1667,6 +1702,7 @@ FX_BOOL CFX_AggDeviceDriver::GetDIBits(CFX_DIBitmap* pBitmap,
   delete pBack;
   return bRet;
 }
+
 FX_BOOL CFX_AggDeviceDriver::SetDIBits(const CFX_DIBSource* pBitmap,
                                        FX_DWORD argb,
                                        const FX_RECT* pSrcRect,
@@ -1687,6 +1723,7 @@ FX_BOOL CFX_AggDeviceDriver::SetDIBits(const CFX_DIBSource* pBitmap,
       left, top, pSrcRect->Width(), pSrcRect->Height(), pBitmap, pSrcRect->left,
       pSrcRect->top, blend_type, m_pClipRgn, m_bRgbByteOrder, pIccTransform);
 }
+
 FX_BOOL CFX_AggDeviceDriver::StretchDIBits(const CFX_DIBSource* pSource,
                                            FX_DWORD argb,
                                            int dest_left,
@@ -1724,6 +1761,7 @@ FX_BOOL CFX_AggDeviceDriver::StretchDIBits(const CFX_DIBSource* pSource,
   }
   return TRUE;
 }
+
 FX_BOOL CFX_AggDeviceDriver::StartDIBits(const CFX_DIBSource* pSource,
                                          int bitmap_alpha,
                                          FX_DWORD argb,
@@ -1742,21 +1780,25 @@ FX_BOOL CFX_AggDeviceDriver::StartDIBits(const CFX_DIBSource* pSource,
   handle = pRenderer;
   return TRUE;
 }
+
 FX_BOOL CFX_AggDeviceDriver::ContinueDIBits(void* pHandle, IFX_Pause* pPause) {
   if (!m_pBitmap->GetBuffer()) {
     return TRUE;
   }
   return ((CFX_ImageRenderer*)pHandle)->Continue(pPause);
 }
+
 void CFX_AggDeviceDriver::CancelDIBits(void* pHandle) {
   if (!m_pBitmap->GetBuffer()) {
     return;
   }
   delete (CFX_ImageRenderer*)pHandle;
 }
+
 CFX_FxgeDevice::CFX_FxgeDevice() {
   m_bOwnedBitmap = FALSE;
 }
+
 FX_BOOL CFX_FxgeDevice::Attach(CFX_DIBitmap* pBitmap,
                                int dither_bits,
                                FX_BOOL bRgbByteOrder,
@@ -1771,6 +1813,7 @@ FX_BOOL CFX_FxgeDevice::Attach(CFX_DIBitmap* pBitmap,
   SetDeviceDriver(pDriver);
   return TRUE;
 }
+
 FX_BOOL CFX_FxgeDevice::Create(int width,
                                int height,
                                FXDIB_Format format,
@@ -1788,6 +1831,7 @@ FX_BOOL CFX_FxgeDevice::Create(int width,
   SetDeviceDriver(pDriver);
   return TRUE;
 }
+
 CFX_FxgeDevice::~CFX_FxgeDevice() {
   if (m_bOwnedBitmap) {
     delete GetBitmap();

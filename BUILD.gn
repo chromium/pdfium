@@ -119,8 +119,6 @@ static_library("pdfium") {
   configs += [ ":pdfium_config" ]
 
   deps = [
-    "third_party:bigint",
-    "third_party:pdfium_base",
     ":fdrm",
     ":formfiller",
     ":fpdfapi",
@@ -132,6 +130,8 @@ static_library("pdfium") {
     ":fxge",
     ":javascript",
     ":pdfwindow",
+    "third_party:bigint",
+    "third_party:pdfium_base",
   ]
 
   if (pdf_enable_xfa) {
@@ -170,9 +170,9 @@ source_set("test_support") {
     "testing/utils/path_service.cpp",
   ]
   deps = [
+    ":pdfium",
     "//testing/gmock",
     "//testing/gtest",
-    ":pdfium",
   ]
   include_dirs = []
   if (pdf_enable_v8) {
@@ -521,8 +521,8 @@ static_library("fxge") {
     "core/include/fxge/fx_ge.h",
     "core/include/fxge/fx_ge_apple.h",
     "core/include/fxge/fx_ge_win32.h",
-    "core/src/fxge/agg/include/fx_agg_driver.h",
-    "core/src/fxge/agg/src/fx_agg_driver.cpp",
+    "core/src/fxge/agg/fx_agg_driver.cpp",
+    "core/src/fxge/agg/fx_agg_driver.h",
     "core/src/fxge/android/fpf_skiafont.cpp",
     "core/src/fxge/android/fpf_skiafont.h",
     "core/src/fxge/android/fpf_skiafontmgr.cpp",
@@ -1436,10 +1436,10 @@ test("pdfium_unittests") {
     "fpdfsdk/src/fpdfdoc_unittest.cpp",
   ]
   deps = [
-    "//testing/gtest",
-    "//testing/gtest:gtest_main",
     ":pdfium",
     ":test_support",
+    "//testing/gtest",
+    "//testing/gtest:gtest_main",
   ]
   if (pdf_enable_xfa) {
     sources += [
@@ -1475,10 +1475,10 @@ test("pdfium_embeddertests") {
     "xfa/src/fxfa/src/parser/xfa_parser_imp_embeddertest.cpp",
   ]
   deps = [
-    "//testing/gmock",
-    "//testing/gtest",
     ":pdfium",
     ":test_support",
+    "//testing/gmock",
+    "//testing/gtest",
   ]
   include_dirs = []
   if (pdf_enable_v8) {

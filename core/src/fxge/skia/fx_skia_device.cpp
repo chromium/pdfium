@@ -7,7 +7,7 @@
 #if defined(_SKIA_SUPPORT_)
 #include "core/include/fxcodec/fx_codec.h"
 
-#include "core/src/fxge/agg/include/fx_agg_driver.h"
+#include "core/src/fxge/agg/fx_agg_driver.h"
 #include "core/src/fxge/skia/fx_skia_device.h"
 
 #include "SkCanvas.h"

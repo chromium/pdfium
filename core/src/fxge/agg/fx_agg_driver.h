@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_SRC_FXGE_AGG_INCLUDE_FX_AGG_DRIVER_H_
-#define CORE_SRC_FXGE_AGG_INCLUDE_FX_AGG_DRIVER_H_
+#ifndef CORE_SRC_FXGE_AGG_FX_AGG_DRIVER_H_
+#define CORE_SRC_FXGE_AGG_FX_AGG_DRIVER_H_
 
 #include "core/include/fxge/fx_ge.h"
 #include "third_party/agg23/agg_clip_liang_barsky.h"
@@ -24,6 +24,7 @@ class CAgg_PathData {
 
   agg::path_storage m_PathData;
 };
+
 class CFX_AggDeviceDriver : public IFX_RenderDeviceDriver {
  public:
   CFX_AggDeviceDriver(CFX_DIBitmap* pBitmap,
@@ -132,8 +133,9 @@ class CFX_AggDeviceDriver : public IFX_RenderDeviceDriver {
 
   void SetClipMask(agg::rasterizer_scanline_aa& rasterizer);
 
-  virtual uint8_t* GetBuffer() const { return m_pBitmap->GetBuffer(); }
+  virtual uint8_t* GetBuffer() const;
 
+ private:
   CFX_DIBitmap* m_pBitmap;
   CFX_ClipRgn* m_pClipRgn;
   CFX_ArrayTemplate<CFX_ClipRgn*> m_StateStack;
@@ -147,4 +149,4 @@ class CFX_AggDeviceDriver : public IFX_RenderDeviceDriver {
   FX_BOOL m_bGroupKnockout;
 };
 
-#endif  // CORE_SRC_FXGE_AGG_INCLUDE_FX_AGG_DRIVER_H_
+#endif  // CORE_SRC_FXGE_AGG_FX_AGG_DRIVER_H_

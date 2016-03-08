@@ -7,7 +7,7 @@
 #include "core/include/fxcrt/fx_ext.h"
 #include "core/include/fxge/fx_freetype.h"
 #include "core/include/fxge/fx_ge.h"
-#include "core/src/fxge/agg/include/fx_agg_driver.h"
+#include "core/src/fxge/agg/fx_agg_driver.h"
 #include "core/src/fxge/dib/dib_int.h"
 #include "core/src/fxge/ge/fx_text_int.h"
 

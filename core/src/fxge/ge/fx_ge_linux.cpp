@@ -5,7 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "core/include/fxge/fx_ge.h"
-#include "core/src/fxge/agg/include/fx_agg_driver.h"
+#include "core/src/fxge/agg/fx_agg_driver.h"
 #include "core/src/fxge/ge/fx_text_int.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_LINUX_
