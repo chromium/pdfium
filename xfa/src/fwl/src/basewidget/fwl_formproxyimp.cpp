@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/fwl/src/basewidget/include/fwl_formproxyimp.h"
+#include "xfa/src/fwl/src/basewidget/fwl_formproxyimp.h"
 
-#include "xfa/src/fwl/src/core/include/fwl_formimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_panelimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+#include "xfa/src/fwl/src/core/fwl_formimp.h"
+#include "xfa/src/fwl/src/core/fwl_noteimp.h"
+#include "xfa/src/fwl/src/core/fwl_panelimp.h"
+#include "xfa/src/fwl/src/core/fwl_targetimp.h"
+#include "xfa/src/fwl/src/core/fwl_widgetimp.h"
 
 CFWL_FormProxyImp::CFWL_FormProxyImp(const CFWL_WidgetImpProperties& properties,
                                      IFWL_Widget* pOuter)

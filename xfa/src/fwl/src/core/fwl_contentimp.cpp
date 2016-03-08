@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/fwl/src/core/include/fwl_contentimp.h"
+#include "xfa/src/fwl/src/core/fwl_contentimp.h"
 
 #include "xfa/include/fwl/core/fwl_content.h"
-#include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_threadimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_widgetmgrimp.h"
+#include "xfa/src/fwl/src/core/fwl_noteimp.h"
+#include "xfa/src/fwl/src/core/fwl_targetimp.h"
+#include "xfa/src/fwl/src/core/fwl_threadimp.h"
+#include "xfa/src/fwl/src/core/fwl_widgetimp.h"
+#include "xfa/src/fwl/src/core/fwl_widgetmgrimp.h"
 
 FWL_ERR IFWL_Content::InsertWidget(IFWL_Widget* pChild, int32_t nIndex) {
   return static_cast<CFWL_ContentImp*>(GetImpl())->InsertWidget(pChild, nIndex);

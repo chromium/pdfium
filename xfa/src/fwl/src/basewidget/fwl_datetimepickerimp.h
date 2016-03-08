@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_DATETIMEPICKERIMP_H_
-#define XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_DATETIMEPICKERIMP_H_
+#ifndef XFA_SRC_FWL_SRC_BASEWIDGET_FWL_DATETIMEPICKERIMP_H_
+#define XFA_SRC_FWL_SRC_BASEWIDGET_FWL_DATETIMEPICKERIMP_H_
 
 #include <memory>
 
@@ -14,8 +14,8 @@
 #include "xfa/include/fwl/basewidget/fwl_datetimepicker.h"
 #include "xfa/include/fwl/basewidget/fwl_edit.h"
 #include "xfa/include/fwl/basewidget/fwl_monthcalendar.h"
-#include "xfa/src/fwl/src/basewidget/include/fwl_editimp.h"
-#include "xfa/src/fwl/src/basewidget/include/fwl_monthcalendarimp.h"
+#include "xfa/src/fwl/src/basewidget/fwl_editimp.h"
+#include "xfa/src/fwl/src/basewidget/fwl_monthcalendarimp.h"
 
 class CFWL_WidgetImp;
 class CFWL_WidgetImpProperties;
@@ -232,4 +232,4 @@ class CFWL_DateTimePickerImpDelegate : public CFWL_WidgetImpDelegate {
   void DisForm_OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet = TRUE);
 };
 
-#endif  // XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_DATETIMEPICKERIMP_H_
+#endif  // XFA_SRC_FWL_SRC_BASEWIDGET_FWL_DATETIMEPICKERIMP_H_

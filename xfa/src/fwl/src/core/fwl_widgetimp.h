@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_WIDGETIMP_H_
-#define XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_WIDGETIMP_H_
+#ifndef XFA_SRC_FWL_SRC_CORE_FWL_WIDGETIMP_H_
+#define XFA_SRC_FWL_SRC_CORE_FWL_WIDGETIMP_H_
 
 #include "xfa/include/fwl/core/fwl_widget.h"
-#include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
+#include "xfa/src/fwl/src/core/fwl_targetimp.h"
 
 class CFWL_NoteThreadImp;
 class CFWL_WidgetImpProperties;
@@ -159,4 +159,4 @@ class CFWL_WidgetImpDelegate : public IFWL_WidgetDelegate {
                        const CFX_Matrix* pMatrix = NULL) override;
 };
 
-#endif  // XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_WIDGETIMP_H_
+#endif  // XFA_SRC_FWL_SRC_CORE_FWL_WIDGETIMP_H_

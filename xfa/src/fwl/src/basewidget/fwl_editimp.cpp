@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/fwl/src/basewidget/include/fwl_editimp.h"
+#include "xfa/src/fwl/src/basewidget/fwl_editimp.h"
 
 #include <algorithm>
 
@@ -14,15 +14,15 @@
 #include "xfa/src/fdp/include/fde_rdr.h"
 #include "xfa/src/fdp/include/fde_rdv.h"
 #include "xfa/src/fee/include/ifde_txtedtpage.h"
-#include "xfa/src/fwl/src/basewidget/include/fwl_caretimp.h"
-#include "xfa/src/fwl/src/basewidget/include/fwl_comboboximp.h"
-#include "xfa/src/fwl/src/basewidget/include/fwl_scrollbarimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_appimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_threadimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_widgetmgrimp.h"
+#include "xfa/src/fwl/src/basewidget/fwl_caretimp.h"
+#include "xfa/src/fwl/src/basewidget/fwl_comboboximp.h"
+#include "xfa/src/fwl/src/basewidget/fwl_scrollbarimp.h"
+#include "xfa/src/fwl/src/core/fwl_appimp.h"
+#include "xfa/src/fwl/src/core/fwl_noteimp.h"
+#include "xfa/src/fwl/src/core/fwl_targetimp.h"
+#include "xfa/src/fwl/src/core/fwl_threadimp.h"
+#include "xfa/src/fwl/src/core/fwl_widgetimp.h"
+#include "xfa/src/fwl/src/core/fwl_widgetmgrimp.h"
 
 // static
 IFWL_Edit* IFWL_Edit::Create(const CFWL_WidgetImpProperties& properties,

@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_PICTUREBOXIMP_H_
-#define XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_PICTUREBOXIMP_H_
+#ifndef XFA_SRC_FWL_SRC_BASEWIDGET_FWL_PICTUREBOXIMP_H_
+#define XFA_SRC_FWL_SRC_BASEWIDGET_FWL_PICTUREBOXIMP_H_
 
-#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+#include "xfa/src/fwl/src/core/fwl_widgetimp.h"
 
 class CFWL_WidgetImpProperties;
 class IFWL_Widget;
@@ -50,4 +50,4 @@ class CFWL_PictureBoxImpDelegate : public CFWL_WidgetImpDelegate {
   CFWL_PictureBoxImp* m_pOwner;
 };
 
-#endif  // XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_PICTUREBOXIMP_H_
+#endif  // XFA_SRC_FWL_SRC_BASEWIDGET_FWL_PICTUREBOXIMP_H_

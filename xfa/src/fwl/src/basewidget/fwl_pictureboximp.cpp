@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/fwl/src/basewidget/include/fwl_pictureboximp.h"
+#include "xfa/src/fwl/src/basewidget/fwl_pictureboximp.h"
 
 #include "xfa/include/fwl/lightwidget/picturebox.h"
-#include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+#include "xfa/src/fwl/src/core/fwl_noteimp.h"
+#include "xfa/src/fwl/src/core/fwl_targetimp.h"
+#include "xfa/src/fwl/src/core/fwl_widgetimp.h"
 
 // static
 IFWL_PictureBox* IFWL_PictureBox::Create(

@@ -7,7 +7,7 @@
 #ifndef XFA_INCLUDE_FWL_BASEWIDGET_FWL_PICTUREBOX_H_
 #define XFA_INCLUDE_FWL_BASEWIDGET_FWL_PICTUREBOX_H_
 
-#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+#include "xfa/src/fwl/src/core/fwl_widgetimp.h"
 
 #define FWL_CLASS_PictureBox L"FWL_PICTUREBOX"
 #define FWL_CLASSHASH_PictureBox 2974721741

@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_APPIMP_H_
-#define XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_APPIMP_H_
+#ifndef XFA_SRC_FWL_SRC_CORE_FWL_APPIMP_H_
+#define XFA_SRC_FWL_SRC_CORE_FWL_APPIMP_H_
 
 #include <memory>
 
-#include "xfa/src/fwl/src/core/include/fwl_threadimp.h"
+#include "xfa/src/fwl/src/core/fwl_threadimp.h"
 
 class CFWL_WidgetMgr;
 class IFWL_AdapterNative;
@@ -35,4 +35,4 @@ class CFWL_AppImp : public CFWL_NoteThreadImp {
   IFWL_ThemeProvider* m_pThemeProvider;
 };
 
-#endif  // XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_APPIMP_H_
+#endif  // XFA_SRC_FWL_SRC_CORE_FWL_APPIMP_H_

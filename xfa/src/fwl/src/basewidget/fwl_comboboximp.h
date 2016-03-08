@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_COMBOBOXIMP_H_
-#define XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_COMBOBOXIMP_H_
+#ifndef XFA_SRC_FWL_SRC_BASEWIDGET_FWL_COMBOBOXIMP_H_
+#define XFA_SRC_FWL_SRC_BASEWIDGET_FWL_COMBOBOXIMP_H_
 
 #include <memory>
 
-#include "xfa/src/fwl/src/basewidget/include/fwl_editimp.h"
-#include "xfa/src/fwl/src/basewidget/include/fwl_listboximp.h"
+#include "xfa/src/fwl/src/basewidget/fwl_editimp.h"
+#include "xfa/src/fwl/src/basewidget/fwl_listboximp.h"
 
 class CFWL_WidgetImp;
 class CFWL_WidgetImpProperties;
@@ -234,4 +234,4 @@ class CFWL_ComboProxyImpDelegate : public CFWL_WidgetImpDelegate {
   CFWL_ComboBoxImp* m_pComboBox;
 };
 
-#endif  // XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_COMBOBOXIMP_H_
+#endif  // XFA_SRC_FWL_SRC_BASEWIDGET_FWL_COMBOBOXIMP_H_

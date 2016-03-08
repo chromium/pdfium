@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_BARCODEIMP_H_
-#define XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_BARCODEIMP_H_
+#ifndef XFA_SRC_FWL_SRC_BASEWIDGET_FWL_BARCODEIMP_H_
+#define XFA_SRC_FWL_SRC_BASEWIDGET_FWL_BARCODEIMP_H_
 
 #include "xfa/include/fwl/basewidget/fwl_barcode.h"
 #include "xfa/include/fwl/basewidget/fwl_scrollbar.h"
 #include "xfa/include/fwl/basewidget/fxmath_barcode.h"
-#include "xfa/src/fwl/src/basewidget/include/fwl_editimp.h"
+#include "xfa/src/fwl/src/basewidget/fwl_editimp.h"
 
 class CFWL_WidgetImpProperties;
 class CFWL_BarcodeImpDelegate;
@@ -51,4 +51,4 @@ class CFWL_BarcodeImpDelegate : public CFWL_EditImpDelegate {
   FWL_ERR OnProcessEvent(CFWL_Event* pEvent) override;
 };
 
-#endif  // XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_BARCODEIMP_H_
+#endif  // XFA_SRC_FWL_SRC_BASEWIDGET_FWL_BARCODEIMP_H_

@@ -4,21 +4,21 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
+#include "xfa/src/fwl/src/core/fwl_noteimp.h"
 
 #include "core/include/fxcrt/fx_ext.h"
 #include "xfa/include/fwl/adapter/fwl_adapterwidgetmgr.h"
 #include "xfa/include/fwl/basewidget/fwl_tooltipctrl.h"
 #include "xfa/include/fwl/core/fwl_app.h"
 #include "xfa/include/fwl/core/fwl_grid.h"
-#include "xfa/src/fwl/src/basewidget/include/fwl_tooltipctrlimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_appimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_formimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_panelimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_threadimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_widgetmgrimp.h"
+#include "xfa/src/fwl/src/basewidget/fwl_tooltipctrlimp.h"
+#include "xfa/src/fwl/src/core/fwl_appimp.h"
+#include "xfa/src/fwl/src/core/fwl_formimp.h"
+#include "xfa/src/fwl/src/core/fwl_panelimp.h"
+#include "xfa/src/fwl/src/core/fwl_targetimp.h"
+#include "xfa/src/fwl/src/core/fwl_threadimp.h"
+#include "xfa/src/fwl/src/core/fwl_widgetimp.h"
+#include "xfa/src/fwl/src/core/fwl_widgetmgrimp.h"
 
 CFWL_NoteLoop::CFWL_NoteLoop(CFWL_WidgetImp* pForm)
     : m_pForm(pForm), m_bContinueModal(TRUE) {}

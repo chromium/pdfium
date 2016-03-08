@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_MONTHCALENDARIMP_H_
-#define XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_MONTHCALENDARIMP_H_
+#ifndef XFA_SRC_FWL_SRC_BASEWIDGET_FWL_MONTHCALENDARIMP_H_
+#define XFA_SRC_FWL_SRC_BASEWIDGET_FWL_MONTHCALENDARIMP_H_
 
 #include "xfa/src/fgas/include/fx_datetime.h"
-#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+#include "xfa/src/fwl/src/core/fwl_widgetimp.h"
 
 class CFWL_WidgetImpProperties;
 class IFWL_Widget;
@@ -240,4 +240,4 @@ class CFWL_MonthCalendarImpDelegate : public CFWL_WidgetImpDelegate {
   CFWL_MonthCalendarImp* m_pOwner;
 };
 
-#endif  // XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_MONTHCALENDARIMP_H_
+#endif  // XFA_SRC_FWL_SRC_BASEWIDGET_FWL_MONTHCALENDARIMP_H_

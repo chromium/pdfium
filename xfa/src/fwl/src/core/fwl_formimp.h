@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_FORMIMP_H_
-#define XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_FORMIMP_H_
+#ifndef XFA_SRC_FWL_SRC_CORE_FWL_FORMIMP_H_
+#define XFA_SRC_FWL_SRC_CORE_FWL_FORMIMP_H_
 
 #include "xfa/include/fwl/core/fwl_form.h"
-#include "xfa/src/fwl/src/core/include/fwl_panelimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+#include "xfa/src/fwl/src/core/fwl_panelimp.h"
+#include "xfa/src/fwl/src/core/fwl_widgetimp.h"
 
 class CFWL_NoteLoop;
 class CFWL_WidgetImpProperties;
@@ -190,4 +190,4 @@ class CFWL_FormImpDelegate : public CFWL_WidgetImpDelegate {
   CFWL_FormImp* m_pOwner;
 };
 
-#endif  // XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_FORMIMP_H_
+#endif  // XFA_SRC_FWL_SRC_CORE_FWL_FORMIMP_H_

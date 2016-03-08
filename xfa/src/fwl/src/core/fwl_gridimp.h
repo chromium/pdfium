@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_GRIDIMP_H_
-#define XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_GRIDIMP_H_
+#ifndef XFA_SRC_FWL_SRC_CORE_FWL_GRIDIMP_H_
+#define XFA_SRC_FWL_SRC_CORE_FWL_GRIDIMP_H_
 
 #include "xfa/include/fwl/core/fwl_app.h"
 #include "xfa/include/fwl/core/fwl_content.h"
 #include "xfa/include/fwl/core/fwl_grid.h"
-#include "xfa/src/fwl/src/core/include/fwl_contentimp.h"
+#include "xfa/src/fwl/src/core/fwl_contentimp.h"
 
 class CFWL_GridLength {
  public:
@@ -194,4 +194,4 @@ class CFWL_GridImpDelegate : public CFWL_WidgetImpDelegate {
   CFWL_GridImp* m_pOwner;
 };
 
-#endif  // XFA_SRC_FWL_SRC_CORE_INCLUDE_FWL_GRIDIMP_H_
+#endif  // XFA_SRC_FWL_SRC_CORE_FWL_GRIDIMP_H_

@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/fwl/src/basewidget/include/fwl_spinbuttonimp.h"
+#include "xfa/src/fwl/src/basewidget/fwl_spinbuttonimp.h"
 
 #include "xfa/include/fwl/basewidget/fwl_spinbutton.h"
 #include "xfa/include/fwl/core/fwl_theme.h"
 #include "xfa/include/fwl/core/fwl_timer.h"
-#include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+#include "xfa/src/fwl/src/core/fwl_noteimp.h"
+#include "xfa/src/fwl/src/core/fwl_targetimp.h"
+#include "xfa/src/fwl/src/core/fwl_widgetimp.h"
 
 #define FWL_SPN_MinWidth 18
 #define FWL_SPN_MinHeight 32

@@ -10,10 +10,10 @@
 #include "xfa/include/fwl/adapter/fwl_adapterthreadmgr.h"
 #include "xfa/include/fwl/adapter/fwl_adapterwidgetmgr.h"
 #include "xfa/include/fwl/core/fwl_app.h"
-#include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_threadimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_widgetmgrimp.h"
+#include "xfa/src/fwl/src/core/fwl_noteimp.h"
+#include "xfa/src/fwl/src/core/fwl_targetimp.h"
+#include "xfa/src/fwl/src/core/fwl_threadimp.h"
+#include "xfa/src/fwl/src/core/fwl_widgetmgrimp.h"
 
 CFWL_SDAdapterWidgetMgr::CFWL_SDAdapterWidgetMgr() {}
 CFWL_SDAdapterWidgetMgr::~CFWL_SDAdapterWidgetMgr() {}

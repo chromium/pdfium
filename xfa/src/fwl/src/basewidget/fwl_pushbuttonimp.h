@@ -4,61 +4,62 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_CHECKBOXIMP_H_
-#define XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_CHECKBOXIMP_H_
+#ifndef XFA_SRC_FWL_SRC_BASEWIDGET_FWL_PUSHBUTTONIMP_H_
+#define XFA_SRC_FWL_SRC_BASEWIDGET_FWL_PUSHBUTTONIMP_H_
 
-#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+#include "xfa/src/fwl/src/core/fwl_widgetimp.h"
 
 class CFWL_WidgetImpProperties;
 class IFWL_Widget;
-class CFWL_CheckBoxImpDelegate;
+class CFWL_PushButtonImpDelegate;
 
-class CFWL_CheckBoxImp : public CFWL_WidgetImp {
+class CFWL_PushButtonImp : public CFWL_WidgetImp {
  public:
-  CFWL_CheckBoxImp(const CFWL_WidgetImpProperties& properties,
-                   IFWL_Widget* pOuter);
-  ~CFWL_CheckBoxImp();
+  CFWL_PushButtonImp(const CFWL_WidgetImpProperties& properties,
+                     IFWL_Widget* pOuter);
+  virtual ~CFWL_PushButtonImp();
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
   virtual FX_DWORD GetClassID() const;
   virtual FWL_ERR Initialize();
   virtual FWL_ERR Finalize();
   virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
+  virtual FWL_ERR SetStates(FX_DWORD dwStates, FX_BOOL bSet = TRUE);
   virtual FWL_ERR Update();
   virtual FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
                              const CFX_Matrix* pMatrix = NULL);
-  virtual int32_t GetCheckState();
-  virtual FWL_ERR SetCheckState(int32_t iCheck);
 
  protected:
-  void Layout();
+  void DrawBkground(CFX_Graphics* pGraphics,
+                    IFWL_ThemeProvider* pTheme,
+                    const CFX_Matrix* pMatrix);
+  void DrawText(CFX_Graphics* pGraphics,
+                IFWL_ThemeProvider* pTheme,
+                const CFX_Matrix* pMatrix);
   FX_DWORD GetPartStates();
   void UpdateTextOutStyles();
-  void NextStates();
   CFX_RectF m_rtClient;
-  CFX_RectF m_rtBox;
   CFX_RectF m_rtCaption;
-  CFX_RectF m_rtFocus;
+  FX_BOOL m_bBtnDown;
   FX_DWORD m_dwTTOStyles;
   int32_t m_iTTOAlign;
-  FX_BOOL m_bBtnDown;
-  friend class CFWL_CheckBoxImpDelegate;
+  friend class CFWL_PushButtonImpDelegate;
 };
-class CFWL_CheckBoxImpDelegate : public CFWL_WidgetImpDelegate {
+class CFWL_PushButtonImpDelegate : public CFWL_WidgetImpDelegate {
  public:
-  CFWL_CheckBoxImpDelegate(CFWL_CheckBoxImp* pOwner);
+  CFWL_PushButtonImpDelegate(CFWL_PushButtonImp* pOwner);
   int32_t OnProcessMessage(CFWL_Message* pMessage) override;
+  FWL_ERR OnProcessEvent(CFWL_Event* pEvent) override;
   FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
                        const CFX_Matrix* pMatrix = NULL) override;
 
  protected:
-  void OnActivate(CFWL_Message* pMsg);
   void OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet = TRUE);
   void OnLButtonDown(CFWL_MsgMouse* pMsg);
   void OnLButtonUp(CFWL_MsgMouse* pMsg);
   void OnMouseMove(CFWL_MsgMouse* pMsg);
   void OnMouseLeave(CFWL_MsgMouse* pMsg);
   void OnKeyDown(CFWL_MsgKey* pMsg);
-  CFWL_CheckBoxImp* m_pOwner;
+  CFWL_PushButtonImp* m_pOwner;
 };
 
-#endif  // XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_CHECKBOXIMP_H_
+#endif  // XFA_SRC_FWL_SRC_BASEWIDGET_FWL_PUSHBUTTONIMP_H_

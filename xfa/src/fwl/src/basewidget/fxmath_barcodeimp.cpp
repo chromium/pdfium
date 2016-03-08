@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/fwl/src/basewidget/include/fxmath_barcodeimp.h"
+#include "xfa/src/fwl/src/basewidget/fxmath_barcodeimp.h"
 
 static CBC_CodeBase* FX_Barcode_CreateBarCodeEngineObject(BC_TYPE type) {
   switch (type) {

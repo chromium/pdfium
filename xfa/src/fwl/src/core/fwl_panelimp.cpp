@@ -4,15 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/fwl/src/core/include/fwl_panelimp.h"
+#include "xfa/src/fwl/src/core/fwl_panelimp.h"
 
 #include "xfa/include/fwl/core/fwl_content.h"
 #include "xfa/include/fwl/core/fwl_grid.h"
 #include "xfa/include/fwl/core/fwl_panel.h"
-#include "xfa/src/fwl/src/core/include/fwl_noteimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_targetimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
-#include "xfa/src/fwl/src/core/include/fwl_widgetmgrimp.h"
+#include "xfa/src/fwl/src/core/fwl_noteimp.h"
+#include "xfa/src/fwl/src/core/fwl_targetimp.h"
+#include "xfa/src/fwl/src/core/fwl_widgetimp.h"
+#include "xfa/src/fwl/src/core/fwl_widgetmgrimp.h"
 
 // static
 IFWL_Panel* IFWL_Panel::Create(CFWL_WidgetImpProperties& properties,

@@ -4,15 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_EDITIMP_H_
-#define XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_EDITIMP_H_
+#ifndef XFA_SRC_FWL_SRC_BASEWIDGET_FWL_EDITIMP_H_
+#define XFA_SRC_FWL_SRC_BASEWIDGET_FWL_EDITIMP_H_
 
 #include <memory>
 #include <vector>
 
 #include "xfa/include/fwl/basewidget/fwl_scrollbar.h"
 #include "xfa/src/fee/include/ifde_txtedtengine.h"
-#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+#include "xfa/src/fwl/src/core/fwl_widgetimp.h"
 
 class CFWL_WidgetImpProperties;
 class CFWL_WidgetImpDelegate;
@@ -205,4 +205,4 @@ class CFWL_EditImpDelegate : public CFWL_WidgetImpDelegate {
   CFWL_EditImp* m_pOwner;
 };
 
-#endif  // XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_EDITIMP_H_
+#endif  // XFA_SRC_FWL_SRC_BASEWIDGET_FWL_EDITIMP_H_

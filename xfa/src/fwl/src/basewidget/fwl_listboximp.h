@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_LISTBOXIMP_H_
-#define XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_LISTBOXIMP_H_
+#ifndef XFA_SRC_FWL_SRC_BASEWIDGET_FWL_LISTBOXIMP_H_
+#define XFA_SRC_FWL_SRC_BASEWIDGET_FWL_LISTBOXIMP_H_
 
 #include <memory>
 
@@ -13,7 +13,7 @@
 #include "xfa/include/fwl/basewidget/fwl_edit.h"
 #include "xfa/include/fwl/basewidget/fwl_listbox.h"
 #include "xfa/include/fwl/basewidget/fwl_scrollbar.h"
-#include "xfa/src/fwl/src/core/include/fwl_widgetimp.h"
+#include "xfa/src/fwl/src/core/fwl_widgetimp.h"
 
 class CFWL_ListBoxImpDelegate;
 
@@ -118,4 +118,4 @@ class CFWL_ListBoxImpDelegate : public CFWL_WidgetImpDelegate {
   CFWL_ListBoxImp* m_pOwner;
 };
 
-#endif  // XFA_SRC_FWL_SRC_BASEWIDGET_INCLUDE_FWL_LISTBOXIMP_H_
+#endif  // XFA_SRC_FWL_SRC_BASEWIDGET_FWL_LISTBOXIMP_H_
