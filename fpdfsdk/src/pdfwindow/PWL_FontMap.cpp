@@ -6,6 +6,7 @@
 
 #include "fpdfsdk/include/pdfwindow/PWL_FontMap.h"
 
+#include "core/include/fpdfapi/cpdf_document.h"
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
 

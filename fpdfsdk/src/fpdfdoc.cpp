@@ -8,6 +8,7 @@
 
 #include <set>
 
+#include "core/include/fpdfapi/cpdf_document.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "third_party/base/stl_util.h"
 

@@ -4,11 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/include/fpdfapi/fpdf_parser.h"
+#include "core/include/fpdfapi/cpdf_document.h"
 
 #include <set>
 
 #include "core/include/fpdfapi/fpdf_module.h"
+#include "core/include/fpdfapi/fpdf_parser.h"
+#include "core/include/fxge/fx_font.h"
+#include "core/src/fpdfapi/fpdf_render/render_int.h"
 #include "third_party/base/stl_util.h"
 
 namespace {
@@ -335,4 +338,13 @@ void CPDF_Document::ClearPageData() {
 void CPDF_Document::ClearRenderData() {
   if (m_pDocRender)
     CPDF_ModuleMgr::Get()->GetRenderModule()->ClearDocData(m_pDocRender);
+}
+
+void CPDF_Document::ClearRenderFont() {
+  if (!m_pDocRender)
+    return;
+
+  CFX_FontCache* pCache = m_pDocRender->GetFontCache();
+  if (pCache)
+    pCache->FreeCache(FALSE);
 }

@@ -6,6 +6,7 @@
 
 #include "xfa/src/fxfa/app/xfa_ffdoc.h"
 
+#include "core/include/fpdfapi/cpdf_document.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
 #include "core/include/fxcrt/fx_ext.h"
 #include "xfa/include/fwl/core/fwl_note.h"

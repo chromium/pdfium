@@ -6,6 +6,7 @@
 
 #include "public/fpdf_save.h"
 
+#include "core/include/fpdfapi/cpdf_document.h"
 #include "core/include/fpdfapi/fpdf_parser.h"
 #include "core/include/fpdfapi/fpdf_serial.h"
 #include "fpdfsdk/include/fsdk_define.h"

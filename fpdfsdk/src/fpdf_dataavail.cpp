@@ -6,6 +6,7 @@
 
 #include "public/fpdf_dataavail.h"
 
+#include "core/include/fpdfapi/cpdf_document.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "public/fpdf_formfill.h"
 

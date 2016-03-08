@@ -4,11 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "fpdfsdk/include/fsdk_mgr.h"
+
 #include <algorithm>
 #include <memory>
 
-#include "fpdfsdk/include/fsdk_mgr.h"
-
+#include "core/include/fpdfapi/cpdf_document.h"
 #include "fpdfsdk/include/formfiller/FFL_FormFiller.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/include/javascript/IJavaScript.h"

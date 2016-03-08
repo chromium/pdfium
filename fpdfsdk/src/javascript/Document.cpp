@@ -6,6 +6,7 @@
 
 #include "fpdfsdk/src/javascript/Document.h"
 
+#include "core/include/fpdfapi/cpdf_document.h"
 #include "fpdfsdk/include/fsdk_mgr.h"  // For CPDFDoc_Environment.
 #include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "fpdfsdk/src/javascript/Field.h"

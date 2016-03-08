@@ -6,6 +6,7 @@
 
 #include "fpdfsdk/include/formfiller/FFL_CBA_Fontmap.h"
 
+#include "core/include/fpdfapi/cpdf_document.h"
 #include "core/include/fpdfapi/fpdf_page.h"
 #include "fpdfsdk/include/fsdk_baseannot.h"
 

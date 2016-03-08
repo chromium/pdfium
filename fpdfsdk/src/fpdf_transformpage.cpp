@@ -6,6 +6,7 @@
 
 #include "public/fpdf_transformpage.h"
 
+#include "core/include/fpdfapi/cpdf_document.h"
 #include "fpdfsdk/include/fsdk_define.h"
 
 namespace {

@@ -6,6 +6,7 @@
 
 #include "core/src/fpdfapi/fpdf_render/render_int.h"
 
+#include "core/include/fpdfapi/cpdf_document.h"
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_render.h"
 #include "core/include/fxge/fx_ge.h"

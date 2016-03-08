@@ -6,6 +6,7 @@
 
 #include <algorithm>
 
+#include "core/include/fpdfapi/cpdf_document.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
 
 CPDF_FormControl::CPDF_FormControl(CPDF_FormField* pField,

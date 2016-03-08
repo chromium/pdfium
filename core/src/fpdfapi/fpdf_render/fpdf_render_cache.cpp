@@ -6,6 +6,7 @@
 
 #include "core/src/fpdfapi/fpdf_render/render_int.h"
 
+#include "core/include/fpdfapi/cpdf_document.h"
 #include "core/include/fpdfapi/fpdf_pageobj.h"
 #include "core/include/fpdfapi/fpdf_render.h"
 #include "core/include/fxge/fx_ge.h"
@@ -330,12 +331,4 @@ int CPDF_ImageCacheEntry::Continue(IFX_Pause* pPause) {
 void CPDF_ImageCacheEntry::CalcSize() {
   m_dwCacheSize = FPDF_ImageCache_EstimateImageSize(m_pCachedBitmap) +
                   FPDF_ImageCache_EstimateImageSize(m_pCachedMask);
-}
-void CPDF_Document::ClearRenderFont() {
-  if (m_pDocRender) {
-    CFX_FontCache* pCache = m_pDocRender->GetFontCache();
-    if (pCache) {
-      pCache->FreeCache(FALSE);
-    }
-  }
 }

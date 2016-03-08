@@ -237,6 +237,7 @@ static_library("fpdfdoc") {
 
 static_library("fpdfapi") {
   sources = [
+    "core/include/fpdfapi/cpdf_document.h",
     "core/include/fpdfapi/fpdf_module.h",
     "core/include/fpdfapi/fpdf_objects.h",
     "core/include/fpdfapi/fpdf_page.h",
@@ -331,10 +332,10 @@ static_library("fpdfapi") {
     "core/src/fpdfapi/fpdf_page/fpdf_page_path.cpp",
     "core/src/fpdfapi/fpdf_page/fpdf_page_pattern.cpp",
     "core/src/fpdfapi/fpdf_page/pageint.h",
+    "core/src/fpdfapi/fpdf_parser/cpdf_document.cpp",
     "core/src/fpdfapi/fpdf_parser/cpdf_syntax_parser.cpp",
     "core/src/fpdfapi/fpdf_parser/cpdf_syntax_parser.h",
     "core/src/fpdfapi/fpdf_parser/fpdf_parser_decode.cpp",
-    "core/src/fpdfapi/fpdf_parser/fpdf_parser_document.cpp",
     "core/src/fpdfapi/fpdf_parser/fpdf_parser_encrypt.cpp",
     "core/src/fpdfapi/fpdf_parser/fpdf_parser_fdf.cpp",
     "core/src/fpdfapi/fpdf_parser/fpdf_parser_objects.cpp",

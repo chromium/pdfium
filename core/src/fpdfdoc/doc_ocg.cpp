@@ -4,6 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/include/fpdfapi/cpdf_document.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
 
 static int32_t FPDFDOC_OCG_FindGroup(const CPDF_Object* pObject,
