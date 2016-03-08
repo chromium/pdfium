@@ -28,6 +28,7 @@ class CPDF_Object;
 class CPDF_Parser;
 class CPDF_Pattern;
 class CPDF_StandardSecurityHandler;
+class CPDF_SyntaxParser;
 class IPDF_SecurityHandler;
 
 #define FPDFPERM_PRINT 0x0004
@@ -231,81 +232,6 @@ class CPDF_SimpleParser {
   FX_DWORD m_dwCurPos;
 };
 
-class CPDF_SyntaxParser {
- public:
-  CPDF_SyntaxParser();
-  ~CPDF_SyntaxParser();
-
-  void InitParser(IFX_FileRead* pFileAccess, FX_DWORD HeaderOffset);
-
-  FX_FILESIZE SavePos() const { return m_Pos; }
-  void RestorePos(FX_FILESIZE pos) { m_Pos = pos; }
-
-  CPDF_Object* GetObject(CPDF_IndirectObjectHolder* pObjList,
-                         FX_DWORD objnum,
-                         FX_DWORD gennum,
-                         FX_BOOL bDecrypt);
-  CPDF_Object* GetObjectByStrict(CPDF_IndirectObjectHolder* pObjList,
-                                 FX_DWORD objnum,
-                                 FX_DWORD gennum);
-  CFX_ByteString GetKeyword();
-
-  void ToNextLine();
-  void ToNextWord();
-
-  FX_BOOL SearchWord(const CFX_ByteStringC& word,
-                     FX_BOOL bWholeWord,
-                     FX_BOOL bForward,
-                     FX_FILESIZE limit);
-  int SearchMultiWord(const CFX_ByteStringC& words,
-                      FX_BOOL bWholeWord,
-                      FX_FILESIZE limit);
-  FX_FILESIZE FindTag(const CFX_ByteStringC& tag, FX_FILESIZE limit);
-
-  void SetEncrypt(std::unique_ptr<CPDF_CryptoHandler> pCryptoHandler);
-
-  FX_BOOL ReadBlock(uint8_t* pBuf, FX_DWORD size);
-  FX_BOOL GetCharAt(FX_FILESIZE pos, uint8_t& ch);
-  CFX_ByteString GetNextWord(bool* bIsNumber);
-
- private:
-  friend class CPDF_Parser;
-  friend class CPDF_DataAvail;
-  friend class fpdf_parser_parser_ReadHexString_Test;
-
-  static const int kParserMaxRecursionDepth = 64;
-  static int s_CurrentRecursionDepth;
-
-  uint32_t GetDirectNum();
-
-  FX_BOOL GetNextChar(uint8_t& ch);
-  FX_BOOL GetCharAtBackward(FX_FILESIZE pos, uint8_t& ch);
-  void GetNextWordInternal(bool* bIsNumber);
-  bool IsWholeWord(FX_FILESIZE startpos,
-                   FX_FILESIZE limit,
-                   const CFX_ByteStringC& tag,
-                   FX_BOOL checkKeyword);
-
-  CFX_ByteString ReadString();
-  CFX_ByteString ReadHexString();
-  unsigned int ReadEOLMarkers(FX_FILESIZE pos);
-  CPDF_Stream* ReadStream(CPDF_Dictionary* pDict,
-                          FX_DWORD objnum,
-                          FX_DWORD gennum);
-
-  FX_FILESIZE m_Pos;
-  int m_MetadataObjnum;
-  IFX_FileRead* m_pFileAccess;
-  FX_DWORD m_HeaderOffset;
-  FX_FILESIZE m_FileLen;
-  uint8_t* m_pFileBuf;
-  FX_DWORD m_BufSize;
-  FX_FILESIZE m_BufOffset;
-  std::unique_ptr<CPDF_CryptoHandler> m_pCryptoHandler;
-  uint8_t m_WordBuffer[257];
-  FX_DWORD m_WordSize;
-};
-
 class CPDF_Parser {
  public:
   enum Error {
@@ -324,11 +250,6 @@ class CPDF_Parser {
 
   void SetPassword(const FX_CHAR* password) { m_Password = password; }
   CFX_ByteString GetPassword() { return m_Password; }
-
-  CPDF_CryptoHandler* GetCryptoHandler() {
-    return m_Syntax.m_pCryptoHandler.get();
-  }
-
   CPDF_Dictionary* GetTrailer() const { return m_pTrailer; }
   FX_FILESIZE GetLastXRefOffset() const { return m_LastXRefOffset; }
   CPDF_Document* GetDocument() const { return m_pDocument; }
@@ -350,12 +271,13 @@ class CPDF_Parser {
   bool IsVersionUpdated() const { return m_bVersionUpdated; }
   bool IsObjectFreeOrNull(FX_DWORD objnum) const;
   FX_BOOL IsFormStream(FX_DWORD objnum, FX_BOOL& bForm);
+  CPDF_CryptoHandler* GetCryptoHandler();
+  IFX_FileRead* GetFileAccess() const;
 
   FX_FILESIZE GetObjectOffset(FX_DWORD objnum) const;
   FX_FILESIZE GetObjectSize(FX_DWORD objnum) const;
 
   void GetIndirectBinary(FX_DWORD objnum, uint8_t*& pBuffer, FX_DWORD& size);
-  IFX_FileRead* GetFileAccess() const { return m_Syntax.m_pFileAccess; }
   int GetFileVersion() const { return m_FileVersion; }
   FX_BOOL IsXRefStream() const { return m_bXRefStream; }
 
@@ -402,7 +324,7 @@ class CPDF_Parser {
   void ShrinkObjectMap(FX_DWORD size);
 
   CPDF_Document* m_pDocument;
-  CPDF_SyntaxParser m_Syntax;
+  std::unique_ptr<CPDF_SyntaxParser> m_pSyntax;
   bool m_bOwnFileRead;
   int m_FileVersion;
   CPDF_Dictionary* m_pTrailer;

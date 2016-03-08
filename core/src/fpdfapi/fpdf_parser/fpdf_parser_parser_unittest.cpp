@@ -4,6 +4,7 @@
 
 #include "core/include/fpdfapi/fpdf_parser.h"
 #include "core/include/fxcrt/fx_stream.h"
+#include "core/src/fpdfapi/fpdf_parser/cpdf_syntax_parser.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/path_service.h"
 
@@ -45,7 +46,7 @@ class CPDF_TestParser : public CPDF_Parser {
       return false;
 
     // For the test file, the header is set at the beginning.
-    m_Syntax.InitParser(pFileAccess, 0);
+    m_pSyntax->InitParser(pFileAccess, 0);
     return true;
   }
 
@@ -54,7 +55,7 @@ class CPDF_TestParser : public CPDF_Parser {
     CFX_TestBufferRead* buffer_reader = new CFX_TestBufferRead(buffer, len);
 
     // For the test file, the header is set at the beginning.
-    m_Syntax.InitParser(buffer_reader, 0);
+    m_pSyntax->InitParser(buffer_reader, 0);
     return true;
   }
 
