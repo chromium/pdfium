@@ -11,6 +11,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/include/fpdfapi/cpdf_document.h"
 #include "core/include/fpdftext/fpdf_text.h"
 #include "fpdfsdk/include/fsdk_actionhandler.h"
 #include "fpdfsdk/include/fsdk_annothandler.h"
@@ -31,7 +32,6 @@
 class CFFL_IFormFiller;
 class CPDFSDK_ActionHandler;
 class CPDFSDK_Annot;
-class CPDFSDK_Document;
 class CPDFSDK_InterForm;
 class CPDFSDK_PageView;
 class CPDFSDK_Widget;
