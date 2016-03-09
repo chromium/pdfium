@@ -8,7 +8,7 @@
 #define XFA_SRC_FXFA_PARSER_XFA_UTILS_H_
 
 #include "xfa/include/fxfa/fxfa_basic.h"
-#include "xfa/src/fdp/include/fde_xml.h"
+#include "xfa/src/fde/xml/fde_xml.h"
 
 class CXFA_LocaleValue;
 

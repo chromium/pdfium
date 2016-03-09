@@ -8,7 +8,7 @@
 #define XFA_SRC_FEE_IFDE_TXTEDTPAGE_H_
 
 #include "core/include/fxge/fx_ge.h"
-#include "xfa/src/fdp/include/fde_psr.h"
+#include "xfa/src/fde/fde_visualset.h"
 #include "xfa/src/fgas/layout/fgas_textbreak.h"
 
 class IFDE_TxtEdtEngine;

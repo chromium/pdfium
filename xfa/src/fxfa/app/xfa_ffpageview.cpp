@@ -6,7 +6,7 @@
 
 #include "xfa/src/fxfa/app/xfa_ffpageview.h"
 
-#include "xfa/src/fdp/include/fde_rdr.h"
+#include "xfa/src/fde/fde_render.h"
 #include "xfa/src/fxfa/app/xfa_ffcheckbutton.h"
 #include "xfa/src/fxfa/app/xfa_ffchoicelist.h"
 #include "xfa/src/fxfa/app/xfa_ffdoc.h"

@@ -8,12 +8,12 @@
 
 #include <algorithm>
 
+#include "xfa/src/fde/tto/fde_textout.h"
 #include "xfa/src/fee/fde_txtedtbuf.h"
 #include "xfa/src/fee/fde_txtedtparag.h"
 #include "xfa/src/fee/ifde_txtedtbuf.h"
 #include "xfa/src/fee/ifde_txtedtengine.h"
 #include "xfa/src/fee/ifde_txtedtpage.h"
-#include "xfa/src/fdp/include/fde_tto.h"
 
 #define FDE_PAGEWIDTH_MAX 0xFFFF
 #define FDE_TXTPLATESIZE (1024 * 12)

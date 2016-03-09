@@ -9,7 +9,7 @@
 #include <algorithm>
 
 #include "core/include/fxcrt/fx_ext.h"
-#include "xfa/src/fdp/include/fde_pen.h"
+#include "xfa/src/fde/fde_pen.h"
 #include "xfa/src/fgas/crt/fgas_algorithm.h"
 #include "xfa/src/fgas/crt/fgas_codepage.h"
 #include "xfa/src/fxfa/app/xfa_ffapp.h"

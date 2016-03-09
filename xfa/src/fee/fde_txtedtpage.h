@@ -9,7 +9,7 @@
 
 #include "core/include/fxcrt/fx_coordinates.h"
 #include "core/include/fxcrt/fx_string.h"
-#include "xfa/src/fdp/include/fde_psr.h"
+#include "xfa/src/fde/fde_visualset.h"
 #include "xfa/src/fee/ifde_txtedtpage.h"
 #include "xfa/src/fgas/crt/fgas_utils.h"
 

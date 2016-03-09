@@ -7,7 +7,7 @@
 #ifndef XFA_SRC_FXFA_PARSER_XFA_OBJECT_H_
 #define XFA_SRC_FXFA_PARSER_XFA_OBJECT_H_
 
-#include "xfa/src/fdp/include/fde_xml.h"
+#include "xfa/src/fde/xml/fde_xml.h"
 #include "xfa/src/fxfa/parser/xfa_utils.h"
 
 class CXFA_Document;

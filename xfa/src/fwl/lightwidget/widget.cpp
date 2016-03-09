@@ -8,7 +8,7 @@
 
 #include "xfa/include/fwl/core/fwl_theme.h"
 #include "xfa/include/fwl/core/fwl_thread.h"
-#include "xfa/src/fdp/include/fde_tto.h"
+#include "xfa/src/fde/tto/fde_textout.h"
 #include "xfa/src/fwl/core/fwl_noteimp.h"
 #include "xfa/src/fwl/core/fwl_noteimp.h"
 #include "xfa/src/fwl/core/fwl_targetimp.h"

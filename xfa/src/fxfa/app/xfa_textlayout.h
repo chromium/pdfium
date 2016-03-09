@@ -7,9 +7,9 @@
 #ifndef XFA_SRC_FXFA_APP_XFA_TEXTLAYOUT_H_
 #define XFA_SRC_FXFA_APP_XFA_TEXTLAYOUT_H_
 
-#include "xfa/src/fdp/include/fde_brs.h"
-#include "xfa/src/fdp/include/fde_css.h"
-#include "xfa/src/fdp/include/fde_rdv.h"
+#include "xfa/src/fde/css/fde_css.h"
+#include "xfa/src/fde/fde_brush.h"
+#include "xfa/src/fde/fde_renderdevice.h"
 #include "xfa/src/fgas/layout/fgas_rtfbreak.h"
 #include "xfa/src/fxfa/app/xfa_ffdoc.h"
 #include "xfa/src/fxfa/parser/xfa_object.h"
