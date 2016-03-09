@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/include/fpdfapi/fpdf_parser.h"
+#include "core/src/fpdfapi/fpdf_parser/fpdf_parser_utility.h"
 
+#include "core/include/fpdfapi/fpdf_parser.h"
 #include "core/include/fxcrt/fx_ext.h"
 
 // Indexed by 8-bit character code, contains either:
@@ -60,171 +61,28 @@ const char PDF_CharType[256] = {
     'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R',
     'R', 'R', 'R', 'R', 'R', 'R', 'R', 'W'};
 
-CPDF_SimpleParser::CPDF_SimpleParser(const uint8_t* pData, FX_DWORD dwSize) {
-  m_pData = pData;
-  m_dwSize = dwSize;
-  m_dwCurPos = 0;
+int32_t GetHeaderOffset(IFX_FileRead* pFile) {
+  // TODO(dsinclair): This is a complicated way of saying %PDF, simplify?
+  const FX_DWORD tag = FXDWORD_FROM_LSBFIRST(0x46445025);
+
+  const size_t kBufSize = 4;
+  uint8_t buf[kBufSize];
+  int32_t offset = 0;
+  while (offset <= 1024) {
+    if (!pFile->ReadBlock(buf, offset, kBufSize))
+      return -1;
+
+    if (*(FX_DWORD*)buf == tag)
+      return offset;
+
+    ++offset;
+  }
+  return -1;
 }
 
-CPDF_SimpleParser::CPDF_SimpleParser(const CFX_ByteStringC& str) {
-  m_pData = str.GetPtr();
-  m_dwSize = str.GetLength();
-  m_dwCurPos = 0;
-}
-
-void CPDF_SimpleParser::ParseWord(const uint8_t*& pStart, FX_DWORD& dwSize) {
-  pStart = NULL;
-  dwSize = 0;
-  uint8_t ch;
-  while (1) {
-    if (m_dwSize <= m_dwCurPos)
-      return;
-    ch = m_pData[m_dwCurPos++];
-    while (PDFCharIsWhitespace(ch)) {
-      if (m_dwSize <= m_dwCurPos)
-        return;
-      ch = m_pData[m_dwCurPos++];
-    }
-
-    if (ch != '%')
-      break;
-
-    while (1) {
-      if (m_dwSize <= m_dwCurPos)
-        return;
-      ch = m_pData[m_dwCurPos++];
-      if (ch == '\r' || ch == '\n')
-        break;
-    }
-  }
-
-  FX_DWORD start_pos = m_dwCurPos - 1;
-  pStart = m_pData + start_pos;
-  if (PDFCharIsDelimiter(ch)) {
-    if (ch == '/') {
-      while (1) {
-        if (m_dwSize <= m_dwCurPos)
-          return;
-        ch = m_pData[m_dwCurPos++];
-        if (!PDFCharIsOther(ch) && !PDFCharIsNumeric(ch)) {
-          m_dwCurPos--;
-          dwSize = m_dwCurPos - start_pos;
-          return;
-        }
-      }
-    } else {
-      dwSize = 1;
-      if (ch == '<') {
-        if (m_dwSize <= m_dwCurPos)
-          return;
-        ch = m_pData[m_dwCurPos++];
-        if (ch == '<')
-          dwSize = 2;
-        else
-          m_dwCurPos--;
-      } else if (ch == '>') {
-        if (m_dwSize <= m_dwCurPos)
-          return;
-        ch = m_pData[m_dwCurPos++];
-        if (ch == '>')
-          dwSize = 2;
-        else
-          m_dwCurPos--;
-      }
-    }
-    return;
-  }
-
-  dwSize = 1;
-  while (1) {
-    if (m_dwSize <= m_dwCurPos)
-      return;
-    ch = m_pData[m_dwCurPos++];
-
-    if (PDFCharIsDelimiter(ch) || PDFCharIsWhitespace(ch)) {
-      m_dwCurPos--;
-      break;
-    }
-    dwSize++;
-  }
-}
-
-CFX_ByteStringC CPDF_SimpleParser::GetWord() {
-  const uint8_t* pStart;
-  FX_DWORD dwSize;
-  ParseWord(pStart, dwSize);
-  if (dwSize == 1 && pStart[0] == '<') {
-    while (m_dwCurPos < m_dwSize && m_pData[m_dwCurPos] != '>') {
-      m_dwCurPos++;
-    }
-    if (m_dwCurPos < m_dwSize) {
-      m_dwCurPos++;
-    }
-    return CFX_ByteStringC(pStart,
-                           (FX_STRSIZE)(m_dwCurPos - (pStart - m_pData)));
-  }
-  if (dwSize == 1 && pStart[0] == '(') {
-    int level = 1;
-    while (m_dwCurPos < m_dwSize) {
-      if (m_pData[m_dwCurPos] == ')') {
-        level--;
-        if (level == 0) {
-          break;
-        }
-      }
-      if (m_pData[m_dwCurPos] == '\\') {
-        if (m_dwSize <= m_dwCurPos) {
-          break;
-        }
-        m_dwCurPos++;
-      } else if (m_pData[m_dwCurPos] == '(') {
-        level++;
-      }
-      if (m_dwSize <= m_dwCurPos) {
-        break;
-      }
-      m_dwCurPos++;
-    }
-    if (m_dwCurPos < m_dwSize) {
-      m_dwCurPos++;
-    }
-    return CFX_ByteStringC(pStart,
-                           (FX_STRSIZE)(m_dwCurPos - (pStart - m_pData)));
-  }
-  return CFX_ByteStringC(pStart, dwSize);
-}
-
-bool CPDF_SimpleParser::FindTagParamFromStart(const CFX_ByteStringC& token,
-                                              int nParams) {
-  nParams++;
-  FX_DWORD* pBuf = FX_Alloc(FX_DWORD, nParams);
-  int buf_index = 0;
-  int buf_count = 0;
-  m_dwCurPos = 0;
-  while (1) {
-    pBuf[buf_index++] = m_dwCurPos;
-    if (buf_index == nParams) {
-      buf_index = 0;
-    }
-    buf_count++;
-    if (buf_count > nParams) {
-      buf_count = nParams;
-    }
-    CFX_ByteStringC word = GetWord();
-    if (word.IsEmpty()) {
-      FX_Free(pBuf);
-      return false;
-    }
-    if (word == token) {
-      if (buf_count < nParams) {
-        continue;
-      }
-      m_dwCurPos = pBuf[buf_index];
-      FX_Free(pBuf);
-      return true;
-    }
-  }
-  return false;
+int32_t GetDirectInteger(CPDF_Dictionary* pDict, const CFX_ByteStringC& key) {
+  CPDF_Number* pObj = ToNumber(pDict->GetElement(key));
+  return pObj ? pObj->GetInteger() : 0;
 }
 
 CFX_ByteString PDF_NameDecode(const CFX_ByteStringC& bstr) {

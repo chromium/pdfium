@@ -8,6 +8,8 @@
 
 #include <time.h>
 
+#include "core/include/fpdfapi/cpdf_parser.h"
+#include "core/include/fpdfapi/cpdf_simple_parser.h"
 #include "core/include/fdrm/fx_crypt.h"
 
 const uint8_t defpasscode[32] = {

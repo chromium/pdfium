@@ -8,6 +8,7 @@
 
 #include <set>
 
+#include "core/include/fpdfapi/cpdf_parser.h"
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_parser.h"
 #include "core/include/fxge/fx_font.h"

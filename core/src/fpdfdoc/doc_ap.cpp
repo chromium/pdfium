@@ -5,6 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "core/include/fpdfapi/cpdf_document.h"
+#include "core/include/fpdfapi/cpdf_simple_parser.h"
 #include "core/include/fpdfdoc/fpdf_ap.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
 #include "core/include/fpdfdoc/fpdf_vt.h"

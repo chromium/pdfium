@@ -8,6 +8,7 @@
 
 #include <algorithm>
 
+#include "core/include/fpdfapi/cpdf_parser.h"
 #include "core/include/fpdfapi/fpdf_parser.h"
 #include "core/include/fxcrt/fx_string.h"
 #include "third_party/base/stl_util.h"

@@ -12,6 +12,7 @@
 #include "core/include/fpdfapi/fpdf_parser.h"
 #include "core/include/fxcodec/fx_codec.h"
 #include "core/include/fxcrt/fx_ext.h"
+#include "core/src/fpdfapi/fpdf_parser/fpdf_parser_utility.h"
 #include "third_party/base/stl_util.h"
 
 #define _STREAM_MAX_SIZE_ 20 * 1024 * 1024

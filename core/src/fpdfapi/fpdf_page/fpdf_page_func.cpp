@@ -12,6 +12,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/include/fpdfapi/cpdf_simple_parser.h"
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fxcrt/fx_safe_types.h"
