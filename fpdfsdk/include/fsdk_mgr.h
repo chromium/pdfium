@@ -22,12 +22,7 @@
 #include "fpdfsdk/include/fx_systemhandler.h"
 #include "javascript/IJavaScript.h"
 #include "public/fpdf_formfill.h"
-#include "public/fpdf_fwlevent.h"  // cross platform keycode and events define.
-
-#ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/include/fpdfxfa/fpdfxfa_doc.h"
-#include "fpdfsdk/include/fpdfxfa/fpdfxfa_page.h"
-#endif  // PDF_ENABLE_XFA
+#include "public/fpdf_fwlevent.h"
 
 class CFFL_IFormFiller;
 class CPDFSDK_ActionHandler;
