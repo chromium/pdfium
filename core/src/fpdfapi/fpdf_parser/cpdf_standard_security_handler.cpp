@@ -6,6 +6,8 @@
 
 #include "core/src/fpdfapi/fpdf_parser/cpdf_standard_security_handler.h"
 
+#include <time.h>
+
 #include "core/include/fdrm/fx_crypt.h"
 #include "core/include/fpdfapi/cpdf_parser.h"
 #include "core/include/fpdfapi/fpdf_parser.h"

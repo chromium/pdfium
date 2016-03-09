@@ -6,8 +6,6 @@
 
 #include "core/include/fpdfapi/fpdf_parser.h"
 
-#include <time.h>
-
 #include "core/include/fpdfapi/cpdf_parser.h"
 #include "core/include/fpdfapi/cpdf_simple_parser.h"
 #include "core/include/fpdfapi/ipdf_security_handler.h"
