@@ -8,7 +8,7 @@
 
 #include "xfa/src/fdp/src/css/fde_cssdatatable.h"
 #include "xfa/src/fdp/src/css/fde_csssyntax.h"
-#include "xfa/src/fgas/include/fx_cpg.h"
+#include "xfa/src/fgas/crt/fgas_codepage.h"
 
 IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadHTMLStandardStyleSheet() {
   static const FX_WCHAR* s_pStyle =

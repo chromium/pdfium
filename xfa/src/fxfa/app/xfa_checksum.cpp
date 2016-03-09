@@ -7,7 +7,7 @@
 #include "xfa/src/fxfa/app/xfa_checksum.h"
 
 #include "core/include/fdrm/fx_crypt.h"
-#include "xfa/src/fgas/include/fx_alg.h"
+#include "xfa/src/fgas/crt/fgas_algorithm.h"
 
 CXFA_SAXReaderHandler::CXFA_SAXReaderHandler(CXFA_ChecksumContext* pContext)
     : m_pContext(pContext) {

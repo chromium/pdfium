@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <memory>
 
-#include "xfa/src/fgas/include/fx_alg.h"
+#include "xfa/src/fgas/crt/fgas_algorithm.h"
 #include "xfa/src/fxfa/fm2js/xfa_fm2jsapi.h"
 #include "xfa/src/fxfa/parser/xfa_docdata.h"
 #include "xfa/src/fxfa/parser/xfa_doclayout.h"

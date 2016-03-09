@@ -7,7 +7,7 @@
 #ifndef XFA_SRC_FXFA_PARSER_XFA_LOCALE_H_
 #define XFA_SRC_FXFA_PARSER_XFA_LOCALE_H_
 
-#include "xfa/src/fgas/include/fx_locale.h"
+#include "xfa/src/fgas/localization/fgas_locale.h"
 #include "xfa/src/fxfa/parser/xfa_object.h"
 
 class CXFA_XMLLocale : public IFX_Locale {

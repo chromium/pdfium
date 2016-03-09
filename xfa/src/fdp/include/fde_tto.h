@@ -9,7 +9,7 @@
 
 #include "core/include/fxge/fx_dib.h"
 #include "core/include/fxge/fx_ge.h"
-#include "xfa/src/fgas/include/fx_fnt.h"
+#include "xfa/src/fgas/font/fgas_font.h"
 
 #define FDE_TTOSTYLE_Underline 0x0001
 #define FDE_TTOSTYLE_Strikeout 0x0002

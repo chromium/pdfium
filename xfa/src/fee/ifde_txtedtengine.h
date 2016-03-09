@@ -8,7 +8,7 @@
 #define XFA_SRC_FEE_IFDE_TXTEDTENGINE_H_
 
 #include "core/include/fxge/fx_dib.h"
-#include "xfa/src/fgas/include/fx_fnt.h"
+#include "xfa/src/fgas/font/fgas_font.h"
 
 class IFDE_TxtEdtPage;
 class IFDE_TxtEdtEngine;

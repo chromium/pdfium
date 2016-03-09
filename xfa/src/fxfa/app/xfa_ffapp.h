@@ -12,7 +12,7 @@
 #include "xfa/include/fwl/adapter/fwl_sdadapterimp.h"
 #include "xfa/include/fwl/core/fwl_app.h"
 #include "xfa/include/fxfa/fxfa.h"
-#include "xfa/src/fgas/include/fx_fnt.h"
+#include "xfa/src/fgas/font/fgas_font.h"
 
 class CXFA_FWLAdapterWidgetMgr;
 class CXFA_FWLTheme;

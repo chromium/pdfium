@@ -11,7 +11,7 @@
 #include "core/include/fxge/fx_font.h"
 #include "core/include/fxge/fx_ge.h"
 #include "xfa/src/fdp/include/fde_pth.h"
-#include "xfa/src/fgas/include/fx_fnt.h"
+#include "xfa/src/fgas/font/fgas_font.h"
 
 class IFDE_Pen;
 class IFDE_Brush;

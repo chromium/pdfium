@@ -8,8 +8,8 @@
 
 #include <algorithm>
 
-#include "xfa/src/fgas/include/fx_cpg.h"
-#include "xfa/src/fgas/include/fx_sys.h"
+#include "xfa/src/fgas/crt/fgas_system.h"
+#include "xfa/src/fgas/crt/fgas_codepage.h"
 
 #define FDE_XMLVALIDCHARRANGENUM 5
 

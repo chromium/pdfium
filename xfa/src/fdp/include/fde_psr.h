@@ -15,7 +15,7 @@
 #include "xfa/src/fdp/include/fde_img.h"
 #include "xfa/src/fdp/include/fde_pen.h"
 #include "xfa/src/fdp/include/fde_pth.h"
-#include "xfa/src/fgas/include/fx_fnt.h"
+#include "xfa/src/fgas/font/fgas_font.h"
 
 enum FDE_VISUALOBJTYPE {
   FDE_VISUALOBJ_Canvas = 0x00,

@@ -8,7 +8,7 @@
 #define XFA_SRC_FDP_SRC_FDE_FDE_ITERATOR_H_
 
 #include "xfa/src/fdp/include/fde_psr.h"
-#include "xfa/src/fgas/include/fx_mem.h"
+#include "xfa/src/fgas/crt/fgas_memory.h"
 
 struct FDE_CANVASITEM : public CFX_Target {
   IFDE_CanvasSet* pCanvas;

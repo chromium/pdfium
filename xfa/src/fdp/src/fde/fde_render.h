@@ -10,7 +10,7 @@
 #include "xfa/src/fdp/include/fde_psr.h"
 #include "xfa/src/fdp/include/fde_rdr.h"
 #include "xfa/src/fdp/include/fde_rdv.h"
-#include "xfa/src/fgas/include/fx_mem.h"
+#include "xfa/src/fgas/crt/fgas_memory.h"
 
 class CFDE_RenderContext : public IFDE_RenderContext,
                            public CFX_Target {

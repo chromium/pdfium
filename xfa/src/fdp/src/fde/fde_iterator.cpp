@@ -6,7 +6,7 @@
 
 #include "xfa/src/fdp/src/fde/fde_iterator.h"
 
-#include "xfa/src/fgas/include/fx_utl.h"
+#include "xfa/src/fgas/crt/fgas_utils.h"
 
 IFDE_VisualSetIterator* IFDE_VisualSetIterator::Create() {
   return new CFDE_VisualSetIterator;

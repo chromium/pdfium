@@ -10,8 +10,8 @@
 
 #include "core/include/fxcrt/fx_ext.h"
 #include "xfa/src/fdp/include/fde_pen.h"
-#include "xfa/src/fgas/include/fx_alg.h"
-#include "xfa/src/fgas/include/fx_cpg.h"
+#include "xfa/src/fgas/crt/fgas_algorithm.h"
+#include "xfa/src/fgas/crt/fgas_codepage.h"
 #include "xfa/src/fxfa/app/xfa_ffapp.h"
 #include "xfa/src/fxfa/app/xfa_ffdoc.h"
 #include "xfa/src/fxfa/app/xfa_fontmgr.h"

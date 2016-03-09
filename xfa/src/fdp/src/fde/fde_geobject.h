@@ -9,7 +9,7 @@
 
 #include "core/include/fxge/fx_ge.h"
 #include "xfa/src/fdp/include/fde_pth.h"
-#include "xfa/src/fgas/include/fx_mem.h"
+#include "xfa/src/fgas/crt/fgas_memory.h"
 
 class CFDE_Path : public IFDE_Path, public CFX_Target {
  public:

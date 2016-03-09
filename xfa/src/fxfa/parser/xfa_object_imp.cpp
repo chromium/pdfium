@@ -7,8 +7,8 @@
 #include "xfa/src/fxfa/parser/xfa_object.h"
 
 #include "core/include/fxcrt/fx_ext.h"
-#include "xfa/src/fgas/include/fx_cpg.h"
-#include "xfa/src/fgas/include/fx_sys.h"
+#include "xfa/src/fgas/crt/fgas_codepage.h"
+#include "xfa/src/fgas/crt/fgas_system.h"
 #include "xfa/src/fxfa/fm2js/xfa_fm2jsapi.h"
 #include "xfa/src/fxfa/parser/xfa_basic_imp.h"
 #include "xfa/src/fxfa/parser/xfa_docdata.h"

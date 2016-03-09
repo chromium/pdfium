@@ -13,8 +13,8 @@
 #include "xfa/src/fdp/include/fde_css.h"
 #include "xfa/src/fdp/src/css/fde_csscache.h"
 #include "xfa/src/fdp/src/css/fde_cssdeclaration.h"
-#include "xfa/src/fgas/include/fx_mem.h"
-#include "xfa/src/fgas/include/fx_sys.h"
+#include "xfa/src/fgas/crt/fgas_memory.h"
+#include "xfa/src/fgas/crt/fgas_system.h"
 
 #define FDE_CSSUNIVERSALHASH ('*')
 

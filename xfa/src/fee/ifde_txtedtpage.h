@@ -9,7 +9,7 @@
 
 #include "core/include/fxge/fx_ge.h"
 #include "xfa/src/fdp/include/fde_psr.h"
-#include "xfa/src/fgas/include/fx_tbk.h"
+#include "xfa/src/fgas/layout/fgas_textbreak.h"
 
 class IFDE_TxtEdtEngine;
 class IFDE_TxtEdtPage : public IFDE_CanvasSet, public IFX_TxtAccess {

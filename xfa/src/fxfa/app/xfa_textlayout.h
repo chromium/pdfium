@@ -10,7 +10,7 @@
 #include "xfa/src/fdp/include/fde_brs.h"
 #include "xfa/src/fdp/include/fde_css.h"
 #include "xfa/src/fdp/include/fde_rdv.h"
-#include "xfa/src/fgas/include/fx_rbk.h"
+#include "xfa/src/fgas/layout/fgas_rtfbreak.h"
 #include "xfa/src/fxfa/app/xfa_ffdoc.h"
 #include "xfa/src/fxfa/parser/xfa_object.h"
 

@@ -9,7 +9,7 @@
 
 #include "xfa/src/fee/ifde_txtedtbuf.h"
 #include "xfa/src/fee/ifde_txtedtengine.h"
-#include "xfa/src/fgas/include/fx_mem.h"
+#include "xfa/src/fgas/crt/fgas_memory.h"
 
 class IFX_CharIter;
 class CFDE_TxtEdtBuf;

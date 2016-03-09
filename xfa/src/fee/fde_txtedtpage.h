@@ -11,7 +11,7 @@
 #include "core/include/fxcrt/fx_string.h"
 #include "xfa/src/fdp/include/fde_psr.h"
 #include "xfa/src/fee/ifde_txtedtpage.h"
-#include "xfa/src/fgas/include/fx_utl.h"
+#include "xfa/src/fgas/crt/fgas_utils.h"
 
 class IFX_CharIter;
 class CFDE_TxtEdtEngine;

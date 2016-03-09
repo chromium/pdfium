@@ -14,10 +14,10 @@
 #include "xfa/src/fdp/include/fde_pen.h"
 #include "xfa/src/fdp/include/fde_rdv.h"
 #include "xfa/src/fdp/include/fde_tto.h"
-#include "xfa/src/fgas/include/fx_fnt.h"
-#include "xfa/src/fgas/include/fx_mem.h"
-#include "xfa/src/fgas/include/fx_tbk.h"
-#include "xfa/src/fgas/include/fx_utl.h"
+#include "xfa/src/fgas/font/fgas_font.h"
+#include "xfa/src/fgas/crt/fgas_memory.h"
+#include "xfa/src/fgas/crt/fgas_utils.h"
+#include "xfa/src/fgas/layout/fgas_textbreak.h"
 
 struct FDE_TTOPIECE {
  public:

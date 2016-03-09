@@ -8,7 +8,7 @@
 #define XFA_SRC_FXFA_APP_XFA_CHECKSUM_H_
 
 #include "xfa/include/fxfa/fxfa.h"
-#include "xfa/src/fgas/include/fx_sax.h"
+#include "xfa/src/fgas/xml/fgas_sax.h"
 
 class CXFA_SAXReaderHandler;
 class CXFA_ChecksumContext;

@@ -8,7 +8,7 @@
 #define XFA_SRC_FXFA_PARSER_XFA_BASIC_IMP_H_
 
 #include "xfa/include/fxfa/fxfa_basic.h"
-#include "xfa/src/fgas/include/fx_stm.h"
+#include "xfa/src/fgas/crt/fgas_stream.h"
 
 struct XFA_NOTSUREATTRIBUTE {
   XFA_ELEMENT eElement;

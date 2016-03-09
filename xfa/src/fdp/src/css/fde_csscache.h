@@ -10,7 +10,7 @@
 #include <map>
 
 #include "xfa/src/fdp/include/fde_css.h"
-#include "xfa/src/fgas/include/fx_mem.h"
+#include "xfa/src/fgas/crt/fgas_memory.h"
 
 struct FDE_CSSCACHEITEM : public CFX_Target {
   FDE_CSSCACHEITEM(IFDE_CSSStyleSheet* p);

@@ -9,7 +9,7 @@
 #include <time.h>
 
 #include "core/include/fxcrt/fx_ext.h"
-#include "xfa/src/fgas/include/fx_locale.h"
+#include "xfa/src/fgas/localization/fgas_locale.h"
 #include "xfa/src/fxfa/fm2js/xfa_fm2jsapi.h"
 #include "xfa/src/fxfa/parser/xfa_document.h"
 #include "xfa/src/fxfa/parser/xfa_localevalue.h"

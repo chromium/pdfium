@@ -9,8 +9,8 @@
 
 #include "core/include/fxcrt/fx_system.h"
 #include "xfa/src/fdp/include/fde_xml.h"
-#include "xfa/src/fgas/include/fx_mem.h"
-#include "xfa/src/fgas/include/fx_stm.h"
+#include "xfa/src/fgas/crt/fgas_memory.h"
+#include "xfa/src/fgas/crt/fgas_stream.h"
 
 class CFDE_BlockBuffer;
 class CFDE_XMLInstruction;

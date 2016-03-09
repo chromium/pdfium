@@ -8,8 +8,8 @@
 #define XFA_SRC_FDP_SRC_CSS_FDE_CSSSYNTAX_H_
 
 #include "xfa/src/fdp/include/fde_css.h"
-#include "xfa/src/fgas/include/fx_mem.h"
-#include "xfa/src/fgas/include/fx_stm.h"
+#include "xfa/src/fgas/crt/fgas_memory.h"
+#include "xfa/src/fgas/crt/fgas_stream.h"
 
 class CFDE_CSSTextBuf : public CFX_Target {
  public:

@@ -7,8 +7,8 @@
 #ifndef XFA_SRC_FDP_INCLUDE_FDE_XML_H_
 #define XFA_SRC_FDP_INCLUDE_FDE_XML_H_
 
-#include "xfa/src/fgas/include/fx_stm.h"
-#include "xfa/src/fgas/include/fx_utl.h"
+#include "xfa/src/fgas/crt/fgas_stream.h"
+#include "xfa/src/fgas/crt/fgas_utils.h"
 
 class IFDE_XMLNode;
 class IFDE_XMLInstruction;

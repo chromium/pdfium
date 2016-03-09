@@ -8,9 +8,9 @@
 #define XFA_SRC_FDP_INCLUDE_FDE_CSS_H_
 
 #include "core/include/fxge/fx_dib.h"
-#include "xfa/src/fgas/include/fx_fnt.h"
-#include "xfa/src/fgas/include/fx_stm.h"
-#include "xfa/src/fgas/include/fx_utl.h"
+#include "xfa/src/fgas/font/fgas_font.h"
+#include "xfa/src/fgas/crt/fgas_stream.h"
+#include "xfa/src/fgas/crt/fgas_utils.h"
 
 class IFDE_CSSValue;
 class IFDE_CSSValueList;

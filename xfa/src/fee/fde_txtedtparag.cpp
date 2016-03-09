@@ -11,7 +11,7 @@
 #include "xfa/src/fee/fx_wordbreak/fx_wordbreak.h"
 #include "xfa/src/fee/ifde_txtedtbuf.h"
 #include "xfa/src/fee/ifde_txtedtengine.h"
-#include "xfa/src/fgas/include/fx_tbk.h"
+#include "xfa/src/fgas/layout/fgas_textbreak.h"
 
 CFDE_TxtEdtParag::CFDE_TxtEdtParag(CFDE_TxtEdtEngine* pEngine)
     : m_nCharStart(0),

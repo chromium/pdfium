@@ -8,8 +8,8 @@
 #define XFA_SRC_FXFA_PARSER_XFA_LOCALEMGR_H_
 
 #include "xfa/include/fxfa/fxfa_objectacc.h"
-#include "xfa/src/fgas/include/fx_datetime.h"
-#include "xfa/src/fgas/include/fx_locale.h"
+#include "xfa/src/fgas/localization/fgas_datetime.h"
+#include "xfa/src/fgas/localization/fgas_locale.h"
 #include "xfa/src/fxfa/parser/xfa_localemgr.h"
 
 class CXFA_Node;

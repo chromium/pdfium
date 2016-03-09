@@ -7,9 +7,9 @@
 #ifndef XFA_SRC_FDP_INCLUDE_FDE_IMG_H_
 #define XFA_SRC_FDP_INCLUDE_FDE_IMG_H_
 
-#include "xfa/src/fgas/include/fx_mem.h"
-#include "xfa/src/fgas/include/fx_stm.h"
-#include "xfa/src/fgas/include/fx_utl.h"
+#include "xfa/src/fgas/crt/fgas_memory.h"
+#include "xfa/src/fgas/crt/fgas_stream.h"
+#include "xfa/src/fgas/crt/fgas_utils.h"
 
 #define FDE_IMAGEFORMAT_Unknown -1
 #define FDE_IMAGEFORMAT_BMP 0

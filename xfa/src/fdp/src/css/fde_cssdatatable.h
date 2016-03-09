@@ -9,7 +9,7 @@
 
 #include "core/include/fxcrt/fx_system.h"
 #include "xfa/src/fdp/include/fde_css.h"
-#include "xfa/src/fgas/include/fx_mem.h"
+#include "xfa/src/fgas/crt/fgas_memory.h"
 
 class CFDE_CSSFunction : public CFX_Target {
  public:

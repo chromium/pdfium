@@ -8,7 +8,7 @@
 #define XFA_SRC_FDP_SRC_FDE_FDE_GEDEVICE_H_
 
 #include "xfa/src/fdp/include/fde_rdv.h"
-#include "xfa/src/fgas/include/fx_mem.h"
+#include "xfa/src/fgas/crt/fgas_memory.h"
 
 class CFDE_FxgeDevice : public IFDE_RenderDevice, public CFX_Target {
  public:
