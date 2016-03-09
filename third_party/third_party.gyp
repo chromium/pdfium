@@ -239,6 +239,12 @@
           ],
         }],
       ],
+      'variables': {
+        'clang_warning_flags': [
+          # Avoid warning for undefined behaviour.
+          '-Wno-shift-negative-value',
+        ],
+      }
     },
     {
       'target_name': 'fx_libopenjpeg',
@@ -322,7 +328,12 @@
           ],
         }],
       ],
-
+      'variables': {
+        'clang_warning_flags': [
+          # Avoid warning for undefined behaviour. https://crbug.com/507712
+          '-Wno-shift-negative-value',
+        ]
+      },
     },
     {
       'target_name': 'pdfium_base',
