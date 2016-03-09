@@ -361,13 +361,13 @@ CXML_Element* CXML_Parser::ParseElement(CXML_Element* pParent,
                                         FX_BOOL bStartTag) {
   m_nOffset = m_nBufferOffset + (FX_FILESIZE)m_dwIndex;
   if (IsEOF()) {
-    return NULL;
+    return nullptr;
   }
   CFX_ByteString tag_name, tag_space;
   FX_BOOL bEndTag;
   GetTagName(tag_space, tag_name, bEndTag, bStartTag);
   if (tag_name.IsEmpty() || bEndTag) {
-    return NULL;
+    return nullptr;
   }
   CXML_Element* pElement = new CXML_Element;
   pElement->m_pParent = pParent;
@@ -417,7 +417,7 @@ CXML_Element* CXML_Parser::ParseElement(CXML_Element* pParent,
   if (ch != '>') {
     m_nOffset = m_nBufferOffset + (FX_FILESIZE)m_dwIndex;
     delete pElement;
-    return NULL;
+    return nullptr;
   }
   SkipWhiteSpaces();
   if (IsEOF()) {
@@ -524,7 +524,7 @@ static CXML_Element* XML_ContinueParse(CXML_Parser& parser,
                                        FX_BOOL bSaveSpaceChars,
                                        FX_FILESIZE* pParsedSize) {
   parser.m_bSaveSpaceChars = bSaveSpaceChars;
-  CXML_Element* pElement = parser.ParseElement(NULL, FALSE);
+  CXML_Element* pElement = parser.ParseElement(nullptr, FALSE);
   if (pParsedSize) {
     *pParsedSize = parser.m_nOffset;
   }
@@ -536,7 +536,7 @@ CXML_Element* CXML_Element::Parse(const void* pBuffer,
                                   FX_FILESIZE* pParsedSize) {
   CXML_Parser parser;
   if (!parser.Init((uint8_t*)pBuffer, size)) {
-    return NULL;
+    return nullptr;
   }
   return XML_ContinueParse(parser, bSaveSpaceChars, pParsedSize);
 }
@@ -545,7 +545,7 @@ CXML_Element* CXML_Element::Parse(IFX_FileRead* pFile,
                                   FX_FILESIZE* pParsedSize) {
   CXML_Parser parser;
   if (!parser.Init(pFile)) {
-    return NULL;
+    return nullptr;
   }
   return XML_ContinueParse(parser, bSaveSpaceChars, pParsedSize);
 }
@@ -554,7 +554,7 @@ CXML_Element* CXML_Element::Parse(IFX_BufferRead* pBuffer,
                                   FX_FILESIZE* pParsedSize) {
   CXML_Parser parser;
   if (!parser.Init(pBuffer)) {
-    return NULL;
+    return nullptr;
   }
   return XML_ContinueParse(parser, bSaveSpaceChars, pParsedSize);
 }
@@ -566,7 +566,7 @@ CXML_Element::CXML_Element(const CFX_ByteStringC& qSpace,
   m_TagName = tagName;
 }
 CXML_Element::CXML_Element(const CFX_ByteStringC& qTagName)
-    : m_pParent(NULL), m_QSpaceName(), m_TagName(), m_AttrMap() {
+    : m_pParent(nullptr), m_QSpaceName(), m_TagName(), m_AttrMap() {
   SetTag(qTagName);
 }
 CXML_Element::~CXML_Element() {
@@ -634,7 +634,7 @@ void CXML_Element::GetAttrByIndex(int index,
 FX_BOOL CXML_Element::HasAttr(const CFX_ByteStringC& name) const {
   CFX_ByteStringC bsSpace, bsName;
   FX_XML_SplitQualifiedName(name, bsSpace, bsName);
-  return m_AttrMap.Lookup(bsSpace, bsName) != NULL;
+  return !!m_AttrMap.Lookup(bsSpace, bsName);
 }
 FX_BOOL CXML_Element::GetAttrValue(const CFX_ByteStringC& name,
                                    CFX_WideString& attribute) const {
@@ -739,7 +739,7 @@ CXML_Element* CXML_Element::GetElement(const CFX_ByteStringC& space,
         return pKid;
     }
   }
-  return NULL;
+  return nullptr;
 }
 FX_DWORD CXML_Element::FindElement(CXML_Element* pChild) const {
   int index = 0;
