@@ -30,14 +30,6 @@ const int64_t g_FXMillisecondsPerSecond = 1000;
 const int64_t g_FXMillisecondsPerMinute = 60000;
 const int64_t g_FXMillisecondsPerHour = 3600000;
 const int64_t g_FXMillisecondsPerDay = 86400000;
-#if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN32_MOBILE_ || \
-    _FX_OS_ == _FX_WIN64_
-const int64_t g_FXMillisecondsPerYear = 0x0757B12C00;
-const int64_t g_FXMillisecondsPerLeapYear = 0x075CD78800;
-const int64_t g_FXMillisecondsPer4Years = 0x1D63EB0C00;
-const int64_t g_FXMillisecondsPer100Years = 0x02DEBCCDD000;
-const int64_t g_FXMillisecondsPer400Years = 0x0B7AF85D9C00;
-#endif
 FX_BOOL FX_IsLeapYear(int32_t iYear) {
   FXSYS_assert(iYear != 0);
   return ((iYear % 4) == 0 && (iYear % 100) != 0) || (iYear % 400) == 0;
