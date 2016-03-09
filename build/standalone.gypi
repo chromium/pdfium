@@ -341,14 +341,14 @@
               '-Wno-inconsistent-missing-override',
             ],
           }],
-          ['clang==1 and MSVS_VERSION == "2013"', {
+          ['OS=="win" and clang==1 and MSVS_VERSION == "2013"', {
             'VCCLCompilerTool': {
               'AdditionalOptions': [
                 '-fmsc-version=1800',
               ],
             },
           }],
-          ['clang==1 and MSVS_VERSION == "2015"', {
+          ['OS=="win" and clang==1 and MSVS_VERSION == "2015"', {
             'VCCLCompilerTool': {
               'AdditionalOptions': [
                 '-fmsc-version=1900',
