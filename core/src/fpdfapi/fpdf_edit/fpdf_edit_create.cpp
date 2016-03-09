@@ -13,6 +13,7 @@
 #include "core/include/fpdfapi/fpdf_parser.h"
 #include "core/include/fpdfapi/fpdf_serial.h"
 #include "core/include/fxcrt/fx_ext.h"
+#include "core/src/fpdfapi/fpdf_parser/cpdf_standard_security_handler.h"
 #include "third_party/base/stl_util.h"
 
 #define PDF_OBJECTSTREAM_MAXLENGTH (256 * 1024)

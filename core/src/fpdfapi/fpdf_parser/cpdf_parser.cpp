@@ -12,6 +12,7 @@
 #include "core/include/fpdfapi/fpdf_parser.h"
 #include "core/include/fxcrt/fx_ext.h"
 #include "core/include/fxcrt/fx_safe_types.h"
+#include "core/src/fpdfapi/fpdf_parser/cpdf_standard_security_handler.h"
 #include "core/src/fpdfapi/fpdf_parser/cpdf_syntax_parser.h"
 #include "core/src/fpdfapi/fpdf_parser/fpdf_parser_utility.h"
 #include "third_party/base/stl_util.h"
