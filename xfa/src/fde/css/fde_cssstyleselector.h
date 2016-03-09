@@ -18,16 +18,16 @@
 
 #define FDE_CSSUNIVERSALHASH ('*')
 
-struct FDE_CSSRULEDATA : public CFX_Target {
+class FDE_CSSRuleData : public CFX_Target {
  public:
-  FDE_CSSRULEDATA(IFDE_CSSSelector* pSel,
+  FDE_CSSRuleData(IFDE_CSSSelector* pSel,
                   IFDE_CSSDeclaration* pDecl,
                   FX_DWORD dwPos);
 
   IFDE_CSSSelector* pSelector;
   IFDE_CSSDeclaration* pDeclaration;
   FX_DWORD dwPriority;
-  FDE_CSSRULEDATA* pNext;
+  FDE_CSSRuleData* pNext;
 };
 
 class CFDE_CSSRuleCollection : public CFX_Target {
@@ -44,26 +44,26 @@ class CFDE_CSSRuleCollection : public CFX_Target {
   void Clear();
 
   int32_t CountSelectors() const { return m_iSelectors; }
-  FDE_CSSRULEDATA* GetIDRuleData(FX_DWORD dwIDHash) {
+  FDE_CSSRuleData* GetIDRuleData(FX_DWORD dwIDHash) {
     void* pData;
     return m_IDRules.Lookup((void*)(uintptr_t)dwIDHash, pData)
-               ? (FDE_CSSRULEDATA*)pData
+               ? (FDE_CSSRuleData*)pData
                : NULL;
   }
-  FDE_CSSRULEDATA* GetTagRuleData(FX_DWORD dwTagHasn) {
+  FDE_CSSRuleData* GetTagRuleData(FX_DWORD dwTagHasn) {
     void* pData;
     return m_TagRules.Lookup((void*)(uintptr_t)dwTagHasn, pData)
-               ? (FDE_CSSRULEDATA*)pData
+               ? (FDE_CSSRuleData*)pData
                : NULL;
   }
-  FDE_CSSRULEDATA* GetClassRuleData(FX_DWORD dwIDHash) {
+  FDE_CSSRuleData* GetClassRuleData(FX_DWORD dwIDHash) {
     void* pData;
     return m_ClassRules.Lookup((void*)(uintptr_t)dwIDHash, pData)
-               ? (FDE_CSSRULEDATA*)pData
+               ? (FDE_CSSRuleData*)pData
                : NULL;
   }
-  FDE_CSSRULEDATA* GetUniversalRuleData() { return m_pUniversalRules; }
-  FDE_CSSRULEDATA* GetPersudoRuleData() { return m_pPersudoRules; }
+  FDE_CSSRuleData* GetUniversalRuleData() { return m_pUniversalRules; }
+  FDE_CSSRuleData* GetPersudoRuleData() { return m_pPersudoRules; }
   IFX_MEMAllocator* m_pStaticStore;
 
  protected:
@@ -75,14 +75,14 @@ class CFDE_CSSRuleCollection : public CFX_Target {
                  FX_DWORD dwKey,
                  IFDE_CSSSelector* pSel,
                  IFDE_CSSDeclaration* pDecl);
-  FX_BOOL AddRuleTo(FDE_CSSRULEDATA*& pList, FDE_CSSRULEDATA* pData);
-  FDE_CSSRULEDATA* NewRuleData(IFDE_CSSSelector* pSel,
+  FX_BOOL AddRuleTo(FDE_CSSRuleData*& pList, FDE_CSSRuleData* pData);
+  FDE_CSSRuleData* NewRuleData(IFDE_CSSSelector* pSel,
                                IFDE_CSSDeclaration* pDecl);
   CFX_MapPtrToPtr m_IDRules;
   CFX_MapPtrToPtr m_TagRules;
   CFX_MapPtrToPtr m_ClassRules;
-  FDE_CSSRULEDATA* m_pUniversalRules;
-  FDE_CSSRULEDATA* m_pPersudoRules;
+  FDE_CSSRuleData* m_pUniversalRules;
+  FDE_CSSRuleData* m_pPersudoRules;
   int32_t m_iSelectors;
 };
 class CFDE_CSSAccelerator;
@@ -117,10 +117,10 @@ class CFDE_CSSStyleSelector : public IFDE_CSSStyleSelector, public CFX_Target {
 
  protected:
   void Reset();
-  void MatchRules(FDE_CSSTAGCACHE* pCache,
-                  FDE_CSSRULEDATA* pList,
+  void MatchRules(FDE_CSSTagCache* pCache,
+                  FDE_CSSRuleData* pList,
                   FDE_CSSPERSUDO ePersudoType);
-  FX_BOOL MatchSelector(FDE_CSSTAGCACHE* pCache,
+  FX_BOOL MatchSelector(FDE_CSSTagCache* pCache,
                         IFDE_CSSSelector* pSel,
                         FDE_CSSPERSUDO ePersudoType);
   void AppendInlineStyle(CFDE_CSSDeclaration* pDecl,
@@ -185,7 +185,7 @@ class CFDE_CSSStyleSelector : public IFDE_CSSStyleSelector, public CFX_Target {
   IFX_MEMAllocator* m_pInlineStyleStore;
   IFX_MEMAllocator* m_pFixedStyleStore;
   CFDE_CSSAccelerator* m_pAccelerator;
-  std::vector<FDE_CSSRULEDATA*> m_MatchedRules;
+  std::vector<FDE_CSSRuleData*> m_MatchedRules;
 };
 
 struct FDE_CSSCOUNTERDATA {

@@ -11,7 +11,7 @@
 
 IFDE_CSSValue* CFDE_CSSDeclaration::GetProperty(FDE_CSSPROPERTY eProperty,
                                                 FX_BOOL& bImportant) const {
-  for (const FDE_CSSPROPERTYHOLDER* pHolder = m_pFirstProperty; pHolder;
+  for (const FDE_CSSPropertyHolder* pHolder = m_pFirstProperty; pHolder;
        pHolder = pHolder->pNext) {
     if (pHolder->eProperty == eProperty) {
       bImportant = pHolder->bImportant;
@@ -27,7 +27,7 @@ void CFDE_CSSDeclaration::GetNextProperty(FX_POSITION& pos,
                                           FDE_CSSPROPERTY& eProperty,
                                           IFDE_CSSValue*& pValue,
                                           FX_BOOL& bImportant) const {
-  const FDE_CSSPROPERTYHOLDER* pHolder = (const FDE_CSSPROPERTYHOLDER*)pos;
+  const FDE_CSSPropertyHolder* pHolder = (const FDE_CSSPropertyHolder*)pos;
   FXSYS_assert(pHolder != NULL);
   bImportant = pHolder->bImportant;
   eProperty = (FDE_CSSPROPERTY)pHolder->eProperty;
@@ -40,7 +40,7 @@ FX_POSITION CFDE_CSSDeclaration::GetStartCustom() const {
 void CFDE_CSSDeclaration::GetNextCustom(FX_POSITION& pos,
                                         CFX_WideString& wsName,
                                         CFX_WideString& wsValue) const {
-  const FDE_CSSCUSTOMPROPERTY* pProperty = (const FDE_CSSCUSTOMPROPERTY*)pos;
+  const FDE_CSSCustomProperty* pProperty = (const FDE_CSSCustomProperty*)pos;
   if (pProperty == NULL) {
     return;
   }
@@ -94,8 +94,8 @@ void CFDE_CSSDeclaration::AddPropertyHolder(IFX_MEMAllocator* pStaticStore,
                                             FDE_CSSPROPERTY eProperty,
                                             IFDE_CSSValue* pValue,
                                             FX_BOOL bImportant) {
-  FDE_CSSPROPERTYHOLDER* pHolder =
-      FXTARGET_NewWith(pStaticStore) FDE_CSSPROPERTYHOLDER;
+  FDE_CSSPropertyHolder* pHolder =
+      FXTARGET_NewWith(pStaticStore) FDE_CSSPropertyHolder;
   pHolder->bImportant = bImportant;
   pHolder->eProperty = eProperty;
   pHolder->pValue = pValue;
@@ -270,8 +270,8 @@ FX_BOOL CFDE_CSSDeclaration::AddProperty(const FDE_CSSPROPERTYARGS* pArgs,
                                          int32_t iNameLen,
                                          const FX_WCHAR* pszValue,
                                          int32_t iValueLen) {
-  FDE_CSSCUSTOMPROPERTY* pProperty =
-      FXTARGET_NewWith(pArgs->pStaticStore) FDE_CSSCUSTOMPROPERTY;
+  FDE_CSSCustomProperty* pProperty =
+      FXTARGET_NewWith(pArgs->pStaticStore) FDE_CSSCustomProperty;
   pProperty->pwsName = CopyToLocal(pArgs, pszName, iNameLen);
   pProperty->pwsValue = CopyToLocal(pArgs, pszValue, iValueLen);
   pProperty->pNext = NULL;

@@ -9,20 +9,22 @@
 
 #include "xfa/src/fde/css/fde_cssdatatable.h"
 
-struct FDE_CSSPROPERTYHOLDER : public CFX_Target {
+class FDE_CSSPropertyHolder : public CFX_Target {
+ public:
   int16_t eProperty;
   int16_t bImportant;
   IFDE_CSSValue* pValue;
-  FDE_CSSPROPERTYHOLDER* pNext;
+  FDE_CSSPropertyHolder* pNext;
 };
 
-struct FDE_CSSCUSTOMPROPERTY : public CFX_Target {
+class FDE_CSSCustomProperty : public CFX_Target {
+ public:
   const FX_WCHAR* pwsName;
   const FX_WCHAR* pwsValue;
-  FDE_CSSCUSTOMPROPERTY* pNext;
+  FDE_CSSCustomProperty* pNext;
 };
 
-struct FDE_CSSPROPERTYARGS : public CFX_Target {
+struct FDE_CSSPROPERTYARGS {
   IFX_MEMAllocator* pStaticStore;
   CFX_MapPtrToPtr* pStringCache;
   FDE_LPCCSSPROPERTYTABLE pProperty;
@@ -147,10 +149,10 @@ class CFDE_CSSDeclaration : public IFDE_CSSDeclaration, public CFX_Target {
                                          FX_FLOAT fValue) const;
   IFDE_CSSPrimitiveValue* NewEnumValue(IFX_MEMAllocator* pStaticStore,
                                        FDE_CSSPROPERTYVALUE eValue) const;
-  FDE_CSSPROPERTYHOLDER* m_pFirstProperty;
-  FDE_CSSPROPERTYHOLDER* m_pLastProperty;
-  FDE_CSSCUSTOMPROPERTY* m_pFirstCustom;
-  FDE_CSSCUSTOMPROPERTY* m_pLastCustom;
+  FDE_CSSPropertyHolder* m_pFirstProperty;
+  FDE_CSSPropertyHolder* m_pLastProperty;
+  FDE_CSSCustomProperty* m_pFirstCustom;
+  FDE_CSSCustomProperty* m_pLastCustom;
 };
 
 #endif  // XFA_SRC_FDE_CSS_FDE_CSSDECLARATION_H_

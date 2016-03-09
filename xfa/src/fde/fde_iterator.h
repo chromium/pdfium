@@ -10,7 +10,7 @@
 #include "xfa/src/fde/fde_visualset.h"
 #include "xfa/src/fgas/crt/fgas_memory.h"
 
-struct FDE_CANVASITEM : public CFX_Target {
+struct FDE_CANVASITEM {
   IFDE_CanvasSet* pCanvas;
   FDE_HVISUALOBJ hCanvas;
   FX_POSITION hPos;

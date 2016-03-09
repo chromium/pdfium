@@ -12,9 +12,10 @@
 #include "xfa/src/fde/css/fde_css.h"
 #include "xfa/src/fgas/crt/fgas_memory.h"
 
-struct FDE_CSSCACHEITEM : public CFX_Target {
-  FDE_CSSCACHEITEM(IFDE_CSSStyleSheet* p);
-  ~FDE_CSSCACHEITEM();
+class FDE_CSSCacheItem : public CFX_Target {
+ public:
+  explicit FDE_CSSCacheItem(IFDE_CSSStyleSheet* p);
+  ~FDE_CSSCacheItem();
 
   IFDE_CSSStyleSheet* pStylesheet;
   FX_DWORD dwActivity;
@@ -39,16 +40,16 @@ class CFDE_CSSStyleSheetCache : public IFDE_CSSStyleSheetCache,
 
  protected:
   void RemoveLowestActivityItem();
-  std::map<CFX_ByteString, FDE_CSSCACHEITEM*> m_Stylesheets;
+  std::map<CFX_ByteString, FDE_CSSCacheItem*> m_Stylesheets;
   IFX_MEMAllocator* m_pFixedStore;
   int32_t m_iMaxItems;
 };
 
-struct FDE_CSSTAGCACHE : public CFX_Target {
+class FDE_CSSTagCache : public CFX_Target {
  public:
-  FDE_CSSTAGCACHE(FDE_CSSTAGCACHE* parent, IFDE_CSSTagProvider* tag);
-  FDE_CSSTAGCACHE(const FDE_CSSTAGCACHE& it);
-  FDE_CSSTAGCACHE* GetParent() const { return pParent; }
+  FDE_CSSTagCache(FDE_CSSTagCache* parent, IFDE_CSSTagProvider* tag);
+  FDE_CSSTagCache(const FDE_CSSTagCache& it);
+  FDE_CSSTagCache* GetParent() const { return pParent; }
   IFDE_CSSTagProvider* GetTag() const { return pTag; }
   FX_DWORD HashID() const { return dwIDHash; }
   FX_DWORD HashTag() const { return dwTagHash; }
@@ -62,20 +63,20 @@ struct FDE_CSSTAGCACHE : public CFX_Target {
 
  protected:
   IFDE_CSSTagProvider* pTag;
-  FDE_CSSTAGCACHE* pParent;
+  FDE_CSSTagCache* pParent;
   FX_DWORD dwIDHash;
   FX_DWORD dwTagHash;
   int32_t iClassIndex;
   CFDE_DWordArray dwClassHashs;
 };
-typedef CFX_ObjectStackTemplate<FDE_CSSTAGCACHE> CFDE_CSSTagStack;
+typedef CFX_ObjectStackTemplate<FDE_CSSTagCache> CFDE_CSSTagStack;
 
 class CFDE_CSSAccelerator : public IFDE_CSSAccelerator, public CFX_Target {
  public:
   virtual void OnEnterTag(IFDE_CSSTagProvider* pTag);
   virtual void OnLeaveTag(IFDE_CSSTagProvider* pTag);
   void Clear() { m_Stack.RemoveAll(); }
-  FDE_CSSTAGCACHE* GetTopElement() const { return m_Stack.GetTopElement(); }
+  FDE_CSSTagCache* GetTopElement() const { return m_Stack.GetTopElement(); }
 
  protected:
   CFDE_CSSTagStack m_Stack;

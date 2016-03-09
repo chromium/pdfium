@@ -83,7 +83,7 @@ FDE_CSSTEXTEMPHASISMARK CFDE_CSSComputedStyle::GetTextEmphasisMark() const {
   }
   return FDE_CSSTEXTEMPHASISMARK_Sesame;
 }
-FDE_CSSRULEDATA::FDE_CSSRULEDATA(IFDE_CSSSelector* pSel,
+FDE_CSSRuleData::FDE_CSSRuleData(IFDE_CSSSelector* pSel,
                                  IFDE_CSSDeclaration* pDecl,
                                  FX_DWORD dwPos)
     : pSelector(pSel), pDeclaration(pDecl), dwPriority(dwPos), pNext(NULL) {
@@ -131,7 +131,7 @@ void CFDE_CSSRuleCollection::AddRulesFrom(IFDE_CSSStyleSheet* pStyleSheet,
       for (int32_t i = 0; i < iSelectors; ++i) {
         IFDE_CSSSelector* pSelector = pStyleRule->GetSelectorList(i);
         if (pSelector->GetType() == FDE_CSSSELECTORTYPE_Persudo) {
-          FDE_CSSRULEDATA* pData = NewRuleData(pSelector, pDeclaration);
+          FDE_CSSRuleData* pData = NewRuleData(pSelector, pDeclaration);
           AddRuleTo(m_pPersudoRules, pData);
           continue;
         }
@@ -142,7 +142,7 @@ void CFDE_CSSRuleCollection::AddRulesFrom(IFDE_CSSStyleSheet* pStyleSheet,
         }
         IFDE_CSSSelector* pNext = pSelector->GetNextSelector();
         if (pNext == NULL) {
-          FDE_CSSRULEDATA* pData = NewRuleData(pSelector, pDeclaration);
+          FDE_CSSRuleData* pData = NewRuleData(pSelector, pDeclaration);
           AddRuleTo(m_pUniversalRules, pData);
           continue;
         }
@@ -183,8 +183,8 @@ void CFDE_CSSRuleCollection::AddRuleTo(CFX_MapPtrToPtr& map,
                                        IFDE_CSSSelector* pSel,
                                        IFDE_CSSDeclaration* pDecl) {
   void* pKey = (void*)(uintptr_t)dwKey;
-  FDE_CSSRULEDATA* pData = NewRuleData(pSel, pDecl);
-  FDE_CSSRULEDATA* pList = NULL;
+  FDE_CSSRuleData* pData = NewRuleData(pSel, pDecl);
+  FDE_CSSRuleData* pList = NULL;
   if (!map.Lookup(pKey, (void*&)pList)) {
     map.SetAt(pKey, pData);
   } else if (AddRuleTo(pList, pData)) {
@@ -192,8 +192,8 @@ void CFDE_CSSRuleCollection::AddRuleTo(CFX_MapPtrToPtr& map,
   }
 }
 
-FX_BOOL CFDE_CSSRuleCollection::AddRuleTo(FDE_CSSRULEDATA*& pList,
-                                          FDE_CSSRULEDATA* pData) {
+FX_BOOL CFDE_CSSRuleCollection::AddRuleTo(FDE_CSSRuleData*& pList,
+                                          FDE_CSSRuleData* pData) {
   if (pList) {
     pData->pNext = pList->pNext;
     pList->pNext = pData;
@@ -204,11 +204,11 @@ FX_BOOL CFDE_CSSRuleCollection::AddRuleTo(FDE_CSSRULEDATA*& pList,
   return TRUE;
 }
 
-FDE_CSSRULEDATA* CFDE_CSSRuleCollection::NewRuleData(
+FDE_CSSRuleData* CFDE_CSSRuleCollection::NewRuleData(
     IFDE_CSSSelector* pSel,
     IFDE_CSSDeclaration* pDecl) {
   return FXTARGET_NewWith(m_pStaticStore)
-      FDE_CSSRULEDATA(pSel, pDecl, ++m_iSelectors);
+      FDE_CSSRuleData(pSel, pDecl, ++m_iSelectors);
 }
 
 IFDE_CSSStyleSelector* IFDE_CSSStyleSelector::Create() {
@@ -322,7 +322,7 @@ int32_t CFDE_CSSStyleSelector::MatchDeclarations(
     CFDE_CSSDeclarationArray& matchedDecls,
     FDE_CSSPERSUDO ePersudoType) {
   FXSYS_assert(m_pAccelerator != NULL && pTag != NULL);
-  FDE_CSSTAGCACHE* pCache = m_pAccelerator->GetTopElement();
+  FDE_CSSTagCache* pCache = m_pAccelerator->GetTopElement();
   FXSYS_assert(pCache != NULL && pCache->GetTag() == pTag);
   matchedDecls.RemoveAt(0, matchedDecls.GetSize());
   for (int32_t ePriority = FDE_CSSSTYLESHEETPRIORITY_MAX - 1; ePriority >= 0;
@@ -349,7 +349,7 @@ int32_t CFDE_CSSStyleSelector::MatchDeclarations(
     }
 
     std::sort(m_MatchedRules.begin(), m_MatchedRules.end(),
-              [](const FDE_CSSRULEDATA* p1, const FDE_CSSRULEDATA* p2) {
+              [](const FDE_CSSRuleData* p1, const FDE_CSSRuleData* p2) {
                 return p1->dwPriority < p2->dwPriority;
               });
     for (const auto& rule : m_MatchedRules)
@@ -359,8 +359,8 @@ int32_t CFDE_CSSStyleSelector::MatchDeclarations(
   return matchedDecls.GetSize();
 }
 
-void CFDE_CSSStyleSelector::MatchRules(FDE_CSSTAGCACHE* pCache,
-                                       FDE_CSSRULEDATA* pList,
+void CFDE_CSSStyleSelector::MatchRules(FDE_CSSTagCache* pCache,
+                                       FDE_CSSRuleData* pList,
                                        FDE_CSSPERSUDO ePersudoType) {
   while (pList) {
     if (MatchSelector(pCache, pList->pSelector, ePersudoType))
@@ -369,7 +369,7 @@ void CFDE_CSSStyleSelector::MatchRules(FDE_CSSTAGCACHE* pCache,
   }
 }
 
-FX_BOOL CFDE_CSSStyleSelector::MatchSelector(FDE_CSSTAGCACHE* pCache,
+FX_BOOL CFDE_CSSStyleSelector::MatchSelector(FDE_CSSTagCache* pCache,
                                              IFDE_CSSSelector* pSel,
                                              FDE_CSSPERSUDO ePersudoType) {
   FX_DWORD dwHash;
