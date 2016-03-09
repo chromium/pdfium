@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTENGINE_H_
-#define XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTENGINE_H_
+#ifndef XFA_SRC_FEE_FDE_TXTEDTENGINE_H_
+#define XFA_SRC_FEE_FDE_TXTEDTENGINE_H_
 
 #include "core/include/fxcrt/fx_string.h"
-#include "xfa/src/fee/include/ifde_txtedtbuf.h"
-#include "xfa/src/fee/include/ifde_txtedtengine.h"
+#include "xfa/src/fee/ifde_txtedtbuf.h"
+#include "xfa/src/fee/ifde_txtedtengine.h"
 
 class IFX_TxtBreak;
 class IFX_CharIter;
@@ -244,4 +244,4 @@ class CFDE_TxtEdtDoRecord_DeleteRange : public IFDE_TxtEdtDoRecord {
   CFX_WideString m_wsRange;
 };
 
-#endif  // XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTENGINE_H_
+#endif  // XFA_SRC_FEE_FDE_TXTEDTENGINE_H_

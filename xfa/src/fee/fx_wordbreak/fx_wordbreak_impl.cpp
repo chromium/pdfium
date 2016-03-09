@@ -4,14 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/fee/src/fx_wordbreak/fx_wordbreak_impl.h"
-
-#define FX_IsOdd(a) ((a)&1)
+#include "xfa/src/fee/fx_wordbreak/fx_wordbreak_impl.h"
 
 FX_WordBreakProp FX_GetWordBreakProperty(FX_WCHAR wcCodePoint) {
   FX_DWORD dwProperty =
       (FX_DWORD)gs_FX_WordBreak_CodePointProperties[wcCodePoint >> 1];
-  return (FX_WordBreakProp)(FX_IsOdd(wcCodePoint) ? (dwProperty & 0x0F)
+  return (FX_WordBreakProp)(((wcCodePoint) & 1) ? (dwProperty & 0x0F)
                                                   : (dwProperty >> 4));
 }
 CFX_CharIter::CFX_CharIter(const CFX_WideString& wsText)

@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTPAGE_H_
-#define XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTPAGE_H_
+#ifndef XFA_SRC_FEE_FDE_TXTEDTPAGE_H_
+#define XFA_SRC_FEE_FDE_TXTEDTPAGE_H_
 
 #include "core/include/fxcrt/fx_coordinates.h"
 #include "core/include/fxcrt/fx_string.h"
 #include "xfa/src/fdp/include/fde_psr.h"
-#include "xfa/src/fee/include/ifde_txtedtpage.h"
+#include "xfa/src/fee/ifde_txtedtpage.h"
 #include "xfa/src/fgas/include/fx_utl.h"
 
 class IFX_CharIter;
@@ -165,4 +165,4 @@ class CFDE_TxtEdtPage : public IFDE_TxtEdtPage {
   int32_t* m_pCharWidth;
 };
 
-#endif  // XFA_SRC_FEE_SRC_FEE_FDE_TXTEDTPAGE_H_
+#endif  // XFA_SRC_FEE_FDE_TXTEDTPAGE_H_

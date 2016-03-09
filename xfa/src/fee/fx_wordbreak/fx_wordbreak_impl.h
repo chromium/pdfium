@@ -4,16 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FEE_SRC_FX_WORDBREAK_FX_WORDBREAK_IMPL_H_
-#define XFA_SRC_FEE_SRC_FX_WORDBREAK_FX_WORDBREAK_IMPL_H_
+#ifndef XFA_SRC_FEE_FX_WORDBREAK_FX_WORDBREAK_IMPL_H_
+#define XFA_SRC_FEE_FX_WORDBREAK_FX_WORDBREAK_IMPL_H_
 
 #include <cstdint>
 
 #include "core/include/fxcrt/fx_string.h"
 #include "core/include/fxcrt/fx_system.h"
-#include "xfa/src/fee/include/fx_wordbreak.h"
-#include "xfa/src/fee/include/ifde_txtedtengine.h"
-#include "xfa/src/fee/src/fx_wordbreak/fx_wordbreak_impl.h"
+#include "xfa/src/fee/fx_wordbreak/fx_wordbreak.h"
+#include "xfa/src/fee/fx_wordbreak/fx_wordbreak_impl.h"
+#include "xfa/src/fee/ifde_txtedtengine.h"
 
 extern const FX_WORD gs_FX_WordBreak_Table[16];
 extern const uint8_t gs_FX_WordBreak_CodePointProperties[(0xFFFF - 1) / 2 + 1];
@@ -75,4 +75,4 @@ class CFX_WordBreak : public IFX_WordBreak {
   IFX_CharIter* m_pCurIter;
 };
 
-#endif  // XFA_SRC_FEE_SRC_FX_WORDBREAK_FX_WORDBREAK_IMPL_H_
+#endif  // XFA_SRC_FEE_FX_WORDBREAK_FX_WORDBREAK_IMPL_H_

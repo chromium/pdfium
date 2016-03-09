@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/fee/src/fx_wordbreak/fx_wordbreak_impl.h"
+#include "xfa/src/fee/fx_wordbreak/fx_wordbreak_impl.h"
 
 const FX_WORD gs_FX_WordBreak_Table[16] = {
     0xFFFF, 0xFFF9, 0xFFFB, 0xFFFB, 0xFFFB, 0xFFFB, 0xEFBB, 0xE77B,

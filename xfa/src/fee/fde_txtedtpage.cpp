@@ -4,17 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/fee/src/fee/fde_txtedtpage.h"
+#include "xfa/src/fee/fde_txtedtpage.h"
 
 #include <algorithm>
 
-#include "xfa/src/fee/include/fx_wordbreak.h"
-#include "xfa/src/fee/include/ifde_txtedtbuf.h"
-#include "xfa/src/fee/include/ifde_txtedtengine.h"
-#include "xfa/src/fee/include/ifde_txtedtpage.h"
-#include "xfa/src/fee/src/fee/fde_txtedtbuf.h"
-#include "xfa/src/fee/src/fee/fde_txtedtengine.h"
-#include "xfa/src/fee/src/fee/fde_txtedtparag.h"
+#include "xfa/src/fee/fx_wordbreak/fx_wordbreak.h"
+#include "xfa/src/fee/fde_txtedtbuf.h"
+#include "xfa/src/fee/fde_txtedtengine.h"
+#include "xfa/src/fee/fde_txtedtparag.h"
+#include "xfa/src/fee/ifde_txtedtbuf.h"
+#include "xfa/src/fee/ifde_txtedtengine.h"
+#include "xfa/src/fee/ifde_txtedtpage.h"
 
 #define FDE_TXTEDT_TOLERANCE 0.1f
 

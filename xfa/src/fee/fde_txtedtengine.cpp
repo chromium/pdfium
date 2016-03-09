@@ -4,15 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/src/fee/src/fee/fde_txtedtengine.h"
+#include "xfa/src/fee/fde_txtedtengine.h"
 
 #include <algorithm>
 
-#include "xfa/src/fee/include/ifde_txtedtbuf.h"
-#include "xfa/src/fee/include/ifde_txtedtengine.h"
-#include "xfa/src/fee/include/ifde_txtedtpage.h"
-#include "xfa/src/fee/src/fee/fde_txtedtbuf.h"
-#include "xfa/src/fee/src/fee/fde_txtedtparag.h"
+#include "xfa/src/fee/fde_txtedtbuf.h"
+#include "xfa/src/fee/fde_txtedtparag.h"
+#include "xfa/src/fee/ifde_txtedtbuf.h"
+#include "xfa/src/fee/ifde_txtedtengine.h"
+#include "xfa/src/fee/ifde_txtedtpage.h"
 #include "xfa/src/fdp/include/fde_tto.h"
 
 #define FDE_PAGEWIDTH_MAX 0xFFFF

@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "xfa/include/fwl/basewidget/fwl_scrollbar.h"
-#include "xfa/src/fee/include/ifde_txtedtengine.h"
+#include "xfa/src/fee/ifde_txtedtengine.h"
 #include "xfa/src/fwl/core/fwl_widgetimp.h"
 
 class CFWL_WidgetImpProperties;

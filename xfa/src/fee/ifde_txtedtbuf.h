@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FEE_INCLUDE_IFDE_TXTEDTBUF_H_
-#define XFA_SRC_FEE_INCLUDE_IFDE_TXTEDTBUF_H_
+#ifndef XFA_SRC_FEE_IFDE_TXTEDTBUF_H_
+#define XFA_SRC_FEE_IFDE_TXTEDTBUF_H_
 
 #include "core/include/fxcrt/fx_basic.h"
 
@@ -36,4 +36,4 @@ class IFDE_TxtEdtBuf {
   virtual FX_BOOL Optimize(IFX_Pause* pPause = NULL) = 0;
 };
 
-#endif  // XFA_SRC_FEE_INCLUDE_IFDE_TXTEDTBUF_H_
+#endif  // XFA_SRC_FEE_IFDE_TXTEDTBUF_H_

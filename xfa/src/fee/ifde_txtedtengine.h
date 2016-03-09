@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FEE_INCLUDE_IFDE_TXTEDTENGINE_H_
-#define XFA_SRC_FEE_INCLUDE_IFDE_TXTEDTENGINE_H_
+#ifndef XFA_SRC_FEE_IFDE_TXTEDTENGINE_H_
+#define XFA_SRC_FEE_IFDE_TXTEDTENGINE_H_
 
 #include "core/include/fxge/fx_dib.h"
 #include "xfa/src/fgas/include/fx_fnt.h"
@@ -255,4 +255,4 @@ class IFDE_TxtEdtParag {
                             int32_t& nCount) const = 0;
 };
 
-#endif  // XFA_SRC_FEE_INCLUDE_IFDE_TXTEDTENGINE_H_
+#endif  // XFA_SRC_FEE_IFDE_TXTEDTENGINE_H_

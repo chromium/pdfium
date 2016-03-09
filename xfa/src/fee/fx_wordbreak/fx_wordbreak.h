@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_SRC_FEE_INCLUDE_FX_WORDBREAK_H_
-#define XFA_SRC_FEE_INCLUDE_FX_WORDBREAK_H_
+#ifndef XFA_SRC_FEE_FX_WORDBREAK_FX_WORDBREAK_H_
+#define XFA_SRC_FEE_FX_WORDBREAK_FX_WORDBREAK_H_
 
 #include "core/include/fxcrt/fx_string.h"
 #include "core/include/fxcrt/fx_system.h"
@@ -27,4 +27,4 @@ class IFX_WordBreak {
 };
 IFX_WordBreak* FX_WordBreak_Create();
 
-#endif  // XFA_SRC_FEE_INCLUDE_FX_WORDBREAK_H_
+#endif  // XFA_SRC_FEE_FX_WORDBREAK_FX_WORDBREAK_H_
