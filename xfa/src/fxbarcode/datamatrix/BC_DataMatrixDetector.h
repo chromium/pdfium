@@ -69,9 +69,10 @@ class CBC_DataMatrixDetector {
   virtual void Init(int32_t& e);
 
  private:
+  static const int32_t INTEGERS[5];
+
   CBC_CommonBitMatrix* m_image;
   CBC_WhiteRectangleDetector* m_rectangleDetector;
-  const static int32_t INTEGERS[5];
 };
 
 #endif  // XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXDETECTOR_H_

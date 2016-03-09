@@ -542,7 +542,7 @@ class IFX_List {
   virtual int32_t GetItemIndex(const CFX_FloatPoint& point) const = 0;
   virtual int32_t GetFirstSelected() const = 0;
 
-  virtual void AddString(const FX_WCHAR* string) = 0;
+  virtual void AddString(const FX_WCHAR* str) = 0;
   virtual void SetTopItem(int32_t nIndex) = 0;
   virtual void Select(int32_t nItemIndex) = 0;
   virtual void SetCaret(int32_t nItemIndex) = 0;

@@ -157,9 +157,12 @@ FXSYS_FILE* FXSYS_wfopen(const FX_WCHAR* filename, const FX_WCHAR* mode);
 
 #ifdef __cplusplus
 }  // extern "C"
+
 #include "third_party/base/numerics/safe_conversions.h"
+
 #define FXSYS_strlen(ptr) pdfium::base::checked_cast<FX_STRSIZE>(strlen(ptr))
 #define FXSYS_wcslen(ptr) pdfium::base::checked_cast<FX_STRSIZE>(wcslen(ptr))
+
 extern "C" {
 #else
 #define FXSYS_strlen(ptr) ((FX_STRSIZE)strlen(ptr))
@@ -206,7 +209,7 @@ extern "C" {
 #define FXSYS_GetModuleFileName GetModuleFileName
 #else
 int FXSYS_GetACP(void);
-char* FXSYS_itoa(int value, char* string, int radix);
+char* FXSYS_itoa(int value, char* str, int radix);
 int FXSYS_WideCharToMultiByte(FX_DWORD codepage,
                               FX_DWORD dwFlags,
                               const wchar_t* wstr,
@@ -229,7 +232,7 @@ FX_DWORD FXSYS_GetModuleFileName(void* hModule, char* buf, FX_DWORD bufsize);
 char* FXSYS_strlwr(char* str);
 char* FXSYS_strupr(char* str);
 int FXSYS_stricmp(const char*, const char*);
-int FXSYS_wcsicmp(const wchar_t* string1, const wchar_t* string2);
+int FXSYS_wcsicmp(const wchar_t* str1, const wchar_t* str2);
 wchar_t* FXSYS_wcslwr(wchar_t* str);
 wchar_t* FXSYS_wcsupr(wchar_t* str);
 #endif  // _FXM_PLATFORM == _FXM_PLATFORM_WINDOWS_

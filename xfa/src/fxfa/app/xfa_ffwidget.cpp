@@ -825,7 +825,8 @@ void XFA_DrawImage(CFX_Graphics* pGS,
   }
   pRenderDevice->RestoreState();
 }
-const static uint8_t g_inv_base64[128] = {
+
+static const uint8_t g_inv_base64[128] = {
     255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
     255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
     255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 62,  255,
@@ -836,6 +837,7 @@ const static uint8_t g_inv_base64[128] = {
     34,  35,  36,  37,  38,  39,  40,  41,  42,  43,  44,  45,  46,  47,  48,
     49,  50,  51,  255, 255, 255, 255, 255,
 };
+
 static uint8_t* XFA_RemoveBase64Whitespace(const uint8_t* pStr, int32_t iLen) {
   uint8_t* pCP;
   int32_t i = 0, j = 0;

@@ -25,7 +25,7 @@ class CBC_QRCoder {
   CBC_CommonByteMatrix* m_matrix;
 
  public:
-  const static int32_t NUM_MASK_PATTERNS;
+  static const int32_t NUM_MASK_PATTERNS;
   CBC_QRCoder();
   virtual ~CBC_QRCoder();
   CBC_QRCoderMode* GetMode();

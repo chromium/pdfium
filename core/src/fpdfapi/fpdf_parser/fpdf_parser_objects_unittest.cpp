@@ -5,6 +5,7 @@
 #include "core/include/fpdfapi/fpdf_objects.h"
 
 #include <memory>
+#include <string>
 #include <vector>
 
 #include "core/include/fxcrt/fx_basic.h"

@@ -62,7 +62,7 @@ class CFX_SystemHandler : public IFX_SystemHandler {
   void OutputSelectedRect(void* pFormFiller, CFX_FloatRect& rect) override;
   FX_BOOL IsSelectionImplemented() override;
   CFX_WideString GetClipboardText(FX_HWND hWnd) override { return L""; }
-  FX_BOOL SetClipboardText(FX_HWND hWnd, CFX_WideString string) override {
+  FX_BOOL SetClipboardText(FX_HWND hWnd, CFX_WideString str) override {
     return FALSE;
   }
   void ClientToScreen(FX_HWND hWnd, int32_t& x, int32_t& y) override {}
@@ -71,7 +71,7 @@ class CFX_SystemHandler : public IFX_SystemHandler {
   FX_HMENU CreatePopupMenu() override { return NULL; }
   FX_BOOL AppendMenuItem(FX_HMENU hMenu,
                          int32_t nIDNewItem,
-                         CFX_WideString string) override {
+                         CFX_WideString str) override {
     return FALSE;
   }
   FX_BOOL EnableMenuItem(FX_HMENU hMenu,

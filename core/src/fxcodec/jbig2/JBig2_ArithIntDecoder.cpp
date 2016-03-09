@@ -6,6 +6,8 @@
 
 #include "core/src/fxcodec/jbig2/JBig2_ArithIntDecoder.h"
 
+#include <vector>
+
 #include "core/include/fxcrt/fx_basic.h"
 
 namespace {

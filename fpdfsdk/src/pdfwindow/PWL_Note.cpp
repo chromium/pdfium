@@ -1507,6 +1507,6 @@ CFX_WideString CPWL_Note::GetReplyString() const {
   return m_sReplyString;
 }
 
-void CPWL_Note::SetReplyString(const CFX_WideString& string) {
-  m_sReplyString = string;
+void CPWL_Note::SetReplyString(const CFX_WideString& str) {
+  m_sReplyString = str;
 }

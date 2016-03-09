@@ -7,12 +7,11 @@
 #ifndef FPDFSDK_SRC_JAVASCRIPT_APP_H_
 #define FPDFSDK_SRC_JAVASCRIPT_APP_H_
 
+#include <vector>
+
 #include "fpdfsdk/src/javascript/JS_Define.h"
 
 class CJS_Runtime;
-
-/* ---------------------------- TimerObj ---------------------------- */
-
 class CJS_Timer;
 
 class TimerObj : public CJS_EmbedObj {

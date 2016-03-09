@@ -7,9 +7,11 @@
 #include "fpdfsdk/src/javascript/JS_Value.h"
 
 #include <time.h>
+
 #include <algorithm>
 #include <cmath>
 #include <limits>
+#include <vector>
 
 #include "fpdfsdk/src/javascript/Document.h"
 #include "fpdfsdk/src/javascript/JS_Define.h"
@@ -361,14 +363,14 @@ void CJS_PropValue::StartSetting() {
 void CJS_PropValue::StartGetting() {
   m_bIsSetting = 0;
 }
-void CJS_PropValue::operator<<(CFX_ByteString string) {
+void CJS_PropValue::operator<<(CFX_ByteString str) {
   ASSERT(!m_bIsSetting);
-  CJS_Value::operator=(string.c_str());
+  CJS_Value::operator=(str.c_str());
 }
 
-void CJS_PropValue::operator>>(CFX_ByteString& string) const {
+void CJS_PropValue::operator>>(CFX_ByteString& str) const {
   ASSERT(m_bIsSetting);
-  string = CJS_Value::ToCFXByteString();
+  str = CJS_Value::ToCFXByteString();
 }
 
 void CJS_PropValue::operator<<(const FX_WCHAR* c_string) {
@@ -794,7 +796,7 @@ int JS_GetSecFromTime(double dt) {
   return (int)_Mod(FXSYS_floor((double)(dt / 1000)), 60);
 }
 
-double JS_DateParse(const wchar_t* string) {
+double JS_DateParse(const wchar_t* str) {
   v8::Isolate* pIsolate = v8::Isolate::GetCurrent();
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::HandleScope scope(pIsolate);
@@ -817,7 +819,7 @@ double JS_DateParse(const wchar_t* string) {
       v8::Local<v8::Function> funC = v8::Local<v8::Function>::Cast(v);
 
       const int argc = 1;
-      v8::Local<v8::String> timeStr = FXJS_WSToJSString(pIsolate, string);
+      v8::Local<v8::String> timeStr = FXJS_WSToJSString(pIsolate, str);
       v8::Local<v8::Value> argv[argc] = {timeStr};
       v = funC->Call(context, context->Global(), argc, argv).ToLocalChecked();
       if (v->IsNumber()) {

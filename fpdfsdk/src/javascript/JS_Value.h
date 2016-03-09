@@ -7,6 +7,8 @@
 #ifndef FPDFSDK_SRC_JAVASCRIPT_JS_VALUE_H_
 #define FPDFSDK_SRC_JAVASCRIPT_JS_VALUE_H_
 
+#include <vector>
+
 #include "core/include/fxcrt/fx_basic.h"
 #include "fpdfsdk/include/jsapi/fxjs_v8.h"
 
@@ -206,7 +208,7 @@ int JS_GetDayFromTime(double dt);
 int JS_GetHourFromTime(double dt);
 int JS_GetMinFromTime(double dt);
 int JS_GetSecFromTime(double dt);
-double JS_DateParse(const wchar_t* string);
+double JS_DateParse(const wchar_t* str);
 double JS_MakeDay(int nYear, int nMonth, int nDay);
 double JS_MakeTime(int nHour, int nMin, int nSec, int nMs);
 double JS_MakeDate(double day, double time);

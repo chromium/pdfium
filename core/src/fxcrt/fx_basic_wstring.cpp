@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include <stddef.h>  // For offsetof().
+#include <stddef.h>
 
 #include <algorithm>
 #include <cctype>
@@ -184,19 +184,18 @@ const CFX_WideString& CFX_WideString::operator+=(const FX_WCHAR* lpsz) {
   }
   return *this;
 }
-const CFX_WideString& CFX_WideString::operator+=(const CFX_WideString& string) {
-  if (!string.m_pData) {
+const CFX_WideString& CFX_WideString::operator+=(const CFX_WideString& str) {
+  if (!str.m_pData) {
     return *this;
   }
-  ConcatInPlace(string.m_pData->m_nDataLength, string.m_pData->m_String);
+  ConcatInPlace(str.m_pData->m_nDataLength, str.m_pData->m_String);
   return *this;
 }
-const CFX_WideString& CFX_WideString::operator+=(
-    const CFX_WideStringC& string) {
-  if (string.IsEmpty()) {
+const CFX_WideString& CFX_WideString::operator+=(const CFX_WideStringC& str) {
+  if (str.IsEmpty()) {
     return *this;
   }
-  ConcatInPlace(string.GetLength(), string.GetPtr());
+  ConcatInPlace(str.GetLength(), str.GetPtr());
   return *this;
 }
 bool CFX_WideString::Equal(const wchar_t* ptr) const {

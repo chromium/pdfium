@@ -6,6 +6,8 @@
 
 #include "xfa/src/fxfa/app/xfa_fftextedit.h"
 
+#include <vector>
+
 #include "xfa/include/fwl/basewidget/fwl_datetimepicker.h"
 #include "xfa/include/fwl/basewidget/fwl_edit.h"
 #include "xfa/include/fwl/lightwidget/datetimepicker.h"

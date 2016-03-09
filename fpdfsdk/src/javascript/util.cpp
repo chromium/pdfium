@@ -8,6 +8,9 @@
 
 #include <time.h>
 
+#include <string>
+#include <vector>
+
 #include "core/include/fxcrt/fx_ext.h"
 #include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "fpdfsdk/src/javascript/JS_Context.h"

@@ -6,7 +6,9 @@
 
 #include "public/fpdf_ppo.h"
 
+#include <map>
 #include <memory>
+#include <vector>
 
 #include "core/include/fpdfapi/cpdf_document.h"
 #include "fpdfsdk/include/fsdk_define.h"

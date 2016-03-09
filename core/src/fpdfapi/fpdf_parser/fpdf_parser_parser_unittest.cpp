@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <limits>
+#include <string>
+
 #include "core/include/fpdfapi/fpdf_parser.h"
 #include "core/include/fxcrt/fx_stream.h"
 #include "core/src/fpdfapi/fpdf_parser/cpdf_syntax_parser.h"

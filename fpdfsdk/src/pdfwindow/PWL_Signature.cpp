@@ -4,9 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "fpdfsdk/include/pdfwindow/PWL_Signature.h"
+
 #include "fpdfsdk/include/pdfwindow/PWL_Icon.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Label.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Signature.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Utils.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
 
@@ -86,8 +87,8 @@ void CPWL_Signature::SetText(const FX_WCHAR* sText) {
   RePosChildWnd();
 }
 
-void CPWL_Signature::SetDescription(const FX_WCHAR* string) {
-  m_pDescription->SetText(string);
+void CPWL_Signature::SetDescription(const FX_WCHAR* str) {
+  m_pDescription->SetText(str);
 
   RePosChildWnd();
 }

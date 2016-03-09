@@ -8,6 +8,7 @@
 #define FPDFSDK_SRC_JAVASCRIPT_GLOBAL_H_
 
 #include <map>
+#include <vector>
 
 #include "fpdfsdk/src/javascript/JS_Define.h"
 

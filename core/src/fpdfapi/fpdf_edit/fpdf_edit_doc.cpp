@@ -771,10 +771,12 @@ CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont,
   pFontDesc->SetAtInteger("CapHeight", capheight);
   CGFloat fStemV = 0;
   int16_t min_width = SHRT_MAX;
+
   static const UniChar stem_chars[] = {'i', 'I', '!', '1'};
-  const size_t count = sizeof(stem_chars) / sizeof(stem_chars[0]);
-  CGGlyph glyphs[count];
-  CGRect boundingRects[count];
+  CGGlyph glyphs[FX_ArraySize(stem_chars)];
+  CGRect boundingRects[FX_ArraySize(stem_chars)];
+
+  const size_t count = FX_ArraySize(stem_chars);
   if (CTFontGetGlyphsForCharacters(font, stem_chars, glyphs, count)) {
     CTFontGetBoundingRectsForGlyphs(font, kCTFontHorizontalOrientation, glyphs,
                                     boundingRects, count);

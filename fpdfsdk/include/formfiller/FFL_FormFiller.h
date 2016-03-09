@@ -7,6 +7,8 @@
 #ifndef FPDFSDK_INCLUDE_FORMFILLER_FFL_FORMFILLER_H_
 #define FPDFSDK_INCLUDE_FORMFILLER_FFL_FORMFILLER_H_
 
+#include <map>
+
 #include "fpdfsdk/include/formfiller/FFL_CBA_Fontmap.h"
 #include "fpdfsdk/include/formfiller/FFL_IFormFiller.h"
 #include "fpdfsdk/include/fsdk_baseform.h"

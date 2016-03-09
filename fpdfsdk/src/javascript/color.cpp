@@ -6,6 +6,8 @@
 
 #include "fpdfsdk/src/javascript/color.h"
 
+#include <vector>
+
 #include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "fpdfsdk/src/javascript/JS_Context.h"
 #include "fpdfsdk/src/javascript/JS_Define.h"

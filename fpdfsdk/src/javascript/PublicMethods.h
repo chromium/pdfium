@@ -7,6 +7,9 @@
 #ifndef FPDFSDK_SRC_JAVASCRIPT_PUBLICMETHODS_H_
 #define FPDFSDK_SRC_JAVASCRIPT_PUBLICMETHODS_H_
 
+#include <string>
+#include <vector>
+
 #include "fpdfsdk/src/javascript/JS_Define.h"
 
 class CJS_PublicMethods : public CJS_Object {

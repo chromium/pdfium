@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <vector>
 
 #include "core/include/fpdfapi/cpdf_document.h"
 #include "fpdfsdk/include/formfiller/FFL_FormFiller.h"

@@ -71,7 +71,7 @@ class CPWL_ComboBox : public CPWL_Wnd {
   CFX_WideString GetText() const;
   void SetText(const FX_WCHAR* text);
 
-  void AddString(const FX_WCHAR* string);
+  void AddString(const FX_WCHAR* str);
   int32_t GetSelect() const;
   void SetSelect(int32_t nItemIndex);
 

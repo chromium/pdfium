@@ -634,7 +634,7 @@ void CPDFXFA_Document::ExportData(IXFA_Doc* hDoc,
                          content.GetLength());
     CFX_WideStringC data(L"data");
     if (pXFADocHander->SavePackage(m_pXFADocView->GetDoc(), data, &fileWrite)) {
-      // TODO: Maybe report error.
+      // Ignoring error.
     }
   } else if (fileType == FXFA_SAVEAS_XDP) {
     if (m_pPDFDoc == NULL)
@@ -694,12 +694,11 @@ void CPDFXFA_Document::ExportData(IXFA_Doc* hDoc,
     }
   }
   if (!fileWrite.Flush()) {
-    // TODO: Report error.
+    // Ignoring flush error.
   }
 }
 void CPDFXFA_Document::ImportData(IXFA_Doc* hDoc,
                                   const CFX_WideStringC& wsFilePath) {
-  // TODO ...
 }
 
 void CPDFXFA_Document::GotoURL(IXFA_Doc* hDoc,
@@ -1001,7 +1000,6 @@ FX_BOOL CPDFXFA_Document::_ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
         pDocHandler->SavePackage(m_pXFADoc, ws, &fileStream);
       } else {
         // PDF,creator.
-        // TODO:
       }
     }
   }
@@ -1192,7 +1190,7 @@ FX_BOOL CPDFXFA_Document::_SubmitData(IXFA_Doc* hDoc, CXFA_Submit submit) {
     bsSubject.ReleaseBuffer();
     bsMsg.ReleaseBuffer();
   } else {
-    // http¡¢ftp
+    // HTTP or FTP
     CFX_WideString ws;
     CFX_ByteString bs = csURL.UTF16LE_Encode();
     int len = bs.GetLength() / sizeof(unsigned short);

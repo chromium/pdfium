@@ -19,7 +19,7 @@ class CBC_CommonByteMatrix;
 
 class CBC_QRCoderEncoder {
  private:
-  const static int32_t m_alphaNumbericTable[96];
+  static const int32_t m_alphaNumbericTable[96];
 
  public:
   CBC_QRCoderEncoder();

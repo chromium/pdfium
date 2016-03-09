@@ -7,6 +7,8 @@
 #ifndef FPDFSDK_SRC_JAVASCRIPT_CONSOLE_H_
 #define FPDFSDK_SRC_JAVASCRIPT_CONSOLE_H_
 
+#include <vector>
+
 #include "fpdfsdk/src/javascript/JS_Define.h"
 
 class console : public CJS_EmbedObj {

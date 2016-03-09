@@ -38,8 +38,9 @@ class CBC_WhiteRectangleDetector {
                              int32_t b,
                              int32_t fixed,
                              FX_BOOL horizontal);
-  const static int32_t INIT_SIZE;
-  const static int32_t CORR;
+
+  static const int32_t INIT_SIZE = 30;
+  static const int32_t CORR = 1;
 
   CBC_CommonBitMatrix* m_image;
   int32_t m_height;

@@ -305,7 +305,7 @@ class CPWL_Note : public CPWL_NoteItem {
   void EnableModify(FX_BOOL bEnabled);
 
   CFX_WideString GetReplyString() const;
-  void SetReplyString(const CFX_WideString& string);
+  void SetReplyString(const CFX_WideString& str);
 
   // CPWL_NoteItem
   void SetSubjectName(const CFX_WideString& sName) override;

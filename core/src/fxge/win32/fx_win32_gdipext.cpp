@@ -16,11 +16,12 @@ using std::max;
 }  // namespace Gdiplus
 
 #include <gdiplus.h>
+
 #include "core/include/fxge/fx_ge_win32.h"
 #include "core/src/fxge/win32/win32_int.h"
 
-using namespace Gdiplus;
-using namespace Gdiplus::DllExports;
+using namespace Gdiplus;              // NOLINT
+using namespace Gdiplus::DllExports;  // NOLINT
 
 #define GdiFillType2Gdip(fill_type) \
   (fill_type == ALTERNATE ? FillModeAlternate : FillModeWinding)
@@ -420,7 +421,7 @@ typedef GpStatus(WINGDIPAPI* FuncType_GdipDrawImageRectI)(GpGraphics* graphics,
                                                           INT height);
 typedef GpStatus(WINGDIPAPI* FuncType_GdipDrawString)(
     GpGraphics* graphics,
-    GDIPCONST WCHAR* string,
+    GDIPCONST WCHAR* str,
     INT length,
     GDIPCONST GpFont* font,
     GDIPCONST RectF* layoutRect,

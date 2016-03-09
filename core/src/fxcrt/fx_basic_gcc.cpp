@@ -33,20 +33,20 @@ IntType FXSYS_StrToInt(const CharType* str) {
 }
 
 template <typename T, typename UT, typename STR_T>
-STR_T FXSYS_IntToStr(T value, STR_T string, int radix) {
+STR_T FXSYS_IntToStr(T value, STR_T str, int radix) {
   if (radix < 2 || radix > 16) {
-    string[0] = 0;
-    return string;
+    str[0] = 0;
+    return str;
   }
   if (value == 0) {
-    string[0] = '0';
-    string[1] = 0;
-    return string;
+    str[0] = '0';
+    str[1] = 0;
+    return str;
   }
   int i = 0;
   UT uvalue;
   if (value < 0) {
-    string[i++] = '-';
+    str[i++] = '-';
     // Standard trick to avoid undefined behaviour when negating INT_MIN.
     uvalue = static_cast<UT>(-(value + 1)) + 1;
   } else {
@@ -59,11 +59,11 @@ STR_T FXSYS_IntToStr(T value, STR_T string, int radix) {
     order = order / radix;
   }
   for (int d = digits - 1; d > -1; d--) {
-    string[d + i] = "0123456789abcdef"[uvalue % radix];
+    str[d + i] = "0123456789abcdef"[uvalue % radix];
     uvalue /= radix;
   }
-  string[digits + i] = 0;
-  return string;
+  str[digits + i] = 0;
+  return str;
 }
 
 #ifdef __cplusplus
@@ -191,8 +191,8 @@ int FXSYS_wcsicmp(const FX_WCHAR* dst, const FX_WCHAR* src) {
   } while (f && (f == l));
   return (f - l);
 }
-char* FXSYS_itoa(int value, char* string, int radix) {
-  return FXSYS_IntToStr<int32_t, uint32_t, FX_CHAR*>(value, string, radix);
+char* FXSYS_itoa(int value, char* str, int radix) {
+  return FXSYS_IntToStr<int32_t, uint32_t, FX_CHAR*>(value, str, radix);
 }
 #ifdef __cplusplus
 }

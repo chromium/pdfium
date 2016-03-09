@@ -120,7 +120,7 @@ class CPDF_PSEngine {
   CPDF_PSEngine();
   ~CPDF_PSEngine();
 
-  FX_BOOL Parse(const FX_CHAR* string, int size);
+  FX_BOOL Parse(const FX_CHAR* str, int size);
   FX_BOOL Execute() { return m_MainProc.Execute(this); }
   FX_BOOL DoOperator(PDF_PSOP op);
   void Reset() { m_StackCount = 0; }
@@ -207,8 +207,8 @@ const struct PDF_PSOpName {
                      {"dup", PSOP_DUP},         {"copy", PSOP_COPY},
                      {"index", PSOP_INDEX},     {"roll", PSOP_ROLL}};
 
-FX_BOOL CPDF_PSEngine::Parse(const FX_CHAR* string, int size) {
-  CPDF_SimpleParser parser((uint8_t*)string, size);
+FX_BOOL CPDF_PSEngine::Parse(const FX_CHAR* str, int size) {
+  CPDF_SimpleParser parser((uint8_t*)str, size);
   CFX_ByteStringC word = parser.GetWord();
   if (word != "{") {
     return FALSE;

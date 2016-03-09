@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FDP_SRC_CSS_FDE_CSSCACHE_H_
 #define XFA_SRC_FDP_SRC_CSS_FDE_CSSCACHE_H_
 
+#include <map>
+
 #include "xfa/src/fdp/include/fde_css.h"
 #include "xfa/src/fgas/include/fx_mem.h"
 

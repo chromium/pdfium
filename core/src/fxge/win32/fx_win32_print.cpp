@@ -287,15 +287,15 @@ CPSOutput::~CPSOutput() {
 void CPSOutput::Init() {
   m_pBuf = FX_Alloc(FX_CHAR, 1026);
 }
-void CPSOutput::OutputPS(const FX_CHAR* string, int len) {
+void CPSOutput::OutputPS(const FX_CHAR* str, int len) {
   if (len < 0) {
-    len = (int)FXSYS_strlen(string);
+    len = (int)FXSYS_strlen(str);
   }
   int sent_len = 0;
   while (len > 0) {
     int send_len = len > 1024 ? 1024 : len;
     *(FX_WORD*)m_pBuf = send_len;
-    FXSYS_memcpy(m_pBuf + 2, string + sent_len, send_len);
+    FXSYS_memcpy(m_pBuf + 2, str + sent_len, send_len);
     ExtEscape(m_hDC, PASSTHROUGH, send_len + 2, m_pBuf, 0, NULL);
     sent_len += send_len;
     len -= send_len;

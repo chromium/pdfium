@@ -7,6 +7,8 @@
 #ifndef XFA_SRC_FXFA_APP_XFA_FFTEXTEDIT_H_
 #define XFA_SRC_FXFA_APP_XFA_FFTEXTEDIT_H_
 
+#include <vector>
+
 #include "xfa/src/fxfa/app/xfa_fffield.h"
 
 class CXFA_FFTextEdit : public CXFA_FFField {

@@ -5,6 +5,9 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "fpdfsdk/include/fsdk_actionhandler.h"
+
+#include <set>
+
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/include/javascript/IJavaScript.h"

@@ -239,9 +239,9 @@ void CPWL_ComboBox::SetText(const FX_WCHAR* text) {
     m_pEdit->SetText(text);
 }
 
-void CPWL_ComboBox::AddString(const FX_WCHAR* string) {
+void CPWL_ComboBox::AddString(const FX_WCHAR* str) {
   if (m_pList)
-    m_pList->AddString(string);
+    m_pList->AddString(str);
 }
 
 int32_t CPWL_ComboBox::GetSelect() const {

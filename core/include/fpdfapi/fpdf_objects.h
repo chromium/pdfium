@@ -337,7 +337,7 @@ class CPDF_Dictionary : public CPDF_Object {
   // Set* functions invalidate iterators for the element with the key |key|.
   void SetAt(const CFX_ByteStringC& key, CPDF_Object* pObj);
   void SetAtName(const CFX_ByteStringC& key, const CFX_ByteString& name);
-  void SetAtString(const CFX_ByteStringC& key, const CFX_ByteString& string);
+  void SetAtString(const CFX_ByteStringC& key, const CFX_ByteString& str);
   void SetAtInteger(const CFX_ByteStringC& key, int i);
   void SetAtNumber(const CFX_ByteStringC& key, FX_FLOAT f);
   void SetAtReference(const CFX_ByteStringC& key,

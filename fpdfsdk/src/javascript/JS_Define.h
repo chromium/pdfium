@@ -7,6 +7,8 @@
 #ifndef FPDFSDK_SRC_JAVASCRIPT_JS_DEFINE_H_
 #define FPDFSDK_SRC_JAVASCRIPT_JS_DEFINE_H_
 
+#include <vector>
+
 #include "fpdfsdk/include/jsapi/fxjs_v8.h"
 #include "fpdfsdk/src/javascript/JS_Object.h"
 #include "fpdfsdk/src/javascript/JS_Value.h"
@@ -15,7 +17,7 @@
 struct JSConstSpec {
   const wchar_t* pName;
   double number;
-  const wchar_t* string;
+  const wchar_t* string;  // NOLINT
   uint8_t t;  // 0:double 1:str
 };
 

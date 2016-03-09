@@ -9,6 +9,7 @@
 
 #include <list>
 #include <memory>
+#include <vector>
 
 #include "fpdfsdk/src/javascript/JS_Define.h"
 

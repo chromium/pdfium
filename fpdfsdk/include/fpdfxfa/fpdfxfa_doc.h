@@ -114,23 +114,17 @@ class CPDFXFA_Document : public IXFA_DocProvider {
     return 0;
   }
 
-  // SignaturePseudoModel method
-  // TODO:
-  virtual int32_t Verify(
-      IXFA_Doc* hDoc,
-      CXFA_Node* pSigNode,
-      FX_BOOL
-          bUsed = TRUE /*, SecurityHandler* pHandler, SignatureInfo &info*/) {
+  virtual int32_t Verify(IXFA_Doc* hDoc,
+                         CXFA_Node* pSigNode,
+                         FX_BOOL bUsed = TRUE) {
     return 0;
   }
-  virtual FX_BOOL Sign(
-      IXFA_Doc* hDoc,
-      CXFA_NodeList* pNodeList,
-      const CFX_WideStringC& wsExpression,
-      const CFX_WideStringC& wsXMLIdent,
-      const CFX_WideStringC& wsValue = FX_WSTRC(L"open"),
-      FX_BOOL
-          bUsed = TRUE /*, SecurityHandler* pHandler = NULL, SignatureInfo &info*/) {
+  virtual FX_BOOL Sign(IXFA_Doc* hDoc,
+                       CXFA_NodeList* pNodeList,
+                       const CFX_WideStringC& wsExpression,
+                       const CFX_WideStringC& wsXMLIdent,
+                       const CFX_WideStringC& wsValue = FX_WSTRC(L"open"),
+                       FX_BOOL bUsed = TRUE) {
     return 0;
   }
   virtual CXFA_NodeList* Enumerate(IXFA_Doc* hDoc) { return 0; }

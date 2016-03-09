@@ -41,18 +41,18 @@ class CBC_DataMatrixDecodedBitStreamParser {
   static uint8_t Unrandomize255State(int32_t randomizedBase256Codeword,
                                      int32_t base256CodewordPosition);
 
-  const static FX_CHAR C40_BASIC_SET_CHARS[];
-  const static FX_CHAR C40_SHIFT2_SET_CHARS[];
+  static const FX_CHAR C40_BASIC_SET_CHARS[];
+  static const FX_CHAR C40_SHIFT2_SET_CHARS[];
 
-  const static FX_CHAR TEXT_BASIC_SET_CHARS[];
-  const static FX_CHAR TEXT_SHIFT3_SET_CHARS[];
-  const static int32_t PAD_ENCODE;
-  const static int32_t ASCII_ENCODE;
-  const static int32_t C40_ENCODE;
-  const static int32_t TEXT_ENCODE;
-  const static int32_t ANSIX12_ENCODE;
-  const static int32_t EDIFACT_ENCODE;
-  const static int32_t BASE256_ENCODE;
+  static const FX_CHAR TEXT_BASIC_SET_CHARS[];
+  static const FX_CHAR TEXT_SHIFT3_SET_CHARS[];
+  static const int32_t PAD_ENCODE;
+  static const int32_t ASCII_ENCODE;
+  static const int32_t C40_ENCODE;
+  static const int32_t TEXT_ENCODE;
+  static const int32_t ANSIX12_ENCODE;
+  static const int32_t EDIFACT_ENCODE;
+  static const int32_t BASE256_ENCODE;
 };
 
 #endif  // XFA_SRC_FXBARCODE_DATAMATRIX_BC_DATAMATRIXDECODEDBITSTREAMPARSER_H_

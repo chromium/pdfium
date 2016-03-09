@@ -12,6 +12,7 @@
 #include <list>
 #include <map>
 #include <memory>
+#include <vector>
 
 #include "core/include/fxcodec/fx_codec.h"
 #include "core/src/fxcodec/jbig2/JBig2_Context.h"

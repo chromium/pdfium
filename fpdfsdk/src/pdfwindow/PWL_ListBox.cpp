@@ -391,9 +391,9 @@ CFX_FloatRect CPWL_ListBox::GetFocusRect() const {
   return CPWL_Wnd::GetFocusRect();
 }
 
-void CPWL_ListBox::AddString(const FX_WCHAR* string) {
+void CPWL_ListBox::AddString(const FX_WCHAR* str) {
   if (m_pList) {
-    m_pList->AddString(string);
+    m_pList->AddString(str);
   }
 }
 

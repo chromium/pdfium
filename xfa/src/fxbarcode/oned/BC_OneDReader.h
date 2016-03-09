@@ -31,8 +31,9 @@ class CBC_OneDReader : public CBC_Reader {
   CFX_ByteString DeDecode(CBC_BinaryBitmap* image, int32_t hints, int32_t& e);
 
  protected:
-  const static int32_t INTEGER_MATH_SHIFT;
-  const static int32_t PATTERN_MATCH_RESULT_SCALE_FACTOR;
+  static const int32_t INTEGER_MATH_SHIFT = 8;
+  static const int32_t PATTERN_MATCH_RESULT_SCALE_FACTOR = 1 << 8;
+
   void RecordPattern(CBC_CommonBitArray* row,
                      int32_t start,
                      CFX_Int32Array* counters,

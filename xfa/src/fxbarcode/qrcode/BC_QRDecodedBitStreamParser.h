@@ -14,7 +14,7 @@ class CBC_QRCoderVersion;
 class CBC_CommonCharacterSetECI;
 class CBC_QRDecodedBitStreamParser {
  private:
-  const static FX_CHAR ALPHANUMERIC_CHARS[45];
+  static const FX_CHAR ALPHANUMERIC_CHARS[45];
   static const FX_CHAR* UTF_8;
   CBC_QRDecodedBitStreamParser();
 

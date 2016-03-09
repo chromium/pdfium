@@ -7,8 +7,9 @@
 #include "fpdfsdk/src/javascript/app.h"
 
 #include <memory>
+#include <vector>
 
-#include "fpdfsdk/include/fsdk_mgr.h"  // For CPDFDoc_Environment.
+#include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "fpdfsdk/src/javascript/Document.h"
 #include "fpdfsdk/src/javascript/JS_Context.h"

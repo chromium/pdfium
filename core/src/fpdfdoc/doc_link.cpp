@@ -6,6 +6,8 @@
 
 #include "core/include/fpdfdoc/fpdf_doc.h"
 
+#include <vector>
+
 CPDF_LinkList::CPDF_LinkList() {
 }
 

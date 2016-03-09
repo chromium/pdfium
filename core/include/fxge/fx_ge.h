@@ -591,7 +591,7 @@ class IFX_RenderDeviceDriver {
 class IFX_PSOutput {
  public:
   virtual void Release() = 0;
-  virtual void OutputPS(const FX_CHAR* string, int len) = 0;
+  virtual void OutputPS(const FX_CHAR* str, int len) = 0;
 
  protected:
   virtual ~IFX_PSOutput() {}

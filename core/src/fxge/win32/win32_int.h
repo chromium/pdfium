@@ -277,7 +277,7 @@ class CPSOutput : public IFX_PSOutput {
 
   // IFX_PSOutput
   void Release() override { delete this; }
-  void OutputPS(const FX_CHAR* string, int len) override;
+  void OutputPS(const FX_CHAR* str, int len) override;
 
   void Init();
 

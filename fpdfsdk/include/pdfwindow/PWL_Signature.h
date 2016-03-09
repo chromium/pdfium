@@ -38,7 +38,7 @@ class CPWL_Signature : public CPWL_Wnd {
   ~CPWL_Signature() override;
 
   void SetText(const FX_WCHAR* sText);
-  void SetDescription(const FX_WCHAR* string);
+  void SetDescription(const FX_WCHAR* str);
   void SetImage(CFX_DIBSource* pImage);
   void SetImageStream(CPDF_Stream* pStream, const FX_CHAR* sImageAlias);
 

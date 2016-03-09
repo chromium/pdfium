@@ -7,6 +7,7 @@
 #include "xfa/src/fwl/basewidget/fwl_editimp.h"
 
 #include <algorithm>
+#include <vector>
 
 #include "xfa/include/fwl/basewidget/fwl_caret.h"
 #include "xfa/include/fwl/basewidget/fwl_datetimepicker.h"

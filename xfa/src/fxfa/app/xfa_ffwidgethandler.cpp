@@ -6,6 +6,8 @@
 
 #include "xfa/src/fxfa/app/xfa_ffwidgethandler.h"
 
+#include <vector>
+
 #include "xfa/src/fxfa/app/xfa_ffchoicelist.h"
 #include "xfa/src/fxfa/app/xfa_ffdoc.h"
 #include "xfa/src/fxfa/app/xfa_ffdocview.h"

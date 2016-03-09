@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <list>
+
 #include "core/include/fxcodec/fx_codec.h"
 #include "core/src/fxcodec/codec/codec_int.h"
 

@@ -13,8 +13,8 @@ class CBC_OnedCode39Reader : public CBC_OneDReader {
  public:
   static const FX_CHAR* ALPHABET_STRING;
   static const FX_CHAR* CHECKSUM_STRING;
-  const static int32_t CHARACTER_ENCODINGS[44];
-  const static int32_t ASTERISK_ENCODING;
+  static const int32_t CHARACTER_ENCODINGS[44];
+  static const int32_t ASTERISK_ENCODING;
   CBC_OnedCode39Reader();
   CBC_OnedCode39Reader(FX_BOOL usingCheckDigit);
   CBC_OnedCode39Reader(FX_BOOL usingCheckDigit, FX_BOOL extendedMode);

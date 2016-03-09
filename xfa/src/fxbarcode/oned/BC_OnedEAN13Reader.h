@@ -11,7 +11,7 @@ class CBC_CommonBitArray;
 class CBC_OnedEAN13Reader;
 class CBC_OnedEAN13Reader : public CBC_OneDimReader {
  public:
-  const static int32_t FIRST_DIGIT_ENCODINGS[10];
+  static const int32_t FIRST_DIGIT_ENCODINGS[10];
   CBC_OnedEAN13Reader();
   virtual ~CBC_OnedEAN13Reader();
 

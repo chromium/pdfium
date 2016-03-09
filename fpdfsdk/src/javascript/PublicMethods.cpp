@@ -7,6 +7,8 @@
 #include "fpdfsdk/src/javascript/PublicMethods.h"
 
 #include <algorithm>
+#include <string>
+#include <vector>
 
 #include "core/include/fxcrt/fx_ext.h"
 #include "fpdfsdk/include/fsdk_mgr.h"  // For CPDFDoc_Environment.
@@ -77,8 +79,8 @@ static const FX_WCHAR* const fullmonths[] = {L"January",
                                              L"November",
                                              L"December"};
 
-FX_BOOL CJS_PublicMethods::IsNumber(const FX_WCHAR* string) {
-  CFX_WideString sTrim = StrTrim(string);
+FX_BOOL CJS_PublicMethods::IsNumber(const FX_WCHAR* str) {
+  CFX_WideString sTrim = StrTrim(str);
   const FX_WCHAR* pTrim = sTrim.c_str();
   const FX_WCHAR* p = pTrim;
 
@@ -228,17 +230,17 @@ CJS_Array CJS_PublicMethods::AF_MakeArrayFromList(CJS_Runtime* pRuntime,
   return StrArray;
 }
 
-int CJS_PublicMethods::ParseStringInteger(const CFX_WideString& string,
+int CJS_PublicMethods::ParseStringInteger(const CFX_WideString& str,
                                           int nStart,
                                           int& nSkip,
                                           int nMaxStep) {
   int nRet = 0;
   nSkip = 0;
-  for (int i = nStart, sz = string.GetLength(); i < sz; i++) {
+  for (int i = nStart, sz = str.GetLength(); i < sz; i++) {
     if (i - nStart > 10)
       break;
 
-    FX_WCHAR c = string.GetAt(i);
+    FX_WCHAR c = str.GetAt(i);
     if (!FXSYS_iswdigit(c))
       break;
 
@@ -251,14 +253,13 @@ int CJS_PublicMethods::ParseStringInteger(const CFX_WideString& string,
   return nRet;
 }
 
-CFX_WideString CJS_PublicMethods::ParseStringString(
-    const CFX_WideString& string,
-    int nStart,
-    int& nSkip) {
+CFX_WideString CJS_PublicMethods::ParseStringString(const CFX_WideString& str,
+                                                    int nStart,
+                                                    int& nSkip) {
   CFX_WideString swRet;
   nSkip = 0;
-  for (int i = nStart, sz = string.GetLength(); i < sz; i++) {
-    FX_WCHAR c = string.GetAt(i);
+  for (int i = nStart, sz = str.GetLength(); i < sz; i++) {
+    FX_WCHAR c = str.GetAt(i);
     if (!FXSYS_iswdigit(c))
       break;
 

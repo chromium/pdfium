@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <string>
 #include <vector>
 
 #include "fpdfsdk/include/fsdk_mgr.h"  // For CPDFDoc_Environment.

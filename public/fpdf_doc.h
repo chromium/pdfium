@@ -272,7 +272,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFLink_Enumerate(FPDF_PAGE page,
                                                FPDF_LINK* linkAnnot);
 
 // Function: FPDFLink_GetAnnotRect
-//          Get the annotation rectangle. (Specified by the ¡°Rect¡± entry of
+//          Get the annotation rectangle. (Specified by the |Rect| entry of
 //          annotation dictionary).
 // Parameters:
 //          linkAnnot[in]       -   Handle to the link annotation.

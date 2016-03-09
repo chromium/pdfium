@@ -44,8 +44,8 @@ class CBC_OnedCodaBarWriter : public CBC_OneDimWriter {
                     int32_t codeLength,
                     FX_BOOL isDevice,
                     int32_t& e);
-  const static FX_CHAR START_END_CHARS[];
-  const static FX_CHAR CONTENT_CHARS[];
+  static const FX_CHAR START_END_CHARS[];
+  static const FX_CHAR CONTENT_CHARS[];
   FX_CHAR m_chStart;
   FX_CHAR m_chEnd;
   int32_t m_iWideNarrRatio;

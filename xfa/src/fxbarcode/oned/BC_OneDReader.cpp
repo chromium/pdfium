@@ -29,9 +29,6 @@
 #include "xfa/src/fxbarcode/oned/BC_OneDReader.h"
 #include "xfa/src/fxbarcode/utils.h"
 
-const int32_t CBC_OneDReader::INTEGER_MATH_SHIFT = 8;
-const int32_t CBC_OneDReader::PATTERN_MATCH_RESULT_SCALE_FACTOR = 1 << 8;
-
 CBC_OneDReader::CBC_OneDReader() {}
 CBC_OneDReader::~CBC_OneDReader() {}
 CFX_ByteString CBC_OneDReader::Decode(CBC_BinaryBitmap* image, int32_t& e) {

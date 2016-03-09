@@ -65,22 +65,7 @@ const int32_t CBC_OnedCode128Reader::CODE_PATTERNS[107][7] = {
     {1, 1, 3, 1, 4, 1, 0}, {1, 1, 4, 1, 3, 1, 0}, {3, 1, 1, 1, 4, 1, 0},
     {4, 1, 1, 1, 3, 1, 0}, {2, 1, 1, 4, 1, 2, 0}, {2, 1, 1, 2, 1, 4, 0},
     {2, 1, 1, 2, 3, 2, 0}, {2, 3, 3, 1, 1, 1, 2}};
-const int32_t CBC_OnedCode128Reader::MAX_AVG_VARIANCE = (int32_t)(256 * 0.25f);
-const int32_t CBC_OnedCode128Reader::MAX_INDIVIDUAL_VARIANCE =
-    (int32_t)(256 * 0.7f);
-const int32_t CBC_OnedCode128Reader::CODE_SHIFT = 98;
-const int32_t CBC_OnedCode128Reader::CODE_CODE_C = 99;
-const int32_t CBC_OnedCode128Reader::CODE_CODE_B = 100;
-const int32_t CBC_OnedCode128Reader::CODE_CODE_A = 101;
-const int32_t CBC_OnedCode128Reader::CODE_FNC_1 = 102;
-const int32_t CBC_OnedCode128Reader::CODE_FNC_2 = 97;
-const int32_t CBC_OnedCode128Reader::CODE_FNC_3 = 96;
-const int32_t CBC_OnedCode128Reader::CODE_FNC_4_A = 101;
-const int32_t CBC_OnedCode128Reader::CODE_FNC_4_B = 100;
-const int32_t CBC_OnedCode128Reader::CODE_START_A = 103;
-const int32_t CBC_OnedCode128Reader::CODE_START_B = 104;
-const int32_t CBC_OnedCode128Reader::CODE_START_C = 105;
-const int32_t CBC_OnedCode128Reader::CODE_STOP = 106;
+
 CBC_OnedCode128Reader::CBC_OnedCode128Reader() {}
 CBC_OnedCode128Reader::~CBC_OnedCode128Reader() {}
 CFX_Int32Array* CBC_OnedCode128Reader::FindStartPattern(CBC_CommonBitArray* row,
@@ -306,6 +291,7 @@ CFX_ByteString CBC_OnedCode128Reader::DecodeRow(int32_t rowNumber,
             result += '0';
           }
           FX_CHAR temp[128];
+          // TODO(dsinclair): Should this be snprintf?
           sprintf(temp, "%d", code);
           result += temp;
         } else {

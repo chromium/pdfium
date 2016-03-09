@@ -6,6 +6,8 @@
 
 #include "xfa/src/fdp/src/css/fde_cssstyleselector.h"
 
+#include <algorithm>
+
 #include "xfa/src/fdp/src/css/fde_csscache.h"
 #include "xfa/src/fdp/src/css/fde_cssdeclaration.h"
 

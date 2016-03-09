@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <string>
+
 #include "testing/utils/path_service.h"
 
 #ifdef PDF_ENABLE_V8

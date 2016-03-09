@@ -6,6 +6,8 @@
 
 #include "fpdfsdk/include/jsapi/fxjs_v8.h"
 
+#include <vector>
+
 #include "core/include/fxcrt/fx_basic.h"
 
 const wchar_t kFXJSValueNameString[] = L"string";
@@ -745,9 +747,8 @@ v8::Local<v8::Value> FXJS_NewObject2(v8::Isolate* pIsolate,
   return pObj->Clone();
 }
 
-v8::Local<v8::Value> FXJS_NewString(v8::Isolate* pIsolate,
-                                    const wchar_t* string) {
-  return FXJS_WSToJSString(pIsolate, string);
+v8::Local<v8::Value> FXJS_NewString(v8::Isolate* pIsolate, const wchar_t* str) {
+  return FXJS_WSToJSString(pIsolate, str);
 }
 
 v8::Local<v8::Value> FXJS_NewNull() {

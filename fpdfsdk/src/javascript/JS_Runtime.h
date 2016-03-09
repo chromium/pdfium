@@ -8,6 +8,7 @@
 #define FPDFSDK_SRC_JAVASCRIPT_JS_RUNTIME_H_
 
 #include <set>
+#include <map>
 #include <utility>
 #include <vector>
 

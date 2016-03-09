@@ -28,9 +28,6 @@
 #include "xfa/src/fxbarcode/common/BC_CommonBitMatrix.h"
 #include "xfa/src/fxbarcode/utils.h"
 
-const int32_t CBC_WhiteRectangleDetector::INIT_SIZE = 30;
-const int32_t CBC_WhiteRectangleDetector::CORR = 1;
-
 CBC_WhiteRectangleDetector::CBC_WhiteRectangleDetector(
     CBC_CommonBitMatrix* image) {
   m_image = image;

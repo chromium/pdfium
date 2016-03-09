@@ -6,8 +6,10 @@
 
 #include "fpdfsdk/src/javascript/Document.h"
 
+#include <vector>
+
 #include "core/include/fpdfapi/cpdf_document.h"
-#include "fpdfsdk/include/fsdk_mgr.h"  // For CPDFDoc_Environment.
+#include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "fpdfsdk/src/javascript/Field.h"
 #include "fpdfsdk/src/javascript/Icon.h"
@@ -655,8 +657,6 @@ FX_BOOL Document::submitForm(IJS_Context* cc,
   }
   return TRUE;
 }
-
-//////////////////////////////////////////////////////////////////////////////////////////////
 
 void Document::AttachDoc(CPDFSDK_Document* pDoc) {
   m_pDocument = pDoc;

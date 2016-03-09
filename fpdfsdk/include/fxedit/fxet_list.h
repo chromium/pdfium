@@ -7,7 +7,7 @@
 #ifndef FPDFSDK_INCLUDE_FXEDIT_FXET_LIST_H_
 #define FPDFSDK_INCLUDE_FXEDIT_FXET_LIST_H_
 
-#include "core/include/fpdfapi/fpdf_parser.h"  // For CFX_FloatPoint.
+#include "core/include/fpdfapi/fpdf_parser.h"
 #include "fpdfsdk/include/fxedit/fx_edit.h"
 
 class IFX_Edit;
@@ -307,7 +307,7 @@ class CFX_ListCtrl : public CFX_List {
   int32_t GetTopItem() const override;
   CFX_FloatRect GetContentRect() const override;
   int32_t GetItemIndex(const CFX_FloatPoint& point) const override;
-  void AddString(const FX_WCHAR* string) override;
+  void AddString(const FX_WCHAR* str) override;
   void SetTopItem(int32_t nIndex) override;
   void Select(int32_t nItemIndex) override;
   void SetCaret(int32_t nItemIndex) override;

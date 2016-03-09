@@ -24,13 +24,13 @@ class CBC_OnedCodaBarReader : public CBC_OneDReader {
   CFX_Int32Array* FindAsteriskPattern(CBC_CommonBitArray* row, int32_t& e);
   FX_BOOL ArrayContains(const FX_CHAR array[], FX_CHAR key);
   FX_CHAR ToNarrowWidePattern(CFX_Int32Array* counter);
+
   static const FX_CHAR* ALPHABET_STRING;
+  static const int32_t CHARACTER_ENCODINGS[22];
 
-  const static int32_t CHARACTER_ENCODINGS[22];
-
-  const static int32_t minCharacterLength;
-
-  const static FX_CHAR STARTEND_ENCODING[8];
+ private:
+  static const int32_t minCharacterLength = 3;
+  static const FX_CHAR STARTEND_ENCODING[8];
 };
 
 #endif  // XFA_SRC_FXBARCODE_ONED_BC_ONEDCODABARREADER_H_

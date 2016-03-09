@@ -4,7 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include <stddef.h>  // For offsetof().
+#include <stddef.h>
+
 #include <cctype>
 
 #include "core/include/fxcrt/fx_basic.h"
@@ -22,15 +23,15 @@ static int _Buffer_itoa(char* buf, int i, FX_DWORD flags) {
     u = -i;
   }
   int base = 10;
-  const FX_CHAR* string = "0123456789abcdef";
+  const FX_CHAR* str = "0123456789abcdef";
   if (flags & FXFORMAT_HEX) {
     base = 16;
     if (flags & FXFORMAT_CAPITAL) {
-      string = "0123456789ABCDEF";
+      str = "0123456789ABCDEF";
     }
   }
   while (u != 0) {
-    buf1[buf_pos--] = string[u % base];
+    buf1[buf_pos--] = str[u % base];
     u = u / base;
   }
   if ((flags & FXFORMAT_SIGNED) && i < 0) {
@@ -202,19 +203,18 @@ const CFX_ByteString& CFX_ByteString::operator+=(char ch) {
   ConcatInPlace(1, &ch);
   return *this;
 }
-const CFX_ByteString& CFX_ByteString::operator+=(const CFX_ByteString& string) {
-  if (!string.m_pData) {
+const CFX_ByteString& CFX_ByteString::operator+=(const CFX_ByteString& str) {
+  if (!str.m_pData) {
     return *this;
   }
-  ConcatInPlace(string.m_pData->m_nDataLength, string.m_pData->m_String);
+  ConcatInPlace(str.m_pData->m_nDataLength, str.m_pData->m_String);
   return *this;
 }
-const CFX_ByteString& CFX_ByteString::operator+=(
-    const CFX_ByteStringC& string) {
-  if (string.IsEmpty()) {
+const CFX_ByteString& CFX_ByteString::operator+=(const CFX_ByteStringC& str) {
+  if (str.IsEmpty()) {
     return *this;
   }
-  ConcatInPlace(string.GetLength(), string.GetCStr());
+  ConcatInPlace(str.GetLength(), str.GetCStr());
   return *this;
 }
 bool CFX_ByteString::Equal(const char* ptr) const {

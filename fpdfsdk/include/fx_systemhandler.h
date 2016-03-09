@@ -55,7 +55,7 @@ class IFX_SystemHandler {
   virtual FX_BOOL IsSelectionImplemented() = 0;
 
   virtual CFX_WideString GetClipboardText(FX_HWND hWnd) = 0;
-  virtual FX_BOOL SetClipboardText(FX_HWND hWnd, CFX_WideString string) = 0;
+  virtual FX_BOOL SetClipboardText(FX_HWND hWnd, CFX_WideString str) = 0;
 
   virtual void ClientToScreen(FX_HWND hWnd, int32_t& x, int32_t& y) = 0;
   virtual void ScreenToClient(FX_HWND hWnd, int32_t& x, int32_t& y) = 0;
@@ -73,7 +73,7 @@ class IFX_SystemHandler {
   virtual FX_HMENU CreatePopupMenu() = 0;
   virtual FX_BOOL AppendMenuItem(FX_HMENU hMenu,
                                  int32_t nIDNewItem,
-                                 CFX_WideString string) = 0;
+                                 CFX_WideString str) = 0;
   virtual FX_BOOL EnableMenuItem(FX_HMENU hMenu,
                                  int32_t nIDItem,
                                  FX_BOOL bEnabled) = 0;

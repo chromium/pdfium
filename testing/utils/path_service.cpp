@@ -13,6 +13,8 @@
 #include <unistd.h>
 #endif  // _WIN32
 
+#include <string>
+
 #include "core/include/fxcrt/fx_system.h"
 
 // static

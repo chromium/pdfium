@@ -16,10 +16,10 @@ class CBC_QRFinderPatternInfo;
 
 class CBC_QRFinderPatternFinder {
  private:
-  const static int32_t CENTER_QUORUM;
-  const static int32_t MIN_SKIP;
-  const static int32_t MAX_MODULES;
-  const static int32_t INTEGER_MATH_SHIFT;
+  static const int32_t CENTER_QUORUM;
+  static const int32_t MIN_SKIP;
+  static const int32_t MAX_MODULES;
+  static const int32_t INTEGER_MATH_SHIFT;
   FX_BOOL m_hasSkipped;
   CBC_CommonBitMatrix* m_image;
   CFX_Int32Array m_crossCheckStateCount;

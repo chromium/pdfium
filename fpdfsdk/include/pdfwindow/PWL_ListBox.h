@@ -81,7 +81,7 @@ class CPWL_ListBox : public CPWL_Wnd {
 
   void OnNotifySelChanged(FX_BOOL bKeyDown, FX_BOOL& bExit, FX_DWORD nFlag);
 
-  void AddString(const FX_WCHAR* string);
+  void AddString(const FX_WCHAR* str);
   void SetTopVisibleIndex(int32_t nItemIndex);
   void ScrollToListItem(int32_t nItemIndex);
   void ResetContent();

@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/include/fxcrt/fx_basic.h"
+#include "xfa/include/fxfa/fxfa.h"
 
 #ifdef PDF_ENABLE_XFA
 #define FSDK_XFAWIDGET_TYPENAME "XFAWidget"

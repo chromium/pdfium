@@ -577,7 +577,9 @@ typedef struct _FPDF_FORMFILLINFO {
   *       To successfully run the javascript action, implementation need to load
   * the page for SDK.
   * */
-  FPDF_PAGE   (*FFI_GetPage)(struct _FPDF_FORMFILLINFO* pThis, FPDF_DOCUMENT document, int nPageIndex);
+  FPDF_PAGE (*FFI_GetPage)(struct _FPDF_FORMFILLINFO* pThis,
+                             FPDF_DOCUMENT document,
+                             int nPageIndex);
 
   /**
   * Method: FFI_GetCurrentPage
@@ -593,7 +595,8 @@ typedef struct _FPDF_FORMFILLINFO {
   * Return value:
   *       Handle to the page. Returned by FPDF_LoadPage function.
   * */
-  FPDF_PAGE   (*FFI_GetCurrentPage)(struct _FPDF_FORMFILLINFO* pThis, FPDF_DOCUMENT document);
+  FPDF_PAGE (*FFI_GetCurrentPage)(struct _FPDF_FORMFILLINFO* pThis,
+                                    FPDF_DOCUMENT document);
 
   /**
   * Method: FFI_GetRotation
@@ -857,7 +860,12 @@ typedef struct _FPDF_FORMFILLINFO {
   * Return value:
   *       TRUE indicates success; otherwise false.
   **/
-  FPDF_BOOL (*FFI_PopupMenu)(struct _FPDF_FORMFILLINFO* pThis, FPDF_PAGE page, FPDF_WIDGET hWidget, int menuFlag, float x, float y);
+  FPDF_BOOL (*FFI_PopupMenu)(struct _FPDF_FORMFILLINFO* pThis,
+                             FPDF_PAGE page,
+                             FPDF_WIDGET hWidget,
+                             int menuFlag,
+                             float x,
+                             float y);
 
   /**
   * Method: FFI_OpenFile
@@ -988,7 +996,8 @@ typedef struct _FPDF_FORMFILLINFO {
   * Return value:
   *       The handle to FPDF_FILEHANDLER.
   **/
-  FPDF_LPFILEHANDLER  (*FFI_DownloadFromURL)(struct _FPDF_FORMFILLINFO* pThis, FPDF_WIDESTRING URL);
+  FPDF_LPFILEHANDLER (*FFI_DownloadFromURL)(struct _FPDF_FORMFILLINFO* pThis,
+                                             FPDF_WIDESTRING URL);
   /**
   * Method: FFI_PostRequestURL
   *           This method will post the request to the server URL.
@@ -1010,7 +1019,13 @@ typedef struct _FPDF_FORMFILLINFO {
   * Return value:
   *       TRUE indicates success, otherwise FALSE.
   **/
-  FPDF_BOOL   (*FFI_PostRequestURL)(struct _FPDF_FORMFILLINFO* pThis, FPDF_WIDESTRING wsURL, FPDF_WIDESTRING wsData, FPDF_WIDESTRING wsContentType, FPDF_WIDESTRING wsEncode, FPDF_WIDESTRING wsHeader, FPDF_BSTR* respone);
+  FPDF_BOOL (*FFI_PostRequestURL)(struct _FPDF_FORMFILLINFO* pThis,
+                                    FPDF_WIDESTRING wsURL,
+                                    FPDF_WIDESTRING wsData,
+                                    FPDF_WIDESTRING wsContentType,
+                                    FPDF_WIDESTRING wsEncode,
+                                    FPDF_WIDESTRING wsHeader,
+                                    FPDF_BSTR* respone);
 
   /**
   * Method: FFI_PutRequestURL
@@ -1028,7 +1043,10 @@ typedef struct _FPDF_FORMFILLINFO {
   * Return value:
   *       TRUE indicates success, otherwise FALSE.
   **/
-  FPDF_BOOL   (*FFI_PutRequestURL)(struct _FPDF_FORMFILLINFO* pThis, FPDF_WIDESTRING wsURL, FPDF_WIDESTRING wsData, FPDF_WIDESTRING wsEncode);
+  FPDF_BOOL (*FFI_PutRequestURL)(struct _FPDF_FORMFILLINFO* pThis,
+                                   FPDF_WIDESTRING wsURL,
+                                   FPDF_WIDESTRING wsData,
+                                   FPDF_WIDESTRING wsEncode);
 #endif  // PDF_ENABLE_XFA
 } FPDF_FORMFILLINFO;
 

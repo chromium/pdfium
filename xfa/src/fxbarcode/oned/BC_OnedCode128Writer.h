@@ -39,11 +39,11 @@ class CBC_OnedCode128Writer : public CBC_OneDimWriter {
   int32_t Encode128B(const CFX_ByteString& contents, CFX_PtrArray& patterns);
   int32_t Encode128C(const CFX_ByteString& contents, CFX_PtrArray& patterns);
   BC_TYPE m_codeFormat;
-  const static int32_t CODE_START_B;
-  const static int32_t CODE_START_C;
-  const static int32_t CODE_CODE_B;
-  const static int32_t CODE_CODE_C;
-  const static int32_t CODE_STOP;
+  static const int32_t CODE_START_B;
+  static const int32_t CODE_START_C;
+  static const int32_t CODE_CODE_B;
+  static const int32_t CODE_CODE_C;
+  static const int32_t CODE_STOP;
 };
 
 #endif  // XFA_SRC_FXBARCODE_ONED_BC_ONEDCODE128WRITER_H_

@@ -15,7 +15,7 @@ class CBC_QRCoderErrorCorrectionLevel;
 
 class CBC_QRCoderVersion {
  private:
-  const static int32_t VERSION_DECODE_INFO[34];
+  static const int32_t VERSION_DECODE_INFO[34];
   static CFX_PtrArray* VERSION;
   int32_t m_versionNumber;
   int32_t m_totalCodeWords;

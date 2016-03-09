@@ -6,6 +6,8 @@
 
 #include <limits.h>
 
+#include <vector>
+
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_parser.h"
 #include "core/include/fxcodec/fx_codec.h"

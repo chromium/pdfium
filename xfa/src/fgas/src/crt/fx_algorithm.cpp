@@ -10,7 +10,7 @@
 extern "C" {
 #endif
 
-const static FX_CHAR g_FXBase64EncoderMap[64] = {
+static const FX_CHAR g_FXBase64EncoderMap[64] = {
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
     'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
@@ -87,7 +87,8 @@ int32_t FX_Base64EncodeA(const uint8_t* pSrc, int32_t iSrcLen, FX_CHAR* pDst) {
   }
   return pDstEnd - pDst;
 }
-const static uint8_t g_FXBase64DecoderMap[256] = {
+
+static const uint8_t g_FXBase64DecoderMap[256] = {
     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
@@ -254,7 +255,8 @@ int32_t FX_Base64DecodeW(const FX_WCHAR* pSrc, int32_t iSrcLen, uint8_t* pDst) {
   }
   return pDstEnd - pDst;
 }
-const static uint8_t g_FXHex2DecMap[256] = {
+
+static const uint8_t g_FXHex2DecMap[256] = {
     0,  0,  0,  0, 0, 0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0,  0,  0,
     0,  0,  0,  0, 0, 0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0,  0,  0,
     0,  0,  0,  0, 0, 0,  0,  0,  0,  1,  2,  3, 4, 5, 6, 7, 8, 9,  0,  0,
@@ -298,5 +300,5 @@ int32_t FX_SeparateStringW(const FX_WCHAR* pStr,
   return pieces.GetSize();
 }
 #ifdef __cplusplus
-};
+}
 #endif

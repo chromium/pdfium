@@ -4,8 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/fxedit/fxet_edit.h"
 #include "fpdfsdk/include/fxedit/fxet_list.h"
+
+#include "fpdfsdk/include/fxedit/fxet_edit.h"
 
 CFX_ListItem::CFX_ListItem()
     : m_pEdit(NULL),
@@ -592,8 +593,8 @@ CFX_FloatRect CFX_ListCtrl::GetItemRect(int32_t nIndex) const {
   return InToOut(CFX_List::GetItemRect(nIndex));
 }
 
-void CFX_ListCtrl::AddString(const FX_WCHAR* string) {
-  AddItem(string);
+void CFX_ListCtrl::AddString(const FX_WCHAR* str) {
+  AddItem(str);
   ReArrange(GetCount() - 1);
 }
 

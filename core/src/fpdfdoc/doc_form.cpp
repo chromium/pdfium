@@ -4,6 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include <vector>
+
 #include "core/include/fpdfapi/cpdf_document.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
 #include "core/src/fpdfdoc/doc_utils.h"
@@ -385,6 +387,7 @@ static FX_BOOL RetrieveSpecificFont(uint8_t charSet,
   lf.lfCharSet = charSet;
   lf.lfPitchAndFamily = pitchAndFamily;
   if (pcsFontName) {
+    // TODO(dsinclair): Should this be strncpy?
     strcpy(lf.lfFaceName, pcsFontName);
   }
   return RetrieveSpecificFont(lf);

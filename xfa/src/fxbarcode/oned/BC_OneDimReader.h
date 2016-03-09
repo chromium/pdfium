@@ -14,18 +14,20 @@ class CBC_CommonBitArray;
 
 class CBC_OneDimReader : public CBC_OneDReader {
  private:
-  const static int32_t MAX_AVG_VARIANCE;
-  const static int32_t MAX_INDIVIDUAL_VARIANCE;
+  static const int32_t MAX_AVG_VARIANCE = (int32_t)(256 * 0.48f);
+  static const int32_t MAX_INDIVIDUAL_VARIANCE = (int32_t)(256 * 0.7f);
 
   FX_BOOL CheckStandardUPCEANChecksum(CFX_ByteString& s, int32_t& e);
 
  public:
-  const static int32_t START_END_PATTERN[3];
-  const static int32_t MIDDLE_PATTERN[5];
-  const static int32_t L_PATTERNS[10][4];
-  const static int32_t L_AND_G_PATTERNS[20][4];
+  static const int32_t START_END_PATTERN[3];
+  static const int32_t MIDDLE_PATTERN[5];
+  static const int32_t L_PATTERNS[10][4];
+  static const int32_t L_AND_G_PATTERNS[20][4];
+
   CBC_OneDimReader();
   virtual ~CBC_OneDimReader();
+
   CFX_ByteString DecodeRow(int32_t rowNumber,
                            CBC_CommonBitArray* row,
                            int32_t hints,

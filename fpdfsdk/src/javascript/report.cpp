@@ -6,6 +6,8 @@
 
 #include "fpdfsdk/src/javascript/report.h"
 
+#include <vector>
+
 #include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "fpdfsdk/src/javascript/JS_Define.h"
 #include "fpdfsdk/src/javascript/JS_Object.h"

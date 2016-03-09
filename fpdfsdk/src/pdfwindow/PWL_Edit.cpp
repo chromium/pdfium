@@ -6,6 +6,8 @@
 
 #include "fpdfsdk/include/pdfwindow/PWL_Edit.h"
 
+#include <vector>
+
 #include "core/include/fxcrt/fx_safe_types.h"
 #include "core/include/fxcrt/fx_xml.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Caret.h"

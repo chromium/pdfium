@@ -7,6 +7,7 @@
 #include "xfa/include/fwl/lightwidget/edit.h"
 
 #include <memory>
+#include <vector>
 
 #include "xfa/include/fwl/basewidget/fwl_edit.h"
 

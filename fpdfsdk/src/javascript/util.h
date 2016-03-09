@@ -7,7 +7,8 @@
 #ifndef FPDFSDK_SRC_JAVASCRIPT_UTIL_H_
 #define FPDFSDK_SRC_JAVASCRIPT_UTIL_H_
 
-#include <string>  // For std::wstring.
+#include <string>
+#include <vector>
 
 #include "fpdfsdk/src/javascript/JS_Define.h"
 

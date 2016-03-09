@@ -9,24 +9,28 @@ for more details about the presubmit API built into depot_tools.
 """
 
 LINT_FILTERS = [
+  # Rvalue ref checks are unreliable.
   '-build/c++11',
+  # Need to fix header names not matching cpp names.
   '-build/include',
+  # Need to fix header names not matching cpp names.
   '-build/include_order',
-  '-build/include_what_you_use',
-  '-build/namespaces',
-  '-build/storage_class',
+  # Too many to fix at the moment.
   '-readability/casting',
+  # Need to refactor large methods to fix.
   '-readability/fn_size',
-  '-readability/todo',
-  '-readability/utf8',
-  '-runtime/arrays',
+  # Need to fix errors when making methods explicit.
   '-runtime/explicit',
+  # Lots of usage to fix first.
   '-runtime/int',
+  # Need to fix two snprintf TODOs
   '-runtime/printf',
+  # Lots of non-const references need to be fixed
   '-runtime/references',
+  # We are not thread safe, so this will never pass.
   '-runtime/threadsafe_fn',
+  # Figure out how to deal with #defines that git cl format creates.
   '-whitespace/indent',
-  '-whitespace/line_length',
 ]
 
 def CheckChangeOnUpload(input_api, output_api):

@@ -15,7 +15,8 @@
 #endif
 
 #ifdef PDF_ENABLE_XFA
-// TODO: remove the #define when XFA is officially in pdfium
+// PDF_USE_XFA is set in confirmation that this version of PDFium can support
+// XFA forms as requested by the PDF_ENABLE_XFA setting.
 #define PDF_USE_XFA
 #endif  // PDF_ENABLE_XFA
 
@@ -313,7 +314,10 @@ typedef struct _FPDF_FILEHANDLER {
    *
    * @return 0 for success, other value for failure.
    */
-  FPDF_RESULT (*ReadBlock)(FPDF_LPVOID clientData, FPDF_DWORD offset, FPDF_LPVOID buffer, FPDF_DWORD size);
+  FPDF_RESULT (*ReadBlock)(FPDF_LPVOID clientData,
+                           FPDF_DWORD offset,
+                           FPDF_LPVOID buffer,
+                           FPDF_DWORD size);
   /**
    * @brief   Callback function to write data into the current file stream.
    *
@@ -327,7 +331,10 @@ typedef struct _FPDF_FILEHANDLER {
    *
    * @return 0 for success, other value for failure.
    */
-  FPDF_RESULT (*WriteBlock)(FPDF_LPVOID clientData, FPDF_DWORD offset, FPDF_LPCVOID buffer, FPDF_DWORD size);
+  FPDF_RESULT (*WriteBlock)(FPDF_LPVOID clientData,
+                            FPDF_DWORD offset,
+                            FPDF_LPCVOID buffer,
+                            FPDF_DWORD size);
   /**
    * @brief   Callback function to flush all internal accessing buffers.
    *

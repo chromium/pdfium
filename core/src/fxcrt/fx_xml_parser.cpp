@@ -6,6 +6,8 @@
 
 #include "core/src/fxcrt/xml_int.h"
 
+#include <vector>
+
 #include "core/include/fxcrt/fx_ext.h"
 #include "core/include/fxcrt/fx_xml.h"
 #include "third_party/base/stl_util.h"
