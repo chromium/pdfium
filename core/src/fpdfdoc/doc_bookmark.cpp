@@ -7,7 +7,9 @@
 #include <memory>
 #include <vector>
 
+#include "core/include/fpdfapi/cpdf_array.h"
 #include "core/include/fpdfapi/cpdf_document.h"
+#include "core/include/fpdfapi/cpdf_string.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
 
 CPDF_Bookmark CPDF_BookmarkTree::GetFirstChild(

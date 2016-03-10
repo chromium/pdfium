@@ -7,6 +7,8 @@
 #include <memory>
 #include <vector>
 
+#include "core/include/fpdfapi/cpdf_string.h"
+#include "core/include/fpdfapi/cpdf_name.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 

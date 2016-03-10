@@ -8,6 +8,7 @@
 
 #include <set>
 
+#include "core/include/fpdfapi/cpdf_array.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/include/javascript/IJavaScript.h"

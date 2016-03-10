@@ -8,7 +8,9 @@
 
 #include <algorithm>
 
+#include "core/include/fpdfapi/cpdf_array.h"
 #include "core/include/fpdfapi/cpdf_document.h"
+#include "core/include/fpdfapi/cpdf_number.h"
 #include "fpdfsdk/include/fsdk_define.h"
 
 typedef CFX_ArrayTemplate<CPDF_Dictionary*> CPDF_ObjectArray;

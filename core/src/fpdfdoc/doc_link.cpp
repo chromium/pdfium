@@ -8,6 +8,8 @@
 
 #include <vector>
 
+#include "core/include/fpdfapi/cpdf_array.h"
+
 CPDF_LinkList::CPDF_LinkList() {
 }
 

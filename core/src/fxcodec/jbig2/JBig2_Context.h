@@ -11,7 +11,7 @@
 #include <memory>
 #include <utility>
 
-#include "core/include/fpdfapi/fpdf_objects.h"
+#include "core/include/fpdfapi/cpdf_object.h"
 #include "core/include/fxcodec/fx_codec_def.h"
 #include "core/src/fxcodec/jbig2/JBig2_List.h"
 #include "core/src/fxcodec/jbig2/JBig2_Page.h"
@@ -19,6 +19,7 @@
 
 class CJBig2_ArithDecoder;
 class CJBig2_GRDProc;
+class CPDF_StreamAcc;
 class IFX_Pause;
 
 // Cache is keyed by the ObjNum of a stream and an index within the stream.

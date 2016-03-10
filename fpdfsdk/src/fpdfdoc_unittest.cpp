@@ -8,6 +8,10 @@
 #include <vector>
 
 #include "core/include/fpdfapi/cpdf_document.h"
+#include "core/include/fpdfapi/cpdf_name.h"
+#include "core/include/fpdfapi/cpdf_number.h"
+#include "core/include/fpdfapi/cpdf_reference.h"
+#include "core/include/fpdfapi/cpdf_string.h"
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
 #include "testing/gtest/include/gtest/gtest.h"

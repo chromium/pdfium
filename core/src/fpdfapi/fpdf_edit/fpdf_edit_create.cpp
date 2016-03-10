@@ -8,8 +8,12 @@
 
 #include <vector>
 
+#include "core/include/fpdfapi/cpdf_array.h"
+#include "core/include/fpdfapi/cpdf_dictionary.h"
 #include "core/include/fpdfapi/cpdf_document.h"
 #include "core/include/fpdfapi/cpdf_parser.h"
+#include "core/include/fpdfapi/cpdf_string.h"
+#include "core/include/fpdfapi/cpdf_reference.h"
 #include "core/include/fpdfapi/fpdf_parser_decode.h"
 #include "core/include/fpdfapi/fpdf_serial.h"
 #include "core/include/fpdfapi/ipdf_crypto_handler.h"

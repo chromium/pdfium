@@ -8,7 +8,14 @@
 
 #include <limits.h>
 
+#include "core/include/fpdfapi/cpdf_array.h"
+#include "core/include/fpdfapi/cpdf_boolean.h"
+#include "core/include/fpdfapi/cpdf_dictionary.h"
 #include "core/include/fpdfapi/cpdf_document.h"
+#include "core/include/fpdfapi/cpdf_name.h"
+#include "core/include/fpdfapi/cpdf_null.h"
+#include "core/include/fpdfapi/cpdf_number.h"
+#include "core/include/fpdfapi/cpdf_string.h"
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fpdfapi/fpdf_parser_decode.h"

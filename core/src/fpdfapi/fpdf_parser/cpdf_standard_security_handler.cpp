@@ -9,8 +9,10 @@
 #include <time.h>
 
 #include "core/include/fdrm/fx_crypt.h"
+#include "core/include/fpdfapi/cpdf_array.h"
+#include "core/include/fpdfapi/cpdf_dictionary.h"
 #include "core/include/fpdfapi/cpdf_parser.h"
-#include "core/include/fpdfapi/fpdf_objects.h"
+#include "core/include/fpdfapi/cpdf_object.h"
 #include "core/src/fpdfapi/fpdf_parser/cpdf_standard_crypto_handler.h"
 
 namespace {

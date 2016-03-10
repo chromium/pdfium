@@ -2,12 +2,21 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "core/include/fpdfapi/fpdf_objects.h"
+#include "core/include/fpdfapi/cpdf_array.h"
+#include "core/include/fpdfapi/cpdf_boolean.h"
+#include "core/include/fpdfapi/cpdf_dictionary.h"
+#include "core/include/fpdfapi/cpdf_name.h"
+#include "core/include/fpdfapi/cpdf_null.h"
+#include "core/include/fpdfapi/cpdf_number.h"
+#include "core/include/fpdfapi/cpdf_reference.h"
+#include "core/include/fpdfapi/cpdf_string.h"
+#include "core/include/fpdfapi/cpdf_stream.h"
 
 #include <memory>
 #include <string>
 #include <vector>
 
+#include "core/include/fpdfapi/cpdf_indirect_object_holder.h"
 #include "core/include/fxcrt/fx_basic.h"
 #include "testing/gtest/include/gtest/gtest.h"
 

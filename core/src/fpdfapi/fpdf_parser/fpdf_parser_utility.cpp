@@ -6,7 +6,12 @@
 
 #include "core/src/fpdfapi/fpdf_parser/fpdf_parser_utility.h"
 
-#include "core/include/fpdfapi/fpdf_objects.h"
+#include "core/include/fpdfapi/cpdf_array.h"
+#include "core/include/fpdfapi/cpdf_dictionary.h"
+#include "core/include/fpdfapi/cpdf_number.h"
+#include "core/include/fpdfapi/cpdf_reference.h"
+#include "core/include/fpdfapi/cpdf_stream.h"
+#include "core/include/fpdfapi/cpdf_string.h"
 #include "core/include/fpdfapi/fpdf_parser_decode.h"
 #include "core/include/fxcrt/fx_ext.h"
 

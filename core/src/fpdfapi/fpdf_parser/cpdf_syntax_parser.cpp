@@ -8,8 +8,16 @@
 
 #include <vector>
 
+#include "core/include/fpdfapi/cpdf_array.h"
+#include "core/include/fpdfapi/cpdf_boolean.h"
+#include "core/include/fpdfapi/cpdf_dictionary.h"
+#include "core/include/fpdfapi/cpdf_name.h"
+#include "core/include/fpdfapi/cpdf_null.h"
+#include "core/include/fpdfapi/cpdf_number.h"
+#include "core/include/fpdfapi/cpdf_reference.h"
+#include "core/include/fpdfapi/cpdf_stream.h"
+#include "core/include/fpdfapi/cpdf_string.h"
 #include "core/include/fpdfapi/fpdf_module.h"
-#include "core/include/fpdfapi/fpdf_objects.h"
 #include "core/include/fpdfapi/fpdf_parser_decode.h"
 #include "core/include/fpdfapi/ipdf_crypto_handler.h"
 #include "core/include/fxcrt/fx_ext.h"

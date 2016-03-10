@@ -13,6 +13,8 @@
 #include <utility>
 #include <vector>
 
+#include "core/include/fpdfapi/cpdf_dictionary.h"
+#include "core/include/fpdfapi/cpdf_string.h"
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fpdfapi/fpdf_pageobj.h"

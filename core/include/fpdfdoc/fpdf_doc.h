@@ -11,6 +11,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/include/fpdfapi/cpdf_dictionary.h"
 #include "core/include/fpdfapi/fpdf_parser_decode.h"
 #include "core/include/fpdfapi/fpdf_render.h"
 

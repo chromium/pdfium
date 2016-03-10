@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/include/fpdfapi/cpdf_stream.h"
 #include "core/src/fxcodec/jbig2/JBig2_ArithDecoder.h"
 #include "core/src/fxcodec/jbig2/JBig2_BitStream.h"
 #include "core/src/fxcodec/jbig2/JBig2_GrdProc.h"

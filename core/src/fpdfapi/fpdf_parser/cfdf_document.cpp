@@ -6,6 +6,7 @@
 
 #include "core/include/fpdfapi/cfdf_document.h"
 
+#include "core/include/fpdfapi/cpdf_dictionary.h"
 #include "core/include/fpdfapi/fpdf_serial.h"
 #include "core/src/fpdfapi/fpdf_parser/cpdf_syntax_parser.h"
 

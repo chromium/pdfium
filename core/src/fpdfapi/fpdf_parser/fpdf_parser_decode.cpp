@@ -9,8 +9,9 @@
 #include <limits.h>
 #include <vector>
 
+#include "core/include/fpdfapi/cpdf_array.h"
+#include "core/include/fpdfapi/cpdf_dictionary.h"
 #include "core/include/fpdfapi/fpdf_module.h"
-#include "core/include/fpdfapi/fpdf_objects.h"
 #include "core/include/fxcodec/fx_codec.h"
 #include "core/include/fxcrt/fx_ext.h"
 #include "core/src/fpdfapi/fpdf_parser/fpdf_parser_utility.h"

@@ -7,7 +7,7 @@
 #ifndef XFA_SRC_FXFA_APP_XFA_FFAPP_H_
 #define XFA_SRC_FXFA_APP_XFA_FFAPP_H_
 
-#include "core/include/fpdfapi/fpdf_objects.h"
+#include "core/include/fpdfapi/cpdf_stream.h"
 #include "xfa/include/fwl/adapter/fwl_adapternative.h"
 #include "xfa/include/fwl/adapter/fwl_sdadapterimp.h"
 #include "xfa/include/fwl/core/fwl_app.h"

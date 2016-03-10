@@ -4,7 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/include/fpdfapi/cpdf_array.h"
 #include "core/include/fpdfapi/cpdf_document.h"
+#include "core/include/fpdfapi/cpdf_reference.h"
 #include "core/include/fpdfapi/fpdf_pageobj.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
 

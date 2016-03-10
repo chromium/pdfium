@@ -6,7 +6,10 @@
 
 #include "public/fpdf_edit.h"
 
+#include "core/include/fpdfapi/cpdf_array.h"
 #include "core/include/fpdfapi/cpdf_document.h"
+#include "core/include/fpdfapi/cpdf_number.h"
+#include "core/include/fpdfapi/cpdf_string.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "public/fpdf_formfill.h"
 #include "third_party/base/stl_util.h"

@@ -8,6 +8,7 @@
 
 #include <memory>
 
+#include "core/include/fpdfapi/cpdf_array.h"
 #include "core/include/fpdfapi/cpdf_document.h"
 #include "core/include/fxcodec/fx_codec.h"
 #include "core/include/fxcrt/fx_safe_types.h"

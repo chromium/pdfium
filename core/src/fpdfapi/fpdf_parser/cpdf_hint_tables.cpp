@@ -7,7 +7,9 @@
 #include "core/src/fpdfapi/fpdf_parser/cpdf_hint_tables.h"
 
 #include "core/include/fxcrt/fx_safe_types.h"
-#include "core/include/fpdfapi/fpdf_objects.h"
+#include "core/include/fpdfapi/cpdf_array.h"
+#include "core/include/fpdfapi/cpdf_dictionary.h"
+#include "core/include/fpdfapi/cpdf_stream.h"
 #include "core/src/fpdfapi/fpdf_parser/cpdf_data_avail.h"
 
 namespace {

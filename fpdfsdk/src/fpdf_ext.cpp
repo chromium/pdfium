@@ -6,6 +6,7 @@
 
 #include "public/fpdf_ext.h"
 
+#include "core/include/fpdfapi/cpdf_array.h"
 #include "core/include/fpdfapi/cpdf_document.h"
 #include "core/include/fxcrt/fx_xml.h"
 #include "fpdfsdk/include/fsdk_define.h"

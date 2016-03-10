@@ -6,7 +6,10 @@
 
 #include "public/fpdf_transformpage.h"
 
+#include "core/include/fpdfapi/cpdf_array.h"
 #include "core/include/fpdfapi/cpdf_document.h"
+#include "core/include/fpdfapi/cpdf_number.h"
+#include "core/include/fpdfapi/cpdf_reference.h"
 #include "fpdfsdk/include/fsdk_define.h"
 
 namespace {

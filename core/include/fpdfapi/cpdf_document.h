@@ -7,10 +7,12 @@
 #ifndef CORE_INCLUDE_FPDFAPI_CPDF_DOCUMENT_H_
 #define CORE_INCLUDE_FPDFAPI_CPDF_DOCUMENT_H_
 
-#include "core/include/fpdfapi/fpdf_objects.h"
+#include "core/include/fpdfapi/cpdf_indirect_object_holder.h"
+#include "core/include/fpdfapi/cpdf_object.h"
 #include "core/include/fxcrt/fx_basic.h"
 
 class CFX_Font;
+class CFX_Matrix;
 class CPDF_ColorSpace;
 class CPDF_DocPageData;
 class CPDF_DocRenderData;
@@ -19,6 +21,7 @@ class CPDF_FontEncoding;
 class CPDF_IccProfile;
 class CPDF_Image;
 class CPDF_Pattern;
+class CPDF_StreamAcc;
 
 #define FPDFPERM_PRINT 0x0004
 #define FPDFPERM_MODIFY 0x0008

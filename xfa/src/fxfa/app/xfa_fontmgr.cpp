@@ -8,6 +8,7 @@
 
 #include <algorithm>
 
+#include "core/include/fpdfapi/cpdf_dictionary.h"
 #include "core/include/fpdfapi/cpdf_document.h"
 #include "core/include/fpdfapi/fpdf_resource.h"
 #include "xfa/src/fxfa/app/xfa_ffapp.h"

@@ -6,7 +6,10 @@
 
 #include <map>
 
+#include "core/include/fpdfapi/cpdf_array.h"
+#include "core/include/fpdfapi/cpdf_dictionary.h"
 #include "core/include/fpdfapi/cpdf_document.h"
+#include "core/include/fpdfapi/cpdf_reference.h"
 #include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fpdfdoc/fpdf_tagged.h"
 #include "core/src/fpdfdoc/doc_utils.h"

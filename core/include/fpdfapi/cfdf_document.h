@@ -7,9 +7,9 @@
 #ifndef CORE_INCLUDE_FPDFAPI_CFDF_DOCUMENT_H_
 #define CORE_INCLUDE_FPDFAPI_CFDF_DOCUMENT_H_
 
-#include "core/include/fpdfapi/fpdf_objects.h"
-#include "core/include/fxcrt/fx_stream.h"
-#include "core/include/fxcrt/fx_system.h"
+#include "core/include/fpdfapi/cpdf_indirect_object_holder.h"
+#include "core/include/fpdfapi/cpdf_object.h"
+#include "core/include/fxcrt/fx_basic.h"
 
 class CPDF_Dictionary;
 

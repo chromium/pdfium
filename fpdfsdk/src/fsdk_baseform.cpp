@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/include/fpdfapi/cfdf_document.h"
+#include "core/include/fpdfapi/cpdf_array.h"
 #include "core/include/fpdfapi/cpdf_document.h"
 #include "fpdfsdk/include/formfiller/FFL_FormFiller.h"
 #include "fpdfsdk/include/fsdk_actionhandler.h"
