@@ -709,7 +709,7 @@ void CPDF_DIBSource::LoadJpxBitmap() {
 
   FX_BOOL bSwapRGB = FALSE;
   if (m_pColorSpace) {
-    if (components != (FX_DWORD)m_pColorSpace->CountComponents())
+    if (components != m_pColorSpace->CountComponents())
       return;
 
     if (m_pColorSpace == CPDF_ColorSpace::GetStockCS(PDFCS_DEVICERGB)) {
@@ -776,7 +776,7 @@ CPDF_DIBSource* CPDF_DIBSource::LoadMask(FX_DWORD& MatteColor) {
   if (pSoftMask) {
     CPDF_Array* pMatte = pSoftMask->GetDict()->GetArrayBy("Matte");
     if (pMatte && m_pColorSpace &&
-        (FX_DWORD)m_pColorSpace->CountComponents() <= m_nComponents) {
+        m_pColorSpace->CountComponents() <= m_nComponents) {
       std::vector<FX_FLOAT> colors(m_nComponents);
       for (FX_DWORD i = 0; i < m_nComponents; i++) {
         colors[i] = pMatte->GetFloatAt(i);
@@ -801,7 +801,7 @@ int CPDF_DIBSource::StratLoadMask() {
   if (m_pMaskStream) {
     CPDF_Array* pMatte = m_pMaskStream->GetDict()->GetArrayBy("Matte");
     if (pMatte && m_pColorSpace &&
-        (FX_DWORD)m_pColorSpace->CountComponents() <= m_nComponents) {
+        m_pColorSpace->CountComponents() <= m_nComponents) {
       FX_FLOAT R, G, B;
       std::vector<FX_FLOAT> colors(m_nComponents);
       for (FX_DWORD i = 0; i < m_nComponents; i++) {

@@ -173,7 +173,7 @@ FX_BOOL CPDF_MeshStream::Load(CPDF_Stream* pShadingStream,
   if (!m_nCoordBits || !m_nCompBits) {
     return FALSE;
   }
-  int nComps = pCS->CountComponents();
+  FX_DWORD nComps = pCS->CountComponents();
   if (nComps > 8) {
     return FALSE;
   }

@@ -458,6 +458,7 @@ class ICodec_Jbig2Encoder {
  public:
   virtual ~ICodec_Jbig2Encoder() {}
 };
+
 class ICodec_IccModule {
  public:
   enum IccCS {
@@ -504,14 +505,14 @@ class ICodec_IccModule {
   virtual void* CreateTransform_sRGB(
       const uint8_t* pProfileData,
       FX_DWORD dwProfileSize,
-      int32_t& nComponents,
+      FX_DWORD& nComponents,
       int32_t intent = 0,
       FX_DWORD dwSrcFormat = Icc_FORMAT_DEFAULT) = 0;
 
   virtual void* CreateTransform_CMYK(
       const uint8_t* pSrcProfileData,
       FX_DWORD dwSrcProfileSize,
-      int32_t& nSrcComponents,
+      FX_DWORD& nSrcComponents,
       const uint8_t* pDstProfileData,
       FX_DWORD dwDstProfileSize,
       int32_t intent = 0,

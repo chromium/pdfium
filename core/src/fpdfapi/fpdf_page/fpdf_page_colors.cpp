@@ -36,7 +36,7 @@ void sRGB_to_AdobeCMYK(FX_FLOAT R,
   }
 }
 
-int ComponentsForFamily(int family) {
+FX_DWORD ComponentsForFamily(int family) {
   if (family == PDFCS_DEVICERGB)
     return 3;
   if (family == PDFCS_DEVICEGRAY)

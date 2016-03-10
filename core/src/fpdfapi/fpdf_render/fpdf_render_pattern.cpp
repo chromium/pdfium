@@ -832,7 +832,7 @@ void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern,
     CPDF_Array* pBackColor =
         pPattern->m_pShadingObj->GetDict()->GetArrayBy("Background");
     if (pBackColor &&
-        pBackColor->GetCount() >= (FX_DWORD)pColorSpace->CountComponents()) {
+        pBackColor->GetCount() >= pColorSpace->CountComponents()) {
       CFX_FixedBufGrow<FX_FLOAT, 16> comps(pColorSpace->CountComponents());
       for (int i = 0; i < pColorSpace->CountComponents(); i++) {
         comps[i] = pBackColor->GetNumberAt(i);

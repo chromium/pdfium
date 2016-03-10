@@ -396,12 +396,12 @@ class CPDF_IccProfile {
  public:
   CPDF_IccProfile(const uint8_t* pData, FX_DWORD dwSize);
   ~CPDF_IccProfile();
-  int32_t GetComponents() const { return m_nSrcComponents; }
+  FX_DWORD GetComponents() const { return m_nSrcComponents; }
   FX_BOOL m_bsRGB;
   void* m_pTransform;
 
  private:
-  int32_t m_nSrcComponents;
+  FX_DWORD m_nSrcComponents;
 };
 
 class CPDF_DeviceCS : public CPDF_ColorSpace {

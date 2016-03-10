@@ -287,13 +287,13 @@ class CCodec_IccModule : public ICodec_IccModule {
   void* CreateTransform_sRGB(
       const uint8_t* pProfileData,
       FX_DWORD dwProfileSize,
-      int32_t& nComponents,
+      FX_DWORD& nComponents,
       int32_t intent = 0,
       FX_DWORD dwSrcFormat = Icc_FORMAT_DEFAULT) override;
   void* CreateTransform_CMYK(
       const uint8_t* pSrcProfileData,
       FX_DWORD dwSrcProfileSize,
-      int32_t& nSrcComponents,
+      FX_DWORD& nSrcComponents,
       const uint8_t* pDstProfileData,
       FX_DWORD dwDstProfileSize,
       int32_t intent = 0,

@@ -917,8 +917,8 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
       if (pCS) {
         FX_FLOAT R, G, B;
         FX_DWORD comps = 8;
-        if (pCS->CountComponents() > static_cast<int32_t>(comps)) {
-          comps = (FX_DWORD)pCS->CountComponents();
+        if (pCS->CountComponents() > comps) {
+          comps = pCS->CountComponents();
         }
         CFX_FixedBufGrow<FX_FLOAT, 8> float_array(comps);
         FX_FLOAT* pFloats = float_array;

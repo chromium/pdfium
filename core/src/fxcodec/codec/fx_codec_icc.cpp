@@ -66,7 +66,8 @@ FX_BOOL CheckComponents(cmsColorSpaceSignature cs,
   }
   return TRUE;
 }
-int32_t GetCSComponents(cmsColorSpaceSignature cs) {
+
+FX_DWORD GetCSComponents(cmsColorSpaceSignature cs) {
   FX_DWORD components;
   switch (cs) {
     case cmsSigLabData:
@@ -87,9 +88,10 @@ int32_t GetCSComponents(cmsColorSpaceSignature cs) {
   }
   return components;
 }
+
 void* IccLib_CreateTransform(const unsigned char* pSrcProfileData,
                              FX_DWORD dwSrcProfileSize,
-                             int32_t& nSrcComponents,
+                             FX_DWORD& nSrcComponents,
                              const unsigned char* pDstProfileData,
                              FX_DWORD dwDstProfileSize,
                              int32_t nDstComponents,
@@ -169,7 +171,7 @@ void* IccLib_CreateTransform(const unsigned char* pSrcProfileData,
 }
 void* IccLib_CreateTransform_sRGB(const unsigned char* pProfileData,
                                   FX_DWORD dwProfileSize,
-                                  int32_t& nComponents,
+                                  FX_DWORD& nComponents,
                                   int32_t intent,
                                   FX_DWORD dwSrcFormat) {
   return IccLib_CreateTransform(pProfileData, dwProfileSize, nComponents, NULL,
@@ -536,15 +538,16 @@ CCodec_IccModule::~CCodec_IccModule() {
 }
 void* CCodec_IccModule::CreateTransform_sRGB(const uint8_t* pProfileData,
                                              FX_DWORD dwProfileSize,
-                                             int32_t& nComponents,
+                                             FX_DWORD& nComponents,
                                              int32_t intent,
                                              FX_DWORD dwSrcFormat) {
   return IccLib_CreateTransform_sRGB(pProfileData, dwProfileSize, nComponents,
                                      intent, dwSrcFormat);
 }
+
 void* CCodec_IccModule::CreateTransform_CMYK(const uint8_t* pSrcProfileData,
                                              FX_DWORD dwSrcProfileSize,
-                                             int32_t& nSrcComponents,
+                                             FX_DWORD& nSrcComponents,
                                              const uint8_t* pDstProfileData,
                                              FX_DWORD dwDstProfileSize,
                                              int32_t intent,
@@ -554,6 +557,7 @@ void* CCodec_IccModule::CreateTransform_CMYK(const uint8_t* pSrcProfileData,
       pSrcProfileData, dwSrcProfileSize, nSrcComponents, pDstProfileData,
       dwDstProfileSize, 4, intent, dwSrcFormat, dwDstFormat);
 }
+
 void CCodec_IccModule::DestroyTransform(void* pTransform) {
   IccLib_DestroyTransform(pTransform);
 }
