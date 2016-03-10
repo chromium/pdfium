@@ -35,7 +35,8 @@ int CountPages(CPDF_Dictionary* pPages,
     }
     if (pKid->KeyExist("Kids")) {
       // Use |visited_pages| to help detect circular references of pages.
-      ScopedSetInsertion<CPDF_Dictionary*> local_add(visited_pages, pKid);
+      pdfium::ScopedSetInsertion<CPDF_Dictionary*> local_add(visited_pages,
+                                                             pKid);
       count += CountPages(pKid, visited_pages);
     } else {
       // This page is a leaf node.

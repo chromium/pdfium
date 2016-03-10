@@ -6,6 +6,7 @@
 #define PDFIUM_THIRD_PARTY_BASE_STL_UTIL_H_
 
 #include <algorithm>
+#include <set>
 
 #include "third_party/base/numerics/safe_conversions.h"
 
@@ -32,6 +33,22 @@ template <typename ResultType, typename Collection>
 ResultType CollectionSize(const Collection& collection) {
   return pdfium::base::checked_cast<ResultType, size_t>(collection.size());
 }
+
+// Track the addition of an object to a set, removing it automatically when
+// the ScopedSetInsertion goes out of scope.
+template <typename T>
+class ScopedSetInsertion {
+ public:
+  ScopedSetInsertion(std::set<T>* org_set, T elem)
+      : m_Set(org_set), m_Entry(elem) {
+    m_Set->insert(m_Entry);
+  }
+  ~ScopedSetInsertion() { m_Set->erase(m_Entry); }
+
+ private:
+  std::set<T>* const m_Set;
+  const T m_Entry;
+};
 
 }  // namespace pdfium
 

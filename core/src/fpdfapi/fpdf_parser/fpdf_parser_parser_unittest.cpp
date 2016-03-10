@@ -8,6 +8,7 @@
 #include "core/include/fpdfapi/cpdf_parser.h"
 #include "core/include/fpdfapi/fpdf_parser.h"
 #include "core/include/fxcrt/fx_stream.h"
+#include "core/include/fxcrt/fx_ext.h"
 #include "core/src/fpdfapi/fpdf_parser/cpdf_syntax_parser.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/path_service.h"

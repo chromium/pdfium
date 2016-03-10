@@ -12,6 +12,12 @@
 
 #include "core/include/fxcrt/fx_basic.h"
 
+// TODO(thestig) Using unique_ptr with ReleaseDeleter is still not ideal.
+// Come up or wait for something better. This appears in this file rather
+// than fx_stream.h due to include ordering restrictions.
+using ScopedFileStream =
+    std::unique_ptr<IFX_FileStream, ReleaseDeleter<IFX_FileStream>>;
+
 FX_FLOAT FXSYS_tan(FX_FLOAT a);
 FX_FLOAT FXSYS_logb(FX_FLOAT b, FX_FLOAT x);
 FX_FLOAT FXSYS_strtof(const FX_CHAR* pcsStr,

@@ -42,25 +42,6 @@ class IPDF_SecurityHandler;
 #define FPDFPERM_PRINT_HIGH 0x0800
 #define FPDF_PAGE_MAX_NUM 0xFFFFF
 
-// TODO(thestig) Using unique_ptr with ReleaseDeleter is still not ideal.
-// Come up or wait for something better.
-using ScopedFileStream =
-    std::unique_ptr<IFX_FileStream, ReleaseDeleter<IFX_FileStream>>;
-
-template <typename T>
-class ScopedSetInsertion {
- public:
-  ScopedSetInsertion(std::set<T>* org_set, T elem)
-      : m_Set(org_set), m_Entry(elem) {
-    m_Set->insert(m_Entry);
-  }
-  ~ScopedSetInsertion() { m_Set->erase(m_Entry); }
-
- private:
-  std::set<T>* const m_Set;
-  const T m_Entry;
-};
-
 // Indexed by 8-bit char code, contains unicode code points.
 extern const FX_WORD PDFDocEncoding[256];
 

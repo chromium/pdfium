@@ -1150,8 +1150,8 @@ CPDF_Object* CPDF_Parser::ParseIndirectObject(
   // Prevent circular parsing the same object.
   if (pdfium::ContainsKey(m_ParsingObjNums, objnum))
     return nullptr;
-  ScopedSetInsertion<FX_DWORD> local_insert(&m_ParsingObjNums, objnum);
 
+  pdfium::ScopedSetInsertion<FX_DWORD> local_insert(&m_ParsingObjNums, objnum);
   if (GetObjectType(objnum) == 1 || GetObjectType(objnum) == 255) {
     FX_FILESIZE pos = m_ObjectInfo[objnum].pos;
     if (pos <= 0)
