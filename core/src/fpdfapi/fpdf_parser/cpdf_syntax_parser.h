@@ -58,7 +58,7 @@ class CPDF_SyntaxParser {
  private:
   friend class CPDF_Parser;
   friend class CPDF_DataAvail;
-  friend class fpdf_parser_parser_ReadHexString_Test;
+  friend class cpdf_syntax_parser_ReadHexString_Test;
 
   static const int kParserMaxRecursionDepth = 64;
   static int s_CurrentRecursionDepth;

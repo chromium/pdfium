@@ -7,7 +7,6 @@
 #ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_UTILS_H_
 #define FPDFSDK_INCLUDE_PDFWINDOW_PWL_UTILS_H_
 
-#include "core/include/fpdfapi/fpdf_parser.h"  // For CFX_FloatPoint.
 #include "core/include/fpdfdoc/fpdf_vt.h"      // For CPVT_WordRange.
 #include "fpdfsdk/include/fxedit/fx_edit.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"

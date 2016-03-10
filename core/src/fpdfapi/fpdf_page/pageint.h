@@ -17,6 +17,7 @@
 
 class CPDF_AllStates;
 class CPDF_ParseOptions;
+class CPDF_IccProfile;
 
 #define PARSE_STEP_LIMIT 100
 

@@ -7,7 +7,6 @@
 #ifndef FPDFSDK_INCLUDE_FXEDIT_FX_EDIT_H_
 #define FPDFSDK_INCLUDE_FXEDIT_FX_EDIT_H_
 
-#include "core/include/fpdfapi/fpdf_parser.h"
 #include "core/include/fxcrt/fx_basic.h"
 #include "core/include/fxge/fx_dib.h"
 

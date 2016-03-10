@@ -7,6 +7,7 @@
 #include "public/fpdf_dataavail.h"
 
 #include "core/include/fpdfapi/cpdf_document.h"
+#include "core/include/fpdfapi/ipdf_data_avail.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "public/fpdf_formfill.h"
 
@@ -34,14 +35,14 @@ static_assert(IPDF_DataAvail::FormAvailable == PDF_FORM_AVAIL,
 static_assert(IPDF_DataAvail::FormNotExist == PDF_FORM_NOTEXIST,
               "IPDF_DataAvail::FormNotExist value mismatch");
 
-class CFPDF_FileAvailWrap : public IFX_FileAvail {
+class CFPDF_FileAvailWrap : public IPDF_DataAvail::FileAvail {
  public:
   CFPDF_FileAvailWrap() { m_pfileAvail = NULL; }
   ~CFPDF_FileAvailWrap() override {}
 
   void Set(FX_FILEAVAIL* pfileAvail) { m_pfileAvail = pfileAvail; }
 
-  // IFX_FileAvail
+  // IPDF_DataAvail::FileAvail:
   FX_BOOL IsDataAvail(FX_FILESIZE offset, FX_DWORD size) override {
     return m_pfileAvail->IsDataAvail(m_pfileAvail, offset, size);
   }
@@ -71,7 +72,7 @@ class CFPDF_FileAccessWrap : public IFX_FileRead {
   FPDF_FILEACCESS* m_pFileAccess;
 };
 
-class CFPDF_DownloadHintsWrap : public IFX_DownloadHints {
+class CFPDF_DownloadHintsWrap : public IPDF_DataAvail::DownloadHints {
  public:
   explicit CFPDF_DownloadHintsWrap(FX_DOWNLOADHINTS* pDownloadHints) {
     m_pDownloadHints = pDownloadHints;

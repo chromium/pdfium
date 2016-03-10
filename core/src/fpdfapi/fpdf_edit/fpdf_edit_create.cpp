@@ -10,7 +10,7 @@
 
 #include "core/include/fpdfapi/cpdf_document.h"
 #include "core/include/fpdfapi/cpdf_parser.h"
-#include "core/include/fpdfapi/fpdf_parser.h"
+#include "core/include/fpdfapi/fpdf_parser_decode.h"
 #include "core/include/fpdfapi/fpdf_serial.h"
 #include "core/include/fpdfapi/ipdf_crypto_handler.h"
 #include "core/include/fxcrt/fx_ext.h"
@@ -960,7 +960,7 @@ int32_t CPDF_Creator::WriteIndirectObjectToStream(const CPDF_Object* pObj) {
   if (pDict) {
     if (pDict == m_pDocument->m_pRootDict || pDict == m_pEncryptDict)
       return 1;
-    if (IsSignatureDict(pDict))
+    if (pDict->IsSignatureDict())
       return 1;
     if (pDict->GetStringBy("Type") == "Page")
       return 1;
@@ -1226,7 +1226,7 @@ int32_t CPDF_Creator::WriteDirectObj(FX_DWORD objnum,
       }
       m_Offset += 2;
       const CPDF_Dictionary* p = pObj->AsDictionary();
-      bool bSignDict = IsSignatureDict(p);
+      bool bSignDict = p->IsSignatureDict();
       for (const auto& it : *p) {
         FX_BOOL bSignValue = FALSE;
         const CFX_ByteString& key = it.first;

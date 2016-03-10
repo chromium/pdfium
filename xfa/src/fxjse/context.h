@@ -7,6 +7,7 @@
 #ifndef XFA_SRC_FXJSE_CONTEXT_H_
 #define XFA_SRC_FXJSE_CONTEXT_H_
 
+#include "core/include/fxcrt/fx_basic.h"
 #include "v8/include/v8.h"
 #include "xfa/include/fxjse/fxjse.h"
 

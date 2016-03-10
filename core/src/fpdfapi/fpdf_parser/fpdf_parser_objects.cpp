@@ -9,7 +9,7 @@
 #include <algorithm>
 
 #include "core/include/fpdfapi/cpdf_parser.h"
-#include "core/include/fpdfapi/fpdf_parser.h"
+#include "core/include/fpdfapi/fpdf_parser_decode.h"
 #include "core/include/fxcrt/fx_string.h"
 #include "third_party/base/stl_util.h"
 
@@ -667,6 +667,13 @@ CFX_Matrix CPDF_Dictionary::GetMatrixBy(const CFX_ByteStringC& key) const {
 
 FX_BOOL CPDF_Dictionary::KeyExist(const CFX_ByteStringC& key) const {
   return pdfium::ContainsKey(m_Map, key);
+}
+
+bool CPDF_Dictionary::IsSignatureDict() const {
+  CPDF_Object* pType = GetElementValue("Type");
+  if (!pType)
+    pType = GetElementValue("FT");
+  return pType && pType->GetString() == "Sig";
 }
 
 void CPDF_Dictionary::SetAt(const CFX_ByteStringC& key, CPDF_Object* pObj) {

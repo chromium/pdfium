@@ -10,7 +10,6 @@
 #include <deque>
 #include <memory>
 
-#include "core/include/fpdfapi/fpdf_parser.h"
 #include "core/include/fpdfapi/fpdf_resource.h"
 #include "core/include/fxge/fx_dib.h"
 

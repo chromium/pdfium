@@ -9,7 +9,8 @@
 #include <vector>
 
 #include "core/include/fpdfapi/fpdf_module.h"
-#include "core/include/fpdfapi/fpdf_parser.h"
+#include "core/include/fpdfapi/fpdf_objects.h"
+#include "core/include/fpdfapi/fpdf_parser_decode.h"
 #include "core/include/fpdfapi/ipdf_crypto_handler.h"
 #include "core/include/fxcrt/fx_ext.h"
 #include "core/src/fpdfapi/fpdf_parser/fpdf_parser_utility.h"
@@ -468,7 +469,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjectHolder* pObjList,
 
     // Only when this is a signature dictionary and has contents, we reset the
     // contents to the un-decrypted form.
-    if (IsSignatureDict(pDict.get()) && dwSignValuePos) {
+    if (pDict->IsSignatureDict() && dwSignValuePos) {
       CFX_AutoRestorer<FX_FILESIZE> save_pos(&m_Pos);
       m_Pos = dwSignValuePos;
       pDict->SetAt("Contents", GetObject(pObjList, objnum, gennum, false));

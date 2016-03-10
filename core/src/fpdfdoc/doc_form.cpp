@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "core/include/fpdfapi/cpdf_document.h"
+#include "core/include/fpdfapi/cfdf_document.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
 #include "core/src/fpdfdoc/doc_utils.h"
 #include "third_party/base/stl_util.h"

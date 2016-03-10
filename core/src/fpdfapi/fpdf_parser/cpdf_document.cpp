@@ -10,7 +10,6 @@
 
 #include "core/include/fpdfapi/cpdf_parser.h"
 #include "core/include/fpdfapi/fpdf_module.h"
-#include "core/include/fpdfapi/fpdf_parser.h"
 #include "core/include/fxge/fx_font.h"
 #include "core/src/fpdfapi/fpdf_render/render_int.h"
 #include "third_party/base/stl_util.h"

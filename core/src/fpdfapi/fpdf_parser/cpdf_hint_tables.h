@@ -1,14 +1,15 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2016 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_SRC_FPDFAPI_FPDF_PARSER_PARSER_INT_H_
-#define CORE_SRC_FPDFAPI_FPDF_PARSER_PARSER_INT_H_
+#ifndef CORE_SRC_FPDFAPI_FPDF_PARSER_CPDF_HINT_TABLES_H_
+#define CORE_SRC_FPDFAPI_FPDF_PARSER_CPDF_HINT_TABLES_H_
 
 #include <vector>
 
+#include "core/include/fpdfapi/ipdf_data_avail.h"
 #include "core/include/fxcrt/fx_basic.h"
 #include "core/include/fxcrt/fx_stream.h"
 
@@ -16,7 +17,6 @@ class CFX_BitStream;
 class CPDF_DataAvail;
 class CPDF_Dictionary;
 class CPDF_Stream;
-class IFX_DownloadHints;
 
 class CPDF_HintTables {
  public:
@@ -31,8 +31,11 @@ class CPDF_HintTables {
                      FX_FILESIZE& szPageStartPos,
                      FX_FILESIZE& szPageLength,
                      FX_DWORD& dwObjNum);
-  IPDF_DataAvail::DocAvailStatus CheckPage(int index,
-                                           IFX_DownloadHints* pHints);
+
+  IPDF_DataAvail::DocAvailStatus CheckPage(
+      int index,
+      IPDF_DataAvail::DownloadHints* pHints);
+
   FX_BOOL LoadHintStream(CPDF_Stream* pHintStream);
 
  protected:
@@ -56,4 +59,4 @@ class CPDF_HintTables {
   std::vector<FX_FILESIZE> m_szSharedObjOffsetArray;
 };
 
-#endif  // CORE_SRC_FPDFAPI_FPDF_PARSER_PARSER_INT_H_
+#endif  // CORE_SRC_FPDFAPI_FPDF_PARSER_CPDF_HINT_TABLES_H_

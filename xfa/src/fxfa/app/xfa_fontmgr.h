@@ -14,6 +14,8 @@
 #include "xfa/include/fxfa/fxfa.h"
 #include "xfa/src/fgas/font/fgas_font.h"
 
+class CPDF_Font;
+
 struct XFA_FONTINFO {
   FX_DWORD dwFontNameHash;
   const FX_WCHAR* pPsName;

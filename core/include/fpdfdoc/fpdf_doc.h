@@ -11,9 +11,10 @@
 #include <memory>
 #include <vector>
 
-#include "core/include/fpdfapi/fpdf_parser.h"
+#include "core/include/fpdfapi/fpdf_parser_decode.h"
 #include "core/include/fpdfapi/fpdf_render.h"
 
+class CFDF_Document;
 class CFieldTree;
 class CPDF_AAction;
 class CPDF_Action;

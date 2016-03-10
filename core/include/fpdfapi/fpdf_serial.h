@@ -11,6 +11,7 @@
 #include "core/include/fpdfapi/fpdf_pageobj.h"
 
 class CPDF_XRefStream;
+class IPDF_CryptoHandler;
 
 CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& buf, const CPDF_Object* pObj);
 

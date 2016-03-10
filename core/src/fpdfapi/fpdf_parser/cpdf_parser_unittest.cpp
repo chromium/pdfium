@@ -6,7 +6,6 @@
 #include <string>
 
 #include "core/include/fpdfapi/cpdf_parser.h"
-#include "core/include/fpdfapi/fpdf_parser.h"
 #include "core/include/fxcrt/fx_stream.h"
 #include "core/include/fxcrt/fx_ext.h"
 #include "core/src/fpdfapi/fpdf_parser/cpdf_syntax_parser.h"
@@ -68,171 +67,13 @@ class CPDF_TestParser : public CPDF_Parser {
   // Add test cases here as private friend so that protected members in
   // CPDF_Parser can be accessed by test cases.
   // Need to access RebuildCrossRef.
-  FRIEND_TEST(fpdf_parser_parser, RebuildCrossRefCorrectly);
-  FRIEND_TEST(fpdf_parser_parser, RebuildCrossRefFailed);
+  FRIEND_TEST(cpdf_parser, RebuildCrossRefCorrectly);
+  FRIEND_TEST(cpdf_parser, RebuildCrossRefFailed);
   // Need to access LoadCrossRefV4.
-  FRIEND_TEST(fpdf_parser_parser, LoadCrossRefV4);
+  FRIEND_TEST(cpdf_parser, LoadCrossRefV4);
 };
 
-TEST(fpdf_parser_parser, ReadHexString) {
-  {
-    // Empty string.
-    uint8_t data[] = "";
-    ScopedFileStream stream(FX_CreateMemoryStream(data, 0, FALSE));
-
-    CPDF_SyntaxParser parser;
-    parser.InitParser(stream.get(), 0);
-    EXPECT_EQ("", parser.ReadHexString());
-    EXPECT_EQ(0, parser.SavePos());
-  }
-
-  {
-    // Blank string.
-    uint8_t data[] = "  ";
-    ScopedFileStream stream(FX_CreateMemoryStream(data, 2, FALSE));
-
-    CPDF_SyntaxParser parser;
-    parser.InitParser(stream.get(), 0);
-    EXPECT_EQ("", parser.ReadHexString());
-    EXPECT_EQ(2, parser.SavePos());
-  }
-
-  {
-    // Skips unknown characters.
-    uint8_t data[] = "z12b";
-    ScopedFileStream stream(FX_CreateMemoryStream(data, 4, FALSE));
-
-    CPDF_SyntaxParser parser;
-    parser.InitParser(stream.get(), 0);
-    EXPECT_EQ("\x12\xb0", parser.ReadHexString());
-    EXPECT_EQ(4, parser.SavePos());
-  }
-
-  {
-    // Skips unknown characters.
-    uint8_t data[] = "*<&*#$^&@1";
-    ScopedFileStream stream(FX_CreateMemoryStream(data, 10, FALSE));
-
-    CPDF_SyntaxParser parser;
-    parser.InitParser(stream.get(), 0);
-    EXPECT_EQ("\x10", parser.ReadHexString());
-    EXPECT_EQ(10, parser.SavePos());
-  }
-
-  {
-    // Skips unknown characters.
-    uint8_t data[] = "\x80zab";
-    ScopedFileStream stream(FX_CreateMemoryStream(data, 4, FALSE));
-
-    CPDF_SyntaxParser parser;
-    parser.InitParser(stream.get(), 0);
-    EXPECT_EQ("\xab", parser.ReadHexString());
-    EXPECT_EQ(4, parser.SavePos());
-  }
-
-  {
-    // Skips unknown characters.
-    uint8_t data[] = "\xffzab";
-    ScopedFileStream stream(FX_CreateMemoryStream(data, 4, FALSE));
-
-    CPDF_SyntaxParser parser;
-    parser.InitParser(stream.get(), 0);
-    EXPECT_EQ("\xab", parser.ReadHexString());
-    EXPECT_EQ(4, parser.SavePos());
-  }
-
-  {
-    // Regular conversion.
-    uint8_t data[] = "1A2b>abcd";
-    ScopedFileStream stream(FX_CreateMemoryStream(data, 9, FALSE));
-
-    CPDF_SyntaxParser parser;
-    parser.InitParser(stream.get(), 0);
-    EXPECT_EQ("\x1a\x2b", parser.ReadHexString());
-    EXPECT_EQ(5, parser.SavePos());
-  }
-
-  {
-    // Position out of bounds.
-    uint8_t data[] = "12ab>";
-    ScopedFileStream stream(FX_CreateMemoryStream(data, 5, FALSE));
-
-    CPDF_SyntaxParser parser;
-    parser.InitParser(stream.get(), 0);
-    parser.RestorePos(5);
-    EXPECT_EQ("", parser.ReadHexString());
-
-    parser.RestorePos(6);
-    EXPECT_EQ("", parser.ReadHexString());
-
-    parser.RestorePos(-1);
-    EXPECT_EQ("", parser.ReadHexString());
-
-    parser.RestorePos(std::numeric_limits<FX_FILESIZE>::max());
-    EXPECT_EQ("", parser.ReadHexString());
-
-    // Check string still parses when set to 0.
-    parser.RestorePos(0);
-    EXPECT_EQ("\x12\xab", parser.ReadHexString());
-  }
-
-  {
-    // Missing ending >.
-    uint8_t data[] = "1A2b";
-    ScopedFileStream stream(FX_CreateMemoryStream(data, 4, FALSE));
-
-    CPDF_SyntaxParser parser;
-    parser.InitParser(stream.get(), 0);
-    EXPECT_EQ("\x1a\x2b", parser.ReadHexString());
-    EXPECT_EQ(4, parser.SavePos());
-  }
-
-  {
-    // Missing ending >.
-    uint8_t data[] = "12abz";
-    ScopedFileStream stream(FX_CreateMemoryStream(data, 5, FALSE));
-
-    CPDF_SyntaxParser parser;
-    parser.InitParser(stream.get(), 0);
-    EXPECT_EQ("\x12\xab", parser.ReadHexString());
-    EXPECT_EQ(5, parser.SavePos());
-  }
-
-  {
-    // Uneven number of bytes.
-    uint8_t data[] = "1A2>asdf";
-    ScopedFileStream stream(FX_CreateMemoryStream(data, 8, FALSE));
-
-    CPDF_SyntaxParser parser;
-    parser.InitParser(stream.get(), 0);
-    EXPECT_EQ("\x1a\x20", parser.ReadHexString());
-    EXPECT_EQ(4, parser.SavePos());
-  }
-
-  {
-    // Uneven number of bytes.
-    uint8_t data[] = "1A2zasdf";
-    ScopedFileStream stream(FX_CreateMemoryStream(data, 8, FALSE));
-
-    CPDF_SyntaxParser parser;
-    parser.InitParser(stream.get(), 0);
-    EXPECT_EQ("\x1a\x2a\xdf", parser.ReadHexString());
-    EXPECT_EQ(8, parser.SavePos());
-  }
-
-  {
-    // Just ending character.
-    uint8_t data[] = ">";
-    ScopedFileStream stream(FX_CreateMemoryStream(data, 1, FALSE));
-
-    CPDF_SyntaxParser parser;
-    parser.InitParser(stream.get(), 0);
-    EXPECT_EQ("", parser.ReadHexString());
-    EXPECT_EQ(1, parser.SavePos());
-  }
-}
-
-TEST(fpdf_parser_parser, RebuildCrossRefCorrectly) {
+TEST(cpdf_parser, RebuildCrossRefCorrectly) {
   CPDF_TestParser parser;
   std::string test_file;
   ASSERT_TRUE(PathService::GetTestFilePath("parser_rebuildxref_correct.pdf",
@@ -248,7 +89,7 @@ TEST(fpdf_parser_parser, RebuildCrossRefCorrectly) {
     EXPECT_EQ(versions[i], parser.m_ObjectInfo[i].gennum);
 }
 
-TEST(fpdf_parser_parser, RebuildCrossRefFailed) {
+TEST(cpdf_parser, RebuildCrossRefFailed) {
   CPDF_TestParser parser;
   std::string test_file;
   ASSERT_TRUE(PathService::GetTestFilePath(
@@ -258,7 +99,7 @@ TEST(fpdf_parser_parser, RebuildCrossRefFailed) {
   ASSERT_FALSE(parser.RebuildCrossRef());
 }
 
-TEST(fpdf_parser_parser, LoadCrossRefV4) {
+TEST(cpdf_parser, LoadCrossRefV4) {
   {
     const unsigned char xref_table[] =
         "xref \n"

@@ -9,7 +9,7 @@
 
 #include <map>
 
-#include "core/include/fpdfapi/fpdf_parser.h"
+#include "core/include/fpdfapi/fpdf_objects.h"
 #include "core/include/fxcrt/fx_system.h"
 #include "core/include/fxge/fx_font.h"
 
@@ -22,6 +22,7 @@ class CPDF_CIDFont;
 class CPDF_CMap;
 class CPDF_Color;
 class CPDF_ColorSpace;
+class CPDF_Document;
 class CPDF_FontEncoding;
 class CPDF_Form;
 class CPDF_Function;

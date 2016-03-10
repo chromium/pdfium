@@ -7,7 +7,6 @@
 #ifndef XFA_INCLUDE_FXJSE_FXJSE_H_
 #define XFA_INCLUDE_FXJSE_FXJSE_H_
 
-#include "core/include/fpdfapi/fpdf_parser.h"
 #include "core/include/fxcrt/fx_string.h"
 #include "core/include/fxcrt/fx_system.h"
 

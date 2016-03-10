@@ -7,20 +7,19 @@
 #ifndef FPDFSDK_INCLUDE_FSDK_BASEFORM_H_
 #define FPDFSDK_INCLUDE_FSDK_BASEFORM_H_
 
+#include <map>
+#include <vector>
+
+#include "core/include/fpdfdoc/fpdf_doc.h"
+#include "core/include/fxcrt/fx_basic.h"
+#include "core/include/fxge/fx_dib.h"
+#include "fpdfsdk/include/fsdk_baseannot.h"
+
 #if _FX_OS_ == _FX_ANDROID_
 #include "time.h"
 #else
 #include <ctime>
 #endif
-
-#include <map>
-#include <vector>
-
-#include "core/include/fpdfapi/fpdf_parser.h"
-#include "core/include/fpdfdoc/fpdf_doc.h"
-#include "core/include/fxcrt/fx_basic.h"
-#include "core/include/fxge/fx_dib.h"
-#include "fpdfsdk/include/fsdk_baseannot.h"
 
 class CPDFSDK_Annot;
 class CPDFSDK_Document;

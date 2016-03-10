@@ -333,6 +333,7 @@ class CPDF_Dictionary : public CPDF_Object {
   }
 
   FX_BOOL KeyExist(const CFX_ByteStringC& key) const;
+  bool IsSignatureDict() const;
 
   // Set* functions invalidate iterators for the element with the key |key|.
   void SetAt(const CFX_ByteStringC& key, CPDF_Object* pObj);

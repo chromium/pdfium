@@ -9,7 +9,6 @@
 #include <vector>
 
 #include "core/include/fpdfapi/cpdf_document.h"
-#include "core/include/fpdfapi/fpdf_parser.h"
 #include "core/include/fpdfapi/ipdf_crypto_handler.h"
 #include "core/include/fxcrt/fx_ext.h"
 #include "core/include/fxcrt/fx_safe_types.h"
