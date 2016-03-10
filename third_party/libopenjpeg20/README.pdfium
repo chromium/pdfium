@@ -21,4 +21,5 @@ Local Modifications:
 0009-opj_pi_next.patch: Fix potential bad precno value in opj_pi_next* functions.
 0010-pi_update_decode_poc.patch: Set proper upper bound for an array in opj_pi_update_decode_poc().
 0011-j2k_update_image_data.patch: Prevent bad signed -> unsigned casting.
+0012-mct_sse.patch: Don't use SSE intrinsics in 32-bit builds.
 TODO(thestig): List all the other patches.
