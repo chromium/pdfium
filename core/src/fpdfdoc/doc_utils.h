@@ -9,6 +9,18 @@
 
 #include <vector>
 
+class CPDF_Dictionary;
+class CPDF_FormField;
+
+class CPDF_NumberTree {
+ public:
+  CPDF_NumberTree(CPDF_Dictionary* pRoot) : m_pRoot(pRoot) {}
+  CPDF_Object* LookupValue(int num) const;
+
+ protected:
+  CPDF_Dictionary* const m_pRoot;
+};
+
 CFX_WideString GetFullName(CPDF_Dictionary* pFieldDict);
 void InitInterFormDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument);
 FX_DWORD CountInterFormFonts(CPDF_Dictionary* pFormDict);

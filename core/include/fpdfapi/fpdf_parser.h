@@ -201,16 +201,6 @@ FX_DWORD RunLengthDecode(const uint8_t* src_buf,
                          FX_DWORD& dest_size);
 bool IsSignatureDict(const CPDF_Dictionary* pDict);
 
-class CPDF_NumberTree {
- public:
-  CPDF_NumberTree(CPDF_Dictionary* pRoot) { m_pRoot = pRoot; }
-
-  CPDF_Object* LookupValue(int num);
-
- protected:
-  CPDF_Dictionary* m_pRoot;
-};
-
 class IFX_FileAvail {
  public:
   virtual ~IFX_FileAvail() {}

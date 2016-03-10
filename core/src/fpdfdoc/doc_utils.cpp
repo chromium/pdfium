@@ -12,7 +12,52 @@
 #include "core/include/fpdfdoc/fpdf_doc.h"
 #include "core/src/fpdfdoc/doc_utils.h"
 
-static const int FPDFDOC_UTILS_MAXRECURSION = 32;
+namespace {
+
+const int FPDFDOC_UTILS_MAXRECURSION = 32;
+
+CPDF_Object* SearchNumberNode(const CPDF_Dictionary* pNode, int num) {
+  CPDF_Array* pLimits = pNode->GetArrayBy("Limits");
+  if (pLimits &&
+      (num < pLimits->GetIntegerAt(0) || num > pLimits->GetIntegerAt(1))) {
+    return NULL;
+  }
+  CPDF_Array* pNumbers = pNode->GetArrayBy("Nums");
+  if (pNumbers) {
+    FX_DWORD dwCount = pNumbers->GetCount() / 2;
+    for (FX_DWORD i = 0; i < dwCount; i++) {
+      int index = pNumbers->GetIntegerAt(i * 2);
+      if (num == index) {
+        return pNumbers->GetElementValue(i * 2 + 1);
+      }
+      if (index > num) {
+        break;
+      }
+    }
+    return NULL;
+  }
+  CPDF_Array* pKids = pNode->GetArrayBy("Kids");
+  if (!pKids) {
+    return NULL;
+  }
+  for (FX_DWORD i = 0; i < pKids->GetCount(); i++) {
+    CPDF_Dictionary* pKid = pKids->GetDictAt(i);
+    if (!pKid) {
+      continue;
+    }
+    CPDF_Object* pFound = SearchNumberNode(pKid, num);
+    if (pFound) {
+      return pFound;
+    }
+  }
+  return NULL;
+}
+
+}  // namespace
+
+CPDF_Object* CPDF_NumberTree::LookupValue(int num) const {
+  return SearchNumberNode(m_pRoot, num);
+}
 
 CFX_WideString GetFullName(CPDF_Dictionary* pFieldDict) {
   CFX_WideString full_name;

@@ -6,6 +6,7 @@
 
 #include "core/include/fpdfapi/cpdf_document.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
+#include "core/src/fpdfdoc/doc_utils.h"
 
 const int nMaxRecursion = 32;
 int CPDF_Dest::GetPageIndex(CPDF_Document* pDoc) {

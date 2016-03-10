@@ -10,6 +10,7 @@
 #include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fpdfapi/fpdf_parser.h"
 #include "core/include/fpdfdoc/fpdf_tagged.h"
+#include "core/src/fpdfdoc/doc_utils.h"
 #include "core/src/fpdfdoc/tagged_int.h"
 
 const int nMaxRecursion = 32;
