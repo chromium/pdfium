@@ -11,7 +11,7 @@
 
 class CPDF_Parser;
 class CPDF_Dictionary;
-class CPDF_CryptoHandler;
+class IPDF_CryptoHandler;
 
 #define FXCIPHER_NONE 0
 #define FXCIPHER_RC4 1
@@ -30,7 +30,7 @@ class IPDF_SecurityHandler {
                                int& keylen) = 0;
 
   virtual FX_BOOL IsMetadataEncrypted() = 0;
-  virtual CPDF_CryptoHandler* CreateCryptoHandler() = 0;
+  virtual IPDF_CryptoHandler* CreateCryptoHandler() = 0;
 };
 
 #endif  // CORE_INCLUDE_FPDFAPI_IPDF_SECURITY_HANDLER_H_

@@ -12,7 +12,9 @@
 #include "core/include/fpdfapi/cpdf_parser.h"
 #include "core/include/fpdfapi/fpdf_parser.h"
 #include "core/include/fpdfapi/fpdf_serial.h"
+#include "core/include/fpdfapi/ipdf_crypto_handler.h"
 #include "core/include/fxcrt/fx_ext.h"
+#include "core/src/fpdfapi/fpdf_parser/cpdf_standard_crypto_handler.h"
 #include "core/src/fpdfapi/fpdf_parser/cpdf_standard_security_handler.h"
 #include "third_party/base/stl_util.h"
 
@@ -470,7 +472,7 @@ class CPDF_Encryptor {
  public:
   CPDF_Encryptor();
   ~CPDF_Encryptor();
-  FX_BOOL Initialize(CPDF_CryptoHandler* pHandler,
+  FX_BOOL Initialize(IPDF_CryptoHandler* pHandler,
                      int objnum,
                      uint8_t* src_data,
                      FX_DWORD src_size);
@@ -483,7 +485,7 @@ CPDF_Encryptor::CPDF_Encryptor() {
   m_dwSize = 0;
   m_bNewBuf = FALSE;
 }
-FX_BOOL CPDF_Encryptor::Initialize(CPDF_CryptoHandler* pHandler,
+FX_BOOL CPDF_Encryptor::Initialize(IPDF_CryptoHandler* pHandler,
                                    int objnum,
                                    uint8_t* src_data,
                                    FX_DWORD src_size) {
@@ -540,7 +542,7 @@ FX_FILESIZE CPDF_ObjectStream::End(CPDF_Creator* pCreator) {
     return 0;
   }
   CFX_FileBufferArchive* pFile = &pCreator->m_File;
-  CPDF_CryptoHandler* pHandler = pCreator->m_pCryptoHandler;
+  IPDF_CryptoHandler* pHandler = pCreator->m_pCryptoHandler;
   FX_FILESIZE ObjOffset = pCreator->m_Offset;
   if (!m_dwObjNum) {
     m_dwObjNum = ++pCreator->m_dwLastObjNum;
@@ -1016,7 +1018,7 @@ int32_t CPDF_Creator::AppendObjectNumberToXRef(FX_DWORD objnum) {
 }
 int32_t CPDF_Creator::WriteStream(const CPDF_Object* pStream,
                                   FX_DWORD objnum,
-                                  CPDF_CryptoHandler* pCrypto) {
+                                  IPDF_CryptoHandler* pCrypto) {
   CPDF_FlateEncoder encoder;
   encoder.Initialize(const_cast<CPDF_Stream*>(pStream->AsStream()),
                      pStream == m_pMetadata ? FALSE : m_bCompress);
@@ -1059,7 +1061,7 @@ int32_t CPDF_Creator::WriteIndirectObj(FX_DWORD objnum,
 
   m_Offset += len;
   if (pObj->IsStream()) {
-    CPDF_CryptoHandler* pHandler = nullptr;
+    IPDF_CryptoHandler* pHandler = nullptr;
     pHandler =
         (pObj == m_pMetadata && !m_bEncryptMetadata) ? NULL : m_pCryptoHandler;
     if (WriteStream(pObj, objnum, pHandler) < 0)
@@ -1139,7 +1141,7 @@ int32_t CPDF_Creator::WriteDirectObj(FX_DWORD objnum,
       encoder.Initialize(const_cast<CPDF_Stream*>(pObj->AsStream()),
                          m_bCompress);
       CPDF_Encryptor encryptor;
-      CPDF_CryptoHandler* pHandler = m_pCryptoHandler;
+      IPDF_CryptoHandler* pHandler = m_pCryptoHandler;
       encryptor.Initialize(pHandler, objnum, encoder.m_pData, encoder.m_dwSize);
       if ((FX_DWORD)encoder.m_pDict->GetIntegerBy("Length") !=
           encryptor.m_dwSize) {

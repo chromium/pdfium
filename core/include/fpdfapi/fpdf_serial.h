@@ -44,7 +44,7 @@ class CPDF_Creator {
 
   FX_BOOL m_bStandardSecurity;
 
-  CPDF_CryptoHandler* m_pCryptoHandler;
+  IPDF_CryptoHandler* m_pCryptoHandler;
   FX_BOOL m_bNewCrypto;
 
   FX_BOOL m_bEncryptMetadata;
@@ -86,7 +86,7 @@ class CPDF_Creator {
   void InitID(FX_BOOL bDefault = TRUE);
   int32_t WriteStream(const CPDF_Object* pStream,
                       FX_DWORD objnum,
-                      CPDF_CryptoHandler* pCrypto);
+                      IPDF_CryptoHandler* pCrypto);
 
   int32_t m_iStage;
   FX_DWORD m_dwFlags;

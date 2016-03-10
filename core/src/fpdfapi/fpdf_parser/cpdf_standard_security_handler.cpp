@@ -11,6 +11,7 @@
 #include "core/include/fdrm/fx_crypt.h"
 #include "core/include/fpdfapi/cpdf_parser.h"
 #include "core/include/fpdfapi/fpdf_parser.h"
+#include "core/src/fpdfapi/fpdf_parser/cpdf_standard_crypto_handler.h"
 
 namespace {
 
@@ -78,7 +79,7 @@ CPDF_StandardSecurityHandler::CPDF_StandardSecurityHandler() {
 
 CPDF_StandardSecurityHandler::~CPDF_StandardSecurityHandler() {}
 
-CPDF_CryptoHandler* CPDF_StandardSecurityHandler::CreateCryptoHandler() {
+IPDF_CryptoHandler* CPDF_StandardSecurityHandler::CreateCryptoHandler() {
   return new CPDF_StandardCryptoHandler;
 }
 

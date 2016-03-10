@@ -10,6 +10,7 @@
 
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_parser.h"
+#include "core/include/fpdfapi/ipdf_crypto_handler.h"
 #include "core/include/fxcrt/fx_ext.h"
 #include "core/src/fpdfapi/fpdf_parser/fpdf_parser_utility.h"
 #include "third_party/base/numerics/safe_math.h"
@@ -636,7 +637,7 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
   const CFX_ByteStringC kEndStreamStr("endstream");
   const CFX_ByteStringC kEndObjStr("endobj");
 
-  CPDF_CryptoHandler* pCryptoHandler =
+  IPDF_CryptoHandler* pCryptoHandler =
       objnum == (FX_DWORD)m_MetadataObjnum ? nullptr : m_pCryptoHandler.get();
   if (!pCryptoHandler) {
     FX_BOOL bSearchForKeyword = TRUE;
@@ -974,6 +975,6 @@ FX_FILESIZE CPDF_SyntaxParser::FindTag(const CFX_ByteStringC& tag,
 }
 
 void CPDF_SyntaxParser::SetEncrypt(
-    std::unique_ptr<CPDF_CryptoHandler> pCryptoHandler) {
+    std::unique_ptr<IPDF_CryptoHandler> pCryptoHandler) {
   m_pCryptoHandler = std::move(pCryptoHandler);
 }

@@ -4,19 +4,27 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/include/fpdfapi/fpdf_parser.h"
+#include "core/src/fpdfapi/fpdf_parser/cpdf_standard_crypto_handler.h"
 
+#include <time.h>
+
+#include "core/include/fpdfapi/fpdf_parser.h"
 #include "core/include/fpdfapi/cpdf_parser.h"
 #include "core/include/fpdfapi/cpdf_simple_parser.h"
 #include "core/include/fpdfapi/ipdf_security_handler.h"
 #include "core/include/fdrm/fx_crypt.h"
 
-struct PDF_CRYPTOITEM {
-  int32_t m_Cipher;
-  int32_t m_KeyLen;
-  FX_BOOL m_bChecked;
-  CPDF_StandardCryptoHandler* m_pCryptoHandler;
-};
+IPDF_CryptoHandler::~IPDF_CryptoHandler() {}
+
+void IPDF_CryptoHandler::Decrypt(FX_DWORD objnum,
+                                 FX_DWORD gennum,
+                                 CFX_ByteString& str) {
+  CFX_BinaryBuf dest_buf;
+  void* context = DecryptStart(objnum, gennum);
+  DecryptStream(context, (const uint8_t*)str, str.GetLength(), dest_buf);
+  DecryptFinish(context, dest_buf);
+  str = dest_buf;
+}
 
 void CPDF_StandardCryptoHandler::CryptBlock(FX_BOOL bEncrypt,
                                             FX_DWORD objnum,
@@ -324,15 +332,6 @@ FX_BOOL CPDF_StandardCryptoHandler::EncryptContent(FX_DWORD objnum,
                                                    FX_DWORD& dest_size) {
   CryptBlock(TRUE, objnum, gennum, src_buf, src_size, dest_buf, dest_size);
   return TRUE;
-}
-void CPDF_CryptoHandler::Decrypt(FX_DWORD objnum,
-                                 FX_DWORD gennum,
-                                 CFX_ByteString& str) {
-  CFX_BinaryBuf dest_buf;
-  void* context = DecryptStart(objnum, gennum);
-  DecryptStream(context, (const uint8_t*)str, str.GetLength(), dest_buf);
-  DecryptFinish(context, dest_buf);
-  str = dest_buf;
 }
 CPDF_StandardCryptoHandler::CPDF_StandardCryptoHandler() {
   m_pAESContext = NULL;

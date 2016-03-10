@@ -14,7 +14,6 @@
 #include "core/include/fxcrt/fx_basic.h"
 
 class CPDF_Array;
-class CPDF_CryptoHandler;
 class CPDF_Dictionary;
 class CPDF_Document;
 class CPDF_IndirectObjectHolder;
@@ -22,6 +21,7 @@ class CPDF_Object;
 class CPDF_StreamAcc;
 class CPDF_SyntaxParser;
 class IFX_FileRead;
+class IPDF_CryptoHandler;
 class IPDF_SecurityHandler;
 
 class CPDF_Parser {
@@ -63,7 +63,7 @@ class CPDF_Parser {
   bool IsVersionUpdated() const { return m_bVersionUpdated; }
   bool IsObjectFreeOrNull(FX_DWORD objnum) const;
   FX_BOOL IsFormStream(FX_DWORD objnum, FX_BOOL& bForm);
-  CPDF_CryptoHandler* GetCryptoHandler();
+  IPDF_CryptoHandler* GetCryptoHandler();
   IFX_FileRead* GetFileAccess() const;
 
   FX_FILESIZE GetObjectOffset(FX_DWORD objnum) const;

@@ -17,7 +17,7 @@
 class CFX_Font;
 class CFX_Matrix;
 class CPDF_ColorSpace;
-class CPDF_CryptoHandler;
+class IPDF_CryptoHandler;
 class CPDF_Document;
 class CPDF_DocPageData;
 class CPDF_DocRenderData;
@@ -45,90 +45,6 @@ class IPDF_SecurityHandler;
 // Indexed by 8-bit char code, contains unicode code points.
 extern const FX_WORD PDFDocEncoding[256];
 
-class CPDF_CryptoHandler {
- public:
-  virtual ~CPDF_CryptoHandler() {}
-
-  virtual FX_BOOL Init(CPDF_Dictionary* pEncryptDict,
-                       IPDF_SecurityHandler* pSecurityHandler) = 0;
-
-  virtual FX_DWORD DecryptGetSize(FX_DWORD src_size) = 0;
-
-  virtual void* DecryptStart(FX_DWORD objnum, FX_DWORD gennum) = 0;
-
-  virtual FX_BOOL DecryptStream(void* context,
-                                const uint8_t* src_buf,
-                                FX_DWORD src_size,
-                                CFX_BinaryBuf& dest_buf) = 0;
-
-  virtual FX_BOOL DecryptFinish(void* context, CFX_BinaryBuf& dest_buf) = 0;
-
-  virtual FX_DWORD EncryptGetSize(FX_DWORD objnum,
-                                  FX_DWORD version,
-                                  const uint8_t* src_buf,
-                                  FX_DWORD src_size) = 0;
-
-  virtual FX_BOOL EncryptContent(FX_DWORD objnum,
-                                 FX_DWORD version,
-                                 const uint8_t* src_buf,
-                                 FX_DWORD src_size,
-                                 uint8_t* dest_buf,
-                                 FX_DWORD& dest_size) = 0;
-
-  void Decrypt(FX_DWORD objnum, FX_DWORD version, CFX_ByteString& str);
-};
-
-class CPDF_StandardCryptoHandler : public CPDF_CryptoHandler {
- public:
-  CPDF_StandardCryptoHandler();
-  ~CPDF_StandardCryptoHandler() override;
-
-  // CPDF_CryptoHandler
-  FX_BOOL Init(CPDF_Dictionary* pEncryptDict,
-               IPDF_SecurityHandler* pSecurityHandler) override;
-  FX_DWORD DecryptGetSize(FX_DWORD src_size) override;
-  void* DecryptStart(FX_DWORD objnum, FX_DWORD gennum) override;
-  FX_BOOL DecryptStream(void* context,
-                        const uint8_t* src_buf,
-                        FX_DWORD src_size,
-                        CFX_BinaryBuf& dest_buf) override;
-  FX_BOOL DecryptFinish(void* context, CFX_BinaryBuf& dest_buf) override;
-  FX_DWORD EncryptGetSize(FX_DWORD objnum,
-                          FX_DWORD version,
-                          const uint8_t* src_buf,
-                          FX_DWORD src_size) override;
-  FX_BOOL EncryptContent(FX_DWORD objnum,
-                         FX_DWORD version,
-                         const uint8_t* src_buf,
-                         FX_DWORD src_size,
-                         uint8_t* dest_buf,
-                         FX_DWORD& dest_size) override;
-
-  FX_BOOL Init(int cipher, const uint8_t* key, int keylen);
-
- protected:
-  virtual void CryptBlock(FX_BOOL bEncrypt,
-                          FX_DWORD objnum,
-                          FX_DWORD gennum,
-                          const uint8_t* src_buf,
-                          FX_DWORD src_size,
-                          uint8_t* dest_buf,
-                          FX_DWORD& dest_size);
-  virtual void* CryptStart(FX_DWORD objnum, FX_DWORD gennum, FX_BOOL bEncrypt);
-  virtual FX_BOOL CryptStream(void* context,
-                              const uint8_t* src_buf,
-                              FX_DWORD src_size,
-                              CFX_BinaryBuf& dest_buf,
-                              FX_BOOL bEncrypt);
-  virtual FX_BOOL CryptFinish(void* context,
-                              CFX_BinaryBuf& dest_buf,
-                              FX_BOOL bEncrypt);
-
-  uint8_t m_EncryptKey[32];
-  int m_KeyLen;
-  int m_Cipher;
-  uint8_t* m_pAESContext;
-};
 
 CFX_ByteString PDF_NameDecode(const CFX_ByteStringC& orig);
 CFX_ByteString PDF_NameDecode(const CFX_ByteString& orig);

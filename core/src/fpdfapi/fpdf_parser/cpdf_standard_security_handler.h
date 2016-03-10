@@ -27,7 +27,7 @@ class CPDF_StandardSecurityHandler : public IPDF_SecurityHandler {
                        const uint8_t*& buffer,
                        int& keylen) override;
   FX_BOOL IsMetadataEncrypted() override;
-  CPDF_CryptoHandler* CreateCryptoHandler() override;
+  IPDF_CryptoHandler* CreateCryptoHandler() override;
 
   void OnCreate(CPDF_Dictionary* pEncryptDict,
                 CPDF_Array* pIdArray,

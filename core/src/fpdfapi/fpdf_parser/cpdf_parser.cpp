@@ -10,6 +10,7 @@
 
 #include "core/include/fpdfapi/cpdf_document.h"
 #include "core/include/fpdfapi/fpdf_parser.h"
+#include "core/include/fpdfapi/ipdf_crypto_handler.h"
 #include "core/include/fxcrt/fx_ext.h"
 #include "core/include/fxcrt/fx_safe_types.h"
 #include "core/src/fpdfapi/fpdf_parser/cpdf_standard_security_handler.h"
@@ -94,7 +95,7 @@ void CPDF_Parser::SetEncryptDictionary(CPDF_Dictionary* pDict) {
   m_pEncryptDict = pDict;
 }
 
-CPDF_CryptoHandler* CPDF_Parser::GetCryptoHandler() {
+IPDF_CryptoHandler* CPDF_Parser::GetCryptoHandler() {
   return m_pSyntax->m_pCryptoHandler.get();
 }
 
@@ -281,7 +282,7 @@ CPDF_Parser::Error CPDF_Parser::SetEncryptHandler() {
       return err;
 
     m_pSecurityHandler = std::move(pSecurityHandler);
-    std::unique_ptr<CPDF_CryptoHandler> pCryptoHandler(
+    std::unique_ptr<IPDF_CryptoHandler> pCryptoHandler(
         m_pSecurityHandler->CreateCryptoHandler());
     if (!pCryptoHandler->Init(m_pEncryptDict, m_pSecurityHandler.get()))
       return HANDLER_ERROR;
