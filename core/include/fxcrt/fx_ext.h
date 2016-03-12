@@ -60,23 +60,19 @@ inline int FXSYS_toHexDigit(const FX_CHAR c) {
 }
 
 inline bool FXSYS_isDecimalDigit(const FX_CHAR c) {
-  return std::isdigit(c);
+  return !!std::isdigit(c);
 }
 
 inline bool FXSYS_isDecimalDigit(const FX_WCHAR c) {
-  return std::iswdigit(c);
+  return !!std::iswdigit(c);
 }
 
 inline int FXSYS_toDecimalDigit(const FX_CHAR c) {
-  if (!std::isdigit(c))
-    return 0;
-  return c - '0';
+  return std::isdigit(c) ? c - '0' : 0;
 }
 
 inline int FXSYS_toDecimalDigit(const FX_WCHAR c) {
-  if (!std::iswdigit(c))
-    return 0;
-  return c - L'0';
+  return std::iswdigit(c) ? c - L'0' : 0;
 }
 
 FX_DWORD FX_HashCode_String_GetA(const FX_CHAR* pStr,

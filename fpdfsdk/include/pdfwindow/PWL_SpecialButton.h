@@ -29,11 +29,11 @@ class CPWL_CheckBox : public CPWL_Button {
   FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
   FX_BOOL OnChar(FX_WORD nChar, FX_DWORD nFlag) override;
 
-  void SetCheck(FX_BOOL bCheck);
-  FX_BOOL IsChecked() const;
+  void SetCheck(bool bCheck);
+  bool IsChecked() const;
 
  private:
-  FX_BOOL m_bChecked;
+  bool m_bChecked;
 };
 
 class CPWL_RadioButton : public CPWL_Button {
@@ -46,11 +46,11 @@ class CPWL_RadioButton : public CPWL_Button {
   FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
   FX_BOOL OnChar(FX_WORD nChar, FX_DWORD nFlag) override;
 
-  void SetCheck(FX_BOOL bCheck);
-  FX_BOOL IsChecked() const;
+  void SetCheck(bool bCheck);
+  bool IsChecked() const;
 
  private:
-  FX_BOOL m_bChecked;
+  bool m_bChecked;
 };
 
 #endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_SPECIALBUTTON_H_

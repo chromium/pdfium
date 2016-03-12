@@ -387,19 +387,20 @@ int32_t GetSimilarValue(int weight,
                         int pitch_family,
                         FX_DWORD style) {
   int32_t iSimilarValue = 0;
-  if ((style & FXFONT_BOLD) == (weight > 400)) {
+  if (!!(style & FXFONT_BOLD) == (weight > 400)) {
     iSimilarValue += 16;
   }
-  if ((style & FXFONT_ITALIC) == bItalic) {
+  if (!!(style & FXFONT_ITALIC) == bItalic) {
     iSimilarValue += 16;
   }
-  if ((style & FXFONT_SERIF) == (pitch_family & FXFONT_FF_ROMAN)) {
+  if (!!(style & FXFONT_SERIF) == !!(pitch_family & FXFONT_FF_ROMAN)) {
     iSimilarValue += 16;
   }
-  if ((style & FXFONT_SCRIPT) == (pitch_family & FXFONT_FF_SCRIPT)) {
+  if (!!(style & FXFONT_SCRIPT) == !!(pitch_family & FXFONT_FF_SCRIPT)) {
     iSimilarValue += 8;
   }
-  if ((style & FXFONT_FIXED_PITCH) == (pitch_family & FXFONT_FF_FIXEDPITCH)) {
+  if (!!(style & FXFONT_FIXED_PITCH) ==
+      !!(pitch_family & FXFONT_FF_FIXEDPITCH)) {
     iSimilarValue += 8;
   }
   return iSimilarValue;

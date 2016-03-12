@@ -55,6 +55,7 @@ CPDF_Parser::CPDF_Parser()
       m_FileVersion(0),
       m_pTrailer(nullptr),
       m_pEncryptDict(nullptr),
+      m_bVersionUpdated(false),
       m_pLinearized(nullptr),
       m_dwFirstPageNo(0),
       m_dwXrefStartObjNum(0) {
@@ -124,7 +125,7 @@ void CPDF_Parser::ShrinkObjectMap(FX_DWORD objnum) {
 }
 
 void CPDF_Parser::CloseParser() {
-  m_bVersionUpdated = FALSE;
+  m_bVersionUpdated = false;
   delete m_pDocument;
   m_pDocument = nullptr;
 
@@ -466,7 +467,7 @@ FX_BOOL CPDF_Parser::LoadLinearizedCrossRefV4(FX_FILESIZE pos,
         m_ObjectInfo[objnum].pos = offset;
         int32_t version = FXSYS_atoi(pEntry + 11);
         if (version >= 1)
-          m_bVersionUpdated = TRUE;
+          m_bVersionUpdated = true;
 
         m_ObjectInfo[objnum].gennum = version;
         if (m_ObjectInfo[objnum].pos < m_pSyntax->m_FileLen)
@@ -541,7 +542,7 @@ bool CPDF_Parser::LoadCrossRefV4(FX_FILESIZE pos,
             m_ObjectInfo[objnum].pos = offset;
             int32_t version = FXSYS_atoi(pEntry + 11);
             if (version >= 1)
-              m_bVersionUpdated = TRUE;
+              m_bVersionUpdated = true;
 
             m_ObjectInfo[objnum].gennum = version;
             if (m_ObjectInfo[objnum].pos < m_pSyntax->m_FileLen)
@@ -775,7 +776,7 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
                     m_ObjectInfo[objnum].pos = obj_pos;
                     m_ObjectInfo[objnum].gennum = gennum;
                     if (oldgen != gennum)
-                      m_bVersionUpdated = TRUE;
+                      m_bVersionUpdated = true;
                   }
                 } else {
                   m_ObjectInfo[objnum].pos = obj_pos;

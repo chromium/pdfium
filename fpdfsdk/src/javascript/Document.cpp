@@ -652,7 +652,7 @@ FX_BOOL Document::submitForm(IJS_Context* cc,
 
   if (pPDFInterForm->CheckRequiredFields(&fieldObjects, true)) {
     pRuntime->BeginBlock();
-    pInterForm->SubmitFields(strURL, fieldObjects, TRUE, !bFDF);
+    pInterForm->SubmitFields(strURL, fieldObjects, true, !bFDF);
     pRuntime->EndBlock();
   }
   return TRUE;
@@ -803,7 +803,7 @@ FX_BOOL Document::info(IJS_Context* cc,
                              (float)pValueObj->GetNumber());
       } else if (pValueObj->IsBoolean()) {
         FXJS_PutObjectBoolean(isolate, pObj, wsKey.c_str(),
-                              (bool)pValueObj->GetInteger());
+                              !!pValueObj->GetInteger());
       }
     }
     vp << pObj;

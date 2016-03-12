@@ -267,7 +267,7 @@ FX_BOOL CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
   if (!CanReadFromBitStream(hStream, required_bits))
     return FALSE;
 
-  for (int i = 0; i < dwSharedObjTotal; ++i) {
+  for (FX_DWORD i = 0; i < dwSharedObjTotal; ++i) {
     dwPrevObjLen = dwCurObjLen;
     FX_SAFE_DWORD safeObjLen = hStream->GetBits(dwDeltaGroupLen);
     safeObjLen += dwGroupLeastLen;

@@ -628,13 +628,14 @@ int CPDF_DIBSource::CreateDecoder() {
         pParams ? pParams->GetIntegerBy("ColorTransform", 1) : 1));
     if (!m_pDecoder) {
       FX_BOOL bTransform = FALSE;
-      int comps, bpc;
+      int comps;
+      int bpc;
       ICodec_JpegModule* pJpegModule = CPDF_ModuleMgr::Get()->GetJpegModule();
       if (pJpegModule->LoadInfo(src_data, src_size, m_Width, m_Height, comps,
                                 bpc, bTransform)) {
-        if (m_nComponents != comps) {
+        if (m_nComponents != static_cast<FX_DWORD>(comps)) {
           FX_Free(m_pCompData);
-          m_nComponents = comps;
+          m_nComponents = static_cast<FX_DWORD>(comps);
           if (m_Family == PDFCS_LAB && m_nComponents != 3) {
             m_pCompData = nullptr;
             return 0;
@@ -1440,7 +1441,9 @@ void CPDF_DIBSource::DownSampleScanline32Bit(int orig_Bpp,
                                              FX_BOOL bFlipX,
                                              int clip_left,
                                              int clip_width) const {
-  int last_src_x = -1;
+  // last_src_x used to store the last seen src_x position which should be
+  // in [0, src_width). Set the initial value to be an invalid src_x value.
+  FX_DWORD last_src_x = src_width;
   FX_ARGB last_argb = FXARGB_MAKE(0xFF, 0xFF, 0xFF, 0xFF);
   FX_FLOAT unit_To8Bpc = 255.0f / ((1 << m_bpc) - 1);
   for (int i = 0; i < clip_width; i++) {

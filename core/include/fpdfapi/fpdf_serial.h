@@ -26,7 +26,7 @@ class CPDF_Creator {
   ~CPDF_Creator();
 
   void RemoveSecurity();
-  FX_BOOL Create(IFX_StreamWrite* pFile, FX_DWORD flags = 0);
+  bool Create(IFX_StreamWrite* pFile, FX_DWORD flags = 0);
   int32_t Continue(IFX_Pause* pPause = NULL);
   FX_BOOL SetFileVersion(int32_t fileVersion = 17);
 
@@ -57,7 +57,7 @@ class CPDF_Creator {
   int32_t m_ObjectStreamSize;
 
   FX_DWORD m_dwLastObjNum;
-  FX_BOOL Create(FX_DWORD flags);
+  bool Create(FX_DWORD flags);
   void ResetStandardSecurity();
   void Clear();
   int32_t WriteDoc_Stage1(IFX_Pause* pPause);

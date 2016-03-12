@@ -412,20 +412,20 @@ class CFX_FxgeDevice : public CFX_RenderDevice {
   CFX_FxgeDevice();
   ~CFX_FxgeDevice() override;
 
-  FX_BOOL Attach(CFX_DIBitmap* pBitmap,
-                 int dither_bits = 0,
-                 FX_BOOL bRgbByteOrder = FALSE,
-                 CFX_DIBitmap* pOriDevice = NULL,
-                 FX_BOOL bGroupKnockout = FALSE);
+  bool Attach(CFX_DIBitmap* pBitmap,
+              int dither_bits = 0,
+              bool bRgbByteOrder = false,
+              CFX_DIBitmap* pOriDevice = NULL,
+              bool bGroupKnockout = false);
 
-  FX_BOOL Create(int width,
-                 int height,
-                 FXDIB_Format format,
-                 int dither_bits = 0,
-                 CFX_DIBitmap* pOriDevice = NULL);
+  bool Create(int width,
+              int height,
+              FXDIB_Format format,
+              int dither_bits = 0,
+              CFX_DIBitmap* pOriDevice = NULL);
 
  protected:
-  FX_BOOL m_bOwnedBitmap;
+  bool m_bOwnedBitmap;
 };
 class CFX_SkiaDevice : public CFX_RenderDevice {
  public:

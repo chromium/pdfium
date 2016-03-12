@@ -110,15 +110,15 @@ FX_BOOL CPDF_FormField::ResetField(FX_BOOL bNotify) {
     case CPDF_FormField::RadioButton: {
       int iCount = CountControls();
       if (iCount) {
+        // TODO(weili): Check whether anything special needs to be done for
+        // unison field. Otherwise, merge these branches.
         if (PDF_FormField_IsUnison(this)) {
           for (int i = 0; i < iCount; i++) {
             CheckControl(i, GetControl(i)->IsDefaultChecked(), FALSE);
           }
         } else {
           for (int i = 0; i < iCount; i++) {
-            CPDF_FormControl* pControl = GetControl(i);
-            FX_BOOL bChecked = pControl->IsDefaultChecked();
-            CheckControl(i, bChecked, FALSE);
+            CheckControl(i, GetControl(i)->IsDefaultChecked(), FALSE);
           }
         }
       }

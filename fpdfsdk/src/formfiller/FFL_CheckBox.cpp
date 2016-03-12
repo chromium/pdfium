@@ -96,7 +96,7 @@ FX_BOOL CFFL_CheckBox::IsDataChanged(CPDFSDK_PageView* pPageView) {
 
 void CFFL_CheckBox::SaveData(CPDFSDK_PageView* pPageView) {
   if (CPWL_CheckBox* pWnd = (CPWL_CheckBox*)GetPDFWindow(pPageView, FALSE)) {
-    FX_BOOL bNewChecked = pWnd->IsChecked();
+    bool bNewChecked = pWnd->IsChecked();
 
     if (bNewChecked) {
       CPDF_FormField* pField = m_pWidget->GetFormField();
@@ -109,7 +109,7 @@ void CFFL_CheckBox::SaveData(CPDFSDK_PageView* pPageView) {
       }
     }
 
-    m_pWidget->SetCheck(bNewChecked, FALSE);
+    m_pWidget->SetCheck(bNewChecked, false);
     m_pWidget->UpdateField();
     SetChangeMark();
   }

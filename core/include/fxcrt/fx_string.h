@@ -577,7 +577,7 @@ class CFX_WideString {
 
   void Empty();
 
-  FX_BOOL IsEmpty() const { return !GetLength(); }
+  bool IsEmpty() const { return !GetLength(); }
 
   FX_STRSIZE GetLength() const { return m_pData ? m_pData->m_nDataLength : 0; }
 

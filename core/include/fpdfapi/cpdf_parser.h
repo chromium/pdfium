@@ -130,7 +130,7 @@ class CPDF_Parser {
   std::map<FX_DWORD, ObjectInfo> m_ObjectInfo;
   std::set<FX_FILESIZE> m_SortedOffset;
   CFX_ArrayTemplate<CPDF_Dictionary*> m_Trailers;
-  FX_BOOL m_bVersionUpdated;
+  bool m_bVersionUpdated;
   CPDF_Object* m_pLinearized;
   FX_DWORD m_dwFirstPageNo;
   FX_DWORD m_dwXrefStartObjNum;

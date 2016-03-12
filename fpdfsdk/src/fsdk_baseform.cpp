@@ -663,7 +663,7 @@ int CPDFSDK_Widget::GetTopVisibleIndex() const {
   return pFormField->GetTopVisibleIndex();
 }
 
-FX_BOOL CPDFSDK_Widget::IsChecked() const {
+bool CPDFSDK_Widget::IsChecked() const {
 #ifdef PDF_ENABLE_XFA
   if (IXFA_WidgetHandler* pXFAWidgetHandler = GetXFAWidgetHandler()) {
     if (IXFA_Widget* hWidget = GetMixXFAWidget()) {
@@ -686,7 +686,7 @@ int CPDFSDK_Widget::GetMaxLen() const {
   return pFormField->GetMaxLen();
 }
 
-void CPDFSDK_Widget::SetCheck(FX_BOOL bChecked, FX_BOOL bNotify) {
+void CPDFSDK_Widget::SetCheck(bool bChecked, bool bNotify) {
   CPDF_FormControl* pFormCtrl = GetFormControl();
   CPDF_FormField* pFormField = pFormCtrl->GetField();
   pFormField->CheckControl(pFormField->GetControlIndex(pFormCtrl), bChecked,
@@ -2373,7 +2373,7 @@ FX_BOOL CPDFSDK_InterForm::DoAction_Hide(const CPDF_Action& action) {
       ASSERT(pControl);
 
       if (CPDFSDK_Widget* pWidget = GetWidget(pControl)) {
-        int nFlags = pWidget->GetFlags();
+        FX_DWORD nFlags = pWidget->GetFlags();
         nFlags &= ~ANNOTFLAG_INVISIBLE;
         nFlags &= ~ANNOTFLAG_NOVIEW;
         if (bHide)
@@ -2406,7 +2406,7 @@ FX_BOOL CPDFSDK_InterForm::DoAction_SubmitForm(const CPDF_Action& action) {
       if (m_pInterForm->CheckRequiredFields(&fields, bIncludeOrExclude))
         return FALSE;
 
-      return SubmitFields(sDestination, fields, bIncludeOrExclude, FALSE);
+      return SubmitFields(sDestination, fields, bIncludeOrExclude, false);
     }
   }
   if (m_pInterForm->CheckRequiredFields(nullptr, true))
@@ -2418,8 +2418,8 @@ FX_BOOL CPDFSDK_InterForm::DoAction_SubmitForm(const CPDF_Action& action) {
 FX_BOOL CPDFSDK_InterForm::SubmitFields(
     const CFX_WideString& csDestination,
     const std::vector<CPDF_FormField*>& fields,
-    FX_BOOL bIncludeOrExclude,
-    FX_BOOL bUrlEncoded) {
+    bool bIncludeOrExclude,
+    bool bUrlEncoded) {
   CPDFDoc_Environment* pEnv = m_pDocument->GetEnv();
 
   CFX_ByteTextBuf textBuf;
@@ -2483,7 +2483,7 @@ FX_BOOL CPDFSDK_InterForm::FDFToURLEncodedData(uint8_t*& pBuf,
 
 FX_BOOL CPDFSDK_InterForm::ExportFieldsToFDFTextBuf(
     const std::vector<CPDF_FormField*>& fields,
-    FX_BOOL bIncludeOrExclude,
+    bool bIncludeOrExclude,
     CFX_ByteTextBuf& textBuf) {
   std::unique_ptr<CFDF_Document> pFDF(m_pInterForm->ExportToFDF(
       m_pDocument->GetPath(), fields, bIncludeOrExclude));

@@ -21,7 +21,7 @@ CFX_FloatRect CPWL_PushButton::GetFocusRect() const {
   return CPWL_Utils::DeflateRect(GetWindowRect(), (FX_FLOAT)GetBorderWidth());
 }
 
-CPWL_CheckBox::CPWL_CheckBox() : m_bChecked(FALSE) {}
+CPWL_CheckBox::CPWL_CheckBox() : m_bChecked(false) {}
 
 CPWL_CheckBox::~CPWL_CheckBox() {}
 
@@ -29,11 +29,11 @@ CFX_ByteString CPWL_CheckBox::GetClassName() const {
   return "CPWL_CheckBox";
 }
 
-void CPWL_CheckBox::SetCheck(FX_BOOL bCheck) {
+void CPWL_CheckBox::SetCheck(bool bCheck) {
   m_bChecked = bCheck;
 }
 
-FX_BOOL CPWL_CheckBox::IsChecked() const {
+bool CPWL_CheckBox::IsChecked() const {
   return m_bChecked;
 }
 
@@ -51,7 +51,7 @@ FX_BOOL CPWL_CheckBox::OnChar(FX_WORD nChar, FX_DWORD nFlag) {
   return TRUE;
 }
 
-CPWL_RadioButton::CPWL_RadioButton() : m_bChecked(FALSE) {}
+CPWL_RadioButton::CPWL_RadioButton() : m_bChecked(false) {}
 
 CPWL_RadioButton::~CPWL_RadioButton() {}
 
@@ -68,11 +68,11 @@ FX_BOOL CPWL_RadioButton::OnLButtonUp(const CFX_FloatPoint& point,
   return TRUE;
 }
 
-void CPWL_RadioButton::SetCheck(FX_BOOL bCheck) {
+void CPWL_RadioButton::SetCheck(bool bCheck) {
   m_bChecked = bCheck;
 }
 
-FX_BOOL CPWL_RadioButton::IsChecked() const {
+bool CPWL_RadioButton::IsChecked() const {
   return m_bChecked;
 }
 

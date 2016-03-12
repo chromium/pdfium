@@ -1799,37 +1799,37 @@ CFX_FxgeDevice::CFX_FxgeDevice() {
   m_bOwnedBitmap = FALSE;
 }
 
-FX_BOOL CFX_FxgeDevice::Attach(CFX_DIBitmap* pBitmap,
-                               int dither_bits,
-                               FX_BOOL bRgbByteOrder,
-                               CFX_DIBitmap* pOriDevice,
-                               FX_BOOL bGroupKnockout) {
+bool CFX_FxgeDevice::Attach(CFX_DIBitmap* pBitmap,
+                            int dither_bits,
+                            bool bRgbByteOrder,
+                            CFX_DIBitmap* pOriDevice,
+                            bool bGroupKnockout) {
   if (!pBitmap) {
-    return FALSE;
+    return false;
   }
   SetBitmap(pBitmap);
   IFX_RenderDeviceDriver* pDriver = new CFX_AggDeviceDriver(
       pBitmap, dither_bits, bRgbByteOrder, pOriDevice, bGroupKnockout);
   SetDeviceDriver(pDriver);
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CFX_FxgeDevice::Create(int width,
-                               int height,
-                               FXDIB_Format format,
-                               int dither_bits,
-                               CFX_DIBitmap* pOriDevice) {
-  m_bOwnedBitmap = TRUE;
+bool CFX_FxgeDevice::Create(int width,
+                            int height,
+                            FXDIB_Format format,
+                            int dither_bits,
+                            CFX_DIBitmap* pOriDevice) {
+  m_bOwnedBitmap = true;
   CFX_DIBitmap* pBitmap = new CFX_DIBitmap;
   if (!pBitmap->Create(width, height, format)) {
     delete pBitmap;
-    return FALSE;
+    return false;
   }
   SetBitmap(pBitmap);
   IFX_RenderDeviceDriver* pDriver =
       new CFX_AggDeviceDriver(pBitmap, dither_bits, FALSE, pOriDevice, FALSE);
   SetDeviceDriver(pDriver);
-  return TRUE;
+  return true;
 }
 
 CFX_FxgeDevice::~CFX_FxgeDevice() {

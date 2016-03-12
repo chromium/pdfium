@@ -381,7 +381,7 @@ bool CFX_FileBufferArchive::Flush() {
     return false;
   if (!m_pBuffer || !nRemaining)
     return true;
-  return m_pFile->WriteBlock(m_pBuffer.get(), nRemaining);
+  return m_pFile->WriteBlock(m_pBuffer.get(), nRemaining) > 0;
 }
 
 int32_t CFX_FileBufferArchive::AppendBlock(const void* pBuf, size_t size) {

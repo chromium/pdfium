@@ -127,7 +127,7 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
   int CountOptions() const;
   FX_BOOL IsOptionSelected(int nIndex) const;
   int GetTopVisibleIndex() const;
-  FX_BOOL IsChecked() const;
+  bool IsChecked() const;
   /*
   BF_ALIGN_LEFT
   BF_ALIGN_MIDDL
@@ -141,7 +141,7 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
   CFX_WideString GetAlternateName() const;
 
   // Set Properties.
-  void SetCheck(FX_BOOL bChecked, FX_BOOL bNotify);
+  void SetCheck(bool bChecked, bool bNotify);
   void SetValue(const CFX_WideString& sValue, FX_BOOL bNotify);
   void SetDefaultValue(const CFX_WideString& sValue);
   void SetOptionSelection(int index, FX_BOOL bSelected, FX_BOOL bNotify);
@@ -298,12 +298,12 @@ class CPDFSDK_InterForm : public CPDF_FormNotify {
   FX_BOOL IsValidField(CPDF_Dictionary* pFieldDict);
   FX_BOOL SubmitFields(const CFX_WideString& csDestination,
                        const std::vector<CPDF_FormField*>& fields,
-                       FX_BOOL bIncludeOrExclude,
-                       FX_BOOL bUrlEncoded);
+                       bool bIncludeOrExclude,
+                       bool bUrlEncoded);
   FX_BOOL SubmitForm(const CFX_WideString& sDestination, FX_BOOL bUrlEncoded);
   FX_BOOL ExportFormToFDFTextBuf(CFX_ByteTextBuf& textBuf);
   FX_BOOL ExportFieldsToFDFTextBuf(const std::vector<CPDF_FormField*>& fields,
-                                   FX_BOOL bIncludeOrExclude,
+                                   bool bIncludeOrExclude,
                                    CFX_ByteTextBuf& textBuf);
   CFX_WideString GetTemporaryFileName(const CFX_WideString& sFileExt);
 

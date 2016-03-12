@@ -772,7 +772,8 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
   GetNextWordInternal(nullptr);
 
   int numMarkers = ReadEOLMarkers(m_Pos);
-  if (m_WordSize == kEndObjStr.GetLength() && numMarkers != 0 &&
+  if (m_WordSize == static_cast<unsigned int>(kEndObjStr.GetLength()) &&
+      numMarkers != 0 &&
       FXSYS_memcmp(m_WordBuffer, kEndObjStr.GetPtr(), kEndObjStr.GetLength()) ==
           0) {
     m_Pos = streamStartPos;

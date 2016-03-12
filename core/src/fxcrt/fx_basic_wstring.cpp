@@ -205,7 +205,7 @@ bool CFX_WideString::Equal(const wchar_t* ptr) const {
   if (!ptr) {
     return m_pData->m_nDataLength == 0;
   }
-  return wcslen(ptr) == m_pData->m_nDataLength &&
+  return wcslen(ptr) == static_cast<size_t>(m_pData->m_nDataLength) &&
          wmemcmp(ptr, m_pData->m_String, m_pData->m_nDataLength) == 0;
 }
 bool CFX_WideString::Equal(const CFX_WideStringC& str) const {

@@ -1953,11 +1953,13 @@ void CPDF_Creator::Clear() {
     m_pIDArray = NULL;
   }
 }
-FX_BOOL CPDF_Creator::Create(IFX_StreamWrite* pFile, FX_DWORD flags) {
+
+bool CPDF_Creator::Create(IFX_StreamWrite* pFile, FX_DWORD flags) {
   m_File.AttachFile(pFile);
   return Create(flags);
 }
-FX_BOOL CPDF_Creator::Create(FX_DWORD flags) {
+
+bool CPDF_Creator::Create(FX_DWORD flags) {
   m_dwFlags = flags;
   m_iStage = 0;
   m_Offset = 0;
@@ -1966,7 +1968,7 @@ FX_BOOL CPDF_Creator::Create(FX_DWORD flags) {
   m_NewObjNumArray.RemoveAll();
   InitID();
   if (flags & FPDFCREATE_PROGRESSIVE) {
-    return TRUE;
+    return true;
   }
   return Continue(NULL) > -1;
 }

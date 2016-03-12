@@ -3022,7 +3022,7 @@ FX_BOOL Field::checkThisBox(IJS_Context* cc,
 
   int nWidget = params[0].ToInt();
 
-  FX_BOOL bCheckit = TRUE;
+  bool bCheckit = true;
   if (iSize >= 2)
     bCheckit = params[1].ToBool();
 
@@ -3036,10 +3036,12 @@ FX_BOOL Field::checkThisBox(IJS_Context* cc,
     return FALSE;
   if (nWidget < 0 || nWidget >= pFormField->CountControls())
     return FALSE;
+  // TODO(weili): Check whether anything special needed for radio button,
+  // otherwise merge these branches.
   if (pFormField->GetFieldType() == FIELDTYPE_RADIOBUTTON)
-    pFormField->CheckControl(nWidget, bCheckit, TRUE);
+    pFormField->CheckControl(nWidget, bCheckit, true);
   else
-    pFormField->CheckControl(nWidget, bCheckit, TRUE);
+    pFormField->CheckControl(nWidget, bCheckit, true);
 
   UpdateFormField(m_pDocument, pFormField, TRUE, TRUE, TRUE);
   return TRUE;

@@ -302,10 +302,9 @@ bool FPDF_Doc_Save(FPDF_DOCUMENT document,
   }
 
   CFX_IFileWrite* pStreamWrite = NULL;
-  FX_BOOL bRet;
   pStreamWrite = new CFX_IFileWrite;
   pStreamWrite->Init(pFileWrite);
-  bRet = FileMaker.Create(pStreamWrite, flags);
+  bool bRet = FileMaker.Create(pStreamWrite, flags);
 #ifdef PDF_ENABLE_XFA
   SendPostSaveToXFADoc(pDoc);
 #endif  // PDF_ENABLE_XFA
