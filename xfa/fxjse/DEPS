@@ -1,0 +1,5 @@
+include_rules = [
+  # TODO(dsinclair): Layering violation. XFA can't include FPDFSDK.
+  '+fpdfsdk/include/jsapi',
+  '+v8/include',
+]

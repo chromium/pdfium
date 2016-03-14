@@ -3,4 +3,6 @@ include_rules = [
   '+fpdfsdk/include',
   '+public',
   '+v8',
+  '+xfa/fxfa/parser',
+  '+xfa/fxfa/fm2js',
 ]
