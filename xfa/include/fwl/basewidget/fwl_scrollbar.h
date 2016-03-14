@@ -7,7 +7,7 @@
 #ifndef XFA_INCLUDE_FWL_BASEWIDGET_FWL_SCROLLBAR_H_
 #define XFA_INCLUDE_FWL_BASEWIDGET_FWL_SCROLLBAR_H_
 
-#include "xfa/src/fwl/core/fwl_widgetimp.h"
+#include "xfa/fwl/core/fwl_widgetimp.h"
 
 #define FWL_CLASS_ScrollBar L"FWL_SCROLLBAR"
 #define FWL_CLASSHASH_ScrollBar 2826584844

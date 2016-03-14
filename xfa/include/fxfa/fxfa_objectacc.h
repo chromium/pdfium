@@ -8,7 +8,7 @@
 #define XFA_INCLUDE_FXFA_FXFA_OBJECTACC_H_
 
 #include "core/include/fxge/fx_dib.h"
-#include "xfa/src/fxfa/parser/xfa_object.h"
+#include "xfa/fxfa/parser/xfa_object.h"
 
 class CXFA_Node;
 class IFX_Locale;

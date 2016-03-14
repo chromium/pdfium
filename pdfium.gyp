@@ -836,8 +836,8 @@
       'conditions': [
         ['pdf_enable_xfa==1', {
           'sources': [
-            'xfa/src/fxbarcode/pdf417/BC_PDF417HighLevelEncoder_unittest.cpp',
-            'xfa/src/fxfa/parser/xfa_utils_imp_unittest.cpp',
+            'xfa/fxbarcode/pdf417/BC_PDF417HighLevelEncoder_unittest.cpp',
+            'xfa/fxfa/parser/xfa_utils_imp_unittest.cpp',
           ],
         }],
       ],
@@ -876,7 +876,7 @@
       'conditions': [
         ['pdf_enable_xfa==1', {
           'sources': [
-            'xfa/src/fxfa/parser/xfa_parser_imp_embeddertest.cpp',
+            'xfa/fxfa/parser/xfa_parser_imp_embeddertest.cpp',
           ],
         }],
         ['pdf_enable_v8==1', {

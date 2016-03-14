@@ -7,7 +7,7 @@
 
 #include "core/include/fxcrt/fx_basic.h"
 #include "core/include/fxcrt/fx_string.h"
-#include "xfa/src/fxfa/fm2js/xfa_program.h"
+#include "xfa/fxfa/fm2js/xfa_program.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   if (size > std::numeric_limits<FX_STRSIZE>::max())
