@@ -16,7 +16,7 @@ class CPDF_Object;
 class IPDF_DataAvail {
  public:
   // Must match PDF_DATA_* definitions in public/fpdf_dataavail.h, but cannot
-  // #include that header. fpdfsdk/src/fpdf_dataavail.cpp has static_asserts
+  // #include that header. fpdfsdk/fpdf_dataavail.cpp has static_asserts
   // to make sure the two sets of values match.
   enum DocAvailStatus {
     DataError = -1,        // PDF_DATA_ERROR
@@ -25,7 +25,7 @@ class IPDF_DataAvail {
   };
 
   // Must match PDF_*LINEAR* definitions in public/fpdf_dataavail.h, but cannot
-  // #include that header. fpdfsdk/src/fpdf_dataavail.cpp has static_asserts
+  // #include that header. fpdfsdk/fpdf_dataavail.cpp has static_asserts
   // to make sure the two sets of values match.
   enum DocLinearizationStatus {
     LinearizationUnknown = -1,  // PDF_LINEARIZATION_UNKNOWN
@@ -34,7 +34,7 @@ class IPDF_DataAvail {
   };
 
   // Must match PDF_FORM_* definitions in public/fpdf_dataavail.h, but cannot
-  // #include that header. fpdfsdk/src/fpdf_dataavail.cpp has static_asserts
+  // #include that header. fpdfsdk/fpdf_dataavail.cpp has static_asserts
   // to make sure the two sets of values match.
   enum DocFormStatus {
     FormError = -1,        // PDF_FORM_ERROR

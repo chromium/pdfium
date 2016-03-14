@@ -112,7 +112,7 @@ class CPDF_RenderContext {
 class CPDF_ProgressiveRenderer {
  public:
   // Must match FDF_RENDER_* definitions in public/fpdf_progressive.h, but
-  // cannot #include that header. fpdfsdk/src/fpdf_progressive.cpp has
+  // cannot #include that header. fpdfsdk/fpdf_progressive.cpp has
   // static_asserts to make sure the two sets of values match.
   enum Status {
     Ready,          // FPDF_RENDER_READER
