@@ -169,14 +169,22 @@ class CFX_ByteString {
 
   static CFX_ByteString FromUnicode(const CFX_WideString& str);
 
-  // Explicit conversion to raw string
+  // Explicit conversion to C-style string.
   const FX_CHAR* c_str() const { return m_pData ? m_pData->m_String : ""; }
 
-  // Implicit conversion to C-style string -- deprecated
+  // Implicit conversion to C-style string -- deprecated.
   operator const FX_CHAR*() const { return m_pData ? m_pData->m_String : ""; }
 
+  // Explicit conversion to uint8_t*.
+  const uint8_t* raw_str() const {
+    return m_pData ? reinterpret_cast<const uint8_t*>(m_pData->m_String)
+                   : nullptr;
+  }
+
+  // Implicit conversiont to uint8_t* -- deprecated.
   operator const uint8_t*() const {
-    return m_pData ? (const uint8_t*)m_pData->m_String : NULL;
+    return m_pData ? reinterpret_cast<const uint8_t*>(m_pData->m_String)
+                   : nullptr;
   }
 
   FX_STRSIZE GetLength() const { return m_pData ? m_pData->m_nDataLength : 0; }
@@ -569,10 +577,10 @@ class CFX_WideString {
 
   static FX_STRSIZE WStringLength(const unsigned short* str);
 
-  // Explicit conversion to raw string
+  // Explicit conversion to C-style wide string.
   const FX_WCHAR* c_str() const { return m_pData ? m_pData->m_String : L""; }
 
-  // Implicit conversion to C-style wide string -- deprecated
+  // Implicit conversion to C-style wide string -- deprecated.
   operator const FX_WCHAR*() const { return m_pData ? m_pData->m_String : L""; }
 
   void Empty();

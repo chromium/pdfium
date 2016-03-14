@@ -471,7 +471,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjectHolder* pObjList,
       if (!pObj)
         continue;
 
-      CFX_ByteStringC keyNoSlash(key.c_str() + 1, key.GetLength() - 1);
+      CFX_ByteStringC keyNoSlash(key.raw_str() + 1, key.GetLength() - 1);
       pDict->SetAt(keyNoSlash, pObj);
     }
 
