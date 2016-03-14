@@ -8,8 +8,6 @@
     ],
     'msvs_disabled_warnings': [
       4005, 4018, 4146, 4333, 4345, 4267,
-      # TODO(ochang): Investigate if this can be fixed properly.
-      4201,
       # TODO(thestig): Fix all instances, remove this, pdfium:29
       4245, 4310, 4389, 4701, 4702, 4706, 4800,
     ],
