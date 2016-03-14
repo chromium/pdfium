@@ -645,7 +645,7 @@ DLLEXPORT void STDCALL FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
   CRenderContext* pContext = new CRenderContext;
   pPage->SetPrivateData((void*)1, pContext, DropContext);
 #ifdef _SKIA_SUPPORT_
-  pContext->m_pDevice = new CFX_SkiaDevice;
+  pContext->m_pDevice = new CFX_SkiaDevice();
 
   if (flags & FPDF_REVERSE_BYTE_ORDER)
     ((CFX_SkiaDevice*)pContext->m_pDevice)
@@ -668,6 +668,26 @@ DLLEXPORT void STDCALL FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
   delete pContext;
   pPage->RemovePrivateData((void*)1);
 }
+
+#ifdef _SKIA_SUPPORT_
+DLLEXPORT FPDF_RECORDER STDCALL FPDF_RenderPageSkp(FPDF_PAGE page,
+                                                   int size_x,
+                                                   int size_y) {
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  if (!pPage)
+    return nullptr;
+  std::unique_ptr<CRenderContext> pContext(new CRenderContext);
+  pPage->SetPrivateData((void*)1, pContext.get(), DropContext);
+  CFX_SkiaDevice* skDevice = new CFX_SkiaDevice();
+  FPDF_RECORDER recorder = skDevice->CreateRecorder(size_x, size_y);
+  pContext->m_pDevice = skDevice;
+
+  FPDF_RenderPage_Retail(pContext.get(), page, 0, 0, size_x, size_y, 0, 0, TRUE,
+                         NULL);
+  pPage->RemovePrivateData((void*)1);
+  return recorder;
+}
+#endif
 
 DLLEXPORT void STDCALL FPDF_ClosePage(FPDF_PAGE page) {
   if (!page)

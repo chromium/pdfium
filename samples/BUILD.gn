@@ -9,8 +9,8 @@ import("../pdfium.gni")
 group("samples") {
   testonly = true
   deps = [
-    ":pdfium_test",
     ":pdfium_diff",
+    ":pdfium_test",
   ]
 }
 
@@ -25,6 +25,9 @@ config("pdfium_samples_config") {
   }
   if (pdf_enable_xfa) {
     defines += [ "PDF_ENABLE_XFA" ]
+  }
+  if (pdf_use_skia) {
+    defines += [ "PDF_ENABLE_SKIA" ]
   }
 }
 
@@ -55,6 +58,9 @@ executable("pdfium_test") {
       "//v8/include",
     ]
     configs += [ "//v8:external_startup_data" ]
+  }
+  if (pdf_use_skia) {
+    deps += [ "//skia" ]
   }
   configs += [ ":pdfium_samples_config" ]
 }

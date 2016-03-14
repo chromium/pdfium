@@ -287,15 +287,16 @@ DLLEXPORT FPDF_BOOL STDCALL FORM_ForceToKillFocus(FPDF_FORMHANDLE hHandle) {
   return pSDKDoc->KillFocusAnnot(0);
 }
 
-DLLEXPORT void STDCALL FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,
-                                    FPDF_BITMAP bitmap,
-                                    FPDF_PAGE page,
-                                    int start_x,
-                                    int start_y,
-                                    int size_x,
-                                    int size_y,
-                                    int rotate,
-                                    int flags) {
+static void FFLCommon(FPDF_FORMHANDLE hHandle,
+                      FPDF_BITMAP bitmap,
+                      FPDF_RECORDER recorder,
+                      FPDF_PAGE page,
+                      int start_x,
+                      int start_y,
+                      int size_x,
+                      int size_y,
+                      int rotate,
+                      int flags) {
   if (!hHandle)
     return;
 
@@ -336,7 +337,8 @@ DLLEXPORT void STDCALL FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,
   FX_RECT clip(start_x, start_y, start_x + size_x, start_y + size_y);
 
 #ifdef _SKIA_SUPPORT_
-  std::unique_ptr<CFX_SkiaDevice> pDevice(new CFX_SkiaDevice);
+  std::unique_ptr<CFX_SkiaDevice> pDevice(new CFX_SkiaDevice());
+  pDevice->AttachRecorder(static_cast<SkPictureRecorder*>(recorder));
 #else
   std::unique_ptr<CFX_FxgeDevice> pDevice(new CFX_FxgeDevice);
 #endif
@@ -373,6 +375,34 @@ DLLEXPORT void STDCALL FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,
   options.m_pOCContext = NULL;
 #endif  // PDF_ENABLE_XFA
 }
+
+DLLEXPORT void STDCALL FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,
+                                    FPDF_BITMAP bitmap,
+                                    FPDF_PAGE page,
+                                    int start_x,
+                                    int start_y,
+                                    int size_x,
+                                    int size_y,
+                                    int rotate,
+                                    int flags) {
+  FFLCommon(hHandle, bitmap, nullptr, page, start_x, start_y, size_x, size_y,
+            rotate, flags);
+}
+
+#ifdef _SKIA_SUPPORT_
+DLLEXPORT void STDCALL FPDF_FFLRecord(FPDF_FORMHANDLE hHandle,
+                                      FPDF_RECORDER recorder,
+                                      FPDF_PAGE page,
+                                      int start_x,
+                                      int start_y,
+                                      int size_x,
+                                      int size_y,
+                                      int rotate,
+                                      int flags) {
+  FFLCommon(hHandle, nullptr, recorder, page, start_x, start_y, size_x, size_y,
+            rotate, flags);
+}
+#endif
 
 #ifdef PDF_ENABLE_XFA
 DLLEXPORT void STDCALL FPDF_Widget_Undo(FPDF_DOCUMENT document,

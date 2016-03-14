@@ -10,6 +10,7 @@
 class SkCanvas;
 class SkPaint;
 class SkPath;
+class SkPictureRecorder;
 struct SkIRect;
 
 class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
@@ -19,6 +20,8 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                        FX_BOOL bRgbByteOrder,
                        CFX_DIBitmap* pOriDevice,
                        FX_BOOL bGroupKnockout);
+  CFX_SkiaDeviceDriver(SkPictureRecorder* recorder);
+  CFX_SkiaDeviceDriver(int size_x, int size_y);
   ~CFX_SkiaDeviceDriver() override;
 
   /** Options */
@@ -139,10 +142,13 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
   void SetClipMask(SkPath& skPath, SkPaint* spaint);
   virtual uint8_t* GetBuffer() const { return m_pAggDriver->GetBuffer(); }
   void PaintStroke(SkPaint* spaint, const CFX_GraphStateData* pGraphState);
+  SkPictureRecorder* GetRecorder() const { return m_pRecorder; }
 
  private:
   CFX_AggDeviceDriver* m_pAggDriver;
-  SkCanvas* m_canvas;
+  SkCanvas* m_pCanvas;
+  SkPictureRecorder* const m_pRecorder;
+  int m_ditherBits;
 };
 #endif  // defined(_SKIA_SUPPORT_)
 

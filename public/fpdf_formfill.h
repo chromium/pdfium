@@ -1508,6 +1508,18 @@ DLLEXPORT void STDCALL FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,
                                     int rotate,
                                     int flags);
 
+#ifdef _SKIA_SUPPORT_
+DLLEXPORT void STDCALL FPDF_FFLRecord(FPDF_FORMHANDLE hHandle,
+                                      FPDF_RECORDER recorder,
+                                      FPDF_PAGE page,
+                                      int start_x,
+                                      int start_y,
+                                      int size_x,
+                                      int size_y,
+                                      int rotate,
+                                      int flags);
+#endif
+
 #ifdef PDF_ENABLE_XFA
 /**
  * Function: FPDF_HasXFAField

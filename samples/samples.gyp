@@ -66,6 +66,12 @@
             '<(DEPTH)/v8/tools/gyp/v8.gyp:v8_libplatform',
           ],
         }],
+        ['pdf_use_skia==1', {
+          'defines': ['PDF_ENABLE_SKIA'],
+          'dependencies': [
+            '<(DEPTH)/skia/skia.gyp:skia',
+          ],
+        }],
       ],
     },
     {

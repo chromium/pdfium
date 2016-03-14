@@ -134,6 +134,7 @@ class CFX_AggDeviceDriver : public IFX_RenderDeviceDriver {
   void SetClipMask(agg::rasterizer_scanline_aa& rasterizer);
 
   virtual uint8_t* GetBuffer() const;
+  const CFX_DIBitmap* GetBitmap() const { return m_pBitmap; }
 
  private:
   CFX_DIBitmap* m_pBitmap;

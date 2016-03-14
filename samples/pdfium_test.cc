@@ -13,6 +13,10 @@
 #include <utility>
 #include <vector>
 
+#if defined PDF_ENABLE_SKIA && !defined _SKIA_SUPPORT_
+#define _SKIA_SUPPORT_
+#endif
+
 #include "public/fpdf_dataavail.h"
 #include "public/fpdf_edit.h"
 #include "public/fpdf_ext.h"
@@ -31,6 +35,11 @@
 #define snprintf _snprintf
 #endif
 
+#ifdef PDF_ENABLE_SKIA
+#include "third_party/skia/include/core/SkPictureRecorder.h"
+#include "third_party/skia/include/core/SkStream.h"
+#endif
+
 enum OutputFormat {
   OUTPUT_NONE,
   OUTPUT_PPM,
@@ -38,6 +47,9 @@ enum OutputFormat {
 #ifdef _WIN32
   OUTPUT_BMP,
   OUTPUT_EMF,
+#endif
+#ifdef PDF_ENABLE_SKIA
+  OUTPUT_SKP,
 #endif
 };
 
@@ -116,7 +128,7 @@ static void WritePng(const char* pdf_name, int num, const void* buffer_void,
       filename, sizeof(filename), "%s.%d.png", pdf_name, num);
   if (chars_formatted < 0 ||
       static_cast<size_t>(chars_formatted) >= sizeof(filename)) {
-    fprintf(stderr, "Filname %s is too long\n", filename);
+    fprintf(stderr, "Filename %s is too long\n", filename);
     return;
   }
 
@@ -192,6 +204,25 @@ void WriteEmf(FPDF_PAGE page, const char* pdf_name, int num) {
                   FPDF_ANNOT | FPDF_PRINTING | FPDF_NO_CATCH);
 
   DeleteEnhMetaFile(CloseEnhMetaFile(dc));
+}
+#endif
+
+#ifdef PDF_ENABLE_SKIA
+void WriteSkp(const char* pdf_name, int num, const void* recorder) {
+  char filename[256];
+  int chars_formatted =
+      snprintf(filename, sizeof(filename), "%s.%d.skp", pdf_name, num);
+
+  if (chars_formatted < 0 ||
+      static_cast<size_t>(chars_formatted) >= sizeof(filename)) {
+    fprintf(stderr, "Filename %s is too long\n", filename);
+    return;
+  }
+
+  SkPictureRecorder* r = (SkPictureRecorder*)recorder;
+  SkPicture* picture = r->endRecordingAsPicture();
+  SkFILEWStream wStream(filename);
+  picture->serialize(&wStream);
 }
 #endif
 
@@ -319,6 +350,14 @@ bool ParseCommandLine(const std::vector<std::string>& args,
         return false;
       }
       options->output_format = OUTPUT_PNG;
+#ifdef PDF_ENABLE_SKIA
+    } else if (cur_arg == "--skp") {
+      if (options->output_format != OUTPUT_NONE) {
+        fprintf(stderr, "Duplicate or conflicting --skp argument\n");
+        return false;
+      }
+      options->output_format = OUTPUT_SKP;
+#endif
     } else if (cur_arg.size() > 11 &&
                cur_arg.compare(0, 11, "--font-dir=") == 0) {
       if (!options->font_directory.empty()) {
@@ -431,6 +470,14 @@ bool RenderPage(const std::string& name,
       WritePpm(name.c_str(), page_index, buffer, stride, width, height);
       break;
 
+#ifdef PDF_ENABLE_SKIA
+    case OUTPUT_SKP: {
+      std::unique_ptr<SkPictureRecorder> recorder(
+          (SkPictureRecorder*)FPDF_RenderPageSkp(page, width, height));
+      FPDF_FFLRecord(form, recorder.get(), page, 0, 0, width, height, 0, 0);
+      WriteSkp(name.c_str(), page_index, recorder.get());
+    } break;
+#endif
     default:
       break;
   }
@@ -634,7 +681,10 @@ static const char usage_string[] =
     "  --emf - write page meta files <pdf-name>.<page-number>.emf\n"
 #endif  // _WIN32
     "  --png - write page images <pdf-name>.<page-number>.png\n"
-    "  --ppm - write page images <pdf-name>.<page-number>.ppm\n";
+#ifdef PDF_ENABLE_SKIA
+    "  --skp - write page images <pdf-name>.<page-number>.skp\n"
+#endif
+    "";
 
 int main(int argc, const char* argv[]) {
   std::vector<std::string> args(argv, argv + argc);

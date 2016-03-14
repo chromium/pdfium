@@ -37,6 +37,7 @@ typedef void* FPDF_PAGELINK;
 typedef void* FPDF_PAGEOBJECT;  // Page object(text, path, etc)
 typedef void* FPDF_PAGERANGE;
 typedef void* FPDF_PATH;
+typedef void* FPDF_RECORDER;
 typedef void* FPDF_SCHHANDLE;
 typedef void* FPDF_TEXTPAGE;
 
@@ -581,6 +582,12 @@ DLLEXPORT void STDCALL FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
                                              int size_y,
                                              int rotate,
                                              int flags);
+
+#ifdef _SKIA_SUPPORT_
+DLLEXPORT FPDF_RECORDER STDCALL FPDF_RenderPageSkp(FPDF_PAGE page,
+                                                   int size_x,
+                                                   int size_y);
+#endif
 
 // Function: FPDF_ClosePage
 //          Close a loaded PDF page.

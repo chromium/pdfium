@@ -16,6 +16,7 @@ class CFX_FontCache;
 class CFX_FaceCache;
 class IFX_RenderDeviceDriver;
 class CCodec_ModuleMgr;
+class SkPictureRecorder;
 
 class CFX_GEModule {
  public:
@@ -427,6 +428,7 @@ class CFX_FxgeDevice : public CFX_RenderDevice {
  protected:
   bool m_bOwnedBitmap;
 };
+
 class CFX_SkiaDevice : public CFX_RenderDevice {
  public:
   CFX_SkiaDevice();
@@ -438,11 +440,15 @@ class CFX_SkiaDevice : public CFX_RenderDevice {
                  CFX_DIBitmap* pOriDevice = NULL,
                  FX_BOOL bGroupKnockout = FALSE);
 
+  FX_BOOL AttachRecorder(SkPictureRecorder* recorder);
+
   FX_BOOL Create(int width,
                  int height,
                  FXDIB_Format format,
                  int dither_bits = 0,
                  CFX_DIBitmap* pOriDevice = NULL);
+
+  SkPictureRecorder* CreateRecorder(int size_x, int size_y);
 
  protected:
   FX_BOOL m_bOwnedBitmap;
