@@ -12,7 +12,6 @@
 #include <vector>
 
 #include "core/include/fpdfapi/cpdf_document.h"
-#include "core/include/fpdftext/fpdf_text.h"
 #include "fpdfsdk/include/fsdk_actionhandler.h"
 #include "fpdfsdk/include/fsdk_annothandler.h"
 #include "fpdfsdk/include/fsdk_baseannot.h"

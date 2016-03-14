@@ -1,26 +1,16 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2016 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_INCLUDE_FPDFTEXT_FPDF_TEXT_H_
-#define CORE_INCLUDE_FPDFTEXT_FPDF_TEXT_H_
+#ifndef CORE_FPDFTEXT_INCLUDE_IPDF_TEXTPAGE_H_
+#define CORE_FPDFTEXT_INCLUDE_IPDF_TEXTPAGE_H_
 
+#include "core/include/fpdfapi/fpdf_page.h"
+#include "core/include/fpdfapi/fpdf_pageobj.h"
 #include "core/include/fxcrt/fx_coordinates.h"
 #include "core/include/fxcrt/fx_system.h"
-
-class CPDF_Page;
-class CPDF_TextObject;
-class IPDF_LinkExtract;
-class IPDF_ReflowedPage;
-class IPDF_TextPage;
-class IPDF_TextPageFind;
-
-#define CHAR_ERROR -1
-#define CHAR_NORMAL 0
-#define CHAR_GENERATED 1
-#define CHAR_UNUNICODE 2
 
 struct FPDF_CHAR_INFO {
   FX_WCHAR m_Unicode;
@@ -34,20 +24,9 @@ struct FPDF_CHAR_INFO {
   CFX_Matrix m_Matrix;
 };
 
-using CFX_RectArray = CFX_ArrayTemplate<CFX_FloatRect>;
-
-#define FPDFTEXT_LRTB 0
-#define FPDFTEXT_RLTB 1
-#define FPDFTEXT_TBRL 2
-#define FPDFTEXT_LEFT -1
-#define FPDFTEXT_RIGHT 1
-#define FPDFTEXT_UP -2
-#define FPDFTEXT_DOWN 2
-
 class IPDF_TextPage {
  public:
   static IPDF_TextPage* CreateTextPage(const CPDF_Page* pPage, int flags = 0);
-  static IPDF_TextPage* CreateReflowTextPage(IPDF_ReflowedPage* pRefPage);
   virtual ~IPDF_TextPage() {}
 
   virtual void ParseTextPage() = 0;
@@ -87,35 +66,4 @@ class IPDF_TextPage {
   virtual CFX_WideString GetPageText(int start = 0, int nCount = -1) const = 0;
 };
 
-#define FPDFTEXT_MATCHCASE 0x00000001
-#define FPDFTEXT_MATCHWHOLEWORD 0x00000002
-#define FPDFTEXT_CONSECUTIVE 0x00000004
-
-class IPDF_TextPageFind {
- public:
-  static IPDF_TextPageFind* CreatePageFind(const IPDF_TextPage* pTextPage);
-  virtual ~IPDF_TextPageFind() {}
-
-  virtual FX_BOOL FindFirst(const CFX_WideString& findwhat,
-                            int flags,
-                            int startPos = 0) = 0;
-  virtual FX_BOOL FindNext() = 0;
-  virtual FX_BOOL FindPrev() = 0;
-  virtual void GetRectArray(CFX_RectArray& rects) const = 0;
-  virtual int GetCurOrder() const = 0;
-  virtual int GetMatchedCount() const = 0;
-};
-
-class IPDF_LinkExtract {
- public:
-  static IPDF_LinkExtract* CreateLinkExtract();
-  virtual ~IPDF_LinkExtract() {}
-
-  virtual FX_BOOL ExtractLinks(const IPDF_TextPage* pTextPage) = 0;
-  virtual int CountLinks() const = 0;
-  virtual CFX_WideString GetURL(int index) const = 0;
-  virtual void GetBoundedSegment(int index, int& start, int& count) const = 0;
-  virtual void GetRects(int index, CFX_RectArray& rects) const = 0;
-};
-
-#endif  // CORE_INCLUDE_FPDFTEXT_FPDF_TEXT_H_
+#endif  // CORE_FPDFTEXT_INCLUDE_IPDF_TEXTPAGE_H_

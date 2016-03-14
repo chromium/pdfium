@@ -6,8 +6,8 @@
 
 #include "core/fpdfapi/fpdf_page/pageint.h"
 
+#include "core/fdrm/crypto/include/fx_crypt.h"
 #include "core/fpdfapi/fpdf_font/font_int.h"
-#include "core/include/fdrm/fx_crypt.h"
 #include "core/include/fpdfapi/cpdf_array.h"
 #include "core/include/fpdfapi/cpdf_dictionary.h"
 #include "core/include/fpdfapi/cpdf_document.h"

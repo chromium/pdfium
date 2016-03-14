@@ -1,5 +1,6 @@
 include_rules = [
   '+core/include',
+  '+core/fpdftext/include',
   '+javascript/IJavaScript.h',
   '+public',
   '+v8',

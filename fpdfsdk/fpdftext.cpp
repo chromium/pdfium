@@ -6,8 +6,10 @@
 
 #include "public/fpdf_text.h"
 
+#include "core/fpdftext/include/ipdf_linkextract.h"
+#include "core/fpdftext/include/ipdf_textpage.h"
+#include "core/fpdftext/include/ipdf_textpagefind.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
-#include "core/include/fpdftext/fpdf_text.h"
 #include "fpdfsdk/include/fsdk_define.h"
 
 #ifdef PDF_ENABLE_XFA

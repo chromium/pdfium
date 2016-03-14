@@ -8,7 +8,7 @@
 
 #include <time.h>
 
-#include "core/include/fdrm/fx_crypt.h"
+#include "core/fdrm/crypto/include/fx_crypt.h"
 #include "core/include/fpdfapi/cpdf_parser.h"
 #include "core/include/fpdfapi/cpdf_simple_parser.h"
 #include "core/include/fpdfapi/ipdf_security_handler.h"

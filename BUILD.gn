@@ -201,7 +201,7 @@ static_library("fdrm") {
     "core/fdrm/crypto/fx_crypt.cpp",
     "core/fdrm/crypto/fx_crypt_aes.cpp",
     "core/fdrm/crypto/fx_crypt_sha.cpp",
-    "core/include/fdrm/fx_crypt.h",
+    "core/fdrm/crypto/include/fx_crypt.h",
   ]
   configs += [ ":pdfium_config" ]
 }
@@ -390,11 +390,13 @@ static_library("fpdfapi") {
 static_library("fpdftext") {
   sources = [
     "core/fpdftext/fpdf_text_int.cpp",
+    "core/fpdftext/include/ipdf_linkextract.h",
+    "core/fpdftext/include/ipdf_textpage.h",
+    "core/fpdftext/include/ipdf_textpagefind.h",
     "core/fpdftext/text_int.h",
     "core/fpdftext/unicodenormalization.cpp",
     "core/fpdftext/unicodenormalizationdata.cpp",
     "core/fpdftext/unicodenormalizationdata.h",
-    "core/include/fpdftext/fpdf_text.h",
   ]
   configs += [ ":pdfium_config" ]
 }

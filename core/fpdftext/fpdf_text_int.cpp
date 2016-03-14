@@ -13,17 +13,27 @@
 #include <utility>
 #include <vector>
 
+#include "core/fpdftext/include/ipdf_linkextract.h"
+#include "core/fpdftext/include/ipdf_textpage.h"
+#include "core/fpdftext/include/ipdf_textpagefind.h"
 #include "core/include/fpdfapi/cpdf_dictionary.h"
 #include "core/include/fpdfapi/cpdf_string.h"
 #include "core/include/fpdfapi/fpdf_module.h"
 #include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fpdfapi/fpdf_pageobj.h"
 #include "core/include/fpdfapi/fpdf_resource.h"
-#include "core/include/fpdftext/fpdf_text.h"
 #include "core/include/fxcrt/fx_bidi.h"
 #include "core/include/fxcrt/fx_ext.h"
 #include "core/include/fxcrt/fx_ucd.h"
 #include "third_party/base/stl_util.h"
+
+#define FPDFTEXT_RLTB 1
+#define FPDFTEXT_LEFT -1
+#define FPDFTEXT_RIGHT 1
+
+#define FPDFTEXT_MATCHCASE 0x00000001
+#define FPDFTEXT_MATCHWHOLEWORD 0x00000002
+#define FPDFTEXT_CONSECUTIVE 0x00000004
 
 namespace {
 
@@ -1899,7 +1909,8 @@ CPDF_TextPageFind::CPDF_TextPageFind(const IPDF_TextPage* pTextPage)
     FPDF_CHAR_INFO info;
     pTextPage->GetCharInfo(i, &info);
     int indexSize = pdfium::CollectionSize<int>(m_CharIndex);
-    if (info.m_Flag == CHAR_NORMAL || info.m_Flag == CHAR_GENERATED) {
+    if (info.m_Flag == FPDFTEXT_CHAR_NORMAL ||
+        info.m_Flag == FPDFTEXT_CHAR_GENERATED) {
       if (indexSize % 2) {
         m_CharIndex.push_back(1);
       } else {
@@ -2325,8 +2336,8 @@ void CPDF_LinkExtract::ParseLink() {
   while (pos < TotalChar) {
     FPDF_CHAR_INFO pageChar;
     m_pTextPage->GetCharInfo(pos, &pageChar);
-    if (pageChar.m_Flag == CHAR_GENERATED || pageChar.m_Unicode == 0x20 ||
-        pos == TotalChar - 1) {
+    if (pageChar.m_Flag == FPDFTEXT_CHAR_GENERATED ||
+        pageChar.m_Unicode == 0x20 || pos == TotalChar - 1) {
       int nCount = pos - start;
       if (pos == TotalChar - 1) {
         nCount++;

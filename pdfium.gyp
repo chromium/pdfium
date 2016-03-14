@@ -212,7 +212,7 @@
       'target_name': 'fdrm',
       'type': 'static_library',
       'sources': [
-        'core/include/fdrm/fx_crypt.h',
+        'core/fdrm/crypto/include/fx_crypt.h',
         'core/fdrm/crypto/fx_crypt.cpp',
         'core/fdrm/crypto/fx_crypt_aes.cpp',
         'core/fdrm/crypto/fx_crypt_sha.cpp',
@@ -403,7 +403,9 @@
       'target_name': 'fpdftext',
       'type': 'static_library',
       'sources': [
-        'core/include/fpdftext/fpdf_text.h',
+        'core/fpdftext/include/ipdf_linkextract.h',
+        'core/fpdftext/include/ipdf_textpage.h',
+        'core/fpdftext/include/ipdf_textpagefind.h',
         'core/fpdftext/fpdf_text_int.cpp',
         'core/fpdftext/text_int.h',
         'core/fpdftext/unicodenormalization.cpp',

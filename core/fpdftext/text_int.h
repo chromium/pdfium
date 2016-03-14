@@ -10,8 +10,10 @@
 #include <deque>
 #include <vector>
 
+#include "core/fpdftext/include/ipdf_linkextract.h"
+#include "core/fpdftext/include/ipdf_textpage.h"
+#include "core/fpdftext/include/ipdf_textpagefind.h"
 #include "core/include/fpdfapi/fpdf_page.h"
-#include "core/include/fpdftext/fpdf_text.h"
 #include "core/include/fxcrt/fx_basic.h"
 
 class CFX_BidiChar;
