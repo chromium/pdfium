@@ -17,7 +17,7 @@
 #define JS_STR_VIEWERVARIATION L"Full"
 #define JS_STR_VIEWERVERSION_XFA L"11"
 
-class CFWL_TimerInfo;
+struct CFWL_TimerInfo;
 
 class CXFA_FWLAdapterTimerMgr : public IFWL_AdapterTimerMgr {
  public:
@@ -35,13 +35,12 @@ class CXFA_FWLAdapterTimerMgr : public IFWL_AdapterTimerMgr {
   CPDFDoc_Environment* const m_pEnv;
 };
 
-class CFWL_TimerInfo {
- public:
+struct CFWL_TimerInfo {
   CFWL_TimerInfo() : pTimer(nullptr) {}
-  CFWL_TimerInfo(uint32_t event, IFWL_Timer* timer)
-      : uIDEvent(event), pTimer(timer) {}
+  CFWL_TimerInfo(int32_t event, IFWL_Timer* timer)
+      : idEvent(event), pTimer(timer) {}
 
-  uint32_t uIDEvent;
+  int32_t idEvent;
   IFWL_Timer* pTimer;
 };
 

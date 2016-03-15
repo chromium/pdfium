@@ -488,7 +488,7 @@ FX_DWORD CFX_UnicodeEncodingEx::GlyphFromCharCode(FX_DWORD charcode) {
   int nmaps = FXFT_Get_Face_CharmapCount(face);
   int m = 0;
   while (m < nmaps) {
-    int nEncodingID =
+    FX_DWORD nEncodingID =
         FXFT_Get_Charmap_Encoding(FXFT_Get_Face_Charmaps(face)[m++]);
     if (m_nEncodingID == nEncodingID) {
       continue;

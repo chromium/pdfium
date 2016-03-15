@@ -350,19 +350,19 @@ void CPDFSDK_Widget::SynchronizeXFAValue(IXFA_DocView* pXFADocView,
       case FIELDTYPE_CHECKBOX: {
         if (CXFA_WidgetAcc* pWidgetAcc =
                 pXFAWidgetHandler->GetDataAcc(hWidget)) {
-          FX_BOOL bChecked = pWidgetAcc->GetCheckState() == XFA_CHECKSTATE_On;
-
-          pFormField->CheckControl(pFormField->GetControlIndex(pFormControl),
-                                   bChecked, TRUE);
+          pFormField->CheckControl(
+              pFormField->GetControlIndex(pFormControl),
+              pWidgetAcc->GetCheckState() == XFA_CHECKSTATE_On, true);
         }
       } break;
       case FIELDTYPE_RADIOBUTTON: {
+        // TODO(weili): Check whether we need to handle checkbox and radio
+        // button differently, otherwise, merge these two cases.
         if (CXFA_WidgetAcc* pWidgetAcc =
                 pXFAWidgetHandler->GetDataAcc(hWidget)) {
-          FX_BOOL bChecked = pWidgetAcc->GetCheckState() == XFA_CHECKSTATE_On;
-
-          pFormField->CheckControl(pFormField->GetControlIndex(pFormControl),
-                                   bChecked, TRUE);
+          pFormField->CheckControl(
+              pFormField->GetControlIndex(pFormControl),
+              pWidgetAcc->GetCheckState() == XFA_CHECKSTATE_On, true);
         }
       } break;
       case FIELDTYPE_TEXTFIELD: {

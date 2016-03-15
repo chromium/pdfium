@@ -20,10 +20,10 @@ FWL_ERR CXFA_FWLAdapterTimerMgr::Start(IFWL_Timer* pTimer,
   if (!m_pEnv)
     return FWL_ERR_Indefinite;
 
-  uint32_t uIDEvent = m_pEnv->FFI_SetTimer(dwElapse, TimerProc);
+  int32_t id_event = m_pEnv->FFI_SetTimer(dwElapse, TimerProc);
   if (!s_TimerArray)
     s_TimerArray = new std::vector<CFWL_TimerInfo*>;
-  s_TimerArray->push_back(new CFWL_TimerInfo(uIDEvent, pTimer));
+  s_TimerArray->push_back(new CFWL_TimerInfo(id_event, pTimer));
   hTimer = reinterpret_cast<FWL_HTIMER>(s_TimerArray->back());
   return FWL_ERR_Succeeded;
 }
@@ -33,7 +33,7 @@ FWL_ERR CXFA_FWLAdapterTimerMgr::Stop(FWL_HTIMER hTimer) {
     return FWL_ERR_Indefinite;
 
   CFWL_TimerInfo* pInfo = reinterpret_cast<CFWL_TimerInfo*>(hTimer);
-  m_pEnv->FFI_KillTimer(pInfo->uIDEvent);
+  m_pEnv->FFI_KillTimer(pInfo->idEvent);
   if (s_TimerArray) {
     auto it = std::find(s_TimerArray->begin(), s_TimerArray->end(), pInfo);
     if (it != s_TimerArray->end()) {
@@ -50,7 +50,7 @@ void CXFA_FWLAdapterTimerMgr::TimerProc(int32_t idEvent) {
     return;
 
   for (CFWL_TimerInfo* pInfo : *s_TimerArray) {
-    if (pInfo->uIDEvent == idEvent) {
+    if (pInfo->idEvent == idEvent) {
       pInfo->pTimer->Run(reinterpret_cast<FWL_HTIMER>(pInfo));
       break;
     }
