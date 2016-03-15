@@ -853,6 +853,15 @@
             'xfa/fxfa/parser/xfa_utils_imp_unittest.cpp',
           ],
         }],
+        ['pdf_enable_v8==1', {
+          'include_dirs': [
+            '<(DEPTH)/v8',
+            '<(DEPTH)/v8/include',
+          ],
+          'sources': [
+            'fpdfsdk/javascript/public_methods_unittest.cpp',
+          ],
+        }],
       ],
     },
     {

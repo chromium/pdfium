@@ -1488,6 +1488,15 @@ test("pdfium_unittests") {
       "xfa/fxfa/parser/xfa_utils_imp_unittest.cpp",
     ]
   }
+  if (pdf_enable_v8) {
+    sources += [
+      "fpdfsdk/javascript/public_methods_unittest.cpp",
+    ]
+    include_dirs += [
+      "//v8",
+      "//v8/include",
+    ]
+  }
   configs += [ ":pdfium_config" ]
 }
 

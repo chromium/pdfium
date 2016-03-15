@@ -18,7 +18,6 @@ class CJS_PublicMethods : public CJS_Object {
       : CJS_Object(pObject) {}
   ~CJS_PublicMethods() override {}
 
- public:
   static FX_BOOL AFNumber_Format(IJS_Context* cc,
                                  const std::vector<CJS_Value>& params,
                                  CJS_Value& vRet,
@@ -108,7 +107,6 @@ class CJS_PublicMethods : public CJS_Object {
                                CJS_Value& vRet,
                                CFX_WideString& sError);
 
- public:
   JS_STATIC_GLOBAL_FUN(AFNumber_Format);
   JS_STATIC_GLOBAL_FUN(AFNumber_Keystroke);
   JS_STATIC_GLOBAL_FUN(AFPercent_Format);
@@ -134,7 +132,6 @@ class CJS_PublicMethods : public CJS_Object {
 
   JS_STATIC_DECLARE_GLOBAL_FUN();
 
- public:
   static int ParseStringInteger(const CFX_WideString& string,
                                 int nStart,
                                 int& nSkip,
@@ -151,7 +148,6 @@ class CJS_PublicMethods : public CJS_Object {
                                 bool* bWrongFormat);
   static double MakeInterDate(CFX_WideString strValue);
 
- public:
   static CFX_WideString StrLTrim(const FX_WCHAR* pStr);
   static CFX_WideString StrRTrim(const FX_WCHAR* pStr);
   static CFX_WideString StrTrim(const FX_WCHAR* pStr);
@@ -160,11 +156,10 @@ class CJS_PublicMethods : public CJS_Object {
   static CFX_ByteString StrRTrim(const FX_CHAR* pStr);
   static CFX_ByteString StrTrim(const FX_CHAR* pStr);
 
-  static FX_BOOL IsNumber(const FX_CHAR* string);
-  static FX_BOOL IsNumber(const FX_WCHAR* string);
+  static bool IsNumber(const FX_WCHAR* string);
 
-  static FX_BOOL maskSatisfied(wchar_t c_Change, wchar_t c_Mask);
-  static FX_BOOL isReservedMaskChar(wchar_t ch);
+  static bool maskSatisfied(wchar_t c_Change, wchar_t c_Mask);
+  static bool isReservedMaskChar(wchar_t ch);
 
   static double AF_Simple(const FX_WCHAR* sFuction,
                           double dValue1,

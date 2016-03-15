@@ -62,44 +62,44 @@ static const FX_WCHAR* const fullmonths[] = {
     L"May",       L"June",     L"July",     L"August",
     L"September", L"October",  L"November", L"December"};
 
-FX_BOOL CJS_PublicMethods::IsNumber(const FX_WCHAR* str) {
+bool CJS_PublicMethods::IsNumber(const FX_WCHAR* str) {
   CFX_WideString sTrim = StrTrim(str);
   const FX_WCHAR* pTrim = sTrim.c_str();
   const FX_WCHAR* p = pTrim;
 
-  FX_BOOL bDot = FALSE;
-  FX_BOOL bKXJS = FALSE;
+  bool bDot = false;
+  bool bKXJS = false;
 
   wchar_t c;
-  while ((c = *p)) {
-    if (c == '.' || c == ',') {
+  while ((c = *p) != L'\0') {
+    if (c == L'.' || c == L',') {
       if (bDot)
-        return FALSE;
-      bDot = TRUE;
-    } else if (c == '-' || c == '+') {
+        return false;
+      bDot = true;
+    } else if (c == L'-' || c == L'+') {
       if (p != pTrim)
-        return FALSE;
-    } else if (c == 'e' || c == 'E') {
+        return false;
+    } else if (c == L'e' || c == L'E') {
       if (bKXJS)
-        return FALSE;
+        return false;
 
       p++;
       c = *p;
-      if (c == '+' || c == '-') {
-        bKXJS = TRUE;
+      if (c == L'+' || c == L'-') {
+        bKXJS = true;
       } else {
-        return FALSE;
+        return false;
       }
     } else if (!FXSYS_iswdigit(c)) {
-      return FALSE;
+      return false;
     }
     p++;
   }
 
-  return TRUE;
+  return true;
 }
 
-FX_BOOL CJS_PublicMethods::maskSatisfied(wchar_t c_Change, wchar_t c_Mask) {
+bool CJS_PublicMethods::maskSatisfied(wchar_t c_Change, wchar_t c_Mask) {
   switch (c_Mask) {
     case L'9':
       return FXSYS_iswdigit(c_Change);
@@ -108,13 +108,13 @@ FX_BOOL CJS_PublicMethods::maskSatisfied(wchar_t c_Change, wchar_t c_Mask) {
     case L'O':
       return FXSYS_iswalnum(c_Change);
     case L'X':
-      return TRUE;
+      return true;
     default:
       return (c_Change == c_Mask);
   }
 }
 
-FX_BOOL CJS_PublicMethods::isReservedMaskChar(wchar_t ch) {
+bool CJS_PublicMethods::isReservedMaskChar(wchar_t ch) {
   return ch == L'9' || ch == L'A' || ch == L'O' || ch == L'X';
 }
 
