@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "core/include/fpdfapi/cpdf_stream.h"
+#include "core/include/fpdfapi/cpdf_stream_acc.h"
 
 CJBig2_BitStream::CJBig2_BitStream(CPDF_StreamAcc* pSrcStream)
     : m_pBuf(pSrcStream->GetData()),

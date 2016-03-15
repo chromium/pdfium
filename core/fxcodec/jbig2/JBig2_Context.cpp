@@ -21,6 +21,7 @@
 #include "core/fxcodec/jbig2/JBig2_SddProc.h"
 #include "core/fxcodec/jbig2/JBig2_TrdProc.h"
 #include "core/include/fpdfapi/cpdf_stream.h"
+#include "core/include/fpdfapi/cpdf_stream_acc.h"
 #include "third_party/base/stl_util.h"
 
 namespace {

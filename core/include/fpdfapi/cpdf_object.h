@@ -150,4 +150,12 @@ inline const CPDF_Reference* ToReference(const CPDF_Object* obj) {
   return obj ? obj->AsReference() : nullptr;
 }
 
+inline CPDF_Stream* ToStream(CPDF_Object* obj) {
+  return obj ? obj->AsStream() : nullptr;
+}
+
+inline const CPDF_Stream* ToStream(const CPDF_Object* obj) {
+  return obj ? obj->AsStream() : nullptr;
+}
+
 #endif  // CORE_INCLUDE_FPDFAPI_CPDF_OBJECT_H_

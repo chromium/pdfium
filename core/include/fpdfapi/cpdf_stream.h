@@ -7,6 +7,7 @@
 #ifndef CORE_INCLUDE_FPDFAPI_CPDF_STREAM_H_
 #define CORE_INCLUDE_FPDFAPI_CPDF_STREAM_H_
 
+#include "core/include/fpdfapi/cpdf_dictionary.h"
 #include "core/include/fpdfapi/cpdf_object.h"
 #include "core/include/fxcrt/fx_stream.h"
 
@@ -55,45 +56,6 @@ class CPDF_Stream : public CPDF_Object {
     uint8_t* m_pDataBuf;
     IFX_FileRead* m_pFile;
   };
-};
-
-inline CPDF_Stream* ToStream(CPDF_Object* obj) {
-  return obj ? obj->AsStream() : nullptr;
-}
-
-inline const CPDF_Stream* ToStream(const CPDF_Object* obj) {
-  return obj ? obj->AsStream() : nullptr;
-}
-
-class CPDF_StreamAcc {
- public:
-  CPDF_StreamAcc();
-  ~CPDF_StreamAcc();
-
-  void LoadAllData(const CPDF_Stream* pStream,
-                   FX_BOOL bRawAccess = FALSE,
-                   FX_DWORD estimated_size = 0,
-                   FX_BOOL bImageAcc = FALSE);
-
-  const CPDF_Stream* GetStream() const { return m_pStream; }
-  CPDF_Dictionary* GetDict() const {
-    return m_pStream ? m_pStream->GetDict() : nullptr;
-  }
-  const uint8_t* GetData() const;
-  FX_DWORD GetSize() const;
-  const CFX_ByteString& GetImageDecoder() const { return m_ImageDecoder; }
-  const CPDF_Dictionary* GetImageParam() const { return m_pImageParam; }
-
-  uint8_t* DetachData();
-
- protected:
-  uint8_t* m_pData;
-  FX_DWORD m_dwSize;
-  FX_BOOL m_bNewBuf;
-  CFX_ByteString m_ImageDecoder;
-  CPDF_Dictionary* m_pImageParam;
-  const CPDF_Stream* m_pStream;
-  uint8_t* m_pSrcData;
 };
 
 #endif  // CORE_INCLUDE_FPDFAPI_CPDF_STREAM_H_

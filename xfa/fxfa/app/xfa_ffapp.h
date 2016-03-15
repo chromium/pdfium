@@ -8,6 +8,7 @@
 #define XFA_FXFA_APP_XFA_FFAPP_H_
 
 #include "core/include/fpdfapi/cpdf_stream.h"
+#include "core/include/fpdfapi/cpdf_stream_acc.h"
 #include "xfa/fgas/font/fgas_font.h"
 #include "xfa/include/fwl/adapter/fwl_adapternative.h"
 #include "xfa/include/fwl/adapter/fwl_sdadapterimp.h"

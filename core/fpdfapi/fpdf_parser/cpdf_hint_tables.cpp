@@ -10,6 +10,7 @@
 #include "core/include/fpdfapi/cpdf_array.h"
 #include "core/include/fpdfapi/cpdf_dictionary.h"
 #include "core/include/fpdfapi/cpdf_stream.h"
+#include "core/include/fpdfapi/cpdf_stream_acc.h"
 #include "core/include/fxcrt/fx_safe_types.h"
 
 namespace {

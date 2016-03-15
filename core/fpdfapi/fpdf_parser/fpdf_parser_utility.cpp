@@ -11,6 +11,7 @@
 #include "core/include/fpdfapi/cpdf_number.h"
 #include "core/include/fpdfapi/cpdf_reference.h"
 #include "core/include/fpdfapi/cpdf_stream.h"
+#include "core/include/fpdfapi/cpdf_stream_acc.h"
 #include "core/include/fpdfapi/cpdf_string.h"
 #include "core/include/fpdfapi/fpdf_parser_decode.h"
 #include "core/include/fxcrt/fx_ext.h"
