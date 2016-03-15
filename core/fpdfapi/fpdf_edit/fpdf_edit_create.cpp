@@ -8,17 +8,17 @@
 
 #include <vector>
 
+#include "core/fpdfapi/fpdf_edit/include/cpdf_creator.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_standard_crypto_handler.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_standard_security_handler.h"
-#include "core/include/fpdfapi/cpdf_array.h"
-#include "core/include/fpdfapi/cpdf_dictionary.h"
-#include "core/include/fpdfapi/cpdf_document.h"
-#include "core/include/fpdfapi/cpdf_parser.h"
-#include "core/include/fpdfapi/cpdf_reference.h"
-#include "core/include/fpdfapi/cpdf_string.h"
-#include "core/include/fpdfapi/fpdf_parser_decode.h"
-#include "core/include/fpdfapi/fpdf_serial.h"
-#include "core/include/fpdfapi/ipdf_crypto_handler.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_parser.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_reference.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
+#include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
+#include "core/fpdfapi/fpdf_parser/ipdf_crypto_handler.h"
 #include "core/include/fxcrt/fx_ext.h"
 #include "third_party/base/stl_util.h"
 

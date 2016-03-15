@@ -10,9 +10,10 @@
 #include <memory>
 #include <vector>
 
-#include "core/include/fpdfapi/cfdf_document.h"
-#include "core/include/fpdfapi/cpdf_array.h"
-#include "core/include/fpdfapi/cpdf_document.h"
+#include "core/fpdfapi/fpdf_parser/include/cfdf_document.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/include/fpdfapi/fpdf_page.h"
 #include "fpdfsdk/include/formfiller/FFL_FormFiller.h"
 #include "fpdfsdk/include/fsdk_actionhandler.h"
 #include "fpdfsdk/include/fsdk_baseannot.h"

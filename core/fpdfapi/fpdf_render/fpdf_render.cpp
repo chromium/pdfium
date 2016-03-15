@@ -7,11 +7,16 @@
 #include "core/fpdfapi/fpdf_render/render_int.h"
 
 #include "core/fpdfapi/fpdf_page/pageint.h"
-#include "core/include/fpdfapi/cpdf_array.h"
-#include "core/include/fpdfapi/cpdf_dictionary.h"
-#include "core/include/fpdfapi/cpdf_document.h"
-#include "core/include/fpdfapi/fpdf_module.h"
-#include "core/include/fpdfapi/fpdf_render.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/fpdfapi/fpdf_parser/ipdf_occontext.h"
+#include "core/fpdfapi/fpdf_render/cpdf_pagerendercache.h"
+#include "core/fpdfapi/fpdf_render/include/cpdf_progressiverenderer.h"
+#include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
+#include "core/fpdfapi/fpdf_render/include/cpdf_textrenderer.h"
+#include "core/fpdfapi/include/cpdf_modulemgr.h"
+#include "core/fpdfapi/ipdf_rendermodule.h"
 #include "core/include/fxge/fx_ge.h"
 
 CPDF_DocRenderData::CPDF_DocRenderData(CPDF_Document* pPDFDoc)
@@ -1321,17 +1326,4 @@ void CPDF_ScaledRenderBuffer::OutputToDevice() {
     m_pDevice->StretchDIBits(m_pBitmapDevice->GetBitmap(), m_Rect.left,
                              m_Rect.top, m_Rect.Width(), m_Rect.Height());
   }
-}
-FX_BOOL IPDF_OCContext::CheckObjectVisible(const CPDF_PageObject* pObj) {
-  const CPDF_ContentMarkData* pData = pObj->m_ContentMark;
-  int nItems = pData->CountItems();
-  for (int i = 0; i < nItems; i++) {
-    const CPDF_ContentMarkItem& item = pData->GetItem(i);
-    if (item.GetName() == "OC" &&
-        item.GetParamType() == CPDF_ContentMarkItem::PropertiesDict &&
-        !CheckOCGVisible(item.GetParam())) {
-      return FALSE;
-    }
-  }
-  return TRUE;
 }

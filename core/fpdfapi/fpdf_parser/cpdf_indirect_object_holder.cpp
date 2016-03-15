@@ -4,9 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/include/fpdfapi/cpdf_indirect_object_holder.h"
-#include "core/include/fpdfapi/cpdf_object.h"
-#include "core/include/fpdfapi/cpdf_parser.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_indirect_object_holder.h"
+
+#include "core/fpdfapi/fpdf_parser/include/cpdf_object.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_parser.h"
 
 CPDF_IndirectObjectHolder::CPDF_IndirectObjectHolder(CPDF_Parser* pParser)
     : m_pParser(pParser), m_LastObjNum(0) {

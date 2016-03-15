@@ -6,6 +6,7 @@
 
 #include "public/fpdf_progressive.h"
 
+#include "core/fpdfapi/fpdf_render/include/cpdf_progressiverenderer.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/include/fsdk_rendercontext.h"
 #include "public/fpdfview.h"

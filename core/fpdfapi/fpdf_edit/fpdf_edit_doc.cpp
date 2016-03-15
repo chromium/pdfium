@@ -7,11 +7,12 @@
 #include <limits.h>
 
 #include "core/fpdfapi/fpdf_page/pageint.h"
-#include "core/include/fpdfapi/cpdf_array.h"
-#include "core/include/fpdfapi/cpdf_dictionary.h"
-#include "core/include/fpdfapi/cpdf_document.h"
-#include "core/include/fpdfapi/cpdf_reference.h"
-#include "core/include/fpdfapi/fpdf_module.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_reference.h"
+#include "core/fpdfapi/include/cpdf_modulemgr.h"
+#include "core/fpdfapi/ipdf_rendermodule.h"
 #include "core/include/fpdfapi/fpdf_page.h"
 
 CPDF_Document::CPDF_Document() : CPDF_IndirectObjectHolder(NULL) {

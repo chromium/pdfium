@@ -11,6 +11,8 @@
 #include <utility>
 #include <vector>
 
+#include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "core/fxcodec/jbig2/JBig2_ArithDecoder.h"
 #include "core/fxcodec/jbig2/JBig2_BitStream.h"
 #include "core/fxcodec/jbig2/JBig2_GrdProc.h"
@@ -20,8 +22,6 @@
 #include "core/fxcodec/jbig2/JBig2_PddProc.h"
 #include "core/fxcodec/jbig2/JBig2_SddProc.h"
 #include "core/fxcodec/jbig2/JBig2_TrdProc.h"
-#include "core/include/fpdfapi/cpdf_stream.h"
-#include "core/include/fpdfapi/cpdf_stream_acc.h"
 #include "third_party/base/stl_util.h"
 
 namespace {

@@ -11,10 +11,10 @@
 #include <memory>
 #include <utility>
 
+#include "core/fpdfapi/fpdf_parser/include/cpdf_object.h"
 #include "core/fxcodec/jbig2/JBig2_List.h"
 #include "core/fxcodec/jbig2/JBig2_Page.h"
 #include "core/fxcodec/jbig2/JBig2_Segment.h"
-#include "core/include/fpdfapi/cpdf_object.h"
 #include "core/include/fxcodec/fx_codec_def.h"
 
 class CJBig2_ArithDecoder;

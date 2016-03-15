@@ -8,8 +8,10 @@
 
 #include <memory>
 
-#include "core/include/fpdfapi/cpdf_array.h"
-#include "core/include/fpdfapi/cpdf_document.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
+#include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "core/include/fxcodec/fx_codec.h"
 #include "core/include/fxcrt/fx_safe_types.h"
 #include "fpdfsdk/include/fsdk_define.h"
@@ -21,7 +23,6 @@
 #include "third_party/base/numerics/safe_conversions_impl.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "core/include/fpdfapi/fpdf_module.h"
 #include "fpdfsdk/include/fpdfxfa/fpdfxfa_app.h"
 #include "fpdfsdk/include/fpdfxfa/fpdfxfa_doc.h"
 #include "fpdfsdk/include/fpdfxfa/fpdfxfa_page.h"

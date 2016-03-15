@@ -6,7 +6,8 @@
 
 #include "fpdfsdk/include/formfiller/FFL_IFormFiller.h"
 
-#include "core/include/fpdfapi/cpdf_document.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/include/fpdfapi/fpdf_page.h"
 #include "fpdfsdk/include/formfiller/FFL_CheckBox.h"
 #include "fpdfsdk/include/formfiller/FFL_ComboBox.h"
 #include "fpdfsdk/include/formfiller/FFL_FormFiller.h"

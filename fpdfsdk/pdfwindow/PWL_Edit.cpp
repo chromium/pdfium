@@ -8,8 +8,10 @@
 
 #include <vector>
 
+#include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fxcrt/fx_safe_types.h"
 #include "core/include/fxcrt/fx_xml.h"
+#include "core/include/fxge/fx_ge.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Caret.h"
 #include "fpdfsdk/include/pdfwindow/PWL_EditCtrl.h"
 #include "fpdfsdk/include/pdfwindow/PWL_FontMap.h"

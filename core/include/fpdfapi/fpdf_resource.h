@@ -9,8 +9,8 @@
 
 #include <map>
 
-#include "core/include/fpdfapi/cpdf_stream.h"
-#include "core/include/fpdfapi/cpdf_stream_acc.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "core/include/fxcrt/fx_system.h"
 #include "core/include/fxge/fx_font.h"
 

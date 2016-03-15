@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/include/fpdfapi/cpdf_boolean.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_boolean.h"
 
 CPDF_Boolean::CPDF_Boolean() : m_bValue(false) {}
 

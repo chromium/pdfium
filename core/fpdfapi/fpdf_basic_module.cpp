@@ -4,7 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/include/fpdfapi/fpdf_module.h"
+#include "core/fpdfapi/include/cpdf_modulemgr.h"
+
+#include "core/fpdfapi/ipdf_rendermodule.h"
 #include "core/include/fxcodec/fx_codec.h"
 
 namespace {

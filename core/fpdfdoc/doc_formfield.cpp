@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/fpdfapi/fpdf_parser/include/cfdf_document.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_number.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_simple_parser.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
 #include "core/fpdfdoc/doc_utils.h"
-#include "core/include/fpdfapi/cfdf_document.h"
-#include "core/include/fpdfapi/cpdf_array.h"
-#include "core/include/fpdfapi/cpdf_document.h"
-#include "core/include/fpdfapi/cpdf_number.h"
-#include "core/include/fpdfapi/cpdf_simple_parser.h"
-#include "core/include/fpdfapi/cpdf_string.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
 
 FX_BOOL PDF_FormField_IsUnison(CPDF_FormField* pField) {

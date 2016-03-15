@@ -7,7 +7,14 @@
 #ifndef FPDFSDK_INCLUDE_FPDFXFA_FPDFXFA_PAGE_H_
 #define FPDFSDK_INCLUDE_FPDFXFA_FPDFXFA_PAGE_H_
 
+#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
+#include "core/fpdfapi/include/cpdf_modulemgr.h"
+#include "core/include/fxcrt/fx_coordinates.h"
+#include "core/include/fxcrt/fx_system.h"
+
+class CPDFXFA_Document;
 class CPDF_Page;
+class IXFA_PageView;
 
 class CPDFXFA_Page {
  public:

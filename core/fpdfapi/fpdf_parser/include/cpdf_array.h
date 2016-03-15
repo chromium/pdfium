@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_INCLUDE_FPDFAPI_CPDF_ARRAY_H_
-#define CORE_INCLUDE_FPDFAPI_CPDF_ARRAY_H_
+#ifndef CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_ARRAY_H_
+#define CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_ARRAY_H_
 
-#include "core/include/fpdfapi/cpdf_indirect_object_holder.h"
-#include "core/include/fpdfapi/cpdf_object.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_indirect_object_holder.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_object.h"
 #include "core/include/fxcrt/fx_basic.h"
 #include "core/include/fxcrt/fx_coordinates.h"
 
@@ -62,4 +62,4 @@ class CPDF_Array : public CPDF_Object {
   CFX_ArrayTemplate<CPDF_Object*> m_Objects;
 };
 
-#endif  // CORE_INCLUDE_FPDFAPI_CPDF_ARRAY_H_
+#endif  // CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_ARRAY_H_

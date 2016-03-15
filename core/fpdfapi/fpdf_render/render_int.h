@@ -10,9 +10,12 @@
 #include <map>
 #include <memory>
 
+#include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
 #include "core/include/fpdfapi/fpdf_pageobj.h"
-#include "core/include/fpdfapi/fpdf_render.h"
 
+class CPDF_PageObjectHolder;
+class CPDF_PageRenderCache;
+class CPDF_RenderStatus;
 class CFX_GlyphBitmap;
 class CFX_ImageTransformer;
 class CPDF_ImageCacheEntry;
@@ -20,6 +23,8 @@ class CPDF_ImageLoaderHandle;
 class ICodec_ScanlineDecoder;
 
 #define TYPE3_MAX_BLUES 16
+
+FX_BOOL IsAvailableMatrix(const CFX_Matrix& matrix);
 
 class CPDF_Type3Glyphs {
  public:

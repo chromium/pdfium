@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_INCLUDE_FPDFAPI_CFDF_DOCUMENT_H_
-#define CORE_INCLUDE_FPDFAPI_CFDF_DOCUMENT_H_
+#ifndef CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CFDF_DOCUMENT_H_
+#define CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CFDF_DOCUMENT_H_
 
-#include "core/include/fpdfapi/cpdf_indirect_object_holder.h"
-#include "core/include/fpdfapi/cpdf_object.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_indirect_object_holder.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_object.h"
 #include "core/include/fxcrt/fx_basic.h"
 
 class CPDF_Dictionary;
@@ -33,4 +33,4 @@ class CFDF_Document : public CPDF_IndirectObjectHolder {
   FX_BOOL m_bOwnFile;
 };
 
-#endif  // CORE_INCLUDE_FPDFAPI_CFDF_DOCUMENT_H_
+#endif  // CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CFDF_DOCUMENT_H_

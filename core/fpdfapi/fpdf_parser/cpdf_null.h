@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_INCLUDE_FPDFAPI_CPDF_NULL_H_
-#define CORE_INCLUDE_FPDFAPI_CPDF_NULL_H_
+#ifndef CORE_FPDFAPI_FPDF_PARSER_CPDF_NULL_H_
+#define CORE_FPDFAPI_FPDF_PARSER_CPDF_NULL_H_
 
-#include "core/include/fpdfapi/cpdf_object.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_object.h"
 
 class CPDF_Null : public CPDF_Object {
  public:
@@ -18,4 +18,4 @@ class CPDF_Null : public CPDF_Object {
   CPDF_Object* Clone(FX_BOOL bDirect = FALSE) const override;
 };
 
-#endif  // CORE_INCLUDE_FPDFAPI_CPDF_NULL_H_
+#endif  // CORE_FPDFAPI_FPDF_PARSER_CPDF_NULL_H_

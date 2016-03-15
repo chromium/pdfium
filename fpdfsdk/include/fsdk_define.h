@@ -7,10 +7,8 @@
 #ifndef FPDFSDK_INCLUDE_FSDK_DEFINE_H_
 #define FPDFSDK_INCLUDE_FSDK_DEFINE_H_
 
-#include "core/include/fpdfapi/cpdf_parser.h"
-#include "core/include/fpdfapi/fpdf_module.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_parser.h"
 #include "core/include/fpdfapi/fpdf_pageobj.h"
-#include "core/include/fpdfapi/fpdf_render.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
 #include "core/include/fpdfdoc/fpdf_vt.h"
 #include "core/include/fxge/fx_ge.h"

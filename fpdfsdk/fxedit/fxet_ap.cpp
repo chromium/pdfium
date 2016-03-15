@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/include/fpdfapi/fpdf_parser_decode.h"
+#include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
 #include "core/include/fpdfapi/fpdf_resource.h"
 #include "fpdfsdk/include/fxedit/fx_edit.h"
 #include "fpdfsdk/include/fxedit/fxet_edit.h"

@@ -6,8 +6,9 @@
 
 #include "fpdfsdk/include/pdfwindow/PWL_FontMap.h"
 
-#include "core/include/fpdfapi/cpdf_document.h"
-#include "core/include/fpdfapi/fpdf_module.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/fpdfapi/include/cpdf_modulemgr.h"
+#include "core/include/fpdfapi/fpdf_page.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
 
 namespace {

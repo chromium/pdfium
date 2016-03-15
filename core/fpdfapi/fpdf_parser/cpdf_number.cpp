@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/include/fpdfapi/cpdf_number.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_number.h"
 
 CPDF_Number::CPDF_Number() : m_bInteger(TRUE), m_Integer(0) {}
 

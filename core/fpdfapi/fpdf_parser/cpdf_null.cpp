@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/include/fpdfapi/cpdf_null.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_null.h"
 
 CPDF_Null::CPDF_Null() {}
 

@@ -7,7 +7,7 @@
 #ifndef CORE_FPDFAPI_FPDF_PARSER_CPDF_STANDARD_CRYPTO_HANDLER_H_
 #define CORE_FPDFAPI_FPDF_PARSER_CPDF_STANDARD_CRYPTO_HANDLER_H_
 
-#include "core/include/fpdfapi/ipdf_crypto_handler.h"
+#include "core/fpdfapi/fpdf_parser/ipdf_crypto_handler.h"
 
 class CPDF_StandardCryptoHandler : public IPDF_CryptoHandler {
  public:

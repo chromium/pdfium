@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/include/fpdfapi/cpdf_document.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
 
 CPDF_ViewerPreferences::CPDF_ViewerPreferences(CPDF_Document* pDoc)

@@ -11,9 +11,10 @@
 #include <memory>
 #include <vector>
 
-#include "core/include/fpdfapi/cpdf_dictionary.h"
-#include "core/include/fpdfapi/fpdf_parser_decode.h"
-#include "core/include/fpdfapi/fpdf_render.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
+#include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
+#include "core/fpdfapi/fpdf_parser/ipdf_occontext.h"
+#include "core/include/fxge/fx_dib.h"
 
 class CFDF_Document;
 class CFieldTree;
@@ -27,6 +28,7 @@ class CPDF_Bookmark;
 class CPDF_BookmarkTree;
 class CPDF_DefaultAppearance;
 class CPDF_Dest;
+class CPDF_Document;
 class CPDF_DocJSActions;
 class CPDF_FileSpec;
 class CPDF_FormControl;
@@ -38,9 +40,13 @@ class CPDF_Link;
 class CPDF_Metadata;
 class CPDF_OCContext;
 class CPDF_Page;
+class CPDF_Font;
+class CPDF_Form;
 class CPDF_RenderOptions;
+class CPDF_RenderContext;
 class CPDF_ViewerPreferences;
 class CXML_Element;
+class CFX_RenderDevice;
 
 class CPDF_NameTree {
  public:

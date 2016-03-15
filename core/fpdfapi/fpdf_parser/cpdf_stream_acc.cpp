@@ -4,10 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/include/fpdfapi/cpdf_stream_acc.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 
-#include "core/include/fpdfapi/cpdf_dictionary.h"
-#include "core/include/fpdfapi/fpdf_parser_decode.h"
+#include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
 
 CPDF_StreamAcc::CPDF_StreamAcc()
     : m_pData(nullptr),

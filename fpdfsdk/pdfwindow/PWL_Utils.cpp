@@ -8,6 +8,7 @@
 
 #include <algorithm>
 
+#include "core/include/fxge/fx_ge.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Icon.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
 

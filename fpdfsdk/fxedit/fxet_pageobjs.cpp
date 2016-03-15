@@ -4,8 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
+#include "core/fpdfapi/fpdf_render/include/cpdf_textrenderer.h"
+#include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fpdfapi/fpdf_pageobj.h"
-#include "core/include/fpdfapi/fpdf_render.h"
 #include "fpdfsdk/include/fx_systemhandler.h"
 #include "fpdfsdk/include/fxedit/fx_edit.h"
 #include "fpdfsdk/include/fxedit/fxet_edit.h"

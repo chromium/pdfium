@@ -9,7 +9,7 @@
 
 #include <vector>
 
-#include "core/include/fpdfapi/ipdf_data_avail.h"
+#include "core/fpdfapi/fpdf_parser/include/ipdf_data_avail.h"
 #include "core/include/fxcrt/fx_basic.h"
 #include "core/include/fxcrt/fx_stream.h"
 

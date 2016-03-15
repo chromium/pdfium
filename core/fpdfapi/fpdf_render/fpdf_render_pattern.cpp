@@ -7,10 +7,11 @@
 #include "core/fpdfapi/fpdf_render/render_int.h"
 
 #include "core/fpdfapi/fpdf_page/pageint.h"
-#include "core/include/fpdfapi/cpdf_array.h"
-#include "core/include/fpdfapi/cpdf_dictionary.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
+#include "core/fpdfapi/fpdf_render/include/cpdf_rendercontext.h"
+#include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
 #include "core/include/fpdfapi/fpdf_pageobj.h"
-#include "core/include/fpdfapi/fpdf_render.h"
 #include "core/include/fxge/fx_ge.h"
 
 #define SHADING_STEPS 256

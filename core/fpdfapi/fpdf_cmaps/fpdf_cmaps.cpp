@@ -7,7 +7,7 @@
 #include "core/fpdfapi/fpdf_cmaps/cmap_int.h"
 
 #include "core/fpdfapi/fpdf_font/font_int.h"
-#include "core/include/fpdfapi/fpdf_module.h"
+#include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "core/include/fpdfapi/fpdf_resource.h"
 
 void FPDFAPI_FindEmbeddedCMap(const char* name,

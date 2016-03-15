@@ -1,31 +1,25 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2016 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_INCLUDE_FPDFAPI_FPDF_MODULE_H_
-#define CORE_INCLUDE_FPDFAPI_FPDF_MODULE_H_
+#ifndef CORE_FPDFAPI_INCLUDE_CPDF_MODULEMGR_H_
+#define CORE_FPDFAPI_INCLUDE_CPDF_MODULEMGR_H_
 
 #include <memory>
 
-#include "core/include/fxcrt/fx_coordinates.h"
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fpdfapi/ipdf_pagemodule.h"
+#include "core/include/fxcrt/fx_basic.h"
 
 class CCodec_ModuleMgr;
-class CPDF_ColorSpace;
-class CPDF_DocPageData;
-class CPDF_DocRenderData;
-class CPDF_Document;
-class CPDF_FontGlobals;
-class CPDF_Page;
-class CPDF_PageRenderCache;
 class ICodec_FaxModule;
 class ICodec_FlateModule;
 class ICodec_IccModule;
 class ICodec_Jbig2Module;
 class ICodec_JpegModule;
 class ICodec_JpxModule;
+
 class IPDF_PageModule;
 class IPDF_RenderModule;
 
@@ -73,29 +67,4 @@ class CPDF_ModuleMgr {
   CFX_PrivateData m_privateData;
 };
 
-class IPDF_PageModule {
- public:
-  virtual ~IPDF_PageModule() {}
-
-  virtual CPDF_DocPageData* CreateDocData(CPDF_Document* pDoc) = 0;
-  virtual void ReleaseDoc(CPDF_Document* pDoc) = 0;
-  virtual void ClearDoc(CPDF_Document* pDoc) = 0;
-  virtual CPDF_FontGlobals* GetFontGlobals() = 0;
-  virtual void ClearStockFont(CPDF_Document* pDoc) = 0;
-  virtual void NotifyCJKAvailable() = 0;
-  virtual CPDF_ColorSpace* GetStockCS(int family) = 0;
-};
-
-class IPDF_RenderModule {
- public:
-  virtual ~IPDF_RenderModule() {}
-
-  virtual CPDF_DocRenderData* CreateDocData(CPDF_Document* pDoc) = 0;
-  virtual void DestroyDocData(CPDF_DocRenderData* pDocRenderData) = 0;
-  virtual void ClearDocData(CPDF_DocRenderData* pDocRenderData) = 0;
-  virtual CPDF_DocRenderData* GetRenderData() = 0;
-  virtual CPDF_PageRenderCache* CreatePageCache(CPDF_Page* pPage) = 0;
-  virtual void DestroyPageCache(CPDF_PageRenderCache* pCache) = 0;
-};
-
-#endif  // CORE_INCLUDE_FPDFAPI_FPDF_MODULE_H_
+#endif  // CORE_FPDFAPI_INCLUDE_CPDF_MODULEMGR_H_

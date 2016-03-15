@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "core/include/fpdfapi/fpdf_parser_decode.h"
+#include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
 
 #include <cstring>
 #include <string>

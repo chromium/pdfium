@@ -6,8 +6,8 @@
 
 #include "core/fpdfapi/fpdf_page/pageint.h"
 
-#include "core/include/fpdfapi/cpdf_dictionary.h"
-#include "core/include/fpdfapi/cpdf_document.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fpdfapi/fpdf_pageobj.h"
 

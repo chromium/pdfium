@@ -6,6 +6,7 @@
 
 #include "fpdfsdk/include/pdfwindow/PWL_Signature.h"
 
+#include "core/include/fxge/fx_ge.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Icon.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Label.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Utils.h"

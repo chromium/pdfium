@@ -6,6 +6,7 @@
 
 #include "fpdfsdk/include/formfiller/FFL_FormFiller.h"
 
+#include "core/include/fpdfapi/fpdf_page.h"
 #include "fpdfsdk/include/formfiller/FFL_CBA_Fontmap.h"
 #include "fpdfsdk/include/fsdk_common.h"
 #include "fpdfsdk/include/fsdk_mgr.h"

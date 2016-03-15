@@ -6,6 +6,7 @@
 
 #include "public/fpdf_edit.h"
 
+#include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "fpdfsdk/include/fsdk_define.h"
 
 DLLEXPORT FPDF_PAGEOBJECT STDCALL

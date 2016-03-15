@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_INCLUDE_FPDFAPI_FPDF_PARSER_DECODE_H_
-#define CORE_INCLUDE_FPDFAPI_FPDF_PARSER_DECODE_H_
+#ifndef CORE_FPDFAPI_FPDF_PARSER_INCLUDE_FPDF_PARSER_DECODE_H_
+#define CORE_FPDFAPI_FPDF_PARSER_INCLUDE_FPDF_PARSER_DECODE_H_
 
 #include "core/include/fxcrt/fx_basic.h"
 
@@ -73,4 +73,4 @@ FX_BOOL PDF_DataDecode(const uint8_t* src_buf,
                        FX_DWORD estimated_size,
                        FX_BOOL bImageAcc);
 
-#endif  // CORE_INCLUDE_FPDFAPI_FPDF_PARSER_DECODE_H_
+#endif  // CORE_FPDFAPI_FPDF_PARSER_INCLUDE_FPDF_PARSER_DECODE_H_

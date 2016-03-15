@@ -6,6 +6,7 @@
 
 #include "fpdfsdk/include/pdfwindow/PWL_ComboBox.h"
 
+#include "core/include/fxge/fx_ge.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Edit.h"
 #include "fpdfsdk/include/pdfwindow/PWL_EditCtrl.h"
 #include "fpdfsdk/include/pdfwindow/PWL_ListBox.h"

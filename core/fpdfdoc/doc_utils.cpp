@@ -7,10 +7,10 @@
 #include <algorithm>
 #include <vector>
 
+#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_simple_parser.h"
 #include "core/fpdfdoc/doc_utils.h"
-#include "core/include/fpdfapi/cpdf_array.h"
-#include "core/include/fpdfapi/cpdf_document.h"
-#include "core/include/fpdfapi/cpdf_simple_parser.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
 
 namespace {

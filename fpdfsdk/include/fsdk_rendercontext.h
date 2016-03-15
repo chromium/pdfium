@@ -7,6 +7,7 @@
 #ifndef FPDFSDK_INCLUDE_FSDK_RENDERCONTEXT_H_
 #define FPDFSDK_INCLUDE_FSDK_RENDERCONTEXT_H_
 
+#include "core/fpdfapi/fpdf_render/include/cpdf_progressiverenderer.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "public/fpdf_progressive.h"
 

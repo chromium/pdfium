@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/include/fpdfapi/cpdf_reference.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_reference.h"
 
-#include "core/include/fpdfapi/cpdf_indirect_object_holder.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_indirect_object_holder.h"
 
 CPDF_Reference::CPDF_Reference(CPDF_IndirectObjectHolder* pDoc, int objnum)
     : m_pObjList(pDoc), m_RefObjNum(objnum) {}

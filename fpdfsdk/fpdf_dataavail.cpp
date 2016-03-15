@@ -6,8 +6,8 @@
 
 #include "public/fpdf_dataavail.h"
 
-#include "core/include/fpdfapi/cpdf_document.h"
-#include "core/include/fpdfapi/ipdf_data_avail.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/fpdfapi/fpdf_parser/include/ipdf_data_avail.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "public/fpdf_formfill.h"
 

@@ -4,15 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/include/fpdfapi/fpdf_parser_decode.h"
+#include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
 
 #include <limits.h>
 #include <vector>
 
 #include "core/fpdfapi/fpdf_parser/fpdf_parser_utility.h"
-#include "core/include/fpdfapi/cpdf_array.h"
-#include "core/include/fpdfapi/cpdf_dictionary.h"
-#include "core/include/fpdfapi/fpdf_module.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
+#include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "core/include/fxcodec/fx_codec.h"
 #include "core/include/fxcrt/fx_ext.h"
 #include "third_party/base/stl_util.h"

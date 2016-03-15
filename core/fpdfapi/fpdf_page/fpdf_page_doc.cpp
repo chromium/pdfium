@@ -8,11 +8,14 @@
 
 #include "core/fdrm/crypto/include/fx_crypt.h"
 #include "core/fpdfapi/fpdf_font/font_int.h"
-#include "core/include/fpdfapi/cpdf_array.h"
-#include "core/include/fpdfapi/cpdf_dictionary.h"
-#include "core/include/fpdfapi/cpdf_document.h"
-#include "core/include/fpdfapi/fpdf_module.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/fpdfapi/include/cpdf_modulemgr.h"
+#include "core/fpdfapi/ipdf_pagemodule.h"
 #include "core/include/fpdfapi/fpdf_page.h"
+
+namespace {
 
 class CPDF_PageModule : public IPDF_PageModule {
  public:
@@ -47,6 +50,8 @@ class CPDF_PageModule : public IPDF_PageModule {
   CPDF_DeviceCS m_StockCMYKCS;
   CPDF_PatternCS m_StockPatternCS;
 };
+
+}  // namespace
 
 CPDF_ColorSpace* CPDF_PageModule::GetStockCS(int family) {
   if (family == PDFCS_DEVICEGRAY) {

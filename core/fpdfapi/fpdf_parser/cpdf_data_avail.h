@@ -9,8 +9,8 @@
 
 #include "core/fpdfapi/fpdf_parser/cpdf_hint_tables.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_syntax_parser.h"
-#include "core/include/fpdfapi/cpdf_parser.h"
-#include "core/include/fpdfapi/ipdf_data_avail.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_parser.h"
+#include "core/fpdfapi/fpdf_parser/include/ipdf_data_avail.h"
 #include "core/include/fxcrt/fx_basic.h"
 
 class CPDF_Dictionary;

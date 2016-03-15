@@ -11,7 +11,8 @@
 #include <string>
 #include <vector>
 
-#include "fpdfsdk/include/fsdk_mgr.h"  // For CPDFDoc_Environment.
+#include "core/include/fpdfapi/fpdf_page.h"
+#include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "fpdfsdk/javascript/Document.h"
 #include "fpdfsdk/javascript/Icon.h"

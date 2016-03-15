@@ -7,12 +7,12 @@
 #include <memory>
 #include <vector>
 
-#include "core/include/fpdfapi/cpdf_document.h"
-#include "core/include/fpdfapi/cpdf_name.h"
-#include "core/include/fpdfapi/cpdf_number.h"
-#include "core/include/fpdfapi/cpdf_reference.h"
-#include "core/include/fpdfapi/cpdf_string.h"
-#include "core/include/fpdfapi/fpdf_module.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_name.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_number.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_reference.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
+#include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"

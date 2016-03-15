@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/include/fpdfapi/cfdf_document.h"
+#include "core/fpdfapi/fpdf_parser/include/cfdf_document.h"
 
+#include "core/fpdfapi/fpdf_edit/include/cpdf_creator.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_syntax_parser.h"
-#include "core/include/fpdfapi/cpdf_dictionary.h"
-#include "core/include/fpdfapi/fpdf_serial.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 
 CFDF_Document::CFDF_Document() : CPDF_IndirectObjectHolder(NULL) {
   m_pRootDict = NULL;

@@ -4,15 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/include/fpdfapi/cpdf_dictionary.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 
-#include "core/include/fpdfapi/cpdf_array.h"
-#include "core/include/fpdfapi/cpdf_boolean.h"
-#include "core/include/fpdfapi/cpdf_name.h"
-#include "core/include/fpdfapi/cpdf_number.h"
-#include "core/include/fpdfapi/cpdf_reference.h"
-#include "core/include/fpdfapi/cpdf_stream.h"
-#include "core/include/fpdfapi/cpdf_string.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_boolean.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_name.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_number.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_reference.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
 #include "third_party/base/stl_util.h"
 
 CPDF_Dictionary::CPDF_Dictionary() {}

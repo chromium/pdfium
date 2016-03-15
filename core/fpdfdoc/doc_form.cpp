@@ -6,11 +6,12 @@
 
 #include <vector>
 
+#include "core/fpdfapi/fpdf_parser/include/cfdf_document.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
 #include "core/fpdfdoc/doc_utils.h"
-#include "core/include/fpdfapi/cfdf_document.h"
-#include "core/include/fpdfapi/cpdf_array.h"
-#include "core/include/fpdfapi/cpdf_document.h"
-#include "core/include/fpdfapi/cpdf_string.h"
+#include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
 #include "third_party/base/stl_util.h"
 

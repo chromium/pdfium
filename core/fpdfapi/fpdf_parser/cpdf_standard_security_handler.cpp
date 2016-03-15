@@ -10,10 +10,10 @@
 
 #include "core/fdrm/crypto/include/fx_crypt.h"
 #include "core/fpdfapi/fpdf_parser/cpdf_standard_crypto_handler.h"
-#include "core/include/fpdfapi/cpdf_array.h"
-#include "core/include/fpdfapi/cpdf_dictionary.h"
-#include "core/include/fpdfapi/cpdf_object.h"
-#include "core/include/fpdfapi/cpdf_parser.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_object.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_parser.h"
 
 namespace {
 

@@ -7,10 +7,10 @@
 #include "core/fpdfapi/fpdf_parser/cpdf_hint_tables.h"
 
 #include "core/fpdfapi/fpdf_parser/cpdf_data_avail.h"
-#include "core/include/fpdfapi/cpdf_array.h"
-#include "core/include/fpdfapi/cpdf_dictionary.h"
-#include "core/include/fpdfapi/cpdf_stream.h"
-#include "core/include/fpdfapi/cpdf_stream_acc.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "core/include/fxcrt/fx_safe_types.h"
 
 namespace {

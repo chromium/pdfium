@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/include/fpdfapi/cpdf_name.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_name.h"
 
-#include "core/include/fpdfapi/fpdf_parser_decode.h"
+#include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
 
 CPDF_Name::CPDF_Name(const CFX_ByteString& str) : m_Name(str) {}
 

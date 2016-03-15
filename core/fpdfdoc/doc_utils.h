@@ -9,7 +9,7 @@
 
 #include <vector>
 
-#include "core/include/fpdfapi/cpdf_parser.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_parser.h"
 #include "core/include/fpdfapi/fpdf_resource.h"
 
 class CPDF_Dictionary;

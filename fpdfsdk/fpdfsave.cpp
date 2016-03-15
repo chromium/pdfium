@@ -8,11 +8,11 @@
 
 #include <vector>
 
-#include "core/include/fpdfapi/cpdf_array.h"
-#include "core/include/fpdfapi/cpdf_document.h"
-#include "core/include/fpdfapi/cpdf_reference.h"
-#include "core/include/fpdfapi/cpdf_string.h"
-#include "core/include/fpdfapi/fpdf_serial.h"
+#include "core/fpdfapi/fpdf_edit/include/cpdf_creator.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_reference.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
 #include "core/include/fxcrt/fx_ext.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "public/fpdf_edit.h"

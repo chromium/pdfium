@@ -7,7 +7,7 @@
 #ifndef CORE_FPDFAPI_FPDF_PARSER_CPDF_STANDARD_SECURITY_HANDLER_H_
 #define CORE_FPDFAPI_FPDF_PARSER_CPDF_STANDARD_SECURITY_HANDLER_H_
 
-#include "core/include/fpdfapi/ipdf_security_handler.h"
+#include "core/fpdfapi/fpdf_parser/ipdf_security_handler.h"
 #include "core/include/fxcrt/fx_string.h"
 #include "core/include/fxcrt/fx_system.h"
 

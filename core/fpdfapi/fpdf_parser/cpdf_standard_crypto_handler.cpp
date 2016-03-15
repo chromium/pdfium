@@ -9,9 +9,9 @@
 #include <time.h>
 
 #include "core/fdrm/crypto/include/fx_crypt.h"
-#include "core/include/fpdfapi/cpdf_parser.h"
-#include "core/include/fpdfapi/cpdf_simple_parser.h"
-#include "core/include/fpdfapi/ipdf_security_handler.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_parser.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_simple_parser.h"
+#include "core/fpdfapi/fpdf_parser/ipdf_security_handler.h"
 
 IPDF_CryptoHandler::~IPDF_CryptoHandler() {}
 
