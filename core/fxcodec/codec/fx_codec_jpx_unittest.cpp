@@ -496,8 +496,8 @@ TEST(fxcodec, YUV420ToRGB) {
   const struct {
     OPJ_UINT32 w;
     bool expected;
-  } cases[] = {{0, false}, {1, false}, {30, false}, {31, true},
-               {32, true}, {33, true}, {34, false}, {UINT_MAX, false}};
+  } cases[] = {{0, false}, {1, false},  {30, false}, {31, true},
+               {32, true}, {33, false}, {34, false}, {UINT_MAX, false}};
   for (int i = 0; i < sizeof(cases) / sizeof(cases[0]); ++i) {
     y.w = cases[i].w;
     y.h = y.w;
