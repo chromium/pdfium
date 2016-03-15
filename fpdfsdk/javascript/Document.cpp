@@ -158,11 +158,6 @@ Document::Document(CJS_Object* pJSObject)
       m_bDelay(FALSE) {}
 
 Document::~Document() {
-  for (int i = 0; i < m_DelayData.GetSize(); i++) {
-    delete m_DelayData.GetAt(i);
-  }
-
-  m_DelayData.RemoveAll();
 }
 
 // the total number of fileds in document.
@@ -865,25 +860,12 @@ FX_BOOL Document::delay(IJS_Context* cc,
 
     vp >> m_bDelay;
     if (m_bDelay) {
-      for (int i = 0, sz = m_DelayData.GetSize(); i < sz; i++)
-        delete m_DelayData.GetAt(i);
-
-      m_DelayData.RemoveAll();
+      m_DelayData.clear();
     } else {
-      CFX_ArrayTemplate<CJS_DelayData*> DelayDataToProcess;
-      for (int i = 0, sz = m_DelayData.GetSize(); i < sz; i++) {
-        if (CJS_DelayData* pData = m_DelayData.GetAt(i)) {
-          DelayDataToProcess.Add(pData);
-          m_DelayData.SetAt(i, NULL);
-        }
-      }
-      m_DelayData.RemoveAll();
-      for (int i = 0, sz = DelayDataToProcess.GetSize(); i < sz; i++) {
-        CJS_DelayData* pData = DelayDataToProcess.GetAt(i);
-        Field::DoDelay(m_pDocument, pData);
-        DelayDataToProcess.SetAt(i, NULL);
-        delete pData;
-      }
+      std::list<std::unique_ptr<CJS_DelayData>> DelayDataToProcess;
+      DelayDataToProcess.swap(m_DelayData);
+      for (const auto& pData : DelayDataToProcess)
+        Field::DoDelay(m_pDocument, pData.get());
     }
   }
   return TRUE;
@@ -1597,36 +1579,24 @@ FX_BOOL Document::getURL(IJS_Context* cc,
 }
 
 void Document::AddDelayData(CJS_DelayData* pData) {
-  m_DelayData.Add(pData);
+  m_DelayData.push_back(std::unique_ptr<CJS_DelayData>(pData));
 }
 
 void Document::DoFieldDelay(const CFX_WideString& sFieldName,
                             int nControlIndex) {
-  CFX_DWordArray DelArray;
-  CFX_ArrayTemplate<CJS_DelayData*> DelayDataForFieldAndControlIndex;
-
-  for (int i = 0, sz = m_DelayData.GetSize(); i < sz; i++) {
-    if (CJS_DelayData* pData = m_DelayData.GetAt(i)) {
-      if (pData->sFieldName == sFieldName &&
-          pData->nControlIndex == nControlIndex) {
-        DelayDataForFieldAndControlIndex.Add(pData);
-        m_DelayData.SetAt(i, NULL);
-        DelArray.Add(i);
-      }
+  std::vector<std::unique_ptr<CJS_DelayData>> DelayDataForFieldAndControlIndex;
+  auto iter = m_DelayData.begin();
+  while (iter != m_DelayData.end()) {
+    auto old = iter++;
+    if ((*old)->sFieldName == sFieldName &&
+        (*old)->nControlIndex == nControlIndex) {
+      DelayDataForFieldAndControlIndex.push_back(std::move(*old));
+      m_DelayData.erase(old);
     }
   }
 
-  for (int j = DelArray.GetSize() - 1; j >= 0; j--) {
-    m_DelayData.RemoveAt(DelArray[j]);
-  }
-
-  for (int i = 0, sz = DelayDataForFieldAndControlIndex.GetSize(); i < sz;
-       i++) {
-    CJS_DelayData* pData = DelayDataForFieldAndControlIndex.GetAt(i);
-    Field::DoDelay(m_pDocument, pData);
-    DelayDataForFieldAndControlIndex.SetAt(i, NULL);
-    delete pData;
-  }
+  for (const auto& pData : DelayDataForFieldAndControlIndex)
+    Field::DoDelay(m_pDocument, pData.get());
 }
 
 CJS_Document* Document::GetCJSDoc() const {

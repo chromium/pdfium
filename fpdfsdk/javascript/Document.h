@@ -275,7 +275,7 @@ class Document : public CJS_EmbedObj {
   CPDFSDK_Document* m_pDocument;
   CFX_WideString m_cwBaseURL;
   bool m_bDelay;
-  CFX_ArrayTemplate<CJS_DelayData*> m_DelayData;
+  std::list<std::unique_ptr<CJS_DelayData>> m_DelayData;
 };
 
 class CJS_Document : public CJS_Object {
