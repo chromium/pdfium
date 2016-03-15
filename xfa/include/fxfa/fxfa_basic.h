@@ -7,7 +7,8 @@
 #ifndef XFA_INCLUDE_FXFA_FXFA_BASIC_H_
 #define XFA_INCLUDE_FXFA_FXFA_BASIC_H_
 
-#include "xfa/include/fxjse/fxjse.h"
+#include "xfa/fxjse/cfxjse_arguments.h"
+#include "xfa/fxjse/include/fxjse.h"
 
 class CXFA_Measurement;
 #define XFA_HASHCODE_Xfa 0xc56b9ff

@@ -18,6 +18,7 @@
 #include "xfa/fxfa/parser/xfa_script_nodehelper.h"
 #include "xfa/fxfa/parser/xfa_script_resolveprocessor.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
+#include "xfa/fxjse/cfxjse_arguments.h"
 
 CXFA_ScriptContext::CXFA_ScriptContext(CXFA_Document* pDocument)
     : m_pDocument(pDocument),

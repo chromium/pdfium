@@ -103,7 +103,6 @@
         "xfa/include/fxfa/fxfa_objectacc.h",
         "xfa/include/fxfa/fxfa_widget.h",
         "xfa/include/fxgraphics/fx_graphics.h",
-        "xfa/include/fxjse/fxjse.h",
         "xfa/fde/css/fde_css.h",
         "xfa/fde/css/fde_csscache.cpp",
         "xfa/fde/css/fde_csscache.h",
@@ -642,6 +641,7 @@
         "xfa/fxgraphics/fx_path_generator.cpp",
         "xfa/fxgraphics/fx_path_generator.h",
         "xfa/fxgraphics/pre.h",
+        "xfa/fxjse/include/fxjse.h",
       ],
       "conditions": [
         ["clang==1" , {
@@ -658,6 +658,7 @@
             '<(DEPTH)/v8/include',
           ],
           'sources': [
+            "xfa/fxjse/cfxjse_arguments.h",
             "xfa/fxjse/class.cpp",
             "xfa/fxjse/class.h",
             "xfa/fxjse/context.cpp",

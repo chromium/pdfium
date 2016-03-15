@@ -19,6 +19,7 @@
 #include "xfa/fxfa/parser/xfa_parser.h"
 #include "xfa/fxfa/parser/xfa_script.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
+#include "xfa/fxjse/cfxjse_arguments.h"
 
 CXFA_Object::CXFA_Object(CXFA_Document* pDocument, FX_DWORD uFlags)
     : m_pDocument(pDocument), m_uFlags(uFlags) {}

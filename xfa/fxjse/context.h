@@ -9,7 +9,7 @@
 
 #include "core/include/fxcrt/fx_basic.h"
 #include "v8/include/v8.h"
-#include "xfa/include/fxjse/fxjse.h"
+#include "xfa/fxjse/include/fxjse.h"
 
 class CFXJSE_Class;
 class CFXJSE_Value;

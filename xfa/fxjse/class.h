@@ -8,7 +8,8 @@
 #define XFA_FXJSE_CLASS_H_
 
 #include "v8/include/v8.h"
-#include "xfa/include/fxjse/fxjse.h"
+#include "xfa/fxjse/cfxjse_arguments.h"
+#include "xfa/fxjse/include/fxjse.h"
 
 class CFXJSE_Context;
 class CFXJSE_Value;

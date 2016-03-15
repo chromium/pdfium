@@ -8,6 +8,7 @@
 #define XFA_FXFA_PARSER_XFA_SCRIPT_EVENTPSEUDOMODEL_H_
 
 #include "xfa/fxfa/parser/xfa_object.h"
+#include "xfa/fxjse/cfxjse_arguments.h"
 
 #define XFA_EVENT_CHANGE 0
 #define XFA_EVENT_COMMITKEY 1

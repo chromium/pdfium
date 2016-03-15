@@ -4,6 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "xfa/fxjse/cfxjse_arguments.h"
 #include "xfa/fxjse/class.h"
 #include "xfa/fxjse/value.h"
 

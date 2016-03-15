@@ -9,6 +9,7 @@
 
 #include "xfa/fxfa/parser/xfa_document.h"
 #include "xfa/fxfa/parser/xfa_object.h"
+#include "xfa/fxjse/cfxjse_arguments.h"
 
 class CScript_HostPseudoModel : public CXFA_OrdinaryObject {
  public:

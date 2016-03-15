@@ -15,6 +15,7 @@
 #include "xfa/fxfa/parser/xfa_parser.h"
 #include "xfa/fxfa/parser/xfa_script.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
+#include "xfa/fxjse/cfxjse_arguments.h"
 
 CScript_SignaturePseudoModel::CScript_SignaturePseudoModel(
     CXFA_Document* pDocument)

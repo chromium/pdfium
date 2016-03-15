@@ -14,6 +14,7 @@
 #include "xfa/fxfa/parser/xfa_document.h"
 #include "xfa/fxfa/parser/xfa_localevalue.h"
 #include "xfa/fxfa/parser/xfa_parser.h"
+#include "xfa/fxjse/cfxjse_arguments.h"
 
 #define FINANCIAL_PRECISION 0.00000001
 

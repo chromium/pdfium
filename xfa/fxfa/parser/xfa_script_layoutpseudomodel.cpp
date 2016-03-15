@@ -17,6 +17,7 @@
 #include "xfa/fxfa/parser/xfa_parser.h"
 #include "xfa/fxfa/parser/xfa_script.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
+#include "xfa/fxjse/cfxjse_arguments.h"
 
 CScript_LayoutPseudoModel::CScript_LayoutPseudoModel(CXFA_Document* pDocument)
     : CXFA_OrdinaryObject(pDocument, XFA_ELEMENT_LayoutPseudoModel) {

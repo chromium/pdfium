@@ -6,6 +6,7 @@
 
 #include "xfa/fxjse/class.h"
 
+#include "xfa/fxjse/cfxjse_arguments.h"
 #include "xfa/fxjse/context.h"
 #include "xfa/fxjse/scope_inline.h"
 #include "xfa/fxjse/util_inline.h"

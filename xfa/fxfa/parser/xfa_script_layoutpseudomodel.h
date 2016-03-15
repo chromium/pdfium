@@ -9,6 +9,7 @@
 
 #include "xfa/fxfa/parser/xfa_doclayout.h"
 #include "xfa/fxfa/parser/xfa_object.h"
+#include "xfa/fxjse/cfxjse_arguments.h"
 
 enum XFA_LAYOUTMODEL_HWXY {
   XFA_LAYOUTMODEL_H,

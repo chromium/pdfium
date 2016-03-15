@@ -8,6 +8,7 @@
 #define XFA_FXFA_PARSER_XFA_SCRIPT_SIGNATUREPSEUDOMODEL_H_
 
 #include "xfa/fxfa/parser/xfa_object.h"
+#include "xfa/fxjse/cfxjse_arguments.h"
 
 class CScript_SignaturePseudoModel : public CXFA_OrdinaryObject {
  public:

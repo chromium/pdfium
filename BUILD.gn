@@ -1349,6 +1349,7 @@ if (pdf_enable_xfa) {
       "xfa/fxgraphics/fx_path_generator.cpp",
       "xfa/fxgraphics/fx_path_generator.h",
       "xfa/fxgraphics/pre.h",
+      "xfa/fxjse/include/fxjse.h",
       "xfa/include/fwl/adapter/fwl_adapternative.h",
       "xfa/include/fwl/adapter/fwl_adapterthreadmgr.h",
       "xfa/include/fwl/adapter/fwl_adaptertimermgr.h",
@@ -1417,11 +1418,11 @@ if (pdf_enable_xfa) {
       "xfa/include/fxfa/fxfa_objectacc.h",
       "xfa/include/fxfa/fxfa_widget.h",
       "xfa/include/fxgraphics/fx_graphics.h",
-      "xfa/include/fxjse/fxjse.h",
     ]
     include_dirs = [ "." ]
     if (pdf_enable_v8) {
       sources += [
+        "xfa/fxjse/cfxjse_arguments.h",
         "xfa/fxjse/class.cpp",
         "xfa/fxjse/class.h",
         "xfa/fxjse/context.cpp",
