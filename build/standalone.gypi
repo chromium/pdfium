@@ -336,9 +336,6 @@
               '-Wno-microsoft-enum-value',  # http://crbug.com/505296
               '-Wno-unknown-pragmas',  # http://crbug.com/505314
               '-Wno-microsoft-cast',  # http://crbug.com/550065
-
-              # TODO(ochang): Fix these properly eventually.
-              '-Wno-inconsistent-missing-override',
             ],
           }],
           ['OS=="win" and clang==1 and MSVS_VERSION == "2013"', {
