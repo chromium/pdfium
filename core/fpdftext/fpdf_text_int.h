@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFTEXT_TEXT_INT_H_
-#define CORE_FPDFTEXT_TEXT_INT_H_
+#ifndef CORE_FPDFTEXT_FPDF_TEXT_INT_H_
+#define CORE_FPDFTEXT_FPDF_TEXT_INT_H_
 
 #include <deque>
 #include <vector>
@@ -241,6 +241,4 @@ class CPDF_LinkExtract : public IPDF_LinkExtract {
   bool m_bIsParsed;
 };
 
-FX_STRSIZE FX_Unicode_GetNormalization(FX_WCHAR wch, FX_WCHAR* pDst);
-
-#endif  // CORE_FPDFTEXT_TEXT_INT_H_
+#endif  // CORE_FPDFTEXT_FPDF_TEXT_INT_H_

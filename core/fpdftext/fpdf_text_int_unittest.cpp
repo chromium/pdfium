@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "testing/gtest/include/gtest/gtest.h"
+#include "core/fpdftext/fpdf_text_int.h"
 
-#include "core/fpdftext/text_int.h"
+#include "testing/gtest/include/gtest/gtest.h"
 
 // Class to help test functions in CPDF_LinkExtract class.
 class CPDF_TestLinkExtract : public CPDF_LinkExtract {

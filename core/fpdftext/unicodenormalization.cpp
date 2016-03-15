@@ -4,12 +4,18 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/fpdftext/unicodenormalization.h"
+
 #include "core/fpdftext/unicodenormalizationdata.h"
 #include "core/include/fxcrt/fx_string.h"
+
+namespace {
 
 const FX_WCHAR* const g_UnicodeData_Normalization_Maps[5] = {
     nullptr, g_UnicodeData_Normalization_Map1, g_UnicodeData_Normalization_Map2,
     g_UnicodeData_Normalization_Map3, g_UnicodeData_Normalization_Map4};
+
+}  // namespace
 
 FX_STRSIZE FX_Unicode_GetNormalization(FX_WCHAR wch, FX_WCHAR* pDst) {
   wch = wch & 0xFFFF;
@@ -41,28 +47,4 @@ FX_STRSIZE FX_Unicode_GetNormalization(FX_WCHAR wch, FX_WCHAR* pDst) {
     }
   }
   return (FX_STRSIZE)wFind;
-}
-FX_STRSIZE FX_WideString_GetNormalization(const CFX_WideStringC& wsSrc,
-                                          FX_WCHAR* pDst) {
-  FX_STRSIZE nCount = 0;
-  for (FX_STRSIZE len = 0; len < wsSrc.GetLength(); len++) {
-    FX_WCHAR wch = wsSrc.GetAt(len);
-    if (pDst) {
-      nCount += FX_Unicode_GetNormalization(wch, pDst + nCount);
-    } else {
-      nCount += FX_Unicode_GetNormalization(wch, pDst);
-    }
-  }
-  return nCount;
-}
-FX_STRSIZE FX_WideString_GetNormalization(const CFX_WideStringC& wsSrc,
-                                          CFX_WideString& wsDst) {
-  FX_STRSIZE nLen = FX_WideString_GetNormalization(wsSrc, (FX_WCHAR*)NULL);
-  if (!nLen) {
-    return 0;
-  }
-  FX_WCHAR* pBuf = wsDst.GetBuffer(nLen);
-  FX_WideString_GetNormalization(wsSrc, pBuf);
-  wsDst.ReleaseBuffer(nLen);
-  return nLen;
 }

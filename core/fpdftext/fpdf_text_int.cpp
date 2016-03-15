@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdftext/text_int.h"
+#include "core/fpdftext/fpdf_text_int.h"
 
 #include <algorithm>
 #include <cctype>
@@ -16,6 +16,7 @@
 #include "core/fpdftext/include/ipdf_linkextract.h"
 #include "core/fpdftext/include/ipdf_textpage.h"
 #include "core/fpdftext/include/ipdf_textpagefind.h"
+#include "core/fpdftext/unicodenormalization.h"
 #include "core/include/fpdfapi/cpdf_dictionary.h"
 #include "core/include/fpdfapi/cpdf_string.h"
 #include "core/include/fpdfapi/fpdf_module.h"
