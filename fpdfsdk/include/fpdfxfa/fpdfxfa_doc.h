@@ -35,6 +35,8 @@ class CPDFXFA_Document : public IXFA_DocProvider {
   int GetPageCount();
   CPDFXFA_Page* GetPage(int page_index);
   CPDFXFA_Page* GetPage(IXFA_PageView* pPage);
+
+  void DeletePage(int page_index);
   void RemovePage(CPDFXFA_Page* page);
   int GetDocType() { return m_iDocType; }
 

@@ -182,6 +182,14 @@ CPDFXFA_Page* CPDFXFA_Document::GetPage(IXFA_PageView* pPage) {
   return NULL;
 }
 
+void CPDFXFA_Document::DeletePage(int page_index) {
+  if (page_index < 0 || page_index >= m_XFAPageList.GetSize())
+    return;
+
+  if (CPDFXFA_Page* pPage = m_XFAPageList.GetAt(page_index))
+    pPage->Release();
+}
+
 void CPDFXFA_Document::RemovePage(CPDFXFA_Page* page) {
   m_XFAPageList.SetAt(page->GetPageIndex(), NULL);
 }
