@@ -6,7 +6,6 @@
 
 #include "core/fpdfapi/fpdf_page/pageint.h"
 
-#include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fpdfapi/fpdf_pageobj.h"
 
 CPDF_PathObject::CPDF_PathObject() {}

@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "core/fpdfapi/fpdf_edit/include/cpdf_creator.h"
+#include "core/fpdfapi/fpdf_page/include/cpdf_form.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
@@ -16,7 +17,6 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_number.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_reference.h"
 #include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
-#include "core/include/fpdfapi/fpdf_page.h"
 
 namespace {
 

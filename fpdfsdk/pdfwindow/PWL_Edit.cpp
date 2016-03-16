@@ -8,7 +8,7 @@
 
 #include <vector>
 
-#include "core/include/fpdfapi/fpdf_page.h"
+#include "core/include/fpdfapi/fpdf_resource.h"
 #include "core/include/fxcrt/fx_safe_types.h"
 #include "core/include/fxcrt/fx_xml.h"
 #include "core/include/fxge/fx_ge.h"

@@ -8,8 +8,8 @@
 
 #include <vector>
 
+#include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
-#include "core/include/fpdfapi/fpdf_page.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "fpdfsdk/javascript/Field.h"

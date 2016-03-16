@@ -8,7 +8,7 @@
 
 #include <algorithm>
 
-#include "core/include/fpdfapi/fpdf_page.h"
+#include "core/fpdfapi/fpdf_page/include/cpdf_pageobjectholder.h"
 #include "core/include/fxcodec/fx_codec.h"
 #include "xfa/fxfa/app/xfa_ffapp.h"
 #include "xfa/fxfa/app/xfa_ffdoc.h"

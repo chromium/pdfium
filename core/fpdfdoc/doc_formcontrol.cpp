@@ -6,11 +6,11 @@
 
 #include <algorithm>
 
+#include "core/fpdfapi/fpdf_page/include/cpdf_form.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_rendercontext.h"
-#include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
 
 CPDF_FormControl::CPDF_FormControl(CPDF_FormField* pField,

@@ -9,8 +9,8 @@
 
 #include <memory>
 
+#include "core/fpdfapi/fpdf_page/cpdf_pageobjectlist.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_rendercontext.h"
-#include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fxcrt/fx_coordinates.h"
 #include "core/include/fxcrt/fx_system.h"
 

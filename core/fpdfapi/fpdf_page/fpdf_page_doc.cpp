@@ -13,7 +13,6 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "core/fpdfapi/ipdf_pagemodule.h"
-#include "core/include/fpdfapi/fpdf_page.h"
 
 namespace {
 

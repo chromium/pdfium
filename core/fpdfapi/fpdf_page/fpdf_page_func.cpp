@@ -15,7 +15,6 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_simple_parser.h"
-#include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fxcrt/fx_safe_types.h"
 #include "third_party/base/numerics/safe_conversions_impl.h"
 

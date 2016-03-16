@@ -6,11 +6,13 @@
 
 #include "public/fpdf_edit.h"
 
+#include "core/fpdfapi/fpdf_edit/include/cpdf_pagecontentgenerator.h"
+#include "core/fpdfapi/fpdf_page/include/cpdf_form.h"
+#include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_number.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
-#include "core/include/fpdfapi/fpdf_page.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "public/fpdf_formfill.h"
 #include "third_party/base/stl_util.h"

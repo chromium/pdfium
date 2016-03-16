@@ -7,7 +7,7 @@
 #include "fpdfsdk/include/pdfwindow/PWL_Icon.h"
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
-#include "core/include/fpdfapi/fpdf_page.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Utils.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
 

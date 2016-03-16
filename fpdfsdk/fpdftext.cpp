@@ -6,6 +6,7 @@
 
 #include "public/fpdf_text.h"
 
+#include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
 #include "core/fpdftext/include/ipdf_linkextract.h"
 #include "core/fpdftext/include/ipdf_textpage.h"
 #include "core/fpdftext/include/ipdf_textpagefind.h"

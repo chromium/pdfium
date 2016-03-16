@@ -7,7 +7,6 @@
 #ifndef CORE_FPDFTEXT_INCLUDE_IPDF_TEXTPAGE_H_
 #define CORE_FPDFTEXT_INCLUDE_IPDF_TEXTPAGE_H_
 
-#include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fpdfapi/fpdf_pageobj.h"
 #include "core/include/fxcrt/fx_coordinates.h"
 #include "core/include/fxcrt/fx_system.h"

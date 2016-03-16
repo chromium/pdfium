@@ -7,7 +7,6 @@
 #ifndef CORE_FPDFAPI_FPDF_EDIT_INCLUDE_CPDF_CREATOR_H_
 #define CORE_FPDFAPI_FPDF_EDIT_INCLUDE_CPDF_CREATOR_H_
 
-#include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fpdfapi/fpdf_pageobj.h"
 
 class CPDF_Parser;

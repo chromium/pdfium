@@ -10,10 +10,12 @@
 #include <deque>
 #include <vector>
 
+#include "core/fpdfapi/fpdf_page/cpdf_pageobjectlist.h"
+#include "core/fpdfapi/fpdf_page/include/cpdf_form.h"
+#include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
 #include "core/fpdftext/include/ipdf_linkextract.h"
 #include "core/fpdftext/include/ipdf_textpage.h"
 #include "core/fpdftext/include/ipdf_textpagefind.h"
-#include "core/include/fpdfapi/fpdf_page.h"
 #include "core/include/fxcrt/fx_basic.h"
 
 class CFX_BidiChar;
