@@ -1491,6 +1491,7 @@ test("pdfium_unittests") {
     "//testing/gtest",
     "//testing/gtest:gtest_main",
   ]
+  include_dirs = []
   if (pdf_enable_xfa) {
     sources += [
       "xfa/fxbarcode/pdf417/BC_PDF417HighLevelEncoder_unittest.cpp",
