@@ -8,6 +8,7 @@
 /testing/gtest
 /third_party/llvm
 /third_party/llvm-build
+/third_party/skia
 /tools/clang
 /v8
 /xcodebuild

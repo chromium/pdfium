@@ -1,38 +1,57 @@
 use_relative_paths = True
 
+vars = {
+  'chromium_git': 'https://chromium.googlesource.com',
+  'pdfium_git': 'https://pdfium.googlesource.com',
+
+  'buildtools_revision': 'c2f259809d5ede3275df5ea0842f0431990c4f98',
+  'cygwin_revision': 'c89e446b273697fadf3a10ff1007a97c0b7de6df',
+  'gmock_revision': '29763965ab52f24565299976b936d1265cb6a271',
+  'gtest_revision': '8245545b6dc9c4703e6496d1efd19e975ad2b038',
+  'icu_revision': '8d342a405be5ae8aacb1e16f0bc31c3a4fbf26a2',
+  'pdfium_tests_revision': 'bafb069353f96d441c6a37786d18cd9f5407937f',
+  'skia_revision': 'ed854fb897fa134f2f64738a75293502fdcf1af2',
+  'trace_event_revision': 'd83d44b13d07c2fd0a40101a7deef9b93b841732',
+  'v8_revision': '3c3d7e7be80f45eeea0dc74a71d7552e2afc2985',
+
+}
+
 deps = {
   "build/gyp":
-    "https://chromium.googlesource.com/external/gyp",
+    Var('chromium_git') + "/external/gyp",
 
   "buildtools":
-    "https://chromium.googlesource.com/chromium/buildtools.git@c2f259809d5ede3275df5ea0842f0431990c4f98",
+    Var('chromium_git') + "/chromium/buildtools.git@" + Var('buildtools_revision'),
 
   "testing/corpus":
-     "https://pdfium.googlesource.com/pdfium_tests@bafb069353f96d441c6a37786d18cd9f5407937f",
+    Var('pdfium_git') + "/pdfium_tests@" + Var('pdfium_tests_revision'),
 
   "testing/gmock":
-     "https://chromium.googlesource.com/external/googlemock.git@29763965ab52f24565299976b936d1265cb6a271",
+    Var('chromium_git') + "/external/googlemock.git@" + Var('gmock_revision'),
 
   "testing/gtest":
-     "https://chromium.googlesource.com/external/googletest.git@8245545b6dc9c4703e6496d1efd19e975ad2b038",
+    Var('chromium_git') + "/external/googletest.git@" + Var('gtest_revision'),
+
+  "third_party/skia":
+    Var('chromium_git') + '/skia.git' + '@' +  Var('skia_revision'),
 
   "tools/clang":
-    "https://chromium.googlesource.com/chromium/src/tools/clang",
+    Var('chromium_git') + "/chromium/src/tools/clang",
 
   "v8":
-    "https://chromium.googlesource.com/v8/v8.git@3c3d7e7be80f45eeea0dc74a71d7552e2afc2985",
+    Var('chromium_git') + "/v8/v8.git@" + Var('v8_revision'),
 
   "v8/base/trace_event/common":
-    "https://chromium.googlesource.com/chromium/src/base/trace_event/common.git@d83d44b13d07c2fd0a40101a7deef9b93b841732",
+    Var('chromium_git') + "/chromium/src/base/trace_event/common.git@" + Var('trace_event_revision'),
 
   "v8/third_party/icu":
-    "https://chromium.googlesource.com/chromium/deps/icu.git@8d342a405be5ae8aacb1e16f0bc31c3a4fbf26a2",
+    Var('chromium_git') + "/chromium/deps/icu.git@" + Var('icu_revision'),
 }
 
 deps_os = {
   "win": {
     "v8/third_party/cygwin":
-      "https://chromium.googlesource.com/chromium/deps/cygwin@c89e446b273697fadf3a10ff1007a97c0b7de6df",
+      Var('chromium_git') + "/chromium/deps/cygwin@" + Var('cygwin_revision'),
   },
 }
 
