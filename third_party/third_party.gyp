@@ -327,6 +327,13 @@
             '-Wno-shift-negative-value',
           ],
         }],
+        ['OS == "win"', {
+          'direct_dependent_settings': {
+            'include_dirs': [
+              'zlib_v128',
+            ],
+          }
+        }],
       ],
       'variables': {
         'clang_warning_flags': [

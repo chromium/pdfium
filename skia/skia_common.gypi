@@ -26,6 +26,11 @@
         'SK_BUILD_FOR_IOS',
       ],
     }],
+    [ 'OS == "win"', {
+      'defines': [
+        'SK_BUILD_FOR_WIN32',
+      ],
+    }],
     [ 'OS != "mac"', {
       'sources/': [
         ['exclude', '_mac\\.(cc|cpp|mm?)$'],
