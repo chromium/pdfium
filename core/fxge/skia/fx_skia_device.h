@@ -8,6 +8,7 @@
 #if defined(_SKIA_SUPPORT_)
 
 class SkCanvas;
+class SkMatrix;
 class SkPaint;
 class SkPath;
 class SkPictureRecorder;
@@ -55,12 +56,6 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                    int alpha_flag = 0,
                    void* pIccTransform = NULL,
                    int blend_type = FXDIB_BLEND_NORMAL) override;
-
-  FX_BOOL SetPixel(int x,
-                   int y,
-                   FX_DWORD color,
-                   int alpha_flag = 0,
-                   void* pIccTransform = NULL) override;
 
   FX_BOOL FillRect(const FX_RECT* pRect,
                    FX_DWORD fill_color,
@@ -133,16 +128,8 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                          int alpha_flag = 0,
                          void* pIccTransform = NULL) override;
 
-  FX_BOOL RenderRasterizer(agg::rasterizer_scanline_aa& rasterizer,
-                           FX_DWORD color,
-                           FX_BOOL bFullCover,
-                           FX_BOOL bGroupKnockout,
-                           int alpha_flag,
-                           void* pIccTransform);
-  void SetClipMask(agg::rasterizer_scanline_aa& rasterizer);
-  void SetClipMask(SkPath& skPath, SkPaint* spaint);
   virtual uint8_t* GetBuffer() const { return m_pAggDriver->GetBuffer(); }
-  void PaintStroke(SkPaint* spaint, const CFX_GraphStateData* pGraphState);
+  void PaintStroke(SkPaint* spaint, const CFX_GraphStateData* pGraphState, const SkMatrix& matrix);
   SkPictureRecorder* GetRecorder() const { return m_pRecorder; }
 
  private:

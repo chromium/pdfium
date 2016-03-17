@@ -32,6 +32,16 @@ static void DebugShowSkiaPath(const SkPath& path) {
 #endif  // SHOW_SKIA_PATH
 }
 
+static void DebugShowCanvasMatrix(const SkCanvas* canvas) {
+#if SHOW_SKIA_PATH
+  SkMatrix matrix = canvas->getTotalMatrix();
+  SkScalar m[9];
+  matrix.get9(m);
+  printf("(%g,%g,%g) (%g,%g,%g) (%g,%g,%g)\n", m[0], m[1], m[2], m[3], m[4], m[5], m[6],
+         m[7], m[8]);
+#endif  // SHOW_SKIA_PATH
+}
+
 #if DRAW_SKIA_CLIP
 
 static SkPaint DebugClipPaint() {
@@ -62,8 +72,7 @@ static void DebugDrawSkiaClipPath(SkCanvas* canvas, const SkPath& path) {}
 #undef SHOW_SKIA_PATH
 #undef DRAW_SKIA_CLIP
 
-static SkPath BuildPath(const CFX_PathData* pPathData,
-                        const CFX_Matrix* pObject2Device) {
+static SkPath BuildPath(const CFX_PathData* pPathData) {
   SkPath skPath;
   const CFX_PathData* pFPath = pPathData;
   int nPoints = pFPath->GetPointCount();
@@ -71,8 +80,6 @@ static SkPath BuildPath(const CFX_PathData* pPathData,
   for (int i = 0; i < nPoints; i++) {
     FX_FLOAT x = pPoints[i].m_PointX;
     FX_FLOAT y = pPoints[i].m_PointY;
-    if (pObject2Device)
-      pObject2Device->Transform(x, y);
     int point_type = pPoints[i].m_Flag & FXPT_TYPE;
     if (point_type == FXPT_MOVETO) {
       skPath.moveTo(x, y);
@@ -81,10 +88,6 @@ static SkPath BuildPath(const CFX_PathData* pPathData,
     } else if (point_type == FXPT_BEZIERTO) {
       FX_FLOAT x2 = pPoints[i + 1].m_PointX, y2 = pPoints[i + 1].m_PointY;
       FX_FLOAT x3 = pPoints[i + 2].m_PointX, y3 = pPoints[i + 2].m_PointY;
-      if (pObject2Device) {
-        pObject2Device->Transform(x2, y2);
-        pObject2Device->Transform(x3, y3);
-      }
       skPath.cubicTo(x, y, x2, y2, x3, y3);
       i += 2;
     }
@@ -96,7 +99,8 @@ static SkPath BuildPath(const CFX_PathData* pPathData,
 
 // convert a stroking path to scanlines
 void CFX_SkiaDeviceDriver::PaintStroke(SkPaint* spaint,
-                                       const CFX_GraphStateData* pGraphState) {
+                                       const CFX_GraphStateData* pGraphState,
+                                       const SkMatrix& matrix) {
   SkPaint::Cap cap;
   switch (pGraphState->m_LineCap) {
     case CFX_GraphStateData::LineCapRound:
@@ -121,8 +125,15 @@ void CFX_SkiaDeviceDriver::PaintStroke(SkPaint* spaint,
       join = SkPaint::kMiter_Join;
       break;
   }
-  FX_FLOAT width = pGraphState->m_LineWidth;
-
+  SkMatrix inverse;
+  if (!matrix.invert(&inverse))
+    return;  // give up if the matrix is degenerate, and not invertable
+  inverse.set(SkMatrix::kMTransX, 0);
+  inverse.set(SkMatrix::kMTransY, 0);
+  SkVector deviceUnits[2] = {{0, 1}, {1, 0}};
+  inverse.mapPoints(deviceUnits, SK_ARRAY_COUNT(deviceUnits));
+  FX_FLOAT width = SkTMax(pGraphState->m_LineWidth,
+                          SkTMin(deviceUnits[0].length(), deviceUnits[1].length()));
   if (pGraphState->m_DashArray) {
     int count = (pGraphState->m_DashCount + 1) / 2;
     SkScalar* intervals = FX_Alloc2D(SkScalar, count, sizeof(SkScalar));
@@ -192,6 +203,19 @@ CFX_SkiaDeviceDriver::~CFX_SkiaDeviceDriver() {
   delete m_pAggDriver;
 }
 
+static SkMatrix ToSkMatrix(const CFX_Matrix& m) {
+    SkMatrix skMatrix;
+    skMatrix.setAll(m.a, m.b, m.e, m.c, m.d, m.f, 0, 0, 1);
+    return skMatrix;
+}
+
+// use when pdf's y-axis points up insead of down
+static SkMatrix ToFlippedSkMatrix(const CFX_Matrix& m) {
+    SkMatrix skMatrix;
+    skMatrix.setAll(m.a, m.b, m.e, -m.c, -m.d, m.f, 0, 0, 1);
+    return skMatrix;
+}
+
 FX_BOOL CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
                                              const FXTEXT_CHARPOS* pCharPos,
                                              CFX_Font* pFont,
@@ -210,10 +234,7 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
   paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
   paint.setTextSize(font_size);
   m_pCanvas->save();
-  SkMatrix skMatrix;
-  const CFX_Matrix& m = *pObject2Device;
-  // note that PDF's y-axis goes up; Skia's y-axis goes down
-  skMatrix.setAll(m.a, m.b, m.e, -m.c, -m.d, m.f, 0, 0, 1);
+  SkMatrix skMatrix = ToFlippedSkMatrix(*pObject2Device);
   m_pCanvas->concat(skMatrix);
   for (int index = 0; index < nChars; ++index) {
     const FXTEXT_CHARPOS& cp = pCharPos[index];
@@ -248,22 +269,12 @@ int CFX_SkiaDeviceDriver::GetDeviceCaps(int caps_id) {
 
 void CFX_SkiaDeviceDriver::SaveState() {
   m_pCanvas->save();
-  if (m_pAggDriver)
-    m_pAggDriver->SaveState();
 }
 
 void CFX_SkiaDeviceDriver::RestoreState(FX_BOOL bKeepSaved) {
-  if (m_pAggDriver)
-    m_pAggDriver->RestoreState(bKeepSaved);
   m_pCanvas->restore();
   if (bKeepSaved)
     m_pCanvas->save();
-}
-
-void CFX_SkiaDeviceDriver::SetClipMask(
-    agg::rasterizer_scanline_aa& rasterizer) {
-  if (m_pAggDriver)
-    m_pAggDriver->SetClipMask(rasterizer);
 }
 
 FX_BOOL CFX_SkiaDeviceDriver::SetClip_PathFill(
@@ -285,10 +296,12 @@ FX_BOOL CFX_SkiaDeviceDriver::SetClip_PathFill(
       return TRUE;
     }
   }
-  SkPath skClipPath = BuildPath(pPathData, pObject2Device);
+  SkPath skClipPath = BuildPath(pPathData);
   skClipPath.setFillType((fill_mode & 3) == FXFILL_WINDING
                              ? SkPath::kWinding_FillType
                              : SkPath::kEvenOdd_FillType);
+  SkMatrix skMatrix = ToSkMatrix(*pObject2Device);
+  skClipPath.transform(skMatrix);
   DebugShowSkiaPath(skClipPath);
   DebugDrawSkiaClipPath(m_pCanvas, skClipPath);
   m_pCanvas->clipPath(skClipPath);
@@ -302,29 +315,18 @@ FX_BOOL CFX_SkiaDeviceDriver::SetClip_PathStroke(
     const CFX_GraphStateData* pGraphState  // graphic state, for pen attributes
     ) {
   // build path data
-  SkPath skPath = BuildPath(pPathData, NULL);
+  SkPath skPath = BuildPath(pPathData);
   skPath.setFillType(SkPath::kWinding_FillType);
 
+  SkMatrix skMatrix = ToSkMatrix(*pObject2Device);
   SkPaint spaint;
-  PaintStroke(&spaint, pGraphState);
+  PaintStroke(&spaint, pGraphState, skMatrix);
   SkPath dst_path;
   spaint.getFillPath(skPath, &dst_path);
+  dst_path.transform(skMatrix);
   DebugDrawSkiaClipPath(m_pCanvas, dst_path);
   m_pCanvas->clipPath(dst_path);
   return TRUE;
-}
-
-FX_BOOL CFX_SkiaDeviceDriver::RenderRasterizer(
-    agg::rasterizer_scanline_aa& rasterizer,
-    FX_DWORD color,
-    FX_BOOL bFullCover,
-    FX_BOOL bGroupKnockout,
-    int alpha_flag,
-    void* pIccTransform) {
-  return m_pAggDriver &&
-         m_pAggDriver->RenderRasterizer(rasterizer, color, bFullCover,
-                                        bGroupKnockout, alpha_flag,
-                                        pIccTransform);
 }
 
 FX_BOOL CFX_SkiaDeviceDriver::DrawPath(
@@ -340,9 +342,12 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawPath(
   SkIRect rect;
   rect.set(0, 0, GetDeviceCaps(FXDC_PIXEL_WIDTH),
            GetDeviceCaps(FXDC_PIXEL_HEIGHT));
-  SkPath skPath = BuildPath(pPathData, pObject2Device);
+  SkPath skPath = BuildPath(pPathData);
   SkPaint spaint;
   spaint.setAntiAlias(true);
+  m_pCanvas->save();
+  SkMatrix skMatrix = ToSkMatrix(*pObject2Device);
+  m_pCanvas->concat(skMatrix);
   if ((fill_mode & 3) && fill_color) {
     skPath.setFillType((fill_mode & 3) == FXFILL_WINDING
                            ? SkPath::kWinding_FillType
@@ -358,20 +363,13 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawPath(
 
   if (pGraphState && stroke_alpha) {
     spaint.setColor(stroke_color);
-    PaintStroke(&spaint, pGraphState);
+    PaintStroke(&spaint, pGraphState, skMatrix);
+    DebugShowSkiaPath(skPath);
+    DebugShowCanvasMatrix(m_pCanvas);
     m_pCanvas->drawPath(skPath, spaint);
   }
-
+  m_pCanvas->restore();
   return TRUE;
-}
-
-FX_BOOL CFX_SkiaDeviceDriver::SetPixel(int x,
-                                       int y,
-                                       FX_DWORD color,
-                                       int alpha_flag,
-                                       void* pIccTransform) {
-  return m_pAggDriver &&
-         m_pAggDriver->SetPixel(x, y, color, alpha_flag, pIccTransform);
 }
 
 FX_BOOL CFX_SkiaDeviceDriver::FillRect(const FX_RECT* pRect,
@@ -514,7 +512,7 @@ FX_BOOL CFX_SkiaDeviceDriver::StartDIBits(const CFX_DIBSource* pSource,
   m_pCanvas->concat(skMatrix);
   SkPaint paint;
   paint.setAntiAlias(true);
-  paint.setFilterQuality(kLow_SkFilterQuality);
+  paint.setFilterQuality(kHigh_SkFilterQuality);
   m_pCanvas->drawBitmap(skBitmap, 0, 0, &paint);
   m_pCanvas->restore();
   return TRUE;

@@ -638,7 +638,7 @@ static_library("fxge") {
   ]
 
   if (pdf_use_skia) {
-    sources += [ "core/src/fxge/skia/fx_skia_device.cpp" ]
+    sources += [ "core/fxge/skia/fx_skia_device.cpp" ]
     deps += [ "//skia" ]
   }
 
