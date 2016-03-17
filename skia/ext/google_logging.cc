@@ -6,6 +6,7 @@
 // for Skia SkASSERT. If you don't want this, you can link with another file
 // that provides integration with the logging of your choice.
 
+#include <stdarg.h>
 #include <stdio.h>
 
 #include "third_party/skia/include/core/SkTypes.h"
