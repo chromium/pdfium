@@ -12,6 +12,8 @@
 #include "xfa/fxfa/app/xfa_ffwidget.h"
 #include "xfa/fxfa/app/xfa_ffwidgetacc.h"
 #include "xfa/fxfa/app/xfa_textlayout.h"
+#include "xfa/fxgraphics/cfx_color.h"
+#include "xfa/fxgraphics/cfx_path.h"
 #include "xfa/include/fwl/core/fwl_widgetmgr.h"
 #include "xfa/include/fwl/lightwidget/pushbutton.h"
 

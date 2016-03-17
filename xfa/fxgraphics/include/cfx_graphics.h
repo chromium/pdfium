@@ -1,15 +1,20 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2016 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_INCLUDE_FXGRAPHICS_FX_GRAPHICS_H_
-#define XFA_INCLUDE_FXGRAPHICS_FX_GRAPHICS_H_
+#ifndef XFA_FXGRAPHICS_INCLUDE_CFX_GRAPHICS_H_
+#define XFA_FXGRAPHICS_INCLUDE_CFX_GRAPHICS_H_
 
-#include "core/include/fpdfapi/fpdf_pageobj.h"
+#include "core/include/fxcrt/fx_system.h"
+#include "core/include/fxge/fx_dib.h"
+#include "core/include/fxge/fx_ge.h"
 
-typedef int FX_ERR;
+class CFX_Color;
+class CFX_Path;
+class CAGG_Graphics;
+
 #define FX_ERR_Succeeded 0
 #define FX_ERR_Indefinite -1
 #define FX_ERR_Parameter_Invalid -100
@@ -18,25 +23,27 @@ typedef int FX_ERR;
 #define FX_ERR_Method_Not_Supported -400
 #define FX_ERR_Out_Of_Memory -500
 
-#define FX_SHADING_Steps 256
-typedef int32_t FX_DashStyle;
-enum {
+using FX_ERR = int;
+using FX_DeviceCap = int32_t;
+using FX_FillMode = int32_t;
+
+enum FX_DashStyle {
   FX_DASHSTYLE_Solid = 0,
   FX_DASHSTYLE_Dash = 1,
   FX_DASHSTYLE_Dot = 2,
   FX_DASHSTYLE_DashDot = 3,
   FX_DASHSTYLE_DashDotDot = 4
 };
-typedef int32_t FX_StrokeAlignment;
-enum {
+
+enum FX_StrokeAlignment {
   FX_STROKEALIGNMENT_Center = 0,
   FX_STROKEALIGNMENT_Inset = 1,
   FX_STROKEALIGNMENT_Outset = 2,
   FX_STROKEALIGNMENT_Left = 3,
   FX_STROKEALIGNMENT_Right = 4
 };
-typedef int32_t FX_HatchStyle;
-enum {
+
+enum FX_HatchStyle {
   FX_HATCHSTYLE_Horizontal = 0,
   FX_HATCHSTYLE_Vertical = 1,
   FX_HATCHSTYLE_ForwardDiagonal = 2,
@@ -91,35 +98,8 @@ enum {
   FX_HATCHSTYLE_OutlinedDiamond = 51,
   FX_HATCHSTYLE_SolidDiamond = 52
 };
-typedef int32_t FX_DeviceCap;
-typedef int32_t FX_FillMode;
+
 class CFX_RenderDevice;
-class CFX_GraphStateData;
-class CFX_Matrix;
-class CFX_DIBSource;
-class CFX_DIBitmap;
-class CFX_Font;
-class CFX_WideString;
-class CFX_PathGenerator;
-class CFX_Graphics;
-class CFX_Color;
-class CFX_Path;
-class CFX_Pattern;
-class CFX_Shading;
-
-class CAGG_Graphics {
- public:
-  CAGG_Graphics();
-  virtual ~CAGG_Graphics();
-
-  FX_ERR Create(CFX_Graphics* owner,
-                int32_t width,
-                int32_t height,
-                FXDIB_Format format);
-
- private:
-  CFX_Graphics* m_owner;
-};
 
 class CFX_Graphics {
  public:
@@ -202,7 +182,37 @@ class CFX_Graphics {
   FX_ERR XorDIBitmap(const CFX_DIBitmap* srcBitmap, const CFX_RectF& rect);
   FX_ERR EqvDIBitmap(const CFX_DIBitmap* srcBitmap, const CFX_RectF& rect);
 
+ protected:
+  int32_t m_type;
+
  private:
+  struct TInfo {
+    TInfo()
+        : isAntialiasing(TRUE),
+          strokeAlignment(FX_STROKEALIGNMENT_Center),
+          isActOnDash(FALSE),
+          strokeColor(nullptr),
+          fillColor(nullptr),
+          font(nullptr),
+          fontSize(40.0),
+          fontHScale(1.0),
+          fontSpacing(0.0) {}
+    explicit TInfo(const TInfo& info);
+    TInfo& operator=(const TInfo& other);
+
+    CFX_GraphStateData graphState;
+    FX_BOOL isAntialiasing;
+    FX_StrokeAlignment strokeAlignment;
+    CFX_Matrix CTM;
+    FX_BOOL isActOnDash;
+    CFX_Color* strokeColor;
+    CFX_Color* fillColor;
+    CFX_Font* font;
+    FX_FLOAT fontSize;
+    FX_FLOAT fontHScale;
+    FX_FLOAT fontSpacing;
+  } m_info;
+
   FX_ERR RenderDeviceSetLineDash(FX_DashStyle dashStyle);
   FX_ERR RenderDeviceStrokePath(CFX_Path* path, CFX_Matrix* matrix);
   FX_ERR RenderDeviceFillPath(CFX_Path* path,
@@ -234,202 +244,10 @@ class CFX_Graphics {
                       FXTEXT_CHARPOS* charPos,
                       CFX_RectF& rect);
 
- protected:
-  int32_t m_type;
-
- private:
-  struct TInfo {
-    TInfo()
-        : isAntialiasing(TRUE),
-          strokeAlignment(FX_STROKEALIGNMENT_Center),
-          isActOnDash(FALSE),
-          strokeColor(nullptr),
-          fillColor(nullptr),
-          font(nullptr),
-          fontSize(40.0),
-          fontHScale(1.0),
-          fontSpacing(0.0) {}
-    explicit TInfo(const TInfo& info);
-    TInfo& operator=(const TInfo& other);
-
-    CFX_GraphStateData graphState;
-    FX_BOOL isAntialiasing;
-    FX_StrokeAlignment strokeAlignment;
-    CFX_Matrix CTM;
-    FX_BOOL isActOnDash;
-    CFX_Color* strokeColor;
-    CFX_Color* fillColor;
-    CFX_Font* font;
-    FX_FLOAT fontSize;
-    FX_FLOAT fontHScale;
-    FX_FLOAT fontSpacing;
-  } m_info;
   CFX_RenderDevice* m_renderDevice;
   CFX_PtrArray m_infoStack;
   CAGG_Graphics* m_aggGraphics;
   friend class CAGG_Graphics;
 };
 
-class CFX_Path {
- public:
-  CFX_Path();
-  virtual ~CFX_Path();
-
-  FX_ERR Create();
-  FX_ERR MoveTo(FX_FLOAT x, FX_FLOAT y);
-  FX_ERR LineTo(FX_FLOAT x, FX_FLOAT y);
-  FX_ERR BezierTo(FX_FLOAT ctrlX1,
-                  FX_FLOAT ctrlY1,
-                  FX_FLOAT ctrlX2,
-                  FX_FLOAT ctrlY2,
-                  FX_FLOAT toX,
-                  FX_FLOAT toY);
-  FX_ERR ArcTo(FX_FLOAT left,
-               FX_FLOAT top,
-               FX_FLOAT width,
-               FX_FLOAT height,
-               FX_FLOAT startAngle,
-               FX_FLOAT sweepAngle);
-  FX_ERR Close();
-
-  FX_ERR AddLine(FX_FLOAT x1, FX_FLOAT y1, FX_FLOAT x2, FX_FLOAT y2);
-  FX_ERR AddBezier(FX_FLOAT startX,
-                   FX_FLOAT startY,
-                   FX_FLOAT ctrlX1,
-                   FX_FLOAT ctrlY1,
-                   FX_FLOAT ctrlX2,
-                   FX_FLOAT ctrlY2,
-                   FX_FLOAT endX,
-                   FX_FLOAT endY);
-  FX_ERR AddRectangle(FX_FLOAT left,
-                      FX_FLOAT top,
-                      FX_FLOAT width,
-                      FX_FLOAT height);
-  FX_ERR AddEllipse(FX_FLOAT left,
-                    FX_FLOAT top,
-                    FX_FLOAT width,
-                    FX_FLOAT height);
-  FX_ERR AddEllipse(const CFX_RectF& rect);
-  FX_ERR AddArc(FX_FLOAT left,
-                FX_FLOAT top,
-                FX_FLOAT width,
-                FX_FLOAT height,
-                FX_FLOAT startAngle,
-                FX_FLOAT sweepAngle);
-  FX_ERR AddPie(FX_FLOAT left,
-                FX_FLOAT top,
-                FX_FLOAT width,
-                FX_FLOAT height,
-                FX_FLOAT startAngle,
-                FX_FLOAT sweepAngle);
-  FX_ERR AddSubpath(CFX_Path* path);
-  FX_ERR Clear();
-
-  FX_BOOL IsEmpty();
-  CFX_PathData* GetPathData();
-
- private:
-  CFX_PathGenerator* m_generator;
-};
-
-class CFX_Color {
- public:
-  CFX_Color();
-  // TODO(weili): Remove implicit conversions. Make this explicit.
-  CFX_Color(const FX_ARGB argb);
-  explicit CFX_Color(CFX_Pattern* pattern, const FX_ARGB argb = 0x0);
-  explicit CFX_Color(CFX_Shading* shading);
-  virtual ~CFX_Color();
-
-  FX_ERR Set(const FX_ARGB argb);
-  FX_ERR Set(CFX_Pattern* pattern, const FX_ARGB argb = 0x0);
-  FX_ERR Set(CFX_Shading* shading);
-
- private:
-  int32_t m_type;
-  union {
-    struct {
-      FX_ARGB argb;
-      CFX_Pattern* pattern;
-    } m_info;
-    CFX_Shading* m_shading;
-  };
-
-  friend class CFX_Graphics;
-};
-
-class CFX_Pattern {
- public:
-  CFX_Pattern();
-  virtual ~CFX_Pattern();
-
-  FX_ERR Create(CFX_DIBitmap* bitmap,
-                const FX_FLOAT xStep,
-                const FX_FLOAT yStep,
-                CFX_Matrix* matrix = NULL);
-  FX_ERR Create(FX_HatchStyle hatchStyle,
-                const FX_ARGB foreArgb,
-                const FX_ARGB backArgb,
-                CFX_Matrix* matrix = NULL);
-
- private:
-  int32_t m_type;
-  CFX_Matrix m_matrix;
-  union {
-    struct {
-      CFX_RectF rect;
-      FX_FLOAT xStep;
-      FX_FLOAT yStep;
-      FX_BOOL isColored;
-    } m_rectInfo;
-    struct {
-      CFX_DIBitmap* bitmap;
-      FX_FLOAT x1Step;
-      FX_FLOAT y1Step;
-    } m_bitmapInfo;
-    struct {
-      FX_HatchStyle hatchStyle;
-      FX_ARGB foreArgb;
-      FX_ARGB backArgb;
-    } m_hatchInfo;
-  };
-  friend class CFX_Graphics;
-};
-
-class CFX_Shading {
- public:
-  CFX_Shading();
-  virtual ~CFX_Shading();
-
-  FX_ERR CreateAxial(const CFX_PointF& beginPoint,
-                     const CFX_PointF& endPoint,
-                     FX_BOOL isExtendedBegin,
-                     FX_BOOL isExtendedEnd,
-                     const FX_ARGB beginArgb,
-                     const FX_ARGB endArgb);
-  FX_ERR CreateRadial(const CFX_PointF& beginPoint,
-                      const CFX_PointF& endPoint,
-                      const FX_FLOAT beginRadius,
-                      const FX_FLOAT endRadius,
-                      FX_BOOL isExtendedBegin,
-                      FX_BOOL isExtendedEnd,
-                      const FX_ARGB beginArgb,
-                      const FX_ARGB endArgb);
-
- private:
-  FX_ERR InitArgbArray();
-
-  int32_t m_type;
-  CFX_PointF m_beginPoint;
-  CFX_PointF m_endPoint;
-  FX_FLOAT m_beginRadius;
-  FX_FLOAT m_endRadius;
-  FX_BOOL m_isExtendedBegin;
-  FX_BOOL m_isExtendedEnd;
-  FX_ARGB m_beginArgb;
-  FX_ARGB m_endArgb;
-  FX_ARGB m_argbArray[FX_SHADING_Steps];
-  friend class CFX_Graphics;
-};
-
-#endif  // XFA_INCLUDE_FXGRAPHICS_FX_GRAPHICS_H_
+#endif  // XFA_FXGRAPHICS_INCLUDE_CFX_GRAPHICS_H_

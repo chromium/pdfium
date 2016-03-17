@@ -12,8 +12,8 @@
 #include "xfa/fxfa/app/xfa_ffpageview.h"
 #include "xfa/fxfa/app/xfa_ffwidget.h"
 #include "xfa/fxfa/app/xfa_textlayout.h"
+#include "xfa/fxgraphics/include/cfx_graphics.h"
 #include "xfa/include/fwl/core/fwl_widgetdef.h"
-#include "xfa/include/fxgraphics/fx_graphics.h"
 
 CXFA_FFText::CXFA_FFText(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc)
     : CXFA_FFDraw(pPageView, pDataAcc) {}

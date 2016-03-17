@@ -10,6 +10,7 @@
 #include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fxfa/app/xfa_ffapp.h"
 #include "xfa/fxfa/app/xfa_ffwidget.h"
+#include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/include/fwl/basewidget/fwl_barcode.h"
 #include "xfa/include/fwl/basewidget/fwl_caret.h"
 #include "xfa/include/fwl/basewidget/fwl_checkbox.h"

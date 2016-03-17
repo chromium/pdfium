@@ -10,7 +10,6 @@
 #include "xfa/include/fwl/core/fwl_note.h"
 #include "xfa/include/fwl/core/fwl_target.h"
 #include "xfa/include/fwl/core/fwl_widgetdef.h"
-#include "xfa/include/fxgraphics/fx_graphics.h"
 
 class IFWL_ThemeProvider;
 class CFWL_WidgetImpProperties;

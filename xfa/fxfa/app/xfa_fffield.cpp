@@ -13,6 +13,8 @@
 #include "xfa/fxfa/app/xfa_ffwidget.h"
 #include "xfa/fxfa/app/xfa_fwltheme.h"
 #include "xfa/fxfa/app/xfa_textlayout.h"
+#include "xfa/fxgraphics/cfx_color.h"
+#include "xfa/fxgraphics/cfx_path.h"
 #include "xfa/include/fwl/basewidget/fwl_edit.h"
 #include "xfa/include/fwl/core/fwl_widgetmgr.h"
 #include "xfa/include/fwl/lightwidget/edit.h"

@@ -6,6 +6,8 @@
 
 #include "xfa/include/fwl/theme/scrollbartp.h"
 
+#include "xfa/fxgraphics/cfx_color.h"
+#include "xfa/fxgraphics/cfx_path.h"
 #include "xfa/include/fwl/basewidget/fwl_scrollbar.h"
 #include "xfa/include/fwl/core/fwl_widget.h"
 

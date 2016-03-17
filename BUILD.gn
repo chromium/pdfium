@@ -1354,10 +1354,20 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/parser/xfa_script_signaturepseudomodel.h",
       "xfa/fxfa/parser/xfa_utils.h",
       "xfa/fxfa/parser/xfa_utils_imp.cpp",
-      "xfa/fxgraphics/fx_graphics.cpp",
-      "xfa/fxgraphics/fx_path_generator.cpp",
-      "xfa/fxgraphics/fx_path_generator.h",
-      "xfa/fxgraphics/pre.h",
+      "xfa/fxgraphics/cagg_graphics.cpp",
+      "xfa/fxgraphics/cagg_graphics.h",
+      "xfa/fxgraphics/cfx_color.cpp",
+      "xfa/fxgraphics/cfx_color.h",
+      "xfa/fxgraphics/cfx_graphics.cpp",
+      "xfa/fxgraphics/cfx_path.cpp",
+      "xfa/fxgraphics/cfx_path.h",
+      "xfa/fxgraphics/cfx_path_generator.cpp",
+      "xfa/fxgraphics/cfx_path_generator.h",
+      "xfa/fxgraphics/cfx_pattern.cpp",
+      "xfa/fxgraphics/cfx_pattern.h",
+      "xfa/fxgraphics/cfx_shading.cpp",
+      "xfa/fxgraphics/cfx_shading.h",
+      "xfa/fxgraphics/include/cfx_graphics.h",
       "xfa/fxjse/include/fxjse.h",
       "xfa/include/fwl/adapter/fwl_adapternative.h",
       "xfa/include/fwl/adapter/fwl_adapterthreadmgr.h",
@@ -1426,7 +1436,6 @@ if (pdf_enable_xfa) {
       "xfa/include/fxfa/fxfa_basic.h",
       "xfa/include/fxfa/fxfa_objectacc.h",
       "xfa/include/fxfa/fxfa_widget.h",
-      "xfa/include/fxgraphics/fx_graphics.h",
     ]
     include_dirs = [ "." ]
     if (pdf_enable_v8) {
@@ -1499,9 +1508,7 @@ test("pdfium_unittests") {
     ]
   }
   if (pdf_enable_v8) {
-    sources += [
-      "fpdfsdk/javascript/public_methods_unittest.cpp",
-    ]
+    sources += [ "fpdfsdk/javascript/public_methods_unittest.cpp" ]
     include_dirs += [
       "//v8",
       "//v8/include",

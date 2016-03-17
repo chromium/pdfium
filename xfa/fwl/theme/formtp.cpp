@@ -7,6 +7,8 @@
 #include "xfa/include/fwl/theme/formtp.h"
 
 #include "xfa/fde/tto/fde_textout.h"
+#include "xfa/fxgraphics/cfx_color.h"
+#include "xfa/fxgraphics/cfx_path.h"
 #include "xfa/include/fwl/core/fwl_form.h"
 #include "xfa/include/fwl/core/fwl_widget.h"
 

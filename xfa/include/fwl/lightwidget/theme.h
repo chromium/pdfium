@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 
+#include "core/include/fxge/fx_dib.h"
 #include "xfa/include/fwl/core/fwl_theme.h"
 
 class CFWL_WidgetTP;

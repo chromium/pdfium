@@ -7,7 +7,7 @@
 #include "xfa/fxfa/app/xfa_rendercontext.h"
 
 #include "xfa/fxfa/app/xfa_ffwidget.h"
-#include "xfa/include/fxgraphics/fx_graphics.h"
+#include "xfa/fxgraphics/include/cfx_graphics.h"
 
 #define XFA_RENDERCONTEXT_MaxCount 30
 

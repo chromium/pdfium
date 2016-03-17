@@ -7,6 +7,8 @@
 #include "xfa/include/fwl/theme/checkboxtp.h"
 
 #include "xfa/fde/tto/fde_textout.h"
+#include "xfa/fxgraphics/cfx_color.h"
+#include "xfa/fxgraphics/cfx_path.h"
 #include "xfa/include/fwl/basewidget/fwl_checkbox.h"
 #include "xfa/include/fwl/core/fwl_widget.h"
 

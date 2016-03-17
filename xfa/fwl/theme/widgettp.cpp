@@ -9,6 +9,9 @@
 #include <algorithm>
 
 #include "xfa/fde/tto/fde_textout.h"
+#include "xfa/fxgraphics/cfx_color.h"
+#include "xfa/fxgraphics/cfx_path.h"
+#include "xfa/fxgraphics/cfx_shading.h"
 #include "xfa/include/fwl/core/fwl_widgetmgr.h"
 
 static void FWL_SetChildThemeID(IFWL_Widget* pParent, FX_DWORD dwThemeID) {
@@ -451,8 +454,7 @@ void CFWL_WidgetTP::DrawAxialShading(CFX_Graphics* pGraphics,
 
   CFX_PointF begPoint(fx1, fy1);
   CFX_PointF endPoint(fx2, fy2);
-  CFX_Shading shading;
-  shading.CreateAxial(begPoint, endPoint, FALSE, FALSE, beginColor, endColor);
+  CFX_Shading shading(begPoint, endPoint, FALSE, FALSE, beginColor, endColor);
   pGraphics->SaveGraphState();
   CFX_Color color1(&shading);
   pGraphics->SetFillColor(&color1);

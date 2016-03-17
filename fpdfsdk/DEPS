@@ -10,4 +10,5 @@ include_rules = [
   '+public',
   '+v8',
   '+xfa/include',
+  '+xfa/fxgraphics/include',
 ]

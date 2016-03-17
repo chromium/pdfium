@@ -7,8 +7,9 @@
 #ifndef XFA_INCLUDE_FWL_CORE_FWL_NOTE_H_
 #define XFA_INCLUDE_FWL_CORE_FWL_NOTE_H_
 
+#include "core/include/fxcrt/fx_coordinates.h"
+#include "xfa/fxgraphics/include/cfx_graphics.h"
 #include "xfa/include/fwl/core/fwl_error.h"
-#include "xfa/include/fxgraphics/fx_graphics.h"
 
 class IFWL_Widget;
 class IFWL_NoteThread;
@@ -44,6 +45,7 @@ class CFWL_EvtSizeChanged;
 class CFWL_EvtIdle;
 class IFWL_NoteDriver;
 class IFWL_NoteLoop;
+
 #define FWL_MSG_Activate L"FWL_MESSAGE_Activate"
 #define FWL_MSG_Deactivate L"FWL_MESSAGE_Deactivate"
 #define FWL_MSG_SetFocus L"FWL_MESSAGE_SetFocus"

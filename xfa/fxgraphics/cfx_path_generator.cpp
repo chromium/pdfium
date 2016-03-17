@@ -4,9 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxgraphics/fx_path_generator.h"
-
-#include "xfa/fxgraphics/pre.h"
+#include "xfa/fxgraphics/cfx_path_generator.h"
 
 CFX_PathGenerator::CFX_PathGenerator() {
   m_pPathData = NULL;

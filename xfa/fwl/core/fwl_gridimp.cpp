@@ -11,6 +11,8 @@
 #include "xfa/fwl/core/fwl_targetimp.h"
 #include "xfa/fwl/core/fwl_threadimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
+#include "xfa/fxgraphics/cfx_color.h"
+#include "xfa/fxgraphics/cfx_path.h"
 
 // static
 IFWL_Grid* IFWL_Grid::Create(const CFWL_WidgetImpProperties& properties) {

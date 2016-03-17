@@ -7,6 +7,8 @@
 #include "xfa/include/fwl/theme/monthcalendartp.h"
 
 #include "xfa/fde/tto/fde_textout.h"
+#include "xfa/fxgraphics/cfx_color.h"
+#include "xfa/fxgraphics/cfx_path.h"
 #include "xfa/include/fwl/basewidget/fwl_monthcalendar.h"
 #include "xfa/include/fwl/core/fwl_widget.h"
 

@@ -7,10 +7,14 @@
 #ifndef XFA_INCLUDE_FWL_CORE_FWL_THEME_H_
 #define XFA_INCLUDE_FWL_CORE_FWL_THEME_H_
 
+#include "core/include/fxcrt/fx_coordinates.h"
+#include "core/include/fxcrt/fx_system.h"
 #include "xfa/include/fwl/core/fwl_error.h"
-#include "xfa/include/fxgraphics/fx_graphics.h"
 
 class IFWL_Widget;
+class CFX_Graphics;
+class CFX_DIBitmap;
+class CFX_Path;
 
 #define FWL_WGTCAPACITY_CXBorder 1
 #define FWL_WGTCAPACITY_CYBorder 2

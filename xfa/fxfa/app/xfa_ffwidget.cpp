@@ -15,7 +15,11 @@
 #include "xfa/fxfa/app/xfa_ffdocview.h"
 #include "xfa/fxfa/app/xfa_ffpageview.h"
 #include "xfa/fxfa/app/xfa_textlayout.h"
-#include "xfa/include/fxgraphics/fx_graphics.h"
+#include "xfa/fxgraphics/cfx_color.h"
+#include "xfa/fxgraphics/cfx_path.h"
+#include "xfa/fxgraphics/cfx_pattern.h"
+#include "xfa/fxgraphics/cfx_shading.h"
+#include "xfa/fxgraphics/include/cfx_graphics.h"
 
 CXFA_FFWidget::CXFA_FFWidget(CXFA_FFPageView* pPageView,
                              CXFA_WidgetAcc* pDataAcc)
@@ -1456,17 +1460,16 @@ static void XFA_BOX_Fill_Radial(CXFA_Box box,
   FX_ARGB crStart, crEnd;
   crStart = fill.GetColor();
   int32_t iType = fill.GetRadial(crEnd);
-  CFX_Shading shading;
   if (iType != XFA_ATTRIBUTEENUM_ToEdge) {
     FX_ARGB temp = crEnd;
     crEnd = crStart;
     crStart = temp;
   }
-  shading.CreateRadial(rtFill.Center(), rtFill.Center(), 0,
-                       FXSYS_sqrt(rtFill.Width() * rtFill.Width() +
-                                  rtFill.Height() * rtFill.Height()) /
-                           2,
-                       TRUE, TRUE, crStart, crEnd);
+  CFX_Shading shading(rtFill.Center(), rtFill.Center(), 0,
+                      FXSYS_sqrt(rtFill.Width() * rtFill.Width() +
+                                 rtFill.Height() * rtFill.Height()) /
+                          2,
+                      TRUE, TRUE, crStart, crEnd);
   CFX_Color cr(&shading);
   pGS->SetFillColor(&cr);
   pGS->FillPath(&fillPath, FXFILL_WINDING, pMatrix);
@@ -1480,7 +1483,7 @@ static void XFA_BOX_Fill_Pattern(CXFA_Box box,
   FX_ARGB crStart, crEnd;
   crStart = fill.GetColor();
   int32_t iType = fill.GetPattern(crEnd);
-  int32_t iHatch = FX_HATCHSTYLE_Cross;
+  FX_HatchStyle iHatch = FX_HATCHSTYLE_Cross;
   switch (iType) {
     case XFA_ATTRIBUTEENUM_CrossDiagonal:
       iHatch = FX_HATCHSTYLE_DiagonalCross;
@@ -1500,8 +1503,8 @@ static void XFA_BOX_Fill_Pattern(CXFA_Box box,
     default:
       break;
   }
-  CFX_Pattern pattern;
-  pattern.Create(iHatch, crEnd, crStart);
+
+  CFX_Pattern pattern(iHatch, crEnd, crStart);
   CFX_Color cr(&pattern);
   pGS->SetFillColor(&cr);
   pGS->FillPath(&fillPath, FXFILL_WINDING, pMatrix);
@@ -1537,8 +1540,7 @@ static void XFA_BOX_Fill_Linear(CXFA_Box box,
     default:
       break;
   }
-  CFX_Shading shading;
-  shading.CreateAxial(ptStart, ptEnd, FALSE, FALSE, crStart, crEnd);
+  CFX_Shading shading(ptStart, ptEnd, FALSE, FALSE, crStart, crEnd);
   CFX_Color cr(&shading);
   pGS->SetFillColor(&cr);
   pGS->FillPath(&fillPath, FXFILL_WINDING, pMatrix);

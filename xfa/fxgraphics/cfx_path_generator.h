@@ -4,19 +4,22 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXGRAPHICS_FX_PATH_GENERATOR_H_
-#define XFA_FXGRAPHICS_FX_PATH_GENERATOR_H_
+#ifndef XFA_FXGRAPHICS_CFX_PATH_GENERATOR_H_
+#define XFA_FXGRAPHICS_CFX_PATH_GENERATOR_H_
 
 #include "core/include/fxge/fx_ge.h"
 
 class CFX_PathGenerator {
  public:
   CFX_PathGenerator();
-  void Create();
   ~CFX_PathGenerator();
+
+  void Create();
   CFX_PathData* GetPathData() const { return m_pPathData; }
+
   void AddPathData(CFX_PathData* path_data);
   void AddPathData(FX_PATHPOINT* points, int count);
+
   void MoveTo(FX_FLOAT x, FX_FLOAT y);
   void LineTo(FX_FLOAT x, FX_FLOAT y);
   void BezierTo(FX_FLOAT ctrl_x1,
@@ -61,4 +64,4 @@ class CFX_PathGenerator {
   CFX_PathData* m_pPathData;
 };
 
-#endif  // XFA_FXGRAPHICS_FX_PATH_GENERATOR_H_
+#endif  // XFA_FXGRAPHICS_CFX_PATH_GENERATOR_H_

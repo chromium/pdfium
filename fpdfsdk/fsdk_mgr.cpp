@@ -23,7 +23,7 @@
 #include "fpdfsdk/include/fpdfxfa/fpdfxfa_doc.h"
 #include "fpdfsdk/include/fpdfxfa/fpdfxfa_page.h"
 #include "fpdfsdk/include/fpdfxfa/fpdfxfa_util.h"
-#include "xfa/include/fxgraphics/fx_graphics.h"
+#include "xfa/fxgraphics/include/cfx_graphics.h"
 #endif  // PDF_ENABLE_XFA
 
 #if _FX_OS_ == _FX_ANDROID_

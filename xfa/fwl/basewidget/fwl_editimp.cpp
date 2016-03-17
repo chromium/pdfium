@@ -21,6 +21,7 @@
 #include "xfa/fwl/core/fwl_threadimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fwl/core/fwl_widgetmgrimp.h"
+#include "xfa/fxgraphics/cfx_path.h"
 #include "xfa/include/fwl/basewidget/fwl_caret.h"
 #include "xfa/include/fwl/basewidget/fwl_datetimepicker.h"
 #include "xfa/include/fwl/core/fwl_theme.h"
