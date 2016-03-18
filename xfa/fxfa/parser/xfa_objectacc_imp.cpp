@@ -169,52 +169,6 @@ int32_t CXFA_Fill::GetRadial(FX_ARGB& endColor) {
   }
   return eAttr;
 }
-FX_BOOL CXFA_Fill::SetPresence(int32_t iPresence) {
-  return m_pNode->SetEnum(XFA_ATTRIBUTE_Presence, (XFA_ATTRIBUTEENUM)iPresence);
-}
-FX_BOOL CXFA_Fill::SetFillType(int32_t iType) {
-  return FALSE;
-}
-FX_BOOL CXFA_Fill::SetPattern(int32_t iPattern, FX_ARGB foreColor) {
-  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_ELEMENT_Pattern);
-  CXFA_Node* pColor = pNode->GetProperty(0, XFA_ELEMENT_Color);
-  CFX_WideString wsColor;
-  int a, r, g, b;
-  ArgbDecode(foreColor, a, r, g, b);
-  wsColor.Format(L"%d,%d,%d", r, g, b);
-  pColor->SetCData(XFA_ATTRIBUTE_Value, wsColor);
-  return pNode->SetEnum(XFA_ATTRIBUTE_Type, (XFA_ATTRIBUTEENUM)iPattern);
-}
-FX_BOOL CXFA_Fill::SetStipple(int32_t iStipple, FX_ARGB stippleColor) {
-  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_ELEMENT_Stipple);
-  CXFA_Node* pColor = pNode->GetProperty(0, XFA_ELEMENT_Color);
-  CFX_WideString wsColor;
-  int a, r, g, b;
-  ArgbDecode(stippleColor, a, r, g, b);
-  wsColor.Format(L"%d,%d,%d", r, g, b);
-  pColor->SetCData(XFA_ATTRIBUTE_Value, wsColor);
-  return pNode->SetEnum(XFA_ATTRIBUTE_Rate, (XFA_ATTRIBUTEENUM)iStipple);
-}
-FX_BOOL CXFA_Fill::SetLinear(int32_t iLinear, FX_ARGB endColor) {
-  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_ELEMENT_Linear);
-  CXFA_Node* pColor = pNode->GetProperty(0, XFA_ELEMENT_Color);
-  CFX_WideString wsColor;
-  int a, r, g, b;
-  ArgbDecode(endColor, a, r, g, b);
-  wsColor.Format(L"%d,%d,%d", r, g, b);
-  pColor->SetCData(XFA_ATTRIBUTE_Value, wsColor);
-  return pNode->SetEnum(XFA_ATTRIBUTE_Type, (XFA_ATTRIBUTEENUM)iLinear);
-}
-FX_BOOL CXFA_Fill::SetRadial(int32_t iRadial, FX_ARGB endColor) {
-  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_ELEMENT_Radial);
-  CXFA_Node* pColor = pNode->GetProperty(0, XFA_ELEMENT_Color);
-  CFX_WideString wsColor;
-  int a, r, g, b;
-  ArgbDecode(endColor, a, r, g, b);
-  wsColor.Format(L"%d,%d,%d", r, g, b);
-  pColor->SetCData(XFA_ATTRIBUTE_Value, wsColor);
-  return pNode->SetEnum(XFA_ATTRIBUTE_Type, (XFA_ATTRIBUTEENUM)iRadial);
-}
 CXFA_Margin::CXFA_Margin(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 FX_BOOL CXFA_Margin::GetLeftInset(FX_FLOAT& fInset, FX_FLOAT fDefInset) const {
   fInset = fDefInset;
@@ -232,18 +186,6 @@ FX_BOOL CXFA_Margin::GetBottomInset(FX_FLOAT& fInset,
                                     FX_FLOAT fDefInset) const {
   fInset = fDefInset;
   return TryMeasure(XFA_ATTRIBUTE_BottomInset, fInset);
-}
-FX_BOOL CXFA_Margin::SetLeftInset(FX_FLOAT fInset) {
-  return SetMeasure(XFA_ATTRIBUTE_LeftInset, fInset);
-}
-FX_BOOL CXFA_Margin::SetTopInset(FX_FLOAT fInset) {
-  return SetMeasure(XFA_ATTRIBUTE_TopInset, fInset);
-}
-FX_BOOL CXFA_Margin::SetRightInset(FX_FLOAT fInset) {
-  return SetMeasure(XFA_ATTRIBUTE_RightInset, fInset);
-}
-FX_BOOL CXFA_Margin::SetBottomInset(FX_FLOAT fInset) {
-  return SetMeasure(XFA_ATTRIBUTE_BottomInset, fInset);
 }
 CXFA_Font::CXFA_Font(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 FX_FLOAT CXFA_Font::GetBaselineShift() {
@@ -277,21 +219,6 @@ int32_t CXFA_Font::GetLineThrough() {
   m_pNode->TryInteger(XFA_ATTRIBUTE_LineThrough, iValue);
   return iValue;
 }
-int32_t CXFA_Font::GetLineThroughPeriod() {
-  XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_All;
-  m_pNode->TryEnum(XFA_ATTRIBUTE_LineThroughPeriod, eAttr);
-  return eAttr;
-}
-int32_t CXFA_Font::GetOverline() {
-  int32_t iValue = 0;
-  m_pNode->TryInteger(XFA_ATTRIBUTE_Overline, iValue);
-  return iValue;
-}
-int32_t CXFA_Font::GetOverlinePeriod() {
-  XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_All;
-  m_pNode->TryEnum(XFA_ATTRIBUTE_OverlinePeriod, eAttr);
-  return eAttr;
-}
 int32_t CXFA_Font::GetUnderline() {
   int32_t iValue = 0;
   m_pNode->TryInteger(XFA_ATTRIBUTE_Underline, iValue);
@@ -320,11 +247,6 @@ FX_BOOL CXFA_Font::IsItalic() {
   m_pNode->TryEnum(XFA_ATTRIBUTE_Posture, eAttr);
   return eAttr == XFA_ATTRIBUTEENUM_Italic;
 }
-FX_BOOL CXFA_Font::IsUseKerning() {
-  XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_None;
-  m_pNode->TryEnum(XFA_ATTRIBUTE_KerningMode, eAttr);
-  return eAttr == XFA_ATTRIBUTEENUM_Pair;
-}
 void CXFA_Font::SetColor(FX_ARGB color) {
   CXFA_Fill fill(m_pNode->GetProperty(0, XFA_ELEMENT_Fill));
   fill.SetColor(color);
@@ -332,44 +254,6 @@ void CXFA_Font::SetColor(FX_ARGB color) {
 FX_ARGB CXFA_Font::GetColor() {
   CXFA_Fill fill(m_pNode->GetChild(0, XFA_ELEMENT_Fill));
   return fill ? fill.GetColor(TRUE) : 0xFF000000;
-}
-FX_BOOL CXFA_Font::SetBaselineShift(FX_FLOAT fBaselineShift) {
-  CXFA_Measurement ms(fBaselineShift, XFA_UNIT_Pt);
-  return m_pNode->SetMeasure(XFA_ATTRIBUTE_BaselineShift, ms);
-}
-FX_BOOL CXFA_Font::SetHorizontalScale(FX_FLOAT fHorizontalScale) {
-  CFX_WideString wsValue;
-  wsValue.Format(L"%d", (int32_t)fHorizontalScale);
-  return m_pNode->SetCData(XFA_ATTRIBUTE_FontHorizontalScale, wsValue);
-}
-FX_BOOL CXFA_Font::SetVerticalScale(FX_FLOAT fVerticalScale) {
-  CFX_WideString wsValue;
-  wsValue.Format(L"%d", (int32_t)fVerticalScale);
-  return m_pNode->SetCData(XFA_ATTRIBUTE_FontVerticalScale, wsValue);
-}
-FX_BOOL CXFA_Font::SetLetterSpacing(FX_FLOAT fLetterSpacing, XFA_UNIT eUnit) {
-  return FALSE;
-}
-FX_BOOL CXFA_Font::SetLineThrough(int32_t iLineThrough) {
-  return m_pNode->SetInteger(XFA_ATTRIBUTE_LineThrough, iLineThrough);
-}
-FX_BOOL CXFA_Font::SetLineThroughPeriod(int32_t iLineThroughPeriod) {
-  return m_pNode->SetEnum(XFA_ATTRIBUTE_LineThroughPeriod,
-                          (XFA_ATTRIBUTEENUM)iLineThroughPeriod);
-}
-FX_BOOL CXFA_Font::SetOverline(int32_t iOverline) {
-  return m_pNode->SetInteger(XFA_ATTRIBUTE_Overline, iOverline);
-}
-FX_BOOL CXFA_Font::SetOverlinePeriod(int32_t iOverlinePeriod) {
-  return m_pNode->SetEnum(XFA_ATTRIBUTE_OverlinePeriod,
-                          (XFA_ATTRIBUTEENUM)iOverlinePeriod);
-}
-FX_BOOL CXFA_Font::SetUnderline(int32_t iUnderline) {
-  return m_pNode->SetInteger(XFA_ATTRIBUTE_Underline, iUnderline);
-}
-FX_BOOL CXFA_Font::SetUnderlinePeriod(int32_t iUnderlinePeriod) {
-  return m_pNode->SetEnum(XFA_ATTRIBUTE_UnderlinePeriod,
-                          (XFA_ATTRIBUTEENUM)iUnderlinePeriod);
 }
 CXFA_Caption::CXFA_Caption(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 int32_t CXFA_Caption::GetPresence() {
@@ -395,19 +279,6 @@ CXFA_Font CXFA_Caption::GetFont() {
 }
 CXFA_Value CXFA_Caption::GetValue() {
   return CXFA_Value(m_pNode ? m_pNode->GetChild(0, XFA_ELEMENT_Value) : NULL);
-}
-CXFA_Para CXFA_Caption::GetPara() {
-  return CXFA_Para(m_pNode ? m_pNode->GetChild(0, XFA_ELEMENT_Para) : NULL);
-}
-FX_BOOL CXFA_Caption::SetPresence(int32_t iPresence) {
-  return m_pNode->SetEnum(XFA_ATTRIBUTE_Presence, (XFA_ATTRIBUTEENUM)iPresence);
-}
-FX_BOOL CXFA_Caption::SetPlacementType(int32_t iType) {
-  return m_pNode->SetEnum(XFA_ATTRIBUTE_Placement, (XFA_ATTRIBUTEENUM)iType);
-}
-FX_BOOL CXFA_Caption::SetReserve(FX_FLOAT fReserve) {
-  CXFA_Measurement ms(fReserve, XFA_UNIT_Pt);
-  return m_pNode->SetMeasure(XFA_ATTRIBUTE_Reserve, ms);
 }
 CXFA_Para::CXFA_Para(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 int32_t CXFA_Para::GetHorizontalAlign() {
@@ -435,16 +306,6 @@ FX_FLOAT CXFA_Para::GetMarginRight() {
   m_pNode->TryMeasure(XFA_ATTRIBUTE_MarginRight, ms);
   return ms.ToUnit(XFA_UNIT_Pt);
 }
-int32_t CXFA_Para::GetOrphans() {
-  int32_t iValue = 0;
-  m_pNode->TryInteger(XFA_ATTRIBUTE_Orphans, iValue);
-  return iValue;
-}
-FX_FLOAT CXFA_Para::GetRadixOffset() {
-  CXFA_Measurement ms;
-  m_pNode->TryMeasure(XFA_ATTRIBUTE_RadixOffset, ms);
-  return ms.ToUnit(XFA_UNIT_Pt);
-}
 FX_FLOAT CXFA_Para::GetSpaceAbove() {
   CXFA_Measurement ms;
   m_pNode->TryMeasure(XFA_ATTRIBUTE_SpaceAbove, ms);
@@ -459,94 +320,6 @@ FX_FLOAT CXFA_Para::GetTextIndent() {
   CXFA_Measurement ms;
   m_pNode->TryMeasure(XFA_ATTRIBUTE_TextIndent, ms);
   return ms.ToUnit(XFA_UNIT_Pt);
-}
-int32_t CXFA_Para::GetWidows() {
-  int32_t iValue = 0;
-  m_pNode->TryInteger(XFA_ATTRIBUTE_Widows, iValue);
-  return iValue;
-}
-FX_BOOL CXFA_Para::SetHorizontalAlign(int32_t iHorizontalAlign) {
-  return m_pNode->SetEnum(XFA_ATTRIBUTE_HAlign,
-                          (XFA_ATTRIBUTEENUM)iHorizontalAlign);
-}
-FX_BOOL CXFA_Para::SetVerticalAlign(int32_t iVerticalAlign) {
-  return m_pNode->SetEnum(XFA_ATTRIBUTE_VAlign,
-                          (XFA_ATTRIBUTEENUM)iVerticalAlign);
-}
-FX_BOOL CXFA_Para::SetLineHeight(FX_FLOAT fLineHeight) {
-  CXFA_Measurement ms;
-  return m_pNode->SetMeasure(XFA_ATTRIBUTE_LineHeight, ms);
-}
-FX_BOOL CXFA_Para::SetMarginLeft(FX_FLOAT fMarginLeft) {
-  CXFA_Measurement ms(fMarginLeft, XFA_UNIT_Pt);
-  return m_pNode->SetMeasure(XFA_ATTRIBUTE_MarginLeft, ms);
-}
-FX_BOOL CXFA_Para::SetMarginRight(FX_FLOAT fMarginRight) {
-  CXFA_Measurement ms(fMarginRight, XFA_UNIT_Pt);
-  return m_pNode->SetMeasure(XFA_ATTRIBUTE_MarginRight, ms);
-}
-FX_BOOL CXFA_Para::SetOrphans(int32_t iOrphans) {
-  return m_pNode->SetInteger(XFA_ATTRIBUTE_Orphans, iOrphans);
-}
-FX_BOOL CXFA_Para::SetRadixOffset(FX_FLOAT fRadixOffset) {
-  CXFA_Measurement ms(fRadixOffset, XFA_UNIT_Pt);
-  return m_pNode->SetMeasure(XFA_ATTRIBUTE_RadixOffset, ms);
-}
-FX_BOOL CXFA_Para::SetSpaceAbove(FX_FLOAT fSpaceAbove) {
-  CXFA_Measurement ms(fSpaceAbove, XFA_UNIT_Pt);
-  return m_pNode->SetMeasure(XFA_ATTRIBUTE_SpaceAbove, ms);
-}
-FX_BOOL CXFA_Para::SetSpaceBelow(FX_FLOAT fSpaceBelow) {
-  CXFA_Measurement ms(fSpaceBelow, XFA_UNIT_Pt);
-  return m_pNode->SetMeasure(XFA_ATTRIBUTE_SpaceBelow, ms);
-}
-FX_BOOL CXFA_Para::SetTextIndent(FX_FLOAT fTextIndent) {
-  CXFA_Measurement ms(fTextIndent, XFA_UNIT_Pt);
-  return m_pNode->SetMeasure(XFA_ATTRIBUTE_TextIndent, ms);
-}
-FX_BOOL CXFA_Para::SetWidows(int32_t iWidows) {
-  return m_pNode->SetInteger(XFA_ATTRIBUTE_Widows, iWidows);
-}
-CXFA_Keep::CXFA_Keep(CXFA_Node* pNode, CXFA_Node* pParent)
-    : CXFA_Data(pNode), m_pParent(pParent) {}
-int32_t CXFA_Keep::GetIntact() {
-  XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_None;
-  switch (m_pParent->GetClassID()) {
-    case XFA_ELEMENT_Subform: {
-      XFA_ATTRIBUTEENUM eAttrSubForm;
-      m_pParent->TryEnum(XFA_ATTRIBUTE_Layout, eAttrSubForm);
-      if (eAttrSubForm == XFA_ATTRIBUTEENUM_Position ||
-          eAttrSubForm == XFA_ATTRIBUTEENUM_Row) {
-        eAttr = XFA_ATTRIBUTEENUM_ContentArea;
-      }
-    } break;
-    case XFA_ELEMENT_Draw:
-      eAttr = XFA_ATTRIBUTEENUM_ContentArea;
-      break;
-    default:
-      break;
-  }
-  m_pNode->TryEnum(XFA_ATTRIBUTE_Intact, eAttr, FALSE);
-  return eAttr;
-}
-int32_t CXFA_Keep::GetNext() {
-  XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_None;
-  m_pNode->TryEnum(XFA_ATTRIBUTE_Next, eAttr);
-  return eAttr;
-}
-int32_t CXFA_Keep::GetPrevious() {
-  XFA_ATTRIBUTEENUM eAttr = XFA_ATTRIBUTEENUM_None;
-  m_pNode->TryEnum(XFA_ATTRIBUTE_Previous, eAttr);
-  return eAttr;
-}
-FX_BOOL CXFA_Keep::SetIntact(int32_t iIntact) {
-  return m_pNode->SetEnum(XFA_ATTRIBUTE_Intact, (XFA_ATTRIBUTEENUM)iIntact);
-}
-FX_BOOL CXFA_Keep::SetNext(int32_t iNext) {
-  return m_pNode->SetEnum(XFA_ATTRIBUTE_Next, (XFA_ATTRIBUTEENUM)iNext);
-}
-FX_BOOL CXFA_Keep::SetPrevious(int32_t iPrevious) {
-  return m_pNode->SetEnum(XFA_ATTRIBUTE_Previous, (XFA_ATTRIBUTEENUM)iPrevious);
 }
 CXFA_Event::CXFA_Event(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 int32_t CXFA_Event::GetActivity() {
@@ -566,29 +339,11 @@ int32_t CXFA_Event::GetEventType() {
 void CXFA_Event::GetRef(CFX_WideStringC& wsRef) {
   m_pNode->TryCData(XFA_ATTRIBUTE_Ref, wsRef);
 }
-int32_t CXFA_Event::GetExecuteRunAt() {
-  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_ELEMENT_Execute);
-  return pNode->GetEnum(XFA_ATTRIBUTE_RunAt);
-}
-int32_t CXFA_Event::GetExecuteType() {
-  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_ELEMENT_Execute);
-  return pNode->GetEnum(XFA_ATTRIBUTE_ExecuteType);
-}
-void CXFA_Event::GetExecuteConnection(CFX_WideString& wsConnection) {
-  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_ELEMENT_Execute);
-  CFX_WideStringC cData;
-  pNode->TryCData(XFA_ATTRIBUTE_Connection, cData);
-  wsConnection = cData;
-}
 CXFA_Script CXFA_Event::GetScript() {
   return CXFA_Script(m_pNode->GetChild(0, XFA_ELEMENT_Script));
 }
 CXFA_Submit CXFA_Event::GetSubmit() {
   return CXFA_Submit(m_pNode->GetChild(0, XFA_ELEMENT_Submit));
-}
-int32_t CXFA_Event::GetSignDataOperation() {
-  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_ELEMENT_SignData);
-  return pNode->GetEnum(XFA_ATTRIBUTE_Operation);
 }
 void CXFA_Event::GetSignDataTarget(CFX_WideString& wsTarget) {
   if (CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_ELEMENT_SignData)) {
@@ -597,41 +352,7 @@ void CXFA_Event::GetSignDataTarget(CFX_WideString& wsTarget) {
     wsTarget = wsCData;
   }
 }
-FX_BOOL CXFA_Event::SetActivity(int32_t iActivity) {
-  return m_pNode->SetEnum(XFA_ATTRIBUTE_Activity, (XFA_ATTRIBUTEENUM)iActivity);
-}
-FX_BOOL CXFA_Event::SetEventType(int32_t iEventType) {
-  return FALSE;
-}
-FX_BOOL CXFA_Event::SetExecuteRunAt(int32_t iExecuteRunAt) {
-  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_ELEMENT_Execute);
-  return pNode->SetEnum(XFA_ATTRIBUTE_RunAt, (XFA_ATTRIBUTEENUM)iExecuteRunAt);
-}
-FX_BOOL CXFA_Event::SetExecuteType(int32_t iExecuteType) {
-  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_ELEMENT_Execute);
-  return pNode->SetEnum(XFA_ATTRIBUTE_ExecuteType,
-                        (XFA_ATTRIBUTEENUM)iExecuteType);
-}
-FX_BOOL CXFA_Event::SetExecuteConnection(const CFX_WideString& wsConnection) {
-  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_ELEMENT_Execute);
-  return pNode->SetCData(XFA_ATTRIBUTE_Connection, wsConnection);
-}
-FX_BOOL CXFA_Event::SetSignDataOperation(int32_t iOperation) {
-  CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_ELEMENT_SignData);
-  return pNode->SetEnum(XFA_ATTRIBUTE_Operation, (XFA_ATTRIBUTEENUM)iOperation);
-}
-FX_BOOL CXFA_Event::SetSignDataTarget(const CFX_WideString& wsTarget) {
-  if (CXFA_Node* pNode = m_pNode->GetProperty(0, XFA_ELEMENT_SignData)) {
-    return pNode->SetCData(XFA_ATTRIBUTE_Target, wsTarget);
-  }
-  return FALSE;
-}
 CXFA_Script::CXFA_Script(CXFA_Node* pNode) : CXFA_Data(pNode) {}
-void CXFA_Script::GetBinding(CFX_WideString& wsBinding) {
-  CFX_WideStringC cData;
-  m_pNode->TryCData(XFA_ATTRIBUTE_Binding, cData);
-  wsBinding = cData;
-}
 XFA_SCRIPTTYPE CXFA_Script::GetContentType() {
   CFX_WideStringC cData;
   if (m_pNode->TryCData(XFA_ATTRIBUTE_ContentType, cData, FALSE)) {
@@ -651,29 +372,6 @@ int32_t CXFA_Script::GetRunAt() {
 void CXFA_Script::GetExpression(CFX_WideString& wsExpression) {
   m_pNode->TryContent(wsExpression);
 }
-FX_BOOL CXFA_Script::SetBinding(const CFX_WideString& wsBinding) {
-  return m_pNode->SetCData(XFA_ATTRIBUTE_Binding, wsBinding);
-}
-FX_BOOL CXFA_Script::SetContentType(XFA_SCRIPTTYPE eType) {
-  CFX_WideString wsType;
-  switch (eType) {
-    case XFA_SCRIPTTYPE_Javascript:
-      wsType = L"application/x-javascript";
-      break;
-    case XFA_SCRIPTTYPE_Formcalc:
-      wsType = L"application/x-formcalc";
-      break;
-    default:
-      break;
-  }
-  return m_pNode->SetCData(XFA_ATTRIBUTE_ContentType, wsType);
-}
-FX_BOOL CXFA_Script::SetRunAt(int32_t iRunAt) {
-  return m_pNode->SetEnum(XFA_ATTRIBUTE_RunAt, (XFA_ATTRIBUTEENUM)iRunAt);
-}
-FX_BOOL CXFA_Script::SetExpression(const CFX_WideString& wsExpression) {
-  return m_pNode->SetContent(wsExpression, wsExpression);
-}
 CXFA_Submit::CXFA_Submit(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 FX_BOOL CXFA_Submit::IsSubmitEmbedPDF() {
   return m_pNode->GetBoolean(XFA_ATTRIBUTE_EmbedPDF);
@@ -684,90 +382,8 @@ int32_t CXFA_Submit::GetSubmitFormat() {
 void CXFA_Submit::GetSubmitTarget(CFX_WideStringC& wsTarget) {
   m_pNode->TryCData(XFA_ATTRIBUTE_Target, wsTarget);
 }
-XFA_TEXTENCODING CXFA_Submit::GetSubmitTextEncoding() {
-  CFX_WideStringC wsCData;
-  if (!m_pNode->TryCData(XFA_ATTRIBUTE_TextEncoding, wsCData)) {
-    return XFA_TEXTENCODING_None;
-  }
-  CFX_WideString wsValue(wsCData);
-  if (wsValue == L"Big-Five") {
-    return XFA_TEXTENCODING_Big5;
-  } else if (wsValue == L"fontSpecific") {
-    return XFA_TEXTENCODING_FontSpecific;
-  } else if (wsValue == L"GBK") {
-    return XFA_TEXTENCODING_GBK;
-  } else if (wsValue == L"GB-18030") {
-    return XFA_TEXTENCODING_GB18030;
-  } else if (wsValue == L"GB-2312") {
-    return XFA_TEXTENCODING_GB2312;
-  } else if (wsValue == L"ISO-8859-NN") {
-    return XFA_TEXTENCODING_ISO8859NN;
-  } else if (wsValue == L"KSC-5601") {
-    return XFA_TEXTENCODING_KSC5601;
-  } else if (wsValue == L"Shift-JIS") {
-    return XFA_TEXTENCODING_ShiftJIS;
-  } else if (wsValue == L"UCS-2") {
-    return XFA_TEXTENCODING_UCS2;
-  } else if (wsValue == L"UTF-16") {
-    return XFA_TEXTENCODING_UTF16;
-  } else if (wsValue == L"UTF-8") {
-    return XFA_TEXTENCODING_UTF8;
-  }
-  return XFA_TEXTENCODING_None;
-}
 void CXFA_Submit::GetSubmitXDPContent(CFX_WideStringC& wsContent) {
   m_pNode->TryCData(XFA_ATTRIBUTE_XdpContent, wsContent);
-}
-FX_BOOL CXFA_Submit::SetSubmitFormat(int32_t iSubmitFormat) {
-  return m_pNode->SetEnum(XFA_ATTRIBUTE_Format,
-                          (XFA_ATTRIBUTEENUM)iSubmitFormat);
-}
-FX_BOOL CXFA_Submit::SetSubmitTarget(const CFX_WideString& wsTarget) {
-  return m_pNode->SetCData(XFA_ATTRIBUTE_Target, wsTarget);
-}
-FX_BOOL CXFA_Submit::SetSubmitTextEncoding(XFA_TEXTENCODING eTextEncoding) {
-  CFX_WideString wsValue;
-  switch (eTextEncoding) {
-    case XFA_TEXTENCODING_Big5:
-      wsValue = L"Big-Five";
-      break;
-    case XFA_TEXTENCODING_FontSpecific:
-      wsValue = L"fontSpecific";
-      break;
-    case XFA_TEXTENCODING_GBK:
-      wsValue = L"GBK";
-      break;
-    case XFA_TEXTENCODING_GB18030:
-      wsValue = L"GB-18030";
-      break;
-    case XFA_TEXTENCODING_GB2312:
-      wsValue = L"GB-2312";
-      break;
-    case XFA_TEXTENCODING_ISO8859NN:
-      wsValue = L"ISO-8859-NN";
-      break;
-    case XFA_TEXTENCODING_KSC5601:
-      wsValue = L"KSC-5601";
-      break;
-    case XFA_TEXTENCODING_ShiftJIS:
-      wsValue = L"Shift-JIS";
-      break;
-    case XFA_TEXTENCODING_UCS2:
-      wsValue = L"UCS-2";
-      break;
-    case XFA_TEXTENCODING_UTF16:
-      wsValue = L"UTF-16";
-      break;
-    case XFA_TEXTENCODING_UTF8:
-      wsValue = L"UTF-8";
-      break;
-    default:
-      break;
-  }
-  return m_pNode->SetCData(XFA_ATTRIBUTE_TextEncoding, wsValue);
-}
-FX_BOOL CXFA_Submit::SetSubmitXDPContent(const CFX_WideString& wsContent) {
-  return m_pNode->SetCData(XFA_ATTRIBUTE_XdpContent, wsContent);
 }
 XFA_ELEMENT CXFA_Value::GetChildValueClassID() {
   if (!m_pNode) {
@@ -812,26 +428,6 @@ CXFA_Image CXFA_Value::GetImage() {
       m_pNode ? (m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild)) : nullptr,
       TRUE);
 }
-FX_BOOL CXFA_Value::SetChildValueContent(const CFX_WideString& wsContent,
-                                         FX_BOOL bNotify,
-                                         XFA_ELEMENT iType) {
-  if (!m_pNode) {
-    return FALSE;
-  }
-  CXFA_Node* pNode = m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
-  if (!pNode) {
-    if (iType == XFA_ELEMENT_UNKNOWN) {
-      return FALSE;
-    }
-    pNode = m_pNode->GetProperty(0, iType);
-  }
-  CFX_WideString wsFormatContent(wsContent);
-  CXFA_WidgetData* pContainerWidgetData = pNode->GetContainerWidgetData();
-  if (pContainerWidgetData) {
-    pContainerWidgetData->GetFormatDataValue(wsContent, wsFormatContent);
-  }
-  return pNode->SetContent(wsContent, wsFormatContent, bNotify);
-}
 int32_t CXFA_Line::GetHand() {
   return m_pNode->GetEnum(XFA_ATTRIBUTE_Hand);
 }
@@ -842,88 +438,13 @@ FX_BOOL CXFA_Line::GetSlop() {
 CXFA_Edge CXFA_Line::GetEdge() {
   return CXFA_Edge(m_pNode->GetChild(0, XFA_ELEMENT_Edge));
 }
-FX_BOOL CXFA_Line::SetHand(int32_t iHand) {
-  return m_pNode->SetEnum(XFA_ATTRIBUTE_Hand, (XFA_ATTRIBUTEENUM)iHand);
-}
-FX_BOOL CXFA_Line::SetSlop(int32_t iSlop) {
-  return m_pNode->SetEnum(XFA_ATTRIBUTE_Slope, (XFA_ATTRIBUTEENUM)iSlop);
-}
 CXFA_Text::CXFA_Text(CXFA_Node* pNode) : CXFA_Data(pNode) {}
-void CXFA_Text::GetName(CFX_WideStringC& wsName) {
-  m_pNode->TryCData(XFA_ATTRIBUTE_Name, wsName);
-}
-int32_t CXFA_Text::GetMaxChars() {
-  return m_pNode->GetInteger(XFA_ATTRIBUTE_MaxChars);
-}
-void CXFA_Text::GetRid(CFX_WideStringC& wsRid) {
-  m_pNode->TryCData(XFA_ATTRIBUTE_Rid, wsRid);
-}
 void CXFA_Text::GetContent(CFX_WideString& wsText) {
   m_pNode->TryContent(wsText);
 }
-void CXFA_Text::SetContent(CFX_WideString wsText, FX_BOOL bNotify) {
-  CFX_WideString wsFormatValue(wsText);
-  CXFA_WidgetData* pContainerWidgetData = m_pNode->GetContainerWidgetData();
-  if (pContainerWidgetData) {
-    pContainerWidgetData->GetFormatDataValue(wsText, wsFormatValue);
-  }
-  m_pNode->SetContent(wsText, wsFormatValue, bNotify);
-}
-FX_BOOL CXFA_Text::SetName(const CFX_WideString& wsName) {
-  return m_pNode->SetCData(XFA_ATTRIBUTE_Name, wsName);
-}
-FX_BOOL CXFA_Text::SetMaxChars(int32_t iMaxChars) {
-  return m_pNode->SetInteger(XFA_ATTRIBUTE_MaxChars, iMaxChars);
-}
-FX_BOOL CXFA_Text::SetRid(const CFX_WideString& wsRid) {
-  return m_pNode->SetCData(XFA_ATTRIBUTE_Rid, wsRid);
-}
 CXFA_ExData::CXFA_ExData(CXFA_Node* pNode) : CXFA_Data(pNode) {}
-void CXFA_ExData::GetContentType(CFX_WideStringC& wsContentType) {
-  m_pNode->TryCData(XFA_ATTRIBUTE_ContentType, wsContentType);
-}
-void CXFA_ExData::GetHref(CFX_WideStringC& wsHref) {
-  m_pNode->TryCData(XFA_ATTRIBUTE_Href, wsHref);
-}
-int32_t CXFA_ExData::GetMaxLength() {
-  return m_pNode->GetInteger(XFA_ATTRIBUTE_MaxLength);
-}
-void CXFA_ExData::GetRid(CFX_WideStringC& wsRid) {
-  m_pNode->TryCData(XFA_ATTRIBUTE_Rid, wsRid);
-}
-int32_t CXFA_ExData::GetTransferEncoding() {
-  return m_pNode->GetEnum(XFA_ATTRIBUTE_TransferEncoding);
-}
-void CXFA_ExData::GetContent(CFX_WideString& wsText) {
-  m_pNode->TryContent(wsText);
-}
 FX_BOOL CXFA_ExData::SetContentType(const CFX_WideString& wsContentType) {
   return m_pNode->SetCData(XFA_ATTRIBUTE_ContentType, wsContentType);
-}
-FX_BOOL CXFA_ExData::SetHref(const CFX_WideString& wsHref) {
-  return m_pNode->SetCData(XFA_ATTRIBUTE_Href, wsHref);
-}
-FX_BOOL CXFA_ExData::SetMaxLength(int32_t iMaxLength) {
-  return m_pNode->SetInteger(XFA_ATTRIBUTE_MaxLength, iMaxLength);
-}
-FX_BOOL CXFA_ExData::SetRid(const CFX_WideString& wsRid) {
-  return m_pNode->SetCData(XFA_ATTRIBUTE_Rid, wsRid);
-}
-FX_BOOL CXFA_ExData::SetTransferEncoding(int32_t iTransferEncoding) {
-  return m_pNode->SetEnum(XFA_ATTRIBUTE_TransferEncoding,
-                          (XFA_ATTRIBUTEENUM)iTransferEncoding);
-}
-FX_BOOL CXFA_ExData::SetContent(const CFX_WideString& wsText,
-                                FX_BOOL bNotify,
-                                FX_BOOL bScriptModify,
-                                FX_BOOL bSyncData) {
-  CFX_WideString wsFormatValue(wsText);
-  CXFA_WidgetData* pContainerWidgetData = m_pNode->GetContainerWidgetData();
-  if (pContainerWidgetData) {
-    pContainerWidgetData->GetFormatDataValue(wsText, wsFormatValue);
-  }
-  return m_pNode->SetContent(wsText, wsFormatValue, bNotify, bScriptModify,
-                             bSyncData);
 }
 CXFA_Image::CXFA_Image(CXFA_Node* pNode, FX_BOOL bDefValue)
     : CXFA_Data(pNode), m_bDefValue(bDefValue) {}
@@ -948,9 +469,6 @@ int32_t CXFA_Image::GetTransferEncoding() {
 FX_BOOL CXFA_Image::GetContent(CFX_WideString& wsText) {
   return m_pNode->TryContent(wsText);
 }
-FX_BOOL CXFA_Image::SetAspect(int32_t iAspect) {
-  return m_pNode->SetEnum(XFA_ATTRIBUTE_Aspect, (XFA_ATTRIBUTEENUM)iAspect);
-}
 FX_BOOL CXFA_Image::SetContentType(const CFX_WideString& wsContentType) {
   return m_pNode->SetCData(XFA_ATTRIBUTE_ContentType, wsContentType);
 }
@@ -966,14 +484,6 @@ FX_BOOL CXFA_Image::SetTransferEncoding(int32_t iTransferEncoding) {
                             (XFA_ATTRIBUTEENUM)iTransferEncoding);
   }
   return TRUE;
-}
-FX_BOOL CXFA_Image::SetContent(const CFX_WideString& wsText) {
-  CFX_WideString wsFormatValue(wsText);
-  CXFA_WidgetData* pContainerWidgetData = m_pNode->GetContainerWidgetData();
-  if (pContainerWidgetData) {
-    pContainerWidgetData->GetFormatDataValue(wsText, wsFormatValue);
-  }
-  return m_pNode->SetContent(wsText, wsFormatValue);
 }
 CXFA_Calculate::CXFA_Calculate(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 int32_t CXFA_Calculate::GetOverride() {
@@ -992,16 +502,6 @@ void CXFA_Calculate::GetMessageText(CFX_WideString& wsMessage) {
     }
   }
 }
-FX_BOOL CXFA_Calculate::SetOverride(int32_t iOverride) {
-  return m_pNode->SetEnum(XFA_ATTRIBUTE_Override, (XFA_ATTRIBUTEENUM)iOverride);
-}
-FX_BOOL CXFA_Calculate::SetMessageText(const CFX_WideString& wsMessage) {
-  if (CXFA_Node* pNode = m_pNode->GetChild(0, XFA_ELEMENT_Message)) {
-    CXFA_Node* pChildNode = pNode->GetProperty(0, XFA_ELEMENT_Text);
-    return pChildNode->SetContent(wsMessage, wsMessage);
-  }
-  return FALSE;
-}
 CXFA_Validate::CXFA_Validate(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 int32_t CXFA_Validate::GetFormatTest() {
   return m_pNode->GetEnum(XFA_ATTRIBUTE_FormatTest);
@@ -1015,10 +515,6 @@ FX_BOOL CXFA_Validate::SetTestValue(int32_t iType,
   }
   m_pNode->SetEnum((XFA_ATTRIBUTE)iType, eName, FALSE);
   return TRUE;
-}
-FX_BOOL CXFA_Validate::SetFormatTest(CFX_WideString wsValue) {
-  return SetTestValue(XFA_ATTRIBUTE_FormatTest, wsValue,
-                      XFA_ATTRIBUTEENUM_Warning);
 }
 FX_BOOL CXFA_Validate::SetNullTest(CFX_WideString wsValue) {
   return SetTestValue(XFA_ATTRIBUTE_NullTest, wsValue,
@@ -1096,36 +592,11 @@ void CXFA_Validate::GetPicture(CFX_WideString& wsPicture) {
 CXFA_Script CXFA_Validate::GetScript() {
   return CXFA_Script(m_pNode->GetChild(0, XFA_ELEMENT_Script));
 }
-CXFA_Variables::CXFA_Variables(CXFA_Node* pNode) : CXFA_Data(pNode) {}
-int32_t CXFA_Variables::CountScripts() {
-  return m_pNode->CountChildren(XFA_ELEMENT_Script);
-}
-CXFA_Script CXFA_Variables::GetScript(int32_t nIndex) {
-  return CXFA_Script(m_pNode->GetChild(nIndex, XFA_ELEMENT_Script));
-}
 CXFA_Bind::CXFA_Bind(CXFA_Node* pNode) : CXFA_Data(pNode) {}
-int32_t CXFA_Bind::GetMatch() {
-  return m_pNode->GetEnum(XFA_ATTRIBUTE_Match);
-}
-void CXFA_Bind::GetRef(CFX_WideStringC& wsRef) {
-  m_pNode->TryCData(XFA_ATTRIBUTE_Ref, wsRef);
-}
 void CXFA_Bind::GetPicture(CFX_WideString& wsPicture) {
   if (CXFA_Node* pPicture = m_pNode->GetChild(0, XFA_ELEMENT_Picture)) {
     pPicture->TryContent(wsPicture);
   }
-}
-FX_BOOL CXFA_Bind::SetMatch(int32_t iMatch) {
-  return m_pNode->SetEnum(XFA_ATTRIBUTE_Match, (XFA_ATTRIBUTEENUM)iMatch);
-}
-FX_BOOL CXFA_Bind::SetRef(const CFX_WideString& wsRef) {
-  return m_pNode->SetCData(XFA_ATTRIBUTE_Ref, wsRef);
-}
-FX_BOOL CXFA_Bind::SetPicture(const CFX_WideString& wsPicture) {
-  if (CXFA_Node* pPicture = m_pNode->GetChild(0, XFA_ELEMENT_Picture)) {
-    return pPicture->SetContent(wsPicture, wsPicture);
-  }
-  return FALSE;
 }
 CXFA_Assist::CXFA_Assist(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 CXFA_ToolTip CXFA_Assist::GetToolTip() {
@@ -1135,13 +606,7 @@ CXFA_ToolTip::CXFA_ToolTip(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 FX_BOOL CXFA_ToolTip::GetTip(CFX_WideString& wsTip) {
   return m_pNode->TryContent(wsTip);
 }
-FX_BOOL CXFA_ToolTip::SetTip(const CFX_WideString& wsTip) {
-  return m_pNode->SetContent(wsTip, wsTip);
-}
 CXFA_BindItems::CXFA_BindItems(CXFA_Node* pNode) : CXFA_Data(pNode) {}
-void CXFA_BindItems::GetConnection(CFX_WideStringC& wsConnection) {
-  m_pNode->TryCData(XFA_ATTRIBUTE_Connection, wsConnection);
-}
 void CXFA_BindItems::GetLabelRef(CFX_WideStringC& wsLabelRef) {
   m_pNode->TryCData(XFA_ATTRIBUTE_LabelRef, wsLabelRef);
 }
@@ -1154,21 +619,6 @@ void CXFA_BindItems::GetRef(CFX_WideStringC& wsRef) {
 FX_BOOL CXFA_BindItems::SetConnection(const CFX_WideString& wsConnection) {
   return m_pNode->SetCData(XFA_ATTRIBUTE_Connection, wsConnection);
 }
-FX_BOOL CXFA_BindItems::SetLabelRef(const CFX_WideString& wsLabelRef) {
-  return m_pNode->SetCData(XFA_ATTRIBUTE_LabelRef, wsLabelRef);
-}
-FX_BOOL CXFA_BindItems::SetValueRef(const CFX_WideString& wsValueRef) {
-  return m_pNode->SetCData(XFA_ATTRIBUTE_ValueRef, wsValueRef);
-}
-FX_BOOL CXFA_BindItems::SetRef(const CFX_WideString& wsRef) {
-  return m_pNode->SetCData(XFA_ATTRIBUTE_Ref, wsRef);
-}
-int32_t CXFA_Box::GetBreak() const {
-  if (!m_pNode) {
-    return XFA_ATTRIBUTEENUM_Close;
-  }
-  return m_pNode->GetEnum(XFA_ATTRIBUTE_Break);
-}
 int32_t CXFA_Box::GetHand() const {
   if (!m_pNode) {
     return XFA_ATTRIBUTEENUM_Even;
@@ -1180,17 +630,6 @@ int32_t CXFA_Box::GetPresence() const {
     return XFA_ATTRIBUTEENUM_Hidden;
   }
   return m_pNode->GetEnum(XFA_ATTRIBUTE_Presence);
-}
-int32_t CXFA_Box::CountCorners() const {
-  if (!m_pNode) {
-    return 0;
-  }
-  return m_pNode->CountChildren(XFA_ELEMENT_Corner);
-}
-CXFA_Corner CXFA_Box::GetCorner(int32_t nIndex) const {
-  return CXFA_Corner(
-      m_pNode ? m_pNode->GetProperty(nIndex, XFA_ELEMENT_Corner, nIndex == 0)
-              : nullptr);
 }
 int32_t CXFA_Box::CountEdges() const {
   if (!m_pNode) {
@@ -1286,33 +725,6 @@ CXFA_Margin CXFA_Box::GetMargin() const {
   return CXFA_Margin(m_pNode ? m_pNode->GetChild(0, XFA_ELEMENT_Margin)
                              : nullptr);
 }
-static FX_BOOL XFA_BOX_SameStyles(const CXFA_StrokeArray& strokes) {
-  int32_t iCount = strokes.GetSize();
-  if (iCount < 1) {
-    return TRUE;
-  }
-  CXFA_Stroke stroke1 = strokes[0];
-  for (int32_t i = 1; i < iCount; i++) {
-    CXFA_Stroke stroke2 = strokes[i];
-    if (!stroke2) {
-      continue;
-    }
-    if (!stroke1) {
-      stroke1 = stroke2;
-    } else if (!stroke1.SameStyles(stroke2)) {
-      return FALSE;
-    }
-  }
-  return TRUE;
-}
-FX_BOOL CXFA_Box::SameStyles() const {
-  if (IsArc()) {
-    return TRUE;
-  }
-  CXFA_StrokeArray strokes;
-  XFA_BOX_GetStrokes(m_pNode, strokes, TRUE);
-  return XFA_BOX_SameStyles(strokes);
-}
 static int32_t XFA_BOX_3DStyle(const CXFA_StrokeArray& strokes,
                                CXFA_Stroke& stroke) {
   int32_t iCount = strokes.GetSize();
@@ -1376,13 +788,6 @@ CXFA_Measurement CXFA_Stroke::GetMSThickness() const {
                  : XFA_GetAttributeDefaultValue_Measure(XFA_ELEMENT_Edge,
                                                         XFA_ATTRIBUTE_Thickness,
                                                         XFA_XDPPACKET_Form);
-}
-void CXFA_Stroke::SetThickness(FX_FLOAT fThickness) {
-  if (!m_pNode) {
-    return;
-  }
-  CXFA_Measurement thickness(fThickness, XFA_UNIT_Pt);
-  m_pNode->SetMeasure(XFA_ATTRIBUTE_Thickness, thickness);
 }
 void CXFA_Stroke::SetMSThickness(CXFA_Measurement msThinkness) {
   if (!m_pNode) {
@@ -1499,27 +904,6 @@ int32_t CXFA_WidgetData::GetAccess(FX_BOOL bTemplate) {
   }
   return XFA_ATTRIBUTEENUM_Open;
 }
-FX_BOOL CXFA_WidgetData::GetAccessKey(CFX_WideStringC& wsAccessKey) {
-  return m_pNode->TryCData(XFA_ATTRIBUTE_AccessKey, wsAccessKey);
-}
-int32_t CXFA_WidgetData::GetAnchorType() {
-  return m_pNode->GetEnum(XFA_ATTRIBUTE_AnchorType);
-}
-int32_t CXFA_WidgetData::GetColSpan() {
-  return m_pNode->GetInteger(XFA_ATTRIBUTE_ColSpan);
-}
-int32_t CXFA_WidgetData::GetPresence() {
-  return m_pNode->GetEnum(XFA_ATTRIBUTE_Presence);
-  CXFA_Node* pNode = m_pNode;
-  while (pNode && pNode->GetObjectType() == XFA_OBJECTTYPE_ContainerNode) {
-    int32_t iAcc = pNode->GetEnum(XFA_ATTRIBUTE_Presence);
-    if (iAcc != XFA_ATTRIBUTEENUM_Visible) {
-      return iAcc;
-    }
-    pNode = pNode->GetNodeItem(XFA_NODEITEM_Parent);
-  }
-  return XFA_ATTRIBUTEENUM_Visible;
-}
 int32_t CXFA_WidgetData::GetRotate() {
   CXFA_Measurement ms;
   if (!m_pNode->TryMeasure(XFA_ATTRIBUTE_Rotate, ms, FALSE)) {
@@ -1543,10 +927,6 @@ CXFA_Margin CXFA_WidgetData::GetMargin(FX_BOOL bModified) {
 }
 CXFA_Para CXFA_WidgetData::GetPara(FX_BOOL bModified) {
   return CXFA_Para(m_pNode->GetProperty(0, XFA_ELEMENT_Para, bModified));
-}
-CXFA_Keep CXFA_WidgetData::GetKeep(FX_BOOL bModified) {
-  return CXFA_Keep(m_pNode->GetProperty(0, XFA_ELEMENT_Keep, bModified),
-                   m_pNode);
 }
 void CXFA_WidgetData::GetEventList(CXFA_NodeArray& events) {
   m_pNode->GetNodeList(events, 0, XFA_ELEMENT_Event);
@@ -1596,18 +976,11 @@ CXFA_Validate CXFA_WidgetData::GetValidate(FX_BOOL bModified) {
   return CXFA_Validate(
       m_pNode->GetProperty(0, XFA_ELEMENT_Validate, bModified));
 }
-CXFA_Variables CXFA_WidgetData::GetVariables(FX_BOOL bModified) {
-  return CXFA_Variables(
-      m_pNode->GetProperty(0, XFA_ELEMENT_Variables, bModified));
-}
 CXFA_Bind CXFA_WidgetData::GetBind(FX_BOOL bModified) {
   return CXFA_Bind(m_pNode->GetProperty(0, XFA_ELEMENT_Bind, bModified));
 }
 CXFA_Assist CXFA_WidgetData::GetAssist(FX_BOOL bModified) {
   return CXFA_Assist(m_pNode->GetProperty(0, XFA_ELEMENT_Assist, bModified));
-}
-void CXFA_WidgetData::GetRelevant(CFX_WideStringC& wsRelevant) {
-  m_pNode->TryCData(XFA_ATTRIBUTE_Relevant, wsRelevant);
 }
 FX_BOOL CXFA_WidgetData::GetWidth(FX_FLOAT& fWidth) {
   return TryMeasure(XFA_ATTRIBUTE_W, fWidth);
@@ -1626,92 +999,6 @@ FX_BOOL CXFA_WidgetData::GetMaxWidth(FX_FLOAT& fMaxWidth) {
 }
 FX_BOOL CXFA_WidgetData::GetMaxHeight(FX_FLOAT& fMaxHeight) {
   return TryMeasure(XFA_ATTRIBUTE_MaxH, fMaxHeight);
-}
-CXFA_BindItems CXFA_WidgetData::GetBindItems() {
-  return CXFA_BindItems(m_pNode->GetChild(0, XFA_ELEMENT_BindItems));
-}
-FX_BOOL CXFA_WidgetData::SetAccess(int32_t iAccess, FX_BOOL bNotify) {
-  return m_pNode->SetEnum(XFA_ATTRIBUTE_Access, (XFA_ATTRIBUTEENUM)iAccess,
-                          bNotify);
-}
-FX_BOOL CXFA_WidgetData::SetAccessKey(const CFX_WideString& wsAccessKey) {
-  return m_pNode->SetCData(XFA_ATTRIBUTE_AccessKey, wsAccessKey);
-}
-FX_BOOL CXFA_WidgetData::SetAnchorType(int32_t iType) {
-  return m_pNode->SetEnum(XFA_ATTRIBUTE_AnchorType, (XFA_ATTRIBUTEENUM)iType);
-}
-FX_BOOL CXFA_WidgetData::SetColSpan(int32_t iColSpan) {
-  return m_pNode->SetInteger(XFA_ATTRIBUTE_ColSpan,
-                             (XFA_ATTRIBUTEENUM)iColSpan);
-}
-FX_BOOL CXFA_WidgetData::SetPresence(int32_t iPresence) {
-  return m_pNode->SetEnum(XFA_ATTRIBUTE_Presence, (XFA_ATTRIBUTEENUM)iPresence);
-}
-FX_BOOL CXFA_WidgetData::SetRotate(int32_t iRotate) {
-  iRotate = XFA_MapRotation(iRotate);
-  CXFA_Measurement ms((FX_FLOAT)iRotate, XFA_UNIT_Angle);
-  return m_pNode->SetMeasure(XFA_ATTRIBUTE_Rotate, ms);
-}
-FX_BOOL CXFA_WidgetData::SetRelevant(const CFX_WideString& wsRelevant) {
-  return m_pNode->SetCData(XFA_ATTRIBUTE_Relevant, wsRelevant);
-}
-FX_BOOL CXFA_WidgetData::SetStatus(FX_DWORD dwStatus) {
-  return FALSE;
-}
-FX_BOOL CXFA_WidgetData::SetWidth(FX_FLOAT fWidth) {
-  return SetMeasure(XFA_ATTRIBUTE_W, fWidth);
-}
-FX_BOOL CXFA_WidgetData::SetHeight(FX_FLOAT fHeight) {
-  return SetMeasure(XFA_ATTRIBUTE_H, fHeight);
-}
-FX_BOOL CXFA_WidgetData::SetMinWidth(FX_FLOAT fMinWidth) {
-  return SetMeasure(XFA_ATTRIBUTE_MinW, fMinWidth);
-}
-FX_BOOL CXFA_WidgetData::SetMinHeight(FX_FLOAT fMinHeight) {
-  return SetMeasure(XFA_ATTRIBUTE_MinH, fMinHeight);
-}
-FX_BOOL CXFA_WidgetData::SetMaxWidth(FX_FLOAT fMaxWidth) {
-  return SetMeasure(XFA_ATTRIBUTE_MaxW, fMaxWidth);
-}
-FX_BOOL CXFA_WidgetData::SetMaxHeight(FX_FLOAT fMaxHeight) {
-  return SetMeasure(XFA_ATTRIBUTE_MaxH, fMaxHeight);
-}
-FX_BOOL CXFA_WidgetData::SetPos(FX_FLOAT x, FX_FLOAT y) {
-  return SetMeasure(XFA_ATTRIBUTE_X, x) && SetMeasure(XFA_ATTRIBUTE_Y, y);
-}
-FX_BOOL CXFA_WidgetData::SetName(const CFX_WideString& wsName) {
-  return m_pNode->SetCData(XFA_ATTRIBUTE_Name, wsName);
-}
-FX_BOOL CXFA_WidgetData::SetButtonHighlight(int32_t iButtonHighlight) {
-  CXFA_Node* pUiChildNode = GetUIChild();
-  return pUiChildNode->SetEnum(XFA_ATTRIBUTE_Highlight,
-                               (XFA_ATTRIBUTEENUM)iButtonHighlight);
-}
-FX_BOOL CXFA_WidgetData::SetButtonRollover(const CFX_WideString& wsRollover,
-                                           FX_BOOL bRichText) {
-  return FALSE;
-}
-FX_BOOL CXFA_WidgetData::SetButtonDown(const CFX_WideString& wsDown,
-                                       FX_BOOL bRichText) {
-  return FALSE;
-}
-FX_BOOL CXFA_WidgetData::SetCheckButtonShape(int32_t iCheckButtonShape) {
-  CXFA_Node* pUiChildNode = GetUIChild();
-  return pUiChildNode->SetEnum(XFA_ATTRIBUTE_Shape,
-                               (XFA_ATTRIBUTEENUM)iCheckButtonShape);
-}
-FX_BOOL CXFA_WidgetData::SetCheckButtonMark(int32_t iCheckButtonMark) {
-  CXFA_Node* pUiChildNode = GetUIChild();
-  return pUiChildNode->SetEnum(XFA_ATTRIBUTE_Mark,
-                               (XFA_ATTRIBUTEENUM)iCheckButtonMark);
-}
-FX_BOOL CXFA_WidgetData::SetCheckButtonSize(FX_FLOAT fCheckButtonMark) {
-  CXFA_Node* pUiChildNode = GetUIChild();
-  if (pUiChildNode) {
-    CXFA_Measurement ms(fCheckButtonMark, XFA_UNIT_Pt);
-    return pUiChildNode->SetMeasure(XFA_ATTRIBUTE_Size, ms);
-  }
-  return FALSE;
 }
 CXFA_Border CXFA_WidgetData::GetUIBorder(FX_BOOL bModified) {
   CXFA_Node* pUIChild = GetUIChild();
@@ -2557,9 +1844,6 @@ int32_t CXFA_WidgetData::GetNumberOfCells() {
   }
   return -1;
 }
-FX_BOOL CXFA_WidgetData::IsDateTimeEditUsePicker() {
-  return TRUE;
-}
 CFX_WideString CXFA_WidgetData::GetBarcodeType() {
   CXFA_Node* pUIChild = GetUIChild();
   return pUIChild ? pUIChild->GetCData(XFA_ATTRIBUTE_Type) : NULL;
@@ -2733,20 +2017,6 @@ void CXFA_WidgetData::GetPasswordChar(CFX_WideString& wsPassWord) {
                                                     XFA_ATTRIBUTE_PasswordChar,
                                                     XFA_XDPPACKET_Form);
   }
-}
-FX_BOOL CXFA_WidgetData::IsAllowRichText() {
-  CXFA_Node* pUIChild = GetUIChild();
-  FX_BOOL bValue = FALSE;
-  if (pUIChild &&
-      pUIChild->TryBoolean(XFA_ATTRIBUTE_AllowRichText, bValue, FALSE)) {
-    return bValue;
-  }
-  if (CXFA_Node* pNode = m_pNode->GetChild(0, XFA_ELEMENT_Value)) {
-    if (CXFA_Node* pChild = pNode->GetNodeItem(XFA_NODEITEM_FirstChild)) {
-      return pChild->GetClassID() == XFA_ELEMENT_ExData;
-    }
-  }
-  return FALSE;
 }
 FX_BOOL CXFA_WidgetData::IsMultiLine() {
   CXFA_Node* pUIChild = GetUIChild();
@@ -3315,20 +2585,6 @@ void CXFA_WidgetData::InsertListTextItem(CXFA_Node* pItems,
   pItems->InsertChild(nIndex, pText);
   pText->SetContent(wsText, wsText, FALSE, FALSE, FALSE);
 }
-CXFA_Filter CXFA_WidgetData::GetFilter(FX_BOOL bModified) {
-  if (!m_pUiChildNode) {
-    return CXFA_Filter(nullptr);
-  }
-  return CXFA_Filter(
-      m_pUiChildNode->GetProperty(0, XFA_ELEMENT_Filter, bModified));
-}
-CXFA_Manifest CXFA_WidgetData::GetManifest(FX_BOOL bModified) {
-  if (!m_pUiChildNode) {
-    return CXFA_Manifest(nullptr);
-  }
-  return CXFA_Manifest(
-      m_pUiChildNode->GetProperty(0, XFA_ELEMENT_Manifest, bModified));
-}
 CXFA_Occur::CXFA_Occur(CXFA_Node* pNode) : CXFA_Data(pNode) {}
 int32_t CXFA_Occur::GetMax() {
   int32_t iMax = 1;
@@ -3347,17 +2603,6 @@ int32_t CXFA_Occur::GetMin() {
     }
   }
   return iMin;
-}
-int32_t CXFA_Occur::GetInitial() {
-  int32_t iInit = 1;
-  if (m_pNode) {
-    int32_t iMin = GetMin();
-    if (!m_pNode->TryInteger(XFA_ATTRIBUTE_Initial, iInit, TRUE) ||
-        iInit < iMin) {
-      iInit = iMin;
-    }
-  }
-  return iInit;
 }
 FX_BOOL CXFA_Occur::GetOccurInfo(int32_t& iMin, int32_t& iMax, int32_t& iInit) {
   if (!m_pNode) {
@@ -3408,353 +2653,4 @@ XFA_ATTRIBUTEENUM XFA_GetEnumTypeAttribute(
     }
   }
   return eType;
-}
-CFX_WideString CXFA_Filter::GetFilterString(XFA_ATTRIBUTE eAttribute) {
-  CFX_WideString wsStringValue;
-  if (m_pNode) {
-    m_pNode->GetAttribute(eAttribute, wsStringValue, FALSE);
-  }
-  return wsStringValue;
-}
-XFA_ATTRIBUTEENUM CXFA_Filter::GetAppearanceFilterType() {
-  if (!m_pNode) {
-    return XFA_ATTRIBUTEENUM_Optional;
-  }
-  CXFA_Node* pAppearanceFilterNode =
-      m_pNode->GetProperty(0, XFA_ELEMENT_AppearanceFilter);
-  return XFA_GetEnumTypeAttribute(pAppearanceFilterNode);
-}
-CFX_WideString CXFA_Filter::GetAppearanceFilterContent() {
-  CFX_WideString wsContent;
-  if (m_pNode) {
-    CXFA_Node* pAppearanceFilterNode =
-        m_pNode->GetProperty(0, XFA_ELEMENT_AppearanceFilter);
-    pAppearanceFilterNode->TryContent(wsContent);
-  }
-  return wsContent;
-}
-XFA_ATTRIBUTEENUM CXFA_Filter::GetCertificatesCredentialServerPolicy() {
-  if (!m_pNode) {
-    return XFA_ATTRIBUTEENUM_Optional;
-  }
-  CXFA_Node* pCertsNode = m_pNode->GetProperty(0, XFA_ELEMENT_Certificates);
-  return XFA_GetEnumTypeAttribute(pCertsNode,
-                                  XFA_ATTRIBUTE_CredentialServerPolicy);
-}
-CFX_WideString CXFA_Filter::GetCertificatesURL() {
-  CFX_WideString wsURL;
-  if (m_pNode) {
-    CXFA_Node* pCertsNode = m_pNode->GetProperty(0, XFA_ELEMENT_Certificates);
-    pCertsNode->GetAttribute(XFA_ATTRIBUTE_Url, wsURL, FALSE);
-  }
-  return wsURL;
-}
-CFX_WideString CXFA_Filter::GetCertificatesURLPolicy() {
-  CFX_WideString wsURLPolicy;
-  if (m_pNode) {
-    CXFA_Node* pCertsNode = m_pNode->GetProperty(0, XFA_ELEMENT_Certificates);
-    pCertsNode->GetAttribute(XFA_ATTRIBUTE_UrlPolicy, wsURLPolicy, FALSE);
-  }
-  return wsURLPolicy;
-}
-CXFA_WrapCertificate CXFA_Filter::GetCertificatesEncryption(FX_BOOL bModified) {
-  if (!m_pNode) {
-    return CXFA_WrapCertificate(NULL);
-  }
-  CXFA_Node* pCertsNode =
-      m_pNode->GetProperty(0, XFA_ELEMENT_Certificates, bModified);
-  return CXFA_WrapCertificate(
-      pCertsNode ? pCertsNode->GetProperty(0, XFA_ELEMENT_Encryption, bModified)
-                 : NULL);
-}
-CXFA_WrapCertificate CXFA_Filter::GetCertificatesIssuers(FX_BOOL bModified) {
-  if (!m_pNode) {
-    return CXFA_WrapCertificate(NULL);
-  }
-  CXFA_Node* pCertsNode =
-      m_pNode->GetProperty(0, XFA_ELEMENT_Certificates, bModified);
-  return CXFA_WrapCertificate(
-      pCertsNode ? pCertsNode->GetProperty(0, XFA_ELEMENT_Issuers, bModified)
-                 : NULL);
-}
-CFX_WideString CXFA_Filter::GetCertificatesKeyUsageString(
-    XFA_ATTRIBUTE eAttribute) {
-  if (!m_pNode) {
-    return FX_WSTRC(L"");
-  }
-  CXFA_Node* pCertsNode = m_pNode->GetProperty(0, XFA_ELEMENT_Certificates);
-  CXFA_Node* pKeyUsageNode = pCertsNode->GetProperty(0, XFA_ELEMENT_KeyUsage);
-  CFX_WideString wsAttributeValue;
-  pKeyUsageNode->GetAttribute(eAttribute, wsAttributeValue, FALSE);
-  return wsAttributeValue;
-}
-CXFA_Oids CXFA_Filter::GetCertificatesOids() {
-  if (!m_pNode) {
-    return CXFA_Oids(NULL);
-  }
-  CXFA_Node* pCertsNode = m_pNode->GetProperty(0, XFA_ELEMENT_Certificates);
-  return CXFA_Oids(pCertsNode ? pCertsNode->GetProperty(0, XFA_ELEMENT_Oids)
-                              : NULL);
-}
-CXFA_WrapCertificate CXFA_Filter::GetCertificatesSigning(FX_BOOL bModified) {
-  if (!m_pNode) {
-    return CXFA_WrapCertificate(NULL);
-  }
-  CXFA_Node* pCertsNode =
-      m_pNode->GetProperty(0, XFA_ELEMENT_Certificates, bModified);
-  return CXFA_WrapCertificate(
-      pCertsNode ? pCertsNode->GetProperty(0, XFA_ELEMENT_Signing, bModified)
-                 : NULL);
-}
-CXFA_DigestMethods CXFA_Filter::GetDigestMethods(FX_BOOL bModified) {
-  return CXFA_DigestMethods(
-      m_pNode ? m_pNode->GetProperty(0, XFA_ELEMENT_DigestMethods, bModified)
-              : NULL);
-}
-CXFA_Encodings CXFA_Filter::GetEncodings(FX_BOOL bModified) {
-  return CXFA_Encodings(
-      m_pNode ? m_pNode->GetProperty(0, XFA_ELEMENT_Encodings, bModified)
-              : NULL);
-}
-CXFA_EncryptionMethods CXFA_Filter::GetEncryptionMethods(FX_BOOL bModified) {
-  return CXFA_EncryptionMethods(
-      m_pNode
-          ? m_pNode->GetProperty(0, XFA_ELEMENT_EncryptionMethods, bModified)
-          : NULL);
-}
-XFA_ATTRIBUTEENUM CXFA_Filter::GetHandlerType() {
-  if (!m_pNode) {
-    return XFA_ATTRIBUTEENUM_Optional;
-  }
-  CXFA_Node* pHandlerNode = m_pNode->GetProperty(0, XFA_ELEMENT_Handler);
-  return XFA_GetEnumTypeAttribute(pHandlerNode);
-}
-CFX_WideString CXFA_Filter::GetHandlerContent() {
-  CFX_WideString wsContent;
-  if (m_pNode) {
-    CXFA_Node* pHandlerNode = m_pNode->GetProperty(0, XFA_ELEMENT_Handler);
-    pHandlerNode->TryContent(wsContent);
-  }
-  return wsContent;
-}
-XFA_ATTRIBUTEENUM CXFA_Filter::GetlockDocumentType() {
-  if (!m_pNode) {
-    return XFA_ATTRIBUTEENUM_Optional;
-  }
-  CXFA_Node* pLockDocNode = m_pNode->GetProperty(0, XFA_ELEMENT_LockDocument);
-  return XFA_GetEnumTypeAttribute(pLockDocNode);
-}
-CFX_WideString CXFA_Filter::GetlockDocumentContent() {
-  CFX_WideString wsContent = FX_WSTRC(L"auto");
-  if (m_pNode) {
-    CXFA_Node* pLockDocNode = m_pNode->GetProperty(0, XFA_ELEMENT_LockDocument);
-    pLockDocNode->TryContent(wsContent);
-  }
-  return wsContent;
-}
-int32_t CXFA_Filter::GetMDPPermissions() {
-  int32_t iPermissions = 2;
-  if (m_pNode) {
-    CXFA_Node* pMDPNode = m_pNode->GetProperty(0, XFA_ELEMENT_Mdp);
-    if (!pMDPNode->TryInteger(XFA_ATTRIBUTE_Permissions, iPermissions, TRUE)) {
-      iPermissions = 2;
-    }
-  }
-  return iPermissions;
-}
-XFA_ATTRIBUTEENUM CXFA_Filter::GetMDPSignatureType() {
-  if (!m_pNode) {
-    return XFA_ATTRIBUTEENUM_Filter;
-  }
-  CXFA_Node* pMDPNode = m_pNode->GetProperty(0, XFA_ELEMENT_Mdp);
-  return XFA_GetEnumTypeAttribute(pMDPNode, XFA_ATTRIBUTE_SignatureType,
-                                  XFA_ATTRIBUTEENUM_Filter);
-}
-CXFA_Reasons CXFA_Filter::GetReasons(FX_BOOL bModified) {
-  return CXFA_Reasons(m_pNode ? m_pNode->GetProperty(0, XFA_ELEMENT_Reasons)
-                              : NULL);
-}
-CFX_WideString CXFA_Filter::GetTimeStampServer() {
-  CFX_WideString wsServerURI;
-  if (m_pNode) {
-    CXFA_Node* pTimeStampNode = m_pNode->GetProperty(0, XFA_ELEMENT_TimeStamp);
-    pTimeStampNode->GetAttribute(XFA_ATTRIBUTE_Server, wsServerURI, FALSE);
-  }
-  return wsServerURI;
-}
-XFA_ATTRIBUTEENUM CXFA_Filter::GetTimeStampType() {
-  if (!m_pNode) {
-    return XFA_ATTRIBUTEENUM_Optional;
-  }
-  CXFA_Node* pTimeStampNode = m_pNode->GetProperty(0, XFA_ELEMENT_TimeStamp);
-  return XFA_GetEnumTypeAttribute(pTimeStampNode);
-}
-CFX_WideString CXFA_Certificate::GetCertificateName() {
-  CFX_WideString wsName;
-  if (m_pNode) {
-    m_pNode->GetAttribute(XFA_ATTRIBUTE_Name, wsName, FALSE);
-  }
-  return wsName;
-}
-CFX_WideString CXFA_Certificate::GetCertificateContent() {
-  CFX_WideString wsContent;
-  if (m_pNode) {
-    m_pNode->TryContent(wsContent);
-  }
-  return wsContent;
-}
-XFA_ATTRIBUTEENUM CXFA_WrapCertificate::GetType() {
-  return XFA_GetEnumTypeAttribute(m_pNode);
-}
-int32_t CXFA_WrapCertificate::CountCertificates() {
-  return m_pNode ? m_pNode->CountChildren(XFA_ELEMENT_Certificate) : 0;
-}
-CXFA_Certificate CXFA_WrapCertificate::GetCertificate(int32_t nIndex) {
-  return CXFA_Certificate(
-      (nIndex > -1 && m_pNode)
-          ? m_pNode->GetChild(nIndex, XFA_ELEMENT_Certificate)
-          : NULL);
-}
-XFA_ATTRIBUTEENUM CXFA_Oids::GetOidsType() {
-  return XFA_GetEnumTypeAttribute(m_pNode);
-}
-int32_t CXFA_Oids::CountOids() {
-  return m_pNode ? m_pNode->CountChildren(XFA_ELEMENT_Oid) : 0;
-}
-CFX_WideString CXFA_Oids::GetOidContent(int32_t nIndex) {
-  if (nIndex <= -1 || !m_pNode) {
-    return FX_WSTRC(L"");
-  }
-  CXFA_Node* pOidNode = m_pNode->GetChild(nIndex, XFA_ELEMENT_Oid);
-  if (!pOidNode) {
-    return FX_WSTRC(L"");
-  }
-  CFX_WideString wsContent;
-  pOidNode->TryContent(wsContent);
-  return wsContent;
-}
-XFA_ATTRIBUTEENUM CXFA_SubjectDNs::GetSubjectDNsType() {
-  return XFA_GetEnumTypeAttribute(m_pNode);
-}
-int32_t CXFA_SubjectDNs::CountSubjectDNs() {
-  return m_pNode ? m_pNode->CountChildren(XFA_ELEMENT_SubjectDN) : 0;
-}
-CFX_WideString CXFA_SubjectDNs::GetSubjectDNString(int32_t nIndex,
-                                                   XFA_ATTRIBUTE eAttribute) {
-  if (nIndex <= -1 || !m_pNode) {
-    return FX_WSTRC(L"");
-  }
-  CXFA_Node* pSubjectDNNode = m_pNode->GetChild(nIndex, XFA_ELEMENT_SubjectDN);
-  if (!pSubjectDNNode) {
-    return FX_WSTRC(L"");
-  }
-  CFX_WideString wsAttributeValue;
-  pSubjectDNNode->GetAttribute(eAttribute, wsAttributeValue, FALSE);
-  return wsAttributeValue;
-}
-CFX_WideString CXFA_SubjectDNs::GetSubjectDNContent(int32_t nIndex) {
-  if (nIndex <= -1 || !m_pNode) {
-    return FX_WSTRC(L"");
-  }
-  CXFA_Node* pSubjectDNNode = m_pNode->GetChild(nIndex, XFA_ELEMENT_SubjectDN);
-  if (!pSubjectDNNode) {
-    return FX_WSTRC(L"");
-  }
-  CFX_WideString wsContent;
-  pSubjectDNNode->TryContent(wsContent);
-  return wsContent;
-}
-XFA_ATTRIBUTEENUM CXFA_DigestMethods::GetDigestMethodsType() {
-  return XFA_GetEnumTypeAttribute(m_pNode);
-}
-int32_t CXFA_DigestMethods::CountDigestMethods() {
-  return m_pNode ? m_pNode->CountChildren(XFA_ELEMENT_DigestMethod) : 0;
-}
-CFX_WideString CXFA_DigestMethods::GetDigestMethodContent(int32_t nIndex) {
-  if (nIndex <= -1 || !m_pNode) {
-    return FX_WSTRC(L"");
-  }
-  CXFA_Node* pDigestMethodNode =
-      m_pNode->GetChild(nIndex, XFA_ELEMENT_DigestMethod);
-  if (!pDigestMethodNode) {
-    return FX_WSTRC(L"");
-  }
-  CFX_WideString wsContent;
-  pDigestMethodNode->TryContent(wsContent);
-  return wsContent;
-}
-XFA_ATTRIBUTEENUM CXFA_Encodings::GetEncodingsType() {
-  return XFA_GetEnumTypeAttribute(m_pNode);
-}
-int32_t CXFA_Encodings::CountEncodings() {
-  return m_pNode ? m_pNode->CountChildren(XFA_ELEMENT_Encoding) : 0;
-}
-CFX_WideString CXFA_Encodings::GetEncodingContent(int32_t nIndex) {
-  if (nIndex <= -1 || !m_pNode) {
-    return FX_WSTRC(L"");
-  }
-  CXFA_Node* pEncodingNode = m_pNode->GetChild(nIndex, XFA_ELEMENT_Encoding);
-  if (!pEncodingNode) {
-    return FX_WSTRC(L"");
-  }
-  CFX_WideString wsContent;
-  pEncodingNode->TryContent(wsContent);
-  return wsContent;
-}
-XFA_ATTRIBUTEENUM CXFA_EncryptionMethods::GetEncryptionMethodsType() {
-  return XFA_GetEnumTypeAttribute(m_pNode);
-}
-int32_t CXFA_EncryptionMethods::CountEncryptionMethods() {
-  return m_pNode ? m_pNode->CountChildren(XFA_ELEMENT_EncryptionMethod) : 0;
-}
-CFX_WideString CXFA_EncryptionMethods::GetEncryptionMethodContent(
-    int32_t nIndex) {
-  if (nIndex <= -1 || !m_pNode) {
-    return FX_WSTRC(L"");
-  }
-  CXFA_Node* pEncryMethodNode =
-      m_pNode->GetChild(nIndex, XFA_ELEMENT_EncryptionMethod);
-  if (!pEncryMethodNode) {
-    return FX_WSTRC(L"");
-  }
-  CFX_WideString wsContent;
-  pEncryMethodNode->TryContent(wsContent);
-  return wsContent;
-}
-XFA_ATTRIBUTEENUM CXFA_Reasons::GetReasonsType() {
-  return XFA_GetEnumTypeAttribute(m_pNode);
-}
-int32_t CXFA_Reasons::CountReasons() {
-  return m_pNode ? m_pNode->CountChildren(XFA_ELEMENT_Reason) : 0;
-}
-CFX_WideString CXFA_Reasons::GetReasonContent(int32_t nIndex) {
-  if (nIndex <= -1 || !m_pNode) {
-    return FX_WSTRC(L"");
-  }
-  CXFA_Node* pReasonNode = m_pNode->GetChild(nIndex, XFA_ELEMENT_Reason);
-  if (!pReasonNode) {
-    return FX_WSTRC(L"");
-  }
-  CFX_WideString wsContent;
-  pReasonNode->TryContent(wsContent);
-  return wsContent;
-}
-XFA_ATTRIBUTEENUM CXFA_Manifest::GetAction() {
-  return XFA_GetEnumTypeAttribute(m_pNode, XFA_ATTRIBUTE_Action,
-                                  XFA_ATTRIBUTEENUM_Include);
-}
-int32_t CXFA_Manifest::CountReives() {
-  return m_pNode ? m_pNode->CountChildren(XFA_ELEMENT_Ref) : 0;
-}
-CFX_WideString CXFA_Manifest::GetRefContent(int32_t nIndex) {
-  if (nIndex <= -1 || !m_pNode) {
-    return FX_WSTRC(L"");
-  }
-  CXFA_Node* pRefNode = m_pNode->GetChild(nIndex, XFA_ELEMENT_Ref);
-  if (!pRefNode) {
-    return FX_WSTRC(L"");
-  }
-  CFX_WideString wsContent;
-  pRefNode->TryContent(wsContent);
-  return wsContent;
 }
