@@ -65,9 +65,13 @@ config("pdfium_config") {
     ]
   }
 
-  if (is_clang) {
+  if (is_clang || is_posix) {
     # TODO(thestig): Fix all instances, remove this, pdfium:29
     cflags += [ "-Wno-sign-compare" ]
+  }
+
+  if (is_posix && !is_clang) {  # When GCC.
+    cflags += [ "-Wno-error=strict-overflow" ]
   }
 }
 
