@@ -599,9 +599,13 @@ FX_BOOL CXFA_FFDocView::RunLayout() {
     m_pXFADocLayout->DoLayout();
     UnlockUpdate();
     m_bInLayoutStatus = FALSE;
+    m_pDoc->GetDocProvider()->PageViewEvent(nullptr,
+                                            XFA_PAGEVIEWEVENT_StopLayout);
     return TRUE;
   }
   m_bInLayoutStatus = FALSE;
+  m_pDoc->GetDocProvider()->PageViewEvent(nullptr,
+                                          XFA_PAGEVIEWEVENT_StopLayout);
   UnlockUpdate();
   return FALSE;
 }

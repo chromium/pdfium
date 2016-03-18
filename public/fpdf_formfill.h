@@ -823,20 +823,29 @@ typedef struct _FPDF_FORMFILLINFO {
 
   /**
   * Method: FFI_PageEvent
-  *     This method fires when pages have been added or deleted.
+  *     This method fires when pages have been added to or deleted from the XFA
+  *     document.
   * Interface Version:
   *     2
   * Implementation Required:
   *     yes
   * Parameters:
   *     pThis       -   Pointer to the interface structure itself.
-  *     page_index  -   0-based page number.
+  *     page_count  -   The number of pages to be added to or deleted from the
+  *                     document.
   *     event_type  -   See FXFA_PAGEVIEWEVENT_* above.
   * Return value:
   *       None.
+  * Comments:
+  *           The pages to be added or deleted always start from the last page
+  *           of document. This means that if parameter page_count is 2 and
+  *           event type is FXFA_PAGEVIEWEVENT_POSTADDED, 2 new pages have been
+  *           appended to the tail of document; If page_count is 2 and
+  *           event type is FXFA_PAGEVIEWEVENT_POSTREMOVED, the last 2 pages
+  *           have been deleted.
   **/
   void (*FFI_PageEvent)(struct _FPDF_FORMFILLINFO* pThis,
-                        int page_index,
+                        int page_count,
                         FPDF_DWORD event_type);
 
   /**

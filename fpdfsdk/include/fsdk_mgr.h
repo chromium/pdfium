@@ -398,9 +398,9 @@ class CPDFDoc_Environment final {
     return L"";
   }
 
-  void FFI_PageEvent(int iPageIndex, FX_DWORD dwEventType) const {
+  void FFI_PageEvent(int iPageCount, FX_DWORD dwEventType) const {
     if (m_pInfo && m_pInfo->FFI_PageEvent)
-      m_pInfo->FFI_PageEvent(m_pInfo, iPageIndex, dwEventType);
+      m_pInfo->FFI_PageEvent(m_pInfo, iPageCount, dwEventType);
   }
 #endif  // PDF_ENABLE_XFA
 

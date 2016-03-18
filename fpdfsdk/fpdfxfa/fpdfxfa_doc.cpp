@@ -44,9 +44,13 @@ CPDFXFA_Document::CPDFXFA_Document(CPDF_Document* pPDFDoc,
       m_pXFADoc(nullptr),
       m_pXFADocView(nullptr),
       m_pApp(pProvider),
-      m_pJSContext(nullptr) {}
+      m_pJSContext(nullptr),
+      m_nLoadStatus(FXFA_LOADSTATUS_PRELOAD),
+      m_nPageCount(0) {}
 
 CPDFXFA_Document::~CPDFXFA_Document() {
+  m_nLoadStatus = FXFA_LOADSTATUS_CLOSING;
+
   if (m_pXFADoc) {
     IXFA_App* pApp = m_pApp->GetXFAApp();
     if (pApp) {
@@ -67,9 +71,13 @@ CPDFXFA_Document::~CPDFXFA_Document() {
     else
       delete m_pPDFDoc;
   }
+
+  m_nLoadStatus = FXFA_LOADSTATUS_CLOSED;
 }
 
 FX_BOOL CPDFXFA_Document::LoadXFADoc() {
+  m_nLoadStatus = FXFA_LOADSTATUS_LOADING;
+
   if (!m_pPDFDoc)
     return FALSE;
 
@@ -115,6 +123,8 @@ FX_BOOL CPDFXFA_Document::LoadXFADoc() {
 
   m_pXFADocView->DoLayout(NULL);
   m_pXFADocView->StopLayout();
+  m_nLoadStatus = FXFA_LOADSTATUS_LOADED;
+
   return TRUE;
 }
 
@@ -147,7 +157,8 @@ CPDFXFA_Page* CPDFXFA_Document::GetPage(int page_index) {
     if (pPage)
       pPage->AddRef();
   } else {
-    m_XFAPageList.SetSize(GetPageCount());
+    m_nPageCount = GetPageCount();
+    m_XFAPageList.SetSize(m_nPageCount);
   }
   if (pPage)
     return pPage;
@@ -480,25 +491,38 @@ FX_BOOL CPDFXFA_Document::PopupMenu(IXFA_Widget* hWidget,
 
 void CPDFXFA_Document::PageViewEvent(IXFA_PageView* pPageView,
                                      FX_DWORD dwFlags) {
-  if (!pPageView || (dwFlags != XFA_PAGEVIEWEVENT_PostAdded &&
-                     dwFlags != XFA_PAGEVIEWEVENT_PostRemoved)) {
-    return;
-  }
-  CPDFXFA_Page* pPage = nullptr;
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
-  if (dwFlags == XFA_PAGEVIEWEVENT_PostAdded) {
-    int nPageIndex = pPageView->GetPageViewIndex();
-    pPage = GetPage(nPageIndex);
-    if (pPage)
-      pPage->SetXFAPageView(pPageView);
-    pEnv->FFI_PageEvent(nPageIndex, dwFlags);
+  if (!pEnv)
     return;
+
+  if (m_nLoadStatus != FXFA_LOADSTATUS_LOADING &&
+      m_nLoadStatus != FXFA_LOADSTATUS_CLOSING &&
+      XFA_PAGEVIEWEVENT_StopLayout == dwFlags) {
+    int nNewCount = GetPageCount();
+    if (nNewCount == m_nPageCount)
+      return;
+
+    IXFA_DocView* pXFADocView = GetXFADocView();
+    if (!pXFADocView)
+      return;
+    for (int iPageIter = 0; iPageIter < m_nPageCount; iPageIter++) {
+      CPDFXFA_Page* pPage = m_XFAPageList.GetAt(iPageIter);
+      if (!pPage)
+        continue;
+      m_pSDKDoc->RemovePageView(pPage);
+      IXFA_PageView* pXFAPageView = pXFADocView->GetPageView(iPageIter);
+      pPage->SetXFAPageView(pXFAPageView);
+      if (pXFAPageView)
+        pXFAPageView->LoadPageView(nullptr);
+    }
+
+    int flag = (nNewCount < m_nPageCount) ? FXFA_PAGEVIEWEVENT_POSTREMOVED
+                                          : FXFA_PAGEVIEWEVENT_POSTADDED;
+    int count = FXSYS_abs(nNewCount - m_nPageCount);
+    m_nPageCount = nNewCount;
+    m_XFAPageList.SetSize(nNewCount);
+    pEnv->FFI_PageEvent(count, flag);
   }
-  pPage = GetPage(pPageView);
-  if (!pPage)
-    return;
-  pEnv->FFI_PageEvent(pPage->GetPageIndex(), dwFlags);
-  pPage->Release();
 }
 
 void CPDFXFA_Document::WidgetEvent(IXFA_Widget* hWidget,

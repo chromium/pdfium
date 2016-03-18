@@ -858,6 +858,13 @@ FX_BOOL CPDFSDK_PageView::DeleteAnnot(CPDFSDK_Annot* pAnnot) {
                  pPage->GetDocument()->GetDocType() != DOCTYPE_DYNAMIC_XFA))
     return FALSE;
 
+  if (GetFocusAnnot() == pAnnot)
+    KillFocusAnnot();
+  CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
+  CPDFSDK_AnnotHandlerMgr* pAnnotHandler = pEnv->GetAnnotHandlerMgr();
+  if (pAnnotHandler)
+    pAnnotHandler->ReleaseAnnot(pAnnot);
+
   auto it = std::find(m_fxAnnotArray.begin(), m_fxAnnotArray.end(), pAnnot);
   if (it != m_fxAnnotArray.end())
     m_fxAnnotArray.erase(it);

@@ -204,6 +204,13 @@ class CPDFXFA_Document : public IXFA_DocProvider {
   void _ClearChangeMark();
 
  private:
+  enum LoadStatus {
+    FXFA_LOADSTATUS_PRELOAD = 0,
+    FXFA_LOADSTATUS_LOADING,
+    FXFA_LOADSTATUS_LOADED,
+    FXFA_LOADSTATUS_CLOSING,
+    FXFA_LOADSTATUS_CLOSED
+  };
   void CloseXFADoc(IXFA_DocHandler* pDoc) {
     if (pDoc) {
       pDoc->CloseDoc(m_pXFADoc);
@@ -221,6 +228,8 @@ class CPDFXFA_Document : public IXFA_DocProvider {
   CPDFXFA_App* m_pApp;
   IJS_Context* m_pJSContext;
   CFX_ArrayTemplate<CPDFXFA_Page*> m_XFAPageList;
+  LoadStatus m_nLoadStatus;
+  int m_nPageCount;
 };
 
 #endif  // FPDFSDK_INCLUDE_FPDFXFA_FPDFXFA_DOC_H_

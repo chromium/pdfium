@@ -354,6 +354,7 @@ class IXFA_MenuHandler {
 #define XFA_PRINTOPT_PrintAnnot 0x00000020
 #define XFA_PAGEVIEWEVENT_PostAdded 1
 #define XFA_PAGEVIEWEVENT_PostRemoved 3
+#define XFA_PAGEVIEWEVENT_StopLayout 4
 #define XFA_WIDGETEVENT_PostAdded 2
 #define XFA_WIDGETEVENT_PreRemoved 3
 #define XFA_WIDGETEVENT_PostContentChanged 6
