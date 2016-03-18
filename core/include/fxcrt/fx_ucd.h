@@ -38,10 +38,10 @@ enum FX_BIDICLASS {
 extern const FX_DWORD kTextLayoutCodeProperties[];
 extern const size_t kTextLayoutCodePropertiesSize;
 
-extern const FX_WCHAR kFXTextLayoutVerticalMirror[];
+extern const uint16_t kFXTextLayoutVerticalMirror[];
 extern const size_t kFXTextLayoutVerticalMirrorSize;
 
-extern const FX_WCHAR kFXTextLayoutBidiMirror[];
+extern const uint16_t kFXTextLayoutBidiMirror[];
 extern const size_t kFXTextLayoutBidiMirrorSize;
 
 FX_DWORD FX_GetUnicodeProperties(FX_WCHAR wch);

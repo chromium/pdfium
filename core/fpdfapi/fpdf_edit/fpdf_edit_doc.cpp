@@ -37,7 +37,7 @@ void CPDF_Document::CreateNewDoc() {
   m_pInfoDict = new CPDF_Dictionary;
   AddIndirectObject(m_pInfoDict);
 }
-static const FX_WCHAR g_FX_CP874Unicodes[128] = {
+static const uint16_t g_FX_CP874Unicodes[128] = {
     0x20AC, 0x0000, 0x0000, 0x0000, 0x0000, 0x2026, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x2018,
     0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014, 0x0000, 0x0000, 0x0000,
@@ -54,7 +54,7 @@ static const FX_WCHAR g_FX_CP874Unicodes[128] = {
     0x0E55, 0x0E56, 0x0E57, 0x0E58, 0x0E59, 0x0E5A, 0x0E5B, 0x0000, 0x0000,
     0x0000, 0x0000,
 };
-static const FX_WCHAR g_FX_CP1250Unicodes[128] = {
+static const uint16_t g_FX_CP1250Unicodes[128] = {
     0x20AC, 0x0000, 0x201A, 0x0000, 0x201E, 0x2026, 0x2020, 0x2021, 0x0000,
     0x2030, 0x0160, 0x2039, 0x015A, 0x0164, 0x017D, 0x0179, 0x0000, 0x2018,
     0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014, 0x0000, 0x2122, 0x0161,
@@ -71,7 +71,7 @@ static const FX_WCHAR g_FX_CP1250Unicodes[128] = {
     0x0151, 0x00F6, 0x00F7, 0x0159, 0x016F, 0x00FA, 0x0171, 0x00FC, 0x00FD,
     0x0163, 0x02D9,
 };
-static const FX_WCHAR g_FX_CP1251Unicodes[128] = {
+static const uint16_t g_FX_CP1251Unicodes[128] = {
     0x0402, 0x0403, 0x201A, 0x0453, 0x201E, 0x2026, 0x2020, 0x2021, 0x20AC,
     0x2030, 0x0409, 0x2039, 0x040A, 0x040C, 0x040B, 0x040F, 0x0452, 0x2018,
     0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014, 0x0000, 0x2122, 0x0459,
@@ -88,7 +88,7 @@ static const FX_WCHAR g_FX_CP1251Unicodes[128] = {
     0x0445, 0x0446, 0x0447, 0x0448, 0x0449, 0x044A, 0x044B, 0x044C, 0x044D,
     0x044E, 0x044F,
 };
-static const FX_WCHAR g_FX_CP1253Unicodes[128] = {
+static const uint16_t g_FX_CP1253Unicodes[128] = {
     0x20AC, 0x0000, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021, 0x0000,
     0x2030, 0x0000, 0x2039, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x2018,
     0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014, 0x0000, 0x2122, 0x0000,
@@ -105,7 +105,7 @@ static const FX_WCHAR g_FX_CP1253Unicodes[128] = {
     0x03C5, 0x03C6, 0x03C7, 0x03C8, 0x03C9, 0x03CA, 0x03CB, 0x03CC, 0x03CD,
     0x03CE, 0x0000,
 };
-static const FX_WCHAR g_FX_CP1254Unicodes[128] = {
+static const uint16_t g_FX_CP1254Unicodes[128] = {
     0x20AC, 0x0000, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021, 0x02C6,
     0x2030, 0x0160, 0x2039, 0x0152, 0x0000, 0x0000, 0x0000, 0x0000, 0x2018,
     0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014, 0x02DC, 0x2122, 0x0161,
@@ -122,7 +122,7 @@ static const FX_WCHAR g_FX_CP1254Unicodes[128] = {
     0x00F5, 0x00F6, 0x00F7, 0x00F8, 0x00F9, 0x00FA, 0x00FB, 0x00FC, 0x0131,
     0x015F, 0x00FF,
 };
-static const FX_WCHAR g_FX_CP1255Unicodes[128] = {
+static const uint16_t g_FX_CP1255Unicodes[128] = {
     0x20AC, 0x0000, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021, 0x02C6,
     0x2030, 0x0000, 0x2039, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x2018,
     0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014, 0x02DC, 0x2122, 0x0000,
@@ -139,7 +139,7 @@ static const FX_WCHAR g_FX_CP1255Unicodes[128] = {
     0x05E5, 0x05E6, 0x05E7, 0x05E8, 0x05E9, 0x05EA, 0x0000, 0x0000, 0x200E,
     0x200F, 0x0000,
 };
-static const FX_WCHAR g_FX_CP1256Unicodes[128] = {
+static const uint16_t g_FX_CP1256Unicodes[128] = {
     0x20AC, 0x067E, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021, 0x02C6,
     0x2030, 0x0679, 0x2039, 0x0152, 0x0686, 0x0698, 0x0688, 0x06AF, 0x2018,
     0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014, 0x06A9, 0x2122, 0x0691,
@@ -156,7 +156,7 @@ static const FX_WCHAR g_FX_CP1256Unicodes[128] = {
     0x064F, 0x0650, 0x00F7, 0x0651, 0x00F9, 0x0652, 0x00FB, 0x00FC, 0x200E,
     0x200F, 0x06D2,
 };
-static const FX_WCHAR g_FX_CP1257Unicodes[128] = {
+static const uint16_t g_FX_CP1257Unicodes[128] = {
     0x20AC, 0x0000, 0x201A, 0x0000, 0x201E, 0x2026, 0x2020, 0x2021, 0x0000,
     0x2030, 0x0000, 0x2039, 0x0000, 0x00A8, 0x02C7, 0x00B8, 0x0000, 0x2018,
     0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014, 0x0000, 0x2122, 0x0000,
@@ -175,7 +175,7 @@ static const FX_WCHAR g_FX_CP1257Unicodes[128] = {
 };
 typedef struct {
   uint8_t m_Charset;
-  const FX_WCHAR* m_pUnicodes;
+  const uint16_t* m_pUnicodes;
 } FX_CharsetUnicodes;
 const FX_CharsetUnicodes g_FX_CharsetUnicodes[] = {
     {FXFONT_THAI_CHARSET, g_FX_CP874Unicodes},
@@ -314,7 +314,7 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
         pEncoding->SetAtName("BaseEncoding", "WinAnsiEncoding");
         CPDF_Array* pArray = new CPDF_Array;
         pArray->AddInteger(128);
-        const FX_WCHAR* pUnicodes = g_FX_CharsetUnicodes[i].m_pUnicodes;
+        const uint16_t* pUnicodes = g_FX_CharsetUnicodes[i].m_pUnicodes;
         for (int j = 0; j < 128; j++) {
           CFX_ByteString name = PDF_AdobeNameFromUnicode(pUnicodes[j]);
           if (name.IsEmpty()) {
@@ -654,7 +654,7 @@ CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont,
         pEncoding->SetAtName("BaseEncoding", "WinAnsiEncoding");
         CPDF_Array* pArray = new CPDF_Array;
         pArray->AddInteger(128);
-        const FX_WCHAR* pUnicodes = g_FX_CharsetUnicodes[i].m_pUnicodes;
+        const uint16_t* pUnicodes = g_FX_CharsetUnicodes[i].m_pUnicodes;
         for (int j = 0; j < 128; j++) {
           CFX_ByteString name = PDF_AdobeNameFromUnicode(pUnicodes[j]);
           if (name.IsEmpty()) {
@@ -889,7 +889,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert) {
         pEncodingDict->SetAtName("BaseEncoding", "WinAnsiEncoding");
         CPDF_Array* pArray = new CPDF_Array;
         pArray->AddInteger(128);
-        const FX_WCHAR* pUnicodes = g_FX_CharsetUnicodes[i].m_pUnicodes;
+        const uint16_t* pUnicodes = g_FX_CharsetUnicodes[i].m_pUnicodes;
         for (int j = 0; j < 128; j++) {
           CFX_ByteString name = PDF_AdobeNameFromUnicode(pUnicodes[j]);
           if (name.IsEmpty()) {
