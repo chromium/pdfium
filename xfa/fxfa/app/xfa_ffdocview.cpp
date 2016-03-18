@@ -297,7 +297,7 @@ int32_t CXFA_FFDocView::ProcessWidgetEvent(CXFA_EventParam* pParam,
         break;
     }
     if (!bValidate) {
-      return XFA_EVENTERROR_Sucess;
+      return XFA_EVENTERROR_Success;
     }
   }
   CXFA_Node* pNode = pWidgetAcc ? pWidgetAcc->GetNode() : NULL;
@@ -310,7 +310,7 @@ int32_t CXFA_FFDocView::ProcessWidgetEvent(CXFA_EventParam* pParam,
     pNode = pRootItem->GetChild(0, XFA_ELEMENT_Subform);
   }
   ExecEventActivityByDeepFirst(pNode, pParam->m_eType, pParam->m_bIsFormReady);
-  return XFA_EVENTERROR_Sucess;
+  return XFA_EVENTERROR_Success;
 }
 IXFA_WidgetHandler* CXFA_FFDocView::GetWidgetHandler() {
   if (!m_pWidgetHandler) {
@@ -691,7 +691,7 @@ void CXFA_FFDocView::RunCalculateRecursive(int32_t& iIndex) {
     if (iRefCount > 11) {
       break;
     }
-    if ((pCurAcc->ProcessCalculate()) == XFA_EVENTERROR_Sucess) {
+    if ((pCurAcc->ProcessCalculate()) == XFA_EVENTERROR_Success) {
       AddValidateWidget(pCurAcc);
     }
     iIndex++;
@@ -712,7 +712,7 @@ int32_t CXFA_FFDocView::RunCalculateWidgets() {
     pCurAcc->GetNode()->SetUserData(XFA_CalcRefCount, (void*)(uintptr_t)0);
   }
   m_CalculateAccs.RemoveAll();
-  return XFA_EVENTERROR_Sucess;
+  return XFA_EVENTERROR_Success;
 }
 void CXFA_FFDocView::AddValidateWidget(CXFA_WidgetAcc* pWidget) {
   if (m_ValidateAccs.Find(pWidget) < 0) {

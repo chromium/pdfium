@@ -594,7 +594,7 @@ class CXFA_EventParam {
   FX_BOOL m_bIsFormReady;
   int32_t m_iValidateActivities;
 };
-#define XFA_EVENTERROR_Sucess 1
+#define XFA_EVENTERROR_Success 1
 #define XFA_EVENTERROR_Error -1
 #define XFA_EVENTERROR_NotExist 0
 #define XFA_EVENTERROR_Disabled 2

@@ -327,7 +327,7 @@ int32_t CXFA_WidgetAcc::ProcessEvent(int32_t iActivity,
     int32_t result = ProcessEvent(event, pEventParam);
     if (i == 0) {
       iRet = result;
-    } else if (result == XFA_EVENTERROR_Sucess) {
+    } else if (result == XFA_EVENTERROR_Success) {
       iRet = result;
     }
   }
@@ -371,7 +371,7 @@ int32_t CXFA_WidgetAcc::ProcessCalculate() {
   EventParam.m_eType = XFA_EVENT_Calculate;
   CXFA_Script script = calc.GetScript();
   int32_t iRet = ExecuteScript(script, &EventParam);
-  if (iRet == XFA_EVENTERROR_Sucess) {
+  if (iRet == XFA_EVENTERROR_Success) {
     if (GetRawValue() != EventParam.m_wsResult) {
       const bool bNotify = GetDoc()->GetDocType() == XFA_DOCTYPE_Static;
       SetValue(EventParam.m_wsResult, XFA_VALUEPICTURE_Raw);
@@ -379,7 +379,7 @@ int32_t CXFA_WidgetAcc::ProcessCalculate() {
       if (bNotify) {
         NotifyEvent(XFA_WIDGETEVENT_PostContentChanged, NULL, NULL, NULL);
       }
-      iRet = XFA_EVENTERROR_Sucess;
+      iRet = XFA_EVENTERROR_Success;
     }
   }
   return iRet;
@@ -388,7 +388,7 @@ void CXFA_WidgetAcc::ProcessScriptTestValidate(CXFA_Validate validate,
                                                int32_t iRet,
                                                FXJSE_HVALUE pRetValue,
                                                FX_BOOL bVersionFlag) {
-  if (iRet == XFA_EVENTERROR_Sucess && pRetValue) {
+  if (iRet == XFA_EVENTERROR_Success && pRetValue) {
     if (FXJSE_Value_IsBoolean(pRetValue) && !FXJSE_Value_ToBoolean(pRetValue)) {
       IXFA_AppProvider* pAppProvider = GetAppProvider();
       if (!pAppProvider) {
@@ -453,7 +453,7 @@ int32_t CXFA_WidgetAcc::ProcessFormatTestValidate(CXFA_Validate validate,
           GetValidateMessage(pAppProvider, wsFormatMsg, TRUE, bVersionFlag);
         }
         pAppProvider->MsgBox(wsFormatMsg, wsTitle, XFA_MBICON_Error, XFA_MB_OK);
-        return XFA_EVENTERROR_Sucess;
+        return XFA_EVENTERROR_Success;
       }
       if (GetNode()->HasFlag(XFA_NODEFLAG_UserInteractive)) {
         return XFA_EVENTERROR_NotExist;
@@ -464,13 +464,13 @@ int32_t CXFA_WidgetAcc::ProcessFormatTestValidate(CXFA_Validate validate,
       if (bVersionFlag) {
         pAppProvider->MsgBox(wsFormatMsg, wsTitle, XFA_MBICON_Warning,
                              XFA_MB_OK);
-        return XFA_EVENTERROR_Sucess;
+        return XFA_EVENTERROR_Success;
       }
       if (pAppProvider->MsgBox(wsFormatMsg, wsTitle, XFA_MBICON_Warning,
                                XFA_MB_YesNo) == XFA_IDYes) {
         GetNode()->SetFlag(XFA_NODEFLAG_UserInteractive, TRUE, FALSE);
       }
-      return XFA_EVENTERROR_Sucess;
+      return XFA_EVENTERROR_Success;
     }
   }
   return XFA_EVENTERROR_NotExist;
@@ -481,16 +481,16 @@ int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_Validate validate,
   CFX_WideString wsValue;
   GetValue(wsValue, XFA_VALUEPICTURE_Raw);
   if (!wsValue.IsEmpty()) {
-    return XFA_EVENTERROR_Sucess;
+    return XFA_EVENTERROR_Success;
   }
   if (m_bIsNull && (m_bPreNull == m_bIsNull)) {
-    return XFA_EVENTERROR_Sucess;
+    return XFA_EVENTERROR_Success;
   }
   int32_t eNullTest = validate.GetNullTest();
   CFX_WideString wsNullMsg;
   validate.GetNullMessageText(wsNullMsg);
   if (iFlags & 0x01) {
-    int32_t iRet = XFA_EVENTERROR_Sucess;
+    int32_t iRet = XFA_EVENTERROR_Success;
     if (eNullTest != XFA_ATTRIBUTEENUM_Disabled) {
       iRet = XFA_EVENTERROR_Error;
     }
@@ -499,7 +499,7 @@ int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_Validate validate,
         m_pDocView->m_arrNullTestMsg.Add(wsNullMsg);
         return XFA_EVENTERROR_Error;
       }
-      return XFA_EVENTERROR_Sucess;
+      return XFA_EVENTERROR_Success;
     }
     return iRet;
   }
@@ -546,7 +546,7 @@ int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_Validate validate,
     default:
       break;
   }
-  return XFA_EVENTERROR_Sucess;
+  return XFA_EVENTERROR_Success;
 }
 void CXFA_WidgetAcc::GetValidateCaptionName(CFX_WideString& wsCaptionName,
                                             FX_BOOL bVersionFlag) {
@@ -626,7 +626,7 @@ int32_t CXFA_WidgetAcc::ProcessValidate(int32_t iFlags) {
     }
     iRet |= ProcessNullTestValidate(validate, iFlags, bVersionFlag);
   }
-  if (iFormat != XFA_EVENTERROR_Sucess) {
+  if (iFormat != XFA_EVENTERROR_Success) {
     ProcessScriptTestValidate(validate, iRet, pRetValue, bVersionFlag);
   }
   if (pRetValue) {
@@ -639,7 +639,7 @@ int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
                                       FXJSE_HVALUE* pRetValue) {
   static const uint32_t MAX_RECURSION_DEPTH = 2;
   if (m_nRecursionDepth > MAX_RECURSION_DEPTH)
-    return XFA_EVENTERROR_Sucess;
+    return XFA_EVENTERROR_Success;
   FXSYS_assert(pEventParam);
   if (!script) {
     return XFA_EVENTERROR_NotExist;
@@ -654,7 +654,7 @@ int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
   }
   XFA_SCRIPTTYPE eScriptType = script.GetContentType();
   if (eScriptType == XFA_SCRIPTTYPE_Unkown) {
-    return XFA_EVENTERROR_Sucess;
+    return XFA_EVENTERROR_Success;
   }
   CXFA_FFDoc* pDoc = GetDoc();
   IXFA_ScriptContext* pContext = pDoc->GetXFADoc()->GetScriptContext();
@@ -672,7 +672,7 @@ int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
   --m_nRecursionDepth;
   int32_t iRet = XFA_EVENTERROR_Error;
   if (bRet) {
-    iRet = XFA_EVENTERROR_Sucess;
+    iRet = XFA_EVENTERROR_Success;
     if (pEventParam->m_eType == XFA_EVENT_Calculate ||
         pEventParam->m_eType == XFA_EVENT_InitCalculate) {
       if (!FXJSE_Value_IsUndefined(hRetValue)) {
@@ -682,12 +682,12 @@ int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
           pEventParam->m_wsResult =
               CFX_WideString::FromUTF8(bsString, bsString.GetLength());
         }
-        iRet = XFA_EVENTERROR_Sucess;
+        iRet = XFA_EVENTERROR_Success;
       } else {
         iRet = XFA_EVENTERROR_Error;
       }
       if (pEventParam->m_eType == XFA_EVENT_InitCalculate) {
-        if ((iRet == XFA_EVENTERROR_Sucess) &&
+        if ((iRet == XFA_EVENTERROR_Success) &&
             (GetRawValue() != pEventParam->m_wsResult)) {
           SetValue(pEventParam->m_wsResult, XFA_VALUEPICTURE_Raw);
           m_pDocView->AddValidateWidget(this);
