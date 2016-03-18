@@ -61,6 +61,21 @@
         },
       ],
     }],
+    ['OS=="linux"', {
+      'targets': [
+        {
+          'target_name': 'pdf_jpx_fuzzer',
+          'type': 'executable',
+          'dependencies': [
+            '../../pdfium.gyp:pdfium',
+          ],
+          'sources': [
+            'pdf_jpx_fuzzer.cc',
+            'unittest_main.cc',
+          ],
+        },
+      ],
+    }],
   ],
   # Empty target so that nonxfa builds work.
   'targets': [

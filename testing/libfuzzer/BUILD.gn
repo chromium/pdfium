@@ -47,4 +47,18 @@ if (pdf_enable_xfa) {
       ":libfuzzer_config",
     ]
   }
+  source_set("pdf_jpx_fuzzer") {
+    testonly = true
+    sources = [
+      "pdf_jpx_fuzzer.cc",
+    ]
+    deps = [
+      "//third_party/pdfium:pdfium",
+    ]
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    configs += [
+      "//build/config/compiler:no_chromium_code",
+      ":libfuzzer_config",
+    ]
+  }
 }

@@ -1,5 +1,6 @@
 include_rules = [
   '+core/include',
+  '+core/fxcodec',
   '+fpdfsdk/include',
   '+public',
   '+v8',
