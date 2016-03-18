@@ -27,7 +27,11 @@
 
 #define SYMBOL_TABLE_Length 2787
 
-FX_FLOAT CBC_PDF417CodewordDecoder::RATIOS_TABLE[2787][8] = {{0}};
+namespace {
+
+FX_FLOAT RATIOS_TABLE[SYMBOL_TABLE_Length][8] = {{0}};
+
+}  // namespace
 
 CBC_PDF417CodewordDecoder::CBC_PDF417CodewordDecoder() {}
 CBC_PDF417CodewordDecoder::~CBC_PDF417CodewordDecoder() {}

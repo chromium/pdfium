@@ -11,7 +11,7 @@
 
 namespace {
 
-const FX_WCHAR* const g_UnicodeData_Normalization_Maps[5] = {
+const uint16_t* const g_UnicodeData_Normalization_Maps[5] = {
     nullptr, g_UnicodeData_Normalization_Map1, g_UnicodeData_Normalization_Map2,
     g_UnicodeData_Normalization_Map3, g_UnicodeData_Normalization_Map4};
 
@@ -33,7 +33,7 @@ FX_STRSIZE FX_Unicode_GetNormalization(FX_WCHAR wch, FX_WCHAR* pDst) {
     wch = wFind & 0x0FFF;
     wFind >>= 12;
   }
-  const FX_WCHAR* pMap = g_UnicodeData_Normalization_Maps[wFind];
+  const uint16_t* pMap = g_UnicodeData_Normalization_Maps[wFind];
   if (pMap == g_UnicodeData_Normalization_Map4) {
     pMap = g_UnicodeData_Normalization_Map4 + wch;
     wFind = (FX_WCHAR)(*pMap++);

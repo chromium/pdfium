@@ -30,9 +30,9 @@ class CBC_PDF417 {
   void setCompact(FX_BOOL compact);
 
  private:
-  static int32_t START_PATTERN;
-  static int32_t STOP_PATTERN;
-  static int32_t CODEWORD_TABLE[][1000];
+  static const int32_t START_PATTERN = 0x1fea8;
+  static const int32_t STOP_PATTERN = 0x3fa29;
+  static const int32_t CODEWORD_TABLE[][929];
   static FX_FLOAT PREFERRED_RATIO;
   static FX_FLOAT DEFAULT_MODULE_WIDTH;
   static FX_FLOAT HEIGHT;

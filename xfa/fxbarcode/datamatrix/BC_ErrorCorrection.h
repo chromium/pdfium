@@ -19,8 +19,6 @@ class CBC_ErrorCorrection {
                                      int32_t& e);
 
  private:
-  static int32_t FACTOR_SETS[];
-  static int32_t FACTORS[][100];
   static int32_t MODULO_VALUE;
   static int32_t LOG[256];
   static int32_t ALOG[256];

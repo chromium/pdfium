@@ -22,9 +22,6 @@ class CBC_PDF417ErrorCorrection {
   static CFX_WideString generateErrorCorrection(CFX_WideString dataCodewords,
                                                 int32_t errorCorrectionLevel,
                                                 int32_t& e);
-
- private:
-  static int32_t EC_COEFFICIENTS[][2500];
 };
 
 #endif  // XFA_FXBARCODE_PDF417_BC_PDF417ERRORCORRECTION_H_

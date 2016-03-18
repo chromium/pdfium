@@ -28,9 +28,7 @@
 #include "xfa/fxbarcode/pdf417/BC_PDF417HighLevelEncoder.h"
 #include "xfa/fxbarcode/utils.h"
 
-int32_t CBC_PDF417::START_PATTERN = 0x1fea8;
-int32_t CBC_PDF417::STOP_PATTERN = 0x3fa29;
-int32_t CBC_PDF417::CODEWORD_TABLE[][1000] = {
+const int32_t CBC_PDF417::CODEWORD_TABLE[][929] = {
     {0x1d5c0, 0x1eaf0, 0x1f57c, 0x1d4e0, 0x1ea78, 0x1f53e, 0x1a8c0, 0x1d470,
      0x1a860, 0x15040, 0x1a830, 0x15020, 0x1adc0, 0x1d6f0, 0x1eb7c, 0x1ace0,
      0x1d678, 0x1eb3e, 0x158c0, 0x1ac70, 0x15860, 0x15dc0, 0x1aef0, 0x1d77c,

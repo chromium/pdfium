@@ -18,7 +18,6 @@ class CBC_PDF417CodewordDecoder {
   static int32_t getDecodedValue(CFX_Int32Array& moduleBitCount);
 
  private:
-  static FX_FLOAT RATIOS_TABLE[][8];
   static CFX_Int32Array* sampleBitCounts(CFX_Int32Array& moduleBitCount);
   static int32_t getDecodedCodewordValue(CFX_Int32Array& moduleBitCount);
   static int32_t getBitValue(CFX_Int32Array& moduleBitCount);
