@@ -4,5 +4,4 @@ CC_LIST: pdfium-reviews@googlegroups.com
 STATUS: http://pdfium-status.appspot.com/status
 TRY_ON_UPLOAD: False
 VIEW_VC: https://pdfium.googlesource.com/pdfium/+/
-GITCL_PREUPLOAD: http://src.chromium.org/viewvc/trunk/tools/depot_tools/git-cl-upload-hook?revision=HEAD&root=chrome
-GITCL_PREDCOMMIT: http://src.chromium.org/viewvc/trunk/tools/depot_tools/git-cl-upload-hook?revision=HEAD&root=chrome
+PROJECT: pdfium
