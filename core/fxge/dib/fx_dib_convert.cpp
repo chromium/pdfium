@@ -8,103 +8,13 @@
 #include "core/include/fxge/fx_dib.h"
 #include "core/include/fxge/fx_ge.h"
 
-const FX_DWORD g_dwWinPalette[256] = {
-    0xff000000, 0xff800000, 0xff008000, 0xff808000, 0xff000080, 0xff800080,
-    0xff008080, 0xff808080, 0xffC0DCC0, 0xffA6CAF0, 0xff2A3FAA, 0xff2A3FFF,
-    0xff2A5F00, 0xff2A5F55, 0xff2A5FAA, 0xff2A5FFF, 0xff2A7F00, 0xff2A7F55,
-    0xff2A7FAA, 0xff2A7FFF, 0xff2A9F00, 0xff2A9F55, 0xff2A9FAA, 0xff2A9FFF,
-    0xff2ABF00, 0xff2ABF55, 0xff2ABFAA, 0xff2ABFFF, 0xff2ADF00, 0xff2ADF55,
-    0xff2ADFAA, 0xff2ADFFF, 0xff2AFF00, 0xff2AFF55, 0xff2AFFAA, 0xff2AFFFF,
-    0xff550000, 0xff550055, 0xff5500AA, 0xff5500FF, 0xff551F00, 0xff551F55,
-    0xff551FAA, 0xff551FFF, 0xff553F00, 0xff553F55, 0xff553FAA, 0xff553FFF,
-    0xff555F00, 0xff555F55, 0xff555FAA, 0xff555FFF, 0xff557F00, 0xff557F55,
-    0xff557FAA, 0xff557FFF, 0xff559F00, 0xff559F55, 0xff559FAA, 0xff559FFF,
-    0xff55BF00, 0xff55BF55, 0xff55BFAA, 0xff55BFFF, 0xff55DF00, 0xff55DF55,
-    0xff55DFAA, 0xff55DFFF, 0xff55FF00, 0xff55FF55, 0xff55FFAA, 0xff55FFFF,
-    0xff7F0000, 0xff7F0055, 0xff7F00AA, 0xff7F00FF, 0xff7F1F00, 0xff7F1F55,
-    0xff7F1FAA, 0xff7F1FFF, 0xff7F3F00, 0xff7F3F55, 0xff7F3FAA, 0xff7F3FFF,
-    0xff7F5F00, 0xff7F5F55, 0xff7F5FAA, 0xff7F5FFF, 0xff7F7F00, 0xff7F7F55,
-    0xff7F7FAA, 0xff7F7FFF, 0xff7F9F00, 0xff7F9F55, 0xff7F9FAA, 0xff7F9FFF,
-    0xff7FBF00, 0xff7FBF55, 0xff7FBFAA, 0xff7FBFFF, 0xff7FDF00, 0xff7FDF55,
-    0xff7FDFAA, 0xff7FDFFF, 0xff00FF7F, 0xff7FFF55, 0xff7FFFAA, 0xff7FFFFF,
-    0xffAA0000, 0xffAA0055, 0xffAA00AA, 0xffAA00FF, 0xffAA1F00, 0xffAA1F55,
-    0xffAA1FAA, 0xffAA1FFF, 0xffAA3F00, 0xffAA3F55, 0xffAA3FAA, 0xffAA3FFF,
-    0xffAA5F00, 0xffAA5F55, 0xffAA5FAA, 0xffAA5FFF, 0xffAA7F00, 0xffAA7F55,
-    0xffAA7FAA, 0xffAA7FFF, 0xffAA9F00, 0xffAA9F55, 0xffAA9FAA, 0xffAA9FFF,
-    0xffAABF00, 0xffAABF55, 0xffAABFAA, 0xffAABFFF, 0xffAADF00, 0xffAADF55,
-    0xffAADFAA, 0xffAADFFF, 0xffAAFF00, 0xffAAFF55, 0xffAAFFAA, 0xffAAFFFF,
-    0xffD40000, 0xffD40055, 0xffD400AA, 0xffD400FF, 0xffD41F00, 0xffD41F55,
-    0xffD41FAA, 0xffD41FFF, 0xffD43F00, 0xffD43F55, 0xffD43FAA, 0xffD43FFF,
-    0xffD45F00, 0xffD45F55, 0xffD45FAA, 0xffD45FFF, 0xffD47F00, 0xffD47F55,
-    0xffD47FAA, 0xffD4F7FF, 0xffD49F00, 0xffD49F55, 0xffD49FAA, 0xffD49FFF,
-    0xffD4BF00, 0xffD4BF55, 0xffD4BFAA, 0xffD4BFFF, 0xffD4DF00, 0xffD4DF55,
-    0xffD4DFAA, 0xffD4DFFF, 0xffD4FF00, 0xffD4FF55, 0xffD4FFAA, 0xffD4FFFF,
-    0xffFF0055, 0xffFF00AA, 0xffFF1F00, 0xffFF1F55, 0xffFF1FAA, 0xffFF1FFF,
-    0xffFF3F00, 0xffFF3F55, 0xffFF3FAA, 0xffFF3FFF, 0xffFF5F00, 0xffFF5F55,
-    0xffFF5FAA, 0xffFF5FFF, 0xffFF7F00, 0xffFF7F55, 0xffFF7FAA, 0xffFF7FFF,
-    0xffFF9F00, 0xffFF9F55, 0xffFF9FAA, 0xffFF9FFF, 0xffFFBF00, 0xffFFBF55,
-    0xffFFBFAA, 0xffFFBFFF, 0xffFFDF00, 0xffFFDF55, 0xffFFDFAA, 0xffFFDFFF,
-    0xffFFFF55, 0xffFFFFAA, 0xffCCCCFF, 0xffFFCCFF, 0xff33FFFF, 0xff66FFFF,
-    0xff99FFFF, 0xffCCFFFF, 0xff007F00, 0xff007F55, 0xff007FAA, 0xff007FFF,
-    0xff009F00, 0xff009F55, 0xff009FAA, 0xff009FFF, 0xff00BF00, 0xff00BF55,
-    0xff00BFAA, 0xff00BFFF, 0xff00DF00, 0xff00DF55, 0xff00DFAA, 0xff00DFFF,
-    0xff00FF55, 0xff00FFAA, 0xff2A0000, 0xff2A0055, 0xff2A00AA, 0xff2A00FF,
-    0xff2A1F00, 0xff2A1F55, 0xff2A1FAA, 0xff2A1FFF, 0xff2A3F00, 0xff2A3F55,
-    0xffFFFBF0, 0xffA0A0A4, 0xff808080, 0xffFF0000, 0xff00FF00, 0xffFF0000,
-    0xff0000FF, 0xffFF00FF, 0xff00FFFF, 0xffFFFFFF};
-const FX_DWORD g_dwMacPalette[256] = {
-    0xffFFFFFF, 0xffFFFFCC, 0xffFFFF99, 0xffFFFF66, 0xffFFFF33, 0xffFFFF00,
-    0xffFFCCFF, 0xffFFCCCC, 0xffFFCC99, 0xffFFCC66, 0xffFFCC33, 0xffFFCC00,
-    0xffFF99FF, 0xffFF99CC, 0xffFF9999, 0xffFF9966, 0xffFF9933, 0xffFF9900,
-    0xffFF66FF, 0xffFF66CC, 0xffFF6699, 0xffFF6666, 0xffFF6633, 0xffFF6600,
-    0xffFF33FF, 0xffFF33CC, 0xffFF3399, 0xffFF3366, 0xffFF3333, 0xffFF3300,
-    0xffFF00FF, 0xffFF00CC, 0xffFF0099, 0xffFF0066, 0xffFF0033, 0xffFF0000,
-    0xffCCFFFF, 0xffCCFFCC, 0xffCCFF99, 0xffCCFF66, 0xffCCFF33, 0xffCCFF00,
-    0xffCCCCFF, 0xffCCCCCC, 0xffCCCC99, 0xffCCCC66, 0xffCCCC33, 0xffCCCC00,
-    0xffCC99FF, 0xffCC99CC, 0xffCC9999, 0xffCC9966, 0xffCC9933, 0xffCC9900,
-    0xffCC66FF, 0xffCC66CC, 0xffCC6699, 0xffCC6666, 0xffCC6633, 0xffCC6600,
-    0xffCC33FF, 0xffCC33CC, 0xffCC3399, 0xffCC3366, 0xffCC3333, 0xffCC3300,
-    0xffCC00FF, 0xffCC00CC, 0xffCC0099, 0xffCC0066, 0xffCC0033, 0xffCC0000,
-    0xff99FFFF, 0xff99FFCC, 0xff99FF99, 0xff99FF66, 0xff99FF33, 0xff99FF00,
-    0xff99CCFF, 0xff99CCCC, 0xff99CC99, 0xff99CC66, 0xff99CC33, 0xff99CC00,
-    0xff9999FF, 0xff9999CC, 0xff999999, 0xff999966, 0xff999933, 0xff999900,
-    0xff9966FF, 0xff9966CC, 0xff996699, 0xff996666, 0xff996633, 0xff996600,
-    0xff9933FF, 0xff9933CC, 0xff993399, 0xff993366, 0xff993333, 0xff993300,
-    0xff9900FF, 0xff9900CC, 0xff990099, 0xff990066, 0xff990033, 0xff990000,
-    0xff66FFFF, 0xff66FFCC, 0xff66FF99, 0xff66FF66, 0xff66FF33, 0xff66FF00,
-    0xff66CCFF, 0xff66CCCC, 0xff66CC99, 0xff66CC66, 0xff66CC33, 0xff66CC00,
-    0xff6699FF, 0xff6699CC, 0xff669999, 0xff669966, 0xff669933, 0xff669900,
-    0xff6666FF, 0xff6666CC, 0xff666699, 0xff666666, 0xff666633, 0xff666600,
-    0xff6633FF, 0xff6633CC, 0xff663399, 0xff663366, 0xff663333, 0xff663300,
-    0xff6600FF, 0xff6600CC, 0xff660099, 0xff660066, 0xff660033, 0xff660000,
-    0xff33FFFF, 0xff33FFCC, 0xff33FF99, 0xff33FF66, 0xff33FF33, 0xff33FF00,
-    0xff33CCFF, 0xff33CCCC, 0xff33CC99, 0xff33CC66, 0xff33CC33, 0xff33CC00,
-    0xff3399FF, 0xff3399CC, 0xff339999, 0xff339966, 0xff339933, 0xff339900,
-    0xff3366FF, 0xff3366CC, 0xff336699, 0xff336666, 0xff336633, 0xff336600,
-    0xff3333FF, 0xff3333CC, 0xff333399, 0xff333366, 0xff333333, 0xff333300,
-    0xff3300FF, 0xff3300CC, 0xff330099, 0xff330066, 0xff330033, 0xff330000,
-    0xff00FFFF, 0xff00FFCC, 0xff00FF99, 0xff00FF66, 0xff00FF33, 0xff00FF00,
-    0xff00CCFF, 0xff00CCCC, 0xff00CC99, 0xff00CC66, 0xff00CC33, 0xff00CC00,
-    0xff0099FF, 0xff0099CC, 0xff009999, 0xff009966, 0xff009933, 0xff009900,
-    0xff0066FF, 0xff0066CC, 0xff006699, 0xff006666, 0xff006633, 0xff006600,
-    0xff0033FF, 0xff0033CC, 0xff003399, 0xff003366, 0xff003333, 0xff003300,
-    0xff0000FF, 0xff0000CC, 0xff000099, 0xff000066, 0xff000033, 0xffEE0000,
-    0xffDD0000, 0xffBB0000, 0xffAA0000, 0xff880000, 0xff770000, 0xff550000,
-    0xff440000, 0xff220000, 0xff110000, 0xff00EE00, 0xff00DD00, 0xff00BB00,
-    0xff00AA00, 0xff008800, 0xff007700, 0xff005500, 0xff004400, 0xff002200,
-    0xff001100, 0xff0000EE, 0xff0000DD, 0xff0000BB, 0xff0000AA, 0xff000088,
-    0xff000077, 0xff000055, 0xff000044, 0xff000022, 0xff000011, 0xffEEEEEE,
-    0xffDDDDDD, 0xffBBBBBB, 0xffAAAAAA, 0xff888888, 0xff777777, 0xff555555,
-    0xff444444, 0xff222222, 0xff111111, 0xff000000};
 class CFX_Palette {
  public:
   CFX_Palette();
   ~CFX_Palette();
 
- public:
-  FX_BOOL BuildPalette(const CFX_DIBSource* pBitmap, int dwPaletteType);
+  FX_BOOL BuildPalette(const CFX_DIBSource* pBitmap);
   FX_DWORD* GetPalette() const { return m_pPalette; }
-
   FX_DWORD* GetColorLut() const { return m_cLut; }
   FX_DWORD* GetAmountLut() const { return m_aLut; }
   int32_t Getlut() const { return m_lut; }
@@ -153,49 +63,23 @@ void _ColorDecode(FX_DWORD pal_v, uint8_t& r, uint8_t& g, uint8_t& b) {
 void _Obtain_Pal(FX_DWORD* aLut,
                  FX_DWORD* cLut,
                  FX_DWORD* dest_pal,
-                 int pal_type,
-                 FX_DWORD* win_mac_pal,
                  FX_DWORD lut) {
-  int row, col;
   FX_DWORD lut_1 = lut - 1;
-  if (pal_type == FXDIB_PALETTE_LOC) {
-    for (row = 0; row < 256; row++) {
-      int lut_offset = lut_1 - row;
-      if (lut_offset < 0) {
-        lut_offset += 256;
-      }
-      FX_DWORD color = cLut[lut_offset];
-      uint8_t r, g, b;
-      _ColorDecode(color, r, g, b);
-      dest_pal[row] = ((FX_DWORD)r << 16) | ((FX_DWORD)g << 8) | b | 0xff000000;
-      aLut[lut_offset] = row;
+  for (int row = 0; row < 256; row++) {
+    int lut_offset = lut_1 - row;
+    if (lut_offset < 0) {
+      lut_offset += 256;
     }
-  } else {
-    for (row = 0; row < 256; row++) {
-      int lut_offset = lut_1 - row;
-      if (lut_offset < 0) {
-        lut_offset += 256;
-      }
-      uint8_t r, g, b;
-      _ColorDecode(cLut[lut_offset], r, g, b);
-      int error, min_error = 1000000;
-      int c_index = 0;
-      for (col = 0; col < 256; col++) {
-        FX_DWORD p_color = win_mac_pal[col];
-        int d_r = r - (uint8_t)(p_color >> 16);
-        int d_g = g - (uint8_t)(p_color >> 8);
-        int d_b = b - (uint8_t)p_color;
-        error = d_r * d_r + d_g * d_g + d_b * d_b;
-        if (error < min_error) {
-          min_error = error;
-          c_index = col;
-        }
-      }
-      dest_pal[row] = win_mac_pal[c_index];
-      aLut[lut_offset] = row;
-    }
+    FX_DWORD color = cLut[lut_offset];
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+    _ColorDecode(color, r, g, b);
+    dest_pal[row] = ((FX_DWORD)r << 16) | ((FX_DWORD)g << 8) | b | 0xff000000;
+    aLut[lut_offset] = row;
   }
 }
+
 CFX_Palette::CFX_Palette() {
   m_pPalette = NULL;
   m_cLut = NULL;
@@ -208,7 +92,7 @@ CFX_Palette::~CFX_Palette() {
   FX_Free(m_aLut);
   m_lut = 0;
 }
-FX_BOOL CFX_Palette::BuildPalette(const CFX_DIBSource* pBitmap, int pal_type) {
+FX_BOOL CFX_Palette::BuildPalette(const CFX_DIBSource* pBitmap) {
   if (!pBitmap) {
     return FALSE;
   }
@@ -244,13 +128,7 @@ FX_BOOL CFX_Palette::BuildPalette(const CFX_DIBSource* pBitmap, int pal_type) {
     }
   }
   _Qsort(m_aLut, m_cLut, 0, m_lut - 1);
-  FX_DWORD* win_mac_pal = NULL;
-  if (pal_type == FXDIB_PALETTE_WIN) {
-    win_mac_pal = (FX_DWORD*)g_dwWinPalette;
-  } else if (pal_type == FXDIB_PALETTE_MAC) {
-    win_mac_pal = (FX_DWORD*)g_dwMacPalette;
-  }
-  _Obtain_Pal(m_aLut, m_cLut, m_pPalette, pal_type, win_mac_pal, m_lut);
+  _Obtain_Pal(m_aLut, m_cLut, m_pPalette, m_lut);
   return TRUE;
 }
 FX_BOOL ConvertBuffer_1bppMask2Gray(uint8_t* dest_buf,
@@ -557,7 +435,7 @@ FX_BOOL ConvertBuffer_Rgb2PltRgb8_NoTransform(uint8_t* dest_buf,
   int bpp = pSrcBitmap->GetBPP() / 8;
   int row, col;
   CFX_Palette palette;
-  palette.BuildPalette(pSrcBitmap, FXDIB_PALETTE_LOC);
+  palette.BuildPalette(pSrcBitmap);
   FX_DWORD* cLut = palette.GetColorLut();
   FX_DWORD* aLut = palette.GetAmountLut();
   if (!cLut || !aLut) {
