@@ -296,11 +296,11 @@ class IXFA_FontMgr {
   virtual IFX_Font* GetFont(IXFA_Doc* hDoc,
                             const CFX_WideStringC& wsFontFamily,
                             FX_DWORD dwFontStyles,
-                            FX_WORD wCodePage = 0xFFFF) = 0;
+                            uint16_t wCodePage = 0xFFFF) = 0;
   virtual IFX_Font* GetDefaultFont(IXFA_Doc* hDoc,
                                    const CFX_WideStringC& wsFontFamily,
                                    FX_DWORD dwFontStyles,
-                                   FX_WORD wCodePage = 0xFFFF) = 0;
+                                   uint16_t wCodePage = 0xFFFF) = 0;
 };
 class IXFA_App {
  public:

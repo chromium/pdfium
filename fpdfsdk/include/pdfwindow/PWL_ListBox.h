@@ -59,8 +59,8 @@ class CPWL_ListBox : public CPWL_Wnd {
   void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           CFX_Matrix* pUser2Device) override;
-  FX_BOOL OnKeyDown(FX_WORD nChar, FX_DWORD nFlag) override;
-  FX_BOOL OnChar(FX_WORD nChar, FX_DWORD nFlag) override;
+  FX_BOOL OnKeyDown(uint16_t nChar, FX_DWORD nFlag) override;
+  FX_BOOL OnChar(uint16_t nChar, FX_DWORD nFlag) override;
   FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
   FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
   FX_BOOL OnMouseMove(const CFX_FloatPoint& point, FX_DWORD nFlag) override;

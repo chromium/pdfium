@@ -515,7 +515,7 @@ FX_DWORD CFX_RTFBreak::AppendChar(FX_WCHAR wch) {
   if (m_bCharCode) {
     return AppendChar_CharCode(wch);
   }
-  FX_DWORD dwProps = kTextLayoutCodeProperties[(FX_WORD)wch];
+  FX_DWORD dwProps = kTextLayoutCodeProperties[(uint16_t)wch];
   FX_DWORD dwType = (dwProps & FX_CHARTYPEBITSMASK);
   CFX_RTFCharArray& tca = m_pCurLine->m_LineChars;
   CFX_RTFChar* pCurChar = tca.AddSpace();

@@ -183,20 +183,20 @@ CFX_WideString CBC_ErrorCorrection::createECCBlock(CFX_WideString codewords,
     e = BCExceptionIllegalArgument;
     return (FX_WCHAR*)"";
   }
-  FX_WORD* ecc = FX_Alloc(FX_WORD, numECWords);
-  FXSYS_memset(ecc, 0, numECWords * sizeof(FX_WORD));
+  uint16_t* ecc = FX_Alloc(uint16_t, numECWords);
+  FXSYS_memset(ecc, 0, numECWords * sizeof(uint16_t));
   for (int32_t l = start; l < start + len; l++) {
-    FX_WORD m = ecc[numECWords - 1] ^ codewords.GetAt(l);
+    uint16_t m = ecc[numECWords - 1] ^ codewords.GetAt(l);
     for (int32_t k = numECWords - 1; k > 0; k--) {
       if (m != 0 && FACTORS[table][k] != 0) {
-        ecc[k] = (FX_WORD)(ecc[k - 1] ^
-                           ALOG[(LOG[m] + LOG[FACTORS[table][k]]) % 255]);
+        ecc[k] = (uint16_t)(ecc[k - 1] ^
+                            ALOG[(LOG[m] + LOG[FACTORS[table][k]]) % 255]);
       } else {
         ecc[k] = ecc[k - 1];
       }
     }
     if (m != 0 && FACTORS[table][0] != 0) {
-      ecc[0] = (FX_WORD)ALOG[(LOG[m] + LOG[FACTORS[table][0]]) % 255];
+      ecc[0] = (uint16_t)ALOG[(LOG[m] + LOG[FACTORS[table][0]]) % 255];
     } else {
       ecc[0] = 0;
     }

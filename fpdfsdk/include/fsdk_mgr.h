@@ -513,14 +513,14 @@ class CPDFSDK_Document {
   FX_BOOL SetFocusAnnot(CPDFSDK_Annot* pAnnot, FX_UINT nFlag = 0);
   FX_BOOL KillFocusAnnot(FX_UINT nFlag = 0);
 
-  FX_BOOL ExtractPages(const std::vector<FX_WORD>& arrExtraPages,
+  FX_BOOL ExtractPages(const std::vector<uint16_t>& arrExtraPages,
                        CPDF_Document* pDstDoc);
   FX_BOOL InsertPages(int nInsertAt,
                       const CPDF_Document* pSrcDoc,
-                      const std::vector<FX_WORD>& arrSrcPages);
+                      const std::vector<uint16_t>& arrSrcPages);
   FX_BOOL ReplacePages(int nPage,
                        const CPDF_Document* pSrcDoc,
-                       const std::vector<FX_WORD>& arrSrcPages);
+                       const std::vector<uint16_t>& arrSrcPages);
 
   void OnCloseDocument();
 

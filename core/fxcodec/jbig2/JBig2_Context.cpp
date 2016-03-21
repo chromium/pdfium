@@ -302,7 +302,7 @@ int32_t CJBig2_Context::parseSegmentHeader(CJBig2_Segment* pSegment) {
           pSegment->m_pReferred_to_segment_numbers[i] = cTemp;
           break;
         case 2:
-          FX_WORD wTemp;
+          uint16_t wTemp;
           if (m_pStream->readShortInteger(&wTemp) != 0)
             return JBIG2_ERROR_TOO_SHORT;
 
@@ -379,7 +379,7 @@ int32_t CJBig2_Context::ProcessingParseSegmentData(CJBig2_Segment* pSegment,
         return JBIG2_ERROR_FATAL;
       return parseGenericRefinementRegion(pSegment);
     case 48: {
-      FX_WORD wTemp;
+      uint16_t wTemp;
       std::unique_ptr<JBig2PageInfo> pPageInfo(new JBig2PageInfo);
       if (m_pStream->readInteger(&pPageInfo->m_dwWidth) != 0 ||
           m_pStream->readInteger(&pPageInfo->m_dwHeight) != 0 ||
@@ -435,7 +435,7 @@ int32_t CJBig2_Context::ProcessingParseSegmentData(CJBig2_Segment* pSegment,
 
 int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
                                         IFX_Pause* pPause) {
-  FX_WORD wFlags;
+  uint16_t wFlags;
   if (m_pStream->readShortInteger(&wFlags) != 0)
     return JBIG2_ERROR_TOO_SHORT;
 
@@ -653,7 +653,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
 }
 
 int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
-  FX_WORD wFlags;
+  uint16_t wFlags;
   JBig2RegionInfo ri;
   if (parseRegionInfo(&ri) != JBIG2_SUCCESS ||
       m_pStream->readShortInteger(&wFlags) != 0) {

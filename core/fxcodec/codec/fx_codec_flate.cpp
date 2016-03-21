@@ -530,7 +530,7 @@ void TIFF_PredictorEncodeLine(uint8_t* dest_buf,
   } else {
     for (int i = row_size - BytesPerPixel; i >= BytesPerPixel;
          i -= BytesPerPixel) {
-      FX_WORD pixel = (dest_buf[i] << 8) | dest_buf[i + 1];
+      uint16_t pixel = (dest_buf[i] << 8) | dest_buf[i + 1];
       pixel -=
           (dest_buf[i - BytesPerPixel] << 8) | dest_buf[i - BytesPerPixel + 1];
       dest_buf[i] = pixel >> 8;
@@ -587,7 +587,7 @@ void TIFF_PredictLine(uint8_t* dest_buf,
   int BytesPerPixel = BitsPerComponent * Colors / 8;
   if (BitsPerComponent == 16) {
     for (FX_DWORD i = BytesPerPixel; i < row_size; i += 2) {
-      FX_WORD pixel =
+      uint16_t pixel =
           (dest_buf[i - BytesPerPixel] << 8) | dest_buf[i - BytesPerPixel + 1];
       pixel += (dest_buf[i] << 8) | dest_buf[i + 1];
       dest_buf[i] = pixel >> 8;

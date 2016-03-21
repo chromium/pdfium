@@ -294,7 +294,7 @@ void CPSOutput::OutputPS(const FX_CHAR* str, int len) {
   int sent_len = 0;
   while (len > 0) {
     int send_len = len > 1024 ? 1024 : len;
-    *(FX_WORD*)m_pBuf = send_len;
+    *(uint16_t*)m_pBuf = send_len;
     FXSYS_memcpy(m_pBuf + 2, str + sent_len, send_len);
     ExtEscape(m_hDC, PASSTHROUGH, send_len + 2, m_pBuf, 0, NULL);
     sent_len += send_len;

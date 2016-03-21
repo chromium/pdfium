@@ -9,7 +9,7 @@
 FX_DWORD FX_GetUnicodeProperties(FX_WCHAR wch) {
   size_t idx = static_cast<size_t>(wch);
   if (idx < kTextLayoutCodePropertiesSize)
-    return kTextLayoutCodeProperties[(FX_WORD)wch];
+    return kTextLayoutCodeProperties[(uint16_t)wch];
   return 0;
 }
 

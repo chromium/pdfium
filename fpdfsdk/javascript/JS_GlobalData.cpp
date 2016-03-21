@@ -317,14 +317,14 @@ void CJS_GlobalData::LoadGlobalPersistentVariables() {
 
   if (pBuffer) {
     uint8_t* p = pBuffer;
-    FX_WORD wType = *((FX_WORD*)p);
-    p += sizeof(FX_WORD);
+    uint16_t wType = *((uint16_t*)p);
+    p += sizeof(uint16_t);
 
-    // FX_WORD wTemp = (FX_WORD)(('X' << 8) | 'F');
+    // uint16_t wTemp = (uint16_t)(('X' << 8) | 'F');
 
-    if (wType == (FX_WORD)(('X' << 8) | 'F')) {
-      FX_WORD wVersion = *((FX_WORD*)p);
-      p += sizeof(FX_WORD);
+    if (wType == (uint16_t)(('X' << 8) | 'F')) {
+      uint16_t wVersion = *((uint16_t*)p);
+      p += sizeof(uint16_t);
 
       ASSERT(wVersion <= 2);
 
@@ -334,7 +334,7 @@ void CJS_GlobalData::LoadGlobalPersistentVariables() {
       FX_DWORD dwSize = *((FX_DWORD*)p);
       p += sizeof(FX_DWORD);
 
-      if (dwSize == nLength - sizeof(FX_WORD) * 2 - sizeof(FX_DWORD) * 2) {
+      if (dwSize == nLength - sizeof(uint16_t) * 2 - sizeof(FX_DWORD) * 2) {
         for (int32_t i = 0, sz = dwCount; i < sz; i++) {
           if (p > pBuffer + nLength)
             break;
@@ -348,8 +348,8 @@ void CJS_GlobalData::LoadGlobalPersistentVariables() {
           CFX_ByteString sEntry = CFX_ByteString(p, dwNameLen);
           p += sizeof(char) * dwNameLen;
 
-          FX_WORD wDataType = *((FX_WORD*)p);
-          p += sizeof(FX_WORD);
+          uint16_t wDataType = *((uint16_t*)p);
+          p += sizeof(uint16_t);
 
           switch (wDataType) {
             case JS_GLOBALDATA_TYPE_NUMBER: {
@@ -369,8 +369,8 @@ void CJS_GlobalData::LoadGlobalPersistentVariables() {
               SetGlobalVariablePersistent(sEntry, TRUE);
             } break;
             case JS_GLOBALDATA_TYPE_BOOLEAN: {
-              FX_WORD wData = *((FX_WORD*)p);
-              p += sizeof(FX_WORD);
+              uint16_t wData = *((uint16_t*)p);
+              p += sizeof(uint16_t);
               SetGlobalVariableBoolean(sEntry, (bool)(wData == 1));
               SetGlobalVariablePersistent(sEntry, TRUE);
             } break;
@@ -417,10 +417,10 @@ void CJS_GlobalData::SaveGlobalPersisitentVariables() {
 
   CFX_BinaryBuf sFile;
 
-  FX_WORD wType = (FX_WORD)(('X' << 8) | 'F');
-  sFile.AppendBlock(&wType, sizeof(FX_WORD));
-  FX_WORD wVersion = 2;
-  sFile.AppendBlock(&wVersion, sizeof(FX_WORD));
+  uint16_t wType = (uint16_t)(('X' << 8) | 'F');
+  sFile.AppendBlock(&wType, sizeof(uint16_t));
+  uint16_t wVersion = 2;
+  sFile.AppendBlock(&wVersion, sizeof(uint16_t));
   sFile.AppendBlock(&nCount, sizeof(FX_DWORD));
   FX_DWORD dwSize = sData.GetSize();
   sFile.AppendBlock(&dwSize, sizeof(FX_DWORD));
@@ -448,13 +448,13 @@ void CJS_GlobalData::WriteFileBuffer(const FX_WCHAR* sFilePath,
 void CJS_GlobalData::MakeByteString(const CFX_ByteString& name,
                                     CJS_KeyValue* pData,
                                     CFX_BinaryBuf& sData) {
-  FX_WORD wType = (FX_WORD)pData->nType;
+  uint16_t wType = (uint16_t)pData->nType;
   switch (wType) {
     case JS_GLOBALDATA_TYPE_NUMBER: {
       FX_DWORD dwNameLen = (FX_DWORD)name.GetLength();
       sData.AppendBlock(&dwNameLen, sizeof(FX_DWORD));
       sData.AppendString(name);
-      sData.AppendBlock(&wType, sizeof(FX_WORD));
+      sData.AppendBlock(&wType, sizeof(uint16_t));
 
       double dData = pData->dData;
       sData.AppendBlock(&dData, sizeof(double));
@@ -463,16 +463,16 @@ void CJS_GlobalData::MakeByteString(const CFX_ByteString& name,
       FX_DWORD dwNameLen = (FX_DWORD)name.GetLength();
       sData.AppendBlock(&dwNameLen, sizeof(FX_DWORD));
       sData.AppendString(name);
-      sData.AppendBlock(&wType, sizeof(FX_WORD));
+      sData.AppendBlock(&wType, sizeof(uint16_t));
 
-      FX_WORD wData = (FX_WORD)pData->bData;
-      sData.AppendBlock(&wData, sizeof(FX_WORD));
+      uint16_t wData = (uint16_t)pData->bData;
+      sData.AppendBlock(&wData, sizeof(uint16_t));
     } break;
     case JS_GLOBALDATA_TYPE_STRING: {
       FX_DWORD dwNameLen = (FX_DWORD)name.GetLength();
       sData.AppendBlock(&dwNameLen, sizeof(FX_DWORD));
       sData.AppendString(name);
-      sData.AppendBlock(&wType, sizeof(FX_WORD));
+      sData.AppendBlock(&wType, sizeof(uint16_t));
 
       FX_DWORD dwDataLen = (FX_DWORD)pData->sData.GetLength();
       sData.AppendBlock(&dwDataLen, sizeof(FX_DWORD));

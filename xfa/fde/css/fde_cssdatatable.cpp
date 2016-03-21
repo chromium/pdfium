@@ -609,11 +609,11 @@ FDE_LPCCSSPROPERTYVALUETABLE FDE_GetCSSPropertyValueByEnum(
 FDE_LPCCSSMEDIATYPETABLE FDE_GetCSSMediaTypeByName(const FX_WCHAR* pszName,
                                                    int32_t iLength) {
   FXSYS_assert(pszName != NULL && iLength > 0);
-  FX_WORD wHash = (FX_WORD)FX_HashCode_String_GetW(pszName, iLength, TRUE);
+  uint16_t wHash = (uint16_t)FX_HashCode_String_GetW(pszName, iLength, TRUE);
   int32_t iEnd =
       sizeof(g_FDE_CSSMediaTypes) / sizeof(FDE_CSSMEDIATYPETABLE) - 1;
   int32_t iMid, iStart = 0;
-  FX_WORD uMid;
+  uint16_t uMid;
   do {
     iMid = (iStart + iEnd) / 2;
     uMid = g_FDE_CSSMediaTypes[iMid].wHash;
@@ -630,11 +630,11 @@ FDE_LPCCSSMEDIATYPETABLE FDE_GetCSSMediaTypeByName(const FX_WCHAR* pszName,
 FDE_LPCCSSLENGTHUNITTABLE FDE_GetCSSLengthUnitByName(const FX_WCHAR* pszName,
                                                      int32_t iLength) {
   FXSYS_assert(pszName != NULL && iLength > 0);
-  FX_WORD wHash = (FX_WORD)FX_HashCode_String_GetW(pszName, iLength, TRUE);
+  uint16_t wHash = (uint16_t)FX_HashCode_String_GetW(pszName, iLength, TRUE);
   int32_t iEnd =
       sizeof(g_FDE_CSSLengthUnits) / sizeof(FDE_CSSLENGTHUNITTABLE) - 1;
   int32_t iMid, iStart = 0;
-  FX_WORD wMid;
+  uint16_t wMid;
   do {
     iMid = (iStart + iEnd) / 2;
     wMid = g_FDE_CSSLengthUnits[iMid].wHash;

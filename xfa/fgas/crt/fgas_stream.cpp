@@ -201,8 +201,8 @@ class CFX_Stream : public IFX_Stream {
   virtual void Flush();
   virtual FX_BOOL SetLength(int32_t iLength);
   virtual int32_t GetBOM(uint8_t bom[4]) const;
-  virtual FX_WORD GetCodePage() const;
-  virtual FX_WORD SetCodePage(FX_WORD wCodePage);
+  virtual uint16_t GetCodePage() const;
+  virtual uint16_t SetCodePage(uint16_t wCodePage);
   virtual IFX_Stream* CreateSharedStream(FX_DWORD dwAccess,
                                          int32_t iOffset,
                                          int32_t iLength);
@@ -242,15 +242,15 @@ class CFX_TextStream : public IFX_Stream {
   virtual FX_BOOL SetLength(int32_t iLength);
 
   virtual int32_t GetBOM(uint8_t bom[4]) const;
-  virtual FX_WORD GetCodePage() const;
-  virtual FX_WORD SetCodePage(FX_WORD wCodePage);
+  virtual uint16_t GetCodePage() const;
+  virtual uint16_t SetCodePage(uint16_t wCodePage);
 
   virtual IFX_Stream* CreateSharedStream(FX_DWORD dwAccess,
                                          int32_t iOffset,
                                          int32_t iLength);
 
  protected:
-  FX_WORD m_wCodePage;
+  uint16_t m_wCodePage;
   int32_t m_wBOMLength;
   FX_DWORD m_dwBOM;
   uint8_t* m_pBuf;
@@ -1015,7 +1015,7 @@ void CFX_TextStream::Flush() {
 FX_BOOL CFX_TextStream::SetLength(int32_t iLength) {
   return m_pStreamImp->SetLength(iLength);
 }
-FX_WORD CFX_TextStream::GetCodePage() const {
+uint16_t CFX_TextStream::GetCodePage() const {
   return m_wCodePage;
 }
 IFX_Stream* CFX_TextStream::CreateSharedStream(FX_DWORD dwAccess,
@@ -1038,11 +1038,11 @@ int32_t CFX_TextStream::GetBOM(uint8_t bom[4]) const {
   *(FX_DWORD*)bom = m_dwBOM;
   return m_wBOMLength;
 }
-FX_WORD CFX_TextStream::SetCodePage(FX_WORD wCodePage) {
+uint16_t CFX_TextStream::SetCodePage(uint16_t wCodePage) {
   if (m_wBOMLength > 0) {
     return m_wCodePage;
   }
-  FX_WORD v = m_wCodePage;
+  uint16_t v = m_wCodePage;
   m_wCodePage = wCodePage;
   return v;
 }
@@ -1421,14 +1421,14 @@ int32_t CFX_Stream::GetBOM(uint8_t bom[4]) const {
   }
   return 0;
 }
-FX_WORD CFX_Stream::GetCodePage() const {
+uint16_t CFX_Stream::GetCodePage() const {
 #if _FX_ENDIAN_ == _FX_LITTLE_ENDIAN_
   return FX_CODEPAGE_UTF16LE;
 #else
   return FX_CODEPAGE_UTF16BE;
 #endif
 }
-FX_WORD CFX_Stream::SetCodePage(FX_WORD wCodePage) {
+uint16_t CFX_Stream::SetCodePage(uint16_t wCodePage) {
 #if _FX_ENDIAN_ == _FX_LITTLE_ENDIAN_
   return FX_CODEPAGE_UTF16LE;
 #else

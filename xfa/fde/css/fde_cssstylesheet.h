@@ -106,16 +106,16 @@ class CFDE_CSSStyleSheet : public IFDE_CSSStyleSheet, public CFX_Target {
     return szUrl.GetLength() > 0;
   }
   virtual FX_DWORD GetMediaList() const { return m_dwMediaList; }
-  virtual FX_WORD GetCodePage() const { return m_wCodePage; }
+  virtual uint16_t GetCodePage() const { return m_wCodePage; }
   virtual int32_t CountRules() const;
   virtual IFDE_CSSRule* GetRule(int32_t index);
   FX_BOOL LoadFromStream(const CFX_WideString& szUrl,
                          IFX_Stream* pStream,
-                         FX_WORD wCodePage);
+                         uint16_t wCodePage);
   FX_BOOL LoadFromBuffer(const CFX_WideString& szUrl,
                          const FX_WCHAR* pBuffer,
                          int32_t iBufSize,
-                         FX_WORD wCodePage);
+                         uint16_t wCodePage);
 
  protected:
   void Reset();
@@ -128,8 +128,8 @@ class CFDE_CSSStyleSheet : public IFDE_CSSStyleSheet, public CFX_Target {
   FDE_CSSSYNTAXSTATUS LoadFontFaceRule(IFDE_CSSSyntaxParser* pSyntax,
                                        CFDE_CSSRuleArray& ruleArray);
   FDE_CSSSYNTAXSTATUS SkipRuleSet(IFDE_CSSSyntaxParser* pSyntax);
-  FX_WORD m_wCodePage;
-  FX_WORD m_wRefCount;
+  uint16_t m_wCodePage;
+  uint16_t m_wRefCount;
   FX_DWORD m_dwMediaList;
   IFX_MEMAllocator* m_pAllocator;
   CFDE_CSSRuleArray m_RuleArray;

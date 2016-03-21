@@ -606,7 +606,7 @@ FX_BOOL CFWL_ScrollBarImp::SendEvent() {
     return m_rtThumb.Contains(m_cpTrackPointX, m_cpTrackPointY);
   }
   if (m_iMouseWheel) {
-    FX_WORD dwCode =
+    uint16_t dwCode =
         m_iMouseWheel < 0 ? FWL_SCBCODE_StepForward : FWL_SCBCODE_StepBackward;
     DoScroll(dwCode, m_fTrackPos);
   }

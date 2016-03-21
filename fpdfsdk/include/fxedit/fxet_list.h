@@ -134,7 +134,7 @@ class CFX_ListItem {
   FX_BOOL IsSelected() const;
   FX_BOOL IsCaret() const;
   FX_FLOAT GetItemHeight() const;
-  FX_WORD GetFirstChar() const;
+  uint16_t GetFirstChar() const;
 
  private:
   IFX_Edit* m_pEdit;
@@ -296,7 +296,7 @@ class CFX_ListCtrl : public CFX_List {
   void OnVK_HOME(FX_BOOL bShift, FX_BOOL bCtrl) override;
   void OnVK_END(FX_BOOL bShift, FX_BOOL bCtrl) override;
   void OnVK(int32_t nItemIndex, FX_BOOL bShift, FX_BOOL bCtrl) override;
-  FX_BOOL OnChar(FX_WORD nChar, FX_BOOL bShift, FX_BOOL bCtrl) override;
+  FX_BOOL OnChar(uint16_t nChar, FX_BOOL bShift, FX_BOOL bCtrl) override;
   void SetPlateRect(const CFX_FloatRect& rect) override;
   void SetScrollPos(const CFX_FloatPoint& point) override;
   void ScrollToListItem(int32_t nItemIndex) override;

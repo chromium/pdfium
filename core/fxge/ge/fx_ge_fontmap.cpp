@@ -14,7 +14,7 @@
 #include "core/include/fxge/fx_ge.h"
 #include "third_party/base/stl_util.h"
 
-#define GET_TT_SHORT(w) (FX_WORD)(((w)[0] << 8) | (w)[1])
+#define GET_TT_SHORT(w) (uint16_t)(((w)[0] << 8) | (w)[1])
 #define GET_TT_LONG(w) \
   (FX_DWORD)(((w)[0] << 24) | ((w)[1] << 16) | ((w)[2] << 8) | (w)[3])
 
@@ -199,7 +199,7 @@ const struct FX_FontStyle {
 };
 
 const struct CODEPAGE_MAP {
-  FX_WORD codepage;
+  uint16_t codepage;
   uint8_t charset;
 } g_Codepage2CharsetTable[] = {
     {0, 1},      {42, 2},     {437, 254},  {850, 255},  {874, 222},
@@ -281,12 +281,12 @@ CFX_ByteString FPDF_LoadTableFromTT(FXSYS_FILE* pFile,
   return CFX_ByteString();
 }
 
-uint8_t GetCharsetFromCodePage(FX_WORD codepage) {
+uint8_t GetCharsetFromCodePage(uint16_t codepage) {
   const CODEPAGE_MAP* pEnd =
       g_Codepage2CharsetTable + FX_ArraySize(g_Codepage2CharsetTable);
   const CODEPAGE_MAP* pCharmap =
       std::lower_bound(g_Codepage2CharsetTable, pEnd, codepage,
-                       [](const CODEPAGE_MAP& charset, FX_WORD page) {
+                       [](const CODEPAGE_MAP& charset, uint16_t page) {
                          return charset.codepage < page;
                        });
   if (pCharmap < pEnd && codepage == pCharmap->codepage)

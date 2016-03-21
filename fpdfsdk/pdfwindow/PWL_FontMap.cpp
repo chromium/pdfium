@@ -79,7 +79,7 @@ CFX_ByteString CPWL_FontMap::GetPDFFontAlias(int32_t nFontIndex) {
   return "";
 }
 
-FX_BOOL CPWL_FontMap::KnowWord(int32_t nFontIndex, FX_WORD word) {
+FX_BOOL CPWL_FontMap::KnowWord(int32_t nFontIndex, uint16_t word) {
   if (nFontIndex >= 0 && nFontIndex < m_aData.GetSize()) {
     if (m_aData.GetAt(nFontIndex)) {
       return CharCodeFromUnicode(nFontIndex, word) >= 0;
@@ -89,7 +89,7 @@ FX_BOOL CPWL_FontMap::KnowWord(int32_t nFontIndex, FX_WORD word) {
   return FALSE;
 }
 
-int32_t CPWL_FontMap::GetWordFontIndex(FX_WORD word,
+int32_t CPWL_FontMap::GetWordFontIndex(uint16_t word,
                                        int32_t nCharset,
                                        int32_t nFontIndex) {
   if (nFontIndex > 0) {
@@ -119,7 +119,7 @@ int32_t CPWL_FontMap::GetWordFontIndex(FX_WORD word,
   return -1;
 }
 
-int32_t CPWL_FontMap::CharCodeFromUnicode(int32_t nFontIndex, FX_WORD word) {
+int32_t CPWL_FontMap::CharCodeFromUnicode(int32_t nFontIndex, uint16_t word) {
   if (CPWL_FontMap_Data* pData = m_aData.GetAt(nFontIndex)) {
     if (pData->pFont) {
       if (pData->pFont->IsUnicodeCompatible()) {
@@ -219,7 +219,7 @@ int32_t CPWL_FontMap::GetFontIndex(const CFX_ByteString& sFontName,
   return AddFontData(pFont, sAlias, nCharset);
 }
 
-int32_t CPWL_FontMap::GetPWLFontIndex(FX_WORD word, int32_t nCharset) {
+int32_t CPWL_FontMap::GetPWLFontIndex(uint16_t word, int32_t nCharset) {
   int32_t nFind = -1;
 
   for (int32_t i = 0, sz = m_aData.GetSize(); i < sz; i++) {
@@ -434,7 +434,7 @@ CFX_ByteString CPWL_FontMap::GetDefaultFontByCharset(int32_t nCharset) {
   return "";
 }
 
-int32_t CPWL_FontMap::CharSetFromUnicode(FX_WORD word, int32_t nOldCharset) {
+int32_t CPWL_FontMap::CharSetFromUnicode(uint16_t word, int32_t nOldCharset) {
   if (m_pSystemHandler && (-1 != m_pSystemHandler->GetCharSet()))
     return m_pSystemHandler->GetCharSet();
   // to avoid CJK Font to show ASCII

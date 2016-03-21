@@ -629,14 +629,14 @@ FX_LOCALECATEGORY CFX_FormatString::GetCategory(
   }
   return eCategory;
 }
-static FX_WORD FX_WStringToLCID(const FX_WCHAR* pstrLCID) {
+static uint16_t FX_WStringToLCID(const FX_WCHAR* pstrLCID) {
   if (!pstrLCID) {
     return 0;
   }
   wchar_t* pEnd;
-  return (FX_WORD)wcstol((wchar_t*)pstrLCID, &pEnd, 16);
+  return (uint16_t)wcstol((wchar_t*)pstrLCID, &pEnd, 16);
 }
-FX_WORD CFX_FormatString::GetLCID(const CFX_WideString& wsPattern) {
+uint16_t CFX_FormatString::GetLCID(const CFX_WideString& wsPattern) {
   return FX_WStringToLCID(GetLocaleName(wsPattern));
 }
 CFX_WideString CFX_FormatString::GetLocaleName(
@@ -2386,7 +2386,7 @@ static FX_BOOL FX_ParseLocaleDate(const CFX_WideString& wsDate,
       }
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'M', '3')) {
       CFX_WideString wsMonthNameAbbr;
-      FX_WORD i = 0;
+      uint16_t i = 0;
       for (; i < 12; i++) {
         pLocale->GetMonthName(i, wsMonthNameAbbr, TRUE);
         if (wsMonthNameAbbr.IsEmpty()) {
@@ -2403,7 +2403,7 @@ static FX_BOOL FX_ParseLocaleDate(const CFX_WideString& wsDate,
       }
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'M', '4')) {
       CFX_WideString wsMonthName;
-      FX_WORD i = 0;
+      uint16_t i = 0;
       for (; i < 12; i++) {
         pLocale->GetMonthName(i, wsMonthName, FALSE);
         if (wsMonthName.IsEmpty()) {
@@ -2422,7 +2422,7 @@ static FX_BOOL FX_ParseLocaleDate(const CFX_WideString& wsDate,
       cc += 1;
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'E', '3')) {
       CFX_WideString wsDayNameAbbr;
-      FX_WORD i = 0;
+      uint16_t i = 0;
       for (; i < 7; i++) {
         pLocale->GetDayName(i, wsDayNameAbbr, TRUE);
         if (wsDayNameAbbr.IsEmpty()) {
@@ -2529,7 +2529,7 @@ static FX_BOOL FX_ParseLocaleTime(const CFX_WideString& wsTime,
   uint8_t hour = 0;
   uint8_t minute = 0;
   uint8_t second = 0;
-  FX_WORD millisecond = 0;
+  uint16_t millisecond = 0;
   int32_t ccf = 0;
   const FX_WCHAR* str = (const FX_WCHAR*)wsTime;
   int len = wsTime.GetLength();
@@ -3768,7 +3768,7 @@ FX_BOOL FX_DateFromCanonical(const CFX_WideString& wsDate,
   int32_t year = 1900;
   int32_t month = 1;
   int32_t day = 1;
-  FX_WORD wYear = 0;
+  uint16_t wYear = 0;
   int cc_start = 0, cc = 0;
   const FX_WCHAR* str = (const FX_WCHAR*)wsDate;
   int len = wsDate.GetLength();
@@ -3851,7 +3851,7 @@ FX_BOOL FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
   uint8_t hour = 0;
   uint8_t minute = 0;
   uint8_t second = 0;
-  FX_WORD millisecond = 0;
+  uint16_t millisecond = 0;
   int cc_start = 0, cc = cc_start;
   const FX_WCHAR* str = (const FX_WCHAR*)wsTime.GetPtr();
   int len = wsTime.GetLength();
@@ -3923,7 +3923,7 @@ FX_BOOL FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
   datetime = datetime + ut;
   return TRUE;
 }
-static FX_WORD FX_GetSolarMonthDays(FX_WORD year, FX_WORD month) {
+static uint16_t FX_GetSolarMonthDays(uint16_t year, uint16_t month) {
   if (month % 2) {
     return 31;
   } else if (month == 2) {
@@ -3931,9 +3931,9 @@ static FX_WORD FX_GetSolarMonthDays(FX_WORD year, FX_WORD month) {
   }
   return 30;
 }
-static FX_WORD FX_GetWeekDay(FX_WORD year, FX_WORD month, FX_WORD day) {
-  FX_WORD g_month_day[] = {0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5};
-  FX_WORD nDays =
+static uint16_t FX_GetWeekDay(uint16_t year, uint16_t month, uint16_t day) {
+  uint16_t g_month_day[] = {0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5};
+  uint16_t nDays =
       (year - 1) % 7 + (year - 1) / 4 - (year - 1) / 100 + (year - 1) / 400;
   nDays += g_month_day[month - 1] + day;
   if (FX_IsLeapYear(year) && month > 2) {
@@ -3941,9 +3941,9 @@ static FX_WORD FX_GetWeekDay(FX_WORD year, FX_WORD month, FX_WORD day) {
   }
   return nDays % 7;
 }
-static FX_WORD FX_GetWeekOfMonth(FX_WORD year, FX_WORD month, FX_WORD day) {
-  FX_WORD week_day = FX_GetWeekDay(year, month, 1);
-  FX_WORD week_index = 0;
+static uint16_t FX_GetWeekOfMonth(uint16_t year, uint16_t month, uint16_t day) {
+  uint16_t week_day = FX_GetWeekDay(year, month, 1);
+  uint16_t week_index = 0;
   week_index += day / 7;
   day = day % 7;
   if (week_day + day > 7) {
@@ -3951,14 +3951,14 @@ static FX_WORD FX_GetWeekOfMonth(FX_WORD year, FX_WORD month, FX_WORD day) {
   }
   return week_index;
 }
-static FX_WORD FX_GetWeekOfYear(FX_WORD year, FX_WORD month, FX_WORD day) {
-  FX_WORD nDays = 0;
-  for (FX_WORD i = 1; i < month; i++) {
+static uint16_t FX_GetWeekOfYear(uint16_t year, uint16_t month, uint16_t day) {
+  uint16_t nDays = 0;
+  for (uint16_t i = 1; i < month; i++) {
     nDays += FX_GetSolarMonthDays(year, i);
   }
   nDays += day;
-  FX_WORD week_day = FX_GetWeekDay(year, 1, 1);
-  FX_WORD week_index = 1;
+  uint16_t week_day = FX_GetWeekDay(year, 1, 1);
+  uint16_t week_index = 1;
   week_index += nDays / 7;
   nDays = nDays % 7;
   if (week_day + nDays > 7) {
@@ -4002,7 +4002,7 @@ static FX_BOOL FX_DateFormat(const CFX_WideString& wsDatePattern,
       wsDay.Format(L"%02d", day);
       wsResult += wsDay;
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'J', '1')) {
-      FX_WORD nDays = 0;
+      uint16_t nDays = 0;
       for (int i = 1; i < month; i++) {
         nDays += FX_GetSolarMonthDays(year, i);
       }
@@ -4011,7 +4011,7 @@ static FX_BOOL FX_DateFormat(const CFX_WideString& wsDatePattern,
       wsDays.Format(L"%d", nDays);
       wsResult += wsDays;
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'J', '3')) {
-      FX_WORD nDays = 0;
+      uint16_t nDays = 0;
       for (int i = 1; i < month; i++) {
         nDays += FX_GetSolarMonthDays(year, i);
       }
@@ -4036,24 +4036,24 @@ static FX_BOOL FX_DateFormat(const CFX_WideString& wsDatePattern,
       pLocale->GetMonthName(month - 1, wsTemp, FALSE);
       wsResult += wsTemp;
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'E', '1')) {
-      FX_WORD wWeekDay = FX_GetWeekDay(year, month, day);
+      uint16_t wWeekDay = FX_GetWeekDay(year, month, day);
       CFX_WideString wsWeekDay;
       wsWeekDay.Format(L"%d", wWeekDay + 1);
       wsResult += wsWeekDay;
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'E', '3')) {
-      FX_WORD wWeekDay = FX_GetWeekDay(year, month, day);
+      uint16_t wWeekDay = FX_GetWeekDay(year, month, day);
       CFX_WideString wsTemp;
       pLocale->GetDayName(wWeekDay, wsTemp, TRUE);
       wsResult += wsTemp;
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'E', '4')) {
-      FX_WORD wWeekDay = FX_GetWeekDay(year, month, day);
+      uint16_t wWeekDay = FX_GetWeekDay(year, month, day);
       if (pLocale) {
         CFX_WideString wsTemp;
         pLocale->GetDayName(wWeekDay, wsTemp, FALSE);
         wsResult += wsTemp;
       }
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'e', '1')) {
-      FX_WORD wWeekDay = FX_GetWeekDay(year, month, day);
+      uint16_t wWeekDay = FX_GetWeekDay(year, month, day);
       CFX_WideString wsWeekDay;
       wsWeekDay.Format(L"%d", wWeekDay ? wWeekDay : 7);
       wsResult += wsWeekDay;
@@ -4070,12 +4070,12 @@ static FX_BOOL FX_DateFormat(const CFX_WideString& wsDatePattern,
       wsYear.Format(L"%d", year);
       wsResult += wsYear;
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'w', '1')) {
-      FX_WORD week_index = FX_GetWeekOfMonth(year, month, day);
+      uint16_t week_index = FX_GetWeekOfMonth(year, month, day);
       CFX_WideString wsWeekInMonth;
       wsWeekInMonth.Format(L"%d", week_index);
       wsResult += wsWeekInMonth;
     } else if (dwSymbol == FXBSTR_ID(0, 0, 'W', '2')) {
-      FX_WORD week_index = FX_GetWeekOfYear(year, month, day);
+      uint16_t week_index = FX_GetWeekOfYear(year, month, day);
       CFX_WideString wsWeekInYear;
       wsWeekInYear.Format(L"%02d", week_index);
       wsResult += wsWeekInYear;
@@ -4092,11 +4092,11 @@ static FX_BOOL FX_TimeFormat(const CFX_WideString& wsTimePattern,
   uint8_t hour = datetime.GetHour();
   uint8_t minute = datetime.GetMinute();
   uint8_t second = datetime.GetSecond();
-  FX_WORD millisecond = datetime.GetMillisecond();
+  uint16_t millisecond = datetime.GetMillisecond();
   int32_t ccf = 0;
   const FX_WCHAR* strf = (const FX_WCHAR*)wsTimePattern;
   int32_t lenf = wsTimePattern.GetLength();
-  FX_WORD wHour = hour;
+  uint16_t wHour = hour;
   FX_BOOL bPM = FALSE;
   if (wsTimePattern.Find('A') != -1) {
     if (wHour >= 12) {

@@ -115,7 +115,7 @@ struct CPVT_WordInfo {
         fWordTail(0.0f),
         nFontIndex(-1),
         pWordProps(NULL) {}
-  CPVT_WordInfo(FX_WORD word,
+  CPVT_WordInfo(uint16_t word,
                 int32_t charset,
                 int32_t fontIndex,
                 CPVT_WordProps* pProps)
@@ -152,7 +152,7 @@ struct CPVT_WordInfo {
       }
     }
   }
-  FX_WORD Word;
+  uint16_t Word;
   int32_t nCharset;
   FX_FLOAT fWordX;
   FX_FLOAT fWordY;
@@ -349,7 +349,7 @@ class CPDF_VariableText : public IPDF_VariableText, private CPDF_EditContainer {
     CPDF_EditContainer::SetPlateRect(rect);
   }
   void SetAlignment(int32_t nFormat = 0) override { m_nAlignment = nFormat; }
-  void SetPasswordChar(FX_WORD wSubWord = '*') override {
+  void SetPasswordChar(uint16_t wSubWord = '*') override {
     m_wSubWord = wSubWord;
   }
   void SetLimitChar(int32_t nLimitChar = 0) override {
@@ -387,7 +387,7 @@ class CPDF_VariableText : public IPDF_VariableText, private CPDF_EditContainer {
                const CPVT_SecProps* pSecProps = NULL,
                const CPVT_WordProps* pWordProps = NULL) override;
   CPVT_WordPlace InsertWord(const CPVT_WordPlace& place,
-                            FX_WORD word,
+                            uint16_t word,
                             int32_t charset = 1,
                             const CPVT_WordProps* pWordProps = NULL) override;
   CPVT_WordPlace InsertSection(
@@ -409,7 +409,7 @@ class CPDF_VariableText : public IPDF_VariableText, private CPDF_EditContainer {
   int32_t GetTotalWords() const override;
   FX_FLOAT GetFontSize() const override { return m_fFontSize; }
   int32_t GetAlignment() const override { return m_nAlignment; }
-  FX_WORD GetPasswordChar() const override { return GetSubWord(); }
+  uint16_t GetPasswordChar() const override { return GetSubWord(); }
   int32_t GetCharArray() const override { return m_nCharArray; }
   int32_t GetLimitChar() const override { return m_nLimitChar; }
   FX_BOOL IsMultiLine() const override { return m_bMultiLine; }
@@ -435,18 +435,18 @@ class CPDF_VariableText : public IPDF_VariableText, private CPDF_EditContainer {
   int32_t WordPlaceToWordIndex(const CPVT_WordPlace& place) const override;
   CPVT_WordPlace WordIndexToWordPlace(int32_t index) const override;
 
-  FX_WORD GetSubWord() const { return m_wSubWord; }
+  uint16_t GetSubWord() const { return m_wSubWord; }
 
  private:
   int32_t GetCharWidth(int32_t nFontIndex,
-                       FX_WORD Word,
-                       FX_WORD SubWord,
+                       uint16_t Word,
+                       uint16_t SubWord,
                        int32_t nWordStyle);
   int32_t GetTypeAscent(int32_t nFontIndex);
   int32_t GetTypeDescent(int32_t nFontIndex);
-  int32_t GetWordFontIndex(FX_WORD word, int32_t charset, int32_t nFontIndex);
+  int32_t GetWordFontIndex(uint16_t word, int32_t charset, int32_t nFontIndex);
   int32_t GetDefaultFontIndex();
-  FX_BOOL IsLatinWord(FX_WORD word);
+  FX_BOOL IsLatinWord(uint16_t word);
 
   CPVT_WordPlace AddSection(const CPVT_WordPlace& place,
                             const CPVT_SectionInfo& secinfo);
@@ -463,8 +463,8 @@ class CPDF_VariableText : public IPDF_VariableText, private CPDF_EditContainer {
   FX_FLOAT GetWordFontSize(const CPVT_WordInfo& WordInfo,
                            FX_BOOL bFactFontSize = FALSE);
   FX_FLOAT GetWordWidth(int32_t nFontIndex,
-                        FX_WORD Word,
-                        FX_WORD SubWord,
+                        uint16_t Word,
+                        uint16_t SubWord,
                         FX_FLOAT fCharSpace,
                         int32_t nHorzScale,
                         FX_FLOAT fFontSize,
@@ -515,7 +515,7 @@ class CPDF_VariableText : public IPDF_VariableText, private CPDF_EditContainer {
   FX_FLOAT m_fLineLeading;
   FX_FLOAT m_fCharSpace;
   int32_t m_nHorzScale;
-  FX_WORD m_wSubWord;
+  uint16_t m_wSubWord;
   FX_FLOAT m_fFontSize;
 
  private:

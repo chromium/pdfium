@@ -26,7 +26,7 @@ class CFX_StdFontMgrImp : public IFX_FontMgr {
                     void* pUserData);
   ~CFX_StdFontMgrImp();
   virtual void Release() { delete this; }
-  virtual IFX_Font* GetDefFontByCodePage(FX_WORD wCodePage,
+  virtual IFX_Font* GetDefFontByCodePage(uint16_t wCodePage,
                                          FX_DWORD dwFontStyles,
                                          const FX_WCHAR* pszFontFamily = NULL);
   virtual IFX_Font* GetDefFontByCharset(uint8_t nCharset,
@@ -35,22 +35,22 @@ class CFX_StdFontMgrImp : public IFX_FontMgr {
   virtual IFX_Font* GetDefFontByUnicode(FX_WCHAR wUnicode,
                                         FX_DWORD dwFontStyles,
                                         const FX_WCHAR* pszFontFamily = NULL);
-  virtual IFX_Font* GetDefFontByLanguage(FX_WORD wLanguage,
+  virtual IFX_Font* GetDefFontByLanguage(uint16_t wLanguage,
                                          FX_DWORD dwFontStyles,
                                          const FX_WCHAR* pszFontFamily = NULL);
   virtual IFX_Font* LoadFont(const FX_WCHAR* pszFontFamily,
                              FX_DWORD dwFontStyles,
-                             FX_WORD wCodePage = 0xFFFF);
+                             uint16_t wCodePage = 0xFFFF);
   virtual IFX_Font* LoadFont(const uint8_t* pBuffer, int32_t iLength);
   virtual IFX_Font* LoadFont(const FX_WCHAR* pszFileName);
   virtual IFX_Font* LoadFont(IFX_Stream* pFontStream,
                              const FX_WCHAR* pszFontAlias = NULL,
                              FX_DWORD dwFontStyles = 0,
-                             FX_WORD wCodePage = 0,
+                             uint16_t wCodePage = 0,
                              FX_BOOL bSaveStream = FALSE);
   virtual IFX_Font* LoadFont(IFX_Font* pSrcFont,
                              FX_DWORD dwFontStyles,
-                             FX_WORD wCodePage = 0xFFFF);
+                             uint16_t wCodePage = 0xFFFF);
   virtual void ClearFontCache();
   virtual void RemoveFont(IFX_Font* pFont);
 
@@ -71,7 +71,7 @@ class CFX_StdFontMgrImp : public IFX_FontMgr {
   FX_LPCFONTDESCRIPTOR FindFont(const FX_WCHAR* pszFontFamily,
                                 FX_DWORD dwFontStyles,
                                 FX_DWORD dwMatchFlags,
-                                FX_WORD wCodePage,
+                                uint16_t wCodePage,
                                 FX_DWORD dwUSB = 999,
                                 FX_WCHAR wUnicode = 0);
   IFX_Font* GetFont(FX_LPCFONTDESCRIPTOR pFD, FX_DWORD dwFontStyles);
@@ -159,7 +159,7 @@ class CFX_FontMgrImp : public IFX_FontMgr {
                  IFX_FontMgrDelegate* pDelegate = NULL,
                  void* pUserData = NULL);
   virtual void Release();
-  virtual IFX_Font* GetDefFontByCodePage(FX_WORD wCodePage,
+  virtual IFX_Font* GetDefFontByCodePage(uint16_t wCodePage,
                                          FX_DWORD dwFontStyles,
                                          const FX_WCHAR* pszFontFamily = NULL);
   virtual IFX_Font* GetDefFontByCharset(uint8_t nCharset,
@@ -168,10 +168,10 @@ class CFX_FontMgrImp : public IFX_FontMgr {
   virtual IFX_Font* GetDefFontByUnicode(FX_WCHAR wUnicode,
                                         FX_DWORD dwFontStyles,
                                         const FX_WCHAR* pszFontFamily = NULL);
-  virtual IFX_Font* GetDefFontByLanguage(FX_WORD wLanguage,
+  virtual IFX_Font* GetDefFontByLanguage(uint16_t wLanguage,
                                          FX_DWORD dwFontStyles,
                                          const FX_WCHAR* pszFontFamily = NULL);
-  virtual IFX_Font* GetFontByCodePage(FX_WORD wCodePage,
+  virtual IFX_Font* GetFontByCodePage(uint16_t wCodePage,
                                       FX_DWORD dwFontStyles,
                                       const FX_WCHAR* pszFontFamily = NULL);
   virtual IFX_Font* GetFontByCharset(uint8_t nCharset,
@@ -180,7 +180,7 @@ class CFX_FontMgrImp : public IFX_FontMgr {
   virtual IFX_Font* GetFontByUnicode(FX_WCHAR wUnicode,
                                      FX_DWORD dwFontStyles,
                                      const FX_WCHAR* pszFontFamily = NULL);
-  virtual IFX_Font* GetFontByLanguage(FX_WORD wLanguage,
+  virtual IFX_Font* GetFontByLanguage(uint16_t wLanguage,
                                       FX_DWORD dwFontStyles,
                                       const FX_WCHAR* pszFontFamily = NULL);
   virtual IFX_Font* LoadFont(const uint8_t* pBuffer,
@@ -211,7 +211,7 @@ class CFX_FontMgrImp : public IFX_FontMgr {
   void RegisterFaces(IFX_FileRead* pFontStream,
                      const CFX_WideString* pFaceName);
   void GetNames(const uint8_t* name_table, CFX_WideStringArray& Names);
-  void GetCharsets(FXFT_Face pFace, CFX_WordArray& Charsets);
+  void GetCharsets(FXFT_Face pFace, CFX_ArrayTemplate<uint16_t>& Charsets);
   void GetUSBCSB(FXFT_Face pFace, FX_DWORD* USB, FX_DWORD* CSB);
   FX_DWORD GetFlags(FXFT_Face pFace);
   CFX_FontDescriptors m_InstalledFonts;
@@ -219,12 +219,12 @@ class CFX_FontMgrImp : public IFX_FontMgr {
   FX_BOOL VerifyUnicode(IFX_Font* pFont, FX_WCHAR wcUnicode);
   int32_t IsPartName(const CFX_WideString& Name1, const CFX_WideString& Name2);
   int32_t MatchFonts(CFX_FontDescriptorInfos& MatchedFonts,
-                     FX_WORD wCodePage,
+                     uint16_t wCodePage,
                      FX_DWORD dwFontStyles,
                      const CFX_WideString& FontName,
                      FX_WCHAR wcUnicode = 0xFFFE);
   int32_t CalcPenalty(CFX_FontDescriptor* pInstalled,
-                      FX_WORD wCodePage,
+                      uint16_t wCodePage,
                       FX_DWORD dwFontStyles,
                       const CFX_WideString& FontName,
                       FX_WCHAR wcUnicode = 0xFFFE);

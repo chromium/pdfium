@@ -20,8 +20,8 @@ struct XFA_FONTINFO {
   FX_DWORD dwFontNameHash;
   const FX_WCHAR* pPsName;
   const FX_WCHAR* pReplaceFont;
-  FX_WORD dwStyles;
-  FX_WORD wCodePage;
+  uint16_t dwStyles;
+  uint16_t wCodePage;
 };
 
 class CXFA_DefFontMgr : public IXFA_FontMgr {
@@ -33,11 +33,11 @@ class CXFA_DefFontMgr : public IXFA_FontMgr {
   IFX_Font* GetFont(IXFA_Doc* hDoc,
                     const CFX_WideStringC& wsFontFamily,
                     FX_DWORD dwFontStyles,
-                    FX_WORD wCodePage = 0xFFFF) override;
+                    uint16_t wCodePage = 0xFFFF) override;
   IFX_Font* GetDefaultFont(IXFA_Doc* hDoc,
                            const CFX_WideStringC& wsFontFamily,
                            FX_DWORD dwFontStyles,
-                           FX_WORD wCodePage = 0xFFFF) override;
+                           uint16_t wCodePage = 0xFFFF) override;
 
  protected:
   CFX_PtrArray m_CacheFonts;
@@ -83,7 +83,7 @@ class CXFA_FontMgr {
   IFX_Font* GetFont(IXFA_Doc* hDoc,
                     const CFX_WideStringC& wsFontFamily,
                     FX_DWORD dwFontStyles,
-                    FX_WORD wCodePage = 0xFFFF);
+                    uint16_t wCodePage = 0xFFFF);
   void LoadDocFonts(IXFA_Doc* hDoc);
   void ReleaseDocFonts(IXFA_Doc* hDoc);
 

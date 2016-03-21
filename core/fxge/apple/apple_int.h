@@ -59,7 +59,7 @@ class CQuartz2D {
   FX_BOOL drawGraphicsString(void* graphics,
                              void* font,
                              FX_FLOAT fontSize,
-                             FX_WORD* glyphIndices,
+                             uint16_t* glyphIndices,
                              CGPoint* glyphPositions,
                              int32_t chars,
                              FX_ARGB argb,

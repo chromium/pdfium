@@ -7,18 +7,18 @@
 #ifndef CORE_FPDFAPI_FPDF_CMAPS_KOREA1_CMAPS_KOREA1_H_
 #define CORE_FPDFAPI_FPDF_CMAPS_KOREA1_CMAPS_KOREA1_H_
 
-#include "core/include/fxcrt/fx_system.h"  // For FX_WORD.
+#include <stdint.h>
 
-extern const FX_WORD g_FXCMAP_KSC_EUC_H_0[];
-extern const FX_WORD g_FXCMAP_KSC_EUC_V_0[];
-extern const FX_WORD g_FXCMAP_KSCms_UHC_H_1[];
-extern const FX_WORD g_FXCMAP_KSCms_UHC_V_1[];
-extern const FX_WORD g_FXCMAP_KSCms_UHC_HW_H_1[];
-extern const FX_WORD g_FXCMAP_KSCms_UHC_HW_V_1[];
-extern const FX_WORD g_FXCMAP_KSCpc_EUC_H_0[];
-extern const FX_WORD g_FXCMAP_UniKS_UCS2_H_1[];
-extern const FX_WORD g_FXCMAP_UniKS_UCS2_V_1[];
-extern const FX_WORD g_FXCMAP_UniKS_UTF16_H_0[];
-extern const FX_WORD g_FXCMAP_Korea1CID2Unicode_2[];
+extern const uint16_t g_FXCMAP_KSC_EUC_H_0[];
+extern const uint16_t g_FXCMAP_KSC_EUC_V_0[];
+extern const uint16_t g_FXCMAP_KSCms_UHC_H_1[];
+extern const uint16_t g_FXCMAP_KSCms_UHC_V_1[];
+extern const uint16_t g_FXCMAP_KSCms_UHC_HW_H_1[];
+extern const uint16_t g_FXCMAP_KSCms_UHC_HW_V_1[];
+extern const uint16_t g_FXCMAP_KSCpc_EUC_H_0[];
+extern const uint16_t g_FXCMAP_UniKS_UCS2_H_1[];
+extern const uint16_t g_FXCMAP_UniKS_UCS2_V_1[];
+extern const uint16_t g_FXCMAP_UniKS_UTF16_H_0[];
+extern const uint16_t g_FXCMAP_Korea1CID2Unicode_2[];
 
 #endif  // CORE_FPDFAPI_FPDF_CMAPS_KOREA1_CMAPS_KOREA1_H_

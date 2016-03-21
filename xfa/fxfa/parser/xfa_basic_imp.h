@@ -48,8 +48,8 @@ class CXFA_WideTextRead : public IFX_Stream {
   virtual FX_BOOL SetLength(int32_t iLength) { return FALSE; }
 
   virtual int32_t GetBOM(uint8_t bom[4]) const { return 0; }
-  virtual FX_WORD GetCodePage() const;
-  virtual FX_WORD SetCodePage(FX_WORD wCodePage);
+  virtual uint16_t GetCodePage() const;
+  virtual uint16_t SetCodePage(uint16_t wCodePage);
 
   virtual void Lock() {}
   virtual void Unlock() {}

@@ -53,14 +53,14 @@ class CPVT_Provider : public IPDF_VariableText_Provider {
 
   // IPDF_VariableText_Provider
   int32_t GetCharWidth(int32_t nFontIndex,
-                       FX_WORD word,
+                       uint16_t word,
                        int32_t nWordStyle) override;
   int32_t GetTypeAscent(int32_t nFontIndex) override;
   int32_t GetTypeDescent(int32_t nFontIndex) override;
-  int32_t GetWordFontIndex(FX_WORD word,
+  int32_t GetWordFontIndex(uint16_t word,
                            int32_t charset,
                            int32_t nFontIndex) override;
-  FX_BOOL IsLatinWord(FX_WORD word) override;
+  FX_BOOL IsLatinWord(uint16_t word) override;
   int32_t GetDefaultFontIndex() override;
 
  private:
@@ -82,7 +82,7 @@ class CPVT_GenerateAP {
                                        IPDF_VariableText_Iterator* pIterator,
                                        const CFX_FloatPoint& ptOffset,
                                        FX_BOOL bContinuous,
-                                       FX_WORD SubWord = 0,
+                                       uint16_t SubWord = 0,
                                        const CPVT_WordRange* pVisible = NULL);
 
   static CFX_ByteString GenerateBorderAP(const CFX_FloatRect& rect,

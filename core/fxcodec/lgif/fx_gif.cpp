@@ -30,14 +30,14 @@ void CGifLZWDecoder::InitTable(uint8_t code_len) {
 void CGifLZWDecoder::ClearTable() {
   code_size_cur = code_size + 1;
   code_next = code_end + 1;
-  code_old = (FX_WORD)-1;
+  code_old = (uint16_t)-1;
   FXSYS_memset(code_table, 0, sizeof(tag_Table) * GIF_MAX_LZW_CODE);
   FXSYS_memset(stack, 0, GIF_MAX_LZW_CODE);
-  for (FX_WORD i = 0; i < code_clear; i++) {
+  for (uint16_t i = 0; i < code_clear; i++) {
     code_table[i].suffix = (uint8_t)i;
   }
 }
-void CGifLZWDecoder::DecodeString(FX_WORD code) {
+void CGifLZWDecoder::DecodeString(uint16_t code) {
   stack_size = 0;
   while (TRUE) {
     ASSERT(code <= code_next);
@@ -50,7 +50,7 @@ void CGifLZWDecoder::DecodeString(FX_WORD code) {
   stack[GIF_MAX_LZW_CODE - 1 - stack_size++] = (uint8_t)code;
   code_first = (uint8_t)code;
 }
-void CGifLZWDecoder::AddCode(FX_WORD prefix_code, uint8_t append_char) {
+void CGifLZWDecoder::AddCode(uint16_t prefix_code, uint8_t append_char) {
   if (code_next == GIF_MAX_LZW_CODE) {
     return;
   }
@@ -70,7 +70,7 @@ int32_t CGifLZWDecoder::Decode(uint8_t* des_buf, FX_DWORD& des_size) {
   if (stack_size != 0) {
     if (des_size < stack_size) {
       FXSYS_memcpy(des_buf, &stack[GIF_MAX_LZW_CODE - stack_size], des_size);
-      stack_size -= (FX_WORD)des_size;
+      stack_size -= (uint16_t)des_size;
       return 3;
     }
     FXSYS_memcpy(des_buf, &stack[GIF_MAX_LZW_CODE - stack_size], stack_size);
@@ -78,7 +78,7 @@ int32_t CGifLZWDecoder::Decode(uint8_t* des_buf, FX_DWORD& des_size) {
     i += stack_size;
     stack_size = 0;
   }
-  FX_WORD code = 0;
+  uint16_t code = 0;
   while (i <= des_size && (avail_in > 0 || bits_left >= code_size_cur)) {
     if (code_size_cur > 12) {
       if (err_msg_ptr) {
@@ -93,7 +93,7 @@ int32_t CGifLZWDecoder::Decode(uint8_t* des_buf, FX_DWORD& des_size) {
       bits_left += 8;
     }
     while (bits_left >= code_size_cur) {
-      code = (FX_WORD)code_store & ((1 << code_size_cur) - 1);
+      code = (uint16_t)code_store & ((1 << code_size_cur) - 1);
       code_store >>= code_size_cur;
       bits_left -= code_size_cur;
       if (code == code_clear) {
@@ -103,7 +103,7 @@ int32_t CGifLZWDecoder::Decode(uint8_t* des_buf, FX_DWORD& des_size) {
         des_size = i;
         return 1;
       } else {
-        if (code_old != (FX_WORD)-1) {
+        if (code_old != (uint16_t)-1) {
           if (code_next < GIF_MAX_LZW_CODE) {
             if (code == code_next) {
               AddCode(code_old, code_first);
@@ -127,7 +127,7 @@ int32_t CGifLZWDecoder::Decode(uint8_t* des_buf, FX_DWORD& des_size) {
         if (i + stack_size > des_size) {
           FXSYS_memcpy(des_buf, &stack[GIF_MAX_LZW_CODE - stack_size],
                        des_size - i);
-          stack_size -= (FX_WORD)(des_size - i);
+          stack_size -= (uint16_t)(des_size - i);
           return 3;
         }
         FXSYS_memcpy(des_buf, &stack[GIF_MAX_LZW_CODE - stack_size],
@@ -179,7 +179,7 @@ static inline uint8_t gif_cut_buf(const uint8_t* buf,
                                   uint8_t& bit_offset,
                                   FX_DWORD& bit_num) {
   if (bit_cut != 8) {
-    FX_WORD index = 0;
+    uint16_t index = 0;
     index |= ((1 << bit_cut) - 1) << (7 - bit_offset);
     uint8_t ret = ((index & buf[offset]) >> (7 - bit_offset));
     bit_offset += bit_cut;
@@ -204,7 +204,7 @@ void CGifLZWEncoder::ClearTable() {
   index_bit_cur = code_size + 1;
   index_num = code_end + 1;
   table_cur = code_end + 1;
-  for (FX_WORD i = 0; i < GIF_MAX_LZW_CODE; i++) {
+  for (uint16_t i = 0; i < GIF_MAX_LZW_CODE; i++) {
     code_table[i].prefix = 0;
     code_table[i].suffix = 0;
   }
@@ -335,7 +335,7 @@ FX_BOOL CGifLZWEncoder::Encode(const uint8_t* src_buf,
 FX_BOOL CGifLZWEncoder::LookUpInTable(const uint8_t* buf,
                                       FX_DWORD& offset,
                                       uint8_t& bit_offset) {
-  for (FX_WORD i = table_cur; i < index_num; i++) {
+  for (uint16_t i = table_cur; i < index_num; i++) {
     if (code_table[i].prefix == code_table[index_num].prefix &&
         code_table[i].suffix == code_table[index_num].suffix) {
       code_table[index_num].prefix = i;
@@ -1041,7 +1041,7 @@ static FX_BOOL gif_write_header(gif_compress_struct_p gif_ptr,
   dst_buf[gif_ptr->cur_offset++] = gif_ptr->lsd_ptr->bc_index;
   dst_buf[gif_ptr->cur_offset++] = gif_ptr->lsd_ptr->pixel_aspect;
   if (gif_ptr->global_pal) {
-    FX_WORD size = sizeof(GifPalette) * gif_ptr->gpal_num;
+    uint16_t size = sizeof(GifPalette) * gif_ptr->gpal_num;
     if (!gif_grow_buf(dst_buf, dst_len, gif_ptr->cur_offset + size)) {
       return FALSE;
     }

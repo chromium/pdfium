@@ -12,7 +12,7 @@
 class CPDF_Dictionary;
 
 // Indexed by 8-bit char code, contains unicode code points.
-extern const FX_WORD PDFDocEncoding[256];
+extern const uint16_t PDFDocEncoding[256];
 
 CFX_ByteString PDF_NameDecode(const CFX_ByteStringC& orig);
 CFX_ByteString PDF_NameDecode(const CFX_ByteString& orig);

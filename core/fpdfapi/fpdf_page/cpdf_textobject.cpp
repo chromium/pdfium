@@ -35,7 +35,7 @@ void CPDF_TextObject::GetItemInfo(int index, CPDF_TextObjectItem* pInfo) const {
   if (!pFont->AsCIDFont()->IsVertWriting()) {
     return;
   }
-  FX_WORD CID = pFont->AsCIDFont()->CIDFromCharCode(pInfo->m_CharCode);
+  uint16_t CID = pFont->AsCIDFont()->CIDFromCharCode(pInfo->m_CharCode);
   pInfo->m_OriginY = pInfo->m_OriginX;
   pInfo->m_OriginX = 0;
   short vx, vy;
@@ -179,7 +179,7 @@ FX_FLOAT CPDF_TextObject::GetCharWidth(FX_DWORD charcode) const {
   if (!bVertWriting)
     return pFont->GetCharWidthF(charcode, 0) * fontsize;
 
-  FX_WORD CID = pCIDFont->CIDFromCharCode(charcode);
+  uint16_t CID = pCIDFont->CIDFromCharCode(charcode);
   return pCIDFont->GetVertWidth(CID) * fontsize;
 }
 
@@ -240,7 +240,7 @@ void CPDF_TextObject::CalcPositionData(FX_FLOAT* pTextAdvanceX,
       }
       charwidth = pFont->GetCharWidthF(charcode, level) * fontsize / 1000;
     } else {
-      FX_WORD CID = pCIDFont->CIDFromCharCode(charcode);
+      uint16_t CID = pCIDFont->CIDFromCharCode(charcode);
       short vx;
       short vy;
       pCIDFont->GetVertOrigin(CID, vx, vy);

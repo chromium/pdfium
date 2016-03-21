@@ -1523,7 +1523,7 @@ FDE_CSSTEXTALIGN CFDE_CSSStyleSelector::ToTextAlign(
       return FDE_CSSTEXTALIGN_Left;
   }
 }
-FX_WORD CFDE_CSSStyleSelector::ToFontWeight(FDE_CSSPROPERTYVALUE eValue) {
+uint16_t CFDE_CSSStyleSelector::ToFontWeight(FDE_CSSPROPERTYVALUE eValue) {
   switch (eValue) {
     case FDE_CSSPROPERTYVALUE_Normal:
       return 400;

@@ -417,7 +417,7 @@ CFX_ByteString CPWL_Utils::GetEditAppStream(IFX_Edit* pEdit,
                                             const CFX_FloatPoint& ptOffset,
                                             const CPVT_WordRange* pRange,
                                             FX_BOOL bContinuous,
-                                            FX_WORD SubWord) {
+                                            uint16_t SubWord) {
   return IFX_Edit::GetEditAppearanceStream(pEdit, ptOffset, pRange, bContinuous,
                                            SubWord);
 }

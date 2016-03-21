@@ -1566,7 +1566,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const FX_WCHAR* sValue) {
       pEdit->SetAlignmentV(1);
     }
 
-    FX_WORD subWord = 0;
+    uint16_t subWord = 0;
     if ((dwFieldFlags >> 13) & 1) {
       subWord = '*';
       pEdit->SetPasswordChar(subWord);

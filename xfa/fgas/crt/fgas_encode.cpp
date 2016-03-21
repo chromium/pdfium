@@ -11,17 +11,17 @@ void FX_SwapByteOrder(FX_WCHAR* pStr, int32_t iLength) {
   if (iLength < 0) {
     iLength = FXSYS_wcslen(pStr);
   }
-  FX_WORD wch;
+  uint16_t wch;
   if (sizeof(FX_WCHAR) > 2) {
     while (iLength-- > 0) {
-      wch = (FX_WORD)*pStr;
+      wch = (uint16_t)*pStr;
       wch = (wch >> 8) | (wch << 8);
       wch &= 0x00FF;
       *pStr++ = wch;
     }
   } else {
     while (iLength-- > 0) {
-      wch = (FX_WORD)*pStr;
+      wch = (uint16_t)*pStr;
       wch = (wch >> 8) | (wch << 8);
       *pStr++ = wch;
     }
@@ -34,17 +34,17 @@ void FX_SwapByteOrderCopy(const FX_WCHAR* pSrc,
   if (iLength < 0) {
     iLength = FXSYS_wcslen(pSrc);
   }
-  FX_WORD wch;
+  uint16_t wch;
   if (sizeof(FX_WCHAR) > 2) {
     while (iLength-- > 0) {
-      wch = (FX_WORD)*pSrc++;
+      wch = (uint16_t)*pSrc++;
       wch = (wch >> 8) | (wch << 8);
       wch &= 0x00FF;
       *pDst++ = wch;
     }
   } else {
     while (iLength-- > 0) {
-      wch = (FX_WORD)*pSrc++;
+      wch = (uint16_t)*pSrc++;
       wch = (wch >> 8) | (wch << 8);
       *pDst++ = wch;
     }
@@ -55,13 +55,13 @@ void FX_UTF16ToWChar(void* pBuffer, int32_t iLength) {
   if (sizeof(FX_WCHAR) == 2) {
     return;
   }
-  FX_WORD* pSrc = (FX_WORD*)pBuffer;
+  uint16_t* pSrc = (uint16_t*)pBuffer;
   FX_WCHAR* pDst = (FX_WCHAR*)pBuffer;
   while (--iLength >= 0) {
     pDst[iLength] = (FX_WCHAR)pSrc[iLength];
   }
 }
-void FX_UTF16ToWCharCopy(const FX_WORD* pUTF16,
+void FX_UTF16ToWCharCopy(const uint16_t* pUTF16,
                          FX_WCHAR* pWChar,
                          int32_t iLength) {
   FXSYS_assert(pUTF16 != NULL && pWChar != NULL && iLength > 0);
@@ -79,30 +79,30 @@ void FX_WCharToUTF16(void* pBuffer, int32_t iLength) {
     return;
   }
   const FX_WCHAR* pSrc = (const FX_WCHAR*)pBuffer;
-  FX_WORD* pDst = (FX_WORD*)pBuffer;
+  uint16_t* pDst = (uint16_t*)pBuffer;
   while (--iLength >= 0) {
-    *pDst++ = (FX_WORD)*pSrc++;
+    *pDst++ = (uint16_t)*pSrc++;
   }
 }
 void FX_WCharToUTF16Copy(const FX_WCHAR* pWChar,
-                         FX_WORD* pUTF16,
+                         uint16_t* pUTF16,
                          int32_t iLength) {
   FXSYS_assert(pWChar != NULL && pUTF16 != NULL && iLength > 0);
   if (sizeof(FX_WCHAR) == 2) {
     FXSYS_memcpy(pUTF16, pWChar, iLength * sizeof(FX_WCHAR));
   } else {
     while (--iLength >= 0) {
-      *pUTF16++ = (FX_WORD)*pWChar++;
+      *pUTF16++ = (uint16_t)*pWChar++;
     }
   }
 }
 inline FX_DWORD FX_DWordFromBytes(const uint8_t* pStr) {
   return FXBSTR_ID(pStr[3], pStr[2], pStr[1], pStr[0]);
 }
-inline FX_WORD FX_WordFromBytes(const uint8_t* pStr) {
+inline uint16_t FX_WordFromBytes(const uint8_t* pStr) {
   return (pStr[1] << 8 | pStr[0]);
 }
-int32_t FX_DecodeString(FX_WORD wCodePage,
+int32_t FX_DecodeString(uint16_t wCodePage,
                         const FX_CHAR* pSrc,
                         int32_t* pSrcLen,
                         FX_WCHAR* pDst,

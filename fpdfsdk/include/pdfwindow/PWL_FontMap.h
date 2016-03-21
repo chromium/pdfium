@@ -56,11 +56,11 @@ class CPWL_FontMap : public IFX_Edit_FontMap {
   // IFX_Edit_FontMap
   CPDF_Font* GetPDFFont(int32_t nFontIndex) override;
   CFX_ByteString GetPDFFontAlias(int32_t nFontIndex) override;
-  int32_t GetWordFontIndex(FX_WORD word,
+  int32_t GetWordFontIndex(uint16_t word,
                            int32_t nCharset,
                            int32_t nFontIndex) override;
-  int32_t CharCodeFromUnicode(int32_t nFontIndex, FX_WORD word) override;
-  int32_t CharSetFromUnicode(FX_WORD word, int32_t nOldCharset) override;
+  int32_t CharCodeFromUnicode(int32_t nFontIndex, uint16_t word) override;
+  int32_t CharSetFromUnicode(uint16_t word, int32_t nOldCharset) override;
 
   void SetSystemHandler(IFX_SystemHandler* pSystemHandler);
   int32_t GetFontMapCount() const;
@@ -86,13 +86,13 @@ class CPWL_FontMap : public IFX_Edit_FontMap {
                                          int32_t nCharset);
   virtual void AddedFont(CPDF_Font* pFont, const CFX_ByteString& sFontAlias);
 
-  FX_BOOL KnowWord(int32_t nFontIndex, FX_WORD word);
+  FX_BOOL KnowWord(int32_t nFontIndex, uint16_t word);
 
   void Empty();
   int32_t GetFontIndex(const CFX_ByteString& sFontName,
                        int32_t nCharset,
                        FX_BOOL bFind);
-  int32_t GetPWLFontIndex(FX_WORD word, int32_t nCharset);
+  int32_t GetPWLFontIndex(uint16_t word, int32_t nCharset);
   int32_t AddFontData(CPDF_Font* pFont,
                       const CFX_ByteString& sFontAlias,
                       int32_t nCharset = DEFAULT_CHARSET);

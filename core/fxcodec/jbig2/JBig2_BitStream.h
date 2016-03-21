@@ -23,7 +23,7 @@ class CJBig2_BitStream {
   int32_t read1Bit(FX_BOOL* bResult);
   int32_t read1Byte(uint8_t* cResult);
   int32_t readInteger(FX_DWORD* dwResult);
-  int32_t readShortInteger(FX_WORD* wResult);
+  int32_t readShortInteger(uint16_t* wResult);
   void alignByte();
   uint8_t getCurByte() const;
   void incByteIdx();

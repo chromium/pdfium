@@ -197,7 +197,7 @@ FX_BOOL CPWL_IconList_Content::OnMouseMove(const CFX_FloatPoint& point,
   return TRUE;
 }
 
-FX_BOOL CPWL_IconList_Content::OnKeyDown(FX_WORD nChar, FX_DWORD nFlag) {
+FX_BOOL CPWL_IconList_Content::OnKeyDown(uint16_t nChar, FX_DWORD nFlag) {
   switch (nChar) {
     case FWL_VKEY_Up:
       if (m_nSelectIndex > 0) {

@@ -26,10 +26,10 @@ void SetDWord_LSBFirst(uint8_t* p, FX_DWORD v) {
 }
 }  // namespace
 
-FX_WORD GetWord_LSBFirst(uint8_t* p) {
+uint16_t GetWord_LSBFirst(uint8_t* p) {
   return p[0] | (p[1] << 8);
 }
-void SetWord_LSBFirst(uint8_t* p, FX_WORD v) {
+void SetWord_LSBFirst(uint8_t* p, uint16_t v) {
   p[0] = (uint8_t)v;
   p[1] = (uint8_t)(v >> 8);
 }
@@ -145,7 +145,7 @@ int32_t bmp_read_header(bmp_decompress_struct_p bmp_ptr) {
             bmp_ptr->skip_size = skip_size_org;
             return 2;
           }
-          FX_WORD biPlanes;
+          uint16_t biPlanes;
           bmp_ptr->width =
               GetDWord_LSBFirst((uint8_t*)&bmp_info_header_ptr->biWidth);
           bmp_ptr->height =
@@ -340,7 +340,7 @@ int32_t bmp_decode_rgb(bmp_decompress_struct_p bmp_ptr) {
         }
       } break;
       case 16: {
-        FX_WORD* buf = (FX_WORD*)des_buf;
+        uint16_t* buf = (uint16_t*)des_buf;
         uint8_t blue_bits = 0;
         uint8_t green_bits = 0;
         uint8_t red_bits = 0;
@@ -551,7 +551,7 @@ int32_t bmp_decode_rle4(bmp_decompress_struct_p bmp_ptr) {
             }
           } break;
           default: {
-            uint8_t size = (uint8_t)(((FX_WORD)(*first_byte_ptr) + 1) >> 1);
+            uint8_t size = (uint8_t)(((uint16_t)(*first_byte_ptr) + 1) >> 1);
             if ((int32_t)*first_byte_ptr >=
                 bmp_ptr->out_row_bytes - bmp_ptr->col_num) {
               if (size + (bmp_ptr->col_num >> 1) > bmp_ptr->src_row_bytes) {
@@ -584,7 +584,7 @@ int32_t bmp_decode_rle4(bmp_decompress_struct_p bmp_ptr) {
         }
         if ((int32_t)*first_byte_ptr >
             bmp_ptr->out_row_bytes - bmp_ptr->col_num) {
-          uint8_t size = (uint8_t)(((FX_WORD)(*first_byte_ptr) + 1) >> 1);
+          uint8_t size = (uint8_t)(((uint16_t)(*first_byte_ptr) + 1) >> 1);
           if (size + (bmp_ptr->col_num >> 1) > bmp_ptr->src_row_bytes) {
             bmp_error(bmp_ptr, "The Bmp File Is Corrupt");
             return 0;

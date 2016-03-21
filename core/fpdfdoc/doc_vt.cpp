@@ -410,7 +410,7 @@ static const uint8_t special_chars[128] = {
     0x01, 0x01, 0x01, 0x0C, 0x00, 0x08, 0x00, 0x00,
 };
 
-static bool IsLatin(FX_WORD word) {
+static bool IsLatin(uint16_t word) {
   if (word <= 0x007F)
     return !!(special_chars[word] & 0x01);
 
@@ -509,7 +509,7 @@ static bool IsOpenStylePunctuation(FX_DWORD word) {
           word == 0xFF3B || word == 0xFF5B || word == 0xFF62);
 }
 
-static bool IsCurrencySymbol(FX_WORD word) {
+static bool IsCurrencySymbol(uint16_t word) {
   return (word == 0x0024 || word == 0x0080 || word == 0x00A2 ||
           word == 0x00A3 || word == 0x00A4 || word == 0x00A5 ||
           (word >= 0x20A0 && word <= 0x20CF) || word == 0xFE69 ||
@@ -517,15 +517,15 @@ static bool IsCurrencySymbol(FX_WORD word) {
           word == 0xFFE5 || word == 0xFFE6);
 }
 
-static bool IsPrefixSymbol(FX_WORD word) {
+static bool IsPrefixSymbol(uint16_t word) {
   return IsCurrencySymbol(word) || word == 0x2116;
 }
 
-static bool IsSpace(FX_WORD word) {
+static bool IsSpace(uint16_t word) {
   return word == 0x0020 || word == 0x3000;
 }
 
-static bool NeedDivision(FX_WORD prevWord, FX_WORD curWord) {
+static bool NeedDivision(uint16_t prevWord, uint16_t curWord) {
   if ((IsLatin(prevWord) || IsDigit(prevWord)) &&
       (IsLatin(curWord) || IsDigit(curWord))) {
     return false;
@@ -819,7 +819,7 @@ void CPDF_VariableText::ResetAll() {
   ResetSectionArray();
 }
 CPVT_WordPlace CPDF_VariableText::InsertWord(const CPVT_WordPlace& place,
-                                             FX_WORD word,
+                                             uint16_t word,
                                              int32_t charset,
                                              const CPVT_WordProps* pWordProps) {
   int32_t nTotlaWords = GetTotalWords();
@@ -896,7 +896,7 @@ CPVT_WordPlace CPDF_VariableText::InsertText(const CPVT_WordPlace& place,
   CPVT_WordPlace wp = place;
   for (int32_t i = 0, sz = swText.GetLength(); i < sz; i++) {
     CPVT_WordPlace oldwp = wp;
-    FX_WORD word = swText.GetAt(i);
+    uint16_t word = swText.GetAt(i);
     switch (word) {
       case 0x0D:
         if (m_bMultiLine) {
@@ -974,7 +974,7 @@ void CPDF_VariableText::SetText(const FX_WCHAR* text,
     if (m_nCharArray > 0 && nCharCount >= m_nCharArray) {
       break;
     }
-    FX_WORD word = swText.GetAt(i);
+    uint16_t word = swText.GetAt(i);
     switch (word) {
       case 0x0D:
         if (m_bMultiLine) {
@@ -1332,8 +1332,8 @@ int32_t CPDF_VariableText::GetWordFontIndex(const CPVT_WordInfo& WordInfo) {
                                             : WordInfo.nFontIndex;
 }
 FX_FLOAT CPDF_VariableText::GetWordWidth(int32_t nFontIndex,
-                                         FX_WORD Word,
-                                         FX_WORD SubWord,
+                                         uint16_t Word,
+                                         uint16_t SubWord,
                                          FX_FLOAT fCharSpace,
                                          int32_t nHorzScale,
                                          FX_FLOAT fFontSize,
@@ -1612,8 +1612,8 @@ CPVT_FloatRect CPDF_VariableText::RearrangeSections(
   return rcRet;
 }
 int32_t CPDF_VariableText::GetCharWidth(int32_t nFontIndex,
-                                        FX_WORD Word,
-                                        FX_WORD SubWord,
+                                        uint16_t Word,
+                                        uint16_t SubWord,
                                         int32_t nWordStyle) {
   if (!m_pVTProvider) {
     return 0;
@@ -1629,7 +1629,7 @@ int32_t CPDF_VariableText::GetTypeAscent(int32_t nFontIndex) {
 int32_t CPDF_VariableText::GetTypeDescent(int32_t nFontIndex) {
   return m_pVTProvider ? m_pVTProvider->GetTypeDescent(nFontIndex) : 0;
 }
-int32_t CPDF_VariableText::GetWordFontIndex(FX_WORD word,
+int32_t CPDF_VariableText::GetWordFontIndex(uint16_t word,
                                             int32_t charset,
                                             int32_t nFontIndex) {
   return m_pVTProvider
@@ -1639,7 +1639,7 @@ int32_t CPDF_VariableText::GetWordFontIndex(FX_WORD word,
 int32_t CPDF_VariableText::GetDefaultFontIndex() {
   return m_pVTProvider ? m_pVTProvider->GetDefaultFontIndex() : -1;
 }
-FX_BOOL CPDF_VariableText::IsLatinWord(FX_WORD word) {
+FX_BOOL CPDF_VariableText::IsLatinWord(uint16_t word) {
   return m_pVTProvider ? m_pVTProvider->IsLatinWord(word) : FALSE;
 }
 IPDF_VariableText_Iterator* CPDF_VariableText::GetIterator() {

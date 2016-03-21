@@ -276,11 +276,11 @@ void FX_GetLineBreakPositions(const FX_WCHAR* pwsText,
   FX_DWORD dwCur, dwNext;
   FX_WCHAR wch;
   wch = *pwsText++;
-  dwCur = kTextLayoutCodeProperties[(FX_WORD)wch] & 0x003F;
+  dwCur = kTextLayoutCodeProperties[(uint16_t)wch] & 0x003F;
   iLength--;
   for (int32_t i = 0; i < iLength; i++) {
     wch = *pwsText++;
-    dwNext = kTextLayoutCodeProperties[(FX_WORD)wch] & 0x003F;
+    dwNext = kTextLayoutCodeProperties[(uint16_t)wch] & 0x003F;
     if (dwNext == FX_CBP_SP) {
       pBrkType[i] = FX_LBT_PROHIBITED_BRK;
     } else {
@@ -301,11 +301,11 @@ void FX_GetLineBreakPositions(const FX_WCHAR* pwsText,
   FX_DWORD dwCur, dwNext;
   FX_WCHAR wch;
   wch = *pwsText++;
-  dwCur = kTextLayoutCodeProperties[(FX_WORD)wch] & 0x003F;
+  dwCur = kTextLayoutCodeProperties[(uint16_t)wch] & 0x003F;
   iLength--;
   for (int32_t i = 0; i < iLength; i++) {
     wch = *pwsText++;
-    dwNext = kTextLayoutCodeProperties[(FX_WORD)wch] & 0x003F;
+    dwNext = kTextLayoutCodeProperties[(uint16_t)wch] & 0x003F;
     if (dwNext == FX_CBP_SP) {
       eType = FX_LBT_PROHIBITED_BRK;
     } else {

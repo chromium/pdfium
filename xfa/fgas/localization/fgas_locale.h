@@ -87,13 +87,13 @@ class IFX_LocaleMgr {
  public:
   virtual ~IFX_LocaleMgr() {}
   virtual void Release() = 0;
-  virtual FX_WORD GetDefLocaleID() = 0;
+  virtual uint16_t GetDefLocaleID() = 0;
   virtual IFX_Locale* GetDefLocale() = 0;
-  virtual IFX_Locale* GetLocale(FX_WORD lcid) = 0;
+  virtual IFX_Locale* GetLocale(uint16_t lcid) = 0;
   virtual IFX_Locale* GetLocaleByName(const CFX_WideStringC& wsLocaleName) = 0;
 };
 IFX_LocaleMgr* FX_LocaleMgr_Create(const FX_WCHAR* pszLocalPath,
-                                   FX_WORD wDefaultLCID);
+                                   uint16_t wDefaultLCID);
 void FX_ParseNumString(const CFX_WideString& wsNum, CFX_WideString& wsResult);
 FX_BOOL FX_DateFromCanonical(const CFX_WideString& wsDate,
                              CFX_Unitime& datetime);
@@ -109,7 +109,7 @@ class IFX_FormatString {
   virtual void SplitFormatString(const CFX_WideString& wsFormatString,
                                  CFX_WideStringArray& wsPatterns) = 0;
   virtual FX_LOCALECATEGORY GetCategory(const CFX_WideString& wsPattern) = 0;
-  virtual FX_WORD GetLCID(const CFX_WideString& wsPattern) = 0;
+  virtual uint16_t GetLCID(const CFX_WideString& wsPattern) = 0;
   virtual CFX_WideString GetLocaleName(const CFX_WideString& wsPattern) = 0;
   virtual FX_BOOL ParseText(const CFX_WideString& wsSrcText,
                             const CFX_WideString& wsPattern,

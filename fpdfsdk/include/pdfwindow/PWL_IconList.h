@@ -78,7 +78,7 @@ class CPWL_IconList_Content : public CPWL_ListCtrl {
   FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
   FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
   FX_BOOL OnMouseMove(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
-  FX_BOOL OnKeyDown(FX_WORD nChar, FX_DWORD nFlag) override;
+  FX_BOOL OnKeyDown(uint16_t nChar, FX_DWORD nFlag) override;
 
  private:
   CPWL_IconList_Item* GetListItem(int32_t nItemIndex) const;

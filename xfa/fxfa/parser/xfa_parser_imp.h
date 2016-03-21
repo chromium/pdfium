@@ -119,8 +119,8 @@ class CXFA_XMLParser : public IFDE_XMLParser {
   FX_FILESIZE m_nStart[2];
   size_t m_nSize[2];
   FX_FILESIZE m_nElementStart;
-  FX_WORD m_dwCheckStatus;
-  FX_WORD m_dwCurrentCheckStatus;
+  uint16_t m_dwCheckStatus;
+  uint16_t m_dwCurrentCheckStatus;
 
  protected:
   IFDE_XMLNode* m_pRoot;

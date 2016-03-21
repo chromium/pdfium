@@ -17,7 +17,7 @@ static const FX_CHARSET_MAP g_FXCharset2CodePageTable[] = {
     {186, 1257}, {204, 1251}, {222, 874},  {238, 1250}, {254, 437},
     {255, 850},
 };
-FX_WORD FX_GetCodePageFromCharset(uint8_t charset) {
+uint16_t FX_GetCodePageFromCharset(uint8_t charset) {
   int32_t iEnd = sizeof(g_FXCharset2CodePageTable) / sizeof(FX_CHARSET_MAP) - 1;
   FXSYS_assert(iEnd >= 0);
   int32_t iStart = 0, iMid;
@@ -43,7 +43,7 @@ static const FX_CHARSET_MAP g_FXCodepage2CharsetTable[] = {
     {84, 10004}, {85, 10006}, {86, 10081}, {87, 10021}, {88, 10029},
     {89, 10007},
 };
-FX_WORD FX_GetCharsetFromCodePage(FX_WORD codepage) {
+uint16_t FX_GetCharsetFromCodePage(uint16_t codepage) {
   int32_t iEnd = sizeof(g_FXCodepage2CharsetTable) / sizeof(FX_CHARSET_MAP) - 1;
   FXSYS_assert(iEnd >= 0);
   int32_t iStart = 0, iMid;
@@ -197,7 +197,7 @@ const FX_LANG2CPMAP g_FXLang2CodepageTable[] = {
     {FX_LANG_Spanish_Nicaragua, FX_CODEPAGE_MSWin_WesternEuropean},
     {FX_LANG_Spanish_PuertoRico, FX_CODEPAGE_MSWin_WesternEuropean},
 };
-FX_WORD FX_GetDefCodePageByLanguage(FX_WORD wLanguage) {
+uint16_t FX_GetDefCodePageByLanguage(uint16_t wLanguage) {
   int32_t iEnd = sizeof(g_FXLang2CodepageTable) / sizeof(FX_LANG2CPMAP) - 1;
   FXSYS_assert(iEnd >= 0);
   int32_t iStart = 0, iMid;
@@ -301,7 +301,7 @@ static const FX_STR2CPHASH g_FXCPHashTable[] = {
     {0xf3d463c2, 0x3a4},  {0xf52a70a3, 0xc42e}, {0xf5693147, 0x6fb3},
     {0xf637e157, 0x478},  {0xfc213f3a, 0x2717}, {0xff654d14, 0x3b5},
 };
-FX_WORD FX_GetCodePageFromStringA(const FX_CHAR* pStr, int32_t iLength) {
+uint16_t FX_GetCodePageFromStringA(const FX_CHAR* pStr, int32_t iLength) {
   FXSYS_assert(pStr != NULL);
   if (iLength < 0) {
     iLength = FXSYS_strlen(pStr);
@@ -317,7 +317,7 @@ FX_WORD FX_GetCodePageFromStringA(const FX_CHAR* pStr, int32_t iLength) {
     iMid = (iStart + iEnd) / 2;
     const FX_STR2CPHASH& cp = g_FXCPHashTable[iMid];
     if (uHash == cp.uHash) {
-      return (FX_WORD)cp.uCodePage;
+      return (uint16_t)cp.uCodePage;
     } else if (uHash < cp.uHash) {
       iEnd = iMid - 1;
     } else {
@@ -326,7 +326,7 @@ FX_WORD FX_GetCodePageFromStringA(const FX_CHAR* pStr, int32_t iLength) {
   } while (iStart <= iEnd);
   return 0xFFFF;
 }
-FX_WORD FX_GetCodePageFormStringW(const FX_WCHAR* pStr, int32_t iLength) {
+uint16_t FX_GetCodePageFormStringW(const FX_WCHAR* pStr, int32_t iLength) {
   if (iLength < 0) {
     iLength = FXSYS_wcslen(pStr);
   }

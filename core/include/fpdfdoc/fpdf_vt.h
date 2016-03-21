@@ -216,7 +216,7 @@ struct CPVT_Word {
         fFontSize(0),
         WordProps() {}
 
-  FX_WORD Word;
+  uint16_t Word;
 
   int32_t nCharset;
 
@@ -266,18 +266,18 @@ class IPDF_VariableText_Provider {
   virtual ~IPDF_VariableText_Provider() {}
 
   virtual int32_t GetCharWidth(int32_t nFontIndex,
-                               FX_WORD word,
+                               uint16_t word,
                                int32_t nWordStyle) = 0;
 
   virtual int32_t GetTypeAscent(int32_t nFontIndex) = 0;
 
   virtual int32_t GetTypeDescent(int32_t nFontIndex) = 0;
 
-  virtual int32_t GetWordFontIndex(FX_WORD word,
+  virtual int32_t GetWordFontIndex(uint16_t word,
                                    int32_t charset,
                                    int32_t nFontIndex) = 0;
 
-  virtual FX_BOOL IsLatinWord(FX_WORD word) = 0;
+  virtual FX_BOOL IsLatinWord(uint16_t word) = 0;
 
   virtual int32_t GetDefaultFontIndex() = 0;
 };
@@ -328,7 +328,7 @@ class IPDF_VariableText {
 
   virtual void SetAlignment(int32_t nFormat = 0) = 0;
 
-  virtual void SetPasswordChar(FX_WORD wSubWord = '*') = 0;
+  virtual void SetPasswordChar(uint16_t wSubWord = '*') = 0;
 
   virtual void SetLimitChar(int32_t nLimitChar = 0) = 0;
 
@@ -369,7 +369,7 @@ class IPDF_VariableText {
 
   virtual CPVT_WordPlace InsertWord(
       const CPVT_WordPlace& place,
-      FX_WORD word,
+      uint16_t word,
       int32_t charset = 1,
       const CPVT_WordProps* pWordProps = NULL) = 0;
 
@@ -401,7 +401,7 @@ class IPDF_VariableText {
 
   virtual int32_t GetAlignment() const = 0;
 
-  virtual FX_WORD GetPasswordChar() const = 0;
+  virtual uint16_t GetPasswordChar() const = 0;
 
   virtual int32_t GetCharArray() const = 0;
 

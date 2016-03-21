@@ -275,22 +275,23 @@ class CFDE_CSSInheritedData {
   int32_t m_iWidows;
   int32_t m_iOrphans;
   const FX_WCHAR* m_pszTextEmphasisCustomMark;
-  uint32_t m_eFontVariant : 1;
-  uint32_t m_eFontStyle : 1;
-  uint32_t m_bTextEmphasisColorCurrent : 1;
-  uint32_t m_eTextAligh : 2;
-  uint32_t m_eVisibility : 2;
-  uint32_t m_eWhiteSpace : 3;
-  uint32_t m_eTextTransform : 2;
-  uint32_t m_eWritingMode : 2;
-  uint32_t m_eWordBreak : 2;
-  uint32_t m_eLineBreak : 2;
-  uint32_t m_eTextEmphasisFill : 1;
-  uint32_t m_eTextEmphasisMark : 3;
-  uint32_t m_eCaptionSide : 3;
-  uint8_t m_eRubyAlign : 4;
-  uint8_t m_eRubyOverhang : 2;
-  uint8_t m_eRubyPosition : 2;
+  FX_DWORD m_eFontVariant : 1;
+  FX_DWORD m_eFontStyle : 1;
+  FX_DWORD m_bTextEmphasisColorCurrent : 1;
+  FX_DWORD m_eTextAligh : 2;
+  FX_DWORD m_eVisibility : 2;
+  FX_DWORD m_eWhiteSpace : 3;
+  FX_DWORD m_eTextTransform : 2;
+  FX_DWORD m_eWritingMode : 2;
+  FX_DWORD m_eWordBreak : 2;
+  FX_DWORD m_eLineBreak : 2;
+  FX_DWORD m_eTextEmphasisFill : 1;
+  FX_DWORD m_eTextEmphasisMark : 3;
+  FX_DWORD m_eCaptionSide : 3;
+
+  uint16_t m_eRubyAlign : 4;
+  uint16_t m_eRubyOverhang : 2;
+  uint16_t m_eRubyPosition : 2;
 };
 class CFDE_CSSNonInheritedData {
  public:

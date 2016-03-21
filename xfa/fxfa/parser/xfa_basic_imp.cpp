@@ -213,7 +213,7 @@ const XFA_ELEMENTINFO* XFA_GetElementByName(const CFX_WideStringC& wsName) {
 const XFA_ELEMENTINFO* XFA_GetElementByID(XFA_ELEMENT eName) {
   return (eName < g_iXFAElementCount) ? (g_XFAElementData + eName) : NULL;
 }
-const FX_WORD* XFA_GetElementChildren(XFA_ELEMENT eElement, int32_t& iCount) {
+const uint16_t* XFA_GetElementChildren(XFA_ELEMENT eElement, int32_t& iCount) {
   if (eElement >= g_iXFAElementCount) {
     return NULL;
   }
@@ -252,11 +252,11 @@ const XFA_ELEMENTINFO* XFA_GetChildOfElement(XFA_ELEMENT eElement,
                                              XFA_ELEMENT eChild,
                                              FX_DWORD dwPacket) {
   int32_t iCount = 0;
-  const FX_WORD* pChild = XFA_GetElementChildren(eElement, iCount);
+  const uint16_t* pChild = XFA_GetElementChildren(eElement, iCount);
   if (pChild == NULL || iCount < 1) {
     return NULL;
   }
-  CFX_DSPATemplate<FX_WORD> search;
+  CFX_DSPATemplate<uint16_t> search;
   int32_t index = search.Lookup(eChild, pChild, iCount);
   if (index < 0) {
     return NULL;
@@ -604,9 +604,9 @@ int32_t CXFA_WideTextRead::ReadString(FX_WCHAR* pStr,
   bEOS = IsEOF();
   return iMaxLength;
 }
-FX_WORD CXFA_WideTextRead::GetCodePage() const {
+uint16_t CXFA_WideTextRead::GetCodePage() const {
   return (sizeof(FX_WCHAR) == 2) ? FX_CODEPAGE_UTF16LE : FX_CODEPAGE_UTF32LE;
 }
-FX_WORD CXFA_WideTextRead::SetCodePage(FX_WORD wCodePage) {
+uint16_t CXFA_WideTextRead::SetCodePage(uint16_t wCodePage) {
   return GetCodePage();
 }

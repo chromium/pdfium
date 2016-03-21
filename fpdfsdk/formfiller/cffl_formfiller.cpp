@@ -13,7 +13,7 @@
 #include "fpdfsdk/include/pdfwindow/PWL_Utils.h"
 
 #define GetRed(rgb) ((uint8_t)(rgb))
-#define GetGreen(rgb) ((uint8_t)(((FX_WORD)(rgb)) >> 8))
+#define GetGreen(rgb) ((uint8_t)(((uint16_t)(rgb)) >> 8))
 #define GetBlue(rgb) ((uint8_t)((rgb) >> 16))
 
 #define FFL_HINT_ELAPSE 800

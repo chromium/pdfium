@@ -35,25 +35,25 @@
 #define BMP_MAX_ERROR_SIZE 256
 #pragma pack(1)
 typedef struct tagBmpFileHeader {
-  FX_WORD bfType;
+  uint16_t bfType;
   FX_DWORD bfSize;
-  FX_WORD bfReserved1;
-  FX_WORD bfReserved2;
+  uint16_t bfReserved1;
+  uint16_t bfReserved2;
   FX_DWORD bfOffBits;
 } BmpFileHeader, *BmpFileHeaderPtr;
 typedef struct tagBmpCoreHeader {
   FX_DWORD bcSize;
-  FX_WORD bcWidth;
-  FX_WORD bcHeight;
-  FX_WORD bcPlanes;
-  FX_WORD bcBitCount;
+  uint16_t bcWidth;
+  uint16_t bcHeight;
+  uint16_t bcPlanes;
+  uint16_t bcBitCount;
 } BmpCoreHeader, *BmpCoreHeaderPtr;
 typedef struct tagBmpInfoHeader {
   FX_DWORD biSize;
   int32_t biWidth;
   int32_t biHeight;
-  FX_WORD biPlanes;
-  FX_WORD biBitCount;
+  uint16_t biPlanes;
+  uint16_t biBitCount;
   FX_DWORD biCompression;
   FX_DWORD biSizeImage;
   int32_t biXPelsPerMeter;
@@ -82,7 +82,7 @@ struct tag_bmp_decompress_struct {
   int32_t src_row_bytes;
   int32_t out_row_bytes;
   uint8_t* out_row_buffer;
-  FX_WORD bitCounts;
+  uint16_t bitCounts;
   FX_DWORD color_used;
   FX_BOOL imgTB_flag;
   int32_t pal_num;
@@ -139,7 +139,7 @@ struct tag_bmp_compress_struct {
   FX_DWORD src_width;
   FX_BOOL src_free;
   FX_DWORD* pal_ptr;
-  FX_WORD pal_num;
+  uint16_t pal_num;
   uint8_t bit_type;
 };
 
@@ -149,7 +149,7 @@ FX_BOOL bmp_encode_image(bmp_compress_struct_p bmp_ptr,
                          uint8_t*& dst_buf,
                          FX_DWORD& dst_size);
 
-FX_WORD GetWord_LSBFirst(uint8_t* p);
-void SetWord_LSBFirst(uint8_t* p, FX_WORD v);
+uint16_t GetWord_LSBFirst(uint8_t* p);
+void SetWord_LSBFirst(uint8_t* p, uint16_t v);
 
 #endif  // CORE_FXCODEC_LBMP_FX_BMP_H_

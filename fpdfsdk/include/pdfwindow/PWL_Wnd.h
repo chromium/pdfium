@@ -298,9 +298,9 @@ class CPWL_Wnd : public CPWL_TimerHandler {
 
   void DrawAppearance(CFX_RenderDevice* pDevice, CFX_Matrix* pUser2Device);
 
-  virtual FX_BOOL OnKeyDown(FX_WORD nChar, FX_DWORD nFlag);
-  virtual FX_BOOL OnKeyUp(FX_WORD nChar, FX_DWORD nFlag);
-  virtual FX_BOOL OnChar(FX_WORD nChar, FX_DWORD nFlag);
+  virtual FX_BOOL OnKeyDown(uint16_t nChar, FX_DWORD nFlag);
+  virtual FX_BOOL OnKeyUp(uint16_t nChar, FX_DWORD nFlag);
+  virtual FX_BOOL OnChar(uint16_t nChar, FX_DWORD nFlag);
   virtual FX_BOOL OnLButtonDblClk(const CFX_FloatPoint& point, FX_DWORD nFlag);
   virtual FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag);
   virtual FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag);

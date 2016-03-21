@@ -28,7 +28,7 @@ class CPDF_PageOrganizer {
 
   FX_BOOL PDFDocInit(CPDF_Document* pDestPDFDoc, CPDF_Document* pSrcPDFDoc);
   FX_BOOL ExportPage(CPDF_Document* pSrcPDFDoc,
-                     std::vector<FX_WORD>* pPageNums,
+                     std::vector<uint16_t>* pPageNums,
                      CPDF_Document* pDestPDFDoc,
                      int nIndex);
   CPDF_Object* PageDictGetInheritableTag(CPDF_Dictionary* pDict,
@@ -96,7 +96,7 @@ FX_BOOL CPDF_PageOrganizer::PDFDocInit(CPDF_Document* pDestPDFDoc,
 }
 
 FX_BOOL CPDF_PageOrganizer::ExportPage(CPDF_Document* pSrcPDFDoc,
-                                       std::vector<FX_WORD>* pPageNums,
+                                       std::vector<uint16_t>* pPageNums,
                                        CPDF_Document* pDestPDFDoc,
                                        int nIndex) {
   int curpage = nIndex;
@@ -314,7 +314,7 @@ FX_DWORD CPDF_PageOrganizer::GetNewObjId(CPDF_Document* pDoc,
 }
 
 FPDF_BOOL ParserPageRangeString(CFX_ByteString rangstring,
-                                std::vector<FX_WORD>* pageArray,
+                                std::vector<uint16_t>* pageArray,
                                 int nCount) {
   if (rangstring.GetLength() != 0) {
     rangstring.Remove(' ');
@@ -337,7 +337,7 @@ FPDF_BOOL ParserPageRangeString(CFX_ByteString rangstring,
         long lPageNum = atol(cbMidRange);
         if (lPageNum <= 0 || lPageNum > nCount)
           return FALSE;
-        pageArray->push_back((FX_WORD)lPageNum);
+        pageArray->push_back((uint16_t)lPageNum);
       } else {
         int nStartPageNum = atol(cbMidRange.Mid(0, nMid));
         if (nStartPageNum == 0)
@@ -375,7 +375,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_ImportPages(FPDF_DOCUMENT dest_doc,
   if (!pSrcDoc)
     return FALSE;
 
-  std::vector<FX_WORD> pageArray;
+  std::vector<uint16_t> pageArray;
   int nCount = pSrcDoc->GetPageCount();
   if (pagerange) {
     if (!ParserPageRangeString(pagerange, &pageArray, nCount))

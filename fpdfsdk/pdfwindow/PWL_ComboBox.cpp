@@ -45,7 +45,7 @@ FX_BOOL CPWL_CBListBox::OnLButtonUp(const CFX_FloatPoint& point,
   return TRUE;
 }
 
-FX_BOOL CPWL_CBListBox::OnKeyDownWithExit(FX_WORD nChar,
+FX_BOOL CPWL_CBListBox::OnKeyDownWithExit(uint16_t nChar,
                                           FX_BOOL& bExit,
                                           FX_DWORD nFlag) {
   if (!m_pList)
@@ -91,7 +91,7 @@ FX_BOOL CPWL_CBListBox::OnKeyDownWithExit(FX_WORD nChar,
   return TRUE;
 }
 
-FX_BOOL CPWL_CBListBox::OnCharWithExit(FX_WORD nChar,
+FX_BOOL CPWL_CBListBox::OnCharWithExit(uint16_t nChar,
                                        FX_BOOL& bExit,
                                        FX_DWORD nFlag) {
   if (!m_pList)
@@ -517,7 +517,7 @@ void CPWL_ComboBox::SetPopup(FX_BOOL bPopup) {
   }
 }
 
-FX_BOOL CPWL_ComboBox::OnKeyDown(FX_WORD nChar, FX_DWORD nFlag) {
+FX_BOOL CPWL_ComboBox::OnKeyDown(uint16_t nChar, FX_DWORD nFlag) {
   if (!m_pList)
     return FALSE;
   if (!m_pEdit)
@@ -576,7 +576,7 @@ FX_BOOL CPWL_ComboBox::OnKeyDown(FX_WORD nChar, FX_DWORD nFlag) {
   return FALSE;
 }
 
-FX_BOOL CPWL_ComboBox::OnChar(FX_WORD nChar, FX_DWORD nFlag) {
+FX_BOOL CPWL_ComboBox::OnChar(uint16_t nChar, FX_DWORD nFlag) {
   if (!m_pList)
     return FALSE;
 

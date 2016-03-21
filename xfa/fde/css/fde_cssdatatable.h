@@ -153,15 +153,15 @@ FDE_LPCCSSPROPERTYVALUETABLE FDE_GetCSSPropertyValueByName(
 FDE_LPCCSSPROPERTYVALUETABLE FDE_GetCSSPropertyValueByEnum(
     FDE_CSSPROPERTYVALUE eName);
 struct FDE_CSSMEDIATYPETABLE {
-  FX_WORD wHash;
-  FX_WORD wValue;
+  uint16_t wHash;
+  uint16_t wValue;
 };
 typedef FDE_CSSMEDIATYPETABLE const* FDE_LPCCSSMEDIATYPETABLE;
 FDE_LPCCSSMEDIATYPETABLE FDE_GetCSSMediaTypeByName(const FX_WCHAR* pszName,
                                                    int32_t iLength);
 struct FDE_CSSLENGTHUNITTABLE {
-  FX_WORD wHash;
-  FX_WORD wValue;
+  uint16_t wHash;
+  uint16_t wValue;
 };
 typedef FDE_CSSLENGTHUNITTABLE const* FDE_LPCCSSLENGTHUNITTABLE;
 FDE_LPCCSSLENGTHUNITTABLE FDE_GetCSSLengthUnitByName(const FX_WCHAR* pszName,

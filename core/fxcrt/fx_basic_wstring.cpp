@@ -16,7 +16,7 @@
 namespace {
 
 #ifndef NDEBUG
-bool IsValidCodePage(FX_WORD codepage) {
+bool IsValidCodePage(uint16_t codepage) {
   switch (codepage) {
     case 0:
     case 932:
@@ -367,7 +367,7 @@ CFX_WideString CFX_WideString::FromLocal(const CFX_ByteString& str) {
 
 // static
 CFX_WideString CFX_WideString::FromCodePage(const CFX_ByteString& str,
-                                            FX_WORD codepage) {
+                                            uint16_t codepage) {
   return CFX_CharMap::GetWideString(codepage, str);
 }
 
@@ -1017,7 +1017,7 @@ FX_FLOAT CFX_WideString::GetFloat() const {
 }
 
 // static
-CFX_ByteString CFX_CharMap::GetByteString(FX_WORD codepage,
+CFX_ByteString CFX_CharMap::GetByteString(uint16_t codepage,
                                           const CFX_WideString& wstr) {
   FXSYS_assert(IsValidCodePage(codepage));
   int src_len = wstr.GetLength();
@@ -1034,7 +1034,7 @@ CFX_ByteString CFX_CharMap::GetByteString(FX_WORD codepage,
 }
 
 // static
-CFX_WideString CFX_CharMap::GetWideString(FX_WORD codepage,
+CFX_WideString CFX_CharMap::GetWideString(uint16_t codepage,
                                           const CFX_ByteString& bstr) {
   FXSYS_assert(IsValidCodePage(codepage));
   int src_len = bstr.GetLength();

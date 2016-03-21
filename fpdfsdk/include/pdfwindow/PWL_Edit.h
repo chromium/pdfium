@@ -62,8 +62,8 @@ class CPWL_Edit : public CPWL_EditCtrl, public IFX_Edit_OprNotify {
   FX_BOOL OnMouseWheel(short zDelta,
                        const CFX_FloatPoint& point,
                        FX_DWORD nFlag) override;
-  FX_BOOL OnKeyDown(FX_WORD nChar, FX_DWORD nFlag) override;
-  FX_BOOL OnChar(FX_WORD nChar, FX_DWORD nFlag) override;
+  FX_BOOL OnKeyDown(uint16_t nChar, FX_DWORD nFlag) override;
+  FX_BOOL OnChar(uint16_t nChar, FX_DWORD nFlag) override;
   CFX_FloatRect GetFocusRect() const override;
   void OnSetFocus() override;
   void OnKillFocus() override;
@@ -154,7 +154,7 @@ class CPWL_Edit : public CPWL_EditCtrl, public IFX_Edit_OprNotify {
                                    FX_BOOL bArabic) const;
 
  public:
-  FX_BOOL IsProceedtoOnChar(FX_WORD nKeyCode, FX_DWORD nFlag);
+  FX_BOOL IsProceedtoOnChar(uint16_t nKeyCode, FX_DWORD nFlag);
 
  private:
   IPWL_Filler_Notify* m_pFillerNotify;

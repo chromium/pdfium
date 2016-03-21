@@ -1765,7 +1765,7 @@ CXFA_DefFontMgr::~CXFA_DefFontMgr() {
 IFX_Font* CXFA_DefFontMgr::GetFont(IXFA_Doc* hDoc,
                                    const CFX_WideStringC& wsFontFamily,
                                    FX_DWORD dwFontStyles,
-                                   FX_WORD wCodePage) {
+                                   uint16_t wCodePage) {
   CFX_WideString wsFontName = wsFontFamily;
   IFX_FontMgr* pFDEFontMgr =
       static_cast<CXFA_FFDoc*>(hDoc)->GetApp()->GetFDEFontMgr();
@@ -1809,7 +1809,7 @@ IFX_Font* CXFA_DefFontMgr::GetFont(IXFA_Doc* hDoc,
 IFX_Font* CXFA_DefFontMgr::GetDefaultFont(IXFA_Doc* hDoc,
                                           const CFX_WideStringC& wsFontFamily,
                                           FX_DWORD dwFontStyles,
-                                          FX_WORD wCodePage) {
+                                          uint16_t wCodePage) {
   IFX_FontMgr* pFDEFontMgr = ((CXFA_FFDoc*)hDoc)->GetApp()->GetFDEFontMgr();
   IFX_Font* pFont =
       pFDEFontMgr->LoadFont(L"Arial Narrow", dwFontStyles, wCodePage);
@@ -2021,7 +2021,7 @@ CXFA_FontMgr::~CXFA_FontMgr() {
 IFX_Font* CXFA_FontMgr::GetFont(IXFA_Doc* hDoc,
                                 const CFX_WideStringC& wsFontFamily,
                                 FX_DWORD dwFontStyles,
-                                FX_WORD wCodePage) {
+                                uint16_t wCodePage) {
   FX_DWORD dwHash = FX_HashCode_String_GetW(wsFontFamily.GetPtr(),
                                             wsFontFamily.GetLength(), FALSE);
   CFX_ByteString bsKey;

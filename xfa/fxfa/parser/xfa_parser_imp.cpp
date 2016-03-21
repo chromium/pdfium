@@ -73,7 +73,7 @@ int32_t CXFA_SimpleParser::StartParse(IFX_FileRead* pStream,
   if (m_pStream == NULL) {
     return XFA_PARSESTATUS_StreamErr;
   }
-  FX_WORD wCodePage = m_pStream->GetCodePage();
+  uint16_t wCodePage = m_pStream->GetCodePage();
   if (wCodePage != FX_CODEPAGE_UTF16LE && wCodePage != FX_CODEPAGE_UTF16BE &&
       wCodePage != FX_CODEPAGE_UTF8) {
     m_pStream->SetCodePage(FX_CODEPAGE_UTF8);

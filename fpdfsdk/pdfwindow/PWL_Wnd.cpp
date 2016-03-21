@@ -407,7 +407,7 @@ void CPWL_Wnd::InvalidateRect(CFX_FloatRect* pRect) {
 }
 
 #define PWL_IMPLEMENT_KEY_METHOD(key_method_name)                      \
-  FX_BOOL CPWL_Wnd::key_method_name(FX_WORD nChar, FX_DWORD nFlag) {   \
+  FX_BOOL CPWL_Wnd::key_method_name(uint16_t nChar, FX_DWORD nFlag) {  \
     if (IsValid() && IsVisible() && IsEnabled()) {                     \
       if (IsWndCaptureKeyboard(this)) {                                \
         for (int32_t i = 0, sz = m_aChildren.GetSize(); i < sz; i++) { \

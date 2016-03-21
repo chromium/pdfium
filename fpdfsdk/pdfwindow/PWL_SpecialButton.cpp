@@ -46,7 +46,7 @@ FX_BOOL CPWL_CheckBox::OnLButtonUp(const CFX_FloatPoint& point,
   return TRUE;
 }
 
-FX_BOOL CPWL_CheckBox::OnChar(FX_WORD nChar, FX_DWORD nFlag) {
+FX_BOOL CPWL_CheckBox::OnChar(uint16_t nChar, FX_DWORD nFlag) {
   SetCheck(!IsChecked());
   return TRUE;
 }
@@ -76,7 +76,7 @@ bool CPWL_RadioButton::IsChecked() const {
   return m_bChecked;
 }
 
-FX_BOOL CPWL_RadioButton::OnChar(FX_WORD nChar, FX_DWORD nFlag) {
+FX_BOOL CPWL_RadioButton::OnChar(uint16_t nChar, FX_DWORD nFlag) {
   SetCheck(TRUE);
   return TRUE;
 }

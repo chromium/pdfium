@@ -969,20 +969,20 @@ CXFA_Measurement XFA_GetAttributeDefaultValue_Measure(XFA_ELEMENT eElement,
                                                       XFA_ATTRIBUTE eAttribute,
                                                       FX_DWORD dwPacket);
 struct XFA_ELEMENTHIERARCHY {
-  FX_WORD wStart;
-  FX_WORD wCount;
+  uint16_t wStart;
+  uint16_t wCount;
 };
 
 struct XFA_SCRIPTHIERARCHY {
-  FX_WORD wMethodStart;
-  FX_WORD wMethodCount;
-  FX_WORD wAttributeStart;
-  FX_WORD wAttributeCount;
+  uint16_t wMethodStart;
+  uint16_t wMethodCount;
+  uint16_t wAttributeStart;
+  uint16_t wAttributeCount;
   int16_t wParentIndex;
 };
 
 typedef XFA_SCRIPTHIERARCHY const* XFA_LPCSCRIPTHIERARCHY;
-const FX_WORD* XFA_GetElementChildren(XFA_ELEMENT eElement, int32_t& iCount);
+const uint16_t* XFA_GetElementChildren(XFA_ELEMENT eElement, int32_t& iCount);
 const uint8_t* XFA_GetElementAttributes(XFA_ELEMENT eElement, int32_t& iCount);
 const XFA_ELEMENTINFO* XFA_GetChildOfElement(XFA_ELEMENT eElement,
                                              XFA_ELEMENT eChild,
@@ -993,7 +993,7 @@ const XFA_ATTRIBUTEINFO* XFA_GetAttributeOfElement(XFA_ELEMENT eElement,
 #define XFA_PROPERTYFLAG_OneOf 0x01
 #define XFA_PROPERTYFLAG_DefaultOneOf 0x02
 struct XFA_PROPERTY {
-  FX_WORD eName;
+  uint16_t eName;
   uint8_t uOccur;
   uint8_t uFlags;
 };
@@ -1070,7 +1070,7 @@ struct XFA_SCRIPTATTRIBUTEINFO {
   const FX_WCHAR* pName;
   XFA_ATTRIBUTE_CALLBACK lpfnCallback;
   int32_t eAttribute;
-  FX_WORD eValueType;
+  uint16_t eValueType;
 };
 const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
     XFA_ELEMENT eElement,

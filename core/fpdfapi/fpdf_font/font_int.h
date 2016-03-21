@@ -71,7 +71,7 @@ class CPDF_FontGlobals {
     int m_Count;
   } m_EmbeddedCharsets[CIDSET_NUM_SETS];
   struct {
-    const FX_WORD* m_pMap;
+    const uint16_t* m_pMap;
     int m_Count;
   } m_EmbeddedToUnicodes[CIDSET_NUM_SETS];
 
@@ -128,8 +128,8 @@ class CPDF_CMap {
   void Release();
   FX_BOOL IsLoaded() const { return m_bLoaded; }
   FX_BOOL IsVertWriting() const { return m_bVertical; }
-  FX_WORD CIDFromCharCode(FX_DWORD charcode) const;
-  FX_DWORD CharCodeFromCID(FX_WORD CID) const;
+  uint16_t CIDFromCharCode(FX_DWORD charcode) const;
+  FX_DWORD CharCodeFromCID(uint16_t CID) const;
   int GetCharSize(FX_DWORD charcode) const;
   FX_DWORD GetNextChar(const FX_CHAR* pString, int nStrLen, int& offset) const;
   int CountChar(const FX_CHAR* pString, int size) const;
@@ -155,7 +155,7 @@ class CPDF_CMap {
   CodingScheme m_CodingScheme;
   int m_nCodeRanges;
   uint8_t* m_pLeadingBytes;
-  FX_WORD* m_pMapping;
+  uint16_t* m_pMapping;
   uint8_t* m_pAddMapping;
   FX_BOOL m_bLoaded;
   const FXCMAP_CMap* m_pEmbedMap;
@@ -169,11 +169,11 @@ class CPDF_CID2UnicodeMap {
   FX_BOOL Initialize();
   FX_BOOL IsLoaded();
   void Load(CPDF_CMapManager* pMgr, CIDSet charset, FX_BOOL bPromptCJK);
-  FX_WCHAR UnicodeFromCID(FX_WORD CID);
+  FX_WCHAR UnicodeFromCID(uint16_t CID);
 
  protected:
   CIDSet m_Charset;
-  const FX_WORD* m_pEmbeddedMap;
+  const uint16_t* m_pEmbeddedMap;
   FX_DWORD m_EmbeddedCount;
 };
 
@@ -197,7 +197,7 @@ class CPDF_ToUnicodeMap {
 };
 
 void FPDFAPI_LoadCID2UnicodeMap(CIDSet charset,
-                                const FX_WORD*& pMap,
+                                const uint16_t*& pMap,
                                 FX_DWORD& count);
 
 #endif  // CORE_FPDFAPI_FPDF_FONT_FONT_INT_H_

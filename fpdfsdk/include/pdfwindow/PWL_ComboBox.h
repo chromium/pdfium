@@ -25,8 +25,8 @@ class CPWL_CBListBox : public CPWL_ListBox {
   // CPWL_ListBox
   FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
 
-  FX_BOOL OnKeyDownWithExit(FX_WORD nChar, FX_BOOL& bExit, FX_DWORD nFlag);
-  FX_BOOL OnCharWithExit(FX_WORD nChar, FX_BOOL& bExit, FX_DWORD nFlag);
+  FX_BOOL OnKeyDownWithExit(uint16_t nChar, FX_BOOL& bExit, FX_DWORD nFlag);
+  FX_BOOL OnCharWithExit(uint16_t nChar, FX_BOOL& bExit, FX_DWORD nFlag);
 };
 
 #define PWL_COMBOBOX_BUTTON_WIDTH 13
@@ -54,8 +54,8 @@ class CPWL_ComboBox : public CPWL_Wnd {
   // CPWL_Wnd:
   CFX_ByteString GetClassName() const override;
   void OnCreate(PWL_CREATEPARAM& cp) override;
-  FX_BOOL OnKeyDown(FX_WORD nChar, FX_DWORD nFlag) override;
-  FX_BOOL OnChar(FX_WORD nChar, FX_DWORD nFlag) override;
+  FX_BOOL OnKeyDown(uint16_t nChar, FX_DWORD nFlag) override;
+  FX_BOOL OnChar(uint16_t nChar, FX_DWORD nFlag) override;
   void OnNotify(CPWL_Wnd* pWnd,
                 FX_DWORD msg,
                 intptr_t wParam = 0,

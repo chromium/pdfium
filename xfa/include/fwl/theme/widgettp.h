@@ -181,10 +181,10 @@ class CFWL_FontData {
   virtual ~CFWL_FontData();
   FX_BOOL Equal(const CFX_WideStringC& wsFontFamily,
                 FX_DWORD dwFontStyles,
-                FX_WORD wCodePage);
+                uint16_t wCodePage);
   FX_BOOL LoadFont(const CFX_WideStringC& wsFontFamily,
                    FX_DWORD dwFontStyles,
-                   FX_WORD wCodePage);
+                   uint16_t wCodePage);
   IFX_Font* GetFont() const { return m_pFont; }
 
  protected:
@@ -205,7 +205,7 @@ class CFWL_FontManager {
 
   IFX_Font* FindFont(const CFX_WideStringC& wsFontFamily,
                      FX_DWORD dwFontStyles,
-                     FX_WORD dwCodePage);
+                     uint16_t dwCodePage);
 
  protected:
   CFWL_FontManager();

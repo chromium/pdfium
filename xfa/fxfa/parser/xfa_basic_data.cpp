@@ -2242,7 +2242,7 @@ const XFA_ELEMENTHIERARCHY g_XFAElementChildrenIndex[] = {
     {228, 0}, {228, 2}, {230, 0}, {230, 0},  {230, 0}, {230, 0},  {230, 0},
     {230, 0}, {230, 0}, {230, 0}, {230, 10},
 };
-const FX_WORD g_XFAElementChildrenData[] = {
+const uint16_t g_XFAElementChildrenData[] = {
     XFA_ELEMENT_Extras,
     XFA_ELEMENT_SubformSet,
     XFA_ELEMENT_BreakBefore,

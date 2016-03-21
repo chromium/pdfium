@@ -85,7 +85,9 @@ static XFA_MAPDATABLOCKCALLBACKINFO deleteWideStringCallBack = {
 static XFA_OBJECTTYPE XFA_GetElementObjectType(XFA_ELEMENT eElement) {
   return (XFA_OBJECTTYPE)XFA_GetElementByID(eElement)->eObjectType;
 }
-CXFA_Node::CXFA_Node(CXFA_Document* pDoc, FX_WORD ePacket, XFA_ELEMENT eElement)
+CXFA_Node::CXFA_Node(CXFA_Document* pDoc,
+                     uint16_t ePacket,
+                     XFA_ELEMENT eElement)
     : CXFA_Object(pDoc, XFA_GetElementObjectType(eElement)),
       m_pNext(nullptr),
       m_pChild(nullptr),

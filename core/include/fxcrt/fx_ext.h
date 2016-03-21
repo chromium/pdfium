@@ -97,8 +97,8 @@ void FX_Random_GenerateCrypto(FX_DWORD* pBuffer, int32_t iCount);
 #ifdef PDF_ENABLE_XFA
 typedef struct FX_GUID {
   FX_DWORD data1;
-  FX_WORD data2;
-  FX_WORD data3;
+  uint16_t data2;
+  uint16_t data3;
   uint8_t data4[8];
 } FX_GUID, *FX_LPGUID;
 typedef FX_GUID const* FX_LPCGUID;

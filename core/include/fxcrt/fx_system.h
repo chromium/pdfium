@@ -68,7 +68,6 @@
 extern "C" {
 #endif
 typedef void* FX_POSITION;       // Keep until fxcrt containers gone
-typedef uint16_t FX_WORD;        // Keep - "an efficient small type"
 typedef uint32_t FX_DWORD;       // Keep - "an efficient type"
 typedef float FX_FLOAT;          // Keep, allow upgrade to doubles.
 typedef double FX_DOUBLE;        // Keep, allow downgrade to floats.
@@ -266,8 +265,8 @@ wchar_t* FXSYS_wcsupr(wchar_t* str);
    (static_cast<FX_DWORD>(p[2]) << 8) | (static_cast<FX_DWORD>(p[3])))
 #define FXSYS_HIBYTE(word) ((uint8_t)((word) >> 8))
 #define FXSYS_LOBYTE(word) ((uint8_t)(word))
-#define FXSYS_HIWORD(dword) ((FX_WORD)((dword) >> 16))
-#define FXSYS_LOWORD(dword) ((FX_WORD)(dword))
+#define FXSYS_HIWORD(dword) ((uint16_t)((dword) >> 16))
+#define FXSYS_LOWORD(dword) ((uint16_t)(dword))
 int32_t FXSYS_atoi(const FX_CHAR* str);
 uint32_t FXSYS_atoui(const FX_CHAR* str);
 int32_t FXSYS_wtoi(const FX_WCHAR* str);

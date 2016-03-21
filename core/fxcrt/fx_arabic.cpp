@@ -150,19 +150,19 @@ IFX_ArabicChar* IFX_ArabicChar::Create() {
 }
 FX_BOOL CFX_ArabicChar::IsArabicChar(FX_WCHAR wch) const {
   FX_DWORD dwRet =
-      kTextLayoutCodeProperties[(FX_WORD)wch] & FX_CHARTYPEBITSMASK;
+      kTextLayoutCodeProperties[(uint16_t)wch] & FX_CHARTYPEBITSMASK;
   return dwRet >= FX_CHARTYPE_ArabicAlef;
 }
 FX_BOOL CFX_ArabicChar::IsArabicFormChar(FX_WCHAR wch) const {
-  return (kTextLayoutCodeProperties[(FX_WORD)wch] & FX_CHARTYPEBITSMASK) ==
+  return (kTextLayoutCodeProperties[(uint16_t)wch] & FX_CHARTYPEBITSMASK) ==
          FX_CHARTYPE_ArabicForm;
 }
 FX_WCHAR CFX_ArabicChar::GetFormChar(FX_WCHAR wch,
                                      FX_WCHAR prev,
                                      FX_WCHAR next) const {
-  CFX_Char c(wch, kTextLayoutCodeProperties[(FX_WORD)wch]);
-  CFX_Char p(prev, kTextLayoutCodeProperties[(FX_WORD)prev]);
-  CFX_Char n(next, kTextLayoutCodeProperties[(FX_WORD)next]);
+  CFX_Char c(wch, kTextLayoutCodeProperties[(uint16_t)wch]);
+  CFX_Char p(prev, kTextLayoutCodeProperties[(uint16_t)prev]);
+  CFX_Char n(next, kTextLayoutCodeProperties[(uint16_t)next]);
   return GetFormChar(&c, &p, &n);
 }
 FX_WCHAR CFX_ArabicChar::GetFormChar(const CFX_Char* cur,
@@ -262,7 +262,7 @@ void FX_BidiClassify(const CFX_WideString& wsText,
     for (int32_t i = 0; i < iCount; i++) {
       wch = *pwsStart++;
       iCls =
-          ((kTextLayoutCodeProperties[(FX_WORD)wch] & FX_BIDICLASSBITSMASK) >>
+          ((kTextLayoutCodeProperties[(uint16_t)wch] & FX_BIDICLASSBITSMASK) >>
            FX_BIDICLASSBITS);
       classes.SetAt(i, iCls);
     }
@@ -270,7 +270,7 @@ void FX_BidiClassify(const CFX_WideString& wsText,
     for (int32_t i = 0; i < iCount; i++) {
       wch = *pwsStart++;
       iCls =
-          ((kTextLayoutCodeProperties[(FX_WORD)wch] & FX_BIDICLASSBITSMASK) >>
+          ((kTextLayoutCodeProperties[(uint16_t)wch] & FX_BIDICLASSBITSMASK) >>
            FX_BIDICLASSBITS);
       classes.SetAt(i, gc_FX_BidiNTypes[iCls]);
     }

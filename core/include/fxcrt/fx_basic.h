@@ -205,10 +205,10 @@ class CFX_FileBufferArchive {
 
 class CFX_CharMap {
  public:
-  static CFX_ByteString GetByteString(FX_WORD codepage,
+  static CFX_ByteString GetByteString(uint16_t codepage,
                                       const CFX_WideString& wstr);
 
-  static CFX_WideString GetWideString(FX_WORD codepage,
+  static CFX_WideString GetWideString(uint16_t codepage,
                                       const CFX_ByteString& bstr);
 
   CFX_CharMap() = delete;
@@ -402,7 +402,6 @@ typedef CFX_ArrayTemplate<FX_DWORD> CFX_DWordArray;
 
 #ifdef PDF_ENABLE_XFA
 typedef CFX_ArrayTemplate<CFX_WideStringC> CFX_WideStringCArray;
-typedef CFX_ArrayTemplate<FX_WORD> CFX_WordArray;
 typedef CFX_ArrayTemplate<FX_FLOAT> CFX_FloatArray;
 typedef CFX_ArrayTemplate<uint8_t> CFX_ByteArray;
 typedef CFX_ArrayTemplate<int32_t> CFX_Int32Array;

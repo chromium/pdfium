@@ -158,8 +158,8 @@ FX_BOOL CFX_WordBreak::FindNextBreakPos(IFX_CharIter* pIter,
     pIter->Next(bPrev);
     FX_WCHAR wcTemp = pIter->GetChar();
     eNextType = FX_GetWordBreakProperty(wcTemp);
-    FX_WORD wBreak =
-        gs_FX_WordBreak_Table[eCurType] & ((FX_WORD)(1 << eNextType));
+    uint16_t wBreak =
+        gs_FX_WordBreak_Table[eCurType] & ((uint16_t)(1 << eNextType));
     if (wBreak) {
       if (pIter->IsEOF(!bPrev)) {
         pIter->Next(!bPrev);

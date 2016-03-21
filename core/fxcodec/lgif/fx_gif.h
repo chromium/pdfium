@@ -52,17 +52,17 @@ typedef struct tagGifHeader {
   char version[3];
 } GifHeader;
 typedef struct tagGifLSD {
-  FX_WORD width;
-  FX_WORD height;
+  uint16_t width;
+  uint16_t height;
   uint8_t global_flag;
   uint8_t bc_index;
   uint8_t pixel_aspect;
 } GifLSD;
 typedef struct tagGifImageInfo {
-  FX_WORD left;
-  FX_WORD top;
-  FX_WORD width;
-  FX_WORD height;
+  uint16_t left;
+  uint16_t top;
+  uint16_t width;
+  uint16_t height;
 
   uint8_t local_flag;
 } GifImageInfo;
@@ -75,15 +75,15 @@ typedef struct tagGifCEF {
 typedef struct tagGifGCE {
   uint8_t block_size;
   uint8_t gce_flag;
-  FX_WORD delay_time;
+  uint16_t delay_time;
   uint8_t trans_index;
 } GifGCE;
 typedef struct tagGifPTE {
   uint8_t block_size;
-  FX_WORD grid_left;
-  FX_WORD grid_top;
-  FX_WORD grid_width;
-  FX_WORD grid_height;
+  uint16_t grid_left;
+  uint16_t grid_top;
+  uint16_t grid_width;
+  uint16_t grid_height;
 
   uint8_t char_width;
   uint8_t char_height;
@@ -115,7 +115,7 @@ typedef struct tagGifPlainText {
 class CGifLZWDecoder {
  public:
   struct tag_Table {
-    FX_WORD prefix;
+    uint16_t prefix;
     uint8_t suffix;
   };
   CGifLZWDecoder(FX_CHAR* error_ptr = NULL) { err_msg_ptr = error_ptr; }
@@ -128,18 +128,18 @@ class CGifLZWDecoder {
 
  private:
   void ClearTable();
-  void AddCode(FX_WORD prefix_code, uint8_t append_char);
-  void DecodeString(FX_WORD code);
+  void AddCode(uint16_t prefix_code, uint8_t append_char);
+  void DecodeString(uint16_t code);
   uint8_t code_size;
   uint8_t code_size_cur;
-  FX_WORD code_clear;
-  FX_WORD code_end;
-  FX_WORD code_next;
+  uint16_t code_clear;
+  uint16_t code_end;
+  uint16_t code_next;
   uint8_t code_first;
   uint8_t stack[GIF_MAX_LZW_CODE];
-  FX_WORD stack_size;
+  uint16_t stack_size;
   tag_Table code_table[GIF_MAX_LZW_CODE];
-  FX_WORD code_old;
+  uint16_t code_old;
 
   uint8_t* next_in;
   FX_DWORD avail_in;
@@ -152,7 +152,7 @@ class CGifLZWDecoder {
 class CGifLZWEncoder {
  public:
   struct tag_Table {
-    FX_WORD prefix;
+    uint16_t prefix;
     uint8_t suffix;
   };
   CGifLZWEncoder();
@@ -184,15 +184,15 @@ class CGifLZWEncoder {
   uint8_t src_bit_cut;
   FX_DWORD src_bit_num;
   uint8_t code_size;
-  FX_WORD code_clear;
-  FX_WORD code_end;
-  FX_WORD index_num;
+  uint16_t code_clear;
+  uint16_t code_end;
+  uint16_t index_num;
   uint8_t bit_offset;
   uint8_t index_bit_cur;
   uint8_t index_buf[GIF_DATA_BLOCK];
   uint8_t index_buf_len;
   tag_Table code_table[GIF_MAX_LZW_CODE];
-  FX_WORD table_cur;
+  uint16_t table_cur;
 };
 typedef struct tag_gif_decompress_struct gif_decompress_struct;
 typedef gif_decompress_struct* gif_decompress_struct_p;
@@ -251,9 +251,9 @@ struct tag_gif_compress_struct {
   GifHeader* header_ptr;
   GifLSD* lsd_ptr;
   GifPalette* global_pal;
-  FX_WORD gpal_num;
+  uint16_t gpal_num;
   GifPalette* local_pal;
-  FX_WORD lpal_num;
+  uint16_t lpal_num;
   GifImageInfo* image_info_ptr;
   CGifLZWEncoder* img_encoder_ptr;
 

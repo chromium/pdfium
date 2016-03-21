@@ -35,9 +35,9 @@ class CXFA_LocaleMgr : public IFX_LocaleMgr {
  public:
   CXFA_LocaleMgr(CXFA_Node* pLocaleSet, CFX_WideString wsDeflcid);
   virtual void Release();
-  virtual FX_WORD GetDefLocaleID();
+  virtual uint16_t GetDefLocaleID();
   virtual IFX_Locale* GetDefLocale();
-  virtual IFX_Locale* GetLocale(FX_WORD lcid);
+  virtual IFX_Locale* GetLocale(uint16_t lcid);
   virtual IFX_Locale* GetLocaleByName(const CFX_WideStringC& wsLocaleName);
   ~CXFA_LocaleMgr();
   void SetDefLocale(IFX_Locale* pLocale);
@@ -48,8 +48,8 @@ class CXFA_LocaleMgr : public IFX_LocaleMgr {
   CFX_PtrArray m_XMLLocaleArray;
   IFX_Locale* m_pDefLocale;
   CFX_WideString m_wsConfigLocale;
-  FX_WORD m_dwDeflcid;
-  FX_WORD m_dwLocaleFlags;
+  uint16_t m_dwDeflcid;
+  uint16_t m_dwLocaleFlags;
 };
 
 class IXFA_TimeZoneProvider {

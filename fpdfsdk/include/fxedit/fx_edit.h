@@ -59,13 +59,13 @@ class IFX_Edit_FontMap {
   // get the alias of a pdf font.
   virtual CFX_ByteString GetPDFFontAlias(int32_t nFontIndex) = 0;
   // get the index of a font that can show a word.
-  virtual int32_t GetWordFontIndex(FX_WORD word,
+  virtual int32_t GetWordFontIndex(uint16_t word,
                                    int32_t charset,
                                    int32_t nFontIndex) = 0;
   // get the charcode of word from unicode
-  virtual int32_t CharCodeFromUnicode(int32_t nFontIndex, FX_WORD word) = 0;
+  virtual int32_t CharCodeFromUnicode(int32_t nFontIndex, uint16_t word) = 0;
   // get the charset of unicode
-  virtual int32_t CharSetFromUnicode(FX_WORD word, int32_t nOldCharset) = 0;
+  virtual int32_t CharSetFromUnicode(uint16_t word, int32_t nOldCharset) = 0;
 };
 
 class IFX_Edit_Notify {
@@ -215,7 +215,7 @@ class IFX_Edit {
   // 2:bottom).
   virtual void SetAlignmentV(int32_t nFormat = 0, FX_BOOL bPaint = TRUE) = 0;
   // if the text is shown in secret , set a character for substitute.
-  virtual void SetPasswordChar(FX_WORD wSubWord = '*',
+  virtual void SetPasswordChar(uint16_t wSubWord = '*',
                                FX_BOOL bPaint = TRUE) = 0;
   // set the maximal count of words of the text.
   virtual void SetLimitChar(int32_t nLimitChar = 0, FX_BOOL bPaint = TRUE) = 0;
@@ -336,7 +336,7 @@ class IFX_Edit {
                        const CPVT_SecProps* pSecProps = NULL,
                        const CPVT_WordProps* pWordProps = NULL) = 0;
   // insert a word into the edit.
-  virtual FX_BOOL InsertWord(FX_WORD word,
+  virtual FX_BOOL InsertWord(uint16_t word,
                              int32_t charset = DEFAULT_CHARSET,
                              const CPVT_WordProps* pWordProps = NULL) = 0;
   // insert a return into the edit.
@@ -404,7 +404,7 @@ class IFX_Edit {
   // get the font size of non_rich text or default font size of richtext.
   virtual FX_FLOAT GetFontSize() const = 0;
   // get the mask character.
-  virtual FX_WORD GetPasswordChar() const = 0;
+  virtual uint16_t GetPasswordChar() const = 0;
   // get the count of charArray
   virtual int32_t GetCharArray() const = 0;
   // get the horizontal scale of all characters
@@ -429,7 +429,7 @@ class IFX_Edit {
       const CFX_FloatPoint& ptOffset,
       const CPVT_WordRange* pRange = NULL,
       FX_BOOL bContinuous = TRUE,
-      FX_WORD SubWord = 0);
+      uint16_t SubWord = 0);
   static CFX_ByteString GetSelectAppearanceStream(
       IFX_Edit* pEdit,
       const CFX_FloatPoint& ptOffset,
@@ -562,7 +562,7 @@ class IFX_List {
   virtual void OnVK_HOME(FX_BOOL bShift, FX_BOOL bCtrl) = 0;
   virtual void OnVK_END(FX_BOOL bShift, FX_BOOL bCtrl) = 0;
   virtual void OnVK(int32_t nItemIndex, FX_BOOL bShift, FX_BOOL bCtrl) = 0;
-  virtual FX_BOOL OnChar(FX_WORD nChar, FX_BOOL bShift, FX_BOOL bCtrl) = 0;
+  virtual FX_BOOL OnChar(uint16_t nChar, FX_BOOL bShift, FX_BOOL bCtrl) = 0;
 
  protected:
   virtual ~IFX_List() {}
@@ -570,7 +570,7 @@ class IFX_List {
 
 CFX_ByteString GetPDFWordString(IFX_Edit_FontMap* pFontMap,
                                 int32_t nFontIndex,
-                                FX_WORD Word,
-                                FX_WORD SubWord);
+                                uint16_t Word,
+                                uint16_t SubWord);
 
 #endif  // FPDFSDK_INCLUDE_FXEDIT_FX_EDIT_H_

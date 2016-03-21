@@ -136,7 +136,7 @@ CPVT_Provider::CPVT_Provider(IPVT_FontMap* pFontMap) : m_pFontMap(pFontMap) {
 }
 CPVT_Provider::~CPVT_Provider() {}
 int32_t CPVT_Provider::GetCharWidth(int32_t nFontIndex,
-                                    FX_WORD word,
+                                    uint16_t word,
                                     int32_t nWordStyle) {
   if (CPDF_Font* pPDFFont = m_pFontMap->GetPDFFont(nFontIndex)) {
     FX_DWORD charcode = pPDFFont->CharCodeFromUnicode(word);
@@ -158,7 +158,7 @@ int32_t CPVT_Provider::GetTypeDescent(int32_t nFontIndex) {
   }
   return 0;
 }
-int32_t CPVT_Provider::GetWordFontIndex(FX_WORD word,
+int32_t CPVT_Provider::GetWordFontIndex(uint16_t word,
                                         int32_t charset,
                                         int32_t nFontIndex) {
   if (CPDF_Font* pDefFont = m_pFontMap->GetPDFFont(0)) {
@@ -173,7 +173,7 @@ int32_t CPVT_Provider::GetWordFontIndex(FX_WORD word,
   }
   return -1;
 }
-FX_BOOL CPVT_Provider::IsLatinWord(FX_WORD word) {
+FX_BOOL CPVT_Provider::IsLatinWord(uint16_t word) {
   if ((word >= 0x61 && word <= 0x7A) || (word >= 0x41 && word <= 0x5A) ||
       word == 0x2D || word == 0x27) {
     return TRUE;
@@ -186,8 +186,8 @@ int32_t CPVT_Provider::GetDefaultFontIndex() {
 
 static CFX_ByteString GetPDFWordString(IPVT_FontMap* pFontMap,
                                        int32_t nFontIndex,
-                                       FX_WORD Word,
-                                       FX_WORD SubWord) {
+                                       uint16_t Word,
+                                       uint16_t SubWord) {
   CFX_ByteString sWord;
   if (SubWord > 0) {
     sWord.Format("%c", SubWord);
@@ -485,7 +485,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
         vt.SetMultiLine(TRUE);
         vt.SetAutoReturn(TRUE);
       }
-      FX_WORD subWord = 0;
+      uint16_t subWord = 0;
       if ((dwFlags >> 13) & 1) {
         subWord = '*';
         vt.SetPasswordChar(subWord);
@@ -721,7 +721,7 @@ CFX_ByteString CPVT_GenerateAP::GenerateEditAP(
     IPDF_VariableText_Iterator* pIterator,
     const CFX_FloatPoint& ptOffset,
     FX_BOOL bContinuous,
-    FX_WORD SubWord,
+    uint16_t SubWord,
     const CPVT_WordRange* pVisible) {
   CFX_ByteTextBuf sEditStream, sLineStream, sWords;
   CFX_FloatPoint ptOld(0.0f, 0.0f), ptNew(0.0f, 0.0f);

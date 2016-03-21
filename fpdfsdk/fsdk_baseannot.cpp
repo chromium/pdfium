@@ -27,7 +27,7 @@ FX_BOOL _gAfxIsLeapYear(int16_t year) {
   return ((year % 400 == 0) || ((year % 4 == 0) && (year % 100 != 0)));
 }
 
-FX_WORD _gAfxGetYearDays(int16_t year) {
+uint16_t _gAfxGetYearDays(int16_t year) {
   return (_gAfxIsLeapYear(year) == TRUE ? 366 : 365);
 }
 
@@ -373,13 +373,13 @@ void CPDFSDK_DateTime::ToSystemTime(FX_SYSTEMTIME& st) {
   time_t t = (time_t)dt;
   struct tm* pTime = localtime(&t);
   if (pTime) {
-    st.wYear = (FX_WORD)pTime->tm_year + 1900;
-    st.wMonth = (FX_WORD)pTime->tm_mon + 1;
-    st.wDay = (FX_WORD)pTime->tm_mday;
-    st.wDayOfWeek = (FX_WORD)pTime->tm_wday;
-    st.wHour = (FX_WORD)pTime->tm_hour;
-    st.wMinute = (FX_WORD)pTime->tm_min;
-    st.wSecond = (FX_WORD)pTime->tm_sec;
+    st.wYear = (uint16_t)pTime->tm_year + 1900;
+    st.wMonth = (uint16_t)pTime->tm_mon + 1;
+    st.wDay = (uint16_t)pTime->tm_mday;
+    st.wDayOfWeek = (uint16_t)pTime->tm_wday;
+    st.wHour = (uint16_t)pTime->tm_hour;
+    st.wMinute = (uint16_t)pTime->tm_min;
+    st.wSecond = (uint16_t)pTime->tm_sec;
     st.wMilliseconds = 0;
   }
 }
@@ -404,7 +404,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::AddDays(short days) {
   ldays = days;
   if (ldays > 0) {
     yy = y;
-    if (((FX_WORD)m * 100 + d) > 300)
+    if (((uint16_t)m * 100 + d) > 300)
       yy++;
     ydays = _gAfxGetYearDays(yy);
     while (ldays >= ydays) {
@@ -429,7 +429,7 @@ CPDFSDK_DateTime& CPDFSDK_DateTime::AddDays(short days) {
   } else {
     ldays *= -1;
     yy = y;
-    if (((FX_WORD)m * 100 + d) < 300)
+    if (((uint16_t)m * 100 + d) < 300)
       yy--;
     ydays = _gAfxGetYearDays(yy);
     while (ldays >= ydays) {

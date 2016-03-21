@@ -37,8 +37,8 @@ class CJBig2_HTRDProc {
   FX_DWORD HGH;
   int32_t HGX;
   int32_t HGY;
-  FX_WORD HRX;
-  FX_WORD HRY;
+  uint16_t HRX;
+  uint16_t HRY;
   uint8_t HPW;
   uint8_t HPH;
 };

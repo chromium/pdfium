@@ -82,7 +82,7 @@ TEST(cpdf_parser, RebuildCrossRefCorrectly) {
 
   ASSERT_TRUE(parser.RebuildCrossRef());
   const FX_FILESIZE offsets[] = {0, 15, 61, 154, 296, 374, 450};
-  const FX_WORD versions[] = {0, 0, 2, 4, 6, 8, 0};
+  const uint16_t versions[] = {0, 0, 2, 4, 6, 8, 0};
   for (size_t i = 0; i < FX_ArraySize(offsets); ++i)
     EXPECT_EQ(offsets[i], parser.m_ObjectInfo[i].pos);
   for (size_t i = 0; i < FX_ArraySize(versions); ++i)

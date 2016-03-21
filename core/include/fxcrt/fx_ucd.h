@@ -124,7 +124,7 @@ class CFX_Char {
         m_iCharWidth(0),
         m_iHorizontalScale(100),
         m_iVertialScale(100) {}
-  CFX_Char(FX_WORD wCharCode, FX_DWORD dwCharProps)
+  CFX_Char(uint16_t wCharCode, FX_DWORD dwCharProps)
       : m_wCharCode(wCharCode),
         m_nBreakType(0),
         m_nRotation(0),
@@ -134,7 +134,7 @@ class CFX_Char {
         m_iHorizontalScale(100),
         m_iVertialScale(100) {}
   FX_DWORD GetCharType() const { return m_dwCharProps & FX_CHARTYPEBITSMASK; }
-  FX_WORD m_wCharCode;
+  uint16_t m_wCharCode;
   uint8_t m_nBreakType;
   int8_t m_nRotation;
   FX_DWORD m_dwCharProps;

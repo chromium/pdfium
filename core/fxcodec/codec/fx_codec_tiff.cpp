@@ -285,11 +285,11 @@ FX_BOOL CCodec_TiffContext::LoadFrameInfo(int32_t frame,
   if (!TIFFSetDirectory(tif_ctx, (uint16)frame)) {
     return FALSE;
   }
-  FX_WORD tif_cs;
+  uint16_t tif_cs;
   FX_DWORD tif_icc_size = 0;
   uint8_t* tif_icc_buf = NULL;
-  FX_WORD tif_bpc = 0;
-  FX_WORD tif_cps;
+  uint16_t tif_bpc = 0;
+  uint16_t tif_cps;
   FX_DWORD tif_rps;
   width = height = comps = 0;
   TIFFGetField(tif_ctx, TIFFTAG_IMAGEWIDTH, &width);
@@ -306,7 +306,7 @@ FX_BOOL CCodec_TiffContext::LoadFrameInfo(int32_t frame,
                      &pAttribute->m_wDPIUnit)) {
       pAttribute->m_wDPIUnit -= 1;
     }
-    Tiff_Exif_GetInfo<FX_WORD>(tif_ctx, TIFFTAG_ORIENTATION, pAttribute);
+    Tiff_Exif_GetInfo<uint16_t>(tif_ctx, TIFFTAG_ORIENTATION, pAttribute);
     if (Tiff_Exif_GetInfo<FX_FLOAT>(tif_ctx, TIFFTAG_XRESOLUTION, pAttribute)) {
       void* val = pAttribute->m_Exif[TIFFTAG_XRESOLUTION];
       FX_FLOAT fDpi = val ? *reinterpret_cast<FX_FLOAT*>(val) : 0;
@@ -487,7 +487,7 @@ FX_BOOL CCodec_TiffContext::Decode(CFX_DIBitmap* pDIBitmap) {
     return FALSE;
   }
   if (pDIBitmap->GetBPP() == 32) {
-    FX_WORD rotation = ORIENTATION_TOPLEFT;
+    uint16_t rotation = ORIENTATION_TOPLEFT;
     TIFFGetField(tif_ctx, TIFFTAG_ORIENTATION, &rotation);
     if (TIFFReadRGBAImageOriented(tif_ctx, img_wid, img_hei,
                                   (uint32*)pDIBitmap->GetBuffer(), rotation,

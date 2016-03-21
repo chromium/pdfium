@@ -16,10 +16,10 @@ struct FGAS_FONTUSB {
   uint16_t wCodePage;
 };
 
-FX_DWORD FGAS_GetFontHashCode(FX_WORD wCodePage, FX_DWORD dwFontStyles);
+FX_DWORD FGAS_GetFontHashCode(uint16_t wCodePage, FX_DWORD dwFontStyles);
 FX_DWORD FGAS_GetFontFamilyHash(const FX_WCHAR* pszFontFamily,
                                 FX_DWORD dwFontStyles,
-                                FX_WORD wCodePage);
+                                uint16_t wCodePage);
 const FGAS_FONTUSB* FGAS_GetUnicodeBitField(FX_WCHAR wUnicode);
 
 #endif  // XFA_FGAS_FONT_FGAS_FONTUTILS_H_

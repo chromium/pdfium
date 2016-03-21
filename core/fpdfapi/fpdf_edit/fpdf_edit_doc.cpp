@@ -463,7 +463,7 @@ static const FX_LANG2CS gs_FXLang2CharsetTable[] = {
     {3763, 163},       {3886, 134}, {105943, 0}, {106375, 1}, {3923451837, 134},
     {3923451838, 136},
 };
-static FX_WORD FX_GetCsFromLangCode(uint32_t uCode) {
+static uint16_t FX_GetCsFromLangCode(uint32_t uCode) {
   int32_t iStart = 0;
   int32_t iEnd = sizeof(gs_FXLang2CharsetTable) / sizeof(FX_LANG2CS) - 1;
   while (iStart <= iEnd) {
@@ -480,7 +480,7 @@ static FX_WORD FX_GetCsFromLangCode(uint32_t uCode) {
   }
   return 0;
 }
-static FX_WORD FX_GetCharsetFromLang(const FX_CHAR* pLang, int32_t iLength) {
+static uint16_t FX_GetCharsetFromLang(const FX_CHAR* pLang, int32_t iLength) {
   FXSYS_assert(pLang);
   if (iLength < 0) {
     iLength = FXSYS_strlen(pLang);

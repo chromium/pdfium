@@ -68,8 +68,8 @@ class IFX_Stream {
   virtual void Flush() = 0;
   virtual FX_BOOL SetLength(int32_t iLength) = 0;
   virtual int32_t GetBOM(uint8_t bom[4]) const = 0;
-  virtual FX_WORD GetCodePage() const = 0;
-  virtual FX_WORD SetCodePage(FX_WORD wCodePage) = 0;
+  virtual uint16_t GetCodePage() const = 0;
+  virtual uint16_t SetCodePage(uint16_t wCodePage) = 0;
   virtual IFX_Stream* CreateSharedStream(FX_DWORD dwAccess,
                                          int32_t iOffset,
                                          int32_t iLength) = 0;

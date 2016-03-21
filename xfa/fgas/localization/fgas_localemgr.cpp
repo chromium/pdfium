@@ -9,7 +9,7 @@
 #include "core/include/fxcrt/fx_xml.h"
 
 IFX_LocaleMgr* FX_LocaleMgr_Create(const FX_WCHAR* pszLocalPath,
-                                   FX_WORD wDefaultLCID) {
+                                   uint16_t wDefaultLCID) {
   void* pPathHandle = FX_OpenFolder(pszLocalPath);
   if (!pPathHandle) {
     return NULL;
@@ -53,7 +53,7 @@ IFX_LocaleMgr* FX_LocaleMgr_Create(const FX_WCHAR* pszLocalPath,
   FX_CloseFolder(pPathHandle);
   return pLocaleMgr;
 }
-CFX_LocaleMgr::CFX_LocaleMgr(FX_WORD wDefLCID) : m_wDefLCID(wDefLCID) {}
+CFX_LocaleMgr::CFX_LocaleMgr(uint16_t wDefLCID) : m_wDefLCID(wDefLCID) {}
 CFX_LocaleMgr::~CFX_LocaleMgr() {
   FX_POSITION ps = m_lcid2locale.GetStartPosition();
   while (ps) {
@@ -72,13 +72,13 @@ CFX_LocaleMgr::~CFX_LocaleMgr() {
   }
   m_lcid2xml.RemoveAll();
 }
-FX_WORD CFX_LocaleMgr::GetDefLocaleID() {
+uint16_t CFX_LocaleMgr::GetDefLocaleID() {
   return m_wDefLCID;
 }
 IFX_Locale* CFX_LocaleMgr::GetDefLocale() {
   return GetLocale(m_wDefLCID);
 }
-IFX_Locale* CFX_LocaleMgr::GetLocale(FX_WORD lcid) {
+IFX_Locale* CFX_LocaleMgr::GetLocale(uint16_t lcid) {
   IFX_Locale* pLocale =
       (IFX_Locale*)m_lcid2locale.GetValueAt((void*)(uintptr_t)lcid);
   if (!pLocale) {

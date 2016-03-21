@@ -11,7 +11,7 @@
 
 IFX_Font* IFX_Font::LoadFont(const FX_WCHAR* pszFontFamily,
                              FX_DWORD dwFontStyles,
-                             FX_WORD wCodePage,
+                             uint16_t wCodePage,
                              IFX_FontMgr* pFontMgr) {
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
   if (NULL != pFontMgr) {
@@ -189,7 +189,7 @@ IFX_Font* CFX_GEFont::Retain() {
 }
 FX_BOOL CFX_GEFont::LoadFont(const FX_WCHAR* pszFontFamily,
                              FX_DWORD dwFontStyles,
-                             FX_WORD wCodePage) {
+                             uint16_t wCodePage) {
   if (m_pFont) {
     return FALSE;
   }
@@ -221,7 +221,7 @@ FX_BOOL CFX_GEFont::LoadFont(const FX_WCHAR* pszFontFamily,
   }
   int32_t iWeight =
       (dwFontStyles & FX_FONTSTYLE_Bold) ? FXFONT_FW_BOLD : FXFONT_FW_NORMAL;
-  FX_WORD wCharSet = FX_GetCharsetFromCodePage(wCodePage);
+  uint16_t wCharSet = FX_GetCharsetFromCodePage(wCodePage);
   if (wCharSet == 0xFFFF) {
     wCharSet = FXSYS_GetACP();
   }
@@ -329,7 +329,7 @@ FX_BOOL CFX_GEFont::InitFont() {
   }
   return TRUE;
 }
-IFX_Font* CFX_GEFont::Derive(FX_DWORD dwFontStyles, FX_WORD wCodePage) {
+IFX_Font* CFX_GEFont::Derive(FX_DWORD dwFontStyles, uint16_t wCodePage) {
   if (GetFontStyles() == dwFontStyles) {
     return Retain();
   }
@@ -489,7 +489,7 @@ int32_t CFX_GEFont::GetGlyphIndex(FX_WCHAR wUnicode,
   if (pFontUSB == NULL) {
     return 0xFFFF;
   }
-  FX_WORD wBitField = pFontUSB->wBitField;
+  uint16_t wBitField = pFontUSB->wBitField;
   if (wBitField >= 128) {
     return 0xFFFF;
   }

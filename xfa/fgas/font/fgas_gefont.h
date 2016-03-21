@@ -21,12 +21,12 @@ class CFX_GEFont : public IFX_Font {
   virtual IFX_Font* Retain();
   FX_BOOL LoadFont(const FX_WCHAR* pszFontFamily,
                    FX_DWORD dwFontStyles,
-                   FX_WORD wCodePage);
+                   uint16_t wCodePage);
   FX_BOOL LoadFont(const uint8_t* pBuffer, int32_t length);
   FX_BOOL LoadFont(const FX_WCHAR* pszFileName);
   FX_BOOL LoadFont(IFX_Stream* pFontStream, FX_BOOL bSaveStream);
   FX_BOOL LoadFont(CFX_Font* pExtFont, FX_BOOL bTakeOver = FALSE);
-  virtual IFX_Font* Derive(FX_DWORD dwFontStyles, FX_WORD wCodePage = 0);
+  virtual IFX_Font* Derive(FX_DWORD dwFontStyles, uint16_t wCodePage = 0);
   virtual void GetFamilyName(CFX_WideString& wsFamily) const;
   virtual void GetPsName(CFX_WideString& wsName) const;
   virtual FX_DWORD GetFontStyles() const;
@@ -71,7 +71,7 @@ class CFX_GEFont : public IFX_Font {
   CFX_RectMassArray* m_pRectArray;
   CFX_MapPtrToPtr* m_pBBoxMap;
   IFX_FontProvider* m_pProvider;
-  FX_WORD m_wCharSet;
+  uint16_t m_wCharSet;
   CFX_PtrArray m_SubstFonts;
   CFX_MapPtrToPtr m_FontMapper;
   FX_BOOL InitFont();

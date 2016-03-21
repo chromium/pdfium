@@ -19,7 +19,7 @@
 
 #define _STREAM_MAX_SIZE_ 20 * 1024 * 1024
 
-const FX_WORD PDFDocEncoding[256] = {
+const uint16_t PDFDocEncoding[256] = {
     0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, 0x0008,
     0x0009, 0x000a, 0x000b, 0x000c, 0x000d, 0x000e, 0x000f, 0x0010, 0x0011,
     0x0012, 0x0013, 0x0014, 0x0015, 0x0016, 0x0017, 0x02d8, 0x02c7, 0x02c6,
@@ -447,13 +447,13 @@ CFX_WideString PDF_DecodeText(const uint8_t* src_data, FX_DWORD src_len) {
     const uint8_t* uni_str = src_data + 2;
     int dest_pos = 0;
     for (FX_DWORD i = 0; i < max_chars * 2; i += 2) {
-      FX_WORD unicode = bBE ? (uni_str[i] << 8 | uni_str[i + 1])
-                            : (uni_str[i + 1] << 8 | uni_str[i]);
+      uint16_t unicode = bBE ? (uni_str[i] << 8 | uni_str[i + 1])
+                             : (uni_str[i + 1] << 8 | uni_str[i]);
       if (unicode == 0x1b) {
         i += 2;
         while (i < max_chars * 2) {
-          FX_WORD unicode = bBE ? (uni_str[i] << 8 | uni_str[i + 1])
-                                : (uni_str[i + 1] << 8 | uni_str[i]);
+          uint16_t unicode = bBE ? (uni_str[i] << 8 | uni_str[i + 1])
+                                 : (uni_str[i + 1] << 8 | uni_str[i]);
           i += 2;
           if (unicode == 0x1b) {
             break;

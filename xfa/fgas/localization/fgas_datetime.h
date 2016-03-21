@@ -68,18 +68,18 @@ class CFX_Unitime {
            uint8_t hour = 0,
            uint8_t minute = 0,
            uint8_t second = 0,
-           FX_WORD millisecond = 0);
+           uint16_t millisecond = 0);
   void Set(FX_UNITIME t);
   int32_t GetYear() const;
   uint8_t GetMonth() const;
   uint8_t GetDay() const;
   FX_WEEKDAY GetDayOfWeek() const;
-  FX_WORD GetDayOfYear() const;
+  uint16_t GetDayOfYear() const;
   int64_t GetDayOfAD() const;
   uint8_t GetHour() const;
   uint8_t GetMinute() const;
   uint8_t GetSecond() const;
-  FX_WORD GetMillisecond() const;
+  uint16_t GetMillisecond() const;
   FX_BOOL AddYears(int32_t iYears);
   FX_BOOL AddMonths(int32_t iMonths);
   FX_BOOL AddDays(int32_t iDays);
@@ -177,7 +177,7 @@ struct FX_TIME {
   uint8_t hour;
   uint8_t minute;
   uint8_t second;
-  FX_WORD millisecond;
+  uint16_t millisecond;
 };
 
 struct FX_TIMEZONE {
@@ -199,7 +199,7 @@ struct FX_DATETIME {
       uint8_t hour;
       uint8_t minute;
       uint8_t second;
-      FX_WORD millisecond;
+      uint16_t millisecond;
     } sTime;
     FX_TIME aTime;
   } Time;
@@ -221,7 +221,7 @@ struct FX_DATETIMEZONE {
           uint8_t hour;
           uint8_t minute;
           uint8_t second;
-          FX_WORD millisecond;
+          uint16_t millisecond;
         };
         FX_TIME time;
       };
@@ -280,19 +280,19 @@ class CFX_DateTime {
                       uint8_t hour = 0,
                       uint8_t minute = 0,
                       uint8_t second = 0,
-                      FX_WORD millisecond = 0);
+                      uint16_t millisecond = 0);
   virtual FX_BOOL FromUnitime(FX_UNITIME t);
   virtual FX_UNITIME ToUnitime() const;
   virtual int32_t GetYear() const;
   virtual uint8_t GetMonth() const;
   virtual uint8_t GetDay() const;
   virtual FX_WEEKDAY GetDayOfWeek() const;
-  virtual FX_WORD GetDayOfYear() const;
+  virtual uint16_t GetDayOfYear() const;
   virtual int64_t GetDayOfAD() const;
   virtual uint8_t GetHour() const;
   virtual uint8_t GetMinute() const;
   virtual uint8_t GetSecond() const;
-  virtual FX_WORD GetMillisecond() const;
+  virtual uint16_t GetMillisecond() const;
   virtual FX_BOOL AddYears(int32_t iYears);
   virtual FX_BOOL AddMonths(int32_t iMonths);
   virtual FX_BOOL AddDays(int32_t iDays);

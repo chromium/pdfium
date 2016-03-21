@@ -46,7 +46,7 @@ class CFX_DIBAttribute {
   int32_t m_nXDPI;
   int32_t m_nYDPI;
   FX_FLOAT m_fAspectRatio;
-  FX_WORD m_wDPIUnit;
+  uint16_t m_wDPIUnit;
   CFX_ByteString m_strAuthor;
   uint8_t m_strTime[20];
   int32_t m_nGifLeft;

@@ -591,16 +591,16 @@ FX_BOOL CXFA_LocaleValue::ValidateCanonicalValue(const CFX_WideString& wsValue,
 }
 FX_BOOL CXFA_LocaleValue::ValidateCanonicalDate(const CFX_WideString& wsDate,
                                                 CFX_Unitime& unDate) {
-  const FX_WORD LastDay[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-  const FX_WORD wCountY = 4, wCountM = 2, wCountD = 2;
+  const uint16_t LastDay[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+  const uint16_t wCountY = 4, wCountM = 2, wCountD = 2;
   int nLen = wsDate.GetLength();
   if (nLen < wCountY || nLen > wCountY + wCountM + wCountD + 2) {
     return FALSE;
   }
   const bool bSymbol = wsDate.Find(0x2D) != -1;
-  FX_WORD wYear = 0;
-  FX_WORD wMonth = 0;
-  FX_WORD wDay = 0;
+  uint16_t wYear = 0;
+  uint16_t wMonth = 0;
+  uint16_t wDay = 0;
   const FX_WCHAR* pDate = (const FX_WCHAR*)wsDate;
   int nIndex = 0, nStart = 0;
   while (pDate[nIndex] != '\0' && nIndex < wCountY) {
@@ -678,15 +678,15 @@ FX_BOOL CXFA_LocaleValue::ValidateCanonicalTime(const CFX_WideString& wsTime) {
   int nLen = wsTime.GetLength();
   if (nLen < 2)
     return FALSE;
-  const FX_WORD wCountH = 2;
-  const FX_WORD wCountM = 2;
-  const FX_WORD wCountS = 2;
-  const FX_WORD wCountF = 3;
+  const uint16_t wCountH = 2;
+  const uint16_t wCountM = 2;
+  const uint16_t wCountS = 2;
+  const uint16_t wCountF = 3;
   const bool bSymbol = wsTime.Find(':') != -1;
-  FX_WORD wHour = 0;
-  FX_WORD wMinute = 0;
-  FX_WORD wSecond = 0;
-  FX_WORD wFraction = 0;
+  uint16_t wHour = 0;
+  uint16_t wMinute = 0;
+  uint16_t wSecond = 0;
+  uint16_t wFraction = 0;
   const FX_WCHAR* pTime = (const FX_WCHAR*)wsTime;
   int nIndex = 0;
   int nStart = 0;

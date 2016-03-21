@@ -569,7 +569,7 @@ class CFX_WideString {
   static CFX_WideString FromLocal(const CFX_ByteString& str);
 
   static CFX_WideString FromCodePage(const CFX_ByteString& str,
-                                     FX_WORD codepage);
+                                     uint16_t codepage);
 
   static CFX_WideString FromUTF8(const char* str, FX_STRSIZE len);
 

@@ -443,17 +443,17 @@ class IFDE_CSSStyleSheet : public IFX_Unknown {
   static IFDE_CSSStyleSheet* LoadFromStream(
       const CFX_WideString& szUrl,
       IFX_Stream* pStream,
-      FX_WORD wCodePage,
+      uint16_t wCodePage,
       FX_DWORD dwMediaList = FDE_CSSMEDIATYPE_ALL);
   static IFDE_CSSStyleSheet* LoadFromBuffer(
       const CFX_WideString& szUrl,
       const FX_WCHAR* pBuffer,
       int32_t iBufSize,
-      FX_WORD wCodePage,
+      uint16_t wCodePage,
       FX_DWORD dwMediaList = FDE_CSSMEDIATYPE_ALL);
   virtual FX_BOOL GetUrl(CFX_WideString& szUrl) = 0;
   virtual FX_DWORD GetMediaList() const = 0;
-  virtual FX_WORD GetCodePage() const = 0;
+  virtual uint16_t GetCodePage() const = 0;
 
   virtual int32_t CountRules() const = 0;
   virtual IFDE_CSSRule* GetRule(int32_t index) = 0;
@@ -866,12 +866,12 @@ class IFDE_CSSFontStyle {
   virtual ~IFDE_CSSFontStyle() {}
   virtual int32_t CountFontFamilies() const = 0;
   virtual const FX_WCHAR* GetFontFamily(int32_t index) const = 0;
-  virtual FX_WORD GetFontWeight() const = 0;
+  virtual uint16_t GetFontWeight() const = 0;
   virtual FDE_CSSFONTVARIANT GetFontVariant() const = 0;
   virtual FDE_CSSFONTSTYLE GetFontStyle() const = 0;
   virtual FX_FLOAT GetFontSize() const = 0;
   virtual FX_ARGB GetColor() const = 0;
-  virtual void SetFontWeight(FX_WORD wFontWeight) = 0;
+  virtual void SetFontWeight(uint16_t wFontWeight) = 0;
   virtual void SetFontVariant(FDE_CSSFONTVARIANT eFontVariant) = 0;
   virtual void SetFontStyle(FDE_CSSFONTSTYLE eFontStyle) = 0;
   virtual void SetFontSize(FX_FLOAT fFontSize) = 0;

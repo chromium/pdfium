@@ -862,7 +862,7 @@ void CPWL_Edit::EnableSpellCheck(FX_BOOL bEnabled) {
     RemoveFlag(PES_SPELLCHECK);
 }
 
-FX_BOOL CPWL_Edit::OnKeyDown(FX_WORD nChar, FX_DWORD nFlag) {
+FX_BOOL CPWL_Edit::OnKeyDown(uint16_t nChar, FX_DWORD nFlag) {
   if (m_bMouseDown)
     return TRUE;
 
@@ -903,7 +903,7 @@ FX_BOOL CPWL_Edit::OnKeyDown(FX_WORD nChar, FX_DWORD nFlag) {
 *If the event is swallowed, implementation may do other unexpected things, which
 *is not the control means to do.
 */
-FX_BOOL CPWL_Edit::IsProceedtoOnChar(FX_WORD nKeyCode, FX_DWORD nFlag) {
+FX_BOOL CPWL_Edit::IsProceedtoOnChar(uint16_t nKeyCode, FX_DWORD nFlag) {
   FX_BOOL bCtrl = IsCTRLpressed(nFlag);
   FX_BOOL bAlt = IsALTpressed(nFlag);
   if (bCtrl && !bAlt) {
@@ -931,7 +931,7 @@ FX_BOOL CPWL_Edit::IsProceedtoOnChar(FX_WORD nKeyCode, FX_DWORD nFlag) {
   }
 }
 
-FX_BOOL CPWL_Edit::OnChar(FX_WORD nChar, FX_DWORD nFlag) {
+FX_BOOL CPWL_Edit::OnChar(uint16_t nChar, FX_DWORD nFlag) {
   if (m_bMouseDown)
     return TRUE;
 

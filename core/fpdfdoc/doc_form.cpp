@@ -21,7 +21,7 @@ const int nMaxRecursion = 32;
 
 const struct SupportFieldEncoding {
   const FX_CHAR* m_name;
-  FX_WORD m_codePage;
+  uint16_t m_codePage;
 } g_fieldEncoding[] = {
     {"BigFive", 950},
     {"GBK", 936},

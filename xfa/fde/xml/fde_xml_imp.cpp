@@ -388,7 +388,7 @@ void CFDE_XMLNode::SaveXMLNode(IFX_Stream* pXMLStream) {
       CFDE_XMLInstruction* pInstruction = (CFDE_XMLInstruction*)pNode;
       if (pInstruction->m_wsTarget.CompareNoCase(L"xml") == 0) {
         ws = L"<?xml version=\"1.0\" encoding=\"";
-        FX_WORD wCodePage = pXMLStream->GetCodePage();
+        uint16_t wCodePage = pXMLStream->GetCodePage();
         if (wCodePage == FX_CODEPAGE_UTF16LE) {
           ws += L"UTF-16";
         } else if (wCodePage == FX_CODEPAGE_UTF16BE) {
@@ -914,7 +914,7 @@ FX_BOOL CFDE_XMLDoc::LoadXML(IFX_Stream* pXMLStream,
     iTextDataSize = 128;
   }
   m_pStream = pXMLStream;
-  FX_WORD wCodePage = m_pStream->GetCodePage();
+  uint16_t wCodePage = m_pStream->GetCodePage();
   if (wCodePage != FX_CODEPAGE_UTF16LE && wCodePage != FX_CODEPAGE_UTF16BE &&
       wCodePage != FX_CODEPAGE_UTF8) {
     m_pStream->SetCodePage(FX_CODEPAGE_UTF8);
@@ -958,7 +958,7 @@ void CFDE_XMLDoc::SaveXMLNode(IFX_Stream* pXMLStream, IFDE_XMLNode* pINode) {
       CFDE_XMLInstruction* pInstruction = (CFDE_XMLInstruction*)pNode;
       if (pInstruction->m_wsTarget.CompareNoCase(L"xml") == 0) {
         ws = L"<?xml version=\"1.0\" encoding=\"";
-        FX_WORD wCodePage = pXMLStream->GetCodePage();
+        uint16_t wCodePage = pXMLStream->GetCodePage();
         if (wCodePage == FX_CODEPAGE_UTF16LE) {
           ws += L"UTF-16";
         } else if (wCodePage == FX_CODEPAGE_UTF16BE) {
@@ -1067,7 +1067,7 @@ void CFDE_XMLDoc::SaveXML(IFX_Stream* pXMLStream, FX_BOOL bSaveBOM) {
   }
   FXSYS_assert((pXMLStream->GetAccessModes() & FX_STREAMACCESS_Text) != 0);
   FXSYS_assert((pXMLStream->GetAccessModes() & FX_STREAMACCESS_Write) != 0);
-  FX_WORD wCodePage = pXMLStream->GetCodePage();
+  uint16_t wCodePage = pXMLStream->GetCodePage();
   if (wCodePage != FX_CODEPAGE_UTF16LE && wCodePage != FX_CODEPAGE_UTF16BE &&
       wCodePage != FX_CODEPAGE_UTF8) {
     wCodePage = FX_CODEPAGE_UTF8;

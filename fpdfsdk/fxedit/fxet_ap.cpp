@@ -11,8 +11,8 @@
 
 CFX_ByteString GetPDFWordString(IFX_Edit_FontMap* pFontMap,
                                 int32_t nFontIndex,
-                                FX_WORD Word,
-                                FX_WORD SubWord) {
+                                uint16_t Word,
+                                uint16_t SubWord) {
   CFX_ByteString sWord;
   if (CPDF_Font* pPDFFont = pFontMap->GetPDFFont(nFontIndex)) {
     if (SubWord > 0) {
@@ -62,7 +62,7 @@ CFX_ByteString IFX_Edit::GetEditAppearanceStream(
     const CFX_FloatPoint& ptOffset,
     const CPVT_WordRange* pRange /* = NULL*/,
     FX_BOOL bContinuous /* = TRUE*/,
-    FX_WORD SubWord /* = 0*/) {
+    uint16_t SubWord /* = 0*/) {
   CFX_ByteTextBuf sEditStream, sWords;
 
   CFX_FloatPoint ptOld(0.0f, 0.0f), ptNew(0.0f, 0.0f);

@@ -52,7 +52,7 @@ class CFX_FormatString : public IFX_FormatString {
   virtual void SplitFormatString(const CFX_WideString& wsFormatString,
                                  CFX_WideStringArray& wsPatterns);
   virtual FX_LOCALECATEGORY GetCategory(const CFX_WideString& wsPattern);
-  virtual FX_WORD GetLCID(const CFX_WideString& wsPattern);
+  virtual uint16_t GetLCID(const CFX_WideString& wsPattern);
   virtual CFX_WideString GetLocaleName(const CFX_WideString& wsPattern);
   virtual FX_BOOL ParseText(const CFX_WideString& wsSrcText,
                             const CFX_WideString& wsPattern,

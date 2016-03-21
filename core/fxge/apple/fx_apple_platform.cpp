@@ -74,7 +74,7 @@ static FX_BOOL _CGDrawGlyphRun(CGContextRef pContext,
       return FALSE;
     }
   }
-  CFX_FixedBufGrow<FX_WORD, 32> glyph_indices(nChars);
+  CFX_FixedBufGrow<uint16_t, 32> glyph_indices(nChars);
   CFX_FixedBufGrow<CGPoint, 32> glyph_positions(nChars);
   for (int i = 0; i < nChars; i++) {
     glyph_indices[i] = pCharPos[i].m_ExtGID;

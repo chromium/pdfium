@@ -1310,7 +1310,7 @@ static void XFA_BOX_GetFillPath(CXFA_Box box,
                                 const CXFA_StrokeArray& strokes,
                                 CFX_RectF rtWidget,
                                 CFX_Path& fillPath,
-                                FX_WORD dwFlags) {
+                                uint16_t dwFlags) {
   if (box.IsArc() || (dwFlags & XFA_DRAWBOX_ForceRound) != 0) {
     CXFA_Edge edge = box.GetEdge(0);
     FX_FLOAT fThickness = edge.GetThickness();

@@ -100,7 +100,7 @@ IFX_Edit_FontMap* CFX_Edit_Provider::GetFontMap() {
 }
 
 int32_t CFX_Edit_Provider::GetCharWidth(int32_t nFontIndex,
-                                        FX_WORD word,
+                                        uint16_t word,
                                         int32_t nWordStyle) {
   if (CPDF_Font* pPDFFont = m_pFontMap->GetPDFFont(nFontIndex)) {
     FX_DWORD charcode = word;
@@ -131,7 +131,7 @@ int32_t CFX_Edit_Provider::GetTypeDescent(int32_t nFontIndex) {
   return 0;
 }
 
-int32_t CFX_Edit_Provider::GetWordFontIndex(FX_WORD word,
+int32_t CFX_Edit_Provider::GetWordFontIndex(uint16_t word,
                                             int32_t charset,
                                             int32_t nFontIndex) {
   return m_pFontMap->GetWordFontIndex(word, charset, nFontIndex);
@@ -141,7 +141,7 @@ int32_t CFX_Edit_Provider::GetDefaultFontIndex() {
   return 0;
 }
 
-FX_BOOL CFX_Edit_Provider::IsLatinWord(FX_WORD word) {
+FX_BOOL CFX_Edit_Provider::IsLatinWord(uint16_t word) {
   return FX_EDIT_ISLATINWORD(word);
 }
 
@@ -409,7 +409,7 @@ CFX_WideString CFX_Edit_GroupUndoItem::GetUndoTitle() {
 CFXEU_InsertWord::CFXEU_InsertWord(CFX_Edit* pEdit,
                                    const CPVT_WordPlace& wpOldPlace,
                                    const CPVT_WordPlace& wpNewPlace,
-                                   FX_WORD word,
+                                   uint16_t word,
                                    int32_t charset,
                                    const CPVT_WordProps* pWordProps)
     : m_pEdit(pEdit),
@@ -477,7 +477,7 @@ void CFXEU_InsertReturn::Undo() {
 CFXEU_Backspace::CFXEU_Backspace(CFX_Edit* pEdit,
                                  const CPVT_WordPlace& wpOldPlace,
                                  const CPVT_WordPlace& wpNewPlace,
-                                 FX_WORD word,
+                                 uint16_t word,
                                  int32_t charset,
                                  const CPVT_SecProps& SecProps,
                                  const CPVT_WordProps& WordProps)
@@ -514,7 +514,7 @@ void CFXEU_Backspace::Undo() {
 CFXEU_Delete::CFXEU_Delete(CFX_Edit* pEdit,
                            const CPVT_WordPlace& wpOldPlace,
                            const CPVT_WordPlace& wpNewPlace,
-                           FX_WORD word,
+                           uint16_t word,
                            int32_t charset,
                            const CPVT_SecProps& SecProps,
                            const CPVT_WordProps& WordProps,
@@ -579,7 +579,7 @@ CFXEU_ClearRich::CFXEU_ClearRich(CFX_Edit* pEdit,
                                  const CPVT_WordPlace& wpOldPlace,
                                  const CPVT_WordPlace& wpNewPlace,
                                  const CPVT_WordRange& wrSel,
-                                 FX_WORD word,
+                                 uint16_t word,
                                  int32_t charset,
                                  const CPVT_SecProps& SecProps,
                                  const CPVT_WordProps& WordProps)
@@ -833,7 +833,7 @@ void CFX_Edit::SetAlignmentV(int32_t nFormat, FX_BOOL bPaint) {
     Paint();
 }
 
-void CFX_Edit::SetPasswordChar(FX_WORD wSubWord, FX_BOOL bPaint) {
+void CFX_Edit::SetPasswordChar(uint16_t wSubWord, FX_BOOL bPaint) {
   m_pVT->SetPasswordChar(wSubWord);
   if (bPaint)
     Paint();
@@ -1589,7 +1589,7 @@ void CFX_Edit::SetText(const FX_WCHAR* text,
   SetText(text, charset, pSecProps, pWordProps, TRUE, TRUE);
 }
 
-FX_BOOL CFX_Edit::InsertWord(FX_WORD word,
+FX_BOOL CFX_Edit::InsertWord(uint16_t word,
                              int32_t charset,
                              const CPVT_WordProps* pWordProps) {
   return InsertWord(word, charset, pWordProps, TRUE, TRUE);
@@ -1623,7 +1623,7 @@ FX_FLOAT CFX_Edit::GetFontSize() const {
   return m_pVT->GetFontSize();
 }
 
-FX_WORD CFX_Edit::GetPasswordChar() const {
+uint16_t CFX_Edit::GetPasswordChar() const {
   return m_pVT->GetPasswordChar();
 }
 
@@ -2467,7 +2467,7 @@ void CFX_Edit::SetText(const FX_WCHAR* text,
     m_pOprNotify->OnSetText(m_wpCaret, m_wpOldCaret);
 }
 
-FX_BOOL CFX_Edit::InsertWord(FX_WORD word,
+FX_BOOL CFX_Edit::InsertWord(uint16_t word,
                              int32_t charset,
                              const CPVT_WordProps* pWordProps,
                              FX_BOOL bAddUndo,
@@ -2972,7 +2972,7 @@ CPVT_WordPlace CFX_Edit::DoInsertText(const CPVT_WordPlace& place,
     CFX_WideString sText = text;
 
     for (int32_t i = 0, sz = sText.GetLength(); i < sz; i++) {
-      FX_WORD word = sText[i];
+      uint16_t word = sText[i];
       switch (word) {
         case 0x0D:
           wp = m_pVT->InsertSection(wp, pSecProps, pWordProps);
@@ -2997,7 +2997,7 @@ CPVT_WordPlace CFX_Edit::DoInsertText(const CPVT_WordPlace& place,
   return wp;
 }
 
-int32_t CFX_Edit::GetCharSetFromUnicode(FX_WORD word, int32_t nOldCharset) {
+int32_t CFX_Edit::GetCharSetFromUnicode(uint16_t word, int32_t nOldCharset) {
   if (IFX_Edit_FontMap* pFontMap = GetFontMap())
     return pFontMap->CharSetFromUnicode(word, nOldCharset);
   return nOldCharset;

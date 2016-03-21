@@ -566,7 +566,7 @@ void CPDF_CharPosList::Load(int nChars,
     if (!pCIDFont) {
       continue;
     }
-    FX_WORD CID = pCIDFont->CIDFromCharCode(CharCode);
+    uint16_t CID = pCIDFont->CIDFromCharCode(CharCode);
     if (bVertWriting) {
       charpos.m_OriginY = charpos.m_OriginX;
       charpos.m_OriginX = 0;

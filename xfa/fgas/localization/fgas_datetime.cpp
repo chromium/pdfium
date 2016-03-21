@@ -124,14 +124,14 @@ static void FX_DaysToDate(int64_t iDays,
 }
 
 struct FXUT_SYSTEMTIME {
-  FX_WORD wYear;
-  FX_WORD wMonth;
-  FX_WORD wDayOfWeek;
-  FX_WORD wDay;
-  FX_WORD wHour;
-  FX_WORD wMinute;
-  FX_WORD wSecond;
-  FX_WORD wMilliseconds;
+  uint16_t wYear;
+  uint16_t wMonth;
+  uint16_t wDayOfWeek;
+  uint16_t wDay;
+  uint16_t wHour;
+  uint16_t wMinute;
+  uint16_t wSecond;
+  uint16_t wMilliseconds;
 };
 
 void CFX_Unitime::Now() {
@@ -160,7 +160,7 @@ void CFX_Unitime::Now() {
 #endif
   Set(utLocal.wYear, (uint8_t)utLocal.wMonth, (uint8_t)utLocal.wDay,
       (uint8_t)utLocal.wHour, (uint8_t)utLocal.wMinute,
-      (uint8_t)utLocal.wSecond, (FX_WORD)utLocal.wMilliseconds);
+      (uint8_t)utLocal.wSecond, (uint16_t)utLocal.wMilliseconds);
 }
 void CFX_Unitime::SetGMTime() {
   FXUT_SYSTEMTIME utLocal;
@@ -188,7 +188,7 @@ void CFX_Unitime::SetGMTime() {
 #endif
   Set(utLocal.wYear, (uint8_t)utLocal.wMonth, (uint8_t)utLocal.wDay,
       (uint8_t)utLocal.wHour, (uint8_t)utLocal.wMinute,
-      (uint8_t)utLocal.wSecond, (FX_WORD)utLocal.wMilliseconds);
+      (uint8_t)utLocal.wSecond, (uint16_t)utLocal.wMilliseconds);
 }
 void CFX_Unitime::Set(int32_t year,
                       uint8_t month,
@@ -196,7 +196,7 @@ void CFX_Unitime::Set(int32_t year,
                       uint8_t hour,
                       uint8_t minute,
                       uint8_t second,
-                      FX_WORD millisecond) {
+                      uint16_t millisecond) {
   FXSYS_assert(hour <= 23);
   FXSYS_assert(minute <= 59);
   FXSYS_assert(second <= 59);
@@ -238,7 +238,7 @@ FX_WEEKDAY CFX_Unitime::GetDayOfWeek() const {
   }
   return (FX_WEEKDAY)v;
 }
-FX_WORD CFX_Unitime::GetDayOfYear() const {
+uint16_t CFX_Unitime::GetDayOfYear() const {
   int32_t iYear;
   uint8_t iMonth, iDay;
   FX_DaysToDate(GetDayOfAD(), iYear, iMonth, iDay);
@@ -274,12 +274,12 @@ uint8_t CFX_Unitime::GetSecond() const {
   }
   return (uint8_t)(v / g_FXMillisecondsPerSecond);
 }
-FX_WORD CFX_Unitime::GetMillisecond() const {
+uint16_t CFX_Unitime::GetMillisecond() const {
   int32_t v = (int32_t)(m_iUnitime % g_FXMillisecondsPerSecond);
   if (v < 0) {
     v += g_FXMillisecondsPerSecond;
   }
-  return (FX_WORD)v;
+  return (uint16_t)v;
 }
 FX_BOOL CFX_Unitime::AddYears(int32_t iYears) {
   FX_UNITIME ut = m_iUnitime;
@@ -350,7 +350,7 @@ FX_BOOL CFX_DateTime::Set(int32_t year,
                           uint8_t hour,
                           uint8_t minute,
                           uint8_t second,
-                          FX_WORD millisecond) {
+                          uint16_t millisecond) {
   ASSERT(year != 0);
   ASSERT(month >= 1 && month <= 12);
   ASSERT(day >= 1 && day <= FX_DaysInMonth(year, month));
@@ -407,7 +407,7 @@ FX_WEEKDAY CFX_DateTime::GetDayOfWeek() const {
   }
   return (FX_WEEKDAY)v;
 }
-FX_WORD CFX_DateTime::GetDayOfYear() const {
+uint16_t CFX_DateTime::GetDayOfYear() const {
   return FX_DaysBeforeMonthInYear(m_DateTime.Date.sDate.year,
                                   m_DateTime.Date.sDate.month) +
          m_DateTime.Date.sDate.day;
@@ -425,7 +425,7 @@ uint8_t CFX_DateTime::GetMinute() const {
 uint8_t CFX_DateTime::GetSecond() const {
   return m_DateTime.Time.sTime.second;
 }
-FX_WORD CFX_DateTime::GetMillisecond() const {
+uint16_t CFX_DateTime::GetMillisecond() const {
   return m_DateTime.Time.sTime.millisecond;
 }
 FX_BOOL CFX_DateTime::AddYears(int32_t iYears) {
@@ -542,7 +542,7 @@ FX_BOOL CFX_DateTime::AddMilliseconds(int32_t iMilliseconds) {
   if (iMilliseconds < 0) {
     iSeconds--, iMilliseconds += g_FXMillisecondsPerSecond;
   }
-  m_DateTime.Time.sTime.millisecond = (FX_WORD)iMilliseconds;
+  m_DateTime.Time.sTime.millisecond = (uint16_t)iMilliseconds;
   if (iSeconds != 0) {
     AddSeconds(iSeconds);
   }

@@ -69,7 +69,7 @@ void CQuartz2D::setGraphicsTextMatrix(void* graphics, CFX_Matrix* matrix) {
 FX_BOOL CQuartz2D::drawGraphicsString(void* graphics,
                                       void* font,
                                       FX_FLOAT fontSize,
-                                      FX_WORD* glyphIndices,
+                                      uint16_t* glyphIndices,
                                       CGPoint* glyphPositions,
                                       int32_t charsCount,
                                       FX_ARGB argb,
@@ -760,7 +760,7 @@ FX_BOOL CFX_QuartzDeviceDriver::CG_DrawGlypRun(int nChars,
       return FALSE;
     }
   }
-  CFX_FixedBufGrow<FX_WORD, 32> glyph_indices(nChars);
+  CFX_FixedBufGrow<uint16_t, 32> glyph_indices(nChars);
   CFX_FixedBufGrow<CGPoint, 32> glyph_positions(nChars);
   for (int i = 0; i < nChars; i++) {
     glyph_indices[i] = pCharPos[i].m_ExtGID;

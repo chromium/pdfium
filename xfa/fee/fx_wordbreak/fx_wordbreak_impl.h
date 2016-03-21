@@ -15,7 +15,7 @@
 #include "xfa/fee/fx_wordbreak/fx_wordbreak_impl.h"
 #include "xfa/fee/ifde_txtedtengine.h"
 
-extern const FX_WORD gs_FX_WordBreak_Table[16];
+extern const uint16_t gs_FX_WordBreak_Table[16];
 extern const uint8_t gs_FX_WordBreak_CodePointProperties[(0xFFFF - 1) / 2 + 1];
 enum FX_WordBreakProp {
   FX_WordBreakProp_None = 0,

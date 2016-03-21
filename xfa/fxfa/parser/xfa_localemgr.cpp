@@ -1060,8 +1060,8 @@ static IFX_Locale* XFA_GetLocaleFromBuffer(const uint8_t* pBuf, int nBufLen) {
   }
   return NULL;
 }
-static FX_WORD XFA_GetLanguage(CFX_WideString wsLanguage) {
-  FX_WORD dwLangueID = XFA_LANGID_en_US;
+static uint16_t XFA_GetLanguage(CFX_WideString wsLanguage) {
+  uint16_t dwLangueID = XFA_LANGID_en_US;
   if (wsLanguage.GetLength() < 2) {
     return dwLangueID;
   }
@@ -1147,7 +1147,7 @@ CXFA_LocaleMgr::~CXFA_LocaleMgr() {
 void CXFA_LocaleMgr::Release() {
   delete this;
 }
-FX_WORD CXFA_LocaleMgr::GetDefLocaleID() {
+uint16_t CXFA_LocaleMgr::GetDefLocaleID() {
   return m_dwDeflcid;
 }
 IFX_Locale* CXFA_LocaleMgr::GetDefLocale() {
@@ -1163,7 +1163,7 @@ IFX_Locale* CXFA_LocaleMgr::GetDefLocale() {
     m_XMLLocaleArray.Add(m_pDefLocale);
   return m_pDefLocale;
 }
-IFX_Locale* CXFA_LocaleMgr::GetLocale(FX_WORD lcid) {
+IFX_Locale* CXFA_LocaleMgr::GetLocale(uint16_t lcid) {
   IFX_Locale* pLocal = NULL;
   switch (lcid) {
     case XFA_LANGID_zh_CN:
@@ -1236,7 +1236,7 @@ IFX_Locale* CXFA_LocaleMgr::GetLocaleByName(
       return pLocale;
     }
   }
-  FX_WORD dwLangueID = XFA_GetLanguage(wsLocaleName);
+  uint16_t dwLangueID = XFA_GetLanguage(wsLocaleName);
   IFX_Locale* pLocale = GetLocale(dwLangueID);
   if (pLocale)
     m_XMLLocaleArray.Add(pLocale);

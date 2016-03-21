@@ -47,7 +47,7 @@ const FX_CHAR* PDF_CharNameFromPredefinedCharSet(int encoding,
 
 FX_WCHAR FT_UnicodeFromCharCode(int encoding, FX_DWORD charcode);
 FX_DWORD FT_CharCodeFromUnicode(int encoding, FX_WCHAR unicode);
-const FX_WORD* PDF_UnicodesForPredefinedCharSet(int encoding);
+const uint16_t* PDF_UnicodesForPredefinedCharSet(int encoding);
 const FX_CHAR* GetAdobeCharName(int iBaseEncoding,
                                 const CFX_ByteString* pCharNames,
                                 int charcode);
@@ -243,11 +243,11 @@ class CPDF_SimpleFont : public CPDF_Font {
   void LoadCharMetrics(int charcode);
 
   CPDF_FontEncoding m_Encoding;
-  FX_WORD m_GlyphIndex[256];
-  FX_WORD m_ExtGID[256];
+  uint16_t m_GlyphIndex[256];
+  uint16_t m_ExtGID[256];
   CFX_ByteString* m_pCharNames;
   int m_BaseEncoding;
-  FX_WORD m_CharWidth[256];
+  uint16_t m_CharWidth[256];
   FX_SMALL_RECT m_CharBBox[256];
   FX_BOOL m_bUseFontWidth;
 };
@@ -381,10 +381,10 @@ class CPDF_CIDFont : public CPDF_Font {
   FX_DWORD CharCodeFromUnicode(FX_WCHAR Unicode) const override;
 
   FX_BOOL LoadGB2312();
-  FX_WORD CIDFromCharCode(FX_DWORD charcode) const;
-  const uint8_t* GetCIDTransform(FX_WORD CID) const;
-  short GetVertWidth(FX_WORD CID) const;
-  void GetVertOrigin(FX_WORD CID, short& vx, short& vy) const;
+  uint16_t CIDFromCharCode(FX_DWORD charcode) const;
+  const uint8_t* GetCIDTransform(uint16_t CID) const;
+  short GetVertWidth(uint16_t CID) const;
+  void GetVertOrigin(uint16_t CID, short& vx, short& vy) const;
   virtual FX_BOOL IsFontStyleFromCharCode(FX_DWORD charcode) const;
 
  protected:
@@ -402,8 +402,8 @@ class CPDF_CIDFont : public CPDF_Font {
   FX_BOOL m_bType1;
   CPDF_StreamAcc* m_pCIDToGIDMap;
   FX_BOOL m_bCIDIsGID;
-  FX_WORD m_DefaultWidth;
-  FX_WORD* m_pAnsiWidths;
+  uint16_t m_DefaultWidth;
+  uint16_t* m_pAnsiWidths;
   FX_SMALL_RECT m_CharBBox[256];
   CFX_DWordArray m_WidthList;
   short m_DefaultVY;

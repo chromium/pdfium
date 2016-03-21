@@ -142,7 +142,7 @@ FX_FLOAT CPWL_EditCtrl::GetFontSize() const {
   return m_pEdit->GetFontSize();
 }
 
-FX_BOOL CPWL_EditCtrl::OnKeyDown(FX_WORD nChar, FX_DWORD nFlag) {
+FX_BOOL CPWL_EditCtrl::OnKeyDown(uint16_t nChar, FX_DWORD nFlag) {
   if (m_bMouseDown)
     return TRUE;
 
@@ -217,7 +217,7 @@ FX_BOOL CPWL_EditCtrl::OnKeyDown(FX_WORD nChar, FX_DWORD nFlag) {
   return bRet;
 }
 
-FX_BOOL CPWL_EditCtrl::OnChar(FX_WORD nChar, FX_DWORD nFlag) {
+FX_BOOL CPWL_EditCtrl::OnChar(uint16_t nChar, FX_DWORD nFlag) {
   if (m_bMouseDown)
     return TRUE;
 
@@ -236,7 +236,7 @@ FX_BOOL CPWL_EditCtrl::OnChar(FX_WORD nChar, FX_DWORD nFlag) {
   FX_BOOL bAlt = IsALTpressed(nFlag);
   FX_BOOL bShift = IsSHIFTpressed(nFlag);
 
-  FX_WORD word = nChar;
+  uint16_t word = nChar;
 
   if (bCtrl && !bAlt) {
     switch (nChar) {
@@ -508,7 +508,7 @@ void CPWL_EditCtrl::InsertText(const FX_WCHAR* csText) {
     m_pEdit->InsertText(csText);
 }
 
-void CPWL_EditCtrl::InsertWord(FX_WORD word, int32_t nCharset) {
+void CPWL_EditCtrl::InsertWord(uint16_t word, int32_t nCharset) {
   if (!IsReadOnly())
     m_pEdit->InsertWord(word, nCharset);
 }

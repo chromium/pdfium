@@ -140,7 +140,7 @@ class CPDF_TextPage : public IPDF_TextPage {
                         int nItems) const;
 
   const CPDF_Page* const m_pPage;
-  std::vector<FX_WORD> m_CharIndex;
+  std::vector<uint16_t> m_CharIndex;
   std::deque<PAGECHAR_INFO> m_CharList;
   std::deque<PAGECHAR_INFO> m_TempCharList;
   CFX_WideTextBuf m_TextBuf;
@@ -189,7 +189,7 @@ class CPDF_TextPageFind : public IPDF_TextPageFind {
   int GetCharIndex(int index) const;
 
  private:
-  std::vector<FX_WORD> m_CharIndex;
+  std::vector<uint16_t> m_CharIndex;
   const IPDF_TextPage* m_pTextPage;
   CFX_WideString m_strText;
   CFX_WideString m_findWhat;

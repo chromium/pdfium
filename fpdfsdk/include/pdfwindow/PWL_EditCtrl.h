@@ -103,8 +103,8 @@ class CPWL_EditCtrl : public CPWL_Wnd, public IFX_Edit_Notify {
   // CPWL_Wnd
   void OnCreate(PWL_CREATEPARAM& cp) override;
   void OnCreated() override;
-  FX_BOOL OnKeyDown(FX_WORD nChar, FX_DWORD nFlag) override;
-  FX_BOOL OnChar(FX_WORD nChar, FX_DWORD nFlag) override;
+  FX_BOOL OnKeyDown(uint16_t nChar, FX_DWORD nFlag) override;
+  FX_BOOL OnChar(uint16_t nChar, FX_DWORD nFlag) override;
   FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
   FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
   FX_BOOL OnMouseMove(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
@@ -149,7 +149,7 @@ class CPWL_EditCtrl : public CPWL_Wnd, public IFX_Edit_Notify {
   void PasteText();
   void CutText();
   void ShowVScrollBar(FX_BOOL bShow);
-  void InsertWord(FX_WORD word, int32_t nCharset);
+  void InsertWord(uint16_t word, int32_t nCharset);
   void InsertReturn();
 
   FX_BOOL IsWndHorV();

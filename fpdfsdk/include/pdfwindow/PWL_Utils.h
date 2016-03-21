@@ -27,9 +27,9 @@ T PWL_MAX(const T& i, const T& j) {
 #define PWL_WIN2PDF(color) ((FX_FLOAT)((FX_FLOAT)color / 255.0f))
 
 #define PWL_MAKEDWORD(low, high) \
-  ((FX_DWORD)((FX_WORD)(low) | (FX_DWORD)(((FX_WORD)(high)) << 16)))
-#define PWL_GETLOWWORD(dword) ((FX_WORD)(dword))
-#define PWL_GETHIGHWORD(dword) ((FX_WORD)(dword >> 16))
+  ((FX_DWORD)((uint16_t)(low) | (FX_DWORD)(((uint16_t)(high)) << 16)))
+#define PWL_GETLOWWORD(dword) ((uint16_t)(dword))
+#define PWL_GETHIGHWORD(dword) ((uint16_t)(dword >> 16))
 
 #define PWL_ICONTYPE_CHECKMARK 0
 #define PWL_ICONTYPE_CIRCLE 1
@@ -171,7 +171,7 @@ class CPWL_Utils {
                                          const CFX_FloatPoint& ptOffset,
                                          const CPVT_WordRange* pRange = NULL,
                                          FX_BOOL bContinuous = TRUE,
-                                         FX_WORD SubWord = 0);
+                                         uint16_t SubWord = 0);
   static CFX_ByteString GetEditSelAppStream(
       IFX_Edit* pEdit,
       const CFX_FloatPoint& ptOffset,

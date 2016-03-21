@@ -16,7 +16,7 @@ struct JBig2PageInfo {
   FX_DWORD m_dwResolutionY;
   uint8_t m_cFlags;
   FX_BOOL m_bIsStriped;
-  FX_WORD m_wMaxStripeSize;
+  uint16_t m_wMaxStripeSize;
 };
 
 #endif  // CORE_FXCODEC_JBIG2_JBIG2_PAGE_H_

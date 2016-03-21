@@ -79,7 +79,7 @@ FX_FLOAT CFX_ListItem::GetItemHeight() const {
   return 0.0f;
 }
 
-FX_WORD CFX_ListItem::GetFirstChar() const {
+uint16_t CFX_ListItem::GetFirstChar() const {
   CPVT_Word word;
 
   if (IFX_Edit_Iterator* pIterator = GetIterator()) {
@@ -570,7 +570,7 @@ void CFX_ListCtrl::OnVK_END(FX_BOOL bShift, FX_BOOL bCtrl) {
   OnVK(GetCount() - 1, bShift, bCtrl);
 }
 
-FX_BOOL CFX_ListCtrl::OnChar(FX_WORD nChar, FX_BOOL bShift, FX_BOOL bCtrl) {
+FX_BOOL CFX_ListCtrl::OnChar(uint16_t nChar, FX_BOOL bShift, FX_BOOL bCtrl) {
   int32_t nIndex = GetLastSelected();
   int32_t nFindIndex = FindNext(nIndex, nChar);
 

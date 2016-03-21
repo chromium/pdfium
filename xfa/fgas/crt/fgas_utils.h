@@ -85,7 +85,7 @@ class CFX_BaseArrayTemplate : public CFX_BaseArray {
 };
 typedef CFX_BaseArrayTemplate<void*> CFDE_PtrArray;
 typedef CFX_BaseArrayTemplate<FX_DWORD> CFDE_DWordArray;
-typedef CFX_BaseArrayTemplate<FX_WORD> CFDE_WordArray;
+typedef CFX_BaseArrayTemplate<uint16_t> CFDE_WordArray;
 
 template <class baseType>
 class CFX_ObjectBaseArrayTemplate : public CFX_BaseArray {
@@ -282,7 +282,7 @@ class CFX_MassArrayTemplate : public CFX_BaseMassArray {
 typedef CFX_MassArrayTemplate<void*> CFX_PtrMassArray;
 typedef CFX_MassArrayTemplate<int32_t> CFX_Int32MassArray;
 typedef CFX_MassArrayTemplate<FX_DWORD> CFX_DWordMassArray;
-typedef CFX_MassArrayTemplate<FX_WORD> CFX_WordMassArray;
+typedef CFX_MassArrayTemplate<uint16_t> CFX_WordMassArray;
 typedef CFX_MassArrayTemplate<CFX_Rect> CFX_RectMassArray;
 typedef CFX_MassArrayTemplate<CFX_RectF> CFX_RectFMassArray;
 
@@ -397,7 +397,7 @@ class CFX_DiscreteArrayTemplate : public CFX_BaseDiscreteArray {
 };
 typedef CFX_DiscreteArrayTemplate<void*> CFX_PtrDiscreteArray;
 typedef CFX_DiscreteArrayTemplate<FX_DWORD> CFX_DWordDiscreteArray;
-typedef CFX_DiscreteArrayTemplate<FX_WORD> CFX_WordDiscreteArray;
+typedef CFX_DiscreteArrayTemplate<uint16_t> CFX_WordDiscreteArray;
 
 class CFX_BaseStack : public CFX_Target {
  protected:
@@ -436,7 +436,7 @@ class CFX_StackTemplate : public CFX_BaseStack {
 };
 typedef CFX_StackTemplate<void*> CFX_PtrStack;
 typedef CFX_StackTemplate<FX_DWORD> CFX_DWordStack;
-typedef CFX_StackTemplate<FX_WORD> CFX_WordStack;
+typedef CFX_StackTemplate<uint16_t> CFX_WordStack;
 typedef CFX_StackTemplate<int32_t> CFX_Int32Stack;
 
 template <class baseType>

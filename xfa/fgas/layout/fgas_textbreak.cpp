@@ -732,10 +732,10 @@ static const FX_TxtBreak_LPFAppendChar g_FX_TxtBreak_lpfAppendChar[16] = {
     &CFX_TxtBreak::AppendChar_Others,      &CFX_TxtBreak::AppendChar_Others,
 };
 FX_DWORD CFX_TxtBreak::AppendChar(FX_WCHAR wch) {
-  FX_DWORD dwProps = kTextLayoutCodeProperties[(FX_WORD)wch];
+  FX_DWORD dwProps = kTextLayoutCodeProperties[(uint16_t)wch];
   FX_DWORD dwType = (dwProps & FX_CHARTYPEBITSMASK);
   CFX_TxtChar* pCurChar = m_pCurLine->m_pLineChars->AddSpace();
-  pCurChar->m_wCharCode = (FX_WORD)wch;
+  pCurChar->m_wCharCode = (uint16_t)wch;
   pCurChar->m_nRotation = m_iCharRotation;
   pCurChar->m_dwCharProps = dwProps;
   pCurChar->m_dwCharStyles = 0;
@@ -1324,8 +1324,8 @@ void CFX_TxtBreak::Reset() {
 }
 
 struct FX_FORMCHAR {
-  FX_WORD wch;
-  FX_WORD wForm;
+  uint16_t wch;
+  uint16_t wForm;
   int32_t iWidth;
 };
 

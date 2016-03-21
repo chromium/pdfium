@@ -27,14 +27,14 @@ struct FX_SYSTEMTIME {
         wMinute(0),
         wSecond(0),
         wMilliseconds(0) {}
-  FX_WORD wYear;
-  FX_WORD wMonth;
-  FX_WORD wDayOfWeek;
-  FX_WORD wDay;
-  FX_WORD wHour;
-  FX_WORD wMinute;
-  FX_WORD wSecond;
-  FX_WORD wMilliseconds;
+  uint16_t wYear;
+  uint16_t wMonth;
+  uint16_t wDayOfWeek;
+  uint16_t wDay;
+  uint16_t wHour;
+  uint16_t wMinute;
+  uint16_t wSecond;
+  uint16_t wMilliseconds;
 };
 
 // cursor style

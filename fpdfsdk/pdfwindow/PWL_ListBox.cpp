@@ -203,7 +203,7 @@ void CPWL_ListBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
   }
 }
 
-FX_BOOL CPWL_ListBox::OnKeyDown(FX_WORD nChar, FX_DWORD nFlag) {
+FX_BOOL CPWL_ListBox::OnKeyDown(uint16_t nChar, FX_DWORD nFlag) {
   CPWL_Wnd::OnKeyDown(nChar, nFlag);
 
   if (!m_pList)
@@ -250,7 +250,7 @@ FX_BOOL CPWL_ListBox::OnKeyDown(FX_WORD nChar, FX_DWORD nFlag) {
   return TRUE;
 }
 
-FX_BOOL CPWL_ListBox::OnChar(FX_WORD nChar, FX_DWORD nFlag) {
+FX_BOOL CPWL_ListBox::OnChar(uint16_t nChar, FX_DWORD nFlag) {
   CPWL_Wnd::OnChar(nChar, nFlag);
 
   if (!m_pList)

@@ -48,7 +48,7 @@ IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadHTMLStandardStyleSheet() {
 IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadFromStream(
     const CFX_WideString& szUrl,
     IFX_Stream* pStream,
-    FX_WORD wCodePage,
+    uint16_t wCodePage,
     FX_DWORD dwMediaList) {
   CFDE_CSSStyleSheet* pStyleSheet = new CFDE_CSSStyleSheet(dwMediaList);
   if (!pStyleSheet->LoadFromStream(szUrl, pStream, wCodePage)) {
@@ -61,7 +61,7 @@ IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadFromBuffer(
     const CFX_WideString& szUrl,
     const FX_WCHAR* pBuffer,
     int32_t iBufSize,
-    FX_WORD wCodePage,
+    uint16_t wCodePage,
     FX_DWORD dwMediaList) {
   CFDE_CSSStyleSheet* pStyleSheet = new CFDE_CSSStyleSheet(dwMediaList);
   if (!pStyleSheet->LoadFromBuffer(szUrl, pBuffer, iBufSize, wCodePage)) {
@@ -124,7 +124,7 @@ IFDE_CSSRule* CFDE_CSSStyleSheet::GetRule(int32_t index) {
 }
 FX_BOOL CFDE_CSSStyleSheet::LoadFromStream(const CFX_WideString& szUrl,
                                            IFX_Stream* pStream,
-                                           FX_WORD wCodePage) {
+                                           uint16_t wCodePage) {
   FXSYS_assert(pStream != NULL);
   IFDE_CSSSyntaxParser* pSyntax = IFDE_CSSSyntaxParser::Create();
   if (pSyntax == NULL) {
@@ -142,7 +142,7 @@ FX_BOOL CFDE_CSSStyleSheet::LoadFromStream(const CFX_WideString& szUrl,
 FX_BOOL CFDE_CSSStyleSheet::LoadFromBuffer(const CFX_WideString& szUrl,
                                            const FX_WCHAR* pBuffer,
                                            int32_t iBufSize,
-                                           FX_WORD wCodePage) {
+                                           uint16_t wCodePage) {
   FXSYS_assert(pBuffer != NULL && iBufSize > 0);
   IFDE_CSSSyntaxParser* pSyntax = IFDE_CSSSyntaxParser::Create();
   if (pSyntax == NULL) {

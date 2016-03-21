@@ -585,7 +585,7 @@ class CXFA_Node : public CXFA_Object {
                                XFA_ATTRIBUTE eAttribute);
 
  protected:
-  CXFA_Node(CXFA_Document* pDoc, FX_WORD ePacket, XFA_ELEMENT eElement);
+  CXFA_Node(CXFA_Document* pDoc, uint16_t ePacket, XFA_ELEMENT eElement);
   ~CXFA_Node();
   friend class CXFA_Document;
   CXFA_Node* Deprecated_GetPrevSibling();
@@ -640,7 +640,7 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* m_pParent;
   IFDE_XMLNode* m_pXMLNode;
   XFA_ELEMENT m_eNodeClass;
-  FX_WORD m_ePacket;
+  uint16_t m_ePacket;
   FX_DWORD m_dwNameHash;
   CXFA_Node* m_pAuxNode;
   XFA_MAPMODULEDATA* m_pMapModuleData;

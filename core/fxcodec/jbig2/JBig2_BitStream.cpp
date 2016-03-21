@@ -101,7 +101,7 @@ int32_t CJBig2_BitStream::readInteger(FX_DWORD* dwResult) {
   return 0;
 }
 
-int32_t CJBig2_BitStream::readShortInteger(FX_WORD* dwResult) {
+int32_t CJBig2_BitStream::readShortInteger(uint16_t* dwResult) {
   if (m_dwByteIdx + 1 >= m_dwLength)
     return -1;
 

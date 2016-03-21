@@ -676,13 +676,13 @@ FWLCOLOR CFWL_WidgetTP::BlendColor(FWLCOLOR srcColor,
   FWLCOLOR dstColor;
   uint8_t n = 255 - scale;
   dstColor.a = (uint8_t)(
-      ((FX_WORD)srcColor.a * n + (FX_WORD)renderColor.a * scale) >> 8);
+      ((uint16_t)srcColor.a * n + (uint16_t)renderColor.a * scale) >> 8);
   dstColor.r = (uint8_t)(
-      ((FX_WORD)srcColor.r * n + (FX_WORD)renderColor.r * scale) >> 8);
+      ((uint16_t)srcColor.r * n + (uint16_t)renderColor.r * scale) >> 8);
   dstColor.g = (uint8_t)(
-      ((FX_WORD)srcColor.g * n + (FX_WORD)renderColor.g * scale) >> 8);
+      ((uint16_t)srcColor.g * n + (uint16_t)renderColor.g * scale) >> 8);
   dstColor.b = (uint8_t)(
-      ((FX_WORD)srcColor.b * n + (FX_WORD)renderColor.b * scale) >> 8);
+      ((uint16_t)srcColor.b * n + (uint16_t)renderColor.b * scale) >> 8);
   return dstColor;
 }
 CFWL_ArrowData::CFWL_ArrowData() : m_pColorData(NULL) {
@@ -714,13 +714,13 @@ CFWL_FontData::~CFWL_FontData() {
 }
 FX_BOOL CFWL_FontData::Equal(const CFX_WideStringC& wsFontFamily,
                              FX_DWORD dwFontStyles,
-                             FX_WORD wCodePage) {
+                             uint16_t wCodePage) {
   return m_wsFamily == wsFontFamily && m_dwStyles == dwFontStyles &&
          m_dwCodePage == wCodePage;
 }
 FX_BOOL CFWL_FontData::LoadFont(const CFX_WideStringC& wsFontFamily,
                                 FX_DWORD dwFontStyles,
-                                FX_WORD dwCodePage) {
+                                uint16_t dwCodePage) {
   m_wsFamily = wsFontFamily;
   m_dwStyles = dwFontStyles;
   m_dwCodePage = dwCodePage;
@@ -751,7 +751,7 @@ CFWL_FontManager::CFWL_FontManager() {}
 CFWL_FontManager::~CFWL_FontManager() {}
 IFX_Font* CFWL_FontManager::FindFont(const CFX_WideStringC& wsFontFamily,
                                      FX_DWORD dwFontStyles,
-                                     FX_WORD wCodePage) {
+                                     uint16_t wCodePage) {
   for (const auto& pData : m_FontsArray) {
     if (pData->Equal(wsFontFamily, dwFontStyles, wCodePage))
       return pData->GetFont();
