@@ -10,8 +10,10 @@
 #include <map>
 #include <memory>
 
+#include "core/fpdfapi/fpdf_page/cpdf_graphicstates.h"
+#include "core/fpdfapi/fpdf_page/include/cpdf_clippath.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
-#include "core/include/fpdfapi/fpdf_pageobj.h"
+#include "core/include/fpdfapi/fpdf_resource.h"
 
 class CPDF_PageObjectHolder;
 class CPDF_PageRenderCache;
@@ -21,6 +23,23 @@ class CFX_ImageTransformer;
 class CPDF_ImageCacheEntry;
 class CPDF_ImageLoaderHandle;
 class ICodec_ScanlineDecoder;
+class CPDF_Type3Font;
+class CPDF_Type3Cache;
+class CPDF_Type3Char;
+class CPDF_TransferFunc;
+class CPDF_Document;
+class CPDF_Object;
+class CFX_FontCache;
+class CPDF_Font;
+class CPDF_PageObject;
+class CPDF_PathObject;
+class CPDF_ShadingObject;
+class CPDF_FormObject;
+class CPDF_ShadingPattern;
+class CPDF_TilingPattern;
+class CPDF_Color;
+class CPDF_Dictionary;
+class CPDF_ImageObject;
 
 #define TYPE3_MAX_BLUES 16
 

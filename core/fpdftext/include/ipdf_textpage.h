@@ -7,9 +7,11 @@
 #ifndef CORE_FPDFTEXT_INCLUDE_IPDF_TEXTPAGE_H_
 #define CORE_FPDFTEXT_INCLUDE_IPDF_TEXTPAGE_H_
 
-#include "core/include/fpdfapi/fpdf_pageobj.h"
 #include "core/include/fxcrt/fx_coordinates.h"
 #include "core/include/fxcrt/fx_system.h"
+
+class CPDF_TextObject;
+class CPDF_Page;
 
 struct FPDF_CHAR_INFO {
   FX_WCHAR m_Unicode;

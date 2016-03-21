@@ -8,12 +8,15 @@
 
 #include "core/fpdfapi/fpdf_page/cpdf_parseoptions.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_form.h"
+#include "core/fpdfapi/fpdf_page/include/cpdf_imageobject.h"
+#include "core/fpdfapi/fpdf_page/include/cpdf_pageobject.h"
+#include "core/fpdfapi/fpdf_page/include/cpdf_pathobject.h"
+#include "core/fpdfapi/fpdf_page/include/cpdf_textobject.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_textrenderer.h"
-#include "core/include/fpdfapi/fpdf_pageobj.h"
 #include "core/include/fxge/fx_ge.h"
 
 CPDF_Type3Cache::~CPDF_Type3Cache() {

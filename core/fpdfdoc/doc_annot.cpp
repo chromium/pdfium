@@ -12,8 +12,8 @@
 #include "core/fpdfapi/fpdf_parser/ipdf_occontext.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_rendercontext.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
-#include "core/include/fpdfapi/fpdf_pageobj.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
+#include "core/include/fxge/fx_ge.h"
 
 CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
     : m_pDocument(pPage->m_pDocument) {

@@ -6,8 +6,15 @@
 
 #include "core/fpdfapi/fpdf_render/render_int.h"
 
+#include "core/fpdfapi/fpdf_page/cpdf_colorstatedata.h"
+#include "core/fpdfapi/fpdf_page/cpdf_graphicstates.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_form.h"
+#include "core/fpdfapi/fpdf_page/include/cpdf_formobject.h"
+#include "core/fpdfapi/fpdf_page/include/cpdf_imageobject.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
+#include "core/fpdfapi/fpdf_page/include/cpdf_pageobject.h"
+#include "core/fpdfapi/fpdf_page/include/cpdf_pathobject.h"
+#include "core/fpdfapi/fpdf_page/include/cpdf_textobject.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"

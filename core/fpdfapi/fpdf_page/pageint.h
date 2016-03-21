@@ -12,13 +12,25 @@
 #include <unordered_map>
 #include <vector>
 
+#include "core/fpdfapi/fpdf_page/cpdf_contentmark.h"
 #include "core/fpdfapi/fpdf_page/cpdf_parseoptions.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_pageobjectholder.h"
-#include "core/include/fpdfapi/fpdf_pageobj.h"
+#include "core/include/fpdfapi/fpdf_resource.h"
+#include "core/include/fxge/fx_ge.h"
 
 class CPDF_AllStates;
-class CPDF_ParseOptions;
+class CPDF_ColorSpace;
+class CPDF_Font;
+class CPDF_FontEncoding;
+class CPDF_Form;
 class CPDF_IccProfile;
+class CPDF_Image;
+class CPDF_ImageObject;
+class CPDF_ParseOptions;
+class CPDF_Pattern;
+class CPDF_StreamAcc;
+class CPDF_TextObject;
+class CPDF_Type3Char;
 
 #define PARSE_STEP_LIMIT 100
 
@@ -307,17 +319,6 @@ class CPDF_ContentParser {
   FX_DWORD m_Size;
   FX_DWORD m_CurrentOffset;
   std::unique_ptr<CPDF_StreamContentParser> m_pParser;
-};
-class CPDF_AllStates : public CPDF_GraphicStates {
- public:
-  CPDF_AllStates();
-  ~CPDF_AllStates();
-  void Copy(const CPDF_AllStates& src);
-  void ProcessExtGS(CPDF_Dictionary* pGS, CPDF_StreamContentParser* pParser);
-  void SetLineDash(CPDF_Array*, FX_FLOAT, FX_FLOAT scale);
-  CFX_Matrix m_TextMatrix, m_CTM, m_ParentMatrix;
-  FX_FLOAT m_TextX, m_TextY, m_TextLineX, m_TextLineY;
-  FX_FLOAT m_TextLeading, m_TextRise, m_TextHorzScale;
 };
 
 class CPDF_DocPageData {

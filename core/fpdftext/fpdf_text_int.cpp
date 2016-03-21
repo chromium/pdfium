@@ -13,13 +13,15 @@
 #include <utility>
 #include <vector>
 
+#include "core/fpdfapi/fpdf_page/include/cpdf_formobject.h"
+#include "core/fpdfapi/fpdf_page/include/cpdf_pageobject.h"
+#include "core/fpdfapi/fpdf_page/include/cpdf_textobject.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
 #include "core/fpdftext/include/ipdf_linkextract.h"
 #include "core/fpdftext/include/ipdf_textpage.h"
 #include "core/fpdftext/include/ipdf_textpagefind.h"
 #include "core/fpdftext/unicodenormalization.h"
-#include "core/include/fpdfapi/fpdf_pageobj.h"
 #include "core/include/fpdfapi/fpdf_resource.h"
 #include "core/include/fxcrt/fx_bidi.h"
 #include "core/include/fxcrt/fx_ext.h"

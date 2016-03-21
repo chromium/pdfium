@@ -12,7 +12,6 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_rendercontext.h"
 #include "core/fpdfapi/fpdf_render/render_int.h"
-#include "core/include/fpdfapi/fpdf_pageobj.h"
 #include "core/include/fxge/fx_ge.h"
 
 struct CACHEINFO {

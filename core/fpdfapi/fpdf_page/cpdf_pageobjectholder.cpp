@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/fpdf_page/include/cpdf_pageobjectholder.h"
 
+#include "core/fpdfapi/fpdf_page/include/cpdf_pageobject.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
 
 CPDF_PageObjectHolder::CPDF_PageObjectHolder()

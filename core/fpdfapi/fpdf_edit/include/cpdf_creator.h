@@ -7,8 +7,12 @@
 #ifndef CORE_FPDFAPI_FPDF_EDIT_INCLUDE_CPDF_CREATOR_H_
 #define CORE_FPDFAPI_FPDF_EDIT_INCLUDE_CPDF_CREATOR_H_
 
-#include "core/include/fpdfapi/fpdf_pageobj.h"
+#include "core/include/fxcrt/fx_basic.h"
 
+class CPDF_Array;
+class CPDF_Dictionary;
+class CPDF_Document;
+class CPDF_Object;
 class CPDF_Parser;
 class CPDF_XRefStream;
 class IPDF_CryptoHandler;

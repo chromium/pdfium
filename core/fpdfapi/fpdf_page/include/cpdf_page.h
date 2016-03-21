@@ -18,6 +18,9 @@ class CPDF_Object;
 class CPDF_PageRenderCache;
 class CPDF_ParseOptions;
 
+CPDF_Object* FPDFAPI_GetPageAttr(CPDF_Dictionary* pPageDict,
+                                 const CFX_ByteStringC& name);
+
 class CPDF_Page : public CPDF_PageObjectHolder, public CFX_PrivateData {
  public:
   CPDF_Page();

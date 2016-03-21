@@ -6,6 +6,7 @@
 
 #include <limits.h>
 
+#include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
@@ -1142,8 +1143,7 @@ void CPDF_Document::DeletePage(int iPage) {
   }
   m_PageList.RemoveAt(iPage);
 }
-CPDF_Object* FPDFAPI_GetPageAttr(CPDF_Dictionary* pPageDict,
-                                 const CFX_ByteStringC& name);
+
 void FPDFAPI_FlatPageAttr(CPDF_Dictionary* pPageDict,
                           const CFX_ByteStringC& name) {
   if (pPageDict->KeyExist(name)) {

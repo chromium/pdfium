@@ -1,12 +1,10 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2016 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/fpdf_page/pageint.h"
-
-#include "core/include/fpdfapi/fpdf_pageobj.h"
+#include "core/fpdfapi/fpdf_page/include/cpdf_pathobject.h"
 
 CPDF_PathObject::CPDF_PathObject() {}
 

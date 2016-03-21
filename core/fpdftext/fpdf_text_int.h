@@ -22,6 +22,7 @@ class CFX_BidiChar;
 class CPDF_FormObject;
 class CPDF_LinkExtract;
 class CPDF_TextPageFind;
+class CPDF_Font;
 
 #define FPDFTEXT_CHAR_ERROR -1
 #define FPDFTEXT_CHAR_NORMAL 0

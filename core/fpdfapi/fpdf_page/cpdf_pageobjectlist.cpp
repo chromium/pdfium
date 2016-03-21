@@ -7,7 +7,6 @@
 #include "core/fpdfapi/fpdf_page/cpdf_pageobjectlist.h"
 
 #include "core/fpdfapi/fpdf_page/pageint.h"
-#include "core/include/fpdfapi/fpdf_pageobj.h"
 #include "third_party/base/stl_util.h"
 
 CPDF_PageObject* CPDF_PageObjectList::GetPageObjectByIndex(int index) {

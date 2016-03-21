@@ -6,7 +6,8 @@
 
 #include "core/fpdfapi/fpdf_parser/ipdf_occontext.h"
 
-#include "core/include/fpdfapi/fpdf_pageobj.h"
+#include "core/fpdfapi/fpdf_page/cpdf_contentmarkitem.h"
+#include "core/fpdfapi/fpdf_page/include/cpdf_pageobject.h"
 
 IPDF_OCContext::~IPDF_OCContext() {}
 

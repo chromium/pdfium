@@ -11,6 +11,9 @@
 #include <memory>
 #include <vector>
 
+#include "core/fpdfapi/fpdf_page/include/cpdf_pageobject.h"
+#include "core/fpdfapi/fpdf_page/include/cpdf_textobject.h"
+#include "core/include/fpdfapi/fpdf_resource.h"
 #include "fpdfsdk/javascript/JS_Define.h"
 
 class PrintParamsObj : public CJS_EmbedObj {
