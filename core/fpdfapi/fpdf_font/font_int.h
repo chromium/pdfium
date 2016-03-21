@@ -110,16 +110,27 @@ class CPDF_CMapParser {
   CFX_ByteString m_Registry, m_Ordering, m_Supplement;
   CFX_ByteString m_LastWord;
 };
-#define CIDCODING_UNKNOWN 0
-#define CIDCODING_GB 1
-#define CIDCODING_BIG5 2
-#define CIDCODING_JIS 3
-#define CIDCODING_KOREA 4
-#define CIDCODING_UCS2 5
-#define CIDCODING_CID 6
-#define CIDCODING_UTF16 7
+
+enum CIDCoding : uint8_t {
+  CIDCODING_UNKNOWN = 0,
+  CIDCODING_GB,
+  CIDCODING_BIG5,
+  CIDCODING_JIS,
+  CIDCODING_KOREA,
+  CIDCODING_UCS2,
+  CIDCODING_CID,
+  CIDCODING_UTF16,
+};
+
 class CPDF_CMap {
  public:
+  enum CodingScheme : uint8_t {
+    OneByte,
+    TwoBytes,
+    MixedTwoBytes,
+    MixedFourBytes
+  };
+
   CPDF_CMap();
   FX_BOOL LoadPredefined(CPDF_CMapManager* pMgr,
                          const FX_CHAR* name,
@@ -134,12 +145,6 @@ class CPDF_CMap {
   FX_DWORD GetNextChar(const FX_CHAR* pString, int nStrLen, int& offset) const;
   int CountChar(const FX_CHAR* pString, int size) const;
   int AppendChar(FX_CHAR* str, FX_DWORD charcode) const;
-  typedef enum {
-    OneByte,
-    TwoBytes,
-    MixedTwoBytes,
-    MixedFourBytes
-  } CodingScheme;
 
  protected:
   ~CPDF_CMap();
@@ -147,7 +152,6 @@ class CPDF_CMap {
   friend class CPDF_CMapManager;
   friend class CPDF_CIDFont;
 
- protected:
   CFX_ByteString m_PredefinedCMap;
   FX_BOOL m_bVertical;
   CIDSet m_Charset;

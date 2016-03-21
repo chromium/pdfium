@@ -344,7 +344,7 @@ class CPDF_Type3Font : public CPDF_SimpleFont {
   std::map<FX_DWORD, CPDF_Type3Char*> m_CacheMap;
 };
 
-enum CIDSet {
+enum CIDSet : uint8_t {
   CIDSET_UNKNOWN,
   CIDSET_GB1,
   CIDSET_CNS1,

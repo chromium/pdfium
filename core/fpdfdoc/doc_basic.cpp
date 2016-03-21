@@ -9,7 +9,14 @@
 #include "core/fpdfdoc/doc_utils.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
 
+namespace {
+
 const int nMaxRecursion = 32;
+const FX_CHAR* const g_sZoomModes[] = {"XYZ",  "Fit",   "FitH",  "FitV", "FitR",
+                                       "FitB", "FitBH", "FitBV", nullptr};
+
+}  // namespace
+
 int CPDF_Dest::GetPageIndex(CPDF_Document* pDoc) {
   CPDF_Array* pArray = ToArray(m_pObj);
   if (!pArray)
@@ -38,25 +45,25 @@ FX_DWORD CPDF_Dest::GetPageObjNum() {
     return pPage->GetObjNum();
   return 0;
 }
-const FX_CHAR* g_sZoomModes[] = {"XYZ",  "Fit",   "FitH",  "FitV", "FitR",
-                                 "FitB", "FitBH", "FitBV", ""};
+
 int CPDF_Dest::GetZoomMode() {
   CPDF_Array* pArray = ToArray(m_pObj);
   if (!pArray)
     return 0;
 
-  CFX_ByteString mode;
   CPDF_Object* pObj = pArray->GetElementValue(1);
-  mode = pObj ? pObj->GetString() : CFX_ByteString();
-  int i = 0;
-  while (g_sZoomModes[i][0] != '\0') {
-    if (mode == g_sZoomModes[i]) {
+  if (!pObj)
+    return 0;
+
+  CFX_ByteString mode = pObj->GetString();
+  for (int i = 0; g_sZoomModes[i]; ++i) {
+    if (mode == g_sZoomModes[i])
       return i + 1;
-    }
-    i++;
   }
+
   return 0;
 }
+
 FX_FLOAT CPDF_Dest::GetParam(int index) {
   CPDF_Array* pArray = ToArray(m_pObj);
   return pArray ? pArray->GetNumberAt(2 + index) : 0;

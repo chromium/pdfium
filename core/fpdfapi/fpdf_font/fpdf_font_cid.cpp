@@ -22,15 +22,15 @@ namespace {
 const FX_CHAR* const g_CharsetNames[CIDSET_NUM_SETS] = {
     nullptr, "GB1", "CNS1", "Japan1", "Korea1", "UCS"};
 
-const int g_CharsetCPs[CIDSET_NUM_SETS] = {0, 936, 950, 932, 949, 1200};
+const uint16_t g_CharsetCPs[CIDSET_NUM_SETS] = {0, 936, 950, 932, 949, 1200};
 
 class CPDF_PredefinedCMap {
  public:
   const FX_CHAR* m_pName;
   CIDSet m_Charset;
-  int m_Coding;
+  CIDCoding m_Coding;
   CPDF_CMap::CodingScheme m_CodingScheme;
-  FX_DWORD m_LeadingSegCount;
+  uint8_t m_LeadingSegCount;
   uint8_t m_LeadingSegs[4];
 };
 

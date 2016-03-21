@@ -10,6 +10,20 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
 
+namespace {
+
+const FX_CHAR* const g_sATypes[] = {
+    "Unknown",     "GoTo",       "GoToR",     "GoToE",      "Launch",
+    "Thread",      "URI",        "Sound",     "Movie",      "Hide",
+    "Named",       "SubmitForm", "ResetForm", "ImportData", "JavaScript",
+    "SetOCGState", "Rendition",  "Trans",     "GoTo3DView", nullptr};
+
+const FX_CHAR* g_sAATypes[] = {"E",  "X",  "D",  "U",  "Fo", "Bl", "PO", "PC",
+                               "PV", "PI", "O",  "C",  "K",  "F",  "V",  "C",
+                               "WC", "WS", "DS", "WP", "DP", ""};
+
+}  // namespace
+
 CPDF_Dest CPDF_Action::GetDest(CPDF_Document* pDoc) const {
   if (!m_pDict) {
     return CPDF_Dest();
@@ -31,27 +45,22 @@ CPDF_Dest CPDF_Action::GetDest(CPDF_Document* pDoc) const {
     return CPDF_Dest(pArray);
   return CPDF_Dest();
 }
-const FX_CHAR* g_sATypes[] = {
-    "Unknown",     "GoTo",       "GoToR",     "GoToE",      "Launch",
-    "Thread",      "URI",        "Sound",     "Movie",      "Hide",
-    "Named",       "SubmitForm", "ResetForm", "ImportData", "JavaScript",
-    "SetOCGState", "Rendition",  "Trans",     "GoTo3DView", ""};
+
 CPDF_Action::ActionType CPDF_Action::GetType() const {
-  ActionType eType = Unknown;
-  if (m_pDict) {
-    CFX_ByteString csType = m_pDict->GetStringBy("S");
-    if (!csType.IsEmpty()) {
-      int i = 0;
-      while (g_sATypes[i][0] != '\0') {
-        if (csType == g_sATypes[i]) {
-          return (ActionType)i;
-        }
-        i++;
-      }
-    }
+  if (!m_pDict)
+    return Unknown;
+
+  CFX_ByteString csType = m_pDict->GetStringBy("S");
+  if (csType.IsEmpty())
+    return Unknown;
+
+  for (int i = 0; g_sATypes[i]; ++i) {
+    if (csType == g_sATypes[i])
+      return static_cast<ActionType>(i);
   }
-  return eType;
+  return Unknown;
 }
+
 CFX_WideString CPDF_Action::GetFilePath() const {
   CFX_ByteString type = m_pDict->GetStringBy("S");
   if (type != "GoToR" && type != "Launch" && type != "SubmitForm" &&
@@ -249,17 +258,16 @@ CPDF_Action CPDF_Action::GetSubAction(FX_DWORD iIndex) const {
   }
   return CPDF_Action();
 }
-const FX_CHAR* g_sAATypes[] = {"E",  "X",  "D",  "U",  "Fo", "Bl", "PO", "PC",
-                               "PV", "PI", "O",  "C",  "K",  "F",  "V",  "C",
-                               "WC", "WS", "DS", "WP", "DP", ""};
+
 FX_BOOL CPDF_AAction::ActionExist(AActionType eType) const {
-  return m_pDict && m_pDict->KeyExist(g_sAATypes[(int)eType]);
+  return m_pDict && m_pDict->KeyExist(g_sAATypes[eType]);
 }
+
 CPDF_Action CPDF_AAction::GetAction(AActionType eType) const {
-  if (!m_pDict) {
+  if (!m_pDict)
     return CPDF_Action();
-  }
-  return CPDF_Action(m_pDict->GetDictBy(g_sAATypes[(int)eType]));
+
+  return CPDF_Action(m_pDict->GetDictBy(g_sAATypes[eType]));
 }
 
 CPDF_DocJSActions::CPDF_DocJSActions(CPDF_Document* pDoc) : m_pDocument(pDoc) {}

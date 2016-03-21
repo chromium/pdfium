@@ -23,6 +23,14 @@
 #include "xfa/include/fwl/basewidget/fwl_pushbutton.h"
 #include "xfa/include/fwl/basewidget/fwl_scrollbar.h"
 
+namespace {
+
+const FX_WCHAR* const g_FWLTheme_CalFonts[] = {
+    L"Arial", L"Courier New", L"DejaVu Sans",
+};
+
+}  // namespace
+
 CXFA_FFWidget* XFA_ThemeGetOuterWidget(IFWL_Widget* pWidget) {
   IFWL_Widget* pOuter = pWidget;
   while (pOuter->GetOuter()) {
@@ -66,9 +74,6 @@ CXFA_FWLTheme::~CXFA_FWLTheme() {
   delete m_pCaretTP;
   delete m_pBarcodeTP;
 }
-static const FX_WCHAR* g_FWLTheme_CalFonts[] = {
-    L"Arial", L"Courier New", L"DejaVu Sans",
-};
 FWL_ERR CXFA_FWLTheme::Initialize() {
   m_pTextOut = IFDE_TextOut::Create();
   for (size_t i = 0; !m_pCalendarFont && i < FX_ArraySize(g_FWLTheme_CalFonts);
