@@ -13,20 +13,20 @@
 class IFX_ArabicChar;
 
 struct FX_ARBFORMTABLE {
-  FX_WCHAR wIsolated;
-  FX_WCHAR wFinal;
-  FX_WCHAR wInitial;
-  FX_WCHAR wMedial;
+  uint16_t wIsolated;
+  uint16_t wFinal;
+  uint16_t wInitial;
+  uint16_t wMedial;
 };
 
 struct FX_ARAALEF {
-  FX_WCHAR wAlef;
-  FX_WCHAR wIsolated;
+  uint16_t wAlef;
+  uint16_t wIsolated;
 };
 
 struct FX_ARASHADDA {
-  FX_WCHAR wShadda;
-  FX_WCHAR wIsolated;
+  uint16_t wShadda;
+  uint16_t wIsolated;
 };
 
 const FX_ARBFORMTABLE* FX_GetArabicFormTable(FX_WCHAR unicode);

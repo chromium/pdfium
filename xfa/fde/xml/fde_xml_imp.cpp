@@ -12,8 +12,7 @@
 #include "xfa/fgas/crt/fgas_system.h"
 
 #define FDE_XMLVALIDCHARRANGENUM 5
-
-static const FX_WCHAR g_XMLValidCharRange[FDE_XMLVALIDCHARRANGENUM][2] = {
+static const uint16_t g_XMLValidCharRange[FDE_XMLVALIDCHARRANGENUM][2] = {
     {0x09, 0x09},
     {0x0A, 0x0A},
     {0x0D, 0x0D},
@@ -39,20 +38,20 @@ FX_BOOL FDE_IsXMLWhiteSpace(FX_WCHAR ch) {
 }
 
 struct FDE_XMLNAMECHAR {
-  FX_WCHAR wStart;
-  FX_WCHAR wEnd;
-  FX_BOOL bStartChar;
+  uint16_t wStart;
+  uint16_t wEnd;
+  bool bStartChar;
 };
 
 #define FDE_XMLNAMECHARSNUM 20
-static FDE_XMLNAMECHAR g_XMLNameChars[FDE_XMLNAMECHARSNUM] = {
-    {L'-', L'.', FALSE},    {L'0', L'9', FALSE},     {L':', L':', FALSE},
-    {L'A', L'Z', TRUE},     {L'_', L'_', TRUE},      {L'a', L'z', TRUE},
-    {0xB7, 0xB7, FALSE},    {0xC0, 0xD6, TRUE},      {0xD8, 0xF6, TRUE},
-    {0xF8, 0x02FF, TRUE},   {0x0300, 0x036F, FALSE}, {0x0370, 0x037D, TRUE},
-    {0x037F, 0x1FFF, TRUE}, {0x200C, 0x200D, TRUE},  {0x203F, 0x2040, FALSE},
-    {0x2070, 0x218F, TRUE}, {0x2C00, 0x2FEF, TRUE},  {0x3001, 0xD7FF, TRUE},
-    {0xF900, 0xFDCF, TRUE}, {0xFDF0, 0xFFFD, TRUE},
+static const FDE_XMLNAMECHAR g_XMLNameChars[FDE_XMLNAMECHARSNUM] = {
+    {L'-', L'.', false},    {L'0', L'9', false},     {L':', L':', false},
+    {L'A', L'Z', true},     {L'_', L'_', true},      {L'a', L'z', true},
+    {0xB7, 0xB7, false},    {0xC0, 0xD6, true},      {0xD8, 0xF6, true},
+    {0xF8, 0x02FF, true},   {0x0300, 0x036F, false}, {0x0370, 0x037D, true},
+    {0x037F, 0x1FFF, true}, {0x200C, 0x200D, true},  {0x203F, 0x2040, false},
+    {0x2070, 0x218F, true}, {0x2C00, 0x2FEF, true},  {0x3001, 0xD7FF, true},
+    {0xF900, 0xFDCF, true}, {0xFDF0, 0xFFFD, true},
 };
 
 FX_BOOL FDE_IsXMLNameChar(FX_WCHAR ch, FX_BOOL bFirstChar) {

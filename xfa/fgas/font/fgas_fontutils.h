@@ -10,10 +10,10 @@
 #include "core/include/fxcrt/fx_string.h"
 
 struct FGAS_FONTUSB {
-  FX_WCHAR wStartUnicode;
-  FX_WCHAR wEndUnicode;
-  FX_WORD wBitField;
-  FX_WORD wCodePage;
+  uint16_t wStartUnicode;
+  uint16_t wEndUnicode;
+  uint16_t wBitField;
+  uint16_t wCodePage;
 };
 
 FX_DWORD FGAS_GetFontHashCode(FX_WORD wCodePage, FX_DWORD dwFontStyles);

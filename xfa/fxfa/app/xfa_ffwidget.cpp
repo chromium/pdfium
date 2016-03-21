@@ -904,8 +904,10 @@ static int32_t XFA_Base64Decode(const FX_CHAR* pStr, uint8_t* pOutBuffer) {
   FX_Free(pBuffer);
   return j;
 }
-static FX_CHAR g_base64_chars[] =
+
+static const FX_CHAR g_base64_chars[] =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
 FX_CHAR* XFA_Base64Encode(const uint8_t* buf, int32_t buf_len) {
   FX_CHAR* out = NULL;
   int i, j;

@@ -10,9 +10,9 @@
 class CBC_QRCoderErrorCorrectionLevel;
 class CBC_QRCoderFormatInformation {
  private:
-  static const int32_t FORMAT_INFO_MASK_QR;
-  static const int32_t FORMAT_INFO_DECODE_LOOKUP[32][2];
-  static const int32_t BITS_SET_IN_HALF_BYTE[16];
+  static const uint16_t FORMAT_INFO_MASK_QR;
+  static const uint16_t FORMAT_INFO_DECODE_LOOKUP[32][2];
+  static const uint8_t BITS_SET_IN_HALF_BYTE[16];
   CBC_QRCoderErrorCorrectionLevel* m_errorCorrectLevl;
   uint8_t m_dataMask;
 

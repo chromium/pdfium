@@ -512,6 +512,7 @@
         'core/fxcodec/jbig2/JBig2_HuffmanDecoder.h',
         'core/fxcodec/jbig2/JBig2_HuffmanTable.cpp',
         'core/fxcodec/jbig2/JBig2_HuffmanTable.h',
+        'core/fxcodec/jbig2/JBig2_HuffmanTable_Standard.cpp',
         'core/fxcodec/jbig2/JBig2_HuffmanTable_Standard.h',
         'core/fxcodec/jbig2/JBig2_Image.cpp',
         'core/fxcodec/jbig2/JBig2_Image.h',

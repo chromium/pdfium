@@ -513,14 +513,12 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
 
     int32_t nIndex = 0;
     if (cSDHUFFDH == 0) {
-      Table_B4.reset(new CJBig2_HuffmanTable(HuffmanTable_B4,
-                                             FX_ArraySize(HuffmanTable_B4),
-                                             HuffmanTable_HTOOB_B4));
+      Table_B4.reset(new CJBig2_HuffmanTable(
+          HuffmanTable_B4, HuffmanTable_B4_Size, HuffmanTable_HTOOB_B4));
       pSymbolDictDecoder->SDHUFFDH = Table_B4.get();
     } else if (cSDHUFFDH == 1) {
-      Table_B5.reset(new CJBig2_HuffmanTable(HuffmanTable_B5,
-                                             FX_ArraySize(HuffmanTable_B5),
-                                             HuffmanTable_HTOOB_B5));
+      Table_B5.reset(new CJBig2_HuffmanTable(
+          HuffmanTable_B5, HuffmanTable_B5_Size, HuffmanTable_HTOOB_B5));
       pSymbolDictDecoder->SDHUFFDH = Table_B5.get();
     } else {
       CJBig2_Segment* pSeg =
@@ -530,14 +528,12 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
       pSymbolDictDecoder->SDHUFFDH = pSeg->m_Result.ht;
     }
     if (cSDHUFFDW == 0) {
-      Table_B2.reset(new CJBig2_HuffmanTable(HuffmanTable_B2,
-                                             FX_ArraySize(HuffmanTable_B2),
-                                             HuffmanTable_HTOOB_B2));
+      Table_B2.reset(new CJBig2_HuffmanTable(
+          HuffmanTable_B2, HuffmanTable_B2_Size, HuffmanTable_HTOOB_B2));
       pSymbolDictDecoder->SDHUFFDW = Table_B2.get();
     } else if (cSDHUFFDW == 1) {
-      Table_B3.reset(new CJBig2_HuffmanTable(HuffmanTable_B3,
-                                             FX_ArraySize(HuffmanTable_B3),
-                                             HuffmanTable_HTOOB_B3));
+      Table_B3.reset(new CJBig2_HuffmanTable(
+          HuffmanTable_B3, HuffmanTable_B3_Size, HuffmanTable_HTOOB_B3));
       pSymbolDictDecoder->SDHUFFDW = Table_B3.get();
     } else {
       CJBig2_Segment* pSeg =
@@ -547,9 +543,8 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
       pSymbolDictDecoder->SDHUFFDW = pSeg->m_Result.ht;
     }
     if (cSDHUFFBMSIZE == 0) {
-      Table_B1.reset(new CJBig2_HuffmanTable(HuffmanTable_B1,
-                                             FX_ArraySize(HuffmanTable_B1),
-                                             HuffmanTable_HTOOB_B1));
+      Table_B1.reset(new CJBig2_HuffmanTable(
+          HuffmanTable_B1, HuffmanTable_B1_Size, HuffmanTable_HTOOB_B1));
       pSymbolDictDecoder->SDHUFFBMSIZE = Table_B1.get();
     } else {
       CJBig2_Segment* pSeg =
@@ -561,9 +556,8 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
     if (pSymbolDictDecoder->SDREFAGG == 1) {
       if (cSDHUFFAGGINST == 0) {
         if (!Table_B1) {
-          Table_B1.reset(new CJBig2_HuffmanTable(HuffmanTable_B1,
-                                                 FX_ArraySize(HuffmanTable_B1),
-                                                 HuffmanTable_HTOOB_B1));
+          Table_B1.reset(new CJBig2_HuffmanTable(
+              HuffmanTable_B1, HuffmanTable_B1_Size, HuffmanTable_HTOOB_B1));
         }
         pSymbolDictDecoder->SDHUFFAGGINST = Table_B1.get();
       } else {
@@ -781,14 +775,12 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     }
     int32_t nIndex = 0;
     if (cSBHUFFFS == 0) {
-      Table_B6.reset(new CJBig2_HuffmanTable(HuffmanTable_B6,
-                                             FX_ArraySize(HuffmanTable_B6),
-                                             HuffmanTable_HTOOB_B6));
+      Table_B6.reset(new CJBig2_HuffmanTable(
+          HuffmanTable_B6, HuffmanTable_B6_Size, HuffmanTable_HTOOB_B6));
       pTRD->SBHUFFFS = Table_B6.get();
     } else if (cSBHUFFFS == 1) {
-      Table_B7.reset(new CJBig2_HuffmanTable(HuffmanTable_B7,
-                                             FX_ArraySize(HuffmanTable_B7),
-                                             HuffmanTable_HTOOB_B7));
+      Table_B7.reset(new CJBig2_HuffmanTable(
+          HuffmanTable_B7, HuffmanTable_B7_Size, HuffmanTable_HTOOB_B7));
       pTRD->SBHUFFFS = Table_B7.get();
     } else {
       CJBig2_Segment* pSeg =
@@ -798,19 +790,16 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFFS = pSeg->m_Result.ht;
     }
     if (cSBHUFFDS == 0) {
-      Table_B8.reset(new CJBig2_HuffmanTable(HuffmanTable_B8,
-                                             FX_ArraySize(HuffmanTable_B8),
-                                             HuffmanTable_HTOOB_B8));
+      Table_B8.reset(new CJBig2_HuffmanTable(
+          HuffmanTable_B8, HuffmanTable_B8_Size, HuffmanTable_HTOOB_B8));
       pTRD->SBHUFFDS = Table_B8.get();
     } else if (cSBHUFFDS == 1) {
-      Table_B9.reset(new CJBig2_HuffmanTable(HuffmanTable_B9,
-                                             FX_ArraySize(HuffmanTable_B9),
-                                             HuffmanTable_HTOOB_B9));
+      Table_B9.reset(new CJBig2_HuffmanTable(
+          HuffmanTable_B9, HuffmanTable_B9_Size, HuffmanTable_HTOOB_B9));
       pTRD->SBHUFFDS = Table_B9.get();
     } else if (cSBHUFFDS == 2) {
-      Table_B10.reset(new CJBig2_HuffmanTable(HuffmanTable_B10,
-                                              FX_ArraySize(HuffmanTable_B10),
-                                              HuffmanTable_HTOOB_B10));
+      Table_B10.reset(new CJBig2_HuffmanTable(
+          HuffmanTable_B10, HuffmanTable_B10_Size, HuffmanTable_HTOOB_B10));
       pTRD->SBHUFFDS = Table_B10.get();
     } else {
       CJBig2_Segment* pSeg =
@@ -820,19 +809,16 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFDS = pSeg->m_Result.ht;
     }
     if (cSBHUFFDT == 0) {
-      Table_B11.reset(new CJBig2_HuffmanTable(HuffmanTable_B11,
-                                              FX_ArraySize(HuffmanTable_B11),
-                                              HuffmanTable_HTOOB_B11));
+      Table_B11.reset(new CJBig2_HuffmanTable(
+          HuffmanTable_B11, HuffmanTable_B11_Size, HuffmanTable_HTOOB_B11));
       pTRD->SBHUFFDT = Table_B11.get();
     } else if (cSBHUFFDT == 1) {
-      Table_B12.reset(new CJBig2_HuffmanTable(HuffmanTable_B12,
-                                              FX_ArraySize(HuffmanTable_B12),
-                                              HuffmanTable_HTOOB_B12));
+      Table_B12.reset(new CJBig2_HuffmanTable(
+          HuffmanTable_B12, HuffmanTable_B12_Size, HuffmanTable_HTOOB_B12));
       pTRD->SBHUFFDT = Table_B12.get();
     } else if (cSBHUFFDT == 2) {
-      Table_B13.reset(new CJBig2_HuffmanTable(HuffmanTable_B13,
-                                              FX_ArraySize(HuffmanTable_B13),
-                                              HuffmanTable_HTOOB_B13));
+      Table_B13.reset(new CJBig2_HuffmanTable(
+          HuffmanTable_B13, HuffmanTable_B13_Size, HuffmanTable_HTOOB_B13));
       pTRD->SBHUFFDT = Table_B13.get();
     } else {
       CJBig2_Segment* pSeg =
@@ -842,14 +828,12 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFDT = pSeg->m_Result.ht;
     }
     if (cSBHUFFRDW == 0) {
-      Table_B14.reset(new CJBig2_HuffmanTable(HuffmanTable_B14,
-                                              FX_ArraySize(HuffmanTable_B14),
-                                              HuffmanTable_HTOOB_B14));
+      Table_B14.reset(new CJBig2_HuffmanTable(
+          HuffmanTable_B14, HuffmanTable_B14_Size, HuffmanTable_HTOOB_B14));
       pTRD->SBHUFFRDW = Table_B14.get();
     } else if (cSBHUFFRDW == 1) {
-      Table_B15.reset(new CJBig2_HuffmanTable(HuffmanTable_B15,
-                                              FX_ArraySize(HuffmanTable_B15),
-                                              HuffmanTable_HTOOB_B15));
+      Table_B15.reset(new CJBig2_HuffmanTable(
+          HuffmanTable_B15, HuffmanTable_B15_Size, HuffmanTable_HTOOB_B15));
       pTRD->SBHUFFRDW = Table_B15.get();
     } else {
       CJBig2_Segment* pSeg =
@@ -860,16 +844,14 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     }
     if (cSBHUFFRDH == 0) {
       if (!Table_B14) {
-        Table_B14.reset(new CJBig2_HuffmanTable(HuffmanTable_B14,
-                                                FX_ArraySize(HuffmanTable_B14),
-                                                HuffmanTable_HTOOB_B14));
+        Table_B14.reset(new CJBig2_HuffmanTable(
+            HuffmanTable_B14, HuffmanTable_B14_Size, HuffmanTable_HTOOB_B14));
       }
       pTRD->SBHUFFRDH = Table_B14.get();
     } else if (cSBHUFFRDH == 1) {
       if (!Table_B15) {
-        Table_B15.reset(new CJBig2_HuffmanTable(HuffmanTable_B15,
-                                                FX_ArraySize(HuffmanTable_B15),
-                                                HuffmanTable_HTOOB_B15));
+        Table_B15.reset(new CJBig2_HuffmanTable(
+            HuffmanTable_B15, HuffmanTable_B15_Size, HuffmanTable_HTOOB_B15));
       }
       pTRD->SBHUFFRDH = Table_B15.get();
     } else {
@@ -881,16 +863,14 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     }
     if (cSBHUFFRDX == 0) {
       if (!Table_B14) {
-        Table_B14.reset(new CJBig2_HuffmanTable(HuffmanTable_B14,
-                                                FX_ArraySize(HuffmanTable_B14),
-                                                HuffmanTable_HTOOB_B14));
+        Table_B14.reset(new CJBig2_HuffmanTable(
+            HuffmanTable_B14, HuffmanTable_B14_Size, HuffmanTable_HTOOB_B14));
       }
       pTRD->SBHUFFRDX = Table_B14.get();
     } else if (cSBHUFFRDX == 1) {
       if (!Table_B15) {
-        Table_B15.reset(new CJBig2_HuffmanTable(HuffmanTable_B15,
-                                                FX_ArraySize(HuffmanTable_B15),
-                                                HuffmanTable_HTOOB_B15));
+        Table_B15.reset(new CJBig2_HuffmanTable(
+            HuffmanTable_B15, HuffmanTable_B15_Size, HuffmanTable_HTOOB_B15));
       }
       pTRD->SBHUFFRDX = Table_B15.get();
     } else {
@@ -902,16 +882,14 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     }
     if (cSBHUFFRDY == 0) {
       if (!Table_B14) {
-        Table_B14.reset(new CJBig2_HuffmanTable(HuffmanTable_B14,
-                                                FX_ArraySize(HuffmanTable_B14),
-                                                HuffmanTable_HTOOB_B14));
+        Table_B14.reset(new CJBig2_HuffmanTable(
+            HuffmanTable_B14, HuffmanTable_B14_Size, HuffmanTable_HTOOB_B14));
       }
       pTRD->SBHUFFRDY = Table_B14.get();
     } else if (cSBHUFFRDY == 1) {
       if (!Table_B15) {
-        Table_B15.reset(new CJBig2_HuffmanTable(HuffmanTable_B15,
-                                                FX_ArraySize(HuffmanTable_B15),
-                                                HuffmanTable_HTOOB_B15));
+        Table_B15.reset(new CJBig2_HuffmanTable(
+            HuffmanTable_B15, HuffmanTable_B15_Size, HuffmanTable_HTOOB_B15));
       }
       pTRD->SBHUFFRDY = Table_B15.get();
     } else {
@@ -922,9 +900,8 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFRDY = pSeg->m_Result.ht;
     }
     if (cSBHUFFRSIZE == 0) {
-      Table_B1.reset(new CJBig2_HuffmanTable(HuffmanTable_B1,
-                                             FX_ArraySize(HuffmanTable_B1),
-                                             HuffmanTable_HTOOB_B1));
+      Table_B1.reset(new CJBig2_HuffmanTable(
+          HuffmanTable_B1, HuffmanTable_B1_Size, HuffmanTable_HTOOB_B1));
       pTRD->SBHUFFRSIZE = Table_B1.get();
     } else {
       CJBig2_Segment* pSeg =

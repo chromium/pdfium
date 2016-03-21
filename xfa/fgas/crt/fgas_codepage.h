@@ -163,7 +163,7 @@ int32_t FX_UTF8Decode(const FX_CHAR* pSrc,
 
 struct FX_STR2CPHASH {
   uint32_t uHash;
-  uint32_t uCodePage;
+  uint16_t uCodePage;
 };
 
 struct FX_CHARSET_MAP {
@@ -172,8 +172,8 @@ struct FX_CHARSET_MAP {
 };
 
 struct FX_LANG2CPMAP {
-  FX_WORD wLanguage;
-  FX_WORD wCodepage;
+  uint16_t wLanguage;
+  uint16_t wCodepage;
 };
 
 #endif  // XFA_FGAS_CRT_FGAS_CODEPAGE_H_

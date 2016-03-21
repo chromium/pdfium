@@ -26,7 +26,7 @@ typedef CFX_MassArrayTemplate<FX_TPO> CFX_TPOArray;
 void FX_TEXTLAYOUT_PieceSort(CFX_TPOArray& tpos, int32_t iStart, int32_t iEnd);
 
 struct FX_JAPCHARPROPERTYEX {
-  FX_WCHAR wChar;
+  uint16_t wChar;
   uint8_t uAlign;
 };
 

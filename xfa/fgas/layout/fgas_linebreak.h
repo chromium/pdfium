@@ -10,7 +10,7 @@
 #include "core/include/fxcrt/fx_system.h"
 #include "xfa/fgas/crt/fgas_utils.h"
 
-enum FX_LINEBREAKTYPE {
+enum FX_LINEBREAKTYPE : uint8_t {
   FX_LBT_UNKNOWN = 0x00,
   FX_LBT_DIRECT_BRK = 0x1A,
   FX_LBT_INDIRECT_BRK = 0x2B,

@@ -653,14 +653,13 @@ double _TimeFromYear(int y) {
   return 86400000.0 * _DayFromYear(y);
 }
 
+static const uint16_t daysMonth[12] = {0,   31,  59,  90,  120, 151,
+                                       181, 212, 243, 273, 304, 334};
+static const uint16_t leapDaysMonth[12] = {0,   31,  60,  91,  121, 152,
+                                           182, 213, 244, 274, 305, 335};
+
 double _TimeFromYearMonth(int y, int m) {
-  static int daysMonth[12] = {0,   31,  59,  90,  120, 151,
-                              181, 212, 243, 273, 304, 334};
-  static int leapDaysMonth[12] = {0,   31,  60,  91,  121, 152,
-                                  182, 213, 244, 274, 305, 335};
-  int* pMonth = daysMonth;
-  if (_isLeapYear(y))
-    pMonth = leapDaysMonth;
+  const uint16_t* pMonth = _isLeapYear(y) ? leapDaysMonth : daysMonth;
   return _TimeFromYear(y) + ((double)pMonth[m]) * 86400000;
 }
 

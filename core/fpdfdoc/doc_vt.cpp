@@ -395,44 +395,39 @@ CPVT_FloatRect CTypeset::Typeset() {
   OutputLines();
   return m_rcRet;
 }
-static int special_chars[128] = {
-    0x0000, 0x000C, 0x0008, 0x000C, 0x0008, 0x0000, 0x0020, 0x0000, 0x0000,
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0008, 0x0008, 0x0000,
-    0x0010, 0x0000, 0x0000, 0x0028, 0x000C, 0x0008, 0x0000, 0x0000, 0x0028,
-    0x0028, 0x0028, 0x0028, 0x0002, 0x0002, 0x0002, 0x0002, 0x0002, 0x0002,
-    0x0002, 0x0002, 0x0002, 0x0002, 0x0008, 0x0008, 0x0000, 0x0000, 0x0000,
-    0x0008, 0x0000, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001,
-    0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001,
-    0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001,
-    0x0001, 0x000C, 0x0000, 0x0008, 0x0000, 0x0000, 0x0000, 0x0001, 0x0001,
-    0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001,
-    0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001,
-    0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x0001, 0x000C, 0x0000, 0x0008,
-    0x0000, 0x0000,
+
+static const uint8_t special_chars[128] = {
+    0x00, 0x0C, 0x08, 0x0C, 0x08, 0x00, 0x20, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x08, 0x00,
+    0x10, 0x00, 0x00, 0x28, 0x0C, 0x08, 0x00, 0x00, 0x28, 0x28, 0x28, 0x28,
+    0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x08, 0x08,
+    0x00, 0x00, 0x00, 0x08, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
+    0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
+    0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x0C, 0x00, 0x08, 0x00, 0x00,
+    0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
+    0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
+    0x01, 0x01, 0x01, 0x0C, 0x00, 0x08, 0x00, 0x00,
 };
-static FX_BOOL IsLatin(FX_WORD word) {
-  if (word <= 0x007F) {
-    if (special_chars[word] & 0x0001) {
-      return TRUE;
-    }
-  }
-  if ((word >= 0x00C0 && word <= 0x00FF) ||
-      (word >= 0x0100 && word <= 0x024F) ||
-      (word >= 0x1E00 && word <= 0x1EFF) ||
-      (word >= 0x2C60 && word <= 0x2C7F) ||
-      (word >= 0xA720 && word <= 0xA7FF) ||
-      (word >= 0xFF21 && word <= 0xFF3A) ||
-      (word >= 0xFF41 && word <= 0xFF5A)) {
-    return TRUE;
-  }
-  return FALSE;
+
+static bool IsLatin(FX_WORD word) {
+  if (word <= 0x007F)
+    return !!(special_chars[word] & 0x01);
+
+  return ((word >= 0x00C0 && word <= 0x00FF) ||
+          (word >= 0x0100 && word <= 0x024F) ||
+          (word >= 0x1E00 && word <= 0x1EFF) ||
+          (word >= 0x2C60 && word <= 0x2C7F) ||
+          (word >= 0xA720 && word <= 0xA7FF) ||
+          (word >= 0xFF21 && word <= 0xFF3A) ||
+          (word >= 0xFF41 && word <= 0xFF5A));
 }
-static FX_BOOL IsDigit(FX_DWORD word) {
+
+static bool IsDigit(FX_DWORD word) {
   return word >= 0x0030 && word <= 0x0039;
 }
-static FX_BOOL IsCJK(FX_DWORD word) {
+
+static bool IsCJK(FX_DWORD word) {
   if ((word >= 0x1100 && word <= 0x11FF) ||
       (word >= 0x2E80 && word <= 0x2FFF) ||
       (word >= 0x3040 && word <= 0x9FBF) ||
@@ -441,134 +436,121 @@ static FX_BOOL IsCJK(FX_DWORD word) {
       (word >= 0xFE30 && word <= 0xFE4F) ||
       (word >= 0x20000 && word <= 0x2A6DF) ||
       (word >= 0x2F800 && word <= 0x2FA1F)) {
-    return TRUE;
+    return true;
   }
   if (word >= 0x3000 && word <= 0x303F) {
-    if (word == 0x3005 || word == 0x3006 || word == 0x3021 || word == 0x3022 ||
+    return (
+        word == 0x3005 || word == 0x3006 || word == 0x3021 || word == 0x3022 ||
         word == 0x3023 || word == 0x3024 || word == 0x3025 || word == 0x3026 ||
         word == 0x3027 || word == 0x3028 || word == 0x3029 || word == 0x3031 ||
-        word == 0x3032 || word == 0x3033 || word == 0x3034 || word == 0x3035) {
-      return TRUE;
-    }
-    return FALSE;
+        word == 0x3032 || word == 0x3033 || word == 0x3034 || word == 0x3035);
   }
-  if (word >= 0xFF66 && word <= 0xFF9D) {
-    return TRUE;
-  }
-  return FALSE;
+  return word >= 0xFF66 && word <= 0xFF9D;
 }
-static FX_BOOL IsPunctuation(FX_DWORD word) {
-  if (word <= 0x007F) {
-    if ((special_chars[word] >> 3) & 1) {
-      return TRUE;
-    }
-  } else if (word >= 0x0080 && word <= 0x00FF) {
-    if (word == 0x0082 || word == 0x0084 || word == 0x0085 || word == 0x0091 ||
-        word == 0x0092 || word == 0x0093 || word <= 0x0094 || word == 0x0096 ||
-        word == 0x00B4 || word == 0x00B8) {
-      return TRUE;
-    }
-  } else if (word >= 0x2000 && word <= 0x206F) {
-    if (word == 0x2010 || word == 0x2011 || word == 0x2012 || word == 0x2013 ||
+
+static bool IsPunctuation(FX_DWORD word) {
+  if (word <= 0x007F)
+    return !!(special_chars[word] & 0x08);
+
+  if (word >= 0x0080 && word <= 0x00FF) {
+    return (word == 0x0082 || word == 0x0084 || word == 0x0085 ||
+            word == 0x0091 || word == 0x0092 || word == 0x0093 ||
+            word <= 0x0094 || word == 0x0096 || word == 0x00B4 ||
+            word == 0x00B8);
+  }
+
+  if (word >= 0x2000 && word <= 0x206F) {
+    return (
+        word == 0x2010 || word == 0x2011 || word == 0x2012 || word == 0x2013 ||
         word == 0x2018 || word == 0x2019 || word == 0x201A || word == 0x201B ||
         word == 0x201C || word == 0x201D || word == 0x201E || word == 0x201F ||
         word == 0x2032 || word == 0x2033 || word == 0x2034 || word == 0x2035 ||
         word == 0x2036 || word == 0x2037 || word == 0x203C || word == 0x203D ||
-        word == 0x203E || word == 0x2044) {
-      return TRUE;
-    }
-  } else if (word >= 0x3000 && word <= 0x303F) {
-    if (word == 0x3001 || word == 0x3002 || word == 0x3003 || word == 0x3005 ||
+        word == 0x203E || word == 0x2044);
+  }
+
+  if (word >= 0x3000 && word <= 0x303F) {
+    return (
+        word == 0x3001 || word == 0x3002 || word == 0x3003 || word == 0x3005 ||
         word == 0x3009 || word == 0x300A || word == 0x300B || word == 0x300C ||
         word == 0x300D || word == 0x300F || word == 0x300E || word == 0x3010 ||
         word == 0x3011 || word == 0x3014 || word == 0x3015 || word == 0x3016 ||
         word == 0x3017 || word == 0x3018 || word == 0x3019 || word == 0x301A ||
-        word == 0x301B || word == 0x301D || word == 0x301E || word == 0x301F) {
-      return TRUE;
-    }
-  } else if (word >= 0xFE50 && word <= 0xFE6F) {
-    if ((word >= 0xFE50 && word <= 0xFE5E) || word == 0xFE63) {
-      return TRUE;
-    }
-  } else if (word >= 0xFF00 && word <= 0xFFEF) {
-    if (word == 0xFF01 || word == 0xFF02 || word == 0xFF07 || word == 0xFF08 ||
+        word == 0x301B || word == 0x301D || word == 0x301E || word == 0x301F);
+  }
+
+  if (word >= 0xFE50 && word <= 0xFE6F)
+    return (word >= 0xFE50 && word <= 0xFE5E) || word == 0xFE63;
+
+  if (word >= 0xFF00 && word <= 0xFFEF) {
+    return (
+        word == 0xFF01 || word == 0xFF02 || word == 0xFF07 || word == 0xFF08 ||
         word == 0xFF09 || word == 0xFF0C || word == 0xFF0E || word == 0xFF0F ||
         word == 0xFF1A || word == 0xFF1B || word == 0xFF1F || word == 0xFF3B ||
         word == 0xFF3D || word == 0xFF40 || word == 0xFF5B || word == 0xFF5C ||
         word == 0xFF5D || word == 0xFF61 || word == 0xFF62 || word == 0xFF63 ||
-        word == 0xFF64 || word == 0xFF65 || word == 0xFF9E || word == 0xFF9F) {
-      return TRUE;
-    }
+        word == 0xFF64 || word == 0xFF65 || word == 0xFF9E || word == 0xFF9F);
   }
-  return FALSE;
+
+  return false;
 }
-static FX_BOOL IsConnectiveSymbol(FX_DWORD word) {
-  if (word <= 0x007F) {
-    if ((special_chars[word] >> 5) & 1) {
-      return TRUE;
-    }
-  }
-  return FALSE;
+
+static bool IsConnectiveSymbol(FX_DWORD word) {
+  return word <= 0x007F && (special_chars[word] & 0x20);
 }
-static FX_BOOL IsOpenStylePunctuation(FX_DWORD word) {
-  if (word <= 0x007F) {
-    if ((special_chars[word] >> 2) & 1) {
-      return TRUE;
-    }
-  } else if (word == 0x300A || word == 0x300C || word == 0x300E ||
-             word == 0x3010 || word == 0x3014 || word == 0x3016 ||
-             word == 0x3018 || word == 0x301A || word == 0xFF08 ||
-             word == 0xFF3B || word == 0xFF5B || word == 0xFF62) {
-    return TRUE;
-  }
-  return FALSE;
+
+static bool IsOpenStylePunctuation(FX_DWORD word) {
+  if (word <= 0x007F)
+    return !!(special_chars[word] & 0x04);
+
+  return (word == 0x300A || word == 0x300C || word == 0x300E ||
+          word == 0x3010 || word == 0x3014 || word == 0x3016 ||
+          word == 0x3018 || word == 0x301A || word == 0xFF08 ||
+          word == 0xFF3B || word == 0xFF5B || word == 0xFF62);
 }
-static FX_BOOL IsCurrencySymbol(FX_WORD word) {
-  if (word == 0x0024 || word == 0x0080 || word == 0x00A2 || word == 0x00A3 ||
-      word == 0x00A4 || word == 0x00A5 || (word >= 0x20A0 && word <= 0x20CF) ||
-      word == 0xFE69 || word == 0xFF04 || word == 0xFFE0 || word == 0xFFE1 ||
-      word == 0xFFE5 || word == 0xFFE6) {
-    return TRUE;
-  }
-  return FALSE;
+
+static bool IsCurrencySymbol(FX_WORD word) {
+  return (word == 0x0024 || word == 0x0080 || word == 0x00A2 ||
+          word == 0x00A3 || word == 0x00A4 || word == 0x00A5 ||
+          (word >= 0x20A0 && word <= 0x20CF) || word == 0xFE69 ||
+          word == 0xFF04 || word == 0xFFE0 || word == 0xFFE1 ||
+          word == 0xFFE5 || word == 0xFFE6);
 }
-static FX_BOOL IsPrefixSymbol(FX_WORD word) {
-  if (IsCurrencySymbol(word)) {
-    return TRUE;
-  }
-  if (word == 0x2116) {
-    return TRUE;
-  }
-  return FALSE;
+
+static bool IsPrefixSymbol(FX_WORD word) {
+  return IsCurrencySymbol(word) || word == 0x2116;
 }
-static FX_BOOL IsSpace(FX_WORD word) {
+
+static bool IsSpace(FX_WORD word) {
   return word == 0x0020 || word == 0x3000;
 }
-static FX_BOOL NeedDivision(FX_WORD prevWord, FX_WORD curWord) {
+
+static bool NeedDivision(FX_WORD prevWord, FX_WORD curWord) {
   if ((IsLatin(prevWord) || IsDigit(prevWord)) &&
       (IsLatin(curWord) || IsDigit(curWord))) {
-    return FALSE;
+    return false;
   }
   if (IsSpace(curWord) || IsPunctuation(curWord)) {
-    return FALSE;
+    return false;
   }
   if (IsConnectiveSymbol(prevWord) || IsConnectiveSymbol(curWord)) {
-    return FALSE;
+    return false;
   }
   if (IsSpace(prevWord) || IsPunctuation(prevWord)) {
-    return TRUE;
+    return true;
   }
   if (IsPrefixSymbol(prevWord)) {
-    return FALSE;
+    return false;
   }
   if (IsPrefixSymbol(curWord) || IsCJK(curWord)) {
-    return TRUE;
+    return true;
   }
   if (IsCJK(prevWord)) {
-    return TRUE;
+    return true;
   }
-  return FALSE;
+  return false;
 }
+
 void CTypeset::SplitLines(FX_BOOL bTypeset, FX_FLOAT fFontSize) {
   ASSERT(m_pVT);
   ASSERT(m_pSection);
