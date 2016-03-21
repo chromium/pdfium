@@ -27,12 +27,6 @@
 #include "xfa/fxbarcode/oned/BC_OnedCode128Reader.h"
 #include "xfa/fxbarcode/oned/BC_OnedCode128Writer.h"
 
-const int32_t CBC_OnedCode128Writer::CODE_CODE_B = 100;
-const int32_t CBC_OnedCode128Writer::CODE_CODE_C = 99;
-const int32_t CBC_OnedCode128Writer::CODE_START_B = 104;
-const int32_t CBC_OnedCode128Writer::CODE_START_C = 105;
-const int32_t CBC_OnedCode128Writer::CODE_STOP = 106;
-
 CBC_OnedCode128Writer::CBC_OnedCode128Writer() {
   m_codeFormat = BC_CODE128_B;
 }

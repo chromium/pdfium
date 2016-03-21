@@ -7,11 +7,11 @@
 #ifndef XFA_INCLUDE_FWL_BASEWIDGET_FWL_BARCODE_H_
 #define XFA_INCLUDE_FWL_BASEWIDGET_FWL_BARCODE_H_
 
+#include "xfa/fxbarcode/include/BC_Library.h"
 #include "xfa/include/fwl/basewidget/fwl_edit.h"
-#include "xfa/include/fxbarcode/BC_BarCode.h"
 
 class CFWL_WidgetImpProperties;
-class IFWL_Barcode;
+
 #define FWL_CLASS_Barcode L"FWL_BARCODE"
 #define FWL_CLASSHASH_Barcode 366886968
 #define FWL_BCDATTRIBUTE_CHARENCODING (1L << 0)
@@ -31,6 +31,7 @@ class IFWL_Barcode;
 #define FWL_PART_BCD_Edge 2
 #define FWL_PART_BCD_Background 3
 #define FWL_BCUPDATECMD_Data FWL_WGTUPDATECMD_User
+
 class IFWL_BarcodeDP : public IFWL_EditDP {
  public:
   virtual BC_CHAR_ENCODING GetCharEncoding() = 0;

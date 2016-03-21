@@ -7,9 +7,13 @@
 #ifndef XFA_FXBARCODE_PDF417_BC_PDF417READER_H_
 #define XFA_FXBARCODE_PDF417_BC_PDF417READER_H_
 
+#include "core/include/fxcrt/fx_string.h"
+#include "core/include/fxcrt/fx_system.h"
+#include "xfa/fxbarcode/BC_Reader.h"
+
 class CBC_BinaryBitmap;
 class CBC_ResultPoint;
-class CBC_PDF417Reader;
+
 class CBC_PDF417Reader : public CBC_Reader {
  public:
   CBC_PDF417Reader();

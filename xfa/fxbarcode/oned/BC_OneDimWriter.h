@@ -9,7 +9,7 @@
 
 #include "core/include/fxge/fx_ge.h"
 #include "xfa/fxbarcode/BC_Writer.h"
-#include "xfa/include/fxbarcode/BC_BarCode.h"
+#include "xfa/fxbarcode/include/BC_Library.h"
 
 class CBC_CommonBitMatrix;
 class CFX_Font;
@@ -19,6 +19,7 @@ class CBC_OneDimWriter : public CBC_Writer {
  public:
   CBC_OneDimWriter();
   virtual ~CBC_OneDimWriter();
+
   uint8_t* Encode(const CFX_ByteString& contents,
                   BCFORMAT format,
                   int32_t& outWidth,
@@ -35,6 +36,7 @@ class CBC_OneDimWriter : public CBC_Writer {
                           int32_t& e) {
     return NULL;
   }
+
   virtual void RenderResult(const CFX_WideStringC& contents,
                             uint8_t* code,
                             int32_t codeLength,
@@ -65,21 +67,6 @@ class CBC_OneDimWriter : public CBC_Writer {
   virtual FX_BOOL SetFont(CFX_Font* cFont);
 
  protected:
-  FX_BOOL m_bPrintChecksum;
-  int32_t m_iDataLenth;
-  FX_BOOL m_bCalcChecksum;
-  CFX_Font* m_pFont;
-  FX_FLOAT m_fFontSize;
-  int32_t m_iFontStyle;
-  FX_DWORD m_fontColor;
-  BC_TEXT_LOC m_locTextLoc;
-  int32_t m_iContentLen;
-  FX_BOOL m_bLeftPadding;
-  FX_BOOL m_bRightPadding;
-  CBC_CommonBitMatrix* m_output;
-  int32_t m_barWidth;
-  int32_t m_multiple;
-  FX_FLOAT m_outputHScale;
   void CalcTextInfo(const CFX_ByteString& text,
                     FXTEXT_CHARPOS* charPos,
                     CFX_Font* cFont,
@@ -115,6 +102,22 @@ class CBC_OneDimWriter : public CBC_Writer {
                         int32_t startColor,
                         int32_t& e);
   FX_WCHAR Upper(FX_WCHAR ch);
+
+  FX_BOOL m_bPrintChecksum;
+  int32_t m_iDataLenth;
+  FX_BOOL m_bCalcChecksum;
+  CFX_Font* m_pFont;
+  FX_FLOAT m_fFontSize;
+  int32_t m_iFontStyle;
+  FX_DWORD m_fontColor;
+  BC_TEXT_LOC m_locTextLoc;
+  int32_t m_iContentLen;
+  FX_BOOL m_bLeftPadding;
+  FX_BOOL m_bRightPadding;
+  CBC_CommonBitMatrix* m_output;
+  int32_t m_barWidth;
+  int32_t m_multiple;
+  FX_FLOAT m_outputHScale;
 };
 
 #endif  // XFA_FXBARCODE_ONED_BC_ONEDIMWRITER_H_

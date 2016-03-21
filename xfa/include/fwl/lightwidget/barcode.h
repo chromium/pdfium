@@ -10,7 +10,6 @@
 #include "xfa/include/fwl/basewidget/fwl_barcode.h"
 #include "xfa/include/fwl/core/fwl_error.h"
 #include "xfa/include/fwl/lightwidget/edit.h"
-#include "xfa/include/fxbarcode/BC_BarCode.h"
 
 class CFWL_Widget;
 class CFWL_WidgetProperties;

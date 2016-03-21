@@ -11,7 +11,7 @@
 #include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "public/fpdf_formfill.h"
-#include "xfa/include/fxbarcode/BC_BarCode.h"
+#include "xfa/fxbarcode/include/BC_Library.h"
 
 CPDFXFA_App* CPDFXFA_App::g_pApp = NULL;
 

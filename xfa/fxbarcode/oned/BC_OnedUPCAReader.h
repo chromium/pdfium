@@ -7,18 +7,21 @@
 #ifndef XFA_FXBARCODE_ONED_BC_ONEDUPCAREADER_H_
 #define XFA_FXBARCODE_ONED_BC_ONEDUPCAREADER_H_
 
+#include "core/include/fxcrt/fx_string.h"
+#include "core/include/fxcrt/fx_system.h"
+#include "xfa/fxbarcode/oned/BC_OneDimReader.h"
+
 class CBC_BinaryBitmap;
 class CBC_CommonBitArray;
-class CBC_OneDimReader;
 class CBC_OnedEAN13Reader;
-class CBC_OnedUPCAReader;
-class CBC_OnedUPCAReader : public CBC_OneDimReader {
- private:
-  CBC_OnedEAN13Reader* m_ean13Reader;
 
+class CBC_OnedUPCAReader : public CBC_OneDimReader {
  public:
   CBC_OnedUPCAReader();
   virtual ~CBC_OnedUPCAReader();
+
+  virtual void Init();
+
   CFX_ByteString DecodeRow(int32_t rowNumber,
                            CBC_CommonBitArray* row,
                            int32_t hints,
@@ -30,7 +33,6 @@ class CBC_OnedUPCAReader : public CBC_OneDimReader {
                            int32_t& e);
   CFX_ByteString Decode(CBC_BinaryBitmap* image, int32_t& e);
   CFX_ByteString Decode(CBC_BinaryBitmap* image, int32_t hints, int32_t& e);
-  virtual void Init();
 
  protected:
   int32_t DecodeMiddle(CBC_CommonBitArray* row,
@@ -38,6 +40,10 @@ class CBC_OnedUPCAReader : public CBC_OneDimReader {
                        CFX_ByteString& resultString,
                        int32_t& e);
   CFX_ByteString MaybeReturnResult(CFX_ByteString& result, int32_t& e);
+
+ private:
+  CBC_OnedEAN13Reader* m_ean13Reader;
+
 };
 
 #endif  // XFA_FXBARCODE_ONED_BC_ONEDUPCAREADER_H_

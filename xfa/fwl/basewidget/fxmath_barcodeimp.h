@@ -7,13 +7,19 @@
 #ifndef XFA_FWL_BASEWIDGET_FXMATH_BARCODEIMP_H_
 #define XFA_FWL_BASEWIDGET_FXMATH_BARCODEIMP_H_
 
+#include "core/include/fxcrt/fx_string.h"
+#include "core/include/fxcrt/fx_system.h"
+#include "xfa/fxbarcode/include/BC_Library.h"
 #include "xfa/include/fwl/basewidget/fxmath_barcode.h"
+
+class CBC_CodeBase;
 
 class CFX_Barcode : public IFX_Barcode {
  public:
   CFX_Barcode();
   ~CFX_Barcode();
-  FX_BOOL Crreate(BC_TYPE type);
+
+  FX_BOOL Create(BC_TYPE type);
   virtual void Release();
   virtual BC_TYPE GetType();
   virtual FX_BOOL Encode(const CFX_WideStringC& contents,

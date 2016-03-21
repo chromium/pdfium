@@ -7,16 +7,22 @@
 #ifndef XFA_FXBARCODE_ONED_BC_ONEDUPCAWRITER_H_
 #define XFA_FXBARCODE_ONED_BC_ONEDUPCAWRITER_H_
 
-class CBC_OnedEAN13Writer;
-class CBC_OnedUPCAWriter;
-class CBC_OnedUPCAWriter : public CBC_OneDimWriter {
- private:
-  CBC_OnedEAN13Writer* m_subWriter;
+#include "core/include/fxcrt/fx_string.h"
+#include "core/include/fxcrt/fx_system.h"
+#include "xfa/fxbarcode/oned/BC_OneDimWriter.h"
 
+class CBC_OnedEAN13Writer;
+class CFX_DIBitmap;
+class CFX_Matrix;
+class CFX_RenderDevice;
+
+class CBC_OnedUPCAWriter : public CBC_OneDimWriter {
  public:
   CBC_OnedUPCAWriter();
   virtual ~CBC_OnedUPCAWriter();
+
   virtual void Init();
+
   uint8_t* Encode(const CFX_ByteString& contents,
                   BCFORMAT format,
                   int32_t& outWidth,
@@ -33,6 +39,7 @@ class CBC_OnedUPCAWriter : public CBC_OneDimWriter {
                   int32_t& e) {
     return nullptr;
   }
+
   void RenderResult(const CFX_WideStringC& contents,
                     uint8_t* code,
                     int32_t codeLength,
@@ -50,6 +57,9 @@ class CBC_OnedUPCAWriter : public CBC_OneDimWriter {
                  int32_t barWidth,
                  int32_t multiple,
                  int32_t& e);
+
+ private:
+  CBC_OnedEAN13Writer* m_subWriter;
 };
 
 #endif  // XFA_FXBARCODE_ONED_BC_ONEDUPCAWRITER_H_

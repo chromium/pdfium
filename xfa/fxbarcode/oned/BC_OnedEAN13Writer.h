@@ -7,12 +7,14 @@
 #ifndef XFA_FXBARCODE_ONED_BC_ONEDEAN13WRITER_H_
 #define XFA_FXBARCODE_ONED_BC_ONEDEAN13WRITER_H_
 
-class CBC_OneDimWriter;
-class CBC_OnedEAN13Writer;
-class CBC_OnedEAN13Writer : public CBC_OneDimWriter {
- private:
-  int32_t m_codeWidth;
+#include "core/include/fxcrt/fx_string.h"
+#include "core/include/fxcrt/fx_system.h"
+#include "xfa/fxbarcode/oned/BC_OneDimWriter.h"
 
+class CFX_DIBitmap;
+class CFX_RenderDevice;
+
+class CBC_OnedEAN13Writer : public CBC_OneDimWriter {
  public:
   CBC_OnedEAN13Writer();
   virtual ~CBC_OnedEAN13Writer();
@@ -31,6 +33,7 @@ class CBC_OnedEAN13Writer : public CBC_OneDimWriter {
   uint8_t* Encode(const CFX_ByteString& contents,
                   int32_t& outLength,
                   int32_t& e);
+
   void RenderResult(const CFX_WideStringC& contents,
                     uint8_t* code,
                     int32_t codeLength,
@@ -48,6 +51,9 @@ class CBC_OnedEAN13Writer : public CBC_OneDimWriter {
                  int32_t barWidth,
                  int32_t multiple,
                  int32_t& e);
+
+ private:
+  int32_t m_codeWidth;
 };
 
 #endif  // XFA_FXBARCODE_ONED_BC_ONEDEAN13WRITER_H_

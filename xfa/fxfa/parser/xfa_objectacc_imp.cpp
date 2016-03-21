@@ -5,6 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "core/include/fxcrt/fx_ext.h"
+#include "xfa/fxbarcode/include/BC_Library.h"
 #include "xfa/fxfa/fm2js/xfa_fm2jsapi.h"
 #include "xfa/fxfa/parser/xfa_docdata.h"
 #include "xfa/fxfa/parser/xfa_doclayout.h"
@@ -15,7 +16,6 @@
 #include "xfa/fxfa/parser/xfa_parser.h"
 #include "xfa/fxfa/parser/xfa_script.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
-#include "xfa/include/fxbarcode/BC_BarCode.h"
 
 static FX_ARGB XFA_WStringToColor(const CFX_WideStringC& wsValue) {
   uint8_t r = 0, g = 0, b = 0;

@@ -7,30 +7,36 @@
 #ifndef XFA_FXBARCODE_ONED_BC_ONEDCODE39READER_H_
 #define XFA_FXBARCODE_ONED_BC_ONEDCODE39READER_H_
 
-class CBC_OneDReader;
+#include "core/include/fxcrt/fx_system.h"
+#include "xfa/fxbarcode/oned/BC_OneDReader.h"
+
 class CBC_CommonBitArray;
+
 class CBC_OnedCode39Reader : public CBC_OneDReader {
  public:
   static const FX_CHAR* ALPHABET_STRING;
   static const FX_CHAR* CHECKSUM_STRING;
   static const int32_t CHARACTER_ENCODINGS[44];
-  static const int32_t ASTERISK_ENCODING;
+  static const int32_t ASTERISK_ENCODING = 0x094;
+
   CBC_OnedCode39Reader();
-  CBC_OnedCode39Reader(FX_BOOL usingCheckDigit);
+  explicit CBC_OnedCode39Reader(FX_BOOL usingCheckDigit);
   CBC_OnedCode39Reader(FX_BOOL usingCheckDigit, FX_BOOL extendedMode);
   virtual ~CBC_OnedCode39Reader();
+
   CFX_ByteString DecodeRow(int32_t rowNumber,
                            CBC_CommonBitArray* row,
                            int32_t hints,
                            int32_t& e);
 
  private:
-  FX_BOOL m_usingCheckDigit;
-  FX_BOOL m_extendedMode;
   CFX_Int32Array* FindAsteriskPattern(CBC_CommonBitArray* row, int32_t& e);
   int32_t ToNarrowWidePattern(CFX_Int32Array* counters);
   FX_CHAR PatternToChar(int32_t pattern, int32_t& e);
   CFX_ByteString DecodeExtended(CFX_ByteString& encoded, int32_t& e);
+
+  FX_BOOL m_usingCheckDigit;
+  FX_BOOL m_extendedMode;
 };
 
 #endif  // XFA_FXBARCODE_ONED_BC_ONEDCODE39READER_H_

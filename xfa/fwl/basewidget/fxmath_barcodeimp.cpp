@@ -6,6 +6,17 @@
 
 #include "xfa/fwl/basewidget/fxmath_barcodeimp.h"
 
+#include "xfa/fxbarcode/cbc_codabar.h"
+#include "xfa/fxbarcode/cbc_code128.h"
+#include "xfa/fxbarcode/cbc_code39.h"
+#include "xfa/fxbarcode/cbc_codebase.h"
+#include "xfa/fxbarcode/cbc_datamatrix.h"
+#include "xfa/fxbarcode/cbc_ean13.h"
+#include "xfa/fxbarcode/cbc_ean8.h"
+#include "xfa/fxbarcode/cbc_pdf417i.h"
+#include "xfa/fxbarcode/cbc_qrcode.h"
+#include "xfa/fxbarcode/cbc_upca.h"
+
 static CBC_CodeBase* FX_Barcode_CreateBarCodeEngineObject(BC_TYPE type) {
   switch (type) {
     case BC_CODE39:
@@ -42,7 +53,7 @@ CFX_Barcode::~CFX_Barcode() {
     m_pBCEngine = NULL;
   }
 }
-FX_BOOL CFX_Barcode::Crreate(BC_TYPE type) {
+FX_BOOL CFX_Barcode::Create(BC_TYPE type) {
   m_pBCEngine = FX_Barcode_CreateBarCodeEngineObject(type);
   return m_pBCEngine != NULL;
 }
@@ -377,7 +388,7 @@ CFX_WideString CFX_Barcode::Decode(CFX_DIBitmap* pBitmap, int32_t& errorCode) {
 }
 IFX_Barcode* FX_Barcode_Create(BC_TYPE type) {
   CFX_Barcode* pBarcode = new CFX_Barcode;
-  if (pBarcode->Crreate(type)) {
+  if (pBarcode->Create(type)) {
     return pBarcode;
   }
   pBarcode->Release();

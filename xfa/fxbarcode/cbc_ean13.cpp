@@ -1,0 +1,114 @@
+// Copyright 2016 PDFium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
+/*
+ * Copyright 2011 ZXing authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#include "xfa/fxbarcode/cbc_ean13.h"
+
+#include "xfa/fxbarcode/BC_BinaryBitmap.h"
+#include "xfa/fxbarcode/BC_BufferedImageLuminanceSource.h"
+#include "xfa/fxbarcode/common/BC_GlobalHistogramBinarizer.h"
+#include "xfa/fxbarcode/oned/BC_OnedEAN13Reader.h"
+#include "xfa/fxbarcode/oned/BC_OnedEAN13Writer.h"
+
+CBC_EAN13::CBC_EAN13() {
+  m_pBCReader = (CBC_Reader*)new (CBC_OnedEAN13Reader);
+  m_pBCWriter = (CBC_Writer*)new (CBC_OnedEAN13Writer);
+}
+
+CBC_EAN13::~CBC_EAN13() {
+  delete (m_pBCReader);
+  delete (m_pBCWriter);
+}
+
+CFX_WideString CBC_EAN13::Preprocess(const CFX_WideStringC& contents) {
+  CFX_WideString encodeContents =
+      ((CBC_OnedEAN13Writer*)m_pBCWriter)->FilterContents(contents);
+  int32_t length = encodeContents.GetLength();
+  if (length <= 12) {
+    for (int32_t i = 0; i < 12 - length; i++)
+      encodeContents = FX_WCHAR('0') + encodeContents;
+
+    CFX_ByteString byteString = encodeContents.UTF8Encode();
+    int32_t checksum =
+        ((CBC_OnedEAN13Writer*)m_pBCWriter)->CalcChecksum(byteString);
+    byteString += checksum - 0 + '0';
+    encodeContents = byteString.UTF8Decode();
+  }
+  if (length > 13)
+    encodeContents = encodeContents.Mid(0, 13);
+
+  return encodeContents;
+}
+
+FX_BOOL CBC_EAN13::Encode(const CFX_WideStringC& contents,
+                          FX_BOOL isDevice,
+                          int32_t& e) {
+  if (contents.IsEmpty()) {
+    e = BCExceptionNoContents;
+    return FALSE;
+  }
+  BCFORMAT format = BCFORMAT_EAN_13;
+  int32_t outWidth = 0;
+  int32_t outHeight = 0;
+  CFX_WideString encodeContents = Preprocess(contents);
+  CFX_ByteString byteString = encodeContents.UTF8Encode();
+  m_renderContents = encodeContents;
+  uint8_t* data = static_cast<CBC_OnedEAN13Writer*>(m_pBCWriter)
+                      ->Encode(byteString, format, outWidth, outHeight, e);
+  BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
+  ((CBC_OneDimWriter*)m_pBCWriter)
+      ->RenderResult(encodeContents, data, outWidth, isDevice, e);
+  FX_Free(data);
+  BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
+  return TRUE;
+}
+
+FX_BOOL CBC_EAN13::RenderDevice(CFX_RenderDevice* device,
+                                const CFX_Matrix* matirx,
+                                int32_t& e) {
+  ((CBC_OneDimWriter*)m_pBCWriter)
+      ->RenderDeviceResult(device, matirx, m_renderContents, e);
+  BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
+  return TRUE;
+}
+
+FX_BOOL CBC_EAN13::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
+  ((CBC_OneDimWriter*)m_pBCWriter)
+      ->RenderBitmapResult(pOutBitmap, m_renderContents, e);
+  BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
+  return TRUE;
+}
+
+CFX_WideString CBC_EAN13::Decode(uint8_t* buf,
+                                 int32_t width,
+                                 int32_t hight,
+                                 int32_t& e) {
+  CFX_WideString str;
+  return str;
+}
+
+CFX_WideString CBC_EAN13::Decode(CFX_DIBitmap* pBitmap, int32_t& e) {
+  CBC_BufferedImageLuminanceSource source(pBitmap);
+  CBC_GlobalHistogramBinarizer binarizer(&source);
+  CBC_BinaryBitmap bitmap(&binarizer);
+  CFX_ByteString str = m_pBCReader->Decode(&bitmap, 0, e);
+  BC_EXCEPTION_CHECK_ReturnValue(e, FX_WSTRC(L""));
+  return CFX_WideString::FromUTF8(str, str.GetLength());
+}

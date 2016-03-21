@@ -6,12 +6,18 @@
 
 #ifndef XFA_FXBARCODE_ONED_BC_ONEDEAN13READER_H_
 #define XFA_FXBARCODE_ONED_BC_ONEDEAN13READER_H_
-class CBC_OneDimReader;
+
+#include "core/include/fxcrt/fx_string.h"
+#include "core/include/fxcrt/fx_system.h"
+#include "xfa/fxbarcode/oned/BC_OneDimReader.h"
+
 class CBC_CommonBitArray;
-class CBC_OnedEAN13Reader;
+class CBC_OnedUPCAReader;
+
 class CBC_OnedEAN13Reader : public CBC_OneDimReader {
  public:
   static const int32_t FIRST_DIGIT_ENCODINGS[10];
+
   CBC_OnedEAN13Reader();
   virtual ~CBC_OnedEAN13Reader();
 
@@ -21,11 +27,12 @@ class CBC_OnedEAN13Reader : public CBC_OneDimReader {
                            int32_t& e);
 
  protected:
+  friend class CBC_OnedUPCAReader;
+
   int32_t DecodeMiddle(CBC_CommonBitArray* row,
                        CFX_Int32Array* startRange,
                        CFX_ByteString& resultString,
                        int32_t& e);
-  friend class CBC_OnedUPCAReader;
 };
 
 #endif  // XFA_FXBARCODE_ONED_BC_ONEDEAN13READER_H_

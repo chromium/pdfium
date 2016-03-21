@@ -7,8 +7,10 @@
 #ifndef XFA_FXBARCODE_ONED_BC_ONEDCODE128READER_H_
 #define XFA_FXBARCODE_ONED_BC_ONEDCODE128READER_H_
 
-class CBC_OneDReader;
+#include "xfa/fxbarcode/oned/BC_OneDReader.h"
+
 class CBC_CommonBitArray;
+
 class CBC_OnedCode128Reader : public CBC_OneDReader {
  public:
   CBC_OnedCode128Reader();

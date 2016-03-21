@@ -7,12 +7,21 @@
 #ifndef XFA_INCLUDE_FWL_BASEWIDGET_FXMATH_BARCODE_H_
 #define XFA_INCLUDE_FWL_BASEWIDGET_FXMATH_BARCODE_H_
 
-#include "xfa/include/fxbarcode/BC_BarCode.h"
+#include "core/include/fxcrt/fx_string.h"
+#include "core/include/fxcrt/fx_system.h"
+#include "core/include/fxge/fx_dib.h"
+#include "xfa/fxbarcode/include/BC_Library.h"
+
+class CFX_Font;
+class CFX_Matrix;
+class CFX_RenderDevice;
 
 class IFX_Barcode {
  public:
   virtual ~IFX_Barcode() {}
+
   virtual void Release() = 0;
+
   virtual BC_TYPE GetType() = 0;
   virtual FX_BOOL Encode(const CFX_WideStringC& contents,
                          FX_BOOL isDevice,
@@ -47,6 +56,7 @@ class IFX_Barcode {
   virtual FX_BOOL SetErrorCorrectionLevel(int32_t level) = 0;
   virtual FX_BOOL SetTruncated(FX_BOOL truncated) = 0;
 };
+
 IFX_Barcode* FX_Barcode_Create(BC_TYPE type);
 
 #endif  // XFA_INCLUDE_FWL_BASEWIDGET_FXMATH_BARCODE_H_

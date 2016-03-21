@@ -7,13 +7,15 @@
 #ifndef XFA_FXBARCODE_ONED_BC_ONEDCODE39WRITER_H_
 #define XFA_FXBARCODE_ONED_BC_ONEDCODE39WRITER_H_
 
-enum BC_TEXT_LOC;
-class CBC_OneDimWriter;
+#include "xfa/fxbarcode/include/BC_Library.h"
+#include "xfa/fxbarcode/oned/BC_OneDimWriter.h"
+
 class CBC_OnedCode39Writer : public CBC_OneDimWriter {
  public:
   CBC_OnedCode39Writer();
-  CBC_OnedCode39Writer(FX_BOOL extendedMode);
+  explicit CBC_OnedCode39Writer(FX_BOOL extendedMode);
   virtual ~CBC_OnedCode39Writer();
+
   uint8_t* Encode(const CFX_ByteString& contents,
                   BCFORMAT format,
                   int32_t& outWidth,
@@ -33,6 +35,7 @@ class CBC_OnedCode39Writer : public CBC_OneDimWriter {
                     int32_t codeLength,
                     FX_BOOL isDevice,
                     int32_t& e);
+
   CFX_WideString encodedContents(const CFX_WideStringC& contents, int32_t& e);
   FX_BOOL CheckContentValidity(const CFX_WideStringC& contents);
   FX_BOOL CheckExtendedContentValidity(const CFX_WideStringC& contents);
@@ -46,6 +49,7 @@ class CBC_OnedCode39Writer : public CBC_OneDimWriter {
  private:
   void ToIntArray(int32_t a, int32_t* toReturn);
   FX_CHAR CalcCheckSum(const CFX_ByteString& contents, int32_t& e);
+
   int32_t m_iWideNarrRatio;
   FX_BOOL m_extendedMode;
 };

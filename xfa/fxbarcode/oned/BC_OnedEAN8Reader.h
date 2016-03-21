@@ -7,9 +7,10 @@
 #ifndef XFA_FXBARCODE_ONED_BC_ONEDEAN8READER_H_
 #define XFA_FXBARCODE_ONED_BC_ONEDEAN8READER_H_
 
-class CBC_OneDimReader;
+#include "xfa/fxbarcode/oned/BC_OneDimReader.h"
+
 class CBC_CommonBitArray;
-class CBC_OnedEAN8Reader;
+
 class CBC_OnedEAN8Reader : public CBC_OneDimReader {
  public:
   CBC_OnedEAN8Reader();
