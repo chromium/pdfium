@@ -201,14 +201,30 @@ static void sycc444_to_rgb(opj_image_t* img) {
   FX_Free(img->comps[2].data);
   img->comps[2].data = d2;
 }
+static bool sycc420_422_size_is_valid(opj_image_t* img) {
+  return (img && img->comps[0].w != std::numeric_limits<OPJ_UINT32>::max() &&
+          (img->comps[0].w + 1) / 2 == img->comps[1].w &&
+          img->comps[1].w == img->comps[2].w &&
+          img->comps[1].h == img->comps[2].h);
+}
+static bool sycc420_size_is_valid(opj_image_t* img) {
+  return (sycc420_422_size_is_valid(img) &&
+          img->comps[0].h != std::numeric_limits<OPJ_UINT32>::max() &&
+          (img->comps[0].h + 1) / 2 == img->comps[1].h);
+}
+static bool sycc422_size_is_valid(opj_image_t* img) {
+  return (sycc420_422_size_is_valid(img) && img->comps[0].h == img->comps[1].h);
+}
 static void sycc422_to_rgb(opj_image_t* img) {
+  if (!sycc422_size_is_valid(img))
+    return;
+
   int prec = img->comps[0].prec;
   int offset = 1 << (prec - 1);
   int upb = (1 << prec) - 1;
-  OPJ_UINT32 maxw =
-      std::min(std::min(img->comps[0].w, img->comps[1].w), img->comps[2].w);
-  OPJ_UINT32 maxh =
-      std::min(std::min(img->comps[0].h, img->comps[1].h), img->comps[2].h);
+
+  OPJ_UINT32 maxw = img->comps[0].w;
+  OPJ_UINT32 maxh = img->comps[0].h;
   FX_SAFE_SIZE_T max_size = maxw;
   max_size *= maxh;
   if (!max_size.IsValid())
@@ -262,16 +278,13 @@ static void sycc422_to_rgb(opj_image_t* img) {
   img->comps[1].dy = img->comps[0].dy;
   img->comps[2].dy = img->comps[0].dy;
 }
-static bool sycc420_size_is_valid(OPJ_UINT32 y, OPJ_UINT32 cbcr) {
-  if (!y || !cbcr)
-    return false;
-
-  return (cbcr == y / 2) || ((y & 1) && (cbcr == y / 2 + 1));
-}
 static bool sycc420_must_extend_cbcr(OPJ_UINT32 y, OPJ_UINT32 cbcr) {
   return (y & 1) && (cbcr == y / 2);
 }
 void sycc420_to_rgb(opj_image_t* img) {
+  if (!sycc420_size_is_valid(img))
+    return;
+
   OPJ_UINT32 prec = img->comps[0].prec;
   if (!prec)
     return;
@@ -282,11 +295,6 @@ void sycc420_to_rgb(opj_image_t* img) {
   OPJ_UINT32 cbw = img->comps[1].w;
   OPJ_UINT32 cbh = img->comps[1].h;
   OPJ_UINT32 crw = img->comps[2].w;
-  OPJ_UINT32 crh = img->comps[2].h;
-  if (cbw != crw || cbh != crh)
-    return;
-  if (!sycc420_size_is_valid(yw, cbw) || !sycc420_size_is_valid(yh, cbh))
-    return;
   bool extw = sycc420_must_extend_cbcr(yw, cbw);
   bool exth = sycc420_must_extend_cbcr(yh, cbh);
   FX_SAFE_DWORD safeSize = yw;
