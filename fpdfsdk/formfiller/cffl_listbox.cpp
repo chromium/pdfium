@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/formfiller/FFL_ListBox.h"
+#include "fpdfsdk/formfiller/cffl_listbox.h"
 
-#include "fpdfsdk/include/formfiller/FFL_CBA_Fontmap.h"
-#include "fpdfsdk/include/formfiller/FFL_FormFiller.h"
-#include "fpdfsdk/include/formfiller/FFL_IFormFiller.h"
+#include "fpdfsdk/formfiller/cba_fontmap.h"
+#include "fpdfsdk/formfiller/cffl_formfiller.h"
+#include "fpdfsdk/formfiller/cffl_iformfiller.h"
 #include "fpdfsdk/include/fsdk_common.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/include/pdfwindow/PWL_ListBox.h"

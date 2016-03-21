@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_FORMFILLER_FFL_PUSHBUTTON_H_
-#define FPDFSDK_INCLUDE_FORMFILLER_FFL_PUSHBUTTON_H_
+#ifndef FPDFSDK_FORMFILLER_CFFL_PUSHBUTTON_H_
+#define FPDFSDK_FORMFILLER_CFFL_PUSHBUTTON_H_
 
-#include "fpdfsdk/include/formfiller/FFL_FormFiller.h"
+#include "fpdfsdk/formfiller/cffl_formfiller.h"
 
 class CFFL_PushButton : public CFFL_Button {
  public:
@@ -25,4 +25,4 @@ class CFFL_PushButton : public CFFL_Button {
               FX_DWORD dwFlags) override;
 };
 
-#endif  // FPDFSDK_INCLUDE_FORMFILLER_FFL_PUSHBUTTON_H_
+#endif  // FPDFSDK_FORMFILLER_CFFL_PUSHBUTTON_H_

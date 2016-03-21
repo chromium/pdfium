@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/formfiller/FFL_TextField.h"
+#include "fpdfsdk/formfiller/cffl_textfield.h"
 
-#include "fpdfsdk/include/formfiller/FFL_CBA_Fontmap.h"
+#include "fpdfsdk/formfiller/cba_fontmap.h"
 #include "fpdfsdk/include/fsdk_common.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
 

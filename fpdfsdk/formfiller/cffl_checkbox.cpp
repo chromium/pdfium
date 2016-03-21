@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/formfiller/FFL_CheckBox.h"
+#include "fpdfsdk/formfiller/cffl_checkbox.h"
 
-#include "fpdfsdk/include/formfiller/FFL_FormFiller.h"
+#include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/include/pdfwindow/PWL_SpecialButton.h"
 #include "public/fpdf_fwlevent.h"

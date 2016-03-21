@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_FORMFILLER_FFL_FORMFILLER_H_
-#define FPDFSDK_INCLUDE_FORMFILLER_FFL_FORMFILLER_H_
+#ifndef FPDFSDK_FORMFILLER_CFFL_FORMFILLER_H_
+#define FPDFSDK_FORMFILLER_CFFL_FORMFILLER_H_
 
 #include <map>
 
-#include "fpdfsdk/include/formfiller/FFL_CBA_Fontmap.h"
-#include "fpdfsdk/include/formfiller/FFL_IFormFiller.h"
+#include "fpdfsdk/formfiller/cba_fontmap.h"
+#include "fpdfsdk/formfiller/cffl_iformfiller.h"
 #include "fpdfsdk/include/fsdk_baseform.h"
 
 class CPDFDoc_Environment;
@@ -200,4 +200,4 @@ class CFFL_Button : public CFFL_FormFiller {
   FX_BOOL m_bMouseDown;
 };
 
-#endif  // FPDFSDK_INCLUDE_FORMFILLER_FFL_FORMFILLER_H_
+#endif  // FPDFSDK_FORMFILLER_CFFL_FORMFILLER_H_

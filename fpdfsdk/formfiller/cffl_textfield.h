@@ -4,21 +4,31 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_FORMFILLER_FFL_LISTBOX_H_
-#define FPDFSDK_INCLUDE_FORMFILLER_FFL_LISTBOX_H_
+#ifndef FPDFSDK_FORMFILLER_CFFL_TEXTFIELD_H_
+#define FPDFSDK_FORMFILLER_CFFL_TEXTFIELD_H_
 
-#include <set>
+#include "fpdfsdk/formfiller/cffl_formfiller.h"
 
-#include "fpdfsdk/include/formfiller/FFL_FormFiller.h"
+#define BF_ALIGN_LEFT 0
+#define BF_ALIGN_MIDDLE 1
+#define BF_ALIGN_RIGHT 2
 
 class CBA_FontMap;
 
-class CFFL_ListBox : public CFFL_FormFiller {
- public:
-  CFFL_ListBox(CPDFDoc_Environment* pApp, CPDFSDK_Annot* pWidget);
-  ~CFFL_ListBox() override;
+struct FFL_TextFieldState {
+  int nStart;
+  int nEnd;
+  CFX_WideString sValue;
+};
 
-  // CFFL_FormFiller
+class CFFL_TextField : public CFFL_FormFiller,
+                       public IPWL_FocusHandler,
+                       public IPWL_Edit_Notify {
+ public:
+  CFFL_TextField(CPDFDoc_Environment* pApp, CPDFSDK_Annot* pAnnot);
+  ~CFFL_TextField() override;
+
+  // CFFL_FormFiller:
   PWL_CREATEPARAM GetCreateParam() override;
   CPWL_Wnd* NewPDFWindow(const PWL_CREATEPARAM& cp,
                          CPDFSDK_PageView* pPageView) override;
@@ -31,15 +41,29 @@ class CFFL_ListBox : public CFFL_FormFiller {
   void SetActionData(CPDFSDK_PageView* pPageView,
                      CPDF_AAction::AActionType type,
                      const PDFSDK_FieldAction& fa) override;
+  FX_BOOL IsActionDataChanged(CPDF_AAction::AActionType type,
+                              const PDFSDK_FieldAction& faOld,
+                              const PDFSDK_FieldAction& faNew) override;
   void SaveState(CPDFSDK_PageView* pPageView) override;
   void RestoreState(CPDFSDK_PageView* pPageView) override;
   CPWL_Wnd* ResetPDFWindow(CPDFSDK_PageView* pPageView,
                            FX_BOOL bRestoreValue) override;
 
+  // IPWL_FocusHandler:
+  void OnSetFocus(CPWL_Wnd* pWnd) override;
+  void OnKillFocus(CPWL_Wnd* pWnd) override;
+
+  // IPWL_Edit_Notify:
+  void OnAddUndo(CPWL_Edit* pEdit) override;
+
+#ifdef PDF_ENABLE_XFA
+  // CFFL_FormFiller:
+  FX_BOOL IsFieldFull(CPDFSDK_PageView* pPageView) override;
+#endif  // PDF_ENABLE_XFA
+
  private:
   CBA_FontMap* m_pFontMap;
-  std::set<int> m_OriginSelections;
-  CFX_ArrayTemplate<int> m_State;
+  FFL_TextFieldState m_State;
 };
 
-#endif  // FPDFSDK_INCLUDE_FORMFILLER_FFL_LISTBOX_H_
+#endif  // FPDFSDK_FORMFILLER_CFFL_TEXTFIELD_H_

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_FORMFILLER_FFL_CBA_FONTMAP_H_
-#define FPDFSDK_INCLUDE_FORMFILLER_FFL_CBA_FONTMAP_H_
+#ifndef FPDFSDK_FORMFILLER_CBA_FONTMAP_H_
+#define FPDFSDK_FORMFILLER_CBA_FONTMAP_H_
 
 #include "fpdfsdk/include/pdfwindow/PWL_FontMap.h"
 
@@ -43,4 +43,4 @@ class CBA_FontMap : public CPWL_FontMap {
   CFX_ByteString m_sAPType;
 };
 
-#endif  // FPDFSDK_INCLUDE_FORMFILLER_FFL_CBA_FONTMAP_H_
+#endif  // FPDFSDK_FORMFILLER_CBA_FONTMAP_H_

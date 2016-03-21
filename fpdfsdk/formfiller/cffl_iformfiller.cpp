@@ -4,17 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/formfiller/FFL_IFormFiller.h"
+#include "fpdfsdk/formfiller/cffl_iformfiller.h"
 
 #include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
-#include "fpdfsdk/include/formfiller/FFL_CheckBox.h"
-#include "fpdfsdk/include/formfiller/FFL_ComboBox.h"
-#include "fpdfsdk/include/formfiller/FFL_FormFiller.h"
-#include "fpdfsdk/include/formfiller/FFL_ListBox.h"
-#include "fpdfsdk/include/formfiller/FFL_PushButton.h"
-#include "fpdfsdk/include/formfiller/FFL_RadioButton.h"
-#include "fpdfsdk/include/formfiller/FFL_TextField.h"
+#include "fpdfsdk/formfiller/cffl_checkbox.h"
+#include "fpdfsdk/formfiller/cffl_combobox.h"
+#include "fpdfsdk/formfiller/cffl_formfiller.h"
+#include "fpdfsdk/formfiller/cffl_listbox.h"
+#include "fpdfsdk/formfiller/cffl_pushbutton.h"
+#include "fpdfsdk/formfiller/cffl_radiobutton.h"
+#include "fpdfsdk/formfiller/cffl_textfield.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Utils.h"
 

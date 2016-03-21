@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/formfiller/FFL_PushButton.h"
+#include "fpdfsdk/formfiller/cffl_pushbutton.h"
 
-#include "fpdfsdk/include/formfiller/FFL_FormFiller.h"
+#include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "fpdfsdk/include/pdfwindow/PWL_SpecialButton.h"
 
 CFFL_PushButton::CFFL_PushButton(CPDFDoc_Environment* pApp,

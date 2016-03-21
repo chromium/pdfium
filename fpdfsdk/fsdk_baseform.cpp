@@ -14,7 +14,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cfdf_document.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
-#include "fpdfsdk/include/formfiller/FFL_FormFiller.h"
+#include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "fpdfsdk/include/fsdk_actionhandler.h"
 #include "fpdfsdk/include/fsdk_baseannot.h"
 #include "fpdfsdk/include/fsdk_define.h"

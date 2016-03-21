@@ -4,29 +4,27 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_FORMFILLER_FFL_TEXTFIELD_H_
-#define FPDFSDK_INCLUDE_FORMFILLER_FFL_TEXTFIELD_H_
+#ifndef FPDFSDK_FORMFILLER_CFFL_COMBOBOX_H_
+#define FPDFSDK_FORMFILLER_CFFL_COMBOBOX_H_
 
-#include "fpdfsdk/include/formfiller/FFL_FormFiller.h"
-
-#define BF_ALIGN_LEFT 0
-#define BF_ALIGN_MIDDLE 1
-#define BF_ALIGN_RIGHT 2
+#include "core/include/fxcrt/fx_string.h"
+#include "fpdfsdk/formfiller/cffl_formfiller.h"
 
 class CBA_FontMap;
 
-struct FFL_TextFieldState {
+struct FFL_ComboBoxState {
+  int nIndex;
   int nStart;
   int nEnd;
   CFX_WideString sValue;
 };
 
-class CFFL_TextField : public CFFL_FormFiller,
-                       public IPWL_FocusHandler,
-                       public IPWL_Edit_Notify {
+class CFFL_ComboBox : public CFFL_FormFiller,
+                      public IPWL_FocusHandler,
+                      public IPWL_Edit_Notify {
  public:
-  CFFL_TextField(CPDFDoc_Environment* pApp, CPDFSDK_Annot* pAnnot);
-  ~CFFL_TextField() override;
+  CFFL_ComboBox(CPDFDoc_Environment* pApp, CPDFSDK_Annot* pWidget);
+  ~CFFL_ComboBox() override;
 
   // CFFL_FormFiller:
   PWL_CREATEPARAM GetCreateParam() override;
@@ -62,8 +60,10 @@ class CFFL_TextField : public CFFL_FormFiller,
 #endif  // PDF_ENABLE_XFA
 
  private:
+  CFX_WideString GetSelectExportText();
+
   CBA_FontMap* m_pFontMap;
-  FFL_TextFieldState m_State;
+  FFL_ComboBoxState m_State;
 };
 
-#endif  // FPDFSDK_INCLUDE_FORMFILLER_FFL_TEXTFIELD_H_
+#endif  // FPDFSDK_FORMFILLER_CFFL_COMBOBOX_H_

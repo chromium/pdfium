@@ -12,7 +12,7 @@
 #include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
-#include "fpdfsdk/include/formfiller/FFL_FormFiller.h"
+#include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "public/fpdf_ext.h"

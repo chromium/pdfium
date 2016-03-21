@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/formfiller/FFL_RadioButton.h"
+#include "fpdfsdk/formfiller/cffl_radiobutton.h"
 
-#include "fpdfsdk/include/formfiller/FFL_FormFiller.h"
+#include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/include/pdfwindow/PWL_SpecialButton.h"
 
