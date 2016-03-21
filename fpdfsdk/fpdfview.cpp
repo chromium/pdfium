@@ -282,7 +282,7 @@ int GetLastError() {
 #endif  // _WIN32
 
 void ProcessParseError(CPDF_Parser::Error err) {
-  FX_DWORD err_code;
+  FX_DWORD err_code = FPDF_ERR_SUCCESS;
   // Translate FPDFAPI error code to FPDFVIEW error code
   switch (err) {
     case CPDF_Parser::SUCCESS:

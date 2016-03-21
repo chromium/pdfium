@@ -522,7 +522,7 @@ FX_DWORD CFX_UnicodeEncodingEx::CharCodeFromUnicode(FX_WCHAR Unicode) const {
       return Unicode;
     }
   }
-  return -1;
+  return static_cast<FX_DWORD>(-1);
 }
 
 CFX_UnicodeEncodingEx* FX_CreateFontEncodingEx(CFX_Font* pFont,

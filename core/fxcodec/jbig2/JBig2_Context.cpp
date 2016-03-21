@@ -201,7 +201,7 @@ int32_t CJBig2_Context::getFirstPage(uint8_t* pBuf,
 }
 int32_t CJBig2_Context::Continue(IFX_Pause* pPause) {
   m_ProcessingStatus = FXCODEC_STATUS_DECODE_READY;
-  int32_t nRet;
+  int32_t nRet = 0;
   if (m_PauseStep <= 1) {
     nRet = decode_EmbedOrgnazation(pPause);
   } else if (m_PauseStep == 2) {
@@ -683,14 +683,14 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
   }
   pTRD->SBRTEMPLATE = (wFlags >> 15) & 0x0001;
 
-  uint8_t cSBHUFFFS;
-  uint8_t cSBHUFFDS;
-  uint8_t cSBHUFFDT;
-  uint8_t cSBHUFFRDW;
-  uint8_t cSBHUFFRDH;
-  uint8_t cSBHUFFRDX;
-  uint8_t cSBHUFFRDY;
-  uint8_t cSBHUFFRSIZE;
+  uint8_t cSBHUFFFS = 0;
+  uint8_t cSBHUFFDS = 0;
+  uint8_t cSBHUFFDT = 0;
+  uint8_t cSBHUFFRDW = 0;
+  uint8_t cSBHUFFRDH = 0;
+  uint8_t cSBHUFFRDX = 0;
+  uint8_t cSBHUFFRDY = 0;
+  uint8_t cSBHUFFRSIZE = 0;
   if (pTRD->SBHUFF == 1) {
     if (m_pStream->readShortInteger(&wFlags) != 0)
       return JBIG2_ERROR_TOO_SHORT;

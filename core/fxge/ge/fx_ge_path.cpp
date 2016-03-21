@@ -340,7 +340,9 @@ CFX_FloatRect CFX_PathData::GetBoundingBox(FX_FLOAT line_width,
                      -100000 * 1.0f);
   int iPoint = 0;
   FX_FLOAT half_width = line_width;
-  int iStartPoint, iEndPoint, iMiddlePoint;
+  int iStartPoint = 0;
+  int iEndPoint = 0;
+  int iMiddlePoint = 0;
   FX_BOOL bJoin;
   while (iPoint < m_PointCount) {
     if (m_pPoints[iPoint].m_Flag == FXPT_MOVETO) {

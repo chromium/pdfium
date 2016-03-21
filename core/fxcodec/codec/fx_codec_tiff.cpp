@@ -122,20 +122,20 @@ static toff_t _tiff_seek(thandle_t context, toff_t offset, int whence) {
     case 2:
       if (pTiffContext->isDecoder) {
         if (pTiffContext->io.in->GetSize() < (FX_FILESIZE)offset) {
-          return -1;
+          return static_cast<toff_t>(-1);
         }
         pTiffContext->offset =
             (FX_DWORD)(pTiffContext->io.in->GetSize() - offset);
       } else {
         if (pTiffContext->io.out->GetSize() < (FX_FILESIZE)offset) {
-          return -1;
+          return static_cast<toff_t>(-1);
         }
         pTiffContext->offset =
             (FX_DWORD)(pTiffContext->io.out->GetSize() - offset);
       }
       break;
     default:
-      return -1;
+      return static_cast<toff_t>(-1);
   }
   ASSERT(pTiffContext->isDecoder ? (pTiffContext->offset <=
                                     (FX_DWORD)pTiffContext->io.in->GetSize())

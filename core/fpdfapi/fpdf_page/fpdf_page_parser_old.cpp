@@ -41,11 +41,11 @@ CPDF_StreamParser::~CPDF_StreamParser() {
   }
 }
 
-FX_DWORD _DecodeAllScanlines(ICodec_ScanlineDecoder* pDecoder,
-                             uint8_t*& dest_buf,
-                             FX_DWORD& dest_size) {
+FX_DWORD DecodeAllScanlines(ICodec_ScanlineDecoder* pDecoder,
+                            uint8_t*& dest_buf,
+                            FX_DWORD& dest_size) {
   if (!pDecoder) {
-    return (FX_DWORD)-1;
+    return static_cast<FX_DWORD>(-1);
   }
   int ncomps = pDecoder->CountComps();
   int bpc = pDecoder->GetBPC();
@@ -54,7 +54,7 @@ FX_DWORD _DecodeAllScanlines(ICodec_ScanlineDecoder* pDecoder,
   int pitch = (width * ncomps * bpc + 7) / 8;
   if (height == 0 || pitch > (1 << 30) / height) {
     delete pDecoder;
-    return -1;
+    return static_cast<FX_DWORD>(-1);
   }
   dest_buf = FX_Alloc2D(uint8_t, pitch, height);
   dest_size = pitch * height;  // Safe since checked alloc returned.
@@ -88,7 +88,7 @@ FX_DWORD PDF_DecodeInlineStream(const uint8_t* src_buf,
   if (decoder == "CCITTFaxDecode" || decoder == "CCF") {
     ICodec_ScanlineDecoder* pDecoder =
         FPDFAPI_CreateFaxDecoder(src_buf, limit, width, height, pParam);
-    return _DecodeAllScanlines(pDecoder, dest_buf, dest_size);
+    return DecodeAllScanlines(pDecoder, dest_buf, dest_size);
   }
   if (decoder == "ASCII85Decode" || decoder == "A85") {
     return A85Decode(src_buf, limit, dest_buf, dest_size);
@@ -109,7 +109,7 @@ FX_DWORD PDF_DecodeInlineStream(const uint8_t* src_buf,
         CPDF_ModuleMgr::Get()->GetJpegModule()->CreateDecoder(
             src_buf, limit, width, height, 0,
             pParam ? pParam->GetIntegerBy("ColorTransform", 1) : 1);
-    return _DecodeAllScanlines(pDecoder, dest_buf, dest_size);
+    return DecodeAllScanlines(pDecoder, dest_buf, dest_size);
   }
   if (decoder == "RunLengthDecode" || decoder == "RL") {
     return RunLengthDecode(src_buf, limit, dest_buf, dest_size);

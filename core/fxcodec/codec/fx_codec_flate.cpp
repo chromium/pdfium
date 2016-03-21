@@ -147,7 +147,7 @@ int CLZWDecoder::Decode(uint8_t* dest_buf,
   m_Early = bEarlyChange ? 1 : 0;
   m_nCodes = 0;
   FX_DWORD old_code = (FX_DWORD)-1;
-  uint8_t last_char;
+  uint8_t last_char = 0;
   while (1) {
     if (m_InPos + m_CodeLen > src_size * 8) {
       break;
@@ -942,7 +942,7 @@ FX_DWORD CCodec_FlateModule::FlateOrLZWDecode(FX_BOOL bLZW,
       offset = src_size;
       int err = decoder->Decode(NULL, dest_size, src_buf, offset, bEarlyChange);
       if (err || dest_size == 0 || dest_size + 1 < dest_size) {
-        return -1;
+        return static_cast<FX_DWORD>(-1);
       }
     }
     {
@@ -965,7 +965,7 @@ FX_DWORD CCodec_FlateModule::FlateOrLZWDecode(FX_BOOL bLZW,
     ret =
         TIFF_Predictor(dest_buf, dest_size, Colors, BitsPerComponent, Columns);
   }
-  return ret ? offset : -1;
+  return ret ? offset : static_cast<FX_DWORD>(-1);
 }
 FX_BOOL CCodec_FlateModule::Encode(const uint8_t* src_buf,
                                    FX_DWORD src_size,

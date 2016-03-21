@@ -15,48 +15,39 @@
 
 CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
                                              JBig2ArithCtx* grContext) {
-  int32_t STRIPT, FIRSTS;
-  FX_DWORD NINSTANCES;
-  int32_t DT, DFS, CURS;
-  int32_t SI, TI;
-  CJBig2_Image* IBI;
-  FX_DWORD WI, HI;
-  int32_t IDS;
-  FX_BOOL RI;
-  int32_t RDWI, RDHI, RDXI, RDYI;
-  CJBig2_Image* IBOI;
-  FX_DWORD WOI, HOI;
-  FX_BOOL bFirst;
-  FX_DWORD nTmp;
-  int32_t nVal, nBits;
   std::unique_ptr<CJBig2_HuffmanDecoder> pHuffmanDecoder(
       new CJBig2_HuffmanDecoder(pStream));
   std::unique_ptr<CJBig2_Image> SBREG(new CJBig2_Image(SBW, SBH));
   SBREG->fill(SBDEFPIXEL);
+  int32_t STRIPT;
   if (pHuffmanDecoder->decodeAValue(SBHUFFDT, &STRIPT) != 0)
     return nullptr;
 
   STRIPT *= SBSTRIPS;
   STRIPT = -STRIPT;
-  FIRSTS = 0;
-  NINSTANCES = 0;
+  FX_DWORD NINSTANCES = 0;
   while (NINSTANCES < SBNUMINSTANCES) {
+    int32_t DT;
     if (pHuffmanDecoder->decodeAValue(SBHUFFDT, &DT) != 0)
       return nullptr;
 
     DT *= SBSTRIPS;
     STRIPT = STRIPT + DT;
-    bFirst = TRUE;
+    bool bFirst = true;
+    int32_t FIRSTS = 0;
+    int32_t CURS = 0;
     for (;;) {
       if (bFirst) {
+        int32_t DFS;
         if (pHuffmanDecoder->decodeAValue(SBHUFFFS, &DFS) != 0)
           return nullptr;
 
         FIRSTS = FIRSTS + DFS;
         CURS = FIRSTS;
-        bFirst = FALSE;
+        bFirst = false;
       } else {
-        nVal = pHuffmanDecoder->decodeAValue(SBHUFFDS, &IDS);
+        int32_t IDS;
+        int32_t nVal = pHuffmanDecoder->decodeAValue(SBHUFFDS, &IDS);
         if (nVal == JBIG2_OOB) {
           break;
         } else if (nVal != 0) {
@@ -67,20 +58,22 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
       }
       uint8_t CURT = 0;
       if (SBSTRIPS != 1) {
-        nTmp = 1;
+        FX_DWORD nTmp = 1;
         while ((FX_DWORD)(1 << nTmp) < SBSTRIPS) {
           nTmp++;
         }
+        int32_t nVal;
         if (pStream->readNBits(nTmp, &nVal) != 0)
           return nullptr;
 
         CURT = nVal;
       }
-      TI = STRIPT + CURT;
-      nVal = 0;
-      nBits = 0;
+      int32_t TI = STRIPT + CURT;
+      int32_t nVal = 0;
+      int32_t nBits = 0;
       FX_DWORD IDI;
       for (;;) {
+        FX_DWORD nTmp;
         if (pStream->read1Bit(&nTmp) != 0)
           return nullptr;
 
@@ -96,16 +89,18 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
           break;
         }
       }
-      if (SBREFINE == 0) {
-        RI = 0;
-      } else {
-        if (pStream->read1Bit(&RI) != 0) {
-          return nullptr;
-        }
+      FX_BOOL RI = 0;
+      if (SBREFINE != 0 && pStream->read1Bit(&RI) != 0) {
+        return nullptr;
       }
+      CJBig2_Image* IBI = nullptr;
       if (RI == 0) {
         IBI = SBSYMS[IDI];
       } else {
+        int32_t RDWI;
+        int32_t RDHI;
+        int32_t RDXI;
+        int32_t RDYI;
         if ((pHuffmanDecoder->decodeAValue(SBHUFFRDW, &RDWI) != 0) ||
             (pHuffmanDecoder->decodeAValue(SBHUFFRDH, &RDHI) != 0) ||
             (pHuffmanDecoder->decodeAValue(SBHUFFRDX, &RDXI) != 0) ||
@@ -114,13 +109,13 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
           return nullptr;
         }
         pStream->alignByte();
-        nTmp = pStream->getOffset();
-        IBOI = SBSYMS[IDI];
+        FX_DWORD nTmp = pStream->getOffset();
+        CJBig2_Image* IBOI = SBSYMS[IDI];
         if (!IBOI)
           return nullptr;
 
-        WOI = IBOI->m_nWidth;
-        HOI = IBOI->m_nHeight;
+        FX_DWORD WOI = IBOI->m_nWidth;
+        FX_DWORD HOI = IBOI->m_nHeight;
         if ((int)(WOI + RDWI) < 0 || (int)(HOI + RDHI) < 0)
           return nullptr;
 
@@ -155,8 +150,8 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
       if (!IBI) {
         continue;
       }
-      WI = IBI->m_nWidth;
-      HI = IBI->m_nHeight;
+      FX_DWORD WI = IBI->m_nWidth;
+      FX_DWORD HI = IBI->m_nHeight;
       if (TRANSPOSED == 0 && ((REFCORNER == JBIG2_CORNER_TOPRIGHT) ||
                               (REFCORNER == JBIG2_CORNER_BOTTOMRIGHT))) {
         CURS = CURS + WI - 1;
@@ -164,7 +159,7 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
                                      (REFCORNER == JBIG2_CORNER_BOTTOMRIGHT))) {
         CURS = CURS + HI - 1;
       }
-      SI = CURS;
+      int32_t SI = CURS;
       if (TRANSPOSED == 0) {
         switch (REFCORNER) {
           case JBIG2_CORNER_TOPLEFT:
@@ -277,7 +272,7 @@ CJBig2_Image* CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
   int32_t FIRSTS = 0;
   FX_DWORD NINSTANCES = 0;
   while (NINSTANCES < SBNUMINSTANCES) {
-    int32_t CURS;
+    int32_t CURS = 0;
     int32_t DT;
     pIADT->decode(pArithDecoder, &DT);
     DT *= SBSTRIPS;

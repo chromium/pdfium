@@ -1538,9 +1538,8 @@ CPDF_Parser::Error CPDF_Parser::StartAsyncParse(IFX_FileRead* pFileAccess) {
   FX_FILESIZE dwFirstXRefOffset = m_pSyntax->SavePos();
 
   FX_BOOL bXRefRebuilt = FALSE;
-  FX_BOOL bLoadV4 = FALSE;
-  if (!(bLoadV4 = LoadCrossRefV4(dwFirstXRefOffset, 0, FALSE)) &&
-      !LoadCrossRefV5(&dwFirstXRefOffset, TRUE)) {
+  FX_BOOL bLoadV4 = LoadCrossRefV4(dwFirstXRefOffset, 0, FALSE);
+  if (!bLoadV4 && !LoadCrossRefV5(&dwFirstXRefOffset, TRUE)) {
     if (!RebuildCrossRef())
       return FORMAT_ERROR;
 

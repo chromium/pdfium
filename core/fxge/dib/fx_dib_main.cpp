@@ -1234,14 +1234,31 @@ void CFX_DIBitmap::DownSampleScanline(int line,
     }
   }
 }
+
+// TODO(weili): Split this function into two for handling CMYK and RGB
+// colors separately.
 FX_BOOL CFX_DIBitmap::ConvertColorScale(FX_DWORD forecolor,
                                         FX_DWORD backcolor) {
   ASSERT(!IsAlphaMask());
   if (!m_pBuffer || IsAlphaMask()) {
     return FALSE;
   }
-  int fc, fm, fy, fk, bc, bm, by, bk;
-  int fr, fg, fb, br, bg, bb;
+  // Values used for CMYK colors.
+  int fc = 0;
+  int fm = 0;
+  int fy = 0;
+  int fk = 0;
+  int bc = 0;
+  int bm = 0;
+  int by = 0;
+  int bk = 0;
+  // Values used for RGB colors.
+  int fr = 0;
+  int fg = 0;
+  int fb = 0;
+  int br = 0;
+  int bg = 0;
+  int bb = 0;
   FX_BOOL isCmykImage = IsCmykImage();
   if (isCmykImage) {
     fc = FXSYS_GetCValue(forecolor);

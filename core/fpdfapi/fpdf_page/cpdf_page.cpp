@@ -140,7 +140,12 @@ void CPDF_Page::GetDisplayMatrix(CFX_Matrix& matrix,
     return;
   }
   CFX_Matrix display_matrix;
-  int x0, y0, x1, y1, x2, y2;
+  int x0 = 0;
+  int y0 = 0;
+  int x1 = 0;
+  int y1 = 0;
+  int x2 = 0;
+  int y2 = 0;
   iRotate %= 4;
   switch (iRotate) {
     case 0:

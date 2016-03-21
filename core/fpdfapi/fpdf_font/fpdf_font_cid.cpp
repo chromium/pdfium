@@ -1584,7 +1584,8 @@ void CPDF_CIDFont::LoadMetricsArray(CPDF_Array* pArray,
                                     int nElements) {
   int width_status = 0;
   int iCurElement = 0;
-  int first_code = 0, last_code;
+  int first_code = 0;
+  int last_code = 0;
   FX_DWORD count = pArray->GetCount();
   for (FX_DWORD i = 0; i < count; i++) {
     CPDF_Object* pObj = pArray->GetElementValue(i);

@@ -982,7 +982,7 @@ static GpPen* _GdipCreatePen(const CFX_GraphStateData* pGraphState,
   }
   GpPen* pPen = NULL;
   CallFunc(GdipCreatePen1)((ARGB)argb, width, UnitWorld, &pPen);
-  LineCap lineCap;
+  LineCap lineCap = LineCapFlat;
   DashCap dashCap = DashCapFlat;
   FX_BOOL bDashExtend = FALSE;
   switch (pGraphState->m_LineCap) {
@@ -1000,7 +1000,7 @@ static GpPen* _GdipCreatePen(const CFX_GraphStateData* pGraphState,
       break;
   }
   CallFunc(GdipSetPenLineCap197819)(pPen, lineCap, lineCap, dashCap);
-  LineJoin lineJoin;
+  LineJoin lineJoin = LineJoinMiterClipped;
   switch (pGraphState->m_LineJoin) {
     case CFX_GraphStateData::LineJoinMiter:
       lineJoin = LineJoinMiterClipped;

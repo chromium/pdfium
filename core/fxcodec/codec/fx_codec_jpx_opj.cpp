@@ -24,16 +24,17 @@ static void fx_warning_callback(const char* msg, void* client_data) {
 static void fx_info_callback(const char* msg, void* client_data) {
   (void)client_data;
 }
+
 OPJ_SIZE_T opj_read_from_memory(void* p_buffer,
                                 OPJ_SIZE_T nb_bytes,
                                 void* p_user_data) {
   DecodeData* srcData = static_cast<DecodeData*>(p_user_data);
   if (!srcData || !srcData->src_data || srcData->src_size == 0) {
-    return -1;
+    return static_cast<OPJ_SIZE_T>(-1);
   }
   // Reads at EOF return an error code.
   if (srcData->offset >= srcData->src_size) {
-    return -1;
+    return static_cast<OPJ_SIZE_T>(-1);
   }
   OPJ_SIZE_T bufferLength = srcData->src_size - srcData->offset;
   OPJ_SIZE_T readlength = nb_bytes < bufferLength ? nb_bytes : bufferLength;
@@ -41,16 +42,17 @@ OPJ_SIZE_T opj_read_from_memory(void* p_buffer,
   srcData->offset += readlength;
   return readlength;
 }
+
 OPJ_SIZE_T opj_write_from_memory(void* p_buffer,
                                  OPJ_SIZE_T nb_bytes,
                                  void* p_user_data) {
   DecodeData* srcData = static_cast<DecodeData*>(p_user_data);
   if (!srcData || !srcData->src_data || srcData->src_size == 0) {
-    return -1;
+    return static_cast<OPJ_SIZE_T>(-1);
   }
   // Writes at EOF return an error code.
   if (srcData->offset >= srcData->src_size) {
-    return -1;
+    return static_cast<OPJ_SIZE_T>(-1);
   }
   OPJ_SIZE_T bufferLength = srcData->src_size - srcData->offset;
   OPJ_SIZE_T writeLength = nb_bytes < bufferLength ? nb_bytes : bufferLength;
@@ -58,17 +60,18 @@ OPJ_SIZE_T opj_write_from_memory(void* p_buffer,
   srcData->offset += writeLength;
   return writeLength;
 }
+
 OPJ_OFF_T opj_skip_from_memory(OPJ_OFF_T nb_bytes, void* p_user_data) {
   DecodeData* srcData = static_cast<DecodeData*>(p_user_data);
   if (!srcData || !srcData->src_data || srcData->src_size == 0) {
-    return -1;
+    return static_cast<OPJ_OFF_T>(-1);
   }
   // Offsets are signed and may indicate a negative skip. Do not support this
   // because of the strange return convention where either bytes skipped or
   // -1 is returned. Following that convention, a successful relative seek of
   // -1 bytes would be required to to give the same result as the error case.
   if (nb_bytes < 0) {
-    return -1;
+    return static_cast<OPJ_OFF_T>(-1);
   }
   // FIXME: use std::make_unsigned<OPJ_OFF_T>::type once c++11 lib is OK'd.
   uint64_t unsignedNbBytes = static_cast<uint64_t>(nb_bytes);
@@ -89,6 +92,7 @@ OPJ_OFF_T opj_skip_from_memory(OPJ_OFF_T nb_bytes, void* p_user_data) {
   }
   return nb_bytes;
 }
+
 OPJ_BOOL opj_seek_from_memory(OPJ_OFF_T nb_bytes, void* p_user_data) {
   DecodeData* srcData = static_cast<DecodeData*>(p_user_data);
   if (!srcData || !srcData->src_data || srcData->src_size == 0) {

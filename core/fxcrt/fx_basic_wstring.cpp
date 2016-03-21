@@ -640,13 +640,12 @@ FX_STRSIZE CFX_WideString::Replace(const FX_WCHAR* lpszOld,
   FX_STRSIZE nCount = 0;
   FX_WCHAR* lpszStart = m_pData->m_String;
   FX_WCHAR* lpszEnd = m_pData->m_String + m_pData->m_nDataLength;
-  FX_WCHAR* lpszTarget;
-  {
-    while ((lpszTarget = (FX_WCHAR*)FXSYS_wcsstr(lpszStart, lpszOld)) &&
-           lpszStart < lpszEnd) {
-      nCount++;
-      lpszStart = lpszTarget + nSourceLen;
-    }
+  while (lpszStart < lpszEnd) {
+    FX_WCHAR* lpszTarget = FXSYS_wcsstr(lpszStart, lpszOld);
+    if (!lpszTarget)
+      break;
+    nCount++;
+    lpszStart = lpszTarget + nSourceLen;
   }
   if (nCount > 0) {
     CopyBeforeWrite();
@@ -667,9 +666,10 @@ FX_STRSIZE CFX_WideString::Replace(const FX_WCHAR* lpszOld,
     lpszStart = m_pData->m_String;
     lpszEnd = m_pData->m_String + std::max(m_pData->m_nDataLength, nNewLength);
     {
-      while ((lpszTarget = (FX_WCHAR*)FXSYS_wcsstr(lpszStart, lpszOld)) !=
-                 NULL &&
-             lpszStart < lpszEnd) {
+      while (lpszStart < lpszEnd) {
+        FX_WCHAR* lpszTarget = FXSYS_wcsstr(lpszStart, lpszOld);
+        if (!lpszTarget)
+          break;
         FX_STRSIZE nBalance =
             nOldLength -
             (FX_STRSIZE)(lpszTarget - m_pData->m_String + nSourceLen);

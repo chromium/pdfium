@@ -140,12 +140,12 @@ CFX_GlyphBitmap* CPDF_Type3Cache::RenderGlyph(CPDF_Type3Glyphs* pSize,
   text_matrix.Set(pMatrix->a, pMatrix->b, pMatrix->c, pMatrix->d, 0, 0);
   image_matrix.Concat(text_matrix);
   CFX_DIBitmap* pResBitmap = NULL;
-  int left, top;
+  int left = 0;
+  int top = 0;
   if (FXSYS_fabs(image_matrix.b) < FXSYS_fabs(image_matrix.a) / 100 &&
       FXSYS_fabs(image_matrix.c) < FXSYS_fabs(image_matrix.d) / 100) {
-    int top_line, bottom_line;
-    top_line = _DetectFirstLastScan(pBitmap, TRUE);
-    bottom_line = _DetectFirstLastScan(pBitmap, FALSE);
+    int top_line = _DetectFirstLastScan(pBitmap, TRUE);
+    int bottom_line = _DetectFirstLastScan(pBitmap, FALSE);
     if (top_line == 0 && bottom_line == pBitmap->GetHeight() - 1) {
       FX_FLOAT top_y = image_matrix.d + image_matrix.f;
       FX_FLOAT bottom_y = image_matrix.f;
@@ -167,7 +167,6 @@ CFX_GlyphBitmap* CPDF_Type3Cache::RenderGlyph(CPDF_Type3Glyphs* pSize,
       } else {
         left = FXSYS_round(image_matrix.e);
       }
-    } else {
     }
   }
   if (!pResBitmap) {

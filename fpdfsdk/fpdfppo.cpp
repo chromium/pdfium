@@ -86,8 +86,7 @@ FX_BOOL CPDF_PageOrganizer::PDFDocInit(CPDF_Document* pDestPDFDoc,
   CPDF_Array* pKeysArray = pNewPages->GetArrayBy("Kids");
   if (!pKeysArray) {
     CPDF_Array* pNewKids = new CPDF_Array;
-    FX_DWORD Kidsobjnum = -1;
-    Kidsobjnum = pDestPDFDoc->AddIndirectObject(pNewKids);
+    FX_DWORD Kidsobjnum = pDestPDFDoc->AddIndirectObject(pNewKids);
 
     pNewPages->SetAt("Kids", new CPDF_Reference(pDestPDFDoc, Kidsobjnum));
     pNewPages->SetAt("Count", new CPDF_Number(0));

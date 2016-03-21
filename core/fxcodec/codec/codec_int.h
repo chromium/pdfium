@@ -47,7 +47,6 @@ class CCodec_ScanlineDecoder : public ICodec_ScanlineDecoder {
   ~CCodec_ScanlineDecoder() override;
 
   // ICodec_ScanlineDecoder
-  FX_DWORD GetSrcOffset() override { return -1; }
   void DownScale(int dest_width, int dest_height) override;
   const uint8_t* GetScanline(int line) override;
   FX_BOOL SkipToScanline(int line, IFX_Pause* pPause) override;

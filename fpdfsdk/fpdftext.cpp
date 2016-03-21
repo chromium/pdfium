@@ -51,7 +51,7 @@ DLLEXPORT int STDCALL FPDFText_CountChars(FPDF_TEXTPAGE text_page) {
 DLLEXPORT unsigned int STDCALL FPDFText_GetUnicode(FPDF_TEXTPAGE text_page,
                                                    int index) {
   if (!text_page)
-    return -1;
+    return 0;
   IPDF_TextPage* textpage = (IPDF_TextPage*)text_page;
 
   if (index < 0 || index >= textpage->CountChars())

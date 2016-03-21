@@ -924,7 +924,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert) {
     pFontDict = new CPDF_Dictionary;
     CFX_ByteString cmap;
     CFX_ByteString ordering;
-    int supplement;
+    int supplement = 0;
     CPDF_Array* pWidthArray = new CPDF_Array;
     switch (charset) {
       case FXFONT_CHINESEBIG5_CHARSET:
@@ -936,7 +936,8 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert) {
         break;
       case FXFONT_GB2312_CHARSET:
         cmap = bVert ? "GBK-EUC-V" : "GBK-EUC-H";
-        ordering = "GB1", supplement = 2;
+        ordering = "GB1";
+        supplement = 2;
         pWidthArray->AddInteger(7716);
         _InsertWidthArray1(pFont, pEncoding.get(), 0x20, 0x20, pWidthArray);
         pWidthArray->AddInteger(814);

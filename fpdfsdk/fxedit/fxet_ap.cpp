@@ -18,12 +18,10 @@ CFX_ByteString GetPDFWordString(IFX_Edit_FontMap* pFontMap,
     if (SubWord > 0) {
       Word = SubWord;
     } else {
-      FX_DWORD dwCharCode = -1;
-
-      if (pPDFFont->IsUnicodeCompatible())
-        dwCharCode = pPDFFont->CharCodeFromUnicode(Word);
-      else
-        dwCharCode = pFontMap->CharCodeFromUnicode(nFontIndex, Word);
+      FX_DWORD dwCharCode =
+          pPDFFont->IsUnicodeCompatible()
+              ? pPDFFont->CharCodeFromUnicode(Word)
+              : pFontMap->CharCodeFromUnicode(nFontIndex, Word);
 
       if (dwCharCode > 0) {
         pPDFFont->AppendChar(sWord, dwCharCode);

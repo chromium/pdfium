@@ -375,7 +375,10 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
   uint8_t* dest_buf = bitmap.GetBuffer();
   int dest_pitch = bitmap.GetPitch();
   int Bpp = bitmap.GetBPP() / 8;
-  int a, r, g, b;
+  int a = 0;
+  int r = 0;
+  int g = 0;
+  int b = 0;
   if (anti_alias == FXFT_RENDER_MODE_LCD) {
     _Color2Argb(fill_color, fill_color, alpha_flag | (1 << 24), pIccTransform);
     ArgbDecode(fill_color, a, r, g, b);

@@ -303,8 +303,8 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
     pDRDict = pFormDict->GetDictBy("DR");
     bUseFormRes = TRUE;
   }
-  CPDF_Dictionary* pDRFontDict = NULL;
-  if (pDRDict && (pDRFontDict = pDRDict->GetDictBy("Font"))) {
+  CPDF_Dictionary* pDRFontDict = pDRDict ? pDRDict->GetDictBy("Font") : nullptr;
+  if (pDRFontDict) {
     pFontDict = pDRFontDict->GetDictBy(sFontName.Mid(1));
     if (!pFontDict && !bUseFormRes) {
       pDRDict = pFormDict->GetDictBy("DR");
