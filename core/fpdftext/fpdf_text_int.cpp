@@ -1804,7 +1804,12 @@ FX_BOOL CPDF_TextPage::IsSameTextObject(CPDF_TextObject* pTextObj1,
   if (nPreCount != nCurCount) {
     return FALSE;
   }
-  CPDF_TextObjectItem itemPer, itemCur;
+  // If both objects have no items, consider them same.
+  if (!nPreCount)
+    return TRUE;
+
+  CPDF_TextObjectItem itemPer = {0, 0.0f, 0.0f};
+  CPDF_TextObjectItem itemCur = {0, 0.0f, 0.0f};
   for (int i = 0; i < nPreCount; i++) {
     pTextObj2->GetItemInfo(i, &itemPer);
     pTextObj1->GetItemInfo(i, &itemCur);
@@ -1823,6 +1828,7 @@ FX_BOOL CPDF_TextPage::IsSameTextObject(CPDF_TextObject* pTextObj1,
   }
   return TRUE;
 }
+
 FX_BOOL CPDF_TextPage::IsSameAsPreTextObject(
     CPDF_TextObject* pTextObj,
     const CPDF_PageObjectList* pObjList,
