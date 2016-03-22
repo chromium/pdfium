@@ -566,7 +566,9 @@ const FX_HATCHDATA hatchBitmapData[FX_HATCHSTYLE_Total] = {
 }  // namespace
 
 CFX_Graphics::CFX_Graphics()
-    : m_renderDevice(nullptr), m_aggGraphics(nullptr) {}
+    : m_type(FX_CONTEXT_None),
+      m_renderDevice(nullptr),
+      m_aggGraphics(nullptr) {}
 
 FX_ERR CFX_Graphics::Create(CFX_RenderDevice* renderDevice,
                             FX_BOOL isAntialiasing) {
