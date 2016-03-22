@@ -52,6 +52,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes(CXFA_ResolveNodesData& rnd) {
       return XFA_ResolveNodes_NumberSign(rnd);
     case '*':
       return XFA_ResolveNodes_Asterisk(rnd);
+    // TODO(dsinclair@chromium.org): We could probably remove this.
     case '.':
       return XFA_ResolveNodes_AnyChild(rnd);
     default:
@@ -85,7 +86,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes(CXFA_ResolveNodesData& rnd) {
 }
 int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_AnyChild(
     CXFA_ResolveNodesData& rnd) {
-  CFX_WideString wsName = rnd.m_wsName.Right(rnd.m_wsName.GetLength() - 1);
+  CFX_WideString wsName = rnd.m_wsName;
   CFX_WideString wsCondition = rnd.m_wsCondition;
   CXFA_Node* findNode = NULL;
   CXFA_NodeArray siblings;
@@ -546,7 +547,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_GetFilter(
         continue;
       }
       if (nNameCount == 0) {
-        pNameBuf[nNameCount++] = wCur;
+        rnd.m_dwStyles |= XFA_RESOLVENODE_AnyChild;
         continue;
       }
       FX_WCHAR wLookahead = nStart < iLength ? pSrc[nStart] : 0;
