@@ -237,25 +237,20 @@ FX_BOOL CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
           if (IXFA_Widget* hGroupWidget = GetGroupMixXFAWidget()) {
             CXFA_WidgetAcc* pAcc = pXFAWidgetHandler->GetDataAcc(hGroupWidget);
             param.m_pTarget = pAcc;
-            pXFAWidgetHandler->ProcessEvent(pAcc, &param);
+            if (pXFAWidgetHandler->ProcessEvent(pAcc, &param) !=
+                XFA_EVENTERROR_Success) {
+              return FALSE;
+            }
           }
-
-          {
-            CXFA_WidgetAcc* pAcc = pXFAWidgetHandler->GetDataAcc(hWidget);
-            param.m_pTarget = pAcc;
-            int32_t nRet = pXFAWidgetHandler->ProcessEvent(pAcc, &param);
-            return nRet == XFA_EVENTERROR_Success;
-          }
-        } else {
-          CXFA_WidgetAcc* pAcc = pXFAWidgetHandler->GetDataAcc(hWidget);
-          param.m_pTarget = pAcc;
-          int32_t nRet = pXFAWidgetHandler->ProcessEvent(pAcc, &param);
-          return nRet == XFA_EVENTERROR_Success;
         }
+        CXFA_WidgetAcc* pAcc = pXFAWidgetHandler->GetDataAcc(hWidget);
+        param.m_pTarget = pAcc;
+        int32_t nRet = pXFAWidgetHandler->ProcessEvent(pAcc, &param);
 
         if (IXFA_DocView* pDocView = pDoc->GetXFADocView()) {
           pDocView->UpdateDocView();
         }
+        return nRet == XFA_EVENTERROR_Success;
       }
     }
   }
