@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/pdfwindow/PWL_ListBox.h"
+#include "fpdfsdk/pdfwindow/PWL_ListBox.h"
 
-#include "fpdfsdk/include/pdfwindow/PWL_Edit.h"
-#include "fpdfsdk/include/pdfwindow/PWL_EditCtrl.h"
-#include "fpdfsdk/include/pdfwindow/PWL_ScrollBar.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Utils.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
+#include "fpdfsdk/pdfwindow/PWL_Edit.h"
+#include "fpdfsdk/pdfwindow/PWL_EditCtrl.h"
+#include "fpdfsdk/pdfwindow/PWL_ScrollBar.h"
+#include "fpdfsdk/pdfwindow/PWL_Utils.h"
+#include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 #include "public/fpdf_fwlevent.h"
 
 #define IsFloatZero(f) ((f) < 0.0001 && (f) > -0.0001)

@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/pdfwindow/PWL_Caret.h"
+#include "fpdfsdk/pdfwindow/PWL_Caret.h"
 
 #include "core/include/fxge/fx_ge.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Utils.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
+#include "fpdfsdk/pdfwindow/PWL_Utils.h"
+#include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
 #define PWL_CARET_FLASHINTERVAL 500
 

@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/pdfwindow/PWL_FontMap.h"
+#include "fpdfsdk/pdfwindow/PWL_FontMap.h"
 
 #include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 #include "core/fpdfapi/fpdf_font/include/cpdf_fontencoding.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
+#include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
 namespace {
 

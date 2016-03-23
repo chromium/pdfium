@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/pdfwindow/PWL_Icon.h"
+#include "fpdfsdk/pdfwindow/PWL_Icon.h"
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Utils.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
+#include "fpdfsdk/pdfwindow/PWL_Utils.h"
+#include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
 CPWL_Image::CPWL_Image() : m_pPDFStream(NULL) {}
 

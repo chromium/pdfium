@@ -8,7 +8,7 @@
 
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
-#include "fpdfsdk/include/pdfwindow/PWL_SpecialButton.h"
+#include "fpdfsdk/pdfwindow/PWL_SpecialButton.h"
 
 CFFL_RadioButton::CFFL_RadioButton(CPDFDoc_Environment* pApp,
                                    CPDFSDK_Annot* pWidget)

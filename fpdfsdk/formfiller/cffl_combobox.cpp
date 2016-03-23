@@ -11,7 +11,7 @@
 #include "fpdfsdk/formfiller/cffl_iformfiller.h"
 #include "fpdfsdk/include/fsdk_common.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
-#include "fpdfsdk/include/pdfwindow/PWL_ComboBox.h"
+#include "fpdfsdk/pdfwindow/PWL_ComboBox.h"
 
 CFFL_ComboBox::CFFL_ComboBox(CPDFDoc_Environment* pApp, CPDFSDK_Annot* pAnnot)
     : CFFL_FormFiller(pApp, pAnnot), m_pFontMap(NULL) {

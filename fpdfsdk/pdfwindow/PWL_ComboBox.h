@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_COMBOBOX_H_
-#define FPDFSDK_INCLUDE_PDFWINDOW_PWL_COMBOBOX_H_
+#ifndef FPDFSDK_PDFWINDOW_PWL_COMBOBOX_H_
+#define FPDFSDK_PDFWINDOW_PWL_COMBOBOX_H_
 
-#include "fpdfsdk/include/pdfwindow/PWL_Edit.h"
-#include "fpdfsdk/include/pdfwindow/PWL_ListBox.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
+#include "fpdfsdk/pdfwindow/PWL_Edit.h"
+#include "fpdfsdk/pdfwindow/PWL_ListBox.h"
+#include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
 class CPWL_CBEdit : public CPWL_Edit {
  public:
@@ -103,4 +103,4 @@ class CPWL_ComboBox : public CPWL_Wnd {
   void* m_pFormFiller;
 };
 
-#endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_COMBOBOX_H_
+#endif  // FPDFSDK_PDFWINDOW_PWL_COMBOBOX_H_

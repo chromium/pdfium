@@ -6,9 +6,9 @@
 
 #include <map>
 
-#include "fpdfsdk/include/pdfwindow/PWL_ScrollBar.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Utils.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
+#include "fpdfsdk/pdfwindow/PWL_ScrollBar.h"
+#include "fpdfsdk/pdfwindow/PWL_Utils.h"
+#include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
 static std::map<int32_t, CPWL_Timer*>& GetPWLTimeMap() {
   // Leak the object at shutdown.

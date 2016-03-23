@@ -7,7 +7,7 @@
 #include "public/fpdf_sysfontinfo.h"
 
 #include "fpdfsdk/include/fsdk_define.h"
-#include "fpdfsdk/include/pdfwindow/PWL_FontMap.h"
+#include "fpdfsdk/pdfwindow/PWL_FontMap.h"
 
 class CFX_ExternalFontInfo final : public IFX_SystemFontInfo {
  public:

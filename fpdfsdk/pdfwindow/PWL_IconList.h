@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_ICONLIST_H_
-#define FPDFSDK_INCLUDE_PDFWINDOW_PWL_ICONLIST_H_
+#ifndef FPDFSDK_PDFWINDOW_PWL_ICONLIST_H_
+#define FPDFSDK_PDFWINDOW_PWL_ICONLIST_H_
 
 #include "core/fxcrt/include/fx_string.h"
-#include "fpdfsdk/include/pdfwindow/PWL_ListCtrl.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
+#include "fpdfsdk/pdfwindow/PWL_ListCtrl.h"
+#include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
 class IPWL_IconList_Notify;
 class CPWL_IconList_Item;
@@ -126,4 +126,4 @@ class CPWL_IconList : public CPWL_Wnd {
   int32_t m_nListCount;
 };
 
-#endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_ICONLIST_H_
+#endif  // FPDFSDK_PDFWINDOW_PWL_ICONLIST_H_

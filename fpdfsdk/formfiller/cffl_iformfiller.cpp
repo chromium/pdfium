@@ -16,7 +16,7 @@
 #include "fpdfsdk/formfiller/cffl_radiobutton.h"
 #include "fpdfsdk/formfiller/cffl_textfield.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Utils.h"
+#include "fpdfsdk/pdfwindow/PWL_Utils.h"
 
 #define FFL_MAXLISTBOXHEIGHT 140.0f
 

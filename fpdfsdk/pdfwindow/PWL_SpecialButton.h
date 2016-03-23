@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_SPECIALBUTTON_H_
-#define FPDFSDK_INCLUDE_PDFWINDOW_PWL_SPECIALBUTTON_H_
+#ifndef FPDFSDK_PDFWINDOW_PWL_SPECIALBUTTON_H_
+#define FPDFSDK_PDFWINDOW_PWL_SPECIALBUTTON_H_
 
-#include "fpdfsdk/include/pdfwindow/PWL_Button.h"
+#include "fpdfsdk/pdfwindow/PWL_Button.h"
 
 class CPWL_PushButton : public CPWL_Button {
  public:
@@ -53,4 +53,4 @@ class CPWL_RadioButton : public CPWL_Button {
   bool m_bChecked;
 };
 
-#endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_SPECIALBUTTON_H_
+#endif  // FPDFSDK_PDFWINDOW_PWL_SPECIALBUTTON_H_

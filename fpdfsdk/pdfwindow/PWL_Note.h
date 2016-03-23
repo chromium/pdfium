@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_NOTE_H_
-#define FPDFSDK_INCLUDE_PDFWINDOW_PWL_NOTE_H_
+#ifndef FPDFSDK_PDFWINDOW_PWL_NOTE_H_
+#define FPDFSDK_PDFWINDOW_PWL_NOTE_H_
 
-#include "fpdfsdk/include/pdfwindow/PWL_Button.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Edit.h"
-#include "fpdfsdk/include/pdfwindow/PWL_ListCtrl.h"
-#include "fpdfsdk/include/pdfwindow/PWL_ScrollBar.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
+#include "fpdfsdk/pdfwindow/PWL_Button.h"
+#include "fpdfsdk/pdfwindow/PWL_Edit.h"
+#include "fpdfsdk/pdfwindow/PWL_ListCtrl.h"
+#include "fpdfsdk/pdfwindow/PWL_ScrollBar.h"
+#include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
 class CPWL_Label;
 class CPWL_Note;
@@ -348,4 +348,4 @@ class CPWL_Note : public CPWL_NoteItem {
   CFX_WideString m_sReplyString;
 };
 
-#endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_NOTE_H_
+#endif  // FPDFSDK_PDFWINDOW_PWL_NOTE_H_

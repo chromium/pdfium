@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/pdfwindow/PWL_ScrollBar.h"
+#include "fpdfsdk/pdfwindow/PWL_ScrollBar.h"
 
 #include "core/include/fxge/fx_ge.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Utils.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
+#include "fpdfsdk/pdfwindow/PWL_Utils.h"
+#include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
 #define IsFloatZero(f) ((f) < 0.0001 && (f) > -0.0001)
 #define IsFloatBigger(fa, fb) ((fa) > (fb) && !IsFloatZero((fa) - (fb)))

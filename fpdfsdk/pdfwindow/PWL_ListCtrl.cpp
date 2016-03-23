@@ -5,8 +5,8 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "core/include/fxge/fx_ge.h"
-#include "fpdfsdk/include/pdfwindow/PWL_ListCtrl.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
+#include "fpdfsdk/pdfwindow/PWL_ListCtrl.h"
+#include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
 CPWL_ListCtrl::CPWL_ListCtrl()
     : m_rcContent(0, 0, 0, 0),

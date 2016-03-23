@@ -4,18 +4,18 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/pdfwindow/PWL_Note.h"
+#include "fpdfsdk/pdfwindow/PWL_Note.h"
 
 #include "core/include/fxge/fx_ge.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Button.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Caret.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Edit.h"
-#include "fpdfsdk/include/pdfwindow/PWL_EditCtrl.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Label.h"
-#include "fpdfsdk/include/pdfwindow/PWL_ListCtrl.h"
-#include "fpdfsdk/include/pdfwindow/PWL_ScrollBar.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Utils.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
+#include "fpdfsdk/pdfwindow/PWL_Button.h"
+#include "fpdfsdk/pdfwindow/PWL_Caret.h"
+#include "fpdfsdk/pdfwindow/PWL_Edit.h"
+#include "fpdfsdk/pdfwindow/PWL_EditCtrl.h"
+#include "fpdfsdk/pdfwindow/PWL_Label.h"
+#include "fpdfsdk/pdfwindow/PWL_ListCtrl.h"
+#include "fpdfsdk/pdfwindow/PWL_ScrollBar.h"
+#include "fpdfsdk/pdfwindow/PWL_Utils.h"
+#include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
 #define POPUP_ITEM_HEAD_BOTTOM 3.0f
 #define POPUP_ITEM_BOTTOMWIDTH 1.0f

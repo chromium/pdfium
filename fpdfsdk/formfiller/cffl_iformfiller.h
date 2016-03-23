@@ -10,7 +10,7 @@
 #include <map>
 
 #include "fpdfsdk/include/fsdk_define.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Edit.h"
+#include "fpdfsdk/pdfwindow/PWL_Edit.h"
 
 class CFFL_FormFiller;
 class CPDFDoc_Environment;

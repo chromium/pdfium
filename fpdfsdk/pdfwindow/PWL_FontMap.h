@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_FONTMAP_H_
-#define FPDFSDK_INCLUDE_PDFWINDOW_PWL_FONTMAP_H_
+#ifndef FPDFSDK_PDFWINDOW_PWL_FONTMAP_H_
+#define FPDFSDK_PDFWINDOW_PWL_FONTMAP_H_
 
 #include "fpdfsdk/include/fxedit/fx_edit.h"
 #include "public/fpdf_sysfontinfo.h"
@@ -134,4 +134,4 @@ class CPWL_DocFontMap : public CPWL_FontMap {
   CPDF_Document* m_pAttachedDoc;
 };
 
-#endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_FONTMAP_H_
+#endif  // FPDFSDK_PDFWINDOW_PWL_FONTMAP_H_

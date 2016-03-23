@@ -11,7 +11,7 @@
 #include "fpdfsdk/formfiller/cffl_iformfiller.h"
 #include "fpdfsdk/include/fsdk_common.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
-#include "fpdfsdk/include/pdfwindow/PWL_ListBox.h"
+#include "fpdfsdk/pdfwindow/PWL_ListBox.h"
 
 #define FFL_DEFAULTLISTBOXFONTSIZE 12.0f
 

@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_EDIT_H_
-#define FPDFSDK_INCLUDE_PDFWINDOW_PWL_EDIT_H_
+#ifndef FPDFSDK_PDFWINDOW_PWL_EDIT_H_
+#define FPDFSDK_PDFWINDOW_PWL_EDIT_H_
 
 #include "core/fxcrt/include/fx_basic.h"
 #include "fpdfsdk/include/fxedit/fx_edit.h"
-#include "fpdfsdk/include/pdfwindow/PWL_EditCtrl.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
+#include "fpdfsdk/pdfwindow/PWL_EditCtrl.h"
+#include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
 class IPWL_SpellCheck;
 
@@ -169,4 +169,4 @@ class CPWL_Edit : public CPWL_EditCtrl, public IFX_Edit_OprNotify {
   void* m_pFormFiller;
 };
 
-#endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_EDIT_H_
+#endif  // FPDFSDK_PDFWINDOW_PWL_EDIT_H_

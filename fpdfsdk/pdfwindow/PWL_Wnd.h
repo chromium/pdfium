@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_WND_H_
-#define FPDFSDK_INCLUDE_PDFWINDOW_PWL_WND_H_
+#ifndef FPDFSDK_PDFWINDOW_PWL_WND_H_
+#define FPDFSDK_PDFWINDOW_PWL_WND_H_
 
 #include <vector>
 
@@ -469,4 +469,4 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   FX_BOOL m_bEnabled;
 };
 
-#endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_WND_H_
+#endif  // FPDFSDK_PDFWINDOW_PWL_WND_H_

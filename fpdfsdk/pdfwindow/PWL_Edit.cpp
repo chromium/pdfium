@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/pdfwindow/PWL_Edit.h"
+#include "fpdfsdk/pdfwindow/PWL_Edit.h"
 
 #include <vector>
 
@@ -12,12 +12,12 @@
 #include "core/fxcrt/include/fx_safe_types.h"
 #include "core/fxcrt/include/fx_xml.h"
 #include "core/include/fxge/fx_ge.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Caret.h"
-#include "fpdfsdk/include/pdfwindow/PWL_EditCtrl.h"
-#include "fpdfsdk/include/pdfwindow/PWL_FontMap.h"
-#include "fpdfsdk/include/pdfwindow/PWL_ScrollBar.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Utils.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
+#include "fpdfsdk/pdfwindow/PWL_Caret.h"
+#include "fpdfsdk/pdfwindow/PWL_EditCtrl.h"
+#include "fpdfsdk/pdfwindow/PWL_FontMap.h"
+#include "fpdfsdk/pdfwindow/PWL_ScrollBar.h"
+#include "fpdfsdk/pdfwindow/PWL_Utils.h"
+#include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 #include "public/fpdf_fwlevent.h"
 #include "third_party/base/stl_util.h"
 

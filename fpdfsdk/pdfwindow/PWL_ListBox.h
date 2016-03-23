@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_LISTBOX_H_
-#define FPDFSDK_INCLUDE_PDFWINDOW_PWL_LISTBOX_H_
+#ifndef FPDFSDK_PDFWINDOW_PWL_LISTBOX_H_
+#define FPDFSDK_PDFWINDOW_PWL_LISTBOX_H_
 
 #include "fpdfsdk/include/fxedit/fx_edit.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
+#include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
 class CPWL_List_Notify;
 class CPWL_ListBox;
@@ -119,4 +119,4 @@ class CPWL_ListBox : public CPWL_Wnd {
   void* m_pFormFiller;
 };
 
-#endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_LISTBOX_H_
+#endif  // FPDFSDK_PDFWINDOW_PWL_LISTBOX_H_

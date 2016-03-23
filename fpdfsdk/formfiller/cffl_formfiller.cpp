@@ -10,7 +10,7 @@
 #include "fpdfsdk/formfiller/cba_fontmap.h"
 #include "fpdfsdk/include/fsdk_common.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Utils.h"
+#include "fpdfsdk/pdfwindow/PWL_Utils.h"
 
 #define GetRed(rgb) ((uint8_t)(rgb))
 #define GetGreen(rgb) ((uint8_t)(((uint16_t)(rgb)) >> 8))

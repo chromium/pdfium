@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_UTILS_H_
-#define FPDFSDK_INCLUDE_PDFWINDOW_PWL_UTILS_H_
+#ifndef FPDFSDK_PDFWINDOW_PWL_UTILS_H_
+#define FPDFSDK_PDFWINDOW_PWL_UTILS_H_
 
-#include "core/include/fpdfdoc/fpdf_vt.h"      // For CPVT_WordRange.
+#include "core/include/fpdfdoc/fpdf_vt.h"
 #include "fpdfsdk/include/fxedit/fx_edit.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
+#include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
 class CFX_PathData;
 struct CPWL_Color;
@@ -409,4 +409,4 @@ class CPWL_Utils {
                                 const PWL_PATH_TYPE type);
 };
 
-#endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_UTILS_H_
+#endif  // FPDFSDK_PDFWINDOW_PWL_UTILS_H_

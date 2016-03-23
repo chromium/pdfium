@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_EDITCTRL_H_
-#define FPDFSDK_INCLUDE_PDFWINDOW_PWL_EDITCTRL_H_
+#ifndef FPDFSDK_PDFWINDOW_PWL_EDITCTRL_H_
+#define FPDFSDK_PDFWINDOW_PWL_EDITCTRL_H_
 
 #include "core/fxcrt/include/fx_string.h"
 #include "fpdfsdk/include/fxedit/fx_edit.h"
-#include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
+#include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
 class CPWL_Caret;
 class CPWL_Edit;
@@ -178,4 +178,4 @@ class CPWL_EditCtrl : public CPWL_Wnd, public IFX_Edit_Notify {
   int32_t m_nCodePage;
 };
 
-#endif  // FPDFSDK_INCLUDE_PDFWINDOW_PWL_EDITCTRL_H_
+#endif  // FPDFSDK_PDFWINDOW_PWL_EDITCTRL_H_

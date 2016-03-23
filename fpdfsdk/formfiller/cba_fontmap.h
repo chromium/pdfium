@@ -7,7 +7,7 @@
 #ifndef FPDFSDK_FORMFILLER_CBA_FONTMAP_H_
 #define FPDFSDK_FORMFILLER_CBA_FONTMAP_H_
 
-#include "fpdfsdk/include/pdfwindow/PWL_FontMap.h"
+#include "fpdfsdk/pdfwindow/PWL_FontMap.h"
 
 class CPDF_Dictionary;
 class CPDFSDK_Annot;

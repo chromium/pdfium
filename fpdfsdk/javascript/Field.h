@@ -10,8 +10,8 @@
 #include <string>
 #include <vector>
 
-#include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"  // For CPWL_Color.
 #include "fpdfsdk/javascript/JS_Define.h"
+#include "fpdfsdk/pdfwindow/PWL_Wnd.h"  // For CPWL_Color.
 
 class CPDFSDK_Widget;
 class Document;
