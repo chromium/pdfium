@@ -13,6 +13,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_formobject.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_pageobject.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_textobject.h"
@@ -25,7 +26,6 @@
 #include "core/fxcrt/fx_bidi.h"
 #include "core/fxcrt/include/fx_ext.h"
 #include "core/fxcrt/include/fx_ucd.h"
-#include "core/include/fpdfapi/fpdf_resource.h"
 #include "third_party/base/stl_util.h"
 
 #define FPDFTEXT_RLTB 1

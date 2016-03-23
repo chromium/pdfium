@@ -8,7 +8,7 @@
 
 #include <algorithm>
 
-#include "core/include/fpdfapi/fpdf_resource.h"
+#include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 
 #define FX_EDIT_UNDO_MAXITEM 10000
 

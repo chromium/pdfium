@@ -8,9 +8,9 @@
 #include <limits>
 #include <vector>
 
+#include "core/fpdfapi/fpdf_page/include/cpdf_colorspace.h"
 #include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcrt/include/fx_safe_types.h"
-#include "core/include/fpdfapi/fpdf_resource.h"
 #include "core/include/fxcodec/fx_codec.h"
 #include "third_party/lcms2-2.6/include/lcms2.h"
 #include "third_party/libopenjpeg20/openjpeg.h"

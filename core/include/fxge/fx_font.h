@@ -13,6 +13,7 @@
 
 #include "core/fxcrt/include/fx_system.h"
 #include "core/include/fxge/fx_dib.h"
+#include "core/include/fxge/fx_freetype.h"
 
 typedef struct FT_FaceRec_* FXFT_Face;
 typedef void* FXFT_Library;

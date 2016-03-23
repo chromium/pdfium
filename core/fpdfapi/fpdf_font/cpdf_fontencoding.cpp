@@ -1,77 +1,52 @@
-// Copyright 2014 PDFium Authors. All rights reserved.
+// Copyright 2016 PDFium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
-#include "core/include/fpdfapi/fpdf_resource.h"
-#include "core/include/fxge/fx_freetype.h"
+#include "core/fpdfapi/fpdf_font/include/cpdf_fontencoding.h"
 
-static const struct _UnicodeAlt {
-  uint16_t m_Unicode;
-  const FX_CHAR* m_Alter;
-} UnicodeAlts[] = {
-    {0x00a0, " "},    {0x00a1, "!"},   {0x00a2, "c"},   {0x00a3, "P"},
-    {0x00a4, "o"},    {0x00a5, "Y"},   {0x00a6, "|"},   {0x00a7, "S"},
-    {0x00a9, "(C)"},  {0x00aa, "a"},   {0x00ab, "<<"},  {0x00ac, "-|"},
-    {0x00ae, "(R)"},  {0x00af, "-"},   {0x00b0, "o"},   {0x00b1, "+/-"},
-    {0x00b2, "^2"},   {0x00b3, "^3"},  {0x00b4, "'"},   {0x00b5, "u"},
-    {0x00b6, "P"},    {0x00b7, "."},   {0x00b9, "^1"},  {0x00ba, "o"},
-    {0x00bb, ">>"},   {0x00bc, "1/4"}, {0x00bd, "1/2"}, {0x00be, "3/4"},
-    {0x00bf, "?"},    {0x00c0, "A"},   {0x00c1, "A"},   {0x00c2, "A"},
-    {0x00c3, "A"},    {0x00c4, "A"},   {0x00c5, "A"},   {0x00c6, "AE"},
-    {0x00c7, "C"},    {0x00c8, "E"},   {0x00c9, "E"},   {0x00ca, "E"},
-    {0x00cb, "E"},    {0x00cc, "I"},   {0x00cd, "I"},   {0x00ce, "I"},
-    {0x00cf, "I"},    {0x00d1, "N"},   {0x00d2, "O"},   {0x00d3, "O"},
-    {0x00d4, "O"},    {0x00d5, "O"},   {0x00d6, "O"},   {0x00d7, "x"},
-    {0x00d8, "O"},    {0x00d9, "U"},   {0x00da, "U"},   {0x00db, "U"},
-    {0x00dc, "U"},    {0x00dd, "Y"},   {0x00df, "S"},   {0x00e0, "a"},
-    {0x00e1, "a"},    {0x00e2, "a"},   {0x00e3, "a"},   {0x00e4, "a"},
-    {0x00e5, "a"},    {0x00e6, "ae"},  {0x00e7, "c"},   {0x00e8, "e"},
-    {0x00e9, "e"},    {0x00ea, "e"},   {0x00eb, "e"},   {0x00ec, "i"},
-    {0x00ed, "i"},    {0x00ee, "i"},   {0x00ef, "i"},   {0x00f1, "n"},
-    {0x00f2, "o"},    {0x00f3, "o"},   {0x00f4, "o"},   {0x00f5, "o"},
-    {0x00f6, "o"},    {0x00f7, "/"},   {0x00f8, "o"},   {0x00f9, "u"},
-    {0x00fa, "u"},    {0x00fb, "u"},   {0x00fc, "u"},   {0x00fd, "y"},
-    {0x00ff, "y"},    {0x02b0, "h"},   {0x02b2, "j"},   {0x02b3, "r"},
-    {0x02b7, "w"},    {0x02b8, "y"},   {0x02b9, "'"},   {0x02ba, "\""},
-    {0x02bb, "'"},    {0x02bc, "'"},   {0x02bd, "'"},   {0x02be, "'"},
-    {0x02bf, "'"},    {0x02c2, "<"},   {0x02c3, ">"},   {0x02c4, "^"},
-    {0x02c5, "v"},    {0x02c6, "^"},   {0x02c7, "v"},   {0x02c8, "'"},
-    {0x02c9, "-"},    {0x02ca, "'"},   {0x02cb, "'"},   {0x02cc, "."},
-    {0x02cd, "_"},    {0x2010, "-"},   {0x2012, "-"},   {0x2013, "-"},
-    {0x2014, "--"},   {0x2015, "--"},  {0x2016, "|"},   {0x2017, "_"},
-    {0x2018, "'"},    {0x2019, "'"},   {0x201a, ","},   {0x201b, "'"},
-    {0x201c, "\""},   {0x201d, "\""},  {0x201e, ","},   {0x201f, "'"},
-    {0x2020, "+"},    {0x2021, "+"},   {0x2022, "*"},   {0x2023, ">"},
-    {0x2024, "."},    {0x2025, ".."},  {0x2027, "."},   {0x2032, "'"},
-    {0x2033, "\""},   {0x2035, "'"},   {0x2036, "\""},  {0x2038, "^"},
-    {0x2039, "<"},    {0x203a, ">"},   {0x203b, "*"},   {0x203c, "!!"},
-    {0x203d, "?!"},   {0x203e, "-"},   {0x2044, "/"},   {0x2047, "??"},
-    {0x2048, "?!"},   {0x2049, "!?"},  {0x204e, "*"},   {0x2052, "%"},
-    {0x2122, "(TM)"}, {0x2212, "-"},   {0x2215, "/"},   {0x2216, "\\"},
-    {0x2217, "*"},    {0x2218, "*"},   {0x2219, "*"},   {0x2223, "|"},
-    {0x22c5, "."},    {0x266f, "#"},   {0XF6D9, "(C)"}, {0XF6DA, "(C)"},
-    {0XF6DB, "(TM)"}, {0XF8E8, "(C)"}, {0xf8e9, "(C)"}, {0XF8EA, "(TM)"},
-    {0xfb01, "fi"},   {0xfb02, "fl"}};
-const FX_CHAR* FCS_GetAltStr(FX_WCHAR unicode) {
-  int begin = 0;
-  int end = sizeof UnicodeAlts / sizeof(struct _UnicodeAlt) - 1;
-  while (begin <= end) {
-    int middle = (begin + end) / 2;
-    uint16_t middlecode = UnicodeAlts[middle].m_Unicode;
-    if (middlecode > unicode) {
-      end = middle - 1;
-    } else if (middlecode < unicode) {
-      begin = middle + 1;
-    } else {
-      return UnicodeAlts[middle].m_Alter;
-    }
-  }
-  return NULL;
-}
-static const uint16_t StandardEncoding[256] = {
+#include "core/fpdfapi/fpdf_parser/include/cpdf_name.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_number.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
+#include "core/include/fxge/fx_freetype.h"
+#include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
+
+namespace {
+
+const uint16_t MSSymbolEncoding[256] = {
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 32,     33,     8704,   35,
+    8707,   37,     38,     8715,   40,     41,     8727,   43,     44,
+    8722,   46,     47,     48,     49,     50,     51,     52,     53,
+    54,     55,     56,     57,     58,     59,     60,     61,     62,
+    63,     8773,   913,    914,    935,    916,    917,    934,    915,
+    919,    921,    977,    922,    923,    924,    925,    927,    928,
+    920,    929,    931,    932,    933,    962,    937,    926,    936,
+    918,    91,     8756,   93,     8869,   95,     8254,   945,    946,
+    967,    948,    949,    966,    947,    951,    953,    981,    954,
+    955,    956,    957,    959,    960,    952,    961,    963,    964,
+    965,    982,    969,    958,    968,    950,    123,    124,    125,
+    8764,   0,      0,      0,      0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 978,
+    8242,   8804,   8725,   8734,   402,    9827,   9830,   9828,   9824,
+    8596,   8592,   8593,   8594,   8595,   176,    177,    8243,   8805,
+    215,    8733,   8706,   8729,   247,    8800,   8801,   8776,   8943,
+    0,      0,      8629,   0,      8465,   8476,   8472,   8855,   8853,
+    8709,   8745,   8746,   8835,   8839,   8836,   8834,   8838,   8712,
+    8713,   8736,   8711,   174,    169,    8482,   8719,   8730,   8901,
+    172,    8743,   8744,   8660,   8656,   8657,   8658,   8659,   9674,
+    9001,   0,      0,      0,      8721,   0,      0,      0,      0,
+    0,      0,      0,      0,      0,      0,      0x0000, 9002,   8747,
+    8992,   0,      8993,   0,      0,      0,      0,      0,      0,
+    0x0000, 0x0000, 0x0000, 0x0000};
+
+const uint16_t StandardEncoding[256] = {
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
@@ -101,7 +76,8 @@ static const uint16_t StandardEncoding[256] = {
     0x0152, 0x00ba, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x00e6, 0x0000,
     0x0000, 0x0000, 0x0131, 0x0000, 0x0000, 0x0142, 0x00f8, 0x0153, 0x00df,
     0x0000, 0x0000, 0x0000, 0x0000};
-static const uint16_t MacRomanEncoding[256] = {
+
+const uint16_t MacRomanEncoding[256] = {
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
@@ -131,7 +107,8 @@ static const uint16_t MacRomanEncoding[256] = {
     0x00cd, 0x00ce, 0x00cf, 0x00cc, 0x00d3, 0x00d4, 0x0000, 0x00d2, 0x00da,
     0x00db, 0x00d9, 0x0131, 0x02c6, 0x02dc, 0x00af, 0x02d8, 0x02d9, 0x02da,
     0x00b8, 0x02dd, 0x02db, 0x02c7};
-static const uint16_t AdobeWinAnsiEncoding[256] = {
+
+const uint16_t AdobeWinAnsiEncoding[256] = {
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
@@ -161,7 +138,8 @@ static const uint16_t AdobeWinAnsiEncoding[256] = {
     0x00ea, 0x00eb, 0x00ec, 0x00ed, 0x00ee, 0x00ef, 0x00f0, 0x00f1, 0x00f2,
     0x00f3, 0x00f4, 0x00f5, 0x00f6, 0x00f7, 0x00f8, 0x00f9, 0x00fa, 0x00fb,
     0x00fc, 0x00fd, 0x00fe, 0x00ff};
-static const uint16_t MacExpertEncoding[256] = {
+
+const uint16_t MacExpertEncoding[256] = {
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
@@ -191,7 +169,8 @@ static const uint16_t MacExpertEncoding[256] = {
     0xf6f2, 0xf6eb, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xf6ee, 0xf6fb,
     0xf6f4, 0xf7af, 0xf6ea, 0x207f, 0xf6ef, 0xf6e2, 0xf6e8, 0xf6f7, 0xf6fc,
     0x0000, 0x0000, 0x0000, 0x0000};
-static const uint16_t AdobeSymbolEncoding[256] = {
+
+const uint16_t AdobeSymbolEncoding[256] = {
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
@@ -222,7 +201,8 @@ static const uint16_t AdobeSymbolEncoding[256] = {
     0x2320, 0xF8F5, 0x2321, 0xF8F6, 0xF8F7, 0xF8F8, 0xF8F9, 0xF8FA, 0xF8FB,
     0xF8FC, 0xF8FD, 0xF8FE, 0x0000,
 };
-static const uint16_t ZapfEncoding[256] = {
+
+const uint16_t ZapfEncoding[256] = {
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
@@ -253,7 +233,8 @@ static const uint16_t ZapfEncoding[256] = {
     0x27B3, 0x27B4, 0x27B5, 0x27B6, 0x27B7, 0x27B8, 0x27B9, 0x27BA, 0x27BB,
     0x27BC, 0x27BD, 0x27BE, 0x0000,
 };
-static const FX_CHAR* const StandardEncodingNames[224] = {
+
+const FX_CHAR* const StandardEncodingNames[224] = {
     "space",
     "exclam",
     "quotedbl",
@@ -479,7 +460,8 @@ static const FX_CHAR* const StandardEncodingNames[224] = {
     NULL,
     NULL,
 };
-static const FX_CHAR* const AdobeWinAnsiEncodingNames[224] = {
+
+const FX_CHAR* const AdobeWinAnsiEncodingNames[224] = {
     "space",
     "exclam",
     "quotedbl",
@@ -705,7 +687,8 @@ static const FX_CHAR* const AdobeWinAnsiEncodingNames[224] = {
     "thorn",
     "ydieresis",
 };
-static const FX_CHAR* const MacRomanEncodingNames[224] = {
+
+const FX_CHAR* const MacRomanEncodingNames[224] = {
     "space",
     "exclam",
     "quotedbl",
@@ -931,7 +914,8 @@ static const FX_CHAR* const MacRomanEncodingNames[224] = {
     "ogonek",
     "caron",
 };
-static const FX_CHAR* const MacExpertEncodingNames[224] = {
+
+const FX_CHAR* const MacExpertEncodingNames[224] = {
     "space",
     "exclamsmall",
     "Hungarumlautsmall",
@@ -1157,7 +1141,8 @@ static const FX_CHAR* const MacExpertEncodingNames[224] = {
     NULL,
     NULL,
 };
-static const FX_CHAR* const PDFDocEncodingNames[232] = {
+
+const FX_CHAR* const PDFDocEncodingNames[232] = {
     "breve",
     "caron",
     "circumflex",
@@ -1391,7 +1376,8 @@ static const FX_CHAR* const PDFDocEncodingNames[232] = {
     "thorn",
     "ydieresis",
 };
-static const FX_CHAR* const AdobeSymbolEncodingNames[224] = {
+
+const FX_CHAR* const AdobeSymbolEncodingNames[224] = {
     "space",
     "exclam",
     "universal",
@@ -1617,7 +1603,8 @@ static const FX_CHAR* const AdobeSymbolEncodingNames[224] = {
     "bracerightbt",
     NULL,
 };
-static const FX_CHAR* const ZapfEncodingNames[224] = {
+
+const FX_CHAR* const ZapfEncodingNames[224] = {
     "space", "a1",   "a2",   "a202", "a3",   "a4",   "a5",   "a119", "a118",
     "a117",  "a11",  "a12",  "a13",  "a14",  "a15",  "a16",  "a105", "a17",
     "a18",   "a19",  "a20",  "a21",  "a22",  "a23",  "a24",  "a25",  "a26",
@@ -1643,91 +1630,89 @@ static const FX_CHAR* const ZapfEncodingNames[224] = {
     "a176",  "a177", "a178", "a179", "a193", "a180", "a199", "a181", "a200",
     "a182",  NULL,   "a201", "a183", "a184", "a197", "a185", "a194", "a198",
     "a186",  "a195", "a187", "a188", "a189", "a190", "a191", NULL};
-const FX_CHAR* PDF_CharNameFromPredefinedCharSet(int encoding,
-                                                 uint8_t charcode) {
-  if (encoding == PDFFONT_ENCODING_PDFDOC) {
-    if (charcode < 24) {
-      return NULL;
-    }
-    charcode -= 24;
-  } else {
-    if (charcode < 32) {
-      return NULL;
-    }
-    charcode -= 32;
-  }
-  switch (encoding) {
-    case PDFFONT_ENCODING_WINANSI:
-      return AdobeWinAnsiEncodingNames[charcode];
-    case PDFFONT_ENCODING_MACROMAN:
-      return MacRomanEncodingNames[charcode];
-    case PDFFONT_ENCODING_MACEXPERT:
-      return MacExpertEncodingNames[charcode];
-    case PDFFONT_ENCODING_STANDARD:
-      return StandardEncodingNames[charcode];
-    case PDFFONT_ENCODING_ADOBE_SYMBOL:
-      return AdobeSymbolEncodingNames[charcode];
-    case PDFFONT_ENCODING_ZAPFDINGBATS:
-      return ZapfEncodingNames[charcode];
-    case PDFFONT_ENCODING_PDFDOC:
-      return PDFDocEncodingNames[charcode];
-  }
-  return NULL;
-}
-FX_WCHAR FT_UnicodeFromCharCode(int encoding, FX_DWORD charcode) {
-  switch (encoding) {
-    case FXFT_ENCODING_UNICODE:
-      return (uint16_t)charcode;
-    case FXFT_ENCODING_ADOBE_STANDARD:
-      return StandardEncoding[(uint8_t)charcode];
-    case FXFT_ENCODING_ADOBE_EXPERT:
-      return MacExpertEncoding[(uint8_t)charcode];
-    case FXFT_ENCODING_ADOBE_LATIN_1:
-      return AdobeWinAnsiEncoding[(uint8_t)charcode];
-    case FXFT_ENCODING_APPLE_ROMAN:
-      return MacRomanEncoding[(uint8_t)charcode];
-    case PDFFONT_ENCODING_PDFDOC:
-      return PDFDocEncoding[(uint8_t)charcode];
-  }
+
+FX_DWORD PDF_FindCode(const uint16_t* pCodes, uint16_t unicode) {
+  for (FX_DWORD i = 0; i < 256; i++)
+    if (pCodes[i] == unicode)
+      return i;
   return 0;
 }
-static FX_DWORD PDF_FindCode(const uint16_t* pCodes, uint16_t unicode) {
-  for (FX_DWORD i = 0; i < 256; i++)
-    if (pCodes[i] == unicode) {
+
+}  // namespace
+
+CPDF_FontEncoding::CPDF_FontEncoding() {
+  FXSYS_memset(m_Unicodes, 0, sizeof(m_Unicodes));
+}
+
+int CPDF_FontEncoding::CharCodeFromUnicode(FX_WCHAR unicode) const {
+  for (int i = 0; i < 256; i++)
+    if (m_Unicodes[i] == unicode) {
       return i;
     }
-  return 0;
+  return -1;
 }
-static const uint16_t MSSymbolEncoding[256] = {
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 32,     33,     8704,   35,
-    8707,   37,     38,     8715,   40,     41,     8727,   43,     44,
-    8722,   46,     47,     48,     49,     50,     51,     52,     53,
-    54,     55,     56,     57,     58,     59,     60,     61,     62,
-    63,     8773,   913,    914,    935,    916,    917,    934,    915,
-    919,    921,    977,    922,    923,    924,    925,    927,    928,
-    920,    929,    931,    932,    933,    962,    937,    926,    936,
-    918,    91,     8756,   93,     8869,   95,     8254,   945,    946,
-    967,    948,    949,    966,    947,    951,    953,    981,    954,
-    955,    956,    957,    959,    960,    952,    961,    963,    964,
-    965,    982,    969,    958,    968,    950,    123,    124,    125,
-    8764,   0,      0,      0,      0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 978,
-    8242,   8804,   8725,   8734,   402,    9827,   9830,   9828,   9824,
-    8596,   8592,   8593,   8594,   8595,   176,    177,    8243,   8805,
-    215,    8733,   8706,   8729,   247,    8800,   8801,   8776,   8943,
-    0,      0,      8629,   0,      8465,   8476,   8472,   8855,   8853,
-    8709,   8745,   8746,   8835,   8839,   8836,   8834,   8838,   8712,
-    8713,   8736,   8711,   174,    169,    8482,   8719,   8730,   8901,
-    172,    8743,   8744,   8660,   8656,   8657,   8658,   8659,   9674,
-    9001,   0,      0,      0,      8721,   0,      0,      0,      0,
-    0,      0,      0,      0,      0,      0,      0x0000, 9002,   8747,
-    8992,   0,      8993,   0,      0,      0,      0,      0,      0,
-    0x0000, 0x0000, 0x0000, 0x0000};
+
+CPDF_FontEncoding::CPDF_FontEncoding(int PredefinedEncoding) {
+  const uint16_t* pSrc = PDF_UnicodesForPredefinedCharSet(PredefinedEncoding);
+  if (!pSrc) {
+    FXSYS_memset(m_Unicodes, 0, sizeof(m_Unicodes));
+  } else {
+    for (int i = 0; i < 256; i++)
+      m_Unicodes[i] = pSrc[i];
+  }
+}
+
+FX_BOOL CPDF_FontEncoding::IsIdentical(CPDF_FontEncoding* pAnother) const {
+  return FXSYS_memcmp(m_Unicodes, pAnother->m_Unicodes, sizeof(m_Unicodes)) ==
+         0;
+}
+
+CPDF_Object* CPDF_FontEncoding::Realize() {
+  int predefined = 0;
+  for (int cs = PDFFONT_ENCODING_WINANSI; cs < PDFFONT_ENCODING_ZAPFDINGBATS;
+       cs++) {
+    const uint16_t* pSrc = PDF_UnicodesForPredefinedCharSet(cs);
+    FX_BOOL match = TRUE;
+    for (int i = 0; i < 256; ++i) {
+      if (m_Unicodes[i] != pSrc[i]) {
+        match = FALSE;
+        break;
+      }
+    }
+    if (match) {
+      predefined = cs;
+      break;
+    }
+  }
+  if (predefined) {
+    if (predefined == PDFFONT_ENCODING_WINANSI) {
+      return new CPDF_Name("WinAnsiEncoding");
+    }
+    if (predefined == PDFFONT_ENCODING_MACROMAN) {
+      return new CPDF_Name("MacRomanEncoding");
+    }
+    if (predefined == PDFFONT_ENCODING_MACEXPERT) {
+      return new CPDF_Name("MacExpertEncoding");
+    }
+    return NULL;
+  }
+  const uint16_t* pStandard =
+      PDF_UnicodesForPredefinedCharSet(PDFFONT_ENCODING_WINANSI);
+  CPDF_Array* pDiff = new CPDF_Array;
+  for (int i = 0; i < 256; i++) {
+    if (pStandard[i] == m_Unicodes[i]) {
+      continue;
+    }
+    pDiff->Add(new CPDF_Number(i));
+    pDiff->Add(new CPDF_Name(PDF_AdobeNameFromUnicode(m_Unicodes[i])));
+  }
+
+  CPDF_Dictionary* pDict = new CPDF_Dictionary;
+  pDict->SetAtName("BaseEncoding", "WinAnsiEncoding");
+  pDict->SetAt("Differences", pDiff);
+  return pDict;
+}
+
 FX_DWORD FT_CharCodeFromUnicode(int encoding, FX_WCHAR unicode) {
   switch (encoding) {
     case FXFT_ENCODING_UNICODE:
@@ -1768,14 +1753,63 @@ const uint16_t* PDF_UnicodesForPredefinedCharSet(int encoding) {
   }
   return NULL;
 }
-FX_DWORD PDF_PredefinedCharCodeFromUnicode(int encoding, FX_WCHAR unicode) {
-  return PDF_FindCode(PDF_UnicodesForPredefinedCharSet(encoding), unicode);
-}
+
 FX_WCHAR PDF_UnicodeFromAdobeName(const FX_CHAR* name) {
   return (FX_WCHAR)(FXFT_unicode_from_adobe_name(name) & 0x7FFFFFFF);
 }
+
 CFX_ByteString PDF_AdobeNameFromUnicode(FX_WCHAR unicode) {
   char glyph_name[64];
   FXFT_adobe_name_from_unicode(glyph_name, unicode);
   return CFX_ByteString(glyph_name);
+}
+
+const FX_CHAR* PDF_CharNameFromPredefinedCharSet(int encoding,
+                                                 uint8_t charcode) {
+  if (encoding == PDFFONT_ENCODING_PDFDOC) {
+    if (charcode < 24)
+      return NULL;
+
+    charcode -= 24;
+  } else {
+    if (charcode < 32)
+      return NULL;
+
+    charcode -= 32;
+  }
+  switch (encoding) {
+    case PDFFONT_ENCODING_WINANSI:
+      return AdobeWinAnsiEncodingNames[charcode];
+    case PDFFONT_ENCODING_MACROMAN:
+      return MacRomanEncodingNames[charcode];
+    case PDFFONT_ENCODING_MACEXPERT:
+      return MacExpertEncodingNames[charcode];
+    case PDFFONT_ENCODING_STANDARD:
+      return StandardEncodingNames[charcode];
+    case PDFFONT_ENCODING_ADOBE_SYMBOL:
+      return AdobeSymbolEncodingNames[charcode];
+    case PDFFONT_ENCODING_ZAPFDINGBATS:
+      return ZapfEncodingNames[charcode];
+    case PDFFONT_ENCODING_PDFDOC:
+      return PDFDocEncodingNames[charcode];
+  }
+  return nullptr;
+}
+
+FX_WCHAR FT_UnicodeFromCharCode(int encoding, FX_DWORD charcode) {
+  switch (encoding) {
+    case FXFT_ENCODING_UNICODE:
+      return (uint16_t)charcode;
+    case FXFT_ENCODING_ADOBE_STANDARD:
+      return StandardEncoding[(uint8_t)charcode];
+    case FXFT_ENCODING_ADOBE_EXPERT:
+      return MacExpertEncoding[(uint8_t)charcode];
+    case FXFT_ENCODING_ADOBE_LATIN_1:
+      return AdobeWinAnsiEncoding[(uint8_t)charcode];
+    case FXFT_ENCODING_APPLE_ROMAN:
+      return MacRomanEncoding[(uint8_t)charcode];
+    case PDFFONT_ENCODING_PDFDOC:
+      return PDFDocEncoding[(uint8_t)charcode];
+  }
+  return 0;
 }

@@ -6,10 +6,11 @@
 
 #include "fpdfsdk/formfiller/cba_fontmap.h"
 
+#include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_simple_parser.h"
-#include "core/include/fpdfapi/fpdf_resource.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
 #include "fpdfsdk/include/fsdk_baseannot.h"
 
 CBA_FontMap::CBA_FontMap(CPDFSDK_Annot* pAnnot,

@@ -6,9 +6,9 @@
 
 #include "core/fpdfapi/fpdf_page/include/cpdf_textstatedata.h"
 
+#include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
-#include "core/include/fpdfapi/fpdf_resource.h"
 
 CPDF_TextStateData::CPDF_TextStateData()
     : m_pFont(nullptr),

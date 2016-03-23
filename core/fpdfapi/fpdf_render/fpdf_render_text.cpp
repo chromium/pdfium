@@ -6,6 +6,10 @@
 
 #include "core/fpdfapi/fpdf_render/render_int.h"
 
+#include "core/fpdfapi/fpdf_font/cpdf_cidfont.h"
+#include "core/fpdfapi/fpdf_font/cpdf_type3char.h"
+#include "core/fpdfapi/fpdf_font/cpdf_type3font.h"
+#include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 #include "core/fpdfapi/fpdf_page/cpdf_parseoptions.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_form.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_imageobject.h"
@@ -318,27 +322,7 @@ static void ReleaseCachedType3(CPDF_Type3Font* pFont) {
   pFont->m_pDocument->GetRenderData()->ReleaseCachedType3(pFont);
   pFont->m_pDocument->GetPageData()->ReleaseFont(pFont->GetFontDict());
 }
-FX_BOOL CPDF_Type3Char::LoadBitmap(CPDF_RenderContext* pContext) {
-  if (m_pBitmap || !m_pForm) {
-    return TRUE;
-  }
-  if (m_pForm->GetPageObjectList()->size() == 1 && !m_bColored) {
-    auto& pPageObj = m_pForm->GetPageObjectList()->front();
-    if (pPageObj->IsImage()) {
-      m_ImageMatrix = pPageObj->AsImage()->m_Matrix;
-      const CFX_DIBSource* pSource =
-          pPageObj->AsImage()->m_pImage->LoadDIBSource();
-      if (pSource) {
-        m_pBitmap = pSource->Clone();
-        delete pSource;
-      }
-      delete m_pForm;
-      m_pForm = NULL;
-      return TRUE;
-    }
-  }
-  return FALSE;
-}
+
 class CPDF_RefType3Cache {
  public:
   CPDF_RefType3Cache(CPDF_Type3Font* pType3Font) {

@@ -9,6 +9,7 @@
 #include "core/fpdfapi/fpdf_page/include/cpdf_pageobject.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_object.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "core/fpdfapi/ipdf_rendermodule.h"

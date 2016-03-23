@@ -8,6 +8,7 @@
 
 #include <limits.h>
 
+#include "core/fpdfapi/fpdf_font/cpdf_type3char.h"
 #include "core/fpdfapi/fpdf_page/cpdf_allstates.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_form.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
@@ -21,6 +22,8 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_name.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_number.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
 #include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"

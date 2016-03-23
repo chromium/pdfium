@@ -10,8 +10,8 @@
 #include <map>
 #include <memory>
 
+#include "core/fpdfapi/fpdf_font/cpdf_cidfont.h"
 #include "core/fxcrt/include/fx_basic.h"
-#include "core/include/fpdfapi/fpdf_resource.h"
 
 class CPDF_CID2UnicodeMap;
 class CPDF_CMap;
@@ -22,6 +22,7 @@ typedef void* FXFT_Library;
 
 short TT2PDF(int m, FXFT_Face face);
 FX_BOOL FT_UseTTCharmap(FXFT_Face face, int platform_id, int encoding_id);
+CIDSet CharsetFromOrdering(const CFX_ByteString& ordering);
 
 class CPDF_CMapManager {
  public:

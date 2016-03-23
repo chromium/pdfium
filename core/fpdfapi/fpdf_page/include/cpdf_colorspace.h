@@ -1,0 +1,122 @@
+// Copyright 2016 PDFium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
+
+#ifndef CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_COLORSPACE_H_
+#define CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_COLORSPACE_H_
+
+#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/include/fx_system.h"
+
+#define PDFCS_DEVICEGRAY 1
+#define PDFCS_DEVICERGB 2
+#define PDFCS_DEVICECMYK 3
+#define PDFCS_CALGRAY 4
+#define PDFCS_CALRGB 5
+#define PDFCS_LAB 6
+#define PDFCS_ICCBASED 7
+#define PDFCS_SEPARATION 8
+#define PDFCS_DEVICEN 9
+#define PDFCS_INDEXED 10
+#define PDFCS_PATTERN 11
+
+class CPDF_Array;
+class CPDF_Document;
+class CPDF_Object;
+
+class CPDF_ColorSpace {
+ public:
+  static CPDF_ColorSpace* GetStockCS(int Family);
+  static CPDF_ColorSpace* Load(CPDF_Document* pDoc, CPDF_Object* pCSObj);
+  static CPDF_ColorSpace* ColorspaceFromName(const CFX_ByteString& name);
+
+  void ReleaseCS();
+
+  int GetBufSize() const;
+  FX_FLOAT* CreateBuf();
+  void GetDefaultColor(FX_FLOAT* buf) const;
+  FX_DWORD CountComponents() const { return m_nComponents; }
+  int GetFamily() const { return m_Family; }
+  virtual void GetDefaultValue(int iComponent,
+                               FX_FLOAT& value,
+                               FX_FLOAT& min,
+                               FX_FLOAT& max) const {
+    value = 0;
+    min = 0;
+    max = 1.0f;
+  }
+
+  FX_BOOL sRGB() const;
+  virtual FX_BOOL GetRGB(FX_FLOAT* pBuf,
+                         FX_FLOAT& R,
+                         FX_FLOAT& G,
+                         FX_FLOAT& B) const = 0;
+  virtual FX_BOOL SetRGB(FX_FLOAT* pBuf,
+                         FX_FLOAT R,
+                         FX_FLOAT G,
+                         FX_FLOAT B) const {
+    return FALSE;
+  }
+
+  FX_BOOL GetCMYK(FX_FLOAT* pBuf,
+                  FX_FLOAT& c,
+                  FX_FLOAT& m,
+                  FX_FLOAT& y,
+                  FX_FLOAT& k) const;
+  FX_BOOL SetCMYK(FX_FLOAT* pBuf,
+                  FX_FLOAT c,
+                  FX_FLOAT m,
+                  FX_FLOAT y,
+                  FX_FLOAT k) const;
+
+  virtual void TranslateImageLine(uint8_t* dest_buf,
+                                  const uint8_t* src_buf,
+                                  int pixels,
+                                  int image_width,
+                                  int image_height,
+                                  FX_BOOL bTransMask = FALSE) const;
+
+  CPDF_Array*& GetArray() { return m_pArray; }
+  int GetMaxIndex() const;
+  virtual CPDF_ColorSpace* GetBaseCS() const { return NULL; }
+
+  virtual void EnableStdConversion(FX_BOOL bEnabled);
+
+  CPDF_Document* const m_pDocument;
+
+ protected:
+  CPDF_ColorSpace(CPDF_Document* pDoc, int family, FX_DWORD nComponents)
+      : m_pDocument(pDoc),
+        m_Family(family),
+        m_nComponents(nComponents),
+        m_pArray(nullptr),
+        m_dwStdConversion(0) {}
+  virtual ~CPDF_ColorSpace() {}
+
+  virtual FX_BOOL v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
+    return TRUE;
+  }
+  virtual FX_BOOL v_GetCMYK(FX_FLOAT* pBuf,
+                            FX_FLOAT& c,
+                            FX_FLOAT& m,
+                            FX_FLOAT& y,
+                            FX_FLOAT& k) const {
+    return FALSE;
+  }
+  virtual FX_BOOL v_SetCMYK(FX_FLOAT* pBuf,
+                            FX_FLOAT c,
+                            FX_FLOAT m,
+                            FX_FLOAT y,
+                            FX_FLOAT k) const {
+    return FALSE;
+  }
+
+  int m_Family;
+  FX_DWORD m_nComponents;
+  CPDF_Array* m_pArray;
+  FX_DWORD m_dwStdConversion;
+};
+
+#endif  // CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_COLORSPACE_H_

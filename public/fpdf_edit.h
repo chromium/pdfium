@@ -15,10 +15,9 @@
 // pointers
 // or long integer numbers.
 
-#define FPDF_ARGB(a, r, g, b)                                     \
-  ((((uint32_t)(((uint8_t)(b) | ((FX_WORD)((uint8_t)(g)) << 8)) | \
-                (((FX_DWORD)(uint8_t)(r)) << 16)))) |             \
-   (((FX_DWORD)(uint8_t)(a)) << 24))
+#define FPDF_ARGB(a, r, g, b)                                      \
+  ((uint32_t)(((uint32_t)(b)&0xff) | (((uint32_t)(g)&0xff) << 8) | \
+              (((uint32_t)(r)&0xff) << 16) | (((uint32_t)(a)&0xff) << 24)))
 #define FPDF_GetBValue(argb) ((uint8_t)(argb))
 #define FPDF_GetGValue(argb) ((uint8_t)(((uint16_t)(argb)) >> 8))
 #define FPDF_GetRValue(argb) ((uint8_t)((argb) >> 16))

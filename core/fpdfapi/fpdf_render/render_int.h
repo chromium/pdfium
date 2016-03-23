@@ -10,10 +10,11 @@
 #include <map>
 #include <memory>
 
+#include "core/fpdfapi/fpdf_page/cpdf_countedobject.h"
 #include "core/fpdfapi/fpdf_page/cpdf_graphicstates.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_clippath.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
-#include "core/include/fpdfapi/fpdf_resource.h"
 
 class CPDF_PageObjectHolder;
 class CPDF_PageRenderCache;
@@ -40,6 +41,7 @@ class CPDF_TilingPattern;
 class CPDF_Color;
 class CPDF_Dictionary;
 class CPDF_ImageObject;
+class CPDF_Stream;
 
 #define TYPE3_MAX_BLUES 16
 

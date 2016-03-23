@@ -7,10 +7,16 @@
 #include "core/fpdfapi/fpdf_page/pageint.h"
 
 #include "core/fdrm/crypto/include/fx_crypt.h"
+#include "core/fpdfapi/fpdf_font/cpdf_type1font.h"
 #include "core/fpdfapi/fpdf_font/font_int.h"
+#include "core/fpdfapi/fpdf_page/cpdf_pattern.h"
+#include "core/fpdfapi/fpdf_page/cpdf_shadingpattern.h"
+#include "core/fpdfapi/fpdf_page/cpdf_tilingpattern.h"
+#include "core/fpdfapi/fpdf_page/include/cpdf_image.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "core/fpdfapi/ipdf_pagemodule.h"
 
@@ -91,7 +97,6 @@ CPDF_StreamAcc* CPDF_Document::LoadFontFile(CPDF_Stream* pStream) {
   return GetValidatePageData()->GetFontFileStreamAcc(pStream);
 }
 
-CPDF_ColorSpace* _CSFromName(const CFX_ByteString& name);
 CPDF_ColorSpace* CPDF_Document::LoadColorSpace(CPDF_Object* pCSObj,
                                                CPDF_Dictionary* pResources) {
   return GetValidatePageData()->GetColorSpace(pCSObj, pResources);
@@ -322,7 +327,7 @@ CPDF_ColorSpace* CPDF_DocPageData::GetColorSpace(
 
   if (pCSObj->IsName()) {
     CFX_ByteString name = pCSObj->GetConstString();
-    CPDF_ColorSpace* pCS = _CSFromName(name);
+    CPDF_ColorSpace* pCS = CPDF_ColorSpace::ColorspaceFromName(name);
     if (!pCS && pResources) {
       CPDF_Dictionary* pList = pResources->GetDictBy("ColorSpace");
       if (pList) {

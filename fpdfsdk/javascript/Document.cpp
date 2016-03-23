@@ -8,6 +8,7 @@
 
 #include <vector>
 
+#include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "fpdfsdk/include/fsdk_mgr.h"

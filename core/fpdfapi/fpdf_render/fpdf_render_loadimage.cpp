@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/fpdfapi/fpdf_page/cpdf_parseoptions.h"
+#include "core/fpdfapi/fpdf_page/include/cpdf_image.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_imageobject.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
@@ -91,71 +92,6 @@ class JpxBitMapContext {
 const int kMaxImageDimension = 0x01FFFF;
 
 }  // namespace
-
-CFX_DIBSource* CPDF_Image::LoadDIBSource(CFX_DIBSource** ppMask,
-                                         FX_DWORD* pMatteColor,
-                                         FX_BOOL bStdCS,
-                                         FX_DWORD GroupFamily,
-                                         FX_BOOL bLoadMask) const {
-  std::unique_ptr<CPDF_DIBSource> source(new CPDF_DIBSource);
-  if (source->Load(m_pDocument, m_pStream,
-                   reinterpret_cast<CPDF_DIBSource**>(ppMask), pMatteColor,
-                   nullptr, nullptr, bStdCS, GroupFamily, bLoadMask)) {
-    return source.release();
-  }
-  return nullptr;
-}
-
-CFX_DIBSource* CPDF_Image::DetachBitmap() {
-  CFX_DIBSource* pBitmap = m_pDIBSource;
-  m_pDIBSource = nullptr;
-  return pBitmap;
-}
-
-CFX_DIBSource* CPDF_Image::DetachMask() {
-  CFX_DIBSource* pBitmap = m_pMask;
-  m_pMask = nullptr;
-  return pBitmap;
-}
-
-FX_BOOL CPDF_Image::StartLoadDIBSource(CPDF_Dictionary* pFormResource,
-                                       CPDF_Dictionary* pPageResource,
-                                       FX_BOOL bStdCS,
-                                       FX_DWORD GroupFamily,
-                                       FX_BOOL bLoadMask) {
-  std::unique_ptr<CPDF_DIBSource> source(new CPDF_DIBSource);
-  int ret =
-      source->StartLoadDIBSource(m_pDocument, m_pStream, TRUE, pFormResource,
-                                 pPageResource, bStdCS, GroupFamily, bLoadMask);
-  if (ret == 2) {
-    m_pDIBSource = source.release();
-    return TRUE;
-  }
-  if (!ret) {
-    m_pDIBSource = nullptr;
-    return FALSE;
-  }
-  m_pMask = source->DetachMask();
-  m_MatteColor = source->GetMatteColor();
-  m_pDIBSource = source.release();
-  return FALSE;
-}
-
-FX_BOOL CPDF_Image::Continue(IFX_Pause* pPause) {
-  CPDF_DIBSource* pSource = static_cast<CPDF_DIBSource*>(m_pDIBSource);
-  int ret = pSource->ContinueLoadDIBSource(pPause);
-  if (ret == 2) {
-    return TRUE;
-  }
-  if (!ret) {
-    delete m_pDIBSource;
-    m_pDIBSource = nullptr;
-    return FALSE;
-  }
-  m_pMask = pSource->DetachMask();
-  m_MatteColor = pSource->GetMatteColor();
-  return FALSE;
-}
 
 CPDF_DIBSource::CPDF_DIBSource()
     : m_pDocument(nullptr),

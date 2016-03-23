@@ -7,11 +7,13 @@
 #include <algorithm>
 #include <vector>
 
+#include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_simple_parser.h"
 #include "core/fpdfdoc/doc_utils.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
+#include "core/include/fxge/fx_font.h"
 
 namespace {
 

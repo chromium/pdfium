@@ -12,6 +12,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_parser.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_reference.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_render/render_int.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "core/fpdfapi/ipdf_rendermodule.h"

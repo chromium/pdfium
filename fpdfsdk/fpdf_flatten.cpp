@@ -13,6 +13,8 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_number.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "fpdfsdk/include/fsdk_define.h"
 
 typedef CFX_ArrayTemplate<CPDF_Dictionary*> CPDF_ObjectArray;

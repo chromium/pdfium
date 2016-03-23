@@ -6,6 +6,10 @@
 
 #include "core/fpdfapi/fpdf_page/cpdf_colorstate.h"
 
+#include "core/fpdfapi/fpdf_page/cpdf_pattern.h"
+#include "core/fpdfapi/fpdf_page/cpdf_tilingpattern.h"
+#include "core/include/fxge/fx_dib.h"
+
 void CPDF_ColorState::SetFillColor(CPDF_ColorSpace* pCS,
                                    FX_FLOAT* pValue,
                                    int nValues) {

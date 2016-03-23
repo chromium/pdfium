@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 
+#include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/include/javascript/IJavaScript.h"

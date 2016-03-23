@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/fpdf_page/include/cpdf_shadingobject.h"
 
+#include "core/fpdfapi/fpdf_page/cpdf_shadingpattern.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 

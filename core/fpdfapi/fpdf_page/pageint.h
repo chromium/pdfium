@@ -13,9 +13,9 @@
 #include <vector>
 
 #include "core/fpdfapi/fpdf_page/cpdf_contentmark.h"
+#include "core/fpdfapi/fpdf_page/cpdf_countedobject.h"
 #include "core/fpdfapi/fpdf_page/cpdf_parseoptions.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_pageobjectholder.h"
-#include "core/include/fpdfapi/fpdf_resource.h"
 #include "core/include/fxge/fx_ge.h"
 
 class CPDF_AllStates;
@@ -26,6 +26,7 @@ class CPDF_Form;
 class CPDF_IccProfile;
 class CPDF_Image;
 class CPDF_ImageObject;
+class CPDF_Page;
 class CPDF_ParseOptions;
 class CPDF_Pattern;
 class CPDF_StreamAcc;
@@ -438,10 +439,7 @@ class CPDF_DeviceCS : public CPDF_ColorSpace {
 
 class CPDF_PatternCS : public CPDF_ColorSpace {
  public:
-  explicit CPDF_PatternCS(CPDF_Document* pDoc)
-      : CPDF_ColorSpace(pDoc, PDFCS_PATTERN, 1),
-        m_pBaseCS(nullptr),
-        m_pCountedBaseCS(nullptr) {}
+  explicit CPDF_PatternCS(CPDF_Document* pDoc);
   ~CPDF_PatternCS() override;
   FX_BOOL v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) override;
   FX_BOOL GetRGB(FX_FLOAT* pBuf,
@@ -453,6 +451,14 @@ class CPDF_PatternCS : public CPDF_ColorSpace {
  private:
   CPDF_ColorSpace* m_pBaseCS;
   CPDF_CountedColorSpace* m_pCountedBaseCS;
+};
+
+#define MAX_PATTERN_COLORCOMPS 16
+struct PatternValue {
+  CPDF_Pattern* m_pPattern;
+  CPDF_CountedPattern* m_pCountedPattern;
+  int m_nComps;
+  FX_FLOAT m_Comps[MAX_PATTERN_COLORCOMPS];
 };
 
 void PDF_ReplaceAbbr(CPDF_Object* pObj);

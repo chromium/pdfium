@@ -9,9 +9,13 @@
 #include <vector>
 
 #include "core/fpdfapi/fpdf_edit/include/cpdf_creator.h"
+#include "core/fpdfapi/fpdf_font/cpdf_type3font.h"
+#include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 #include "core/fpdfapi/fpdf_page/cpdf_allstates.h"
+#include "core/fpdfapi/fpdf_page/cpdf_shadingpattern.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_form.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_formobject.h"
+#include "core/fpdfapi/fpdf_page/include/cpdf_image.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_imageobject.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_pageobject.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_pathobject.h"
@@ -23,6 +27,8 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_name.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_number.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_reference.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
 
 namespace {

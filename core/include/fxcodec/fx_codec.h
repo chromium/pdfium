@@ -532,6 +532,14 @@ class ICodec_IccModule {
   virtual void SetComponents(FX_DWORD nComponents) = 0;
 };
 
+void ReverseRGB(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels);
+void sRGB_to_AdobeCMYK(FX_FLOAT R,
+                       FX_FLOAT G,
+                       FX_FLOAT B,
+                       FX_FLOAT& c,
+                       FX_FLOAT& m,
+                       FX_FLOAT& y,
+                       FX_FLOAT& k);
 void AdobeCMYK_to_sRGB(FX_FLOAT c,
                        FX_FLOAT m,
                        FX_FLOAT y,
