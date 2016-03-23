@@ -298,6 +298,7 @@ bool IsValidEmbeddedCharcodeFromUnicodeCharset(CIDSet charset) {
 }
 
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+
 FX_DWORD EmbeddedCharcodeFromUnicode(const FXCMAP_CMap* pEmbedMap,
                                      CIDSet charset,
                                      FX_WCHAR unicode) {
@@ -321,7 +322,6 @@ FX_DWORD EmbeddedCharcodeFromUnicode(const FXCMAP_CMap* pEmbedMap,
   }
   return 0;
 }
-#endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
 
 FX_WCHAR EmbeddedUnicodeFromCharcode(const FXCMAP_CMap* pEmbedMap,
                                      CIDSet charset,
@@ -343,6 +343,8 @@ FX_WCHAR EmbeddedUnicodeFromCharcode(const FXCMAP_CMap* pEmbedMap,
     return pCodes[cid];
   return 0;
 }
+
+#endif  // _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
 
 void FT_UseCIDCharmap(FXFT_Face face, int coding) {
   int encoding;
