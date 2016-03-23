@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_INCLUDE_FXCRT_FX_SYSTEM_H_
-#define CORE_INCLUDE_FXCRT_FX_SYSTEM_H_
+#ifndef CORE_FXCRT_INCLUDE_FX_SYSTEM_H_
+#define CORE_FXCRT_INCLUDE_FX_SYSTEM_H_
 
 #include <assert.h>
 #include <math.h>
@@ -67,13 +67,13 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-typedef void* FX_POSITION;       // Keep until fxcrt containers gone
-typedef uint32_t FX_DWORD;       // Keep - "an efficient type"
-typedef float FX_FLOAT;          // Keep, allow upgrade to doubles.
-typedef double FX_DOUBLE;        // Keep, allow downgrade to floats.
-typedef int FX_BOOL;             // Keep, sadly not always 0 or 1.
-typedef char FX_CHAR;            // Keep, questionable signedness.
-typedef wchar_t FX_WCHAR;        // Keep, maybe bad platform wchars.
+typedef void* FX_POSITION;  // Keep until fxcrt containers gone
+typedef uint32_t FX_DWORD;  // Keep - "an efficient type"
+typedef float FX_FLOAT;     // Keep, allow upgrade to doubles.
+typedef double FX_DOUBLE;   // Keep, allow downgrade to floats.
+typedef int FX_BOOL;        // Keep, sadly not always 0 or 1.
+typedef char FX_CHAR;       // Keep, questionable signedness.
+typedef wchar_t FX_WCHAR;   // Keep, maybe bad platform wchars.
 
 // PDFium string sizes are limited to 2^31-1, and the value is signed to
 // allow -1 as a placeholder for "unknown".
@@ -317,4 +317,4 @@ int FXSYS_round(FX_FLOAT f);
 #define NEVER_INLINE __attribute__((__noinline__))
 #endif  // _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
-#endif  // CORE_INCLUDE_FXCRT_FX_SYSTEM_H_
+#endif  // CORE_FXCRT_INCLUDE_FX_SYSTEM_H_

@@ -12,7 +12,7 @@
 #include "core/fxcodec/jbig2/JBig2_BitStream.h"
 #include "core/fxcodec/jbig2/JBig2_Define.h"
 #include "core/fxcodec/jbig2/JBig2_HuffmanTable_Standard.h"
-#include "core/include/fxcrt/fx_memory.h"
+#include "core/fxcrt/include/fx_memory.h"
 
 CJBig2_HuffmanTable::CJBig2_HuffmanTable(const JBig2TableLine* pTable,
                                          FX_DWORD nLines,

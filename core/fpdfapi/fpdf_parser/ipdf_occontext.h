@@ -7,7 +7,7 @@
 #ifndef CORE_FPDFAPI_FPDF_PARSER_IPDF_OCCONTEXT_H_
 #define CORE_FPDFAPI_FPDF_PARSER_IPDF_OCCONTEXT_H_
 
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_system.h"
 
 class CPDF_Dictionary;
 class CPDF_PageObject;

@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_INCLUDE_FXCRT_FX_XML_H_
-#define CORE_INCLUDE_FXCRT_FX_XML_H_
+#ifndef CORE_FXCRT_INCLUDE_FX_XML_H_
+#define CORE_FXCRT_INCLUDE_FX_XML_H_
 
 #include <memory>
 #include <vector>
 
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 
 class CXML_AttrItem {
  public:
@@ -166,4 +166,4 @@ class CXML_Element {
   friend class CXML_Composer;
 };
 
-#endif  // CORE_INCLUDE_FXCRT_FX_XML_H_
+#endif  // CORE_FXCRT_INCLUDE_FX_XML_H_

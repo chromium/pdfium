@@ -7,8 +7,8 @@
 #ifndef XFA_FXJSE_INCLUDE_FXJSE_H_
 #define XFA_FXJSE_INCLUDE_FXJSE_H_
 
-#include "core/include/fxcrt/fx_string.h"
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/include/fx_system.h"
 
 struct FXJSE_CLASS;
 class CFXJSE_Arguments;

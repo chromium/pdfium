@@ -7,7 +7,7 @@
 #ifndef CORE_FPDFAPI_FPDF_PARSER_IPDF_CRYPTO_HANDLER_H_
 #define CORE_FPDFAPI_FPDF_PARSER_IPDF_CRYPTO_HANDLER_H_
 
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 
 class CPDF_Dictionary;
 class IPDF_SecurityHandler;

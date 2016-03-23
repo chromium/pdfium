@@ -8,8 +8,8 @@
 
 #include <vector>
 
-#include "core/include/fxcrt/fx_ext.h"
-#include "core/include/fxcrt/fx_xml.h"
+#include "core/fxcrt/include/fx_ext.h"
+#include "core/fxcrt/include/fx_xml.h"
 #include "third_party/base/stl_util.h"
 
 CXML_Parser::~CXML_Parser() {

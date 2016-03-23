@@ -10,8 +10,8 @@
 #include <vector>
 
 #include "core/fpdfapi/fpdf_parser/include/ipdf_data_avail.h"
-#include "core/include/fxcrt/fx_basic.h"
-#include "core/include/fxcrt/fx_stream.h"
+#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/include/fx_stream.h"
 
 class CFX_BitStream;
 class CPDF_DataAvail;

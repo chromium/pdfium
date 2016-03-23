@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/app/xfa_ffdocview.h"
 
-#include "core/include/fxcrt/fx_ext.h"
+#include "core/fxcrt/include/fx_ext.h"
 #include "xfa/fxfa/app/xfa_ffapp.h"
 #include "xfa/fxfa/app/xfa_ffbarcode.h"
 #include "xfa/fxfa/app/xfa_ffcheckbutton.h"

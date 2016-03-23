@@ -22,10 +22,10 @@
 #include "core/fpdftext/include/ipdf_textpage.h"
 #include "core/fpdftext/include/ipdf_textpagefind.h"
 #include "core/fpdftext/unicodenormalization.h"
+#include "core/fxcrt/fx_bidi.h"
+#include "core/fxcrt/include/fx_ext.h"
+#include "core/fxcrt/include/fx_ucd.h"
 #include "core/include/fpdfapi/fpdf_resource.h"
-#include "core/include/fxcrt/fx_bidi.h"
-#include "core/include/fxcrt/fx_ext.h"
-#include "core/include/fxcrt/fx_ucd.h"
 #include "third_party/base/stl_util.h"
 
 #define FPDFTEXT_RLTB 1

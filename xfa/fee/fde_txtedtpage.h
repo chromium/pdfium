@@ -7,8 +7,8 @@
 #ifndef XFA_FEE_FDE_TXTEDTPAGE_H_
 #define XFA_FEE_FDE_TXTEDTPAGE_H_
 
-#include "core/include/fxcrt/fx_coordinates.h"
-#include "core/include/fxcrt/fx_string.h"
+#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/include/fx_string.h"
 #include "xfa/fde/fde_visualset.h"
 #include "xfa/fee/ifde_txtedtpage.h"
 #include "xfa/fgas/crt/fgas_utils.h"

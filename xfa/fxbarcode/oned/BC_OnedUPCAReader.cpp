@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 #include "xfa/fxbarcode/BC_Reader.h"
 #include "xfa/fxbarcode/oned/BC_OneDReader.h"
 #include "xfa/fxbarcode/oned/BC_OneDimReader.h"

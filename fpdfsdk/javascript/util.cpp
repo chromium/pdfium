@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 
-#include "core/include/fxcrt/fx_ext.h"
+#include "core/fxcrt/include/fx_ext.h"
 #include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "fpdfsdk/javascript/JS_Context.h"
 #include "fpdfsdk/javascript/JS_Define.h"

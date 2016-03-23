@@ -7,9 +7,9 @@
 #ifndef CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_GENERALSTATEDATA_H_
 #define CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_GENERALSTATEDATA_H_
 
-#include "core/include/fxcrt/fx_coordinates.h"
-#include "core/include/fxcrt/fx_string.h"
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/include/fx_system.h"
 #include "core/include/fxge/fx_dib.h"
 
 class CPDF_TransferFunc;

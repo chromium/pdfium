@@ -8,7 +8,7 @@
 #define CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_FORMOBJECT_H_
 
 #include "core/fpdfapi/fpdf_page/include/cpdf_pageobject.h"
-#include "core/include/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/include/fx_coordinates.h"
 
 class Form;
 

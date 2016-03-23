@@ -1,4 +1,5 @@
 include_rules = [
   '+core/include',
+  '+core/fxcrt/include',
   '+third_party/bigint'
 ]

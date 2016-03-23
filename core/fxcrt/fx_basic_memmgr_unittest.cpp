@@ -4,7 +4,7 @@
 
 #include <limits>
 
-#include "core/include/fxcrt/fx_memory.h"
+#include "core/fxcrt/include/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {

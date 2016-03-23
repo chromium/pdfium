@@ -9,7 +9,7 @@
 
 #include <cstdint>
 
-#include "core/include/fxcrt/fx_string.h"
+#include "core/fxcrt/include/fx_string.h"
 
 class CBC_Dimension {
  public:

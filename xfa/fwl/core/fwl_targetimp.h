@@ -7,7 +7,7 @@
 #ifndef XFA_FWL_CORE_FWL_TARGETIMP_H_
 #define XFA_FWL_CORE_FWL_TARGETIMP_H_
 
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 #include "xfa/include/fwl/core/fwl_target.h"
 
 class CFWL_TargetImp {

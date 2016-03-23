@@ -7,7 +7,7 @@
 #ifndef XFA_FGAS_LAYOUT_FGAS_TEXTBREAK_H_
 #define XFA_FGAS_LAYOUT_FGAS_TEXTBREAK_H_
 
-#include "core/include/fxcrt/fx_ucd.h"
+#include "core/fxcrt/include/fx_ucd.h"
 #include "core/include/fxge/fx_ge.h"
 #include "xfa/fgas/crt/fgas_utils.h"
 #include "xfa/fgas/layout/fgas_unicode.h"

@@ -7,7 +7,7 @@
 #ifndef XFA_FXBARCODE_COMMON_BC_COMMONDECODERRESULT_H_
 #define XFA_FXBARCODE_COMMON_BC_COMMONDECODERRESULT_H_
 
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 
 class CBC_QRCoderErrorCorrectionLevel;
 class CBC_PDF417ResultMetadata;

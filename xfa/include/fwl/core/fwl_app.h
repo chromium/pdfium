@@ -7,7 +7,7 @@
 #ifndef XFA_INCLUDE_FWL_CORE_FWL_APP_H_
 #define XFA_INCLUDE_FWL_CORE_FWL_APP_H_
 
-#include "core/include/fxcrt/fx_string.h"
+#include "core/fxcrt/include/fx_string.h"
 #include "xfa/include/fwl/core/fwl_thread.h"
 
 class IFWL_AdapterNative;

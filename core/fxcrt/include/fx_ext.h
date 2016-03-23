@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_INCLUDE_FXCRT_FX_EXT_H_
-#define CORE_INCLUDE_FXCRT_FX_EXT_H_
+#ifndef CORE_FXCRT_INCLUDE_FX_EXT_H_
+#define CORE_FXCRT_INCLUDE_FX_EXT_H_
 
 #include <cctype>
 #include <cwctype>
 
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 
 // TODO(thestig) Using unique_ptr with ReleaseDeleter is still not ideal.
 // Come up or wait for something better. This appears in this file rather
@@ -131,4 +131,4 @@ class CFX_SSortTemplate {
   }
 };
 
-#endif  // CORE_INCLUDE_FXCRT_FX_EXT_H_
+#endif  // CORE_FXCRT_INCLUDE_FX_EXT_H_

@@ -7,7 +7,7 @@
 #ifndef XFA_INCLUDE_FWL_CORE_FWL_NOTE_H_
 #define XFA_INCLUDE_FWL_CORE_FWL_NOTE_H_
 
-#include "core/include/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/include/fx_coordinates.h"
 #include "xfa/fxgraphics/include/cfx_graphics.h"
 #include "xfa/include/fwl/core/fwl_error.h"
 

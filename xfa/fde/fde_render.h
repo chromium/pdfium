@@ -7,7 +7,7 @@
 #ifndef XFA_FDE_FDE_RENDER_H_
 #define XFA_FDE_FDE_RENDER_H_
 
-#include "core/include/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/include/fx_coordinates.h"
 #include "xfa/fde/fde_visualset.h"
 
 class IFDE_RenderDevice;

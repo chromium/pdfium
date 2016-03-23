@@ -9,8 +9,8 @@
 
 #include "core/fpdfapi/fpdf_page/include/cpdf_pageobject.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_path.h"
-#include "core/include/fxcrt/fx_coordinates.h"
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/include/fx_system.h"
 
 class CPDF_PathObject : public CPDF_PageObject {
  public:

@@ -7,8 +7,8 @@
 #ifndef XFA_FEE_FX_WORDBREAK_FX_WORDBREAK_H_
 #define XFA_FEE_FX_WORDBREAK_FX_WORDBREAK_H_
 
-#include "core/include/fxcrt/fx_string.h"
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/include/fx_system.h"
 
 class IFX_CharIter;
 

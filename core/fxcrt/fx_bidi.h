@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_INCLUDE_FXCRT_FX_BIDI_H_
-#define CORE_INCLUDE_FXCRT_FX_BIDI_H_
+#ifndef CORE_FXCRT_FX_BIDI_H_
+#define CORE_FXCRT_FX_BIDI_H_
 
 #include <memory>
 #include <vector>
 
-#include "core/include/fxcrt/fx_string.h"
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/include/fx_system.h"
 
 // Processes characters and group them into segments based on text direction.
 class CFX_BidiChar {
@@ -70,4 +70,4 @@ class CFX_BidiString {
   CFX_BidiChar::Direction m_eOverallDirection;
 };
 
-#endif  // CORE_INCLUDE_FXCRT_FX_BIDI_H_
+#endif  // CORE_FXCRT_FX_BIDI_H_

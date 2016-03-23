@@ -14,7 +14,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
 #include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
-#include "core/include/fxcrt/fx_ext.h"
+#include "core/fxcrt/include/fx_ext.h"
 
 // Indexed by 8-bit character code, contains either:
 //   'W' - for whitespace: NUL, TAB, CR, LF, FF, SPACE, 0x80, 0xff

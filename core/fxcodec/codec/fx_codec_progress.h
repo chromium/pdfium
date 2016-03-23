@@ -7,9 +7,9 @@
 #ifndef CORE_FXCODEC_CODEC_FX_CODEC_PROGRESS_H_
 #define CORE_FXCODEC_CODEC_FX_CODEC_PROGRESS_H_
 
+#include "core/fxcrt/include/fx_memory.h"
+#include "core/fxcrt/include/fx_system.h"
 #include "core/include/fxcodec/fx_codec.h"
-#include "core/include/fxcrt/fx_memory.h"
-#include "core/include/fxcrt/fx_system.h"
 #include "core/include/fxge/fx_dib.h"
 
 #define FXCODEC_BLOCK_SIZE 4096

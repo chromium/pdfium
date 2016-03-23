@@ -8,8 +8,8 @@
 #define CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_PAGEOBJECTHOLDER_H_
 
 #include "core/fpdfapi/fpdf_page/cpdf_pageobjectlist.h"
-#include "core/include/fxcrt/fx_coordinates.h"
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/include/fx_system.h"
 
 class IFX_Pause;
 class CPDF_Dictionary;

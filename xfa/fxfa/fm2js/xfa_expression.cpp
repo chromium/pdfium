@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/fm2js/xfa_expression.h"
 
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 
 namespace {
 

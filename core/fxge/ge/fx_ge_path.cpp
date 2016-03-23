@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_system.h"
 #include "core/include/fxge/fx_ge.h"
 #include "third_party/base/numerics/safe_math.h"
 

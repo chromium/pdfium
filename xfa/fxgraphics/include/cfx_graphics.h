@@ -7,7 +7,7 @@
 #ifndef XFA_FXGRAPHICS_INCLUDE_CFX_GRAPHICS_H_
 #define XFA_FXGRAPHICS_INCLUDE_CFX_GRAPHICS_H_
 
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_system.h"
 #include "core/include/fxge/fx_dib.h"
 #include "core/include/fxge/fx_ge.h"
 

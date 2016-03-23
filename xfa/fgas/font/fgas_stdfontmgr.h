@@ -7,7 +7,7 @@
 #ifndef XFA_FGAS_FONT_FGAS_STDFONTMGR_H_
 #define XFA_FGAS_FONT_FGAS_STDFONTMGR_H_
 
-#include "core/include/fxcrt/fx_ext.h"
+#include "core/fxcrt/include/fx_ext.h"
 #include "core/include/fxge/fx_freetype.h"
 #include "core/include/fxge/fx_ge.h"
 #include "third_party/freetype/include/freetype/fttypes.h"

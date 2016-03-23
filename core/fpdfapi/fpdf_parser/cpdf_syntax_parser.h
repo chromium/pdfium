@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 
 class CPDF_Dictionary;
 class CPDF_IndirectObjectHolder;

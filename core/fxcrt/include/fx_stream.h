@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_INCLUDE_FXCRT_FX_STREAM_H_
-#define CORE_INCLUDE_FXCRT_FX_STREAM_H_
+#ifndef CORE_FXCRT_INCLUDE_FX_STREAM_H_
+#define CORE_FXCRT_INCLUDE_FX_STREAM_H_
 
-#include "core/include/fxcrt/fx_string.h"
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/include/fx_system.h"
 
 void* FX_OpenFolder(const FX_CHAR* path);
 void* FX_OpenFolder(const FX_WCHAR* path);
@@ -159,4 +159,4 @@ class IFX_BufferRead : public IFX_StreamRead {
   virtual FX_FILESIZE GetBlockOffset() = 0;
 };
 
-#endif  // CORE_INCLUDE_FXCRT_FX_STREAM_H_
+#endif  // CORE_FXCRT_INCLUDE_FX_STREAM_H_

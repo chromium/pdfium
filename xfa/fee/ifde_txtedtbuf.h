@@ -7,7 +7,7 @@
 #ifndef XFA_FEE_IFDE_TXTEDTBUF_H_
 #define XFA_FEE_IFDE_TXTEDTBUF_H_
 
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 
 #define FDE_DEFCHUNKLENGTH (1024)
 

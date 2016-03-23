@@ -9,8 +9,8 @@
 
 #include <map>
 
-#include "core/include/fxcrt/fx_ext.h"
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_ext.h"
+#include "core/fxcrt/include/fx_system.h"
 #include "xfa/fgas/font/fgas_font.h"
 #include "xfa/include/fxfa/fxfa.h"
 

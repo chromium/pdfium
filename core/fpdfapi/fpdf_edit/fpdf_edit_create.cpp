@@ -21,7 +21,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
 #include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
 #include "core/fpdfapi/fpdf_parser/ipdf_crypto_handler.h"
-#include "core/include/fxcrt/fx_ext.h"
+#include "core/fxcrt/include/fx_ext.h"
 #include "third_party/base/stl_util.h"
 
 #define PDF_OBJECTSTREAM_MAXLENGTH (256 * 1024)

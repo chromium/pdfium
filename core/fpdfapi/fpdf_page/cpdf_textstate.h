@@ -8,7 +8,7 @@
 #define CORE_FPDFAPI_FPDF_PAGE_CPDF_TEXTSTATE_H_
 
 #include "core/fpdfapi/fpdf_page/include/cpdf_textstatedata.h"
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 
 class CPDF_Font;
 

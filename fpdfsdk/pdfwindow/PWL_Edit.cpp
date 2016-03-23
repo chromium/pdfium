@@ -8,9 +8,9 @@
 
 #include <vector>
 
+#include "core/fxcrt/include/fx_safe_types.h"
+#include "core/fxcrt/include/fx_xml.h"
 #include "core/include/fpdfapi/fpdf_resource.h"
-#include "core/include/fxcrt/fx_safe_types.h"
-#include "core/include/fxcrt/fx_xml.h"
 #include "core/include/fxge/fx_ge.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Caret.h"
 #include "fpdfsdk/include/pdfwindow/PWL_EditCtrl.h"

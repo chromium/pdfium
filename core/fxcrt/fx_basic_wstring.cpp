@@ -9,8 +9,8 @@
 #include <algorithm>
 #include <cctype>
 
-#include "core/include/fxcrt/fx_basic.h"
-#include "core/include/fxcrt/fx_ext.h"
+#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/include/fx_ext.h"
 #include "third_party/base/numerics/safe_math.h"
 
 namespace {

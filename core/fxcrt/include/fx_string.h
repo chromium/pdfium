@@ -4,14 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_INCLUDE_FXCRT_FX_STRING_H_
-#define CORE_INCLUDE_FXCRT_FX_STRING_H_
+#ifndef CORE_FXCRT_INCLUDE_FX_STRING_H_
+#define CORE_FXCRT_INCLUDE_FX_STRING_H_
 
 #include <stdint.h>  // For intptr_t.
 #include <algorithm>
 
-#include "core/include/fxcrt/fx_memory.h"
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_memory.h"
+#include "core/fxcrt/include/fx_system.h"
 
 class CFX_BinaryBuf;
 class CFX_ByteString;
@@ -816,4 +816,4 @@ inline FX_FLOAT FX_atof(const CFX_WideStringC& wsStr) {
 void FX_atonum(const CFX_ByteStringC& str, FX_BOOL& bInteger, void* pData);
 FX_STRSIZE FX_ftoa(FX_FLOAT f, FX_CHAR* buf);
 
-#endif  // CORE_INCLUDE_FXCRT_FX_STRING_H_
+#endif  // CORE_FXCRT_INCLUDE_FX_STRING_H_

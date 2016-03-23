@@ -6,7 +6,7 @@
 
 #include "xfa/fgas/crt/fgas_algorithm.h"
 
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -9,7 +9,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
-#include "core/include/fxcrt/fx_xml.h"
+#include "core/fxcrt/include/fx_xml.h"
 #include "fpdfsdk/include/fsdk_define.h"
 
 #ifdef PDF_ENABLE_XFA

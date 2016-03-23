@@ -8,9 +8,9 @@
 #define CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_PAGE_H_
 
 #include "core/fpdfapi/fpdf_page/include/cpdf_pageobjectholder.h"
-#include "core/include/fxcrt/fx_basic.h"
-#include "core/include/fxcrt/fx_coordinates.h"
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/include/fx_system.h"
 
 class CPDF_Document;
 class CPDF_Dictionary;

@@ -7,7 +7,7 @@
 #ifndef CORE_FPDFAPI_FPDF_PARSER_IPDF_SECURITY_HANDLER_H_
 #define CORE_FPDFAPI_FPDF_PARSER_IPDF_SECURITY_HANDLER_H_
 
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_system.h"
 
 class CPDF_Parser;
 class CPDF_Dictionary;

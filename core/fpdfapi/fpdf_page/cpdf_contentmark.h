@@ -8,7 +8,7 @@
 #define CORE_FPDFAPI_FPDF_PAGE_CPDF_CONTENTMARK_H_
 
 #include "core/fpdfapi/fpdf_page/cpdf_contentmarkdata.h"
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 
 class CPDF_ContentMark : public CFX_CountRef<CPDF_ContentMarkData> {
  public:

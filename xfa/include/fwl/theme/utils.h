@@ -7,7 +7,7 @@
 #ifndef XFA_INCLUDE_FWL_THEME_UTILS_H_
 #define XFA_INCLUDE_FWL_THEME_UTILS_H_
 
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_system.h"
 
 #define THEME_XPSimilar
 enum FWLTHEME_EDGE {

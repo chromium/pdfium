@@ -10,8 +10,8 @@
 #include <map>
 #include <vector>
 
-#include "core/include/fxcrt/fx_basic.h"
-#include "core/include/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/include/fx_coordinates.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "xfa/include/fxfa/fxfa.h"

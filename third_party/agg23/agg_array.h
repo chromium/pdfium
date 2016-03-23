@@ -17,7 +17,7 @@
 #define AGG_ARRAY_INCLUDED
 
 #include "agg_basics.h"
-#include "core/include/fxcrt/fx_memory.h"  // For FXSYS_* macros.
+#include "core/fxcrt/include/fx_memory.h"  // For FXSYS_* macros.
 
 namespace agg
 {

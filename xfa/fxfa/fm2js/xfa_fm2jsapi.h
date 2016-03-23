@@ -7,7 +7,7 @@
 #ifndef XFA_FXFA_FM2JS_XFA_FM2JSAPI_H_
 #define XFA_FXFA_FM2JS_XFA_FM2JSAPI_H_
 
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 #include "xfa/fxfa/parser/xfa_document.h"
 #include "xfa/fxjse/include/fxjse.h"
 

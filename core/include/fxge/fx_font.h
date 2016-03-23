@@ -11,7 +11,7 @@
 #include <memory>
 #include <vector>
 
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_system.h"
 #include "core/include/fxge/fx_dib.h"
 
 typedef struct FT_FaceRec_* FXFT_Face;

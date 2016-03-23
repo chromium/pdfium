@@ -8,7 +8,7 @@
 
 #include <algorithm>
 
-#include "core/include/fxcrt/fx_ext.h"
+#include "core/fxcrt/include/fx_ext.h"
 #include "xfa/fde/fde_pen.h"
 #include "xfa/fgas/crt/fgas_algorithm.h"
 #include "xfa/fgas/crt/fgas_codepage.h"

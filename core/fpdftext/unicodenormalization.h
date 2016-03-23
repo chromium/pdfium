@@ -7,7 +7,7 @@
 #ifndef CORE_FPDFTEXT_UNICODENORMALIZATION_H_
 #define CORE_FPDFTEXT_UNICODENORMALIZATION_H_
 
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_system.h"
 
 FX_STRSIZE FX_Unicode_GetNormalization(FX_WCHAR wch, FX_WCHAR* pDst);
 

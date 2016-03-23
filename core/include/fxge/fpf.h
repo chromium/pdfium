@@ -7,7 +7,7 @@
 #ifndef CORE_INCLUDE_FXGE_FPF_H_
 #define CORE_INCLUDE_FXGE_FPF_H_
 
-#include "core/include/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/include/fx_coordinates.h"
 
 class IFPF_FontMgr;
 

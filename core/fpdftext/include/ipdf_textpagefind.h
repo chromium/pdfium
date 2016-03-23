@@ -8,8 +8,8 @@
 #define CORE_FPDFTEXT_INCLUDE_IPDF_TEXTPAGEFIND_H_
 
 #include "core/fpdftext/include/ipdf_textpage.h"
-#include "core/include/fxcrt/fx_coordinates.h"
-#include "core/include/fxcrt/fx_string.h"
+#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/include/fx_string.h"
 
 class IPDF_TextPageFind {
  public:

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/fxcrt/include/fx_memory.h"
 #include "core/fxcrt/plex.h"
-#include "core/include/fxcrt/fx_memory.h"
 
 CFX_Plex* CFX_Plex::Create(CFX_Plex*& pHead,
                            FX_DWORD nMax,

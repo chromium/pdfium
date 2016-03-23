@@ -6,7 +6,7 @@
 
 #include "xfa/include/fwl/adapter/fwl_sdadapterimp.h"
 
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_system.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/fwl_targetimp.h"
 #include "xfa/fwl/core/fwl_threadimp.h"

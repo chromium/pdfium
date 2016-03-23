@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 #include "xfa/fxbarcode/common/BC_CommonDecoderResult.h"
 #include "xfa/fxbarcode/pdf417/BC_PDF417ResultMetadata.h"
 #include "xfa/fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"

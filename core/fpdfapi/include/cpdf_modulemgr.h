@@ -10,7 +10,7 @@
 #include <memory>
 
 #include "core/fpdfapi/ipdf_pagemodule.h"
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 
 class CCodec_ModuleMgr;
 class ICodec_FaxModule;

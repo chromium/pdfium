@@ -4,16 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_INCLUDE_FXCRT_FX_BASIC_H_
-#define CORE_INCLUDE_FXCRT_FX_BASIC_H_
+#ifndef CORE_FXCRT_INCLUDE_FX_BASIC_H_
+#define CORE_FXCRT_INCLUDE_FX_BASIC_H_
 
 #include <algorithm>
 #include <memory>
 
-#include "core/include/fxcrt/fx_memory.h"
-#include "core/include/fxcrt/fx_stream.h"
-#include "core/include/fxcrt/fx_string.h"
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_memory.h"
+#include "core/fxcrt/include/fx_stream.h"
+#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/include/fx_system.h"
 
 // The FX_ArraySize(arr) macro returns the # of elements in an array arr.
 // The expression is a compile-time constant, and therefore can be
@@ -1150,4 +1150,4 @@ class CFX_Matrix_3by3 {
   FX_FLOAT i;
 };
 
-#endif  // CORE_INCLUDE_FXCRT_FX_BASIC_H_
+#endif  // CORE_FXCRT_INCLUDE_FX_BASIC_H_

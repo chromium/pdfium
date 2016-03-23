@@ -7,8 +7,8 @@
 #ifndef XFA_FGAS_CRT_FGAS_MEMORY_H_
 #define XFA_FGAS_CRT_FGAS_MEMORY_H_
 
-#include "core/include/fxcrt/fx_memory.h"
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_memory.h"
+#include "core/fxcrt/include/fx_system.h"
 
 class IFX_MEMAllocator;
 class CFX_Target;

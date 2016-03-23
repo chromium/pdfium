@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/fm2js/xfa_fm2jsapi.h"
 
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 #include "xfa/fxfa/fm2js/xfa_fm2jscontext.h"
 #include "xfa/fxfa/fm2js/xfa_program.h"
 #include "xfa/fxfa/parser/xfa_document.h"

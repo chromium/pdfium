@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_INCLUDE_FXCRT_FX_MEMORY_H_
-#define CORE_INCLUDE_FXCRT_FX_MEMORY_H_
+#ifndef CORE_FXCRT_INCLUDE_FX_MEMORY_H_
+#define CORE_FXCRT_INCLUDE_FX_MEMORY_H_
 
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_system.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -81,4 +81,4 @@ class CFX_DestructObject {
 
 #endif  // __cplusplus
 
-#endif  // CORE_INCLUDE_FXCRT_FX_MEMORY_H_
+#endif  // CORE_FXCRT_INCLUDE_FX_MEMORY_H_

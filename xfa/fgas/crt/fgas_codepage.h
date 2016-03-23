@@ -7,7 +7,7 @@
 #ifndef XFA_FGAS_CRT_FGAS_CODEPAGE_H_
 #define XFA_FGAS_CRT_FGAS_CODEPAGE_H_
 
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 
 #define FX_CODEPAGE_DefANSI 0
 #define FX_CODEPAGE_DefOEM 1

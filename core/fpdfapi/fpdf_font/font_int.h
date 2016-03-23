@@ -10,8 +10,8 @@
 #include <map>
 #include <memory>
 
+#include "core/fxcrt/include/fx_basic.h"
 #include "core/include/fpdfapi/fpdf_resource.h"
-#include "core/include/fxcrt/fx_basic.h"
 
 class CPDF_CID2UnicodeMap;
 class CPDF_CMap;

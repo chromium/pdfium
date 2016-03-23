@@ -9,8 +9,8 @@
 
 #include <algorithm>
 
-#include "core/include/fxcrt/fx_basic.h"
-#include "core/include/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/include/fx_safe_types.h"
 
 class IFXCRT_FileAccess {
  public:

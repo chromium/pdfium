@@ -11,9 +11,9 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/include/fx_coordinates.h"  // For FX_RECT.
 #include "core/include/fxcodec/fx_codec_def.h"
-#include "core/include/fxcrt/fx_basic.h"
-#include "core/include/fxcrt/fx_coordinates.h"  // For FX_RECT.
 
 class CFX_DIBSource;
 class CJPX_Decoder;

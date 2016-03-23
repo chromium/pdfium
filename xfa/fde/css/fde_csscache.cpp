@@ -8,7 +8,7 @@
 
 #include <algorithm>
 
-#include "core/include/fxcrt/fx_ext.h"
+#include "core/fxcrt/include/fx_ext.h"
 
 FDE_CSSCacheItem::FDE_CSSCacheItem(IFDE_CSSStyleSheet* p)
     : pStylesheet(p), dwActivity(0) {

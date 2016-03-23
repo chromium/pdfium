@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/include/fxcrt/fx_ucd.h"
+#include "core/fxcrt/include/fx_ucd.h"
 
 FX_DWORD FX_GetUnicodeProperties(FX_WCHAR wch) {
   size_t idx = static_cast<size_t>(wch);

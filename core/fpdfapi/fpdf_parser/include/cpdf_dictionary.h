@@ -10,8 +10,8 @@
 #include <map>
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_object.h"
-#include "core/include/fxcrt/fx_coordinates.h"
-#include "core/include/fxcrt/fx_string.h"
+#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/include/fx_string.h"
 
 class CPDF_IndirectObjectHolder;
 

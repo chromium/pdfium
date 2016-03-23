@@ -7,8 +7,8 @@
 #include <setjmp.h>
 
 #include "core/fxcodec/codec/codec_int.h"
+#include "core/fxcrt/include/fx_safe_types.h"
 #include "core/include/fxcodec/fx_codec.h"
-#include "core/include/fxcrt/fx_safe_types.h"
 #include "core/include/fxge/fx_dib.h"
 
 extern "C" {

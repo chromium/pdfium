@@ -8,9 +8,9 @@
 #define CORE_FPDFAPI_FPDF_EDIT_INCLUDE_CPDF_PAGECONTENTGENERATOR_H_
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
-#include "core/include/fxcrt/fx_basic.h"
-#include "core/include/fxcrt/fx_coordinates.h"
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/include/fx_system.h"
 
 class CPDF_Object;
 class CPDF_Page;

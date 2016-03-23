@@ -7,7 +7,7 @@
 #ifndef FPDFSDK_INCLUDE_FXEDIT_FX_EDIT_H_
 #define FPDFSDK_INCLUDE_FXEDIT_FX_EDIT_H_
 
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 #include "core/include/fxge/fx_dib.h"
 
 class CFX_RenderDevice;

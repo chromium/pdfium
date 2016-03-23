@@ -7,7 +7,7 @@
 #ifndef XFA_FXBARCODE_COMMON_BC_COMMONPERSPECTIVETRANSFORM_H_
 #define XFA_FXBARCODE_COMMON_BC_COMMONPERSPECTIVETRANSFORM_H_
 
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 
 class CBC_CommonPerspectiveTransform {
  public:

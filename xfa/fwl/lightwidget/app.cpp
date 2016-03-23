@@ -6,7 +6,7 @@
 
 #include "xfa/include/fwl/lightwidget/app.h"
 
-#include "core/include/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/include/fx_coordinates.h"
 #include "xfa/include/fwl/core/fwl_app.h"
 #include "xfa/include/fwl/core/fwl_error.h"
 #include "xfa/include/fwl/lightwidget/theme.h"

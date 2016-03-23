@@ -12,8 +12,8 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_simple_parser.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
+#include "core/fxcrt/include/fx_ext.h"
 #include "core/include/fpdfapi/fpdf_resource.h"
-#include "core/include/fxcrt/fx_ext.h"
 #include "core/include/fxge/fx_freetype.h"
 #include "core/include/fxge/fx_ge.h"
 

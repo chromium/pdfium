@@ -7,8 +7,8 @@
 #ifndef CORE_INCLUDE_FXGE_FX_DIB_H_
 #define CORE_INCLUDE_FXGE_FX_DIB_H_
 
-#include "core/include/fxcrt/fx_basic.h"
-#include "core/include/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/include/fx_coordinates.h"
 
 enum FXDIB_Format {
   FXDIB_Invalid = 0,

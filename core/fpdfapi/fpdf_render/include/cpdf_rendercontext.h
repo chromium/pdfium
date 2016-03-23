@@ -7,8 +7,8 @@
 #ifndef CORE_FPDFAPI_FPDF_RENDER_INCLUDE_CPDF_RENDERCONTEXT_H_
 #define CORE_FPDFAPI_FPDF_RENDER_INCLUDE_CPDF_RENDERCONTEXT_H_
 
-#include "core/include/fxcrt/fx_basic.h"
-#include "core/include/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/include/fx_coordinates.h"
 
 class CPDF_Dictionary;
 class CPDF_Document;

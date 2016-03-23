@@ -7,8 +7,8 @@
 #ifndef CORE_FPDFAPI_FPDF_PAGE_CPDF_COLORSTATEDATA_H_
 #define CORE_FPDFAPI_FPDF_PAGE_CPDF_COLORSTATEDATA_H_
 
+#include "core/fxcrt/include/fx_system.h"
 #include "core/include/fpdfapi/fpdf_resource.h"
-#include "core/include/fxcrt/fx_system.h"
 
 class CPDF_ColorStateData {
  public:

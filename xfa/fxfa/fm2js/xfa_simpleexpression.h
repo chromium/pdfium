@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 #include "xfa/fxfa/fm2js/xfa_lexer.h"
 
 #define RUNTIMEFUNCTIONRETURNVALUE \

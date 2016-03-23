@@ -7,7 +7,7 @@
 #ifndef XFA_FXBARCODE_ONED_BC_ONEDCODE39READER_H_
 #define XFA_FXBARCODE_ONED_BC_ONEDCODE39READER_H_
 
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_system.h"
 #include "xfa/fxbarcode/oned/BC_OneDReader.h"
 
 class CBC_CommonBitArray;

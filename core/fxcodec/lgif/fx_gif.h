@@ -9,7 +9,7 @@
 
 #include <setjmp.h>
 
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 
 #define GIF_SIGNATURE "GIF"
 #define GIF_SIG_EXTENSION 0x21

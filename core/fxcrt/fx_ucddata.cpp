@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/include/fxcrt/fx_basic.h"
-#include "core/include/fxcrt/fx_ucd.h"
+#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/include/fx_ucd.h"
 
 const FX_DWORD kTextLayoutCodeProperties[] = {
     0xfffe9a93, 0xfffe9a93, 0xfffe9a93, 0xfffe9a93, 0xfffe9a93, 0xfffe9a93,

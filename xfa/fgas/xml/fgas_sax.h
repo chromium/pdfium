@@ -7,7 +7,7 @@
 #ifndef XFA_FGAS_XML_FGAS_SAX_H_
 #define XFA_FGAS_XML_FGAS_SAX_H_
 
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 
 #define FX_SAXPARSEMODE_NotConvert_amp 0x0001
 #define FX_SAXPARSEMODE_NotConvert_lt 0x0002

@@ -10,8 +10,8 @@
 #include <map>
 #include <vector>
 
+#include "core/fxcrt/include/fx_basic.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
-#include "core/include/fxcrt/fx_basic.h"
 #include "core/include/fxge/fx_dib.h"
 #include "fpdfsdk/include/fsdk_baseannot.h"
 

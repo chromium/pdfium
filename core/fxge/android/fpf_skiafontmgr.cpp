@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_system.h"
 
 #if _FX_OS_ == _FX_ANDROID_
 
@@ -13,9 +13,9 @@
 #define FPF_SKIAMATCHWEIGHT_1 16
 #define FPF_SKIAMATCHWEIGHT_2 8
 
+#include "core/fxcrt/include/fx_ext.h"
 #include "core/fxge/android/fpf_skiafont.h"
 #include "core/fxge/android/fpf_skiafontmgr.h"
-#include "core/include/fxcrt/fx_ext.h"
 #include "core/include/fxge/fx_freetype.h"
 
 #ifdef __cplusplus

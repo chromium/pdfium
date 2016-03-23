@@ -10,8 +10,8 @@
 #include <memory>
 #include <vector>
 
-#include "core/include/fxcrt/fx_coordinates.h"
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/include/fx_system.h"
 #include "xfa/include/fwl/core/fwl_error.h"
 #include "xfa/include/fwl/core/fwl_theme.h"
 #include "xfa/include/fwl/core/fwl_widget.h"

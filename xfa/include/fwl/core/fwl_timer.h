@@ -7,7 +7,7 @@
 #ifndef XFA_INCLUDE_FWL_CORE_FWL_TIMER_H_
 #define XFA_INCLUDE_FWL_CORE_FWL_TIMER_H_
 
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_system.h"
 
 typedef struct FWL_HTIMER_ { void* pData; } * FWL_HTIMER;
 

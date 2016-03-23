@@ -8,8 +8,8 @@
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/fxcrt/include/fx_ext.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
-#include "core/include/fxcrt/fx_ext.h"
 #include "xfa/fgas/crt/fgas_algorithm.h"
 #include "xfa/fxfa/app/xfa_ffapp.h"
 #include "xfa/fxfa/app/xfa_ffdocview.h"

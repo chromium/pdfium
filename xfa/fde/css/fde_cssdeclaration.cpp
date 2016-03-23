@@ -6,7 +6,7 @@
 
 #include "xfa/fde/css/fde_cssdeclaration.h"
 
-#include "core/include/fxcrt/fx_ext.h"
+#include "core/fxcrt/include/fx_ext.h"
 #include "xfa/fgas/crt/fgas_system.h"
 
 IFDE_CSSValue* CFDE_CSSDeclaration::GetProperty(FDE_CSSPROPERTY eProperty,

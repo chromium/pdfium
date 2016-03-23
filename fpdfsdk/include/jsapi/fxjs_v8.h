@@ -19,7 +19,7 @@
 
 #include <vector>
 
-#include "core/include/fxcrt/fx_string.h"
+#include "core/fxcrt/include/fx_string.h"
 
 class CFXJS_ObjDefinition;
 

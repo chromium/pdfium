@@ -11,7 +11,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
-#include "core/include/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/include/fx_safe_types.h"
 
 namespace {
 

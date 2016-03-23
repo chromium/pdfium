@@ -9,8 +9,8 @@
 
 #include <cstdint>
 
-#include "core/include/fxcrt/fx_string.h"
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/include/fx_system.h"
 #include "xfa/fee/fx_wordbreak/fx_wordbreak.h"
 #include "xfa/fee/fx_wordbreak/fx_wordbreak_impl.h"
 #include "xfa/fee/ifde_txtedtengine.h"

@@ -11,7 +11,7 @@
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_system.h"
 #include "core/include/fxge/fx_font.h"
 
 class CFX_CTTGSUBTable;

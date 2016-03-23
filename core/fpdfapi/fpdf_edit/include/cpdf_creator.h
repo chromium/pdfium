@@ -7,7 +7,7 @@
 #ifndef CORE_FPDFAPI_FPDF_EDIT_INCLUDE_CPDF_CREATOR_H_
 #define CORE_FPDFAPI_FPDF_EDIT_INCLUDE_CPDF_CREATOR_H_
 
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 
 class CPDF_Array;
 class CPDF_Dictionary;

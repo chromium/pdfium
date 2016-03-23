@@ -7,7 +7,7 @@
 #ifndef FPDFSDK_INCLUDE_PDFWINDOW_PWL_ICON_H_
 #define FPDFSDK_INCLUDE_PDFWINDOW_PWL_ICON_H_
 
-#include "core/include/fxcrt/fx_string.h"
+#include "core/fxcrt/include/fx_string.h"
 #include "fpdfsdk/include/pdfwindow/PWL_Wnd.h"
 
 class CPWL_Image : public CPWL_Wnd {

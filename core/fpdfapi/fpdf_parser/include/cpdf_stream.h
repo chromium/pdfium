@@ -9,7 +9,7 @@
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_object.h"
-#include "core/include/fxcrt/fx_stream.h"
+#include "core/fxcrt/include/fx_stream.h"
 
 class CPDF_Stream : public CPDF_Object {
  public:

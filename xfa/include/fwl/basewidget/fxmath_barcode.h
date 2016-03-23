@@ -7,8 +7,8 @@
 #ifndef XFA_INCLUDE_FWL_BASEWIDGET_FXMATH_BARCODE_H_
 #define XFA_INCLUDE_FWL_BASEWIDGET_FXMATH_BARCODE_H_
 
-#include "core/include/fxcrt/fx_string.h"
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/include/fx_system.h"
 #include "core/include/fxge/fx_dib.h"
 #include "xfa/fxbarcode/include/BC_Library.h"
 

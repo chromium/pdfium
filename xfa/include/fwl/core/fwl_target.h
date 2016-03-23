@@ -7,7 +7,7 @@
 #ifndef XFA_INCLUDE_FWL_CORE_FWL_TARGET_H_
 #define XFA_INCLUDE_FWL_CORE_FWL_TARGET_H_
 
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 #include "xfa/include/fwl/core/fwl_error.h"
 
 // FWL contains three parallel inheritance hierarchies, which reference each

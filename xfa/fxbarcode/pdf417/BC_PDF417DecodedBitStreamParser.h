@@ -7,8 +7,8 @@
 #ifndef XFA_FXBARCODE_PDF417_BC_PDF417DECODEDBITSTREAMPARSER_H_
 #define XFA_FXBARCODE_PDF417_BC_PDF417DECODEDBITSTREAMPARSER_H_
 
-#include "core/include/fxcrt/fx_basic.h"
-#include "core/include/fxcrt/fx_string.h"
+#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/include/fx_string.h"
 
 class CBC_CommonDecoderResult;
 class CBC_PDF417ResultMetadata;

@@ -25,7 +25,7 @@
 #include <algorithm>
 #include <memory>
 
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 #include "xfa/fxbarcode/BC_Reader.h"
 #include "xfa/fxbarcode/common/BC_CommonBitArray.h"
 #include "xfa/fxbarcode/oned/BC_OneDReader.h"

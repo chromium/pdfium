@@ -8,8 +8,8 @@
 
 #include <algorithm>
 
-#include "core/include/fxcrt/fx_coordinates.h"
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/include/fx_system.h"
 #include "xfa/fde/fde_brush.h"
 #include "xfa/fde/fde_pen.h"
 #include "xfa/fde/fde_renderdevice.h"

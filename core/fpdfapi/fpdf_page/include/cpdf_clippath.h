@@ -9,9 +9,9 @@
 
 #include "core/fpdfapi/fpdf_page/cpdf_clippathdata.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_path.h"
-#include "core/include/fxcrt/fx_basic.h"
-#include "core/include/fxcrt/fx_coordinates.h"
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_basic.h"
+#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/include/fx_system.h"
 
 class CPDF_TextObject;
 

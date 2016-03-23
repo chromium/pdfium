@@ -8,7 +8,7 @@
 
 #include <vector>
 
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 
 const wchar_t kFXJSValueNameString[] = L"string";
 const wchar_t kFXJSValueNameNumber[] = L"number";

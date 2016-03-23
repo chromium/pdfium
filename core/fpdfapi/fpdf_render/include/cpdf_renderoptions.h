@@ -7,7 +7,7 @@
 #ifndef CORE_FPDFAPI_FPDF_RENDER_INCLUDE_CPDF_RENDEROPTIONS_H_
 #define CORE_FPDFAPI_FPDF_RENDER_INCLUDE_CPDF_RENDEROPTIONS_H_
 
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_system.h"
 #include "core/include/fxge/fx_dib.h"
 
 class IPDF_OCContext;

@@ -7,8 +7,8 @@
 #ifndef XFA_FXGRAPHICS_CFX_SHADING_H_
 #define XFA_FXGRAPHICS_CFX_SHADING_H_
 
-#include "core/include/fxcrt/fx_coordinates.h"
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/include/fx_system.h"
 #include "core/include/fxge/fx_dib.h"
 
 #define FX_SHADING_Steps 256

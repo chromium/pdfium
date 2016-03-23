@@ -7,8 +7,8 @@
 #ifndef CORE_FPDFAPI_FPDF_PARSER_INCLUDE_IPDF_DATA_AVAIL_H_
 #define CORE_FPDFAPI_FPDF_PARSER_INCLUDE_IPDF_DATA_AVAIL_H_
 
-#include "core/include/fxcrt/fx_stream.h"
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_stream.h"
+#include "core/fxcrt/include/fx_system.h"
 
 class CPDF_Document;
 class CPDF_Object;

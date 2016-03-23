@@ -7,8 +7,8 @@
 #ifndef XFA_FDE_FDE_PATH_H_
 #define XFA_FDE_FDE_PATH_H_
 
-#include "core/include/fxcrt/fx_coordinates.h"
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/include/fx_system.h"
 
 class IFDE_Path {
  public:

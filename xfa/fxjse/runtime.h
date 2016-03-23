@@ -7,7 +7,7 @@
 #ifndef XFA_FXJSE_RUNTIME_H_
 #define XFA_FXJSE_RUNTIME_H_
 
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 #include "v8/include/v8.h"
 
 class CFXJSE_RuntimeList;

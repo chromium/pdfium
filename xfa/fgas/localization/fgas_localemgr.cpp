@@ -6,7 +6,7 @@
 
 #include "xfa/fgas/localization/fgas_localemgr.h"
 
-#include "core/include/fxcrt/fx_xml.h"
+#include "core/fxcrt/include/fx_xml.h"
 
 IFX_LocaleMgr* FX_LocaleMgr_Create(const FX_WCHAR* pszLocalPath,
                                    uint16_t wDefaultLCID) {

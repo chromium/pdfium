@@ -6,7 +6,7 @@
 
 #include "xfa/fwl/core/fwl_noteimp.h"
 
-#include "core/include/fxcrt/fx_ext.h"
+#include "core/fxcrt/include/fx_ext.h"
 #include "xfa/fwl/basewidget/fwl_tooltipctrlimp.h"
 #include "xfa/fwl/core/fwl_appimp.h"
 #include "xfa/fwl/core/fwl_formimp.h"

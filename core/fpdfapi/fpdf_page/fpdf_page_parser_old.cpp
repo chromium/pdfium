@@ -24,9 +24,9 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
 #include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
+#include "core/fxcrt/include/fx_ext.h"
+#include "core/fxcrt/include/fx_safe_types.h"
 #include "core/include/fxcodec/fx_codec.h"
-#include "core/include/fxcrt/fx_ext.h"
-#include "core/include/fxcrt/fx_safe_types.h"
 
 CPDF_StreamParser::CPDF_StreamParser(const uint8_t* pData, FX_DWORD dwSize) {
   m_pBuf = pData;

@@ -7,7 +7,7 @@
 #ifndef CORE_FXGE_ANDROID_FX_ANDROID_FONT_H_
 #define CORE_FXGE_ANDROID_FX_ANDROID_FONT_H_
 
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_system.h"
 
 #if _FX_OS_ == _FX_ANDROID_
 

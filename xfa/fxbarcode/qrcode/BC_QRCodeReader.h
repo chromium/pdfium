@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 
-#include "core/include/fxcrt/fx_string.h"
+#include "core/fxcrt/include/fx_string.h"
 #include "xfa/fxbarcode/BC_Reader.h"
 
 class CBC_BinaryBitmap;

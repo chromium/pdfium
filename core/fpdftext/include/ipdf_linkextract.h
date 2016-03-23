@@ -7,9 +7,9 @@
 #ifndef CORE_FPDFTEXT_INCLUDE_IPDF_LINKEXTRACT_H_
 #define CORE_FPDFTEXT_INCLUDE_IPDF_LINKEXTRACT_H_
 
-#include "core/include/fxcrt/fx_coordinates.h"
-#include "core/include/fxcrt/fx_system.h"
 #include "core/fpdftext/include/ipdf_textpage.h"
+#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/include/fx_system.h"
 
 class IPDF_LinkExtract {
  public:

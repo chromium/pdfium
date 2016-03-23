@@ -7,8 +7,8 @@
 #ifndef XFA_INCLUDE_FWL_CORE_FWL_THEME_H_
 #define XFA_INCLUDE_FWL_CORE_FWL_THEME_H_
 
-#include "core/include/fxcrt/fx_coordinates.h"
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/include/fx_system.h"
 #include "xfa/include/fwl/core/fwl_error.h"
 
 class IFWL_Widget;

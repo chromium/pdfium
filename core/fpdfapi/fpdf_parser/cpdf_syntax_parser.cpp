@@ -21,7 +21,7 @@
 #include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
 #include "core/fpdfapi/fpdf_parser/ipdf_crypto_handler.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
-#include "core/include/fxcrt/fx_ext.h"
+#include "core/fxcrt/include/fx_ext.h"
 #include "third_party/base/numerics/safe_math.h"
 
 namespace {

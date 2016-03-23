@@ -20,7 +20,7 @@
 
 #include "agg_shorten_path.h"
 #include "agg_vcgen_dash.h"
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 
 namespace agg
 {

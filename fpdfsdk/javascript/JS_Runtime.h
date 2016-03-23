@@ -12,7 +12,7 @@
 #include <utility>
 #include <vector>
 
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 #include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "fpdfsdk/include/jsapi/fxjs_v8.h"
 #include "fpdfsdk/javascript/JS_EventHandler.h"

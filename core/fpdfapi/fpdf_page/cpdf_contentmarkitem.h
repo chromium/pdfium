@@ -7,8 +7,8 @@
 #ifndef CORE_FPDFAPI_FPDF_PAGE_CPDF_CONTENTMARKITEM_H_
 #define CORE_FPDFAPI_FPDF_PAGE_CPDF_CONTENTMARKITEM_H_
 
-#include "core/include/fxcrt/fx_string.h"
-#include "core/include/fxcrt/fx_system.h"
+#include "core/fxcrt/include/fx_string.h"
+#include "core/fxcrt/include/fx_system.h"
 
 class CPDF_Dictionary;
 

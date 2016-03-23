@@ -7,7 +7,7 @@
 #ifndef XFA_FXBARCODE_BC_WRITER_H_
 #define XFA_FXBARCODE_BC_WRITER_H_
 
-#include "core/include/fxcrt/fx_string.h"
+#include "core/fxcrt/include/fx_string.h"
 #include "core/include/fxge/fx_dib.h"
 #include "xfa/fxbarcode/utils.h"
 

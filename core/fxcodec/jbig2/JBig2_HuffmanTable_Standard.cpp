@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/include/fxcrt/fx_basic.h"
 #include "core/fxcodec/jbig2/JBig2_HuffmanTable_Standard.h"
+#include "core/fxcrt/include/fx_basic.h"
 
 const bool HuffmanTable_HTOOB_B1 = false;
 const JBig2TableLine HuffmanTable_B1[] = {{1, 4, 0},

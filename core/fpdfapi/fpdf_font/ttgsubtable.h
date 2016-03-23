@@ -11,7 +11,7 @@
 
 #include <map>
 
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 #include "core/include/fxge/fx_font.h"
 #include "core/include/fxge/fx_freetype.h"
 

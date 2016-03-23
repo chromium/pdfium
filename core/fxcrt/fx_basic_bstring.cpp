@@ -8,7 +8,7 @@
 
 #include <cctype>
 
-#include "core/include/fxcrt/fx_basic.h"
+#include "core/fxcrt/include/fx_basic.h"
 #include "third_party/base/numerics/safe_math.h"
 
 static int _Buffer_itoa(char* buf, int i, FX_DWORD flags) {
