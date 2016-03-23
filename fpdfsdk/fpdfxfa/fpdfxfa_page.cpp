@@ -102,8 +102,6 @@ FX_BOOL CPDFXFA_Page::LoadPage() {
     default:
       return FALSE;
   }
-
-  return FALSE;
 }
 
 FX_BOOL CPDFXFA_Page::LoadPDFPage(CPDF_Dictionary* pageDict) {

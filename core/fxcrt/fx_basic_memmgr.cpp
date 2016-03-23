@@ -21,5 +21,7 @@ void FXMEM_DefaultFree(void* pointer, int flags) {
 NEVER_INLINE void FX_OutOfMemoryTerminate() {
   // Termimate cleanly if we can, else crash at a specific address (0xbd).
   abort();
+#ifndef _WIN32
   reinterpret_cast<void (*)()>(0xbd)();
+#endif
 }

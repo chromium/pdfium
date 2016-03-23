@@ -8,10 +8,17 @@
 #include <assert.h>
 #include <stdlib.h>
 
-#define CHECK(condition)                                                \
-  if (!(condition)) {                                                   \
-    abort();                                                            \
-    *(reinterpret_cast<volatile char*>(NULL) + 42) = 0x42;              \
+#ifndef _WIN32
+#define NULL_DEREF_IF_POSSIBLE \
+  *(reinterpret_cast<volatile char*>(NULL) + 42) = 0x42;
+#else
+#define NULL_DEREF_IF_POSSIBLE
+#endif
+
+#define CHECK(condition)   \
+  if (!(condition)) {      \
+    abort();               \
+    NULL_DEREF_IF_POSSIBLE \
   }
 
 #define NOTREACHED() assert(false)

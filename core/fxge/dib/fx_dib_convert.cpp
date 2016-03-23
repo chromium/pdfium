@@ -949,7 +949,6 @@ FX_BOOL ConvertBuffer(FXDIB_Format dest_format,
     default:
       return FALSE;
   }
-  return FALSE;
 }
 CFX_DIBitmap* CFX_DIBSource::CloneConvert(FXDIB_Format dest_format,
                                           const FX_RECT* pClip,

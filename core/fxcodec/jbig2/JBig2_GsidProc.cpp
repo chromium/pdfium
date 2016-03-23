@@ -96,10 +96,9 @@ FX_DWORD* CJBig2_GSIDProc::decode_MMR(CJBig2_BitStream* pStream,
       pGRD->Continue_decode(pPause);
     }
     if (!GSPLANES.get()[J]) {
-      for (int32_t K = GSBPP - 1; K > J; --K) {
+      for (int32_t K = GSBPP - 1; K > J; --K)
         delete GSPLANES.get()[K];
-        return nullptr;
-      }
+      return nullptr;
     }
     pStream->alignByte();
     pStream->offset(3);

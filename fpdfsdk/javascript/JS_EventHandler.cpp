@@ -514,8 +514,6 @@ const FX_WCHAR* CJS_EventHandler::Name() {
     default:
       return L"";
   }
-
-  return L"";
 }
 
 const FX_WCHAR* CJS_EventHandler::Type() {
@@ -571,8 +569,6 @@ const FX_WCHAR* CJS_EventHandler::Type() {
     default:
       return L"";
   }
-
-  return L"";
 }
 
 FX_BOOL& CJS_EventHandler::Rc() {

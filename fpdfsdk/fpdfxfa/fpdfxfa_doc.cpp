@@ -144,8 +144,6 @@ int CPDFXFA_Document::GetPageCount() {
     default:
       return 0;
   }
-
-  return 0;
 }
 
 CPDFXFA_Page* CPDFXFA_Document::GetPage(int page_index) {

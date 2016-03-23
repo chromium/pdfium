@@ -1052,12 +1052,13 @@ FX_WCHAR CPDF_CIDFont::GetUnicodeFromCharCode(FX_DWORD charcode) const {
       return 0;
     }
     return unicode;
-#endif
+#else
     if (m_pCMap->m_pEmbedMap) {
       return EmbeddedUnicodeFromCharcode(m_pCMap->m_pEmbedMap,
                                          m_pCMap->m_Charset, charcode);
     }
     return 0;
+#endif
   }
   return m_pCID2UnicodeMap->UnicodeFromCID(CIDFromCharCode(charcode));
 }
