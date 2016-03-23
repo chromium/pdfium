@@ -9,9 +9,10 @@
 
 #include "xfa/fwl/core/fwl_widgetimp.h"
 
+class CFWL_CheckBoxImpDelegate;
+class CFWL_MsgMouse;
 class CFWL_WidgetImpProperties;
 class IFWL_Widget;
-class CFWL_CheckBoxImpDelegate;
 
 class CFWL_CheckBoxImp : public CFWL_WidgetImp {
  public:

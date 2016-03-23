@@ -8,7 +8,7 @@
 #define XFA_FWL_BASEWIDGET_FWL_SCROLLBARIMP_H_
 
 #include "xfa/fwl/core/fwl_widgetimp.h"
-#include "xfa/include/fwl/core/fwl_timer.h"
+#include "xfa/fwl/core/ifwl_timer.h"
 
 class CFWL_WidgetImpProperties;
 class IFWL_Widget;

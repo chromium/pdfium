@@ -7,7 +7,9 @@
 #ifndef XFA_FWL_CORE_FWL_WIDGETMGRIMP_H_
 #define XFA_FWL_CORE_FWL_WIDGETMGRIMP_H_
 
-#include "xfa/include/fwl/core/fwl_widgetmgr.h"
+#include "xfa/fwl/core/ifwl_widgetmgr.h"
+#include "xfa/fwl/core/ifwl_widgetmgrdelegate.h"
+#include "xfa/fxgraphics/include/cfx_graphics.h"
 
 class IFWL_Widget;
 class IFWL_AdapterWidgetMgr;

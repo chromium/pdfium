@@ -7,13 +7,17 @@
 #include "xfa/fwl/basewidget/fwl_tooltipctrlimp.h"
 
 #include "xfa/fde/tto/fde_textout.h"
+#include "xfa/fwl/basewidget/ifwl_tooltip.h"
+#include "xfa/fwl/core/cfwl_themebackground.h"
+#include "xfa/fwl/core/cfwl_themepart.h"
+#include "xfa/fwl/core/cfwl_themetext.h"
 #include "xfa/fwl/core/fwl_formimp.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/fwl_panelimp.h"
 #include "xfa/fwl/core/fwl_targetimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
-#include "xfa/include/fwl/basewidget/fwl_tooltipctrl.h"
-#include "xfa/include/fwl/core/fwl_theme.h"
+#include "xfa/fwl/core/ifwl_themeprovider.h"
+#include "xfa/fwl/core/ifwl_tooltiptarget.h"
 
 // static
 IFWL_ToolTip* IFWL_ToolTip::Create(const CFWL_WidgetImpProperties& properties,

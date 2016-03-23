@@ -6,6 +6,8 @@
 
 #include "xfa/fwl/core/fwl_gridimp.h"
 
+#include "xfa/fwl/core/cfwl_message.h"
+#include "xfa/fwl/core/cfwl_widgetimpproperties.h"
 #include "xfa/fwl/core/fwl_contentimp.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/fwl_targetimp.h"

@@ -8,10 +8,12 @@
 #define XFA_FWL_BASEWIDGET_FWL_SPINBUTTONIMP_H_
 
 #include "xfa/fwl/core/fwl_widgetimp.h"
-#include "xfa/include/fwl/core/fwl_timer.h"
+#include "xfa/fwl/core/ifwl_timer.h"
+#include "xfa/fwl/core/ifwl_widget.h"
 
-class CFWL_WidgetImpProperties;
+class CFWL_MsgMouse;
 class CFWL_SpinButtonImpDelegate;
+class CFWL_WidgetImpProperties;
 
 class CFWL_SpinButtonImp : public CFWL_WidgetImp, public IFWL_Timer {
  public:

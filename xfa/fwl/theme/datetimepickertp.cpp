@@ -6,7 +6,8 @@
 
 #include "xfa/include/fwl/theme/datetimepickertp.h"
 
-#include "xfa/include/fwl/basewidget/fwl_datetimepicker.h"
+#include "xfa/fwl/basewidget/ifwl_datetimepicker.h"
+#include "xfa/fwl/core/cfwl_themebackground.h"
 
 CFWL_DateTimePickerTP::CFWL_DateTimePickerTP() {
   m_pThemeData = new DTPThemeData;

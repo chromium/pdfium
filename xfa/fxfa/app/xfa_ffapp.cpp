@@ -8,13 +8,13 @@
 
 #include <algorithm>
 
+#include "xfa/fwl/core/ifwl_widgetmgrdelegate.h"
 #include "xfa/fxfa/app/xfa_ffdoc.h"
 #include "xfa/fxfa/app/xfa_ffdochandler.h"
 #include "xfa/fxfa/app/xfa_ffwidgethandler.h"
 #include "xfa/fxfa/app/xfa_fontmgr.h"
 #include "xfa/fxfa/app/xfa_fwladapter.h"
 #include "xfa/fxfa/app/xfa_fwltheme.h"
-#include "xfa/include/fwl/core/fwl_widgetmgr.h"
 
 CXFA_FileRead::CXFA_FileRead(const CFX_ArrayTemplate<CPDF_Stream*>& streams) {
   int32_t iCount = streams.GetSize();

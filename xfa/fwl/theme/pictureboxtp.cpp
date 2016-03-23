@@ -6,10 +6,12 @@
 
 #include "xfa/include/fwl/theme/pictureboxtp.h"
 
-#include "xfa/include/fwl/basewidget/fwl_picturebox.h"
-#include "xfa/include/fwl/core/fwl_widget.h"
+#include "xfa/fwl/basewidget/ifwl_picturebox.h"
+#include "xfa/fwl/core/cfwl_themebackground.h"
+#include "xfa/fwl/core/ifwl_widget.h"
 
 CFWL_PictureBoxTP::CFWL_PictureBoxTP() {}
+
 CFWL_PictureBoxTP::~CFWL_PictureBoxTP() {}
 
 FX_BOOL CFWL_PictureBoxTP::IsValidWidget(IFWL_Widget* pWidget) {

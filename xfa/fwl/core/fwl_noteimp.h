@@ -7,14 +7,24 @@
 #ifndef XFA_FWL_CORE_FWL_NOTEIMP_H_
 #define XFA_FWL_CORE_FWL_NOTEIMP_H_
 
-#include "xfa/include/fwl/core/fwl_note.h"
+#include "xfa/fwl/core/ifwl_notedriver.h"
+#include "xfa/fwl/core/ifwl_noteloop.h"
+#include "xfa/fxgraphics/include/cfx_graphics.h"
 
-class CFWL_WidgetImp;
+class CFWL_CoreToolTipDP;
+class CFWL_MsgActivate;
+class CFWL_MsgDeactivate;
+class CFWL_MsgDropFiles;
+class CFWL_MsgKey;
+class CFWL_MsgKillFocus;
+class CFWL_MsgMouse;
+class CFWL_MsgMouseWheel;
+class CFWL_MsgSetFocus;
+class CFWL_MsgSize;
+class CFWL_MsgWindowMove;
 class CFWL_ToolTipImp;
-class CFWL_CoreToopTipDP;
-class CFWL_NoteDriver;
-class CFWL_EventTarget;
-class CFWL_ToolTipContainer;
+class CFWL_WidgetImp;
+class IFWL_ToolTipTarget;
 
 class CFWL_NoteLoop : public IFWL_NoteLoop {
  public:
@@ -37,6 +47,7 @@ class CFWL_NoteLoop : public IFWL_NoteLoop {
   CFWL_WidgetImp* m_pForm;
   FX_BOOL m_bContinueModal;
 };
+
 class CFWL_NoteDriver : public IFWL_NoteDriver {
  public:
   CFWL_NoteDriver();
@@ -105,7 +116,9 @@ class CFWL_NoteDriver : public IFWL_NoteDriver {
   FWLMessageHookCallback m_hook;
   void* m_hookInfo;
 };
+
 typedef CFX_MapPtrTemplate<void*, FX_DWORD> CFWL_EventSource;
+
 class CFWL_EventTarget {
  public:
   CFWL_EventTarget(CFWL_NoteDriver* pNoteDriver, IFWL_Widget* pListener)
@@ -124,6 +137,7 @@ class CFWL_EventTarget {
   CFWL_NoteDriver* m_pNoteDriver;
   FX_BOOL m_bInvalid;
 };
+
 class CFWL_ToolTipContainer {
  public:
   static CFWL_ToolTipContainer* getInstance();
@@ -147,7 +161,7 @@ class CFWL_ToolTipContainer {
 
   IFWL_ToolTipTarget* pCurTarget;
   CFWL_ToolTipImp* m_pToolTipImp;
-  CFWL_CoreToopTipDP* m_ToolTipDp;
+  CFWL_CoreToolTipDP* m_ToolTipDp;
   CFX_PtrArray m_arrWidget;
 
  private:

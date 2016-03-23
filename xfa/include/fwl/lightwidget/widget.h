@@ -7,7 +7,9 @@
 #ifndef XFA_INCLUDE_FWL_LIGHTWIDGET_WIDGET_H_
 #define XFA_INCLUDE_FWL_LIGHTWIDGET_WIDGET_H_
 
-#include "xfa/include/fwl/core/fwl_widget.h"
+#include "xfa/fwl/core/cfwl_event.h"
+#include "xfa/fwl/core/cfwl_widgetimpproperties.h"
+#include "xfa/fwl/core/ifwl_widget.h"
 
 class CFWL_Event;
 class CFWL_Message;

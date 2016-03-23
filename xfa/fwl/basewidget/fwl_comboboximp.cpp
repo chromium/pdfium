@@ -11,6 +11,10 @@
 #include "xfa/fwl/basewidget/fwl_formproxyimp.h"
 #include "xfa/fwl/basewidget/fwl_listboximp.h"
 #include "xfa/fwl/basewidget/fwl_scrollbarimp.h"
+#include "xfa/fwl/core/cfwl_message.h"
+#include "xfa/fwl/core/cfwl_themebackground.h"
+#include "xfa/fwl/core/cfwl_themepart.h"
+#include "xfa/fwl/core/cfwl_themetext.h"
 #include "xfa/fwl/core/fwl_appimp.h"
 #include "xfa/fwl/core/fwl_formimp.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
@@ -19,7 +23,8 @@
 #include "xfa/fwl/core/fwl_threadimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fwl/core/fwl_widgetmgrimp.h"
-#include "xfa/include/fwl/core/fwl_theme.h"
+#include "xfa/fwl/core/ifwl_notethread.h"
+#include "xfa/fwl/core/ifwl_themeprovider.h"
 
 // static
 IFWL_ComboBox* IFWL_ComboBox::Create(

@@ -9,13 +9,16 @@
 #include "xfa/fwl/basewidget/fwl_editimp.h"
 #include "xfa/fwl/basewidget/fwl_formproxyimp.h"
 #include "xfa/fwl/basewidget/fwl_monthcalendarimp.h"
+#include "xfa/fwl/basewidget/ifwl_spinbutton.h"
+#include "xfa/fwl/core/cfwl_message.h"
+#include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/fwl_formimp.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/fwl_panelimp.h"
 #include "xfa/fwl/core/fwl_targetimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fwl/core/fwl_widgetmgrimp.h"
-#include "xfa/include/fwl/basewidget/fwl_spinbutton.h"
+#include "xfa/fwl/core/ifwl_themeprovider.h"
 
 #define FWL_DTP_WIDTH 100
 #define FWL_DTP_HEIGHT 20

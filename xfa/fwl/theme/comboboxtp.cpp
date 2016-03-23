@@ -6,10 +6,12 @@
 
 #include "xfa/include/fwl/theme/comboboxtp.h"
 
+#include "xfa/fwl/basewidget/ifwl_combobox.h"
+#include "xfa/fwl/core/cfwl_themebackground.h"
+#include "xfa/fwl/core/ifwl_themeprovider.h"
+#include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
-#include "xfa/include/fwl/basewidget/fwl_combobox.h"
-#include "xfa/include/fwl/core/fwl_widget.h"
 
 #define FWLTHEME_CAPACITY_ComboFormHandler 8.0f
 

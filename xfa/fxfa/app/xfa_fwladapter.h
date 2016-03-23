@@ -7,7 +7,7 @@
 #ifndef XFA_FXFA_APP_XFA_FWLADAPTER_H_
 #define XFA_FXFA_APP_XFA_FWLADAPTER_H_
 
-#include "xfa/include/fwl/adapter/fwl_sdadapterimp.h"
+#include "xfa/fwl/core/fwl_sdadapterimp.h"
 
 class CXFA_FWLAdapterWidgetMgr : public CFWL_SDAdapterWidgetMgr {
  public:

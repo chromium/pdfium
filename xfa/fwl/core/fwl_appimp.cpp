@@ -10,9 +10,9 @@
 #include "xfa/fwl/core/fwl_targetimp.h"
 #include "xfa/fwl/core/fwl_threadimp.h"
 #include "xfa/fwl/core/fwl_widgetmgrimp.h"
-#include "xfa/include/fwl/adapter/fwl_adapterwidgetmgr.h"
-#include "xfa/include/fwl/core/fwl_app.h"
-#include "xfa/include/fwl/core/fwl_widget.h"
+#include "xfa/fwl/core/ifwl_adapterwidgetmgr.h"
+#include "xfa/fwl/core/ifwl_app.h"
+#include "xfa/fwl/core/ifwl_widget.h"
 
 IFWL_App* IFWL_App::Create(IFWL_AdapterNative* pAdapter) {
   IFWL_App* pApp = new IFWL_App;

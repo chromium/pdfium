@@ -10,9 +10,10 @@
 #include "xfa/fgas/localization/fgas_datetime.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
 
+class CFWL_MonthCalendarImpDelegate;
+class CFWL_MsgMouse;
 class CFWL_WidgetImpProperties;
 class IFWL_Widget;
-class CFWL_MonthCalendarImpDelegate;
 
 extern uint8_t FX_DaysInMonth(int32_t iYear, uint8_t iMonth);
 

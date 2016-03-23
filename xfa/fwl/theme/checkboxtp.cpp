@@ -7,10 +7,12 @@
 #include "xfa/include/fwl/theme/checkboxtp.h"
 
 #include "xfa/fde/tto/fde_textout.h"
+#include "xfa/fwl/basewidget/ifwl_checkbox.h"
+#include "xfa/fwl/core/cfwl_themebackground.h"
+#include "xfa/fwl/core/cfwl_themetext.h"
+#include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
-#include "xfa/include/fwl/basewidget/fwl_checkbox.h"
-#include "xfa/include/fwl/core/fwl_widget.h"
 
 #define CHECKBOX_SIZE_SIGNMARGIN 3
 #define CHECKBOX_SIZE_SIGNBORDER 2

@@ -6,15 +6,16 @@
 
 #include "xfa/fwl/core/fwl_widgetmgrimp.h"
 
+#include "xfa/fwl/core/cfwl_message.h"
 #include "xfa/fwl/core/fwl_appimp.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/fwl_targetimp.h"
 #include "xfa/fwl/core/fwl_threadimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
-#include "xfa/include/fwl/adapter/fwl_adapternative.h"
-#include "xfa/include/fwl/adapter/fwl_adapterwidgetmgr.h"
-#include "xfa/include/fwl/core/fwl_app.h"
-#include "xfa/include/fwl/core/fwl_form.h"
+#include "xfa/fwl/core/ifwl_adapternative.h"
+#include "xfa/fwl/core/ifwl_adapterwidgetmgr.h"
+#include "xfa/fwl/core/ifwl_app.h"
+#include "xfa/fwl/core/ifwl_form.h"
 
 FX_BOOL FWL_UseOffscreen(IFWL_Widget* pWidget) {
 #if (_FX_OS_ == _FX_MACOSX_)

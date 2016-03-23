@@ -10,11 +10,15 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/include/fx_system.h"
 #include "core/include/fxge/fx_dib.h"
-#include "xfa/include/fwl/core/fwl_theme.h"
+#include "xfa/fwl/core/ifwl_themeprovider.h"
 
 class CFWL_WidgetTP;
 class IFWL_Widget;
+class CFWL_ThemePart;
+class CFWL_ThemeText;
 
 class CFWL_Theme : public IFWL_ThemeProvider {
  public:

@@ -9,11 +9,13 @@
 
 #include "xfa/fwl/core/fwl_panelimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
-#include "xfa/include/fwl/core/fwl_form.h"
+#include "xfa/fwl/core/ifwl_form.h"
 
+class CFWL_MsgMouse;
+class CFWL_MsgClose;
+class CFWL_MsgWindowMove;
 class CFWL_NoteLoop;
 class CFWL_WidgetImpProperties;
-class CFWL_MsgMouse;
 class IFWL_Widget;
 class IFWL_ThemeProvider;
 class CFWL_SysBtn;

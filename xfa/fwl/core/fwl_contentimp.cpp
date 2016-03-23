@@ -11,7 +11,7 @@
 #include "xfa/fwl/core/fwl_threadimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fwl/core/fwl_widgetmgrimp.h"
-#include "xfa/include/fwl/core/fwl_content.h"
+#include "xfa/fwl/core/ifwl_content.h"
 
 FWL_ERR IFWL_Content::InsertWidget(IFWL_Widget* pChild, int32_t nIndex) {
   return static_cast<CFWL_ContentImp*>(GetImpl())->InsertWidget(pChild, nIndex);

@@ -6,11 +6,14 @@
 
 #include "xfa/fwl/basewidget/fwl_scrollbarimp.h"
 
+#include "xfa/fwl/basewidget/ifwl_scrollbar.h"
+#include "xfa/fwl/core/cfwl_message.h"
+#include "xfa/fwl/core/cfwl_themebackground.h"
+#include "xfa/fwl/core/cfwl_themepart.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/fwl_targetimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
-#include "xfa/include/fwl/basewidget/fwl_scrollbar.h"
-#include "xfa/include/fwl/core/fwl_theme.h"
+#include "xfa/fwl/core/ifwl_themeprovider.h"
 
 #define FWL_SCROLLBAR_Elapse 500
 #define FWL_SCROLLBAR_MinThumb 5

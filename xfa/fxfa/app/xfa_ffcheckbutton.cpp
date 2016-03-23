@@ -6,6 +6,9 @@
 
 #include "xfa/fxfa/app/xfa_ffcheckbutton.h"
 
+#include "xfa/fwl/core/cfwl_message.h"
+#include "xfa/fwl/core/ifwl_notedriver.h"
+#include "xfa/fwl/core/ifwl_widgetmgrdelegate.h"
 #include "xfa/fxfa/app/xfa_ffapp.h"
 #include "xfa/fxfa/app/xfa_ffdoc.h"
 #include "xfa/fxfa/app/xfa_ffdocview.h"
@@ -13,7 +16,6 @@
 #include "xfa/fxfa/app/xfa_fffield.h"
 #include "xfa/fxfa/app/xfa_ffpageview.h"
 #include "xfa/fxfa/app/xfa_ffwidget.h"
-#include "xfa/include/fwl/core/fwl_widgetmgr.h"
 #include "xfa/include/fwl/lightwidget/checkbox.h"
 
 CXFA_FFCheckButton::CXFA_FFCheckButton(CXFA_FFPageView* pPageView,

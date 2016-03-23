@@ -7,10 +7,14 @@
 #include "xfa/fwl/basewidget/fwl_pushbuttonimp.h"
 
 #include "xfa/fde/tto/fde_textout.h"
+#include "xfa/fwl/basewidget/ifwl_pushbutton.h"
+#include "xfa/fwl/core/cfwl_message.h"
+#include "xfa/fwl/core/cfwl_themebackground.h"
+#include "xfa/fwl/core/cfwl_themetext.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/fwl_targetimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
-#include "xfa/include/fwl/basewidget/fwl_pushbutton.h"
+#include "xfa/fwl/core/ifwl_themeprovider.h"
 
 // static
 IFWL_PushButton* IFWL_PushButton::Create(

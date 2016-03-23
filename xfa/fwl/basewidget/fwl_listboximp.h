@@ -9,13 +9,16 @@
 
 #include <memory>
 
+#include "xfa/fwl/basewidget/ifwl_combobox.h"
+#include "xfa/fwl/basewidget/ifwl_edit.h"
+#include "xfa/fwl/basewidget/ifwl_listbox.h"
+#include "xfa/fwl/basewidget/ifwl_scrollbar.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
-#include "xfa/include/fwl/basewidget/fwl_combobox.h"
-#include "xfa/include/fwl/basewidget/fwl_edit.h"
-#include "xfa/include/fwl/basewidget/fwl_listbox.h"
-#include "xfa/include/fwl/basewidget/fwl_scrollbar.h"
 
 class CFWL_ListBoxImpDelegate;
+class CFWL_MsgKillFocus;
+class CFWL_MsgMouse;
+class CFWL_MsgMouseWheel;
 
 class CFWL_ListBoxImp : public CFWL_WidgetImp {
  public:

@@ -7,9 +7,9 @@
 #ifndef XFA_FXFA_APP_XFA_FWLTHEME_H_
 #define XFA_FXFA_APP_XFA_FWLTHEME_H_
 
+#include "xfa/fwl/core/ifwl_target.h"
+#include "xfa/fwl/core/ifwl_themeprovider.h"
 #include "xfa/fxfa/app/xfa_ffapp.h"
-#include "xfa/include/fwl/core/fwl_target.h"
-#include "xfa/include/fwl/core/fwl_theme.h"
 #include "xfa/include/fwl/theme/barcodetp.h"
 #include "xfa/include/fwl/theme/carettp.h"
 #include "xfa/include/fwl/theme/checkboxtp.h"

@@ -7,7 +7,7 @@
 #ifndef XFA_INCLUDE_FWL_LIGHTWIDGET_TOOLTIPCTRL_H_
 #define XFA_INCLUDE_FWL_LIGHTWIDGET_TOOLTIPCTRL_H_
 
-#include "xfa/include/fwl/basewidget/fwl_tooltipctrl.h"
+#include "xfa/fwl/basewidget/ifwl_tooltip.h"
 #include "xfa/include/fwl/lightwidget/widget.h"
 
 class CFWL_ToolTip : public CFWL_Widget {

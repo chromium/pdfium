@@ -7,8 +7,8 @@
 #ifndef XFA_INCLUDE_FWL_LIGHTWIDGET_PICTUREBOX_H_
 #define XFA_INCLUDE_FWL_LIGHTWIDGET_PICTUREBOX_H_
 
-#include "xfa/include/fwl/basewidget/fwl_picturebox.h"
-#include "xfa/include/fwl/core/fwl_error.h"
+#include "xfa/fwl/basewidget/ifwl_picturebox.h"
+#include "xfa/fwl/core/fwl_error.h"
 #include "xfa/include/fwl/lightwidget/widget.h"
 
 class CFWL_PictureBox : public CFWL_Widget {

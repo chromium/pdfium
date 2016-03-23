@@ -8,6 +8,8 @@
 
 #include "core/fxcrt/include/fx_ext.h"
 #include "xfa/fwl/basewidget/fwl_tooltipctrlimp.h"
+#include "xfa/fwl/basewidget/ifwl_tooltip.h"
+#include "xfa/fwl/core/cfwl_message.h"
 #include "xfa/fwl/core/fwl_appimp.h"
 #include "xfa/fwl/core/fwl_formimp.h"
 #include "xfa/fwl/core/fwl_panelimp.h"
@@ -15,10 +17,10 @@
 #include "xfa/fwl/core/fwl_threadimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fwl/core/fwl_widgetmgrimp.h"
-#include "xfa/include/fwl/adapter/fwl_adapterwidgetmgr.h"
-#include "xfa/include/fwl/basewidget/fwl_tooltipctrl.h"
-#include "xfa/include/fwl/core/fwl_app.h"
-#include "xfa/include/fwl/core/fwl_grid.h"
+#include "xfa/fwl/core/ifwl_adapterwidgetmgr.h"
+#include "xfa/fwl/core/ifwl_app.h"
+#include "xfa/fwl/core/ifwl_grid.h"
+#include "xfa/fwl/core/ifwl_tooltiptarget.h"
 
 CFWL_NoteLoop::CFWL_NoteLoop(CFWL_WidgetImp* pForm)
     : m_pForm(pForm), m_bContinueModal(TRUE) {}
@@ -805,7 +807,7 @@ void CFWL_NoteDriver::ClearInvalidEventTargets(FX_BOOL bRemoveAll) {
     }
   }
 }
-class CFWL_CoreToopTipDP : public IFWL_ToolTipDP {
+class CFWL_CoreToolTipDP : public IFWL_ToolTipDP {
  public:
   FWL_ERR GetCaption(IFWL_Widget* pWidget, CFX_WideString& wsCaption);
   int32_t GetInitialDelay(IFWL_Widget* pWidget);
@@ -813,36 +815,36 @@ class CFWL_CoreToopTipDP : public IFWL_ToolTipDP {
   CFX_DIBitmap* GetToolTipIcon(IFWL_Widget* pWidget);
   CFX_SizeF GetToolTipIconSize(IFWL_Widget* pWidget);
   CFX_RectF GetAnchor();
-  CFWL_CoreToopTipDP();
+  CFWL_CoreToolTipDP();
 
   CFX_WideString m_wsCaption;
   int32_t m_nInitDelayTime;
   int32_t m_nAutoPopDelayTime;
   CFX_RectF m_fAnchor;
 };
-CFWL_CoreToopTipDP::CFWL_CoreToopTipDP() {
+CFWL_CoreToolTipDP::CFWL_CoreToolTipDP() {
   m_nInitDelayTime = 500;
   m_nAutoPopDelayTime = 50000;
   m_fAnchor.Set(0.0, 0.0, 0.0, 0.0);
 }
-FWL_ERR CFWL_CoreToopTipDP::GetCaption(IFWL_Widget* pWidget,
+FWL_ERR CFWL_CoreToolTipDP::GetCaption(IFWL_Widget* pWidget,
                                        CFX_WideString& wsCaption) {
   wsCaption = m_wsCaption;
   return FWL_ERR_Succeeded;
 }
-int32_t CFWL_CoreToopTipDP::GetInitialDelay(IFWL_Widget* pWidget) {
+int32_t CFWL_CoreToolTipDP::GetInitialDelay(IFWL_Widget* pWidget) {
   return m_nInitDelayTime;
 }
-int32_t CFWL_CoreToopTipDP::GetAutoPopDelay(IFWL_Widget* pWidget) {
+int32_t CFWL_CoreToolTipDP::GetAutoPopDelay(IFWL_Widget* pWidget) {
   return m_nAutoPopDelayTime;
 }
-CFX_DIBitmap* CFWL_CoreToopTipDP::GetToolTipIcon(IFWL_Widget* pWidget) {
+CFX_DIBitmap* CFWL_CoreToolTipDP::GetToolTipIcon(IFWL_Widget* pWidget) {
   return NULL;
 }
-CFX_SizeF CFWL_CoreToopTipDP::GetToolTipIconSize(IFWL_Widget* pWidget) {
+CFX_SizeF CFWL_CoreToolTipDP::GetToolTipIconSize(IFWL_Widget* pWidget) {
   return CFX_SizeF();
 }
-CFX_RectF CFWL_CoreToopTipDP::GetAnchor() {
+CFX_RectF CFWL_CoreToolTipDP::GetAnchor() {
   return m_fAnchor;
 }
 CFWL_EventTarget::~CFWL_EventTarget() {
@@ -930,7 +932,7 @@ CFWL_ToolTipContainer* CFWL_ToolTipContainer::s_pInstance = NULL;
 
 CFWL_ToolTipContainer::CFWL_ToolTipContainer()
     : pCurTarget(NULL), m_pToolTipImp(NULL) {
-  m_ToolTipDp = new CFWL_CoreToopTipDP;
+  m_ToolTipDp = new CFWL_CoreToolTipDP;
   m_ToolTipDp->m_nInitDelayTime = 0;
   m_ToolTipDp->m_nAutoPopDelayTime = 2000;
 }

@@ -7,7 +7,7 @@
 #ifndef XFA_INCLUDE_FWL_LIGHTWIDGET_PUSHBUTTON_H_
 #define XFA_INCLUDE_FWL_LIGHTWIDGET_PUSHBUTTON_H_
 
-#include "xfa/include/fwl/basewidget/fwl_pushbutton.h"
+#include "xfa/fwl/basewidget/ifwl_pushbutton.h"
 #include "xfa/include/fwl/lightwidget/widget.h"
 
 class CFWL_PushButton : public CFWL_Widget {

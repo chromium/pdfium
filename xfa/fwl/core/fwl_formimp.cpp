@@ -8,6 +8,10 @@
 
 #include "xfa/fde/tto/fde_textout.h"
 #include "xfa/fwl/basewidget/fwl_formproxyimp.h"
+#include "xfa/fwl/core/cfwl_message.h"
+#include "xfa/fwl/core/cfwl_themebackground.h"
+#include "xfa/fwl/core/cfwl_themepart.h"
+#include "xfa/fwl/core/cfwl_themetext.h"
 #include "xfa/fwl/core/fwl_appimp.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/fwl_panelimp.h"
@@ -15,10 +19,10 @@
 #include "xfa/fwl/core/fwl_threadimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fwl/core/fwl_widgetmgrimp.h"
-#include "xfa/include/fwl/adapter/fwl_adapterwidgetmgr.h"
-#include "xfa/include/fwl/core/fwl_app.h"
-#include "xfa/include/fwl/core/fwl_content.h"
-#include "xfa/include/fwl/core/fwl_theme.h"
+#include "xfa/fwl/core/ifwl_adapterwidgetmgr.h"
+#include "xfa/fwl/core/ifwl_app.h"
+#include "xfa/fwl/core/ifwl_content.h"
+#include "xfa/fwl/core/ifwl_themeprovider.h"
 
 #define FWL_SYSBTNSIZE 21
 #define FWL_SYSBTNMARGIN 5

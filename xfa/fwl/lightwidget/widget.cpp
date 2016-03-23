@@ -7,13 +7,14 @@
 #include "xfa/include/fwl/lightwidget/widget.h"
 
 #include "xfa/fde/tto/fde_textout.h"
+#include "xfa/fwl/core/cfwl_themetext.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/fwl_targetimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fwl/core/fwl_widgetmgrimp.h"
-#include "xfa/include/fwl/core/fwl_theme.h"
-#include "xfa/include/fwl/core/fwl_thread.h"
+#include "xfa/fwl/core/ifwl_notethread.h"
+#include "xfa/fwl/core/ifwl_themeprovider.h"
 
 CFWL_WidgetImpProperties CFWL_WidgetProperties::MakeWidgetImpProperties(
     IFWL_DataProvider* pDataProvider) const {

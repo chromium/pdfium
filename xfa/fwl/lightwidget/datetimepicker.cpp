@@ -8,10 +8,9 @@
 
 #include <memory>
 
-#include "xfa/include/fwl/basewidget/fwl_datetimepicker.h"
-#include "xfa/include/fwl/core/fwl_error.h"
-#include "xfa/include/fwl/core/fwl_note.h"
-#include "xfa/include/fwl/core/fwl_widget.h"
+#include "xfa/fwl/basewidget/ifwl_datetimepicker.h"
+#include "xfa/fwl/core/fwl_error.h"
+#include "xfa/fwl/core/ifwl_widget.h"
 
 CFWL_DateTimePicker* CFWL_DateTimePicker::Create() {
   return new CFWL_DateTimePicker;

@@ -11,11 +11,10 @@
 
 #include "xfa/fwl/basewidget/fwl_editimp.h"
 #include "xfa/fwl/basewidget/fwl_monthcalendarimp.h"
-#include "xfa/include/fwl/basewidget/fwl_datetimepicker.h"
-#include "xfa/include/fwl/basewidget/fwl_edit.h"
-#include "xfa/include/fwl/basewidget/fwl_monthcalendar.h"
-#include "xfa/include/fwl/core/fwl_form.h"
-#include "xfa/include/fwl/core/fwl_theme.h"
+#include "xfa/fwl/basewidget/ifwl_datetimepicker.h"
+#include "xfa/fwl/basewidget/ifwl_edit.h"
+#include "xfa/fwl/basewidget/ifwl_monthcalendar.h"
+#include "xfa/fwl/core/ifwl_form.h"
 
 class CFWL_WidgetImp;
 class CFWL_WidgetImpProperties;

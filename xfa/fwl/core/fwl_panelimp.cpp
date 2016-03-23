@@ -6,13 +6,16 @@
 
 #include "xfa/fwl/core/fwl_panelimp.h"
 
+#include "xfa/fwl/core/cfwl_widgetimpproperties.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/fwl_targetimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fwl/core/fwl_widgetmgrimp.h"
-#include "xfa/include/fwl/core/fwl_content.h"
-#include "xfa/include/fwl/core/fwl_grid.h"
-#include "xfa/include/fwl/core/fwl_panel.h"
+#include "xfa/fwl/core/ifwl_content.h"
+#include "xfa/fwl/core/ifwl_custompanel.h"
+#include "xfa/fwl/core/ifwl_grid.h"
+#include "xfa/fwl/core/ifwl_panel.h"
+#include "xfa/fwl/core/ifwl_proxy.h"
 
 // static
 IFWL_Panel* IFWL_Panel::Create(CFWL_WidgetImpProperties& properties,

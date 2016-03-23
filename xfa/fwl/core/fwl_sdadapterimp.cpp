@@ -4,16 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/include/fwl/adapter/fwl_sdadapterimp.h"
+#include "xfa/fwl/core/fwl_sdadapterimp.h"
 
 #include "core/fxcrt/include/fx_system.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/fwl_targetimp.h"
 #include "xfa/fwl/core/fwl_threadimp.h"
 #include "xfa/fwl/core/fwl_widgetmgrimp.h"
-#include "xfa/include/fwl/adapter/fwl_adapterthreadmgr.h"
-#include "xfa/include/fwl/adapter/fwl_adapterwidgetmgr.h"
-#include "xfa/include/fwl/core/fwl_app.h"
+#include "xfa/fwl/core/ifwl_adapterthreadmgr.h"
+#include "xfa/fwl/core/ifwl_adapterwidgetmgr.h"
+#include "xfa/fwl/core/ifwl_app.h"
 
 CFWL_SDAdapterWidgetMgr::CFWL_SDAdapterWidgetMgr() {}
 CFWL_SDAdapterWidgetMgr::~CFWL_SDAdapterWidgetMgr() {}

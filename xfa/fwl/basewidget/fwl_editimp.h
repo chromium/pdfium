@@ -11,9 +11,13 @@
 #include <vector>
 
 #include "xfa/fee/ifde_txtedtengine.h"
+#include "xfa/fwl/basewidget/ifwl_scrollbar.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
-#include "xfa/include/fwl/basewidget/fwl_scrollbar.h"
+#include "xfa/fxgraphics/cfx_path.h"
 
+class CFWL_MsgActivate;
+class CFWL_MsgDeactivate;
+class CFWL_MsgMouse;
 class CFWL_WidgetImpProperties;
 class CFWL_WidgetImpDelegate;
 class IFWL_Caret;

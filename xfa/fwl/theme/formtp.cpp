@@ -7,10 +7,14 @@
 #include "xfa/include/fwl/theme/formtp.h"
 
 #include "xfa/fde/tto/fde_textout.h"
+#include "xfa/fwl/core/cfwl_themebackground.h"
+#include "xfa/fwl/core/cfwl_themepart.h"
+#include "xfa/fwl/core/cfwl_themetext.h"
+#include "xfa/fwl/core/ifwl_form.h"
+#include "xfa/fwl/core/ifwl_themeprovider.h"
+#include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
-#include "xfa/include/fwl/core/fwl_form.h"
-#include "xfa/include/fwl/core/fwl_widget.h"
 
 #define FWLTHEME_CAPACITY_CXFormBorder 3
 #define FWLTHEME_CAPACITY_CYFormBorder 3

@@ -6,10 +6,12 @@
 
 #include "xfa/include/fwl/theme/scrollbartp.h"
 
+#include "xfa/fwl/basewidget/ifwl_scrollbar.h"
+#include "xfa/fwl/core/cfwl_themebackground.h"
+#include "xfa/fwl/core/ifwl_themeprovider.h"
+#include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
-#include "xfa/include/fwl/basewidget/fwl_scrollbar.h"
-#include "xfa/include/fwl/core/fwl_widget.h"
 
 #define FWL_SCROLL_PawLen 12.5f
 

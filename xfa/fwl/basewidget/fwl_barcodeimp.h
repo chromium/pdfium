@@ -8,9 +8,9 @@
 #define XFA_FWL_BASEWIDGET_FWL_BARCODEIMP_H_
 
 #include "xfa/fwl/basewidget/fwl_editimp.h"
-#include "xfa/include/fwl/basewidget/fwl_barcode.h"
-#include "xfa/include/fwl/basewidget/fwl_scrollbar.h"
-#include "xfa/include/fwl/basewidget/fxmath_barcode.h"
+#include "xfa/fwl/basewidget/ifwl_barcode.h"
+#include "xfa/fwl/basewidget/ifwl_scrollbar.h"
+#include "xfa/fwl/basewidget/ifx_barcode.h"
 
 class CFWL_WidgetImpProperties;
 class CFWL_BarcodeImpDelegate;

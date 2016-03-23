@@ -9,7 +9,7 @@
 #include <memory>
 #include <vector>
 
-#include "xfa/include/fwl/basewidget/fwl_edit.h"
+#include "xfa/fwl/basewidget/ifwl_edit.h"
 
 CFWL_Edit* CFWL_Edit::Create() {
   return new CFWL_Edit;

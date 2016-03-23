@@ -9,9 +9,10 @@
 
 #include "xfa/fwl/core/fwl_widgetimp.h"
 
+class CFWL_MsgMouse;
 class CFWL_WidgetImpProperties;
-class IFWL_Widget;
 class CFWL_PushButtonImpDelegate;
+class IFWL_Widget;
 
 class CFWL_PushButtonImp : public CFWL_WidgetImp {
  public:
@@ -44,6 +45,7 @@ class CFWL_PushButtonImp : public CFWL_WidgetImp {
   int32_t m_iTTOAlign;
   friend class CFWL_PushButtonImpDelegate;
 };
+
 class CFWL_PushButtonImpDelegate : public CFWL_WidgetImpDelegate {
  public:
   CFWL_PushButtonImpDelegate(CFWL_PushButtonImp* pOwner);

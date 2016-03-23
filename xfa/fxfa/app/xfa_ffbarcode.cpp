@@ -7,12 +7,13 @@
 #include "xfa/fxfa/app/xfa_ffbarcode.h"
 
 #include "core/fxcrt/include/fx_ext.h"
+#include "xfa/fwl/core/ifwl_app.h"
+#include "xfa/fwl/core/ifwl_notedriver.h"
 #include "xfa/fxfa/app/xfa_fffield.h"
 #include "xfa/fxfa/app/xfa_ffpageview.h"
 #include "xfa/fxfa/app/xfa_fftextedit.h"
 #include "xfa/fxfa/app/xfa_ffwidget.h"
 #include "xfa/fxfa/app/xfa_fwladapter.h"
-#include "xfa/include/fwl/core/fwl_app.h"
 #include "xfa/include/fwl/lightwidget/barcode.h"
 
 namespace {

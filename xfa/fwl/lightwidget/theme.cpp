@@ -8,6 +8,9 @@
 
 #include <algorithm>
 
+#include "xfa/fwl/core/cfwl_themebackground.h"
+#include "xfa/fwl/core/cfwl_themepart.h"
+#include "xfa/fwl/core/cfwl_themetext.h"
 #include "xfa/include/fwl/theme/barcodetp.h"
 #include "xfa/include/fwl/theme/carettp.h"
 #include "xfa/include/fwl/theme/checkboxtp.h"

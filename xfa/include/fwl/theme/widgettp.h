@@ -12,9 +12,8 @@
 
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_system.h"
-#include "xfa/include/fwl/core/fwl_error.h"
-#include "xfa/include/fwl/core/fwl_theme.h"
-#include "xfa/include/fwl/core/fwl_widget.h"
+#include "xfa/fwl/core/fwl_error.h"
+#include "xfa/fxgraphics/include/cfx_graphics.h"
 #include "xfa/include/fwl/theme/utils.h"
 
 class IFWL_Widget;
@@ -22,6 +21,9 @@ class IFDE_TextOut;
 class IFX_Font;
 class IFX_FontMgr;
 class CFWL_ArrowData;
+class CFWL_ThemeBackground;
+class CFWL_ThemePart;
+class CFWL_ThemeText;
 
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
 class IFX_FontSourceEnum;

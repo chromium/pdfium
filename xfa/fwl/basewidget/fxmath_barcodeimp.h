@@ -9,8 +9,8 @@
 
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
+#include "xfa/fwl/basewidget/ifx_barcode.h"
 #include "xfa/fxbarcode/include/BC_Library.h"
-#include "xfa/include/fwl/basewidget/fxmath_barcode.h"
 
 class CBC_CodeBase;
 

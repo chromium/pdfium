@@ -7,7 +7,7 @@
 #ifndef XFA_INCLUDE_FWL_LIGHTWIDGET_APP_H_
 #define XFA_INCLUDE_FWL_LIGHTWIDGET_APP_H_
 
-#include "xfa/include/fwl/core/fwl_error.h"
+#include "xfa/fwl/core/fwl_error.h"
 
 class CFWL_Theme;
 class IFWL_App;

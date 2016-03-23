@@ -8,9 +8,9 @@
 #define XFA_FWL_CORE_FWL_GRIDIMP_H_
 
 #include "xfa/fwl/core/fwl_contentimp.h"
-#include "xfa/include/fwl/core/fwl_app.h"
-#include "xfa/include/fwl/core/fwl_content.h"
-#include "xfa/include/fwl/core/fwl_grid.h"
+#include "xfa/fwl/core/ifwl_app.h"
+#include "xfa/fwl/core/ifwl_content.h"
+#include "xfa/fwl/core/ifwl_grid.h"
 
 class CFWL_GridLength {
  public:

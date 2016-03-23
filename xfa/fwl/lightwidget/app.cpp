@@ -7,8 +7,8 @@
 #include "xfa/include/fwl/lightwidget/app.h"
 
 #include "core/fxcrt/include/fx_coordinates.h"
-#include "xfa/include/fwl/core/fwl_app.h"
-#include "xfa/include/fwl/core/fwl_error.h"
+#include "xfa/fwl/core/fwl_error.h"
+#include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/include/fwl/lightwidget/theme.h"
 
 CFWL_App::CFWL_App() : m_pIface(IFWL_App::Create(nullptr)), m_pTheme(nullptr) {}

@@ -8,6 +8,10 @@
 
 #include <vector>
 
+#include "xfa/fwl/basewidget/ifwl_datetimepicker.h"
+#include "xfa/fwl/basewidget/ifwl_edit.h"
+#include "xfa/fwl/core/cfwl_message.h"
+#include "xfa/fwl/core/ifwl_notedriver.h"
 #include "xfa/fxfa/app/xfa_ffapp.h"
 #include "xfa/fxfa/app/xfa_ffdoc.h"
 #include "xfa/fxfa/app/xfa_ffdocview.h"
@@ -17,8 +21,6 @@
 #include "xfa/fxfa/app/xfa_fwladapter.h"
 #include "xfa/fxfa/app/xfa_textlayout.h"
 #include "xfa/fxfa/parser/xfa_localevalue.h"
-#include "xfa/include/fwl/basewidget/fwl_datetimepicker.h"
-#include "xfa/include/fwl/basewidget/fwl_edit.h"
 #include "xfa/include/fwl/lightwidget/datetimepicker.h"
 #include "xfa/include/fwl/lightwidget/edit.h"
 

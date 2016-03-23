@@ -7,16 +7,20 @@
 #ifndef XFA_FWL_CORE_FWL_WIDGETIMP_H_
 #define XFA_FWL_CORE_FWL_WIDGETIMP_H_
 
+#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxcrt/include/fx_system.h"
+#include "xfa/fwl/core/cfwl_event.h"
 #include "xfa/fwl/core/fwl_targetimp.h"
-#include "xfa/include/fwl/core/fwl_widget.h"
+#include "xfa/fwl/core/ifwl_widgetdelegate.h"
 
+class CFWL_MsgKey;
 class CFWL_NoteThreadImp;
 class CFWL_WidgetImpProperties;
 class CFWL_WidgetMgr;
 class IFWL_DataProvider;
+class IFWL_NoteThread;
 class IFWL_ThemeProvider;
 class IFWL_Widget;
-class IFWL_WidgetDelegate;
 
 class CFWL_WidgetImp : public CFWL_TargetImp {
  public:

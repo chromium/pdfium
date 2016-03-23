@@ -7,10 +7,11 @@
 #include "xfa/fwl/basewidget/fwl_barcodeimp.h"
 
 #include "xfa/fwl/basewidget/fwl_editimp.h"
+#include "xfa/fwl/core/cfwl_themepart.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/fwl_targetimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
-#include "xfa/include/fwl/core/fwl_theme.h"
+#include "xfa/fwl/core/ifwl_themeprovider.h"
 
 // static
 IFWL_Barcode* IFWL_Barcode::Create(const CFWL_WidgetImpProperties& properties) {

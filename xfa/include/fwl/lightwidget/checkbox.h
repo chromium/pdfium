@@ -7,7 +7,7 @@
 #ifndef XFA_INCLUDE_FWL_LIGHTWIDGET_CHECKBOX_H_
 #define XFA_INCLUDE_FWL_LIGHTWIDGET_CHECKBOX_H_
 
-#include "xfa/include/fwl/basewidget/fwl_checkbox.h"
+#include "xfa/fwl/basewidget/ifwl_checkbox.h"
 #include "xfa/include/fwl/lightwidget/widget.h"
 
 class CFWL_CheckBox : public CFWL_Widget {

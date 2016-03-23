@@ -7,7 +7,8 @@
 #ifndef XFA_INCLUDE_FWL_LIGHTWIDGET_CARET_H_
 #define XFA_INCLUDE_FWL_LIGHTWIDGET_CARET_H_
 
-#include "xfa/include/fwl/core/fwl_error.h"
+#include "xfa/fwl/core/fwl_error.h"
+#include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/include/fwl/lightwidget/widget.h"
 
 class CFWL_Caret : public CFWL_Widget {

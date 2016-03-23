@@ -7,10 +7,10 @@
 #include "xfa/fwl/core/fwl_appimp.h"
 #include "xfa/fwl/core/fwl_targetimp.h"
 #include "xfa/fwl/core/fwl_threadimp.h"
-#include "xfa/include/fwl/adapter/fwl_adapternative.h"
-#include "xfa/include/fwl/adapter/fwl_adaptertimermgr.h"
-#include "xfa/include/fwl/core/fwl_app.h"
-#include "xfa/include/fwl/core/fwl_timer.h"
+#include "xfa/fwl/core/ifwl_adapternative.h"
+#include "xfa/fwl/core/ifwl_app.h"
+#include "xfa/fwl/core/ifwl_timer.h"
+#include "xfa/fwl/core/include/ifwl_adaptertimermgr.h"
 
 FWL_HTIMER FWL_StartTimer(IFWL_Timer* pTimer,
                           FX_DWORD dwElapse,

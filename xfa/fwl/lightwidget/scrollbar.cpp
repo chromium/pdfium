@@ -8,7 +8,7 @@
 
 #include <memory>
 
-#include "xfa/include/fwl/basewidget/fwl_scrollbar.h"
+#include "xfa/fwl/basewidget/ifwl_scrollbar.h"
 
 CFWL_ScrollBar* CFWL_ScrollBar::Create() {
   return new CFWL_ScrollBar;

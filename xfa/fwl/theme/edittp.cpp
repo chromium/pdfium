@@ -6,10 +6,11 @@
 
 #include "xfa/include/fwl/theme/edittp.h"
 
+#include "xfa/fwl/basewidget/ifwl_edit.h"
+#include "xfa/fwl/core/cfwl_themebackground.h"
+#include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
-#include "xfa/include/fwl/basewidget/fwl_edit.h"
-#include "xfa/include/fwl/core/fwl_widget.h"
 
 CFWL_EditTP::CFWL_EditTP() {}
 CFWL_EditTP::~CFWL_EditTP() {}

@@ -11,6 +11,7 @@
 #include "core/fxcrt/include/fx_ext.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
 #include "xfa/fgas/crt/fgas_algorithm.h"
+#include "xfa/fwl/core/ifwl_notedriver.h"
 #include "xfa/fxfa/app/xfa_ffapp.h"
 #include "xfa/fxfa/app/xfa_ffdocview.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
@@ -18,7 +19,6 @@
 #include "xfa/fxfa/app/xfa_fontmgr.h"
 #include "xfa/fxfa/parser/xfa_docdata.h"
 #include "xfa/fxfa/parser/xfa_parser.h"
-#include "xfa/include/fwl/core/fwl_note.h"
 
 CXFA_FFDoc::CXFA_FFDoc(CXFA_FFApp* pApp, IXFA_DocProvider* pDocProvider)
     : m_pDocProvider(pDocProvider),

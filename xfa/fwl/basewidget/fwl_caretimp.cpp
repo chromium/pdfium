@@ -6,11 +6,12 @@
 
 #include "xfa/fwl/basewidget/fwl_caretimp.h"
 
+#include "xfa/fwl/basewidget/ifwl_caret.h"
+#include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/fwl_targetimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
-#include "xfa/include/fwl/basewidget/fwl_caret.h"
-#include "xfa/include/fwl/core/fwl_theme.h"
+#include "xfa/fwl/core/ifwl_themeprovider.h"
 
 // static
 IFWL_Caret* IFWL_Caret::Create(const CFWL_WidgetImpProperties& properties,

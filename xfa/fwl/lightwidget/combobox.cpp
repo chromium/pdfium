@@ -8,8 +8,8 @@
 
 #include <utility>
 
-#include "xfa/include/fwl/core/fwl_error.h"
-#include "xfa/include/fwl/core/fwl_widget.h"
+#include "xfa/fwl/core/fwl_error.h"
+#include "xfa/fwl/core/ifwl_widget.h"
 
 CFWL_ComboBox* CFWL_ComboBox::Create() {
   return new CFWL_ComboBox;

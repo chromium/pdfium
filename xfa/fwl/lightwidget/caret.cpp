@@ -8,9 +8,9 @@
 
 #include <memory>
 
+#include "xfa/fwl/basewidget/ifwl_caret.h"
 #include "xfa/fwl/core/fwl_targetimp.h"
 #include "xfa/fxgraphics/cfx_color.h"
-#include "xfa/include/fwl/basewidget/fwl_caret.h"
 #include "xfa/include/fwl/lightwidget/edit.h"
 
 CFWL_Caret* CFWL_Caret::Create() {

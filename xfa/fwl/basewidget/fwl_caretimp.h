@@ -8,8 +8,8 @@
 #define XFA_FWL_BASEWIDGET_FWL_CARETIMP_H_
 
 #include "xfa/fwl/core/fwl_widgetimp.h"
+#include "xfa/fwl/core/ifwl_timer.h"
 #include "xfa/fxgraphics/cfx_color.h"
-#include "xfa/include/fwl/core/fwl_timer.h"
 
 class CFWL_WidgetImpProperties;
 class IFWL_Widget;

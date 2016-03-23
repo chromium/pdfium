@@ -6,12 +6,14 @@
 
 #include "xfa/fxfa/app/xfa_ffimageedit.h"
 
+#include "xfa/fwl/core/cfwl_message.h"
+#include "xfa/fwl/core/ifwl_app.h"
+#include "xfa/fwl/core/ifwl_notedriver.h"
 #include "xfa/fxfa/app/xfa_ffdoc.h"
 #include "xfa/fxfa/app/xfa_ffdocview.h"
 #include "xfa/fxfa/app/xfa_fffield.h"
 #include "xfa/fxfa/app/xfa_ffpageview.h"
 #include "xfa/fxfa/app/xfa_ffwidget.h"
-#include "xfa/include/fwl/core/fwl_app.h"
 #include "xfa/include/fwl/lightwidget/picturebox.h"
 
 CXFA_FFImageEdit::CXFA_FFImageEdit(CXFA_FFPageView* pPageView,

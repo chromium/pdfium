@@ -9,6 +9,7 @@
 #include "xfa/fwl/core/fwl_appimp.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/fwl_targetimp.h"
+#include "xfa/fwl/core/ifwl_notethread.h"
 
 void IFWL_Thread::Release() {
   delete m_pImpl;

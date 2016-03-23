@@ -10,9 +10,9 @@
 #include <memory>
 #include <vector>
 
-#include "xfa/include/fwl/basewidget/fwl_listbox.h"
-#include "xfa/include/fwl/core/fwl_error.h"
-#include "xfa/include/fwl/core/fwl_widget.h"
+#include "xfa/fwl/basewidget/ifwl_listbox.h"
+#include "xfa/fwl/core/fwl_error.h"
+#include "xfa/fwl/core/ifwl_widget.h"
 #include "xfa/include/fwl/lightwidget/widget.h"
 
 class CFWL_ListItem;

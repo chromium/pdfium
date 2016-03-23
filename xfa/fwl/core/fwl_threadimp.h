@@ -7,10 +7,11 @@
 #ifndef XFA_FWL_CORE_FWL_THREADIMP_H_
 #define XFA_FWL_CORE_FWL_THREADIMP_H_
 
-#include "xfa/include/fwl/core/fwl_thread.h"  // For FWL_HTHREAD.
+#include "xfa/fwl/core/ifwl_thread.h"
 
 class CFWL_NoteDriver;
 class IFWL_NoteDriver;
+class IFWL_NoteThread;
 
 class CFWL_ThreadImp {
  public:

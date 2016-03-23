@@ -10,9 +10,9 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "xfa/fgas/font/fgas_font.h"
-#include "xfa/include/fwl/adapter/fwl_adapternative.h"
-#include "xfa/include/fwl/adapter/fwl_sdadapterimp.h"
-#include "xfa/include/fwl/core/fwl_app.h"
+#include "xfa/fwl/core/fwl_sdadapterimp.h"
+#include "xfa/fwl/core/ifwl_adapternative.h"
+#include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/include/fxfa/fxfa.h"
 
 class CXFA_FWLAdapterWidgetMgr;

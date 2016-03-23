@@ -10,7 +10,7 @@
 #include <memory>
 #include <vector>
 
-#include "xfa/include/fwl/basewidget/fwl_combobox.h"
+#include "xfa/fwl/basewidget/ifwl_combobox.h"
 #include "xfa/include/fwl/lightwidget/widget.h"
 
 class CFWL_WidgetProperties;

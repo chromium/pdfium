@@ -7,10 +7,10 @@
 #ifndef XFA_FXFA_APP_XFA_FFFIELD_H_
 #define XFA_FXFA_APP_XFA_FFFIELD_H_
 
+#include "xfa/fwl/core/fwl_sdadapterimp.h"
+#include "xfa/fwl/core/ifwl_widgetdelegate.h"
 #include "xfa/fxfa/app/xfa_ffpageview.h"
 #include "xfa/fxfa/app/xfa_ffwidget.h"
-#include "xfa/include/fwl/adapter/fwl_sdadapterimp.h"
-#include "xfa/include/fwl/core/fwl_widget.h"
 #include "xfa/include/fwl/lightwidget/widget.h"
 
 #define XFA_MINUI_HEIGHT 4.32f
