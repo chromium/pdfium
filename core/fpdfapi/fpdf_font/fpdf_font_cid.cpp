@@ -284,6 +284,8 @@ int GetCharSizeImpl(FX_DWORD charcode,
   return 1;
 }
 
+#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
+
 bool IsValidEmbeddedCharcodeFromUnicodeCharset(CIDSet charset) {
   switch (charset) {
     case CIDSET_GB1:
@@ -296,8 +298,6 @@ bool IsValidEmbeddedCharcodeFromUnicodeCharset(CIDSet charset) {
       return false;
   }
 }
-
-#if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
 
 FX_DWORD EmbeddedCharcodeFromUnicode(const FXCMAP_CMap* pEmbedMap,
                                      CIDSet charset,
