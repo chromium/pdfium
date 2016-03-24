@@ -5,6 +5,7 @@
 {
   'variables': {
     'pdf_enable_xfa%': 0,  # Set to 1 by standalone.gypi in standalone builds.
+    'pdf_use_skia%': 0,
   },
   'target_defaults': {
     'defines': [
@@ -79,6 +80,15 @@
         'freetype/src/smooth/smooth.c',
         'freetype/src/truetype/truetype.c',
         'freetype/src/type1/type1.c',
+      ],
+      'conditions': [
+        ['pdf_use_skia==1', {
+          'sources': [
+           'freetype/src/base/ftfntfmt.c',
+           'freetype/src/base/ftfstype.c',
+           'freetype/src/base/fttype1.c',
+          ],
+        }],
       ],
       'variables': {
         'clang_warning_flags': [

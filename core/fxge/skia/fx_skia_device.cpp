@@ -19,10 +19,12 @@
 #include "third_party/skia/include/core/SkTypeface.h"
 #include "third_party/skia/include/effects/SkDashPathEffect.h"
 
+namespace {
+
 #define SHOW_SKIA_PATH 0  // set to 1 to print the path contents
 #define DRAW_SKIA_CLIP 0  // set to 1 to draw a green rectangle around the clip
 
-static void DebugShowSkiaPath(const SkPath& path) {
+void DebugShowSkiaPath(const SkPath& path) {
 #if SHOW_SKIA_PATH
   char buffer[4096];
   sk_bzero(buffer, sizeof(buffer));
@@ -32,19 +34,19 @@ static void DebugShowSkiaPath(const SkPath& path) {
 #endif  // SHOW_SKIA_PATH
 }
 
-static void DebugShowCanvasMatrix(const SkCanvas* canvas) {
+void DebugShowCanvasMatrix(const SkCanvas* canvas) {
 #if SHOW_SKIA_PATH
   SkMatrix matrix = canvas->getTotalMatrix();
   SkScalar m[9];
   matrix.get9(m);
-  printf("(%g,%g,%g) (%g,%g,%g) (%g,%g,%g)\n", m[0], m[1], m[2], m[3], m[4], m[5], m[6],
-         m[7], m[8]);
+  printf("(%g,%g,%g) (%g,%g,%g) (%g,%g,%g)\n", m[0], m[1], m[2], m[3], m[4],
+         m[5], m[6], m[7], m[8]);
 #endif  // SHOW_SKIA_PATH
 }
 
 #if DRAW_SKIA_CLIP
 
-static SkPaint DebugClipPaint() {
+SkPaint DebugClipPaint() {
   SkPaint paint;
   paint.setAntiAlias(true);
   paint.setColor(SK_ColorGREEN);
@@ -52,27 +54,27 @@ static SkPaint DebugClipPaint() {
   return paint;
 }
 
-static void DebugDrawSkiaClipRect(SkCanvas* canvas, const SkRect& rect) {
+void DebugDrawSkiaClipRect(SkCanvas* canvas, const SkRect& rect) {
   SkPaint paint = DebugClipPaint();
   canvas->drawRect(rect, paint);
 }
 
-static void DebugDrawSkiaClipPath(SkCanvas* canvas, const SkPath& path) {
+void DebugDrawSkiaClipPath(SkCanvas* canvas, const SkPath& path) {
   SkPaint paint = DebugClipPaint();
   canvas->drawPath(path, paint);
 }
 
 #else  // DRAW_SKIA_CLIP
 
-static void DebugDrawSkiaClipRect(SkCanvas* canvas, const SkRect& rect) {}
-static void DebugDrawSkiaClipPath(SkCanvas* canvas, const SkPath& path) {}
+void DebugDrawSkiaClipRect(SkCanvas* canvas, const SkRect& rect) {}
+void DebugDrawSkiaClipPath(SkCanvas* canvas, const SkPath& path) {}
 
 #endif  // DRAW_SKIA_CLIP
 
 #undef SHOW_SKIA_PATH
 #undef DRAW_SKIA_CLIP
 
-static SkPath BuildPath(const CFX_PathData* pPathData) {
+SkPath BuildPath(const CFX_PathData* pPathData) {
   SkPath skPath;
   const CFX_PathData* pFPath = pPathData;
   int nPoints = pFPath->GetPointCount();
@@ -96,6 +98,59 @@ static SkPath BuildPath(const CFX_PathData* pPathData) {
   }
   return skPath;
 }
+
+SkMatrix ToSkMatrix(const CFX_Matrix& m) {
+  SkMatrix skMatrix;
+  skMatrix.setAll(m.a, m.b, m.e, m.c, m.d, m.f, 0, 0, 1);
+  return skMatrix;
+}
+
+// use when pdf's y-axis points up insead of down
+SkMatrix ToFlippedSkMatrix(const CFX_Matrix& m) {
+  SkMatrix skMatrix;
+  skMatrix.setAll(m.a, m.b, m.e, -m.c, -m.d, m.f, 0, 0, 1);
+  return skMatrix;
+}
+
+SkXfermode::Mode GetSkiaBlendMode(int blend_type) {
+  switch (blend_type) {
+    case FXDIB_BLEND_MULTIPLY:
+      return SkXfermode::kMultiply_Mode;
+    case FXDIB_BLEND_SCREEN:
+      return SkXfermode::kScreen_Mode;
+    case FXDIB_BLEND_OVERLAY:
+      return SkXfermode::kOverlay_Mode;
+    case FXDIB_BLEND_DARKEN:
+      return SkXfermode::kDarken_Mode;
+    case FXDIB_BLEND_LIGHTEN:
+      return SkXfermode::kLighten_Mode;
+    case FXDIB_BLEND_COLORDODGE:
+      return SkXfermode::kColorDodge_Mode;
+    case FXDIB_BLEND_COLORBURN:
+      return SkXfermode::kColorBurn_Mode;
+    case FXDIB_BLEND_HARDLIGHT:
+      return SkXfermode::kHardLight_Mode;
+    case FXDIB_BLEND_SOFTLIGHT:
+      return SkXfermode::kSoftLight_Mode;
+    case FXDIB_BLEND_DIFFERENCE:
+      return SkXfermode::kDifference_Mode;
+    case FXDIB_BLEND_EXCLUSION:
+      return SkXfermode::kExclusion_Mode;
+    case FXDIB_BLEND_HUE:
+      return SkXfermode::kHue_Mode;
+    case FXDIB_BLEND_SATURATION:
+      return SkXfermode::kSaturation_Mode;
+    case FXDIB_BLEND_COLOR:
+      return SkXfermode::kColor_Mode;
+    case FXDIB_BLEND_LUMINOSITY:
+      return SkXfermode::kLuminosity_Mode;
+    case FXDIB_BLEND_NORMAL:
+    default:
+      return SkXfermode::kSrcOver_Mode;
+  }
+}
+
+}  // namespace
 
 // convert a stroking path to scanlines
 void CFX_SkiaDeviceDriver::PaintStroke(SkPaint* spaint,
@@ -132,8 +187,9 @@ void CFX_SkiaDeviceDriver::PaintStroke(SkPaint* spaint,
   inverse.set(SkMatrix::kMTransY, 0);
   SkVector deviceUnits[2] = {{0, 1}, {1, 0}};
   inverse.mapPoints(deviceUnits, SK_ARRAY_COUNT(deviceUnits));
-  FX_FLOAT width = SkTMax(pGraphState->m_LineWidth,
-                          SkTMin(deviceUnits[0].length(), deviceUnits[1].length()));
+  FX_FLOAT width =
+      SkTMax(pGraphState->m_LineWidth,
+             SkTMin(deviceUnits[0].length(), deviceUnits[1].length()));
   if (pGraphState->m_DashArray) {
     int count = (pGraphState->m_DashCount + 1) / 2;
     SkScalar* intervals = FX_Alloc2D(SkScalar, count, sizeof(SkScalar));
@@ -150,9 +206,8 @@ void CFX_SkiaDeviceDriver::PaintStroke(SkPaint* spaint,
       intervals[i * 2] = on;
       intervals[i * 2 + 1] = off;
     }
-    spaint->setPathEffect(SkDashPathEffect::Create(intervals, count * 2,
-                                                   pGraphState->m_DashPhase))
-        ->unref();
+    spaint->setPathEffect(
+        SkDashPathEffect::Make(intervals, count * 2, pGraphState->m_DashPhase));
   }
   spaint->setStyle(SkPaint::kStroke_Style);
   spaint->setAntiAlias(true);
@@ -203,19 +258,6 @@ CFX_SkiaDeviceDriver::~CFX_SkiaDeviceDriver() {
   delete m_pAggDriver;
 }
 
-static SkMatrix ToSkMatrix(const CFX_Matrix& m) {
-    SkMatrix skMatrix;
-    skMatrix.setAll(m.a, m.b, m.e, m.c, m.d, m.f, 0, 0, 1);
-    return skMatrix;
-}
-
-// use when pdf's y-axis points up insead of down
-static SkMatrix ToFlippedSkMatrix(const CFX_Matrix& m) {
-    SkMatrix skMatrix;
-    skMatrix.setAll(m.a, m.b, m.e, -m.c, -m.d, m.f, 0, 0, 1);
-    return skMatrix;
-}
-
 FX_BOOL CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
                                              const FXTEXT_CHARPOS* pCharPos,
                                              CFX_Font* pFont,
@@ -233,6 +275,7 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
   paint.setTypeface(typeface);
   paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
   paint.setTextSize(font_size);
+  paint.setSubpixelText(true);
   m_pCanvas->save();
   SkMatrix skMatrix = ToFlippedSkMatrix(*pObject2Device);
   m_pCanvas->concat(skMatrix);
@@ -345,6 +388,7 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawPath(
   SkPath skPath = BuildPath(pPathData);
   SkPaint spaint;
   spaint.setAntiAlias(true);
+  spaint.setXfermodeMode(GetSkiaBlendMode(blend_type));
   m_pCanvas->save();
   SkMatrix skMatrix = ToSkMatrix(*pObject2Device);
   m_pCanvas->concat(skMatrix);
@@ -380,6 +424,7 @@ FX_BOOL CFX_SkiaDeviceDriver::FillRect(const FX_RECT* pRect,
   SkPaint spaint;
   spaint.setAntiAlias(true);
   spaint.setColor(fill_color);
+  spaint.setXfermodeMode(GetSkiaBlendMode(blend_type));
 
   m_pCanvas->drawRect(
       SkRect::MakeLTRB(pRect->left, pRect->top, pRect->right, pRect->bottom),
@@ -513,6 +558,8 @@ FX_BOOL CFX_SkiaDeviceDriver::StartDIBits(const CFX_DIBSource* pSource,
   SkPaint paint;
   paint.setAntiAlias(true);
   paint.setFilterQuality(kHigh_SkFilterQuality);
+  paint.setXfermodeMode(GetSkiaBlendMode(blend_type));
+  paint.setAlpha(bitmap_alpha);
   m_pCanvas->drawBitmap(skBitmap, 0, 0, &paint);
   m_pCanvas->restore();
   return TRUE;

@@ -36,10 +36,6 @@
     '../third_party/skia/src/ports/SkDiscardableMemory_none.cpp',
 
     '../third_party/skia/src/fonts/SkFontMgr_indirect.cpp',
-    '../third_party/skia/src/ports/SkFontHost_FreeType.cpp',
-
-    '../third_party/skia/src/ports/SkFontMgr_empty_factory.cpp',
-    '../third_party/skia/src/fonts/SkFontMgr_indirect.cpp',
     '../third_party/skia/src/fonts/SkRemotableFontMgr.cpp',
     '../third_party/skia/src/ports/SkRemotableFontMgr_win_dw.cpp',
 
@@ -52,7 +48,9 @@
     "../third_party/skia/src/ports/SkFontMgr_android.cpp",
     "../third_party/skia/src/ports/SkFontMgr_android_factory.cpp",
     '../third_party/skia/src/ports/SkFontMgr_android_parser.cpp',
-    '../third_party/skia/src/ports/SkFontMgr_win_dw.cpp',
+    '../third_party/skia/src/ports/SkFontMgr_custom.cpp',
+    '../third_party/skia/src/ports/SkFontMgr_custom_empty_factory.cpp',
+
     '../third_party/skia/src/ports/SkGlobalInitialization_default.cpp',
     '../third_party/skia/src/ports/SkMemory_malloc.cpp',
     '../third_party/skia/src/ports/SkOSFile_posix.cpp',
@@ -79,7 +77,6 @@
   '../third_party/skia/src/utils/SkMD5.cpp',
   '../third_party/skia/src/utils/SkMeshUtils.cpp',
   '../third_party/skia/src/utils/SkNinePatch.cpp',
-  '../third_party/skia/src/utils/SkOSFile.cpp',
   '../third_party/skia/src/utils/SkParsePath.cpp',
 
 #windows
@@ -112,6 +109,8 @@
     '../third_party/skia/src/sfnt',
     '../third_party/skia/src/utils',
     '../third_party/skia/src/lazy',
+    # TODO(dsinclair): Right way to use third_party.gyp:fx_freetype?
+    '../third_party/freetype/include',
   ],
   'conditions': [
     ['skia_support_gpu != 0', {
@@ -144,6 +143,9 @@
         # Keeping _win.cpp
         "../third_party/skia/src/utils/SkThreadUtils_pthread.cpp",
       ],
+       'dependencies': [
+        '../third_party/third_party.gyp:fx_freetype'
+      ],
     },{
       'sources!': [
         # Keeping _pthread.cpp
@@ -169,10 +171,6 @@
         '-Wno-unused',
         '-Wno-unused-function',
       ],
-      # TODO(dsinclair): Right way to use third_party.gyp:fx_freetype?
-      'include_dirs': [
-        '../third_party/freetype/include',
-      ],
     }],
     [ 'OS=="win" or OS=="mac" or OS=="ios" or OS=="android"', {
       'sources!': [
@@ -182,7 +180,7 @@
         '../third_party/skia/src/fonts/SkFontMgr_fontconfig.cpp',
       ],
     }],
-    [ 'OS=="win" or OS=="mac" or OS=="ios"', {
+    [ 'OS=="mac" or OS=="ios"', {
       'sources!': [
         '../third_party/skia/src/ports/SkFontHost_FreeType.cpp',
         '../third_party/skia/src/ports/SkFontHost_FreeType_common.cpp',

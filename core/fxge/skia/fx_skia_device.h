@@ -129,7 +129,9 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                          void* pIccTransform = NULL) override;
 
   virtual uint8_t* GetBuffer() const { return m_pAggDriver->GetBuffer(); }
-  void PaintStroke(SkPaint* spaint, const CFX_GraphStateData* pGraphState, const SkMatrix& matrix);
+  void PaintStroke(SkPaint* spaint,
+                   const CFX_GraphStateData* pGraphState,
+                   const SkMatrix& matrix);
   SkPictureRecorder* GetRecorder() const { return m_pRecorder; }
 
  private:
