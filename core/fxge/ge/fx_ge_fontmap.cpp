@@ -681,20 +681,44 @@ void CFX_FontMapper::SetSystemFontInfo(IFX_SystemFontInfo* pFontInfo) {
   }
   m_pFontInfo = pFontInfo;
 }
+static CFX_ByteString GetStringFromTable(const uint8_t* string_ptr,
+                                         FX_DWORD string_ptr_length,
+                                         uint16_t offset,
+                                         uint16_t length) {
+  if (string_ptr_length < offset + length) {
+    return CFX_ByteString();
+  }
+  return CFX_ByteStringC(string_ptr + offset, length);
+}
+CFX_ByteString GetNameFromTT(const uint8_t* name_table,
+                             FX_DWORD name_table_size,
+                             FX_DWORD name_id) {
+  if (!name_table || name_table_size < 6) {
+    return CFX_ByteString();
+  }
+  FX_DWORD name_count = GET_TT_SHORT(name_table + 2);
+  FX_DWORD string_offset = GET_TT_SHORT(name_table + 4);
+  // We will ignore the possibility of overlap of structures and
+  // string table as if it's all corrupt there's not a lot we can do.
+  if (name_table_size < string_offset) {
+    return CFX_ByteString();
+  }
 
-CFX_ByteString GetNameFromTT(const uint8_t* name_table, FX_DWORD name_id) {
-  const uint8_t* ptr = name_table + 2;
-  int name_count = GET_TT_SHORT(ptr);
-  int string_offset = GET_TT_SHORT(ptr + 2);
   const uint8_t* string_ptr = name_table + string_offset;
-  ptr += 4;
-  for (int i = 0; i < name_count; i++) {
-    if (GET_TT_SHORT(ptr + 6) == name_id && GET_TT_SHORT(ptr) == 1 &&
-        GET_TT_SHORT(ptr + 2) == 0) {
-      return CFX_ByteStringC(string_ptr + GET_TT_SHORT(ptr + 10),
-                             GET_TT_SHORT(ptr + 8));
+  FX_DWORD string_ptr_size = name_table_size - string_offset;
+  name_table += 6;
+  name_table_size -= 6;
+  if (name_table_size < name_count * 12) {
+    return CFX_ByteString();
+  }
+
+  for (FX_DWORD i = 0; i < name_count; i++, name_table += 12) {
+    if (GET_TT_SHORT(name_table + 6) == name_id &&
+        GET_TT_SHORT(name_table) == 1 && GET_TT_SHORT(name_table + 2) == 0) {
+      return GetStringFromTable(string_ptr, string_ptr_size,
+                                GET_TT_SHORT(name_table + 10),
+                                GET_TT_SHORT(name_table + 8));
     }
-    ptr += 12;
   }
   return CFX_ByteString();
 }
@@ -711,7 +735,8 @@ CFX_ByteString CFX_FontMapper::GetPSNameFromTT(void* hFont) {
   uint8_t* buffer_ptr = buffer.data();
   FX_DWORD bytes_read =
       m_pFontInfo->GetFontData(hFont, kTableNAME, buffer_ptr, size);
-  return (bytes_read == size) ? GetNameFromTT(buffer_ptr, 6) : CFX_ByteString();
+  return bytes_read == size ? GetNameFromTT(buffer_ptr, bytes_read, 6)
+                            : CFX_ByteString();
 }
 
 void CFX_FontMapper::AddInstalledFont(const CFX_ByteString& name, int charset) {
@@ -1442,8 +1467,11 @@ void CFX_FolderFontInfo::ReportFace(const CFX_ByteString& path,
   if (names.IsEmpty()) {
     return;
   }
-  CFX_ByteString facename = GetNameFromTT(names, 1);
-  CFX_ByteString style = GetNameFromTT(names, 2);
+  CFX_ByteString facename = GetNameFromTT(names, names.GetLength(), 1);
+  if (facename.IsEmpty()) {
+    return;
+  }
+  CFX_ByteString style = GetNameFromTT(names, names.GetLength(), 2);
   if (style != "Regular") {
     facename += " " + style;
   }
