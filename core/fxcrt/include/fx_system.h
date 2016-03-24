@@ -253,10 +253,6 @@ wchar_t* FXSYS_wcsupr(wchar_t* str);
 #define FXSYS_log10(a) (FX_FLOAT) log10(a)
 #define FXSYS_fmod(a, b) (FX_FLOAT) fmod(a, b)
 #define FXSYS_abs abs
-#define FXDWORD_FROM_LSBFIRST(i) (i)
-#define FXDWORD_FROM_MSBFIRST(i)                        \
-  (((uint8_t)(i) << 24) | ((uint8_t)((i) >> 8) << 16) | \
-   ((uint8_t)((i) >> 16) << 8) | (uint8_t)((i) >> 24))
 #define FXDWORD_GET_LSBFIRST(p)                                                \
   ((static_cast<FX_DWORD>(p[3]) << 24) | (static_cast<FX_DWORD>(p[2]) << 16) | \
    (static_cast<FX_DWORD>(p[1]) << 8) | (static_cast<FX_DWORD>(p[0])))

@@ -69,20 +69,14 @@ const char PDF_CharType[256] = {
     'R', 'R', 'R', 'R', 'R', 'R', 'R', 'W'};
 
 int32_t GetHeaderOffset(IFX_FileRead* pFile) {
-  // TODO(dsinclair): This is a complicated way of saying %PDF, simplify?
-  const FX_DWORD tag = FXDWORD_FROM_LSBFIRST(0x46445025);
-
   const size_t kBufSize = 4;
   uint8_t buf[kBufSize];
-  int32_t offset = 0;
-  while (offset <= 1024) {
+  for (int32_t offset = 0; offset <= 1024; ++offset) {
     if (!pFile->ReadBlock(buf, offset, kBufSize))
       return -1;
 
-    if (*(FX_DWORD*)buf == tag)
+    if (memcmp(buf, "%PDF", 4) == 0)
       return offset;
-
-    ++offset;
   }
   return -1;
 }

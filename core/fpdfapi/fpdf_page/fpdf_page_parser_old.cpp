@@ -248,9 +248,7 @@ CPDF_Stream* CPDF_StreamParser::ReadInlineStream(CPDF_Document* pDoc,
 
 #define MAX_WORD_BUFFER 256
 #define MAX_STRING_LENGTH 32767
-#define FXDWORD_TRUE FXDWORD_FROM_LSBFIRST(0x65757274)
-#define FXDWORD_NULL FXDWORD_FROM_LSBFIRST(0x6c6c756e)
-#define FXDWORD_FALS FXDWORD_FROM_LSBFIRST(0x736c6166)
+
 CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {
   if (m_pLastObj) {
     m_pLastObj->Release();
@@ -311,20 +309,21 @@ CPDF_StreamParser::SyntaxType CPDF_StreamParser::ParseNextElement() {
   m_WordBuffer[m_WordSize] = 0;
   if (bIsNumber)
     return Number;
+
   if (m_WordBuffer[0] == '/')
     return Name;
 
   if (m_WordSize == 4) {
-    if (*(FX_DWORD*)m_WordBuffer == FXDWORD_TRUE) {
+    if (memcmp(m_WordBuffer, "true", 4) == 0) {
       m_pLastObj = new CPDF_Boolean(TRUE);
       return Others;
     }
-    if (*(FX_DWORD*)m_WordBuffer == FXDWORD_NULL) {
+    if (memcmp(m_WordBuffer, "null", 4) == 0) {
       m_pLastObj = new CPDF_Null;
       return Others;
     }
   } else if (m_WordSize == 5) {
-    if (*(FX_DWORD*)m_WordBuffer == FXDWORD_FALS && m_WordBuffer[4] == 'e') {
+    if (memcmp(m_WordBuffer, "false", 5) == 0) {
       m_pLastObj = new CPDF_Boolean(FALSE);
       return Others;
     }
@@ -453,14 +452,14 @@ CPDF_Object* CPDF_StreamParser::ReadNextObject(FX_BOOL bAllowNestedArray,
     return pArray;
   }
   if (m_WordSize == 4) {
-    if (*(FX_DWORD*)m_WordBuffer == FXDWORD_TRUE) {
+    if (memcmp(m_WordBuffer, "true", 4) == 0) {
       return new CPDF_Boolean(TRUE);
     }
-    if (*(FX_DWORD*)m_WordBuffer == FXDWORD_NULL) {
+    if (memcmp(m_WordBuffer, "null", 4) == 0) {
       return new CPDF_Null;
     }
   } else if (m_WordSize == 5) {
-    if (*(FX_DWORD*)m_WordBuffer == FXDWORD_FALS && m_WordBuffer[4] == 'e') {
+    if (memcmp(m_WordBuffer, "false", 5) == 0) {
       return new CPDF_Boolean(FALSE);
     }
   }

@@ -411,7 +411,7 @@ FX_DWORD CFX_Win32FontInfo::GetFontData(void* hFont,
                                         uint8_t* buffer,
                                         FX_DWORD size) {
   HFONT hOldFont = (HFONT)::SelectObject(m_hDC, (HFONT)hFont);
-  table = FXDWORD_FROM_MSBFIRST(table);
+  table = FXDWORD_GET_MSBFIRST(reinterpret_cast<uint8_t*>(&table));
   size = ::GetFontData(m_hDC, table, 0, buffer, size);
   ::SelectObject(m_hDC, hOldFont);
   if (size == GDI_ERROR) {
