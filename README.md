@@ -131,11 +131,9 @@ and add the "Cr-Internals-Plugins-PDF" label.
 
 For contributing code, we will follow
 [Chromium's process](http://dev.chromium.org/developers/contributing-code)
-as much as possible. The main exceptions are:
+as much as possible. The main exceptions is:
 
 1. Code has to conform to the existing style and not Chromium/Google style.
-2. There is no commit queue, approved committers can land their changes via
-`git cl land`
 
 ## Branches
 
