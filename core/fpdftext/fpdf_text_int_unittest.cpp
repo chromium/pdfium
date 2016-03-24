@@ -19,7 +19,7 @@ TEST(fpdf_text_int, CheckMailLink) {
   // Check cases that fail to extract valid mail link.
   const wchar_t* invalid_strs[] = {
       L"",
-      L"peter.pan"        // '@' is required.
+      L"peter.pan",       // '@' is required.
       L"abc@server",      // Domain name needs at least one '.'.
       L"abc.@gmail.com",  // '.' can not immediately precede '@'.
       L"abc@xyz&q.org",   // Domain name should not contain '&'.
