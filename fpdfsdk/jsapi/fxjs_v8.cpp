@@ -371,11 +371,6 @@ void FXJS_ReleaseRuntime(v8::Isolate* pIsolate,
       v8::Local<v8::Context>::New(pIsolate, *pV8PersistentContext);
   v8::Context::Scope context_scope(context);
 
-  FXJS_PerIsolateData* pData = FXJS_PerIsolateData::Get(pIsolate);
-  if (!pData)
-    return;
-  pData->ReleaseDynamicObjsMap();
-
   int maxID = CFXJS_ObjDefinition::MaxID(pIsolate);
   for (int i = 0; i < maxID; ++i) {
     CFXJS_ObjDefinition* pObjDef = CFXJS_ObjDefinition::ForID(pIsolate, i);
@@ -402,8 +397,12 @@ void FXJS_ReleaseRuntime(v8::Isolate* pIsolate,
   for (int i = 0; i < maxID; ++i)
     delete CFXJS_ObjDefinition::ForID(pIsolate, i);
 
-  pIsolate->SetData(g_embedderDataSlot, nullptr);
-  delete pData;
+  FXJS_PerIsolateData* pData = FXJS_PerIsolateData::Get(pIsolate);
+  if (pData) {
+    pData->ReleaseDynamicObjsMap();
+    pIsolate->SetData(g_embedderDataSlot, nullptr);
+    delete pData;
+  }
 }
 
 IJS_Runtime* FXJS_GetRuntimeFromIsolate(v8::Isolate* pIsolate) {
