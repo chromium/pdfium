@@ -295,7 +295,7 @@
         "xfa/fxbarcode/cbc_datamatrix.cpp",
         "xfa/fxbarcode/cbc_datamatrix.h",
         "xfa/fxbarcode/cbc_ean8.cpp",
-        "xfa/fxbarcode/cbc_ena8.h",
+        "xfa/fxbarcode/cbc_ean8.h",
         "xfa/fxbarcode/cbc_ean13.cpp",
         "xfa/fxbarcode/cbc_ean13.h",
         "xfa/fxbarcode/cbc_onecode.cpp",
