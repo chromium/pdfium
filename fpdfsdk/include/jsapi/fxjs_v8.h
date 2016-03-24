@@ -97,7 +97,8 @@ class FXJS_PerIsolateData {
   static void SetUp(v8::Isolate* pIsolate);
   static FXJS_PerIsolateData* Get(v8::Isolate* pIsolate);
   void CreateDynamicObjsMap(v8::Isolate* pIsolate) {
-    m_pDynamicObjsMap = new V8TemplateMap(pIsolate);
+    if (!m_pDynamicObjsMap)
+      m_pDynamicObjsMap = new V8TemplateMap(pIsolate);
   }
   void ReleaseDynamicObjsMap() {
     delete m_pDynamicObjsMap;

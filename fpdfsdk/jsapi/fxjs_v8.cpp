@@ -374,7 +374,6 @@ void FXJS_ReleaseRuntime(v8::Isolate* pIsolate,
   FXJS_PerIsolateData* pData = FXJS_PerIsolateData::Get(pIsolate);
   if (!pData)
     return;
-  pData->ReleaseDynamicObjsMap();
 
   int maxID = CFXJS_ObjDefinition::MaxID(pIsolate);
   for (int i = 0; i < maxID; ++i) {
@@ -399,6 +398,7 @@ void FXJS_ReleaseRuntime(v8::Isolate* pIsolate,
   if (pIsolate == g_isolate && --g_isolate_ref_count > 0)
     return;
 
+  pData->ReleaseDynamicObjsMap();
   for (int i = 0; i < maxID; ++i)
     delete CFXJS_ObjDefinition::ForID(pIsolate, i);
 
