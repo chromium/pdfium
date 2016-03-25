@@ -16,15 +16,25 @@ IntType FXSYS_StrToInt(const CharType* str) {
   if (!str)
     return 0;
 
-  bool neg = std::numeric_limits<IntType>::is_signed && *str == '-';
-  if (neg)
+  // Process the sign.
+  bool neg = *str == '-';
+  if (neg || *str == '+')
     str++;
 
   IntType num = 0;
   while (*str && FXSYS_isDecimalDigit(*str)) {
     IntType val = FXSYS_toDecimalDigit(*str);
-    if (num > (std::numeric_limits<IntType>::max() - val) / 10)
-      break;
+    if (num > (std::numeric_limits<IntType>::max() - val) / 10) {
+      if (neg && std::numeric_limits<IntType>::is_signed) {
+        // Return MIN when the represented number is signed type and is smaller
+        // than the min value.
+        return std::numeric_limits<IntType>::min();
+      } else {
+        // Return MAX when the represented number is signed type and is larger
+        // than the max value, or the number is unsigned type and out of range.
+        return std::numeric_limits<IntType>::max();
+      }
+    }
 
     num = num * 10 + val;
     str++;
