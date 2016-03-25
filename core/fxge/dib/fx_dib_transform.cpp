@@ -229,9 +229,9 @@ CFX_DIBitmap* CFX_DIBSource::SwapXY(FX_BOOL bXFlip,
         dest_scan += (result_height - 1) * dest_pitch;
       }
       if (nBytes == 4) {
-        FX_DWORD* src_scan = (FX_DWORD*)GetScanline(row) + col_start;
+        uint32_t* src_scan = (uint32_t*)GetScanline(row) + col_start;
         for (int col = col_start; col < col_end; col++) {
-          *(FX_DWORD*)dest_scan = *src_scan++;
+          *(uint32_t*)dest_scan = *src_scan++;
           dest_scan += dest_step;
         }
       } else {
@@ -299,7 +299,7 @@ FX_RECT FXDIB_SwapClipBox(FX_RECT& clip,
 CFX_DIBitmap* CFX_DIBSource::TransformTo(const CFX_Matrix* pDestMatrix,
                                          int& result_left,
                                          int& result_top,
-                                         FX_DWORD flags,
+                                         uint32_t flags,
                                          const FX_RECT* pDestClip) const {
   CFX_ImageTransformer transformer;
   transformer.Start(this, pDestMatrix, flags, pDestClip);
@@ -311,7 +311,7 @@ CFX_DIBitmap* CFX_DIBSource::TransformTo(const CFX_Matrix* pDestMatrix,
 }
 CFX_DIBitmap* CFX_DIBSource::StretchTo(int dest_width,
                                        int dest_height,
-                                       FX_DWORD flags,
+                                       uint32_t flags,
                                        const FX_RECT* pClip) const {
   FX_RECT clip_rect(0, 0, FXSYS_abs(dest_width), FXSYS_abs(dest_height));
   if (pClip) {
@@ -623,7 +623,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
     int Bpp = m_Storer.GetBitmap()->GetBPP() / 8;
     int destBpp = pTransformed->GetBPP() / 8;
     if (Bpp == 1) {
-      FX_DWORD argb[256];
+      uint32_t argb[256];
       FX_ARGB* pPal = m_Storer.GetBitmap()->GetPalette();
       if (pPal) {
         for (int i = 0; i < 256; i++) {
@@ -667,7 +667,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
               }
               int row_offset_l = src_row_l * stretch_pitch;
               int row_offset_r = src_row_r * stretch_pitch;
-              FX_DWORD r_bgra_cmyk = argb[bilinear_interpol(
+              uint32_t r_bgra_cmyk = argb[bilinear_interpol(
                   stretch_buf, row_offset_l, row_offset_r, src_col_l, src_col_r,
                   res_x, res_y, 1, 0)];
               if (transformF == FXDIB_Rgba) {
@@ -675,7 +675,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
                 dest_pos[1] = (uint8_t)(r_bgra_cmyk >> 16);
                 dest_pos[2] = (uint8_t)(r_bgra_cmyk >> 8);
               } else {
-                *(FX_DWORD*)dest_pos = r_bgra_cmyk;
+                *(uint32_t*)dest_pos = r_bgra_cmyk;
               }
             }
             dest_pos += destBpp;
@@ -702,7 +702,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
               bicubic_get_pos_weight(pos_pixel, u_w, v_w, src_col_l, src_row_l,
                                      res_x, res_y, stretch_width,
                                      stretch_height);
-              FX_DWORD r_bgra_cmyk =
+              uint32_t r_bgra_cmyk =
                   argb[bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel,
                                         u_w, v_w, res_x, res_y, 1, 0)];
               if (transformF == FXDIB_Rgba) {
@@ -710,7 +710,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
                 dest_pos[1] = (uint8_t)(r_bgra_cmyk >> 16);
                 dest_pos[2] = (uint8_t)(r_bgra_cmyk >> 8);
               } else {
-                *(FX_DWORD*)dest_pos = r_bgra_cmyk;
+                *(uint32_t*)dest_pos = r_bgra_cmyk;
               }
             }
             dest_pos += destBpp;
@@ -731,14 +731,14 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
               if (src_row == stretch_height) {
                 src_row--;
               }
-              FX_DWORD r_bgra_cmyk =
+              uint32_t r_bgra_cmyk =
                   argb[stretch_buf[src_row * stretch_pitch + src_col]];
               if (transformF == FXDIB_Rgba) {
                 dest_pos[0] = (uint8_t)(r_bgra_cmyk >> 24);
                 dest_pos[1] = (uint8_t)(r_bgra_cmyk >> 16);
                 dest_pos[2] = (uint8_t)(r_bgra_cmyk >> 8);
               } else {
-                *(FX_DWORD*)dest_pos = r_bgra_cmyk;
+                *(uint32_t*)dest_pos = r_bgra_cmyk;
               }
             }
             dest_pos += destBpp;
@@ -794,7 +794,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
                     r_pos_k_r = bilinear_interpol(
                         stretch_buf, row_offset_l, row_offset_r, src_col_l,
                         src_col_r, res_x, res_y, Bpp, 3);
-                    *(FX_DWORD*)dest_pos =
+                    *(uint32_t*)dest_pos =
                         FXCMYK_TODIB(CmykEncode(r_pos_blue_c_r, r_pos_green_m_r,
                                                 r_pos_red_y_r, r_pos_k_r));
                   }
@@ -802,7 +802,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
                   uint8_t r_pos_a_r = bilinear_interpol(
                       stretch_buf, row_offset_l, row_offset_r, src_col_l,
                       src_col_r, res_x, res_y, Bpp, 3);
-                  *(FX_DWORD*)dest_pos = FXARGB_TODIB(
+                  *(uint32_t*)dest_pos = FXARGB_TODIB(
                       FXARGB_MAKE(r_pos_a_r, r_pos_red_y_r, r_pos_green_m_r,
                                   r_pos_blue_c_r));
                 }
@@ -812,11 +812,11 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
                   r_pos_k_r = bilinear_interpol(
                       stretch_buf, row_offset_l, row_offset_r, src_col_l,
                       src_col_r, res_x, res_y, Bpp, 3);
-                  *(FX_DWORD*)dest_pos =
+                  *(uint32_t*)dest_pos =
                       FXCMYK_TODIB(CmykEncode(r_pos_blue_c_r, r_pos_green_m_r,
                                               r_pos_red_y_r, r_pos_k_r));
                 } else {
-                  *(FX_DWORD*)dest_pos = FXARGB_TODIB(
+                  *(uint32_t*)dest_pos = FXARGB_TODIB(
                       FXARGB_MAKE(r_pos_k_r, r_pos_red_y_r, r_pos_green_m_r,
                                   r_pos_blue_c_r));
                 }
@@ -865,7 +865,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
                     r_pos_k_r =
                         bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel,
                                          u_w, v_w, res_x, res_y, Bpp, 3);
-                    *(FX_DWORD*)dest_pos =
+                    *(uint32_t*)dest_pos =
                         FXCMYK_TODIB(CmykEncode(r_pos_blue_c_r, r_pos_green_m_r,
                                                 r_pos_red_y_r, r_pos_k_r));
                   }
@@ -873,7 +873,7 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
                   uint8_t r_pos_a_r =
                       bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel,
                                        u_w, v_w, res_x, res_y, Bpp, 3);
-                  *(FX_DWORD*)dest_pos = FXARGB_TODIB(
+                  *(uint32_t*)dest_pos = FXARGB_TODIB(
                       FXARGB_MAKE(r_pos_a_r, r_pos_red_y_r, r_pos_green_m_r,
                                   r_pos_blue_c_r));
                 }
@@ -883,11 +883,11 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
                   r_pos_k_r =
                       bicubic_interpol(stretch_buf, stretch_pitch, pos_pixel,
                                        u_w, v_w, res_x, res_y, Bpp, 3);
-                  *(FX_DWORD*)dest_pos =
+                  *(uint32_t*)dest_pos =
                       FXCMYK_TODIB(CmykEncode(r_pos_blue_c_r, r_pos_green_m_r,
                                               r_pos_red_y_r, r_pos_k_r));
                 } else {
-                  *(FX_DWORD*)dest_pos = FXARGB_TODIB(
+                  *(uint32_t*)dest_pos = FXARGB_TODIB(
                       FXARGB_MAKE(r_pos_k_r, r_pos_red_y_r, r_pos_green_m_r,
                                   r_pos_blue_c_r));
                 }
@@ -920,19 +920,19 @@ FX_BOOL CFX_ImageTransformer::Continue(IFX_Pause* pPause) {
                     dest_pos[1] = src_pos[1];
                     dest_pos[2] = src_pos[2];
                   } else {
-                    *(FX_DWORD*)dest_pos = FXCMYK_TODIB(CmykEncode(
+                    *(uint32_t*)dest_pos = FXCMYK_TODIB(CmykEncode(
                         src_pos[0], src_pos[1], src_pos[2], src_pos[3]));
                   }
                 } else {
-                  *(FX_DWORD*)dest_pos = FXARGB_TODIB(FXARGB_MAKE(
+                  *(uint32_t*)dest_pos = FXARGB_TODIB(FXARGB_MAKE(
                       src_pos[3], src_pos[2], src_pos[1], src_pos[0]));
                 }
               } else {
                 if (transformF == FXDIB_Cmyka) {
-                  *(FX_DWORD*)dest_pos = FXCMYK_TODIB(CmykEncode(
+                  *(uint32_t*)dest_pos = FXCMYK_TODIB(CmykEncode(
                       src_pos[0], src_pos[1], src_pos[2], src_pos[3]));
                 } else {
-                  *(FX_DWORD*)dest_pos = FXARGB_TODIB(
+                  *(uint32_t*)dest_pos = FXARGB_TODIB(
                       FXARGB_MAKE(0xff, src_pos[2], src_pos[1], src_pos[0]));
                 }
               }

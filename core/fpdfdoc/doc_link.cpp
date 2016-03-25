@@ -17,7 +17,7 @@ CPDF_LinkList::~CPDF_LinkList() {}
 
 const std::vector<CPDF_Dictionary*>* CPDF_LinkList::GetPageLinks(
     CPDF_Page* pPage) {
-  FX_DWORD objnum = pPage->m_pFormDict->GetObjNum();
+  uint32_t objnum = pPage->m_pFormDict->GetObjNum();
   if (objnum == 0)
     return nullptr;
 
@@ -63,7 +63,7 @@ void CPDF_LinkList::LoadPageLinks(CPDF_Page* pPage,
   if (!pAnnotList)
     return;
 
-  for (FX_DWORD i = 0; i < pAnnotList->GetCount(); ++i) {
+  for (uint32_t i = 0; i < pAnnotList->GetCount(); ++i) {
     CPDF_Dictionary* pAnnot = pAnnotList->GetDictAt(i);
     bool add_link = (pAnnot && pAnnot->GetStringBy("Subtype") == "Link");
     // Add non-links as nullptrs to preserve z-order.

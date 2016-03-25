@@ -32,8 +32,8 @@ class CFX_WindowsDIB : public CFX_DIBitmap {
 
   static CFX_DIBitmap* LoadFromDDB(HDC hDC,
                                    HBITMAP hBitmap,
-                                   FX_DWORD* pPalette = NULL,
-                                   FX_DWORD size = 256);
+                                   uint32_t* pPalette = NULL,
+                                   uint32_t size = 256);
 
   static CFX_DIBitmap* LoadFromFile(const FX_WCHAR* filename);
 

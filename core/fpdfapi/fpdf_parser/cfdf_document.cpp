@@ -40,7 +40,7 @@ CFDF_Document* CFDF_Document::ParseFile(IFX_FileRead* pFile, FX_BOOL bOwnFile) {
   }
   return pDoc;
 }
-CFDF_Document* CFDF_Document::ParseMemory(const uint8_t* pData, FX_DWORD size) {
+CFDF_Document* CFDF_Document::ParseMemory(const uint8_t* pData, uint32_t size) {
   return CFDF_Document::ParseFile(FX_CreateMemoryStream((uint8_t*)pData, size),
                                   TRUE);
 }
@@ -53,7 +53,7 @@ void CFDF_Document::ParseStream(IFX_FileRead* pFile, FX_BOOL bOwnFile) {
     bool bNumber;
     CFX_ByteString word = parser.GetNextWord(&bNumber);
     if (bNumber) {
-      FX_DWORD objnum = FXSYS_atoui(word);
+      uint32_t objnum = FXSYS_atoui(word);
       word = parser.GetNextWord(&bNumber);
       if (!bNumber) {
         break;

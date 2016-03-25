@@ -27,7 +27,7 @@ CFX_ByteString CFX_WindowsDIB::GetBitmapInfo(const CFX_DIBitmap* pBitmap) {
   pbmih->biPlanes = 1;
   pbmih->biWidth = pBitmap->GetWidth();
   if (pBitmap->GetBPP() == 8) {
-    FX_DWORD* pPalette = (FX_DWORD*)(pbmih + 1);
+    uint32_t* pPalette = (uint32_t*)(pbmih + 1);
     if (pBitmap->GetPalette()) {
       for (int i = 0; i < 256; i++) {
         pPalette[i] = pBitmap->GetPalette()[i];
@@ -39,7 +39,7 @@ CFX_ByteString CFX_WindowsDIB::GetBitmapInfo(const CFX_DIBitmap* pBitmap) {
     }
   }
   if (pBitmap->GetBPP() == 1) {
-    FX_DWORD* pPalette = (FX_DWORD*)(pbmih + 1);
+    uint32_t* pPalette = (uint32_t*)(pbmih + 1);
     if (pBitmap->GetPalette()) {
       pPalette[0] = pBitmap->GetPalette()[0];
       pPalette[1] = pBitmap->GetPalette()[1];
@@ -88,11 +88,11 @@ CFX_DIBitmap* _FX_WindowsDIB_LoadFromBuf(BITMAPINFO* pbmi,
   }
   if (pbmi->bmiHeader.biBitCount == 1) {
     for (int i = 0; i < 2; i++) {
-      pBitmap->SetPaletteEntry(i, ((FX_DWORD*)pbmi->bmiColors)[i] | 0xff000000);
+      pBitmap->SetPaletteEntry(i, ((uint32_t*)pbmi->bmiColors)[i] | 0xff000000);
     }
   } else if (pbmi->bmiHeader.biBitCount == 8) {
     for (int i = 0; i < 256; i++) {
-      pBitmap->SetPaletteEntry(i, ((FX_DWORD*)pbmi->bmiColors)[i] | 0xff000000);
+      pBitmap->SetPaletteEntry(i, ((uint32_t*)pbmi->bmiColors)[i] | 0xff000000);
     }
   }
   return pBitmap;
@@ -182,8 +182,8 @@ CFX_DIBitmap* CFX_WindowsDIB::LoadDIBitmap(WINDIB_Open_Args_ args) {
 }
 CFX_DIBitmap* CFX_WindowsDIB::LoadFromDDB(HDC hDC,
                                           HBITMAP hBitmap,
-                                          FX_DWORD* pPalette,
-                                          FX_DWORD palsize) {
+                                          uint32_t* pPalette,
+                                          uint32_t palsize) {
   FX_BOOL bCreatedDC = !hDC;
   if (bCreatedDC) {
     hDC = CreateCompatibleDC(NULL);
@@ -201,7 +201,7 @@ CFX_DIBitmap* CFX_WindowsDIB::LoadFromDDB(HDC hDC,
   if (bmih.biBitCount == 1 || bmih.biBitCount == 8) {
     int size = sizeof(BITMAPINFOHEADER) + 8;
     if (bmih.biBitCount == 8) {
-      size += sizeof(FX_DWORD) * 254;
+      size += sizeof(uint32_t) * 254;
     }
     BITMAPINFO* pbmih = (BITMAPINFO*)FX_Alloc(uint8_t, size);
     pbmih->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);

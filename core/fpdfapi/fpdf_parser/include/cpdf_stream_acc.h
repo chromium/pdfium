@@ -19,7 +19,7 @@ class CPDF_StreamAcc {
 
   void LoadAllData(const CPDF_Stream* pStream,
                    FX_BOOL bRawAccess = FALSE,
-                   FX_DWORD estimated_size = 0,
+                   uint32_t estimated_size = 0,
                    FX_BOOL bImageAcc = FALSE);
 
   const CPDF_Stream* GetStream() const { return m_pStream; }
@@ -28,14 +28,14 @@ class CPDF_StreamAcc {
   }
 
   const uint8_t* GetData() const;
-  FX_DWORD GetSize() const;
+  uint32_t GetSize() const;
   const CFX_ByteString& GetImageDecoder() const { return m_ImageDecoder; }
   const CPDF_Dictionary* GetImageParam() const { return m_pImageParam; }
   uint8_t* DetachData();
 
  protected:
   uint8_t* m_pData;
-  FX_DWORD m_dwSize;
+  uint32_t m_dwSize;
   FX_BOOL m_bNewBuf;
   CFX_ByteString m_ImageDecoder;
   CPDF_Dictionary* m_pImageParam;

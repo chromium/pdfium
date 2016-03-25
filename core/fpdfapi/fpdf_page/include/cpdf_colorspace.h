@@ -37,7 +37,7 @@ class CPDF_ColorSpace {
   int GetBufSize() const;
   FX_FLOAT* CreateBuf();
   void GetDefaultColor(FX_FLOAT* buf) const;
-  FX_DWORD CountComponents() const { return m_nComponents; }
+  uint32_t CountComponents() const { return m_nComponents; }
   int GetFamily() const { return m_Family; }
   virtual void GetDefaultValue(int iComponent,
                                FX_FLOAT& value,
@@ -87,7 +87,7 @@ class CPDF_ColorSpace {
   CPDF_Document* const m_pDocument;
 
  protected:
-  CPDF_ColorSpace(CPDF_Document* pDoc, int family, FX_DWORD nComponents)
+  CPDF_ColorSpace(CPDF_Document* pDoc, int family, uint32_t nComponents)
       : m_pDocument(pDoc),
         m_Family(family),
         m_nComponents(nComponents),
@@ -114,9 +114,9 @@ class CPDF_ColorSpace {
   }
 
   int m_Family;
-  FX_DWORD m_nComponents;
+  uint32_t m_nComponents;
   CPDF_Array* m_pArray;
-  FX_DWORD m_dwStdConversion;
+  uint32_t m_dwStdConversion;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_COLORSPACE_H_

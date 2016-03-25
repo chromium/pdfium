@@ -14,10 +14,10 @@
 CJBig2_Image* CJBig2_HTRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
                                             JBig2ArithCtx* gbContext,
                                             IFX_Pause* pPause) {
-  FX_DWORD ng, mg;
+  uint32_t ng, mg;
   int32_t x, y;
-  FX_DWORD HBPP;
-  FX_DWORD* GI;
+  uint32_t HBPP;
+  uint32_t* GI;
   std::unique_ptr<CJBig2_Image> HSKIP;
   std::unique_ptr<CJBig2_Image> HTREG(new CJBig2_Image(HBW, HBH));
   HTREG->fill(HDEFPIXEL);
@@ -37,7 +37,7 @@ CJBig2_Image* CJBig2_HTRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
     }
   }
   HBPP = 1;
-  while ((FX_DWORD)(1 << HBPP) < HNUMPATS) {
+  while ((uint32_t)(1 << HBPP) < HNUMPATS) {
     HBPP++;
   }
   std::unique_ptr<CJBig2_GSIDProc> pGID(new CJBig2_GSIDProc());
@@ -56,7 +56,7 @@ CJBig2_Image* CJBig2_HTRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
     for (ng = 0; ng < HGW; ng++) {
       x = (HGX + mg * HRY + ng * HRX) >> 8;
       y = (HGY + mg * HRX - ng * HRY) >> 8;
-      FX_DWORD pat_index = GI[mg * HGW + ng];
+      uint32_t pat_index = GI[mg * HGW + ng];
       if (pat_index >= HNUMPATS) {
         pat_index = HNUMPATS - 1;
       }
@@ -69,13 +69,13 @@ CJBig2_Image* CJBig2_HTRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
 
 CJBig2_Image* CJBig2_HTRDProc::decode_MMR(CJBig2_BitStream* pStream,
                                           IFX_Pause* pPause) {
-  FX_DWORD ng, mg;
+  uint32_t ng, mg;
   int32_t x, y;
-  FX_DWORD* GI;
+  uint32_t* GI;
   std::unique_ptr<CJBig2_Image> HTREG(new CJBig2_Image(HBW, HBH));
   HTREG->fill(HDEFPIXEL);
-  FX_DWORD HBPP = 1;
-  while ((FX_DWORD)(1 << HBPP) < HNUMPATS) {
+  uint32_t HBPP = 1;
+  while ((uint32_t)(1 << HBPP) < HNUMPATS) {
     HBPP++;
   }
   std::unique_ptr<CJBig2_GSIDProc> pGID(new CJBig2_GSIDProc());
@@ -92,7 +92,7 @@ CJBig2_Image* CJBig2_HTRDProc::decode_MMR(CJBig2_BitStream* pStream,
     for (ng = 0; ng < HGW; ng++) {
       x = (HGX + mg * HRY + ng * HRX) >> 8;
       y = (HGY + mg * HRX - ng * HRY) >> 8;
-      FX_DWORD pat_index = GI[mg * HGW + ng];
+      uint32_t pat_index = GI[mg * HGW + ng];
       if (pat_index >= HNUMPATS) {
         pat_index = HNUMPATS - 1;
       }

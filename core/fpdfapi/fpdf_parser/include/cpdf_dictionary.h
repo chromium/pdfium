@@ -65,7 +65,7 @@ class CPDF_Dictionary : public CPDF_Object {
   void SetAtNumber(const CFX_ByteStringC& key, FX_FLOAT f);
   void SetAtReference(const CFX_ByteStringC& key,
                       CPDF_IndirectObjectHolder* pDoc,
-                      FX_DWORD objnum);
+                      uint32_t objnum);
   void SetAtReference(const CFX_ByteStringC& key,
                       CPDF_IndirectObjectHolder* pDoc,
                       CPDF_Object* obj) {
@@ -77,7 +77,7 @@ class CPDF_Dictionary : public CPDF_Object {
 
   void AddReference(const CFX_ByteStringC& key,
                     CPDF_IndirectObjectHolder* pDoc,
-                    FX_DWORD objnum);
+                    uint32_t objnum);
 
   // Invalidates iterators for the element with the key |key|.
   void RemoveAt(const CFX_ByteStringC& key);

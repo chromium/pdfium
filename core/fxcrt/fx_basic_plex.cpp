@@ -8,8 +8,8 @@
 #include "core/fxcrt/plex.h"
 
 CFX_Plex* CFX_Plex::Create(CFX_Plex*& pHead,
-                           FX_DWORD nMax,
-                           FX_DWORD cbElement) {
+                           uint32_t nMax,
+                           uint32_t cbElement) {
   CFX_Plex* p =
       (CFX_Plex*)FX_Alloc(uint8_t, sizeof(CFX_Plex) + nMax * cbElement);
   p->pNext = pHead;

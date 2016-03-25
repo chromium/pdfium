@@ -30,7 +30,7 @@ class CPDF_HintTables {
   FX_BOOL GetPagePos(int index,
                      FX_FILESIZE& szPageStartPos,
                      FX_FILESIZE& szPageLength,
-                     FX_DWORD& dwObjNum);
+                     uint32_t& dwObjNum);
 
   IPDF_DataAvail::DocAvailStatus CheckPage(
       int index,
@@ -40,8 +40,8 @@ class CPDF_HintTables {
 
  protected:
   FX_BOOL ReadPageHintTable(CFX_BitStream* hStream);
-  FX_BOOL ReadSharedObjHintTable(CFX_BitStream* hStream, FX_DWORD offset);
-  FX_DWORD GetItemLength(int index, const std::vector<FX_FILESIZE>& szArray);
+  FX_BOOL ReadSharedObjHintTable(CFX_BitStream* hStream, uint32_t offset);
+  uint32_t GetItemLength(int index, const std::vector<FX_FILESIZE>& szArray);
 
  private:
   int ReadPrimaryHintStreamOffset() const;
@@ -49,12 +49,12 @@ class CPDF_HintTables {
 
   CPDF_Dictionary* m_pLinearizedDict;
   CPDF_DataAvail* m_pDataAvail;
-  FX_DWORD m_nFirstPageSharedObjs;
+  uint32_t m_nFirstPageSharedObjs;
   FX_FILESIZE m_szFirstPageObjOffset;
-  CFX_ArrayTemplate<FX_DWORD> m_dwDeltaNObjsArray;
-  CFX_ArrayTemplate<FX_DWORD> m_dwNSharedObjsArray;
-  CFX_ArrayTemplate<FX_DWORD> m_dwSharedObjNumArray;
-  CFX_ArrayTemplate<FX_DWORD> m_dwIdentifierArray;
+  CFX_ArrayTemplate<uint32_t> m_dwDeltaNObjsArray;
+  CFX_ArrayTemplate<uint32_t> m_dwNSharedObjsArray;
+  CFX_ArrayTemplate<uint32_t> m_dwSharedObjNumArray;
+  CFX_ArrayTemplate<uint32_t> m_dwIdentifierArray;
   std::vector<FX_FILESIZE> m_szPageOffsetArray;
   std::vector<FX_FILESIZE> m_szSharedObjOffsetArray;
 };

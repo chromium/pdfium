@@ -114,8 +114,8 @@ class IFX_FileStream : public IFX_FileRead, public IFX_FileWrite {
   FX_BOOL Flush() override = 0;
 };
 
-IFX_FileStream* FX_CreateFileStream(const FX_CHAR* filename, FX_DWORD dwModes);
-IFX_FileStream* FX_CreateFileStream(const FX_WCHAR* filename, FX_DWORD dwModes);
+IFX_FileStream* FX_CreateFileStream(const FX_CHAR* filename, uint32_t dwModes);
+IFX_FileStream* FX_CreateFileStream(const FX_WCHAR* filename, uint32_t dwModes);
 
 #ifdef PDF_ENABLE_XFA
 class IFX_FileAccess {
@@ -124,7 +124,7 @@ class IFX_FileAccess {
   virtual void Release() = 0;
   virtual IFX_FileAccess* Retain() = 0;
   virtual void GetPath(CFX_WideString& wsPath) = 0;
-  virtual IFX_FileStream* CreateFileStream(FX_DWORD dwModes) = 0;
+  virtual IFX_FileStream* CreateFileStream(uint32_t dwModes) = 0;
 };
 IFX_FileAccess* FX_CreateDefaultFileAccess(const CFX_WideStringC& wsPath);
 #endif  // PDF_ENABLE_XFA

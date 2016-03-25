@@ -85,8 +85,8 @@ class CPDF_Bookmark {
   explicit CPDF_Bookmark(CPDF_Dictionary* pDict) : m_pDict(pDict) {}
 
   CPDF_Dictionary* GetDict() const { return m_pDict; }
-  FX_DWORD GetColorRef() const;
-  FX_DWORD GetFontStyle() const;
+  uint32_t GetColorRef() const;
+  uint32_t GetFontStyle() const;
   CFX_WideString GetTitle() const;
   CPDF_Dest GetDest(CPDF_Document* pDocument) const;
   CPDF_Action GetAction() const;
@@ -111,7 +111,7 @@ class CPDF_Dest {
   CPDF_Object* GetObject() const { return m_pObj; }
   CFX_ByteString GetRemoteName();
   int GetPageIndex(CPDF_Document* pDoc);
-  FX_DWORD GetPageObjNum();
+  uint32_t GetPageObjNum();
   int GetZoomMode();
   FX_FLOAT GetParam(int index);
 
@@ -154,9 +154,9 @@ class CPDF_ActionFields {
  public:
   explicit CPDF_ActionFields(const CPDF_Action* pAction) : m_pAction(pAction) {}
 
-  FX_DWORD GetFieldsCount() const;
+  uint32_t GetFieldsCount() const;
   std::vector<CPDF_Object*> GetAllFields() const;
-  CPDF_Object* GetField(FX_DWORD iIndex) const;
+  CPDF_Object* GetField(uint32_t iIndex) const;
 
  protected:
   const CPDF_Action* const m_pAction;
@@ -204,7 +204,7 @@ class CPDF_Action {
   FX_BOOL GetMouseMap() const { return m_pDict->GetBooleanBy("IsMap"); }
   FX_BOOL GetHideStatus() const { return m_pDict->GetBooleanBy("H", TRUE); }
   CFX_ByteString GetNamedAction() const { return m_pDict->GetStringBy("N"); }
-  FX_DWORD GetFlags() const { return m_pDict->GetIntegerBy("Flags"); }
+  uint32_t GetFlags() const { return m_pDict->GetIntegerBy("Flags"); }
   CFX_WideString GetJavaScript() const;
   CPDF_Dictionary* GetAnnot() const;
   int32_t GetOperationType() const;
@@ -213,8 +213,8 @@ class CPDF_Action {
   FX_BOOL IsSynchronous() const { return m_pDict->GetBooleanBy("Synchronous"); }
   FX_BOOL IsRepeat() const { return m_pDict->GetBooleanBy("Repeat"); }
   FX_BOOL IsMixPlay() const { return m_pDict->GetBooleanBy("Mix"); }
-  FX_DWORD GetSubActionsCount() const;
-  CPDF_Action GetSubAction(FX_DWORD iIndex) const;
+  uint32_t GetSubActionsCount() const;
+  CPDF_Action GetSubAction(uint32_t iIndex) const;
 
  protected:
   CPDF_Dictionary* const m_pDict;
@@ -306,7 +306,7 @@ class CPDF_LinkList {
   const std::vector<CPDF_Dictionary*>* GetPageLinks(CPDF_Page* pPage);
   void LoadPageLinks(CPDF_Page* pPage, std::vector<CPDF_Dictionary*>* pList);
 
-  std::map<FX_DWORD, std::vector<CPDF_Dictionary*>> m_PageMap;
+  std::map<uint32_t, std::vector<CPDF_Dictionary*>> m_PageMap;
 };
 
 class CPDF_Link {
@@ -342,7 +342,7 @@ class CPDF_Annot : public CFX_PrivateData {
   ~CPDF_Annot();
 
   CFX_ByteString GetSubType() const;
-  FX_DWORD GetFlags() const;
+  uint32_t GetFlags() const;
   void GetRect(CFX_FloatRect& rect) const;
   const CPDF_Dictionary* GetAnnotDict() const { return m_pAnnotDict; }
   CPDF_Dictionary* GetAnnotDict() { return m_pAnnotDict; }
@@ -388,7 +388,7 @@ class CPDF_AnnotList {
                      CPDF_RenderContext* pContext,
                      FX_BOOL bPrinting,
                      CFX_Matrix* pMatrix,
-                     FX_DWORD dwAnnotFlags,
+                     uint32_t dwAnnotFlags,
                      CPDF_RenderOptions* pOptions,
                      FX_RECT* pClipRect);
   size_t Count() const { return m_AnnotList.size(); }
@@ -487,9 +487,9 @@ class CPDF_InterForm : public CFX_PrivateData {
   FX_BOOL ValidateFieldName(const CPDF_FormControl* pControl,
                             CFX_WideString& csNewFieldName);
 
-  FX_DWORD CountFields(const CFX_WideString& csFieldName = L"");
+  uint32_t CountFields(const CFX_WideString& csFieldName = L"");
 
-  CPDF_FormField* GetField(FX_DWORD index,
+  CPDF_FormField* GetField(uint32_t index,
                            const CFX_WideString& csFieldName = L"");
 
   CPDF_FormField* GetFieldByDict(CPDF_Dictionary* pFieldDict) const;
@@ -515,9 +515,9 @@ class CPDF_InterForm : public CFX_PrivateData {
 
   int FindFieldInCalculationOrder(const CPDF_FormField* pField);
 
-  FX_DWORD CountFormFonts();
+  uint32_t CountFormFonts();
 
-  CPDF_Font* GetFormFont(FX_DWORD index, CFX_ByteString& csNameTag);
+  CPDF_Font* GetFormFont(uint32_t index, CFX_ByteString& csNameTag);
 
   CPDF_Font* GetFormFont(CFX_ByteString csNameTag);
 
@@ -663,7 +663,7 @@ class CPDF_FormField {
   CFX_WideString GetFullName();
 
   Type GetType() const { return m_Type; }
-  FX_DWORD GetFlags() const { return m_Flags; }
+  uint32_t GetFlags() const { return m_Flags; }
 
   CPDF_Dictionary* GetFieldDict() const { return m_pDict; }
   void SetFieldDict(CPDF_Dictionary* pDict) { m_pDict = pDict; }
@@ -684,7 +684,7 @@ class CPDF_FormField {
 
   CFX_WideString GetMappingName();
 
-  FX_DWORD GetFieldFlags();
+  uint32_t GetFieldFlags();
 
   CFX_ByteString GetDefaultStyle();
 
@@ -781,7 +781,7 @@ class CPDF_FormField {
                         FX_BOOL bNotify);
 
   CPDF_FormField::Type m_Type;
-  FX_DWORD m_Flags;
+  uint32_t m_Flags;
   CPDF_InterForm* m_pForm;
   CPDF_Dictionary* m_pDict;
   CFX_ArrayTemplate<CPDF_FormControl*> m_ControlList;

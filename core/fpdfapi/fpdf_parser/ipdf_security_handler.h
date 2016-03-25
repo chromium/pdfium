@@ -24,7 +24,7 @@ class IPDF_SecurityHandler {
   virtual FX_BOOL OnInit(CPDF_Parser* pParser,
                          CPDF_Dictionary* pEncryptDict) = 0;
 
-  virtual FX_DWORD GetPermissions() = 0;
+  virtual uint32_t GetPermissions() = 0;
   virtual FX_BOOL GetCryptInfo(int& cipher,
                                const uint8_t*& buffer,
                                int& keylen) = 0;

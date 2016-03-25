@@ -66,8 +66,8 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template0_opt3(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
   FX_BOOL LTP, SLTP, bVal;
-  FX_DWORD CONTEXT;
-  FX_DWORD line1, line2;
+  uint32_t CONTEXT;
+  uint32_t line1, line2;
   uint8_t *pLine, *pLine1, *pLine2, cVal;
   int32_t nStride, nStride2, k;
   int32_t nLineBytes, nBitsLeft, cc;
@@ -81,8 +81,8 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template0_opt3(
   nStride2 = nStride << 1;
   nLineBytes = ((GBW + 7) >> 3) - 1;
   nBitsLeft = GBW - (nLineBytes << 3);
-  FX_DWORD height = GBH & 0x7fffffff;
-  for (FX_DWORD h = 0; h < height; h++) {
+  uint32_t height = GBH & 0x7fffffff;
+  for (uint32_t h = 0; h < height; h++) {
     if (TPGDON) {
       SLTP = pArithDecoder->DECODE(&gbContext[0x9b25]);
       LTP = LTP ^ SLTP;
@@ -156,12 +156,12 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template0_unopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
   FX_BOOL LTP, SLTP, bVal;
-  FX_DWORD CONTEXT;
-  FX_DWORD line1, line2, line3;
+  uint32_t CONTEXT;
+  uint32_t line1, line2, line3;
   LTP = 0;
   std::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
   GBREG->fill(0);
-  for (FX_DWORD h = 0; h < GBH; h++) {
+  for (uint32_t h = 0; h < GBH; h++) {
     if (TPGDON) {
       SLTP = pArithDecoder->DECODE(&gbContext[0x9b25]);
       LTP = LTP ^ SLTP;
@@ -175,7 +175,7 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template0_unopt(
       line2 |= GBREG->getPixel(1, h - 1) << 1;
       line2 |= GBREG->getPixel(0, h - 1) << 2;
       line3 = 0;
-      for (FX_DWORD w = 0; w < GBW; w++) {
+      for (uint32_t w = 0; w < GBW; w++) {
         if (USESKIP && SKIP->getPixel(w, h)) {
           bVal = 0;
         } else {
@@ -204,8 +204,8 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template1_opt3(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
   FX_BOOL LTP, SLTP, bVal;
-  FX_DWORD CONTEXT;
-  FX_DWORD line1, line2;
+  uint32_t CONTEXT;
+  uint32_t line1, line2;
   uint8_t *pLine, *pLine1, *pLine2, cVal;
   int32_t nStride, nStride2, k;
   int32_t nLineBytes, nBitsLeft, cc;
@@ -219,7 +219,7 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template1_opt3(
   nStride2 = nStride << 1;
   nLineBytes = ((GBW + 7) >> 3) - 1;
   nBitsLeft = GBW - (nLineBytes << 3);
-  for (FX_DWORD h = 0; h < GBH; h++) {
+  for (uint32_t h = 0; h < GBH; h++) {
     if (TPGDON) {
       SLTP = pArithDecoder->DECODE(&gbContext[0x0795]);
       LTP = LTP ^ SLTP;
@@ -293,12 +293,12 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template1_unopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
   FX_BOOL LTP, SLTP, bVal;
-  FX_DWORD CONTEXT;
-  FX_DWORD line1, line2, line3;
+  uint32_t CONTEXT;
+  uint32_t line1, line2, line3;
   LTP = 0;
   std::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
   GBREG->fill(0);
-  for (FX_DWORD h = 0; h < GBH; h++) {
+  for (uint32_t h = 0; h < GBH; h++) {
     if (TPGDON) {
       SLTP = pArithDecoder->DECODE(&gbContext[0x0795]);
       LTP = LTP ^ SLTP;
@@ -313,7 +313,7 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template1_unopt(
       line2 |= GBREG->getPixel(1, h - 1) << 1;
       line2 |= GBREG->getPixel(0, h - 1) << 2;
       line3 = 0;
-      for (FX_DWORD w = 0; w < GBW; w++) {
+      for (uint32_t w = 0; w < GBW; w++) {
         if (USESKIP && SKIP->getPixel(w, h)) {
           bVal = 0;
         } else {
@@ -338,8 +338,8 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template2_opt3(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
   FX_BOOL LTP, SLTP, bVal;
-  FX_DWORD CONTEXT;
-  FX_DWORD line1, line2;
+  uint32_t CONTEXT;
+  uint32_t line1, line2;
   uint8_t *pLine, *pLine1, *pLine2, cVal;
   int32_t nStride, nStride2, k;
   int32_t nLineBytes, nBitsLeft, cc;
@@ -353,7 +353,7 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template2_opt3(
   nStride2 = nStride << 1;
   nLineBytes = ((GBW + 7) >> 3) - 1;
   nBitsLeft = GBW - (nLineBytes << 3);
-  for (FX_DWORD h = 0; h < GBH; h++) {
+  for (uint32_t h = 0; h < GBH; h++) {
     if (TPGDON) {
       SLTP = pArithDecoder->DECODE(&gbContext[0x00e5]);
       LTP = LTP ^ SLTP;
@@ -427,12 +427,12 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template2_unopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
   FX_BOOL LTP, SLTP, bVal;
-  FX_DWORD CONTEXT;
-  FX_DWORD line1, line2, line3;
+  uint32_t CONTEXT;
+  uint32_t line1, line2, line3;
   LTP = 0;
   std::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
   GBREG->fill(0);
-  for (FX_DWORD h = 0; h < GBH; h++) {
+  for (uint32_t h = 0; h < GBH; h++) {
     if (TPGDON) {
       SLTP = pArithDecoder->DECODE(&gbContext[0x00e5]);
       LTP = LTP ^ SLTP;
@@ -445,7 +445,7 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template2_unopt(
       line2 = GBREG->getPixel(1, h - 1);
       line2 |= GBREG->getPixel(0, h - 1) << 1;
       line3 = 0;
-      for (FX_DWORD w = 0; w < GBW; w++) {
+      for (uint32_t w = 0; w < GBW; w++) {
         if (USESKIP && SKIP->getPixel(w, h)) {
           bVal = 0;
         } else {
@@ -471,8 +471,8 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template3_opt3(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
   FX_BOOL LTP, SLTP, bVal;
-  FX_DWORD CONTEXT;
-  FX_DWORD line1;
+  uint32_t CONTEXT;
+  uint32_t line1;
   uint8_t *pLine, *pLine1, cVal;
   int32_t nStride, k;
   int32_t nLineBytes, nBitsLeft, cc;
@@ -485,7 +485,7 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template3_opt3(
   nStride = GBREG->m_nStride;
   nLineBytes = ((GBW + 7) >> 3) - 1;
   nBitsLeft = GBW - (nLineBytes << 3);
-  for (FX_DWORD h = 0; h < GBH; h++) {
+  for (uint32_t h = 0; h < GBH; h++) {
     if (TPGDON) {
       SLTP = pArithDecoder->DECODE(&gbContext[0x0195]);
       LTP = LTP ^ SLTP;
@@ -546,12 +546,12 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template3_unopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext) {
   FX_BOOL LTP, SLTP, bVal;
-  FX_DWORD CONTEXT;
-  FX_DWORD line1, line2;
+  uint32_t CONTEXT;
+  uint32_t line1, line2;
   LTP = 0;
   std::unique_ptr<CJBig2_Image> GBREG(new CJBig2_Image(GBW, GBH));
   GBREG->fill(0);
-  for (FX_DWORD h = 0; h < GBH; h++) {
+  for (uint32_t h = 0; h < GBH; h++) {
     if (TPGDON) {
       SLTP = pArithDecoder->DECODE(&gbContext[0x0195]);
       LTP = LTP ^ SLTP;
@@ -562,7 +562,7 @@ CJBig2_Image* CJBig2_GRDProc::decode_Arith_Template3_unopt(
       line1 = GBREG->getPixel(1, h - 1);
       line1 |= GBREG->getPixel(0, h - 1) << 1;
       line2 = 0;
-      for (FX_DWORD w = 0; w < GBW; w++) {
+      for (uint32_t w = 0; w < GBW; w++) {
         if (USESKIP && SKIP->getPixel(w, h)) {
           bVal = 0;
         } else {
@@ -673,7 +673,7 @@ FXCODEC_STATUS CJBig2_GRDProc::Start_decode_MMR(CJBig2_Image** pImage,
   FaxG4Decode(pStream->getBuf(), pStream->getLength(), &bitpos,
               (*pImage)->m_pData, GBW, GBH, (*pImage)->m_nStride);
   pStream->setBitPos(bitpos);
-  for (i = 0; (FX_DWORD)i < (*pImage)->m_nStride * GBH; i++) {
+  for (i = 0; (uint32_t)i < (*pImage)->m_nStride * GBH; i++) {
     (*pImage)->m_pData[i] = ~(*pImage)->m_pData[i];
   }
   m_ProssiveStatus = FXCODEC_STATUS_DECODE_FINISH;
@@ -698,8 +698,8 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template0_opt3(
     JBig2ArithCtx* gbContext,
     IFX_Pause* pPause) {
   FX_BOOL SLTP, bVal;
-  FX_DWORD CONTEXT;
-  FX_DWORD line1, line2;
+  uint32_t CONTEXT;
+  uint32_t line1, line2;
   uint8_t *pLine1, *pLine2, cVal;
   int32_t nStride, nStride2, k;
   int32_t nLineBytes, nBitsLeft, cc;
@@ -710,7 +710,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template0_opt3(
   nStride2 = nStride << 1;
   nLineBytes = ((GBW + 7) >> 3) - 1;
   nBitsLeft = GBW - (nLineBytes << 3);
-  FX_DWORD height = GBH & 0x7fffffff;
+  uint32_t height = GBH & 0x7fffffff;
   for (; m_loopIndex < height; m_loopIndex++) {
     if (TPGDON) {
       SLTP = pArithDecoder->DECODE(&gbContext[0x9b25]);
@@ -793,8 +793,8 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template0_unopt(
     JBig2ArithCtx* gbContext,
     IFX_Pause* pPause) {
   FX_BOOL SLTP, bVal;
-  FX_DWORD CONTEXT;
-  FX_DWORD line1, line2, line3;
+  uint32_t CONTEXT;
+  uint32_t line1, line2, line3;
   for (; m_loopIndex < GBH; m_loopIndex++) {
     if (TPGDON) {
       SLTP = pArithDecoder->DECODE(&gbContext[0x9b25]);
@@ -809,7 +809,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template0_unopt(
       line2 |= pImage->getPixel(1, m_loopIndex - 1) << 1;
       line2 |= pImage->getPixel(0, m_loopIndex - 1) << 2;
       line3 = 0;
-      for (FX_DWORD w = 0; w < GBW; w++) {
+      for (uint32_t w = 0; w < GBW; w++) {
         if (USESKIP && SKIP->getPixel(w, m_loopIndex)) {
           bVal = 0;
         } else {
@@ -848,8 +848,8 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template1_opt3(
     JBig2ArithCtx* gbContext,
     IFX_Pause* pPause) {
   FX_BOOL SLTP, bVal;
-  FX_DWORD CONTEXT;
-  FX_DWORD line1, line2;
+  uint32_t CONTEXT;
+  uint32_t line1, line2;
   uint8_t *pLine1, *pLine2, cVal;
   int32_t nStride, nStride2, k;
   int32_t nLineBytes, nBitsLeft, cc;
@@ -942,9 +942,9 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template1_unopt(
     JBig2ArithCtx* gbContext,
     IFX_Pause* pPause) {
   FX_BOOL SLTP, bVal;
-  FX_DWORD CONTEXT;
-  FX_DWORD line1, line2, line3;
-  for (FX_DWORD h = 0; h < GBH; h++) {
+  uint32_t CONTEXT;
+  uint32_t line1, line2, line3;
+  for (uint32_t h = 0; h < GBH; h++) {
     if (TPGDON) {
       SLTP = pArithDecoder->DECODE(&gbContext[0x0795]);
       LTP = LTP ^ SLTP;
@@ -959,7 +959,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template1_unopt(
       line2 |= pImage->getPixel(1, h - 1) << 1;
       line2 |= pImage->getPixel(0, h - 1) << 2;
       line3 = 0;
-      for (FX_DWORD w = 0; w < GBW; w++) {
+      for (uint32_t w = 0; w < GBW; w++) {
         if (USESKIP && SKIP->getPixel(w, h)) {
           bVal = 0;
         } else {
@@ -993,8 +993,8 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template2_opt3(
     JBig2ArithCtx* gbContext,
     IFX_Pause* pPause) {
   FX_BOOL SLTP, bVal;
-  FX_DWORD CONTEXT;
-  FX_DWORD line1, line2;
+  uint32_t CONTEXT;
+  uint32_t line1, line2;
   uint8_t *pLine1, *pLine2, cVal;
   int32_t nStride, nStride2, k;
   int32_t nLineBytes, nBitsLeft, cc;
@@ -1087,8 +1087,8 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template2_unopt(
     JBig2ArithCtx* gbContext,
     IFX_Pause* pPause) {
   FX_BOOL SLTP, bVal;
-  FX_DWORD CONTEXT;
-  FX_DWORD line1, line2, line3;
+  uint32_t CONTEXT;
+  uint32_t line1, line2, line3;
   for (; m_loopIndex < GBH; m_loopIndex++) {
     if (TPGDON) {
       SLTP = pArithDecoder->DECODE(&gbContext[0x00e5]);
@@ -1102,7 +1102,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template2_unopt(
       line2 = pImage->getPixel(1, m_loopIndex - 1);
       line2 |= pImage->getPixel(0, m_loopIndex - 1) << 1;
       line3 = 0;
-      for (FX_DWORD w = 0; w < GBW; w++) {
+      for (uint32_t w = 0; w < GBW; w++) {
         if (USESKIP && SKIP->getPixel(w, m_loopIndex)) {
           bVal = 0;
         } else {
@@ -1138,8 +1138,8 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template3_opt3(
     JBig2ArithCtx* gbContext,
     IFX_Pause* pPause) {
   FX_BOOL SLTP, bVal;
-  FX_DWORD CONTEXT;
-  FX_DWORD line1;
+  uint32_t CONTEXT;
+  uint32_t line1;
   uint8_t *pLine1, cVal;
   int32_t nStride, k;
   int32_t nLineBytes, nBitsLeft, cc;
@@ -1218,8 +1218,8 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template3_unopt(
     JBig2ArithCtx* gbContext,
     IFX_Pause* pPause) {
   FX_BOOL SLTP, bVal;
-  FX_DWORD CONTEXT;
-  FX_DWORD line1, line2;
+  uint32_t CONTEXT;
+  uint32_t line1, line2;
   for (; m_loopIndex < GBH; m_loopIndex++) {
     if (TPGDON) {
       SLTP = pArithDecoder->DECODE(&gbContext[0x0195]);
@@ -1231,7 +1231,7 @@ FXCODEC_STATUS CJBig2_GRDProc::decode_Arith_Template3_unopt(
       line1 = pImage->getPixel(1, m_loopIndex - 1);
       line1 |= pImage->getPixel(0, m_loopIndex - 1) << 1;
       line2 = 0;
-      for (FX_DWORD w = 0; w < GBW; w++) {
+      for (uint32_t w = 0; w < GBW; w++) {
         if (USESKIP && SKIP->getPixel(w, m_loopIndex)) {
           bVal = 0;
         } else {

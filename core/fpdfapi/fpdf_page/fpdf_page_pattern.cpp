@@ -58,7 +58,7 @@ CFX_FloatRect GetShadingBBox(CPDF_Stream* pStream,
     color_count = kQuadColorsPerPatch;
 
   while (!stream.m_BitStream.IsEOF()) {
-    FX_DWORD flag = 0;
+    uint32_t flag = 0;
     if (type != kLatticeFormGouraudTriangleMeshShading)
       flag = stream.GetFlag();
 

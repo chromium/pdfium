@@ -31,7 +31,7 @@ int CPDF_Dest::GetPageIndex(CPDF_Document* pDoc) {
     return 0;
   return pDoc->GetPageIndex(pPage->GetObjNum());
 }
-FX_DWORD CPDF_Dest::GetPageObjNum() {
+uint32_t CPDF_Dest::GetPageObjNum() {
   CPDF_Array* pArray = ToArray(m_pObj);
   if (!pArray)
     return 0;
@@ -101,8 +101,8 @@ static CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
   }
   CPDF_Array* pNames = pNode->GetArrayBy("Names");
   if (pNames) {
-    FX_DWORD dwCount = pNames->GetCount() / 2;
-    for (FX_DWORD i = 0; i < dwCount; i++) {
+    uint32_t dwCount = pNames->GetCount() / 2;
+    for (uint32_t i = 0; i < dwCount; i++) {
       CFX_ByteString csValue = pNames->GetStringAt(i * 2);
       int32_t iCompare = csValue.Compare(csName);
       if (iCompare <= 0) {
@@ -125,7 +125,7 @@ static CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
   if (!pKids) {
     return NULL;
   }
-  for (FX_DWORD i = 0; i < pKids->GetCount(); i++) {
+  for (uint32_t i = 0; i < pKids->GetCount(); i++) {
     CPDF_Dictionary* pKid = pKids->GetDictAt(i);
     if (!pKid) {
       continue;
@@ -164,7 +164,7 @@ static CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
   if (!pKids) {
     return NULL;
   }
-  for (FX_DWORD i = 0; i < pKids->GetCount(); i++) {
+  for (uint32_t i = 0; i < pKids->GetCount(); i++) {
     CPDF_Dictionary* pKid = pKids->GetDictAt(i);
     if (!pKid) {
       continue;
@@ -190,7 +190,7 @@ static int CountNames(CPDF_Dictionary* pNode, int nLevel = 0) {
     return 0;
   }
   int nCount = 0;
-  for (FX_DWORD i = 0; i < pKids->GetCount(); i++) {
+  for (uint32_t i = 0; i < pKids->GetCount(); i++) {
     CPDF_Dictionary* pKid = pKids->GetDictAt(i);
     if (!pKid) {
       continue;

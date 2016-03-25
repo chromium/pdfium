@@ -230,7 +230,7 @@ int32_t CJBig2_Context::Continue(IFX_Pause* pPause) {
   return nRet;
 }
 
-CJBig2_Segment* CJBig2_Context::findSegmentByNumber(FX_DWORD dwNumber) {
+CJBig2_Segment* CJBig2_Context::findSegmentByNumber(uint32_t dwNumber) {
   if (m_pGlobalContext) {
     CJBig2_Segment* pSeg = m_pGlobalContext->findSegmentByNumber(dwNumber);
     if (pSeg) {
@@ -267,11 +267,11 @@ int32_t CJBig2_Context::parseSegmentHeader(CJBig2_Segment* pSegment) {
     return JBIG2_ERROR_TOO_SHORT;
   }
 
-  FX_DWORD dwTemp;
+  uint32_t dwTemp;
   uint8_t cTemp = m_pStream->getCurByte();
   if ((cTemp >> 5) == 7) {
     if (m_pStream->readInteger(
-            (FX_DWORD*)&pSegment->m_nReferred_to_segment_count) != 0) {
+            (uint32_t*)&pSegment->m_nReferred_to_segment_count) != 0) {
       return JBIG2_ERROR_TOO_SHORT;
     }
     pSegment->m_nReferred_to_segment_count &= 0x1fffffff;
@@ -292,7 +292,7 @@ int32_t CJBig2_Context::parseSegmentHeader(CJBig2_Segment* pSegment) {
   uint8_t cPSize = pSegment->m_cFlags.s.page_association_size ? 4 : 1;
   if (pSegment->m_nReferred_to_segment_count) {
     pSegment->m_pReferred_to_segment_numbers =
-        FX_Alloc(FX_DWORD, pSegment->m_nReferred_to_segment_count);
+        FX_Alloc(uint32_t, pSegment->m_nReferred_to_segment_count);
     for (int32_t i = 0; i < pSegment->m_nReferred_to_segment_count; ++i) {
       switch (cSSize) {
         case 1:
@@ -396,7 +396,7 @@ int32_t CJBig2_Context::ProcessingParseSegmentData(CJBig2_Segment* pSegment,
         pPageInfo->m_bIsStriped = TRUE;
 
       if (!m_bBufSpecified) {
-        FX_DWORD height =
+        uint32_t height =
             bMaxHeight ? pPageInfo->m_wMaxStripeSize : pPageInfo->m_dwHeight;
         m_pPage.reset(new CJBig2_Image(pPageInfo->m_dwWidth, height));
       }
@@ -449,8 +449,8 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
   uint8_t cSDHUFFBMSIZE = (wFlags >> 6) & 0x0001;
   uint8_t cSDHUFFAGGINST = (wFlags >> 7) & 0x0001;
   if (pSymbolDictDecoder->SDHUFF == 0) {
-    const FX_DWORD dwTemp = (pSymbolDictDecoder->SDTEMPLATE == 0) ? 8 : 2;
-    for (FX_DWORD i = 0; i < dwTemp; ++i) {
+    const uint32_t dwTemp = (pSymbolDictDecoder->SDTEMPLATE == 0) ? 8 : 2;
+    for (uint32_t i = 0; i < dwTemp; ++i) {
       if (m_pStream->read1Byte((uint8_t*)&pSymbolDictDecoder->SDAT[i]) != 0)
         return JBIG2_ERROR_TOO_SHORT;
     }
@@ -488,7 +488,7 @@ int32_t CJBig2_Context::parseSymbolDict(CJBig2_Segment* pSegment,
   std::unique_ptr<CJBig2_Image*, FxFreeDeleter> SDINSYMS;
   if (pSymbolDictDecoder->SDNUMINSYMS != 0) {
     SDINSYMS.reset(FX_Alloc(CJBig2_Image*, pSymbolDictDecoder->SDNUMINSYMS));
-    FX_DWORD dwTemp = 0;
+    uint32_t dwTemp = 0;
     for (int32_t i = 0; i < pSegment->m_nReferred_to_segment_count; ++i) {
       CJBig2_Segment* pSeg =
           findSegmentByNumber(pSegment->m_pReferred_to_segment_numbers[i]);
@@ -665,7 +665,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
   pTRD->SBH = ri.height;
   pTRD->SBHUFF = wFlags & 0x0001;
   pTRD->SBREFINE = (wFlags >> 1) & 0x0001;
-  FX_DWORD dwTemp = (wFlags >> 2) & 0x0003;
+  uint32_t dwTemp = (wFlags >> 2) & 0x0003;
   pTRD->SBSTRIPS = 1 << dwTemp;
   pTRD->REFCORNER = (JBig2Corner)((wFlags >> 4) & 0x0003);
   pTRD->TRANSPOSED = (wFlags >> 6) & 0x0001;
@@ -751,7 +751,7 @@ int32_t CJBig2_Context::parseTextRegion(CJBig2_Segment* pSegment) {
     pTRD->SBSYMCODES = SBSYMCODES.get();
   } else {
     dwTemp = 0;
-    while ((FX_DWORD)(1 << dwTemp) < pTRD->SBNUMSYMS) {
+    while ((uint32_t)(1 << dwTemp) < pTRD->SBNUMSYMS) {
       ++dwTemp;
     }
     pTRD->SBSYMCODELEN = (uint8_t)dwTemp;
@@ -999,8 +999,8 @@ int32_t CJBig2_Context::parseHalftoneRegion(CJBig2_Segment* pSegment,
       m_pStream->read1Byte(&cFlags) != 0 ||
       m_pStream->readInteger(&pHRD->HGW) != 0 ||
       m_pStream->readInteger(&pHRD->HGH) != 0 ||
-      m_pStream->readInteger((FX_DWORD*)&pHRD->HGX) != 0 ||
-      m_pStream->readInteger((FX_DWORD*)&pHRD->HGY) != 0 ||
+      m_pStream->readInteger((uint32_t*)&pHRD->HGX) != 0 ||
+      m_pStream->readInteger((uint32_t*)&pHRD->HGY) != 0 ||
       m_pStream->readShortInteger(&pHRD->HRX) != 0 ||
       m_pStream->readShortInteger(&pHRD->HRY) != 0) {
     return JBIG2_ERROR_TOO_SHORT;
@@ -1261,10 +1261,10 @@ int32_t CJBig2_Context::parseTable(CJBig2_Segment* pSegment) {
 }
 
 int32_t CJBig2_Context::parseRegionInfo(JBig2RegionInfo* pRI) {
-  if (m_pStream->readInteger((FX_DWORD*)&pRI->width) != 0 ||
-      m_pStream->readInteger((FX_DWORD*)&pRI->height) != 0 ||
-      m_pStream->readInteger((FX_DWORD*)&pRI->x) != 0 ||
-      m_pStream->readInteger((FX_DWORD*)&pRI->y) != 0 ||
+  if (m_pStream->readInteger((uint32_t*)&pRI->width) != 0 ||
+      m_pStream->readInteger((uint32_t*)&pRI->height) != 0 ||
+      m_pStream->readInteger((uint32_t*)&pRI->x) != 0 ||
+      m_pStream->readInteger((uint32_t*)&pRI->y) != 0 ||
       m_pStream->read1Byte(&pRI->flags) != 0) {
     return JBIG2_ERROR_TOO_SHORT;
   }
@@ -1273,7 +1273,7 @@ int32_t CJBig2_Context::parseRegionInfo(JBig2RegionInfo* pRI) {
 
 JBig2HuffmanCode* CJBig2_Context::decodeSymbolIDHuffmanTable(
     CJBig2_BitStream* pStream,
-    FX_DWORD SBNUMSYMS) {
+    uint32_t SBNUMSYMS) {
   const size_t kRunCodesSize = 35;
   int32_t runcodes[kRunCodesSize];
   int32_t runcodes_len[kRunCodesSize];
@@ -1291,7 +1291,7 @@ JBig2HuffmanCode* CJBig2_Context::decodeSymbolIDHuffmanTable(
     int32_t j;
     int32_t nVal = 0;
     int32_t nBits = 0;
-    FX_DWORD nTemp;
+    uint32_t nTemp;
     while (true) {
       if (pStream->read1Bit(&nTemp) != 0)
         return nullptr;

@@ -233,7 +233,7 @@ FX_BOOL CFX_AggDeviceDriver::DrawDeviceText(int nChars,
                                             CFX_FontCache* pCache,
                                             const CFX_Matrix* pObject2Device,
                                             FX_FLOAT font_size,
-                                            FX_DWORD color,
+                                            uint32_t color,
                                             int alpha_flag,
                                             void* pIccTransform) {
   return FALSE;
@@ -384,7 +384,7 @@ FX_BOOL CFX_AggDeviceDriver::SetClip_PathStroke(
 class CFX_Renderer {
  private:
   int m_Alpha, m_Red, m_Green, m_Blue, m_Gray;
-  FX_DWORD m_Color;
+  uint32_t m_Color;
   FX_BOOL m_bFullCover;
   FX_BOOL m_bRgbByteOrder;
   CFX_DIBitmap* m_pOriDevice;
@@ -746,7 +746,7 @@ class CFX_Renderer {
         }
         if (src_alpha) {
           if (src_alpha == 255) {
-            *(FX_DWORD*)dest_scan = m_Color;
+            *(uint32_t*)dest_scan = m_Color;
           } else {
             uint8_t dest_alpha =
                 dest_scan[3] + src_alpha - dest_scan[3] * src_alpha / 255;
@@ -782,7 +782,7 @@ class CFX_Renderer {
       }
       if (src_alpha) {
         if (src_alpha == 255) {
-          *(FX_DWORD*)dest_scan = m_Color;
+          *(uint32_t*)dest_scan = m_Color;
         } else {
           if (dest_scan[3] == 0) {
             dest_scan[3] = src_alpha;
@@ -834,7 +834,7 @@ class CFX_Renderer {
         if (src_alpha) {
           if (src_alpha == 255) {
             if (Bpp == 4) {
-              *(FX_DWORD*)dest_scan = m_Color;
+              *(uint32_t*)dest_scan = m_Color;
             } else if (Bpp == 3) {
               *dest_scan++ = m_Red;
               *dest_scan++ = m_Green;
@@ -914,7 +914,7 @@ class CFX_Renderer {
         if (src_alpha) {
           if (src_alpha == 255) {
             if (Bpp == 4) {
-              *(FX_DWORD*)dest_scan = m_Color;
+              *(uint32_t*)dest_scan = m_Color;
             } else if (Bpp == 3) {
               *dest_scan++ = m_Blue;
               *dest_scan++ = m_Green;
@@ -1081,7 +1081,7 @@ class CFX_Renderer {
   FX_BOOL Init(CFX_DIBitmap* pDevice,
                CFX_DIBitmap* pOriDevice,
                const CFX_ClipRgn* pClipRgn,
-               FX_DWORD color,
+               uint32_t color,
                FX_BOOL bFullCover,
                FX_BOOL bRgbByteOrder,
                int alpha_flag = 0,
@@ -1211,7 +1211,7 @@ class CFX_Renderer {
 
 FX_BOOL CFX_AggDeviceDriver::RenderRasterizer(
     agg::rasterizer_scanline_aa& rasterizer,
-    FX_DWORD color,
+    uint32_t color,
     FX_BOOL bFullCover,
     FX_BOOL bGroupKnockout,
     int alpha_flag,
@@ -1231,8 +1231,8 @@ FX_BOOL CFX_AggDeviceDriver::RenderRasterizer(
 FX_BOOL CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
                                       const CFX_Matrix* pObject2Device,
                                       const CFX_GraphStateData* pGraphState,
-                                      FX_DWORD fill_color,
-                                      FX_DWORD stroke_color,
+                                      uint32_t fill_color,
+                                      uint32_t stroke_color,
                                       int fill_mode,
                                       int alpha_flag,
                                       void* pIccTransform,
@@ -1312,7 +1312,7 @@ FX_BOOL CFX_AggDeviceDriver::DrawPath(const CFX_PathData* pPathData,
   return TRUE;
 }
 
-void RgbByteOrderSetPixel(CFX_DIBitmap* pBitmap, int x, int y, FX_DWORD argb) {
+void RgbByteOrderSetPixel(CFX_DIBitmap* pBitmap, int x, int y, uint32_t argb) {
   if (x < 0 || x >= pBitmap->GetWidth() || y < 0 || y >= pBitmap->GetHeight()) {
     return;
   }
@@ -1351,7 +1351,7 @@ void RgbByteOrderCompositeRect(CFX_DIBitmap* pBitmap,
       uint8_t* dest_scan =
           pBuffer + row * pBitmap->GetPitch() + rect.left * Bpp;
       if (Bpp == 4) {
-        FX_DWORD* scan = (FX_DWORD*)dest_scan;
+        uint32_t* scan = (uint32_t*)dest_scan;
         for (int col = 0; col < width; col++) {
           *scan++ = dib_argb;
         }
@@ -1523,7 +1523,7 @@ FX_ARGB _DefaultCMYK2ARGB(FX_CMYK cmyk, uint8_t alpha) {
 FX_BOOL _DibSetPixel(CFX_DIBitmap* pDevice,
                      int x,
                      int y,
-                     FX_DWORD color,
+                     uint32_t color,
                      int alpha_flag,
                      void* pIccTransform) {
   FX_BOOL bObjCMYK = FXGETFLAG_COLORTYPE(alpha_flag);
@@ -1558,7 +1558,7 @@ FX_BOOL _DibSetPixel(CFX_DIBitmap* pDevice,
 
 FX_BOOL CFX_AggDeviceDriver::SetPixel(int x,
                                       int y,
-                                      FX_DWORD color,
+                                      uint32_t color,
                                       int alpha_flag,
                                       void* pIccTransform) {
   if (!m_pBitmap->GetBuffer()) {
@@ -1604,7 +1604,7 @@ FX_BOOL CFX_AggDeviceDriver::SetPixel(int x,
 }
 
 FX_BOOL CFX_AggDeviceDriver::FillRect(const FX_RECT* pRect,
-                                      FX_DWORD fill_color,
+                                      uint32_t fill_color,
                                       int alpha_flag,
                                       void* pIccTransform,
                                       int blend_type) {
@@ -1704,7 +1704,7 @@ FX_BOOL CFX_AggDeviceDriver::GetDIBits(CFX_DIBitmap* pBitmap,
 }
 
 FX_BOOL CFX_AggDeviceDriver::SetDIBits(const CFX_DIBSource* pBitmap,
-                                       FX_DWORD argb,
+                                       uint32_t argb,
                                        const FX_RECT* pSrcRect,
                                        int left,
                                        int top,
@@ -1725,13 +1725,13 @@ FX_BOOL CFX_AggDeviceDriver::SetDIBits(const CFX_DIBSource* pBitmap,
 }
 
 FX_BOOL CFX_AggDeviceDriver::StretchDIBits(const CFX_DIBSource* pSource,
-                                           FX_DWORD argb,
+                                           uint32_t argb,
                                            int dest_left,
                                            int dest_top,
                                            int dest_width,
                                            int dest_height,
                                            const FX_RECT* pClipRect,
-                                           FX_DWORD flags,
+                                           uint32_t flags,
                                            int alpha_flag,
                                            void* pIccTransform,
                                            int blend_type) {
@@ -1764,9 +1764,9 @@ FX_BOOL CFX_AggDeviceDriver::StretchDIBits(const CFX_DIBSource* pSource,
 
 FX_BOOL CFX_AggDeviceDriver::StartDIBits(const CFX_DIBSource* pSource,
                                          int bitmap_alpha,
-                                         FX_DWORD argb,
+                                         uint32_t argb,
                                          const CFX_Matrix* pMatrix,
-                                         FX_DWORD render_flags,
+                                         uint32_t render_flags,
                                          void*& handle,
                                          int alpha_flag,
                                          void* pIccTransform,

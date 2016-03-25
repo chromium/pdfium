@@ -37,7 +37,7 @@ static void bmp_read_scanline(bmp_decompress_struct_p bmp_ptr,
   pModule->ReadScanlineCallback(p->child_ptr, row_num, row_buf);
 }
 static FX_BOOL bmp_get_data_position(bmp_decompress_struct_p bmp_ptr,
-                                     FX_DWORD rcd_pos) {
+                                     uint32_t rcd_pos) {
   FXBMP_Context* p = (FXBMP_Context*)bmp_ptr->context_ptr;
   CCodec_BmpModule* pModule = (CCodec_BmpModule*)p->parent_ptr;
   return pModule->InputImagePositionBufCallback(p->child_ptr, rcd_pos);
@@ -81,7 +81,7 @@ int32_t CCodec_BmpModule::ReadHeader(void* pContext,
                                      FX_BOOL* tb_flag,
                                      int32_t* components,
                                      int32_t* pal_num,
-                                     FX_DWORD** pal_pp,
+                                     uint32_t** pal_pp,
                                      CFX_DIBAttribute* pAttribute) {
   FXBMP_Context* p = (FXBMP_Context*)pContext;
   if (setjmp(p->bmp_ptr->jmpbuf)) {
@@ -112,14 +112,14 @@ int32_t CCodec_BmpModule::LoadImage(void* pContext) {
   }
   return bmp_decode_image(p->bmp_ptr);
 }
-FX_DWORD CCodec_BmpModule::GetAvailInput(void* pContext,
+uint32_t CCodec_BmpModule::GetAvailInput(void* pContext,
                                          uint8_t** avial_buf_ptr) {
   FXBMP_Context* p = (FXBMP_Context*)pContext;
   return bmp_get_avail_input(p->bmp_ptr, avial_buf_ptr);
 }
 void CCodec_BmpModule::Input(void* pContext,
                              const uint8_t* src_buf,
-                             FX_DWORD src_size) {
+                             uint32_t src_size) {
   FXBMP_Context* p = (FXBMP_Context*)pContext;
   bmp_input_buffer(p->bmp_ptr, (uint8_t*)src_buf, src_size);
 }

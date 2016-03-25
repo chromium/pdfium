@@ -231,7 +231,7 @@ CStretchEngine::CStretchEngine(IFX_ScanlineComposer* pDestBitmap,
   m_pExtraAlphaBuf = NULL;
   m_pDestMaskScanline = NULL;
   m_DestClip = clip_rect;
-  FX_DWORD size = clip_rect.Width();
+  uint32_t size = clip_rect.Width();
   if (size && m_DestBpp > (int)(INT_MAX / size)) {
     return;
   }
@@ -351,7 +351,7 @@ FX_BOOL CStretchEngine::StartStretchHorz() {
   if (m_pSource && m_bHasAlpha && m_pSource->m_pAlphaMask) {
     m_pExtraAlphaBuf =
         FX_Alloc2D(unsigned char, m_SrcClip.Height(), m_ExtraMaskPitch);
-    FX_DWORD size = (m_DestClip.Width() * 8 + 31) / 32 * 4;
+    uint32_t size = (m_DestClip.Width() * 8 + 31) / 32 * 4;
     m_pDestMaskScanline = FX_TryAlloc(unsigned char, size);
     if (!m_pDestMaskScanline) {
       return FALSE;
@@ -730,9 +730,9 @@ void CStretchEngine::StretchVert() {
             dest_a = dest_a < 0 ? 0 : dest_a > 16711680 ? 16711680 : dest_a;
           }
           if (dest_a) {
-            int r = ((FX_DWORD)dest_r_y) * 255 / dest_a;
-            int g = ((FX_DWORD)dest_g_m) * 255 / dest_a;
-            int b = ((FX_DWORD)dest_b_c) * 255 / dest_a;
+            int r = ((uint32_t)dest_r_y) * 255 / dest_a;
+            int g = ((uint32_t)dest_g_m) * 255 / dest_a;
+            int b = ((uint32_t)dest_b_c) * 255 / dest_a;
             dest_scan[0] = b > 255 ? 255 : b < 0 ? 0 : b;
             dest_scan[1] = g > 255 ? 255 : g < 0 ? 0 : g;
             dest_scan[2] = r > 255 ? 255 : r < 0 ? 0 : r;
@@ -782,7 +782,7 @@ FX_BOOL CFX_ImageStretcher::Start(IFX_ScanlineComposer* pDest,
                                   int dest_width,
                                   int dest_height,
                                   const FX_RECT& rect,
-                                  FX_DWORD flags) {
+                                  uint32_t flags) {
   m_DestFormat = _GetStretchedFormat(pSource);
   m_DestBPP = m_DestFormat & 0xff;
   m_pDest = pDest;
@@ -863,7 +863,7 @@ FX_BOOL CFX_ImageStretcher::StartQuickStretch() {
     m_DestHeight = -m_DestHeight;
   }
   m_LineIndex = 0;
-  FX_DWORD size = m_ClipRect.Width();
+  uint32_t size = m_ClipRect.Width();
   if (size && m_DestBPP > (int)(INT_MAX / size)) {
     return FALSE;
   }

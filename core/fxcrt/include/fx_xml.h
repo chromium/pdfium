@@ -71,7 +71,7 @@ class CXML_Element {
   CFX_ByteString GetNamespace(FX_BOOL bQualified = FALSE) const;
   CFX_ByteString GetNamespaceURI(const CFX_ByteStringC& qName) const;
   CXML_Element* GetParent() const { return m_pParent; }
-  FX_DWORD CountAttrs() const { return m_AttrMap.GetSize(); }
+  uint32_t CountAttrs() const { return m_AttrMap.GetSize(); }
   void GetAttrByIndex(int index,
                       CFX_ByteString& space,
                       CFX_ByteString& name,
@@ -129,26 +129,26 @@ class CXML_Element {
     return attr;
   }
 
-  FX_DWORD CountChildren() const { return m_Children.size(); }
-  ChildType GetChildType(FX_DWORD index) const;
-  CFX_WideString GetContent(FX_DWORD index) const;
-  CXML_Element* GetElement(FX_DWORD index) const;
+  uint32_t CountChildren() const { return m_Children.size(); }
+  ChildType GetChildType(uint32_t index) const;
+  CFX_WideString GetContent(uint32_t index) const;
+  CXML_Element* GetElement(uint32_t index) const;
   CXML_Element* GetElement(const CFX_ByteStringC& space,
                            const CFX_ByteStringC& tag) const {
     return GetElement(space, tag, 0);
   }
 
-  FX_DWORD CountElements(const CFX_ByteStringC& space,
+  uint32_t CountElements(const CFX_ByteStringC& space,
                          const CFX_ByteStringC& tag) const;
   CXML_Element* GetElement(const CFX_ByteStringC& space,
                            const CFX_ByteStringC& tag,
                            int index) const;
 
-  FX_DWORD FindElement(CXML_Element* pChild) const;
+  uint32_t FindElement(CXML_Element* pChild) const;
   void SetTag(const CFX_ByteStringC& qSpace, const CFX_ByteStringC& tagname);
   void SetTag(const CFX_ByteStringC& qTagName);
   void RemoveChildren();
-  void RemoveChild(FX_DWORD index);
+  void RemoveChild(uint32_t index);
 
  protected:
   struct ChildRecord {

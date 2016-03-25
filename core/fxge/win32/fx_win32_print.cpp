@@ -34,7 +34,7 @@ int CGdiPrinterDriver::GetDeviceCaps(int caps_id) {
   return CGdiDeviceDriver::GetDeviceCaps(caps_id);
 }
 FX_BOOL CGdiPrinterDriver::SetDIBits(const CFX_DIBSource* pSource,
-                                     FX_DWORD color,
+                                     uint32_t color,
                                      const FX_RECT* pSrcRect,
                                      int left,
                                      int top,
@@ -62,13 +62,13 @@ FX_BOOL CGdiPrinterDriver::SetDIBits(const CFX_DIBSource* pSource,
   return GDI_SetDIBits(pBitmap, pSrcRect, left, top, pIccTransform);
 }
 FX_BOOL CGdiPrinterDriver::StretchDIBits(const CFX_DIBSource* pSource,
-                                         FX_DWORD color,
+                                         uint32_t color,
                                          int dest_left,
                                          int dest_top,
                                          int dest_width,
                                          int dest_height,
                                          const FX_RECT* pClipRect,
-                                         FX_DWORD flags,
+                                         uint32_t flags,
                                          int alpha_flag,
                                          void* pIccTransform,
                                          int blend_type) {
@@ -147,7 +147,7 @@ static CFX_DIBitmap* Transform1bppBitmap(const CFX_DIBSource* pSrc,
   }
   int src_width = pSrcBitmap->GetWidth(), src_height = pSrcBitmap->GetHeight();
   uint8_t* src_buf = pSrcBitmap->GetBuffer();
-  FX_DWORD src_pitch = pSrcBitmap->GetPitch();
+  uint32_t src_pitch = pSrcBitmap->GetPitch();
   FX_FLOAT dest_area = pDestMatrix->GetUnitArea();
   FX_FLOAT area_scale = ((FX_FLOAT)(src_width * src_height)) / dest_area;
   FX_FLOAT size_scale = FXSYS_sqrt(area_scale);
@@ -222,9 +222,9 @@ static CFX_DIBitmap* Transform1bppBitmap(const CFX_DIBSource* pSrc,
 }
 FX_BOOL CGdiPrinterDriver::StartDIBits(const CFX_DIBSource* pSource,
                                        int bitmap_alpha,
-                                       FX_DWORD color,
+                                       uint32_t color,
                                        const CFX_Matrix* pMatrix,
-                                       FX_DWORD render_flags,
+                                       uint32_t render_flags,
                                        void*& handle,
                                        int alpha_flag,
                                        void* pIccTransform,
@@ -330,7 +330,7 @@ FX_BOOL CPSPrinterDriver::Init(HDC hDC, int pslevel, FX_BOOL bCmykOutput) {
       if (ret) {
         CFX_PathData path;
         path.AllocPointCount(pData->rdh.nCount * 5);
-        for (FX_DWORD i = 0; i < pData->rdh.nCount; i++) {
+        for (uint32_t i = 0; i < pData->rdh.nCount; i++) {
           RECT* pRect = (RECT*)(pData->Buffer + pData->rdh.nRgnSize * i);
           path.AppendRect((FX_FLOAT)pRect->left, (FX_FLOAT)pRect->bottom,
                           (FX_FLOAT)pRect->right, (FX_FLOAT)pRect->top);
@@ -408,7 +408,7 @@ FX_BOOL CPSPrinterDriver::GetClipBox(FX_RECT* pRect) {
   return TRUE;
 }
 FX_BOOL CPSPrinterDriver::SetDIBits(const CFX_DIBSource* pBitmap,
-                                    FX_DWORD color,
+                                    uint32_t color,
                                     const FX_RECT* pSrcRect,
                                     int left,
                                     int top,
@@ -422,13 +422,13 @@ FX_BOOL CPSPrinterDriver::SetDIBits(const CFX_DIBSource* pBitmap,
                                 pIccTransform);
 }
 FX_BOOL CPSPrinterDriver::StretchDIBits(const CFX_DIBSource* pBitmap,
-                                        FX_DWORD color,
+                                        uint32_t color,
                                         int dest_left,
                                         int dest_top,
                                         int dest_width,
                                         int dest_height,
                                         const FX_RECT* pClipRect,
-                                        FX_DWORD flags,
+                                        uint32_t flags,
                                         int alpha_flag,
                                         void* pIccTransform,
                                         int blend_type) {
@@ -441,9 +441,9 @@ FX_BOOL CPSPrinterDriver::StretchDIBits(const CFX_DIBSource* pBitmap,
 }
 FX_BOOL CPSPrinterDriver::StartDIBits(const CFX_DIBSource* pBitmap,
                                       int bitmap_alpha,
-                                      FX_DWORD color,
+                                      uint32_t color,
                                       const CFX_Matrix* pMatrix,
-                                      FX_DWORD render_flags,
+                                      uint32_t render_flags,
                                       void*& handle,
                                       int alpha_flag,
                                       void* pIccTransform,
@@ -464,7 +464,7 @@ FX_BOOL CPSPrinterDriver::DrawDeviceText(int nChars,
                                          CFX_FontCache* pCache,
                                          const CFX_Matrix* pObject2Device,
                                          FX_FLOAT font_size,
-                                         FX_DWORD color,
+                                         uint32_t color,
                                          int alpha_flag,
                                          void* pIccTransform) {
   return m_PSRenderer.DrawText(nChars, pCharPos, pFont, pCache, pObject2Device,

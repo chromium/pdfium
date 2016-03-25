@@ -19,58 +19,58 @@ CFX_ByteString PDF_NameDecode(const CFX_ByteString& orig);
 CFX_ByteString PDF_NameEncode(const CFX_ByteString& orig);
 CFX_ByteString PDF_EncodeString(const CFX_ByteString& src,
                                 FX_BOOL bHex = FALSE);
-CFX_WideString PDF_DecodeText(const uint8_t* pData, FX_DWORD size);
+CFX_WideString PDF_DecodeText(const uint8_t* pData, uint32_t size);
 CFX_WideString PDF_DecodeText(const CFX_ByteString& bstr);
 CFX_ByteString PDF_EncodeText(const FX_WCHAR* pString, int len = -1);
 CFX_ByteString PDF_EncodeText(const CFX_WideString& str);
 
 void FlateEncode(const uint8_t* src_buf,
-                 FX_DWORD src_size,
+                 uint32_t src_size,
                  uint8_t*& dest_buf,
-                 FX_DWORD& dest_size);
+                 uint32_t& dest_size);
 void FlateEncode(const uint8_t* src_buf,
-                 FX_DWORD src_size,
+                 uint32_t src_size,
                  int predictor,
                  int Colors,
                  int BitsPerComponent,
                  int Columns,
                  uint8_t*& dest_buf,
-                 FX_DWORD& dest_size);
-FX_DWORD FlateDecode(const uint8_t* src_buf,
-                     FX_DWORD src_size,
+                 uint32_t& dest_size);
+uint32_t FlateDecode(const uint8_t* src_buf,
+                     uint32_t src_size,
                      uint8_t*& dest_buf,
-                     FX_DWORD& dest_size);
-FX_DWORD RunLengthDecode(const uint8_t* src_buf,
-                         FX_DWORD src_size,
+                     uint32_t& dest_size);
+uint32_t RunLengthDecode(const uint8_t* src_buf,
+                         uint32_t src_size,
                          uint8_t*& dest_buf,
-                         FX_DWORD& dest_size);
+                         uint32_t& dest_size);
 
 // Public for testing.
-FX_DWORD A85Decode(const uint8_t* src_buf,
-                   FX_DWORD src_size,
+uint32_t A85Decode(const uint8_t* src_buf,
+                   uint32_t src_size,
                    uint8_t*& dest_buf,
-                   FX_DWORD& dest_size);
+                   uint32_t& dest_size);
 // Public for testing.
-FX_DWORD HexDecode(const uint8_t* src_buf,
-                   FX_DWORD src_size,
+uint32_t HexDecode(const uint8_t* src_buf,
+                   uint32_t src_size,
                    uint8_t*& dest_buf,
-                   FX_DWORD& dest_size);
+                   uint32_t& dest_size);
 // Public for testing.
-FX_DWORD FPDFAPI_FlateOrLZWDecode(FX_BOOL bLZW,
+uint32_t FPDFAPI_FlateOrLZWDecode(FX_BOOL bLZW,
                                   const uint8_t* src_buf,
-                                  FX_DWORD src_size,
+                                  uint32_t src_size,
                                   CPDF_Dictionary* pParams,
-                                  FX_DWORD estimated_size,
+                                  uint32_t estimated_size,
                                   uint8_t*& dest_buf,
-                                  FX_DWORD& dest_size);
+                                  uint32_t& dest_size);
 FX_BOOL PDF_DataDecode(const uint8_t* src_buf,
-                       FX_DWORD src_size,
+                       uint32_t src_size,
                        const CPDF_Dictionary* pDict,
                        uint8_t*& dest_buf,
-                       FX_DWORD& dest_size,
+                       uint32_t& dest_size,
                        CFX_ByteString& ImageEncoding,
                        CPDF_Dictionary*& pImageParms,
-                       FX_DWORD estimated_size,
+                       uint32_t estimated_size,
                        FX_BOOL bImageAcc);
 
 #endif  // CORE_FPDFAPI_FPDF_PARSER_INCLUDE_FPDF_PARSER_DECODE_H_

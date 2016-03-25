@@ -423,11 +423,11 @@ static bool IsLatin(uint16_t word) {
           (word >= 0xFF41 && word <= 0xFF5A));
 }
 
-static bool IsDigit(FX_DWORD word) {
+static bool IsDigit(uint32_t word) {
   return word >= 0x0030 && word <= 0x0039;
 }
 
-static bool IsCJK(FX_DWORD word) {
+static bool IsCJK(uint32_t word) {
   if ((word >= 0x1100 && word <= 0x11FF) ||
       (word >= 0x2E80 && word <= 0x2FFF) ||
       (word >= 0x3040 && word <= 0x9FBF) ||
@@ -448,7 +448,7 @@ static bool IsCJK(FX_DWORD word) {
   return word >= 0xFF66 && word <= 0xFF9D;
 }
 
-static bool IsPunctuation(FX_DWORD word) {
+static bool IsPunctuation(uint32_t word) {
   if (word <= 0x007F)
     return !!(special_chars[word] & 0x08);
 
@@ -495,11 +495,11 @@ static bool IsPunctuation(FX_DWORD word) {
   return false;
 }
 
-static bool IsConnectiveSymbol(FX_DWORD word) {
+static bool IsConnectiveSymbol(uint32_t word) {
   return word <= 0x007F && (special_chars[word] & 0x20);
 }
 
-static bool IsOpenStylePunctuation(FX_DWORD word) {
+static bool IsOpenStylePunctuation(uint32_t word) {
   if (word <= 0x007F)
     return !!(special_chars[word] & 0x04);
 

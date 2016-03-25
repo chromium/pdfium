@@ -74,7 +74,7 @@ FX_BOOL CPDF_Image::LoadImageF(CPDF_Stream* pStream, FX_BOOL bInline) {
   return TRUE;
 }
 
-CPDF_Dictionary* CPDF_Image::InitJPEG(uint8_t* pData, FX_DWORD size) {
+CPDF_Dictionary* CPDF_Image::InitJPEG(uint8_t* pData, uint32_t size) {
   int32_t width;
   int32_t height;
   int32_t num_comps;
@@ -120,7 +120,7 @@ CPDF_Dictionary* CPDF_Image::InitJPEG(uint8_t* pData, FX_DWORD size) {
   return pDict;
 }
 
-void CPDF_Image::SetJpegImage(uint8_t* pData, FX_DWORD size) {
+void CPDF_Image::SetJpegImage(uint8_t* pData, uint32_t size) {
   CPDF_Dictionary* pDict = InitJPEG(pData, size);
   if (!pDict) {
     return;
@@ -129,11 +129,11 @@ void CPDF_Image::SetJpegImage(uint8_t* pData, FX_DWORD size) {
 }
 
 void CPDF_Image::SetJpegImage(IFX_FileRead* pFile) {
-  FX_DWORD size = (FX_DWORD)pFile->GetSize();
+  uint32_t size = (uint32_t)pFile->GetSize();
   if (!size) {
     return;
   }
-  FX_DWORD dwEstimateSize = size;
+  uint32_t dwEstimateSize = size;
   if (dwEstimateSize > 8192) {
     dwEstimateSize = 8192;
   }
@@ -221,7 +221,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
       uint8_t* pColorTable = FX_Alloc2D(uint8_t, iPalette, 3);
       uint8_t* ptr = pColorTable;
       for (int32_t i = 0; i < iPalette; i++) {
-        FX_DWORD argb = pBitmap->GetPaletteArgb(i);
+        uint32_t argb = pBitmap->GetPaletteArgb(i);
         ptr[0] = (uint8_t)(argb >> 16);
         ptr[1] = (uint8_t)(argb >> 8);
         ptr[2] = (uint8_t)argb;
@@ -357,9 +357,9 @@ void CPDF_Image::ResetCache(CPDF_Page* pPage, const CFX_DIBitmap* pBitmap) {
 }
 
 CFX_DIBSource* CPDF_Image::LoadDIBSource(CFX_DIBSource** ppMask,
-                                         FX_DWORD* pMatteColor,
+                                         uint32_t* pMatteColor,
                                          FX_BOOL bStdCS,
-                                         FX_DWORD GroupFamily,
+                                         uint32_t GroupFamily,
                                          FX_BOOL bLoadMask) const {
   std::unique_ptr<CPDF_DIBSource> source(new CPDF_DIBSource);
   if (source->Load(m_pDocument, m_pStream,
@@ -385,7 +385,7 @@ CFX_DIBSource* CPDF_Image::DetachMask() {
 FX_BOOL CPDF_Image::StartLoadDIBSource(CPDF_Dictionary* pFormResource,
                                        CPDF_Dictionary* pPageResource,
                                        FX_BOOL bStdCS,
-                                       FX_DWORD GroupFamily,
+                                       uint32_t GroupFamily,
                                        FX_BOOL bLoadMask) {
   std::unique_ptr<CPDF_DIBSource> source(new CPDF_DIBSource);
   int ret =

@@ -149,7 +149,7 @@ IFX_ArabicChar* IFX_ArabicChar::Create() {
   return new CFX_ArabicChar;
 }
 FX_BOOL CFX_ArabicChar::IsArabicChar(FX_WCHAR wch) const {
-  FX_DWORD dwRet =
+  uint32_t dwRet =
       kTextLayoutCodeProperties[(uint16_t)wch] & FX_CHARTYPEBITSMASK;
   return dwRet >= FX_CHARTYPE_ArabicAlef;
 }

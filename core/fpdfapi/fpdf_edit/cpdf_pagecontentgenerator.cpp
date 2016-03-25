@@ -91,7 +91,7 @@ void CPDF_PageContentGenerator::ProcessImage(CFX_ByteTextBuf& buf,
   buf << "q " << pImageObj->m_Matrix << " cm ";
   if (!pImageObj->m_pImage->IsInline()) {
     CPDF_Stream* pStream = pImageObj->m_pImage->GetStream();
-    FX_DWORD dwSavedObjNum = pStream->GetObjNum();
+    uint32_t dwSavedObjNum = pStream->GetObjNum();
     CFX_ByteString name = RealizeResource(pStream, "XObject");
     if (dwSavedObjNum == 0) {
       if (pImageObj->m_pImage)
@@ -103,7 +103,7 @@ void CPDF_PageContentGenerator::ProcessImage(CFX_ByteTextBuf& buf,
 }
 void CPDF_PageContentGenerator::ProcessForm(CFX_ByteTextBuf& buf,
                                             const uint8_t* data,
-                                            FX_DWORD size,
+                                            uint32_t size,
                                             CFX_Matrix& matrix) {
   if (!data || !size) {
     return;

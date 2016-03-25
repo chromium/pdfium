@@ -81,7 +81,7 @@ CJBig2_ArithIaidDecoder::CJBig2_ArithIaidDecoder(unsigned char SBSYMCODELENA)
 CJBig2_ArithIaidDecoder::~CJBig2_ArithIaidDecoder() {}
 
 void CJBig2_ArithIaidDecoder::decode(CJBig2_ArithDecoder* pArithDecoder,
-                                     FX_DWORD* nResult) {
+                                     uint32_t* nResult) {
   int PREV = 1;
   for (unsigned char i = 0; i < SBSYMCODELEN; ++i) {
     JBig2ArithCtx* pCX = &m_IAID[PREV];

@@ -26,7 +26,7 @@ void FPDFAPI_FindEmbeddedCMap(const char* name,
                               int charset,
                               int coding,
                               const FXCMAP_CMap*& pMap);
-uint16_t FPDFAPI_CIDFromCharCode(const FXCMAP_CMap* pMap, FX_DWORD charcode);
-FX_DWORD FPDFAPI_CharCodeFromCID(const FXCMAP_CMap* pMap, uint16_t cid);
+uint16_t FPDFAPI_CIDFromCharCode(const FXCMAP_CMap* pMap, uint32_t charcode);
+uint32_t FPDFAPI_CharCodeFromCID(const FXCMAP_CMap* pMap, uint16_t cid);
 
 #endif  // CORE_FPDFAPI_FPDF_CMAPS_CMAP_INT_H_

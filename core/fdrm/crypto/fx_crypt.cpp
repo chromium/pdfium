@@ -12,7 +12,7 @@ extern "C" {
 struct rc4_state {
   int x, y, m[256];
 };
-void CRYPT_ArcFourSetup(void* context, const uint8_t* key, FX_DWORD length) {
+void CRYPT_ArcFourSetup(void* context, const uint8_t* key, uint32_t length) {
   rc4_state* s = (rc4_state*)context;
   int i, j, k, *m, a;
   s->x = 0;
@@ -32,7 +32,7 @@ void CRYPT_ArcFourSetup(void* context, const uint8_t* key, FX_DWORD length) {
     }
   }
 }
-void CRYPT_ArcFourCrypt(void* context, unsigned char* data, FX_DWORD length) {
+void CRYPT_ArcFourCrypt(void* context, unsigned char* data, uint32_t length) {
   struct rc4_state* s = (struct rc4_state*)context;
   int i, x, y, *m, a, b;
   x = s->x;
@@ -50,24 +50,24 @@ void CRYPT_ArcFourCrypt(void* context, unsigned char* data, FX_DWORD length) {
   s->y = y;
 }
 void CRYPT_ArcFourCryptBlock(uint8_t* pData,
-                             FX_DWORD size,
+                             uint32_t size,
                              const uint8_t* key,
-                             FX_DWORD keylen) {
+                             uint32_t keylen) {
   rc4_state s;
   CRYPT_ArcFourSetup(&s, key, keylen);
   CRYPT_ArcFourCrypt(&s, pData, size);
 }
 struct md5_context {
-  FX_DWORD total[2];
-  FX_DWORD state[4];
+  uint32_t total[2];
+  uint32_t state[4];
   uint8_t buffer[64];
 };
 #define GET_FX_DWORD(n, b, i)                          \
   {                                                    \
-    (n) = (FX_DWORD)((uint8_t*)b)[(i)] |               \
-          (((FX_DWORD)((uint8_t*)b)[(i) + 1]) << 8) |  \
-          (((FX_DWORD)((uint8_t*)b)[(i) + 2]) << 16) | \
-          (((FX_DWORD)((uint8_t*)b)[(i) + 3]) << 24);  \
+    (n) = (uint32_t)((uint8_t*)b)[(i)] |               \
+          (((uint32_t)((uint8_t*)b)[(i) + 1]) << 8) |  \
+          (((uint32_t)((uint8_t*)b)[(i) + 2]) << 16) | \
+          (((uint32_t)((uint8_t*)b)[(i) + 3]) << 24);  \
   }
 #define PUT_FX_DWORD(n, b, i)                                 \
   {                                                           \
@@ -77,7 +77,7 @@ struct md5_context {
     (((uint8_t*)b)[(i) + 3]) = (uint8_t)(((n) >> 24) & 0xFF); \
   }
 void md5_process(struct md5_context* ctx, const uint8_t data[64]) {
-  FX_DWORD A, B, C, D, X[16];
+  uint32_t A, B, C, D, X[16];
   GET_FX_DWORD(X[0], data, 0);
   GET_FX_DWORD(X[1], data, 4);
   GET_FX_DWORD(X[2], data, 8);
@@ -190,9 +190,9 @@ void CRYPT_MD5Start(void* context) {
   ctx->state[2] = 0x98BADCFE;
   ctx->state[3] = 0x10325476;
 }
-void CRYPT_MD5Update(void* pctx, const uint8_t* input, FX_DWORD length) {
+void CRYPT_MD5Update(void* pctx, const uint8_t* input, uint32_t length) {
   struct md5_context* ctx = (struct md5_context*)pctx;
-  FX_DWORD left, fill;
+  uint32_t left, fill;
   if (!length) {
     return;
   }
@@ -224,7 +224,7 @@ const uint8_t md5_padding[64] = {
     0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 void CRYPT_MD5Finish(void* pctx, uint8_t digest[16]) {
   struct md5_context* ctx = (struct md5_context*)pctx;
-  FX_DWORD last, padn;
+  uint32_t last, padn;
   uint8_t msglen[8];
   PUT_FX_DWORD(ctx->total[0], msglen, 0);
   PUT_FX_DWORD(ctx->total[1], msglen, 4);
@@ -238,7 +238,7 @@ void CRYPT_MD5Finish(void* pctx, uint8_t digest[16]) {
   PUT_FX_DWORD(ctx->state[3], digest, 12);
 }
 void CRYPT_MD5Generate(const uint8_t* input,
-                       FX_DWORD length,
+                       uint32_t length,
                        uint8_t digest[16]) {
   md5_context ctx;
   CRYPT_MD5Start(&ctx);
@@ -246,13 +246,13 @@ void CRYPT_MD5Generate(const uint8_t* input,
   CRYPT_MD5Finish(&ctx, digest);
 }
 static FX_BOOL (*g_PubKeyDecryptor)(const uint8_t* pData,
-                                    FX_DWORD size,
+                                    uint32_t size,
                                     uint8_t* data_buf,
-                                    FX_DWORD& data_len) = NULL;
+                                    uint32_t& data_len) = NULL;
 void CRYPT_SetPubKeyDecryptor(FX_BOOL (*func)(const uint8_t* pData,
-                                              FX_DWORD size,
+                                              uint32_t size,
                                               uint8_t* data_buf,
-                                              FX_DWORD& data_len)) {
+                                              uint32_t& data_len)) {
   g_PubKeyDecryptor = func;
 }
 #ifdef __cplusplus

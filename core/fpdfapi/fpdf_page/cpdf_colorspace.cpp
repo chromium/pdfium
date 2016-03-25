@@ -364,7 +364,7 @@ CPDF_ColorSpace* CPDF_ColorSpace::Load(CPDF_Document* pDoc, CPDF_Object* pObj) {
     return ColorspaceFromName(familyname);
 
   CPDF_ColorSpace* pCS = NULL;
-  FX_DWORD id = familyname.GetID();
+  uint32_t id = familyname.GetID();
   if (id == FXBSTR_ID('C', 'a', 'l', 'G')) {
     pCS = new CPDF_CalGray(pDoc);
   } else if (id == FXBSTR_ID('C', 'a', 'l', 'R')) {
@@ -930,8 +930,8 @@ void CPDF_ICCBasedCS::TranslateImageLine(uint8_t* pDestBuf,
         uint8_t* temp_src = FX_Alloc2D(uint8_t, nMaxColors, m_nComponents);
         uint8_t* pSrc = temp_src;
         for (int i = 0; i < nMaxColors; i++) {
-          FX_DWORD color = i;
-          FX_DWORD order = nMaxColors / 52;
+          uint32_t color = i;
+          uint32_t order = nMaxColors / 52;
           for (int c = 0; c < m_nComponents; c++) {
             *pSrc++ = (uint8_t)(color / order * 5);
             color %= order;

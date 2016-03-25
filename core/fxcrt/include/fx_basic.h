@@ -87,7 +87,7 @@ class CFX_ByteTextBuf : public CFX_BinaryBuf {
   CFX_ByteStringC GetByteString() const;
 
   CFX_ByteTextBuf& operator<<(int i);
-  CFX_ByteTextBuf& operator<<(FX_DWORD i);
+  CFX_ByteTextBuf& operator<<(uint32_t i);
   CFX_ByteTextBuf& operator<<(double f);
   CFX_ByteTextBuf& operator<<(const CFX_ByteStringC& lpsz);
   CFX_ByteTextBuf& operator<<(const CFX_ByteTextBuf& buf);
@@ -124,7 +124,7 @@ class CFX_ArchiveSaver {
 
   CFX_ArchiveSaver& operator<<(int i);
 
-  CFX_ArchiveSaver& operator<<(FX_DWORD i);
+  CFX_ArchiveSaver& operator<<(uint32_t i);
 
   CFX_ArchiveSaver& operator<<(FX_FLOAT i);
 
@@ -151,13 +151,13 @@ class CFX_ArchiveSaver {
 };
 class CFX_ArchiveLoader {
  public:
-  CFX_ArchiveLoader(const uint8_t* pData, FX_DWORD dwSize);
+  CFX_ArchiveLoader(const uint8_t* pData, uint32_t dwSize);
 
   CFX_ArchiveLoader& operator>>(uint8_t& i);
 
   CFX_ArchiveLoader& operator>>(int& i);
 
-  CFX_ArchiveLoader& operator>>(FX_DWORD& i);
+  CFX_ArchiveLoader& operator>>(uint32_t& i);
 
   CFX_ArchiveLoader& operator>>(FX_FLOAT& i);
 
@@ -169,14 +169,14 @@ class CFX_ArchiveLoader {
 
   FX_BOOL IsEOF();
 
-  FX_BOOL Read(void* pBuf, FX_DWORD dwSize);
+  FX_BOOL Read(void* pBuf, uint32_t dwSize);
 
  protected:
-  FX_DWORD m_LoadingPos;
+  uint32_t m_LoadingPos;
 
   const uint8_t* m_pLoadingBuf;
 
-  FX_DWORD m_LoadingSize;
+  uint32_t m_LoadingSize;
 };
 #endif  // PDF_ENABLE_XFA
 
@@ -189,7 +189,7 @@ class CFX_FileBufferArchive {
   bool Flush();
   int32_t AppendBlock(const void* pBuf, size_t size);
   int32_t AppendByte(uint8_t byte);
-  int32_t AppendDWord(FX_DWORD i);
+  int32_t AppendDWord(uint32_t i);
   int32_t AppendString(const CFX_ByteStringC& lpsz);
 
   // |pFile| must outlive the CFX_FileBufferArchive.
@@ -222,7 +222,7 @@ class CFX_UTF8Decoder {
 
   void Input(uint8_t byte);
 
-  void AppendChar(FX_DWORD ch);
+  void AppendChar(uint32_t ch);
 
   void ClearStatus() { m_PendingBytes = 0; }
 
@@ -231,7 +231,7 @@ class CFX_UTF8Decoder {
  protected:
   int m_PendingBytes;
 
-  FX_DWORD m_PendingChar;
+  uint32_t m_PendingChar;
 
   CFX_WideTextBuf m_Buffer;
 };
@@ -631,14 +631,14 @@ class CFX_MapPtrToPtr {
                     void*& rKey,
                     void*& rValue) const;
 
-  FX_DWORD GetHashTableSize() const { return m_nHashTableSize; }
+  uint32_t GetHashTableSize() const { return m_nHashTableSize; }
 
-  void InitHashTable(FX_DWORD hashSize, FX_BOOL bAllocNow = TRUE);
+  void InitHashTable(uint32_t hashSize, FX_BOOL bAllocNow = TRUE);
 
  protected:
   CAssoc** m_pHashTable;
 
-  FX_DWORD m_nHashTableSize;
+  uint32_t m_nHashTableSize;
 
   int m_nCount;
 
@@ -648,13 +648,13 @@ class CFX_MapPtrToPtr {
 
   int m_nBlockSize;
 
-  FX_DWORD HashKey(void* key) const;
+  uint32_t HashKey(void* key) const;
 
   CAssoc* NewAssoc();
 
   void FreeAssoc(CAssoc* pAssoc);
 
-  CAssoc* GetAssocAt(void* key, FX_DWORD& hash) const;
+  CAssoc* GetAssocAt(void* key, uint32_t& hash) const;
 };
 
 template <class KeyType, class ValueType>
@@ -792,8 +792,8 @@ class CFX_PrivateData {
     if (!module_id) {
       return FALSE;
     }
-    FX_DWORD nCount = m_DataList.GetSize();
-    for (FX_DWORD n = 0; n < nCount; n++) {
+    uint32_t nCount = m_DataList.GetSize();
+    for (uint32_t n = 0; n < nCount; n++) {
       if (m_DataList[n].m_pModuleId == module_id) {
         pData = m_DataList[n].m_pData;
         return TRUE;
@@ -815,28 +815,28 @@ class CFX_PrivateData {
 
 class CFX_BitStream {
  public:
-  void Init(const uint8_t* pData, FX_DWORD dwSize);
+  void Init(const uint8_t* pData, uint32_t dwSize);
 
-  FX_DWORD GetBits(FX_DWORD nBits);
+  uint32_t GetBits(uint32_t nBits);
 
   void ByteAlign();
 
   FX_BOOL IsEOF() { return m_BitPos >= m_BitSize; }
 
-  void SkipBits(FX_DWORD nBits) { m_BitPos += nBits; }
+  void SkipBits(uint32_t nBits) { m_BitPos += nBits; }
 
   void Rewind() { m_BitPos = 0; }
 
-  FX_DWORD GetPos() const { return m_BitPos; }
+  uint32_t GetPos() const { return m_BitPos; }
 
-  FX_DWORD BitsRemaining() const {
+  uint32_t BitsRemaining() const {
     return m_BitSize >= m_BitPos ? m_BitSize - m_BitPos : 0;
   }
 
  protected:
-  FX_DWORD m_BitPos;
+  uint32_t m_BitPos;
 
-  FX_DWORD m_BitSize;
+  uint32_t m_BitSize;
 
   const uint8_t* m_pData;
 };
@@ -1091,8 +1091,8 @@ typedef CFX_ListArrayTemplate<CFX_SortListArray<sizeof(FX_FILESIZE)>,
 class IFX_Unknown {
  public:
   virtual ~IFX_Unknown() {}
-  virtual FX_DWORD Release() = 0;
-  virtual FX_DWORD AddRef() = 0;
+  virtual uint32_t Release() = 0;
+  virtual uint32_t AddRef() = 0;
 };
 #define FX_IsOdd(a) ((a)&1)
 #endif  // PDF_ENABLE_XFA

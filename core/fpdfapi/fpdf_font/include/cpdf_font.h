@@ -39,7 +39,7 @@ class CPDF_Font {
                                 CPDF_Dictionary* pFontDict);
   static CPDF_Font* GetStockFont(CPDF_Document* pDoc,
                                  const CFX_ByteStringC& fontname);
-  static const FX_DWORD kInvalidCharCode = static_cast<FX_DWORD>(-1);
+  static const uint32_t kInvalidCharCode = static_cast<uint32_t>(-1);
 
   virtual ~CPDF_Font();
 
@@ -58,27 +58,27 @@ class CPDF_Font {
 
   virtual FX_BOOL IsVertWriting() const;
   virtual FX_BOOL IsUnicodeCompatible() const;
-  virtual FX_DWORD GetNextChar(const FX_CHAR* pString,
+  virtual uint32_t GetNextChar(const FX_CHAR* pString,
                                int nStrLen,
                                int& offset) const;
   virtual int CountChar(const FX_CHAR* pString, int size) const;
-  virtual int AppendChar(FX_CHAR* buf, FX_DWORD charcode) const;
-  virtual int GetCharSize(FX_DWORD charcode) const;
-  virtual int GlyphFromCharCode(FX_DWORD charcode,
+  virtual int AppendChar(FX_CHAR* buf, uint32_t charcode) const;
+  virtual int GetCharSize(uint32_t charcode) const;
+  virtual int GlyphFromCharCode(uint32_t charcode,
                                 FX_BOOL* pVertGlyph = nullptr);
-  virtual int GlyphFromCharCodeExt(FX_DWORD charcode);
-  virtual CFX_WideString UnicodeFromCharCode(FX_DWORD charcode) const;
-  virtual FX_DWORD CharCodeFromUnicode(FX_WCHAR Unicode) const;
+  virtual int GlyphFromCharCodeExt(uint32_t charcode);
+  virtual CFX_WideString UnicodeFromCharCode(uint32_t charcode) const;
+  virtual uint32_t CharCodeFromUnicode(FX_WCHAR Unicode) const;
 
   const CFX_ByteString& GetBaseFont() const { return m_BaseFont; }
   const CFX_SubstFont* GetSubstFont() const { return m_Font.GetSubstFont(); }
-  FX_DWORD GetFlags() const { return m_Flags; }
+  uint32_t GetFlags() const { return m_Flags; }
   FX_BOOL IsEmbedded() const { return IsType3Font() || m_pFontFile != nullptr; }
   CPDF_StreamAcc* GetFontFile() const { return m_pFontFile; }
   CPDF_Dictionary* GetFontDict() const { return m_pFontDict; }
   FX_BOOL IsStandardFont() const;
   FXFT_Face GetFace() const { return m_Font.GetFace(); }
-  void AppendChar(CFX_ByteString& str, FX_DWORD charcode) const;
+  void AppendChar(CFX_ByteString& str, uint32_t charcode) const;
 
   void GetFontBBox(FX_RECT& rect) const { rect = m_FontBBox; }
   int GetTypeAscent() const { return m_Ascent; }
@@ -87,8 +87,8 @@ class CPDF_Font {
   int GetStemV() const { return m_StemV; }
   int GetStringWidth(const FX_CHAR* pString, int size);
 
-  virtual int GetCharWidthF(FX_DWORD charcode, int level = 0) = 0;
-  virtual FX_RECT GetCharBBox(FX_DWORD charcode, int level = 0) = 0;
+  virtual int GetCharWidthF(uint32_t charcode, int level = 0) = 0;
+  virtual FX_RECT GetCharBBox(uint32_t charcode, int level = 0) = 0;
 
   CPDF_Document* m_pDocument;
   CFX_Font m_Font;

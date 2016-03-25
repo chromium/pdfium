@@ -490,7 +490,7 @@ static FX_FLOAT PDF_Interpolate(FX_FLOAT x,
                                 FX_FLOAT ymax) {
   return ((x - xmin) * (ymax - ymin) / (xmax - xmin)) + ymin;
 }
-static FX_DWORD _GetBits32(const uint8_t* pData, int bitpos, int nbits) {
+static uint32_t _GetBits32(const uint8_t* pData, int bitpos, int nbits) {
   int result = 0;
   for (int i = 0; i < nbits; i++)
     if (pData[(bitpos + i) / 8] & (1 << (7 - (bitpos + i) % 8))) {
@@ -515,8 +515,8 @@ class CPDF_SampledFunc : public CPDF_Function {
 
   SampleEncodeInfo* m_pEncodeInfo;
   SampleDecodeInfo* m_pDecodeInfo;
-  FX_DWORD m_nBitsPerSample;
-  FX_DWORD m_SampleMax;
+  uint32_t m_nBitsPerSample;
+  uint32_t m_SampleMax;
   CPDF_StreamAcc* m_pSampleStream;
 };
 
@@ -632,7 +632,7 @@ FX_BOOL CPDF_SampledFunc::v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const {
     return FALSE;
   }
   for (int j = 0; j < m_nOutputs; j++) {
-    FX_DWORD sample =
+    uint32_t sample =
         _GetBits32(pSampleData, bitpos.ValueOrDie() + j * m_nBitsPerSample,
                    m_nBitsPerSample);
     FX_FLOAT encoded = (FX_FLOAT)sample;
@@ -650,7 +650,7 @@ FX_BOOL CPDF_SampledFunc::v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const {
         if (!bitpos2.IsValid()) {
           return FALSE;
         }
-        FX_DWORD sample1 =
+        uint32_t sample1 =
             _GetBits32(pSampleData, bitpos2.ValueOrDie(), m_nBitsPerSample);
         encoded += (encoded_input[i] - index[i]) *
                    ((FX_FLOAT)sample1 - (FX_FLOAT)sample);
@@ -770,12 +770,12 @@ FX_BOOL CPDF_StitchFunc::v_Init(CPDF_Object* pObj) {
   if (!pArray) {
     return FALSE;
   }
-  FX_DWORD nSubs = pArray->GetCount();
+  uint32_t nSubs = pArray->GetCount();
   if (nSubs == 0) {
     return FALSE;
   }
   m_nOutputs = 0;
-  for (FX_DWORD i = 0; i < nSubs; i++) {
+  for (uint32_t i = 0; i < nSubs; i++) {
     CPDF_Object* pSub = pArray->GetElementValue(i);
     if (pSub == pObj) {
       return FALSE;
@@ -804,7 +804,7 @@ FX_BOOL CPDF_StitchFunc::v_Init(CPDF_Object* pObj) {
   if (!pArray) {
     return FALSE;
   }
-  for (FX_DWORD i = 0; i < nSubs - 1; i++) {
+  for (uint32_t i = 0; i < nSubs - 1; i++) {
     m_pBounds[i + 1] = pArray->GetFloatAt(i);
   }
   m_pBounds[nSubs] = m_pDomains[1];
@@ -813,7 +813,7 @@ FX_BOOL CPDF_StitchFunc::v_Init(CPDF_Object* pObj) {
   if (!pArray) {
     return FALSE;
   }
-  for (FX_DWORD i = 0; i < nSubs * 2; i++) {
+  for (uint32_t i = 0; i < nSubs * 2; i++) {
     m_pEncode[i] = pArray->GetFloatAt(i);
   }
   return TRUE;
@@ -900,7 +900,7 @@ FX_BOOL CPDF_Function::Init(CPDF_Object* pObj) {
       m_pRanges[i] = pRanges->GetFloatAt(i);
     }
   }
-  FX_DWORD old_outputs = m_nOutputs;
+  uint32_t old_outputs = m_nOutputs;
   if (!v_Init(pObj)) {
     return FALSE;
   }

@@ -32,7 +32,7 @@ int CountPages(CPDF_Dictionary* pPages,
     return 0;
   }
   count = 0;
-  for (FX_DWORD i = 0; i < pKidList->GetCount(); i++) {
+  for (uint32_t i = 0; i < pKidList->GetCount(); i++) {
     CPDF_Dictionary* pKid = pKidList->GetDictAt(i);
     if (!pKid || pdfium::ContainsKey(*visited_pages, pKid)) {
       continue;
@@ -114,7 +114,7 @@ void CPDF_Document::LoadAsynDoc(CPDF_Dictionary* pLinearized) {
     m_ID1 = pIDArray->GetStringAt(0);
     m_ID2 = pIDArray->GetStringAt(1);
   }
-  FX_DWORD dwPageCount = 0;
+  uint32_t dwPageCount = 0;
   CPDF_Object* pCount = pLinearized->GetElement("N");
   if (ToNumber(pCount))
     dwPageCount = pCount->GetInteger();
@@ -216,8 +216,8 @@ CPDF_Dictionary* CPDF_Document::GetPage(int iPage) {
 }
 
 int CPDF_Document::_FindPageIndex(CPDF_Dictionary* pNode,
-                                  FX_DWORD& skip_count,
-                                  FX_DWORD objnum,
+                                  uint32_t& skip_count,
+                                  uint32_t objnum,
                                   int& index,
                                   int level) {
   if (pNode->KeyExist("Kids")) {
@@ -228,14 +228,14 @@ int CPDF_Document::_FindPageIndex(CPDF_Dictionary* pNode,
     if (level >= FX_MAX_PAGE_LEVEL) {
       return -1;
     }
-    FX_DWORD count = pNode->GetIntegerBy("Count");
+    uint32_t count = pNode->GetIntegerBy("Count");
     if (count <= skip_count) {
       skip_count -= count;
       index += count;
       return -1;
     }
     if (count && count == pKidList->GetCount()) {
-      for (FX_DWORD i = 0; i < count; i++) {
+      for (uint32_t i = 0; i < count; i++) {
         if (CPDF_Reference* pKid = ToReference(pKidList->GetElement(i))) {
           if (pKid->GetRefObjNum() == objnum) {
             m_PageList.SetAt(index + i, objnum);
@@ -244,7 +244,7 @@ int CPDF_Document::_FindPageIndex(CPDF_Dictionary* pNode,
         }
       }
     }
-    for (FX_DWORD i = 0; i < pKidList->GetCount(); i++) {
+    for (uint32_t i = 0; i < pKidList->GetCount(); i++) {
       CPDF_Dictionary* pKid = pKidList->GetDictAt(i);
       if (!pKid) {
         continue;
@@ -269,12 +269,12 @@ int CPDF_Document::_FindPageIndex(CPDF_Dictionary* pNode,
   }
   return -1;
 }
-int CPDF_Document::GetPageIndex(FX_DWORD objnum) {
-  FX_DWORD nPages = m_PageList.GetSize();
-  FX_DWORD skip_count = 0;
+int CPDF_Document::GetPageIndex(uint32_t objnum) {
+  uint32_t nPages = m_PageList.GetSize();
+  uint32_t skip_count = 0;
   FX_BOOL bSkipped = FALSE;
-  for (FX_DWORD i = 0; i < nPages; i++) {
-    FX_DWORD objnum1 = m_PageList.GetAt(i);
+  for (uint32_t i = 0; i < nPages; i++) {
+    uint32_t objnum1 = m_PageList.GetAt(i);
     if (objnum1 == objnum) {
       return i;
     }
@@ -315,14 +315,14 @@ int CPDF_Document::RetrievePageCount() const {
   return CountPages(pPages, &visited_pages);
 }
 
-FX_DWORD CPDF_Document::GetUserPermissions(FX_BOOL bCheckRevision) const {
+uint32_t CPDF_Document::GetUserPermissions(FX_BOOL bCheckRevision) const {
   if (!m_pParser) {
-    return (FX_DWORD)-1;
+    return (uint32_t)-1;
   }
   return m_pParser->GetPermissions(bCheckRevision);
 }
 
-FX_BOOL CPDF_Document::IsFormStream(FX_DWORD objnum, FX_BOOL& bForm) const {
+FX_BOOL CPDF_Document::IsFormStream(uint32_t objnum, FX_BOOL& bForm) const {
   auto it = m_IndirectObjs.find(objnum);
   if (it != m_IndirectObjs.end()) {
     CPDF_Stream* pStream = it->second->AsStream();

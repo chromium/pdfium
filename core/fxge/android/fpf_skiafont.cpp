@@ -167,9 +167,9 @@ int32_t CFPF_SkiaFont::GetItalicAngle() const {
   }
   return 0;
 }
-FX_DWORD CFPF_SkiaFont::GetFontData(FX_DWORD dwTable,
+uint32_t CFPF_SkiaFont::GetFontData(uint32_t dwTable,
                                     uint8_t* pBuffer,
-                                    FX_DWORD dwSize) {
+                                    uint32_t dwSize) {
   if (!m_Face) {
     return 0;
   }
@@ -177,12 +177,12 @@ FX_DWORD CFPF_SkiaFont::GetFontData(FX_DWORD dwTable,
   if (FXFT_Load_Sfnt_Table(m_Face, dwTable, 0, pBuffer, &ulSize)) {
     return 0;
   }
-  return pdfium::base::checked_cast<FX_DWORD>(ulSize);
+  return pdfium::base::checked_cast<uint32_t>(ulSize);
 }
 FX_BOOL CFPF_SkiaFont::InitFont(CFPF_SkiaFontMgr* pFontMgr,
                                 CFPF_SkiaFontDescriptor* pFontDes,
                                 const CFX_ByteStringC& bsFamily,
-                                FX_DWORD dwStyle,
+                                uint32_t dwStyle,
                                 uint8_t uCharset) {
   if (!pFontMgr || !pFontDes) {
     return FALSE;

@@ -52,14 +52,14 @@ class CPDF_Image {
   FX_BOOL IsInterpol() const { return m_bInterpolate; }
 
   CFX_DIBSource* LoadDIBSource(CFX_DIBSource** ppMask = NULL,
-                               FX_DWORD* pMatteColor = NULL,
+                               uint32_t* pMatteColor = NULL,
                                FX_BOOL bStdCS = FALSE,
-                               FX_DWORD GroupFamily = 0,
+                               uint32_t GroupFamily = 0,
                                FX_BOOL bLoadMask = FALSE) const;
 
   void SetInlineDict(CPDF_Dictionary* pDict) { m_pInlineDict = pDict; }
   void SetImage(const CFX_DIBitmap* pDIBitmap, int32_t iCompress);
-  void SetJpegImage(uint8_t* pImageData, FX_DWORD size);
+  void SetJpegImage(uint8_t* pImageData, uint32_t size);
   void SetJpegImage(IFX_FileRead* pFile);
 
   void ResetCache(CPDF_Page* pPage, const CFX_DIBitmap* pDIBitmap);
@@ -67,7 +67,7 @@ class CPDF_Image {
   FX_BOOL StartLoadDIBSource(CPDF_Dictionary* pFormResource,
                              CPDF_Dictionary* pPageResource,
                              FX_BOOL bStdCS = FALSE,
-                             FX_DWORD GroupFamily = 0,
+                             uint32_t GroupFamily = 0,
                              FX_BOOL bLoadMask = FALSE);
   FX_BOOL Continue(IFX_Pause* pPause);
   CFX_DIBSource* DetachBitmap();
@@ -75,10 +75,10 @@ class CPDF_Image {
 
   CFX_DIBSource* m_pDIBSource;
   CFX_DIBSource* m_pMask;
-  FX_DWORD m_MatteColor;
+  uint32_t m_MatteColor;
 
  private:
-  CPDF_Dictionary* InitJPEG(uint8_t* pData, FX_DWORD size);
+  CPDF_Dictionary* InitJPEG(uint8_t* pData, uint32_t size);
 
   CPDF_Stream* m_pStream;
   FX_BOOL m_bInline;

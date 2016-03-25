@@ -446,7 +446,7 @@ uint32_t FX_GetLangHashCode(const FX_CHAR* pStr) {
   return uHashCode;
 }
 struct FX_LANG2CS {
-  FX_DWORD uLang;
+  uint32_t uLang;
   int uCharset;
 } * FX_LPLANG2CS;
 static const FX_LANG2CS gs_FXLang2CharsetTable[] = {
@@ -501,11 +501,11 @@ static void _CFString2CFXByteString(CFStringRef src, CFX_ByteString& dest) {
   free(pBuffer);
 }
 FX_BOOL IsHasCharSet(CFArrayRef languages,
-                     const CFX_ArrayTemplate<FX_DWORD>& charSets) {
+                     const CFX_ArrayTemplate<uint32_t>& charSets) {
   int iCount = charSets.GetSize();
   for (int i = 0; i < CFArrayGetCount(languages); ++i) {
     CFStringRef language = (CFStringRef)CFArrayGetValueAtIndex(languages, i);
-    FX_DWORD CharSet = FX_GetCharsetFromLang(
+    uint32_t CharSet = FX_GetCharsetFromLang(
         CFStringGetCStringPtr(language, kCFStringEncodingMacRoman), -1);
     for (int j = 0; j < iCount; ++j) {
       if (CharSet == charSets[j]) {
@@ -572,7 +572,7 @@ CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont,
     CFRelease(descriptor);
     return NULL;
   }
-  CFX_ArrayTemplate<FX_DWORD> charSets;
+  CFX_ArrayTemplate<uint32_t> charSets;
   charSets.Add(FXFONT_CHINESEBIG5_CHARSET);
   charSets.Add(FXFONT_GB2312_CHARSET);
   charSets.Add(FXFONT_HANGEUL_CHARSET);
@@ -1008,7 +1008,7 @@ CPDF_Font* CPDF_Document::AddFont(CFX_Font* pFont, int charset, FX_BOOL bVert) {
   } else {
     static const FX_CHAR stem_chars[] = {'i', 'I', '!', '1'};
     const size_t count = sizeof(stem_chars) / sizeof(stem_chars[0]);
-    FX_DWORD glyph = pEncoding->GlyphFromCharCode(stem_chars[0]);
+    uint32_t glyph = pEncoding->GlyphFromCharCode(stem_chars[0]);
     nStemV = pFont->GetGlyphWidth(glyph);
     for (size_t i = 1; i < count; i++) {
       glyph = pEncoding->GlyphFromCharCode(stem_chars[i]);
@@ -1076,7 +1076,7 @@ static int InsertDeletePDFPage(CPDF_Document* pDoc,
 static int InsertNewPage(CPDF_Document* pDoc,
                          int iPage,
                          CPDF_Dictionary* pPageDict,
-                         CFX_ArrayTemplate<FX_DWORD>& pageList) {
+                         CFX_ArrayTemplate<uint32_t>& pageList) {
   CPDF_Dictionary* pRoot = pDoc->GetRoot();
   if (!pRoot) {
     return -1;
@@ -1111,7 +1111,7 @@ static int InsertNewPage(CPDF_Document* pDoc,
 CPDF_Dictionary* CPDF_Document::CreateNewPage(int iPage) {
   CPDF_Dictionary* pDict = new CPDF_Dictionary;
   pDict->SetAtName("Type", "Page");
-  FX_DWORD dwObjNum = AddIndirectObject(pDict);
+  uint32_t dwObjNum = AddIndirectObject(pDict);
   if (InsertNewPage(this, iPage, pDict, m_PageList) < 0) {
     ReleaseIndirectObject(dwObjNum);
     return NULL;

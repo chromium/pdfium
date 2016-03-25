@@ -31,9 +31,9 @@ class CPDF_Reference : public CPDF_Object {
   const CPDF_Reference* AsReference() const override;
 
   CPDF_IndirectObjectHolder* GetObjList() const { return m_pObjList; }
-  FX_DWORD GetRefObjNum() const { return m_RefObjNum; }
+  uint32_t GetRefObjNum() const { return m_RefObjNum; }
 
-  void SetRef(CPDF_IndirectObjectHolder* pDoc, FX_DWORD objnum);
+  void SetRef(CPDF_IndirectObjectHolder* pDoc, uint32_t objnum);
 
  protected:
   ~CPDF_Reference() override;
@@ -45,7 +45,7 @@ class CPDF_Reference : public CPDF_Object {
   }
 
   CPDF_IndirectObjectHolder* m_pObjList;
-  FX_DWORD m_RefObjNum;
+  uint32_t m_RefObjNum;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_REFERENCE_H_

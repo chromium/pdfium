@@ -103,7 +103,7 @@ typedef struct tagGifImage {
   GifPalette* local_pal_ptr;
   GifImageInfo* image_info_ptr;
   uint8_t image_code_size;
-  FX_DWORD image_data_pos;
+  uint32_t image_data_pos;
   uint8_t* image_row_buf;
   int32_t image_row_num;
 } GifImage;
@@ -121,10 +121,10 @@ class CGifLZWDecoder {
   CGifLZWDecoder(FX_CHAR* error_ptr = NULL) { err_msg_ptr = error_ptr; }
   void InitTable(uint8_t code_len);
 
-  int32_t Decode(uint8_t* des_buf, FX_DWORD& des_size);
+  int32_t Decode(uint8_t* des_buf, uint32_t& des_size);
 
-  void Input(uint8_t* src_buf, FX_DWORD src_size);
-  FX_DWORD GetAvailInput();
+  void Input(uint8_t* src_buf, uint32_t src_size);
+  uint32_t GetAvailInput();
 
  private:
   void ClearTable();
@@ -142,10 +142,10 @@ class CGifLZWDecoder {
   uint16_t code_old;
 
   uint8_t* next_in;
-  FX_DWORD avail_in;
+  uint32_t avail_in;
 
   uint8_t bits_left;
-  FX_DWORD code_store;
+  uint32_t code_store;
 
   FX_CHAR* err_msg_ptr;
 };
@@ -160,29 +160,29 @@ class CGifLZWEncoder {
   void Start(uint8_t code_len,
              const uint8_t* src_buf,
              uint8_t*& dst_buf,
-             FX_DWORD& offset);
+             uint32_t& offset);
   FX_BOOL Encode(const uint8_t* src_buf,
-                 FX_DWORD src_len,
+                 uint32_t src_len,
                  uint8_t*& dst_buf,
-                 FX_DWORD& dst_len,
-                 FX_DWORD& offset);
-  void Finish(uint8_t*& dst_buf, FX_DWORD& dst_len, FX_DWORD& offset);
+                 uint32_t& dst_len,
+                 uint32_t& offset);
+  void Finish(uint8_t*& dst_buf, uint32_t& dst_len, uint32_t& offset);
 
  private:
   void ClearTable();
   FX_BOOL LookUpInTable(const uint8_t* buf,
-                        FX_DWORD& offset,
+                        uint32_t& offset,
                         uint8_t& bit_offset);
-  void EncodeString(FX_DWORD index,
+  void EncodeString(uint32_t index,
                     uint8_t*& dst_buf,
-                    FX_DWORD& dst_len,
-                    FX_DWORD& offset);
-  void WriteBlock(uint8_t*& dst_buf, FX_DWORD& dst_len, FX_DWORD& offset);
+                    uint32_t& dst_len,
+                    uint32_t& offset);
+  void WriteBlock(uint8_t*& dst_buf, uint32_t& dst_len, uint32_t& offset);
   jmp_buf jmp;
-  FX_DWORD src_offset;
+  uint32_t src_offset;
   uint8_t src_bit_offset;
   uint8_t src_bit_cut;
-  FX_DWORD src_bit_num;
+  uint32_t src_bit_num;
   uint8_t code_size;
   uint16_t code_clear;
   uint16_t code_end;
@@ -213,23 +213,23 @@ struct tag_gif_decompress_struct {
   uint8_t bc_index;
   uint8_t pixel_aspect;
   CGifLZWDecoder* img_decoder_ptr;
-  FX_DWORD img_row_offset;
-  FX_DWORD img_row_avail_size;
+  uint32_t img_row_offset;
+  uint32_t img_row_avail_size;
   uint8_t img_pass_num;
   CFX_ArrayTemplate<GifImage*>* img_ptr_arr_ptr;
   uint8_t* (*gif_ask_buf_for_pal_fn)(gif_decompress_struct_p gif_ptr,
                                      int32_t pal_size);
   uint8_t* next_in;
-  FX_DWORD avail_in;
+  uint32_t avail_in;
   int32_t decode_status;
-  FX_DWORD skip_size;
+  uint32_t skip_size;
   void (*gif_record_current_position_fn)(gif_decompress_struct_p gif_ptr,
-                                         FX_DWORD* cur_pos_ptr);
+                                         uint32_t* cur_pos_ptr);
   void (*gif_get_row_fn)(gif_decompress_struct_p gif_ptr,
                          int32_t row_num,
                          uint8_t* row_buf);
   FX_BOOL (*gif_get_record_position_fn)(gif_decompress_struct_p gif_ptr,
-            FX_DWORD cur_pos,
+            uint32_t cur_pos,
             int32_t left, int32_t top, int32_t width, int32_t height,
             int32_t pal_num, void* pal_ptr,
             int32_t delay_time, FX_BOOL user_input,
@@ -243,11 +243,11 @@ typedef gif_compress_struct* gif_compress_struct_p;
 typedef gif_compress_struct_p* gif_compress_struct_pp;
 struct tag_gif_compress_struct {
   const uint8_t* src_buf;
-  FX_DWORD src_pitch;
-  FX_DWORD src_width;
-  FX_DWORD src_row;
-  FX_DWORD cur_offset;
-  FX_DWORD frames;
+  uint32_t src_pitch;
+  uint32_t src_width;
+  uint32_t src_row;
+  uint32_t cur_offset;
+  uint32_t frames;
   GifHeader* header_ptr;
   GifLSD* lsd_ptr;
   GifPalette* global_pal;
@@ -258,11 +258,11 @@ struct tag_gif_compress_struct {
   CGifLZWEncoder* img_encoder_ptr;
 
   uint8_t* cmt_data_ptr;
-  FX_DWORD cmt_data_len;
+  uint32_t cmt_data_len;
   GifGCE* gce_ptr;
   GifPTE* pte_ptr;
   const uint8_t* pte_data_ptr;
-  FX_DWORD pte_data_len;
+  uint32_t pte_data_len;
 };
 
 void gif_error(gif_decompress_struct_p gif_ptr, const FX_CHAR* err_msg);
@@ -281,16 +281,16 @@ void gif_takeover_gce_ptr(gif_decompress_struct_p gif_ptr,
 int32_t gif_load_frame(gif_decompress_struct_p gif_ptr, int32_t frame_num);
 uint8_t* gif_read_data(gif_decompress_struct_p gif_ptr,
                        uint8_t** des_buf_pp,
-                       FX_DWORD data_size);
+                       uint32_t data_size);
 void gif_save_decoding_status(gif_decompress_struct_p gif_ptr, int32_t status);
 void gif_input_buffer(gif_decompress_struct_p gif_ptr,
                       uint8_t* src_buf,
-                      FX_DWORD src_size);
-FX_DWORD gif_get_avail_input(gif_decompress_struct_p gif_ptr,
+                      uint32_t src_size);
+uint32_t gif_get_avail_input(gif_decompress_struct_p gif_ptr,
                              uint8_t** avial_buf_ptr);
-void interlace_buf(const uint8_t* buf, FX_DWORD width, FX_DWORD height);
+void interlace_buf(const uint8_t* buf, uint32_t width, uint32_t height);
 FX_BOOL gif_encode(gif_compress_struct_p gif_ptr,
                    uint8_t*& dst_buf,
-                   FX_DWORD& dst_len);
+                   uint32_t& dst_len);
 
 #endif  // CORE_FXCODEC_LGIF_FX_GIF_H_

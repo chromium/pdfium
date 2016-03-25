@@ -15,7 +15,7 @@
 IFXCRT_FileAccess* FXCRT_FileAccess_Create() {
   return new CFXCRT_FileAccess_CRT;
 }
-void FXCRT_GetFileModeString(FX_DWORD dwModes, CFX_ByteString& bsMode) {
+void FXCRT_GetFileModeString(uint32_t dwModes, CFX_ByteString& bsMode) {
   if (dwModes & FX_FILEMODE_ReadOnly) {
     bsMode = "rb";
   } else if (dwModes & FX_FILEMODE_Truncate) {
@@ -24,7 +24,7 @@ void FXCRT_GetFileModeString(FX_DWORD dwModes, CFX_ByteString& bsMode) {
     bsMode = "a+b";
   }
 }
-void FXCRT_GetFileModeString(FX_DWORD dwModes, CFX_WideString& wsMode) {
+void FXCRT_GetFileModeString(uint32_t dwModes, CFX_WideString& wsMode) {
   if (dwModes & FX_FILEMODE_ReadOnly) {
     wsMode = FX_WSTRC(L"rb");
   } else if (dwModes & FX_FILEMODE_Truncate) {
@@ -38,7 +38,7 @@ CFXCRT_FileAccess_CRT::~CFXCRT_FileAccess_CRT() {
   Close();
 }
 FX_BOOL CFXCRT_FileAccess_CRT::Open(const CFX_ByteStringC& fileName,
-                                    FX_DWORD dwMode) {
+                                    uint32_t dwMode) {
   if (m_hFile) {
     return FALSE;
   }
@@ -48,7 +48,7 @@ FX_BOOL CFXCRT_FileAccess_CRT::Open(const CFX_ByteStringC& fileName,
   return m_hFile != NULL;
 }
 FX_BOOL CFXCRT_FileAccess_CRT::Open(const CFX_WideStringC& fileName,
-                                    FX_DWORD dwMode) {
+                                    uint32_t dwMode) {
   if (m_hFile) {
     return FALSE;
   }

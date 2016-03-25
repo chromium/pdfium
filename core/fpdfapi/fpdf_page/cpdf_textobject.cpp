@@ -25,7 +25,7 @@ CPDF_TextObject::~CPDF_TextObject() {
 
 void CPDF_TextObject::GetItemInfo(int index, CPDF_TextObjectItem* pInfo) const {
   pInfo->m_CharCode =
-      m_nChars == 1 ? (FX_DWORD)(uintptr_t)m_pCharCodes : m_pCharCodes[index];
+      m_nChars == 1 ? (uint32_t)(uintptr_t)m_pCharCodes : m_pCharCodes[index];
   pInfo->m_OriginX = index ? m_pCharPos[index - 1] : 0;
   pInfo->m_OriginY = 0;
   if (pInfo->m_CharCode == -1) {
@@ -54,26 +54,26 @@ int CPDF_TextObject::CountChars() const {
   }
   int count = 0;
   for (int i = 0; i < m_nChars; ++i)
-    if (m_pCharCodes[i] != (FX_DWORD)-1) {
+    if (m_pCharCodes[i] != (uint32_t)-1) {
       ++count;
     }
   return count;
 }
 
 void CPDF_TextObject::GetCharInfo(int index,
-                                  FX_DWORD& charcode,
+                                  uint32_t& charcode,
                                   FX_FLOAT& kerning) const {
   if (m_nChars == 1) {
-    charcode = (FX_DWORD)(uintptr_t)m_pCharCodes;
+    charcode = (uint32_t)(uintptr_t)m_pCharCodes;
     kerning = 0;
     return;
   }
   int count = 0;
   for (int i = 0; i < m_nChars; ++i) {
-    if (m_pCharCodes[i] != (FX_DWORD)-1) {
+    if (m_pCharCodes[i] != (uint32_t)-1) {
       if (count == index) {
         charcode = m_pCharCodes[i];
-        if (i == m_nChars - 1 || m_pCharCodes[i + 1] != (FX_DWORD)-1) {
+        if (i == m_nChars - 1 || m_pCharCodes[i + 1] != (uint32_t)-1) {
           kerning = 0;
         } else {
           kerning = m_pCharPos[i];
@@ -92,8 +92,8 @@ void CPDF_TextObject::GetCharInfo(int index, CPDF_TextObjectItem* pInfo) const {
   }
   int count = 0;
   for (int i = 0; i < m_nChars; ++i) {
-    FX_DWORD charcode = m_pCharCodes[i];
-    if (charcode == (FX_DWORD)-1) {
+    uint32_t charcode = m_pCharCodes[i];
+    if (charcode == (uint32_t)-1) {
       continue;
     }
     if (count == index) {
@@ -110,8 +110,8 @@ CPDF_TextObject* CPDF_TextObject::Clone() const {
 
   obj->m_nChars = m_nChars;
   if (m_nChars > 1) {
-    obj->m_pCharCodes = FX_Alloc(FX_DWORD, m_nChars);
-    FXSYS_memcpy(obj->m_pCharCodes, m_pCharCodes, m_nChars * sizeof(FX_DWORD));
+    obj->m_pCharCodes = FX_Alloc(uint32_t, m_nChars);
+    FXSYS_memcpy(obj->m_pCharCodes, m_pCharCodes, m_nChars * sizeof(uint32_t));
     obj->m_pCharPos = FX_Alloc(FX_FLOAT, m_nChars - 1);
     FXSYS_memcpy(obj->m_pCharPos, m_pCharPos,
                  (m_nChars - 1) * sizeof(FX_FLOAT));
@@ -145,7 +145,7 @@ void CPDF_TextObject::SetSegments(const CFX_ByteString* pStrs,
   }
   m_nChars += nsegs - 1;
   if (m_nChars > 1) {
-    m_pCharCodes = FX_Alloc(FX_DWORD, m_nChars);
+    m_pCharCodes = FX_Alloc(uint32_t, m_nChars);
     m_pCharPos = FX_Alloc(FX_FLOAT, m_nChars - 1);
     int index = 0;
     for (int i = 0; i < nsegs; ++i) {
@@ -156,12 +156,12 @@ void CPDF_TextObject::SetSegments(const CFX_ByteString* pStrs,
       }
       if (i != nsegs - 1) {
         m_pCharPos[index - 1] = pKerning[i];
-        m_pCharCodes[index++] = (FX_DWORD)-1;
+        m_pCharCodes[index++] = (uint32_t)-1;
       }
     }
   } else {
     int offset = 0;
-    m_pCharCodes = (FX_DWORD*)(uintptr_t)pFont->GetNextChar(
+    m_pCharCodes = (uint32_t*)(uintptr_t)pFont->GetNextChar(
         pStrs[0], pStrs[0].GetLength(), offset);
   }
 }
@@ -171,7 +171,7 @@ void CPDF_TextObject::SetText(const CFX_ByteString& str) {
   RecalcPositionData();
 }
 
-FX_FLOAT CPDF_TextObject::GetCharWidth(FX_DWORD charcode) const {
+FX_FLOAT CPDF_TextObject::GetCharWidth(uint32_t charcode) const {
   FX_FLOAT fontsize = m_TextState.GetFontSize() / 1000;
   CPDF_Font* pFont = m_TextState.GetFont();
   FX_BOOL bVertWriting = FALSE;
@@ -203,10 +203,10 @@ void CPDF_TextObject::CalcPositionData(FX_FLOAT* pTextAdvanceX,
   }
   FX_FLOAT fontsize = m_TextState.GetFontSize();
   for (int i = 0; i < m_nChars; ++i) {
-    FX_DWORD charcode =
-        m_nChars == 1 ? (FX_DWORD)(uintptr_t)m_pCharCodes : m_pCharCodes[i];
+    uint32_t charcode =
+        m_nChars == 1 ? (uint32_t)(uintptr_t)m_pCharCodes : m_pCharCodes[i];
     if (i > 0) {
-      if (charcode == (FX_DWORD)-1) {
+      if (charcode == (uint32_t)-1) {
         curpos -= (m_pCharPos[i - 1] * fontsize) / 1000;
         continue;
       }

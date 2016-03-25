@@ -229,13 +229,13 @@ void CPDF_Dictionary::SetAtString(const CFX_ByteStringC& key,
 
 void CPDF_Dictionary::SetAtReference(const CFX_ByteStringC& key,
                                      CPDF_IndirectObjectHolder* pDoc,
-                                     FX_DWORD objnum) {
+                                     uint32_t objnum) {
   SetAt(key, new CPDF_Reference(pDoc, objnum));
 }
 
 void CPDF_Dictionary::AddReference(const CFX_ByteStringC& key,
                                    CPDF_IndirectObjectHolder* pDoc,
-                                   FX_DWORD objnum) {
+                                   uint32_t objnum) {
   SetAt(key, new CPDF_Reference(pDoc, objnum));
 }
 

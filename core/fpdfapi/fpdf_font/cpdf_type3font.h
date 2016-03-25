@@ -25,13 +25,13 @@ class CPDF_Type3Font : public CPDF_SimpleFont {
   bool IsType3Font() const override;
   const CPDF_Type3Font* AsType3Font() const override;
   CPDF_Type3Font* AsType3Font() override;
-  int GetCharWidthF(FX_DWORD charcode, int level = 0) override;
-  FX_RECT GetCharBBox(FX_DWORD charcode, int level = 0) override;
+  int GetCharWidthF(uint32_t charcode, int level = 0) override;
+  FX_RECT GetCharBBox(uint32_t charcode, int level = 0) override;
 
   void SetPageResources(CPDF_Dictionary* pResources) {
     m_pPageResources = pResources;
   }
-  CPDF_Type3Char* LoadChar(FX_DWORD charcode, int level = 0);
+  CPDF_Type3Char* LoadChar(uint32_t charcode, int level = 0);
   void CheckType3FontMetrics();
 
   CFX_Matrix& GetFontMatrix() { return m_FontMatrix; }
@@ -50,7 +50,7 @@ class CPDF_Type3Font : public CPDF_SimpleFont {
   CPDF_Dictionary* m_pCharProcs;
   CPDF_Dictionary* m_pPageResources;
   CPDF_Dictionary* m_pFontResources;
-  std::map<FX_DWORD, CPDF_Type3Char*> m_CacheMap;
+  std::map<uint32_t, CPDF_Type3Char*> m_CacheMap;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_FONT_CPDF_TYPE3FONT_H_

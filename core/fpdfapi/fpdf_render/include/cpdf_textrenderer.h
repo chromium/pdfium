@@ -42,7 +42,7 @@ class CPDF_TextRenderer {
 
   static FX_BOOL DrawTextPath(CFX_RenderDevice* pDevice,
                               int nChars,
-                              FX_DWORD* pCharCodes,
+                              uint32_t* pCharCodes,
                               FX_FLOAT* pCharPos,
                               CPDF_Font* pFont,
                               FX_FLOAT font_size,
@@ -56,7 +56,7 @@ class CPDF_TextRenderer {
 
   static FX_BOOL DrawNormalText(CFX_RenderDevice* pDevice,
                                 int nChars,
-                                FX_DWORD* pCharCodes,
+                                uint32_t* pCharCodes,
                                 FX_FLOAT* pCharPos,
                                 CPDF_Font* pFont,
                                 FX_FLOAT font_size,
@@ -66,7 +66,7 @@ class CPDF_TextRenderer {
 
   static FX_BOOL DrawType3Text(CFX_RenderDevice* pDevice,
                                int nChars,
-                               FX_DWORD* pCharCodes,
+                               uint32_t* pCharCodes,
                                FX_FLOAT* pCharPos,
                                CPDF_Font* pFont,
                                FX_FLOAT font_size,

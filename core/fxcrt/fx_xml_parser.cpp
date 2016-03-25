@@ -179,7 +179,7 @@ void CXML_Parser::SkipLiterals(const CFX_ByteStringC& str) {
   }
   m_dwIndex = m_dwBufferSize;
 }
-FX_DWORD CXML_Parser::GetCharRef() {
+uint32_t CXML_Parser::GetCharRef() {
   m_nOffset = m_nBufferOffset + (FX_FILESIZE)m_dwIndex;
   if (IsEOF()) {
     return 0;
@@ -187,7 +187,7 @@ FX_DWORD CXML_Parser::GetCharRef() {
   uint8_t ch;
   int32_t iState = 0;
   CFX_ByteTextBuf buf;
-  FX_DWORD code = 0;
+  uint32_t code = 0;
   do {
     while (m_dwIndex < m_dwBufferSize) {
       ch = m_pBuffer[m_dwIndex];
@@ -689,10 +689,10 @@ FX_BOOL CXML_Element::GetAttrFloat(const CFX_ByteStringC& space,
   }
   return FALSE;
 }
-CXML_Element::ChildType CXML_Element::GetChildType(FX_DWORD index) const {
+CXML_Element::ChildType CXML_Element::GetChildType(uint32_t index) const {
   return index < m_Children.size() ? m_Children[index].type : Invalid;
 }
-CFX_WideString CXML_Element::GetContent(FX_DWORD index) const {
+CFX_WideString CXML_Element::GetContent(uint32_t index) const {
   if (index < m_Children.size() && m_Children[index].type == Content) {
     CXML_Content* pContent =
         static_cast<CXML_Content*>(m_Children[index].child);
@@ -701,13 +701,13 @@ CFX_WideString CXML_Element::GetContent(FX_DWORD index) const {
   }
   return CFX_WideString();
 }
-CXML_Element* CXML_Element::GetElement(FX_DWORD index) const {
+CXML_Element* CXML_Element::GetElement(uint32_t index) const {
   if (index < m_Children.size() && m_Children[index].type == Element) {
     return static_cast<CXML_Element*>(m_Children[index].child);
   }
   return nullptr;
 }
-FX_DWORD CXML_Element::CountElements(const CFX_ByteStringC& space,
+uint32_t CXML_Element::CountElements(const CFX_ByteStringC& space,
                                      const CFX_ByteStringC& tag) const {
   int count = 0;
   for (const ChildRecord& record : m_Children) {
@@ -741,7 +741,7 @@ CXML_Element* CXML_Element::GetElement(const CFX_ByteStringC& space,
   }
   return nullptr;
 }
-FX_DWORD CXML_Element::FindElement(CXML_Element* pChild) const {
+uint32_t CXML_Element::FindElement(CXML_Element* pChild) const {
   int index = 0;
   for (const ChildRecord& record : m_Children) {
     if (record.type == Element &&
@@ -750,7 +750,7 @@ FX_DWORD CXML_Element::FindElement(CXML_Element* pChild) const {
     }
     ++index;
   }
-  return (FX_DWORD)-1;
+  return (uint32_t)-1;
 }
 
 bool CXML_AttrItem::Matches(const CFX_ByteStringC& space,

@@ -35,8 +35,8 @@ class CJBig2_GRDProc {
   FX_RECT GetReplaceRect() const { return m_ReplaceRect; }
 
   FX_BOOL MMR;
-  FX_DWORD GBW;
-  FX_DWORD GBH;
+  uint32_t GBW;
+  uint32_t GBH;
   uint8_t GBTEMPLATE;
   FX_BOOL TPGDON;
   FX_BOOL USESKIP;
@@ -109,7 +109,7 @@ class CJBig2_GRDProc {
   CJBig2_Image* decode_Arith_Template3_unopt(CJBig2_ArithDecoder* pArithDecoder,
                                              JBig2ArithCtx* gbContext);
 
-  FX_DWORD m_loopIndex;
+  uint32_t m_loopIndex;
   uint8_t* m_pLine;
   IFX_Pause* m_pPause;
   FXCODEC_STATUS m_ProssiveStatus;

@@ -16,7 +16,7 @@ class CJBig2_PatternDict {
 
   ~CJBig2_PatternDict();
 
-  FX_DWORD NUMPATS;
+  uint32_t NUMPATS;
   CJBig2_Image** HDPATS;
 };
 

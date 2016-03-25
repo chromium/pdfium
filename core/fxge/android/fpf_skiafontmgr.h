@@ -44,9 +44,9 @@ class CFPF_SkiaFontDescriptor {
     m_pFamily[iSize] = 0;
   }
   FX_CHAR* m_pFamily;
-  FX_DWORD m_dwStyle;
+  uint32_t m_dwStyle;
   int32_t m_iFaceIndex;
-  FX_DWORD m_dwCharsets;
+  uint32_t m_dwCharsets;
   int32_t m_iGlyphNum;
 };
 
@@ -100,8 +100,8 @@ class CFPF_SkiaFontMgr : public IFPF_FontMgr {
   void LoadPrivateFont(void* pBuffer, size_t szBuffer) override;
   IFPF_Font* CreateFont(const CFX_ByteStringC& bsFamilyname,
                         uint8_t uCharset,
-                        FX_DWORD dwStyle,
-                        FX_DWORD dwMatch = 0) override;
+                        uint32_t dwStyle,
+                        uint32_t dwMatch = 0) override;
 
   FX_BOOL InitFTLibrary();
   FXFT_Face GetFontFace(IFX_FileRead* pFileRead, int32_t iFaceIndex = 0);
@@ -119,7 +119,7 @@ class CFPF_SkiaFontMgr : public IFPF_FontMgr {
   FX_BOOL m_bLoaded;
   FXFT_Library m_FTLibrary;
   std::vector<CFPF_SkiaFontDescriptor*> m_FontFaces;
-  std::map<FX_DWORD, CFPF_SkiaFont*> m_FamilyFonts;
+  std::map<uint32_t, CFPF_SkiaFont*> m_FamilyFonts;
 };
 
 #endif

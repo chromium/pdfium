@@ -437,9 +437,9 @@ typedef HANDLE(__stdcall* FuncType_GdiAddFontMemResourceEx)(PVOID pbFont,
                                                             DWORD* pcFonts);
 typedef BOOL(__stdcall* FuncType_GdiRemoveFontMemResourceEx)(HANDLE handle);
 void* CGdiplusExt::GdiAddFontMemResourceEx(void* pFontdata,
-                                           FX_DWORD size,
+                                           uint32_t size,
                                            void* pdv,
-                                           FX_DWORD* num_face) {
+                                           uint32_t* num_face) {
   if (m_pGdiAddFontMemResourceEx) {
     return ((FuncType_GdiAddFontMemResourceEx)m_pGdiAddFontMemResourceEx)(
         (PVOID)pFontdata, (DWORD)size, (PVOID)pdv, (DWORD*)num_face);
@@ -711,7 +711,7 @@ void CGdiplusExt::Load() {
       GetProcAddress(m_GdiModule, "RemoveFontMemResourceEx");
 }
 CGdiplusExt::~CGdiplusExt() {}
-LPVOID CGdiplusExt::LoadMemFont(LPBYTE pData, FX_DWORD size) {
+LPVOID CGdiplusExt::LoadMemFont(LPBYTE pData, uint32_t size) {
   GpFontCollection* pCollection = NULL;
   CGdiplusExt& GdiplusExt =
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
@@ -809,7 +809,7 @@ void CGdiplusExt::GdipSetTextRenderingHint(void* graphics, int mode) {
   CallFunc(GdipSetTextRenderingHint)((GpGraphics*)graphics,
                                      (TextRenderingHint)mode);
 }
-void CGdiplusExt::GdipSetPageUnit(void* graphics, FX_DWORD unit) {
+void CGdiplusExt::GdipSetPageUnit(void* graphics, uint32_t unit) {
   CGdiplusExt& GdiplusExt =
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
   CallFunc(GdipSetPageUnit)((GpGraphics*)graphics, (GpUnit)unit);
@@ -833,7 +833,7 @@ FX_BOOL CGdiplusExt::GdipDrawDriverString(void* graphics,
   }
   return FALSE;
 }
-void CGdiplusExt::GdipCreateBrush(FX_DWORD fill_argb, void** pBrush) {
+void CGdiplusExt::GdipCreateBrush(uint32_t fill_argb, void** pBrush) {
   CGdiplusExt& GdiplusExt =
       ((CWin32Platform*)CFX_GEModule::Get()->GetPlatformData())->m_GdiplusExt;
   CallFunc(GdipCreateSolidFill)((ARGB)fill_argb, (GpSolidFill**)pBrush);
@@ -916,7 +916,7 @@ FX_BOOL CGdiplusExt::StretchBitMask(HDC hDC,
                                     int dest_top,
                                     int dest_width,
                                     int dest_height,
-                                    FX_DWORD argb,
+                                    uint32_t argb,
                                     const FX_RECT* pClipRect,
                                     int flags) {
   ASSERT(pBitmap->GetBPP() == 1);
@@ -1100,8 +1100,8 @@ FX_BOOL CGdiplusExt::DrawPath(HDC hDC,
                               const CFX_PathData* pPathData,
                               const CFX_Matrix* pObject2Device,
                               const CFX_GraphStateData* pGraphState,
-                              FX_DWORD fill_argb,
-                              FX_DWORD stroke_argb,
+                              uint32_t fill_argb,
+                              uint32_t stroke_argb,
                               int fill_mode) {
   int nPoints = pPathData->GetPointCount();
   if (nPoints == 0) {

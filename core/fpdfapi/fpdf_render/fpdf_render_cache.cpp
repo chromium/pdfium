@@ -15,7 +15,7 @@
 #include "core/include/fxge/fx_ge.h"
 
 struct CACHEINFO {
-  FX_DWORD time;
+  uint32_t time;
   CPDF_Stream* pStream;
 };
 
@@ -30,7 +30,7 @@ CPDF_PageRenderCache::~CPDF_PageRenderCache() {
     delete it.second;
 }
 void CPDF_PageRenderCache::CacheOptimization(int32_t dwLimitCacheSize) {
-  if (m_nCacheSize <= (FX_DWORD)dwLimitCacheSize)
+  if (m_nCacheSize <= (uint32_t)dwLimitCacheSize)
     return;
 
   size_t nCount = m_ImageCache.size();
@@ -41,10 +41,10 @@ void CPDF_PageRenderCache::CacheOptimization(int32_t dwLimitCacheSize) {
     pCACHEINFO[i++].pStream = it.second->GetStream();
   }
   FXSYS_qsort(pCACHEINFO, nCount, sizeof(CACHEINFO), compare);
-  FX_DWORD nTimeCount = m_nTimeCount;
+  uint32_t nTimeCount = m_nTimeCount;
 
   // Check if time value is about to roll over and reset all entries.
-  // The comparision is legal because FX_DWORD is an unsigned type.
+  // The comparision is legal because uint32_t is an unsigned type.
   if (nTimeCount + 1 < nTimeCount) {
     for (i = 0; i < nCount; i++)
       m_ImageCache[pCACHEINFO[i].pStream]->m_dwTimeCount = i;
@@ -55,7 +55,7 @@ void CPDF_PageRenderCache::CacheOptimization(int32_t dwLimitCacheSize) {
   while (i + 15 < nCount)
     ClearImageCacheEntry(pCACHEINFO[i++].pStream);
 
-  while (i < nCount && m_nCacheSize > (FX_DWORD)dwLimitCacheSize)
+  while (i < nCount && m_nCacheSize > (uint32_t)dwLimitCacheSize)
     ClearImageCacheEntry(pCACHEINFO[i++].pStream);
 
   FX_Free(pCACHEINFO);
@@ -69,8 +69,8 @@ void CPDF_PageRenderCache::ClearImageCacheEntry(CPDF_Stream* pStream) {
   delete it->second;
   m_ImageCache.erase(it);
 }
-FX_DWORD CPDF_PageRenderCache::EstimateSize() {
-  FX_DWORD dwSize = 0;
+uint32_t CPDF_PageRenderCache::EstimateSize() {
+  uint32_t dwSize = 0;
   for (const auto& it : m_ImageCache)
     dwSize += it.second->EstimateSize();
 
@@ -80,9 +80,9 @@ FX_DWORD CPDF_PageRenderCache::EstimateSize() {
 void CPDF_PageRenderCache::GetCachedBitmap(CPDF_Stream* pStream,
                                            CFX_DIBSource*& pBitmap,
                                            CFX_DIBSource*& pMask,
-                                           FX_DWORD& MatteColor,
+                                           uint32_t& MatteColor,
                                            FX_BOOL bStdCS,
-                                           FX_DWORD GroupFamily,
+                                           uint32_t GroupFamily,
                                            FX_BOOL bLoadMask,
                                            CPDF_RenderStatus* pRenderStatus,
                                            int32_t downsampleWidth,
@@ -109,7 +109,7 @@ void CPDF_PageRenderCache::GetCachedBitmap(CPDF_Stream* pStream,
 FX_BOOL CPDF_PageRenderCache::StartGetCachedBitmap(
     CPDF_Stream* pStream,
     FX_BOOL bStdCS,
-    FX_DWORD GroupFamily,
+    uint32_t GroupFamily,
     FX_BOOL bLoadMask,
     CPDF_RenderStatus* pRenderStatus,
     int32_t downsampleWidth,
@@ -197,18 +197,18 @@ void CPDF_ImageCacheEntry::ClearImageData() {
     ((CPDF_DIBSource*)m_pCachedBitmap)->ClearImageData();
   }
 }
-static FX_DWORD FPDF_ImageCache_EstimateImageSize(const CFX_DIBSource* pDIB) {
+static uint32_t FPDF_ImageCache_EstimateImageSize(const CFX_DIBSource* pDIB) {
   return pDIB && pDIB->GetBuffer()
-             ? (FX_DWORD)pDIB->GetHeight() * pDIB->GetPitch() +
-                   (FX_DWORD)pDIB->GetPaletteSize() * 4
+             ? (uint32_t)pDIB->GetHeight() * pDIB->GetPitch() +
+                   (uint32_t)pDIB->GetPaletteSize() * 4
              : 0;
 }
 FX_BOOL CPDF_ImageCacheEntry::GetCachedBitmap(CFX_DIBSource*& pBitmap,
                                               CFX_DIBSource*& pMask,
-                                              FX_DWORD& MatteColor,
+                                              uint32_t& MatteColor,
                                               CPDF_Dictionary* pPageResources,
                                               FX_BOOL bStdCS,
-                                              FX_DWORD GroupFamily,
+                                              uint32_t GroupFamily,
                                               FX_BOOL bLoadMask,
                                               CPDF_RenderStatus* pRenderStatus,
                                               int32_t downsampleWidth,
@@ -264,7 +264,7 @@ CFX_DIBSource* CPDF_ImageCacheEntry::DetachMask() {
 int CPDF_ImageCacheEntry::StartGetCachedBitmap(CPDF_Dictionary* pFormResources,
                                                CPDF_Dictionary* pPageResources,
                                                FX_BOOL bStdCS,
-                                               FX_DWORD GroupFamily,
+                                               uint32_t GroupFamily,
                                                FX_BOOL bLoadMask,
                                                CPDF_RenderStatus* pRenderStatus,
                                                int32_t downsampleWidth,

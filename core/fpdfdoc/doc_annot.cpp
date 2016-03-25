@@ -28,12 +28,12 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
   CPDF_Dictionary* pAcroForm = pRoot->GetDictBy("AcroForm");
   FX_BOOL bRegenerateAP =
       pAcroForm && pAcroForm->GetBooleanBy("NeedAppearances");
-  for (FX_DWORD i = 0; i < pAnnots->GetCount(); ++i) {
+  for (uint32_t i = 0; i < pAnnots->GetCount(); ++i) {
     CPDF_Dictionary* pDict = ToDictionary(pAnnots->GetElementValue(i));
     if (!pDict)
       continue;
 
-    FX_DWORD dwObjNum = pDict->GetObjNum();
+    uint32_t dwObjNum = pDict->GetObjNum();
     if (dwObjNum == 0) {
       dwObjNum = m_pDocument->AddIndirectObject(pDict);
       CPDF_Reference* pAction = new CPDF_Reference(m_pDocument, dwObjNum);
@@ -67,7 +67,7 @@ void CPDF_AnnotList::DisplayPass(CPDF_Page* pPage,
     if ((bWidgetPass && !bWidget) || (!bWidgetPass && bWidget))
       continue;
 
-    FX_DWORD annot_flags = pAnnot->GetFlags();
+    uint32_t annot_flags = pAnnot->GetFlags();
     if (annot_flags & ANNOTFLAG_HIDDEN)
       continue;
 
@@ -110,7 +110,7 @@ void CPDF_AnnotList::DisplayAnnots(CPDF_Page* pPage,
                                    CPDF_RenderContext* pContext,
                                    FX_BOOL bPrinting,
                                    CFX_Matrix* pUser2Device,
-                                   FX_DWORD dwAnnotFlags,
+                                   uint32_t dwAnnotFlags,
                                    CPDF_RenderOptions* pOptions,
                                    FX_RECT* pClipRect) {
   if (dwAnnotFlags & 0x01) {
@@ -148,7 +148,7 @@ void CPDF_Annot::GetRect(CFX_FloatRect& rect) const {
   rect.Normalize();
 }
 
-FX_DWORD CPDF_Annot::GetFlags() const {
+uint32_t CPDF_Annot::GetFlags() const {
   return m_pAnnotDict->GetIntegerBy("F");
 }
 
@@ -259,7 +259,7 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
   if (GetSubType() == "Popup") {
     return;
   }
-  FX_DWORD annot_flags = GetFlags();
+  uint32_t annot_flags = GetFlags();
   if (annot_flags & ANNOTFLAG_HIDDEN) {
     return;
   }
@@ -311,7 +311,7 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
     return;
   }
   CPDF_Array* pColor = m_pAnnotDict->GetArrayBy("C");
-  FX_DWORD argb = 0xff000000;
+  uint32_t argb = 0xff000000;
   if (pColor) {
     int R = (int32_t)(pColor->GetNumberAt(0) * 255);
     int G = (int32_t)(pColor->GetNumberAt(1) * 255);
@@ -322,13 +322,13 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
   graph_state.m_LineWidth = width;
   if (style_char == 'D') {
     if (pDashArray) {
-      FX_DWORD dash_count = pDashArray->GetCount();
+      uint32_t dash_count = pDashArray->GetCount();
       if (dash_count % 2) {
         dash_count++;
       }
       graph_state.m_DashArray = FX_Alloc(FX_FLOAT, dash_count);
       graph_state.m_DashCount = dash_count;
-      FX_DWORD i;
+      uint32_t i;
       for (i = 0; i < pDashArray->GetCount(); ++i) {
         graph_state.m_DashArray[i] = pDashArray->GetNumberAt(i);
       }

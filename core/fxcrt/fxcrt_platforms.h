@@ -10,16 +10,16 @@
 #include "core/fxcrt/extension.h"
 
 #if _FX_OS_ == _FX_ANDROID_
-void FXCRT_GetFileModeString(FX_DWORD dwModes, CFX_ByteString& bsMode);
-void FXCRT_GetFileModeString(FX_DWORD dwModes, CFX_WideString& wsMode);
+void FXCRT_GetFileModeString(uint32_t dwModes, CFX_ByteString& bsMode);
+void FXCRT_GetFileModeString(uint32_t dwModes, CFX_WideString& wsMode);
 class CFXCRT_FileAccess_CRT : public IFXCRT_FileAccess {
  public:
   CFXCRT_FileAccess_CRT();
   ~CFXCRT_FileAccess_CRT() override;
 
   // IFXCRT_FileAccess
-  FX_BOOL Open(const CFX_ByteStringC& fileName, FX_DWORD dwMode) override;
-  FX_BOOL Open(const CFX_WideStringC& fileName, FX_DWORD dwMode) override;
+  FX_BOOL Open(const CFX_ByteStringC& fileName, uint32_t dwMode) override;
+  FX_BOOL Open(const CFX_WideStringC& fileName, uint32_t dwMode) override;
   void Close() override;
   void Release() override;
   FX_FILESIZE GetSize() const override;

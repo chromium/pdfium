@@ -37,7 +37,7 @@ class CDWriteExt {
   FX_BOOL IsAvailable() { return m_pDWriteFactory != NULL; }
 
   void* DwCreateFontFaceFromStream(uint8_t* pData,
-                                   FX_DWORD size,
+                                   uint32_t size,
                                    int simulation_style);
   FX_BOOL DwCreateRenderingTarget(CFX_DIBitmap* pSrc, void** renderTarget);
   void DwDeleteRenderingTarget(void* renderTarget);

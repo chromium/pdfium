@@ -18,9 +18,9 @@ class CPDF_ColorStateData {
   void Default();
 
   CPDF_Color m_FillColor;
-  FX_DWORD m_FillRGB;
+  uint32_t m_FillRGB;
   CPDF_Color m_StrokeColor;
-  FX_DWORD m_StrokeRGB;
+  uint32_t m_StrokeRGB;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PAGE_CPDF_COLORSTATEDATA_H_

@@ -21,7 +21,7 @@
 
 namespace {
 
-FX_DWORD ComponentsForFamily(int family) {
+uint32_t ComponentsForFamily(int family) {
   if (family == PDFCS_DEVICERGB)
     return 3;
   if (family == PDFCS_DEVICEGRAY)
@@ -216,7 +216,7 @@ void CPDF_DeviceCS::TranslateImageLine(uint8_t* pDestBuf,
   }
 }
 
-CPDF_IccProfile::CPDF_IccProfile(const uint8_t* pData, FX_DWORD dwSize)
+CPDF_IccProfile::CPDF_IccProfile(const uint8_t* pData, uint32_t dwSize)
     : m_bsRGB(FALSE), m_pTransform(NULL), m_nSrcComponents(0) {
   if (dwSize == 3144 &&
       FXSYS_memcmp(pData + 0x190, "sRGB IEC61966-2.1", 17) == 0) {

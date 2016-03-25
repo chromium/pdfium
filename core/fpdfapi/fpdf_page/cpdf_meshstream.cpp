@@ -26,7 +26,7 @@ FX_BOOL CPDF_MeshStream::Load(CPDF_Stream* pShadingStream,
   if (!m_nCoordBits || !m_nCompBits)
     return FALSE;
 
-  FX_DWORD nComps = pCS->CountComponents();
+  uint32_t nComps = pCS->CountComponents();
   if (nComps > 8)
     return FALSE;
 
@@ -44,14 +44,14 @@ FX_BOOL CPDF_MeshStream::Load(CPDF_Stream* pShadingStream,
   m_xmax = pDecode->GetNumberAt(1);
   m_ymin = pDecode->GetNumberAt(2);
   m_ymax = pDecode->GetNumberAt(3);
-  for (FX_DWORD i = 0; i < m_nComps; i++) {
+  for (uint32_t i = 0; i < m_nComps; i++) {
     m_ColorMin[i] = pDecode->GetNumberAt(i * 2 + 4);
     m_ColorMax[i] = pDecode->GetNumberAt(i * 2 + 5);
   }
   return TRUE;
 }
 
-FX_DWORD CPDF_MeshStream::GetFlag() {
+uint32_t CPDF_MeshStream::GetFlag() {
   return m_BitStream.GetBits(m_nFlagBits) & 0x03;
 }
 
@@ -70,7 +70,7 @@ void CPDF_MeshStream::GetCoords(FX_FLOAT& x, FX_FLOAT& y) {
 }
 
 void CPDF_MeshStream::GetColor(FX_FLOAT& r, FX_FLOAT& g, FX_FLOAT& b) {
-  FX_DWORD i;
+  uint32_t i;
   FX_FLOAT color_value[8];
   for (i = 0; i < m_nComps; i++) {
     color_value[i] = m_ColorMin[i] +
@@ -82,7 +82,7 @@ void CPDF_MeshStream::GetColor(FX_FLOAT& r, FX_FLOAT& g, FX_FLOAT& b) {
     FX_FLOAT result[kMaxResults];
     int nResults;
     FXSYS_memset(result, 0, sizeof(result));
-    for (FX_DWORD i = 0; i < m_nFuncs; i++) {
+    for (uint32_t i = 0; i < m_nFuncs; i++) {
       if (m_pFuncs[i] && m_pFuncs[i]->CountOutputs() <= kMaxResults) {
         m_pFuncs[i]->Call(color_value, 1, result, nResults);
       }
@@ -93,9 +93,9 @@ void CPDF_MeshStream::GetColor(FX_FLOAT& r, FX_FLOAT& g, FX_FLOAT& b) {
   }
 }
 
-FX_DWORD CPDF_MeshStream::GetVertex(CPDF_MeshVertex& vertex,
+uint32_t CPDF_MeshStream::GetVertex(CPDF_MeshVertex& vertex,
                                     CFX_Matrix* pObject2Bitmap) {
-  FX_DWORD flag = GetFlag();
+  uint32_t flag = GetFlag();
   GetCoords(vertex.x, vertex.y);
   pObject2Bitmap->Transform(vertex.x, vertex.y);
   GetColor(vertex.r, vertex.g, vertex.b);

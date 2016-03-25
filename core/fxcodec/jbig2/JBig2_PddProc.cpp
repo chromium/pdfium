@@ -16,7 +16,7 @@ CJBig2_PatternDict* CJBig2_PDDProc::decode_Arith(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* gbContext,
     IFX_Pause* pPause) {
-  FX_DWORD GRAY;
+  uint32_t GRAY;
   CJBig2_Image* BHDC = nullptr;
   std::unique_ptr<CJBig2_PatternDict> pDict(new CJBig2_PatternDict());
   pDict->NUMPATS = GRAYMAX + 1;
@@ -59,7 +59,7 @@ CJBig2_PatternDict* CJBig2_PDDProc::decode_Arith(
 
 CJBig2_PatternDict* CJBig2_PDDProc::decode_MMR(CJBig2_BitStream* pStream,
                                                IFX_Pause* pPause) {
-  FX_DWORD GRAY;
+  uint32_t GRAY;
   CJBig2_Image* BHDC = nullptr;
   std::unique_ptr<CJBig2_PatternDict> pDict(new CJBig2_PatternDict());
   pDict->NUMPATS = GRAYMAX + 1;

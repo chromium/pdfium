@@ -57,7 +57,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
         return;
       }
     } else {
-      FX_DWORD fill_argb = m_Options.TranslateColor(mask_argb);
+      uint32_t fill_argb = m_Options.TranslateColor(mask_argb);
       if (bitmap_alpha < 255) {
         ((uint8_t*)&fill_argb)[3] =
             ((uint8_t*)&fill_argb)[3] * bitmap_alpha / 255;
@@ -137,7 +137,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
   std::unique_ptr<CFX_DIBitmap> pBackdrop1(new CFX_DIBitmap);
   pBackdrop1->Create(pBackdrop->GetWidth(), pBackdrop->GetHeight(),
                      FXDIB_Rgb32);
-  pBackdrop1->Clear((FX_DWORD)-1);
+  pBackdrop1->Clear((uint32_t)-1);
   pBackdrop1->CompositeBitmap(0, 0, pBackdrop->GetWidth(),
                               pBackdrop->GetHeight(), pBackdrop.get(), 0, 0);
   pBackdrop = std::move(pBackdrop1);
@@ -221,7 +221,7 @@ void CPDF_DIBTransferFunc::TranslateScanline(uint8_t* dest_buf,
           *dest_buf++ = m_RampG[FXARGB_G(src_argb)];
           *dest_buf++ = m_RampR[FXARGB_B(src_argb)];
         } else {
-          FX_DWORD src_byte = *src_buf;
+          uint32_t src_byte = *src_buf;
           *dest_buf++ = m_RampB[src_byte];
           *dest_buf++ = m_RampG[src_byte];
           *dest_buf++ = m_RampR[src_byte];
@@ -417,7 +417,7 @@ FX_BOOL CPDF_ImageRenderer::StartRenderDIBSource() {
           m_Flags |= FXRENDER_IMAGE_LOSSY;
         }
       } else if (CPDF_Array* pArray = pFilters->AsArray()) {
-        for (FX_DWORD i = 0; i < pArray->GetCount(); i++) {
+        for (uint32_t i = 0; i < pArray->GetCount(); i++) {
           CFX_ByteStringC bsDecodeType = pArray->GetConstStringAt(i);
           if (bsDecodeType == "DCTDecode" || bsDecodeType == "JPXDecode") {
             m_Flags |= FXRENDER_IMAGE_LOSSY;
@@ -494,7 +494,7 @@ FX_BOOL CPDF_ImageRenderer::Start(CPDF_RenderStatus* pStatus,
                                   FX_ARGB bitmap_argb,
                                   int bitmap_alpha,
                                   const CFX_Matrix* pImage2Device,
-                                  FX_DWORD flags,
+                                  uint32_t flags,
                                   FX_BOOL bStdCS,
                                   int blendType) {
   m_pRenderStatus = pStatus;
@@ -788,7 +788,7 @@ FX_BOOL CPDF_ImageRenderer::StartBitmapAlpha() {
     CFX_PathData path;
     path.AppendRect(0, 0, 1, 1);
     path.Transform(&m_ImageMatrix);
-    FX_DWORD fill_color =
+    uint32_t fill_color =
         ArgbEncode(0xff, m_BitmapAlpha, m_BitmapAlpha, m_BitmapAlpha);
     m_pRenderStatus->m_pDevice->DrawPath(&path, NULL, NULL, fill_color, 0,
                                          FXFILL_WINDING);
@@ -868,7 +868,7 @@ FX_BOOL CPDF_ImageRenderer::Continue(IFX_Pause* pPause) {
 }
 ICodec_ScanlineDecoder* FPDFAPI_CreateFlateDecoder(
     const uint8_t* src_buf,
-    FX_DWORD src_size,
+    uint32_t src_size,
     int width,
     int height,
     int nComps,
@@ -925,7 +925,7 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
       pCS = m_pContext->GetDocument()->LoadColorSpace(pCSObj);
       if (pCS) {
         FX_FLOAT R, G, B;
-        FX_DWORD comps = 8;
+        uint32_t comps = 8;
         if (pCS->CountComponents() > comps) {
           comps = pCS->CountComponents();
         }

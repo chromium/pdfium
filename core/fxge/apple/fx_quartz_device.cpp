@@ -43,7 +43,7 @@ void CQuartz2D::destroyGraphics(void* graphics) {
     CGContextRelease((CGContextRef)graphics);
   }
 }
-void* CQuartz2D::CreateFont(const uint8_t* pFontData, FX_DWORD dwFontSize) {
+void* CQuartz2D::CreateFont(const uint8_t* pFontData, uint32_t dwFontSize) {
   CGDataProviderRef pDataProvider =
       CGDataProviderCreateWithData(NULL, pFontData, (size_t)dwFontSize, NULL);
   if (NULL == pDataProvider) {
@@ -337,8 +337,8 @@ static CGBlendMode GetCGBlendMode(int blend_type) {
 FX_BOOL CFX_QuartzDeviceDriver::DrawPath(const CFX_PathData* pathData,
                                          const CFX_Matrix* matrix,
                                          const CFX_GraphStateData* graphState,
-                                         FX_DWORD fillArgb,
-                                         FX_DWORD strokeArgb,
+                                         uint32_t fillArgb,
+                                         uint32_t strokeArgb,
                                          int fillMode,
                                          int alpha_flag,
                                          void* pIccTransform,
@@ -414,7 +414,7 @@ FX_BOOL CFX_QuartzDeviceDriver::DrawCosmeticLine(FX_FLOAT x1,
                                                  FX_FLOAT y1,
                                                  FX_FLOAT x2,
                                                  FX_FLOAT y2,
-                                                 FX_DWORD argb,
+                                                 uint32_t argb,
                                                  int alphaFlag,
                                                  void* iccTransform,
                                                  int blend_type) {
@@ -636,7 +636,7 @@ FX_BOOL CFX_QuartzDeviceDriver::StretchDIBits(const CFX_DIBSource* pBitmap,
                                               int dest_width,
                                               int dest_height,
                                               const FX_RECT* clipRect,
-                                              FX_DWORD flags,
+                                              uint32_t flags,
                                               int alphaFlag,
                                               void* iccTransform,
                                               int blend_type) {
@@ -742,7 +742,7 @@ FX_BOOL CFX_QuartzDeviceDriver::CG_DrawGlypRun(int nChars,
                                                const CFX_Matrix* pGlyphMatrix,
                                                const CFX_Matrix* pObject2Device,
                                                FX_FLOAT font_size,
-                                               FX_DWORD argb,
+                                               uint32_t argb,
                                                int alpha_flag,
                                                void* pIccTransform) {
   if (nChars == 0) {
@@ -807,7 +807,7 @@ FX_BOOL CFX_QuartzDeviceDriver::DrawDeviceText(int nChars,
                                                CFX_FontCache* pCache,
                                                const CFX_Matrix* pObject2Device,
                                                FX_FLOAT font_size,
-                                               FX_DWORD color,
+                                               uint32_t color,
                                                int alpha_flag,
                                                void* pIccTransform) {
   if (NULL == pFont || NULL == _context) {

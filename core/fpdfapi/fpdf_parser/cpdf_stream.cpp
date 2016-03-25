@@ -10,7 +10,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
 
-CPDF_Stream::CPDF_Stream(uint8_t* pData, FX_DWORD size, CPDF_Dictionary* pDict)
+CPDF_Stream::CPDF_Stream(uint8_t* pData, uint32_t size, CPDF_Dictionary* pDict)
     : m_pDict(pDict),
       m_dwSize(size),
       m_GenNum(kMemoryBasedGenNum),
@@ -58,7 +58,7 @@ void CPDF_Stream::InitStreamInternal(CPDF_Dictionary* pDict) {
 }
 
 void CPDF_Stream::InitStream(uint8_t* pData,
-                             FX_DWORD size,
+                             uint32_t size,
                              CPDF_Dictionary* pDict) {
   InitStreamInternal(pDict);
   m_GenNum = kMemoryBasedGenNum;
@@ -74,7 +74,7 @@ void CPDF_Stream::InitStream(uint8_t* pData,
 CPDF_Object* CPDF_Stream::Clone(FX_BOOL bDirect) const {
   CPDF_StreamAcc acc;
   acc.LoadAllData(this, TRUE);
-  FX_DWORD streamSize = acc.GetSize();
+  uint32_t streamSize = acc.GetSize();
   CPDF_Dictionary* pDict = GetDict();
   if (pDict)
     pDict = ToDictionary(pDict->Clone(bDirect));
@@ -83,7 +83,7 @@ CPDF_Object* CPDF_Stream::Clone(FX_BOOL bDirect) const {
 }
 
 void CPDF_Stream::SetData(const uint8_t* pData,
-                          FX_DWORD size,
+                          uint32_t size,
                           FX_BOOL bCompressed,
                           FX_BOOL bKeepBuf) {
   if (IsMemoryBased())
@@ -110,7 +110,7 @@ void CPDF_Stream::SetData(const uint8_t* pData,
 
 FX_BOOL CPDF_Stream::ReadRawData(FX_FILESIZE offset,
                                  uint8_t* buf,
-                                 FX_DWORD size) const {
+                                 uint32_t size) const {
   if (!IsMemoryBased() && m_pFile)
     return m_pFile->ReadBlock(buf, offset, size);
 
@@ -124,7 +124,7 @@ void CPDF_Stream::InitStreamFromFile(IFX_FileRead* pFile,
                                      CPDF_Dictionary* pDict) {
   InitStreamInternal(pDict);
   m_pFile = pFile;
-  m_dwSize = (FX_DWORD)pFile->GetSize();
+  m_dwSize = (uint32_t)pFile->GetSize();
   if (m_pDict)
     m_pDict->SetAtInteger("Length", m_dwSize);
 }

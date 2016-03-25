@@ -62,7 +62,7 @@ CPDF_Object* CPDF_Reference::Clone(FX_BOOL bDirect) const {
   return new CPDF_Reference(m_pObjList, m_RefObjNum);
 }
 
-void CPDF_Reference::SetRef(CPDF_IndirectObjectHolder* pDoc, FX_DWORD objnum) {
+void CPDF_Reference::SetRef(CPDF_IndirectObjectHolder* pDoc, uint32_t objnum) {
   m_pObjList = pDoc;
   m_RefObjNum = objnum;
 }

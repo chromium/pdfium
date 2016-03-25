@@ -82,7 +82,7 @@ class CPDF_StructElementImpl final : public CPDF_StructElement {
                  int subindex = -1) override;
 
   void LoadKids(CPDF_Dictionary* pDict);
-  void LoadKid(FX_DWORD PageObjNum, CPDF_Object* pObj, CPDF_StructKid* pKid);
+  void LoadKid(uint32_t PageObjNum, CPDF_Object* pObj, CPDF_StructKid* pKid);
   CPDF_Object* GetAttr(const CFX_ByteStringC& owner,
                        const CFX_ByteStringC& name,
                        FX_BOOL bInheritable,

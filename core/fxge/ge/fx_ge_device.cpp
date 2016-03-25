@@ -113,8 +113,8 @@ void CFX_RenderDevice::UpdateClipBox() {
 FX_BOOL CFX_RenderDevice::DrawPath(const CFX_PathData* pPathData,
                                    const CFX_Matrix* pObject2Device,
                                    const CFX_GraphStateData* pGraphState,
-                                   FX_DWORD fill_color,
-                                   FX_DWORD stroke_color,
+                                   uint32_t fill_color,
+                                   uint32_t stroke_color,
                                    int fill_mode,
                                    int alpha_flag,
                                    void* pIccTransform,
@@ -201,7 +201,7 @@ FX_BOOL CFX_RenderDevice::DrawPath(const CFX_PathData* pPathData,
                                    m_pDeviceDriver->GetDriverType())) {
       CFX_GraphStateData graphState;
       graphState.m_LineWidth = 0.0f;
-      FX_DWORD strokecolor = fill_color;
+      uint32_t strokecolor = fill_color;
       if (bThin) {
         if (FXGETFLAG_COLORTYPE(alpha_flag)) {
           FXSETFLAG_ALPHA_STROKE(alpha_flag, fill_alpha >> 2);
@@ -244,8 +244,8 @@ FX_BOOL CFX_RenderDevice::DrawFillStrokePath(
     const CFX_PathData* pPathData,
     const CFX_Matrix* pObject2Device,
     const CFX_GraphStateData* pGraphState,
-    FX_DWORD fill_color,
-    FX_DWORD stroke_color,
+    uint32_t fill_color,
+    uint32_t stroke_color,
     int fill_mode,
     int alpha_flag,
     void* pIccTransform,
@@ -302,7 +302,7 @@ FX_BOOL CFX_RenderDevice::DrawFillStrokePath(
 
 FX_BOOL CFX_RenderDevice::SetPixel(int x,
                                    int y,
-                                   FX_DWORD color,
+                                   uint32_t color,
                                    int alpha_flag,
                                    void* pIccTransform) {
   if (m_pDeviceDriver->SetPixel(x, y, color, alpha_flag, pIccTransform)) {
@@ -312,7 +312,7 @@ FX_BOOL CFX_RenderDevice::SetPixel(int x,
   return FillRect(&rect, color, alpha_flag, pIccTransform);
 }
 FX_BOOL CFX_RenderDevice::FillRect(const FX_RECT* pRect,
-                                   FX_DWORD fill_color,
+                                   uint32_t fill_color,
                                    int alpha_flag,
                                    void* pIccTransform,
                                    int blend_type) {
@@ -343,7 +343,7 @@ FX_BOOL CFX_RenderDevice::DrawCosmeticLine(FX_FLOAT x1,
                                            FX_FLOAT y1,
                                            FX_FLOAT x2,
                                            FX_FLOAT y2,
-                                           FX_DWORD color,
+                                           uint32_t color,
                                            int fill_mode,
                                            int alpha_flag,
                                            void* pIccTransform,
@@ -436,7 +436,7 @@ FX_BOOL CFX_RenderDevice::StretchDIBits(const CFX_DIBSource* pBitmap,
                                         int top,
                                         int dest_width,
                                         int dest_height,
-                                        FX_DWORD flags,
+                                        uint32_t flags,
                                         void* pIccTransform,
                                         int blend_mode) {
   FX_RECT dest_rect(left, top, left + dest_width, top + dest_height);
@@ -452,7 +452,7 @@ FX_BOOL CFX_RenderDevice::StretchDIBits(const CFX_DIBSource* pBitmap,
 FX_BOOL CFX_RenderDevice::SetBitMask(const CFX_DIBSource* pBitmap,
                                      int left,
                                      int top,
-                                     FX_DWORD argb,
+                                     uint32_t argb,
                                      int alpha_flag,
                                      void* pIccTransform) {
   FX_RECT src_rect(0, 0, pBitmap->GetWidth(), pBitmap->GetHeight());
@@ -465,8 +465,8 @@ FX_BOOL CFX_RenderDevice::StretchBitMask(const CFX_DIBSource* pBitmap,
                                          int top,
                                          int dest_width,
                                          int dest_height,
-                                         FX_DWORD argb,
-                                         FX_DWORD flags,
+                                         uint32_t argb,
+                                         uint32_t flags,
                                          int alpha_flag,
                                          void* pIccTransform) {
   FX_RECT dest_rect(left, top, left + dest_width, top + dest_height);
@@ -478,9 +478,9 @@ FX_BOOL CFX_RenderDevice::StretchBitMask(const CFX_DIBSource* pBitmap,
 }
 FX_BOOL CFX_RenderDevice::StartDIBits(const CFX_DIBSource* pBitmap,
                                       int bitmap_alpha,
-                                      FX_DWORD argb,
+                                      uint32_t argb,
                                       const CFX_Matrix* pMatrix,
-                                      FX_DWORD flags,
+                                      uint32_t flags,
                                       void*& handle,
                                       int alpha_flag,
                                       void* pIccTransform,

@@ -18,13 +18,13 @@ int CJBig2_HuffmanDecoder::decodeAValue(CJBig2_HuffmanTable* pTable,
   int nVal = 0;
   int nBits = 0;
   while (1) {
-    FX_DWORD nTmp;
+    uint32_t nTmp;
     if (m_pStream->read1Bit(&nTmp) == -1)
       break;
 
     nVal = (nVal << 1) | nTmp;
     ++nBits;
-    for (FX_DWORD i = 0; i < pTable->Size(); ++i) {
+    for (uint32_t i = 0; i < pTable->Size(); ++i) {
       if (pTable->GetPREFLEN()[i] == nBits && pTable->GetCODES()[i] == nVal) {
         if (pTable->IsHTOOB() && i == pTable->Size() - 1)
           return JBIG2_OOB;
@@ -32,7 +32,7 @@ int CJBig2_HuffmanDecoder::decodeAValue(CJBig2_HuffmanTable* pTable,
         if (m_pStream->readNBits(pTable->GetRANGELEN()[i], &nTmp) == -1)
           return -1;
 
-        FX_DWORD offset = pTable->IsHTOOB() ? 3 : 2;
+        uint32_t offset = pTable->IsHTOOB() ? 3 : 2;
         if (i == pTable->Size() - offset)
           *nResult = pTable->GetRANGELOW()[i] - nTmp;
         else

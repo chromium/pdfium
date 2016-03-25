@@ -32,7 +32,7 @@ class CPDF_ColorState : public CFX_CountRef<CPDF_ColorStateData> {
 
  private:
   void SetColor(CPDF_Color& color,
-                FX_DWORD& rgb,
+                uint32_t& rgb,
                 CPDF_ColorSpace* pCS,
                 FX_FLOAT* pValue,
                 int nValues);

@@ -14,20 +14,20 @@ class CFX_Palette {
   ~CFX_Palette();
 
   FX_BOOL BuildPalette(const CFX_DIBSource* pBitmap);
-  FX_DWORD* GetPalette() const { return m_pPalette; }
-  FX_DWORD* GetColorLut() const { return m_cLut; }
-  FX_DWORD* GetAmountLut() const { return m_aLut; }
+  uint32_t* GetPalette() const { return m_pPalette; }
+  uint32_t* GetColorLut() const { return m_cLut; }
+  uint32_t* GetAmountLut() const { return m_aLut; }
   int32_t Getlut() const { return m_lut; }
 
  protected:
-  FX_DWORD* m_pPalette;
-  FX_DWORD* m_cLut;
-  FX_DWORD* m_aLut;
+  uint32_t* m_pPalette;
+  uint32_t* m_cLut;
+  uint32_t* m_aLut;
   int m_lut;
 };
-int _Partition(FX_DWORD* alut, FX_DWORD* clut, int l, int r) {
-  FX_DWORD p_a = alut[l];
-  FX_DWORD p_c = clut[l];
+int _Partition(uint32_t* alut, uint32_t* clut, int l, int r) {
+  uint32_t p_a = alut[l];
+  uint32_t p_c = clut[l];
   while (l < r) {
     while (l < r && alut[r] >= p_a) {
       r--;
@@ -48,34 +48,34 @@ int _Partition(FX_DWORD* alut, FX_DWORD* clut, int l, int r) {
   clut[l] = p_c;
   return l;
 }
-void _Qsort(FX_DWORD* alut, FX_DWORD* clut, int l, int r) {
+void _Qsort(uint32_t* alut, uint32_t* clut, int l, int r) {
   if (l < r) {
     int pI = _Partition(alut, clut, l, r);
     _Qsort(alut, clut, l, pI - 1);
     _Qsort(alut, clut, pI + 1, r);
   }
 }
-void _ColorDecode(FX_DWORD pal_v, uint8_t& r, uint8_t& g, uint8_t& b) {
+void _ColorDecode(uint32_t pal_v, uint8_t& r, uint8_t& g, uint8_t& b) {
   r = (uint8_t)((pal_v & 0xf00) >> 4);
   g = (uint8_t)(pal_v & 0x0f0);
   b = (uint8_t)((pal_v & 0x00f) << 4);
 }
-void _Obtain_Pal(FX_DWORD* aLut,
-                 FX_DWORD* cLut,
-                 FX_DWORD* dest_pal,
-                 FX_DWORD lut) {
-  FX_DWORD lut_1 = lut - 1;
+void _Obtain_Pal(uint32_t* aLut,
+                 uint32_t* cLut,
+                 uint32_t* dest_pal,
+                 uint32_t lut) {
+  uint32_t lut_1 = lut - 1;
   for (int row = 0; row < 256; row++) {
     int lut_offset = lut_1 - row;
     if (lut_offset < 0) {
       lut_offset += 256;
     }
-    FX_DWORD color = cLut[lut_offset];
+    uint32_t color = cLut[lut_offset];
     uint8_t r;
     uint8_t g;
     uint8_t b;
     _ColorDecode(color, r, g, b);
-    dest_pal[row] = ((FX_DWORD)r << 16) | ((FX_DWORD)g << 8) | b | 0xff000000;
+    dest_pal[row] = ((uint32_t)r << 16) | ((uint32_t)g << 8) | b | 0xff000000;
     aLut[lut_offset] = row;
   }
 }
@@ -97,7 +97,7 @@ FX_BOOL CFX_Palette::BuildPalette(const CFX_DIBSource* pBitmap) {
     return FALSE;
   }
   FX_Free(m_pPalette);
-  m_pPalette = FX_Alloc(FX_DWORD, 256);
+  m_pPalette = FX_Alloc(uint32_t, 256);
   int bpp = pBitmap->GetBPP() / 8;
   int width = pBitmap->GetWidth();
   int height = pBitmap->GetHeight();
@@ -105,18 +105,18 @@ FX_BOOL CFX_Palette::BuildPalette(const CFX_DIBSource* pBitmap) {
   m_cLut = NULL;
   FX_Free(m_aLut);
   m_aLut = NULL;
-  m_cLut = FX_Alloc(FX_DWORD, 4096);
-  m_aLut = FX_Alloc(FX_DWORD, 4096);
+  m_cLut = FX_Alloc(uint32_t, 4096);
+  m_aLut = FX_Alloc(uint32_t, 4096);
   int row, col;
   m_lut = 0;
   for (row = 0; row < height; row++) {
     uint8_t* scan_line = (uint8_t*)pBitmap->GetScanline(row);
     for (col = 0; col < width; col++) {
       uint8_t* src_port = scan_line + col * bpp;
-      FX_DWORD b = src_port[0] & 0xf0;
-      FX_DWORD g = src_port[1] & 0xf0;
-      FX_DWORD r = src_port[2] & 0xf0;
-      FX_DWORD index = (r << 4) + g + (b >> 4);
+      uint32_t b = src_port[0] & 0xf0;
+      uint32_t g = src_port[1] & 0xf0;
+      uint32_t r = src_port[2] & 0xf0;
+      uint32_t index = (r << 4) + g + (b >> 4);
       m_aLut[index]++;
     }
   }
@@ -176,10 +176,10 @@ FX_BOOL ConvertBuffer_1bppPlt2Gray(uint8_t* dest_buf,
                                    int src_left,
                                    int src_top,
                                    void* pIccTransform) {
-  FX_DWORD* src_plt = pSrcBitmap->GetPalette();
+  uint32_t* src_plt = pSrcBitmap->GetPalette();
   uint8_t gray[2];
   if (pIccTransform) {
-    FX_DWORD plt[2];
+    uint32_t plt[2];
     if (pSrcBitmap->IsCmykImage()) {
       plt[0] = FXCMYK_TODIB(src_plt[0]);
       plt[1] = FXCMYK_TODIB(src_plt[1]);
@@ -238,10 +238,10 @@ FX_BOOL ConvertBuffer_8bppPlt2Gray(uint8_t* dest_buf,
                                    int src_left,
                                    int src_top,
                                    void* pIccTransform) {
-  FX_DWORD* src_plt = pSrcBitmap->GetPalette();
+  uint32_t* src_plt = pSrcBitmap->GetPalette();
   uint8_t gray[256];
   if (pIccTransform) {
-    FX_DWORD plt[256];
+    uint32_t plt[256];
     if (pSrcBitmap->IsCmykImage()) {
       for (int i = 0; i < 256; i++) {
         plt[i] = FXCMYK_TODIB(src_plt[i]);
@@ -323,10 +323,10 @@ FX_BOOL ConvertBuffer_RgbOrCmyk2Gray(uint8_t* dest_buf,
             pSrcBitmap->GetScanline(src_top + row) + src_left * 4;
         for (int col = 0; col < width; col++) {
           uint8_t r, g, b;
-          AdobeCMYK_to_sRGB1(FXSYS_GetCValue((FX_DWORD)src_scan[0]),
-                             FXSYS_GetMValue((FX_DWORD)src_scan[1]),
-                             FXSYS_GetYValue((FX_DWORD)src_scan[2]),
-                             FXSYS_GetKValue((FX_DWORD)src_scan[3]), r, g, b);
+          AdobeCMYK_to_sRGB1(FXSYS_GetCValue((uint32_t)src_scan[0]),
+                             FXSYS_GetMValue((uint32_t)src_scan[1]),
+                             FXSYS_GetYValue((uint32_t)src_scan[2]),
+                             FXSYS_GetKValue((uint32_t)src_scan[3]), r, g, b);
           *dest_scan++ = FXRGB2GRAY(r, g, b);
           src_scan += 4;
         }
@@ -380,14 +380,14 @@ FX_BOOL ConvertBuffer_Plt2PltRgb8(uint8_t* dest_buf,
                                   const CFX_DIBSource* pSrcBitmap,
                                   int src_left,
                                   int src_top,
-                                  FX_DWORD* dst_plt,
+                                  uint32_t* dst_plt,
                                   void* pIccTransform) {
   ConvertBuffer_IndexCopy(dest_buf, dest_pitch, width, height, pSrcBitmap,
                           src_left, src_top);
-  FX_DWORD* src_plt = pSrcBitmap->GetPalette();
+  uint32_t* src_plt = pSrcBitmap->GetPalette();
   int plt_size = pSrcBitmap->GetPaletteSize();
   if (pIccTransform) {
-    FX_DWORD plt[256];
+    uint32_t plt[256];
     uint8_t* bgr_ptr = (uint8_t*)plt;
     if (pSrcBitmap->IsCmykImage()) {
       for (int i = 0; i < plt_size; i++) {
@@ -431,18 +431,18 @@ FX_BOOL ConvertBuffer_Rgb2PltRgb8_NoTransform(uint8_t* dest_buf,
                                               const CFX_DIBSource* pSrcBitmap,
                                               int src_left,
                                               int src_top,
-                                              FX_DWORD* dst_plt) {
+                                              uint32_t* dst_plt) {
   int bpp = pSrcBitmap->GetBPP() / 8;
   int row, col;
   CFX_Palette palette;
   palette.BuildPalette(pSrcBitmap);
-  FX_DWORD* cLut = palette.GetColorLut();
-  FX_DWORD* aLut = palette.GetAmountLut();
+  uint32_t* cLut = palette.GetColorLut();
+  uint32_t* aLut = palette.GetAmountLut();
   if (!cLut || !aLut) {
     return FALSE;
   }
   int lut = palette.Getlut();
-  FX_DWORD* pPalette = palette.GetPalette();
+  uint32_t* pPalette = palette.GetPalette();
   if (lut > 256) {
     int err, min_err;
     int lut_256 = lut - 256;
@@ -452,7 +452,7 @@ FX_BOOL ConvertBuffer_Rgb2PltRgb8_NoTransform(uint8_t* dest_buf,
       _ColorDecode(cLut[row], r, g, b);
       int clrindex = 0;
       for (int col = 0; col < 256; col++) {
-        FX_DWORD p_color = *(pPalette + col);
+        uint32_t p_color = *(pPalette + col);
         int d_r = r - (uint8_t)(p_color >> 16);
         int d_g = g - (uint8_t)(p_color >> 8);
         int d_b = b - (uint8_t)(p_color);
@@ -475,7 +475,7 @@ FX_BOOL ConvertBuffer_Rgb2PltRgb8_NoTransform(uint8_t* dest_buf,
       int r = src_port[2] & 0xf0;
       int g = src_port[1] & 0xf0;
       int b = src_port[0] & 0xf0;
-      FX_DWORD clrindex = (r << 4) + g + (b >> 4);
+      uint32_t clrindex = (r << 4) + g + (b >> 4);
       for (int i = lut_1; i >= 0; i--)
         if (clrindex == cLut[i]) {
           *(dest_scan + col) = (uint8_t)(aLut[i]);
@@ -483,7 +483,7 @@ FX_BOOL ConvertBuffer_Rgb2PltRgb8_NoTransform(uint8_t* dest_buf,
         }
     }
   }
-  FXSYS_memcpy(dst_plt, pPalette, sizeof(FX_DWORD) * 256);
+  FXSYS_memcpy(dst_plt, pPalette, sizeof(uint32_t) * 256);
   return TRUE;
 }
 FX_BOOL ConvertBuffer_Rgb2PltRgb8(uint8_t* dest_buf,
@@ -493,7 +493,7 @@ FX_BOOL ConvertBuffer_Rgb2PltRgb8(uint8_t* dest_buf,
                                   const CFX_DIBSource* pSrcBitmap,
                                   int src_left,
                                   int src_top,
-                                  FX_DWORD* dst_plt,
+                                  uint32_t* dst_plt,
                                   void* pIccTransform) {
   FX_BOOL ret = ConvertBuffer_Rgb2PltRgb8_NoTransform(
       dest_buf, dest_pitch, width, height, pSrcBitmap, src_left, src_top,
@@ -574,8 +574,8 @@ FX_BOOL ConvertBuffer_1bppPlt2Rgb(FXDIB_Format dst_format,
                                   int src_top,
                                   void* pIccTransform) {
   int comps = (dst_format & 0xff) / 8;
-  FX_DWORD* src_plt = pSrcBitmap->GetPalette();
-  FX_DWORD plt[2];
+  uint32_t* src_plt = pSrcBitmap->GetPalette();
+  uint32_t plt[2];
   uint8_t* bgr_ptr = (uint8_t*)plt;
   if (pSrcBitmap->IsCmykImage()) {
     plt[0] = FXCMYK_TODIB(src_plt[0]);
@@ -633,8 +633,8 @@ FX_BOOL ConvertBuffer_8bppPlt2Rgb(FXDIB_Format dst_format,
                                   int src_top,
                                   void* pIccTransform) {
   int comps = (dst_format & 0xff) / 8;
-  FX_DWORD* src_plt = pSrcBitmap->GetPalette();
-  FX_DWORD plt[256];
+  uint32_t* src_plt = pSrcBitmap->GetPalette();
+  uint32_t plt[256];
   uint8_t* bgr_ptr = (uint8_t*)plt;
   if (!pSrcBitmap->IsCmykImage()) {
     for (int i = 0; i < 256; i++) {
@@ -817,7 +817,7 @@ FX_BOOL ConvertBuffer(FXDIB_Format dest_format,
                       const CFX_DIBSource* pSrcBitmap,
                       int src_left,
                       int src_top,
-                      FX_DWORD*& d_pal,
+                      uint32_t*& d_pal,
                       void* pIccTransform) {
   FXDIB_Format src_format = pSrcBitmap->GetFormat();
   if (!CFX_GEModule::Get()->GetCodecModule() ||
@@ -864,7 +864,7 @@ FX_BOOL ConvertBuffer(FXDIB_Format dest_format,
                              height, pSrcBitmap, src_left, src_top, d_pal,
                              pIccTransform);
       }
-      d_pal = FX_Alloc(FX_DWORD, 256);
+      d_pal = FX_Alloc(uint32_t, 256);
       if (((src_format & 0xff) == 1 || (src_format & 0xff) == 8) &&
           pSrcBitmap->GetPalette()) {
         return ConvertBuffer_Plt2PltRgb8(dest_buf, dest_pitch, width, height,
@@ -997,7 +997,7 @@ CFX_DIBitmap* CFX_DIBSource::CloneConvert(FXDIB_Format dest_format,
     delete pClone;
     return NULL;
   }
-  FX_DWORD* pal_8bpp = NULL;
+  uint32_t* pal_8bpp = NULL;
   ret = ConvertBuffer(dest_format, pClone->GetBuffer(), pClone->GetPitch(),
                       m_Width, m_Height, this, 0, 0, pal_8bpp, pIccTransform);
   if (!ret) {
@@ -1075,7 +1075,7 @@ FX_BOOL CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format,
     }
   }
   FX_BOOL ret = FALSE;
-  FX_DWORD* pal_8bpp = NULL;
+  uint32_t* pal_8bpp = NULL;
   ret = ConvertBuffer(dest_format, dest_buf, dest_pitch, m_Width, m_Height,
                       this, 0, 0, pal_8bpp, pIccTransform);
   if (!ret) {

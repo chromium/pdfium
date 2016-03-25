@@ -38,35 +38,35 @@ class CPDF_CIDFont : public CPDF_Font {
   bool IsCIDFont() const override;
   const CPDF_CIDFont* AsCIDFont() const override;
   CPDF_CIDFont* AsCIDFont() override;
-  int GlyphFromCharCode(FX_DWORD charcode, FX_BOOL* pVertGlyph = NULL) override;
-  int GetCharWidthF(FX_DWORD charcode, int level = 0) override;
-  FX_RECT GetCharBBox(FX_DWORD charcode, int level = 0) override;
-  FX_DWORD GetNextChar(const FX_CHAR* pString,
+  int GlyphFromCharCode(uint32_t charcode, FX_BOOL* pVertGlyph = NULL) override;
+  int GetCharWidthF(uint32_t charcode, int level = 0) override;
+  FX_RECT GetCharBBox(uint32_t charcode, int level = 0) override;
+  uint32_t GetNextChar(const FX_CHAR* pString,
                        int nStrLen,
                        int& offset) const override;
   int CountChar(const FX_CHAR* pString, int size) const override;
-  int AppendChar(FX_CHAR* str, FX_DWORD charcode) const override;
-  int GetCharSize(FX_DWORD charcode) const override;
+  int AppendChar(FX_CHAR* str, uint32_t charcode) const override;
+  int GetCharSize(uint32_t charcode) const override;
   FX_BOOL IsVertWriting() const override;
   FX_BOOL IsUnicodeCompatible() const override;
   FX_BOOL Load() override;
-  CFX_WideString UnicodeFromCharCode(FX_DWORD charcode) const override;
-  FX_DWORD CharCodeFromUnicode(FX_WCHAR Unicode) const override;
+  CFX_WideString UnicodeFromCharCode(uint32_t charcode) const override;
+  uint32_t CharCodeFromUnicode(FX_WCHAR Unicode) const override;
 
   FX_BOOL LoadGB2312();
-  uint16_t CIDFromCharCode(FX_DWORD charcode) const;
+  uint16_t CIDFromCharCode(uint32_t charcode) const;
   const uint8_t* GetCIDTransform(uint16_t CID) const;
   short GetVertWidth(uint16_t CID) const;
   void GetVertOrigin(uint16_t CID, short& vx, short& vy) const;
-  virtual FX_BOOL IsFontStyleFromCharCode(FX_DWORD charcode) const;
+  virtual FX_BOOL IsFontStyleFromCharCode(uint32_t charcode) const;
 
  protected:
-  int GetGlyphIndex(FX_DWORD unicodeb, FX_BOOL* pVertGlyph);
+  int GetGlyphIndex(uint32_t unicodeb, FX_BOOL* pVertGlyph);
   void LoadMetricsArray(CPDF_Array* pArray,
-                        CFX_ArrayTemplate<FX_DWORD>& result,
+                        CFX_ArrayTemplate<uint32_t>& result,
                         int nElements);
   void LoadSubstFont();
-  FX_WCHAR GetUnicodeFromCharCode(FX_DWORD charcode) const;
+  FX_WCHAR GetUnicodeFromCharCode(uint32_t charcode) const;
 
   CPDF_CMap* m_pCMap;
   CPDF_CMap* m_pAllocatedCMap;
@@ -78,10 +78,10 @@ class CPDF_CIDFont : public CPDF_Font {
   uint16_t m_DefaultWidth;
   uint16_t* m_pAnsiWidths;
   FX_SMALL_RECT m_CharBBox[256];
-  CFX_ArrayTemplate<FX_DWORD> m_WidthList;
+  CFX_ArrayTemplate<uint32_t> m_WidthList;
   short m_DefaultVY;
   short m_DefaultW1;
-  CFX_ArrayTemplate<FX_DWORD> m_VertMetrics;
+  CFX_ArrayTemplate<uint32_t> m_VertMetrics;
   FX_BOOL m_bAdobeCourierStd;
   CFX_CTTGSUBTable* m_pTTGSUBTable;
 };

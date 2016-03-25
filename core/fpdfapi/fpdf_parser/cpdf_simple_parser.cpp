@@ -8,13 +8,13 @@
 
 #include "core/fpdfapi/fpdf_parser/fpdf_parser_utility.h"
 
-CPDF_SimpleParser::CPDF_SimpleParser(const uint8_t* pData, FX_DWORD dwSize)
+CPDF_SimpleParser::CPDF_SimpleParser(const uint8_t* pData, uint32_t dwSize)
     : m_pData(pData), m_dwSize(dwSize), m_dwCurPos(0) {}
 
 CPDF_SimpleParser::CPDF_SimpleParser(const CFX_ByteStringC& str)
     : m_pData(str.GetPtr()), m_dwSize(str.GetLength()), m_dwCurPos(0) {}
 
-void CPDF_SimpleParser::ParseWord(const uint8_t*& pStart, FX_DWORD& dwSize) {
+void CPDF_SimpleParser::ParseWord(const uint8_t*& pStart, uint32_t& dwSize) {
   pStart = nullptr;
   dwSize = 0;
   uint8_t ch;
@@ -40,7 +40,7 @@ void CPDF_SimpleParser::ParseWord(const uint8_t*& pStart, FX_DWORD& dwSize) {
     }
   }
 
-  FX_DWORD start_pos = m_dwCurPos - 1;
+  uint32_t start_pos = m_dwCurPos - 1;
   pStart = m_pData + start_pos;
   if (PDFCharIsDelimiter(ch)) {
     if (ch == '/') {
@@ -93,7 +93,7 @@ void CPDF_SimpleParser::ParseWord(const uint8_t*& pStart, FX_DWORD& dwSize) {
 
 CFX_ByteStringC CPDF_SimpleParser::GetWord() {
   const uint8_t* pStart;
-  FX_DWORD dwSize;
+  uint32_t dwSize;
   ParseWord(pStart, dwSize);
   if (dwSize == 1 && pStart[0] == '<') {
     while (m_dwCurPos < m_dwSize && m_pData[m_dwCurPos] != '>') {
@@ -139,7 +139,7 @@ CFX_ByteStringC CPDF_SimpleParser::GetWord() {
 bool CPDF_SimpleParser::FindTagParamFromStart(const CFX_ByteStringC& token,
                                               int nParams) {
   nParams++;
-  FX_DWORD* pBuf = FX_Alloc(FX_DWORD, nParams);
+  uint32_t* pBuf = FX_Alloc(uint32_t, nParams);
   int buf_index = 0;
   int buf_count = 0;
   m_dwCurPos = 0;

@@ -35,8 +35,8 @@ class CPDF_Object {
   };
 
   virtual Type GetType() const = 0;
-  FX_DWORD GetObjNum() const { return m_ObjNum; }
-  FX_DWORD GetGenNum() const { return m_GenNum; }
+  uint32_t GetObjNum() const { return m_ObjNum; }
+  uint32_t GetGenNum() const { return m_GenNum; }
 
   virtual CPDF_Object* Clone(FX_BOOL bDirect = FALSE) const = 0;
   virtual CPDF_Object* GetDirect() const;
@@ -85,8 +85,8 @@ class CPDF_Object {
   virtual ~CPDF_Object();
   void Destroy() { delete this; }
 
-  FX_DWORD m_ObjNum;
-  FX_DWORD m_GenNum;
+  uint32_t m_ObjNum;
+  uint32_t m_GenNum;
 
   friend class CPDF_IndirectObjectHolder;
   friend class CPDF_Parser;

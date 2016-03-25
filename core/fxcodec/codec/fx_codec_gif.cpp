@@ -37,7 +37,7 @@ static uint8_t* gif_ask_buf_for_pal(gif_decompress_struct_p gif_ptr,
       p->child_ptr, gif_get_frame_num(gif_ptr), pal_size);
 }
 static void gif_record_current_position(gif_decompress_struct_p gif_ptr,
-                                        FX_DWORD* cur_pos_ptr) {
+                                        uint32_t* cur_pos_ptr) {
   FXGIF_Context* p = (FXGIF_Context*)gif_ptr->context_ptr;
   CCodec_GifModule* pModule = (CCodec_GifModule*)p->parent_ptr;
   pModule->RecordCurrentPositionCallback(p->child_ptr, *cur_pos_ptr);
@@ -50,7 +50,7 @@ static void gif_read_scanline(gif_decompress_struct_p gif_ptr,
   pModule->ReadScanlineCallback(p->child_ptr, row_num, row_buf);
 }
 static FX_BOOL gif_get_record_position(gif_decompress_struct_p gif_ptr,
-                                       FX_DWORD cur_pos,
+                                       uint32_t cur_pos,
                                        int32_t left,
                                        int32_t top,
                                        int32_t width,
@@ -155,7 +155,7 @@ int32_t CCodec_GifModule::LoadFrame(void* pContext,
       if (p->gif_ptr->cmt_data_ptr) {
         const uint8_t* buf =
             (const uint8_t*)p->gif_ptr->cmt_data_ptr->GetBuffer(0);
-        FX_DWORD len = p->gif_ptr->cmt_data_ptr->GetLength();
+        uint32_t len = p->gif_ptr->cmt_data_ptr->GetLength();
         if (len > 21) {
           uint8_t size = *buf++;
           if (size) {
@@ -174,14 +174,14 @@ int32_t CCodec_GifModule::LoadFrame(void* pContext,
   }
   return ret;
 }
-FX_DWORD CCodec_GifModule::GetAvailInput(void* pContext,
+uint32_t CCodec_GifModule::GetAvailInput(void* pContext,
                                          uint8_t** avial_buf_ptr) {
   FXGIF_Context* p = (FXGIF_Context*)pContext;
   return gif_get_avail_input(p->gif_ptr, avial_buf_ptr);
 }
 void CCodec_GifModule::Input(void* pContext,
                              const uint8_t* src_buf,
-                             FX_DWORD src_size) {
+                             uint32_t src_size) {
   FXGIF_Context* p = (FXGIF_Context*)pContext;
   gif_input_buffer(p->gif_ptr, (uint8_t*)src_buf, src_size);
 }

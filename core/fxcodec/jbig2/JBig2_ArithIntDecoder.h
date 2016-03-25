@@ -30,7 +30,7 @@ class CJBig2_ArithIaidDecoder {
   explicit CJBig2_ArithIaidDecoder(unsigned char SBSYMCODELENA);
   ~CJBig2_ArithIaidDecoder();
 
-  void decode(CJBig2_ArithDecoder* pArithDecoder, FX_DWORD* nResult);
+  void decode(CJBig2_ArithDecoder* pArithDecoder, uint32_t* nResult);
 
  private:
   std::vector<JBig2ArithCtx> m_IAID;

@@ -2149,7 +2149,7 @@ inline void _CompositeRow_1bppPal2Graya(uint8_t* dest_scan,
 }
 inline void _CompositeRow_8bppRgb2Rgb_NoBlend(uint8_t* dest_scan,
                                               const uint8_t* src_scan,
-                                              FX_DWORD* pPalette,
+                                              uint32_t* pPalette,
                                               int pixel_count,
                                               int DestBpp,
                                               const uint8_t* clip_scan,
@@ -2217,7 +2217,7 @@ inline void _CompositeRow_8bppRgb2Rgb_NoBlend(uint8_t* dest_scan,
 inline void _CompositeRow_1bppRgb2Rgb_NoBlend(uint8_t* dest_scan,
                                               const uint8_t* src_scan,
                                               int src_left,
-                                              FX_DWORD* pPalette,
+                                              uint32_t* pPalette,
                                               int pixel_count,
                                               int DestBpp,
                                               const uint8_t* clip_scan) {
@@ -2260,7 +2260,7 @@ inline void _CompositeRow_1bppRgb2Rgb_NoBlend(uint8_t* dest_scan,
 inline void _CompositeRow_8bppRgb2Argb_NoBlend(uint8_t* dest_scan,
                                                const uint8_t* src_scan,
                                                int width,
-                                               FX_DWORD* pPalette,
+                                               uint32_t* pPalette,
                                                const uint8_t* clip_scan,
                                                const uint8_t* src_alpha_scan) {
   if (src_alpha_scan) {
@@ -2345,7 +2345,7 @@ inline void _CompositeRow_8bppRgb2Argb_NoBlend(uint8_t* dest_scan,
 void _CompositeRow_8bppRgb2Rgba_NoBlend(uint8_t* dest_scan,
                                         const uint8_t* src_scan,
                                         int width,
-                                        FX_DWORD* pPalette,
+                                        uint32_t* pPalette,
                                         const uint8_t* clip_scan,
                                         uint8_t* dest_alpha_scan,
                                         const uint8_t* src_alpha_scan) {
@@ -2433,7 +2433,7 @@ inline void _CompositeRow_1bppRgb2Argb_NoBlend(uint8_t* dest_scan,
                                                const uint8_t* src_scan,
                                                int src_left,
                                                int width,
-                                               FX_DWORD* pPalette,
+                                               uint32_t* pPalette,
                                                const uint8_t* clip_scan) {
   int reset_r, reset_g, reset_b;
   int set_r, set_g, set_b;
@@ -2483,7 +2483,7 @@ void _CompositeRow_1bppRgb2Rgba_NoBlend(uint8_t* dest_scan,
                                         const uint8_t* src_scan,
                                         int src_left,
                                         int width,
-                                        FX_DWORD* pPalette,
+                                        uint32_t* pPalette,
                                         const uint8_t* clip_scan,
                                         uint8_t* dest_alpha_scan) {
   int reset_r, reset_g, reset_b;
@@ -3959,7 +3959,7 @@ void _CompositeRow_BitMask2Rgb_RgbByteOrder(uint8_t* dest_scan,
 }
 inline FX_BOOL _ScanlineCompositor_InitSourceMask(FXDIB_Format dest_format,
                                                   int alpha_flag,
-                                                  FX_DWORD mask_color,
+                                                  uint32_t mask_color,
                                                   int& mask_alpha,
                                                   int& mask_red,
                                                   int& mask_green,
@@ -4026,8 +4026,8 @@ inline FX_BOOL _ScanlineCompositor_InitSourceMask(FXDIB_Format dest_format,
 }
 inline void _ScanlineCompositor_InitSourcePalette(FXDIB_Format src_format,
                                                   FXDIB_Format dest_format,
-                                                  FX_DWORD*& pDestPalette,
-                                                  FX_DWORD* pSrcPalette,
+                                                  uint32_t*& pDestPalette,
+                                                  uint32_t* pSrcPalette,
                                                   void* icc_module,
                                                   void* pIccTransform) {
   ICodec_IccModule* pIccModule = (ICodec_IccModule*)icc_module;
@@ -4039,9 +4039,9 @@ inline void _ScanlineCompositor_InitSourcePalette(FXDIB_Format src_format,
       if ((dest_format & 0xff) == 8) {
         int pal_count = 1 << (src_format & 0xff);
         uint8_t* gray_pal = FX_Alloc(uint8_t, pal_count);
-        pDestPalette = (FX_DWORD*)gray_pal;
+        pDestPalette = (uint32_t*)gray_pal;
         for (int i = 0; i < pal_count; i++) {
-          FX_DWORD color = isSrcCmyk ? FXCMYK_TODIB(pSrcPalette[i])
+          uint32_t color = isSrcCmyk ? FXCMYK_TODIB(pSrcPalette[i])
                                      : FXARGB_TODIB(pSrcPalette[i]);
           pIccModule->TranslateScanline(pIccTransform, gray_pal,
                                         (const uint8_t*)&color, 1);
@@ -4049,9 +4049,9 @@ inline void _ScanlineCompositor_InitSourcePalette(FXDIB_Format src_format,
         }
       } else {
         int palsize = 1 << (src_format & 0xff);
-        pDestPalette = FX_Alloc(FX_DWORD, palsize);
+        pDestPalette = FX_Alloc(uint32_t, palsize);
         for (int i = 0; i < palsize; i++) {
-          FX_DWORD color = isSrcCmyk ? FXCMYK_TODIB(pSrcPalette[i])
+          uint32_t color = isSrcCmyk ? FXCMYK_TODIB(pSrcPalette[i])
                                      : FXARGB_TODIB(pSrcPalette[i]);
           pIccModule->TranslateScanline(pIccTransform, (uint8_t*)&color,
                                         (const uint8_t*)&color, 1);
@@ -4073,9 +4073,9 @@ inline void _ScanlineCompositor_InitSourcePalette(FXDIB_Format src_format,
       if ((dest_format & 0xff) == 8) {
         pIccModule->TranslateScanline(pIccTransform, gray_pal, gray_pal,
                                       pal_count);
-        pDestPalette = (FX_DWORD*)gray_pal;
+        pDestPalette = (uint32_t*)gray_pal;
       } else {
-        pDestPalette = FX_Alloc(FX_DWORD, pal_count);
+        pDestPalette = FX_Alloc(uint32_t, pal_count);
         for (int i = 0; i < pal_count; i++) {
           pIccModule->TranslateScanline(
               pIccTransform, (uint8_t*)&pDestPalette[i], &gray_pal[i], 1);
@@ -4090,7 +4090,7 @@ inline void _ScanlineCompositor_InitSourcePalette(FXDIB_Format src_format,
       if ((dest_format & 0xff) == 8) {
         int pal_count = 1 << (src_format & 0xff);
         uint8_t* gray_pal = FX_Alloc(uint8_t, pal_count);
-        pDestPalette = (FX_DWORD*)gray_pal;
+        pDestPalette = (uint32_t*)gray_pal;
         if (isSrcCmyk) {
           for (int i = 0; i < pal_count; i++) {
             FX_CMYK cmyk = pSrcPalette[i];
@@ -4109,9 +4109,9 @@ inline void _ScanlineCompositor_InitSourcePalette(FXDIB_Format src_format,
         }
       } else {
         int palsize = 1 << (src_format & 0xff);
-        pDestPalette = FX_Alloc(FX_DWORD, palsize);
+        pDestPalette = FX_Alloc(uint32_t, palsize);
         if (isDstCmyk == isSrcCmyk) {
-          FXSYS_memcpy(pDestPalette, pSrcPalette, palsize * sizeof(FX_DWORD));
+          FXSYS_memcpy(pDestPalette, pSrcPalette, palsize * sizeof(uint32_t));
         } else {
           for (int i = 0; i < palsize; i++) {
             FX_CMYK cmyk = pSrcPalette[i];
@@ -4135,10 +4135,10 @@ inline void _ScanlineCompositor_InitSourcePalette(FXDIB_Format src_format,
             gray_pal[i] = i;
           }
         }
-        pDestPalette = (FX_DWORD*)gray_pal;
+        pDestPalette = (uint32_t*)gray_pal;
       } else {
         int palsize = 1 << (src_format & 0xff);
-        pDestPalette = FX_Alloc(FX_DWORD, palsize);
+        pDestPalette = FX_Alloc(uint32_t, palsize);
         if (palsize == 2) {
           pDestPalette[0] = isSrcCmyk ? 255 : 0xff000000;
           pDestPalette[1] = isSrcCmyk ? 0 : 0xffffffff;
@@ -4175,8 +4175,8 @@ CFX_ScanlineCompositor::~CFX_ScanlineCompositor() {
 FX_BOOL CFX_ScanlineCompositor::Init(FXDIB_Format dest_format,
                                      FXDIB_Format src_format,
                                      int32_t width,
-                                     FX_DWORD* pSrcPalette,
-                                     FX_DWORD mask_color,
+                                     uint32_t* pSrcPalette,
+                                     uint32_t mask_color,
                                      int blend_type,
                                      FX_BOOL bClip,
                                      FX_BOOL bRgbByteOrder,
@@ -4706,7 +4706,7 @@ FX_BOOL CFX_DIBitmap::CompositeMask(int dest_left,
                                     int width,
                                     int height,
                                     const CFX_DIBSource* pMask,
-                                    FX_DWORD color,
+                                    uint32_t color,
                                     int src_left,
                                     int src_top,
                                     int blend_type,
@@ -4775,7 +4775,7 @@ FX_BOOL CFX_DIBitmap::CompositeRect(int left,
                                     int top,
                                     int width,
                                     int height,
-                                    FX_DWORD color,
+                                    uint32_t color,
                                     int alpha_flag,
                                     void* pIccTransform) {
   if (!m_pBuffer) {
@@ -4791,7 +4791,7 @@ FX_BOOL CFX_DIBitmap::CompositeRect(int left,
     return TRUE;
   }
   width = rect.Width();
-  FX_DWORD dst_color;
+  uint32_t dst_color;
   if (alpha_flag >> 8) {
     dst_color = FXCMYK_TODIB(color);
   } else {
@@ -4905,7 +4905,7 @@ FX_BOOL CFX_DIBitmap::CompositeRect(int left,
         FXSYS_memset(dest_scan_alpha, 0xff, width);
       }
       if (Bpp == 4) {
-        FX_DWORD* scan = (FX_DWORD*)dest_scan;
+        uint32_t* scan = (uint32_t*)dest_scan;
         for (int col = 0; col < width; col++) {
           *scan++ = dst_color;
         }
@@ -4996,7 +4996,7 @@ CFX_BitmapComposer::~CFX_BitmapComposer() {
 void CFX_BitmapComposer::Compose(CFX_DIBitmap* pDest,
                                  const CFX_ClipRgn* pClipRgn,
                                  int bitmap_alpha,
-                                 FX_DWORD mask_color,
+                                 uint32_t mask_color,
                                  FX_RECT& dest_rect,
                                  FX_BOOL bVertical,
                                  FX_BOOL bFlipX,
@@ -5028,7 +5028,7 @@ void CFX_BitmapComposer::Compose(CFX_DIBitmap* pDest,
 FX_BOOL CFX_BitmapComposer::SetInfo(int width,
                                     int height,
                                     FXDIB_Format src_format,
-                                    FX_DWORD* pSrcPalette) {
+                                    uint32_t* pSrcPalette) {
   m_SrcFormat = src_format;
   if (!m_Compositor.Init(m_pBitmap->GetFormat(), src_format, width, pSrcPalette,
                          m_MaskColor, FXDIB_BLEND_NORMAL,

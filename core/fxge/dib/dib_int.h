@@ -82,7 +82,7 @@ class CStretchEngine {
   uint8_t* m_pDestMaskScanline;
   FX_RECT m_SrcClip;
   const CFX_DIBSource* m_pSource;
-  FX_DWORD* m_pSrcPalette;
+  uint32_t* m_pSrcPalette;
   int m_SrcWidth, m_SrcHeight;
   int m_SrcPitch, m_InterPitch;
   int m_ExtraMaskPitch;

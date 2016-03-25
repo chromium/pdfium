@@ -317,7 +317,7 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
                                              CFX_FontCache* pCache,
                                              const CFX_Matrix* pObject2Device,
                                              FX_FLOAT font_size,
-                                             FX_DWORD color,
+                                             uint32_t color,
                                              int alpha_flag,
                                              void* pIccTransform) {
   SkAutoTUnref<SkTypeface> typeface(SkTypeface::CreateFromStream(
@@ -430,8 +430,8 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawPath(
     const CFX_PathData* pPathData,          // path info
     const CFX_Matrix* pObject2Device,       // optional transformation
     const CFX_GraphStateData* pGraphState,  // graphic state, for pen attributes
-    FX_DWORD fill_color,                    // fill color
-    FX_DWORD stroke_color,                  // stroke color
+    uint32_t fill_color,                    // fill color
+    uint32_t stroke_color,                  // stroke color
     int fill_mode,  // fill mode, WINDING or ALTERNATE. 0 for not filled
     int alpha_flag,
     void* pIccTransform,
@@ -483,7 +483,7 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawPath(
 }
 
 FX_BOOL CFX_SkiaDeviceDriver::FillRect(const FX_RECT* pRect,
-                                       FX_DWORD fill_color,
+                                       uint32_t fill_color,
                                        int alpha_flag,
                                        void* pIccTransform,
                                        int blend_type) {
@@ -583,7 +583,7 @@ FX_BOOL CFX_SkiaDeviceDriver::GetDIBits(CFX_DIBitmap* pBitmap,
 }
 
 FX_BOOL CFX_SkiaDeviceDriver::SetDIBits(const CFX_DIBSource* pBitmap,
-                                        FX_DWORD argb,
+                                        uint32_t argb,
                                         const FX_RECT* pSrcRect,
                                         int left,
                                         int top,
@@ -596,13 +596,13 @@ FX_BOOL CFX_SkiaDeviceDriver::SetDIBits(const CFX_DIBSource* pBitmap,
 }
 
 FX_BOOL CFX_SkiaDeviceDriver::StretchDIBits(const CFX_DIBSource* pSource,
-                                            FX_DWORD argb,
+                                            uint32_t argb,
                                             int dest_left,
                                             int dest_top,
                                             int dest_width,
                                             int dest_height,
                                             const FX_RECT* pClipRect,
-                                            FX_DWORD flags,
+                                            uint32_t flags,
                                             int alpha_flag,
                                             void* pIccTransform,
                                             int blend_type) {
@@ -614,9 +614,9 @@ FX_BOOL CFX_SkiaDeviceDriver::StretchDIBits(const CFX_DIBSource* pSource,
 
 FX_BOOL CFX_SkiaDeviceDriver::StartDIBits(const CFX_DIBSource* pSource,
                                           int bitmap_alpha,
-                                          FX_DWORD argb,
+                                          uint32_t argb,
                                           const CFX_Matrix* pMatrix,
-                                          FX_DWORD render_flags,
+                                          uint32_t render_flags,
                                           void*& handle,
                                           int alpha_flag,
                                           void* pIccTransform,

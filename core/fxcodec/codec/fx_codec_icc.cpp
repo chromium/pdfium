@@ -8,13 +8,13 @@
 #include "core/include/fxcodec/fx_codec.h"
 #include "third_party/lcms2-2.6/include/lcms2.h"
 
-const FX_DWORD N_COMPONENT_LAB = 3;
-const FX_DWORD N_COMPONENT_GRAY = 1;
-const FX_DWORD N_COMPONENT_RGB = 3;
-const FX_DWORD N_COMPONENT_CMYK = 4;
-const FX_DWORD N_COMPONENT_DEFAULT = 3;
+const uint32_t N_COMPONENT_LAB = 3;
+const uint32_t N_COMPONENT_GRAY = 1;
+const uint32_t N_COMPONENT_RGB = 3;
+const uint32_t N_COMPONENT_CMYK = 4;
+const uint32_t N_COMPONENT_DEFAULT = 3;
 
-FX_BOOL MD5ComputeID(const void* buf, FX_DWORD dwSize, uint8_t ID[16]) {
+FX_BOOL MD5ComputeID(const void* buf, uint32_t dwSize, uint8_t ID[16]) {
   return cmsMD5computeIDExt(buf, dwSize, ID);
 }
 struct CLcmsCmm {
@@ -67,8 +67,8 @@ FX_BOOL CheckComponents(cmsColorSpaceSignature cs,
   return TRUE;
 }
 
-FX_DWORD GetCSComponents(cmsColorSpaceSignature cs) {
-  FX_DWORD components;
+uint32_t GetCSComponents(cmsColorSpaceSignature cs) {
+  uint32_t components;
   switch (cs) {
     case cmsSigLabData:
       components = N_COMPONENT_LAB;
@@ -90,14 +90,14 @@ FX_DWORD GetCSComponents(cmsColorSpaceSignature cs) {
 }
 
 void* IccLib_CreateTransform(const unsigned char* pSrcProfileData,
-                             FX_DWORD dwSrcProfileSize,
-                             FX_DWORD& nSrcComponents,
+                             uint32_t dwSrcProfileSize,
+                             uint32_t& nSrcComponents,
                              const unsigned char* pDstProfileData,
-                             FX_DWORD dwDstProfileSize,
+                             uint32_t dwDstProfileSize,
                              int32_t nDstComponents,
                              int intent,
-                             FX_DWORD dwSrcFormat = Icc_FORMAT_DEFAULT,
-                             FX_DWORD dwDstFormat = Icc_FORMAT_DEFAULT) {
+                             uint32_t dwSrcFormat = Icc_FORMAT_DEFAULT,
+                             uint32_t dwDstFormat = Icc_FORMAT_DEFAULT) {
   cmsHPROFILE srcProfile = NULL;
   cmsHPROFILE dstProfile = NULL;
   cmsHTRANSFORM hTransform = NULL;
@@ -170,10 +170,10 @@ void* IccLib_CreateTransform(const unsigned char* pSrcProfileData,
   return pCmm;
 }
 void* IccLib_CreateTransform_sRGB(const unsigned char* pProfileData,
-                                  FX_DWORD dwProfileSize,
-                                  FX_DWORD& nComponents,
+                                  uint32_t dwProfileSize,
+                                  uint32_t& nComponents,
                                   int32_t intent,
-                                  FX_DWORD dwSrcFormat) {
+                                  uint32_t dwSrcFormat) {
   return IccLib_CreateTransform(pProfileData, dwProfileSize, nComponents, NULL,
                                 0, 3, intent, dwSrcFormat);
 }
@@ -185,7 +185,7 @@ void IccLib_DestroyTransform(void* pTransform) {
   delete (CLcmsCmm*)pTransform;
 }
 void IccLib_Translate(void* pTransform,
-                      FX_DWORD nSrcComponents,
+                      uint32_t nSrcComponents,
                       FX_FLOAT* pSrcValues,
                       FX_FLOAT* pDestValues) {
   if (!pTransform) {
@@ -196,14 +196,14 @@ void IccLib_Translate(void* pTransform,
   if (p->m_bLab) {
     CFX_FixedBufGrow<double, 16> inputs(nSrcComponents);
     double* input = inputs;
-    for (FX_DWORD i = 0; i < nSrcComponents; i++) {
+    for (uint32_t i = 0; i < nSrcComponents; i++) {
       input[i] = pSrcValues[i];
     }
     cmsDoTransform(p->m_hTransform, input, output, 1);
   } else {
     CFX_FixedBufGrow<uint8_t, 16> inputs(nSrcComponents);
     uint8_t* input = inputs;
-    for (FX_DWORD i = 0; i < nSrcComponents; i++) {
+    for (uint32_t i = 0; i < nSrcComponents; i++) {
       if (pSrcValues[i] > 1.0f) {
         input[i] = 255;
       } else if (pSrcValues[i] < 0) {
@@ -284,7 +284,7 @@ ICodec_IccModule::IccCS GetProfileCSFromHandle(void* pProfile) {
 }
 ICodec_IccModule::IccCS CCodec_IccModule::GetProfileCS(
     const uint8_t* pProfileData,
-    FX_DWORD dwProfileSize) {
+    uint32_t dwProfileSize) {
   ICodec_IccModule::IccCS cs;
   cmsHPROFILE hProfile =
       cmsOpenProfileFromMem((void*)pProfileData, dwProfileSize);
@@ -302,14 +302,14 @@ ICodec_IccModule::IccCS CCodec_IccModule::GetProfileCS(IFX_FileRead* pFile) {
     return IccCS_Unknown;
   }
   ICodec_IccModule::IccCS cs;
-  FX_DWORD dwSize = (FX_DWORD)pFile->GetSize();
+  uint32_t dwSize = (uint32_t)pFile->GetSize();
   uint8_t* pBuf = FX_Alloc(uint8_t, dwSize);
   pFile->ReadBlock(pBuf, 0, dwSize);
   cs = GetProfileCS(pBuf, dwSize);
   FX_Free(pBuf);
   return cs;
 }
-FX_DWORD TransferProfileType(void* pProfile, FX_DWORD dwFormat) {
+uint32_t TransferProfileType(void* pProfile, uint32_t dwFormat) {
   cmsColorSpaceSignature cs = cmsGetColorSpace(pProfile);
   switch (cs) {
     case cmsSigXYZData:
@@ -359,7 +359,7 @@ class CFX_IccProfileCache {
   CFX_IccProfileCache();
   ~CFX_IccProfileCache();
   void* m_pProfile;
-  FX_DWORD m_dwRate;
+  uint32_t m_dwRate;
 
  protected:
   void Purge();
@@ -379,7 +379,7 @@ class CFX_IccTransformCache {
   CFX_IccTransformCache(CLcmsCmm* pCmm = NULL);
   ~CFX_IccTransformCache();
   void* m_pIccTransform;
-  FX_DWORD m_dwRate;
+  uint32_t m_dwRate;
   CLcmsCmm* m_pCmm;
 
  protected:
@@ -400,10 +400,10 @@ void CFX_IccTransformCache::Purge() {}
 class CFX_ByteStringKey : public CFX_BinaryBuf {
  public:
   CFX_ByteStringKey() : CFX_BinaryBuf() {}
-  CFX_ByteStringKey& operator<<(FX_DWORD i);
+  CFX_ByteStringKey& operator<<(uint32_t i);
 };
-CFX_ByteStringKey& CFX_ByteStringKey::operator<<(FX_DWORD i) {
-  AppendBlock(&i, sizeof(FX_DWORD));
+CFX_ByteStringKey& CFX_ByteStringKey::operator<<(uint32_t i) {
+  AppendBlock(&i, sizeof(uint32_t));
   return *this;
 }
 void* CCodec_IccModule::CreateProfile(ICodec_IccModule::IccParam* pIccParam,
@@ -472,10 +472,10 @@ void* CCodec_IccModule::CreateTransform(
     ICodec_IccModule::IccParam* pInputParam,
     ICodec_IccModule::IccParam* pOutputParam,
     ICodec_IccModule::IccParam* pProofParam,
-    FX_DWORD dwIntent,
-    FX_DWORD dwFlag,
-    FX_DWORD dwPrfIntent,
-    FX_DWORD dwPrfFlag) {
+    uint32_t dwIntent,
+    uint32_t dwFlag,
+    uint32_t dwPrfIntent,
+    uint32_t dwPrfFlag) {
   CLcmsCmm* pCmm = NULL;
   ASSERT(pInputParam && pOutputParam);
   CFX_ByteStringKey key;
@@ -487,9 +487,9 @@ void* CCodec_IccModule::CreateTransform(
   if (!pOutputProfile) {
     return NULL;
   }
-  FX_DWORD dwInputProfileType =
+  uint32_t dwInputProfileType =
       TransferProfileType(pInputProfile, pInputParam->dwFormat);
-  FX_DWORD dwOutputProfileType =
+  uint32_t dwOutputProfileType =
       TransferProfileType(pOutputProfile, pOutputParam->dwFormat);
   if (dwInputProfileType == 0 || dwOutputProfileType == 0) {
     return NULL;
@@ -537,22 +537,22 @@ CCodec_IccModule::~CCodec_IccModule() {
   m_MapTranform.clear();
 }
 void* CCodec_IccModule::CreateTransform_sRGB(const uint8_t* pProfileData,
-                                             FX_DWORD dwProfileSize,
-                                             FX_DWORD& nComponents,
+                                             uint32_t dwProfileSize,
+                                             uint32_t& nComponents,
                                              int32_t intent,
-                                             FX_DWORD dwSrcFormat) {
+                                             uint32_t dwSrcFormat) {
   return IccLib_CreateTransform_sRGB(pProfileData, dwProfileSize, nComponents,
                                      intent, dwSrcFormat);
 }
 
 void* CCodec_IccModule::CreateTransform_CMYK(const uint8_t* pSrcProfileData,
-                                             FX_DWORD dwSrcProfileSize,
-                                             FX_DWORD& nSrcComponents,
+                                             uint32_t dwSrcProfileSize,
+                                             uint32_t& nSrcComponents,
                                              const uint8_t* pDstProfileData,
-                                             FX_DWORD dwDstProfileSize,
+                                             uint32_t dwDstProfileSize,
                                              int32_t intent,
-                                             FX_DWORD dwSrcFormat,
-                                             FX_DWORD dwDstFormat) {
+                                             uint32_t dwSrcFormat,
+                                             uint32_t dwDstFormat) {
   return IccLib_CreateTransform(
       pSrcProfileData, dwSrcProfileSize, nSrcComponents, pDstProfileData,
       dwDstProfileSize, 4, intent, dwSrcFormat, dwDstFormat);

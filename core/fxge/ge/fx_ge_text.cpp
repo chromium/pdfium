@@ -138,7 +138,7 @@ static const uint8_t g_TextGammaAdjust[256] = {
 #define ADJUST_ALPHA(background, foreground, src_alpha, text_flags, a) \
   src_alpha = g_TextGammaAdjust[(uint8_t)src_alpha];
 void _Color2Argb(FX_ARGB& argb,
-                 FX_DWORD color,
+                 uint32_t color,
                  int alpha_flag,
                  void* pIccTransform) {
   if (!pIccTransform && !FXGETFLAG_COLORTYPE(alpha_flag)) {
@@ -177,8 +177,8 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
                                          CFX_FontCache* pCache,
                                          FX_FLOAT font_size,
                                          const CFX_Matrix* pText2Device,
-                                         FX_DWORD fill_color,
-                                         FX_DWORD text_flags,
+                                         uint32_t fill_color,
+                                         uint32_t text_flags,
                                          int alpha_flag,
                                          void* pIccTransform) {
   int nativetext_flags = text_flags;
@@ -1114,7 +1114,7 @@ FX_BOOL CFX_RenderDevice::DrawTextPath(int nChars,
                                        const CFX_Matrix* pText2User,
                                        const CFX_Matrix* pUser2Device,
                                        const CFX_GraphStateData* pGraphState,
-                                       FX_DWORD fill_color,
+                                       uint32_t fill_color,
                                        FX_ARGB stroke_color,
                                        CFX_PathData* pClippingPath,
                                        int nFlag,
@@ -1256,7 +1256,7 @@ CFX_GlyphBitmap* CFX_FaceCache::LookUpGlyphBitmap(
     CFX_Font* pFont,
     const CFX_Matrix* pMatrix,
     CFX_ByteStringC& FaceGlyphsKey,
-    FX_DWORD glyph_index,
+    uint32_t glyph_index,
     FX_BOOL bFontStyle,
     int dest_width,
     int anti_alias) {
@@ -1281,13 +1281,13 @@ CFX_GlyphBitmap* CFX_FaceCache::LookUpGlyphBitmap(
   return pGlyphBitmap;
 }
 const CFX_GlyphBitmap* CFX_FaceCache::LoadGlyphBitmap(CFX_Font* pFont,
-                                                      FX_DWORD glyph_index,
+                                                      uint32_t glyph_index,
                                                       FX_BOOL bFontStyle,
                                                       const CFX_Matrix* pMatrix,
                                                       int dest_width,
                                                       int anti_alias,
                                                       int& text_flags) {
-  if (glyph_index == (FX_DWORD)-1) {
+  if (glyph_index == (uint32_t)-1) {
     return NULL;
   }
   _CFX_UniqueKeyGen keygen;
@@ -1512,7 +1512,7 @@ static void _ContrastAdjust(uint8_t* pDataIn,
   }
 }
 CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(CFX_Font* pFont,
-                                            FX_DWORD glyph_index,
+                                            uint32_t glyph_index,
                                             FX_BOOL bFontStyle,
                                             const CFX_Matrix* pMatrix,
                                             int dest_width,
@@ -1647,12 +1647,12 @@ CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(CFX_Font* pFont,
   return pGlyphBitmap;
 }
 const CFX_PathData* CFX_FaceCache::LoadGlyphPath(CFX_Font* pFont,
-                                                 FX_DWORD glyph_index,
+                                                 uint32_t glyph_index,
                                                  int dest_width) {
-  if (!m_Face || glyph_index == (FX_DWORD)-1)
+  if (!m_Face || glyph_index == (uint32_t)-1)
     return nullptr;
 
-  FX_DWORD key = glyph_index;
+  uint32_t key = glyph_index;
   if (pFont->GetSubstFont()) {
     key += (((pFont->GetSubstFont()->m_Weight / 16) << 15) +
             ((pFont->GetSubstFont()->m_ItalicAngle / 2) << 21) +
@@ -1792,7 +1792,7 @@ static int _Outline_CubicTo(const FXFT_Vector* control1,
   return 0;
 }
 };
-CFX_PathData* CFX_Font::LoadGlyphPath(FX_DWORD glyph_index, int dest_width) {
+CFX_PathData* CFX_Font::LoadGlyphPath(uint32_t glyph_index, int dest_width) {
   if (!m_Face) {
     return NULL;
   }
@@ -1868,8 +1868,8 @@ void _CFX_UniqueKeyGen::Generate(int count, ...) {
   va_start(argList, count);
   for (int i = 0; i < count; i++) {
     int p = va_arg(argList, int);
-    ((FX_DWORD*)m_Key)[i] = p;
+    ((uint32_t*)m_Key)[i] = p;
   }
   va_end(argList);
-  m_KeyLen = count * sizeof(FX_DWORD);
+  m_KeyLen = count * sizeof(uint32_t);
 }

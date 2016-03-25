@@ -35,7 +35,7 @@ enum FX_BIDICLASS {
   FX_BIDICLASS_N = FX_BIDICLASS_ON,
 };
 
-extern const FX_DWORD kTextLayoutCodeProperties[];
+extern const uint32_t kTextLayoutCodeProperties[];
 extern const size_t kTextLayoutCodePropertiesSize;
 
 extern const uint16_t kFXTextLayoutVerticalMirror[];
@@ -44,7 +44,7 @@ extern const size_t kFXTextLayoutVerticalMirrorSize;
 extern const uint16_t kFXTextLayoutBidiMirror[];
 extern const size_t kFXTextLayoutBidiMirrorSize;
 
-FX_DWORD FX_GetUnicodeProperties(FX_WCHAR wch);
+uint32_t FX_GetUnicodeProperties(FX_WCHAR wch);
 FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch, FX_BOOL bRTL, FX_BOOL bVertical);
 
 #ifdef PDF_ENABLE_XFA
@@ -110,7 +110,7 @@ enum FX_CHARTYPE {
 
 FX_BOOL FX_IsCtrlCode(FX_WCHAR ch);
 FX_WCHAR FX_GetMirrorChar(FX_WCHAR wch,
-                          FX_DWORD dwProps,
+                          uint32_t dwProps,
                           FX_BOOL bRTL,
                           FX_BOOL bVertical);
 class CFX_Char {
@@ -124,7 +124,7 @@ class CFX_Char {
         m_iCharWidth(0),
         m_iHorizontalScale(100),
         m_iVertialScale(100) {}
-  CFX_Char(uint16_t wCharCode, FX_DWORD dwCharProps)
+  CFX_Char(uint16_t wCharCode, uint32_t dwCharProps)
       : m_wCharCode(wCharCode),
         m_nBreakType(0),
         m_nRotation(0),
@@ -133,12 +133,12 @@ class CFX_Char {
         m_iCharWidth(0),
         m_iHorizontalScale(100),
         m_iVertialScale(100) {}
-  FX_DWORD GetCharType() const { return m_dwCharProps & FX_CHARTYPEBITSMASK; }
+  uint32_t GetCharType() const { return m_dwCharProps & FX_CHARTYPEBITSMASK; }
   uint16_t m_wCharCode;
   uint8_t m_nBreakType;
   int8_t m_nRotation;
-  FX_DWORD m_dwCharProps;
-  FX_DWORD m_dwCharStyles;
+  uint32_t m_dwCharProps;
+  uint32_t m_dwCharStyles;
   int32_t m_iCharWidth;
   int32_t m_iHorizontalScale;
   int32_t m_iVertialScale;
@@ -154,7 +154,7 @@ class CFX_TxtChar : public CFX_Char {
         m_iBidiPos(0),
         m_iBidiOrder(0),
         m_pUserData(NULL) {}
-  FX_DWORD m_dwStatus;
+  uint32_t m_dwStatus;
   int16_t m_iBidiClass;
   int16_t m_iBidiLevel;
   int16_t m_iBidiPos;
@@ -175,15 +175,15 @@ class CFX_RTFChar : public CFX_Char {
         m_dwLayoutStyles(0),
         m_dwIdentity(0),
         m_pUserData(NULL) {}
-  FX_DWORD m_dwStatus;
+  uint32_t m_dwStatus;
   int32_t m_iFontSize;
   int32_t m_iFontHeight;
   int16_t m_iBidiClass;
   int16_t m_iBidiLevel;
   int16_t m_iBidiPos;
   int16_t m_iBidiOrder;
-  FX_DWORD m_dwLayoutStyles;
-  FX_DWORD m_dwIdentity;
+  uint32_t m_dwLayoutStyles;
+  uint32_t m_dwIdentity;
   IFX_Unknown* m_pUserData;
 };
 typedef CFX_ArrayTemplate<CFX_RTFChar> CFX_RTFCharArray;

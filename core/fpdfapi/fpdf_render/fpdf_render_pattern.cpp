@@ -70,7 +70,7 @@ static void DrawAxialShading(CFX_DIBitmap* pBitmap,
   CFX_FixedBufGrow<FX_FLOAT, 16> result_array(total_results);
   FX_FLOAT* pResults = result_array;
   FXSYS_memset(pResults, 0, total_results * sizeof(FX_FLOAT));
-  FX_DWORD rgb_array[SHADING_STEPS];
+  uint32_t rgb_array[SHADING_STEPS];
   for (int i = 0; i < SHADING_STEPS; i++) {
     FX_FLOAT input = (t_max - t_min) * i / SHADING_STEPS + t_min;
     int offset = 0;
@@ -90,7 +90,7 @@ static void DrawAxialShading(CFX_DIBitmap* pBitmap,
   }
   int pitch = pBitmap->GetPitch();
   for (int row = 0; row < height; row++) {
-    FX_DWORD* dib_buf = (FX_DWORD*)(pBitmap->GetBuffer() + row * pitch);
+    uint32_t* dib_buf = (uint32_t*)(pBitmap->GetBuffer() + row * pitch);
     for (int column = 0; column < width; column++) {
       FX_FLOAT x = (FX_FLOAT)column, y = (FX_FLOAT)row;
       matrix.Transform(x, y);
@@ -156,7 +156,7 @@ static void DrawRadialShading(CFX_DIBitmap* pBitmap,
   CFX_FixedBufGrow<FX_FLOAT, 16> result_array(total_results);
   FX_FLOAT* pResults = result_array;
   FXSYS_memset(pResults, 0, total_results * sizeof(FX_FLOAT));
-  FX_DWORD rgb_array[SHADING_STEPS];
+  uint32_t rgb_array[SHADING_STEPS];
   for (int i = 0; i < SHADING_STEPS; i++) {
     FX_FLOAT input = (t_max - t_min) * i / SHADING_STEPS + t_min;
     int offset = 0;
@@ -189,7 +189,7 @@ static void DrawRadialShading(CFX_DIBitmap* pBitmap,
     }
   }
   for (int row = 0; row < height; row++) {
-    FX_DWORD* dib_buf = (FX_DWORD*)(pBitmap->GetBuffer() + row * pitch);
+    uint32_t* dib_buf = (uint32_t*)(pBitmap->GetBuffer() + row * pitch);
     for (int column = 0; column < width; column++) {
       FX_FLOAT x = (FX_FLOAT)column, y = (FX_FLOAT)row;
       matrix.Transform(x, y);
@@ -286,7 +286,7 @@ static void DrawFuncShading(CFX_DIBitmap* pBitmap,
   FX_FLOAT* pResults = result_array;
   FXSYS_memset(pResults, 0, total_results * sizeof(FX_FLOAT));
   for (int row = 0; row < height; row++) {
-    FX_DWORD* dib_buf = (FX_DWORD*)(pBitmap->GetBuffer() + row * pitch);
+    uint32_t* dib_buf = (uint32_t*)(pBitmap->GetBuffer() + row * pitch);
     for (int column = 0; column < width; column++) {
       FX_FLOAT x = (FX_FLOAT)column, y = (FX_FLOAT)row;
       matrix.Transform(x, y);
@@ -432,7 +432,7 @@ static void DrawFreeGouraudShading(CFX_DIBitmap* pBitmap,
 
   while (!stream.m_BitStream.IsEOF()) {
     CPDF_MeshVertex vertex;
-    FX_DWORD flag = stream.GetVertex(vertex, pObject2Bitmap);
+    uint32_t flag = stream.GetVertex(vertex, pObject2Bitmap);
     if (flag == 0) {
       triangle[0] = vertex;
       for (int j = 1; j < 3; j++) {
@@ -782,7 +782,7 @@ static void DrawCoonPatchMeshes(FX_BOOL bTensor,
   CFX_PointF coords[16];
   int point_count = bTensor ? 16 : 12;
   while (!stream.m_BitStream.IsEOF()) {
-    FX_DWORD flag = stream.GetFlag();
+    uint32_t flag = stream.GetFlag();
     int iStartPoint = 0, iStartColor = 0, i = 0;
     if (flag) {
       iStartPoint = 4;
@@ -1141,7 +1141,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
     return;
   }
   screen.Clear(0);
-  FX_DWORD* src_buf = (FX_DWORD*)pPatternBitmap->GetBuffer();
+  uint32_t* src_buf = (uint32_t*)pPatternBitmap->GetBuffer();
   for (int col = min_col; col <= max_col; col++) {
     for (int row = min_row; row <= max_row; row++) {
       int start_x, start_y;
@@ -1160,8 +1160,8 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
             start_y >= clip_box.Height()) {
           continue;
         }
-        FX_DWORD* dest_buf =
-            (FX_DWORD*)(screen.GetBuffer() + screen.GetPitch() * start_y +
+        uint32_t* dest_buf =
+            (uint32_t*)(screen.GetBuffer() + screen.GetPitch() * start_y +
                         start_x * 4);
         if (pPattern->m_bColored) {
           *dest_buf = *src_buf;

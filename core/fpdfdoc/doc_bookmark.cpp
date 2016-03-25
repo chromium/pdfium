@@ -32,7 +32,7 @@ CPDF_Bookmark CPDF_BookmarkTree::GetNextSibling(
   return pNext == bookmark.GetDict() ? CPDF_Bookmark() : CPDF_Bookmark(pNext);
 }
 
-FX_DWORD CPDF_Bookmark::GetColorRef() const {
+uint32_t CPDF_Bookmark::GetColorRef() const {
   if (!m_pDict) {
     return 0;
   }
@@ -45,7 +45,7 @@ FX_DWORD CPDF_Bookmark::GetColorRef() const {
   int b = FXSYS_round(pColor->GetNumberAt(2) * 255);
   return FXSYS_RGB(r, g, b);
 }
-FX_DWORD CPDF_Bookmark::GetFontStyle() const {
+uint32_t CPDF_Bookmark::GetFontStyle() const {
   if (!m_pDict) {
     return 0;
   }

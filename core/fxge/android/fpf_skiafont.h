@@ -27,7 +27,7 @@ class CFPF_SkiaFont : public IFPF_Font {
   FPF_HFONT GetHandle() override;
   CFX_ByteString GetFamilyName() override;
   CFX_WideString GetPsName() override;
-  FX_DWORD GetFontStyle() const override { return m_dwStyle; }
+  uint32_t GetFontStyle() const override { return m_dwStyle; }
   uint8_t GetCharset() const override { return m_uCharset; }
   int32_t GetGlyphIndex(FX_WCHAR wUnicode) override;
   int32_t GetGlyphWidth(int32_t iGlyphIndex) override;
@@ -37,23 +37,23 @@ class CFPF_SkiaFont : public IFPF_Font {
   FX_BOOL GetBBox(FX_RECT& rtBBox) override;
   int32_t GetHeight() const override;
   int32_t GetItalicAngle() const override;
-  FX_DWORD GetFontData(FX_DWORD dwTable,
+  uint32_t GetFontData(uint32_t dwTable,
                        uint8_t* pBuffer,
-                       FX_DWORD dwSize) override;
+                       uint32_t dwSize) override;
 
   FX_BOOL InitFont(CFPF_SkiaFontMgr* pFontMgr,
                    CFPF_SkiaFontDescriptor* pFontDes,
                    const CFX_ByteStringC& bsFamily,
-                   FX_DWORD dwStyle,
+                   uint32_t dwStyle,
                    uint8_t uCharset);
 
  protected:
   CFPF_SkiaFontMgr* m_pFontMgr;
   CFPF_SkiaFontDescriptor* m_pFontDes;
   FXFT_Face m_Face;
-  FX_DWORD m_dwStyle;
+  uint32_t m_dwStyle;
   uint8_t m_uCharset;
-  FX_DWORD m_dwRefCount;
+  uint32_t m_dwRefCount;
 };
 #endif
 

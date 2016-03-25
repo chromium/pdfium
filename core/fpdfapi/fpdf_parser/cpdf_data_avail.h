@@ -63,7 +63,7 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
   DocFormStatus IsFormAvail(DownloadHints* pHints) override;
   DocLinearizationStatus IsLinearizedPDF() override;
   FX_BOOL IsLinearized() override { return m_bLinearized; }
-  void GetLinearizedMainXRefInfo(FX_FILESIZE* pPos, FX_DWORD* pSize) override;
+  void GetLinearizedMainXRefInfo(FX_FILESIZE* pPos, uint32_t* pSize) override;
 
   int GetPageCount() const;
   CPDF_Dictionary* GetPage(int index);
@@ -77,7 +77,7 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
     ~PageNode();
 
     PDF_PAGENODE_TYPE m_type;
-    FX_DWORD m_dwPageNo;
+    uint32_t m_dwPageNo;
     CFX_ArrayTemplate<PageNode*> m_childNode;
   };
 
@@ -85,7 +85,7 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
   static int s_CurrentDataAvailRecursionDepth;
   static const int kMaxPageRecursionDepth = 1024;
 
-  FX_DWORD GetObjectSize(FX_DWORD objnum, FX_FILESIZE& offset);
+  uint32_t GetObjectSize(uint32_t objnum, FX_FILESIZE& offset);
   FX_BOOL IsObjectsAvail(CFX_ArrayTemplate<CPDF_Object*>& obj_array,
                          FX_BOOL bParsePage,
                          IPDF_DataAvail::DownloadHints* pHints,
@@ -112,15 +112,15 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
 
   int32_t CheckCrossRefStream(IPDF_DataAvail::DownloadHints* pHints,
                               FX_FILESIZE& xref_offset);
-  FX_BOOL IsLinearizedFile(uint8_t* pData, FX_DWORD dwLen);
+  FX_BOOL IsLinearizedFile(uint8_t* pData, uint32_t dwLen);
   void SetStartOffset(FX_FILESIZE dwOffset);
   FX_BOOL GetNextToken(CFX_ByteString& token);
   FX_BOOL GetNextChar(uint8_t& ch);
   CPDF_Object* ParseIndirectObjectAt(
       FX_FILESIZE pos,
-      FX_DWORD objnum,
+      uint32_t objnum,
       CPDF_IndirectObjectHolder* pObjList = nullptr);
-  CPDF_Object* GetObject(FX_DWORD objnum,
+  CPDF_Object* GetObject(uint32_t objnum,
                          IPDF_DataAvail::DownloadHints* pHints,
                          FX_BOOL* pExistInFile);
   FX_BOOL GetPageKids(CPDF_Parser* pParser, CPDF_Object* pPages);
@@ -143,24 +143,24 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
                         int32_t& iCount,
                         IPDF_DataAvail::DownloadHints* pHints,
                         int level);
-  FX_BOOL CheckUnkownPageNode(FX_DWORD dwPageNo,
+  FX_BOOL CheckUnkownPageNode(uint32_t dwPageNo,
                               PageNode* pPageNode,
                               IPDF_DataAvail::DownloadHints* pHints);
-  FX_BOOL CheckArrayPageNode(FX_DWORD dwPageNo,
+  FX_BOOL CheckArrayPageNode(uint32_t dwPageNo,
                              PageNode* pPageNode,
                              IPDF_DataAvail::DownloadHints* pHints);
   FX_BOOL CheckPageCount(IPDF_DataAvail::DownloadHints* pHints);
   bool IsFirstCheck(int iPage);
   void ResetFirstCheck(int iPage);
   FX_BOOL IsDataAvail(FX_FILESIZE offset,
-                      FX_DWORD size,
+                      uint32_t size,
                       IPDF_DataAvail::DownloadHints* pHints);
 
   CPDF_Parser m_parser;
   CPDF_SyntaxParser m_syntaxParser;
   CPDF_Object* m_pRoot;
-  FX_DWORD m_dwRootObjNum;
-  FX_DWORD m_dwInfoObjNum;
+  uint32_t m_dwRootObjNum;
+  uint32_t m_dwInfoObjNum;
   CPDF_Object* m_pLinearized;
   CPDF_Object* m_pTrailer;
   FX_BOOL m_bDocAvail;
@@ -172,18 +172,18 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
   PDF_DATAAVAIL_STATUS m_docStatus;
   FX_FILESIZE m_dwFileLen;
   CPDF_Document* m_pDocument;
-  std::set<FX_DWORD> m_ObjectSet;
+  std::set<uint32_t> m_ObjectSet;
   CFX_ArrayTemplate<CPDF_Object*> m_objs_array;
   FX_FILESIZE m_Pos;
   FX_FILESIZE m_bufferOffset;
-  FX_DWORD m_bufferSize;
+  uint32_t m_bufferSize;
   CFX_ByteString m_WordBuf;
   uint8_t m_bufferData[512];
-  CFX_ArrayTemplate<FX_DWORD> m_XRefStreamList;
-  CFX_ArrayTemplate<FX_DWORD> m_PageObjList;
-  FX_DWORD m_PagesObjNum;
+  CFX_ArrayTemplate<uint32_t> m_XRefStreamList;
+  CFX_ArrayTemplate<uint32_t> m_PageObjList;
+  uint32_t m_PagesObjNum;
   FX_BOOL m_bLinearized;
-  FX_DWORD m_dwFirstPageNo;
+  uint32_t m_dwFirstPageNo;
   FX_BOOL m_bLinearedDataOK;
   FX_BOOL m_bMainXRefLoadTried;
   FX_BOOL m_bMainXRefLoadedOK;
@@ -193,7 +193,7 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
   FX_FILESIZE m_dwCurrentXRefSteam;
   FX_BOOL m_bAnnotsLoad;
   FX_BOOL m_bHaveAcroForm;
-  FX_DWORD m_dwAcroFormObjNum;
+  uint32_t m_dwAcroFormObjNum;
   FX_BOOL m_bAcroFormLoad;
   CPDF_Object* m_pAcroForm;
   CFX_ArrayTemplate<CPDF_Object*> m_arrayAcroforms;
@@ -203,13 +203,13 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
   FX_BOOL m_bPageLoadedOK;
   FX_BOOL m_bLinearizedFormParamLoad;
   CFX_ArrayTemplate<CPDF_Object*> m_PagesArray;
-  FX_DWORD m_dwEncryptObjNum;
+  uint32_t m_dwEncryptObjNum;
   FX_FILESIZE m_dwPrevXRefOffset;
   FX_BOOL m_bTotalLoadPageTree;
   FX_BOOL m_bCurPageDictLoadOK;
   PageNode m_pageNodes;
-  std::set<FX_DWORD> m_pageMapCheckState;
-  std::set<FX_DWORD> m_pagesLoadState;
+  std::set<uint32_t> m_pageMapCheckState;
+  std::set<uint32_t> m_pagesLoadState;
   std::unique_ptr<CPDF_HintTables> m_pHintTables;
   FX_BOOL m_bSupportHintTable;
 };

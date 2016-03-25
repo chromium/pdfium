@@ -47,7 +47,7 @@ void CPDF_AllStates::SetLineDash(CPDF_Array* pArray,
   CFX_GraphStateData* pData = m_GraphState.GetModify();
   pData->m_DashPhase = phase * scale;
   pData->SetDashCount(pArray->GetCount());
-  for (FX_DWORD i = 0; i < pArray->GetCount(); i++) {
+  for (uint32_t i = 0; i < pArray->GetCount(); i++) {
     pData->m_DashArray[i] = pArray->GetNumberAt(i) * scale;
   }
 }
@@ -62,7 +62,7 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
     if (!pObject)
       continue;
 
-    FX_DWORD key = key_str.GetID();
+    uint32_t key = key_str.GetID();
     switch (key) {
       case FXBSTR_ID('L', 'W', 0, 0):
         m_GraphState.GetModify()->m_LineWidth = pObject->GetNumber();

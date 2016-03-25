@@ -10,7 +10,7 @@ void CFX_UTF8Decoder::Clear() {
   m_Buffer.Clear();
   m_PendingBytes = 0;
 }
-void CFX_UTF8Decoder::AppendChar(FX_DWORD ch) {
+void CFX_UTF8Decoder::AppendChar(uint32_t ch) {
   m_Buffer.AppendChar((FX_WCHAR)ch);
 }
 void CFX_UTF8Decoder::Input(uint8_t byte) {
@@ -44,20 +44,20 @@ void CFX_UTF8Decoder::Input(uint8_t byte) {
   }
 }
 void CFX_UTF8Encoder::Input(FX_WCHAR unicode) {
-  if ((FX_DWORD)unicode < 0x80) {
+  if ((uint32_t)unicode < 0x80) {
     m_Buffer.AppendChar(unicode);
   } else {
-    if ((FX_DWORD)unicode >= 0x80000000) {
+    if ((uint32_t)unicode >= 0x80000000) {
       return;
     }
     int nbytes = 0;
-    if ((FX_DWORD)unicode < 0x800) {
+    if ((uint32_t)unicode < 0x800) {
       nbytes = 2;
-    } else if ((FX_DWORD)unicode < 0x10000) {
+    } else if ((uint32_t)unicode < 0x10000) {
       nbytes = 3;
-    } else if ((FX_DWORD)unicode < 0x200000) {
+    } else if ((uint32_t)unicode < 0x200000) {
       nbytes = 4;
-    } else if ((FX_DWORD)unicode < 0x4000000) {
+    } else if ((uint32_t)unicode < 0x4000000) {
       nbytes = 5;
     } else {
       nbytes = 6;

@@ -477,7 +477,7 @@ CPDF_Image* CPDF_DocPageData::GetImage(CPDF_Object* pImageStream) {
   if (!pImageStream)
     return nullptr;
 
-  const FX_DWORD dwImageObjNum = pImageStream->GetObjNum();
+  const uint32_t dwImageObjNum = pImageStream->GetObjNum();
   auto it = m_ImageMap.find(dwImageObjNum);
   if (it != m_ImageMap.end()) {
     return it->second->AddRef();

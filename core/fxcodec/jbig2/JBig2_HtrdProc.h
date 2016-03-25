@@ -24,17 +24,17 @@ class CJBig2_HTRDProc {
   CJBig2_Image* decode_MMR(CJBig2_BitStream* pStream, IFX_Pause* pPause);
 
  public:
-  FX_DWORD HBW;
-  FX_DWORD HBH;
+  uint32_t HBW;
+  uint32_t HBH;
   FX_BOOL HMMR;
   uint8_t HTEMPLATE;
-  FX_DWORD HNUMPATS;
+  uint32_t HNUMPATS;
   CJBig2_Image** HPATS;
   FX_BOOL HDEFPIXEL;
   JBig2ComposeOp HCOMBOP;
   FX_BOOL HENABLESKIP;
-  FX_DWORD HGW;
-  FX_DWORD HGH;
+  uint32_t HGW;
+  uint32_t HGH;
   int32_t HGX;
   int32_t HGY;
   uint16_t HRX;

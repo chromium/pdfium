@@ -26,7 +26,7 @@ FX_BOOL FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
     return FALSE;
   }
   CFX_ByteString field_type = FPDF_GetFieldAttr(pAnnotDict, "FT")->GetString();
-  FX_DWORD flags = FPDF_GetFieldAttr(pAnnotDict, "Ff")
+  uint32_t flags = FPDF_GetFieldAttr(pAnnotDict, "Ff")
                        ? FPDF_GetFieldAttr(pAnnotDict, "Ff")->GetInteger()
                        : 0;
   if (field_type == "Tx") {
@@ -141,7 +141,7 @@ int32_t CPVT_Provider::GetCharWidth(int32_t nFontIndex,
                                     uint16_t word,
                                     int32_t nWordStyle) {
   if (CPDF_Font* pPDFFont = m_pFontMap->GetPDFFont(nFontIndex)) {
-    FX_DWORD charcode = pPDFFont->CharCodeFromUnicode(word);
+    uint32_t charcode = pPDFFont->CharCodeFromUnicode(word);
     if (charcode != CPDF_Font::kInvalidCharCode) {
       return pPDFFont->GetCharWidthF(charcode);
     }
@@ -204,7 +204,7 @@ static CFX_ByteString GetPDFWordString(IPVT_FontMap* pFontMap,
         pPDFFont->GetBaseFont().Compare("ZapfDingbats") == 0) {
       sWord.Format("%c", Word);
     } else {
-      FX_DWORD dwCharCode = pPDFFont->CharCodeFromUnicode(Word);
+      uint32_t dwCharCode = pPDFFont->CharCodeFromUnicode(Word);
       if (dwCharCode != CPDF_Font::kInvalidCharCode) {
         pPDFFont->AppendChar(sWord, dwCharCode);
       }
@@ -462,10 +462,10 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
       int32_t nAlign = FPDF_GetFieldAttr(pAnnotDict, "Q")
                            ? FPDF_GetFieldAttr(pAnnotDict, "Q")->GetInteger()
                            : 0;
-      FX_DWORD dwFlags = FPDF_GetFieldAttr(pAnnotDict, "Ff")
+      uint32_t dwFlags = FPDF_GetFieldAttr(pAnnotDict, "Ff")
                              ? FPDF_GetFieldAttr(pAnnotDict, "Ff")->GetInteger()
                              : 0;
-      FX_DWORD dwMaxLen =
+      uint32_t dwMaxLen =
           FPDF_GetFieldAttr(pAnnotDict, "MaxLen")
               ? FPDF_GetFieldAttr(pAnnotDict, "MaxLen")->GetInteger()
               : 0;
@@ -625,7 +625,7 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
 
             FX_BOOL bSelected = FALSE;
             if (pSels) {
-              for (FX_DWORD s = 0, ssz = pSels->GetCount(); s < ssz; s++) {
+              for (uint32_t s = 0, ssz = pSels->GetCount(); s < ssz; s++) {
                 if (i == pSels->GetIntegerAt(s)) {
                   bSelected = TRUE;
                   break;

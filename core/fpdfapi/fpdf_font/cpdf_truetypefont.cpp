@@ -112,7 +112,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
           m_GlyphIndex[charcode] = FXFT_Get_Char_Index(
               m_Font.GetFace(), m_Encoding.m_Unicodes[charcode]);
         } else if (bMacRoman) {
-          FX_DWORD maccode = FT_CharCodeFromUnicode(
+          uint32_t maccode = FT_CharCodeFromUnicode(
               FXFT_ENCODING_APPLE_ROMAN, m_Encoding.m_Unicodes[charcode]);
           if (!maccode) {
             m_GlyphIndex[charcode] =

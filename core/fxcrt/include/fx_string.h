@@ -89,7 +89,7 @@ class CFX_ByteStringC {
     return !(*this == other);
   }
 
-  FX_DWORD GetID(FX_STRSIZE start_pos = 0) const;
+  uint32_t GetID(FX_STRSIZE start_pos = 0) const;
 
   const uint8_t* GetPtr() const { return m_Ptr; }
 
@@ -296,13 +296,13 @@ class CFX_ByteString {
 
   CFX_WideString UTF8Decode() const;
 
-  FX_DWORD GetID(FX_STRSIZE start_pos = 0) const;
+  uint32_t GetID(FX_STRSIZE start_pos = 0) const;
 
 #define FXFORMAT_SIGNED 1
 #define FXFORMAT_HEX 2
 #define FXFORMAT_CAPITAL 4
 
-  static CFX_ByteString FormatInteger(int i, FX_DWORD flags = 0);
+  static CFX_ByteString FormatInteger(int i, uint32_t flags = 0);
   static CFX_ByteString FormatFloat(FX_FLOAT f, int precision = 0);
 
  protected:

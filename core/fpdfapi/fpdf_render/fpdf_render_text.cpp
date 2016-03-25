@@ -29,7 +29,7 @@ CPDF_Type3Cache::~CPDF_Type3Cache() {
   }
   m_SizeMap.clear();
 }
-CFX_GlyphBitmap* CPDF_Type3Cache::LoadGlyph(FX_DWORD charcode,
+CFX_GlyphBitmap* CPDF_Type3Cache::LoadGlyph(uint32_t charcode,
                                             const CFX_Matrix* pMatrix,
                                             FX_FLOAT retinaScaleX,
                                             FX_FLOAT retinaScaleY) {
@@ -130,7 +130,7 @@ static int _DetectFirstLastScan(const CFX_DIBitmap* pBitmap, FX_BOOL bFirst) {
   return -1;
 }
 CFX_GlyphBitmap* CPDF_Type3Cache::RenderGlyph(CPDF_Type3Glyphs* pSize,
-                                              FX_DWORD charcode,
+                                              uint32_t charcode,
                                               const CFX_Matrix* pMatrix,
                                               FX_FLOAT retinaScaleX,
                                               FX_FLOAT retinaScaleY) {
@@ -192,10 +192,10 @@ void _CPDF_UniqueKeyGen::Generate(int count, ...) {
   va_start(argList, count);
   for (int i = 0; i < count; i++) {
     int p = va_arg(argList, int);
-    ((FX_DWORD*)m_Key)[i] = p;
+    ((uint32_t*)m_Key)[i] = p;
   }
   va_end(argList);
-  m_KeyLen = count * sizeof(FX_DWORD);
+  m_KeyLen = count * sizeof(uint32_t);
 }
 FX_BOOL CPDF_RenderStatus::ProcessText(const CPDF_TextObject* textobj,
                                        const CFX_Matrix* pObj2Device,
@@ -334,7 +334,7 @@ class CPDF_RefType3Cache {
       ReleaseCachedType3(m_pType3Font);
     }
   }
-  FX_DWORD m_dwCount;
+  uint32_t m_dwCount;
   CPDF_Type3Font* m_pType3Font;
 };
 FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj,
@@ -362,13 +362,13 @@ FX_BOOL CPDF_RenderStatus::ProcessType3Text(const CPDF_TextObject* textobj,
     return FALSE;
   }
   CPDF_RefType3Cache refTypeCache(pType3Font);
-  FX_DWORD* pChars = textobj->m_pCharCodes;
+  uint32_t* pChars = textobj->m_pCharCodes;
   if (textobj->m_nChars == 1) {
-    pChars = (FX_DWORD*)(&textobj->m_pCharCodes);
+    pChars = (uint32_t*)(&textobj->m_pCharCodes);
   }
   for (int iChar = 0; iChar < textobj->m_nChars; iChar++) {
-    FX_DWORD charcode = pChars[iChar];
-    if (charcode == (FX_DWORD)-1) {
+    uint32_t charcode = pChars[iChar];
+    if (charcode == (uint32_t)-1) {
       continue;
     }
     CPDF_Type3Char* pType3Char = pType3Font->LoadChar(charcode);
@@ -501,12 +501,12 @@ class CPDF_CharPosList {
   CPDF_CharPosList();
   ~CPDF_CharPosList();
   void Load(int nChars,
-            FX_DWORD* pCharCodes,
+            uint32_t* pCharCodes,
             FX_FLOAT* pCharPos,
             CPDF_Font* pFont,
             FX_FLOAT font_size);
   FXTEXT_CHARPOS* m_pCharPos;
-  FX_DWORD m_nChars;
+  uint32_t m_nChars;
 };
 
 CPDF_CharPosList::CPDF_CharPosList() {
@@ -516,7 +516,7 @@ CPDF_CharPosList::~CPDF_CharPosList() {
   FX_Free(m_pCharPos);
 }
 void CPDF_CharPosList::Load(int nChars,
-                            FX_DWORD* pCharCodes,
+                            uint32_t* pCharCodes,
                             FX_FLOAT* pCharPos,
                             CPDF_Font* pFont,
                             FX_FLOAT FontSize) {
@@ -525,9 +525,9 @@ void CPDF_CharPosList::Load(int nChars,
   CPDF_CIDFont* pCIDFont = pFont->AsCIDFont();
   FX_BOOL bVertWriting = pCIDFont && pCIDFont->IsVertWriting();
   for (int iChar = 0; iChar < nChars; iChar++) {
-    FX_DWORD CharCode =
-        nChars == 1 ? (FX_DWORD)(uintptr_t)pCharCodes : pCharCodes[iChar];
-    if (CharCode == (FX_DWORD)-1) {
+    uint32_t CharCode =
+        nChars == 1 ? (uint32_t)(uintptr_t)pCharCodes : pCharCodes[iChar];
+    if (CharCode == (uint32_t)-1) {
       continue;
     }
     FX_BOOL bVert = FALSE;
@@ -575,7 +575,7 @@ void CPDF_CharPosList::Load(int nChars,
 }
 FX_BOOL CPDF_TextRenderer::DrawTextPath(CFX_RenderDevice* pDevice,
                                         int nChars,
-                                        FX_DWORD* pCharCodes,
+                                        uint32_t* pCharCodes,
                                         FX_FLOAT* pCharPos,
                                         CPDF_Font* pFont,
                                         FX_FLOAT font_size,
@@ -629,16 +629,16 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
   if (nChars == 0) {
     return;
   }
-  FX_DWORD charcode;
+  uint32_t charcode;
   int offset = 0;
-  FX_DWORD* pCharCodes;
+  uint32_t* pCharCodes;
   FX_FLOAT* pCharPos;
   if (nChars == 1) {
     charcode = pFont->GetNextChar(str, str.GetLength(), offset);
-    pCharCodes = (FX_DWORD*)(uintptr_t)charcode;
+    pCharCodes = (uint32_t*)(uintptr_t)charcode;
     pCharPos = NULL;
   } else {
-    pCharCodes = FX_Alloc(FX_DWORD, nChars);
+    pCharCodes = FX_Alloc(uint32_t, nChars);
     pCharPos = FX_Alloc(FX_FLOAT, nChars - 1);
     FX_FLOAT cur_pos = 0;
     for (int i = 0; i < nChars; i++) {
@@ -673,7 +673,7 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
 }
 FX_BOOL CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
                                           int nChars,
-                                          FX_DWORD* pCharCodes,
+                                          uint32_t* pCharCodes,
                                           FX_FLOAT* pCharPos,
                                           CPDF_Font* pFont,
                                           FX_FLOAT font_size,
@@ -687,7 +687,7 @@ FX_BOOL CPDF_TextRenderer::DrawNormalText(CFX_RenderDevice* pDevice,
   CharPosList.Load(nChars, pCharCodes, pCharPos, pFont, font_size);
   int FXGE_flags = 0;
   if (pOptions) {
-    FX_DWORD dwFlags = pOptions->m_Flags;
+    uint32_t dwFlags = pOptions->m_Flags;
     if (dwFlags & RENDER_CLEARTYPE) {
       FXGE_flags |= FXTEXT_CLEARTYPE;
       if (dwFlags & RENDER_BGR_STRIPE) {
@@ -750,7 +750,7 @@ void CPDF_RenderStatus::DrawTextPathWithPattern(const CPDF_TextObject* textobj,
   CPDF_CharPosList CharPosList;
   CharPosList.Load(textobj->m_nChars, textobj->m_pCharCodes,
                    textobj->m_pCharPos, pFont, font_size);
-  for (FX_DWORD i = 0; i < CharPosList.m_nChars; i++) {
+  for (uint32_t i = 0; i < CharPosList.m_nChars; i++) {
     FXTEXT_CHARPOS& charpos = CharPosList.m_pCharPos[i];
     const CFX_PathData* pPath = pFaceCache->LoadGlyphPath(
         &pFont->m_Font, charpos.m_GlyphIndex, charpos.m_FontCharWidth);

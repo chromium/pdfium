@@ -30,10 +30,10 @@ class CFX_AndroidFontInfo : public IFX_SystemFontInfo {
                         int& bExact);
 
   virtual void* GetFont(const FX_CHAR* face);
-  virtual FX_DWORD GetFontData(void* hFont,
-                               FX_DWORD table,
+  virtual uint32_t GetFontData(void* hFont,
+                               uint32_t table,
                                uint8_t* buffer,
-                               FX_DWORD size);
+                               uint32_t size);
   virtual FX_BOOL GetFaceName(void* hFont, CFX_ByteString& name);
   virtual FX_BOOL GetFontCharset(void* hFont, int& charset);
 

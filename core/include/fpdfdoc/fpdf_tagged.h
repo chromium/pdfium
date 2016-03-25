@@ -37,21 +37,21 @@ struct CPDF_StructKid {
       CPDF_Dictionary* m_pDict;
     } m_Element;
     struct {
-      FX_DWORD m_PageObjNum;
+      uint32_t m_PageObjNum;
 
-      FX_DWORD m_ContentId;
+      uint32_t m_ContentId;
     } m_PageContent;
     struct {
-      FX_DWORD m_PageObjNum;
+      uint32_t m_PageObjNum;
 
-      FX_DWORD m_ContentId;
+      uint32_t m_ContentId;
 
-      FX_DWORD m_RefObjNum;
+      uint32_t m_RefObjNum;
     } m_StreamContent;
     struct {
-      FX_DWORD m_PageObjNum;
+      uint32_t m_PageObjNum;
 
-      FX_DWORD m_RefObjNum;
+      uint32_t m_RefObjNum;
     } m_Object;
   };
 };

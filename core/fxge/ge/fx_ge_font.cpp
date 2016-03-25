@@ -13,7 +13,7 @@
 namespace {
 
 #ifdef PDF_ENABLE_XFA
-const FX_DWORD g_EncodingID[] = {
+const uint32_t g_EncodingID[] = {
     FXFM_ENCODING_MS_SYMBOL,     FXFM_ENCODING_UNICODE,
     FXFM_ENCODING_MS_SJIS,       FXFM_ENCODING_MS_GB2312,
     FXFM_ENCODING_MS_BIG5,       FXFM_ENCODING_MS_WANSUNG,
@@ -24,7 +24,7 @@ const FX_DWORD g_EncodingID[] = {
 };
 
 CFX_UnicodeEncodingEx* _FXFM_CreateFontEncoding(CFX_Font* pFont,
-                                                FX_DWORD nEncodingID) {
+                                                uint32_t nEncodingID) {
   if (FXFT_Select_Charmap(pFont->GetFace(), nEncodingID))
     return nullptr;
   return new CFX_UnicodeEncodingEx(pFont, nEncodingID);
@@ -127,7 +127,7 @@ void CFX_Font::DeleteFace() {
 }
 void CFX_Font::LoadSubst(const CFX_ByteString& face_name,
                          FX_BOOL bTrueType,
-                         FX_DWORD flags,
+                         uint32_t flags,
                          int weight,
                          int italic_angle,
                          int CharsetCP,
@@ -213,7 +213,7 @@ FX_BOOL CFX_Font::LoadFile(IFX_FileRead* pFile,
 }
 #endif  // PDF_ENABLE_XFA
 
-int CFX_Font::GetGlyphWidth(FX_DWORD glyph_index) {
+int CFX_Font::GetGlyphWidth(uint32_t glyph_index) {
   if (!m_Face) {
     return 0;
   }
@@ -231,7 +231,7 @@ int CFX_Font::GetGlyphWidth(FX_DWORD glyph_index) {
   return width;
 }
 
-FX_BOOL CFX_Font::LoadEmbedded(const uint8_t* data, FX_DWORD size) {
+FX_BOOL CFX_Font::LoadEmbedded(const uint8_t* data, uint32_t size) {
   m_pFontDataAllocation = FX_Alloc(uint8_t, size);
   FXSYS_memcpy(m_pFontDataAllocation, data, size);
   m_Face = FT_LoadFont(m_pFontDataAllocation, size);
@@ -261,7 +261,7 @@ int CFX_Font::GetDescent() const {
                    FXFT_Get_Face_Descender(m_Face));
 }
 
-FX_BOOL CFX_Font::GetGlyphBBox(FX_DWORD glyph_index, FX_RECT& bbox) {
+FX_BOOL CFX_Font::GetGlyphBBox(uint32_t glyph_index, FX_RECT& bbox) {
   if (!m_Face)
     return FALSE;
 
@@ -448,7 +448,7 @@ CFX_UnicodeEncoding::CFX_UnicodeEncoding(CFX_Font* pFont) : m_pFont(pFont) {}
 
 CFX_UnicodeEncoding::~CFX_UnicodeEncoding() {}
 
-FX_DWORD CFX_UnicodeEncoding::GlyphFromCharCode(FX_DWORD charcode) {
+uint32_t CFX_UnicodeEncoding::GlyphFromCharCode(uint32_t charcode) {
   FXFT_Face face = m_pFont->GetFace();
   if (!face)
     return charcode;
@@ -457,7 +457,7 @@ FX_DWORD CFX_UnicodeEncoding::GlyphFromCharCode(FX_DWORD charcode) {
     return FXFT_Get_Char_Index(face, charcode);
 
   if (m_pFont->GetSubstFont() && m_pFont->GetSubstFont()->m_Charset == 2) {
-    FX_DWORD index = 0;
+    uint32_t index = 0;
     if (FXFT_Select_Charmap(face, FXFT_ENCODING_MS_SYMBOL) == 0)
       index = FXFT_Get_Char_Index(face, charcode);
     if (!index && !FXFT_Select_Charmap(face, FXFT_ENCODING_APPLE_ROMAN))
@@ -468,12 +468,12 @@ FX_DWORD CFX_UnicodeEncoding::GlyphFromCharCode(FX_DWORD charcode) {
 
 #ifdef PDF_ENABLE_XFA
 CFX_UnicodeEncodingEx::CFX_UnicodeEncodingEx(CFX_Font* pFont,
-                                             FX_DWORD EncodingID)
+                                             uint32_t EncodingID)
     : CFX_UnicodeEncoding(pFont), m_nEncodingID(EncodingID) {}
 
 CFX_UnicodeEncodingEx::~CFX_UnicodeEncodingEx() {}
 
-FX_DWORD CFX_UnicodeEncodingEx::GlyphFromCharCode(FX_DWORD charcode) {
+uint32_t CFX_UnicodeEncodingEx::GlyphFromCharCode(uint32_t charcode) {
   FXFT_Face face = m_pFont->GetFace();
   FT_UInt nIndex = FXFT_Get_Char_Index(face, charcode);
   if (nIndex > 0) {
@@ -482,7 +482,7 @@ FX_DWORD CFX_UnicodeEncodingEx::GlyphFromCharCode(FX_DWORD charcode) {
   int nmaps = FXFT_Get_Face_CharmapCount(face);
   int m = 0;
   while (m < nmaps) {
-    FX_DWORD nEncodingID =
+    uint32_t nEncodingID =
         FXFT_Get_Charmap_Encoding(FXFT_Get_Face_Charmaps(face)[m++]);
     if (m_nEncodingID == nEncodingID) {
       continue;
@@ -501,7 +501,7 @@ FX_DWORD CFX_UnicodeEncodingEx::GlyphFromCharCode(FX_DWORD charcode) {
   return 0;
 }
 
-FX_DWORD CFX_UnicodeEncodingEx::CharCodeFromUnicode(FX_WCHAR Unicode) const {
+uint32_t CFX_UnicodeEncodingEx::CharCodeFromUnicode(FX_WCHAR Unicode) const {
   if (m_nEncodingID == FXFM_ENCODING_UNICODE ||
       m_nEncodingID == FXFM_ENCODING_MS_SYMBOL) {
     return Unicode;
@@ -516,11 +516,11 @@ FX_DWORD CFX_UnicodeEncodingEx::CharCodeFromUnicode(FX_WCHAR Unicode) const {
       return Unicode;
     }
   }
-  return static_cast<FX_DWORD>(-1);
+  return static_cast<uint32_t>(-1);
 }
 
 CFX_UnicodeEncodingEx* FX_CreateFontEncodingEx(CFX_Font* pFont,
-                                               FX_DWORD nEncodingID) {
+                                               uint32_t nEncodingID) {
   if (!pFont || !pFont->GetFace())
     return nullptr;
 

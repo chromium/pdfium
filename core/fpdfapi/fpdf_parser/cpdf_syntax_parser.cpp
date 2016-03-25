@@ -28,8 +28,8 @@ namespace {
 
 struct SearchTagRecord {
   const char* m_pTag;
-  FX_DWORD m_Len;
-  FX_DWORD m_Offset;
+  uint32_t m_Len;
+  uint32_t m_Offset;
 };
 
 }  // namespace
@@ -60,14 +60,14 @@ FX_BOOL CPDF_SyntaxParser::GetNextChar(uint8_t& ch) {
 
   if (m_BufOffset >= pos || (FX_FILESIZE)(m_BufOffset + m_BufSize) <= pos) {
     FX_FILESIZE read_pos = pos;
-    FX_DWORD read_size = m_BufSize;
+    uint32_t read_size = m_BufSize;
     if ((FX_FILESIZE)read_size > m_FileLen)
-      read_size = (FX_DWORD)m_FileLen;
+      read_size = (uint32_t)m_FileLen;
 
     if ((FX_FILESIZE)(read_pos + read_size) > m_FileLen) {
       if (m_FileLen < (FX_FILESIZE)read_size) {
         read_pos = 0;
-        read_size = (FX_DWORD)m_FileLen;
+        read_size = (uint32_t)m_FileLen;
       } else {
         read_pos = m_FileLen - read_size;
       }
@@ -95,11 +95,11 @@ FX_BOOL CPDF_SyntaxParser::GetCharAtBackward(FX_FILESIZE pos, uint8_t& ch) {
     else
       read_pos = pos - m_BufSize + 1;
 
-    FX_DWORD read_size = m_BufSize;
+    uint32_t read_size = m_BufSize;
     if ((FX_FILESIZE)(read_pos + read_size) > m_FileLen) {
       if (m_FileLen < (FX_FILESIZE)read_size) {
         read_pos = 0;
-        read_size = (FX_DWORD)m_FileLen;
+        read_size = (uint32_t)m_FileLen;
       } else {
         read_pos = m_FileLen - read_size;
       }
@@ -114,7 +114,7 @@ FX_BOOL CPDF_SyntaxParser::GetCharAtBackward(FX_FILESIZE pos, uint8_t& ch) {
   return TRUE;
 }
 
-FX_BOOL CPDF_SyntaxParser::ReadBlock(uint8_t* pBuf, FX_DWORD size) {
+FX_BOOL CPDF_SyntaxParser::ReadBlock(uint8_t* pBuf, uint32_t size) {
   if (!m_pFileAccess->ReadBlock(pBuf, m_Pos + m_HeaderOffset, size))
     return FALSE;
   m_Pos += size;
@@ -375,8 +375,8 @@ CFX_ByteString CPDF_SyntaxParser::GetKeyword() {
 }
 
 CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjectHolder* pObjList,
-                                          FX_DWORD objnum,
-                                          FX_DWORD gennum,
+                                          uint32_t objnum,
+                                          uint32_t gennum,
                                           FX_BOOL bDecrypt) {
   CFX_AutoRestorer<int> restorer(&s_CurrentRecursionDepth);
   if (++s_CurrentRecursionDepth > kParserMaxRecursionDepth)
@@ -394,7 +394,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjectHolder* pObjList,
     if (bIsNumber) {
       CFX_ByteString nextword2 = GetNextWord(nullptr);
       if (nextword2 == "R") {
-        FX_DWORD objnum = FXSYS_atoui(word);
+        uint32_t objnum = FXSYS_atoui(word);
         return new CPDF_Reference(pObjList, objnum);
       }
     }
@@ -500,8 +500,8 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjectHolder* pObjList,
 
 CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
     CPDF_IndirectObjectHolder* pObjList,
-    FX_DWORD objnum,
-    FX_DWORD gennum) {
+    uint32_t objnum,
+    uint32_t gennum) {
   CFX_AutoRestorer<int> restorer(&s_CurrentRecursionDepth);
   if (++s_CurrentRecursionDepth > kParserMaxRecursionDepth)
     return nullptr;
@@ -628,8 +628,8 @@ unsigned int CPDF_SyntaxParser::ReadEOLMarkers(FX_FILESIZE pos) {
 }
 
 CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
-                                           FX_DWORD objnum,
-                                           FX_DWORD gennum) {
+                                           uint32_t objnum,
+                                           uint32_t gennum) {
   CPDF_Object* pLenObj = pDict->GetElement("Length");
   FX_FILESIZE len = -1;
   CPDF_Reference* pLenObjRef = ToReference(pLenObj);
@@ -647,7 +647,7 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
   const CFX_ByteStringC kEndObjStr("endobj");
 
   IPDF_CryptoHandler* pCryptoHandler =
-      objnum == (FX_DWORD)m_MetadataObjnum ? nullptr : m_pCryptoHandler.get();
+      objnum == (uint32_t)m_MetadataObjnum ? nullptr : m_pCryptoHandler.get();
   if (!pCryptoHandler) {
     FX_BOOL bSearchForKeyword = TRUE;
     if (len >= 0) {
@@ -782,7 +782,7 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
 }
 
 void CPDF_SyntaxParser::InitParser(IFX_FileRead* pFileAccess,
-                                   FX_DWORD HeaderOffset) {
+                                   uint32_t HeaderOffset) {
   FX_Free(m_pFileBuf);
 
   m_pFileBuf = FX_Alloc(uint8_t, m_BufSize);
@@ -810,7 +810,7 @@ bool CPDF_SyntaxParser::IsWholeWord(FX_FILESIZE startpos,
                                     FX_FILESIZE limit,
                                     const CFX_ByteStringC& tag,
                                     FX_BOOL checkKeyword) {
-  const FX_DWORD taglen = tag.GetLength();
+  const uint32_t taglen = tag.GetLength();
 
   bool bCheckLeft = !PDFCharIsDelimiter(tag[0]) && !PDFCharIsWhitespace(tag[0]);
   bool bCheckRight = !PDFCharIsDelimiter(tag[taglen - 1]) &&
@@ -914,12 +914,12 @@ int32_t CPDF_SyntaxParser::SearchMultiWord(const CFX_ByteStringC& tags,
   }
 
   std::vector<SearchTagRecord> patterns(ntags);
-  FX_DWORD start = 0;
-  FX_DWORD itag = 0;
-  FX_DWORD max_len = 0;
+  uint32_t start = 0;
+  uint32_t itag = 0;
+  uint32_t max_len = 0;
   for (int i = 0; i <= tags.GetLength(); ++i) {
     if (tags[i] == 0) {
-      FX_DWORD len = i - start;
+      uint32_t len = i - start;
       max_len = std::max(len, max_len);
       patterns[itag].m_pTag = tags.GetCStr() + start;
       patterns[itag].m_Len = len;

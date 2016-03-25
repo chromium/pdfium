@@ -11,14 +11,14 @@
 #include "core/fxcrt/include/fx_basic.h"
 #include "third_party/base/numerics/safe_math.h"
 
-static int _Buffer_itoa(char* buf, int i, FX_DWORD flags) {
+static int _Buffer_itoa(char* buf, int i, uint32_t flags) {
   if (i == 0) {
     buf[0] = '0';
     return 1;
   }
   char buf1[32];
   int buf_pos = 31;
-  FX_DWORD u = i;
+  uint32_t u = i;
   if ((flags & FXFORMAT_SIGNED) && i < 0) {
     u = -i;
   }
@@ -43,7 +43,7 @@ static int _Buffer_itoa(char* buf, int i, FX_DWORD flags) {
   }
   return len;
 }
-CFX_ByteString CFX_ByteString::FormatInteger(int i, FX_DWORD flags) {
+CFX_ByteString CFX_ByteString::FormatInteger(int i, uint32_t flags) {
   char buf[32];
   return CFX_ByteStringC(buf, _Buffer_itoa(buf, i, flags));
 }
@@ -1012,17 +1012,17 @@ void CFX_ByteString::TrimLeft(FX_CHAR chTarget) {
 void CFX_ByteString::TrimLeft() {
   TrimLeft("\x09\x0a\x0b\x0c\x0d\x20");
 }
-FX_DWORD CFX_ByteString::GetID(FX_STRSIZE start_pos) const {
+uint32_t CFX_ByteString::GetID(FX_STRSIZE start_pos) const {
   return CFX_ByteStringC(*this).GetID(start_pos);
 }
-FX_DWORD CFX_ByteStringC::GetID(FX_STRSIZE start_pos) const {
+uint32_t CFX_ByteStringC::GetID(FX_STRSIZE start_pos) const {
   if (m_Length == 0) {
     return 0;
   }
   if (start_pos < 0 || start_pos >= m_Length) {
     return 0;
   }
-  FX_DWORD strid = 0;
+  uint32_t strid = 0;
   if (start_pos + 4 > m_Length) {
     for (FX_STRSIZE i = 0; i < m_Length - start_pos; i++) {
       strid = strid * 256 + m_Ptr[start_pos + i];

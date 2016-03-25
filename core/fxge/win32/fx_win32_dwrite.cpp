@@ -127,7 +127,7 @@ CDWriteExt::~CDWriteExt() {
   Unload();
 }
 LPVOID CDWriteExt::DwCreateFontFaceFromStream(uint8_t* pData,
-                                              FX_DWORD size,
+                                              uint32_t size,
                                               int simulation_style) {
   IDWriteFactory* pDwFactory = (IDWriteFactory*)m_pDWriteFactory;
   IDWriteFontFile* pDwFontFile = NULL;

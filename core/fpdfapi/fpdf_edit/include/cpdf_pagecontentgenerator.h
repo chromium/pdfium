@@ -29,7 +29,7 @@ class CPDF_PageContentGenerator {
   void ProcessImage(CFX_ByteTextBuf& buf, CPDF_ImageObject* pImageObj);
   void ProcessForm(CFX_ByteTextBuf& buf,
                    const uint8_t* data,
-                   FX_DWORD size,
+                   uint32_t size,
                    CFX_Matrix& matrix);
   CFX_ByteString RealizeResource(CPDF_Object* pResourceObj,
                                  const FX_CHAR* szType);

@@ -18,7 +18,7 @@ FX_BOOL PDF_FormField_IsUnison(CPDF_FormField* pField) {
   if (pField->GetType() == CPDF_FormField::CheckBox) {
     bUnison = TRUE;
   } else {
-    FX_DWORD dwFlags = pField->GetFieldFlags();
+    uint32_t dwFlags = pField->GetFieldFlags();
     bUnison = ((dwFlags & 0x2000000) != 0);
   }
   return bUnison;
@@ -36,7 +36,7 @@ void CPDF_FormField::SyncFieldFlags() {
   CFX_ByteString type_name = FPDF_GetFieldAttr(m_pDict, "FT")
                                  ? FPDF_GetFieldAttr(m_pDict, "FT")->GetString()
                                  : CFX_ByteString();
-  FX_DWORD flags = FPDF_GetFieldAttr(m_pDict, "Ff")
+  uint32_t flags = FPDF_GetFieldAttr(m_pDict, "Ff")
                        ? FPDF_GetFieldAttr(m_pDict, "Ff")->GetInteger()
                        : 0;
   m_Flags = 0;
@@ -261,7 +261,7 @@ CFX_WideString CPDF_FormField::GetMappingName() {
   }
   return pObj->GetUnicodeText();
 }
-FX_DWORD CPDF_FormField::GetFieldFlags() {
+uint32_t CPDF_FormField::GetFieldFlags() {
   CPDF_Object* pObj = FPDF_GetFieldAttr(m_pDict, "Ff");
   if (!pObj) {
     return 0;
@@ -537,7 +537,7 @@ FX_BOOL CPDF_FormField::IsItemSelected(int index) {
       break;
     }
   }
-  for (FX_DWORD i = 0; i < pArray->GetCount(); i++)
+  for (uint32_t i = 0; i < pArray->GetCount(); i++)
     if (pArray->GetElementValue(i)->GetUnicodeText() == opt_value &&
         (int)i == iPos) {
       return TRUE;

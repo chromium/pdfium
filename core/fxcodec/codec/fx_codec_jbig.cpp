@@ -58,12 +58,12 @@ void CCodec_Jbig2Module::DestroyJbig2Context(void* pJbig2Content) {
 }
 FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(void* pJbig2Context,
                                                CFX_PrivateData* pPrivateData,
-                                               FX_DWORD width,
-                                               FX_DWORD height,
+                                               uint32_t width,
+                                               uint32_t height,
                                                CPDF_StreamAcc* src_stream,
                                                CPDF_StreamAcc* global_stream,
                                                uint8_t* dest_buf,
-                                               FX_DWORD dest_pitch,
+                                               uint32_t dest_pitch,
                                                IFX_Pause* pPause) {
   if (!pJbig2Context) {
     return FXCODEC_STATUS_ERR_PARAMS;
@@ -95,7 +95,7 @@ FXCODEC_STATUS CCodec_Jbig2Module::StartDecode(void* pJbig2Context,
       return FXCODEC_STATUS_ERROR;
     }
     int dword_size = height * dest_pitch / 4;
-    FX_DWORD* dword_buf = (FX_DWORD*)dest_buf;
+    uint32_t* dword_buf = (uint32_t*)dest_buf;
     for (int i = 0; i < dword_size; i++) {
       dword_buf[i] = ~dword_buf[i];
     }
@@ -118,7 +118,7 @@ FXCODEC_STATUS CCodec_Jbig2Module::ContinueDecode(void* pJbig2Context,
   }
   int dword_size =
       m_pJbig2Context->m_height * m_pJbig2Context->m_dest_pitch / 4;
-  FX_DWORD* dword_buf = (FX_DWORD*)m_pJbig2Context->m_dest_buf;
+  uint32_t* dword_buf = (uint32_t*)m_pJbig2Context->m_dest_buf;
   for (int i = 0; i < dword_size; i++) {
     dword_buf[i] = ~dword_buf[i];
   }

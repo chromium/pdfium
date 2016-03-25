@@ -1631,8 +1631,8 @@ const FX_CHAR* const ZapfEncodingNames[224] = {
     "a182",  NULL,   "a201", "a183", "a184", "a197", "a185", "a194", "a198",
     "a186",  "a195", "a187", "a188", "a189", "a190", "a191", NULL};
 
-FX_DWORD PDF_FindCode(const uint16_t* pCodes, uint16_t unicode) {
-  for (FX_DWORD i = 0; i < 256; i++)
+uint32_t PDF_FindCode(const uint16_t* pCodes, uint16_t unicode) {
+  for (uint32_t i = 0; i < 256; i++)
     if (pCodes[i] == unicode)
       return i;
   return 0;
@@ -1713,7 +1713,7 @@ CPDF_Object* CPDF_FontEncoding::Realize() {
   return pDict;
 }
 
-FX_DWORD FT_CharCodeFromUnicode(int encoding, FX_WCHAR unicode) {
+uint32_t FT_CharCodeFromUnicode(int encoding, FX_WCHAR unicode) {
   switch (encoding) {
     case FXFT_ENCODING_UNICODE:
       return unicode;
@@ -1796,7 +1796,7 @@ const FX_CHAR* PDF_CharNameFromPredefinedCharSet(int encoding,
   return nullptr;
 }
 
-FX_WCHAR FT_UnicodeFromCharCode(int encoding, FX_DWORD charcode) {
+FX_WCHAR FT_UnicodeFromCharCode(int encoding, uint32_t charcode) {
   switch (encoding) {
     case FXFT_ENCODING_UNICODE:
       return (uint16_t)charcode;

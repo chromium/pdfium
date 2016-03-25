@@ -43,17 +43,17 @@ class CFX_Win32FontInfo final : public IFX_SystemFontInfo {
                 const FX_CHAR* face,
                 int& iExact) override;
   void* GetFont(const FX_CHAR* face) override { return NULL; }
-  FX_DWORD GetFontData(void* hFont,
-                       FX_DWORD table,
+  uint32_t GetFontData(void* hFont,
+                       uint32_t table,
                        uint8_t* buffer,
-                       FX_DWORD size) override;
+                       uint32_t size) override;
   FX_BOOL GetFaceName(void* hFont, CFX_ByteString& name) override;
   FX_BOOL GetFontCharset(void* hFont, int& charset) override;
   void DeleteFont(void* hFont) override;
 
   FX_BOOL IsOpenTypeFromDiv(const LOGFONTA* plf);
   FX_BOOL IsSupportFontFormDiv(const LOGFONTA* plf);
-  void AddInstalledFont(const LOGFONTA* plf, FX_DWORD FontType);
+  void AddInstalledFont(const LOGFONTA* plf, uint32_t FontType);
   void GetGBPreference(CFX_ByteString& face, int weight, int picth_family);
   void GetJapanesePreference(CFX_ByteString& face,
                              int weight,
@@ -76,18 +76,18 @@ void CFX_Win32FontInfo::Release() {
   delete this;
 }
 #define TT_MAKE_TAG(x1, x2, x3, x4)                                    \
-  (((FX_DWORD)x1 << 24) | ((FX_DWORD)x2 << 16) | ((FX_DWORD)x3 << 8) | \
-   (FX_DWORD)x4)
+  (((uint32_t)x1 << 24) | ((uint32_t)x2 << 16) | ((uint32_t)x3 << 8) | \
+   (uint32_t)x4)
 FX_BOOL CFX_Win32FontInfo::IsOpenTypeFromDiv(const LOGFONTA* plf) {
   HFONT hFont = CreateFontIndirectA(plf);
   FX_BOOL ret = FALSE;
-  FX_DWORD font_size = GetFontData(hFont, 0, NULL, 0);
-  if (font_size != GDI_ERROR && font_size >= sizeof(FX_DWORD)) {
-    FX_DWORD lVersion = 0;
-    GetFontData(hFont, 0, (uint8_t*)(&lVersion), sizeof(FX_DWORD));
-    lVersion = (((FX_DWORD)(uint8_t)(lVersion)) << 24) |
-               ((FX_DWORD)((uint8_t)(lVersion >> 8))) << 16 |
-               ((FX_DWORD)((uint8_t)(lVersion >> 16))) << 8 |
+  uint32_t font_size = GetFontData(hFont, 0, NULL, 0);
+  if (font_size != GDI_ERROR && font_size >= sizeof(uint32_t)) {
+    uint32_t lVersion = 0;
+    GetFontData(hFont, 0, (uint8_t*)(&lVersion), sizeof(uint32_t));
+    lVersion = (((uint32_t)(uint8_t)(lVersion)) << 24) |
+               ((uint32_t)((uint8_t)(lVersion >> 8))) << 16 |
+               ((uint32_t)((uint8_t)(lVersion >> 16))) << 8 |
                ((uint8_t)(lVersion >> 24));
     if (lVersion == TT_MAKE_TAG('O', 'T', 'T', 'O') || lVersion == 0x00010000 ||
         lVersion == TT_MAKE_TAG('t', 't', 'c', 'f') ||
@@ -101,13 +101,13 @@ FX_BOOL CFX_Win32FontInfo::IsOpenTypeFromDiv(const LOGFONTA* plf) {
 FX_BOOL CFX_Win32FontInfo::IsSupportFontFormDiv(const LOGFONTA* plf) {
   HFONT hFont = CreateFontIndirectA(plf);
   FX_BOOL ret = FALSE;
-  FX_DWORD font_size = GetFontData(hFont, 0, NULL, 0);
-  if (font_size != GDI_ERROR && font_size >= sizeof(FX_DWORD)) {
-    FX_DWORD lVersion = 0;
-    GetFontData(hFont, 0, (uint8_t*)(&lVersion), sizeof(FX_DWORD));
-    lVersion = (((FX_DWORD)(uint8_t)(lVersion)) << 24) |
-               ((FX_DWORD)((uint8_t)(lVersion >> 8))) << 16 |
-               ((FX_DWORD)((uint8_t)(lVersion >> 16))) << 8 |
+  uint32_t font_size = GetFontData(hFont, 0, NULL, 0);
+  if (font_size != GDI_ERROR && font_size >= sizeof(uint32_t)) {
+    uint32_t lVersion = 0;
+    GetFontData(hFont, 0, (uint8_t*)(&lVersion), sizeof(uint32_t));
+    lVersion = (((uint32_t)(uint8_t)(lVersion)) << 24) |
+               ((uint32_t)((uint8_t)(lVersion >> 8))) << 16 |
+               ((uint32_t)((uint8_t)(lVersion >> 16))) << 8 |
                ((uint8_t)(lVersion >> 24));
     if (lVersion == TT_MAKE_TAG('O', 'T', 'T', 'O') || lVersion == 0x00010000 ||
         lVersion == TT_MAKE_TAG('t', 't', 'c', 'f') ||
@@ -122,7 +122,7 @@ FX_BOOL CFX_Win32FontInfo::IsSupportFontFormDiv(const LOGFONTA* plf) {
   return ret;
 }
 void CFX_Win32FontInfo::AddInstalledFont(const LOGFONTA* plf,
-                                         FX_DWORD FontType) {
+                                         uint32_t FontType) {
   CFX_ByteString name(plf->lfFaceName);
   if (name[0] == '@') {
     return;
@@ -144,7 +144,7 @@ void CFX_Win32FontInfo::AddInstalledFont(const LOGFONTA* plf,
 }
 static int CALLBACK FontEnumProc(const LOGFONTA* plf,
                                  const TEXTMETRICA* lpntme,
-                                 FX_DWORD FontType,
+                                 uint32_t FontType,
                                  LPARAM lParam) {
   CFX_Win32FontInfo* pFontInfo = (CFX_Win32FontInfo*)lParam;
   if (pFontInfo->m_pMapper->GetFontEnumerator()) {
@@ -406,10 +406,10 @@ void* CFX_Win32FontInfo::MapFont(int weight,
 void CFX_Win32FontInfo::DeleteFont(void* hFont) {
   ::DeleteObject(hFont);
 }
-FX_DWORD CFX_Win32FontInfo::GetFontData(void* hFont,
-                                        FX_DWORD table,
+uint32_t CFX_Win32FontInfo::GetFontData(void* hFont,
+                                        uint32_t table,
                                         uint8_t* buffer,
-                                        FX_DWORD size) {
+                                        uint32_t size) {
   HFONT hOldFont = (HFONT)::SelectObject(m_hDC, (HFONT)hFont);
   table = FXDWORD_GET_MSBFIRST(reinterpret_cast<uint8_t*>(&table));
   size = ::GetFontData(m_hDC, table, 0, buffer, size);
@@ -581,7 +581,7 @@ FX_BOOL CGdiDeviceDriver::GDI_StretchDIBits(const CFX_DIBitmap* pBitmap1,
                                             int dest_top,
                                             int dest_width,
                                             int dest_height,
-                                            FX_DWORD flags,
+                                            uint32_t flags,
                                             void* pIccTransform) {
   CFX_DIBitmap* pBitmap = (CFX_DIBitmap*)pBitmap1;
   if (!pBitmap || dest_width == 0 || dest_height == 0) {
@@ -624,8 +624,8 @@ FX_BOOL CGdiDeviceDriver::GDI_StretchBitMask(const CFX_DIBitmap* pBitmap1,
                                              int dest_top,
                                              int dest_width,
                                              int dest_height,
-                                             FX_DWORD bitmap_color,
-                                             FX_DWORD flags,
+                                             uint32_t bitmap_color,
+                                             uint32_t flags,
                                              int alpha_flag,
                                              void* pIccTransform) {
   CFX_DIBitmap* pBitmap = (CFX_DIBitmap*)pBitmap1;
@@ -637,7 +637,7 @@ FX_BOOL CGdiDeviceDriver::GDI_StretchBitMask(const CFX_DIBitmap* pBitmap1,
   int width = pBitmap->GetWidth(), height = pBitmap->GetHeight();
   struct {
     BITMAPINFOHEADER bmiHeader;
-    FX_DWORD bmiColors[2];
+    uint32_t bmiColors[2];
   } bmi;
   FXSYS_memset(&bmi.bmiHeader, 0, sizeof(BITMAPINFOHEADER));
   bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
@@ -691,7 +691,7 @@ FX_BOOL CGdiDeviceDriver::SetClipRgn(void* hRgn) {
 }
 static HPEN _CreatePen(const CFX_GraphStateData* pGraphState,
                        const CFX_Matrix* pMatrix,
-                       FX_DWORD argb) {
+                       uint32_t argb) {
   FX_FLOAT width;
   FX_FLOAT scale = 1.f;
   if (pMatrix)
@@ -703,7 +703,7 @@ static HPEN _CreatePen(const CFX_GraphStateData* pGraphState,
   } else {
     width = 1.0f;
   }
-  FX_DWORD PenStyle = PS_GEOMETRIC;
+  uint32_t PenStyle = PS_GEOMETRIC;
   if (width < 1) {
     width = 1;
   }
@@ -741,9 +741,9 @@ static HPEN _CreatePen(const CFX_GraphStateData* pGraphState,
   lb.lbColor = rgb;
   lb.lbStyle = BS_SOLID;
   lb.lbHatch = 0;
-  FX_DWORD* pDash = NULL;
+  uint32_t* pDash = NULL;
   if (pGraphState->m_DashCount) {
-    pDash = FX_Alloc(FX_DWORD, pGraphState->m_DashCount);
+    pDash = FX_Alloc(uint32_t, pGraphState->m_DashCount);
     for (int i = 0; i < pGraphState->m_DashCount; i++) {
       pDash[i] = FXSYS_round(
           pMatrix ? pMatrix->TransformDistance(pGraphState->m_DashArray[i])
@@ -758,7 +758,7 @@ static HPEN _CreatePen(const CFX_GraphStateData* pGraphState,
   FX_Free(pDash);
   return hPen;
 }
-static HBRUSH _CreateBrush(FX_DWORD argb) {
+static HBRUSH _CreateBrush(uint32_t argb) {
   int a;
   FX_COLORREF rgb;
   ArgbDecode(argb, a, rgb);
@@ -851,8 +851,8 @@ static FX_BOOL _MatrixNoScaled(const CFX_Matrix* pMatrix) {
 FX_BOOL CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
                                    const CFX_Matrix* pMatrix,
                                    const CFX_GraphStateData* pGraphState,
-                                   FX_DWORD fill_color,
-                                   FX_DWORD stroke_color,
+                                   uint32_t fill_color,
+                                   uint32_t stroke_color,
                                    int fill_mode,
                                    int alpha_flag,
                                    void* pIccTransform,
@@ -961,7 +961,7 @@ FX_BOOL CGdiDeviceDriver::DrawPath(const CFX_PathData* pPathData,
   return TRUE;
 }
 FX_BOOL CGdiDeviceDriver::FillRect(const FX_RECT* pRect,
-                                   FX_DWORD fill_color,
+                                   uint32_t fill_color,
                                    int alpha_flag,
                                    void* pIccTransform,
                                    int blend_type) {
@@ -1017,7 +1017,7 @@ FX_BOOL CGdiDeviceDriver::DrawCosmeticLine(FX_FLOAT x1,
                                            FX_FLOAT y1,
                                            FX_FLOAT x2,
                                            FX_FLOAT y2,
-                                           FX_DWORD color,
+                                           uint32_t color,
                                            int alpha_flag,
                                            void* pIccTransform,
                                            int blend_type) {
@@ -1098,7 +1098,7 @@ FX_BOOL CGdiDisplayDriver::GetDIBits(CFX_DIBitmap* pBitmap,
   return ret;
 }
 FX_BOOL CGdiDisplayDriver::SetDIBits(const CFX_DIBSource* pSource,
-                                     FX_DWORD color,
+                                     uint32_t color,
                                      const FX_RECT* pSrcRect,
                                      int left,
                                      int top,
@@ -1152,7 +1152,7 @@ FX_BOOL CGdiDisplayDriver::SetDIBits(const CFX_DIBSource* pSource,
   return FALSE;
 }
 FX_BOOL CGdiDisplayDriver::UseFoxitStretchEngine(const CFX_DIBSource* pSource,
-                                                 FX_DWORD color,
+                                                 uint32_t color,
                                                  int dest_left,
                                                  int dest_top,
                                                  int dest_width,
@@ -1183,13 +1183,13 @@ FX_BOOL CGdiDisplayDriver::UseFoxitStretchEngine(const CFX_DIBSource* pSource,
   return ret;
 }
 FX_BOOL CGdiDisplayDriver::StretchDIBits(const CFX_DIBSource* pSource,
-                                         FX_DWORD color,
+                                         uint32_t color,
                                          int dest_left,
                                          int dest_top,
                                          int dest_width,
                                          int dest_height,
                                          const FX_RECT* pClipRect,
-                                         FX_DWORD flags,
+                                         uint32_t flags,
                                          int alpha_flag,
                                          void* pIccTransform,
                                          int blend_type) {
@@ -1265,7 +1265,7 @@ int GetPSLevel(HDC hDC) {
   if (device_type != DT_RASPRINTER) {
     return 0;
   }
-  FX_DWORD esc = GET_PS_FEATURESETTING;
+  uint32_t esc = GET_PS_FEATURESETTING;
   if (ExtEscape(hDC, QUERYESCSUPPORT, sizeof esc, (char*)&esc, 0, NULL)) {
     int param = FEATURESETTING_PSLEVEL;
     if (ExtEscape(hDC, GET_PS_FEATURESETTING, sizeof(int), (char*)&param,
@@ -1282,7 +1282,7 @@ int GetPSLevel(HDC hDC) {
     return 0;
   }
   esc = PSIDENT_GDICENTRIC;
-  if (ExtEscape(hDC, POSTSCRIPT_IDENTIFY, sizeof(FX_DWORD), (char*)&esc, 0,
+  if (ExtEscape(hDC, POSTSCRIPT_IDENTIFY, sizeof(uint32_t), (char*)&esc, 0,
                 NULL) <= 0) {
     return 2;
   }

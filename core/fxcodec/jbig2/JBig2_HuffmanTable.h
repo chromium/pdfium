@@ -17,7 +17,7 @@ struct JBig2TableLine;
 class CJBig2_HuffmanTable {
  public:
   CJBig2_HuffmanTable(const JBig2TableLine* pTable,
-                      FX_DWORD nLines,
+                      uint32_t nLines,
                       bool bHTOOB);
 
   explicit CJBig2_HuffmanTable(CJBig2_BitStream* pStream);
@@ -25,7 +25,7 @@ class CJBig2_HuffmanTable {
   ~CJBig2_HuffmanTable();
 
   bool IsHTOOB() const { return HTOOB; }
-  FX_DWORD Size() const { return NTEMP; }
+  uint32_t Size() const { return NTEMP; }
   const std::vector<int>& GetCODES() const { return CODES; }
   const std::vector<int>& GetPREFLEN() const { return PREFLEN; }
   const std::vector<int>& GetRANGELEN() const { return RANGELEN; }
@@ -40,7 +40,7 @@ class CJBig2_HuffmanTable {
 
   bool m_bOK;
   bool HTOOB;
-  FX_DWORD NTEMP;
+  uint32_t NTEMP;
   std::vector<int> CODES;
   std::vector<int> PREFLEN;
   std::vector<int> RANGELEN;

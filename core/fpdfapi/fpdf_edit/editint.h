@@ -22,46 +22,46 @@ class CPDF_ObjectStream {
 
   FX_BOOL Start();
 
-  int32_t CompressIndirectObject(FX_DWORD dwObjNum, const CPDF_Object* pObj);
-  int32_t CompressIndirectObject(FX_DWORD dwObjNum,
+  int32_t CompressIndirectObject(uint32_t dwObjNum, const CPDF_Object* pObj);
+  int32_t CompressIndirectObject(uint32_t dwObjNum,
                                  const uint8_t* pBuffer,
-                                 FX_DWORD dwSize);
+                                 uint32_t dwSize);
 
   FX_FILESIZE End(CPDF_Creator* pCreator);
 
-  CFX_ArrayTemplate<FX_DWORD> m_ObjNumArray;
+  CFX_ArrayTemplate<uint32_t> m_ObjNumArray;
 
   CFX_ByteTextBuf m_Buffer;
-  FX_DWORD m_dwObjNum;
+  uint32_t m_dwObjNum;
   int32_t m_index;
 
  protected:
-  CFX_ArrayTemplate<FX_DWORD> m_OffsetArray;
+  CFX_ArrayTemplate<uint32_t> m_OffsetArray;
 };
 class CPDF_XRefStream {
  public:
   struct Index {
-    FX_DWORD objnum;
-    FX_DWORD count;
+    uint32_t objnum;
+    uint32_t count;
   };
 
   CPDF_XRefStream();
 
   FX_BOOL Start();
-  int32_t CompressIndirectObject(FX_DWORD dwObjNum,
+  int32_t CompressIndirectObject(uint32_t dwObjNum,
                                  const CPDF_Object* pObj,
                                  CPDF_Creator* pCreator);
-  int32_t CompressIndirectObject(FX_DWORD dwObjNum,
+  int32_t CompressIndirectObject(uint32_t dwObjNum,
                                  const uint8_t* pBuffer,
-                                 FX_DWORD dwSize,
+                                 uint32_t dwSize,
                                  CPDF_Creator* pCreator);
   FX_BOOL End(CPDF_Creator* pCreator, FX_BOOL bEOF = FALSE);
-  void AddObjectNumberToIndexArray(FX_DWORD objnum);
+  void AddObjectNumberToIndexArray(uint32_t objnum);
   FX_BOOL EndXRefStream(CPDF_Creator* pCreator);
 
   std::vector<Index> m_IndexArray;
   FX_FILESIZE m_PrevOffset;
-  FX_DWORD m_dwTempObjNum;
+  uint32_t m_dwTempObjNum;
 
  protected:
   int32_t EndObjectStream(CPDF_Creator* pCreator, FX_BOOL bEOF = TRUE);

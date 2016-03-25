@@ -14,8 +14,8 @@ static int32_t FPDFDOC_OCG_FindGroup(const CPDF_Object* pObject,
     return -1;
 
   if (const CPDF_Array* pArray = pObject->AsArray()) {
-    FX_DWORD dwCount = pArray->GetCount();
-    for (FX_DWORD i = 0; i < dwCount; i++) {
+    uint32_t dwCount = pArray->GetCount();
+    for (uint32_t i = 0; i < dwCount; i++) {
       if (pArray->GetDictAt(i) == pGroupDict)
         return i;
     }
@@ -32,8 +32,8 @@ static FX_BOOL FPDFDOC_OCG_HasIntent(const CPDF_Dictionary* pDict,
   }
   CFX_ByteString bsIntent;
   if (CPDF_Array* pArray = pIntent->AsArray()) {
-    FX_DWORD dwCount = pArray->GetCount();
-    for (FX_DWORD i = 0; i < dwCount; i++) {
+    uint32_t dwCount = pArray->GetCount();
+    for (uint32_t i = 0; i < dwCount; i++) {
       bsIntent = pArray->GetStringAt(i);
       if (bsIntent == "All" || bsIntent == csElement)
         return TRUE;

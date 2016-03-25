@@ -20,7 +20,7 @@ CPDF_IndirectObjectHolder::~CPDF_IndirectObjectHolder() {
     pair.second->Destroy();
 }
 
-CPDF_Object* CPDF_IndirectObjectHolder::GetIndirectObject(FX_DWORD objnum) {
+CPDF_Object* CPDF_IndirectObjectHolder::GetIndirectObject(uint32_t objnum) {
   if (objnum == 0)
     return nullptr;
 
@@ -44,7 +44,7 @@ CPDF_Object* CPDF_IndirectObjectHolder::GetIndirectObject(FX_DWORD objnum) {
   return pObj;
 }
 
-FX_DWORD CPDF_IndirectObjectHolder::AddIndirectObject(CPDF_Object* pObj) {
+uint32_t CPDF_IndirectObjectHolder::AddIndirectObject(CPDF_Object* pObj) {
   if (pObj->m_ObjNum)
     return pObj->m_ObjNum;
 
@@ -54,7 +54,7 @@ FX_DWORD CPDF_IndirectObjectHolder::AddIndirectObject(CPDF_Object* pObj) {
   return m_LastObjNum;
 }
 
-void CPDF_IndirectObjectHolder::ReleaseIndirectObject(FX_DWORD objnum) {
+void CPDF_IndirectObjectHolder::ReleaseIndirectObject(uint32_t objnum) {
   auto it = m_IndirectObjs.find(objnum);
   if (it == m_IndirectObjs.end() || it->second->GetObjNum() == -1)
     return;
@@ -62,7 +62,7 @@ void CPDF_IndirectObjectHolder::ReleaseIndirectObject(FX_DWORD objnum) {
   m_IndirectObjs.erase(it);
 }
 
-FX_BOOL CPDF_IndirectObjectHolder::InsertIndirectObject(FX_DWORD objnum,
+FX_BOOL CPDF_IndirectObjectHolder::InsertIndirectObject(uint32_t objnum,
                                                         CPDF_Object* pObj) {
   if (!objnum || !pObj)
     return FALSE;

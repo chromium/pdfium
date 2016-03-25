@@ -32,7 +32,7 @@ void* CFX_AndroidFontInfo::MapFont(int weight,
   if (!m_pFontMgr) {
     return NULL;
   }
-  FX_DWORD dwStyle = 0;
+  uint32_t dwStyle = 0;
   if (weight >= 700) {
     dwStyle |= FXFONT_BOLD;
   }
@@ -54,10 +54,10 @@ void* CFX_AndroidFontInfo::MapFont(int weight,
 void* CFX_AndroidFontInfo::GetFont(const FX_CHAR* face) {
   return NULL;
 }
-FX_DWORD CFX_AndroidFontInfo::GetFontData(void* hFont,
-                                          FX_DWORD table,
+uint32_t CFX_AndroidFontInfo::GetFontData(void* hFont,
+                                          uint32_t table,
                                           uint8_t* buffer,
-                                          FX_DWORD size) {
+                                          uint32_t size) {
   if (!hFont) {
     return 0;
   }

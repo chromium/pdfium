@@ -31,7 +31,7 @@ class IFPF_Font {
   virtual FPF_HFONT GetHandle() = 0;
   virtual CFX_ByteString GetFamilyName() = 0;
   virtual CFX_WideString GetPsName() = 0;
-  virtual FX_DWORD GetFontStyle() const = 0;
+  virtual uint32_t GetFontStyle() const = 0;
   virtual uint8_t GetCharset() const = 0;
 
   virtual int32_t GetGlyphIndex(FX_WCHAR wUnicode) = 0;
@@ -45,9 +45,9 @@ class IFPF_Font {
 
   virtual int32_t GetHeight() const = 0;
   virtual int32_t GetItalicAngle() const = 0;
-  virtual FX_DWORD GetFontData(FX_DWORD dwTable,
+  virtual uint32_t GetFontData(uint32_t dwTable,
                                uint8_t* pBuffer,
-                               FX_DWORD dwSize) = 0;
+                               uint32_t dwSize) = 0;
 
  protected:
   virtual ~IFPF_Font() {}
@@ -63,8 +63,8 @@ class IFPF_FontMgr {
 
   virtual IFPF_Font* CreateFont(const CFX_ByteStringC& bsFamilyname,
                                 uint8_t charset,
-                                FX_DWORD dwStyle,
-                                FX_DWORD dwMatch = 0) = 0;
+                                uint32_t dwStyle,
+                                uint32_t dwMatch = 0) = 0;
 };
 
 #endif  // CORE_INCLUDE_FXGE_FPF_H_

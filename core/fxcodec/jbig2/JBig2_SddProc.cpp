@@ -24,18 +24,18 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
     std::vector<JBig2ArithCtx>* gbContext,
     std::vector<JBig2ArithCtx>* grContext) {
   CJBig2_Image** SDNEWSYMS;
-  FX_DWORD HCHEIGHT, NSYMSDECODED;
+  uint32_t HCHEIGHT, NSYMSDECODED;
   int32_t HCDH;
-  FX_DWORD SYMWIDTH, TOTWIDTH;
+  uint32_t SYMWIDTH, TOTWIDTH;
   int32_t DW;
   CJBig2_Image* BS;
-  FX_DWORD I, J, REFAGGNINST;
+  uint32_t I, J, REFAGGNINST;
   FX_BOOL* EXFLAGS;
-  FX_DWORD EXINDEX;
+  uint32_t EXINDEX;
   FX_BOOL CUREXFLAG;
-  FX_DWORD EXRUNLENGTH;
-  FX_DWORD nTmp;
-  FX_DWORD SBNUMSYMS;
+  uint32_t EXRUNLENGTH;
+  uint32_t nTmp;
+  uint32_t SBNUMSYMS;
   uint8_t SBSYMCODELEN;
   int32_t RDXI, RDYI;
   CJBig2_Image** SBSYMS;
@@ -55,7 +55,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
   std::unique_ptr<CJBig2_ArithIntDecoder> IARDW(new CJBig2_ArithIntDecoder);
   std::unique_ptr<CJBig2_ArithIntDecoder> IARDH(new CJBig2_ArithIntDecoder);
   nTmp = 0;
-  while ((FX_DWORD)(1 << nTmp) < (SDNUMINSYMS + SDNUMNEWSYMS)) {
+  while ((uint32_t)(1 << nTmp) < (SDNUMINSYMS + SDNUMNEWSYMS)) {
     nTmp++;
   }
   IAID.reset(new CJBig2_ArithIaidDecoder((uint8_t)nTmp));
@@ -124,7 +124,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
           pDecoder->SBNUMSYMS = SDNUMINSYMS + NSYMSDECODED;
           SBNUMSYMS = pDecoder->SBNUMSYMS;
           nTmp = 0;
-          while ((FX_DWORD)(1 << nTmp) < SBNUMSYMS) {
+          while ((uint32_t)(1 << nTmp) < SBNUMSYMS) {
             nTmp++;
           }
           SBSYMCODELEN = (uint8_t)nTmp;
@@ -192,7 +192,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Arith(
           FX_Free(SBSYMS);
         } else if (REFAGGNINST == 1) {
           SBNUMSYMS = SDNUMINSYMS + NSYMSDECODED;
-          FX_DWORD IDI;
+          uint32_t IDI;
           IAID->decode(pArithDecoder, &IDI);
           IARDX->decode(pArithDecoder, &RDXI);
           IARDY->decode(pArithDecoder, &RDYI);
@@ -283,26 +283,26 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
     std::vector<JBig2ArithCtx>* grContext,
     IFX_Pause* pPause) {
   CJBig2_Image** SDNEWSYMS;
-  FX_DWORD* SDNEWSYMWIDTHS;
-  FX_DWORD HCHEIGHT, NSYMSDECODED;
+  uint32_t* SDNEWSYMWIDTHS;
+  uint32_t HCHEIGHT, NSYMSDECODED;
   int32_t HCDH;
-  FX_DWORD SYMWIDTH, TOTWIDTH, HCFIRSTSYM;
+  uint32_t SYMWIDTH, TOTWIDTH, HCFIRSTSYM;
   int32_t DW;
   CJBig2_Image *BS, *BHC;
-  FX_DWORD I, J, REFAGGNINST;
+  uint32_t I, J, REFAGGNINST;
   FX_BOOL* EXFLAGS;
-  FX_DWORD EXINDEX;
+  uint32_t EXINDEX;
   FX_BOOL CUREXFLAG;
-  FX_DWORD EXRUNLENGTH;
+  uint32_t EXRUNLENGTH;
   int32_t nVal, nBits;
-  FX_DWORD nTmp;
-  FX_DWORD SBNUMSYMS;
+  uint32_t nTmp;
+  uint32_t SBNUMSYMS;
   uint8_t SBSYMCODELEN;
   JBig2HuffmanCode* SBSYMCODES;
-  FX_DWORD IDI;
+  uint32_t IDI;
   int32_t RDXI, RDYI;
-  FX_DWORD BMSIZE;
-  FX_DWORD stride;
+  uint32_t BMSIZE;
+  uint32_t stride;
   CJBig2_Image** SBSYMS;
   std::unique_ptr<CJBig2_HuffmanDecoder> pHuffmanDecoder(
       new CJBig2_HuffmanDecoder(pStream));
@@ -311,8 +311,8 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
   SDNEWSYMWIDTHS = nullptr;
   BHC = nullptr;
   if (SDREFAGG == 0) {
-    SDNEWSYMWIDTHS = FX_Alloc(FX_DWORD, SDNUMNEWSYMS);
-    FXSYS_memset(SDNEWSYMWIDTHS, 0, SDNUMNEWSYMS * sizeof(FX_DWORD));
+    SDNEWSYMWIDTHS = FX_Alloc(uint32_t, SDNUMNEWSYMS);
+    FXSYS_memset(SDNEWSYMWIDTHS, 0, SDNUMNEWSYMS * sizeof(uint32_t));
   }
   std::unique_ptr<CJBig2_SymbolDict> pDict(new CJBig2_SymbolDict());
   std::unique_ptr<CJBig2_HuffmanTable> pTable;
@@ -370,7 +370,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
           SBNUMSYMS = pDecoder->SBNUMSYMS;
           SBSYMCODES = FX_Alloc(JBig2HuffmanCode, SBNUMSYMS);
           nTmp = 1;
-          while ((FX_DWORD)(1 << nTmp) < SBNUMSYMS) {
+          while ((uint32_t)(1 << nTmp) < SBNUMSYMS) {
             nTmp++;
           }
           for (I = 0; I < SBNUMSYMS; I++) {
@@ -433,7 +433,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
         } else if (REFAGGNINST == 1) {
           SBNUMSYMS = SDNUMINSYMS + SDNUMNEWSYMS;
           nTmp = 1;
-          while ((FX_DWORD)(1 << nTmp) < SBNUMSYMS) {
+          while ((uint32_t)(1 << nTmp) < SBNUMSYMS) {
             nTmp++;
           }
           SBSYMCODELEN = (uint8_t)nTmp;
@@ -499,7 +499,7 @@ CJBig2_SymbolDict* CJBig2_SDDProc::decode_Huffman(
           }
           pStream->alignByte();
           pStream->offset(2);
-          if ((FX_DWORD)nVal != (pStream->getOffset() - nTmp)) {
+          if ((uint32_t)nVal != (pStream->getOffset() - nTmp)) {
             delete BS;
             FX_Free(SBSYMS);
             goto failed;

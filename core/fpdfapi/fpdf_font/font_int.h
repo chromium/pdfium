@@ -98,7 +98,7 @@ class CPDF_CMapParser {
   friend class fpdf_font_cid_CMap_GetCode_Test;
   friend class fpdf_font_cid_CMap_GetCodeRange_Test;
 
-  static FX_DWORD CMap_GetCode(const CFX_ByteStringC& word);
+  static uint32_t CMap_GetCode(const CFX_ByteStringC& word);
   static bool CMap_GetCodeRange(CMap_CodeRange& range,
                                 const CFX_ByteStringC& first,
                                 const CFX_ByteStringC& second);
@@ -106,7 +106,7 @@ class CPDF_CMapParser {
   CPDF_CMap* m_pCMap;
   int m_Status;
   int m_CodeSeq;
-  FX_DWORD m_CodePoints[4];
+  uint32_t m_CodePoints[4];
   CFX_ArrayTemplate<CMap_CodeRange> m_CodeRanges;
   CFX_ByteString m_Registry, m_Ordering, m_Supplement;
   CFX_ByteString m_LastWord;
@@ -136,16 +136,16 @@ class CPDF_CMap {
   FX_BOOL LoadPredefined(CPDF_CMapManager* pMgr,
                          const FX_CHAR* name,
                          FX_BOOL bPromptCJK);
-  FX_BOOL LoadEmbedded(const uint8_t* pData, FX_DWORD dwSize);
+  FX_BOOL LoadEmbedded(const uint8_t* pData, uint32_t dwSize);
   void Release();
   FX_BOOL IsLoaded() const { return m_bLoaded; }
   FX_BOOL IsVertWriting() const { return m_bVertical; }
-  uint16_t CIDFromCharCode(FX_DWORD charcode) const;
-  FX_DWORD CharCodeFromCID(uint16_t CID) const;
-  int GetCharSize(FX_DWORD charcode) const;
-  FX_DWORD GetNextChar(const FX_CHAR* pString, int nStrLen, int& offset) const;
+  uint16_t CIDFromCharCode(uint32_t charcode) const;
+  uint32_t CharCodeFromCID(uint16_t CID) const;
+  int GetCharSize(uint32_t charcode) const;
+  uint32_t GetNextChar(const FX_CHAR* pString, int nStrLen, int& offset) const;
   int CountChar(const FX_CHAR* pString, int size) const;
-  int AppendChar(FX_CHAR* str, FX_DWORD charcode) const;
+  int AppendChar(FX_CHAR* str, uint32_t charcode) const;
 
  protected:
   ~CPDF_CMap();
@@ -179,17 +179,17 @@ class CPDF_CID2UnicodeMap {
  protected:
   CIDSet m_Charset;
   const uint16_t* m_pEmbeddedMap;
-  FX_DWORD m_EmbeddedCount;
+  uint32_t m_EmbeddedCount;
 };
 
 class CPDF_ToUnicodeMap {
  public:
   void Load(CPDF_Stream* pStream);
-  CFX_WideString Lookup(FX_DWORD charcode);
-  FX_DWORD ReverseLookup(FX_WCHAR unicode);
+  CFX_WideString Lookup(uint32_t charcode);
+  uint32_t ReverseLookup(FX_WCHAR unicode);
 
  protected:
-  std::map<FX_DWORD, FX_DWORD> m_Map;
+  std::map<uint32_t, uint32_t> m_Map;
   CPDF_CID2UnicodeMap* m_pBaseMap;
   CFX_WideTextBuf m_MultiCharBuf;
 
@@ -197,12 +197,12 @@ class CPDF_ToUnicodeMap {
   friend class fpdf_font_StringToCode_Test;
   friend class fpdf_font_StringToWideString_Test;
 
-  static FX_DWORD StringToCode(const CFX_ByteStringC& str);
+  static uint32_t StringToCode(const CFX_ByteStringC& str);
   static CFX_WideString StringToWideString(const CFX_ByteStringC& str);
 };
 
 void FPDFAPI_LoadCID2UnicodeMap(CIDSet charset,
                                 const uint16_t*& pMap,
-                                FX_DWORD& count);
+                                uint32_t& count);
 
 #endif  // CORE_FPDFAPI_FPDF_FONT_FONT_INT_H_

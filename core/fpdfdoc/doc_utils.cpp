@@ -27,8 +27,8 @@ CPDF_Object* SearchNumberNode(const CPDF_Dictionary* pNode, int num) {
   }
   CPDF_Array* pNumbers = pNode->GetArrayBy("Nums");
   if (pNumbers) {
-    FX_DWORD dwCount = pNumbers->GetCount() / 2;
-    for (FX_DWORD i = 0; i < dwCount; i++) {
+    uint32_t dwCount = pNumbers->GetCount() / 2;
+    for (uint32_t i = 0; i < dwCount; i++) {
       int index = pNumbers->GetIntegerAt(i * 2);
       if (num == index) {
         return pNumbers->GetElementValue(i * 2 + 1);
@@ -43,7 +43,7 @@ CPDF_Object* SearchNumberNode(const CPDF_Dictionary* pNode, int num) {
   if (!pKids) {
     return NULL;
   }
-  for (FX_DWORD i = 0; i < pKids->GetCount(); i++) {
+  for (uint32_t i = 0; i < pKids->GetCount(); i++) {
     CPDF_Dictionary* pKid = pKids->GetDictAt(i);
     if (!pKid) {
       continue;
@@ -274,7 +274,7 @@ void InitInterFormDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument) {
   }
   if (!pFormDict) {
     pFormDict = new CPDF_Dictionary;
-    FX_DWORD dwObjNum = pDocument->AddIndirectObject(pFormDict);
+    uint32_t dwObjNum = pDocument->AddIndirectObject(pFormDict);
     CPDF_Dictionary* pRoot = pDocument->GetRoot();
     pRoot->SetAtReference("AcroForm", pDocument, dwObjNum);
   }
@@ -311,7 +311,7 @@ void InitInterFormDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument) {
     pFormDict->SetAtString("DA", csDA);
   }
 }
-FX_DWORD CountInterFormFonts(CPDF_Dictionary* pFormDict) {
+uint32_t CountInterFormFonts(CPDF_Dictionary* pFormDict) {
   if (!pFormDict) {
     return 0;
   }
@@ -323,7 +323,7 @@ FX_DWORD CountInterFormFonts(CPDF_Dictionary* pFormDict) {
   if (!pFonts) {
     return 0;
   }
-  FX_DWORD dwCount = 0;
+  uint32_t dwCount = 0;
   for (const auto& it : *pFonts) {
     CPDF_Object* pObj = it.second;
     if (!pObj) {
@@ -339,7 +339,7 @@ FX_DWORD CountInterFormFonts(CPDF_Dictionary* pFormDict) {
 }
 CPDF_Font* GetInterFormFont(CPDF_Dictionary* pFormDict,
                             CPDF_Document* pDocument,
-                            FX_DWORD index,
+                            uint32_t index,
                             CFX_ByteString& csNameTag) {
   if (!pFormDict) {
     return NULL;
@@ -352,7 +352,7 @@ CPDF_Font* GetInterFormFont(CPDF_Dictionary* pFormDict,
   if (!pFonts) {
     return NULL;
   }
-  FX_DWORD dwCount = 0;
+  uint32_t dwCount = 0;
   for (const auto& it : *pFonts) {
     const CFX_ByteString& csKey = it.first;
     CPDF_Object* pObj = it.second;
@@ -708,7 +708,7 @@ void CPDF_IconFit::GetIconPosition(FX_FLOAT& fLeft, FX_FLOAT& fBottom) {
   }
   CPDF_Array* pA = m_pDict->GetArrayBy("A");
   if (pA) {
-    FX_DWORD dwCount = pA->GetCount();
+    uint32_t dwCount = pA->GetCount();
     if (dwCount > 0) {
       fLeft = pA->GetNumberAt(0);
     }

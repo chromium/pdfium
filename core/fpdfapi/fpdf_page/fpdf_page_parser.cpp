@@ -255,8 +255,8 @@ void CPDF_StreamContentParser::AddObjectParam(CPDF_Object* pObj) {
   m_ParamBuf[index].m_pObject = pObj;
 }
 void CPDF_StreamContentParser::ClearAllParams() {
-  FX_DWORD index = m_ParamStartPos;
-  for (FX_DWORD i = 0; i < m_ParamCount; i++) {
+  uint32_t index = m_ParamStartPos;
+  for (uint32_t i = 0; i < m_ParamCount; i++) {
     if (m_ParamBuf[index].m_Type == 0) {
       if (CPDF_Object* pObject = m_ParamBuf[index].m_pObject)
         pObject->Release();
@@ -270,7 +270,7 @@ void CPDF_StreamContentParser::ClearAllParams() {
   m_ParamCount = 0;
 }
 
-CPDF_Object* CPDF_StreamContentParser::GetObject(FX_DWORD index) {
+CPDF_Object* CPDF_StreamContentParser::GetObject(uint32_t index) {
   if (index >= m_ParamCount) {
     return NULL;
   }
@@ -302,7 +302,7 @@ CPDF_Object* CPDF_StreamContentParser::GetObject(FX_DWORD index) {
   return NULL;
 }
 
-CFX_ByteString CPDF_StreamContentParser::GetString(FX_DWORD index) {
+CFX_ByteString CPDF_StreamContentParser::GetString(uint32_t index) {
   if (index >= m_ParamCount) {
     return CFX_ByteString();
   }
@@ -320,7 +320,7 @@ CFX_ByteString CPDF_StreamContentParser::GetString(FX_DWORD index) {
   return CFX_ByteString();
 }
 
-FX_FLOAT CPDF_StreamContentParser::GetNumber(FX_DWORD index) {
+FX_FLOAT CPDF_StreamContentParser::GetNumber(uint32_t index) {
   if (index >= m_ParamCount) {
     return 0;
   }
@@ -339,7 +339,7 @@ FX_FLOAT CPDF_StreamContentParser::GetNumber(FX_DWORD index) {
   return 0;
 }
 
-FX_FLOAT CPDF_StreamContentParser::GetNumber16(FX_DWORD index) {
+FX_FLOAT CPDF_StreamContentParser::GetNumber16(uint32_t index) {
   return GetNumber(index);
 }
 
@@ -484,7 +484,7 @@ CPDF_StreamContentParser::InitializeOpCodes() {
 
 void CPDF_StreamContentParser::OnOperator(const FX_CHAR* op) {
   int i = 0;
-  FX_DWORD opid = 0;
+  uint32_t opid = 0;
   while (i < 4 && op[i]) {
     opid = (opid << 8) + op[i];
     i++;
@@ -574,7 +574,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
     std::unique_ptr<CPDF_Object, ReleaseDeleter<CPDF_Object>> pObj(
         m_pSyntax->ReadNextObject());
     if (!key.IsEmpty()) {
-      FX_DWORD dwObjNum = pObj ? pObj->GetObjNum() : 0;
+      uint32_t dwObjNum = pObj ? pObj->GetObjNum() : 0;
       if (dwObjNum)
         pDict->SetAtReference(key, m_pDocument, dwObjNum);
       else
@@ -1645,17 +1645,17 @@ void CPDF_StreamContentParser::AddPathObject(int FillType, FX_BOOL bStroke) {
   }
 }
 
-FX_DWORD CPDF_StreamContentParser::Parse(const uint8_t* pData,
-                                         FX_DWORD dwSize,
-                                         FX_DWORD max_cost) {
+uint32_t CPDF_StreamContentParser::Parse(const uint8_t* pData,
+                                         uint32_t dwSize,
+                                         uint32_t max_cost) {
   if (m_Level > _FPDF_MAX_FORM_LEVEL_) {
     return dwSize;
   }
-  FX_DWORD InitObjCount = m_pObjectHolder->GetPageObjectList()->size();
+  uint32_t InitObjCount = m_pObjectHolder->GetPageObjectList()->size();
   CPDF_StreamParser syntax(pData, dwSize);
   CPDF_StreamParserAutoClearer auto_clearer(&m_pSyntax, &syntax);
   while (1) {
-    FX_DWORD cost = m_pObjectHolder->GetPageObjectList()->size() - InitObjCount;
+    uint32_t cost = m_pObjectHolder->GetPageObjectList()->size() - InitObjCount;
     if (max_cost && cost >= max_cost) {
       break;
     }
@@ -1810,7 +1810,7 @@ void PDF_ReplaceAbbr(CPDF_Object* pObj) {
     }
     case CPDF_Object::ARRAY: {
       CPDF_Array* pArray = pObj->AsArray();
-      for (FX_DWORD i = 0; i < pArray->GetCount(); i++) {
+      for (uint32_t i = 0; i < pArray->GetCount(); i++) {
         CPDF_Object* pElement = pArray->GetElement(i);
         if (pElement->IsName()) {
           CFX_ByteString name = pElement->GetString();

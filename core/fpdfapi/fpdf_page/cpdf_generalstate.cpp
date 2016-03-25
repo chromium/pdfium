@@ -9,7 +9,7 @@
 namespace {
 
 int RI_StringToId(const CFX_ByteString& ri) {
-  FX_DWORD id = ri.GetID();
+  uint32_t id = ri.GetID();
   if (id == FXBSTR_ID('A', 'b', 's', 'o'))
     return 1;
 

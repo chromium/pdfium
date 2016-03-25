@@ -121,16 +121,16 @@ int CPDF_Font::CountChar(const FX_CHAR* pString, int size) const {
   return size;
 }
 
-int CPDF_Font::GetCharSize(FX_DWORD charcode) const {
+int CPDF_Font::GetCharSize(uint32_t charcode) const {
   return 1;
 }
 
-int CPDF_Font::GlyphFromCharCode(FX_DWORD charcode, FX_BOOL* pVertGlyph) {
+int CPDF_Font::GlyphFromCharCode(uint32_t charcode, FX_BOOL* pVertGlyph) {
   ASSERT(false);
   return 0;
 }
 
-int CPDF_Font::GlyphFromCharCodeExt(FX_DWORD charcode) {
+int CPDF_Font::GlyphFromCharCodeExt(uint32_t charcode) {
   return GlyphFromCharCode(charcode);
 }
 
@@ -145,12 +145,12 @@ FX_BOOL CPDF_Font::IsVertWriting() const {
   return bVertWriting;
 }
 
-int CPDF_Font::AppendChar(FX_CHAR* buf, FX_DWORD charcode) const {
+int CPDF_Font::AppendChar(FX_CHAR* buf, uint32_t charcode) const {
   *buf = (FX_CHAR)charcode;
   return 1;
 }
 
-void CPDF_Font::AppendChar(CFX_ByteString& str, FX_DWORD charcode) const {
+void CPDF_Font::AppendChar(CFX_ByteString& str, uint32_t charcode) const {
   char buf[4];
   int len = AppendChar(buf, charcode);
   if (len == 1) {
@@ -160,7 +160,7 @@ void CPDF_Font::AppendChar(CFX_ByteString& str, FX_DWORD charcode) const {
   }
 }
 
-CFX_WideString CPDF_Font::UnicodeFromCharCode(FX_DWORD charcode) const {
+CFX_WideString CPDF_Font::UnicodeFromCharCode(uint32_t charcode) const {
   if (!m_bToUnicodeLoaded)
     ((CPDF_Font*)this)->LoadUnicodeMap();
 
@@ -169,7 +169,7 @@ CFX_WideString CPDF_Font::UnicodeFromCharCode(FX_DWORD charcode) const {
   return CFX_WideString();
 }
 
-FX_DWORD CPDF_Font::CharCodeFromUnicode(FX_WCHAR unicode) const {
+uint32_t CPDF_Font::CharCodeFromUnicode(FX_WCHAR unicode) const {
   if (!m_bToUnicodeLoaded)
     ((CPDF_Font*)this)->LoadUnicodeMap();
 
@@ -237,7 +237,7 @@ void CPDF_Font::LoadFontDescriptor(CPDF_Dictionary* pFontDesc) {
     return;
 
   const uint8_t* pFontData = m_pFontFile->GetData();
-  FX_DWORD dwFontSize = m_pFontFile->GetSize();
+  uint32_t dwFontSize = m_pFontFile->GetSize();
   if (!m_Font.LoadEmbedded(pFontData, dwFontSize)) {
     m_pDocument->GetPageData()->ReleaseFontFileStreamAcc(
         const_cast<CPDF_Stream*>(m_pFontFile->GetStream()->AsStream()));
@@ -305,7 +305,7 @@ int CPDF_Font::GetStringWidth(const FX_CHAR* pString, int size) {
   int offset = 0;
   int width = 0;
   while (offset < size) {
-    FX_DWORD charcode = GetNextChar(pString, size, offset);
+    uint32_t charcode = GetNextChar(pString, size, offset);
     width += GetCharWidthF(charcode);
   }
   return width;
@@ -387,14 +387,14 @@ CPDF_Font* CPDF_Font::CreateFontF(CPDF_Document* pDoc,
   return pFont;
 }
 
-FX_DWORD CPDF_Font::GetNextChar(const FX_CHAR* pString,
+uint32_t CPDF_Font::GetNextChar(const FX_CHAR* pString,
                                 int nStrLen,
                                 int& offset) const {
   if (offset < 0 || nStrLen < 1) {
     return 0;
   }
   uint8_t ch = offset < nStrLen ? pString[offset++] : pString[nStrLen - 1];
-  return static_cast<FX_DWORD>(ch);
+  return static_cast<uint32_t>(ch);
 }
 
 void CPDF_Font::LoadPDFEncoding(CPDF_Object* pEncoding,
@@ -450,8 +450,8 @@ void CPDF_Font::LoadPDFEncoding(CPDF_Object* pEncoding,
     return;
   }
   pCharNames = new CFX_ByteString[256];
-  FX_DWORD cur_code = 0;
-  for (FX_DWORD i = 0; i < pDiffs->GetCount(); i++) {
+  uint32_t cur_code = 0;
+  for (uint32_t i = 0; i < pDiffs->GetCount(); i++) {
     CPDF_Object* pElement = pDiffs->GetElementValue(i);
     if (!pElement)
       continue;

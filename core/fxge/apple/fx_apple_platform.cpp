@@ -33,7 +33,7 @@ void CFX_FaceCache::InitPlatform() {}
 void CFX_FaceCache::DestroyPlatform() {}
 CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph_Nativetext(
     CFX_Font* pFont,
-    FX_DWORD glyph_index,
+    uint32_t glyph_index,
     const CFX_Matrix* pMatrix,
     int dest_width,
     int anti_alias) {
@@ -46,7 +46,7 @@ static FX_BOOL _CGDrawGlyphRun(CGContextRef pContext,
                                CFX_FontCache* pCache,
                                const CFX_Matrix* pObject2Device,
                                FX_FLOAT font_size,
-                               FX_DWORD argb,
+                               uint32_t argb,
                                int alpha_flag,
                                void* pIccTransform) {
   if (nChars == 0) {
@@ -103,7 +103,7 @@ FX_BOOL CFX_AggDeviceDriver::DrawDeviceText(int nChars,
                                             CFX_FontCache* pCache,
                                             const CFX_Matrix* pObject2Device,
                                             FX_FLOAT font_size,
-                                            FX_DWORD argb,
+                                            uint32_t argb,
                                             int alpha_flag,
                                             void* pIccTransform) {
   if (!pFont) {

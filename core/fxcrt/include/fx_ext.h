@@ -75,28 +75,28 @@ inline int FXSYS_toDecimalDigit(const FX_WCHAR c) {
   return std::iswdigit(c) ? c - L'0' : 0;
 }
 
-FX_DWORD FX_HashCode_String_GetA(const FX_CHAR* pStr,
+uint32_t FX_HashCode_String_GetA(const FX_CHAR* pStr,
                                  int32_t iLength,
                                  FX_BOOL bIgnoreCase = FALSE);
-FX_DWORD FX_HashCode_String_GetW(const FX_WCHAR* pStr,
+uint32_t FX_HashCode_String_GetW(const FX_WCHAR* pStr,
                                  int32_t iLength,
                                  FX_BOOL bIgnoreCase = FALSE);
 
-void* FX_Random_MT_Start(FX_DWORD dwSeed);
+void* FX_Random_MT_Start(uint32_t dwSeed);
 
-FX_DWORD FX_Random_MT_Generate(void* pContext);
+uint32_t FX_Random_MT_Generate(void* pContext);
 
 void FX_Random_MT_Close(void* pContext);
 
-void FX_Random_GenerateBase(FX_DWORD* pBuffer, int32_t iCount);
+void FX_Random_GenerateBase(uint32_t* pBuffer, int32_t iCount);
 
-void FX_Random_GenerateMT(FX_DWORD* pBuffer, int32_t iCount);
+void FX_Random_GenerateMT(uint32_t* pBuffer, int32_t iCount);
 
-void FX_Random_GenerateCrypto(FX_DWORD* pBuffer, int32_t iCount);
+void FX_Random_GenerateCrypto(uint32_t* pBuffer, int32_t iCount);
 
 #ifdef PDF_ENABLE_XFA
 typedef struct FX_GUID {
-  FX_DWORD data1;
+  uint32_t data1;
   uint16_t data2;
   uint16_t data3;
   uint8_t data4[8];

@@ -57,14 +57,14 @@ FX_BOOL CPDF_Type3Font::Load() {
   int StartChar = m_pFontDict->GetIntegerBy("FirstChar");
   CPDF_Array* pWidthArray = m_pFontDict->GetArrayBy("Widths");
   if (pWidthArray && (StartChar >= 0 && StartChar < 256)) {
-    FX_DWORD count = pWidthArray->GetCount();
+    uint32_t count = pWidthArray->GetCount();
     if (count > 256) {
       count = 256;
     }
     if (StartChar + count > 256) {
       count = 256 - StartChar;
     }
-    for (FX_DWORD i = 0; i < count; i++) {
+    for (uint32_t i = 0; i < count; i++) {
       m_CharWidthL[StartChar + i] =
           FXSYS_round(pWidthArray->GetNumberAt(i) * xscale * 1000);
     }
@@ -89,7 +89,7 @@ void CPDF_Type3Font::CheckType3FontMetrics() {
   CheckFontMetrics();
 }
 
-CPDF_Type3Char* CPDF_Type3Font::LoadChar(FX_DWORD charcode, int level) {
+CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode, int level) {
   if (level >= _FPDF_MAX_TYPE3_FORM_LEVEL_)
     return nullptr;
 
@@ -145,7 +145,7 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(FX_DWORD charcode, int level) {
   return pCachedChar;
 }
 
-int CPDF_Type3Font::GetCharWidthF(FX_DWORD charcode, int level) {
+int CPDF_Type3Font::GetCharWidthF(uint32_t charcode, int level) {
   if (charcode >= FX_ArraySize(m_CharWidthL))
     charcode = 0;
 
@@ -156,7 +156,7 @@ int CPDF_Type3Font::GetCharWidthF(FX_DWORD charcode, int level) {
   return pChar ? pChar->m_Width : 0;
 }
 
-FX_RECT CPDF_Type3Font::GetCharBBox(FX_DWORD charcode, int level) {
+FX_RECT CPDF_Type3Font::GetCharBBox(uint32_t charcode, int level) {
   const CPDF_Type3Char* pChar = LoadChar(charcode, level);
   return pChar ? pChar->m_BBox : FX_RECT();
 }

@@ -50,8 +50,8 @@ class CPDF_RenderContext {
                      const CPDF_RenderOptions* pOptions,
                      CFX_Matrix* pFinalMatrix);
 
-  FX_DWORD CountLayers() const { return m_Layers.GetSize(); }
-  Layer* GetLayer(FX_DWORD index) { return m_Layers.GetDataPtr(index); }
+  uint32_t CountLayers() const { return m_Layers.GetSize(); }
+  Layer* GetLayer(uint32_t index) { return m_Layers.GetDataPtr(index); }
 
   CPDF_Document* GetDocument() const { return m_pDocument; }
   CPDF_Dictionary* GetPageResources() const { return m_pPageResources; }

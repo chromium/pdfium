@@ -122,7 +122,7 @@ class CPDF_TextPage : public IPDF_TextPage {
                                 CPDF_PageObjectList::const_iterator ObjPos);
   FX_BOOL IsSameTextObject(CPDF_TextObject* pTextObj1,
                            CPDF_TextObject* pTextObj2);
-  int GetCharWidth(FX_DWORD charCode, CPDF_Font* pFont) const;
+  int GetCharWidth(uint32_t charCode, CPDF_Font* pFont) const;
   void CloseTempLine();
   void OnPiece(CFX_BidiChar* pBidi, CFX_WideString& str);
   int32_t PreMarkedContent(PDFTEXT_Obj pObj);

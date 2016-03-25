@@ -22,7 +22,7 @@ CPDF_SimpleFont::~CPDF_SimpleFont() {
   delete[] m_pCharNames;
 }
 
-int CPDF_SimpleFont::GlyphFromCharCode(FX_DWORD charcode, FX_BOOL* pVertGlyph) {
+int CPDF_SimpleFont::GlyphFromCharCode(uint32_t charcode, FX_BOOL* pVertGlyph) {
   if (pVertGlyph) {
     *pVertGlyph = FALSE;
   }
@@ -82,7 +82,7 @@ void CPDF_SimpleFont::LoadCharMetrics(int charcode) {
   }
 }
 
-int CPDF_SimpleFont::GetCharWidthF(FX_DWORD charcode, int level) {
+int CPDF_SimpleFont::GetCharWidthF(uint32_t charcode, int level) {
   if (charcode > 0xff) {
     charcode = 0;
   }
@@ -95,7 +95,7 @@ int CPDF_SimpleFont::GetCharWidthF(FX_DWORD charcode, int level) {
   return (int16_t)m_CharWidth[charcode];
 }
 
-FX_RECT CPDF_SimpleFont::GetCharBBox(FX_DWORD charcode, int level) {
+FX_RECT CPDF_SimpleFont::GetCharBBox(uint32_t charcode, int level) {
   if (charcode > 0xff)
     charcode = 0;
 
@@ -204,7 +204,7 @@ FX_BOOL CPDF_SimpleFont::IsUnicodeCompatible() const {
          m_BaseEncoding != PDFFONT_ENCODING_ZAPFDINGBATS;
 }
 
-CFX_WideString CPDF_SimpleFont::UnicodeFromCharCode(FX_DWORD charcode) const {
+CFX_WideString CPDF_SimpleFont::UnicodeFromCharCode(uint32_t charcode) const {
   CFX_WideString unicode = CPDF_Font::UnicodeFromCharCode(charcode);
   if (!unicode.IsEmpty())
     return unicode;
@@ -214,8 +214,8 @@ CFX_WideString CPDF_SimpleFont::UnicodeFromCharCode(FX_DWORD charcode) const {
   return ret;
 }
 
-FX_DWORD CPDF_SimpleFont::CharCodeFromUnicode(FX_WCHAR unicode) const {
-  FX_DWORD ret = CPDF_Font::CharCodeFromUnicode(unicode);
+uint32_t CPDF_SimpleFont::CharCodeFromUnicode(FX_WCHAR unicode) const {
+  uint32_t ret = CPDF_Font::CharCodeFromUnicode(unicode);
   if (ret)
     return ret;
   return m_Encoding.CharCodeFromUnicode(unicode);

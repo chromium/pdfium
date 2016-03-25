@@ -45,7 +45,7 @@ static int compareWordRange(const void* key, const void* element) {
 };
 extern "C" {
 static int compareDWordRange(const void* p1, const void* p2) {
-  FX_DWORD key = *(FX_DWORD*)p1;
+  uint32_t key = *(uint32_t*)p1;
   uint16_t hiword = (uint16_t)(key >> 16);
   uint16_t* element = (uint16_t*)p2;
   if (hiword < element[0]) {
@@ -66,8 +66,8 @@ static int compareDWordRange(const void* p1, const void* p2) {
 };
 extern "C" {
 static int compareDWordSingle(const void* p1, const void* p2) {
-  FX_DWORD key = *(FX_DWORD*)p1;
-  FX_DWORD value = ((*(uint16_t*)p2) << 16) | ((uint16_t*)p2)[1];
+  uint32_t key = *(uint32_t*)p1;
+  uint32_t value = ((*(uint16_t*)p2) << 16) | ((uint16_t*)p2)[1];
   if (key < value) {
     return -1;
   }
@@ -77,7 +77,7 @@ static int compareDWordSingle(const void* p1, const void* p2) {
   return 0;
 }
 };
-uint16_t FPDFAPI_CIDFromCharCode(const FXCMAP_CMap* pMap, FX_DWORD charcode) {
+uint16_t FPDFAPI_CIDFromCharCode(const FXCMAP_CMap* pMap, uint32_t charcode) {
   if (charcode >> 16) {
     while (1) {
       if (pMap->m_DWordMapType == FXCMAP_CMap::Range) {
@@ -127,7 +127,7 @@ uint16_t FPDFAPI_CIDFromCharCode(const FXCMAP_CMap* pMap, FX_DWORD charcode) {
   }
   return 0;
 }
-FX_DWORD FPDFAPI_CharCodeFromCID(const FXCMAP_CMap* pMap, uint16_t cid) {
+uint32_t FPDFAPI_CharCodeFromCID(const FXCMAP_CMap* pMap, uint16_t cid) {
   while (1) {
     if (pMap->m_WordMapType == FXCMAP_CMap::Single) {
       const uint16_t* pCur = pMap->m_pWordMap;
@@ -159,7 +159,7 @@ FX_DWORD FPDFAPI_CharCodeFromCID(const FXCMAP_CMap* pMap, uint16_t cid) {
       const uint16_t* pEnd = pMap->m_pDWordMap + pMap->m_DWordCount * 4;
       while (pCur < pEnd) {
         if (cid >= pCur[3] && cid <= pCur[3] + pCur[2] - pCur[1]) {
-          return (((FX_DWORD)pCur[0] << 16) | pCur[1]) + cid - pCur[3];
+          return (((uint32_t)pCur[0] << 16) | pCur[1]) + cid - pCur[3];
         }
         pCur += 4;
       }
@@ -168,7 +168,7 @@ FX_DWORD FPDFAPI_CharCodeFromCID(const FXCMAP_CMap* pMap, uint16_t cid) {
       const uint16_t* pEnd = pMap->m_pDWordMap + pMap->m_DWordCount * 3;
       while (pCur < pEnd) {
         if (pCur[2] == cid) {
-          return ((FX_DWORD)pCur[0] << 16) | pCur[1];
+          return ((uint32_t)pCur[0] << 16) | pCur[1];
         }
         pCur += 3;
       }
@@ -183,7 +183,7 @@ FX_DWORD FPDFAPI_CharCodeFromCID(const FXCMAP_CMap* pMap, uint16_t cid) {
 
 void FPDFAPI_LoadCID2UnicodeMap(CIDSet charset,
                                 const uint16_t*& pMap,
-                                FX_DWORD& count) {
+                                uint32_t& count) {
   CPDF_FontGlobals* pFontGlobals =
       CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
   pMap = pFontGlobals->m_EmbeddedToUnicodes[charset].m_pMap;

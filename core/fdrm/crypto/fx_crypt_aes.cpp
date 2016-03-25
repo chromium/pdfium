@@ -804,9 +804,9 @@ static void aes_encrypt_cbc(unsigned char* dest,
   FXSYS_memcpy(ctx->iv, iv, sizeof(iv));
 }
 void CRYPT_AESSetKey(void* context,
-                     FX_DWORD blocklen,
+                     uint32_t blocklen,
                      const uint8_t* key,
-                     FX_DWORD keylen,
+                     uint32_t keylen,
                      FX_BOOL bEncrypt) {
   aes_setup((AESContext*)context, blocklen, key, keylen);
 }
@@ -819,13 +819,13 @@ void CRYPT_AESSetIV(void* context, const uint8_t* iv) {
 void CRYPT_AESDecrypt(void* context,
                       uint8_t* dest,
                       const uint8_t* src,
-                      FX_DWORD len) {
+                      uint32_t len) {
   aes_decrypt_cbc(dest, src, len, (AESContext*)context);
 }
 void CRYPT_AESEncrypt(void* context,
                       uint8_t* dest,
                       const uint8_t* src,
-                      FX_DWORD len) {
+                      uint32_t len) {
   aes_encrypt_cbc(dest, src, len, (AESContext*)context);
 }
 #ifdef __cplusplus

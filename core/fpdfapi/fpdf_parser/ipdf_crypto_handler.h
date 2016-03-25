@@ -19,27 +19,27 @@ class IPDF_CryptoHandler {
   virtual FX_BOOL Init(CPDF_Dictionary* pEncryptDict,
                        IPDF_SecurityHandler* pSecurityHandler) = 0;
 
-  virtual FX_DWORD DecryptGetSize(FX_DWORD src_size) = 0;
-  virtual void* DecryptStart(FX_DWORD objnum, FX_DWORD gennum) = 0;
+  virtual uint32_t DecryptGetSize(uint32_t src_size) = 0;
+  virtual void* DecryptStart(uint32_t objnum, uint32_t gennum) = 0;
   virtual FX_BOOL DecryptStream(void* context,
                                 const uint8_t* src_buf,
-                                FX_DWORD src_size,
+                                uint32_t src_size,
                                 CFX_BinaryBuf& dest_buf) = 0;
 
   virtual FX_BOOL DecryptFinish(void* context, CFX_BinaryBuf& dest_buf) = 0;
-  virtual FX_DWORD EncryptGetSize(FX_DWORD objnum,
-                                  FX_DWORD version,
+  virtual uint32_t EncryptGetSize(uint32_t objnum,
+                                  uint32_t version,
                                   const uint8_t* src_buf,
-                                  FX_DWORD src_size) = 0;
+                                  uint32_t src_size) = 0;
 
-  virtual FX_BOOL EncryptContent(FX_DWORD objnum,
-                                 FX_DWORD version,
+  virtual FX_BOOL EncryptContent(uint32_t objnum,
+                                 uint32_t version,
                                  const uint8_t* src_buf,
-                                 FX_DWORD src_size,
+                                 uint32_t src_size,
                                  uint8_t* dest_buf,
-                                 FX_DWORD& dest_size) = 0;
+                                 uint32_t& dest_size) = 0;
 
-  void Decrypt(FX_DWORD objnum, FX_DWORD version, CFX_ByteString& str);
+  void Decrypt(uint32_t objnum, uint32_t version, CFX_ByteString& str);
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PARSER_IPDF_CRYPTO_HANDLER_H_

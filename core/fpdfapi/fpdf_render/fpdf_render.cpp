@@ -208,7 +208,7 @@ FX_BOOL CPDF_RenderStatus::Initialize(CPDF_RenderContext* pContext,
                                       FX_BOOL bStdCS,
                                       CPDF_Type3Char* pType3Char,
                                       FX_ARGB fill_color,
-                                      FX_DWORD GroupFamily,
+                                      uint32_t GroupFamily,
                                       FX_BOOL bLoadMask) {
   m_pContext = pContext;
   m_pDevice = pDevice;
@@ -508,11 +508,11 @@ FX_BOOL CPDF_RenderStatus::ProcessPath(const CPDF_PathObject* pPathObj,
   if (FillType == 0 && !bStroke) {
     return TRUE;
   }
-  FX_DWORD fill_argb = 0;
+  uint32_t fill_argb = 0;
   if (FillType) {
     fill_argb = GetFillArgb(pPathObj);
   }
-  FX_DWORD stroke_argb = 0;
+  uint32_t stroke_argb = 0;
   if (bStroke) {
     stroke_argb = GetStrokeArgb(pPathObj);
   }
@@ -569,7 +569,7 @@ FX_ARGB CPDF_RenderStatus::GetFillArgb(const CPDF_PageObject* pObj,
                      m_InitialStates.m_ColorState;
   }
   FX_COLORREF rgb = pColorData->m_FillRGB;
-  if (rgb == (FX_DWORD)-1) {
+  if (rgb == (uint32_t)-1) {
     return 0;
   }
   const CPDF_GeneralStateData* pGeneralData = pObj->m_GeneralState;
@@ -603,7 +603,7 @@ FX_ARGB CPDF_RenderStatus::GetStrokeArgb(const CPDF_PageObject* pObj) const {
                      m_InitialStates.m_ColorState;
   }
   FX_COLORREF rgb = pColorData->m_StrokeRGB;
-  if (rgb == (FX_DWORD)-1) {
+  if (rgb == (uint32_t)-1) {
     return 0;
   }
   const CPDF_GeneralStateData* pGeneralData = pObj->m_GeneralState;
@@ -847,7 +847,7 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
     pTextMask->Clear(0);
     CFX_FxgeDevice text_device;
     text_device.Attach(pTextMask.get());
-    for (FX_DWORD i = 0; i < pPageObj->m_ClipPath.GetTextCount(); i++) {
+    for (uint32_t i = 0; i < pPageObj->m_ClipPath.GetTextCount(); i++) {
       CPDF_TextObject* textobj = pPageObj->m_ClipPath.GetText(i);
       if (!textobj) {
         break;
@@ -1156,7 +1156,7 @@ CPDF_TransferFunc* CPDF_DocRenderData::GetTransferFunc(CPDF_Object* pObj) {
     if (pArray->GetCount() < 3)
       return nullptr;
 
-    for (FX_DWORD i = 0; i < 3; ++i) {
+    for (uint32_t i = 0; i < 3; ++i) {
       pFuncs[2 - i].reset(CPDF_Function::Load(pArray->GetElementValue(i)));
       if (!pFuncs[2 - i])
         return nullptr;

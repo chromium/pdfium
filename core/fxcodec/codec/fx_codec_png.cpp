@@ -239,7 +239,7 @@ void CCodec_PngModule::Finish(void* pContext) {
 }
 FX_BOOL CCodec_PngModule::Input(void* pContext,
                                 const uint8_t* src_buf,
-                                FX_DWORD src_size,
+                                uint32_t src_size,
                                 CFX_DIBAttribute* pAttribute) {
   FXPNG_Context* p = (FXPNG_Context*)pContext;
   if (setjmp(png_jmpbuf(p->png_ptr))) {

@@ -15,7 +15,7 @@
 #include "core/fxcrt/include/fx_memory.h"
 
 CJBig2_HuffmanTable::CJBig2_HuffmanTable(const JBig2TableLine* pTable,
-                                         FX_DWORD nLines,
+                                         uint32_t nLines,
                                          bool bHTOOB)
     : m_bOK(true), HTOOB(bHTOOB), NTEMP(nLines) {
   ParseFromStandardTable(pTable);
@@ -32,7 +32,7 @@ void CJBig2_HuffmanTable::ParseFromStandardTable(const JBig2TableLine* pTable) {
   PREFLEN.resize(NTEMP);
   RANGELEN.resize(NTEMP);
   RANGELOW.resize(NTEMP);
-  for (FX_DWORD i = 0; i < NTEMP; ++i) {
+  for (uint32_t i = 0; i < NTEMP; ++i) {
     PREFLEN[i] = pTable[i].PREFLEN;
     RANGELEN[i] = pTable[i].RANDELEN;
     RANGELOW[i] = pTable[i].RANGELOW;
@@ -48,8 +48,8 @@ bool CJBig2_HuffmanTable::ParseFromCodedBuffer(CJBig2_BitStream* pStream) {
   HTOOB = !!(cTemp & 0x01);
   unsigned char HTPS = ((cTemp >> 1) & 0x07) + 1;
   unsigned char HTRS = ((cTemp >> 4) & 0x07) + 1;
-  FX_DWORD HTLOW;
-  FX_DWORD HTHIGH;
+  uint32_t HTLOW;
+  uint32_t HTHIGH;
   if (pStream->readInteger(&HTLOW) == -1 ||
       pStream->readInteger(&HTHIGH) == -1) {
     return false;
@@ -99,7 +99,7 @@ bool CJBig2_HuffmanTable::ParseFromCodedBuffer(CJBig2_BitStream* pStream) {
 
 void CJBig2_HuffmanTable::InitCodes() {
   int lenmax = 0;
-  for (FX_DWORD i = 0; i < NTEMP; ++i)
+  for (uint32_t i = 0; i < NTEMP; ++i)
     lenmax = std::max(PREFLEN[i], lenmax);
 
   CODES.resize(NTEMP);
@@ -113,7 +113,7 @@ void CJBig2_HuffmanTable::InitCodes() {
   for (int i = 1; i <= lenmax; ++i) {
     FIRSTCODE[i] = (FIRSTCODE[i - 1] + LENCOUNT[i - 1]) << 1;
     int CURCODE = FIRSTCODE[i];
-    for (FX_DWORD j = 0; j < NTEMP; ++j) {
+    for (uint32_t j = 0; j < NTEMP; ++j) {
       if (PREFLEN[j] == i)
         CODES[j] = CURCODE++;
     }

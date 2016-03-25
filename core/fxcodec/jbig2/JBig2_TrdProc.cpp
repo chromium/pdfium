@@ -25,7 +25,7 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
 
   STRIPT *= SBSTRIPS;
   STRIPT = -STRIPT;
-  FX_DWORD NINSTANCES = 0;
+  uint32_t NINSTANCES = 0;
   while (NINSTANCES < SBNUMINSTANCES) {
     int32_t DT;
     if (pHuffmanDecoder->decodeAValue(SBHUFFDT, &DT) != 0)
@@ -58,8 +58,8 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
       }
       uint8_t CURT = 0;
       if (SBSTRIPS != 1) {
-        FX_DWORD nTmp = 1;
-        while ((FX_DWORD)(1 << nTmp) < SBSTRIPS) {
+        uint32_t nTmp = 1;
+        while ((uint32_t)(1 << nTmp) < SBSTRIPS) {
           nTmp++;
         }
         int32_t nVal;
@@ -71,9 +71,9 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
       int32_t TI = STRIPT + CURT;
       int32_t nVal = 0;
       int32_t nBits = 0;
-      FX_DWORD IDI;
+      uint32_t IDI;
       for (;;) {
-        FX_DWORD nTmp;
+        uint32_t nTmp;
         if (pStream->read1Bit(&nTmp) != 0)
           return nullptr;
 
@@ -109,13 +109,13 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
           return nullptr;
         }
         pStream->alignByte();
-        FX_DWORD nTmp = pStream->getOffset();
+        uint32_t nTmp = pStream->getOffset();
         CJBig2_Image* IBOI = SBSYMS[IDI];
         if (!IBOI)
           return nullptr;
 
-        FX_DWORD WOI = IBOI->m_nWidth;
-        FX_DWORD HOI = IBOI->m_nHeight;
+        uint32_t WOI = IBOI->m_nWidth;
+        uint32_t HOI = IBOI->m_nHeight;
         if ((int)(WOI + RDWI) < 0 || (int)(HOI + RDHI) < 0)
           return nullptr;
 
@@ -142,7 +142,7 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
 
         pStream->alignByte();
         pStream->offset(2);
-        if ((FX_DWORD)nVal != (pStream->getOffset() - nTmp)) {
+        if ((uint32_t)nVal != (pStream->getOffset() - nTmp)) {
           delete IBI;
           return nullptr;
         }
@@ -150,8 +150,8 @@ CJBig2_Image* CJBig2_TRDProc::decode_Huffman(CJBig2_BitStream* pStream,
       if (!IBI) {
         continue;
       }
-      FX_DWORD WI = IBI->m_nWidth;
-      FX_DWORD HI = IBI->m_nHeight;
+      uint32_t WI = IBI->m_nWidth;
+      uint32_t HI = IBI->m_nHeight;
       if (TRANSPOSED == 0 && ((REFCORNER == JBIG2_CORNER_TOPRIGHT) ||
                               (REFCORNER == JBIG2_CORNER_BOTTOMRIGHT))) {
         CURS = CURS + WI - 1;
@@ -270,7 +270,7 @@ CJBig2_Image* CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
   STRIPT *= SBSTRIPS;
   STRIPT = -STRIPT;
   int32_t FIRSTS = 0;
-  FX_DWORD NINSTANCES = 0;
+  uint32_t NINSTANCES = 0;
   while (NINSTANCES < SBNUMINSTANCES) {
     int32_t CURS = 0;
     int32_t DT;
@@ -299,7 +299,7 @@ CJBig2_Image* CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
         pIAIT->decode(pArithDecoder, &CURT);
 
       int32_t TI = STRIPT + CURT;
-      FX_DWORD IDI;
+      uint32_t IDI;
       pIAID->decode(pArithDecoder, &IDI);
       if (IDI >= SBNUMSYMS)
         return nullptr;
@@ -324,8 +324,8 @@ CJBig2_Image* CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
         pIARDX->decode(pArithDecoder, &RDXI);
         pIARDY->decode(pArithDecoder, &RDYI);
         CJBig2_Image* IBOI = SBSYMS[IDI];
-        FX_DWORD WOI = IBOI->m_nWidth;
-        FX_DWORD HOI = IBOI->m_nHeight;
+        uint32_t WOI = IBOI->m_nWidth;
+        uint32_t HOI = IBOI->m_nHeight;
         if ((int)(WOI + RDWI) < 0 || (int)(HOI + RDHI) < 0) {
           return nullptr;
         }
@@ -347,8 +347,8 @@ CJBig2_Image* CJBig2_TRDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
       if (!pIBI)
         return nullptr;
 
-      FX_DWORD WI = pIBI->m_nWidth;
-      FX_DWORD HI = pIBI->m_nHeight;
+      uint32_t WI = pIBI->m_nWidth;
+      uint32_t HI = pIBI->m_nHeight;
       if (TRANSPOSED == 0 && ((REFCORNER == JBIG2_CORNER_TOPRIGHT) ||
                               (REFCORNER == JBIG2_CORNER_BOTTOMRIGHT))) {
         CURS += WI - 1;

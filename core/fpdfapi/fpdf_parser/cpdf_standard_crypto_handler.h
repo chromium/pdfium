@@ -17,38 +17,38 @@ class CPDF_StandardCryptoHandler : public IPDF_CryptoHandler {
   // IPDF_CryptoHandler
   FX_BOOL Init(CPDF_Dictionary* pEncryptDict,
                IPDF_SecurityHandler* pSecurityHandler) override;
-  FX_DWORD DecryptGetSize(FX_DWORD src_size) override;
-  void* DecryptStart(FX_DWORD objnum, FX_DWORD gennum) override;
+  uint32_t DecryptGetSize(uint32_t src_size) override;
+  void* DecryptStart(uint32_t objnum, uint32_t gennum) override;
   FX_BOOL DecryptStream(void* context,
                         const uint8_t* src_buf,
-                        FX_DWORD src_size,
+                        uint32_t src_size,
                         CFX_BinaryBuf& dest_buf) override;
   FX_BOOL DecryptFinish(void* context, CFX_BinaryBuf& dest_buf) override;
-  FX_DWORD EncryptGetSize(FX_DWORD objnum,
-                          FX_DWORD version,
+  uint32_t EncryptGetSize(uint32_t objnum,
+                          uint32_t version,
                           const uint8_t* src_buf,
-                          FX_DWORD src_size) override;
-  FX_BOOL EncryptContent(FX_DWORD objnum,
-                         FX_DWORD version,
+                          uint32_t src_size) override;
+  FX_BOOL EncryptContent(uint32_t objnum,
+                         uint32_t version,
                          const uint8_t* src_buf,
-                         FX_DWORD src_size,
+                         uint32_t src_size,
                          uint8_t* dest_buf,
-                         FX_DWORD& dest_size) override;
+                         uint32_t& dest_size) override;
 
   FX_BOOL Init(int cipher, const uint8_t* key, int keylen);
 
  protected:
   virtual void CryptBlock(FX_BOOL bEncrypt,
-                          FX_DWORD objnum,
-                          FX_DWORD gennum,
+                          uint32_t objnum,
+                          uint32_t gennum,
                           const uint8_t* src_buf,
-                          FX_DWORD src_size,
+                          uint32_t src_size,
                           uint8_t* dest_buf,
-                          FX_DWORD& dest_size);
-  virtual void* CryptStart(FX_DWORD objnum, FX_DWORD gennum, FX_BOOL bEncrypt);
+                          uint32_t& dest_size);
+  virtual void* CryptStart(uint32_t objnum, uint32_t gennum, FX_BOOL bEncrypt);
   virtual FX_BOOL CryptStream(void* context,
                               const uint8_t* src_buf,
-                              FX_DWORD src_size,
+                              uint32_t src_size,
                               CFX_BinaryBuf& dest_buf,
                               FX_BOOL bEncrypt);
   virtual FX_BOOL CryptFinish(void* context,

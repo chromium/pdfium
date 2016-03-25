@@ -31,25 +31,25 @@ class CPDF_MeshStream {
                int nFuncs,
                CPDF_ColorSpace* pCS);
 
-  FX_DWORD GetFlag();
+  uint32_t GetFlag();
 
   void GetCoords(FX_FLOAT& x, FX_FLOAT& y);
   void GetColor(FX_FLOAT& r, FX_FLOAT& g, FX_FLOAT& b);
 
-  FX_DWORD GetVertex(CPDF_MeshVertex& vertex, CFX_Matrix* pObject2Bitmap);
+  uint32_t GetVertex(CPDF_MeshVertex& vertex, CFX_Matrix* pObject2Bitmap);
   FX_BOOL GetVertexRow(CPDF_MeshVertex* vertex,
                        int count,
                        CFX_Matrix* pObject2Bitmap);
 
   CPDF_Function** m_pFuncs;
   CPDF_ColorSpace* m_pCS;
-  FX_DWORD m_nFuncs;
-  FX_DWORD m_nCoordBits;
-  FX_DWORD m_nCompBits;
-  FX_DWORD m_nFlagBits;
-  FX_DWORD m_nComps;
-  FX_DWORD m_CoordMax;
-  FX_DWORD m_CompMax;
+  uint32_t m_nFuncs;
+  uint32_t m_nCoordBits;
+  uint32_t m_nCompBits;
+  uint32_t m_nFlagBits;
+  uint32_t m_nComps;
+  uint32_t m_CoordMax;
+  uint32_t m_CompMax;
   FX_FLOAT m_xmin;
   FX_FLOAT m_xmax;
   FX_FLOAT m_ymin;

@@ -7,7 +7,7 @@
 #include "core/fxcrt/include/fx_basic.h"
 #include "core/fxcrt/include/fx_ucd.h"
 
-const FX_DWORD kTextLayoutCodeProperties[] = {
+const uint32_t kTextLayoutCodeProperties[] = {
     0xfffe9a93, 0xfffe9a93, 0xfffe9a93, 0xfffe9a93, 0xfffe9a93, 0xfffe9a93,
     0xfffe9a93, 0xfffe9a93, 0xfffe9a93, 0xfffe8ae5, 0xfffe9b5c, 0xfffe9ada,
     0xfffe9b1a, 0xfffe9b5b, 0xfffe9a93, 0xfffe9a93, 0xfffe9a93, 0xfffe9a93,

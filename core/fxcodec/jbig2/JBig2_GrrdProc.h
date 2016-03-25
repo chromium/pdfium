@@ -30,8 +30,8 @@ class CJBig2_GRRDProc {
   CJBig2_Image* decode_Template1_opt(CJBig2_ArithDecoder* pArithDecoder,
                                      JBig2ArithCtx* grContext);
 
-  FX_DWORD GRW;
-  FX_DWORD GRH;
+  uint32_t GRW;
+  uint32_t GRH;
   FX_BOOL GRTEMPLATE;
   CJBig2_Image* GRREFERENCE;
   int32_t GRREFERENCEDX;

@@ -675,15 +675,15 @@ class CJPX_Decoder {
  public:
   explicit CJPX_Decoder(CPDF_ColorSpace* cs);
   ~CJPX_Decoder();
-  FX_BOOL Init(const unsigned char* src_data, FX_DWORD src_size);
-  void GetInfo(FX_DWORD* width, FX_DWORD* height, FX_DWORD* components);
+  FX_BOOL Init(const unsigned char* src_data, uint32_t src_size);
+  void GetInfo(uint32_t* width, uint32_t* height, uint32_t* components);
   bool Decode(uint8_t* dest_buf,
               int pitch,
               const std::vector<uint8_t>& offsets);
 
  private:
   const uint8_t* m_SrcData;
-  FX_DWORD m_SrcSize;
+  uint32_t m_SrcSize;
   opj_image_t* image;
   opj_codec_t* l_codec;
   opj_stream_t* l_stream;
@@ -705,7 +705,7 @@ CJPX_Decoder::~CJPX_Decoder() {
   }
 }
 
-FX_BOOL CJPX_Decoder::Init(const unsigned char* src_data, FX_DWORD src_size) {
+FX_BOOL CJPX_Decoder::Init(const unsigned char* src_data, uint32_t src_size) {
   static const unsigned char szJP2Header[] = {
       0x00, 0x00, 0x00, 0x0c, 0x6a, 0x50, 0x20, 0x20, 0x0d, 0x0a, 0x87, 0x0a};
   if (!src_data || src_size < sizeof(szJP2Header))
@@ -788,12 +788,12 @@ FX_BOOL CJPX_Decoder::Init(const unsigned char* src_data, FX_DWORD src_size) {
   return TRUE;
 }
 
-void CJPX_Decoder::GetInfo(FX_DWORD* width,
-                           FX_DWORD* height,
-                           FX_DWORD* components) {
-  *width = (FX_DWORD)image->x1;
-  *height = (FX_DWORD)image->y1;
-  *components = (FX_DWORD)image->numcomps;
+void CJPX_Decoder::GetInfo(uint32_t* width,
+                           uint32_t* height,
+                           uint32_t* components) {
+  *width = (uint32_t)image->x1;
+  *height = (uint32_t)image->y1;
+  *components = (uint32_t)image->numcomps;
 }
 
 bool CJPX_Decoder::Decode(uint8_t* dest_buf,
@@ -874,16 +874,16 @@ CCodec_JpxModule::CCodec_JpxModule() {}
 CCodec_JpxModule::~CCodec_JpxModule() {}
 
 CJPX_Decoder* CCodec_JpxModule::CreateDecoder(const uint8_t* src_buf,
-                                              FX_DWORD src_size,
+                                              uint32_t src_size,
                                               CPDF_ColorSpace* cs) {
   std::unique_ptr<CJPX_Decoder> decoder(new CJPX_Decoder(cs));
   return decoder->Init(src_buf, src_size) ? decoder.release() : nullptr;
 }
 
 void CCodec_JpxModule::GetImageInfo(CJPX_Decoder* pDecoder,
-                                    FX_DWORD* width,
-                                    FX_DWORD* height,
-                                    FX_DWORD* components) {
+                                    uint32_t* width,
+                                    uint32_t* height,
+                                    uint32_t* components) {
   pDecoder->GetInfo(width, height, components);
 }
 

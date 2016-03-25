@@ -257,7 +257,7 @@ int FaxGetRun(const uint8_t* ins_array,
               const uint8_t* src_buf,
               int& bitpos,
               int bitsize) {
-  FX_DWORD code = 0;
+  uint32_t code = 0;
   int ins_off = 0;
   while (1) {
     uint8_t ins = ins_array[ins_off++];
@@ -602,7 +602,7 @@ class CCodec_FaxDecoder : public CCodec_ScanlineDecoder {
   ~CCodec_FaxDecoder() override;
 
   FX_BOOL Create(const uint8_t* src_buf,
-                 FX_DWORD src_size,
+                 uint32_t src_size,
                  int width,
                  int height,
                  int K,
@@ -616,12 +616,12 @@ class CCodec_FaxDecoder : public CCodec_ScanlineDecoder {
   void v_DownScale(int dest_width, int dest_height) override {}
   FX_BOOL v_Rewind() override;
   uint8_t* v_GetNextLine() override;
-  FX_DWORD GetSrcOffset() override;
+  uint32_t GetSrcOffset() override;
 
   int m_Encoding, m_bEndOfLine, m_bByteAlign, m_bBlack;
   int bitpos;
   const uint8_t* m_pSrcBuf;
-  FX_DWORD m_SrcSize;
+  uint32_t m_SrcSize;
   uint8_t* m_pScanlineBuf;
   uint8_t* m_pRefBuf;
 };
@@ -635,7 +635,7 @@ CCodec_FaxDecoder::~CCodec_FaxDecoder() {
   FX_Free(m_pRefBuf);
 }
 FX_BOOL CCodec_FaxDecoder::Create(const uint8_t* src_buf,
-                                  FX_DWORD src_size,
+                                  uint32_t src_size,
                                   int width,
                                   int height,
                                   int K,
@@ -657,7 +657,7 @@ FX_BOOL CCodec_FaxDecoder::Create(const uint8_t* src_buf,
     m_OrigHeight = height;
   }
   // Should not overflow. Checked by FPDFAPI_CreateFaxDecoder.
-  m_Pitch = (static_cast<FX_DWORD>(m_OrigWidth) + 31) / 32 * 4;
+  m_Pitch = (static_cast<uint32_t>(m_OrigWidth) + 31) / 32 * 4;
   m_OutputWidth = m_OrigWidth;
   m_OutputHeight = m_OrigHeight;
   m_pScanlineBuf = FX_Alloc(uint8_t, m_Pitch);
@@ -717,14 +717,14 @@ uint8_t* CCodec_FaxDecoder::v_GetNextLine() {
     }
   }
   if (m_bBlack) {
-    for (FX_DWORD i = 0; i < m_Pitch; i++) {
+    for (uint32_t i = 0; i < m_Pitch; i++) {
       m_pScanlineBuf[i] = ~m_pScanlineBuf[i];
     }
   }
   return m_pScanlineBuf;
 }
-FX_DWORD CCodec_FaxDecoder::GetSrcOffset() {
-  FX_DWORD ret = (bitpos + 7) / 8;
+uint32_t CCodec_FaxDecoder::GetSrcOffset() {
+  uint32_t ret = (bitpos + 7) / 8;
   if (ret > m_SrcSize) {
     ret = m_SrcSize;
   }
@@ -732,7 +732,7 @@ FX_DWORD CCodec_FaxDecoder::GetSrcOffset() {
 }
 
 void FaxG4Decode(const uint8_t* src_buf,
-                 FX_DWORD src_size,
+                 uint32_t src_size,
                  int* pbitpos,
                  uint8_t* dest_buf,
                  int width,
@@ -758,7 +758,7 @@ class CCodec_FaxEncoder {
  public:
   CCodec_FaxEncoder(const uint8_t* src_buf, int width, int height, int pitch);
   ~CCodec_FaxEncoder();
-  void Encode(uint8_t*& dest_buf, FX_DWORD& dest_size);
+  void Encode(uint8_t*& dest_buf, uint32_t& dest_size);
   void Encode2DLine(const uint8_t* scan_line);
   CFX_BinaryBuf m_DestBuf;
   uint8_t* m_pRefLine;
@@ -783,7 +783,7 @@ CCodec_FaxEncoder::~CCodec_FaxEncoder() {
   FX_Free(m_pRefLine);
   FX_Free(m_pLineBuf);
 }
-void CCodec_FaxEncoder::Encode(uint8_t*& dest_buf, FX_DWORD& dest_size) {
+void CCodec_FaxEncoder::Encode(uint8_t*& dest_buf, uint32_t& dest_size) {
   int dest_bitpos = 0;
   uint8_t last_byte = 0;
   for (int i = 0; i < m_Rows; i++) {
@@ -807,14 +807,14 @@ FX_BOOL CCodec_FaxModule::Encode(const uint8_t* src_buf,
                                  int height,
                                  int pitch,
                                  uint8_t*& dest_buf,
-                                 FX_DWORD& dest_size) {
+                                 uint32_t& dest_size) {
   CCodec_FaxEncoder encoder(src_buf, width, height, pitch);
   encoder.Encode(dest_buf, dest_size);
   return TRUE;
 }
 ICodec_ScanlineDecoder* CCodec_FaxModule::CreateDecoder(
     const uint8_t* src_buf,
-    FX_DWORD src_size,
+    uint32_t src_size,
     int width,
     int height,
     int K,

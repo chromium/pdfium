@@ -17,18 +17,18 @@ struct JBig2ArithCtx;
 
 class CJBig2_GSIDProc {
  public:
-  FX_DWORD* decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
+  uint32_t* decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
                          JBig2ArithCtx* gbContext,
                          IFX_Pause* pPause);
 
-  FX_DWORD* decode_MMR(CJBig2_BitStream* pStream, IFX_Pause* pPause);
+  uint32_t* decode_MMR(CJBig2_BitStream* pStream, IFX_Pause* pPause);
 
  public:
   FX_BOOL GSMMR;
   FX_BOOL GSUSESKIP;
   uint8_t GSBPP;
-  FX_DWORD GSW;
-  FX_DWORD GSH;
+  uint32_t GSW;
+  uint32_t GSH;
   uint8_t GSTEMPLATE;
   CJBig2_Image* GSKIP;
 };

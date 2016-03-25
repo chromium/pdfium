@@ -18,8 +18,8 @@ class CFXCRT_FileAccess_Posix : public IFXCRT_FileAccess {
   ~CFXCRT_FileAccess_Posix() override;
 
   // IFXCRT_FileAccess
-  FX_BOOL Open(const CFX_ByteStringC& fileName, FX_DWORD dwMode) override;
-  FX_BOOL Open(const CFX_WideStringC& fileName, FX_DWORD dwMode) override;
+  FX_BOOL Open(const CFX_ByteStringC& fileName, uint32_t dwMode) override;
+  FX_BOOL Open(const CFX_WideStringC& fileName, uint32_t dwMode) override;
   void Close() override;
   void Release() override;
   FX_FILESIZE GetSize() const override;

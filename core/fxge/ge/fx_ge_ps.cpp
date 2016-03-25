@@ -11,7 +11,7 @@
 
 struct PSGlyph {
   CFX_Font* m_pFont;
-  FX_DWORD m_GlyphIndex;
+  uint32_t m_GlyphIndex;
   FX_BOOL m_bGlyphAdjust;
   FX_FLOAT m_AdjustMatrix[4];
 };
@@ -178,8 +178,8 @@ void CFX_PSRenderer::SetClip_PathStroke(const CFX_PathData* pPathData,
 FX_BOOL CFX_PSRenderer::DrawPath(const CFX_PathData* pPathData,
                                  const CFX_Matrix* pObject2Device,
                                  const CFX_GraphStateData* pGraphState,
-                                 FX_DWORD fill_color,
-                                 FX_DWORD stroke_color,
+                                 uint32_t fill_color,
+                                 uint32_t stroke_color,
                                  int fill_mode,
                                  int alpha_flag,
                                  void* pIccTransform) {
@@ -275,7 +275,7 @@ static void FaxCompressData(uint8_t* src_buf,
                             int width,
                             int height,
                             uint8_t*& dest_buf,
-                            FX_DWORD& dest_size) {
+                            uint32_t& dest_size) {
   CCodec_ModuleMgr* pEncoders = CFX_GEModule::Get()->GetCodecModule();
   if (width * height > 128 && pEncoders &&
       pEncoders->GetFaxModule()->Encode(src_buf, width, height, (width + 7) / 8,
@@ -288,9 +288,9 @@ static void FaxCompressData(uint8_t* src_buf,
 }
 static void PSCompressData(int PSLevel,
                            uint8_t* src_buf,
-                           FX_DWORD src_size,
+                           uint32_t src_size,
                            uint8_t*& output_buf,
-                           FX_DWORD& output_size,
+                           uint32_t& output_size,
                            const FX_CHAR*& filter) {
   output_buf = src_buf;
   output_size = src_size;
@@ -300,7 +300,7 @@ static void PSCompressData(int PSLevel,
   }
   CCodec_ModuleMgr* pEncoders = CFX_GEModule::Get()->GetCodecModule();
   uint8_t* dest_buf = NULL;
-  FX_DWORD dest_size = src_size;
+  uint32_t dest_size = src_size;
   if (PSLevel >= 3) {
     if (pEncoders &&
         pEncoders->GetFlateModule()->Encode(src_buf, src_size, dest_buf,
@@ -323,7 +323,7 @@ static void PSCompressData(int PSLevel,
   }
 }
 FX_BOOL CFX_PSRenderer::SetDIBits(const CFX_DIBSource* pSource,
-                                  FX_DWORD color,
+                                  uint32_t color,
                                   int left,
                                   int top,
                                   int alpha_flag,
@@ -335,12 +335,12 @@ FX_BOOL CFX_PSRenderer::SetDIBits(const CFX_DIBSource* pSource,
   return DrawDIBits(pSource, color, &matrix, 0, alpha_flag, pIccTransform);
 }
 FX_BOOL CFX_PSRenderer::StretchDIBits(const CFX_DIBSource* pSource,
-                                      FX_DWORD color,
+                                      uint32_t color,
                                       int dest_left,
                                       int dest_top,
                                       int dest_width,
                                       int dest_height,
-                                      FX_DWORD flags,
+                                      uint32_t flags,
                                       int alpha_flag,
                                       void* pIccTransform) {
   StartRendering();
@@ -350,9 +350,9 @@ FX_BOOL CFX_PSRenderer::StretchDIBits(const CFX_DIBSource* pSource,
   return DrawDIBits(pSource, color, &matrix, flags, alpha_flag, pIccTransform);
 }
 FX_BOOL CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource,
-                                   FX_DWORD color,
+                                   uint32_t color,
                                    const CFX_Matrix* pMatrix,
-                                   FX_DWORD flags,
+                                   uint32_t flags,
                                    int alpha_flag,
                                    void* pIccTransform) {
   StartRendering();
@@ -377,14 +377,14 @@ FX_BOOL CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource,
   buf << width << " " << height;
   if (pSource->GetBPP() == 1 && !pSource->GetPalette()) {
     int pitch = (width + 7) / 8;
-    FX_DWORD src_size = height * pitch;
+    uint32_t src_size = height * pitch;
     uint8_t* src_buf = FX_Alloc(uint8_t, src_size);
     for (int row = 0; row < height; row++) {
       const uint8_t* src_scan = pSource->GetScanline(row);
       FXSYS_memcpy(src_buf + row * pitch, src_scan, pitch);
     }
     uint8_t* output_buf;
-    FX_DWORD output_size;
+    uint32_t output_size;
     FaxCompressData(src_buf, width, height, output_buf, output_size);
     if (pSource->IsAlphaMask()) {
       SetColor(color, alpha_flag, pIccTransform);
@@ -469,7 +469,7 @@ FX_BOOL CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource,
         }
       }
       uint8_t* compressed_buf;
-      FX_DWORD compressed_size;
+      uint32_t compressed_size;
       PSCompressData(m_PSLevel, output_buf, output_size, compressed_buf,
                      compressed_size, filter);
       if (output_buf != compressed_buf) {
@@ -497,7 +497,7 @@ FX_BOOL CFX_PSRenderer::DrawDIBits(const CFX_DIBSource* pSource,
   OUTPUT_PS("\nQ\n");
   return TRUE;
 }
-void CFX_PSRenderer::SetColor(FX_DWORD color,
+void CFX_PSRenderer::SetColor(uint32_t color,
                               int alpha_flag,
                               void* pIccTransform) {
   if (!CFX_GEModule::Get()->GetCodecModule() ||
@@ -646,7 +646,7 @@ FX_BOOL CFX_PSRenderer::DrawText(int nChars,
                                  CFX_FontCache* pCache,
                                  const CFX_Matrix* pObject2Device,
                                  FX_FLOAT font_size,
-                                 FX_DWORD color,
+                                 uint32_t color,
                                  int alpha_flag,
                                  void* pIccTransform) {
   StartRendering();
@@ -688,7 +688,7 @@ FX_BOOL CFX_PSRenderer::DrawText(int nChars,
 }
 void CFX_PSRenderer::WritePSBinary(const uint8_t* data, int len) {
   uint8_t* dest_buf;
-  FX_DWORD dest_size;
+  uint32_t dest_size;
   CCodec_ModuleMgr* pEncoders = CFX_GEModule::Get()->GetCodecModule();
   if (pEncoders &&
       pEncoders->GetBasicModule()->A85Encode(data, len, dest_buf, dest_size)) {

@@ -23,18 +23,18 @@ class CPDF_SyntaxParser {
   CPDF_SyntaxParser();
   ~CPDF_SyntaxParser();
 
-  void InitParser(IFX_FileRead* pFileAccess, FX_DWORD HeaderOffset);
+  void InitParser(IFX_FileRead* pFileAccess, uint32_t HeaderOffset);
 
   FX_FILESIZE SavePos() const { return m_Pos; }
   void RestorePos(FX_FILESIZE pos) { m_Pos = pos; }
 
   CPDF_Object* GetObject(CPDF_IndirectObjectHolder* pObjList,
-                         FX_DWORD objnum,
-                         FX_DWORD gennum,
+                         uint32_t objnum,
+                         uint32_t gennum,
                          FX_BOOL bDecrypt);
   CPDF_Object* GetObjectByStrict(CPDF_IndirectObjectHolder* pObjList,
-                                 FX_DWORD objnum,
-                                 FX_DWORD gennum);
+                                 uint32_t objnum,
+                                 uint32_t gennum);
   CFX_ByteString GetKeyword();
 
   void ToNextLine();
@@ -51,7 +51,7 @@ class CPDF_SyntaxParser {
 
   void SetEncrypt(std::unique_ptr<IPDF_CryptoHandler> pCryptoHandler);
 
-  FX_BOOL ReadBlock(uint8_t* pBuf, FX_DWORD size);
+  FX_BOOL ReadBlock(uint8_t* pBuf, uint32_t size);
   FX_BOOL GetCharAt(FX_FILESIZE pos, uint8_t& ch);
   CFX_ByteString GetNextWord(bool* bIsNumber);
 
@@ -77,20 +77,20 @@ class CPDF_SyntaxParser {
   CFX_ByteString ReadHexString();
   unsigned int ReadEOLMarkers(FX_FILESIZE pos);
   CPDF_Stream* ReadStream(CPDF_Dictionary* pDict,
-                          FX_DWORD objnum,
-                          FX_DWORD gennum);
+                          uint32_t objnum,
+                          uint32_t gennum);
 
   FX_FILESIZE m_Pos;
   int m_MetadataObjnum;
   IFX_FileRead* m_pFileAccess;
-  FX_DWORD m_HeaderOffset;
+  uint32_t m_HeaderOffset;
   FX_FILESIZE m_FileLen;
   uint8_t* m_pFileBuf;
-  FX_DWORD m_BufSize;
+  uint32_t m_BufSize;
   FX_FILESIZE m_BufOffset;
   std::unique_ptr<IPDF_CryptoHandler> m_pCryptoHandler;
   uint8_t m_WordBuffer[257];
-  FX_DWORD m_WordSize;
+  uint32_t m_WordSize;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PARSER_CPDF_SYNTAX_PARSER_H_

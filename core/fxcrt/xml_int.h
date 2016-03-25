@@ -110,7 +110,7 @@ class CXML_Parser {
   void SkipWhiteSpaces();
   void GetName(CFX_ByteString& space, CFX_ByteString& name);
   void GetAttrValue(CFX_WideString& value);
-  FX_DWORD GetCharRef();
+  uint32_t GetCharRef();
   void GetTagName(CFX_ByteString& space,
                   CFX_ByteString& name,
                   FX_BOOL& bEndTag,

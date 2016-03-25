@@ -235,12 +235,12 @@ class CFX_GraphStateData {
 #define FXTEXT_PRINTIMAGETEXT 0x10
 #define FXTEXT_NOSMOOTH 0x20
 typedef struct {
-  FX_DWORD m_GlyphIndex;
+  uint32_t m_GlyphIndex;
   FX_FLOAT m_OriginX, m_OriginY;
   int m_FontCharWidth;
   FX_BOOL m_bGlyphAdjust;
   FX_FLOAT m_AdjustMatrix[4];
-  FX_DWORD m_ExtGID;
+  uint32_t m_ExtGID;
   FX_BOOL m_bFontStyle;
 } FXTEXT_CHARPOS;
 
@@ -286,8 +286,8 @@ class CFX_RenderDevice {
   FX_BOOL DrawPath(const CFX_PathData* pPathData,
                    const CFX_Matrix* pObject2Device,
                    const CFX_GraphStateData* pGraphState,
-                   FX_DWORD fill_color,
-                   FX_DWORD stroke_color,
+                   uint32_t fill_color,
+                   uint32_t stroke_color,
                    int fill_mode,
                    int alpha_flag = 0,
                    void* pIccTransform = NULL,
@@ -295,12 +295,12 @@ class CFX_RenderDevice {
 
   FX_BOOL SetPixel(int x,
                    int y,
-                   FX_DWORD color,
+                   uint32_t color,
                    int alpha_flag = 0,
                    void* pIccTransform = NULL);
 
   FX_BOOL FillRect(const FX_RECT* pRect,
-                   FX_DWORD color,
+                   uint32_t color,
                    int alpha_flag = 0,
                    void* pIccTransform = NULL,
                    int blend_type = FXDIB_BLEND_NORMAL);
@@ -309,7 +309,7 @@ class CFX_RenderDevice {
                            FX_FLOAT y1,
                            FX_FLOAT x2,
                            FX_FLOAT y2,
-                           FX_DWORD color,
+                           uint32_t color,
                            int fill_mode = 0,
                            int alpha_flag = 0,
                            void* pIccTransform = NULL,
@@ -333,14 +333,14 @@ class CFX_RenderDevice {
                         int top,
                         int dest_width,
                         int dest_height,
-                        FX_DWORD flags = 0,
+                        uint32_t flags = 0,
                         void* pIccTransform = NULL,
                         int blend_type = FXDIB_BLEND_NORMAL);
 
   FX_BOOL SetBitMask(const CFX_DIBSource* pBitmap,
                      int left,
                      int top,
-                     FX_DWORD color,
+                     uint32_t color,
                      int alpha_flag = 0,
                      void* pIccTransform = NULL);
 
@@ -349,16 +349,16 @@ class CFX_RenderDevice {
                          int top,
                          int dest_width,
                          int dest_height,
-                         FX_DWORD color,
-                         FX_DWORD flags = 0,
+                         uint32_t color,
+                         uint32_t flags = 0,
                          int alpha_flag = 0,
                          void* pIccTransform = NULL);
 
   FX_BOOL StartDIBits(const CFX_DIBSource* pBitmap,
                       int bitmap_alpha,
-                      FX_DWORD color,
+                      uint32_t color,
                       const CFX_Matrix* pMatrix,
-                      FX_DWORD flags,
+                      uint32_t flags,
                       void*& handle,
                       int alpha_flag = 0,
                       void* pIccTransform = NULL,
@@ -374,8 +374,8 @@ class CFX_RenderDevice {
                          CFX_FontCache* pCache,
                          FX_FLOAT font_size,
                          const CFX_Matrix* pText2Device,
-                         FX_DWORD fill_color,
-                         FX_DWORD text_flags,
+                         uint32_t fill_color,
+                         uint32_t text_flags,
                          int alpha_flag = 0,
                          void* pIccTransform = NULL);
 
@@ -387,8 +387,8 @@ class CFX_RenderDevice {
                        const CFX_Matrix* pText2User,
                        const CFX_Matrix* pUser2Device,
                        const CFX_GraphStateData* pGraphState,
-                       FX_DWORD fill_color,
-                       FX_DWORD stroke_color,
+                       uint32_t fill_color,
+                       uint32_t stroke_color,
                        CFX_PathData* pClippingPath,
                        int nFlag = 0,
                        int alpha_flag = 0,
@@ -403,8 +403,8 @@ class CFX_RenderDevice {
   FX_BOOL DrawFillStrokePath(const CFX_PathData* pPathData,
                              const CFX_Matrix* pObject2Device,
                              const CFX_GraphStateData* pGraphState,
-                             FX_DWORD fill_color,
-                             FX_DWORD stroke_color,
+                             uint32_t fill_color,
+                             uint32_t stroke_color,
                              int fill_mode,
                              int alpha_flag,
                              void* pIccTransform,
@@ -505,8 +505,8 @@ class IFX_RenderDeviceDriver {
   virtual FX_BOOL DrawPath(const CFX_PathData* pPathData,
                            const CFX_Matrix* pObject2Device,
                            const CFX_GraphStateData* pGraphState,
-                           FX_DWORD fill_color,
-                           FX_DWORD stroke_color,
+                           uint32_t fill_color,
+                           uint32_t stroke_color,
                            int fill_mode,
                            int alpha_flag = 0,
                            void* pIccTransform = NULL,
@@ -514,14 +514,14 @@ class IFX_RenderDeviceDriver {
 
   virtual FX_BOOL SetPixel(int x,
                            int y,
-                           FX_DWORD color,
+                           uint32_t color,
                            int alpha_flag = 0,
                            void* pIccTransform = NULL) {
     return FALSE;
   }
 
   virtual FX_BOOL FillRect(const FX_RECT* pRect,
-                           FX_DWORD fill_color,
+                           uint32_t fill_color,
                            int alpha_flag = 0,
                            void* pIccTransform = NULL,
                            int blend_type = FXDIB_BLEND_NORMAL) {
@@ -532,7 +532,7 @@ class IFX_RenderDeviceDriver {
                                    FX_FLOAT y1,
                                    FX_FLOAT x2,
                                    FX_FLOAT y2,
-                                   FX_DWORD color,
+                                   uint32_t color,
                                    int alpha_flag = 0,
                                    void* pIccTransform = NULL,
                                    int blend_type = FXDIB_BLEND_NORMAL) {
@@ -551,7 +551,7 @@ class IFX_RenderDeviceDriver {
   virtual CFX_DIBitmap* GetBackDrop() { return NULL; }
 
   virtual FX_BOOL SetDIBits(const CFX_DIBSource* pBitmap,
-                            FX_DWORD color,
+                            uint32_t color,
                             const FX_RECT* pSrcRect,
                             int dest_left,
                             int dest_top,
@@ -560,22 +560,22 @@ class IFX_RenderDeviceDriver {
                             void* pIccTransform = NULL) = 0;
 
   virtual FX_BOOL StretchDIBits(const CFX_DIBSource* pBitmap,
-                                FX_DWORD color,
+                                uint32_t color,
                                 int dest_left,
                                 int dest_top,
                                 int dest_width,
                                 int dest_height,
                                 const FX_RECT* pClipRect,
-                                FX_DWORD flags,
+                                uint32_t flags,
                                 int alpha_flag = 0,
                                 void* pIccTransform = NULL,
                                 int blend_type = FXDIB_BLEND_NORMAL) = 0;
 
   virtual FX_BOOL StartDIBits(const CFX_DIBSource* pBitmap,
                               int bitmap_alpha,
-                              FX_DWORD color,
+                              uint32_t color,
                               const CFX_Matrix* pMatrix,
-                              FX_DWORD flags,
+                              uint32_t flags,
                               void*& handle,
                               int alpha_flag = 0,
                               void* pIccTransform = NULL,
@@ -593,7 +593,7 @@ class IFX_RenderDeviceDriver {
                                  CFX_FontCache* pCache,
                                  const CFX_Matrix* pObject2Device,
                                  FX_FLOAT font_size,
-                                 FX_DWORD color,
+                                 uint32_t color,
                                  int alpha_flag = 0,
                                  void* pIccTransform = NULL) {
     return FALSE;
@@ -652,33 +652,33 @@ class CFX_PSRenderer {
   FX_BOOL DrawPath(const CFX_PathData* pPathData,
                    const CFX_Matrix* pObject2Device,
                    const CFX_GraphStateData* pGraphState,
-                   FX_DWORD fill_color,
-                   FX_DWORD stroke_color,
+                   uint32_t fill_color,
+                   uint32_t stroke_color,
                    int fill_mode,
                    int alpha_flag = 0,
                    void* pIccTransform = NULL);
 
   FX_BOOL SetDIBits(const CFX_DIBSource* pBitmap,
-                    FX_DWORD color,
+                    uint32_t color,
                     int dest_left,
                     int dest_top,
                     int alpha_flag = 0,
                     void* pIccTransform = NULL);
 
   FX_BOOL StretchDIBits(const CFX_DIBSource* pBitmap,
-                        FX_DWORD color,
+                        uint32_t color,
                         int dest_left,
                         int dest_top,
                         int dest_width,
                         int dest_height,
-                        FX_DWORD flags,
+                        uint32_t flags,
                         int alpha_flag = 0,
                         void* pIccTransform = NULL);
 
   FX_BOOL DrawDIBits(const CFX_DIBSource* pBitmap,
-                     FX_DWORD color,
+                     uint32_t color,
                      const CFX_Matrix* pMatrix,
-                     FX_DWORD flags,
+                     uint32_t flags,
                      int alpha_flag = 0,
                      void* pIccTransform = NULL);
 
@@ -688,7 +688,7 @@ class CFX_PSRenderer {
                    CFX_FontCache* pCache,
                    const CFX_Matrix* pObject2Device,
                    FX_FLOAT font_size,
-                   FX_DWORD color,
+                   uint32_t color,
                    int alpha_flag = 0,
                    void* pIccTransform = NULL);
 
@@ -705,7 +705,7 @@ class CFX_PSRenderer {
 
   FX_BOOL m_bColorSet;
 
-  FX_DWORD m_LastColor;
+  uint32_t m_LastColor;
 
   FX_RECT m_ClipBox;
 
@@ -719,7 +719,7 @@ class CFX_PSRenderer {
 
   void SetGraphState(const CFX_GraphStateData* pGraphState);
 
-  void SetColor(FX_DWORD color, int alpha_flag, void* pIccTransform);
+  void SetColor(uint32_t color, int alpha_flag, void* pIccTransform);
 
   void FindPSFontGlyph(CFX_FaceCache* pFaceCache,
                        CFX_Font* pFont,

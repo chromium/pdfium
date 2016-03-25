@@ -12,10 +12,10 @@
 IFXCRT_FileAccess* FXCRT_FileAccess_Create() {
   return new CFXCRT_FileAccess_Win64;
 }
-void FXCRT_Windows_GetFileMode(FX_DWORD dwMode,
-                               FX_DWORD& dwAccess,
-                               FX_DWORD& dwShare,
-                               FX_DWORD& dwCreation) {
+void FXCRT_Windows_GetFileMode(uint32_t dwMode,
+                               uint32_t& dwAccess,
+                               uint32_t& dwShare,
+                               uint32_t& dwCreation) {
   dwAccess = GENERIC_READ;
   dwShare = FILE_SHARE_READ | FILE_SHARE_WRITE;
   if (!(dwMode & FX_FILEMODE_ReadOnly)) {
@@ -41,11 +41,11 @@ CFXCRT_FileAccess_Win64::~CFXCRT_FileAccess_Win64() {
   Close();
 }
 FX_BOOL CFXCRT_FileAccess_Win64::Open(const CFX_ByteStringC& fileName,
-                                      FX_DWORD dwMode) {
+                                      uint32_t dwMode) {
   if (m_hFile) {
     return FALSE;
   }
-  FX_DWORD dwAccess, dwShare, dwCreation;
+  uint32_t dwAccess, dwShare, dwCreation;
   FXCRT_Windows_GetFileMode(dwMode, dwAccess, dwShare, dwCreation);
   m_hFile = ::CreateFileA(fileName.GetCStr(), dwAccess, dwShare, NULL,
                           dwCreation, FILE_ATTRIBUTE_NORMAL, NULL);
@@ -55,11 +55,11 @@ FX_BOOL CFXCRT_FileAccess_Win64::Open(const CFX_ByteStringC& fileName,
   return m_hFile != NULL;
 }
 FX_BOOL CFXCRT_FileAccess_Win64::Open(const CFX_WideStringC& fileName,
-                                      FX_DWORD dwMode) {
+                                      uint32_t dwMode) {
   if (m_hFile) {
     return FALSE;
   }
-  FX_DWORD dwAccess, dwShare, dwCreation;
+  uint32_t dwAccess, dwShare, dwCreation;
   FXCRT_Windows_GetFileMode(dwMode, dwAccess, dwShare, dwCreation);
   m_hFile = ::CreateFileW((LPCWSTR)fileName.GetPtr(), dwAccess, dwShare, NULL,
                           dwCreation, FILE_ATTRIBUTE_NORMAL, NULL);

@@ -21,7 +21,7 @@ class CFX_SizeGlyphCache {
  public:
   CFX_SizeGlyphCache() {}
   ~CFX_SizeGlyphCache();
-  std::map<FX_DWORD, CFX_GlyphBitmap*> m_GlyphMap;
+  std::map<uint32_t, CFX_GlyphBitmap*> m_GlyphMap;
 };
 class CTTFontDesc {
  public:
@@ -62,8 +62,8 @@ class CFX_FontFaceInfo {
   CFX_FontFaceInfo(CFX_ByteString filePath,
                    CFX_ByteString faceName,
                    CFX_ByteString fontTables,
-                   FX_DWORD fontOffset,
-                   FX_DWORD fileSize)
+                   uint32_t fontOffset,
+                   uint32_t fileSize)
       : m_FilePath(filePath),
         m_FaceName(faceName),
         m_FontTables(fontTables),
@@ -75,10 +75,10 @@ class CFX_FontFaceInfo {
   const CFX_ByteString m_FilePath;
   const CFX_ByteString m_FaceName;
   const CFX_ByteString m_FontTables;
-  const FX_DWORD m_FontOffset;
-  const FX_DWORD m_FileSize;
-  FX_DWORD m_Styles;
-  FX_DWORD m_Charsets;
+  const uint32_t m_FontOffset;
+  const uint32_t m_FileSize;
+  uint32_t m_Styles;
+  uint32_t m_Charsets;
 };
 
 #endif  // CORE_FXGE_GE_FX_TEXT_INT_H_

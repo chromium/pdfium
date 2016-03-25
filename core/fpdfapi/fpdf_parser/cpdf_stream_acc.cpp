@@ -18,7 +18,7 @@ CPDF_StreamAcc::CPDF_StreamAcc()
 
 void CPDF_StreamAcc::LoadAllData(const CPDF_Stream* pStream,
                                  FX_BOOL bRawAccess,
-                                 FX_DWORD estimated_size,
+                                 uint32_t estimated_size,
                                  FX_BOOL bImageAcc) {
   if (!pStream)
     return;
@@ -31,7 +31,7 @@ void CPDF_StreamAcc::LoadAllData(const CPDF_Stream* pStream,
     return;
   }
   uint8_t* pSrcData;
-  FX_DWORD dwSrcSize = pStream->GetRawSize();
+  uint32_t dwSrcSize = pStream->GetRawSize();
   if (dwSrcSize == 0)
     return;
 
@@ -43,7 +43,7 @@ void CPDF_StreamAcc::LoadAllData(const CPDF_Stream* pStream,
     pSrcData = pStream->GetRawData();
   }
   uint8_t* pDecryptedData = pSrcData;
-  FX_DWORD dwDecryptedSize = dwSrcSize;
+  uint32_t dwDecryptedSize = dwSrcSize;
   if (!pStream->GetDict()->KeyExist("Filter") || bRawAccess) {
     m_pData = pDecryptedData;
     m_dwSize = dwDecryptedSize;
@@ -83,7 +83,7 @@ const uint8_t* CPDF_StreamAcc::GetData() const {
   return m_pStream->GetRawData();
 }
 
-FX_DWORD CPDF_StreamAcc::GetSize() const {
+uint32_t CPDF_StreamAcc::GetSize() const {
   if (m_bNewBuf) {
     return m_dwSize;
   }

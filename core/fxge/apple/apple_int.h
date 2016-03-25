@@ -43,17 +43,17 @@ typedef enum eFXIOSFONTFLAG {
   eFXFontFlagScript = 1 << 4,
 } FX_IOSFONTFLAG;
 typedef struct IOS_FONTDATA_ {
-  FX_DWORD nHashCode;
+  uint32_t nHashCode;
   const char* psName;
-  FX_DWORD charsets;
-  FX_DWORD styles;
+  uint32_t charsets;
+  uint32_t styles;
 } IOS_FONTDATA;
 class CQuartz2D {
  public:
   void* createGraphics(CFX_DIBitmap* bitmap);
   void destroyGraphics(void* graphics);
 
-  void* CreateFont(const uint8_t* pFontData, FX_DWORD dwFontSize);
+  void* CreateFont(const uint8_t* pFontData, uint32_t dwFontSize);
   void DestroyFont(void* pFont);
   void setGraphicsTextMatrix(void* graphics, CFX_Matrix* matrix);
   FX_BOOL drawGraphicsString(void* graphics,
@@ -97,21 +97,21 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
   FX_BOOL DrawPath(const CFX_PathData* pPathData,
                    const CFX_Matrix* pObject2Device,
                    const CFX_GraphStateData* pGraphState,
-                   FX_DWORD fill_color,
-                   FX_DWORD stroke_color,
+                   uint32_t fill_color,
+                   uint32_t stroke_color,
                    int fill_mode,
                    int alpha_flag = 0,
                    void* pIccTransform = NULL,
                    int blend_type = FXDIB_BLEND_NORMAL) override;
   FX_BOOL SetPixel(int x,
                    int y,
-                   FX_DWORD color,
+                   uint32_t color,
                    int alpha_flag = 0,
                    void* pIccTransform = NULL) override {
     return FALSE;
   }
   FX_BOOL FillRect(const FX_RECT* pRect,
-                   FX_DWORD fill_color,
+                   uint32_t fill_color,
                    int alpha_flag = 0,
                    void* pIccTransform = NULL,
                    int blend_type = FXDIB_BLEND_NORMAL) override;
@@ -119,7 +119,7 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
                            FX_FLOAT y1,
                            FX_FLOAT x2,
                            FX_FLOAT y2,
-                           FX_DWORD color,
+                           uint32_t color,
                            int alpha_flag = 0,
                            void* pIccTransform = NULL,
                            int blend_type = FXDIB_BLEND_NORMAL) override;
@@ -131,7 +131,7 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
                     FX_BOOL bDEdge = FALSE) override;
   CFX_DIBitmap* GetBackDrop() override { return NULL; }
   FX_BOOL SetDIBits(const CFX_DIBSource* pBitmap,
-                    FX_DWORD color,
+                    uint32_t color,
                     const FX_RECT* pSrcRect,
                     int dest_left,
                     int dest_top,
@@ -139,21 +139,21 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
                     int alpha_flag = 0,
                     void* pIccTransform = NULL) override;
   FX_BOOL StretchDIBits(const CFX_DIBSource* pBitmap,
-                        FX_DWORD color,
+                        uint32_t color,
                         int dest_left,
                         int dest_top,
                         int dest_width,
                         int dest_height,
                         const FX_RECT* pClipRect,
-                        FX_DWORD flags,
+                        uint32_t flags,
                         int alpha_flag = 0,
                         void* pIccTransform = NULL,
                         int blend_type = FXDIB_BLEND_NORMAL) override;
   FX_BOOL StartDIBits(const CFX_DIBSource* pBitmap,
                       int bitmap_alpha,
-                      FX_DWORD color,
+                      uint32_t color,
                       const CFX_Matrix* pMatrix,
-                      FX_DWORD flags,
+                      uint32_t flags,
                       void*& handle,
                       int alpha_flag = 0,
                       void* pIccTransform = NULL,
@@ -170,7 +170,7 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
                          CFX_FontCache* pCache,
                          const CFX_Matrix* pObject2Device,
                          FX_FLOAT font_size,
-                         FX_DWORD color,
+                         uint32_t color,
                          int alpha_flag = 0,
                          void* pIccTransform = NULL) override;
   void* GetPlatformSurface() const override { return NULL; }
@@ -191,7 +191,7 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
                          const CFX_Matrix* pGlyphMatrix,
                          const CFX_Matrix* pObject2Device,
                          FX_FLOAT font_size,
-                         FX_DWORD argb,
+                         uint32_t argb,
                          int alpha_flag,
                          void* pIccTransform);
   void CG_SetImageTransform(int dest_left,
@@ -263,7 +263,7 @@ class CFX_FontProvider final : public IFX_FileRead {
 };
 
 uint32_t FX_GetHashCode(const FX_CHAR* pStr);
-FX_DWORD FX_IOSGetMatchFamilyNameHashcode(const FX_CHAR* pFontName);
+uint32_t FX_IOSGetMatchFamilyNameHashcode(const FX_CHAR* pFontName);
 uint32_t FX_IOSGetFamilyNamesCount();
 const FX_CHAR* FX_IOSGetFamilyName(uint32_t uIndex);
 #endif

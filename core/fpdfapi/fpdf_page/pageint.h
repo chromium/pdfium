@@ -39,7 +39,7 @@ class CPDF_StreamParser {
  public:
   enum SyntaxType { EndOfData, Number, Keyword, Name, Others };
 
-  CPDF_StreamParser(const uint8_t* pData, FX_DWORD dwSize);
+  CPDF_StreamParser(const uint8_t* pData, uint32_t dwSize);
   ~CPDF_StreamParser();
 
   CPDF_Stream* ReadInlineStream(CPDF_Document* pDoc,
@@ -48,14 +48,14 @@ class CPDF_StreamParser {
                                 FX_BOOL bDecode);
   SyntaxType ParseNextElement();
   uint8_t* GetWordBuf() { return m_WordBuffer; }
-  FX_DWORD GetWordSize() const { return m_WordSize; }
+  uint32_t GetWordSize() const { return m_WordSize; }
   CPDF_Object* GetObject() {
     CPDF_Object* pObj = m_pLastObj;
     m_pLastObj = NULL;
     return pObj;
   }
-  FX_DWORD GetPos() const { return m_Pos; }
-  void SetPos(FX_DWORD pos) { m_Pos = pos; }
+  uint32_t GetPos() const { return m_Pos; }
+  void SetPos(uint32_t pos) { m_Pos = pos; }
   CPDF_Object* ReadNextObject(FX_BOOL bAllowNestedArray = FALSE,
                               FX_BOOL bInArray = FALSE);
   void SkipPathObject();
@@ -69,13 +69,13 @@ class CPDF_StreamParser {
   const uint8_t* m_pBuf;
 
   // Length in bytes of m_pBuf.
-  FX_DWORD m_Size;
+  uint32_t m_Size;
 
   // Current byte position within m_pBuf.
-  FX_DWORD m_Pos;
+  uint32_t m_Pos;
 
   uint8_t m_WordBuffer[256];
-  FX_DWORD m_WordSize;
+  uint32_t m_WordSize;
   CPDF_Object* m_pLastObj;
 
  private:
@@ -128,14 +128,14 @@ class CPDF_StreamContentParser {
   void AddNameParam(const FX_CHAR* name, int size);
   int GetNextParamPos();
   void ClearAllParams();
-  CPDF_Object* GetObject(FX_DWORD index);
-  CFX_ByteString GetString(FX_DWORD index);
-  FX_FLOAT GetNumber(FX_DWORD index);
-  FX_FLOAT GetNumber16(FX_DWORD index);
-  int GetInteger(FX_DWORD index) { return (int32_t)(GetNumber(index)); }
+  CPDF_Object* GetObject(uint32_t index);
+  CFX_ByteString GetString(uint32_t index);
+  FX_FLOAT GetNumber(uint32_t index);
+  FX_FLOAT GetNumber16(uint32_t index);
+  int GetInteger(uint32_t index) { return (int32_t)(GetNumber(index)); }
   void OnOperator(const FX_CHAR* op);
   void BigCaseCaller(int index);
-  FX_DWORD GetParsePos() { return m_pSyntax->GetPos(); }
+  uint32_t GetParsePos() { return m_pSyntax->GetPos(); }
   void AddTextObject(CFX_ByteString* pText,
                      FX_FLOAT fInitKerning,
                      FX_FLOAT* pKerning,
@@ -144,7 +144,7 @@ class CPDF_StreamContentParser {
   void ConvertUserSpace(FX_FLOAT& x, FX_FLOAT& y);
   void ConvertTextSpace(FX_FLOAT& x, FX_FLOAT& y);
   void OnChangeTextMatrix();
-  FX_DWORD Parse(const uint8_t* pData, FX_DWORD dwSize, FX_DWORD max_cost);
+  uint32_t Parse(const uint8_t* pData, uint32_t dwSize, uint32_t max_cost);
   void ParsePathObject();
   void AddPathPoint(FX_FLOAT x, FX_FLOAT y, int flag);
   void AddPathRect(FX_FLOAT x, FX_FLOAT y, FX_FLOAT w, FX_FLOAT h);
@@ -168,7 +168,7 @@ class CPDF_StreamContentParser {
 
  protected:
   using OpCodes =
-      std::unordered_map<FX_DWORD, void (CPDF_StreamContentParser::*)()>;
+      std::unordered_map<uint32_t, void (CPDF_StreamContentParser::*)()>;
   static OpCodes InitializeOpCodes();
 
   void Handle_CloseFillStrokePath();
@@ -254,8 +254,8 @@ class CPDF_StreamContentParser {
   CFX_FloatRect m_BBox;
   CPDF_ParseOptions m_Options;
   ContentParam m_ParamBuf[PARAM_BUF_SIZE];
-  FX_DWORD m_ParamStartPos;
-  FX_DWORD m_ParamCount;
+  uint32_t m_ParamStartPos;
+  uint32_t m_ParamCount;
   CPDF_StreamParser* m_pSyntax;
   std::unique_ptr<CPDF_AllStates> m_pCurStates;
   CPDF_ContentMark m_CurContentMark;
@@ -313,12 +313,12 @@ class CPDF_ContentParser {
   FX_BOOL m_bForm;
   CPDF_ParseOptions m_Options;
   CPDF_Type3Char* m_pType3Char;
-  FX_DWORD m_nStreams;
+  uint32_t m_nStreams;
   std::unique_ptr<CPDF_StreamAcc> m_pSingleStream;
   std::vector<std::unique_ptr<CPDF_StreamAcc>> m_StreamArray;
   uint8_t* m_pData;
-  FX_DWORD m_Size;
-  FX_DWORD m_CurrentOffset;
+  uint32_t m_Size;
+  uint32_t m_CurrentOffset;
   std::unique_ptr<CPDF_StreamContentParser> m_pParser;
 };
 
@@ -361,7 +361,7 @@ class CPDF_DocPageData {
   using CPDF_FontFileMap = std::map<CPDF_Stream*, CPDF_CountedStreamAcc*>;
   using CPDF_FontMap = std::map<CPDF_Dictionary*, CPDF_CountedFont*>;
   using CPDF_IccProfileMap = std::map<CPDF_Stream*, CPDF_CountedIccProfile*>;
-  using CPDF_ImageMap = std::map<FX_DWORD, CPDF_CountedImage*>;
+  using CPDF_ImageMap = std::map<uint32_t, CPDF_CountedImage*>;
   using CPDF_PatternMap = std::map<CPDF_Object*, CPDF_CountedPattern*>;
 
   CPDF_Document* const m_pPDFDoc;
@@ -441,14 +441,14 @@ class CPDF_StitchFunc : public CPDF_Function {
 
 class CPDF_IccProfile {
  public:
-  CPDF_IccProfile(const uint8_t* pData, FX_DWORD dwSize);
+  CPDF_IccProfile(const uint8_t* pData, uint32_t dwSize);
   ~CPDF_IccProfile();
-  FX_DWORD GetComponents() const { return m_nSrcComponents; }
+  uint32_t GetComponents() const { return m_nSrcComponents; }
   FX_BOOL m_bsRGB;
   void* m_pTransform;
 
  private:
-  FX_DWORD m_nSrcComponents;
+  uint32_t m_nSrcComponents;
 };
 
 class CPDF_DeviceCS : public CPDF_ColorSpace {

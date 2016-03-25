@@ -14,7 +14,7 @@
 IFXCRT_FileAccess* FXCRT_FileAccess_Create() {
   return new CFXCRT_FileAccess_Posix;
 }
-void FXCRT_Posix_GetFileMode(FX_DWORD dwModes,
+void FXCRT_Posix_GetFileMode(uint32_t dwModes,
                              int32_t& nFlags,
                              int32_t& nMasks) {
   nFlags = O_BINARY | O_LARGEFILE;
@@ -34,7 +34,7 @@ CFXCRT_FileAccess_Posix::~CFXCRT_FileAccess_Posix() {
   Close();
 }
 FX_BOOL CFXCRT_FileAccess_Posix::Open(const CFX_ByteStringC& fileName,
-                                      FX_DWORD dwMode) {
+                                      uint32_t dwMode) {
   if (m_nFD > -1) {
     return FALSE;
   }
@@ -44,7 +44,7 @@ FX_BOOL CFXCRT_FileAccess_Posix::Open(const CFX_ByteStringC& fileName,
   return m_nFD > -1;
 }
 FX_BOOL CFXCRT_FileAccess_Posix::Open(const CFX_WideStringC& fileName,
-                                      FX_DWORD dwMode) {
+                                      uint32_t dwMode) {
   return Open(FX_UTF8Encode(fileName), dwMode);
 }
 void CFXCRT_FileAccess_Posix::Close() {

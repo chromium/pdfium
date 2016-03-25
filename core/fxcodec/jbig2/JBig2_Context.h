@@ -23,7 +23,7 @@ class CPDF_StreamAcc;
 class IFX_Pause;
 
 // Cache is keyed by the ObjNum of a stream and an index within the stream.
-using CJBig2_CacheKey = std::pair<FX_DWORD, FX_DWORD>;
+using CJBig2_CacheKey = std::pair<uint32_t, uint32_t>;
 // NB: CJBig2_SymbolDict* is owned.
 using CJBig2_CachePair = std::pair<CJBig2_CacheKey, CJBig2_SymbolDict*>;
 
@@ -74,7 +74,7 @@ class CJBig2_Context {
 
   int32_t decode_RandomOrgnazation(IFX_Pause* pPause);
 
-  CJBig2_Segment* findSegmentByNumber(FX_DWORD dwNumber);
+  CJBig2_Segment* findSegmentByNumber(uint32_t dwNumber);
 
   CJBig2_Segment* findReferredSegmentByTypeAndIndex(CJBig2_Segment* pSegment,
                                                     uint8_t cType,
@@ -103,7 +103,7 @@ class CJBig2_Context {
   int32_t parseRegionInfo(JBig2RegionInfo* pRI);
 
   JBig2HuffmanCode* decodeSymbolIDHuffmanTable(CJBig2_BitStream* pStream,
-                                               FX_DWORD SBNUMSYMS);
+                                               uint32_t SBNUMSYMS);
 
   void huffman_assign_code(int* CODES, int* PREFLEN, int NTEMP);
 
@@ -125,7 +125,7 @@ class CJBig2_Context {
   std::unique_ptr<CJBig2_GRDProc> m_pGRD;
   JBig2ArithCtx* m_gbContext;
   std::unique_ptr<CJBig2_Segment> m_pSegment;
-  FX_DWORD m_dwOffset;
+  uint32_t m_dwOffset;
   JBig2RegionInfo m_ri;
   std::list<CJBig2_CachePair>* const m_pSymbolDictCache;
   bool m_bIsGlobal;

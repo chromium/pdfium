@@ -46,13 +46,13 @@ class IPDF_DataAvail {
   class FileAvail {
    public:
     virtual ~FileAvail();
-    virtual FX_BOOL IsDataAvail(FX_FILESIZE offset, FX_DWORD size) = 0;
+    virtual FX_BOOL IsDataAvail(FX_FILESIZE offset, uint32_t size) = 0;
   };
 
   class DownloadHints {
    public:
     virtual ~DownloadHints();
-    virtual void AddSegment(FX_FILESIZE offset, FX_DWORD size) = 0;
+    virtual void AddSegment(FX_FILESIZE offset, uint32_t size) = 0;
   };
 
   static IPDF_DataAvail* Create(FileAvail* pFileAvail, IFX_FileRead* pFileRead);
@@ -68,7 +68,7 @@ class IPDF_DataAvail {
   virtual DocFormStatus IsFormAvail(DownloadHints* pHints) = 0;
   virtual DocLinearizationStatus IsLinearizedPDF() = 0;
   virtual void GetLinearizedMainXRefInfo(FX_FILESIZE* pPos,
-                                         FX_DWORD* pSize) = 0;
+                                         uint32_t* pSize) = 0;
 
  protected:
   IPDF_DataAvail(FileAvail* pFileAvail, IFX_FileRead* pFileRead);

@@ -41,11 +41,11 @@ class CPDF_RenderOptions {
   int m_ColorMode;
   FX_COLORREF m_BackColor;
   FX_COLORREF m_ForeColor;
-  FX_DWORD m_Flags;
+  uint32_t m_Flags;
   int m_Interpolation;
-  FX_DWORD m_AddFlags;
+  uint32_t m_AddFlags;
   IPDF_OCContext* m_pOCContext;
-  FX_DWORD m_dwLimitCacheSize;
+  uint32_t m_dwLimitCacheSize;
   int m_HalftoneLimit;
 };
 

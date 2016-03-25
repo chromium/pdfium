@@ -15,8 +15,8 @@
 class IFXCRT_FileAccess {
  public:
   virtual ~IFXCRT_FileAccess() {}
-  virtual FX_BOOL Open(const CFX_ByteStringC& fileName, FX_DWORD dwMode) = 0;
-  virtual FX_BOOL Open(const CFX_WideStringC& fileName, FX_DWORD dwMode) = 0;
+  virtual FX_BOOL Open(const CFX_ByteStringC& fileName, uint32_t dwMode) = 0;
+  virtual FX_BOOL Open(const CFX_WideStringC& fileName, uint32_t dwMode) = 0;
   virtual void Close() = 0;
   virtual void Release() = 0;
   virtual FX_FILESIZE GetSize() const = 0;
@@ -51,7 +51,7 @@ class CFX_CRTFileAccess : public IFX_FileAccess {
 
   void GetPath(CFX_WideString& wsPath) override { wsPath = m_path; }
 
-  IFX_FileStream* CreateFileStream(FX_DWORD dwModes) override {
+  IFX_FileStream* CreateFileStream(uint32_t dwModes) override {
     return FX_CreateFileStream(m_path, dwModes);
   }
 
@@ -63,7 +63,7 @@ class CFX_CRTFileAccess : public IFX_FileAccess {
 
  protected:
   CFX_WideString m_path;
-  FX_DWORD m_RefCount;
+  uint32_t m_RefCount;
 };
 #endif  // PDF_ENABLE_XFA
 
@@ -87,7 +87,7 @@ class CFX_CRTFileStream final : public IFX_FileStream {
 
  protected:
   IFXCRT_FileAccess* m_pFile;
-  FX_DWORD m_dwCount;
+  uint32_t m_dwCount;
 };
 
 #define FX_MEMSTREAM_BlockSize (64 * 1024)
@@ -129,7 +129,7 @@ class CFX_MemoryStream final : public IFX_MemoryStream {
     return this;
   }
   void Release() override {
-    FX_DWORD nCount = --m_dwCount;
+    uint32_t nCount = --m_dwCount;
     if (nCount) {
       return;
     }
@@ -282,12 +282,12 @@ class CFX_MemoryStream final : public IFX_MemoryStream {
 
  protected:
   CFX_ArrayTemplate<uint8_t*> m_Blocks;
-  FX_DWORD m_dwCount;
+  uint32_t m_dwCount;
   size_t m_nTotalSize;
   size_t m_nCurSize;
   size_t m_nCurPos;
   size_t m_nGrowSize;
-  FX_DWORD m_dwFlags;
+  uint32_t m_dwFlags;
   FX_BOOL ExpandBlocks(size_t size) {
     if (m_nCurSize < size) {
       m_nCurSize = size;
@@ -320,12 +320,12 @@ struct FX_MTRANDOMCONTEXT {
     mti = MT_N + 1;
     bHaveSeed = FALSE;
   }
-  FX_DWORD mti;
+  uint32_t mti;
   FX_BOOL bHaveSeed;
-  FX_DWORD mt[MT_N];
+  uint32_t mt[MT_N];
 };
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-FX_BOOL FX_GenerateCryptoRandom(FX_DWORD* pBuffer, int32_t iCount);
+FX_BOOL FX_GenerateCryptoRandom(uint32_t* pBuffer, int32_t iCount);
 #endif
 #ifdef __cplusplus
 }

@@ -102,7 +102,7 @@ FX_BOOL CPDF_Type1Font::Load() {
   return LoadCommon();
 }
 
-int CPDF_Type1Font::GlyphFromCharCodeExt(FX_DWORD charcode) {
+int CPDF_Type1Font::GlyphFromCharCodeExt(uint32_t charcode) {
   if (charcode > 0xff) {
     return -1;
   }

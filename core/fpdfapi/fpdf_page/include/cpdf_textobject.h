@@ -12,7 +12,7 @@
 #include "core/fxcrt/include/fx_system.h"
 
 struct CPDF_TextObjectItem {
-  FX_DWORD m_CharCode;
+  uint32_t m_CharCode;
   FX_FLOAT m_OriginX;
   FX_FLOAT m_OriginY;
 };
@@ -33,9 +33,9 @@ class CPDF_TextObject : public CPDF_PageObject {
   int CountItems() const { return m_nChars; }
   void GetItemInfo(int index, CPDF_TextObjectItem* pInfo) const;
   int CountChars() const;
-  void GetCharInfo(int index, FX_DWORD& charcode, FX_FLOAT& kerning) const;
+  void GetCharInfo(int index, uint32_t& charcode, FX_FLOAT& kerning) const;
   void GetCharInfo(int index, CPDF_TextObjectItem* pInfo) const;
-  FX_FLOAT GetCharWidth(FX_DWORD charcode) const;
+  FX_FLOAT GetCharWidth(uint32_t charcode) const;
   FX_FLOAT GetPosX() const { return m_PosX; }
   FX_FLOAT GetPosY() const { return m_PosY; }
   void GetTextMatrix(CFX_Matrix* pMatrix) const;
@@ -62,7 +62,7 @@ class CPDF_TextObject : public CPDF_PageObject {
   FX_FLOAT m_PosX;
   FX_FLOAT m_PosY;
   int m_nChars;
-  FX_DWORD* m_pCharCodes;
+  uint32_t* m_pCharCodes;
   FX_FLOAT* m_pCharPos;
 };
 

@@ -18,7 +18,7 @@ class CPDF_Type1Font : public CPDF_SimpleFont {
   bool IsType1Font() const override;
   const CPDF_Type1Font* AsType1Font() const override;
   CPDF_Type1Font* AsType1Font() override;
-  int GlyphFromCharCodeExt(FX_DWORD charcode) override;
+  int GlyphFromCharCodeExt(uint32_t charcode) override;
 
   int GetBase14Font() const { return m_Base14Font; }
 

@@ -10,10 +10,10 @@
 #include "core/fxcrt/include/fx_system.h"
 
 struct JBig2PageInfo {
-  FX_DWORD m_dwWidth;
-  FX_DWORD m_dwHeight;
-  FX_DWORD m_dwResolutionX;
-  FX_DWORD m_dwResolutionY;
+  uint32_t m_dwWidth;
+  uint32_t m_dwHeight;
+  uint32_t m_dwResolutionX;
+  uint32_t m_dwResolutionY;
   uint8_t m_cFlags;
   FX_BOOL m_bIsStriped;
   uint16_t m_wMaxStripeSize;

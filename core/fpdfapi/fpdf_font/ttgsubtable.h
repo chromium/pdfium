@@ -344,7 +344,7 @@ class CFX_CTTGSUBTable {
     p += 4;
     return ret;
   }
-  std::map<FX_DWORD, FX_DWORD> m_featureMap;
+  std::map<uint32_t, uint32_t> m_featureMap;
   FX_BOOL m_bFeautureMapLoad;
   bool loaded;
   struct tt_gsub_header header;
@@ -355,7 +355,7 @@ class CFX_CTTGSUBTable {
 class CFX_GSUBTable final : public IFX_GSUBTable {
  public:
   ~CFX_GSUBTable() override {}
-  FX_BOOL GetVerticalGlyph(FX_DWORD glyphnum, FX_DWORD* vglyphnum) override;
+  FX_BOOL GetVerticalGlyph(uint32_t glyphnum, uint32_t* vglyphnum) override;
 
   CFX_CTTGSUBTable m_GsubImp;
 };

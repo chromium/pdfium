@@ -25,7 +25,7 @@ void CPDF_ColorState::SetStrokeColor(CPDF_ColorSpace* pCS,
 }
 
 void CPDF_ColorState::SetColor(CPDF_Color& color,
-                               FX_DWORD& rgb,
+                               uint32_t& rgb,
                                CPDF_ColorSpace* pCS,
                                FX_FLOAT* pValue,
                                int nValues) {
@@ -39,7 +39,7 @@ void CPDF_ColorState::SetColor(CPDF_Color& color,
   }
   color.SetValue(pValue);
   int R, G, B;
-  rgb = color.GetRGB(R, G, B) ? FXSYS_RGB(R, G, B) : (FX_DWORD)-1;
+  rgb = color.GetRGB(R, G, B) ? FXSYS_RGB(R, G, B) : (uint32_t)-1;
 }
 
 void CPDF_ColorState::SetFillPattern(CPDF_Pattern* pPattern,
@@ -54,7 +54,7 @@ void CPDF_ColorState::SetFillPattern(CPDF_Pattern* pPattern,
     pData->m_FillRGB = 0x00BFBFBF;
     return;
   }
-  pData->m_FillRGB = ret ? FXSYS_RGB(R, G, B) : (FX_DWORD)-1;
+  pData->m_FillRGB = ret ? FXSYS_RGB(R, G, B) : (uint32_t)-1;
 }
 
 void CPDF_ColorState::SetStrokePattern(CPDF_Pattern* pPattern,
@@ -70,5 +70,5 @@ void CPDF_ColorState::SetStrokePattern(CPDF_Pattern* pPattern,
     return;
   }
   pData->m_StrokeRGB =
-      pData->m_StrokeColor.GetRGB(R, G, B) ? FXSYS_RGB(R, G, B) : (FX_DWORD)-1;
+      pData->m_StrokeColor.GetRGB(R, G, B) ? FXSYS_RGB(R, G, B) : (uint32_t)-1;
 }

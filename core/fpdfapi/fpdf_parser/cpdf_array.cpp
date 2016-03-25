@@ -76,43 +76,43 @@ CFX_Matrix CPDF_Array::GetMatrix() {
   return matrix;
 }
 
-CPDF_Object* CPDF_Array::GetElement(FX_DWORD i) const {
-  if (i >= (FX_DWORD)m_Objects.GetSize())
+CPDF_Object* CPDF_Array::GetElement(uint32_t i) const {
+  if (i >= (uint32_t)m_Objects.GetSize())
     return nullptr;
   return m_Objects.GetAt(i);
 }
 
-CPDF_Object* CPDF_Array::GetElementValue(FX_DWORD i) const {
-  if (i >= (FX_DWORD)m_Objects.GetSize())
+CPDF_Object* CPDF_Array::GetElementValue(uint32_t i) const {
+  if (i >= (uint32_t)m_Objects.GetSize())
     return nullptr;
   return m_Objects.GetAt(i)->GetDirect();
 }
 
-CFX_ByteString CPDF_Array::GetStringAt(FX_DWORD i) const {
-  if (i >= (FX_DWORD)m_Objects.GetSize())
+CFX_ByteString CPDF_Array::GetStringAt(uint32_t i) const {
+  if (i >= (uint32_t)m_Objects.GetSize())
     return CFX_ByteString();
   return m_Objects.GetAt(i)->GetString();
 }
 
-CFX_ByteStringC CPDF_Array::GetConstStringAt(FX_DWORD i) const {
-  if (i >= (FX_DWORD)m_Objects.GetSize())
+CFX_ByteStringC CPDF_Array::GetConstStringAt(uint32_t i) const {
+  if (i >= (uint32_t)m_Objects.GetSize())
     return CFX_ByteStringC();
   return m_Objects.GetAt(i)->GetConstString();
 }
 
-int CPDF_Array::GetIntegerAt(FX_DWORD i) const {
-  if (i >= (FX_DWORD)m_Objects.GetSize())
+int CPDF_Array::GetIntegerAt(uint32_t i) const {
+  if (i >= (uint32_t)m_Objects.GetSize())
     return 0;
   return m_Objects.GetAt(i)->GetInteger();
 }
 
-FX_FLOAT CPDF_Array::GetNumberAt(FX_DWORD i) const {
-  if (i >= (FX_DWORD)m_Objects.GetSize())
+FX_FLOAT CPDF_Array::GetNumberAt(uint32_t i) const {
+  if (i >= (uint32_t)m_Objects.GetSize())
     return 0;
   return m_Objects.GetAt(i)->GetNumber();
 }
 
-CPDF_Dictionary* CPDF_Array::GetDictAt(FX_DWORD i) const {
+CPDF_Dictionary* CPDF_Array::GetDictAt(uint32_t i) const {
   CPDF_Object* p = GetElementValue(i);
   if (!p)
     return NULL;
@@ -123,16 +123,16 @@ CPDF_Dictionary* CPDF_Array::GetDictAt(FX_DWORD i) const {
   return NULL;
 }
 
-CPDF_Stream* CPDF_Array::GetStreamAt(FX_DWORD i) const {
+CPDF_Stream* CPDF_Array::GetStreamAt(uint32_t i) const {
   return ToStream(GetElementValue(i));
 }
 
-CPDF_Array* CPDF_Array::GetArrayAt(FX_DWORD i) const {
+CPDF_Array* CPDF_Array::GetArrayAt(uint32_t i) const {
   return ToArray(GetElementValue(i));
 }
 
-void CPDF_Array::RemoveAt(FX_DWORD i, int nCount) {
-  if (i >= (FX_DWORD)m_Objects.GetSize())
+void CPDF_Array::RemoveAt(uint32_t i, int nCount) {
+  if (i >= (uint32_t)m_Objects.GetSize())
     return;
 
   if (nCount <= 0 || nCount > m_Objects.GetSize() - i)
@@ -145,12 +145,12 @@ void CPDF_Array::RemoveAt(FX_DWORD i, int nCount) {
   m_Objects.RemoveAt(i, nCount);
 }
 
-void CPDF_Array::SetAt(FX_DWORD i,
+void CPDF_Array::SetAt(uint32_t i,
                        CPDF_Object* pObj,
                        CPDF_IndirectObjectHolder* pObjs) {
   ASSERT(IsArray());
-  ASSERT(i < (FX_DWORD)m_Objects.GetSize());
-  if (i >= (FX_DWORD)m_Objects.GetSize())
+  ASSERT(i < (uint32_t)m_Objects.GetSize());
+  if (i >= (uint32_t)m_Objects.GetSize())
     return;
   if (CPDF_Object* pOld = m_Objects.GetAt(i))
     pOld->Release();
@@ -161,7 +161,7 @@ void CPDF_Array::SetAt(FX_DWORD i,
   m_Objects.SetAt(i, pObj);
 }
 
-void CPDF_Array::InsertAt(FX_DWORD index,
+void CPDF_Array::InsertAt(uint32_t index,
                           CPDF_Object* pObj,
                           CPDF_IndirectObjectHolder* pObjs) {
   if (pObj->GetObjNum()) {
@@ -201,7 +201,7 @@ void CPDF_Array::AddNumber(FX_FLOAT f) {
 }
 
 void CPDF_Array::AddReference(CPDF_IndirectObjectHolder* pDoc,
-                              FX_DWORD objnum) {
+                              uint32_t objnum) {
   ASSERT(IsArray());
   Add(new CPDF_Reference(pDoc, objnum));
 }

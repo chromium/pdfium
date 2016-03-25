@@ -20,8 +20,8 @@
 #define PDFFONT_ENCODING_MS_SYMBOL 8
 #define PDFFONT_ENCODING_UNICODE 9
 
-FX_DWORD FT_CharCodeFromUnicode(int encoding, FX_WCHAR unicode);
-FX_WCHAR FT_UnicodeFromCharCode(int encoding, FX_DWORD charcode);
+uint32_t FT_CharCodeFromUnicode(int encoding, FX_WCHAR unicode);
+FX_WCHAR FT_UnicodeFromCharCode(int encoding, uint32_t charcode);
 
 FX_WCHAR PDF_UnicodeFromAdobeName(const FX_CHAR* name);
 CFX_ByteString PDF_AdobeNameFromUnicode(FX_WCHAR unicode);

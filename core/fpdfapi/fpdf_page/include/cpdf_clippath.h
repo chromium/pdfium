@@ -17,10 +17,10 @@ class CPDF_TextObject;
 
 class CPDF_ClipPath : public CFX_CountRef<CPDF_ClipPathData> {
  public:
-  FX_DWORD GetPathCount() const { return m_pObject->m_PathCount; }
+  uint32_t GetPathCount() const { return m_pObject->m_PathCount; }
   CPDF_Path GetPath(int i) const { return m_pObject->m_pPathList[i]; }
   int GetClipType(int i) const { return m_pObject->m_pTypeList[i]; }
-  FX_DWORD GetTextCount() const { return m_pObject->m_TextCount; }
+  uint32_t GetTextCount() const { return m_pObject->m_TextCount; }
   CPDF_TextObject* GetText(int i) const { return m_pObject->m_pTextList[i]; }
   CFX_FloatRect GetClipBox() const;
 

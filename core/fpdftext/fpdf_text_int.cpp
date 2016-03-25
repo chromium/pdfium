@@ -80,7 +80,7 @@ FX_FLOAT _CalculateBaseSpace(const CPDF_TextObject* pTextObj,
     for (int i = 0; i < nItems; i++) {
       CPDF_TextObjectItem item;
       pTextObj->GetItemInfo(i, &item);
-      if (item.m_CharCode == (FX_DWORD)-1) {
+      if (item.m_CharCode == (uint32_t)-1) {
         FX_FLOAT fontsize_h = pTextObj->m_TextState.GetFontSizeH();
         FX_FLOAT kerning = -fontsize_h * item.m_OriginX / 1000;
         baseSpace = std::min(baseSpace, kerning + spacing);
@@ -897,7 +897,7 @@ void CPDF_TextPage::ProcessFormObject(CPDF_FormObject* pFormObj,
   }
 }
 
-int CPDF_TextPage::GetCharWidth(FX_DWORD charCode, CPDF_Font* pFont) const {
+int CPDF_TextPage::GetCharWidth(uint32_t charCode, CPDF_Font* pFont) const {
   if (charCode == -1)
     return 0;
 
@@ -1267,7 +1267,7 @@ FX_BOOL CPDF_TextPage::IsRightToLeft(const CPDF_TextObject* pTextObj,
   for (int32_t i = 0; i < nItems; i++) {
     CPDF_TextObjectItem item;
     pTextObj->GetItemInfo(i, &item);
-    if (item.m_CharCode == (FX_DWORD)-1) {
+    if (item.m_CharCode == (uint32_t)-1) {
       continue;
     }
     CFX_WideString wstrItem = pFont->UnicodeFromCharCode(item.m_CharCode);
@@ -1393,7 +1393,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
     charinfo.m_OriginX = 0;
     charinfo.m_OriginY = 0;
     pTextObj->GetItemInfo(i, &item);
-    if (item.m_CharCode == (FX_DWORD)-1) {
+    if (item.m_CharCode == (uint32_t)-1) {
       CFX_WideString str = m_TempTextBuf.GetWideString();
       if (str.IsEmpty()) {
         str = m_TextBuf.GetWideString();
@@ -1415,7 +1415,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
     if (spacing && i > 0) {
       int last_width = 0;
       FX_FLOAT fontsize_h = pTextObj->m_TextState.GetFontSizeH();
-      FX_DWORD space_charcode = pFont->CharCodeFromUnicode(' ');
+      uint32_t space_charcode = pFont->CharCodeFromUnicode(' ');
       FX_FLOAT threshold = 0;
       if (space_charcode != -1) {
         threshold = fontsize_h * pFont->GetCharWidthF(space_charcode) / 1000;
@@ -1448,7 +1448,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
                           charinfo.m_OriginX, charinfo.m_OriginY);
         m_TempCharList.push_back(charinfo);
       }
-      if (item.m_CharCode == (FX_DWORD)-1) {
+      if (item.m_CharCode == (uint32_t)-1) {
         continue;
       }
     }
@@ -1861,7 +1861,7 @@ FX_BOOL CPDF_TextPage::GenerateCharInfo(FX_WCHAR unicode, PAGECHAR_INFO& info) {
   info.m_CharCode = -1;
   info.m_Flag = FPDFTEXT_CHAR_GENERATED;
   int preWidth = 0;
-  if (preChar->m_pTextObj && preChar->m_CharCode != (FX_DWORD)-1)
+  if (preChar->m_pTextObj && preChar->m_CharCode != (uint32_t)-1)
     preWidth =
         GetCharWidth(preChar->m_CharCode, preChar->m_pTextObj->GetFont());
 

@@ -18,7 +18,7 @@ class CFDF_Document : public CPDF_IndirectObjectHolder {
   static CFDF_Document* CreateNewDoc();
   static CFDF_Document* ParseFile(IFX_FileRead* pFile,
                                   FX_BOOL bOwnFile = FALSE);
-  static CFDF_Document* ParseMemory(const uint8_t* pData, FX_DWORD size);
+  static CFDF_Document* ParseMemory(const uint8_t* pData, uint32_t size);
   ~CFDF_Document();
 
   FX_BOOL WriteBuf(CFX_ByteTextBuf& buf) const;

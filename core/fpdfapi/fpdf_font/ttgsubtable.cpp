@@ -16,7 +16,7 @@ CFX_GlyphMap::CFX_GlyphMap() {}
 CFX_GlyphMap::~CFX_GlyphMap() {}
 extern "C" {
 static int _CompareInt(const void* p1, const void* p2) {
-  return (*(FX_DWORD*)p1) - (*(FX_DWORD*)p2);
+  return (*(uint32_t*)p1) - (*(uint32_t*)p2);
 }
 };
 struct _IntPair {
@@ -24,7 +24,7 @@ struct _IntPair {
   int32_t value;
 };
 void CFX_GlyphMap::SetAt(int key, int value) {
-  FX_DWORD count = m_Buffer.GetSize() / sizeof(_IntPair);
+  uint32_t count = m_Buffer.GetSize() / sizeof(_IntPair);
   _IntPair* buf = (_IntPair*)m_Buffer.GetBuffer();
   _IntPair pair = {key, value};
   if (count == 0 || key > buf[count - 1].key) {
@@ -52,7 +52,7 @@ FX_BOOL CFX_GlyphMap::Lookup(int key, int& value) {
   if (!pResult) {
     return FALSE;
   }
-  value = ((FX_DWORD*)pResult)[1];
+  value = ((uint32_t*)pResult)[1];
   return TRUE;
 }
 bool CFX_CTTGSUBTable::LoadGSUBTable(FT_Bytes gsub) {
@@ -82,7 +82,7 @@ bool CFX_CTTGSUBTable::GetVerticalGlyph(uint32_t glyphnum,
              k < ((ScriptList.ScriptRecord + i)->Script.LangSysRecord + j)
                      ->LangSys.FeatureCount;
              ++k) {
-          FX_DWORD index =
+          uint32_t index =
               *(((ScriptList.ScriptRecord + i)->Script.LangSysRecord + j)
                     ->LangSys.FeatureIndex +
                 k);
@@ -382,8 +382,8 @@ void CFX_CTTGSUBTable::ParseSingleSubstFormat2(FT_Bytes raw,
     rec->Substitute[i] = GetUInt16(sp);
   }
 }
-FX_BOOL CFX_GSUBTable::GetVerticalGlyph(FX_DWORD glyphnum,
-                                        FX_DWORD* vglyphnum) {
+FX_BOOL CFX_GSUBTable::GetVerticalGlyph(uint32_t glyphnum,
+                                        uint32_t* vglyphnum) {
   return m_GsubImp.GetVerticalGlyph(glyphnum, vglyphnum);
 }
 // static

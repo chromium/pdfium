@@ -20,13 +20,13 @@ CJBig2_Image* CJBig2_GRRDProc::decode(CJBig2_ArithDecoder* pArithDecoder,
   if (GRTEMPLATE == 0) {
     if ((GRAT[0] == -1) && (GRAT[1] == -1) && (GRAT[2] == -1) &&
         (GRAT[3] == -1) && (GRREFERENCEDX == 0) &&
-        (GRW == (FX_DWORD)GRREFERENCE->m_nWidth)) {
+        (GRW == (uint32_t)GRREFERENCE->m_nWidth)) {
       return decode_Template0_opt(pArithDecoder, grContext);
     }
     return decode_Template0_unopt(pArithDecoder, grContext);
   }
 
-  if ((GRREFERENCEDX == 0) && (GRW == (FX_DWORD)GRREFERENCE->m_nWidth))
+  if ((GRREFERENCEDX == 0) && (GRW == (uint32_t)GRREFERENCE->m_nWidth))
     return decode_Template1_opt(pArithDecoder, grContext);
   return decode_Template1_unopt(pArithDecoder, grContext);
 }
@@ -35,12 +35,12 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template0_unopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* grContext) {
   FX_BOOL LTP, SLTP, bVal;
-  FX_DWORD CONTEXT;
-  FX_DWORD line1, line2, line3, line4, line5;
+  uint32_t CONTEXT;
+  uint32_t line1, line2, line3, line4, line5;
   LTP = 0;
   std::unique_ptr<CJBig2_Image> GRREG(new CJBig2_Image(GRW, GRH));
   GRREG->fill(0);
-  for (FX_DWORD h = 0; h < GRH; h++) {
+  for (uint32_t h = 0; h < GRH; h++) {
     if (TPGRON) {
       SLTP = pArithDecoder->DECODE(&grContext[0x0010]);
       LTP = LTP ^ SLTP;
@@ -61,7 +61,7 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template0_unopt(
                << 1;
       line5 |= GRREFERENCE->getPixel(-GRREFERENCEDX - 1, h - GRREFERENCEDY + 1)
                << 2;
-      for (FX_DWORD w = 0; w < GRW; w++) {
+      for (uint32_t w = 0; w < GRW; w++) {
         CONTEXT = line5;
         CONTEXT |= line4 << 3;
         CONTEXT |= line3 << 6;
@@ -104,7 +104,7 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template0_unopt(
                << 1;
       line5 |= GRREFERENCE->getPixel(-GRREFERENCEDX - 1, h - GRREFERENCEDY + 1)
                << 2;
-      for (FX_DWORD w = 0; w < GRW; w++) {
+      for (uint32_t w = 0; w < GRW; w++) {
         bVal = GRREFERENCE->getPixel(w, h);
         if (!(TPGRON && (bVal == GRREFERENCE->getPixel(w - 1, h - 1)) &&
               (bVal == GRREFERENCE->getPixel(w, h - 1)) &&
@@ -153,8 +153,8 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template0_opt(
     return nullptr;
 
   FX_BOOL LTP, SLTP, bVal;
-  FX_DWORD CONTEXT;
-  FX_DWORD line1, line1_r, line2_r, line3_r;
+  uint32_t CONTEXT;
+  uint32_t line1, line1_r, line2_r, line3_r;
   uint8_t *pLine, *pLineR, cVal;
   intptr_t nStride, nStrideR, nOffset;
   int32_t k, nBits;
@@ -287,12 +287,12 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template1_unopt(
     CJBig2_ArithDecoder* pArithDecoder,
     JBig2ArithCtx* grContext) {
   FX_BOOL LTP, SLTP, bVal;
-  FX_DWORD CONTEXT;
-  FX_DWORD line1, line2, line3, line4, line5;
+  uint32_t CONTEXT;
+  uint32_t line1, line2, line3, line4, line5;
   LTP = 0;
   std::unique_ptr<CJBig2_Image> GRREG(new CJBig2_Image(GRW, GRH));
   GRREG->fill(0);
-  for (FX_DWORD h = 0; h < GRH; h++) {
+  for (uint32_t h = 0; h < GRH; h++) {
     if (TPGRON) {
       SLTP = pArithDecoder->DECODE(&grContext[0x0008]);
       LTP = LTP ^ SLTP;
@@ -310,7 +310,7 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template1_unopt(
       line5 = GRREFERENCE->getPixel(-GRREFERENCEDX + 1, h - GRREFERENCEDY + 1);
       line5 |= GRREFERENCE->getPixel(-GRREFERENCEDX, h - GRREFERENCEDY + 1)
                << 1;
-      for (FX_DWORD w = 0; w < GRW; w++) {
+      for (uint32_t w = 0; w < GRW; w++) {
         CONTEXT = line5;
         CONTEXT |= line4 << 2;
         CONTEXT |= line3 << 5;
@@ -346,7 +346,7 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template1_unopt(
       line5 = GRREFERENCE->getPixel(-GRREFERENCEDX + 1, h - GRREFERENCEDY + 1);
       line5 |= GRREFERENCE->getPixel(-GRREFERENCEDX, h - GRREFERENCEDY + 1)
                << 1;
-      for (FX_DWORD w = 0; w < GRW; w++) {
+      for (uint32_t w = 0; w < GRW; w++) {
         bVal = GRREFERENCE->getPixel(w, h);
         if (!(TPGRON && (bVal == GRREFERENCE->getPixel(w - 1, h - 1)) &&
               (bVal == GRREFERENCE->getPixel(w, h - 1)) &&
@@ -391,8 +391,8 @@ CJBig2_Image* CJBig2_GRRDProc::decode_Template1_opt(
     return nullptr;
 
   FX_BOOL LTP, SLTP, bVal;
-  FX_DWORD CONTEXT;
-  FX_DWORD line1, line1_r, line2_r, line3_r;
+  uint32_t CONTEXT;
+  uint32_t line1, line1_r, line2_r, line3_r;
   uint8_t *pLine, *pLineR, cVal;
   intptr_t nStride, nStrideR, nOffset;
   int32_t k, nBits;

@@ -25,10 +25,10 @@ class CPDF_NumberTree {
 
 CFX_WideString GetFullName(CPDF_Dictionary* pFieldDict);
 void InitInterFormDict(CPDF_Dictionary*& pFormDict, CPDF_Document* pDocument);
-FX_DWORD CountInterFormFonts(CPDF_Dictionary* pFormDict);
+uint32_t CountInterFormFonts(CPDF_Dictionary* pFormDict);
 CPDF_Font* GetInterFormFont(CPDF_Dictionary* pFormDict,
                             CPDF_Document* pDocument,
-                            FX_DWORD index,
+                            uint32_t index,
                             CFX_ByteString& csNameTag);
 CPDF_Font* GetInterFormFont(CPDF_Dictionary* pFormDict,
                             CPDF_Document* pDocument,

@@ -68,7 +68,6 @@
 extern "C" {
 #endif
 typedef void* FX_POSITION;  // Keep until fxcrt containers gone
-typedef uint32_t FX_DWORD;  // Keep - "an efficient type"
 typedef float FX_FLOAT;     // Keep, allow upgrade to doubles.
 typedef double FX_DOUBLE;   // Keep, allow downgrade to floats.
 typedef int FX_BOOL;        // Keep, sadly not always 0 or 1.
@@ -209,25 +208,25 @@ extern "C" {
 #else
 int FXSYS_GetACP(void);
 char* FXSYS_itoa(int value, char* str, int radix);
-int FXSYS_WideCharToMultiByte(FX_DWORD codepage,
-                              FX_DWORD dwFlags,
+int FXSYS_WideCharToMultiByte(uint32_t codepage,
+                              uint32_t dwFlags,
                               const wchar_t* wstr,
                               int wlen,
                               char* buf,
                               int buflen,
                               const char* default_str,
                               int* pUseDefault);
-int FXSYS_MultiByteToWideChar(FX_DWORD codepage,
-                              FX_DWORD dwFlags,
+int FXSYS_MultiByteToWideChar(uint32_t codepage,
+                              uint32_t dwFlags,
                               const char* bstr,
                               int blen,
                               wchar_t* buf,
                               int buflen);
-FX_DWORD FXSYS_GetFullPathName(const char* filename,
-                               FX_DWORD buflen,
+uint32_t FXSYS_GetFullPathName(const char* filename,
+                               uint32_t buflen,
                                char* buf,
                                char** filepart);
-FX_DWORD FXSYS_GetModuleFileName(void* hModule, char* buf, FX_DWORD bufsize);
+uint32_t FXSYS_GetModuleFileName(void* hModule, char* buf, uint32_t bufsize);
 char* FXSYS_strlwr(char* str);
 char* FXSYS_strupr(char* str);
 int FXSYS_stricmp(const char*, const char*);
@@ -254,11 +253,11 @@ wchar_t* FXSYS_wcsupr(wchar_t* str);
 #define FXSYS_fmod(a, b) (FX_FLOAT) fmod(a, b)
 #define FXSYS_abs abs
 #define FXDWORD_GET_LSBFIRST(p)                                                \
-  ((static_cast<FX_DWORD>(p[3]) << 24) | (static_cast<FX_DWORD>(p[2]) << 16) | \
-   (static_cast<FX_DWORD>(p[1]) << 8) | (static_cast<FX_DWORD>(p[0])))
+  ((static_cast<uint32_t>(p[3]) << 24) | (static_cast<uint32_t>(p[2]) << 16) | \
+   (static_cast<uint32_t>(p[1]) << 8) | (static_cast<uint32_t>(p[0])))
 #define FXDWORD_GET_MSBFIRST(p)                                                \
-  ((static_cast<FX_DWORD>(p[0]) << 24) | (static_cast<FX_DWORD>(p[1]) << 16) | \
-   (static_cast<FX_DWORD>(p[2]) << 8) | (static_cast<FX_DWORD>(p[3])))
+  ((static_cast<uint32_t>(p[0]) << 24) | (static_cast<uint32_t>(p[1]) << 16) | \
+   (static_cast<uint32_t>(p[2]) << 8) | (static_cast<uint32_t>(p[3])))
 #define FXSYS_HIBYTE(word) ((uint8_t)((word) >> 8))
 #define FXSYS_LOBYTE(word) ((uint8_t)(word))
 #define FXSYS_HIWORD(dword) ((uint16_t)((dword) >> 16))

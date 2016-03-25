@@ -50,8 +50,8 @@ class CPDF_Document : public CFX_PrivateData, public CPDF_IndirectObjectHolder {
 
   int GetPageCount() const;
   CPDF_Dictionary* GetPage(int iPage);
-  int GetPageIndex(FX_DWORD objnum);
-  FX_DWORD GetUserPermissions(FX_BOOL bCheckRevision = FALSE) const;
+  int GetPageIndex(uint32_t objnum);
+  uint32_t GetUserPermissions(FX_BOOL bCheckRevision = FALSE) const;
   CPDF_DocPageData* GetPageData() { return GetValidatePageData(); }
   void ClearPageData();
   void RemoveColorSpaceFromPageData(CPDF_Object* pObject);
@@ -60,7 +60,7 @@ class CPDF_Document : public CFX_PrivateData, public CPDF_IndirectObjectHolder {
   void ClearRenderData();
   void ClearRenderFont();
 
-  FX_BOOL IsFormStream(FX_DWORD objnum, FX_BOOL& bForm) const;
+  FX_BOOL IsFormStream(uint32_t objnum, FX_BOOL& bForm) const;
 
   // |pFontDict| must not be null.
   CPDF_Font* LoadFont(CPDF_Dictionary* pFontDict);
@@ -110,8 +110,8 @@ class CPDF_Document : public CFX_PrivateData, public CPDF_IndirectObjectHolder {
                                 int nPagesToGo,
                                 int level);
   int _FindPageIndex(CPDF_Dictionary* pNode,
-                     FX_DWORD& skip_count,
-                     FX_DWORD objnum,
+                     uint32_t& skip_count,
+                     uint32_t objnum,
                      int& index,
                      int level = 0);
   FX_BOOL CheckOCGVisible(CPDF_Dictionary* pOCG, FX_BOOL bPrinting);
@@ -127,9 +127,9 @@ class CPDF_Document : public CFX_PrivateData, public CPDF_IndirectObjectHolder {
   CFX_ByteString m_ID1;
   CFX_ByteString m_ID2;
   FX_BOOL m_bLinearized;
-  FX_DWORD m_dwFirstPageNo;
-  FX_DWORD m_dwFirstPageObjNum;
-  CFX_ArrayTemplate<FX_DWORD> m_PageList;
+  uint32_t m_dwFirstPageNo;
+  uint32_t m_dwFirstPageObjNum;
+  CFX_ArrayTemplate<uint32_t> m_PageList;
   CPDF_DocPageData* m_pDocPage;
   CPDF_DocRenderData* m_pDocRender;
 };

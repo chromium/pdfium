@@ -116,7 +116,7 @@ CFX_ByteTextBuf& CFX_ByteTextBuf::operator<<(int i) {
   return *this;
 }
 
-CFX_ByteTextBuf& CFX_ByteTextBuf::operator<<(FX_DWORD i) {
+CFX_ByteTextBuf& CFX_ByteTextBuf::operator<<(uint32_t i) {
   char buf[32];
   FXSYS_itoa(i, buf, 10);
   AppendBlock(buf, FXSYS_strlen(buf));
@@ -208,11 +208,11 @@ CFX_ArchiveSaver& CFX_ArchiveSaver::operator<<(int i) {
   }
   return *this;
 }
-CFX_ArchiveSaver& CFX_ArchiveSaver::operator<<(FX_DWORD i) {
+CFX_ArchiveSaver& CFX_ArchiveSaver::operator<<(uint32_t i) {
   if (m_pStream) {
-    m_pStream->WriteBlock(&i, sizeof(FX_DWORD));
+    m_pStream->WriteBlock(&i, sizeof(uint32_t));
   } else {
-    m_SavingBuf.AppendBlock(&i, sizeof(FX_DWORD));
+    m_SavingBuf.AppendBlock(&i, sizeof(uint32_t));
   }
   return *this;
 }
@@ -257,7 +257,7 @@ void CFX_ArchiveSaver::Write(const void* pData, FX_STRSIZE dwSize) {
     m_SavingBuf.AppendBlock(pData, dwSize);
   }
 }
-CFX_ArchiveLoader::CFX_ArchiveLoader(const uint8_t* pData, FX_DWORD dwSize) {
+CFX_ArchiveLoader::CFX_ArchiveLoader(const uint8_t* pData, uint32_t dwSize) {
   m_pLoadingBuf = pData;
   m_LoadingPos = 0;
   m_LoadingSize = dwSize;
@@ -276,8 +276,8 @@ CFX_ArchiveLoader& CFX_ArchiveLoader::operator>>(int& i) {
   Read(&i, sizeof(int));
   return *this;
 }
-CFX_ArchiveLoader& CFX_ArchiveLoader::operator>>(FX_DWORD& i) {
-  Read(&i, sizeof(FX_DWORD));
+CFX_ArchiveLoader& CFX_ArchiveLoader::operator>>(uint32_t& i) {
+  Read(&i, sizeof(uint32_t));
   return *this;
 }
 CFX_ArchiveLoader& CFX_ArchiveLoader::operator>>(FX_FLOAT& i) {
@@ -308,7 +308,7 @@ CFX_ArchiveLoader& CFX_ArchiveLoader::operator>>(CFX_WideString& str) {
       encoded.GetLength() / sizeof(unsigned short));
   return *this;
 }
-FX_BOOL CFX_ArchiveLoader::Read(void* pBuf, FX_DWORD dwSize) {
+FX_BOOL CFX_ArchiveLoader::Read(void* pBuf, uint32_t dwSize) {
   if (m_LoadingPos + dwSize > m_LoadingSize) {
     return FALSE;
   }
@@ -318,7 +318,7 @@ FX_BOOL CFX_ArchiveLoader::Read(void* pBuf, FX_DWORD dwSize) {
 }
 #endif  // PDF_ENABLE_XFA
 
-void CFX_BitStream::Init(const uint8_t* pData, FX_DWORD dwSize) {
+void CFX_BitStream::Init(const uint8_t* pData, uint32_t dwSize) {
   m_pData = pData;
   m_BitSize = dwSize * 8;
   m_BitPos = 0;
@@ -330,7 +330,7 @@ void CFX_BitStream::ByteAlign() {
   }
   m_BitPos += 8 - mod;
 }
-FX_DWORD CFX_BitStream::GetBits(FX_DWORD nBits) {
+uint32_t CFX_BitStream::GetBits(uint32_t nBits) {
   if (nBits > m_BitSize || m_BitPos + nBits > m_BitSize) {
     return 0;
   }
@@ -339,9 +339,9 @@ FX_DWORD CFX_BitStream::GetBits(FX_DWORD nBits) {
     m_BitPos++;
     return bit;
   }
-  FX_DWORD byte_pos = m_BitPos / 8;
-  FX_DWORD bit_pos = m_BitPos % 8, bit_left = nBits;
-  FX_DWORD result = 0;
+  uint32_t byte_pos = m_BitPos / 8;
+  uint32_t bit_pos = m_BitPos % 8, bit_left = nBits;
+  uint32_t result = 0;
   if (bit_pos) {
     if (8 - bit_pos >= bit_left) {
       result =
@@ -412,7 +412,7 @@ int32_t CFX_FileBufferArchive::AppendByte(uint8_t byte) {
   return AppendBlock(&byte, 1);
 }
 
-int32_t CFX_FileBufferArchive::AppendDWord(FX_DWORD i) {
+int32_t CFX_FileBufferArchive::AppendDWord(uint32_t i) {
   char buf[32];
   FXSYS_itoa(i, buf, 10);
   return AppendBlock(buf, (size_t)FXSYS_strlen(buf));

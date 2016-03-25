@@ -107,8 +107,8 @@ extern "C" {
 int FXSYS_GetACP() {
   return 0;
 }
-FX_DWORD FXSYS_GetFullPathName(const FX_CHAR* filename,
-                               FX_DWORD buflen,
+uint32_t FXSYS_GetFullPathName(const FX_CHAR* filename,
+                               uint32_t buflen,
                                FX_CHAR* buf,
                                FX_CHAR** filepart) {
   int srclen = FXSYS_strlen(filename);
@@ -118,8 +118,8 @@ FX_DWORD FXSYS_GetFullPathName(const FX_CHAR* filename,
   FXSYS_strcpy(buf, filename);
   return srclen;
 }
-FX_DWORD FXSYS_GetModuleFileName(void* hModule, char* buf, FX_DWORD bufsize) {
-  return (FX_DWORD)-1;
+uint32_t FXSYS_GetModuleFileName(void* hModule, char* buf, uint32_t bufsize) {
+  return (uint32_t)-1;
 }
 #ifdef __cplusplus
 }
@@ -212,8 +212,8 @@ char* FXSYS_itoa(int value, char* str, int radix) {
 #ifdef __cplusplus
 extern "C" {
 #endif
-int FXSYS_WideCharToMultiByte(FX_DWORD codepage,
-                              FX_DWORD dwFlags,
+int FXSYS_WideCharToMultiByte(uint32_t codepage,
+                              uint32_t dwFlags,
                               const FX_WCHAR* wstr,
                               int wlen,
                               FX_CHAR* buf,
@@ -231,8 +231,8 @@ int FXSYS_WideCharToMultiByte(FX_DWORD codepage,
   }
   return len;
 }
-int FXSYS_MultiByteToWideChar(FX_DWORD codepage,
-                              FX_DWORD dwFlags,
+int FXSYS_MultiByteToWideChar(uint32_t codepage,
+                              uint32_t dwFlags,
                               const FX_CHAR* bstr,
                               int blen,
                               FX_WCHAR* buf,

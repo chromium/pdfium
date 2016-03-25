@@ -27,7 +27,7 @@ class CJBig2_PDDProc {
   FX_BOOL HDMMR;
   uint8_t HDPW;
   uint8_t HDPH;
-  FX_DWORD GRAYMAX;
+  uint32_t GRAYMAX;
   uint8_t HDTEMPLATE;
 };
 

@@ -13,7 +13,7 @@
 
 class CPDF_Stream : public CPDF_Object {
  public:
-  CPDF_Stream(uint8_t* pData, FX_DWORD size, CPDF_Dictionary* pDict);
+  CPDF_Stream(uint8_t* pData, uint32_t size, CPDF_Dictionary* pDict);
 
   // CPDF_Object.
   Type GetType() const override;
@@ -24,33 +24,33 @@ class CPDF_Stream : public CPDF_Object {
   CPDF_Stream* AsStream() override;
   const CPDF_Stream* AsStream() const override;
 
-  FX_DWORD GetRawSize() const { return m_dwSize; }
+  uint32_t GetRawSize() const { return m_dwSize; }
   uint8_t* GetRawData() const { return m_pDataBuf; }
 
   void SetData(const uint8_t* pData,
-               FX_DWORD size,
+               uint32_t size,
                FX_BOOL bCompressed,
                FX_BOOL bKeepBuf);
 
-  void InitStream(uint8_t* pData, FX_DWORD size, CPDF_Dictionary* pDict);
+  void InitStream(uint8_t* pData, uint32_t size, CPDF_Dictionary* pDict);
   void InitStreamFromFile(IFX_FileRead* pFile, CPDF_Dictionary* pDict);
 
   FX_BOOL ReadRawData(FX_FILESIZE start_pos,
                       uint8_t* pBuf,
-                      FX_DWORD buf_size) const;
+                      uint32_t buf_size) const;
 
   bool IsMemoryBased() const { return m_GenNum == kMemoryBasedGenNum; }
 
  protected:
-  static const FX_DWORD kMemoryBasedGenNum = (FX_DWORD)-1;
+  static const uint32_t kMemoryBasedGenNum = (uint32_t)-1;
 
   ~CPDF_Stream() override;
 
   void InitStreamInternal(CPDF_Dictionary* pDict);
 
   CPDF_Dictionary* m_pDict;
-  FX_DWORD m_dwSize;
-  FX_DWORD m_GenNum;
+  uint32_t m_dwSize;
+  uint32_t m_GenNum;
 
   union {
     uint8_t* m_pDataBuf;

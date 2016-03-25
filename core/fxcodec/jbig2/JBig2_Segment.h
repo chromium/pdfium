@@ -35,7 +35,7 @@ class CJBig2_Segment {
 
   ~CJBig2_Segment();
 
-  FX_DWORD m_dwNumber;
+  uint32_t m_dwNumber;
   union {
     struct {
       uint8_t type : 6;
@@ -45,13 +45,13 @@ class CJBig2_Segment {
     uint8_t c;
   } m_cFlags;
   int32_t m_nReferred_to_segment_count;
-  FX_DWORD* m_pReferred_to_segment_numbers;
-  FX_DWORD m_dwPage_association;
-  FX_DWORD m_dwData_length;
+  uint32_t* m_pReferred_to_segment_numbers;
+  uint32_t m_dwPage_association;
+  uint32_t m_dwData_length;
 
-  FX_DWORD m_dwHeader_Length;
-  FX_DWORD m_dwObjNum;
-  FX_DWORD m_dwDataOffset;
+  uint32_t m_dwHeader_Length;
+  uint32_t m_dwObjNum;
+  uint32_t m_dwDataOffset;
   JBig2_SegmentState m_State;
   JBig2_ResultType m_nResultType;
   union {

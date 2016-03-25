@@ -122,12 +122,12 @@ class CCodec_ProgressiveDecoder : public ICodec_ProgressiveDecoder {
                                               int pass,
                                               int line);
   static void GifRecordCurrentPositionCallback(void* pModule,
-                                               FX_DWORD& cur_pos);
+                                               uint32_t& cur_pos);
   static uint8_t* GifAskLocalPaletteBufCallback(void* pModule,
                                                 int32_t frame_num,
                                                 int32_t pal_size);
   static FX_BOOL GifInputRecordPositionBufCallback(void* pModule,
-                                                   FX_DWORD rcd_pos,
+                                                   uint32_t rcd_pos,
                                                    const FX_RECT& img_rc,
                                                    int32_t pal_num,
                                                    void* pal_ptr,
@@ -140,7 +140,7 @@ class CCodec_ProgressiveDecoder : public ICodec_ProgressiveDecoder {
                                       int32_t row_num,
                                       uint8_t* row_buf);
   static FX_BOOL BmpInputImagePositionBufCallback(void* pModule,
-                                                  FX_DWORD rcd_pos);
+                                                  uint32_t rcd_pos);
   static void BmpReadScanlineCallback(void* pModule,
                                       int32_t row_num,
                                       uint8_t* row_buf);
@@ -182,9 +182,9 @@ class CCodec_ProgressiveDecoder : public ICodec_ProgressiveDecoder {
   void* m_pBmpContext;
   void* m_pTiffContext;
   FXCODEC_IMAGE_TYPE m_imagType;
-  FX_DWORD m_offSet;
+  uint32_t m_offSet;
   uint8_t* m_pSrcBuf;
-  FX_DWORD m_SrcSize;
+  uint32_t m_SrcSize;
   uint8_t* m_pDecodeBuf;
   int m_ScanlineSize;
   CFX_DIBitmap* m_pDeviceBitmap;

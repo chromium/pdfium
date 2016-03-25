@@ -14,7 +14,7 @@
 #include "core/fxcodec/jbig2/JBig2_List.h"
 #include "core/fxcrt/include/fx_basic.h"
 
-FX_DWORD* CJBig2_GSIDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
+uint32_t* CJBig2_GSIDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
                                         JBig2ArithCtx* gbContext,
                                         IFX_Pause* pPause) {
   std::unique_ptr<CJBig2_GRDProc> pGRD(new CJBig2_GRDProc());
@@ -56,11 +56,11 @@ FX_DWORD* CJBig2_GSIDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
     if (i < GSBPP - 1)
       pImage->composeFrom(0, 0, GSPLANES.get(i + 1), JBIG2_COMPOSE_XOR);
   }
-  std::unique_ptr<FX_DWORD, FxFreeDeleter> GSVALS(
-      FX_Alloc2D(FX_DWORD, GSW, GSH));
-  JBIG2_memset(GSVALS.get(), 0, sizeof(FX_DWORD) * GSW * GSH);
-  for (FX_DWORD y = 0; y < GSH; ++y) {
-    for (FX_DWORD x = 0; x < GSW; ++x) {
+  std::unique_ptr<uint32_t, FxFreeDeleter> GSVALS(
+      FX_Alloc2D(uint32_t, GSW, GSH));
+  JBIG2_memset(GSVALS.get(), 0, sizeof(uint32_t) * GSW * GSH);
+  for (uint32_t y = 0; y < GSH; ++y) {
+    for (uint32_t x = 0; x < GSW; ++x) {
       for (int32_t i = 0; i < GSBPP; ++i) {
         GSVALS.get()[y * GSW + x] |= GSPLANES.get(i)->getPixel(x, y) << i;
       }
@@ -69,7 +69,7 @@ FX_DWORD* CJBig2_GSIDProc::decode_Arith(CJBig2_ArithDecoder* pArithDecoder,
   return GSVALS.release();
 }
 
-FX_DWORD* CJBig2_GSIDProc::decode_MMR(CJBig2_BitStream* pStream,
+uint32_t* CJBig2_GSIDProc::decode_MMR(CJBig2_BitStream* pStream,
                                       IFX_Pause* pPause) {
   std::unique_ptr<CJBig2_GRDProc> pGRD(new CJBig2_GRDProc());
   pGRD->MMR = GSMMR;
@@ -106,10 +106,10 @@ FX_DWORD* CJBig2_GSIDProc::decode_MMR(CJBig2_BitStream* pStream,
                                    JBIG2_COMPOSE_XOR);
     J = J - 1;
   }
-  std::unique_ptr<FX_DWORD> GSVALS(FX_Alloc2D(FX_DWORD, GSW, GSH));
-  JBIG2_memset(GSVALS.get(), 0, sizeof(FX_DWORD) * GSW * GSH);
-  for (FX_DWORD y = 0; y < GSH; ++y) {
-    for (FX_DWORD x = 0; x < GSW; ++x) {
+  std::unique_ptr<uint32_t> GSVALS(FX_Alloc2D(uint32_t, GSW, GSH));
+  JBIG2_memset(GSVALS.get(), 0, sizeof(uint32_t) * GSW * GSH);
+  for (uint32_t y = 0; y < GSH; ++y) {
+    for (uint32_t x = 0; x < GSW; ++x) {
       for (J = 0; J < GSBPP; ++J) {
         GSVALS.get()[y * GSW + x] |= GSPLANES.get()[J]->getPixel(x, y) << J;
       }

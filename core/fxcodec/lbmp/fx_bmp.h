@@ -13,7 +13,7 @@
 
 #define BMP_WIDTHBYTES(width, bitCount) ((width * bitCount) + 31) / 32 * 4
 #define BMP_PAL_ENCODE(a, r, g, b) \
-  (((FX_DWORD)(a) << 24) | ((r) << 16) | ((g) << 8) | (b))
+  (((uint32_t)(a) << 24) | ((r) << 16) | ((g) << 8) | (b))
 #define BMP_D_STATUS_HEADER 0x01
 #define BMP_D_STATUS_PAL 0x02
 #define BMP_D_STATUS_DATA_PRE 0x03
@@ -36,30 +36,30 @@
 #pragma pack(1)
 typedef struct tagBmpFileHeader {
   uint16_t bfType;
-  FX_DWORD bfSize;
+  uint32_t bfSize;
   uint16_t bfReserved1;
   uint16_t bfReserved2;
-  FX_DWORD bfOffBits;
+  uint32_t bfOffBits;
 } BmpFileHeader, *BmpFileHeaderPtr;
 typedef struct tagBmpCoreHeader {
-  FX_DWORD bcSize;
+  uint32_t bcSize;
   uint16_t bcWidth;
   uint16_t bcHeight;
   uint16_t bcPlanes;
   uint16_t bcBitCount;
 } BmpCoreHeader, *BmpCoreHeaderPtr;
 typedef struct tagBmpInfoHeader {
-  FX_DWORD biSize;
+  uint32_t biSize;
   int32_t biWidth;
   int32_t biHeight;
   uint16_t biPlanes;
   uint16_t biBitCount;
-  FX_DWORD biCompression;
-  FX_DWORD biSizeImage;
+  uint32_t biCompression;
+  uint32_t biSizeImage;
   int32_t biXPelsPerMeter;
   int32_t biYPelsPerMeter;
-  FX_DWORD biClrUsed;
-  FX_DWORD biClrImportant;
+  uint32_t biClrUsed;
+  uint32_t biClrImportant;
 } BmpInfoHeader, *BmpInfoHeaderPtr;
 #pragma pack()
 
@@ -77,36 +77,36 @@ struct tag_bmp_decompress_struct {
   BmpInfoHeaderPtr bmp_infoheader_ptr;
   int32_t width;
   int32_t height;
-  FX_DWORD compress_flag;
+  uint32_t compress_flag;
   int32_t components;
   int32_t src_row_bytes;
   int32_t out_row_bytes;
   uint8_t* out_row_buffer;
   uint16_t bitCounts;
-  FX_DWORD color_used;
+  uint32_t color_used;
   FX_BOOL imgTB_flag;
   int32_t pal_num;
   int32_t pal_type;
-  FX_DWORD* pal_ptr;
-  FX_DWORD data_size;
-  FX_DWORD img_data_offset;
-  FX_DWORD img_ifh_size;
+  uint32_t* pal_ptr;
+  uint32_t data_size;
+  uint32_t img_data_offset;
+  uint32_t img_ifh_size;
   int32_t row_num;
   int32_t col_num;
   int32_t dpi_x;
   int32_t dpi_y;
-  FX_DWORD mask_red;
-  FX_DWORD mask_green;
-  FX_DWORD mask_blue;
+  uint32_t mask_red;
+  uint32_t mask_green;
+  uint32_t mask_blue;
 
   FX_BOOL (*bmp_get_data_position_fn)(bmp_decompress_struct_p bmp_ptr,
-                                       FX_DWORD cur_pos);
+                                       uint32_t cur_pos);
   void (*bmp_get_row_fn)(bmp_decompress_struct_p bmp_ptr,
                          int32_t row_num,
                          uint8_t* row_buf);
   uint8_t* next_in;
-  FX_DWORD avail_in;
-  FX_DWORD skip_size;
+  uint32_t avail_in;
+  uint32_t skip_size;
   int32_t decode_status;
 };
 void bmp_error(bmp_decompress_struct_p bmp_ptr, const FX_CHAR* err_msg);
@@ -119,12 +119,12 @@ int32_t bmp_decode_rle8(bmp_decompress_struct_p bmp_ptr);
 int32_t bmp_decode_rle4(bmp_decompress_struct_p bmp_ptr);
 uint8_t* bmp_read_data(bmp_decompress_struct_p bmp_ptr,
                        uint8_t** des_buf_pp,
-                       FX_DWORD data_size);
+                       uint32_t data_size);
 void bmp_save_decoding_status(bmp_decompress_struct_p bmp_ptr, int32_t status);
 void bmp_input_buffer(bmp_decompress_struct_p bmp_ptr,
                       uint8_t* src_buf,
-                      FX_DWORD src_size);
-FX_DWORD bmp_get_avail_input(bmp_decompress_struct_p bmp_ptr,
+                      uint32_t src_size);
+uint32_t bmp_get_avail_input(bmp_decompress_struct_p bmp_ptr,
                              uint8_t** avial_buf_ptr);
 typedef struct tag_bmp_compress_struct bmp_compress_struct;
 typedef bmp_compress_struct* bmp_compress_struct_p;
@@ -133,12 +133,12 @@ struct tag_bmp_compress_struct {
   BmpFileHeader file_header;
   BmpInfoHeader info_header;
   uint8_t* src_buf;
-  FX_DWORD src_pitch;
-  FX_DWORD src_row;
+  uint32_t src_pitch;
+  uint32_t src_row;
   uint8_t src_bpp;
-  FX_DWORD src_width;
+  uint32_t src_width;
   FX_BOOL src_free;
-  FX_DWORD* pal_ptr;
+  uint32_t* pal_ptr;
   uint16_t pal_num;
   uint8_t bit_type;
 };
@@ -147,7 +147,7 @@ bmp_compress_struct_p bmp_create_compress();
 void bmp_destroy_compress(bmp_compress_struct_p bmp_ptr);
 FX_BOOL bmp_encode_image(bmp_compress_struct_p bmp_ptr,
                          uint8_t*& dst_buf,
-                         FX_DWORD& dst_size);
+                         uint32_t& dst_size);
 
 uint16_t GetWord_LSBFirst(uint8_t* p);
 void SetWord_LSBFirst(uint8_t* p, uint16_t v);
