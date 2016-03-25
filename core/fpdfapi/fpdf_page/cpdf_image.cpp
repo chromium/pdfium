@@ -153,11 +153,7 @@ void CPDF_Image::SetJpegImage(IFX_FileRead* pFile) {
   m_pStream->InitStreamFromFile(pFile, pDict);
 }
 
-void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap,
-                          int32_t iCompress,
-                          IFX_FileWrite* pFileWrite,
-                          IFX_FileRead* pFileRead,
-                          const CFX_DIBitmap* pMask) {
+void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap, int32_t iCompress) {
   int32_t BitmapWidth = pBitmap->GetWidth();
   int32_t BitmapHeight = pBitmap->GetHeight();
   if (BitmapWidth < 1 || BitmapHeight < 1) {
@@ -262,12 +258,6 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap,
     pMaskBitmap = pBitmap->GetAlphaMask();
     bDeleteMask = TRUE;
   }
-  if (!pMaskBitmap && pMask) {
-    FXDIB_Format maskFormat = pMask->GetFormat();
-    if (maskFormat == FXDIB_1bppMask || maskFormat == FXDIB_8bppMask) {
-      pMaskBitmap = pMask;
-    }
-  }
   if (pMaskBitmap) {
     int32_t maskWidth = pMaskBitmap->GetWidth();
     int32_t maskHeight = pMaskBitmap->GetHeight();
@@ -300,7 +290,6 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap,
       delete pMaskBitmap;
     }
   }
-  FX_BOOL bStream = pFileWrite && pFileRead;
   if (opType == 0) {
     if (iCompress & PDF_IMAGE_LOSSLESS_COMPRESS) {
     } else {
@@ -309,7 +298,7 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap,
         CFX_DIBitmap* pNewBitmap = new CFX_DIBitmap();
         pNewBitmap->Copy(pBitmap);
         pNewBitmap->ConvertFormat(FXDIB_Rgb);
-        SetImage(pNewBitmap, iCompress, pFileWrite, pFileRead);
+        SetImage(pNewBitmap, iCompress);
         if (pDict) {
           pDict->Release();
           pDict = NULL;
@@ -321,35 +310,20 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap,
         return;
       }
     }
-    if (bStream) {
-      pFileWrite->WriteBlock(dest_buf, dest_size);
-      FX_Free(dest_buf);
-      dest_buf = NULL;
-    }
   } else if (opType == 1) {
-    if (!bStream) {
-      dest_buf = FX_Alloc2D(uint8_t, dest_pitch, BitmapHeight);
-      dest_size =
-          dest_pitch * BitmapHeight;  // Safe since checked alloc returned.
-    }
+    dest_buf = FX_Alloc2D(uint8_t, dest_pitch, BitmapHeight);
+    dest_size = dest_pitch * BitmapHeight;  // Safe as checked alloc returned.
+
     uint8_t* pDest = dest_buf;
     for (int32_t i = 0; i < BitmapHeight; i++) {
-      if (!bStream) {
-        FXSYS_memcpy(pDest, src_buf, dest_pitch);
-        pDest += dest_pitch;
-      } else {
-        pFileWrite->WriteBlock(src_buf, dest_pitch);
-      }
+      FXSYS_memcpy(pDest, src_buf, dest_pitch);
+      pDest += dest_pitch;
       src_buf += src_pitch;
     }
   } else if (opType == 2) {
-    if (!bStream) {
-      dest_buf = FX_Alloc2D(uint8_t, dest_pitch, BitmapHeight);
-      dest_size =
-          dest_pitch * BitmapHeight;  // Safe since checked alloc returned.
-    } else {
-      dest_buf = FX_Alloc(uint8_t, dest_pitch);
-    }
+    dest_buf = FX_Alloc2D(uint8_t, dest_pitch, BitmapHeight);
+    dest_size = dest_pitch * BitmapHeight;  // Safe as checked alloc returned.
+
     uint8_t* pDest = dest_buf;
     int32_t src_offset = 0;
     int32_t dest_offset = 0;
@@ -363,28 +337,15 @@ void CPDF_Image::SetImage(const CFX_DIBitmap* pBitmap,
         dest_offset += 3;
         src_offset += bpp == 24 ? 3 : 4;
       }
-      if (bStream) {
-        pFileWrite->WriteBlock(pDest, dest_pitch);
-        pDest = dest_buf;
-      } else {
-        pDest += dest_pitch;
-      }
+
+      pDest += dest_pitch;
       dest_offset = 0;
-    }
-    if (bStream) {
-      FX_Free(dest_buf);
-      dest_buf = NULL;
     }
   }
   if (!m_pStream) {
     m_pStream = new CPDF_Stream(NULL, 0, NULL);
   }
-  if (!bStream) {
-    m_pStream->InitStream(dest_buf, dest_size, pDict);
-  } else {
-    pFileWrite->Flush();
-    m_pStream->InitStreamFromFile(pFileRead, pDict);
-  }
+  m_pStream->InitStream(dest_buf, dest_size, pDict);
   m_bIsMask = pBitmap->IsAlphaMask();
   m_Width = BitmapWidth;
   m_Height = BitmapHeight;

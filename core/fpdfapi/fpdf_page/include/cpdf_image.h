@@ -58,11 +58,7 @@ class CPDF_Image {
                                FX_BOOL bLoadMask = FALSE) const;
 
   void SetInlineDict(CPDF_Dictionary* pDict) { m_pInlineDict = pDict; }
-  void SetImage(const CFX_DIBitmap* pDIBitmap,
-                int32_t iCompress,
-                IFX_FileWrite* pFileWrite = NULL,
-                IFX_FileRead* pFileRead = NULL,
-                const CFX_DIBitmap* pMask = NULL);
+  void SetImage(const CFX_DIBitmap* pDIBitmap, int32_t iCompress);
   void SetJpegImage(uint8_t* pImageData, FX_DWORD size);
   void SetJpegImage(IFX_FileRead* pFile);
 
