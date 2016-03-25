@@ -740,9 +740,9 @@ void CBC_QRCoderEncoder::AppendGBKBytes(const CFX_ByteString& content,
                                         CBC_QRCoderBitVector* bits,
                                         int32_t& e) {
   int32_t length = content.GetLength();
-  FX_DWORD value = 0;
+  uint32_t value = 0;
   for (int32_t i = 0; i < length; i += 2) {
-    value = (FX_DWORD)((uint8_t)content[i] << 8 | (uint8_t)content[i + 1]);
+    value = (uint32_t)((uint8_t)content[i] << 8 | (uint8_t)content[i + 1]);
     if (value <= 0xAAFE && value >= 0xA1A1) {
       value -= 0xA1A1;
     } else if (value <= 0xFAFE && value >= 0xB0A1) {
@@ -751,7 +751,7 @@ void CBC_QRCoderEncoder::AppendGBKBytes(const CFX_ByteString& content,
       e = BCExceptionInvalidateCharacter;
       BC_EXCEPTION_CHECK_ReturnVoid(e);
     }
-    value = (FX_DWORD)((value >> 8) * 0x60) + (FX_DWORD)(value & 0xff);
+    value = (uint32_t)((value >> 8) * 0x60) + (uint32_t)(value & 0xff);
     bits->AppendBits(value, 13, e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);
   }
@@ -777,9 +777,9 @@ void CBC_QRCoderEncoder::AppendKanjiBytes(const CFX_ByteString& content,
                                           CBC_QRCoderBitVector* bits,
                                           int32_t& e) {
   CFX_ByteArray bytes;
-  FX_DWORD value = 0;
+  uint32_t value = 0;
   for (int32_t i = 0; i < bytes.GetSize(); i += 2) {
-    value = (FX_DWORD)((uint8_t)(content[i] << 8) | (uint8_t)content[i + 1]);
+    value = (uint32_t)((uint8_t)(content[i] << 8) | (uint8_t)content[i + 1]);
     if (value <= 0x9ffc && value >= 0x8140) {
       value -= 0x8140;
     } else if (value <= 0xebbf && value >= 0xe040) {
@@ -788,7 +788,7 @@ void CBC_QRCoderEncoder::AppendKanjiBytes(const CFX_ByteString& content,
       e = BCExceptionInvalidateCharacter;
       BC_EXCEPTION_CHECK_ReturnVoid(e);
     }
-    value = (FX_DWORD)((value >> 8) * 0xc0) + (FX_DWORD)(value & 0xff);
+    value = (uint32_t)((value >> 8) * 0xc0) + (uint32_t)(value & 0xff);
     bits->AppendBits(value, 13, e);
     BC_EXCEPTION_CHECK_ReturnVoid(e);
   }

@@ -48,7 +48,7 @@ void FDE_GetPageMatrix(CFX_Matrix& pageMatrix,
                        const CFX_RectF& docPageRect,
                        const CFX_Rect& devicePageRect,
                        int32_t iRotate,
-                       FX_DWORD dwCoordinatesType) {
+                       uint32_t dwCoordinatesType) {
   FXSYS_assert(iRotate >= 0 && iRotate <= 3);
   FX_BOOL bFlipX = (dwCoordinatesType & 0x01) != 0;
   FX_BOOL bFlipY = (dwCoordinatesType & 0x02) != 0;

@@ -81,7 +81,7 @@ const XFA_FMBuildInFunc g_BuildInFuncs[] = {
 struct XFA_FMSOMMethod {
   uint32_t m_uHash;
   const FX_WCHAR* m_wsSomMethodName;
-  FX_DWORD m_dParameters;
+  uint32_t m_dParameters;
 };
 const XFA_FMSOMMethod gs_FMSomMethods[] = {
     {0x00000068, L"h", 0x01},
@@ -114,7 +114,7 @@ CFX_WideStringC XFA_FM_EXPTypeToString(
   return gs_lpStrExpFuncName[simpleExpType];
 }
 
-CXFA_FMSimpleExpression::CXFA_FMSimpleExpression(FX_DWORD line, XFA_FM_TOKEN op)
+CXFA_FMSimpleExpression::CXFA_FMSimpleExpression(uint32_t line, XFA_FM_TOKEN op)
     : m_line(line), m_op(op) {}
 
 void CXFA_FMSimpleExpression::ToJavaScript(CFX_WideTextBuf& javascript) {}
@@ -125,14 +125,14 @@ XFA_FM_TOKEN CXFA_FMSimpleExpression::GetOperatorToken() const {
   return m_op;
 }
 
-CXFA_FMNullExpression::CXFA_FMNullExpression(FX_DWORD line)
+CXFA_FMNullExpression::CXFA_FMNullExpression(uint32_t line)
     : CXFA_FMSimpleExpression(line, TOKnull) {}
 
 void CXFA_FMNullExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << FX_WSTRC(L"null");
 }
 
-CXFA_FMNumberExpression::CXFA_FMNumberExpression(FX_DWORD line,
+CXFA_FMNumberExpression::CXFA_FMNumberExpression(uint32_t line,
                                                  CFX_WideStringC wsNumber)
     : CXFA_FMSimpleExpression(line, TOKnumber), m_wsNumber(wsNumber) {}
 
@@ -140,7 +140,7 @@ void CXFA_FMNumberExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << m_wsNumber;
 }
 
-CXFA_FMStringExpression::CXFA_FMStringExpression(FX_DWORD line,
+CXFA_FMStringExpression::CXFA_FMStringExpression(uint32_t line,
                                                  CFX_WideStringC wsString)
     : CXFA_FMSimpleExpression(line, TOKstring), m_wsString(wsString) {}
 
@@ -171,7 +171,7 @@ void CXFA_FMStringExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
 }
 
 CXFA_FMIdentifierExpressionn::CXFA_FMIdentifierExpressionn(
-    FX_DWORD line,
+    uint32_t line,
     CFX_WideStringC wsIdentifier)
     : CXFA_FMSimpleExpression(line, TOKidentifier),
       m_wsIdentifier(wsIdentifier) {}
@@ -200,14 +200,14 @@ void CXFA_FMIdentifierExpressionn::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << tempStr;
 }
 
-CXFA_FMUnaryExpression::CXFA_FMUnaryExpression(FX_DWORD line,
+CXFA_FMUnaryExpression::CXFA_FMUnaryExpression(uint32_t line,
                                                XFA_FM_TOKEN op,
                                                CXFA_FMSimpleExpression* pExp)
     : CXFA_FMSimpleExpression(line, op), m_pExp(pExp) {}
 
 void CXFA_FMUnaryExpression::ToJavaScript(CFX_WideTextBuf& javascript) {}
 
-CXFA_FMBinExpression::CXFA_FMBinExpression(FX_DWORD line,
+CXFA_FMBinExpression::CXFA_FMBinExpression(uint32_t line,
                                            XFA_FM_TOKEN op,
                                            CXFA_FMSimpleExpression* pExp1,
                                            CXFA_FMSimpleExpression* pExp2)
@@ -215,7 +215,7 @@ CXFA_FMBinExpression::CXFA_FMBinExpression(FX_DWORD line,
 
 void CXFA_FMBinExpression::ToJavaScript(CFX_WideTextBuf& javascript) {}
 
-CXFA_FMAssignExpression::CXFA_FMAssignExpression(FX_DWORD line,
+CXFA_FMAssignExpression::CXFA_FMAssignExpression(uint32_t line,
                                                  XFA_FM_TOKEN op,
                                                  CXFA_FMSimpleExpression* pExp1,
                                                  CXFA_FMSimpleExpression* pExp2)
@@ -282,7 +282,7 @@ void CXFA_FMAssignExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
 }
 
 CXFA_FMLogicalOrExpression::CXFA_FMLogicalOrExpression(
-    FX_DWORD line,
+    uint32_t line,
     XFA_FM_TOKEN op,
     CXFA_FMSimpleExpression* pExp1,
     CXFA_FMSimpleExpression* pExp2)
@@ -298,7 +298,7 @@ void CXFA_FMLogicalOrExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
 }
 
 CXFA_FMLogicalAndExpression::CXFA_FMLogicalAndExpression(
-    FX_DWORD line,
+    uint32_t line,
     XFA_FM_TOKEN op,
     CXFA_FMSimpleExpression* pExp1,
     CXFA_FMSimpleExpression* pExp2)
@@ -314,7 +314,7 @@ void CXFA_FMLogicalAndExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
 }
 
 CXFA_FMEqualityExpression::CXFA_FMEqualityExpression(
-    FX_DWORD line,
+    uint32_t line,
     XFA_FM_TOKEN op,
     CXFA_FMSimpleExpression* pExp1,
     CXFA_FMSimpleExpression* pExp2)
@@ -342,7 +342,7 @@ void CXFA_FMEqualityExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
 }
 
 CXFA_FMRelationalExpression::CXFA_FMRelationalExpression(
-    FX_DWORD line,
+    uint32_t line,
     XFA_FM_TOKEN op,
     CXFA_FMSimpleExpression* pExp1,
     CXFA_FMSimpleExpression* pExp2)
@@ -378,7 +378,7 @@ void CXFA_FMRelationalExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
 }
 
 CXFA_FMAdditiveExpression::CXFA_FMAdditiveExpression(
-    FX_DWORD line,
+    uint32_t line,
     XFA_FM_TOKEN op,
     CXFA_FMSimpleExpression* pExp1,
     CXFA_FMSimpleExpression* pExp2)
@@ -404,7 +404,7 @@ void CXFA_FMAdditiveExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
 }
 
 CXFA_FMMultiplicativeExpression::CXFA_FMMultiplicativeExpression(
-    FX_DWORD line,
+    uint32_t line,
     XFA_FM_TOKEN op,
     CXFA_FMSimpleExpression* pExp1,
     CXFA_FMSimpleExpression* pExp2)
@@ -430,7 +430,7 @@ void CXFA_FMMultiplicativeExpression::ToJavaScript(
   javascript << FX_WSTRC(L")");
 }
 
-CXFA_FMPosExpression::CXFA_FMPosExpression(FX_DWORD line,
+CXFA_FMPosExpression::CXFA_FMPosExpression(uint32_t line,
                                            CXFA_FMSimpleExpression* pExp)
     : CXFA_FMUnaryExpression(line, TOKplus, pExp) {}
 
@@ -441,7 +441,7 @@ void CXFA_FMPosExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << FX_WSTRC(L")");
 }
 
-CXFA_FMNegExpression::CXFA_FMNegExpression(FX_DWORD line,
+CXFA_FMNegExpression::CXFA_FMNegExpression(uint32_t line,
                                            CXFA_FMSimpleExpression* pExp)
     : CXFA_FMUnaryExpression(line, TOKminus, pExp) {}
 
@@ -452,7 +452,7 @@ void CXFA_FMNegExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << FX_WSTRC(L")");
 }
 
-CXFA_FMNotExpression::CXFA_FMNotExpression(FX_DWORD line,
+CXFA_FMNotExpression::CXFA_FMNotExpression(uint32_t line,
                                            CXFA_FMSimpleExpression* pExp)
     : CXFA_FMUnaryExpression(line, TOKksnot, pExp) {}
 
@@ -463,7 +463,7 @@ void CXFA_FMNotExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   javascript << FX_WSTRC(L")");
 }
 
-CXFA_FMCallExpression::CXFA_FMCallExpression(FX_DWORD line,
+CXFA_FMCallExpression::CXFA_FMCallExpression(uint32_t line,
                                              CXFA_FMSimpleExpression* pExp,
                                              CFX_PtrArray* pArguments,
                                              FX_BOOL bIsSomMethod)
@@ -498,12 +498,12 @@ bool CXFA_FMCallExpression::IsBuildInFunc(CFX_WideTextBuf* funcName) {
   return false;
 }
 
-FX_DWORD CXFA_FMCallExpression::IsMethodWithObjParam(
+uint32_t CXFA_FMCallExpression::IsMethodWithObjParam(
     const CFX_WideStringC& methodName) {
   int32_t iLength = methodName.GetLength();
   uint32_t uHash = FX_HashCode_String_GetW(methodName.GetPtr(), iLength);
   XFA_FMSOMMethod somMethodWithObjPara;
-  FX_DWORD parameters = 0x00;
+  uint32_t parameters = 0x00;
   int32_t iStart = 0,
           iEnd = (sizeof(gs_FMSomMethods) / sizeof(gs_FMSomMethods[0])) - 1;
   int32_t iMid = (iStart + iEnd) / 2;
@@ -529,7 +529,7 @@ void CXFA_FMCallExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
     javascript << funcName;
     javascript << FX_WSTRC(L"(");
     if (m_pArguments) {
-      FX_DWORD methodPara = IsMethodWithObjParam(funcName.GetWideString());
+      uint32_t methodPara = IsMethodWithObjParam(funcName.GetWideString());
       if (methodPara > 0) {
         for (int i = 0; i < m_pArguments->GetSize(); ++i) {
           if ((methodPara & (0x01 << i)) > 0) {
@@ -615,7 +615,7 @@ void CXFA_FMCallExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
 }
 
 CXFA_FMDotAccessorExpression::CXFA_FMDotAccessorExpression(
-    FX_DWORD line,
+    uint32_t line,
     CXFA_FMSimpleExpression* pAccessor,
     XFA_FM_TOKEN op,
     CFX_WideStringC wsIdentifier,
@@ -655,7 +655,7 @@ void CXFA_FMDotAccessorExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
 }
 
 CXFA_FMIndexExpression::CXFA_FMIndexExpression(
-    FX_DWORD line,
+    uint32_t line,
     XFA_FM_AccessorIndex accessorIndex,
     CXFA_FMSimpleExpression* pIndexExp,
     FX_BOOL bIsStarIndex)
@@ -691,7 +691,7 @@ void CXFA_FMIndexExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
 }
 
 CXFA_FMDotDotAccessorExpression::CXFA_FMDotDotAccessorExpression(
-    FX_DWORD line,
+    uint32_t line,
     CXFA_FMSimpleExpression* pAccessor,
     XFA_FM_TOKEN op,
     CFX_WideStringC wsIdentifier,
@@ -718,7 +718,7 @@ void CXFA_FMDotDotAccessorExpression::ToJavaScript(
 }
 
 CXFA_FMMethodCallExpression::CXFA_FMMethodCallExpression(
-    FX_DWORD line,
+    uint32_t line,
     CXFA_FMSimpleExpression* pAccessorExp1,
     CXFA_FMSimpleExpression* pCallExp)
     : CXFA_FMBinExpression(line, TOKdot, pAccessorExp1, pCallExp) {}

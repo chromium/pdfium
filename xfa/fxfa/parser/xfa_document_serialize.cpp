@@ -477,7 +477,7 @@ FX_BOOL CXFA_DataExporter::Export(IFX_FileWrite* pWrite) {
 }
 FX_BOOL CXFA_DataExporter::Export(IFX_FileWrite* pWrite,
                                   CXFA_Node* pNode,
-                                  FX_DWORD dwFlag,
+                                  uint32_t dwFlag,
                                   const FX_CHAR* pChecksum) {
   if (!pWrite) {
     ASSERT(false);
@@ -496,7 +496,7 @@ FX_BOOL CXFA_DataExporter::Export(IFX_FileWrite* pWrite,
 }
 FX_BOOL CXFA_DataExporter::Export(IFX_Stream* pStream,
                                   CXFA_Node* pNode,
-                                  FX_DWORD dwFlag,
+                                  uint32_t dwFlag,
                                   const FX_CHAR* pChecksum) {
   IFDE_XMLDoc* pXMLDoc = m_pDocument->GetParser()->GetXMLDoc();
   if (pNode->GetObjectType() == XFA_OBJECTTYPE_ModelNode) {

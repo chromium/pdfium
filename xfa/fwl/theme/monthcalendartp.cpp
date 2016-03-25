@@ -71,8 +71,8 @@ FX_BOOL CFWL_MonthCalendarTP::IsValidWidget(IFWL_Widget* pWidget) {
     return FALSE;
   return pWidget->GetClassID() == FWL_CLASSHASH_MonthCalendar;
 }
-FX_DWORD CFWL_MonthCalendarTP::SetThemeID(IFWL_Widget* pWidget,
-                                          FX_DWORD dwThemeID,
+uint32_t CFWL_MonthCalendarTP::SetThemeID(IFWL_Widget* pWidget,
+                                          uint32_t dwThemeID,
                                           FX_BOOL bChildren) {
   if (m_pThemeData) {
     SetThemeData(FWL_GetThemeColor(dwThemeID));
@@ -160,7 +160,7 @@ FX_BOOL CFWL_MonthCalendarTP::DrawText(CFWL_ThemeText* pParams) {
   return CFWL_WidgetTP::DrawText(pParams);
 }
 void* CFWL_MonthCalendarTP::GetCapacity(CFWL_ThemePart* pThemePart,
-                                        FX_DWORD dwCapacity) {
+                                        uint32_t dwCapacity) {
   FX_BOOL bDefPro = FALSE;
   FX_BOOL bDwordVal = FALSE;
   switch (dwCapacity) {
@@ -558,7 +558,7 @@ FX_BOOL CFWL_MonthCalendarTP::DrawTodayCircle(CFWL_ThemeBackground* pParams,
   pParams->m_pGraphics->RestoreGraphState();
   return TRUE;
 }
-FWLTHEME_STATE CFWL_MonthCalendarTP::GetState(FX_DWORD dwFWLStates) {
+FWLTHEME_STATE CFWL_MonthCalendarTP::GetState(uint32_t dwFWLStates) {
   if (dwFWLStates & FWL_PARTSTATE_MCD_Hovered) {
     return FWLTHEME_STATE_Hover;
   } else if (dwFWLStates & FWL_PARTSTATE_MCD_Pressed) {
@@ -566,7 +566,7 @@ FWLTHEME_STATE CFWL_MonthCalendarTP::GetState(FX_DWORD dwFWLStates) {
   }
   return FWLTHEME_STATE_Normal;
 }
-void CFWL_MonthCalendarTP::SetThemeData(FX_DWORD dwThemeID) {
+void CFWL_MonthCalendarTP::SetThemeData(uint32_t dwThemeID) {
   if (dwThemeID == 0) {
     m_pThemeData->clrCaption = ArgbEncode(0xff, 0, 153, 255);
     m_pThemeData->clrSeperator = ArgbEncode(0xff, 141, 161, 239);

@@ -245,7 +245,7 @@ static FX_BOOL XFA_FDEExtension_MatchNodeName(
     IFDE_XMLNode* pNode,
     const CFX_WideStringC& wsLocalTagName,
     const CFX_WideStringC& wsNamespaceURIPrefix,
-    FX_DWORD eMatchFlags = XFA_XDPPACKET_FLAGS_NOMATCH) {
+    uint32_t eMatchFlags = XFA_XDPPACKET_FLAGS_NOMATCH) {
   if (!pNode || pNode->GetType() != FDE_XMLNODE_Element) {
     return FALSE;
   }

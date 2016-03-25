@@ -112,11 +112,11 @@ FWL_ERR CXFA_FWLTheme::Finalize() {
 FX_BOOL CXFA_FWLTheme::IsValidWidget(IFWL_Widget* pWidget) {
   return TRUE;
 }
-FX_DWORD CXFA_FWLTheme::GetThemeID(IFWL_Widget* pWidget) {
+uint32_t CXFA_FWLTheme::GetThemeID(IFWL_Widget* pWidget) {
   return 0;
 }
-FX_DWORD CXFA_FWLTheme::SetThemeID(IFWL_Widget* pWidget,
-                                   FX_DWORD dwThemeID,
+uint32_t CXFA_FWLTheme::SetThemeID(IFWL_Widget* pWidget,
+                                   uint32_t dwThemeID,
                                    FX_BOOL bChildren) {
   return 0;
 }
@@ -191,7 +191,7 @@ FX_BOOL CXFA_FWLTheme::DrawText(CFWL_ThemeText* pParams) {
   return TRUE;
 }
 void* CXFA_FWLTheme::GetCapacity(CFWL_ThemePart* pThemePart,
-                                 FX_DWORD dwCapacity) {
+                                 uint32_t dwCapacity) {
   switch (dwCapacity) {
     case FWL_WGTCAPACITY_Font: {
       if (CXFA_FFWidget* pWidget =
@@ -377,12 +377,12 @@ void CXFA_FWLCheckBoxTP::DrawCheckSign(IFWL_Widget* pWidget,
                                        int32_t iState,
                                        CFX_Matrix* pMatrix) {
   CFX_RectF rtSign(*pRtBox);
-  FX_DWORD dwColor = 0xFF000000;
+  uint32_t dwColor = 0xFF000000;
   if ((iState & FWL_PARTSTATE_CKB_Mask2) == FWL_PARTSTATE_CKB_Neutral) {
     dwColor = 0xFFA9A9A9;
   }
   {
-    FX_DWORD dwStyle = pWidget->GetStylesEx();
+    uint32_t dwStyle = pWidget->GetStylesEx();
     rtSign.Deflate(rtSign.width / 4, rtSign.height / 4);
     switch (dwStyle & FWL_STYLEEXT_CKB_SignShapeMask) {
       case FWL_STYLEEXT_CKB_SignShapeCheck:

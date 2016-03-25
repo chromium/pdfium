@@ -505,7 +505,7 @@ CXFA_WidgetAcc* CXFA_FFDocView::GetWidgetAccByName(
     const CFX_WideStringC& wsName,
     CXFA_WidgetAcc* pRefWidgetAcc) {
   CFX_WideString wsExpression;
-  FX_DWORD dwStyle = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
+  uint32_t dwStyle = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
                      XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;
   IXFA_ScriptContext* pScriptContext = m_pDoc->GetXFADoc()->GetScriptContext();
   if (!pScriptContext) {
@@ -774,7 +774,7 @@ void CXFA_FFDocView::RunBindItems() {
         pWidgetNode->GetDocument()->GetScriptContext();
     CFX_WideStringC wsRef;
     binditems.GetRef(wsRef);
-    FX_DWORD dwStyle = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
+    uint32_t dwStyle = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
                        XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent |
                        XFA_RESOLVENODE_ALL;
     XFA_RESOLVENODE_RS rs;
@@ -793,7 +793,7 @@ void CXFA_FFDocView::RunBindItems() {
     const bool bValueUseContent =
         wsValueRef.IsEmpty() || wsValueRef == FX_WSTRC(L"$");
     CFX_WideString wsValue, wsLabel;
-    FX_DWORD uValueHash = FX_HashCode_String_GetW(CFX_WideString(wsValueRef),
+    uint32_t uValueHash = FX_HashCode_String_GetW(CFX_WideString(wsValueRef),
                                                   wsValueRef.GetLength());
     for (int32_t i = 0; i < iCount; i++) {
       CXFA_Object* refObj = rs.nodes[i];

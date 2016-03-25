@@ -829,7 +829,7 @@ FX_FLOAT CXFA_Stroke::GetRadius() const {
   return m_pNode ? m_pNode->GetMeasure(XFA_ATTRIBUTE_Radius).ToUnit(XFA_UNIT_Pt)
                  : 0;
 }
-FX_BOOL CXFA_Stroke::SameStyles(CXFA_Stroke stroke, FX_DWORD dwFlags) const {
+FX_BOOL CXFA_Stroke::SameStyles(CXFA_Stroke stroke, uint32_t dwFlags) const {
   if (m_pNode == stroke.GetNode()) {
     return TRUE;
   }
@@ -1236,7 +1236,7 @@ CXFA_Node* CXFA_WidgetData::GetSelectedMember() {
 CXFA_Node* CXFA_WidgetData::SetSelectedMember(const CFX_WideStringC& wsName,
                                               FX_BOOL bNotify) {
   CXFA_Node* pSelectedMember = NULL;
-  FX_DWORD nameHash =
+  uint32_t nameHash =
       FX_HashCode_String_GetW(wsName.GetPtr(), wsName.GetLength());
   for (CXFA_Node* pNode = ToNode(m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild));
        pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
@@ -2189,7 +2189,7 @@ FX_BOOL CXFA_WidgetData::GetPictureContent(CFX_WideString& wsPicture,
       if (!pLocale) {
         return FALSE;
       }
-      FX_DWORD dwType = widgetValue.GetType();
+      uint32_t dwType = widgetValue.GetType();
       switch (dwType) {
         case XFA_VT_DATE:
           pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Medium,
@@ -2229,7 +2229,7 @@ FX_BOOL CXFA_WidgetData::GetPictureContent(CFX_WideString& wsPicture,
         if (!pLocale) {
           return FALSE;
         }
-        FX_DWORD dwType = widgetValue.GetType();
+        uint32_t dwType = widgetValue.GetType();
         switch (dwType) {
           case XFA_VT_DATE:
             pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Short,

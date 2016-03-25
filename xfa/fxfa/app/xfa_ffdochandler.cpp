@@ -17,7 +17,7 @@ void CXFA_FFDocHandler::ReleaseDoc(IXFA_Doc* hDoc) {
 IXFA_DocProvider* CXFA_FFDocHandler::GetDocProvider(IXFA_Doc* hDoc) {
   return static_cast<CXFA_FFDoc*>(hDoc)->GetDocProvider();
 }
-FX_DWORD CXFA_FFDocHandler::GetDocType(IXFA_Doc* hDoc) {
+uint32_t CXFA_FFDocHandler::GetDocType(IXFA_Doc* hDoc) {
   return static_cast<CXFA_FFDoc*>(hDoc)->GetDocType();
 }
 int32_t CXFA_FFDocHandler::StartLoad(IXFA_Doc* hDoc) {
@@ -31,7 +31,7 @@ void CXFA_FFDocHandler::StopLoad(IXFA_Doc* hDoc) {
 }
 
 IXFA_DocView* CXFA_FFDocHandler::CreateDocView(IXFA_Doc* hDoc,
-                                               FX_DWORD dwView) {
+                                               uint32_t dwView) {
   return static_cast<CXFA_FFDoc*>(hDoc)->CreateDocView(dwView);
 }
 int32_t CXFA_FFDocHandler::CountPackages(IXFA_Doc* hDoc) {

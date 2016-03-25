@@ -54,7 +54,7 @@ FWL_ERR CFWL_CheckBoxImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_CheckBox;
   return FWL_ERR_Succeeded;
 }
-FX_DWORD CFWL_CheckBoxImp::GetClassID() const {
+uint32_t CFWL_CheckBoxImp::GetClassID() const {
   return FWL_CLASSHASH_CheckBox;
 }
 FWL_ERR CFWL_CheckBoxImp::Initialize() {
@@ -279,7 +279,7 @@ void CFWL_CheckBoxImp::Layout() {
     m_rtFocus.Inflate(1, 1);
   }
 }
-FX_DWORD CFWL_CheckBoxImp::GetPartStates() {
+uint32_t CFWL_CheckBoxImp::GetPartStates() {
   int32_t dwStates = FWL_PARTSTATE_CKB_UnChecked;
   if ((m_pProperties->m_dwStates & FWL_STATE_CKB_CheckMask) ==
       FWL_STATE_CKB_Neutral) {
@@ -355,7 +355,7 @@ void CFWL_CheckBoxImp::UpdateTextOutStyles() {
   }
 }
 void CFWL_CheckBoxImp::NextStates() {
-  FX_DWORD dwFirststate = m_pProperties->m_dwStates;
+  uint32_t dwFirststate = m_pProperties->m_dwStates;
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_CKB_RadioButton) {
     if ((m_pProperties->m_dwStates & FWL_STATE_CKB_CheckMask) ==
         FWL_STATE_CKB_Unchecked) {
@@ -400,7 +400,7 @@ void CFWL_CheckBoxImp::NextStates() {
     }
   }
   Repaint(&m_rtClient);
-  FX_DWORD dwLaststate = m_pProperties->m_dwStates;
+  uint32_t dwLaststate = m_pProperties->m_dwStates;
   if (dwFirststate != dwLaststate) {
     CFWL_EvtCkbCheckStateChanged wmCheckBoxState;
     wmCheckBoxState.m_pSrcTarget = m_pInterface;
@@ -412,7 +412,7 @@ CFWL_CheckBoxImpDelegate::CFWL_CheckBoxImpDelegate(CFWL_CheckBoxImp* pOwner)
 int32_t CFWL_CheckBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return 0;
-  FX_DWORD dwMsgCode = pMessage->GetClassID();
+  uint32_t dwMsgCode = pMessage->GetClassID();
   int32_t iRet = 1;
   switch (dwMsgCode) {
     case FWL_MSGHASH_Activate: {
@@ -426,7 +426,7 @@ int32_t CFWL_CheckBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     }
     case FWL_MSGHASH_Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
-      FX_DWORD dwCmd = pMsg->m_dwCmd;
+      uint32_t dwCmd = pMsg->m_dwCmd;
       switch (dwCmd) {
         case FWL_MSGMOUSECMD_LButtonDown: {
           OnLButtonDown(pMsg);

@@ -39,7 +39,7 @@ FWL_ERR CFWL_Widget::GetClassName(CFX_WideString& wsClass) const {
     return FWL_ERR_Indefinite;
   return m_pIface->GetClassName(wsClass);
 }
-FX_DWORD CFWL_Widget::GetClassID() const {
+uint32_t CFWL_Widget::GetClassID() const {
   if (!m_pIface)
     return 0;
   return m_pIface->GetClassID();
@@ -99,32 +99,32 @@ FWL_ERR CFWL_Widget::SetOwner(CFWL_Widget* pOwner) {
     return FWL_ERR_Indefinite;
   return FWL_ERR_Succeeded;
 }
-FX_DWORD CFWL_Widget::GetStyles() {
+uint32_t CFWL_Widget::GetStyles() {
   if (!m_pIface)
     return 0;
   return m_pIface->GetStyles();
 }
-FWL_ERR CFWL_Widget::ModifyStyles(FX_DWORD dwStylesAdded,
-                                  FX_DWORD dwStylesRemoved) {
+FWL_ERR CFWL_Widget::ModifyStyles(uint32_t dwStylesAdded,
+                                  uint32_t dwStylesRemoved) {
   if (!m_pIface)
     return FWL_ERR_Indefinite;
   return m_pIface->ModifyStyles(dwStylesAdded, dwStylesRemoved);
 }
-FX_DWORD CFWL_Widget::GetStylesEx() {
+uint32_t CFWL_Widget::GetStylesEx() {
   if (!m_pIface)
     return 0;
   return m_pIface->GetStylesEx();
 }
-FWL_ERR CFWL_Widget::ModifyStylesEx(FX_DWORD dwStylesExAdded,
-                                    FX_DWORD dwStylesExRemoved) {
+FWL_ERR CFWL_Widget::ModifyStylesEx(uint32_t dwStylesExAdded,
+                                    uint32_t dwStylesExRemoved) {
   return m_pIface->ModifyStylesEx(dwStylesExAdded, dwStylesExRemoved);
 }
-FX_DWORD CFWL_Widget::GetStates() {
+uint32_t CFWL_Widget::GetStates() {
   if (!m_pIface)
     return FWL_ERR_Indefinite;
   return m_pIface->GetStates();
 }
-FWL_ERR CFWL_Widget::SetStates(FX_DWORD dwStates, FX_BOOL bSet) {
+FWL_ERR CFWL_Widget::SetStates(uint32_t dwStates, FX_BOOL bSet) {
   if (!m_pIface)
     return FWL_ERR_Indefinite;
   return m_pIface->SetStates(dwStates, bSet);
@@ -156,7 +156,7 @@ FWL_ERR CFWL_Widget::UnlockUpdate() {
     return FWL_ERR_Indefinite;
   return m_pIface->UnlockUpdate();
 }
-FX_DWORD CFWL_Widget::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
+uint32_t CFWL_Widget::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   if (!m_pIface)
     return 0;
   return m_pIface->HitTest(fx, fy);
@@ -251,7 +251,7 @@ FWL_ERR CFWL_Widget::SetGrab(FX_BOOL bSet) {
   return FWL_ERR_Succeeded;
 }
 void CFWL_Widget::RegisterEventTarget(CFWL_Widget* pEventSource,
-                                      FX_DWORD dwFilter) {
+                                      uint32_t dwFilter) {
   if (!m_pIface)
     return;
   IFWL_NoteThread* pThread = m_pIface->GetOwnerThread();

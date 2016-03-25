@@ -959,7 +959,7 @@ FX_ERR CFX_Graphics::CalcTextRect(CFX_RectF& rect,
                                   CFX_Matrix* matrix) {
   if (m_type == FX_CONTEXT_Device && m_renderDevice) {
     int32_t length = text.GetLength();
-    FX_DWORD* charCodes = FX_Alloc(FX_DWORD, length);
+    uint32_t* charCodes = FX_Alloc(uint32_t, length);
     FXTEXT_CHARPOS* charPos = FX_Alloc(FXTEXT_CHARPOS, length);
     CalcTextInfo(text, charCodes, charPos, rect);
     FX_Free(charPos);
@@ -1282,7 +1282,7 @@ FX_ERR CFX_Graphics::RenderDeviceShowText(const CFX_PointF& point,
                                           const CFX_WideString& text,
                                           CFX_Matrix* matrix) {
   int32_t length = text.GetLength();
-  FX_DWORD* charCodes = FX_Alloc(FX_DWORD, length);
+  uint32_t* charCodes = FX_Alloc(uint32_t, length);
   FXTEXT_CHARPOS* charPos = FX_Alloc(FXTEXT_CHARPOS, length);
   CFX_RectF rect;
   rect.Set(point.x, point.y, 0, 0);
@@ -1378,7 +1378,7 @@ FX_ERR CFX_Graphics::FillPathWithShading(CFX_Path* path,
       FX_FLOAT y_span = end_y - start_y;
       FX_FLOAT axis_len_square = (x_span * x_span) + (y_span * y_span);
       for (int32_t row = 0; row < height; row++) {
-        FX_DWORD* dib_buf = (FX_DWORD*)(bmp.GetBuffer() + row * pitch);
+        uint32_t* dib_buf = (uint32_t*)(bmp.GetBuffer() + row * pitch);
         for (int32_t column = 0; column < width; column++) {
           FX_FLOAT x = (FX_FLOAT)(column);
           FX_FLOAT y = (FX_FLOAT)(row);
@@ -1410,7 +1410,7 @@ FX_ERR CFX_Graphics::FillPathWithShading(CFX_Path* path,
                    ((start_y - end_y) * (start_y - end_y)) -
                    ((start_r - end_r) * (start_r - end_r));
       for (int32_t row = 0; row < height; row++) {
-        FX_DWORD* dib_buf = (FX_DWORD*)(bmp.GetBuffer() + row * pitch);
+        uint32_t* dib_buf = (uint32_t*)(bmp.GetBuffer() + row * pitch);
         for (int32_t column = 0; column < width; column++) {
           FX_FLOAT x = (FX_FLOAT)(column);
           FX_FLOAT y = (FX_FLOAT)(row);
@@ -1495,7 +1495,7 @@ FX_ERR CFX_Graphics::SetDIBitsWithMatrix(CFX_DIBSource* source,
 }
 
 FX_ERR CFX_Graphics::CalcTextInfo(const CFX_WideString& text,
-                                  FX_DWORD* charCodes,
+                                  uint32_t* charCodes,
                                   FXTEXT_CHARPOS* charPos,
                                   CFX_RectF& rect) {
   std::unique_ptr<CFX_UnicodeEncoding> encoding(

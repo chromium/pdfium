@@ -43,13 +43,13 @@ CXFA_LocaleValue::CXFA_LocaleValue(const CXFA_LocaleValue& value) {
   m_pLocaleMgr = NULL;
   *this = value;
 }
-CXFA_LocaleValue::CXFA_LocaleValue(FX_DWORD dwType,
+CXFA_LocaleValue::CXFA_LocaleValue(uint32_t dwType,
                                    CXFA_LocaleMgr* pLocaleMgr) {
   m_dwType = dwType;
   m_bValid = (m_dwType != XFA_VT_NULL);
   m_pLocaleMgr = pLocaleMgr;
 }
-CXFA_LocaleValue::CXFA_LocaleValue(FX_DWORD dwType,
+CXFA_LocaleValue::CXFA_LocaleValue(uint32_t dwType,
                                    const CFX_WideString& wsValue,
                                    CXFA_LocaleMgr* pLocaleMgr) {
   m_wsValue = wsValue;
@@ -57,7 +57,7 @@ CXFA_LocaleValue::CXFA_LocaleValue(FX_DWORD dwType,
   m_pLocaleMgr = pLocaleMgr;
   m_bValid = ValidateCanonicalValue(wsValue, dwType);
 }
-CXFA_LocaleValue::CXFA_LocaleValue(FX_DWORD dwType,
+CXFA_LocaleValue::CXFA_LocaleValue(uint32_t dwType,
                                    const CFX_WideString& wsValue,
                                    const CFX_WideString& wsFormat,
                                    IFX_Locale* pLocale,
@@ -76,7 +76,7 @@ CXFA_LocaleValue& CXFA_LocaleValue::operator=(const CXFA_LocaleValue& value) {
 }
 CXFA_LocaleValue::~CXFA_LocaleValue() {}
 static FX_LOCALECATEGORY XFA_ValugeCategory(FX_LOCALECATEGORY eCategory,
-                                            FX_DWORD dwValueType) {
+                                            uint32_t dwValueType) {
   if (eCategory == FX_LOCALECATEGORY_Unknown) {
     switch (dwValueType) {
       case XFA_VT_BOOLEAN:
@@ -193,11 +193,11 @@ FX_BOOL CXFA_LocaleValue::ValidateValue(const CFX_WideString& wsValue,
 CFX_WideString CXFA_LocaleValue::GetValue() const {
   return m_wsValue;
 }
-FX_DWORD CXFA_LocaleValue::GetType() const {
+uint32_t CXFA_LocaleValue::GetType() const {
   return m_dwType;
 }
 void CXFA_LocaleValue::SetValue(const CFX_WideString& wsValue,
-                                FX_DWORD dwType) {
+                                uint32_t dwType) {
   m_wsValue = wsValue;
   m_dwType = dwType;
 }
@@ -211,7 +211,7 @@ FX_FLOAT CXFA_LocaleValue::GetNum() const {
   if (m_bValid && (m_dwType == XFA_VT_BOOLEAN || m_dwType == XFA_VT_INTEGER ||
                    m_dwType == XFA_VT_DECIMAL || m_dwType == XFA_VT_FLOAT)) {
     int64_t nIntegral = 0;
-    FX_DWORD dwFractional = 0;
+    uint32_t dwFractional = 0;
     int32_t nExponent = 0;
     int cc = 0;
     FX_BOOL bNegative = FALSE, bExpSign = FALSE;
@@ -252,7 +252,7 @@ FX_FLOAT CXFA_LocaleValue::GetNum() const {
           break;
         }
       }
-      dwFractional = (FX_DWORD)(fraction * 4294967296.0);
+      dwFractional = (uint32_t)(fraction * 4294967296.0);
     }
     if (cc < len && (str[cc] == 'E' || str[cc] == 'e')) {
       cc++;
@@ -286,7 +286,7 @@ FX_DOUBLE CXFA_LocaleValue::GetDoubleNum() const {
   if (m_bValid && (m_dwType == XFA_VT_BOOLEAN || m_dwType == XFA_VT_INTEGER ||
                    m_dwType == XFA_VT_DECIMAL || m_dwType == XFA_VT_FLOAT)) {
     int64_t nIntegral = 0;
-    FX_DWORD dwFractional = 0;
+    uint32_t dwFractional = 0;
     int32_t nExponent = 0;
     int32_t cc = 0;
     FX_BOOL bNegative = FALSE, bExpSign = FALSE;
@@ -327,7 +327,7 @@ FX_DOUBLE CXFA_LocaleValue::GetDoubleNum() const {
           break;
         }
       }
-      dwFractional = (FX_DWORD)(fraction * 4294967296.0);
+      dwFractional = (uint32_t)(fraction * 4294967296.0);
     }
     if (cc < len && (str[cc] == 'E' || str[cc] == 'e')) {
       cc++;
@@ -551,7 +551,7 @@ static FX_BOOL XFA_ValueSplitDateTime(const CFX_WideString& wsDateTime,
   return TRUE;
 }
 FX_BOOL CXFA_LocaleValue::ValidateCanonicalValue(const CFX_WideString& wsValue,
-                                                 FX_DWORD dwVType) {
+                                                 uint32_t dwVType) {
   if (wsValue.IsEmpty()) {
     return TRUE;
   }

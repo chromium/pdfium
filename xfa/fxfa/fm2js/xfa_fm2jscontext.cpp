@@ -4288,7 +4288,7 @@ FX_BOOL CXFA_FM2JSContext::HTMLCode2STR(uint32_t iCode,
   return FALSE;
 }
 static FX_BOOL XFA_PATTERN_STRING_Type(const CFX_ByteStringC& szPattern,
-                                       FX_DWORD& patternType) {
+                                       uint32_t& patternType) {
   CFX_WideString wsPattern =
       CFX_WideString::FromUTF8(szPattern.GetCStr(), szPattern.GetLength());
   if (FX_WSTRC(L"datetime") == wsPattern.Left(8)) {
@@ -4391,7 +4391,7 @@ void CXFA_FM2JSContext::Format(FXJSE_HOBJECT hThis,
     FXSYS_assert(pThisNode);
     CXFA_WidgetData widgetData(pThisNode);
     IFX_Locale* pLocale = widgetData.GetLocal();
-    FX_DWORD patternType;
+    uint32_t patternType;
     FX_BOOL bCompelte = XFA_PATTERN_STRING_Type(szPattern, patternType);
     CFX_WideString wsPattern =
         CFX_WideString::FromUTF8(szPattern, szPattern.GetLength());
@@ -4603,7 +4603,7 @@ void CXFA_FM2JSContext::Parse(FXJSE_HOBJECT hThis,
       FXSYS_assert(pThisNode);
       CXFA_WidgetData widgetData(pThisNode);
       IFX_Locale* pLocale = widgetData.GetLocal();
-      FX_DWORD patternType;
+      uint32_t patternType;
       FX_BOOL bCompletePattern =
           XFA_PATTERN_STRING_Type(szPattern, patternType);
       CFX_WideString wsPattern =
@@ -6837,7 +6837,7 @@ FX_BOOL CXFA_FM2JSContext::GetObjectByName(
   }
   IXFA_ScriptContext* pScriptContext = pDoc->GetScriptContext();
   XFA_RESOLVENODE_RS resoveNodeRS;
-  FX_DWORD dwFlags = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
+  uint32_t dwFlags = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
                      XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;
   int32_t iRet = pScriptContext->ResolveObjects(
       pScriptContext->GetThisObject(),
@@ -6868,7 +6868,7 @@ int32_t CXFA_FM2JSContext::ResolveObjects(FXJSE_HOBJECT hThis,
   }
   IXFA_ScriptContext* pScriptContext = pDoc->GetScriptContext();
   CXFA_Object* pNode = NULL;
-  FX_DWORD dFlags = 0UL;
+  uint32_t dFlags = 0UL;
   if (bdotAccessor) {
     if (FXJSE_Value_IsNull(hRefValue)) {
       pNode = pScriptContext->GetThisObject();

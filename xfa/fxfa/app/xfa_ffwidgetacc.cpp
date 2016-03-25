@@ -741,7 +741,7 @@ void CXFA_WidgetAcc::UpdateUIDisplay(CXFA_FFWidget* pExcept) {
     pWidget->AddInvalidateRect();
   }
 }
-void CXFA_WidgetAcc::NotifyEvent(FX_DWORD dwEvent,
+void CXFA_WidgetAcc::NotifyEvent(uint32_t dwEvent,
                                  CXFA_FFWidget* pWidget,
                                  void* pParam,
                                  void* pAdditional) {
@@ -899,7 +899,7 @@ void CXFA_WidgetAcc::CalculateTextContentSize(CFX_SizeF& size) {
     pTextOut->SetFontSize(fFontSize);
     pTextOut->SetLineBreakTolerance(fFontSize * 0.2f);
     pTextOut->SetLineSpace(GetLineHeight());
-    FX_DWORD dwStyles = FDE_TTOSTYLE_LastLineHeight;
+    uint32_t dwStyles = FDE_TTOSTYLE_LastLineHeight;
     if (GetUIType() == XFA_ELEMENT_TextEdit && IsMultiLine()) {
       dwStyles |= FDE_TTOSTYLE_LineWrap;
     }
@@ -1535,7 +1535,7 @@ CXFA_WidgetLayoutData* CXFA_WidgetAcc::GetWidgetLayoutData() {
 }
 IFX_Font* CXFA_WidgetAcc::GetFDEFont() {
   CFX_WideStringC wsFontName = FX_WSTRC(L"Courier");
-  FX_DWORD dwFontStyle = 0;
+  uint32_t dwFontStyle = 0;
   if (CXFA_Font font = GetFont()) {
     if (font.IsBold()) {
       dwFontStyle |= FX_FONTSTYLE_Bold;

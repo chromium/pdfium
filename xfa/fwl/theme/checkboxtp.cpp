@@ -41,8 +41,8 @@ CFWL_CheckBoxTP::~CFWL_CheckBoxTP() {
 FX_BOOL CFWL_CheckBoxTP::IsValidWidget(IFWL_Widget* pWidget) {
   return pWidget && pWidget->GetClassID() == FWL_CLASSHASH_CheckBox;
 }
-FX_DWORD CFWL_CheckBoxTP::SetThemeID(IFWL_Widget* pWidget,
-                                     FX_DWORD dwThemeID,
+uint32_t CFWL_CheckBoxTP::SetThemeID(IFWL_Widget* pWidget,
+                                     uint32_t dwThemeID,
                                      FX_BOOL bChildren) {
   if (m_pThemeData) {
     SetThemeData(FWL_GetThemeColor(dwThemeID));
@@ -111,11 +111,11 @@ FWL_ERR CFWL_CheckBoxTP::Finalize() {
 void CFWL_CheckBoxTP::DrawBoxBk(IFWL_Widget* pWidget,
                                 CFX_Graphics* pGraphics,
                                 const CFX_RectF* pRect,
-                                FX_DWORD dwStates,
+                                uint32_t dwStates,
                                 CFX_Matrix* pMatrix) {
   dwStates &= 0x03;
   int32_t fillMode = FXFILL_WINDING;
-  FX_DWORD dwStyleEx = pWidget->GetStylesEx();
+  uint32_t dwStyleEx = pWidget->GetStylesEx();
   dwStyleEx &= FWL_STYLEEXT_CKB_ShapeMask;
   CFX_Path path;
   path.Create();
@@ -176,11 +176,11 @@ void CFWL_CheckBoxTP::DrawBoxBk(IFWL_Widget* pWidget,
 void CFWL_CheckBoxTP::DrawSign(IFWL_Widget* pWidget,
                                CFX_Graphics* pGraphics,
                                const CFX_RectF* pRtBox,
-                               FX_DWORD dwStates,
+                               uint32_t dwStates,
                                CFX_Matrix* pMatrix) {
   CFX_RectF rtSign(*pRtBox);
   rtSign.Deflate(CHECKBOX_SIZE_SIGNMARGIN, CHECKBOX_SIZE_SIGNMARGIN);
-  FX_DWORD dwColor = m_pThemeData->clrSignCheck;
+  uint32_t dwColor = m_pThemeData->clrSignCheck;
   FX_BOOL bCheck = TRUE;
   if (((dwStates & FWL_PARTSTATE_CKB_Mask1) == FWL_PARTSTATE_CKB_Disabled) &&
       ((dwStates & FWL_PARTSTATE_CKB_Mask2) == FWL_PARTSTATE_CKB_Checked)) {
@@ -209,7 +209,7 @@ void CFWL_CheckBoxTP::DrawSign(IFWL_Widget* pWidget,
     }
   }
   if (bCheck) {
-    FX_DWORD dwStyle = pWidget->GetStylesEx();
+    uint32_t dwStyle = pWidget->GetStylesEx();
     switch (dwStyle & FWL_STYLEEXT_CKB_SignShapeMask) {
       case FWL_STYLEEXT_CKB_SignShapeCheck: {
         DrawSignCheck(pGraphics, &rtSign, dwColor, pMatrix);
@@ -393,8 +393,8 @@ void CFWL_CheckBoxTP::DrawSignBorder(IFWL_Widget* pWidget,
     }
   }
 }
-void CFWL_CheckBoxTP::SetThemeData(FX_DWORD dwID) {
-  FX_DWORD* pData = (FX_DWORD*)&m_pThemeData->clrBoxBk;
+void CFWL_CheckBoxTP::SetThemeData(uint32_t dwID) {
+  uint32_t* pData = (uint32_t*)&m_pThemeData->clrBoxBk;
   if (dwID) {
     *pData++ = 0, *pData++ = 0, *pData++ = ArgbEncode(255, 220, 220, 215),
     *pData++ = ArgbEncode(255, 255, 255, 255),

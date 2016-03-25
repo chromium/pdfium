@@ -13,7 +13,7 @@
 #include "xfa/fwl/core/include/ifwl_adaptertimermgr.h"
 
 FWL_HTIMER FWL_StartTimer(IFWL_Timer* pTimer,
-                          FX_DWORD dwElapse,
+                          uint32_t dwElapse,
                           FX_BOOL bImmediately) {
   IFWL_AdapterNative* pAdapterNative = FWL_GetAdapterNative();
   if (!pAdapterNative)

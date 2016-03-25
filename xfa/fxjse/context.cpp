@@ -70,7 +70,7 @@ static const FX_CHAR* szCompatibleModeScripts[] = {
     "  }\n"
     "}(this, {String: ['substr', 'toUpperCase']}));"};
 void FXJSE_Context_EnableCompatibleMode(FXJSE_HCONTEXT hContext,
-                                        FX_DWORD dwCompatibleFlags) {
+                                        uint32_t dwCompatibleFlags) {
   for (uint32_t i = 0; i < (uint32_t)FXJSE_COMPATIBLEMODEFLAGCOUNT; i++) {
     if (dwCompatibleFlags & (1 << i)) {
       FXJSE_ExecuteScript(hContext, szCompatibleModeScripts[i], NULL, NULL);

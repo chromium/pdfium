@@ -72,7 +72,7 @@ FX_BOOL CFWL_ComboBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   return TRUE;
 }
 void CFWL_ComboBoxTP::DrawStrethHandler(CFWL_ThemeBackground* pParams,
-                                        FX_DWORD dwStates,
+                                        uint32_t dwStates,
                                         CFX_Matrix* pMatrix) {
   CFX_Path path;
   path.Create();
@@ -83,7 +83,7 @@ void CFWL_ComboBoxTP::DrawStrethHandler(CFWL_ThemeBackground* pParams,
   pParams->m_pGraphics->FillPath(&path, FXFILL_WINDING, &pParams->m_matrix);
 }
 void* CFWL_ComboBoxTP::GetCapacity(CFWL_ThemePart* pThemePart,
-                                   FX_DWORD dwCapacity) {
+                                   uint32_t dwCapacity) {
   if (dwCapacity == FWL_WGTCAPACITY_CMB_ComboFormHandler) {
     m_fValue = FWLTHEME_CAPACITY_ComboFormHandler;
     return &m_fValue;
@@ -92,7 +92,7 @@ void* CFWL_ComboBoxTP::GetCapacity(CFWL_ThemePart* pThemePart,
 }
 #ifdef THEME_XPSimilar
 void CFWL_ComboBoxTP::DrawDropDownButton(CFWL_ThemeBackground* pParams,
-                                         FX_DWORD dwStates,
+                                         uint32_t dwStates,
                                          CFX_Matrix* pMatrix) {
   FWLTHEME_STATE eState = FWLTHEME_STATE_Normal;
   switch (dwStates) {
@@ -119,7 +119,7 @@ void CFWL_ComboBoxTP::DrawDropDownButton(CFWL_ThemeBackground* pParams,
 }
 #else
 void CFWL_ComboBoxTP::DrawDropDownButton(CFWL_ThemeBackground* pParams,
-                                         FX_DWORD dwStates,
+                                         uint32_t dwStates,
                                          CFX_Matrix* pMatrix) {
   FX_BOOL bPressed = ((pParams->m_dwStates & FWL_CMBPARTSTATE_Pressed) ==
                       FWL_CMBPARTSTATE_Pressed);

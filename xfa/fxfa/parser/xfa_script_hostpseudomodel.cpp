@@ -25,7 +25,7 @@ CScript_HostPseudoModel::~CScript_HostPseudoModel() {}
 void CScript_HostPseudoModel::Script_HostPseudoModel_LoadString(
     FXJSE_HVALUE hValue,
     IXFA_Notify* pNotify,
-    FX_DWORD dwFlag) {
+    uint32_t dwFlag) {
   CFX_WideString wsValue;
   pNotify->GetAppProvider()->LoadString(dwFlag, wsValue);
   FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsValue));
@@ -323,7 +323,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_OpenList(
         FXJSE_Value_Release(hValue);
         return;
       }
-      FX_DWORD dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent |
+      uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent |
                         XFA_RESOLVENODE_Siblings;
       XFA_RESOLVENODE_RS resoveNodeRS;
       int32_t iRet = pScriptContext->ResolveObjects(pObject, wsExpression,
@@ -457,7 +457,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_ResetData(
     if (!pObject) {
       return;
     }
-    FX_DWORD dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent |
+    uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent |
                       XFA_RESOLVENODE_Siblings;
     XFA_RESOLVENODE_RS resoveNodeRS;
     int32_t iRet =
@@ -486,7 +486,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_Beep(
   if (!pNotify) {
     return;
   }
-  FX_DWORD dwType = 4;
+  uint32_t dwType = 4;
   if (iLength >= 1) {
     dwType = pArguments->GetInt32(0);
   }
@@ -526,7 +526,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_SetFocus(
         FXJSE_Value_Release(hValue);
         return;
       }
-      FX_DWORD dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent |
+      uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Parent |
                         XFA_RESOLVENODE_Siblings;
       XFA_RESOLVENODE_RS resoveNodeRS;
       int32_t iRet = pScriptContext->ResolveObjects(pObject, wsExpression,
@@ -570,8 +570,8 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_MessageBox(
   }
   CFX_WideString wsMessage;
   CFX_WideString bsTitle;
-  FX_DWORD dwMessageType = XFA_MBICON_Error;
-  FX_DWORD dwButtonType = XFA_MB_OK;
+  uint32_t dwMessageType = XFA_MBICON_Error;
+  uint32_t dwButtonType = XFA_MB_OK;
   if (iLength >= 1) {
     if (!Script_HostPseudoModel_ValidateArgsForMsg(pArguments, 0, wsMessage)) {
       return;
@@ -656,7 +656,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_Print(
     return;
   }
   IXFA_Doc* hDoc = pNotify->GetHDOC();
-  FX_DWORD dwOptions = 0;
+  uint32_t dwOptions = 0;
   FX_BOOL bShowDialog = TRUE;
   if (iLength >= 1) {
     bShowDialog = pArguments->GetInt32(0) == 0 ? FALSE : TRUE;

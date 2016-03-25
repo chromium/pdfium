@@ -316,7 +316,7 @@ FX_DOUBLE XFA_WideStringToDouble(const CFX_WideString& wsStringVal) {
   wsValue.TrimLeft();
   wsValue.TrimRight();
   int64_t nIntegral = 0;
-  FX_DWORD dwFractional = 0;
+  uint32_t dwFractional = 0;
   int32_t nExponent = 0;
   int32_t cc = 0;
   FX_BOOL bNegative = FALSE, bExpSign = FALSE;
@@ -361,7 +361,7 @@ FX_DOUBLE XFA_WideStringToDouble(const CFX_WideString& wsStringVal) {
         return 0;
       }
     }
-    dwFractional = (FX_DWORD)(fraction * 4294967296.0);
+    dwFractional = (uint32_t)(fraction * 4294967296.0);
   }
   if (cc < len && (str[cc] == 'E' || str[cc] == 'e')) {
     cc++;

@@ -39,7 +39,7 @@ IFX_LocaleMgr* FX_LocaleMgr_Create(const FX_WCHAR* pszLocalPath,
       if (bssp == "http://www.foxitsoftware.com/localization") {
         CFX_WideString wsLCID = pXmlLocale->GetAttrValue("", "lcid");
         wchar_t* pEnd = NULL;
-        FX_DWORD dwLCID = wcstol(wsLCID, &pEnd, 16);
+        uint32_t dwLCID = wcstol(wsLCID, &pEnd, 16);
         if (pLocaleMgr->m_lcid2xml.GetValueAt((void*)(uintptr_t)dwLCID)) {
           delete pXmlLocale;
         } else {

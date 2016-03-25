@@ -44,7 +44,7 @@ FWL_ERR CFWL_PushButtonImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_PushButton;
   return FWL_ERR_Succeeded;
 }
-FX_DWORD CFWL_PushButtonImp::GetClassID() const {
+uint32_t CFWL_PushButtonImp::GetClassID() const {
   return FWL_CLASSHASH_PushButton;
 }
 FWL_ERR CFWL_PushButtonImp::Initialize() {
@@ -84,7 +84,7 @@ FWL_ERR CFWL_PushButtonImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
   }
   return FWL_ERR_Succeeded;
 }
-FWL_ERR CFWL_PushButtonImp::SetStates(FX_DWORD dwStates, FX_BOOL bSet) {
+FWL_ERR CFWL_PushButtonImp::SetStates(uint32_t dwStates, FX_BOOL bSet) {
   if ((dwStates & FWL_WGTSTATE_Disabled) && bSet) {
     m_pProperties->m_dwStates = FWL_WGTSTATE_Disabled;
     return FWL_ERR_Succeeded;
@@ -335,8 +335,8 @@ void CFWL_PushButtonImp::DrawText(CFX_Graphics* pGraphics,
   param.m_iTTOAlign = m_iTTOAlign;
   pTheme->DrawText(&param);
 }
-FX_DWORD CFWL_PushButtonImp::GetPartStates() {
-  FX_DWORD dwStates = FWL_PARTSTATE_PSB_Normal;
+uint32_t CFWL_PushButtonImp::GetPartStates() {
+  uint32_t dwStates = FWL_PARTSTATE_PSB_Normal;
   if (m_pProperties->m_dwStates & FWL_WGTSTATE_Focused) {
     dwStates |= FWL_PARTSTATE_PSB_Focused;
   }
@@ -408,7 +408,7 @@ int32_t CFWL_PushButtonImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     return 1;
   }
   int32_t iRet = 1;
-  FX_DWORD dwMsgCode = pMessage->GetClassID();
+  uint32_t dwMsgCode = pMessage->GetClassID();
   switch (dwMsgCode) {
     case FWL_MSGHASH_SetFocus:
     case FWL_MSGHASH_KillFocus: {
@@ -417,7 +417,7 @@ int32_t CFWL_PushButtonImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     }
     case FWL_MSGHASH_Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
-      FX_DWORD dwCmd = pMsg->m_dwCmd;
+      uint32_t dwCmd = pMsg->m_dwCmd;
       switch (dwCmd) {
         case FWL_MSGMOUSECMD_LButtonDown: {
           OnLButtonDown(pMsg);

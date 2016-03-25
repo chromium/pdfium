@@ -62,11 +62,11 @@ FWL_ERR CFWL_FormTP::Finalize() {
 FX_BOOL CFWL_FormTP::IsValidWidget(IFWL_Widget* pWidget) {
   if (!pWidget)
     return FALSE;
-  FX_DWORD dwHash = pWidget->GetClassID();
+  uint32_t dwHash = pWidget->GetClassID();
   return dwHash == FWL_CLASSHASH_Form;
 }
-FX_DWORD CFWL_FormTP::SetThemeID(IFWL_Widget* pWidget,
-                                 FX_DWORD dwThemeID,
+uint32_t CFWL_FormTP::SetThemeID(IFWL_Widget* pWidget,
+                                 uint32_t dwThemeID,
                                  FX_BOOL bChildren) {
   if (m_pThemeData) {
     SetThemeData(FWL_GetThemeColor(dwThemeID));
@@ -159,7 +159,7 @@ FX_BOOL CFWL_FormTP::DrawText(CFWL_ThemeText* pParams) {
   return CFWL_WidgetTP::DrawText(pParams);
 }
 void* CFWL_FormTP::GetCapacity(CFWL_ThemePart* pThemePart,
-                               FX_DWORD dwCapacity) {
+                               uint32_t dwCapacity) {
   FX_BOOL bDefPro = FALSE;
   FX_BOOL bDwordVal = FALSE;
   switch (dwCapacity) {
@@ -230,7 +230,7 @@ FWL_ERR CFWL_FormTP::GetPartRect(CFWL_ThemePart* pThemePart,
   return FWL_ERR_Succeeded;
 }
 void CFWL_FormTP::CalCloseBox(IFWL_Widget* pWidget, CFX_RectF& rect) {
-  FX_DWORD dwStyles = pWidget->GetStyles();
+  uint32_t dwStyles = pWidget->GetStyles();
   CFX_RectF rtWidget;
   pWidget->GetWidgetRect(rtWidget);
   rtWidget.Offset(-rtWidget.left, -rtWidget.top);
@@ -244,7 +244,7 @@ void CFWL_FormTP::CalCloseBox(IFWL_Widget* pWidget, CFX_RectF& rect) {
   }
 }
 void CFWL_FormTP::CalMaxBox(IFWL_Widget* pWidget, CFX_RectF& rect) {
-  FX_DWORD dwStyles = pWidget->GetStyles();
+  uint32_t dwStyles = pWidget->GetStyles();
   CFX_RectF rtWidget;
   pWidget->GetWidgetRect(rtWidget);
   rtWidget.Offset(-rtWidget.left, -rtWidget.top);
@@ -260,7 +260,7 @@ void CFWL_FormTP::CalMaxBox(IFWL_Widget* pWidget, CFX_RectF& rect) {
   }
 }
 void CFWL_FormTP::CalMinBox(IFWL_Widget* pWidget, CFX_RectF& rect) {
-  FX_DWORD dwStyles = pWidget->GetStyles();
+  uint32_t dwStyles = pWidget->GetStyles();
   CFX_RectF rtWidget;
   pWidget->GetWidgetRect(rtWidget);
   rtWidget.Offset(-rtWidget.left, -rtWidget.top);
@@ -578,7 +578,7 @@ void CFWL_FormTP::DrawIconImage(CFX_Graphics* pGraphics,
                                 int32_t iActive) {
   pGraphics->StretchImage(pDIBitmap, *pRect, pMatrix);
 }
-void CFWL_FormTP::SetThemeData(FX_DWORD dwID) {
+void CFWL_FormTP::SetThemeData(uint32_t dwID) {
   m_pThemeData->clrTransWhite = ArgbEncode(0x65, 255, 255, 255);
   m_pThemeData->clrCloseBtBKStart[0][0] = ArgbEncode(0xff, 240, 166, 148);
   m_pThemeData->clrCloseBtBKEnd[0][0] = ArgbEncode(0xff, 228, 61, 5);

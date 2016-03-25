@@ -46,7 +46,7 @@ void CXFA_FFImageEdit::UnloadWidget() {
 }
 void CXFA_FFImageEdit::RenderWidget(CFX_Graphics* pGS,
                                     CFX_Matrix* pMatrix,
-                                    FX_DWORD dwStatus,
+                                    uint32_t dwStatus,
                                     int32_t iRotate) {
   if (!IsMatchVisibleStatus(dwStatus)) {
     return;
@@ -82,7 +82,7 @@ void CXFA_FFImageEdit::RenderWidget(CFX_Graphics* pGS,
                   iImageYDpi, iHorzAlign, iVertAlign);
   }
 }
-FX_BOOL CXFA_FFImageEdit::OnLButtonDown(FX_DWORD dwFlags,
+FX_BOOL CXFA_FFImageEdit::OnLButtonDown(uint32_t dwFlags,
                                         FX_FLOAT fx,
                                         FX_FLOAT fy) {
   if (m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open) {

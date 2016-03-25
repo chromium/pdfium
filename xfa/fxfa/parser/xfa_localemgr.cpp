@@ -1048,7 +1048,7 @@ static IFX_Locale* XFA_GetLocaleFromBuffer(const uint8_t* pBuf, int nBufLen) {
   }
   CXML_Element* pLocale = NULL;
   uint8_t* pOut = NULL;
-  FX_DWORD dwSize;
+  uint32_t dwSize;
   pCodecMgr->GetFlateModule()->FlateOrLZWDecode(FALSE, pBuf, nBufLen, TRUE, 0,
                                                 0, 0, 0, 0, pOut, dwSize);
   if (pOut) {
@@ -1066,8 +1066,8 @@ static uint16_t XFA_GetLanguage(CFX_WideString wsLanguage) {
     return dwLangueID;
   }
   wsLanguage.MakeLower();
-  FX_DWORD dwIDFirst = wsLanguage.GetAt(0) << 8 | wsLanguage.GetAt(1);
-  FX_DWORD dwIDSecond = wsLanguage.GetLength() >= 5
+  uint32_t dwIDFirst = wsLanguage.GetAt(0) << 8 | wsLanguage.GetAt(1);
+  uint32_t dwIDSecond = wsLanguage.GetLength() >= 5
                             ? wsLanguage.GetAt(3) << 8 | wsLanguage.GetAt(4)
                             : 0;
   switch (dwIDFirst) {

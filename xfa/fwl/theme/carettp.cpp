@@ -37,7 +37,7 @@ FX_BOOL CFWL_CaretTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   return TRUE;
 }
 void CFWL_CaretTP::DrawCaretBK(CFX_Graphics* pGraphics,
-                               FX_DWORD dwStates,
+                               uint32_t dwStates,
                                const CFX_RectF* pRect,
                                CFX_Color* crFill,
                                CFX_Matrix* pMatrix) {

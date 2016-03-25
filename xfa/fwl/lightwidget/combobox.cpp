@@ -230,8 +230,8 @@ FWL_ERR CFWL_ComboBox::GetBBox(CFX_RectF& rect) {
     return FALSE;
   return static_cast<IFWL_ComboBox*>(m_pIface)->GetBBox(rect);
 }
-FWL_ERR CFWL_ComboBox::EditModifyStylesEx(FX_DWORD dwStylesExAdded,
-                                          FX_DWORD dwStylesExRemoved) {
+FWL_ERR CFWL_ComboBox::EditModifyStylesEx(uint32_t dwStylesExAdded,
+                                          uint32_t dwStylesExRemoved) {
   if (!m_pIface)
     return FALSE;
   return static_cast<IFWL_ComboBox*>(m_pIface)
@@ -272,7 +272,7 @@ FX_BOOL CFWL_ComboBox::CFWL_ComboBoxDP::SetItemIndex(IFWL_Widget* pWidget,
   m_ItemArray[nIndex].reset(reinterpret_cast<CFWL_ComboBoxItem*>(hItem));
   return TRUE;
 }
-FX_DWORD CFWL_ComboBox::CFWL_ComboBoxDP::GetItemStyles(IFWL_Widget* pWidget,
+uint32_t CFWL_ComboBox::CFWL_ComboBoxDP::GetItemStyles(IFWL_Widget* pWidget,
                                                        FWL_HLISTITEM hItem) {
   if (!hItem)
     return 0;
@@ -305,7 +305,7 @@ void* CFWL_ComboBox::CFWL_ComboBoxDP::GetItemData(IFWL_Widget* pWidget,
 }
 FWL_ERR CFWL_ComboBox::CFWL_ComboBoxDP::SetItemStyles(IFWL_Widget* pWidget,
                                                       FWL_HLISTITEM hItem,
-                                                      FX_DWORD dwStyle) {
+                                                      uint32_t dwStyle) {
   if (!hItem)
     return FWL_ERR_Indefinite;
   reinterpret_cast<CFWL_ComboBoxItem*>(hItem)->m_dwStyles = dwStyle;
@@ -351,7 +351,7 @@ FWL_ERR CFWL_ComboBox::CFWL_ComboBoxDP::SetItemCheckRect(
   pItem->m_rtCheckBox = rtCheck;
   return FWL_ERR_Succeeded;
 }
-FX_DWORD CFWL_ComboBox::CFWL_ComboBoxDP::GetItemCheckState(
+uint32_t CFWL_ComboBox::CFWL_ComboBoxDP::GetItemCheckState(
     IFWL_Widget* pWidget,
     FWL_HLISTITEM hItem) {
   CFWL_ComboBoxItem* pItem = reinterpret_cast<CFWL_ComboBoxItem*>(hItem);
@@ -360,7 +360,7 @@ FX_DWORD CFWL_ComboBox::CFWL_ComboBoxDP::GetItemCheckState(
 FWL_ERR CFWL_ComboBox::CFWL_ComboBoxDP::SetItemCheckState(
     IFWL_Widget* pWidget,
     FWL_HLISTITEM hItem,
-    FX_DWORD dwCheckState) {
+    uint32_t dwCheckState) {
   CFWL_ComboBoxItem* pItem = reinterpret_cast<CFWL_ComboBoxItem*>(hItem);
   pItem->m_dwCheckState = dwCheckState;
   return FWL_ERR_Succeeded;

@@ -19,8 +19,8 @@
 #include "xfa/fxfa/parser/xfa_script.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
-FX_DWORD XFA_GetRelevant(CXFA_Node* pFormItem, FX_DWORD dwParentRelvant) {
-  FX_DWORD dwRelevant = XFA_LAYOUTSTATUS_Viewable | XFA_LAYOUTSTATUS_Printable;
+uint32_t XFA_GetRelevant(CXFA_Node* pFormItem, uint32_t dwParentRelvant) {
+  uint32_t dwRelevant = XFA_LAYOUTSTATUS_Viewable | XFA_LAYOUTSTATUS_Printable;
   CFX_WideStringC wsRelevant;
   if (pFormItem->TryCData(XFA_ATTRIBUTE_Relevant, wsRelevant)) {
     if (wsRelevant == FX_WSTRC(L"+print") || wsRelevant == FX_WSTRC(L"print")) {

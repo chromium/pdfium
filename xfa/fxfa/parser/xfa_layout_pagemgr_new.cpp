@@ -1516,7 +1516,7 @@ void CXFA_LayoutPageMgr::SaveLayoutItem(CXFA_LayoutItem* pParentLayoutItem) {
   while (pCurLayoutItem) {
     pNextLayoutItem = pCurLayoutItem->m_pNextSibling;
     if (pCurLayoutItem->IsContentLayoutItem()) {
-      FX_DWORD dwFlag = pCurLayoutItem->m_pFormNode->GetFlag();
+      uint32_t dwFlag = pCurLayoutItem->m_pFormNode->GetFlag();
       if (dwFlag & (XFA_NODEFLAG_HasRemoved)) {
         IXFA_Notify* pNotify =
             m_pTemplatePageSetRoot->GetDocument()->GetParser()->GetNotify();
@@ -1793,12 +1793,12 @@ void CXFA_LayoutPageMgr::LayoutPageSetContents() {
 void XFA_SyncContainer(IXFA_Notify* pNotify,
                        IXFA_DocLayout* pDocLayout,
                        CXFA_LayoutItem* pContainerItem,
-                       FX_DWORD dwRelevant,
+                       uint32_t dwRelevant,
                        FX_BOOL bVisible,
                        int32_t nPageIndex) {
   FX_BOOL bVisibleItem = FALSE;
-  FX_DWORD dwStatus = 0;
-  FX_DWORD dwRelevantContainer = 0;
+  uint32_t dwStatus = 0;
+  uint32_t dwRelevantContainer = 0;
   if (bVisible) {
     XFA_ATTRIBUTEENUM eAttributeValue =
         pContainerItem->m_pFormNode->GetEnum(XFA_ATTRIBUTE_Presence);
@@ -1841,7 +1841,7 @@ void CXFA_LayoutPageMgr::SyncLayoutData() {
       switch (pContainerItem->m_pFormNode->GetClassID()) {
         case XFA_ELEMENT_PageArea: {
           nPageIdx++;
-          FX_DWORD dwRelevant =
+          uint32_t dwRelevant =
               XFA_LAYOUTSTATUS_Viewable | XFA_LAYOUTSTATUS_Printable;
           CXFA_NodeIteratorTemplate<CXFA_LayoutItem,
                                     CXFA_TraverseStrategy_LayoutItem>
@@ -1857,7 +1857,7 @@ void CXFA_LayoutPageMgr::SyncLayoutData() {
             FX_BOOL bVisible =
                 (pContentItem->m_pFormNode->GetEnum(XFA_ATTRIBUTE_Presence) ==
                  XFA_ATTRIBUTEENUM_Visible);
-            FX_DWORD dwRelevantChild =
+            uint32_t dwRelevantChild =
                 XFA_GetRelevant(pContentItem->m_pFormNode, dwRelevant);
             XFA_SyncContainer(pNotify, m_pLayoutProcessor, pContentItem,
                               dwRelevantChild, bVisible, nPageIdx);

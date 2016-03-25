@@ -20,7 +20,7 @@ CXFA_FFText::CXFA_FFText(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc)
 CXFA_FFText::~CXFA_FFText() {}
 void CXFA_FFText::RenderWidget(CFX_Graphics* pGS,
                                CFX_Matrix* pMatrix,
-                               FX_DWORD dwStatus,
+                               uint32_t dwStatus,
                                int32_t iRotate) {
   if (!IsMatchVisibleStatus(dwStatus)) {
     return;
@@ -101,7 +101,7 @@ FX_BOOL CXFA_FFText::PerformLayout() {
   pTextLayout->m_bHasBlock = FALSE;
   return TRUE;
 }
-FX_BOOL CXFA_FFText::OnLButtonDown(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
+FX_BOOL CXFA_FFText::OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
   CFX_RectF rtBox;
   GetRectWithoutRotate(rtBox);
   if (!rtBox.Contains(fx, fy)) {
@@ -114,7 +114,7 @@ FX_BOOL CXFA_FFText::OnLButtonDown(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
   SetButtonDown(TRUE);
   return TRUE;
 }
-FX_BOOL CXFA_FFText::OnMouseMove(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
+FX_BOOL CXFA_FFText::OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
   CFX_RectF rtBox;
   GetRectWithoutRotate(rtBox);
   if (!rtBox.Contains(fx, fy)) {
@@ -126,7 +126,7 @@ FX_BOOL CXFA_FFText::OnMouseMove(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
   }
   return TRUE;
 }
-FX_BOOL CXFA_FFText::OnLButtonUp(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
+FX_BOOL CXFA_FFText::OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
   if (!IsButtonDown()) {
     return FALSE;
   }
@@ -139,7 +139,7 @@ FX_BOOL CXFA_FFText::OnLButtonUp(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
   pDoc->GetDocProvider()->GotoURL(pDoc, CFX_WideStringC(wsURLContent), FALSE);
   return TRUE;
 }
-FX_DWORD CXFA_FFText::OnHitTest(FX_FLOAT fx, FX_FLOAT fy) {
+uint32_t CXFA_FFText::OnHitTest(FX_FLOAT fx, FX_FLOAT fy) {
   CFX_RectF rtBox;
   GetRectWithoutRotate(rtBox);
   if (!rtBox.Contains(fx, fy)) {

@@ -147,8 +147,8 @@ FWL_ERR IFWL_DateTimePicker::GetBBox(CFX_RectF& rect) {
 FWL_ERR IFWL_DateTimePicker::SetEditLimit(int32_t nLimit) {
   return static_cast<CFWL_DateTimePickerImp*>(GetImpl())->SetEditLimit(nLimit);
 }
-FWL_ERR IFWL_DateTimePicker::ModifyEditStylesEx(FX_DWORD dwStylesExAdded,
-                                                FX_DWORD dwStylesExRemoved) {
+FWL_ERR IFWL_DateTimePicker::ModifyEditStylesEx(uint32_t dwStylesExAdded,
+                                                uint32_t dwStylesExRemoved) {
   return static_cast<CFWL_DateTimePickerImp*>(GetImpl())
       ->ModifyEditStylesEx(dwStylesExAdded, dwStylesExRemoved);
 }
@@ -173,7 +173,7 @@ int32_t CFWL_DateTimeEditImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   if (m_pOwner->m_pWidgetMgr->IsFormDisabled()) {
     return DisForm_OnProcessMessage(pMessage);
   }
-  FX_DWORD dwHashCode = pMessage->GetClassID();
+  uint32_t dwHashCode = pMessage->GetClassID();
   if (dwHashCode == FWL_MSGHASH_SetFocus ||
       dwHashCode == FWL_MSGHASH_KillFocus) {
     IFWL_Widget* pOuter = m_pOwner->GetOuter();
@@ -184,7 +184,7 @@ int32_t CFWL_DateTimeEditImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
 }
 int32_t CFWL_DateTimeEditImpDelegate::DisForm_OnProcessMessage(
     CFWL_Message* pMessage) {
-  FX_DWORD dwHashCode = pMessage->GetClassID();
+  uint32_t dwHashCode = pMessage->GetClassID();
   if (m_pOwner->m_pWidgetMgr->IsFormDisabled()) {
     if (dwHashCode == FWL_MSGHASH_Mouse) {
       CFWL_MsgMouse* pMouse = static_cast<CFWL_MsgMouse*>(pMessage);
@@ -232,7 +232,7 @@ CFWL_DateTimeCalendarImpDelegate::CFWL_DateTimeCalendarImpDelegate(
 }
 int32_t CFWL_DateTimeCalendarImpDelegate::OnProcessMessage(
     CFWL_Message* pMessage) {
-  FX_DWORD dwCode = pMessage->GetClassID();
+  uint32_t dwCode = pMessage->GetClassID();
   if (dwCode == FWL_MSGHASH_SetFocus || dwCode == FWL_MSGHASH_KillFocus) {
     IFWL_Widget* pOuter = m_pOwner->GetOuter();
     IFWL_WidgetDelegate* pDelegate = pOuter->SetDelegate(NULL);
@@ -431,7 +431,7 @@ FWL_ERR CFWL_DateTimePickerImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_DateTimePicker;
   return FWL_ERR_Succeeded;
 }
-FX_DWORD CFWL_DateTimePickerImp::GetClassID() const {
+uint32_t CFWL_DateTimePickerImp::GetClassID() const {
   return FWL_CLASSHASH_DateTimePicker;
 }
 FWL_ERR CFWL_DateTimePickerImp::Initialize() {
@@ -531,7 +531,7 @@ FWL_ERR CFWL_DateTimePickerImp::Update() {
   m_pMonthCal->Update();
   return FWL_ERR_Succeeded;
 }
-FX_DWORD CFWL_DateTimePickerImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
+uint32_t CFWL_DateTimePickerImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   if (m_pWidgetMgr->IsFormDisabled()) {
     return DisForm_HitTest(fx, fy);
   }
@@ -675,8 +675,8 @@ FWL_ERR CFWL_DateTimePickerImp::GetBBox(CFX_RectF& rect) {
 FWL_ERR CFWL_DateTimePickerImp::SetEditLimit(int32_t nLimit) {
   return m_pEdit->SetLimit(nLimit);
 }
-FWL_ERR CFWL_DateTimePickerImp::ModifyEditStylesEx(FX_DWORD dwStylesExAdded,
-                                                   FX_DWORD dwStylesExRemoved) {
+FWL_ERR CFWL_DateTimePickerImp::ModifyEditStylesEx(uint32_t dwStylesExAdded,
+                                                   uint32_t dwStylesExRemoved) {
   return m_pEdit->ModifyStylesEx(dwStylesExAdded, dwStylesExRemoved);
 }
 void CFWL_DateTimePickerImp::DrawDropDownButton(CFX_Graphics* pGraphics,
@@ -755,8 +755,8 @@ FX_BOOL CFWL_DateTimePickerImp::IsMonthCalendarShowed() {
 void CFWL_DateTimePickerImp::ReSetEditAlignment() {
   if (!m_pEdit)
     return;
-  FX_DWORD dwStylExes = m_pProperties->m_dwStyleExes;
-  FX_DWORD dwAdd = 0;
+  uint32_t dwStylExes = m_pProperties->m_dwStyleExes;
+  uint32_t dwAdd = 0;
   switch (dwStylExes & FWL_STYLEEXT_DTP_EditHAlignMask) {
     case FWL_STYLEEXT_DTP_EditHCenter: {
       dwAdd |= FWL_STYLEEXT_EDT_HCenter;
@@ -901,7 +901,7 @@ void CFWL_DateTimePickerImp::DisForm_ShowMonthCalendar(FX_BOOL bActivate) {
   rtInvalidate.Inflate(2, 2);
   Repaint(&rtInvalidate);
 }
-FX_DWORD CFWL_DateTimePickerImp::DisForm_HitTest(FX_FLOAT fx, FX_FLOAT fy) {
+uint32_t CFWL_DateTimePickerImp::DisForm_HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   CFX_RectF rect;
   rect.Set(0, 0, m_pProperties->m_rtWidget.width,
            m_pProperties->m_rtWidget.height);
@@ -1018,7 +1018,7 @@ int32_t CFWL_DateTimePickerImpDelegate::OnProcessMessage(
     CFWL_Message* pMessage) {
   if (!pMessage)
     return 0;
-  FX_DWORD dwMsgCode = pMessage->GetClassID();
+  uint32_t dwMsgCode = pMessage->GetClassID();
   switch (dwMsgCode) {
     case FWL_MSGHASH_SetFocus:
     case FWL_MSGHASH_KillFocus: {
@@ -1027,7 +1027,7 @@ int32_t CFWL_DateTimePickerImpDelegate::OnProcessMessage(
     }
     case FWL_MSGHASH_Mouse: {
       CFWL_MsgMouse* pMouse = static_cast<CFWL_MsgMouse*>(pMessage);
-      FX_DWORD dwCmd = pMouse->m_dwCmd;
+      uint32_t dwCmd = pMouse->m_dwCmd;
       switch (dwCmd) {
         case FWL_MSGMOUSECMD_LButtonDown: {
           OnLButtonDown(pMouse);

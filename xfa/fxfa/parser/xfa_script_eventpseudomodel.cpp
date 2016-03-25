@@ -53,7 +53,7 @@ void Script_EventPseudoModel_BooleanProperty(FXJSE_HVALUE hValue,
 }
 void CScript_EventPseudoModel::Script_EventPseudoModel_Property(
     FXJSE_HVALUE hValue,
-    FX_DWORD dwFlag,
+    uint32_t dwFlag,
     FX_BOOL bSetting) {
   IXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
   if (!pScriptContext) {

@@ -27,8 +27,8 @@ CFWL_PushButtonTP::~CFWL_PushButtonTP() {
 FX_BOOL CFWL_PushButtonTP::IsValidWidget(IFWL_Widget* pWidget) {
   return pWidget->GetClassID() == FWL_CLASSHASH_PushButton;
 }
-FX_DWORD CFWL_PushButtonTP::SetThemeID(IFWL_Widget* pWidget,
-                                       FX_DWORD dwThemeID,
+uint32_t CFWL_PushButtonTP::SetThemeID(IFWL_Widget* pWidget,
+                                       uint32_t dwThemeID,
                                        FX_BOOL bChildren) {
   SetThemeData(FWL_GetThemeColor(dwThemeID));
   return CFWL_WidgetTP::SetThemeID(pWidget, dwThemeID, bChildren);
@@ -96,7 +96,7 @@ FX_BOOL CFWL_PushButtonTP::DrawBackground(CFWL_ThemeBackground* pParams) {
   return TRUE;
 }
 void* CFWL_PushButtonTP::GetCapacity(CFWL_ThemePart* pThemePart,
-                                     FX_DWORD dwCapacity) {
+                                     uint32_t dwCapacity) {
   if (dwCapacity == FWL_WGTCAPACITY_PSB_Margin) {
     m_fValue = 0;
     return &m_fValue;
@@ -111,7 +111,7 @@ FWL_ERR CFWL_PushButtonTP::Finalize() {
   FinalizeTTO();
   return CFWL_WidgetTP::Finalize();
 }
-void CFWL_PushButtonTP::SetThemeData(FX_DWORD dwID) {
+void CFWL_PushButtonTP::SetThemeData(uint32_t dwID) {
   if (dwID) {
     m_pThemeData->clrBorder[0] = ArgbEncode(255, 55, 98, 6);
     m_pThemeData->clrBorder[1] = ArgbEncode(255, 55, 98, 6);
@@ -156,6 +156,6 @@ void CFWL_PushButtonTP::SetThemeData(FX_DWORD dwID) {
     m_pThemeData->clrFill[4] = ArgbEncode(255, 245, 244, 234);
   }
 }
-int32_t CFWL_PushButtonTP::GetColorID(FX_DWORD dwStates) {
+int32_t CFWL_PushButtonTP::GetColorID(uint32_t dwStates) {
   return dwStates &= FWL_PARTSTATE_PSB_Mask;
 }

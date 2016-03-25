@@ -41,7 +41,7 @@ int32_t CXFA_RenderContext::StartRender(IXFA_PageView* pPageView,
   m_rtClipRect.Set(rtPage.left, rtPage.top, rtPage.width, rtPage.height);
   mtRes.TransformRect(m_rtClipRect);
   m_dwStatus = m_options.m_bHighlight ? XFA_WIDGETSTATUS_Highlight : 0;
-  FX_DWORD dwFilterType = XFA_WIDGETFILTER_Visible | XFA_WIDGETFILTER_AllType |
+  uint32_t dwFilterType = XFA_WIDGETFILTER_Visible | XFA_WIDGETFILTER_AllType |
                           (m_options.m_bPrint ? XFA_WIDGETSTATUS_Printable
                                               : XFA_WIDGETSTATUS_Viewable);
   m_pWidgetIterator =

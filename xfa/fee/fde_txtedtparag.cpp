@@ -44,7 +44,7 @@ void CFDE_TxtEdtParag::LoadParag() {
   int32_t nEndIndex = m_nCharStart + m_nCharCount;
   CFX_ArrayTemplate<int32_t> LineBaseArr;
   FX_BOOL bReload = FALSE;
-  FX_DWORD dwBreakStatus = FX_TXTBREAK_None;
+  uint32_t dwBreakStatus = FX_TXTBREAK_None;
   do {
     if (bReload) {
       dwBreakStatus = pTxtBreak->EndBreak(FX_TXTBREAK_ParagraphBreak);
@@ -105,7 +105,7 @@ void CFDE_TxtEdtParag::CalcLines() {
   IFDE_TxtEdtBuf* pTxtBuf = m_pEngine->GetTextBuf();
   IFX_CharIter* pIter = new CFDE_TxtEdtBufIter((CFDE_TxtEdtBuf*)pTxtBuf);
   int32_t nCount = 0;
-  FX_DWORD dwBreakStatus = FX_TXTBREAK_None;
+  uint32_t dwBreakStatus = FX_TXTBREAK_None;
   int32_t nEndIndex = m_nCharStart + m_nCharCount;
   pIter->SetAt(m_nCharStart);
   FX_BOOL bReload = FALSE;

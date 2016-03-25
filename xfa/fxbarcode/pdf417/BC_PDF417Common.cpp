@@ -620,22 +620,22 @@ int32_t CBC_PDF417Common::getBitCountSum(CFX_Int32Array& moduleBitCount) {
   }
   return bitCountSum;
 }
-int32_t CBC_PDF417Common::getCodeword(FX_DWORD symbol) {
-  FX_DWORD sym = symbol & 0x3FFFF;
+int32_t CBC_PDF417Common::getCodeword(uint32_t symbol) {
+  uint32_t sym = symbol & 0x3FFFF;
   int32_t i = findCodewordIndex(sym);
   if (i == -1) {
     return -1;
   }
   return (CODEWORD_TABLE[i] - 1) % NUMBER_OF_CODEWORDS;
 }
-int32_t CBC_PDF417Common::findCodewordIndex(FX_DWORD symbol) {
+int32_t CBC_PDF417Common::findCodewordIndex(uint32_t symbol) {
   int32_t first = 0;
   int32_t upto = sizeof(SYMBOL_TABLE) / sizeof(SYMBOL_TABLE[0]);
   while (first < upto) {
-    int32_t mid = ((FX_DWORD)(first + upto)) >> 1;
-    if (symbol < (FX_DWORD)SYMBOL_TABLE[mid]) {
+    int32_t mid = ((uint32_t)(first + upto)) >> 1;
+    if (symbol < (uint32_t)SYMBOL_TABLE[mid]) {
       upto = mid;
-    } else if (symbol > (FX_DWORD)SYMBOL_TABLE[mid]) {
+    } else if (symbol > (uint32_t)SYMBOL_TABLE[mid]) {
       first = mid + 1;
     } else {
       return mid;

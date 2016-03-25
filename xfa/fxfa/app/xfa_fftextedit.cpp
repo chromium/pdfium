@@ -56,8 +56,8 @@ void CXFA_FFTextEdit::UpdateWidgetProperty() {
   if (!pWidget) {
     return;
   }
-  FX_DWORD dwStyle = 0;
-  FX_DWORD dwExtendedStyle = FWL_STYLEEXT_EDT_ShowScrollbarFocus |
+  uint32_t dwStyle = 0;
+  uint32_t dwExtendedStyle = FWL_STYLEEXT_EDT_ShowScrollbarFocus |
                              FWL_STYLEEXT_EDT_OuterScrollbar |
                              FWL_STYLEEXT_EDT_LastLineHeight;
   dwExtendedStyle |= UpdateUIProperty();
@@ -94,7 +94,7 @@ void CXFA_FFTextEdit::UpdateWidgetProperty() {
   m_pNormalWidget->ModifyStyles(dwStyle, 0xFFFFFFFF);
   m_pNormalWidget->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
 }
-FX_BOOL CXFA_FFTextEdit::OnLButtonDown(FX_DWORD dwFlags,
+FX_BOOL CXFA_FFTextEdit::OnLButtonDown(uint32_t dwFlags,
                                        FX_FLOAT fx,
                                        FX_FLOAT fy) {
   if (!PtInActiveRect(fx, fy)) {
@@ -116,7 +116,7 @@ FX_BOOL CXFA_FFTextEdit::OnLButtonDown(FX_DWORD dwFlags,
   TranslateFWLMessage(&ms);
   return TRUE;
 }
-FX_BOOL CXFA_FFTextEdit::OnRButtonDown(FX_DWORD dwFlags,
+FX_BOOL CXFA_FFTextEdit::OnRButtonDown(uint32_t dwFlags,
                                        FX_FLOAT fx,
                                        FX_FLOAT fy) {
   if (m_pDataAcc->GetAccess() != XFA_ATTRIBUTEENUM_Open) {
@@ -140,7 +140,7 @@ FX_BOOL CXFA_FFTextEdit::OnRButtonDown(FX_DWORD dwFlags,
   TranslateFWLMessage(&ms);
   return TRUE;
 }
-FX_BOOL CXFA_FFTextEdit::OnRButtonUp(FX_DWORD dwFlags,
+FX_BOOL CXFA_FFTextEdit::OnRButtonUp(uint32_t dwFlags,
                                      FX_FLOAT fx,
                                      FX_FLOAT fy) {
   if (!CXFA_FFField::OnRButtonUp(dwFlags, fx, fy))
@@ -208,8 +208,8 @@ void CXFA_FFTextEdit::ValidateNumberField(const CFX_WideString& wsText) {
 FX_BOOL CXFA_FFTextEdit::IsDataChanged() {
   return (m_dwStatus & XFA_WIDGETSTATUS_TextEditValueChanged) != 0;
 }
-FX_DWORD CXFA_FFTextEdit::GetAlignment() {
-  FX_DWORD dwExtendedStyle = 0;
+uint32_t CXFA_FFTextEdit::GetAlignment() {
+  uint32_t dwExtendedStyle = 0;
   if (CXFA_Para para = m_pDataAcc->GetPara()) {
     int32_t iHorz = para.GetHorizontalAlign();
     switch (iHorz) {
@@ -405,7 +405,7 @@ int32_t CXFA_FFTextEdit::OnProcessMessage(CFWL_Message* pMessage) {
 }
 FWL_ERR CXFA_FFTextEdit::OnProcessEvent(CFWL_Event* pEvent) {
   CXFA_FFField::OnProcessEvent(pEvent);
-  FX_DWORD dwEventID = pEvent->GetClassID();
+  uint32_t dwEventID = pEvent->GetClassID();
   switch (dwEventID) {
     case FWL_EVTHASH_EDT_TextChanged: {
       CFWL_EvtEdtTextChanged* event = (CFWL_EvtEdtTextChanged*)pEvent;
@@ -463,7 +463,7 @@ void CXFA_FFNumericEdit::UpdateWidgetProperty() {
   if (!pWidget) {
     return;
   }
-  FX_DWORD dwExtendedStyle =
+  uint32_t dwExtendedStyle =
       FWL_STYLEEXT_EDT_ShowScrollbarFocus | FWL_STYLEEXT_EDT_OuterScrollbar |
       FWL_STYLEEXT_EDT_Validate | FWL_STYLEEXT_EDT_Number |
       FWL_STYLEEXT_EDT_LastLineHeight;
@@ -484,7 +484,7 @@ void CXFA_FFNumericEdit::UpdateWidgetProperty() {
   m_pNormalWidget->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
 }
 FWL_ERR CXFA_FFNumericEdit::OnProcessEvent(CFWL_Event* pEvent) {
-  FX_DWORD dwEventID = pEvent->GetClassID();
+  uint32_t dwEventID = pEvent->GetClassID();
   if (dwEventID == FWL_EVTHASH_EDT_Validate) {
     CFWL_EvtEdtValidate* event = (CFWL_EvtEdtValidate*)pEvent;
     CFX_WideString wsChange = event->wsInsert;
@@ -537,7 +537,7 @@ void CXFA_FFPasswordEdit::UpdateWidgetProperty() {
   if (!pWidget) {
     return;
   }
-  FX_DWORD dwExtendedStyle =
+  uint32_t dwExtendedStyle =
       FWL_STYLEEXT_EDT_ShowScrollbarFocus | FWL_STYLEEXT_EDT_OuterScrollbar |
       FWL_STYLEEXT_EDT_Password | FWL_STYLEEXT_EDT_LastLineHeight;
   dwExtendedStyle |= UpdateUIProperty();
@@ -563,7 +563,7 @@ CXFA_FFDateTimeEdit::CXFA_FFDateTimeEdit(CXFA_FFPageView* pPageView,
 CXFA_FFDateTimeEdit::~CXFA_FFDateTimeEdit() {}
 
 FX_BOOL CXFA_FFDateTimeEdit::GetBBox(CFX_RectF& rtBox,
-                                     FX_DWORD dwStatus,
+                                     uint32_t dwStatus,
                                      FX_BOOL bDrawFocus) {
   if (bDrawFocus)
     return FALSE;
@@ -618,11 +618,11 @@ void CXFA_FFDateTimeEdit::UpdateWidgetProperty() {
   if (!pWidget) {
     return;
   }
-  FX_DWORD dwExtendedStyle = FWL_STYLEEXT_DTP_ShortDateFormat;
+  uint32_t dwExtendedStyle = FWL_STYLEEXT_DTP_ShortDateFormat;
   dwExtendedStyle |= UpdateUIProperty();
   dwExtendedStyle |= GetAlignment();
   m_pNormalWidget->ModifyStylesEx(dwExtendedStyle, 0xFFFFFFFF);
-  FX_DWORD dwEditStyles = FWL_STYLEEXT_EDT_LastLineHeight;
+  uint32_t dwEditStyles = FWL_STYLEEXT_EDT_LastLineHeight;
   int32_t iNumCells = m_pDataAcc->GetNumberOfCells();
   if (iNumCells > 0) {
     dwEditStyles |= FWL_STYLEEXT_EDT_CombText;
@@ -637,8 +637,8 @@ void CXFA_FFDateTimeEdit::UpdateWidgetProperty() {
   }
   pWidget->ModifyEditStylesEx(dwEditStyles, 0xFFFFFFFF);
 }
-FX_DWORD CXFA_FFDateTimeEdit::GetAlignment() {
-  FX_DWORD dwExtendedStyle = 0;
+uint32_t CXFA_FFDateTimeEdit::GetAlignment() {
+  uint32_t dwExtendedStyle = 0;
   if (CXFA_Para para = m_pDataAcc->GetPara()) {
     int32_t iHorz = para.GetHorizontalAlign();
     switch (iHorz) {
@@ -786,7 +786,7 @@ void CXFA_FFDateTimeEdit::OnSelectChanged(IFWL_Widget* pWidget,
   m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Change, &eParam);
 }
 FWL_ERR CXFA_FFDateTimeEdit::OnProcessEvent(CFWL_Event* pEvent) {
-  FX_DWORD dwEventID = pEvent->GetClassID();
+  uint32_t dwEventID = pEvent->GetClassID();
   if (dwEventID == FWL_EVTHASH_DTP_SelectChanged) {
     CFWL_Event_DtpSelectChanged* event = (CFWL_Event_DtpSelectChanged*)pEvent;
     OnSelectChanged(m_pNormalWidget->GetWidget(), event->iYear, event->iMonth,

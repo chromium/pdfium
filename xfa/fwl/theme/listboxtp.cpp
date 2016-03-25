@@ -53,7 +53,7 @@ FX_BOOL CFWL_ListBoxTP::DrawBackground(CFWL_ThemeBackground* pParams) {
       break;
     }
     case FWL_PART_LTB_Check: {
-      FX_DWORD color = 0xFF000000;
+      uint32_t color = 0xFF000000;
       if (pParams->m_dwStates == FWL_PARTSTATE_LTB_Checked) {
         color = 0xFFFF0000;
       } else if (pParams->m_dwStates == FWL_PARTSTATE_LTB_UnChecked) {
@@ -75,7 +75,7 @@ FWL_ERR CFWL_ListBoxTP::Finalize() {
   return CFWL_WidgetTP::Finalize();
 }
 void CFWL_ListBoxTP::DrawListBoxItem(CFX_Graphics* pGraphics,
-                                     FX_DWORD dwStates,
+                                     uint32_t dwStates,
                                      const CFX_RectF* prtItem,
                                      void* pData,
                                      CFX_Matrix* pMatrix) {

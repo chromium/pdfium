@@ -85,9 +85,9 @@ FDE_CSSTEXTEMPHASISMARK CFDE_CSSComputedStyle::GetTextEmphasisMark() const {
 }
 FDE_CSSRuleData::FDE_CSSRuleData(IFDE_CSSSelector* pSel,
                                  IFDE_CSSDeclaration* pDecl,
-                                 FX_DWORD dwPos)
+                                 uint32_t dwPos)
     : pSelector(pSel), pDeclaration(pDecl), dwPriority(dwPos), pNext(NULL) {
-  static const FX_DWORD s_Specific[5] = {0x00010000, 0x00010000, 0x00100000,
+  static const uint32_t s_Specific[5] = {0x00010000, 0x00010000, 0x00100000,
                                          0x00100000, 0x01000000};
   for (; pSel != NULL; pSel = pSel->GetNextSelector()) {
     FDE_CSSSELECTORTYPE eType = pSel->GetType();
@@ -106,12 +106,12 @@ void CFDE_CSSRuleCollection::Clear() {
   m_iSelectors = 0;
 }
 void CFDE_CSSRuleCollection::AddRulesFrom(const CFDE_CSSStyleSheetArray& sheets,
-                                          FX_DWORD dwMediaList,
+                                          uint32_t dwMediaList,
                                           IFX_FontMgr* pFontMgr) {
   int32_t iSheets = sheets.GetSize();
   for (int32_t i = 0; i < iSheets; ++i) {
     IFDE_CSSStyleSheet* pSheet = sheets.GetAt(i);
-    if (FX_DWORD dwMatchMedia = pSheet->GetMediaList() & dwMediaList) {
+    if (uint32_t dwMatchMedia = pSheet->GetMediaList() & dwMediaList) {
       int32_t iRules = pSheet->CountRules();
       for (int32_t j = 0; j < iRules; j++) {
         AddRulesFrom(pSheet, pSheet->GetRule(j), dwMatchMedia, pFontMgr);
@@ -121,7 +121,7 @@ void CFDE_CSSRuleCollection::AddRulesFrom(const CFDE_CSSStyleSheetArray& sheets,
 }
 void CFDE_CSSRuleCollection::AddRulesFrom(IFDE_CSSStyleSheet* pStyleSheet,
                                           IFDE_CSSRule* pRule,
-                                          FX_DWORD dwMediaList,
+                                          uint32_t dwMediaList,
                                           IFX_FontMgr* pFontMgr) {
   switch (pRule->GetType()) {
     case FDE_CSSRULETYPE_Style: {
@@ -179,7 +179,7 @@ void CFDE_CSSRuleCollection::AddRulesFrom(IFDE_CSSStyleSheet* pStyleSheet,
   }
 }
 void CFDE_CSSRuleCollection::AddRuleTo(CFX_MapPtrToPtr& map,
-                                       FX_DWORD dwKey,
+                                       uint32_t dwKey,
                                        IFDE_CSSSelector* pSel,
                                        IFDE_CSSDeclaration* pDecl) {
   void* pKey = (void*)(uintptr_t)dwKey;
@@ -298,7 +298,7 @@ void CFDE_CSSStyleSelector::SetStylePriority(
     FDE_CSSSTYLESHEETPRIORITY ePriority) {
   m_ePriorities[ePriority] = eType;
 }
-void CFDE_CSSStyleSelector::UpdateStyleIndex(FX_DWORD dwMediaList) {
+void CFDE_CSSStyleSelector::UpdateStyleIndex(uint32_t dwMediaList) {
   Reset();
   m_pRuleDataStore = FX_CreateAllocator(FX_ALLOCTYPE_Static, 1024, 0);
   FXSYS_assert(m_pRuleDataStore != NULL);
@@ -372,7 +372,7 @@ void CFDE_CSSStyleSelector::MatchRules(FDE_CSSTagCache* pCache,
 FX_BOOL CFDE_CSSStyleSelector::MatchSelector(FDE_CSSTagCache* pCache,
                                              IFDE_CSSSelector* pSel,
                                              FDE_CSSPERSUDO ePersudoType) {
-  FX_DWORD dwHash;
+  uint32_t dwHash;
   while (pSel != NULL && pCache != NULL) {
     switch (pSel->GetType()) {
       case FDE_CSSSELECTORTYPE_Descendant:
@@ -433,14 +433,14 @@ void CFDE_CSSStyleSelector::ComputeStyle(
     }
     CFDE_CSSDeclaration* pDecl = NULL;
     CFX_WideStringC wsAttri, wsValue;
-    FX_DWORD dwAttriHash;
+    uint32_t dwAttriHash;
     do {
       pTag->GetNextAttribute(pos, wsAttri, wsValue);
       dwAttriHash =
           FX_HashCode_String_GetW(wsAttri.GetPtr(), wsAttri.GetLength(), TRUE);
-      static const FX_DWORD s_dwStyleHash =
+      static const uint32_t s_dwStyleHash =
           FX_HashCode_String_GetW(L"style", 5, TRUE);
-      static const FX_DWORD s_dwAlignHash =
+      static const uint32_t s_dwAlignHash =
           FX_HashCode_String_GetW(L"align", 5, TRUE);
       if (dwAttriHash == s_dwStyleHash) {
         if (pDecl == NULL) {
@@ -1743,8 +1743,8 @@ FDE_CSSWHITESPACE CFDE_CSSStyleSelector::ToWhiteSpace(
       return FDE_CSSWHITESPACE_Normal;
   }
 }
-FX_DWORD CFDE_CSSStyleSelector::ToTextDecoration(IFDE_CSSValueList* pValue) {
-  FX_DWORD dwDecoration = 0;
+uint32_t CFDE_CSSStyleSelector::ToTextDecoration(IFDE_CSSValueList* pValue) {
+  uint32_t dwDecoration = 0;
   for (int32_t i = pValue->CountValues() - 1; i >= 0; --i) {
     IFDE_CSSPrimitiveValue* pPrimitive =
         (IFDE_CSSPrimitiveValue*)pValue->GetValue(i);

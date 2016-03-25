@@ -161,7 +161,7 @@ FWL_ERR CFWL_Edit::SetNumberRange(int32_t iMin, int32_t iMax) {
   }
   return static_cast<IFWL_Edit*>(m_pIface)->SetNumberRange(iMin, iMax);
 }
-FWL_ERR CFWL_Edit::SetBackColor(FX_DWORD dwColor) {
+FWL_ERR CFWL_Edit::SetBackColor(uint32_t dwColor) {
   if (!m_pIface)
     return FWL_ERR_Indefinite;
   return static_cast<IFWL_Edit*>(m_pIface)->SetBackColor(dwColor);

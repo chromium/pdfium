@@ -25,12 +25,12 @@ IXFA_PageView* CXFA_FFWidgetHandler::GetPageView(IXFA_Widget* hWidget) {
 void CXFA_FFWidgetHandler::GetRect(IXFA_Widget* hWidget, CFX_RectF& rt) {
   static_cast<CXFA_FFWidget*>(hWidget)->GetWidgetRect(rt);
 }
-FX_DWORD CXFA_FFWidgetHandler::GetStatus(IXFA_Widget* hWidget) {
+uint32_t CXFA_FFWidgetHandler::GetStatus(IXFA_Widget* hWidget) {
   return static_cast<CXFA_FFWidget*>(hWidget)->GetStatus();
 }
 FX_BOOL CXFA_FFWidgetHandler::GetBBox(IXFA_Widget* hWidget,
                                       CFX_RectF& rtBox,
-                                      FX_DWORD dwStatus,
+                                      uint32_t dwStatus,
                                       FX_BOOL bDrawFocus) {
   return static_cast<CXFA_FFWidget*>(hWidget)
       ->GetBBox(rtBox, dwStatus, bDrawFocus);
@@ -74,7 +74,7 @@ FX_BOOL CXFA_FFWidgetHandler::OnMouseExit(IXFA_Widget* hWidget) {
   return bRet;
 }
 FX_BOOL CXFA_FFWidgetHandler::OnLButtonDown(IXFA_Widget* hWidget,
-                                            FX_DWORD dwFlags,
+                                            uint32_t dwFlags,
                                             FX_FLOAT fx,
                                             FX_FLOAT fy) {
   m_pDocView->LockUpdate();
@@ -91,7 +91,7 @@ FX_BOOL CXFA_FFWidgetHandler::OnLButtonDown(IXFA_Widget* hWidget,
   return bRet;
 }
 FX_BOOL CXFA_FFWidgetHandler::OnLButtonUp(IXFA_Widget* hWidget,
-                                          FX_DWORD dwFlags,
+                                          uint32_t dwFlags,
                                           FX_FLOAT fx,
                                           FX_FLOAT fy) {
   m_pDocView->LockUpdate();
@@ -104,7 +104,7 @@ FX_BOOL CXFA_FFWidgetHandler::OnLButtonUp(IXFA_Widget* hWidget,
   return bRet;
 }
 FX_BOOL CXFA_FFWidgetHandler::OnLButtonDblClk(IXFA_Widget* hWidget,
-                                              FX_DWORD dwFlags,
+                                              uint32_t dwFlags,
                                               FX_FLOAT fx,
                                               FX_FLOAT fy) {
   static_cast<CXFA_FFWidget*>(hWidget)->Rotate2Normal(fx, fy);
@@ -114,7 +114,7 @@ FX_BOOL CXFA_FFWidgetHandler::OnLButtonDblClk(IXFA_Widget* hWidget,
   return bRet;
 }
 FX_BOOL CXFA_FFWidgetHandler::OnMouseMove(IXFA_Widget* hWidget,
-                                          FX_DWORD dwFlags,
+                                          uint32_t dwFlags,
                                           FX_FLOAT fx,
                                           FX_FLOAT fy) {
   static_cast<CXFA_FFWidget*>(hWidget)->Rotate2Normal(fx, fy);
@@ -124,7 +124,7 @@ FX_BOOL CXFA_FFWidgetHandler::OnMouseMove(IXFA_Widget* hWidget,
   return bRet;
 }
 FX_BOOL CXFA_FFWidgetHandler::OnMouseWheel(IXFA_Widget* hWidget,
-                                           FX_DWORD dwFlags,
+                                           uint32_t dwFlags,
                                            int16_t zDelta,
                                            FX_FLOAT fx,
                                            FX_FLOAT fy) {
@@ -135,7 +135,7 @@ FX_BOOL CXFA_FFWidgetHandler::OnMouseWheel(IXFA_Widget* hWidget,
   return bRet;
 }
 FX_BOOL CXFA_FFWidgetHandler::OnRButtonDown(IXFA_Widget* hWidget,
-                                            FX_DWORD dwFlags,
+                                            uint32_t dwFlags,
                                             FX_FLOAT fx,
                                             FX_FLOAT fy) {
   static_cast<CXFA_FFWidget*>(hWidget)->Rotate2Normal(fx, fy);
@@ -150,7 +150,7 @@ FX_BOOL CXFA_FFWidgetHandler::OnRButtonDown(IXFA_Widget* hWidget,
   return bRet;
 }
 FX_BOOL CXFA_FFWidgetHandler::OnRButtonUp(IXFA_Widget* hWidget,
-                                          FX_DWORD dwFlags,
+                                          uint32_t dwFlags,
                                           FX_FLOAT fx,
                                           FX_FLOAT fy) {
   static_cast<CXFA_FFWidget*>(hWidget)->Rotate2Normal(fx, fy);
@@ -160,7 +160,7 @@ FX_BOOL CXFA_FFWidgetHandler::OnRButtonUp(IXFA_Widget* hWidget,
   return bRet;
 }
 FX_BOOL CXFA_FFWidgetHandler::OnRButtonDblClk(IXFA_Widget* hWidget,
-                                              FX_DWORD dwFlags,
+                                              uint32_t dwFlags,
                                               FX_FLOAT fx,
                                               FX_FLOAT fy) {
   static_cast<CXFA_FFWidget*>(hWidget)->Rotate2Normal(fx, fy);
@@ -170,8 +170,8 @@ FX_BOOL CXFA_FFWidgetHandler::OnRButtonDblClk(IXFA_Widget* hWidget,
   return bRet;
 }
 FX_BOOL CXFA_FFWidgetHandler::OnKeyDown(IXFA_Widget* hWidget,
-                                        FX_DWORD dwKeyCode,
-                                        FX_DWORD dwFlags) {
+                                        uint32_t dwKeyCode,
+                                        uint32_t dwFlags) {
   FX_BOOL bRet =
       static_cast<CXFA_FFWidget*>(hWidget)->OnKeyDown(dwKeyCode, dwFlags);
   m_pDocView->RunInvalidate();
@@ -179,21 +179,21 @@ FX_BOOL CXFA_FFWidgetHandler::OnKeyDown(IXFA_Widget* hWidget,
   return bRet;
 }
 FX_BOOL CXFA_FFWidgetHandler::OnKeyUp(IXFA_Widget* hWidget,
-                                      FX_DWORD dwKeyCode,
-                                      FX_DWORD dwFlags) {
+                                      uint32_t dwKeyCode,
+                                      uint32_t dwFlags) {
   FX_BOOL bRet =
       static_cast<CXFA_FFWidget*>(hWidget)->OnKeyUp(dwKeyCode, dwFlags);
   m_pDocView->RunInvalidate();
   return bRet;
 }
 FX_BOOL CXFA_FFWidgetHandler::OnChar(IXFA_Widget* hWidget,
-                                     FX_DWORD dwChar,
-                                     FX_DWORD dwFlags) {
+                                     uint32_t dwChar,
+                                     uint32_t dwFlags) {
   FX_BOOL bRet = static_cast<CXFA_FFWidget*>(hWidget)->OnChar(dwChar, dwFlags);
   m_pDocView->RunInvalidate();
   return bRet;
 }
-FX_DWORD CXFA_FFWidgetHandler::OnHitTest(IXFA_Widget* hWidget,
+uint32_t CXFA_FFWidgetHandler::OnHitTest(IXFA_Widget* hWidget,
                                          FX_FLOAT fx,
                                          FX_FLOAT fy) {
   if (!(static_cast<CXFA_FFWidget*>(hWidget)->GetStatus() &
@@ -534,7 +534,7 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateFontNode(CXFA_Node* pParent) const {
   return pFont;
 }
 CXFA_Node* CXFA_FFWidgetHandler::CreateMarginNode(CXFA_Node* pParent,
-                                                  FX_DWORD dwFlags,
+                                                  uint32_t dwFlags,
                                                   FX_FLOAT fInsets[4]) const {
   CXFA_Node* pMargin = CreateCopyNode(XFA_ELEMENT_Margin, pParent);
   if (dwFlags & 0x01) {

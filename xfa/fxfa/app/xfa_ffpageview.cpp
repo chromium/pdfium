@@ -76,7 +76,7 @@ IXFA_Widget* CXFA_FFPageView::GetWidgetByPos(FX_FLOAT fx, FX_FLOAT fy) {
     FX_FLOAT fWidgetx = fx;
     FX_FLOAT fWidgety = fy;
     pWidget->Rotate2Normal(fWidgetx, fWidgety);
-    FX_DWORD dwFlag = pWidget->OnHitTest(fWidgetx, fWidgety);
+    uint32_t dwFlag = pWidget->OnHitTest(fWidgetx, fWidgety);
     if ((FWL_WGTHITTEST_Client == dwFlag ||
          FWL_WGTHITTEST_HyperLink == dwFlag)) {
       break;
@@ -86,8 +86,8 @@ IXFA_Widget* CXFA_FFPageView::GetWidgetByPos(FX_FLOAT fx, FX_FLOAT fy) {
   return pWidget;
 }
 IXFA_WidgetIterator* CXFA_FFPageView::CreateWidgetIterator(
-    FX_DWORD dwTraverseWay,
-    FX_DWORD dwWidgetFilter) {
+    uint32_t dwTraverseWay,
+    uint32_t dwWidgetFilter) {
   switch (dwTraverseWay) {
     case XFA_TRAVERSEWAY_Tranvalse:
       return new CXFA_FFTabOrderPageWidgetIterator(this, dwWidgetFilter);
@@ -97,16 +97,16 @@ IXFA_WidgetIterator* CXFA_FFPageView::CreateWidgetIterator(
   return NULL;
 }
 static FX_BOOL XFA_PageWidgetFilter(CXFA_FFWidget* pWidget,
-                                    FX_DWORD dwFilter,
+                                    uint32_t dwFilter,
                                     FX_BOOL bTraversal,
                                     FX_BOOL bIgnorerelevant) {
   CXFA_WidgetAcc* pWidgetAcc = pWidget->GetDataAcc();
-  FX_DWORD dwType = dwFilter & XFA_WIDGETFILTER_AllType;
+  uint32_t dwType = dwFilter & XFA_WIDGETFILTER_AllType;
   if ((dwType == XFA_WIDGETFILTER_Field) &&
       (pWidgetAcc->GetClassID() != XFA_ELEMENT_Field)) {
     return FALSE;
   }
-  FX_DWORD dwStatus = pWidget->GetStatus();
+  uint32_t dwStatus = pWidget->GetStatus();
   if (bTraversal && (dwStatus & XFA_WIDGETSTATUS_Disabled)) {
     return FALSE;
   }
@@ -118,7 +118,7 @@ static FX_BOOL XFA_PageWidgetFilter(CXFA_FFWidget* pWidget,
   return (dwFilter & dwStatus) == dwFilter;
 }
 CXFA_FFPageWidgetIterator::CXFA_FFPageWidgetIterator(CXFA_FFPageView* pPageView,
-                                                     FX_DWORD dwFilter) {
+                                                     uint32_t dwFilter) {
   m_pPageView = pPageView;
   m_dwFilter = dwFilter;
   m_sIterator.Init(pPageView);
@@ -186,7 +186,7 @@ IXFA_Widget* CXFA_FFPageWidgetIterator::GetWidget(
 }
 CXFA_FFTabOrderPageWidgetIterator::CXFA_FFTabOrderPageWidgetIterator(
     CXFA_FFPageView* pPageView,
-    FX_DWORD dwFilter)
+    uint32_t dwFilter)
     : m_pPageView(pPageView), m_dwFilter(dwFilter), m_iCurWidget(-1) {
   m_bIgnorerelevant = ((CXFA_FFDoc*)m_pPageView->GetDocView()->GetDoc())
                           ->GetXFADoc()

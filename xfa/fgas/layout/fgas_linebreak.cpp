@@ -273,7 +273,7 @@ void FX_GetLineBreakPositions(const FX_WCHAR* pwsText,
   if (iLength < 2) {
     return;
   }
-  FX_DWORD dwCur, dwNext;
+  uint32_t dwCur, dwNext;
   FX_WCHAR wch;
   wch = *pwsText++;
   dwCur = kTextLayoutCodeProperties[(uint16_t)wch] & 0x003F;
@@ -298,7 +298,7 @@ void FX_GetLineBreakPositions(const FX_WCHAR* pwsText,
     return;
   }
   FX_LINEBREAKTYPE eType;
-  FX_DWORD dwCur, dwNext;
+  uint32_t dwCur, dwNext;
   FX_WCHAR wch;
   wch = *pwsText++;
   dwCur = kTextLayoutCodeProperties[(uint16_t)wch] & 0x003F;

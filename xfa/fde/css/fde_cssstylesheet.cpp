@@ -49,7 +49,7 @@ IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadFromStream(
     const CFX_WideString& szUrl,
     IFX_Stream* pStream,
     uint16_t wCodePage,
-    FX_DWORD dwMediaList) {
+    uint32_t dwMediaList) {
   CFDE_CSSStyleSheet* pStyleSheet = new CFDE_CSSStyleSheet(dwMediaList);
   if (!pStyleSheet->LoadFromStream(szUrl, pStream, wCodePage)) {
     pStyleSheet->Release();
@@ -62,7 +62,7 @@ IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadFromBuffer(
     const FX_WCHAR* pBuffer,
     int32_t iBufSize,
     uint16_t wCodePage,
-    FX_DWORD dwMediaList) {
+    uint32_t dwMediaList) {
   CFDE_CSSStyleSheet* pStyleSheet = new CFDE_CSSStyleSheet(dwMediaList);
   if (!pStyleSheet->LoadFromBuffer(szUrl, pBuffer, iBufSize, wCodePage)) {
     pStyleSheet->Release();
@@ -70,7 +70,7 @@ IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadFromBuffer(
   }
   return pStyleSheet;
 }
-CFDE_CSSStyleSheet::CFDE_CSSStyleSheet(FX_DWORD dwMediaList)
+CFDE_CSSStyleSheet::CFDE_CSSStyleSheet(uint32_t dwMediaList)
     : m_wCodePage(FX_CODEPAGE_UTF8),
       m_wRefCount(1),
       m_dwMediaList(dwMediaList),
@@ -106,11 +106,11 @@ void CFDE_CSSStyleSheet::Reset() {
     m_pAllocator = NULL;
   }
 }
-FX_DWORD CFDE_CSSStyleSheet::AddRef() {
+uint32_t CFDE_CSSStyleSheet::AddRef() {
   return ++m_wRefCount;
 }
-FX_DWORD CFDE_CSSStyleSheet::Release() {
-  FX_DWORD dwRefCount = --m_wRefCount;
+uint32_t CFDE_CSSStyleSheet::Release() {
+  uint32_t dwRefCount = --m_wRefCount;
   if (dwRefCount == 0) {
     delete this;
   }
@@ -188,7 +188,7 @@ FX_BOOL CFDE_CSSStyleSheet::LoadFromSyntax(IFDE_CSSSyntaxParser* pSyntax) {
 }
 FDE_CSSSYNTAXSTATUS CFDE_CSSStyleSheet::LoadMediaRule(
     IFDE_CSSSyntaxParser* pSyntax) {
-  FX_DWORD dwMediaList = 0;
+  uint32_t dwMediaList = 0;
   CFDE_CSSMediaRule* pMediaRule = NULL;
   for (;;) {
     switch (pSyntax->DoSyntaxParse()) {

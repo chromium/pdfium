@@ -1102,7 +1102,7 @@ CFDE_XMLDOMParser::~CFDE_XMLDOMParser() {
   m_ws2.Empty();
 }
 int32_t CFDE_XMLDOMParser::DoParser(IFX_Pause* pPause) {
-  FX_DWORD dwRet;
+  uint32_t dwRet;
   int32_t iCount = 0;
   while (TRUE) {
     dwRet = m_pParser->DoSyntaxParse();
@@ -1220,7 +1220,7 @@ CFDE_XMLSAXParser::~CFDE_XMLSAXParser() {
   m_ws2.Empty();
 }
 int32_t CFDE_XMLSAXParser::DoParser(IFX_Pause* pPause) {
-  FX_DWORD dwRet = 0;
+  uint32_t dwRet = 0;
   int32_t iCount = 0;
   while (TRUE) {
     dwRet = m_pParser->DoSyntaxParse();
@@ -1499,7 +1499,7 @@ void CFDE_XMLSyntaxParser::Init(IFX_Stream* pStream,
   m_iParsedBytes = m_iParsedChars = 0;
   m_iBufferChars = 0;
 }
-FX_DWORD CFDE_XMLSyntaxParser::DoSyntaxParse() {
+uint32_t CFDE_XMLSyntaxParser::DoSyntaxParse() {
   if (m_dwStatus == FDE_XMLSYNTAXSTATUS_Error ||
       m_dwStatus == FDE_XMLSYNTAXSTATUS_EOS) {
     return m_dwStatus;
@@ -1508,7 +1508,7 @@ FX_DWORD CFDE_XMLSyntaxParser::DoSyntaxParse() {
   int32_t iStreamLength = m_pStream->GetLength();
   int32_t iPos;
   FX_WCHAR ch;
-  FX_DWORD dwStatus = FDE_XMLSYNTAXSTATUS_None;
+  uint32_t dwStatus = FDE_XMLSYNTAXSTATUS_None;
   while (TRUE) {
     if (m_pStart >= m_pEnd) {
       if (m_bEOS || m_iCurrentPos >= iStreamLength) {
@@ -1814,7 +1814,7 @@ FX_DWORD CFDE_XMLSyntaxParser::DoSyntaxParse() {
               break;
             }
             m_SkipStack.Pop();
-            FX_DWORD* pDWord = m_SkipStack.GetTopElement();
+            uint32_t* pDWord = m_SkipStack.GetTopElement();
             if (pDWord == NULL) {
               m_dwMode = FDE_XMLSYNTAXMODE_Text;
             } else {
@@ -1845,7 +1845,7 @@ FX_DWORD CFDE_XMLSyntaxParser::DoSyntaxParse() {
               default:
                 if (ch == m_SkipChar) {
                   m_SkipStack.Pop();
-                  FX_DWORD* pDWord = m_SkipStack.GetTopElement();
+                  uint32_t* pDWord = m_SkipStack.GetTopElement();
                   if (pDWord == NULL) {
                     if (m_iDataLength >= 9) {
                       CFX_WideString wsHeader;
@@ -1993,20 +1993,20 @@ int32_t CFDE_XMLSyntaxParser::GetStatus() const {
   return m_iParsedBytes * 100 / iStreamLength;
 }
 static int32_t FX_GetUTF8EncodeLength(const FX_WCHAR* pSrc, int32_t iSrcLen) {
-  FX_DWORD unicode = 0;
+  uint32_t unicode = 0;
   int32_t iDstNum = 0;
   while (iSrcLen-- > 0) {
     unicode = *pSrc++;
     int nbytes = 0;
-    if ((FX_DWORD)unicode < 0x80) {
+    if ((uint32_t)unicode < 0x80) {
       nbytes = 1;
-    } else if ((FX_DWORD)unicode < 0x800) {
+    } else if ((uint32_t)unicode < 0x800) {
       nbytes = 2;
-    } else if ((FX_DWORD)unicode < 0x10000) {
+    } else if ((uint32_t)unicode < 0x10000) {
       nbytes = 3;
-    } else if ((FX_DWORD)unicode < 0x200000) {
+    } else if ((uint32_t)unicode < 0x200000) {
       nbytes = 4;
-    } else if ((FX_DWORD)unicode < 0x4000000) {
+    } else if ((uint32_t)unicode < 0x4000000) {
       nbytes = 5;
     } else {
       nbytes = 6;

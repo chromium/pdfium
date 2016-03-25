@@ -174,7 +174,7 @@ FWL_HLISTITEM CFWL_ListBox::GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
   }
   return NULL;
 }
-FX_DWORD CFWL_ListBox::GetItemStates(FWL_HLISTITEM hItem) {
+uint32_t CFWL_ListBox::GetItemStates(FWL_HLISTITEM hItem) {
   if (!hItem)
     return 0;
   CFWL_ListItem* pItem = reinterpret_cast<CFWL_ListItem*>(hItem);
@@ -216,7 +216,7 @@ FX_BOOL CFWL_ListBox::CFWL_ListBoxDP::SetItemIndex(IFWL_Widget* pWidget,
   m_ItemArray[nIndex].reset(reinterpret_cast<CFWL_ListItem*>(hItem));
   return TRUE;
 }
-FX_DWORD CFWL_ListBox::CFWL_ListBoxDP::GetItemStyles(IFWL_Widget* pWidget,
+uint32_t CFWL_ListBox::CFWL_ListBoxDP::GetItemStyles(IFWL_Widget* pWidget,
                                                      FWL_HLISTITEM hItem) {
   if (!hItem)
     return -1;
@@ -248,7 +248,7 @@ void* CFWL_ListBox::CFWL_ListBoxDP::GetItemData(IFWL_Widget* pWidget,
 }
 FWL_ERR CFWL_ListBox::CFWL_ListBoxDP::SetItemStyles(IFWL_Widget* pWidget,
                                                     FWL_HLISTITEM hItem,
-                                                    FX_DWORD dwStyle) {
+                                                    uint32_t dwStyle) {
   if (!hItem)
     return FWL_ERR_Indefinite;
   reinterpret_cast<CFWL_ListItem*>(hItem)->m_dwStates = dwStyle;
@@ -290,13 +290,13 @@ FWL_ERR CFWL_ListBox::CFWL_ListBoxDP::SetItemCheckRect(
   reinterpret_cast<CFWL_ListItem*>(hItem)->m_rtCheckBox = rtCheck;
   return FWL_ERR_Succeeded;
 }
-FX_DWORD CFWL_ListBox::CFWL_ListBoxDP::GetItemCheckState(IFWL_Widget* pWidget,
+uint32_t CFWL_ListBox::CFWL_ListBoxDP::GetItemCheckState(IFWL_Widget* pWidget,
                                                          FWL_HLISTITEM hItem) {
   return reinterpret_cast<CFWL_ListItem*>(hItem)->m_dwCheckState;
 }
 FWL_ERR CFWL_ListBox::CFWL_ListBoxDP::SetItemCheckState(IFWL_Widget* pWidget,
                                                         FWL_HLISTITEM hItem,
-                                                        FX_DWORD dwCheckState) {
+                                                        uint32_t dwCheckState) {
   reinterpret_cast<CFWL_ListItem*>(hItem)->m_dwCheckState = dwCheckState;
   return FWL_ERR_Succeeded;
 }

@@ -664,7 +664,7 @@ FX_BOOL CFWL_WidgetMgr::IsAbleNative(IFWL_Widget* pWidget) {
   if (!pWidget->IsInstance(FX_WSTRC(FWL_CLASS_Form))) {
     return FALSE;
   }
-  FX_DWORD dwStyles = pWidget->GetStyles();
+  uint32_t dwStyles = pWidget->GetStyles();
   return ((dwStyles & FWL_WGTSTYLE_WindowTypeMask) ==
           FWL_WGTSTYLE_OverLapper) ||
          (dwStyles & FWL_WGTSTYLE_Popup);
@@ -686,7 +686,7 @@ FX_BOOL CFWL_WidgetMgr::GetAdapterPopupPos(IFWL_Widget* pWidget,
 }
 CFWL_WidgetMgrDelegate::CFWL_WidgetMgrDelegate(CFWL_WidgetMgr* pWidgetMgr)
     : m_pWidgetMgr(pWidgetMgr) {}
-FWL_ERR CFWL_WidgetMgrDelegate::OnSetCapability(FX_DWORD dwCapability) {
+FWL_ERR CFWL_WidgetMgrDelegate::OnSetCapability(uint32_t dwCapability) {
   m_pWidgetMgr->m_dwCapability = dwCapability;
   return FWL_ERR_Succeeded;
 }

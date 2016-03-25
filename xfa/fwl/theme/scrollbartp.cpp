@@ -31,15 +31,15 @@ FX_BOOL CFWL_ScrollBarTP::IsValidWidget(IFWL_Widget* pWidget) {
   return pWidget->GetClassID() == FWL_CLASSHASH_ScrollBar;
 }
 void* CFWL_ScrollBarTP::GetCapacity(CFWL_ThemePart* pThemePart,
-                                    FX_DWORD dwCapacity) {
+                                    uint32_t dwCapacity) {
   if (dwCapacity == FWL_CAPACITY_SCB_Size) {
     m_fValue = 5;
     return &m_fValue;
   }
   return CFWL_WidgetTP::GetCapacity(pThemePart, dwCapacity);
 }
-FX_DWORD CFWL_ScrollBarTP::SetThemeID(IFWL_Widget* pWidget,
-                                      FX_DWORD dwThemeID,
+uint32_t CFWL_ScrollBarTP::SetThemeID(IFWL_Widget* pWidget,
+                                      uint32_t dwThemeID,
                                       FX_BOOL bChildren) {
   if (m_pThemeData) {
     SetThemeData(FWL_GetThemeColor(dwThemeID));
@@ -335,7 +335,7 @@ void CFWL_ScrollBarTP::DrawMaxMinBtn(CFX_Graphics* pGraphics,
             eState == FWLTHEME_STATE_Pressed, pMatrix);
 }
 #endif
-void CFWL_ScrollBarTP::SetThemeData(FX_DWORD dwID) {
+void CFWL_ScrollBarTP::SetThemeData(uint32_t dwID) {
   m_pThemeData->clrPawColorLight[3] = ArgbEncode(0xff, 208, 223, 172);
   m_pThemeData->clrPawColorDark[3] = ArgbEncode(0xff, 140, 157, 115);
   m_pThemeData->clrBtnBK[3][0] = ArgbEncode(0xff, 164, 180, 139);

@@ -49,7 +49,7 @@ FWL_ERR IFWL_Form::SetFormSize(FWL_FORMSIZE eFormSize) {
 IFWL_Widget* IFWL_Form::DoModal() {
   return static_cast<CFWL_FormImp*>(GetImpl())->DoModal();
 }
-IFWL_Widget* IFWL_Form::DoModal(FX_DWORD& dwCommandID) {
+IFWL_Widget* IFWL_Form::DoModal(uint32_t& dwCommandID) {
   return static_cast<CFWL_FormImp*>(GetImpl())->DoModal(dwCommandID);
 }
 FWL_ERR IFWL_Form::EndDoModal() {
@@ -96,7 +96,7 @@ FWL_ERR CFWL_FormImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_Form;
   return FWL_ERR_Succeeded;
 }
-FX_DWORD CFWL_FormImp::GetClassID() const {
+uint32_t CFWL_FormImp::GetClassID() const {
   return FWL_CLASSHASH_Form;
 }
 FX_BOOL CFWL_FormImp::IsInstance(const CFX_WideStringC& wsClass) const {
@@ -194,7 +194,7 @@ FWL_ERR CFWL_FormImp::Update() {
   Layout();
   return FWL_ERR_Succeeded;
 }
-FX_DWORD CFWL_FormImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
+uint32_t CFWL_FormImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   (void)GetAvailableTheme();
   if (m_pCloseBox && m_pCloseBox->m_rtBtn.Contains(fx, fy)) {
     return FWL_WGTHITTEST_CloseBox;
@@ -407,7 +407,7 @@ IFWL_Widget* CFWL_FormImp::DoModal() {
   m_pNoteLoop = NULL;
   return NULL;
 }
-IFWL_Widget* CFWL_FormImp::DoModal(FX_DWORD& dwCommandID) {
+IFWL_Widget* CFWL_FormImp::DoModal(uint32_t& dwCommandID) {
   return DoModal();
 }
 FWL_ERR CFWL_FormImp::EndDoModal() {
@@ -458,7 +458,7 @@ void CFWL_FormImp::SetAccelerator(CFX_MapAccelerators* pAccelerators) {
   if (!pAccelerators)
     return;
   m_mapAccelerators.RemoveAll();
-  FX_DWORD vrKey, rValue;
+  uint32_t vrKey, rValue;
   FX_POSITION pos = pAccelerators->GetStartPosition();
   while (pos) {
     pAccelerators->GetNextAssoc(pos, vrKey, rValue);
@@ -526,7 +526,7 @@ CFWL_SysBtn* CFWL_FormImp::GetSysBtnAtPoint(FX_FLOAT fx, FX_FLOAT fy) {
   }
   return NULL;
 }
-CFWL_SysBtn* CFWL_FormImp::GetSysBtnByState(FX_DWORD dwState) {
+CFWL_SysBtn* CFWL_FormImp::GetSysBtnByState(uint32_t dwState) {
   if (m_pCloseBox && (m_pCloseBox->m_dwState & dwState)) {
     return m_pCloseBox;
   }
@@ -571,7 +571,7 @@ int32_t CFWL_FormImp::GetSysBtnIndex(CFWL_SysBtn* pBtn) {
   return arrBtn.Find(pBtn);
 }
 FX_FLOAT CFWL_FormImp::GetCaptionHeight() {
-  FX_DWORD dwCapacity = 0;
+  uint32_t dwCapacity = 0;
   if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_Caption) {
     dwCapacity = FWL_WGTCAPACITY_FRM_CYCaption;
   } else if (m_pProperties->m_dwStyles & FWL_WGTSTYLE_NarrowCaption) {
@@ -879,7 +879,7 @@ int32_t CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
 #ifdef FWL_UseMacSystemBorder
   if (!pMessage)
     return 0;
-  FX_DWORD dwMsgCode = pMessage->GetClassID();
+  uint32_t dwMsgCode = pMessage->GetClassID();
   switch (dwMsgCode) {
     case FWL_MSGHASH_Activate: {
       m_pOwner->m_pProperties->m_dwStates &= ~FWL_WGTSTATE_Deactivated;
@@ -896,7 +896,7 @@ int32_t CFWL_FormImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
 #else
   if (!pMessage)
     return 0;
-  FX_DWORD dwMsgCode = pMessage->GetClassID();
+  uint32_t dwMsgCode = pMessage->GetClassID();
   int32_t iRet = 1;
   switch (dwMsgCode) {
     case FWL_MSGHASH_Activate: {

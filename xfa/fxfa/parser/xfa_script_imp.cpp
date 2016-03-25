@@ -116,7 +116,7 @@ void CXFA_ScriptContext::GlobalPropertySetter(FXJSE_HOBJECT hObject,
   CXFA_Object* lpCurNode = lpScriptContext->GetVariablesThis(lpOrginalNode);
   CFX_WideString wsPropName = CFX_WideString::FromUTF8(
       (const FX_CHAR*)szPropName.GetPtr(), szPropName.GetLength());
-  FX_DWORD dwFlag = XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings |
+  uint32_t dwFlag = XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings |
                     XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
                     XFA_RESOLVENODE_Attributes;
   CXFA_Node* pRefNode = ToNode(lpScriptContext->GetThisObject());
@@ -143,7 +143,7 @@ void CXFA_ScriptContext::GlobalPropertySetter(FXJSE_HOBJECT hObject,
 FX_BOOL CXFA_ScriptContext::QueryNodeByFlag(CXFA_Node* refNode,
                                             const CFX_WideStringC& propname,
                                             FXJSE_HVALUE hValue,
-                                            FX_DWORD dwFlag,
+                                            uint32_t dwFlag,
                                             FX_BOOL bSetting) {
   if (!refNode)
     return false;
@@ -191,7 +191,7 @@ void CXFA_ScriptContext::GlobalPropertyGetter(FXJSE_HOBJECT hObject,
       }
     }
   }
-  FX_DWORD dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
+  uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
                     XFA_RESOLVENODE_Attributes;
   CXFA_Node* pRefNode = ToNode(lpScriptContext->GetThisObject());
   if (pOrginalObject->GetObjectType() == XFA_OBJECTTYPE_VariablesThis) {
@@ -240,7 +240,7 @@ void CXFA_ScriptContext::NormalPropertyGetter(FXJSE_HOBJECT hObject,
     FXJSE_Value_Set(hValue, pValue);
     return;
   }
-  FX_DWORD dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
+  uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
                     XFA_RESOLVENODE_Attributes;
   FX_BOOL bRet = lpScriptContext->QueryNodeByFlag(ToNode(pObject), wsPropName,
                                                   hValue, dwFlag, FALSE);
@@ -563,7 +563,7 @@ FXJSE_HCLASS CXFA_ScriptContext::GetJseNormalClass() {
 int32_t CXFA_ScriptContext::ResolveObjects(CXFA_Object* refNode,
                                            const CFX_WideStringC& wsExpression,
                                            XFA_RESOLVENODE_RS& resolveNodeRS,
-                                           FX_DWORD dwStyles,
+                                           uint32_t dwStyles,
                                            CXFA_Node* bindNode) {
   if (wsExpression.IsEmpty()) {
     return 0;

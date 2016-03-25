@@ -31,7 +31,7 @@ CXFA_FFPushButton::~CXFA_FFPushButton() {
 }
 void CXFA_FFPushButton::RenderWidget(CFX_Graphics* pGS,
                                      CFX_Matrix* pMatrix,
-                                     FX_DWORD dwStatus,
+                                     uint32_t dwStatus,
                                      int32_t iRotate) {
   if (!IsMatchVisibleStatus(dwStatus)) {
     return;
@@ -70,7 +70,7 @@ FX_BOOL CXFA_FFPushButton::LoadWidget() {
   return CXFA_FFField::LoadWidget();
 }
 void CXFA_FFPushButton::UpdateWidgetProperty() {
-  FX_DWORD dwStyleEx = 0;
+  uint32_t dwStyleEx = 0;
   switch (m_pDataAcc->GetButtonHighlight()) {
     case XFA_ATTRIBUTEENUM_Inverted:
       dwStyleEx = XFA_FWL_PSBSTYLEEXT_HiliteInverted;
@@ -190,7 +190,7 @@ void CXFA_FFPushButton::RenderHighlightCaption(CFX_Graphics* pGS,
       mt.Concat(*pMatrix);
     }
     {
-      FX_DWORD dwState = m_pNormalWidget->GetStates();
+      uint32_t dwState = m_pNormalWidget->GetStates();
       if (m_pDownTextLayout && (dwState & FWL_STATE_PSB_Pressed) &&
           (dwState & FWL_STATE_PSB_Hovered)) {
         if (m_pDownTextLayout->DrawString(pRenderDevice, mt, rtClip)) {

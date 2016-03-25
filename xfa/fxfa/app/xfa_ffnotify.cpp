@@ -71,7 +71,7 @@ void CXFA_FFNotify::OnNodeEvent(CXFA_Node* pSender,
   }
 }
 void CXFA_FFNotify::OnWidgetDataEvent(CXFA_WidgetData* pSender,
-                                      FX_DWORD dwEvent,
+                                      uint32_t dwEvent,
                                       void* pParam,
                                       void* pAdditional,
                                       void* pAdditional2) {
@@ -432,7 +432,7 @@ void CXFA_FFNotify::OnValueChanging(CXFA_Node* pSender,
   if (pDocView->GetLayoutStatus() < XFA_DOCVIEW_LAYOUTSTATUS_End) {
     return;
   }
-  FX_DWORD dwPacket = pSender->GetPacketID();
+  uint32_t dwPacket = pSender->GetPacketID();
   if (dwPacket & XFA_XDPPACKET_Datasets) {
   } else if (pSender->IsFormContainer()) {
     XFA_ATTRIBUTE eAttr = (XFA_ATTRIBUTE)(uintptr_t)pParam;
@@ -460,7 +460,7 @@ void CXFA_FFNotify::OnValueChanged(CXFA_Node* pSender,
   if (!pDocView) {
     return;
   }
-  FX_DWORD dwPacket = pSender->GetPacketID();
+  uint32_t dwPacket = pSender->GetPacketID();
   XFA_ATTRIBUTE eAttr = (XFA_ATTRIBUTE)(uintptr_t)pParam;
   if (dwPacket & XFA_XDPPACKET_Form) {
     CXFA_Node* pParentNode = static_cast<CXFA_Node*>(pParam3);
@@ -575,8 +575,8 @@ void CXFA_FFNotify::OnLayoutItemAdd(CXFA_FFDocView* pDocView,
   CXFA_FFWidget* pWidget = static_cast<CXFA_FFWidget*>(pSender);
   int32_t iPageIdx = (int32_t)(uintptr_t)pParam;
   IXFA_PageView* pNewPageView = pDocView->GetPageView(iPageIdx);
-  FX_DWORD dwStatus = (FX_DWORD)(uintptr_t)pParam2;
-  FX_DWORD dwFilter = XFA_WIDGETSTATUS_Visible | XFA_WIDGETSTATUS_Viewable |
+  uint32_t dwStatus = (uint32_t)(uintptr_t)pParam2;
+  uint32_t dwFilter = XFA_WIDGETSTATUS_Visible | XFA_WIDGETSTATUS_Viewable |
                       XFA_WIDGETSTATUS_Printable;
   pWidget->ModifyStatus(dwStatus, dwFilter);
   IXFA_PageView* pPrePageView = pWidget->GetPageView();
@@ -628,7 +628,7 @@ void CXFA_FFNotify::OnLayoutItemStatustChanged(CXFA_FFDocView* pDocView,
   if (!pWidget) {
     return;
   }
-  FX_DWORD dwStatus = (FX_DWORD)(uintptr_t)pParam;
+  uint32_t dwStatus = (uint32_t)(uintptr_t)pParam;
   if (dwStatus == 0) {
     CXFA_LayoutItem* pPreItem = pSender->GetPrev();
     if (pPreItem) {
@@ -638,8 +638,8 @@ void CXFA_FFNotify::OnLayoutItemStatustChanged(CXFA_FFDocView* pDocView,
       }
     }
   }
-  FX_DWORD dwOldStatus = pWidget->GetStatus();
-  FX_DWORD dwFilter = XFA_WIDGETSTATUS_Visible | XFA_WIDGETSTATUS_Viewable |
+  uint32_t dwOldStatus = pWidget->GetStatus();
+  uint32_t dwFilter = XFA_WIDGETSTATUS_Visible | XFA_WIDGETSTATUS_Viewable |
                       XFA_WIDGETSTATUS_Printable;
   if ((dwOldStatus & dwFilter) == dwStatus) {
     return;

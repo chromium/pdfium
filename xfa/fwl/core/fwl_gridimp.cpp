@@ -168,7 +168,7 @@ FWL_ERR CFWL_GridImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_Grid;
   return FWL_ERR_Succeeded;
 }
-FX_DWORD CFWL_GridImp::GetClassID() const {
+uint32_t CFWL_GridImp::GetClassID() const {
   return FWL_CLASSHASH_Grid;
 }
 FWL_ERR CFWL_GridImp::Initialize() {

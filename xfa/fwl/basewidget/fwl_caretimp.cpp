@@ -26,10 +26,10 @@ IFWL_Caret::IFWL_Caret() {}
 FWL_ERR IFWL_Caret::ShowCaret(FX_BOOL bFlag) {
   return static_cast<CFWL_CaretImp*>(GetImpl())->ShowCaret(bFlag);
 }
-FWL_ERR IFWL_Caret::GetFrequency(FX_DWORD& elapse) {
+FWL_ERR IFWL_Caret::GetFrequency(uint32_t& elapse) {
   return static_cast<CFWL_CaretImp*>(GetImpl())->GetFrequency(elapse);
 }
-FWL_ERR IFWL_Caret::SetFrequency(FX_DWORD elapse) {
+FWL_ERR IFWL_Caret::SetFrequency(uint32_t elapse) {
   return static_cast<CFWL_CaretImp*>(GetImpl())->SetFrequency(elapse);
 }
 FWL_ERR IFWL_Caret::SetColor(CFX_Color crFill) {
@@ -55,7 +55,7 @@ FWL_ERR CFWL_CaretImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_Caret;
   return FWL_ERR_Succeeded;
 }
-FX_DWORD CFWL_CaretImp::GetClassID() const {
+uint32_t CFWL_CaretImp::GetClassID() const {
   return FWL_CLASSHASH_Caret;
 }
 FWL_ERR CFWL_CaretImp::Initialize() {
@@ -94,11 +94,11 @@ FWL_ERR CFWL_CaretImp::ShowCaret(FX_BOOL bFlag) {
   }
   return SetStates(FWL_WGTSTATE_Invisible, !bFlag);
 }
-FWL_ERR CFWL_CaretImp::GetFrequency(FX_DWORD& elapse) {
+FWL_ERR CFWL_CaretImp::GetFrequency(uint32_t& elapse) {
   elapse = m_dwElapse;
   return FWL_ERR_Succeeded;
 }
-FWL_ERR CFWL_CaretImp::SetFrequency(FX_DWORD elapse) {
+FWL_ERR CFWL_CaretImp::SetFrequency(uint32_t elapse) {
   m_dwElapse = elapse;
   return FWL_ERR_Succeeded;
 }

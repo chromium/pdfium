@@ -158,7 +158,7 @@ FX_BOOL CFDE_FxgeDevice::DrawString(IFDE_Brush* pBrush,
       FXTEXT_CHARPOS* pCurCP = NULL;
       int32_t iCurCount = 0;
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-      FX_DWORD dwFontStyle = pFont->GetFontStyles();
+      uint32_t dwFontStyle = pFont->GetFontStyles();
       CFX_Font FxFont;
       CFX_SubstFont SubstFxFont;
       FxFont.SetSubstFont(&SubstFxFont);

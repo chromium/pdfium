@@ -40,7 +40,7 @@ FWL_ERR CFWL_PictureBoxImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_PictureBox;
   return FWL_ERR_Succeeded;
 }
-FX_DWORD CFWL_PictureBoxImp::GetClassID() const {
+uint32_t CFWL_PictureBoxImp::GetClassID() const {
   return FWL_CLASSHASH_PictureBox;
 }
 FWL_ERR CFWL_PictureBoxImp::Initialize() {

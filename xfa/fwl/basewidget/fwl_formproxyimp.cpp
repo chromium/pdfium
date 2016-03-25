@@ -20,7 +20,7 @@ FWL_ERR CFWL_FormProxyImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_FormProxy;
   return FWL_ERR_Succeeded;
 }
-FX_DWORD CFWL_FormProxyImp::GetClassID() const {
+uint32_t CFWL_FormProxyImp::GetClassID() const {
   return FWL_CLASSHASH_FormProxy;
 }
 FX_BOOL CFWL_FormProxyImp::IsInstance(const CFX_WideStringC& wsClass) const {

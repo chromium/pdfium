@@ -10,7 +10,7 @@
 #include "xfa/fgas/font/fgas_fontutils.h"
 
 IFX_Font* IFX_Font::LoadFont(const FX_WCHAR* pszFontFamily,
-                             FX_DWORD dwFontStyles,
+                             uint32_t dwFontStyles,
                              uint16_t wCodePage,
                              IFX_FontMgr* pFontMgr) {
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
@@ -109,7 +109,7 @@ CFX_GEFont::CFX_GEFont(IFX_FontMgr* pFontMgr)
       m_FontMapper(16) {
 }
 
-CFX_GEFont::CFX_GEFont(const CFX_GEFont& src, FX_DWORD dwFontStyles)
+CFX_GEFont::CFX_GEFont(const CFX_GEFont& src, uint32_t dwFontStyles)
     :
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
       m_bUseLogFontStyle(FALSE),
@@ -188,7 +188,7 @@ IFX_Font* CFX_GEFont::Retain() {
   return this;
 }
 FX_BOOL CFX_GEFont::LoadFont(const FX_WCHAR* pszFontFamily,
-                             FX_DWORD dwFontStyles,
+                             uint32_t dwFontStyles,
                              uint16_t wCodePage) {
   if (m_pFont) {
     return FALSE;
@@ -197,7 +197,7 @@ FX_BOOL CFX_GEFont::LoadFont(const FX_WCHAR* pszFontFamily,
   if (pszFontFamily != NULL) {
     csFontFamily = CFX_ByteString::FromUnicode(pszFontFamily);
   }
-  FX_DWORD dwFlags = 0;
+  uint32_t dwFlags = 0;
   if (dwFontStyles & FX_FONTSTYLE_FixedPitch) {
     dwFlags |= FXFONT_FIXED_PITCH;
   }
@@ -329,7 +329,7 @@ FX_BOOL CFX_GEFont::InitFont() {
   }
   return TRUE;
 }
-IFX_Font* CFX_GEFont::Derive(FX_DWORD dwFontStyles, uint16_t wCodePage) {
+IFX_Font* CFX_GEFont::Derive(uint32_t dwFontStyles, uint16_t wCodePage) {
   if (GetFontStyles() == dwFontStyles) {
     return Retain();
   }
@@ -355,14 +355,14 @@ void CFX_GEFont::GetFamilyName(CFX_WideString& wsFamily) const {
 void CFX_GEFont::GetPsName(CFX_WideString& wsName) const {
   wsName = m_pFont->GetPsName();
 }
-FX_DWORD CFX_GEFont::GetFontStyles() const {
+uint32_t CFX_GEFont::GetFontStyles() const {
   FXSYS_assert(m_pFont != NULL);
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
   if (m_bUseLogFontStyle) {
     return m_dwLogFontStyle;
   }
 #endif
-  FX_DWORD dwStyles = 0;
+  uint32_t dwStyles = 0;
   if (!m_pFont->GetSubstFont()) {
     if (m_pFont->IsBold()) {
       dwStyles |= FX_FONTSTYLE_Bold;
@@ -566,7 +566,7 @@ void CFX_GEFont::Reset() {
   }
 }
 IFX_Font* CFX_GEFont::GetSubstFont(int32_t iGlyphIndex) const {
-  iGlyphIndex = ((FX_DWORD)iGlyphIndex) >> 24;
+  iGlyphIndex = ((uint32_t)iGlyphIndex) >> 24;
   return iGlyphIndex == 0 ? (IFX_Font*)this
                           : (IFX_Font*)m_SubstFonts[iGlyphIndex - 1];
 }

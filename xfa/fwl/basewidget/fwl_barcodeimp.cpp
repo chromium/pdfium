@@ -42,7 +42,7 @@ FWL_ERR CFWL_BarcodeImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_Barcode;
   return FWL_ERR_Succeeded;
 }
-FX_DWORD CFWL_BarcodeImp::GetClassID() const {
+uint32_t CFWL_BarcodeImp::GetClassID() const {
   return FWL_CLASSHASH_Barcode;
 }
 FWL_ERR CFWL_BarcodeImp::Initialize() {
@@ -129,7 +129,7 @@ void CFWL_BarcodeImp::GenerateBarcodeImageCache() {
   }
   m_pBarcodeEngine->SetHeight(int32_t(m_rtClient.height));
   m_pBarcodeEngine->SetWidth(int32_t(m_rtClient.width));
-  FX_DWORD dwAttributeMask = pData->GetBarcodeAttributeMask();
+  uint32_t dwAttributeMask = pData->GetBarcodeAttributeMask();
   if (dwAttributeMask & FWL_BCDATTRIBUTE_CHARENCODING) {
     m_pBarcodeEngine->SetCharEncoding(pData->GetCharEncoding());
   }
@@ -212,7 +212,7 @@ FX_BOOL CFWL_BarcodeImp::IsProtectedType() {
 CFWL_BarcodeImpDelegate::CFWL_BarcodeImpDelegate(CFWL_BarcodeImp* pOwner)
     : CFWL_EditImpDelegate(pOwner) {}
 FWL_ERR CFWL_BarcodeImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
-  FX_DWORD dwFlag = pEvent->GetClassID();
+  uint32_t dwFlag = pEvent->GetClassID();
   if (dwFlag == FWL_EVTHASH_EDT_TextChanged) {
     CFWL_BarcodeImp* pOwner = static_cast<CFWL_BarcodeImp*>(m_pOwner);
     pOwner->ReleaseBarcodeEngine();

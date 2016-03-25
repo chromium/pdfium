@@ -44,7 +44,7 @@ static const int32_t g_iFXLocaleNumSubCatCount =
     sizeof(g_FXLocaleNumSubCatData) / sizeof(FX_LOCALESUBCATEGORYINFO);
 
 struct FX_LOCALETIMEZONEINFO {
-  FX_DWORD uHash;
+  uint32_t uHash;
   int16_t iHour;
   int16_t iMinute;
 };
@@ -367,7 +367,7 @@ static FX_BOOL FX_WStringToNumeric(const CFX_WideString& wsValue,
       scale++;
       cc++;
     }
-    lcnum.m_Fractional = (FX_DWORD)(fraction * 4294967296.0);
+    lcnum.m_Fractional = (uint32_t)(fraction * 4294967296.0);
   }
   if (cc < len && (str[cc] == 'E' || str[cc] == 'e')) {
     cc++;
@@ -396,7 +396,7 @@ CFX_LCNumeric::CFX_LCNumeric() {
   m_Exponent = 0;
 }
 CFX_LCNumeric::CFX_LCNumeric(int64_t integral,
-                             FX_DWORD fractional,
+                             uint32_t fractional,
                              int32_t exponent) {
   m_Integral = integral;
   m_Fractional = fractional;
@@ -404,14 +404,14 @@ CFX_LCNumeric::CFX_LCNumeric(int64_t integral,
 }
 CFX_LCNumeric::CFX_LCNumeric(FX_FLOAT dbRetValue) {
   m_Integral = (int64_t)dbRetValue;
-  m_Fractional = (FX_DWORD)(((dbRetValue > 0) ? (dbRetValue - m_Integral)
+  m_Fractional = (uint32_t)(((dbRetValue > 0) ? (dbRetValue - m_Integral)
                                               : (m_Integral - dbRetValue)) *
                             4294967296);
   m_Exponent = 0;
 }
 CFX_LCNumeric::CFX_LCNumeric(double dbvalue) {
   m_Integral = (int64_t)dbvalue;
-  m_Fractional = (FX_DWORD)(
+  m_Fractional = (uint32_t)(
       ((dbvalue > 0) ? (dbvalue - m_Integral) : (m_Integral - dbvalue)) *
       4294967296);
   m_Exponent = 0;
@@ -599,7 +599,7 @@ FX_LOCALECATEGORY CFX_FormatString::GetCategory(
         wsCategory += pStr[ccf];
         ccf++;
       }
-      FX_DWORD dwHash =
+      uint32_t dwHash =
           FX_HashCode_String_GetW(wsCategory, wsCategory.GetLength());
       if (dwHash == FX_LOCALECATEGORY_DateHash) {
         if (eCategory == FX_LOCALECATEGORY_Time) {
@@ -715,7 +715,7 @@ IFX_Locale* CFX_FormatString::GetTextFormat(const CFX_WideString& wsPattern,
 #define FX_NUMSTYLE_DotVorv 0x04
 IFX_Locale* CFX_FormatString::GetNumericFormat(const CFX_WideString& wsPattern,
                                                int32_t& iDotIndex,
-                                               FX_DWORD& dwStyle,
+                                               uint32_t& dwStyle,
                                                CFX_WideString& wsPurgePattern) {
   dwStyle = 0;
   IFX_Locale* pLocale = NULL;
@@ -759,7 +759,7 @@ IFX_Locale* CFX_FormatString::GetNumericFormat(const CFX_WideString& wsPattern,
           while (ccf < iLenf && pStr[ccf] != '(' && pStr[ccf] != '{') {
             wsSubCategory += pStr[ccf++];
           }
-          FX_DWORD dwSubHash =
+          uint32_t dwSubHash =
               FX_HashCode_String_GetW(wsSubCategory, wsSubCategory.GetLength());
           FX_LOCALENUMSUBCATEGORY eSubCategory = FX_LOCALENUMPATTERN_Decimal;
           for (int32_t i = 0; i < g_iFXLocaleNumSubCatCount; i++) {
@@ -920,7 +920,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
     return FALSE;
   }
   int32_t dot_index_f = -1;
-  FX_DWORD dwFormatStyle = 0;
+  uint32_t dwFormatStyle = 0;
   CFX_WideString wsNumFormat;
   IFX_Locale* pLocale =
       GetNumericFormat(wsPattern, dot_index_f, dwFormatStyle, wsNumFormat);
@@ -1686,7 +1686,7 @@ FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
     return FALSE;
   }
   int32_t dot_index_f = -1;
-  FX_DWORD dwFormatStyle = 0;
+  uint32_t dwFormatStyle = 0;
   CFX_WideString wsNumFormat;
   IFX_Locale* pLocale =
       GetNumericFormat(wsPattern, dot_index_f, dwFormatStyle, wsNumFormat);
@@ -2236,7 +2236,7 @@ FX_DATETIMETYPE CFX_FormatString::GetDateTimeFormat(
           while (ccf < iLenf && pStr[ccf] != '(' && pStr[ccf] != '{') {
             wsSubCategory += pStr[ccf++];
           }
-          FX_DWORD dwSubHash =
+          uint32_t dwSubHash =
               FX_HashCode_String_GetW(wsSubCategory, wsSubCategory.GetLength());
           FX_LOCALEDATETIMESUBCATEGORY eSubCategory =
               FX_LOCALEDATETIMESUBCATEGORY_Medium;
@@ -2337,8 +2337,8 @@ static FX_BOOL FX_ParseLocaleDate(const CFX_WideString& wsDate,
       ccf++;
       continue;
     }
-    FX_DWORD dwSymbolNum = 1;
-    FX_DWORD dwSymbol = strf[ccf++];
+    uint32_t dwSymbolNum = 1;
+    uint32_t dwSymbol = strf[ccf++];
     while (ccf < lenf && strf[ccf] == dwSymbol) {
       ccf++;
       dwSymbolNum++;
@@ -2556,8 +2556,8 @@ static FX_BOOL FX_ParseLocaleTime(const CFX_WideString& wsTime,
       ccf++;
       continue;
     }
-    FX_DWORD dwSymbolNum = 1;
-    FX_DWORD dwSymbol = strf[ccf++];
+    uint32_t dwSymbolNum = 1;
+    uint32_t dwSymbol = strf[ccf++];
     while (ccf < lenf && strf[ccf] == dwSymbol) {
       ccf++;
       dwSymbolNum++;
@@ -2666,7 +2666,7 @@ static FX_BOOL FX_ParseLocaleTime(const CFX_WideString& wsTime,
       if (cc + 3 > len) {
         continue;
       }
-      FX_DWORD dwHash = str[cc++];
+      uint32_t dwHash = str[cc++];
       dwHash = (dwHash << 8) | str[cc++];
       dwHash = (dwHash << 8) | str[cc++];
       if (dwHash == FXBSTR_ID(0, 'G', 'M', 'T')) {
@@ -2683,7 +2683,7 @@ static FX_BOOL FX_ParseLocaleTime(const CFX_WideString& wsTime,
         const FX_LOCALETIMEZONEINFO* pTimeZoneInfo =
             std::lower_bound(g_FXLocaleTimeZoneData, pEnd, dwHash,
                              [](const FX_LOCALETIMEZONEINFO& info,
-                                FX_DWORD hash) { return info.uHash < hash; });
+                                uint32_t hash) { return info.uHash < hash; });
         if (pTimeZoneInfo < pEnd && dwHash == pTimeZoneInfo->uHash) {
           hour += pTimeZoneInfo->iHour;
           minute += pTimeZoneInfo->iHour > 0 ? pTimeZoneInfo->iMinute
@@ -2909,7 +2909,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
     return FALSE;
   }
   int32_t dot_index_f = -1;
-  FX_DWORD dwNumStyle = 0;
+  uint32_t dwNumStyle = 0;
   CFX_WideString wsNumFormat;
   IFX_Locale* pLocale =
       GetNumericFormat(wsPattern, dot_index_f, dwNumStyle, wsNumFormat);
@@ -3342,7 +3342,7 @@ FX_BOOL CFX_FormatString::FormatLCNumeric(CFX_LCNumeric& lcNum,
                                           const CFX_WideString& wsPattern,
                                           CFX_WideString& wsOutput) {
   int32_t dot_index_f = -1;
-  FX_DWORD dwNumStyle = 0;
+  uint32_t dwNumStyle = 0;
   CFX_WideString wsNumFormat;
   IFX_Locale* pLocale =
       GetNumericFormat(wsPattern, dot_index_f, dwNumStyle, wsNumFormat);
@@ -3986,8 +3986,8 @@ static FX_BOOL FX_DateFormat(const CFX_WideString& wsDatePattern,
       wsResult += strf[ccf++];
       continue;
     }
-    FX_DWORD dwSymbolNum = 1;
-    FX_DWORD dwSymbol = strf[ccf++];
+    uint32_t dwSymbolNum = 1;
+    uint32_t dwSymbol = strf[ccf++];
     while (ccf < lenf && strf[ccf] == dwSymbol) {
       ccf++;
       dwSymbolNum++;
@@ -4112,8 +4112,8 @@ static FX_BOOL FX_TimeFormat(const CFX_WideString& wsTimePattern,
       wsResult += strf[ccf++];
       continue;
     }
-    FX_DWORD dwSymbolNum = 1;
-    FX_DWORD dwSymbol = strf[ccf++];
+    uint32_t dwSymbolNum = 1;
+    uint32_t dwSymbol = strf[ccf++];
     while (ccf < lenf && strf[ccf] == dwSymbol) {
       ccf++;
       dwSymbolNum++;

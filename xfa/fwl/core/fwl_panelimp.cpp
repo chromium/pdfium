@@ -42,7 +42,7 @@ FWL_ERR CFWL_PanelImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_Panel;
   return FWL_ERR_Succeeded;
 }
-FX_DWORD CFWL_PanelImp::GetClassID() const {
+uint32_t CFWL_PanelImp::GetClassID() const {
   return FWL_CLASSHASH_Panel;
 }
 FWL_ERR CFWL_PanelImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {

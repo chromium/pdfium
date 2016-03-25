@@ -62,7 +62,7 @@ FX_FLOAT IFWL_ScrollBar::GetTrackPos() {
 FWL_ERR IFWL_ScrollBar::SetTrackPos(FX_FLOAT fTrackPos) {
   return static_cast<CFWL_ScrollBarImp*>(GetImpl())->SetTrackPos(fTrackPos);
 }
-FX_BOOL IFWL_ScrollBar::DoScroll(FX_DWORD dwCode, FX_FLOAT fPos) {
+FX_BOOL IFWL_ScrollBar::DoScroll(uint32_t dwCode, FX_FLOAT fPos) {
   return static_cast<CFWL_ScrollBarImp*>(GetImpl())->DoScroll(dwCode, fPos);
 }
 CFWL_ScrollBarImp::CFWL_ScrollBarImp(const CFWL_WidgetImpProperties& properties,
@@ -104,7 +104,7 @@ FWL_ERR CFWL_ScrollBarImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_ScrollBar;
   return FWL_ERR_Succeeded;
 }
-FX_DWORD CFWL_ScrollBarImp::GetClassID() const {
+uint32_t CFWL_ScrollBarImp::GetClassID() const {
   return FWL_CLASSHASH_ScrollBar;
 }
 FWL_ERR CFWL_ScrollBarImp::Initialize() {
@@ -210,7 +210,7 @@ FWL_ERR CFWL_ScrollBarImp::SetTrackPos(FX_FLOAT fTrackPos) {
   CalcMaxTrackRect(m_rtMaxTrack);
   return FWL_ERR_Succeeded;
 }
-FX_BOOL CFWL_ScrollBarImp::DoScroll(FX_DWORD dwCode, FX_FLOAT fPos) {
+FX_BOOL CFWL_ScrollBarImp::DoScroll(uint32_t dwCode, FX_FLOAT fPos) {
   switch (dwCode) {
     case FWL_SCBCODE_Min:
     case FWL_SCBCODE_Max:
@@ -615,7 +615,7 @@ FX_BOOL CFWL_ScrollBarImp::SendEvent() {
   }
   return TRUE;
 }
-FX_BOOL CFWL_ScrollBarImp::OnScroll(FX_DWORD dwCode, FX_FLOAT fPos) {
+FX_BOOL CFWL_ScrollBarImp::OnScroll(uint32_t dwCode, FX_FLOAT fPos) {
   FX_BOOL bRet = TRUE;
   CFWL_EvtScroll ev;
   ev.m_iScrollCode = dwCode;
@@ -631,10 +631,10 @@ int32_t CFWL_ScrollBarImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return 0;
   int32_t iRet = 1;
-  FX_DWORD dwMsgCode = pMessage->GetClassID();
+  uint32_t dwMsgCode = pMessage->GetClassID();
   if (dwMsgCode == FWL_MSGHASH_Mouse) {
     CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
-    FX_DWORD dwCmd = pMsg->m_dwCmd;
+    uint32_t dwCmd = pMsg->m_dwCmd;
     switch (dwCmd) {
       case FWL_MSGMOUSECMD_LButtonDown: {
         OnLButtonDown(pMsg->m_dwFlags, pMsg->m_fx, pMsg->m_fy);
@@ -667,7 +667,7 @@ FWL_ERR CFWL_ScrollBarImpDelegate::OnDrawWidget(CFX_Graphics* pGraphics,
                                                 const CFX_Matrix* pMatrix) {
   return m_pOwner->DrawWidget(pGraphics, pMatrix);
 }
-void CFWL_ScrollBarImpDelegate::OnLButtonDown(FX_DWORD dwFlags,
+void CFWL_ScrollBarImpDelegate::OnLButtonDown(uint32_t dwFlags,
                                               FX_FLOAT fx,
                                               FX_FLOAT fy) {
   if (!m_pOwner->IsEnabled()) {
@@ -703,7 +703,7 @@ void CFWL_ScrollBarImpDelegate::OnLButtonDown(FX_DWORD dwFlags,
     m_pOwner->m_hTimer = FWL_StartTimer(m_pOwner, FWL_SCROLLBAR_Elapse);
   }
 }
-void CFWL_ScrollBarImpDelegate::OnLButtonUp(FX_DWORD dwFlags,
+void CFWL_ScrollBarImpDelegate::OnLButtonUp(uint32_t dwFlags,
                                             FX_FLOAT fx,
                                             FX_FLOAT fy) {
   FWL_StopTimer(m_pOwner->m_hTimer);
@@ -715,7 +715,7 @@ void CFWL_ScrollBarImpDelegate::OnLButtonUp(FX_DWORD dwFlags,
   DoMouseUp(4, m_pOwner->m_rtMaxTrack, m_pOwner->m_iMaxTrackState, fx, fy);
   m_pOwner->SetGrab(FALSE);
 }
-void CFWL_ScrollBarImpDelegate::OnMouseMove(FX_DWORD dwFlags,
+void CFWL_ScrollBarImpDelegate::OnMouseMove(uint32_t dwFlags,
                                             FX_FLOAT fx,
                                             FX_FLOAT fy) {
   DoMouseMove(0, m_pOwner->m_rtMinBtn, m_pOwner->m_iMinButtonState, fx, fy);
@@ -733,7 +733,7 @@ void CFWL_ScrollBarImpDelegate::OnMouseLeave() {
 }
 void CFWL_ScrollBarImpDelegate::OnMouseWheel(FX_FLOAT fx,
                                              FX_FLOAT fy,
-                                             FX_DWORD dwFlags,
+                                             uint32_t dwFlags,
                                              FX_FLOAT fDeltaX,
                                              FX_FLOAT fDeltaY) {
   m_pOwner->m_iMouseWheel = (int32_t)fDeltaX;

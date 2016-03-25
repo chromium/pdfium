@@ -16,7 +16,7 @@ namespace {
 class CFX_StreamImp {
  public:
   virtual void Release() { delete this; }
-  virtual FX_DWORD GetAccessModes() const { return m_dwAccess; }
+  virtual uint32_t GetAccessModes() const { return m_dwAccess; }
   virtual int32_t GetLength() const = 0;
   virtual int32_t Seek(FX_STREAMSEEK eSeek, int32_t iOffset) = 0;
   virtual int32_t GetPosition() = 0;
@@ -33,14 +33,14 @@ class CFX_StreamImp {
  protected:
   CFX_StreamImp();
   virtual ~CFX_StreamImp() {}
-  FX_DWORD m_dwAccess;
+  uint32_t m_dwAccess;
 };
 
 class CFX_FileStreamImp : public CFX_StreamImp {
  public:
   CFX_FileStreamImp();
   virtual ~CFX_FileStreamImp();
-  FX_BOOL LoadFile(const FX_WCHAR* pszSrcFileName, FX_DWORD dwAccess);
+  FX_BOOL LoadFile(const FX_WCHAR* pszSrcFileName, uint32_t dwAccess);
   virtual int32_t GetLength() const;
   virtual int32_t Seek(FX_STREAMSEEK eSeek, int32_t iOffset);
   virtual int32_t GetPosition();
@@ -61,7 +61,7 @@ class CFX_BufferStreamImp : public CFX_StreamImp {
  public:
   CFX_BufferStreamImp();
   virtual ~CFX_BufferStreamImp() {}
-  FX_BOOL LoadBuffer(uint8_t* pData, int32_t iTotalSize, FX_DWORD dwAccess);
+  FX_BOOL LoadBuffer(uint8_t* pData, int32_t iTotalSize, uint32_t dwAccess);
   virtual int32_t GetLength() const;
   virtual int32_t Seek(FX_STREAMSEEK eSeek, int32_t iOffset);
   virtual int32_t GetPosition();
@@ -84,7 +84,7 @@ class CFX_FileReadStreamImp : public CFX_StreamImp {
  public:
   CFX_FileReadStreamImp();
   virtual ~CFX_FileReadStreamImp() {}
-  FX_BOOL LoadFileRead(IFX_FileRead* pFileRead, FX_DWORD dwAccess);
+  FX_BOOL LoadFileRead(IFX_FileRead* pFileRead, uint32_t dwAccess);
   virtual int32_t GetLength() const;
   virtual int32_t Seek(FX_STREAMSEEK eSeek, int32_t iOffset);
   virtual int32_t GetPosition() { return m_iPosition; }
@@ -113,7 +113,7 @@ class CFX_BufferReadStreamImp : public CFX_StreamImp {
   ~CFX_BufferReadStreamImp();
   FX_BOOL LoadBufferRead(IFX_BufferRead* pBufferRead,
                          int32_t iFileSize,
-                         FX_DWORD dwAccess,
+                         uint32_t dwAccess,
                          FX_BOOL bReleaseBufferRead);
 
   virtual int32_t GetLength() const;
@@ -143,7 +143,7 @@ class CFX_FileWriteStreamImp : public CFX_StreamImp {
  public:
   CFX_FileWriteStreamImp();
   virtual ~CFX_FileWriteStreamImp() {}
-  FX_BOOL LoadFileWrite(IFX_FileWrite* pFileWrite, FX_DWORD dwAccess);
+  FX_BOOL LoadFileWrite(IFX_FileWrite* pFileWrite, uint32_t dwAccess);
   virtual int32_t GetLength() const;
   virtual int32_t Seek(FX_STREAMSEEK eSeek, int32_t iOffset);
   virtual int32_t GetPosition() { return m_iPosition; }
@@ -176,17 +176,17 @@ class CFX_Stream : public IFX_Stream {
  public:
   CFX_Stream();
   ~CFX_Stream();
-  FX_BOOL LoadFile(const FX_WCHAR* pszSrcFileName, FX_DWORD dwAccess);
-  FX_BOOL LoadBuffer(uint8_t* pData, int32_t iTotalSize, FX_DWORD dwAccess);
-  FX_BOOL LoadFileRead(IFX_FileRead* pFileRead, FX_DWORD dwAccess);
-  FX_BOOL LoadFileWrite(IFX_FileWrite* pFileWrite, FX_DWORD dwAccess);
+  FX_BOOL LoadFile(const FX_WCHAR* pszSrcFileName, uint32_t dwAccess);
+  FX_BOOL LoadBuffer(uint8_t* pData, int32_t iTotalSize, uint32_t dwAccess);
+  FX_BOOL LoadFileRead(IFX_FileRead* pFileRead, uint32_t dwAccess);
+  FX_BOOL LoadFileWrite(IFX_FileWrite* pFileWrite, uint32_t dwAccess);
   FX_BOOL LoadBufferRead(IFX_BufferRead* pBufferRead,
                          int32_t iFileSize,
-                         FX_DWORD dwAccess,
+                         uint32_t dwAccess,
                          FX_BOOL bReleaseBufferRead);
   virtual void Release();
   virtual IFX_Stream* Retain();
-  virtual FX_DWORD GetAccessModes() const { return m_dwAccess; }
+  virtual uint32_t GetAccessModes() const { return m_dwAccess; }
   virtual int32_t GetLength() const;
   virtual int32_t Seek(FX_STREAMSEEK eSeek, int32_t iOffset);
   virtual int32_t GetPosition();
@@ -203,14 +203,14 @@ class CFX_Stream : public IFX_Stream {
   virtual int32_t GetBOM(uint8_t bom[4]) const;
   virtual uint16_t GetCodePage() const;
   virtual uint16_t SetCodePage(uint16_t wCodePage);
-  virtual IFX_Stream* CreateSharedStream(FX_DWORD dwAccess,
+  virtual IFX_Stream* CreateSharedStream(uint32_t dwAccess,
                                          int32_t iOffset,
                                          int32_t iLength);
 
  protected:
   FX_STREAMTYPE m_eStreamType;
   CFX_StreamImp* m_pStreamImp;
-  FX_DWORD m_dwAccess;
+  uint32_t m_dwAccess;
   int32_t m_iTotalSize;
   int32_t m_iPosition;
   int32_t m_iStart;
@@ -225,7 +225,7 @@ class CFX_TextStream : public IFX_Stream {
   virtual void Release();
   virtual IFX_Stream* Retain();
 
-  virtual FX_DWORD GetAccessModes() const;
+  virtual uint32_t GetAccessModes() const;
   virtual int32_t GetLength() const;
   virtual int32_t Seek(FX_STREAMSEEK eSeek, int32_t iOffset);
   virtual int32_t GetPosition();
@@ -245,14 +245,14 @@ class CFX_TextStream : public IFX_Stream {
   virtual uint16_t GetCodePage() const;
   virtual uint16_t SetCodePage(uint16_t wCodePage);
 
-  virtual IFX_Stream* CreateSharedStream(FX_DWORD dwAccess,
+  virtual IFX_Stream* CreateSharedStream(uint32_t dwAccess,
                                          int32_t iOffset,
                                          int32_t iLength);
 
  protected:
   uint16_t m_wCodePage;
   int32_t m_wBOMLength;
-  FX_DWORD m_dwBOM;
+  uint32_t m_dwBOM;
   uint8_t* m_pBuf;
   int32_t m_iBufSize;
   FX_BOOL m_bDelStream;
@@ -310,7 +310,7 @@ class CFGAS_FileWrite : public IFX_FileWrite {
 }  // namespace
 
 IFX_Stream* IFX_Stream::CreateStream(IFX_BufferRead* pBufferRead,
-                                     FX_DWORD dwAccess,
+                                     uint32_t dwAccess,
                                      int32_t iFileSize,
                                      FX_BOOL bReleaseBufferRead) {
   CFX_Stream* pSR = new CFX_Stream;
@@ -325,7 +325,7 @@ IFX_Stream* IFX_Stream::CreateStream(IFX_BufferRead* pBufferRead,
   return pSR;
 }
 IFX_Stream* IFX_Stream::CreateStream(IFX_FileRead* pFileRead,
-                                     FX_DWORD dwAccess) {
+                                     uint32_t dwAccess) {
   CFX_Stream* pSR = new CFX_Stream;
   if (!pSR->LoadFileRead(pFileRead, dwAccess)) {
     pSR->Release();
@@ -337,7 +337,7 @@ IFX_Stream* IFX_Stream::CreateStream(IFX_FileRead* pFileRead,
   return pSR;
 }
 IFX_Stream* IFX_Stream::CreateStream(IFX_FileWrite* pFileWrite,
-                                     FX_DWORD dwAccess) {
+                                     uint32_t dwAccess) {
   CFX_Stream* pSR = new CFX_Stream;
   if (!pSR->LoadFileWrite(pFileWrite, dwAccess)) {
     pSR->Release();
@@ -349,7 +349,7 @@ IFX_Stream* IFX_Stream::CreateStream(IFX_FileWrite* pFileWrite,
   return pSR;
 }
 IFX_Stream* IFX_Stream::CreateStream(const FX_WCHAR* pszFileName,
-                                     FX_DWORD dwAccess) {
+                                     uint32_t dwAccess) {
   CFX_Stream* pSR = new CFX_Stream;
   if (!pSR->LoadFile(pszFileName, dwAccess)) {
     pSR->Release();
@@ -362,7 +362,7 @@ IFX_Stream* IFX_Stream::CreateStream(const FX_WCHAR* pszFileName,
 }
 IFX_Stream* IFX_Stream::CreateStream(uint8_t* pData,
                                      int32_t length,
-                                     FX_DWORD dwAccess) {
+                                     uint32_t dwAccess) {
   CFX_Stream* pSR = new CFX_Stream;
   if (!pSR->LoadBuffer(pData, length, dwAccess)) {
     pSR->Release();
@@ -383,7 +383,7 @@ CFX_FileStreamImp::~CFX_FileStreamImp() {
   }
 }
 FX_BOOL CFX_FileStreamImp::LoadFile(const FX_WCHAR* pszSrcFileName,
-                                    FX_DWORD dwAccess) {
+                                    uint32_t dwAccess) {
   FXSYS_assert(m_hFile == NULL);
   FXSYS_assert(pszSrcFileName != NULL && FXSYS_wcslen(pszSrcFileName) > 0);
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN32_MOBILE_ || \
@@ -547,7 +547,7 @@ FX_BOOL CFX_FileStreamImp::SetLength(int32_t iLength) {
 CFX_FileReadStreamImp::CFX_FileReadStreamImp()
     : m_pFileRead(NULL), m_iPosition(0), m_iLength(0) {}
 FX_BOOL CFX_FileReadStreamImp::LoadFileRead(IFX_FileRead* pFileRead,
-                                            FX_DWORD dwAccess) {
+                                            uint32_t dwAccess) {
   FXSYS_assert(m_pFileRead == NULL && pFileRead != NULL);
   if (dwAccess & FX_STREAMACCESS_Write) {
     return FALSE;
@@ -621,7 +621,7 @@ CFX_BufferReadStreamImp::~CFX_BufferReadStreamImp() {
 }
 FX_BOOL CFX_BufferReadStreamImp::LoadBufferRead(IFX_BufferRead* pBufferRead,
                                                 int32_t iFileSize,
-                                                FX_DWORD dwAccess,
+                                                uint32_t dwAccess,
                                                 FX_BOOL bReleaseBufferRead) {
   FXSYS_assert(m_pBufferRead == NULL && pBufferRead != NULL);
   if (dwAccess & FX_STREAMACCESS_Write) {
@@ -680,8 +680,8 @@ int32_t CFX_BufferReadStreamImp::ReadData(uint8_t* pBuffer,
   if (iBufferSize > iLength - m_iPosition) {
     iBufferSize = iLength - m_iPosition;
   }
-  FX_DWORD dwBlockOffset = m_pBufferRead->GetBlockOffset();
-  FX_DWORD dwBlockSize = m_pBufferRead->GetBlockSize();
+  uint32_t dwBlockOffset = m_pBufferRead->GetBlockOffset();
+  uint32_t dwBlockSize = m_pBufferRead->GetBlockSize();
   if (m_iPosition < (int32_t)dwBlockOffset) {
     if (!m_pBufferRead->ReadNextBlock(TRUE)) {
       return 0;
@@ -702,8 +702,8 @@ int32_t CFX_BufferReadStreamImp::ReadData(uint8_t* pBuffer,
     return 0;
   }
   const uint8_t* pBufferTmp = m_pBufferRead->GetBlockBuffer();
-  FX_DWORD dwOffsetTmp = m_iPosition - dwBlockOffset;
-  FX_DWORD dwCopySize =
+  uint32_t dwOffsetTmp = m_iPosition - dwBlockOffset;
+  uint32_t dwCopySize =
       std::min(iBufferSize, (int32_t)(dwBlockSize - dwOffsetTmp));
   FXSYS_memcpy(pBuffer, pBufferTmp + dwOffsetTmp, dwCopySize);
   dwOffsetTmp = dwCopySize;
@@ -715,7 +715,7 @@ int32_t CFX_BufferReadStreamImp::ReadData(uint8_t* pBuffer,
     dwBlockOffset = m_pBufferRead->GetBlockOffset();
     dwBlockSize = m_pBufferRead->GetBlockSize();
     pBufferTmp = m_pBufferRead->GetBlockBuffer();
-    dwCopySize = std::min((FX_DWORD)iBufferSize, dwBlockSize);
+    dwCopySize = std::min((uint32_t)iBufferSize, dwBlockSize);
     FXSYS_memcpy(pBuffer + dwOffsetTmp, pBufferTmp, dwCopySize);
     dwOffsetTmp += dwCopySize;
     iBufferSize -= dwCopySize;
@@ -742,7 +742,7 @@ int32_t CFX_BufferReadStreamImp::ReadString(FX_WCHAR* pStr,
 CFX_FileWriteStreamImp::CFX_FileWriteStreamImp()
     : m_pFileWrite(NULL), m_iPosition(0) {}
 FX_BOOL CFX_FileWriteStreamImp::LoadFileWrite(IFX_FileWrite* pFileWrite,
-                                              FX_DWORD dwAccess) {
+                                              uint32_t dwAccess) {
   FXSYS_assert(m_pFileWrite == NULL && pFileWrite != NULL);
   if (dwAccess & FX_STREAMACCESS_Read) {
     return FALSE;
@@ -809,7 +809,7 @@ CFX_BufferStreamImp::CFX_BufferStreamImp()
       m_iLength(0) {}
 FX_BOOL CFX_BufferStreamImp::LoadBuffer(uint8_t* pData,
                                         int32_t iTotalSize,
-                                        FX_DWORD dwAccess) {
+                                        uint32_t dwAccess) {
   FXSYS_assert(m_pData == NULL);
   FXSYS_assert(pData != NULL && iTotalSize > 0);
   m_dwAccess = dwAccess;
@@ -988,7 +988,7 @@ IFX_Stream* CFX_TextStream::Retain() {
   m_iRefCount++;
   return this;
 }
-FX_DWORD CFX_TextStream::GetAccessModes() const {
+uint32_t CFX_TextStream::GetAccessModes() const {
   return m_pStreamImp->GetAccessModes() | FX_STREAMACCESS_Text;
 }
 int32_t CFX_TextStream::GetLength() const {
@@ -1018,7 +1018,7 @@ FX_BOOL CFX_TextStream::SetLength(int32_t iLength) {
 uint16_t CFX_TextStream::GetCodePage() const {
   return m_wCodePage;
 }
-IFX_Stream* CFX_TextStream::CreateSharedStream(FX_DWORD dwAccess,
+IFX_Stream* CFX_TextStream::CreateSharedStream(uint32_t dwAccess,
                                                int32_t iOffset,
                                                int32_t iLength) {
   IFX_Stream* pSR =
@@ -1035,7 +1035,7 @@ int32_t CFX_TextStream::GetBOM(uint8_t bom[4]) const {
   if (m_wBOMLength < 1) {
     return 0;
   }
-  *(FX_DWORD*)bom = m_dwBOM;
+  *(uint32_t*)bom = m_dwBOM;
   return m_wBOMLength;
 }
 uint16_t CFX_TextStream::SetCodePage(uint16_t wCodePage) {
@@ -1131,7 +1131,7 @@ CFX_Stream::~CFX_Stream() {
   }
 }
 FX_BOOL CFX_Stream::LoadFile(const FX_WCHAR* pszSrcFileName,
-                             FX_DWORD dwAccess) {
+                             uint32_t dwAccess) {
   if (m_eStreamType != FX_SREAMTYPE_Unknown || m_pStreamImp != NULL) {
     return FALSE;
   }
@@ -1151,7 +1151,7 @@ FX_BOOL CFX_Stream::LoadFile(const FX_WCHAR* pszSrcFileName,
   }
   return bRet;
 }
-FX_BOOL CFX_Stream::LoadFileRead(IFX_FileRead* pFileRead, FX_DWORD dwAccess) {
+FX_BOOL CFX_Stream::LoadFileRead(IFX_FileRead* pFileRead, uint32_t dwAccess) {
   if (m_eStreamType != FX_SREAMTYPE_Unknown || m_pStreamImp != NULL) {
     return FALSE;
   }
@@ -1172,7 +1172,7 @@ FX_BOOL CFX_Stream::LoadFileRead(IFX_FileRead* pFileRead, FX_DWORD dwAccess) {
   return bRet;
 }
 FX_BOOL CFX_Stream::LoadFileWrite(IFX_FileWrite* pFileWrite,
-                                  FX_DWORD dwAccess) {
+                                  uint32_t dwAccess) {
   if (m_eStreamType != FX_SREAMTYPE_Unknown || m_pStreamImp != NULL) {
     return FALSE;
   }
@@ -1194,7 +1194,7 @@ FX_BOOL CFX_Stream::LoadFileWrite(IFX_FileWrite* pFileWrite,
 }
 FX_BOOL CFX_Stream::LoadBuffer(uint8_t* pData,
                                int32_t iTotalSize,
-                               FX_DWORD dwAccess) {
+                               uint32_t dwAccess) {
   if (m_eStreamType != FX_SREAMTYPE_Unknown || m_pStreamImp != NULL) {
     return FALSE;
   }
@@ -1216,7 +1216,7 @@ FX_BOOL CFX_Stream::LoadBuffer(uint8_t* pData,
 }
 FX_BOOL CFX_Stream::LoadBufferRead(IFX_BufferRead* pBufferRead,
                                    int32_t iFileSize,
-                                   FX_DWORD dwAccess,
+                                   uint32_t dwAccess,
                                    FX_BOOL bReleaseBufferRead) {
   if (m_eStreamType != FX_SREAMTYPE_Unknown || m_pStreamImp != NULL) {
     return FALSE;
@@ -1435,7 +1435,7 @@ uint16_t CFX_Stream::SetCodePage(uint16_t wCodePage) {
   return FX_CODEPAGE_UTF16BE;
 #endif
 }
-IFX_Stream* CFX_Stream::CreateSharedStream(FX_DWORD dwAccess,
+IFX_Stream* CFX_Stream::CreateSharedStream(uint32_t dwAccess,
                                            int32_t iOffset,
                                            int32_t iLength) {
   FXSYS_assert(iLength > 0);

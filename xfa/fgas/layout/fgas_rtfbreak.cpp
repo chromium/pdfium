@@ -68,13 +68,13 @@ class CFX_RTFLine {
 
 class CFX_RTFBreak : public IFX_RTFBreak {
  public:
-  CFX_RTFBreak(FX_DWORD dwPolicies);
+  CFX_RTFBreak(uint32_t dwPolicies);
   ~CFX_RTFBreak();
   void Release() override { delete this; }
   void SetLineBoundary(FX_FLOAT fLineStart, FX_FLOAT fLineEnd) override;
   void SetLineStartPos(FX_FLOAT fLinePos) override;
-  FX_DWORD GetLayoutStyles() const override { return m_dwLayoutStyles; }
-  void SetLayoutStyles(FX_DWORD dwLayoutStyles) override;
+  uint32_t GetLayoutStyles() const override { return m_dwLayoutStyles; }
+  void SetLayoutStyles(uint32_t dwLayoutStyles) override;
   void SetFont(IFX_Font* pFont) override;
   void SetFontSize(FX_FLOAT fFontSize) override;
   void SetTabWidth(FX_FLOAT fTabWidth) override;
@@ -92,8 +92,8 @@ class CFX_RTFBreak : public IFX_RTFBreak {
   void SetReadingOrder(FX_BOOL bRTL = FALSE) override;
   void SetAlignment(int32_t iAlignment = FX_RTFLINEALIGNMENT_Left) override;
   void SetUserData(IFX_Unknown* pUserData) override;
-  FX_DWORD AppendChar(FX_WCHAR wch) override;
-  FX_DWORD EndBreak(FX_DWORD dwStatus = FX_RTFBREAK_PieceBreak) override;
+  uint32_t AppendChar(FX_WCHAR wch) override;
+  uint32_t EndBreak(uint32_t dwStatus = FX_RTFBREAK_PieceBreak) override;
   int32_t CountBreakPieces() const override;
   const CFX_RTFPiece* GetBreakPiece(int32_t index) const override;
   void GetLineRect(CFX_RectF& rect) const override;
@@ -108,19 +108,19 @@ class CFX_RTFBreak : public IFX_RTFBreak {
   int32_t GetCharRects(const FX_RTFTEXTOBJ* pText,
                        CFX_RectFArray& rtArray,
                        FX_BOOL bCharBBox = FALSE) const override;
-  FX_DWORD AppendChar_CharCode(FX_WCHAR wch);
-  FX_DWORD AppendChar_Combination(CFX_RTFChar* pCurChar, int32_t iRotation);
-  FX_DWORD AppendChar_Tab(CFX_RTFChar* pCurChar, int32_t iRotation);
-  FX_DWORD AppendChar_Control(CFX_RTFChar* pCurChar, int32_t iRotation);
-  FX_DWORD AppendChar_Arabic(CFX_RTFChar* pCurChar, int32_t iRotation);
-  FX_DWORD AppendChar_Others(CFX_RTFChar* pCurChar, int32_t iRotation);
+  uint32_t AppendChar_CharCode(FX_WCHAR wch);
+  uint32_t AppendChar_Combination(CFX_RTFChar* pCurChar, int32_t iRotation);
+  uint32_t AppendChar_Tab(CFX_RTFChar* pCurChar, int32_t iRotation);
+  uint32_t AppendChar_Control(CFX_RTFChar* pCurChar, int32_t iRotation);
+  uint32_t AppendChar_Arabic(CFX_RTFChar* pCurChar, int32_t iRotation);
+  uint32_t AppendChar_Others(CFX_RTFChar* pCurChar, int32_t iRotation);
 
  protected:
-  FX_DWORD m_dwPolicies;
+  uint32_t m_dwPolicies;
   IFX_ArabicChar* m_pArabicChar;
   int32_t m_iBoundaryStart;
   int32_t m_iBoundaryEnd;
-  FX_DWORD m_dwLayoutStyles;
+  uint32_t m_dwLayoutStyles;
   FX_BOOL m_bPagination;
   FX_BOOL m_bVertical;
   FX_BOOL m_bSingleLine;
@@ -145,19 +145,19 @@ class CFX_RTFBreak : public IFX_RTFBreak {
   FX_BOOL m_bRTL;
   int32_t m_iAlignment;
   IFX_Unknown* m_pUserData;
-  FX_DWORD m_dwCharType;
-  FX_DWORD m_dwIdentity;
+  uint32_t m_dwCharType;
+  uint32_t m_dwIdentity;
   CFX_RTFLine m_RTFLine1;
   CFX_RTFLine m_RTFLine2;
   CFX_RTFLine* m_pCurLine;
   int32_t m_iReady;
   int32_t m_iTolerance;
-  int32_t GetLineRotation(FX_DWORD dwStyles) const;
+  int32_t GetLineRotation(uint32_t dwStyles) const;
   void SetBreakStatus();
   CFX_RTFChar* GetLastChar(int32_t index) const;
   CFX_RTFLine* GetRTFLine(FX_BOOL bReady) const;
   CFX_RTFPieceArray* GetRTFPieces(FX_BOOL bReady) const;
-  FX_DWORD GetUnifiedCharType(FX_DWORD dwType) const;
+  uint32_t GetUnifiedCharType(uint32_t dwType) const;
   int32_t GetLastPositionedTab() const;
   FX_BOOL GetPositionedTab(int32_t& iTabPos) const;
   int32_t GetBreakPos(CFX_RTFCharArray& tca,
@@ -169,19 +169,19 @@ class CFX_RTFBreak : public IFX_RTFBreak {
                      FX_BOOL bAllChars = FALSE);
   FX_BOOL EndBreak_SplitLine(CFX_RTFLine* pNextLine,
                              FX_BOOL bAllChars,
-                             FX_DWORD dwStatus);
-  void EndBreak_BidiLine(CFX_TPOArray& tpos, FX_DWORD dwStatus);
+                             uint32_t dwStatus);
+  void EndBreak_BidiLine(CFX_TPOArray& tpos, uint32_t dwStatus);
   void EndBreak_Alignment(CFX_TPOArray& tpos,
                           FX_BOOL bAllChars,
-                          FX_DWORD dwStatus);
+                          uint32_t dwStatus);
 };
 
 }  // namespace
 
-IFX_RTFBreak* IFX_RTFBreak::Create(FX_DWORD dwPolicies) {
+IFX_RTFBreak* IFX_RTFBreak::Create(uint32_t dwPolicies) {
   return new CFX_RTFBreak(dwPolicies);
 }
-CFX_RTFBreak::CFX_RTFBreak(FX_DWORD dwPolicies)
+CFX_RTFBreak::CFX_RTFBreak(uint32_t dwPolicies)
     : m_dwPolicies(dwPolicies),
       m_pArabicChar(NULL),
       m_iBoundaryStart(0),
@@ -243,7 +243,7 @@ void CFX_RTFBreak::SetLineStartPos(FX_FLOAT fLinePos) {
   iLinePos = std::max(iLinePos, m_iBoundaryStart);
   m_pCurLine->m_iStart = iLinePos;
 }
-void CFX_RTFBreak::SetLayoutStyles(FX_DWORD dwLayoutStyles) {
+void CFX_RTFBreak::SetLayoutStyles(uint32_t dwLayoutStyles) {
   if (m_dwLayoutStyles == dwLayoutStyles) {
     return;
   }
@@ -424,7 +424,7 @@ void CFX_RTFBreak::SetUserData(IFX_Unknown* pUserData) {
   }
 }
 static const int32_t gs_FX_RTFLineRotations[8] = {0, 3, 1, 0, 2, 1, 3, 2};
-int32_t CFX_RTFBreak::GetLineRotation(FX_DWORD dwStyles) const {
+int32_t CFX_RTFBreak::GetLineRotation(uint32_t dwStyles) const {
   return gs_FX_RTFLineRotations[(dwStyles & 0x0E) >> 1];
 }
 void CFX_RTFBreak::SetBreakStatus() {
@@ -477,7 +477,7 @@ CFX_RTFPieceArray* CFX_RTFBreak::GetRTFPieces(FX_BOOL bReady) const {
   }
   return &pRTFLine->m_LinePieces;
 }
-inline FX_DWORD CFX_RTFBreak::GetUnifiedCharType(FX_DWORD dwType) const {
+inline uint32_t CFX_RTFBreak::GetUnifiedCharType(uint32_t dwType) const {
   return dwType >= FX_CHARTYPE_ArabicAlef ? FX_CHARTYPE_Arabic : dwType;
 }
 int32_t CFX_RTFBreak::GetLastPositionedTab() const {
@@ -497,7 +497,7 @@ FX_BOOL CFX_RTFBreak::GetPositionedTab(int32_t& iTabPos) const {
   }
   return FALSE;
 }
-typedef FX_DWORD (CFX_RTFBreak::*FX_RTFBreak_LPFAppendChar)(
+typedef uint32_t (CFX_RTFBreak::*FX_RTFBreak_LPFAppendChar)(
     CFX_RTFChar* pCurChar,
     int32_t iRotation);
 static const FX_RTFBreak_LPFAppendChar g_FX_RTFBreak_lpfAppendChar[16] = {
@@ -510,13 +510,13 @@ static const FX_RTFBreak_LPFAppendChar g_FX_RTFBreak_lpfAppendChar[16] = {
     &CFX_RTFBreak::AppendChar_Arabic,      &CFX_RTFBreak::AppendChar_Others,
     &CFX_RTFBreak::AppendChar_Others,      &CFX_RTFBreak::AppendChar_Others,
 };
-FX_DWORD CFX_RTFBreak::AppendChar(FX_WCHAR wch) {
+uint32_t CFX_RTFBreak::AppendChar(FX_WCHAR wch) {
   FXSYS_assert(m_pFont != NULL && m_pCurLine != NULL && m_pArabicChar != NULL);
   if (m_bCharCode) {
     return AppendChar_CharCode(wch);
   }
-  FX_DWORD dwProps = kTextLayoutCodeProperties[(uint16_t)wch];
-  FX_DWORD dwType = (dwProps & FX_CHARTYPEBITSMASK);
+  uint32_t dwProps = kTextLayoutCodeProperties[(uint16_t)wch];
+  uint32_t dwType = (dwProps & FX_CHARTYPEBITSMASK);
   CFX_RTFCharArray& tca = m_pCurLine->m_LineChars;
   CFX_RTFChar* pCurChar = tca.AddSpace();
   pCurChar->m_dwStatus = 0;
@@ -535,7 +535,7 @@ FX_DWORD CFX_RTFBreak::AppendChar(FX_WCHAR wch) {
     m_pUserData->AddRef();
   }
   pCurChar->m_pUserData = m_pUserData;
-  FX_DWORD dwRet1 = FX_RTFBREAK_None;
+  uint32_t dwRet1 = FX_RTFBREAK_None;
   if (dwType != FX_CHARTYPE_Combination &&
       GetUnifiedCharType(m_dwCharType) != GetUnifiedCharType(dwType)) {
     if (!m_bSingleLine && !m_bOrphanLine && m_dwCharType > 0 &&
@@ -553,13 +553,13 @@ FX_DWORD CFX_RTFBreak::AppendChar(FX_WCHAR wch) {
   if (m_bVertical && (dwProps & 0x8000) != 0) {
     iRotation = (iRotation + 1) % 4;
   }
-  FX_DWORD dwRet2 =
+  uint32_t dwRet2 =
       (this->*g_FX_RTFBreak_lpfAppendChar[dwType >> FX_CHARTYPEBITS])(
           pCurChar, iRotation);
   m_dwCharType = dwType;
   return std::max(dwRet1, dwRet2);
 }
-FX_DWORD CFX_RTFBreak::AppendChar_CharCode(FX_WCHAR wch) {
+uint32_t CFX_RTFBreak::AppendChar_CharCode(FX_WCHAR wch) {
   FXSYS_assert(m_pFont != NULL && m_pCurLine != NULL);
   FXSYS_assert(m_bCharCode);
   m_pCurLine->m_iMBCSChars++;
@@ -601,7 +601,7 @@ FX_DWORD CFX_RTFBreak::AppendChar_CharCode(FX_WCHAR wch) {
   }
   return FX_RTFBREAK_None;
 }
-FX_DWORD CFX_RTFBreak::AppendChar_Combination(CFX_RTFChar* pCurChar,
+uint32_t CFX_RTFBreak::AppendChar_Combination(CFX_RTFChar* pCurChar,
                                               int32_t iRotation) {
   int32_t iCharWidth = 0;
   if (m_bVertical != FX_IsOdd(iRotation)) {
@@ -626,7 +626,7 @@ FX_DWORD CFX_RTFBreak::AppendChar_Combination(CFX_RTFChar* pCurChar,
   }
   return FX_RTFBREAK_None;
 }
-FX_DWORD CFX_RTFBreak::AppendChar_Tab(CFX_RTFChar* pCurChar,
+uint32_t CFX_RTFBreak::AppendChar_Tab(CFX_RTFChar* pCurChar,
                                       int32_t iRotation) {
   if (m_dwLayoutStyles & FX_RTFLAYOUTSTYLE_ExpandTab) {
     FX_BOOL bBreak = FALSE;
@@ -648,9 +648,9 @@ FX_DWORD CFX_RTFBreak::AppendChar_Tab(CFX_RTFChar* pCurChar,
   }
   return FX_RTFBREAK_None;
 }
-FX_DWORD CFX_RTFBreak::AppendChar_Control(CFX_RTFChar* pCurChar,
+uint32_t CFX_RTFBreak::AppendChar_Control(CFX_RTFChar* pCurChar,
                                           int32_t iRotation) {
-  FX_DWORD dwRet2 = FX_RTFBREAK_None;
+  uint32_t dwRet2 = FX_RTFBREAK_None;
   if (!m_bSingleLine) {
     switch (pCurChar->m_wCharCode) {
       case L'\v':
@@ -675,7 +675,7 @@ FX_DWORD CFX_RTFBreak::AppendChar_Control(CFX_RTFChar* pCurChar,
   }
   return dwRet2;
 }
-FX_DWORD CFX_RTFBreak::AppendChar_Arabic(CFX_RTFChar* pCurChar,
+uint32_t CFX_RTFBreak::AppendChar_Arabic(CFX_RTFChar* pCurChar,
                                          int32_t iRotation) {
   CFX_RTFChar* pLastChar = NULL;
   int32_t& iLineWidth = m_pCurLine->m_iWidth;
@@ -733,9 +733,9 @@ FX_DWORD CFX_RTFBreak::AppendChar_Arabic(CFX_RTFChar* pCurChar,
   }
   return FX_RTFBREAK_None;
 }
-FX_DWORD CFX_RTFBreak::AppendChar_Others(CFX_RTFChar* pCurChar,
+uint32_t CFX_RTFBreak::AppendChar_Others(CFX_RTFChar* pCurChar,
                                          int32_t iRotation) {
-  FX_DWORD dwType = (pCurChar->m_dwCharProps & FX_CHARTYPEBITSMASK);
+  uint32_t dwType = (pCurChar->m_dwCharProps & FX_CHARTYPEBITSMASK);
   FX_WCHAR wForm;
   if (dwType == FX_CHARTYPE_Numeric) {
     if (m_dwLayoutStyles & FX_RTFLAYOUTSTYLE_ArabicNumber) {
@@ -773,7 +773,7 @@ FX_DWORD CFX_RTFBreak::AppendChar_Others(CFX_RTFChar* pCurChar,
   }
   return FX_RTFBREAK_None;
 }
-FX_DWORD CFX_RTFBreak::EndBreak(FX_DWORD dwStatus) {
+uint32_t CFX_RTFBreak::EndBreak(uint32_t dwStatus) {
   FXSYS_assert(dwStatus >= FX_RTFBREAK_PieceBreak &&
                dwStatus <= FX_RTFBREAK_PageBreak);
   m_dwIdentity++;
@@ -836,7 +836,7 @@ EndBreak_Ret:
 }
 FX_BOOL CFX_RTFBreak::EndBreak_SplitLine(CFX_RTFLine* pNextLine,
                                          FX_BOOL bAllChars,
-                                         FX_DWORD dwStatus) {
+                                         uint32_t dwStatus) {
   FX_BOOL bDone = FALSE;
   if (!m_bSingleLine && !m_bOrphanLine &&
       m_pCurLine->GetLineEnd() > m_iBoundaryEnd + m_iTolerance) {
@@ -869,7 +869,7 @@ FX_BOOL CFX_RTFBreak::EndBreak_SplitLine(CFX_RTFLine* pNextLine,
     CFX_RTFPiece tp;
     tp.m_pChars = &m_pCurLine->m_LineChars;
     FX_BOOL bNew = TRUE;
-    FX_DWORD dwIdentity = (FX_DWORD)-1;
+    uint32_t dwIdentity = (uint32_t)-1;
     int32_t iLast = m_pCurLine->CountChars() - 1, j = 0;
     for (int32_t i = 0; i <= iLast;) {
       pTC = pCurChars + i;
@@ -913,7 +913,7 @@ FX_BOOL CFX_RTFBreak::EndBreak_SplitLine(CFX_RTFLine* pNextLine,
   }
   return FALSE;
 }
-void CFX_RTFBreak::EndBreak_BidiLine(CFX_TPOArray& tpos, FX_DWORD dwStatus) {
+void CFX_RTFBreak::EndBreak_BidiLine(CFX_TPOArray& tpos, uint32_t dwStatus) {
   FX_TPO tpo;
   CFX_RTFPiece tp;
   CFX_RTFChar* pTC;
@@ -948,7 +948,7 @@ void CFX_RTFBreak::EndBreak_BidiLine(CFX_TPOArray& tpos, FX_DWORD dwStatus) {
   tp.m_pChars = &chars;
   CFX_RTFPieceArray* pCurPieces = &m_pCurLine->m_LinePieces;
   int32_t iBidiLevel = -1, iCharWidth;
-  FX_DWORD dwIdentity = (FX_DWORD)-1;
+  uint32_t dwIdentity = (uint32_t)-1;
   i = j = 0;
   while (i < iCount) {
     pTC = chars.GetDataPtr(i);
@@ -1011,12 +1011,12 @@ void CFX_RTFBreak::EndBreak_BidiLine(CFX_TPOArray& tpos, FX_DWORD dwStatus) {
 }
 void CFX_RTFBreak::EndBreak_Alignment(CFX_TPOArray& tpos,
                                       FX_BOOL bAllChars,
-                                      FX_DWORD dwStatus) {
+                                      uint32_t dwStatus) {
   CFX_RTFPieceArray* pCurPieces = &m_pCurLine->m_LinePieces;
   int32_t iNetWidth = m_pCurLine->m_iWidth, iGapChars = 0, iCharWidth;
   int32_t iCount = pCurPieces->GetSize();
   FX_BOOL bFind = FALSE;
-  FX_DWORD dwCharType;
+  uint32_t dwCharType;
   int32_t i, j;
   FX_TPO tpo;
   for (i = iCount - 1; i > -1; i--) {
@@ -1137,7 +1137,7 @@ int32_t CFX_RTFBreak::GetBreakPos(CFX_RTFCharArray& tca,
   FX_BOOL bNumberBreak = (m_dwPolicies & FX_RTFBREAKPOLICY_NumberBreak) != 0;
   FX_BOOL bInfixBreak = (m_dwPolicies & FX_RTFBREAKPOLICY_InfixBreak) != 0;
   FX_LINEBREAKTYPE eType;
-  FX_DWORD nCodeProp, nCur, nNext;
+  uint32_t nCodeProp, nCur, nNext;
   CFX_RTFChar* pCur = pCharArray + iLength--;
   if (bAllChars) {
     pCur->m_nBreakType = FX_LBT_UNKNOWN;
@@ -1355,7 +1355,7 @@ int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
   int32_t* pWidths = pText->pWidths;
   int32_t iLength = pText->iLength - 1;
   IFX_Font* pFont = pText->pFont;
-  FX_DWORD dwStyles = pText->dwLayoutStyles;
+  uint32_t dwStyles = pText->dwLayoutStyles;
   CFX_RectF rtText(*pText->pRect);
   FX_BOOL bRTLPiece = FX_IsOdd(pText->iBidiLevel);
   FX_FLOAT fFontSize = pText->fFontSize;
@@ -1378,7 +1378,7 @@ int32_t CFX_RTFBreak::GetDisplayPos(const FX_RTFTEXTOBJ* pText,
   int32_t iHorScale = pText->iHorizontalScale;
   int32_t iVerScale = pText->iVerticalScale;
   FX_BOOL bEmptyChar;
-  FX_DWORD dwProps, dwCharType;
+  uint32_t dwProps, dwCharType;
   fX = rtText.left;
   fY = rtText.top;
   if (bVerticalDoc) {
@@ -1613,7 +1613,7 @@ int32_t CFX_RTFBreak::GetCharRects(const FX_RTFTEXTOBJ* pText,
   FX_FLOAT fHeight = FXSYS_fabs(bbox.height * fScale);
   rtArray.RemoveAll();
   rtArray.SetSize(iLength);
-  FX_DWORD dwStyles = pText->dwLayoutStyles;
+  uint32_t dwStyles = pText->dwLayoutStyles;
   FX_BOOL bVertical = (dwStyles & FX_RTFLAYOUTSTYLE_VerticalLayout) != 0;
   FX_BOOL bSingleLine = (dwStyles & FX_RTFLAYOUTSTYLE_SingleLine) != 0;
   FX_BOOL bCombText = (dwStyles & FX_TXTLAYOUTSTYLE_CombText) != 0;

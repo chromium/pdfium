@@ -60,7 +60,7 @@ FWL_ERR CFWL_SpinButtonImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_SpinButton;
   return FWL_ERR_Succeeded;
 }
-FX_DWORD CFWL_SpinButtonImp::GetClassID() const {
+uint32_t CFWL_SpinButtonImp::GetClassID() const {
   return FWL_CLASSHASH_SpinButton;
 }
 FWL_ERR CFWL_SpinButtonImp::Initialize() {
@@ -101,7 +101,7 @@ FWL_ERR CFWL_SpinButtonImp::Update() {
   }
   return FWL_ERR_Succeeded;
 }
-FX_DWORD CFWL_SpinButtonImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
+uint32_t CFWL_SpinButtonImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   if (m_rtClient.Contains(fx, fy)) {
     return FWL_WGTHITTEST_Client;
   }
@@ -208,7 +208,7 @@ int32_t CFWL_SpinButtonImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return 0;
   int32_t iRet = 1;
-  FX_DWORD dwMsgCode = pMessage->GetClassID();
+  uint32_t dwMsgCode = pMessage->GetClassID();
   switch (dwMsgCode) {
     case FWL_MSGHASH_SetFocus:
     case FWL_MSGHASH_KillFocus: {
@@ -217,7 +217,7 @@ int32_t CFWL_SpinButtonImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     }
     case FWL_MSGHASH_Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
-      FX_DWORD dwCmd = pMsg->m_dwCmd;
+      uint32_t dwCmd = pMsg->m_dwCmd;
       switch (dwCmd) {
         case FWL_MSGMOUSECMD_LButtonDown: {
           OnLButtonDown(pMsg);

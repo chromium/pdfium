@@ -54,7 +54,7 @@ FX_BOOL CBC_CommonBitMatrix::Get(int32_t x, int32_t y) {
   if (offset >= m_rowSize * m_height || offset < 0) {
     return false;
   }
-  return ((((FX_DWORD)m_bits[offset]) >> (x & 0x1f)) & 1) != 0;
+  return ((((uint32_t)m_bits[offset]) >> (x & 0x1f)) & 1) != 0;
 }
 int32_t* CBC_CommonBitMatrix::GetBits() {
   return m_bits;

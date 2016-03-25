@@ -76,11 +76,11 @@ FX_BOOL CFWL_NoteLoop::TranslateAccelerator(CFWL_Message* pMessage) {
   if (!pos) {
     return FALSE;
   }
-  FX_DWORD vrKey, rValue;
+  uint32_t vrKey, rValue;
   while (pos) {
     accel.GetNextAssoc(pos, vrKey, rValue);
-    FX_DWORD dwFlags = (vrKey & 0xFF00) >> 8;
-    FX_DWORD m_dwKeyCode = vrKey & 0x00FF;
+    uint32_t dwFlags = (vrKey & 0xFF00) >> 8;
+    uint32_t m_dwKeyCode = vrKey & 0x00FF;
     if (pMsgKey->m_dwFlags == dwFlags && pMsgKey->m_dwKeyCode == m_dwKeyCode) {
       GenerateCommondEvent(rValue);
       return TRUE;
@@ -92,7 +92,7 @@ FWL_ERR CFWL_NoteLoop::SetMainForm(CFWL_WidgetImp* pForm) {
   m_pForm = pForm;
   return FWL_ERR_Succeeded;
 }
-void CFWL_NoteLoop::GenerateCommondEvent(FX_DWORD dwCommand) {
+void CFWL_NoteLoop::GenerateCommondEvent(uint32_t dwCommand) {
   CFWL_EvtMenuCommand ev;
   ev.m_iCommand = dwCommand;
   IFWL_NoteThread* pThread = m_pForm->GetOwnerThread();
@@ -165,8 +165,8 @@ FX_BOOL CFWL_NoteDriver::SendNote(CFWL_Note* pNote) {
 #define FWL_NoteDriver_EventKey 1100
 FWL_ERR CFWL_NoteDriver::RegisterEventTarget(IFWL_Widget* pListener,
                                              IFWL_Widget* pEventSource,
-                                             FX_DWORD dwFilter) {
-  FX_DWORD dwkey = (FX_DWORD)(uintptr_t)pListener->GetPrivateData(
+                                             uint32_t dwFilter) {
+  uint32_t dwkey = (uint32_t)(uintptr_t)pListener->GetPrivateData(
       (void*)(uintptr_t)FWL_NoteDriver_EventKey);
   if (dwkey == 0) {
     void* random = FX_Random_MT_Start(0);
@@ -184,7 +184,7 @@ FWL_ERR CFWL_NoteDriver::RegisterEventTarget(IFWL_Widget* pListener,
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_NoteDriver::UnregisterEventTarget(IFWL_Widget* pListener) {
-  FX_DWORD dwkey = (FX_DWORD)(uintptr_t)pListener->GetPrivateData(
+  uint32_t dwkey = (uint32_t)(uintptr_t)pListener->GetPrivateData(
       (void*)(uintptr_t)FWL_NoteDriver_EventKey);
   if (dwkey == 0) {
     return FWL_ERR_Indefinite;
@@ -847,7 +847,7 @@ CFWL_EventTarget::~CFWL_EventTarget() {
   m_eventSources.RemoveAll();
 }
 int32_t CFWL_EventTarget::SetEventSource(IFWL_Widget* pSource,
-                                         FX_DWORD dwFilter) {
+                                         uint32_t dwFilter) {
   if (pSource) {
     m_eventSources.SetAt(pSource, dwFilter);
     return m_eventSources.GetCount();
@@ -865,7 +865,7 @@ FX_BOOL CFWL_EventTarget::ProcessEvent(CFWL_Event* pEvent) {
   FX_POSITION pos = m_eventSources.GetStartPosition();
   while (pos) {
     IFWL_Widget* pSource = NULL;
-    FX_DWORD dwFilter = 0;
+    uint32_t dwFilter = 0;
     m_eventSources.GetNextAssoc(pos, (void*&)pSource, dwFilter);
     if (pSource == pEvent->m_pSrcTarget ||
         pEvent->GetClassID() == FWL_EVTHASH_Idle) {
@@ -877,7 +877,7 @@ FX_BOOL CFWL_EventTarget::ProcessEvent(CFWL_Event* pEvent) {
   }
   return FALSE;
 }
-FX_BOOL CFWL_EventTarget::IsFilterEvent(CFWL_Event* pEvent, FX_DWORD dwFilter) {
+FX_BOOL CFWL_EventTarget::IsFilterEvent(CFWL_Event* pEvent, uint32_t dwFilter) {
   if (dwFilter == FWL_EVENT_ALL_MASK) {
     return TRUE;
   }

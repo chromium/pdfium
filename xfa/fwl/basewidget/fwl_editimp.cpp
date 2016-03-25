@@ -155,7 +155,7 @@ FWL_ERR IFWL_Edit::SetOuter(IFWL_Widget* pOuter) {
 FWL_ERR IFWL_Edit::SetNumberRange(int32_t iMin, int32_t iMax) {
   return static_cast<CFWL_EditImp*>(GetImpl())->SetNumberRange(iMin, iMax);
 }
-FWL_ERR IFWL_Edit::SetBackColor(FX_DWORD dwColor) {
+FWL_ERR IFWL_Edit::SetBackColor(uint32_t dwColor) {
   return static_cast<CFWL_EditImp*>(GetImpl())->SetBackgroundColor(dwColor);
 }
 FWL_ERR IFWL_Edit::SetFont(const CFX_WideString& wsFont, FX_FLOAT fSize) {
@@ -210,7 +210,7 @@ FWL_ERR CFWL_EditImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_Edit;
   return FWL_ERR_Succeeded;
 }
-FX_DWORD CFWL_EditImp::GetClassID() const {
+uint32_t CFWL_EditImp::GetClassID() const {
   return FWL_CLASSHASH_Edit;
 }
 FWL_ERR CFWL_EditImp::Initialize() {
@@ -273,7 +273,7 @@ FWL_ERR CFWL_EditImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
   }
   return FWL_ERR_Succeeded;
 }
-FWL_ERR CFWL_EditImp::SetStates(FX_DWORD dwStates, FX_BOOL bSet) {
+FWL_ERR CFWL_EditImp::SetStates(uint32_t dwStates, FX_BOOL bSet) {
   if ((m_pProperties->m_dwStates & FWL_WGTSTATE_Invisible) ||
       (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled)) {
     ShowCaret(FALSE);
@@ -300,7 +300,7 @@ FWL_ERR CFWL_EditImp::Update() {
   InitCaret();
   return FWL_ERR_Succeeded;
 }
-FX_DWORD CFWL_EditImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
+uint32_t CFWL_EditImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   if (m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_OuterScrollbar) {
     if (IsShowScrollBar(TRUE)) {
       CFX_RectF rect;
@@ -798,7 +798,7 @@ void CFWL_EditImp::On_CaretChanged(IFDE_TxtEdtEngine* pEdit,
 }
 void CFWL_EditImp::On_TextChanged(IFDE_TxtEdtEngine* pEdit,
                                   FDE_TXTEDT_TEXTCHANGE_INFO& ChangeInfo) {
-  FX_DWORD dwStyleEx = m_pProperties->m_dwStyleExes;
+  uint32_t dwStyleEx = m_pProperties->m_dwStyleExes;
   if (dwStyleEx & FWL_STYLEEXT_EDT_VAlignMask) {
     UpdateVAlignment();
   }
@@ -922,7 +922,7 @@ FX_BOOL CFWL_EditImp::On_Validate(IFDE_TxtEdtEngine* pEdit,
   DispatchEvent(&event);
   return event.bValidate;
 }
-FWL_ERR CFWL_EditImp::SetBackgroundColor(FX_DWORD color) {
+FWL_ERR CFWL_EditImp::SetBackgroundColor(uint32_t color) {
   m_backColor = color;
   m_updateBackColor = TRUE;
   return FWL_ERR_Succeeded;
@@ -945,7 +945,7 @@ void CFWL_EditImp::DrawTextBk(CFX_Graphics* pGraphics,
   param.m_dwStates = m_pProperties->m_dwStyleExes & FWL_STYLEEXT_EDT_ReadOnly
                          ? FWL_PARTSTATE_EDT_ReadOnly
                          : FWL_PARTSTATE_EDT_Normal;
-  FX_DWORD dwStates = (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled);
+  uint32_t dwStates = (m_pProperties->m_dwStates & FWL_WGTSTATE_Disabled);
   if (dwStates) {
     param.m_dwStates = FWL_PARTSTATE_EDT_Disable;
   }
@@ -1166,8 +1166,8 @@ void CFWL_EditImp::UpdateEditParams() {
   if (!pFontSize)
     return;
   m_fFontSize = *pFontSize;
-  FX_DWORD* pFontColor =
-      static_cast<FX_DWORD*>(GetThemeCapacity(FWL_WGTCAPACITY_TextColor));
+  uint32_t* pFontColor =
+      static_cast<uint32_t*>(GetThemeCapacity(FWL_WGTCAPACITY_TextColor));
   if (!pFontColor)
     return;
   params.dwFontColor = *pFontColor;
@@ -1738,7 +1738,7 @@ CFWL_EditImpDelegate::CFWL_EditImpDelegate(CFWL_EditImp* pOwner)
 int32_t CFWL_EditImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return 0;
-  FX_DWORD dwMsgCode = pMessage->GetClassID();
+  uint32_t dwMsgCode = pMessage->GetClassID();
   int32_t iRet = 1;
   switch (dwMsgCode) {
     case FWL_MSGHASH_Activate: {
@@ -1756,7 +1756,7 @@ int32_t CFWL_EditImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     }
     case FWL_MSGHASH_Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
-      FX_DWORD dwCmd = pMsg->m_dwCmd;
+      uint32_t dwCmd = pMsg->m_dwCmd;
       switch (dwCmd) {
         case FWL_MSGMOUSECMD_LButtonDown: {
           OnLButtonDown(pMsg);
@@ -1784,7 +1784,7 @@ int32_t CFWL_EditImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     }
     case FWL_MSGHASH_Key: {
       CFWL_MsgKey* pKey = static_cast<CFWL_MsgKey*>(pMessage);
-      FX_DWORD dwCmd = pKey->m_dwCmd;
+      uint32_t dwCmd = pKey->m_dwCmd;
       if (dwCmd == FWL_MSGKEYCMD_KeyDown) {
         OnKeyDown(pKey);
       } else if (dwCmd == FWL_MSGKEYCMD_Char) {
@@ -1800,7 +1800,7 @@ int32_t CFWL_EditImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
 FWL_ERR CFWL_EditImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
   if (!pEvent)
     return FWL_ERR_Indefinite;
-  FX_DWORD dwHashCode = pEvent->GetClassID();
+  uint32_t dwHashCode = pEvent->GetClassID();
   if (dwHashCode != FWL_EVTHASH_Scroll) {
     return FWL_ERR_Succeeded;
   }
@@ -1847,7 +1847,7 @@ void CFWL_EditImpDelegate::DoButtonDown(CFWL_MsgMouse* pMsg) {
   m_pOwner->m_pEdtEngine->SetCaretPos(nIndex, bBefore);
 }
 void CFWL_EditImpDelegate::OnFocusChanged(CFWL_Message* pMsg, FX_BOOL bSet) {
-  FX_DWORD dwStyleEx = m_pOwner->GetStylesEx();
+  uint32_t dwStyleEx = m_pOwner->GetStylesEx();
   FX_BOOL bRepaint = dwStyleEx & FWL_STYLEEXT_EDT_InnerCaret;
   if (bSet) {
     m_pOwner->m_pProperties->m_dwStates |= FWL_WGTSTATE_Focused;
@@ -1964,7 +1964,7 @@ void CFWL_EditImpDelegate::OnKeyDown(CFWL_MsgKey* pMsg) {
   FDE_TXTEDTMOVECARET MoveCaret = MC_MoveNone;
   FX_BOOL bShift = pMsg->m_dwFlags & FWL_KEYFLAG_Shift;
   FX_BOOL bCtrl = pMsg->m_dwFlags & FWL_KEYFLAG_Ctrl;
-  FX_DWORD dwKeyCode = pMsg->m_dwKeyCode;
+  uint32_t dwKeyCode = pMsg->m_dwKeyCode;
   switch (dwKeyCode) {
     case FWL_VKEY_Left: {
       MoveCaret = MC_Left;
@@ -2109,7 +2109,7 @@ void CFWL_EditImpDelegate::OnChar(CFWL_MsgKey* pMsg) {
   }
 }
 FX_BOOL CFWL_EditImpDelegate::OnScroll(IFWL_ScrollBar* pScrollBar,
-                                       FX_DWORD dwCode,
+                                       uint32_t dwCode,
                                        FX_FLOAT fPos) {
   CFX_SizeF fs;
   pScrollBar->GetRange(fs.x, fs.y);

@@ -7,8 +7,8 @@
 #include "xfa/fee/fx_wordbreak/fx_wordbreak_impl.h"
 
 FX_WordBreakProp FX_GetWordBreakProperty(FX_WCHAR wcCodePoint) {
-  FX_DWORD dwProperty =
-      (FX_DWORD)gs_FX_WordBreak_CodePointProperties[wcCodePoint >> 1];
+  uint32_t dwProperty =
+      (uint32_t)gs_FX_WordBreak_CodePointProperties[wcCodePoint >> 1];
   return (FX_WordBreakProp)(((wcCodePoint)&1) ? (dwProperty & 0x0F)
                                               : (dwProperty >> 4));
 }

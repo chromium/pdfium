@@ -112,13 +112,13 @@ FDE_CSSTagCache::FDE_CSSTagCache(FDE_CSSTagCache* parent,
   FX_POSITION pos = pTag->GetFirstAttribute();
   while (pos != NULL) {
     pTag->GetNextAttribute(pos, wsName, wsValue);
-    FX_DWORD dwNameHash =
+    uint32_t dwNameHash =
         FX_HashCode_String_GetW(wsName.GetPtr(), wsName.GetLength(), TRUE);
-    static const FX_DWORD s_dwIDHash = FX_HashCode_String_GetW(L"id", 2, TRUE);
-    static const FX_DWORD s_dwClassHash =
+    static const uint32_t s_dwIDHash = FX_HashCode_String_GetW(L"id", 2, TRUE);
+    static const uint32_t s_dwClassHash =
         FX_HashCode_String_GetW(L"class", 5, TRUE);
     if (dwNameHash == s_dwClassHash) {
-      FX_DWORD dwHash =
+      uint32_t dwHash =
           FX_HashCode_String_GetW(wsValue.GetPtr(), wsValue.GetLength());
       dwClassHashs.Add(dwHash);
     } else if (dwNameHash == s_dwIDHash) {

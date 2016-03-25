@@ -69,7 +69,7 @@ int32_t CXFA_NodeHelper::XFA_CountSiblings(CXFA_Node* pNode,
 }
 int32_t CXFA_NodeHelper::XFA_NodeAcc_TraverseAnySiblings(
     CXFA_Node* parent,
-    FX_DWORD dNameHash,
+    uint32_t dNameHash,
     CXFA_NodeArray* pSiblings,
     FX_BOOL bIsClassName) {
   if (parent == NULL || pSiblings == NULL) {
@@ -128,7 +128,7 @@ int32_t CXFA_NodeHelper::XFA_NodeAcc_TraverseAnySiblings(
   return nCount;
 }
 int32_t CXFA_NodeHelper::XFA_NodeAcc_TraverseSiblings(CXFA_Node* parent,
-                                                      FX_DWORD dNameHash,
+                                                      uint32_t dNameHash,
                                                       CXFA_NodeArray* pSiblings,
                                                       XFA_LOGIC_TYPE eLogicType,
                                                       FX_BOOL bIsClassName,
@@ -242,7 +242,7 @@ int32_t CXFA_NodeHelper::XFA_GetIndex(CXFA_Node* pNode,
       return 0;
     }
   }
-  FX_DWORD dwHashName = pNode->GetNameHash();
+  uint32_t dwHashName = pNode->GetNameHash();
   if (bIsClassIndex) {
     dwHashName = pNode->GetClassHashCode();
   }

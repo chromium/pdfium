@@ -35,10 +35,10 @@ FWL_ERR CFWL_Caret::Initialize(const CFWL_WidgetProperties* pProperties) {
 FWL_ERR CFWL_Caret::ShowCaret(FX_BOOL bFlag) {
   return static_cast<IFWL_Caret*>(m_pIface)->ShowCaret(bFlag);
 }
-FWL_ERR CFWL_Caret::GetFrequency(FX_DWORD& elapse) {
+FWL_ERR CFWL_Caret::GetFrequency(uint32_t& elapse) {
   return static_cast<IFWL_Caret*>(m_pIface)->GetFrequency(elapse);
 }
-FWL_ERR CFWL_Caret::SetFrequency(FX_DWORD elapse) {
+FWL_ERR CFWL_Caret::SetFrequency(uint32_t elapse) {
   return static_cast<IFWL_Caret*>(m_pIface)->SetFrequency(elapse);
 }
 FWL_ERR CFWL_Caret::SetColor(CFX_Color crFill) {

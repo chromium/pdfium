@@ -20,7 +20,7 @@ FX_BOOL CXFA_FFSignature::LoadWidget() {
 }
 void CXFA_FFSignature::RenderWidget(CFX_Graphics* pGS,
                                     CFX_Matrix* pMatrix,
-                                    FX_DWORD dwStatus,
+                                    uint32_t dwStatus,
                                     int32_t iRotate) {
   if (!IsMatchVisibleStatus(dwStatus)) {
     return;
@@ -46,61 +46,61 @@ FX_BOOL CXFA_FFSignature::OnMouseEnter() {
 FX_BOOL CXFA_FFSignature::OnMouseExit() {
   return FALSE;
 }
-FX_BOOL CXFA_FFSignature::OnLButtonDown(FX_DWORD dwFlags,
+FX_BOOL CXFA_FFSignature::OnLButtonDown(uint32_t dwFlags,
                                         FX_FLOAT fx,
                                         FX_FLOAT fy) {
   return FALSE;
 }
-FX_BOOL CXFA_FFSignature::OnLButtonUp(FX_DWORD dwFlags,
+FX_BOOL CXFA_FFSignature::OnLButtonUp(uint32_t dwFlags,
                                       FX_FLOAT fx,
                                       FX_FLOAT fy) {
   return FALSE;
 }
-FX_BOOL CXFA_FFSignature::OnLButtonDblClk(FX_DWORD dwFlags,
+FX_BOOL CXFA_FFSignature::OnLButtonDblClk(uint32_t dwFlags,
                                           FX_FLOAT fx,
                                           FX_FLOAT fy) {
   return FALSE;
 }
-FX_BOOL CXFA_FFSignature::OnMouseMove(FX_DWORD dwFlags,
+FX_BOOL CXFA_FFSignature::OnMouseMove(uint32_t dwFlags,
                                       FX_FLOAT fx,
                                       FX_FLOAT fy) {
   return FALSE;
 }
-FX_BOOL CXFA_FFSignature::OnMouseWheel(FX_DWORD dwFlags,
+FX_BOOL CXFA_FFSignature::OnMouseWheel(uint32_t dwFlags,
                                        int16_t zDelta,
                                        FX_FLOAT fx,
                                        FX_FLOAT fy) {
   return FALSE;
 }
-FX_BOOL CXFA_FFSignature::OnRButtonDown(FX_DWORD dwFlags,
+FX_BOOL CXFA_FFSignature::OnRButtonDown(uint32_t dwFlags,
                                         FX_FLOAT fx,
                                         FX_FLOAT fy) {
   return FALSE;
 }
-FX_BOOL CXFA_FFSignature::OnRButtonUp(FX_DWORD dwFlags,
+FX_BOOL CXFA_FFSignature::OnRButtonUp(uint32_t dwFlags,
                                       FX_FLOAT fx,
                                       FX_FLOAT fy) {
   return FALSE;
 }
-FX_BOOL CXFA_FFSignature::OnRButtonDblClk(FX_DWORD dwFlags,
+FX_BOOL CXFA_FFSignature::OnRButtonDblClk(uint32_t dwFlags,
                                           FX_FLOAT fx,
                                           FX_FLOAT fy) {
   return FALSE;
 }
-FX_BOOL CXFA_FFSignature::OnKeyDown(FX_DWORD dwKeyCode, FX_DWORD dwFlags) {
+FX_BOOL CXFA_FFSignature::OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags) {
   return FALSE;
 }
-FX_BOOL CXFA_FFSignature::OnKeyUp(FX_DWORD dwKeyCode, FX_DWORD dwFlags) {
+FX_BOOL CXFA_FFSignature::OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) {
   return FALSE;
 }
-FX_BOOL CXFA_FFSignature::OnChar(FX_DWORD dwChar, FX_DWORD dwFlags) {
+FX_BOOL CXFA_FFSignature::OnChar(uint32_t dwChar, uint32_t dwFlags) {
   return FALSE;
 }
-FX_DWORD CXFA_FFSignature::OnHitTest(FX_FLOAT fx, FX_FLOAT fy) {
+uint32_t CXFA_FFSignature::OnHitTest(FX_FLOAT fx, FX_FLOAT fy) {
   if (m_pNormalWidget) {
     FX_FLOAT ffx = fx, ffy = fy;
     FWLToClient(ffx, ffy);
-    FX_DWORD dwWidgetHit = m_pNormalWidget->HitTest(ffx, ffy);
+    uint32_t dwWidgetHit = m_pNormalWidget->HitTest(ffx, ffy);
     if (dwWidgetHit != FWL_WGTHITTEST_Unknown) {
       return FWL_WGTHITTEST_Client;
     }

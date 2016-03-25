@@ -141,7 +141,7 @@ FX_BOOL CXFA_FFBarcode::LoadWidget() {
 }
 void CXFA_FFBarcode::RenderWidget(CFX_Graphics* pGS,
                                   CFX_Matrix* pMatrix,
-                                  FX_DWORD dwStatus,
+                                  uint32_t dwStatus,
                                   int32_t iRotate) {
   if (!IsMatchVisibleStatus(dwStatus)) {
     return;
@@ -217,7 +217,7 @@ void CXFA_FFBarcode::UpdateWidgetProperty() {
     pBarCodeWidget->SetPrintChecksum(TRUE);
   }
 }
-FX_BOOL CXFA_FFBarcode::OnLButtonDown(FX_DWORD dwFlags,
+FX_BOOL CXFA_FFBarcode::OnLButtonDown(uint32_t dwFlags,
                                       FX_FLOAT fx,
                                       FX_FLOAT fy) {
   CFWL_Barcode* pBarCodeWidget = (CFWL_Barcode*)m_pNormalWidget;
@@ -229,7 +229,7 @@ FX_BOOL CXFA_FFBarcode::OnLButtonDown(FX_DWORD dwFlags,
   }
   return CXFA_FFTextEdit::OnLButtonDown(dwFlags, fx, fy);
 }
-FX_BOOL CXFA_FFBarcode::OnRButtonDown(FX_DWORD dwFlags,
+FX_BOOL CXFA_FFBarcode::OnRButtonDown(uint32_t dwFlags,
                                       FX_FLOAT fx,
                                       FX_FLOAT fy) {
   CFWL_Barcode* pBarCodeWidget = (CFWL_Barcode*)m_pNormalWidget;

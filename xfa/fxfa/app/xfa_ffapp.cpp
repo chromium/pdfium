@@ -24,7 +24,7 @@ CXFA_FileRead::CXFA_FileRead(const CFX_ArrayTemplate<CPDF_Stream*>& streams) {
   }
 }
 FX_FILESIZE CXFA_FileRead::GetSize() {
-  FX_DWORD dwSize = 0;
+  uint32_t dwSize = 0;
   int32_t iCount = m_Data.GetSize();
   for (int32_t i = 0; i < iCount; i++) {
     CPDF_StreamAcc& acc = m_Data[i];
@@ -48,7 +48,7 @@ FX_BOOL CXFA_FileRead::ReadBlock(void* buffer,
   }
   while (index < iCount) {
     CPDF_StreamAcc& acc = m_Data[index];
-    FX_DWORD dwSize = acc.GetSize();
+    uint32_t dwSize = acc.GetSize();
     size_t dwRead = std::min(size, static_cast<size_t>(dwSize - offset));
     FXSYS_memcpy(buffer, acc.GetData() + offset, dwRead);
     size -= dwRead;

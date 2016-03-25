@@ -96,7 +96,7 @@ void FX_WCharToUTF16Copy(const FX_WCHAR* pWChar,
     }
   }
 }
-inline FX_DWORD FX_DWordFromBytes(const uint8_t* pStr) {
+inline uint32_t FX_DWordFromBytes(const uint8_t* pStr) {
   return FXBSTR_ID(pStr[3], pStr[2], pStr[1], pStr[0]);
 }
 inline uint16_t FX_WordFromBytes(const uint8_t* pStr) {
@@ -127,7 +127,7 @@ int32_t FX_UTF8Decode(const FX_CHAR* pSrc,
   }
   int32_t iDstLen = *pDstLen;
   FX_BOOL bValidDst = (pDst != NULL && iDstLen > 0);
-  FX_DWORD dwCode = 0;
+  uint32_t dwCode = 0;
   int32_t iPending = 0;
   int32_t iSrcNum = 0, iDstNum = 0;
   int32_t k = 0;

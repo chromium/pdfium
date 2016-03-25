@@ -119,18 +119,18 @@ FX_BOOL CFDE_CSSDeclaration::AddProperty(const FDE_CSSPROPERTYARGS* pArgs,
     }
     bImportant = TRUE;
   }
-  const FX_DWORD dwType = pArgs->pProperty->dwType;
+  const uint32_t dwType = pArgs->pProperty->dwType;
   switch (dwType & 0x0F) {
     case FDE_CSSVALUETYPE_Primitive: {
-      static const FX_DWORD g_ValueGuessOrder[] = {
+      static const uint32_t g_ValueGuessOrder[] = {
           FDE_CSSVALUETYPE_MaybeNumber,   FDE_CSSVALUETYPE_MaybeEnum,
           FDE_CSSVALUETYPE_MaybeColor,    FDE_CSSVALUETYPE_MaybeURI,
           FDE_CSSVALUETYPE_MaybeFunction, FDE_CSSVALUETYPE_MaybeString,
       };
       static const int32_t g_ValueGuessCount =
-          sizeof(g_ValueGuessOrder) / sizeof(FX_DWORD);
+          sizeof(g_ValueGuessOrder) / sizeof(uint32_t);
       for (int32_t i = 0; i < g_ValueGuessCount; ++i) {
-        const FX_DWORD dwMatch = dwType & g_ValueGuessOrder[i];
+        const uint32_t dwMatch = dwType & g_ValueGuessOrder[i];
         if (dwMatch == 0) {
           continue;
         }
@@ -539,7 +539,7 @@ FX_BOOL CFDE_CSSDeclaration::ParseValueListProperty(
   FX_WCHAR separator =
       (pArgs->pProperty->eName == FDE_CSSPROPERTY_FontFamily) ? ',' : ' ';
   CFDE_CSSValueListParser parser(pszValue, iValueLen, separator);
-  const FX_DWORD dwType = pArgs->pProperty->dwType;
+  const uint32_t dwType = pArgs->pProperty->dwType;
   FDE_CSSPRIMITIVETYPE eType;
   CFDE_CSSValueArray list;
   while (parser.NextValue(eType, pszValue, iValueLen)) {

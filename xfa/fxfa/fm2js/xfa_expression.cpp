@@ -18,10 +18,10 @@ const CFX_WideStringC RUNTIMEBLOCKTEMPARRAYINDEX =
 
 }  // namespace
 
-CXFA_FMExpression::CXFA_FMExpression(FX_DWORD line)
+CXFA_FMExpression::CXFA_FMExpression(uint32_t line)
     : m_type(XFA_FM_EXPTYPE_UNKNOWN), m_line(line) {}
 
-CXFA_FMExpression::CXFA_FMExpression(FX_DWORD line, XFA_FM_EXPTYPE type)
+CXFA_FMExpression::CXFA_FMExpression(uint32_t line, XFA_FM_EXPTYPE type)
     : m_type(type), m_line(line) {}
 
 void CXFA_FMExpression::ToJavaScript(CFX_WideTextBuf& javascript) {}
@@ -29,7 +29,7 @@ void CXFA_FMExpression::ToJavaScript(CFX_WideTextBuf& javascript) {}
 void CXFA_FMExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {}
 
 CXFA_FMFunctionDefinition::CXFA_FMFunctionDefinition(
-    FX_DWORD line,
+    uint32_t line,
     FX_BOOL isGlobal,
     const CFX_WideStringC& wsName,
     CFX_WideStringCArray* pArguments,
@@ -118,7 +118,7 @@ void CXFA_FMFunctionDefinition::ToJavaScript(CFX_WideTextBuf& javascript) {
 
 void CXFA_FMFunctionDefinition::ToImpliedReturnJS(CFX_WideTextBuf&) {}
 
-CXFA_FMVarExpression::CXFA_FMVarExpression(FX_DWORD line,
+CXFA_FMVarExpression::CXFA_FMVarExpression(uint32_t line,
                                            const CFX_WideStringC& wsName,
                                            CXFA_FMExpression* pInit)
     : CXFA_FMExpression(line, XFA_FM_EXPTYPE_VAR),
@@ -171,7 +171,7 @@ void CXFA_FMVarExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
   javascript << FX_WSTRC(L";\n");
 }
 
-CXFA_FMExpExpression::CXFA_FMExpExpression(FX_DWORD line,
+CXFA_FMExpExpression::CXFA_FMExpExpression(uint32_t line,
                                            CXFA_FMSimpleExpression* pExpression)
     : CXFA_FMExpression(line, XFA_FM_EXPTYPE_EXP), m_pExpression(pExpression) {}
 
@@ -208,7 +208,7 @@ void CXFA_FMExpExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
   }
 }
 
-CXFA_FMBlockExpression::CXFA_FMBlockExpression(FX_DWORD line,
+CXFA_FMBlockExpression::CXFA_FMBlockExpression(uint32_t line,
                                                CFX_PtrArray* pExpressionList)
     : CXFA_FMExpression(line, XFA_FM_EXPTYPE_BLOCK),
       m_pExpressionList(pExpressionList) {}
@@ -251,7 +251,7 @@ void CXFA_FMBlockExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
   javascript << FX_WSTRC(L"}\n");
 }
 
-CXFA_FMDoExpression::CXFA_FMDoExpression(FX_DWORD line,
+CXFA_FMDoExpression::CXFA_FMDoExpression(uint32_t line,
                                          CXFA_FMExpression* pList)
     : CXFA_FMExpression(line), m_pList(pList) {}
 
@@ -263,7 +263,7 @@ void CXFA_FMDoExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
   m_pList->ToImpliedReturnJS(javascript);
 }
 
-CXFA_FMIfExpression::CXFA_FMIfExpression(FX_DWORD line,
+CXFA_FMIfExpression::CXFA_FMIfExpression(uint32_t line,
                                          CXFA_FMSimpleExpression* pExpression,
                                          CXFA_FMExpression* pIfExpression,
                                          CXFA_FMExpression* pElseExpression)
@@ -331,7 +331,7 @@ void CXFA_FMLoopExpression::ToJavaScript(CFX_WideTextBuf& javascript) {}
 void CXFA_FMLoopExpression::ToImpliedReturnJS(CFX_WideTextBuf&) {}
 
 CXFA_FMWhileExpression::CXFA_FMWhileExpression(
-    FX_DWORD line,
+    uint32_t line,
     CXFA_FMSimpleExpression* pCondition,
     CXFA_FMExpression* pExpression)
     : CXFA_FMLoopExpression(line),
@@ -354,7 +354,7 @@ void CXFA_FMWhileExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
   m_pExpression->ToImpliedReturnJS(javascript);
 }
 
-CXFA_FMBreakExpression::CXFA_FMBreakExpression(FX_DWORD line)
+CXFA_FMBreakExpression::CXFA_FMBreakExpression(uint32_t line)
     : CXFA_FMExpression(line, XFA_FM_EXPTYPE_BREAK) {}
 
 CXFA_FMBreakExpression::~CXFA_FMBreakExpression() {}
@@ -371,7 +371,7 @@ void CXFA_FMBreakExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
   javascript << FX_WSTRC(L"break;\n");
 }
 
-CXFA_FMContinueExpression::CXFA_FMContinueExpression(FX_DWORD line)
+CXFA_FMContinueExpression::CXFA_FMContinueExpression(uint32_t line)
     : CXFA_FMExpression(line, XFA_FM_EXPTYPE_CONTINUE) {}
 
 CXFA_FMContinueExpression::~CXFA_FMContinueExpression() {}
@@ -388,7 +388,7 @@ void CXFA_FMContinueExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
   javascript << FX_WSTRC(L"continue;\n");
 }
 
-CXFA_FMForExpression::CXFA_FMForExpression(FX_DWORD line,
+CXFA_FMForExpression::CXFA_FMForExpression(uint32_t line,
                                            const CFX_WideStringC& wsVariant,
                                            CXFA_FMSimpleExpression* pAssignment,
                                            CXFA_FMSimpleExpression* pAccessor,
@@ -504,7 +504,7 @@ void CXFA_FMForExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
 }
 
 CXFA_FMForeachExpression::CXFA_FMForeachExpression(
-    FX_DWORD line,
+    uint32_t line,
     const CFX_WideStringC& wsIdentifier,
     CFX_PtrArray* pAccessors,
     CXFA_FMExpression* pList)

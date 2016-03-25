@@ -34,7 +34,7 @@ void XFA_DataDescription_UpdateDataRelation(CXFA_Node* pDataNode,
   for (CXFA_Node* pDataChild = pDataNode->GetNodeItem(XFA_NODEITEM_FirstChild);
        pDataChild;
        pDataChild = pDataChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
-    FX_DWORD dwNameHash = pDataChild->GetNameHash();
+    uint32_t dwNameHash = pDataChild->GetNameHash();
     XFA_ELEMENT eType = pDataChild->GetClassID();
     if (!dwNameHash) {
       continue;

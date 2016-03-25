@@ -122,7 +122,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Dollar(
   if (rnd.m_nLevel > 0) {
     return -1;
   }
-  FX_DWORD dwNameHash =
+  uint32_t dwNameHash =
       FX_HashCode_String_GetW((const FX_WCHAR*)wsName + 1, iNameLen - 1);
   if (dwNameHash == XFA_HASHCODE_Xfa) {
     nodes.Add(rnd.m_pSC->GetDocument()->GetRoot());
@@ -218,7 +218,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
   CXFA_Node* curNode = ToNode(rnd.m_CurNode);
   CXFA_ObjArray& nodes = rnd.m_Nodes;
   int32_t nNum = nodes.GetSize();
-  FX_DWORD dwStyles = rnd.m_dwStyles;
+  uint32_t dwStyles = rnd.m_dwStyles;
   CFX_WideString& wsName = rnd.m_wsName;
   uint32_t uNameHash = rnd.m_uHashName;
   CFX_WideString& wsCondition = rnd.m_wsCondition;
@@ -391,7 +391,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
   }
   if (dwStyles & XFA_RESOLVENODE_Siblings) {
     CXFA_Node* child = parentNode->GetNodeItem(XFA_NODEITEM_FirstChild);
-    FX_DWORD dwSubStyles =
+    uint32_t dwSubStyles =
         XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties;
     if (dwStyles & XFA_RESOLVENODE_TagName) {
       dwSubStyles |= XFA_RESOLVENODE_TagName;
@@ -443,7 +443,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
         rndFind.m_CurNode = child;
         CFX_WideString wsOriginCondition = rndFind.m_wsCondition;
         rndFind.m_wsCondition.Empty();
-        FX_DWORD dwOriginStyle = rndFind.m_dwStyles;
+        uint32_t dwOriginStyle = rndFind.m_dwStyles;
         rndFind.m_dwStyles = dwOriginStyle | XFA_RESOLVENODE_ALL;
         XFA_ResolveNodes_Normal(rndFind);
         rndFind.m_dwStyles = dwOriginStyle;
@@ -476,7 +476,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
     }
   }
   if (dwStyles & XFA_RESOLVENODE_Parent) {
-    FX_DWORD dwSubStyles = XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent |
+    uint32_t dwSubStyles = XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent |
                            XFA_RESOLVENODE_Properties;
     if (dwStyles & XFA_RESOLVENODE_TagName) {
       dwSubStyles |= XFA_RESOLVENODE_TagName;
@@ -782,9 +782,9 @@ void CXFA_ResolveProcessor::XFA_ResolveNode_FilterCondition(
   }
 }
 void CXFA_ResolveProcessor::XFA_ResolveNodes_SetStylesForChild(
-    FX_DWORD dwParentStyles,
+    uint32_t dwParentStyles,
     CXFA_ResolveNodesData& rnd) {
-  FX_DWORD dwSubStyles = XFA_RESOLVENODE_Children;
+  uint32_t dwSubStyles = XFA_RESOLVENODE_Children;
   if (dwParentStyles & XFA_RESOLVENODE_TagName) {
     dwSubStyles |= XFA_RESOLVENODE_TagName;
   }

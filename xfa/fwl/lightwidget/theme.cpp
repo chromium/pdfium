@@ -49,14 +49,14 @@ FX_BOOL CFWL_Theme::IsValidWidget(IFWL_Widget* pWidget) {
   return !!GetTheme(pWidget);
 }
 
-FX_DWORD CFWL_Theme::GetThemeID(IFWL_Widget* pWidget) {
+uint32_t CFWL_Theme::GetThemeID(IFWL_Widget* pWidget) {
   return GetTheme(pWidget)->GetThemeID(pWidget);
 }
 
-FX_DWORD CFWL_Theme::SetThemeID(IFWL_Widget* pWidget,
-                                FX_DWORD dwThemeID,
+uint32_t CFWL_Theme::SetThemeID(IFWL_Widget* pWidget,
+                                uint32_t dwThemeID,
                                 FX_BOOL bChildren) {
-  FX_DWORD dwID;
+  uint32_t dwID;
   for (const auto& pTheme : m_ThemesArray) {
     dwID = pTheme->GetThemeID(pWidget);
     pTheme->SetThemeID(pWidget, dwThemeID, FALSE);
@@ -81,7 +81,7 @@ FX_BOOL CFWL_Theme::DrawText(CFWL_ThemeText* pParams) {
   return GetTheme(pParams->m_pWidget)->DrawText(pParams);
 }
 
-void* CFWL_Theme::GetCapacity(CFWL_ThemePart* pThemePart, FX_DWORD dwCapacity) {
+void* CFWL_Theme::GetCapacity(CFWL_ThemePart* pThemePart, uint32_t dwCapacity) {
   return GetTheme(pThemePart->m_pWidget)->GetCapacity(pThemePart, dwCapacity);
 }
 

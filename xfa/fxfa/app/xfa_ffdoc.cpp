@@ -32,7 +32,7 @@ CXFA_FFDoc::CXFA_FFDoc(CXFA_FFApp* pApp, IXFA_DocProvider* pDocProvider)
 CXFA_FFDoc::~CXFA_FFDoc() {
   CloseDoc();
 }
-FX_DWORD CXFA_FFDoc::GetDocType() {
+uint32_t CXFA_FFDoc::GetDocType() {
   return m_dwDocType;
 }
 int32_t CXFA_FFDoc::StartLoad() {
@@ -181,7 +181,7 @@ void CXFA_FFDoc::StopLoad() {
     m_dwDocType = XFA_DOCTYPE_Dynamic;
   }
 }
-IXFA_DocView* CXFA_FFDoc::CreateDocView(FX_DWORD dwView) {
+IXFA_DocView* CXFA_FFDoc::CreateDocView(uint32_t dwView) {
   CXFA_FFDocView* pDocView =
       (CXFA_FFDocView*)m_mapTypeToDocView.GetValueAt((void*)(uintptr_t)dwView);
   if (!pDocView) {
@@ -236,8 +236,8 @@ FX_BOOL CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
   CFX_ArrayTemplate<CPDF_Stream*> xfaStreams;
   if (pElementXFA->IsArray()) {
     CPDF_Array* pXFAArray = (CPDF_Array*)pElementXFA;
-    FX_DWORD count = pXFAArray->GetCount() / 2;
-    for (FX_DWORD i = 0; i < count; i++) {
+    uint32_t count = pXFAArray->GetCount() / 2;
+    for (uint32_t i = 0; i < count; i++) {
       if (CPDF_Stream* pStream = pXFAArray->GetStreamAt(i * 2 + 1))
         xfaStreams.Add(pStream);
     }
@@ -307,7 +307,7 @@ FX_BOOL CXFA_FFDoc::CloseDoc() {
   pNoteDriver->ClearEventTargets(FALSE);
   return TRUE;
 }
-void CXFA_FFDoc::SetDocType(FX_DWORD dwType) {
+void CXFA_FFDoc::SetDocType(uint32_t dwType) {
   m_dwDocType = dwType;
 }
 CPDF_Document* CXFA_FFDoc::GetPDFDoc() {
@@ -320,7 +320,7 @@ CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(const CFX_WideStringC& wsName,
   if (!m_pPDFDoc)
     return nullptr;
 
-  FX_DWORD dwHash =
+  uint32_t dwHash =
       FX_HashCode_String_GetW(wsName.GetPtr(), wsName.GetLength(), FALSE);
   FX_IMAGEDIB_AND_DPI* imageDIBDpi = nullptr;
   if (m_mapNamedImages.Lookup((void*)(uintptr_t)dwHash, (void*&)imageDIBDpi)) {
@@ -379,7 +379,7 @@ CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(const CFX_WideStringC& wsName,
 }
 
 IFDE_XMLElement* CXFA_FFDoc::GetPackageData(const CFX_WideStringC& wsPackage) {
-  FX_DWORD packetHash =
+  uint32_t packetHash =
       FX_HashCode_String_GetW(wsPackage.GetPtr(), wsPackage.GetLength());
   CXFA_Node* pNode = ToNode(m_pDocument->GetXFAObject(packetHash));
   if (!pNode) {
@@ -397,7 +397,7 @@ FX_BOOL CXFA_FFDoc::SavePackage(const CFX_WideStringC& wsPackage,
   if (!pExport) {
     return FALSE;
   }
-  FX_DWORD packetHash =
+  uint32_t packetHash =
       FX_HashCode_String_GetW(wsPackage.GetPtr(), wsPackage.GetLength());
   CXFA_Node* pNode = NULL;
   if (packetHash == XFA_HASHCODE_Xfa) {

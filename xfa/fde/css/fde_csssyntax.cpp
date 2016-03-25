@@ -30,7 +30,7 @@ CFDE_CSSSyntaxParser::CFDE_CSSSyntaxParser()
       m_iStreamPos(0),
       m_iPlaneSize(0),
       m_iTextDatLen(0),
-      m_dwCheck((FX_DWORD)-1),
+      m_dwCheck((uint32_t)-1),
       m_eMode(FDE_CSSSYNTAXMODE_RuleSet),
       m_eStatus(FDE_CSSSYNTAXSTATUS_None) {}
 CFDE_CSSSyntaxParser::~CFDE_CSSSyntaxParser() {
@@ -69,7 +69,7 @@ void CFDE_CSSSyntaxParser::Reset(FX_BOOL bOnlyDeclaration) {
   m_pStream = NULL;
   m_iStreamPos = 0;
   m_iTextDatLen = 0;
-  m_dwCheck = (FX_DWORD)-1;
+  m_dwCheck = (uint32_t)-1;
   m_eStatus = FDE_CSSSYNTAXSTATUS_None;
   m_eMode = bOnlyDeclaration ? FDE_CSSSYNTAXMODE_PropertyName
                              : FDE_CSSSYNTAXMODE_RuleSet;

@@ -69,16 +69,16 @@ void CXFA_FFWidget::GetRectWithoutRotate(CFX_RectF& rtWidget) {
       break;
   }
 }
-FX_DWORD CXFA_FFWidget::GetStatus() {
+uint32_t CXFA_FFWidget::GetStatus() {
   return m_dwStatus;
 }
 
-void CXFA_FFWidget::ModifyStatus(FX_DWORD dwAdded, FX_DWORD dwRemoved) {
+void CXFA_FFWidget::ModifyStatus(uint32_t dwAdded, uint32_t dwRemoved) {
   m_dwStatus = (m_dwStatus & ~dwRemoved) | dwAdded;
 }
 
 FX_BOOL CXFA_FFWidget::GetBBox(CFX_RectF& rtBox,
-                               FX_DWORD dwStatus,
+                               uint32_t dwStatus,
                                FX_BOOL bDrawFocus) {
   if (bDrawFocus)
     return FALSE;
@@ -100,7 +100,7 @@ FX_BOOL CXFA_FFWidget::GetToolTip(CFX_WideString& wsToolTip) {
 }
 void CXFA_FFWidget::RenderWidget(CFX_Graphics* pGS,
                                  CFX_Matrix* pMatrix,
-                                 FX_DWORD dwStatus,
+                                 uint32_t dwStatus,
                                  int32_t iRotate) {
   if (!IsMatchVisibleStatus(dwStatus)) {
     return;
@@ -137,7 +137,7 @@ void CXFA_FFWidget::DrawBorder(CFX_Graphics* pGS,
                                CXFA_Box box,
                                const CFX_RectF& rtBorder,
                                CFX_Matrix* pMatrix,
-                               FX_DWORD dwFlags) {
+                               uint32_t dwFlags) {
   XFA_DrawBox(box, pGS, rtBorder, pMatrix, dwFlags);
 }
 void CXFA_FFWidget::InvalidateWidget(const CFX_RectF* pRect) {
@@ -179,37 +179,37 @@ FX_BOOL CXFA_FFWidget::OnMouseEnter() {
 FX_BOOL CXFA_FFWidget::OnMouseExit() {
   return FALSE;
 }
-FX_BOOL CXFA_FFWidget::OnLButtonDown(FX_DWORD dwFlags,
+FX_BOOL CXFA_FFWidget::OnLButtonDown(uint32_t dwFlags,
                                      FX_FLOAT fx,
                                      FX_FLOAT fy) {
   return FALSE;
 }
-FX_BOOL CXFA_FFWidget::OnLButtonUp(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
+FX_BOOL CXFA_FFWidget::OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
   return FALSE;
 }
-FX_BOOL CXFA_FFWidget::OnLButtonDblClk(FX_DWORD dwFlags,
+FX_BOOL CXFA_FFWidget::OnLButtonDblClk(uint32_t dwFlags,
                                        FX_FLOAT fx,
                                        FX_FLOAT fy) {
   return FALSE;
 }
-FX_BOOL CXFA_FFWidget::OnMouseMove(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
+FX_BOOL CXFA_FFWidget::OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
   return FALSE;
 }
-FX_BOOL CXFA_FFWidget::OnMouseWheel(FX_DWORD dwFlags,
+FX_BOOL CXFA_FFWidget::OnMouseWheel(uint32_t dwFlags,
                                     int16_t zDelta,
                                     FX_FLOAT fx,
                                     FX_FLOAT fy) {
   return FALSE;
 }
-FX_BOOL CXFA_FFWidget::OnRButtonDown(FX_DWORD dwFlags,
+FX_BOOL CXFA_FFWidget::OnRButtonDown(uint32_t dwFlags,
                                      FX_FLOAT fx,
                                      FX_FLOAT fy) {
   return FALSE;
 }
-FX_BOOL CXFA_FFWidget::OnRButtonUp(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
+FX_BOOL CXFA_FFWidget::OnRButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) {
   return FALSE;
 }
-FX_BOOL CXFA_FFWidget::OnRButtonDblClk(FX_DWORD dwFlags,
+FX_BOOL CXFA_FFWidget::OnRButtonDblClk(uint32_t dwFlags,
                                        FX_FLOAT fx,
                                        FX_FLOAT fy) {
   return FALSE;
@@ -238,16 +238,16 @@ FX_BOOL CXFA_FFWidget::OnKillFocus(CXFA_FFWidget* pNewWidget) {
   }
   return TRUE;
 }
-FX_BOOL CXFA_FFWidget::OnKeyDown(FX_DWORD dwKeyCode, FX_DWORD dwFlags) {
+FX_BOOL CXFA_FFWidget::OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags) {
   return FALSE;
 }
-FX_BOOL CXFA_FFWidget::OnKeyUp(FX_DWORD dwKeyCode, FX_DWORD dwFlags) {
+FX_BOOL CXFA_FFWidget::OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags) {
   return FALSE;
 }
-FX_BOOL CXFA_FFWidget::OnChar(FX_DWORD dwChar, FX_DWORD dwFlags) {
+FX_BOOL CXFA_FFWidget::OnChar(uint32_t dwChar, uint32_t dwFlags) {
   return FALSE;
 }
-FX_DWORD CXFA_FFWidget::OnHitTest(FX_FLOAT fx, FX_FLOAT fy) {
+uint32_t CXFA_FFWidget::OnHitTest(FX_FLOAT fx, FX_FLOAT fy) {
   return FALSE;
 }
 FX_BOOL CXFA_FFWidget::OnSetCursor(FX_FLOAT fx, FX_FLOAT fy) {
@@ -398,7 +398,7 @@ void CXFA_FFWidget::GetMinMaxHeight(FX_FLOAT fMinHeight, FX_FLOAT fMaxHeight) {
     m_pDataAcc->GetMaxHeight(fMaxHeight);
   }
 }
-FX_BOOL CXFA_FFWidget::IsMatchVisibleStatus(FX_DWORD dwStatus) {
+FX_BOOL CXFA_FFWidget::IsMatchVisibleStatus(uint32_t dwStatus) {
   return m_dwStatus & XFA_WIDGETSTATUS_Visible;
 }
 void CXFA_FFWidget::EventKillFocus() {
@@ -483,7 +483,7 @@ class CXFA_ImageRenderer {
                 FX_ARGB bitmap_argb,
                 int bitmap_alpha,
                 const CFX_Matrix* pImage2Device,
-                FX_DWORD flags,
+                uint32_t flags,
                 int blendType = FXDIB_BLEND_NORMAL);
   FX_BOOL Continue(IFX_Pause* pPause);
 
@@ -495,7 +495,7 @@ class CXFA_ImageRenderer {
   CFX_DIBitmap* m_pCloneConvert;
   int m_BitmapAlpha;
   FX_ARGB m_FillArgb;
-  FX_DWORD m_Flags;
+  uint32_t m_Flags;
   CFX_ImageTransformer* m_pTransformer;
   void* m_DeviceHandle;
   int32_t m_BlendType;
@@ -540,7 +540,7 @@ FX_BOOL CXFA_ImageRenderer::Start(CFX_RenderDevice* pDevice,
                                   FX_ARGB bitmap_argb,
                                   int bitmap_alpha,
                                   const CFX_Matrix* pImage2Device,
-                                  FX_DWORD flags,
+                                  uint32_t flags,
                                   int blendType) {
   m_pDevice = pDevice;
   m_pDIBSource = pDIBSource;
@@ -683,7 +683,7 @@ void CXFA_ImageRenderer::CompositeDIBitmap(CFX_DIBitmap* pDIBitmap,
         return;
       }
     } else {
-      FX_DWORD fill_argb = (mask_argb);
+      uint32_t fill_argb = (mask_argb);
       if (bitmap_alpha < 255) {
         ((uint8_t*)&fill_argb)[3] =
             ((uint8_t*)&fill_argb)[3] * bitmap_alpha / 255;
@@ -870,7 +870,7 @@ static int32_t XFA_Base64Decode(const FX_CHAR* pStr, uint8_t* pOutBuffer) {
   }
   int32_t iLen = FXSYS_strlen((FX_CHAR*)pBuffer);
   int32_t i = 0, j = 0;
-  FX_DWORD dwLimb = 0;
+  uint32_t dwLimb = 0;
   for (; i + 3 < iLen; i += 4) {
     if (pBuffer[i] == '=' || pBuffer[i + 1] == '=' || pBuffer[i + 2] == '=' ||
         pBuffer[i + 3] == '=') {
@@ -878,23 +878,23 @@ static int32_t XFA_Base64Decode(const FX_CHAR* pStr, uint8_t* pOutBuffer) {
         break;
       }
       if (pBuffer[i + 2] == '=') {
-        dwLimb = ((FX_DWORD)g_inv_base64[pBuffer[i]] << 6) |
-                 ((FX_DWORD)g_inv_base64[pBuffer[i + 1]]);
+        dwLimb = ((uint32_t)g_inv_base64[pBuffer[i]] << 6) |
+                 ((uint32_t)g_inv_base64[pBuffer[i + 1]]);
         pOutBuffer[j] = (uint8_t)(dwLimb >> 4) & 0xFF;
         j++;
       } else {
-        dwLimb = ((FX_DWORD)g_inv_base64[pBuffer[i]] << 12) |
-                 ((FX_DWORD)g_inv_base64[pBuffer[i + 1]] << 6) |
-                 ((FX_DWORD)g_inv_base64[pBuffer[i + 2]]);
+        dwLimb = ((uint32_t)g_inv_base64[pBuffer[i]] << 12) |
+                 ((uint32_t)g_inv_base64[pBuffer[i + 1]] << 6) |
+                 ((uint32_t)g_inv_base64[pBuffer[i + 2]]);
         pOutBuffer[j] = (uint8_t)(dwLimb >> 10) & 0xFF;
         pOutBuffer[j + 1] = (uint8_t)(dwLimb >> 2) & 0xFF;
         j += 2;
       }
     } else {
-      dwLimb = ((FX_DWORD)g_inv_base64[pBuffer[i]] << 18) |
-               ((FX_DWORD)g_inv_base64[pBuffer[i + 1]] << 12) |
-               ((FX_DWORD)g_inv_base64[pBuffer[i + 2]] << 6) |
-               ((FX_DWORD)g_inv_base64[pBuffer[i + 3]]);
+      dwLimb = ((uint32_t)g_inv_base64[pBuffer[i]] << 18) |
+               ((uint32_t)g_inv_base64[pBuffer[i + 1]] << 12) |
+               ((uint32_t)g_inv_base64[pBuffer[i + 2]] << 6) |
+               ((uint32_t)g_inv_base64[pBuffer[i + 3]]);
       pOutBuffer[j] = (uint8_t)(dwLimb >> 16) & 0xff;
       pOutBuffer[j + 1] = (uint8_t)(dwLimb >> 8) & 0xff;
       pOutBuffer[j + 2] = (uint8_t)(dwLimb)&0xff;
@@ -911,11 +911,11 @@ static const FX_CHAR g_base64_chars[] =
 FX_CHAR* XFA_Base64Encode(const uint8_t* buf, int32_t buf_len) {
   FX_CHAR* out = NULL;
   int i, j;
-  FX_DWORD limb;
+  uint32_t limb;
   out = FX_Alloc(FX_CHAR, ((buf_len * 8 + 5) / 6) + 5);
   for (i = 0, j = 0, limb = 0; i + 2 < buf_len; i += 3, j += 4) {
-    limb = ((FX_DWORD)buf[i] << 16) | ((FX_DWORD)buf[i + 1] << 8) |
-           ((FX_DWORD)buf[i + 2]);
+    limb = ((uint32_t)buf[i] << 16) | ((uint32_t)buf[i + 1] << 8) |
+           ((uint32_t)buf[i + 2]);
     out[j] = g_base64_chars[(limb >> 18) & 63];
     out[j + 1] = g_base64_chars[(limb >> 12) & 63];
     out[j + 2] = g_base64_chars[(limb >> 6) & 63];
@@ -925,14 +925,14 @@ FX_CHAR* XFA_Base64Encode(const uint8_t* buf, int32_t buf_len) {
     case 0:
       break;
     case 1:
-      limb = ((FX_DWORD)buf[i]);
+      limb = ((uint32_t)buf[i]);
       out[j++] = g_base64_chars[(limb >> 2) & 63];
       out[j++] = g_base64_chars[(limb << 4) & 63];
       out[j++] = '=';
       out[j++] = '=';
       break;
     case 2:
-      limb = ((FX_DWORD)buf[i] << 8) | ((FX_DWORD)buf[i + 1]);
+      limb = ((uint32_t)buf[i] << 8) | ((uint32_t)buf[i + 1]);
       out[j++] = g_base64_chars[(limb >> 10) & 63];
       out[j++] = g_base64_chars[(limb >> 4) & 63];
       out[j++] = g_base64_chars[(limb << 2) & 63];
@@ -1120,7 +1120,7 @@ FX_BOOL XFA_IsCreateWidget(XFA_ELEMENT iType) {
 static void XFA_BOX_GetPath_Arc(CXFA_Box box,
                                 CFX_RectF rtDraw,
                                 CFX_Path& fillPath,
-                                FX_DWORD dwFlags) {
+                                uint32_t dwFlags) {
   FX_FLOAT a, b;
   a = rtDraw.width / 2.0f;
   b = rtDraw.height / 2.0f;
@@ -1552,7 +1552,7 @@ static void XFA_BOX_Fill(CXFA_Box box,
                          CFX_Graphics* pGS,
                          const CFX_RectF& rtWidget,
                          CFX_Matrix* pMatrix,
-                         FX_DWORD dwFlags) {
+                         uint32_t dwFlags) {
   CXFA_Fill fill = box.GetFill();
   if (!fill || fill.GetPresence() != XFA_ATTRIBUTEENUM_Visible) {
     return;
@@ -1623,7 +1623,7 @@ static void XFA_BOX_StrokeArc(CXFA_Box box,
                               CFX_Graphics* pGS,
                               CFX_RectF rtWidget,
                               CFX_Matrix* pMatrix,
-                              FX_DWORD dwFlags) {
+                              uint32_t dwFlags) {
   CXFA_Edge edge = box.GetEdge(0);
   if (!edge || !edge.IsVisible()) {
     return;
@@ -1883,7 +1883,7 @@ static void XFA_BOX_Stroke(CXFA_Box box,
                            CFX_Graphics* pGS,
                            CFX_RectF rtWidget,
                            CFX_Matrix* pMatrix,
-                           FX_DWORD dwFlags) {
+                           uint32_t dwFlags) {
   if (box.IsArc() || (dwFlags & XFA_DRAWBOX_ForceRound) != 0) {
     XFA_BOX_StrokeArc(box, pGS, rtWidget, pMatrix, dwFlags);
     return;
@@ -1947,7 +1947,7 @@ void XFA_DrawBox(CXFA_Box box,
                  CFX_Graphics* pGS,
                  const CFX_RectF& rtWidget,
                  CFX_Matrix* pMatrix,
-                 FX_DWORD dwFlags) {
+                 uint32_t dwFlags) {
   if (!box || box.GetPresence() != XFA_ATTRIBUTEENUM_Visible) {
     return;
   }

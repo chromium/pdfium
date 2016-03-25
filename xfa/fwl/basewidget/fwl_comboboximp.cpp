@@ -128,8 +128,8 @@ FX_BOOL IFWL_ComboBox::EditDeSelect() {
 FWL_ERR IFWL_ComboBox::GetBBox(CFX_RectF& rect) {
   return static_cast<CFWL_ComboBoxImp*>(GetImpl())->GetBBox(rect);
 }
-FWL_ERR IFWL_ComboBox::EditModifyStylesEx(FX_DWORD dwStylesExAdded,
-                                          FX_DWORD dwStylesExRemoved) {
+FWL_ERR IFWL_ComboBox::EditModifyStylesEx(uint32_t dwStylesExAdded,
+                                          uint32_t dwStylesExRemoved) {
   return static_cast<CFWL_ComboBoxImp*>(GetImpl())
       ->EditModifyStylesEx(dwStylesExAdded, dwStylesExRemoved);
 }
@@ -145,7 +145,7 @@ CFWL_ComboEditImpDelegate::CFWL_ComboEditImpDelegate(CFWL_ComboEditImp* pOwner)
 int32_t CFWL_ComboEditImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return 0;
-  FX_DWORD dwMsgCode = pMessage->GetClassID();
+  uint32_t dwMsgCode = pMessage->GetClassID();
   FX_BOOL backDefault = TRUE;
   switch (dwMsgCode) {
     case FWL_MSGHASH_SetFocus:
@@ -287,7 +287,7 @@ CFWL_ComboListImpDelegate::CFWL_ComboListImpDelegate(CFWL_ComboListImp* pOwner)
 int32_t CFWL_ComboListImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return 0;
-  FX_DWORD dwHashCode = pMessage->GetClassID();
+  uint32_t dwHashCode = pMessage->GetClassID();
   FX_BOOL backDefault = TRUE;
   if (dwHashCode == FWL_MSGHASH_SetFocus ||
       dwHashCode == FWL_MSGHASH_KillFocus) {
@@ -305,7 +305,7 @@ int32_t CFWL_ComboListImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
         return pDelegate->OnProcessMessage(pMsg);
       }
     }
-    FX_DWORD dwCmd = pMsg->m_dwCmd;
+    uint32_t dwCmd = pMsg->m_dwCmd;
     switch (dwCmd) {
       case FWL_MSGMOUSECMD_MouseMove: {
         backDefault = FALSE;
@@ -413,7 +413,7 @@ int32_t CFWL_ComboListImpDelegate::OnDropListKey(CFWL_MsgKey* pKey) {
       static_cast<CFWL_ComboBoxImp*>(m_pOwner->m_pOuter->GetImpl());
   FX_BOOL bPropagate = FALSE;
   if (pKey->m_dwCmd == FWL_MSGKEYCMD_KeyDown) {
-    FX_DWORD dwKeyCode = pKey->m_dwKeyCode;
+    uint32_t dwKeyCode = pKey->m_dwKeyCode;
     switch (dwKeyCode) {
       case FWL_VKEY_Return:
       case FWL_VKEY_Escape: {
@@ -440,7 +440,7 @@ int32_t CFWL_ComboListImpDelegate::OnDropListKey(CFWL_MsgKey* pKey) {
   return 0;
 }
 void CFWL_ComboListImpDelegate::OnDropListKeyDown(CFWL_MsgKey* pKey) {
-  FX_DWORD dwKeyCode = pKey->m_dwKeyCode;
+  uint32_t dwKeyCode = pKey->m_dwKeyCode;
   switch (dwKeyCode) {
     case FWL_VKEY_Up:
     case FWL_VKEY_Down:
@@ -485,7 +485,7 @@ FWL_ERR CFWL_ComboBoxImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_ComboBox;
   return FWL_ERR_Succeeded;
 }
-FX_DWORD CFWL_ComboBoxImp::GetClassID() const {
+uint32_t CFWL_ComboBoxImp::GetClassID() const {
   return FWL_CLASSHASH_ComboBox;
 }
 FWL_ERR CFWL_ComboBoxImp::Initialize() {
@@ -549,8 +549,8 @@ FWL_ERR CFWL_ComboBoxImp::GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize) {
   }
   return FWL_ERR_Succeeded;
 }
-FWL_ERR CFWL_ComboBoxImp::ModifyStylesEx(FX_DWORD dwStylesExAdded,
-                                         FX_DWORD dwStylesExRemoved) {
+FWL_ERR CFWL_ComboBoxImp::ModifyStylesEx(uint32_t dwStylesExAdded,
+                                         uint32_t dwStylesExRemoved) {
   if (m_pWidgetMgr->IsFormDisabled()) {
     return DisForm_ModifyStylesEx(dwStylesExAdded, dwStylesExRemoved);
   }
@@ -590,7 +590,7 @@ FWL_ERR CFWL_ComboBoxImp::Update() {
           &part, FWL_WGTCAPACITY_CMB_ComboFormHandler));
   return FWL_ERR_Succeeded;
 }
-FX_DWORD CFWL_ComboBoxImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
+uint32_t CFWL_ComboBoxImp::HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   if (m_pWidgetMgr->IsFormDisabled()) {
     return DisForm_HitTest(fx, fy);
   }
@@ -719,7 +719,7 @@ FWL_ERR CFWL_ComboBoxImp::SetCurSel(int32_t iSel) {
   m_iCurSel = bClearSel ? -1 : iSel;
   return FWL_ERR_Succeeded;
 }
-FWL_ERR CFWL_ComboBoxImp::SetStates(FX_DWORD dwStates, FX_BOOL bSet) {
+FWL_ERR CFWL_ComboBoxImp::SetStates(uint32_t dwStates, FX_BOOL bSet) {
   FX_BOOL bIsDropDown = IsDropDownStyle();
   if (bIsDropDown && m_pEdit) {
     m_pEdit->SetStates(dwStates, bSet);
@@ -863,8 +863,8 @@ FWL_ERR CFWL_ComboBoxImp::GetBBox(CFX_RectF& rect) {
   }
   return FWL_ERR_Succeeded;
 }
-FWL_ERR CFWL_ComboBoxImp::EditModifyStylesEx(FX_DWORD dwStylesExAdded,
-                                             FX_DWORD dwStylesExRemoved) {
+FWL_ERR CFWL_ComboBoxImp::EditModifyStylesEx(uint32_t dwStylesExAdded,
+                                             uint32_t dwStylesExRemoved) {
   if (m_pEdit != NULL) {
     return m_pEdit->ModifyStylesEx(dwStylesExAdded, dwStylesExRemoved);
   } else {
@@ -904,7 +904,7 @@ void CFWL_ComboBoxImp::ShowDropList(FX_BOOL bActivate) {
     static_cast<CFWL_ComboListImp*>(m_pListBox->GetImpl())
         ->ChangeSelected(m_iCurSel);
     ReSetListItemAlignment();
-    FX_DWORD dwStyleAdd = m_pProperties->m_dwStyleExes &
+    uint32_t dwStyleAdd = m_pProperties->m_dwStyleExes &
                           (FWL_STYLEEXT_CMB_Sort | FWL_STYLEEXT_CMB_OwnerDraw);
     m_pListBox->ModifyStylesEx(dwStyleAdd, 0);
     m_pListBox->GetWidgetRect(m_rtList, TRUE);
@@ -1049,8 +1049,8 @@ void CFWL_ComboBoxImp::ReSetTheme() {
 void CFWL_ComboBoxImp::ReSetEditAlignment() {
   if (!m_pEdit)
     return;
-  FX_DWORD dwStylExes = m_pProperties->m_dwStyleExes;
-  FX_DWORD dwAdd = 0;
+  uint32_t dwStylExes = m_pProperties->m_dwStyleExes;
+  uint32_t dwAdd = 0;
   switch (dwStylExes & FWL_STYLEEXT_CMB_EditHAlignMask) {
     case FWL_STYLEEXT_CMB_EditHCenter: {
       dwAdd |= FWL_STYLEEXT_EDT_HCenter;
@@ -1086,8 +1086,8 @@ void CFWL_ComboBoxImp::ReSetEditAlignment() {
 void CFWL_ComboBoxImp::ReSetListItemAlignment() {
   if (!m_pListBox)
     return;
-  FX_DWORD dwStylExes = m_pProperties->m_dwStyleExes;
-  FX_DWORD dwAdd = 0;
+  uint32_t dwStylExes = m_pProperties->m_dwStyleExes;
+  uint32_t dwAdd = 0;
   switch (dwStylExes & FWL_STYLEEXT_CMB_ListItemAlignMask) {
     case FWL_STYLEEXT_CMB_ListItemCenterAlign: {
       dwAdd |= FWL_STYLEEXT_LTB_CenterAlign;
@@ -1224,8 +1224,8 @@ void CFWL_ComboBoxImp::DisForm_ShowDropList(FX_BOOL bActivate) {
 FX_BOOL CFWL_ComboBoxImp::DisForm_IsDropListShowed() {
   return !(m_pListBox->GetStates() & FWL_WGTSTATE_Invisible);
 }
-FWL_ERR CFWL_ComboBoxImp::DisForm_ModifyStylesEx(FX_DWORD dwStylesExAdded,
-                                                 FX_DWORD dwStylesExRemoved) {
+FWL_ERR CFWL_ComboBoxImp::DisForm_ModifyStylesEx(uint32_t dwStylesExAdded,
+                                                 uint32_t dwStylesExRemoved) {
   if (!m_pEdit) {
     DisForm_InitComboEdit();
   }
@@ -1251,7 +1251,7 @@ FWL_ERR CFWL_ComboBoxImp::DisForm_Update() {
   Layout();
   return FWL_ERR_Succeeded;
 }
-FX_DWORD CFWL_ComboBoxImp::DisForm_HitTest(FX_FLOAT fx, FX_FLOAT fy) {
+uint32_t CFWL_ComboBoxImp::DisForm_HitTest(FX_FLOAT fx, FX_FLOAT fy) {
   CFX_RectF rect;
   rect.Set(0, 0, m_pProperties->m_rtWidget.width - m_rtBtn.width,
            m_pProperties->m_rtWidget.height);
@@ -1366,7 +1366,7 @@ int32_t CFWL_ComboBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   }
   if (!pMessage)
     return 0;
-  FX_DWORD dwMsgCode = pMessage->GetClassID();
+  uint32_t dwMsgCode = pMessage->GetClassID();
   FX_BOOL iRet = 1;
   switch (dwMsgCode) {
     case FWL_MSGHASH_SetFocus:
@@ -1376,7 +1376,7 @@ int32_t CFWL_ComboBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
     }
     case FWL_MSGHASH_Mouse: {
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
-      FX_DWORD dwCmd = pMsg->m_dwCmd;
+      uint32_t dwCmd = pMsg->m_dwCmd;
       switch (dwCmd) {
         case FWL_MSGMOUSECMD_LButtonDown: {
           OnLButtonDown(pMsg);
@@ -1408,7 +1408,7 @@ int32_t CFWL_ComboBoxImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   return iRet;
 }
 FWL_ERR CFWL_ComboBoxImpDelegate::OnProcessEvent(CFWL_Event* pEvent) {
-  FX_DWORD dwFlag = pEvent->GetClassID();
+  uint32_t dwFlag = pEvent->GetClassID();
   if (dwFlag == FWL_EVTHASH_LTB_DrawItem) {
     CFWL_EvtLtbDrawItem* pDrawItemEvent =
         static_cast<CFWL_EvtLtbDrawItem*>(pEvent);
@@ -1522,7 +1522,7 @@ void CFWL_ComboBoxImpDelegate::OnMouseLeave(CFWL_MsgMouse* pMsg) {
   }
 }
 void CFWL_ComboBoxImpDelegate::OnKey(CFWL_MsgKey* pMsg) {
-  FX_DWORD dwKeyCode = pMsg->m_dwKeyCode;
+  uint32_t dwKeyCode = pMsg->m_dwKeyCode;
   if (dwKeyCode == FWL_VKEY_Tab) {
     m_pOwner->DispatchKeyEvent(pMsg);
     return;
@@ -1531,7 +1531,7 @@ void CFWL_ComboBoxImpDelegate::OnKey(CFWL_MsgKey* pMsg) {
     DoSubCtrlKey(pMsg);
 }
 void CFWL_ComboBoxImpDelegate::DoSubCtrlKey(CFWL_MsgKey* pMsg) {
-  FX_DWORD dwKeyCode = pMsg->m_dwKeyCode;
+  uint32_t dwKeyCode = pMsg->m_dwKeyCode;
   const bool bUp = dwKeyCode == FWL_VKEY_Up;
   const bool bDown = dwKeyCode == FWL_VKEY_Down;
   if (bUp || bDown) {
@@ -1589,7 +1589,7 @@ int32_t CFWL_ComboBoxImpDelegate::DisForm_OnProcessMessage(
     CFWL_Message* pMessage) {
   if (!pMessage)
     return 0;
-  FX_DWORD dwMsgCode = pMessage->GetClassID();
+  uint32_t dwMsgCode = pMessage->GetClassID();
   FX_BOOL backDefault = TRUE;
   switch (dwMsgCode) {
     case FWL_MSGHASH_SetFocus:
@@ -1601,7 +1601,7 @@ int32_t CFWL_ComboBoxImpDelegate::DisForm_OnProcessMessage(
     case FWL_MSGHASH_Mouse: {
       backDefault = FALSE;
       CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
-      FX_DWORD dwCmd = pMsg->m_dwCmd;
+      uint32_t dwCmd = pMsg->m_dwCmd;
       switch (dwCmd) {
         case FWL_MSGMOUSECMD_LButtonDown: {
           DisForm_OnLButtonDown(pMsg);
@@ -1623,7 +1623,7 @@ int32_t CFWL_ComboBoxImpDelegate::DisForm_OnProcessMessage(
       }
       if (m_pOwner->DisForm_IsDropListShowed() &&
           pKey->m_dwCmd == FWL_MSGKEYCMD_KeyDown) {
-        FX_DWORD dwKeyCode = pKey->m_dwKeyCode;
+        uint32_t dwKeyCode = pKey->m_dwKeyCode;
         FX_BOOL bListKey =
             dwKeyCode == FWL_VKEY_Up || dwKeyCode == FWL_VKEY_Down ||
             dwKeyCode == FWL_VKEY_Return || dwKeyCode == FWL_VKEY_Escape;
@@ -1683,7 +1683,7 @@ void CFWL_ComboBoxImpDelegate::DisForm_OnFocusChanged(CFWL_Message* pMsg,
   }
 }
 void CFWL_ComboBoxImpDelegate::DisForm_OnKey(CFWL_MsgKey* pMsg) {
-  FX_DWORD dwKeyCode = pMsg->m_dwKeyCode;
+  uint32_t dwKeyCode = pMsg->m_dwKeyCode;
   const bool bUp = dwKeyCode == FWL_VKEY_Up;
   const bool bDown = dwKeyCode == FWL_VKEY_Down;
   if (bUp || bDown) {
@@ -1738,10 +1738,10 @@ CFWL_ComboProxyImpDelegate::CFWL_ComboProxyImpDelegate(
 int32_t CFWL_ComboProxyImpDelegate::OnProcessMessage(CFWL_Message* pMessage) {
   if (!pMessage)
     return 0;
-  FX_DWORD dwMsgCode = pMessage->GetClassID();
+  uint32_t dwMsgCode = pMessage->GetClassID();
   if (dwMsgCode == FWL_MSGHASH_Mouse) {
     CFWL_MsgMouse* pMsg = static_cast<CFWL_MsgMouse*>(pMessage);
-    FX_DWORD dwCmd = pMsg->m_dwCmd;
+    uint32_t dwCmd = pMsg->m_dwCmd;
     switch (dwCmd) {
       case FWL_MSGMOUSECMD_LButtonDown: {
         OnLButtonDown(pMsg);

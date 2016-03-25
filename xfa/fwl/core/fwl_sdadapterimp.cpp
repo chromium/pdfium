@@ -86,7 +86,7 @@ FWL_ERR CFWL_SDAdapterWidgetMgr::SetBorderRegion(IFWL_Widget* pWidget,
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_SDAdapterWidgetMgr::SetTransparent(IFWL_Widget* pWidget,
-                                                FX_DWORD dwAlpha) {
+                                                uint32_t dwAlpha) {
   return FWL_ERR_Succeeded;
 }
 FWL_ERR CFWL_SDAdapterWidgetMgr::SetFullScreen(IFWL_Widget* pWidget,
@@ -113,7 +113,7 @@ FWL_ERR CFWL_SDAdapterWidgetMgr::ReleaseWidgetDC(IFWL_Widget* pWidget,
 void* CFWL_SDAdapterWidgetMgr::GetWindow(IFWL_Widget* pWidget) {
   return NULL;
 }
-FX_DWORD CFWL_SDAdapterWidgetMgr::GetKeyState(FX_DWORD dwVirtKey) {
+uint32_t CFWL_SDAdapterWidgetMgr::GetKeyState(uint32_t dwVirtKey) {
   return 0;
 }
 FWL_ERR CFWL_SDAdapterWidgetMgr::RunLoop(IFWL_Widget* widget) {

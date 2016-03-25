@@ -95,7 +95,7 @@ CXFA_Object* CXFA_Document::GetXFAObject(const CFX_WideStringC& wsNodeName) {
   return GetXFAObject(
       FX_HashCode_String_GetW(wsNodeName.GetPtr(), wsNodeName.GetLength()));
 }
-CXFA_Object* CXFA_Document::GetXFAObject(FX_DWORD dwNodeNameHash) {
+CXFA_Object* CXFA_Document::GetXFAObject(uint32_t dwNodeNameHash) {
   switch (dwNodeNameHash) {
     case XFA_HASHCODE_Data: {
       CXFA_Node* pDatasetsNode = ToNode(GetXFAObject(XFA_HASHCODE_Datasets));
@@ -168,7 +168,7 @@ CXFA_Object* CXFA_Document::GetXFAObject(FX_DWORD dwNodeNameHash) {
       return m_pRootNode->GetFirstChildByName(dwNodeNameHash);
   }
 }
-CXFA_Node* CXFA_Document::CreateNode(FX_DWORD dwPacket, XFA_ELEMENT eElement) {
+CXFA_Node* CXFA_Document::CreateNode(uint32_t dwPacket, XFA_ELEMENT eElement) {
   return CreateNode(XFA_GetPacketByID(dwPacket), eElement);
 }
 CXFA_Node* CXFA_Document::CreateNode(const XFA_PACKETINFO* pPacket,
@@ -201,7 +201,7 @@ void CXFA_Document::PurgeNodes() {
   }
   m_rgPurgeNodes.RemoveAll();
 }
-void CXFA_Document::SetFlag(FX_DWORD dwFlag, FX_BOOL bOn) {
+void CXFA_Document::SetFlag(uint32_t dwFlag, FX_BOOL bOn) {
   if (bOn) {
     m_dwDocFlags |= dwFlag;
   } else {
@@ -359,7 +359,7 @@ void CXFA_Document::DoProtoMerge() {
   if (!pTemplateRoot) {
     return;
   }
-  CFX_MapPtrTemplate<FX_DWORD, CXFA_Node*> mIDMap;
+  CFX_MapPtrTemplate<uint32_t, CXFA_Node*> mIDMap;
   CXFA_NodeSet sUseNodes;
   CXFA_NodeIterator sIterator(pTemplateRoot);
   for (CXFA_Node* pNode = sIterator.GetCurrent(); pNode;
@@ -417,7 +417,7 @@ void CXFA_Document::DoProtoMerge() {
     }
     CXFA_Node* pProtoNode = NULL;
     if (!wsSOM.IsEmpty()) {
-      FX_DWORD dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Attributes |
+      uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Attributes |
                         XFA_RESOLVENODE_Properties | XFA_RESOLVENODE_Parent |
                         XFA_RESOLVENODE_Siblings;
       XFA_RESOLVENODE_RS resoveNodeRS;

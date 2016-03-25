@@ -16,7 +16,7 @@ CXFA_SAXReaderHandler::CXFA_SAXReaderHandler(CXFA_ChecksumContext* pContext)
 CXFA_SAXReaderHandler::~CXFA_SAXReaderHandler() {}
 void* CXFA_SAXReaderHandler::OnTagEnter(const CFX_ByteStringC& bsTagName,
                                         FX_SAXNODE eType,
-                                        FX_DWORD dwStartPos) {
+                                        uint32_t dwStartPos) {
   UpdateChecksum(TRUE);
   if (eType != FX_SAXNODE_Tag && eType != FX_SAXNODE_Instruction) {
     return NULL;
@@ -51,7 +51,7 @@ void CXFA_SAXReaderHandler::OnTagBreak(void* pTag) {
 void CXFA_SAXReaderHandler::OnTagData(void* pTag,
                                       FX_SAXNODE eType,
                                       const CFX_ByteStringC& bsData,
-                                      FX_DWORD dwStartPos) {
+                                      uint32_t dwStartPos) {
   if (pTag == NULL) {
     return;
   }
@@ -64,7 +64,7 @@ void CXFA_SAXReaderHandler::OnTagData(void* pTag,
     textBuf << "]]>";
   }
 }
-void CXFA_SAXReaderHandler::OnTagClose(void* pTag, FX_DWORD dwEndPos) {
+void CXFA_SAXReaderHandler::OnTagClose(void* pTag, uint32_t dwEndPos) {
   if (pTag == NULL) {
     return;
   }
@@ -79,7 +79,7 @@ void CXFA_SAXReaderHandler::OnTagClose(void* pTag, FX_DWORD dwEndPos) {
 }
 void CXFA_SAXReaderHandler::OnTagEnd(void* pTag,
                                      const CFX_ByteStringC& bsTagName,
-                                     FX_DWORD dwEndPos) {
+                                     uint32_t dwEndPos) {
   if (pTag == NULL) {
     return;
   }
@@ -90,7 +90,7 @@ void CXFA_SAXReaderHandler::OnTagEnd(void* pTag,
 void CXFA_SAXReaderHandler::OnTargetData(void* pTag,
                                          FX_SAXNODE eType,
                                          const CFX_ByteStringC& bsData,
-                                         FX_DWORD dwStartPos) {
+                                         uint32_t dwStartPos) {
   if (pTag == NULL && eType != FX_SAXNODE_Comment) {
     return;
   }
@@ -155,7 +155,7 @@ FX_BOOL CXFA_ChecksumContext::UpdateChecksum(IFX_FileRead* pSrcFile,
   CXFA_SAXReaderHandler handler(this);
   m_pSAXReader->SetHandler(&handler);
   if (m_pSAXReader->StartParse(
-          pSrcFile, (FX_DWORD)offset, (FX_DWORD)size,
+          pSrcFile, (uint32_t)offset, (uint32_t)size,
           FX_SAXPARSEMODE_NotSkipSpace | FX_SAXPARSEMODE_NotConvert_amp |
               FX_SAXPARSEMODE_NotConvert_lt | FX_SAXPARSEMODE_NotConvert_gt |
               FX_SAXPARSEMODE_NotConvert_sharp) < 0) {

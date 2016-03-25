@@ -84,7 +84,7 @@ FWL_ERR CFWL_ScrollBar::SetTrackPos(FX_FLOAT fTrackPos) {
     return FWL_ERR_Indefinite;
   return static_cast<IFWL_ScrollBar*>(m_pIface)->SetTrackPos(fTrackPos);
 }
-FX_BOOL CFWL_ScrollBar::DoScroll(FX_DWORD dwCode, FX_FLOAT fPos) {
+FX_BOOL CFWL_ScrollBar::DoScroll(uint32_t dwCode, FX_FLOAT fPos) {
   if (!m_pIface)
     return FALSE;
   return static_cast<IFWL_ScrollBar*>(m_pIface)->DoScroll(dwCode, fPos);

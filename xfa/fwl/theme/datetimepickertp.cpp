@@ -45,7 +45,7 @@ FX_BOOL CFWL_DateTimePickerTP::DrawBackground(CFWL_ThemeBackground* pParams) {
 #ifdef THEME_XPSimilar
 void CFWL_DateTimePickerTP::DrawDropDownButton(CFWL_ThemeBackground* pParams,
                                                CFX_Matrix* pMatrix) {
-  FX_DWORD dwStates = pParams->m_dwStates;
+  uint32_t dwStates = pParams->m_dwStates;
   dwStates &= 0x03;
   FWLTHEME_STATE eState = FWLTHEME_STATE_Normal;
   switch (eState & dwStates) {
@@ -111,7 +111,7 @@ void CFWL_DateTimePickerTP::DrawDropDownButton(CFWL_ThemeBackground* pParams,
 }
 #endif
 void CFWL_DateTimePickerTP::initThemeData() {
-  FX_DWORD* pData = (FX_DWORD*)&m_pThemeData->BoxBkColor;
+  uint32_t* pData = (uint32_t*)&m_pThemeData->BoxBkColor;
   *pData++ = 0, *pData++ = 0, *pData++ = ArgbEncode(255, 220, 220, 215),
   *pData++ = ArgbEncode(255, 255, 255, 255),
   *pData++ = ArgbEncode(255, 255, 240, 207),

@@ -77,7 +77,7 @@ int32_t CFDE_TxtEdtTextSet::GetDisplayPos(FDE_HVISUALOBJ hText,
   CFDE_TxtEdtEngine* pEngine = (CFDE_TxtEdtEngine*)(m_pPage->GetEngine());
   const FDE_TXTEDTPARAMS* pTextParams = pEngine->GetEditParams();
   IFX_TxtBreak* pBreak = pEngine->GetTextBreak();
-  FX_DWORD dwLayoutStyle = pBreak->GetLayoutStyles();
+  uint32_t dwLayoutStyle = pBreak->GetLayoutStyles();
   FX_TXTRUN tr;
   tr.pAccess = m_pPage;
   tr.pIdentity = (void*)hText;
@@ -110,7 +110,7 @@ int32_t CFDE_TxtEdtTextSet::GetCharRects_Impl(FDE_HVISUALOBJ hText,
     return 0;
   }
   const FDE_TXTEDTPARAMS* pTextParams = pEngine->GetEditParams();
-  FX_DWORD dwLayoutStyle = pEngine->GetTextBreak()->GetLayoutStyles();
+  uint32_t dwLayoutStyle = pEngine->GetTextBreak()->GetLayoutStyles();
   FX_TXTRUN tr;
   tr.pAccess = m_pPage;
   tr.pIdentity = (void*)hText;
@@ -428,7 +428,7 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
     m_pTextSet = new CFDE_TxtEdtTextSet(this);
   }
   m_PieceMassArr.RemoveAll(TRUE);
-  FX_DWORD dwBreakStatus = FX_TXTBREAK_None;
+  uint32_t dwBreakStatus = FX_TXTBREAK_None;
   int32_t nPieceStart = 0;
   if (m_pCharWidth != NULL) {
     delete[] m_pCharWidth;

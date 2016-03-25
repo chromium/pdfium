@@ -136,8 +136,8 @@ FWL_ERR CFWL_DateTimePicker::GetBBox(CFX_RectF& rect) {
 FWL_ERR CFWL_DateTimePicker::SetEditLimit(int32_t nLimit) {
   return static_cast<IFWL_DateTimePicker*>(m_pIface)->SetEditLimit(nLimit);
 }
-FWL_ERR CFWL_DateTimePicker::ModifyEditStylesEx(FX_DWORD dwStylesExAdded,
-                                                FX_DWORD dwStylesExRemoved) {
+FWL_ERR CFWL_DateTimePicker::ModifyEditStylesEx(uint32_t dwStylesExAdded,
+                                                uint32_t dwStylesExRemoved) {
   return static_cast<IFWL_DateTimePicker*>(m_pIface)
       ->ModifyEditStylesEx(dwStylesExAdded, dwStylesExRemoved);
 }

@@ -52,7 +52,7 @@ void CXFA_FFCheckButton::UpdateWidgetProperty() {
   }
   FX_FLOAT fSize = m_pDataAcc->GetCheckButtonSize();
   pCheckBox->SetBoxSize(fSize);
-  FX_DWORD dwStyleEx = FWL_STYLEEXT_CKB_SignShapeCross;
+  uint32_t dwStyleEx = FWL_STYLEEXT_CKB_SignShapeCross;
   int32_t iCheckMark = m_pDataAcc->GetCheckButtonMark();
   switch (iCheckMark) {
     case XFA_ATTRIBUTEENUM_Check:
@@ -214,7 +214,7 @@ void CXFA_FFCheckButton::AddUIMargin(int32_t iCapPlacement) {
 }
 void CXFA_FFCheckButton::RenderWidget(CFX_Graphics* pGS,
                                       CFX_Matrix* pMatrix,
-                                      FX_DWORD dwStatus,
+                                      uint32_t dwStatus,
                                       int32_t iRotate) {
   if (!IsMatchVisibleStatus(dwStatus)) {
     return;
@@ -239,7 +239,7 @@ void CXFA_FFCheckButton::RenderWidget(CFX_Graphics* pGS,
   GetApp()->GetWidgetMgrDelegate()->OnDrawWidget(m_pNormalWidget->GetWidget(),
                                                  pGS, &mt);
 }
-FX_BOOL CXFA_FFCheckButton::OnLButtonUp(FX_DWORD dwFlags,
+FX_BOOL CXFA_FFCheckButton::OnLButtonUp(uint32_t dwFlags,
                                         FX_FLOAT fx,
                                         FX_FLOAT fy) {
   if (!m_pNormalWidget) {
@@ -261,7 +261,7 @@ FX_BOOL CXFA_FFCheckButton::OnLButtonUp(FX_DWORD dwFlags,
 }
 XFA_CHECKSTATE CXFA_FFCheckButton::FWLState2XFAState() {
   XFA_CHECKSTATE eCheckState = XFA_CHECKSTATE_Off;
-  FX_DWORD dwState = m_pNormalWidget->GetStates();
+  uint32_t dwState = m_pNormalWidget->GetStates();
   if (dwState & FWL_STATE_CKB_Checked) {
     eCheckState = XFA_CHECKSTATE_On;
   } else if (dwState & FWL_STATE_CKB_Neutral) {
@@ -300,7 +300,7 @@ int32_t CXFA_FFCheckButton::OnProcessMessage(CFWL_Message* pMessage) {
 }
 FWL_ERR CXFA_FFCheckButton::OnProcessEvent(CFWL_Event* pEvent) {
   CXFA_FFField::OnProcessEvent(pEvent);
-  FX_DWORD dwEventID = pEvent->GetClassID();
+  uint32_t dwEventID = pEvent->GetClassID();
   switch (dwEventID) {
     case FWL_EVTHASH_CKB_CheckStateChanged: {
       CXFA_EventParam eParam;

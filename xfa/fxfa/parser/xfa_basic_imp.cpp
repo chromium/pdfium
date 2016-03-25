@@ -42,11 +42,11 @@ const XFA_PACKETINFO* XFA_GetPacketByName(const CFX_WideStringC& wsName) {
   return NULL;
 }
 
-const XFA_PACKETINFO* XFA_GetPacketByID(FX_DWORD dwPacket) {
+const XFA_PACKETINFO* XFA_GetPacketByID(uint32_t dwPacket) {
   int32_t iStart = 0, iEnd = g_iXFAPacketCount - 1;
   do {
     int32_t iMid = (iStart + iEnd) / 2;
-    FX_DWORD dwFind = (g_XFAPacketData + iMid)->eName;
+    uint32_t dwFind = (g_XFAPacketData + iMid)->eName;
     if (dwPacket == dwFind) {
       return g_XFAPacketData + iMid;
     } else if (dwPacket < dwFind) {
@@ -116,7 +116,7 @@ FX_BOOL XFA_GetAttributeDefaultValue(void*& pValue,
                                      XFA_ELEMENT eElement,
                                      XFA_ATTRIBUTE eAttribute,
                                      XFA_ATTRIBUTETYPE eType,
-                                     FX_DWORD dwPacket) {
+                                     uint32_t dwPacket) {
   const XFA_ATTRIBUTEINFO* pInfo = XFA_GetAttributeByID(eAttribute);
   if (pInfo == NULL) {
     return FALSE;
@@ -139,7 +139,7 @@ FX_BOOL XFA_GetAttributeDefaultValue(void*& pValue,
 }
 XFA_ATTRIBUTEENUM XFA_GetAttributeDefaultValue_Enum(XFA_ELEMENT eElement,
                                                     XFA_ATTRIBUTE eAttribute,
-                                                    FX_DWORD dwPacket) {
+                                                    uint32_t dwPacket) {
   void* pValue;
   if (XFA_GetAttributeDefaultValue(pValue, eElement, eAttribute,
                                    XFA_ATTRIBUTETYPE_Enum, dwPacket)) {
@@ -149,7 +149,7 @@ XFA_ATTRIBUTEENUM XFA_GetAttributeDefaultValue_Enum(XFA_ELEMENT eElement,
 }
 CFX_WideStringC XFA_GetAttributeDefaultValue_Cdata(XFA_ELEMENT eElement,
                                                    XFA_ATTRIBUTE eAttribute,
-                                                   FX_DWORD dwPacket) {
+                                                   uint32_t dwPacket) {
   void* pValue;
   if (XFA_GetAttributeDefaultValue(pValue, eElement, eAttribute,
                                    XFA_ATTRIBUTETYPE_Cdata, dwPacket)) {
@@ -159,7 +159,7 @@ CFX_WideStringC XFA_GetAttributeDefaultValue_Cdata(XFA_ELEMENT eElement,
 }
 FX_BOOL XFA_GetAttributeDefaultValue_Boolean(XFA_ELEMENT eElement,
                                              XFA_ATTRIBUTE eAttribute,
-                                             FX_DWORD dwPacket) {
+                                             uint32_t dwPacket) {
   void* pValue;
   if (XFA_GetAttributeDefaultValue(pValue, eElement, eAttribute,
                                    XFA_ATTRIBUTETYPE_Boolean, dwPacket)) {
@@ -169,7 +169,7 @@ FX_BOOL XFA_GetAttributeDefaultValue_Boolean(XFA_ELEMENT eElement,
 }
 int32_t XFA_GetAttributeDefaultValue_Integer(XFA_ELEMENT eElement,
                                              XFA_ATTRIBUTE eAttribute,
-                                             FX_DWORD dwPacket) {
+                                             uint32_t dwPacket) {
   void* pValue;
   if (XFA_GetAttributeDefaultValue(pValue, eElement, eAttribute,
                                    XFA_ATTRIBUTETYPE_Integer, dwPacket)) {
@@ -179,7 +179,7 @@ int32_t XFA_GetAttributeDefaultValue_Integer(XFA_ELEMENT eElement,
 }
 CXFA_Measurement XFA_GetAttributeDefaultValue_Measure(XFA_ELEMENT eElement,
                                                       XFA_ATTRIBUTE eAttribute,
-                                                      FX_DWORD dwPacket) {
+                                                      uint32_t dwPacket) {
   void* pValue;
   if (XFA_GetAttributeDefaultValue(pValue, eElement, eAttribute,
                                    XFA_ATTRIBUTETYPE_Measure, dwPacket)) {
@@ -231,7 +231,7 @@ const uint8_t* XFA_GetElementAttributes(XFA_ELEMENT eElement, int32_t& iCount) {
 }
 const XFA_ATTRIBUTEINFO* XFA_GetAttributeOfElement(XFA_ELEMENT eElement,
                                                    XFA_ATTRIBUTE eAttribute,
-                                                   FX_DWORD dwPacket) {
+                                                   uint32_t dwPacket) {
   int32_t iCount = 0;
   const uint8_t* pAttr = XFA_GetElementAttributes(eElement, iCount);
   if (pAttr == NULL || iCount < 1) {
@@ -250,7 +250,7 @@ const XFA_ATTRIBUTEINFO* XFA_GetAttributeOfElement(XFA_ELEMENT eElement,
 }
 const XFA_ELEMENTINFO* XFA_GetChildOfElement(XFA_ELEMENT eElement,
                                              XFA_ELEMENT eChild,
-                                             FX_DWORD dwPacket) {
+                                             uint32_t dwPacket) {
   int32_t iCount = 0;
   const uint16_t* pChild = XFA_GetElementChildren(eElement, iCount);
   if (pChild == NULL || iCount < 1) {
@@ -278,7 +278,7 @@ const XFA_PROPERTY* XFA_GetElementProperties(XFA_ELEMENT eElement,
 }
 const XFA_PROPERTY* XFA_GetPropertyOfElement(XFA_ELEMENT eElement,
                                              XFA_ELEMENT eProperty,
-                                             FX_DWORD dwPacket) {
+                                             uint32_t dwPacket) {
   int32_t iCount = 0;
   const XFA_PROPERTY* pProperty = XFA_GetElementProperties(eElement, iCount);
   if (pProperty == NULL || iCount < 1) {
@@ -560,7 +560,7 @@ IFX_Stream* CXFA_WideTextRead::Retain() {
   m_iRefCount++;
   return this;
 }
-FX_DWORD CXFA_WideTextRead::GetAccessModes() const {
+uint32_t CXFA_WideTextRead::GetAccessModes() const {
   return FX_STREAMACCESS_Read | FX_STREAMACCESS_Text;
 }
 int32_t CXFA_WideTextRead::GetLength() const {

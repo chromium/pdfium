@@ -10,7 +10,7 @@
 
 namespace {
 
-const FX_DWORD kSaxFileBufSize = 32768;
+const uint32_t kSaxFileBufSize = 32768;
 
 }  // namespace
 
@@ -26,10 +26,10 @@ CFX_SAXFile::CFX_SAXFile()
       m_dwBufSize(0),
       m_dwBufIndex(0) {}
 FX_BOOL CFX_SAXFile::StartFile(IFX_FileRead* pFile,
-                               FX_DWORD dwStart,
-                               FX_DWORD dwLen) {
+                               uint32_t dwStart,
+                               uint32_t dwLen) {
   FXSYS_assert(m_pFile == NULL && pFile != NULL);
-  FX_DWORD dwSize = pFile->GetSize();
+  uint32_t dwSize = pFile->GetSize();
   if (dwStart >= dwSize) {
     return FALSE;
   }
@@ -53,7 +53,7 @@ FX_BOOL CFX_SAXFile::StartFile(IFX_FileRead* pFile,
 }
 FX_BOOL CFX_SAXFile::ReadNextBlock() {
   FXSYS_assert(m_pFile != NULL);
-  FX_DWORD dwSize = m_dwEnd - m_dwCur;
+  uint32_t dwSize = m_dwEnd - m_dwCur;
   if (dwSize == 0) {
     return FALSE;
   }
@@ -169,9 +169,9 @@ inline FX_BOOL CFX_SAXReader::SkipSpace(uint8_t ch) {
   return (m_dwParseMode & FX_SAXPARSEMODE_NotSkipSpace) == 0 && ch < 0x21;
 }
 int32_t CFX_SAXReader::StartParse(IFX_FileRead* pFile,
-                                  FX_DWORD dwStart,
-                                  FX_DWORD dwLen,
-                                  FX_DWORD dwParseMode) {
+                                  uint32_t dwStart,
+                                  uint32_t dwLen,
+                                  uint32_t dwParseMode) {
   m_iState = -1;
   Reset();
   if (!m_File.StartFile(pFile, dwStart, dwLen)) {
@@ -209,8 +209,8 @@ int32_t CFX_SAXReader::ContinueParse(IFX_Pause* pPause) {
     return m_iState;
   }
   while (m_File.m_dwCur < m_File.m_dwEnd) {
-    FX_DWORD& index = m_File.m_dwBufIndex;
-    FX_DWORD size = m_File.m_dwBufSize;
+    uint32_t& index = m_File.m_dwBufIndex;
+    uint32_t size = m_File.m_dwBufSize;
     const uint8_t* pBuf = m_File.m_pBuf;
     while (index < size) {
       m_CurByte = pBuf[index];

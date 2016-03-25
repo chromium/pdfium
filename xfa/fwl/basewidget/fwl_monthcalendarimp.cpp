@@ -93,7 +93,7 @@ FWL_ERR CFWL_MonthCalendarImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_MonthCalendar;
   return FWL_ERR_Succeeded;
 }
-FX_DWORD CFWL_MonthCalendarImp::GetClassID() const {
+uint32_t CFWL_MonthCalendarImp::GetClassID() const {
   return FWL_CLASSHASH_MonthCalendar;
 }
 FWL_ERR CFWL_MonthCalendarImp::Initialize() {
@@ -513,7 +513,7 @@ CFX_SizeF CFWL_MonthCalendarImp::CalcSize(FX_BOOL bAutoSize) {
   CFX_WideString* wsText = NULL;
   FX_FLOAT fMaxWeekW = 0.0f;
   FX_FLOAT fMaxWeekH = 0.0f;
-  for (FX_DWORD week = FWL_MCCAPACITY_Sun; week <= FWL_MCCAPACITY_Sat; week++) {
+  for (uint32_t week = FWL_MCCAPACITY_Sun; week <= FWL_MCCAPACITY_Sat; week++) {
     wsText = static_cast<CFX_WideString*>(pTheme->GetCapacity(&params, week));
     CFX_SizeF sz = CalcTextSize(*wsText, m_pProperties->m_pThemeProvider);
     fMaxWeekW = (fMaxWeekW >= sz.x) ? fMaxWeekW : sz.x;
@@ -536,7 +536,7 @@ CFX_SizeF CFWL_MonthCalendarImp::CalcSize(FX_BOOL bAutoSize) {
          MONTHCAL_HEADER_BTN_HMARGIN * 2;
   FX_FLOAT fMonthMaxW = 0.0f;
   FX_FLOAT fMonthMaxH = 0.0f;
-  for (FX_DWORD month = FWL_MCCAPACITY_January;
+  for (uint32_t month = FWL_MCCAPACITY_January;
        month <= FWL_MCCAPACITY_December; month++) {
     wsText = static_cast<CFX_WideString*>(pTheme->GetCapacity(&params, month));
     CFX_SizeF sz = CalcTextSize(*wsText, m_pProperties->m_pThemeProvider);
@@ -773,7 +773,7 @@ void CFWL_MonthCalendarImp::ReSetDateItem() {
     }
     CFX_WideString wsDay;
     wsDay.Format(L"%d", i + 1);
-    FX_DWORD dwStates = 0;
+    uint32_t dwStates = 0;
     if (m_iYear == m_iCurYear && m_iMonth == m_iCurMonth && m_iDay == (i + 1)) {
       dwStates |= FWL_ITEMSTATE_MCD_Flag;
     }
@@ -929,7 +929,7 @@ int32_t CFWL_MonthCalendarImpDelegate::OnProcessMessage(
     CFWL_Message* pMessage) {
   if (!pMessage)
     return 0;
-  FX_DWORD dwMsgCode = pMessage->GetClassID();
+  uint32_t dwMsgCode = pMessage->GetClassID();
   int32_t iRet = 1;
   switch (dwMsgCode) {
     case FWL_MSGHASH_SetFocus:
@@ -942,7 +942,7 @@ int32_t CFWL_MonthCalendarImpDelegate::OnProcessMessage(
     }
     case FWL_MSGHASH_Mouse: {
       CFWL_MsgMouse* pMouse = static_cast<CFWL_MsgMouse*>(pMessage);
-      FX_DWORD dwCmd = pMouse->m_dwCmd;
+      uint32_t dwCmd = pMouse->m_dwCmd;
       switch (dwCmd) {
         case FWL_MSGMOUSECMD_LButtonDown: {
           OnLButtonDown(pMouse);

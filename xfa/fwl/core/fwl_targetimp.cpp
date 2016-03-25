@@ -9,7 +9,7 @@
 FWL_ERR IFWL_Target::GetClassName(CFX_WideString& wsClass) const {
   return m_pImpl->GetClassName(wsClass);
 }
-FX_DWORD IFWL_Target::GetClassID() const {
+uint32_t IFWL_Target::GetClassID() const {
   return m_pImpl->GetClassID();
 }
 FX_BOOL IFWL_Target::IsInstance(const CFX_WideStringC& wsClass) const {
@@ -30,7 +30,7 @@ FWL_ERR CFWL_TargetImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass.Empty();
   return FWL_ERR_Succeeded;
 }
-FX_DWORD CFWL_TargetImp::GetClassID() const {
+uint32_t CFWL_TargetImp::GetClassID() const {
   return 0;
 }
 FX_BOOL CFWL_TargetImp::IsInstance(const CFX_WideStringC& wsClass) const {

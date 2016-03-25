@@ -61,7 +61,7 @@ FX_BOOL FX_fsetsize(FXSYS_FILE* file, int32_t size) {
   return _chsize(_fileno(file), size) == 0;
 #elif _FX_OS_ == _FX_WIN32_MOBILE_
   HANDLE hFile = _fileno(file);
-  FX_DWORD dwPos = ::SetFilePointer(hFile, 0, 0, FILE_CURRENT);
+  uint32_t dwPos = ::SetFilePointer(hFile, 0, 0, FILE_CURRENT);
   ::SetFilePointer(hFile, size, 0, FILE_BEGIN);
   FX_BOOL bRet = ::SetEndOfFile(hFile);
   ::SetFilePointer(hFile, (int32_t)dwPos, 0, FILE_BEGIN);

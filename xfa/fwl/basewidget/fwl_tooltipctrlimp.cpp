@@ -63,7 +63,7 @@ FWL_ERR CFWL_ToolTipImp::GetClassName(CFX_WideString& wsClass) const {
   wsClass = FWL_CLASS_ToolTip;
   return FWL_ERR_Succeeded;
 }
-FX_DWORD CFWL_ToolTipImp::GetClassID() const {
+uint32_t CFWL_ToolTipImp::GetClassID() const {
   return FWL_CLASSHASH_ToolTip;
 }
 FWL_ERR CFWL_ToolTipImp::Initialize() {
@@ -226,7 +226,7 @@ FWL_ERR CFWL_ToolTipImp::Hide() {
   }
   return TRUE;
 }
-FWL_ERR CFWL_ToolTipImp::SetStates(FX_DWORD dwStates, FX_BOOL bSet) {
+FWL_ERR CFWL_ToolTipImp::SetStates(uint32_t dwStates, FX_BOOL bSet) {
   if ((dwStates & FWL_WGTSTATE_Invisible) && !bSet) {
     IFWL_ToolTipDP* pData =
         static_cast<IFWL_ToolTipDP*>(m_pProperties->m_pDataProvider);

@@ -21,20 +21,20 @@ static const FX_CHAR g_FXBase64EncoderMap[64] = {
 };
 
 struct FX_BASE64DATA {
-  FX_DWORD data1 : 2;
-  FX_DWORD data2 : 6;
-  FX_DWORD data3 : 4;
-  FX_DWORD data4 : 4;
-  FX_DWORD data5 : 6;
-  FX_DWORD data6 : 2;
-  FX_DWORD data7 : 8;
+  uint32_t data1 : 2;
+  uint32_t data2 : 6;
+  uint32_t data3 : 4;
+  uint32_t data4 : 4;
+  uint32_t data5 : 6;
+  uint32_t data6 : 2;
+  uint32_t data7 : 8;
 };
 
 static void FX_Base64EncodePiece(const FX_BASE64DATA& src,
                                  int32_t iBytes,
                                  FX_CHAR dst[4]) {
   dst[0] = g_FXBase64EncoderMap[src.data2];
-  FX_DWORD b = src.data1 << 4;
+  uint32_t b = src.data1 << 4;
   if (iBytes > 1) {
     b |= src.data4;
   }
@@ -76,7 +76,7 @@ int32_t FX_Base64EncodeA(const uint8_t* pSrc, int32_t iSrcLen, FX_CHAR* pDst) {
       ((uint8_t*)&srcData)[2] = *pSrc++;
       iSrcLen -= 3;
     } else {
-      *((FX_DWORD*)&srcData) = 0;
+      *((uint32_t*)&srcData) = 0;
       ((uint8_t*)&srcData)[0] = *pSrc++;
       if (iSrcLen > 1) {
         ((uint8_t*)&srcData)[1] = *pSrc++;
@@ -172,12 +172,12 @@ int32_t FX_Base64DecodeA(const FX_CHAR* pSrc, int32_t iSrcLen, uint8_t* pDst) {
   uint8_t* pDstEnd = pDst;
   while (iSrcLen > 0) {
     if (iSrcLen > 3) {
-      *((FX_DWORD*)srcData) = *((FX_DWORD*)pSrc);
+      *((uint32_t*)srcData) = *((uint32_t*)pSrc);
       pSrc += 4;
       iSrcLen -= 4;
     } else {
-      *((FX_DWORD*)&dstData) = 0;
-      *((FX_DWORD*)srcData) = 0;
+      *((uint32_t*)&dstData) = 0;
+      *((uint32_t*)srcData) = 0;
       srcData[0] = *pSrc++;
       if (iSrcLen > 1) {
         srcData[1] = *pSrc++;
@@ -234,8 +234,8 @@ int32_t FX_Base64DecodeW(const FX_WCHAR* pSrc, int32_t iSrcLen, uint8_t* pDst) {
       srcData[3] = (FX_CHAR)*pSrc++;
       iSrcLen -= 4;
     } else {
-      *((FX_DWORD*)&dstData) = 0;
-      *((FX_DWORD*)srcData) = 0;
+      *((uint32_t*)&dstData) = 0;
+      *((uint32_t*)srcData) = 0;
       srcData[0] = (FX_CHAR)*pSrc++;
       if (iSrcLen > 1) {
         srcData[1] = (FX_CHAR)*pSrc++;

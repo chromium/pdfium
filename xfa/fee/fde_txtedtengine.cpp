@@ -1053,7 +1053,7 @@ void CFDE_TxtEdtEngine::UpdatePages() {
   }
 }
 void CFDE_TxtEdtEngine::UpdateTxtBreak() {
-  FX_DWORD dwStyle = m_pTextBreak->GetLayoutStyles();
+  uint32_t dwStyle = m_pTextBreak->GetLayoutStyles();
   if (m_Param.dwMode & FDE_TEXTEDITMODE_MultiLines) {
     dwStyle &= ~FX_TXTLAYOUTSTYLE_SingleLine;
   } else {
@@ -1100,7 +1100,7 @@ void CFDE_TxtEdtEngine::UpdateTxtBreak() {
     dwStyle &= ~FX_TXTLAYOUTSTYLE_ArabicShapes;
   }
   m_pTextBreak->SetLayoutStyles(dwStyle);
-  FX_DWORD dwAligment = 0;
+  uint32_t dwAligment = 0;
   if (m_Param.dwAlignment & FDE_TEXTEDITALIGN_Justified) {
     dwAligment |= FX_TXTLINEALIGNMENT_Justified;
   } else if (m_Param.dwAlignment & FDE_TEXTEDITALIGN_Distributed) {
@@ -1515,7 +1515,7 @@ FX_BOOL CFDE_TxtEdtEngine::IsFitArea(CFX_WideString& wsText) {
   pTextOut->SetFontSize(m_Param.fFontSize);
   CFX_RectF rcText;
   FXSYS_memset(&rcText, 0, sizeof(rcText));
-  FX_DWORD dwStyle = 0;
+  uint32_t dwStyle = 0;
   if (!(m_Param.dwMode & FDE_TEXTEDITMODE_MultiLines)) {
     dwStyle |= FDE_TTOSTYLE_SingleLine;
   }

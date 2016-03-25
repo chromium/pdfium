@@ -160,7 +160,7 @@ const FX_WCHAR* XFA_FM_KeywordToString(XFA_FM_TOKEN op) {
 
 CXFA_FMToken::CXFA_FMToken() : m_type(TOKreserver), m_uLinenum(1) {}
 
-CXFA_FMToken::CXFA_FMToken(FX_DWORD uLineNum)
+CXFA_FMToken::CXFA_FMToken(uint32_t uLineNum)
     : m_type(TOKreserver), m_uLinenum(uLineNum) {}
 
 CXFA_FMLexer::CXFA_FMLexer(const CFX_WideStringC& wsFormCalc,
@@ -404,7 +404,7 @@ CXFA_FMToken* CXFA_FMLexer::Scan() {
   }
 }
 
-FX_DWORD CXFA_FMLexer::Number(CXFA_FMToken* t,
+uint32_t CXFA_FMLexer::Number(CXFA_FMToken* t,
                               const FX_WCHAR* p,
                               const FX_WCHAR*& pEnd) {
   FX_DOUBLE number = 0;
@@ -418,7 +418,7 @@ FX_DWORD CXFA_FMLexer::Number(CXFA_FMToken* t,
   return 0;
 }
 
-FX_DWORD CXFA_FMLexer::String(CXFA_FMToken* t,
+uint32_t CXFA_FMLexer::String(CXFA_FMToken* t,
                               const FX_WCHAR* p,
                               const FX_WCHAR*& pEnd) {
   const FX_WCHAR* pStart = p;
@@ -458,7 +458,7 @@ FX_DWORD CXFA_FMLexer::String(CXFA_FMToken* t,
   return 0;
 }
 
-FX_DWORD CXFA_FMLexer::Identifiers(CXFA_FMToken* t,
+uint32_t CXFA_FMLexer::Identifiers(CXFA_FMToken* t,
                                    const FX_WCHAR* p,
                                    const FX_WCHAR*& pEnd) {
   const FX_WCHAR* pStart = p;

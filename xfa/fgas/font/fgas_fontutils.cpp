@@ -9,8 +9,8 @@
 #include "core/fxcrt/include/fx_ext.h"
 #include "xfa/fgas/font/fgas_font.h"
 
-FX_DWORD FGAS_GetFontHashCode(uint16_t wCodePage, FX_DWORD dwFontStyles) {
-  FX_DWORD dwHash = wCodePage;
+uint32_t FGAS_GetFontHashCode(uint16_t wCodePage, uint32_t dwFontStyles) {
+  uint32_t dwHash = wCodePage;
   if (dwFontStyles & FX_FONTSTYLE_FixedPitch) {
     dwHash |= 0x00010000;
   }
@@ -31,8 +31,8 @@ FX_DWORD FGAS_GetFontHashCode(uint16_t wCodePage, FX_DWORD dwFontStyles) {
   }
   return dwHash;
 }
-FX_DWORD FGAS_GetFontFamilyHash(const FX_WCHAR* pszFontFamily,
-                                FX_DWORD dwFontStyles,
+uint32_t FGAS_GetFontFamilyHash(const FX_WCHAR* pszFontFamily,
+                                uint32_t dwFontStyles,
                                 uint16_t wCodePage) {
   CFX_WideString wsFont(pszFontFamily);
   if (dwFontStyles & FX_FONTSTYLE_Bold) {

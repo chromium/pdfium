@@ -87,9 +87,9 @@ CFX_FloatRect FDE_CSSBoundaryToRect(IFDE_CSSBoundaryStyle* pBoundStyle,
   }
   return rect;
 }
-FX_DWORD FDE_CSSFontStyleToFDE(IFDE_CSSFontStyle* pFontStyle) {
+uint32_t FDE_CSSFontStyleToFDE(IFDE_CSSFontStyle* pFontStyle) {
   FXSYS_assert(pFontStyle != NULL);
-  FX_DWORD dwFontStyle = FX_FONTSTYLE_Normal;
+  uint32_t dwFontStyle = FX_FONTSTYLE_Normal;
   if (pFontStyle->GetFontStyle() == FDE_CSSFONTSTYLE_Italic) {
     dwFontStyle |= FX_FONTSTYLE_Italic;
   }
@@ -560,10 +560,10 @@ FDE_LPCCSSPERSUDOTABLE FDE_GetCSSPersudoByEnum(FDE_CSSPERSUDO ePersudo) {
 FDE_LPCCSSPROPERTYTABLE FDE_GetCSSPropertyByName(const FX_WCHAR* pszName,
                                                  int32_t iLength) {
   FXSYS_assert(pszName != NULL && iLength > 0);
-  FX_DWORD dwHash = FX_HashCode_String_GetW(pszName, iLength, TRUE);
+  uint32_t dwHash = FX_HashCode_String_GetW(pszName, iLength, TRUE);
   int32_t iEnd = FDE_CSSPROPERTY_MAX - 1;
   int32_t iMid, iStart = 0;
-  FX_DWORD dwMid;
+  uint32_t dwMid;
   do {
     iMid = (iStart + iEnd) / 2;
     dwMid = g_FDE_CSSProperties[iMid].dwHash;
@@ -584,10 +584,10 @@ FDE_LPCCSSPROPERTYVALUETABLE FDE_GetCSSPropertyValueByName(
     const FX_WCHAR* pszName,
     int32_t iLength) {
   FXSYS_assert(pszName != NULL && iLength > 0);
-  FX_DWORD dwHash = FX_HashCode_String_GetW(pszName, iLength, TRUE);
+  uint32_t dwHash = FX_HashCode_String_GetW(pszName, iLength, TRUE);
   int32_t iEnd = FDE_CSSPROPERTYVALUE_MAX - 1;
   int32_t iMid, iStart = 0;
-  FX_DWORD dwMid;
+  uint32_t dwMid;
   do {
     iMid = (iStart + iEnd) / 2;
     dwMid = g_FDE_CSSPropertyValues[iMid].dwHash;
@@ -651,10 +651,10 @@ FDE_LPCCSSLENGTHUNITTABLE FDE_GetCSSLengthUnitByName(const FX_WCHAR* pszName,
 FDE_LPCCSSCOLORTABLE FDE_GetCSSColorByName(const FX_WCHAR* pszName,
                                            int32_t iLength) {
   FXSYS_assert(pszName != NULL && iLength > 0);
-  FX_DWORD dwHash = FX_HashCode_String_GetW(pszName, iLength, TRUE);
+  uint32_t dwHash = FX_HashCode_String_GetW(pszName, iLength, TRUE);
   int32_t iEnd = sizeof(g_FDE_CSSColors) / sizeof(FDE_CSSCOLORTABLE) - 1;
   int32_t iMid, iStart = 0;
-  FX_DWORD dwMid;
+  uint32_t dwMid;
   do {
     iMid = (iStart + iEnd) / 2;
     dwMid = g_FDE_CSSColors[iMid].dwHash;

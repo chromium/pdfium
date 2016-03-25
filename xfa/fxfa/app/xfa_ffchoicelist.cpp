@@ -46,7 +46,7 @@ FX_BOOL CXFA_FFListBox::LoadWidget() {
   for (int32_t i = 0; i < iItems; i++) {
     pListBox->AddString(wsLabelArray[i]);
   }
-  FX_DWORD dwExtendedStyle = FWL_STYLEEXT_LTB_ShowScrollBarFocus;
+  uint32_t dwExtendedStyle = FWL_STYLEEXT_LTB_ShowScrollBarFocus;
   if (m_pDataAcc->GetChoiceListOpen() == XFA_ATTRIBUTEENUM_MultiSelect) {
     dwExtendedStyle |= FWL_STYLEEXT_LTB_MultiSelection;
   }
@@ -100,8 +100,8 @@ FX_BOOL CXFA_FFListBox::IsDataChanged() {
   }
   return TRUE;
 }
-FX_DWORD CXFA_FFListBox::GetAlignment() {
-  FX_DWORD dwExtendedStyle = 0;
+uint32_t CXFA_FFListBox::GetAlignment() {
+  uint32_t dwExtendedStyle = 0;
   if (CXFA_Para para = m_pDataAcc->GetPara()) {
     int32_t iHorz = para.GetHorizontalAlign();
     switch (iHorz) {
@@ -185,7 +185,7 @@ int32_t CXFA_FFListBox::OnProcessMessage(CFWL_Message* pMessage) {
 }
 FWL_ERR CXFA_FFListBox::OnProcessEvent(CFWL_Event* pEvent) {
   CXFA_FFField::OnProcessEvent(pEvent);
-  FX_DWORD dwEventID = pEvent->GetClassID();
+  uint32_t dwEventID = pEvent->GetClassID();
   switch (dwEventID) {
     case FWL_EVTHASH_LTB_SelChanged: {
       CFX_Int32Array arrSels;
@@ -208,7 +208,7 @@ CXFA_FFComboBox::CXFA_FFComboBox(CXFA_FFPageView* pPageView,
 CXFA_FFComboBox::~CXFA_FFComboBox() {}
 
 FX_BOOL CXFA_FFComboBox::GetBBox(CFX_RectF& rtBox,
-                                 FX_DWORD dwStatus,
+                                 uint32_t dwStatus,
                                  FX_BOOL bDrawFocus) {
   if (bDrawFocus)
     return FALSE;
@@ -261,8 +261,8 @@ void CXFA_FFComboBox::UpdateWidgetProperty() {
   if (!pComboBox) {
     return;
   }
-  FX_DWORD dwExtendedStyle = 0;
-  FX_DWORD dwEditStyles =
+  uint32_t dwExtendedStyle = 0;
+  uint32_t dwEditStyles =
       FWL_STYLEEXT_EDT_ReadOnly | FWL_STYLEEXT_EDT_LastLineHeight;
   dwExtendedStyle |= UpdateUIProperty();
   if (m_pDataAcc->IsChoiceListAllowTextEntry()) {
@@ -281,7 +281,7 @@ void CXFA_FFComboBox::UpdateWidgetProperty() {
   }
   pComboBox->EditModifyStylesEx(dwEditStyles, 0xFFFFFFFF);
 }
-FX_BOOL CXFA_FFComboBox::OnRButtonUp(FX_DWORD dwFlags,
+FX_BOOL CXFA_FFComboBox::OnRButtonUp(uint32_t dwFlags,
                                      FX_FLOAT fx,
                                      FX_FLOAT fy) {
   if (!CXFA_FFField::OnRButtonUp(dwFlags, fx, fy))
@@ -331,8 +331,8 @@ void CXFA_FFComboBox::FWLEventSelChange(CXFA_EventParam* pParam) {
   pFWLcombobox->GetEditText(pParam->m_wsNewText);
   m_pDataAcc->ProcessEvent(XFA_ATTRIBUTEENUM_Change, pParam);
 }
-FX_DWORD CXFA_FFComboBox::GetAlignment() {
-  FX_DWORD dwExtendedStyle = 0;
+uint32_t CXFA_FFComboBox::GetAlignment() {
+  uint32_t dwExtendedStyle = 0;
   if (CXFA_Para para = m_pDataAcc->GetPara()) {
     int32_t iHorz = para.GetHorizontalAlign();
     switch (iHorz) {
@@ -500,7 +500,7 @@ int32_t CXFA_FFComboBox::OnProcessMessage(CFWL_Message* pMessage) {
 }
 FWL_ERR CXFA_FFComboBox::OnProcessEvent(CFWL_Event* pEvent) {
   CXFA_FFField::OnProcessEvent(pEvent);
-  FX_DWORD dwEventID = pEvent->GetClassID();
+  uint32_t dwEventID = pEvent->GetClassID();
   switch (dwEventID) {
     case FWL_EVTHASH_CMB_SelChanged: {
       CFWL_EvtCmbSelChanged* postEvent = (CFWL_EvtCmbSelChanged*)pEvent;

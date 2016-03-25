@@ -133,7 +133,7 @@ void CBC_OneDimWriter::CalcTextInfo(const CFX_ByteString& text,
       FX_CreateFontEncodingEx(cFont));
 
   int32_t length = text.GetLength();
-  FX_DWORD* pCharCode = FX_Alloc(FX_DWORD, text.GetLength());
+  uint32_t* pCharCode = FX_Alloc(uint32_t, text.GetLength());
   FX_FLOAT charWidth = 0;
   for (int32_t j = 0; j < text.GetLength(); j++) {
     pCharCode[j] = encoding->CharCodeFromUnicode(text[j]);

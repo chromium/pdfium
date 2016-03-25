@@ -21,7 +21,7 @@
 #include "xfa/fxfa/parser/xfa_utils.h"
 #include "xfa/fxjse/cfxjse_arguments.h"
 
-CXFA_Object::CXFA_Object(CXFA_Document* pDocument, FX_DWORD uFlags)
+CXFA_Object::CXFA_Object(CXFA_Document* pDocument, uint32_t uFlags)
     : m_pDocument(pDocument), m_uFlags(uFlags) {}
 void CXFA_Object::GetClassName(CFX_WideStringC& wsName) const {
   wsName = XFA_GetElementByID(GetClassID())->pName;
@@ -222,7 +222,7 @@ CXFA_Node* CXFA_Node::GetNodeItem(XFA_NODEITEM eItem,
   return pNode;
 }
 int32_t CXFA_Node::GetNodeList(CXFA_NodeArray& nodes,
-                               FX_DWORD dwTypeFilter,
+                               uint32_t dwTypeFilter,
                                XFA_ELEMENT eElementFilter,
                                int32_t iLevel) {
   if (--iLevel < 0) {
@@ -303,7 +303,7 @@ int32_t CXFA_Node::GetNodeList(CXFA_NodeArray& nodes,
   return nodes.GetSize();
 }
 CXFA_Node* CXFA_Node::CreateSamePacketNode(XFA_ELEMENT eElement,
-                                           FX_DWORD dwFlags) {
+                                           uint32_t dwFlags) {
   IXFA_ObjFactory* pFactory = m_pDocument->GetParser()->GetFactory();
   CXFA_Node* pNode = pFactory->CreateNode(m_ePacket, eElement);
   pNode->SetFlag(dwFlags);
@@ -638,7 +638,7 @@ void CXFA_Node::Script_TreeClass_ResolveNode(CFXJSE_Arguments* pArguments) {
   if (refNode->GetClassID() == XFA_ELEMENT_Xfa) {
     refNode = ToNode(pScriptContext->GetThisObject());
   }
-  FX_DWORD dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Attributes |
+  uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Attributes |
                     XFA_RESOLVENODE_Properties | XFA_RESOLVENODE_Parent |
                     XFA_RESOLVENODE_Siblings;
   XFA_RESOLVENODE_RS resoveNodeRS;
@@ -681,7 +681,7 @@ void CXFA_Node::Script_TreeClass_ResolveNodes(CFXJSE_Arguments* pArguments) {
   if (!hValue) {
     return;
   }
-  FX_DWORD dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Attributes |
+  uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Attributes |
                     XFA_RESOLVENODE_Properties | XFA_RESOLVENODE_Parent |
                     XFA_RESOLVENODE_Siblings;
   CXFA_Node* refNode = this;
@@ -692,7 +692,7 @@ void CXFA_Node::Script_TreeClass_ResolveNodes(CFXJSE_Arguments* pArguments) {
 }
 void CXFA_Node::Script_Som_ResolveNodeList(FXJSE_HVALUE hValue,
                                            CFX_WideString wsExpression,
-                                           FX_DWORD dwFlag,
+                                           uint32_t dwFlag,
                                            CXFA_Node* refNode) {
   IXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
   if (!pScriptContext) {
@@ -729,7 +729,7 @@ void CXFA_Node::Script_TreeClass_All(FXJSE_HVALUE hValue,
   if (bSetting) {
     ThrowScriptErrorMessage(XFA_IDS_INVAlID_PROP_SET);
   } else {
-    FX_DWORD dwFlag = XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_ALL;
+    uint32_t dwFlag = XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_ALL;
     CFX_WideString wsName;
     GetAttribute(XFA_ATTRIBUTE_Name, wsName);
     CFX_WideString wsExpression = wsName + FX_WSTRC(L"[*]");
@@ -761,7 +761,7 @@ void CXFA_Node::Script_TreeClass_ClassAll(FXJSE_HVALUE hValue,
   if (bSetting) {
     ThrowScriptErrorMessage(XFA_IDS_INVAlID_PROP_SET);
   } else {
-    FX_DWORD dwFlag = XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_ALL;
+    uint32_t dwFlag = XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_ALL;
     CFX_WideStringC wsName;
     GetClassName(wsName);
     CFX_WideString wsExpression = FX_WSTRC(L"#") + wsName + FX_WSTRC(L"[*]");
@@ -1311,7 +1311,7 @@ void CXFA_Node::Script_Attribute_SendAttributeChangeMessage(
   if (!pNotify) {
     return;
   }
-  FX_DWORD dwPacket = GetPacketID();
+  uint32_t dwPacket = GetPacketID();
   if (dwPacket & XFA_XDPPACKET_Form) {
     FX_BOOL bNeedFindContainer = FALSE;
     XFA_ELEMENT eType = GetClassID();
@@ -1492,7 +1492,7 @@ void CXFA_Node::Script_Attribute_String(FXJSE_HVALUE hValue,
       }
       CXFA_Node* pProtoNode = NULL;
       if (!wsSOM.IsEmpty()) {
-        FX_DWORD dwFlag = XFA_RESOLVENODE_Children |
+        uint32_t dwFlag = XFA_RESOLVENODE_Children |
                           XFA_RESOLVENODE_Attributes |
                           XFA_RESOLVENODE_Properties | XFA_RESOLVENODE_Parent |
                           XFA_RESOLVENODE_Siblings;
@@ -2491,7 +2491,7 @@ static CXFA_Node* XFA_ScriptInstanceManager_GetItem(CXFA_Node* pInstMgrNode,
                                                     int32_t iIndex) {
   ASSERT(pInstMgrNode);
   int32_t iCount = 0;
-  FX_DWORD dwNameHash = 0;
+  uint32_t dwNameHash = 0;
   for (CXFA_Node* pNode = pInstMgrNode->GetNodeItem(XFA_NODEITEM_NextSibling);
        pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     XFA_ELEMENT eCurType = pNode->GetClassID();
@@ -2821,7 +2821,7 @@ void CXFA_Node::Script_InstanceManager_Min(FXJSE_HVALUE hValue,
 static int32_t XFA_ScriptInstanceManager_GetCount(CXFA_Node* pInstMgrNode) {
   ASSERT(pInstMgrNode);
   int32_t iCount = 0;
-  FX_DWORD dwNameHash = 0;
+  uint32_t dwNameHash = 0;
   for (CXFA_Node* pNode = pInstMgrNode->GetNodeItem(XFA_NODEITEM_NextSibling);
        pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     XFA_ELEMENT eCurType = pNode->GetClassID();
@@ -2883,7 +2883,7 @@ static void XFA_ScriptInstanceManager_ReorderDataNodes(CXFA_NodeSet& sSet1,
                                                        CXFA_NodeSet& sSet2,
                                                        FX_BOOL bInsertBefore) {
   CFX_MapPtrTemplate<CXFA_Node*,
-                     CFX_MapPtrTemplate<FX_DWORD, CXFA_DualNodeArray*>*>
+                     CFX_MapPtrTemplate<uint32_t, CXFA_DualNodeArray*>*>
       rgNodeListMap;
   FX_POSITION pos;
   pos = sSet1.GetStartPosition();
@@ -2891,15 +2891,15 @@ static void XFA_ScriptInstanceManager_ReorderDataNodes(CXFA_NodeSet& sSet1,
     CXFA_Node* pNode = NULL;
     sSet1.GetNextAssoc(pos, pNode);
     CXFA_Node* pParentNode = pNode->GetNodeItem(XFA_NODEITEM_Parent);
-    FX_DWORD dwNameHash = pNode->GetNameHash();
+    uint32_t dwNameHash = pNode->GetNameHash();
     if (!pParentNode || !dwNameHash) {
       continue;
     }
-    CFX_MapPtrTemplate<FX_DWORD, CXFA_DualNodeArray*>* pNodeListChildMap =
+    CFX_MapPtrTemplate<uint32_t, CXFA_DualNodeArray*>* pNodeListChildMap =
         rgNodeListMap[pParentNode];
     if (!pNodeListChildMap) {
       rgNodeListMap[pParentNode] = pNodeListChildMap =
-          new CFX_MapPtrTemplate<FX_DWORD, CXFA_DualNodeArray*>;
+          new CFX_MapPtrTemplate<uint32_t, CXFA_DualNodeArray*>;
     }
     CXFA_DualNodeArray* pDualNodeArray = (*pNodeListChildMap)[dwNameHash];
     if (!pDualNodeArray) {
@@ -2913,15 +2913,15 @@ static void XFA_ScriptInstanceManager_ReorderDataNodes(CXFA_NodeSet& sSet1,
     CXFA_Node* pNode = NULL;
     sSet2.GetNextAssoc(pos, pNode);
     CXFA_Node* pParentNode = pNode->GetNodeItem(XFA_NODEITEM_Parent);
-    FX_DWORD dwNameHash = pNode->GetNameHash();
+    uint32_t dwNameHash = pNode->GetNameHash();
     if (!pParentNode || !dwNameHash) {
       continue;
     }
-    CFX_MapPtrTemplate<FX_DWORD, CXFA_DualNodeArray*>* pNodeListChildMap =
+    CFX_MapPtrTemplate<uint32_t, CXFA_DualNodeArray*>* pNodeListChildMap =
         rgNodeListMap[pParentNode];
     if (!pNodeListChildMap) {
       rgNodeListMap[pParentNode] = pNodeListChildMap =
-          new CFX_MapPtrTemplate<FX_DWORD, CXFA_DualNodeArray*>;
+          new CFX_MapPtrTemplate<uint32_t, CXFA_DualNodeArray*>;
     }
     CXFA_DualNodeArray* pDualNodeArray = (*pNodeListChildMap)[dwNameHash];
     if (!pDualNodeArray) {
@@ -2937,14 +2937,14 @@ static void XFA_ScriptInstanceManager_ReorderDataNodes(CXFA_NodeSet& sSet1,
   pos = rgNodeListMap.GetStartPosition();
   while (pos) {
     CXFA_Node* pParentNode = NULL;
-    CFX_MapPtrTemplate<FX_DWORD, CXFA_DualNodeArray*>* pNodeListChildMap = NULL;
+    CFX_MapPtrTemplate<uint32_t, CXFA_DualNodeArray*>* pNodeListChildMap = NULL;
     rgNodeListMap.GetNextAssoc(pos, pParentNode, pNodeListChildMap);
     if (!pNodeListChildMap) {
       continue;
     }
     FX_POSITION childpos = pNodeListChildMap->GetStartPosition();
     while (childpos) {
-      FX_DWORD dwNameHash = 0;
+      uint32_t dwNameHash = 0;
       CXFA_DualNodeArray* pDualNodeArray = NULL;
       pNodeListChildMap->GetNextAssoc(childpos, dwNameHash, pDualNodeArray);
       if (!pDualNodeArray) {
@@ -3294,7 +3294,7 @@ int32_t CXFA_Node::InstanceManager_SetInstances(int32_t iDesired) {
     CFX_WideString wsInstanceName = wsInstManagerName.IsEmpty()
                                         ? wsInstManagerName
                                         : wsInstManagerName.Mid(1);
-    FX_DWORD dInstanceNameHash =
+    uint32_t dInstanceNameHash =
         wsInstanceName.IsEmpty() ? 0 : FX_HashCode_String_GetW(
                                            wsInstanceName,
                                            wsInstanceName.GetLength());
@@ -3733,7 +3733,7 @@ enum XFA_KEYTYPE {
   XFA_KEYTYPE_Element,
 };
 void* XFA_GetMapKey_Custom(const CFX_WideStringC& wsKey) {
-  FX_DWORD dwKey = FX_HashCode_String_GetW(wsKey.GetPtr(), wsKey.GetLength());
+  uint32_t dwKey = FX_HashCode_String_GetW(wsKey.GetPtr(), wsKey.GetLength());
   return (void*)(uintptr_t)((dwKey << 1) | XFA_KEYTYPE_Custom);
 }
 void* XFA_GetMapKey_Element(XFA_ELEMENT eElement, XFA_ATTRIBUTE eAttribute) {
@@ -4495,7 +4495,7 @@ CXFA_Node* CXFA_Node::GetProperty(int32_t index,
                                   XFA_ELEMENT eProperty,
                                   FX_BOOL bCreateProperty) {
   XFA_ELEMENT eElement = GetClassID();
-  FX_DWORD dwPacket = GetPacketID();
+  uint32_t dwPacket = GetPacketID();
   const XFA_PROPERTY* pProperty =
       XFA_GetPropertyOfElement(eElement, eProperty, dwPacket);
   if (pProperty == NULL || index >= pProperty->uOccur) {
@@ -4737,7 +4737,7 @@ CXFA_Node* CXFA_Node::GetFirstChildByName(const CFX_WideStringC& wsName) const {
       wsName.IsEmpty() ? 0 : FX_HashCode_String_GetW(wsName.GetPtr(),
                                                      wsName.GetLength()));
 }
-CXFA_Node* CXFA_Node::GetFirstChildByName(FX_DWORD dwNameHash) const {
+CXFA_Node* CXFA_Node::GetFirstChildByName(uint32_t dwNameHash) const {
   for (CXFA_Node* pNode = GetNodeItem(XFA_NODEITEM_FirstChild); pNode;
        pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     if (pNode->GetNameHash() == dwNameHash) {
@@ -4755,7 +4755,7 @@ CXFA_Node* CXFA_Node::GetFirstChildByClass(XFA_ELEMENT eElement) const {
   }
   return NULL;
 }
-CXFA_Node* CXFA_Node::GetNextSameNameSibling(FX_DWORD dwNameHash) const {
+CXFA_Node* CXFA_Node::GetNextSameNameSibling(uint32_t dwNameHash) const {
   for (CXFA_Node* pNode = GetNodeItem(XFA_NODEITEM_NextSibling); pNode;
        pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     if (pNode->GetNameHash() == dwNameHash) {
@@ -4831,7 +4831,7 @@ CXFA_Node* CXFA_Node::GetInstanceMgrOfSubform() {
 CXFA_Node* CXFA_Node::GetOccurNode() {
   return GetFirstChildByClass(XFA_ELEMENT_Occur);
 }
-FX_BOOL CXFA_Node::HasFlag(FX_DWORD dwFlag) const {
+FX_BOOL CXFA_Node::HasFlag(uint32_t dwFlag) const {
   if (m_uFlags & dwFlag) {
     return TRUE;
   }
@@ -4843,7 +4843,7 @@ FX_BOOL CXFA_Node::HasFlag(FX_DWORD dwFlag) const {
   }
   return FALSE;
 }
-void CXFA_Node::SetFlag(FX_DWORD dwFlag, FX_BOOL bOn, FX_BOOL bNotify) {
+void CXFA_Node::SetFlag(uint32_t dwFlag, FX_BOOL bOn, FX_BOOL bNotify) {
   if (bOn) {
     switch (dwFlag) {
       case XFA_NODEFLAG_Initialized:
@@ -5241,7 +5241,7 @@ CXFA_NodeList::CXFA_NodeList(CXFA_Document* pDocument)
 }
 CXFA_Node* CXFA_NodeList::NamedItem(const CFX_WideStringC& wsName) {
   int32_t iCount = GetLength();
-  FX_DWORD dwHashCode =
+  uint32_t dwHashCode =
       FX_HashCode_String_GetW(wsName.GetPtr(), wsName.GetLength());
   for (int32_t i = 0; i < iCount; i++) {
     CXFA_Node* ret = Item(i);

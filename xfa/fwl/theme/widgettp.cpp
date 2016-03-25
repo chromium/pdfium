@@ -18,7 +18,7 @@
 #include "xfa/fxgraphics/cfx_path.h"
 #include "xfa/fxgraphics/cfx_shading.h"
 
-static void FWL_SetChildThemeID(IFWL_Widget* pParent, FX_DWORD dwThemeID) {
+static void FWL_SetChildThemeID(IFWL_Widget* pParent, uint32_t dwThemeID) {
   IFWL_WidgetMgr* pWidgetMgr = FWL_GetWidgetMgr();
   IFWL_Widget* pChild =
       pWidgetMgr->GetWidget(pParent, FWL_WGTRELATION_FirstChild);
@@ -34,13 +34,13 @@ static void FWL_SetChildThemeID(IFWL_Widget* pParent, FX_DWORD dwThemeID) {
 FX_BOOL CFWL_WidgetTP::IsValidWidget(IFWL_Widget* pWidget) {
   return FALSE;
 }
-FX_DWORD CFWL_WidgetTP::GetThemeID(IFWL_Widget* pWidget) {
+uint32_t CFWL_WidgetTP::GetThemeID(IFWL_Widget* pWidget) {
   return m_dwThemeID;
 }
-FX_DWORD CFWL_WidgetTP::SetThemeID(IFWL_Widget* pWidget,
-                                   FX_DWORD dwThemeID,
+uint32_t CFWL_WidgetTP::SetThemeID(IFWL_Widget* pWidget,
+                                   uint32_t dwThemeID,
                                    FX_BOOL bChildren) {
-  FX_DWORD dwOld = m_dwThemeID;
+  uint32_t dwOld = m_dwThemeID;
   m_dwThemeID = dwThemeID;
   if (CFWL_ArrowData::IsInstance()) {
     CFWL_ArrowData::GetInstance()->SetColorData(FWL_GetThemeColor(dwThemeID));
@@ -81,7 +81,7 @@ FX_BOOL CFWL_WidgetTP::DrawText(CFWL_ThemeText* pParams) {
   return TRUE;
 }
 void* CFWL_WidgetTP::GetCapacity(CFWL_ThemePart* pThemePart,
-                                 FX_DWORD dwCapacity) {
+                                 uint32_t dwCapacity) {
   switch (dwCapacity) {
     case FWL_WGTCAPACITY_CXBorder: {
       m_fValue = FWLTHEME_CAPACITY_CXBorder;
@@ -222,7 +222,7 @@ FX_ERR CFWL_WidgetTP::FinalizeTTO() {
 }
 #ifdef THEME_XPSimilar
 void CFWL_WidgetTP::DrawEdge(CFX_Graphics* pGraphics,
-                             FX_DWORD dwStyles,
+                             uint32_t dwStyles,
                              const CFX_RectF* pRect,
                              CFX_Matrix* pMatrix) {
   if (!pGraphics)
@@ -249,7 +249,7 @@ void CFWL_WidgetTP::DrawEdge(CFX_Graphics* pGraphics,
 }
 #else
 void CFWL_WidgetTP::DrawEdge(CFX_Graphics* pGraphics,
-                             FX_DWORD dwStyles,
+                             uint32_t dwStyles,
                              const CFX_RectF* pRect,
                              CFX_Matrix* pMatrix) {
   if (!pGraphics)
@@ -717,13 +717,13 @@ CFWL_FontData::~CFWL_FontData() {
 #endif
 }
 FX_BOOL CFWL_FontData::Equal(const CFX_WideStringC& wsFontFamily,
-                             FX_DWORD dwFontStyles,
+                             uint32_t dwFontStyles,
                              uint16_t wCodePage) {
   return m_wsFamily == wsFontFamily && m_dwStyles == dwFontStyles &&
          m_dwCodePage == wCodePage;
 }
 FX_BOOL CFWL_FontData::LoadFont(const CFX_WideStringC& wsFontFamily,
-                                FX_DWORD dwFontStyles,
+                                uint32_t dwFontStyles,
                                 uint16_t dwCodePage) {
   m_wsFamily = wsFontFamily;
   m_dwStyles = dwFontStyles;
@@ -754,7 +754,7 @@ void CFWL_FontManager::DestroyInstance() {
 CFWL_FontManager::CFWL_FontManager() {}
 CFWL_FontManager::~CFWL_FontManager() {}
 IFX_Font* CFWL_FontManager::FindFont(const CFX_WideStringC& wsFontFamily,
-                                     FX_DWORD dwFontStyles,
+                                     uint32_t dwFontStyles,
                                      uint16_t wCodePage) {
   for (const auto& pData : m_FontsArray) {
     if (pData->Equal(wsFontFamily, dwFontStyles, wCodePage))
@@ -773,13 +773,13 @@ void FWLTHEME_Release() {
   CFWL_ArrowData::DestroyInstance();
   CFWL_FontManager::DestroyInstance();
 }
-FX_DWORD FWL_GetThemeLayout(FX_DWORD dwThemeID) {
+uint32_t FWL_GetThemeLayout(uint32_t dwThemeID) {
   return 0xffff0000 & dwThemeID;
 }
-FX_DWORD FWL_GetThemeColor(FX_DWORD dwThemeID) {
+uint32_t FWL_GetThemeColor(uint32_t dwThemeID) {
   return 0x0000ffff & dwThemeID;
 }
-FX_DWORD FWL_MakeThemeID(FX_DWORD dwLayout, FX_DWORD dwColor) {
+uint32_t FWL_MakeThemeID(uint32_t dwLayout, uint32_t dwColor) {
   return (dwLayout << 16) | (0x0000FFFF & dwColor);
 }
 CFWL_ArrowData* CFWL_ArrowData::m_pInstance = NULL;
@@ -804,7 +804,7 @@ CFWL_ArrowData::~CFWL_ArrowData() {
     m_pColorData = NULL;
   }
 }
-void CFWL_ArrowData::SetColorData(FX_DWORD dwID) {
+void CFWL_ArrowData::SetColorData(uint32_t dwID) {
   if (!m_pColorData) {
     m_pColorData = new CColorData;
   }
