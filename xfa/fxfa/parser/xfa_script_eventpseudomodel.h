@@ -90,7 +90,7 @@ class CScript_EventPseudoModel : public CXFA_OrdinaryObject {
 
  protected:
   void Script_EventPseudoModel_Property(FXJSE_HVALUE hValue,
-                                        FX_DWORD dwFlag,
+                                        uint32_t dwFlag,
                                         FX_BOOL bSetting);
 };
 

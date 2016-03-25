@@ -293,7 +293,7 @@ class CFDE_XMLSyntaxParser : public IFDE_XMLSyntaxParser, public CFX_Target {
   virtual void Init(IFX_Stream* pStream,
                     int32_t iXMLPlaneSize,
                     int32_t iTextDataSize = 256);
-  virtual FX_DWORD DoSyntaxParse();
+  virtual uint32_t DoSyntaxParse();
   virtual int32_t GetStatus() const;
   virtual int32_t GetCurrentPos() const {
     return m_iParsedChars + (m_pStart - m_pBuffer);
@@ -342,8 +342,8 @@ class CFDE_XMLSyntaxParser : public IFDE_XMLSyntaxParser, public CFX_Target {
   FX_WCHAR* m_pCurrentBlock;
   int32_t m_iIndexInBlock;
   int32_t m_iTextDataLength;
-  FX_DWORD m_dwStatus;
-  FX_DWORD m_dwMode;
+  uint32_t m_dwStatus;
+  uint32_t m_dwMode;
   FX_WCHAR m_wQuotationMark;
   int32_t m_iEntityStart;
   CFX_DWordStack m_SkipStack;

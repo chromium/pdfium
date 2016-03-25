@@ -83,7 +83,7 @@ FXJSE_HVALUE FXJSE_Context_GetGlobalObject(FXJSE_HCONTEXT hContext);
 FXJSE_HRUNTIME FXJSE_Context_GetRuntime(FXJSE_HCONTEXT hContext);
 
 void FXJSE_Context_EnableCompatibleMode(FXJSE_HCONTEXT hContext,
-                                        FX_DWORD dwCompatibleFlags);
+                                        uint32_t dwCompatibleFlags);
 
 void FXJSE_DefineFunctions(FXJSE_HCONTEXT hContext,
                            const FXJSE_FUNCTION* lpFunctions,

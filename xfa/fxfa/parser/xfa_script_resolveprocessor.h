@@ -35,7 +35,7 @@ class CXFA_ResolveNodesData {
   CFX_WideString m_wsCondition;
   int32_t m_nLevel;
   CXFA_ObjArray m_Nodes;
-  FX_DWORD m_dwStyles;
+  uint32_t m_dwStyles;
   const XFA_SCRIPTATTRIBUTEINFO* m_pScriptAttribute;
   XFA_RESOVENODE_RSTYPE m_dwFlag;
 };
@@ -67,7 +67,7 @@ class CXFA_ResolveProcessor {
   void XFA_ResolveNode_FilterCondition(CXFA_ResolveNodesData& rnd,
                                        CFX_WideString wsCondition);
   int32_t XFA_ResolveNodes_PopStack(CFX_Int32Array& stack);
-  void XFA_ResolveNodes_SetStylesForChild(FX_DWORD dwParentStyles,
+  void XFA_ResolveNodes_SetStylesForChild(uint32_t dwParentStyles,
                                           CXFA_ResolveNodesData& rnd);
   int32_t XFA_ResolveNode_SetResultCreateNode(XFA_RESOLVENODE_RS& resolveNodeRS,
                                               CFX_WideString& wsLastCondition);

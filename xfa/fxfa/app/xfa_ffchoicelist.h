@@ -21,7 +21,7 @@ class CXFA_FFListBox : public CXFA_FFField {
   virtual FX_BOOL CommitData();
   virtual FX_BOOL UpdateFWLData();
   virtual FX_BOOL IsDataChanged();
-  FX_DWORD GetAlignment();
+  uint32_t GetAlignment();
 
  public:
   void OnSelectChanged(IFWL_Widget* pWidget, const CFX_Int32Array& arrSels);
@@ -41,11 +41,11 @@ class CXFA_FFComboBox : public CXFA_FFField {
   CXFA_FFComboBox(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
   virtual ~CXFA_FFComboBox();
   virtual FX_BOOL GetBBox(CFX_RectF& rtBox,
-                          FX_DWORD dwStatus,
+                          uint32_t dwStatus,
                           FX_BOOL bDrawFocus = FALSE);
   virtual FX_BOOL LoadWidget();
   virtual void UpdateWidgetProperty();
-  virtual FX_BOOL OnRButtonUp(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
+  virtual FX_BOOL OnRButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
   virtual FX_BOOL OnKillFocus(CXFA_FFWidget* pNewWidget);
   virtual FX_BOOL CanUndo();
   virtual FX_BOOL CanRedo();
@@ -69,7 +69,7 @@ class CXFA_FFComboBox : public CXFA_FFField {
   virtual FX_BOOL CommitData();
   virtual FX_BOOL UpdateFWLData();
   virtual FX_BOOL IsDataChanged();
-  FX_DWORD GetAlignment();
+  uint32_t GetAlignment();
   void FWLEventSelChange(CXFA_EventParam* pParam);
 
   CFX_WideString m_wsNewValue;

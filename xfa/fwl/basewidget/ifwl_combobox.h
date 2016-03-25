@@ -142,8 +142,8 @@ class IFWL_ComboBox : public IFWL_Widget {
   FX_BOOL EditDelete();
   FX_BOOL EditDeSelect();
   FWL_ERR GetBBox(CFX_RectF& rect);
-  FWL_ERR EditModifyStylesEx(FX_DWORD dwStylesExAdded,
-                             FX_DWORD dwStylesExRemoved);
+  FWL_ERR EditModifyStylesEx(uint32_t dwStylesExAdded,
+                             uint32_t dwStylesExRemoved);
 
  protected:
   IFWL_ComboBox();

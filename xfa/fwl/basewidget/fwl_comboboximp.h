@@ -85,15 +85,15 @@ class CFWL_ComboBoxImp : public CFWL_WidgetImp {
                    IFWL_Widget* pOuter);
   virtual ~CFWL_ComboBoxImp();
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
-  virtual FX_DWORD GetClassID() const;
+  virtual uint32_t GetClassID() const;
   virtual FWL_ERR Initialize();
   virtual FWL_ERR Finalize();
   virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
-  virtual FWL_ERR ModifyStylesEx(FX_DWORD dwStylesExAdded,
-                                 FX_DWORD dwStylesExRemoved);
-  virtual FWL_ERR SetStates(FX_DWORD dwStates, FX_BOOL bSet = TRUE);
+  virtual FWL_ERR ModifyStylesEx(uint32_t dwStylesExAdded,
+                                 uint32_t dwStylesExRemoved);
+  virtual FWL_ERR SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE);
   virtual FWL_ERR Update();
-  virtual FX_DWORD HitTest(FX_FLOAT fx, FX_FLOAT fy);
+  virtual uint32_t HitTest(FX_FLOAT fx, FX_FLOAT fy);
   virtual FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
                              const CFX_Matrix* pMatrix = NULL);
   virtual FWL_ERR SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
@@ -128,8 +128,8 @@ class CFWL_ComboBoxImp : public CFWL_WidgetImp {
   virtual FX_BOOL EditDelete();
   virtual FX_BOOL EditDeSelect();
   virtual FWL_ERR GetBBox(CFX_RectF& rect);
-  virtual FWL_ERR EditModifyStylesEx(FX_DWORD dwStylesExAdded,
-                                     FX_DWORD dwStylesExRemoved);
+  virtual FWL_ERR EditModifyStylesEx(uint32_t dwStylesExAdded,
+                                     uint32_t dwStylesExRemoved);
 
  protected:
   void DrawStretchHandler(CFX_Graphics* pGraphics, const CFX_Matrix* pMatrix);
@@ -150,10 +150,10 @@ class CFWL_ComboBoxImp : public CFWL_WidgetImp {
   void DisForm_InitComboEdit();
   void DisForm_ShowDropList(FX_BOOL bActivate);
   FX_BOOL DisForm_IsDropListShowed();
-  FWL_ERR DisForm_ModifyStylesEx(FX_DWORD dwStylesExAdded,
-                                 FX_DWORD dwStylesExRemoved);
+  FWL_ERR DisForm_ModifyStylesEx(uint32_t dwStylesExAdded,
+                                 uint32_t dwStylesExRemoved);
   FWL_ERR DisForm_Update();
-  FX_DWORD DisForm_HitTest(FX_FLOAT fx, FX_FLOAT fy);
+  uint32_t DisForm_HitTest(FX_FLOAT fx, FX_FLOAT fy);
   FWL_ERR DisForm_DrawWidget(CFX_Graphics* pGraphics,
                              const CFX_Matrix* pMatrix = NULL);
   FWL_ERR DisForm_GetBBox(CFX_RectF& rect);

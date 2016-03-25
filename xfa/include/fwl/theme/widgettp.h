@@ -32,16 +32,16 @@ class IFX_FontSourceEnum;
 class CFWL_WidgetTP {
  public:
   virtual FX_BOOL IsValidWidget(IFWL_Widget* pWidget);
-  virtual FX_DWORD GetThemeID(IFWL_Widget* pWidget);
-  virtual FX_DWORD SetThemeID(IFWL_Widget* pWidget,
-                              FX_DWORD dwThemeID,
+  virtual uint32_t GetThemeID(IFWL_Widget* pWidget);
+  virtual uint32_t SetThemeID(IFWL_Widget* pWidget,
+                              uint32_t dwThemeID,
                               FX_BOOL bChildren = TRUE);
   virtual FWL_ERR GetThemeMatrix(IFWL_Widget* pWidget, CFX_Matrix& matrix);
   virtual FWL_ERR SetThemeMatrix(IFWL_Widget* pWidget,
                                  const CFX_Matrix& matrix);
   virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams);
   virtual FX_BOOL DrawText(CFWL_ThemeText* pParams);
-  virtual void* GetCapacity(CFWL_ThemePart* pThemePart, FX_DWORD dwCapacity);
+  virtual void* GetCapacity(CFWL_ThemePart* pThemePart, uint32_t dwCapacity);
   virtual FX_BOOL IsCustomizedLayout(IFWL_Widget* pWidget);
   virtual FWL_ERR GetPartRect(CFWL_ThemePart* pThemePart, CFX_RectF& rtPart);
   virtual FX_BOOL IsInPart(CFWL_ThemePart* pThemePart,
@@ -66,7 +66,7 @@ class CFWL_WidgetTP {
   FX_ERR InitTTO();
   FX_ERR FinalizeTTO();
   void DrawEdge(CFX_Graphics* pGraphics,
-                FX_DWORD dwStyles,
+                uint32_t dwStyles,
                 const CFX_RectF* pRect,
                 CFX_Matrix* pMatrix = NULL);
   void Draw3DRect(CFX_Graphics* pGraphics,
@@ -141,20 +141,20 @@ class CFWL_WidgetTP {
                     FWLTHEME_STATE eState,
                     CFX_Matrix* pMatrix = NULL);
   FWLCOLOR BlendColor(FWLCOLOR srcColor, FWLCOLOR renderColor, uint8_t scale);
-  FX_DWORD m_dwRefCount;
+  uint32_t m_dwRefCount;
   IFDE_TextOut* m_pTextOut;
   IFX_Font* m_pFDEFont;
   FX_FLOAT m_fValue;
-  FX_DWORD m_dwValue;
+  uint32_t m_dwValue;
   CFX_RectF m_rtMargin;
-  FX_DWORD m_dwThemeID;
+  uint32_t m_dwThemeID;
   CFX_Matrix _ctm;
 };
 FX_BOOL FWLTHEME_Init();
 void FWLTHEME_Release();
-FX_DWORD FWL_GetThemeLayout(FX_DWORD dwThemeID);
-FX_DWORD FWL_GetThemeColor(FX_DWORD dwThemeID);
-FX_DWORD FWL_MakeThemeID(FX_DWORD dwLayout, FX_DWORD dwColor);
+uint32_t FWL_GetThemeLayout(uint32_t dwThemeID);
+uint32_t FWL_GetThemeColor(uint32_t dwThemeID);
+uint32_t FWL_MakeThemeID(uint32_t dwLayout, uint32_t dwColor);
 
 class CFWL_ArrowData {
  public:
@@ -162,7 +162,7 @@ class CFWL_ArrowData {
   static FX_BOOL IsInstance();
   static void DestroyInstance();
   virtual ~CFWL_ArrowData();
-  void SetColorData(FX_DWORD dwID);
+  void SetColorData(uint32_t dwID);
 
   class CColorData {
    public:
@@ -182,17 +182,17 @@ class CFWL_FontData {
   CFWL_FontData();
   virtual ~CFWL_FontData();
   FX_BOOL Equal(const CFX_WideStringC& wsFontFamily,
-                FX_DWORD dwFontStyles,
+                uint32_t dwFontStyles,
                 uint16_t wCodePage);
   FX_BOOL LoadFont(const CFX_WideStringC& wsFontFamily,
-                   FX_DWORD dwFontStyles,
+                   uint32_t dwFontStyles,
                    uint16_t wCodePage);
   IFX_Font* GetFont() const { return m_pFont; }
 
  protected:
   CFX_WideString m_wsFamily;
-  FX_DWORD m_dwStyles;
-  FX_DWORD m_dwCodePage;
+  uint32_t m_dwStyles;
+  uint32_t m_dwCodePage;
   IFX_Font* m_pFont;
   IFX_FontMgr* m_pFontMgr;
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
@@ -206,7 +206,7 @@ class CFWL_FontManager {
   static void DestroyInstance();
 
   IFX_Font* FindFont(const CFX_WideStringC& wsFontFamily,
-                     FX_DWORD dwFontStyles,
+                     uint32_t dwFontStyles,
                      uint16_t dwCodePage);
 
  protected:

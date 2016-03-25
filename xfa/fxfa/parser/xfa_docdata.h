@@ -22,7 +22,7 @@ class IXFA_PacketExport {
   virtual FX_BOOL Export(IFX_FileWrite* pWrite) = 0;
   virtual FX_BOOL Export(IFX_FileWrite* pWrite,
                          CXFA_Node* pNode,
-                         FX_DWORD dwFlag = 0,
+                         uint32_t dwFlag = 0,
                          const FX_CHAR* pChecksum = NULL) = 0;
 };
 class IXFA_PacketImport {

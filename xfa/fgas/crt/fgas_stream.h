@@ -37,15 +37,15 @@ enum FX_STREAMSEEK {
 
 class IFX_Stream {
  public:
-  static IFX_Stream* CreateStream(IFX_FileRead* pFileRead, FX_DWORD dwAccess);
-  static IFX_Stream* CreateStream(IFX_FileWrite* pFileWrite, FX_DWORD dwAccess);
+  static IFX_Stream* CreateStream(IFX_FileRead* pFileRead, uint32_t dwAccess);
+  static IFX_Stream* CreateStream(IFX_FileWrite* pFileWrite, uint32_t dwAccess);
   static IFX_Stream* CreateStream(const FX_WCHAR* pszFileName,
-                                  FX_DWORD dwAccess);
+                                  uint32_t dwAccess);
   static IFX_Stream* CreateStream(uint8_t* pData,
                                   int32_t length,
-                                  FX_DWORD dwAccess);
+                                  uint32_t dwAccess);
   static IFX_Stream* CreateStream(IFX_BufferRead* pBufferRead,
-                                  FX_DWORD dwAccess,
+                                  uint32_t dwAccess,
                                   int32_t iFileSize = -1,
                                   FX_BOOL bReleaseBufferRead = TRUE);
   static IFX_Stream* CreateTextStream(IFX_Stream* pBaseStream,
@@ -53,7 +53,7 @@ class IFX_Stream {
   virtual ~IFX_Stream() {}
   virtual void Release() = 0;
   virtual IFX_Stream* Retain() = 0;
-  virtual FX_DWORD GetAccessModes() const = 0;
+  virtual uint32_t GetAccessModes() const = 0;
   virtual int32_t GetLength() const = 0;
   virtual int32_t Seek(FX_STREAMSEEK eSeek, int32_t iOffset) = 0;
   virtual int32_t GetPosition() = 0;
@@ -70,7 +70,7 @@ class IFX_Stream {
   virtual int32_t GetBOM(uint8_t bom[4]) const = 0;
   virtual uint16_t GetCodePage() const = 0;
   virtual uint16_t SetCodePage(uint16_t wCodePage) = 0;
-  virtual IFX_Stream* CreateSharedStream(FX_DWORD dwAccess,
+  virtual IFX_Stream* CreateSharedStream(uint32_t dwAccess,
                                          int32_t iOffset,
                                          int32_t iLength) = 0;
 };

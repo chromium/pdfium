@@ -132,7 +132,7 @@ class CXFA_XMLParser : public IFDE_XMLParser {
   CXFA_XMLNodeStack m_NodeStack;
   CFX_WideString m_ws1;
   CFX_WideString m_ws2;
-  FX_DWORD m_dwStatus;
+  uint32_t m_dwStatus;
 };
 
 #endif  // XFA_FXFA_PARSER_XFA_PARSER_IMP_H_

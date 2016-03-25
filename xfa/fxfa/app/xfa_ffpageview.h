@@ -27,8 +27,8 @@ class CXFA_FFPageView : public CXFA_ContainerLayoutItem, public IXFA_PageView {
   void UnloadPageView() override;
   IXFA_Widget* GetWidgetByPos(FX_FLOAT fx, FX_FLOAT fy) override;
   IXFA_WidgetIterator* CreateWidgetIterator(
-      FX_DWORD dwTraverseWay = XFA_TRAVERSEWAY_Form,
-      FX_DWORD dwWidgetFilter = XFA_WIDGETFILTER_Visible |
+      uint32_t dwTraverseWay = XFA_TRAVERSEWAY_Form,
+      uint32_t dwWidgetFilter = XFA_WIDGETFILTER_Visible |
                                 XFA_WIDGETFILTER_Viewable |
                                 XFA_WIDGETFILTER_AllType) override;
 
@@ -43,7 +43,7 @@ typedef CXFA_NodeIteratorTemplate<CXFA_LayoutItem,
     CXFA_LayoutItemIterator;
 class CXFA_FFPageWidgetIterator : public IXFA_WidgetIterator {
  public:
-  CXFA_FFPageWidgetIterator(CXFA_FFPageView* pPageView, FX_DWORD dwFilter);
+  CXFA_FFPageWidgetIterator(CXFA_FFPageView* pPageView, uint32_t dwFilter);
   virtual ~CXFA_FFPageWidgetIterator();
   virtual void Release() { delete this; }
 
@@ -59,7 +59,7 @@ class CXFA_FFPageWidgetIterator : public IXFA_WidgetIterator {
   IXFA_Widget* GetWidget(CXFA_LayoutItem* pLayoutItem);
   CXFA_FFPageView* m_pPageView;
   IXFA_Widget* m_hCurWidget;
-  FX_DWORD m_dwFilter;
+  uint32_t m_dwFilter;
   FX_BOOL m_bIgnorerelevant;
   CXFA_LayoutItemIterator m_sIterator;
 };
@@ -75,7 +75,7 @@ class CXFA_TabParam {
 class CXFA_FFTabOrderPageWidgetIterator : public IXFA_WidgetIterator {
  public:
   CXFA_FFTabOrderPageWidgetIterator(CXFA_FFPageView* pPageView,
-                                    FX_DWORD dwFilter);
+                                    uint32_t dwFilter);
   virtual ~CXFA_FFTabOrderPageWidgetIterator();
 
   virtual void Release();
@@ -91,7 +91,7 @@ class CXFA_FFTabOrderPageWidgetIterator : public IXFA_WidgetIterator {
  protected:
   CXFA_WidgetArray m_TabOrderWidgetArray;
   CXFA_FFPageView* m_pPageView;
-  FX_DWORD m_dwFilter;
+  uint32_t m_dwFilter;
   int32_t m_iCurWidget;
   FX_BOOL m_bIgnorerelevant;
   CXFA_FFWidget* GetTraverseWidget(CXFA_FFWidget* pWidget);

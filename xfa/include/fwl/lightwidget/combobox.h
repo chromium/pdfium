@@ -64,8 +64,8 @@ class CFWL_ComboBox : public CFWL_Widget {
   FX_BOOL EditDelete();
   FX_BOOL EditDeSelect();
   FWL_ERR GetBBox(CFX_RectF& rect);
-  FWL_ERR EditModifyStylesEx(FX_DWORD dwStylesExAdded,
-                             FX_DWORD dwStylesExRemoved);
+  FWL_ERR EditModifyStylesEx(uint32_t dwStylesExAdded,
+                             uint32_t dwStylesExRemoved);
   CFWL_ComboBox();
   virtual ~CFWL_ComboBox();
 
@@ -86,7 +86,7 @@ class CFWL_ComboBox : public CFWL_Widget {
                                  FWL_HLISTITEM hItem,
                                  int32_t nIndex);
 
-    virtual FX_DWORD GetItemStyles(IFWL_Widget* pWidget, FWL_HLISTITEM hItem);
+    virtual uint32_t GetItemStyles(IFWL_Widget* pWidget, FWL_HLISTITEM hItem);
     virtual FWL_ERR GetItemText(IFWL_Widget* pWidget,
                                 FWL_HLISTITEM hItem,
                                 CFX_WideString& wsText);
@@ -96,7 +96,7 @@ class CFWL_ComboBox : public CFWL_Widget {
     virtual void* GetItemData(IFWL_Widget* pWidget, FWL_HLISTITEM hItem);
     virtual FWL_ERR SetItemStyles(IFWL_Widget* pWidget,
                                   FWL_HLISTITEM hItem,
-                                  FX_DWORD dwStyle);
+                                  uint32_t dwStyle);
     virtual FWL_ERR SetItemText(IFWL_Widget* pWidget,
                                 FWL_HLISTITEM hItem,
                                 const FX_WCHAR* pszText);
@@ -112,11 +112,11 @@ class CFWL_ComboBox : public CFWL_Widget {
     virtual FWL_ERR SetItemCheckRect(IFWL_Widget* pWidget,
                                      FWL_HLISTITEM hItem,
                                      const CFX_RectF& rtCheck);
-    virtual FX_DWORD GetItemCheckState(IFWL_Widget* pWidget,
+    virtual uint32_t GetItemCheckState(IFWL_Widget* pWidget,
                                        FWL_HLISTITEM hItem);
     virtual FWL_ERR SetItemCheckState(IFWL_Widget* pWidget,
                                       FWL_HLISTITEM hItem,
-                                      FX_DWORD dwCheckState);
+                                      uint32_t dwCheckState);
     virtual FX_FLOAT GetListHeight(IFWL_Widget* pWidget);
 
     std::vector<std::unique_ptr<CFWL_ComboBoxItem>> m_ItemArray;
@@ -133,10 +133,10 @@ class CFWL_ComboBoxItem {
     m_pData = NULL;
   }
   CFX_RectF m_rtItem;
-  FX_DWORD m_dwStyles;
+  uint32_t m_dwStyles;
   CFX_WideString m_wsText;
   CFX_DIBitmap* m_pDIB;
-  FX_DWORD m_dwCheckState;
+  uint32_t m_dwCheckState;
   CFX_RectF m_rtCheckBox;
   void* m_pData;
 };

@@ -47,7 +47,7 @@ class IFWL_BarcodeDP : public IFWL_EditDP {
   virtual int32_t GetVersion() = 0;
   virtual int32_t GetErrorCorrectionLevel() = 0;
   virtual FX_BOOL GetTruncated() = 0;
-  virtual FX_DWORD GetBarcodeAttributeMask() = 0;
+  virtual uint32_t GetBarcodeAttributeMask() = 0;
 };
 
 class IFWL_Barcode : public IFWL_Edit {

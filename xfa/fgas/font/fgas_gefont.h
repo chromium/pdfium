@@ -14,22 +14,22 @@
 
 class CFX_GEFont : public IFX_Font {
  public:
-  CFX_GEFont(const CFX_GEFont& src, FX_DWORD dwFontStyles);
+  CFX_GEFont(const CFX_GEFont& src, uint32_t dwFontStyles);
   CFX_GEFont(IFX_FontMgr* pFontMgr);
   ~CFX_GEFont();
   virtual void Release();
   virtual IFX_Font* Retain();
   FX_BOOL LoadFont(const FX_WCHAR* pszFontFamily,
-                   FX_DWORD dwFontStyles,
+                   uint32_t dwFontStyles,
                    uint16_t wCodePage);
   FX_BOOL LoadFont(const uint8_t* pBuffer, int32_t length);
   FX_BOOL LoadFont(const FX_WCHAR* pszFileName);
   FX_BOOL LoadFont(IFX_Stream* pFontStream, FX_BOOL bSaveStream);
   FX_BOOL LoadFont(CFX_Font* pExtFont, FX_BOOL bTakeOver = FALSE);
-  virtual IFX_Font* Derive(FX_DWORD dwFontStyles, uint16_t wCodePage = 0);
+  virtual IFX_Font* Derive(uint32_t dwFontStyles, uint16_t wCodePage = 0);
   virtual void GetFamilyName(CFX_WideString& wsFamily) const;
   virtual void GetPsName(CFX_WideString& wsName) const;
-  virtual FX_DWORD GetFontStyles() const;
+  virtual uint32_t GetFontStyles() const;
   virtual uint8_t GetCharSet() const;
   virtual FX_BOOL GetCharWidth(FX_WCHAR wUnicode,
                                int32_t& iWidth,
@@ -49,7 +49,7 @@ class CFX_GEFont : public IFX_Font {
     m_pProvider = pProvider;
   }
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
-  virtual void SetLogicalFontStyle(FX_DWORD dwLogFontStyle) {
+  virtual void SetLogicalFontStyle(uint32_t dwLogFontStyle) {
     m_bUseLogFontStyle = TRUE;
     m_dwLogFontStyle = dwLogFontStyle;
   }
@@ -58,7 +58,7 @@ class CFX_GEFont : public IFX_Font {
  protected:
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
   FX_BOOL m_bUseLogFontStyle;
-  FX_DWORD m_dwLogFontStyle;
+  uint32_t m_dwLogFontStyle;
 #endif
   CFX_Font* m_pFont;
   IFX_FontMgr* m_pFontMgr;

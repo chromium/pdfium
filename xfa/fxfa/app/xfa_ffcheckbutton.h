@@ -16,14 +16,14 @@ class CXFA_FFCheckButton : public CXFA_FFField {
   virtual ~CXFA_FFCheckButton();
   virtual void RenderWidget(CFX_Graphics* pGS,
                             CFX_Matrix* pMatrix = NULL,
-                            FX_DWORD dwStatus = 0,
+                            uint32_t dwStatus = 0,
                             int32_t iRotate = 0);
 
   virtual FX_BOOL LoadWidget();
   virtual FX_BOOL PerformLayout();
   virtual FX_BOOL UpdateFWLData();
   virtual void UpdateWidgetProperty();
-  virtual FX_BOOL OnLButtonUp(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
+  virtual FX_BOOL OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
   void SetFWLCheckState(XFA_CHECKSTATE eCheckState);
   virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
   virtual FWL_ERR OnProcessEvent(CFWL_Event* pEvent);

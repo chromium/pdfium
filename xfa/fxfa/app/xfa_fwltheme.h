@@ -35,17 +35,17 @@ class CXFA_FWLTheme : public IFWL_ThemeProvider {
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const {
     return FWL_ERR_Succeeded;
   }
-  virtual FX_DWORD GetHashCode() const { return 0; }
+  virtual uint32_t GetHashCode() const { return 0; }
   virtual FWL_ERR Initialize();
   virtual FWL_ERR Finalize();
   virtual FX_BOOL IsValidWidget(IFWL_Widget* pWidget);
-  virtual FX_DWORD GetThemeID(IFWL_Widget* pWidget);
-  virtual FX_DWORD SetThemeID(IFWL_Widget* pWidget,
-                              FX_DWORD dwThemeID,
+  virtual uint32_t GetThemeID(IFWL_Widget* pWidget);
+  virtual uint32_t SetThemeID(IFWL_Widget* pWidget,
+                              uint32_t dwThemeID,
                               FX_BOOL bChildren = TRUE);
   virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams);
   virtual FX_BOOL DrawText(CFWL_ThemeText* pParams);
-  virtual void* GetCapacity(CFWL_ThemePart* pThemePart, FX_DWORD dwCapacity);
+  virtual void* GetCapacity(CFWL_ThemePart* pThemePart, uint32_t dwCapacity);
   virtual FX_BOOL IsCustomizedLayout(IFWL_Widget* pWidget);
   virtual FWL_ERR GetPartRect(CFWL_ThemePart* pThemePart);
   virtual FX_BOOL IsInPart(CFWL_ThemePart* pThemePart,
@@ -79,7 +79,7 @@ class CXFA_FWLTheme : public IFWL_ThemeProvider {
   CFWL_BarcodeTP* m_pBarcodeTP;
   IFDE_TextOut* m_pTextOut;
   FX_FLOAT m_fCapacity;
-  FX_DWORD m_dwCapacity;
+  uint32_t m_dwCapacity;
   IFX_Font* m_pCalendarFont;
   CFX_WideString m_wsResource;
   CXFA_FFApp* m_pApp;

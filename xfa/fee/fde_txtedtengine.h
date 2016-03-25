@@ -187,7 +187,7 @@ class CFDE_TxtEdtEngine : public IFDE_TxtEdtEngine {
   FX_BOOL m_bBefore;
   int32_t m_nCaretPage;
   CFX_RectF m_rtCaret;
-  FX_DWORD m_dwFindFlags;
+  uint32_t m_dwFindFlags;
   FX_BOOL m_bLock;
   int32_t m_nLimit;
   FX_WCHAR m_wcAliasChar;

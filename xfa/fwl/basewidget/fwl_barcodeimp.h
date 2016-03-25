@@ -25,7 +25,7 @@ class CFWL_BarcodeImp : public CFWL_EditImp {
                   IFWL_Widget* pOuter);
   virtual ~CFWL_BarcodeImp();
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
-  virtual FX_DWORD GetClassID() const;
+  virtual uint32_t GetClassID() const;
   virtual FWL_ERR Initialize();
   virtual FWL_ERR Finalize();
   virtual FWL_ERR Update();
@@ -40,7 +40,7 @@ class CFWL_BarcodeImp : public CFWL_EditImp {
   void CreateBarcodeEngine();
   void ReleaseBarcodeEngine();
   IFX_Barcode* m_pBarcodeEngine;
-  FX_DWORD m_dwStatus;
+  uint32_t m_dwStatus;
   BC_TYPE m_type;
   friend class CFWL_BarcodeImpDelegate;
 };

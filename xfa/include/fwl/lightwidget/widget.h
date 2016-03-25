@@ -34,9 +34,9 @@ class CFWL_WidgetProperties {
   CFX_WideString m_wsWindowclass;
   CFX_Matrix m_ctmOnParent;
   CFX_RectF m_rtWidget;
-  FX_DWORD m_dwStyles;
-  FX_DWORD m_dwStyleExes;
-  FX_DWORD m_dwStates;
+  uint32_t m_dwStyles;
+  uint32_t m_dwStyleExes;
+  uint32_t m_dwStates;
   CFWL_Widget* m_pParent;
   CFWL_Widget* m_pOwner;
 };
@@ -46,7 +46,7 @@ class CFWL_Widget {
   virtual ~CFWL_Widget();
   IFWL_Widget* GetWidget();
   FWL_ERR GetClassName(CFX_WideString& wsClass) const;
-  FX_DWORD GetClassID() const;
+  uint32_t GetClassID() const;
   virtual FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const;
 
  protected:
@@ -61,12 +61,12 @@ class CFWL_Widget {
   FWL_ERR SetParent(CFWL_Widget* pParent);
   CFWL_Widget* GetOwner();
   FWL_ERR SetOwner(CFWL_Widget* pOwner);
-  FX_DWORD GetStyles();
-  FWL_ERR ModifyStyles(FX_DWORD dwStylesAdded, FX_DWORD dwStylesRemoved);
-  FX_DWORD GetStylesEx();
-  FWL_ERR ModifyStylesEx(FX_DWORD dwStylesExAdded, FX_DWORD dwStylesExRemoved);
-  FX_DWORD GetStates();
-  FWL_ERR SetStates(FX_DWORD dwStates, FX_BOOL bSet = TRUE);
+  uint32_t GetStyles();
+  FWL_ERR ModifyStyles(uint32_t dwStylesAdded, uint32_t dwStylesRemoved);
+  uint32_t GetStylesEx();
+  FWL_ERR ModifyStylesEx(uint32_t dwStylesExAdded, uint32_t dwStylesExRemoved);
+  uint32_t GetStates();
+  FWL_ERR SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE);
   FWL_ERR SetPrivateData(void* module_id,
                          void* pData,
                          PD_CALLBACK_FREEDATA callback);
@@ -74,7 +74,7 @@ class CFWL_Widget {
   FWL_ERR Update();
   FWL_ERR LockUpdate();
   FWL_ERR UnlockUpdate();
-  FX_DWORD HitTest(FX_FLOAT fx, FX_FLOAT fy);
+  uint32_t HitTest(FX_FLOAT fx, FX_FLOAT fy);
   FWL_ERR TransformTo(CFWL_Widget* pWidget, FX_FLOAT& fx, FX_FLOAT& fy);
   FWL_ERR TransformTo(CFWL_Widget* pWidget, CFX_RectF& rt);
   FWL_ERR GetMatrix(CFX_Matrix& matrix, FX_BOOL bGlobal = FALSE);
@@ -87,7 +87,7 @@ class CFWL_Widget {
   CFWL_Widget();
 
   void RegisterEventTarget(CFWL_Widget* pEventSource = NULL,
-                           FX_DWORD dwFilter = FWL_EVENT_ALL_MASK);
+                           uint32_t dwFilter = FWL_EVENT_ALL_MASK);
   void DispatchEvent(CFWL_Event* pEvent);
   CFX_SizeF CalcTextSize(const CFX_WideString& wsText,
                          FX_BOOL bMultiLine = FALSE,

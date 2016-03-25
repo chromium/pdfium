@@ -27,7 +27,7 @@ class CXFA_WideTextRead : public IFX_Stream {
   virtual void Release();
   virtual IFX_Stream* Retain();
 
-  virtual FX_DWORD GetAccessModes() const;
+  virtual uint32_t GetAccessModes() const;
   virtual int32_t GetLength() const;
   virtual int32_t Seek(FX_STREAMSEEK eSeek, int32_t iOffset);
   virtual int32_t GetPosition();
@@ -54,7 +54,7 @@ class CXFA_WideTextRead : public IFX_Stream {
   virtual void Lock() {}
   virtual void Unlock() {}
 
-  virtual IFX_Stream* CreateSharedStream(FX_DWORD dwAccess,
+  virtual IFX_Stream* CreateSharedStream(uint32_t dwAccess,
                                          int32_t iOffset,
                                          int32_t iLength) {
     return NULL;

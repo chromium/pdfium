@@ -22,11 +22,11 @@ class FDE_CSSRuleData : public CFX_Target {
  public:
   FDE_CSSRuleData(IFDE_CSSSelector* pSel,
                   IFDE_CSSDeclaration* pDecl,
-                  FX_DWORD dwPos);
+                  uint32_t dwPos);
 
   IFDE_CSSSelector* pSelector;
   IFDE_CSSDeclaration* pDeclaration;
-  FX_DWORD dwPriority;
+  uint32_t dwPriority;
   FDE_CSSRuleData* pNext;
 };
 
@@ -39,24 +39,24 @@ class CFDE_CSSRuleCollection : public CFX_Target {
         m_iSelectors(0) {}
   ~CFDE_CSSRuleCollection() { Clear(); }
   void AddRulesFrom(const CFDE_CSSStyleSheetArray& sheets,
-                    FX_DWORD dwMediaList,
+                    uint32_t dwMediaList,
                     IFX_FontMgr* pFontMgr);
   void Clear();
 
   int32_t CountSelectors() const { return m_iSelectors; }
-  FDE_CSSRuleData* GetIDRuleData(FX_DWORD dwIDHash) {
+  FDE_CSSRuleData* GetIDRuleData(uint32_t dwIDHash) {
     void* pData;
     return m_IDRules.Lookup((void*)(uintptr_t)dwIDHash, pData)
                ? (FDE_CSSRuleData*)pData
                : NULL;
   }
-  FDE_CSSRuleData* GetTagRuleData(FX_DWORD dwTagHasn) {
+  FDE_CSSRuleData* GetTagRuleData(uint32_t dwTagHasn) {
     void* pData;
     return m_TagRules.Lookup((void*)(uintptr_t)dwTagHasn, pData)
                ? (FDE_CSSRuleData*)pData
                : NULL;
   }
-  FDE_CSSRuleData* GetClassRuleData(FX_DWORD dwIDHash) {
+  FDE_CSSRuleData* GetClassRuleData(uint32_t dwIDHash) {
     void* pData;
     return m_ClassRules.Lookup((void*)(uintptr_t)dwIDHash, pData)
                ? (FDE_CSSRuleData*)pData
@@ -69,10 +69,10 @@ class CFDE_CSSRuleCollection : public CFX_Target {
  protected:
   void AddRulesFrom(IFDE_CSSStyleSheet* pStyleSheet,
                     IFDE_CSSRule* pRule,
-                    FX_DWORD dwMediaList,
+                    uint32_t dwMediaList,
                     IFX_FontMgr* pFontMgr);
   void AddRuleTo(CFX_MapPtrToPtr& map,
-                 FX_DWORD dwKey,
+                 uint32_t dwKey,
                  IFDE_CSSSelector* pSel,
                  IFDE_CSSDeclaration* pDecl);
   FX_BOOL AddRuleTo(FDE_CSSRuleData*& pList, FDE_CSSRuleData* pData);
@@ -102,7 +102,7 @@ class CFDE_CSSStyleSelector : public IFDE_CSSStyleSelector, public CFX_Target {
                                  const CFDE_CSSStyleSheetArray* pArray);
   virtual void SetStylePriority(FDE_CSSSTYLESHEETGROUP eType,
                                 FDE_CSSSTYLESHEETPRIORITY ePriority);
-  virtual void UpdateStyleIndex(FX_DWORD dwMediaList);
+  virtual void UpdateStyleIndex(uint32_t dwMediaList);
   virtual IFDE_CSSAccelerator* InitAccelerator();
   virtual IFDE_CSSComputedStyle* CreateComputedStyle(
       IFDE_CSSComputedStyle* pParentStyle);
@@ -152,7 +152,7 @@ class CFDE_CSSStyleSelector : public IFDE_CSSStyleSelector, public CFX_Target {
   FDE_CSSLISTSTYLEPOSITION ToListStylePosition(FDE_CSSPROPERTYVALUE eValue);
   FDE_CSSVISIBILITY ToVisibility(FDE_CSSPROPERTYVALUE eValue);
   FDE_CSSWHITESPACE ToWhiteSpace(FDE_CSSPROPERTYVALUE eValue);
-  FX_DWORD ToTextDecoration(IFDE_CSSValueList* pList);
+  uint32_t ToTextDecoration(IFDE_CSSValueList* pList);
   FDE_CSSTEXTTRANSFORM ToTextTransform(FDE_CSSPROPERTYVALUE eValue);
   FDE_CSSFONTVARIANT ToFontVariant(FDE_CSSPROPERTYVALUE eValue);
   FDE_CSSFLOAT ToFloat(FDE_CSSPROPERTYVALUE eValue);
@@ -338,32 +338,32 @@ class CFDE_CSSNonInheritedData {
 
   FX_FLOAT m_fVerticalAlign;
   FX_FLOAT m_fTextCombineNumber;
-  FX_DWORD m_eBDRLeftStyle : 4;
-  FX_DWORD m_eBDRTopStyle : 4;
-  FX_DWORD m_eBDRRightStyle : 4;
-  FX_DWORD m_eBDRBottomStyle : 4;
-  FX_DWORD m_eDisplay : 5;
-  FX_DWORD m_eVerticalAlign : 4;
-  FX_DWORD m_eListStyleType : 5;
-  FX_DWORD m_eColumnRuleStyle : 4;
-  FX_DWORD m_ePageBreakInside : 3;
-  FX_DWORD m_ePageBreakAfter : 3;
-  FX_DWORD m_ePageBreakBefore : 3;
-  FX_DWORD m_ePosition : 2;
-  FX_DWORD m_eBKGRepeat : 2;
-  FX_DWORD m_eFloat : 2;
-  FX_DWORD m_eClear : 2;
-  FX_DWORD m_eOverflowX : 3;
-  FX_DWORD m_eOverflowY : 3;
-  FX_DWORD m_eListStylePosition : 1;
-  FX_DWORD m_eBKGAttachment : 1;
-  FX_DWORD m_bHasMargin : 1;
-  FX_DWORD m_bHasBorder : 1;
-  FX_DWORD m_bHasPadding : 1;
-  FX_DWORD m_dwTextDecoration : 5;
-  FX_DWORD m_eTextCombine : 1;
-  FX_DWORD m_bColumnRuleColorSame : 1;
-  FX_DWORD m_bHasTextCombineNumber : 1;
+  uint32_t m_eBDRLeftStyle : 4;
+  uint32_t m_eBDRTopStyle : 4;
+  uint32_t m_eBDRRightStyle : 4;
+  uint32_t m_eBDRBottomStyle : 4;
+  uint32_t m_eDisplay : 5;
+  uint32_t m_eVerticalAlign : 4;
+  uint32_t m_eListStyleType : 5;
+  uint32_t m_eColumnRuleStyle : 4;
+  uint32_t m_ePageBreakInside : 3;
+  uint32_t m_ePageBreakAfter : 3;
+  uint32_t m_ePageBreakBefore : 3;
+  uint32_t m_ePosition : 2;
+  uint32_t m_eBKGRepeat : 2;
+  uint32_t m_eFloat : 2;
+  uint32_t m_eClear : 2;
+  uint32_t m_eOverflowX : 3;
+  uint32_t m_eOverflowY : 3;
+  uint32_t m_eListStylePosition : 1;
+  uint32_t m_eBKGAttachment : 1;
+  uint32_t m_bHasMargin : 1;
+  uint32_t m_bHasBorder : 1;
+  uint32_t m_bHasPadding : 1;
+  uint32_t m_dwTextDecoration : 5;
+  uint32_t m_eTextCombine : 1;
+  uint32_t m_bColumnRuleColorSame : 1;
+  uint32_t m_bHasTextCombineNumber : 1;
 };
 class CFDE_CSSComputedStyle : public IFDE_CSSComputedStyle,
                               public IFDE_CSSFontStyle,
@@ -382,9 +382,9 @@ class CFDE_CSSComputedStyle : public IFDE_CSSComputedStyle,
   CFDE_CSSComputedStyle(IFX_MEMAllocator* pAlloc)
       : m_dwRefCount(1), m_pAllocator(pAlloc) {}
   ~CFDE_CSSComputedStyle() {}
-  virtual FX_DWORD AddRef() { return ++m_dwRefCount; }
-  virtual FX_DWORD Release() {
-    FX_DWORD dwRefCount = --m_dwRefCount;
+  virtual uint32_t AddRef() { return ++m_dwRefCount; }
+  virtual uint32_t Release() {
+    uint32_t dwRefCount = --m_dwRefCount;
     if (dwRefCount == 0) {
       if (m_NonInheritedData.m_pCounterStyle != NULL) {
         delete m_NonInheritedData.m_pCounterStyle;
@@ -709,7 +709,7 @@ class CFDE_CSSComputedStyle : public IFDE_CSSComputedStyle,
   virtual FDE_CSSTEXTTRANSFORM GetTextTransform() const {
     return (FDE_CSSTEXTTRANSFORM)m_InheritedData.m_eTextTransform;
   }
-  virtual FX_DWORD GetTextDecoration() const {
+  virtual uint32_t GetTextDecoration() const {
     return m_NonInheritedData.m_dwTextDecoration;
   }
   virtual const FDE_CSSLENGTH& GetLetterSpacing() const {
@@ -785,7 +785,7 @@ class CFDE_CSSComputedStyle : public IFDE_CSSComputedStyle,
   virtual void SetTextTransform(FDE_CSSTEXTTRANSFORM eTextTransform) {
     m_InheritedData.m_eTextTransform = eTextTransform;
   }
-  virtual void SetTextDecoration(FX_DWORD dwTextDecoration) {
+  virtual void SetTextDecoration(uint32_t dwTextDecoration) {
     m_NonInheritedData.m_dwTextDecoration = dwTextDecoration;
   }
   virtual void SetLetterSpacing(const FDE_CSSLENGTH& letterSpacing) {
@@ -890,7 +890,7 @@ class CFDE_CSSComputedStyle : public IFDE_CSSComputedStyle,
     m_CustomProperties.Add(wsName);
     m_CustomProperties.Add(wsValue);
   }
-  FX_DWORD m_dwRefCount;
+  uint32_t m_dwRefCount;
   IFX_MEMAllocator* m_pAllocator;
   CFDE_CSSInheritedData m_InheritedData;
   CFDE_CSSNonInheritedData m_NonInheritedData;

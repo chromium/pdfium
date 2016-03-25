@@ -18,12 +18,12 @@ class CFWL_FormTP : public CFWL_WidgetTP {
   virtual FWL_ERR Initialize();
   virtual FWL_ERR Finalize();
   virtual FX_BOOL IsValidWidget(IFWL_Widget* pWidget);
-  virtual FX_DWORD SetThemeID(IFWL_Widget* pWidget,
-                              FX_DWORD dwThemeID,
+  virtual uint32_t SetThemeID(IFWL_Widget* pWidget,
+                              uint32_t dwThemeID,
                               FX_BOOL bChildren = TRUE);
   virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams);
   virtual FX_BOOL DrawText(CFWL_ThemeText* pParams);
-  virtual void* GetCapacity(CFWL_ThemePart* pThemePart, FX_DWORD dwCapacity);
+  virtual void* GetCapacity(CFWL_ThemePart* pThemePart, uint32_t dwCapacity);
   virtual FWL_ERR GetPartRect(CFWL_ThemePart* pThemePart, CFX_RectF& rtPart);
 
  protected:
@@ -75,7 +75,7 @@ class CFWL_FormTP : public CFWL_WidgetTP {
                      FWLTHEME_STATE eState,
                      CFX_Matrix* pMatrix,
                      int32_t iActive = 0);
-  void SetThemeData(FX_DWORD dwID);
+  void SetThemeData(uint32_t dwID);
   void TransModeColor(FX_ARGB clrFore, FX_ARGB& clrBack);
   void DeactiveForm();
   void InitCaption(FX_BOOL bActive);

@@ -109,7 +109,7 @@ class CBC_OneDimWriter : public CBC_Writer {
   CFX_Font* m_pFont;
   FX_FLOAT m_fFontSize;
   int32_t m_iFontStyle;
-  FX_DWORD m_fontColor;
+  uint32_t m_fontColor;
   BC_TEXT_LOC m_locTextLoc;
   int32_t m_iContentLen;
   FX_BOOL m_bLeftPadding;

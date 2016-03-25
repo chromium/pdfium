@@ -105,8 +105,8 @@ class IFWL_DateTimePicker : public IFWL_Widget {
   FX_BOOL DeSelect();
   FWL_ERR GetBBox(CFX_RectF& rect);
   FWL_ERR SetEditLimit(int32_t nLimit);
-  FWL_ERR ModifyEditStylesEx(FX_DWORD dwStylesExAdded,
-                             FX_DWORD dwStylesExRemoved);
+  FWL_ERR ModifyEditStylesEx(uint32_t dwStylesExAdded,
+                             uint32_t dwStylesExRemoved);
 
  protected:
   IFWL_DateTimePicker();

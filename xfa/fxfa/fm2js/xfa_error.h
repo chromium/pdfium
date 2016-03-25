@@ -27,7 +27,7 @@ class CXFA_FMErrorInfo {
  public:
   CXFA_FMErrorInfo() : linenum(0) {}
   ~CXFA_FMErrorInfo() {}
-  FX_DWORD linenum;
+  uint32_t linenum;
   CFX_WideString message;
 };
 const FX_WCHAR* XFA_FM_ErrorMsg(XFA_FM_ERRMSG msg);

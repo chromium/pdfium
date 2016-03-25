@@ -97,7 +97,7 @@ class IXFA_ScriptContext {
   virtual int32_t ResolveObjects(CXFA_Object* refNode,
                                  const CFX_WideStringC& wsExpression,
                                  XFA_RESOLVENODE_RS& resolveNodeRS,
-                                 FX_DWORD dwStyles = XFA_RESOLVENODE_Children,
+                                 uint32_t dwStyles = XFA_RESOLVENODE_Children,
                                  CXFA_Node* bindNode = NULL) = 0;
   virtual FXJSE_HVALUE GetJSValueFromMap(CXFA_Object* pObject) = 0;
   virtual void CacheList(CXFA_NodeList* pList) = 0;

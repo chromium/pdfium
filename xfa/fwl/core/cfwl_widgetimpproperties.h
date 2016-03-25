@@ -31,9 +31,9 @@ class CFWL_WidgetImpProperties {
 
   CFX_Matrix m_ctmOnParent;
   CFX_RectF m_rtWidget;
-  FX_DWORD m_dwStyles;
-  FX_DWORD m_dwStyleExes;
-  FX_DWORD m_dwStates;
+  uint32_t m_dwStyles;
+  uint32_t m_dwStyleExes;
+  uint32_t m_dwStates;
   IFWL_ThemeProvider* m_pThemeProvider;
   IFWL_DataProvider* m_pDataProvider;
   IFWL_Widget* m_pParent;

@@ -46,16 +46,16 @@ class CXFA_FFWidget : public IXFA_Widget,
   void SetPageView(IXFA_PageView* pPageView);
   void GetWidgetRect(CFX_RectF& rtWidget);
   CFX_RectF ReCacheWidgetRect();
-  FX_DWORD GetStatus();
-  void ModifyStatus(FX_DWORD dwAdded, FX_DWORD dwRemoved);
+  uint32_t GetStatus();
+  void ModifyStatus(uint32_t dwAdded, uint32_t dwRemoved);
   virtual FX_BOOL GetBBox(CFX_RectF& rtBox,
-                          FX_DWORD dwStatus,
+                          uint32_t dwStatus,
                           FX_BOOL bDrawFocus = FALSE);
   CXFA_WidgetAcc* GetDataAcc();
   FX_BOOL GetToolTip(CFX_WideString& wsToolTip);
   virtual void RenderWidget(CFX_Graphics* pGS,
                             CFX_Matrix* pMatrix = NULL,
-                            FX_DWORD dwStatus = 0,
+                            uint32_t dwStatus = 0,
                             int32_t iRotate = 0);
 
   virtual FX_BOOL IsLoaded();
@@ -66,24 +66,24 @@ class CXFA_FFWidget : public IXFA_Widget,
   virtual void UpdateWidgetProperty();
   virtual FX_BOOL OnMouseEnter();
   virtual FX_BOOL OnMouseExit();
-  virtual FX_BOOL OnLButtonDown(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual FX_BOOL OnLButtonUp(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual FX_BOOL OnLButtonDblClk(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual FX_BOOL OnMouseMove(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual FX_BOOL OnMouseWheel(FX_DWORD dwFlags,
+  virtual FX_BOOL OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
+  virtual FX_BOOL OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
+  virtual FX_BOOL OnLButtonDblClk(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
+  virtual FX_BOOL OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
+  virtual FX_BOOL OnMouseWheel(uint32_t dwFlags,
                                int16_t zDelta,
                                FX_FLOAT fx,
                                FX_FLOAT fy);
-  virtual FX_BOOL OnRButtonDown(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual FX_BOOL OnRButtonUp(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual FX_BOOL OnRButtonDblClk(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
+  virtual FX_BOOL OnRButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
+  virtual FX_BOOL OnRButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
+  virtual FX_BOOL OnRButtonDblClk(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
 
   virtual FX_BOOL OnSetFocus(CXFA_FFWidget* pOldWidget);
   virtual FX_BOOL OnKillFocus(CXFA_FFWidget* pNewWidget);
-  virtual FX_BOOL OnKeyDown(FX_DWORD dwKeyCode, FX_DWORD dwFlags);
-  virtual FX_BOOL OnKeyUp(FX_DWORD dwKeyCode, FX_DWORD dwFlags);
-  virtual FX_BOOL OnChar(FX_DWORD dwChar, FX_DWORD dwFlags);
-  virtual FX_DWORD OnHitTest(FX_FLOAT fx, FX_FLOAT fy);
+  virtual FX_BOOL OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags);
+  virtual FX_BOOL OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags);
+  virtual FX_BOOL OnChar(uint32_t dwChar, uint32_t dwFlags);
+  virtual uint32_t OnHitTest(FX_FLOAT fx, FX_FLOAT fy);
   virtual FX_BOOL OnSetCursor(FX_FLOAT fx, FX_FLOAT fy);
   virtual FX_BOOL CanUndo() { return FALSE; }
   virtual FX_BOOL CanRedo() { return FALSE; }
@@ -130,11 +130,11 @@ class CXFA_FFWidget : public IXFA_Widget,
                   CXFA_Box box,
                   const CFX_RectF& rtBorder,
                   CFX_Matrix* pMatrix,
-                  FX_DWORD dwFlags = 0);
+                  uint32_t dwFlags = 0);
   void GetMinMaxWidth(FX_FLOAT fMinWidth, FX_FLOAT fMaxWidth);
   void GetMinMaxHeight(FX_FLOAT fMinHeight, FX_FLOAT fMaxHeight);
   void GetRectWithoutRotate(CFX_RectF& rtWidget);
-  FX_BOOL IsMatchVisibleStatus(FX_DWORD dwStatus);
+  FX_BOOL IsMatchVisibleStatus(uint32_t dwStatus);
 
   void EventKillFocus();
   FX_BOOL IsButtonDown();
@@ -182,6 +182,6 @@ void XFA_DrawBox(CXFA_Box box,
                  CFX_Graphics* pGS,
                  const CFX_RectF& rtWidget,
                  CFX_Matrix* pMatrix,
-                 FX_DWORD dwFlags = 0);
+                 uint32_t dwFlags = 0);
 
 #endif  // XFA_FXFA_APP_XFA_FFWIDGET_H_

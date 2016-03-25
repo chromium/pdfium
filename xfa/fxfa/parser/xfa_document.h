@@ -82,7 +82,7 @@ class IXFA_Notify {
                            void* pParam3 = NULL,
                            void* pParam4 = NULL) = 0;
   virtual void OnWidgetDataEvent(CXFA_WidgetData* pSender,
-                                 FX_DWORD dwEvent,
+                                 uint32_t dwEvent,
                                  void* pParam = NULL,
                                  void* pAdditional = NULL,
                                  void* pAdditional2 = NULL) = 0;
@@ -123,7 +123,7 @@ class IXFA_Notify {
 class IXFA_ObjFactory {
  public:
   virtual ~IXFA_ObjFactory() {}
-  virtual CXFA_Node* CreateNode(FX_DWORD dwPacket, XFA_ELEMENT eElement) = 0;
+  virtual CXFA_Node* CreateNode(uint32_t dwPacket, XFA_ELEMENT eElement) = 0;
   virtual CXFA_Node* CreateNode(const XFA_PACKETINFO* pPacket,
                                 XFA_ELEMENT eElement) = 0;
 };
@@ -146,17 +146,17 @@ class CXFA_Document : public IXFA_ObjFactory {
   IXFA_Notify* GetNotify() const;
   void SetRoot(CXFA_Node* pNewRoot);
   CXFA_Object* GetXFAObject(const CFX_WideStringC& wsNodeName);
-  CXFA_Object* GetXFAObject(FX_DWORD wsNodeNameHash);
+  CXFA_Object* GetXFAObject(uint32_t wsNodeNameHash);
   void AddPurgeNode(CXFA_Node* pNode);
   FX_BOOL RemovePurgeNode(CXFA_Node* pNode);
   void PurgeNodes();
-  bool HasFlag(FX_DWORD dwFlag) { return (m_dwDocFlags & dwFlag) == dwFlag; }
-  void SetFlag(FX_DWORD dwFlag, FX_BOOL bOn = TRUE);
+  bool HasFlag(uint32_t dwFlag) { return (m_dwDocFlags & dwFlag) == dwFlag; }
+  void SetFlag(uint32_t dwFlag, FX_BOOL bOn = TRUE);
   FX_BOOL IsInteractive();
   XFA_VERSION GetCurVersionMode() { return m_eCurVersionMode; }
   XFA_VERSION RecognizeXFAVersionNumber(CFX_WideString& wsTemplateNS);
   CXFA_LocaleMgr* GetLocalMgr();
-  virtual CXFA_Node* CreateNode(FX_DWORD dwPacket, XFA_ELEMENT eElement);
+  virtual CXFA_Node* CreateNode(uint32_t dwPacket, XFA_ELEMENT eElement);
   virtual CXFA_Node* CreateNode(const XFA_PACKETINFO* pPacket,
                                 XFA_ELEMENT eElement);
   void DoProtoMerge();
@@ -177,7 +177,7 @@ class CXFA_Document : public IXFA_ObjFactory {
   IXFA_ScriptContext* GetScriptContext();
   void ClearLayoutData();
 
-  CFX_MapPtrTemplate<FX_DWORD, CXFA_Node*> m_rgGlobalBinding;
+  CFX_MapPtrTemplate<uint32_t, CXFA_Node*> m_rgGlobalBinding;
   CXFA_NodeArray m_pPendingPageSet;
 
  protected:
@@ -194,7 +194,7 @@ class CXFA_Document : public IXFA_ObjFactory {
   CScript_SignaturePseudoModel* m_pScriptSignature;
   CXFA_NodeSet m_rgPurgeNodes;
   XFA_VERSION m_eCurVersionMode;
-  FX_DWORD m_dwDocFlags;
+  uint32_t m_dwDocFlags;
   friend class CXFA_SimpleParser;
 };
 

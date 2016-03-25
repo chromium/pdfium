@@ -57,7 +57,7 @@ enum XFA_FM_AccessorIndex {
 
 class CXFA_FMSimpleExpression {
  public:
-  CXFA_FMSimpleExpression(FX_DWORD line, XFA_FM_TOKEN op);
+  CXFA_FMSimpleExpression(uint32_t line, XFA_FM_TOKEN op);
   virtual ~CXFA_FMSimpleExpression() {}
   virtual void ToJavaScript(CFX_WideTextBuf& javascript);
   virtual void ToImpliedReturnJS(CFX_WideTextBuf& javascript);
@@ -65,20 +65,20 @@ class CXFA_FMSimpleExpression {
   XFA_FM_TOKEN GetOperatorToken() const;
 
  protected:
-  FX_DWORD m_line;
+  uint32_t m_line;
   XFA_FM_TOKEN m_op;
 };
 
 class CXFA_FMNullExpression : public CXFA_FMSimpleExpression {
  public:
-  explicit CXFA_FMNullExpression(FX_DWORD line);
+  explicit CXFA_FMNullExpression(uint32_t line);
   ~CXFA_FMNullExpression() override {}
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
 };
 
 class CXFA_FMNumberExpression : public CXFA_FMSimpleExpression {
  public:
-  CXFA_FMNumberExpression(FX_DWORD line, CFX_WideStringC wsNumber);
+  CXFA_FMNumberExpression(uint32_t line, CFX_WideStringC wsNumber);
   ~CXFA_FMNumberExpression() override {}
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
 
@@ -88,7 +88,7 @@ class CXFA_FMNumberExpression : public CXFA_FMSimpleExpression {
 
 class CXFA_FMStringExpression : public CXFA_FMSimpleExpression {
  public:
-  CXFA_FMStringExpression(FX_DWORD line, CFX_WideStringC wsString);
+  CXFA_FMStringExpression(uint32_t line, CFX_WideStringC wsString);
   ~CXFA_FMStringExpression() override {}
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
 
@@ -98,7 +98,7 @@ class CXFA_FMStringExpression : public CXFA_FMSimpleExpression {
 
 class CXFA_FMIdentifierExpressionn : public CXFA_FMSimpleExpression {
  public:
-  CXFA_FMIdentifierExpressionn(FX_DWORD line, CFX_WideStringC wsIdentifier);
+  CXFA_FMIdentifierExpressionn(uint32_t line, CFX_WideStringC wsIdentifier);
   ~CXFA_FMIdentifierExpressionn() override {}
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
 
@@ -108,7 +108,7 @@ class CXFA_FMIdentifierExpressionn : public CXFA_FMSimpleExpression {
 
 class CXFA_FMUnaryExpression : public CXFA_FMSimpleExpression {
  public:
-  CXFA_FMUnaryExpression(FX_DWORD line,
+  CXFA_FMUnaryExpression(uint32_t line,
                          XFA_FM_TOKEN op,
                          CXFA_FMSimpleExpression* pExp);
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
@@ -119,7 +119,7 @@ class CXFA_FMUnaryExpression : public CXFA_FMSimpleExpression {
 
 class CXFA_FMBinExpression : public CXFA_FMSimpleExpression {
  public:
-  CXFA_FMBinExpression(FX_DWORD line,
+  CXFA_FMBinExpression(uint32_t line,
                        XFA_FM_TOKEN op,
                        CXFA_FMSimpleExpression* pExp1,
                        CXFA_FMSimpleExpression* pExp2);
@@ -132,7 +132,7 @@ class CXFA_FMBinExpression : public CXFA_FMSimpleExpression {
 
 class CXFA_FMAssignExpression : public CXFA_FMBinExpression {
  public:
-  CXFA_FMAssignExpression(FX_DWORD line,
+  CXFA_FMAssignExpression(uint32_t line,
                           XFA_FM_TOKEN op,
                           CXFA_FMSimpleExpression* pExp1,
                           CXFA_FMSimpleExpression* pExp2);
@@ -143,7 +143,7 @@ class CXFA_FMAssignExpression : public CXFA_FMBinExpression {
 
 class CXFA_FMLogicalOrExpression : public CXFA_FMBinExpression {
  public:
-  CXFA_FMLogicalOrExpression(FX_DWORD line,
+  CXFA_FMLogicalOrExpression(uint32_t line,
                              XFA_FM_TOKEN op,
                              CXFA_FMSimpleExpression* pExp1,
                              CXFA_FMSimpleExpression* pExp2);
@@ -153,7 +153,7 @@ class CXFA_FMLogicalOrExpression : public CXFA_FMBinExpression {
 
 class CXFA_FMLogicalAndExpression : public CXFA_FMBinExpression {
  public:
-  CXFA_FMLogicalAndExpression(FX_DWORD line,
+  CXFA_FMLogicalAndExpression(uint32_t line,
                               XFA_FM_TOKEN op,
                               CXFA_FMSimpleExpression* pExp1,
                               CXFA_FMSimpleExpression* pExp2);
@@ -163,7 +163,7 @@ class CXFA_FMLogicalAndExpression : public CXFA_FMBinExpression {
 
 class CXFA_FMEqualityExpression : public CXFA_FMBinExpression {
  public:
-  CXFA_FMEqualityExpression(FX_DWORD line,
+  CXFA_FMEqualityExpression(uint32_t line,
                             XFA_FM_TOKEN op,
                             CXFA_FMSimpleExpression* pExp1,
                             CXFA_FMSimpleExpression* pExp2);
@@ -173,7 +173,7 @@ class CXFA_FMEqualityExpression : public CXFA_FMBinExpression {
 
 class CXFA_FMRelationalExpression : public CXFA_FMBinExpression {
  public:
-  CXFA_FMRelationalExpression(FX_DWORD line,
+  CXFA_FMRelationalExpression(uint32_t line,
                               XFA_FM_TOKEN op,
                               CXFA_FMSimpleExpression* pExp1,
                               CXFA_FMSimpleExpression* pExp2);
@@ -183,7 +183,7 @@ class CXFA_FMRelationalExpression : public CXFA_FMBinExpression {
 
 class CXFA_FMAdditiveExpression : public CXFA_FMBinExpression {
  public:
-  CXFA_FMAdditiveExpression(FX_DWORD line,
+  CXFA_FMAdditiveExpression(uint32_t line,
                             XFA_FM_TOKEN op,
                             CXFA_FMSimpleExpression* pExp1,
                             CXFA_FMSimpleExpression* pExp2);
@@ -193,7 +193,7 @@ class CXFA_FMAdditiveExpression : public CXFA_FMBinExpression {
 
 class CXFA_FMMultiplicativeExpression : public CXFA_FMBinExpression {
  public:
-  CXFA_FMMultiplicativeExpression(FX_DWORD line,
+  CXFA_FMMultiplicativeExpression(uint32_t line,
                                   XFA_FM_TOKEN op,
                                   CXFA_FMSimpleExpression* pExp1,
                                   CXFA_FMSimpleExpression* pExp2);
@@ -203,34 +203,34 @@ class CXFA_FMMultiplicativeExpression : public CXFA_FMBinExpression {
 
 class CXFA_FMPosExpression : public CXFA_FMUnaryExpression {
  public:
-  CXFA_FMPosExpression(FX_DWORD line, CXFA_FMSimpleExpression* pExp);
+  CXFA_FMPosExpression(uint32_t line, CXFA_FMSimpleExpression* pExp);
   ~CXFA_FMPosExpression() override {}
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
 };
 
 class CXFA_FMNegExpression : public CXFA_FMUnaryExpression {
  public:
-  CXFA_FMNegExpression(FX_DWORD line, CXFA_FMSimpleExpression* pExp);
+  CXFA_FMNegExpression(uint32_t line, CXFA_FMSimpleExpression* pExp);
   ~CXFA_FMNegExpression() override {}
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
 };
 
 class CXFA_FMNotExpression : public CXFA_FMUnaryExpression {
  public:
-  CXFA_FMNotExpression(FX_DWORD line, CXFA_FMSimpleExpression* pExp);
+  CXFA_FMNotExpression(uint32_t line, CXFA_FMSimpleExpression* pExp);
   ~CXFA_FMNotExpression() override {}
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
 };
 
 class CXFA_FMCallExpression : public CXFA_FMUnaryExpression {
  public:
-  CXFA_FMCallExpression(FX_DWORD line,
+  CXFA_FMCallExpression(uint32_t line,
                         CXFA_FMSimpleExpression* pExp,
                         CFX_PtrArray* pArguments,
                         FX_BOOL bIsSomMethod);
   ~CXFA_FMCallExpression() override;
   bool IsBuildInFunc(CFX_WideTextBuf* funcName);
-  FX_DWORD IsMethodWithObjParam(const CFX_WideStringC& methodName);
+  uint32_t IsMethodWithObjParam(const CFX_WideStringC& methodName);
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
 
  private:
@@ -240,7 +240,7 @@ class CXFA_FMCallExpression : public CXFA_FMUnaryExpression {
 
 class CXFA_FMDotAccessorExpression : public CXFA_FMBinExpression {
  public:
-  CXFA_FMDotAccessorExpression(FX_DWORD line,
+  CXFA_FMDotAccessorExpression(uint32_t line,
                                CXFA_FMSimpleExpression* pAccessor,
                                XFA_FM_TOKEN op,
                                CFX_WideStringC wsIdentifier,
@@ -254,7 +254,7 @@ class CXFA_FMDotAccessorExpression : public CXFA_FMBinExpression {
 
 class CXFA_FMIndexExpression : public CXFA_FMUnaryExpression {
  public:
-  CXFA_FMIndexExpression(FX_DWORD line,
+  CXFA_FMIndexExpression(uint32_t line,
                          XFA_FM_AccessorIndex accessorIndex,
                          CXFA_FMSimpleExpression* pIndexExp,
                          FX_BOOL bIsStarIndex);
@@ -268,7 +268,7 @@ class CXFA_FMIndexExpression : public CXFA_FMUnaryExpression {
 
 class CXFA_FMDotDotAccessorExpression : public CXFA_FMBinExpression {
  public:
-  CXFA_FMDotDotAccessorExpression(FX_DWORD line,
+  CXFA_FMDotDotAccessorExpression(uint32_t line,
                                   CXFA_FMSimpleExpression* pAccessor,
                                   XFA_FM_TOKEN op,
                                   CFX_WideStringC wsIdentifier,
@@ -282,7 +282,7 @@ class CXFA_FMDotDotAccessorExpression : public CXFA_FMBinExpression {
 
 class CXFA_FMMethodCallExpression : public CXFA_FMBinExpression {
  public:
-  CXFA_FMMethodCallExpression(FX_DWORD line,
+  CXFA_FMMethodCallExpression(uint32_t line,
                               CXFA_FMSimpleExpression* pAccessorExp1,
                               CXFA_FMSimpleExpression* pCallExp);
   ~CXFA_FMMethodCallExpression() override {}

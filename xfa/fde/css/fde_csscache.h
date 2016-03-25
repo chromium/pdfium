@@ -18,7 +18,7 @@ class FDE_CSSCacheItem : public CFX_Target {
   ~FDE_CSSCacheItem();
 
   IFDE_CSSStyleSheet* pStylesheet;
-  FX_DWORD dwActivity;
+  uint32_t dwActivity;
 };
 
 class CFDE_CSSStyleSheetCache : public IFDE_CSSStyleSheetCache,
@@ -51,11 +51,11 @@ class FDE_CSSTagCache : public CFX_Target {
   FDE_CSSTagCache(const FDE_CSSTagCache& it);
   FDE_CSSTagCache* GetParent() const { return pParent; }
   IFDE_CSSTagProvider* GetTag() const { return pTag; }
-  FX_DWORD HashID() const { return dwIDHash; }
-  FX_DWORD HashTag() const { return dwTagHash; }
+  uint32_t HashID() const { return dwIDHash; }
+  uint32_t HashTag() const { return dwTagHash; }
   int32_t CountHashClass() const { return dwClassHashs.GetSize(); }
   void SetClassIndex(int32_t index) { iClassIndex = index; }
-  FX_DWORD HashClass() const {
+  uint32_t HashClass() const {
     return iClassIndex < dwClassHashs.GetSize()
                ? dwClassHashs.GetAt(iClassIndex)
                : 0;
@@ -64,8 +64,8 @@ class FDE_CSSTagCache : public CFX_Target {
  protected:
   IFDE_CSSTagProvider* pTag;
   FDE_CSSTagCache* pParent;
-  FX_DWORD dwIDHash;
-  FX_DWORD dwTagHash;
+  uint32_t dwIDHash;
+  uint32_t dwTagHash;
   int32_t iClassIndex;
   CFDE_DWordArray dwClassHashs;
 };

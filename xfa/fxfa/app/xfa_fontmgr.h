@@ -17,7 +17,7 @@
 class CPDF_Font;
 
 struct XFA_FONTINFO {
-  FX_DWORD dwFontNameHash;
+  uint32_t dwFontNameHash;
   const FX_WCHAR* pPsName;
   const FX_WCHAR* pReplaceFont;
   uint16_t dwStyles;
@@ -32,11 +32,11 @@ class CXFA_DefFontMgr : public IXFA_FontMgr {
   // IXFA_FontMgr:
   IFX_Font* GetFont(IXFA_Doc* hDoc,
                     const CFX_WideStringC& wsFontFamily,
-                    FX_DWORD dwFontStyles,
+                    uint32_t dwFontStyles,
                     uint16_t wCodePage = 0xFFFF) override;
   IFX_Font* GetDefaultFont(IXFA_Doc* hDoc,
                            const CFX_WideStringC& wsFontFamily,
-                           FX_DWORD dwFontStyles,
+                           uint32_t dwFontStyles,
                            uint16_t wCodePage = 0xFFFF) override;
 
  protected:
@@ -48,7 +48,7 @@ class CXFA_PDFFontMgr : public IFX_FontProvider {
   CXFA_PDFFontMgr(CXFA_FFDoc* pDoc);
   ~CXFA_PDFFontMgr();
   IFX_Font* GetFont(const CFX_WideStringC& wsFontFamily,
-                    FX_DWORD dwFontStyles,
+                    uint32_t dwFontStyles,
                     CPDF_Font** pPDFFont,
                     FX_BOOL bStrictMatch = TRUE);
   FX_BOOL GetCharWidth(IFX_Font* pFont,
@@ -82,7 +82,7 @@ class CXFA_FontMgr {
   ~CXFA_FontMgr();
   IFX_Font* GetFont(IXFA_Doc* hDoc,
                     const CFX_WideStringC& wsFontFamily,
-                    FX_DWORD dwFontStyles,
+                    uint32_t dwFontStyles,
                     uint16_t wCodePage = 0xFFFF);
   void LoadDocFonts(IXFA_Doc* hDoc);
   void ReleaseDocFonts(IXFA_Doc* hDoc);

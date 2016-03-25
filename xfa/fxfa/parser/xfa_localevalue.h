@@ -27,11 +27,11 @@ class CXFA_LocaleValue {
  public:
   CXFA_LocaleValue();
   CXFA_LocaleValue(const CXFA_LocaleValue& value);
-  CXFA_LocaleValue(FX_DWORD dwType, CXFA_LocaleMgr* pLocaleMgr);
-  CXFA_LocaleValue(FX_DWORD dwType,
+  CXFA_LocaleValue(uint32_t dwType, CXFA_LocaleMgr* pLocaleMgr);
+  CXFA_LocaleValue(uint32_t dwType,
                    const CFX_WideString& wsValue,
                    CXFA_LocaleMgr* pLocaleMgr);
-  CXFA_LocaleValue(FX_DWORD dwType,
+  CXFA_LocaleValue(uint32_t dwType,
                    const CFX_WideString& wsValue,
                    const CFX_WideString& wsFormat,
                    IFX_Locale* pLocale,
@@ -52,7 +52,7 @@ class CXFA_LocaleValue {
                               IFX_Locale* pLocale,
                               XFA_VALUEPICTURE eValueType) const;
   FX_BOOL ValidateCanonicalValue(const CFX_WideString& wsValue,
-                                 FX_DWORD dwVType);
+                                 uint32_t dwVType);
   FX_BOOL ValidateCanonicalDate(const CFX_WideString& wsDate,
                                 CFX_Unitime& unDate);
   FX_BOOL ValidateCanonicalTime(const CFX_WideString& wsTime);
@@ -67,8 +67,8 @@ class CXFA_LocaleValue {
                               int32_t* pos = NULL);
 
   CFX_WideString GetValue() const;
-  FX_DWORD GetType() const;
-  void SetValue(const CFX_WideString& wsValue, FX_DWORD dwType);
+  uint32_t GetType() const;
+  void SetValue(const CFX_WideString& wsValue, uint32_t dwType);
   CFX_WideString GetText() const;
   FX_FLOAT GetNum() const;
   FX_DOUBLE GetDoubleNum() const;
@@ -105,7 +105,7 @@ class CXFA_LocaleValue {
                             IFX_Locale* pLocale);
   CXFA_LocaleMgr* m_pLocaleMgr;
   CFX_WideString m_wsValue;
-  FX_DWORD m_dwType;
+  uint32_t m_dwType;
   FX_BOOL m_bValid;
 };
 

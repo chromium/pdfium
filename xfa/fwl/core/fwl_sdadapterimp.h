@@ -45,7 +45,7 @@ class CFWL_SDAdapterWidgetMgr : public IFWL_AdapterWidgetMgr {
   virtual FWL_ERR SetWidgetCaption(IFWL_Widget* pWidget,
                                    const CFX_WideStringC& wsCaption);
   virtual FWL_ERR SetBorderRegion(IFWL_Widget* pWidget, CFX_Path* pPath);
-  virtual FWL_ERR SetTransparent(IFWL_Widget* pWidget, FX_DWORD dwAlpha);
+  virtual FWL_ERR SetTransparent(IFWL_Widget* pWidget, uint32_t dwAlpha);
   virtual FWL_ERR SetFullScreen(IFWL_Widget* pWidget, FX_BOOL bFullScreen);
   virtual FX_BOOL CheckMessage();
   virtual FX_BOOL IsIdleMessage();
@@ -55,7 +55,7 @@ class CFWL_SDAdapterWidgetMgr : public IFWL_AdapterWidgetMgr {
                                   void* pDC,
                                   CFX_RectF* pClip = 0);
   virtual void* GetWindow(IFWL_Widget* pWidget);
-  virtual FX_DWORD GetKeyState(FX_DWORD dwVirtKey);
+  virtual uint32_t GetKeyState(uint32_t dwVirtKey);
   virtual FWL_ERR RunLoop(IFWL_Widget* widget);
   virtual FWL_ERR EndLoop();
   virtual FWL_ERR InitMenu(IFWL_Menu* pMenu, IFWL_MenuDP* pMenuData);

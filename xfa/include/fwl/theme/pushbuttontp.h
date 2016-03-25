@@ -14,24 +14,24 @@ class CFWL_PushButtonTP : public CFWL_WidgetTP {
   CFWL_PushButtonTP();
   virtual ~CFWL_PushButtonTP();
   virtual FX_BOOL IsValidWidget(IFWL_Widget* pWidget);
-  virtual FX_DWORD SetThemeID(IFWL_Widget* pWidget,
-                              FX_DWORD dwThemeID,
+  virtual uint32_t SetThemeID(IFWL_Widget* pWidget,
+                              uint32_t dwThemeID,
                               FX_BOOL bChildren = TRUE);
   virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams);
-  virtual void* GetCapacity(CFWL_ThemePart* pThemePart, FX_DWORD dwCapacity);
+  virtual void* GetCapacity(CFWL_ThemePart* pThemePart, uint32_t dwCapacity);
   virtual FWL_ERR Initialize();
   virtual FWL_ERR Finalize();
 
  protected:
-  void SetThemeData(FX_DWORD dwID);
-  void SetTopLineColor(FX_DWORD* pData);
-  void SetLeftLineColor(FX_DWORD* pData);
-  void SetRightLineColor(FX_DWORD* pData);
-  void SetBottomLineColor(FX_DWORD* pData);
-  void SetBackgroudColor(FX_DWORD* pData);
-  void SetCaptionColor(FX_DWORD* pData);
-  void SetCornerColor(FX_DWORD* pData);
-  int32_t GetColorID(FX_DWORD dwStates);
+  void SetThemeData(uint32_t dwID);
+  void SetTopLineColor(uint32_t* pData);
+  void SetLeftLineColor(uint32_t* pData);
+  void SetRightLineColor(uint32_t* pData);
+  void SetBottomLineColor(uint32_t* pData);
+  void SetBackgroudColor(uint32_t* pData);
+  void SetCaptionColor(uint32_t* pData);
+  void SetCornerColor(uint32_t* pData);
+  int32_t GetColorID(uint32_t dwStates);
 
   struct PBThemeData {
     FX_ARGB clrBorder[5];

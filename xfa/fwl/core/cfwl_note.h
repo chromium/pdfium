@@ -17,9 +17,9 @@ class IFWL_Widget;
 // get cast to IFWL_* types.
 class CFWL_Note {
  public:
-  virtual FX_DWORD Release() {
+  virtual uint32_t Release() {
     m_dwRefCount--;
-    FX_DWORD dwRefCount = m_dwRefCount;
+    uint32_t dwRefCount = m_dwRefCount;
     if (!m_dwRefCount)
       delete this;
     return dwRefCount;
@@ -35,7 +35,7 @@ class CFWL_Note {
     return FWL_ERR_Succeeded;
   }
 
-  virtual FX_DWORD GetClassID() const { return 0; }
+  virtual uint32_t GetClassID() const { return 0; }
 
   virtual FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const {
     return TRUE;
@@ -46,7 +46,7 @@ class CFWL_Note {
 
   IFWL_Widget* m_pSrcTarget;
   IFWL_Widget* m_pDstTarget;
-  FX_DWORD m_dwExtend;
+  uint32_t m_dwExtend;
 
  protected:
   CFWL_Note(FX_BOOL bIsEvent)
@@ -60,7 +60,7 @@ class CFWL_Note {
   virtual FX_BOOL Initialize() { return TRUE; }
   virtual int32_t Finalize() { return 0; }
 
-  FX_DWORD m_dwRefCount;
+  uint32_t m_dwRefCount;
   FX_BOOL m_bIsEvent;
 };
 

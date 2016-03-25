@@ -78,7 +78,7 @@ class CFWL_Message : public CFWL_Note {
       wsClass = L## #classname;                                   \
       return FWL_ERR_Succeeded;                                   \
     }                                                             \
-    virtual FX_DWORD GetClassID() const { return msghashcode; }
+    virtual uint32_t GetClassID() const { return msghashcode; }
 
 #define END_FWL_MESSAGE_DEF \
   }                         \
@@ -93,8 +93,8 @@ END_FWL_MESSAGE_DEF
 BEGIN_FWL_MESSAGE_DEF(CFWL_MsgMouse, FWL_MSGHASH_Mouse)
 FX_FLOAT m_fx;
 FX_FLOAT m_fy;
-FX_DWORD m_dwFlags;
-FX_DWORD m_dwCmd;
+uint32_t m_dwFlags;
+uint32_t m_dwCmd;
 END_FWL_MESSAGE_DEF
 
 BEGIN_FWL_MESSAGE_DEF(CFWL_MsgMouseWheel, FWL_MSGHASH_MouseWheel)
@@ -102,7 +102,7 @@ FX_FLOAT m_fx;
 FX_FLOAT m_fy;
 FX_FLOAT m_fDeltaX;
 FX_FLOAT m_fDeltaY;
-FX_DWORD m_dwFlags;
+uint32_t m_dwFlags;
 END_FWL_MESSAGE_DEF
 
 BEGIN_FWL_MESSAGE_DEF(CFWL_MsgSetFocus, FWL_MSGHASH_SetFocus)
@@ -114,9 +114,9 @@ IFWL_Widget* m_pSetFocus;
 END_FWL_MESSAGE_DEF
 
 BEGIN_FWL_MESSAGE_DEF(CFWL_MsgKey, FWL_MSGHASH_Key)
-FX_DWORD m_dwKeyCode;
-FX_DWORD m_dwFlags;
-FX_DWORD m_dwCmd;
+uint32_t m_dwKeyCode;
+uint32_t m_dwFlags;
+uint32_t m_dwCmd;
 END_FWL_MESSAGE_DEF
 
 BEGIN_FWL_MESSAGE_DEF(CFWL_MsgCursor, FWL_MSGHASH_Cursor)

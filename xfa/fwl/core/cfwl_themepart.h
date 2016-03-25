@@ -23,8 +23,8 @@ class CFWL_ThemePart {
   CFX_RectF m_rtPart;
   IFWL_Widget* m_pWidget;
   int32_t m_iPart;
-  FX_DWORD m_dwStates;
-  FX_DWORD m_dwData;
+  uint32_t m_dwStates;
+  uint32_t m_dwData;
   void* m_pData;
 };
 

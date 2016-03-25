@@ -38,7 +38,7 @@ class IFWL_AdapterWidgetMgr {
   virtual FWL_ERR SetWidgetCaption(IFWL_Widget* pWidget,
                                    const CFX_WideStringC& wsCaption) = 0;
   virtual FWL_ERR SetBorderRegion(IFWL_Widget* pWidget, CFX_Path* pPath) = 0;
-  virtual FWL_ERR SetTransparent(IFWL_Widget* pWidget, FX_DWORD dwAlpha) = 0;
+  virtual FWL_ERR SetTransparent(IFWL_Widget* pWidget, uint32_t dwAlpha) = 0;
   virtual FWL_ERR ShowWidget(IFWL_Widget* pWidget) = 0;
   virtual FWL_ERR HideWidget(IFWL_Widget* pWidget) = 0;
   virtual FWL_ERR SetNormal(IFWL_Widget* pWidget) = 0;
@@ -58,7 +58,7 @@ class IFWL_AdapterWidgetMgr {
                                   void* pDC,
                                   CFX_RectF* pClip = 0) = 0;
   virtual void* GetWindow(IFWL_Widget* pWidget) = 0;
-  virtual FX_DWORD GetKeyState(FX_DWORD dwVirtKey) = 0;
+  virtual uint32_t GetKeyState(uint32_t dwVirtKey) = 0;
   virtual FWL_ERR RunLoop(IFWL_Widget* widget) = 0;
   virtual FWL_ERR EndLoop() = 0;
   virtual FWL_ERR InitMenu(IFWL_Menu* pMenu, IFWL_MenuDP* pMenuData) = 0;

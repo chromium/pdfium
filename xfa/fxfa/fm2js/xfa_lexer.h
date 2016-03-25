@@ -94,25 +94,25 @@ const FX_WCHAR* XFA_FM_KeywordToString(XFA_FM_TOKEN op);
 class CXFA_FMToken {
  public:
   CXFA_FMToken();
-  explicit CXFA_FMToken(FX_DWORD uLineNum);
+  explicit CXFA_FMToken(uint32_t uLineNum);
 
   CFX_WideStringC m_wstring;
   XFA_FM_TOKEN m_type;
-  FX_DWORD m_uLinenum;
+  uint32_t m_uLinenum;
 };
 
 class CXFA_FMLexer {
  public:
   CXFA_FMLexer(const CFX_WideStringC& wsFormcalc, CXFA_FMErrorInfo* pErrorInfo);
   CXFA_FMToken* NextToken();
-  FX_DWORD Number(CXFA_FMToken* t, const FX_WCHAR* p, const FX_WCHAR*& pEnd);
-  FX_DWORD String(CXFA_FMToken* t, const FX_WCHAR* p, const FX_WCHAR*& pEnd);
-  FX_DWORD Identifiers(CXFA_FMToken* t,
+  uint32_t Number(CXFA_FMToken* t, const FX_WCHAR* p, const FX_WCHAR*& pEnd);
+  uint32_t String(CXFA_FMToken* t, const FX_WCHAR* p, const FX_WCHAR*& pEnd);
+  uint32_t Identifiers(CXFA_FMToken* t,
                        const FX_WCHAR* p,
                        const FX_WCHAR*& pEnd);
   void Comment(const FX_WCHAR* p, const FX_WCHAR*& pEnd);
   XFA_FM_TOKEN IsKeyword(const CFX_WideStringC& p);
-  void SetCurrentLine(FX_DWORD line) { m_uCurrentLine = line; }
+  void SetCurrentLine(uint32_t line) { m_uCurrentLine = line; }
   void SetToken(CXFA_FMToken* pToken) {
     if (m_pToken.get() != pToken)
       m_pToken.reset(pToken);
@@ -126,7 +126,7 @@ class CXFA_FMLexer {
   CXFA_FMToken* Scan();
 
   const FX_WCHAR* m_ptr;
-  FX_DWORD m_uCurrentLine;
+  uint32_t m_uCurrentLine;
   std::unique_ptr<CXFA_FMToken> m_pToken;
   CXFA_FMErrorInfo* m_pErrorInfo;
 };

@@ -68,7 +68,7 @@ class IFWL_ScrollBar : public IFWL_Widget {
   FWL_ERR SetPos(FX_FLOAT fPos);
   FX_FLOAT GetTrackPos();
   FWL_ERR SetTrackPos(FX_FLOAT fTrackPos);
-  FX_BOOL DoScroll(FX_DWORD dwCode, FX_FLOAT fPos = 0.0f);
+  FX_BOOL DoScroll(uint32_t dwCode, FX_FLOAT fPos = 0.0f);
 
  protected:
   IFWL_ScrollBar();

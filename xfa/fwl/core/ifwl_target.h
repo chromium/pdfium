@@ -35,7 +35,7 @@ class IFWL_Target {
   // These call into equivalent polymorphic methods of m_pImpl. There
   // should be no need to override these in subclasses.
   FWL_ERR GetClassName(CFX_WideString& wsClass) const;
-  FX_DWORD GetClassID() const;
+  uint32_t GetClassID() const;
   FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const;
   FWL_ERR Initialize();
   FWL_ERR Finalize();

@@ -66,7 +66,7 @@ class CFWL_WidgetMgr : public IFWL_WidgetMgr {
   FX_BOOL SetWidgetIndex(IFWL_Widget* pWidget, int32_t nIndex) override;
   FWL_ERR RepaintWidget(IFWL_Widget* pWidget,
                         const CFX_RectF* pRect = NULL) override;
-  FX_DWORD GetCapability() override { return m_dwCapability; }
+  uint32_t GetCapability() override { return m_dwCapability; }
 
   void AddWidget(IFWL_Widget* pWidget);
   void InsertWidget(IFWL_Widget* pParent,
@@ -130,7 +130,7 @@ class CFWL_WidgetMgr : public IFWL_WidgetMgr {
   IFWL_AdapterWidgetMgr* m_pAdapter;
   CFWL_WidgetMgrDelegate* m_pDelegate;
   friend class CFWL_WidgetMgrDelegate;
-  FX_DWORD m_dwCapability;
+  uint32_t m_dwCapability;
 #if (_FX_OS_ == _FX_WIN32_DESKTOP_) || (_FX_OS_ == _FX_WIN64_)
   CFX_RectF m_rtScreen;
 #endif
@@ -143,7 +143,7 @@ class CFWL_WidgetMgrDelegate : public IFWL_WidgetMgrDelegate {
 
   // IFWL_WidgetMgrDelegate:
   FWL_ERR OnSetCapability(
-      FX_DWORD dwCapability = FWL_WGTMGR_DisableThread) override;
+      uint32_t dwCapability = FWL_WGTMGR_DisableThread) override;
   int32_t OnProcessMessageToForm(CFWL_Message* pMessage) override;
   FWL_ERR OnDrawWidget(IFWL_Widget* pWidget,
                        CFX_Graphics* pGraphics,

@@ -23,7 +23,7 @@ class CFWL_MonthCalendarImp : public CFWL_WidgetImp {
                         IFWL_Widget* pOuter);
   ~CFWL_MonthCalendarImp();
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
-  virtual FX_DWORD GetClassID() const;
+  virtual uint32_t GetClassID() const;
   virtual FWL_ERR Initialize();
   virtual FWL_ERR Finalize();
   virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
@@ -209,7 +209,7 @@ class CFWL_MonthCalendarImp : public CFWL_WidgetImp {
 struct FWL_DATEINFO {
   FWL_DATEINFO(int32_t day,
                int32_t dayofweek,
-               FX_DWORD dwSt,
+               uint32_t dwSt,
                CFX_RectF rc,
                CFX_WideString& wsday)
       : iDay(day),
@@ -219,7 +219,7 @@ struct FWL_DATEINFO {
         wsDay(wsday) {}
   int32_t iDay;
   int32_t iDayOfWeek;
-  FX_DWORD dwStates;
+  uint32_t dwStates;
   CFX_RectF rect;
   CFX_WideString wsDay;
 };

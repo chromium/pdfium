@@ -41,9 +41,9 @@ enum XFA_OBJECTTYPE {
 };
 class CXFA_Object {
  public:
-  CXFA_Object(CXFA_Document* pDocument, FX_DWORD uFlags);
+  CXFA_Object(CXFA_Document* pDocument, uint32_t uFlags);
   CXFA_Document* GetDocument() const { return m_pDocument; }
-  FX_DWORD GetFlag() const { return m_uFlags; }
+  uint32_t GetFlag() const { return m_uFlags; }
   XFA_OBJECTTYPE GetObjectType() const {
     return (XFA_OBJECTTYPE)(m_uFlags & XFA_OBJECTTYPEMASK);
   }
@@ -85,7 +85,7 @@ class CXFA_Object {
 
  protected:
   CXFA_Document* const m_pDocument;
-  FX_DWORD m_uFlags;
+  uint32_t m_uFlags;
 };
 
 #define XFA_NODEFILTER_Children 0x01
@@ -131,9 +131,9 @@ struct XFA_MAPMODULEDATA {
 class CXFA_Node : public CXFA_Object {
  public:
   XFA_ELEMENT GetClassID() const { return (XFA_ELEMENT)m_eNodeClass; }
-  FX_DWORD GetPacketID() const { return m_ePacket; }
-  FX_BOOL HasFlag(FX_DWORD dwFlag) const;
-  void SetFlag(FX_DWORD dwFlag, FX_BOOL bOn = TRUE, FX_BOOL bNotify = TRUE);
+  uint32_t GetPacketID() const { return m_ePacket; }
+  FX_BOOL HasFlag(uint32_t dwFlag) const;
+  void SetFlag(uint32_t dwFlag, FX_BOOL bOn = TRUE, FX_BOOL bNotify = TRUE);
   FX_BOOL IsAttributeInXML();
   FX_BOOL IsFormContainer() {
     return m_ePacket == XFA_XDPPACKET_Form && IsContainerNode();
@@ -142,7 +142,7 @@ class CXFA_Node : public CXFA_Object {
   IFDE_XMLNode* GetXMLMappingNode() const { return m_pXMLNode; }
   IFDE_XMLNode* CreateXMLMappingNode();
   FX_BOOL IsNeedSavingXMLNode();
-  FX_DWORD GetNameHash() const { return m_dwNameHash; }
+  uint32_t GetNameHash() const { return m_dwNameHash; }
   bool IsUnnamed() const { return m_dwNameHash == 0; }
   CXFA_Node* GetModelNode();
   void UpdateNameHash();
@@ -268,12 +268,12 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* GetNodeItem(XFA_NODEITEM eItem) const;
   CXFA_Node* GetNodeItem(XFA_NODEITEM eItem, XFA_OBJECTTYPE eType) const;
   int32_t GetNodeList(CXFA_NodeArray& nodes,
-                      FX_DWORD dwTypeFilter = XFA_NODEFILTER_Children |
+                      uint32_t dwTypeFilter = XFA_NODEFILTER_Children |
                                               XFA_NODEFILTER_Properties,
                       XFA_ELEMENT eElementFilter = XFA_ELEMENT_UNKNOWN,
                       int32_t iLevel = 1);
   CXFA_Node* CreateSamePacketNode(XFA_ELEMENT eElement,
-                                  FX_DWORD dwFlags = XFA_NODEFLAG_Initialized);
+                                  uint32_t dwFlags = XFA_NODEFLAG_Initialized);
   CXFA_Node* CloneTemplateToForm(FX_BOOL bRecursive);
   CXFA_Node* GetTemplateNode() const;
   void SetTemplateNode(CXFA_Node* pTemplateNode);
@@ -289,9 +289,9 @@ class CXFA_Node : public CXFA_Object {
   FX_BOOL GetLocaleName(CFX_WideString& wsLocaleName);
   XFA_ATTRIBUTEENUM GetIntact();
   CXFA_Node* GetFirstChildByName(const CFX_WideStringC& wsNodeName) const;
-  CXFA_Node* GetFirstChildByName(FX_DWORD dwNodeNameHash) const;
+  CXFA_Node* GetFirstChildByName(uint32_t dwNodeNameHash) const;
   CXFA_Node* GetFirstChildByClass(XFA_ELEMENT eNodeClass) const;
-  CXFA_Node* GetNextSameNameSibling(FX_DWORD dwNodeNameHash) const;
+  CXFA_Node* GetNextSameNameSibling(uint32_t dwNodeNameHash) const;
   CXFA_Node* GetNextSameNameSibling(const CFX_WideStringC& wsNodeName) const;
   CXFA_Node* GetNextSameClassSibling(XFA_ELEMENT eNodeClass) const;
   int32_t GetNodeSameNameIndex() const;
@@ -304,7 +304,7 @@ class CXFA_Node : public CXFA_Object {
   void Script_TreeClass_ResolveNodes(CFXJSE_Arguments* pArguments);
   void Script_Som_ResolveNodeList(FXJSE_HVALUE hValue,
                                   CFX_WideString wsExpression,
-                                  FX_DWORD dwFlag,
+                                  uint32_t dwFlag,
                                   CXFA_Node* refNode = NULL);
   void Script_TreeClass_All(FXJSE_HVALUE hValue,
                             FX_BOOL bSetting,
@@ -641,7 +641,7 @@ class CXFA_Node : public CXFA_Object {
   IFDE_XMLNode* m_pXMLNode;
   XFA_ELEMENT m_eNodeClass;
   uint16_t m_ePacket;
-  FX_DWORD m_dwNameHash;
+  uint32_t m_dwNameHash;
   CXFA_Node* m_pAuxNode;
   XFA_MAPMODULEDATA* m_pMapModuleData;
 };

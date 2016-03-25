@@ -16,11 +16,11 @@ class CXFA_FFImageEdit : public CXFA_FFField {
 
   virtual void RenderWidget(CFX_Graphics* pGS,
                             CFX_Matrix* pMatrix = NULL,
-                            FX_DWORD dwStatus = 0,
+                            uint32_t dwStatus = 0,
                             int32_t iRotate = 0);
   virtual FX_BOOL LoadWidget();
   virtual void UnloadWidget();
-  virtual FX_BOOL OnLButtonDown(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
+  virtual FX_BOOL OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
   virtual int32_t OnProcessMessage(CFWL_Message* pMessage);
   virtual FWL_ERR OnProcessEvent(CFWL_Event* pEvent);
   virtual FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,

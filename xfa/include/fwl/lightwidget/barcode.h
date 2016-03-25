@@ -108,8 +108,8 @@ class CFWL_Barcode : public CFWL_Edit {
     virtual int32_t GetErrorCorrectionLevel() { return m_nECLevel; }
     FX_BOOL m_bTruncated;
     virtual FX_BOOL GetTruncated() { return m_bTruncated; }
-    FX_DWORD m_dwAttributeMask;
-    virtual FX_DWORD GetBarcodeAttributeMask() { return m_dwAttributeMask; }
+    uint32_t m_dwAttributeMask;
+    virtual uint32_t GetBarcodeAttributeMask() { return m_dwAttributeMask; }
 
    public:
     CFWL_BarcodeDP() : m_dwAttributeMask(0) {}

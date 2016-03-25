@@ -209,7 +209,7 @@ class IFDE_XMLSyntaxParser {
   virtual void Init(IFX_Stream* pStream,
                     int32_t iXMLPlaneSize,
                     int32_t iTextDataSize = 256) = 0;
-  virtual FX_DWORD DoSyntaxParse() = 0;
+  virtual uint32_t DoSyntaxParse() = 0;
   virtual int32_t GetStatus() const = 0;
   virtual int32_t GetCurrentPos() const = 0;
   virtual FX_FILESIZE GetCurrentBinaryPos() const = 0;

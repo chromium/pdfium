@@ -22,7 +22,7 @@ class CFWL_CaretImp : public CFWL_WidgetImp {
   virtual ~CFWL_CaretImp();
 
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
-  virtual FX_DWORD GetClassID() const;
+  virtual uint32_t GetClassID() const;
 
   virtual FWL_ERR Initialize();
   virtual FWL_ERR Finalize();
@@ -31,8 +31,8 @@ class CFWL_CaretImp : public CFWL_WidgetImp {
                              const CFX_Matrix* pMatrix = NULL);
 
   virtual FWL_ERR ShowCaret(FX_BOOL bFlag = TRUE);
-  virtual FWL_ERR GetFrequency(FX_DWORD& elapse);
-  virtual FWL_ERR SetFrequency(FX_DWORD elapse);
+  virtual FWL_ERR GetFrequency(uint32_t& elapse);
+  virtual FWL_ERR SetFrequency(uint32_t elapse);
   virtual FWL_ERR SetColor(CFX_Color crFill);
 
  protected:
@@ -48,7 +48,7 @@ class CFWL_CaretImp : public CFWL_WidgetImp {
   };
   CFWL_CaretTimer* m_pTimer;
   FWL_HTIMER m_hTimer;
-  FX_DWORD m_dwElapse;
+  uint32_t m_dwElapse;
   CFX_Color m_crFill;
   FX_BOOL m_bSetColor;
   friend class CFWL_CaretImpDelegate;

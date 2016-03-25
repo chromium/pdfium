@@ -18,7 +18,7 @@ class CFWL_CaretTP : public CFWL_WidgetTP {
 
  protected:
   void DrawCaretBK(CFX_Graphics* pGraphics,
-                   FX_DWORD dwStates,
+                   uint32_t dwStates,
                    const CFX_RectF* pRect,
                    CFX_Color* crFill,
                    CFX_Matrix* pMatrix = NULL);

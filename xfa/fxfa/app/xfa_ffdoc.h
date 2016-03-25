@@ -25,15 +25,15 @@ class CXFA_FFDoc : public IXFA_Doc {
   CXFA_FFDoc(CXFA_FFApp* pApp, IXFA_DocProvider* pDocProvider);
   ~CXFA_FFDoc();
   IXFA_DocProvider* GetDocProvider() { return m_pDocProvider; }
-  FX_DWORD GetDocType();
+  uint32_t GetDocType();
   int32_t StartLoad();
   int32_t DoLoad(IFX_Pause* pPause = NULL);
   void StopLoad();
-  IXFA_DocView* CreateDocView(FX_DWORD dwView = 0);
+  IXFA_DocView* CreateDocView(uint32_t dwView = 0);
   FX_BOOL OpenDoc(IFX_FileRead* pStream, FX_BOOL bTakeOverFile);
   FX_BOOL OpenDoc(CPDF_Document* pPDFDoc);
   FX_BOOL CloseDoc();
-  void SetDocType(FX_DWORD dwType);
+  void SetDocType(uint32_t dwType);
   CXFA_Document* GetXFADoc() { return m_pDocument; }
   CXFA_FFApp* GetApp() { return m_pApp; }
   CXFA_FFDocView* GetDocView(IXFA_DocLayout* pLayout);
@@ -57,7 +57,7 @@ class CXFA_FFDoc : public IXFA_Doc {
   CPDF_Document* m_pPDFDoc;
   CFX_MapPtrToPtr m_mapNamedImages;
   CFX_MapPtrToPtr m_mapTypeToDocView;
-  FX_DWORD m_dwDocType;
+  uint32_t m_dwDocType;
   FX_BOOL m_bOwnStream;
 };
 

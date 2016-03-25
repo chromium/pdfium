@@ -15,7 +15,7 @@ class CXFA_FFImage : public CXFA_FFDraw {
   virtual ~CXFA_FFImage();
   virtual void RenderWidget(CFX_Graphics* pGS,
                             CFX_Matrix* pMatrix = NULL,
-                            FX_DWORD dwStatus = 0,
+                            uint32_t dwStatus = 0,
                             int32_t iRotate = 0);
   virtual FX_BOOL IsLoaded();
   virtual FX_BOOL LoadWidget();

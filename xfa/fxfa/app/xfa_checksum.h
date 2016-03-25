@@ -26,7 +26,7 @@ class CXFA_SAXReaderHandler : public IFX_SAXReaderHandler {
   virtual ~CXFA_SAXReaderHandler();
   virtual void* OnTagEnter(const CFX_ByteStringC& bsTagName,
                            FX_SAXNODE eType,
-                           FX_DWORD dwStartPos);
+                           uint32_t dwStartPos);
   virtual void OnTagAttribute(void* pTag,
                               const CFX_ByteStringC& bsAttri,
                               const CFX_ByteStringC& bsValue);
@@ -34,16 +34,16 @@ class CXFA_SAXReaderHandler : public IFX_SAXReaderHandler {
   virtual void OnTagData(void* pTag,
                          FX_SAXNODE eType,
                          const CFX_ByteStringC& bsData,
-                         FX_DWORD dwStartPos);
-  virtual void OnTagClose(void* pTag, FX_DWORD dwEndPos);
+                         uint32_t dwStartPos);
+  virtual void OnTagClose(void* pTag, uint32_t dwEndPos);
   virtual void OnTagEnd(void* pTag,
                         const CFX_ByteStringC& bsTagName,
-                        FX_DWORD dwEndPos);
+                        uint32_t dwEndPos);
 
   virtual void OnTargetData(void* pTag,
                             FX_SAXNODE eType,
                             const CFX_ByteStringC& bsData,
-                            FX_DWORD dwStartPos);
+                            uint32_t dwStartPos);
 
  protected:
   void UpdateChecksum(FX_BOOL bCheckSpace);

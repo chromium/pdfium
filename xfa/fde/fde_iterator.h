@@ -24,7 +24,7 @@ class CFDE_VisualSetIterator : public IFDE_VisualSetIterator,
   virtual void Release() { delete this; }
 
   virtual FX_BOOL AttachCanvas(IFDE_CanvasSet* pCanvas);
-  virtual FX_BOOL FilterObjects(FX_DWORD dwObjects = 0xFFFFFFFF);
+  virtual FX_BOOL FilterObjects(uint32_t dwObjects = 0xFFFFFFFF);
 
   virtual void Reset();
   virtual FDE_HVISUALOBJ GetNext(IFDE_VisualSet*& pVisualSet,
@@ -32,7 +32,7 @@ class CFDE_VisualSetIterator : public IFDE_VisualSetIterator,
                                  IFDE_CanvasSet** ppCanvasSet = NULL);
 
  protected:
-  FX_DWORD m_dwFilter;
+  uint32_t m_dwFilter;
   CFX_StackTemplate<FDE_CANVASITEM> m_CanvasStack;
 };
 

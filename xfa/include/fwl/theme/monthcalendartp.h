@@ -14,12 +14,12 @@ class CFWL_MonthCalendarTP : public CFWL_WidgetTP {
   CFWL_MonthCalendarTP();
   virtual ~CFWL_MonthCalendarTP();
   virtual FX_BOOL IsValidWidget(IFWL_Widget* pWidget);
-  virtual FX_DWORD SetThemeID(IFWL_Widget* pWidget,
-                              FX_DWORD dwThemeID,
+  virtual uint32_t SetThemeID(IFWL_Widget* pWidget,
+                              uint32_t dwThemeID,
                               FX_BOOL bChildren = TRUE);
   virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams);
   virtual FX_BOOL DrawText(CFWL_ThemeText* pParams);
-  virtual void* GetCapacity(CFWL_ThemePart* pThemePart, FX_DWORD dwCapacity);
+  virtual void* GetCapacity(CFWL_ThemePart* pThemePart, uint32_t dwCapacity);
   virtual FWL_ERR Initialize();
   virtual FWL_ERR Finalize();
 
@@ -33,8 +33,8 @@ class CFWL_MonthCalendarTP : public CFWL_WidgetTP {
   FX_BOOL DrawTodayCircle(CFWL_ThemeBackground* pParams, CFX_Matrix* pMatrix);
   FX_BOOL DrawHSeperator(CFWL_ThemeBackground* pParams, CFX_Matrix* pMatrix);
   FX_BOOL DrawWeekNumSep(CFWL_ThemeBackground* pParams, CFX_Matrix* pMatrix);
-  FWLTHEME_STATE GetState(FX_DWORD dwFWLStates);
-  void SetThemeData(FX_DWORD dwThemeID);
+  FWLTHEME_STATE GetState(uint32_t dwFWLStates);
+  void SetThemeData(uint32_t dwThemeID);
   class MCThemeData {
    public:
     FX_ARGB clrCaption;

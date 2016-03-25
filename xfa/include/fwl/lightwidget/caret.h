@@ -16,8 +16,8 @@ class CFWL_Caret : public CFWL_Widget {
   static CFWL_Caret* Create();
   FWL_ERR Initialize(const CFWL_WidgetProperties* pProperties = NULL);
   FWL_ERR ShowCaret(FX_BOOL bFlag = TRUE);
-  FWL_ERR GetFrequency(FX_DWORD& elapse);
-  FWL_ERR SetFrequency(FX_DWORD elapse);
+  FWL_ERR GetFrequency(uint32_t& elapse);
+  FWL_ERR SetFrequency(uint32_t elapse);
   FWL_ERR SetColor(CFX_Color crFill);
 
  protected:

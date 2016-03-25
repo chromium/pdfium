@@ -15,7 +15,7 @@ class CXFA_FFLine : public CXFA_FFDraw {
   virtual ~CXFA_FFLine();
   virtual void RenderWidget(CFX_Graphics* pGS,
                             CFX_Matrix* pMatrix = NULL,
-                            FX_DWORD dwStatus = 0,
+                            uint32_t dwStatus = 0,
                             int32_t iRotate = 0);
 
  private:
@@ -27,7 +27,7 @@ class CXFA_FFArc : public CXFA_FFDraw {
   virtual ~CXFA_FFArc();
   virtual void RenderWidget(CFX_Graphics* pGS,
                             CFX_Matrix* pMatrix = NULL,
-                            FX_DWORD dwStatus = 0,
+                            uint32_t dwStatus = 0,
                             int32_t iRotate = 0);
 };
 class CXFA_FFRectangle : public CXFA_FFDraw {
@@ -36,7 +36,7 @@ class CXFA_FFRectangle : public CXFA_FFDraw {
   virtual ~CXFA_FFRectangle();
   virtual void RenderWidget(CFX_Graphics* pGS,
                             CFX_Matrix* pMatrix = NULL,
-                            FX_DWORD dwStatus = 0,
+                            uint32_t dwStatus = 0,
                             int32_t iRotate = 0);
 };
 

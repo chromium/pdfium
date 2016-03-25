@@ -26,13 +26,13 @@ class CXFA_DataExporter : public IXFA_PacketExport {
   virtual FX_BOOL Export(IFX_FileWrite* pWrite);
   virtual FX_BOOL Export(IFX_FileWrite* pWrite,
                          CXFA_Node* pNode,
-                         FX_DWORD dwFlag = 0,
+                         uint32_t dwFlag = 0,
                          const FX_CHAR* pChecksum = NULL);
 
  protected:
   FX_BOOL Export(IFX_Stream* pStream,
                  CXFA_Node* pNode,
-                 FX_DWORD dwFlag,
+                 uint32_t dwFlag,
                  const FX_CHAR* pChecksum);
   CXFA_Document* m_pDocument;
 };

@@ -80,7 +80,7 @@ class CScript_HostPseudoModel : public CXFA_OrdinaryObject {
  protected:
   void Script_HostPseudoModel_LoadString(FXJSE_HVALUE hValue,
                                          IXFA_Notify* pNotify,
-                                         FX_DWORD dwFlag);
+                                         uint32_t dwFlag);
   FX_BOOL Script_HostPseudoModel_ValidateArgsForMsg(
       CFXJSE_Arguments* pArguments,
       int32_t iArgIndex,

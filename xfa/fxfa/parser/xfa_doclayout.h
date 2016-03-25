@@ -90,7 +90,7 @@ class CXFA_ContentLayoutItem : public CXFA_LayoutItem {
   CXFA_ContentLayoutItem* m_pNext;
   CFX_PointF m_sPos;
   CFX_SizeF m_sSize;
-  FX_DWORD m_dwStatus;
+  uint32_t m_dwStatus;
 };
 
 CXFA_ContainerLayoutItem* CXFA_LayoutItem::AsContainerLayoutItem() {

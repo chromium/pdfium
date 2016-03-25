@@ -70,7 +70,7 @@ class CFWL_Event : public CFWL_Note {
       wsClass = L## #classname;                                   \
       return FWL_ERR_Succeeded;                                   \
     }                                                             \
-    virtual FX_DWORD GetClassID() const { return eventhashcode; }
+    virtual uint32_t GetClassID() const { return eventhashcode; }
 
 #define END_FWL_EVENT_DEF \
   }                       \
@@ -79,8 +79,8 @@ class CFWL_Event : public CFWL_Note {
 BEGIN_FWL_EVENT_DEF(CFWL_EvtMouse, FWL_EVTHASH_Mouse)
 FX_FLOAT m_fx;
 FX_FLOAT m_fy;
-FX_DWORD m_dwFlags;
-FX_DWORD m_dwCmd;
+uint32_t m_dwFlags;
+uint32_t m_dwCmd;
 END_FWL_EVENT_DEF
 
 BEGIN_FWL_EVENT_DEF(CFWL_EvtMouseWheel, FWL_EVTHASH_MouseWheel)
@@ -88,13 +88,13 @@ FX_FLOAT m_fx;
 FX_FLOAT m_fy;
 FX_FLOAT m_fDeltaX;
 FX_FLOAT m_fDeltaY;
-FX_DWORD m_dwFlags;
+uint32_t m_dwFlags;
 END_FWL_EVENT_DEF
 
 BEGIN_FWL_EVENT_DEF(CFWL_EvtKey, FWL_EVTHASH_Key)
-FX_DWORD m_dwKeyCode;
-FX_DWORD m_dwFlags;
-FX_DWORD m_dwCmd;
+uint32_t m_dwKeyCode;
+uint32_t m_dwFlags;
+uint32_t m_dwCmd;
 END_FWL_EVENT_DEF
 
 BEGIN_FWL_EVENT_DEF(CFWL_EvtSetFocus, FWL_EVTHASH_SetFocus)
@@ -114,7 +114,7 @@ BEGIN_FWL_EVENT_DEF(CFWL_EvtClick, FWL_EVTHASH_Click)
 END_FWL_EVENT_DEF
 
 BEGIN_FWL_EVENT_DEF(CFWL_EvtScroll, FWL_EVTHASH_Scroll)
-FX_DWORD m_iScrollCode;
+uint32_t m_iScrollCode;
 FX_FLOAT m_fPos;
 FX_BOOL* m_pRet;
 END_FWL_EVENT_DEF

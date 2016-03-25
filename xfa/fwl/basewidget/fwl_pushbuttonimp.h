@@ -20,11 +20,11 @@ class CFWL_PushButtonImp : public CFWL_WidgetImp {
                      IFWL_Widget* pOuter);
   virtual ~CFWL_PushButtonImp();
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
-  virtual FX_DWORD GetClassID() const;
+  virtual uint32_t GetClassID() const;
   virtual FWL_ERR Initialize();
   virtual FWL_ERR Finalize();
   virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
-  virtual FWL_ERR SetStates(FX_DWORD dwStates, FX_BOOL bSet = TRUE);
+  virtual FWL_ERR SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE);
   virtual FWL_ERR Update();
   virtual FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
                              const CFX_Matrix* pMatrix = NULL);
@@ -36,12 +36,12 @@ class CFWL_PushButtonImp : public CFWL_WidgetImp {
   void DrawText(CFX_Graphics* pGraphics,
                 IFWL_ThemeProvider* pTheme,
                 const CFX_Matrix* pMatrix);
-  FX_DWORD GetPartStates();
+  uint32_t GetPartStates();
   void UpdateTextOutStyles();
   CFX_RectF m_rtClient;
   CFX_RectF m_rtCaption;
   FX_BOOL m_bBtnDown;
-  FX_DWORD m_dwTTOStyles;
+  uint32_t m_dwTTOStyles;
   int32_t m_iTTOAlign;
   friend class CFWL_PushButtonImpDelegate;
 };

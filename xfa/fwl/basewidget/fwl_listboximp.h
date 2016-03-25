@@ -26,12 +26,12 @@ class CFWL_ListBoxImp : public CFWL_WidgetImp {
                   IFWL_Widget* pOuter);
   ~CFWL_ListBoxImp();
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
-  virtual FX_DWORD GetClassID() const;
+  virtual uint32_t GetClassID() const;
   virtual FWL_ERR Initialize();
   virtual FWL_ERR Finalize();
   virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
   virtual FWL_ERR Update();
-  virtual FX_DWORD HitTest(FX_FLOAT fx, FX_FLOAT fy);
+  virtual uint32_t HitTest(FX_FLOAT fx, FX_FLOAT fy);
   virtual FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
                              const CFX_Matrix* pMatrix = NULL);
   virtual FWL_ERR SetThemeProvider(IFWL_ThemeProvider* pThemeProvider);
@@ -44,7 +44,7 @@ class CFWL_ListBoxImp : public CFWL_WidgetImp {
   virtual FWL_ERR* Sort(IFWL_ListBoxCompare* pCom);
 
  protected:
-  FWL_HLISTITEM GetItem(FWL_HLISTITEM hItem, FX_DWORD dwKeyCode);
+  FWL_HLISTITEM GetItem(FWL_HLISTITEM hItem, uint32_t dwKeyCode);
   void SetSelection(FWL_HLISTITEM hStart,
                     FWL_HLISTITEM hEnd,
                     FX_BOOL bSelected);
@@ -92,7 +92,7 @@ class CFWL_ListBoxImp : public CFWL_WidgetImp {
   CFX_RectF m_rtConent;
   std::unique_ptr<IFWL_ScrollBar> m_pHorzScrollBar;
   std::unique_ptr<IFWL_ScrollBar> m_pVertScrollBar;
-  FX_DWORD m_dwTTOStyles;
+  uint32_t m_dwTTOStyles;
   int32_t m_iTTOAligns;
   FWL_HLISTITEM m_hAnchor;
   FX_FLOAT m_fItemHeight;
@@ -116,7 +116,7 @@ class CFWL_ListBoxImpDelegate : public CFWL_WidgetImpDelegate {
   void OnMouseWheel(CFWL_MsgMouseWheel* pMsg);
   void OnKeyDown(CFWL_MsgKey* pMsg);
   void OnVK(FWL_HLISTITEM hItem, FX_BOOL bShift, FX_BOOL bCtrl);
-  FX_BOOL OnScroll(IFWL_ScrollBar* pScrollBar, FX_DWORD dwCode, FX_FLOAT fPos);
+  FX_BOOL OnScroll(IFWL_ScrollBar* pScrollBar, uint32_t dwCode, FX_FLOAT fPos);
   void DispatchSelChangedEv();
   CFWL_ListBoxImp* m_pOwner;
 };

@@ -28,7 +28,7 @@ class CXFA_RenderContext : public IXFA_RenderContext {
   CFX_Graphics* m_pGS;
   CFX_Matrix m_matrix;
   CXFA_RenderOptions m_options;
-  FX_DWORD m_dwStatus;
+  uint32_t m_dwStatus;
   CFX_RectF m_rtClipRect;
 };
 

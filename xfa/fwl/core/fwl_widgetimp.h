@@ -36,14 +36,14 @@ class CFWL_WidgetImp : public CFWL_TargetImp {
   virtual IFWL_Widget* GetOwner();
   virtual FWL_ERR SetOwner(IFWL_Widget* pOwner);
   virtual IFWL_Widget* GetOuter();
-  virtual FX_DWORD GetStyles();
-  virtual FWL_ERR ModifyStyles(FX_DWORD dwStylesAdded,
-                               FX_DWORD dwStylesRemoved);
-  virtual FX_DWORD GetStylesEx();
-  virtual FWL_ERR ModifyStylesEx(FX_DWORD dwStylesExAdded,
-                                 FX_DWORD dwStylesExRemoved);
-  virtual FX_DWORD GetStates();
-  virtual FWL_ERR SetStates(FX_DWORD dwStates, FX_BOOL bSet = TRUE);
+  virtual uint32_t GetStyles();
+  virtual FWL_ERR ModifyStyles(uint32_t dwStylesAdded,
+                               uint32_t dwStylesRemoved);
+  virtual uint32_t GetStylesEx();
+  virtual FWL_ERR ModifyStylesEx(uint32_t dwStylesExAdded,
+                                 uint32_t dwStylesExRemoved);
+  virtual uint32_t GetStates();
+  virtual FWL_ERR SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE);
   virtual FWL_ERR SetPrivateData(void* module_id,
                                  void* pData,
                                  PD_CALLBACK_FREEDATA callback);
@@ -51,7 +51,7 @@ class CFWL_WidgetImp : public CFWL_TargetImp {
   virtual FWL_ERR Update();
   virtual FWL_ERR LockUpdate();
   virtual FWL_ERR UnlockUpdate();
-  virtual FX_DWORD HitTest(FX_FLOAT fx, FX_FLOAT fy);
+  virtual uint32_t HitTest(FX_FLOAT fx, FX_FLOAT fy);
   virtual FWL_ERR TransformTo(IFWL_Widget* pWidget, FX_FLOAT& fx, FX_FLOAT& fy);
   virtual FWL_ERR TransformTo(IFWL_Widget* pWidget, CFX_RectF& rt);
   virtual FWL_ERR GetMatrix(CFX_Matrix& matrix, FX_BOOL bGlobal = FALSE);
@@ -86,7 +86,7 @@ class CFWL_WidgetImp : public CFWL_TargetImp {
   FX_FLOAT GetBorderSize(FX_BOOL bCX = TRUE);
   FX_FLOAT GetEdgeWidth();
   void GetRelativeRect(CFX_RectF& rect);
-  void* GetThemeCapacity(FX_DWORD dwCapacity);
+  void* GetThemeCapacity(uint32_t dwCapacity);
   IFWL_ThemeProvider* GetAvailableTheme();
   CFWL_WidgetImp* GetRootOuter();
   CFX_SizeF CalcTextSize(const CFX_WideString& wsText,
@@ -95,7 +95,7 @@ class CFWL_WidgetImp : public CFWL_TargetImp {
                          int32_t iLineWidth = -1);
   void CalcTextRect(const CFX_WideString& wsText,
                     IFWL_ThemeProvider* pTheme,
-                    FX_DWORD dwTTOStyles,
+                    uint32_t dwTTOStyles,
                     int32_t iTTOAlign,
                     CFX_RectF& rect);
   void SetFocus(FX_BOOL bFocus);
@@ -118,7 +118,7 @@ class CFWL_WidgetImp : public CFWL_TargetImp {
                              CFX_RectF& rtPopup);
   FX_BOOL GetScreenSize(FX_FLOAT& fx, FX_FLOAT& fy);
   void RegisterEventTarget(IFWL_Widget* pEventSource = NULL,
-                           FX_DWORD dwFilter = FWL_EVENT_ALL_MASK);
+                           uint32_t dwFilter = FWL_EVENT_ALL_MASK);
   void UnregisterEventTarget();
   void DispatchKeyEvent(CFWL_MsgKey* pNote);
   void DispatchEvent(CFWL_Event* pEvent);
@@ -149,8 +149,8 @@ class CFWL_WidgetImp : public CFWL_TargetImp {
   int32_t m_iLock;
   friend class CFWL_WidgetImpDelegate;
   friend void FWL_SetWidgetRect(IFWL_Widget* widget, const CFX_RectF& rect);
-  friend void FWL_SetWidgetStates(IFWL_Widget* widget, FX_DWORD dwStates);
-  friend void FWL_SetWidgetStyles(IFWL_Widget* widget, FX_DWORD dwStyles);
+  friend void FWL_SetWidgetStates(IFWL_Widget* widget, uint32_t dwStates);
+  friend void FWL_SetWidgetStyles(IFWL_Widget* widget, uint32_t dwStyles);
 };
 
 class CFWL_WidgetImpDelegate : public IFWL_WidgetDelegate {

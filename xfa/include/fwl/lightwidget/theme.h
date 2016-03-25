@@ -27,16 +27,16 @@ class CFWL_Theme : public IFWL_ThemeProvider {
 
   // IFWL_ThemeProvider:
   FX_BOOL IsValidWidget(IFWL_Widget* pWidget) override;
-  FX_DWORD GetThemeID(IFWL_Widget* pWidget) override;
-  FX_DWORD SetThemeID(IFWL_Widget* pWidget,
-                      FX_DWORD dwThemeID,
+  uint32_t GetThemeID(IFWL_Widget* pWidget) override;
+  uint32_t SetThemeID(IFWL_Widget* pWidget,
+                      uint32_t dwThemeID,
                       FX_BOOL bChildren = TRUE) override;
   FWL_ERR GetThemeMatrix(IFWL_Widget* pWidget, CFX_Matrix& matrix) override;
   FWL_ERR SetThemeMatrix(IFWL_Widget* pWidget,
                          const CFX_Matrix& matrix) override;
   FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams) override;
   FX_BOOL DrawText(CFWL_ThemeText* pParams) override;
-  void* GetCapacity(CFWL_ThemePart* pThemePart, FX_DWORD dwCapacity) override;
+  void* GetCapacity(CFWL_ThemePart* pThemePart, uint32_t dwCapacity) override;
   FX_BOOL IsCustomizedLayout(IFWL_Widget* pWidget) override;
   FWL_ERR GetPartRect(CFWL_ThemePart* pThemePart, CFX_RectF& rtPart) override;
   FX_BOOL IsInPart(CFWL_ThemePart* pThemePart,

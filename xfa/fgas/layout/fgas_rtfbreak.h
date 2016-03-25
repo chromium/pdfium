@@ -85,7 +85,7 @@ struct FX_RTFTEXTOBJ {
   int32_t iLength;
   IFX_Font* pFont;
   FX_FLOAT fFontSize;
-  FX_DWORD dwLayoutStyles;
+  uint32_t dwLayoutStyles;
   int32_t iCharRotation;
   int32_t iBidiLevel;
   const CFX_RectF* pRect;
@@ -172,7 +172,7 @@ class CFX_RTFPiece : public CFX_Target {
     m_iHorizontalScale = 100;
     m_iVerticalScale = 100;
   }
-  FX_DWORD m_dwStatus;
+  uint32_t m_dwStatus;
   int32_t m_iStartPos;
   int32_t m_iWidth;
   int32_t m_iStartChar;
@@ -183,8 +183,8 @@ class CFX_RTFPiece : public CFX_Target {
   int32_t m_iFontHeight;
   int32_t m_iHorizontalScale;
   int32_t m_iVerticalScale;
-  FX_DWORD m_dwLayoutStyles;
-  FX_DWORD m_dwIdentity;
+  uint32_t m_dwLayoutStyles;
+  uint32_t m_dwIdentity;
   CFX_RTFCharArray* m_pChars;
   IFX_Unknown* m_pUserData;
 };
@@ -192,13 +192,13 @@ typedef CFX_BaseArrayTemplate<CFX_RTFPiece> CFX_RTFPieceArray;
 
 class IFX_RTFBreak {
  public:
-  static IFX_RTFBreak* Create(FX_DWORD dwPolicies);
+  static IFX_RTFBreak* Create(uint32_t dwPolicies);
   virtual ~IFX_RTFBreak() {}
   virtual void Release() = 0;
   virtual void SetLineBoundary(FX_FLOAT fLineStart, FX_FLOAT fLineEnd) = 0;
   virtual void SetLineStartPos(FX_FLOAT fLinePos) = 0;
-  virtual FX_DWORD GetLayoutStyles() const = 0;
-  virtual void SetLayoutStyles(FX_DWORD dwLayoutStyles) = 0;
+  virtual uint32_t GetLayoutStyles() const = 0;
+  virtual void SetLayoutStyles(uint32_t dwLayoutStyles) = 0;
   virtual void SetFont(IFX_Font* pFont) = 0;
   virtual void SetFontSize(FX_FLOAT fFontSize) = 0;
   virtual void SetTabWidth(FX_FLOAT fTabWidth) = 0;
@@ -216,8 +216,8 @@ class IFX_RTFBreak {
   virtual void SetReadingOrder(FX_BOOL bRTL = FALSE) = 0;
   virtual void SetAlignment(int32_t iAlignment = FX_RTFLINEALIGNMENT_Left) = 0;
   virtual void SetUserData(IFX_Unknown* pUserData) = 0;
-  virtual FX_DWORD AppendChar(FX_WCHAR wch) = 0;
-  virtual FX_DWORD EndBreak(FX_DWORD dwStatus = FX_RTFBREAK_PieceBreak) = 0;
+  virtual uint32_t AppendChar(FX_WCHAR wch) = 0;
+  virtual uint32_t EndBreak(uint32_t dwStatus = FX_RTFBREAK_PieceBreak) = 0;
   virtual int32_t CountBreakPieces() const = 0;
   virtual const CFX_RTFPiece* GetBreakPiece(int32_t index) const = 0;
   virtual void GetLineRect(CFX_RectF& rect) const = 0;

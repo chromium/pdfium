@@ -132,8 +132,8 @@ class CFDE_CSSValueListParser : public CFX_Target {
 struct FDE_CSSPROPERTYTABLE {
   FDE_CSSPROPERTY eName;
   const FX_WCHAR* pszName;
-  FX_DWORD dwHash;
-  FX_DWORD dwType;
+  uint32_t dwHash;
+  uint32_t dwType;
 };
 typedef FDE_CSSPROPERTYTABLE const* FDE_LPCCSSPROPERTYTABLE;
 
@@ -143,7 +143,7 @@ FDE_LPCCSSPROPERTYTABLE FDE_GetCSSPropertyByEnum(FDE_CSSPROPERTY eName);
 struct FDE_CSSPROPERTYVALUETABLE {
   FDE_CSSPROPERTYVALUE eName;
   const FX_WCHAR* pszName;
-  FX_DWORD dwHash;
+  uint32_t dwHash;
 };
 typedef FDE_CSSPROPERTYVALUETABLE const* FDE_LPCCSSPROPERTYVALUETABLE;
 
@@ -167,7 +167,7 @@ typedef FDE_CSSLENGTHUNITTABLE const* FDE_LPCCSSLENGTHUNITTABLE;
 FDE_LPCCSSLENGTHUNITTABLE FDE_GetCSSLengthUnitByName(const FX_WCHAR* pszName,
                                                      int32_t iLength);
 struct FDE_CSSCOLORTABLE {
-  FX_DWORD dwHash;
+  uint32_t dwHash;
   FX_ARGB dwValue;
 };
 typedef FDE_CSSCOLORTABLE const* FDE_LPCCSSCOLORTABLE;
@@ -176,7 +176,7 @@ FDE_LPCCSSCOLORTABLE FDE_GetCSSColorByName(const FX_WCHAR* pszName,
 struct FDE_CSSPERSUDOTABLE {
   FDE_CSSPERSUDO eName;
   const FX_WCHAR* pszName;
-  FX_DWORD dwHash;
+  uint32_t dwHash;
 };
 typedef FDE_CSSPERSUDOTABLE const* FDE_LPCCSSPERSUDOTABLE;
 

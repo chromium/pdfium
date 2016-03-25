@@ -104,11 +104,11 @@ struct FX_TXTRUN {
   int32_t iLength;
   IFX_Font* pFont;
   FX_FLOAT fFontSize;
-  FX_DWORD dwStyles;
+  uint32_t dwStyles;
   int32_t iHorizontalScale;
   int32_t iVerticalScale;
   int32_t iCharRotation;
-  FX_DWORD dwCharStyles;
+  uint32_t dwCharStyles;
   const CFX_RectF* pRect;
   FX_WCHAR wLineBreakChar;
   FX_BOOL bSkipSpace;
@@ -162,7 +162,7 @@ class CFX_TxtPiece : public CFX_Target {
       *pWidths++ = pChar->m_iCharWidth;
     }
   }
-  FX_DWORD m_dwStatus;
+  uint32_t m_dwStatus;
   int32_t m_iStartPos;
   int32_t m_iWidth;
   int32_t m_iStartChar;
@@ -171,7 +171,7 @@ class CFX_TxtPiece : public CFX_Target {
   int32_t m_iBidiPos;
   int32_t m_iHorizontalScale;
   int32_t m_iVerticalScale;
-  FX_DWORD m_dwCharStyles;
+  uint32_t m_dwCharStyles;
   CFX_TxtCharArray* m_pChars;
   void* m_pUserData;
 };
@@ -179,13 +179,13 @@ typedef CFX_BaseArrayTemplate<CFX_TxtPiece> CFX_TxtPieceArray;
 
 class IFX_TxtBreak {
  public:
-  static IFX_TxtBreak* Create(FX_DWORD dwPolicies);
+  static IFX_TxtBreak* Create(uint32_t dwPolicies);
   virtual ~IFX_TxtBreak() {}
   virtual void Release() = 0;
   virtual void SetLineWidth(FX_FLOAT fLineWidth) = 0;
   virtual void SetLinePos(FX_FLOAT fLinePos) = 0;
-  virtual FX_DWORD GetLayoutStyles() const = 0;
-  virtual void SetLayoutStyles(FX_DWORD dwLayoutStyles) = 0;
+  virtual uint32_t GetLayoutStyles() const = 0;
+  virtual void SetLayoutStyles(uint32_t dwLayoutStyles) = 0;
   virtual void SetFont(IFX_Font* pFont) = 0;
   virtual void SetFontSize(FX_FLOAT fFontSize) = 0;
   virtual void SetTabWidth(FX_FLOAT fTabWidth, FX_BOOL bEquidistant) = 0;
@@ -197,12 +197,12 @@ class IFX_TxtBreak {
   virtual void SetCharRotation(int32_t iCharRotation) = 0;
   virtual void SetCharSpace(FX_FLOAT fCharSpace) = 0;
   virtual void SetAlignment(int32_t iAlignment) = 0;
-  virtual FX_DWORD GetContextCharStyles() const = 0;
-  virtual void SetContextCharStyles(FX_DWORD dwCharStyles) = 0;
+  virtual uint32_t GetContextCharStyles() const = 0;
+  virtual void SetContextCharStyles(uint32_t dwCharStyles) = 0;
   virtual void SetCombWidth(FX_FLOAT fCombWidth) = 0;
   virtual void SetUserData(void* pUserData) = 0;
-  virtual FX_DWORD AppendChar(FX_WCHAR wch) = 0;
-  virtual FX_DWORD EndBreak(FX_DWORD dwStatus = FX_TXTBREAK_PieceBreak) = 0;
+  virtual uint32_t AppendChar(FX_WCHAR wch) = 0;
+  virtual uint32_t EndBreak(uint32_t dwStatus = FX_TXTBREAK_PieceBreak) = 0;
   virtual int32_t CountBreakChars() const = 0;
   virtual int32_t CountBreakPieces() const = 0;
   virtual const CFX_TxtPiece* GetBreakPiece(int32_t index) const = 0;

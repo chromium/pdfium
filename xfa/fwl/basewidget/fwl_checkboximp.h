@@ -20,7 +20,7 @@ class CFWL_CheckBoxImp : public CFWL_WidgetImp {
                    IFWL_Widget* pOuter);
   ~CFWL_CheckBoxImp();
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
-  virtual FX_DWORD GetClassID() const;
+  virtual uint32_t GetClassID() const;
   virtual FWL_ERR Initialize();
   virtual FWL_ERR Finalize();
   virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
@@ -32,14 +32,14 @@ class CFWL_CheckBoxImp : public CFWL_WidgetImp {
 
  protected:
   void Layout();
-  FX_DWORD GetPartStates();
+  uint32_t GetPartStates();
   void UpdateTextOutStyles();
   void NextStates();
   CFX_RectF m_rtClient;
   CFX_RectF m_rtBox;
   CFX_RectF m_rtCaption;
   CFX_RectF m_rtFocus;
-  FX_DWORD m_dwTTOStyles;
+  uint32_t m_dwTTOStyles;
   int32_t m_iTTOAlign;
   FX_BOOL m_bBtnDown;
   friend class CFWL_CheckBoxImpDelegate;

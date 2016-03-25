@@ -23,10 +23,10 @@ class CXFA_FFWidgetHandler : public IXFA_WidgetHandler {
                                     IXFA_Widget* hBefore = NULL);
   virtual IXFA_PageView* GetPageView(IXFA_Widget* hWidget);
   virtual void GetRect(IXFA_Widget* hWidget, CFX_RectF& rt);
-  virtual FX_DWORD GetStatus(IXFA_Widget* hWidget);
+  virtual uint32_t GetStatus(IXFA_Widget* hWidget);
   virtual FX_BOOL GetBBox(IXFA_Widget* hWidget,
                           CFX_RectF& rtBox,
-                          FX_DWORD dwStatus,
+                          uint32_t dwStatus,
                           FX_BOOL bDrawFocus = FALSE);
   virtual CXFA_WidgetAcc* GetDataAcc(IXFA_Widget* hWidget);
   virtual void GetName(IXFA_Widget* hWidget,
@@ -41,49 +41,49 @@ class CXFA_FFWidgetHandler : public IXFA_WidgetHandler {
   virtual FX_BOOL OnMouseEnter(IXFA_Widget* hWidget);
   virtual FX_BOOL OnMouseExit(IXFA_Widget* hWidget);
   virtual FX_BOOL OnLButtonDown(IXFA_Widget* hWidget,
-                                FX_DWORD dwFlags,
+                                uint32_t dwFlags,
                                 FX_FLOAT fx,
                                 FX_FLOAT fy);
   virtual FX_BOOL OnLButtonUp(IXFA_Widget* hWidget,
-                              FX_DWORD dwFlags,
+                              uint32_t dwFlags,
                               FX_FLOAT fx,
                               FX_FLOAT fy);
   virtual FX_BOOL OnLButtonDblClk(IXFA_Widget* hWidget,
-                                  FX_DWORD dwFlags,
+                                  uint32_t dwFlags,
                                   FX_FLOAT fx,
                                   FX_FLOAT fy);
   virtual FX_BOOL OnMouseMove(IXFA_Widget* hWidget,
-                              FX_DWORD dwFlags,
+                              uint32_t dwFlags,
                               FX_FLOAT fx,
                               FX_FLOAT fy);
   virtual FX_BOOL OnMouseWheel(IXFA_Widget* hWidget,
-                               FX_DWORD dwFlags,
+                               uint32_t dwFlags,
                                int16_t zDelta,
                                FX_FLOAT fx,
                                FX_FLOAT fy);
   virtual FX_BOOL OnRButtonDown(IXFA_Widget* hWidget,
-                                FX_DWORD dwFlags,
+                                uint32_t dwFlags,
                                 FX_FLOAT fx,
                                 FX_FLOAT fy);
   virtual FX_BOOL OnRButtonUp(IXFA_Widget* hWidget,
-                              FX_DWORD dwFlags,
+                              uint32_t dwFlags,
                               FX_FLOAT fx,
                               FX_FLOAT fy);
   virtual FX_BOOL OnRButtonDblClk(IXFA_Widget* hWidget,
-                                  FX_DWORD dwFlags,
+                                  uint32_t dwFlags,
                                   FX_FLOAT fx,
                                   FX_FLOAT fy);
 
   virtual FX_BOOL OnKeyDown(IXFA_Widget* hWidget,
-                            FX_DWORD dwKeyCode,
-                            FX_DWORD dwFlags);
+                            uint32_t dwKeyCode,
+                            uint32_t dwFlags);
   virtual FX_BOOL OnKeyUp(IXFA_Widget* hWidget,
-                          FX_DWORD dwKeyCode,
-                          FX_DWORD dwFlags);
+                          uint32_t dwKeyCode,
+                          uint32_t dwFlags);
   virtual FX_BOOL OnChar(IXFA_Widget* hWidget,
-                         FX_DWORD dwChar,
-                         FX_DWORD dwFlags);
-  virtual FX_DWORD OnHitTest(IXFA_Widget* hWidget, FX_FLOAT fx, FX_FLOAT fy);
+                         uint32_t dwChar,
+                         uint32_t dwFlags);
+  virtual uint32_t OnHitTest(IXFA_Widget* hWidget, FX_FLOAT fx, FX_FLOAT fy);
   virtual FX_BOOL OnSetCursor(IXFA_Widget* hWidget, FX_FLOAT fx, FX_FLOAT fy);
   virtual void RenderWidget(IXFA_Widget* hWidget,
                             CFX_Graphics* pGS,
@@ -136,7 +136,7 @@ class CXFA_FFWidgetHandler : public IXFA_WidgetHandler {
                                 CXFA_Node* pBefore) const;
   CXFA_Node* CreateFontNode(CXFA_Node* pParent) const;
   CXFA_Node* CreateMarginNode(CXFA_Node* pParent,
-                              FX_DWORD dwFlags,
+                              uint32_t dwFlags,
                               FX_FLOAT fInsets[4]) const;
   CXFA_Node* CreateValueNode(XFA_ELEMENT eValue, CXFA_Node* pParent) const;
   IXFA_ObjFactory* GetObjFactory() const;

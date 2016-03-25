@@ -240,7 +240,7 @@ class CFX_Graphics {
 
   FX_ERR SetDIBitsWithMatrix(CFX_DIBSource* source, CFX_Matrix* matrix);
   FX_ERR CalcTextInfo(const CFX_WideString& text,
-                      FX_DWORD* charCodes,
+                      uint32_t* charCodes,
                       FXTEXT_CHARPOS* charPos,
                       CFX_RectF& rect);
 

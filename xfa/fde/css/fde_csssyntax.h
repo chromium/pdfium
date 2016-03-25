@@ -110,7 +110,7 @@ class CFDE_CSSSyntaxParser : public IFDE_CSSSyntaxParser, public CFX_Target {
   CFDE_CSSTextBuf m_TextData;
   CFDE_CSSTextBuf m_TextPlane;
   int32_t m_iTextDatLen;
-  FX_DWORD m_dwCheck;
+  uint32_t m_dwCheck;
   FDE_CSSSYNTAXMODE m_eMode;
   FDE_CSSSYNTAXSTATUS m_eStatus;
   CFX_StackTemplate<FDE_CSSSYNTAXMODE> m_ModeStack;

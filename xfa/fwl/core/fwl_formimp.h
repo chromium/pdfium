@@ -53,7 +53,7 @@ class CFWL_SysBtn {
   }
 
   CFX_RectF m_rtBtn;
-  FX_DWORD m_dwState;
+  uint32_t m_dwState;
 };
 enum FORM_RESIZETYPE {
   FORM_RESIZETYPE_None = 0,
@@ -76,7 +76,7 @@ class CFWL_FormImp : public CFWL_PanelImp {
   CFWL_FormImp(const CFWL_WidgetImpProperties& properties, IFWL_Widget* pOuter);
   virtual ~CFWL_FormImp();
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
-  virtual FX_DWORD GetClassID() const;
+  virtual uint32_t GetClassID() const;
   virtual FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const;
   virtual FWL_ERR Initialize();
   virtual FWL_ERR Finalize();
@@ -84,13 +84,13 @@ class CFWL_FormImp : public CFWL_PanelImp {
   virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
   virtual FWL_ERR GetClientRect(CFX_RectF& rect);
   virtual FWL_ERR Update();
-  virtual FX_DWORD HitTest(FX_FLOAT fx, FX_FLOAT fy);
+  virtual uint32_t HitTest(FX_FLOAT fx, FX_FLOAT fy);
   virtual FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
                              const CFX_Matrix* pMatrix = NULL);
   virtual FWL_FORMSIZE GetFormSize();
   virtual FWL_ERR SetFormSize(FWL_FORMSIZE eFormSize);
   virtual IFWL_Widget* DoModal();
-  virtual IFWL_Widget* DoModal(FX_DWORD& dwCommandID);
+  virtual IFWL_Widget* DoModal(uint32_t& dwCommandID);
   virtual FWL_ERR EndDoModal();
   virtual FWL_ERR SetBorderRegion(CFX_Path* pPath);
   virtual void DrawBackground(CFX_Graphics* pGraphics,
@@ -105,7 +105,7 @@ class CFWL_FormImp : public CFWL_PanelImp {
   void RemoveSysButtons();
   void CalcContentRect(CFX_RectF& rtContent);
   CFWL_SysBtn* GetSysBtnAtPoint(FX_FLOAT fx, FX_FLOAT fy);
-  CFWL_SysBtn* GetSysBtnByState(FX_DWORD dwState);
+  CFWL_SysBtn* GetSysBtnByState(uint32_t dwState);
   CFWL_SysBtn* GetSysBtnByIndex(int32_t nIndex);
   int32_t GetSysBtnIndex(CFWL_SysBtn* pBtn);
   FX_FLOAT GetCaptionHeight();

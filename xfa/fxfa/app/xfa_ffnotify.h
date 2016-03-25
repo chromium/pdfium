@@ -25,7 +25,7 @@ class CXFA_FFNotify : public IXFA_Notify {
                            void* pParam3 = NULL,
                            void* pParam4 = NULL);
   virtual void OnWidgetDataEvent(CXFA_WidgetData* pSender,
-                                 FX_DWORD dwEvent,
+                                 uint32_t dwEvent,
                                  void* pParam = NULL,
                                  void* pAdditional = NULL,
                                  void* pAdditional2 = NULL);

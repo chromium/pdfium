@@ -12,16 +12,16 @@
 class CFX_SAXFile {
  public:
   CFX_SAXFile();
-  FX_BOOL StartFile(IFX_FileRead* pFile, FX_DWORD dwStart, FX_DWORD dwLen);
+  FX_BOOL StartFile(IFX_FileRead* pFile, uint32_t dwStart, uint32_t dwLen);
   FX_BOOL ReadNextBlock();
   void Reset();
   IFX_FileRead* m_pFile;
-  FX_DWORD m_dwStart;
-  FX_DWORD m_dwEnd;
-  FX_DWORD m_dwCur;
+  uint32_t m_dwStart;
+  uint32_t m_dwEnd;
+  uint32_t m_dwCur;
   uint8_t* m_pBuf;
-  FX_DWORD m_dwBufSize;
-  FX_DWORD m_dwBufIndex;
+  uint32_t m_dwBufSize;
+  uint32_t m_dwBufIndex;
 };
 
 enum FX_SAXMODE {
@@ -53,7 +53,7 @@ class CFX_SAXItem {
         m_pNext(NULL) {}
   void* m_pNode;
   FX_SAXNODE m_eNode;
-  FX_DWORD m_dwID;
+  uint32_t m_dwID;
   FX_BOOL m_bSkip;
   CFX_SAXItem* m_pPrev;
   CFX_SAXItem* m_pNext;
@@ -72,9 +72,9 @@ class CFX_SAXReader : public IFX_SAXReader {
   ~CFX_SAXReader();
   virtual void Release() { delete this; }
   virtual int32_t StartParse(IFX_FileRead* pFile,
-                             FX_DWORD dwStart = 0,
-                             FX_DWORD dwLen = -1,
-                             FX_DWORD dwParseMode = 0);
+                             uint32_t dwStart = 0,
+                             uint32_t dwLen = -1,
+                             uint32_t dwParseMode = 0);
   virtual int32_t ContinueParse(IFX_Pause* pPause = NULL);
   virtual void SkipCurrentNode();
   virtual void SetHandler(IFX_SAXReaderHandler* pHandler);
@@ -102,15 +102,15 @@ class CFX_SAXReader : public IFX_SAXReader {
   int32_t m_iState;
   CFX_SAXItem* m_pRoot;
   CFX_SAXItem* m_pCurItem;
-  FX_DWORD m_dwItemID;
+  uint32_t m_dwItemID;
   FX_SAXMODE m_eMode;
   FX_SAXMODE m_ePrevMode;
   FX_BOOL m_bCharData;
   uint8_t m_CurByte;
-  FX_DWORD m_dwDataOffset;
+  uint32_t m_dwDataOffset;
   CFX_ByteArray m_SkipStack;
   uint8_t m_SkipChar;
-  FX_DWORD m_dwNodePos;
+  uint32_t m_dwNodePos;
   uint8_t* m_pszData;
   int32_t m_iDataSize;
   int32_t m_iDataLength;
@@ -119,7 +119,7 @@ class CFX_SAXReader : public IFX_SAXReader {
   uint8_t* m_pszName;
   int32_t m_iNameSize;
   int32_t m_iNameLength;
-  FX_DWORD m_dwParseMode;
+  uint32_t m_dwParseMode;
   CFX_SAXCommentContext* m_pCommentContext;
   void Reset();
   void Push();

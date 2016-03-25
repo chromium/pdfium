@@ -19,7 +19,7 @@ class CFWL_FormProxyImp : public CFWL_FormImp {
                     IFWL_Widget* pOuter);
   ~CFWL_FormProxyImp();
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
-  virtual FX_DWORD GetClassID() const;
+  virtual uint32_t GetClassID() const;
   virtual FX_BOOL IsInstance(const CFX_WideStringC& wsClass) const;
   virtual FWL_ERR Initialize();
   virtual FWL_ERR Finalize();

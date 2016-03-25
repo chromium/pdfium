@@ -31,14 +31,14 @@ class CFWL_EditImp : public CFWL_WidgetImp, public IFDE_TxtEdtEventSink {
 
   // CFWL_WidgetImp:
   FWL_ERR GetClassName(CFX_WideString& wsClass) const override;
-  FX_DWORD GetClassID() const override;
+  uint32_t GetClassID() const override;
   FWL_ERR Initialize() override;
   FWL_ERR Finalize() override;
   FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE) override;
   FWL_ERR SetWidgetRect(const CFX_RectF& rect) override;
   FWL_ERR Update() override;
-  FX_DWORD HitTest(FX_FLOAT fx, FX_FLOAT fy) override;
-  FWL_ERR SetStates(FX_DWORD dwStates, FX_BOOL bSet = TRUE) override;
+  uint32_t HitTest(FX_FLOAT fx, FX_FLOAT fy) override;
+  FWL_ERR SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE) override;
   FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
                      const CFX_Matrix* pMatrix = NULL) override;
   FWL_ERR SetThemeProvider(IFWL_ThemeProvider* pThemeProvider) override;
@@ -109,7 +109,7 @@ class CFWL_EditImp : public CFWL_WidgetImp, public IFDE_TxtEdtEventSink {
                                 CFX_WideString& wsBlockText) override;
   FX_BOOL On_Validate(IFDE_TxtEdtEngine* pEdit,
                       CFX_WideString& wsText) override;
-  virtual FWL_ERR SetBackgroundColor(FX_DWORD color);
+  virtual FWL_ERR SetBackgroundColor(uint32_t color);
   virtual FWL_ERR SetFont(const CFX_WideString& wsFont, FX_FLOAT fSize);
   void SetScrollOffset(FX_FLOAT fScrollOffset);
   FX_BOOL GetSuggestWords(CFX_PointF pointf,
@@ -177,7 +177,7 @@ class CFWL_EditImp : public CFWL_WidgetImp, public IFDE_TxtEdtEventSink {
   CFX_WideString m_wsCache;
   friend class CFWL_TxtEdtEventSink;
   friend class CFWL_EditImpDelegate;
-  FX_DWORD m_backColor;
+  uint32_t m_backColor;
   FX_BOOL m_updateBackColor;
   CFX_WideString m_wsFont;
   CFX_ByteStringArray m_RecordArr;
@@ -204,7 +204,7 @@ class CFWL_EditImpDelegate : public CFWL_WidgetImpDelegate {
   void OnMouseMove(CFWL_MsgMouse* pMsg);
   void OnKeyDown(CFWL_MsgKey* pMsg);
   void OnChar(CFWL_MsgKey* pMsg);
-  FX_BOOL OnScroll(IFWL_ScrollBar* pScrollBar, FX_DWORD dwCode, FX_FLOAT fPos);
+  FX_BOOL OnScroll(IFWL_ScrollBar* pScrollBar, uint32_t dwCode, FX_FLOAT fPos);
   void DoCursor(CFWL_MsgMouse* pMsg);
   CFWL_EditImp* m_pOwner;
 };

@@ -20,7 +20,7 @@ class CFWL_ScrollBarImp : public CFWL_WidgetImp, public IFWL_Timer {
                     IFWL_Widget* pOuter);
   ~CFWL_ScrollBarImp();
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
-  virtual FX_DWORD GetClassID() const;
+  virtual uint32_t GetClassID() const;
   virtual FWL_ERR Initialize();
   virtual FWL_ERR Finalize();
   virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
@@ -38,7 +38,7 @@ class CFWL_ScrollBarImp : public CFWL_WidgetImp, public IFWL_Timer {
   virtual FWL_ERR SetPos(FX_FLOAT fPos);
   virtual FX_FLOAT GetTrackPos();
   virtual FWL_ERR SetTrackPos(FX_FLOAT fTrackPos);
-  virtual FX_BOOL DoScroll(FX_DWORD dwCode, FX_FLOAT fPos = 0.0f);
+  virtual FX_BOOL DoScroll(uint32_t dwCode, FX_FLOAT fPos = 0.0f);
   virtual FWL_ERR SetOuter(IFWL_Widget* pOuter);
   virtual int32_t Run(FWL_HTIMER hTimer);
 
@@ -64,7 +64,7 @@ class CFWL_ScrollBarImp : public CFWL_WidgetImp, public IFWL_Timer {
   FX_FLOAT GetTrackPointPos(FX_FLOAT fx, FX_FLOAT fy);
   void GetTrackRect(CFX_RectF& rect, FX_BOOL bLower = TRUE);
   FX_BOOL SendEvent();
-  FX_BOOL OnScroll(FX_DWORD dwCode, FX_FLOAT fPos);
+  FX_BOOL OnScroll(uint32_t dwCode, FX_FLOAT fPos);
 
   FWL_HTIMER m_hTimer;
   FX_FLOAT m_fRangeMin;
@@ -106,13 +106,13 @@ class CFWL_ScrollBarImpDelegate : public CFWL_WidgetImpDelegate {
                        const CFX_Matrix* pMatrix = NULL) override;
 
  protected:
-  void OnLButtonDown(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  void OnLButtonUp(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  void OnMouseMove(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
+  void OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
+  void OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
+  void OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
   void OnMouseLeave();
   void OnMouseWheel(FX_FLOAT fx,
                     FX_FLOAT fy,
-                    FX_DWORD dwFlags,
+                    uint32_t dwFlags,
                     FX_FLOAT fDeltaX,
                     FX_FLOAT fDeltaY);
   void DoMouseDown(int32_t iItem,

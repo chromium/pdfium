@@ -18,7 +18,7 @@ CXFA_Node* XFA_NodeMerge_CloneOrMergeContainer(
 CXFA_Node* XFA_DataMerge_FindDataScope(CXFA_Node* pParentFormNode);
 CXFA_Node* XFA_DataMerge_FindFormDOMInstance(CXFA_Document* pDocument,
                                              XFA_ELEMENT eClassID,
-                                             FX_DWORD dwNameHash,
+                                             uint32_t dwNameHash,
                                              CXFA_Node* pFormParent);
 
 #endif  // XFA_FXFA_PARSER_XFA_DOCUMENT_DATAMERGER_IMP_H_

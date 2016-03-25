@@ -14,7 +14,7 @@ class CBC_PDF417Common {
   CBC_PDF417Common();
   virtual ~CBC_PDF417Common();
   static int32_t getBitCountSum(CFX_Int32Array& moduleBitCount);
-  static int32_t getCodeword(FX_DWORD symbol);
+  static int32_t getCodeword(uint32_t symbol);
   static const int32_t NUMBER_OF_CODEWORDS = 929;
   static const int32_t MAX_CODEWORDS_IN_BARCODE = NUMBER_OF_CODEWORDS - 1;
   static const int32_t MIN_ROWS_IN_BARCODE = 3;
@@ -28,7 +28,7 @@ class CBC_PDF417Common {
 
  private:
   static CFX_Int32Array* EMPTY_INT_ARRAY;
-  static int32_t findCodewordIndex(FX_DWORD symbol);
+  static int32_t findCodewordIndex(uint32_t symbol);
 };
 
 #endif  // XFA_FXBARCODE_PDF417_BC_PDF417COMMON_H_

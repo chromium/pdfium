@@ -21,14 +21,14 @@ class CFWL_ToolTipImp : public CFWL_FormImp {
                   IFWL_Widget* pOuter);
   virtual ~CFWL_ToolTipImp();
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
-  virtual FX_DWORD GetClassID() const;
+  virtual uint32_t GetClassID() const;
   virtual FWL_ERR Initialize();
   virtual FWL_ERR Finalize();
   virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
   virtual FWL_ERR Update();
   virtual FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
                              const CFX_Matrix* pMatrix = NULL);
-  virtual FWL_ERR SetStates(FX_DWORD dwStates, FX_BOOL bSet);
+  virtual FWL_ERR SetStates(uint32_t dwStates, FX_BOOL bSet);
   virtual FWL_ERR GetClientRect(CFX_RectF& rect);
   FWL_ERR SetAnchor(const CFX_RectF& rtAnchor);
   FWL_ERR Show();
@@ -54,7 +54,7 @@ class CFWL_ToolTipImp : public CFWL_FormImp {
   CFX_RectF m_rtClient;
   CFX_RectF m_rtCaption;
   FX_BOOL m_bBtnDown;
-  FX_DWORD m_dwTTOStyles;
+  uint32_t m_dwTTOStyles;
   int32_t m_iTTOAlign;
   CFX_RectF m_rtAnchor;
   FWL_HTIMER m_hTimerShow;

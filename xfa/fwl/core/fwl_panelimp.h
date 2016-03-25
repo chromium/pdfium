@@ -19,7 +19,7 @@ class CFWL_PanelImp : public CFWL_WidgetImp {
                 IFWL_Widget* pOuter);
   virtual ~CFWL_PanelImp();
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
-  virtual FX_DWORD GetClassID() const;
+  virtual uint32_t GetClassID() const;
   virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
   virtual FWL_ERR Update();
   virtual IFWL_Content* GetContent();

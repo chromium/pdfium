@@ -65,7 +65,7 @@ class CFWL_GridWidgetInfo {
   int32_t m_iRow;
   int32_t m_iRowSpan;
   CFWL_GridLength m_Size[6];
-  FX_DWORD m_dwMarginFlag;
+  uint32_t m_dwMarginFlag;
   FX_FLOAT m_Margin[4];
   FX_FLOAT m_fActualWidth;
   FX_FLOAT m_fActualHeight;
@@ -76,7 +76,7 @@ class CFWL_GridImp : public CFWL_ContentImp {
   CFWL_GridImp(const CFWL_WidgetImpProperties& properties, IFWL_Widget* pOuter);
   virtual ~CFWL_GridImp();
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
-  virtual FX_DWORD GetClassID() const;
+  virtual uint32_t GetClassID() const;
   virtual FWL_ERR Initialize();
   virtual FWL_ERR Finalize();
   virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);

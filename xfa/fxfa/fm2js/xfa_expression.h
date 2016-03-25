@@ -24,22 +24,22 @@ enum XFA_FM_EXPTYPE {
 
 class CXFA_FMExpression {
  public:
-  explicit CXFA_FMExpression(FX_DWORD line);
-  CXFA_FMExpression(FX_DWORD line, XFA_FM_EXPTYPE type);
+  explicit CXFA_FMExpression(uint32_t line);
+  CXFA_FMExpression(uint32_t line, XFA_FM_EXPTYPE type);
   virtual ~CXFA_FMExpression() {}
   virtual void ToJavaScript(CFX_WideTextBuf& javascript);
   virtual void ToImpliedReturnJS(CFX_WideTextBuf&);
-  FX_DWORD GetLine() { return m_line; }
+  uint32_t GetLine() { return m_line; }
   XFA_FM_EXPTYPE GetExpType() const { return m_type; }
 
  protected:
   XFA_FM_EXPTYPE m_type;
-  FX_DWORD m_line;
+  uint32_t m_line;
 };
 
 class CXFA_FMFunctionDefinition : public CXFA_FMExpression {
  public:
-  CXFA_FMFunctionDefinition(FX_DWORD line,
+  CXFA_FMFunctionDefinition(uint32_t line,
                             FX_BOOL isGlobal,
                             const CFX_WideStringC& wsName,
                             CFX_WideStringCArray* pArguments,
@@ -57,7 +57,7 @@ class CXFA_FMFunctionDefinition : public CXFA_FMExpression {
 
 class CXFA_FMVarExpression : public CXFA_FMExpression {
  public:
-  CXFA_FMVarExpression(FX_DWORD line,
+  CXFA_FMVarExpression(uint32_t line,
                        const CFX_WideStringC& wsName,
                        CXFA_FMExpression* pInit);
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
@@ -70,7 +70,7 @@ class CXFA_FMVarExpression : public CXFA_FMExpression {
 
 class CXFA_FMExpExpression : public CXFA_FMExpression {
  public:
-  CXFA_FMExpExpression(FX_DWORD line, CXFA_FMSimpleExpression* pExpression);
+  CXFA_FMExpExpression(uint32_t line, CXFA_FMSimpleExpression* pExpression);
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
   void ToImpliedReturnJS(CFX_WideTextBuf&) override;
 
@@ -80,7 +80,7 @@ class CXFA_FMExpExpression : public CXFA_FMExpression {
 
 class CXFA_FMBlockExpression : public CXFA_FMExpression {
  public:
-  CXFA_FMBlockExpression(FX_DWORD line, CFX_PtrArray* pExpressionList);
+  CXFA_FMBlockExpression(uint32_t line, CFX_PtrArray* pExpressionList);
   ~CXFA_FMBlockExpression() override;
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
   void ToImpliedReturnJS(CFX_WideTextBuf&) override;
@@ -91,7 +91,7 @@ class CXFA_FMBlockExpression : public CXFA_FMExpression {
 
 class CXFA_FMDoExpression : public CXFA_FMExpression {
  public:
-  CXFA_FMDoExpression(FX_DWORD line, CXFA_FMExpression* pList);
+  CXFA_FMDoExpression(uint32_t line, CXFA_FMExpression* pList);
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
   void ToImpliedReturnJS(CFX_WideTextBuf&) override;
 
@@ -101,7 +101,7 @@ class CXFA_FMDoExpression : public CXFA_FMExpression {
 
 class CXFA_FMIfExpression : public CXFA_FMExpression {
  public:
-  CXFA_FMIfExpression(FX_DWORD line,
+  CXFA_FMIfExpression(uint32_t line,
                       CXFA_FMSimpleExpression* pExpression,
                       CXFA_FMExpression* pIfExpression,
                       CXFA_FMExpression* pElseExpression);
@@ -116,7 +116,7 @@ class CXFA_FMIfExpression : public CXFA_FMExpression {
 
 class CXFA_FMLoopExpression : public CXFA_FMExpression {
  public:
-  explicit CXFA_FMLoopExpression(FX_DWORD line) : CXFA_FMExpression(line) {}
+  explicit CXFA_FMLoopExpression(uint32_t line) : CXFA_FMExpression(line) {}
   ~CXFA_FMLoopExpression() override;
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
   void ToImpliedReturnJS(CFX_WideTextBuf&) override;
@@ -124,7 +124,7 @@ class CXFA_FMLoopExpression : public CXFA_FMExpression {
 
 class CXFA_FMWhileExpression : public CXFA_FMLoopExpression {
  public:
-  CXFA_FMWhileExpression(FX_DWORD line,
+  CXFA_FMWhileExpression(uint32_t line,
                          CXFA_FMSimpleExpression* pCodition,
                          CXFA_FMExpression* pExpression);
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
@@ -137,7 +137,7 @@ class CXFA_FMWhileExpression : public CXFA_FMLoopExpression {
 
 class CXFA_FMBreakExpression : public CXFA_FMExpression {
  public:
-  explicit CXFA_FMBreakExpression(FX_DWORD line);
+  explicit CXFA_FMBreakExpression(uint32_t line);
   ~CXFA_FMBreakExpression() override;
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
   void ToImpliedReturnJS(CFX_WideTextBuf&) override;
@@ -145,7 +145,7 @@ class CXFA_FMBreakExpression : public CXFA_FMExpression {
 
 class CXFA_FMContinueExpression : public CXFA_FMExpression {
  public:
-  explicit CXFA_FMContinueExpression(FX_DWORD line);
+  explicit CXFA_FMContinueExpression(uint32_t line);
   ~CXFA_FMContinueExpression() override;
   void ToJavaScript(CFX_WideTextBuf& javascript) override;
   void ToImpliedReturnJS(CFX_WideTextBuf&) override;
@@ -153,7 +153,7 @@ class CXFA_FMContinueExpression : public CXFA_FMExpression {
 
 class CXFA_FMForExpression : public CXFA_FMLoopExpression {
  public:
-  CXFA_FMForExpression(FX_DWORD line,
+  CXFA_FMForExpression(uint32_t line,
                        const CFX_WideStringC& wsVariant,
                        CXFA_FMSimpleExpression* pAssignment,
                        CXFA_FMSimpleExpression* pAccessor,
@@ -174,7 +174,7 @@ class CXFA_FMForExpression : public CXFA_FMLoopExpression {
 
 class CXFA_FMForeachExpression : public CXFA_FMLoopExpression {
  public:
-  CXFA_FMForeachExpression(FX_DWORD line,
+  CXFA_FMForeachExpression(uint32_t line,
                            const CFX_WideStringC& wsIdentifier,
                            CFX_PtrArray* pAccessors,
                            CXFA_FMExpression* pList);

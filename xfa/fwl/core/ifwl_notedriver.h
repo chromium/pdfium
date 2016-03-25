@@ -33,7 +33,7 @@ class IFWL_NoteDriver {
   virtual FWL_ERR RegisterEventTarget(
       IFWL_Widget* pListener,
       IFWL_Widget* pEventSource = NULL,
-      FX_DWORD dwFilter = FWL_EVENT_ALL_MASK) = 0;
+      uint32_t dwFilter = FWL_EVENT_ALL_MASK) = 0;
   virtual FWL_ERR UnregisterEventTarget(IFWL_Widget* pListener) = 0;
   virtual void ClearEventTargets(FX_BOOL bRemoveAll) = 0;
   virtual int32_t GetQueueMaxSize() const = 0;

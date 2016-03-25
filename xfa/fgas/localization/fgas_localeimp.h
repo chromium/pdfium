@@ -102,7 +102,7 @@ class CFX_FormatString : public IFX_FormatString {
                             CFX_WideString& wsPurgePattern);
   IFX_Locale* GetNumericFormat(const CFX_WideString& wsPattern,
                                int32_t& iDotIndex,
-                               FX_DWORD& dwStyle,
+                               uint32_t& dwStyle,
                                CFX_WideString& wsPurgePattern);
   FX_BOOL FormatStrNum(const CFX_WideStringC& wsInputNum,
                        const CFX_WideString& wsPattern,

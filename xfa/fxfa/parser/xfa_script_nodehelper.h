@@ -29,13 +29,13 @@ class CXFA_NodeHelper {
       XFA_LOGIC_TYPE eLogicType = XFA_LOGIC_NoTransparent);
 
   int32_t XFA_NodeAcc_TraverseSiblings(CXFA_Node* parent,
-                                       FX_DWORD dNameHash,
+                                       uint32_t dNameHash,
                                        CXFA_NodeArray* pSiblings,
                                        XFA_LOGIC_TYPE eLogicType,
                                        FX_BOOL bIsClassName = FALSE,
                                        FX_BOOL bIsFindProperty = TRUE);
   int32_t XFA_NodeAcc_TraverseAnySiblings(CXFA_Node* parent,
-                                          FX_DWORD dNameHash,
+                                          uint32_t dNameHash,
                                           CXFA_NodeArray* pSiblings,
                                           FX_BOOL bIsClassName = FALSE);
   int32_t XFA_CountSiblings(CXFA_Node* pNode,

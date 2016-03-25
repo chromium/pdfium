@@ -35,7 +35,7 @@ class CXFA_ScriptContext : public IXFA_ScriptContext {
   virtual int32_t ResolveObjects(CXFA_Object* refNode,
                                  const CFX_WideStringC& wsExpression,
                                  XFA_RESOLVENODE_RS& resolveNodeRS,
-                                 FX_DWORD dwStyles = XFA_RESOLVENODE_Children,
+                                 uint32_t dwStyles = XFA_RESOLVENODE_Children,
                                  CXFA_Node* bindNode = NULL);
   virtual FXJSE_HVALUE GetJSValueFromMap(CXFA_Object* pObject);
   virtual void CacheList(CXFA_NodeList* pList) { m_CacheListArray.Add(pList); }
@@ -59,7 +59,7 @@ class CXFA_ScriptContext : public IXFA_ScriptContext {
   FX_BOOL QueryNodeByFlag(CXFA_Node* refNode,
                           const CFX_WideStringC& propname,
                           FXJSE_HVALUE hValue,
-                          FX_DWORD dwFlag,
+                          uint32_t dwFlag,
                           FX_BOOL bSetting);
   FX_BOOL QueryVariableHValue(CXFA_Node* pScriptNode,
                               const CFX_ByteStringC& szPropName,
@@ -121,7 +121,7 @@ class CXFA_ScriptContext : public IXFA_ScriptContext {
   CXFA_ResolveProcessor* m_pResolveProcessor;
   XFA_HFM2JSCONTEXT m_hFM2JSContext;
   CXFA_Object* m_pThisObject;
-  FX_DWORD m_dwBuiltInInFlags;
+  uint32_t m_dwBuiltInInFlags;
   XFA_ATTRIBUTEENUM m_eRunAtType;
 };
 

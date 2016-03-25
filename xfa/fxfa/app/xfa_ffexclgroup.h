@@ -17,7 +17,7 @@ class CXFA_FFExclGroup : public CXFA_FFWidget {
 
   virtual void RenderWidget(CFX_Graphics* pGS,
                             CFX_Matrix* pMatrix = NULL,
-                            FX_DWORD dwStatus = 0,
+                            uint32_t dwStatus = 0,
                             int32_t iRotate = 0);
 };
 

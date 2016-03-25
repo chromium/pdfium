@@ -213,7 +213,7 @@ class IXFA_AppProvider {
    * @param[in] dwType The system code for the appropriate sound.0 (Error)1
    * (Warning)2 (Question)3 (Status)4 (Default)
    */
-  virtual void Beep(FX_DWORD dwType) = 0;
+  virtual void Beep(uint32_t dwType) = 0;
 
   /**
    * Displays a message box.
@@ -224,8 +224,8 @@ class IXFA_AppProvider {
    */
   virtual int32_t MsgBox(const CFX_WideStringC& wsMessage,
                          const CFX_WideStringC& wsTitle = FX_WSTRC(L""),
-                         FX_DWORD dwIconType = 0,
-                         FX_DWORD dwButtonType = 0) = 0;
+                         uint32_t dwIconType = 0,
+                         uint32_t dwButtonType = 0) = 0;
 
   /**
    * Get a response from the user.
@@ -295,11 +295,11 @@ class IXFA_FontMgr {
 
   virtual IFX_Font* GetFont(IXFA_Doc* hDoc,
                             const CFX_WideStringC& wsFontFamily,
-                            FX_DWORD dwFontStyles,
+                            uint32_t dwFontStyles,
                             uint16_t wCodePage = 0xFFFF) = 0;
   virtual IFX_Font* GetDefaultFont(IXFA_Doc* hDoc,
                                    const CFX_WideStringC& wsFontFamily,
-                                   FX_DWORD dwFontStyles,
+                                   uint32_t dwFontStyles,
                                    uint16_t wCodePage = 0xFFFF) = 0;
 };
 class IXFA_App {
@@ -368,7 +368,7 @@ class IXFA_DocProvider {
   virtual void SetChangeMark(IXFA_Doc* hDoc) = 0;
   virtual void InvalidateRect(IXFA_PageView* pPageView,
                               const CFX_RectF& rt,
-                              FX_DWORD dwFlags = 0) = 0;
+                              uint32_t dwFlags = 0) = 0;
   virtual void DisplayCaret(IXFA_Widget* hWidget,
                             FX_BOOL bVisible,
                             const CFX_RectF* pRtAnchor) = 0;
@@ -380,10 +380,10 @@ class IXFA_DocProvider {
   virtual FX_BOOL PopupMenu(IXFA_Widget* hWidget,
                             CFX_PointF ptPopup,
                             const CFX_RectF* pRectExclude = NULL) = 0;
-  virtual void PageViewEvent(IXFA_PageView* pPageView, FX_DWORD dwFlags) = 0;
+  virtual void PageViewEvent(IXFA_PageView* pPageView, uint32_t dwFlags) = 0;
   virtual void WidgetEvent(IXFA_Widget* hWidget,
                            CXFA_WidgetAcc* pWidgetData,
-                           FX_DWORD dwEvent,
+                           uint32_t dwEvent,
                            void* pParam = NULL,
                            void* pAdditional = NULL) = 0;
   virtual FX_BOOL RenderCustomWidget(IXFA_Widget* hWidget,
@@ -413,7 +413,7 @@ class IXFA_DocProvider {
   virtual void Print(IXFA_Doc* hDoc,
                      int32_t nStartPage,
                      int32_t nEndPage,
-                     FX_DWORD dwOptions) = 0;
+                     uint32_t dwOptions) = 0;
   virtual int32_t AbsPageCountInBatch(IXFA_Doc* hDoc) = 0;
   virtual int32_t AbsPageInBatch(IXFA_Doc* hDoc, IXFA_Widget* hWidget) = 0;
   virtual int32_t SheetCountInBatch(IXFA_Doc* hDoc) = 0;
@@ -478,12 +478,12 @@ class IXFA_DocHandler {
   virtual void ReleaseDoc(IXFA_Doc* hDoc) = 0;
   virtual IXFA_DocProvider* GetDocProvider(IXFA_Doc* hDoc) = 0;
 
-  virtual FX_DWORD GetDocType(IXFA_Doc* hDoc) = 0;
+  virtual uint32_t GetDocType(IXFA_Doc* hDoc) = 0;
   virtual int32_t StartLoad(IXFA_Doc* hDoc) = 0;
   virtual int32_t DoLoad(IXFA_Doc* hDoc, IFX_Pause* pPause = NULL) = 0;
   virtual void StopLoad(IXFA_Doc* hDoc) = 0;
 
-  virtual IXFA_DocView* CreateDocView(IXFA_Doc* hDoc, FX_DWORD dwView = 0) = 0;
+  virtual IXFA_DocView* CreateDocView(IXFA_Doc* hDoc, uint32_t dwView = 0) = 0;
 
   virtual int32_t CountPackages(IXFA_Doc* hDoc) = 0;
   virtual void GetPackageName(IXFA_Doc* hDoc,
@@ -650,8 +650,8 @@ class IXFA_PageView {
   virtual void UnloadPageView() = 0;
   virtual IXFA_Widget* GetWidgetByPos(FX_FLOAT fx, FX_FLOAT fy) = 0;
   virtual IXFA_WidgetIterator* CreateWidgetIterator(
-      FX_DWORD dwTraverseWay = XFA_TRAVERSEWAY_Form,
-      FX_DWORD dwWidgetFilter = XFA_WIDGETFILTER_Visible |
+      uint32_t dwTraverseWay = XFA_TRAVERSEWAY_Form,
+      uint32_t dwWidgetFilter = XFA_WIDGETFILTER_Visible |
                                 XFA_WIDGETFILTER_Viewable |
                                 XFA_WIDGETFILTER_AllType) = 0;
 };
@@ -717,10 +717,10 @@ class IXFA_WidgetHandler {
                                     IXFA_Widget* hBefore = NULL) = 0;
   virtual IXFA_PageView* GetPageView(IXFA_Widget* hWidget) = 0;
   virtual void GetRect(IXFA_Widget* hWidget, CFX_RectF& rt) = 0;
-  virtual FX_DWORD GetStatus(IXFA_Widget* hWidget) = 0;
+  virtual uint32_t GetStatus(IXFA_Widget* hWidget) = 0;
   virtual FX_BOOL GetBBox(IXFA_Widget* hWidget,
                           CFX_RectF& rtBox,
-                          FX_DWORD dwStatus,
+                          uint32_t dwStatus,
                           FX_BOOL bDrawFocus = FALSE) = 0;
   virtual CXFA_WidgetAcc* GetDataAcc(IXFA_Widget* hWidget) = 0;
 
@@ -737,49 +737,49 @@ class IXFA_WidgetHandler {
   virtual FX_BOOL OnMouseEnter(IXFA_Widget* hWidget) = 0;
   virtual FX_BOOL OnMouseExit(IXFA_Widget* hWidget) = 0;
   virtual FX_BOOL OnLButtonDown(IXFA_Widget* hWidget,
-                                FX_DWORD dwFlags,
+                                uint32_t dwFlags,
                                 FX_FLOAT fx,
                                 FX_FLOAT fy) = 0;
   virtual FX_BOOL OnLButtonUp(IXFA_Widget* hWidget,
-                              FX_DWORD dwFlags,
+                              uint32_t dwFlags,
                               FX_FLOAT fx,
                               FX_FLOAT fy) = 0;
   virtual FX_BOOL OnLButtonDblClk(IXFA_Widget* hWidget,
-                                  FX_DWORD dwFlags,
+                                  uint32_t dwFlags,
                                   FX_FLOAT fx,
                                   FX_FLOAT fy) = 0;
   virtual FX_BOOL OnMouseMove(IXFA_Widget* hWidget,
-                              FX_DWORD dwFlags,
+                              uint32_t dwFlags,
                               FX_FLOAT fx,
                               FX_FLOAT fy) = 0;
   virtual FX_BOOL OnMouseWheel(IXFA_Widget* hWidget,
-                               FX_DWORD dwFlags,
+                               uint32_t dwFlags,
                                int16_t zDelta,
                                FX_FLOAT fx,
                                FX_FLOAT fy) = 0;
   virtual FX_BOOL OnRButtonDown(IXFA_Widget* hWidget,
-                                FX_DWORD dwFlags,
+                                uint32_t dwFlags,
                                 FX_FLOAT fx,
                                 FX_FLOAT fy) = 0;
   virtual FX_BOOL OnRButtonUp(IXFA_Widget* hWidget,
-                              FX_DWORD dwFlags,
+                              uint32_t dwFlags,
                               FX_FLOAT fx,
                               FX_FLOAT fy) = 0;
   virtual FX_BOOL OnRButtonDblClk(IXFA_Widget* hWidget,
-                                  FX_DWORD dwFlags,
+                                  uint32_t dwFlags,
                                   FX_FLOAT fx,
                                   FX_FLOAT fy) = 0;
 
   virtual FX_BOOL OnKeyDown(IXFA_Widget* hWidget,
-                            FX_DWORD dwKeyCode,
-                            FX_DWORD dwFlags) = 0;
+                            uint32_t dwKeyCode,
+                            uint32_t dwFlags) = 0;
   virtual FX_BOOL OnKeyUp(IXFA_Widget* hWidget,
-                          FX_DWORD dwKeyCode,
-                          FX_DWORD dwFlags) = 0;
+                          uint32_t dwKeyCode,
+                          uint32_t dwFlags) = 0;
   virtual FX_BOOL OnChar(IXFA_Widget* hWidget,
-                         FX_DWORD dwChar,
-                         FX_DWORD dwFlags) = 0;
-  virtual FX_DWORD OnHitTest(IXFA_Widget* hWidget,
+                         uint32_t dwChar,
+                         uint32_t dwFlags) = 0;
+  virtual uint32_t OnHitTest(IXFA_Widget* hWidget,
                              FX_FLOAT fx,
                              FX_FLOAT fy) = 0;
   virtual FX_BOOL OnSetCursor(IXFA_Widget* hWidget,

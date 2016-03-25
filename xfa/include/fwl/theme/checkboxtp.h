@@ -15,8 +15,8 @@ class CFWL_CheckBoxTP : public CFWL_WidgetTP {
   CFWL_CheckBoxTP();
   virtual ~CFWL_CheckBoxTP();
   virtual FX_BOOL IsValidWidget(IFWL_Widget* pWidget);
-  virtual FX_DWORD SetThemeID(IFWL_Widget* pWidget,
-                              FX_DWORD dwThemeID,
+  virtual uint32_t SetThemeID(IFWL_Widget* pWidget,
+                              uint32_t dwThemeID,
                               FX_BOOL bChildren = TRUE);
   virtual FX_BOOL DrawText(CFWL_ThemeText* pParams);
   virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams);
@@ -27,12 +27,12 @@ class CFWL_CheckBoxTP : public CFWL_WidgetTP {
   void DrawBoxBk(IFWL_Widget* pWidget,
                  CFX_Graphics* pGraphics,
                  const CFX_RectF* pRect,
-                 FX_DWORD dwStates,
+                 uint32_t dwStates,
                  CFX_Matrix* pMatrix = NULL);
   void DrawSign(IFWL_Widget* pWidget,
                 CFX_Graphics* pGraphics,
                 const CFX_RectF* pRtBox,
-                FX_DWORD dwStates,
+                uint32_t dwStates,
                 CFX_Matrix* pMatrix = NULL);
   void DrawSignNeutral(CFX_Graphics* pGraphics,
                        const CFX_RectF* pRtSign,
@@ -66,7 +66,7 @@ class CFWL_CheckBoxTP : public CFWL_WidgetTP {
                       const CFX_RectF* pRtBox,
                       FX_BOOL bDisable = FALSE,
                       CFX_Matrix* pMatrix = NULL);
-  void SetThemeData(FX_DWORD dwID);
+  void SetThemeData(uint32_t dwID);
   void initCheckPath(FX_FLOAT fCheckLen);
   struct CKBThemeData {
     FX_ARGB clrBoxBk[13][2];

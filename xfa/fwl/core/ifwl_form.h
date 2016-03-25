@@ -86,7 +86,7 @@ class IFWL_Form : public IFWL_Panel {
   FWL_FORMSIZE GetFormSize();
   FWL_ERR SetFormSize(FWL_FORMSIZE eFormSize);
   IFWL_Widget* DoModal();
-  IFWL_Widget* DoModal(FX_DWORD& dwCommandID);
+  IFWL_Widget* DoModal(uint32_t& dwCommandID);
   FWL_ERR EndDoModal();
   FWL_ERR SetBorderRegion(CFX_Path* pPath);
 

@@ -21,7 +21,7 @@ class CFDE_CSSSelector : public IFDE_CSSSelector, public CFX_Target {
         m_pNext(NULL) {}
   virtual FDE_CSSSELECTORTYPE GetType() const { return m_eType; }
 
-  virtual FX_DWORD GetNameHash() const { return m_dwHash; }
+  virtual uint32_t GetNameHash() const { return m_dwHash; }
 
   virtual IFDE_CSSSelector* GetNextSelector() const { return m_pNext; }
   static IFDE_CSSSelector* FromString(IFX_MEMAllocator* pStaticStore,
@@ -37,7 +37,7 @@ class CFDE_CSSSelector : public IFDE_CSSSelector, public CFX_Target {
                                          FDE_CSSSELECTORTYPE eType);
   void SetType(FDE_CSSSELECTORTYPE eType) { m_eType = eType; }
   FDE_CSSSELECTORTYPE m_eType;
-  FX_DWORD m_dwHash;
+  uint32_t m_dwHash;
   IFDE_CSSSelector* m_pNext;
 };
 typedef CFX_ArrayTemplate<IFDE_CSSSelector*> CFDE_CSSSelectorArray;
@@ -63,10 +63,10 @@ class CFDE_CSSStyleRule : public IFDE_CSSStyleRule, public CFX_Target {
 };
 class CFDE_CSSMediaRule : public IFDE_CSSMediaRule, public CFX_Target {
  public:
-  CFDE_CSSMediaRule(FX_DWORD dwMediaList) : m_dwMediaList(dwMediaList) {}
+  CFDE_CSSMediaRule(uint32_t dwMediaList) : m_dwMediaList(dwMediaList) {}
   ~CFDE_CSSMediaRule();
 
-  virtual FX_DWORD GetMediaList() const { return m_dwMediaList; }
+  virtual uint32_t GetMediaList() const { return m_dwMediaList; }
 
   virtual int32_t CountRules() const { return m_RuleArray.GetSize(); }
   virtual IFDE_CSSRule* GetRule(int32_t index) {
@@ -75,7 +75,7 @@ class CFDE_CSSMediaRule : public IFDE_CSSMediaRule, public CFX_Target {
   CFDE_CSSRuleArray& GetArray() { return m_RuleArray; }
 
  protected:
-  FX_DWORD m_dwMediaList;
+  uint32_t m_dwMediaList;
   CFDE_CSSRuleArray m_RuleArray;
 };
 class CFDE_CSSFontFaceRule : public IFDE_CSSFontFaceRule, public CFX_Target {
@@ -96,16 +96,16 @@ class CFDE_CSSFontFaceRule : public IFDE_CSSFontFaceRule, public CFX_Target {
     return FDE_CSSSYNTAXSTATUS_Error;
 class CFDE_CSSStyleSheet : public IFDE_CSSStyleSheet, public CFX_Target {
  public:
-  CFDE_CSSStyleSheet(FX_DWORD dwMediaList);
+  CFDE_CSSStyleSheet(uint32_t dwMediaList);
   ~CFDE_CSSStyleSheet();
-  virtual FX_DWORD AddRef();
-  virtual FX_DWORD Release();
+  virtual uint32_t AddRef();
+  virtual uint32_t Release();
 
   virtual FX_BOOL GetUrl(CFX_WideString& szUrl) {
     szUrl = m_szUrl;
     return szUrl.GetLength() > 0;
   }
-  virtual FX_DWORD GetMediaList() const { return m_dwMediaList; }
+  virtual uint32_t GetMediaList() const { return m_dwMediaList; }
   virtual uint16_t GetCodePage() const { return m_wCodePage; }
   virtual int32_t CountRules() const;
   virtual IFDE_CSSRule* GetRule(int32_t index);
@@ -130,7 +130,7 @@ class CFDE_CSSStyleSheet : public IFDE_CSSStyleSheet, public CFX_Target {
   FDE_CSSSYNTAXSTATUS SkipRuleSet(IFDE_CSSSyntaxParser* pSyntax);
   uint16_t m_wCodePage;
   uint16_t m_wRefCount;
-  FX_DWORD m_dwMediaList;
+  uint32_t m_dwMediaList;
   IFX_MEMAllocator* m_pAllocator;
   CFDE_CSSRuleArray m_RuleArray;
   CFX_WideString m_szUrl;

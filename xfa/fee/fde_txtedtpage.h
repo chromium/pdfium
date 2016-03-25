@@ -64,7 +64,7 @@ struct FDE_TEXTEDITPIECE {
   int32_t nCount;
   int32_t nBidiLevel;
   CFX_RectF rtPiece;
-  FX_DWORD dwCharStyles;
+  uint32_t dwCharStyles;
 };
 typedef CFX_MassArrayTemplate<FDE_TEXTEDITPIECE> CFDE_TXTEDTPieceMassArray;
 

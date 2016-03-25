@@ -23,7 +23,7 @@ class IFWL_WidgetMgrDelegate {
   virtual ~IFWL_WidgetMgrDelegate() {}
 
   virtual FWL_ERR OnSetCapability(
-      FX_DWORD dwCapability = FWL_WGTMGR_DisableThread) = 0;
+      uint32_t dwCapability = FWL_WGTMGR_DisableThread) = 0;
   virtual int32_t OnProcessMessageToForm(CFWL_Message* pMessage) = 0;
   virtual FWL_ERR OnDrawWidget(IFWL_Widget* pWidget,
                                CFX_Graphics* pGraphics,

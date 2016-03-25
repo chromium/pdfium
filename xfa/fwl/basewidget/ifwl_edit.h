@@ -163,7 +163,7 @@ class IFWL_Edit : public IFWL_Widget {
   FWL_ERR SetTabWidth(FX_FLOAT fTabWidth, FX_BOOL bEquidistant);
   FWL_ERR SetOuter(IFWL_Widget* pOuter);
   FWL_ERR SetNumberRange(int32_t iMin, int32_t iMax);
-  FWL_ERR SetBackColor(FX_DWORD dwColor);
+  FWL_ERR SetBackColor(uint32_t dwColor);
   FWL_ERR SetFont(const CFX_WideString& wsFont, FX_FLOAT fSize);
   void SetScrollOffset(FX_FLOAT fScrollOffset);
   FX_BOOL GetSuggestWords(CFX_PointF pointf,

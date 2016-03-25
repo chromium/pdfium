@@ -14,11 +14,11 @@ class CFWL_ScrollBarTP : public CFWL_WidgetTP {
   CFWL_ScrollBarTP();
   virtual ~CFWL_ScrollBarTP();
   virtual FX_BOOL IsValidWidget(IFWL_Widget* pWidget);
-  virtual FX_DWORD SetThemeID(IFWL_Widget* pWidget,
-                              FX_DWORD dwThemeID,
+  virtual uint32_t SetThemeID(IFWL_Widget* pWidget,
+                              uint32_t dwThemeID,
                               FX_BOOL bChildren = TRUE);
   virtual FX_BOOL DrawBackground(CFWL_ThemeBackground* pParams);
-  virtual void* GetCapacity(CFWL_ThemePart* pThemePart, FX_DWORD dwCapacity);
+  virtual void* GetCapacity(CFWL_ThemePart* pThemePart, uint32_t dwCapacity);
 
  protected:
   void DrawThumbBtn(CFX_Graphics* pGraphics,
@@ -43,7 +43,7 @@ class CFWL_ScrollBarTP : public CFWL_WidgetTP {
                FX_BOOL bVert,
                FWLTHEME_STATE eState,
                CFX_Matrix* pMatrix = NULL);
-  void SetThemeData(FX_DWORD dwID);
+  void SetThemeData(uint32_t dwID);
   struct SBThemeData {
     FX_ARGB clrPawColorLight[4];
     FX_ARGB clrPawColorDark[4];

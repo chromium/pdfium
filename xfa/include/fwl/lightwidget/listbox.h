@@ -43,7 +43,7 @@ class CFWL_ListBox : public CFWL_Widget {
   FWL_ERR SetItemData(FWL_HLISTITEM hItem, void* pData);
   void* GetItemData(FWL_HLISTITEM hItem);
   FWL_HLISTITEM GetItemAtPoint(FX_FLOAT fx, FX_FLOAT fy);
-  FX_DWORD GetItemStates(FWL_HLISTITEM hItem);
+  uint32_t GetItemStates(FWL_HLISTITEM hItem);
   CFWL_ListBox();
   virtual ~CFWL_ListBox();
 
@@ -64,7 +64,7 @@ class CFWL_ListBox : public CFWL_Widget {
     FX_BOOL SetItemIndex(IFWL_Widget* pWidget,
                          FWL_HLISTITEM hItem,
                          int32_t nIndex) override;
-    FX_DWORD GetItemStyles(IFWL_Widget* pWidget, FWL_HLISTITEM hItem) override;
+    uint32_t GetItemStyles(IFWL_Widget* pWidget, FWL_HLISTITEM hItem) override;
     FWL_ERR GetItemText(IFWL_Widget* pWidget,
                         FWL_HLISTITEM hItem,
                         CFX_WideString& wsText) override;
@@ -74,7 +74,7 @@ class CFWL_ListBox : public CFWL_Widget {
     void* GetItemData(IFWL_Widget* pWidget, FWL_HLISTITEM hItem) override;
     FWL_ERR SetItemStyles(IFWL_Widget* pWidget,
                           FWL_HLISTITEM hItem,
-                          FX_DWORD dwStyle) override;
+                          uint32_t dwStyle) override;
     FWL_ERR SetItemText(IFWL_Widget* pWidget,
                         FWL_HLISTITEM hItem,
                         const FX_WCHAR* pszText) override;
@@ -90,11 +90,11 @@ class CFWL_ListBox : public CFWL_Widget {
     FWL_ERR SetItemCheckRect(IFWL_Widget* pWidget,
                              FWL_HLISTITEM hItem,
                              const CFX_RectF& rtCheck) override;
-    FX_DWORD GetItemCheckState(IFWL_Widget* pWidget,
+    uint32_t GetItemCheckState(IFWL_Widget* pWidget,
                                FWL_HLISTITEM hItem) override;
     FWL_ERR SetItemCheckState(IFWL_Widget* pWidget,
                               FWL_HLISTITEM hItem,
-                              FX_DWORD dwCheckState) override;
+                              uint32_t dwCheckState) override;
 
     std::vector<std::unique_ptr<CFWL_ListItem>> m_ItemArray;
     CFX_WideString m_wsData;
@@ -116,11 +116,11 @@ class CFWL_ListItem {
     m_rtCheckBox.Reset();
   }
   CFX_RectF m_rtItem;
-  FX_DWORD m_dwStates;
+  uint32_t m_dwStates;
   CFX_WideString m_wsText;
   CFX_DIBitmap* m_pDIB;
   void* m_pData;
-  FX_DWORD m_dwCheckState;
+  uint32_t m_dwCheckState;
   CFX_RectF m_rtCheckBox;
 };
 

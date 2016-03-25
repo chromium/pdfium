@@ -22,38 +22,38 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   virtual ~CXFA_FFField();
 
   virtual FX_BOOL GetBBox(CFX_RectF& rtBox,
-                          FX_DWORD dwStatus,
+                          uint32_t dwStatus,
                           FX_BOOL bDrawFocus = FALSE);
   virtual void RenderWidget(CFX_Graphics* pGS,
                             CFX_Matrix* pMatrix = NULL,
-                            FX_DWORD dwStatus = 0,
+                            uint32_t dwStatus = 0,
                             int32_t iRotate = 0);
   virtual FX_BOOL IsLoaded();
   virtual FX_BOOL LoadWidget();
   virtual void UnloadWidget();
   virtual FX_BOOL PerformLayout();
   virtual void UpdateFWL();
-  FX_DWORD UpdateUIProperty();
+  uint32_t UpdateUIProperty();
   virtual FX_BOOL OnMouseEnter();
   virtual FX_BOOL OnMouseExit();
-  virtual FX_BOOL OnLButtonDown(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual FX_BOOL OnLButtonUp(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual FX_BOOL OnLButtonDblClk(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual FX_BOOL OnMouseMove(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual FX_BOOL OnMouseWheel(FX_DWORD dwFlags,
+  virtual FX_BOOL OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
+  virtual FX_BOOL OnLButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
+  virtual FX_BOOL OnLButtonDblClk(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
+  virtual FX_BOOL OnMouseMove(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
+  virtual FX_BOOL OnMouseWheel(uint32_t dwFlags,
                                int16_t zDelta,
                                FX_FLOAT fx,
                                FX_FLOAT fy);
-  virtual FX_BOOL OnRButtonDown(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual FX_BOOL OnRButtonUp(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
-  virtual FX_BOOL OnRButtonDblClk(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy);
+  virtual FX_BOOL OnRButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
+  virtual FX_BOOL OnRButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
+  virtual FX_BOOL OnRButtonDblClk(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy);
 
   virtual FX_BOOL OnSetFocus(CXFA_FFWidget* pOldWidget);
   virtual FX_BOOL OnKillFocus(CXFA_FFWidget* pNewWidget);
-  virtual FX_BOOL OnKeyDown(FX_DWORD dwKeyCode, FX_DWORD dwFlags);
-  virtual FX_BOOL OnKeyUp(FX_DWORD dwKeyCode, FX_DWORD dwFlags);
-  virtual FX_BOOL OnChar(FX_DWORD dwChar, FX_DWORD dwFlags);
-  virtual FX_DWORD OnHitTest(FX_FLOAT fx, FX_FLOAT fy);
+  virtual FX_BOOL OnKeyDown(uint32_t dwKeyCode, uint32_t dwFlags);
+  virtual FX_BOOL OnKeyUp(uint32_t dwKeyCode, uint32_t dwFlags);
+  virtual FX_BOOL OnChar(uint32_t dwChar, uint32_t dwFlags);
+  virtual uint32_t OnHitTest(FX_FLOAT fx, FX_FLOAT fy);
   virtual FX_BOOL OnSetCursor(FX_FLOAT fx, FX_FLOAT fy);
 
  protected:
@@ -72,7 +72,7 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   virtual FX_BOOL IsDataChanged();
   void DrawHighlight(CFX_Graphics* pGS,
                      CFX_Matrix* pMatrix,
-                     FX_DWORD dwStatus,
+                     uint32_t dwStatus,
                      FX_BOOL bEllipse = FALSE);
   void DrawFocus(CFX_Graphics* pGS, CFX_Matrix* pMatrix);
   void TranslateFWLMessage(CFWL_Message* pMessage);

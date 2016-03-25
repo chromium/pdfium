@@ -19,9 +19,9 @@ class CXFA_FFTextEdit : public CXFA_FFField {
   // CXFA_FFField:
   FX_BOOL LoadWidget() override;
   void UpdateWidgetProperty() override;
-  FX_BOOL OnLButtonDown(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
-  FX_BOOL OnRButtonDown(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
-  FX_BOOL OnRButtonUp(FX_DWORD dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  FX_BOOL OnLButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  FX_BOOL OnRButtonDown(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
+  FX_BOOL OnRButtonUp(uint32_t dwFlags, FX_FLOAT fx, FX_FLOAT fy) override;
   FX_BOOL OnSetFocus(CXFA_FFWidget* pOldWidget) override;
   FX_BOOL OnKillFocus(CXFA_FFWidget* pNewWidget) override;
   FX_BOOL CanUndo() override;
@@ -58,7 +58,7 @@ class CXFA_FFTextEdit : public CXFA_FFField {
                           std::vector<CFX_ByteString>& sSuggest);
 
  protected:
-  FX_DWORD GetAlignment();
+  uint32_t GetAlignment();
   FX_BOOL CommitData() override;
   FX_BOOL UpdateFWLData() override;
   FX_BOOL IsDataChanged() override;
@@ -98,7 +98,7 @@ class CXFA_FFDateTimeEdit : public CXFA_FFTextEdit {
   virtual ~CXFA_FFDateTimeEdit();
 
   virtual FX_BOOL GetBBox(CFX_RectF& rtBox,
-                          FX_DWORD dwStatus,
+                          uint32_t dwStatus,
                           FX_BOOL bDrawFocus = FALSE);
   virtual FX_BOOL LoadWidget();
   virtual void UpdateWidgetProperty();
@@ -120,7 +120,7 @@ class CXFA_FFDateTimeEdit : public CXFA_FFTextEdit {
   virtual FX_BOOL DeSelect();
 
  protected:
-  FX_DWORD GetAlignment();
+  uint32_t GetAlignment();
 
   virtual FX_BOOL PtInActiveRect(FX_FLOAT fx, FX_FLOAT fy);
   virtual FX_BOOL CommitData();

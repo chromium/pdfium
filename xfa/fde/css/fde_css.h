@@ -394,7 +394,7 @@ class IFDE_CSSSelector {
  public:
   virtual ~IFDE_CSSSelector() {}
   virtual FDE_CSSSELECTORTYPE GetType() const = 0;
-  virtual FX_DWORD GetNameHash() const = 0;
+  virtual uint32_t GetNameHash() const = 0;
   virtual IFDE_CSSSelector* GetNextSelector() const = 0;
 };
 #define FDE_CSSMEDIATYPE_Braille 0x01
@@ -428,7 +428,7 @@ class IFDE_CSSStyleRule : public IFDE_CSSRule {
 class IFDE_CSSMediaRule : public IFDE_CSSRule {
  public:
   virtual FDE_CSSRULETYPE GetType() const { return FDE_CSSRULETYPE_Media; }
-  virtual FX_DWORD GetMediaList() const = 0;
+  virtual uint32_t GetMediaList() const = 0;
   virtual int32_t CountRules() const = 0;
   virtual IFDE_CSSRule* GetRule(int32_t index) = 0;
 };
@@ -444,15 +444,15 @@ class IFDE_CSSStyleSheet : public IFX_Unknown {
       const CFX_WideString& szUrl,
       IFX_Stream* pStream,
       uint16_t wCodePage,
-      FX_DWORD dwMediaList = FDE_CSSMEDIATYPE_ALL);
+      uint32_t dwMediaList = FDE_CSSMEDIATYPE_ALL);
   static IFDE_CSSStyleSheet* LoadFromBuffer(
       const CFX_WideString& szUrl,
       const FX_WCHAR* pBuffer,
       int32_t iBufSize,
       uint16_t wCodePage,
-      FX_DWORD dwMediaList = FDE_CSSMEDIATYPE_ALL);
+      uint32_t dwMediaList = FDE_CSSMEDIATYPE_ALL);
   virtual FX_BOOL GetUrl(CFX_WideString& szUrl) = 0;
-  virtual FX_DWORD GetMediaList() const = 0;
+  virtual uint32_t GetMediaList() const = 0;
   virtual uint16_t GetCodePage() const = 0;
 
   virtual int32_t CountRules() const = 0;
@@ -936,7 +936,7 @@ class IFDE_CSSParagraphStyle {
   virtual FDE_CSSVERTICALALIGN GetVerticalAlign() const = 0;
   virtual FX_FLOAT GetNumberVerticalAlign() const = 0;
   virtual FDE_CSSTEXTTRANSFORM GetTextTransform() const = 0;
-  virtual FX_DWORD GetTextDecoration() const = 0;
+  virtual uint32_t GetTextDecoration() const = 0;
   virtual const FDE_CSSLENGTH& GetLetterSpacing() const = 0;
   virtual const FDE_CSSLENGTH& GetWordSpacing() const = 0;
   virtual FDE_CSSWRITINGMODE GetWritingMode() const = 0;
@@ -961,7 +961,7 @@ class IFDE_CSSParagraphStyle {
   virtual void SetVerticalAlign(FDE_CSSVERTICALALIGN eVerticalAlign) = 0;
   virtual void SetNumberVerticalAlign(FX_FLOAT fAlign) = 0;
   virtual void SetTextTransform(FDE_CSSTEXTTRANSFORM eTextTransform) = 0;
-  virtual void SetTextDecoration(FX_DWORD dwTextDecoration) = 0;
+  virtual void SetTextDecoration(uint32_t dwTextDecoration) = 0;
   virtual void SetLetterSpacing(const FDE_CSSLENGTH& letterSpacing) = 0;
   virtual void SetWordSpacing(const FDE_CSSLENGTH& wordSpacing) = 0;
   virtual void SetWritingMode(FDE_CSSWRITINGMODE eWritingMode) = 0;
@@ -1065,7 +1065,7 @@ class IFDE_CSSStyleSelector {
                                  const CFDE_CSSStyleSheetArray* pArray) = 0;
   virtual void SetStylePriority(FDE_CSSSTYLESHEETGROUP eType,
                                 FDE_CSSSTYLESHEETPRIORITY ePriority) = 0;
-  virtual void UpdateStyleIndex(FX_DWORD dwMediaList) = 0;
+  virtual void UpdateStyleIndex(uint32_t dwMediaList) = 0;
   virtual IFDE_CSSAccelerator* InitAccelerator() = 0;
   virtual IFDE_CSSComputedStyle* CreateComputedStyle(
       IFDE_CSSComputedStyle* pParentStyle) = 0;

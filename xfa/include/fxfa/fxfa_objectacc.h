@@ -333,7 +333,7 @@ class CXFA_Stroke : public CXFA_Data {
   int32_t GetJoinType() const;
   FX_BOOL IsInverted() const;
   FX_FLOAT GetRadius() const;
-  FX_BOOL SameStyles(CXFA_Stroke stroke, FX_DWORD dwFlags = 0) const;
+  FX_BOOL SameStyles(CXFA_Stroke stroke, uint32_t dwFlags = 0) const;
 };
 
 class CXFA_Corner : public CXFA_Stroke {
@@ -434,7 +434,7 @@ class CXFA_WidgetData : public CXFA_Data {
   CXFA_Validate GetValidate(FX_BOOL bModified = FALSE);
   CXFA_Bind GetBind(FX_BOOL bModified = FALSE);
   CXFA_Assist GetAssist(FX_BOOL bModified = FALSE);
-  FX_DWORD GetRelevantStatus();
+  uint32_t GetRelevantStatus();
   FX_BOOL GetWidth(FX_FLOAT& fWidth);
   FX_BOOL GetHeight(FX_FLOAT& fHeight);
   FX_BOOL GetMinWidth(FX_FLOAT& fMinWidth);

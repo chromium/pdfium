@@ -31,12 +31,12 @@ class IFWL_Widget : public IFWL_Target {
   IFWL_Widget* GetOwner();
   FWL_ERR SetOwner(IFWL_Widget* pOwner);
   IFWL_Widget* GetOuter();
-  FX_DWORD GetStyles();
-  FWL_ERR ModifyStyles(FX_DWORD dwStylesAdded, FX_DWORD dwStylesRemoved);
-  FX_DWORD GetStylesEx();
-  FWL_ERR ModifyStylesEx(FX_DWORD dwStylesExAdded, FX_DWORD dwStylesExRemoved);
-  FX_DWORD GetStates();
-  FWL_ERR SetStates(FX_DWORD dwStates, FX_BOOL bSet = TRUE);
+  uint32_t GetStyles();
+  FWL_ERR ModifyStyles(uint32_t dwStylesAdded, uint32_t dwStylesRemoved);
+  uint32_t GetStylesEx();
+  FWL_ERR ModifyStylesEx(uint32_t dwStylesExAdded, uint32_t dwStylesExRemoved);
+  uint32_t GetStates();
+  FWL_ERR SetStates(uint32_t dwStates, FX_BOOL bSet = TRUE);
   FWL_ERR SetPrivateData(void* module_id,
                          void* pData,
                          PD_CALLBACK_FREEDATA callback);
@@ -44,7 +44,7 @@ class IFWL_Widget : public IFWL_Target {
   FWL_ERR Update();
   FWL_ERR LockUpdate();
   FWL_ERR UnlockUpdate();
-  FX_DWORD HitTest(FX_FLOAT fx, FX_FLOAT fy);
+  uint32_t HitTest(FX_FLOAT fx, FX_FLOAT fy);
   FWL_ERR TransformTo(IFWL_Widget* pWidget, FX_FLOAT& fx, FX_FLOAT& fy);
   FWL_ERR TransformTo(IFWL_Widget* pWidget, CFX_RectF& rt);
   FWL_ERR GetMatrix(CFX_Matrix& matrix, FX_BOOL bGlobal = FALSE);
@@ -58,7 +58,7 @@ class IFWL_Widget : public IFWL_Target {
   CFX_SizeF GetOffsetFromParent(IFWL_Widget* pParent);
 };
 
-typedef CFX_MapPtrTemplate<FX_DWORD, FX_DWORD> CFX_MapAccelerators;
+typedef CFX_MapPtrTemplate<uint32_t, uint32_t> CFX_MapAccelerators;
 
 FWL_ERR FWL_Accelerator_SetApp(CFX_MapAccelerators* pMapAccel);
 FWL_ERR FWL_Accelerator_SetThread(CFX_MapAccelerators* pMapAccel);

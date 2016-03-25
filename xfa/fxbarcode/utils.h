@@ -11,8 +11,8 @@
 
 typedef CFX_MapPtrTemplate<void*, int32_t> CFX_PtrToInt32;
 FX_BOOL BC_FX_ByteString_Replace(CFX_ByteString& dst,
-                                 FX_DWORD first,
-                                 FX_DWORD last,
+                                 uint32_t first,
+                                 uint32_t last,
                                  int32_t count,
                                  FX_CHAR c);
 void BC_FX_ByteString_Append(CFX_ByteString& dst, int32_t count, FX_CHAR c);

@@ -113,7 +113,7 @@ class IFDE_VisualSetIterator {
   virtual ~IFDE_VisualSetIterator() {}
   virtual void Release() = 0;
   virtual FX_BOOL AttachCanvas(IFDE_CanvasSet* pCanvas) = 0;
-  virtual FX_BOOL FilterObjects(FX_DWORD dwObjects = 0xFFFFFFFF) = 0;
+  virtual FX_BOOL FilterObjects(uint32_t dwObjects = 0xFFFFFFFF) = 0;
   virtual void Reset() = 0;
   virtual FDE_HVISUALOBJ GetNext(IFDE_VisualSet*& pVisualSet,
                                  FDE_HVISUALOBJ* phCanvasObj = NULL,

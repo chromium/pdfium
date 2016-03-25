@@ -21,12 +21,12 @@ class CFWL_SpinButtonImp : public CFWL_WidgetImp, public IFWL_Timer {
                      IFWL_Widget* pOuter);
   ~CFWL_SpinButtonImp();
   virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
-  virtual FX_DWORD GetClassID() const;
+  virtual uint32_t GetClassID() const;
   virtual FWL_ERR Initialize();
   virtual FWL_ERR Finalize();
   virtual FWL_ERR GetWidgetRect(CFX_RectF& rect, FX_BOOL bAutoSize = FALSE);
   virtual FWL_ERR Update();
-  virtual FX_DWORD HitTest(FX_FLOAT fx, FX_FLOAT fy);
+  virtual uint32_t HitTest(FX_FLOAT fx, FX_FLOAT fy);
   virtual FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
                              const CFX_Matrix* pMatrix = NULL);
   virtual int32_t Run(FWL_HTIMER hTimer);
@@ -43,8 +43,8 @@ class CFWL_SpinButtonImp : public CFWL_WidgetImp, public IFWL_Timer {
   CFX_RectF m_rtClient;
   CFX_RectF m_rtUpButton;
   CFX_RectF m_rtDnButton;
-  FX_DWORD m_dwUpState;
-  FX_DWORD m_dwDnState;
+  uint32_t m_dwUpState;
+  uint32_t m_dwDnState;
   int32_t m_iButtonIndex;
   FX_BOOL m_bLButtonDwn;
   FWL_HTIMER m_hTimer;

@@ -80,7 +80,7 @@ class IFWL_ListBoxDP : public IFWL_DataProvider {
   virtual FX_BOOL SetItemIndex(IFWL_Widget* pWidget,
                                FWL_HLISTITEM hItem,
                                int32_t nIndex) = 0;
-  virtual FX_DWORD GetItemStyles(IFWL_Widget* pWidget, FWL_HLISTITEM hItem) = 0;
+  virtual uint32_t GetItemStyles(IFWL_Widget* pWidget, FWL_HLISTITEM hItem) = 0;
   virtual FWL_ERR GetItemText(IFWL_Widget* pWidget,
                               FWL_HLISTITEM hItem,
                               CFX_WideString& wsText) = 0;
@@ -90,7 +90,7 @@ class IFWL_ListBoxDP : public IFWL_DataProvider {
   virtual void* GetItemData(IFWL_Widget* pWidget, FWL_HLISTITEM hItem) = 0;
   virtual FWL_ERR SetItemStyles(IFWL_Widget* pWidget,
                                 FWL_HLISTITEM hItem,
-                                FX_DWORD dwStyle) = 0;
+                                uint32_t dwStyle) = 0;
   virtual FWL_ERR SetItemText(IFWL_Widget* pWidget,
                               FWL_HLISTITEM hItem,
                               const FX_WCHAR* pszText) = 0;
@@ -106,11 +106,11 @@ class IFWL_ListBoxDP : public IFWL_DataProvider {
   virtual FWL_ERR SetItemCheckRect(IFWL_Widget* pWidget,
                                    FWL_HLISTITEM hItem,
                                    const CFX_RectF& rtCheck) = 0;
-  virtual FX_DWORD GetItemCheckState(IFWL_Widget* pWidget,
+  virtual uint32_t GetItemCheckState(IFWL_Widget* pWidget,
                                      FWL_HLISTITEM hItem) = 0;
   virtual FWL_ERR SetItemCheckState(IFWL_Widget* pWidget,
                                     FWL_HLISTITEM hItem,
-                                    FX_DWORD dwCheckState) = 0;
+                                    uint32_t dwCheckState) = 0;
 };
 
 class IFWL_ListBoxCompare {

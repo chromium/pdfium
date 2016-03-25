@@ -45,7 +45,7 @@ class CFWL_Edit : public CFWL_Widget {
   FX_BOOL Undo(const CFX_ByteStringC& bsRecord);
   FWL_ERR SetTabWidth(FX_FLOAT fTabWidth, FX_BOOL bEquidistant);
   FWL_ERR SetNumberRange(int32_t iMin, int32_t iMax);
-  FWL_ERR SetBackColor(FX_DWORD dwColor);
+  FWL_ERR SetBackColor(uint32_t dwColor);
   FWL_ERR SetFont(const CFX_WideString& wsFont, FX_FLOAT fSize);
   FX_BOOL CanUndo();
   FX_BOOL CanRedo();

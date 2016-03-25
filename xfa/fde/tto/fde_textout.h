@@ -44,7 +44,7 @@ class IFDE_TextOut {
   virtual void SetFont(IFX_Font* pFont) = 0;
   virtual void SetFontSize(FX_FLOAT fFontSize) = 0;
   virtual void SetTextColor(FX_ARGB color) = 0;
-  virtual void SetStyles(FX_DWORD dwStyles) = 0;
+  virtual void SetStyles(uint32_t dwStyles) = 0;
   virtual void SetTabWidth(FX_FLOAT fTabWidth) = 0;
   virtual void SetEllipsisString(const CFX_WideString& wsEllipsis) = 0;
   virtual void SetParagraphBreakChar(FX_WCHAR wch) = 0;

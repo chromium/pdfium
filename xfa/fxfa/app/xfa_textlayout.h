@@ -74,12 +74,12 @@ class CXFA_TextParseContext : public CFX_Target {
   const IFDE_CSSDeclaration** GetDecls() {
     return (const IFDE_CSSDeclaration**)m_ppMatchedDecls;
   }
-  FX_DWORD CountDecls() const { return m_dwMatchedDecls; }
+  uint32_t CountDecls() const { return m_dwMatchedDecls; }
   IFDE_CSSComputedStyle* m_pParentStyle;
 
  protected:
   IFDE_CSSDeclaration** m_ppMatchedDecls;
-  FX_DWORD m_dwMatchedDecls;
+  uint32_t m_dwMatchedDecls;
   FDE_CSSDISPLAY m_eDisplay;
 };
 
@@ -169,7 +169,7 @@ class CXFA_LoaderContext {
   CXFA_Node* m_pNode;
   IFDE_CSSComputedStyle* m_pParentStyle;
   CFX_ArrayTemplate<FX_FLOAT> m_lineHeights;
-  FX_DWORD m_dwFlags;
+  uint32_t m_dwFlags;
   CFX_FloatArray m_BlocksHeight;
 };
 
@@ -180,21 +180,21 @@ class CXFA_LinkUserData : public IFX_Unknown, public CFX_Target {
     m_pszURLContent = pszText;
   }
   ~CXFA_LinkUserData() {}
-  virtual FX_DWORD Release() {
-    FX_DWORD dwRefCount = --m_dwRefCount;
+  virtual uint32_t Release() {
+    uint32_t dwRefCount = --m_dwRefCount;
     if (dwRefCount <= 0) {
       FXTARGET_DeleteWith(CXFA_LinkUserData, m_pAllocator, this);
     }
     return dwRefCount;
   }
-  virtual FX_DWORD AddRef() { return ++m_dwRefCount; }
+  virtual uint32_t AddRef() { return ++m_dwRefCount; }
 
  public:
   const FX_WCHAR* GetLinkURL() { return m_pszURLContent; }
 
  protected:
   IFX_MEMAllocator* m_pAllocator;
-  FX_DWORD m_dwRefCount;
+  uint32_t m_dwRefCount;
   CFX_WideString m_pszURLContent;
 };
 
@@ -226,21 +226,21 @@ class CXFA_TextUserData : public IFX_Unknown, public CFX_Target {
     if (m_pLinkData)
       m_pLinkData->Release();
   }
-  virtual FX_DWORD Release() {
-    FX_DWORD dwRefCount = --m_dwRefCount;
+  virtual uint32_t Release() {
+    uint32_t dwRefCount = --m_dwRefCount;
     if (dwRefCount == 0) {
       FXTARGET_DeleteWith(CXFA_TextUserData, m_pAllocator, this);
     }
     return dwRefCount;
   }
-  virtual FX_DWORD AddRef() { return ++m_dwRefCount; }
+  virtual uint32_t AddRef() { return ++m_dwRefCount; }
 
   IFDE_CSSComputedStyle* m_pStyle;
   CXFA_LinkUserData* m_pLinkData;
 
  protected:
   IFX_MEMAllocator* m_pAllocator;
-  FX_DWORD m_dwRefCount;
+  uint32_t m_dwRefCount;
 };
 
 class XFA_TextPiece : public CFX_Target {
@@ -277,7 +277,7 @@ class CXFA_PieceLine : public CFX_Target {
 typedef CFX_ArrayTemplate<CXFA_PieceLine*> CXFA_PieceLineArray;
 
 struct XFA_TABSTOPS {
-  FX_DWORD dwAlign;
+  uint32_t dwAlign;
   FX_FLOAT fTabstops;
 };
 
@@ -289,7 +289,7 @@ class CXFA_TextTabstopsContext {
         m_bTabstops(FALSE),
         m_fTabWidth(0),
         m_fLeft(0) {}
-  void Append(FX_DWORD dwAlign, FX_FLOAT fTabstops) {
+  void Append(uint32_t dwAlign, FX_FLOAT fTabstops) {
     int32_t i = 0;
     for (i = 0; i < m_iTabCount; i++) {
       XFA_TABSTOPS* pTabstop = m_tabstops.GetDataPtr(i);
@@ -380,11 +380,11 @@ class CXFA_TextLayout {
                      FX_FLOAT& fLinePos,
                      FX_FLOAT fSpaceAbove,
                      FX_BOOL bSavePieces);
-  void AppendTextLine(FX_DWORD dwStatus,
+  void AppendTextLine(uint32_t dwStatus,
                       FX_FLOAT& fLinePos,
                       FX_BOOL bSavePieces,
                       FX_BOOL bEndBreak = FALSE);
-  void EndBreak(FX_DWORD dwStatus, FX_FLOAT& fLinePos, FX_BOOL bDefault);
+  void EndBreak(uint32_t dwStatus, FX_FLOAT& fLinePos, FX_BOOL bDefault);
   FX_BOOL IsEnd(FX_BOOL bSavePieces);
   void ProcessText(CFX_WideString& wsText);
   void UpdateAlign(FX_FLOAT fHeight, FX_FLOAT fBottom);

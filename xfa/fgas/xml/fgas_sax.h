@@ -32,7 +32,7 @@ class IFX_SAXReaderHandler {
   virtual ~IFX_SAXReaderHandler() {}
   virtual void* OnTagEnter(const CFX_ByteStringC& bsTagName,
                            FX_SAXNODE eType,
-                           FX_DWORD dwStartPos) = 0;
+                           uint32_t dwStartPos) = 0;
   virtual void OnTagAttribute(void* pTag,
                               const CFX_ByteStringC& bsAttri,
                               const CFX_ByteStringC& bsValue) = 0;
@@ -40,15 +40,15 @@ class IFX_SAXReaderHandler {
   virtual void OnTagData(void* pTag,
                          FX_SAXNODE eType,
                          const CFX_ByteStringC& bsData,
-                         FX_DWORD dwStartPos) = 0;
-  virtual void OnTagClose(void* pTag, FX_DWORD dwEndPos) = 0;
+                         uint32_t dwStartPos) = 0;
+  virtual void OnTagClose(void* pTag, uint32_t dwEndPos) = 0;
   virtual void OnTagEnd(void* pTag,
                         const CFX_ByteStringC& bsTagName,
-                        FX_DWORD dwEndPos) = 0;
+                        uint32_t dwEndPos) = 0;
   virtual void OnTargetData(void* pTag,
                             FX_SAXNODE eType,
                             const CFX_ByteStringC& bsData,
-                            FX_DWORD dwStartPos) = 0;
+                            uint32_t dwStartPos) = 0;
 };
 
 class IFX_SAXReader {
@@ -56,9 +56,9 @@ class IFX_SAXReader {
   virtual ~IFX_SAXReader() {}
   virtual void Release() = 0;
   virtual int32_t StartParse(IFX_FileRead* pFile,
-                             FX_DWORD dwStart = 0,
-                             FX_DWORD dwLen = -1,
-                             FX_DWORD dwParseMode = 0) = 0;
+                             uint32_t dwStart = 0,
+                             uint32_t dwLen = -1,
+                             uint32_t dwParseMode = 0) = 0;
   virtual int32_t ContinueParse(IFX_Pause* pPause = NULL) = 0;
   virtual void SkipCurrentNode() = 0;
   virtual void SetHandler(IFX_SAXReaderHandler* pHandler) = 0;

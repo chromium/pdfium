@@ -42,7 +42,7 @@ class CFWL_NoteLoop : public IFWL_NoteLoop {
   FWL_ERR SetMainForm(CFWL_WidgetImp* pForm);
 
  protected:
-  void GenerateCommondEvent(FX_DWORD dwCommand);
+  void GenerateCommondEvent(uint32_t dwCommand);
 
   CFWL_WidgetImp* m_pForm;
   FX_BOOL m_bContinueModal;
@@ -57,7 +57,7 @@ class CFWL_NoteDriver : public IFWL_NoteDriver {
   FX_BOOL SendNote(CFWL_Note* pNote) override;
   FWL_ERR RegisterEventTarget(IFWL_Widget* pListener,
                               IFWL_Widget* pEventSource = NULL,
-                              FX_DWORD dwFilter = FWL_EVENT_ALL_MASK) override;
+                              uint32_t dwFilter = FWL_EVENT_ALL_MASK) override;
   FWL_ERR UnregisterEventTarget(IFWL_Widget* pListener) override;
   void ClearEventTargets(FX_BOOL bRemoveAll) override;
   int32_t GetQueueMaxSize() const override;
@@ -116,7 +116,7 @@ class CFWL_NoteDriver : public IFWL_NoteDriver {
   void* m_hookInfo;
 };
 
-typedef CFX_MapPtrTemplate<void*, FX_DWORD> CFWL_EventSource;
+typedef CFX_MapPtrTemplate<void*, uint32_t> CFWL_EventSource;
 
 class CFWL_EventTarget {
  public:
@@ -124,9 +124,9 @@ class CFWL_EventTarget {
       : m_pListener(pListener), m_pNoteDriver(pNoteDriver), m_bInvalid(FALSE) {}
   ~CFWL_EventTarget();
   int32_t SetEventSource(IFWL_Widget* pSource,
-                         FX_DWORD dwFilter = FWL_EVENT_ALL_MASK);
+                         uint32_t dwFilter = FWL_EVENT_ALL_MASK);
   FX_BOOL ProcessEvent(CFWL_Event* pEvent);
-  FX_BOOL IsFilterEvent(CFWL_Event* pEvent, FX_DWORD dwFilter);
+  FX_BOOL IsFilterEvent(CFWL_Event* pEvent, uint32_t dwFilter);
   FX_BOOL IsInvalid() { return m_bInvalid; }
   void FlagInvalid() { m_bInvalid = TRUE; }
 
