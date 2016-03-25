@@ -947,7 +947,7 @@ FX_BOOL Field::currentValueIndices(IJS_Context* cc,
     if (!m_bCanSet)
       return FALSE;
 
-    CFX_DWordArray array;
+    CFX_ArrayTemplate<FX_DWORD> array;
 
     if (vp.GetType() == CJS_Value::VT_number) {
       int iSelecting = 0;
@@ -1002,7 +1002,7 @@ FX_BOOL Field::currentValueIndices(IJS_Context* cc,
 void Field::SetCurrentValueIndices(CPDFSDK_Document* pDocument,
                                    const CFX_WideString& swFieldName,
                                    int nControlIndex,
-                                   const CFX_DWordArray& array) {
+                                   const CFX_ArrayTemplate<FX_DWORD>& array) {
   ASSERT(pDocument);
 
   std::vector<CPDF_FormField*> FieldArray =
@@ -3428,7 +3428,7 @@ void Field::AddDelay_Color(enum FIELD_PROP prop, const CPWL_Color& color) {
 }
 
 void Field::AddDelay_WordArray(enum FIELD_PROP prop,
-                               const CFX_DWordArray& array) {
+                               const CFX_ArrayTemplate<FX_DWORD>& array) {
   CJS_DelayData* pNewData = new CJS_DelayData;
   pNewData->sFieldName = m_FieldName;
   pNewData->nControlIndex = m_nFormControlIndex;

@@ -93,7 +93,7 @@ class CPDF_Creator {
   FX_POSITION m_Pos;
   FX_FILESIZE m_XrefStart;
   CFX_FileSizeListArray m_ObjectOffset;
-  CFX_DWordArray m_NewObjNumArray;
+  CFX_ArrayTemplate<FX_DWORD> m_NewObjNumArray;
   CPDF_Array* m_pIDArray;
   int32_t m_FileVersion;
 };

@@ -84,7 +84,7 @@ struct CJS_DelayData {
   CFX_WideString widestring;
   CFX_FloatRect rect;
   CPWL_Color color;
-  CFX_DWordArray wordarray;
+  CFX_ArrayTemplate<FX_DWORD> wordarray;
   CJS_WideStringArray widestringarray;
 };
 
@@ -344,7 +344,7 @@ class Field : public CJS_EmbedObj {
   static void SetCurrentValueIndices(CPDFSDK_Document* pDocument,
                                      const CFX_WideString& swFieldName,
                                      int nControlIndex,
-                                     const CFX_DWordArray& array);
+                                     const CFX_ArrayTemplate<FX_DWORD>& array);
   static void SetDefaultStyle(CPDFSDK_Document* pDocument,
                               const CFX_WideString& swFieldName,
                               int nControlIndex);
@@ -476,7 +476,8 @@ class Field : public CJS_EmbedObj {
   void AddDelay_WideString(enum FIELD_PROP prop, const CFX_WideString& string);
   void AddDelay_Rect(enum FIELD_PROP prop, const CFX_FloatRect& rect);
   void AddDelay_Color(enum FIELD_PROP prop, const CPWL_Color& color);
-  void AddDelay_WordArray(enum FIELD_PROP prop, const CFX_DWordArray& array);
+  void AddDelay_WordArray(enum FIELD_PROP prop,
+                          const CFX_ArrayTemplate<FX_DWORD>& array);
   void AddDelay_WideStringArray(enum FIELD_PROP prop,
                                 const CJS_WideStringArray& array);
 

@@ -346,7 +346,7 @@ class CFX_FontMapper {
   FX_BOOL m_bListLoaded;
   FXFT_Face m_MMFaces[MM_FACE_COUNT];
   CFX_ByteString m_LastFamily;
-  CFX_DWordArray m_CharsetArray;
+  CFX_ArrayTemplate<FX_DWORD> m_CharsetArray;
   std::vector<CFX_ByteString> m_FaceArray;
   IFX_SystemFontInfo* m_pFontInfo;
   FXFT_Face m_FoxitFaces[FOXIT_FACE_COUNT];

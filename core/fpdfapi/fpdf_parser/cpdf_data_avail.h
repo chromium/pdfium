@@ -179,8 +179,8 @@ class CPDF_DataAvail final : public IPDF_DataAvail {
   FX_DWORD m_bufferSize;
   CFX_ByteString m_WordBuf;
   uint8_t m_bufferData[512];
-  CFX_DWordArray m_XRefStreamList;
-  CFX_DWordArray m_PageObjList;
+  CFX_ArrayTemplate<FX_DWORD> m_XRefStreamList;
+  CFX_ArrayTemplate<FX_DWORD> m_PageObjList;
   FX_DWORD m_PagesObjNum;
   FX_BOOL m_bLinearized;
   FX_DWORD m_dwFirstPageNo;

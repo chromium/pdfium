@@ -1010,7 +1010,7 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, FX_BOOL bMainXRef) {
     return FALSE;
   }
 
-  CFX_DWordArray WidthArray;
+  CFX_ArrayTemplate<FX_DWORD> WidthArray;
   FX_SAFE_DWORD dwAccWidth = 0;
   for (FX_DWORD i = 0; i < pArray->GetCount(); i++) {
     WidthArray.Add(pArray->GetIntegerAt(i));

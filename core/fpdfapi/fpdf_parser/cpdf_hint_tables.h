@@ -51,10 +51,10 @@ class CPDF_HintTables {
   CPDF_DataAvail* m_pDataAvail;
   FX_DWORD m_nFirstPageSharedObjs;
   FX_FILESIZE m_szFirstPageObjOffset;
-  CFX_DWordArray m_dwDeltaNObjsArray;
-  CFX_DWordArray m_dwNSharedObjsArray;
-  CFX_DWordArray m_dwSharedObjNumArray;
-  CFX_DWordArray m_dwIdentifierArray;
+  CFX_ArrayTemplate<FX_DWORD> m_dwDeltaNObjsArray;
+  CFX_ArrayTemplate<FX_DWORD> m_dwNSharedObjsArray;
+  CFX_ArrayTemplate<FX_DWORD> m_dwSharedObjNumArray;
+  CFX_ArrayTemplate<FX_DWORD> m_dwIdentifierArray;
   std::vector<FX_FILESIZE> m_szPageOffsetArray;
   std::vector<FX_FILESIZE> m_szSharedObjOffsetArray;
 };

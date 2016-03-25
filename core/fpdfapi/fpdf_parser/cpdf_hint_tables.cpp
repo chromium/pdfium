@@ -126,7 +126,7 @@ FX_BOOL CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
   if (!CanReadFromBitStream(hStream, required_bits))
     return FALSE;
 
-  CFX_DWordArray dwPageLenArray;
+  CFX_ArrayTemplate<FX_DWORD> dwPageLenArray;
   for (int i = 0; i < nPages; ++i) {
     FX_SAFE_DWORD safePageLen = hStream->GetBits(dwDeltaPageLenBits);
     safePageLen += dwPageLeastLen;

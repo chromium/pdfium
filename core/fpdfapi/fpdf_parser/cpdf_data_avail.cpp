@@ -499,7 +499,7 @@ void CPDF_DataAvail::ResetFirstCheck(int iPage) {
 
 FX_BOOL CPDF_DataAvail::CheckPage(IPDF_DataAvail::DownloadHints* pHints) {
   FX_DWORD iPageObjs = m_PageObjList.GetSize();
-  CFX_DWordArray UnavailObjList;
+  CFX_ArrayTemplate<FX_DWORD> UnavailObjList;
   for (FX_DWORD i = 0; i < iPageObjs; ++i) {
     FX_DWORD dwPageObjNum = m_PageObjList.GetAt(i);
     FX_BOOL bExist = FALSE;

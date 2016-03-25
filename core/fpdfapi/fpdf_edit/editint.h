@@ -29,14 +29,14 @@ class CPDF_ObjectStream {
 
   FX_FILESIZE End(CPDF_Creator* pCreator);
 
-  CFX_DWordArray m_ObjNumArray;
+  CFX_ArrayTemplate<FX_DWORD> m_ObjNumArray;
 
   CFX_ByteTextBuf m_Buffer;
   FX_DWORD m_dwObjNum;
   int32_t m_index;
 
  protected:
-  CFX_DWordArray m_OffsetArray;
+  CFX_ArrayTemplate<FX_DWORD> m_OffsetArray;
 };
 class CPDF_XRefStream {
  public:

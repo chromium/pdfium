@@ -500,7 +500,8 @@ static void _CFString2CFXByteString(CFStringRef src, CFX_ByteString& dest) {
   dest = (FX_CHAR*)pBuffer;
   free(pBuffer);
 }
-FX_BOOL IsHasCharSet(CFArrayRef languages, const CFX_DWordArray& charSets) {
+FX_BOOL IsHasCharSet(CFArrayRef languages,
+                     const CFX_ArrayTemplate<FX_DWORD>& charSets) {
   int iCount = charSets.GetSize();
   for (int i = 0; i < CFArrayGetCount(languages); ++i) {
     CFStringRef language = (CFStringRef)CFArrayGetValueAtIndex(languages, i);
@@ -571,7 +572,7 @@ CPDF_Font* CPDF_Document::AddMacFont(CTFontRef pFont,
     CFRelease(descriptor);
     return NULL;
   }
-  CFX_DWordArray charSets;
+  CFX_ArrayTemplate<FX_DWORD> charSets;
   charSets.Add(FXFONT_CHINESEBIG5_CHARSET);
   charSets.Add(FXFONT_GB2312_CHARSET);
   charSets.Add(FXFONT_HANGEUL_CHARSET);
@@ -1075,7 +1076,7 @@ static int InsertDeletePDFPage(CPDF_Document* pDoc,
 static int InsertNewPage(CPDF_Document* pDoc,
                          int iPage,
                          CPDF_Dictionary* pPageDict,
-                         CFX_DWordArray& pageList) {
+                         CFX_ArrayTemplate<FX_DWORD>& pageList) {
   CPDF_Dictionary* pRoot = pDoc->GetRoot();
   if (!pRoot) {
     return -1;

@@ -812,7 +812,7 @@ void CPDF_CIDFont::LoadSubstFont() {
                    g_CharsetCPs[m_Charset], IsVertWriting());
 }
 void CPDF_CIDFont::LoadMetricsArray(CPDF_Array* pArray,
-                                    CFX_DWordArray& result,
+                                    CFX_ArrayTemplate<FX_DWORD>& result,
                                     int nElements) {
   int width_status = 0;
   int iCurElement = 0;

@@ -63,7 +63,7 @@ class CPDF_CIDFont : public CPDF_Font {
  protected:
   int GetGlyphIndex(FX_DWORD unicodeb, FX_BOOL* pVertGlyph);
   void LoadMetricsArray(CPDF_Array* pArray,
-                        CFX_DWordArray& result,
+                        CFX_ArrayTemplate<FX_DWORD>& result,
                         int nElements);
   void LoadSubstFont();
   FX_WCHAR GetUnicodeFromCharCode(FX_DWORD charcode) const;
@@ -78,10 +78,10 @@ class CPDF_CIDFont : public CPDF_Font {
   uint16_t m_DefaultWidth;
   uint16_t* m_pAnsiWidths;
   FX_SMALL_RECT m_CharBBox[256];
-  CFX_DWordArray m_WidthList;
+  CFX_ArrayTemplate<FX_DWORD> m_WidthList;
   short m_DefaultVY;
   short m_DefaultW1;
-  CFX_DWordArray m_VertMetrics;
+  CFX_ArrayTemplate<FX_DWORD> m_VertMetrics;
   FX_BOOL m_bAdobeCourierStd;
   CFX_CTTGSUBTable* m_pTTGSUBTable;
 };

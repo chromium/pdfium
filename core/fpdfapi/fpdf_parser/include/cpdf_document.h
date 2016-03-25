@@ -129,7 +129,7 @@ class CPDF_Document : public CFX_PrivateData, public CPDF_IndirectObjectHolder {
   FX_BOOL m_bLinearized;
   FX_DWORD m_dwFirstPageNo;
   FX_DWORD m_dwFirstPageObjNum;
-  CFX_DWordArray m_PageList;
+  CFX_ArrayTemplate<FX_DWORD> m_PageList;
   CPDF_DocPageData* m_pDocPage;
   CPDF_DocRenderData* m_pDocRender;
 };
