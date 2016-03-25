@@ -161,11 +161,7 @@ FX_BOOL CFWL_NoteDriver::SendNote(CFWL_Note* pNote) {
   }
   return TRUE;
 }
-extern void FWL_PostMessageToMainRoop(CFWL_Message* pMessage);
-FX_BOOL CFWL_NoteDriver::PostMessage(CFWL_Message* pMessage) {
-  FWL_PostMessageToMainRoop(pMessage);
-  return TRUE;
-}
+
 #define FWL_NoteDriver_EventKey 1100
 FWL_ERR CFWL_NoteDriver::RegisterEventTarget(IFWL_Widget* pListener,
                                              IFWL_Widget* pEventSource,

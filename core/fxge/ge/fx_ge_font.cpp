@@ -10,12 +10,6 @@
 
 #define EM_ADJUST(em, a) (em == 0 ? (a) : (a)*1000 / em)
 
-#ifdef PDF_ENABLE_XFA
-extern void _FPDFAPI_GetInternalFontData(int id1,
-                                         const uint8_t*& data,
-                                         FX_DWORD& size);
-#endif  // PDF_ENABLE_XFA
-
 namespace {
 
 #ifdef PDF_ENABLE_XFA

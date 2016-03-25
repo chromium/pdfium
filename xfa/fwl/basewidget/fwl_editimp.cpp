@@ -27,6 +27,8 @@
 #include "xfa/fwl/core/fwl_widgetimp.h"
 #include "xfa/fwl/core/fwl_widgetmgrimp.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
+#include "xfa/fxfa/app/xfa_ffdoc.h"
+#include "xfa/fxfa/app/xfa_ffwidget.h"
 #include "xfa/fxgraphics/cfx_path.h"
 
 // static
@@ -1619,9 +1621,30 @@ void CFWL_EditImp::InitEngine() {
   }
   m_pEdtEngine = IFDE_TxtEdtEngine::Create();
 }
-extern FX_BOOL FWL_ShowCaret(IFWL_Widget* pWidget,
-                             FX_BOOL bVisible,
-                             const CFX_RectF* pRtAnchor);
+
+FX_BOOL FWL_ShowCaret(IFWL_Widget* pWidget,
+                      FX_BOOL bVisible,
+                      const CFX_RectF* pRtAnchor) {
+  CXFA_FFWidget* pXFAWidget = (CXFA_FFWidget*)pWidget->GetPrivateData(pWidget);
+  if (!pXFAWidget) {
+    return FALSE;
+  }
+  IXFA_DocProvider* pDocProvider = pXFAWidget->GetDoc()->GetDocProvider();
+  if (!pDocProvider) {
+    return FALSE;
+  }
+  if (bVisible) {
+    CFX_Matrix mt;
+    pXFAWidget->GetRotateMatrix(mt);
+    CFX_RectF rt(*pRtAnchor);
+    mt.TransformRect(rt);
+    pDocProvider->DisplayCaret(pXFAWidget, bVisible, &rt);
+    return TRUE;
+  }
+  pDocProvider->DisplayCaret(pXFAWidget, bVisible, pRtAnchor);
+  return TRUE;
+}
+
 void CFWL_EditImp::ShowCaret(FX_BOOL bVisible, CFX_RectF* pRect) {
   if (m_pCaret) {
     m_pCaret->ShowCaret(bVisible);

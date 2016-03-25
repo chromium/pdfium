@@ -8,31 +8,6 @@
 
 #include "xfa/fxfa/app/xfa_ffdoc.h"
 #include "xfa/fxfa/app/xfa_fffield.h"
-#include "xfa/fxfa/app/xfa_ffwidget.h"
-
-void FWL_PostMessageToMainRoop(CFWL_Message* pMessage) {}
-FX_BOOL FWL_ShowCaret(IFWL_Widget* pWidget,
-                      FX_BOOL bVisible,
-                      const CFX_RectF* pRtAnchor) {
-  CXFA_FFWidget* pXFAWidget = (CXFA_FFWidget*)pWidget->GetPrivateData(pWidget);
-  if (!pXFAWidget) {
-    return FALSE;
-  }
-  IXFA_DocProvider* pDocProvider = pXFAWidget->GetDoc()->GetDocProvider();
-  if (!pDocProvider) {
-    return FALSE;
-  }
-  if (bVisible) {
-    CFX_Matrix mt;
-    pXFAWidget->GetRotateMatrix(mt);
-    CFX_RectF rt(*pRtAnchor);
-    mt.TransformRect(rt);
-    pDocProvider->DisplayCaret(pXFAWidget, bVisible, &rt);
-    return TRUE;
-  }
-  pDocProvider->DisplayCaret(pXFAWidget, bVisible, pRtAnchor);
-  return TRUE;
-}
 
 FWL_ERR CXFA_FWLAdapterWidgetMgr::RepaintWidget(IFWL_Widget* pWidget,
                                                 const CFX_RectF* pRect) {

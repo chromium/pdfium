@@ -30,7 +30,6 @@ class IFWL_NoteDriver {
   virtual ~IFWL_NoteDriver() {}
 
   virtual FX_BOOL SendNote(CFWL_Note* pNote) = 0;
-  virtual FX_BOOL PostMessage(CFWL_Message* pMessage) = 0;
   virtual FWL_ERR RegisterEventTarget(
       IFWL_Widget* pListener,
       IFWL_Widget* pEventSource = NULL,

@@ -55,7 +55,6 @@ class CFWL_NoteDriver : public IFWL_NoteDriver {
 
   // IFWL_NoteDriver:
   FX_BOOL SendNote(CFWL_Note* pNote) override;
-  FX_BOOL PostMessage(CFWL_Message* pMessage) override;
   FWL_ERR RegisterEventTarget(IFWL_Widget* pListener,
                               IFWL_Widget* pEventSource = NULL,
                               FX_DWORD dwFilter = FWL_EVENT_ALL_MASK) override;
