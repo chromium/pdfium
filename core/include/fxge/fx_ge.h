@@ -14,6 +14,7 @@ class CFX_Font;
 class CFX_FontMgr;
 class CFX_FontCache;
 class CFX_FaceCache;
+class CPDF_ShadingPattern;
 class IFX_RenderDeviceDriver;
 class CCodec_ModuleMgr;
 class SkPictureRecorder;
@@ -215,6 +216,8 @@ class CFX_GraphStateData {
 #define FXRC_BITMASK_OUTPUT 0x400
 #define FXRC_BYTEMASK_OUTPUT 0x800
 #define FXRENDER_IMAGE_LOSSY 0x1000
+#define FXRC_FILLSTROKE_PATH 0x2000
+#define FXRC_SHADING 0x4000
 #define FXFILL_ALTERNATE 1
 #define FXFILL_WINDING 2
 #define FXFILL_FULLCOVER 4
@@ -397,6 +400,15 @@ class CFX_RenderDevice {
  private:
   void InitDeviceInfo();
   void UpdateClipBox();
+  FX_BOOL DrawFillStrokePath(const CFX_PathData* pPathData,
+                             const CFX_Matrix* pObject2Device,
+                             const CFX_GraphStateData* pGraphState,
+                             FX_DWORD fill_color,
+                             FX_DWORD stroke_color,
+                             int fill_mode,
+                             int alpha_flag,
+                             void* pIccTransform,
+                             int blend_type);
 
   CFX_DIBitmap* m_pBitmap;
   int m_Width;
@@ -587,11 +599,16 @@ class IFX_RenderDeviceDriver {
     return FALSE;
   }
 
-  virtual void* GetPlatformSurface() { return NULL; }
-
-  virtual int GetDriverType() { return 0; }
-
+  virtual void* GetPlatformSurface() const { return NULL; }
+  virtual int GetDriverType() const { return 0; }
   virtual void ClearDriver() {}
+
+  virtual FX_BOOL DrawShading(CPDF_ShadingPattern* pPattern,
+                              CFX_Matrix* pMatrix,
+                              int alpha,
+                              FX_BOOL bAlphaMode) {
+    return false;
+  }
 };
 
 class IFX_PSOutput {

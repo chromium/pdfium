@@ -173,7 +173,7 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
                          FX_DWORD color,
                          int alpha_flag = 0,
                          void* pIccTransform = NULL) override;
-  void* GetPlatformSurface() override { return NULL; }
+  void* GetPlatformSurface() const override { return NULL; }
   void ClearDriver() override;
 
  protected:

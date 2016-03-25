@@ -128,6 +128,11 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                          int alpha_flag = 0,
                          void* pIccTransform = NULL) override;
 
+  FX_BOOL DrawShading(CPDF_ShadingPattern* pPattern,
+                      CFX_Matrix* pMatrix,
+                      int alpha,
+                      FX_BOOL bAlphaMode) override;
+
   virtual uint8_t* GetBuffer() const { return m_pAggDriver->GetBuffer(); }
   void PaintStroke(SkPaint* spaint,
                    const CFX_GraphStateData* pGraphState,

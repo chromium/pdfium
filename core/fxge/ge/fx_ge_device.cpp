@@ -109,6 +109,7 @@ void CFX_RenderDevice::UpdateClipBox() {
   m_ClipBox.right = m_Width;
   m_ClipBox.bottom = m_Height;
 }
+
 FX_BOOL CFX_RenderDevice::DrawPath(const CFX_PathData* pPathData,
                                    const CFX_Matrix* pObject2Device,
                                    const CFX_GraphStateData* pGraphState,
@@ -224,6 +225,31 @@ FX_BOOL CFX_RenderDevice::DrawPath(const CFX_PathData* pPathData,
   }
   if ((fill_mode & 3) && fill_alpha && stroke_alpha < 0xff &&
       (fill_mode & FX_FILL_STROKE)) {
+    if (m_RenderCaps & FXRC_FILLSTROKE_PATH) {
+      return m_pDeviceDriver->DrawPath(pPathData, pObject2Device, pGraphState,
+                                       fill_color, stroke_color, fill_mode,
+                                       alpha_flag, pIccTransform, blend_type);
+    }
+    return DrawFillStrokePath(pPathData, pObject2Device, pGraphState,
+                              fill_color, stroke_color, fill_mode, alpha_flag,
+                              pIccTransform, blend_type);
+  }
+  return m_pDeviceDriver->DrawPath(pPathData, pObject2Device, pGraphState,
+                                   fill_color, stroke_color, fill_mode,
+                                   alpha_flag, pIccTransform, blend_type);
+}
+
+// This can be removed once PDFium entirely relies on Skia
+FX_BOOL CFX_RenderDevice::DrawFillStrokePath(
+    const CFX_PathData* pPathData,
+    const CFX_Matrix* pObject2Device,
+    const CFX_GraphStateData* pGraphState,
+    FX_DWORD fill_color,
+    FX_DWORD stroke_color,
+    int fill_mode,
+    int alpha_flag,
+    void* pIccTransform,
+    int blend_type) {
     if (!(m_RenderCaps & FXRC_GET_BITS)) {
       return FALSE;
     }
@@ -272,11 +298,8 @@ FX_BOOL CFX_RenderDevice::DrawPath(const CFX_PathData* pPathData,
                      FXSYS_round(rect.Height() * fScaleY));
     return m_pDeviceDriver->SetDIBits(&bitmap, 0, &src_rect, rect.left,
                                       rect.top, FXDIB_BLEND_NORMAL);
-  }
-  return m_pDeviceDriver->DrawPath(pPathData, pObject2Device, pGraphState,
-                                   fill_color, stroke_color, fill_mode,
-                                   alpha_flag, pIccTransform, blend_type);
 }
+
 FX_BOOL CFX_RenderDevice::SetPixel(int x,
                                    int y,
                                    FX_DWORD color,

@@ -377,24 +377,68 @@ class CPDF_DocPageData {
 
 class CPDF_Function {
  public:
+  enum class Type {
+    kType0Sampled,
+    kType2ExpotentialInterpolation,
+    kType3Stitching,
+    kType4PostScript,
+  };
+
   static CPDF_Function* Load(CPDF_Object* pFuncObj);
   virtual ~CPDF_Function();
   FX_BOOL Call(FX_FLOAT* inputs,
                int ninputs,
                FX_FLOAT* results,
                int& nresults) const;
-  int CountInputs() { return m_nInputs; }
-  int CountOutputs() { return m_nOutputs; }
+  int CountInputs() const { return m_nInputs; }
+  int CountOutputs() const { return m_nOutputs; }
+  FX_FLOAT GetDomain(int i) const { return m_pDomains[i]; }
+  Type GetType() const { return m_Type; }
 
  protected:
-  CPDF_Function();
-  int m_nInputs, m_nOutputs;
-  FX_FLOAT* m_pDomains;
-  FX_FLOAT* m_pRanges;
+  CPDF_Function(Type type);
   FX_BOOL Init(CPDF_Object* pObj);
   virtual FX_BOOL v_Init(CPDF_Object* pObj) = 0;
   virtual FX_BOOL v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const = 0;
+
+  int m_nInputs;
+  int m_nOutputs;
+  FX_FLOAT* m_pDomains;
+  FX_FLOAT* m_pRanges;
+  Type m_Type;
 };
+
+class CPDF_ExpIntFunc : public CPDF_Function {
+ public:
+  CPDF_ExpIntFunc();
+  ~CPDF_ExpIntFunc() override;
+
+  // CPDF_Function
+  FX_BOOL v_Init(CPDF_Object* pObj) override;
+  FX_BOOL v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const override;
+
+  int m_nOrigOutputs;
+  FX_FLOAT m_Exponent;
+  FX_FLOAT* m_pBeginValues;
+  FX_FLOAT* m_pEndValues;
+};
+
+class CPDF_StitchFunc : public CPDF_Function {
+ public:
+  CPDF_StitchFunc();
+  ~CPDF_StitchFunc() override;
+
+  // CPDF_Function
+  FX_BOOL v_Init(CPDF_Object* pObj) override;
+  FX_BOOL v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const override;
+
+  std::vector<CPDF_Function*> m_pSubFunctions;
+  FX_FLOAT* m_pBounds;
+  FX_FLOAT* m_pEncode;
+
+  static const int kRequiredNumInputs = 1;
+};
+
 class CPDF_IccProfile {
  public:
   CPDF_IccProfile(const uint8_t* pData, FX_DWORD dwSize);

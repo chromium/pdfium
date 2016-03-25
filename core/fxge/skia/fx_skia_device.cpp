@@ -7,6 +7,10 @@
 #if defined(_SKIA_SUPPORT_)
 #include "core/include/fxcodec/fx_codec.h"
 
+#include "core/fpdfapi/fpdf_page/cpdf_shadingpattern.h"
+#include "core/fpdfapi/fpdf_page/pageint.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fxge/agg/fx_agg_driver.h"
 #include "core/fxge/skia/fx_skia_device.h"
 
@@ -18,6 +22,8 @@
 #include "third_party/skia/include/core/SkStream.h"
 #include "third_party/skia/include/core/SkTypeface.h"
 #include "third_party/skia/include/effects/SkDashPathEffect.h"
+#include "third_party/skia/include/effects/SkGradientShader.h"
+#include "third_party/skia/include/pathops/SkPathOps.h"
 
 namespace {
 
@@ -148,6 +154,53 @@ SkXfermode::Mode GetSkiaBlendMode(int blend_type) {
     default:
       return SkXfermode::kSrcOver_Mode;
   }
+}
+
+bool AddColors(const CPDF_Function* pFunc, SkTDArray<SkColor>* skColors) {
+  if (pFunc->CountInputs() != 1)
+    return false;
+  ASSERT(CPDF_Function::Type::kType2ExpotentialInterpolation ==
+         pFunc->GetType());
+  const CPDF_ExpIntFunc* expIntFunc =
+      static_cast<const CPDF_ExpIntFunc*>(pFunc);
+  if (expIntFunc->m_Exponent != 1)
+    return false;
+  if (expIntFunc->m_nOrigOutputs != 3)
+    return false;
+  skColors->push(SkColorSetARGB(
+      0xFF, SkUnitScalarClampToByte(expIntFunc->m_pBeginValues[0]),
+      SkUnitScalarClampToByte(expIntFunc->m_pBeginValues[1]),
+      SkUnitScalarClampToByte(expIntFunc->m_pBeginValues[2])));
+  skColors->push(
+      SkColorSetARGB(0xFF, SkUnitScalarClampToByte(expIntFunc->m_pEndValues[0]),
+                     SkUnitScalarClampToByte(expIntFunc->m_pEndValues[1]),
+                     SkUnitScalarClampToByte(expIntFunc->m_pEndValues[2])));
+  return true;
+}
+
+bool AddStitching(const CPDF_Function* pFunc,
+                  SkTDArray<SkColor>* skColors,
+                  SkTDArray<SkScalar>* skPos) {
+  int inputs = pFunc->CountInputs();
+  ASSERT(CPDF_Function::Type::kType3Stitching == pFunc->GetType());
+  const CPDF_StitchFunc* stitchFunc =
+      static_cast<const CPDF_StitchFunc*>(pFunc);
+  FX_FLOAT boundsStart = stitchFunc->GetDomain(0);
+
+  for (int i = 0; i < inputs; ++i) {
+    const CPDF_Function* pSubFunc = stitchFunc->m_pSubFunctions[i];
+    if (pSubFunc->GetType() !=
+        CPDF_Function::Type::kType2ExpotentialInterpolation)
+      return false;
+    if (!AddColors(pSubFunc, skColors))
+      return false;
+    FX_FLOAT boundsEnd =
+        i < inputs - 1 ? stitchFunc->m_pBounds[i] : stitchFunc->GetDomain(1);
+    skPos->push(boundsStart);
+    skPos->push(boundsEnd);
+    boundsStart = boundsEnd;
+  }
+  return true;
 }
 
 }  // namespace
@@ -303,7 +356,8 @@ int CFX_SkiaDeviceDriver::GetDeviceCaps(int caps_id) {
       return 0;
     case FXDC_RENDER_CAPS:
       return FXRC_GET_BITS | FXRC_ALPHA_PATH | FXRC_ALPHA_IMAGE |
-             FXRC_BLEND_MODE | FXRC_SOFT_CLIP | FXRC_ALPHA_OUTPUT;
+             FXRC_BLEND_MODE | FXRC_SOFT_CLIP | FXRC_ALPHA_OUTPUT |
+             FXRC_FILLSTROKE_PATH | FXRC_SHADING;
     case FXDC_DITHER_BITS:
       return m_ditherBits;
   }
@@ -385,32 +439,44 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawPath(
   SkIRect rect;
   rect.set(0, 0, GetDeviceCaps(FXDC_PIXEL_WIDTH),
            GetDeviceCaps(FXDC_PIXEL_HEIGHT));
-  SkPath skPath = BuildPath(pPathData);
-  SkPaint spaint;
-  spaint.setAntiAlias(true);
-  spaint.setXfermodeMode(GetSkiaBlendMode(blend_type));
-  m_pCanvas->save();
   SkMatrix skMatrix = ToSkMatrix(*pObject2Device);
+  SkPaint skPaint;
+  skPaint.setAntiAlias(true);
+  int stroke_alpha = FXGETFLAG_COLORTYPE(alpha_flag)
+                         ? FXGETFLAG_ALPHA_STROKE(alpha_flag)
+                         : FXARGB_A(stroke_color);
+  if (pGraphState && stroke_alpha)
+    PaintStroke(&skPaint, pGraphState, skMatrix);
+  SkPath skPath = BuildPath(pPathData);
+  m_pCanvas->save();
   m_pCanvas->concat(skMatrix);
   if ((fill_mode & 3) && fill_color) {
     skPath.setFillType((fill_mode & 3) == FXFILL_WINDING
                            ? SkPath::kWinding_FillType
                            : SkPath::kEvenOdd_FillType);
-
-    spaint.setStyle(SkPaint::kFill_Style);
-    spaint.setColor(fill_color);
-    m_pCanvas->drawPath(skPath, spaint);
+    SkPath strokePath;
+    const SkPath* fillPath = &skPath;
+    if (pGraphState && stroke_alpha) {
+      SkAlpha fillA = SkColorGetA(fill_color);
+      SkAlpha strokeA = SkColorGetA(stroke_color);
+      if (fillA && fillA < 0xFF && strokeA && strokeA < 0xFF) {
+        skPaint.getFillPath(skPath, &strokePath);
+        if (Op(skPath, strokePath, SkPathOp::kDifference_SkPathOp,
+               &strokePath)) {
+          fillPath = &strokePath;
+        }
+      }
+    }
+    skPaint.setStyle(SkPaint::kFill_Style);
+    skPaint.setColor(fill_color);
+    m_pCanvas->drawPath(*fillPath, skPaint);
   }
-  int stroke_alpha = FXGETFLAG_COLORTYPE(alpha_flag)
-                         ? FXGETFLAG_ALPHA_STROKE(alpha_flag)
-                         : FXARGB_A(stroke_color);
-
   if (pGraphState && stroke_alpha) {
-    spaint.setColor(stroke_color);
-    PaintStroke(&spaint, pGraphState, skMatrix);
     DebugShowSkiaPath(skPath);
     DebugShowCanvasMatrix(m_pCanvas);
-    m_pCanvas->drawPath(skPath, spaint);
+    skPaint.setStyle(SkPaint::kStroke_Style);
+    skPaint.setColor(stroke_color);
+    m_pCanvas->drawPath(skPath, skPaint);
   }
   m_pCanvas->restore();
   return TRUE;
@@ -430,6 +496,71 @@ FX_BOOL CFX_SkiaDeviceDriver::FillRect(const FX_RECT* pRect,
       SkRect::MakeLTRB(pRect->left, pRect->top, pRect->right, pRect->bottom),
       spaint);
   return TRUE;
+}
+
+FX_BOOL CFX_SkiaDeviceDriver::DrawShading(CPDF_ShadingPattern* pPattern,
+                                          CFX_Matrix* pMatrix,
+                                          int alpha,
+                                          FX_BOOL bAlphaMode) {
+  CPDF_Function** pFuncs = pPattern->m_pFunctions;
+  int nFuncs = pPattern->m_nFuncs;
+  if (nFuncs != 1)  // TODO(caryclark) remove this restriction
+    return false;
+  CPDF_Dictionary* pDict = pPattern->m_pShadingObj->GetDict();
+  CPDF_Array* pCoords = pDict->GetArrayBy("Coords");
+  if (!pCoords)
+    return true;
+  FX_FLOAT start_x = pCoords->GetNumberAt(0);
+  FX_FLOAT start_y = pCoords->GetNumberAt(1);
+  FX_FLOAT end_x = pCoords->GetNumberAt(2);
+  FX_FLOAT end_y = pCoords->GetNumberAt(3);
+  FX_FLOAT t_min = 0;
+  FX_FLOAT t_max = 1;
+  CPDF_Array* pArray = pDict->GetArrayBy("Domain");
+  if (pArray) {
+    t_min = pArray->GetNumberAt(0);
+    t_max = pArray->GetNumberAt(1);
+  }
+  FX_BOOL bStartExtend = FALSE, bEndExtend = FALSE;
+  pArray = pDict->GetArrayBy("Extend");
+  if (pArray) {
+    bStartExtend = pArray->GetIntegerAt(0);
+    bEndExtend = pArray->GetIntegerAt(1);
+  }
+  SkTDArray<SkColor> skColors;
+  SkTDArray<SkScalar> skPos;
+  for (int j = 0; j < nFuncs; j++) {
+    const CPDF_Function* pFunc = pFuncs[j];
+    if (!pFunc)
+      continue;
+    switch (pFunc->GetType()) {
+      case CPDF_Function::Type::kType2ExpotentialInterpolation:
+        if (!AddColors(pFunc, &skColors))
+          return false;
+        skPos.push(0);
+        skPos.push(1);
+        break;
+      case CPDF_Function::Type::kType3Stitching:
+        if (!AddStitching(pFunc, &skColors, &skPos))
+          return false;
+        break;
+      default:
+        return false;
+    }
+  }
+  SkMatrix skMatrix = ToSkMatrix(*pMatrix);
+  SkPoint pts[] = {{start_x, start_y}, {end_x, end_y}};
+  SkPaint paint;
+  paint.setAntiAlias(true);
+  paint.setShader(SkGradientShader::MakeLinear(pts, skColors.begin(),
+                                               skPos.begin(), skColors.count(),
+                                               SkShader::kClamp_TileMode));
+  paint.setAlpha(alpha);
+  m_pCanvas->save();
+  m_pCanvas->concat(skMatrix);
+  m_pCanvas->drawRect(SkRect::MakeWH(1, 1), paint);
+  m_pCanvas->restore();
+  return true;
 }
 
 FX_BOOL CFX_SkiaDeviceDriver::GetClipBox(FX_RECT* pRect) {

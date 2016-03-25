@@ -122,7 +122,7 @@ class CFX_AggDeviceDriver : public IFX_RenderDeviceDriver {
                          FX_DWORD color,
                          int alpha_flag,
                          void* pIccTransform) override;
-  int GetDriverType() override { return 1; }
+  int GetDriverType() const override { return 1; }
 
   FX_BOOL RenderRasterizer(agg::rasterizer_scanline_aa& rasterizer,
                            FX_DWORD color,

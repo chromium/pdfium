@@ -520,11 +520,12 @@ class CPDF_SampledFunc : public CPDF_Function {
   CPDF_StreamAcc* m_pSampleStream;
 };
 
-CPDF_SampledFunc::CPDF_SampledFunc() {
+CPDF_SampledFunc::CPDF_SampledFunc() : CPDF_Function(Type::kType0Sampled) {
   m_pSampleStream = NULL;
   m_pEncodeInfo = NULL;
   m_pDecodeInfo = NULL;
 }
+
 CPDF_SampledFunc::~CPDF_SampledFunc() {
   delete m_pSampleStream;
   FX_Free(m_pEncodeInfo);
@@ -665,6 +666,7 @@ FX_BOOL CPDF_SampledFunc::v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const {
 class CPDF_PSFunc : public CPDF_Function {
  public:
   // CPDF_Function
+  CPDF_PSFunc() : CPDF_Function(Type::kType4PostScript) {}
   FX_BOOL v_Init(CPDF_Object* pObj) override;
   FX_BOOL v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const override;
 
@@ -694,25 +696,14 @@ FX_BOOL CPDF_PSFunc::v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const {
   return TRUE;
 }
 
-class CPDF_ExpIntFunc : public CPDF_Function {
- public:
-  CPDF_ExpIntFunc();
-  ~CPDF_ExpIntFunc() override;
+}  // namespace
 
-  // CPDF_Function
-  FX_BOOL v_Init(CPDF_Object* pObj) override;
-  FX_BOOL v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const override;
-
-  FX_FLOAT m_Exponent;
-  FX_FLOAT* m_pBeginValues;
-  FX_FLOAT* m_pEndValues;
-  int m_nOrigOutputs;
-};
-
-CPDF_ExpIntFunc::CPDF_ExpIntFunc() {
+CPDF_ExpIntFunc::CPDF_ExpIntFunc()
+    : CPDF_Function(Type::kType2ExpotentialInterpolation) {
   m_pBeginValues = NULL;
   m_pEndValues = NULL;
 }
+
 CPDF_ExpIntFunc::~CPDF_ExpIntFunc() {
   FX_Free(m_pBeginValues);
   FX_Free(m_pEndValues);
@@ -755,26 +746,11 @@ FX_BOOL CPDF_ExpIntFunc::v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const {
   return TRUE;
 }
 
-class CPDF_StitchFunc : public CPDF_Function {
- public:
-  CPDF_StitchFunc();
-  ~CPDF_StitchFunc() override;
-
-  // CPDF_Function
-  FX_BOOL v_Init(CPDF_Object* pObj) override;
-  FX_BOOL v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const override;
-
-  std::vector<CPDF_Function*> m_pSubFunctions;
-  FX_FLOAT* m_pBounds;
-  FX_FLOAT* m_pEncode;
-
-  static const int kRequiredNumInputs = 1;
-};
-
-CPDF_StitchFunc::CPDF_StitchFunc() {
+CPDF_StitchFunc::CPDF_StitchFunc() : CPDF_Function(Type::kType3Stitching) {
   m_pBounds = NULL;
   m_pEncode = NULL;
 }
+
 CPDF_StitchFunc::~CPDF_StitchFunc() {
   for (auto& sub : m_pSubFunctions) {
     delete sub;
@@ -859,13 +835,10 @@ FX_BOOL CPDF_StitchFunc::v_Call(FX_FLOAT* inputs, FX_FLOAT* outputs) const {
   return TRUE;
 }
 
-}  // namespace
-
 CPDF_Function* CPDF_Function::Load(CPDF_Object* pFuncObj) {
   if (!pFuncObj) {
     return NULL;
   }
-  CPDF_Function* pFunc = NULL;
   int type;
   if (CPDF_Stream* pStream = pFuncObj->AsStream()) {
     type = pStream->GetDict()->GetIntegerBy("FunctionType");
@@ -874,14 +847,15 @@ CPDF_Function* CPDF_Function::Load(CPDF_Object* pFuncObj) {
   } else {
     return NULL;
   }
+  CPDF_Function* pFunc = NULL;
   if (type == 0) {
-    pFunc = new CPDF_SampledFunc;
+    pFunc = new CPDF_SampledFunc();
   } else if (type == 2) {
-    pFunc = new CPDF_ExpIntFunc;
+    pFunc = new CPDF_ExpIntFunc();
   } else if (type == 3) {
-    pFunc = new CPDF_StitchFunc;
+    pFunc = new CPDF_StitchFunc();
   } else if (type == 4) {
-    pFunc = new CPDF_PSFunc;
+    pFunc = new CPDF_PSFunc();
   } else {
     return NULL;
   }
@@ -891,10 +865,12 @@ CPDF_Function* CPDF_Function::Load(CPDF_Object* pFuncObj) {
   }
   return pFunc;
 }
-CPDF_Function::CPDF_Function() {
+
+CPDF_Function::CPDF_Function(Type type) : m_Type(type) {
   m_pDomains = NULL;
   m_pRanges = NULL;
 }
+
 CPDF_Function::~CPDF_Function() {
   FX_Free(m_pDomains);
   FX_Free(m_pRanges);

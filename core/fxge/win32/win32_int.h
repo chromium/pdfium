@@ -145,7 +145,7 @@ class CGdiDeviceDriver : public IFX_RenderDeviceDriver {
                            void* pIccTransform,
                            int blend_type) override;
   FX_BOOL GetClipBox(FX_RECT* pRect) override;
-  void* GetPlatformSurface() override { return (void*)m_hDC; }
+  void* GetPlatformSurface() const override { return (void*)m_hDC; }
 
   virtual void* GetClipRgn();
   virtual FX_BOOL SetClipRgn(void* pRgn);
@@ -352,7 +352,7 @@ class CPSPrinterDriver : public IFX_RenderDeviceDriver {
                          FX_DWORD color,
                          int alpha_flag,
                          void* pIccTransform) override;
-  void* GetPlatformSurface() override { return (void*)m_hDC; }
+  void* GetPlatformSurface() const override { return (void*)m_hDC; }
 
   HDC m_hDC;
   FX_BOOL m_bCmykOutput;
