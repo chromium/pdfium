@@ -17,7 +17,6 @@ class util : public CJS_EmbedObj {
   util(CJS_Object* pJSObject);
   ~util() override;
 
- public:
   FX_BOOL printd(IJS_Context* cc,
                  const std::vector<CJS_Value>& params,
                  CJS_Value& vRet,
@@ -39,15 +38,9 @@ class util : public CJS_EmbedObj {
                      CJS_Value& vRet,
                      CFX_WideString& sError);
 
- public:
-  static void printd(const std::wstring& cFormat,
-                     CJS_Date Date,
-                     bool bXFAPicture,
-                     std::wstring& cPurpose);
   static void printx(const std::string& cFormat,
                      const std::string& cSource,
                      std::string& cPurpose);
-  static int ParstDataType(std::wstring* sFormat);
 };
 
 class CJS_Util : public CJS_Object {

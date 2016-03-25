@@ -8,6 +8,7 @@
 
 #include <time.h>
 
+#include <algorithm>
 #include <string>
 #include <vector>
 
@@ -42,50 +43,39 @@ END_JS_STATIC_METHOD()
 
 IMPLEMENT_JS_CLASS(CJS_Util, util)
 
-util::util(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
-
-util::~util() {}
-
-struct stru_TbConvert {
-  const FX_WCHAR* lpszJSMark;
-  const FX_WCHAR* lpszCppMark;
-};
-
-const stru_TbConvert fcTable[] = {
-    {L"mmmm", L"%B"},
-    {L"mmm", L"%b"},
-    {L"mm", L"%m"},
-    // "m"
-    {L"dddd", L"%A"},
-    {L"ddd", L"%a"},
-    {L"dd", L"%d"},
-    // "d",   "%w",
-    {L"yyyy", L"%Y"},
-    {L"yy", L"%y"},
-    {L"HH", L"%H"},
-    // "H"
-    {L"hh", L"%I"},
-    // "h"
-    {L"MM", L"%M"},
-    // "M"
-    {L"ss", L"%S"},
-    // "s
-    {L"TT", L"%p"},
-// "t"
-#if defined(_WIN32)
-    {L"tt", L"%p"},
-    {L"h", L"%#I"},
-#else
-    {L"tt", L"%P"},
-    {L"h", L"%l"},
-#endif
-};
-
 #define UTIL_INT 0
 #define UTIL_DOUBLE 1
 #define UTIL_STRING 2
 
-int util::ParstDataType(std::wstring* sFormat) {
+namespace {
+
+// Map PDF-style directives to equivalent wcsftime directives. Not
+// all have direct equivalents, though.
+struct TbConvert {
+  const FX_WCHAR* lpszJSMark;
+  const FX_WCHAR* lpszCppMark;
+};
+
+// Map PDF-style directives lacking direct wcsftime directives to
+// the value with which they will be replaced.
+struct TbConvertAdditional {
+  const FX_WCHAR* lpszJSMark;
+  int iValue;
+};
+
+const TbConvert TbConvertTable[] = {
+    {L"mmmm", L"%B"}, {L"mmm", L"%b"}, {L"mm", L"%m"},   {L"dddd", L"%A"},
+    {L"ddd", L"%a"},  {L"dd", L"%d"},  {L"yyyy", L"%Y"}, {L"yy", L"%y"},
+    {L"HH", L"%H"},   {L"hh", L"%I"},  {L"MM", L"%M"},   {L"ss", L"%S"},
+    {L"TT", L"%p"},
+#if defined(_WIN32)
+    {L"tt", L"%p"},   {L"h", L"%#I"},
+#else
+    {L"tt", L"%P"},   {L"h", L"%l"},
+#endif
+};
+
+int ParseDataType(std::wstring* sFormat) {
   bool bPercent = FALSE;
   for (size_t i = 0; i < sFormat->length(); ++i) {
     wchar_t c = (*sFormat)[i];
@@ -119,6 +109,12 @@ int util::ParstDataType(std::wstring* sFormat) {
   return -1;
 }
 
+}  // namespace
+
+util::util(CJS_Object* pJSObject) : CJS_EmbedObj(pJSObject) {}
+
+util::~util() {}
+
 FX_BOOL util::printf(IJS_Context* cc,
                      const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
@@ -143,8 +139,6 @@ FX_BOOL util::printf(IJS_Context* cc,
   }
 
   std::wstring c_strResult;
-
-  // for(int iIndex = 1;iIndex < params.size();iIndex++)
   std::wstring c_strFormat;
   for (int iIndex = 0; iIndex < (int)c_strConvers.size(); iIndex++) {
     c_strFormat = c_strConvers[iIndex];
@@ -159,7 +153,7 @@ FX_BOOL util::printf(IJS_Context* cc,
       continue;
     }
 
-    switch (ParstDataType(&c_strFormat)) {
+    switch (ParseDataType(&c_strFormat)) {
       case UTIL_INT:
         strSegment.Format(c_strFormat.c_str(), params[iIndex].ToInt());
         break;
@@ -191,9 +185,7 @@ FX_BOOL util::printd(IJS_Context* cc,
     return FALSE;
 
   CJS_Runtime* pRuntime = CJS_Runtime::FromContext(cc);
-  CJS_Value p1(pRuntime);
-  p1 = params[0];
-
+  CJS_Value p1 = params[0];
   CJS_Value p2 = params[1];
   CJS_Date jsDate(pRuntime);
   if (!p2.ConvertToDate(jsDate)) {
@@ -207,10 +199,8 @@ FX_BOOL util::printd(IJS_Context* cc,
   }
 
   if (p1.GetType() == CJS_Value::VT_number) {
-    int nFormat = p1.ToInt();
     CFX_WideString swResult;
-
-    switch (nFormat) {
+    switch (p1.ToInt()) {
       case 0:
         swResult.Format(L"D:%04d%02d%02d%02d%02d%02d", jsDate.GetYear(),
                         jsDate.GetMonth() + 1, jsDate.GetDay(),
@@ -230,63 +220,52 @@ FX_BOOL util::printd(IJS_Context* cc,
                         jsDate.GetSeconds());
         break;
       default:
+        sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSVALUEERROR);
         return FALSE;
     }
 
     vRet = swResult.c_str();
     return TRUE;
   }
+
   if (p1.GetType() == CJS_Value::VT_string) {
-    std::basic_string<wchar_t> cFormat = p1.ToCFXWideString().c_str();
-
-    bool bXFAPicture = false;
-    if (iSize > 2) {
-      bXFAPicture = params[2].ToBool();
-    }
-
-    if (bXFAPicture) {
+    if (iSize > 2 && params[2].ToBool()) {
+      sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_NOTSUPPORT);
       return FALSE;  // currently, it doesn't support XFAPicture.
     }
 
-    for (size_t i = 0; i < sizeof(fcTable) / sizeof(stru_TbConvert); ++i) {
+    // Convert PDF-style format specifiers to wcsftime specifiers. Remove any
+    // pre-existing %-directives before inserting our own.
+    std::basic_string<wchar_t> cFormat = p1.ToCFXWideString().c_str();
+    cFormat.erase(std::remove(cFormat.begin(), cFormat.end(), '%'),
+                  cFormat.end());
+
+    for (size_t i = 0; i < FX_ArraySize(TbConvertTable); ++i) {
       int iStart = 0;
       int iEnd;
-      while ((iEnd = cFormat.find(fcTable[i].lpszJSMark, iStart)) != -1) {
-        cFormat.replace(iEnd, FXSYS_wcslen(fcTable[i].lpszJSMark),
-                        fcTable[i].lpszCppMark);
+      while ((iEnd = cFormat.find(TbConvertTable[i].lpszJSMark, iStart)) !=
+             -1) {
+        cFormat.replace(iEnd, FXSYS_wcslen(TbConvertTable[i].lpszJSMark),
+                        TbConvertTable[i].lpszCppMark);
         iStart = iEnd;
       }
     }
 
-    int iYear, iMonth, iDay, iHour, iMin, iSec;
-    iYear = jsDate.GetYear();
-    iMonth = jsDate.GetMonth();
-    iDay = jsDate.GetDay();
-    iHour = jsDate.GetHours();
-    iMin = jsDate.GetMinutes();
-    iSec = jsDate.GetSeconds();
+    int iYear = jsDate.GetYear();
+    int iMonth = jsDate.GetMonth();
+    int iDay = jsDate.GetDay();
+    int iHour = jsDate.GetHours();
+    int iMin = jsDate.GetMinutes();
+    int iSec = jsDate.GetSeconds();
 
-    struct tm time = {};
-    time.tm_year = iYear - 1900;
-    time.tm_mon = iMonth;
-    time.tm_mday = iDay;
-    time.tm_hour = iHour;
-    time.tm_min = iMin;
-    time.tm_sec = iSec;
-
-    struct stru_TbConvertAd {
-      const FX_WCHAR* lpszJSMark;
-      int iValue;
-    };
-
-    stru_TbConvertAd cTableAd[] = {
+    TbConvertAdditional cTableAd[] = {
         {L"m", iMonth + 1}, {L"d", iDay},
         {L"H", iHour},      {L"h", iHour > 12 ? iHour - 12 : iHour},
         {L"M", iMin},       {L"s", iSec},
     };
 
-    for (size_t i = 0; i < sizeof(cTableAd) / sizeof(stru_TbConvertAd); ++i) {
-      wchar_t tszValue[10];
+    for (size_t i = 0; i < FX_ArraySize(cTableAd); ++i) {
+      wchar_t tszValue[16];
       CFX_WideString sValue;
       sValue.Format(L"%d", cTableAd[i].iValue);
       memcpy(tszValue, (wchar_t*)sValue.GetBuffer(sValue.GetLength() + 1),
@@ -306,93 +285,25 @@ FX_BOOL util::printd(IJS_Context* cc,
       }
     }
 
-    CFX_WideString strFormat;
+    struct tm time = {};
+    time.tm_year = iYear - 1900;
+    time.tm_mon = iMonth;
+    time.tm_mday = iDay;
+    time.tm_hour = iHour;
+    time.tm_min = iMin;
+    time.tm_sec = iSec;
+
     wchar_t buf[64] = {};
-    strFormat = wcsftime(buf, 64, cFormat.c_str(), &time);
+    wcsftime(buf, 64, cFormat.c_str(), &time);
     cFormat = buf;
     vRet = cFormat.c_str();
     return TRUE;
   }
+
+  sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSTYPEERROR);
   return FALSE;
 }
 
-void util::printd(const std::wstring& cFormat2,
-                  CJS_Date jsDate,
-                  bool bXFAPicture,
-                  std::wstring& cPurpose) {
-  std::wstring cFormat = cFormat2;
-
-  if (bXFAPicture) {
-    return;  // currently, it doesn't support XFAPicture.
-  }
-
-  for (size_t i = 0; i < sizeof(fcTable) / sizeof(stru_TbConvert); ++i) {
-    int iStart = 0;
-    int iEnd;
-    while ((iEnd = cFormat.find(fcTable[i].lpszJSMark, iStart)) != -1) {
-      cFormat.replace(iEnd, FXSYS_wcslen(fcTable[i].lpszJSMark),
-                      fcTable[i].lpszCppMark);
-      iStart = iEnd;
-    }
-  }
-
-  int iYear, iMonth, iDay, iHour, iMin, iSec;
-  iYear = jsDate.GetYear();
-  iMonth = jsDate.GetMonth();
-  iDay = jsDate.GetDay();
-  iHour = jsDate.GetHours();
-  iMin = jsDate.GetMinutes();
-  iSec = jsDate.GetSeconds();
-
-  struct tm time = {};
-  time.tm_year = iYear - 1900;
-  time.tm_mon = iMonth;
-  time.tm_mday = iDay;
-  time.tm_hour = iHour;
-  time.tm_min = iMin;
-  time.tm_sec = iSec;
-  //  COleDateTime cppTm(iYear,iMonth+1,iDay,iHour,iMin,iSec);
-  // CString strFormat = cppTm.Format(cFormat.c_str());
-
-  struct stru_TbConvertAd {
-    const FX_WCHAR* lpszJSMark;
-    int iValue;
-  };
-
-  stru_TbConvertAd cTableAd[] = {
-      {L"m", iMonth + 1}, {L"d", iDay},
-      {L"H", iHour},      {L"h", iHour > 12 ? iHour - 12 : iHour},
-      {L"M", iMin},       {L"s", iSec},
-  };
-
-  // cFormat = strFormat.GetBuffer(strFormat.GetLength()+1);
-  for (size_t i = 0; i < sizeof(cTableAd) / sizeof(stru_TbConvertAd); ++i) {
-    wchar_t tszValue[10];
-    CFX_WideString sValue;
-    sValue.Format(L"%d", cTableAd[i].iValue);
-    memcpy(tszValue, (wchar_t*)sValue.GetBuffer(sValue.GetLength() + 1),
-           sValue.GetLength() * sizeof(wchar_t));
-
-    int iStart = 0;
-    int iEnd;
-    while ((iEnd = cFormat.find(cTableAd[i].lpszJSMark, iStart)) != -1) {
-      if (iEnd > 0) {
-        if (cFormat[iEnd - 1] == L'%') {
-          iStart = iEnd + 1;
-          continue;
-        }
-      }
-      cFormat.replace(iEnd, FXSYS_wcslen(cTableAd[i].lpszJSMark), tszValue);
-      iStart = iEnd;
-    }
-  }
-
-  CFX_WideString strFormat;
-  wchar_t buf[64] = {};
-  strFormat = wcsftime(buf, 64, cFormat.c_str(), &time);
-  cFormat = buf;
-  cPurpose = cFormat;
-}
 
 FX_BOOL util::printx(IJS_Context* cc,
                      const std::vector<CJS_Value>& params,

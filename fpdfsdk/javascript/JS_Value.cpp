@@ -778,15 +778,15 @@ int JS_GetDayFromTime(double dt) {
 }
 
 int JS_GetHourFromTime(double dt) {
-  return (int)_Mod(FXSYS_floor((double)(dt / (60 * 60 * 1000))), 24);
+  return (int)_Mod(floor(dt / (60 * 60 * 1000)), 24);
 }
 
 int JS_GetMinFromTime(double dt) {
-  return (int)_Mod(FXSYS_floor((double)(dt / (60 * 1000))), 60);
+  return (int)_Mod(floor(dt / (60 * 1000)), 60);
 }
 
 int JS_GetSecFromTime(double dt) {
-  return (int)_Mod(FXSYS_floor((double)(dt / 1000)), 60);
+  return (int)_Mod(floor(dt / 1000), 60);
 }
 
 double JS_DateParse(const wchar_t* str) {
@@ -820,7 +820,7 @@ double JS_DateParse(const wchar_t* str) {
         double date = v->ToNumber(context).ToLocalChecked()->Value();
         if (!_isfinite(date))
           return date;
-        return date + _getLocalTZA() + _getDaylightSavingTA(date);
+        return JS_LocalTime(date);
       }
     }
   }
@@ -869,7 +869,7 @@ bool JS_PortIsNan(double d) {
 }
 
 double JS_LocalTime(double d) {
-  return JS_GetDateTime() + _getDaylightSavingTA(d);
+  return d + _getLocalTZA() + _getDaylightSavingTA(d);
 }
 
 std::vector<CJS_Value> JS_ExpandKeywordParams(
