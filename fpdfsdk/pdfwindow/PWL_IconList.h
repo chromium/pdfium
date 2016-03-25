@@ -75,10 +75,10 @@ class CPWL_IconList_Content : public CPWL_ListCtrl {
  protected:
   // CPWL_ListCtrl
   void CreateChildWnd(const PWL_CREATEPARAM& cp) override;
-  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
-  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
-  FX_BOOL OnMouseMove(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
-  FX_BOOL OnKeyDown(uint16_t nChar, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  FX_BOOL OnMouseMove(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  FX_BOOL OnKeyDown(uint16_t nChar, uint32_t nFlag) override;
 
  private:
   CPWL_IconList_Item* GetListItem(int32_t nItemIndex) const;
@@ -112,12 +112,12 @@ class CPWL_IconList : public CPWL_Wnd {
   // CPWL_Wnd
   FX_BOOL OnMouseWheel(short zDelta,
                        const CFX_FloatPoint& point,
-                       FX_DWORD nFlag) override;
+                       uint32_t nFlag) override;
   void OnCreated() override;
   void RePosChildWnd() override;
   void CreateChildWnd(const PWL_CREATEPARAM& cp) override;
   void OnNotify(CPWL_Wnd* pWnd,
-                FX_DWORD msg,
+                uint32_t msg,
                 intptr_t wParam = 0,
                 intptr_t lParam = 0) override;
 

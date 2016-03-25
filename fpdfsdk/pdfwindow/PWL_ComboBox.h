@@ -23,10 +23,10 @@ class CPWL_CBListBox : public CPWL_ListBox {
   ~CPWL_CBListBox() override {}
 
   // CPWL_ListBox
-  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) override;
 
-  FX_BOOL OnKeyDownWithExit(uint16_t nChar, FX_BOOL& bExit, FX_DWORD nFlag);
-  FX_BOOL OnCharWithExit(uint16_t nChar, FX_BOOL& bExit, FX_DWORD nFlag);
+  FX_BOOL OnKeyDownWithExit(uint16_t nChar, FX_BOOL& bExit, uint32_t nFlag);
+  FX_BOOL OnCharWithExit(uint16_t nChar, FX_BOOL& bExit, uint32_t nFlag);
 };
 
 #define PWL_COMBOBOX_BUTTON_WIDTH 13
@@ -40,8 +40,8 @@ class CPWL_CBButton : public CPWL_Wnd {
   void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           CFX_Matrix* pUser2Device) override;
-  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
-  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) override;
 };
 
 class CPWL_ComboBox : public CPWL_Wnd {
@@ -54,10 +54,10 @@ class CPWL_ComboBox : public CPWL_Wnd {
   // CPWL_Wnd:
   CFX_ByteString GetClassName() const override;
   void OnCreate(PWL_CREATEPARAM& cp) override;
-  FX_BOOL OnKeyDown(uint16_t nChar, FX_DWORD nFlag) override;
-  FX_BOOL OnChar(uint16_t nChar, FX_DWORD nFlag) override;
+  FX_BOOL OnKeyDown(uint16_t nChar, uint32_t nFlag) override;
+  FX_BOOL OnChar(uint16_t nChar, uint32_t nFlag) override;
   void OnNotify(CPWL_Wnd* pWnd,
-                FX_DWORD msg,
+                uint32_t msg,
                 intptr_t wParam = 0,
                 intptr_t lParam = 0) override;
   void CreateChildWnd(const PWL_CREATEPARAM& cp) override;

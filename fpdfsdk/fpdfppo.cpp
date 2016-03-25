@@ -22,7 +22,7 @@
 
 class CPDF_PageOrganizer {
  public:
-  using ObjectNumberMap = std::map<FX_DWORD, FX_DWORD>;
+  using ObjectNumberMap = std::map<uint32_t, uint32_t>;
   CPDF_PageOrganizer();
   ~CPDF_PageOrganizer();
 
@@ -36,7 +36,7 @@ class CPDF_PageOrganizer {
   FX_BOOL UpdateReference(CPDF_Object* pObj,
                           CPDF_Document* pDoc,
                           ObjectNumberMap* pObjNumberMap);
-  FX_DWORD GetNewObjId(CPDF_Document* pDoc,
+  uint32_t GetNewObjId(CPDF_Document* pDoc,
                        ObjectNumberMap* pObjNumberMap,
                        CPDF_Reference* pRef);
 };
@@ -74,7 +74,7 @@ FX_BOOL CPDF_PageOrganizer::PDFDocInit(CPDF_Document* pDestPDFDoc,
       pElement ? ToDictionary(pElement->GetDirect()) : nullptr;
   if (!pNewPages) {
     pNewPages = new CPDF_Dictionary;
-    FX_DWORD NewPagesON = pDestPDFDoc->AddIndirectObject(pNewPages);
+    uint32_t NewPagesON = pDestPDFDoc->AddIndirectObject(pNewPages);
     pNewRoot->SetAt("Pages", new CPDF_Reference(pDestPDFDoc, NewPagesON));
   }
 
@@ -86,7 +86,7 @@ FX_BOOL CPDF_PageOrganizer::PDFDocInit(CPDF_Document* pDestPDFDoc,
   CPDF_Array* pKeysArray = pNewPages->GetArrayBy("Kids");
   if (!pKeysArray) {
     CPDF_Array* pNewKids = new CPDF_Array;
-    FX_DWORD Kidsobjnum = pDestPDFDoc->AddIndirectObject(pNewKids);
+    uint32_t Kidsobjnum = pDestPDFDoc->AddIndirectObject(pNewKids);
 
     pNewPages->SetAt("Kids", new CPDF_Reference(pDestPDFDoc, Kidsobjnum));
     pNewPages->SetAt("Count", new CPDF_Number(0));
@@ -164,8 +164,8 @@ FX_BOOL CPDF_PageOrganizer::ExportPage(CPDF_Document* pSrcPDFDoc,
     }
 
     // Update the reference
-    FX_DWORD dwOldPageObj = pSrcPageDict->GetObjNum();
-    FX_DWORD dwNewPageObj = pCurPageDict->GetObjNum();
+    uint32_t dwOldPageObj = pSrcPageDict->GetObjNum();
+    uint32_t dwNewPageObj = pCurPageDict->GetObjNum();
 
     (*pObjNumberMap)[dwOldPageObj] = dwNewPageObj;
 
@@ -213,7 +213,7 @@ FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
   switch (pObj->GetType()) {
     case CPDF_Object::REFERENCE: {
       CPDF_Reference* pReference = pObj->AsReference();
-      FX_DWORD newobjnum = GetNewObjId(pDoc, pObjNumberMap, pReference);
+      uint32_t newobjnum = GetNewObjId(pDoc, pObjNumberMap, pReference);
       if (newobjnum == 0)
         return FALSE;
       pReference->SetRef(pDoc, newobjnum);
@@ -241,8 +241,8 @@ FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
     }
     case CPDF_Object::ARRAY: {
       CPDF_Array* pArray = pObj->AsArray();
-      FX_DWORD count = pArray->GetCount();
-      for (FX_DWORD i = 0; i < count; ++i) {
+      uint32_t count = pArray->GetCount();
+      for (uint32_t i = 0; i < count; ++i) {
         CPDF_Object* pNextObj = pArray->GetElement(i);
         if (!pNextObj)
           return FALSE;
@@ -269,14 +269,14 @@ FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
   return TRUE;
 }
 
-FX_DWORD CPDF_PageOrganizer::GetNewObjId(CPDF_Document* pDoc,
+uint32_t CPDF_PageOrganizer::GetNewObjId(CPDF_Document* pDoc,
                                          ObjectNumberMap* pObjNumberMap,
                                          CPDF_Reference* pRef) {
   if (!pRef)
     return 0;
 
-  FX_DWORD dwObjnum = pRef->GetRefObjNum();
-  FX_DWORD dwNewObjNum = 0;
+  uint32_t dwObjnum = pRef->GetRefObjNum();
+  uint32_t dwNewObjNum = 0;
   const auto it = pObjNumberMap->find(dwObjnum);
   if (it != pObjNumberMap->end())
     dwNewObjNum = it->second;

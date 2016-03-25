@@ -97,8 +97,8 @@ CJS_Timer::CJS_Timer(CJS_EmbedObj* pObj,
                      CJS_Runtime* pRuntime,
                      int nType,
                      const CFX_WideString& script,
-                     FX_DWORD dwElapse,
-                     FX_DWORD dwTimeOut)
+                     uint32_t dwElapse,
+                     uint32_t dwTimeOut)
     : m_nTimerID(0),
       m_pEmbedObj(pObj),
       m_bProcessing(false),

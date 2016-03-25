@@ -18,7 +18,7 @@ CFX_ByteString GetPDFWordString(IFX_Edit_FontMap* pFontMap,
     if (SubWord > 0) {
       Word = SubWord;
     } else {
-      FX_DWORD dwCharCode =
+      uint32_t dwCharCode =
           pPDFFont->IsUnicodeCompatible()
               ? pPDFFont->CharCodeFromUnicode(Word)
               : pFontMap->CharCodeFromUnicode(nFontIndex, Word);

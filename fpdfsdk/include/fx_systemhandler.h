@@ -92,10 +92,10 @@ class IFX_SystemHandler {
   virtual int32_t SetTimer(int32_t uElapse, TimerCallback lpTimerFunc) = 0;
   virtual void KillTimer(int32_t nID) = 0;
 
-  virtual FX_BOOL IsSHIFTKeyDown(FX_DWORD nFlag) = 0;
-  virtual FX_BOOL IsCTRLKeyDown(FX_DWORD nFlag) = 0;
-  virtual FX_BOOL IsALTKeyDown(FX_DWORD nFlag) = 0;
-  virtual FX_BOOL IsINSERTKeyDown(FX_DWORD nFlag) = 0;
+  virtual FX_BOOL IsSHIFTKeyDown(uint32_t nFlag) = 0;
+  virtual FX_BOOL IsCTRLKeyDown(uint32_t nFlag) = 0;
+  virtual FX_BOOL IsALTKeyDown(uint32_t nFlag) = 0;
+  virtual FX_BOOL IsINSERTKeyDown(uint32_t nFlag) = 0;
 
   virtual FX_SYSTEMTIME GetLocalTime() = 0;
 

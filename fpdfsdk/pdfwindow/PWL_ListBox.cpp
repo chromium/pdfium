@@ -203,7 +203,7 @@ void CPWL_ListBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
   }
 }
 
-FX_BOOL CPWL_ListBox::OnKeyDown(uint16_t nChar, FX_DWORD nFlag) {
+FX_BOOL CPWL_ListBox::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
   CPWL_Wnd::OnKeyDown(nChar, nFlag);
 
   if (!m_pList)
@@ -250,7 +250,7 @@ FX_BOOL CPWL_ListBox::OnKeyDown(uint16_t nChar, FX_DWORD nFlag) {
   return TRUE;
 }
 
-FX_BOOL CPWL_ListBox::OnChar(uint16_t nChar, FX_DWORD nFlag) {
+FX_BOOL CPWL_ListBox::OnChar(uint16_t nChar, uint32_t nFlag) {
   CPWL_Wnd::OnChar(nChar, nFlag);
 
   if (!m_pList)
@@ -266,7 +266,7 @@ FX_BOOL CPWL_ListBox::OnChar(uint16_t nChar, FX_DWORD nFlag) {
 }
 
 FX_BOOL CPWL_ListBox::OnLButtonDown(const CFX_FloatPoint& point,
-                                    FX_DWORD nFlag) {
+                                    uint32_t nFlag) {
   CPWL_Wnd::OnLButtonDown(point, nFlag);
 
   if (ClientHitTest(point)) {
@@ -281,7 +281,7 @@ FX_BOOL CPWL_ListBox::OnLButtonDown(const CFX_FloatPoint& point,
   return TRUE;
 }
 
-FX_BOOL CPWL_ListBox::OnLButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) {
+FX_BOOL CPWL_ListBox::OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) {
   CPWL_Wnd::OnLButtonUp(point, nFlag);
 
   if (m_bMouseDown) {
@@ -299,7 +299,7 @@ void CPWL_ListBox::SetHoverSel(FX_BOOL bHoverSel) {
   m_bHoverSel = bHoverSel;
 }
 
-FX_BOOL CPWL_ListBox::OnMouseMove(const CFX_FloatPoint& point, FX_DWORD nFlag) {
+FX_BOOL CPWL_ListBox::OnMouseMove(const CFX_FloatPoint& point, uint32_t nFlag) {
   CPWL_Wnd::OnMouseMove(point, nFlag);
 
   if (m_bHoverSel && !IsCaptureMouse() && ClientHitTest(point)) {
@@ -316,7 +316,7 @@ FX_BOOL CPWL_ListBox::OnMouseMove(const CFX_FloatPoint& point, FX_DWORD nFlag) {
 }
 
 void CPWL_ListBox::OnNotify(CPWL_Wnd* pWnd,
-                            FX_DWORD msg,
+                            uint32_t msg,
                             intptr_t wParam,
                             intptr_t lParam) {
   CPWL_Wnd::OnNotify(pWnd, msg, wParam, lParam);
@@ -367,7 +367,7 @@ void CPWL_ListBox::RePosChildWnd() {
 
 void CPWL_ListBox::OnNotifySelChanged(FX_BOOL bKeyDown,
                                       FX_BOOL& bExit,
-                                      FX_DWORD nFlag) {
+                                      uint32_t nFlag) {
   if (!m_pFillerNotify)
     return;
 
@@ -517,7 +517,7 @@ CFX_FloatRect CPWL_ListBox::GetListRect() const {
 
 FX_BOOL CPWL_ListBox::OnMouseWheel(short zDelta,
                                    const CFX_FloatPoint& point,
-                                   FX_DWORD nFlag) {
+                                   uint32_t nFlag) {
   if (!m_pList)
     return FALSE;
 

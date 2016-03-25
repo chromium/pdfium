@@ -1460,7 +1460,7 @@ int Document::CountWords(CPDF_TextObject* pTextObj) {
   FX_BOOL bIsLatin = FALSE;
 
   for (int i = 0, sz = pTextObj->CountChars(); i < sz; i++) {
-    FX_DWORD charcode = static_cast<FX_DWORD>(-1);
+    uint32_t charcode = static_cast<uint32_t>(-1);
     FX_FLOAT kerning;
 
     pTextObj->GetCharInfo(i, charcode, kerning);
@@ -1493,7 +1493,7 @@ CFX_WideString Document::GetObjWordStr(CPDF_TextObject* pTextObj,
   FX_BOOL bIsLatin = FALSE;
 
   for (int i = 0, sz = pTextObj->CountChars(); i < sz; i++) {
-    FX_DWORD charcode = static_cast<FX_DWORD>(-1);
+    uint32_t charcode = static_cast<uint32_t>(-1);
     FX_FLOAT kerning;
 
     pTextObj->GetCharInfo(i, charcode, kerning);

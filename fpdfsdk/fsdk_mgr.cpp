@@ -97,16 +97,16 @@ class CFX_SystemHandler : public IFX_SystemHandler {
                                         uint8_t nCharset) override;
   int32_t SetTimer(int32_t uElapse, TimerCallback lpTimerFunc) override;
   void KillTimer(int32_t nID) override;
-  FX_BOOL IsSHIFTKeyDown(FX_DWORD nFlag) override {
+  FX_BOOL IsSHIFTKeyDown(uint32_t nFlag) override {
     return m_pEnv->FFI_IsSHIFTKeyDown(nFlag);
   }
-  FX_BOOL IsCTRLKeyDown(FX_DWORD nFlag) override {
+  FX_BOOL IsCTRLKeyDown(uint32_t nFlag) override {
     return m_pEnv->FFI_IsCTRLKeyDown(nFlag);
   }
-  FX_BOOL IsALTKeyDown(FX_DWORD nFlag) override {
+  FX_BOOL IsALTKeyDown(uint32_t nFlag) override {
     return m_pEnv->FFI_IsALTKeyDown(nFlag);
   }
-  FX_BOOL IsINSERTKeyDown(FX_DWORD nFlag) override {
+  FX_BOOL IsINSERTKeyDown(uint32_t nFlag) override {
     return m_pEnv->FFI_IsINSERTKeyDown(nFlag);
   }
   FX_SYSTEMTIME GetLocalTime() override;

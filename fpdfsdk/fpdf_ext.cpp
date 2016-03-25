@@ -123,7 +123,7 @@ FX_BOOL CheckSharedForm(const CXML_Element* pElement, CFX_ByteString cbName) {
     }
   }
 
-  FX_DWORD nCount = pElement->CountChildren();
+  uint32_t nCount = pElement->CountChildren();
   for (i = 0; i < (int)nCount; i++) {
     CXML_Element::ChildType childType = pElement->GetChildType(i);
     if (childType == CXML_Element::Element) {
@@ -135,7 +135,7 @@ FX_BOOL CheckSharedForm(const CXML_Element* pElement, CFX_ByteString cbName) {
   return FALSE;
 }
 
-void CheckUnSupportError(CPDF_Document* pDoc, FX_DWORD err_code) {
+void CheckUnSupportError(CPDF_Document* pDoc, uint32_t err_code) {
   // Security
   if (err_code == FPDF_ERR_SECURITY) {
     FPDF_UnSupportError(FPDF_UNSP_DOC_SECURITY);

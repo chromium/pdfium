@@ -1551,7 +1551,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const FX_WCHAR* sValue) {
     pEdit->SetPlateRect(rcClient);
     pEdit->SetAlignmentH(pControl->GetControlAlignment());
 
-    FX_DWORD dwFieldFlags = pField->GetFieldFlags();
+    uint32_t dwFieldFlags = pField->GetFieldFlags();
     FX_BOOL bMultiLine = (dwFieldFlags >> 12) & 1;
 
     if (bMultiLine) {
@@ -2371,7 +2371,7 @@ FX_BOOL CPDFSDK_InterForm::DoAction_Hide(const CPDF_Action& action) {
       ASSERT(pControl);
 
       if (CPDFSDK_Widget* pWidget = GetWidget(pControl)) {
-        FX_DWORD nFlags = pWidget->GetFlags();
+        uint32_t nFlags = pWidget->GetFlags();
         nFlags &= ~ANNOTFLAG_INVISIBLE;
         nFlags &= ~ANNOTFLAG_NOVIEW;
         if (bHide)
@@ -2396,7 +2396,7 @@ FX_BOOL CPDFSDK_InterForm::DoAction_SubmitForm(const CPDF_Action& action) {
   CPDF_Dictionary* pActionDict = action.GetDict();
   if (pActionDict->KeyExist("Fields")) {
     CPDF_ActionFields af(&action);
-    FX_DWORD dwFlags = action.GetFlags();
+    uint32_t dwFlags = action.GetFlags();
     std::vector<CPDF_Object*> fieldObjects = af.GetAllFields();
     std::vector<CPDF_FormField*> fields = GetFieldFromObjects(fieldObjects);
     if (!fields.empty()) {
@@ -2452,7 +2452,7 @@ FX_BOOL CPDFSDK_InterForm::FDFToURLEncodedData(uint8_t*& pBuf,
       return FALSE;
 
     CFX_ByteTextBuf fdfEncodedData;
-    for (FX_DWORD i = 0; i < pFields->GetCount(); i++) {
+    for (uint32_t i = 0; i < pFields->GetCount(); i++) {
       CPDF_Dictionary* pField = pFields->GetDictAt(i);
       if (!pField)
         continue;
@@ -2569,7 +2569,7 @@ FX_BOOL CPDFSDK_InterForm::DoAction_ResetForm(const CPDF_Action& action) {
     return m_pInterForm->ResetForm(true);
 
   CPDF_ActionFields af(&action);
-  FX_DWORD dwFlags = action.GetFlags();
+  uint32_t dwFlags = action.GetFlags();
 
   std::vector<CPDF_Object*> fieldObjects = af.GetAllFields();
   std::vector<CPDF_FormField*> fields = GetFieldFromObjects(fieldObjects);

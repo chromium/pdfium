@@ -14,7 +14,7 @@
 std::vector<CFWL_TimerInfo*>* CXFA_FWLAdapterTimerMgr::s_TimerArray = nullptr;
 
 FWL_ERR CXFA_FWLAdapterTimerMgr::Start(IFWL_Timer* pTimer,
-                                       FX_DWORD dwElapse,
+                                       uint32_t dwElapse,
                                        FWL_HTIMER& hTimer,
                                        FX_BOOL bImmediately) {
   if (!m_pEnv)

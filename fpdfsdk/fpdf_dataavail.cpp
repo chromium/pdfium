@@ -43,7 +43,7 @@ class CFPDF_FileAvailWrap : public IPDF_DataAvail::FileAvail {
   void Set(FX_FILEAVAIL* pfileAvail) { m_pfileAvail = pfileAvail; }
 
   // IPDF_DataAvail::FileAvail:
-  FX_BOOL IsDataAvail(FX_FILESIZE offset, FX_DWORD size) override {
+  FX_BOOL IsDataAvail(FX_FILESIZE offset, uint32_t size) override {
     return m_pfileAvail->IsDataAvail(m_pfileAvail, offset, size);
   }
 
@@ -81,7 +81,7 @@ class CFPDF_DownloadHintsWrap : public IPDF_DataAvail::DownloadHints {
 
  public:
   // IFX_DownloadHints
-  void AddSegment(FX_FILESIZE offset, FX_DWORD size) override {
+  void AddSegment(FX_FILESIZE offset, uint32_t size) override {
     m_pDownloadHints->AddSegment(m_pDownloadHints, offset, size);
   }
 

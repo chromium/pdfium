@@ -22,7 +22,7 @@
 #define IsFloatEqual(fa, fb) IsFloatZero((fa) - (fb))
 
 FX_BOOL CPWL_CBListBox::OnLButtonUp(const CFX_FloatPoint& point,
-                                    FX_DWORD nFlag) {
+                                    uint32_t nFlag) {
   CPWL_Wnd::OnLButtonUp(point, nFlag);
 
   if (m_bMouseDown) {
@@ -47,7 +47,7 @@ FX_BOOL CPWL_CBListBox::OnLButtonUp(const CFX_FloatPoint& point,
 
 FX_BOOL CPWL_CBListBox::OnKeyDownWithExit(uint16_t nChar,
                                           FX_BOOL& bExit,
-                                          FX_DWORD nFlag) {
+                                          uint32_t nFlag) {
   if (!m_pList)
     return FALSE;
 
@@ -93,7 +93,7 @@ FX_BOOL CPWL_CBListBox::OnKeyDownWithExit(uint16_t nChar,
 
 FX_BOOL CPWL_CBListBox::OnCharWithExit(uint16_t nChar,
                                        FX_BOOL& bExit,
-                                       FX_DWORD nFlag) {
+                                       uint32_t nFlag) {
   if (!m_pList)
     return FALSE;
 
@@ -178,7 +178,7 @@ void CPWL_CBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
 }
 
 FX_BOOL CPWL_CBButton::OnLButtonDown(const CFX_FloatPoint& point,
-                                     FX_DWORD nFlag) {
+                                     uint32_t nFlag) {
   CPWL_Wnd::OnLButtonDown(point, nFlag);
 
   SetCapture();
@@ -192,7 +192,7 @@ FX_BOOL CPWL_CBButton::OnLButtonDown(const CFX_FloatPoint& point,
 }
 
 FX_BOOL CPWL_CBButton::OnLButtonUp(const CFX_FloatPoint& point,
-                                   FX_DWORD nFlag) {
+                                   uint32_t nFlag) {
   CPWL_Wnd::OnLButtonUp(point, nFlag);
 
   ReleaseCapture();
@@ -517,7 +517,7 @@ void CPWL_ComboBox::SetPopup(FX_BOOL bPopup) {
   }
 }
 
-FX_BOOL CPWL_ComboBox::OnKeyDown(uint16_t nChar, FX_DWORD nFlag) {
+FX_BOOL CPWL_ComboBox::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
   if (!m_pList)
     return FALSE;
   if (!m_pEdit)
@@ -576,7 +576,7 @@ FX_BOOL CPWL_ComboBox::OnKeyDown(uint16_t nChar, FX_DWORD nFlag) {
   return FALSE;
 }
 
-FX_BOOL CPWL_ComboBox::OnChar(uint16_t nChar, FX_DWORD nFlag) {
+FX_BOOL CPWL_ComboBox::OnChar(uint16_t nChar, uint32_t nFlag) {
   if (!m_pList)
     return FALSE;
 
@@ -603,7 +603,7 @@ FX_BOOL CPWL_ComboBox::OnChar(uint16_t nChar, FX_DWORD nFlag) {
 }
 
 void CPWL_ComboBox::OnNotify(CPWL_Wnd* pWnd,
-                             FX_DWORD msg,
+                             uint32_t msg,
                              intptr_t wParam,
                              intptr_t lParam) {
   switch (msg) {

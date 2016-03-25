@@ -45,10 +45,10 @@ class CFX_ExternalFontInfo final : public IFX_SystemFontInfo {
     return NULL;
   }
 
-  FX_DWORD GetFontData(void* hFont,
-                       FX_DWORD table,
+  uint32_t GetFontData(void* hFont,
+                       uint32_t table,
                        uint8_t* buffer,
-                       FX_DWORD size) override {
+                       uint32_t size) override {
     if (m_pInfo->GetFontData)
       return m_pInfo->GetFontData(m_pInfo, hFont, table, buffer, size);
     return 0;
@@ -57,7 +57,7 @@ class CFX_ExternalFontInfo final : public IFX_SystemFontInfo {
   FX_BOOL GetFaceName(void* hFont, CFX_ByteString& name) override {
     if (!m_pInfo->GetFaceName)
       return FALSE;
-    FX_DWORD size = m_pInfo->GetFaceName(m_pInfo, hFont, NULL, 0);
+    uint32_t size = m_pInfo->GetFaceName(m_pInfo, hFont, NULL, 0);
     if (size == 0)
       return FALSE;
     char* buffer = FX_Alloc(char, size);

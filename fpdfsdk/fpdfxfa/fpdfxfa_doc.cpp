@@ -233,7 +233,7 @@ FX_BOOL CPDFXFA_Document::GetChangeMark(IXFA_Doc* hDoc) {
 
 void CPDFXFA_Document::InvalidateRect(IXFA_PageView* pPageView,
                                       const CFX_RectF& rt,
-                                      FX_DWORD dwFlags /* = 0 */) {
+                                      uint32_t dwFlags /* = 0 */) {
   if (!m_pXFADoc || !m_pSDKDoc)
     return;
 
@@ -257,7 +257,7 @@ void CPDFXFA_Document::InvalidateRect(IXFA_PageView* pPageView,
 }
 
 void CPDFXFA_Document::InvalidateRect(IXFA_Widget* hWidget,
-                                      FX_DWORD dwFlags /* = 0 */) {
+                                      uint32_t dwFlags /* = 0 */) {
   if (!hWidget)
     return;
 
@@ -355,7 +355,7 @@ FX_BOOL CPDFXFA_Document::GetPopupPos(IXFA_Widget* hWidget,
   rcAnchor.bottom = rtAnchor.top;
 
   int t1, t2, t;
-  FX_DWORD dwPos;
+  uint32_t dwPos;
   FX_FLOAT fPoupHeight;
   switch (nRotate) {
     case 90: {
@@ -489,7 +489,7 @@ FX_BOOL CPDFXFA_Document::PopupMenu(IXFA_Widget* hWidget,
 }
 
 void CPDFXFA_Document::PageViewEvent(IXFA_PageView* pPageView,
-                                     FX_DWORD dwFlags) {
+                                     uint32_t dwFlags) {
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
   if (!pEnv)
     return;
@@ -526,7 +526,7 @@ void CPDFXFA_Document::PageViewEvent(IXFA_PageView* pPageView,
 
 void CPDFXFA_Document::WidgetEvent(IXFA_Widget* hWidget,
                                    CXFA_WidgetAcc* pWidgetData,
-                                   FX_DWORD dwEvent,
+                                   uint32_t dwEvent,
                                    void* pParam,
                                    void* pAdditional) {
   if (m_iDocType != DOCTYPE_DYNAMIC_XFA || !hWidget)
@@ -788,7 +788,7 @@ void CPDFXFA_Document::SetFocusWidget(IXFA_Doc* hDoc, IXFA_Widget* hWidget) {
 void CPDFXFA_Document::Print(IXFA_Doc* hDoc,
                              int32_t nStartPage,
                              int32_t nEndPage,
-                             FX_DWORD dwOptions) {
+                             uint32_t dwOptions) {
   if (hDoc != m_pXFADoc)
     return;
 

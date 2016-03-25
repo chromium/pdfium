@@ -27,7 +27,7 @@ T PWL_MAX(const T& i, const T& j) {
 #define PWL_WIN2PDF(color) ((FX_FLOAT)((FX_FLOAT)color / 255.0f))
 
 #define PWL_MAKEDWORD(low, high) \
-  ((FX_DWORD)((uint16_t)(low) | (FX_DWORD)(((uint16_t)(high)) << 16)))
+  ((uint32_t)((uint16_t)(low) | (uint32_t)(((uint16_t)(high)) << 16)))
 #define PWL_GETLOWWORD(dword) ((uint16_t)(dword))
 #define PWL_GETHIGHWORD(dword) ((uint16_t)(dword >> 16))
 

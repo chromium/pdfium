@@ -148,8 +148,8 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot {
   void SetModifiedDate(const FX_SYSTEMTIME& st);
   FX_SYSTEMTIME GetModifiedDate() const;
 
-  void SetFlags(FX_DWORD nFlags);
-  FX_DWORD GetFlags() const;
+  void SetFlags(uint32_t nFlags);
+  uint32_t GetFlags() const;
 
   void SetAppState(const CFX_ByteString& str);
   CFX_ByteString GetAppState() const;

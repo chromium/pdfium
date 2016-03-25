@@ -134,7 +134,7 @@ void CPDFXFA_App::GetVersion(CFX_WideString& wsVersion) {
   wsVersion = JS_STR_VIEWERVERSION_XFA;
 }
 
-void CPDFXFA_App::Beep(FX_DWORD dwType) {
+void CPDFXFA_App::Beep(uint32_t dwType) {
   CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
   if (pEnv) {
     pEnv->JS_appBeep(dwType);
@@ -143,13 +143,13 @@ void CPDFXFA_App::Beep(FX_DWORD dwType) {
 
 int32_t CPDFXFA_App::MsgBox(const CFX_WideStringC& wsMessage,
                             const CFX_WideStringC& wsTitle,
-                            FX_DWORD dwIconType,
-                            FX_DWORD dwButtonType) {
+                            uint32_t dwIconType,
+                            uint32_t dwButtonType) {
   CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
   if (!pEnv)
     return -1;
 
-  FX_DWORD iconType = 0;
+  uint32_t iconType = 0;
   int iButtonType = 0;
   switch (dwIconType) {
     case XFA_MBICON_Error:

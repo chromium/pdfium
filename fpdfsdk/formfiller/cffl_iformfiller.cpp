@@ -57,7 +57,7 @@ void CFFL_IFormFiller::OnDraw(CPDFSDK_PageView* pPageView,
                               CPDFSDK_Annot* pAnnot,
                               CFX_RenderDevice* pDevice,
                               CFX_Matrix* pUser2Device,
-                              FX_DWORD dwFlags) {
+                              uint32_t dwFlags) {
   ASSERT(pPageView);
   CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
 
@@ -500,7 +500,7 @@ FX_BOOL CFFL_IFormFiller::IsFillingAllowed(CPDFSDK_Widget* pWidget) {
 
   CPDF_Page* pPage = pWidget->GetPDFPage();
   CPDF_Document* pDocument = pPage->m_pDocument;
-  FX_DWORD dwPermissions = pDocument->GetUserPermissions();
+  uint32_t dwPermissions = pDocument->GetUserPermissions();
   return (dwPermissions & FPDFPERM_FILL_FORM) ||
          (dwPermissions & FPDFPERM_ANNOT_FORM) ||
          (dwPermissions & FPDFPERM_MODIFY);
@@ -642,7 +642,7 @@ void CFFL_IFormFiller::OnKeyStrokeCommit(CPDFSDK_Widget* pWidget,
                                          CPDFSDK_PageView* pPageView,
                                          FX_BOOL& bRC,
                                          FX_BOOL& bExit,
-                                         FX_DWORD nFlag) {
+                                         uint32_t nFlag) {
   if (!m_bNotifying) {
     if (pWidget->GetAAction(CPDF_AAction::KeyStroke).GetDict()) {
       m_bNotifying = TRUE;
@@ -674,7 +674,7 @@ void CFFL_IFormFiller::OnValidate(CPDFSDK_Widget* pWidget,
                                   CPDFSDK_PageView* pPageView,
                                   FX_BOOL& bRC,
                                   FX_BOOL& bExit,
-                                  FX_DWORD nFlag) {
+                                  uint32_t nFlag) {
   if (!m_bNotifying) {
     if (pWidget->GetAAction(CPDF_AAction::Validate).GetDict()) {
       m_bNotifying = TRUE;
@@ -704,7 +704,7 @@ void CFFL_IFormFiller::OnValidate(CPDFSDK_Widget* pWidget,
 void CFFL_IFormFiller::OnCalculate(CPDFSDK_Widget* pWidget,
                                    CPDFSDK_PageView* pPageView,
                                    FX_BOOL& bExit,
-                                   FX_DWORD nFlag) {
+                                   uint32_t nFlag) {
   if (!m_bNotifying) {
     ASSERT(pWidget);
     CPDFSDK_Document* pDocument = pPageView->GetSDKDocument();
@@ -719,7 +719,7 @@ void CFFL_IFormFiller::OnCalculate(CPDFSDK_Widget* pWidget,
 void CFFL_IFormFiller::OnFormat(CPDFSDK_Widget* pWidget,
                                 CPDFSDK_PageView* pPageView,
                                 FX_BOOL& bExit,
-                                FX_DWORD nFlag) {
+                                uint32_t nFlag) {
   if (!m_bNotifying) {
     ASSERT(pWidget);
     CPDFSDK_Document* pDocument = pPageView->GetSDKDocument();
@@ -816,7 +816,7 @@ void CFFL_IFormFiller::OnFull(CPDFSDK_Widget* pWidget,
 
 void CFFL_IFormFiller::OnPopupPreOpen(void* pPrivateData,
                                       FX_BOOL& bExit,
-                                      FX_DWORD nFlag) {
+                                      uint32_t nFlag) {
   CFFL_PrivateData* pData = (CFFL_PrivateData*)pPrivateData;
   ASSERT(pData);
   ASSERT(pData->pWidget);
@@ -832,7 +832,7 @@ void CFFL_IFormFiller::OnPopupPreOpen(void* pPrivateData,
 
 void CFFL_IFormFiller::OnPopupPostOpen(void* pPrivateData,
                                        FX_BOOL& bExit,
-                                       FX_DWORD nFlag) {
+                                       uint32_t nFlag) {
   CFFL_PrivateData* pData = (CFFL_PrivateData*)pPrivateData;
   ASSERT(pData);
   ASSERT(pData->pWidget);
@@ -933,7 +933,7 @@ void CFFL_IFormFiller::OnBeforeKeyStroke(void* pPrivateData,
                                          FX_BOOL bKeyDown,
                                          FX_BOOL& bRC,
                                          FX_BOOL& bExit,
-                                         FX_DWORD nFlag) {
+                                         uint32_t nFlag) {
   CFFL_PrivateData* pData = (CFFL_PrivateData*)pPrivateData;
   ASSERT(pData->pWidget);
 

@@ -32,7 +32,7 @@ class CFFL_IFormFiller : public IPWL_Filler_Notify {
                       CPDFSDK_Annot* pAnnot,
                       CFX_RenderDevice* pDevice,
                       CFX_Matrix* pUser2Device,
-                      FX_DWORD dwFlags);
+                      uint32_t dwFlags);
 
   virtual void OnCreate(CPDFSDK_Annot* pAnnot);
   virtual void OnLoad(CPDFSDK_Annot* pAnnot);
@@ -96,21 +96,21 @@ class CFFL_IFormFiller : public IPWL_Filler_Notify {
                          CPDFSDK_PageView* pPageView,
                          FX_BOOL& bRC,
                          FX_BOOL& bExit,
-                         FX_DWORD nFlag);
+                         uint32_t nFlag);
   void OnValidate(CPDFSDK_Widget* pWidget,
                   CPDFSDK_PageView* pPageView,
                   FX_BOOL& bRC,
                   FX_BOOL& bExit,
-                  FX_DWORD nFlag);
+                  uint32_t nFlag);
 
   void OnCalculate(CPDFSDK_Widget* pWidget,
                    CPDFSDK_PageView* pPageView,
                    FX_BOOL& bExit,
-                   FX_DWORD nFlag);
+                   uint32_t nFlag);
   void OnFormat(CPDFSDK_Widget* pWidget,
                 CPDFSDK_PageView* pPageView,
                 FX_BOOL& bExit,
-                FX_DWORD nFlag);
+                uint32_t nFlag);
   void OnButtonUp(CPDFSDK_Widget* pWidget,
                   CPDFSDK_PageView* pPageView,
                   FX_BOOL& bReset,
@@ -156,14 +156,14 @@ class CFFL_IFormFiller : public IPWL_Filler_Notify {
                          FX_BOOL bKeyDown,
                          FX_BOOL& bRC,
                          FX_BOOL& bExit,
-                         FX_DWORD nFlag) override;
+                         uint32_t nFlag) override;
 #ifdef PDF_ENABLE_XFA
   void OnPopupPreOpen(void* pPrivateData,
                       FX_BOOL& bExit,
-                      FX_DWORD nFlag) override;
+                      uint32_t nFlag) override;
   void OnPopupPostOpen(void* pPrivateData,
                        FX_BOOL& bExit,
-                       FX_DWORD nFlag) override;
+                       uint32_t nFlag) override;
   void SetFocusAnnotTab(CPDFSDK_Annot* pWidget,
                         FX_BOOL bSameField,
                         FX_BOOL bNext);

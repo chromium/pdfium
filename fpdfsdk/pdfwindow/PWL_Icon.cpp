@@ -133,7 +133,7 @@ void CPWL_Icon::GetIconPosition(FX_FLOAT& fLeft, FX_FLOAT& fBottom) {
     CPDF_Array* pA =
         m_pIconFit->GetDict() ? m_pIconFit->GetDict()->GetArrayBy("A") : NULL;
     if (pA) {
-      FX_DWORD dwCount = pA->GetCount();
+      uint32_t dwCount = pA->GetCount();
       if (dwCount > 0)
         fLeft = pA->GetNumberAt(0);
       if (dwCount > 1)

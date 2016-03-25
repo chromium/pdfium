@@ -383,7 +383,7 @@ FX_BOOL app::setInterval(IJS_Context* cc,
   }
 
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-  FX_DWORD dwInterval = params.size() > 1 ? params[1].ToInt() : 1000;
+  uint32_t dwInterval = params.size() > 1 ? params[1].ToInt() : 1000;
 
   CPDFDoc_Environment* pApp = pRuntime->GetReaderApp();
   ASSERT(pApp);
@@ -421,7 +421,7 @@ FX_BOOL app::setTimeOut(IJS_Context* cc,
     return TRUE;
   }
 
-  FX_DWORD dwTimeOut = params.size() > 1 ? params[1].ToInt() : 1000;
+  uint32_t dwTimeOut = params.size() > 1 ? params[1].ToInt() : 1000;
 
   CPDFDoc_Environment* pApp = pRuntime->GetReaderApp();
   ASSERT(pApp);

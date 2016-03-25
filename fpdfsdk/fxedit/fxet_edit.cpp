@@ -103,7 +103,7 @@ int32_t CFX_Edit_Provider::GetCharWidth(int32_t nFontIndex,
                                         uint16_t word,
                                         int32_t nWordStyle) {
   if (CPDF_Font* pPDFFont = m_pFontMap->GetPDFFont(nFontIndex)) {
-    FX_DWORD charcode = word;
+    uint32_t charcode = word;
 
     if (pPDFFont->IsUnicodeCompatible())
       charcode = pPDFFont->CharCodeFromUnicode(word);

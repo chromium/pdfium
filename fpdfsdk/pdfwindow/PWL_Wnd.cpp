@@ -407,7 +407,7 @@ void CPWL_Wnd::InvalidateRect(CFX_FloatRect* pRect) {
 }
 
 #define PWL_IMPLEMENT_KEY_METHOD(key_method_name)                      \
-  FX_BOOL CPWL_Wnd::key_method_name(uint16_t nChar, FX_DWORD nFlag) {  \
+  FX_BOOL CPWL_Wnd::key_method_name(uint16_t nChar, uint32_t nFlag) {  \
     if (IsValid() && IsVisible() && IsEnabled()) {                     \
       if (IsWndCaptureKeyboard(this)) {                                \
         for (int32_t i = 0, sz = m_aChildren.GetSize(); i < sz; i++) { \
@@ -424,7 +424,7 @@ void CPWL_Wnd::InvalidateRect(CFX_FloatRect* pRect) {
 
 #define PWL_IMPLEMENT_MOUSE_METHOD(mouse_method_name)                        \
   FX_BOOL CPWL_Wnd::mouse_method_name(const CFX_FloatPoint& point,           \
-                                      FX_DWORD nFlag) {                      \
+                                      uint32_t nFlag) {                      \
     if (IsValid() && IsVisible() && IsEnabled()) {                           \
       if (IsWndCaptureMouse(this)) {                                         \
         for (int32_t i = 0, sz = m_aChildren.GetSize(); i < sz; i++) {       \
@@ -468,7 +468,7 @@ PWL_IMPLEMENT_MOUSE_METHOD(OnMouseMove)
 
 FX_BOOL CPWL_Wnd::OnMouseWheel(short zDelta,
                                const CFX_FloatPoint& point,
-                               FX_DWORD nFlag) {
+                               uint32_t nFlag) {
   if (IsValid() && IsVisible() && IsEnabled()) {
     SetCursor();
     if (IsWndCaptureKeyboard(this)) {
@@ -501,7 +501,7 @@ void CPWL_Wnd::RemoveChild(CPWL_Wnd* pWnd) {
 }
 
 void CPWL_Wnd::OnNotify(CPWL_Wnd* pWnd,
-                        FX_DWORD msg,
+                        uint32_t msg,
                         intptr_t wParam,
                         intptr_t lParam) {
   switch (msg) {
@@ -549,15 +549,15 @@ CFX_FloatPoint CPWL_Wnd::GetCenterPoint() const {
                         (rcClient.top + rcClient.bottom) * 0.5f);
 }
 
-FX_BOOL CPWL_Wnd::HasFlag(FX_DWORD dwFlags) const {
+FX_BOOL CPWL_Wnd::HasFlag(uint32_t dwFlags) const {
   return (m_sPrivateParam.dwFlags & dwFlags) != 0;
 }
 
-void CPWL_Wnd::RemoveFlag(FX_DWORD dwFlags) {
+void CPWL_Wnd::RemoveFlag(uint32_t dwFlags) {
   m_sPrivateParam.dwFlags &= ~dwFlags;
 }
 
-void CPWL_Wnd::AddFlag(FX_DWORD dwFlags) {
+void CPWL_Wnd::AddFlag(uint32_t dwFlags) {
   m_sPrivateParam.dwFlags |= dwFlags;
 }
 
@@ -1006,7 +1006,7 @@ void CPWL_Wnd::OnEnabled() {}
 
 void CPWL_Wnd::OnDisabled() {}
 
-FX_BOOL CPWL_Wnd::IsCTRLpressed(FX_DWORD nFlag) const {
+FX_BOOL CPWL_Wnd::IsCTRLpressed(uint32_t nFlag) const {
   if (IFX_SystemHandler* pSystemHandler = GetSystemHandler()) {
     return pSystemHandler->IsCTRLKeyDown(nFlag);
   }
@@ -1014,7 +1014,7 @@ FX_BOOL CPWL_Wnd::IsCTRLpressed(FX_DWORD nFlag) const {
   return FALSE;
 }
 
-FX_BOOL CPWL_Wnd::IsSHIFTpressed(FX_DWORD nFlag) const {
+FX_BOOL CPWL_Wnd::IsSHIFTpressed(uint32_t nFlag) const {
   if (IFX_SystemHandler* pSystemHandler = GetSystemHandler()) {
     return pSystemHandler->IsSHIFTKeyDown(nFlag);
   }
@@ -1022,7 +1022,7 @@ FX_BOOL CPWL_Wnd::IsSHIFTpressed(FX_DWORD nFlag) const {
   return FALSE;
 }
 
-FX_BOOL CPWL_Wnd::IsALTpressed(FX_DWORD nFlag) const {
+FX_BOOL CPWL_Wnd::IsALTpressed(uint32_t nFlag) const {
   if (IFX_SystemHandler* pSystemHandler = GetSystemHandler()) {
     return pSystemHandler->IsALTKeyDown(nFlag);
   }
@@ -1030,7 +1030,7 @@ FX_BOOL CPWL_Wnd::IsALTpressed(FX_DWORD nFlag) const {
   return FALSE;
 }
 
-FX_BOOL CPWL_Wnd::IsINSERTpressed(FX_DWORD nFlag) const {
+FX_BOOL CPWL_Wnd::IsINSERTpressed(uint32_t nFlag) const {
   if (IFX_SystemHandler* pSystemHandler = GetSystemHandler()) {
     return pSystemHandler->IsINSERTKeyDown(nFlag);
   }

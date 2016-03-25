@@ -103,19 +103,19 @@ class CPDFDoc_Environment final {
       m_pInfo->FFI_OnChange(m_pInfo);
   }
 
-  FX_BOOL FFI_IsSHIFTKeyDown(FX_DWORD nFlag) const {
+  FX_BOOL FFI_IsSHIFTKeyDown(uint32_t nFlag) const {
     return (nFlag & FWL_EVENTFLAG_ShiftKey) != 0;
   }
 
-  FX_BOOL FFI_IsCTRLKeyDown(FX_DWORD nFlag) const {
+  FX_BOOL FFI_IsCTRLKeyDown(uint32_t nFlag) const {
     return (nFlag & FWL_EVENTFLAG_ControlKey) != 0;
   }
 
-  FX_BOOL FFI_IsALTKeyDown(FX_DWORD nFlag) const {
+  FX_BOOL FFI_IsALTKeyDown(uint32_t nFlag) const {
     return (nFlag & FWL_EVENTFLAG_AltKey) != 0;
   }
 
-  FX_BOOL FFI_IsINSERTKeyDown(FX_DWORD nFlag) const { return FALSE; }
+  FX_BOOL FFI_IsINSERTKeyDown(uint32_t nFlag) const { return FALSE; }
 
   FPDF_PAGE FFI_GetPage(FPDF_DOCUMENT document, int nPageIndex) {
     if (m_pInfo && m_pInfo->FFI_GetPage)
@@ -398,7 +398,7 @@ class CPDFDoc_Environment final {
     return L"";
   }
 
-  void FFI_PageEvent(int iPageCount, FX_DWORD dwEventType) const {
+  void FFI_PageEvent(int iPageCount, uint32_t dwEventType) const {
     if (m_pInfo && m_pInfo->FFI_PageEvent)
       m_pInfo->FFI_PageEvent(m_pInfo, iPageCount, dwEventType);
   }

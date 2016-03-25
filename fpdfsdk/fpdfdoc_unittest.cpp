@@ -48,7 +48,7 @@ using CPDF_TestPdfDocument = CPDF_TestDocument;
 class PDFDocTest : public testing::Test {
  public:
   struct DictObjInfo {
-    FX_DWORD num;
+    uint32_t num;
     CPDF_Dictionary* obj;
   };
 

@@ -541,7 +541,7 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
 }
 
 FX_BOOL CPWL_SBButton::OnLButtonDown(const CFX_FloatPoint& point,
-                                     FX_DWORD nFlag) {
+                                     uint32_t nFlag) {
   CPWL_Wnd::OnLButtonDown(point, nFlag);
 
   if (CPWL_Wnd* pParent = GetParentWindow())
@@ -554,7 +554,7 @@ FX_BOOL CPWL_SBButton::OnLButtonDown(const CFX_FloatPoint& point,
 }
 
 FX_BOOL CPWL_SBButton::OnLButtonUp(const CFX_FloatPoint& point,
-                                   FX_DWORD nFlag) {
+                                   uint32_t nFlag) {
   CPWL_Wnd::OnLButtonUp(point, nFlag);
 
   if (CPWL_Wnd* pParent = GetParentWindow())
@@ -567,7 +567,7 @@ FX_BOOL CPWL_SBButton::OnLButtonUp(const CFX_FloatPoint& point,
 }
 
 FX_BOOL CPWL_SBButton::OnMouseMove(const CFX_FloatPoint& point,
-                                   FX_DWORD nFlag) {
+                                   uint32_t nFlag) {
   CPWL_Wnd::OnMouseMove(point, nFlag);
 
   if (CPWL_Wnd* pParent = GetParentWindow()) {
@@ -702,7 +702,7 @@ void CPWL_ScrollBar::DrawThisAppearance(CFX_RenderDevice* pDevice,
 }
 
 FX_BOOL CPWL_ScrollBar::OnLButtonDown(const CFX_FloatPoint& point,
-                                      FX_DWORD nFlag) {
+                                      uint32_t nFlag) {
   CPWL_Wnd::OnLButtonDown(point, nFlag);
 
   if (HasFlag(PWS_AUTOTRANSPARENT)) {
@@ -758,7 +758,7 @@ FX_BOOL CPWL_ScrollBar::OnLButtonDown(const CFX_FloatPoint& point,
 }
 
 FX_BOOL CPWL_ScrollBar::OnLButtonUp(const CFX_FloatPoint& point,
-                                    FX_DWORD nFlag) {
+                                    uint32_t nFlag) {
   CPWL_Wnd::OnLButtonUp(point, nFlag);
 
   if (HasFlag(PWS_AUTOTRANSPARENT)) {
@@ -775,7 +775,7 @@ FX_BOOL CPWL_ScrollBar::OnLButtonUp(const CFX_FloatPoint& point,
 }
 
 void CPWL_ScrollBar::OnNotify(CPWL_Wnd* pWnd,
-                              FX_DWORD msg,
+                              uint32_t msg,
                               intptr_t wParam,
                               intptr_t lParam) {
   CPWL_Wnd::OnNotify(pWnd, msg, wParam, lParam);

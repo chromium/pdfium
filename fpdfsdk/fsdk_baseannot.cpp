@@ -622,11 +622,11 @@ FX_SYSTEMTIME CPDFSDK_BAAnnot::GetModifiedDate() const {
   return systime;
 }
 
-void CPDFSDK_BAAnnot::SetFlags(FX_DWORD nFlags) {
+void CPDFSDK_BAAnnot::SetFlags(uint32_t nFlags) {
   m_pAnnot->GetAnnotDict()->SetAtInteger("F", nFlags);
 }
 
-FX_DWORD CPDFSDK_BAAnnot::GetFlags() const {
+uint32_t CPDFSDK_BAAnnot::GetFlags() const {
   return m_pAnnot->GetAnnotDict()->GetIntegerBy("F");
 }
 
@@ -884,7 +884,7 @@ FX_BOOL CPDFSDK_BAAnnot::CreateFormFiller() {
   return TRUE;
 }
 FX_BOOL CPDFSDK_BAAnnot::IsVisible() const {
-  FX_DWORD nFlags = GetFlags();
+  uint32_t nFlags = GetFlags();
   return !((nFlags & ANNOTFLAG_INVISIBLE) || (nFlags & ANNOTFLAG_HIDDEN) ||
            (nFlags & ANNOTFLAG_NOVIEW));
 }

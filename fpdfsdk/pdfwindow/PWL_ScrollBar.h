@@ -43,9 +43,9 @@ class CPWL_SBButton : public CPWL_Wnd {
   void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           CFX_Matrix* pUser2Device) override;
-  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
-  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
-  FX_BOOL OnMouseMove(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  FX_BOOL OnMouseMove(const CFX_FloatPoint& point, uint32_t nFlag) override;
 
  protected:
   PWL_SCROLLBAR_TYPE m_eScrollBarType;
@@ -101,10 +101,10 @@ class CPWL_ScrollBar : public CPWL_Wnd {
   void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           CFX_Matrix* pUser2Device) override;
-  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
-  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) override;
   void OnNotify(CPWL_Wnd* pWnd,
-                FX_DWORD msg,
+                uint32_t msg,
                 intptr_t wParam = 0,
                 intptr_t lParam = 0) override;
   void CreateChildWnd(const PWL_CREATEPARAM& cp) override;

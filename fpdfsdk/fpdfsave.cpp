@@ -138,7 +138,7 @@ bool SaveXFADocumentData(CPDFXFA_Document* pDocument,
     CPDF_StreamAcc streamAcc;
     streamAcc.LoadAllData(pTemplateStream);
     uint8_t* pData = (uint8_t*)streamAcc.GetData();
-    FX_DWORD dwSize2 = streamAcc.GetSize();
+    uint32_t dwSize2 = streamAcc.GetSize();
     ScopedFileStream pTemplate(FX_CreateMemoryStream(pData, dwSize2));
     pContext->UpdateChecksum(pTemplate.get());
   }

@@ -103,13 +103,13 @@ class CPWL_EditCtrl : public CPWL_Wnd, public IFX_Edit_Notify {
   // CPWL_Wnd
   void OnCreate(PWL_CREATEPARAM& cp) override;
   void OnCreated() override;
-  FX_BOOL OnKeyDown(uint16_t nChar, FX_DWORD nFlag) override;
-  FX_BOOL OnChar(uint16_t nChar, FX_DWORD nFlag) override;
-  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
-  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
-  FX_BOOL OnMouseMove(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
+  FX_BOOL OnKeyDown(uint16_t nChar, uint32_t nFlag) override;
+  FX_BOOL OnChar(uint16_t nChar, uint32_t nFlag) override;
+  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  FX_BOOL OnMouseMove(const CFX_FloatPoint& point, uint32_t nFlag) override;
   void OnNotify(CPWL_Wnd* pWnd,
-                FX_DWORD msg,
+                uint32_t msg,
                 intptr_t wParam = 0,
                 intptr_t lParam = 0) override;
   void CreateChildWnd(const PWL_CREATEPARAM& cp) override;

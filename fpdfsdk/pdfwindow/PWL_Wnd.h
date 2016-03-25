@@ -233,7 +233,7 @@ struct PWL_CREATEPARAM {
   IFX_Edit_FontMap* pFontMap;         // required for text window
   IPWL_Provider* pProvider;           // required for self coordinate
   IPWL_FocusHandler* pFocusHandler;   // optional
-  FX_DWORD dwFlags;                   // optional
+  uint32_t dwFlags;                   // optional
   CPWL_Color sBackgroundColor;        // optional
   FX_HWND hAttachedWnd;               // required for no-reader framework
   IPWL_SpellCheck* pSpellCheck;       // required for spellchecking
@@ -298,21 +298,21 @@ class CPWL_Wnd : public CPWL_TimerHandler {
 
   void DrawAppearance(CFX_RenderDevice* pDevice, CFX_Matrix* pUser2Device);
 
-  virtual FX_BOOL OnKeyDown(uint16_t nChar, FX_DWORD nFlag);
-  virtual FX_BOOL OnKeyUp(uint16_t nChar, FX_DWORD nFlag);
-  virtual FX_BOOL OnChar(uint16_t nChar, FX_DWORD nFlag);
-  virtual FX_BOOL OnLButtonDblClk(const CFX_FloatPoint& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnMButtonDblClk(const CFX_FloatPoint& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnMButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnMButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnRButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnRButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag);
-  virtual FX_BOOL OnMouseMove(const CFX_FloatPoint& point, FX_DWORD nFlag);
+  virtual FX_BOOL OnKeyDown(uint16_t nChar, uint32_t nFlag);
+  virtual FX_BOOL OnKeyUp(uint16_t nChar, uint32_t nFlag);
+  virtual FX_BOOL OnChar(uint16_t nChar, uint32_t nFlag);
+  virtual FX_BOOL OnLButtonDblClk(const CFX_FloatPoint& point, uint32_t nFlag);
+  virtual FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag);
+  virtual FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag);
+  virtual FX_BOOL OnMButtonDblClk(const CFX_FloatPoint& point, uint32_t nFlag);
+  virtual FX_BOOL OnMButtonDown(const CFX_FloatPoint& point, uint32_t nFlag);
+  virtual FX_BOOL OnMButtonUp(const CFX_FloatPoint& point, uint32_t nFlag);
+  virtual FX_BOOL OnRButtonDown(const CFX_FloatPoint& point, uint32_t nFlag);
+  virtual FX_BOOL OnRButtonUp(const CFX_FloatPoint& point, uint32_t nFlag);
+  virtual FX_BOOL OnMouseMove(const CFX_FloatPoint& point, uint32_t nFlag);
   virtual FX_BOOL OnMouseWheel(short zDelta,
                                const CFX_FloatPoint& point,
-                               FX_DWORD nFlag);
+                               uint32_t nFlag);
 
   virtual void SetFocus();
   virtual void KillFocus();
@@ -320,7 +320,7 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   void ReleaseCapture();
 
   virtual void OnNotify(CPWL_Wnd* pWnd,
-                        FX_DWORD msg,
+                        uint32_t msg,
                         intptr_t wParam = 0,
                         intptr_t lParam = 0);
   virtual void SetTextColor(const CPWL_Color& color);
@@ -348,9 +348,9 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   CFX_FloatPoint GetCenterPoint() const;
   int32_t GetBorderWidth() const;
   FX_BOOL IsVisible() const { return m_bVisible; }
-  FX_BOOL HasFlag(FX_DWORD dwFlags) const;
-  void AddFlag(FX_DWORD dwFlags);
-  void RemoveFlag(FX_DWORD dwFlags);
+  FX_BOOL HasFlag(uint32_t dwFlags) const;
+  void AddFlag(uint32_t dwFlags);
+  void RemoveFlag(uint32_t dwFlags);
   const CFX_FloatRect& GetClipRect() const;
   CPWL_Wnd* GetParentWindow() const;
   int32_t GetBorderStyle() const;
@@ -434,10 +434,10 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   FX_BOOL IsWndCaptureKeyboard(const CPWL_Wnd* pWnd) const;
   const CPWL_Wnd* GetRootWnd() const;
 
-  FX_BOOL IsCTRLpressed(FX_DWORD nFlag) const;
-  FX_BOOL IsSHIFTpressed(FX_DWORD nFlag) const;
-  FX_BOOL IsALTpressed(FX_DWORD nFlag) const;
-  FX_BOOL IsINSERTpressed(FX_DWORD nFlag) const;
+  FX_BOOL IsCTRLpressed(uint32_t nFlag) const;
+  FX_BOOL IsSHIFTpressed(uint32_t nFlag) const;
+  FX_BOOL IsALTpressed(uint32_t nFlag) const;
+  FX_BOOL IsINSERTpressed(uint32_t nFlag) const;
 
  private:
   void AddChild(CPWL_Wnd* pWnd);

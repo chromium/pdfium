@@ -947,7 +947,7 @@ FX_BOOL Field::currentValueIndices(IJS_Context* cc,
     if (!m_bCanSet)
       return FALSE;
 
-    CFX_ArrayTemplate<FX_DWORD> array;
+    CFX_ArrayTemplate<uint32_t> array;
 
     if (vp.GetType() == CJS_Value::VT_number) {
       int iSelecting = 0;
@@ -1002,7 +1002,7 @@ FX_BOOL Field::currentValueIndices(IJS_Context* cc,
 void Field::SetCurrentValueIndices(CPDFSDK_Document* pDocument,
                                    const CFX_WideString& swFieldName,
                                    int nControlIndex,
-                                   const CFX_ArrayTemplate<FX_DWORD>& array) {
+                                   const CFX_ArrayTemplate<uint32_t>& array) {
   ASSERT(pDocument);
 
   std::vector<CPDF_FormField*> FieldArray =
@@ -1010,7 +1010,7 @@ void Field::SetCurrentValueIndices(CPDFSDK_Document* pDocument,
   for (CPDF_FormField* pFormField : FieldArray) {
     int nFieldType = pFormField->GetFieldType();
     if (nFieldType == FIELDTYPE_COMBOBOX || nFieldType == FIELDTYPE_LISTBOX) {
-      FX_DWORD dwFieldFlags = pFormField->GetFieldFlags();
+      uint32_t dwFieldFlags = pFormField->GetFieldFlags();
       pFormField->ClearSelection(TRUE);
 
       for (int i = 0, sz = array.GetSize(); i < sz; i++) {
@@ -1209,7 +1209,7 @@ FX_BOOL Field::display(IJS_Context* cc,
     if (!pWidget)
       return FALSE;
 
-    FX_DWORD dwFlag = pWidget->GetFlags();
+    uint32_t dwFlag = pWidget->GetFlags();
 
     if (ANNOTFLAG_INVISIBLE & dwFlag || ANNOTFLAG_HIDDEN & dwFlag) {
       vp << (int32_t)1;
@@ -1244,7 +1244,7 @@ void Field::SetDisplay(CPDFSDK_Document* pDocument,
         ASSERT(pFormControl);
 
         if (CPDFSDK_Widget* pWidget = pInterForm->GetWidget(pFormControl)) {
-          FX_DWORD dwFlag = pWidget->GetFlags();
+          uint32_t dwFlag = pWidget->GetFlags();
           switch (number) {
             case 0:
               dwFlag &= (~ANNOTFLAG_INVISIBLE);
@@ -1285,7 +1285,7 @@ void Field::SetDisplay(CPDFSDK_Document* pDocument,
       if (CPDF_FormControl* pFormControl =
               pFormField->GetControl(nControlIndex)) {
         if (CPDFSDK_Widget* pWidget = pInterForm->GetWidget(pFormControl)) {
-          FX_DWORD dwFlag = pWidget->GetFlags();
+          uint32_t dwFlag = pWidget->GetFlags();
           switch (number) {
             case 0:
               dwFlag &= (~ANNOTFLAG_INVISIBLE);
@@ -1525,7 +1525,7 @@ FX_BOOL Field::hidden(IJS_Context* cc,
     if (!pWidget)
       return FALSE;
 
-    FX_DWORD dwFlags = pWidget->GetFlags();
+    uint32_t dwFlags = pWidget->GetFlags();
 
     if (ANNOTFLAG_INVISIBLE & dwFlags || ANNOTFLAG_HIDDEN & dwFlags)
       vp << true;
@@ -1549,7 +1549,7 @@ void Field::SetHidden(CPDFSDK_Document* pDocument,
       for (int i = 0, sz = pFormField->CountControls(); i < sz; ++i) {
         if (CPDFSDK_Widget* pWidget =
                 pInterForm->GetWidget(pFormField->GetControl(i))) {
-          FX_DWORD dwFlags = pWidget->GetFlags();
+          uint32_t dwFlags = pWidget->GetFlags();
 
           if (b) {
             dwFlags &= (~ANNOTFLAG_INVISIBLE);
@@ -1577,7 +1577,7 @@ void Field::SetHidden(CPDFSDK_Document* pDocument,
       if (CPDF_FormControl* pFormControl =
               pFormField->GetControl(nControlIndex)) {
         if (CPDFSDK_Widget* pWidget = pInterForm->GetWidget(pFormControl)) {
-          FX_DWORD dwFlags = pWidget->GetFlags();
+          uint32_t dwFlags = pWidget->GetFlags();
 
           if (b) {
             dwFlags &= (~ANNOTFLAG_INVISIBLE);
@@ -1964,7 +1964,7 @@ FX_BOOL Field::print(IJS_Context* cc,
         for (int i = 0, sz = pFormField->CountControls(); i < sz; ++i) {
           if (CPDFSDK_Widget* pWidget =
                   pInterForm->GetWidget(pFormField->GetControl(i))) {
-            FX_DWORD dwFlags = pWidget->GetFlags();
+            uint32_t dwFlags = pWidget->GetFlags();
             if (bVP)
               dwFlags |= ANNOTFLAG_PRINT;
             else
@@ -1985,7 +1985,7 @@ FX_BOOL Field::print(IJS_Context* cc,
         if (CPDF_FormControl* pFormControl =
                 pFormField->GetControl(m_nFormControlIndex)) {
           if (CPDFSDK_Widget* pWidget = pInterForm->GetWidget(pFormControl)) {
-            FX_DWORD dwFlags = pWidget->GetFlags();
+            uint32_t dwFlags = pWidget->GetFlags();
             if (bVP)
               dwFlags |= ANNOTFLAG_PRINT;
             else
@@ -3428,7 +3428,7 @@ void Field::AddDelay_Color(enum FIELD_PROP prop, const CPWL_Color& color) {
 }
 
 void Field::AddDelay_WordArray(enum FIELD_PROP prop,
-                               const CFX_ArrayTemplate<FX_DWORD>& array) {
+                               const CFX_ArrayTemplate<uint32_t>& array) {
   CJS_DelayData* pNewData = new CJS_DelayData;
   pNewData->sFieldName = m_FieldName;
   pNewData->nControlIndex = m_nFormControlIndex;

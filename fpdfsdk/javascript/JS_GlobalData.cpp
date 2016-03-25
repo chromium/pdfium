@@ -328,19 +328,19 @@ void CJS_GlobalData::LoadGlobalPersistentVariables() {
 
       ASSERT(wVersion <= 2);
 
-      FX_DWORD dwCount = *((FX_DWORD*)p);
-      p += sizeof(FX_DWORD);
+      uint32_t dwCount = *((uint32_t*)p);
+      p += sizeof(uint32_t);
 
-      FX_DWORD dwSize = *((FX_DWORD*)p);
-      p += sizeof(FX_DWORD);
+      uint32_t dwSize = *((uint32_t*)p);
+      p += sizeof(uint32_t);
 
-      if (dwSize == nLength - sizeof(uint16_t) * 2 - sizeof(FX_DWORD) * 2) {
+      if (dwSize == nLength - sizeof(uint16_t) * 2 - sizeof(uint32_t) * 2) {
         for (int32_t i = 0, sz = dwCount; i < sz; i++) {
           if (p > pBuffer + nLength)
             break;
 
-          FX_DWORD dwNameLen = *((FX_DWORD*)p);
-          p += sizeof(FX_DWORD);
+          uint32_t dwNameLen = *((uint32_t*)p);
+          p += sizeof(uint32_t);
 
           if (p + dwNameLen > pBuffer + nLength)
             break;
@@ -356,8 +356,8 @@ void CJS_GlobalData::LoadGlobalPersistentVariables() {
               double dData = 0;
               switch (wVersion) {
                 case 1: {
-                  FX_DWORD dwData = *((FX_DWORD*)p);
-                  p += sizeof(FX_DWORD);
+                  uint32_t dwData = *((uint32_t*)p);
+                  p += sizeof(uint32_t);
                   dData = dwData;
                 } break;
                 case 2: {
@@ -375,8 +375,8 @@ void CJS_GlobalData::LoadGlobalPersistentVariables() {
               SetGlobalVariablePersistent(sEntry, TRUE);
             } break;
             case JS_GLOBALDATA_TYPE_STRING: {
-              FX_DWORD dwLength = *((FX_DWORD*)p);
-              p += sizeof(FX_DWORD);
+              uint32_t dwLength = *((uint32_t*)p);
+              p += sizeof(uint32_t);
 
               if (p + dwLength > pBuffer + nLength)
                 break;
@@ -398,7 +398,7 @@ void CJS_GlobalData::LoadGlobalPersistentVariables() {
 }
 
 void CJS_GlobalData::SaveGlobalPersisitentVariables() {
-  FX_DWORD nCount = 0;
+  uint32_t nCount = 0;
   CFX_BinaryBuf sData;
 
   for (int i = 0, sz = m_arrayGlobalData.GetSize(); i < sz; i++) {
@@ -421,9 +421,9 @@ void CJS_GlobalData::SaveGlobalPersisitentVariables() {
   sFile.AppendBlock(&wType, sizeof(uint16_t));
   uint16_t wVersion = 2;
   sFile.AppendBlock(&wVersion, sizeof(uint16_t));
-  sFile.AppendBlock(&nCount, sizeof(FX_DWORD));
-  FX_DWORD dwSize = sData.GetSize();
-  sFile.AppendBlock(&dwSize, sizeof(FX_DWORD));
+  sFile.AppendBlock(&nCount, sizeof(uint32_t));
+  uint32_t dwSize = sData.GetSize();
+  sFile.AppendBlock(&dwSize, sizeof(uint32_t));
 
   sFile.AppendBlock(sData.GetBuffer(), sData.GetSize());
 
@@ -451,8 +451,8 @@ void CJS_GlobalData::MakeByteString(const CFX_ByteString& name,
   uint16_t wType = (uint16_t)pData->nType;
   switch (wType) {
     case JS_GLOBALDATA_TYPE_NUMBER: {
-      FX_DWORD dwNameLen = (FX_DWORD)name.GetLength();
-      sData.AppendBlock(&dwNameLen, sizeof(FX_DWORD));
+      uint32_t dwNameLen = (uint32_t)name.GetLength();
+      sData.AppendBlock(&dwNameLen, sizeof(uint32_t));
       sData.AppendString(name);
       sData.AppendBlock(&wType, sizeof(uint16_t));
 
@@ -460,8 +460,8 @@ void CJS_GlobalData::MakeByteString(const CFX_ByteString& name,
       sData.AppendBlock(&dData, sizeof(double));
     } break;
     case JS_GLOBALDATA_TYPE_BOOLEAN: {
-      FX_DWORD dwNameLen = (FX_DWORD)name.GetLength();
-      sData.AppendBlock(&dwNameLen, sizeof(FX_DWORD));
+      uint32_t dwNameLen = (uint32_t)name.GetLength();
+      sData.AppendBlock(&dwNameLen, sizeof(uint32_t));
       sData.AppendString(name);
       sData.AppendBlock(&wType, sizeof(uint16_t));
 
@@ -469,20 +469,20 @@ void CJS_GlobalData::MakeByteString(const CFX_ByteString& name,
       sData.AppendBlock(&wData, sizeof(uint16_t));
     } break;
     case JS_GLOBALDATA_TYPE_STRING: {
-      FX_DWORD dwNameLen = (FX_DWORD)name.GetLength();
-      sData.AppendBlock(&dwNameLen, sizeof(FX_DWORD));
+      uint32_t dwNameLen = (uint32_t)name.GetLength();
+      sData.AppendBlock(&dwNameLen, sizeof(uint32_t));
       sData.AppendString(name);
       sData.AppendBlock(&wType, sizeof(uint16_t));
 
-      FX_DWORD dwDataLen = (FX_DWORD)pData->sData.GetLength();
-      sData.AppendBlock(&dwDataLen, sizeof(FX_DWORD));
+      uint32_t dwDataLen = (uint32_t)pData->sData.GetLength();
+      sData.AppendBlock(&dwDataLen, sizeof(uint32_t));
       sData.AppendString(pData->sData);
     } break;
     case JS_GLOBALDATA_TYPE_NULL: {
-      FX_DWORD dwNameLen = (FX_DWORD)name.GetLength();
-      sData.AppendBlock(&dwNameLen, sizeof(FX_DWORD));
+      uint32_t dwNameLen = (uint32_t)name.GetLength();
+      sData.AppendBlock(&dwNameLen, sizeof(uint32_t));
       sData.AppendString(name);
-      sData.AppendBlock(&wType, sizeof(FX_DWORD));
+      sData.AppendBlock(&wType, sizeof(uint32_t));
     } break;
     default:
       break;

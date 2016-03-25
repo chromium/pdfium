@@ -78,7 +78,7 @@ void CFFL_FormFiller::OnDraw(CPDFSDK_PageView* pPageView,
                              CPDFSDK_Annot* pAnnot,
                              CFX_RenderDevice* pDevice,
                              CFX_Matrix* pUser2Device,
-                             FX_DWORD dwFlags) {
+                             uint32_t dwFlags) {
   ASSERT(pAnnot->GetPDFAnnot()->GetSubType() == "Widget");
 
   if (CPWL_Wnd* pWnd = GetPDFWindow(pPageView, FALSE)) {
@@ -96,7 +96,7 @@ void CFFL_FormFiller::OnDrawDeactive(CPDFSDK_PageView* pPageView,
                                      CPDFSDK_Annot* pAnnot,
                                      CFX_RenderDevice* pDevice,
                                      CFX_Matrix* pUser2Device,
-                                     FX_DWORD dwFlags) {
+                                     uint32_t dwFlags) {
   CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
   pWidget->DrawAppearance(pDevice, pUser2Device, CPDF_Annot::Normal, NULL);
 }
@@ -297,8 +297,8 @@ PWL_CREATEPARAM CFFL_FormFiller::GetCreateParam() {
   cp.pProvider = this;
   cp.rcRectWnd = GetPDFWindowRect();
 
-  FX_DWORD dwCreateFlags = PWS_BORDER | PWS_BACKGROUND | PWS_VISIBLE;
-  FX_DWORD dwFieldFlag = m_pWidget->GetFieldFlags();
+  uint32_t dwCreateFlags = PWS_BORDER | PWS_BACKGROUND | PWS_VISIBLE;
+  uint32_t dwFieldFlag = m_pWidget->GetFieldFlags();
   if (dwFieldFlag & FIELDFLAG_READONLY) {
     dwCreateFlags |= PWS_READONLY;
   }
@@ -692,7 +692,7 @@ void CFFL_Button::OnDraw(CPDFSDK_PageView* pPageView,
                          CPDFSDK_Annot* pAnnot,
                          CFX_RenderDevice* pDevice,
                          CFX_Matrix* pUser2Device,
-                         FX_DWORD dwFlags) {
+                         uint32_t dwFlags) {
   ASSERT(pPageView);
   CPDFSDK_Widget* pWidget = (CPDFSDK_Widget*)pAnnot;
   CPDF_FormControl* pCtrl = pWidget->GetFormControl();
@@ -723,6 +723,6 @@ void CFFL_Button::OnDrawDeactive(CPDFSDK_PageView* pPageView,
                                  CPDFSDK_Annot* pAnnot,
                                  CFX_RenderDevice* pDevice,
                                  CFX_Matrix* pUser2Device,
-                                 FX_DWORD dwFlags) {
+                                 uint32_t dwFlags) {
   OnDraw(pPageView, pAnnot, pDevice, pUser2Device, dwFlags);
 }

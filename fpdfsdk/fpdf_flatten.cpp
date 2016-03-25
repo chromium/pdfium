@@ -94,7 +94,7 @@ int ParserAnnots(CPDF_Document* pSourceDoc,
   if (!pAnnots)
     return FLATTEN_NOTHINGTODO;
 
-  FX_DWORD dwSize = pAnnots->GetCount();
+  uint32_t dwSize = pAnnots->GetCount();
   for (int i = 0; i < (int)dwSize; i++) {
     CPDF_Dictionary* pAnnotDic = ToDictionary(pAnnots->GetElementValue(i));
     if (!pAnnotDic)
@@ -213,7 +213,7 @@ void SetPageContents(CFX_ByteString key,
     case CPDF_Object::STREAM: {
       pContentsArray = new CPDF_Array;
       CPDF_Stream* pContents = pContentsObj->AsStream();
-      FX_DWORD dwObjNum = pDocument->AddIndirectObject(pContents);
+      uint32_t dwObjNum = pDocument->AddIndirectObject(pContents);
       CPDF_StreamAcc acc;
       acc.LoadAllData(pContents);
       CFX_ByteString sStream = "q\n";
@@ -237,7 +237,7 @@ void SetPageContents(CFX_ByteString key,
   if (!pContentsArray)
     return;
 
-  FX_DWORD dwObjNum = pDocument->AddIndirectObject(pContentsArray);
+  uint32_t dwObjNum = pDocument->AddIndirectObject(pContentsArray);
   pPage->SetAtReference("Contents", pDocument, dwObjNum);
 
   if (!key.IsEmpty()) {
@@ -380,7 +380,7 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
   }
 
   CPDF_Stream* pNewXObject = new CPDF_Stream(NULL, 0, new CPDF_Dictionary);
-  FX_DWORD dwObjNum = pDocument->AddIndirectObject(pNewXObject);
+  uint32_t dwObjNum = pDocument->AddIndirectObject(pNewXObject);
   CPDF_Dictionary* pPageXObject = pRes->GetDictBy("XObject");
   if (!pPageXObject) {
     pPageXObject = new CPDF_Dictionary;
@@ -486,7 +486,7 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
 
     CFX_ByteString sFormName;
     sFormName.Format("F%d", i);
-    FX_DWORD dwObjNum = pDocument->AddIndirectObject(pObj);
+    uint32_t dwObjNum = pDocument->AddIndirectObject(pObj);
     pXObject->SetAtReference(sFormName, pDocument, dwObjNum);
 
     CPDF_StreamAcc acc;

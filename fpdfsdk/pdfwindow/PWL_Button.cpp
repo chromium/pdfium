@@ -21,7 +21,7 @@ void CPWL_Button::OnCreate(PWL_CREATEPARAM& cp) {
 }
 
 FX_BOOL CPWL_Button::OnLButtonDown(const CFX_FloatPoint& point,
-                                   FX_DWORD nFlag) {
+                                   uint32_t nFlag) {
   CPWL_Wnd::OnLButtonDown(point, nFlag);
 
   m_bMouseDown = TRUE;
@@ -30,7 +30,7 @@ FX_BOOL CPWL_Button::OnLButtonDown(const CFX_FloatPoint& point,
   return TRUE;
 }
 
-FX_BOOL CPWL_Button::OnLButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) {
+FX_BOOL CPWL_Button::OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) {
   CPWL_Wnd::OnLButtonUp(point, nFlag);
 
   ReleaseCapture();

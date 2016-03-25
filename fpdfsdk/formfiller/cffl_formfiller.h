@@ -29,12 +29,12 @@ class CFFL_FormFiller : public IPWL_Provider, public CPWL_TimerHandler {
                       CPDFSDK_Annot* pAnnot,
                       CFX_RenderDevice* pDevice,
                       CFX_Matrix* pUser2Device,
-                      FX_DWORD dwFlags);
+                      uint32_t dwFlags);
   virtual void OnDrawDeactive(CPDFSDK_PageView* pPageView,
                               CPDFSDK_Annot* pAnnot,
                               CFX_RenderDevice* pDevice,
                               CFX_Matrix* pUser2Device,
-                              FX_DWORD dwFlags);
+                              uint32_t dwFlags);
 
   virtual void OnCreate(CPDFSDK_Annot* pAnnot);
   virtual void OnLoad(CPDFSDK_Annot* pAnnot);
@@ -188,12 +188,12 @@ class CFFL_Button : public CFFL_FormFiller {
               CPDFSDK_Annot* pAnnot,
               CFX_RenderDevice* pDevice,
               CFX_Matrix* pUser2Device,
-              FX_DWORD dwFlags) override;
+              uint32_t dwFlags) override;
   void OnDrawDeactive(CPDFSDK_PageView* pPageView,
                       CPDFSDK_Annot* pAnnot,
                       CFX_RenderDevice* pDevice,
                       CFX_Matrix* pUser2Device,
-                      FX_DWORD dwFlags) override;
+                      uint32_t dwFlags) override;
 
  protected:
   FX_BOOL m_bMouseIn;

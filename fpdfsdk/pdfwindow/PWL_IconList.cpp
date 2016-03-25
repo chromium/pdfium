@@ -165,7 +165,7 @@ void CPWL_IconList_Content::CreateChildWnd(const PWL_CREATEPARAM& cp) {
 }
 
 FX_BOOL CPWL_IconList_Content::OnLButtonDown(const CFX_FloatPoint& point,
-                                             FX_DWORD nFlag) {
+                                             uint32_t nFlag) {
   SetFocus();
 
   SetCapture();
@@ -179,7 +179,7 @@ FX_BOOL CPWL_IconList_Content::OnLButtonDown(const CFX_FloatPoint& point,
 }
 
 FX_BOOL CPWL_IconList_Content::OnLButtonUp(const CFX_FloatPoint& point,
-                                           FX_DWORD nFlag) {
+                                           uint32_t nFlag) {
   m_bMouseDown = FALSE;
   ReleaseCapture();
 
@@ -187,7 +187,7 @@ FX_BOOL CPWL_IconList_Content::OnLButtonUp(const CFX_FloatPoint& point,
 }
 
 FX_BOOL CPWL_IconList_Content::OnMouseMove(const CFX_FloatPoint& point,
-                                           FX_DWORD nFlag) {
+                                           uint32_t nFlag) {
   if (m_bMouseDown) {
     int32_t nItemIndex = FindItemIndex(point);
     SetSelect(nItemIndex);
@@ -197,7 +197,7 @@ FX_BOOL CPWL_IconList_Content::OnMouseMove(const CFX_FloatPoint& point,
   return TRUE;
 }
 
-FX_BOOL CPWL_IconList_Content::OnKeyDown(uint16_t nChar, FX_DWORD nFlag) {
+FX_BOOL CPWL_IconList_Content::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
   switch (nChar) {
     case FWL_VKEY_Up:
       if (m_nSelectIndex > 0) {
@@ -375,7 +375,7 @@ void CPWL_IconList::OnCreated() {
 }
 
 void CPWL_IconList::OnNotify(CPWL_Wnd* pWnd,
-                             FX_DWORD msg,
+                             uint32_t msg,
                              intptr_t wParam,
                              intptr_t lParam) {
   CPWL_Wnd::OnNotify(pWnd, msg, wParam, lParam);
@@ -464,7 +464,7 @@ void CPWL_IconList::SetIconFillColor(const CPWL_Color& color) {
 
 FX_BOOL CPWL_IconList::OnMouseWheel(short zDelta,
                                     const CFX_FloatPoint& point,
-                                    FX_DWORD nFlag) {
+                                    uint32_t nFlag) {
   CFX_FloatPoint ptScroll = m_pListContent->GetScrollPos();
   CFX_FloatRect rcScroll = m_pListContent->GetScrollArea();
   CFX_FloatRect rcContents = m_pListContent->GetClientRect();

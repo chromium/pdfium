@@ -153,15 +153,15 @@ FX_BOOL CFPDF_FileStream::Flush() {
 CPDF_CustomAccess::CPDF_CustomAccess(FPDF_FILEACCESS* pFileAccess) {
   m_FileAccess = *pFileAccess;
 #ifdef PDF_ENABLE_XFA
-  m_BufferOffset = (FX_DWORD)-1;
+  m_BufferOffset = (uint32_t)-1;
 #endif  // PDF_ENABLE_XFA
 }
 
 #ifdef PDF_ENABLE_XFA
-FX_BOOL CPDF_CustomAccess::GetByte(FX_DWORD pos, uint8_t& ch) {
+FX_BOOL CPDF_CustomAccess::GetByte(uint32_t pos, uint8_t& ch) {
   if (pos >= m_FileAccess.m_FileLen)
     return FALSE;
-  if (m_BufferOffset == (FX_DWORD)-1 || pos < m_BufferOffset ||
+  if (m_BufferOffset == (uint32_t)-1 || pos < m_BufferOffset ||
       pos >= m_BufferOffset + 512) {
     // Need to read from file access
     m_BufferOffset = pos;
@@ -176,9 +176,9 @@ FX_BOOL CPDF_CustomAccess::GetByte(FX_DWORD pos, uint8_t& ch) {
   return TRUE;
 }
 
-FX_BOOL CPDF_CustomAccess::GetBlock(FX_DWORD pos,
+FX_BOOL CPDF_CustomAccess::GetBlock(uint32_t pos,
                                     uint8_t* pBuf,
-                                    FX_DWORD size) {
+                                    uint32_t size) {
   if (pos + size > m_FileAccess.m_FileLen)
     return FALSE;
   return m_FileAccess.m_GetBlock(m_FileAccess.m_Param, pos, pBuf, size);
@@ -202,7 +202,7 @@ FX_BOOL CPDF_CustomAccess::ReadBlock(void* buffer,
 }
 
 // 0 bit: FPDF_POLICY_MACHINETIME_ACCESS
-static FX_DWORD foxit_sandbox_policy = 0xFFFFFFFF;
+static uint32_t foxit_sandbox_policy = 0xFFFFFFFF;
 
 void FSDK_SetSandBoxPolicy(FPDF_DWORD policy, FPDF_BOOL enable) {
   switch (policy) {
@@ -282,7 +282,7 @@ int GetLastError() {
 #endif  // _WIN32
 
 void ProcessParseError(CPDF_Parser::Error err) {
-  FX_DWORD err_code = FPDF_ERR_SUCCESS;
+  uint32_t err_code = FPDF_ERR_SUCCESS;
   // Translate FPDFAPI error code to FPDFVIEW error code
   switch (err) {
     case CPDF_Parser::SUCCESS:
@@ -390,7 +390,7 @@ class CMemFile final : public IFX_FileRead {
     FX_SAFE_FILESIZE newPos =
         pdfium::base::checked_cast<FX_FILESIZE, size_t>(size);
     newPos += offset;
-    if (!newPos.IsValid() || newPos.ValueOrDie() > (FX_DWORD)m_size) {
+    if (!newPos.IsValid() || newPos.ValueOrDie() > (uint32_t)m_size) {
       return FALSE;
     }
     FXSYS_memcpy(buffer, m_pBuf + offset, size);
@@ -458,7 +458,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_GetFileVersion(FPDF_DOCUMENT doc,
   return TRUE;
 }
 
-// jabdelmalek: changed return type from FX_DWORD to build on Linux (and match
+// jabdelmalek: changed return type from uint32_t to build on Linux (and match
 // header).
 DLLEXPORT unsigned long STDCALL FPDF_GetDocPermissions(FPDF_DOCUMENT document) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
@@ -466,11 +466,11 @@ DLLEXPORT unsigned long STDCALL FPDF_GetDocPermissions(FPDF_DOCUMENT document) {
 #ifndef PDF_ENABLE_XFA
     return 0;
 #else   // PDF_ENABLE_XFA
-    return (FX_DWORD)-1;
+    return (uint32_t)-1;
 #endif  // PDF_ENABLE_XFA
 
   CPDF_Dictionary* pDict = pDoc->GetParser()->GetEncryptDict();
-  return pDict ? pDict->GetIntegerBy("P") : (FX_DWORD)-1;
+  return pDict ? pDict->GetIntegerBy("P") : (uint32_t)-1;
 }
 
 DLLEXPORT int STDCALL FPDF_GetSecurityHandlerRevision(FPDF_DOCUMENT document) {

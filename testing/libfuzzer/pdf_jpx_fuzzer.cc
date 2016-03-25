@@ -21,9 +21,9 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   if (!decoder)
     return 0;
 
-  FX_DWORD width;
-  FX_DWORD height;
-  FX_DWORD components;
+  uint32_t width;
+  uint32_t height;
+  uint32_t components;
   g_module.GetImageInfo(decoder.get(), &width, &height, &components);
 
   FXDIB_Format format;
@@ -43,7 +43,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
     return 0;
 
   std::vector<uint8_t> output_offsets(components);
-  for (FX_DWORD i = 0; i < components; ++i)
+  for (uint32_t i = 0; i < components; ++i)
     output_offsets[i] = i;
 
   g_module.Decode(decoder.get(), bitmap->GetBuffer(), bitmap->GetPitch(),

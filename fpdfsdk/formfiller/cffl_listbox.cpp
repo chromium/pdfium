@@ -25,7 +25,7 @@ CFFL_ListBox::~CFFL_ListBox() {
 PWL_CREATEPARAM CFFL_ListBox::GetCreateParam() {
   PWL_CREATEPARAM cp = CFFL_FormFiller::GetCreateParam();
 
-  FX_DWORD dwFieldFlag = m_pWidget->GetFieldFlags();
+  uint32_t dwFieldFlag = m_pWidget->GetFieldFlags();
 
   if (dwFieldFlag & FIELDFLAG_MULTISELECT) {
     cp.dwFlags |= PLBS_MULTIPLESEL;

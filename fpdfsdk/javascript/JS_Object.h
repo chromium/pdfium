@@ -80,14 +80,14 @@ class CJS_Timer : public CJS_Runtime::Observer {
             CJS_Runtime* pRuntime,
             int nType,
             const CFX_WideString& script,
-            FX_DWORD dwElapse,
-            FX_DWORD dwTimeOut);
+            uint32_t dwElapse,
+            uint32_t dwTimeOut);
   ~CJS_Timer() override;
 
   void KillJSTimer();
 
   int GetType() const { return m_nType; }
-  FX_DWORD GetTimeOut() const { return m_dwTimeOut; }
+  uint32_t GetTimeOut() const { return m_dwTimeOut; }
   CJS_Runtime* GetRuntime() const { return m_bValid ? m_pRuntime : nullptr; }
   CFX_WideString GetJScript() const { return m_swJScript; }
 
@@ -100,14 +100,14 @@ class CJS_Timer : public CJS_Runtime::Observer {
   // CJS_Runtime::Observer
   void OnDestroyed() override;
 
-  FX_DWORD m_nTimerID;
+  uint32_t m_nTimerID;
   CJS_EmbedObj* const m_pEmbedObj;
   bool m_bProcessing;
   bool m_bValid;
 
   // data
   const int m_nType;  // 0:Interval; 1:TimeOut
-  const FX_DWORD m_dwTimeOut;
+  const uint32_t m_dwTimeOut;
   const CFX_WideString m_swJScript;
   CJS_Runtime* const m_pRuntime;
   CPDFDoc_Environment* const m_pApp;

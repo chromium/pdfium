@@ -104,8 +104,8 @@ class CPWL_Note_CloseBox : public CPWL_Button {
   // CPWL_Button
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           CFX_Matrix* pUser2Device) override;
-  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
-  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) override;
 
  private:
   FX_BOOL m_bMouseDown;
@@ -146,7 +146,7 @@ class CPWL_Note_Edit : public CPWL_Edit {
   FX_FLOAT GetItemHeight(FX_FLOAT fLimitWidth) override;
   void SetText(const FX_WCHAR* csText) override;
   void OnNotify(CPWL_Wnd* pWnd,
-                FX_DWORD msg,
+                uint32_t msg,
                 intptr_t wParam = 0,
                 intptr_t lParam = 0) override;
   void RePosChildWnd() override;
@@ -203,10 +203,10 @@ class CPWL_Note_Contents : public CPWL_ListCtrl {
   // CPWL_ListCtrl
   CFX_ByteString GetClassName() const override;
   void OnNotify(CPWL_Wnd* pWnd,
-                FX_DWORD msg,
+                uint32_t msg,
                 intptr_t wParam = 0,
                 intptr_t lParam = 0) override;
-  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) override;
   void CreateChildWnd(const PWL_CREATEPARAM& cp) override;
 
  private:
@@ -253,13 +253,13 @@ class CPWL_NoteItem : public CPWL_Wnd, public IPWL_NoteItem {
 
  protected:
   // CPWL_Wnd
-  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
-  FX_BOOL OnRButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  FX_BOOL OnRButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) override;
   CFX_ByteString GetClassName() const override;
   void RePosChildWnd() override;
   void CreateChildWnd(const PWL_CREATEPARAM& cp) override;
   void OnNotify(CPWL_Wnd* pWnd,
-                FX_DWORD msg,
+                uint32_t msg,
                 intptr_t wParam = 0,
                 intptr_t lParam = 0) override;
   FX_FLOAT GetItemHeight(FX_FLOAT fLimitWidth) override;
@@ -316,15 +316,15 @@ class CPWL_Note : public CPWL_NoteItem {
   FX_BOOL IsTopItem() const override { return TRUE; }
   const CPWL_Note* GetNote() const override;
   IPWL_NoteNotify* GetNoteNotify() const override;
-  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
-  FX_BOOL OnRButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  FX_BOOL OnRButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) override;
   FX_BOOL OnMouseWheel(short zDelta,
                        const CFX_FloatPoint& point,
-                       FX_DWORD nFlag) override;
+                       uint32_t nFlag) override;
   void RePosChildWnd() override;
   void CreateChildWnd(const PWL_CREATEPARAM& cp) override;
   void OnNotify(CPWL_Wnd* pWnd,
-                FX_DWORD msg,
+                uint32_t msg,
                 intptr_t wParam = 0,
                 intptr_t lParam = 0) override;
 

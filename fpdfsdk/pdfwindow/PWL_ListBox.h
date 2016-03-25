@@ -59,17 +59,17 @@ class CPWL_ListBox : public CPWL_Wnd {
   void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           CFX_Matrix* pUser2Device) override;
-  FX_BOOL OnKeyDown(uint16_t nChar, FX_DWORD nFlag) override;
-  FX_BOOL OnChar(uint16_t nChar, FX_DWORD nFlag) override;
-  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
-  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
-  FX_BOOL OnMouseMove(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
+  FX_BOOL OnKeyDown(uint16_t nChar, uint32_t nFlag) override;
+  FX_BOOL OnChar(uint16_t nChar, uint32_t nFlag) override;
+  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  FX_BOOL OnLButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  FX_BOOL OnMouseMove(const CFX_FloatPoint& point, uint32_t nFlag) override;
   FX_BOOL OnMouseWheel(short zDelta,
                        const CFX_FloatPoint& point,
-                       FX_DWORD nFlag) override;
+                       uint32_t nFlag) override;
   void KillFocus() override;
   void OnNotify(CPWL_Wnd* pWnd,
-                FX_DWORD msg,
+                uint32_t msg,
                 intptr_t wParam = 0,
                 intptr_t lParam = 0) override;
   void RePosChildWnd() override;
@@ -79,7 +79,7 @@ class CPWL_ListBox : public CPWL_Wnd {
 
   virtual CFX_WideString GetText() const;
 
-  void OnNotifySelChanged(FX_BOOL bKeyDown, FX_BOOL& bExit, FX_DWORD nFlag);
+  void OnNotifySelChanged(FX_BOOL bKeyDown, FX_BOOL& bExit, uint32_t nFlag);
 
   void AddString(const FX_WCHAR* str);
   void SetTopVisibleIndex(int32_t nItemIndex);

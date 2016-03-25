@@ -31,14 +31,14 @@ class IPWL_Filler_Notify {
                                  FX_BOOL bKeyDown,
                                  FX_BOOL& bRC,
                                  FX_BOOL& bExit,
-                                 FX_DWORD nFlag) = 0;
+                                 uint32_t nFlag) = 0;
 #ifdef PDF_ENABLE_XFA
   virtual void OnPopupPreOpen(void* pPrivateData,
                               FX_BOOL& bExit,
-                              FX_DWORD nFlag) = 0;
+                              uint32_t nFlag) = 0;
   virtual void OnPopupPostOpen(void* pPrivateData,
                                FX_BOOL& bExit,
-                               FX_DWORD nFlag) = 0;
+                               uint32_t nFlag) = 0;
 #endif  // PDF_ENABLE_XFA
 };
 
@@ -56,14 +56,14 @@ class CPWL_Edit : public CPWL_EditCtrl, public IFX_Edit_OprNotify {
   void GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           CFX_Matrix* pUser2Device) override;
-  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
-  FX_BOOL OnLButtonDblClk(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
-  FX_BOOL OnRButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) override;
+  FX_BOOL OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  FX_BOOL OnLButtonDblClk(const CFX_FloatPoint& point, uint32_t nFlag) override;
+  FX_BOOL OnRButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) override;
   FX_BOOL OnMouseWheel(short zDelta,
                        const CFX_FloatPoint& point,
-                       FX_DWORD nFlag) override;
-  FX_BOOL OnKeyDown(uint16_t nChar, FX_DWORD nFlag) override;
-  FX_BOOL OnChar(uint16_t nChar, FX_DWORD nFlag) override;
+                       uint32_t nFlag) override;
+  FX_BOOL OnKeyDown(uint16_t nChar, uint32_t nFlag) override;
+  FX_BOOL OnChar(uint16_t nChar, uint32_t nFlag) override;
   CFX_FloatRect GetFocusRect() const override;
   void OnSetFocus() override;
   void OnKillFocus() override;
@@ -154,7 +154,7 @@ class CPWL_Edit : public CPWL_EditCtrl, public IFX_Edit_OprNotify {
                                    FX_BOOL bArabic) const;
 
  public:
-  FX_BOOL IsProceedtoOnChar(uint16_t nKeyCode, FX_DWORD nFlag);
+  FX_BOOL IsProceedtoOnChar(uint16_t nKeyCode, uint32_t nFlag);
 
  private:
   IPWL_Filler_Notify* m_pFillerNotify;

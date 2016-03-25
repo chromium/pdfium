@@ -72,7 +72,7 @@ void CPWL_EditCtrl::RePosChildWnd() {
 }
 
 void CPWL_EditCtrl::OnNotify(CPWL_Wnd* pWnd,
-                             FX_DWORD msg,
+                             uint32_t msg,
                              intptr_t wParam,
                              intptr_t lParam) {
   CPWL_Wnd::OnNotify(pWnd, msg, wParam, lParam);
@@ -142,7 +142,7 @@ FX_FLOAT CPWL_EditCtrl::GetFontSize() const {
   return m_pEdit->GetFontSize();
 }
 
-FX_BOOL CPWL_EditCtrl::OnKeyDown(uint16_t nChar, FX_DWORD nFlag) {
+FX_BOOL CPWL_EditCtrl::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
   if (m_bMouseDown)
     return TRUE;
 
@@ -217,7 +217,7 @@ FX_BOOL CPWL_EditCtrl::OnKeyDown(uint16_t nChar, FX_DWORD nFlag) {
   return bRet;
 }
 
-FX_BOOL CPWL_EditCtrl::OnChar(uint16_t nChar, FX_DWORD nFlag) {
+FX_BOOL CPWL_EditCtrl::OnChar(uint16_t nChar, uint32_t nFlag) {
   if (m_bMouseDown)
     return TRUE;
 
@@ -292,7 +292,7 @@ FX_BOOL CPWL_EditCtrl::OnChar(uint16_t nChar, FX_DWORD nFlag) {
 }
 
 FX_BOOL CPWL_EditCtrl::OnLButtonDown(const CFX_FloatPoint& point,
-                                     FX_DWORD nFlag) {
+                                     uint32_t nFlag) {
   CPWL_Wnd::OnLButtonDown(point, nFlag);
 
   if (ClientHitTest(point)) {
@@ -309,7 +309,7 @@ FX_BOOL CPWL_EditCtrl::OnLButtonDown(const CFX_FloatPoint& point,
 }
 
 FX_BOOL CPWL_EditCtrl::OnLButtonUp(const CFX_FloatPoint& point,
-                                   FX_DWORD nFlag) {
+                                   uint32_t nFlag) {
   CPWL_Wnd::OnLButtonUp(point, nFlag);
 
   if (m_bMouseDown) {
@@ -325,7 +325,7 @@ FX_BOOL CPWL_EditCtrl::OnLButtonUp(const CFX_FloatPoint& point,
 }
 
 FX_BOOL CPWL_EditCtrl::OnMouseMove(const CFX_FloatPoint& point,
-                                   FX_DWORD nFlag) {
+                                   uint32_t nFlag) {
   CPWL_Wnd::OnMouseMove(point, nFlag);
 
   if (m_bMouseDown)

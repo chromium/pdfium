@@ -467,7 +467,7 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
   }
 }
 
-FX_BOOL CPWL_Edit::OnLButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag) {
+FX_BOOL CPWL_Edit::OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) {
   CPWL_Wnd::OnLButtonDown(point, nFlag);
 
   if (HasFlag(PES_TEXTOVERFLOW) || ClientHitTest(point)) {
@@ -484,7 +484,7 @@ FX_BOOL CPWL_Edit::OnLButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag) {
 }
 
 FX_BOOL CPWL_Edit::OnLButtonDblClk(const CFX_FloatPoint& point,
-                                   FX_DWORD nFlag) {
+                                   uint32_t nFlag) {
   CPWL_Wnd::OnLButtonDblClk(point, nFlag);
 
   if (HasFlag(PES_TEXTOVERFLOW) || ClientHitTest(point)) {
@@ -503,7 +503,7 @@ FX_BOOL CPWL_Edit::OnLButtonDblClk(const CFX_FloatPoint& point,
 #define WM_PWLEDIT_SELECTALL 0x07
 #define WM_PWLEDIT_SUGGEST 0x08
 
-FX_BOOL CPWL_Edit::OnRButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) {
+FX_BOOL CPWL_Edit::OnRButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) {
   if (m_bMouseDown)
     return FALSE;
 
@@ -862,7 +862,7 @@ void CPWL_Edit::EnableSpellCheck(FX_BOOL bEnabled) {
     RemoveFlag(PES_SPELLCHECK);
 }
 
-FX_BOOL CPWL_Edit::OnKeyDown(uint16_t nChar, FX_DWORD nFlag) {
+FX_BOOL CPWL_Edit::OnKeyDown(uint16_t nChar, uint32_t nFlag) {
   if (m_bMouseDown)
     return TRUE;
 
@@ -903,7 +903,7 @@ FX_BOOL CPWL_Edit::OnKeyDown(uint16_t nChar, FX_DWORD nFlag) {
 *If the event is swallowed, implementation may do other unexpected things, which
 *is not the control means to do.
 */
-FX_BOOL CPWL_Edit::IsProceedtoOnChar(uint16_t nKeyCode, FX_DWORD nFlag) {
+FX_BOOL CPWL_Edit::IsProceedtoOnChar(uint16_t nKeyCode, uint32_t nFlag) {
   FX_BOOL bCtrl = IsCTRLpressed(nFlag);
   FX_BOOL bAlt = IsALTpressed(nFlag);
   if (bCtrl && !bAlt) {
@@ -931,7 +931,7 @@ FX_BOOL CPWL_Edit::IsProceedtoOnChar(uint16_t nKeyCode, FX_DWORD nFlag) {
   }
 }
 
-FX_BOOL CPWL_Edit::OnChar(uint16_t nChar, FX_DWORD nFlag) {
+FX_BOOL CPWL_Edit::OnChar(uint16_t nChar, uint32_t nFlag) {
   if (m_bMouseDown)
     return TRUE;
 
@@ -983,7 +983,7 @@ FX_BOOL CPWL_Edit::OnChar(uint16_t nChar, FX_DWORD nFlag) {
 
 FX_BOOL CPWL_Edit::OnMouseWheel(short zDelta,
                                 const CFX_FloatPoint& point,
-                                FX_DWORD nFlag) {
+                                uint32_t nFlag) {
   if (HasFlag(PES_MULTILINE)) {
     CFX_FloatPoint ptScroll = GetScrollPos();
 

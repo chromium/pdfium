@@ -285,7 +285,7 @@ DLLEXPORT void STDCALL FPDFPage_InsertClipPath(FPDF_PAGE page,
 
   CFX_ByteTextBuf strClip;
   CPDF_ClipPath* pClipPath = (CPDF_ClipPath*)clipPath;
-  FX_DWORD i;
+  uint32_t i;
   for (i = 0; i < pClipPath->GetPathCount(); i++) {
     CPDF_Path path = pClipPath->GetPath(i);
     int iClipType = pClipPath->GetClipType(i);

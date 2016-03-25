@@ -25,13 +25,13 @@
 
 // Convert a #FX_ARGB to a #FX_COLORREF.
 #define FX_ARGBTOCOLORREF(argb)                                            \
-  ((((FX_DWORD)argb & 0x00FF0000) >> 16) | ((FX_DWORD)argb & 0x0000FF00) | \
-   (((FX_DWORD)argb & 0x000000FF) << 16))
+  ((((uint32_t)argb & 0x00FF0000) >> 16) | ((uint32_t)argb & 0x0000FF00) | \
+   (((uint32_t)argb & 0x000000FF) << 16))
 
 // Convert a #FX_COLORREF to a #FX_ARGB.
 #define FX_COLORREFTOARGB(rgb)                                   \
-  ((FX_DWORD)0xFF000000 | (((FX_DWORD)rgb & 0x000000FF) << 16) | \
-   ((FX_DWORD)rgb & 0x0000FF00) | (((FX_DWORD)rgb & 0x00FF0000) >> 16))
+  ((uint32_t)0xFF000000 | (((uint32_t)rgb & 0x000000FF) << 16) | \
+   ((uint32_t)rgb & 0x0000FF00) | (((uint32_t)rgb & 0x00FF0000) >> 16))
 
 typedef unsigned int FX_UINT;
 class CRenderContext;
@@ -49,15 +49,15 @@ class CPDF_CustomAccess final : public IFX_FileRead {
 
 #ifdef PDF_ENABLE_XFA
   virtual CFX_ByteString GetFullPath() { return ""; }
-  virtual FX_BOOL GetByte(FX_DWORD pos, uint8_t& ch);
-  virtual FX_BOOL GetBlock(FX_DWORD pos, uint8_t* pBuf, FX_DWORD size);
+  virtual FX_BOOL GetByte(uint32_t pos, uint8_t& ch);
+  virtual FX_BOOL GetBlock(uint32_t pos, uint8_t* pBuf, uint32_t size);
 #endif  // PDF_ENABLE_XFA
 
  private:
   FPDF_FILEACCESS m_FileAccess;
 #ifdef PDF_ENABLE_XFA
   uint8_t m_Buffer[512];
-  FX_DWORD m_BufferOffset;
+  uint32_t m_BufferOffset;
 #endif  // PDF_ENABLE_XFA
 };
 
@@ -124,7 +124,7 @@ void FPDF_RenderPage_Retail(CRenderContext* pContext,
                             FX_BOOL bNeedToRestore,
                             IFSDK_PAUSE_Adapter* pause);
 
-void CheckUnSupportError(CPDF_Document* pDoc, FX_DWORD err_code);
+void CheckUnSupportError(CPDF_Document* pDoc, uint32_t err_code);
 void CheckUnSupportAnnot(CPDF_Document* pDoc, const CPDF_Annot* pPDFAnnot);
 void ProcessParseError(CPDF_Parser::Error err);
 

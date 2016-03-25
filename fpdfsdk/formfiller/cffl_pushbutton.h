@@ -22,7 +22,7 @@ class CFFL_PushButton : public CFFL_Button {
               CPDFSDK_Annot* pAnnot,
               CFX_RenderDevice* pDevice,
               CFX_Matrix* pUser2Device,
-              FX_DWORD dwFlags) override;
+              uint32_t dwFlags) override;
 };
 
 #endif  // FPDFSDK_FORMFILLER_CFFL_PUSHBUTTON_H_

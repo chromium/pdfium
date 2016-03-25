@@ -17,7 +17,7 @@
 #include "fpdfsdk/javascript/JS_Define.h"
 #include "fpdfsdk/javascript/JS_Object.h"
 
-static const FX_DWORD g_nan[2] = {0, 0x7FF80000};
+static const uint32_t g_nan[2] = {0, 0x7FF80000};
 static double GetNan() {
   return *(double*)g_nan;
 }

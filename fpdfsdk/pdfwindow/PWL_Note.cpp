@@ -152,7 +152,7 @@ void CPWL_Note_Edit::OnKillFocus() {
 }
 
 void CPWL_Note_Edit::OnNotify(CPWL_Wnd* pWnd,
-                              FX_DWORD msg,
+                              uint32_t msg,
                               intptr_t wParam,
                               intptr_t lParam) {
   if (m_bEnableNotify) {
@@ -333,7 +333,7 @@ void CPWL_Note_CloseBox::DrawThisAppearance(CFX_RenderDevice* pDevice,
 }
 
 FX_BOOL CPWL_Note_CloseBox::OnLButtonDown(const CFX_FloatPoint& point,
-                                          FX_DWORD nFlag) {
+                                          uint32_t nFlag) {
   SetBorderStyle(PBS_INSET);
   InvalidateRect(NULL);
 
@@ -343,7 +343,7 @@ FX_BOOL CPWL_Note_CloseBox::OnLButtonDown(const CFX_FloatPoint& point,
 }
 
 FX_BOOL CPWL_Note_CloseBox::OnLButtonUp(const CFX_FloatPoint& point,
-                                        FX_DWORD nFlag) {
+                                        uint32_t nFlag) {
   m_bMouseDown = FALSE;
 
   SetBorderStyle(PBS_BEVELED);
@@ -466,7 +466,7 @@ IPWL_NoteItem* CPWL_Note_Contents::GetHitNoteItem(const CFX_FloatPoint& point) {
 }
 
 void CPWL_Note_Contents::OnNotify(CPWL_Wnd* pWnd,
-                                  FX_DWORD msg,
+                                  uint32_t msg,
                                   intptr_t wParam,
                                   intptr_t lParam) {
   switch (msg) {
@@ -527,7 +527,7 @@ void CPWL_Note_Contents::OnNotify(CPWL_Wnd* pWnd,
 }
 
 FX_BOOL CPWL_Note_Contents::OnLButtonDown(const CFX_FloatPoint& point,
-                                          FX_DWORD nFlag) {
+                                          uint32_t nFlag) {
   if (CPWL_Wnd::OnLButtonDown(point, nFlag))
     return TRUE;
 
@@ -912,7 +912,7 @@ FX_FLOAT CPWL_NoteItem::GetItemRightMargin() {
 }
 
 FX_BOOL CPWL_NoteItem::OnLButtonDown(const CFX_FloatPoint& point,
-                                     FX_DWORD nFlag) {
+                                     uint32_t nFlag) {
   if (!m_pContents->WndHitTest(m_pContents->ParentToChild(point))) {
     SetNoteFocus(FALSE);
   }
@@ -923,7 +923,7 @@ FX_BOOL CPWL_NoteItem::OnLButtonDown(const CFX_FloatPoint& point,
 }
 
 FX_BOOL CPWL_NoteItem::OnRButtonUp(const CFX_FloatPoint& point,
-                                   FX_DWORD nFlag) {
+                                   uint32_t nFlag) {
   if (!m_pContents->WndHitTest(m_pContents->ParentToChild(point))) {
     SetNoteFocus(FALSE);
     PopupNoteItemMenu(point);
@@ -935,7 +935,7 @@ FX_BOOL CPWL_NoteItem::OnRButtonUp(const CFX_FloatPoint& point,
 }
 
 void CPWL_NoteItem::OnNotify(CPWL_Wnd* pWnd,
-                             FX_DWORD msg,
+                             uint32_t msg,
                              intptr_t wParam,
                              intptr_t lParam) {
   switch (msg) {
@@ -1302,7 +1302,7 @@ CFX_WideString CPWL_Note::GetAuthorName() const {
 
 FX_BOOL CPWL_Note::OnMouseWheel(short zDelta,
                                 const CFX_FloatPoint& point,
-                                FX_DWORD nFlag) {
+                                uint32_t nFlag) {
   CFX_FloatPoint ptScroll = m_pContents->GetScrollPos();
   CFX_FloatRect rcScroll = m_pContents->GetScrollArea();
   CFX_FloatRect rcContents = m_pContents->GetClientRect();
@@ -1337,7 +1337,7 @@ FX_BOOL CPWL_Note::OnMouseWheel(short zDelta,
 }
 
 void CPWL_Note::OnNotify(CPWL_Wnd* pWnd,
-                         FX_DWORD msg,
+                         uint32_t msg,
                          intptr_t wParam,
                          intptr_t lParam) {
   switch (msg) {
@@ -1462,7 +1462,7 @@ void CPWL_Note::SetBkColor(const CPWL_Color& color) {
     m_pRBBox->SetTextColor(sTextColor);
 }
 
-FX_BOOL CPWL_Note::OnLButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag) {
+FX_BOOL CPWL_Note::OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) {
   if (m_pOptions->WndHitTest(m_pOptions->ParentToChild(point))) {
     if (IPWL_NoteNotify* pNotify = GetNoteNotify()) {
       int32_t x, y;
@@ -1479,7 +1479,7 @@ FX_BOOL CPWL_Note::OnLButtonDown(const CFX_FloatPoint& point, FX_DWORD nFlag) {
   return CPWL_Wnd::OnLButtonDown(point, nFlag);
 }
 
-FX_BOOL CPWL_Note::OnRButtonUp(const CFX_FloatPoint& point, FX_DWORD nFlag) {
+FX_BOOL CPWL_Note::OnRButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) {
   return CPWL_Wnd::OnRButtonUp(point, nFlag);
 }
 

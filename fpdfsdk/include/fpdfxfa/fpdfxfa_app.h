@@ -50,11 +50,11 @@ class CPDFXFA_App : public IXFA_AppProvider {
     wsFoxitName = L"Foxit";
   }
 
-  void Beep(FX_DWORD dwType) override;
+  void Beep(uint32_t dwType) override;
   int32_t MsgBox(const CFX_WideStringC& wsMessage,
                  const CFX_WideStringC& wsTitle,
-                 FX_DWORD dwIconType,
-                 FX_DWORD dwButtonType) override;
+                 uint32_t dwIconType,
+                 uint32_t dwButtonType) override;
   void Response(CFX_WideString& wsAnswer,
                 const CFX_WideStringC& wsQuestion,
                 const CFX_WideStringC& wsTitle,

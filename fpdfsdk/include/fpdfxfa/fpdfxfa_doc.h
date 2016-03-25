@@ -49,9 +49,9 @@ class CPDFXFA_Document : public IXFA_DocProvider {
   // used in dynamic xfa, dwFlags refer to XFA_INVALIDATE_XXX macros.
   virtual void InvalidateRect(IXFA_PageView* pPageView,
                               const CFX_RectF& rt,
-                              FX_DWORD dwFlags = 0);
+                              uint32_t dwFlags = 0);
   // used in static xfa, dwFlags refer to XFA_INVALIDATE_XXX macros.
-  virtual void InvalidateRect(IXFA_Widget* hWidget, FX_DWORD dwFlags = 0);
+  virtual void InvalidateRect(IXFA_Widget* hWidget, uint32_t dwFlags = 0);
   // show or hide caret
   virtual void DisplayCaret(IXFA_Widget* hWidget,
                             FX_BOOL bVisible,
@@ -67,11 +67,11 @@ class CPDFXFA_Document : public IXFA_DocProvider {
                             const CFX_RectF* pRectExclude = NULL);
 
   // dwFlags XFA_PAGEVIEWEVENT_Added, XFA_PAGEVIEWEVENT_Removing
-  virtual void PageViewEvent(IXFA_PageView* pPageView, FX_DWORD dwFlags);
+  virtual void PageViewEvent(IXFA_PageView* pPageView, uint32_t dwFlags);
   // dwEvent refer to XFA_WIDGETEVENT_XXX
   virtual void WidgetEvent(IXFA_Widget* hWidget,
                            CXFA_WidgetAcc* pWidgetData,
-                           FX_DWORD dwEvent,
+                           uint32_t dwEvent,
                            void* pParam = NULL,
                            void* pAdditional = NULL);
 
@@ -104,7 +104,7 @@ class CPDFXFA_Document : public IXFA_DocProvider {
   virtual void Print(IXFA_Doc* hDoc,
                      int32_t nStartPage,
                      int32_t nEndPage,
-                     FX_DWORD dwOptions);
+                     uint32_t dwOptions);
 
   // LayoutPseudo method
   virtual int32_t AbsPageCountInBatch(IXFA_Doc* hDoc) { return 0; }
