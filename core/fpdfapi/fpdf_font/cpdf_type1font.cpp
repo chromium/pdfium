@@ -120,7 +120,8 @@ void CPDF_Type1Font::LoadGlyphMap() {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
   FX_BOOL bCoreText = TRUE;
   CQuartz2D& quartz2d =
-      ((CApplePlatform*)CFX_GEModule::Get()->GetPlatformData())->_quartz2d;
+      static_cast<CApplePlatform*>(CFX_GEModule::Get()->GetPlatformData())
+          ->m_quartz2d;
   if (!m_Font.GetPlatformFont()) {
     if (m_Font.GetPsName() == CFX_WideString::FromLocal("DFHeiStd-W5")) {
       bCoreText = FALSE;

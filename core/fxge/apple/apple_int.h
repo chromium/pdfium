@@ -34,6 +34,7 @@ typedef enum eFXIOSFONTCHARSET {
   eFXFontCharsetARABIC = 1 << 12,
   eFXFontCharsetBALTIC = 1 << 13,
 } FX_IOSCHARSET;
+
 FX_IOSCHARSET FX_GetiOSCharset(int charset);
 typedef enum eFXIOSFONTFLAG {
   eFXFontFlagBold = 1,
@@ -42,12 +43,14 @@ typedef enum eFXIOSFONTFLAG {
   eFXFontFlagSerif = 1 << 3,
   eFXFontFlagScript = 1 << 4,
 } FX_IOSFONTFLAG;
+
 typedef struct IOS_FONTDATA_ {
   uint32_t nHashCode;
   const char* psName;
   uint32_t charsets;
   uint32_t styles;
 } IOS_FONTDATA;
+
 class CQuartz2D {
  public:
   void* createGraphics(CFX_DIBitmap* bitmap);
@@ -67,12 +70,13 @@ class CQuartz2D {
   void saveGraphicsState(void* graphics);
   void restoreGraphicsState(void* graphics);
 };
+
 class CApplePlatform {
  public:
   CApplePlatform() {}
   ~CApplePlatform() {}
 
-  CQuartz2D _quartz2d;
+  CQuartz2D m_quartz2d;
 };
 
 class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
@@ -200,66 +204,18 @@ class CFX_QuartzDeviceDriver : public IFX_RenderDeviceDriver {
                             int dest_height,
                             CGRect* rect = NULL);
 
- protected:
-  CGContextRef _context;
-  CGAffineTransform _foxitDevice2User;
-  CGAffineTransform _user2FoxitDevice;
+  CGContextRef m_context;
+  CGAffineTransform m_foxitDevice2User;
+  CGAffineTransform m_user2FoxitDevice;
   int32_t m_saveCount;
 
-  int32_t _width;
-  int32_t _height;
-  int32_t _bitsPerPixel;
-  int32_t _deviceClass;
-  int32_t _renderCaps;
-  int32_t _horzSize;
-  int32_t _vertSize;
-};
-
-class CFX_FontProvider final : public IFX_FileRead {
- public:
-  // IFX_FileRead
-  void Release() override { delete this; }
-  FX_FILESIZE GetSize() override { return (FX_FILESIZE)_totalSize; }
-  FX_BOOL IsEOF() override { return _offSet == _totalSize; }
-  FX_FILESIZE GetPosition() override { return (FX_FILESIZE)_offSet; }
-  FX_BOOL ReadBlock(void* buffer, FX_FILESIZE offset, size_t size) override;
-  size_t ReadBlock(void* buffer, size_t size) override;
-
- public:
-  CFX_FontProvider(CGFontRef cgFont);
-  ~CFX_FontProvider() override;
-  void InitTableOffset();
-  unsigned long Read(unsigned long offset,
-                     unsigned char* buffer,
-                     unsigned long count);
-
- protected:
-  uint32_t CalcTableCheckSum(const uint32_t* table,
-                             uint32_t numberOfBytesInTable);
-  uint32_t CalcTableDataRefCheckSum(CFDataRef dataRef);
-
- private:
-  CGFontRef m_cgFont;
-  UInt32 m_iTableSize;
-  size_t _offSet;
-  typedef struct FontHeader {
-    int32_t fVersion;
-    uint16_t fNumTables;
-    uint16_t fSearchRange;
-    uint16_t fEntrySelector;
-    uint16_t fRangeShift;
-  } FontHeader;
-  typedef struct TableEntry {
-    uint32_t fTag;
-    uint32_t fCheckSum;
-    uint32_t fOffset;
-    uint32_t fLength;
-  } TableEntry;
-  FontHeader _fontHeader;
-  unsigned char* _tableEntries;
-  size_t* _tableOffsets;
-  int _tableCount;
-  int _totalSize;
+  int32_t m_width;
+  int32_t m_height;
+  int32_t m_bitsPerPixel;
+  int32_t m_deviceClass;
+  int32_t m_renderCaps;
+  int32_t m_horzSize;
+  int32_t m_vertSize;
 };
 
 uint32_t FX_GetHashCode(const FX_CHAR* pStr);

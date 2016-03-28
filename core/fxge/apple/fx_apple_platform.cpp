@@ -18,12 +18,14 @@
 
 void CFX_AggDeviceDriver::InitPlatform() {
   CQuartz2D& quartz2d =
-      ((CApplePlatform*)CFX_GEModule::Get()->GetPlatformData())->_quartz2d;
+      static_cast<CApplePlatform*>(CFX_GEModule::Get()->GetPlatformData())
+          ->m_quartz2d;
   m_pPlatformGraphics = quartz2d.createGraphics(m_pBitmap);
 }
 void CFX_AggDeviceDriver::DestroyPlatform() {
   CQuartz2D& quartz2d =
-      ((CApplePlatform*)CFX_GEModule::Get()->GetPlatformData())->_quartz2d;
+      static_cast<CApplePlatform*>(CFX_GEModule::Get()->GetPlatformData())
+          ->m_quartz2d;
   if (m_pPlatformGraphics) {
     quartz2d.destroyGraphics(m_pPlatformGraphics);
     m_pPlatformGraphics = NULL;
@@ -63,7 +65,8 @@ static FX_BOOL _CGDrawGlyphRun(CGContextRef pContext,
     new_matrix.Concat(*pObject2Device);
   }
   CQuartz2D& quartz2d =
-      ((CApplePlatform*)CFX_GEModule::Get()->GetPlatformData())->_quartz2d;
+      static_cast<CApplePlatform*>(CFX_GEModule::Get()->GetPlatformData())
+          ->m_quartz2d;
   if (!pFont->GetPlatformFont()) {
     if (pFont->GetPsName() == CFX_WideString::FromLocal("DFHeiStd-W5")) {
       return FALSE;
@@ -164,7 +167,8 @@ FX_BOOL CFX_AggDeviceDriver::DrawDeviceText(int nChars,
 void CFX_Font::ReleasePlatformResource() {
   if (m_pPlatformFont) {
     CQuartz2D& quartz2d =
-        ((CApplePlatform*)CFX_GEModule::Get()->GetPlatformData())->_quartz2d;
+        static_cast<CApplePlatform*>(CFX_GEModule::Get()->GetPlatformData())
+            ->m_quartz2d;
     quartz2d.DestroyFont(m_pPlatformFont);
     m_pPlatformFont = NULL;
   }
