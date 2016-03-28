@@ -7,6 +7,7 @@
 #ifndef FPDFSDK_JAVASCRIPT_APP_H_
 #define FPDFSDK_JAVASCRIPT_APP_H_
 
+#include <memory>
 #include <vector>
 
 #include "fpdfsdk/javascript/JS_Define.h"
@@ -40,7 +41,6 @@ class app : public CJS_EmbedObj {
   app(CJS_Object* pJSObject);
   ~app() override;
 
- public:
   FX_BOOL activeDocs(IJS_Context* cc,
                      CJS_PropValue& vp,
                      CFX_WideString& sError);
@@ -160,9 +160,11 @@ class app : public CJS_EmbedObj {
   void TimerProc(CJS_Timer* pTimer) override;
   void RunJsScript(CJS_Runtime* pRuntime, const CFX_WideString& wsScript);
 
+  void ClearTimerCommon(const CJS_Value& param);
+
   bool m_bCalculate;
   bool m_bRuntimeHighLight;
-  CFX_ArrayTemplate<CJS_Timer*> m_aTimer;
+  std::vector<std::unique_ptr<CJS_Timer>> m_Timers;
 };
 
 class CJS_App : public CJS_Object {

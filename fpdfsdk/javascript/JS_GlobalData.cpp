@@ -8,6 +8,7 @@
 
 #include "core/fdrm/crypto/include/fx_crypt.h"
 #include "fpdfsdk/include/javascript/IJavaScript.h"
+#include "third_party/base/stl_util.h"
 
 #define JS_MAXGLOBALDATA (1024 * 4 - 8)
 
@@ -97,6 +98,15 @@ static const uint8_t JS_RC4KEY[] = {
     0x0e, 0xd0, 0x6b, 0xbb, 0xd5, 0x75, 0x55, 0x8b, 0x6e, 0x6b, 0x19, 0xa0,
     0xf8, 0x77, 0xd5, 0xa3};
 
+// Returns true if non-empty, setting sPropName
+static bool TrimPropName(const char* propname, CFX_ByteString* sPropName) {
+  ASSERT(propname);
+  *sPropName = propname;
+  sPropName->TrimLeft();
+  sPropName->TrimRight();
+  return sPropName->GetLength() != 0;
+}
+
 CJS_GlobalData* CJS_GlobalData::g_Instance = nullptr;
 
 // static
@@ -115,197 +125,164 @@ void CJS_GlobalData::Release() {
   }
 }
 
-CJS_GlobalData::CJS_GlobalData() : m_RefCount(0) {
-  m_sFilePath += SDK_JS_GLOBALDATA_FILENAME;
+CJS_GlobalData::CJS_GlobalData()
+    : m_RefCount(0), m_sFilePath(SDK_JS_GLOBALDATA_FILENAME) {
   LoadGlobalPersistentVariables();
 }
 
 CJS_GlobalData::~CJS_GlobalData() {
   SaveGlobalPersisitentVariables();
-  for (int i = 0, sz = m_arrayGlobalData.GetSize(); i < sz; i++)
-    delete m_arrayGlobalData.GetAt(i);
-
-  m_arrayGlobalData.RemoveAll();
 }
 
-int CJS_GlobalData::FindGlobalVariable(const FX_CHAR* propname) {
-  for (int i = 0, sz = m_arrayGlobalData.GetSize(); i < sz; i++) {
-    CJS_GlobalData_Element* pTemp = m_arrayGlobalData.GetAt(i);
-    if (pTemp->data.sKey[0] == *propname && pTemp->data.sKey == propname)
-      return i;
+CJS_GlobalData::iterator CJS_GlobalData::FindGlobalVariable(
+    const FX_CHAR* propname) {
+  for (auto it = m_arrayGlobalData.begin(); it != m_arrayGlobalData.end();
+       ++it) {
+    if ((*it)->data.sKey == propname)
+      return it;
   }
-  return -1;
+  return m_arrayGlobalData.end();
+}
+
+CJS_GlobalData::const_iterator CJS_GlobalData::FindGlobalVariable(
+    const FX_CHAR* propname) const {
+  for (auto it = m_arrayGlobalData.begin(); it != m_arrayGlobalData.end();
+       ++it) {
+    if ((*it)->data.sKey == propname)
+      return it;
+  }
+  return m_arrayGlobalData.end();
 }
 
 CJS_GlobalData_Element* CJS_GlobalData::GetGlobalVariable(
     const FX_CHAR* propname) {
-  ASSERT(propname);
-
-  int nFind = FindGlobalVariable(propname);
-  return nFind >= 0 ? m_arrayGlobalData.GetAt(nFind) : nullptr;
+  auto iter = FindGlobalVariable(propname);
+  return iter != m_arrayGlobalData.end() ? iter->get() : nullptr;
 }
 
 void CJS_GlobalData::SetGlobalVariableNumber(const FX_CHAR* propname,
                                              double dData) {
-  ASSERT(propname);
-  CFX_ByteString sPropName = propname;
-  sPropName.TrimLeft();
-  sPropName.TrimRight();
-  if (sPropName.GetLength() == 0)
+  CFX_ByteString sPropName;
+  if (!TrimPropName(propname, &sPropName))
     return;
 
   if (CJS_GlobalData_Element* pData = GetGlobalVariable(sPropName)) {
     pData->data.nType = JS_GLOBALDATA_TYPE_NUMBER;
     pData->data.dData = dData;
-  } else {
-    CJS_GlobalData_Element* pNewData = new CJS_GlobalData_Element;
-    pNewData->data.sKey = sPropName;
-    pNewData->data.nType = JS_GLOBALDATA_TYPE_NUMBER;
-    pNewData->data.dData = dData;
-    m_arrayGlobalData.Add(pNewData);
+    return;
   }
+  std::unique_ptr<CJS_GlobalData_Element> pNewData(new CJS_GlobalData_Element);
+  pNewData->data.sKey = sPropName;
+  pNewData->data.nType = JS_GLOBALDATA_TYPE_NUMBER;
+  pNewData->data.dData = dData;
+  m_arrayGlobalData.push_back(std::move(pNewData));
 }
 
 void CJS_GlobalData::SetGlobalVariableBoolean(const FX_CHAR* propname,
                                               bool bData) {
-  ASSERT(propname);
-  CFX_ByteString sPropName = propname;
-
-  sPropName.TrimLeft();
-  sPropName.TrimRight();
-
-  if (sPropName.GetLength() == 0)
+  CFX_ByteString sPropName;
+  if (!TrimPropName(propname, &sPropName))
     return;
 
   if (CJS_GlobalData_Element* pData = GetGlobalVariable(sPropName)) {
     pData->data.nType = JS_GLOBALDATA_TYPE_BOOLEAN;
     pData->data.bData = bData;
-  } else {
-    CJS_GlobalData_Element* pNewData = new CJS_GlobalData_Element;
-    pNewData->data.sKey = sPropName;
-    pNewData->data.nType = JS_GLOBALDATA_TYPE_BOOLEAN;
-    pNewData->data.bData = bData;
-
-    m_arrayGlobalData.Add(pNewData);
+    return;
   }
+  std::unique_ptr<CJS_GlobalData_Element> pNewData(new CJS_GlobalData_Element);
+  pNewData->data.sKey = sPropName;
+  pNewData->data.nType = JS_GLOBALDATA_TYPE_BOOLEAN;
+  pNewData->data.bData = bData;
+  m_arrayGlobalData.push_back(std::move(pNewData));
 }
 
 void CJS_GlobalData::SetGlobalVariableString(const FX_CHAR* propname,
                                              const CFX_ByteString& sData) {
-  ASSERT(propname);
-  CFX_ByteString sPropName = propname;
-
-  sPropName.TrimLeft();
-  sPropName.TrimRight();
-
-  if (sPropName.GetLength() == 0)
+  CFX_ByteString sPropName;
+  if (!TrimPropName(propname, &sPropName))
     return;
 
   if (CJS_GlobalData_Element* pData = GetGlobalVariable(sPropName)) {
     pData->data.nType = JS_GLOBALDATA_TYPE_STRING;
     pData->data.sData = sData;
-  } else {
-    CJS_GlobalData_Element* pNewData = new CJS_GlobalData_Element;
-    pNewData->data.sKey = sPropName;
-    pNewData->data.nType = JS_GLOBALDATA_TYPE_STRING;
-    pNewData->data.sData = sData;
-
-    m_arrayGlobalData.Add(pNewData);
+    return;
   }
+  std::unique_ptr<CJS_GlobalData_Element> pNewData(new CJS_GlobalData_Element);
+  pNewData->data.sKey = sPropName;
+  pNewData->data.nType = JS_GLOBALDATA_TYPE_STRING;
+  pNewData->data.sData = sData;
+  m_arrayGlobalData.push_back(std::move(pNewData));
 }
 
 void CJS_GlobalData::SetGlobalVariableObject(
     const FX_CHAR* propname,
     const CJS_GlobalVariableArray& array) {
-  ASSERT(propname);
-  CFX_ByteString sPropName = propname;
-
-  sPropName.TrimLeft();
-  sPropName.TrimRight();
-
-  if (sPropName.GetLength() == 0)
+  CFX_ByteString sPropName;
+  if (!TrimPropName(propname, &sPropName))
     return;
 
   if (CJS_GlobalData_Element* pData = GetGlobalVariable(sPropName)) {
     pData->data.nType = JS_GLOBALDATA_TYPE_OBJECT;
     pData->data.objData.Copy(array);
-  } else {
-    CJS_GlobalData_Element* pNewData = new CJS_GlobalData_Element;
-    pNewData->data.sKey = sPropName;
-    pNewData->data.nType = JS_GLOBALDATA_TYPE_OBJECT;
-    pNewData->data.objData.Copy(array);
-
-    m_arrayGlobalData.Add(pNewData);
+    return;
   }
+  std::unique_ptr<CJS_GlobalData_Element> pNewData(new CJS_GlobalData_Element);
+  pNewData->data.sKey = sPropName;
+  pNewData->data.nType = JS_GLOBALDATA_TYPE_OBJECT;
+  pNewData->data.objData.Copy(array);
+  m_arrayGlobalData.push_back(std::move(pNewData));
 }
 
 void CJS_GlobalData::SetGlobalVariableNull(const FX_CHAR* propname) {
-  ASSERT(propname);
-  CFX_ByteString sPropName = propname;
-
-  sPropName.TrimLeft();
-  sPropName.TrimRight();
-
-  if (sPropName.GetLength() == 0)
+  CFX_ByteString sPropName;
+  if (!TrimPropName(propname, &sPropName))
     return;
 
   if (CJS_GlobalData_Element* pData = GetGlobalVariable(sPropName)) {
     pData->data.nType = JS_GLOBALDATA_TYPE_NULL;
-  } else {
-    CJS_GlobalData_Element* pNewData = new CJS_GlobalData_Element;
-    pNewData->data.sKey = sPropName;
-    pNewData->data.nType = JS_GLOBALDATA_TYPE_NULL;
-
-    m_arrayGlobalData.Add(pNewData);
+    return;
   }
+  std::unique_ptr<CJS_GlobalData_Element> pNewData(new CJS_GlobalData_Element);
+  pNewData->data.sKey = sPropName;
+  pNewData->data.nType = JS_GLOBALDATA_TYPE_NULL;
+  m_arrayGlobalData.push_back(std::move(pNewData));
 }
 
 FX_BOOL CJS_GlobalData::SetGlobalVariablePersistent(const FX_CHAR* propname,
                                                     FX_BOOL bPersistent) {
-  ASSERT(propname);
-  CFX_ByteString sPropName = propname;
-
-  sPropName.TrimLeft();
-  sPropName.TrimRight();
-
-  if (sPropName.GetLength() == 0)
+  CFX_ByteString sPropName;
+  if (!TrimPropName(propname, &sPropName))
     return FALSE;
 
-  if (CJS_GlobalData_Element* pData = GetGlobalVariable(sPropName)) {
-    pData->bPersistent = bPersistent;
-    return TRUE;
-  }
+  CJS_GlobalData_Element* pData = GetGlobalVariable(sPropName);
+  if (!pData)
+    return FALSE;
 
-  return FALSE;
+  pData->bPersistent = bPersistent;
+  return TRUE;
 }
 
 FX_BOOL CJS_GlobalData::DeleteGlobalVariable(const FX_CHAR* propname) {
-  ASSERT(propname);
-  CFX_ByteString sPropName = propname;
-
-  sPropName.TrimLeft();
-  sPropName.TrimRight();
-
-  if (sPropName.GetLength() == 0)
+  CFX_ByteString sPropName;
+  if (!TrimPropName(propname, &sPropName))
     return FALSE;
 
-  int nFind = FindGlobalVariable(sPropName);
+  auto iter = FindGlobalVariable(sPropName);
+  if (iter == m_arrayGlobalData.end())
+    return FALSE;
 
-  if (nFind >= 0) {
-    delete m_arrayGlobalData.GetAt(nFind);
-    m_arrayGlobalData.RemoveAt(nFind);
-    return TRUE;
-  }
-
-  return FALSE;
+  m_arrayGlobalData.erase(iter);
+  return TRUE;
 }
 
 int32_t CJS_GlobalData::GetSize() const {
-  return m_arrayGlobalData.GetSize();
+  return pdfium::CollectionSize<int32_t>(m_arrayGlobalData);
 }
 
 CJS_GlobalData_Element* CJS_GlobalData::GetAt(int index) const {
-  return m_arrayGlobalData.GetAt(index);
+  if (index < 0 || index >= GetSize())
+    return nullptr;
+  return m_arrayGlobalData[index].get();
 }
 
 void CJS_GlobalData::LoadGlobalPersistentVariables() {
@@ -400,13 +377,10 @@ void CJS_GlobalData::LoadGlobalPersistentVariables() {
 void CJS_GlobalData::SaveGlobalPersisitentVariables() {
   uint32_t nCount = 0;
   CFX_BinaryBuf sData;
-
-  for (int i = 0, sz = m_arrayGlobalData.GetSize(); i < sz; i++) {
-    CJS_GlobalData_Element* pElement = m_arrayGlobalData.GetAt(i);
+  for (const auto& pElement : m_arrayGlobalData) {
     if (pElement->bPersistent) {
       CFX_BinaryBuf sElement;
       MakeByteString(pElement->data.sKey, &pElement->data, sElement);
-
       if (sData.GetSize() + sElement.GetSize() > JS_MAXGLOBALDATA)
         break;
 
@@ -416,7 +390,6 @@ void CJS_GlobalData::SaveGlobalPersisitentVariables() {
   }
 
   CFX_BinaryBuf sFile;
-
   uint16_t wType = (uint16_t)(('X' << 8) | 'F');
   sFile.AppendBlock(&wType, sizeof(uint16_t));
   uint16_t wVersion = 2;

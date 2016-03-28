@@ -53,39 +53,21 @@ enum FIELD_PROP {
   FP_VALUE
 };
 
-class CJS_WideStringArray {
- public:
-  CJS_WideStringArray() {}
-  virtual ~CJS_WideStringArray() {
-    for (int i = 0, sz = m_Data.GetSize(); i < sz; i++)
-      delete m_Data.GetAt(i);
-    m_Data.RemoveAll();
-  }
-
-  void Add(const CFX_WideString& string) {
-    m_Data.Add(new CFX_WideString(string));
-  }
-
-  int GetSize() const { return m_Data.GetSize(); }
-
-  CFX_WideString GetAt(int i) const { return *m_Data.GetAt(i); }
-
- private:
-  CFX_ArrayTemplate<CFX_WideString*> m_Data;
-};
-
 struct CJS_DelayData {
-  CFX_WideString sFieldName;
+  CJS_DelayData(FIELD_PROP prop, int idx, const CFX_WideString& name)
+      : eProp(prop), nControlIndex(idx), sFieldName(name) {}
+
+  FIELD_PROP eProp;
   int nControlIndex;
-  enum FIELD_PROP eProp;
+  CFX_WideString sFieldName;
   int32_t num;
   bool b;
   CFX_ByteString string;
   CFX_WideString widestring;
   CFX_FloatRect rect;
   CPWL_Color color;
-  CFX_ArrayTemplate<uint32_t> wordarray;
-  CJS_WideStringArray widestringarray;
+  std::vector<uint32_t> wordarray;
+  std::vector<CFX_WideString> widestringarray;
 };
 
 class Field : public CJS_EmbedObj {
@@ -344,7 +326,7 @@ class Field : public CJS_EmbedObj {
   static void SetCurrentValueIndices(CPDFSDK_Document* pDocument,
                                      const CFX_WideString& swFieldName,
                                      int nControlIndex,
-                                     const CFX_ArrayTemplate<uint32_t>& array);
+                                     const std::vector<uint32_t>& array);
   static void SetDefaultStyle(CPDFSDK_Document* pDocument,
                               const CFX_WideString& swFieldName,
                               int nControlIndex);
@@ -430,7 +412,7 @@ class Field : public CJS_EmbedObj {
   static void SetValue(CPDFSDK_Document* pDocument,
                        const CFX_WideString& swFieldName,
                        int nControlIndex,
-                       const CJS_WideStringArray& strArray);
+                       const std::vector<CFX_WideString>& strArray);
 
   static void AddField(CPDFSDK_Document* pDocument,
                        int nPageIndex,
@@ -470,16 +452,15 @@ class Field : public CJS_EmbedObj {
   CPDF_FormControl* GetSmartFieldControl(CPDF_FormField* pFormField);
   FX_BOOL ValueIsOccur(CPDF_FormField* pFormField, CFX_WideString csOptLabel);
 
-  void AddDelay_Int(enum FIELD_PROP prop, int32_t n);
-  void AddDelay_Bool(enum FIELD_PROP prop, bool b);
-  void AddDelay_String(enum FIELD_PROP prop, const CFX_ByteString& string);
-  void AddDelay_WideString(enum FIELD_PROP prop, const CFX_WideString& string);
-  void AddDelay_Rect(enum FIELD_PROP prop, const CFX_FloatRect& rect);
-  void AddDelay_Color(enum FIELD_PROP prop, const CPWL_Color& color);
-  void AddDelay_WordArray(enum FIELD_PROP prop,
-                          const CFX_ArrayTemplate<uint32_t>& array);
-  void AddDelay_WideStringArray(enum FIELD_PROP prop,
-                                const CJS_WideStringArray& array);
+  void AddDelay_Int(FIELD_PROP prop, int32_t n);
+  void AddDelay_Bool(FIELD_PROP prop, bool b);
+  void AddDelay_String(FIELD_PROP prop, const CFX_ByteString& string);
+  void AddDelay_WideString(FIELD_PROP prop, const CFX_WideString& string);
+  void AddDelay_Rect(FIELD_PROP prop, const CFX_FloatRect& rect);
+  void AddDelay_Color(FIELD_PROP prop, const CPWL_Color& color);
+  void AddDelay_WordArray(FIELD_PROP prop, const std::vector<uint32_t>& array);
+  void AddDelay_WideStringArray(FIELD_PROP prop,
+                                const std::vector<CFX_WideString>& array);
 
   void DoDelay();
 

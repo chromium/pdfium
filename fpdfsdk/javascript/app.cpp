@@ -32,7 +32,7 @@ END_JS_STATIC_METHOD()
 IMPLEMENT_JS_CLASS(CJS_TimerObj, TimerObj)
 
 TimerObj::TimerObj(CJS_Object* pJSObject)
-    : CJS_EmbedObj(pJSObject), m_pTimer(NULL) {}
+    : CJS_EmbedObj(pJSObject), m_pTimer(nullptr) {}
 
 TimerObj::~TimerObj() {}
 
@@ -102,10 +102,6 @@ app::app(CJS_Object* pJSObject)
     : CJS_EmbedObj(pJSObject), m_bCalculate(true), m_bRuntimeHighLight(false) {}
 
 app::~app() {
-  for (int i = 0, sz = m_aTimer.GetSize(); i < sz; i++)
-    delete m_aTimer[i];
-
-  m_aTimer.RemoveAll();
 }
 
 FX_BOOL app::activeDocs(IJS_Context* cc,
@@ -120,7 +116,7 @@ FX_BOOL app::activeDocs(IJS_Context* cc,
   CPDFSDK_Document* pCurDoc = pContext->GetReaderDocument();
   CJS_Array aDocs(pRuntime);
   if (CPDFSDK_Document* pDoc = pApp->GetSDKDocument()) {
-    CJS_Document* pJSDocument = NULL;
+    CJS_Document* pJSDocument = nullptr;
     if (pDoc == pCurDoc) {
       v8::Local<v8::Object> pObj = FXJS_GetThisObj(pRuntime->GetIsolate());
       if (FXJS_GetObjDefnID(pObj) == CJS_Document::g_nObjDefnID)
@@ -384,19 +380,16 @@ FX_BOOL app::setInterval(IJS_Context* cc,
 
   CJS_Runtime* pRuntime = pContext->GetJSRuntime();
   uint32_t dwInterval = params.size() > 1 ? params[1].ToInt() : 1000;
-
   CPDFDoc_Environment* pApp = pRuntime->GetReaderApp();
-  ASSERT(pApp);
-  CJS_Timer* pTimer =
-      new CJS_Timer(this, pApp, pRuntime, 0, script, dwInterval, 0);
-  m_aTimer.Add(pTimer);
+  m_Timers.push_back(std::unique_ptr<CJS_Timer>(
+      new CJS_Timer(this, pApp, pRuntime, 0, script, dwInterval, 0)));
 
   v8::Local<v8::Object> pRetObj = FXJS_NewFxDynamicObj(
       pRuntime->GetIsolate(), pRuntime, CJS_TimerObj::g_nObjDefnID);
-  CJS_TimerObj* pJS_TimerObj =
-      (CJS_TimerObj*)FXJS_GetPrivate(pRuntime->GetIsolate(), pRetObj);
-  TimerObj* pTimerObj = (TimerObj*)pJS_TimerObj->GetEmbedObject();
-  pTimerObj->SetTimer(pTimer);
+  CJS_TimerObj* pJS_TimerObj = static_cast<CJS_TimerObj*>(
+      FXJS_GetPrivate(pRuntime->GetIsolate(), pRetObj));
+  TimerObj* pTimerObj = static_cast<TimerObj*>(pJS_TimerObj->GetEmbedObject());
+  pTimerObj->SetTimer(m_Timers.back().get());
 
   vRet = pRetObj;
   return TRUE;
@@ -406,36 +399,32 @@ FX_BOOL app::setTimeOut(IJS_Context* cc,
                         const std::vector<CJS_Value>& params,
                         CJS_Value& vRet,
                         CFX_WideString& sError) {
+  CJS_Context* pContext = static_cast<CJS_Context*>(cc);
   if (params.size() > 2 || params.size() == 0) {
-    sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSPARAMERROR);
+    sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
     return FALSE;
   }
 
-  CJS_Context* pContext = (CJS_Context*)cc;
-  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
-
-  CFX_WideString script = params.size() > 0 ? params[0].ToCFXWideString() : L"";
+  CFX_WideString script = params[0].ToCFXWideString();
   if (script.IsEmpty()) {
-    sError =
-        JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSAFNUMBER_KEYSTROKE);
+    sError = JSGetStringFromID(pContext, IDS_STRING_JSAFNUMBER_KEYSTROKE);
     return TRUE;
   }
 
   uint32_t dwTimeOut = params.size() > 1 ? params[1].ToInt() : 1000;
-
+  CJS_Runtime* pRuntime = pContext->GetJSRuntime();
   CPDFDoc_Environment* pApp = pRuntime->GetReaderApp();
-  ASSERT(pApp);
-
-  CJS_Timer* pTimer =
-      new CJS_Timer(this, pApp, pRuntime, 1, script, dwTimeOut, dwTimeOut);
-  m_aTimer.Add(pTimer);
+  m_Timers.push_back(std::unique_ptr<CJS_Timer>(
+      new CJS_Timer(this, pApp, pRuntime, 1, script, dwTimeOut, dwTimeOut)));
 
   v8::Local<v8::Object> pRetObj = FXJS_NewFxDynamicObj(
       pRuntime->GetIsolate(), pRuntime, CJS_TimerObj::g_nObjDefnID);
-  CJS_TimerObj* pJS_TimerObj =
-      (CJS_TimerObj*)FXJS_GetPrivate(pRuntime->GetIsolate(), pRetObj);
-  TimerObj* pTimerObj = (TimerObj*)pJS_TimerObj->GetEmbedObject();
-  pTimerObj->SetTimer(pTimer);
+
+  CJS_TimerObj* pJS_TimerObj = static_cast<CJS_TimerObj*>(
+      FXJS_GetPrivate(pRuntime->GetIsolate(), pRetObj));
+
+  TimerObj* pTimerObj = static_cast<TimerObj*>(pJS_TimerObj->GetEmbedObject());
+  pTimerObj->SetTimer(m_Timers.back().get());
 
   vRet = pRetObj;
   return TRUE;
@@ -451,29 +440,7 @@ FX_BOOL app::clearTimeOut(IJS_Context* cc,
     return FALSE;
   }
 
-  if (params[0].GetType() == CJS_Value::VT_fxobject) {
-    v8::Local<v8::Object> pObj = params[0].ToV8Object();
-    if (FXJS_GetObjDefnID(pObj) == CJS_TimerObj::g_nObjDefnID) {
-      if (CJS_Object* pJSObj = params[0].ToCJSObject()) {
-        if (TimerObj* pTimerObj = (TimerObj*)pJSObj->GetEmbedObject()) {
-          if (CJS_Timer* pTimer = pTimerObj->GetTimer()) {
-            pTimer->KillJSTimer();
-
-            for (int i = 0, sz = m_aTimer.GetSize(); i < sz; i++) {
-              if (m_aTimer[i] == pTimer) {
-                m_aTimer.RemoveAt(i);
-                break;
-              }
-            }
-
-            delete pTimer;
-            pTimerObj->SetTimer(NULL);
-          }
-        }
-      }
-    }
-  }
-
+  app::ClearTimerCommon(params[0]);
   return TRUE;
 }
 
@@ -487,30 +454,40 @@ FX_BOOL app::clearInterval(IJS_Context* cc,
     return FALSE;
   }
 
-  if (params[0].GetType() == CJS_Value::VT_fxobject) {
-    v8::Local<v8::Object> pObj = params[0].ToV8Object();
-    if (FXJS_GetObjDefnID(pObj) == CJS_TimerObj::g_nObjDefnID) {
-      if (CJS_Object* pJSObj = params[0].ToCJSObject()) {
-        if (TimerObj* pTimerObj = (TimerObj*)pJSObj->GetEmbedObject()) {
-          if (CJS_Timer* pTimer = pTimerObj->GetTimer()) {
-            pTimer->KillJSTimer();
-
-            for (int i = 0, sz = m_aTimer.GetSize(); i < sz; i++) {
-              if (m_aTimer[i] == pTimer) {
-                m_aTimer.RemoveAt(i);
-                break;
-              }
-            }
-
-            delete pTimer;
-            pTimerObj->SetTimer(NULL);
-          }
-        }
-      }
-    }
-  }
-
+  app::ClearTimerCommon(params[0]);
   return TRUE;
+}
+
+void app::ClearTimerCommon(const CJS_Value& param) {
+  if (param.GetType() != CJS_Value::VT_fxobject)
+    return;
+
+  v8::Local<v8::Object> pObj = param.ToV8Object();
+  if (FXJS_GetObjDefnID(pObj) != CJS_TimerObj::g_nObjDefnID)
+    return;
+
+  CJS_Object* pJSObj = param.ToCJSObject();
+  if (!pJSObj)
+    return;
+
+  TimerObj* pTimerObj = static_cast<TimerObj*>(pJSObj->GetEmbedObject());
+  if (!pTimerObj)
+    return;
+
+  CJS_Timer* pTimer = pTimerObj->GetTimer();
+  if (!pTimer)
+    return;
+
+  pTimer->KillJSTimer();
+  auto iter = std::find_if(m_Timers.begin(), m_Timers.end(),
+                           [pTimer](const std::unique_ptr<CJS_Timer>& that) {
+                             return pTimer == that.get();
+                           });
+
+  if (iter != m_Timers.end())
+    m_Timers.erase(iter);
+
+  pTimerObj->SetTimer(nullptr);
 }
 
 FX_BOOL app::execMenuItem(IJS_Context* cc,

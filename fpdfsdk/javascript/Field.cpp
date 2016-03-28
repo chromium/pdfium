@@ -947,12 +947,11 @@ FX_BOOL Field::currentValueIndices(IJS_Context* cc,
     if (!m_bCanSet)
       return FALSE;
 
-    CFX_ArrayTemplate<uint32_t> array;
-
+    std::vector<uint32_t> array;
     if (vp.GetType() == CJS_Value::VT_number) {
       int iSelecting = 0;
       vp >> iSelecting;
-      array.Add(iSelecting);
+      array.push_back(iSelecting);
     } else if (vp.IsArrayObject()) {
       CJS_Array SelArray(pRuntime);
       CJS_Value SelValue(pRuntime);
@@ -961,7 +960,7 @@ FX_BOOL Field::currentValueIndices(IJS_Context* cc,
       for (int i = 0, sz = SelArray.GetLength(); i < sz; i++) {
         SelArray.GetElement(i, SelValue);
         iSelecting = SelValue.ToInt();
-        array.Add(iSelecting);
+        array.push_back(iSelecting);
       }
     }
 
@@ -1002,26 +1001,23 @@ FX_BOOL Field::currentValueIndices(IJS_Context* cc,
 void Field::SetCurrentValueIndices(CPDFSDK_Document* pDocument,
                                    const CFX_WideString& swFieldName,
                                    int nControlIndex,
-                                   const CFX_ArrayTemplate<uint32_t>& array) {
+                                   const std::vector<uint32_t>& array) {
   ASSERT(pDocument);
-
   std::vector<CPDF_FormField*> FieldArray =
       GetFormFields(pDocument, swFieldName);
+
   for (CPDF_FormField* pFormField : FieldArray) {
     int nFieldType = pFormField->GetFieldType();
     if (nFieldType == FIELDTYPE_COMBOBOX || nFieldType == FIELDTYPE_LISTBOX) {
       uint32_t dwFieldFlags = pFormField->GetFieldFlags();
       pFormField->ClearSelection(TRUE);
-
-      for (int i = 0, sz = array.GetSize(); i < sz; i++) {
-        if (i > 0 && !(dwFieldFlags & (1 << 21))) {
+      for (size_t i = 0; i < array.size(); ++i) {
+        if (i != 0 && !(dwFieldFlags & (1 << 21)))
           break;
+        if (array[i] < pFormField->CountOptions() &&
+            !pFormField->IsItemSelected(array[i])) {
+          pFormField->SetItemSelection(array[i], TRUE);
         }
-
-        int iSelecting = (int32_t)array.GetAt(i);
-        if (iSelecting < pFormField->CountOptions() &&
-            !pFormField->IsItemSelected(iSelecting))
-          pFormField->SetItemSelection(iSelecting, TRUE);
       }
       UpdateFormField(pDocument, pFormField, TRUE, TRUE, TRUE);
     }
@@ -2712,20 +2708,19 @@ FX_BOOL Field::value(IJS_Context* cc,
     if (!m_bCanSet)
       return FALSE;
 
-    CJS_WideStringArray strArray;
-
+    std::vector<CFX_WideString> strArray;
     if (vp.IsArrayObject()) {
       CJS_Array ValueArray(pRuntime);
       vp.ConvertToArray(ValueArray);
       for (int i = 0, sz = ValueArray.GetLength(); i < sz; i++) {
         CJS_Value ElementValue(pRuntime);
         ValueArray.GetElement(i, ElementValue);
-        strArray.Add(ElementValue.ToCFXWideString());
+        strArray.push_back(ElementValue.ToCFXWideString());
       }
     } else {
       CFX_WideString swValue;
       vp >> swValue;
-      strArray.Add(swValue);
+      strArray.push_back(swValue);
     }
 
     if (m_bDelay) {
@@ -2788,10 +2783,9 @@ FX_BOOL Field::value(IJS_Context* cc,
 void Field::SetValue(CPDFSDK_Document* pDocument,
                      const CFX_WideString& swFieldName,
                      int nControlIndex,
-                     const CJS_WideStringArray& strArray) {
+                     const std::vector<CFX_WideString>& strArray) {
   ASSERT(pDocument);
-
-  if (strArray.GetSize() < 1)
+  if (strArray.empty())
     return;
 
   std::vector<CPDF_FormField*> FieldArray =
@@ -2804,38 +2798,33 @@ void Field::SetValue(CPDFSDK_Document* pDocument,
     switch (pFormField->GetFieldType()) {
       case FIELDTYPE_TEXTFIELD:
       case FIELDTYPE_COMBOBOX:
-        if (pFormField->GetValue() != strArray.GetAt(0)) {
-          CFX_WideString WideString = strArray.GetAt(0);
-          pFormField->SetValue(strArray.GetAt(0), TRUE);
+        if (pFormField->GetValue() != strArray[0]) {
+          pFormField->SetValue(strArray[0], TRUE);
           UpdateFormField(pDocument, pFormField, TRUE, FALSE, TRUE);
         }
         break;
-      case FIELDTYPE_CHECKBOX:  // mantis: 0004493
+      case FIELDTYPE_CHECKBOX:
       case FIELDTYPE_RADIOBUTTON: {
-        if (pFormField->GetValue() != strArray.GetAt(0)) {
-          pFormField->SetValue(strArray.GetAt(0), TRUE);
+        if (pFormField->GetValue() != strArray[0]) {
+          pFormField->SetValue(strArray[0], TRUE);
           UpdateFormField(pDocument, pFormField, TRUE, FALSE, TRUE);
         }
       } break;
       case FIELDTYPE_LISTBOX: {
         FX_BOOL bModified = FALSE;
-
-        for (int i = 0, sz = strArray.GetSize(); i < sz; i++) {
-          int iIndex = pFormField->FindOption(strArray.GetAt(i));
-
-          if (!pFormField->IsItemSelected(iIndex)) {
+        for (const auto& str : strArray) {
+          if (!pFormField->IsItemSelected(pFormField->FindOption(str))) {
             bModified = TRUE;
             break;
           }
         }
-
         if (bModified) {
           pFormField->ClearSelection(TRUE);
-          for (int i = 0, sz = strArray.GetSize(); i < sz; i++) {
-            int iIndex = pFormField->FindOption(strArray.GetAt(i));
-            pFormField->SetItemSelection(iIndex, TRUE, TRUE);
+          for (const auto& str : strArray) {
+            int index = pFormField->FindOption(str);
+            if (!pFormField->IsItemSelected(index))
+              pFormField->SetItemSelection(index, TRUE, TRUE);
           }
-
           UpdateFormField(pDocument, pFormField, TRUE, FALSE, TRUE);
         }
       } break;
@@ -3365,96 +3354,66 @@ FX_BOOL Field::source(IJS_Context* cc,
   return TRUE;
 }
 
-void Field::AddDelay_Int(enum FIELD_PROP prop, int32_t n) {
-  CJS_DelayData* pNewData = new CJS_DelayData;
-  pNewData->sFieldName = m_FieldName;
-  pNewData->nControlIndex = m_nFormControlIndex;
-  pNewData->eProp = prop;
+void Field::AddDelay_Int(FIELD_PROP prop, int32_t n) {
+  CJS_DelayData* pNewData =
+      new CJS_DelayData(prop, m_nFormControlIndex, m_FieldName);
   pNewData->num = n;
-
   m_pJSDoc->AddDelayData(pNewData);
 }
 
-void Field::AddDelay_Bool(enum FIELD_PROP prop, bool b) {
-  CJS_DelayData* pNewData = new CJS_DelayData;
-  pNewData->sFieldName = m_FieldName;
-  pNewData->nControlIndex = m_nFormControlIndex;
-  pNewData->eProp = prop;
+void Field::AddDelay_Bool(FIELD_PROP prop, bool b) {
+  CJS_DelayData* pNewData =
+      new CJS_DelayData(prop, m_nFormControlIndex, m_FieldName);
   pNewData->b = b;
-
   m_pJSDoc->AddDelayData(pNewData);
 }
 
-void Field::AddDelay_String(enum FIELD_PROP prop,
-                            const CFX_ByteString& string) {
-  CJS_DelayData* pNewData = new CJS_DelayData;
-  pNewData->sFieldName = m_FieldName;
-  pNewData->nControlIndex = m_nFormControlIndex;
-  pNewData->eProp = prop;
+void Field::AddDelay_String(FIELD_PROP prop, const CFX_ByteString& string) {
+  CJS_DelayData* pNewData =
+      new CJS_DelayData(prop, m_nFormControlIndex, m_FieldName);
   pNewData->string = string;
-
   m_pJSDoc->AddDelayData(pNewData);
 }
 
-void Field::AddDelay_WideString(enum FIELD_PROP prop,
-                                const CFX_WideString& string) {
-  CJS_DelayData* pNewData = new CJS_DelayData;
-  pNewData->sFieldName = m_FieldName;
-  pNewData->nControlIndex = m_nFormControlIndex;
-  pNewData->eProp = prop;
+void Field::AddDelay_WideString(FIELD_PROP prop, const CFX_WideString& string) {
+  CJS_DelayData* pNewData =
+      new CJS_DelayData(prop, m_nFormControlIndex, m_FieldName);
   pNewData->widestring = string;
-
   m_pJSDoc->AddDelayData(pNewData);
 }
 
-void Field::AddDelay_Rect(enum FIELD_PROP prop, const CFX_FloatRect& rect) {
-  CJS_DelayData* pNewData = new CJS_DelayData;
-  pNewData->sFieldName = m_FieldName;
-  pNewData->nControlIndex = m_nFormControlIndex;
-  pNewData->eProp = prop;
+void Field::AddDelay_Rect(FIELD_PROP prop, const CFX_FloatRect& rect) {
+  CJS_DelayData* pNewData =
+      new CJS_DelayData(prop, m_nFormControlIndex, m_FieldName);
   pNewData->rect = rect;
-
   m_pJSDoc->AddDelayData(pNewData);
 }
 
-void Field::AddDelay_Color(enum FIELD_PROP prop, const CPWL_Color& color) {
-  CJS_DelayData* pNewData = new CJS_DelayData;
-  pNewData->sFieldName = m_FieldName;
-  pNewData->nControlIndex = m_nFormControlIndex;
-  pNewData->eProp = prop;
+void Field::AddDelay_Color(FIELD_PROP prop, const CPWL_Color& color) {
+  CJS_DelayData* pNewData =
+      new CJS_DelayData(prop, m_nFormControlIndex, m_FieldName);
   pNewData->color = color;
-
   m_pJSDoc->AddDelayData(pNewData);
 }
 
-void Field::AddDelay_WordArray(enum FIELD_PROP prop,
-                               const CFX_ArrayTemplate<uint32_t>& array) {
-  CJS_DelayData* pNewData = new CJS_DelayData;
-  pNewData->sFieldName = m_FieldName;
-  pNewData->nControlIndex = m_nFormControlIndex;
-  pNewData->eProp = prop;
-
-  for (int i = 0, sz = array.GetSize(); i < sz; i++)
-    pNewData->wordarray.Add(array.GetAt(i));
-
+void Field::AddDelay_WordArray(FIELD_PROP prop,
+                               const std::vector<uint32_t>& array) {
+  CJS_DelayData* pNewData =
+      new CJS_DelayData(prop, m_nFormControlIndex, m_FieldName);
+  pNewData->wordarray = array;
   m_pJSDoc->AddDelayData(pNewData);
 }
 
-void Field::AddDelay_WideStringArray(enum FIELD_PROP prop,
-                                     const CJS_WideStringArray& array) {
-  CJS_DelayData* pNewData = new CJS_DelayData;
-  pNewData->sFieldName = m_FieldName;
-  pNewData->nControlIndex = m_nFormControlIndex;
-  pNewData->eProp = prop;
-  for (int i = 0, sz = array.GetSize(); i < sz; i++)
-    pNewData->widestringarray.Add(array.GetAt(i));
-
+void Field::AddDelay_WideStringArray(FIELD_PROP prop,
+                                     const std::vector<CFX_WideString>& array) {
+  CJS_DelayData* pNewData =
+      new CJS_DelayData(prop, m_nFormControlIndex, m_FieldName);
+  pNewData->widestringarray = array;
   m_pJSDoc->AddDelayData(pNewData);
 }
 
 void Field::DoDelay(CPDFSDK_Document* pDocument, CJS_DelayData* pData) {
   ASSERT(pDocument);
-
   switch (pData->eProp) {
     case FP_ALIGNMENT:
       Field::SetAlignment(pDocument, pData->sFieldName, pData->nControlIndex,

@@ -6,6 +6,8 @@
 
 #include "fpdfsdk/javascript/JS_Runtime.h"
 
+#include <algorithm>
+
 #include "fpdfsdk/include/fsdk_mgr.h"  // For CPDFDoc_Environment.
 #include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "fpdfsdk/javascript/Consts.h"
@@ -117,17 +119,10 @@ CJS_Runtime::~CJS_Runtime() {
   for (auto* obs : m_observers)
     obs->OnDestroyed();
 
-  for (int i = 0, sz = m_ContextArray.GetSize(); i < sz; i++)
-    delete m_ContextArray.GetAt(i);
-
-  m_ContextArray.RemoveAll();
+  m_ContextArray.clear();
   m_ConstArrays.clear();
   FXJS_ReleaseRuntime(GetIsolate(), &m_context, &m_StaticObjects);
-
-  m_pApp = NULL;
-  m_pDocument = NULL;
   m_context.Reset();
-
   if (m_isolateManaged)
     m_isolate->Dispose();
 }
@@ -183,27 +178,21 @@ void CJS_Runtime::DefineJSObjects() {
 }
 
 IJS_Context* CJS_Runtime::NewContext() {
-  CJS_Context* p = new CJS_Context(this);
-  m_ContextArray.Add(p);
-  return p;
+  m_ContextArray.push_back(std::unique_ptr<CJS_Context>(new CJS_Context(this)));
+  return m_ContextArray.back().get();
 }
 
 void CJS_Runtime::ReleaseContext(IJS_Context* pContext) {
-  CJS_Context* pJSContext = (CJS_Context*)pContext;
-
-  for (int i = 0, sz = m_ContextArray.GetSize(); i < sz; i++) {
-    if (pJSContext == m_ContextArray.GetAt(i)) {
-      delete pJSContext;
-      m_ContextArray.RemoveAt(i);
-      break;
+  for (auto it = m_ContextArray.begin(); it != m_ContextArray.end(); ++it) {
+    if (it->get() == static_cast<CJS_Context*>(pContext)) {
+      m_ContextArray.erase(it);
+      return;
     }
   }
 }
 
 IJS_Context* CJS_Runtime::GetCurrentContext() {
-  if (!m_ContextArray.GetSize())
-    return NULL;
-  return m_ContextArray.GetAt(m_ContextArray.GetSize() - 1);
+  return m_ContextArray.empty() ? nullptr : m_ContextArray.back().get();
 }
 
 void CJS_Runtime::SetReaderDocument(CPDFSDK_Document* pReaderDoc) {

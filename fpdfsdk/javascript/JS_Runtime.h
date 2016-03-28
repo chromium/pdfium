@@ -8,6 +8,7 @@
 #define FPDFSDK_JAVASCRIPT_JS_RUNTIME_H_
 
 #include <map>
+#include <memory>
 #include <set>
 #include <utility>
 #include <vector>
@@ -75,8 +76,8 @@ class CJS_Runtime : public IJS_Runtime {
  private:
   void DefineJSObjects();
 
-  CFX_ArrayTemplate<CJS_Context*> m_ContextArray;
-  CPDFDoc_Environment* m_pApp;
+  std::vector<std::unique_ptr<CJS_Context>> m_ContextArray;
+  CPDFDoc_Environment* const m_pApp;
   CPDFSDK_Document* m_pDocument;
   FX_BOOL m_bBlocking;
   std::set<FieldEvent> m_FieldEventSet;

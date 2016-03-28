@@ -7,6 +7,9 @@
 #ifndef FPDFSDK_JAVASCRIPT_JS_GLOBALDATA_H_
 #define FPDFSDK_JAVASCRIPT_JS_GLOBALDATA_H_
 
+#include <memory>
+#include <vector>
+
 #include "core/fxcrt/include/fx_basic.h"
 
 #define JS_GLOBALDATA_TYPE_NUMBER 0
@@ -77,6 +80,11 @@ class CJS_GlobalData {
   CJS_GlobalData_Element* GetAt(int index) const;
 
  private:
+  using iterator =
+      std::vector<std::unique_ptr<CJS_GlobalData_Element>>::iterator;
+  using const_iterator =
+      std::vector<std::unique_ptr<CJS_GlobalData_Element>>::const_iterator;
+
   static CJS_GlobalData* g_Instance;
 
   CJS_GlobalData();
@@ -86,7 +94,8 @@ class CJS_GlobalData {
   void SaveGlobalPersisitentVariables();
 
   CJS_GlobalData_Element* GetGlobalVariable(const FX_CHAR* propname);
-  int FindGlobalVariable(const FX_CHAR* propname);
+  iterator FindGlobalVariable(const FX_CHAR* propname);
+  const_iterator FindGlobalVariable(const FX_CHAR* propname) const;
 
   void LoadFileBuffer(const FX_WCHAR* sFilePath,
                       uint8_t*& pBuffer,
@@ -99,7 +108,7 @@ class CJS_GlobalData {
                       CFX_BinaryBuf& sData);
 
   size_t m_RefCount;
-  CFX_ArrayTemplate<CJS_GlobalData_Element*> m_arrayGlobalData;
+  std::vector<std::unique_ptr<CJS_GlobalData_Element>> m_arrayGlobalData;
   CFX_WideString m_sFilePath;
 };
 
