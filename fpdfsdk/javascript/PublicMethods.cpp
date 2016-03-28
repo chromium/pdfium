@@ -1424,39 +1424,31 @@ FX_BOOL CJS_PublicMethods::AFSpecial_Format(
     return FALSE;
   }
 
-  std::string cFormat;
-  int iIndex = params[0].ToInt();
-
   CJS_EventHandler* pEvent = pContext->GetEventHandler();
   if (!pEvent->m_pValue)
     return FALSE;
-  CFX_WideString& Value = pEvent->Value();
-  std::string strSrc = CFX_ByteString::FromUnicode(Value).c_str();
 
-  switch (iIndex) {
+  CFX_WideString wsSource = pEvent->Value();
+  CFX_WideString wsFormat;
+  switch (params[0].ToInt()) {
     case 0:
-      cFormat = "99999";
+      wsFormat = L"99999";
       break;
     case 1:
-      cFormat = "99999-9999";
+      wsFormat = L"99999-9999";
       break;
-    case 2: {
-      std::string NumberStr;
-      util::printx("9999999999", strSrc, NumberStr);
-      if (NumberStr.length() >= 10)
-        cFormat = "(999) 999-9999";
+    case 2:
+      if (util::printx(L"9999999999", wsSource).GetLength() >= 10)
+        wsFormat = L"(999) 999-9999";
       else
-        cFormat = "999-9999";
+        wsFormat = L"999-9999";
       break;
-    }
     case 3:
-      cFormat = "999-99-9999";
+      wsFormat = L"999-99-9999";
       break;
   }
 
-  std::string strDes;
-  util::printx(cFormat, strSrc, strDes);
-  Value = CFX_WideString::FromLocal(strDes.c_str());
+  pEvent->Value() = util::printx(wsFormat, wsSource);
   return TRUE;
 }
 
@@ -1578,22 +1570,15 @@ FX_BOOL CJS_PublicMethods::AFSpecial_Keystroke(
       cFormat = "99999";
       break;
     case 1:
-      // cFormat = "99999-9999";
       cFormat = "999999999";
       break;
-    case 2: {
-      std::string NumberStr;
-      util::printx("9999999999", strSrc, NumberStr);
+    case 2:
       if (strSrc.length() + wstrChange.length() > 7)
-        // cFormat = "(999) 999-9999";
         cFormat = "9999999999";
       else
-        // cFormat = "999-9999";
         cFormat = "9999999";
       break;
-    }
     case 3:
-      // cFormat = "999-99-9999";
       cFormat = "999999999";
       break;
   }

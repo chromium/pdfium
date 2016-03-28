@@ -38,9 +38,8 @@ class util : public CJS_EmbedObj {
                      CJS_Value& vRet,
                      CFX_WideString& sError);
 
-  static void printx(const std::string& cFormat,
-                     const std::string& cSource,
-                     std::string& cPurpose);
+  static CFX_WideString printx(const CFX_WideString& cFormat,
+                               const CFX_WideString& cSource);
 };
 
 class CJS_Util : public CJS_Object {

@@ -309,96 +309,113 @@ FX_BOOL util::printx(IJS_Context* cc,
                      const std::vector<CJS_Value>& params,
                      CJS_Value& vRet,
                      CFX_WideString& sError) {
-  int iSize = params.size();
-  if (iSize < 2)
+  if (params.size() < 2) {
+    sError = JSGetStringFromID((CJS_Context*)cc, IDS_STRING_JSPARAMERROR);
     return FALSE;
-  CFX_WideString sFormat = params[0].ToCFXWideString();
-  CFX_WideString sSource = params[1].ToCFXWideString();
-  std::string cFormat = CFX_ByteString::FromUnicode(sFormat).c_str();
-  std::string cSource = CFX_ByteString::FromUnicode(sSource).c_str();
-  std::string cDest;
-  printx(cFormat, cSource, cDest);
-  vRet = cDest.c_str();
+  }
+  vRet = printx(params[0].ToCFXWideString(), params[1].ToCFXWideString());
   return TRUE;
 }
 
-void util::printx(const std::string& cFormat,
-                  const std::string& cSource2,
-                  std::string& cPurpose) {
-  std::string cSource(cSource2);
-  if (!cPurpose.empty())
-    // cPurpose.clear();
-    cPurpose.erase();
-  int itSource = 0;
-  int iSize = cSource.size();
-  for (int iIndex = 0; iIndex < (int)cFormat.size() && itSource < iSize;
-       iIndex++) {
-    char letter = cFormat[iIndex];
-    switch (letter) {
-      case '?':
-        cPurpose += cSource[itSource];
-        itSource++;
-        break;
-      case 'X': {
-        while (itSource < iSize) {
-          if (std::isdigit(cSource[itSource]) ||
-              (cSource[itSource] >= 'a' && cSource[itSource] <= 'z') ||
-              (cSource[itSource] >= 'A' && cSource[itSource] <= 'Z')) {
-            cPurpose += cSource[itSource];
-            itSource++;
-            break;
-          }
-          itSource++;
+enum CaseMode { kPreserveCase, kUpperCase, kLowerCase };
+
+static FX_WCHAR TranslateCase(FX_WCHAR input, CaseMode eMode) {
+  if (eMode == kLowerCase && input >= 'A' && input <= 'Z')
+    return input | 0x20;
+  if (eMode == kUpperCase && input >= 'a' && input <= 'z')
+    return input & ~0x20;
+  return input;
+}
+
+CFX_WideString util::printx(const CFX_WideString& wsFormat,
+                            const CFX_WideString& wsSource) {
+  CFX_WideString wsResult;
+  FX_STRSIZE iSourceIdx = 0;
+  FX_STRSIZE iFormatIdx = 0;
+  CaseMode eCaseMode = kPreserveCase;
+  bool bEscaped = false;
+  while (iFormatIdx < wsFormat.GetLength()) {
+    if (bEscaped) {
+      bEscaped = false;
+      wsResult += wsFormat[iFormatIdx];
+      ++iFormatIdx;
+      continue;
+    }
+    switch (wsFormat[iFormatIdx]) {
+      case '\\': {
+        bEscaped = true;
+        ++iFormatIdx;
+      } break;
+      case '<': {
+        eCaseMode = kLowerCase;
+        ++iFormatIdx;
+      } break;
+      case '>': {
+        eCaseMode = kUpperCase;
+        ++iFormatIdx;
+      } break;
+      case '=': {
+        eCaseMode = kPreserveCase;
+        ++iFormatIdx;
+      } break;
+      case '?': {
+        if (iSourceIdx < wsSource.GetLength()) {
+          wsResult += TranslateCase(wsSource[iSourceIdx], eCaseMode);
+          ++iSourceIdx;
         }
-        break;
+        ++iFormatIdx;
+      } break;
+      case 'X': {
+        if (iSourceIdx < wsSource.GetLength()) {
+          if ((wsSource[iSourceIdx] >= '0' && wsSource[iSourceIdx] <= '9') ||
+              (wsSource[iSourceIdx] >= 'a' && wsSource[iSourceIdx] <= 'z') ||
+              (wsSource[iSourceIdx] >= 'A' && wsSource[iSourceIdx] <= 'Z')) {
+            wsResult += TranslateCase(wsSource[iSourceIdx], eCaseMode);
+            ++iFormatIdx;
+          }
+          ++iSourceIdx;
+        } else {
+          ++iFormatIdx;
+        }
       } break;
       case 'A': {
-        while (itSource < iSize) {
-          if ((cSource[itSource] >= 'a' && cSource[itSource] <= 'z') ||
-              (cSource[itSource] >= 'A' && cSource[itSource] <= 'Z')) {
-            cPurpose += cSource[itSource];
-            itSource++;
-            break;
+        if (iSourceIdx < wsSource.GetLength()) {
+          if ((wsSource[iSourceIdx] >= 'a' && wsSource[iSourceIdx] <= 'z') ||
+              (wsSource[iSourceIdx] >= 'A' && wsSource[iSourceIdx] <= 'Z')) {
+            wsResult += TranslateCase(wsSource[iSourceIdx], eCaseMode);
+            ++iFormatIdx;
           }
-          itSource++;
+          ++iSourceIdx;
+        } else {
+          ++iFormatIdx;
         }
-        break;
       } break;
       case '9': {
-        while (itSource < iSize) {
-          if (std::isdigit(cSource[itSource])) {
-            cPurpose += cSource[itSource];
-            itSource++;
-            break;
+        if (iSourceIdx < wsSource.GetLength()) {
+          if (wsSource[iSourceIdx] >= '0' && wsSource[iSourceIdx] <= '9') {
+            wsResult += wsSource[iSourceIdx];
+            ++iFormatIdx;
           }
-          itSource++;
+          ++iSourceIdx;
+        } else {
+          ++iFormatIdx;
         }
-        break;
-      }
+      } break;
       case '*': {
-        cPurpose.append(cSource, itSource, iSize - itSource);
-        itSource = iSize - 1;
-        break;
-      }
-      case '\\':
-        break;
-      case '>': {
-        for (char& c : cSource)
-          c = toupper(c);
-        break;
-      }
-      case '<': {
-        for (char& c : cSource)
-          c = tolower(c);
-        break;
-      }
-      case '=':
-        break;
-      default:
-        cPurpose += letter;
-        break;
+        if (iSourceIdx < wsSource.GetLength()) {
+          wsResult += TranslateCase(wsSource[iSourceIdx], eCaseMode);
+          ++iSourceIdx;
+        } else {
+          ++iFormatIdx;
+        }
+      } break;
+      default: {
+        wsResult += wsFormat[iFormatIdx];
+        ++iFormatIdx;
+      } break;
     }
   }
+  return wsResult;
 }
 
 FX_BOOL util::scand(IJS_Context* cc,
