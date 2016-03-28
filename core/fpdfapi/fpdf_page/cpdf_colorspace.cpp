@@ -467,7 +467,7 @@ void CPDF_ColorSpace::GetDefaultColor(FX_FLOAT* buf) const {
     return;
   }
   FX_FLOAT min, max;
-  for (int i = 0; i < m_nComponents; i++) {
+  for (uint32_t i = 0; i < m_nComponents; i++) {
     GetDefaultValue(i, buf[i], min, max);
   }
 }
@@ -490,7 +490,7 @@ void CPDF_ColorSpace::TranslateImageLine(uint8_t* dest_buf,
   FX_FLOAT* src = srcbuf;
   FX_FLOAT R, G, B;
   for (int i = 0; i < pixels; i++) {
-    for (int j = 0; j < m_nComponents; j++)
+    for (uint32_t j = 0; j < m_nComponents; j++)
       if (m_Family == PDFCS_INDEXED) {
         src[j] = (FX_FLOAT)(*src_buf++);
       } else {
@@ -842,7 +842,7 @@ FX_BOOL CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
   }
   CPDF_Array* pRanges = pDict->GetArrayBy("Range");
   m_pRanges = FX_Alloc2D(FX_FLOAT, m_nComponents, 2);
-  for (int i = 0; i < m_nComponents * 2; i++) {
+  for (uint32_t i = 0; i < m_nComponents * 2; i++) {
     if (pRanges)
       m_pRanges[i] = pRanges->GetNumberAt(i);
     else if (i % 2)
@@ -918,7 +918,7 @@ void CPDF_ICCBasedCS::TranslateImageLine(uint8_t* pDestBuf,
     ReverseRGB(pDestBuf, pSrcBuf, pixels);
   } else if (m_pProfile->m_pTransform) {
     int nMaxColors = 1;
-    for (int i = 0; i < m_nComponents; i++) {
+    for (uint32_t i = 0; i < m_nComponents; i++) {
       nMaxColors *= 52;
     }
     if (m_nComponents > 3 || image_width * image_height < nMaxColors * 3 / 2) {
@@ -932,7 +932,7 @@ void CPDF_ICCBasedCS::TranslateImageLine(uint8_t* pDestBuf,
         for (int i = 0; i < nMaxColors; i++) {
           uint32_t color = i;
           uint32_t order = nMaxColors / 52;
-          for (int c = 0; c < m_nComponents; c++) {
+          for (uint32_t c = 0; c < m_nComponents; c++) {
             *pSrc++ = (uint8_t)(color / order * 5);
             color %= order;
             order /= 52;
@@ -944,7 +944,7 @@ void CPDF_ICCBasedCS::TranslateImageLine(uint8_t* pDestBuf,
       }
       for (int i = 0; i < pixels; i++) {
         int index = 0;
-        for (int c = 0; c < m_nComponents; c++) {
+        for (uint32_t c = 0; c < m_nComponents; c++) {
           index = index * 52 + (*pSrcBuf) / 5;
           pSrcBuf++;
         }

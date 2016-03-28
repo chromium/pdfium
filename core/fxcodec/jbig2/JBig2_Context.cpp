@@ -1277,7 +1277,7 @@ JBig2HuffmanCode* CJBig2_Context::decodeSymbolIDHuffmanTable(
   const size_t kRunCodesSize = 35;
   int32_t runcodes[kRunCodesSize];
   int32_t runcodes_len[kRunCodesSize];
-  for (int32_t i = 0; i < kRunCodesSize; ++i) {
+  for (size_t i = 0; i < kRunCodesSize; ++i) {
     if (pStream->readNBits(4, &runcodes_len[i]) != 0)
       return nullptr;
   }
@@ -1288,7 +1288,7 @@ JBig2HuffmanCode* CJBig2_Context::decodeSymbolIDHuffmanTable(
   int32_t run;
   int32_t i = 0;
   while (i < (int)SBNUMSYMS) {
-    int32_t j;
+    size_t j;
     int32_t nVal = 0;
     int32_t nBits = 0;
     uint32_t nTemp;
@@ -1299,15 +1299,13 @@ JBig2HuffmanCode* CJBig2_Context::decodeSymbolIDHuffmanTable(
       nVal = (nVal << 1) | nTemp;
       ++nBits;
       for (j = 0; j < kRunCodesSize; ++j) {
-        if (nBits == runcodes_len[j] && nVal == runcodes[j]) {
+        if (nBits == runcodes_len[j] && nVal == runcodes[j])
           break;
-        }
       }
-      if (j < kRunCodesSize) {
+      if (j < kRunCodesSize)
         break;
-      }
     }
-    int32_t runcode = j;
+    int32_t runcode = static_cast<int32_t>(j);
     if (runcode < 32) {
       SBSYMCODES.get()[i].codelen = runcode;
       run = 0;
@@ -1327,11 +1325,11 @@ JBig2HuffmanCode* CJBig2_Context::decodeSymbolIDHuffmanTable(
     if (run > 0) {
       if (i + run > (int)SBNUMSYMS)
         return nullptr;
-      for (j = 0; j < run; ++j) {
+      for (int32_t k = 0; k < run; ++k) {
         if (runcode == 32 && i > 0) {
-          SBSYMCODES.get()[i + j].codelen = SBSYMCODES.get()[i - 1].codelen;
+          SBSYMCODES.get()[i + k].codelen = SBSYMCODES.get()[i - 1].codelen;
         } else {
-          SBSYMCODES.get()[i + j].codelen = 0;
+          SBSYMCODES.get()[i + k].codelen = 0;
         }
       }
       i += run;

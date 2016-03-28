@@ -1329,12 +1329,12 @@ int CFX_FontMapper::GetFaceSize() const {
 }
 
 FX_BOOL CFX_FontMapper::IsBuiltinFace(const FXFT_Face face) const {
-  for (int i = 0; i < MM_FACE_COUNT; ++i) {
+  for (size_t i = 0; i < MM_FACE_COUNT; ++i) {
     if (m_MMFaces[i] == face) {
       return TRUE;
     }
   }
-  for (int i = 0; i < FOXIT_FACE_COUNT; ++i) {
+  for (size_t i = 0; i < FOXIT_FACE_COUNT; ++i) {
     if (m_FoxitFaces[i] == face) {
       return TRUE;
     }

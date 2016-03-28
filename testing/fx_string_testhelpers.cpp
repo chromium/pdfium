@@ -12,7 +12,8 @@ namespace {
 template <typename T>
 std::ostream& output_string(std::ostream& out, const T& str) {
   out << std::hex << std::setfill('0') << '"';
-  for (size_t i = 0; i < str.GetLength(); ++i) {
+  // This function is used for FX strings whose length is defined as int.
+  for (int i = 0; i < str.GetLength(); ++i) {
     unsigned int c = str.GetAt(i);
     if (c >= 0x20 && c < 0x7F) {
       out << static_cast<char>(c);

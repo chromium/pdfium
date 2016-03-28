@@ -47,7 +47,7 @@ const CPDF_Array* CPDF_Array::AsArray() const {
 
 CPDF_Object* CPDF_Array::Clone(FX_BOOL bDirect) const {
   CPDF_Array* pCopy = new CPDF_Array();
-  for (int i = 0; i < GetCount(); i++) {
+  for (size_t i = 0; i < GetCount(); i++) {
     CPDF_Object* value = m_Objects.GetAt(i);
     pCopy->m_Objects.Add(value->Clone(bDirect));
   }

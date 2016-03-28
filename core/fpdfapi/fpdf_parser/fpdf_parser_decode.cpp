@@ -176,24 +176,21 @@ uint32_t RunLengthDecode(const uint8_t* src_buf,
     if (src_buf[i] < 128) {
       old = dest_size;
       dest_size += src_buf[i] + 1;
-      if (dest_size < old) {
-        return static_cast<uint32_t>(-1);
-      }
+      if (dest_size < old)
+        return FX_INVALID_OFFSET;
       i += src_buf[i] + 2;
     } else if (src_buf[i] > 128) {
       old = dest_size;
       dest_size += 257 - src_buf[i];
-      if (dest_size < old) {
-        return static_cast<uint32_t>(-1);
-      }
+      if (dest_size < old)
+        return FX_INVALID_OFFSET;
       i += 2;
     } else {
       break;
     }
   }
-  if (dest_size >= _STREAM_MAX_SIZE_) {
-    return static_cast<uint32_t>(-1);
-  }
+  if (dest_size >= _STREAM_MAX_SIZE_)
+    return FX_INVALID_OFFSET;
   dest_buf = FX_Alloc(uint8_t, dest_size);
   i = 0;
   int dest_count = 0;

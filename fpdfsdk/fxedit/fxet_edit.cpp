@@ -110,7 +110,7 @@ int32_t CFX_Edit_Provider::GetCharWidth(int32_t nFontIndex,
     else
       charcode = m_pFontMap->CharCodeFromUnicode(nFontIndex, word);
 
-    if (charcode != -1)
+    if (charcode != CPDF_Font::kInvalidCharCode)
       return pPDFFont->GetCharWidthF(charcode);
   }
 

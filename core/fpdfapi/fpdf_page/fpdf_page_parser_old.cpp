@@ -48,7 +48,7 @@ uint32_t DecodeAllScanlines(ICodec_ScanlineDecoder* pDecoder,
                             uint8_t*& dest_buf,
                             uint32_t& dest_size) {
   if (!pDecoder) {
-    return static_cast<uint32_t>(-1);
+    return FX_INVALID_OFFSET;
   }
   int ncomps = pDecoder->CountComps();
   int bpc = pDecoder->GetBPC();
@@ -57,7 +57,7 @@ uint32_t DecodeAllScanlines(ICodec_ScanlineDecoder* pDecoder,
   int pitch = (width * ncomps * bpc + 7) / 8;
   if (height == 0 || pitch > (1 << 30) / height) {
     delete pDecoder;
-    return static_cast<uint32_t>(-1);
+    return FX_INVALID_OFFSET;
   }
   dest_buf = FX_Alloc2D(uint8_t, pitch, height);
   dest_size = pitch * height;  // Safe since checked alloc returned.

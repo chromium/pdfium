@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <memory>
 
+#include "core/fxcrt/include/fx_ext.h"
 #include "core/include/fxcodec/fx_codec.h"
 #include "core/include/fxcodec/fx_codec_flate.h"
 #include "third_party/zlib_v128/zlib.h"
@@ -942,7 +943,7 @@ uint32_t CCodec_FlateModule::FlateOrLZWDecode(FX_BOOL bLZW,
       offset = src_size;
       int err = decoder->Decode(NULL, dest_size, src_buf, offset, bEarlyChange);
       if (err || dest_size == 0 || dest_size + 1 < dest_size) {
-        return static_cast<uint32_t>(-1);
+        return FX_INVALID_OFFSET;
       }
     }
     {
@@ -965,7 +966,7 @@ uint32_t CCodec_FlateModule::FlateOrLZWDecode(FX_BOOL bLZW,
     ret =
         TIFF_Predictor(dest_buf, dest_size, Colors, BitsPerComponent, Columns);
   }
-  return ret ? offset : static_cast<uint32_t>(-1);
+  return ret ? offset : FX_INVALID_OFFSET;
 }
 FX_BOOL CCodec_FlateModule::Encode(const uint8_t* src_buf,
                                    uint32_t src_size,

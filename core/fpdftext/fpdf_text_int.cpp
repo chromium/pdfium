@@ -898,7 +898,7 @@ void CPDF_TextPage::ProcessFormObject(CPDF_FormObject* pFormObj,
 }
 
 int CPDF_TextPage::GetCharWidth(uint32_t charCode, CPDF_Font* pFont) const {
-  if (charCode == -1)
+  if (charCode == CPDF_Font::kInvalidCharCode)
     return 0;
 
   if (int w = pFont->GetCharWidthF(charCode))
@@ -1149,7 +1149,8 @@ int32_t CPDF_TextPage::PreMarkedContent(PDFTEXT_Obj Obj) {
   CPDF_Font* pFont = pTextObj->GetFont();
   bExist = FALSE;
   for (FX_STRSIZE i = 0; i < nItems; i++) {
-    if (pFont->CharCodeFromUnicode(actText.GetAt(i)) != -1) {
+    if (pFont->CharCodeFromUnicode(actText.GetAt(i)) !=
+        CPDF_Font::kInvalidCharCode) {
       bExist = TRUE;
       break;
     }
@@ -1417,7 +1418,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
       FX_FLOAT fontsize_h = pTextObj->m_TextState.GetFontSizeH();
       uint32_t space_charcode = pFont->CharCodeFromUnicode(' ');
       FX_FLOAT threshold = 0;
-      if (space_charcode != -1) {
+      if (space_charcode != CPDF_Font::kInvalidCharCode) {
         threshold = fontsize_h * pFont->GetCharWidthF(space_charcode) / 1000;
       }
       if (threshold > fontsize_h / 3) {
@@ -1439,7 +1440,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
         charinfo.m_pTextObj = pTextObj;
         charinfo.m_Index = m_TextBuf.GetLength();
         m_TempTextBuf.AppendChar(TEXT_BLANK_CHAR);
-        charinfo.m_CharCode = -1;
+        charinfo.m_CharCode = CPDF_Font::kInvalidCharCode;
         charinfo.m_Matrix.Copy(formMatrix);
         matrix.Transform(item.m_OriginX, item.m_OriginY, charinfo.m_OriginX,
                          charinfo.m_OriginY);
@@ -1448,7 +1449,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
                           charinfo.m_OriginX, charinfo.m_OriginY);
         m_TempCharList.push_back(charinfo);
       }
-      if (item.m_CharCode == (uint32_t)-1) {
+      if (item.m_CharCode == CPDF_Font::kInvalidCharCode) {
         continue;
       }
     }
@@ -1858,12 +1859,13 @@ FX_BOOL CPDF_TextPage::GenerateCharInfo(FX_WCHAR unicode, PAGECHAR_INFO& info) {
   info.m_Index = m_TextBuf.GetLength();
   info.m_Unicode = unicode;
   info.m_pTextObj = NULL;
-  info.m_CharCode = -1;
+  info.m_CharCode = CPDF_Font::kInvalidCharCode;
   info.m_Flag = FPDFTEXT_CHAR_GENERATED;
   int preWidth = 0;
-  if (preChar->m_pTextObj && preChar->m_CharCode != (uint32_t)-1)
+  if (preChar->m_pTextObj && preChar->m_CharCode != -1) {
     preWidth =
         GetCharWidth(preChar->m_CharCode, preChar->m_pTextObj->GetFont());
+  }
 
   FX_FLOAT fFontSize = preChar->m_pTextObj ? preChar->m_pTextObj->GetFontSize()
                                            : preChar->m_CharBox.Height();

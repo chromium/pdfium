@@ -4,6 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 #include "core/fxge/ge/fx_text_int.h"
 #include "core/include/fxge/fx_freetype.h"
 #include "core/include/fxge/fx_ge.h"
@@ -516,7 +517,7 @@ uint32_t CFX_UnicodeEncodingEx::CharCodeFromUnicode(FX_WCHAR Unicode) const {
       return Unicode;
     }
   }
-  return static_cast<uint32_t>(-1);
+  return CPDF_Font::kInvalidCharCode;
 }
 
 CFX_UnicodeEncodingEx* FX_CreateFontEncodingEx(CFX_Font* pFont,

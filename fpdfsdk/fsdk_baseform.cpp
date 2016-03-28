@@ -2800,13 +2800,13 @@ void CBA_AnnotIterator::GenerateResults() {
           sa.erase(sa.begin() + nLeftTopIndex);
 
           std::vector<int> aSelect;
-          for (int i = 0; i < sa.size(); ++i) {
+          for (size_t i = 0; i < sa.size(); ++i) {
             CFX_FloatRect rcAnnot = GetAnnotRect(sa[i]);
             FX_FLOAT fCenterY = (rcAnnot.top + rcAnnot.bottom) / 2.0f;
             if (fCenterY > rcLeftTop.bottom && fCenterY < rcLeftTop.top)
               aSelect.push_back(i);
           }
-          for (int i = 0; i < aSelect.size(); ++i)
+          for (size_t i = 0; i < aSelect.size(); ++i)
             m_Annots.push_back(sa[aSelect[i]]);
 
           for (int i = aSelect.size() - 1; i >= 0; --i)
@@ -2844,13 +2844,13 @@ void CBA_AnnotIterator::GenerateResults() {
           sa.erase(sa.begin() + nLeftTopIndex);
 
           std::vector<int> aSelect;
-          for (int i = 0; i < sa.size(); ++i) {
+          for (size_t i = 0; i < sa.size(); ++i) {
             CFX_FloatRect rcAnnot = GetAnnotRect(sa[i]);
             FX_FLOAT fCenterX = (rcAnnot.left + rcAnnot.right) / 2.0f;
             if (fCenterX > rcLeftTop.left && fCenterX < rcLeftTop.right)
               aSelect.push_back(i);
           }
-          for (int i = 0; i < aSelect.size(); ++i)
+          for (size_t i = 0; i < aSelect.size(); ++i)
             m_Annots.push_back(sa[aSelect[i]]);
 
           for (int i = aSelect.size() - 1; i >= 0; --i)

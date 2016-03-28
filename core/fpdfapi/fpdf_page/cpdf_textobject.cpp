@@ -28,7 +28,7 @@ void CPDF_TextObject::GetItemInfo(int index, CPDF_TextObjectItem* pInfo) const {
       m_nChars == 1 ? (uint32_t)(uintptr_t)m_pCharCodes : m_pCharCodes[index];
   pInfo->m_OriginX = index ? m_pCharPos[index - 1] : 0;
   pInfo->m_OriginY = 0;
-  if (pInfo->m_CharCode == -1) {
+  if (pInfo->m_CharCode == CPDF_Font::kInvalidCharCode) {
     return;
   }
   CPDF_Font* pFont = m_TextState.GetFont();
@@ -54,7 +54,7 @@ int CPDF_TextObject::CountChars() const {
   }
   int count = 0;
   for (int i = 0; i < m_nChars; ++i)
-    if (m_pCharCodes[i] != (uint32_t)-1) {
+    if (m_pCharCodes[i] != CPDF_Font::kInvalidCharCode) {
       ++count;
     }
   return count;
@@ -70,10 +70,11 @@ void CPDF_TextObject::GetCharInfo(int index,
   }
   int count = 0;
   for (int i = 0; i < m_nChars; ++i) {
-    if (m_pCharCodes[i] != (uint32_t)-1) {
+    if (m_pCharCodes[i] != CPDF_Font::kInvalidCharCode) {
       if (count == index) {
         charcode = m_pCharCodes[i];
-        if (i == m_nChars - 1 || m_pCharCodes[i + 1] != (uint32_t)-1) {
+        if (i == m_nChars - 1 ||
+            m_pCharCodes[i + 1] != CPDF_Font::kInvalidCharCode) {
           kerning = 0;
         } else {
           kerning = m_pCharPos[i];
@@ -93,7 +94,7 @@ void CPDF_TextObject::GetCharInfo(int index, CPDF_TextObjectItem* pInfo) const {
   int count = 0;
   for (int i = 0; i < m_nChars; ++i) {
     uint32_t charcode = m_pCharCodes[i];
-    if (charcode == (uint32_t)-1) {
+    if (charcode == CPDF_Font::kInvalidCharCode) {
       continue;
     }
     if (count == index) {
@@ -156,7 +157,7 @@ void CPDF_TextObject::SetSegments(const CFX_ByteString* pStrs,
       }
       if (i != nsegs - 1) {
         m_pCharPos[index - 1] = pKerning[i];
-        m_pCharCodes[index++] = (uint32_t)-1;
+        m_pCharCodes[index++] = CPDF_Font::kInvalidCharCode;
       }
     }
   } else {
@@ -206,7 +207,7 @@ void CPDF_TextObject::CalcPositionData(FX_FLOAT* pTextAdvanceX,
     uint32_t charcode =
         m_nChars == 1 ? (uint32_t)(uintptr_t)m_pCharCodes : m_pCharCodes[i];
     if (i > 0) {
-      if (charcode == (uint32_t)-1) {
+      if (charcode == CPDF_Font::kInvalidCharCode) {
         curpos -= (m_pCharPos[i - 1] * fontsize) / 1000;
         continue;
       }

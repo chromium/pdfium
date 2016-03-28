@@ -185,7 +185,7 @@ FX_BOOL CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
     if (!CanReadFromBitStream(hStream, required_bits))
       return FALSE;
 
-    for (int j = 0; j < m_dwNSharedObjsArray[i]; j++)
+    for (uint32_t j = 0; j < m_dwNSharedObjsArray[i]; j++)
       m_dwIdentifierArray.Add(hStream->GetBits(dwSharedIdBits));
   }
   hStream->ByteAlign();
@@ -385,7 +385,7 @@ IPDF_DataAvail::DocAvailStatus CPDF_HintTables::CheckPage(
 
   uint32_t dwIndex = 0;
   uint32_t dwObjNum = 0;
-  for (int j = 0; j < m_dwNSharedObjsArray[index]; ++j) {
+  for (uint32_t j = 0; j < m_dwNSharedObjsArray[index]; ++j) {
     dwIndex = m_dwIdentifierArray[offset + j];
     if (dwIndex >= m_dwSharedObjNumArray.GetSize())
       return IPDF_DataAvail::DataNotAvailable;
