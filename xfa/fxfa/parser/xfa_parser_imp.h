@@ -7,6 +7,7 @@
 #ifndef XFA_FXFA_PARSER_XFA_PARSER_IMP_H_
 #define XFA_FXFA_PARSER_XFA_PARSER_IMP_H_
 
+#include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fxfa/parser/xfa_parser.h"
 
 class CXFA_XMLParser;
@@ -21,56 +22,56 @@ class CXFA_SimpleParser : public IXFA_Parser {
                              XFA_XDPPACKET ePacketID = XFA_XDPPACKET_XDP);
   virtual int32_t DoParse(IFX_Pause* pPause = NULL);
   virtual int32_t ParseXMLData(const CFX_WideString& wsXML,
-                               IFDE_XMLNode*& pXMLNode,
+                               CFDE_XMLNode*& pXMLNode,
                                IFX_Pause* pPause = NULL);
-  virtual void ConstructXFANode(CXFA_Node* pXFANode, IFDE_XMLNode* pXMLNode);
+  virtual void ConstructXFANode(CXFA_Node* pXFANode, CFDE_XMLNode* pXMLNode);
   virtual IXFA_ObjFactory* GetFactory() const { return m_pFactory; }
   virtual CXFA_Node* GetRootNode() const { return m_pRootNode; }
-  virtual IFDE_XMLDoc* GetXMLDoc() const { return m_pXMLDoc; }
+  virtual CFDE_XMLDoc* GetXMLDoc() const { return m_pXMLDoc; }
   virtual void CloseParser();
 
  protected:
-  CXFA_Node* ParseAsXDPPacket(IFDE_XMLNode* pXMLDocumentNode,
+  CXFA_Node* ParseAsXDPPacket(CFDE_XMLNode* pXMLDocumentNode,
                               XFA_XDPPACKET ePacketID);
-  CXFA_Node* ParseAsXDPPacket_XDP(IFDE_XMLNode* pXMLDocumentNode,
+  CXFA_Node* ParseAsXDPPacket_XDP(CFDE_XMLNode* pXMLDocumentNode,
                                   XFA_XDPPACKET ePacketID);
-  CXFA_Node* ParseAsXDPPacket_Config(IFDE_XMLNode* pXMLDocumentNode,
+  CXFA_Node* ParseAsXDPPacket_Config(CFDE_XMLNode* pXMLDocumentNode,
                                      XFA_XDPPACKET ePacketID);
-  CXFA_Node* ParseAsXDPPacket_TemplateForm(IFDE_XMLNode* pXMLDocumentNode,
+  CXFA_Node* ParseAsXDPPacket_TemplateForm(CFDE_XMLNode* pXMLDocumentNode,
                                            XFA_XDPPACKET ePacketID);
-  CXFA_Node* ParseAsXDPPacket_Data(IFDE_XMLNode* pXMLDocumentNode,
+  CXFA_Node* ParseAsXDPPacket_Data(CFDE_XMLNode* pXMLDocumentNode,
                                    XFA_XDPPACKET ePacketID);
   CXFA_Node* ParseAsXDPPacket_LocaleConnectionSourceSet(
-      IFDE_XMLNode* pXMLDocumentNode,
+      CFDE_XMLNode* pXMLDocumentNode,
       XFA_XDPPACKET ePacketID);
-  CXFA_Node* ParseAsXDPPacket_Xdc(IFDE_XMLNode* pXMLDocumentNode,
+  CXFA_Node* ParseAsXDPPacket_Xdc(CFDE_XMLNode* pXMLDocumentNode,
                                   XFA_XDPPACKET ePacketID);
-  CXFA_Node* ParseAsXDPPacket_User(IFDE_XMLNode* pXMLDocumentNode,
+  CXFA_Node* ParseAsXDPPacket_User(CFDE_XMLNode* pXMLDocumentNode,
                                    XFA_XDPPACKET ePacketID);
   CXFA_Node* NormalLoader(CXFA_Node* pXFANode,
-                          IFDE_XMLNode* pXMLDoc,
+                          CFDE_XMLNode* pXMLDoc,
                           XFA_XDPPACKET ePacketID,
                           FX_BOOL bUseAttribute = TRUE);
   CXFA_Node* DataLoader(CXFA_Node* pXFANode,
-                        IFDE_XMLNode* pXMLDoc,
+                        CFDE_XMLNode* pXMLDoc,
                         FX_BOOL bDoTransform);
-  CXFA_Node* UserPacketLoader(CXFA_Node* pXFANode, IFDE_XMLNode* pXMLDoc);
+  CXFA_Node* UserPacketLoader(CXFA_Node* pXFANode, CFDE_XMLNode* pXMLDoc);
   void ParseContentNode(CXFA_Node* pXFANode,
-                        IFDE_XMLNode* pXMLNode,
+                        CFDE_XMLNode* pXMLNode,
                         XFA_XDPPACKET ePacketID);
   void ParseDataValue(CXFA_Node* pXFANode,
-                      IFDE_XMLNode* pXMLNode,
+                      CFDE_XMLNode* pXMLNode,
                       XFA_XDPPACKET ePacketID);
   void ParseDataGroup(CXFA_Node* pXFANode,
-                      IFDE_XMLNode* pXMLNode,
+                      CFDE_XMLNode* pXMLNode,
                       XFA_XDPPACKET ePacketID);
   void ParseInstruction(CXFA_Node* pXFANode,
-                        IFDE_XMLInstruction* pXMLInstruction,
+                        CFDE_XMLInstruction* pXMLInstruction,
                         XFA_XDPPACKET ePacketID);
   void SetFactory(IXFA_ObjFactory* pFactory);
 
   CXFA_XMLParser* m_pXMLParser;
-  IFDE_XMLDoc* m_pXMLDoc;
+  CFDE_XMLDoc* m_pXMLDoc;
   IFX_Stream* m_pStream;
   IFX_FileRead* m_pFileRead;
   IXFA_ObjFactory* m_pFactory;
@@ -89,14 +90,14 @@ class CXFA_DocumentParser : public IXFA_DocParser {
                              XFA_XDPPACKET ePacketID = XFA_XDPPACKET_XDP);
   virtual int32_t DoParse(IFX_Pause* pPause = NULL);
   virtual int32_t ParseXMLData(const CFX_WideString& wsXML,
-                               IFDE_XMLNode*& pXMLNode,
+                               CFDE_XMLNode*& pXMLNode,
                                IFX_Pause* pPause = NULL);
-  virtual void ConstructXFANode(CXFA_Node* pXFANode, IFDE_XMLNode* pXMLNode);
+  virtual void ConstructXFANode(CXFA_Node* pXFANode, CFDE_XMLNode* pXMLNode);
   virtual IXFA_ObjFactory* GetFactory() const {
     return m_nodeParser.GetFactory();
   }
   virtual CXFA_Node* GetRootNode() const { return m_nodeParser.GetRootNode(); }
-  virtual IFDE_XMLDoc* GetXMLDoc() const { return m_nodeParser.GetXMLDoc(); }
+  virtual CFDE_XMLDoc* GetXMLDoc() const { return m_nodeParser.GetXMLDoc(); }
   virtual IXFA_Notify* GetNotify() const { return m_pNotify; }
   virtual CXFA_Document* GetDocument() const { return m_pDocument; }
   virtual void CloseParser();
@@ -106,11 +107,11 @@ class CXFA_DocumentParser : public IXFA_DocParser {
   IXFA_Notify* m_pNotify;
   CXFA_Document* m_pDocument;
 };
-typedef CFX_StackTemplate<IFDE_XMLNode*> CXFA_XMLNodeStack;
+typedef CFX_StackTemplate<CFDE_XMLNode*> CXFA_XMLNodeStack;
 
-class CXFA_XMLParser : public IFDE_XMLParser {
+class CXFA_XMLParser : public CFDE_XMLParser {
  public:
-  CXFA_XMLParser(IFDE_XMLNode* pRoot, IFX_Stream* pStream);
+  CXFA_XMLParser(CFDE_XMLNode* pRoot, IFX_Stream* pStream);
   ~CXFA_XMLParser();
 
   virtual void Release() { delete this; }
@@ -123,12 +124,11 @@ class CXFA_XMLParser : public IFDE_XMLParser {
   uint16_t m_dwCurrentCheckStatus;
 
  protected:
-  IFDE_XMLNode* m_pRoot;
+  CFDE_XMLNode* m_pRoot;
   IFX_Stream* m_pStream;
-  IFDE_XMLSyntaxParser* m_pParser;
-
-  IFDE_XMLNode* m_pParent;
-  IFDE_XMLNode* m_pChild;
+  CFDE_XMLSyntaxParser* m_pParser;
+  CFDE_XMLNode* m_pParent;
+  CFDE_XMLNode* m_pChild;
   CXFA_XMLNodeStack m_NodeStack;
   CFX_WideString m_ws1;
   CFX_WideString m_ws2;

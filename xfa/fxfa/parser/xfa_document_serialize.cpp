@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/xfa_document_serialize.h"
 
+#include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fxfa/fm2js/xfa_fm2jsapi.h"
 #include "xfa/fxfa/parser/xfa_docdata.h"
@@ -60,8 +61,8 @@ FX_BOOL CXFA_DataImporter::ImportData(IFX_FileRead* pDataDocument) {
       pDataModel->InsertChild(pChildNode);
     }
   } else {
-    IFDE_XMLNode* pXMLNode = pImportDataRoot->GetXMLMappingNode();
-    IFDE_XMLNode* pParentXMLNode = pXMLNode->GetNodeItem(IFDE_XMLNode::Parent);
+    CFDE_XMLNode* pXMLNode = pImportDataRoot->GetXMLMappingNode();
+    CFDE_XMLNode* pParentXMLNode = pXMLNode->GetNodeItem(CFDE_XMLNode::Parent);
     if (pParentXMLNode) {
       pParentXMLNode->RemoveChildNode(pXMLNode);
     }
@@ -244,12 +245,12 @@ static void XFA_DataExporter_RegenerateFormFile_Changed(
       pNode->GetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType, FALSE);
       if (pRawValueNode->GetClassID() == XFA_ELEMENT_SharpxHTML &&
           wsContentType.Equal(FX_WSTRC(L"text/html"))) {
-        IFDE_XMLNode* pExDataXML = pNode->GetXMLMappingNode();
+        CFDE_XMLNode* pExDataXML = pNode->GetXMLMappingNode();
         if (!pExDataXML) {
           break;
         }
-        IFDE_XMLNode* pRichTextXML =
-            pExDataXML->GetNodeItem(IFDE_XMLNode::FirstChild);
+        CFDE_XMLNode* pRichTextXML =
+            pExDataXML->GetNodeItem(CFDE_XMLNode::FirstChild);
         if (!pRichTextXML) {
           break;
         }
@@ -498,7 +499,7 @@ FX_BOOL CXFA_DataExporter::Export(IFX_Stream* pStream,
                                   CXFA_Node* pNode,
                                   uint32_t dwFlag,
                                   const FX_CHAR* pChecksum) {
-  IFDE_XMLDoc* pXMLDoc = m_pDocument->GetParser()->GetXMLDoc();
+  CFDE_XMLDoc* pXMLDoc = m_pDocument->GetParser()->GetXMLDoc();
   if (pNode->GetObjectType() == XFA_OBJECTTYPE_ModelNode) {
     switch (pNode->GetPacketID()) {
       case XFA_XDPPACKET_XDP: {
@@ -513,8 +514,8 @@ FX_BOOL CXFA_DataExporter::Export(IFX_Stream* pStream,
         pStream->WriteString(s_pwsPostamble, FXSYS_wcslen(s_pwsPostamble));
       } break;
       case XFA_XDPPACKET_Datasets: {
-        IFDE_XMLElement* pElement =
-            (IFDE_XMLElement*)pNode->GetXMLMappingNode();
+        CFDE_XMLElement* pElement =
+            static_cast<CFDE_XMLElement*>(pNode->GetXMLMappingNode());
         if (!pElement || pElement->GetType() != FDE_XMLNODE_Element) {
           return FALSE;
         }
@@ -528,8 +529,8 @@ FX_BOOL CXFA_DataExporter::Export(IFX_Stream* pStream,
       } break;
       case XFA_XDPPACKET_Template:
       default: {
-        IFDE_XMLElement* pElement =
-            (IFDE_XMLElement*)pNode->GetXMLMappingNode();
+        CFDE_XMLElement* pElement =
+            static_cast<CFDE_XMLElement*>(pNode->GetXMLMappingNode());
         if (!pElement || pElement->GetType() != FDE_XMLNODE_Element) {
           return FALSE;
         }
@@ -548,8 +549,8 @@ FX_BOOL CXFA_DataExporter::Export(IFX_Stream* pStream,
         break;
       }
     }
-    IFDE_XMLElement* pElement =
-        (IFDE_XMLElement*)pExportNode->GetXMLMappingNode();
+    CFDE_XMLElement* pElement =
+        static_cast<CFDE_XMLElement*>(pExportNode->GetXMLMappingNode());
     if (!pElement || pElement->GetType() != FDE_XMLNODE_Element) {
       return FALSE;
     }
@@ -574,16 +575,16 @@ void XFA_DataExporter_DealWithDataGroupNode(CXFA_Node* pDataNode) {
   }
   if (pDataNode->GetClassID() == XFA_ELEMENT_DataGroup) {
     if (iChildNum > 0) {
-      IFDE_XMLNode* pXMLNode = pDataNode->GetXMLMappingNode();
+      CFDE_XMLNode* pXMLNode = pDataNode->GetXMLMappingNode();
       FXSYS_assert(pXMLNode->GetType() == FDE_XMLNODE_Element);
-      IFDE_XMLElement* pXMLElement = (IFDE_XMLElement*)pXMLNode;
+      CFDE_XMLElement* pXMLElement = static_cast<CFDE_XMLElement*>(pXMLNode);
       if (pXMLElement->HasAttribute(L"xfa:dataNode")) {
         pXMLElement->RemoveAttribute(L"xfa:dataNode");
       }
     } else {
-      IFDE_XMLNode* pXMLNode = pDataNode->GetXMLMappingNode();
+      CFDE_XMLNode* pXMLNode = pDataNode->GetXMLMappingNode();
       FXSYS_assert(pXMLNode->GetType() == FDE_XMLNODE_Element);
-      ((IFDE_XMLElement*)pXMLNode)
+      static_cast<CFDE_XMLElement*>(pXMLNode)
           ->SetString(FX_WSTRC(L"xfa:dataNode"), FX_WSTRC(L"dataGroup"));
     }
   }

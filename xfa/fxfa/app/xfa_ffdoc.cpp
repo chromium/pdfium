@@ -10,6 +10,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fxcrt/include/fx_ext.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
+#include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fgas/crt/fgas_algorithm.h"
 #include "xfa/fwl/core/ifwl_notedriver.h"
 #include "xfa/fxfa/app/xfa_ffapp.h"
@@ -42,16 +43,16 @@ int32_t CXFA_FFDoc::StartLoad() {
   m_pDocument = pDocParser->GetDocument();
   return iStatus;
 }
-FX_BOOL XFA_GetPDFContentsFromPDFXML(IFDE_XMLNode* pPDFElement,
+FX_BOOL XFA_GetPDFContentsFromPDFXML(CFDE_XMLNode* pPDFElement,
                                      uint8_t*& pByteBuffer,
                                      int32_t& iBufferSize) {
-  IFDE_XMLElement* pDocumentElement = NULL;
-  for (IFDE_XMLNode* pXMLNode =
-           pPDFElement->GetNodeItem(IFDE_XMLNode::FirstChild);
-       pXMLNode; pXMLNode = pXMLNode->GetNodeItem(IFDE_XMLNode::NextSibling)) {
+  CFDE_XMLElement* pDocumentElement = NULL;
+  for (CFDE_XMLNode* pXMLNode =
+           pPDFElement->GetNodeItem(CFDE_XMLNode::FirstChild);
+       pXMLNode; pXMLNode = pXMLNode->GetNodeItem(CFDE_XMLNode::NextSibling)) {
     if (pXMLNode->GetType() == FDE_XMLNODE_Element) {
       CFX_WideString wsTagName;
-      IFDE_XMLElement* pXMLElement = (IFDE_XMLElement*)pXMLNode;
+      CFDE_XMLElement* pXMLElement = static_cast<CFDE_XMLElement*>(pXMLNode);
       pXMLElement->GetTagName(wsTagName);
       if (wsTagName.Equal(FX_WSTRC(L"document"))) {
         pDocumentElement = pXMLElement;
@@ -62,13 +63,13 @@ FX_BOOL XFA_GetPDFContentsFromPDFXML(IFDE_XMLNode* pPDFElement,
   if (!pDocumentElement) {
     return FALSE;
   }
-  IFDE_XMLElement* pChunkElement = NULL;
-  for (IFDE_XMLNode* pXMLNode =
-           pDocumentElement->GetNodeItem(IFDE_XMLNode::FirstChild);
-       pXMLNode; pXMLNode = pXMLNode->GetNodeItem(IFDE_XMLNode::NextSibling)) {
+  CFDE_XMLElement* pChunkElement = NULL;
+  for (CFDE_XMLNode* pXMLNode =
+           pDocumentElement->GetNodeItem(CFDE_XMLNode::FirstChild);
+       pXMLNode; pXMLNode = pXMLNode->GetNodeItem(CFDE_XMLNode::NextSibling)) {
     if (pXMLNode->GetType() == FDE_XMLNODE_Element) {
       CFX_WideString wsTagName;
-      IFDE_XMLElement* pXMLElement = (IFDE_XMLElement*)pXMLNode;
+      CFDE_XMLElement* pXMLElement = static_cast<CFDE_XMLElement*>(pXMLNode);
       pXMLElement->GetTagName(wsTagName);
       if (wsTagName.Equal(FX_WSTRC(L"chunk"))) {
         pChunkElement = pXMLElement;
@@ -111,7 +112,7 @@ int32_t CXFA_FFDoc::DoLoad(IFX_Pause* pPause) {
     if (!pPDFNode) {
       return XFA_PARSESTATUS_SyntaxErr;
     }
-    IFDE_XMLNode* pPDFXML = pPDFNode->GetXMLMappingNode();
+    CFDE_XMLNode* pPDFXML = pPDFNode->GetXMLMappingNode();
     if (pPDFXML->GetType() != FDE_XMLNODE_Element) {
       return XFA_PARSESTATUS_SyntaxErr;
     }
@@ -122,7 +123,7 @@ int32_t CXFA_FFDoc::DoLoad(IFX_Pause* pPause) {
       pXFAReader = FX_CreateMemoryStream(pByteBuffer, iBufferSize, TRUE);
     } else {
       CFX_WideString wsHref;
-      ((IFDE_XMLElement*)pPDFXML)->GetString(L"href", wsHref);
+      static_cast<CFDE_XMLElement*>(pPDFXML)->GetString(L"href", wsHref);
       if (!wsHref.IsEmpty()) {
         pXFAReader = GetDocProvider()->OpenLinkedFile(this, wsHref);
       }
@@ -378,16 +379,16 @@ CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(const CFX_WideStringC& wsName,
   return (CFX_DIBitmap*)imageDIBDpi->pDibSource;
 }
 
-IFDE_XMLElement* CXFA_FFDoc::GetPackageData(const CFX_WideStringC& wsPackage) {
+CFDE_XMLElement* CXFA_FFDoc::GetPackageData(const CFX_WideStringC& wsPackage) {
   uint32_t packetHash =
       FX_HashCode_String_GetW(wsPackage.GetPtr(), wsPackage.GetLength());
   CXFA_Node* pNode = ToNode(m_pDocument->GetXFAObject(packetHash));
   if (!pNode) {
     return NULL;
   }
-  IFDE_XMLNode* pXMLNode = pNode->GetXMLMappingNode();
+  CFDE_XMLNode* pXMLNode = pNode->GetXMLMappingNode();
   return (pXMLNode && pXMLNode->GetType() == FDE_XMLNODE_Element)
-             ? (IFDE_XMLElement*)pXMLNode
+             ? static_cast<CFDE_XMLElement*>(pXMLNode)
              : NULL;
 }
 FX_BOOL CXFA_FFDoc::SavePackage(const CFX_WideStringC& wsPackage,

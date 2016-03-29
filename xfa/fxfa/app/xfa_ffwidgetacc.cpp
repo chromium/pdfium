@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "xfa/fde/tto/fde_textout.h"
+#include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fxfa/app/xfa_ffapp.h"
 #include "xfa/fxfa/app/xfa_ffcheckbutton.h"
 #include "xfa/fxfa/app/xfa_ffchoicelist.h"
@@ -288,9 +289,10 @@ void CXFA_WidgetAcc::SetImageEdit(const CFX_WideStringC& wsContentType,
   if (pHrefNode) {
     pHrefNode->SetCData(XFA_ATTRIBUTE_Value, wsHref);
   } else {
-    IFDE_XMLNode* pXMLNode = pBind->GetXMLMappingNode();
+    CFDE_XMLNode* pXMLNode = pBind->GetXMLMappingNode();
     FXSYS_assert(pXMLNode && pXMLNode->GetType() == FDE_XMLNODE_Element);
-    ((IFDE_XMLElement*)pXMLNode)->SetString(FX_WSTRC(L"href"), wsHref);
+    static_cast<CFDE_XMLElement*>(pXMLNode)
+        ->SetString(FX_WSTRC(L"href"), wsHref);
   }
 }
 
@@ -1602,14 +1604,14 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(FX_BOOL& bRichText) {
     return pChildNode;
   } else if (m_eType == XFA_TEXTPROVIDERTYPE_Datasets) {
     CXFA_Node* pBind = m_pWidgetAcc->GetDatasets();
-    IFDE_XMLNode* pXMLNode = pBind->GetXMLMappingNode();
+    CFDE_XMLNode* pXMLNode = pBind->GetXMLMappingNode();
     FXSYS_assert(pXMLNode);
-    for (IFDE_XMLNode* pXMLChild =
-             pXMLNode->GetNodeItem(IFDE_XMLNode::FirstChild);
+    for (CFDE_XMLNode* pXMLChild =
+             pXMLNode->GetNodeItem(CFDE_XMLNode::FirstChild);
          pXMLChild;
-         pXMLChild = pXMLChild->GetNodeItem(IFDE_XMLNode::NextSibling)) {
+         pXMLChild = pXMLChild->GetNodeItem(CFDE_XMLNode::NextSibling)) {
       if (pXMLChild->GetType() == FDE_XMLNODE_Element) {
-        IFDE_XMLElement* pElement = (IFDE_XMLElement*)pXMLChild;
+        CFDE_XMLElement* pElement = static_cast<CFDE_XMLElement*>(pXMLChild);
         if (XFA_RecognizeRichText(pElement)) {
           bRichText = TRUE;
         }

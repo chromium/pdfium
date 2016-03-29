@@ -7,6 +7,7 @@
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 #include "core/fxcrt/include/fx_ext.h"
+#include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fxfa/fm2js/xfa_fm2jsapi.h"
 #include "xfa/fxfa/parser/xfa_docdata.h"
 #include "xfa/fxfa/parser/xfa_doclayout.h"
@@ -186,14 +187,14 @@ CXFA_LocaleValue XFA_GetLocaleValue(CXFA_WidgetData* pWidgetData) {
   return CXFA_LocaleValue(iVTType, pWidgetData->GetRawValue(),
                           pWidgetData->GetNode()->GetDocument()->GetLocalMgr());
 }
-void XFA_GetPlainTextFromRichText(IFDE_XMLNode* pXMLNode,
+void XFA_GetPlainTextFromRichText(CFDE_XMLNode* pXMLNode,
                                   CFX_WideString& wsPlainText) {
   if (pXMLNode == NULL) {
     return;
   }
   switch (pXMLNode->GetType()) {
     case FDE_XMLNODE_Element: {
-      IFDE_XMLElement* pXMLElement = (IFDE_XMLElement*)pXMLNode;
+      CFDE_XMLElement* pXMLElement = static_cast<CFDE_XMLElement*>(pXMLNode);
       CFX_WideString wsTag;
       pXMLElement->GetLocalTagName(wsTag);
       uint32_t uTag = FX_HashCode_String_GetW(wsTag, wsTag.GetLength(), TRUE);
@@ -212,21 +213,21 @@ void XFA_GetPlainTextFromRichText(IFDE_XMLNode* pXMLNode,
     } break;
     case FDE_XMLNODE_Text: {
       CFX_WideString wsContent;
-      ((IFDE_XMLText*)pXMLNode)->GetText(wsContent);
+      static_cast<CFDE_XMLText*>(pXMLNode)->GetText(wsContent);
       wsPlainText += wsContent;
     } break;
     case FDE_XMLNODE_CharData: {
       CFX_WideString wsCharData;
-      ((IFDE_XMLCharData*)pXMLNode)->GetCharData(wsCharData);
+      static_cast<CFDE_XMLCharData*>(pXMLNode)->GetCharData(wsCharData);
       wsPlainText += wsCharData;
     } break;
     default:
       break;
   }
-  for (IFDE_XMLNode* pChildXML =
-           pXMLNode->GetNodeItem(IFDE_XMLNode::FirstChild);
+  for (CFDE_XMLNode* pChildXML =
+           pXMLNode->GetNodeItem(CFDE_XMLNode::FirstChild);
        pChildXML;
-       pChildXML = pChildXML->GetNodeItem(IFDE_XMLNode::NextSibling)) {
+       pChildXML = pChildXML->GetNodeItem(CFDE_XMLNode::NextSibling)) {
     XFA_GetPlainTextFromRichText(pChildXML, wsPlainText);
   }
 }

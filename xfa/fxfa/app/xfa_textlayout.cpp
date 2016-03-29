@@ -10,6 +10,7 @@
 
 #include "core/fxcrt/include/fx_ext.h"
 #include "xfa/fde/fde_pen.h"
+#include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fgas/crt/fgas_algorithm.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fxfa/app/xfa_ffapp.h"
@@ -64,7 +65,7 @@ CXFA_TextParser::~CXFA_TextParser() {
     m_pAllocator->Release();
   FX_POSITION ps = m_mapXMLNodeToParseContext.GetStartPosition();
   while (ps) {
-    IFDE_XMLNode* pXMLNode;
+    CFDE_XMLNode* pXMLNode;
     CXFA_TextParseContext* pParseContext;
     m_mapXMLNodeToParseContext.GetNextAssoc(ps, pXMLNode, pParseContext);
     if (pParseContext)
@@ -75,7 +76,7 @@ CXFA_TextParser::~CXFA_TextParser() {
 void CXFA_TextParser::Reset() {
   FX_POSITION ps = m_mapXMLNodeToParseContext.GetStartPosition();
   while (ps) {
-    IFDE_XMLNode* pXMLNode;
+    CFDE_XMLNode* pXMLNode;
     CXFA_TextParseContext* pParseContext;
     m_mapXMLNodeToParseContext.GetNextAssoc(ps, pXMLNode, pParseContext);
     if (pParseContext)
@@ -210,7 +211,7 @@ IFDE_CSSComputedStyle* CXFA_TextParser::CreateStyle(
   return pNewStyle;
 }
 IFDE_CSSComputedStyle* CXFA_TextParser::ComputeStyle(
-    IFDE_XMLNode* pXMLNode,
+    CFDE_XMLNode* pXMLNode,
     IFDE_CSSComputedStyle* pParentStyle) {
   CXFA_TextParseContext* pContext = static_cast<CXFA_TextParseContext*>(
       m_mapXMLNodeToParseContext.GetValueAt(pXMLNode));
@@ -230,7 +231,7 @@ IFDE_CSSComputedStyle* CXFA_TextParser::ComputeStyle(
   pCSSAccel->OnLeaveTag(&tagProvider);
   return pStyle;
 }
-void CXFA_TextParser::DoParse(IFDE_XMLNode* pXMLContainer,
+void CXFA_TextParser::DoParse(CFDE_XMLNode* pXMLContainer,
                               IXFA_TextProvider* pTextProvider) {
   if (pXMLContainer == NULL || pTextProvider == NULL || m_pAllocator) {
     return;
@@ -242,7 +243,7 @@ void CXFA_TextParser::DoParse(IFDE_XMLNode* pXMLContainer,
   ParseRichText(pXMLContainer, pRootStyle);
   pRootStyle->Release();
 }
-void CXFA_TextParser::ParseRichText(IFDE_XMLNode* pXMLNode,
+void CXFA_TextParser::ParseRichText(CFDE_XMLNode* pXMLNode,
                                     IFDE_CSSComputedStyle* pParentStyle) {
   if (pXMLNode == NULL) {
     return;
@@ -278,16 +279,16 @@ void CXFA_TextParser::ParseRichText(IFDE_XMLNode* pXMLNode,
     pTextContext->SetDisplay(eDisplay);
     m_mapXMLNodeToParseContext.SetAt(pXMLNode, pTextContext);
   }
-  for (IFDE_XMLNode* pXMLChild =
-           pXMLNode->GetNodeItem(IFDE_XMLNode::FirstChild);
+  for (CFDE_XMLNode* pXMLChild =
+           pXMLNode->GetNodeItem(CFDE_XMLNode::FirstChild);
        pXMLChild;
-       pXMLChild = pXMLChild->GetNodeItem(IFDE_XMLNode::NextSibling)) {
+       pXMLChild = pXMLChild->GetNodeItem(CFDE_XMLNode::NextSibling)) {
     ParseRichText(pXMLChild, pNewStyle);
   }
   if (pNewStyle)
     pNewStyle->Release();
 }
-void CXFA_TextParser::ParseTagInfo(IFDE_XMLNode* pXMLNode,
+void CXFA_TextParser::ParseTagInfo(CFDE_XMLNode* pXMLNode,
                                    CXFA_CSSTagProvider& tagProvider) {
   static const uint32_t s_XFATagName[] = {
       0x61,       0x62,       0x69,       0x70,       0x0001f714,
@@ -296,7 +297,7 @@ void CXFA_TextParser::ParseTagInfo(IFDE_XMLNode* pXMLNode,
   };
   CFX_WideString wsName;
   if (pXMLNode->GetType() == FDE_XMLNODE_Element) {
-    IFDE_XMLElement* pXMLElement = (IFDE_XMLElement*)pXMLNode;
+    CFDE_XMLElement* pXMLElement = static_cast<CFDE_XMLElement*>(pXMLNode);
     pXMLElement->GetLocalTagName(wsName);
     tagProvider.SetTagNameObj(wsName);
     uint32_t dwHashCode =
@@ -391,7 +392,7 @@ FX_FLOAT CXFA_TextParser::GetFontSize(IXFA_TextProvider* pTextProvider,
 }
 int32_t CXFA_TextParser::GetHorScale(IXFA_TextProvider* pTextProvider,
                                      IFDE_CSSComputedStyle* pStyle,
-                                     IFDE_XMLNode* pXMLNode) const {
+                                     CFDE_XMLNode* pXMLNode) const {
   if (pStyle) {
     CFX_WideString wsValue;
     if (pStyle->GetCustomStyle(FX_WSTRC(L"xfa-font-horizontal-scale"),
@@ -406,7 +407,7 @@ int32_t CXFA_TextParser::GetHorScale(IXFA_TextProvider* pTextProvider,
               FX_WSTRC(L"xfa-font-horizontal-scale"), wsValue)) {
         return wsValue.GetInteger();
       }
-      pXMLNode = pXMLNode->GetNodeItem(IFDE_XMLNode::Parent);
+      pXMLNode = pXMLNode->GetNodeItem(CFDE_XMLNode::Parent);
     }
   }
   if (CXFA_Font font = pTextProvider->GetFontNode()) {
@@ -515,7 +516,7 @@ FX_FLOAT CXFA_TextParser::GetLineHeight(IXFA_TextProvider* pTextProvider,
   return fLineHeight;
 }
 FX_BOOL CXFA_TextParser::GetEmbbedObj(IXFA_TextProvider* pTextProvider,
-                                      IFDE_XMLNode* pXMLNode,
+                                      CFDE_XMLNode* pXMLNode,
                                       CFX_WideString& wsValue) {
   wsValue.Empty();
   if (pXMLNode == NULL) {
@@ -523,7 +524,7 @@ FX_BOOL CXFA_TextParser::GetEmbbedObj(IXFA_TextProvider* pTextProvider,
   }
   FX_BOOL bRet = FALSE;
   if (pXMLNode->GetType() == FDE_XMLNODE_Element) {
-    IFDE_XMLElement* pElement = (IFDE_XMLElement*)pXMLNode;
+    CFDE_XMLElement* pElement = static_cast<CFDE_XMLElement*>(pXMLNode);
     CFX_WideString wsAttr;
     pElement->GetString(FX_WSTRC(L"xfa:embed").GetPtr(), wsAttr);
     if (wsAttr.IsEmpty()) {
@@ -559,7 +560,7 @@ FX_BOOL CXFA_TextParser::GetEmbbedObj(IXFA_TextProvider* pTextProvider,
   return bRet;
 }
 CXFA_TextParseContext* CXFA_TextParser::GetParseContextFromMap(
-    IFDE_XMLNode* pXMLNode) {
+    CFDE_XMLNode* pXMLNode) {
   return (CXFA_TextParseContext*)m_mapXMLNodeToParseContext.GetValueAt(
       pXMLNode);
 }
@@ -712,19 +713,19 @@ void CXFA_TextLayout::GetTextDataNode() {
   }
   m_pTextDataNode = pNode;
 }
-IFDE_XMLNode* CXFA_TextLayout::GetXMLContainerNode() {
-  IFDE_XMLNode* pXMLContainer = NULL;
+CFDE_XMLNode* CXFA_TextLayout::GetXMLContainerNode() {
+  CFDE_XMLNode* pXMLContainer = NULL;
   if (m_bRichText) {
-    IFDE_XMLNode* pXMLRoot = m_pTextDataNode->GetXMLMappingNode();
+    CFDE_XMLNode* pXMLRoot = m_pTextDataNode->GetXMLMappingNode();
     if (!pXMLRoot) {
       return pXMLContainer;
     }
-    for (IFDE_XMLNode* pXMLChild =
-             pXMLRoot->GetNodeItem(IFDE_XMLNode::FirstChild);
+    for (CFDE_XMLNode* pXMLChild =
+             pXMLRoot->GetNodeItem(CFDE_XMLNode::FirstChild);
          pXMLChild;
-         pXMLChild = pXMLChild->GetNodeItem(IFDE_XMLNode::NextSibling)) {
+         pXMLChild = pXMLChild->GetNodeItem(CFDE_XMLNode::NextSibling)) {
       if (pXMLChild->GetType() == FDE_XMLNODE_Element) {
-        IFDE_XMLElement* pXMLElement = (IFDE_XMLElement*)pXMLChild;
+        CFDE_XMLElement* pXMLElement = static_cast<CFDE_XMLElement*>(pXMLChild);
         CFX_WideString wsTag;
         pXMLElement->GetLocalTagName(wsTag);
         if (wsTag.Equal(FX_WSTRC(L"body")) || wsTag.Equal(FX_WSTRC(L"html"))) {
@@ -803,7 +804,7 @@ void CXFA_TextLayout::InitBreak(FX_FLOAT fLineWidth) {
 void CXFA_TextLayout::InitBreak(IFDE_CSSComputedStyle* pStyle,
                                 FDE_CSSDISPLAY eDisplay,
                                 FX_FLOAT fLineWidth,
-                                IFDE_XMLNode* pXMLNode,
+                                CFDE_XMLNode* pXMLNode,
                                 IFDE_CSSComputedStyle* pParentStyle) {
   if (pStyle == NULL) {
     InitBreak(fLineWidth);
@@ -1113,17 +1114,17 @@ FX_BOOL CXFA_TextLayout::Layout(int32_t iBlock) {
     }
     m_pBreak->Reset();
     if (m_bRichText) {
-      IFDE_XMLNode* pContainerNode = GetXMLContainerNode();
+      CFDE_XMLNode* pContainerNode = GetXMLContainerNode();
       if (!pContainerNode) {
         return TRUE;
       }
-      IFDE_XMLNode* pXMLNode = m_pLoader->m_pXMLNode;
+      CFDE_XMLNode* pXMLNode = m_pLoader->m_pXMLNode;
       if (pXMLNode == NULL) {
         return TRUE;
       }
-      IFDE_XMLNode* pSaveXMLNode = m_pLoader->m_pXMLNode;
+      CFDE_XMLNode* pSaveXMLNode = m_pLoader->m_pXMLNode;
       for (; pXMLNode;
-           pXMLNode = pXMLNode->GetNodeItem(IFDE_XMLNode::NextSibling)) {
+           pXMLNode = pXMLNode->GetNodeItem(CFDE_XMLNode::NextSibling)) {
         FX_BOOL bFlag = LoadRichText(pXMLNode, szText, fLinePos,
                                      m_pLoader->m_pParentStyle, TRUE);
         if (!bFlag) {
@@ -1131,7 +1132,7 @@ FX_BOOL CXFA_TextLayout::Layout(int32_t iBlock) {
         }
       }
       while (pXMLNode == NULL) {
-        pXMLNode = pSaveXMLNode->GetNodeItem(IFDE_XMLNode::Parent);
+        pXMLNode = pSaveXMLNode->GetNodeItem(CFDE_XMLNode::Parent);
         if (pXMLNode == pContainerNode) {
           break;
         }
@@ -1142,12 +1143,12 @@ FX_BOOL CXFA_TextLayout::Layout(int32_t iBlock) {
           break;
         }
         pSaveXMLNode = pXMLNode;
-        pXMLNode = pXMLNode->GetNodeItem(IFDE_XMLNode::NextSibling);
+        pXMLNode = pXMLNode->GetNodeItem(CFDE_XMLNode::NextSibling);
         if (!pXMLNode) {
           continue;
         }
         for (; pXMLNode;
-             pXMLNode = pXMLNode->GetNodeItem(IFDE_XMLNode::NextSibling)) {
+             pXMLNode = pXMLNode->GetNodeItem(CFDE_XMLNode::NextSibling)) {
           FX_BOOL bFlag = LoadRichText(pXMLNode, szText, fLinePos,
                                        m_pLoader->m_pParentStyle, TRUE);
           if (!bFlag) {
@@ -1313,7 +1314,7 @@ FX_BOOL CXFA_TextLayout::Loader(const CFX_SizeF& szText,
     return TRUE;
   }
   if (m_bRichText) {
-    IFDE_XMLNode* pXMLContainer = GetXMLContainerNode();
+    CFDE_XMLNode* pXMLContainer = GetXMLContainerNode();
     if (pXMLContainer) {
       if (!m_textParser.IsParsed()) {
         m_textParser.DoParse(pXMLContainer, m_pTextProvider);
@@ -1359,7 +1360,7 @@ void CXFA_TextLayout::LoadText(CXFA_Node* pNode,
     EndBreak(FX_RTFBREAK_ParagraphBreak, fLinePos, bSavePieces);
   }
 }
-FX_BOOL CXFA_TextLayout::LoadRichText(IFDE_XMLNode* pXMLNode,
+FX_BOOL CXFA_TextLayout::LoadRichText(CFDE_XMLNode* pXMLNode,
                                       const CFX_SizeF& szText,
                                       FX_FLOAT& fLinePos,
                                       IFDE_CSSComputedStyle* pParentStyle,
@@ -1381,7 +1382,7 @@ FX_BOOL CXFA_TextLayout::LoadRichText(IFDE_XMLNode* pXMLNode,
   if (bEndBreak) {
     FX_BOOL bCurOl = FALSE;
     FX_BOOL bCurLi = FALSE;
-    IFDE_XMLElement* pElement = NULL;
+    CFDE_XMLElement* pElement = NULL;
     if (pContext) {
       if (m_bBlockContinue ||
           (m_pLoader && pXMLNode == m_pLoader->m_pXMLNode)) {
@@ -1390,7 +1391,7 @@ FX_BOOL CXFA_TextLayout::LoadRichText(IFDE_XMLNode* pXMLNode,
       if (pXMLNode->GetType() == FDE_XMLNODE_Text) {
         bContentNode = TRUE;
       } else if (pXMLNode->GetType() == FDE_XMLNODE_Element) {
-        pElement = (IFDE_XMLElement*)pXMLNode;
+        pElement = static_cast<CFDE_XMLElement*>(pXMLNode);
         pElement->GetLocalTagName(wsName);
       }
       if (wsName == FX_WSTRC(L"ol")) {
@@ -1437,7 +1438,7 @@ FX_BOOL CXFA_TextLayout::LoadRichText(IFDE_XMLNode* pXMLNode,
             m_textParser.IsSpaceRun(bContentNode ? pParentStyle : pStyle);
         CFX_WideString wsText;
         if (bContentNode && iTabCount == 0) {
-          ((IFDE_XMLText*)pXMLNode)->GetText(wsText);
+          static_cast<CFDE_XMLText*>(pXMLNode)->GetText(wsText);
         } else if (wsName == FX_WSTRC(L"br")) {
           wsText = L'\n';
         } else if (wsName == FX_WSTRC(L"li")) {
@@ -1506,10 +1507,10 @@ FX_BOOL CXFA_TextLayout::LoadRichText(IFDE_XMLNode* pXMLNode,
       }
     }
     FX_BOOL ret = TRUE;
-    for (IFDE_XMLNode* pChildNode =
-             pXMLNode->GetNodeItem(IFDE_XMLNode::FirstChild);
+    for (CFDE_XMLNode* pChildNode =
+             pXMLNode->GetNodeItem(CFDE_XMLNode::FirstChild);
          pChildNode;
-         pChildNode = pChildNode->GetNodeItem(IFDE_XMLNode::NextSibling)) {
+         pChildNode = pChildNode->GetNodeItem(CFDE_XMLNode::NextSibling)) {
       if (bCurOl) {
         iLiCount++;
       }
@@ -1557,7 +1558,7 @@ FX_BOOL CXFA_TextLayout::LoadRichText(IFDE_XMLNode* pXMLNode,
         }
         if (m_pLoader && m_pLoader->m_iTotalLines > -1) {
           m_pLoader->m_pXMLNode =
-              pXMLNode->GetNodeItem(IFDE_XMLNode::NextSibling);
+              pXMLNode->GetNodeItem(CFDE_XMLNode::NextSibling);
           m_pLoader->m_pParentStyle = pParentStyle;
         }
         return FALSE;

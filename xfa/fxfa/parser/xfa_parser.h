@@ -9,6 +9,8 @@
 
 #include "xfa/fxfa/parser/xfa_document.h"
 
+class CFDE_XMLDoc;
+
 class IXFA_Parser {
  public:
   static IXFA_Parser* Create(IXFA_ObjFactory* pFactory,
@@ -19,13 +21,13 @@ class IXFA_Parser {
                              XFA_XDPPACKET ePacketID = XFA_XDPPACKET_XDP) = 0;
   virtual int32_t DoParse(IFX_Pause* pPause = NULL) = 0;
   virtual int32_t ParseXMLData(const CFX_WideString& wsXML,
-                               IFDE_XMLNode*& pXMLNode,
+                               CFDE_XMLNode*& pXMLNode,
                                IFX_Pause* pPause = NULL) = 0;
   virtual void ConstructXFANode(CXFA_Node* pXFANode,
-                                IFDE_XMLNode* pXMLNode) = 0;
+                                CFDE_XMLNode* pXMLNode) = 0;
   virtual IXFA_ObjFactory* GetFactory() const = 0;
   virtual CXFA_Node* GetRootNode() const = 0;
-  virtual IFDE_XMLDoc* GetXMLDoc() const = 0;
+  virtual CFDE_XMLDoc* GetXMLDoc() const = 0;
   virtual void CloseParser() = 0;
 };
 class IXFA_DocParser : public IXFA_Parser {

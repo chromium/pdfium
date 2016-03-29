@@ -42,7 +42,7 @@ class CXFA_FFDoc : public IXFA_Doc {
   CFX_DIBitmap* GetPDFNamedImage(const CFX_WideStringC& wsName,
                                  int32_t& iImageXDpi,
                                  int32_t& iImageYDpi);
-  IFDE_XMLElement* GetPackageData(const CFX_WideStringC& wsPackage);
+  CFDE_XMLElement* GetPackageData(const CFX_WideStringC& wsPackage);
   FX_BOOL SavePackage(const CFX_WideStringC& wsPackage,
                       IFX_FileWrite* pFile,
                       IXFA_ChecksumContext* pCSContext = NULL);

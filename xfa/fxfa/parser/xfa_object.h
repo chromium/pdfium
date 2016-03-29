@@ -138,9 +138,9 @@ class CXFA_Node : public CXFA_Object {
   FX_BOOL IsFormContainer() {
     return m_ePacket == XFA_XDPPACKET_Form && IsContainerNode();
   }
-  void SetXMLMappingNode(IFDE_XMLNode* pXMLNode) { m_pXMLNode = pXMLNode; }
-  IFDE_XMLNode* GetXMLMappingNode() const { return m_pXMLNode; }
-  IFDE_XMLNode* CreateXMLMappingNode();
+  void SetXMLMappingNode(CFDE_XMLNode* pXMLNode) { m_pXMLNode = pXMLNode; }
+  CFDE_XMLNode* GetXMLMappingNode() const { return m_pXMLNode; }
+  CFDE_XMLNode* CreateXMLMappingNode();
   FX_BOOL IsNeedSavingXMLNode();
   uint32_t GetNameHash() const { return m_dwNameHash; }
   bool IsUnnamed() const { return m_dwNameHash == 0; }
@@ -638,7 +638,7 @@ class CXFA_Node : public CXFA_Object {
   CXFA_Node* m_pChild;
   CXFA_Node* m_pLastChild;
   CXFA_Node* m_pParent;
-  IFDE_XMLNode* m_pXMLNode;
+  CFDE_XMLNode* m_pXMLNode;
   XFA_ELEMENT m_eNodeClass;
   uint16_t m_ePacket;
   uint32_t m_dwNameHash;

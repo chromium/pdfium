@@ -88,9 +88,9 @@ class CXFA_TextParser {
   CXFA_TextParser() : m_pAllocator(NULL), m_pSelector(NULL), m_pUASheet(NULL) {}
   virtual ~CXFA_TextParser();
   void Reset();
-  void DoParse(IFDE_XMLNode* pXMLContainer, IXFA_TextProvider* pTextProvider);
+  void DoParse(CFDE_XMLNode* pXMLContainer, IXFA_TextProvider* pTextProvider);
   IFDE_CSSComputedStyle* CreateRootStyle(IXFA_TextProvider* pTextProvider);
-  IFDE_CSSComputedStyle* ComputeStyle(IFDE_XMLNode* pXMLNode,
+  IFDE_CSSComputedStyle* ComputeStyle(CFDE_XMLNode* pXMLNode,
                                       IFDE_CSSComputedStyle* pParentStyle);
   FX_BOOL IsParsed() const { return m_pAllocator != NULL; }
 
@@ -106,7 +106,7 @@ class CXFA_TextParser {
                        IFDE_CSSComputedStyle* pStyle) const;
   int32_t GetHorScale(IXFA_TextProvider* pTextProvider,
                       IFDE_CSSComputedStyle* pStyle,
-                      IFDE_XMLNode* pXMLNode) const;
+                      CFDE_XMLNode* pXMLNode) const;
   int32_t GetVerScale(IXFA_TextProvider* pTextProvider,
                       IFDE_CSSComputedStyle* pStyle) const;
   void GetUnderline(IXFA_TextProvider* pTextProvider,
@@ -125,21 +125,21 @@ class CXFA_TextParser {
                          FX_BOOL bFirst,
                          FX_FLOAT fVerScale) const;
   FX_BOOL GetEmbbedObj(IXFA_TextProvider* pTextProvider,
-                       IFDE_XMLNode* pXMLNode,
+                       CFDE_XMLNode* pXMLNode,
                        CFX_WideString& wsValue);
-  CXFA_TextParseContext* GetParseContextFromMap(IFDE_XMLNode* pXMLNode);
+  CXFA_TextParseContext* GetParseContextFromMap(CFDE_XMLNode* pXMLNode);
 
  private:
   void InitCSSData(IXFA_TextProvider* pTextProvider);
-  void ParseRichText(IFDE_XMLNode* pXMLNode,
+  void ParseRichText(CFDE_XMLNode* pXMLNode,
                      IFDE_CSSComputedStyle* pParentStyle);
-  void ParseTagInfo(IFDE_XMLNode* pXMLNode, CXFA_CSSTagProvider& tagProvider);
+  void ParseTagInfo(CFDE_XMLNode* pXMLNode, CXFA_CSSTagProvider& tagProvider);
   IFDE_CSSStyleSheet* LoadDefaultSheetStyle();
   IFDE_CSSComputedStyle* CreateStyle(IFDE_CSSComputedStyle* pParentStyle);
   IFX_MEMAllocator* m_pAllocator;
   IFDE_CSSStyleSelector* m_pSelector;
   IFDE_CSSStyleSheet* m_pUASheet;
-  CFX_MapPtrTemplate<IFDE_XMLNode*, CXFA_TextParseContext*>
+  CFX_MapPtrTemplate<CFDE_XMLNode*, CXFA_TextParseContext*>
       m_mapXMLNodeToParseContext;
 };
 
@@ -165,7 +165,7 @@ class CXFA_LoaderContext {
   int32_t m_iChar;
   int32_t m_iLines;
   int32_t m_iTotalLines;
-  IFDE_XMLNode* m_pXMLNode;
+  CFDE_XMLNode* m_pXMLNode;
   CXFA_Node* m_pNode;
   IFDE_CSSComputedStyle* m_pParentStyle;
   CFX_ArrayTemplate<FX_FLOAT> m_lineHeights;
@@ -352,13 +352,13 @@ class CXFA_TextLayout {
 
  private:
   void GetTextDataNode();
-  IFDE_XMLNode* GetXMLContainerNode();
+  CFDE_XMLNode* GetXMLContainerNode();
   IFX_RTFBreak* CreateBreak(FX_BOOL bDefault);
   void InitBreak(FX_FLOAT fLineWidth);
   void InitBreak(IFDE_CSSComputedStyle* pStyle,
                  FDE_CSSDISPLAY eDisplay,
                  FX_FLOAT fLineWidth,
-                 IFDE_XMLNode* pXMLNode,
+                 CFDE_XMLNode* pXMLNode,
                  IFDE_CSSComputedStyle* pParentStyle = NULL);
   FX_BOOL Loader(const CFX_SizeF& szText,
                  FX_FLOAT& fLinePos,
@@ -367,7 +367,7 @@ class CXFA_TextLayout {
                 const CFX_SizeF& szText,
                 FX_FLOAT& fLinePos,
                 FX_BOOL bSavePieces);
-  FX_BOOL LoadRichText(IFDE_XMLNode* pXMLNode,
+  FX_BOOL LoadRichText(CFDE_XMLNode* pXMLNode,
                        const CFX_SizeF& szText,
                        FX_FLOAT& fLinePos,
                        IFDE_CSSComputedStyle* pParentStyle,

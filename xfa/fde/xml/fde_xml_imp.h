@@ -17,14 +17,30 @@ class CFDE_XMLInstruction;
 class CFDE_XMLElement;
 class CFDE_XMLText;
 class CFDE_XMLDoc;
-class IFDE_XMLParser;
 class CFDE_XMLDOMParser;
+class CFDE_XMLParser;
 class CFDE_XMLSAXParser;
 class CFDE_XMLSyntaxParser;
 
 class CFDE_XMLNode : public CFX_Target {
  public:
+  enum NodeItem {
+    Root = 0,
+    Parent,
+    FirstSibling,
+    PriorSibling,
+    NextSibling,
+    LastSibling,
+    FirstNeighbor,
+    PriorNeighbor,
+    NextNeighbor,
+    LastNeighbor,
+    FirstChild,
+    LastChild
+  };
+
   CFDE_XMLNode();
+
   virtual void Release() { delete this; }
   virtual FDE_XMLNODETYPE GetType() const { return FDE_XMLNODE_Unknown; }
   virtual int32_t CountChildNodes() const;
@@ -36,11 +52,11 @@ class CFDE_XMLNode : public CFX_Target {
   virtual int32_t InsertChildNode(CFDE_XMLNode* pNode, int32_t index = -1);
   virtual void RemoveChildNode(CFDE_XMLNode* pNode);
   virtual void DeleteChildren();
-  virtual CFDE_XMLNode* GetNodeItem(IFDE_XMLNode::NodeItem eItem) const;
+  virtual CFDE_XMLNode* GetNodeItem(CFDE_XMLNode::NodeItem eItem) const;
   virtual int32_t GetNodeLevel() const;
-  virtual FX_BOOL InsertNodeItem(IFDE_XMLNode::NodeItem eItem,
+  virtual FX_BOOL InsertNodeItem(CFDE_XMLNode::NodeItem eItem,
                                  CFDE_XMLNode* pNode);
-  virtual CFDE_XMLNode* RemoveNodeItem(IFDE_XMLNode::NodeItem eItem);
+  virtual CFDE_XMLNode* RemoveNodeItem(CFDE_XMLNode::NodeItem eItem);
   virtual CFDE_XMLNode* Clone(FX_BOOL bRecursive);
   virtual void SaveXMLNode(IFX_Stream* pXMLStream);
 
@@ -169,33 +185,42 @@ class CFDE_XMLDoc : public CFX_Target {
                           int32_t iXMLPlaneSize = 8192,
                           int32_t iTextDataSize = 256,
                           FDE_XMLREADERHANDLER* pHandler = NULL);
-  virtual FX_BOOL LoadXML(IFDE_XMLParser* pXMLParser);
+  virtual FX_BOOL LoadXML(CFDE_XMLParser* pXMLParser);
   virtual int32_t DoLoad(IFX_Pause* pPause = NULL);
   virtual void CloseXML();
   virtual CFDE_XMLNode* GetRoot() const { return m_pRoot; }
   virtual void SaveXML(IFX_Stream* pXMLStream = NULL, FX_BOOL bSaveBOM = TRUE);
-  virtual void SaveXMLNode(IFX_Stream* pXMLStream, IFDE_XMLNode* pNode);
+  virtual void SaveXMLNode(IFX_Stream* pXMLStream, CFDE_XMLNode* pNode);
 
  protected:
   IFX_Stream* m_pStream;
   int32_t m_iStatus;
   CFDE_XMLNode* m_pRoot;
-  IFDE_XMLSyntaxParser* m_pSyntaxParser;
-  IFDE_XMLParser* m_pXMLParser;
+  CFDE_XMLSyntaxParser* m_pSyntaxParser;
+  CFDE_XMLParser* m_pXMLParser;
   void Reset(FX_BOOL bInitRoot);
   void ReleaseParser();
 };
 typedef CFX_StackTemplate<CFDE_XMLNode*> CFDE_XMLDOMNodeStack;
-class CFDE_XMLDOMParser : public IFDE_XMLParser, public CFX_Target {
+
+class CFDE_XMLParser {
  public:
-  CFDE_XMLDOMParser(CFDE_XMLNode* pRoot, IFDE_XMLSyntaxParser* pParser);
+  virtual ~CFDE_XMLParser() {}
+
+  virtual void Release() = 0;
+  virtual int32_t DoParser(IFX_Pause* pPause) = 0;
+};
+
+class CFDE_XMLDOMParser : public CFDE_XMLParser, public CFX_Target {
+ public:
+  CFDE_XMLDOMParser(CFDE_XMLNode* pRoot, CFDE_XMLSyntaxParser* pParser);
   ~CFDE_XMLDOMParser();
 
   virtual void Release() { delete this; }
   virtual int32_t DoParser(IFX_Pause* pPause);
 
  private:
-  IFDE_XMLSyntaxParser* m_pParser;
+  CFDE_XMLSyntaxParser* m_pParser;
   CFDE_XMLNode* m_pParent;
   CFDE_XMLNode* m_pChild;
   CFDE_XMLDOMNodeStack m_NodeStack;
@@ -211,10 +236,10 @@ class CFDE_XMLTAG : public CFX_Target {
   FDE_XMLNODETYPE eType;
 };
 typedef CFX_ObjectStackTemplate<CFDE_XMLTAG> CFDE_XMLTagStack;
-class CFDE_XMLSAXParser : public IFDE_XMLParser, public CFX_Target {
+class CFDE_XMLSAXParser : public CFDE_XMLParser, public CFX_Target {
  public:
   CFDE_XMLSAXParser(FDE_XMLREADERHANDLER* pHandler,
-                    IFDE_XMLSyntaxParser* pParser);
+                    CFDE_XMLSyntaxParser* pParser);
   ~CFDE_XMLSAXParser();
 
   virtual void Release() { delete this; }
@@ -224,7 +249,7 @@ class CFDE_XMLSAXParser : public IFDE_XMLParser, public CFX_Target {
   void Push(const CFDE_XMLTAG& xmlTag);
   void Pop();
   FDE_XMLREADERHANDLER* m_pHandler;
-  IFDE_XMLSyntaxParser* m_pParser;
+  CFDE_XMLSyntaxParser* m_pParser;
   CFDE_XMLTagStack m_TagStack;
   CFDE_XMLTAG* m_pTagTop;
   CFX_WideString m_ws1;
@@ -285,39 +310,39 @@ class CFDE_BlockBuffer : public CFX_Target {
 #define FDE_XMLSYNTAXMODE_SkipComment 16
 #define FDE_XMLSYNTAXMODE_SkipCommentOrDecl 17
 #define FDE_XMLSYNTAXMODE_TargetData 18
-class CFDE_XMLSyntaxParser : public IFDE_XMLSyntaxParser, public CFX_Target {
+class CFDE_XMLSyntaxParser : public CFX_Target {
  public:
   CFDE_XMLSyntaxParser();
   ~CFDE_XMLSyntaxParser();
-  virtual void Release() { delete this; }
-  virtual void Init(IFX_Stream* pStream,
-                    int32_t iXMLPlaneSize,
-                    int32_t iTextDataSize = 256);
-  virtual uint32_t DoSyntaxParse();
-  virtual int32_t GetStatus() const;
-  virtual int32_t GetCurrentPos() const {
+  void Release() { delete this; }
+  void Init(IFX_Stream* pStream,
+            int32_t iXMLPlaneSize,
+            int32_t iTextDataSize = 256);
+  uint32_t DoSyntaxParse();
+  int32_t GetStatus() const;
+  int32_t GetCurrentPos() const {
     return m_iParsedChars + (m_pStart - m_pBuffer);
   }
-  virtual FX_FILESIZE GetCurrentBinaryPos() const;
-  virtual int32_t GetCurrentNodeNumber() const { return m_iCurrentNodeNum; }
-  virtual int32_t GetLastNodeNumber() const { return m_iLastNodeNum; }
+  FX_FILESIZE GetCurrentBinaryPos() const;
+  int32_t GetCurrentNodeNumber() const { return m_iCurrentNodeNum; }
+  int32_t GetLastNodeNumber() const { return m_iLastNodeNum; }
 
-  virtual void GetTargetName(CFX_WideString& wsTarget) const {
+  void GetTargetName(CFX_WideString& wsTarget) const {
     m_BlockBuffer.GetTextData(wsTarget, 0, m_iTextDataLength);
   }
-  virtual void GetTagName(CFX_WideString& wsTag) const {
+  void GetTagName(CFX_WideString& wsTag) const {
     m_BlockBuffer.GetTextData(wsTag, 0, m_iTextDataLength);
   }
-  virtual void GetAttributeName(CFX_WideString& wsAttriName) const {
+  void GetAttributeName(CFX_WideString& wsAttriName) const {
     m_BlockBuffer.GetTextData(wsAttriName, 0, m_iTextDataLength);
   }
-  virtual void GetAttributeValue(CFX_WideString& wsAttriValue) const {
+  void GetAttributeValue(CFX_WideString& wsAttriValue) const {
     m_BlockBuffer.GetTextData(wsAttriValue, 0, m_iTextDataLength);
   }
-  virtual void GetTextData(CFX_WideString& wsText) const {
+  void GetTextData(CFX_WideString& wsText) const {
     m_BlockBuffer.GetTextData(wsText, 0, m_iTextDataLength);
   }
-  virtual void GetTargetData(CFX_WideString& wsData) const {
+  void GetTargetData(CFX_WideString& wsData) const {
     m_BlockBuffer.GetTextData(wsData, 0, m_iTextDataLength);
   }
 

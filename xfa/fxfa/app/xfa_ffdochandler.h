@@ -13,36 +13,37 @@ class CXFA_FFDocHandler : public IXFA_DocHandler {
  public:
   CXFA_FFDocHandler();
   ~CXFA_FFDocHandler();
-  virtual void ReleaseDoc(IXFA_Doc* hDoc);
-  virtual IXFA_DocProvider* GetDocProvider(IXFA_Doc* hDoc);
-  virtual uint32_t GetDocType(IXFA_Doc* hDoc);
-  virtual int32_t StartLoad(IXFA_Doc* hDoc);
-  virtual int32_t DoLoad(IXFA_Doc* hDoc, IFX_Pause* pPause = NULL);
-  virtual void StopLoad(IXFA_Doc* hDoc);
 
-  virtual IXFA_DocView* CreateDocView(IXFA_Doc* hDoc, uint32_t dwView = 0);
-  virtual int32_t CountPackages(IXFA_Doc* hDoc);
-  virtual void GetPackageName(IXFA_Doc* hDoc,
-                              int32_t iPackage,
-                              CFX_WideStringC& wsPackage);
-  virtual IFDE_XMLElement* GetPackageData(IXFA_Doc* hDoc,
-                                          const CFX_WideStringC& wsPackage);
-  virtual FX_BOOL SavePackage(IXFA_Doc* hDoc,
-                              const CFX_WideStringC& wsPackage,
-                              IFX_FileWrite* pFile,
-                              IXFA_ChecksumContext* pCSContext = NULL);
-  virtual FX_BOOL CloseDoc(IXFA_Doc* hDoc);
-  virtual FX_BOOL ImportData(IXFA_Doc* hDoc,
-                             IFX_FileRead* pStream,
-                             FX_BOOL bXDP = TRUE);
-  virtual void SetJSERuntime(IXFA_Doc* hDoc, FXJSE_HRUNTIME hRuntime);
-  virtual FXJSE_HVALUE GetXFAScriptObject(IXFA_Doc* hDoc);
-  virtual XFA_ATTRIBUTEENUM GetRestoreState(IXFA_Doc* hDoc);
-  virtual FX_BOOL RunDocScript(IXFA_Doc* hDoc,
-                               XFA_SCRIPTTYPE eScriptType,
-                               const CFX_WideStringC& wsScript,
-                               FXJSE_HVALUE hRetValue,
-                               FXJSE_HVALUE hThisObject);
+  void ReleaseDoc(IXFA_Doc* hDoc) override;
+  IXFA_DocProvider* GetDocProvider(IXFA_Doc* hDoc) override;
+  uint32_t GetDocType(IXFA_Doc* hDoc) override;
+  int32_t StartLoad(IXFA_Doc* hDoc) override;
+  int32_t DoLoad(IXFA_Doc* hDoc, IFX_Pause* pPause = NULL) override;
+  void StopLoad(IXFA_Doc* hDoc) override;
+
+  IXFA_DocView* CreateDocView(IXFA_Doc* hDoc, uint32_t dwView = 0) override;
+  int32_t CountPackages(IXFA_Doc* hDoc) override;
+  void GetPackageName(IXFA_Doc* hDoc,
+                      int32_t iPackage,
+                      CFX_WideStringC& wsPackage) override;
+  CFDE_XMLElement* GetPackageData(IXFA_Doc* hDoc,
+                                  const CFX_WideStringC& wsPackage);
+  FX_BOOL SavePackage(IXFA_Doc* hDoc,
+                      const CFX_WideStringC& wsPackage,
+                      IFX_FileWrite* pFile,
+                      IXFA_ChecksumContext* pCSContext = NULL) override;
+  FX_BOOL CloseDoc(IXFA_Doc* hDoc) override;
+  FX_BOOL ImportData(IXFA_Doc* hDoc,
+                     IFX_FileRead* pStream,
+                     FX_BOOL bXDP = TRUE) override;
+  void SetJSERuntime(IXFA_Doc* hDoc, FXJSE_HRUNTIME hRuntime) override;
+  FXJSE_HVALUE GetXFAScriptObject(IXFA_Doc* hDoc) override;
+  XFA_ATTRIBUTEENUM GetRestoreState(IXFA_Doc* hDoc) override;
+  FX_BOOL RunDocScript(IXFA_Doc* hDoc,
+                       XFA_SCRIPTTYPE eScriptType,
+                       const CFX_WideStringC& wsScript,
+                       FXJSE_HVALUE hRetValue,
+                       FXJSE_HVALUE hThisObject) override;
 
  protected:
 };

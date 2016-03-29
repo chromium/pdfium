@@ -40,7 +40,7 @@ int32_t CXFA_FFDocHandler::CountPackages(IXFA_Doc* hDoc) {
 void CXFA_FFDocHandler::GetPackageName(IXFA_Doc* hDoc,
                                        int32_t iPackage,
                                        CFX_WideStringC& wsPackage) {}
-IFDE_XMLElement* CXFA_FFDocHandler::GetPackageData(
+CFDE_XMLElement* CXFA_FFDocHandler::GetPackageData(
     IXFA_Doc* hDoc,
     const CFX_WideStringC& wsPackage) {
   return static_cast<CXFA_FFDoc*>(hDoc)->GetPackageData(wsPackage);

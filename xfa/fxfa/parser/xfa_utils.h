@@ -10,10 +10,12 @@
 #include "xfa/fde/xml/fde_xml.h"
 #include "xfa/include/fxfa/fxfa_basic.h"
 
+class CFDE_XMLElement;
+class CFDE_XMLNode;
 class CXFA_LocaleValue;
 
 FX_BOOL XFA_FDEExtension_ResolveNamespaceQualifier(
-    IFDE_XMLElement* pNode,
+    CFDE_XMLElement* pNode,
     const CFX_WideStringC& wsQualifier,
     CFX_WideString& wsNamespaceURI);
 template <class NodeType, class TraverseStrategy>
@@ -200,8 +202,8 @@ FX_DOUBLE XFA_WideStringToDouble(const CFX_WideString& wsStringVal);
 FX_DOUBLE XFA_ByteStringToDouble(const CFX_ByteStringC& szStringVal);
 int32_t XFA_MapRotation(int32_t nRotation);
 
-FX_BOOL XFA_RecognizeRichText(IFDE_XMLElement* pRichTextXMLNode);
-void XFA_GetPlainTextFromRichText(IFDE_XMLNode* pXMLNode,
+FX_BOOL XFA_RecognizeRichText(CFDE_XMLElement* pRichTextXMLNode);
+void XFA_GetPlainTextFromRichText(CFDE_XMLNode* pXMLNode,
                                   CFX_WideString& wsPlainText);
 FX_BOOL XFA_FieldIsMultiListBox(CXFA_Node* pFieldNode);
 IFX_Stream* XFA_CreateWideTextRead(const CFX_WideString& wsBuffer);
