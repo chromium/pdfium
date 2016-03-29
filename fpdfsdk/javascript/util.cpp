@@ -446,13 +446,17 @@ FX_BOOL util::byteToChar(IJS_Context* cc,
                          const std::vector<CJS_Value>& params,
                          CJS_Value& vRet,
                          CFX_WideString& sError) {
-  int iSize = params.size();
-  if (iSize == 0)
+  CJS_Context* pContext = static_cast<CJS_Context*>(cc);
+  if (params.size() < 1) {
+    sError = JSGetStringFromID(pContext, IDS_STRING_JSPARAMERROR);
     return FALSE;
-  int nByte = params[0].ToInt();
-  unsigned char cByte = (unsigned char)nByte;
-  CFX_WideString csValue;
-  csValue.Format(L"%c", cByte);
-  vRet = csValue.c_str();
+  }
+  int arg = params[0].ToInt();
+  if (arg < 0 || arg > 255) {
+    sError = JSGetStringFromID(pContext, IDS_STRING_JSVALUEERROR);
+    return FALSE;
+  }
+  CFX_WideString wStr(static_cast<FX_WCHAR>(arg));
+  vRet = wStr.c_str();
   return TRUE;
 }
