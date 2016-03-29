@@ -82,7 +82,7 @@ int32_t GetHeaderOffset(IFX_FileRead* pFile) {
 }
 
 int32_t GetDirectInteger(CPDF_Dictionary* pDict, const CFX_ByteStringC& key) {
-  CPDF_Number* pObj = ToNumber(pDict->GetElement(key));
+  CPDF_Number* pObj = ToNumber(pDict->GetObjectBy(key));
   return pObj ? pObj->GetInteger() : 0;
 }
 
@@ -180,7 +180,7 @@ CFX_ByteTextBuf& operator<<(CFX_ByteTextBuf& buf, const CPDF_Object* pObj) {
       const CPDF_Array* p = pObj->AsArray();
       buf << "[";
       for (uint32_t i = 0; i < p->GetCount(); i++) {
-        CPDF_Object* pElement = p->GetElement(i);
+        CPDF_Object* pElement = p->GetObjectAt(i);
         if (pElement->GetObjNum()) {
           buf << " " << pElement->GetObjNum() << " 0 R";
         } else {

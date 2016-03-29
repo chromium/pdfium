@@ -39,7 +39,7 @@ CPDF_ShadingPattern::CPDF_ShadingPattern(CPDF_Document* pDoc,
   if (!bShading) {
     CPDF_Dictionary* pDict = m_pPatternObj->GetDict();
     m_Pattern2Form = pDict->GetMatrixBy("Matrix");
-    m_pShadingObj = pDict->GetElementValue("Shading");
+    m_pShadingObj = pDict->GetDirectObjectBy("Shading");
     if (parentMatrix)
       m_Pattern2Form.Concat(*parentMatrix);
   }
@@ -70,19 +70,19 @@ FX_BOOL CPDF_ShadingPattern::Load() {
       delete m_pFunctions[i];
     m_nFuncs = 0;
   }
-  CPDF_Object* pFunc = pShadingDict->GetElementValue("Function");
+  CPDF_Object* pFunc = pShadingDict->GetDirectObjectBy("Function");
   if (pFunc) {
     if (CPDF_Array* pArray = pFunc->AsArray()) {
       m_nFuncs = std::min<int>(pArray->GetCount(), 4);
 
       for (int i = 0; i < m_nFuncs; i++)
-        m_pFunctions[i] = CPDF_Function::Load(pArray->GetElementValue(i));
+        m_pFunctions[i] = CPDF_Function::Load(pArray->GetDirectObjectAt(i));
     } else {
       m_pFunctions[0] = CPDF_Function::Load(pFunc);
       m_nFuncs = 1;
     }
   }
-  CPDF_Object* pCSObj = pShadingDict->GetElementValue("ColorSpace");
+  CPDF_Object* pCSObj = pShadingDict->GetDirectObjectBy("ColorSpace");
   if (!pCSObj)
     return FALSE;
 

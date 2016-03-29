@@ -200,7 +200,7 @@ DLLEXPORT int FPDFDoc_GetPageMode(FPDF_DOCUMENT document) {
   if (!pRoot)
     return PAGEMODE_UNKNOWN;
 
-  CPDF_Object* pName = pRoot->GetElement("PageMode");
+  CPDF_Object* pName = pRoot->GetObjectBy("PageMode");
   if (!pName)
     return PAGEMODE_USENONE;
 

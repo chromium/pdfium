@@ -31,8 +31,8 @@ class CPDF_Dictionary : public CPDF_Object {
   const CPDF_Dictionary* AsDictionary() const override;
 
   size_t GetCount() const { return m_Map.size(); }
-  CPDF_Object* GetElement(const CFX_ByteStringC& key) const;
-  CPDF_Object* GetElementValue(const CFX_ByteStringC& key) const;
+  CPDF_Object* GetObjectBy(const CFX_ByteStringC& key) const;
+  CPDF_Object* GetDirectObjectBy(const CFX_ByteStringC& key) const;
   CFX_ByteString GetStringBy(const CFX_ByteStringC& key) const;
   CFX_ByteStringC GetConstStringBy(const CFX_ByteStringC& key) const;
   CFX_ByteString GetStringBy(const CFX_ByteStringC& key,

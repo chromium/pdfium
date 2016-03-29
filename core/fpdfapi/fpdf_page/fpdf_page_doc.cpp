@@ -331,7 +331,7 @@ CPDF_ColorSpace* CPDF_DocPageData::GetColorSpace(
     if (!pCS && pResources) {
       CPDF_Dictionary* pList = pResources->GetDictBy("ColorSpace");
       if (pList) {
-        pCSObj = pList->GetElementValue(name);
+        pCSObj = pList->GetDirectObjectBy(name);
         return GetColorSpace(pCSObj, nullptr);
       }
     }
@@ -345,13 +345,13 @@ CPDF_ColorSpace* CPDF_DocPageData::GetColorSpace(
     CPDF_Object* pDefaultCS = nullptr;
     switch (pCS->GetFamily()) {
       case PDFCS_DEVICERGB:
-        pDefaultCS = pColorSpaces->GetElementValue("DefaultRGB");
+        pDefaultCS = pColorSpaces->GetDirectObjectBy("DefaultRGB");
         break;
       case PDFCS_DEVICEGRAY:
-        pDefaultCS = pColorSpaces->GetElementValue("DefaultGray");
+        pDefaultCS = pColorSpaces->GetDirectObjectBy("DefaultGray");
         break;
       case PDFCS_DEVICECMYK:
-        pDefaultCS = pColorSpaces->GetElementValue("DefaultCMYK");
+        pDefaultCS = pColorSpaces->GetDirectObjectBy("DefaultCMYK");
         break;
     }
     return pDefaultCS ? GetColorSpace(pDefaultCS, nullptr) : pCS;
@@ -361,7 +361,7 @@ CPDF_ColorSpace* CPDF_DocPageData::GetColorSpace(
   if (!pArray || pArray->GetCount() == 0)
     return nullptr;
   if (pArray->GetCount() == 1)
-    return GetColorSpace(pArray->GetElementValue(0), pResources);
+    return GetColorSpace(pArray->GetDirectObjectAt(0), pResources);
 
   CPDF_CountedColorSpace* csData = nullptr;
   auto it = m_ColorSpaceMap.find(pCSObj);

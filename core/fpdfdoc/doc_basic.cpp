@@ -22,7 +22,7 @@ int CPDF_Dest::GetPageIndex(CPDF_Document* pDoc) {
   if (!pArray)
     return 0;
 
-  CPDF_Object* pPage = pArray->GetElementValue(0);
+  CPDF_Object* pPage = pArray->GetDirectObjectAt(0);
   if (!pPage)
     return 0;
   if (pPage->IsNumber())
@@ -36,7 +36,7 @@ uint32_t CPDF_Dest::GetPageObjNum() {
   if (!pArray)
     return 0;
 
-  CPDF_Object* pPage = pArray->GetElementValue(0);
+  CPDF_Object* pPage = pArray->GetDirectObjectAt(0);
   if (!pPage)
     return 0;
   if (pPage->IsNumber())
@@ -51,7 +51,7 @@ int CPDF_Dest::GetZoomMode() {
   if (!pArray)
     return 0;
 
-  CPDF_Object* pObj = pArray->GetElementValue(1);
+  CPDF_Object* pObj = pArray->GetDirectObjectAt(1);
   if (!pObj)
     return 0;
 
@@ -116,7 +116,7 @@ static CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
         break;
       }
       nIndex += i;
-      return pNames->GetElementValue(i * 2 + 1);
+      return pNames->GetDirectObjectAt(i * 2 + 1);
     }
     nIndex += dwCount;
     return NULL;
@@ -158,7 +158,7 @@ static CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
       *ppFind = pNames;
     }
     csName = pNames->GetStringAt((nIndex - nCurIndex) * 2);
-    return pNames->GetElementValue((nIndex - nCurIndex) * 2 + 1);
+    return pNames->GetDirectObjectAt((nIndex - nCurIndex) * 2 + 1);
   }
   CPDF_Array* pKids = pNode->GetArrayBy("Kids");
   if (!pKids) {
@@ -237,7 +237,7 @@ CPDF_Array* CPDF_NameTree::LookupNamedDest(CPDF_Document* pDoc,
     CPDF_Dictionary* pDests = pDoc->GetRoot()->GetDictBy("Dests");
     if (!pDests)
       return nullptr;
-    pValue = pDests->GetElementValue(sName);
+    pValue = pDests->GetDirectObjectBy(sName);
   }
   if (!pValue)
     return nullptr;

@@ -70,7 +70,7 @@ FX_BOOL CPDF_Type3Font::Load() {
     }
   }
   m_pCharProcs = m_pFontDict->GetDictBy("CharProcs");
-  CPDF_Object* pEncoding = m_pFontDict->GetElementValue("Encoding");
+  CPDF_Object* pEncoding = m_pFontDict->GetDirectObjectBy("Encoding");
   if (pEncoding) {
     LoadPDFEncoding(pEncoding, m_BaseEncoding, m_pCharNames, FALSE, FALSE);
     if (m_pCharNames) {
@@ -103,7 +103,7 @@ CPDF_Type3Char* CPDF_Type3Font::LoadChar(uint32_t charcode, int level) {
     return nullptr;
 
   CPDF_Stream* pStream =
-      ToStream(m_pCharProcs ? m_pCharProcs->GetElementValue(name) : nullptr);
+      ToStream(m_pCharProcs ? m_pCharProcs->GetDirectObjectBy(name) : nullptr);
   if (!pStream)
     return nullptr;
 

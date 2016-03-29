@@ -96,7 +96,7 @@ int32_t PDF_CreatorAppendObject(const CPDF_Object* pObj,
       offset += 1;
       const CPDF_Array* p = pObj->AsArray();
       for (uint32_t i = 0; i < p->GetCount(); i++) {
-        CPDF_Object* pElement = p->GetElement(i);
+        CPDF_Object* pElement = p->GetObjectAt(i);
         if (pElement->GetObjNum()) {
           if (pFile->AppendString(" ") < 0) {
             return -1;
@@ -1199,7 +1199,7 @@ int32_t CPDF_Creator::WriteDirectObj(uint32_t objnum,
       m_Offset += 1;
       const CPDF_Array* p = pObj->AsArray();
       for (uint32_t i = 0; i < p->GetCount(); i++) {
-        CPDF_Object* pElement = p->GetElement(i);
+        CPDF_Object* pElement = p->GetObjectAt(i);
         if (pElement->GetObjNum()) {
           if (m_File.AppendString(" ") < 0) {
             return -1;
@@ -1493,7 +1493,7 @@ int32_t CPDF_Creator::WriteDoc_Stage1(IFX_Pause* pPause) {
       m_dwFlags &= ~FPDFCREATE_INCREMENTAL;
     }
     CPDF_Dictionary* pDict = m_pDocument->GetRoot();
-    m_pMetadata = pDict ? pDict->GetElementValue("Metadata") : NULL;
+    m_pMetadata = pDict ? pDict->GetDirectObjectBy("Metadata") : NULL;
     if (m_dwFlags & FPDFCREATE_OBJECTSTREAM) {
       m_pXRefStream = new CPDF_XRefStream;
       m_pXRefStream->Start();
@@ -1979,7 +1979,7 @@ void CPDF_Creator::InitID(FX_BOOL bDefault) {
   FX_BOOL bNewId = !m_pIDArray;
   if (!m_pIDArray) {
     m_pIDArray = new CPDF_Array;
-    CPDF_Object* pID1 = pOldIDArray ? pOldIDArray->GetElement(0) : NULL;
+    CPDF_Object* pID1 = pOldIDArray ? pOldIDArray->GetObjectAt(0) : NULL;
     if (pID1) {
       m_pIDArray->Add(pID1->Clone());
     } else {
@@ -1993,7 +1993,7 @@ void CPDF_Creator::InitID(FX_BOOL bDefault) {
     return;
   }
   if (pOldIDArray) {
-    CPDF_Object* pID2 = pOldIDArray->GetElement(1);
+    CPDF_Object* pID2 = pOldIDArray->GetObjectAt(1);
     if ((m_dwFlags & FPDFCREATE_INCREMENTAL) && m_pEncryptDict && pID2) {
       m_pIDArray->Add(pID2->Clone());
       return;
@@ -2004,7 +2004,7 @@ void CPDF_Creator::InitID(FX_BOOL bDefault) {
     m_pIDArray->Add(new CPDF_String(bsBuffer, TRUE), m_pDocument);
     return;
   }
-  m_pIDArray->Add(m_pIDArray->GetElement(0)->Clone());
+  m_pIDArray->Add(m_pIDArray->GetObjectAt(0)->Clone());
   if (m_pEncryptDict && !pOldIDArray && m_pParser && bNewId) {
     if (m_pEncryptDict->GetStringBy("Filter") == "Standard") {
       CPDF_StandardSecurityHandler handler;

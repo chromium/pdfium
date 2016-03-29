@@ -756,7 +756,7 @@ CPDF_FormField* CPDF_InterForm::GetFieldInCalculationOrder(int index) {
     return NULL;
   }
   if (CPDF_Dictionary* pElement =
-          ToDictionary(pArray->GetElementValue(index))) {
+          ToDictionary(pArray->GetDirectObjectAt(index))) {
     return GetFieldByDict(pElement);
   }
   return NULL;
@@ -770,7 +770,7 @@ int CPDF_InterForm::FindFieldInCalculationOrder(const CPDF_FormField* pField) {
     return -1;
   }
   for (uint32_t i = 0; i < pArray->GetCount(); i++) {
-    CPDF_Object* pElement = pArray->GetElementValue(i);
+    CPDF_Object* pElement = pArray->GetDirectObjectAt(i);
     if (pElement == pField->m_pDict) {
       return i;
     }
@@ -953,20 +953,20 @@ CPDF_FormField* CPDF_InterForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
     }
     if (pParent && pParent != pFieldDict && !pParent->KeyExist("FT")) {
       if (pFieldDict->KeyExist("FT")) {
-        CPDF_Object* pFTValue = pFieldDict->GetElementValue("FT");
+        CPDF_Object* pFTValue = pFieldDict->GetDirectObjectBy("FT");
         if (pFTValue) {
           pParent->SetAt("FT", pFTValue->Clone());
         }
       }
       if (pFieldDict->KeyExist("Ff")) {
-        CPDF_Object* pFfValue = pFieldDict->GetElementValue("Ff");
+        CPDF_Object* pFfValue = pFieldDict->GetDirectObjectBy("Ff");
         if (pFfValue) {
           pParent->SetAt("Ff", pFfValue->Clone());
         }
       }
     }
     pField = new CPDF_FormField(this, pParent);
-    CPDF_Object* pTObj = pDict->GetElement("T");
+    CPDF_Object* pTObj = pDict->GetObjectBy("T");
     if (ToReference(pTObj)) {
       CPDF_Object* pClone = pTObj->Clone(TRUE);
       if (pClone)
@@ -1157,7 +1157,7 @@ void CPDF_InterForm::FDF_ImportField(CPDF_Dictionary* pFieldDict,
   if ((eType == CPDF_FormField::ListBox || eType == CPDF_FormField::ComboBox) &&
       pFieldDict->KeyExist("Opt")) {
     pField->m_pDict->SetAt("Opt",
-                           pFieldDict->GetElementValue("Opt")->Clone(TRUE));
+                           pFieldDict->GetDirectObjectBy("Opt")->Clone(TRUE));
   }
   if (bNotify && m_pFormNotify) {
     if (iType == FIELDTYPE_CHECKBOX || iType == FIELDTYPE_RADIOBUTTON) {

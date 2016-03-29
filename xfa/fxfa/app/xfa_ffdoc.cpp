@@ -229,7 +229,7 @@ FX_BOOL CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
   if (pAcroForm == NULL) {
     return FALSE;
   }
-  CPDF_Object* pElementXFA = pAcroForm->GetElementValue("XFA");
+  CPDF_Object* pElementXFA = pAcroForm->GetDirectObjectBy("XFA");
   if (pElementXFA == NULL) {
     return FALSE;
   }

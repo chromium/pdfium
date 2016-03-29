@@ -51,32 +51,32 @@ CPDF_Object* CPDF_Dictionary::Clone(FX_BOOL bDirect) const {
   return pCopy;
 }
 
-CPDF_Object* CPDF_Dictionary::GetElement(const CFX_ByteStringC& key) const {
+CPDF_Object* CPDF_Dictionary::GetObjectBy(const CFX_ByteStringC& key) const {
   auto it = m_Map.find(key);
   if (it == m_Map.end())
     return nullptr;
   return it->second;
 }
-CPDF_Object* CPDF_Dictionary::GetElementValue(
+CPDF_Object* CPDF_Dictionary::GetDirectObjectBy(
     const CFX_ByteStringC& key) const {
-  CPDF_Object* p = GetElement(key);
+  CPDF_Object* p = GetObjectBy(key);
   return p ? p->GetDirect() : nullptr;
 }
 
 CFX_ByteString CPDF_Dictionary::GetStringBy(const CFX_ByteStringC& key) const {
-  CPDF_Object* p = GetElement(key);
+  CPDF_Object* p = GetObjectBy(key);
   return p ? p->GetString() : CFX_ByteString();
 }
 
 CFX_ByteStringC CPDF_Dictionary::GetConstStringBy(
     const CFX_ByteStringC& key) const {
-  CPDF_Object* p = GetElement(key);
+  CPDF_Object* p = GetObjectBy(key);
   return p ? p->GetConstString() : CFX_ByteStringC();
 }
 
 CFX_WideString CPDF_Dictionary::GetUnicodeTextBy(
     const CFX_ByteStringC& key) const {
-  CPDF_Object* p = GetElement(key);
+  CPDF_Object* p = GetObjectBy(key);
   if (CPDF_Reference* pRef = ToReference(p))
     p = pRef->GetDirect();
   return p ? p->GetUnicodeText() : CFX_WideString();
@@ -84,40 +84,40 @@ CFX_WideString CPDF_Dictionary::GetUnicodeTextBy(
 
 CFX_ByteString CPDF_Dictionary::GetStringBy(const CFX_ByteStringC& key,
                                             const CFX_ByteStringC& def) const {
-  CPDF_Object* p = GetElement(key);
+  CPDF_Object* p = GetObjectBy(key);
   return p ? p->GetString() : CFX_ByteString(def);
 }
 
 CFX_ByteStringC CPDF_Dictionary::GetConstStringBy(
     const CFX_ByteStringC& key,
     const CFX_ByteStringC& def) const {
-  CPDF_Object* p = GetElement(key);
+  CPDF_Object* p = GetObjectBy(key);
   return p ? p->GetConstString() : CFX_ByteStringC(def);
 }
 
 int CPDF_Dictionary::GetIntegerBy(const CFX_ByteStringC& key) const {
-  CPDF_Object* p = GetElement(key);
+  CPDF_Object* p = GetObjectBy(key);
   return p ? p->GetInteger() : 0;
 }
 
 int CPDF_Dictionary::GetIntegerBy(const CFX_ByteStringC& key, int def) const {
-  CPDF_Object* p = GetElement(key);
+  CPDF_Object* p = GetObjectBy(key);
   return p ? p->GetInteger() : def;
 }
 
 FX_FLOAT CPDF_Dictionary::GetNumberBy(const CFX_ByteStringC& key) const {
-  CPDF_Object* p = GetElement(key);
+  CPDF_Object* p = GetObjectBy(key);
   return p ? p->GetNumber() : 0;
 }
 
 FX_BOOL CPDF_Dictionary::GetBooleanBy(const CFX_ByteStringC& key,
                                       FX_BOOL bDefault) const {
-  CPDF_Object* p = GetElement(key);
+  CPDF_Object* p = GetObjectBy(key);
   return ToBoolean(p) ? p->GetInteger() : bDefault;
 }
 
 CPDF_Dictionary* CPDF_Dictionary::GetDictBy(const CFX_ByteStringC& key) const {
-  CPDF_Object* p = GetElementValue(key);
+  CPDF_Object* p = GetDirectObjectBy(key);
   if (!p)
     return nullptr;
   if (CPDF_Dictionary* pDict = p->AsDictionary())
@@ -128,11 +128,11 @@ CPDF_Dictionary* CPDF_Dictionary::GetDictBy(const CFX_ByteStringC& key) const {
 }
 
 CPDF_Array* CPDF_Dictionary::GetArrayBy(const CFX_ByteStringC& key) const {
-  return ToArray(GetElementValue(key));
+  return ToArray(GetDirectObjectBy(key));
 }
 
 CPDF_Stream* CPDF_Dictionary::GetStreamBy(const CFX_ByteStringC& key) const {
-  return ToStream(GetElementValue(key));
+  return ToStream(GetDirectObjectBy(key));
 }
 
 CFX_FloatRect CPDF_Dictionary::GetRectBy(const CFX_ByteStringC& key) const {
@@ -156,9 +156,9 @@ FX_BOOL CPDF_Dictionary::KeyExist(const CFX_ByteStringC& key) const {
 }
 
 bool CPDF_Dictionary::IsSignatureDict() const {
-  CPDF_Object* pType = GetElementValue("Type");
+  CPDF_Object* pType = GetDirectObjectBy("Type");
   if (!pType)
-    pType = GetElementValue("FT");
+    pType = GetDirectObjectBy("FT");
   return pType && pType->GetString() == "Sig";
 }
 

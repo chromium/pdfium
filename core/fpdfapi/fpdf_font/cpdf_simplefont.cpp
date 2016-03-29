@@ -146,7 +146,7 @@ FX_BOOL CPDF_SimpleFont::LoadCommon() {
   if (!(m_Flags & PDFFONT_SYMBOLIC)) {
     m_BaseEncoding = PDFFONT_ENCODING_STANDARD;
   }
-  CPDF_Object* pEncoding = m_pFontDict->GetElementValue("Encoding");
+  CPDF_Object* pEncoding = m_pFontDict->GetDirectObjectBy("Encoding");
   LoadPDFEncoding(pEncoding, m_BaseEncoding, m_pCharNames, m_pFontFile != NULL,
                   m_Font.IsTTFont());
   LoadGlyphMap();

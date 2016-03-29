@@ -565,7 +565,7 @@ FX_BOOL CPDFSDK_BAAnnot::IsAppearanceValid(CPDF_Annot::AppearanceMode mode) {
     ap_entry = "N";
 
   // Get the AP stream or subdirectory
-  CPDF_Object* psub = pAP->GetElementValue(ap_entry);
+  CPDF_Object* psub = pAP->GetDirectObjectBy(ap_entry);
   return !!psub;
 }
 

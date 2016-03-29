@@ -120,7 +120,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFPage_TransFormWithClip(FPDF_PAGE page,
 
   CPDF_Dictionary* pPageDic = pPage->m_pFormDict;
   CPDF_Object* pContentObj =
-      pPageDic ? pPageDic->GetElement("Contents") : nullptr;
+      pPageDic ? pPageDic->GetObjectBy("Contents") : nullptr;
   if (!pContentObj)
     pContentObj = pPageDic ? pPageDic->GetArrayBy("Contents") : nullptr;
   if (!pContentObj)
@@ -277,7 +277,7 @@ DLLEXPORT void STDCALL FPDFPage_InsertClipPath(FPDF_PAGE page,
 
   CPDF_Dictionary* pPageDic = pPage->m_pFormDict;
   CPDF_Object* pContentObj =
-      pPageDic ? pPageDic->GetElement("Contents") : nullptr;
+      pPageDic ? pPageDic->GetObjectBy("Contents") : nullptr;
   if (!pContentObj)
     pContentObj = pPageDic ? pPageDic->GetArrayBy("Contents") : nullptr;
   if (!pContentObj)

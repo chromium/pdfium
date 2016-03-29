@@ -115,16 +115,16 @@ void CPDF_Document::LoadAsynDoc(CPDF_Dictionary* pLinearized) {
     m_ID2 = pIDArray->GetStringAt(1);
   }
   uint32_t dwPageCount = 0;
-  CPDF_Object* pCount = pLinearized->GetElement("N");
+  CPDF_Object* pCount = pLinearized->GetObjectBy("N");
   if (ToNumber(pCount))
     dwPageCount = pCount->GetInteger();
 
   m_PageList.SetSize(dwPageCount);
-  CPDF_Object* pNo = pLinearized->GetElement("P");
+  CPDF_Object* pNo = pLinearized->GetObjectBy("P");
   if (ToNumber(pNo))
     m_dwFirstPageNo = pNo->GetInteger();
 
-  CPDF_Object* pObjNum = pLinearized->GetElement("O");
+  CPDF_Object* pObjNum = pLinearized->GetObjectBy("O");
   if (ToNumber(pObjNum))
     m_dwFirstPageObjNum = pObjNum->GetInteger();
 }
@@ -236,7 +236,7 @@ int CPDF_Document::_FindPageIndex(CPDF_Dictionary* pNode,
     }
     if (count && count == pKidList->GetCount()) {
       for (uint32_t i = 0; i < count; i++) {
-        if (CPDF_Reference* pKid = ToReference(pKidList->GetElement(i))) {
+        if (CPDF_Reference* pKid = ToReference(pKidList->GetObjectAt(i))) {
           if (pKid->GetRefObjNum() == objnum) {
             m_PageList.SetAt(index + i, objnum);
             return index + i;

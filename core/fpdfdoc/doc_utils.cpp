@@ -31,7 +31,7 @@ CPDF_Object* SearchNumberNode(const CPDF_Dictionary* pNode, int num) {
     for (uint32_t i = 0; i < dwCount; i++) {
       int index = pNumbers->GetIntegerAt(i * 2);
       if (num == index) {
-        return pNumbers->GetElementValue(i * 2 + 1);
+        return pNumbers->GetDirectObjectAt(i * 2 + 1);
       }
       if (index > num) {
         break;
@@ -743,7 +743,7 @@ CPDF_Object* FPDF_GetFieldAttr(CPDF_Dictionary* pFieldDict,
   if (!pFieldDict) {
     return NULL;
   }
-  CPDF_Object* pAttr = pFieldDict->GetElementValue(name);
+  CPDF_Object* pAttr = pFieldDict->GetDirectObjectBy(name);
   if (pAttr) {
     return pAttr;
   }

@@ -47,7 +47,7 @@ void CPDF_PageContentGenerator::GenerateContent() {
     ProcessImage(buf, pPageObj->AsImage());
   }
   CPDF_Object* pContent =
-      pPageDict ? pPageDict->GetElementValue("Contents") : NULL;
+      pPageDict ? pPageDict->GetDirectObjectBy("Contents") : NULL;
   if (pContent) {
     pPageDict->RemoveAt("Contents");
   }
@@ -122,7 +122,7 @@ void CPDF_PageContentGenerator::ProcessForm(CFX_ByteTextBuf& buf,
 }
 void CPDF_PageContentGenerator::TransformContent(CFX_Matrix& matrix) {
   CPDF_Dictionary* pDict = m_pPage->m_pFormDict;
-  CPDF_Object* pContent = pDict ? pDict->GetElementValue("Contents") : NULL;
+  CPDF_Object* pContent = pDict ? pDict->GetDirectObjectBy("Contents") : NULL;
   if (!pContent)
     return;
 
@@ -133,7 +133,7 @@ void CPDF_PageContentGenerator::TransformContent(CFX_Matrix& matrix) {
     int size = 0;
     int i = 0;
     for (i = 0; i < iCount; ++i) {
-      pContent = pArray->GetElement(i);
+      pContent = pArray->GetObjectAt(i);
       CPDF_Stream* pStream = ToStream(pContent);
       if (!pStream)
         continue;

@@ -777,9 +777,10 @@ FX_BOOL CPDF_RenderStatus::ProcessTransparency(const CPDF_PageObject* pPageObj,
       pDocument = pPageObj->AsImage()->m_pImage->GetDocument();
     }
     CPDF_Dictionary* pPageResources = pPage ? pPage->m_pPageResources : NULL;
-    CPDF_Object* pCSObj =
-        pPageObj->AsImage()->m_pImage->GetStream()->GetDict()->GetElementValue(
-            "ColorSpace");
+    CPDF_Object* pCSObj = pPageObj->AsImage()
+                              ->m_pImage->GetStream()
+                              ->GetDict()
+                              ->GetDirectObjectBy("ColorSpace");
     CPDF_ColorSpace* pColorSpace =
         pDocument->LoadColorSpace(pCSObj, pPageResources);
     if (pColorSpace) {
@@ -1157,7 +1158,7 @@ CPDF_TransferFunc* CPDF_DocRenderData::GetTransferFunc(CPDF_Object* pObj) {
       return nullptr;
 
     for (uint32_t i = 0; i < 3; ++i) {
-      pFuncs[2 - i].reset(CPDF_Function::Load(pArray->GetElementValue(i)));
+      pFuncs[2 - i].reset(CPDF_Function::Load(pArray->GetDirectObjectAt(i)));
       if (!pFuncs[2 - i])
         return nullptr;
     }

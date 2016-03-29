@@ -584,7 +584,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
   PDF_ReplaceAbbr(pDict);
   CPDF_Object* pCSObj = NULL;
   if (pDict->KeyExist("ColorSpace")) {
-    pCSObj = pDict->GetElementValue("ColorSpace");
+    pCSObj = pDict->GetDirectObjectBy("ColorSpace");
     if (pCSObj->IsName()) {
       CFX_ByteString name = pCSObj->GetString();
       if (name != "DeviceRGB" && name != "DeviceGray" && name != "DeviceCMYK") {
@@ -731,7 +731,7 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
       pList = m_pPageResources->GetDictBy("XObject");
     if (!pList)
       return;
-    CPDF_Reference* pRes = ToReference(pList->GetElement(name));
+    CPDF_Reference* pRes = ToReference(pList->GetObjectBy(name));
     if (!pRes)
       return;
 
@@ -1268,7 +1268,7 @@ CPDF_Object* CPDF_StreamContentParser::FindResourceObj(
     if (!pList) {
       return NULL;
     }
-    CPDF_Object* pRes = pList->GetElementValue(name);
+    CPDF_Object* pRes = pList->GetDirectObjectBy(name);
     return pRes;
   }
   CPDF_Dictionary* pList = m_pResources->GetDictBy(type);
@@ -1280,10 +1280,10 @@ CPDF_Object* CPDF_StreamContentParser::FindResourceObj(
     if (!pList) {
       return NULL;
     }
-    CPDF_Object* pRes = pList->GetElementValue(name);
+    CPDF_Object* pRes = pList->GetDirectObjectBy(name);
     return pRes;
   }
-  CPDF_Object* pRes = pList->GetElementValue(name);
+  CPDF_Object* pRes = pList->GetDirectObjectBy(name);
   return pRes;
 }
 
@@ -1432,7 +1432,7 @@ void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
   int n = pArray->GetCount();
   int nsegs = 0;
   for (int i = 0; i < n; i++) {
-    if (pArray->GetElementValue(i)->IsString())
+    if (pArray->GetDirectObjectAt(i)->IsString())
       nsegs++;
   }
   if (nsegs == 0) {
@@ -1448,7 +1448,7 @@ void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
   int iSegment = 0;
   FX_FLOAT fInitKerning = 0;
   for (int i = 0; i < n; i++) {
-    CPDF_Object* pObj = pArray->GetElementValue(i);
+    CPDF_Object* pObj = pArray->GetDirectObjectAt(i);
     if (pObj->IsString()) {
       CFX_ByteString str = pObj->GetString();
       if (str.IsEmpty()) {
@@ -1811,7 +1811,7 @@ void PDF_ReplaceAbbr(CPDF_Object* pObj) {
     case CPDF_Object::ARRAY: {
       CPDF_Array* pArray = pObj->AsArray();
       for (uint32_t i = 0; i < pArray->GetCount(); i++) {
-        CPDF_Object* pElement = pArray->GetElement(i);
+        CPDF_Object* pElement = pArray->GetObjectAt(i);
         if (pElement->IsName()) {
           CFX_ByteString name = pElement->GetString();
           CFX_ByteStringC fullname = PDF_FindFullName(

@@ -355,7 +355,7 @@ CPDF_ColorSpace* CPDF_ColorSpace::Load(CPDF_Document* pDoc, CPDF_Object* pObj) {
   if (!pArray || pArray->GetCount() == 0)
     return nullptr;
 
-  CPDF_Object* pFamilyObj = pArray->GetElementValue(0);
+  CPDF_Object* pFamilyObj = pArray->GetDirectObjectAt(0);
   if (!pFamilyObj)
     return nullptr;
 
@@ -802,7 +802,7 @@ FX_BOOL CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
   CPDF_Dictionary* pDict = pStream->GetDict();
   if (!m_pProfile->m_pTransform) {  // No valid ICC profile or using sRGB
     CPDF_Object* pAlterCSObj =
-        pDict ? pDict->GetElementValue("Alternate") : nullptr;
+        pDict ? pDict->GetDirectObjectBy("Alternate") : nullptr;
     if (pAlterCSObj) {
       CPDF_ColorSpace* pAlterCS = CPDF_ColorSpace::Load(pDoc, pAlterCSObj);
       if (pAlterCS) {
@@ -978,7 +978,7 @@ FX_BOOL CPDF_IndexedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
   if (pArray->GetCount() < 4) {
     return FALSE;
   }
-  CPDF_Object* pBaseObj = pArray->GetElementValue(1);
+  CPDF_Object* pBaseObj = pArray->GetDirectObjectAt(1);
   if (pBaseObj == m_pArray) {
     return FALSE;
   }
@@ -998,7 +998,7 @@ FX_BOOL CPDF_IndexedCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
   }
   m_MaxIndex = pArray->GetIntegerAt(2);
 
-  CPDF_Object* pTableObj = pArray->GetElementValue(3);
+  CPDF_Object* pTableObj = pArray->GetDirectObjectAt(3);
   if (!pTableObj)
     return FALSE;
 
@@ -1062,7 +1062,7 @@ CPDF_PatternCS::~CPDF_PatternCS() {
 }
 
 FX_BOOL CPDF_PatternCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
-  CPDF_Object* pBaseCS = pArray->GetElementValue(1);
+  CPDF_Object* pBaseCS = pArray->GetDirectObjectAt(1);
   if (pBaseCS == m_pArray) {
     return FALSE;
   }
@@ -1129,7 +1129,7 @@ FX_BOOL CPDF_SeparationCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
     m_Type = None;
   } else {
     m_Type = Colorant;
-    CPDF_Object* pAltCS = pArray->GetElementValue(2);
+    CPDF_Object* pAltCS = pArray->GetDirectObjectAt(2);
     if (pAltCS == m_pArray) {
       return FALSE;
     }
@@ -1137,7 +1137,7 @@ FX_BOOL CPDF_SeparationCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
     if (!m_pAltCS) {
       return FALSE;
     }
-    CPDF_Object* pFuncObj = pArray->GetElementValue(3);
+    CPDF_Object* pFuncObj = pArray->GetDirectObjectAt(3);
     if (pFuncObj && !pFuncObj->IsName())
       m_pFunc = CPDF_Function::Load(pFuncObj);
 
@@ -1209,17 +1209,17 @@ void CPDF_DeviceNCS::GetDefaultValue(int iComponent,
 }
 
 FX_BOOL CPDF_DeviceNCS::v_Load(CPDF_Document* pDoc, CPDF_Array* pArray) {
-  CPDF_Array* pObj = ToArray(pArray->GetElementValue(1));
+  CPDF_Array* pObj = ToArray(pArray->GetDirectObjectAt(1));
   if (!pObj)
     return FALSE;
 
   m_nComponents = pObj->GetCount();
-  CPDF_Object* pAltCS = pArray->GetElementValue(2);
+  CPDF_Object* pAltCS = pArray->GetDirectObjectAt(2);
   if (!pAltCS || pAltCS == m_pArray) {
     return FALSE;
   }
   m_pAltCS = Load(pDoc, pAltCS);
-  m_pFunc = CPDF_Function::Load(pArray->GetElementValue(3));
+  m_pFunc = CPDF_Function::Load(pArray->GetDirectObjectAt(3));
   if (!m_pAltCS || !m_pFunc) {
     return FALSE;
   }

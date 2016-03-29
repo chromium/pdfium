@@ -76,13 +76,13 @@ CFX_Matrix CPDF_Array::GetMatrix() {
   return matrix;
 }
 
-CPDF_Object* CPDF_Array::GetElement(uint32_t i) const {
+CPDF_Object* CPDF_Array::GetObjectAt(uint32_t i) const {
   if (i >= (uint32_t)m_Objects.GetSize())
     return nullptr;
   return m_Objects.GetAt(i);
 }
 
-CPDF_Object* CPDF_Array::GetElementValue(uint32_t i) const {
+CPDF_Object* CPDF_Array::GetDirectObjectAt(uint32_t i) const {
   if (i >= (uint32_t)m_Objects.GetSize())
     return nullptr;
   return m_Objects.GetAt(i)->GetDirect();
@@ -113,7 +113,7 @@ FX_FLOAT CPDF_Array::GetNumberAt(uint32_t i) const {
 }
 
 CPDF_Dictionary* CPDF_Array::GetDictAt(uint32_t i) const {
-  CPDF_Object* p = GetElementValue(i);
+  CPDF_Object* p = GetDirectObjectAt(i);
   if (!p)
     return NULL;
   if (CPDF_Dictionary* pDict = p->AsDictionary())
@@ -124,11 +124,11 @@ CPDF_Dictionary* CPDF_Array::GetDictAt(uint32_t i) const {
 }
 
 CPDF_Stream* CPDF_Array::GetStreamAt(uint32_t i) const {
-  return ToStream(GetElementValue(i));
+  return ToStream(GetDirectObjectAt(i));
 }
 
 CPDF_Array* CPDF_Array::GetArrayAt(uint32_t i) const {
-  return ToArray(GetElementValue(i));
+  return ToArray(GetDirectObjectAt(i));
 }
 
 void CPDF_Array::RemoveAt(uint32_t i, int nCount) {

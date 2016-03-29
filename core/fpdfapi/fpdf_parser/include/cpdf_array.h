@@ -25,10 +25,8 @@ class CPDF_Array : public CPDF_Object {
   const CPDF_Array* AsArray() const override;
 
   uint32_t GetCount() const { return m_Objects.GetSize(); }
-  CPDF_Object* GetElement(uint32_t index) const;
-  CPDF_Object* GetElementValue(uint32_t index) const;
-  CFX_Matrix GetMatrix();
-  CFX_FloatRect GetRect();
+  CPDF_Object* GetObjectAt(uint32_t index) const;
+  CPDF_Object* GetDirectObjectAt(uint32_t index) const;
   CFX_ByteString GetStringAt(uint32_t index) const;
   CFX_ByteStringC GetConstStringAt(uint32_t index) const;
   int GetIntegerAt(uint32_t index) const;
@@ -37,6 +35,8 @@ class CPDF_Array : public CPDF_Object {
   CPDF_Stream* GetStreamAt(uint32_t index) const;
   CPDF_Array* GetArrayAt(uint32_t index) const;
   FX_FLOAT GetFloatAt(uint32_t index) const { return GetNumberAt(index); }
+  CFX_Matrix GetMatrix();
+  CFX_FloatRect GetRect();
 
   void SetAt(uint32_t index,
              CPDF_Object* pObj,

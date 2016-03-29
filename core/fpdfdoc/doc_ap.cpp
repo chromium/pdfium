@@ -616,12 +616,12 @@ static FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
           if (IsFloatSmaller(fy, rcBody.bottom)) {
             break;
           }
-          if (CPDF_Object* pOpt = pOpts->GetElementValue(i)) {
+          if (CPDF_Object* pOpt = pOpts->GetDirectObjectAt(i)) {
             CFX_WideString swItem;
             if (pOpt->IsString())
               swItem = pOpt->GetUnicodeText();
             else if (CPDF_Array* pArray = pOpt->AsArray())
-              swItem = pArray->GetElementValue(1)->GetUnicodeText();
+              swItem = pArray->GetDirectObjectAt(1)->GetUnicodeText();
 
             FX_BOOL bSelected = FALSE;
             if (pSels) {

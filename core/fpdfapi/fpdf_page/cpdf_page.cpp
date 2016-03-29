@@ -18,7 +18,7 @@ CPDF_Object* FPDFAPI_GetPageAttr(CPDF_Dictionary* pPageDict,
                                  const CFX_ByteStringC& name) {
   int level = 0;
   while (1) {
-    CPDF_Object* pObj = pPageDict->GetElementValue(name);
+    CPDF_Object* pObj = pPageDict->GetDirectObjectBy(name);
     if (pObj) {
       return pObj;
     }

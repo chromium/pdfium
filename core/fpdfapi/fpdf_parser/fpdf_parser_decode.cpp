@@ -336,12 +336,12 @@ FX_BOOL PDF_DataDecode(const uint8_t* src_buf,
                        CPDF_Dictionary*& pImageParms,
                        uint32_t last_estimated_size,
                        FX_BOOL bImageAcc) {
-  CPDF_Object* pDecoder = pDict ? pDict->GetElementValue("Filter") : nullptr;
+  CPDF_Object* pDecoder = pDict ? pDict->GetDirectObjectBy("Filter") : nullptr;
   if (!pDecoder || (!pDecoder->IsArray() && !pDecoder->IsName()))
     return FALSE;
 
   CPDF_Object* pParams =
-      pDict ? pDict->GetElementValue("DecodeParms") : nullptr;
+      pDict ? pDict->GetDirectObjectBy("DecodeParms") : nullptr;
   std::vector<CFX_ByteString> DecoderList;
   CFX_ArrayTemplate<CPDF_Object*> ParamList;
   if (CPDF_Array* pDecoders = pDecoder->AsArray()) {

@@ -452,7 +452,7 @@ void CPDF_Font::LoadPDFEncoding(CPDF_Object* pEncoding,
   pCharNames = new CFX_ByteString[256];
   uint32_t cur_code = 0;
   for (uint32_t i = 0; i < pDiffs->GetCount(); i++) {
-    CPDF_Object* pElement = pDiffs->GetElementValue(i);
+    CPDF_Object* pElement = pDiffs->GetDirectObjectAt(i);
     if (!pElement)
       continue;
 

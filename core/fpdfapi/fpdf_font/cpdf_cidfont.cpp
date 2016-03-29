@@ -373,7 +373,7 @@ FX_BOOL CPDF_CIDFont::Load() {
   if (pFontDesc) {
     LoadFontDescriptor(pFontDesc);
   }
-  CPDF_Object* pEncoding = m_pFontDict->GetElementValue("Encoding");
+  CPDF_Object* pEncoding = m_pFontDict->GetDirectObjectBy("Encoding");
   if (!pEncoding) {
     return FALSE;
   }
@@ -431,7 +431,7 @@ FX_BOOL CPDF_CIDFont::Load() {
   }
   if (1) {
     if (m_pFontFile || (GetSubstFont()->m_SubstFlags & FXFONT_SUBST_EXACT)) {
-      CPDF_Object* pmap = pCIDFontDict->GetElementValue("CIDToGIDMap");
+      CPDF_Object* pmap = pCIDFontDict->GetDirectObjectBy("CIDToGIDMap");
       if (pmap) {
         if (CPDF_Stream* pStream = pmap->AsStream()) {
           m_pCIDToGIDMap = new CPDF_StreamAcc;
@@ -820,7 +820,7 @@ void CPDF_CIDFont::LoadMetricsArray(CPDF_Array* pArray,
   int last_code = 0;
   uint32_t count = pArray->GetCount();
   for (uint32_t i = 0; i < count; i++) {
-    CPDF_Object* pObj = pArray->GetElementValue(i);
+    CPDF_Object* pObj = pArray->GetDirectObjectAt(i);
     if (!pObj)
       continue;
 

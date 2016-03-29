@@ -153,7 +153,7 @@ FX_BOOL CPDF_DataAvail::IsObjectsAvail(
       case CPDF_Object::ARRAY: {
         CPDF_Array* pArray = pObj->GetArray();
         for (uint32_t k = 0; k < pArray->GetCount(); ++k)
-          new_obj_array.Add(pArray->GetElement(k));
+          new_obj_array.Add(pArray->GetObjectAt(k));
       } break;
       case CPDF_Object::STREAM:
         pObj = pObj->GetDict();
@@ -451,7 +451,7 @@ FX_BOOL CPDF_DataAvail::CheckRoot(IPDF_DataAvail::DownloadHints* pHints) {
     return FALSE;
   }
 
-  CPDF_Reference* pRef = ToReference(pDict->GetElement("Pages"));
+  CPDF_Reference* pRef = ToReference(pDict->GetObjectBy("Pages"));
   if (!pRef) {
     m_docStatus = PDF_DATAAVAIL_ERROR;
     return FALSE;
@@ -459,7 +459,7 @@ FX_BOOL CPDF_DataAvail::CheckRoot(IPDF_DataAvail::DownloadHints* pHints) {
 
   m_PagesObjNum = pRef->GetRefObjNum();
   CPDF_Reference* pAcroFormRef =
-      ToReference(m_pRoot->GetDict()->GetElement("AcroForm"));
+      ToReference(m_pRoot->GetDict()->GetObjectBy("AcroForm"));
   if (pAcroFormRef) {
     m_bHaveAcroForm = TRUE;
     m_dwAcroFormObjNum = pAcroFormRef->GetRefObjNum();
@@ -477,7 +477,7 @@ FX_BOOL CPDF_DataAvail::CheckRoot(IPDF_DataAvail::DownloadHints* pHints) {
 FX_BOOL CPDF_DataAvail::PreparePageItem() {
   CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
   CPDF_Reference* pRef =
-      ToReference(pRoot ? pRoot->GetElement("Pages") : nullptr);
+      ToReference(pRoot ? pRoot->GetObjectBy("Pages") : nullptr);
   if (!pRef) {
     m_docStatus = PDF_DATAAVAIL_ERROR;
     return FALSE;
@@ -515,7 +515,7 @@ FX_BOOL CPDF_DataAvail::CheckPage(IPDF_DataAvail::DownloadHints* pHints) {
       if (pArray) {
         int32_t iSize = pArray->GetCount();
         for (int32_t j = 0; j < iSize; ++j) {
-          if (CPDF_Reference* pRef = ToReference(pArray->GetElement(j)))
+          if (CPDF_Reference* pRef = ToReference(pArray->GetObjectAt(j)))
             UnavailObjList.Add(pRef->GetRefObjNum());
         }
       }
@@ -573,7 +573,7 @@ FX_BOOL CPDF_DataAvail::GetPageKids(CPDF_Parser* pParser, CPDF_Object* pPages) {
   }
 
   CPDF_Dictionary* pDict = pPages->GetDict();
-  CPDF_Object* pKids = pDict ? pDict->GetElement("Kids") : NULL;
+  CPDF_Object* pKids = pDict ? pDict->GetObjectBy("Kids") : NULL;
   if (!pKids)
     return TRUE;
 
@@ -584,7 +584,7 @@ FX_BOOL CPDF_DataAvail::GetPageKids(CPDF_Parser* pParser, CPDF_Object* pPages) {
     case CPDF_Object::ARRAY: {
       CPDF_Array* pKidsArray = pKids->AsArray();
       for (uint32_t i = 0; i < pKidsArray->GetCount(); ++i) {
-        if (CPDF_Reference* pRef = ToReference(pKidsArray->GetElement(i)))
+        if (CPDF_Reference* pRef = ToReference(pKidsArray->GetObjectAt(i)))
           m_PageObjList.Add(pRef->GetRefObjNum());
       }
     } break;
@@ -647,19 +647,19 @@ FX_BOOL CPDF_DataAvail::CheckHeader(IPDF_DataAvail::DownloadHints* pHints) {
 
 FX_BOOL CPDF_DataAvail::CheckFirstPage(IPDF_DataAvail::DownloadHints* pHints) {
   CPDF_Dictionary* pDict = m_pLinearized->GetDict();
-  CPDF_Object* pEndOffSet = pDict ? pDict->GetElement("E") : NULL;
+  CPDF_Object* pEndOffSet = pDict ? pDict->GetObjectBy("E") : NULL;
   if (!pEndOffSet) {
     m_docStatus = PDF_DATAAVAIL_ERROR;
     return FALSE;
   }
 
-  CPDF_Object* pXRefOffset = pDict ? pDict->GetElement("T") : NULL;
+  CPDF_Object* pXRefOffset = pDict ? pDict->GetObjectBy("T") : NULL;
   if (!pXRefOffset) {
     m_docStatus = PDF_DATAAVAIL_ERROR;
     return FALSE;
   }
 
-  CPDF_Object* pFileLen = pDict ? pDict->GetElement("L") : NULL;
+  CPDF_Object* pFileLen = pDict ? pDict->GetObjectBy("L") : NULL;
   if (!pFileLen) {
     m_docStatus = PDF_DATAAVAIL_ERROR;
     return FALSE;
@@ -746,7 +746,7 @@ FX_BOOL CPDF_DataAvail::CheckHintTables(IPDF_DataAvail::DownloadHints* pHints) {
     return FALSE;
   }
 
-  int nPageCount = pDict->GetElementValue("N")->GetInteger();
+  int nPageCount = pDict->GetDirectObjectBy("N")->GetInteger();
   if (nPageCount <= 1) {
     m_docStatus = PDF_DATAAVAIL_DONE;
     return TRUE;
@@ -754,12 +754,12 @@ FX_BOOL CPDF_DataAvail::CheckHintTables(IPDF_DataAvail::DownloadHints* pHints) {
 
   CPDF_Array* pHintStreamRange = pDict->GetArrayBy("H");
   FX_FILESIZE szHSStart =
-      pHintStreamRange->GetElementValue(0)
-          ? pHintStreamRange->GetElementValue(0)->GetInteger()
+      pHintStreamRange->GetDirectObjectAt(0)
+          ? pHintStreamRange->GetDirectObjectAt(0)->GetInteger()
           : 0;
   FX_FILESIZE szHSLength =
-      pHintStreamRange->GetElementValue(1)
-          ? pHintStreamRange->GetElementValue(1)->GetInteger()
+      pHintStreamRange->GetDirectObjectAt(1)
+          ? pHintStreamRange->GetDirectObjectAt(1)->GetInteger()
           : 0;
   if (szHSStart < 0 || szHSLength <= 0) {
     m_docStatus = PDF_DATAAVAIL_ERROR;
@@ -864,8 +864,8 @@ FX_BOOL CPDF_DataAvail::IsLinearizedFile(uint8_t* pData, uint32_t dwLen) {
     return FALSE;
 
   CPDF_Dictionary* pDict = m_pLinearized->GetDict();
-  if (pDict && pDict->GetElement("Linearized")) {
-    CPDF_Object* pLen = pDict->GetElement("L");
+  if (pDict && pDict->GetObjectBy("Linearized")) {
+    CPDF_Object* pLen = pDict->GetObjectBy("L");
     if (!pLen)
       return FALSE;
 
@@ -874,7 +874,7 @@ FX_BOOL CPDF_DataAvail::IsLinearizedFile(uint8_t* pData, uint32_t dwLen) {
 
     m_bLinearized = TRUE;
 
-    if (CPDF_Number* pNo = ToNumber(pDict->GetElement("P")))
+    if (CPDF_Number* pNo = ToNumber(pDict->GetObjectBy("P")))
       m_dwFirstPageNo = pNo->GetInteger();
 
     return TRUE;
@@ -954,7 +954,7 @@ int32_t CPDF_DataAvail::CheckCrossRefStream(
     }
 
     CPDF_Dictionary* pDict = pObj->GetDict();
-    CPDF_Name* pName = ToName(pDict ? pDict->GetElement("Type") : nullptr);
+    CPDF_Name* pName = ToName(pDict ? pDict->GetObjectBy("Type") : nullptr);
     if (pName) {
       if (pName->GetString() == "XRef") {
         m_Pos += m_parser.m_pSyntax->SavePos();
@@ -1204,7 +1204,7 @@ FX_BOOL CPDF_DataAvail::CheckTrailer(IPDF_DataAvail::DownloadHints* pHints) {
       return FALSE;
 
     CPDF_Dictionary* pTrailerDict = pTrailer->GetDict();
-    CPDF_Object* pEncrypt = pTrailerDict->GetElement("Encrypt");
+    CPDF_Object* pEncrypt = pTrailerDict->GetObjectBy("Encrypt");
     if (ToReference(pEncrypt)) {
       m_docStatus = PDF_DATAAVAIL_LOADALLFILE;
       return TRUE;
@@ -1286,7 +1286,7 @@ FX_BOOL CPDF_DataAvail::CheckArrayPageNode(
 
   pPageNode->m_type = PDF_PAGENODE_PAGES;
   for (uint32_t i = 0; i < pArray->GetCount(); ++i) {
-    CPDF_Reference* pKid = ToReference(pArray->GetElement(i));
+    CPDF_Reference* pKid = ToReference(pArray->GetObjectAt(i));
     if (!pKid)
       continue;
 
@@ -1333,7 +1333,7 @@ FX_BOOL CPDF_DataAvail::CheckUnkownPageNode(
   CFX_ByteString type = pDict->GetStringBy("Type");
   if (type == "Pages") {
     pPageNode->m_type = PDF_PAGENODE_PAGES;
-    CPDF_Object* pKids = pDict->GetElement("Kids");
+    CPDF_Object* pKids = pDict->GetObjectBy("Kids");
     if (!pKids) {
       m_docStatus = PDF_DATAAVAIL_PAGE;
       return TRUE;
@@ -1349,7 +1349,7 @@ FX_BOOL CPDF_DataAvail::CheckUnkownPageNode(
       case CPDF_Object::ARRAY: {
         CPDF_Array* pKidsArray = pKids->AsArray();
         for (uint32_t i = 0; i < pKidsArray->GetCount(); ++i) {
-          CPDF_Reference* pKid = ToReference(pKidsArray->GetElement(i));
+          CPDF_Reference* pKid = ToReference(pKidsArray->GetObjectAt(i));
           if (!pKid)
             continue;
 
@@ -1544,7 +1544,7 @@ FX_BOOL CPDF_DataAvail::CheckPageAnnots(int32_t iPage,
     if (!pPageDict)
       return TRUE;
 
-    CPDF_Object* pAnnots = pPageDict->GetElement("Annots");
+    CPDF_Object* pAnnots = pPageDict->GetObjectBy("Annots");
     if (!pAnnots)
       return TRUE;
 
@@ -1587,7 +1587,7 @@ FX_BOOL CPDF_DataAvail::HaveResourceAncestor(CPDF_Dictionary* pDict) {
   if (++s_CurrentDataAvailRecursionDepth > kMaxDataAvailRecursionDepth)
     return FALSE;
 
-  CPDF_Object* pParent = pDict->GetElement("Parent");
+  CPDF_Object* pParent = pDict->GetObjectBy("Parent");
   if (!pParent)
     return FALSE;
 
@@ -1595,7 +1595,7 @@ FX_BOOL CPDF_DataAvail::HaveResourceAncestor(CPDF_Dictionary* pDict) {
   if (!pParentDict)
     return FALSE;
 
-  CPDF_Object* pRet = pParentDict->GetElement("Resources");
+  CPDF_Object* pRet = pParentDict->GetObjectBy("Resources");
   if (pRet) {
     m_pPageResource = pRet;
     return TRUE;
@@ -1709,7 +1709,7 @@ IPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
   }
 
   if (m_pPageDict && !m_bNeedDownLoadResource) {
-    m_pPageResource = m_pPageDict->GetElement("Resources");
+    m_pPageResource = m_pPageDict->GetObjectBy("Resources");
     if (!m_pPageResource)
       m_bNeedDownLoadResource = HaveResourceAncestor(m_pPageDict);
     else
@@ -1763,7 +1763,7 @@ void CPDF_DataAvail::GetLinearizedMainXRefInfo(FX_FILESIZE* pPos,
 int CPDF_DataAvail::GetPageCount() const {
   if (m_pLinearized) {
     CPDF_Dictionary* pDict = m_pLinearized->GetDict();
-    CPDF_Object* pObj = pDict ? pDict->GetElementValue("N") : nullptr;
+    CPDF_Object* pObj = pDict ? pDict->GetDirectObjectBy("N") : nullptr;
     return pObj ? pObj->GetInteger() : 0;
   }
   return m_pDocument ? m_pDocument->GetPageCount() : 0;
@@ -1775,7 +1775,7 @@ CPDF_Dictionary* CPDF_DataAvail::GetPage(int index) {
 
   if (m_pLinearized) {
     CPDF_Dictionary* pDict = m_pLinearized->GetDict();
-    CPDF_Object* pObj = pDict ? pDict->GetElementValue("P") : nullptr;
+    CPDF_Object* pObj = pDict ? pDict->GetDirectObjectBy("P") : nullptr;
 
     int pageNum = pObj ? pObj->GetInteger() : 0;
     if (m_pHintTables && index != pageNum) {
@@ -1810,7 +1810,7 @@ IPDF_DataAvail::DocFormStatus CPDF_DataAvail::IsFormAvail(
     if (!pRoot)
       return FormAvailable;
 
-    CPDF_Object* pAcroForm = pRoot->GetElement("AcroForm");
+    CPDF_Object* pAcroForm = pRoot->GetObjectBy("AcroForm");
     if (!pAcroForm)
       return FormNotExist;
 

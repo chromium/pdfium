@@ -55,7 +55,7 @@ CFX_WideString CPDF_Bookmark::GetTitle() const {
   if (!m_pDict) {
     return CFX_WideString();
   }
-  CPDF_String* pString = ToString(m_pDict->GetElementValue("Title"));
+  CPDF_String* pString = ToString(m_pDict->GetDirectObjectBy("Title"));
   if (!pString)
     return CFX_WideString();
 
@@ -75,7 +75,7 @@ CPDF_Dest CPDF_Bookmark::GetDest(CPDF_Document* pDocument) const {
   if (!m_pDict)
     return CPDF_Dest();
 
-  CPDF_Object* pDest = m_pDict->GetElementValue("Dest");
+  CPDF_Object* pDest = m_pDict->GetDirectObjectBy("Dest");
   if (!pDest)
     return CPDF_Dest();
   if (pDest->IsString() || pDest->IsName()) {

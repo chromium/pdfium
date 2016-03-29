@@ -776,7 +776,7 @@ FX_BOOL CPDF_StitchFunc::v_Init(CPDF_Object* pObj) {
   }
   m_nOutputs = 0;
   for (uint32_t i = 0; i < nSubs; i++) {
-    CPDF_Object* pSub = pArray->GetElementValue(i);
+    CPDF_Object* pSub = pArray->GetDirectObjectAt(i);
     if (pSub == pObj) {
       return FALSE;
     }

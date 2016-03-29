@@ -111,8 +111,8 @@ DLLEXPORT FPDF_PAGE STDCALL FPDFPage_New(FPDF_DOCUMENT document,
 DLLEXPORT int STDCALL FPDFPage_GetRotation(FPDF_PAGE page) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage || !pPage->m_pFormDict || !pPage->m_pFormDict->KeyExist("Type") ||
-      !pPage->m_pFormDict->GetElement("Type")->GetDirect() ||
-      pPage->m_pFormDict->GetElement("Type")->GetDirect()->GetString().Compare(
+      !pPage->m_pFormDict->GetObjectBy("Type")->GetDirect() ||
+      pPage->m_pFormDict->GetObjectBy("Type")->GetDirect()->GetString().Compare(
           "Page")) {
     return -1;
   }
@@ -122,13 +122,13 @@ DLLEXPORT int STDCALL FPDFPage_GetRotation(FPDF_PAGE page) {
 
   while (pDict) {
     if (pDict->KeyExist("Rotate")) {
-      CPDF_Object* pRotateObj = pDict->GetElement("Rotate")->GetDirect();
+      CPDF_Object* pRotateObj = pDict->GetObjectBy("Rotate")->GetDirect();
       return pRotateObj ? pRotateObj->GetInteger() / 90 : 0;
     }
     if (!pDict->KeyExist("Parent"))
       break;
 
-    pDict = ToDictionary(pDict->GetElement("Parent")->GetDirect());
+    pDict = ToDictionary(pDict->GetObjectBy("Parent")->GetDirect());
   }
 
   return 0;
@@ -138,8 +138,8 @@ DLLEXPORT void STDCALL FPDFPage_InsertObject(FPDF_PAGE page,
                                              FPDF_PAGEOBJECT page_obj) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage || !pPage->m_pFormDict || !pPage->m_pFormDict->KeyExist("Type") ||
-      !pPage->m_pFormDict->GetElement("Type")->GetDirect() ||
-      pPage->m_pFormDict->GetElement("Type")->GetDirect()->GetString().Compare(
+      !pPage->m_pFormDict->GetObjectBy("Type")->GetDirect() ||
+      pPage->m_pFormDict->GetObjectBy("Type")->GetDirect()->GetString().Compare(
           "Page")) {
     return;
   }
@@ -182,8 +182,8 @@ DLLEXPORT void STDCALL FPDFPage_InsertObject(FPDF_PAGE page,
 DLLEXPORT int STDCALL FPDFPage_CountObject(FPDF_PAGE page) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage || !pPage->m_pFormDict || !pPage->m_pFormDict->KeyExist("Type") ||
-      !pPage->m_pFormDict->GetElement("Type")->GetDirect() ||
-      pPage->m_pFormDict->GetElement("Type")->GetDirect()->GetString().Compare(
+      !pPage->m_pFormDict->GetObjectBy("Type")->GetDirect() ||
+      pPage->m_pFormDict->GetObjectBy("Type")->GetDirect()->GetString().Compare(
           "Page")) {
     return -1;
   }
@@ -194,7 +194,7 @@ DLLEXPORT FPDF_PAGEOBJECT STDCALL FPDFPage_GetObject(FPDF_PAGE page,
                                                      int index) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage || !pPage->m_pFormDict || !pPage->m_pFormDict->KeyExist("Type") ||
-      pPage->m_pFormDict->GetElement("Type")->GetDirect()->GetString().Compare(
+      pPage->m_pFormDict->GetObjectBy("Type")->GetDirect()->GetString().Compare(
           "Page")) {
     return nullptr;
   }
@@ -247,8 +247,8 @@ FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT pageObject) {
 DLLEXPORT FPDF_BOOL STDCALL FPDFPage_GenerateContent(FPDF_PAGE page) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage || !pPage->m_pFormDict || !pPage->m_pFormDict->KeyExist("Type") ||
-      !pPage->m_pFormDict->GetElement("Type")->GetDirect() ||
-      pPage->m_pFormDict->GetElement("Type")->GetDirect()->GetString().Compare(
+      !pPage->m_pFormDict->GetObjectBy("Type")->GetDirect() ||
+      pPage->m_pFormDict->GetObjectBy("Type")->GetDirect()->GetString().Compare(
           "Page")) {
     return FALSE;
   }
@@ -310,8 +310,8 @@ DLLEXPORT void STDCALL FPDFPage_TransformAnnots(FPDF_PAGE page,
 DLLEXPORT void STDCALL FPDFPage_SetRotation(FPDF_PAGE page, int rotate) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage || !pPage->m_pFormDict || !pPage->m_pFormDict->KeyExist("Type") ||
-      !pPage->m_pFormDict->GetElement("Type")->GetDirect() ||
-      pPage->m_pFormDict->GetElement("Type")->GetDirect()->GetString().Compare(
+      !pPage->m_pFormDict->GetObjectBy("Type")->GetDirect() ||
+      pPage->m_pFormDict->GetObjectBy("Type")->GetDirect()->GetString().Compare(
           "Page")) {
     return;
   }

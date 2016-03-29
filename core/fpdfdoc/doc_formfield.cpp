@@ -305,7 +305,7 @@ CFX_WideString CPDF_FormField::GetValue(FX_BOOL bDefault) {
     case CPDF_Object::STREAM:
       return pValue->GetUnicodeText();
     case CPDF_Object::ARRAY:
-      pValue = pValue->AsArray()->GetElementValue(0);
+      pValue = pValue->AsArray()->GetDirectObjectAt(0);
       if (pValue)
         return pValue->GetUnicodeText();
       break;
@@ -447,7 +447,7 @@ int CPDF_FormField::GetSelectedIndex(int index) {
     if (!pArray || index < 0)
       return -1;
 
-    CPDF_Object* elementValue = pArray->GetElementValue(index);
+    CPDF_Object* elementValue = pArray->GetDirectObjectAt(index);
     sel_value =
         elementValue ? elementValue->GetUnicodeText() : CFX_WideString();
   }
@@ -538,7 +538,7 @@ FX_BOOL CPDF_FormField::IsItemSelected(int index) {
     }
   }
   for (uint32_t i = 0; i < pArray->GetCount(); i++)
-    if (pArray->GetElementValue(i)->GetUnicodeText() == opt_value &&
+    if (pArray->GetDirectObjectAt(i)->GetUnicodeText() == opt_value &&
         (int)i == iPos) {
       return TRUE;
     }
@@ -691,11 +691,11 @@ CFX_WideString CPDF_FormField::GetOptionText(int index, int sub_index) {
   if (!pArray)
     return CFX_WideString();
 
-  CPDF_Object* pOption = pArray->GetElementValue(index);
+  CPDF_Object* pOption = pArray->GetDirectObjectAt(index);
   if (!pOption)
     return CFX_WideString();
   if (CPDF_Array* pOptionArray = pOption->AsArray())
-    pOption = pOptionArray->GetElementValue(sub_index);
+    pOption = pOptionArray->GetDirectObjectAt(sub_index);
 
   CPDF_String* pString = ToString(pOption);
   return pString ? pString->GetUnicodeText() : CFX_WideString();

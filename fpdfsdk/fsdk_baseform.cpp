@@ -467,7 +467,7 @@ FX_BOOL CPDFSDK_Widget::IsWidgetAppearanceValid(
     ap_entry = "N";
 
   // Get the AP stream or subdirectory
-  CPDF_Object* psub = pAP->GetElementValue(ap_entry);
+  CPDF_Object* psub = pAP->GetDirectObjectBy(ap_entry);
   if (!psub)
     return FALSE;
 
@@ -2119,7 +2119,7 @@ int CPDFSDK_InterForm::GetPageIndexByAnnotDict(
     if (CPDF_Dictionary* pPageDict = pDocument->GetPage(i)) {
       if (CPDF_Array* pAnnots = pPageDict->GetArrayBy("Annots")) {
         for (int j = 0, jsz = pAnnots->GetCount(); j < jsz; j++) {
-          CPDF_Object* pDict = pAnnots->GetElementValue(j);
+          CPDF_Object* pDict = pAnnots->GetDirectObjectAt(j);
           if (pAnnotDict == pDict) {
             return i;
           }

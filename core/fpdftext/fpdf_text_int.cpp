@@ -1125,7 +1125,7 @@ int32_t CPDF_TextPage::PreMarkedContent(PDFTEXT_Obj Obj) {
       continue;
     pDict = item.GetParam();
     CPDF_String* temp =
-        ToString(pDict ? pDict->GetElement("ActualText") : nullptr);
+        ToString(pDict ? pDict->GetObjectBy("ActualText") : nullptr);
     if (temp) {
       bExist = TRUE;
       actText = temp->GetUnicodeText();

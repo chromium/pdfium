@@ -159,7 +159,7 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
   }
 
   // to avoid checkbox and radiobutton
-  CPDF_Object* pObject = pAPDict->GetElement(m_sAPType);
+  CPDF_Object* pObject = pAPDict->GetObjectBy(m_sAPType);
   if (ToDictionary(pObject))
     return;
 

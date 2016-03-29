@@ -358,7 +358,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_HasXFAField(FPDF_DOCUMENT document,
   if (!pAcroForm)
     return FALSE;
 
-  CPDF_Object* pXFA = pAcroForm->GetElement("XFA");
+  CPDF_Object* pXFA = pAcroForm->GetObjectBy("XFA");
   if (!pXFA)
     return FALSE;
 

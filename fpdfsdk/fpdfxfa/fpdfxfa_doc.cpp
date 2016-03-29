@@ -677,7 +677,7 @@ void CPDFXFA_Document::ExportData(IXFA_Doc* hDoc,
     CPDF_Dictionary* pAcroForm = pRoot->GetDictBy("AcroForm");
     if (NULL == pAcroForm)
       return;
-    CPDF_Object* pXFA = pAcroForm->GetElement("XFA");
+    CPDF_Object* pXFA = pAcroForm->GetObjectBy("XFA");
     if (pXFA == NULL)
       return;
     if (!pXFA->IsArray())
@@ -687,8 +687,8 @@ void CPDFXFA_Document::ExportData(IXFA_Doc* hDoc,
       return;
     int size = pArray->GetCount();
     for (int i = 1; i < size; i += 2) {
-      CPDF_Object* pPDFObj = pArray->GetElement(i);
-      CPDF_Object* pPrePDFObj = pArray->GetElement(i - 1);
+      CPDF_Object* pPDFObj = pArray->GetObjectAt(i);
+      CPDF_Object* pPrePDFObj = pArray->GetObjectAt(i - 1);
       if (!pPrePDFObj->IsString())
         continue;
       if (!pPDFObj->IsReference())
@@ -982,7 +982,7 @@ FX_BOOL CPDFXFA_Document::_ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
       fileStream.Flush();
       return FALSE;
     }
-    CPDF_Object* pXFA = pAcroForm->GetElement("XFA");
+    CPDF_Object* pXFA = pAcroForm->GetObjectBy("XFA");
     if (pXFA == NULL) {
       fileStream.Flush();
       return FALSE;
@@ -998,8 +998,8 @@ FX_BOOL CPDFXFA_Document::_ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
     }
     int size = pArray->GetCount();
     for (int i = 1; i < size; i += 2) {
-      CPDF_Object* pPDFObj = pArray->GetElement(i);
-      CPDF_Object* pPrePDFObj = pArray->GetElement(i - 1);
+      CPDF_Object* pPDFObj = pArray->GetObjectAt(i);
+      CPDF_Object* pPrePDFObj = pArray->GetObjectAt(i - 1);
       if (!pPrePDFObj->IsString())
         continue;
       if (!pPDFObj->IsReference())

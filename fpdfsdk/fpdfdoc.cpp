@@ -288,7 +288,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDFLink_Enumerate(FPDF_PAGE page,
     return FALSE;
   for (int i = *startPos; i < (int)pAnnots->GetCount(); i++) {
     CPDF_Dictionary* pDict =
-        ToDictionary(static_cast<CPDF_Object*>(pAnnots->GetElementValue(i)));
+        ToDictionary(static_cast<CPDF_Object*>(pAnnots->GetDirectObjectAt(i)));
     if (!pDict)
       continue;
     if (pDict->GetStringBy("Subtype").Equal("Link")) {

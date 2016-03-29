@@ -630,7 +630,7 @@ unsigned int CPDF_SyntaxParser::ReadEOLMarkers(FX_FILESIZE pos) {
 CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
                                            uint32_t objnum,
                                            uint32_t gennum) {
-  CPDF_Object* pLenObj = pDict->GetElement("Length");
+  CPDF_Object* pLenObj = pDict->GetObjectBy("Length");
   FX_FILESIZE len = -1;
   CPDF_Reference* pLenObjRef = ToReference(pLenObj);
 

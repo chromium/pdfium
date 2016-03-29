@@ -420,7 +420,7 @@ bool CPDF_DIBSource::LoadColorInfo(const CPDF_Dictionary* pFormResources,
 
   if (m_bImageMask || !m_pDict->KeyExist("ColorSpace")) {
     if (!m_bImageMask) {
-      CPDF_Object* pFilter = m_pDict->GetElementValue("Filter");
+      CPDF_Object* pFilter = m_pDict->GetDirectObjectBy("Filter");
       if (pFilter) {
         CFX_ByteString filter;
         if (pFilter->IsName()) {
@@ -442,7 +442,7 @@ bool CPDF_DIBSource::LoadColorInfo(const CPDF_Dictionary* pFormResources,
     return true;
   }
 
-  CPDF_Object* pCSObj = m_pDict->GetElementValue("ColorSpace");
+  CPDF_Object* pCSObj = m_pDict->GetDirectObjectBy("ColorSpace");
   if (!pCSObj)
     return false;
 
@@ -508,7 +508,7 @@ DIB_COMP_DATA* CPDF_DIBSource::GetDecodeAndMaskArray(FX_BOOL& bDefaultDecode,
     }
   }
   if (!m_pDict->KeyExist("SMask")) {
-    CPDF_Object* pMask = m_pDict->GetElementValue("Mask");
+    CPDF_Object* pMask = m_pDict->GetDirectObjectBy("Mask");
     if (!pMask) {
       return pCompData;
     }
@@ -727,7 +727,7 @@ CPDF_DIBSource* CPDF_DIBSource::LoadMask(uint32_t& MatteColor) {
     return LoadMaskDIB(pSoftMask);
   }
 
-  if (CPDF_Stream* pStream = ToStream(m_pDict->GetElementValue("Mask")))
+  if (CPDF_Stream* pStream = ToStream(m_pDict->GetDirectObjectBy("Mask")))
     return LoadMaskDIB(pStream);
 
   return nullptr;
@@ -752,7 +752,7 @@ int CPDF_DIBSource::StratLoadMask() {
     return StartLoadMaskDIB();
   }
 
-  m_pMaskStream = ToStream(m_pDict->GetElementValue("Mask"));
+  m_pMaskStream = ToStream(m_pDict->GetDirectObjectBy("Mask"));
   return m_pMaskStream ? StartLoadMaskDIB() : 1;
 }
 
@@ -879,7 +879,7 @@ void CPDF_DIBSource::LoadPalette() {
 
 void CPDF_DIBSource::ValidateDictParam() {
   m_bpc = m_bpc_orig;
-  CPDF_Object* pFilter = m_pDict->GetElementValue("Filter");
+  CPDF_Object* pFilter = m_pDict->GetDirectObjectBy("Filter");
   if (pFilter) {
     if (pFilter->IsName()) {
       CFX_ByteString filter = pFilter->GetString();

@@ -26,7 +26,7 @@ static int32_t FPDFDOC_OCG_FindGroup(const CPDF_Object* pObject,
 static FX_BOOL FPDFDOC_OCG_HasIntent(const CPDF_Dictionary* pDict,
                                      const CFX_ByteStringC& csElement,
                                      const CFX_ByteStringC& csDef = "") {
-  CPDF_Object* pIntent = pDict->GetElementValue("Intent");
+  CPDF_Object* pIntent = pDict->GetDirectObjectBy("Intent");
   if (!pIntent) {
     return csElement == csDef;
   }
@@ -198,7 +198,7 @@ FX_BOOL CPDF_OCContext::GetOCGVE(CPDF_Array* pExpression,
   CPDF_Object* pOCGObj;
   CFX_ByteString csOperator = pExpression->GetStringAt(0);
   if (csOperator == "Not") {
-    pOCGObj = pExpression->GetElementValue(1);
+    pOCGObj = pExpression->GetDirectObjectAt(1);
     if (!pOCGObj)
       return FALSE;
     if (CPDF_Dictionary* pDict = pOCGObj->AsDictionary())
@@ -210,7 +210,7 @@ FX_BOOL CPDF_OCContext::GetOCGVE(CPDF_Array* pExpression,
   if (csOperator == "Or" || csOperator == "And") {
     FX_BOOL bValue = FALSE;
     for (int32_t i = 1; i < iCount; i++) {
-      pOCGObj = pExpression->GetElementValue(1);
+      pOCGObj = pExpression->GetDirectObjectAt(1);
       if (!pOCGObj) {
         continue;
       }
@@ -241,7 +241,7 @@ FX_BOOL CPDF_OCContext::LoadOCMDState(const CPDF_Dictionary* pOCMDDict,
     return GetOCGVE(pVE, bFromConfig);
   }
   CFX_ByteString csP = pOCMDDict->GetStringBy("P", "AnyOn");
-  CPDF_Object* pOCGObj = pOCMDDict->GetElementValue("OCGs");
+  CPDF_Object* pOCGObj = pOCMDDict->GetDirectObjectBy("OCGs");
   if (!pOCGObj)
     return TRUE;
   if (const CPDF_Dictionary* pDict = pOCGObj->AsDictionary())

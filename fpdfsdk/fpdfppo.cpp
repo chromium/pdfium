@@ -69,7 +69,7 @@ FX_BOOL CPDF_PageOrganizer::PDFDocInit(CPDF_Document* pDestPDFDoc,
     pNewRoot->SetAt("Type", new CPDF_Name("Catalog"));
   }
 
-  CPDF_Object* pElement = pNewRoot->GetElement("Pages");
+  CPDF_Object* pElement = pNewRoot->GetObjectBy("Pages");
   CPDF_Dictionary* pNewPages =
       pElement ? ToDictionary(pElement->GetDirect()) : nullptr;
   if (!pNewPages) {
@@ -184,25 +184,25 @@ CPDF_Object* CPDF_PageOrganizer::PageDictGetInheritableTag(
   if (!pDict->KeyExist("Parent") || !pDict->KeyExist("Type"))
     return nullptr;
 
-  CPDF_Object* pType = pDict->GetElement("Type")->GetDirect();
+  CPDF_Object* pType = pDict->GetObjectBy("Type")->GetDirect();
   if (!ToName(pType))
     return nullptr;
   if (pType->GetString().Compare("Page"))
     return nullptr;
 
-  CPDF_Dictionary* pp = ToDictionary(pDict->GetElement("Parent")->GetDirect());
+  CPDF_Dictionary* pp = ToDictionary(pDict->GetObjectBy("Parent")->GetDirect());
   if (!pp)
     return nullptr;
 
   if (pDict->KeyExist((const char*)nSrctag))
-    return pDict->GetElement((const char*)nSrctag);
+    return pDict->GetObjectBy((const char*)nSrctag);
 
   while (pp) {
     if (pp->KeyExist((const char*)nSrctag))
-      return pp->GetElement((const char*)nSrctag);
+      return pp->GetObjectBy((const char*)nSrctag);
     if (!pp->KeyExist("Parent"))
       break;
-    pp = ToDictionary(pp->GetElement("Parent")->GetDirect());
+    pp = ToDictionary(pp->GetObjectBy("Parent")->GetDirect());
   }
   return nullptr;
 }
@@ -243,7 +243,7 @@ FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
       CPDF_Array* pArray = pObj->AsArray();
       uint32_t count = pArray->GetCount();
       for (uint32_t i = 0; i < count; ++i) {
-        CPDF_Object* pNextObj = pArray->GetElement(i);
+        CPDF_Object* pNextObj = pArray->GetObjectAt(i);
         if (!pNextObj)
           return FALSE;
         if (!UpdateReference(pNextObj, pDoc, pObjNumberMap))

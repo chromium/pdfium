@@ -96,7 +96,7 @@ int ParserAnnots(CPDF_Document* pSourceDoc,
 
   uint32_t dwSize = pAnnots->GetCount();
   for (int i = 0; i < (int)dwSize; i++) {
-    CPDF_Dictionary* pAnnotDic = ToDictionary(pAnnots->GetElementValue(i));
+    CPDF_Dictionary* pAnnotDic = ToDictionary(pAnnots->GetDirectObjectAt(i));
     if (!pAnnotDic)
       continue;
 

@@ -408,7 +408,7 @@ FX_BOOL CPDF_ImageRenderer::StartRenderDIBSource() {
   }
   if (m_pRenderStatus->m_pDevice->GetDeviceClass() != FXDC_DISPLAY) {
     CPDF_Object* pFilters =
-        m_pImageObject->m_pImage->GetStream()->GetDict()->GetElementValue(
+        m_pImageObject->m_pImage->GetStream()->GetDict()->GetDirectObjectBy(
             "Filter");
     if (pFilters) {
       if (pFilters->IsName()) {
@@ -452,7 +452,7 @@ FX_BOOL CPDF_ImageRenderer::StartRenderDIBSource() {
     }
     CPDF_Dictionary* pPageResources = pPage ? pPage->m_pPageResources : NULL;
     CPDF_Object* pCSObj =
-        m_pImageObject->m_pImage->GetStream()->GetDict()->GetElementValue(
+        m_pImageObject->m_pImage->GetStream()->GetDict()->GetDirectObjectBy(
             "ColorSpace");
     CPDF_ColorSpace* pColorSpace =
         pDocument->LoadColorSpace(pCSObj, pPageResources);
@@ -889,7 +889,7 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
     return NULL;
   }
   std::unique_ptr<CPDF_Function> pFunc;
-  CPDF_Object* pFuncObj = pSMaskDict->GetElementValue("TR");
+  CPDF_Object* pFuncObj = pSMaskDict->GetDirectObjectBy("TR");
   if (pFuncObj && (pFuncObj->IsDictionary() || pFuncObj->IsStream()))
     pFunc.reset(CPDF_Function::Load(pFuncObj));
 
@@ -919,7 +919,7 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
     if (pBC) {
       CPDF_Dictionary* pDict = pGroup->GetDict();
       if (pDict && pDict->GetDictBy("Group"))
-        pCSObj = pDict->GetDictBy("Group")->GetElementValue("CS");
+        pCSObj = pDict->GetDictBy("Group")->GetDirectObjectBy("CS");
       else
         pCSObj = NULL;
       pCS = m_pContext->GetDocument()->LoadColorSpace(pCSObj);

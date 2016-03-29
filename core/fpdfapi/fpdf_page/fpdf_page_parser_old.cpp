@@ -134,7 +134,7 @@ CPDF_Stream* CPDF_StreamParser::ReadInlineStream(CPDF_Document* pDoc,
 
   CFX_ByteString Decoder;
   CPDF_Dictionary* pParam = nullptr;
-  CPDF_Object* pFilter = pDict->GetElementValue("Filter");
+  CPDF_Object* pFilter = pDict->GetDirectObjectBy("Filter");
   if (pFilter) {
     if (CPDF_Array* pArray = pFilter->AsArray()) {
       Decoder = pArray->GetStringAt(0);
@@ -712,7 +712,7 @@ void CPDF_ContentParser::Start(CPDF_Page* pPage, CPDF_ParseOptions* pOptions) {
   m_InternalStage = STAGE_GETCONTENT;
   m_CurrentOffset = 0;
 
-  CPDF_Object* pContent = pPage->m_pFormDict->GetElementValue("Contents");
+  CPDF_Object* pContent = pPage->m_pFormDict->GetDirectObjectBy("Contents");
   if (!pContent) {
     m_Status = Done;
     return;
@@ -826,7 +826,7 @@ void CPDF_ContentParser::Continue(IFX_Pause* pPause) {
             m_pObjectHolder->m_pFormDict->GetArrayBy("Contents");
         m_StreamArray[m_CurrentOffset].reset(new CPDF_StreamAcc);
         CPDF_Stream* pStreamObj = ToStream(
-            pContent ? pContent->GetElementValue(m_CurrentOffset) : nullptr);
+            pContent ? pContent->GetDirectObjectAt(m_CurrentOffset) : nullptr);
         m_StreamArray[m_CurrentOffset]->LoadAllData(pStreamObj, FALSE);
         m_CurrentOffset++;
       }

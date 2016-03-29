@@ -32,7 +32,7 @@ CPDF_Dest CPDF_Action::GetDest(CPDF_Document* pDoc) const {
   if (type != "GoTo" && type != "GoToR") {
     return CPDF_Dest();
   }
-  CPDF_Object* pDest = m_pDict->GetElementValue("D");
+  CPDF_Object* pDest = m_pDict->GetDirectObjectBy("D");
   if (!pDest) {
     return CPDF_Dest();
   }
@@ -67,7 +67,7 @@ CFX_WideString CPDF_Action::GetFilePath() const {
       type != "ImportData") {
     return CFX_WideString();
   }
-  CPDF_Object* pFile = m_pDict->GetElementValue("F");
+  CPDF_Object* pFile = m_pDict->GetDirectObjectBy("F");
   CFX_WideString path;
   if (!pFile) {
     if (type == "Launch") {
@@ -111,7 +111,7 @@ uint32_t CPDF_ActionFields::GetFieldsCount() const {
   CFX_ByteString csType = pDict->GetStringBy("S");
   CPDF_Object* pFields = NULL;
   if (csType == "Hide") {
-    pFields = pDict->GetElementValue("T");
+    pFields = pDict->GetDirectObjectBy("T");
   } else {
     pFields = pDict->GetArrayBy("Fields");
   }
@@ -138,7 +138,7 @@ std::vector<CPDF_Object*> CPDF_ActionFields::GetAllFields() const {
   CFX_ByteString csType = pDict->GetStringBy("S");
   CPDF_Object* pFields;
   if (csType == "Hide")
-    pFields = pDict->GetElementValue("T");
+    pFields = pDict->GetDirectObjectBy("T");
   else
     pFields = pDict->GetArrayBy("Fields");
   if (!pFields)
@@ -149,7 +149,7 @@ std::vector<CPDF_Object*> CPDF_ActionFields::GetAllFields() const {
   } else if (CPDF_Array* pArray = pFields->AsArray()) {
     uint32_t iCount = pArray->GetCount();
     for (uint32_t i = 0; i < iCount; ++i) {
-      CPDF_Object* pObj = pArray->GetElementValue(i);
+      CPDF_Object* pObj = pArray->GetDirectObjectAt(i);
       if (pObj) {
         fields.push_back(pObj);
       }
@@ -169,7 +169,7 @@ CPDF_Object* CPDF_ActionFields::GetField(uint32_t iIndex) const {
   CFX_ByteString csType = pDict->GetStringBy("S");
   CPDF_Object* pFields = NULL;
   if (csType == "Hide") {
-    pFields = pDict->GetElementValue("T");
+    pFields = pDict->GetDirectObjectBy("T");
   } else {
     pFields = pDict->GetArrayBy("Fields");
   }
@@ -181,7 +181,7 @@ CPDF_Object* CPDF_ActionFields::GetField(uint32_t iIndex) const {
     if (iIndex == 0)
       pFindObj = pFields;
   } else if (CPDF_Array* pArray = pFields->AsArray()) {
-    pFindObj = pArray->GetElementValue(iIndex);
+    pFindObj = pArray->GetDirectObjectAt(iIndex);
   }
   return pFindObj;
 }
@@ -191,7 +191,7 @@ CFX_WideString CPDF_Action::GetJavaScript() const {
   if (!m_pDict) {
     return csJS;
   }
-  CPDF_Object* pJS = m_pDict->GetElementValue("JS");
+  CPDF_Object* pJS = m_pDict->GetDirectObjectBy("JS");
   return pJS ? pJS->GetUnicodeText() : csJS;
 }
 CPDF_Dictionary* CPDF_Action::GetAnnot() const {
@@ -236,7 +236,7 @@ uint32_t CPDF_Action::GetSubActionsCount() const {
   if (!m_pDict || !m_pDict->KeyExist("Next"))
     return 0;
 
-  CPDF_Object* pNext = m_pDict->GetElementValue("Next");
+  CPDF_Object* pNext = m_pDict->GetDirectObjectBy("Next");
   if (!pNext)
     return 0;
   if (pNext->IsDictionary())
@@ -249,7 +249,7 @@ CPDF_Action CPDF_Action::GetSubAction(uint32_t iIndex) const {
   if (!m_pDict || !m_pDict->KeyExist("Next")) {
     return CPDF_Action();
   }
-  CPDF_Object* pNext = m_pDict->GetElementValue("Next");
+  CPDF_Object* pNext = m_pDict->GetDirectObjectBy("Next");
   if (CPDF_Dictionary* pDict = ToDictionary(pNext)) {
     if (iIndex == 0)
       return CPDF_Action(pDict);

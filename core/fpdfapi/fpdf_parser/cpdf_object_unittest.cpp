@@ -123,7 +123,7 @@ class PDFObjectsTest : public testing::Test {
         if (array1->GetCount() != array2->GetCount())
           return false;
         for (size_t i = 0; i < array1->GetCount(); ++i) {
-          if (!Equal(array1->GetElement(i), array2->GetElement(i)))
+          if (!Equal(array1->GetObjectAt(i), array2->GetObjectAt(i)))
             return false;
         }
         return true;
@@ -135,7 +135,7 @@ class PDFObjectsTest : public testing::Test {
           return false;
         for (CPDF_Dictionary::const_iterator it = dict1->begin();
              it != dict1->end(); ++it) {
-          if (!Equal(it->second, dict2->GetElement(it->first)))
+          if (!Equal(it->second, dict2->GetObjectBy(it->first)))
             return false;
         }
         return true;
@@ -706,8 +706,8 @@ TEST(PDFArrayTest, AddNumber) {
   for (size_t i = 0; i < FX_ArraySize(vals); ++i)
     arr->AddNumber(vals[i]);
   for (size_t i = 0; i < FX_ArraySize(vals); ++i) {
-    EXPECT_EQ(CPDF_Object::NUMBER, arr->GetElement(i)->GetType());
-    EXPECT_EQ(vals[i], arr->GetElement(i)->GetNumber());
+    EXPECT_EQ(CPDF_Object::NUMBER, arr->GetObjectAt(i)->GetType());
+    EXPECT_EQ(vals[i], arr->GetObjectAt(i)->GetNumber());
   }
 }
 
@@ -717,8 +717,8 @@ TEST(PDFArrayTest, AddInteger) {
   for (size_t i = 0; i < FX_ArraySize(vals); ++i)
     arr->AddInteger(vals[i]);
   for (size_t i = 0; i < FX_ArraySize(vals); ++i) {
-    EXPECT_EQ(CPDF_Object::NUMBER, arr->GetElement(i)->GetType());
-    EXPECT_EQ(vals[i], arr->GetElement(i)->GetNumber());
+    EXPECT_EQ(CPDF_Object::NUMBER, arr->GetObjectAt(i)->GetType());
+    EXPECT_EQ(vals[i], arr->GetObjectAt(i)->GetNumber());
   }
 }
 
@@ -732,14 +732,14 @@ TEST(PDFArrayTest, AddStringAndName) {
     name_array->AddName(vals[i]);
   }
   for (size_t i = 0; i < FX_ArraySize(vals); ++i) {
-    EXPECT_EQ(CPDF_Object::STRING, string_array->GetElement(i)->GetType());
-    EXPECT_STREQ(vals[i], string_array->GetElement(i)->GetString().c_str());
-    EXPECT_EQ(CPDF_Object::NAME, name_array->GetElement(i)->GetType());
-    EXPECT_STREQ(vals[i], name_array->GetElement(i)->GetString().c_str());
+    EXPECT_EQ(CPDF_Object::STRING, string_array->GetObjectAt(i)->GetType());
+    EXPECT_STREQ(vals[i], string_array->GetObjectAt(i)->GetString().c_str());
+    EXPECT_EQ(CPDF_Object::NAME, name_array->GetObjectAt(i)->GetType());
+    EXPECT_STREQ(vals[i], name_array->GetObjectAt(i)->GetString().c_str());
   }
 }
 
-TEST(PDFArrayTest, AddReferenceAndGetElement) {
+TEST(PDFArrayTest, AddReferenceAndGetObjectAt) {
   std::unique_ptr<CPDF_IndirectObjectHolder> holder(
       new CPDF_IndirectObjectHolder(nullptr));
   CPDF_Boolean* boolean_obj = new CPDF_Boolean(true);
@@ -766,11 +766,11 @@ TEST(PDFArrayTest, AddReferenceAndGetElement) {
   // Check arrays.
   EXPECT_EQ(arr->GetCount(), arr1->GetCount());
   for (size_t i = 0; i < arr->GetCount(); ++i) {
-    EXPECT_EQ(CPDF_Object::REFERENCE, arr->GetElement(i)->GetType());
-    EXPECT_EQ(indirect_objs[i], arr->GetElement(i)->GetDirect());
-    EXPECT_EQ(indirect_objs[i], arr->GetElementValue(i));
-    EXPECT_EQ(CPDF_Object::REFERENCE, arr1->GetElement(i)->GetType());
-    EXPECT_EQ(indirect_objs[i], arr1->GetElement(i)->GetDirect());
-    EXPECT_EQ(indirect_objs[i], arr1->GetElementValue(i));
+    EXPECT_EQ(CPDF_Object::REFERENCE, arr->GetObjectAt(i)->GetType());
+    EXPECT_EQ(indirect_objs[i], arr->GetObjectAt(i)->GetDirect());
+    EXPECT_EQ(indirect_objs[i], arr->GetDirectObjectAt(i));
+    EXPECT_EQ(CPDF_Object::REFERENCE, arr1->GetObjectAt(i)->GetType());
+    EXPECT_EQ(indirect_objs[i], arr1->GetObjectAt(i)->GetDirect());
+    EXPECT_EQ(indirect_objs[i], arr1->GetDirectObjectAt(i));
   }
 }

@@ -29,7 +29,7 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
   FX_BOOL bRegenerateAP =
       pAcroForm && pAcroForm->GetBooleanBy("NeedAppearances");
   for (uint32_t i = 0; i < pAnnots->GetCount(); ++i) {
-    CPDF_Dictionary* pDict = ToDictionary(pAnnots->GetElementValue(i));
+    CPDF_Dictionary* pDict = ToDictionary(pAnnots->GetDirectObjectAt(i));
     if (!pDict)
       continue;
 
@@ -166,7 +166,7 @@ CPDF_Stream* FPDFDOC_GetAnnotAP(CPDF_Dictionary* pAnnotDict,
   if (!pAP->KeyExist(ap_entry))
     ap_entry = "N";
 
-  CPDF_Object* psub = pAP->GetElementValue(ap_entry);
+  CPDF_Object* psub = pAP->GetDirectObjectBy(ap_entry);
   if (!psub)
     return nullptr;
   if (CPDF_Stream* pStream = psub->AsStream())
@@ -288,7 +288,7 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
         int nLen = pDashArray->GetCount();
         int i = 0;
         for (; i < nLen; ++i) {
-          CPDF_Object* pObj = pDashArray->GetElementValue(i);
+          CPDF_Object* pObj = pDashArray->GetDirectObjectAt(i);
           if (pObj && pObj->GetInteger()) {
             break;
           }

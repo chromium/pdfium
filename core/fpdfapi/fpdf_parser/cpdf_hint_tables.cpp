@@ -102,7 +102,7 @@ FX_BOOL CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
   // Item 13: Skip Item 13 which has 16 bits.
   hStream->SkipBits(16);
 
-  CPDF_Object* pPageNum = m_pLinearizedDict->GetElementValue("N");
+  CPDF_Object* pPageNum = m_pLinearizedDict->GetDirectObjectBy("N");
   int nPages = pPageNum ? pPageNum->GetInteger() : 0;
   if (nPages < 1)
     return FALSE;
@@ -135,12 +135,12 @@ FX_BOOL CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
     dwPageLenArray.Add(safePageLen.ValueOrDie());
   }
 
-  CPDF_Object* pOffsetE = m_pLinearizedDict->GetElementValue("E");
+  CPDF_Object* pOffsetE = m_pLinearizedDict->GetDirectObjectBy("E");
   int nOffsetE = pOffsetE ? pOffsetE->GetInteger() : -1;
   if (nOffsetE < 0)
     return FALSE;
 
-  CPDF_Object* pFirstPageNum = m_pLinearizedDict->GetElementValue("P");
+  CPDF_Object* pFirstPageNum = m_pLinearizedDict->GetDirectObjectBy("P");
   int nFirstPageNum = pFirstPageNum ? pFirstPageNum->GetInteger() : 0;
   for (int i = 0; i < nPages; ++i) {
     if (i == nFirstPageNum) {
@@ -256,7 +256,7 @@ FX_BOOL CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
   // Item 7: The number of bits needed to represent the difference between the
   // greatest and least length of a shared object group, in bytes.
   uint32_t dwDeltaGroupLen = hStream->GetBits(16);
-  CPDF_Object* pFirstPageObj = m_pLinearizedDict->GetElementValue("O");
+  CPDF_Object* pFirstPageObj = m_pLinearizedDict->GetDirectObjectBy("O");
   int nFirstPageObjNum = pFirstPageObj ? pFirstPageObj->GetInteger() : -1;
   if (nFirstPageObjNum < 0)
     return FALSE;
@@ -331,10 +331,10 @@ FX_BOOL CPDF_HintTables::GetPagePos(int index,
   szPageStartPos = m_szPageOffsetArray[index];
   szPageLength = GetItemLength(index, m_szPageOffsetArray);
 
-  CPDF_Object* pFirstPageNum = m_pLinearizedDict->GetElementValue("P");
+  CPDF_Object* pFirstPageNum = m_pLinearizedDict->GetDirectObjectBy("P");
   int nFirstPageNum = pFirstPageNum ? pFirstPageNum->GetInteger() : 0;
 
-  CPDF_Object* pFirstPageObjNum = m_pLinearizedDict->GetElementValue("O");
+  CPDF_Object* pFirstPageObjNum = m_pLinearizedDict->GetDirectObjectBy("O");
   if (!pFirstPageObjNum)
     return FALSE;
 
@@ -360,7 +360,7 @@ IPDF_DataAvail::DocAvailStatus CPDF_HintTables::CheckPage(
   if (!m_pLinearizedDict || !pHints)
     return IPDF_DataAvail::DataError;
 
-  CPDF_Object* pFirstAvailPage = m_pLinearizedDict->GetElementValue("P");
+  CPDF_Object* pFirstAvailPage = m_pLinearizedDict->GetDirectObjectBy("P");
   int nFirstAvailPage = pFirstAvailPage ? pFirstAvailPage->GetInteger() : 0;
   if (index == nFirstAvailPage)
     return IPDF_DataAvail::DataAvailable;
@@ -378,7 +378,7 @@ IPDF_DataAvail::DocAvailStatus CPDF_HintTables::CheckPage(
   for (int i = 0; i < index; ++i)
     offset += m_dwNSharedObjsArray[i];
 
-  CPDF_Object* pFirstPageObj = m_pLinearizedDict->GetElementValue("O");
+  CPDF_Object* pFirstPageObj = m_pLinearizedDict->GetDirectObjectBy("O");
   int nFirstPageObjNum = pFirstPageObj ? pFirstPageObj->GetInteger() : -1;
   if (nFirstPageObjNum < 0)
     return IPDF_DataAvail::DataError;
@@ -414,7 +414,7 @@ FX_BOOL CPDF_HintTables::LoadHintStream(CPDF_Stream* pHintStream) {
     return FALSE;
 
   CPDF_Dictionary* pDict = pHintStream->GetDict();
-  CPDF_Object* pOffset = pDict ? pDict->GetElement("S") : nullptr;
+  CPDF_Object* pOffset = pDict ? pDict->GetObjectBy("S") : nullptr;
   if (!pOffset || !pOffset->IsNumber())
     return FALSE;
 
@@ -447,7 +447,7 @@ int CPDF_HintTables::ReadPrimaryHintStreamOffset() const {
   if (!pRange)
     return -1;
 
-  CPDF_Object* pStreamOffset = pRange->GetElementValue(0);
+  CPDF_Object* pStreamOffset = pRange->GetDirectObjectAt(0);
   if (!pStreamOffset)
     return -1;
 
@@ -462,7 +462,7 @@ int CPDF_HintTables::ReadPrimaryHintStreamLength() const {
   if (!pRange)
     return -1;
 
-  CPDF_Object* pStreamLen = pRange->GetElementValue(1);
+  CPDF_Object* pStreamLen = pRange->GetDirectObjectAt(1);
   if (!pStreamLen)
     return -1;
 

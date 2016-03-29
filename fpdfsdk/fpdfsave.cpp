@@ -101,7 +101,7 @@ bool SaveXFADocumentData(CPDFXFA_Document* pDocument,
   if (!pAcroForm)
     return false;
 
-  CPDF_Object* pXFA = pAcroForm->GetElement("XFA");
+  CPDF_Object* pXFA = pAcroForm->GetObjectBy("XFA");
   if (!pXFA)
     return true;
 
@@ -118,7 +118,7 @@ bool SaveXFADocumentData(CPDFXFA_Document* pDocument,
   int iTemplate = -1;
   int iLast = size - 2;
   for (int i = 0; i < size - 1; i++) {
-    CPDF_Object* pPDFObj = pArray->GetElement(i);
+    CPDF_Object* pPDFObj = pArray->GetObjectAt(i);
     if (!pPDFObj->IsString())
       continue;
     if (pPDFObj->GetString() == "form")
@@ -146,7 +146,7 @@ bool SaveXFADocumentData(CPDFXFA_Document* pDocument,
   CPDF_Stream* pDataSetsStream = NULL;
   if (iFormIndex != -1) {
     // Get form CPDF_Stream
-    CPDF_Object* pFormPDFObj = pArray->GetElement(iFormIndex);
+    CPDF_Object* pFormPDFObj = pArray->GetObjectAt(iFormIndex);
     if (pFormPDFObj->IsReference()) {
       CPDF_Object* pFormDirectObj = pFormPDFObj->GetDirect();
       if (pFormDirectObj && pFormDirectObj->IsStream()) {
@@ -159,7 +159,7 @@ bool SaveXFADocumentData(CPDFXFA_Document* pDocument,
 
   if (iDataSetsIndex != -1) {
     // Get datasets CPDF_Stream
-    CPDF_Object* pDataSetsPDFObj = pArray->GetElement(iDataSetsIndex);
+    CPDF_Object* pDataSetsPDFObj = pArray->GetObjectAt(iDataSetsIndex);
     if (pDataSetsPDFObj->IsReference()) {
       CPDF_Reference* pDataSetsRefObj = (CPDF_Reference*)pDataSetsPDFObj;
       CPDF_Object* pDataSetsDirectObj = pDataSetsRefObj->GetDirect();
