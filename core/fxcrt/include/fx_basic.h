@@ -15,32 +15,6 @@
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
 
-// The FX_ArraySize(arr) macro returns the # of elements in an array arr.
-// The expression is a compile-time constant, and therefore can be
-// used in defining new arrays, for example.  If you use FX_ArraySize on
-// a pointer by mistake, you will get a compile-time error.
-//
-// One caveat is that FX_ArraySize() doesn't accept any array of an
-// anonymous type or a type defined inside a function.
-#define FX_ArraySize(array) (sizeof(ArraySizeHelper(array)))
-
-// This template function declaration is used in defining FX_ArraySize.
-// Note that the function doesn't need an implementation, as we only
-// use its type.
-template <typename T, size_t N>
-char(&ArraySizeHelper(T(&array)[N]))[N];
-
-// Used with std::unique_ptr to FX_Free raw memory.
-struct FxFreeDeleter {
-  inline void operator()(void* ptr) const { FX_Free(ptr); }
-};
-
-// Used with std::unique_ptr to Release() objects that can't be deleted.
-template <class T>
-struct ReleaseDeleter {
-  inline void operator()(T* ptr) const { ptr->Release(); }
-};
-
 class CFX_BinaryBuf {
  public:
   CFX_BinaryBuf();
