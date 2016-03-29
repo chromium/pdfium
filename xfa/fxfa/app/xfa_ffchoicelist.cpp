@@ -9,14 +9,14 @@
 #include "xfa/fwl/basewidget/ifwl_edit.h"
 #include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_notedriver.h"
+#include "xfa/fwl/lightwidget/cfwl_combobox.h"
+#include "xfa/fwl/lightwidget/cfwl_listbox.h"
 #include "xfa/fxfa/app/xfa_ffdoc.h"
 #include "xfa/fxfa/app/xfa_ffdocview.h"
 #include "xfa/fxfa/app/xfa_fffield.h"
 #include "xfa/fxfa/app/xfa_ffpageview.h"
 #include "xfa/fxfa/app/xfa_ffwidget.h"
 #include "xfa/fxfa/app/xfa_fwladapter.h"
-#include "xfa/include/fwl/lightwidget/combobox.h"
-#include "xfa/include/fwl/lightwidget/listbox.h"
 
 CXFA_FFListBox::CXFA_FFListBox(CXFA_FFPageView* pPageView,
                                CXFA_WidgetAcc* pDataAcc)

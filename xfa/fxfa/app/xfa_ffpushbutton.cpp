@@ -8,6 +8,7 @@
 
 #include "xfa/fwl/core/ifwl_notedriver.h"
 #include "xfa/fwl/core/ifwl_widgetmgrdelegate.h"
+#include "xfa/fwl/lightwidget/cfwl_pushbutton.h"
 #include "xfa/fxfa/app/xfa_ffapp.h"
 #include "xfa/fxfa/app/xfa_fffield.h"
 #include "xfa/fxfa/app/xfa_ffpageview.h"
@@ -16,7 +17,6 @@
 #include "xfa/fxfa/app/xfa_textlayout.h"
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
-#include "xfa/include/fwl/lightwidget/pushbutton.h"
 
 CXFA_FFPushButton::CXFA_FFPushButton(CXFA_FFPageView* pPageView,
                                      CXFA_WidgetAcc* pDataAcc)

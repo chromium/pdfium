@@ -9,7 +9,7 @@
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/fwl_targetimp.h"
 #include "xfa/fwl/core/fwl_widgetimp.h"
-#include "xfa/include/fwl/lightwidget/picturebox.h"
+#include "xfa/fwl/lightwidget/cfwl_picturebox.h"
 
 // static
 IFWL_PictureBox* IFWL_PictureBox::Create(

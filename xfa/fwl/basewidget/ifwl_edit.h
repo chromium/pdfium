@@ -9,8 +9,8 @@
 
 #include <vector>
 
-#include "xfa/include/fwl/lightwidget/widget.h"
 #include "xfa/fwl/core/ifwl_dataprovider.h"
+#include "xfa/fwl/lightwidget/cfwl_widget.h"
 
 #define FWL_CLASS_Edit L"FWL_EDIT"
 #define FWL_CLASSHASH_Edit 2893987822

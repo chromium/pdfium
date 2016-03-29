@@ -20,7 +20,7 @@ class IFWL_WidgetDelegate {
   virtual int32_t OnProcessMessage(CFWL_Message* pMessage) = 0;
   virtual FWL_ERR OnProcessEvent(CFWL_Event* pEvent) = 0;
   virtual FWL_ERR OnDrawWidget(CFX_Graphics* pGraphics,
-                               const CFX_Matrix* pMatrix = NULL) = 0;
+                               const CFX_Matrix* pMatrix = nullptr) = 0;
 };
 
 #endif  // XFA_FWL_CORE_IFWL_WIDGETDELEGATE_H_
