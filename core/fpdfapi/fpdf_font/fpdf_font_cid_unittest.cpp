@@ -18,16 +18,16 @@ bool uint_ranges_equal(uint8_t* a, uint8_t* b, size_t count) {
 }  // namespace
 
 TEST(fpdf_font_cid, CMap_GetCode) {
-  EXPECT_EQ(0, CPDF_CMapParser::CMap_GetCode(""));
-  EXPECT_EQ(0, CPDF_CMapParser::CMap_GetCode("<"));
-  EXPECT_EQ(194, CPDF_CMapParser::CMap_GetCode("<c2"));
-  EXPECT_EQ(162, CPDF_CMapParser::CMap_GetCode("<A2"));
-  EXPECT_EQ(2802, CPDF_CMapParser::CMap_GetCode("<Af2"));
-  EXPECT_EQ(162, CPDF_CMapParser::CMap_GetCode("<A2z"));
+  EXPECT_EQ(0u, CPDF_CMapParser::CMap_GetCode(""));
+  EXPECT_EQ(0u, CPDF_CMapParser::CMap_GetCode("<"));
+  EXPECT_EQ(194u, CPDF_CMapParser::CMap_GetCode("<c2"));
+  EXPECT_EQ(162u, CPDF_CMapParser::CMap_GetCode("<A2"));
+  EXPECT_EQ(2802u, CPDF_CMapParser::CMap_GetCode("<Af2"));
+  EXPECT_EQ(162u, CPDF_CMapParser::CMap_GetCode("<A2z"));
 
-  EXPECT_EQ(12, CPDF_CMapParser::CMap_GetCode("12"));
-  EXPECT_EQ(12, CPDF_CMapParser::CMap_GetCode("12d"));
-  EXPECT_EQ(128, CPDF_CMapParser::CMap_GetCode("128"));
+  EXPECT_EQ(12u, CPDF_CMapParser::CMap_GetCode("12"));
+  EXPECT_EQ(12u, CPDF_CMapParser::CMap_GetCode("12d"));
+  EXPECT_EQ(128u, CPDF_CMapParser::CMap_GetCode("128"));
 }
 
 TEST(fpdf_font_cid, CMap_GetCodeRange) {

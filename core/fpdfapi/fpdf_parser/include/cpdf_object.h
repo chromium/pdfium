@@ -22,6 +22,7 @@ class CPDF_String;
 
 class CPDF_Object {
  public:
+  static const uint32_t kInvalidObjNum = static_cast<uint32_t>(-1);
   enum Type {
     BOOLEAN = 1,
     NUMBER,

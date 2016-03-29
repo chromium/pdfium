@@ -458,11 +458,9 @@ int CPDF_FormField::GetSelectedIndex(int index) {
       return iOptIndex;
     }
   }
-  int nOpts = CountOptions();
-  for (int i = 0; i < nOpts; i++) {
-    if (sel_value == GetOptionValue(i)) {
+  for (int i = 0; i < CountOptions(); i++) {
+    if (sel_value == GetOptionValue(i))
       return i;
-    }
   }
   return -1;
 }
@@ -500,6 +498,7 @@ FX_BOOL CPDF_FormField::ClearSelection(FX_BOOL bNotify) {
   m_pForm->m_bUpdated = TRUE;
   return TRUE;
 }
+
 FX_BOOL CPDF_FormField::IsItemSelected(int index) {
   ASSERT(GetType() == ComboBox || GetType() == ListBox);
   if (index < 0 || index >= CountOptions()) {
@@ -544,6 +543,7 @@ FX_BOOL CPDF_FormField::IsItemSelected(int index) {
     }
   return FALSE;
 }
+
 FX_BOOL CPDF_FormField::SetItemSelection(int index,
                                          FX_BOOL bSelected,
                                          FX_BOOL bNotify) {
@@ -575,20 +575,16 @@ FX_BOOL CPDF_FormField::SetItemSelection(int index,
           }
         } else if (pValue->IsArray()) {
           CPDF_Array* pArray = new CPDF_Array;
-          int iCount = CountOptions();
-          for (int i = 0; i < iCount; i++) {
-            if (i != index) {
-              if (IsItemSelected(i)) {
-                opt_value = GetOptionValue(i);
-                pArray->AddString(PDF_EncodeText(opt_value));
-              }
+          for (int i = 0; i < CountOptions(); i++) {
+            if (i != index && IsItemSelected(i)) {
+              opt_value = GetOptionValue(i);
+              pArray->AddString(PDF_EncodeText(opt_value));
             }
           }
-          if (pArray->GetCount() < 1) {
+          if (pArray->GetCount() < 1)
             pArray->Release();
-          } else {
+          else
             m_pDict->SetAt("V", pArray);
-          }
         }
       } else if (m_Type == ComboBox) {
         m_pDict->RemoveAt("V");
@@ -602,15 +598,8 @@ FX_BOOL CPDF_FormField::SetItemSelection(int index,
         m_pDict->SetAtString("V", PDF_EncodeText(opt_value));
       } else {
         CPDF_Array* pArray = new CPDF_Array;
-        int iCount = CountOptions();
-        for (int i = 0; i < iCount; i++) {
-          FX_BOOL bSelected;
-          if (i != index) {
-            bSelected = IsItemSelected(i);
-          } else {
-            bSelected = TRUE;
-          }
-          if (bSelected) {
+        for (int i = 0; i < CountOptions(); i++) {
+          if (i == index || IsItemSelected(i)) {
             opt_value = GetOptionValue(i);
             pArray->AddString(PDF_EncodeText(opt_value));
           }
@@ -638,54 +627,46 @@ FX_BOOL CPDF_FormField::SetItemSelection(int index,
   m_pForm->m_bUpdated = TRUE;
   return TRUE;
 }
+
 FX_BOOL CPDF_FormField::IsItemDefaultSelected(int index) {
   ASSERT(GetType() == ComboBox || GetType() == ListBox);
-  if (index < 0 || index >= CountOptions()) {
+  if (index < 0 || index >= CountOptions())
     return FALSE;
-  }
   int iDVIndex = GetDefaultSelectedItem();
-  if (iDVIndex < 0) {
-    return FALSE;
-  }
-  return (iDVIndex == index);
+  return iDVIndex >= 0 && iDVIndex == index;
 }
+
 int CPDF_FormField::GetDefaultSelectedItem() {
   ASSERT(GetType() == ComboBox || GetType() == ListBox);
   CPDF_Object* pValue = FPDF_GetFieldAttr(m_pDict, "DV");
-  if (!pValue) {
+  if (!pValue)
     return -1;
-  }
   CFX_WideString csDV = pValue->GetUnicodeText();
-  if (csDV.IsEmpty()) {
+  if (csDV.IsEmpty())
     return -1;
-  }
-  int iCount = CountOptions();
-  for (int i = 0; i < iCount; i++) {
-    if (csDV == GetOptionValue(i)) {
+  for (int i = 0; i < CountOptions(); i++) {
+    if (csDV == GetOptionValue(i))
       return i;
-    }
   }
   return -1;
 }
+
 void CPDF_FormField::UpdateAP(CPDF_FormControl* pControl) {
-  if (m_Type == PushButton) {
+  if (m_Type == PushButton || m_Type == RadioButton || m_Type == CheckBox)
     return;
-  }
-  if (m_Type == RadioButton || m_Type == CheckBox) {
+  if (!m_pForm->m_bGenerateAP)
     return;
-  }
-  if (!m_pForm->m_bGenerateAP) {
-    return;
-  }
   for (int i = 0; i < CountControls(); i++) {
     CPDF_FormControl* pControl = GetControl(i);
     FPDF_GenerateAP(m_pForm->m_pDocument, pControl->m_pWidgetDict);
   }
 }
+
 int CPDF_FormField::CountOptions() {
   CPDF_Array* pArray = ToArray(FPDF_GetFieldAttr(m_pDict, "Opt"));
   return pArray ? pArray->GetCount() : 0;
 }
+
 CFX_WideString CPDF_FormField::GetOptionText(int index, int sub_index) {
   CPDF_Array* pArray = ToArray(FPDF_GetFieldAttr(m_pDict, "Opt"));
   if (!pArray)
@@ -706,30 +687,23 @@ CFX_WideString CPDF_FormField::GetOptionLabel(int index) {
 CFX_WideString CPDF_FormField::GetOptionValue(int index) {
   return GetOptionText(index, 0);
 }
+
 int CPDF_FormField::FindOption(CFX_WideString csOptLabel) {
-  int iCount = CountOptions();
-  for (int i = 0; i < iCount; i++) {
-    CFX_WideString csValue = GetOptionValue(i);
-    if (csValue == csOptLabel) {
+  for (int i = 0; i < CountOptions(); i++) {
+    if (GetOptionValue(i) == csOptLabel)
       return i;
-    }
   }
   return -1;
 }
-int CPDF_FormField::FindOptionValue(const CFX_WideString& csOptValue,
-                                    int iStartIndex) {
-  if (iStartIndex < 0) {
-    iStartIndex = 0;
-  }
-  int iCount = CountOptions();
-  for (; iStartIndex < iCount; iStartIndex++) {
-    CFX_WideString csValue = GetOptionValue(iStartIndex);
-    if (csValue == csOptValue) {
-      return iStartIndex;
-    }
+
+int CPDF_FormField::FindOptionValue(const CFX_WideString& csOptValue) {
+  for (int i = 0; i < CountOptions(); i++) {
+    if (GetOptionValue(i) == csOptValue)
+      return i;
   }
   return -1;
 }
+
 #ifdef PDF_ENABLE_XFA
 int CPDF_FormField::InsertOption(CFX_WideString csOptLabel,
                                  int index,

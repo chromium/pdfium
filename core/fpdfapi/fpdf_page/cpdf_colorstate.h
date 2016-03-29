@@ -25,17 +25,21 @@ class CPDF_ColorState : public CFX_CountRef<CPDF_ColorStateData> {
     return m_pObject ? &m_pObject->m_StrokeColor : nullptr;
   }
 
-  void SetFillColor(CPDF_ColorSpace* pCS, FX_FLOAT* pValue, int nValues);
-  void SetStrokeColor(CPDF_ColorSpace* pCS, FX_FLOAT* pValue, int nValues);
-  void SetFillPattern(CPDF_Pattern* pattern, FX_FLOAT* pValue, int nValues);
-  void SetStrokePattern(CPDF_Pattern* pattern, FX_FLOAT* pValue, int nValues);
+  void SetFillColor(CPDF_ColorSpace* pCS, FX_FLOAT* pValue, uint32_t nValues);
+  void SetStrokeColor(CPDF_ColorSpace* pCS, FX_FLOAT* pValue, uint32_t nValues);
+  void SetFillPattern(CPDF_Pattern* pattern,
+                      FX_FLOAT* pValue,
+                      uint32_t nValues);
+  void SetStrokePattern(CPDF_Pattern* pattern,
+                        FX_FLOAT* pValue,
+                        uint32_t nValues);
 
  private:
   void SetColor(CPDF_Color& color,
                 uint32_t& rgb,
                 CPDF_ColorSpace* pCS,
                 FX_FLOAT* pValue,
-                int nValues);
+                uint32_t nValues);
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PAGE_CPDF_COLORSTATE_H_

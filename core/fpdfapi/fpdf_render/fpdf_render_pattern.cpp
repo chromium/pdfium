@@ -58,15 +58,13 @@ static void DrawAxialShading(CFX_DIBitmap* pBitmap,
   FX_FLOAT axis_len_square = (x_span * x_span) + (y_span * y_span);
   CFX_Matrix matrix;
   matrix.SetReverse(*pObject2Bitmap);
-  int total_results = 0;
+  uint32_t total_results = 0;
   for (int j = 0; j < nFuncs; j++) {
-    if (pFuncs[j]) {
+    if (pFuncs[j])
       total_results += pFuncs[j]->CountOutputs();
-    }
   }
-  if (pCS->CountComponents() > total_results) {
+  if (pCS->CountComponents() > total_results)
     total_results = pCS->CountComponents();
-  }
   CFX_FixedBufGrow<FX_FLOAT, 16> result_array(total_results);
   FX_FLOAT* pResults = result_array;
   FXSYS_memset(pResults, 0, total_results * sizeof(FX_FLOAT));
@@ -144,7 +142,7 @@ static void DrawRadialShading(CFX_DIBitmap* pBitmap,
     bStartExtend = pArray->GetIntegerAt(0);
     bEndExtend = pArray->GetIntegerAt(1);
   }
-  int total_results = 0;
+  uint32_t total_results = 0;
   for (int j = 0; j < nFuncs; j++) {
     if (pFuncs[j]) {
       total_results += pFuncs[j]->CountOutputs();
@@ -273,15 +271,13 @@ static void DrawFuncShading(CFX_DIBitmap* pBitmap,
   int width = pBitmap->GetWidth();
   int height = pBitmap->GetHeight();
   int pitch = pBitmap->GetPitch();
-  int total_results = 0;
+  uint32_t total_results = 0;
   for (int j = 0; j < nFuncs; j++) {
-    if (pFuncs[j]) {
+    if (pFuncs[j])
       total_results += pFuncs[j]->CountOutputs();
-    }
   }
-  if (pCS->CountComponents() > total_results) {
+  if (pCS->CountComponents() > total_results)
     total_results = pCS->CountComponents();
-  }
   CFX_FixedBufGrow<FX_FLOAT, 16> result_array(total_results);
   FX_FLOAT* pResults = result_array;
   FXSYS_memset(pResults, 0, total_results * sizeof(FX_FLOAT));
@@ -845,9 +841,8 @@ void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern,
     if (pBackColor &&
         pBackColor->GetCount() >= pColorSpace->CountComponents()) {
       CFX_FixedBufGrow<FX_FLOAT, 16> comps(pColorSpace->CountComponents());
-      for (int i = 0; i < pColorSpace->CountComponents(); i++) {
+      for (uint32_t i = 0; i < pColorSpace->CountComponents(); i++)
         comps[i] = pBackColor->GetNumberAt(i);
-      }
       FX_FLOAT R = 0.0f, G = 0.0f, B = 0.0f;
       pColorSpace->GetRGB(comps, R, G, B);
       background = ArgbEncode(255, (int32_t)(R * 255), (int32_t)(G * 255),

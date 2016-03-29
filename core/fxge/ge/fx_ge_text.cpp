@@ -1536,12 +1536,14 @@ CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(CFX_Font* pFont,
       skew = pSubstFont->m_ItalicAngle;
     }
     if (skew) {
-      skew = skew <= -ANGLESKEW_ARRAY_SIZE ? -58 : -g_AngleSkew[-skew];
-      if (pFont->IsVertical()) {
+      // skew is nonpositive so -skew is used as the index.
+      skew = -skew <= static_cast<int>(ANGLESKEW_ARRAY_SIZE)
+                 ? -58
+                 : -g_AngleSkew[-skew];
+      if (pFont->IsVertical())
         ft_matrix.yx += ft_matrix.yy * skew / 100;
-      } else {
+      else
         ft_matrix.xy += -ft_matrix.xx * skew / 100;
-      }
     }
     if (pSubstFont->m_SubstFlags & FXFONT_SUBST_MM) {
       pFont->AdjustMMParams(glyph_index, dest_width,
@@ -1574,10 +1576,9 @@ CFX_GlyphBitmap* CFX_FaceCache::RenderGlyph(CFX_Font* pFont,
   }
   if (pSubstFont && !(pSubstFont->m_SubstFlags & FXFONT_SUBST_MM) &&
       weight > 400) {
-    int index = (weight - 400) / 10;
-    if (index >= WEIGHTPOW_ARRAY_SIZE) {
+    uint32_t index = (weight - 400) / 10;
+    if (index >= WEIGHTPOW_ARRAY_SIZE)
       return NULL;
-    }
     int level = 0;
     if (pSubstFont->m_Charset == FXFONT_SHIFTJIS_CHARSET) {
       level =
@@ -1801,12 +1802,14 @@ CFX_PathData* CFX_Font::LoadGlyphPath(uint32_t glyph_index, int dest_width) {
   if (m_pSubstFont) {
     if (m_pSubstFont->m_ItalicAngle) {
       int skew = m_pSubstFont->m_ItalicAngle;
-      skew = skew <= -ANGLESKEW_ARRAY_SIZE ? -58 : -g_AngleSkew[-skew];
-      if (m_bVertical) {
+      // skew is nonpositive so -skew is used as the index.
+      skew = -skew <= static_cast<int>(ANGLESKEW_ARRAY_SIZE)
+                 ? -58
+                 : -g_AngleSkew[-skew];
+      if (m_bVertical)
         ft_matrix.yx += ft_matrix.yy * skew / 100;
-      } else {
+      else
         ft_matrix.xy += -ft_matrix.xx * skew / 100;
-      }
     }
     if (m_pSubstFont->m_SubstFlags & FXFONT_SUBST_MM) {
       AdjustMMParams(glyph_index, dest_width, m_pSubstFont->m_Weight);
@@ -1817,21 +1820,18 @@ CFX_PathData* CFX_Font::LoadGlyphPath(uint32_t glyph_index, int dest_width) {
   if (!(m_Face->face_flags & FT_FACE_FLAG_SFNT) || !FT_IS_TRICKY(m_Face)) {
     load_flags |= FT_LOAD_NO_HINTING;
   }
-  int error = FXFT_Load_Glyph(m_Face, glyph_index, load_flags);
-  if (error) {
+  if (FXFT_Load_Glyph(m_Face, glyph_index, load_flags))
     return NULL;
-  }
   if (m_pSubstFont && !(m_pSubstFont->m_SubstFlags & FXFONT_SUBST_MM) &&
       m_pSubstFont->m_Weight > 400) {
-    int index = (m_pSubstFont->m_Weight - 400) / 10;
+    uint32_t index = (m_pSubstFont->m_Weight - 400) / 10;
     if (index >= WEIGHTPOW_ARRAY_SIZE)
       index = WEIGHTPOW_ARRAY_SIZE - 1;
     int level = 0;
-    if (m_pSubstFont->m_Charset == FXFONT_SHIFTJIS_CHARSET) {
+    if (m_pSubstFont->m_Charset == FXFONT_SHIFTJIS_CHARSET)
       level = g_WeightPow_SHIFTJIS[index] * 2 * 65536 / 36655;
-    } else {
+    else
       level = g_WeightPow[index] * 2;
-    }
     FXFT_Outline_Embolden(FXFT_Get_Glyph_Outline(m_Face), level);
   }
   FXFT_Outline_Funcs funcs;

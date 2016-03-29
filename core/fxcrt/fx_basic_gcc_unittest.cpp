@@ -93,16 +93,16 @@ TEST(fxcrt, FXSYS_wtoi64) {
 }
 
 TEST(fxcrt, FXSYS_atoui) {
-  EXPECT_EQ(0, FXSYS_atoui(""));
-  EXPECT_EQ(0, FXSYS_atoui("0"));
+  EXPECT_EQ(0u, FXSYS_atoui(""));
+  EXPECT_EQ(0u, FXSYS_atoui("0"));
   EXPECT_EQ(4294967295, FXSYS_atoui("-1"));
-  EXPECT_EQ(2345, FXSYS_atoui("2345"));
+  EXPECT_EQ(2345u, FXSYS_atoui("2345"));
   // Handle the sign.
   EXPECT_EQ(4294964951, FXSYS_atoui("-2345"));
-  EXPECT_EQ(2345, FXSYS_atoui("+2345"));
+  EXPECT_EQ(2345u, FXSYS_atoui("+2345"));
   // The max value.
   EXPECT_EQ(4294967295, FXSYS_atoui("4294967295"));
-  EXPECT_EQ(9, FXSYS_atoui("9x9"));
+  EXPECT_EQ(9u, FXSYS_atoui("9x9"));
 
   // Out of range values.
   EXPECT_EQ(4294967295, FXSYS_atoui("2147483623423412348"));

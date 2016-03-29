@@ -134,7 +134,9 @@ inline bool operator==(const char* lhs, const CFX_ByteStringC& rhs) {
 inline bool operator!=(const char* lhs, const CFX_ByteStringC& rhs) {
   return rhs != lhs;
 }
-#define FXBSTR_ID(c1, c2, c3, c4) ((c1 << 24) | (c2 << 16) | (c3 << 8) | (c4))
+#define FXBSTR_ID(c1, c2, c3, c4)                                      \
+  (((uint32_t)c1 << 24) | ((uint32_t)c2 << 16) | ((uint32_t)c3 << 8) | \
+   ((uint32_t)c4))
 
 // A mutable string with shared buffers using copy-on-write semantics that
 // avoids the cost of std::string's iterator stability guarantees.

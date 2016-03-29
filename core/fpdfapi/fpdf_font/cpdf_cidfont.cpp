@@ -155,13 +155,12 @@ uint32_t EmbeddedCharcodeFromUnicode(const FXCMAP_CMap* pEmbedMap,
   if (!pCodes)
     return 0;
 
-  int nCodes = pFontGlobals->m_EmbeddedToUnicodes[charset].m_Count;
-  for (int i = 0; i < nCodes; ++i) {
+  for (uint32_t i = 0; i < pFontGlobals->m_EmbeddedToUnicodes[charset].m_Count;
+       ++i) {
     if (pCodes[i] == unicode) {
       uint32_t CharCode = FPDFAPI_CharCodeFromCID(pEmbedMap, i);
-      if (CharCode != 0) {
+      if (CharCode != 0)
         return CharCode;
-      }
     }
   }
   return 0;

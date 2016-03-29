@@ -43,7 +43,7 @@ CPDF_ShadingPattern::CPDF_ShadingPattern(CPDF_Document* pDoc,
     if (parentMatrix)
       m_Pattern2Form.Concat(*parentMatrix);
   }
-  for (int i = 0; i < FX_ArraySize(m_pFunctions); ++i)
+  for (size_t i = 0; i < FX_ArraySize(m_pFunctions); ++i)
     m_pFunctions[i] = nullptr;
 }
 

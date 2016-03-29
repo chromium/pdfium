@@ -194,7 +194,8 @@ FX_BOOL CPDF_CustomAccess::ReadBlock(void* buffer,
   FX_SAFE_FILESIZE newPos =
       pdfium::base::checked_cast<FX_FILESIZE, size_t>(size);
   newPos += offset;
-  if (!newPos.IsValid() || newPos.ValueOrDie() > m_FileAccess.m_FileLen) {
+  if (!newPos.IsValid() ||
+      newPos.ValueOrDie() > static_cast<FX_FILESIZE>(m_FileAccess.m_FileLen)) {
     return FALSE;
   }
   return m_FileAccess.m_GetBlock(m_FileAccess.m_Param, offset, (uint8_t*)buffer,

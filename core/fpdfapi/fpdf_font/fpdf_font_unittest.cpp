@@ -6,12 +6,12 @@
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(fpdf_font, StringToCode) {
-  EXPECT_EQ(0, CPDF_ToUnicodeMap::StringToCode(""));
-  EXPECT_EQ(194, CPDF_ToUnicodeMap::StringToCode("<c2"));
-  EXPECT_EQ(162, CPDF_ToUnicodeMap::StringToCode("<A2"));
-  EXPECT_EQ(2802, CPDF_ToUnicodeMap::StringToCode("<Af2"));
-  EXPECT_EQ(12, CPDF_ToUnicodeMap::StringToCode("12"));
-  EXPECT_EQ(128, CPDF_ToUnicodeMap::StringToCode("128"));
+  EXPECT_EQ(0u, CPDF_ToUnicodeMap::StringToCode(""));
+  EXPECT_EQ(194u, CPDF_ToUnicodeMap::StringToCode("<c2"));
+  EXPECT_EQ(162u, CPDF_ToUnicodeMap::StringToCode("<A2"));
+  EXPECT_EQ(2802u, CPDF_ToUnicodeMap::StringToCode("<Af2"));
+  EXPECT_EQ(12u, CPDF_ToUnicodeMap::StringToCode("12"));
+  EXPECT_EQ(128u, CPDF_ToUnicodeMap::StringToCode("128"));
 }
 
 TEST(fpdf_font, StringToWideString) {

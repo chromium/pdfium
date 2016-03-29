@@ -48,8 +48,8 @@ class CFX_StockFontArray {
   ~CFX_StockFontArray();
 
   // Takes ownership of |pFont|.
-  void SetFont(int index, CPDF_Font* pFont);
-  CPDF_Font* GetFont(int index) const;
+  void SetFont(uint32_t index, CPDF_Font* pFont);
+  CPDF_Font* GetFont(uint32_t index) const;
 
  private:
   std::unique_ptr<CPDF_Font> m_StockFonts[14];
@@ -61,19 +61,19 @@ class CPDF_FontGlobals {
   ~CPDF_FontGlobals();
 
   void Clear(CPDF_Document* pDoc);
-  CPDF_Font* Find(CPDF_Document* pDoc, int index);
+  CPDF_Font* Find(CPDF_Document* pDoc, uint32_t index);
 
   // Takes ownership of |pFont|.
-  void Set(CPDF_Document* key, int index, CPDF_Font* pFont);
+  void Set(CPDF_Document* key, uint32_t index, CPDF_Font* pFont);
 
   CPDF_CMapManager m_CMapManager;
   struct {
     const struct FXCMAP_CMap* m_pMapList;
-    int m_Count;
+    uint32_t m_Count;
   } m_EmbeddedCharsets[CIDSET_NUM_SETS];
   struct {
     const uint16_t* m_pMap;
-    int m_Count;
+    uint32_t m_Count;
   } m_EmbeddedToUnicodes[CIDSET_NUM_SETS];
 
  private:

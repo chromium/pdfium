@@ -26,7 +26,7 @@ TEST(fpdf_text_int, CheckMailLink) {
       L"abc@.xyz.org",    // Domain name should not start with '.'.
       L"fan@g..com"       // Domain name should not have consecutive '.'
   };
-  for (int i = 0; i < FX_ArraySize(invalid_strs); ++i) {
+  for (size_t i = 0; i < FX_ArraySize(invalid_strs); ++i) {
     CFX_WideString text_str(invalid_strs[i]);
     EXPECT_FALSE(extractor.CheckMailLink(text_str));
   }
@@ -46,7 +46,7 @@ TEST(fpdf_text_int, CheckMailLink) {
       {L"fan@g.com..", L"fan@g.com"},           // Trim the ending periods.
       {L"CAP.cap@Gmail.Com", L"CAP.cap@Gmail.Com"},  // Keep the original case.
   };
-  for (int i = 0; i < FX_ArraySize(valid_strs); ++i) {
+  for (size_t i = 0; i < FX_ArraySize(valid_strs); ++i) {
     CFX_WideString text_str(valid_strs[i][0]);
     CFX_WideString expected_str(L"mailto:");
     expected_str += valid_strs[i][1];

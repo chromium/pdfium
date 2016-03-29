@@ -1502,7 +1502,7 @@ FX_BOOL CJS_PublicMethods::AFSpecial_KeystrokeEx(
   if (wChange.empty())
     return TRUE;
 
-  int iIndexMask = pEvent->SelStart();
+  size_t iIndexMask = pEvent->SelStart();
 
   size_t combined_len = wstrValue.length() + wChange.length() -
                         (pEvent->SelEnd() - pEvent->SelStart());

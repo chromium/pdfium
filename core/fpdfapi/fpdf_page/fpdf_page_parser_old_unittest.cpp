@@ -19,7 +19,7 @@ TEST(fpdf_page_parser_old, ReadHexString) {
     uint8_t data[] = "1A2b>abcd";
     CPDF_StreamParser parser(data, 5);
     EXPECT_EQ("\x1a\x2b", parser.ReadHexString());
-    EXPECT_EQ(5, parser.GetPos());
+    EXPECT_EQ(5u, parser.GetPos());
   }
 
   {
@@ -27,7 +27,7 @@ TEST(fpdf_page_parser_old, ReadHexString) {
     uint8_t data[] = "1A2b";
     CPDF_StreamParser parser(data, 5);
     EXPECT_EQ("\x1a\x2b", parser.ReadHexString());
-    EXPECT_EQ(5, parser.GetPos());
+    EXPECT_EQ(5u, parser.GetPos());
   }
 
   {
@@ -35,13 +35,13 @@ TEST(fpdf_page_parser_old, ReadHexString) {
     uint8_t data[] = "1A2>asdf";
     CPDF_StreamParser parser(data, 5);
     EXPECT_EQ("\x1a\x20", parser.ReadHexString());
-    EXPECT_EQ(4, parser.GetPos());
+    EXPECT_EQ(4u, parser.GetPos());
   }
 
   {
     uint8_t data[] = ">";
     CPDF_StreamParser parser(data, 5);
     EXPECT_EQ("", parser.ReadHexString());
-    EXPECT_EQ(1, parser.GetPos());
+    EXPECT_EQ(1u, parser.GetPos());
   }
 }

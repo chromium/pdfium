@@ -45,14 +45,14 @@ CFX_StockFontArray::~CFX_StockFontArray() {
   }
 }
 
-CPDF_Font* CFX_StockFontArray::GetFont(int index) const {
-  if (index < 0 || index >= FX_ArraySize(m_StockFonts))
+CPDF_Font* CFX_StockFontArray::GetFont(uint32_t index) const {
+  if (index >= FX_ArraySize(m_StockFonts))
     return nullptr;
   return m_StockFonts[index].get();
 }
 
-void CFX_StockFontArray::SetFont(int index, CPDF_Font* font) {
-  if (index < 0 || index >= FX_ArraySize(m_StockFonts))
+void CFX_StockFontArray::SetFont(uint32_t index, CPDF_Font* font) {
+  if (index >= FX_ArraySize(m_StockFonts))
     return;
   m_StockFonts[index].reset(font);
 }
@@ -64,14 +64,16 @@ CPDF_FontGlobals::CPDF_FontGlobals() {
 
 CPDF_FontGlobals::~CPDF_FontGlobals() {}
 
-CPDF_Font* CPDF_FontGlobals::Find(CPDF_Document* pDoc, int index) {
+CPDF_Font* CPDF_FontGlobals::Find(CPDF_Document* pDoc, uint32_t index) {
   auto it = m_StockMap.find(pDoc);
   if (it == m_StockMap.end())
     return nullptr;
   return it->second ? it->second->GetFont(index) : nullptr;
 }
 
-void CPDF_FontGlobals::Set(CPDF_Document* pDoc, int index, CPDF_Font* pFont) {
+void CPDF_FontGlobals::Set(CPDF_Document* pDoc,
+                           uint32_t index,
+                           CPDF_Font* pFont) {
   if (!pdfium::ContainsKey(m_StockMap, pDoc))
     m_StockMap[pDoc].reset(new CFX_StockFontArray);
   m_StockMap[pDoc]->SetFont(index, pFont);
@@ -121,7 +123,7 @@ CFX_WideString CPDF_ToUnicodeMap::Lookup(uint32_t charcode) {
 
 uint32_t CPDF_ToUnicodeMap::ReverseLookup(FX_WCHAR unicode) {
   for (const auto& pair : m_Map) {
-    if (pair.second == unicode)
+    if (pair.second == static_cast<uint32_t>(unicode))
       return pair.first;
   }
   return 0;

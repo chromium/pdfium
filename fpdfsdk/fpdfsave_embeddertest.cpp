@@ -19,14 +19,14 @@ TEST_F(FPDFSaveEmbedderTest, SaveSimpleDoc) {
   EXPECT_TRUE(OpenDocument("hello_world.pdf"));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   EXPECT_THAT(GetString(), testing::StartsWith("%PDF-1.7\r\n"));
-  EXPECT_EQ(843, GetString().length());
+  EXPECT_EQ(843u, GetString().length());
 }
 
 TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocWithVersion) {
   EXPECT_TRUE(OpenDocument("hello_world.pdf"));
   EXPECT_TRUE(FPDF_SaveWithVersion(document(), this, 0, 14));
   EXPECT_THAT(GetString(), testing::StartsWith("%PDF-1.4\r\n"));
-  EXPECT_EQ(843, GetString().length());
+  EXPECT_EQ(843u, GetString().length());
 }
 
 TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocWithBadVersion) {

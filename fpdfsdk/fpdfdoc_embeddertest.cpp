@@ -72,7 +72,7 @@ TEST_F(FPDFDocEmbeddertest, NoBookmarks) {
 
   // The non-existent top-level bookmark has no title.
   unsigned short buf[128];
-  EXPECT_EQ(0, FPDFBookmark_GetTitle(nullptr, buf, sizeof(buf)));
+  EXPECT_EQ(0u, FPDFBookmark_GetTitle(nullptr, buf, sizeof(buf)));
 
   // The non-existent top-level bookmark has no children.
   EXPECT_EQ(nullptr, FPDFBookmark_GetFirstChild(document(), nullptr));
@@ -84,11 +84,11 @@ TEST_F(FPDFDocEmbeddertest, Bookmarks) {
 
   // The existent top-level bookmark has no title.
   unsigned short buf[128];
-  EXPECT_EQ(0, FPDFBookmark_GetTitle(nullptr, buf, sizeof(buf)));
+  EXPECT_EQ(0u, FPDFBookmark_GetTitle(nullptr, buf, sizeof(buf)));
 
   FPDF_BOOKMARK child = FPDFBookmark_GetFirstChild(document(), nullptr);
   EXPECT_NE(nullptr, child);
-  EXPECT_EQ(34, FPDFBookmark_GetTitle(child, buf, sizeof(buf)));
+  EXPECT_EQ(34u, FPDFBookmark_GetTitle(child, buf, sizeof(buf)));
   EXPECT_EQ(CFX_WideString(L"A Good Beginning"),
             CFX_WideString::FromUTF16LE(buf, 16));
 
@@ -96,7 +96,7 @@ TEST_F(FPDFDocEmbeddertest, Bookmarks) {
 
   FPDF_BOOKMARK sibling = FPDFBookmark_GetNextSibling(document(), child);
   EXPECT_NE(nullptr, sibling);
-  EXPECT_EQ(28, FPDFBookmark_GetTitle(sibling, buf, sizeof(buf)));
+  EXPECT_EQ(28u, FPDFBookmark_GetTitle(sibling, buf, sizeof(buf)));
   EXPECT_EQ(CFX_WideString(L"A Good Ending"),
             CFX_WideString::FromUTF16LE(buf, 13));
 
@@ -115,7 +115,7 @@ TEST_F(FPDFDocEmbeddertest, FindBookmarks) {
 
   // Check that the string matches.
   unsigned short buf[128];
-  EXPECT_EQ(34, FPDFBookmark_GetTitle(child, buf, sizeof(buf)));
+  EXPECT_EQ(34u, FPDFBookmark_GetTitle(child, buf, sizeof(buf)));
   EXPECT_EQ(CFX_WideString(L"A Good Beginning"),
             CFX_WideString::FromUTF16LE(buf, 16));
 

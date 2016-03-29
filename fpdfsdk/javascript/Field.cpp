@@ -1014,7 +1014,7 @@ void Field::SetCurrentValueIndices(CPDFSDK_Document* pDocument,
       for (size_t i = 0; i < array.size(); ++i) {
         if (i != 0 && !(dwFieldFlags & (1 << 21)))
           break;
-        if (array[i] < pFormField->CountOptions() &&
+        if (array[i] < static_cast<uint32_t>(pFormField->CountOptions()) &&
             !pFormField->IsItemSelected(array[i])) {
           pFormField->SetItemSelection(array[i], TRUE);
         }

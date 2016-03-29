@@ -387,11 +387,11 @@ class CPDF_Function {
   static CPDF_Function* Load(CPDF_Object* pFuncObj);
   virtual ~CPDF_Function();
   FX_BOOL Call(FX_FLOAT* inputs,
-               int ninputs,
+               uint32_t ninputs,
                FX_FLOAT* results,
                int& nresults) const;
-  int CountInputs() const { return m_nInputs; }
-  int CountOutputs() const { return m_nOutputs; }
+  uint32_t CountInputs() const { return m_nInputs; }
+  uint32_t CountOutputs() const { return m_nOutputs; }
   FX_FLOAT GetDomain(int i) const { return m_pDomains[i]; }
   Type GetType() const { return m_Type; }
 
@@ -401,8 +401,8 @@ class CPDF_Function {
   virtual FX_BOOL v_Init(CPDF_Object* pObj) = 0;
   virtual FX_BOOL v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const = 0;
 
-  int m_nInputs;
-  int m_nOutputs;
+  uint32_t m_nInputs;
+  uint32_t m_nOutputs;
   FX_FLOAT* m_pDomains;
   FX_FLOAT* m_pRanges;
   Type m_Type;
@@ -417,7 +417,7 @@ class CPDF_ExpIntFunc : public CPDF_Function {
   FX_BOOL v_Init(CPDF_Object* pObj) override;
   FX_BOOL v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const override;
 
-  int m_nOrigOutputs;
+  uint32_t m_nOrigOutputs;
   FX_FLOAT m_Exponent;
   FX_FLOAT* m_pBeginValues;
   FX_FLOAT* m_pEndValues;
@@ -436,7 +436,7 @@ class CPDF_StitchFunc : public CPDF_Function {
   FX_FLOAT* m_pBounds;
   FX_FLOAT* m_pEncode;
 
-  static const int kRequiredNumInputs = 1;
+  static const uint32_t kRequiredNumInputs = 1;
 };
 
 class CPDF_IccProfile {

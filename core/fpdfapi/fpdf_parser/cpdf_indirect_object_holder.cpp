@@ -26,7 +26,8 @@ CPDF_Object* CPDF_IndirectObjectHolder::GetIndirectObject(uint32_t objnum) {
 
   auto it = m_IndirectObjs.find(objnum);
   if (it != m_IndirectObjs.end())
-    return it->second->GetObjNum() != -1 ? it->second : nullptr;
+    return it->second->GetObjNum() != CPDF_Object::kInvalidObjNum ? it->second
+                                                                  : nullptr;
 
   if (!m_pParser)
     return nullptr;
@@ -56,8 +57,10 @@ uint32_t CPDF_IndirectObjectHolder::AddIndirectObject(CPDF_Object* pObj) {
 
 void CPDF_IndirectObjectHolder::ReleaseIndirectObject(uint32_t objnum) {
   auto it = m_IndirectObjs.find(objnum);
-  if (it == m_IndirectObjs.end() || it->second->GetObjNum() == -1)
+  if (it == m_IndirectObjs.end() ||
+      it->second->GetObjNum() == CPDF_Object::kInvalidObjNum) {
     return;
+  }
   it->second->Destroy();
   m_IndirectObjs.erase(it);
 }

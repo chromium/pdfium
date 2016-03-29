@@ -48,7 +48,8 @@ TEST_F(FPDFTextEmbeddertest, Text) {
   EXPECT_TRUE(check_unsigned_shorts(expected, fixed_buffer, sizeof(expected)));
 
   // Count does not include the terminating NUL in the string literal.
-  EXPECT_EQ(sizeof(expected) - 1, FPDFText_CountChars(textpage));
+  EXPECT_EQ(sizeof(expected) - 1,
+            static_cast<size_t>(FPDFText_CountChars(textpage)));
   for (size_t i = 0; i < sizeof(expected) - 1; ++i) {
     EXPECT_EQ(static_cast<unsigned int>(expected[i]),
               FPDFText_GetUnicode(textpage, i))
@@ -285,6 +286,7 @@ TEST_F(FPDFTextEmbeddertest, WebLinks) {
   EXPECT_EQ(26, FPDFLink_GetURL(pagelink, 1, nullptr, 0));
 
   static const char expected_url[] = "http://example.com?q=foo";
+  static const size_t expected_len = sizeof(expected_url);
   unsigned short fixed_buffer[128];
 
   // Retrieve a link with too small a buffer.  Buffer will not be
@@ -297,30 +299,27 @@ TEST_F(FPDFTextEmbeddertest, WebLinks) {
 
   // Check buffer that doesn't have space for a terminating NUL.
   memset(fixed_buffer, 0xbd, sizeof(fixed_buffer));
-  EXPECT_EQ(
-      sizeof(expected_url) - 1,
-      FPDFLink_GetURL(pagelink, 0, fixed_buffer, sizeof(expected_url) - 1));
-  EXPECT_TRUE(check_unsigned_shorts(expected_url, fixed_buffer,
-                                    sizeof(expected_url) - 1));
-  EXPECT_EQ(0xbdbd, fixed_buffer[sizeof(expected_url) - 1]);
+  EXPECT_EQ(static_cast<int>(expected_len - 1),
+            FPDFLink_GetURL(pagelink, 0, fixed_buffer, expected_len - 1));
+  EXPECT_TRUE(
+      check_unsigned_shorts(expected_url, fixed_buffer, expected_len - 1));
+  EXPECT_EQ(0xbdbd, fixed_buffer[expected_len - 1]);
 
   // Retreive link with exactly-sized buffer.
   memset(fixed_buffer, 0xbd, sizeof(fixed_buffer));
-  EXPECT_EQ(sizeof(expected_url),
-            FPDFLink_GetURL(pagelink, 0, fixed_buffer, sizeof(expected_url)));
-  EXPECT_TRUE(
-      check_unsigned_shorts(expected_url, fixed_buffer, sizeof(expected_url)));
-  EXPECT_EQ(0u, fixed_buffer[sizeof(expected_url) - 1]);
-  EXPECT_EQ(0xbdbd, fixed_buffer[sizeof(expected_url)]);
+  EXPECT_EQ(static_cast<int>(expected_len),
+            FPDFLink_GetURL(pagelink, 0, fixed_buffer, expected_len));
+  EXPECT_TRUE(check_unsigned_shorts(expected_url, fixed_buffer, expected_len));
+  EXPECT_EQ(0u, fixed_buffer[expected_len - 1]);
+  EXPECT_EQ(0xbdbd, fixed_buffer[expected_len]);
 
   // Retreive link with ample-sized-buffer.
   memset(fixed_buffer, 0xbd, sizeof(fixed_buffer));
-  EXPECT_EQ(sizeof(expected_url),
+  EXPECT_EQ(static_cast<int>(expected_len),
             FPDFLink_GetURL(pagelink, 0, fixed_buffer, 128));
-  EXPECT_TRUE(
-      check_unsigned_shorts(expected_url, fixed_buffer, sizeof(expected_url)));
-  EXPECT_EQ(0u, fixed_buffer[sizeof(expected_url) - 1]);
-  EXPECT_EQ(0xbdbd, fixed_buffer[sizeof(expected_url)]);
+  EXPECT_TRUE(check_unsigned_shorts(expected_url, fixed_buffer, expected_len));
+  EXPECT_EQ(0u, fixed_buffer[expected_len - 1]);
+  EXPECT_EQ(0xbdbd, fixed_buffer[expected_len]);
 
   // Each link rendered in a single rect in this test page.
   EXPECT_EQ(1, FPDFLink_CountRects(pagelink, 0));
@@ -382,7 +381,7 @@ TEST_F(FPDFTextEmbeddertest, GetFontSize) {
                                         16, 16, 16, 16, 16, 16, 16, 16, 16, 16};
 
   int count = FPDFText_CountChars(textpage);
-  ASSERT_EQ(FX_ArraySize(kExpectedFontsSizes), count);
+  ASSERT_EQ(FX_ArraySize(kExpectedFontsSizes), static_cast<size_t>(count));
   for (int i = 0; i < count; ++i)
     EXPECT_EQ(kExpectedFontsSizes[i], FPDFText_GetFontSize(textpage, i)) << i;
 

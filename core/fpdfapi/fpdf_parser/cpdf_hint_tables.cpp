@@ -59,7 +59,7 @@ FX_BOOL CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
 
   // Item 2: The location of the first page's page object.
   uint32_t dwFirstObjLoc = hStream->GetBits(32);
-  if (dwFirstObjLoc > nStreamOffset) {
+  if (dwFirstObjLoc > static_cast<uint32_t>(nStreamOffset)) {
     FX_SAFE_DWORD safeLoc = pdfium::base::checked_cast<uint32_t>(nStreamLen);
     safeLoc += dwFirstObjLoc;
     if (!safeLoc.IsValid())
@@ -236,7 +236,7 @@ FX_BOOL CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
 
   // Item 2: The location of the first object in the shared objects section.
   uint32_t dwFirstSharedObjLoc = hStream->GetBits(32);
-  if (dwFirstSharedObjLoc > nStreamOffset)
+  if (dwFirstSharedObjLoc > static_cast<uint32_t>(nStreamOffset))
     dwFirstSharedObjLoc += nStreamLen;
 
   // Item 3: The number of shared object entries for the first page.
@@ -387,12 +387,13 @@ IPDF_DataAvail::DocAvailStatus CPDF_HintTables::CheckPage(
   uint32_t dwObjNum = 0;
   for (uint32_t j = 0; j < m_dwNSharedObjsArray[index]; ++j) {
     dwIndex = m_dwIdentifierArray[offset + j];
-    if (dwIndex >= m_dwSharedObjNumArray.GetSize())
+    if (dwIndex >= static_cast<uint32_t>(m_dwSharedObjNumArray.GetSize()))
       return IPDF_DataAvail::DataNotAvailable;
 
     dwObjNum = m_dwSharedObjNumArray[dwIndex];
-    if (dwObjNum >= nFirstPageObjNum &&
-        dwObjNum < nFirstPageObjNum + m_nFirstPageSharedObjs) {
+    if (dwObjNum >= static_cast<uint32_t>(nFirstPageObjNum) &&
+        dwObjNum <
+            static_cast<uint32_t>(nFirstPageObjNum) + m_nFirstPageSharedObjs) {
       continue;
     }
 
@@ -428,7 +429,7 @@ FX_BOOL CPDF_HintTables::LoadHintStream(CPDF_Stream* pHintStream) {
   // Hint table has at least 60 bytes.
   const uint32_t MIN_STREAM_LEN = 60;
   if (size < MIN_STREAM_LEN || shared_hint_table_offset <= 0 ||
-      size < shared_hint_table_offset) {
+      size < static_cast<uint32_t>(shared_hint_table_offset)) {
     return FALSE;
   }
 

@@ -131,14 +131,14 @@ CPDF_Array* CPDF_Array::GetArrayAt(uint32_t i) const {
   return ToArray(GetDirectObjectAt(i));
 }
 
-void CPDF_Array::RemoveAt(uint32_t i, int nCount) {
+void CPDF_Array::RemoveAt(uint32_t i, uint32_t nCount) {
   if (i >= (uint32_t)m_Objects.GetSize())
     return;
 
   if (nCount <= 0 || nCount > m_Objects.GetSize() - i)
     return;
 
-  for (int j = 0; j < nCount; ++j) {
+  for (uint32_t j = 0; j < nCount; ++j) {
     if (CPDF_Object* p = m_Objects.GetAt(i + j))
       p->Release();
   }

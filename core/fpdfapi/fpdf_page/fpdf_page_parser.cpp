@@ -1126,15 +1126,14 @@ void CPDF_StreamContentParser::Handle_SetColorPS_Fill() {
   if (!pLastParam) {
     return;
   }
-  int nargs = m_ParamCount;
-  int nvalues = nargs;
-  if (pLastParam->IsName()) {
+  uint32_t nargs = m_ParamCount;
+  uint32_t nvalues = nargs;
+  if (pLastParam->IsName())
     nvalues--;
-  }
   FX_FLOAT* values = NULL;
   if (nvalues) {
     values = FX_Alloc(FX_FLOAT, nvalues);
-    for (int i = 0; i < nvalues; i++) {
+    for (uint32_t i = 0; i < nvalues; i++) {
       values[i] = GetNumber(nargs - i - 1);
     }
   }

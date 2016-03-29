@@ -88,14 +88,16 @@ TEST_F(FPDFViewEmbeddertest, NamedDests) {
   buffer_size = sizeof(fixed_buffer);
   dest = FPDF_GetNamedDest(document(), 2, fixed_buffer, &buffer_size);
   EXPECT_EQ(nullptr, dest);
-  EXPECT_EQ(sizeof(fixed_buffer), buffer_size);  // unmodified.
+  EXPECT_EQ(sizeof(fixed_buffer),
+            static_cast<size_t>(buffer_size));  // unmodified.
 
   // Try to retrieve the forth item with ample buffer. Item is taken
   // from Dests NameTree but has a vale of the wrong type in named_dests.pdf.
   buffer_size = sizeof(fixed_buffer);
   dest = FPDF_GetNamedDest(document(), 3, fixed_buffer, &buffer_size);
   EXPECT_EQ(nullptr, dest);
-  EXPECT_EQ(sizeof(fixed_buffer), buffer_size);  // unmodified.
+  EXPECT_EQ(sizeof(fixed_buffer),
+            static_cast<size_t>(buffer_size));  // unmodified.
 
   // Try to retrieve fifth item with ample buffer. Item taken from the
   // old-style Dests dictionary object in named_dests.pdf.
@@ -120,25 +122,29 @@ TEST_F(FPDFViewEmbeddertest, NamedDests) {
   buffer_size = sizeof(fixed_buffer);
   dest = FPDF_GetNamedDest(document(), 6, fixed_buffer, &buffer_size);
   EXPECT_EQ(nullptr, dest);
-  EXPECT_EQ(sizeof(fixed_buffer), buffer_size);  // unmodified.
+  EXPECT_EQ(sizeof(fixed_buffer),
+            static_cast<size_t>(buffer_size));  // unmodified.
 
   // Try to underflow/overflow the integer index.
   buffer_size = sizeof(fixed_buffer);
   dest = FPDF_GetNamedDest(document(), std::numeric_limits<int>::max(),
                            fixed_buffer, &buffer_size);
   EXPECT_EQ(nullptr, dest);
-  EXPECT_EQ(sizeof(fixed_buffer), buffer_size);  // unmodified.
+  EXPECT_EQ(sizeof(fixed_buffer),
+            static_cast<size_t>(buffer_size));  // unmodified.
 
   buffer_size = sizeof(fixed_buffer);
   dest = FPDF_GetNamedDest(document(), std::numeric_limits<int>::min(),
                            fixed_buffer, &buffer_size);
   EXPECT_EQ(nullptr, dest);
-  EXPECT_EQ(sizeof(fixed_buffer), buffer_size);  // unmodified.
+  EXPECT_EQ(sizeof(fixed_buffer),
+            static_cast<size_t>(buffer_size));  // unmodified.
 
   buffer_size = sizeof(fixed_buffer);
   dest = FPDF_GetNamedDest(document(), -1, fixed_buffer, &buffer_size);
   EXPECT_EQ(nullptr, dest);
-  EXPECT_EQ(sizeof(fixed_buffer), buffer_size);  // unmodified.
+  EXPECT_EQ(sizeof(fixed_buffer),
+            static_cast<size_t>(buffer_size));  // unmodified.
 }
 
 TEST_F(FPDFViewEmbeddertest, NamedDestsByName) {

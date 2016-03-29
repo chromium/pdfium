@@ -1410,7 +1410,7 @@ void CPDF_Creator::InitNewObjNumOffsets() {
   for (const auto& pair : m_pDocument->m_IndirectObjs) {
     const uint32_t objnum = pair.first;
     const CPDF_Object* pObj = pair.second;
-    if (pObj->GetObjNum() == -1)
+    if (pObj->GetObjNum() == CPDF_Object::kInvalidObjNum)
       continue;
     if (bIncremental) {
       if (!pObj->IsModified())

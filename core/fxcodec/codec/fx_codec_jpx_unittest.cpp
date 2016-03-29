@@ -296,7 +296,7 @@ TEST(fxcodec, DecodeDataSkip) {
 
     // Skiping within buffer is allowed.
     memset(buffer, 0xbd, sizeof(buffer));
-    EXPECT_EQ(1, opj_skip_from_memory(1, &dd));
+    EXPECT_EQ(1u, opj_skip_from_memory(1, &dd));
     EXPECT_EQ(1u, opj_read_from_memory(buffer, 1, &dd));
     EXPECT_EQ(0x01, buffer[0]);
     EXPECT_EQ(0xbd, buffer[1]);
@@ -310,7 +310,7 @@ TEST(fxcodec, DecodeDataSkip) {
 
     // Skiping to EOS-1 is possible.
     memset(buffer, 0xbd, sizeof(buffer));
-    EXPECT_EQ(4, opj_skip_from_memory(4, &dd));
+    EXPECT_EQ(4u, opj_skip_from_memory(4, &dd));
     EXPECT_EQ(1u, opj_read_from_memory(buffer, 1, &dd));
     EXPECT_EQ(0x87, buffer[0]);
     EXPECT_EQ(0xbd, buffer[1]);
@@ -325,7 +325,7 @@ TEST(fxcodec, DecodeDataSkip) {
 
     // Skiping directly to EOS is allowed.
     memset(buffer, 0xbd, sizeof(buffer));
-    EXPECT_EQ(8, opj_skip_from_memory(8, &dd));
+    EXPECT_EQ(8u, opj_skip_from_memory(8, &dd));
 
     // Next read fails.
     EXPECT_EQ(kReadError, opj_read_from_memory(buffer, 1, &dd));
@@ -336,7 +336,7 @@ TEST(fxcodec, DecodeDataSkip) {
 
     // Skipping beyond end of stream is allowed and returns full distance.
     memset(buffer, 0xbd, sizeof(buffer));
-    EXPECT_EQ(9, opj_skip_from_memory(9, &dd));
+    EXPECT_EQ(9u, opj_skip_from_memory(9, &dd));
 
     // Next read fails.
     EXPECT_EQ(kReadError, opj_read_from_memory(buffer, 1, &dd));
@@ -348,7 +348,7 @@ TEST(fxcodec, DecodeDataSkip) {
     // Skipping way beyond EOS is allowd, doesn't wrap, and returns
     // full distance.
     memset(buffer, 0xbd, sizeof(buffer));
-    EXPECT_EQ(4, opj_skip_from_memory(4, &dd));
+    EXPECT_EQ(4u, opj_skip_from_memory(4, &dd));
     EXPECT_EQ(std::numeric_limits<OPJ_OFF_T>::max(),
               opj_skip_from_memory(std::numeric_limits<OPJ_OFF_T>::max(), &dd));
 
@@ -361,7 +361,7 @@ TEST(fxcodec, DecodeDataSkip) {
 
     // Negative skip within buffer not is allowed, position unchanged.
     memset(buffer, 0xbd, sizeof(buffer));
-    EXPECT_EQ(4, opj_skip_from_memory(4, &dd));
+    EXPECT_EQ(4u, opj_skip_from_memory(4, &dd));
     EXPECT_EQ(kSkipError, opj_skip_from_memory(-2, &dd));
 
     // Next read succeeds as if nothing has happenned.
@@ -383,12 +383,12 @@ TEST(fxcodec, DecodeDataSkip) {
 
     // Negative skip way before buffer is not allowed, doesn't wrap
     memset(buffer, 0xbd, sizeof(buffer));
-    EXPECT_EQ(4, opj_skip_from_memory(4, &dd));
+    EXPECT_EQ(4u, opj_skip_from_memory(4, &dd));
     EXPECT_EQ(kSkipError,
               opj_skip_from_memory(std::numeric_limits<OPJ_OFF_T>::min(), &dd));
 
     // Next read succeeds. If it fails, it may mean we wrapped.
-    EXPECT_EQ(1, opj_read_from_memory(buffer, 1, &dd));
+    EXPECT_EQ(1u, opj_read_from_memory(buffer, 1, &dd));
     EXPECT_EQ(0x84, buffer[0]);
     EXPECT_EQ(0xbd, buffer[1]);
   }
@@ -397,7 +397,7 @@ TEST(fxcodec, DecodeDataSkip) {
 
     // Negative skip after EOS isn't alowed, still EOS.
     memset(buffer, 0xbd, sizeof(buffer));
-    EXPECT_EQ(8, opj_skip_from_memory(8, &dd));
+    EXPECT_EQ(8u, opj_skip_from_memory(8, &dd));
     EXPECT_EQ(kSkipError, opj_skip_from_memory(-4, &dd));
 
     // Next read fails.
@@ -420,7 +420,7 @@ TEST(fxcodec, DecodeDataSeek) {
   // Seeking before start returns error leaving position unchanged.
   memset(buffer, 0xbd, sizeof(buffer));
   EXPECT_FALSE(opj_seek_from_memory(-1, &dd));
-  EXPECT_EQ(1, opj_read_from_memory(buffer, 1, &dd));
+  EXPECT_EQ(1u, opj_read_from_memory(buffer, 1, &dd));
   EXPECT_EQ(0x02, buffer[0]);
   EXPECT_EQ(0xbd, buffer[1]);
 
@@ -428,7 +428,7 @@ TEST(fxcodec, DecodeDataSeek) {
   memset(buffer, 0xbd, sizeof(buffer));
   EXPECT_FALSE(
       opj_seek_from_memory(std::numeric_limits<OPJ_OFF_T>::min(), &dd));
-  EXPECT_EQ(1, opj_read_from_memory(buffer, 1, &dd));
+  EXPECT_EQ(1u, opj_read_from_memory(buffer, 1, &dd));
   EXPECT_EQ(0x03, buffer[0]);
   EXPECT_EQ(0xbd, buffer[1]);
 
@@ -498,7 +498,7 @@ TEST(fxcodec, YUV420ToRGB) {
     bool expected;
   } cases[] = {{0, false}, {1, false},  {30, false}, {31, true},
                {32, true}, {33, false}, {34, false}, {UINT_MAX, false}};
-  for (int i = 0; i < sizeof(cases) / sizeof(cases[0]); ++i) {
+  for (size_t i = 0; i < sizeof(cases) / sizeof(cases[0]); ++i) {
     y.w = cases[i].w;
     y.h = y.w;
     img.x1 = y.w;

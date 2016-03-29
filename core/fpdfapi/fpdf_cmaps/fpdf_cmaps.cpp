@@ -18,11 +18,10 @@ void FPDFAPI_FindEmbeddedCMap(const char* name,
       CPDF_ModuleMgr::Get()->GetPageModule()->GetFontGlobals();
   const FXCMAP_CMap* pCMaps =
       pFontGlobals->m_EmbeddedCharsets[charset].m_pMapList;
-  int nCMaps = pFontGlobals->m_EmbeddedCharsets[charset].m_Count;
-  for (int i = 0; i < nCMaps; i++) {
-    if (FXSYS_strcmp(name, pCMaps[i].m_Name)) {
+  for (uint32_t i = 0; i < pFontGlobals->m_EmbeddedCharsets[charset].m_Count;
+       i++) {
+    if (FXSYS_strcmp(name, pCMaps[i].m_Name))
       continue;
-    }
     pMap = &pCMaps[i];
     break;
   }

@@ -44,7 +44,7 @@ class CPDF_Array : public CPDF_Object {
   void InsertAt(uint32_t index,
                 CPDF_Object* pObj,
                 CPDF_IndirectObjectHolder* pObjs = nullptr);
-  void RemoveAt(uint32_t index, int nCount = 1);
+  void RemoveAt(uint32_t index, uint32_t nCount = 1);
 
   void Add(CPDF_Object* pObj, CPDF_IndirectObjectHolder* pObjs = nullptr);
   void AddNumber(FX_FLOAT f);
