@@ -636,10 +636,4 @@ class CPDF_DIBTransferFunc : public CFX_FilteredDIB {
   const uint8_t* m_RampB;
 };
 
-struct _CPDF_UniqueKeyGen {
-  void Generate(int count, ...);
-  FX_CHAR m_Key[128];
-  int m_KeyLen;
-};
-
 #endif  // CORE_FPDFAPI_FPDF_RENDER_RENDER_INT_H_

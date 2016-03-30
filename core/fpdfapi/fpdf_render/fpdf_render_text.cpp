@@ -23,6 +23,27 @@
 #include "core/fpdfapi/fpdf_render/include/cpdf_textrenderer.h"
 #include "core/include/fxge/fx_ge.h"
 
+namespace {
+
+struct CPDF_UniqueKeyGen {
+  void Generate(int count, ...);
+  FX_CHAR m_Key[128];
+  int m_KeyLen;
+};
+
+void CPDF_UniqueKeyGen::Generate(int count, ...) {
+  va_list argList;
+  va_start(argList, count);
+  for (int i = 0; i < count; i++) {
+    int p = va_arg(argList, int);
+    ((uint32_t*)m_Key)[i] = p;
+  }
+  va_end(argList);
+  m_KeyLen = count * sizeof(uint32_t);
+}
+
+}  // namespace
+
 CPDF_Type3Cache::~CPDF_Type3Cache() {
   for (const auto& pair : m_SizeMap) {
     delete pair.second;
@@ -33,7 +54,7 @@ CFX_GlyphBitmap* CPDF_Type3Cache::LoadGlyph(uint32_t charcode,
                                             const CFX_Matrix* pMatrix,
                                             FX_FLOAT retinaScaleX,
                                             FX_FLOAT retinaScaleY) {
-  _CPDF_UniqueKeyGen keygen;
+  CPDF_UniqueKeyGen keygen;
   keygen.Generate(
       4, FXSYS_round(pMatrix->a * 10000), FXSYS_round(pMatrix->b * 10000),
       FXSYS_round(pMatrix->c * 10000), FXSYS_round(pMatrix->d * 10000));
@@ -187,16 +208,7 @@ CFX_GlyphBitmap* CPDF_Type3Cache::RenderGlyph(CPDF_Type3Glyphs* pSize,
   delete pResBitmap;
   return pGlyph;
 }
-void _CPDF_UniqueKeyGen::Generate(int count, ...) {
-  va_list argList;
-  va_start(argList, count);
-  for (int i = 0; i < count; i++) {
-    int p = va_arg(argList, int);
-    ((uint32_t*)m_Key)[i] = p;
-  }
-  va_end(argList);
-  m_KeyLen = count * sizeof(uint32_t);
-}
+
 FX_BOOL CPDF_RenderStatus::ProcessText(const CPDF_TextObject* textobj,
                                        const CFX_Matrix* pObj2Device,
                                        CFX_PathData* pClippingPath) {
