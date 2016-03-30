@@ -57,7 +57,6 @@
       'PNG_PREFIX',
       'PNG_USE_READ_MACROS',
       'V8_DEPRECATION_WARNINGS',
-      '_CRT_SECURE_NO_WARNINGS',
     ],
     'include_dirs': [
       # This is implicit in GN.
@@ -94,7 +93,7 @@
       }],
     ],
     'msvs_disabled_warnings': [
-      4005, 4018, 4146, 4333, 4345, 4267,
+      4018, 4146, 4333, 4345, 4267,
     ],
     'variables': {
       'clang_warning_flags': [

@@ -18,7 +18,6 @@ config("pdfium_config") {
     "PNG_PREFIX",
     "PNG_USE_READ_MACROS",
     "V8_DEPRECATION_WARNINGS",
-    "_CRT_SECURE_NO_WARNINGS",
   ]
 
   if (pdf_use_skia) {

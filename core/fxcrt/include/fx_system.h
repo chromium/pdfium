@@ -54,7 +54,6 @@
 #endif
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-#define _CRT_SECURE_NO_WARNINGS
 #include <windows.h>
 #include <sal.h>
 #endif
