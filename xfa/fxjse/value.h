@@ -125,12 +125,12 @@ class CFXJSE_Value {
         v8::Local<v8::Value>::New(m_pIsolate, m_hValue);
     return static_cast<FX_FLOAT>(hValue->NumberValue());
   }
-  V8_INLINE FXJSE_DOUBLE ToDouble() const {
+  V8_INLINE double ToDouble() const {
     ASSERT(!m_hValue.IsEmpty());
     CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
     v8::Local<v8::Value> hValue =
         v8::Local<v8::Value>::New(m_pIsolate, m_hValue);
-    return static_cast<FXJSE_DOUBLE>(hValue->NumberValue());
+    return static_cast<double>(hValue->NumberValue());
   }
   V8_INLINE int32_t ToInteger() const {
     ASSERT(!m_hValue.IsEmpty());
@@ -172,7 +172,7 @@ class CFXJSE_Value {
     v8::Local<v8::Value> hValue = v8::Integer::New(m_pIsolate, nInteger);
     m_hValue.Reset(m_pIsolate, hValue);
   }
-  V8_INLINE void SetDouble(FXJSE_DOUBLE dDouble) {
+  V8_INLINE void SetDouble(double dDouble) {
     CFXJSE_ScopeUtil_IsolateHandle scope(m_pIsolate);
     v8::Local<v8::Value> hValue = v8::Number::New(m_pIsolate, dDouble);
     m_hValue.Reset(m_pIsolate, hValue);
@@ -192,7 +192,7 @@ class CFXJSE_Value {
   }
   void SetHostObject(void* lpObject, CFXJSE_Class* lpClass);
   void SetArray(uint32_t uValueCount, CFXJSE_Value** rgValues);
-  void SetDate(FXJSE_DOUBLE dDouble);
+  void SetDate(double dDouble);
 
  public:
   FX_BOOL GetObjectProperty(const CFX_ByteStringC& szPropName,

@@ -69,7 +69,7 @@ FX_FLOAT FXJSE_Value_ToFloat(FXJSE_HVALUE hValue) {
   return reinterpret_cast<CFXJSE_Value*>(hValue)->ToFloat();
 }
 
-FXJSE_DOUBLE FXJSE_Value_ToDouble(FXJSE_HVALUE hValue) {
+double FXJSE_Value_ToDouble(FXJSE_HVALUE hValue) {
   return reinterpret_cast<CFXJSE_Value*>(hValue)->ToDouble();
 }
 
@@ -112,7 +112,7 @@ void FXJSE_Value_SetFloat(FXJSE_HVALUE hValue, FX_FLOAT fFloat) {
   reinterpret_cast<CFXJSE_Value*>(hValue)->SetFloat(fFloat);
 }
 
-void FXJSE_Value_SetDouble(FXJSE_HVALUE hValue, FXJSE_DOUBLE dDouble) {
+void FXJSE_Value_SetDouble(FXJSE_HVALUE hValue, double dDouble) {
   reinterpret_cast<CFXJSE_Value*>(hValue)->SetDouble(dDouble);
 }
 
@@ -136,7 +136,7 @@ void FXJSE_Value_SetArray(FXJSE_HVALUE hValue,
       ->SetArray(uValueCount, reinterpret_cast<CFXJSE_Value**>(rgValues));
 }
 
-void FXJSE_Value_SetDate(FXJSE_HVALUE hValue, FXJSE_DOUBLE dDouble) {
+void FXJSE_Value_SetDate(FXJSE_HVALUE hValue, double dDouble) {
   reinterpret_cast<CFXJSE_Value*>(hValue)->SetDate(dDouble);
 }
 
@@ -361,7 +361,7 @@ void CFXJSE_Value::SetArray(uint32_t uValueCount, CFXJSE_Value** rgValues) {
   m_hValue.Reset(m_pIsolate, hArrayObject);
 }
 
-void CFXJSE_Value::SetDate(FXJSE_DOUBLE dDouble) {
+void CFXJSE_Value::SetDate(double dDouble) {
   CFXJSE_ScopeUtil_IsolateHandleRootContext scope(m_pIsolate);
   v8::Local<v8::Value> hDate = v8::Date::New(m_pIsolate, dDouble);
   m_hValue.Reset(m_pIsolate, hDate);
