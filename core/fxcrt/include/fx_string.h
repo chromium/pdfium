@@ -10,6 +10,7 @@
 #include <stdint.h>  // For intptr_t.
 #include <algorithm>
 
+#include "core/fxcrt/include/cfx_retain_ptr.h"
 #include "core/fxcrt/include/fx_memory.h"
 #include "core/fxcrt/include/fx_system.h"
 
@@ -92,11 +93,9 @@ class CFX_ByteStringC {
   uint32_t GetID(FX_STRSIZE start_pos = 0) const;
 
   const uint8_t* GetPtr() const { return m_Ptr; }
-
   const FX_CHAR* GetCStr() const { return (const FX_CHAR*)m_Ptr; }
 
   FX_STRSIZE GetLength() const { return m_Length; }
-
   bool IsEmpty() const { return m_Length == 0; }
 
   uint8_t GetAt(FX_STRSIZE index) const { return m_Ptr[index]; }
@@ -144,16 +143,9 @@ class CFX_ByteString {
  public:
   typedef FX_CHAR value_type;
 
-  CFX_ByteString() : m_pData(nullptr) {}
-
-  // Copy constructor.
-  CFX_ByteString(const CFX_ByteString& str);
-
-  // Move constructor.
-  inline CFX_ByteString(CFX_ByteString&& other) {
-    m_pData = other.m_pData;
-    other.m_pData = nullptr;
-  }
+  CFX_ByteString() {}
+  CFX_ByteString(const CFX_ByteString& other) : m_pData(other.m_pData) {}
+  CFX_ByteString(CFX_ByteString&& other) { m_pData.Swap(other.m_pData); }
 
   CFX_ByteString(char ch);
   CFX_ByteString(const FX_CHAR* ptr)
@@ -167,8 +159,11 @@ class CFX_ByteString {
 
   ~CFX_ByteString();
 
-  static CFX_ByteString FromUnicode(const FX_WCHAR* ptr, FX_STRSIZE len = -1);
+  // Deprecated -- use clear().
+  void Empty() { m_pData.Reset(); }
+  void clear() { m_pData.Reset(); }
 
+  static CFX_ByteString FromUnicode(const FX_WCHAR* ptr, FX_STRSIZE len = -1);
   static CFX_ByteString FromUnicode(const CFX_WideString& str);
 
   // Explicit conversion to C-style string.
@@ -190,7 +185,6 @@ class CFX_ByteString {
   }
 
   FX_STRSIZE GetLength() const { return m_pData ? m_pData->m_nDataLength : 0; }
-
   bool IsEmpty() const { return !GetLength(); }
 
   int Compare(const CFX_ByteStringC& str) const;
@@ -217,24 +211,16 @@ class CFX_ByteString {
     return result < 0 || (result == 0 && GetLength() < str.GetLength());
   }
 
-  void Empty();
-
   const CFX_ByteString& operator=(const FX_CHAR* str);
-
   const CFX_ByteString& operator=(const CFX_ByteStringC& bstrc);
-
   const CFX_ByteString& operator=(const CFX_ByteString& stringSrc);
-
   const CFX_ByteString& operator=(const CFX_BinaryBuf& buf);
 
   void Load(const uint8_t* str, FX_STRSIZE len);
 
   const CFX_ByteString& operator+=(FX_CHAR ch);
-
   const CFX_ByteString& operator+=(const FX_CHAR* str);
-
   const CFX_ByteString& operator+=(const CFX_ByteString& str);
-
   const CFX_ByteString& operator+=(const CFX_ByteStringC& bstrc);
 
   uint8_t GetAt(FX_STRSIZE nIndex) const {
@@ -246,49 +232,34 @@ class CFX_ByteString {
   }
 
   void SetAt(FX_STRSIZE nIndex, FX_CHAR ch);
-
   FX_STRSIZE Insert(FX_STRSIZE index, FX_CHAR ch);
-
   FX_STRSIZE Delete(FX_STRSIZE index, FX_STRSIZE count = 1);
 
   void Format(const FX_CHAR* lpszFormat, ...);
-
   void FormatV(const FX_CHAR* lpszFormat, va_list argList);
 
   void Reserve(FX_STRSIZE len);
-
   FX_CHAR* GetBuffer(FX_STRSIZE len);
-
   void ReleaseBuffer(FX_STRSIZE len = -1);
 
   CFX_ByteString Mid(FX_STRSIZE first) const;
-
   CFX_ByteString Mid(FX_STRSIZE first, FX_STRSIZE count) const;
-
   CFX_ByteString Left(FX_STRSIZE count) const;
-
   CFX_ByteString Right(FX_STRSIZE count) const;
 
   FX_STRSIZE Find(const CFX_ByteStringC& lpszSub, FX_STRSIZE start = 0) const;
-
   FX_STRSIZE Find(FX_CHAR ch, FX_STRSIZE start = 0) const;
-
   FX_STRSIZE ReverseFind(FX_CHAR ch) const;
 
   void MakeLower();
-
   void MakeUpper();
 
   void TrimRight();
-
   void TrimRight(FX_CHAR chTarget);
-
   void TrimRight(const CFX_ByteStringC& lpszTargets);
 
   void TrimLeft();
-
   void TrimLeft(FX_CHAR chTarget);
-
   void TrimLeft(const CFX_ByteStringC& lpszTargets);
 
   FX_STRSIZE Replace(const CFX_ByteStringC& lpszOld,
@@ -308,52 +279,62 @@ class CFX_ByteString {
   static CFX_ByteString FormatFloat(FX_FLOAT f, int precision = 0);
 
  protected:
-  // To ensure ref counts do not overflow, consider the worst possible case:
-  // the entire address space contains nothing but pointers to this object.
-  // Since the count increments with each new pointer, the largest value is
-  // the number of pointers that can fit into the address space. The size of
-  // the address space itself is a good upper bound on it; we need not go
-  // larger.
   class StringData {
    public:
-    static StringData* Create(int nLen);
+    static StringData* Create(FX_STRSIZE nLen);
+    static StringData* Create(const StringData& other);
+    static StringData* Create(const FX_CHAR* pStr, FX_STRSIZE nLen);
+
     void Retain() { ++m_nRefs; }
     void Release() {
       if (--m_nRefs <= 0)
         FX_Free(this);
     }
 
+    bool CanOperateInPlace(FX_STRSIZE nTotalLen) const {
+      return m_nRefs <= 1 && nTotalLen <= m_nAllocLength;
+    }
+
+    void CopyContents(const StringData& other);
+    void CopyContents(const FX_CHAR* pStr, FX_STRSIZE nLen);
+    void CopyContentsAt(FX_STRSIZE offset,
+                        const FX_CHAR* pStr,
+                        FX_STRSIZE nLen);
+
+    // To ensure ref counts do not overflow, consider the worst possible case:
+    // the entire address space contains nothing but pointers to this object.
+    // Since the count increments with each new pointer, the largest value is
+    // the number of pointers that can fit into the address space. The size of
+    // the address space itself is a good upper bound on it.
     intptr_t m_nRefs;  // Would prefer ssize_t, but no windows support.
+
+    // |FX_STRSIZE| is currently typedef'd as |int|.
+    // TODO(palmer): It should be a |size_t|, or at least unsigned.
+    // These lengths do not include the terminating NUL, but the underlying
+    // buffer is sized to be capable of holding it.
     FX_STRSIZE m_nDataLength;
     FX_STRSIZE m_nAllocLength;
+
+    // Not really 1, variable size.
     FX_CHAR m_String[1];
 
    private:
-    StringData(FX_STRSIZE dataLen, FX_STRSIZE allocLen)
-        : m_nRefs(1), m_nDataLength(dataLen), m_nAllocLength(allocLen) {
-      FXSYS_assert(dataLen >= 0);
-      FXSYS_assert(allocLen >= 0);
-      FXSYS_assert(dataLen <= allocLen);
-      m_String[dataLen] = 0;
-    }
+    StringData(FX_STRSIZE dataLen, FX_STRSIZE allocLen);
     ~StringData() = delete;
   };
 
+  void CopyBeforeWrite();
+  void AllocBeforeWrite(FX_STRSIZE nLen);
   void AllocCopy(CFX_ByteString& dest,
                  FX_STRSIZE nCopyLen,
                  FX_STRSIZE nCopyIndex) const;
-  void AssignCopy(FX_STRSIZE nSrcLen, const FX_CHAR* lpszSrcData);
-  void ConcatCopy(FX_STRSIZE nSrc1Len,
-                  const FX_CHAR* lpszSrc1Data,
-                  FX_STRSIZE nSrc2Len,
-                  const FX_CHAR* lpszSrc2Data);
-  void ConcatInPlace(FX_STRSIZE nSrcLen, const FX_CHAR* lpszSrcData);
-  void CopyBeforeWrite();
-  void AllocBeforeWrite(FX_STRSIZE nLen);
+  void AssignCopy(const FX_CHAR* pSrcData, FX_STRSIZE nSrcLen);
+  void Concat(const FX_CHAR* lpszSrcData, FX_STRSIZE nSrcLen);
 
-  StringData* m_pData;
-  friend class fxcrt_ByteStringConcatInPlace_Test;
+  CFX_RetainPtr<StringData> m_pData;
+  friend class fxcrt_ByteStringConcat_Test;
 };
+
 inline CFX_ByteStringC::CFX_ByteStringC(const CFX_ByteString& src) {
   m_Ptr = (const uint8_t*)src;
   m_Length = src.GetLength();
@@ -421,6 +402,7 @@ inline CFX_ByteString operator+(const CFX_ByteStringC& str1,
                                 const CFX_ByteString& str2) {
   return CFX_ByteString(str1, str2);
 }
+
 class CFX_WideStringC {
  public:
   typedef FX_WCHAR value_type;
@@ -478,7 +460,6 @@ class CFX_WideStringC {
   const FX_WCHAR* GetPtr() const { return m_Ptr; }
 
   FX_STRSIZE GetLength() const { return m_Length; }
-
   bool IsEmpty() const { return m_Length == 0; }
 
   FX_WCHAR GetAt(FX_STRSIZE index) const { return m_Ptr[index]; }
@@ -530,6 +511,7 @@ class CFX_WideStringC {
  private:
   void* operator new(size_t) throw() { return NULL; }
 };
+
 inline bool operator==(const wchar_t* lhs, const CFX_WideStringC& rhs) {
   return rhs == lhs;
 }
@@ -550,7 +532,7 @@ class CFX_WideString {
   CFX_WideString(const CFX_WideString& str);
 
   // Move constructor.
-  inline CFX_WideString(CFX_WideString&& other) {
+  CFX_WideString(CFX_WideString&& other) {
     m_pData = other.m_pData;
     other.m_pData = nullptr;
   }
@@ -559,22 +541,18 @@ class CFX_WideString {
       : CFX_WideString(ptr, ptr ? FXSYS_wcslen(ptr) : 0) {}
 
   CFX_WideString(const FX_WCHAR* ptr, FX_STRSIZE len);
-
   CFX_WideString(FX_WCHAR ch);
 
   CFX_WideString(const CFX_WideStringC& str);
-
   CFX_WideString(const CFX_WideStringC& str1, const CFX_WideStringC& str2);
 
   ~CFX_WideString();
 
   static CFX_WideString FromLocal(const CFX_ByteString& str);
-
   static CFX_WideString FromCodePage(const CFX_ByteString& str,
                                      uint16_t codepage);
 
   static CFX_WideString FromUTF8(const char* str, FX_STRSIZE len);
-
   static CFX_WideString FromUTF16LE(const unsigned short* str, FX_STRSIZE len);
 
   static FX_STRSIZE WStringLength(const unsigned short* str);
@@ -588,21 +566,15 @@ class CFX_WideString {
   void Empty();
 
   bool IsEmpty() const { return !GetLength(); }
-
   FX_STRSIZE GetLength() const { return m_pData ? m_pData->m_nDataLength : 0; }
 
   const CFX_WideString& operator=(const FX_WCHAR* str);
-
   const CFX_WideString& operator=(const CFX_WideString& stringSrc);
-
   const CFX_WideString& operator=(const CFX_WideStringC& stringSrc);
 
   const CFX_WideString& operator+=(const FX_WCHAR* str);
-
   const CFX_WideString& operator+=(FX_WCHAR ch);
-
   const CFX_WideString& operator+=(const CFX_WideString& str);
-
   const CFX_WideString& operator+=(const CFX_WideStringC& str);
 
   bool operator==(const wchar_t* ptr) const { return Equal(ptr); }
@@ -632,9 +604,7 @@ class CFX_WideString {
   void SetAt(FX_STRSIZE nIndex, FX_WCHAR ch);
 
   int Compare(const FX_WCHAR* str) const;
-
   int Compare(const CFX_WideString& str) const;
-
   int CompareNoCase(const FX_WCHAR* str) const;
 
   bool Equal(const wchar_t* ptr) const;
@@ -642,57 +612,40 @@ class CFX_WideString {
   bool Equal(const CFX_WideString& other) const;
 
   CFX_WideString Mid(FX_STRSIZE first) const;
-
   CFX_WideString Mid(FX_STRSIZE first, FX_STRSIZE count) const;
-
   CFX_WideString Left(FX_STRSIZE count) const;
-
   CFX_WideString Right(FX_STRSIZE count) const;
 
   FX_STRSIZE Insert(FX_STRSIZE index, FX_WCHAR ch);
-
   FX_STRSIZE Delete(FX_STRSIZE index, FX_STRSIZE count = 1);
 
   void Format(const FX_WCHAR* lpszFormat, ...);
-
   void FormatV(const FX_WCHAR* lpszFormat, va_list argList);
 
   void MakeLower();
-
   void MakeUpper();
 
   void TrimRight();
-
   void TrimRight(FX_WCHAR chTarget);
-
   void TrimRight(const FX_WCHAR* lpszTargets);
 
   void TrimLeft();
-
   void TrimLeft(FX_WCHAR chTarget);
-
   void TrimLeft(const FX_WCHAR* lpszTargets);
 
   void Reserve(FX_STRSIZE len);
-
   FX_WCHAR* GetBuffer(FX_STRSIZE len);
-
   void ReleaseBuffer(FX_STRSIZE len = -1);
 
   int GetInteger() const;
-
   FX_FLOAT GetFloat() const;
 
   FX_STRSIZE Find(const FX_WCHAR* lpszSub, FX_STRSIZE start = 0) const;
-
   FX_STRSIZE Find(FX_WCHAR ch, FX_STRSIZE start = 0) const;
-
   FX_STRSIZE Replace(const FX_WCHAR* lpszOld, const FX_WCHAR* lpszNew);
-
   FX_STRSIZE Remove(FX_WCHAR ch);
 
   CFX_ByteString UTF8Encode() const;
-
   CFX_ByteString UTF16LE_Encode() const;
 
  protected:
