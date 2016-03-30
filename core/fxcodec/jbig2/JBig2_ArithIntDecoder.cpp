@@ -75,7 +75,7 @@ bool CJBig2_ArithIntDecoder::decode(CJBig2_ArithDecoder* pArithDecoder,
 
 CJBig2_ArithIaidDecoder::CJBig2_ArithIaidDecoder(unsigned char SBSYMCODELENA)
     : SBSYMCODELEN(SBSYMCODELENA) {
-  m_IAID.resize(1 << SBSYMCODELEN);
+  m_IAID.resize(static_cast<size_t>(1) << SBSYMCODELEN);
 }
 
 CJBig2_ArithIaidDecoder::~CJBig2_ArithIaidDecoder() {}
