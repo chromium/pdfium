@@ -93,7 +93,7 @@
       }],
     ],
     'msvs_disabled_warnings': [
-      4018, 4146, 4333, 4345, 4267,
+      4267,
     ],
     'variables': {
       'clang_warning_flags': [

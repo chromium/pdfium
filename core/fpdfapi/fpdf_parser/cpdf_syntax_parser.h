@@ -83,7 +83,7 @@ class CPDF_SyntaxParser {
   FX_FILESIZE m_Pos;
   int m_MetadataObjnum;
   IFX_FileRead* m_pFileAccess;
-  uint32_t m_HeaderOffset;
+  FX_FILESIZE m_HeaderOffset;
   FX_FILESIZE m_FileLen;
   uint8_t* m_pFileBuf;
   uint32_t m_BufSize;

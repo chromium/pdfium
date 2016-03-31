@@ -480,13 +480,13 @@ DLLEXPORT void STDCALL FPDF_Widget_Copy(FPDF_DOCUMENT document,
   pXFAMenuHander->Copy((IXFA_Widget*)hWidget, wsCpText);
 
   CFX_ByteString bsCpText = wsCpText.UTF16LE_Encode();
-  int len = bsCpText.GetLength() / sizeof(unsigned short);
+  uint32_t len = bsCpText.GetLength() / sizeof(unsigned short);
   if (wsText == NULL) {
     *size = len;
     return;
   }
 
-  int real_size = len < *size ? len : *size;
+  uint32_t real_size = len < *size ? len : *size;
   if (real_size > 0) {
     FXSYS_memcpy((void*)wsText,
                  bsCpText.GetBuffer(real_size * sizeof(unsigned short)),
@@ -516,13 +516,13 @@ DLLEXPORT void STDCALL FPDF_Widget_Cut(FPDF_DOCUMENT document,
   pXFAMenuHander->Cut((IXFA_Widget*)hWidget, wsCpText);
 
   CFX_ByteString bsCpText = wsCpText.UTF16LE_Encode();
-  int len = bsCpText.GetLength() / sizeof(unsigned short);
+  uint32_t len = bsCpText.GetLength() / sizeof(unsigned short);
   if (wsText == NULL) {
     *size = len;
     return;
   }
 
-  int real_size = len < *size ? len : *size;
+  uint32_t real_size = len < *size ? len : *size;
   if (real_size > 0) {
     FXSYS_memcpy((void*)wsText,
                  bsCpText.GetBuffer(real_size * sizeof(unsigned short)),
@@ -625,13 +625,13 @@ FPDF_StringHandleGetStringByIndex(FPDF_STRINGHANDLE sHandle,
     return FALSE;
 
   std::vector<CFX_ByteString>* sSuggestWords = FromFPDFStringHandle(sHandle);
-  int len = (*sSuggestWords)[index].GetLength();
+  uint32_t len = (*sSuggestWords)[index].GetLength();
   if (!bsText) {
     *size = len;
     return TRUE;
   }
 
-  int real_size = len < *size ? len : *size;
+  uint32_t real_size = len < *size ? len : *size;
   if (real_size > 0)
     FXSYS_memcpy((void*)bsText, (const FX_CHAR*)(*sSuggestWords)[index],
                  real_size);

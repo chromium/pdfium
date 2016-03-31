@@ -716,10 +716,10 @@ FX_BOOL CPDF_DataAvail::CheckFirstPage(IPDF_DataAvail::DownloadHints* pHints) {
 FX_BOOL CPDF_DataAvail::IsDataAvail(FX_FILESIZE offset,
                                     uint32_t size,
                                     IPDF_DataAvail::DownloadHints* pHints) {
-  if (offset > m_dwFileLen)
+  if (offset < 0 || offset > m_dwFileLen)
     return TRUE;
 
-  FX_SAFE_DWORD safeSize = pdfium::base::checked_cast<uint32_t>(offset);
+  FX_SAFE_FILESIZE safeSize = offset;
   safeSize += size;
   safeSize += 512;
   if (!safeSize.IsValid() || safeSize.ValueOrDie() > m_dwFileLen)

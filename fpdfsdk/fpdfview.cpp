@@ -391,7 +391,7 @@ class CMemFile final : public IFX_FileRead {
     FX_SAFE_FILESIZE newPos =
         pdfium::base::checked_cast<FX_FILESIZE, size_t>(size);
     newPos += offset;
-    if (!newPos.IsValid() || newPos.ValueOrDie() > (uint32_t)m_size) {
+    if (!newPos.IsValid() || newPos.ValueOrDie() > m_size) {
       return FALSE;
     }
     FXSYS_memcpy(buffer, m_pBuf + offset, size);
@@ -1155,7 +1155,7 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDest(FPDF_DOCUMENT document,
 
   CFX_WideString wsName = PDF_DecodeText(bsName);
   CFX_ByteString utf16Name = wsName.UTF16LE_Encode();
-  unsigned int len = utf16Name.GetLength();
+  int len = utf16Name.GetLength();
   if (!buffer) {
     *buflen = len;
   } else if (*buflen >= len) {

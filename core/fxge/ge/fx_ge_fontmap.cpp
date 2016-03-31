@@ -681,15 +681,17 @@ void CFX_FontMapper::SetSystemFontInfo(IFX_SystemFontInfo* pFontInfo) {
   }
   m_pFontInfo = pFontInfo;
 }
+
 static CFX_ByteString GetStringFromTable(const uint8_t* string_ptr,
                                          uint32_t string_ptr_length,
                                          uint16_t offset,
                                          uint16_t length) {
-  if (string_ptr_length < offset + length) {
+  if (string_ptr_length < static_cast<uint32_t>(offset + length)) {
     return CFX_ByteString();
   }
   return CFX_ByteStringC(string_ptr + offset, length);
 }
+
 CFX_ByteString GetNameFromTT(const uint8_t* name_table,
                              uint32_t name_table_size,
                              uint32_t name_id) {

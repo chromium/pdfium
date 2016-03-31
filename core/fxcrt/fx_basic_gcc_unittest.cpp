@@ -16,15 +16,16 @@ TEST(fxcrt, FXSYS_atoi) {
   EXPECT_EQ(2345, FXSYS_atoi("+2345"));
   // The max value.
   EXPECT_EQ(2147483647, FXSYS_atoi("2147483647"));
-  // The min value.
-  EXPECT_EQ(-2147483648, FXSYS_atoi("-2147483648"));
+  // The min value. Written in -1 format to avoid "unary minus operator applied
+  // to unsigned type" warning.
+  EXPECT_EQ(-2147483647 - 1, FXSYS_atoi("-2147483648"));
   // With invalid char.
   EXPECT_EQ(9, FXSYS_atoi("9x9"));
 
   // Out of range values.
   EXPECT_EQ(2147483647, FXSYS_atoi("2147483623423412348"));
   EXPECT_EQ(2147483647, FXSYS_atoi("2147483648"));
-  EXPECT_EQ(-2147483648, FXSYS_atoi("-2147483650"));
+  EXPECT_EQ(-2147483647 - 1, FXSYS_atoi("-2147483650"));
 }
 
 TEST(fxcrt, FXSYS_atoi64) {
@@ -58,13 +59,13 @@ TEST(fxcrt, FXSYS_wtoi) {
   // The max value.
   EXPECT_EQ(2147483647, FXSYS_wtoi(L"2147483647"));
   // The min value.
-  EXPECT_EQ(-2147483648, FXSYS_wtoi(L"-2147483648"));
+  EXPECT_EQ(-2147483647 - 1, FXSYS_wtoi(L"-2147483648"));
   EXPECT_EQ(9, FXSYS_wtoi64(L"9x9"));
 
   // Out of range values.
   EXPECT_EQ(2147483647, FXSYS_wtoi(L"2147483623423412348"));
   EXPECT_EQ(2147483647, FXSYS_wtoi(L"2147483648"));
-  EXPECT_EQ(-2147483648, FXSYS_wtoi(L"-2147483652"));
+  EXPECT_EQ(-2147483647 - 1, FXSYS_wtoi(L"-2147483652"));
 }
 
 TEST(fxcrt, FXSYS_wtoi64) {

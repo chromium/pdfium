@@ -39,7 +39,10 @@ IntType FXSYS_StrToInt(const CharType* str) {
     num = num * 10 + val;
     str++;
   }
-  return neg ? -num : num;
+  // When it is a negative value, -num should be returned. Since num may be of
+  // unsigned type, use ~num + 1 to avoid the warning of applying unary minus
+  // operator to unsigned type.
+  return neg ? ~num + 1 : num;
 }
 
 template <typename T, typename UT, typename STR_T>
