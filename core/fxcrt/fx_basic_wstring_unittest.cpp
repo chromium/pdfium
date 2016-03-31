@@ -276,6 +276,230 @@ TEST(fxcrt, WideStringConcatInPlace) {
   EXPECT_EQ(L"xxxxxx", not_aliased);
 }
 
+TEST(fxcrt, WideStringRemove) {
+  CFX_WideString freed(L"FREED");
+  freed.Remove(L'E');
+  EXPECT_EQ(L"FRD", freed);
+  freed.Remove(L'F');
+  EXPECT_EQ(L"RD", freed);
+  freed.Remove(L'D');
+  EXPECT_EQ(L"R", freed);
+  freed.Remove(L'X');
+  EXPECT_EQ(L"R", freed);
+  freed.Remove(L'R');
+  EXPECT_EQ(L"", freed);
+
+  CFX_WideString empty;
+  empty.Remove(L'X');
+  EXPECT_EQ(L"", empty);
+}
+
+TEST(fxcrt, WideStringReplace) {
+  CFX_WideString fred(L"FRED");
+  fred.Replace(L"FR", L"BL");
+  EXPECT_EQ(L"BLED", fred);
+  fred.Replace(L"D", L"DDY");
+  EXPECT_EQ(L"BLEDDY", fred);
+  fred.Replace(L"LEDD", L"");
+  EXPECT_EQ(L"BY", fred);
+  fred.Replace(L"X", L"CLAMS");
+  EXPECT_EQ(L"BY", fred);
+  fred.Replace(L"BY", L"HI");
+  EXPECT_EQ(L"HI", fred);
+  fred.Replace(L"", L"CLAMS");
+  EXPECT_EQ(L"HI", fred);
+  fred.Replace(L"HI", L"");
+  EXPECT_EQ(L"", fred);
+}
+
+TEST(fxcrt, WideStringInsert) {
+  CFX_WideString fred(L"FRED");
+  fred.Insert(-1, 'X');
+  EXPECT_EQ(L"XFRED", fred);
+
+  fred.Insert(0, 'S');
+  EXPECT_EQ(L"SXFRED", fred);
+
+  fred.Insert(2, 'T');
+  EXPECT_EQ(L"SXTFRED", fred);
+
+  fred.Insert(5, 'U');
+  EXPECT_EQ(L"SXTFRUED", fred);
+
+  fred.Insert(8, 'V');
+  EXPECT_EQ(L"SXTFRUEDV", fred);
+
+  fred.Insert(12, 'P');
+  EXPECT_EQ(L"SXTFRUEDVP", fred);
+
+  {
+    CFX_WideString empty;
+    empty.Insert(-1, 'X');
+    EXPECT_EQ(L"X", empty);
+  }
+  {
+    CFX_WideString empty;
+    empty.Insert(0, 'X');
+    EXPECT_EQ(L"X", empty);
+  }
+  {
+    CFX_WideString empty;
+    empty.Insert(5, 'X');
+    EXPECT_EQ(L"X", empty);
+  }
+}
+
+TEST(fxcrt, WideStringDelete) {
+  CFX_WideString fred(L"FRED");
+  fred.Delete(0, 2);
+  EXPECT_EQ(L"ED", fred);
+  fred.Delete(1);
+  EXPECT_EQ(L"E", fred);
+  fred.Delete(-1);
+  EXPECT_EQ(L"", fred);
+  fred.Delete(1);
+  EXPECT_EQ(L"", fred);
+
+  CFX_WideString empty;
+  empty.Delete(0);
+  EXPECT_EQ(L"", empty);
+  empty.Delete(-1);
+  EXPECT_EQ(L"", empty);
+  empty.Delete(1);
+  EXPECT_EQ(L"", empty);
+}
+
+TEST(fxcrt, WideStringMid) {
+  CFX_WideString fred(L"FRED");
+  EXPECT_EQ(L"", fred.Mid(0, 0));
+  EXPECT_EQ(L"", fred.Mid(3, 0));
+  EXPECT_EQ(L"FRED", fred.Mid(0));
+  EXPECT_EQ(L"RED", fred.Mid(1));
+  EXPECT_EQ(L"ED", fred.Mid(2));
+  EXPECT_EQ(L"D", fred.Mid(3));
+  EXPECT_EQ(L"F", fred.Mid(0, 1));
+  EXPECT_EQ(L"R", fred.Mid(1, 1));
+  EXPECT_EQ(L"E", fred.Mid(2, 1));
+  EXPECT_EQ(L"D", fred.Mid(3, 1));
+  EXPECT_EQ(L"FR", fred.Mid(0, 2));
+  EXPECT_EQ(L"FRED", fred.Mid(0, 4));
+  EXPECT_EQ(L"FRED", fred.Mid(0, 10));
+
+  EXPECT_EQ(L"FR", fred.Mid(-1, 2));
+  EXPECT_EQ(L"RED", fred.Mid(1, 4));
+  EXPECT_EQ(L"", fred.Mid(4, 1));
+
+  CFX_WideString empty;
+  EXPECT_EQ(L"", empty.Mid(0, 0));
+  EXPECT_EQ(L"", empty.Mid(0));
+  EXPECT_EQ(L"", empty.Mid(1));
+  EXPECT_EQ(L"", empty.Mid(-1));
+}
+
+TEST(fxcrt, WideStringLeft) {
+  CFX_WideString fred(L"FRED");
+  EXPECT_EQ(L"", fred.Left(0));
+  EXPECT_EQ(L"F", fred.Left(1));
+  EXPECT_EQ(L"FR", fred.Left(2));
+  EXPECT_EQ(L"FRE", fred.Left(3));
+  EXPECT_EQ(L"FRED", fred.Left(4));
+
+  EXPECT_EQ(L"FRED", fred.Left(5));
+  EXPECT_EQ(L"", fred.Left(-1));
+
+  CFX_WideString empty;
+  EXPECT_EQ(L"", empty.Left(0));
+  EXPECT_EQ(L"", empty.Left(1));
+  EXPECT_EQ(L"", empty.Left(-1));
+}
+
+TEST(fxcrt, WideStringRight) {
+  CFX_WideString fred(L"FRED");
+  EXPECT_EQ(L"", fred.Right(0));
+  EXPECT_EQ(L"D", fred.Right(1));
+  EXPECT_EQ(L"ED", fred.Right(2));
+  EXPECT_EQ(L"RED", fred.Right(3));
+  EXPECT_EQ(L"FRED", fred.Right(4));
+
+  EXPECT_EQ(L"FRED", fred.Right(5));
+  EXPECT_EQ(L"", fred.Right(-1));
+
+  CFX_WideString empty;
+  EXPECT_EQ(L"", empty.Right(0));
+  EXPECT_EQ(L"", empty.Right(1));
+  EXPECT_EQ(L"", empty.Right(-1));
+}
+
+TEST(fxcrt, WideStringUpperLower) {
+  CFX_WideString fred(L"F-Re.42D");
+  fred.MakeLower();
+  EXPECT_EQ(L"f-re.42d", fred);
+  fred.MakeUpper();
+  EXPECT_EQ(L"F-RE.42D", fred);
+
+  CFX_WideString empty;
+  empty.MakeLower();
+  EXPECT_EQ(L"", empty);
+  empty.MakeUpper();
+  EXPECT_EQ(L"", empty);
+}
+
+TEST(fxcrt, WideStringTrimRight) {
+  CFX_WideString fred(L"  FRED  ");
+  fred.TrimRight();
+  EXPECT_EQ(L"  FRED", fred);
+  fred.TrimRight(L'E');
+  EXPECT_EQ(L"  FRED", fred);
+  fred.TrimRight(L'D');
+  EXPECT_EQ(L"  FRE", fred);
+  fred.TrimRight(L"ERP");
+  EXPECT_EQ(L"  F", fred);
+
+  CFX_WideString blank(L"   ");
+  blank.TrimRight(L"ERP");
+  EXPECT_EQ(L"   ", blank);
+  blank.TrimRight(L'E');
+  EXPECT_EQ(L"   ", blank);
+  blank.TrimRight();
+  EXPECT_EQ(L"", blank);
+
+  CFX_WideString empty;
+  empty.TrimRight(L"ERP");
+  EXPECT_EQ(L"", empty);
+  empty.TrimRight(L'E');
+  EXPECT_EQ(L"", empty);
+  empty.TrimRight();
+  EXPECT_EQ(L"", empty);
+}
+
+TEST(fxcrt, WideStringTrimLeft) {
+  CFX_WideString fred(L"  FRED  ");
+  fred.TrimLeft();
+  EXPECT_EQ(L"FRED  ", fred);
+  fred.TrimLeft(L'E');
+  EXPECT_EQ(L"FRED  ", fred);
+  fred.TrimLeft(L'F');
+  EXPECT_EQ(L"RED  ", fred);
+  fred.TrimLeft(L"ERP");
+  EXPECT_EQ(L"D  ", fred);
+
+  CFX_WideString blank(L"   ");
+  blank.TrimLeft(L"ERP");
+  EXPECT_EQ(L"   ", blank);
+  blank.TrimLeft(L'E');
+  EXPECT_EQ(L"   ", blank);
+  blank.TrimLeft();
+  EXPECT_EQ(L"", blank);
+
+  CFX_WideString empty;
+  empty.TrimLeft(L"ERP");
+  EXPECT_EQ(L"", empty);
+  empty.TrimLeft(L'E');
+  EXPECT_EQ(L"", empty);
+  empty.TrimLeft();
+  EXPECT_EQ(L"", empty);
+}
+
 TEST(fxcrt, WideStringUTF16LE_Encode) {
   struct UTF16LEEncodeCase {
     CFX_WideString ws;

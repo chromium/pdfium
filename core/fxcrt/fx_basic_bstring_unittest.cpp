@@ -315,6 +315,224 @@ TEST(fxcrt, ByteStringConcatInPlace) {
   EXPECT_EQ("xxxxxx", not_aliased);
 }
 
+TEST(fxcrt, ByteStringRemove) {
+  CFX_ByteString freed("FREED");
+  freed.Remove('E');
+  EXPECT_EQ("FRD", freed);
+  freed.Remove('F');
+  EXPECT_EQ("RD", freed);
+  freed.Remove('D');
+  EXPECT_EQ("R", freed);
+  freed.Remove('X');
+  EXPECT_EQ("R", freed);
+  freed.Remove('R');
+  EXPECT_EQ("", freed);
+
+  CFX_ByteString empty;
+  empty.Remove('X');
+  EXPECT_EQ("", empty);
+}
+
+TEST(fxcrt, ByteStringReplace) {
+  CFX_ByteString fred("FRED");
+  fred.Replace("FR", "BL");
+  EXPECT_EQ("BLED", fred);
+  fred.Replace("D", "DDY");
+  EXPECT_EQ("BLEDDY", fred);
+  fred.Replace("LEDD", "");
+  EXPECT_EQ("BY", fred);
+  fred.Replace("X", "CLAMS");
+  EXPECT_EQ("BY", fred);
+  fred.Replace("BY", "HI");
+  EXPECT_EQ("HI", fred);
+  fred.Replace("", "CLAMS");
+  EXPECT_EQ("HI", fred);
+  fred.Replace("HI", "");
+  EXPECT_EQ("", fred);
+}
+
+TEST(fxcrt, ByteStringInsert) {
+  CFX_ByteString fred("FRED");
+  fred.Insert(-1, 'X');
+  EXPECT_EQ("XFRED", fred);
+  fred.Insert(0, 'S');
+  EXPECT_EQ("SXFRED", fred);
+  fred.Insert(2, 'T');
+  EXPECT_EQ("SXTFRED", fred);
+  fred.Insert(5, 'U');
+  EXPECT_EQ("SXTFRUED", fred);
+  fred.Insert(8, 'V');
+  EXPECT_EQ("SXTFRUEDV", fred);
+  fred.Insert(12, 'P');
+  EXPECT_EQ("SXTFRUEDVP", fred);
+  {
+    CFX_ByteString empty;
+    empty.Insert(-1, 'X');
+    EXPECT_EQ("X", empty);
+  }
+  {
+    CFX_ByteString empty;
+    empty.Insert(0, 'X');
+    EXPECT_EQ("X", empty);
+  }
+  {
+    CFX_ByteString empty;
+    empty.Insert(5, 'X');
+    EXPECT_EQ("X", empty);
+  }
+}
+
+TEST(fxcrt, ByteStringDelete) {
+  CFX_ByteString fred("FRED");
+  fred.Delete(0, 2);
+  EXPECT_EQ("ED", fred);
+  fred.Delete(1);
+  EXPECT_EQ("E", fred);
+  fred.Delete(-1);
+  EXPECT_EQ("", fred);
+  fred.Delete(1);
+  EXPECT_EQ("", fred);
+
+  CFX_ByteString empty;
+  empty.Delete(0);
+  EXPECT_EQ("", empty);
+  empty.Delete(-1);
+  EXPECT_EQ("", empty);
+  empty.Delete(1);
+  EXPECT_EQ("", empty);
+}
+
+TEST(fxcrt, ByteStringMid) {
+  CFX_ByteString fred("FRED");
+  EXPECT_EQ("", fred.Mid(0, 0));
+  EXPECT_EQ("", fred.Mid(3, 0));
+  EXPECT_EQ("FRED", fred.Mid(0));
+  EXPECT_EQ("RED", fred.Mid(1));
+  EXPECT_EQ("ED", fred.Mid(2));
+  EXPECT_EQ("D", fred.Mid(3));
+  EXPECT_EQ("F", fred.Mid(0, 1));
+  EXPECT_EQ("R", fred.Mid(1, 1));
+  EXPECT_EQ("E", fred.Mid(2, 1));
+  EXPECT_EQ("D", fred.Mid(3, 1));
+  EXPECT_EQ("FR", fred.Mid(0, 2));
+  EXPECT_EQ("FRED", fred.Mid(0, 4));
+  EXPECT_EQ("FRED", fred.Mid(0, 10));
+
+  EXPECT_EQ("FR", fred.Mid(-1, 2));
+  EXPECT_EQ("RED", fred.Mid(1, 4));
+  EXPECT_EQ("", fred.Mid(4, 1));
+
+  CFX_ByteString empty;
+  EXPECT_EQ("", empty.Mid(0, 0));
+  EXPECT_EQ("", empty.Mid(0));
+  EXPECT_EQ("", empty.Mid(1));
+  EXPECT_EQ("", empty.Mid(-1));
+}
+
+TEST(fxcrt, ByteStringLeft) {
+  CFX_ByteString fred("FRED");
+  EXPECT_EQ("", fred.Left(0));
+  EXPECT_EQ("F", fred.Left(1));
+  EXPECT_EQ("FR", fred.Left(2));
+  EXPECT_EQ("FRE", fred.Left(3));
+  EXPECT_EQ("FRED", fred.Left(4));
+
+  EXPECT_EQ("FRED", fred.Left(5));
+  EXPECT_EQ("", fred.Left(-1));
+
+  CFX_ByteString empty;
+  EXPECT_EQ("", empty.Left(0));
+  EXPECT_EQ("", empty.Left(1));
+  EXPECT_EQ("", empty.Left(-1));
+}
+
+TEST(fxcrt, ByteStringRight) {
+  CFX_ByteString fred("FRED");
+  EXPECT_EQ("", fred.Right(0));
+  EXPECT_EQ("D", fred.Right(1));
+  EXPECT_EQ("ED", fred.Right(2));
+  EXPECT_EQ("RED", fred.Right(3));
+  EXPECT_EQ("FRED", fred.Right(4));
+
+  EXPECT_EQ("FRED", fred.Right(5));
+  EXPECT_EQ("", fred.Right(-1));
+
+  CFX_ByteString empty;
+  EXPECT_EQ("", empty.Right(0));
+  EXPECT_EQ("", empty.Right(1));
+  EXPECT_EQ("", empty.Right(-1));
+}
+
+TEST(fxcrt, ByteStringUpperLower) {
+  CFX_ByteString fred("F-Re.42D");
+  fred.MakeLower();
+  EXPECT_EQ("f-re.42d", fred);
+  fred.MakeUpper();
+  EXPECT_EQ("F-RE.42D", fred);
+
+  CFX_ByteString empty;
+  empty.MakeLower();
+  EXPECT_EQ("", empty);
+  empty.MakeUpper();
+  EXPECT_EQ("", empty);
+}
+
+TEST(fxcrt, ByteStringTrimRight) {
+  CFX_ByteString fred("  FRED  ");
+  fred.TrimRight();
+  EXPECT_EQ("  FRED", fred);
+  fred.TrimRight('E');
+  EXPECT_EQ("  FRED", fred);
+  fred.TrimRight('D');
+  EXPECT_EQ("  FRE", fred);
+  fred.TrimRight("ERP");
+  EXPECT_EQ("  F", fred);
+
+  CFX_ByteString blank("   ");
+  blank.TrimRight("ERP");
+  EXPECT_EQ("   ", blank);
+  blank.TrimRight('E');
+  EXPECT_EQ("   ", blank);
+  blank.TrimRight();
+  EXPECT_EQ("", blank);
+
+  CFX_ByteString empty;
+  empty.TrimRight("ERP");
+  EXPECT_EQ("", empty);
+  empty.TrimRight('E');
+  EXPECT_EQ("", empty);
+  empty.TrimRight();
+  EXPECT_EQ("", empty);
+}
+
+TEST(fxcrt, ByteStringTrimLeft) {
+  CFX_ByteString fred("  FRED  ");
+  fred.TrimLeft();
+  EXPECT_EQ("FRED  ", fred);
+  fred.TrimLeft('E');
+  EXPECT_EQ("FRED  ", fred);
+  fred.TrimLeft('F');
+  EXPECT_EQ("RED  ", fred);
+  fred.TrimLeft("ERP");
+  EXPECT_EQ("D  ", fred);
+
+  CFX_ByteString blank("   ");
+  blank.TrimLeft("ERP");
+  EXPECT_EQ("   ", blank);
+  blank.TrimLeft('E');
+  EXPECT_EQ("   ", blank);
+  blank.TrimLeft();
+  EXPECT_EQ("", blank);
+
+  CFX_ByteString empty;
+  empty.TrimLeft("ERP");
+  EXPECT_EQ("", empty);
+  empty.TrimLeft('E');
+  EXPECT_EQ("", empty);
+  empty.TrimLeft();
+  EXPECT_EQ("", empty);
+}
+
 TEST(fxcrt, ByteStringCNotNull) {
   CFX_ByteStringC string3("abc");
   CFX_ByteStringC string6("abcdef");

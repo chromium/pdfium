@@ -420,27 +420,20 @@ void CFX_ByteString::ConcatCopy(FX_STRSIZE nSrc1Len,
   pOldData->Release();
 }
 CFX_ByteString CFX_ByteString::Mid(FX_STRSIZE nFirst) const {
-  if (!m_pData) {
+  if (!m_pData)
     return CFX_ByteString();
-  }
+
   return Mid(nFirst, m_pData->m_nDataLength - nFirst);
 }
 CFX_ByteString CFX_ByteString::Mid(FX_STRSIZE nFirst, FX_STRSIZE nCount) const {
-  if (nFirst < 0) {
-    nFirst = 0;
-  }
-  if (nCount < 0) {
-    nCount = 0;
-  }
-  if (nFirst + nCount > m_pData->m_nDataLength) {
-    nCount = m_pData->m_nDataLength - nFirst;
-  }
-  if (nFirst > m_pData->m_nDataLength) {
-    nCount = 0;
-  }
-  if (nFirst == 0 && nFirst + nCount == m_pData->m_nDataLength) {
+  if (!m_pData)
+    return CFX_ByteString();
+
+  nFirst = std::min(std::max(0, nFirst), m_pData->m_nDataLength);
+  nCount = std::min(std::max(0, nCount), m_pData->m_nDataLength - nFirst);
+  if (nFirst == 0 && nCount == m_pData->m_nDataLength)
     return *this;
-  }
+
   CFX_ByteString dest;
   AllocCopy(dest, nCount, nFirst);
   return dest;

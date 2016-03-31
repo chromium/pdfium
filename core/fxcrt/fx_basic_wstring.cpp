@@ -441,27 +441,20 @@ CFX_WideString CFX_WideString::Left(FX_STRSIZE nCount) const {
   return dest;
 }
 CFX_WideString CFX_WideString::Mid(FX_STRSIZE nFirst) const {
+  if (!m_pData)
+    return CFX_WideString();
+
   return Mid(nFirst, m_pData->m_nDataLength - nFirst);
 }
 CFX_WideString CFX_WideString::Mid(FX_STRSIZE nFirst, FX_STRSIZE nCount) const {
-  if (!m_pData) {
+  if (!m_pData)
     return CFX_WideString();
-  }
-  if (nFirst < 0) {
-    nFirst = 0;
-  }
-  if (nCount < 0) {
-    nCount = 0;
-  }
-  if (nFirst + nCount > m_pData->m_nDataLength) {
-    nCount = m_pData->m_nDataLength - nFirst;
-  }
-  if (nFirst > m_pData->m_nDataLength) {
-    nCount = 0;
-  }
-  if (nFirst == 0 && nFirst + nCount == m_pData->m_nDataLength) {
+
+  nFirst = std::min(std::max(nFirst, 0), m_pData->m_nDataLength);
+  nCount = std::min(std::max(nCount, 0), m_pData->m_nDataLength - nFirst);
+  if (nFirst == 0 && nCount == m_pData->m_nDataLength)
     return *this;
-  }
+
   CFX_WideString dest;
   AllocCopy(dest, nCount, nFirst);
   return dest;
