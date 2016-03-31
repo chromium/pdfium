@@ -288,28 +288,28 @@ TEST(fxcrt, ByteStringCNull) {
   EXPECT_NE(null_string, non_null_string);
 }
 
-TEST(fxcrt, ByteStringConcat) {
+TEST(fxcrt, ByteStringConcatInPlace) {
   CFX_ByteString fred;
-  fred.Concat("FRED", 4);
+  fred.ConcatInPlace(4, "FRED");
   EXPECT_EQ("FRED", fred);
 
-  fred.Concat("DY", 2);
+  fred.ConcatInPlace(2, "DY");
   EXPECT_EQ("FREDDY", fred);
 
   fred.Delete(3, 3);
   EXPECT_EQ("FRE", fred);
 
-  fred.Concat("D", 1);
+  fred.ConcatInPlace(1, "D");
   EXPECT_EQ("FRED", fred);
 
   CFX_ByteString copy = fred;
-  fred.Concat("DY", 2);
+  fred.ConcatInPlace(2, "DY");
   EXPECT_EQ("FREDDY", fred);
   EXPECT_EQ("FRED", copy);
 
   // Test invalid arguments.
   copy = fred;
-  fred.Concat("freddy", -6);
+  fred.ConcatInPlace(-6, "freddy");
   CFX_ByteString not_aliased("xxxxxx");
   EXPECT_EQ("FREDDY", fred);
   EXPECT_EQ("xxxxxx", not_aliased);
