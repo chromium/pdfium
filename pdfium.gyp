@@ -922,6 +922,7 @@
       'conditions': [
         ['pdf_enable_xfa==1', {
           'sources': [
+            'xfa/fde/xml/fde_xml_imp_unittest.cpp',
             'xfa/fxbarcode/pdf417/BC_PDF417HighLevelEncoder_unittest.cpp',
             'xfa/fxfa/parser/xfa_utils_imp_unittest.cpp',
           ],

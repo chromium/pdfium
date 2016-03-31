@@ -31,7 +31,8 @@ inline int32_t FX_tolower(int32_t ch) {
 
 int32_t FX_wcsnicmp(const FX_WCHAR* s1, const FX_WCHAR* s2, size_t count) {
   FXSYS_assert(s1 != NULL && s2 != NULL && count > 0);
-  FX_WCHAR wch1 = 0, wch2 = 0;
+  FX_WCHAR wch1 = 0;
+  FX_WCHAR wch2 = 0;
   while (count-- > 0) {
     wch1 = (FX_WCHAR)FX_tolower(*s1++);
     wch2 = (FX_WCHAR)FX_tolower(*s2++);

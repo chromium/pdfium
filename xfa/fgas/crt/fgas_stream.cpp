@@ -870,8 +870,9 @@ int32_t CFX_BufferStreamImp::ReadString(FX_WCHAR* pStr,
   }
   const FX_WCHAR* pSrc = (const FX_WCHAR*)(FX_CHAR*)(m_pData + m_iPosition);
   int32_t iCount = 0;
-  while (*pSrc != L'\0' && iCount < iLen) {
-    *pStr++ = *pSrc++, iCount++;
+  while (*pSrc && iCount < iLen) {
+    *pStr++ = *pSrc++;
+    iCount++;
   }
   m_iPosition += iCount * 2;
   bEOS = (*pSrc == L'\0') || (m_iPosition >= m_iLength);
@@ -1345,6 +1346,7 @@ int32_t CFX_Stream::ReadString(FX_WCHAR* pStr,
   }
   return iLen;
 }
+
 int32_t CFX_Stream::WriteData(const uint8_t* pBuffer, int32_t iBufferSize) {
   FXSYS_assert(pBuffer != NULL && iBufferSize > 0);
   if (m_pStreamImp == NULL) {

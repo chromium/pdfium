@@ -1491,7 +1491,7 @@ uint32_t CFDE_XMLSyntaxParser::DoSyntaxParse() {
   FXSYS_assert(m_pStream && m_pBuffer && m_BlockBuffer.IsInitialized());
   int32_t iStreamLength = m_pStream->GetLength();
   int32_t iPos;
-  FX_WCHAR ch;
+
   uint32_t dwStatus = FDE_XMLSYNTAXSTATUS_None;
   while (TRUE) {
     if (m_pStart >= m_pEnd) {
@@ -1516,8 +1516,9 @@ uint32_t CFDE_XMLSyntaxParser::DoSyntaxParse() {
       m_pStart = m_pBuffer;
       m_pEnd = m_pBuffer + m_iBufferChars;
     }
+
     while (m_pStart < m_pEnd) {
-      ch = *m_pStart;
+      FX_WCHAR ch = *m_pStart;
       switch (m_dwMode) {
         case FDE_XMLSYNTAXMODE_Text:
           if (ch == L'<') {
@@ -1783,27 +1784,51 @@ uint32_t CFDE_XMLSyntaxParser::DoSyntaxParse() {
           m_pStart++;
           break;
         case FDE_XMLSYNTAXMODE_SkipCommentOrDecl:
-          if (ch == '-') {
+          if (FX_wcsnicmp(m_pStart, L"--", 2) == 0) {
+            m_pStart += 2;
             m_dwMode = FDE_XMLSYNTAXMODE_SkipComment;
+          } else if (FX_wcsnicmp(m_pStart, L"[CDATA[", 7) == 0) {
+            m_pStart += 7;
+            m_dwMode = FDE_XMLSYNTAXMODE_SkipCData;
           } else {
             m_dwMode = FDE_XMLSYNTAXMODE_SkipDeclNode;
             m_SkipChar = L'>';
             m_SkipStack.Push(L'>');
           }
           break;
+        case FDE_XMLSYNTAXMODE_SkipCData: {
+          if (FX_wcsnicmp(m_pStart, L"]]>", 3) == 0) {
+            m_pStart += 3;
+            dwStatus = FDE_XMLSYNTAXSTATUS_CData;
+            m_iTextDataLength = m_iDataLength;
+            m_BlockBuffer.Reset();
+            m_pCurrentBlock = m_BlockBuffer.GetAvailableBlock(m_iIndexInBlock);
+            m_dwMode = FDE_XMLSYNTAXMODE_Text;
+          } else {
+            if (m_iIndexInBlock == m_iAllocStep) {
+              m_pCurrentBlock =
+                  m_BlockBuffer.GetAvailableBlock(m_iIndexInBlock);
+              if (!m_pCurrentBlock)
+                return FDE_XMLSYNTAXSTATUS_Error;
+            }
+            m_pCurrentBlock[m_iIndexInBlock++] = ch;
+            m_iDataLength++;
+            m_pStart++;
+          }
+          break;
+        }
         case FDE_XMLSYNTAXMODE_SkipDeclNode:
           if (m_SkipChar == L'\'' || m_SkipChar == L'\"') {
             m_pStart++;
-            if (ch != m_SkipChar) {
+            if (ch != m_SkipChar)
               break;
-            }
+
             m_SkipStack.Pop();
             uint32_t* pDWord = m_SkipStack.GetTopElement();
-            if (pDWord == NULL) {
+            if (!pDWord)
               m_dwMode = FDE_XMLSYNTAXMODE_Text;
-            } else {
+            else
               m_SkipChar = (FX_WCHAR)*pDWord;
-            }
           } else {
             switch (ch) {
               case L'<':
@@ -1830,20 +1855,10 @@ uint32_t CFDE_XMLSyntaxParser::DoSyntaxParse() {
                 if (ch == m_SkipChar) {
                   m_SkipStack.Pop();
                   uint32_t* pDWord = m_SkipStack.GetTopElement();
-                  if (pDWord == NULL) {
+                  if (!pDWord) {
                     if (m_iDataLength >= 9) {
                       CFX_WideString wsHeader;
                       m_BlockBuffer.GetTextData(wsHeader, 0, 7);
-                      if (wsHeader.Equal(FX_WSTRC(L"[CDATA["))) {
-                        CFX_WideString wsTailer;
-                        m_BlockBuffer.GetTextData(wsTailer, m_iDataLength - 2,
-                                                  2);
-                        if (wsTailer.Equal(FX_WSTRC(L"]]"))) {
-                          m_BlockBuffer.DeleteTextChars(7, TRUE);
-                          m_BlockBuffer.DeleteTextChars(2, FALSE);
-                          dwStatus = FDE_XMLSYNTAXSTATUS_CData;
-                        }
-                      }
                     }
                     m_iTextDataLength = m_iDataLength;
                     m_BlockBuffer.Reset();
@@ -1851,7 +1866,7 @@ uint32_t CFDE_XMLSyntaxParser::DoSyntaxParse() {
                         m_BlockBuffer.GetAvailableBlock(m_iIndexInBlock);
                     m_dwMode = FDE_XMLSYNTAXMODE_Text;
                   } else {
-                    m_SkipChar = (FX_WCHAR)*pDWord;
+                    m_SkipChar = static_cast<FX_WCHAR>(*pDWord);
                   }
                 }
                 break;
@@ -1871,27 +1886,11 @@ uint32_t CFDE_XMLSyntaxParser::DoSyntaxParse() {
           }
           break;
         case FDE_XMLSYNTAXMODE_SkipComment:
-          if (ch == L'-') {
-            if (m_iIndexInBlock == m_iAllocStep) {
-              m_pCurrentBlock =
-                  m_BlockBuffer.GetAvailableBlock(m_iIndexInBlock);
-              if (!m_pCurrentBlock) {
-                return FDE_XMLSYNTAXSTATUS_Error;
-              }
-            }
-            m_pCurrentBlock[m_iIndexInBlock++] = L'-';
-            m_iDataLength++;
-          } else if (ch == L'>') {
-            if (m_iDataLength > 1) {
-              m_BlockBuffer.Reset();
-              m_pCurrentBlock =
-                  m_BlockBuffer.GetAvailableBlock(m_iIndexInBlock);
-              m_dwMode = FDE_XMLSYNTAXMODE_Text;
-            }
-          } else {
-            m_BlockBuffer.Reset();
-            m_pCurrentBlock = m_BlockBuffer.GetAvailableBlock(m_iIndexInBlock);
+          if (FX_wcsnicmp(m_pStart, L"-->", 3) == 0) {
+            m_pStart += 2;
+            m_dwMode = FDE_XMLSYNTAXMODE_Text;
           }
+
           m_pStart++;
           break;
         case FDE_XMLSYNTAXMODE_TargetData:
@@ -1945,9 +1944,8 @@ uint32_t CFDE_XMLSyntaxParser::DoSyntaxParse() {
         default:
           break;
       }
-      if (dwStatus != FDE_XMLSYNTAXSTATUS_None) {
+      if (dwStatus != FDE_XMLSYNTAXSTATUS_None)
         return dwStatus;
-      }
     }
   }
   return 0;

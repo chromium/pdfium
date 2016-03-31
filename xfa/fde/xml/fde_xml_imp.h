@@ -309,7 +309,9 @@ class CFDE_BlockBuffer : public CFX_Target {
 #define FDE_XMLSYNTAXMODE_DeclCharData 15
 #define FDE_XMLSYNTAXMODE_SkipComment 16
 #define FDE_XMLSYNTAXMODE_SkipCommentOrDecl 17
-#define FDE_XMLSYNTAXMODE_TargetData 18
+#define FDE_XMLSYNTAXMODE_SkipCData 18
+#define FDE_XMLSYNTAXMODE_TargetData 19
+
 class CFDE_XMLSyntaxParser : public CFX_Target {
  public:
   CFDE_XMLSyntaxParser();
