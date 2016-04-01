@@ -1583,7 +1583,7 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(FX_BOOL& bRichText) {
       CFX_WideString wsContentType;
       m_pTextNode->GetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType,
                                 FALSE);
-      if (wsContentType.Equal(FX_WSTRC(L"text/html"))) {
+      if (wsContentType == FX_WSTRC(L"text/html")) {
         bRichText = TRUE;
       }
     }
@@ -1599,7 +1599,7 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(FX_BOOL& bRichText) {
     if (pChildNode && pChildNode->GetClassID() == XFA_ELEMENT_ExData) {
       CFX_WideString wsContentType;
       pChildNode->GetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType, FALSE);
-      if (wsContentType.Equal(FX_WSTRC(L"text/html"))) {
+      if (wsContentType == FX_WSTRC(L"text/html")) {
         bRichText = TRUE;
       }
     }
@@ -1634,7 +1634,7 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(FX_BOOL& bRichText) {
     if (pChildNode && pChildNode->GetClassID() == XFA_ELEMENT_ExData) {
       CFX_WideString wsContentType;
       pChildNode->GetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType, FALSE);
-      if (wsContentType.Equal(FX_WSTRC(L"text/html"))) {
+      if (wsContentType == FX_WSTRC(L"text/html")) {
         bRichText = TRUE;
       }
     }

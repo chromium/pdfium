@@ -2273,7 +2273,7 @@ IFX_Locale* CXFA_WidgetData::GetLocal() {
   CFX_WideString wsLocaleName;
   bLocale = m_pNode->GetLocaleName(wsLocaleName);
   if (bLocale) {
-    if (wsLocaleName.Equal(FX_WSTRC(L"ambient"))) {
+    if (wsLocaleName == FX_WSTRC(L"ambient")) {
       pLocale = m_pNode->GetDocument()->GetLocalMgr()->GetDefLocale();
     } else {
       pLocale =

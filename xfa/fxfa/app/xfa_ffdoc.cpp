@@ -59,7 +59,7 @@ FX_BOOL XFA_GetPDFContentsFromPDFXML(CFDE_XMLNode* pPDFElement,
       CFX_WideString wsTagName;
       CFDE_XMLElement* pXMLElement = static_cast<CFDE_XMLElement*>(pXMLNode);
       pXMLElement->GetTagName(wsTagName);
-      if (wsTagName.Equal(FX_WSTRC(L"document"))) {
+      if (wsTagName == FX_WSTRC(L"document")) {
         pDocumentElement = pXMLElement;
         break;
       }
@@ -76,7 +76,7 @@ FX_BOOL XFA_GetPDFContentsFromPDFXML(CFDE_XMLNode* pPDFElement,
       CFX_WideString wsTagName;
       CFDE_XMLElement* pXMLElement = static_cast<CFDE_XMLElement*>(pXMLNode);
       pXMLElement->GetTagName(wsTagName);
-      if (wsTagName.Equal(FX_WSTRC(L"chunk"))) {
+      if (wsTagName == FX_WSTRC(L"chunk")) {
         pChunkElement = pXMLElement;
         break;
       }

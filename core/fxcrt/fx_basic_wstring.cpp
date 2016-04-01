@@ -198,30 +198,30 @@ const CFX_WideString& CFX_WideString::operator+=(const CFX_WideStringC& str) {
   ConcatInPlace(str.GetLength(), str.GetPtr());
   return *this;
 }
-bool CFX_WideString::Equal(const wchar_t* ptr) const {
-  if (!m_pData) {
-    return !ptr || ptr[0] == L'\0';
-  }
-  if (!ptr) {
+bool CFX_WideString::operator==(const wchar_t* ptr) const {
+  if (!m_pData)
+    return !ptr || !ptr[0];
+
+  if (!ptr)
     return m_pData->m_nDataLength == 0;
-  }
+
   return wcslen(ptr) == static_cast<size_t>(m_pData->m_nDataLength) &&
          wmemcmp(ptr, m_pData->m_String, m_pData->m_nDataLength) == 0;
 }
-bool CFX_WideString::Equal(const CFX_WideStringC& str) const {
-  if (!m_pData) {
+bool CFX_WideString::operator==(const CFX_WideStringC& str) const {
+  if (!m_pData)
     return str.IsEmpty();
-  }
+
   return str.GetLength() == m_pData->m_nDataLength &&
          wmemcmp(str.GetPtr(), m_pData->m_String, m_pData->m_nDataLength) == 0;
 }
-bool CFX_WideString::Equal(const CFX_WideString& other) const {
-  if (IsEmpty()) {
+bool CFX_WideString::operator==(const CFX_WideString& other) const {
+  if (IsEmpty())
     return other.IsEmpty();
-  }
-  if (other.IsEmpty()) {
+
+  if (other.IsEmpty())
     return false;
-  }
+
   return other.m_pData->m_nDataLength == m_pData->m_nDataLength &&
          wmemcmp(other.m_pData->m_String, m_pData->m_String,
                  m_pData->m_nDataLength) == 0;

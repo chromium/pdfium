@@ -54,7 +54,6 @@ FX_BOOL CPDF_PageOrganizer::PDFDocInit(CPDF_Document* pDestPDFDoc,
   if (!pNewRoot)
     return FALSE;
 
-  // Set the document information
   CPDF_Dictionary* DInfoDict = pDestPDFDoc->GetInfo();
   if (!DInfoDict)
     return FALSE;
@@ -63,11 +62,9 @@ FX_BOOL CPDF_PageOrganizer::PDFDocInit(CPDF_Document* pDestPDFDoc,
   producerstr.Format("PDFium");
   DInfoDict->SetAt("Producer", new CPDF_String(producerstr, FALSE));
 
-  // Set type
   CFX_ByteString cbRootType = pNewRoot->GetStringBy("Type", "");
-  if (cbRootType.Equal("")) {
+  if (cbRootType.IsEmpty())
     pNewRoot->SetAt("Type", new CPDF_Name("Catalog"));
-  }
 
   CPDF_Object* pElement = pNewRoot->GetObjectBy("Pages");
   CPDF_Dictionary* pNewPages =
@@ -79,7 +76,7 @@ FX_BOOL CPDF_PageOrganizer::PDFDocInit(CPDF_Document* pDestPDFDoc,
   }
 
   CFX_ByteString cbPageType = pNewPages->GetStringBy("Type", "");
-  if (cbPageType.Equal("")) {
+  if (cbPageType == "") {
     pNewPages->SetAt("Type", new CPDF_Name("Pages"));
   }
 

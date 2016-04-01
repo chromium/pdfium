@@ -242,7 +242,7 @@ static void XFA_DataExporter_RegenerateFormFile_Changed(
       CFX_WideString wsContentType;
       pNode->GetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType, FALSE);
       if (pRawValueNode->GetClassID() == XFA_ELEMENT_SharpxHTML &&
-          wsContentType.Equal(FX_WSTRC(L"text/html"))) {
+          wsContentType == FX_WSTRC(L"text/html")) {
         CFDE_XMLNode* pExDataXML = pNode->GetXMLMappingNode();
         if (!pExDataXML) {
           break;
@@ -264,7 +264,7 @@ static void XFA_DataExporter_RegenerateFormFile_Changed(
         pTempStream->Release();
         pMemStream->Release();
       } else if (pRawValueNode->GetClassID() == XFA_ELEMENT_Sharpxml &&
-                 wsContentType.Equal(FX_WSTRC(L"text/xml"))) {
+                 wsContentType == FX_WSTRC(L"text/xml")) {
         CFX_WideString wsRawValue;
         pRawValueNode->GetAttribute(XFA_ATTRIBUTE_Value, wsRawValue, FALSE);
         if (wsRawValue.IsEmpty()) {

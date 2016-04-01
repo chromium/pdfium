@@ -79,9 +79,9 @@ static FX_BOOL XFA_DataMerge_FormValueNode_SetChildContent(
           CFX_WideString wsContentType;
           pChildNode->GetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType,
                                    FALSE);
-          if (wsContentType.Equal(FX_WSTRC(L"text/html"))) {
+          if (wsContentType == FX_WSTRC(L"text/html")) {
             element = XFA_ELEMENT_SharpxHTML;
-          } else if (wsContentType.Equal(FX_WSTRC(L"text/xml"))) {
+          } else if (wsContentType == FX_WSTRC(L"text/xml")) {
             element = XFA_ELEMENT_Sharpxml;
           }
         }

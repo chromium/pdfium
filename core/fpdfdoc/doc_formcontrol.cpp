@@ -190,7 +190,7 @@ CPDF_FormControl::HighlightingMode CPDF_FormControl::GetHighlightingMode() {
   }
   CFX_ByteString csH = m_pWidgetDict->GetStringBy("H", "I");
   for (int i = 0; g_sHighlightingMode[i]; ++i) {
-    if (csH.Equal(g_sHighlightingMode[i]))
+    if (csH == g_sHighlightingMode[i])
       return static_cast<HighlightingMode>(i);
   }
   return Invert;

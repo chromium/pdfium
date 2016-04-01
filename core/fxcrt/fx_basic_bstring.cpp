@@ -217,30 +217,30 @@ const CFX_ByteString& CFX_ByteString::operator+=(const CFX_ByteStringC& str) {
   ConcatInPlace(str.GetLength(), str.GetCStr());
   return *this;
 }
-bool CFX_ByteString::Equal(const char* ptr) const {
-  if (!m_pData) {
-    return !ptr || ptr[0] == '\0';
-  }
-  if (!ptr) {
+bool CFX_ByteString::operator==(const char* ptr) const {
+  if (!m_pData)
+    return !ptr || !ptr[0];
+
+  if (!ptr)
     return m_pData->m_nDataLength == 0;
-  }
+
   return FXSYS_strlen(ptr) == m_pData->m_nDataLength &&
          FXSYS_memcmp(ptr, m_pData->m_String, m_pData->m_nDataLength) == 0;
 }
-bool CFX_ByteString::Equal(const CFX_ByteStringC& str) const {
-  if (!m_pData) {
+bool CFX_ByteString::operator==(const CFX_ByteStringC& str) const {
+  if (!m_pData)
     return str.IsEmpty();
-  }
+
   return m_pData->m_nDataLength == str.GetLength() &&
          FXSYS_memcmp(m_pData->m_String, str.GetCStr(), str.GetLength()) == 0;
 }
-bool CFX_ByteString::Equal(const CFX_ByteString& other) const {
-  if (IsEmpty()) {
+bool CFX_ByteString::operator==(const CFX_ByteString& other) const {
+  if (IsEmpty())
     return other.IsEmpty();
-  }
-  if (other.IsEmpty()) {
+
+  if (other.IsEmpty())
     return false;
-  }
+
   return other.m_pData->m_nDataLength == m_pData->m_nDataLength &&
          FXSYS_memcmp(other.m_pData->m_String, m_pData->m_String,
                       m_pData->m_nDataLength) == 0;

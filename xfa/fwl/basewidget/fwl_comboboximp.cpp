@@ -1556,7 +1556,7 @@ void CFWL_ComboBoxImpDelegate::DoSubCtrlKey(CFWL_MsgKey* pMsg) {
         FWL_HLISTITEM hItem = pData->GetItem(m_pOwner->m_pInterface, iCurSel);
         static_cast<CFWL_ComboListImp*>(m_pOwner->m_pListBox->GetImpl())
             ->GetItemText(hItem, wsTemp);
-        bMatchEqual = wsText.Equal(wsTemp);
+        bMatchEqual = wsText == wsTemp;
       }
     }
     if (iCurSel < 0) {
@@ -1703,7 +1703,7 @@ void CFWL_ComboBoxImpDelegate::DisForm_OnKey(CFWL_MsgKey* pMsg) {
         CFX_WideString wsTemp;
         FWL_HLISTITEM item = m_pOwner->m_pListBox->GetSelItem(iCurSel);
         m_pOwner->m_pListBox->GetItemText(item, wsTemp);
-        bMatchEqual = wsText.Equal(wsTemp);
+        bMatchEqual = wsText == wsTemp;
       }
     }
     if (iCurSel < 0) {

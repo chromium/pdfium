@@ -178,21 +178,21 @@ CXFA_FMIdentifierExpressionn::CXFA_FMIdentifierExpressionn(
 
 void CXFA_FMIdentifierExpressionn::ToJavaScript(CFX_WideTextBuf& javascript) {
   CFX_WideString tempStr = m_wsIdentifier;
-  if (tempStr.Equal(FX_WSTRC(L"$"))) {
+  if (tempStr == FX_WSTRC(L"$")) {
     tempStr = FX_WSTRC(L"this");
-  } else if (tempStr.Equal(FX_WSTRC(L"!"))) {
+  } else if (tempStr == FX_WSTRC(L"!")) {
     tempStr = FX_WSTRC(L"xfa.datasets");
-  } else if (tempStr.Equal(FX_WSTRC(L"$data"))) {
+  } else if (tempStr == FX_WSTRC(L"$data")) {
     tempStr = FX_WSTRC(L"xfa.datasets.data");
-  } else if (tempStr.Equal(FX_WSTRC(L"$event"))) {
+  } else if (tempStr == FX_WSTRC(L"$event")) {
     tempStr = FX_WSTRC(L"xfa.event");
-  } else if (tempStr.Equal(FX_WSTRC(L"$form"))) {
+  } else if (tempStr == FX_WSTRC(L"$form")) {
     tempStr = FX_WSTRC(L"xfa.form");
-  } else if (tempStr.Equal(FX_WSTRC(L"$host"))) {
+  } else if (tempStr == FX_WSTRC(L"$host")) {
     tempStr = FX_WSTRC(L"xfa.host");
-  } else if (tempStr.Equal(FX_WSTRC(L"$layout"))) {
+  } else if (tempStr == FX_WSTRC(L"$layout")) {
     tempStr = FX_WSTRC(L"xfa.layout");
-  } else if (tempStr.Equal(FX_WSTRC(L"$template"))) {
+  } else if (tempStr == FX_WSTRC(L"$template")) {
     tempStr = FX_WSTRC(L"xfa.template");
   } else if (tempStr[0] == L'!') {
     tempStr = EXCLAMATION_IN_IDENTIFIER + tempStr.Mid(1);

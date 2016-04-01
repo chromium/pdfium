@@ -52,10 +52,10 @@ TEST(doc_basic_filespec, EncodeDecodeFileName) {
   };
   for (const auto& data : test_data) {
     CFX_WideString encoded_str = CPDF_FileSpec::EncodeFileName(data.input);
-    EXPECT_TRUE(encoded_str.Equal(data.expected));
+    EXPECT_TRUE(encoded_str == data.expected);
     // DecodeFileName is the reverse procedure of EncodeFileName.
     CFX_WideString decoded_str = CPDF_FileSpec::DecodeFileName(data.expected);
-    EXPECT_TRUE(decoded_str.Equal(data.input));
+    EXPECT_TRUE(decoded_str == data.input);
   }
 }
 
@@ -78,7 +78,7 @@ TEST(doc_basic_filespec, GetFileName) {
     CPDF_FileSpec file_spec(str_obj.get());
     CFX_WideString file_name;
     EXPECT_TRUE(file_spec.GetFileName(&file_name));
-    EXPECT_TRUE(file_name.Equal(test_data.expected));
+    EXPECT_TRUE(file_name == test_data.expected);
   }
   {
     // Dictionary object.
@@ -111,14 +111,14 @@ TEST(doc_basic_filespec, GetFileName) {
     for (int i = 0; i < 5; ++i) {
       dict_obj->SetAt(keywords[i], new CPDF_String(test_data[i].input));
       EXPECT_TRUE(file_spec.GetFileName(&file_name));
-      EXPECT_TRUE(file_name.Equal(test_data[i].expected));
+      EXPECT_TRUE(file_name == test_data[i].expected);
     }
 
     // With all the former fields and 'FS' field suggests 'URL' type.
     dict_obj->SetAtString("FS", "URL");
     EXPECT_TRUE(file_spec.GetFileName(&file_name));
     // Url string is not decoded.
-    EXPECT_TRUE(file_name.Equal(test_data[4].input));
+    EXPECT_TRUE(file_name == test_data[4].input);
   }
   {
     // Invalid object.
@@ -152,7 +152,7 @@ TEST(doc_basic_filespec, SetFileName) {
   // Check we can get the file name back.
   CFX_WideString file_name;
   EXPECT_TRUE(file_spec1.GetFileName(&file_name));
-  EXPECT_TRUE(file_name.Equal(test_data.input));
+  EXPECT_TRUE(file_name == test_data.input);
 
   // Dictionary object.
   ScopedDict dict_obj(new CPDF_Dictionary);
@@ -160,10 +160,10 @@ TEST(doc_basic_filespec, SetFileName) {
   file_spec2.SetFileName(test_data.input);
   // Check internal object value.
   file_name = dict_obj->GetUnicodeTextBy("F");
-  EXPECT_TRUE(file_name.Equal(test_data.expected));
+  EXPECT_TRUE(file_name == test_data.expected);
   file_name = dict_obj->GetUnicodeTextBy("UF");
-  EXPECT_TRUE(file_name.Equal(test_data.expected));
+  EXPECT_TRUE(file_name == test_data.expected);
   // Check we can get the file name back.
   EXPECT_TRUE(file_spec2.GetFileName(&file_name));
-  EXPECT_TRUE(file_name.Equal(test_data.input));
+  EXPECT_TRUE(file_name == test_data.input);
 }

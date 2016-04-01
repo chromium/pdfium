@@ -1960,8 +1960,8 @@ FX_BOOL CXFA_PDFFontMgr::PsNameMatchDRFontName(
     }
     if (iDifferLength > 1) {
       CFX_ByteString bsDRTailer = bsDRName.Right(iDifferLength);
-      if (bsDRTailer.Equal("MT") || bsDRTailer.Equal("PSMT") ||
-          bsDRTailer.Equal("Regular") || bsDRTailer.Equal("Reg")) {
+      if (bsDRTailer == "MT" || bsDRTailer == "PSMT" ||
+          bsDRTailer == "Regular" || bsDRTailer == "Reg") {
         return TRUE;
       }
       if (bBoldFont || bItalicFont) {
@@ -1970,18 +1970,17 @@ FX_BOOL CXFA_PDFFontMgr::PsNameMatchDRFontName(
       FX_BOOL bMatch = FALSE;
       switch (bsPsName.GetAt(iPsLen - 1)) {
         case 'L': {
-          if (bsDRName.Right(5).Equal("Light")) {
+          if (bsDRName.Right(5) == "Light") {
             bMatch = TRUE;
           }
         } break;
         case 'R': {
-          if (bsDRName.Right(7).Equal("Regular") ||
-              bsDRName.Right(3).Equal("Reg")) {
+          if (bsDRName.Right(7) == "Regular" || bsDRName.Right(3) == "Reg") {
             bMatch = TRUE;
           }
         } break;
         case 'M': {
-          if (bsDRName.Right(5).Equal("Medium")) {
+          if (bsDRName.Right(5) == "Medium") {
             bMatch = TRUE;
           }
         } break;

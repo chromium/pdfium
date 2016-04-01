@@ -3542,65 +3542,62 @@ void CXFA_FM2JSContext::UnitValue(FXJSE_HOBJECT hThis,
           strUnit = strFirstUnit;
         }
         FX_DOUBLE dResult = 0;
-        if (strFirstUnit.Equal("in") || strFirstUnit.Equal("inches")) {
-          if (strUnit.Equal("mm") || strUnit.Equal("millimeters")) {
+        if (strFirstUnit == "in" || strFirstUnit == "inches") {
+          if (strUnit == "mm" || strUnit == "millimeters") {
             dResult = dFirstNumber * 25.4;
-          } else if (strUnit.Equal("cm") || strUnit.Equal("centimeters")) {
+          } else if (strUnit == "cm" || strUnit == "centimeters") {
             dResult = dFirstNumber * 2.54;
-          } else if (strUnit.Equal("pt") || strUnit.Equal("points")) {
+          } else if (strUnit == "pt" || strUnit == "points") {
             dResult = dFirstNumber / 72;
-          } else if (strUnit.Equal("mp") || strUnit.Equal("millipoints")) {
+          } else if (strUnit == "mp" || strUnit == "millipoints") {
             dResult = dFirstNumber / 72000;
           } else {
             dResult = dFirstNumber;
           }
-        } else if (strFirstUnit.Equal("mm") ||
-                   strFirstUnit.Equal("millimeters")) {
-          if (strUnit.Equal("mm") || strUnit.Equal("millimeters")) {
+        } else if (strFirstUnit == "mm" || strFirstUnit == "millimeters") {
+          if (strUnit == "mm" || strUnit == "millimeters") {
             dResult = dFirstNumber;
-          } else if (strUnit.Equal("cm") || strUnit.Equal("centimeters")) {
+          } else if (strUnit == "cm" || strUnit == "centimeters") {
             dResult = dFirstNumber / 10;
-          } else if (strUnit.Equal("pt") || strUnit.Equal("points")) {
+          } else if (strUnit == "pt" || strUnit == "points") {
             dResult = dFirstNumber / 25.4 / 72;
-          } else if (strUnit.Equal("mp") || strUnit.Equal("millipoints")) {
+          } else if (strUnit == "mp" || strUnit == "millipoints") {
             dResult = dFirstNumber / 25.4 / 72000;
           } else {
             dResult = dFirstNumber / 25.4;
           }
-        } else if (strFirstUnit.Equal("cm") ||
-                   strFirstUnit.Equal("centimeters")) {
-          if (strUnit.Equal("mm") || strUnit.Equal("millimeters")) {
+        } else if (strFirstUnit == "cm" || strFirstUnit == "centimeters") {
+          if (strUnit == "mm" || strUnit == "millimeters") {
             dResult = dFirstNumber * 10;
-          } else if (strUnit.Equal("cm") || strUnit.Equal("centimeters")) {
+          } else if (strUnit == "cm" || strUnit == "centimeters") {
             dResult = dFirstNumber;
-          } else if (strUnit.Equal("pt") || strUnit.Equal("points")) {
+          } else if (strUnit == "pt" || strUnit == "points") {
             dResult = dFirstNumber / 2.54 / 72;
-          } else if (strUnit.Equal("mp") || strUnit.Equal("millipoints")) {
+          } else if (strUnit == "mp" || strUnit == "millipoints") {
             dResult = dFirstNumber / 2.54 / 72000;
           } else {
             dResult = dFirstNumber / 2.54;
           }
-        } else if (strFirstUnit.Equal("pt") || strFirstUnit.Equal("points")) {
-          if (strUnit.Equal("mm") || strUnit.Equal("millimeters")) {
+        } else if (strFirstUnit == "pt" || strFirstUnit == "points") {
+          if (strUnit == "mm" || strUnit == "millimeters") {
             dResult = dFirstNumber / 72 * 25.4;
-          } else if (strUnit.Equal("cm") || strUnit.Equal("centimeters")) {
+          } else if (strUnit == "cm" || strUnit == "centimeters") {
             dResult = dFirstNumber / 72 * 2.54;
-          } else if (strUnit.Equal("pt") || strUnit.Equal("points")) {
+          } else if (strUnit == "pt" || strUnit == "points") {
             dResult = dFirstNumber;
-          } else if (strUnit.Equal("mp") || strUnit.Equal("millipoints")) {
+          } else if (strUnit == "mp" || strUnit == "millipoints") {
             dResult = dFirstNumber * 1000;
           } else {
             dResult = dFirstNumber / 72;
           }
-        } else if (strFirstUnit.Equal("mp") ||
-                   strFirstUnit.Equal("millipoints")) {
-          if (strUnit.Equal("mm") || strUnit.Equal("millimeters")) {
+        } else if (strFirstUnit == "mp" || strFirstUnit == "millipoints") {
+          if (strUnit == "mm" || strUnit == "millimeters") {
             dResult = dFirstNumber / 72000 * 25.4;
-          } else if (strUnit.Equal("cm") || strUnit.Equal("centimeters")) {
+          } else if (strUnit == "cm" || strUnit == "centimeters") {
             dResult = dFirstNumber / 72000 * 2.54;
-          } else if (strUnit.Equal("pt") || strUnit.Equal("points")) {
+          } else if (strUnit == "pt" || strUnit == "points") {
             dResult = dFirstNumber / 1000;
-          } else if (strUnit.Equal("mp") || strUnit.Equal("millipoints")) {
+          } else if (strUnit == "mp" || strUnit == "millipoints") {
             dResult = dFirstNumber;
           } else {
             dResult = dFirstNumber / 72000;
@@ -5710,7 +5707,7 @@ void CXFA_FM2JSContext::equality_operator(FXJSE_HOBJECT hThis,
         FXJSE_Value_ToUTF8String(argFirst, firstOutput);
         FXJSE_Value_ToUTF8String(argSecond, secondOutput);
         FXJSE_Value_SetInteger(args.GetReturnValue(),
-                               firstOutput.Equal(secondOutput) ? 1 : 0);
+                               firstOutput == secondOutput);
       } else {
         FX_DOUBLE first = HValueToDouble(hThis, argFirst);
         FX_DOUBLE second = HValueToDouble(hThis, argSecond);
@@ -5748,12 +5745,11 @@ void CXFA_FM2JSContext::notequality_operator(FXJSE_HOBJECT hThis,
         FXJSE_Value_ToUTF8String(argFirst, firstOutput);
         FXJSE_Value_ToUTF8String(argSecond, secondOutput);
         FXJSE_Value_SetInteger(args.GetReturnValue(),
-                               firstOutput.Equal(secondOutput) ? 0 : 1);
+                               firstOutput != secondOutput);
       } else {
         FX_DOUBLE first = HValueToDouble(hThis, argFirst);
         FX_DOUBLE second = HValueToDouble(hThis, argSecond);
-        FXJSE_Value_SetInteger(args.GetReturnValue(),
-                               (first == second) ? 0 : 1);
+        FXJSE_Value_SetInteger(args.GetReturnValue(), first != second);
       }
       FXJSE_Value_Release(argFirst);
       FXJSE_Value_Release(argSecond);
@@ -6694,7 +6690,7 @@ FX_BOOL CXFA_FM2JSContext::simpleValueCompare(FXJSE_HOBJECT hThis,
     CFX_ByteString firstString, secondString;
     HValueToUTF8String(firstValue, firstString);
     HValueToUTF8String(secondValue, secondString);
-    bReturn = firstString.Equal(secondString);
+    bReturn = firstString == secondString;
   } else if (FXJSE_Value_IsNumber(firstValue)) {
     FX_FLOAT first = HValueToFloat(hThis, firstValue);
     FX_FLOAT second = HValueToFloat(hThis, secondValue);

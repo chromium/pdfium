@@ -1456,7 +1456,7 @@ int32_t CXFA_XMLParser::DoParser(IFX_Pause* pPause) {
         }
         m_pParser->GetTagName(m_ws1);
         static_cast<CFDE_XMLElement*>(m_pChild)->GetTagName(m_ws2);
-        if (m_ws1.GetLength() > 0 && !m_ws1.Equal(m_ws2)) {
+        if (m_ws1.GetLength() > 0 && m_ws1 != m_ws2) {
           m_dwStatus = FDE_XMLSYNTAXSTATUS_Error;
           break;
         }

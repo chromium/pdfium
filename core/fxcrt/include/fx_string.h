@@ -194,16 +194,11 @@ class CFX_ByteString {
   bool IsEmpty() const { return !GetLength(); }
 
   int Compare(const CFX_ByteStringC& str) const;
-
-  bool Equal(const char* ptr) const;
-  bool Equal(const CFX_ByteStringC& str) const;
-  bool Equal(const CFX_ByteString& other) const;
-
   bool EqualNoCase(const CFX_ByteStringC& str) const;
 
-  bool operator==(const char* ptr) const { return Equal(ptr); }
-  bool operator==(const CFX_ByteStringC& str) const { return Equal(str); }
-  bool operator==(const CFX_ByteString& other) const { return Equal(other); }
+  bool operator==(const char* ptr) const;
+  bool operator==(const CFX_ByteStringC& str) const;
+  bool operator==(const CFX_ByteString& other) const;
 
   bool operator!=(const char* ptr) const { return !(*this == ptr); }
   bool operator!=(const CFX_ByteStringC& str) const { return !(*this == str); }
@@ -588,26 +583,20 @@ class CFX_WideString {
   void Empty();
 
   bool IsEmpty() const { return !GetLength(); }
-
   FX_STRSIZE GetLength() const { return m_pData ? m_pData->m_nDataLength : 0; }
 
   const CFX_WideString& operator=(const FX_WCHAR* str);
-
   const CFX_WideString& operator=(const CFX_WideString& stringSrc);
-
   const CFX_WideString& operator=(const CFX_WideStringC& stringSrc);
 
   const CFX_WideString& operator+=(const FX_WCHAR* str);
-
   const CFX_WideString& operator+=(FX_WCHAR ch);
-
   const CFX_WideString& operator+=(const CFX_WideString& str);
-
   const CFX_WideString& operator+=(const CFX_WideStringC& str);
 
-  bool operator==(const wchar_t* ptr) const { return Equal(ptr); }
-  bool operator==(const CFX_WideStringC& str) const { return Equal(str); }
-  bool operator==(const CFX_WideString& other) const { return Equal(other); }
+  bool operator==(const wchar_t* ptr) const;
+  bool operator==(const CFX_WideStringC& str) const;
+  bool operator==(const CFX_WideString& other) const;
 
   bool operator!=(const wchar_t* ptr) const { return !(*this == ptr); }
   bool operator!=(const CFX_WideStringC& str) const { return !(*this == str); }
@@ -632,51 +621,34 @@ class CFX_WideString {
   void SetAt(FX_STRSIZE nIndex, FX_WCHAR ch);
 
   int Compare(const FX_WCHAR* str) const;
-
   int Compare(const CFX_WideString& str) const;
-
   int CompareNoCase(const FX_WCHAR* str) const;
 
-  bool Equal(const wchar_t* ptr) const;
-  bool Equal(const CFX_WideStringC& str) const;
-  bool Equal(const CFX_WideString& other) const;
 
   CFX_WideString Mid(FX_STRSIZE first) const;
-
   CFX_WideString Mid(FX_STRSIZE first, FX_STRSIZE count) const;
-
   CFX_WideString Left(FX_STRSIZE count) const;
-
   CFX_WideString Right(FX_STRSIZE count) const;
 
   FX_STRSIZE Insert(FX_STRSIZE index, FX_WCHAR ch);
-
   FX_STRSIZE Delete(FX_STRSIZE index, FX_STRSIZE count = 1);
 
   void Format(const FX_WCHAR* lpszFormat, ...);
-
   void FormatV(const FX_WCHAR* lpszFormat, va_list argList);
 
   void MakeLower();
-
   void MakeUpper();
 
   void TrimRight();
-
   void TrimRight(FX_WCHAR chTarget);
-
   void TrimRight(const FX_WCHAR* lpszTargets);
 
   void TrimLeft();
-
   void TrimLeft(FX_WCHAR chTarget);
-
   void TrimLeft(const FX_WCHAR* lpszTargets);
 
   void Reserve(FX_STRSIZE len);
-
   FX_WCHAR* GetBuffer(FX_STRSIZE len);
-
   void ReleaseBuffer(FX_STRSIZE len = -1);
 
   int GetInteger() const;

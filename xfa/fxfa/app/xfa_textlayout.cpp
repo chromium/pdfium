@@ -729,7 +729,7 @@ CFDE_XMLNode* CXFA_TextLayout::GetXMLContainerNode() {
         CFDE_XMLElement* pXMLElement = static_cast<CFDE_XMLElement*>(pXMLChild);
         CFX_WideString wsTag;
         pXMLElement->GetLocalTagName(wsTag);
-        if (wsTag.Equal(FX_WSTRC(L"body")) || wsTag.Equal(FX_WSTRC(L"html"))) {
+        if (wsTag == FX_WSTRC(L"body") || wsTag == FX_WSTRC(L"html")) {
           pXMLContainer = pXMLChild;
           break;
         }

@@ -1078,7 +1078,7 @@ void CXFA_Node::Script_NodeClass_SaveXML(CFXJSE_Arguments* pArguments) {
   FX_BOOL bPrettyMode = FALSE;
   if (iLength == 1) {
     CFX_ByteString bsPretty = pArguments->GetUTF8String(0);
-    if (!bsPretty.Equal("pretty")) {
+    if (bsPretty != "pretty") {
       ThrowScriptErrorMessage(XFA_IDS_ARGUMENT_MISMATCH);
       return;
     }
@@ -1259,7 +1259,7 @@ void CXFA_Node::Script_ModelClass_IsCompatibleNS(CFXJSE_Arguments* pArguments) {
   TryNamespace(wsNodeNameSpace);
   FXJSE_HVALUE hValue = pArguments->GetReturnValue();
   if (hValue) {
-    FXJSE_Value_SetBoolean(hValue, wsNodeNameSpace.Equal(wsNameSpace));
+    FXJSE_Value_SetBoolean(hValue, wsNodeNameSpace == wsNameSpace);
   }
 }
 void CXFA_Node::Script_ModelClass_Context(FXJSE_HVALUE hValue,
@@ -1748,7 +1748,7 @@ void CXFA_Node::Script_Boolean_Value(FXJSE_HVALUE hValue,
     SetScriptContent(wsNewValue, wsFormatValue, TRUE, TRUE);
   } else {
     CFX_WideString wsValue = GetScriptContent(TRUE);
-    FXJSE_Value_SetBoolean(hValue, wsValue.Equal(FX_WSTRC(L"1")));
+    FXJSE_Value_SetBoolean(hValue, wsValue == FX_WSTRC(L"1"));
   }
 }
 struct XFA_ExecEventParaInfo {
@@ -4303,17 +4303,16 @@ FX_BOOL CXFA_Node::SetScriptContent(const CFX_WideString& wsContent,
       CFX_WideString wsContentType;
       if (GetClassID() == XFA_ELEMENT_ExData) {
         GetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType, FALSE);
-        if (wsContentType.Equal(FX_WSTRC(L"text/html"))) {
+        if (wsContentType == FX_WSTRC(L"text/html")) {
           wsContentType = FX_WSTRC(L"");
           SetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType);
         }
       }
       CXFA_Node* pContentRawDataNode = GetNodeItem(XFA_NODEITEM_FirstChild);
       if (!pContentRawDataNode) {
-        pContentRawDataNode =
-            CreateSamePacketNode((wsContentType.Equal(FX_WSTRC(L"text/xml")))
-                                     ? XFA_ELEMENT_Sharpxml
-                                     : XFA_ELEMENT_Sharptext);
+        pContentRawDataNode = CreateSamePacketNode(
+            (wsContentType == FX_WSTRC(L"text/xml")) ? XFA_ELEMENT_Sharpxml
+                                                     : XFA_ELEMENT_Sharptext);
         InsertChild(pContentRawDataNode);
       }
       return pContentRawDataNode->SetScriptContent(
@@ -4409,9 +4408,9 @@ FX_BOOL CXFA_Node::TryContent(CFX_WideString& wsContent,
         if (GetClassID() == XFA_ELEMENT_ExData) {
           CFX_WideString wsContentType;
           GetAttribute(XFA_ATTRIBUTE_ContentType, wsContentType, FALSE);
-          if (wsContentType.Equal(FX_WSTRC(L"text/html"))) {
+          if (wsContentType == FX_WSTRC(L"text/html")) {
             element = XFA_ELEMENT_SharpxHTML;
-          } else if (wsContentType.Equal(FX_WSTRC(L"text/xml"))) {
+          } else if (wsContentType == FX_WSTRC(L"text/xml")) {
             element = XFA_ELEMENT_Sharpxml;
           }
         }
