@@ -6,6 +6,7 @@
 
 #include <algorithm>
 
+#include "core/fpdfdoc/include/ipdf_variabletext_provider.h"
 #include "core/fpdfdoc/pdf_vt.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
 #include "core/include/fpdfdoc/fpdf_vt.h"

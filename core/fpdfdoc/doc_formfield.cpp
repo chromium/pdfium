@@ -10,6 +10,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_number.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_simple_parser.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
+#include "core/fpdfdoc/cpvt_generateap.h"
 #include "core/fpdfdoc/doc_utils.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
 

@@ -7,6 +7,7 @@
 #ifndef FPDFSDK_INCLUDE_FXEDIT_FXET_EDIT_H_
 #define FPDFSDK_INCLUDE_FXEDIT_FXET_EDIT_H_
 
+#include "core/fpdfdoc/include/ipdf_variabletext_provider.h"
 #include "core/include/fpdfdoc/fpdf_vt.h"
 #include "fpdfsdk/include/fxedit/fx_edit.h"
 

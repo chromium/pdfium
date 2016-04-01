@@ -261,26 +261,7 @@ struct CPVT_Section {
 
   CPVT_WordProps WordProps;
 };
-class IPDF_VariableText_Provider {
- public:
-  virtual ~IPDF_VariableText_Provider() {}
 
-  virtual int32_t GetCharWidth(int32_t nFontIndex,
-                               uint16_t word,
-                               int32_t nWordStyle) = 0;
-
-  virtual int32_t GetTypeAscent(int32_t nFontIndex) = 0;
-
-  virtual int32_t GetTypeDescent(int32_t nFontIndex) = 0;
-
-  virtual int32_t GetWordFontIndex(uint16_t word,
-                                   int32_t charset,
-                                   int32_t nFontIndex) = 0;
-
-  virtual FX_BOOL IsLatinWord(uint16_t word) = 0;
-
-  virtual int32_t GetDefaultFontIndex() = 0;
-};
 class IPDF_VariableText_Iterator {
  public:
   virtual ~IPDF_VariableText_Iterator() {}

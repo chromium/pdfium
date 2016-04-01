@@ -947,8 +947,6 @@ class CPDF_FormNotify {
   virtual void AfterFormImportData(CPDF_InterForm* pForm) {}
 };
 
-FX_BOOL FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
-
 class CPDF_PageLabel {
  public:
   explicit CPDF_PageLabel(CPDF_Document* pDocument) : m_pDocument(pDocument) {}

@@ -12,6 +12,7 @@
 #include "core/fpdfapi/fpdf_parser/ipdf_occontext.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_rendercontext.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
+#include "core/fpdfdoc/cpvt_generateap.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
 #include "core/include/fxge/fx_ge.h"
 
