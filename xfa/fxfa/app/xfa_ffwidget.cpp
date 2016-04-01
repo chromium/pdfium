@@ -10,16 +10,16 @@
 
 #include "core/fpdfapi/fpdf_page/include/cpdf_pageobjectholder.h"
 #include "core/include/fxcodec/fx_codec.h"
-#include "xfa/fxfa/app/xfa_ffapp.h"
-#include "xfa/fxfa/app/xfa_ffdoc.h"
-#include "xfa/fxfa/app/xfa_ffdocview.h"
-#include "xfa/fxfa/app/xfa_ffpageview.h"
 #include "xfa/fxfa/app/xfa_textlayout.h"
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
 #include "xfa/fxgraphics/cfx_pattern.h"
 #include "xfa/fxgraphics/cfx_shading.h"
 #include "xfa/fxgraphics/include/cfx_graphics.h"
+#include "xfa/include/fxfa/xfa_ffapp.h"
+#include "xfa/include/fxfa/xfa_ffdoc.h"
+#include "xfa/include/fxfa/xfa_ffdocview.h"
+#include "xfa/include/fxfa/xfa_ffpageview.h"
 
 CXFA_FFWidget::CXFA_FFWidget(CXFA_FFPageView* pPageView,
                              CXFA_WidgetAcc* pDataAcc)
@@ -29,11 +29,11 @@ CXFA_FFWidget::CXFA_FFWidget(CXFA_FFPageView* pPageView,
   m_rtWidget.Set(0, 0, 0, 0);
 }
 CXFA_FFWidget::~CXFA_FFWidget() {}
-IXFA_PageView* CXFA_FFWidget::GetPageView() {
+CXFA_FFPageView* CXFA_FFWidget::GetPageView() {
   return m_pPageView;
 }
-void CXFA_FFWidget::SetPageView(IXFA_PageView* pPageView) {
-  m_pPageView = static_cast<CXFA_FFPageView*>(pPageView);
+void CXFA_FFWidget::SetPageView(CXFA_FFPageView* pPageView) {
+  m_pPageView = pPageView;
 }
 void CXFA_FFWidget::GetWidgetRect(CFX_RectF& rtWidget) {
   if ((m_dwStatus & XFA_WIDGETSTATUS_RectCached) == 0) {

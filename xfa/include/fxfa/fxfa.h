@@ -14,39 +14,16 @@
 
 class CFX_Graphics;
 class CPDF_Document;
+class CXFA_FFPageView;
 class CXFA_Node;
 class CXFA_NodeList;
 class CXFA_WidgetAcc;
 class IFWL_AdapterTimerMgr;
 class IFX_Font;
-class IXFA_App;
 class IXFA_AppProvider;
-class IXFA_ChecksumContext;
-class IXFA_DocHandler;
 class IXFA_DocProvider;
-class IXFA_DocView;
-class IXFA_FontMgr;
-class IXFA_MenuHandler;
-class IXFA_PageView;
 class IXFA_WidgetAccIterator;
-class IXFA_WidgetHandler;
 class IXFA_WidgetIterator;
-
-class IXFA_Doc {
- public:
-  virtual ~IXFA_Doc() {}
-
- protected:
-  IXFA_Doc() {}
-};
-
-class IXFA_Widget {
- public:
-  virtual ~IXFA_Widget() {}
-
- protected:
-  IXFA_Widget() {}
-};
 
 #define XFA_MBICON_Error 0
 #define XFA_MBICON_Warning 1
@@ -288,62 +265,7 @@ class IXFA_AppProvider {
                                  FX_BOOL bOpen = TRUE) = 0;
   virtual IFWL_AdapterTimerMgr* GetTimerMgr() = 0;
 };
-class IXFA_FontMgr {
- public:
-  static IXFA_FontMgr* CreateDefault();
-  virtual ~IXFA_FontMgr();
 
-  virtual IFX_Font* GetFont(IXFA_Doc* hDoc,
-                            const CFX_WideStringC& wsFontFamily,
-                            uint32_t dwFontStyles,
-                            uint16_t wCodePage = 0xFFFF) = 0;
-  virtual IFX_Font* GetDefaultFont(IXFA_Doc* hDoc,
-                                   const CFX_WideStringC& wsFontFamily,
-                                   uint32_t dwFontStyles,
-                                   uint16_t wCodePage = 0xFFFF) = 0;
-};
-class IXFA_App {
- public:
-  static IXFA_App* Create(IXFA_AppProvider* pProvider);
-  virtual ~IXFA_App();
-
-  virtual IXFA_DocHandler* GetDocHandler() = 0;
-  virtual IXFA_Doc* CreateDoc(IXFA_DocProvider* pProvider,
-                              IFX_FileRead* pStream,
-                              FX_BOOL bTakeOverFile = TRUE) = 0;
-  virtual IXFA_Doc* CreateDoc(IXFA_DocProvider* pProvider,
-                              CPDF_Document* pPDFDoc) = 0;
-  virtual IXFA_AppProvider* GetAppProvider() = 0;
-  virtual void SetDefaultFontMgr(IXFA_FontMgr* pFontMgr) = 0;
-  virtual IXFA_MenuHandler* GetMenuHandler() = 0;
-};
-class IXFA_MenuHandler {
- public:
-  virtual ~IXFA_MenuHandler() {}
-
-  virtual FX_BOOL CanCopy(IXFA_Widget* hWidget) = 0;
-  virtual FX_BOOL CanCut(IXFA_Widget* hWidget) = 0;
-  virtual FX_BOOL CanPaste(IXFA_Widget* hWidget) = 0;
-  virtual FX_BOOL CanSelectAll(IXFA_Widget* hWidget) = 0;
-  virtual FX_BOOL CanDelete(IXFA_Widget* hWidget) = 0;
-  virtual FX_BOOL CanDeSelect(IXFA_Widget* hWidget) = 0;
-  virtual FX_BOOL Copy(IXFA_Widget* hWidget, CFX_WideString& wsText) = 0;
-  virtual FX_BOOL Cut(IXFA_Widget* hWidget, CFX_WideString& wsText) = 0;
-  virtual FX_BOOL Paste(IXFA_Widget* hWidget, const CFX_WideString& wsText) = 0;
-  virtual FX_BOOL SelectAll(IXFA_Widget* hWidget) = 0;
-  virtual FX_BOOL Delete(IXFA_Widget* hWidget) = 0;
-  virtual FX_BOOL DeSelect(IXFA_Widget* hWidget) = 0;
-  virtual FX_BOOL CanUndo(IXFA_Widget* hWidget) = 0;
-  virtual FX_BOOL CanRedo(IXFA_Widget* hWidget) = 0;
-  virtual FX_BOOL Undo(IXFA_Widget* hWidget) = 0;
-  virtual FX_BOOL Redo(IXFA_Widget* hWidget) = 0;
-  virtual FX_BOOL GetSuggestWords(IXFA_Widget* hWidget,
-                                  CFX_PointF pointf,
-                                  std::vector<CFX_ByteString>& sSuggest) = 0;
-  virtual FX_BOOL ReplaceSpellCheckWord(IXFA_Widget* hWidget,
-                                        CFX_PointF pointf,
-                                        const CFX_ByteStringC& bsReplace) = 0;
-};
 #define XFA_INVALIDATE_AllPages 0x00000000
 #define XFA_INVALIDATE_CurrentPage 0x00000001
 #define XFA_PRINTOPT_ShowDialog 0x00000001
@@ -365,65 +287,65 @@ class IXFA_DocProvider {
  public:
   virtual ~IXFA_DocProvider() {}
 
-  virtual void SetChangeMark(IXFA_Doc* hDoc) = 0;
-  virtual void InvalidateRect(IXFA_PageView* pPageView,
+  virtual void SetChangeMark(CXFA_FFDoc* hDoc) = 0;
+  virtual void InvalidateRect(CXFA_FFPageView* pPageView,
                               const CFX_RectF& rt,
                               uint32_t dwFlags = 0) = 0;
-  virtual void DisplayCaret(IXFA_Widget* hWidget,
+  virtual void DisplayCaret(CXFA_FFWidget* hWidget,
                             FX_BOOL bVisible,
                             const CFX_RectF* pRtAnchor) = 0;
-  virtual FX_BOOL GetPopupPos(IXFA_Widget* hWidget,
+  virtual FX_BOOL GetPopupPos(CXFA_FFWidget* hWidget,
                               FX_FLOAT fMinPopup,
                               FX_FLOAT fMaxPopup,
                               const CFX_RectF& rtAnchor,
                               CFX_RectF& rtPopup) = 0;
-  virtual FX_BOOL PopupMenu(IXFA_Widget* hWidget,
+  virtual FX_BOOL PopupMenu(CXFA_FFWidget* hWidget,
                             CFX_PointF ptPopup,
                             const CFX_RectF* pRectExclude = NULL) = 0;
-  virtual void PageViewEvent(IXFA_PageView* pPageView, uint32_t dwFlags) = 0;
-  virtual void WidgetEvent(IXFA_Widget* hWidget,
+  virtual void PageViewEvent(CXFA_FFPageView* pPageView, uint32_t dwFlags) = 0;
+  virtual void WidgetEvent(CXFA_FFWidget* hWidget,
                            CXFA_WidgetAcc* pWidgetData,
                            uint32_t dwEvent,
                            void* pParam = NULL,
                            void* pAdditional = NULL) = 0;
-  virtual FX_BOOL RenderCustomWidget(IXFA_Widget* hWidget,
+  virtual FX_BOOL RenderCustomWidget(CXFA_FFWidget* hWidget,
                                      CFX_Graphics* pGS,
                                      CFX_Matrix* pMatrix,
                                      const CFX_RectF& rtUI) {
     return FALSE;
   }
-  virtual int32_t CountPages(IXFA_Doc* hDoc) = 0;
-  virtual int32_t GetCurrentPage(IXFA_Doc* hDoc) = 0;
-  virtual void SetCurrentPage(IXFA_Doc* hDoc, int32_t iCurPage) = 0;
-  virtual FX_BOOL IsCalculationsEnabled(IXFA_Doc* hDoc) = 0;
-  virtual void SetCalculationsEnabled(IXFA_Doc* hDoc, FX_BOOL bEnabled) = 0;
-  virtual void GetTitle(IXFA_Doc* hDoc, CFX_WideString& wsTitle) = 0;
-  virtual void SetTitle(IXFA_Doc* hDoc, const CFX_WideStringC& wsTitle) = 0;
-  virtual void ExportData(IXFA_Doc* hDoc,
+  virtual int32_t CountPages(CXFA_FFDoc* hDoc) = 0;
+  virtual int32_t GetCurrentPage(CXFA_FFDoc* hDoc) = 0;
+  virtual void SetCurrentPage(CXFA_FFDoc* hDoc, int32_t iCurPage) = 0;
+  virtual FX_BOOL IsCalculationsEnabled(CXFA_FFDoc* hDoc) = 0;
+  virtual void SetCalculationsEnabled(CXFA_FFDoc* hDoc, FX_BOOL bEnabled) = 0;
+  virtual void GetTitle(CXFA_FFDoc* hDoc, CFX_WideString& wsTitle) = 0;
+  virtual void SetTitle(CXFA_FFDoc* hDoc, const CFX_WideStringC& wsTitle) = 0;
+  virtual void ExportData(CXFA_FFDoc* hDoc,
                           const CFX_WideStringC& wsFilePath,
                           FX_BOOL bXDP = TRUE) = 0;
-  virtual void ImportData(IXFA_Doc* hDoc,
+  virtual void ImportData(CXFA_FFDoc* hDoc,
                           const CFX_WideStringC& wsFilePath) = 0;
-  virtual void GotoURL(IXFA_Doc* hDoc,
+  virtual void GotoURL(CXFA_FFDoc* hDoc,
                        const CFX_WideStringC& bsURL,
                        FX_BOOL bAppend = TRUE) = 0;
-  virtual FX_BOOL IsValidationsEnabled(IXFA_Doc* hDoc) = 0;
-  virtual void SetValidationsEnabled(IXFA_Doc* hDoc, FX_BOOL bEnabled) = 0;
-  virtual void SetFocusWidget(IXFA_Doc* hDoc, IXFA_Widget* hWidget) = 0;
-  virtual void Print(IXFA_Doc* hDoc,
+  virtual FX_BOOL IsValidationsEnabled(CXFA_FFDoc* hDoc) = 0;
+  virtual void SetValidationsEnabled(CXFA_FFDoc* hDoc, FX_BOOL bEnabled) = 0;
+  virtual void SetFocusWidget(CXFA_FFDoc* hDoc, CXFA_FFWidget* hWidget) = 0;
+  virtual void Print(CXFA_FFDoc* hDoc,
                      int32_t nStartPage,
                      int32_t nEndPage,
                      uint32_t dwOptions) = 0;
-  virtual int32_t AbsPageCountInBatch(IXFA_Doc* hDoc) = 0;
-  virtual int32_t AbsPageInBatch(IXFA_Doc* hDoc, IXFA_Widget* hWidget) = 0;
-  virtual int32_t SheetCountInBatch(IXFA_Doc* hDoc) = 0;
-  virtual int32_t SheetInBatch(IXFA_Doc* hDoc, IXFA_Widget* hWidget) = 0;
-  virtual int32_t Verify(IXFA_Doc* hDoc,
+  virtual int32_t AbsPageCountInBatch(CXFA_FFDoc* hDoc) = 0;
+  virtual int32_t AbsPageInBatch(CXFA_FFDoc* hDoc, CXFA_FFWidget* hWidget) = 0;
+  virtual int32_t SheetCountInBatch(CXFA_FFDoc* hDoc) = 0;
+  virtual int32_t SheetInBatch(CXFA_FFDoc* hDoc, CXFA_FFWidget* hWidget) = 0;
+  virtual int32_t Verify(CXFA_FFDoc* hDoc,
                          CXFA_Node* pSigNode,
                          FX_BOOL bUsed = TRUE) {
     return 0;
   }
-  virtual FX_BOOL Sign(IXFA_Doc* hDoc,
+  virtual FX_BOOL Sign(CXFA_FFDoc* hDoc,
                        CXFA_NodeList* pNodeList,
                        const CFX_WideStringC& wsExpression,
                        const CFX_WideStringC& wsXMLIdent,
@@ -431,33 +353,33 @@ class IXFA_DocProvider {
                        FX_BOOL bUsed = TRUE) {
     return 0;
   }
-  virtual CXFA_NodeList* Enumerate(IXFA_Doc* hDoc) { return 0; }
-  virtual FX_BOOL Clear(IXFA_Doc* hDoc,
+  virtual CXFA_NodeList* Enumerate(CXFA_FFDoc* hDoc) { return 0; }
+  virtual FX_BOOL Clear(CXFA_FFDoc* hDoc,
                         CXFA_Node* pSigNode,
                         FX_BOOL bCleared = TRUE) {
     return 0;
   }
-  virtual void GetURL(IXFA_Doc* hDoc, CFX_WideString& wsDocURL) = 0;
-  virtual FX_ARGB GetHighlightColor(IXFA_Doc* hDoc) = 0;
+  virtual void GetURL(CXFA_FFDoc* hDoc, CFX_WideString& wsDocURL) = 0;
+  virtual FX_ARGB GetHighlightColor(CXFA_FFDoc* hDoc) = 0;
 
-  virtual FX_BOOL SubmitData(IXFA_Doc* hDoc, CXFA_Submit submit) = 0;
-  virtual FX_BOOL CheckWord(IXFA_Doc* hDoc, const CFX_ByteStringC& sWord) = 0;
-  virtual FX_BOOL GetSuggestWords(IXFA_Doc* hDoc,
+  virtual FX_BOOL SubmitData(CXFA_FFDoc* hDoc, CXFA_Submit submit) = 0;
+  virtual FX_BOOL CheckWord(CXFA_FFDoc* hDoc, const CFX_ByteStringC& sWord) = 0;
+  virtual FX_BOOL GetSuggestWords(CXFA_FFDoc* hDoc,
                                   const CFX_ByteStringC& sWord,
                                   std::vector<CFX_ByteString>& sSuggest) = 0;
-  virtual FX_BOOL GetPDFScriptObject(IXFA_Doc* hDoc,
+  virtual FX_BOOL GetPDFScriptObject(CXFA_FFDoc* hDoc,
                                      const CFX_ByteStringC& utf8Name,
                                      FXJSE_HVALUE hValue) = 0;
-  virtual FX_BOOL GetGlobalProperty(IXFA_Doc* hDoc,
+  virtual FX_BOOL GetGlobalProperty(CXFA_FFDoc* hDoc,
                                     const CFX_ByteStringC& szPropName,
                                     FXJSE_HVALUE hValue) = 0;
-  virtual FX_BOOL SetGlobalProperty(IXFA_Doc* hDoc,
+  virtual FX_BOOL SetGlobalProperty(CXFA_FFDoc* hDoc,
                                     const CFX_ByteStringC& szPropName,
                                     FXJSE_HVALUE hValue) = 0;
-  virtual CPDF_Document* OpenPDF(IXFA_Doc* hDoc,
+  virtual CPDF_Document* OpenPDF(CXFA_FFDoc* hDoc,
                                  IFX_FileRead* pFile,
                                  FX_BOOL bTakeOverFile) = 0;
-  virtual IFX_FileRead* OpenLinkedFile(IXFA_Doc* hDoc,
+  virtual IFX_FileRead* OpenLinkedFile(CXFA_FFDoc* hDoc,
                                        const CFX_WideString& wsLink) = 0;
 };
 #define XFA_DOCVIEW_View 0x00000000
@@ -471,43 +393,7 @@ class IXFA_DocProvider {
 #define XFA_PARSESTATUS_SyntaxErr -1
 #define XFA_PARSESTATUS_Ready 0
 #define XFA_PARSESTATUS_Done 100
-class IXFA_DocHandler {
- public:
-  virtual ~IXFA_DocHandler() {}
 
-  virtual void ReleaseDoc(IXFA_Doc* hDoc) = 0;
-  virtual IXFA_DocProvider* GetDocProvider(IXFA_Doc* hDoc) = 0;
-
-  virtual uint32_t GetDocType(IXFA_Doc* hDoc) = 0;
-  virtual int32_t StartLoad(IXFA_Doc* hDoc) = 0;
-  virtual int32_t DoLoad(IXFA_Doc* hDoc, IFX_Pause* pPause = NULL) = 0;
-  virtual void StopLoad(IXFA_Doc* hDoc) = 0;
-
-  virtual IXFA_DocView* CreateDocView(IXFA_Doc* hDoc, uint32_t dwView = 0) = 0;
-
-  virtual int32_t CountPackages(IXFA_Doc* hDoc) = 0;
-  virtual void GetPackageName(IXFA_Doc* hDoc,
-                              int32_t iPackage,
-                              CFX_WideStringC& wsPackage) = 0;
-
-  virtual FX_BOOL SavePackage(IXFA_Doc* hDoc,
-                              const CFX_WideStringC& wsPackage,
-                              IFX_FileWrite* pFile,
-                              IXFA_ChecksumContext* pCSContext = NULL) = 0;
-  virtual FX_BOOL CloseDoc(IXFA_Doc* hDoc) = 0;
-
-  virtual FX_BOOL ImportData(IXFA_Doc* hDoc,
-                             IFX_FileRead* pStream,
-                             FX_BOOL bXDP = TRUE) = 0;
-  virtual void SetJSERuntime(IXFA_Doc* hDoc, FXJSE_HRUNTIME hRuntime) = 0;
-  virtual FXJSE_HVALUE GetXFAScriptObject(IXFA_Doc* hDoc) = 0;
-  virtual XFA_ATTRIBUTEENUM GetRestoreState(IXFA_Doc* hDoc) = 0;
-  virtual FX_BOOL RunDocScript(IXFA_Doc* hDoc,
-                               XFA_SCRIPTTYPE eScriptType,
-                               const CFX_WideStringC& wsScript,
-                               FXJSE_HVALUE hRetValue,
-                               FXJSE_HVALUE hThisObject) = 0;
-};
 enum XFA_EVENTTYPE {
   XFA_EVENT_Click,
   XFA_EVENT_Change,
@@ -601,32 +487,7 @@ class CXFA_EventParam {
 enum XFA_WIDGETORDER {
   XFA_WIDGETORDER_PreOrder,
 };
-class IXFA_DocView {
- public:
-  virtual ~IXFA_DocView() {}
 
-  virtual IXFA_Doc* GetDoc() = 0;
-  virtual int32_t StartLayout(int32_t iStartPage = 0) = 0;
-  virtual int32_t DoLayout(IFX_Pause* pPause = NULL) = 0;
-  virtual void StopLayout() = 0;
-
-  virtual int32_t GetLayoutStatus() = 0;
-  virtual void UpdateDocView() = 0;
-  virtual int32_t CountPageViews() = 0;
-  virtual IXFA_PageView* GetPageView(int32_t nIndex) = 0;
-  virtual IXFA_Widget* GetWidgetByName(const CFX_WideStringC& wsName) = 0;
-  virtual CXFA_WidgetAcc* GetWidgetAccByName(const CFX_WideStringC& wsName) = 0;
-  virtual void ResetWidgetData(CXFA_WidgetAcc* pWidgetAcc = NULL) = 0;
-  virtual int32_t ProcessWidgetEvent(CXFA_EventParam* pParam,
-                                     CXFA_WidgetAcc* pWidgetAcc = NULL) = 0;
-  virtual IXFA_WidgetHandler* GetWidgetHandler() = 0;
-  virtual IXFA_WidgetIterator* CreateWidgetIterator() = 0;
-  virtual IXFA_WidgetAccIterator* CreateWidgetAccIterator(
-      XFA_WIDGETORDER eOrder = XFA_WIDGETORDER_PreOrder) = 0;
-  virtual IXFA_Widget* GetFocusWidget() = 0;
-  virtual void KillFocus() = 0;
-  virtual FX_BOOL SetFocus(IXFA_Widget* hWidget) = 0;
-};
 #define XFA_TRAVERSEWAY_Tranvalse 0x0001
 #define XFA_TRAVERSEWAY_Form 0x0002
 #define XFA_WIDGETFILTER_Visible 0x0001
@@ -634,27 +495,7 @@ class IXFA_DocView {
 #define XFA_WIDGETFILTER_Printable 0x0020
 #define XFA_WIDGETFILTER_Field 0x0100
 #define XFA_WIDGETFILTER_AllType 0x0F00
-class IXFA_PageView {
- public:
-  virtual ~IXFA_PageView() {}
 
-  virtual IXFA_DocView* GetDocView() = 0;
-  virtual int32_t GetPageViewIndex() = 0;
-  virtual void GetPageViewRect(CFX_RectF& rtPage) = 0;
-
-  virtual void GetDisplayMatrix(CFX_Matrix& mt,
-                                const CFX_Rect& rtDisp,
-                                int32_t iRotate) = 0;
-
-  virtual int32_t LoadPageView(IFX_Pause* pPause = NULL) = 0;
-  virtual void UnloadPageView() = 0;
-  virtual IXFA_Widget* GetWidgetByPos(FX_FLOAT fx, FX_FLOAT fy) = 0;
-  virtual IXFA_WidgetIterator* CreateWidgetIterator(
-      uint32_t dwTraverseWay = XFA_TRAVERSEWAY_Form,
-      uint32_t dwWidgetFilter = XFA_WIDGETFILTER_Visible |
-                                XFA_WIDGETFILTER_Viewable |
-                                XFA_WIDGETFILTER_AllType) = 0;
-};
 class CXFA_RenderOptions {
  public:
   CXFA_RenderOptions() : m_bPrint(FALSE), m_bHighlight(TRUE) {}
@@ -665,20 +506,7 @@ class CXFA_RenderOptions {
 #define XFA_RENDERSTATUS_ToBeContinued 2
 #define XFA_RENDERSTATUS_Done 3
 #define XFA_RENDERSTATUS_Failed -1
-class IXFA_RenderContext {
- public:
-  virtual void Release() = 0;
-  virtual int32_t StartRender(IXFA_PageView* pPageView,
-                              CFX_Graphics* pGS,
-                              const CFX_Matrix& pMatrix,
-                              const CXFA_RenderOptions& options) = 0;
-  virtual int32_t DoRender(IFX_Pause* pPause = NULL) = 0;
-  virtual void StopRender() = 0;
 
- protected:
-  ~IXFA_RenderContext() {}
-};
-IXFA_RenderContext* XFA_RenderContext_Create();
 enum XFA_WIDGETTYPE {
   XFA_WIDGETTYPE_Barcode,
   XFA_WIDGETTYPE_PushButton,
@@ -708,139 +536,20 @@ enum XFA_WIDGETTYPE {
 #define XFA_WIDGETSTATUS_Viewable 0x00000010
 #define XFA_WIDGETSTATUS_Printable 0x00000020
 #define XFA_WIDGETSTATUS_Focused 0x00000100
-class IXFA_WidgetHandler {
- public:
-  virtual ~IXFA_WidgetHandler() {}
 
-  virtual IXFA_Widget* CreateWidget(IXFA_Widget* hParent,
-                                    XFA_WIDGETTYPE eType,
-                                    IXFA_Widget* hBefore = NULL) = 0;
-  virtual IXFA_PageView* GetPageView(IXFA_Widget* hWidget) = 0;
-  virtual void GetRect(IXFA_Widget* hWidget, CFX_RectF& rt) = 0;
-  virtual uint32_t GetStatus(IXFA_Widget* hWidget) = 0;
-  virtual FX_BOOL GetBBox(IXFA_Widget* hWidget,
-                          CFX_RectF& rtBox,
-                          uint32_t dwStatus,
-                          FX_BOOL bDrawFocus = FALSE) = 0;
-  virtual CXFA_WidgetAcc* GetDataAcc(IXFA_Widget* hWidget) = 0;
-
-  virtual void GetName(IXFA_Widget* hWidget,
-                       CFX_WideString& wsName,
-                       int32_t iNameType = 0) = 0;
-  virtual FX_BOOL GetToolTip(IXFA_Widget* hWidget,
-                             CFX_WideString& wsToolTip) = 0;
-  virtual void SetPrivateData(IXFA_Widget* hWidget,
-                              void* module_id,
-                              void* pData,
-                              PD_CALLBACK_FREEDATA callback) = 0;
-  virtual void* GetPrivateData(IXFA_Widget* hWidget, void* module_id) = 0;
-  virtual FX_BOOL OnMouseEnter(IXFA_Widget* hWidget) = 0;
-  virtual FX_BOOL OnMouseExit(IXFA_Widget* hWidget) = 0;
-  virtual FX_BOOL OnLButtonDown(IXFA_Widget* hWidget,
-                                uint32_t dwFlags,
-                                FX_FLOAT fx,
-                                FX_FLOAT fy) = 0;
-  virtual FX_BOOL OnLButtonUp(IXFA_Widget* hWidget,
-                              uint32_t dwFlags,
-                              FX_FLOAT fx,
-                              FX_FLOAT fy) = 0;
-  virtual FX_BOOL OnLButtonDblClk(IXFA_Widget* hWidget,
-                                  uint32_t dwFlags,
-                                  FX_FLOAT fx,
-                                  FX_FLOAT fy) = 0;
-  virtual FX_BOOL OnMouseMove(IXFA_Widget* hWidget,
-                              uint32_t dwFlags,
-                              FX_FLOAT fx,
-                              FX_FLOAT fy) = 0;
-  virtual FX_BOOL OnMouseWheel(IXFA_Widget* hWidget,
-                               uint32_t dwFlags,
-                               int16_t zDelta,
-                               FX_FLOAT fx,
-                               FX_FLOAT fy) = 0;
-  virtual FX_BOOL OnRButtonDown(IXFA_Widget* hWidget,
-                                uint32_t dwFlags,
-                                FX_FLOAT fx,
-                                FX_FLOAT fy) = 0;
-  virtual FX_BOOL OnRButtonUp(IXFA_Widget* hWidget,
-                              uint32_t dwFlags,
-                              FX_FLOAT fx,
-                              FX_FLOAT fy) = 0;
-  virtual FX_BOOL OnRButtonDblClk(IXFA_Widget* hWidget,
-                                  uint32_t dwFlags,
-                                  FX_FLOAT fx,
-                                  FX_FLOAT fy) = 0;
-
-  virtual FX_BOOL OnKeyDown(IXFA_Widget* hWidget,
-                            uint32_t dwKeyCode,
-                            uint32_t dwFlags) = 0;
-  virtual FX_BOOL OnKeyUp(IXFA_Widget* hWidget,
-                          uint32_t dwKeyCode,
-                          uint32_t dwFlags) = 0;
-  virtual FX_BOOL OnChar(IXFA_Widget* hWidget,
-                         uint32_t dwChar,
-                         uint32_t dwFlags) = 0;
-  virtual uint32_t OnHitTest(IXFA_Widget* hWidget,
-                             FX_FLOAT fx,
-                             FX_FLOAT fy) = 0;
-  virtual FX_BOOL OnSetCursor(IXFA_Widget* hWidget,
-                              FX_FLOAT fx,
-                              FX_FLOAT fy) = 0;
-
-  virtual void RenderWidget(IXFA_Widget* hWidget,
-                            CFX_Graphics* pGS,
-                            CFX_Matrix* pMatrix = NULL,
-                            FX_BOOL bHighlight = FALSE) = 0;
-  virtual FX_BOOL HasEvent(CXFA_WidgetAcc* pWidgetAcc,
-                           XFA_EVENTTYPE eEventType) = 0;
-  virtual int32_t ProcessEvent(CXFA_WidgetAcc* pWidgetAcc,
-                               CXFA_EventParam* pParam) = 0;
-};
 class IXFA_WidgetIterator {
  public:
   virtual void Release() = 0;
   virtual void Reset() = 0;
-  virtual IXFA_Widget* MoveToFirst() = 0;
-  virtual IXFA_Widget* MoveToLast() = 0;
-  virtual IXFA_Widget* MoveToNext() = 0;
-  virtual IXFA_Widget* MoveToPrevious() = 0;
-  virtual IXFA_Widget* GetCurrentWidget() = 0;
-  virtual FX_BOOL SetCurrentWidget(IXFA_Widget* hWidget) = 0;
+  virtual CXFA_FFWidget* MoveToFirst() = 0;
+  virtual CXFA_FFWidget* MoveToLast() = 0;
+  virtual CXFA_FFWidget* MoveToNext() = 0;
+  virtual CXFA_FFWidget* MoveToPrevious() = 0;
+  virtual CXFA_FFWidget* GetCurrentWidget() = 0;
+  virtual FX_BOOL SetCurrentWidget(CXFA_FFWidget* hWidget) = 0;
 
  protected:
   ~IXFA_WidgetIterator() {}
 };
-class IXFA_WidgetAccIterator {
- public:
-  virtual void Release() = 0;
-  virtual void Reset() = 0;
-  virtual CXFA_WidgetAcc* MoveToFirst() = 0;
-  virtual CXFA_WidgetAcc* MoveToLast() = 0;
-  virtual CXFA_WidgetAcc* MoveToNext() = 0;
-  virtual CXFA_WidgetAcc* MoveToPrevious() = 0;
-  virtual CXFA_WidgetAcc* GetCurrentWidgetAcc() = 0;
-  virtual FX_BOOL SetCurrentWidgetAcc(CXFA_WidgetAcc* hWidget) = 0;
-  virtual void SkipTree() = 0;
-
- protected:
-  ~IXFA_WidgetAccIterator() {}
-};
-IXFA_WidgetAccIterator* XFA_WidgetAccIterator_Create(
-    CXFA_WidgetAcc* pTravelRoot,
-    XFA_WIDGETORDER eOrder = XFA_WIDGETORDER_PreOrder);
-class IXFA_ChecksumContext {
- public:
-  virtual void Release() = 0;
-
-  virtual FX_BOOL StartChecksum() = 0;
-  virtual FX_BOOL UpdateChecksum(IFX_FileRead* pSrcFile,
-                                 FX_FILESIZE offset = 0,
-                                 size_t size = 0) = 0;
-  virtual void FinishChecksum() = 0;
-  virtual void GetChecksum(CFX_ByteString& bsChecksum) = 0;
-
- protected:
-  ~IXFA_ChecksumContext() {}
-};
-IXFA_ChecksumContext* XFA_Checksum_Create();
 
 #endif  // XFA_INCLUDE_FXFA_FXFA_H_

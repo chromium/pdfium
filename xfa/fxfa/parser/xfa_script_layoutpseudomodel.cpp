@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/xfa_script_layoutpseudomodel.h"
 
+#include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/fm2js/xfa_fm2jsapi.h"
 #include "xfa/fxfa/parser/xfa_docdata.h"
 #include "xfa/fxfa/parser/xfa_doclayout.h"
@@ -15,7 +16,9 @@
 #include "xfa/fxfa/parser/xfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 #include "xfa/fxfa/parser/xfa_parser.h"
+#include "xfa/fxfa/parser/xfa_parser_imp.h"
 #include "xfa/fxfa/parser/xfa_script.h"
+#include "xfa/fxfa/parser/xfa_script_imp.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 #include "xfa/fxjse/cfxjse_arguments.h"
 
@@ -28,7 +31,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_Ready(
     FXJSE_HVALUE hValue,
     FX_BOOL bSetting,
     XFA_ATTRIBUTE eAttribute) {
-  IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -80,7 +83,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_HWXY(
   if (!pNode) {
     return;
   }
-  IXFA_DocLayout* pDocLayout = m_pDocument->GetDocLayout();
+  CXFA_LayoutProcessor* pDocLayout = m_pDocument->GetDocLayout();
   if (!pDocLayout) {
     return;
   }
@@ -140,7 +143,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_Y(
 void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_NumberedPageCount(
     CFXJSE_Arguments* pArguments,
     FX_BOOL bNumbered) {
-  IXFA_DocLayout* pDocLayout = m_pDocument->GetDocLayout();
+  CXFA_LayoutProcessor* pDocLayout = m_pDocument->GetDocLayout();
   if (!pDocLayout) {
     return;
   }
@@ -148,7 +151,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_NumberedPageCount(
   int32_t iPageNum = pDocLayout->CountPages();
   if (bNumbered) {
     for (int32_t i = 0; i < iPageNum; i++) {
-      IXFA_LayoutPage* pLayoutPage = pDocLayout->GetPage(i);
+      CXFA_ContainerLayoutItem* pLayoutPage = pDocLayout->GetPage(i);
       if (!pLayoutPage) {
         continue;
       }
@@ -183,7 +186,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_PageSpan(
   if (!pNode) {
     return;
   }
-  IXFA_DocLayout* pDocLayout = m_pDocument->GetDocLayout();
+  CXFA_LayoutProcessor* pDocLayout = m_pDocument->GetDocLayout();
   if (!pDocLayout) {
     return;
   }
@@ -205,7 +208,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_Page(
   Script_LayoutPseudoModel_PageImp(pArguments, FALSE);
 }
 void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_GetObjArray(
-    IXFA_DocLayout* pDocLayout,
+    CXFA_LayoutProcessor* pDocLayout,
     int32_t iPageNo,
     const CFX_WideString& wsType,
     FX_BOOL bOnPageArea,
@@ -369,11 +372,11 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_PageContent(
   if (iLength >= 3) {
     bOnPageArea = pArguments->GetInt32(2) == 0 ? FALSE : TRUE;
   }
-  IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
   if (!pNotify) {
     return;
   }
-  IXFA_DocLayout* pDocLayout = m_pDocument->GetDocLayout();
+  CXFA_LayoutProcessor* pDocLayout = m_pDocument->GetDocLayout();
   if (!pDocLayout) {
     return;
   }
@@ -392,11 +395,11 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_AbsPageCount(
 }
 void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_AbsPageCountInBatch(
     CFXJSE_Arguments* pArguments) {
-  IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
   if (!pNotify) {
     return;
   }
-  IXFA_Doc* hDoc = pNotify->GetHDOC();
+  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   int32_t iPageCount = pNotify->GetDocProvider()->AbsPageCountInBatch(hDoc);
   FXJSE_HVALUE hValue = pArguments->GetReturnValue();
   if (hValue) {
@@ -405,11 +408,11 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_AbsPageCountInBatch(
 }
 void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_SheetCountInBatch(
     CFXJSE_Arguments* pArguments) {
-  IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
   if (!pNotify) {
     return;
   }
-  IXFA_Doc* hDoc = pNotify->GetHDOC();
+  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   int32_t iPageCount = pNotify->GetDocProvider()->SheetCountInBatch(hDoc);
   FXJSE_HVALUE hValue = pArguments->GetReturnValue();
   if (hValue) {
@@ -447,19 +450,20 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_AbsPageInBatch(
   if (!pNode) {
     return;
   }
-  IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
   if (!pNotify) {
     return;
   }
-  IXFA_DocLayout* pDocLayout = m_pDocument->GetDocLayout();
+  CXFA_LayoutProcessor* pDocLayout = m_pDocument->GetDocLayout();
   if (!pDocLayout) {
     return;
   }
-  IXFA_Widget* hWidget = pNotify->GetHWidget(pDocLayout->GetLayoutItem(pNode));
+  CXFA_FFWidget* hWidget =
+      pNotify->GetHWidget(pDocLayout->GetLayoutItem(pNode));
   if (!hWidget) {
     return;
   }
-  IXFA_Doc* hDoc = pNotify->GetHDOC();
+  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   int32_t iPageCount = pNotify->GetDocProvider()->AbsPageInBatch(hDoc, hWidget);
   FXJSE_HVALUE hValue = pArguments->GetReturnValue();
   if (hValue) {
@@ -481,19 +485,20 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_SheetInBatch(
   if (!pNode) {
     return;
   }
-  IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
   if (!pNotify) {
     return;
   }
-  IXFA_DocLayout* pDocLayout = m_pDocument->GetDocLayout();
+  CXFA_LayoutProcessor* pDocLayout = m_pDocument->GetDocLayout();
   if (!pDocLayout) {
     return;
   }
-  IXFA_Widget* hWidget = pNotify->GetHWidget(pDocLayout->GetLayoutItem(pNode));
+  CXFA_FFWidget* hWidget =
+      pNotify->GetHWidget(pDocLayout->GetLayoutItem(pNode));
   if (!hWidget) {
     return;
   }
-  IXFA_Doc* hDoc = pNotify->GetHDOC();
+  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   int32_t iPageCount = pNotify->GetDocProvider()->SheetInBatch(hDoc, hWidget);
   FXJSE_HVALUE hValue = pArguments->GetReturnValue();
   if (hValue) {
@@ -537,7 +542,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_PageImp(
   if (!pNode && hValue) {
     FXJSE_Value_SetInteger(hValue, iPage);
   }
-  IXFA_DocLayout* pDocLayout = m_pDocument->GetDocLayout();
+  CXFA_LayoutProcessor* pDocLayout = m_pDocument->GetDocLayout();
   if (!pDocLayout) {
     return;
   }

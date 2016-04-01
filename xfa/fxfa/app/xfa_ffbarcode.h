@@ -8,8 +8,8 @@
 #define XFA_FXFA_APP_XFA_FFBARCODE_H_
 
 #include "xfa/fxbarcode/include/BC_Library.h"
-#include "xfa/fxfa/app/xfa_ffpageview.h"
 #include "xfa/fxfa/app/xfa_fftextedit.h"
+#include "xfa/include/fxfa/xfa_ffpageview.h"
 
 class CXFA_FFBarcode : public CXFA_FFTextEdit {
  public:

@@ -12,6 +12,8 @@
 #include "fpdfsdk/include/fpdfxfa/fpdfxfa_util.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
+#include "xfa/include/fxfa/xfa_ffdocview.h"
+#include "xfa/include/fxfa/xfa_ffpageview.h"
 
 CPDFXFA_Page::CPDFXFA_Page(CPDFXFA_Document* pDoc, int page_index)
     : m_pPDFPage(NULL),
@@ -66,15 +68,15 @@ FX_BOOL CPDFXFA_Page::LoadPDFPage() {
 FX_BOOL CPDFXFA_Page::LoadXFAPageView() {
   if (!m_pDocument)
     return FALSE;
-  IXFA_Doc* pXFADoc = m_pDocument->GetXFADoc();
+  CXFA_FFDoc* pXFADoc = m_pDocument->GetXFADoc();
   if (!pXFADoc)
     return FALSE;
 
-  IXFA_DocView* pXFADocView = m_pDocument->GetXFADocView();
+  CXFA_FFDocView* pXFADocView = m_pDocument->GetXFADocView();
   if (!pXFADocView)
     return FALSE;
 
-  IXFA_PageView* pPageView = pXFADocView->GetPageView(m_iPageIndex);
+  CXFA_FFPageView* pPageView = pXFADocView->GetPageView(m_iPageIndex);
   if (!pPageView)
     return FALSE;
 

@@ -4,22 +4,27 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/app/xfa_ffdoc.h"
+#include "xfa/include/fxfa/xfa_ffdoc.h"
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fxcrt/include/fx_ext.h"
+#include "core/fxcrt/include/fx_memory.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fgas/crt/fgas_algorithm.h"
 #include "xfa/fwl/core/ifwl_notedriver.h"
-#include "xfa/fxfa/app/xfa_ffapp.h"
-#include "xfa/fxfa/app/xfa_ffdocview.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/app/xfa_ffwidget.h"
-#include "xfa/fxfa/app/xfa_fontmgr.h"
 #include "xfa/fxfa/parser/xfa_docdata.h"
+#include "xfa/fxfa/parser/xfa_document_serialize.h"
 #include "xfa/fxfa/parser/xfa_parser.h"
+#include "xfa/fxfa/parser/xfa_parser_imp.h"
+#include "xfa/fxfa/parser/xfa_parser_imp.h"
+#include "xfa/include/fxfa/xfa_checksum.h"
+#include "xfa/include/fxfa/xfa_ffapp.h"
+#include "xfa/include/fxfa/xfa_ffdocview.h"
+#include "xfa/include/fxfa/xfa_fontmgr.h"
 
 CXFA_FFDoc::CXFA_FFDoc(CXFA_FFApp* pApp, IXFA_DocProvider* pDocProvider)
     : m_pDocProvider(pDocProvider),
@@ -38,7 +43,7 @@ uint32_t CXFA_FFDoc::GetDocType() {
 }
 int32_t CXFA_FFDoc::StartLoad() {
   m_pNotify = new CXFA_FFNotify(this);
-  IXFA_DocParser* pDocParser = IXFA_DocParser::Create(m_pNotify);
+  CXFA_DocumentParser* pDocParser = new CXFA_DocumentParser(m_pNotify);
   int32_t iStatus = pDocParser->StartParse(m_pStream);
   m_pDocument = pDocParser->GetDocument();
   return iStatus;
@@ -182,7 +187,7 @@ void CXFA_FFDoc::StopLoad() {
     m_dwDocType = XFA_DOCTYPE_Dynamic;
   }
 }
-IXFA_DocView* CXFA_FFDoc::CreateDocView(uint32_t dwView) {
+CXFA_FFDocView* CXFA_FFDoc::CreateDocView(uint32_t dwView) {
   CXFA_FFDocView* pDocView =
       (CXFA_FFDocView*)m_mapTypeToDocView.GetValueAt((void*)(uintptr_t)dwView);
   if (!pDocView) {
@@ -191,7 +196,7 @@ IXFA_DocView* CXFA_FFDoc::CreateDocView(uint32_t dwView) {
   }
   return pDocView;
 }
-CXFA_FFDocView* CXFA_FFDoc::GetDocView(IXFA_DocLayout* pLayout) {
+CXFA_FFDocView* CXFA_FFDoc::GetDocView(CXFA_LayoutProcessor* pLayout) {
   FX_POSITION ps = m_mapTypeToDocView.GetStartPosition();
   while (ps) {
     void* pType;
@@ -393,11 +398,8 @@ CFDE_XMLElement* CXFA_FFDoc::GetPackageData(const CFX_WideStringC& wsPackage) {
 }
 FX_BOOL CXFA_FFDoc::SavePackage(const CFX_WideStringC& wsPackage,
                                 IFX_FileWrite* pFile,
-                                IXFA_ChecksumContext* pCSContext) {
-  IXFA_PacketExport* pExport = IXFA_PacketExport::Create(m_pDocument);
-  if (!pExport) {
-    return FALSE;
-  }
+                                CXFA_ChecksumContext* pCSContext) {
+  CXFA_DataExporter* pExport = new CXFA_DataExporter(m_pDocument);
   uint32_t packetHash =
       FX_HashCode_String_GetW(wsPackage.GetPtr(), wsPackage.GetLength());
   CXFA_Node* pNode = NULL;
@@ -422,11 +424,8 @@ FX_BOOL CXFA_FFDoc::SavePackage(const CFX_WideStringC& wsPackage,
   return bFlags;
 }
 FX_BOOL CXFA_FFDoc::ImportData(IFX_FileRead* pStream, FX_BOOL bXDP) {
-  FX_BOOL bRet = FALSE;
-  IXFA_PacketImport* pImport = IXFA_PacketImport::Create(m_pDocument);
-  if (pImport) {
-    bRet = pImport->ImportData(pStream);
-    pImport->Release();
-  }
-  return bRet;
+  std::unique_ptr<CXFA_DataImporter, ReleaseDeleter<CXFA_DataImporter>>
+      importer(new CXFA_DataImporter(m_pDocument));
+
+  return importer->ImportData(pStream);
 }

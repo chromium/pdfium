@@ -42,9 +42,7 @@ config("pdfium_config") {
   }
 
   if (is_win) {
-    cflags += [
-      "/wd4267",
-    ]
+    cflags += [ "/wd4267" ]
   }
 
   if (is_clang || is_posix) {
@@ -1392,9 +1390,7 @@ if (pdf_enable_xfa) {
       "xfa/fxbarcode/qrcode/BC_QRGridSampler.h",
       "xfa/fxbarcode/utils.h",
       "xfa/fxfa/app/xfa_checksum.cpp",
-      "xfa/fxfa/app/xfa_checksum.h",
       "xfa/fxfa/app/xfa_ffapp.cpp",
-      "xfa/fxfa/app/xfa_ffapp.h",
       "xfa/fxfa/app/xfa_ffbarcode.cpp",
       "xfa/fxfa/app/xfa_ffbarcode.h",
       "xfa/fxfa/app/xfa_ffcheckbutton.cpp",
@@ -1402,11 +1398,8 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/app/xfa_ffchoicelist.cpp",
       "xfa/fxfa/app/xfa_ffchoicelist.h",
       "xfa/fxfa/app/xfa_ffdoc.cpp",
-      "xfa/fxfa/app/xfa_ffdoc.h",
       "xfa/fxfa/app/xfa_ffdochandler.cpp",
-      "xfa/fxfa/app/xfa_ffdochandler.h",
       "xfa/fxfa/app/xfa_ffdocview.cpp",
-      "xfa/fxfa/app/xfa_ffdocview.h",
       "xfa/fxfa/app/xfa_ffdraw.cpp",
       "xfa/fxfa/app/xfa_ffdraw.h",
       "xfa/fxfa/app/xfa_ffexclgroup.cpp",
@@ -1420,7 +1413,6 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/app/xfa_ffnotify.cpp",
       "xfa/fxfa/app/xfa_ffnotify.h",
       "xfa/fxfa/app/xfa_ffpageview.cpp",
-      "xfa/fxfa/app/xfa_ffpageview.h",
       "xfa/fxfa/app/xfa_ffpath.cpp",
       "xfa/fxfa/app/xfa_ffpath.h",
       "xfa/fxfa/app/xfa_ffpushbutton.cpp",
@@ -1438,15 +1430,12 @@ if (pdf_enable_xfa) {
       "xfa/fxfa/app/xfa_ffwidgetacc.cpp",
       "xfa/fxfa/app/xfa_ffwidgetacc.h",
       "xfa/fxfa/app/xfa_ffwidgethandler.cpp",
-      "xfa/fxfa/app/xfa_ffwidgethandler.h",
       "xfa/fxfa/app/xfa_fontmgr.cpp",
-      "xfa/fxfa/app/xfa_fontmgr.h",
       "xfa/fxfa/app/xfa_fwladapter.cpp",
       "xfa/fxfa/app/xfa_fwladapter.h",
       "xfa/fxfa/app/xfa_fwltheme.cpp",
       "xfa/fxfa/app/xfa_fwltheme.h",
       "xfa/fxfa/app/xfa_rendercontext.cpp",
-      "xfa/fxfa/app/xfa_rendercontext.h",
       "xfa/fxfa/app/xfa_textlayout.cpp",
       "xfa/fxfa/app/xfa_textlayout.h",
       "xfa/fxfa/fm2js/xfa_error.cpp",
@@ -1539,6 +1528,15 @@ if (pdf_enable_xfa) {
       "xfa/include/fxfa/fxfa_basic.h",
       "xfa/include/fxfa/fxfa_objectacc.h",
       "xfa/include/fxfa/fxfa_widget.h",
+      "xfa/include/fxfa/xfa_checksum.h",
+      "xfa/include/fxfa/xfa_ffapp.h",
+      "xfa/include/fxfa/xfa_ffdoc.h",
+      "xfa/include/fxfa/xfa_ffdochandler.h",
+      "xfa/include/fxfa/xfa_ffdocview.h",
+      "xfa/include/fxfa/xfa_ffpageview.h",
+      "xfa/include/fxfa/xfa_ffwidgethandler.h",
+      "xfa/include/fxfa/xfa_fontmgr.h",
+      "xfa/include/fxfa/xfa_rendercontext.h",
     ]
     include_dirs = [ "." ]
     if (pdf_enable_v8) {

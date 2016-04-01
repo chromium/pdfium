@@ -13,7 +13,7 @@ class CFDE_XMLDoc;
 
 class IXFA_Parser {
  public:
-  static IXFA_Parser* Create(IXFA_ObjFactory* pFactory,
+  static IXFA_Parser* Create(CXFA_Document* pFactory,
                              FX_BOOL bDocumentParser = FALSE);
   virtual ~IXFA_Parser() {}
   virtual void Release() = 0;
@@ -25,16 +25,10 @@ class IXFA_Parser {
                                IFX_Pause* pPause = NULL) = 0;
   virtual void ConstructXFANode(CXFA_Node* pXFANode,
                                 CFDE_XMLNode* pXMLNode) = 0;
-  virtual IXFA_ObjFactory* GetFactory() const = 0;
+  virtual CXFA_Document* GetFactory() const = 0;
   virtual CXFA_Node* GetRootNode() const = 0;
   virtual CFDE_XMLDoc* GetXMLDoc() const = 0;
   virtual void CloseParser() = 0;
-};
-class IXFA_DocParser : public IXFA_Parser {
- public:
-  static IXFA_DocParser* Create(IXFA_Notify* pNotify);
-  virtual CXFA_Document* GetDocument() const = 0;
-  virtual IXFA_Notify* GetNotify() const = 0;
 };
 
 #endif  // XFA_FXFA_PARSER_XFA_PARSER_H_

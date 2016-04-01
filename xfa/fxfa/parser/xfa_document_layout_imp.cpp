@@ -28,7 +28,7 @@ CXFA_LayoutProcessor* CXFA_Document::GetLayoutProcessor() {
   }
   return m_pLayoutProcessor;
 }
-IXFA_DocLayout* CXFA_Document::GetDocLayout() {
+CXFA_LayoutProcessor* CXFA_Document::GetDocLayout() {
   return GetLayoutProcessor();
 }
 CXFA_LayoutProcessor::CXFA_LayoutProcessor(CXFA_Document* pDocument)
@@ -133,7 +133,7 @@ FX_BOOL CXFA_LayoutProcessor::IncrementLayout() {
 int32_t CXFA_LayoutProcessor::CountPages() const {
   return m_pLayoutPageMgr ? m_pLayoutPageMgr->GetPageCount() : 0;
 }
-IXFA_LayoutPage* CXFA_LayoutProcessor::GetPage(int32_t index) const {
+CXFA_ContainerLayoutItem* CXFA_LayoutProcessor::GetPage(int32_t index) const {
   return m_pLayoutPageMgr ? m_pLayoutPageMgr->GetPage(index) : NULL;
 }
 CXFA_LayoutItem* CXFA_LayoutProcessor::GetLayoutItem(CXFA_Node* pFormItem) {
@@ -171,7 +171,7 @@ CXFA_LayoutItem::CXFA_LayoutItem(CXFA_Node* pNode, FX_BOOL bIsContentLayoutItem)
 CXFA_LayoutItem::~CXFA_LayoutItem() {}
 CXFA_ContainerLayoutItem::CXFA_ContainerLayoutItem(CXFA_Node* pNode)
     : CXFA_LayoutItem(pNode, FALSE), m_pOldSubform(NULL) {}
-IXFA_DocLayout* CXFA_ContainerLayoutItem::GetLayout() const {
+CXFA_LayoutProcessor* CXFA_ContainerLayoutItem::GetLayout() const {
   return m_pFormNode->GetDocument()->GetLayoutProcessor();
 }
 int32_t CXFA_ContainerLayoutItem::GetPageIndex() const {

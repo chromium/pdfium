@@ -10,10 +10,13 @@
 
 #include "core/fxcrt/include/fx_ext.h"
 #include "xfa/fgas/localization/fgas_locale.h"
+#include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/fm2js/xfa_fm2jsapi.h"
 #include "xfa/fxfa/parser/xfa_document.h"
 #include "xfa/fxfa/parser/xfa_localevalue.h"
 #include "xfa/fxfa/parser/xfa_parser.h"
+#include "xfa/fxfa/parser/xfa_parser_imp.h"
+#include "xfa/fxfa/parser/xfa_script_imp.h"
 #include "xfa/fxjse/cfxjse_arguments.h"
 
 #define FINANCIAL_PRECISION 0.00000001
@@ -1596,7 +1599,7 @@ void CXFA_FM2JSContext::Time2Num(FXJSE_HOBJECT hThis,
         int32_t second = uniTime.GetSecond();
         int32_t milSecond = uniTime.GetMillisecond();
         int32_t mins = hour * 60 + min;
-        IXFA_TimeZoneProvider* pProvider = IXFA_TimeZoneProvider::Get();
+        CXFA_TimeZoneProvider* pProvider = CXFA_TimeZoneProvider::Get();
         if (pProvider) {
           FX_TIMEZONE tz;
           pProvider->GetTimeZone(tz);
@@ -6835,7 +6838,7 @@ FX_BOOL CXFA_FM2JSContext::GetObjectByName(
   if (!pDoc) {
     return bFlags;
   }
-  IXFA_ScriptContext* pScriptContext = pDoc->GetScriptContext();
+  CXFA_ScriptContext* pScriptContext = pDoc->GetScriptContext();
   XFA_RESOLVENODE_RS resoveNodeRS;
   uint32_t dwFlags = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
                      XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;
@@ -6866,7 +6869,7 @@ int32_t CXFA_FM2JSContext::ResolveObjects(FXJSE_HOBJECT hThis,
   if (!pDoc) {
     return iRet;
   }
-  IXFA_ScriptContext* pScriptContext = pDoc->GetScriptContext();
+  CXFA_ScriptContext* pScriptContext = pDoc->GetScriptContext();
   CXFA_Object* pNode = NULL;
   uint32_t dFlags = 0UL;
   if (bdotAccessor) {

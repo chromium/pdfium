@@ -4,16 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/app/xfa_rendercontext.h"
+#include "xfa/include/fxfa/xfa_rendercontext.h"
 
 #include "xfa/fxfa/app/xfa_ffwidget.h"
 #include "xfa/fxgraphics/include/cfx_graphics.h"
+#include "xfa/include/fxfa/xfa_ffpageview.h"
 
 #define XFA_RENDERCONTEXT_MaxCount 30
 
-IXFA_RenderContext* XFA_RenderContext_Create() {
-  return new CXFA_RenderContext;
-}
 CXFA_RenderContext::CXFA_RenderContext() {
   m_pWidgetIterator = NULL;
   m_pWidget = NULL;
@@ -26,7 +24,7 @@ CXFA_RenderContext::CXFA_RenderContext() {
 CXFA_RenderContext::~CXFA_RenderContext() {
   StopRender();
 }
-int32_t CXFA_RenderContext::StartRender(IXFA_PageView* pPageView,
+int32_t CXFA_RenderContext::StartRender(CXFA_FFPageView* pPageView,
                                         CFX_Graphics* pGS,
                                         const CFX_Matrix& matrix,
                                         const CXFA_RenderOptions& options) {

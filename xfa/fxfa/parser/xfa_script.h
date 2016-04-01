@@ -82,40 +82,4 @@ struct XFA_JSBUILTININFO {
 
 const XFA_JSBUILTININFO* XFA_GetJSBuiltinByHash(uint32_t uHashCode);
 
-class IXFA_ScriptContext {
- public:
-  virtual ~IXFA_ScriptContext() {}
-  virtual void Release() = 0;
-  virtual void Initialize(FXJSE_HRUNTIME hRuntime) = 0;
-
-  virtual void SetEventParam(CXFA_EventParam param) = 0;
-  virtual CXFA_EventParam* GetEventParam() = 0;
-  virtual FX_BOOL RunScript(XFA_SCRIPTLANGTYPE eScriptType,
-                            const CFX_WideStringC& wsScript,
-                            FXJSE_HVALUE hRetValue,
-                            CXFA_Object* pThisObject = NULL) = 0;
-  virtual int32_t ResolveObjects(CXFA_Object* refNode,
-                                 const CFX_WideStringC& wsExpression,
-                                 XFA_RESOLVENODE_RS& resolveNodeRS,
-                                 uint32_t dwStyles = XFA_RESOLVENODE_Children,
-                                 CXFA_Node* bindNode = NULL) = 0;
-  virtual FXJSE_HVALUE GetJSValueFromMap(CXFA_Object* pObject) = 0;
-  virtual void CacheList(CXFA_NodeList* pList) = 0;
-  virtual CXFA_Object* GetThisObject() const = 0;
-  virtual FXJSE_HRUNTIME GetRuntime() const = 0;
-  virtual int32_t GetIndexByName(CXFA_Node* refNode) = 0;
-  virtual int32_t GetIndexByClassName(CXFA_Node* refNode) = 0;
-  virtual void GetSomExpression(CXFA_Node* refNode,
-                                CFX_WideString& wsExpression) = 0;
-
-  virtual void SetNodesOfRunScript(CXFA_NodeArray* pArray) = 0;
-  virtual void AddNodesOfRunScript(const CXFA_NodeArray& nodes) = 0;
-  virtual void AddNodesOfRunScript(CXFA_Node* pNode) = 0;
-  virtual FXJSE_HCLASS GetJseNormalClass() = 0;
-  virtual XFA_SCRIPTLANGTYPE GetType() = 0;
-  virtual void SetRunAtType(XFA_ATTRIBUTEENUM eRunAt) = 0;
-  virtual FX_BOOL IsRunAtClient() = 0;
-};
-IXFA_ScriptContext* XFA_ScriptContext_Create(CXFA_Document* pDocument);
-
 #endif  // XFA_FXFA_PARSER_XFA_SCRIPT_H_

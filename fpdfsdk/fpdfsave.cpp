@@ -23,6 +23,10 @@
 #include "fpdfsdk/include/fpdfxfa/fpdfxfa_doc.h"
 #include "fpdfsdk/include/fpdfxfa/fpdfxfa_util.h"
 #include "public/fpdf_formfill.h"
+#include "xfa/include/fxfa/xfa_checksum.h"
+#include "xfa/include/fxfa/xfa_ffapp.h"
+#include "xfa/include/fxfa/xfa_ffdocview.h"
+#include "xfa/include/fxfa/xfa_ffwidgethandler.h"
 #endif
 
 #if _FX_OS_ == _FX_ANDROID_
@@ -83,11 +87,11 @@ bool SaveXFADocumentData(CPDFXFA_Document* pDocument,
   if (!CPDFXFA_App::GetInstance()->GetXFAApp())
     return true;
 
-  IXFA_DocView* pXFADocView = pDocument->GetXFADocView();
+  CXFA_FFDocView* pXFADocView = pDocument->GetXFADocView();
   if (!pXFADocView)
     return true;
 
-  IXFA_DocHandler* pXFADocHandler =
+  CXFA_FFDocHandler* pXFADocHandler =
       CPDFXFA_App::GetInstance()->GetXFAApp()->GetDocHandler();
   CPDF_Document* pPDFDocument = pDocument->GetPDFDoc();
   if (!pDocument)
@@ -128,8 +132,8 @@ bool SaveXFADocumentData(CPDFXFA_Document* pDocument,
     else if (pPDFObj->GetString() == "template")
       iTemplate = i + 1;
   }
-  std::unique_ptr<IXFA_ChecksumContext, ReleaseDeleter<IXFA_ChecksumContext>>
-      pContext(XFA_Checksum_Create());
+  std::unique_ptr<CXFA_ChecksumContext, ReleaseDeleter<CXFA_ChecksumContext>>
+      pContext(new CXFA_ChecksumContext);
   pContext->StartChecksum();
 
   // template
@@ -228,13 +232,13 @@ bool SendPostSaveToXFADoc(CPDFXFA_Document* pDocument) {
       pDocument->GetDocType() != DOCTYPE_STATIC_XFA)
     return true;
 
-  IXFA_DocView* pXFADocView = pDocument->GetXFADocView();
+  CXFA_FFDocView* pXFADocView = pDocument->GetXFADocView();
   if (!pXFADocView)
     return false;
 
-  IXFA_WidgetHandler* pWidgetHander = pXFADocView->GetWidgetHandler();
+  CXFA_FFWidgetHandler* pWidgetHander = pXFADocView->GetWidgetHandler();
   CXFA_WidgetAcc* pWidgetAcc = NULL;
-  IXFA_WidgetAccIterator* pWidgetAccIterator =
+  CXFA_WidgetAccIterator* pWidgetAccIterator =
       pXFADocView->CreateWidgetAccIterator();
   pWidgetAcc = pWidgetAccIterator->MoveToNext();
   while (pWidgetAcc) {
@@ -255,13 +259,13 @@ bool SendPreSaveToXFADoc(CPDFXFA_Document* pDocument,
       pDocument->GetDocType() != DOCTYPE_STATIC_XFA)
     return true;
 
-  IXFA_DocView* pXFADocView = pDocument->GetXFADocView();
+  CXFA_FFDocView* pXFADocView = pDocument->GetXFADocView();
   if (!pXFADocView)
     return true;
 
-  IXFA_WidgetHandler* pWidgetHander = pXFADocView->GetWidgetHandler();
+  CXFA_FFWidgetHandler* pWidgetHander = pXFADocView->GetWidgetHandler();
   CXFA_WidgetAcc* pWidgetAcc = NULL;
-  IXFA_WidgetAccIterator* pWidgetAccIterator =
+  CXFA_WidgetAccIterator* pWidgetAccIterator =
       pXFADocView->CreateWidgetAccIterator();
   pWidgetAcc = pWidgetAccIterator->MoveToNext();
   while (pWidgetAcc) {

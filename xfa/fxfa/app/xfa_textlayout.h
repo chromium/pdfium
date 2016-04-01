@@ -11,28 +11,15 @@
 #include "xfa/fde/fde_brush.h"
 #include "xfa/fde/fde_renderdevice.h"
 #include "xfa/fgas/layout/fgas_rtfbreak.h"
-#include "xfa/fxfa/app/xfa_ffdoc.h"
 #include "xfa/fxfa/parser/xfa_object.h"
+#include "xfa/include/fxfa/xfa_ffdoc.h"
 
 #define XFA_LOADERCNTXTFLG_FILTERSPACE 0x001
 
 class CXFA_Para;
 class CXFA_Font;
+class CXFA_TextProvider;
 class CXFA_TextTabstopsContext;
-
-class IXFA_TextProvider {
- public:
-  virtual ~IXFA_TextProvider() {}
-  virtual CXFA_Node* GetTextNode(FX_BOOL& bRichText) = 0;
-  virtual CXFA_Para GetParaNode() = 0;
-  virtual CXFA_Font GetFontNode() = 0;
-  virtual FX_BOOL IsCheckButtonAndAutoWidth() = 0;
-  virtual CXFA_FFDoc* GetDocNode() = 0;
-  virtual FX_BOOL GetEmbbedObj(FX_BOOL bURI,
-                               FX_BOOL bRaw,
-                               const CFX_WideString& wsAttr,
-                               CFX_WideString& wsValue) = 0;
-};
 
 class CXFA_CSSTagProvider : public IFDE_CSSTagProvider {
  public:
@@ -88,49 +75,49 @@ class CXFA_TextParser {
   CXFA_TextParser() : m_pAllocator(NULL), m_pSelector(NULL), m_pUASheet(NULL) {}
   virtual ~CXFA_TextParser();
   void Reset();
-  void DoParse(CFDE_XMLNode* pXMLContainer, IXFA_TextProvider* pTextProvider);
-  IFDE_CSSComputedStyle* CreateRootStyle(IXFA_TextProvider* pTextProvider);
+  void DoParse(CFDE_XMLNode* pXMLContainer, CXFA_TextProvider* pTextProvider);
+  IFDE_CSSComputedStyle* CreateRootStyle(CXFA_TextProvider* pTextProvider);
   IFDE_CSSComputedStyle* ComputeStyle(CFDE_XMLNode* pXMLNode,
                                       IFDE_CSSComputedStyle* pParentStyle);
   FX_BOOL IsParsed() const { return m_pAllocator != NULL; }
 
-  int32_t GetVAlgin(IXFA_TextProvider* pTextProvider) const;
+  int32_t GetVAlgin(CXFA_TextProvider* pTextProvider) const;
   FX_FLOAT GetTabInterval(IFDE_CSSComputedStyle* pStyle) const;
   int32_t CountTabs(IFDE_CSSComputedStyle* pStyle) const;
   FX_BOOL IsSpaceRun(IFDE_CSSComputedStyle* pStyle) const;
   FX_BOOL GetTabstops(IFDE_CSSComputedStyle* pStyle,
                       CXFA_TextTabstopsContext* pTabstopContext);
-  IFX_Font* GetFont(IXFA_TextProvider* pTextProvider,
+  IFX_Font* GetFont(CXFA_TextProvider* pTextProvider,
                     IFDE_CSSComputedStyle* pStyle) const;
-  FX_FLOAT GetFontSize(IXFA_TextProvider* pTextProvider,
+  FX_FLOAT GetFontSize(CXFA_TextProvider* pTextProvider,
                        IFDE_CSSComputedStyle* pStyle) const;
-  int32_t GetHorScale(IXFA_TextProvider* pTextProvider,
+  int32_t GetHorScale(CXFA_TextProvider* pTextProvider,
                       IFDE_CSSComputedStyle* pStyle,
                       CFDE_XMLNode* pXMLNode) const;
-  int32_t GetVerScale(IXFA_TextProvider* pTextProvider,
+  int32_t GetVerScale(CXFA_TextProvider* pTextProvider,
                       IFDE_CSSComputedStyle* pStyle) const;
-  void GetUnderline(IXFA_TextProvider* pTextProvider,
+  void GetUnderline(CXFA_TextProvider* pTextProvider,
                     IFDE_CSSComputedStyle* pStyle,
                     int32_t& iUnderline,
                     int32_t& iPeriod) const;
-  void GetLinethrough(IXFA_TextProvider* pTextProvider,
+  void GetLinethrough(CXFA_TextProvider* pTextProvider,
                       IFDE_CSSComputedStyle* pStyle,
                       int32_t& iLinethrough) const;
-  FX_ARGB GetColor(IXFA_TextProvider* pTextProvider,
+  FX_ARGB GetColor(CXFA_TextProvider* pTextProvider,
                    IFDE_CSSComputedStyle* pStyle) const;
-  FX_FLOAT GetBaseline(IXFA_TextProvider* pTextProvider,
+  FX_FLOAT GetBaseline(CXFA_TextProvider* pTextProvider,
                        IFDE_CSSComputedStyle* pStyle) const;
-  FX_FLOAT GetLineHeight(IXFA_TextProvider* pTextProvider,
+  FX_FLOAT GetLineHeight(CXFA_TextProvider* pTextProvider,
                          IFDE_CSSComputedStyle* pStyle,
                          FX_BOOL bFirst,
                          FX_FLOAT fVerScale) const;
-  FX_BOOL GetEmbbedObj(IXFA_TextProvider* pTextProvider,
+  FX_BOOL GetEmbbedObj(CXFA_TextProvider* pTextProvider,
                        CFDE_XMLNode* pXMLNode,
                        CFX_WideString& wsValue);
   CXFA_TextParseContext* GetParseContextFromMap(CFDE_XMLNode* pXMLNode);
 
  private:
-  void InitCSSData(IXFA_TextProvider* pTextProvider);
+  void InitCSSData(CXFA_TextProvider* pTextProvider);
   void ParseRichText(CFDE_XMLNode* pXMLNode,
                      IFDE_CSSComputedStyle* pParentStyle);
   void ParseTagInfo(CFDE_XMLNode* pXMLNode, CXFA_CSSTagProvider& tagProvider);
@@ -324,7 +311,7 @@ class CXFA_TextTabstopsContext {
 
 class CXFA_TextLayout {
  public:
-  CXFA_TextLayout(IXFA_TextProvider* pTextProvider);
+  CXFA_TextLayout(CXFA_TextProvider* pTextProvider);
   virtual ~CXFA_TextLayout();
   int32_t GetText(CFX_WideString& wsText);
   FX_FLOAT GetLayoutHeight();
@@ -408,7 +395,7 @@ class CXFA_TextLayout {
   FX_BOOL Layout(int32_t iBlock);
   int32_t CountBlocks() const;
 
-  IXFA_TextProvider* m_pTextProvider;
+  CXFA_TextProvider* m_pTextProvider;
   CXFA_Node* m_pTextDataNode;
   FX_BOOL m_bRichText;
   IFX_MEMAllocator* m_pAllocator;

@@ -4,14 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_APP_XFA_FFDOCVIEW_H_
-#define XFA_FXFA_APP_XFA_FFDOCVIEW_H_
+#ifndef XFA_INCLUDE_FXFA_XFA_FFDOCVIEW_H_
+#define XFA_INCLUDE_FXFA_XFA_FFDOCVIEW_H_
 
-#include "xfa/fxfa/app/xfa_ffdoc.h"
+#include "xfa/include/fxfa/xfa_ffdoc.h"
 
 class CXFA_FFWidgetHandler;
 class CXFA_FFDoc;
 class CXFA_FFWidget;
+class CXFA_WidgetAccIterator;
+
 extern const XFA_ATTRIBUTEENUM gs_EventActivity[];
 enum XFA_DOCVIEW_LAYOUTSTATUS {
   XFA_DOCVIEW_LAYOUTSTATUS_None,
@@ -29,37 +31,36 @@ enum XFA_DOCVIEW_LAYOUTSTATUS {
   XFA_DOCVIEW_LAYOUTSTATUS_DocReady,
   XFA_DOCVIEW_LAYOUTSTATUS_End
 };
-class CXFA_FFDocView : public IXFA_DocView {
+class CXFA_FFDocView {
  public:
   CXFA_FFDocView(CXFA_FFDoc* pDoc);
   ~CXFA_FFDocView();
 
-  virtual IXFA_Doc* GetDoc() { return m_pDoc; }
-  virtual int32_t StartLayout(int32_t iStartPage = 0);
-  virtual int32_t DoLayout(IFX_Pause* pPause = NULL);
-  virtual void StopLayout();
-  virtual int32_t GetLayoutStatus();
-  virtual void UpdateDocView();
-  virtual int32_t CountPageViews();
-  virtual IXFA_PageView* GetPageView(int32_t nIndex);
-  virtual IXFA_Widget* GetWidgetByName(const CFX_WideStringC& wsName);
-  virtual CXFA_WidgetAcc* GetWidgetAccByName(const CFX_WideStringC& wsName);
-  virtual void ResetWidgetData(CXFA_WidgetAcc* pWidgetAcc = NULL);
-  virtual int32_t ProcessWidgetEvent(CXFA_EventParam* pParam,
-                                     CXFA_WidgetAcc* pWidgetAcc = NULL);
-  virtual IXFA_WidgetHandler* GetWidgetHandler();
-  virtual IXFA_WidgetIterator* CreateWidgetIterator();
-  virtual IXFA_WidgetAccIterator* CreateWidgetAccIterator(
+  CXFA_FFDoc* GetDoc() { return m_pDoc; }
+  int32_t StartLayout(int32_t iStartPage = 0);
+  int32_t DoLayout(IFX_Pause* pPause = NULL);
+  void StopLayout();
+  int32_t GetLayoutStatus();
+  void UpdateDocView();
+  int32_t CountPageViews();
+  CXFA_FFPageView* GetPageView(int32_t nIndex);
+
+  void ResetWidgetData(CXFA_WidgetAcc* pWidgetAcc = NULL);
+  int32_t ProcessWidgetEvent(CXFA_EventParam* pParam,
+                             CXFA_WidgetAcc* pWidgetAcc = NULL);
+  CXFA_FFWidgetHandler* GetWidgetHandler();
+  IXFA_WidgetIterator* CreateWidgetIterator();
+  CXFA_WidgetAccIterator* CreateWidgetAccIterator(
       XFA_WIDGETORDER eOrder = XFA_WIDGETORDER_PreOrder);
-  virtual IXFA_Widget* GetFocusWidget();
-  virtual void KillFocus();
-  virtual FX_BOOL SetFocus(IXFA_Widget* hWidget);
+  CXFA_FFWidget* GetFocusWidget();
+  void KillFocus();
+  FX_BOOL SetFocus(CXFA_FFWidget* hWidget);
   CXFA_FFWidget* GetWidgetByName(const CFX_WideStringC& wsName,
                                  CXFA_FFWidget* pRefWidget = NULL);
   CXFA_WidgetAcc* GetWidgetAccByName(const CFX_WideStringC& wsName,
                                      CXFA_WidgetAcc* pRefWidgetAcc = NULL);
-  IXFA_DocLayout* GetXFALayout() const;
-  void OnPageEvent(IXFA_LayoutPage* pSender,
+  CXFA_LayoutProcessor* GetXFALayout() const;
+  void OnPageEvent(CXFA_ContainerLayoutItem* pSender,
                    XFA_PAGEEVENT eEvent,
                    int32_t iPageIndex);
   void LockUpdate();
@@ -67,7 +68,7 @@ class CXFA_FFDocView : public IXFA_DocView {
   FX_BOOL IsUpdateLocked();
   void ClearInvalidateList();
   void AddInvalidateRect(CXFA_FFWidget* pWidget, const CFX_RectF& rtInvalidate);
-  void AddInvalidateRect(IXFA_PageView* pPageView,
+  void AddInvalidateRect(CXFA_FFPageView* pPageView,
                          const CFX_RectF& rtInvalidate);
   void RunInvalidate();
   void RunDocClose();
@@ -112,7 +113,7 @@ class CXFA_FFDocView : public IXFA_DocView {
 
   CXFA_FFDoc* m_pDoc;
   CXFA_FFWidgetHandler* m_pWidgetHandler;
-  IXFA_DocLayout* m_pXFADocLayout;
+  CXFA_LayoutProcessor* m_pXFADocLayout;
   CXFA_WidgetAcc* m_pFocusAcc;
   CXFA_FFWidget* m_pFocusWidget;
   CXFA_FFWidget* m_pOldFocusWidget;
@@ -135,31 +136,32 @@ class CXFA_FFDocWidgetIterator : public IXFA_WidgetIterator {
   virtual void Release() { delete this; }
 
   virtual void Reset();
-  virtual IXFA_Widget* MoveToFirst();
-  virtual IXFA_Widget* MoveToLast();
-  virtual IXFA_Widget* MoveToNext();
-  virtual IXFA_Widget* MoveToPrevious();
-  virtual IXFA_Widget* GetCurrentWidget();
-  virtual FX_BOOL SetCurrentWidget(IXFA_Widget* hWidget);
+  virtual CXFA_FFWidget* MoveToFirst();
+  virtual CXFA_FFWidget* MoveToLast();
+  virtual CXFA_FFWidget* MoveToNext();
+  virtual CXFA_FFWidget* MoveToPrevious();
+  virtual CXFA_FFWidget* GetCurrentWidget();
+  virtual FX_BOOL SetCurrentWidget(CXFA_FFWidget* hWidget);
 
  protected:
   CXFA_ContainerIterator m_ContentIterator;
   CXFA_FFDocView* m_pDocView;
   CXFA_FFWidget* m_pCurWidget;
 };
-class CXFA_WidgetAccIterator : public IXFA_WidgetAccIterator {
+class CXFA_WidgetAccIterator {
  public:
   CXFA_WidgetAccIterator(CXFA_FFDocView* pDocView, CXFA_Node* pTravelRoot);
-  virtual ~CXFA_WidgetAccIterator();
-  virtual void Release() { delete this; }
-  virtual void Reset();
-  virtual CXFA_WidgetAcc* MoveToFirst();
-  virtual CXFA_WidgetAcc* MoveToLast();
-  virtual CXFA_WidgetAcc* MoveToNext();
-  virtual CXFA_WidgetAcc* MoveToPrevious();
-  virtual CXFA_WidgetAcc* GetCurrentWidgetAcc();
-  virtual FX_BOOL SetCurrentWidgetAcc(CXFA_WidgetAcc* hWidget);
-  virtual void SkipTree();
+  ~CXFA_WidgetAccIterator();
+
+  void Release() { delete this; }
+  void Reset();
+  CXFA_WidgetAcc* MoveToFirst();
+  CXFA_WidgetAcc* MoveToLast();
+  CXFA_WidgetAcc* MoveToNext();
+  CXFA_WidgetAcc* MoveToPrevious();
+  CXFA_WidgetAcc* GetCurrentWidgetAcc();
+  FX_BOOL SetCurrentWidgetAcc(CXFA_WidgetAcc* hWidget);
+  void SkipTree();
 
  protected:
   CXFA_ContainerIterator m_ContentIterator;
@@ -167,4 +169,4 @@ class CXFA_WidgetAccIterator : public IXFA_WidgetAccIterator {
   CXFA_WidgetAcc* m_pCurWidgetAcc;
 };
 
-#endif  // XFA_FXFA_APP_XFA_FFDOCVIEW_H_
+#endif  // XFA_INCLUDE_FXFA_XFA_FFDOCVIEW_H_

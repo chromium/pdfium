@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/xfa_layout_appadapter.h"
 
+#include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/fm2js/xfa_fm2jsapi.h"
 #include "xfa/fxfa/parser/xfa_docdata.h"
 #include "xfa/fxfa/parser/xfa_doclayout.h"
@@ -16,6 +17,7 @@
 #include "xfa/fxfa/parser/xfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 #include "xfa/fxfa/parser/xfa_parser.h"
+#include "xfa/fxfa/parser/xfa_parser_imp.h"
 #include "xfa/fxfa/parser/xfa_script.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
@@ -41,9 +43,9 @@ uint32_t XFA_GetRelevant(CXFA_Node* pFormItem, uint32_t dwParentRelvant) {
 }
 void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem) {
   CXFA_LayoutItem* pNode = pLayoutItem->m_pFirstChild;
-  IXFA_Notify* pNotify =
+  CXFA_FFNotify* pNotify =
       pLayoutItem->m_pFormNode->GetDocument()->GetParser()->GetNotify();
-  IXFA_DocLayout* pDocLayout =
+  CXFA_LayoutProcessor* pDocLayout =
       pLayoutItem->m_pFormNode->GetDocument()->GetDocLayout();
   while (pNode) {
     CXFA_LayoutItem* pNext = pNode->m_pNextSibling;

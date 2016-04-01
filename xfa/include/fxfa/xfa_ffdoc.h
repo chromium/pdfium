@@ -4,12 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_APP_XFA_FFDOC_H_
-#define XFA_FXFA_APP_XFA_FFDOC_H_
+#ifndef XFA_INCLUDE_FXFA_XFA_FFDOC_H_
+#define XFA_INCLUDE_FXFA_XFA_FFDOC_H_
 
 #include "xfa/fxfa/parser/xfa_document.h"
 #include "xfa/include/fxfa/fxfa.h"
 
+class CXFA_ChecksumContext;
 class CXFA_FFApp;
 class CXFA_FFNotify;
 class CXFA_FFDocView;
@@ -20,7 +21,7 @@ struct FX_IMAGEDIB_AND_DPI {
   int32_t iImageYDpi;
 };
 
-class CXFA_FFDoc : public IXFA_Doc {
+class CXFA_FFDoc {
  public:
   CXFA_FFDoc(CXFA_FFApp* pApp, IXFA_DocProvider* pDocProvider);
   ~CXFA_FFDoc();
@@ -29,14 +30,14 @@ class CXFA_FFDoc : public IXFA_Doc {
   int32_t StartLoad();
   int32_t DoLoad(IFX_Pause* pPause = NULL);
   void StopLoad();
-  IXFA_DocView* CreateDocView(uint32_t dwView = 0);
+  CXFA_FFDocView* CreateDocView(uint32_t dwView = 0);
   FX_BOOL OpenDoc(IFX_FileRead* pStream, FX_BOOL bTakeOverFile);
   FX_BOOL OpenDoc(CPDF_Document* pPDFDoc);
   FX_BOOL CloseDoc();
   void SetDocType(uint32_t dwType);
   CXFA_Document* GetXFADoc() { return m_pDocument; }
   CXFA_FFApp* GetApp() { return m_pApp; }
-  CXFA_FFDocView* GetDocView(IXFA_DocLayout* pLayout);
+  CXFA_FFDocView* GetDocView(CXFA_LayoutProcessor* pLayout);
   CXFA_FFDocView* GetDocView();
   CPDF_Document* GetPDFDoc();
   CFX_DIBitmap* GetPDFNamedImage(const CFX_WideStringC& wsName,
@@ -45,7 +46,7 @@ class CXFA_FFDoc : public IXFA_Doc {
   CFDE_XMLElement* GetPackageData(const CFX_WideStringC& wsPackage);
   FX_BOOL SavePackage(const CFX_WideStringC& wsPackage,
                       IFX_FileWrite* pFile,
-                      IXFA_ChecksumContext* pCSContext = NULL);
+                      CXFA_ChecksumContext* pCSContext = NULL);
   FX_BOOL ImportData(IFX_FileRead* pStream, FX_BOOL bXDP = TRUE);
 
  protected:
@@ -61,4 +62,4 @@ class CXFA_FFDoc : public IXFA_Doc {
   FX_BOOL m_bOwnStream;
 };
 
-#endif  // XFA_FXFA_APP_XFA_FFDOC_H_
+#endif  // XFA_INCLUDE_FXFA_XFA_FFDOC_H_

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_APP_XFA_FFAPP_H_
-#define XFA_FXFA_APP_XFA_FFAPP_H_
+#ifndef XFA_INCLUDE_FXFA_XFA_FFAPP_H_
+#define XFA_INCLUDE_FXFA_XFA_FFAPP_H_
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
@@ -15,6 +15,7 @@
 #include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/include/fxfa/fxfa.h"
 
+class CXFA_DefFontMgr;
 class CXFA_FWLAdapterWidgetMgr;
 class CXFA_FWLTheme;
 class CXFA_FFDocHandler;
@@ -34,21 +35,19 @@ class CXFA_FileRead : public IFX_FileRead {
   CFX_ObjectArray<CPDF_StreamAcc> m_Data;
 };
 
-class CXFA_FFApp : public IXFA_App, public IFWL_AdapterNative {
+class CXFA_FFApp : public IFWL_AdapterNative {
  public:
   CXFA_FFApp(IXFA_AppProvider* pProvider);
   ~CXFA_FFApp() override;
 
-  // IFXFA_App:
-  IXFA_DocHandler* GetDocHandler() override;
-  IXFA_Doc* CreateDoc(IXFA_DocProvider* pProvider,
-                      IFX_FileRead* pStream,
-                      FX_BOOL bTakeOverFile) override;
-  IXFA_Doc* CreateDoc(IXFA_DocProvider* pProvider,
-                      CPDF_Document* pPDFDoc) override;
-  IXFA_AppProvider* GetAppProvider() override { return m_pProvider; }
-  void SetDefaultFontMgr(IXFA_FontMgr* pFontMgr) override;
-  IXFA_MenuHandler* GetMenuHandler() override;
+  CXFA_FFDocHandler* GetDocHandler();
+  CXFA_FFDoc* CreateDoc(IXFA_DocProvider* pProvider,
+                        IFX_FileRead* pStream,
+                        FX_BOOL bTakeOverFile);
+  CXFA_FFDoc* CreateDoc(IXFA_DocProvider* pProvider, CPDF_Document* pPDFDoc);
+  IXFA_AppProvider* GetAppProvider() { return m_pProvider; }
+  void SetDefaultFontMgr(CXFA_DefFontMgr* pFontMgr);
+  CXFA_FFMenuHandler* GetMenuHandler();
 
   // IFWL_AdapterNative:
   IFWL_AdapterWidgetMgr* GetWidgetMgr(
@@ -79,4 +78,4 @@ class CXFA_FFApp : public IXFA_App, public IFWL_AdapterNative {
   CFWL_SDAdapterThreadMgr* m_pAdapterThreadMgr;
 };
 
-#endif  // XFA_FXFA_APP_XFA_FFAPP_H_
+#endif  // XFA_INCLUDE_FXFA_XFA_FFAPP_H_

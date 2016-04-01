@@ -15,12 +15,11 @@ class CXFA_Document;
 class CXFA_LayoutItem;
 class CXFA_LayoutProcessor;
 class CXFA_Node;
-class IXFA_DocLayout;
-class IXFA_DocParser;
-class IXFA_LayoutPage;
-class IXFA_Notify;
-class IXFA_ObjFactory;
-class IXFA_ScriptContext;
+class CXFA_LayoutProcessor;
+class CXFA_DocumentParser;
+class CXFA_ContainerLayoutItem;
+class CXFA_FFNotify;
+class CXFA_ScriptContext;
 
 enum XFA_VERSION {
   XFA_VERSION_UNKNOWN = 0,
@@ -68,65 +67,6 @@ enum XFA_LAYOUTRESULT {
 #define XFA_LAYOUTNOTIFY_StrictHeight 0x0001
 #define XFA_LAYOUTNOTIFY_NoParentBreak 0x0002
 
-class IXFA_Notify {
- public:
-  virtual ~IXFA_Notify() {}
-  virtual void OnPageEvent(IXFA_LayoutPage* pSender,
-                           XFA_PAGEEVENT eEvent,
-                           void* pParam = NULL) = 0;
-
-  virtual void OnNodeEvent(CXFA_Node* pSender,
-                           XFA_NODEEVENT eEvent,
-                           void* pParam = NULL,
-                           void* pParam2 = NULL,
-                           void* pParam3 = NULL,
-                           void* pParam4 = NULL) = 0;
-  virtual void OnWidgetDataEvent(CXFA_WidgetData* pSender,
-                                 uint32_t dwEvent,
-                                 void* pParam = NULL,
-                                 void* pAdditional = NULL,
-                                 void* pAdditional2 = NULL) = 0;
-
-  virtual CXFA_LayoutItem* OnCreateLayoutItem(CXFA_Node* pNode) = 0;
-  virtual void OnLayoutEvent(IXFA_DocLayout* pLayout,
-                             CXFA_LayoutItem* pSender,
-                             XFA_LAYOUTEVENT eEvent,
-                             void* pParam = NULL,
-                             void* pParam2 = NULL) = 0;
-  virtual void StartFieldDrawLayout(CXFA_Node* pItem,
-                                    FX_FLOAT& fCalcWidth,
-                                    FX_FLOAT& fCalcHeight) = 0;
-  virtual FX_BOOL FindSplitPos(CXFA_Node* pItem,
-                               int32_t iBlockIndex,
-                               FX_FLOAT& fCalcHeightPos) = 0;
-  virtual FX_BOOL RunScript(CXFA_Node* pScript, CXFA_Node* pFormItem) = 0;
-  virtual int32_t ExecEventByDeepFirst(CXFA_Node* pFormNode,
-                                       XFA_EVENTTYPE eEventType,
-                                       FX_BOOL bIsFormReady = FALSE,
-                                       FX_BOOL bRecursive = TRUE,
-                                       CXFA_WidgetAcc* pExclude = NULL) = 0;
-  virtual void AddCalcValidate(CXFA_Node* pNode) = 0;
-  virtual IXFA_Doc* GetHDOC() = 0;
-  virtual IXFA_DocProvider* GetDocProvider() = 0;
-  virtual IXFA_AppProvider* GetAppProvider() = 0;
-  virtual IXFA_WidgetHandler* GetWidgetHandler() = 0;
-  virtual IXFA_Widget* GetHWidget(CXFA_LayoutItem* pLayoutItem) = 0;
-  virtual void OpenDropDownList(IXFA_Widget* hWidget) = 0;
-  virtual CFX_WideString GetCurrentDateTime() = 0;
-  virtual void ResetData(CXFA_WidgetData* pWidgetData = NULL) = 0;
-  virtual int32_t GetLayoutStatus() = 0;
-  virtual void RunNodeInitialize(CXFA_Node* pNode) = 0;
-  virtual void RunSubformIndexChange(CXFA_Node* pSubformNode) = 0;
-  virtual CXFA_Node* GetFocusWidgetNode() = 0;
-  virtual void SetFocusWidgetNode(CXFA_Node* pNode) = 0;
-};
-class IXFA_ObjFactory {
- public:
-  virtual ~IXFA_ObjFactory() {}
-  virtual CXFA_Node* CreateNode(uint32_t dwPacket, XFA_ELEMENT eElement) = 0;
-  virtual CXFA_Node* CreateNode(const XFA_PACKETINFO* pPacket,
-                                XFA_ELEMENT eElement) = 0;
-};
 #define XFA_DOCFLAG_StrictScoping 0x0001
 #define XFA_DOCFLAG_HasInteractive 0x0002
 #define XFA_DOCFLAG_Interactive 0x0004
@@ -137,13 +77,13 @@ class CScript_HostPseudoModel;
 class CScript_LogPseudoModel;
 class CScript_LayoutPseudoModel;
 class CScript_SignaturePseudoModel;
-class CXFA_Document : public IXFA_ObjFactory {
+class CXFA_Document {
  public:
-  CXFA_Document(IXFA_DocParser* pParser);
+  CXFA_Document(CXFA_DocumentParser* pParser);
   ~CXFA_Document();
   CXFA_Node* GetRoot() const { return m_pRootNode; }
-  IXFA_DocParser* GetParser() const { return m_pParser; }
-  IXFA_Notify* GetNotify() const;
+  CXFA_DocumentParser* GetParser() const { return m_pParser; }
+  CXFA_FFNotify* GetNotify() const;
   void SetRoot(CXFA_Node* pNewRoot);
   CXFA_Object* GetXFAObject(const CFX_WideStringC& wsNodeName);
   CXFA_Object* GetXFAObject(uint32_t wsNodeNameHash);
@@ -156,9 +96,8 @@ class CXFA_Document : public IXFA_ObjFactory {
   XFA_VERSION GetCurVersionMode() { return m_eCurVersionMode; }
   XFA_VERSION RecognizeXFAVersionNumber(CFX_WideString& wsTemplateNS);
   CXFA_LocaleMgr* GetLocalMgr();
-  virtual CXFA_Node* CreateNode(uint32_t dwPacket, XFA_ELEMENT eElement);
-  virtual CXFA_Node* CreateNode(const XFA_PACKETINFO* pPacket,
-                                XFA_ELEMENT eElement);
+  CXFA_Node* CreateNode(uint32_t dwPacket, XFA_ELEMENT eElement);
+  CXFA_Node* CreateNode(const XFA_PACKETINFO* pPacket, XFA_ELEMENT eElement);
   void DoProtoMerge();
   CXFA_Node* GetNodeByID(CXFA_Node* pRoot, const CFX_WideStringC& wsID);
   void DoDataMerge();
@@ -172,17 +111,17 @@ class CXFA_Document : public IXFA_ObjFactory {
   void DataMerge_UpdateBindingRelations(CXFA_Node* pFormUpdateRoot);
   CXFA_Node* GetNotBindNode(CXFA_ObjArray& arrayNodes);
   CXFA_LayoutProcessor* GetLayoutProcessor();
-  IXFA_DocLayout* GetDocLayout();
-  IXFA_ScriptContext* InitScriptContext(FXJSE_HRUNTIME hRuntime);
-  IXFA_ScriptContext* GetScriptContext();
+  CXFA_LayoutProcessor* GetDocLayout();
+  CXFA_ScriptContext* InitScriptContext(FXJSE_HRUNTIME hRuntime);
+  CXFA_ScriptContext* GetScriptContext();
   void ClearLayoutData();
 
   CFX_MapPtrTemplate<uint32_t, CXFA_Node*> m_rgGlobalBinding;
   CXFA_NodeArray m_pPendingPageSet;
 
  protected:
-  IXFA_DocParser* m_pParser;
-  IXFA_ScriptContext* m_pScriptContext;
+  CXFA_DocumentParser* m_pParser;
+  CXFA_ScriptContext* m_pScriptContext;
   CXFA_LayoutProcessor* m_pLayoutProcessor;
   CXFA_Node* m_pRootNode;
   CXFA_LocaleMgr* m_pLocalMgr;

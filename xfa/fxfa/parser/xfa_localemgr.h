@@ -52,24 +52,17 @@ class CXFA_LocaleMgr : public IFX_LocaleMgr {
   uint16_t m_dwLocaleFlags;
 };
 
-class IXFA_TimeZoneProvider {
- public:
-  static IXFA_TimeZoneProvider* Create();
-  static IXFA_TimeZoneProvider* Get();
-  static void Destroy();
-
-  virtual ~IXFA_TimeZoneProvider() {}
-
-  virtual void SetTimeZone(FX_TIMEZONE& tz) = 0;
-
-  virtual void GetTimeZone(FX_TIMEZONE& tz) = 0;
-};
-class CXFA_TimeZoneProvider : public IXFA_TimeZoneProvider {
+class CXFA_TimeZoneProvider {
  public:
   CXFA_TimeZoneProvider();
-  virtual ~CXFA_TimeZoneProvider();
-  virtual void SetTimeZone(FX_TIMEZONE& tz);
-  virtual void GetTimeZone(FX_TIMEZONE& tz);
+  ~CXFA_TimeZoneProvider();
+
+  static CXFA_TimeZoneProvider* Create();
+  static CXFA_TimeZoneProvider* Get();
+  static void Destroy();
+
+  void SetTimeZone(FX_TIMEZONE& tz);
+  void GetTimeZone(FX_TIMEZONE& tz);
 
  private:
   FX_TIMEZONE m_tz;

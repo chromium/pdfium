@@ -53,7 +53,7 @@ class CScript_LayoutPseudoModel : public CXFA_OrdinaryObject {
   void Script_LayoutPseudoModel_AbsPage(CFXJSE_Arguments* pArguments);
 
  protected:
-  void Script_LayoutPseudoModel_GetObjArray(IXFA_DocLayout* pDocLayout,
+  void Script_LayoutPseudoModel_GetObjArray(CXFA_LayoutProcessor* pDocLayout,
                                             int32_t iPageNo,
                                             const CFX_WideString& wsType,
                                             FX_BOOL bOnPageArea,

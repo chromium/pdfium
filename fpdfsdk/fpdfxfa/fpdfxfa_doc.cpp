@@ -16,6 +16,10 @@
 #include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/javascript/ijs_runtime.h"
 #include "public/fpdf_formfill.h"
+#include "xfa/include/fxfa/xfa_ffapp.h"
+#include "xfa/include/fxfa/xfa_ffdoc.h"
+#include "xfa/include/fxfa/xfa_ffdocview.h"
+#include "xfa/include/fxfa/xfa_ffpageview.h"
 
 #define IDS_XFA_Validate_Input                                          \
   "At least one required field was empty. Please fill in the required " \
@@ -53,9 +57,9 @@ CPDFXFA_Document::~CPDFXFA_Document() {
   m_nLoadStatus = FXFA_LOADSTATUS_CLOSING;
 
   if (m_pXFADoc) {
-    IXFA_App* pApp = m_pApp->GetXFAApp();
+    CXFA_FFApp* pApp = m_pApp->GetXFAApp();
     if (pApp) {
-      IXFA_DocHandler* pDocHandler = pApp->GetDocHandler();
+      CXFA_FFDocHandler* pDocHandler = pApp->GetDocHandler();
       if (pDocHandler) {
         CloseXFADoc(pDocHandler);
       }
@@ -84,7 +88,7 @@ FX_BOOL CPDFXFA_Document::LoadXFADoc() {
 
   m_XFAPageList.RemoveAll();
 
-  IXFA_App* pApp = m_pApp->GetXFAApp();
+  CXFA_FFApp* pApp = m_pApp->GetXFAApp();
   if (!pApp)
     return FALSE;
 
@@ -94,7 +98,7 @@ FX_BOOL CPDFXFA_Document::LoadXFADoc() {
     return FALSE;
   }
 
-  IXFA_DocHandler* pDocHandler = pApp->GetDocHandler();
+  CXFA_FFDocHandler* pDocHandler = pApp->GetDocHandler();
   if (!pDocHandler) {
     SetLastError(FPDF_ERR_XFALOAD);
     return FALSE;
@@ -170,7 +174,7 @@ CPDFXFA_Page* CPDFXFA_Document::GetPage(int page_index) {
   return pPage;
 }
 
-CPDFXFA_Page* CPDFXFA_Document::GetPage(IXFA_PageView* pPage) {
+CPDFXFA_Page* CPDFXFA_Document::GetPage(CXFA_FFPageView* pPage) {
   if (!pPage)
     return NULL;
 
@@ -219,19 +223,19 @@ void CPDFXFA_Document::FXRect2PDFRect(const CFX_RectF& fxRectF,
   pdfRect.bottom = fxRectF.top;
 }
 
-void CPDFXFA_Document::SetChangeMark(IXFA_Doc* hDoc) {
+void CPDFXFA_Document::SetChangeMark(CXFA_FFDoc* hDoc) {
   if (hDoc == m_pXFADoc && m_pSDKDoc) {
     m_pSDKDoc->SetChangeMark();
   }
 }
 
-FX_BOOL CPDFXFA_Document::GetChangeMark(IXFA_Doc* hDoc) {
+FX_BOOL CPDFXFA_Document::GetChangeMark(CXFA_FFDoc* hDoc) {
   if (hDoc == m_pXFADoc && m_pSDKDoc)
     return m_pSDKDoc->GetChangeMark();
   return FALSE;
 }
 
-void CPDFXFA_Document::InvalidateRect(IXFA_PageView* pPageView,
+void CPDFXFA_Document::InvalidateRect(CXFA_FFPageView* pPageView,
                                       const CFX_RectF& rt,
                                       uint32_t dwFlags /* = 0 */) {
   if (!m_pXFADoc || !m_pSDKDoc)
@@ -256,7 +260,7 @@ void CPDFXFA_Document::InvalidateRect(IXFA_PageView* pPageView,
                        rcPage.right, rcPage.top);
 }
 
-void CPDFXFA_Document::InvalidateRect(IXFA_Widget* hWidget,
+void CPDFXFA_Document::InvalidateRect(CXFA_FFWidget* hWidget,
                                       uint32_t dwFlags /* = 0 */) {
   if (!hWidget)
     return;
@@ -267,11 +271,11 @@ void CPDFXFA_Document::InvalidateRect(IXFA_Widget* hWidget,
   if (m_iDocType != DOCTYPE_DYNAMIC_XFA)
     return;
 
-  IXFA_WidgetHandler* pWidgetHandler = m_pXFADocView->GetWidgetHandler();
+  CXFA_FFWidgetHandler* pWidgetHandler = m_pXFADocView->GetWidgetHandler();
   if (!pWidgetHandler)
     return;
 
-  IXFA_PageView* pPageView = pWidgetHandler->GetPageView(hWidget);
+  CXFA_FFPageView* pPageView = pWidgetHandler->GetPageView(hWidget);
   if (!pPageView)
     return;
 
@@ -280,7 +284,7 @@ void CPDFXFA_Document::InvalidateRect(IXFA_Widget* hWidget,
   InvalidateRect(pPageView, rect, dwFlags);
 }
 
-void CPDFXFA_Document::DisplayCaret(IXFA_Widget* hWidget,
+void CPDFXFA_Document::DisplayCaret(CXFA_FFWidget* hWidget,
                                     FX_BOOL bVisible,
                                     const CFX_RectF* pRtAnchor) {
   if (!hWidget || pRtAnchor == NULL)
@@ -292,11 +296,11 @@ void CPDFXFA_Document::DisplayCaret(IXFA_Widget* hWidget,
   if (m_iDocType != DOCTYPE_DYNAMIC_XFA)
     return;
 
-  IXFA_WidgetHandler* pWidgetHandler = m_pXFADocView->GetWidgetHandler();
+  CXFA_FFWidgetHandler* pWidgetHandler = m_pXFADocView->GetWidgetHandler();
   if (!pWidgetHandler)
     return;
 
-  IXFA_PageView* pPageView = pWidgetHandler->GetPageView(hWidget);
+  CXFA_FFPageView* pPageView = pWidgetHandler->GetPageView(hWidget);
   if (!pPageView)
     return;
 
@@ -316,7 +320,7 @@ void CPDFXFA_Document::DisplayCaret(IXFA_Widget* hWidget,
                          rcCaret.right, rcCaret.bottom);
 }
 
-FX_BOOL CPDFXFA_Document::GetPopupPos(IXFA_Widget* hWidget,
+FX_BOOL CPDFXFA_Document::GetPopupPos(CXFA_FFWidget* hWidget,
                                       FX_FLOAT fMinPopup,
                                       FX_FLOAT fMaxPopup,
                                       const CFX_RectF& rtAnchor,
@@ -324,7 +328,7 @@ FX_BOOL CPDFXFA_Document::GetPopupPos(IXFA_Widget* hWidget,
   if (NULL == hWidget) {
     return FALSE;
   }
-  IXFA_PageView* pXFAPageView =
+  CXFA_FFPageView* pXFAPageView =
       m_pXFADocView->GetWidgetHandler()->GetPageView(hWidget);
   if (NULL == pXFAPageView) {
     return FALSE;
@@ -450,13 +454,13 @@ FX_BOOL CPDFXFA_Document::GetPopupPos(IXFA_Widget* hWidget,
   return TRUE;
 }
 
-FX_BOOL CPDFXFA_Document::PopupMenu(IXFA_Widget* hWidget,
+FX_BOOL CPDFXFA_Document::PopupMenu(CXFA_FFWidget* hWidget,
                                     CFX_PointF ptPopup,
                                     const CFX_RectF* pRectExclude) {
   if (NULL == hWidget) {
     return FALSE;
   }
-  IXFA_PageView* pXFAPageView =
+  CXFA_FFPageView* pXFAPageView =
       m_pXFADocView->GetWidgetHandler()->GetPageView(hWidget);
   if (pXFAPageView == NULL)
     return FALSE;
@@ -467,7 +471,7 @@ FX_BOOL CPDFXFA_Document::PopupMenu(IXFA_Widget* hWidget,
 
   int menuFlag = 0;
 
-  IXFA_MenuHandler* pXFAMenuHander = m_pApp->GetXFAApp()->GetMenuHandler();
+  CXFA_FFMenuHandler* pXFAMenuHander = m_pApp->GetXFAApp()->GetMenuHandler();
   if (pXFAMenuHander->CanUndo(hWidget))
     menuFlag |= FXFA_MEMU_UNDO;
   if (pXFAMenuHander->CanRedo(hWidget))
@@ -488,7 +492,7 @@ FX_BOOL CPDFXFA_Document::PopupMenu(IXFA_Widget* hWidget,
   return pEnv->FFI_PopupMenu(pPage, hWidget, menuFlag, ptPopup, NULL);
 }
 
-void CPDFXFA_Document::PageViewEvent(IXFA_PageView* pPageView,
+void CPDFXFA_Document::PageViewEvent(CXFA_FFPageView* pPageView,
                                      uint32_t dwFlags) {
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
   if (!pEnv)
@@ -501,7 +505,7 @@ void CPDFXFA_Document::PageViewEvent(IXFA_PageView* pPageView,
     if (nNewCount == m_nPageCount)
       return;
 
-    IXFA_DocView* pXFADocView = GetXFADocView();
+    CXFA_FFDocView* pXFADocView = GetXFADocView();
     if (!pXFADocView)
       return;
     for (int iPageIter = 0; iPageIter < m_nPageCount; iPageIter++) {
@@ -509,7 +513,7 @@ void CPDFXFA_Document::PageViewEvent(IXFA_PageView* pPageView,
       if (!pPage)
         continue;
       m_pSDKDoc->RemovePageView(pPage);
-      IXFA_PageView* pXFAPageView = pXFADocView->GetPageView(iPageIter);
+      CXFA_FFPageView* pXFAPageView = pXFADocView->GetPageView(iPageIter);
       pPage->SetXFAPageView(pXFAPageView);
       if (pXFAPageView)
         pXFAPageView->LoadPageView(nullptr);
@@ -524,7 +528,7 @@ void CPDFXFA_Document::PageViewEvent(IXFA_PageView* pPageView,
   }
 }
 
-void CPDFXFA_Document::WidgetEvent(IXFA_Widget* hWidget,
+void CPDFXFA_Document::WidgetEvent(CXFA_FFWidget* hWidget,
                                    CXFA_WidgetAcc* pWidgetData,
                                    uint32_t dwEvent,
                                    void* pParam,
@@ -536,7 +540,7 @@ void CPDFXFA_Document::WidgetEvent(IXFA_Widget* hWidget,
   if (!pEnv)
     return;
 
-  IXFA_PageView* pPageView =
+  CXFA_FFPageView* pPageView =
       m_pXFADocView->GetWidgetHandler()->GetPageView(hWidget);
   if (pPageView == NULL)
     return;
@@ -557,13 +561,13 @@ void CPDFXFA_Document::WidgetEvent(IXFA_Widget* hWidget,
   }
 }
 
-int32_t CPDFXFA_Document::CountPages(IXFA_Doc* hDoc) {
+int32_t CPDFXFA_Document::CountPages(CXFA_FFDoc* hDoc) {
   if (hDoc == m_pXFADoc && m_pSDKDoc) {
     return GetPageCount();
   }
   return 0;
 }
-int32_t CPDFXFA_Document::GetCurrentPage(IXFA_Doc* hDoc) {
+int32_t CPDFXFA_Document::GetCurrentPage(CXFA_FFDoc* hDoc) {
   if (hDoc != m_pXFADoc || !m_pSDKDoc)
     return -1;
   if (m_iDocType != DOCTYPE_DYNAMIC_XFA)
@@ -575,7 +579,7 @@ int32_t CPDFXFA_Document::GetCurrentPage(IXFA_Doc* hDoc) {
 
   return pEnv->FFI_GetCurrentPageIndex(this);
 }
-void CPDFXFA_Document::SetCurrentPage(IXFA_Doc* hDoc, int32_t iCurPage) {
+void CPDFXFA_Document::SetCurrentPage(CXFA_FFDoc* hDoc, int32_t iCurPage) {
   if (hDoc != m_pXFADoc || !m_pSDKDoc || m_iDocType != DOCTYPE_DYNAMIC_XFA ||
       iCurPage < 0 || iCurPage >= m_pSDKDoc->GetPageCount()) {
     return;
@@ -585,7 +589,7 @@ void CPDFXFA_Document::SetCurrentPage(IXFA_Doc* hDoc, int32_t iCurPage) {
     return;
   pEnv->FFI_SetCurrentPage(this, iCurPage);
 }
-FX_BOOL CPDFXFA_Document::IsCalculationsEnabled(IXFA_Doc* hDoc) {
+FX_BOOL CPDFXFA_Document::IsCalculationsEnabled(CXFA_FFDoc* hDoc) {
   if (hDoc != m_pXFADoc || !m_pSDKDoc)
     return FALSE;
   if (m_pSDKDoc->GetInterForm())
@@ -593,7 +597,7 @@ FX_BOOL CPDFXFA_Document::IsCalculationsEnabled(IXFA_Doc* hDoc) {
 
   return FALSE;
 }
-void CPDFXFA_Document::SetCalculationsEnabled(IXFA_Doc* hDoc,
+void CPDFXFA_Document::SetCalculationsEnabled(CXFA_FFDoc* hDoc,
                                               FX_BOOL bEnabled) {
   if (hDoc != m_pXFADoc || !m_pSDKDoc)
     return;
@@ -601,7 +605,7 @@ void CPDFXFA_Document::SetCalculationsEnabled(IXFA_Doc* hDoc,
     m_pSDKDoc->GetInterForm()->XfaEnableCalculate(bEnabled);
 }
 
-void CPDFXFA_Document::GetTitle(IXFA_Doc* hDoc, CFX_WideString& wsTitle) {
+void CPDFXFA_Document::GetTitle(CXFA_FFDoc* hDoc, CFX_WideString& wsTitle) {
   if (hDoc != m_pXFADoc)
     return;
   if (m_pPDFDoc == NULL)
@@ -615,7 +619,7 @@ void CPDFXFA_Document::GetTitle(IXFA_Doc* hDoc, CFX_WideString& wsTitle) {
   wsTitle = wsTitle.FromLocal(csTitle.GetBuffer(csTitle.GetLength()));
   csTitle.ReleaseBuffer(csTitle.GetLength());
 }
-void CPDFXFA_Document::SetTitle(IXFA_Doc* hDoc,
+void CPDFXFA_Document::SetTitle(CXFA_FFDoc* hDoc,
                                 const CFX_WideStringC& wsTitle) {
   if (hDoc != m_pXFADoc)
     return;
@@ -627,7 +631,7 @@ void CPDFXFA_Document::SetTitle(IXFA_Doc* hDoc,
     return;
   pInfoDict->SetAt("Title", new CPDF_String(wsTitle));
 }
-void CPDFXFA_Document::ExportData(IXFA_Doc* hDoc,
+void CPDFXFA_Document::ExportData(CXFA_FFDoc* hDoc,
                                   const CFX_WideStringC& wsFilePath,
                                   FX_BOOL bXDP) {
   if (hDoc != m_pXFADoc)
@@ -658,7 +662,7 @@ void CPDFXFA_Document::ExportData(IXFA_Doc* hDoc,
 
   CFPDF_FileStream fileWrite(pFileHandler);
 
-  IXFA_DocHandler* pXFADocHander = m_pApp->GetXFAApp()->GetDocHandler();
+  CXFA_FFDocHandler* pXFADocHander = m_pApp->GetXFAApp()->GetDocHandler();
   CFX_ByteString content;
   if (fileType == FXFA_SAVEAS_XML) {
     content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
@@ -729,10 +733,10 @@ void CPDFXFA_Document::ExportData(IXFA_Doc* hDoc,
     // Ignoring flush error.
   }
 }
-void CPDFXFA_Document::ImportData(IXFA_Doc* hDoc,
+void CPDFXFA_Document::ImportData(CXFA_FFDoc* hDoc,
                                   const CFX_WideStringC& wsFilePath) {}
 
-void CPDFXFA_Document::GotoURL(IXFA_Doc* hDoc,
+void CPDFXFA_Document::GotoURL(CXFA_FFDoc* hDoc,
                                const CFX_WideStringC& bsURL,
                                FX_BOOL bAppend) {
   if (hDoc != m_pXFADoc)
@@ -750,7 +754,7 @@ void CPDFXFA_Document::GotoURL(IXFA_Doc* hDoc,
   pEnv->FFI_GotoURL(this, str, bAppend);
 }
 
-FX_BOOL CPDFXFA_Document::IsValidationsEnabled(IXFA_Doc* hDoc) {
+FX_BOOL CPDFXFA_Document::IsValidationsEnabled(CXFA_FFDoc* hDoc) {
   if (hDoc != m_pXFADoc || !m_pSDKDoc)
     return FALSE;
   if (m_pSDKDoc->GetInterForm())
@@ -758,13 +762,15 @@ FX_BOOL CPDFXFA_Document::IsValidationsEnabled(IXFA_Doc* hDoc) {
 
   return TRUE;
 }
-void CPDFXFA_Document::SetValidationsEnabled(IXFA_Doc* hDoc, FX_BOOL bEnabled) {
+void CPDFXFA_Document::SetValidationsEnabled(CXFA_FFDoc* hDoc,
+                                             FX_BOOL bEnabled) {
   if (hDoc != m_pXFADoc || !m_pSDKDoc)
     return;
   if (m_pSDKDoc->GetInterForm())
     m_pSDKDoc->GetInterForm()->XfaSetValidationsEnabled(bEnabled);
 }
-void CPDFXFA_Document::SetFocusWidget(IXFA_Doc* hDoc, IXFA_Widget* hWidget) {
+void CPDFXFA_Document::SetFocusWidget(CXFA_FFDoc* hDoc,
+                                      CXFA_FFWidget* hWidget) {
   if (hDoc != m_pXFADoc)
     return;
 
@@ -785,7 +791,7 @@ void CPDFXFA_Document::SetFocusWidget(IXFA_Doc* hDoc, IXFA_Widget* hWidget) {
     }
   }
 }
-void CPDFXFA_Document::Print(IXFA_Doc* hDoc,
+void CPDFXFA_Document::Print(CXFA_FFDoc* hDoc,
                              int32_t nStartPage,
                              int32_t nEndPage,
                              uint32_t dwOptions) {
@@ -809,7 +815,7 @@ void CPDFXFA_Document::Print(IXFA_Doc* hDoc,
       dwOptions & XFA_PRINTOPT_PrintAnnot);
 }
 
-void CPDFXFA_Document::GetURL(IXFA_Doc* hDoc, CFX_WideString& wsDocURL) {
+void CPDFXFA_Document::GetURL(CXFA_FFDoc* hDoc, CFX_WideString& wsDocURL) {
   if (hDoc != m_pXFADoc)
     return;
 
@@ -820,7 +826,7 @@ void CPDFXFA_Document::GetURL(IXFA_Doc* hDoc, CFX_WideString& wsDocURL) {
   pEnv->FFI_GetURL(this, wsDocURL);
 }
 
-FX_ARGB CPDFXFA_Document::GetHighlightColor(IXFA_Doc* hDoc) {
+FX_ARGB CPDFXFA_Document::GetHighlightColor(CXFA_FFDoc* hDoc) {
   if (hDoc != m_pXFADoc)
     return 0;
   if (m_pSDKDoc) {
@@ -848,10 +854,10 @@ FX_BOOL CPDFXFA_Document::_OnBeforeNotifySumbit() {
     return TRUE;
   if (m_pXFADocView == NULL)
     return TRUE;
-  IXFA_WidgetHandler* pWidgetHandler = m_pXFADocView->GetWidgetHandler();
+  CXFA_FFWidgetHandler* pWidgetHandler = m_pXFADocView->GetWidgetHandler();
   if (pWidgetHandler == NULL)
     return TRUE;
-  IXFA_WidgetAccIterator* pWidgetAccIterator =
+  CXFA_WidgetAccIterator* pWidgetAccIterator =
       m_pXFADocView->CreateWidgetAccIterator();
   if (pWidgetAccIterator) {
     CXFA_EventParam Param;
@@ -897,10 +903,10 @@ void CPDFXFA_Document::_OnAfterNotifySumbit() {
     return;
   if (m_pXFADocView == NULL)
     return;
-  IXFA_WidgetHandler* pWidgetHandler = m_pXFADocView->GetWidgetHandler();
+  CXFA_FFWidgetHandler* pWidgetHandler = m_pXFADocView->GetWidgetHandler();
   if (pWidgetHandler == NULL)
     return;
-  IXFA_WidgetAccIterator* pWidgetAccIterator =
+  CXFA_WidgetAccIterator* pWidgetAccIterator =
       m_pXFADocView->CreateWidgetAccIterator();
   if (pWidgetAccIterator == NULL)
     return;
@@ -916,7 +922,7 @@ void CPDFXFA_Document::_OnAfterNotifySumbit() {
   m_pXFADocView->UpdateDocView();
 }
 
-FX_BOOL CPDFXFA_Document::SubmitData(IXFA_Doc* hDoc, CXFA_Submit submit) {
+FX_BOOL CPDFXFA_Document::SubmitData(CXFA_FFDoc* hDoc, CXFA_Submit submit) {
   if (!_NotifySubmit(TRUE))
     return FALSE;
   if (NULL == m_pXFADocView)
@@ -928,7 +934,7 @@ FX_BOOL CPDFXFA_Document::SubmitData(IXFA_Doc* hDoc, CXFA_Submit submit) {
   return ret;
 }
 
-IFX_FileRead* CPDFXFA_Document::OpenLinkedFile(IXFA_Doc* hDoc,
+IFX_FileRead* CPDFXFA_Document::OpenLinkedFile(CXFA_FFDoc* hDoc,
                                                const CFX_WideString& wsLink) {
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
   if (pEnv == NULL)
@@ -949,7 +955,7 @@ FX_BOOL CPDFXFA_Document::_ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
                                             FPDF_DWORD flag) {
   if (NULL == m_pXFADocView)
     return FALSE;
-  IXFA_DocHandler* pDocHandler = m_pApp->GetXFAApp()->GetDocHandler();
+  CXFA_FFDocHandler* pDocHandler = m_pApp->GetXFAApp()->GetDocHandler();
   CFX_ByteString content;
 
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
@@ -1135,7 +1141,7 @@ FX_BOOL CPDFXFA_Document::_MailToInfo(CFX_WideString& csURL,
   return TRUE;
 }
 
-FX_BOOL CPDFXFA_Document::_SubmitData(IXFA_Doc* hDoc, CXFA_Submit submit) {
+FX_BOOL CPDFXFA_Document::_SubmitData(CXFA_FFDoc* hDoc, CXFA_Submit submit) {
 #ifdef PDF_ENABLE_XFA
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
   if (!pEnv)
@@ -1236,7 +1242,7 @@ FX_BOOL CPDFXFA_Document::_SubmitData(IXFA_Doc* hDoc, CXFA_Submit submit) {
 #endif
 }
 
-FX_BOOL CPDFXFA_Document::SetGlobalProperty(IXFA_Doc* hDoc,
+FX_BOOL CPDFXFA_Document::SetGlobalProperty(CXFA_FFDoc* hDoc,
                                             const CFX_ByteStringC& szPropName,
                                             FXJSE_HVALUE hValue) {
   if (hDoc != m_pXFADoc)
@@ -1247,7 +1253,7 @@ FX_BOOL CPDFXFA_Document::SetGlobalProperty(IXFA_Doc* hDoc,
                                                                 hValue);
   return FALSE;
 }
-FX_BOOL CPDFXFA_Document::GetPDFScriptObject(IXFA_Doc* hDoc,
+FX_BOOL CPDFXFA_Document::GetPDFScriptObject(CXFA_FFDoc* hDoc,
                                              const CFX_ByteStringC& utf8Name,
                                              FXJSE_HVALUE hValue) {
   if (hDoc != m_pXFADoc)
@@ -1264,7 +1270,7 @@ FX_BOOL CPDFXFA_Document::GetPDFScriptObject(IXFA_Doc* hDoc,
   return _GetHValueByName(utf8Name, hValue,
                           m_pSDKDoc->GetEnv()->GetJSRuntime());
 }
-FX_BOOL CPDFXFA_Document::GetGlobalProperty(IXFA_Doc* hDoc,
+FX_BOOL CPDFXFA_Document::GetGlobalProperty(CXFA_FFDoc* hDoc,
                                             const CFX_ByteStringC& szPropName,
                                             FXJSE_HVALUE hValue) {
   if (hDoc != m_pXFADoc)

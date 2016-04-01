@@ -7,6 +7,7 @@
 #include "xfa/fxfa/parser/xfa_script_imp.h"
 
 #include "core/fxcrt/include/fx_ext.h"
+#include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/fm2js/xfa_fm2jsapi.h"
 #include "xfa/fxfa/parser/xfa_docdata.h"
 #include "xfa/fxfa/parser/xfa_doclayout.h"
@@ -133,7 +134,7 @@ void CXFA_ScriptContext::GlobalPropertySetter(FXJSE_HOBJECT hObject,
       return;
     }
   }
-  IXFA_Notify* pNotify = pDoc->GetNotify();
+  CXFA_FFNotify* pNotify = pDoc->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -213,7 +214,7 @@ void CXFA_ScriptContext::GlobalPropertyGetter(FXJSE_HOBJECT hObject,
                                            hValue, TRUE)) {
     return;
   }
-  IXFA_Notify* pNotify = pDoc->GetNotify();
+  CXFA_FFNotify* pNotify = pDoc->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -776,7 +777,4 @@ void CXFA_ScriptContext::AddNodesOfRunScript(CXFA_Node* pNode) {
   if (m_pScriptNodeArray->Find(pNode) == -1) {
     m_pScriptNodeArray->Add(pNode);
   }
-}
-IXFA_ScriptContext* XFA_ScriptContext_Create(CXFA_Document* pDocument) {
-  return new CXFA_ScriptContext(pDocument);
 }

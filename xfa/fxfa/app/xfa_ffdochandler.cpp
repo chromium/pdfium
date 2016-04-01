@@ -4,79 +4,83 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/app/xfa_ffdochandler.h"
+#include "xfa/include/fxfa/xfa_ffdochandler.h"
 
-#include "xfa/fxfa/app/xfa_ffdoc.h"
 #include "xfa/fxfa/parser/xfa_script.h"
+#include "xfa/fxfa/parser/xfa_script_imp.h"
+#include "xfa/include/fxfa/xfa_checksum.h"
+#include "xfa/include/fxfa/xfa_ffdoc.h"
 
 CXFA_FFDocHandler::CXFA_FFDocHandler() {}
+
 CXFA_FFDocHandler::~CXFA_FFDocHandler() {}
-void CXFA_FFDocHandler::ReleaseDoc(IXFA_Doc* hDoc) {
+
+void CXFA_FFDocHandler::ReleaseDoc(CXFA_FFDoc* hDoc) {
   delete hDoc;  // virtual dtor.
 }
-IXFA_DocProvider* CXFA_FFDocHandler::GetDocProvider(IXFA_Doc* hDoc) {
-  return static_cast<CXFA_FFDoc*>(hDoc)->GetDocProvider();
+IXFA_DocProvider* CXFA_FFDocHandler::GetDocProvider(CXFA_FFDoc* hDoc) {
+  return hDoc->GetDocProvider();
 }
-uint32_t CXFA_FFDocHandler::GetDocType(IXFA_Doc* hDoc) {
-  return static_cast<CXFA_FFDoc*>(hDoc)->GetDocType();
+uint32_t CXFA_FFDocHandler::GetDocType(CXFA_FFDoc* hDoc) {
+  return hDoc->GetDocType();
 }
-int32_t CXFA_FFDocHandler::StartLoad(IXFA_Doc* hDoc) {
-  return static_cast<CXFA_FFDoc*>(hDoc)->StartLoad();
+int32_t CXFA_FFDocHandler::StartLoad(CXFA_FFDoc* hDoc) {
+  return hDoc->StartLoad();
 }
-int32_t CXFA_FFDocHandler::DoLoad(IXFA_Doc* hDoc, IFX_Pause* pPause) {
-  return static_cast<CXFA_FFDoc*>(hDoc)->DoLoad(pPause);
+int32_t CXFA_FFDocHandler::DoLoad(CXFA_FFDoc* hDoc, IFX_Pause* pPause) {
+  return hDoc->DoLoad(pPause);
 }
-void CXFA_FFDocHandler::StopLoad(IXFA_Doc* hDoc) {
-  static_cast<CXFA_FFDoc*>(hDoc)->StopLoad();
+void CXFA_FFDocHandler::StopLoad(CXFA_FFDoc* hDoc) {
+  hDoc->StopLoad();
 }
 
-IXFA_DocView* CXFA_FFDocHandler::CreateDocView(IXFA_Doc* hDoc,
-                                               uint32_t dwView) {
-  return static_cast<CXFA_FFDoc*>(hDoc)->CreateDocView(dwView);
+CXFA_FFDocView* CXFA_FFDocHandler::CreateDocView(CXFA_FFDoc* hDoc,
+                                                 uint32_t dwView) {
+  return hDoc->CreateDocView(dwView);
 }
-int32_t CXFA_FFDocHandler::CountPackages(IXFA_Doc* hDoc) {
+int32_t CXFA_FFDocHandler::CountPackages(CXFA_FFDoc* hDoc) {
   return 0;
 }
-void CXFA_FFDocHandler::GetPackageName(IXFA_Doc* hDoc,
+void CXFA_FFDocHandler::GetPackageName(CXFA_FFDoc* hDoc,
                                        int32_t iPackage,
                                        CFX_WideStringC& wsPackage) {}
 CFDE_XMLElement* CXFA_FFDocHandler::GetPackageData(
-    IXFA_Doc* hDoc,
+    CXFA_FFDoc* hDoc,
     const CFX_WideStringC& wsPackage) {
-  return static_cast<CXFA_FFDoc*>(hDoc)->GetPackageData(wsPackage);
+  return hDoc->GetPackageData(wsPackage);
 }
-FX_BOOL CXFA_FFDocHandler::SavePackage(IXFA_Doc* hDoc,
+FX_BOOL CXFA_FFDocHandler::SavePackage(CXFA_FFDoc* hDoc,
                                        const CFX_WideStringC& wsPackage,
                                        IFX_FileWrite* pFile,
-                                       IXFA_ChecksumContext* pCSContext) {
-  return static_cast<CXFA_FFDoc*>(hDoc)
-      ->SavePackage(wsPackage, pFile, pCSContext);
+                                       CXFA_ChecksumContext* pCSContext) {
+  return hDoc->SavePackage(wsPackage, pFile, pCSContext);
 }
-FX_BOOL CXFA_FFDocHandler::CloseDoc(IXFA_Doc* hDoc) {
-  return static_cast<CXFA_FFDoc*>(hDoc)->CloseDoc();
+FX_BOOL CXFA_FFDocHandler::CloseDoc(CXFA_FFDoc* hDoc) {
+  return hDoc->CloseDoc();
 }
 
-FX_BOOL CXFA_FFDocHandler::ImportData(IXFA_Doc* hDoc,
+FX_BOOL CXFA_FFDocHandler::ImportData(CXFA_FFDoc* hDoc,
                                       IFX_FileRead* pStream,
                                       FX_BOOL bXDP) {
-  return static_cast<CXFA_FFDoc*>(hDoc)->ImportData(pStream, bXDP);
+  return hDoc->ImportData(pStream, bXDP);
 }
-void CXFA_FFDocHandler::SetJSERuntime(IXFA_Doc* hDoc, FXJSE_HRUNTIME hRuntime) {
-  static_cast<CXFA_FFDoc*>(hDoc)->GetXFADoc()->InitScriptContext(hRuntime);
+void CXFA_FFDocHandler::SetJSERuntime(CXFA_FFDoc* hDoc,
+                                      FXJSE_HRUNTIME hRuntime) {
+  hDoc->GetXFADoc()->InitScriptContext(hRuntime);
 }
-FXJSE_HVALUE CXFA_FFDocHandler::GetXFAScriptObject(IXFA_Doc* hDoc) {
-  CXFA_Document* pXFADoc = static_cast<CXFA_FFDoc*>(hDoc)->GetXFADoc();
+FXJSE_HVALUE CXFA_FFDocHandler::GetXFAScriptObject(CXFA_FFDoc* hDoc) {
+  CXFA_Document* pXFADoc = hDoc->GetXFADoc();
   if (!pXFADoc) {
     return NULL;
   }
-  IXFA_ScriptContext* pScriptContext = pXFADoc->GetScriptContext();
+  CXFA_ScriptContext* pScriptContext = pXFADoc->GetScriptContext();
   if (!pScriptContext) {
     return NULL;
   }
   return pScriptContext->GetJSValueFromMap(pXFADoc->GetRoot());
 }
-XFA_ATTRIBUTEENUM CXFA_FFDocHandler::GetRestoreState(IXFA_Doc* hDoc) {
-  CXFA_Document* pXFADoc = static_cast<CXFA_FFDoc*>(hDoc)->GetXFADoc();
+XFA_ATTRIBUTEENUM CXFA_FFDocHandler::GetRestoreState(CXFA_FFDoc* hDoc) {
+  CXFA_Document* pXFADoc = hDoc->GetXFADoc();
   if (!pXFADoc) {
     return XFA_ATTRIBUTEENUM_Unknown;
   }
@@ -90,16 +94,16 @@ XFA_ATTRIBUTEENUM CXFA_FFDocHandler::GetRestoreState(IXFA_Doc* hDoc) {
   }
   return pSubForm->GetEnum(XFA_ATTRIBUTE_RestoreState);
 }
-FX_BOOL CXFA_FFDocHandler::RunDocScript(IXFA_Doc* hDoc,
+FX_BOOL CXFA_FFDocHandler::RunDocScript(CXFA_FFDoc* hDoc,
                                         XFA_SCRIPTTYPE eScriptType,
                                         const CFX_WideStringC& wsScript,
                                         FXJSE_HVALUE hRetValue,
                                         FXJSE_HVALUE hThisObject) {
-  CXFA_Document* pXFADoc = static_cast<CXFA_FFDoc*>(hDoc)->GetXFADoc();
+  CXFA_Document* pXFADoc = hDoc->GetXFADoc();
   if (!pXFADoc) {
     return FALSE;
   }
-  IXFA_ScriptContext* pScriptContext = pXFADoc->GetScriptContext();
+  CXFA_ScriptContext* pScriptContext = pXFADoc->GetScriptContext();
   if (!pScriptContext) {
     return FALSE;
   }

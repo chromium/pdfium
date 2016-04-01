@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/app/xfa_checksum.h"
+#include "xfa/include/fxfa/xfa_checksum.h"
 
 #include "core/fdrm/crypto/include/fx_crypt.h"
 #include "xfa/fgas/crt/fgas_algorithm.h"
@@ -124,9 +124,7 @@ void CXFA_SAXReaderHandler::UpdateChecksum(FX_BOOL bCheckSpace) {
   }
   m_SAXContext.m_TextBuf.Clear();
 }
-IXFA_ChecksumContext* XFA_Checksum_Create() {
-  return new CXFA_ChecksumContext;
-}
+
 CXFA_ChecksumContext::CXFA_ChecksumContext()
     : m_pSAXReader(NULL), m_pByteContext(NULL) {}
 CXFA_ChecksumContext::~CXFA_ChecksumContext() {

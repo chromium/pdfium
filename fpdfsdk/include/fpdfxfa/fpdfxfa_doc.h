@@ -11,6 +11,7 @@
 
 #include "public/fpdfview.h"
 #include "xfa/include/fxfa/fxfa.h"
+#include "xfa/include/fxfa/xfa_ffdochandler.h"
 
 class CPDFXFA_App;
 class CPDFXFA_Document;
@@ -19,7 +20,7 @@ class CPDFSDK_Document;
 class CPDFDoc_Environment;
 class IJS_Runtime;
 class IJS_Context;
-class IXFA_DocHandler;
+class CXFA_FFDocHandler;
 
 class CPDFXFA_Document : public IXFA_DocProvider {
  public:
@@ -29,12 +30,12 @@ class CPDFXFA_Document : public IXFA_DocProvider {
   FX_BOOL LoadXFADoc();
   CPDFXFA_App* GetApp() { return m_pApp; }
   CPDF_Document* GetPDFDoc() { return m_pPDFDoc; }
-  IXFA_Doc* GetXFADoc() { return m_pXFADoc; }
-  IXFA_DocView* GetXFADocView() { return m_pXFADocView; }
+  CXFA_FFDoc* GetXFADoc() { return m_pXFADoc; }
+  CXFA_FFDocView* GetXFADocView() { return m_pXFADocView; }
 
   int GetPageCount();
   CPDFXFA_Page* GetPage(int page_index);
-  CPDFXFA_Page* GetPage(IXFA_PageView* pPage);
+  CPDFXFA_Page* GetPage(CXFA_FFPageView* pPage);
 
   void DeletePage(int page_index);
   void RemovePage(CPDFXFA_Page* page);
@@ -44,39 +45,39 @@ class CPDFXFA_Document : public IXFA_DocProvider {
 
   void FXRect2PDFRect(const CFX_RectF& fxRectF, CFX_FloatRect& pdfRect);
 
-  virtual void SetChangeMark(IXFA_Doc* hDoc);
-  virtual FX_BOOL GetChangeMark(IXFA_Doc* hDoc);
+  virtual void SetChangeMark(CXFA_FFDoc* hDoc);
+  virtual FX_BOOL GetChangeMark(CXFA_FFDoc* hDoc);
   // used in dynamic xfa, dwFlags refer to XFA_INVALIDATE_XXX macros.
-  virtual void InvalidateRect(IXFA_PageView* pPageView,
+  virtual void InvalidateRect(CXFA_FFPageView* pPageView,
                               const CFX_RectF& rt,
                               uint32_t dwFlags = 0);
   // used in static xfa, dwFlags refer to XFA_INVALIDATE_XXX macros.
-  virtual void InvalidateRect(IXFA_Widget* hWidget, uint32_t dwFlags = 0);
+  virtual void InvalidateRect(CXFA_FFWidget* hWidget, uint32_t dwFlags = 0);
   // show or hide caret
-  virtual void DisplayCaret(IXFA_Widget* hWidget,
+  virtual void DisplayCaret(CXFA_FFWidget* hWidget,
                             FX_BOOL bVisible,
                             const CFX_RectF* pRtAnchor);
   // dwPos: (0:bottom 1:top)
-  virtual FX_BOOL GetPopupPos(IXFA_Widget* hWidget,
+  virtual FX_BOOL GetPopupPos(CXFA_FFWidget* hWidget,
                               FX_FLOAT fMinPopup,
                               FX_FLOAT fMaxPopup,
                               const CFX_RectF& rtAnchor,
                               CFX_RectF& rtPopup);
-  virtual FX_BOOL PopupMenu(IXFA_Widget* hWidget,
+  virtual FX_BOOL PopupMenu(CXFA_FFWidget* hWidget,
                             CFX_PointF ptPopup,
                             const CFX_RectF* pRectExclude = NULL);
 
   // dwFlags XFA_PAGEVIEWEVENT_Added, XFA_PAGEVIEWEVENT_Removing
-  virtual void PageViewEvent(IXFA_PageView* pPageView, uint32_t dwFlags);
+  virtual void PageViewEvent(CXFA_FFPageView* pPageView, uint32_t dwFlags);
   // dwEvent refer to XFA_WIDGETEVENT_XXX
-  virtual void WidgetEvent(IXFA_Widget* hWidget,
+  virtual void WidgetEvent(CXFA_FFWidget* hWidget,
                            CXFA_WidgetAcc* pWidgetData,
                            uint32_t dwEvent,
                            void* pParam = NULL,
                            void* pAdditional = NULL);
 
   // return true if render it.
-  virtual FX_BOOL RenderCustomWidget(IXFA_Widget* hWidget,
+  virtual FX_BOOL RenderCustomWidget(CXFA_FFWidget* hWidget,
                                      CFX_Graphics* pGS,
                                      CFX_Matrix* pMatrix,
                                      const CFX_RectF& rtUI) {
@@ -84,44 +85,44 @@ class CPDFXFA_Document : public IXFA_DocProvider {
   }
 
   // host method
-  virtual int32_t CountPages(IXFA_Doc* hDoc);
-  virtual int32_t GetCurrentPage(IXFA_Doc* hDoc);
-  virtual void SetCurrentPage(IXFA_Doc* hDoc, int32_t iCurPage);
-  virtual FX_BOOL IsCalculationsEnabled(IXFA_Doc* hDoc);
-  virtual void SetCalculationsEnabled(IXFA_Doc* hDoc, FX_BOOL bEnabled);
-  virtual void GetTitle(IXFA_Doc* hDoc, CFX_WideString& wsTitle);
-  virtual void SetTitle(IXFA_Doc* hDoc, const CFX_WideStringC& wsTitle);
-  virtual void ExportData(IXFA_Doc* hDoc,
+  virtual int32_t CountPages(CXFA_FFDoc* hDoc);
+  virtual int32_t GetCurrentPage(CXFA_FFDoc* hDoc);
+  virtual void SetCurrentPage(CXFA_FFDoc* hDoc, int32_t iCurPage);
+  virtual FX_BOOL IsCalculationsEnabled(CXFA_FFDoc* hDoc);
+  virtual void SetCalculationsEnabled(CXFA_FFDoc* hDoc, FX_BOOL bEnabled);
+  virtual void GetTitle(CXFA_FFDoc* hDoc, CFX_WideString& wsTitle);
+  virtual void SetTitle(CXFA_FFDoc* hDoc, const CFX_WideStringC& wsTitle);
+  virtual void ExportData(CXFA_FFDoc* hDoc,
                           const CFX_WideStringC& wsFilePath,
                           FX_BOOL bXDP = TRUE);
-  virtual void ImportData(IXFA_Doc* hDoc, const CFX_WideStringC& wsFilePath);
-  virtual void GotoURL(IXFA_Doc* hDoc,
+  virtual void ImportData(CXFA_FFDoc* hDoc, const CFX_WideStringC& wsFilePath);
+  virtual void GotoURL(CXFA_FFDoc* hDoc,
                        const CFX_WideStringC& bsURL,
                        FX_BOOL bAppend = TRUE);
-  virtual FX_BOOL IsValidationsEnabled(IXFA_Doc* hDoc);
-  virtual void SetValidationsEnabled(IXFA_Doc* hDoc, FX_BOOL bEnabled);
-  virtual void SetFocusWidget(IXFA_Doc* hDoc, IXFA_Widget* hWidget);
-  virtual void Print(IXFA_Doc* hDoc,
+  virtual FX_BOOL IsValidationsEnabled(CXFA_FFDoc* hDoc);
+  virtual void SetValidationsEnabled(CXFA_FFDoc* hDoc, FX_BOOL bEnabled);
+  virtual void SetFocusWidget(CXFA_FFDoc* hDoc, CXFA_FFWidget* hWidget);
+  virtual void Print(CXFA_FFDoc* hDoc,
                      int32_t nStartPage,
                      int32_t nEndPage,
                      uint32_t dwOptions);
 
   // LayoutPseudo method
-  virtual int32_t AbsPageCountInBatch(IXFA_Doc* hDoc) { return 0; }
-  virtual int32_t AbsPageInBatch(IXFA_Doc* hDoc, IXFA_Widget* hWidget) {
+  virtual int32_t AbsPageCountInBatch(CXFA_FFDoc* hDoc) { return 0; }
+  virtual int32_t AbsPageInBatch(CXFA_FFDoc* hDoc, CXFA_FFWidget* hWidget) {
     return 0;
   }
-  virtual int32_t SheetCountInBatch(IXFA_Doc* hDoc) { return 0; }
-  virtual int32_t SheetInBatch(IXFA_Doc* hDoc, IXFA_Widget* hWidget) {
+  virtual int32_t SheetCountInBatch(CXFA_FFDoc* hDoc) { return 0; }
+  virtual int32_t SheetInBatch(CXFA_FFDoc* hDoc, CXFA_FFWidget* hWidget) {
     return 0;
   }
 
-  virtual int32_t Verify(IXFA_Doc* hDoc,
+  virtual int32_t Verify(CXFA_FFDoc* hDoc,
                          CXFA_Node* pSigNode,
                          FX_BOOL bUsed = TRUE) {
     return 0;
   }
-  virtual FX_BOOL Sign(IXFA_Doc* hDoc,
+  virtual FX_BOOL Sign(CXFA_FFDoc* hDoc,
                        CXFA_NodeList* pNodeList,
                        const CFX_WideStringC& wsExpression,
                        const CFX_WideStringC& wsXMLIdent,
@@ -129,16 +130,16 @@ class CPDFXFA_Document : public IXFA_DocProvider {
                        FX_BOOL bUsed = TRUE) {
     return 0;
   }
-  virtual CXFA_NodeList* Enumerate(IXFA_Doc* hDoc) { return 0; }
-  virtual FX_BOOL Clear(IXFA_Doc* hDoc,
+  virtual CXFA_NodeList* Enumerate(CXFA_FFDoc* hDoc) { return 0; }
+  virtual FX_BOOL Clear(CXFA_FFDoc* hDoc,
                         CXFA_Node* pSigNode,
                         FX_BOOL bCleared = TRUE) {
     return 0;
   }
 
   // Get document path
-  virtual void GetURL(IXFA_Doc* hDoc, CFX_WideString& wsDocURL);
-  virtual FX_ARGB GetHighlightColor(IXFA_Doc* hDoc);
+  virtual void GetURL(CXFA_FFDoc* hDoc, CFX_WideString& wsDocURL);
+  virtual FX_ARGB GetHighlightColor(CXFA_FFDoc* hDoc);
 
   /**
    *Submit data to email, http, ftp.
@@ -152,35 +153,35 @@ class CPDFXFA_Document : public IXFA_DocProvider {
    * @param[in] bEmbedPDF, specifies whether PDF is embedded in the submitted
    *content or not.
    */
-  virtual FX_BOOL SubmitData(IXFA_Doc* hDoc, CXFA_Submit submit);
+  virtual FX_BOOL SubmitData(CXFA_FFDoc* hDoc, CXFA_Submit submit);
 
-  virtual FX_BOOL CheckWord(IXFA_Doc* hDoc, const CFX_ByteStringC& sWord) {
+  virtual FX_BOOL CheckWord(CXFA_FFDoc* hDoc, const CFX_ByteStringC& sWord) {
     return FALSE;
   }
-  virtual FX_BOOL GetSuggestWords(IXFA_Doc* hDoc,
+  virtual FX_BOOL GetSuggestWords(CXFA_FFDoc* hDoc,
                                   const CFX_ByteStringC& sWord,
                                   std::vector<CFX_ByteString>& sSuggest) {
     return FALSE;
   }
 
   // Get PDF javascript object, set the object to hValue.
-  virtual FX_BOOL GetPDFScriptObject(IXFA_Doc* hDoc,
+  virtual FX_BOOL GetPDFScriptObject(CXFA_FFDoc* hDoc,
                                      const CFX_ByteStringC& utf8Name,
                                      FXJSE_HVALUE hValue);
 
-  virtual FX_BOOL GetGlobalProperty(IXFA_Doc* hDoc,
+  virtual FX_BOOL GetGlobalProperty(CXFA_FFDoc* hDoc,
                                     const CFX_ByteStringC& szPropName,
                                     FXJSE_HVALUE hValue);
-  virtual FX_BOOL SetGlobalProperty(IXFA_Doc* hDoc,
+  virtual FX_BOOL SetGlobalProperty(CXFA_FFDoc* hDoc,
                                     const CFX_ByteStringC& szPropName,
                                     FXJSE_HVALUE hValue);
-  virtual CPDF_Document* OpenPDF(IXFA_Doc* hDoc,
+  virtual CPDF_Document* OpenPDF(CXFA_FFDoc* hDoc,
                                  IFX_FileRead* pFile,
                                  FX_BOOL bTakeOverFile) {
     return NULL;
   }
 
-  virtual IFX_FileRead* OpenLinkedFile(IXFA_Doc* hDoc,
+  virtual IFX_FileRead* OpenLinkedFile(CXFA_FFDoc* hDoc,
                                        const CFX_WideString& wsLink);
 
   FX_BOOL _GetHValueByName(const CFX_ByteStringC& utf8Name,
@@ -189,7 +190,7 @@ class CPDFXFA_Document : public IXFA_DocProvider {
   FX_BOOL _OnBeforeNotifySumbit();
   void _OnAfterNotifySumbit();
   FX_BOOL _NotifySubmit(FX_BOOL bPrevOrPost);
-  FX_BOOL _SubmitData(IXFA_Doc* hDoc, CXFA_Submit submit);
+  FX_BOOL _SubmitData(CXFA_FFDoc* hDoc, CXFA_Submit submit);
   FX_BOOL _MailToInfo(CFX_WideString& csURL,
                       CFX_WideString& csToAddress,
                       CFX_WideString& csCCAddress,
@@ -211,7 +212,7 @@ class CPDFXFA_Document : public IXFA_DocProvider {
     FXFA_LOADSTATUS_CLOSING,
     FXFA_LOADSTATUS_CLOSED
   };
-  void CloseXFADoc(IXFA_DocHandler* pDoc) {
+  void CloseXFADoc(CXFA_FFDocHandler* pDoc) {
     if (pDoc) {
       pDoc->CloseDoc(m_pXFADoc);
       pDoc->ReleaseDoc(m_pXFADoc);
@@ -223,8 +224,8 @@ class CPDFXFA_Document : public IXFA_DocProvider {
   int m_iDocType;
   CPDF_Document* m_pPDFDoc;
   CPDFSDK_Document* m_pSDKDoc;
-  IXFA_Doc* m_pXFADoc;
-  IXFA_DocView* m_pXFADocView;
+  CXFA_FFDoc* m_pXFADoc;
+  CXFA_FFDocView* m_pXFADocView;
   CPDFXFA_App* m_pApp;
   IJS_Context* m_pJSContext;
   CFX_ArrayTemplate<CPDFXFA_Page*> m_XFAPageList;

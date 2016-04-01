@@ -24,6 +24,7 @@
 #include "fpdfsdk/include/fpdfxfa/fpdfxfa_page.h"
 #include "fpdfsdk/include/fpdfxfa/fpdfxfa_util.h"
 #include "xfa/fxgraphics/include/cfx_graphics.h"
+#include "xfa/include/fxfa/xfa_rendercontext.h"
 #endif  // PDF_ENABLE_XFA
 
 #if _FX_OS_ == _FX_ANDROID_
@@ -702,17 +703,15 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
                  static_cast<FX_FLOAT>(pClip.Width()),
                  static_cast<FX_FLOAT>(pClip.Height()));
     gs.SetClipRect(rectClip);
-    IXFA_RenderContext* pRenderContext = XFA_RenderContext_Create();
-    if (!pRenderContext)
-      return;
+    CXFA_RenderContext* pRenderContext = new CXFA_RenderContext;
     CXFA_RenderOptions renderOptions;
     renderOptions.m_bHighlight = TRUE;
-    IXFA_PageView* xfaView = pPage->GetXFAPageView();
+    CXFA_FFPageView* xfaView = pPage->GetXFAPageView();
     pRenderContext->StartRender(xfaView, &gs, *pUser2Device, renderOptions);
     pRenderContext->DoRender();
     pRenderContext->StopRender();
     pRenderContext->Release();
-    IXFA_DocView* docView = xfaView->GetDocView();
+    CXFA_FFDocView* docView = xfaView->GetDocView();
     if (!docView)
       return;
     CPDFSDK_Annot* annot = GetFocusAnnot();
@@ -821,7 +820,7 @@ CPDFSDK_Annot* CPDFSDK_PageView::AddAnnot(CPDF_Annot* pPDFAnnot) {
 }
 
 #ifdef PDF_ENABLE_XFA
-CPDFSDK_Annot* CPDFSDK_PageView::AddAnnot(IXFA_Widget* pPDFAnnot) {
+CPDFSDK_Annot* CPDFSDK_PageView::AddAnnot(CXFA_FFWidget* pPDFAnnot) {
   if (!pPDFAnnot)
     return nullptr;
 
@@ -914,7 +913,7 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetAnnotByDict(CPDF_Dictionary* pDict) {
 }
 
 #ifdef PDF_ENABLE_XFA
-CPDFSDK_Annot* CPDFSDK_PageView::GetAnnotByXFAWidget(IXFA_Widget* hWidget) {
+CPDFSDK_Annot* CPDFSDK_PageView::GetAnnotByXFAWidget(CXFA_FFWidget* hWidget) {
   if (!hWidget)
     return nullptr;
 
@@ -1087,7 +1086,7 @@ void CPDFSDK_PageView::LoadFXAnnots() {
 #ifdef PDF_ENABLE_XFA
   m_page->AddRef();
   if (m_pSDKDoc->GetXFADocument()->GetDocType() == DOCTYPE_DYNAMIC_XFA) {
-    IXFA_PageView* pageView = m_page->GetXFAPageView();
+    CXFA_FFPageView* pageView = m_page->GetXFAPageView();
     IXFA_WidgetIterator* pWidgetHander = pageView->CreateWidgetIterator(
         XFA_TRAVERSEWAY_Form, XFA_WIDGETFILTER_Visible |
                                   XFA_WIDGETFILTER_Viewable |
@@ -1098,7 +1097,7 @@ void CPDFSDK_PageView::LoadFXAnnots() {
       return;
     }
 
-    while (IXFA_Widget* pXFAAnnot = pWidgetHander->MoveToNext()) {
+    while (CXFA_FFWidget* pXFAAnnot = pWidgetHander->MoveToNext()) {
       CPDFSDK_Annot* pAnnot = pAnnotHandlerMgr->NewAnnot(pXFAAnnot, this);
       if (!pAnnot)
         continue;

@@ -21,9 +21,9 @@
 #include "xfa/fwl/basewidget/ifwl_scrollbar.h"
 #include "xfa/fwl/core/cfwl_themebackground.h"
 #include "xfa/fwl/core/cfwl_themetext.h"
-#include "xfa/fxfa/app/xfa_ffapp.h"
 #include "xfa/fxfa/app/xfa_ffwidget.h"
 #include "xfa/fxgraphics/cfx_color.h"
+#include "xfa/include/fxfa/xfa_ffapp.h"
 
 namespace {
 

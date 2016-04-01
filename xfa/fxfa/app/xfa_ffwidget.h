@@ -36,14 +36,12 @@ class CXFA_CalcData {
   CFX_PtrArray m_Globals;
   int32_t m_iRefCount;
 };
-class CXFA_FFWidget : public IXFA_Widget,
-                      public CFX_PrivateData,
-                      public CXFA_ContentLayoutItem {
+class CXFA_FFWidget : public CFX_PrivateData, public CXFA_ContentLayoutItem {
  public:
   CXFA_FFWidget(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc);
   virtual ~CXFA_FFWidget();
-  IXFA_PageView* GetPageView();
-  void SetPageView(IXFA_PageView* pPageView);
+  CXFA_FFPageView* GetPageView();
+  void SetPageView(CXFA_FFPageView* pPageView);
   void GetWidgetRect(CFX_RectF& rtWidget);
   CFX_RectF ReCacheWidgetRect();
   uint32_t GetStatus();

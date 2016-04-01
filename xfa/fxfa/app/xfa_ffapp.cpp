@@ -4,17 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/app/xfa_ffapp.h"
+#include "xfa/include/fxfa/xfa_ffapp.h"
 
 #include <algorithm>
 
 #include "xfa/fwl/core/ifwl_widgetmgrdelegate.h"
-#include "xfa/fxfa/app/xfa_ffdoc.h"
-#include "xfa/fxfa/app/xfa_ffdochandler.h"
-#include "xfa/fxfa/app/xfa_ffwidgethandler.h"
-#include "xfa/fxfa/app/xfa_fontmgr.h"
 #include "xfa/fxfa/app/xfa_fwladapter.h"
 #include "xfa/fxfa/app/xfa_fwltheme.h"
+#include "xfa/include/fxfa/xfa_ffdoc.h"
+#include "xfa/include/fxfa/xfa_ffdochandler.h"
+#include "xfa/include/fxfa/xfa_ffwidgethandler.h"
+#include "xfa/include/fxfa/xfa_fontmgr.h"
 
 CXFA_FileRead::CXFA_FileRead(const CFX_ArrayTemplate<CPDF_Stream*>& streams) {
   int32_t iCount = streams.GetSize();
@@ -61,12 +61,7 @@ FX_BOOL CXFA_FileRead::ReadBlock(void* buffer,
   }
   return FALSE;
 }
-// static
-IXFA_App* IXFA_App::Create(IXFA_AppProvider* pProvider) {
-  return new CXFA_FFApp(pProvider);
-}
-// virtual
-IXFA_App::~IXFA_App() {}
+
 CXFA_FFApp::CXFA_FFApp(IXFA_AppProvider* pProvider)
     : m_pDocHandler(nullptr),
       m_pFWLTheme(nullptr),
@@ -83,7 +78,7 @@ CXFA_FFApp::CXFA_FFApp(IXFA_AppProvider* pProvider)
   m_pFWLApp = IFWL_App::Create(this);
   FWL_SetApp(m_pFWLApp);
   m_pFWLApp->Initialize();
-  IXFA_TimeZoneProvider::Create();
+  CXFA_TimeZoneProvider::Create();
 }
 CXFA_FFApp::~CXFA_FFApp() {
   delete m_pDocHandler;
@@ -97,7 +92,7 @@ CXFA_FFApp::~CXFA_FFApp() {
   delete m_pAdapterWidgetMgr;
   delete m_pAdapterThreadMgr;
   delete m_pMenuHandler;
-  IXFA_TimeZoneProvider::Destroy();
+  CXFA_TimeZoneProvider::Destroy();
   delete m_pFontMgr;
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
   if (m_pFontSource)
@@ -106,21 +101,21 @@ CXFA_FFApp::~CXFA_FFApp() {
   if (m_pFDEFontMgr)
     m_pFDEFontMgr->Release();
 }
-IXFA_MenuHandler* CXFA_FFApp::GetMenuHandler() {
+CXFA_FFMenuHandler* CXFA_FFApp::GetMenuHandler() {
   if (!m_pMenuHandler) {
     m_pMenuHandler = new CXFA_FFMenuHandler;
   }
   return m_pMenuHandler;
 }
-IXFA_DocHandler* CXFA_FFApp::GetDocHandler() {
+CXFA_FFDocHandler* CXFA_FFApp::GetDocHandler() {
   if (!m_pDocHandler) {
     m_pDocHandler = new CXFA_FFDocHandler;
   }
   return m_pDocHandler;
 }
-IXFA_Doc* CXFA_FFApp::CreateDoc(IXFA_DocProvider* pProvider,
-                                IFX_FileRead* pStream,
-                                FX_BOOL bTakeOverFile) {
+CXFA_FFDoc* CXFA_FFApp::CreateDoc(IXFA_DocProvider* pProvider,
+                                  IFX_FileRead* pStream,
+                                  FX_BOOL bTakeOverFile) {
   CXFA_FFDoc* pDoc = new CXFA_FFDoc(this, pProvider);
   FX_BOOL bSuccess = pDoc->OpenDoc(pStream, bTakeOverFile);
   if (!bSuccess) {
@@ -129,8 +124,8 @@ IXFA_Doc* CXFA_FFApp::CreateDoc(IXFA_DocProvider* pProvider,
   }
   return pDoc;
 }
-IXFA_Doc* CXFA_FFApp::CreateDoc(IXFA_DocProvider* pProvider,
-                                CPDF_Document* pPDFDoc) {
+CXFA_FFDoc* CXFA_FFApp::CreateDoc(IXFA_DocProvider* pProvider,
+                                  CPDF_Document* pPDFDoc) {
   if (pPDFDoc == NULL) {
     return NULL;
   }
@@ -143,7 +138,7 @@ IXFA_Doc* CXFA_FFApp::CreateDoc(IXFA_DocProvider* pProvider,
   return pDoc;
 }
 
-void CXFA_FFApp::SetDefaultFontMgr(IXFA_FontMgr* pFontMgr) {
+void CXFA_FFApp::SetDefaultFontMgr(CXFA_DefFontMgr* pFontMgr) {
   if (!m_pFontMgr) {
     m_pFontMgr = new CXFA_FontMgr();
   }

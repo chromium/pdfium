@@ -11,16 +11,7 @@
 
 class CXFA_ContainerLayoutItem;
 class CXFA_ContentLayoutItem;
-class IXFA_DocLayout;
-
-class IXFA_LayoutPage {
- public:
-  virtual ~IXFA_LayoutPage() {}
-  virtual IXFA_DocLayout* GetLayout() const = 0;
-  virtual int32_t GetPageIndex() const = 0;
-  virtual void GetPageSize(CFX_SizeF& size) = 0;
-  virtual CXFA_Node* GetMasterPage() const = 0;
-};
+class CXFA_LayoutProcessor;
 
 class CXFA_LayoutItem {
  public:
@@ -31,7 +22,7 @@ class CXFA_LayoutItem {
   inline CXFA_ContainerLayoutItem* AsContainerLayoutItem();
   inline CXFA_ContentLayoutItem* AsContentLayoutItem();
 
-  IXFA_LayoutPage* GetPage() const;
+  CXFA_ContainerLayoutItem* GetPage() const;
   CXFA_Node* GetFormNode() const;
   void GetRect(CFX_RectF& rtLayout, FX_BOOL bRelative = FALSE) const;
   int32_t GetIndex() const;
@@ -60,16 +51,14 @@ class CXFA_LayoutItem {
   FX_BOOL m_bIsContentLayoutItem;
 };
 
-class CXFA_ContainerLayoutItem : public CXFA_LayoutItem,
-                                 public IXFA_LayoutPage {
+class CXFA_ContainerLayoutItem : public CXFA_LayoutItem {
  public:
   CXFA_ContainerLayoutItem(CXFA_Node* pNode);
 
-  // IXFA_LayoutPage:
-  IXFA_DocLayout* GetLayout() const override;
-  int32_t GetPageIndex() const override;
-  void GetPageSize(CFX_SizeF& size) override;
-  CXFA_Node* GetMasterPage() const override;
+  CXFA_LayoutProcessor* GetLayout() const;
+  int32_t GetPageIndex() const;
+  void GetPageSize(CFX_SizeF& size);
+  CXFA_Node* GetMasterPage() const;
 
   CXFA_Node* m_pOldSubform;
 };
@@ -119,18 +108,6 @@ class CXFA_TraverseStrategy_LayoutItem {
   static inline CXFA_LayoutItem* GetParent(CXFA_LayoutItem* pLayoutItem) {
     return pLayoutItem->m_pParent;
   }
-};
-
-class IXFA_DocLayout {
- public:
-  virtual ~IXFA_DocLayout() {}
-  virtual CXFA_Document* GetDocument() const = 0;
-  virtual int32_t StartLayout(FX_BOOL bForceRestart = FALSE) = 0;
-  virtual int32_t DoLayout(IFX_Pause* pPause = NULL) = 0;
-  virtual FX_BOOL IncrementLayout() = 0;
-  virtual int32_t CountPages() const = 0;
-  virtual IXFA_LayoutPage* GetPage(int32_t index) const = 0;
-  virtual CXFA_LayoutItem* GetLayoutItem(CXFA_Node* pFormItem) = 0;
 };
 
 #endif  // XFA_FXFA_PARSER_XFA_DOCLAYOUT_H_

@@ -1269,21 +1269,28 @@ CFX_WideStringC CXFA_LocaleMgr::GetConfigLocaleName(CXFA_Node* pConfig) {
   return m_wsConfigLocale;
 }
 static CXFA_TimeZoneProvider* g_pProvider = NULL;
-IXFA_TimeZoneProvider* IXFA_TimeZoneProvider::Create() {
+
+// Static.
+CXFA_TimeZoneProvider* CXFA_TimeZoneProvider::Create() {
   FXSYS_assert(!g_pProvider);
   g_pProvider = new CXFA_TimeZoneProvider();
   return g_pProvider;
 }
-IXFA_TimeZoneProvider* IXFA_TimeZoneProvider::Get() {
+
+// Static.
+CXFA_TimeZoneProvider* CXFA_TimeZoneProvider::Get() {
   if (!g_pProvider) {
     g_pProvider = new CXFA_TimeZoneProvider();
   }
   return g_pProvider;
 }
-void IXFA_TimeZoneProvider::Destroy() {
+
+// Static.
+void CXFA_TimeZoneProvider::Destroy() {
   delete g_pProvider;
   g_pProvider = NULL;
 }
+
 #include <time.h>
 CXFA_TimeZoneProvider::CXFA_TimeZoneProvider() {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_

@@ -6,10 +6,10 @@
 
 #include "xfa/fxfa/app/xfa_ffsignature.h"
 
-#include "xfa/fxfa/app/xfa_ffdoc.h"
 #include "xfa/fxfa/app/xfa_fffield.h"
-#include "xfa/fxfa/app/xfa_ffpageview.h"
 #include "xfa/fxfa/app/xfa_ffwidget.h"
+#include "xfa/include/fxfa/xfa_ffdoc.h"
+#include "xfa/include/fxfa/xfa_ffpageview.h"
 
 CXFA_FFSignature::CXFA_FFSignature(CXFA_FFPageView* pPageView,
                                    CXFA_WidgetAcc* pDataAcc)

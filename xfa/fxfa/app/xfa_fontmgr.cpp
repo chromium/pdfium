@@ -4,15 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/app/xfa_fontmgr.h"
+#include "xfa/include/fxfa/xfa_fontmgr.h"
 
 #include <algorithm>
 
 #include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
-#include "xfa/fxfa/app/xfa_ffapp.h"
-#include "xfa/fxfa/app/xfa_ffdoc.h"
+#include "xfa/include/fxfa/xfa_ffapp.h"
+#include "xfa/include/fxfa/xfa_ffdoc.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 static const XFA_FONTINFO g_XFAFontsMap[] = {
@@ -1748,12 +1748,7 @@ const XFA_FONTINFO* XFA_GetFontINFOByFontName(
   return NULL;
 #endif
 }
-// static
-IXFA_FontMgr* IXFA_FontMgr::CreateDefault() {
-  return new CXFA_DefFontMgr;
-}
-// virtual
-IXFA_FontMgr::~IXFA_FontMgr() {}
+
 CXFA_DefFontMgr::~CXFA_DefFontMgr() {
   int32_t iCounts = m_CacheFonts.GetSize();
   for (int32_t i = 0; i < iCounts; i++) {
@@ -1762,13 +1757,12 @@ CXFA_DefFontMgr::~CXFA_DefFontMgr() {
   m_CacheFonts.RemoveAll();
 }
 
-IFX_Font* CXFA_DefFontMgr::GetFont(IXFA_Doc* hDoc,
+IFX_Font* CXFA_DefFontMgr::GetFont(CXFA_FFDoc* hDoc,
                                    const CFX_WideStringC& wsFontFamily,
                                    uint32_t dwFontStyles,
                                    uint16_t wCodePage) {
   CFX_WideString wsFontName = wsFontFamily;
-  IFX_FontMgr* pFDEFontMgr =
-      static_cast<CXFA_FFDoc*>(hDoc)->GetApp()->GetFDEFontMgr();
+  IFX_FontMgr* pFDEFontMgr = hDoc->GetApp()->GetFDEFontMgr();
   IFX_Font* pFont = pFDEFontMgr->LoadFont(wsFontName, dwFontStyles, wCodePage);
   if (!pFont) {
     const XFA_FONTINFO* pCurFont = XFA_GetFontINFOByFontName(wsFontName);
@@ -1806,11 +1800,11 @@ IFX_Font* CXFA_DefFontMgr::GetFont(IXFA_Doc* hDoc,
   return pFont;
 }
 
-IFX_Font* CXFA_DefFontMgr::GetDefaultFont(IXFA_Doc* hDoc,
+IFX_Font* CXFA_DefFontMgr::GetDefaultFont(CXFA_FFDoc* hDoc,
                                           const CFX_WideStringC& wsFontFamily,
                                           uint32_t dwFontStyles,
                                           uint16_t wCodePage) {
-  IFX_FontMgr* pFDEFontMgr = ((CXFA_FFDoc*)hDoc)->GetApp()->GetFDEFontMgr();
+  IFX_FontMgr* pFDEFontMgr = hDoc->GetApp()->GetFDEFontMgr();
   IFX_Font* pFont =
       pFDEFontMgr->LoadFont(L"Arial Narrow", dwFontStyles, wCodePage);
   if (!pFont)
@@ -2018,7 +2012,7 @@ CXFA_FontMgr::CXFA_FontMgr() : m_pDefFontMgr(NULL) {}
 CXFA_FontMgr::~CXFA_FontMgr() {
   DelAllMgrMap();
 }
-IFX_Font* CXFA_FontMgr::GetFont(IXFA_Doc* hDoc,
+IFX_Font* CXFA_FontMgr::GetFont(CXFA_FFDoc* hDoc,
                                 const CFX_WideStringC& wsFontFamily,
                                 uint32_t dwFontStyles,
                                 uint16_t wCodePage) {
@@ -2061,12 +2055,12 @@ IFX_Font* CXFA_FontMgr::GetFont(IXFA_Doc* hDoc,
   }
   return pFont;
 }
-void CXFA_FontMgr::LoadDocFonts(IXFA_Doc* hDoc) {
+void CXFA_FontMgr::LoadDocFonts(CXFA_FFDoc* hDoc) {
   if (!m_PDFFontMgrArray.GetValueAt(hDoc)) {
-    m_PDFFontMgrArray.SetAt(hDoc, new CXFA_PDFFontMgr((CXFA_FFDoc*)hDoc));
+    m_PDFFontMgrArray.SetAt(hDoc, new CXFA_PDFFontMgr(hDoc));
   }
 }
-void CXFA_FontMgr::ReleaseDocFonts(IXFA_Doc* hDoc) {
+void CXFA_FontMgr::ReleaseDocFonts(CXFA_FFDoc* hDoc) {
   CXFA_PDFFontMgr* pMgr = NULL;
   if (m_PDFFontMgrArray.Lookup(hDoc, (void*&)pMgr)) {
     delete pMgr;
@@ -2076,7 +2070,7 @@ void CXFA_FontMgr::ReleaseDocFonts(IXFA_Doc* hDoc) {
 void CXFA_FontMgr::DelAllMgrMap() {
   FX_POSITION ps = m_PDFFontMgrArray.GetStartPosition();
   while (ps) {
-    IXFA_Doc* hDoc = NULL;
+    CXFA_FFDoc* hDoc = NULL;
     CXFA_PDFFontMgr* pMgr = NULL;
     m_PDFFontMgrArray.GetNextAssoc(ps, (void*&)hDoc, (void*&)pMgr);
     delete pMgr;
@@ -2084,6 +2078,6 @@ void CXFA_FontMgr::DelAllMgrMap() {
   m_PDFFontMgrArray.RemoveAll();
   m_FontMap.clear();
 }
-void CXFA_FontMgr::SetDefFontMgr(IXFA_FontMgr* pFontMgr) {
+void CXFA_FontMgr::SetDefFontMgr(CXFA_DefFontMgr* pFontMgr) {
   m_pDefFontMgr = pFontMgr;
 }

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_APP_XFA_CHECKSUM_H_
-#define XFA_FXFA_APP_XFA_CHECKSUM_H_
+#ifndef XFA_INCLUDE_FXFA_XFA_CHECKSUM_H_
+#define XFA_INCLUDE_FXFA_XFA_CHECKSUM_H_
 
 #include "xfa/fgas/xml/fgas_sax.h"
 #include "xfa/include/fxfa/fxfa.h"
@@ -51,17 +51,18 @@ class CXFA_SAXReaderHandler : public IFX_SAXReaderHandler {
   CXFA_SAXContext m_SAXContext;
 };
 
-class CXFA_ChecksumContext : public IXFA_ChecksumContext {
+class CXFA_ChecksumContext {
  public:
   CXFA_ChecksumContext();
-  virtual ~CXFA_ChecksumContext();
-  virtual void Release() { delete this; }
-  virtual FX_BOOL StartChecksum();
-  virtual FX_BOOL UpdateChecksum(IFX_FileRead* pSrcFile,
-                                 FX_FILESIZE offset = 0,
-                                 size_t size = 0);
-  virtual void FinishChecksum();
-  virtual void GetChecksum(CFX_ByteString& bsChecksum);
+  ~CXFA_ChecksumContext();
+
+  void Release() { delete this; }
+  FX_BOOL StartChecksum();
+  FX_BOOL UpdateChecksum(IFX_FileRead* pSrcFile,
+                         FX_FILESIZE offset = 0,
+                         size_t size = 0);
+  void FinishChecksum();
+  void GetChecksum(CFX_ByteString& bsChecksum);
   void Update(const CFX_ByteStringC& bsText);
 
  protected:
@@ -70,4 +71,4 @@ class CXFA_ChecksumContext : public IXFA_ChecksumContext {
   CFX_ByteString m_bsChecksum;
 };
 
-#endif  // XFA_FXFA_APP_XFA_CHECKSUM_H_
+#endif  // XFA_INCLUDE_FXFA_XFA_CHECKSUM_H_

@@ -10,6 +10,7 @@
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fgas/crt/fgas_system.h"
+#include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/fm2js/xfa_fm2jsapi.h"
 #include "xfa/fxfa/parser/xfa_basic_imp.h"
 #include "xfa/fxfa/parser/xfa_docdata.h"
@@ -18,7 +19,9 @@
 #include "xfa/fxfa/parser/xfa_document_layout_imp.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_parser.h"
+#include "xfa/fxfa/parser/xfa_parser_imp.h"
 #include "xfa/fxfa/parser/xfa_script.h"
+#include "xfa/fxfa/parser/xfa_script_imp.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 #include "xfa/fxjse/cfxjse_arguments.h"
 
@@ -117,7 +120,7 @@ CXFA_Node::~CXFA_Node() {
   }
 }
 CXFA_Node* CXFA_Node::Clone(FX_BOOL bRecursive) {
-  IXFA_ObjFactory* pFactory = m_pDocument->GetParser()->GetFactory();
+  CXFA_Document* pFactory = m_pDocument->GetParser()->GetFactory();
   CXFA_Node* pClone = pFactory->CreateNode(m_ePacket, m_eNodeClass);
   if (!pClone) {
     return NULL;
@@ -286,7 +289,7 @@ int32_t CXFA_Node::GetNodeList(CXFA_NodeArray& nodes,
       }
       for (int32_t i = 0; i < iProperties; i++) {
         if (pProperty[i].uFlags & XFA_PROPERTYFLAG_DefaultOneOf) {
-          IXFA_ObjFactory* pFactory = m_pDocument->GetParser()->GetFactory();
+          CXFA_Document* pFactory = m_pDocument->GetParser()->GetFactory();
           const XFA_PACKETINFO* pPacket = XFA_GetPacketByID(GetPacketID());
           CXFA_Node* pNewNode =
               pFactory->CreateNode(pPacket, (XFA_ELEMENT)pProperty[i].eName);
@@ -305,14 +308,14 @@ int32_t CXFA_Node::GetNodeList(CXFA_NodeArray& nodes,
 }
 CXFA_Node* CXFA_Node::CreateSamePacketNode(XFA_ELEMENT eElement,
                                            uint32_t dwFlags) {
-  IXFA_ObjFactory* pFactory = m_pDocument->GetParser()->GetFactory();
+  CXFA_Document* pFactory = m_pDocument->GetParser()->GetFactory();
   CXFA_Node* pNode = pFactory->CreateNode(m_ePacket, eElement);
   pNode->SetFlag(dwFlags);
   return pNode;
 }
 CXFA_Node* CXFA_Node::CloneTemplateToForm(FX_BOOL bRecursive) {
   FXSYS_assert(m_ePacket == XFA_XDPPACKET_Template);
-  IXFA_ObjFactory* pFactory = m_pDocument->GetParser()->GetFactory();
+  CXFA_Document* pFactory = m_pDocument->GetParser()->GetFactory();
   CXFA_Node* pClone = pFactory->CreateNode(XFA_XDPPACKET_Form, m_eNodeClass);
   if (!pClone) {
     return NULL;
@@ -631,7 +634,7 @@ void CXFA_Node::Script_TreeClass_ResolveNode(CFXJSE_Arguments* pArguments) {
   CFX_ByteString bsExpression = pArguments->GetUTF8String(0);
   wsExpression =
       CFX_WideString::FromUTF8(bsExpression, bsExpression.GetLength());
-  IXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
+  CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
   if (!pScriptContext) {
     return;
   }
@@ -695,7 +698,7 @@ void CXFA_Node::Script_Som_ResolveNodeList(FXJSE_HVALUE hValue,
                                            CFX_WideString wsExpression,
                                            uint32_t dwFlag,
                                            CXFA_Node* refNode) {
-  IXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
+  CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
   if (!pScriptContext) {
     return;
   }
@@ -740,7 +743,7 @@ void CXFA_Node::Script_TreeClass_All(FXJSE_HVALUE hValue,
 void CXFA_Node::Script_TreeClass_Nodes(FXJSE_HVALUE hValue,
                                        FX_BOOL bSetting,
                                        XFA_ATTRIBUTE eAttribute) {
-  IXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
+  CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
   if (!pScriptContext) {
     return;
   }
@@ -1309,7 +1312,7 @@ void CXFA_Node::Script_Attribute_SendAttributeChangeMessage(
   if (!pLayoutPro) {
     return;
   }
-  IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -1604,7 +1607,7 @@ void CXFA_Node::Script_Som_Message(FXJSE_HVALUE hValue,
         break;
     }
     if (!bNew) {
-      IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+      CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
       if (!pNotify) {
         return;
       }
@@ -2185,7 +2188,7 @@ void CXFA_Node::Script_Field_ExecEvent(CFXJSE_Arguments* pArguments) {
 void CXFA_Node::Script_Field_ExecInitialize(CFXJSE_Arguments* pArguments) {
   int32_t argc = pArguments->GetLength();
   if (argc == 0) {
-    IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+    CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
     if (!pNotify) {
       return;
     }
@@ -2278,7 +2281,7 @@ void CXFA_Node::Script_Field_GetItemState(CFXJSE_Arguments* pArguments) {
 void CXFA_Node::Script_Field_ExecCalculate(CFXJSE_Arguments* pArguments) {
   int32_t argc = pArguments->GetLength();
   if (argc == 0) {
-    IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+    CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
     if (!pNotify) {
       return;
     }
@@ -2360,7 +2363,7 @@ void CXFA_Node::Script_Field_AddItem(CFXJSE_Arguments* pArguments) {
 void CXFA_Node::Script_Field_ExecValidate(CFXJSE_Arguments* pArguments) {
   int32_t argc = pArguments->GetLength();
   if (argc == 0) {
-    IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+    CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
     if (!pNotify) {
       FXJSE_Value_SetBoolean(pArguments->GetReturnValue(), FALSE);
     } else {
@@ -2450,7 +2453,7 @@ void CXFA_Node::Script_ExclGroup_SelectedMember(CFXJSE_Arguments* pArguments) {
 void CXFA_Node::Script_ExclGroup_ExecInitialize(CFXJSE_Arguments* pArguments) {
   int32_t argc = pArguments->GetLength();
   if (argc == 0) {
-    IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+    CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
     if (!pNotify) {
       return;
     }
@@ -2463,7 +2466,7 @@ void CXFA_Node::Script_ExclGroup_ExecInitialize(CFXJSE_Arguments* pArguments) {
 void CXFA_Node::Script_ExclGroup_ExecCalculate(CFXJSE_Arguments* pArguments) {
   int32_t argc = pArguments->GetLength();
   if (argc == 0) {
-    IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+    CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
     if (!pNotify) {
       return;
     }
@@ -2476,7 +2479,7 @@ void CXFA_Node::Script_ExclGroup_ExecCalculate(CFXJSE_Arguments* pArguments) {
 void CXFA_Node::Script_ExclGroup_ExecValidate(CFXJSE_Arguments* pArguments) {
   int32_t argc = pArguments->GetLength();
   if (argc == 0) {
-    IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+    CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
     if (!pNotify) {
       FXJSE_Value_SetBoolean(pArguments->GetReturnValue(), FALSE);
     } else {
@@ -2539,7 +2542,7 @@ void CXFA_Node::Script_Som_InstanceIndex(FXJSE_HVALUE hValue,
     }
     if (pManagerNode) {
       pManagerNode->InstanceManager_MoveInstance(iTo, iFrom);
-      IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+      CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
       if (!pNotify) {
         return;
       }
@@ -2616,7 +2619,7 @@ void CXFA_Node::Script_Subform_ExecEvent(CFXJSE_Arguments* pArguments) {
 void CXFA_Node::Script_Subform_ExecInitialize(CFXJSE_Arguments* pArguments) {
   int32_t argc = pArguments->GetLength();
   if (argc == 0) {
-    IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+    CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
     if (!pNotify) {
       return;
     }
@@ -2629,7 +2632,7 @@ void CXFA_Node::Script_Subform_ExecInitialize(CFXJSE_Arguments* pArguments) {
 void CXFA_Node::Script_Subform_ExecCalculate(CFXJSE_Arguments* pArguments) {
   int32_t argc = pArguments->GetLength();
   if (argc == 0) {
-    IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+    CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
     if (!pNotify) {
       return;
     }
@@ -2642,7 +2645,7 @@ void CXFA_Node::Script_Subform_ExecCalculate(CFXJSE_Arguments* pArguments) {
 void CXFA_Node::Script_Subform_ExecValidate(CFXJSE_Arguments* pArguments) {
   int32_t argc = pArguments->GetLength();
   if (argc == 0) {
-    IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+    CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
     if (!pNotify) {
       FXJSE_Value_SetBoolean(pArguments->GetReturnValue(), FALSE);
     } else {
@@ -3134,7 +3137,7 @@ void CXFA_Node::Script_InstanceManager_MoveInstance(
   int32_t iFrom = pArguments->GetInt32(0);
   int32_t iTo = pArguments->GetInt32(1);
   InstanceManager_MoveInstance(iTo, iFrom);
-  IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -3168,7 +3171,7 @@ void CXFA_Node::Script_InstanceManager_RemoveInstance(
   }
   CXFA_Node* pRemoveInstance = XFA_ScriptInstanceManager_GetItem(this, iIndex);
   XFA_ScriptInstanceManager_RemoveItem(this, pRemoveInstance);
-  IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
   if (pNotify) {
     for (int32_t i = iIndex; i < iCount - 1; i++) {
       CXFA_Node* pSubformInstance = XFA_ScriptInstanceManager_GetItem(this, i);
@@ -3220,7 +3223,7 @@ void CXFA_Node::Script_InstanceManager_AddInstance(
   FXJSE_Value_Set(
       pArguments->GetReturnValue(),
       m_pDocument->GetScriptContext()->GetJSValueFromMap(pNewInstance));
-  IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -3263,7 +3266,7 @@ void CXFA_Node::Script_InstanceManager_InsertInstance(
   FXJSE_Value_Set(
       pArguments->GetReturnValue(),
       m_pDocument->GetScriptContext()->GetJSValueFromMap(pNewInstance));
-  IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
   if (!pNotify) {
     return;
   }
@@ -3326,7 +3329,7 @@ int32_t CXFA_Node::InstanceManager_SetInstances(int32_t iDesired) {
       XFA_ScriptInstanceManager_InsertItem(this, pNewInstance, iCount, iCount,
                                            FALSE);
       iCount++;
-      IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+      CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
       if (!pNotify) {
         return 0;
       }
@@ -3419,7 +3422,7 @@ void CXFA_Node::Script_Form_Remerge(CFXJSE_Arguments* pArguments) {
 void CXFA_Node::Script_Form_ExecInitialize(CFXJSE_Arguments* pArguments) {
   int32_t argc = pArguments->GetLength();
   if (argc == 0) {
-    IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+    CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
     if (!pNotify) {
       return;
     }
@@ -3439,7 +3442,7 @@ void CXFA_Node::Script_Form_Recalculate(CFXJSE_Arguments* pArguments) {
   int32_t argc = pArguments->GetLength();
   if (argc == 1) {
     const bool bScriptFlags = pArguments->GetInt32(0) != 0;
-    IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+    CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
     if (!pNotify) {
       return;
     }
@@ -3456,7 +3459,7 @@ void CXFA_Node::Script_Form_Recalculate(CFXJSE_Arguments* pArguments) {
 void CXFA_Node::Script_Form_ExecCalculate(CFXJSE_Arguments* pArguments) {
   int32_t argc = pArguments->GetLength();
   if (argc == 0) {
-    IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+    CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
     if (!pNotify) {
       return;
     }
@@ -3469,7 +3472,7 @@ void CXFA_Node::Script_Form_ExecCalculate(CFXJSE_Arguments* pArguments) {
 void CXFA_Node::Script_Form_ExecValidate(CFXJSE_Arguments* pArguments) {
   int32_t argc = pArguments->GetLength();
   if (argc == 0) {
-    IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+    CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
     if (!pNotify) {
       FXJSE_Value_SetBoolean(pArguments->GetReturnValue(), FALSE);
     } else {
@@ -4429,7 +4432,7 @@ FX_BOOL CXFA_Node::TryContent(CFX_WideString& wsContent,
   }
   if (pNode) {
     if (bScriptModify) {
-      IXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
+      CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
       if (pScriptContext) {
         m_pDocument->GetScriptContext()->AddNodesOfRunScript(this);
       }
@@ -4526,7 +4529,7 @@ CXFA_Node* CXFA_Node::GetProperty(int32_t index,
       }
     }
   }
-  IXFA_ObjFactory* pFactory = m_pDocument->GetParser()->GetFactory();
+  CXFA_Document* pFactory = m_pDocument->GetParser()->GetFactory();
   const XFA_PACKETINFO* pPacket = XFA_GetPacketByID(dwPacket);
   CXFA_Node* pNewNode;
   for (; iCount <= index; iCount++) {
@@ -4614,7 +4617,7 @@ int32_t CXFA_Node::InsertChild(int32_t index, CXFA_Node* pNode) {
   ASSERT(m_pLastChild);
   ASSERT(m_pLastChild->m_pNext == NULL);
   pNode->SetFlag(XFA_NODEFLAG_HasRemoved, FALSE);
-  IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
   if (pNotify) {
     pNotify->OnNodeEvent(this, XFA_NODEEVENT_ChildAdded, pNode);
   }
@@ -4660,7 +4663,7 @@ FX_BOOL CXFA_Node::InsertChild(CXFA_Node* pNode, CXFA_Node* pBeforeNode) {
   ASSERT(m_pLastChild);
   ASSERT(m_pLastChild->m_pNext == NULL);
   pNode->SetFlag(XFA_NODEFLAG_HasRemoved, FALSE);
-  IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
   if (pNotify) {
     pNotify->OnNodeEvent(this, XFA_NODEEVENT_ChildAdded, pNode);
   }
@@ -4784,21 +4787,21 @@ CXFA_Node* CXFA_Node::GetNextSameClassSibling(XFA_ELEMENT eElement) const {
   return NULL;
 }
 int32_t CXFA_Node::GetNodeSameNameIndex() const {
-  IXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
+  CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
   if (!pScriptContext) {
     return -1;
   }
   return pScriptContext->GetIndexByName(const_cast<CXFA_Node*>(this));
 }
 int32_t CXFA_Node::GetNodeSameClassIndex() const {
-  IXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
+  CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
   if (!pScriptContext) {
     return -1;
   }
   return pScriptContext->GetIndexByClassName(const_cast<CXFA_Node*>(this));
 }
 void CXFA_Node::GetSOMExpression(CFX_WideString& wsSOMExpression) {
-  IXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
+  CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
   if (!pScriptContext) {
     return;
   }
@@ -4851,7 +4854,7 @@ void CXFA_Node::SetFlag(uint32_t dwFlag, FX_BOOL bOn, FX_BOOL bNotify) {
     switch (dwFlag) {
       case XFA_NODEFLAG_Initialized:
         if (bNotify && !HasFlag(XFA_NODEFLAG_Initialized)) {
-          IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+          CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
           if (pNotify) {
             pNotify->OnNodeEvent(this, XFA_NODEEVENT_Ready);
           }
@@ -4872,7 +4875,7 @@ void CXFA_Node::OnRemoved(CXFA_Node* pParent,
                           CXFA_Node* pRemoved,
                           FX_BOOL bNotify) {
   if (bNotify && pParent) {
-    IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+    CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
     if (pNotify) {
       pNotify->OnNodeEvent(pParent, XFA_NODEEVENT_ChildRemoved, pRemoved);
     }
@@ -4882,7 +4885,7 @@ void CXFA_Node::OnChanging(XFA_ATTRIBUTE eAttr,
                            void* pNewValue,
                            FX_BOOL bNotify) {
   if (bNotify && HasFlag(XFA_NODEFLAG_Initialized)) {
-    IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+    CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
     if (pNotify) {
       pNotify->OnNodeEvent(this, XFA_NODEEVENT_ValueChanging,
                            (void*)(uintptr_t)eAttr, pNewValue);
@@ -4905,7 +4908,7 @@ int32_t CXFA_Node::execSingleEventByName(const CFX_WideStringC& wsEventName,
       GetEventParaInfoByName(wsEventName);
   if (eventParaInfo) {
     uint32_t validFlags = eventParaInfo->m_validFlags;
-    IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+    CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
     if (!pNotify) {
       return iRet;
     }

@@ -13,17 +13,18 @@ class CXFA_ItemLayoutProcessor;
 class CXFA_LayoutPageMgr;
 class CXFA_ContainerLayoutItem;
 
-class CXFA_LayoutProcessor : public IXFA_DocLayout {
+class CXFA_LayoutProcessor {
  public:
   CXFA_LayoutProcessor(CXFA_Document* pDocument);
   ~CXFA_LayoutProcessor();
-  virtual CXFA_Document* GetDocument() const;
-  virtual int32_t StartLayout(FX_BOOL bForceRestart = FALSE);
-  virtual int32_t DoLayout(IFX_Pause* pPause = NULL);
-  virtual FX_BOOL IncrementLayout();
-  virtual int32_t CountPages() const;
-  virtual IXFA_LayoutPage* GetPage(int32_t index) const;
-  virtual CXFA_LayoutItem* GetLayoutItem(CXFA_Node* pFormItem);
+
+  CXFA_Document* GetDocument() const;
+  int32_t StartLayout(FX_BOOL bForceRestart = FALSE);
+  int32_t DoLayout(IFX_Pause* pPause = NULL);
+  FX_BOOL IncrementLayout();
+  int32_t CountPages() const;
+  CXFA_ContainerLayoutItem* GetPage(int32_t index) const;
+  CXFA_LayoutItem* GetLayoutItem(CXFA_Node* pFormItem);
 
   void AddChangedContainer(CXFA_Node* pContainer);
   void SetForceReLayout(FX_BOOL bForceRestart) { m_bNeeLayout = bForceRestart; }

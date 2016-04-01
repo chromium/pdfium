@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/xfa_script_eventpseudomodel.h"
 
+#include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/fm2js/xfa_fm2jsapi.h"
 #include "xfa/fxfa/parser/xfa_docdata.h"
 #include "xfa/fxfa/parser/xfa_doclayout.h"
@@ -13,9 +14,12 @@
 #include "xfa/fxfa/parser/xfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 #include "xfa/fxfa/parser/xfa_parser.h"
+#include "xfa/fxfa/parser/xfa_parser_imp.h"
 #include "xfa/fxfa/parser/xfa_script.h"
+#include "xfa/fxfa/parser/xfa_script_imp.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 #include "xfa/fxjse/cfxjse_arguments.h"
+#include "xfa/include/fxfa/xfa_ffwidgethandler.h"
 
 CScript_EventPseudoModel::CScript_EventPseudoModel(CXFA_Document* pDocument)
     : CXFA_OrdinaryObject(pDocument, XFA_ELEMENT_EventPseudoModel) {
@@ -55,7 +59,7 @@ void CScript_EventPseudoModel::Script_EventPseudoModel_Property(
     FXJSE_HVALUE hValue,
     uint32_t dwFlag,
     FX_BOOL bSetting) {
-  IXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
+  CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
   if (!pScriptContext) {
     return;
   }
@@ -238,7 +242,7 @@ void CScript_EventPseudoModel::Script_EventPseudoModel_Target(
 }
 void CScript_EventPseudoModel::Script_EventPseudoModel_Emit(
     CFXJSE_Arguments* pArguments) {
-  IXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
+  CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
   if (!pScriptContext) {
     return;
   }
@@ -246,11 +250,11 @@ void CScript_EventPseudoModel::Script_EventPseudoModel_Emit(
   if (!pEventParam) {
     return;
   }
-  IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
   if (!pNotify) {
     return;
   }
-  IXFA_WidgetHandler* pWidgetHandler = pNotify->GetWidgetHandler();
+  CXFA_FFWidgetHandler* pWidgetHandler = pNotify->GetWidgetHandler();
   if (!pWidgetHandler) {
     return;
   }
@@ -258,7 +262,7 @@ void CScript_EventPseudoModel::Script_EventPseudoModel_Emit(
 }
 void CScript_EventPseudoModel::Script_EventPseudoModel_Reset(
     CFXJSE_Arguments* pArguments) {
-  IXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
+  CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
   if (!pScriptContext) {
     return;
   }

@@ -16,7 +16,7 @@ enum XFA_TEXTPROVIDERTYPE {
   XFA_TEXTPROVIDERTYPE_Rollover,
   XFA_TEXTPROVIDERTYPE_Down,
 };
-class CXFA_TextProvider : public IXFA_TextProvider {
+class CXFA_TextProvider {
  public:
   CXFA_TextProvider(CXFA_WidgetAcc* pWidgetAcc,
                     XFA_TEXTPROVIDERTYPE eType,
@@ -24,16 +24,17 @@ class CXFA_TextProvider : public IXFA_TextProvider {
       : m_pWidgetAcc(pWidgetAcc), m_eType(eType), m_pTextNode(pTextNode) {
     FXSYS_assert(m_pWidgetAcc);
   }
-  virtual ~CXFA_TextProvider() {}
-  virtual CXFA_Node* GetTextNode(FX_BOOL& bRichText);
-  virtual CXFA_Para GetParaNode();
-  virtual CXFA_Font GetFontNode();
-  virtual FX_BOOL IsCheckButtonAndAutoWidth();
-  virtual CXFA_FFDoc* GetDocNode() { return m_pWidgetAcc->GetDoc(); }
-  virtual FX_BOOL GetEmbbedObj(FX_BOOL bURI,
-                               FX_BOOL bRaw,
-                               const CFX_WideString& wsAttr,
-                               CFX_WideString& wsValue);
+  ~CXFA_TextProvider() {}
+
+  CXFA_Node* GetTextNode(FX_BOOL& bRichText);
+  CXFA_Para GetParaNode();
+  CXFA_Font GetFontNode();
+  FX_BOOL IsCheckButtonAndAutoWidth();
+  CXFA_FFDoc* GetDocNode() { return m_pWidgetAcc->GetDoc(); }
+  FX_BOOL GetEmbbedObj(FX_BOOL bURI,
+                       FX_BOOL bRaw,
+                       const CFX_WideString& wsAttr,
+                       CFX_WideString& wsValue);
 
  protected:
   CXFA_WidgetAcc* m_pWidgetAcc;

@@ -6,8 +6,8 @@
 
 #include "xfa/fxfa/app/xfa_fwladapter.h"
 
-#include "xfa/fxfa/app/xfa_ffdoc.h"
 #include "xfa/fxfa/app/xfa_fffield.h"
+#include "xfa/include/fxfa/xfa_ffdoc.h"
 
 FWL_ERR CXFA_FWLAdapterWidgetMgr::RepaintWidget(IFWL_Widget* pWidget,
                                                 const CFX_RectF* pRect) {

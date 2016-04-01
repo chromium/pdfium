@@ -15,12 +15,10 @@
 #include "xfa/fxfa/parser/xfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 #include "xfa/fxfa/parser/xfa_parser.h"
+#include "xfa/fxfa/parser/xfa_parser_imp.h"
 #include "xfa/fxfa/parser/xfa_script.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
-IXFA_PacketImport* IXFA_PacketImport::Create(CXFA_Document* pDocument) {
-  return new CXFA_DataImporter(pDocument);
-}
 CXFA_DataImporter::CXFA_DataImporter(CXFA_Document* pDocument)
     : m_pDocument(pDocument) {
   ASSERT(m_pDocument);
@@ -465,10 +463,7 @@ void XFA_DataExporter_RegenerateFormFile(CXFA_Node* pNode,
     XFA_DataExporter_RegenerateFormFile_Container(pNode, pStream, bSaveXML);
   }
 }
-IXFA_PacketExport* IXFA_PacketExport::Create(CXFA_Document* pDocument,
-                                             XFA_DATAFORMAT eFormat) {
-  return new CXFA_DataExporter(pDocument);
-}
+
 CXFA_DataExporter::CXFA_DataExporter(CXFA_Document* pDocument)
     : m_pDocument(pDocument) {
   ASSERT(m_pDocument);

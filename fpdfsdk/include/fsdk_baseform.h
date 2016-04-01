@@ -15,6 +15,10 @@
 #include "core/include/fxge/fx_dib.h"
 #include "fpdfsdk/include/fsdk_baseannot.h"
 
+#ifdef PDF_ENABLE_XFA
+#include "xfa/include/fxfa/xfa_ffwidgethandler.h"
+#endif  // PDF_ENABLE_XFA
+
 #if _FX_OS_ == _FX_ANDROID_
 #include "time.h"
 #else
@@ -67,9 +71,9 @@ struct PDFSDK_FieldAction {
 class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
  public:
 #ifdef PDF_ENABLE_XFA
-  IXFA_Widget* GetMixXFAWidget() const;
-  IXFA_Widget* GetGroupMixXFAWidget();
-  IXFA_WidgetHandler* GetXFAWidgetHandler() const;
+  CXFA_FFWidget* GetMixXFAWidget() const;
+  CXFA_FFWidget* GetGroupMixXFAWidget();
+  CXFA_FFWidgetHandler* GetXFAWidgetHandler() const;
 
   FX_BOOL HasXFAAAction(PDFSDK_XFAAActionType eXFAAAT);
   FX_BOOL OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
@@ -80,12 +84,12 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
   void SynchronizeXFAValue();
   void SynchronizeXFAItems();
 
-  static void SynchronizeXFAValue(IXFA_DocView* pXFADocView,
-                                  IXFA_Widget* hWidget,
+  static void SynchronizeXFAValue(CXFA_FFDocView* pXFADocView,
+                                  CXFA_FFWidget* hWidget,
                                   CPDF_FormField* pFormField,
                                   CPDF_FormControl* pFormControl);
-  static void SynchronizeXFAItems(IXFA_DocView* pXFADocView,
-                                  IXFA_Widget* hWidget,
+  static void SynchronizeXFAItems(CXFA_FFDocView* pXFADocView,
+                                  CXFA_FFWidget* hWidget,
                                   CPDF_FormField* pFormField,
                                   CPDF_FormControl* pFormControl);
 #endif  // PDF_ENABLE_XFA
@@ -214,21 +218,21 @@ class CPDFSDK_Widget : public CPDFSDK_BAAnnot {
   int32_t m_nValueAge;
 
 #ifdef PDF_ENABLE_XFA
-  mutable IXFA_Widget* m_hMixXFAWidget;
-  mutable IXFA_WidgetHandler* m_pWidgetHandler;
+  mutable CXFA_FFWidget* m_hMixXFAWidget;
+  mutable CXFA_FFWidgetHandler* m_pWidgetHandler;
 #endif  // PDF_ENABLE_XFA
 };
 
 #ifdef PDF_ENABLE_XFA
 class CPDFSDK_XFAWidget : public CPDFSDK_Annot {
  public:
-  CPDFSDK_XFAWidget(IXFA_Widget* pAnnot,
+  CPDFSDK_XFAWidget(CXFA_FFWidget* pAnnot,
                     CPDFSDK_PageView* pPageView,
                     CPDFSDK_InterForm* pInterForm);
   ~CPDFSDK_XFAWidget() override {}
 
   FX_BOOL IsXFAField() override;
-  IXFA_Widget* GetXFAWidget() const override { return m_hXFAWidget; }
+  CXFA_FFWidget* GetXFAWidget() const override { return m_hXFAWidget; }
   CFX_ByteString GetType() const override;
   CFX_ByteString GetSubType() const override { return ""; }
   CFX_FloatRect GetRect() const override;
@@ -237,10 +241,10 @@ class CPDFSDK_XFAWidget : public CPDFSDK_Annot {
 
  private:
   CPDFSDK_InterForm* m_pInterForm;
-  IXFA_Widget* m_hXFAWidget;
+  CXFA_FFWidget* m_hXFAWidget;
 };
 #define CPDFSDK_XFAWidgetMap \
-  CFX_MapPtrTemplate<IXFA_Widget*, CPDFSDK_XFAWidget*>
+  CFX_MapPtrTemplate<CXFA_FFWidget*, CPDFSDK_XFAWidget*>
 #define CPDFSDK_FieldSynchronizeMap CFX_MapPtrTemplate<CPDF_FormField*, int>
 #endif  // PDF_ENABLE_XFA
 
@@ -268,9 +272,9 @@ class CPDFSDK_InterForm : public CPDF_FormNotify {
   FX_BOOL IsCalculateEnabled() const;
 
 #ifdef PDF_ENABLE_XFA
-  void AddXFAMap(IXFA_Widget* hWidget, CPDFSDK_XFAWidget* pWidget);
-  void RemoveXFAMap(IXFA_Widget* hWidget);
-  CPDFSDK_XFAWidget* GetXFAWidget(IXFA_Widget* hWidget);
+  void AddXFAMap(CXFA_FFWidget* hWidget, CPDFSDK_XFAWidget* pWidget);
+  void RemoveXFAMap(CXFA_FFWidget* hWidget);
+  CPDFSDK_XFAWidget* GetXFAWidget(CXFA_FFWidget* hWidget);
   void XfaEnableCalculate(FX_BOOL bEnabled);
   FX_BOOL IsXfaCalculateEnabled() const;
   FX_BOOL IsXfaValidationsEnabled();

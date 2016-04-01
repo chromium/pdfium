@@ -4,217 +4,207 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/app/xfa_ffwidgethandler.h"
+#include "xfa/include/fxfa/xfa_ffwidgethandler.h"
 
 #include <vector>
 
 #include "xfa/fxfa/app/xfa_ffchoicelist.h"
-#include "xfa/fxfa/app/xfa_ffdoc.h"
-#include "xfa/fxfa/app/xfa_ffdocview.h"
 #include "xfa/fxfa/app/xfa_fffield.h"
 #include "xfa/fxfa/app/xfa_ffwidget.h"
 #include "xfa/fxfa/app/xfa_fwladapter.h"
+#include "xfa/fxfa/parser/xfa_document_layout_imp.h"
 #include "xfa/fxfa/parser/xfa_parser.h"
+#include "xfa/fxfa/parser/xfa_parser_imp.h"
+#include "xfa/include/fxfa/xfa_ffdoc.h"
+#include "xfa/include/fxfa/xfa_ffdocview.h"
 
 CXFA_FFWidgetHandler::CXFA_FFWidgetHandler(CXFA_FFDocView* pDocView)
     : m_pDocView(pDocView) {}
+
 CXFA_FFWidgetHandler::~CXFA_FFWidgetHandler() {}
-IXFA_PageView* CXFA_FFWidgetHandler::GetPageView(IXFA_Widget* hWidget) {
-  return static_cast<CXFA_FFWidget*>(hWidget)->GetPageView();
+
+CXFA_FFPageView* CXFA_FFWidgetHandler::GetPageView(CXFA_FFWidget* hWidget) {
+  return hWidget->GetPageView();
 }
-void CXFA_FFWidgetHandler::GetRect(IXFA_Widget* hWidget, CFX_RectF& rt) {
-  static_cast<CXFA_FFWidget*>(hWidget)->GetWidgetRect(rt);
+void CXFA_FFWidgetHandler::GetRect(CXFA_FFWidget* hWidget, CFX_RectF& rt) {
+  hWidget->GetWidgetRect(rt);
 }
-uint32_t CXFA_FFWidgetHandler::GetStatus(IXFA_Widget* hWidget) {
-  return static_cast<CXFA_FFWidget*>(hWidget)->GetStatus();
+uint32_t CXFA_FFWidgetHandler::GetStatus(CXFA_FFWidget* hWidget) {
+  return hWidget->GetStatus();
 }
-FX_BOOL CXFA_FFWidgetHandler::GetBBox(IXFA_Widget* hWidget,
+FX_BOOL CXFA_FFWidgetHandler::GetBBox(CXFA_FFWidget* hWidget,
                                       CFX_RectF& rtBox,
                                       uint32_t dwStatus,
                                       FX_BOOL bDrawFocus) {
-  return static_cast<CXFA_FFWidget*>(hWidget)
-      ->GetBBox(rtBox, dwStatus, bDrawFocus);
+  return hWidget->GetBBox(rtBox, dwStatus, bDrawFocus);
 }
-CXFA_WidgetAcc* CXFA_FFWidgetHandler::GetDataAcc(IXFA_Widget* hWidget) {
-  return static_cast<CXFA_FFWidget*>(hWidget)->GetDataAcc();
+CXFA_WidgetAcc* CXFA_FFWidgetHandler::GetDataAcc(CXFA_FFWidget* hWidget) {
+  return hWidget->GetDataAcc();
 }
-void CXFA_FFWidgetHandler::GetName(IXFA_Widget* hWidget,
+void CXFA_FFWidgetHandler::GetName(CXFA_FFWidget* hWidget,
                                    CFX_WideString& wsName,
                                    int32_t iNameType) {
-  static_cast<CXFA_FFWidget*>(hWidget)->GetDataAcc()->GetName(wsName,
-                                                              iNameType);
+  hWidget->GetDataAcc()->GetName(wsName, iNameType);
 }
-FX_BOOL CXFA_FFWidgetHandler::GetToolTip(IXFA_Widget* hWidget,
+FX_BOOL CXFA_FFWidgetHandler::GetToolTip(CXFA_FFWidget* hWidget,
                                          CFX_WideString& wsToolTip) {
-  return static_cast<CXFA_FFWidget*>(hWidget)->GetToolTip(wsToolTip);
+  return hWidget->GetToolTip(wsToolTip);
 }
-void CXFA_FFWidgetHandler::SetPrivateData(IXFA_Widget* hWidget,
+void CXFA_FFWidgetHandler::SetPrivateData(CXFA_FFWidget* hWidget,
                                           void* module_id,
                                           void* pData,
                                           PD_CALLBACK_FREEDATA callback) {
-  static_cast<CXFA_FFWidget*>(hWidget)
-      ->SetPrivateData(module_id, pData, callback);
+  hWidget->SetPrivateData(module_id, pData, callback);
 }
-void* CXFA_FFWidgetHandler::GetPrivateData(IXFA_Widget* hWidget,
+void* CXFA_FFWidgetHandler::GetPrivateData(CXFA_FFWidget* hWidget,
                                            void* module_id) {
-  return static_cast<CXFA_FFWidget*>(hWidget)->GetPrivateData(module_id);
+  return hWidget->GetPrivateData(module_id);
 }
-FX_BOOL CXFA_FFWidgetHandler::OnMouseEnter(IXFA_Widget* hWidget) {
+FX_BOOL CXFA_FFWidgetHandler::OnMouseEnter(CXFA_FFWidget* hWidget) {
   m_pDocView->LockUpdate();
-  FX_BOOL bRet = static_cast<CXFA_FFWidget*>(hWidget)->OnMouseEnter();
+  FX_BOOL bRet = hWidget->OnMouseEnter();
   m_pDocView->UnlockUpdate();
   m_pDocView->UpdateDocView();
   return bRet;
 }
-FX_BOOL CXFA_FFWidgetHandler::OnMouseExit(IXFA_Widget* hWidget) {
+FX_BOOL CXFA_FFWidgetHandler::OnMouseExit(CXFA_FFWidget* hWidget) {
   m_pDocView->LockUpdate();
-  FX_BOOL bRet = static_cast<CXFA_FFWidget*>(hWidget)->OnMouseExit();
+  FX_BOOL bRet = hWidget->OnMouseExit();
   m_pDocView->UnlockUpdate();
   m_pDocView->UpdateDocView();
   return bRet;
 }
-FX_BOOL CXFA_FFWidgetHandler::OnLButtonDown(IXFA_Widget* hWidget,
+FX_BOOL CXFA_FFWidgetHandler::OnLButtonDown(CXFA_FFWidget* hWidget,
                                             uint32_t dwFlags,
                                             FX_FLOAT fx,
                                             FX_FLOAT fy) {
   m_pDocView->LockUpdate();
-  static_cast<CXFA_FFWidget*>(hWidget)->Rotate2Normal(fx, fy);
-  FX_BOOL bRet =
-      static_cast<CXFA_FFWidget*>(hWidget)->OnLButtonDown(dwFlags, fx, fy);
+  hWidget->Rotate2Normal(fx, fy);
+  FX_BOOL bRet = hWidget->OnLButtonDown(dwFlags, fx, fy);
   if (bRet && m_pDocView->SetFocus(hWidget)) {
     ((CXFA_FFDoc*)m_pDocView->GetDoc())
         ->GetDocProvider()
-        ->SetFocusWidget(m_pDocView->GetDoc(), (IXFA_Widget*)hWidget);
+        ->SetFocusWidget(m_pDocView->GetDoc(), (CXFA_FFWidget*)hWidget);
   }
   m_pDocView->UnlockUpdate();
   m_pDocView->UpdateDocView();
   return bRet;
 }
-FX_BOOL CXFA_FFWidgetHandler::OnLButtonUp(IXFA_Widget* hWidget,
+FX_BOOL CXFA_FFWidgetHandler::OnLButtonUp(CXFA_FFWidget* hWidget,
                                           uint32_t dwFlags,
                                           FX_FLOAT fx,
                                           FX_FLOAT fy) {
   m_pDocView->LockUpdate();
-  static_cast<CXFA_FFWidget*>(hWidget)->Rotate2Normal(fx, fy);
+  hWidget->Rotate2Normal(fx, fy);
   m_pDocView->m_bLayoutEvent = TRUE;
-  FX_BOOL bRet =
-      static_cast<CXFA_FFWidget*>(hWidget)->OnLButtonUp(dwFlags, fx, fy);
+  FX_BOOL bRet = hWidget->OnLButtonUp(dwFlags, fx, fy);
   m_pDocView->UnlockUpdate();
   m_pDocView->UpdateDocView();
   return bRet;
 }
-FX_BOOL CXFA_FFWidgetHandler::OnLButtonDblClk(IXFA_Widget* hWidget,
+FX_BOOL CXFA_FFWidgetHandler::OnLButtonDblClk(CXFA_FFWidget* hWidget,
                                               uint32_t dwFlags,
                                               FX_FLOAT fx,
                                               FX_FLOAT fy) {
-  static_cast<CXFA_FFWidget*>(hWidget)->Rotate2Normal(fx, fy);
-  FX_BOOL bRet =
-      static_cast<CXFA_FFWidget*>(hWidget)->OnLButtonDblClk(dwFlags, fx, fy);
+  hWidget->Rotate2Normal(fx, fy);
+  FX_BOOL bRet = hWidget->OnLButtonDblClk(dwFlags, fx, fy);
   m_pDocView->RunInvalidate();
   return bRet;
 }
-FX_BOOL CXFA_FFWidgetHandler::OnMouseMove(IXFA_Widget* hWidget,
+FX_BOOL CXFA_FFWidgetHandler::OnMouseMove(CXFA_FFWidget* hWidget,
                                           uint32_t dwFlags,
                                           FX_FLOAT fx,
                                           FX_FLOAT fy) {
-  static_cast<CXFA_FFWidget*>(hWidget)->Rotate2Normal(fx, fy);
-  FX_BOOL bRet =
-      static_cast<CXFA_FFWidget*>(hWidget)->OnMouseMove(dwFlags, fx, fy);
+  hWidget->Rotate2Normal(fx, fy);
+  FX_BOOL bRet = hWidget->OnMouseMove(dwFlags, fx, fy);
   m_pDocView->RunInvalidate();
   return bRet;
 }
-FX_BOOL CXFA_FFWidgetHandler::OnMouseWheel(IXFA_Widget* hWidget,
+FX_BOOL CXFA_FFWidgetHandler::OnMouseWheel(CXFA_FFWidget* hWidget,
                                            uint32_t dwFlags,
                                            int16_t zDelta,
                                            FX_FLOAT fx,
                                            FX_FLOAT fy) {
-  static_cast<CXFA_FFWidget*>(hWidget)->Rotate2Normal(fx, fy);
-  FX_BOOL bRet = static_cast<CXFA_FFWidget*>(hWidget)
-                     ->OnMouseWheel(dwFlags, zDelta, fx, fy);
+  hWidget->Rotate2Normal(fx, fy);
+  FX_BOOL bRet = hWidget->OnMouseWheel(dwFlags, zDelta, fx, fy);
   m_pDocView->RunInvalidate();
   return bRet;
 }
-FX_BOOL CXFA_FFWidgetHandler::OnRButtonDown(IXFA_Widget* hWidget,
+FX_BOOL CXFA_FFWidgetHandler::OnRButtonDown(CXFA_FFWidget* hWidget,
                                             uint32_t dwFlags,
                                             FX_FLOAT fx,
                                             FX_FLOAT fy) {
-  static_cast<CXFA_FFWidget*>(hWidget)->Rotate2Normal(fx, fy);
-  FX_BOOL bRet =
-      static_cast<CXFA_FFWidget*>(hWidget)->OnRButtonDown(dwFlags, fx, fy);
+  hWidget->Rotate2Normal(fx, fy);
+  FX_BOOL bRet = hWidget->OnRButtonDown(dwFlags, fx, fy);
   if (bRet && m_pDocView->SetFocus(hWidget)) {
     ((CXFA_FFDoc*)m_pDocView->GetDoc())
         ->GetDocProvider()
-        ->SetFocusWidget(m_pDocView->GetDoc(), (IXFA_Widget*)hWidget);
+        ->SetFocusWidget(m_pDocView->GetDoc(), (CXFA_FFWidget*)hWidget);
   }
   m_pDocView->RunInvalidate();
   return bRet;
 }
-FX_BOOL CXFA_FFWidgetHandler::OnRButtonUp(IXFA_Widget* hWidget,
+FX_BOOL CXFA_FFWidgetHandler::OnRButtonUp(CXFA_FFWidget* hWidget,
                                           uint32_t dwFlags,
                                           FX_FLOAT fx,
                                           FX_FLOAT fy) {
-  static_cast<CXFA_FFWidget*>(hWidget)->Rotate2Normal(fx, fy);
-  FX_BOOL bRet =
-      static_cast<CXFA_FFWidget*>(hWidget)->OnRButtonUp(dwFlags, fx, fy);
+  hWidget->Rotate2Normal(fx, fy);
+  FX_BOOL bRet = hWidget->OnRButtonUp(dwFlags, fx, fy);
   m_pDocView->RunInvalidate();
   return bRet;
 }
-FX_BOOL CXFA_FFWidgetHandler::OnRButtonDblClk(IXFA_Widget* hWidget,
+FX_BOOL CXFA_FFWidgetHandler::OnRButtonDblClk(CXFA_FFWidget* hWidget,
                                               uint32_t dwFlags,
                                               FX_FLOAT fx,
                                               FX_FLOAT fy) {
-  static_cast<CXFA_FFWidget*>(hWidget)->Rotate2Normal(fx, fy);
-  FX_BOOL bRet =
-      static_cast<CXFA_FFWidget*>(hWidget)->OnRButtonDblClk(dwFlags, fx, fy);
+  hWidget->Rotate2Normal(fx, fy);
+  FX_BOOL bRet = hWidget->OnRButtonDblClk(dwFlags, fx, fy);
   m_pDocView->RunInvalidate();
   return bRet;
 }
-FX_BOOL CXFA_FFWidgetHandler::OnKeyDown(IXFA_Widget* hWidget,
+FX_BOOL CXFA_FFWidgetHandler::OnKeyDown(CXFA_FFWidget* hWidget,
                                         uint32_t dwKeyCode,
                                         uint32_t dwFlags) {
-  FX_BOOL bRet =
-      static_cast<CXFA_FFWidget*>(hWidget)->OnKeyDown(dwKeyCode, dwFlags);
+  FX_BOOL bRet = hWidget->OnKeyDown(dwKeyCode, dwFlags);
   m_pDocView->RunInvalidate();
   m_pDocView->UpdateDocView();
   return bRet;
 }
-FX_BOOL CXFA_FFWidgetHandler::OnKeyUp(IXFA_Widget* hWidget,
+FX_BOOL CXFA_FFWidgetHandler::OnKeyUp(CXFA_FFWidget* hWidget,
                                       uint32_t dwKeyCode,
                                       uint32_t dwFlags) {
-  FX_BOOL bRet =
-      static_cast<CXFA_FFWidget*>(hWidget)->OnKeyUp(dwKeyCode, dwFlags);
+  FX_BOOL bRet = hWidget->OnKeyUp(dwKeyCode, dwFlags);
   m_pDocView->RunInvalidate();
   return bRet;
 }
-FX_BOOL CXFA_FFWidgetHandler::OnChar(IXFA_Widget* hWidget,
+FX_BOOL CXFA_FFWidgetHandler::OnChar(CXFA_FFWidget* hWidget,
                                      uint32_t dwChar,
                                      uint32_t dwFlags) {
-  FX_BOOL bRet = static_cast<CXFA_FFWidget*>(hWidget)->OnChar(dwChar, dwFlags);
+  FX_BOOL bRet = hWidget->OnChar(dwChar, dwFlags);
   m_pDocView->RunInvalidate();
   return bRet;
 }
-uint32_t CXFA_FFWidgetHandler::OnHitTest(IXFA_Widget* hWidget,
+uint32_t CXFA_FFWidgetHandler::OnHitTest(CXFA_FFWidget* hWidget,
                                          FX_FLOAT fx,
                                          FX_FLOAT fy) {
-  if (!(static_cast<CXFA_FFWidget*>(hWidget)->GetStatus() &
-        XFA_WIDGETSTATUS_Visible)) {
+  if (!(hWidget->GetStatus() & XFA_WIDGETSTATUS_Visible))
     return FWL_WGTHITTEST_Unknown;
-  }
-  static_cast<CXFA_FFWidget*>(hWidget)->Rotate2Normal(fx, fy);
-  return static_cast<CXFA_FFWidget*>(hWidget)->OnHitTest(fx, fy);
+
+  hWidget->Rotate2Normal(fx, fy);
+  return hWidget->OnHitTest(fx, fy);
 }
-FX_BOOL CXFA_FFWidgetHandler::OnSetCursor(IXFA_Widget* hWidget,
+FX_BOOL CXFA_FFWidgetHandler::OnSetCursor(CXFA_FFWidget* hWidget,
                                           FX_FLOAT fx,
                                           FX_FLOAT fy) {
-  static_cast<CXFA_FFWidget*>(hWidget)->Rotate2Normal(fx, fy);
-  return static_cast<CXFA_FFWidget*>(hWidget)->OnSetCursor(fx, fy);
+  hWidget->Rotate2Normal(fx, fy);
+  return hWidget->OnSetCursor(fx, fy);
 }
-void CXFA_FFWidgetHandler::RenderWidget(IXFA_Widget* hWidget,
+void CXFA_FFWidgetHandler::RenderWidget(CXFA_FFWidget* hWidget,
                                         CFX_Graphics* pGS,
                                         CFX_Matrix* pMatrix,
                                         FX_BOOL bHighlight) {
-  static_cast<CXFA_FFWidget*>(hWidget)->RenderWidget(
-      pGS, pMatrix, bHighlight ? XFA_WIDGETSTATUS_Highlight : 0, 0);
+  hWidget->RenderWidget(pGS, pMatrix,
+                        bHighlight ? XFA_WIDGETSTATUS_Highlight : 0, 0);
 }
 FX_BOOL CXFA_FFWidgetHandler::HasEvent(CXFA_WidgetAcc* pWidgetAcc,
                                        XFA_EVENTTYPE eEventType) {
@@ -288,15 +278,13 @@ int32_t CXFA_FFWidgetHandler::ProcessEvent(CXFA_WidgetAcc* pWidgetAcc,
       pWidgetAcc->ProcessEvent(gs_EventActivity[pParam->m_eType], pParam);
   return iRet;
 }
-IXFA_Widget* CXFA_FFWidgetHandler::CreateWidget(IXFA_Widget* hParent,
-                                                XFA_WIDGETTYPE eType,
-                                                IXFA_Widget* hBefore) {
+CXFA_FFWidget* CXFA_FFWidgetHandler::CreateWidget(CXFA_FFWidget* hParent,
+                                                  XFA_WIDGETTYPE eType,
+                                                  CXFA_FFWidget* hBefore) {
   CXFA_Node* pParentFormItem =
-      hParent ? static_cast<CXFA_FFWidget*>(hParent)->GetDataAcc()->GetNode()
-              : NULL;
+      hParent ? hParent->GetDataAcc()->GetNode() : nullptr;
   CXFA_Node* pBeforeFormItem =
-      hBefore ? static_cast<CXFA_FFWidget*>(hBefore)->GetDataAcc()->GetNode()
-              : NULL;
+      hBefore ? hBefore->GetDataAcc()->GetNode() : nullptr;
   CXFA_Node* pNewFormItem =
       CreateWidgetFormItem(eType, pParentFormItem, pBeforeFormItem);
   if (pNewFormItem == NULL) {
@@ -307,7 +295,7 @@ IXFA_Widget* CXFA_FFWidgetHandler::CreateWidget(IXFA_Widget* hParent,
   m_pDocView->RunLayout();
   CXFA_LayoutItem* pLayout =
       m_pDocView->GetXFALayout()->GetLayoutItem(pNewFormItem);
-  return (IXFA_Widget*)pLayout;
+  return (CXFA_FFWidget*)pLayout;
 }
 CXFA_Node* CXFA_FFWidgetHandler::CreateWidgetFormItem(
     XFA_WIDGETTYPE eType,
@@ -561,74 +549,77 @@ CXFA_Node* CXFA_FFWidgetHandler::CreateValueNode(XFA_ELEMENT eValue,
   CreateCopyNode(eValue, pValue);
   return pValue;
 }
-IXFA_ObjFactory* CXFA_FFWidgetHandler::GetObjFactory() const {
+CXFA_Document* CXFA_FFWidgetHandler::GetObjFactory() const {
   return GetXFADoc()->GetParser()->GetFactory();
 }
 CXFA_Document* CXFA_FFWidgetHandler::GetXFADoc() const {
   return ((CXFA_FFDoc*)(m_pDocView->GetDoc()))->GetXFADoc();
 }
+
 CXFA_FFMenuHandler::CXFA_FFMenuHandler() {}
+
 CXFA_FFMenuHandler::~CXFA_FFMenuHandler() {}
-FX_BOOL CXFA_FFMenuHandler::CanCopy(IXFA_Widget* hWidget) {
-  return static_cast<CXFA_FFWidget*>(hWidget)->CanCopy();
+
+FX_BOOL CXFA_FFMenuHandler::CanCopy(CXFA_FFWidget* hWidget) {
+  return hWidget->CanCopy();
 }
-FX_BOOL CXFA_FFMenuHandler::CanCut(IXFA_Widget* hWidget) {
-  return static_cast<CXFA_FFWidget*>(hWidget)->CanCut();
+FX_BOOL CXFA_FFMenuHandler::CanCut(CXFA_FFWidget* hWidget) {
+  return hWidget->CanCut();
 }
-FX_BOOL CXFA_FFMenuHandler::CanPaste(IXFA_Widget* hWidget) {
-  return static_cast<CXFA_FFWidget*>(hWidget)->CanPaste();
+FX_BOOL CXFA_FFMenuHandler::CanPaste(CXFA_FFWidget* hWidget) {
+  return hWidget->CanPaste();
 }
-FX_BOOL CXFA_FFMenuHandler::CanSelectAll(IXFA_Widget* hWidget) {
-  return static_cast<CXFA_FFWidget*>(hWidget)->CanSelectAll();
+FX_BOOL CXFA_FFMenuHandler::CanSelectAll(CXFA_FFWidget* hWidget) {
+  return hWidget->CanSelectAll();
 }
-FX_BOOL CXFA_FFMenuHandler::CanDelete(IXFA_Widget* hWidget) {
-  return static_cast<CXFA_FFWidget*>(hWidget)->CanDelete();
+FX_BOOL CXFA_FFMenuHandler::CanDelete(CXFA_FFWidget* hWidget) {
+  return hWidget->CanDelete();
 }
-FX_BOOL CXFA_FFMenuHandler::CanDeSelect(IXFA_Widget* hWidget) {
-  return static_cast<CXFA_FFWidget*>(hWidget)->CanDeSelect();
+FX_BOOL CXFA_FFMenuHandler::CanDeSelect(CXFA_FFWidget* hWidget) {
+  return hWidget->CanDeSelect();
 }
-FX_BOOL CXFA_FFMenuHandler::Copy(IXFA_Widget* hWidget, CFX_WideString& wsText) {
-  return static_cast<CXFA_FFWidget*>(hWidget)->Copy(wsText);
+FX_BOOL CXFA_FFMenuHandler::Copy(CXFA_FFWidget* hWidget,
+                                 CFX_WideString& wsText) {
+  return hWidget->Copy(wsText);
 }
-FX_BOOL CXFA_FFMenuHandler::Cut(IXFA_Widget* hWidget, CFX_WideString& wsText) {
-  return static_cast<CXFA_FFWidget*>(hWidget)->Cut(wsText);
+FX_BOOL CXFA_FFMenuHandler::Cut(CXFA_FFWidget* hWidget,
+                                CFX_WideString& wsText) {
+  return hWidget->Cut(wsText);
 }
-FX_BOOL CXFA_FFMenuHandler::Paste(IXFA_Widget* hWidget,
+FX_BOOL CXFA_FFMenuHandler::Paste(CXFA_FFWidget* hWidget,
                                   const CFX_WideString& wsText) {
-  return static_cast<CXFA_FFWidget*>(hWidget)->Paste(wsText);
+  return hWidget->Paste(wsText);
 }
-FX_BOOL CXFA_FFMenuHandler::SelectAll(IXFA_Widget* hWidget) {
-  return static_cast<CXFA_FFWidget*>(hWidget)->SelectAll();
+FX_BOOL CXFA_FFMenuHandler::SelectAll(CXFA_FFWidget* hWidget) {
+  return hWidget->SelectAll();
 }
-FX_BOOL CXFA_FFMenuHandler::Delete(IXFA_Widget* hWidget) {
-  return static_cast<CXFA_FFWidget*>(hWidget)->Delete();
+FX_BOOL CXFA_FFMenuHandler::Delete(CXFA_FFWidget* hWidget) {
+  return hWidget->Delete();
 }
-FX_BOOL CXFA_FFMenuHandler::DeSelect(IXFA_Widget* hWidget) {
-  return static_cast<CXFA_FFWidget*>(hWidget)->DeSelect();
+FX_BOOL CXFA_FFMenuHandler::DeSelect(CXFA_FFWidget* hWidget) {
+  return hWidget->DeSelect();
 }
-FX_BOOL CXFA_FFMenuHandler::CanUndo(IXFA_Widget* hWidget) {
-  return static_cast<CXFA_FFWidget*>(hWidget)->CanUndo();
+FX_BOOL CXFA_FFMenuHandler::CanUndo(CXFA_FFWidget* hWidget) {
+  return hWidget->CanUndo();
 }
-FX_BOOL CXFA_FFMenuHandler::CanRedo(IXFA_Widget* hWidget) {
-  return static_cast<CXFA_FFWidget*>(hWidget)->CanRedo();
+FX_BOOL CXFA_FFMenuHandler::CanRedo(CXFA_FFWidget* hWidget) {
+  return hWidget->CanRedo();
 }
-FX_BOOL CXFA_FFMenuHandler::Undo(IXFA_Widget* hWidget) {
-  return static_cast<CXFA_FFWidget*>(hWidget)->Undo();
+FX_BOOL CXFA_FFMenuHandler::Undo(CXFA_FFWidget* hWidget) {
+  return hWidget->Undo();
 }
-FX_BOOL CXFA_FFMenuHandler::Redo(IXFA_Widget* hWidget) {
-  return static_cast<CXFA_FFWidget*>(hWidget)->Redo();
+FX_BOOL CXFA_FFMenuHandler::Redo(CXFA_FFWidget* hWidget) {
+  return hWidget->Redo();
 }
 FX_BOOL CXFA_FFMenuHandler::GetSuggestWords(
-    IXFA_Widget* hWidget,
+    CXFA_FFWidget* hWidget,
     CFX_PointF pointf,
     std::vector<CFX_ByteString>& sSuggest) {
-  return static_cast<CXFA_FFWidget*>(hWidget)
-      ->GetSuggestWords(pointf, sSuggest);
+  return hWidget->GetSuggestWords(pointf, sSuggest);
 }
 FX_BOOL CXFA_FFMenuHandler::ReplaceSpellCheckWord(
-    IXFA_Widget* hWidget,
+    CXFA_FFWidget* hWidget,
     CFX_PointF pointf,
     const CFX_ByteStringC& bsReplace) {
-  return static_cast<CXFA_FFWidget*>(hWidget)
-      ->ReplaceSpellCheckWord(pointf, bsReplace);
+  return hWidget->ReplaceSpellCheckWord(pointf, bsReplace);
 }

@@ -76,7 +76,7 @@ CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::NewAnnot(CPDF_Annot* pAnnot,
 }
 
 #ifdef PDF_ENABLE_XFA
-CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::NewAnnot(IXFA_Widget* pAnnot,
+CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::NewAnnot(CXFA_FFWidget* pAnnot,
                                                  CPDFSDK_PageView* pPageView) {
   ASSERT(pAnnot);
   ASSERT(pPageView);
@@ -383,7 +383,7 @@ CPDFSDK_Annot* CPDFSDK_AnnotHandlerMgr::GetNextAnnot(CPDFSDK_Annot* pSDKAnnot,
     return NULL;
   if (pWidgetIterator->GetCurrentWidget() != pSDKAnnot->GetXFAWidget())
     pWidgetIterator->SetCurrentWidget(pSDKAnnot->GetXFAWidget());
-  IXFA_Widget* hNextFocus = NULL;
+  CXFA_FFWidget* hNextFocus = NULL;
   hNextFocus =
       bNext ? pWidgetIterator->MoveToNext() : pWidgetIterator->MoveToPrevious();
   if (!hNextFocus && pSDKAnnot)
@@ -439,7 +439,7 @@ CPDFSDK_Annot* CPDFSDK_BFAnnotHandler::NewAnnot(CPDF_Annot* pAnnot,
 }
 
 #ifdef PDF_ENABLE_XFA
-CPDFSDK_Annot* CPDFSDK_BFAnnotHandler::NewAnnot(IXFA_Widget* hWidget,
+CPDFSDK_Annot* CPDFSDK_BFAnnotHandler::NewAnnot(CXFA_FFWidget* hWidget,
                                                 CPDFSDK_PageView* pPage) {
   return NULL;
 }
@@ -734,7 +734,7 @@ FX_BOOL CPDFSDK_BFAnnotHandler::HitTest(CPDFSDK_PageView* pPageView,
 CPDFSDK_XFAAnnotHandler::CPDFSDK_XFAAnnotHandler(CPDFDoc_Environment* pApp)
     : m_pApp(pApp) {}
 
-CPDFSDK_Annot* CPDFSDK_XFAAnnotHandler::NewAnnot(IXFA_Widget* pAnnot,
+CPDFSDK_Annot* CPDFSDK_XFAAnnotHandler::NewAnnot(CXFA_FFWidget* pAnnot,
                                                  CPDFSDK_PageView* pPage) {
   CPDFSDK_Document* pSDKDoc = m_pApp->GetSDKDocument();
   CPDFSDK_InterForm* pInterForm = (CPDFSDK_InterForm*)pSDKDoc->GetInterForm();
@@ -756,7 +756,7 @@ void CPDFSDK_XFAAnnotHandler::OnDraw(CPDFSDK_PageView* pPageView,
   ASSERT(pAnnot != NULL);
 
   CPDFSDK_Document* pSDKDoc = pPageView->GetSDKDocument();
-  IXFA_WidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
 
   CFX_Graphics gs;
   gs.Create(pDevice);
@@ -785,7 +785,7 @@ CFX_FloatRect CPDFSDK_XFAAnnotHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
                                                    CPDFSDK_Annot* pAnnot) {
   ASSERT(pAnnot);
 
-  IXFA_WidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
   CFX_RectF rcBBox;
   XFA_ELEMENT eType =
       pWidgetHandler->GetDataAcc(pAnnot->GetXFAWidget())->GetUIType();
@@ -819,11 +819,11 @@ FX_BOOL CPDFSDK_XFAAnnotHandler::HitTest(CPDFSDK_PageView* pPageView,
   if (!pDoc)
     return FALSE;
 
-  IXFA_DocView* pDocView = pDoc->GetXFADocView();
+  CXFA_FFDocView* pDocView = pDoc->GetXFADocView();
   if (!pDocView)
     return FALSE;
 
-  IXFA_WidgetHandler* pWidgetHandler = pDocView->GetWidgetHandler();
+  CXFA_FFWidgetHandler* pWidgetHandler = pDocView->GetWidgetHandler();
   if (!pWidgetHandler)
     return FALSE;
 
@@ -837,7 +837,7 @@ void CPDFSDK_XFAAnnotHandler::OnMouseEnter(CPDFSDK_PageView* pPageView,
                                            uint32_t nFlag) {
   if (!pPageView || !pAnnot)
     return;
-  IXFA_WidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
   pWidgetHandler->OnMouseEnter(pAnnot->GetXFAWidget());
 }
 
@@ -847,7 +847,7 @@ void CPDFSDK_XFAAnnotHandler::OnMouseExit(CPDFSDK_PageView* pPageView,
   if (!pPageView || !pAnnot)
     return;
 
-  IXFA_WidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
   pWidgetHandler->OnMouseExit(pAnnot->GetXFAWidget());
 }
 
@@ -858,7 +858,7 @@ FX_BOOL CPDFSDK_XFAAnnotHandler::OnLButtonDown(CPDFSDK_PageView* pPageView,
   if (!pPageView || !pAnnot)
     return FALSE;
 
-  IXFA_WidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
   return pWidgetHandler->OnLButtonDown(pAnnot->GetXFAWidget(),
                                        GetFWLFlags(nFlags), point.x, point.y);
 }
@@ -870,7 +870,7 @@ FX_BOOL CPDFSDK_XFAAnnotHandler::OnLButtonUp(CPDFSDK_PageView* pPageView,
   if (!pPageView || !pAnnot)
     return FALSE;
 
-  IXFA_WidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
   return pWidgetHandler->OnLButtonUp(pAnnot->GetXFAWidget(),
                                      GetFWLFlags(nFlags), point.x, point.y);
 }
@@ -882,7 +882,7 @@ FX_BOOL CPDFSDK_XFAAnnotHandler::OnLButtonDblClk(CPDFSDK_PageView* pPageView,
   if (!pPageView || !pAnnot)
     return FALSE;
 
-  IXFA_WidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
   return pWidgetHandler->OnLButtonDblClk(pAnnot->GetXFAWidget(),
                                          GetFWLFlags(nFlags), point.x, point.y);
 }
@@ -894,7 +894,7 @@ FX_BOOL CPDFSDK_XFAAnnotHandler::OnMouseMove(CPDFSDK_PageView* pPageView,
   if (!pPageView || !pAnnot)
     return FALSE;
 
-  IXFA_WidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
   return pWidgetHandler->OnMouseMove(pAnnot->GetXFAWidget(),
                                      GetFWLFlags(nFlags), point.x, point.y);
 }
@@ -907,7 +907,7 @@ FX_BOOL CPDFSDK_XFAAnnotHandler::OnMouseWheel(CPDFSDK_PageView* pPageView,
   if (!pPageView || !pAnnot)
     return FALSE;
 
-  IXFA_WidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
   return pWidgetHandler->OnMouseWheel(
       pAnnot->GetXFAWidget(), GetFWLFlags(nFlags), zDelta, point.x, point.y);
 }
@@ -919,7 +919,7 @@ FX_BOOL CPDFSDK_XFAAnnotHandler::OnRButtonDown(CPDFSDK_PageView* pPageView,
   if (!pPageView || !pAnnot)
     return FALSE;
 
-  IXFA_WidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
   return pWidgetHandler->OnRButtonDown(pAnnot->GetXFAWidget(),
                                        GetFWLFlags(nFlags), point.x, point.y);
 }
@@ -931,7 +931,7 @@ FX_BOOL CPDFSDK_XFAAnnotHandler::OnRButtonUp(CPDFSDK_PageView* pPageView,
   if (!pPageView || !pAnnot)
     return FALSE;
 
-  IXFA_WidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
   return pWidgetHandler->OnRButtonUp(pAnnot->GetXFAWidget(),
                                      GetFWLFlags(nFlags), point.x, point.y);
 }
@@ -943,7 +943,7 @@ FX_BOOL CPDFSDK_XFAAnnotHandler::OnRButtonDblClk(CPDFSDK_PageView* pPageView,
   if (!pPageView || !pAnnot)
     return FALSE;
 
-  IXFA_WidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
   return pWidgetHandler->OnRButtonDblClk(pAnnot->GetXFAWidget(),
                                          GetFWLFlags(nFlags), point.x, point.y);
 }
@@ -954,7 +954,7 @@ FX_BOOL CPDFSDK_XFAAnnotHandler::OnChar(CPDFSDK_Annot* pAnnot,
   if (!pAnnot)
     return FALSE;
 
-  IXFA_WidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
   return pWidgetHandler->OnChar(pAnnot->GetXFAWidget(), nChar,
                                 GetFWLFlags(nFlags));
 }
@@ -965,7 +965,7 @@ FX_BOOL CPDFSDK_XFAAnnotHandler::OnKeyDown(CPDFSDK_Annot* pAnnot,
   if (!pAnnot)
     return FALSE;
 
-  IXFA_WidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
   return pWidgetHandler->OnKeyDown(pAnnot->GetXFAWidget(), nKeyCode,
                                    GetFWLFlags(nFlag));
 }
@@ -976,7 +976,7 @@ FX_BOOL CPDFSDK_XFAAnnotHandler::OnKeyUp(CPDFSDK_Annot* pAnnot,
   if (!pAnnot)
     return FALSE;
 
-  IXFA_WidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
+  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
   return pWidgetHandler->OnKeyUp(pAnnot->GetXFAWidget(), nKeyCode,
                                  GetFWLFlags(nFlag));
 }
@@ -993,7 +993,7 @@ FX_BOOL CPDFSDK_XFAAnnotHandler::OnKillFocus(CPDFSDK_Annot* pAnnot,
 
 FX_BOOL CPDFSDK_XFAAnnotHandler::OnXFAChangedFocus(CPDFSDK_Annot* pOldAnnot,
                                                    CPDFSDK_Annot* pNewAnnot) {
-  IXFA_WidgetHandler* pWidgetHandler = NULL;
+  CXFA_FFWidgetHandler* pWidgetHandler = NULL;
 
   if (pOldAnnot)
     pWidgetHandler = GetXFAWidgetHandler(pOldAnnot);
@@ -1002,9 +1002,9 @@ FX_BOOL CPDFSDK_XFAAnnotHandler::OnXFAChangedFocus(CPDFSDK_Annot* pOldAnnot,
 
   if (pWidgetHandler) {
     FX_BOOL bRet = TRUE;
-    IXFA_Widget* hWidget = pNewAnnot ? pNewAnnot->GetXFAWidget() : NULL;
+    CXFA_FFWidget* hWidget = pNewAnnot ? pNewAnnot->GetXFAWidget() : NULL;
     if (hWidget) {
-      IXFA_PageView* pXFAPageView = pWidgetHandler->GetPageView(hWidget);
+      CXFA_FFPageView* pXFAPageView = pWidgetHandler->GetPageView(hWidget);
       if (pXFAPageView) {
         bRet = pXFAPageView->GetDocView()->SetFocus(hWidget);
         if (pXFAPageView->GetDocView()->GetFocusWidget() == hWidget)
@@ -1017,7 +1017,7 @@ FX_BOOL CPDFSDK_XFAAnnotHandler::OnXFAChangedFocus(CPDFSDK_Annot* pOldAnnot,
   return TRUE;
 }
 
-IXFA_WidgetHandler* CPDFSDK_XFAAnnotHandler::GetXFAWidgetHandler(
+CXFA_FFWidgetHandler* CPDFSDK_XFAAnnotHandler::GetXFAWidgetHandler(
     CPDFSDK_Annot* pAnnot) {
   if (!pAnnot)
     return NULL;
@@ -1034,7 +1034,7 @@ IXFA_WidgetHandler* CPDFSDK_XFAAnnotHandler::GetXFAWidgetHandler(
   if (!pDoc)
     return NULL;
 
-  IXFA_DocView* pDocView = pDoc->GetXFADocView();
+  CXFA_FFDocView* pDocView = pDoc->GetXFADocView();
   if (!pDocView)
     return NULL;
 

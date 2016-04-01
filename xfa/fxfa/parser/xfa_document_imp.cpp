@@ -5,6 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "core/fxcrt/include/fx_ext.h"
+#include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/fm2js/xfa_fm2jsapi.h"
 #include "xfa/fxfa/parser/xfa_basic_imp.h"
 #include "xfa/fxfa/parser/xfa_docdata.h"
@@ -14,16 +15,18 @@
 #include "xfa/fxfa/parser/xfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 #include "xfa/fxfa/parser/xfa_parser.h"
+#include "xfa/fxfa/parser/xfa_parser_imp.h"
 #include "xfa/fxfa/parser/xfa_script.h"
 #include "xfa/fxfa/parser/xfa_script_datawindow.h"
 #include "xfa/fxfa/parser/xfa_script_eventpseudomodel.h"
 #include "xfa/fxfa/parser/xfa_script_hostpseudomodel.h"
+#include "xfa/fxfa/parser/xfa_script_imp.h"
 #include "xfa/fxfa/parser/xfa_script_layoutpseudomodel.h"
 #include "xfa/fxfa/parser/xfa_script_logpseudomodel.h"
 #include "xfa/fxfa/parser/xfa_script_signaturepseudomodel.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
-CXFA_Document::CXFA_Document(IXFA_DocParser* pParser)
+CXFA_Document::CXFA_Document(CXFA_DocumentParser* pParser)
     : m_pParser(pParser),
       m_pScriptContext(nullptr),
       m_pLayoutProcessor(nullptr),
@@ -88,7 +91,7 @@ void CXFA_Document::SetRoot(CXFA_Node* pNewRoot) {
   m_pRootNode = pNewRoot;
   RemovePurgeNode(pNewRoot);
 }
-IXFA_Notify* CXFA_Document::GetNotify() const {
+CXFA_FFNotify* CXFA_Document::GetNotify() const {
   return m_pParser->GetNotify();
 }
 CXFA_Object* CXFA_Document::GetXFAObject(const CFX_WideStringC& wsNodeName) {
@@ -245,17 +248,15 @@ CXFA_LocaleMgr* CXFA_Document::GetLocalMgr() {
   }
   return m_pLocalMgr;
 }
-IXFA_ScriptContext* CXFA_Document::InitScriptContext(FXJSE_HRUNTIME hRuntime) {
-  if (!m_pScriptContext) {
-    m_pScriptContext = XFA_ScriptContext_Create(this);
-  }
+CXFA_ScriptContext* CXFA_Document::InitScriptContext(FXJSE_HRUNTIME hRuntime) {
+  if (!m_pScriptContext)
+    m_pScriptContext = new CXFA_ScriptContext(this);
   m_pScriptContext->Initialize(hRuntime);
   return m_pScriptContext;
 }
-IXFA_ScriptContext* CXFA_Document::GetScriptContext() {
-  if (!m_pScriptContext) {
-    m_pScriptContext = XFA_ScriptContext_Create(this);
-  }
+CXFA_ScriptContext* CXFA_Document::GetScriptContext() {
+  if (!m_pScriptContext)
+    m_pScriptContext = new CXFA_ScriptContext(this);
   return m_pScriptContext;
 }
 XFA_VERSION CXFA_Document::RecognizeXFAVersionNumber(

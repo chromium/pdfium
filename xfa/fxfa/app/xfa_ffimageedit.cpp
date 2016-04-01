@@ -10,11 +10,11 @@
 #include "xfa/fwl/core/ifwl_app.h"
 #include "xfa/fwl/core/ifwl_notedriver.h"
 #include "xfa/fwl/lightwidget/cfwl_picturebox.h"
-#include "xfa/fxfa/app/xfa_ffdoc.h"
-#include "xfa/fxfa/app/xfa_ffdocview.h"
 #include "xfa/fxfa/app/xfa_fffield.h"
-#include "xfa/fxfa/app/xfa_ffpageview.h"
 #include "xfa/fxfa/app/xfa_ffwidget.h"
+#include "xfa/include/fxfa/xfa_ffdoc.h"
+#include "xfa/include/fxfa/xfa_ffdocview.h"
+#include "xfa/include/fxfa/xfa_ffpageview.h"
 
 CXFA_FFImageEdit::CXFA_FFImageEdit(CXFA_FFPageView* pPageView,
                                    CXFA_WidgetAcc* pDataAcc)

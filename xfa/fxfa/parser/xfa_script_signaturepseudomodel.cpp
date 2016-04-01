@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/xfa_script_signaturepseudomodel.h"
 
+#include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/fm2js/xfa_fm2jsapi.h"
 #include "xfa/fxfa/parser/xfa_docdata.h"
 #include "xfa/fxfa/parser/xfa_doclayout.h"
@@ -13,7 +14,9 @@
 #include "xfa/fxfa/parser/xfa_localemgr.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 #include "xfa/fxfa/parser/xfa_parser.h"
+#include "xfa/fxfa/parser/xfa_parser_imp.h"
 #include "xfa/fxfa/parser/xfa_script.h"
+#include "xfa/fxfa/parser/xfa_script_imp.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 #include "xfa/fxjse/cfxjse_arguments.h"
 
@@ -30,11 +33,11 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Verify(
     ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"verify");
     return;
   }
-  IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
   if (!pNotify) {
     return;
   }
-  IXFA_Doc* hDoc = pNotify->GetHDOC();
+  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   CXFA_Node* pNode = NULL;
   if (iLength >= 1) {
     pNode = static_cast<CXFA_Node*>(pArguments->GetObject(0));
@@ -52,11 +55,11 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Sign(
     ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"sign");
     return;
   }
-  IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
   if (!pNotify) {
     return;
   }
-  IXFA_Doc* hDoc = pNotify->GetHDOC();
+  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   CXFA_NodeList* pNodeList = NULL;
   CFX_WideString wsExpression;
   CFX_WideString wsXMLIdent;
@@ -86,11 +89,11 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Enumerate(
     ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"enumerate");
     return;
   }
-  IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
   if (!pNotify) {
     return;
   }
-  IXFA_Doc* hDoc = pNotify->GetHDOC();
+  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   CXFA_NodeList* pList = pNotify->GetDocProvider()->Enumerate(hDoc);
   if (!pList)
     return;
@@ -104,11 +107,11 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Clear(
     ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD, L"clear");
     return;
   }
-  IXFA_Notify* pNotify = m_pDocument->GetParser()->GetNotify();
+  CXFA_FFNotify* pNotify = m_pDocument->GetParser()->GetNotify();
   if (!pNotify) {
     return;
   }
-  IXFA_Doc* hDoc = pNotify->GetHDOC();
+  CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   CXFA_Node* pNode = NULL;
   FX_BOOL bClear = TRUE;
   if (iLength >= 1) {

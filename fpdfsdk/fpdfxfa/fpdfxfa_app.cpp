@@ -11,6 +11,8 @@
 #include "fpdfsdk/include/fsdk_mgr.h"
 #include "public/fpdf_formfill.h"
 #include "xfa/fxbarcode/include/BC_Library.h"
+#include "xfa/include/fxfa/xfa_ffapp.h"
+#include "xfa/include/fxfa/xfa_fontmgr.h"
 
 CPDFXFA_App* CPDFXFA_App::g_pApp = NULL;
 
@@ -29,7 +31,6 @@ void CPDFXFA_App::ReleaseInstance() {
 CPDFXFA_App::CPDFXFA_App()
     : m_bJavaScriptInitialized(FALSE),
       m_pXFAApp(NULL),
-      m_pFontMgr(NULL),
       m_hJSERuntime(NULL),
       m_csAppType(JS_STR_VIEWERTYPE_STANDARD),
       m_bOwnedRuntime(false) {
@@ -37,9 +38,6 @@ CPDFXFA_App::CPDFXFA_App()
 }
 
 CPDFXFA_App::~CPDFXFA_App() {
-  delete m_pFontMgr;
-  m_pFontMgr = NULL;
-
   delete m_pXFAApp;
   m_pXFAApp = NULL;
 
@@ -62,15 +60,8 @@ FX_BOOL CPDFXFA_App::Initialize(FXJSE_HRUNTIME hRuntime) {
   if (!m_hJSERuntime)
     return FALSE;
 
-  m_pXFAApp = IXFA_App::Create(this);
-  if (!m_pXFAApp)
-    return FALSE;
-
-  m_pFontMgr = IXFA_FontMgr::CreateDefault();
-  if (!m_pFontMgr)
-    return FALSE;
-
-  m_pXFAApp->SetDefaultFontMgr(m_pFontMgr);
+  m_pXFAApp = new CXFA_FFApp(this);
+  m_pXFAApp->SetDefaultFontMgr(new CXFA_DefFontMgr);
 #endif
   return TRUE;
 }

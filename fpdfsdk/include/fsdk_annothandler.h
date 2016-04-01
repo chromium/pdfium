@@ -15,6 +15,9 @@
 
 #ifdef PDF_ENABLE_XFA
 #include "xfa/include/fxfa/fxfa.h"
+#include "xfa/include/fxfa/xfa_ffdocview.h"
+#include "xfa/include/fxfa/xfa_ffpageview.h"
+#include "xfa/include/fxfa/xfa_ffwidgethandler.h"
 
 #define FSDK_XFAWIDGET_TYPENAME "XFAWidget"
 #endif  // PDF_ENABLE_XFA
@@ -42,7 +45,7 @@ class IPDFSDK_AnnotHandler {
                                   CPDFSDK_PageView* pPage) = 0;
 
 #ifdef PDF_ENABLE_XFA
-  virtual CPDFSDK_Annot* NewAnnot(IXFA_Widget* hWidget,
+  virtual CPDFSDK_Annot* NewAnnot(CXFA_FFWidget* hWidget,
                                   CPDFSDK_PageView* pPage) = 0;
 #endif  // PDF_ENABLE_XFA
 
@@ -148,7 +151,7 @@ class CPDFSDK_BFAnnotHandler : public IPDFSDK_AnnotHandler {
   FX_BOOL CanAnswer(CPDFSDK_Annot* pAnnot) override;
   CPDFSDK_Annot* NewAnnot(CPDF_Annot* pAnnot, CPDFSDK_PageView* pPage) override;
 #ifdef PDF_ENABLE_XFA
-  CPDFSDK_Annot* NewAnnot(IXFA_Widget* hWidget,
+  CPDFSDK_Annot* NewAnnot(CXFA_FFWidget* hWidget,
                           CPDFSDK_PageView* pPage) override;
 #endif  // PDF_ENABLE_XFA
   void ReleaseAnnot(CPDFSDK_Annot* pAnnot) override;
@@ -255,7 +258,8 @@ class CPDFSDK_XFAAnnotHandler : public IPDFSDK_AnnotHandler {
     return NULL;
   }
 
-  virtual CPDFSDK_Annot* NewAnnot(IXFA_Widget* pAnnot, CPDFSDK_PageView* pPage);
+  virtual CPDFSDK_Annot* NewAnnot(CXFA_FFWidget* pAnnot,
+                                  CPDFSDK_PageView* pPage);
 
   virtual void ReleaseAnnot(CPDFSDK_Annot* pAnnot);
 
@@ -345,7 +349,7 @@ class CPDFSDK_XFAAnnotHandler : public IPDFSDK_AnnotHandler {
                                     CPDFSDK_Annot* pNewAnnot);
 
  private:
-  IXFA_WidgetHandler* GetXFAWidgetHandler(CPDFSDK_Annot* pAnnot);
+  CXFA_FFWidgetHandler* GetXFAWidgetHandler(CPDFSDK_Annot* pAnnot);
   uint32_t GetFWLFlags(uint32_t dwFlag);
 
  private:
@@ -367,7 +371,7 @@ class CPDFSDK_AnnotHandlerMgr {
   virtual CPDFSDK_Annot* NewAnnot(CPDF_Annot* pAnnot,
                                   CPDFSDK_PageView* pPageView);
 #ifdef PDF_ENABLE_XFA
-  virtual CPDFSDK_Annot* NewAnnot(IXFA_Widget* pAnnot,
+  virtual CPDFSDK_Annot* NewAnnot(CXFA_FFWidget* pAnnot,
                                   CPDFSDK_PageView* pPageView);
 #endif  // PDF_ENABLE_XFA
   virtual void ReleaseAnnot(CPDFSDK_Annot* pAnnot);

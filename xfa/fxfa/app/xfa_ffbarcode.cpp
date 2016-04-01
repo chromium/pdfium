@@ -11,10 +11,10 @@
 #include "xfa/fwl/core/ifwl_notedriver.h"
 #include "xfa/fwl/lightwidget/cfwl_barcode.h"
 #include "xfa/fxfa/app/xfa_fffield.h"
-#include "xfa/fxfa/app/xfa_ffpageview.h"
 #include "xfa/fxfa/app/xfa_fftextedit.h"
 #include "xfa/fxfa/app/xfa_ffwidget.h"
 #include "xfa/fxfa/app/xfa_fwladapter.h"
+#include "xfa/include/fxfa/xfa_ffpageview.h"
 
 namespace {
 

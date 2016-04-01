@@ -18,12 +18,13 @@
 #include "xfa/fxfa/parser/xfa_parser.h"
 #include "xfa/fxfa/parser/xfa_script.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
+#include "xfa/include/fxfa/xfa_checksum.h"
 
-IXFA_Parser* IXFA_Parser::Create(IXFA_ObjFactory* pFactory,
+IXFA_Parser* IXFA_Parser::Create(CXFA_Document* pFactory,
                                  FX_BOOL bDocumentParser) {
   return new CXFA_SimpleParser(pFactory, bDocumentParser);
 }
-CXFA_SimpleParser::CXFA_SimpleParser(IXFA_ObjFactory* pFactory,
+CXFA_SimpleParser::CXFA_SimpleParser(CXFA_Document* pFactory,
                                      FX_BOOL bDocumentParser)
     : m_pXMLParser(nullptr),
       m_pXMLDoc(nullptr),
@@ -36,7 +37,7 @@ CXFA_SimpleParser::CXFA_SimpleParser(IXFA_ObjFactory* pFactory,
 CXFA_SimpleParser::~CXFA_SimpleParser() {
   CloseParser();
 }
-void CXFA_SimpleParser::SetFactory(IXFA_ObjFactory* pFactory) {
+void CXFA_SimpleParser::SetFactory(CXFA_Document* pFactory) {
   m_pFactory = pFactory;
 }
 static CFDE_XMLNode* XFA_FDEExtension_GetDocumentNode(
@@ -564,7 +565,7 @@ CXFA_Node* CXFA_SimpleParser::ParseAsXDPPacket_TemplateForm(
           m_pXMLParser->m_dwCheckStatus != 0x03) {
         return NULL;
       }
-      IXFA_ChecksumContext* pChecksum = XFA_Checksum_Create();
+      CXFA_ChecksumContext* pChecksum = new CXFA_ChecksumContext;
       pChecksum->StartChecksum();
       pChecksum->UpdateChecksum(m_pFileRead, m_pXMLParser->m_nStart[0],
                                 m_pXMLParser->m_nSize[0]);
@@ -1342,10 +1343,8 @@ void CXFA_SimpleParser::CloseParser() {
     m_pStream = NULL;
   }
 }
-IXFA_DocParser* IXFA_DocParser::Create(IXFA_Notify* pNotify) {
-  return new CXFA_DocumentParser(pNotify);
-}
-CXFA_DocumentParser::CXFA_DocumentParser(IXFA_Notify* pNotify)
+
+CXFA_DocumentParser::CXFA_DocumentParser(CXFA_FFNotify* pNotify)
     : m_nodeParser(NULL, TRUE), m_pNotify(pNotify), m_pDocument(NULL) {}
 CXFA_DocumentParser::~CXFA_DocumentParser() {
   CloseParser();

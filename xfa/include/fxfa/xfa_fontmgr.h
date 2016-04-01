@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_FXFA_APP_XFA_FONTMGR_H_
-#define XFA_FXFA_APP_XFA_FONTMGR_H_
+#ifndef XFA_INCLUDE_FXFA_XFA_FONTMGR_H_
+#define XFA_INCLUDE_FXFA_XFA_FONTMGR_H_
 
 #include <map>
 
@@ -24,20 +24,19 @@ struct XFA_FONTINFO {
   uint16_t wCodePage;
 };
 
-class CXFA_DefFontMgr : public IXFA_FontMgr {
+class CXFA_DefFontMgr {
  public:
   CXFA_DefFontMgr() {}
-  ~CXFA_DefFontMgr() override;
+  ~CXFA_DefFontMgr();
 
-  // IXFA_FontMgr:
-  IFX_Font* GetFont(IXFA_Doc* hDoc,
+  IFX_Font* GetFont(CXFA_FFDoc* hDoc,
                     const CFX_WideStringC& wsFontFamily,
                     uint32_t dwFontStyles,
-                    uint16_t wCodePage = 0xFFFF) override;
-  IFX_Font* GetDefaultFont(IXFA_Doc* hDoc,
+                    uint16_t wCodePage = 0xFFFF);
+  IFX_Font* GetDefaultFont(CXFA_FFDoc* hDoc,
                            const CFX_WideStringC& wsFontFamily,
                            uint32_t dwFontStyles,
-                           uint16_t wCodePage = 0xFFFF) override;
+                           uint16_t wCodePage = 0xFFFF);
 
  protected:
   CFX_PtrArray m_CacheFonts;
@@ -80,21 +79,21 @@ class CXFA_FontMgr {
  public:
   CXFA_FontMgr();
   ~CXFA_FontMgr();
-  IFX_Font* GetFont(IXFA_Doc* hDoc,
+  IFX_Font* GetFont(CXFA_FFDoc* hDoc,
                     const CFX_WideStringC& wsFontFamily,
                     uint32_t dwFontStyles,
                     uint16_t wCodePage = 0xFFFF);
-  void LoadDocFonts(IXFA_Doc* hDoc);
-  void ReleaseDocFonts(IXFA_Doc* hDoc);
+  void LoadDocFonts(CXFA_FFDoc* hDoc);
+  void ReleaseDocFonts(CXFA_FFDoc* hDoc);
 
-  void SetDefFontMgr(IXFA_FontMgr* pFontMgr);
+  void SetDefFontMgr(CXFA_DefFontMgr* pFontMgr);
 
  protected:
   void DelAllMgrMap();
 
   CFX_MapPtrToPtr m_PDFFontMgrArray;
-  IXFA_FontMgr* m_pDefFontMgr;
+  CXFA_DefFontMgr* m_pDefFontMgr;
   std::map<CFX_ByteString, IFX_Font*> m_FontMap;
 };
 
-#endif  //  XFA_FXFA_APP_XFA_FONTMGR_H_
+#endif  //  XFA_INCLUDE_FXFA_XFA_FONTMGR_H_

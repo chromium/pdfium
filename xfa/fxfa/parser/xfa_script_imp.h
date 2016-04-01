@@ -18,44 +18,41 @@
 
 class CXFA_ResolveProcessor;
 
-class CXFA_ScriptContext : public IXFA_ScriptContext {
+class CXFA_ScriptContext {
  public:
   explicit CXFA_ScriptContext(CXFA_Document* pDocument);
   ~CXFA_ScriptContext();
 
-  virtual void Release();
-  virtual void Initialize(FXJSE_HRUNTIME hRuntime);
-  virtual void SetEventParam(CXFA_EventParam param) { m_eventParam = param; }
-  virtual CXFA_EventParam* GetEventParam() { return &m_eventParam; }
-  virtual FX_BOOL RunScript(XFA_SCRIPTLANGTYPE eScriptType,
-                            const CFX_WideStringC& wsScript,
-                            FXJSE_HVALUE hRetValue,
-                            CXFA_Object* pThisObject = NULL);
+  void Release();
+  void Initialize(FXJSE_HRUNTIME hRuntime);
+  void SetEventParam(CXFA_EventParam param) { m_eventParam = param; }
+  CXFA_EventParam* GetEventParam() { return &m_eventParam; }
+  FX_BOOL RunScript(XFA_SCRIPTLANGTYPE eScriptType,
+                    const CFX_WideStringC& wsScript,
+                    FXJSE_HVALUE hRetValue,
+                    CXFA_Object* pThisObject = NULL);
 
-  virtual int32_t ResolveObjects(CXFA_Object* refNode,
-                                 const CFX_WideStringC& wsExpression,
-                                 XFA_RESOLVENODE_RS& resolveNodeRS,
-                                 uint32_t dwStyles = XFA_RESOLVENODE_Children,
-                                 CXFA_Node* bindNode = NULL);
-  virtual FXJSE_HVALUE GetJSValueFromMap(CXFA_Object* pObject);
-  virtual void CacheList(CXFA_NodeList* pList) { m_CacheListArray.Add(pList); }
-  virtual CXFA_Object* GetThisObject() const { return m_pThisObject; }
-  virtual FXJSE_HRUNTIME GetRuntime() const { return m_hJsRuntime; }
+  int32_t ResolveObjects(CXFA_Object* refNode,
+                         const CFX_WideStringC& wsExpression,
+                         XFA_RESOLVENODE_RS& resolveNodeRS,
+                         uint32_t dwStyles = XFA_RESOLVENODE_Children,
+                         CXFA_Node* bindNode = NULL);
+  FXJSE_HVALUE GetJSValueFromMap(CXFA_Object* pObject);
+  void CacheList(CXFA_NodeList* pList) { m_CacheListArray.Add(pList); }
+  CXFA_Object* GetThisObject() const { return m_pThisObject; }
+  FXJSE_HRUNTIME GetRuntime() const { return m_hJsRuntime; }
 
-  virtual int32_t GetIndexByName(CXFA_Node* refNode);
-  virtual int32_t GetIndexByClassName(CXFA_Node* refNode);
-  virtual void GetSomExpression(CXFA_Node* refNode,
-                                CFX_WideString& wsExpression);
+  int32_t GetIndexByName(CXFA_Node* refNode);
+  int32_t GetIndexByClassName(CXFA_Node* refNode);
+  void GetSomExpression(CXFA_Node* refNode, CFX_WideString& wsExpression);
 
-  virtual void SetNodesOfRunScript(CXFA_NodeArray* pArray);
-  virtual void AddNodesOfRunScript(const CXFA_NodeArray& nodes);
-  virtual void AddNodesOfRunScript(CXFA_Node* pNode);
-  virtual FXJSE_HCLASS GetJseNormalClass();
+  void SetNodesOfRunScript(CXFA_NodeArray* pArray);
+  void AddNodesOfRunScript(const CXFA_NodeArray& nodes);
+  void AddNodesOfRunScript(CXFA_Node* pNode);
+  FXJSE_HCLASS GetJseNormalClass();
 
-  virtual void SetRunAtType(XFA_ATTRIBUTEENUM eRunAt) { m_eRunAtType = eRunAt; }
-  virtual FX_BOOL IsRunAtClient() {
-    return m_eRunAtType != XFA_ATTRIBUTEENUM_Server;
-  }
+  void SetRunAtType(XFA_ATTRIBUTEENUM eRunAt) { m_eRunAtType = eRunAt; }
+  FX_BOOL IsRunAtClient() { return m_eRunAtType != XFA_ATTRIBUTEENUM_Server; }
   FX_BOOL QueryNodeByFlag(CXFA_Node* refNode,
                           const CFX_WideStringC& propname,
                           FXJSE_HVALUE hValue,

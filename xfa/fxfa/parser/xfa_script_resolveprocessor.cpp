@@ -694,7 +694,6 @@ void CXFA_ResolveProcessor::XFA_ResolveNode_DoPredicateFilter(
   CXFA_NodeArray& findNodes = (CXFA_NodeArray&)rnd.m_Nodes;
   FXSYS_assert(iFoundCount == findNodes.GetSize());
   CFX_WideString wsExpression;
-  IXFA_ScriptContext* pContext = NULL;
   XFA_SCRIPTLANGTYPE eLangType = XFA_SCRIPTLANGTYPE_Unkown;
   if (wsCondition.Left(2) == FX_WSTRC(L".[") &&
       wsCondition.Right(1) == FX_WSTRC(L"]")) {
@@ -705,7 +704,8 @@ void CXFA_ResolveProcessor::XFA_ResolveNode_DoPredicateFilter(
   } else {
     return;
   }
-  pContext = rnd.m_pSC;
+
+  CXFA_ScriptContext* pContext = rnd.m_pSC;
   wsExpression = wsCondition.Mid(2, wsCondition.GetLength() - 3);
   for (int32_t i = iFoundCount - 1; i >= 0; i--) {
     CXFA_Object* node = findNodes[i];

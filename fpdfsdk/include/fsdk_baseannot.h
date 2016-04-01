@@ -83,7 +83,7 @@ class CPDFSDK_Annot {
   virtual CPDF_Annot* GetPDFAnnot() const { return nullptr; }
 
 #ifdef PDF_ENABLE_XFA
-  virtual IXFA_Widget* GetXFAWidget() const { return nullptr; }
+  virtual CXFA_FFWidget* GetXFAWidget() const { return nullptr; }
 #endif  // PDF_ENABLE_XFA
 
   virtual CFX_ByteString GetType() const { return ""; }

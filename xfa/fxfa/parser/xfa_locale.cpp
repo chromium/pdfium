@@ -107,8 +107,7 @@ void CXFA_XMLLocale::GetMeridiemName(CFX_WideString& wsMeridiemName,
   wsMeridiemName = GetCalendarSymbol("meridiem", bAM ? 0 : 1, FALSE);
 }
 void CXFA_XMLLocale::GetTimeZone(FX_TIMEZONE& tz) const {
-  IXFA_TimeZoneProvider* pProvider = IXFA_TimeZoneProvider::Get();
-  pProvider->GetTimeZone(tz);
+  CXFA_TimeZoneProvider::Get()->GetTimeZone(tz);
 }
 void CXFA_XMLLocale::GetEraName(CFX_WideString& wsEraName, FX_BOOL bAD) const {
   wsEraName = GetCalendarSymbol("era", bAD ? 1 : 0, FALSE);
@@ -278,8 +277,7 @@ void CXFA_NodeLocale::GetMeridiemName(CFX_WideString& wsMeridiemName,
       GetCalendarSymbol(XFA_ELEMENT_MeridiemNames, bAM ? 0 : 1, FALSE);
 }
 void CXFA_NodeLocale::GetTimeZone(FX_TIMEZONE& tz) const {
-  IXFA_TimeZoneProvider* pProvider = IXFA_TimeZoneProvider::Get();
-  pProvider->GetTimeZone(tz);
+  CXFA_TimeZoneProvider::Get()->GetTimeZone(tz);
 }
 void CXFA_NodeLocale::GetEraName(CFX_WideString& wsEraName, FX_BOOL bAD) const {
   wsEraName = GetCalendarSymbol(XFA_ELEMENT_EraNames, bAD ? 1 : 0, FALSE);
