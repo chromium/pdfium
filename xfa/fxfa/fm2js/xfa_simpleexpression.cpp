@@ -10,38 +10,39 @@
 
 namespace {
 
-const CFX_WideStringC gs_lpStrExpFuncName[] = {
-    FX_WSTRC(L"foxit_xfa_formcalc_runtime.assign_value_operator"),
-    FX_WSTRC(L"foxit_xfa_formcalc_runtime.logical_or_operator"),
-    FX_WSTRC(L"foxit_xfa_formcalc_runtime.logical_and_operator"),
-    FX_WSTRC(L"foxit_xfa_formcalc_runtime.equality_operator"),
-    FX_WSTRC(L"foxit_xfa_formcalc_runtime.notequality_operator"),
-    FX_WSTRC(L"foxit_xfa_formcalc_runtime.less_operator"),
-    FX_WSTRC(L"foxit_xfa_formcalc_runtime.lessequal_operator"),
-    FX_WSTRC(L"foxit_xfa_formcalc_runtime.greater_operator"),
-    FX_WSTRC(L"foxit_xfa_formcalc_runtime.greaterequal_operator"),
-    FX_WSTRC(L"foxit_xfa_formcalc_runtime.plus_operator"),
-    FX_WSTRC(L"foxit_xfa_formcalc_runtime.minus_operator"),
-    FX_WSTRC(L"foxit_xfa_formcalc_runtime.multiple_operator"),
-    FX_WSTRC(L"foxit_xfa_formcalc_runtime.divide_operator"),
-    FX_WSTRC(L"foxit_xfa_formcalc_runtime.positive_operator"),
-    FX_WSTRC(L"foxit_xfa_formcalc_runtime.negative_operator"),
-    FX_WSTRC(L"foxit_xfa_formcalc_runtime.logical_not_operator"),
-    FX_WSTRC(L"foxit_xfa_formcalc_runtime."),
-    FX_WSTRC(L"foxit_xfa_formcalc_runtime.dot_accessor"),
-    FX_WSTRC(L"foxit_xfa_formcalc_runtime.dotdot_accessor"),
-    FX_WSTRC(L"foxit_xfa_formcalc_runtime.concat_fm_object"),
-    FX_WSTRC(L"foxit_xfa_formcalc_runtime.is_fm_object"),
-    FX_WSTRC(L"foxit_xfa_formcalc_runtime.is_fm_array"),
-    FX_WSTRC(L"foxit_xfa_formcalc_runtime.get_fm_value"),
-    FX_WSTRC(L"foxit_xfa_formcalc_runtime.get_fm_jsobj"),
-    FX_WSTRC(L"foxit_xfa_formcalc_runtime.fm_var_filter"),
+const FX_WCHAR* const gs_lpStrExpFuncName[] = {
+    L"foxit_xfa_formcalc_runtime.assign_value_operator",
+    L"foxit_xfa_formcalc_runtime.logical_or_operator",
+    L"foxit_xfa_formcalc_runtime.logical_and_operator",
+    L"foxit_xfa_formcalc_runtime.equality_operator",
+    L"foxit_xfa_formcalc_runtime.notequality_operator",
+    L"foxit_xfa_formcalc_runtime.less_operator",
+    L"foxit_xfa_formcalc_runtime.lessequal_operator",
+    L"foxit_xfa_formcalc_runtime.greater_operator",
+    L"foxit_xfa_formcalc_runtime.greaterequal_operator",
+    L"foxit_xfa_formcalc_runtime.plus_operator",
+    L"foxit_xfa_formcalc_runtime.minus_operator",
+    L"foxit_xfa_formcalc_runtime.multiple_operator",
+    L"foxit_xfa_formcalc_runtime.divide_operator",
+    L"foxit_xfa_formcalc_runtime.positive_operator",
+    L"foxit_xfa_formcalc_runtime.negative_operator",
+    L"foxit_xfa_formcalc_runtime.logical_not_operator",
+    L"foxit_xfa_formcalc_runtime.",
+    L"foxit_xfa_formcalc_runtime.dot_accessor",
+    L"foxit_xfa_formcalc_runtime.dotdot_accessor",
+    L"foxit_xfa_formcalc_runtime.concat_fm_object",
+    L"foxit_xfa_formcalc_runtime.is_fm_object",
+    L"foxit_xfa_formcalc_runtime.is_fm_array",
+    L"foxit_xfa_formcalc_runtime.get_fm_value",
+    L"foxit_xfa_formcalc_runtime.get_fm_jsobj",
+    L"foxit_xfa_formcalc_runtime.fm_var_filter",
 };
 
 struct XFA_FMBuildInFunc {
   uint32_t m_uHash;
   const FX_WCHAR* m_buildinfunc;
 };
+
 const XFA_FMBuildInFunc g_BuildInFuncs[] = {
     {0x0001f1f5, L"At"},           {0x00020b9c, L"FV"},
     {0x00021aef, L"If"},           {0x00023ee6, L"PV"},

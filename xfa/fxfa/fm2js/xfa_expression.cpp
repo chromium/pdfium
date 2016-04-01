@@ -10,11 +10,11 @@
 
 namespace {
 
-const CFX_WideStringC RUNTIMEBLOCKTEMPARRAY =
-    FX_WSTRC(L"foxit_xfa_formcalc_runtime_block_temp_array");
+const FX_WCHAR RUNTIMEBLOCKTEMPARRAY[] =
+    L"foxit_xfa_formcalc_runtime_block_temp_array";
 
-const CFX_WideStringC RUNTIMEBLOCKTEMPARRAYINDEX =
-    FX_WSTRC(L"foxit_xfa_formcalc_runtime_block_temp_array_index");
+const FX_WCHAR RUNTIMEBLOCKTEMPARRAYINDEX[] =
+    L"foxit_xfa_formcalc_runtime_block_temp_array_index";
 
 }  // namespace
 

@@ -56,10 +56,9 @@ static const FX_LOCALETIMEZONEINFO g_FXLocaleTimeZoneData[] = {
     {FXBSTR_ID(0, 'P', 'D', 'T'), -7, 0}, {FXBSTR_ID(0, 'P', 'S', 'T'), -8, 0},
 };
 
-static const CFX_WideStringC gs_wsTextSymbols = FX_WSTRC(L"AXO09");
-static const CFX_WideStringC gs_wsTimeSymbols = FX_WSTRC(L"hHkKMSFAzZ");
-static const CFX_WideStringC gs_wsDateSymbols = FX_WSTRC(L"DJMEeGgYwW");
-static const CFX_WideStringC gs_wsConstChars = FX_WSTRC(L",-:/. ");
+static const FX_WCHAR gs_wsTimeSymbols[] = L"hHkKMSFAzZ";
+static const FX_WCHAR gs_wsDateSymbols[] = L"DJMEeGgYwW";
+static const FX_WCHAR gs_wsConstChars[] = L",-:/. ";
 
 static FX_STRSIZE FX_Local_Find(const CFX_WideStringC& wsSymbols,
                                 FX_WCHAR ch,
