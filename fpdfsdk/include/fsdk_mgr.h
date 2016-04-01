@@ -19,7 +19,6 @@
 #include "fpdfsdk/include/fsdk_common.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/include/fx_systemhandler.h"
-#include "javascript/IJavaScript.h"
 #include "public/fpdf_formfill.h"
 #include "public/fpdf_fwlevent.h"
 
@@ -30,6 +29,7 @@ class CPDFSDK_InterForm;
 class CPDFSDK_PageView;
 class CPDFSDK_Widget;
 class IFX_SystemHandler;
+class IJS_Runtime;
 
 // NOTE: |bsUTF16LE| must outlive the use of the result. Care must be taken
 // since modifying the result would impact |bsUTF16LE|.

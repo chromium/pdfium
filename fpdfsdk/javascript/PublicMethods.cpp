@@ -11,15 +11,14 @@
 #include <vector>
 
 #include "core/fxcrt/include/fx_ext.h"
-#include "fpdfsdk/include/fsdk_mgr.h"  // For CPDFDoc_Environment.
-#include "fpdfsdk/include/javascript/IJavaScript.h"
+#include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/javascript/Field.h"
-#include "fpdfsdk/javascript/JS_Context.h"
 #include "fpdfsdk/javascript/JS_Define.h"
 #include "fpdfsdk/javascript/JS_EventHandler.h"
 #include "fpdfsdk/javascript/JS_Object.h"
-#include "fpdfsdk/javascript/JS_Runtime.h"
 #include "fpdfsdk/javascript/JS_Value.h"
+#include "fpdfsdk/javascript/cjs_context.h"
+#include "fpdfsdk/javascript/cjs_runtime.h"
 #include "fpdfsdk/javascript/color.h"
 #include "fpdfsdk/javascript/resource.h"
 #include "fpdfsdk/javascript/util.h"
@@ -739,8 +738,6 @@ CFX_WideString CJS_PublicMethods::MakeFormatDate(double dDate,
   return sRet;
 }
 
-/* -------------------------------------------------------------------------- */
-
 // function AFNumber_Format(nDec, sepStyle, negStyle, currStyle, strCurrency,
 // bCurrencyPrepend)
 FX_BOOL CJS_PublicMethods::AFNumber_Format(IJS_Context* cc,
@@ -780,7 +777,6 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IJS_Context* cc,
   if (iNegStyle < 0 || iNegStyle > 3)
     iNegStyle = 0;
 
-  //////////////////////////////////////////////////////
   // for processing decimal places
   strValue.Replace(",", ".");
   double dValue = atof(strValue);
@@ -813,7 +809,7 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IJS_Context* cc,
     }
     iMax = iDec2 + 1;
   }
-  ///////////////////////////////////////////////////////
+
   // for processing seperator style
   if (iDec2 < iMax) {
     if (iSepStyle == 0 || iSepStyle == 1) {
@@ -840,9 +836,7 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IJS_Context* cc,
     }
   }
 
-  //////////////////////////////////////////////////////////////////////
   // for processing currency string
-
   Value = CFX_WideString::FromLocal(strValue);
   std::wstring strValue2 = Value.c_str();
 
@@ -851,7 +845,6 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IJS_Context* cc,
   else
     strValue2 = strValue2 + wstrCurrency;
 
-  /////////////////////////////////////////////////////////////////////////
   // for processing negative style
   if (iNegative) {
     if (iNegStyle == 0) {
@@ -1069,7 +1062,6 @@ FX_BOOL CJS_PublicMethods::AFPercent_Format(
   if (iSepStyle < 0 || iSepStyle > 3)
     iSepStyle = 0;
 
-  //////////////////////////////////////////////////////
   // for processing decimal places
   double dValue = atof(strValue);
   dValue *= 100;
@@ -1097,7 +1089,7 @@ FX_BOOL CJS_PublicMethods::AFPercent_Format(
     }
     iMax = iDec2 + 1;
   }
-  ///////////////////////////////////////////////////////
+
   // for processing seperator style
   if (iDec2 < iMax) {
     if (iSepStyle == 0 || iSepStyle == 1) {
@@ -1123,7 +1115,7 @@ FX_BOOL CJS_PublicMethods::AFPercent_Format(
       iMax++;
     }
   }
-  ////////////////////////////////////////////////////////////////////
+
   // negative mark
   if (iNegative)
     strValue = "-" + strValue;

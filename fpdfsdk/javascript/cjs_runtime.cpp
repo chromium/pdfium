@@ -4,17 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/javascript/JS_Runtime.h"
+#include "fpdfsdk/javascript/cjs_runtime.h"
 
 #include <algorithm>
 
-#include "fpdfsdk/include/fsdk_mgr.h"  // For CPDFDoc_Environment.
-#include "fpdfsdk/include/javascript/IJavaScript.h"
+#include "fpdfsdk/include/fsdk_mgr.h"
 #include "fpdfsdk/javascript/Consts.h"
 #include "fpdfsdk/javascript/Document.h"
 #include "fpdfsdk/javascript/Field.h"
 #include "fpdfsdk/javascript/Icon.h"
-#include "fpdfsdk/javascript/JS_Context.h"
+#include "fpdfsdk/javascript/cjs_context.h"
 #include "fpdfsdk/javascript/JS_Define.h"
 #include "fpdfsdk/javascript/JS_EventHandler.h"
 #include "fpdfsdk/javascript/JS_GlobalData.h"

@@ -7,7 +7,6 @@ include_rules = [
   '+core/fpdfapi/fpdf_parser/include',
   '+core/fpdfapi/fpdf_render/include',
   '+core/fxcrt/include',
-  '+javascript/IJavaScript.h',
   '+public',
   '+v8',
   '+xfa/include',

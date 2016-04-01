@@ -10,14 +10,13 @@
 #include <vector>
 
 #include "fpdfsdk/include/fsdk_mgr.h"
-#include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "fpdfsdk/javascript/Document.h"
-#include "fpdfsdk/javascript/JS_Context.h"
 #include "fpdfsdk/javascript/JS_Define.h"
 #include "fpdfsdk/javascript/JS_EventHandler.h"
 #include "fpdfsdk/javascript/JS_Object.h"
-#include "fpdfsdk/javascript/JS_Runtime.h"
 #include "fpdfsdk/javascript/JS_Value.h"
+#include "fpdfsdk/javascript/cjs_context.h"
+#include "fpdfsdk/javascript/cjs_runtime.h"
 #include "fpdfsdk/javascript/resource.h"
 
 BEGIN_JS_STATIC_CONST(CJS_TimerObj)

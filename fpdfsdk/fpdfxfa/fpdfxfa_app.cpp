@@ -9,7 +9,6 @@
 #include "fpdfsdk/include/fpdfxfa/fpdfxfa_util.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
-#include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "public/fpdf_formfill.h"
 #include "xfa/fxbarcode/include/BC_Library.h"
 

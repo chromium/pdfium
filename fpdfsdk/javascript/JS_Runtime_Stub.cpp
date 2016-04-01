@@ -6,8 +6,9 @@
 
 #include <memory>
 
-#include "fpdfsdk/include/fsdk_mgr.h"  // For CPDFDoc_Environment.
-#include "fpdfsdk/include/javascript/IJavaScript.h"
+#include "fpdfsdk/include/fsdk_mgr.h"
+#include "fpdfsdk/javascript/ijs_context.h"
+#include "fpdfsdk/javascript/ijs_runtime.h"
 
 class CJS_ContextStub final : public IJS_Context {
  public:

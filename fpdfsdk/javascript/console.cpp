@@ -8,14 +8,11 @@
 
 #include <vector>
 
-#include "fpdfsdk/include/javascript/IJavaScript.h"
-#include "fpdfsdk/javascript/JS_Context.h"
 #include "fpdfsdk/javascript/JS_Define.h"
 #include "fpdfsdk/javascript/JS_EventHandler.h"
 #include "fpdfsdk/javascript/JS_Object.h"
 #include "fpdfsdk/javascript/JS_Value.h"
-
-/* ------------------------ console ------------------------ */
+#include "fpdfsdk/javascript/cjs_context.h"
 
 BEGIN_JS_STATIC_CONST(CJS_Console)
 END_JS_STATIC_CONST()

@@ -14,16 +14,15 @@
 #include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
-#include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "fpdfsdk/javascript/Document.h"
 #include "fpdfsdk/javascript/Icon.h"
-#include "fpdfsdk/javascript/JS_Context.h"
 #include "fpdfsdk/javascript/JS_Define.h"
 #include "fpdfsdk/javascript/JS_EventHandler.h"
 #include "fpdfsdk/javascript/JS_Object.h"
-#include "fpdfsdk/javascript/JS_Runtime.h"
 #include "fpdfsdk/javascript/JS_Value.h"
 #include "fpdfsdk/javascript/PublicMethods.h"
+#include "fpdfsdk/javascript/cjs_context.h"
+#include "fpdfsdk/javascript/cjs_runtime.h"
 #include "fpdfsdk/javascript/color.h"
 
 BEGIN_JS_STATIC_CONST(CJS_Field)

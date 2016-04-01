@@ -8,12 +8,9 @@
 
 #include <vector>
 
-#include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "fpdfsdk/javascript/JS_Define.h"
 #include "fpdfsdk/javascript/JS_Object.h"
 #include "fpdfsdk/javascript/JS_Value.h"
-
-/* ---------------------- report ---------------------- */
 
 BEGIN_JS_STATIC_CONST(CJS_Report)
 END_JS_STATIC_CONST()

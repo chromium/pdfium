@@ -6,15 +6,12 @@
 
 #include "fpdfsdk/javascript/event.h"
 
-#include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "fpdfsdk/javascript/Field.h"
-#include "fpdfsdk/javascript/JS_Context.h"
 #include "fpdfsdk/javascript/JS_Define.h"
 #include "fpdfsdk/javascript/JS_EventHandler.h"
 #include "fpdfsdk/javascript/JS_Object.h"
 #include "fpdfsdk/javascript/JS_Value.h"
-
-/* -------------------------- event -------------------------- */
+#include "fpdfsdk/javascript/cjs_context.h"
 
 BEGIN_JS_STATIC_CONST(CJS_Event)
 END_JS_STATIC_CONST()

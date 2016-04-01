@@ -21,8 +21,6 @@ class CFX_Edit_Provider;
 #define FX_EDIT_IsFloatSmaller(fa, fb) \
   (fa < fb && !FX_EDIT_IsFloatEqual(fa, fb))
 
-/* ------------------------- CFX_Edit_Refresh ---------------------------- */
-
 enum REFRESH_PLAN_E { RP_ANALYSE, RP_NOANALYSE, RP_OPTIONAL };
 
 enum EDIT_PROPS_E {
@@ -165,8 +163,6 @@ class CFX_Edit_Refresh {
   CFX_Edit_RectArray m_RefreshRects;
 };
 
-/* ------------------------- CFX_Edit_Select ---------------------------- */
-
 class CFX_Edit_Select {
  public:
   CFX_Edit_Select() {}
@@ -205,8 +201,6 @@ class CFX_Edit_Select {
 
   CPVT_WordPlace BeginPos, EndPos;
 };
-
-/* ------------------------- CFX_Edit_Undo ---------------------------- */
 
 class CFX_Edit_Undo {
  public:
@@ -279,9 +273,6 @@ class CFX_Edit_GroupUndoItem : public IFX_Edit_UndoItem {
   CFX_WideString m_sTitle;
   CFX_ArrayTemplate<CFX_Edit_UndoItem*> m_Items;
 };
-
-/* ------------------------- CFX_Edit_UndoItem derived classes
- * ---------------------------- */
 
 class CFXEU_InsertWord : public CFX_Edit_UndoItem {
  public:
@@ -506,8 +497,6 @@ class CFXEU_SetWordProps : public CFX_Edit_UndoItem {
   CPVT_WordProps m_OldWordProps;
   CPVT_WordProps m_NewWordProps;
 };
-
-/* ------------------------- CFX_Edit ---------------------------- */
 
 class CFX_Edit : public IFX_Edit {
   friend class CFX_Edit_Iterator;
@@ -763,8 +752,6 @@ class CFX_Edit : public IFX_Edit {
   FX_BOOL m_bOprNotify;
   CFX_Edit_GroupUndoItem* m_pGroupUndoItem;
 };
-
-/* ------------------------- CFX_Edit_Iterator ---------------------------- */
 
 class CFX_Edit_Iterator : public IFX_Edit_Iterator {
  public:

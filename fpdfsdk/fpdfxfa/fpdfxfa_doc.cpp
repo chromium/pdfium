@@ -14,7 +14,7 @@
 #include "fpdfsdk/include/fpdfxfa/fpdfxfa_util.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
-#include "fpdfsdk/include/javascript/IJavaScript.h"
+#include "fpdfsdk/javascript/ijs_runtime.h"
 #include "public/fpdf_formfill.h"
 
 #define IDS_XFA_Validate_Input                                          \

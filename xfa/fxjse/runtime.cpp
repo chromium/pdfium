@@ -9,7 +9,7 @@
 #include "fpdfsdk/include/jsapi/fxjs_v8.h"
 #include "xfa/fxjse/scope_inline.h"
 
-// Duplicates fpdfsdk's JS_Runtime.h, but keeps XFA from depending on it.
+// Duplicates fpdfsdk's cjs_runtime.h, but keeps XFA from depending on it.
 // TODO(tsepez): make a single version of this.
 class FXJSE_ArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
   void* Allocate(size_t length) override { return calloc(1, length); }

@@ -7,12 +7,9 @@
 #include "fpdfsdk/javascript/JS_GlobalData.h"
 
 #include "core/fdrm/crypto/include/fx_crypt.h"
-#include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "third_party/base/stl_util.h"
 
 #define JS_MAXGLOBALDATA (1024 * 4 - 8)
-
-/* --------------------- CJS_GlobalVariableArray --------------------- */
 
 CJS_GlobalVariableArray::CJS_GlobalVariableArray() {}
 
@@ -80,8 +77,6 @@ void CJS_GlobalVariableArray::Empty() {
     delete array.GetAt(i);
   array.RemoveAll();
 }
-
-/* -------------------------- CJS_GlobalData -------------------------- */
 
 #define READER_JS_GLOBALDATA_FILENAME L"Reader_JsGlobal.Data"
 #define PHANTOM_JS_GLOBALDATA_FILENAME L"Phantom_JsGlobal.Data"

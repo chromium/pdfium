@@ -12,16 +12,15 @@
 #include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
-#include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "fpdfsdk/javascript/Field.h"
 #include "fpdfsdk/javascript/Icon.h"
-#include "fpdfsdk/javascript/JS_Context.h"
 #include "fpdfsdk/javascript/JS_Define.h"
 #include "fpdfsdk/javascript/JS_EventHandler.h"
 #include "fpdfsdk/javascript/JS_Object.h"
-#include "fpdfsdk/javascript/JS_Runtime.h"
 #include "fpdfsdk/javascript/JS_Value.h"
 #include "fpdfsdk/javascript/app.h"
+#include "fpdfsdk/javascript/cjs_context.h"
+#include "fpdfsdk/javascript/cjs_runtime.h"
 #include "fpdfsdk/javascript/resource.h"
 #include "third_party/base/numerics/safe_math.h"
 
@@ -53,8 +52,6 @@ PrintParamsObj::PrintParamsObj(CJS_Object* pJSObject)
   bReverse = FALSE;
   bAnnotations = TRUE;
 }
-
-/* ---------------------- Document ---------------------- */
 
 #define MINWIDTH 5.0f
 #define MINHEIGHT 5.0f
@@ -147,9 +144,6 @@ void CJS_Document::InitInstance(IJS_Runtime* pIRuntime) {
   pDoc->AttachDoc(pRuntime->GetReaderDocument());
   pDoc->SetIsolate(pRuntime->GetIsolate());
 }
-
-/* --------------------------------- Document ---------------------------------
- */
 
 Document::Document(CJS_Object* pJSObject)
     : CJS_EmbedObj(pJSObject),

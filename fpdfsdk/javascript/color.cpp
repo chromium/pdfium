@@ -8,15 +8,12 @@
 
 #include <vector>
 
-#include "fpdfsdk/include/javascript/IJavaScript.h"
-#include "fpdfsdk/javascript/JS_Context.h"
 #include "fpdfsdk/javascript/JS_Define.h"
 #include "fpdfsdk/javascript/JS_EventHandler.h"
 #include "fpdfsdk/javascript/JS_Object.h"
-#include "fpdfsdk/javascript/JS_Runtime.h"
 #include "fpdfsdk/javascript/JS_Value.h"
-
-/* -------------------------- color -------------------------- */
+#include "fpdfsdk/javascript/cjs_context.h"
+#include "fpdfsdk/javascript/cjs_runtime.h"
 
 BEGIN_JS_STATIC_CONST(CJS_Color)
 END_JS_STATIC_CONST()

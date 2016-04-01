@@ -4,14 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/javascript/JS_Context.h"
+#include "fpdfsdk/javascript/cjs_context.h"
 
-#include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "fpdfsdk/javascript/JS_EventHandler.h"
-#include "fpdfsdk/javascript/JS_Runtime.h"
+#include "fpdfsdk/javascript/cjs_runtime.h"
 #include "fpdfsdk/javascript/resource.h"
-
-/* -------------------------- CJS_Context -------------------------- */
 
 CJS_Context::CJS_Context(CJS_Runtime* pRuntime)
     : m_pRuntime(pRuntime), m_bBusy(FALSE), m_bMsgBoxEnable(TRUE) {

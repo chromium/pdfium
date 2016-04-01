@@ -14,7 +14,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "fpdfsdk/formfiller/cffl_formfiller.h"
 #include "fpdfsdk/include/fsdk_define.h"
-#include "fpdfsdk/include/javascript/IJavaScript.h"
+#include "fpdfsdk/javascript/ijs_runtime.h"
 #include "public/fpdf_ext.h"
 #include "third_party/base/stl_util.h"
 

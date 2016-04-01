@@ -9,8 +9,6 @@
 
 #include "fpdfsdk/javascript/JS_Define.h"
 
-/* ------------------------------ border ------------------------------ */
-
 class CJS_Border : public CJS_Object {
  public:
   explicit CJS_Border(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
@@ -18,8 +16,6 @@ class CJS_Border : public CJS_Object {
 
   DECLARE_JS_CLASS_CONST();
 };
-
-/* ------------------------------ display ------------------------------ */
 
 class CJS_Display : public CJS_Object {
  public:
@@ -29,8 +25,6 @@ class CJS_Display : public CJS_Object {
   DECLARE_JS_CLASS_CONST();
 };
 
-/* ------------------------------ font ------------------------------ */
-
 class CJS_Font : public CJS_Object {
  public:
   explicit CJS_Font(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
@@ -38,8 +32,6 @@ class CJS_Font : public CJS_Object {
 
   DECLARE_JS_CLASS_CONST();
 };
-
-/* ------------------------------ highlight ------------------------------ */
 
 class CJS_Highlight : public CJS_Object {
  public:
@@ -49,8 +41,6 @@ class CJS_Highlight : public CJS_Object {
   DECLARE_JS_CLASS_CONST();
 };
 
-/* ------------------------------ position ------------------------------ */
-
 class CJS_Position : public CJS_Object {
  public:
   explicit CJS_Position(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
@@ -58,8 +48,6 @@ class CJS_Position : public CJS_Object {
 
   DECLARE_JS_CLASS_CONST();
 };
-
-/* ------------------------------ scaleHow ------------------------------ */
 
 class CJS_ScaleHow : public CJS_Object {
  public:
@@ -69,8 +57,6 @@ class CJS_ScaleHow : public CJS_Object {
   DECLARE_JS_CLASS_CONST();
 };
 
-/* ------------------------------ scaleWhen ------------------------------ */
-
 class CJS_ScaleWhen : public CJS_Object {
  public:
   explicit CJS_ScaleWhen(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
@@ -78,8 +64,6 @@ class CJS_ScaleWhen : public CJS_Object {
 
   DECLARE_JS_CLASS_CONST();
 };
-
-/* ------------------------------ style ------------------------------ */
 
 class CJS_Style : public CJS_Object {
  public:
@@ -89,8 +73,6 @@ class CJS_Style : public CJS_Object {
   DECLARE_JS_CLASS_CONST();
 };
 
-/* ------------------------------ zoomtype ------------------------------ */
-
 class CJS_Zoomtype : public CJS_Object {
  public:
   explicit CJS_Zoomtype(v8::Local<v8::Object> pObject) : CJS_Object(pObject) {}
@@ -99,14 +81,10 @@ class CJS_Zoomtype : public CJS_Object {
   DECLARE_JS_CLASS_CONST();
 };
 
-/* ------------------------------ CJS_GlobalConsts -------------------------- */
-
 class CJS_GlobalConsts : public CJS_Object {
  public:
   static void DefineJSObjects(CJS_Runtime* pRuntime);
 };
-
-/* ------------------------------ CJS_GlobalArrays -------------------------- */
 
 class CJS_GlobalArrays : public CJS_Object {
  public:

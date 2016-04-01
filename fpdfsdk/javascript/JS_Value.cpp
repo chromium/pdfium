@@ -282,8 +282,6 @@ FX_BOOL CJS_Value::ConvertToDate(CJS_Date& date) const {
   return FALSE;
 }
 
-/* ---------------------------- CJS_PropValue ---------------------------- */
-
 CJS_PropValue::CJS_PropValue(const CJS_Value& value)
     : CJS_Value(value), m_bIsSetting(0) {}
 

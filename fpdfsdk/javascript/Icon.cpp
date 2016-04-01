@@ -6,12 +6,9 @@
 
 #include "fpdfsdk/javascript/Icon.h"
 
-#include "fpdfsdk/include/javascript/IJavaScript.h"
 #include "fpdfsdk/javascript/JS_Define.h"
 #include "fpdfsdk/javascript/JS_Object.h"
 #include "fpdfsdk/javascript/JS_Value.h"
-
-/* ---------------------- Icon ---------------------- */
 
 BEGIN_JS_STATIC_CONST(CJS_Icon)
 END_JS_STATIC_CONST()

@@ -11,7 +11,8 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/include/fsdk_mgr.h"
-#include "fpdfsdk/include/javascript/IJavaScript.h"
+#include "fpdfsdk/javascript/ijs_context.h"
+#include "fpdfsdk/javascript/ijs_runtime.h"
 #include "third_party/base/stl_util.h"
 
 CPDFSDK_ActionHandler::CPDFSDK_ActionHandler()
