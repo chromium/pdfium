@@ -1406,7 +1406,7 @@ CXFA_XMLParser::CXFA_XMLParser(CFDE_XMLNode* pRoot, IFX_Stream* pStream)
       m_pParent(pRoot),
       m_pChild(nullptr),
       m_NodeStack(16),
-      m_dwStatus(FDE_XMLSYNTAXSTATUS_None) {
+      m_syntaxParserResult(FDE_XmlSyntaxResult::None) {
   ASSERT(m_pParent && m_pStream);
   m_NodeStack.Push(m_pParent);
   m_pParser = new CFDE_XMLSyntaxParser;
@@ -1421,48 +1421,47 @@ CXFA_XMLParser::~CXFA_XMLParser() {
   m_ws2.Empty();
 }
 int32_t CXFA_XMLParser::DoParser(IFX_Pause* pPause) {
-  if (m_dwStatus == FDE_XMLSYNTAXSTATUS_Error) {
+  if (m_syntaxParserResult == FDE_XmlSyntaxResult::Error)
     return -1;
-  }
-  if (m_dwStatus == FDE_XMLSYNTAXSTATUS_EOS) {
+  if (m_syntaxParserResult == FDE_XmlSyntaxResult::EndOfString)
     return 100;
-  }
+
   int32_t iCount = 0;
   while (TRUE) {
-    m_dwStatus = m_pParser->DoSyntaxParse();
-    switch (m_dwStatus) {
-      case FDE_XMLSYNTAXSTATUS_InstructionOpen:
+    m_syntaxParserResult = m_pParser->DoSyntaxParse();
+    switch (m_syntaxParserResult) {
+      case FDE_XmlSyntaxResult::InstructionOpen:
         break;
-      case FDE_XMLSYNTAXSTATUS_InstructionClose:
+      case FDE_XmlSyntaxResult::InstructionClose:
         if (m_pChild) {
           if (m_pChild->GetType() != FDE_XMLNODE_Instruction) {
-            m_dwStatus = FDE_XMLSYNTAXSTATUS_Error;
+            m_syntaxParserResult = FDE_XmlSyntaxResult::Error;
             break;
           }
         }
         m_pChild = m_pParent;
         break;
-      case FDE_XMLSYNTAXSTATUS_ElementOpen:
+      case FDE_XmlSyntaxResult::ElementOpen:
         if (m_dwCheckStatus != 0x03 && m_NodeStack.GetSize() == 2) {
           m_nElementStart = m_pParser->GetCurrentPos() - 1;
         }
         break;
-      case FDE_XMLSYNTAXSTATUS_ElementBreak:
+      case FDE_XmlSyntaxResult::ElementBreak:
         break;
-      case FDE_XMLSYNTAXSTATUS_ElementClose:
+      case FDE_XmlSyntaxResult::ElementClose:
         if (m_pChild->GetType() != FDE_XMLNODE_Element) {
-          m_dwStatus = FDE_XMLSYNTAXSTATUS_Error;
+          m_syntaxParserResult = FDE_XmlSyntaxResult::Error;
           break;
         }
         m_pParser->GetTagName(m_ws1);
         static_cast<CFDE_XMLElement*>(m_pChild)->GetTagName(m_ws2);
         if (m_ws1.GetLength() > 0 && m_ws1 != m_ws2) {
-          m_dwStatus = FDE_XMLSYNTAXSTATUS_Error;
+          m_syntaxParserResult = FDE_XmlSyntaxResult::Error;
           break;
         }
         m_NodeStack.Pop();
         if (m_NodeStack.GetSize() < 1) {
-          m_dwStatus = FDE_XMLSYNTAXSTATUS_Error;
+          m_syntaxParserResult = FDE_XmlSyntaxResult::Error;
           break;
         } else if (m_dwCurrentCheckStatus != 0 && m_NodeStack.GetSize() == 2) {
           m_nSize[m_dwCurrentCheckStatus - 1] =
@@ -1475,7 +1474,7 @@ int32_t CXFA_XMLParser::DoParser(IFX_Pause* pPause) {
         m_pChild = m_pParent;
         iCount++;
         break;
-      case FDE_XMLSYNTAXSTATUS_TargetName:
+      case FDE_XmlSyntaxResult::TargetName:
         m_pParser->GetTargetName(m_ws1);
         if (m_ws1 == FX_WSTRC(L"originalXFAVersion") ||
             m_ws1 == FX_WSTRC(L"acrobat")) {
@@ -1486,7 +1485,7 @@ int32_t CXFA_XMLParser::DoParser(IFX_Pause* pPause) {
         }
         m_ws1.Empty();
         break;
-      case FDE_XMLSYNTAXSTATUS_TagName:
+      case FDE_XmlSyntaxResult::TagName:
         m_pParser->GetTagName(m_ws1);
         m_pChild = new CFDE_XMLElement(m_ws1);
         m_pParent->InsertChildNode(m_pChild);
@@ -1509,10 +1508,10 @@ int32_t CXFA_XMLParser::DoParser(IFX_Pause* pPause) {
           }
         }
         break;
-      case FDE_XMLSYNTAXSTATUS_AttriName:
+      case FDE_XmlSyntaxResult::AttriName:
         m_pParser->GetAttributeName(m_ws1);
         break;
-      case FDE_XMLSYNTAXSTATUS_AttriValue:
+      case FDE_XmlSyntaxResult::AttriValue:
         if (m_pChild) {
           m_pParser->GetAttributeName(m_ws2);
           if (m_pChild->GetType() == FDE_XMLNODE_Element) {
@@ -1521,22 +1520,22 @@ int32_t CXFA_XMLParser::DoParser(IFX_Pause* pPause) {
         }
         m_ws1.Empty();
         break;
-      case FDE_XMLSYNTAXSTATUS_Text:
+      case FDE_XmlSyntaxResult::Text:
         m_pParser->GetTextData(m_ws1);
         m_pChild = new CFDE_XMLText(m_ws1);
         m_pParent->InsertChildNode(m_pChild);
         m_pChild = m_pParent;
         break;
-      case FDE_XMLSYNTAXSTATUS_CData:
+      case FDE_XmlSyntaxResult::CData:
         m_pParser->GetTextData(m_ws1);
         m_pChild = new CFDE_XMLCharData(m_ws1);
         m_pParent->InsertChildNode(m_pChild);
         m_pChild = m_pParent;
         break;
-      case FDE_XMLSYNTAXSTATUS_TargetData:
+      case FDE_XmlSyntaxResult::TargetData:
         if (m_pChild) {
           if (m_pChild->GetType() != FDE_XMLNODE_Instruction) {
-            m_dwStatus = FDE_XMLSYNTAXSTATUS_Error;
+            m_syntaxParserResult = FDE_XmlSyntaxResult::Error;
             break;
           }
           if (!m_ws1.IsEmpty()) {
@@ -1550,15 +1549,16 @@ int32_t CXFA_XMLParser::DoParser(IFX_Pause* pPause) {
       default:
         break;
     }
-    if (m_dwStatus == FDE_XMLSYNTAXSTATUS_Error ||
-        m_dwStatus == FDE_XMLSYNTAXSTATUS_EOS) {
+    if (m_syntaxParserResult == FDE_XmlSyntaxResult::Error ||
+        m_syntaxParserResult == FDE_XmlSyntaxResult::EndOfString) {
       break;
     }
     if (pPause && iCount > 500 && pPause->NeedToPauseNow()) {
       break;
     }
   }
-  return (m_dwStatus == FDE_XMLSYNTAXSTATUS_Error || m_NodeStack.GetSize() != 1)
+  return (m_syntaxParserResult == FDE_XmlSyntaxResult::Error ||
+          m_NodeStack.GetSize() != 1)
              ? -1
              : m_pParser->GetStatus();
 }

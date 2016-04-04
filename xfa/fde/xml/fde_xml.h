@@ -10,6 +10,24 @@
 #include "xfa/fgas/crt/fgas_stream.h"
 #include "xfa/fgas/crt/fgas_utils.h"
 
+enum class FDE_XmlSyntaxResult {
+  None,
+  InstructionOpen,
+  InstructionClose,
+  ElementOpen,
+  ElementBreak,
+  ElementClose,
+  TargetName,
+  TagName,
+  AttriName,
+  AttriValue,
+  Text,
+  CData,
+  TargetData,
+  Error,
+  EndOfString
+};
+
 enum FDE_XMLNODETYPE {
   FDE_XMLNODE_Unknown = 0,
   FDE_XMLNODE_Instruction,
@@ -44,21 +62,5 @@ struct FDE_XMLREADERHANDLER {
                  FDE_XMLNODETYPE eType,
                  const CFX_WideString& wsValue);
 };
-
-#define FDE_XMLSYNTAXSTATUS_None 0x00
-#define FDE_XMLSYNTAXSTATUS_InstructionOpen 0x01
-#define FDE_XMLSYNTAXSTATUS_InstructionClose 0x02
-#define FDE_XMLSYNTAXSTATUS_ElementOpen 0x03
-#define FDE_XMLSYNTAXSTATUS_ElementBreak 0x04
-#define FDE_XMLSYNTAXSTATUS_ElementClose 0x05
-#define FDE_XMLSYNTAXSTATUS_TargetName 0x06
-#define FDE_XMLSYNTAXSTATUS_TagName 0x07
-#define FDE_XMLSYNTAXSTATUS_AttriName 0x08
-#define FDE_XMLSYNTAXSTATUS_AttriValue 0x09
-#define FDE_XMLSYNTAXSTATUS_Text 0x0A
-#define FDE_XMLSYNTAXSTATUS_CData 0x0B
-#define FDE_XMLSYNTAXSTATUS_TargetData 0x0C
-#define FDE_XMLSYNTAXSTATUS_Error 0xFE
-#define FDE_XMLSYNTAXSTATUS_EOS 0xFF
 
 #endif  // XFA_FDE_XML_FDE_XML_H_

@@ -1089,63 +1089,64 @@ CFDE_XMLDOMParser::~CFDE_XMLDOMParser() {
   m_ws1.Empty();
   m_ws2.Empty();
 }
+
 int32_t CFDE_XMLDOMParser::DoParser(IFX_Pause* pPause) {
-  uint32_t dwRet;
+  FDE_XmlSyntaxResult syntaxParserResult;
   int32_t iCount = 0;
   while (TRUE) {
-    dwRet = m_pParser->DoSyntaxParse();
-    switch (dwRet) {
-      case FDE_XMLSYNTAXSTATUS_InstructionOpen:
+    syntaxParserResult = m_pParser->DoSyntaxParse();
+    switch (syntaxParserResult) {
+      case FDE_XmlSyntaxResult::InstructionOpen:
         break;
-      case FDE_XMLSYNTAXSTATUS_InstructionClose:
+      case FDE_XmlSyntaxResult::InstructionClose:
         if (m_pChild->GetType() != FDE_XMLNODE_Instruction) {
-          dwRet = FDE_XMLSYNTAXSTATUS_Error;
+          syntaxParserResult = FDE_XmlSyntaxResult::Error;
           break;
         }
         m_pChild = m_pParent;
         break;
-      case FDE_XMLSYNTAXSTATUS_ElementOpen:
-      case FDE_XMLSYNTAXSTATUS_ElementBreak:
+      case FDE_XmlSyntaxResult::ElementOpen:
+      case FDE_XmlSyntaxResult::ElementBreak:
         break;
-      case FDE_XMLSYNTAXSTATUS_ElementClose:
+      case FDE_XmlSyntaxResult::ElementClose:
         if (m_pChild->GetType() != FDE_XMLNODE_Element) {
-          dwRet = FDE_XMLSYNTAXSTATUS_Error;
+          syntaxParserResult = FDE_XmlSyntaxResult::Error;
           break;
         }
         m_pParser->GetTagName(m_ws1);
         ((CFDE_XMLElement*)m_pChild)->GetTagName(m_ws2);
         if (m_ws1.GetLength() > 0 && m_ws1.Compare(m_ws2) != 0) {
-          dwRet = FDE_XMLSYNTAXSTATUS_Error;
+          syntaxParserResult = FDE_XmlSyntaxResult::Error;
           break;
         }
         m_NodeStack.Pop();
         if (m_NodeStack.GetSize() < 1) {
-          dwRet = FDE_XMLSYNTAXSTATUS_Error;
+          syntaxParserResult = FDE_XmlSyntaxResult::Error;
           break;
         }
         m_pParent = (CFDE_XMLNode*)*m_NodeStack.GetTopElement();
         m_pChild = m_pParent;
         iCount++;
         break;
-      case FDE_XMLSYNTAXSTATUS_TargetName:
+      case FDE_XmlSyntaxResult::TargetName:
         m_pParser->GetTargetName(m_ws1);
         m_pChild = new CFDE_XMLInstruction(m_ws1);
         m_pParent->InsertChildNode(m_pChild);
         m_ws1.Empty();
         break;
-      case FDE_XMLSYNTAXSTATUS_TagName:
+      case FDE_XmlSyntaxResult::TagName:
         m_pParser->GetTagName(m_ws1);
         m_pChild = new CFDE_XMLElement(m_ws1);
         m_pParent->InsertChildNode(m_pChild);
         m_NodeStack.Push(m_pChild);
         m_pParent = m_pChild;
         break;
-      case FDE_XMLSYNTAXSTATUS_AttriName:
+      case FDE_XmlSyntaxResult::AttriName:
         m_pParser->GetAttributeName(m_ws1);
         break;
-      case FDE_XMLSYNTAXSTATUS_AttriValue:
+      case FDE_XmlSyntaxResult::AttriValue:
         if (m_pChild == NULL) {
-          dwRet = FDE_XMLSYNTAXSTATUS_Error;
+          syntaxParserResult = FDE_XmlSyntaxResult::Error;
           break;
         }
         m_pParser->GetAttributeName(m_ws2);
@@ -1156,22 +1157,22 @@ int32_t CFDE_XMLDOMParser::DoParser(IFX_Pause* pPause) {
         }
         m_ws1.Empty();
         break;
-      case FDE_XMLSYNTAXSTATUS_Text:
+      case FDE_XmlSyntaxResult::Text:
         m_pParser->GetTextData(m_ws1);
         m_pChild = new CFDE_XMLText(m_ws1);
         m_pParent->InsertChildNode(m_pChild);
         m_pChild = m_pParent;
         break;
-      case FDE_XMLSYNTAXSTATUS_CData:
+      case FDE_XmlSyntaxResult::CData:
         m_pParser->GetTextData(m_ws1);
         m_pChild = new CFDE_XMLCharData(m_ws1);
         m_pParent->InsertChildNode(m_pChild);
         m_pChild = m_pParent;
         break;
-      case FDE_XMLSYNTAXSTATUS_TargetData:
+      case FDE_XmlSyntaxResult::TargetData:
         if (m_pChild == NULL ||
             m_pChild->GetType() != FDE_XMLNODE_Instruction) {
-          dwRet = FDE_XMLSYNTAXSTATUS_Error;
+          syntaxParserResult = FDE_XmlSyntaxResult::Error;
           break;
         }
         if (!m_ws1.IsEmpty()) {
@@ -1184,8 +1185,8 @@ int32_t CFDE_XMLDOMParser::DoParser(IFX_Pause* pPause) {
       default:
         break;
     }
-    if (dwRet == FDE_XMLSYNTAXSTATUS_Error ||
-        dwRet == FDE_XMLSYNTAXSTATUS_EOS) {
+    if (syntaxParserResult == FDE_XmlSyntaxResult::Error ||
+        syntaxParserResult == FDE_XmlSyntaxResult::EndOfString) {
       break;
     }
     if (pPause != NULL && iCount > 500 && pPause->NeedToPauseNow()) {
@@ -1208,28 +1209,28 @@ CFDE_XMLSAXParser::~CFDE_XMLSAXParser() {
   m_ws2.Empty();
 }
 int32_t CFDE_XMLSAXParser::DoParser(IFX_Pause* pPause) {
-  uint32_t dwRet = 0;
+  FDE_XmlSyntaxResult syntaxParserResult;
   int32_t iCount = 0;
   while (TRUE) {
-    dwRet = m_pParser->DoSyntaxParse();
-    switch (dwRet) {
-      case FDE_XMLSYNTAXSTATUS_ElementBreak:
+    syntaxParserResult = m_pParser->DoSyntaxParse();
+    switch (syntaxParserResult) {
+      case FDE_XmlSyntaxResult::ElementBreak:
         if (m_pTagTop == NULL) {
-          dwRet = FDE_XMLSYNTAXSTATUS_Error;
+          syntaxParserResult = FDE_XmlSyntaxResult::Error;
           break;
         }
         if (m_pTagTop->eType == FDE_XMLNODE_Element) {
           m_pHandler->OnTagBreak(m_pHandler, m_pTagTop->wsTagName);
         }
         break;
-      case FDE_XMLSYNTAXSTATUS_ElementClose:
+      case FDE_XmlSyntaxResult::ElementClose:
         if (m_pTagTop == NULL || m_pTagTop->eType != FDE_XMLNODE_Element) {
-          dwRet = FDE_XMLSYNTAXSTATUS_Error;
+          syntaxParserResult = FDE_XmlSyntaxResult::Error;
           break;
         }
         m_pParser->GetTagName(m_ws1);
         if (m_ws1.GetLength() > 0 && m_ws1.Compare(m_pTagTop->wsTagName) != 0) {
-          dwRet = FDE_XMLSYNTAXSTATUS_Error;
+          syntaxParserResult = FDE_XmlSyntaxResult::Error;
           break;
         } else if (m_ws1.GetLength() == 0) {
           m_pHandler->OnTagBreak(m_pHandler, m_pTagTop->wsTagName);
@@ -1238,7 +1239,7 @@ int32_t CFDE_XMLSAXParser::DoParser(IFX_Pause* pPause) {
         Pop();
         iCount++;
         break;
-      case FDE_XMLSYNTAXSTATUS_TargetName: {
+      case FDE_XmlSyntaxResult::TargetName: {
         m_pParser->GetTargetName(m_ws1);
         CFDE_XMLTAG xmlTag;
         xmlTag.wsTagName = m_ws1;
@@ -1248,7 +1249,7 @@ int32_t CFDE_XMLSAXParser::DoParser(IFX_Pause* pPause) {
                                m_pTagTop->wsTagName);
         m_ws1.Empty();
       } break;
-      case FDE_XMLSYNTAXSTATUS_TagName: {
+      case FDE_XmlSyntaxResult::TagName: {
         m_pParser->GetTargetName(m_ws1);
         CFDE_XMLTAG xmlTag;
         xmlTag.wsTagName = m_ws1;
@@ -1257,13 +1258,13 @@ int32_t CFDE_XMLSAXParser::DoParser(IFX_Pause* pPause) {
         m_pHandler->OnTagEnter(m_pHandler, FDE_XMLNODE_Element,
                                m_pTagTop->wsTagName);
       } break;
-      case FDE_XMLSYNTAXSTATUS_AttriName:
+      case FDE_XmlSyntaxResult::AttriName:
         m_pParser->GetTargetName(m_ws1);
         break;
-      case FDE_XMLSYNTAXSTATUS_AttriValue:
+      case FDE_XmlSyntaxResult::AttriValue:
         m_pParser->GetAttributeName(m_ws2);
         if (m_pTagTop == NULL) {
-          dwRet = FDE_XMLSYNTAXSTATUS_Error;
+          syntaxParserResult = FDE_XmlSyntaxResult::Error;
           break;
         }
         if (m_pTagTop->eType == FDE_XMLNODE_Element) {
@@ -1271,15 +1272,15 @@ int32_t CFDE_XMLSAXParser::DoParser(IFX_Pause* pPause) {
         }
         m_ws1.Empty();
         break;
-      case FDE_XMLSYNTAXSTATUS_CData:
+      case FDE_XmlSyntaxResult::CData:
         m_pParser->GetTextData(m_ws1);
         m_pHandler->OnData(m_pHandler, FDE_XMLNODE_CharData, m_ws1);
         break;
-      case FDE_XMLSYNTAXSTATUS_Text:
+      case FDE_XmlSyntaxResult::Text:
         m_pParser->GetTextData(m_ws1);
         m_pHandler->OnData(m_pHandler, FDE_XMLNODE_Text, m_ws1);
         break;
-      case FDE_XMLSYNTAXSTATUS_TargetData:
+      case FDE_XmlSyntaxResult::TargetData:
         m_pParser->GetTargetData(m_ws1);
         m_pHandler->OnData(m_pHandler, FDE_XMLNODE_Instruction, m_ws1);
         m_ws1.Empty();
@@ -1287,8 +1288,8 @@ int32_t CFDE_XMLSAXParser::DoParser(IFX_Pause* pPause) {
       default:
         break;
     }
-    if (dwRet == FDE_XMLSYNTAXSTATUS_Error ||
-        dwRet == FDE_XMLSYNTAXSTATUS_EOS) {
+    if (syntaxParserResult == FDE_XmlSyntaxResult::Error ||
+        syntaxParserResult == FDE_XmlSyntaxResult::EndOfString) {
       break;
     }
     if (pPause != NULL && iCount > 500 && pPause->NeedToPauseNow()) {
@@ -1455,8 +1456,8 @@ CFDE_XMLSyntaxParser::CFDE_XMLSyntaxParser()
       m_pCurrentBlock(nullptr),
       m_iIndexInBlock(0),
       m_iTextDataLength(0),
-      m_dwStatus(FDE_XMLSYNTAXSTATUS_None),
-      m_dwMode(FDE_XMLSYNTAXMODE_Text),
+      m_syntaxParserResult(FDE_XmlSyntaxResult::None),
+      m_syntaxParserState(FDE_XmlSyntaxState::Text),
       m_wQuotationMark(0),
       m_iEntityStart(-1),
       m_SkipStack(16) {
@@ -1483,21 +1484,22 @@ void CFDE_XMLSyntaxParser::Init(IFX_Stream* pStream,
   m_iParsedBytes = m_iParsedChars = 0;
   m_iBufferChars = 0;
 }
-uint32_t CFDE_XMLSyntaxParser::DoSyntaxParse() {
-  if (m_dwStatus == FDE_XMLSYNTAXSTATUS_Error ||
-      m_dwStatus == FDE_XMLSYNTAXSTATUS_EOS) {
-    return m_dwStatus;
+
+FDE_XmlSyntaxResult CFDE_XMLSyntaxParser::DoSyntaxParse() {
+  if (m_syntaxParserResult == FDE_XmlSyntaxResult::Error ||
+      m_syntaxParserResult == FDE_XmlSyntaxResult::EndOfString) {
+    return m_syntaxParserResult;
   }
   FXSYS_assert(m_pStream && m_pBuffer && m_BlockBuffer.IsInitialized());
   int32_t iStreamLength = m_pStream->GetLength();
   int32_t iPos;
 
-  uint32_t dwStatus = FDE_XMLSYNTAXSTATUS_None;
+  FDE_XmlSyntaxResult syntaxParserResult = FDE_XmlSyntaxResult::None;
   while (TRUE) {
     if (m_pStart >= m_pEnd) {
       if (m_bEOS || m_iCurrentPos >= iStreamLength) {
-        m_dwStatus = FDE_XMLSYNTAXSTATUS_EOS;
-        return m_dwStatus;
+        m_syntaxParserResult = FDE_XmlSyntaxResult::EndOfString;
+        return m_syntaxParserResult;
       }
       m_iParsedChars += (m_pEnd - m_pBuffer);
       m_iParsedBytes = m_iCurrentPos;
@@ -1509,8 +1511,8 @@ uint32_t CFDE_XMLSyntaxParser::DoSyntaxParse() {
       iPos = m_pStream->GetPosition();
       if (m_iBufferChars < 1) {
         m_iCurrentPos = iStreamLength;
-        m_dwStatus = FDE_XMLSYNTAXSTATUS_EOS;
-        return m_dwStatus;
+        m_syntaxParserResult = FDE_XmlSyntaxResult::EndOfString;
+        return m_syntaxParserResult;
       }
       m_iCurrentPos = iPos;
       m_pStart = m_pBuffer;
@@ -1519,8 +1521,8 @@ uint32_t CFDE_XMLSyntaxParser::DoSyntaxParse() {
 
     while (m_pStart < m_pEnd) {
       FX_WCHAR ch = *m_pStart;
-      switch (m_dwMode) {
-        case FDE_XMLSYNTAXMODE_Text:
+      switch (m_syntaxParserState) {
+        case FDE_XmlSyntaxState::Text:
           if (ch == L'<') {
             if (m_iDataLength > 0) {
               m_iTextDataLength = m_iDataLength;
@@ -1528,22 +1530,22 @@ uint32_t CFDE_XMLSyntaxParser::DoSyntaxParse() {
               m_pCurrentBlock =
                   m_BlockBuffer.GetAvailableBlock(m_iIndexInBlock);
               m_iEntityStart = -1;
-              dwStatus = FDE_XMLSYNTAXSTATUS_Text;
+              syntaxParserResult = FDE_XmlSyntaxResult::Text;
             } else {
               m_pStart++;
-              m_dwMode = FDE_XMLSYNTAXMODE_Node;
+              m_syntaxParserState = FDE_XmlSyntaxState::Node;
             }
           } else {
             ParseTextChar(ch);
           }
           break;
-        case FDE_XMLSYNTAXMODE_Node:
+        case FDE_XmlSyntaxState::Node:
           if (ch == L'!') {
             m_pStart++;
-            m_dwMode = FDE_XMLSYNTAXMODE_SkipCommentOrDecl;
+            m_syntaxParserState = FDE_XmlSyntaxState::SkipCommentOrDecl;
           } else if (ch == L'/') {
             m_pStart++;
-            m_dwMode = FDE_XMLSYNTAXMODE_CloseElement;
+            m_syntaxParserState = FDE_XmlSyntaxState::CloseElement;
           } else if (ch == L'?') {
             m_iLastNodeNum++;
             m_iCurrentNodeNum = m_iLastNodeNum;
@@ -1551,42 +1553,42 @@ uint32_t CFDE_XMLSyntaxParser::DoSyntaxParse() {
             m_CurNode.eNodeType = FDE_XMLNODE_Instruction;
             m_XMLNodeStack.Push(m_CurNode);
             m_pStart++;
-            m_dwMode = FDE_XMLSYNTAXMODE_Target;
-            dwStatus = FDE_XMLSYNTAXSTATUS_InstructionOpen;
+            m_syntaxParserState = FDE_XmlSyntaxState::Target;
+            syntaxParserResult = FDE_XmlSyntaxResult::InstructionOpen;
           } else {
             m_iLastNodeNum++;
             m_iCurrentNodeNum = m_iLastNodeNum;
             m_CurNode.iNodeNum = m_iLastNodeNum;
             m_CurNode.eNodeType = FDE_XMLNODE_Element;
             m_XMLNodeStack.Push(m_CurNode);
-            m_dwMode = FDE_XMLSYNTAXMODE_Tag;
-            dwStatus = FDE_XMLSYNTAXSTATUS_ElementOpen;
+            m_syntaxParserState = FDE_XmlSyntaxState::Tag;
+            syntaxParserResult = FDE_XmlSyntaxResult::ElementOpen;
           }
           break;
-        case FDE_XMLSYNTAXMODE_Target:
-        case FDE_XMLSYNTAXMODE_Tag:
+        case FDE_XmlSyntaxState::Target:
+        case FDE_XmlSyntaxState::Tag:
           if (!FDE_IsXMLNameChar(ch, m_iDataLength < 1)) {
             if (m_iDataLength < 1) {
-              m_dwStatus = FDE_XMLSYNTAXSTATUS_Error;
-              return m_dwStatus;
+              m_syntaxParserResult = FDE_XmlSyntaxResult::Error;
+              return m_syntaxParserResult;
             } else {
               m_iTextDataLength = m_iDataLength;
               m_BlockBuffer.Reset();
               m_pCurrentBlock =
                   m_BlockBuffer.GetAvailableBlock(m_iIndexInBlock);
-              if (m_dwMode != FDE_XMLSYNTAXMODE_Target) {
-                dwStatus = FDE_XMLSYNTAXSTATUS_TagName;
+              if (m_syntaxParserState != FDE_XmlSyntaxState::Target) {
+                syntaxParserResult = FDE_XmlSyntaxResult::TagName;
               } else {
-                dwStatus = FDE_XMLSYNTAXSTATUS_TargetName;
+                syntaxParserResult = FDE_XmlSyntaxResult::TargetName;
               }
-              m_dwMode = FDE_XMLSYNTAXMODE_AttriName;
+              m_syntaxParserState = FDE_XmlSyntaxState::AttriName;
             }
           } else {
             if (m_iIndexInBlock == m_iAllocStep) {
               m_pCurrentBlock =
                   m_BlockBuffer.GetAvailableBlock(m_iIndexInBlock);
               if (!m_pCurrentBlock) {
-                return FDE_XMLSYNTAXSTATUS_Error;
+                return FDE_XmlSyntaxResult::Error;
               }
             }
             m_pCurrentBlock[m_iIndexInBlock++] = ch;
@@ -1594,7 +1596,7 @@ uint32_t CFDE_XMLSyntaxParser::DoSyntaxParse() {
             m_pStart++;
           }
           break;
-        case FDE_XMLSYNTAXMODE_AttriName:
+        case FDE_XmlSyntaxState::AttriName:
           if (m_iDataLength < 1 && FDE_IsXMLWhiteSpace(ch)) {
             m_pStart++;
             break;
@@ -1603,24 +1605,24 @@ uint32_t CFDE_XMLSyntaxParser::DoSyntaxParse() {
             if (m_iDataLength < 1) {
               if (m_CurNode.eNodeType == FDE_XMLNODE_Element) {
                 if (ch == L'>' || ch == L'/') {
-                  m_dwMode = FDE_XMLSYNTAXMODE_BreakElement;
+                  m_syntaxParserState = FDE_XmlSyntaxState::BreakElement;
                   break;
                 }
               } else if (m_CurNode.eNodeType == FDE_XMLNODE_Instruction) {
                 if (ch == L'?') {
-                  m_dwMode = FDE_XMLSYNTAXMODE_CloseInstruction;
+                  m_syntaxParserState = FDE_XmlSyntaxState::CloseInstruction;
                   m_pStart++;
                 } else {
-                  m_dwMode = FDE_XMLSYNTAXMODE_TargetData;
+                  m_syntaxParserState = FDE_XmlSyntaxState::TargetData;
                 }
                 break;
               }
-              m_dwStatus = FDE_XMLSYNTAXSTATUS_Error;
-              return m_dwStatus;
+              m_syntaxParserResult = FDE_XmlSyntaxResult::Error;
+              return m_syntaxParserResult;
             } else {
               if (m_CurNode.eNodeType == FDE_XMLNODE_Instruction) {
                 if (ch != '=' && !FDE_IsXMLWhiteSpace(ch)) {
-                  m_dwMode = FDE_XMLSYNTAXMODE_TargetData;
+                  m_syntaxParserState = FDE_XmlSyntaxState::TargetData;
                   break;
                 }
               }
@@ -1628,15 +1630,15 @@ uint32_t CFDE_XMLSyntaxParser::DoSyntaxParse() {
               m_BlockBuffer.Reset();
               m_pCurrentBlock =
                   m_BlockBuffer.GetAvailableBlock(m_iIndexInBlock);
-              m_dwMode = FDE_XMLSYNTAXMODE_AttriEqualSign;
-              dwStatus = FDE_XMLSYNTAXSTATUS_AttriName;
+              m_syntaxParserState = FDE_XmlSyntaxState::AttriEqualSign;
+              syntaxParserResult = FDE_XmlSyntaxResult::AttriName;
             }
           } else {
             if (m_iIndexInBlock == m_iAllocStep) {
               m_pCurrentBlock =
                   m_BlockBuffer.GetAvailableBlock(m_iIndexInBlock);
               if (!m_pCurrentBlock) {
-                return FDE_XMLSYNTAXSTATUS_Error;
+                return FDE_XmlSyntaxResult::Error;
               }
             }
             m_pCurrentBlock[m_iIndexInBlock++] = ch;
@@ -1644,77 +1646,77 @@ uint32_t CFDE_XMLSyntaxParser::DoSyntaxParse() {
             m_pStart++;
           }
           break;
-        case FDE_XMLSYNTAXMODE_AttriEqualSign:
+        case FDE_XmlSyntaxState::AttriEqualSign:
           if (FDE_IsXMLWhiteSpace(ch)) {
             m_pStart++;
             break;
           }
           if (ch != L'=') {
             if (m_CurNode.eNodeType == FDE_XMLNODE_Instruction) {
-              m_dwMode = FDE_XMLSYNTAXMODE_TargetData;
+              m_syntaxParserState = FDE_XmlSyntaxState::TargetData;
               break;
             }
-            m_dwStatus = FDE_XMLSYNTAXSTATUS_Error;
-            return m_dwStatus;
+            m_syntaxParserResult = FDE_XmlSyntaxResult::Error;
+            return m_syntaxParserResult;
           } else {
-            m_dwMode = FDE_XMLSYNTAXMODE_AttriQuotation;
+            m_syntaxParserState = FDE_XmlSyntaxState::AttriQuotation;
             m_pStart++;
           }
           break;
-        case FDE_XMLSYNTAXMODE_AttriQuotation:
+        case FDE_XmlSyntaxState::AttriQuotation:
           if (FDE_IsXMLWhiteSpace(ch)) {
             m_pStart++;
             break;
           }
           if (ch != L'\"' && ch != L'\'') {
-            m_dwStatus = FDE_XMLSYNTAXSTATUS_Error;
-            return m_dwStatus;
+            m_syntaxParserResult = FDE_XmlSyntaxResult::Error;
+            return m_syntaxParserResult;
           } else {
             m_wQuotationMark = ch;
-            m_dwMode = FDE_XMLSYNTAXMODE_AttriValue;
+            m_syntaxParserState = FDE_XmlSyntaxState::AttriValue;
             m_pStart++;
           }
           break;
-        case FDE_XMLSYNTAXMODE_AttriValue:
+        case FDE_XmlSyntaxState::AttriValue:
           if (ch == m_wQuotationMark) {
             if (m_iEntityStart > -1) {
-              m_dwStatus = FDE_XMLSYNTAXSTATUS_Error;
-              return m_dwStatus;
+              m_syntaxParserResult = FDE_XmlSyntaxResult::Error;
+              return m_syntaxParserResult;
             }
             m_iTextDataLength = m_iDataLength;
             m_wQuotationMark = 0;
             m_BlockBuffer.Reset();
             m_pCurrentBlock = m_BlockBuffer.GetAvailableBlock(m_iIndexInBlock);
             m_pStart++;
-            m_dwMode = FDE_XMLSYNTAXMODE_AttriName;
-            dwStatus = FDE_XMLSYNTAXSTATUS_AttriValue;
+            m_syntaxParserState = FDE_XmlSyntaxState::AttriName;
+            syntaxParserResult = FDE_XmlSyntaxResult::AttriValue;
           } else {
             ParseTextChar(ch);
           }
           break;
-        case FDE_XMLSYNTAXMODE_CloseInstruction:
+        case FDE_XmlSyntaxState::CloseInstruction:
           if (ch != L'>') {
             if (m_iIndexInBlock == m_iAllocStep) {
               m_pCurrentBlock =
                   m_BlockBuffer.GetAvailableBlock(m_iIndexInBlock);
               if (!m_pCurrentBlock) {
-                return FDE_XMLSYNTAXSTATUS_Error;
+                return FDE_XmlSyntaxResult::Error;
               }
             }
             m_pCurrentBlock[m_iIndexInBlock++] = ch;
             m_iDataLength++;
-            m_dwMode = FDE_XMLSYNTAXMODE_TargetData;
+            m_syntaxParserState = FDE_XmlSyntaxState::TargetData;
           } else if (m_iDataLength > 0) {
             m_iTextDataLength = m_iDataLength;
             m_BlockBuffer.Reset();
             m_pCurrentBlock = m_BlockBuffer.GetAvailableBlock(m_iIndexInBlock);
-            dwStatus = FDE_XMLSYNTAXSTATUS_TargetData;
+            syntaxParserResult = FDE_XmlSyntaxResult::TargetData;
           } else {
             m_pStart++;
             FDE_XMLNODE* pXMLNode = m_XMLNodeStack.GetTopElement();
             if (pXMLNode == NULL) {
-              m_dwStatus = FDE_XMLSYNTAXSTATUS_Error;
-              return m_dwStatus;
+              m_syntaxParserResult = FDE_XmlSyntaxResult::Error;
+              return m_syntaxParserResult;
             }
             m_XMLNodeStack.Pop();
             pXMLNode = m_XMLNodeStack.GetTopElement();
@@ -1727,29 +1729,29 @@ uint32_t CFDE_XMLSyntaxParser::DoSyntaxParse() {
             m_iCurrentNodeNum = m_CurNode.iNodeNum;
             m_BlockBuffer.Reset();
             m_pCurrentBlock = m_BlockBuffer.GetAvailableBlock(m_iIndexInBlock);
-            m_dwMode = FDE_XMLSYNTAXMODE_Text;
-            dwStatus = FDE_XMLSYNTAXSTATUS_InstructionClose;
+            m_syntaxParserState = FDE_XmlSyntaxState::Text;
+            syntaxParserResult = FDE_XmlSyntaxResult::InstructionClose;
           }
           break;
-        case FDE_XMLSYNTAXMODE_BreakElement:
+        case FDE_XmlSyntaxState::BreakElement:
           if (ch == L'>') {
-            m_dwMode = FDE_XMLSYNTAXMODE_Text;
-            dwStatus = FDE_XMLSYNTAXSTATUS_ElementBreak;
+            m_syntaxParserState = FDE_XmlSyntaxState::Text;
+            syntaxParserResult = FDE_XmlSyntaxResult::ElementBreak;
           } else if (ch == L'/') {
-            m_dwMode = FDE_XMLSYNTAXMODE_CloseElement;
+            m_syntaxParserState = FDE_XmlSyntaxState::CloseElement;
           } else {
-            m_dwStatus = FDE_XMLSYNTAXSTATUS_Error;
-            return m_dwStatus;
+            m_syntaxParserResult = FDE_XmlSyntaxResult::Error;
+            return m_syntaxParserResult;
           }
           m_pStart++;
           break;
-        case FDE_XMLSYNTAXMODE_CloseElement:
+        case FDE_XmlSyntaxState::CloseElement:
           if (!FDE_IsXMLNameChar(ch, m_iDataLength < 1)) {
             if (ch == L'>') {
               FDE_XMLNODE* pXMLNode = m_XMLNodeStack.GetTopElement();
               if (pXMLNode == NULL) {
-                m_dwStatus = FDE_XMLSYNTAXSTATUS_Error;
-                return m_dwStatus;
+                m_syntaxParserResult = FDE_XmlSyntaxResult::Error;
+                return m_syntaxParserResult;
               }
               m_XMLNodeStack.Pop();
               pXMLNode = m_XMLNodeStack.GetTopElement();
@@ -1764,18 +1766,18 @@ uint32_t CFDE_XMLSyntaxParser::DoSyntaxParse() {
               m_BlockBuffer.Reset();
               m_pCurrentBlock =
                   m_BlockBuffer.GetAvailableBlock(m_iIndexInBlock);
-              m_dwMode = FDE_XMLSYNTAXMODE_Text;
-              dwStatus = FDE_XMLSYNTAXSTATUS_ElementClose;
+              m_syntaxParserState = FDE_XmlSyntaxState::Text;
+              syntaxParserResult = FDE_XmlSyntaxResult::ElementClose;
             } else if (!FDE_IsXMLWhiteSpace(ch)) {
-              m_dwStatus = FDE_XMLSYNTAXSTATUS_Error;
-              return m_dwStatus;
+              m_syntaxParserResult = FDE_XmlSyntaxResult::Error;
+              return m_syntaxParserResult;
             }
           } else {
             if (m_iIndexInBlock == m_iAllocStep) {
               m_pCurrentBlock =
                   m_BlockBuffer.GetAvailableBlock(m_iIndexInBlock);
               if (!m_pCurrentBlock) {
-                return FDE_XMLSYNTAXSTATUS_Error;
+                return FDE_XmlSyntaxResult::Error;
               }
             }
             m_pCurrentBlock[m_iIndexInBlock++] = ch;
@@ -1783,33 +1785,33 @@ uint32_t CFDE_XMLSyntaxParser::DoSyntaxParse() {
           }
           m_pStart++;
           break;
-        case FDE_XMLSYNTAXMODE_SkipCommentOrDecl:
+        case FDE_XmlSyntaxState::SkipCommentOrDecl:
           if (FX_wcsnicmp(m_pStart, L"--", 2) == 0) {
             m_pStart += 2;
-            m_dwMode = FDE_XMLSYNTAXMODE_SkipComment;
+            m_syntaxParserState = FDE_XmlSyntaxState::SkipComment;
           } else if (FX_wcsnicmp(m_pStart, L"[CDATA[", 7) == 0) {
             m_pStart += 7;
-            m_dwMode = FDE_XMLSYNTAXMODE_SkipCData;
+            m_syntaxParserState = FDE_XmlSyntaxState::SkipCData;
           } else {
-            m_dwMode = FDE_XMLSYNTAXMODE_SkipDeclNode;
+            m_syntaxParserState = FDE_XmlSyntaxState::SkipDeclNode;
             m_SkipChar = L'>';
             m_SkipStack.Push(L'>');
           }
           break;
-        case FDE_XMLSYNTAXMODE_SkipCData: {
+        case FDE_XmlSyntaxState::SkipCData: {
           if (FX_wcsnicmp(m_pStart, L"]]>", 3) == 0) {
             m_pStart += 3;
-            dwStatus = FDE_XMLSYNTAXSTATUS_CData;
+            syntaxParserResult = FDE_XmlSyntaxResult::CData;
             m_iTextDataLength = m_iDataLength;
             m_BlockBuffer.Reset();
             m_pCurrentBlock = m_BlockBuffer.GetAvailableBlock(m_iIndexInBlock);
-            m_dwMode = FDE_XMLSYNTAXMODE_Text;
+            m_syntaxParserState = FDE_XmlSyntaxState::Text;
           } else {
             if (m_iIndexInBlock == m_iAllocStep) {
               m_pCurrentBlock =
                   m_BlockBuffer.GetAvailableBlock(m_iIndexInBlock);
               if (!m_pCurrentBlock)
-                return FDE_XMLSYNTAXSTATUS_Error;
+                return FDE_XmlSyntaxResult::Error;
             }
             m_pCurrentBlock[m_iIndexInBlock++] = ch;
             m_iDataLength++;
@@ -1817,7 +1819,7 @@ uint32_t CFDE_XMLSyntaxParser::DoSyntaxParse() {
           }
           break;
         }
-        case FDE_XMLSYNTAXMODE_SkipDeclNode:
+        case FDE_XmlSyntaxState::SkipDeclNode:
           if (m_SkipChar == L'\'' || m_SkipChar == L'\"') {
             m_pStart++;
             if (ch != m_SkipChar)
@@ -1826,7 +1828,7 @@ uint32_t CFDE_XMLSyntaxParser::DoSyntaxParse() {
             m_SkipStack.Pop();
             uint32_t* pDWord = m_SkipStack.GetTopElement();
             if (!pDWord)
-              m_dwMode = FDE_XMLSYNTAXMODE_Text;
+              m_syntaxParserState = FDE_XmlSyntaxState::Text;
             else
               m_SkipChar = (FX_WCHAR)*pDWord;
           } else {
@@ -1864,7 +1866,7 @@ uint32_t CFDE_XMLSyntaxParser::DoSyntaxParse() {
                     m_BlockBuffer.Reset();
                     m_pCurrentBlock =
                         m_BlockBuffer.GetAvailableBlock(m_iIndexInBlock);
-                    m_dwMode = FDE_XMLSYNTAXMODE_Text;
+                    m_syntaxParserState = FDE_XmlSyntaxState::Text;
                   } else {
                     m_SkipChar = static_cast<FX_WCHAR>(*pDWord);
                   }
@@ -1876,7 +1878,7 @@ uint32_t CFDE_XMLSyntaxParser::DoSyntaxParse() {
                 m_pCurrentBlock =
                     m_BlockBuffer.GetAvailableBlock(m_iIndexInBlock);
                 if (!m_pCurrentBlock) {
-                  return FDE_XMLSYNTAXSTATUS_Error;
+                  return FDE_XmlSyntaxResult::Error;
                 }
               }
               m_pCurrentBlock[m_iIndexInBlock++] = ch;
@@ -1885,15 +1887,15 @@ uint32_t CFDE_XMLSyntaxParser::DoSyntaxParse() {
             m_pStart++;
           }
           break;
-        case FDE_XMLSYNTAXMODE_SkipComment:
+        case FDE_XmlSyntaxState::SkipComment:
           if (FX_wcsnicmp(m_pStart, L"-->", 3) == 0) {
             m_pStart += 2;
-            m_dwMode = FDE_XMLSYNTAXMODE_Text;
+            m_syntaxParserState = FDE_XmlSyntaxState::Text;
           }
 
           m_pStart++;
           break;
-        case FDE_XMLSYNTAXMODE_TargetData:
+        case FDE_XmlSyntaxState::TargetData:
           if (FDE_IsXMLWhiteSpace(ch)) {
             if (m_iDataLength < 1) {
               m_pStart++;
@@ -1905,12 +1907,12 @@ uint32_t CFDE_XMLSyntaxParser::DoSyntaxParse() {
               m_pCurrentBlock =
                   m_BlockBuffer.GetAvailableBlock(m_iIndexInBlock);
               m_pStart++;
-              dwStatus = FDE_XMLSYNTAXSTATUS_TargetData;
+              syntaxParserResult = FDE_XmlSyntaxResult::TargetData;
               break;
             }
           }
           if (ch == '?') {
-            m_dwMode = FDE_XMLSYNTAXMODE_CloseInstruction;
+            m_syntaxParserState = FDE_XmlSyntaxState::CloseInstruction;
             m_pStart++;
           } else if (ch == '\"') {
             if (m_wQuotationMark == 0) {
@@ -1923,17 +1925,17 @@ uint32_t CFDE_XMLSyntaxParser::DoSyntaxParse() {
               m_pCurrentBlock =
                   m_BlockBuffer.GetAvailableBlock(m_iIndexInBlock);
               m_pStart++;
-              dwStatus = FDE_XMLSYNTAXSTATUS_TargetData;
+              syntaxParserResult = FDE_XmlSyntaxResult::TargetData;
             } else {
-              m_dwStatus = FDE_XMLSYNTAXSTATUS_Error;
-              return m_dwStatus;
+              m_syntaxParserResult = FDE_XmlSyntaxResult::Error;
+              return m_syntaxParserResult;
             }
           } else {
             if (m_iIndexInBlock == m_iAllocStep) {
               m_pCurrentBlock =
                   m_BlockBuffer.GetAvailableBlock(m_iIndexInBlock);
               if (!m_pCurrentBlock) {
-                return FDE_XMLSYNTAXSTATUS_Error;
+                return FDE_XmlSyntaxResult::Error;
               }
             }
             m_pCurrentBlock[m_iIndexInBlock++] = ch;
@@ -1944,11 +1946,11 @@ uint32_t CFDE_XMLSyntaxParser::DoSyntaxParse() {
         default:
           break;
       }
-      if (dwStatus != FDE_XMLSYNTAXSTATUS_None)
-        return dwStatus;
+      if (syntaxParserResult != FDE_XmlSyntaxResult::None)
+        return syntaxParserResult;
     }
   }
-  return 0;
+  return FDE_XmlSyntaxResult::Text;
 }
 
 CFDE_XMLSyntaxParser::~CFDE_XMLSyntaxParser() {
@@ -1966,10 +1968,10 @@ int32_t CFDE_XMLSyntaxParser::GetStatus() const {
   if (iStreamLength < 1) {
     return 100;
   }
-  if (m_dwStatus == FDE_XMLSYNTAXSTATUS_Error) {
+  if (m_syntaxParserResult == FDE_XmlSyntaxResult::Error) {
     return -1;
   }
-  if (m_dwStatus == FDE_XMLSYNTAXSTATUS_EOS) {
+  if (m_syntaxParserResult == FDE_XmlSyntaxResult::EndOfString) {
     return 100;
   }
   return m_iParsedBytes * 100 / iStreamLength;

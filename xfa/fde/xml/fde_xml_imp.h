@@ -291,27 +291,6 @@ class CFDE_BlockBuffer : public CFX_Target {
   int32_t m_iStartPosition;
 };
 
-#define FDE_XMLSYNTAXMODE_Text 0
-#define FDE_XMLSYNTAXMODE_Node 1
-#define FDE_XMLSYNTAXMODE_Target 2
-#define FDE_XMLSYNTAXMODE_Tag 3
-#define FDE_XMLSYNTAXMODE_AttriName 4
-#define FDE_XMLSYNTAXMODE_AttriEqualSign 5
-#define FDE_XMLSYNTAXMODE_AttriQuotation 6
-#define FDE_XMLSYNTAXMODE_AttriValue 7
-#define FDE_XMLSYNTAXMODE_Entity 8
-#define FDE_XMLSYNTAXMODE_EntityDecimal 9
-#define FDE_XMLSYNTAXMODE_EntityHex 10
-#define FDE_XMLSYNTAXMODE_CloseInstruction 11
-#define FDE_XMLSYNTAXMODE_BreakElement 12
-#define FDE_XMLSYNTAXMODE_CloseElement 13
-#define FDE_XMLSYNTAXMODE_SkipDeclNode 14
-#define FDE_XMLSYNTAXMODE_DeclCharData 15
-#define FDE_XMLSYNTAXMODE_SkipComment 16
-#define FDE_XMLSYNTAXMODE_SkipCommentOrDecl 17
-#define FDE_XMLSYNTAXMODE_SkipCData 18
-#define FDE_XMLSYNTAXMODE_TargetData 19
-
 class CFDE_XMLSyntaxParser : public CFX_Target {
  public:
   CFDE_XMLSyntaxParser();
@@ -320,7 +299,7 @@ class CFDE_XMLSyntaxParser : public CFX_Target {
   void Init(IFX_Stream* pStream,
             int32_t iXMLPlaneSize,
             int32_t iTextDataSize = 256);
-  uint32_t DoSyntaxParse();
+  FDE_XmlSyntaxResult DoSyntaxParse();
   int32_t GetStatus() const;
   int32_t GetCurrentPos() const {
     return m_iParsedChars + (m_pStart - m_pBuffer);
@@ -349,6 +328,29 @@ class CFDE_XMLSyntaxParser : public CFX_Target {
   }
 
  protected:
+  enum class FDE_XmlSyntaxState {
+    Text,
+    Node,
+    Target,
+    Tag,
+    AttriName,
+    AttriEqualSign,
+    AttriQuotation,
+    AttriValue,
+    Entity,
+    EntityDecimal,
+    EntityHex,
+    CloseInstruction,
+    BreakElement,
+    CloseElement,
+    SkipDeclNode,
+    DeclCharData,
+    SkipComment,
+    SkipCommentOrDecl,
+    SkipCData,
+    TargetData
+  };
+
   IFX_Stream* m_pStream;
   int32_t m_iXMLPlaneSize;
   int32_t m_iCurrentPos;
@@ -369,8 +371,8 @@ class CFDE_XMLSyntaxParser : public CFX_Target {
   FX_WCHAR* m_pCurrentBlock;
   int32_t m_iIndexInBlock;
   int32_t m_iTextDataLength;
-  uint32_t m_dwStatus;
-  uint32_t m_dwMode;
+  FDE_XmlSyntaxResult m_syntaxParserResult;
+  FDE_XmlSyntaxState m_syntaxParserState;
   FX_WCHAR m_wQuotationMark;
   int32_t m_iEntityStart;
   CFX_DWordStack m_SkipStack;
