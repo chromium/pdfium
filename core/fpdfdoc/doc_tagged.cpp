@@ -205,7 +205,8 @@ CPDF_StructElementImpl::CPDF_StructElementImpl(CPDF_StructTreeImpl* pTree,
   m_pDict = pDict;
   m_Type = pDict->GetStringBy("S");
   if (pTree->m_pRoleMap) {
-    CFX_ByteString mapped = pTree->m_pRoleMap->GetStringBy(m_Type);
+    CFX_ByteString mapped =
+        pTree->m_pRoleMap->GetStringBy(m_Type.AsByteStringC());
     if (!mapped.IsEmpty()) {
       m_Type = mapped;
     }
@@ -373,14 +374,16 @@ CPDF_Object* CPDF_StructElementImpl::GetAttr(const CFX_ByteStringC& owner,
   if (CPDF_Array* pArray = pC->AsArray()) {
     for (uint32_t i = 0; i < pArray->GetCount(); i++) {
       CFX_ByteString class_name = pArray->GetStringAt(i);
-      CPDF_Dictionary* pClassDict = pClassMap->GetDictBy(class_name);
+      CPDF_Dictionary* pClassDict =
+          pClassMap->GetDictBy(class_name.AsByteStringC());
       if (pClassDict && pClassDict->GetStringBy("O") == owner)
         return pClassDict->GetDirectObjectBy(name);
     }
     return nullptr;
   }
   CFX_ByteString class_name = pC->GetString();
-  CPDF_Dictionary* pClassDict = pClassMap->GetDictBy(class_name);
+  CPDF_Dictionary* pClassDict =
+      pClassMap->GetDictBy(class_name.AsByteStringC());
   if (pClassDict && pClassDict->GetStringBy("O") == owner)
     return pClassDict->GetDirectObjectBy(name);
   return nullptr;

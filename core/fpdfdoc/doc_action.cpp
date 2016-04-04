@@ -38,8 +38,8 @@ CPDF_Dest CPDF_Action::GetDest(CPDF_Document* pDoc) const {
   }
   if (pDest->IsString() || pDest->IsName()) {
     CPDF_NameTree name_tree(pDoc, "Dests");
-    CFX_ByteStringC name = pDest->GetString();
-    return CPDF_Dest(name_tree.LookupNamedDest(pDoc, name));
+    return CPDF_Dest(
+        name_tree.LookupNamedDest(pDoc, pDest->GetString().AsByteStringC()));
   }
   if (CPDF_Array* pArray = pDest->AsArray())
     return CPDF_Dest(pArray);

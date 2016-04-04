@@ -466,7 +466,7 @@ FX_BOOL CPDFSDK_Widget::IsWidgetAppearanceValid(
     case FIELDTYPE_CHECKBOX:
     case FIELDTYPE_RADIOBUTTON:
       if (CPDF_Dictionary* pSubDict = psub->AsDictionary()) {
-        return pSubDict->GetStreamBy(GetAppState()) != NULL;
+        return !!pSubDict->GetStreamBy(GetAppState().AsByteStringC());
       }
       return FALSE;
   }
@@ -1813,7 +1813,7 @@ void CPDFSDK_Widget::AddImageToAppearance(const CFX_ByteString& sAPType,
   ASSERT(pDoc);
 
   CPDF_Dictionary* pAPDict = m_pAnnot->GetAnnotDict()->GetDictBy("AP");
-  CPDF_Stream* pStream = pAPDict->GetStreamBy(sAPType);
+  CPDF_Stream* pStream = pAPDict->GetStreamBy(sAPType.AsByteStringC());
   CPDF_Dictionary* pStreamDict = pStream->GetDict();
   CFX_ByteString sImageAlias = "IMG";
 
@@ -1831,14 +1831,14 @@ void CPDFSDK_Widget::AddImageToAppearance(const CFX_ByteString& sAPType,
 
   if (pStreamResList) {
     CPDF_Dictionary* pXObject = new CPDF_Dictionary;
-    pXObject->SetAtReference(sImageAlias, pDoc, pImage);
+    pXObject->SetAtReference(sImageAlias.AsByteStringC(), pDoc, pImage);
     pStreamResList->SetAt("XObject", pXObject);
   }
 }
 
 void CPDFSDK_Widget::RemoveAppearance(const CFX_ByteString& sAPType) {
   if (CPDF_Dictionary* pAPDict = m_pAnnot->GetAnnotDict()->GetDictBy("AP")) {
-    pAPDict->RemoveAt(sAPType);
+    pAPDict->RemoveAt(sAPType.AsByteStringC());
   }
 }
 

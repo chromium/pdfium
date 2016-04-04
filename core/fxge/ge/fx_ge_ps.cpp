@@ -680,7 +680,7 @@ FX_BOOL CFX_PSRenderer::DrawText(int nChars,
     buf << pCharPos[i].m_OriginX << " " << pCharPos[i].m_OriginY << " m";
     CFX_ByteString hex;
     hex.Format("<%02X>", ps_glyphindex);
-    buf << hex << "Tj\n";
+    buf << hex.AsByteStringC() << "Tj\n";
   }
   buf << "Q\n";
   m_pOutput->OutputPS((const FX_CHAR*)buf.GetBuffer(), buf.GetSize());

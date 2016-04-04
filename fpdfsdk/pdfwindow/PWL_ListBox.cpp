@@ -118,21 +118,25 @@ void CPWL_ListBox::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
 
       CFX_FloatPoint ptOffset(rcItem.left, (rcItem.top + rcItem.bottom) * 0.5f);
       if (m_pList->IsItemSelected(i)) {
-        sListItems << CPWL_Utils::GetRectFillAppStream(
-            rcItem, PWL_DEFAULT_SELBACKCOLOR);
+        sListItems << CPWL_Utils::GetRectFillAppStream(rcItem,
+                                                       PWL_DEFAULT_SELBACKCOLOR)
+                          .AsByteStringC();
         CFX_ByteString sItem =
             CPWL_Utils::GetEditAppStream(m_pList->GetItemEdit(i), ptOffset);
         if (sItem.GetLength() > 0) {
           sListItems << "BT\n"
                      << CPWL_Utils::GetColorAppStream(PWL_DEFAULT_SELTEXTCOLOR)
-                     << sItem << "ET\n";
+                            .AsByteStringC()
+                     << sItem.AsByteStringC() << "ET\n";
         }
       } else {
         CFX_ByteString sItem =
             CPWL_Utils::GetEditAppStream(m_pList->GetItemEdit(i), ptOffset);
         if (sItem.GetLength() > 0) {
-          sListItems << "BT\n" << CPWL_Utils::GetColorAppStream(GetTextColor())
-                     << sItem << "ET\n";
+          sListItems << "BT\n"
+                     << CPWL_Utils::GetColorAppStream(GetTextColor())
+                            .AsByteStringC()
+                     << sItem.AsByteStringC() << "ET\n";
         }
       }
     }

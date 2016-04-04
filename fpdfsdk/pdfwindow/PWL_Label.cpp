@@ -118,7 +118,8 @@ CFX_FloatRect CPWL_Label::GetContentRect() const {
 void CPWL_Label::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
   CPWL_Wnd::GetThisAppearanceStream(sAppStream);
 
-  sAppStream << GetTextAppearanceStream(CFX_FloatPoint(0.0f, 0.0f));
+  sAppStream << GetTextAppearanceStream(CFX_FloatPoint(0.0f, 0.0f))
+                    .AsByteStringC();
 }
 
 CFX_ByteString CPWL_Label::GetTextAppearanceStream(
@@ -127,8 +128,9 @@ CFX_ByteString CPWL_Label::GetTextAppearanceStream(
   CFX_ByteString sEdit = CPWL_Utils::GetEditAppStream(m_pEdit, ptOffset);
 
   if (sEdit.GetLength() > 0) {
-    sRet << "BT\n" << CPWL_Utils::GetColorAppStream(GetTextColor()) << sEdit
-         << "ET\n";
+    sRet << "BT\n"
+         << CPWL_Utils::GetColorAppStream(GetTextColor()).AsByteStringC()
+         << sEdit.AsByteStringC() << "ET\n";
   }
 
   return sRet.GetByteString();

@@ -427,7 +427,7 @@ CPDF_Object* CPDF_StreamParser::ReadNextObject(FX_BOOL bAllowNestedArray,
         return nullptr;
       }
       if (!key.IsEmpty()) {
-        pDict->SetAt(key, pObj);
+        pDict->SetAt(key.AsByteStringC(), pObj);
       } else {
         pObj->Release();
       }

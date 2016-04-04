@@ -78,7 +78,7 @@ void CPDF_FormControl::SetOnStateName(const CFX_ByteString& csOn) {
         continue;
       }
       if (csKey2 != "Off") {
-        pSubDict->ReplaceKey(csKey2, csValue);
+        pSubDict->ReplaceKey(csKey2.AsByteStringC(), csValue.AsByteStringC());
         break;
       }
     }
@@ -202,7 +202,7 @@ CPDF_ApSettings CPDF_FormControl::GetMK() const {
 }
 
 bool CPDF_FormControl::HasMKEntry(CFX_ByteString csEntry) const {
-  return GetMK().HasMKEntry(csEntry);
+  return GetMK().HasMKEntry(csEntry.AsByteStringC());
 }
 
 int CPDF_FormControl::GetRotation() {
@@ -210,24 +210,24 @@ int CPDF_FormControl::GetRotation() {
 }
 
 FX_ARGB CPDF_FormControl::GetColor(int& iColorType, CFX_ByteString csEntry) {
-  return GetMK().GetColor(iColorType, csEntry);
+  return GetMK().GetColor(iColorType, csEntry.AsByteStringC());
 }
 
 FX_FLOAT CPDF_FormControl::GetOriginalColor(int index, CFX_ByteString csEntry) {
-  return GetMK().GetOriginalColor(index, csEntry);
+  return GetMK().GetOriginalColor(index, csEntry.AsByteStringC());
 }
 
 void CPDF_FormControl::GetOriginalColor(int& iColorType,
                                         FX_FLOAT fc[4],
                                         CFX_ByteString csEntry) {
-  GetMK().GetOriginalColor(iColorType, fc, csEntry);
+  GetMK().GetOriginalColor(iColorType, fc, csEntry.AsByteStringC());
 }
 CFX_WideString CPDF_FormControl::GetCaption(CFX_ByteString csEntry) {
-  return GetMK().GetCaption(csEntry);
+  return GetMK().GetCaption(csEntry.AsByteStringC());
 }
 
 CPDF_Stream* CPDF_FormControl::GetIcon(CFX_ByteString csEntry) {
-  return GetMK().GetIcon(csEntry);
+  return GetMK().GetIcon(csEntry.AsByteStringC());
 }
 
 CPDF_IconFit CPDF_FormControl::GetIconFit() {
@@ -286,7 +286,8 @@ CPDF_Font* CPDF_FormControl::GetDefaultControlFont() {
   if (CPDF_Dictionary* pDict = ToDictionary(pObj)) {
     CPDF_Dictionary* pFonts = pDict->GetDictBy("Font");
     if (pFonts) {
-      CPDF_Dictionary* pElement = pFonts->GetDictBy(csFontNameTag);
+      CPDF_Dictionary* pElement =
+          pFonts->GetDictBy(csFontNameTag.AsByteStringC());
       if (pElement) {
         CPDF_Font* pFont = m_pField->m_pForm->m_pDocument->LoadFont(pElement);
         if (pFont) {
@@ -303,7 +304,8 @@ CPDF_Font* CPDF_FormControl::GetDefaultControlFont() {
   if (CPDF_Dictionary* pDict = ToDictionary(pObj)) {
     CPDF_Dictionary* pFonts = pDict->GetDictBy("Font");
     if (pFonts) {
-      CPDF_Dictionary* pElement = pFonts->GetDictBy(csFontNameTag);
+      CPDF_Dictionary* pElement =
+          pFonts->GetDictBy(csFontNameTag.AsByteStringC());
       if (pElement) {
         CPDF_Font* pFont = m_pField->m_pForm->m_pDocument->LoadFont(pElement);
         if (pFont) {

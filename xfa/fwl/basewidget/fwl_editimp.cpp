@@ -734,14 +734,14 @@ FX_BOOL CFWL_EditImp::Undo() {
     return FALSE;
   }
   CFX_ByteString bsRecord = m_RecordArr[m_iCurRecord--];
-  return Undo(bsRecord);
+  return Undo(bsRecord.AsByteStringC());
 }
 FX_BOOL CFWL_EditImp::Redo() {
   if (!CanRedo()) {
     return FALSE;
   }
   CFX_ByteString bsRecord = m_RecordArr[++m_iCurRecord];
-  return Redo(bsRecord);
+  return Redo(bsRecord.AsByteStringC());
 }
 FX_BOOL CFWL_EditImp::CanUndo() {
   return m_iCurRecord >= 0;

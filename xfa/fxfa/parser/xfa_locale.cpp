@@ -72,7 +72,8 @@ void CXFA_XMLLocale::GetNumbericSymbol(FX_LOCALENUMSYMBOL eType,
     default:
       return;
   }
-  CXML_Element* pElement = m_pLocaleData->GetElement("", bsSymbols);
+  CXML_Element* pElement =
+      m_pLocaleData->GetElement("", bsSymbols.AsByteStringC());
   if (!pElement) {
     return;
   }
@@ -86,7 +87,7 @@ void CXFA_XMLLocale::GetDateTimeSymbols(CFX_WideString& wsDtSymbol) const {
   }
   CFX_ByteString bsSpace;
   CXML_Element* pNumberSymbols =
-      m_pLocaleData->GetElement(bsSpace, "dateTimeSymbols");
+      m_pLocaleData->GetElement(bsSpace.AsByteStringC(), "dateTimeSymbols");
   if (!pNumberSymbols) {
     return;
   }
@@ -120,10 +121,12 @@ CFX_WideString CXFA_XMLLocale::GetCalendarSymbol(const CFX_ByteStringC& symbol,
   if (m_pLocaleData) {
     CXML_Element* pChild = m_pLocaleData->GetElement("", "calendarSymbols");
     if (pChild) {
-      CXML_Element* pSymbolNames = pChild->GetElement("", pstrSymbolNames);
+      CXML_Element* pSymbolNames =
+          pChild->GetElement("", pstrSymbolNames.AsByteStringC());
       if (pSymbolNames) {
         if (pSymbolNames->GetAttrInteger("abbr") != bAbbr) {
-          pSymbolNames = pChild->GetElement("", pstrSymbolNames, 1);
+          pSymbolNames =
+              pChild->GetElement("", pstrSymbolNames.AsByteStringC(), 1);
         }
         if (pSymbolNames && pSymbolNames->GetAttrInteger("abbr") == bAbbr) {
           CXML_Element* pSymbolName =

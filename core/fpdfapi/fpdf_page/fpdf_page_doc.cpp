@@ -331,7 +331,7 @@ CPDF_ColorSpace* CPDF_DocPageData::GetColorSpace(
     if (!pCS && pResources) {
       CPDF_Dictionary* pList = pResources->GetDictBy("ColorSpace");
       if (pList) {
-        pCSObj = pList->GetDirectObjectBy(name);
+        pCSObj = pList->GetDirectObjectBy(name.AsByteStringC());
         return GetColorSpace(pCSObj, nullptr);
       }
     }

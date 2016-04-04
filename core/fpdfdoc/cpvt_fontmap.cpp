@@ -38,8 +38,9 @@ void CPVT_FontMap::GetAnnotSysPDFFont(CPDF_Document* pDoc,
     return;
 
   if (CPDF_Dictionary* pFontList = pResDict->GetDictBy("Font")) {
-    if (!pFontList->KeyExist(sSysFontAlias))
-      pFontList->SetAtReference(sSysFontAlias, pDoc, pPDFFont->GetFontDict());
+    if (!pFontList->KeyExist(sSysFontAlias.AsByteStringC()))
+      pFontList->SetAtReference(sSysFontAlias.AsByteStringC(), pDoc,
+                                pPDFFont->GetFontDict());
   }
   pSysFont = pPDFFont;
 }

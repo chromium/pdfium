@@ -265,6 +265,7 @@ void CPWL_Edit::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
       case PBS_SOLID: {
         sLine << "q\n" << GetBorderWidth() << " w\n"
               << CPWL_Utils::GetColorAppStream(GetBorderColor(), FALSE)
+                     .AsByteStringC()
               << " 2 J 0 j\n";
 
         for (int32_t i = 1; i < nCharArray; i++) {
@@ -281,6 +282,7 @@ void CPWL_Edit::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
       case PBS_DASH: {
         sLine << "q\n" << GetBorderWidth() << " w\n"
               << CPWL_Utils::GetColorAppStream(GetBorderColor(), FALSE)
+                     .AsByteStringC()
               << " 2 J 0 j\n"
               << "[" << GetBorderDash().nDash << " " << GetBorderDash().nGap
               << "] " << GetBorderDash().nPhase << " d\n";
@@ -319,7 +321,8 @@ void CPWL_Edit::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
 
   if (sEditSel.GetLength() > 0)
     sText << CPWL_Utils::GetColorAppStream(PWL_DEFAULT_SELBACKCOLOR)
-          << sEditSel;
+                 .AsByteStringC()
+          << sEditSel.AsByteStringC();
 
   wrTemp = CPWL_Utils::OverlapWordRange(wrVisible, wrSelBefore);
   CFX_ByteString sEditBefore = CPWL_Utils::GetEditAppStream(
@@ -327,8 +330,9 @@ void CPWL_Edit::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
       m_pEdit->GetPasswordChar());
 
   if (sEditBefore.GetLength() > 0)
-    sText << "BT\n" << CPWL_Utils::GetColorAppStream(GetTextColor())
-          << sEditBefore << "ET\n";
+    sText << "BT\n"
+          << CPWL_Utils::GetColorAppStream(GetTextColor()).AsByteStringC()
+          << sEditBefore.AsByteStringC() << "ET\n";
 
   wrTemp = CPWL_Utils::OverlapWordRange(wrVisible, wrSelect);
   CFX_ByteString sEditMid = CPWL_Utils::GetEditAppStream(
@@ -338,7 +342,8 @@ void CPWL_Edit::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
   if (sEditMid.GetLength() > 0)
     sText << "BT\n"
           << CPWL_Utils::GetColorAppStream(CPWL_Color(COLORTYPE_GRAY, 1))
-          << sEditMid << "ET\n";
+                 .AsByteStringC()
+          << sEditMid.AsByteStringC() << "ET\n";
 
   wrTemp = CPWL_Utils::OverlapWordRange(wrVisible, wrSelAfter);
   CFX_ByteString sEditAfter = CPWL_Utils::GetEditAppStream(
@@ -346,8 +351,9 @@ void CPWL_Edit::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
       m_pEdit->GetPasswordChar());
 
   if (sEditAfter.GetLength() > 0)
-    sText << "BT\n" << CPWL_Utils::GetColorAppStream(GetTextColor())
-          << sEditAfter << "ET\n";
+    sText << "BT\n"
+          << CPWL_Utils::GetColorAppStream(GetTextColor()).AsByteStringC()
+          << sEditAfter.AsByteStringC() << "ET\n";
 
   if (HasFlag(PES_SPELLCHECK)) {
     CFX_ByteString sSpellCheck = CPWL_Utils::GetSpellCheckAppStream(
@@ -355,7 +361,8 @@ void CPWL_Edit::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
     if (sSpellCheck.GetLength() > 0)
       sText << CPWL_Utils::GetColorAppStream(CPWL_Color(COLORTYPE_RGB, 1, 0, 0),
                                              FALSE)
-            << sSpellCheck;
+                   .AsByteStringC()
+            << sSpellCheck.AsByteStringC();
   }
 
   if (sText.GetLength() > 0) {
@@ -742,8 +749,9 @@ CFX_ByteString CPWL_Edit::GetTextAppearanceStream(
   CFX_ByteString sEdit = CPWL_Utils::GetEditAppStream(m_pEdit, ptOffset);
 
   if (sEdit.GetLength() > 0) {
-    sRet << "BT\n" << CPWL_Utils::GetColorAppStream(GetTextColor()) << sEdit
-         << "ET\n";
+    sRet << "BT\n"
+         << CPWL_Utils::GetColorAppStream(GetTextColor()).AsByteStringC()
+         << sEdit.AsByteStringC() << "ET\n";
   }
 
   return sRet.GetByteString();

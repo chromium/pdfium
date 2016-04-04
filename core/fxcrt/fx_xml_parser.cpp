@@ -371,7 +371,7 @@ CXML_Element* CXML_Parser::ParseElement(CXML_Element* pParent,
   }
   CXML_Element* pElement = new CXML_Element;
   pElement->m_pParent = pParent;
-  pElement->SetTag(tag_space, tag_name);
+  pElement->SetTag(tag_space.AsByteStringC(), tag_name.AsByteStringC());
   do {
     CFX_ByteString attr_space, attr_name;
     while (m_dwIndex < m_dwBufferSize) {
@@ -397,7 +397,8 @@ CXML_Element* CXML_Parser::ParseElement(CXML_Element* pParent,
       }
       CFX_WideString attr_value;
       GetAttrValue(attr_value);
-      pElement->m_AttrMap.SetAt(attr_space, attr_name, attr_value);
+      pElement->m_AttrMap.SetAt(attr_space.AsByteStringC(),
+                                attr_name.AsByteStringC(), attr_value);
     }
     m_nOffset = m_nBufferOffset + (FX_FILESIZE)m_dwIndex;
     if (m_dwIndex < m_dwBufferSize || IsEOF()) {
@@ -600,7 +601,7 @@ CFX_ByteString CXML_Element::GetNamespace(FX_BOOL bQualified) const {
   if (bQualified) {
     return m_QSpaceName;
   }
-  return GetNamespaceURI(m_QSpaceName);
+  return GetNamespaceURI(m_QSpaceName.AsByteStringC());
 }
 CFX_ByteString CXML_Element::GetNamespaceURI(
     const CFX_ByteStringC& qName) const {

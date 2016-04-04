@@ -395,8 +395,7 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
       char sExtend[5] = {};
       FXSYS_itoa(iKey, sExtend, 10);
       key = CFX_ByteString("FFT") + CFX_ByteString(sExtend);
-
-      if (!pPageXObject->KeyExist(key))
+      if (!pPageXObject->KeyExist(key.AsByteStringC()))
         break;
     }
   }
@@ -406,7 +405,7 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
   CPDF_Dictionary* pNewXORes = NULL;
 
   if (!key.IsEmpty()) {
-    pPageXObject->SetAtReference(key, pDocument, dwObjNum);
+    pPageXObject->SetAtReference(key.AsByteStringC(), pDocument, dwObjNum);
     CPDF_Dictionary* pNewOXbjectDic = pNewXObject->GetDict();
     pNewXORes = new CPDF_Dictionary;
     pNewOXbjectDic->SetAt("Resources", pNewXORes);
@@ -438,7 +437,7 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
         continue;
 
       if (!sAnnotState.IsEmpty()) {
-        pAPStream = pAPDic->GetStreamBy(sAnnotState);
+        pAPStream = pAPDic->GetStreamBy(sAnnotState.AsByteStringC());
       } else {
         auto it = pAPDic->begin();
         if (it != pAPDic->end()) {
@@ -487,7 +486,7 @@ DLLEXPORT int STDCALL FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     CFX_ByteString sFormName;
     sFormName.Format("F%d", i);
     uint32_t dwObjNum = pDocument->AddIndirectObject(pObj);
-    pXObject->SetAtReference(sFormName, pDocument, dwObjNum);
+    pXObject->SetAtReference(sFormName.AsByteStringC(), pDocument, dwObjNum);
 
     CPDF_StreamAcc acc;
     acc.LoadAllData(pNewXObject);

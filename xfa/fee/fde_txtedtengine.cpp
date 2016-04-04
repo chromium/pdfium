@@ -391,7 +391,7 @@ int32_t CFDE_TxtEdtEngine::Insert(int32_t nStart,
         new CFDE_TxtEdtDoRecord_Insert(this, m_nCaret, lpBuffer, nLength);
     CFX_ByteString bsDoRecord;
     pRecord->Serialize(bsDoRecord);
-    m_Param.pEventSink->On_AddDoRecord(this, bsDoRecord);
+    m_Param.pEventSink->On_AddDoRecord(this, bsDoRecord.AsByteStringC());
     pRecord->Release();
   }
   GetText(m_ChangeInfo.wsPrevText, 0);
@@ -454,7 +454,7 @@ int32_t CFDE_TxtEdtEngine::Delete(int32_t nStart, FX_BOOL bBackspace) {
         new CFDE_TxtEdtDoRecord_DeleteRange(this, nStart, m_nCaret, wsRange);
     CFX_ByteString bsDoRecord;
     pRecord->Serialize(bsDoRecord);
-    m_Param.pEventSink->On_AddDoRecord(this, bsDoRecord);
+    m_Param.pEventSink->On_AddDoRecord(this, bsDoRecord.AsByteStringC());
     pRecord->Release();
   }
   m_ChangeInfo.nChangeType = FDE_TXTEDT_TEXTCHANGE_TYPE_Delete;
@@ -944,7 +944,7 @@ void CFDE_TxtEdtEngine::DeleteRange_DoRecord(int32_t nStart,
         this, nStart, m_nCaret, wsRange, bSel);
     CFX_ByteString bsDoRecord;
     pRecord->Serialize(bsDoRecord);
-    m_Param.pEventSink->On_AddDoRecord(this, bsDoRecord);
+    m_Param.pEventSink->On_AddDoRecord(this, bsDoRecord.AsByteStringC());
     pRecord->Release();
   }
   m_ChangeInfo.nChangeType = FDE_TXTEDT_TEXTCHANGE_TYPE_Delete;

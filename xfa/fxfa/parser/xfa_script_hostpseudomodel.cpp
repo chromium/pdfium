@@ -32,7 +32,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_LoadString(
     uint32_t dwFlag) {
   CFX_WideString wsValue;
   pNotify->GetAppProvider()->LoadString(dwFlag, wsValue);
-  FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsValue));
+  FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsValue).AsByteStringC());
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_AppType(
     FXJSE_HVALUE hValue,
@@ -48,7 +48,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_AppType(
   }
   CFX_WideString wsAppType;
   pNotify->GetAppProvider()->GetAppType(wsAppType);
-  FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsAppType));
+  FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsAppType).AsByteStringC());
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_FoxitAppType(
     FXJSE_HVALUE hValue,
@@ -64,7 +64,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_FoxitAppType(
   }
   CFX_WideString wsAppType;
   pNotify->GetAppProvider()->GetFoxitAppType(wsAppType);
-  FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsAppType));
+  FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsAppType).AsByteStringC());
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_CalculationsEnabled(
     FXJSE_HVALUE hValue,
@@ -114,7 +114,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_Language(
   }
   CFX_WideString wsLanguage;
   pNotify->GetAppProvider()->GetLanguage(wsLanguage);
-  FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsLanguage));
+  FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsLanguage).AsByteStringC());
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_NumPages(
     FXJSE_HVALUE hValue,
@@ -146,7 +146,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_Platform(
   }
   CFX_WideString wsPlatform;
   pNotify->GetAppProvider()->GetPlatform(wsPlatform);
-  FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsPlatform));
+  FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsPlatform).AsByteStringC());
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_Title(
     FXJSE_HVALUE hValue,
@@ -169,7 +169,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_Title(
   }
   CFX_WideString wsTitle;
   pNotify->GetDocProvider()->GetTitle(hDoc, wsTitle);
-  FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsTitle));
+  FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsTitle).AsByteStringC());
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_ValidationsEnabled(
     FXJSE_HVALUE hValue,
@@ -205,7 +205,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_Variation(
   }
   CFX_WideString wsVariation;
   pNotify->GetAppProvider()->GetVariation(wsVariation);
-  FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsVariation));
+  FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsVariation).AsByteStringC());
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_Version(
     FXJSE_HVALUE hValue,
@@ -221,7 +221,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_Version(
   }
   CFX_WideString wsVersion;
   pNotify->GetAppProvider()->GetVersion(wsVersion);
-  FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsVersion));
+  FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsVersion).AsByteStringC());
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_FoxitVersion(
     FXJSE_HVALUE hValue,
@@ -237,7 +237,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_FoxitVersion(
   }
   CFX_WideString wsVersion;
   pNotify->GetAppProvider()->GetFoxitVersion(wsVersion);
-  FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsVersion));
+  FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsVersion).AsByteStringC());
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_Name(
     FXJSE_HVALUE hValue,
@@ -253,7 +253,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_Name(
   }
   CFX_WideString wsAppName;
   pNotify->GetAppProvider()->GetAppName(wsAppName);
-  FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsAppName));
+  FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsAppName).AsByteStringC());
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_FoxitName(
     FXJSE_HVALUE hValue,
@@ -269,7 +269,8 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_FoxitName(
   }
   CFX_WideString wsFoxitAppName;
   pNotify->GetAppProvider()->GetFoxitAppName(wsFoxitAppName);
-  FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsFoxitAppName));
+  FXJSE_Value_SetUTF8String(hValue,
+                            FX_UTF8Encode(wsFoxitAppName).AsByteStringC());
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_GotoURL(
     CFXJSE_Arguments* pArguments) {
@@ -388,7 +389,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_Response(
                                       wsDefaultAnswer, bMark);
   FXJSE_HVALUE hValue = pArguments->GetReturnValue();
   if (hValue) {
-    FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsAnswer));
+    FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsAnswer).AsByteStringC());
   }
 }
 void CScript_HostPseudoModel::Script_HostPseudoModel_DocumentInBatch(
@@ -801,6 +802,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_CurrentDateTime(
   CFX_WideString wsDataTime = pNotify->GetCurrentDateTime();
   FXJSE_HVALUE hValue = pArguments->GetReturnValue();
   if (hValue) {
-    FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsDataTime));
+    FXJSE_Value_SetUTF8String(hValue,
+                              FX_UTF8Encode(wsDataTime).AsByteStringC());
   }
 }

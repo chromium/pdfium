@@ -111,12 +111,12 @@ void CFX_Locale::GetNumbericSymbol(FX_LOCALENUMSYMBOL eType,
   CFX_ByteString bsSpace;
   CFX_WideString wsName = gs_LocalNumberSymbols[eType];
   CXML_Element* pNumberSymbols =
-      m_pElement->GetElement(bsSpace, "numberSymbols");
+      m_pElement->GetElement(bsSpace.AsByteStringC(), "numberSymbols");
   if (!pNumberSymbols) {
     return;
   }
-  wsNumSymbol =
-      FX_GetXMLContent(bsSpace, pNumberSymbols, "numberSymbol", wsName);
+  wsNumSymbol = FX_GetXMLContent(bsSpace.AsByteStringC(), pNumberSymbols,
+                                 "numberSymbol", wsName);
 }
 void CFX_Locale::GetDateTimeSymbols(CFX_WideString& wsDtSymbol) const {
   if (!m_pElement) {
@@ -124,7 +124,7 @@ void CFX_Locale::GetDateTimeSymbols(CFX_WideString& wsDtSymbol) const {
   }
   CFX_ByteString bsSpace;
   CXML_Element* pNumberSymbols =
-      m_pElement->GetElement(bsSpace, "dateTimeSymbols");
+      m_pElement->GetElement(bsSpace.AsByteStringC(), "dateTimeSymbols");
   if (!pNumberSymbols) {
     return;
   }
@@ -137,20 +137,23 @@ static void FX_GetCalendarSymbol(CXML_Element* pXmlElement,
                                  CFX_WideString& wsName) {
   CFX_ByteString bsSpace;
   CFX_ByteString pstrSymbolNames = symbol_type + "Names";
-  CXML_Element* pChild = pXmlElement->GetElement(bsSpace, "calendarSymbols");
+  CXML_Element* pChild =
+      pXmlElement->GetElement(bsSpace.AsByteStringC(), "calendarSymbols");
   if (!pChild) {
     return;
   }
-  CXML_Element* pSymbolNames = pChild->GetElement(bsSpace, pstrSymbolNames);
+  CXML_Element* pSymbolNames = pChild->GetElement(
+      bsSpace.AsByteStringC(), pstrSymbolNames.AsByteStringC());
   if (!pSymbolNames) {
     return;
   }
   if (pSymbolNames->GetAttrInteger("abbr") != bAbbr) {
-    pSymbolNames = pChild->GetElement(bsSpace, pstrSymbolNames, 1);
+    pSymbolNames = pChild->GetElement(bsSpace.AsByteStringC(),
+                                      pstrSymbolNames.AsByteStringC(), 1);
   }
   if (pSymbolNames && pSymbolNames->GetAttrInteger("abbr") == bAbbr) {
-    CXML_Element* pSymbolName =
-        pSymbolNames->GetElement(bsSpace, symbol_type, index);
+    CXML_Element* pSymbolName = pSymbolNames->GetElement(
+        bsSpace.AsByteStringC(), symbol_type.AsByteStringC(), index);
     if (pSymbolName) {
       wsName = pSymbolName->GetContent(0);
     }
@@ -228,13 +231,13 @@ static void FX_GetPattern(CXML_Element* pXmlElement,
                           const CFX_WideString& wsSubCategory,
                           CFX_WideString& wsPattern) {
   CFX_ByteString bsSpace;
-  CXML_Element* pDatePatterns =
-      pXmlElement->GetElement(bsSpace, bsCategory + "s");
+  CXML_Element* pDatePatterns = pXmlElement->GetElement(
+      bsSpace.AsByteStringC(), (bsCategory + "s").AsByteStringC());
   if (!pDatePatterns) {
     return;
   }
-  wsPattern =
-      FX_GetXMLContent(bsSpace, pDatePatterns, bsCategory, wsSubCategory);
+  wsPattern = FX_GetXMLContent(bsSpace.AsByteStringC(), pDatePatterns,
+                               bsCategory.AsByteStringC(), wsSubCategory);
 }
 static void FX_GetDateTimePattern(CXML_Element* pXmlElement,
                                   const CFX_ByteString& bsCategory,

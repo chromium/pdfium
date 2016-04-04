@@ -74,12 +74,13 @@ CFX_ByteString CPDF_PageContentGenerator::RealizeResource(
   int idnum = 1;
   while (1) {
     name.Format("FX%c%d", szType[0], idnum);
-    if (!pResList->KeyExist(name)) {
+    if (!pResList->KeyExist(name.AsByteStringC())) {
       break;
     }
     idnum++;
   }
-  pResList->AddReference(name, m_pDocument, pResourceObj->GetObjNum());
+  pResList->AddReference(name.AsByteStringC(), m_pDocument,
+                         pResourceObj->GetObjNum());
   return name;
 }
 void CPDF_PageContentGenerator::ProcessImage(CFX_ByteTextBuf& buf,

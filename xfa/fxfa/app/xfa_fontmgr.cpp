@@ -1861,7 +1861,8 @@ IFX_Font* CXFA_PDFFontMgr::FindFont(CFX_ByteString strPsName,
   for (const auto& it : *pFontSetDict) {
     const CFX_ByteString& key = it.first;
     CPDF_Object* pObj = it.second;
-    if (!PsNameMatchDRFontName(strPsName, bBold, bItalic, key, bStrictMatch)) {
+    if (!PsNameMatchDRFontName(strPsName.AsByteStringC(), bBold, bItalic, key,
+                               bStrictMatch)) {
       continue;
     }
     CPDF_Object* pDirect = pObj->GetDirect();

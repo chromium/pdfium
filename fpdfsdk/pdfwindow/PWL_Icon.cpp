@@ -42,7 +42,7 @@ CFX_ByteString CPWL_Image::GetImageAppStream() {
     sAppStream << mt.GetA() << " " << mt.GetB() << " " << mt.GetC() << " "
                << mt.GetD() << " " << mt.GetE() << " " << mt.GetF() << " cm\n";
 
-    sAppStream << "0 g 0 G 1 w /" << sAlias << " Do\n"
+    sAppStream << "0 g 0 G 1 w /" << sAlias.AsByteStringC() << " Do\n"
                << "Q\n";
   }
 

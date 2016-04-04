@@ -343,8 +343,9 @@ CFX_ByteString CPDF_InterForm::GenerateNewResourceName(
   int num = 0;
   CFX_ByteString bsNum;
   while (TRUE) {
-    if (!pDict->KeyExist(csTmp + bsNum)) {
-      return csTmp + bsNum;
+    CFX_ByteString csKey = csTmp + bsNum;
+    if (!pDict->KeyExist(csKey.AsByteStringC())) {
+      return csKey;
     }
     if (m < iCount) {
       csTmp += csStr[m++];

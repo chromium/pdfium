@@ -27,8 +27,8 @@ class CFX_BinaryBuf {
   void Clear();
   void EstimateSize(FX_STRSIZE size, FX_STRSIZE alloc_step = 0);
   void AppendBlock(const void* pBuf, FX_STRSIZE size);
-  void AppendString(const CFX_ByteStringC& str) {
-    AppendBlock(str.GetPtr(), str.GetLength());
+  void AppendString(const CFX_ByteString& str) {
+    AppendBlock(str.c_str(), str.GetLength());
   }
 
   void AppendByte(uint8_t byte) {
@@ -63,6 +63,12 @@ class CFX_ByteTextBuf : public CFX_BinaryBuf {
   CFX_ByteTextBuf& operator<<(int i);
   CFX_ByteTextBuf& operator<<(uint32_t i);
   CFX_ByteTextBuf& operator<<(double f);
+  CFX_ByteTextBuf& operator<<(const FX_CHAR* pStr) {
+    return *this << CFX_ByteStringC(pStr);
+  }
+  CFX_ByteTextBuf& operator<<(const CFX_ByteString& str) {
+    return *this << str.AsByteStringC();
+  }
   CFX_ByteTextBuf& operator<<(const CFX_ByteStringC& lpsz);
   CFX_ByteTextBuf& operator<<(const CFX_ByteTextBuf& buf);
 };

@@ -115,7 +115,7 @@ void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,
         CFX_ByteString mode =
             pArray ? pArray->GetStringAt(0) : pObject->GetString();
 
-        pGeneralState->SetBlendMode(mode);
+        pGeneralState->SetBlendMode(mode.AsByteStringC());
         if (pGeneralState->m_BlendType > FXDIB_BLEND_MULTIPLY) {
           pParser->GetPageObjectHolder()->SetBackgroundAlphaNeeded(TRUE);
         }

@@ -32,7 +32,7 @@ CFX_ByteString CPDF_String::GetString() const {
 }
 
 CFX_ByteStringC CPDF_String::GetConstString() const {
-  return CFX_ByteStringC(m_String);
+  return m_String.AsByteStringC();
 }
 
 void CPDF_String::SetString(const CFX_ByteString& str) {

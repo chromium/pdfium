@@ -440,7 +440,7 @@ void CPDF_CMapParser::ParseWord(const CFX_ByteStringC& word) {
       }
       if (m_CodeSeq % 2) {
         CMap_CodeRange range;
-        if (CMap_GetCodeRange(range, m_LastWord, word)) {
+        if (CMap_GetCodeRange(range, m_LastWord.AsByteStringC(), word)) {
           m_CodeRanges.Add(range);
         }
       }

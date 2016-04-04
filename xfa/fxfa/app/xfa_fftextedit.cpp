@@ -420,13 +420,13 @@ FWL_ERR CXFA_FFTextEdit::OnProcessEvent(CFWL_Event* pEvent) {
     case FWL_EVTHASH_EDT_CheckWord: {
       CFX_WideString wstr(L"FWL_EVENT_DTP_SelectChanged");
       CFWL_EvtEdtCheckWord* event = (CFWL_EvtEdtCheckWord*)pEvent;
-      event->bCheckWord = CheckWord(event->bsWord);
+      event->bCheckWord = CheckWord(event->bsWord.AsByteStringC());
       break;
     }
     case FWL_EVTHASH_EDT_GetSuggestWords: {
       CFWL_EvtEdtGetSuggestWords* event = (CFWL_EvtEdtGetSuggestWords*)pEvent;
-      event->bSuggestWords =
-          GetSuggestWords(event->bsWord, event->bsArraySuggestWords);
+      event->bSuggestWords = GetSuggestWords(event->bsWord.AsByteStringC(),
+                                             event->bsArraySuggestWords);
       break;
     }
     default: {}

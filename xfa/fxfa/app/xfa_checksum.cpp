@@ -73,7 +73,7 @@ void CXFA_SAXReaderHandler::OnTagClose(void* pTag, uint32_t dwEndPos) {
   if (pSAXContext->m_eNode == FX_SAXNODE_Instruction) {
     textBuf << "?>";
   } else if (pSAXContext->m_eNode == FX_SAXNODE_Tag) {
-    textBuf << "></" << pSAXContext->m_bsTagName << ">";
+    textBuf << "></" << pSAXContext->m_bsTagName.AsByteStringC() << ">";
   }
   UpdateChecksum(FALSE);
 }

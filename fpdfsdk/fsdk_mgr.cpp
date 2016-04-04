@@ -186,7 +186,7 @@ FX_BOOL CFX_SystemHandler::FindNativeTrueTypeFont(
     pFontMapper->LoadInstalledFonts();
 
   for (const auto& font : pFontMapper->m_InstalledTTFonts) {
-    if (font.Compare(sFontFaceName))
+    if (font.Compare(sFontFaceName.AsByteStringC()))
       return TRUE;
   }
 

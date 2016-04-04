@@ -248,7 +248,7 @@ CFX_ArchiveSaver& CFX_ArchiveSaver::operator<<(const FX_WCHAR* wstr) {
 }
 CFX_ArchiveSaver& CFX_ArchiveSaver::operator<<(const CFX_WideString& wstr) {
   CFX_ByteString encoded = wstr.UTF16LE_Encode();
-  return operator<<(encoded);
+  return operator<<(encoded.AsByteStringC());
 }
 void CFX_ArchiveSaver::Write(const void* pData, FX_STRSIZE dwSize) {
   if (m_pStream) {
