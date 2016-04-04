@@ -629,6 +629,8 @@ FX_BOOL CFX_SkiaDeviceDriver::StartDIBits(const CFX_DIBSource* pSource,
   int rowBytes = pSource->GetPitch();
   switch (pSource->GetBPP()) {
     case 1: {
+      uint8_t zero = pSource->IsAlphaMask() ? 0xFF : 0x00;
+      uint8_t one = zero ^ 0xFF;
       dst8Storage.reset(FX_Alloc2D(uint8_t, width, height));
       uint8_t* dst8Pixels = dst8Storage.get();
       for (int y = 0; y < height; ++y) {
@@ -636,7 +638,7 @@ FX_BOOL CFX_SkiaDeviceDriver::StartDIBits(const CFX_DIBSource* pSource,
             static_cast<const uint8_t*>(buffer) + y * rowBytes;
         uint8_t* dstRow = dst8Pixels + y * width;
         for (int x = 0; x < width; ++x)
-          dstRow[x] = srcRow[x >> 3] & (1 << (~x & 0x07)) ? 0xFF : 0x00;
+          dstRow[x] = srcRow[x >> 3] & (1 << (~x & 0x07)) ? one : zero;
       }
       buffer = dst8Storage.get();
       rowBytes = width;
