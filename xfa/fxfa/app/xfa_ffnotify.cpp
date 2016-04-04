@@ -20,7 +20,6 @@
 #include "xfa/fxfa/app/xfa_ffsubform.h"
 #include "xfa/fxfa/app/xfa_fftext.h"
 #include "xfa/fxfa/app/xfa_fftextedit.h"
-#include "xfa/fxfa/app/xfa_ffwidget.h"
 #include "xfa/fxfa/app/xfa_ffwidgetacc.h"
 #include "xfa/fxfa/app/xfa_fwladapter.h"
 #include "xfa/fxfa/app/xfa_textlayout.h"
@@ -28,6 +27,7 @@
 #include "xfa/include/fxfa/xfa_ffdoc.h"
 #include "xfa/include/fxfa/xfa_ffdocview.h"
 #include "xfa/include/fxfa/xfa_ffpageview.h"
+#include "xfa/include/fxfa/xfa_ffwidget.h"
 #include "xfa/include/fxfa/xfa_ffwidgethandler.h"
 
 static void XFA_FFDeleteWidgetAcc(void* pData) {

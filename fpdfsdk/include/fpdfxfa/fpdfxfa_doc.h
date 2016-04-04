@@ -11,6 +11,7 @@
 
 #include "public/fpdfview.h"
 #include "xfa/include/fxfa/fxfa.h"
+#include "xfa/include/fxfa/xfa_ffdoc.h"
 #include "xfa/include/fxfa/xfa_ffdochandler.h"
 
 class CPDFXFA_App;
@@ -212,12 +213,13 @@ class CPDFXFA_Document : public IXFA_DocProvider {
     FXFA_LOADSTATUS_CLOSING,
     FXFA_LOADSTATUS_CLOSED
   };
+
   void CloseXFADoc(CXFA_FFDocHandler* pDoc) {
     if (pDoc) {
-      pDoc->CloseDoc(m_pXFADoc);
-      pDoc->ReleaseDoc(m_pXFADoc);
-      m_pXFADoc = NULL;
-      m_pXFADocView = NULL;
+      m_pXFADoc->CloseDoc();
+      delete m_pXFADoc;
+      m_pXFADoc = nullptr;
+      m_pXFADocView = nullptr;
     }
   }
 

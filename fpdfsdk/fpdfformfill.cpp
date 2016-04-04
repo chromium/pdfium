@@ -24,6 +24,7 @@
 #include "xfa/include/fxfa/xfa_ffapp.h"
 #include "xfa/include/fxfa/xfa_ffdocview.h"
 #include "xfa/include/fxfa/xfa_ffpageview.h"
+#include "xfa/include/fxfa/xfa_ffwidget.h"
 #endif  // PDF_ENABLE_XFA
 
 namespace {
@@ -100,7 +101,7 @@ DLLEXPORT int STDCALL FPDFPage_HasFormFieldAtPoint(FPDF_FORMHANDLE hHandle,
   CXFA_FFWidget* pXFAAnnot = pWidgetIterator->MoveToNext();
   while (pXFAAnnot) {
     CFX_RectF rcBBox;
-    pWidgetHandler->GetBBox(pXFAAnnot, rcBBox, 0);
+    pXFAAnnot->GetBBox(rcBBox, 0);
     CFX_FloatRect rcWidget(rcBBox.left, rcBBox.top, rcBBox.left + rcBBox.width,
                            rcBBox.top + rcBBox.height);
     rcWidget.left -= 1.0f;
@@ -412,7 +413,7 @@ DLLEXPORT void STDCALL FPDF_FFLRecord(FPDF_FORMHANDLE hHandle,
 #ifdef PDF_ENABLE_XFA
 DLLEXPORT void STDCALL FPDF_Widget_Undo(FPDF_DOCUMENT document,
                                         FPDF_WIDGET hWidget) {
-  if (NULL == hWidget || NULL == document)
+  if (!hWidget || !document)
     return;
 
   CPDFXFA_Document* pDocument = (CPDFXFA_Document*)document;
@@ -420,16 +421,11 @@ DLLEXPORT void STDCALL FPDF_Widget_Undo(FPDF_DOCUMENT document,
       pDocument->GetDocType() != XFA_DOCTYPE_Static)
     return;
 
-  CXFA_FFMenuHandler* pXFAMenuHander =
-      CPDFXFA_App::GetInstance()->GetXFAApp()->GetMenuHandler();
-  if (pXFAMenuHander == NULL)
-    return;
-
-  pXFAMenuHander->Undo((CXFA_FFWidget*)hWidget);
+  static_cast<CXFA_FFWidget*>(hWidget)->Undo();
 }
 DLLEXPORT void STDCALL FPDF_Widget_Redo(FPDF_DOCUMENT document,
                                         FPDF_WIDGET hWidget) {
-  if (NULL == hWidget || NULL == document)
+  if (!hWidget || !document)
     return;
 
   CPDFXFA_Document* pDocument = (CPDFXFA_Document*)document;
@@ -437,17 +433,12 @@ DLLEXPORT void STDCALL FPDF_Widget_Redo(FPDF_DOCUMENT document,
       pDocument->GetDocType() != XFA_DOCTYPE_Static)
     return;
 
-  CXFA_FFMenuHandler* pXFAMenuHander =
-      CPDFXFA_App::GetInstance()->GetXFAApp()->GetMenuHandler();
-  if (pXFAMenuHander == NULL)
-    return;
-
-  pXFAMenuHander->Redo((CXFA_FFWidget*)hWidget);
+  static_cast<CXFA_FFWidget*>(hWidget)->Redo();
 }
 
 DLLEXPORT void STDCALL FPDF_Widget_SelectAll(FPDF_DOCUMENT document,
                                              FPDF_WIDGET hWidget) {
-  if (NULL == hWidget || NULL == document)
+  if (!hWidget || !document)
     return;
 
   CPDFXFA_Document* pDocument = (CPDFXFA_Document*)document;
@@ -455,18 +446,13 @@ DLLEXPORT void STDCALL FPDF_Widget_SelectAll(FPDF_DOCUMENT document,
       pDocument->GetDocType() != XFA_DOCTYPE_Static)
     return;
 
-  CXFA_FFMenuHandler* pXFAMenuHander =
-      CPDFXFA_App::GetInstance()->GetXFAApp()->GetMenuHandler();
-  if (pXFAMenuHander == NULL)
-    return;
-
-  pXFAMenuHander->SelectAll((CXFA_FFWidget*)hWidget);
+  static_cast<CXFA_FFWidget*>(hWidget)->SelectAll();
 }
 DLLEXPORT void STDCALL FPDF_Widget_Copy(FPDF_DOCUMENT document,
                                         FPDF_WIDGET hWidget,
                                         FPDF_WIDESTRING wsText,
                                         FPDF_DWORD* size) {
-  if (NULL == hWidget || NULL == document)
+  if (!hWidget || !document)
     return;
 
   CPDFXFA_Document* pDocument = (CPDFXFA_Document*)document;
@@ -474,13 +460,8 @@ DLLEXPORT void STDCALL FPDF_Widget_Copy(FPDF_DOCUMENT document,
       pDocument->GetDocType() != XFA_DOCTYPE_Static)
     return;
 
-  CXFA_FFMenuHandler* pXFAMenuHander =
-      CPDFXFA_App::GetInstance()->GetXFAApp()->GetMenuHandler();
-  if (pXFAMenuHander == NULL)
-    return;
-
   CFX_WideString wsCpText;
-  pXFAMenuHander->Copy((CXFA_FFWidget*)hWidget, wsCpText);
+  static_cast<CXFA_FFWidget*>(hWidget)->Copy(wsCpText);
 
   CFX_ByteString bsCpText = wsCpText.UTF16LE_Encode();
   uint32_t len = bsCpText.GetLength() / sizeof(unsigned short);
@@ -510,17 +491,12 @@ DLLEXPORT void STDCALL FPDF_Widget_Cut(FPDF_DOCUMENT document,
       pDocument->GetDocType() != XFA_DOCTYPE_Static)
     return;
 
-  CXFA_FFMenuHandler* pXFAMenuHander =
-      CPDFXFA_App::GetInstance()->GetXFAApp()->GetMenuHandler();
-  if (pXFAMenuHander == NULL)
-    return;
-
   CFX_WideString wsCpText;
-  pXFAMenuHander->Cut((CXFA_FFWidget*)hWidget, wsCpText);
+  static_cast<CXFA_FFWidget*>(hWidget)->Cut(wsCpText);
 
   CFX_ByteString bsCpText = wsCpText.UTF16LE_Encode();
   uint32_t len = bsCpText.GetLength() / sizeof(unsigned short);
-  if (wsText == NULL) {
+  if (!wsText) {
     *size = len;
     return;
   }
@@ -539,7 +515,7 @@ DLLEXPORT void STDCALL FPDF_Widget_Paste(FPDF_DOCUMENT document,
                                          FPDF_WIDGET hWidget,
                                          FPDF_WIDESTRING wsText,
                                          FPDF_DWORD size) {
-  if (NULL == hWidget || NULL == document)
+  if (!hWidget || !document)
     return;
 
   CPDFXFA_Document* pDocument = (CPDFXFA_Document*)document;
@@ -547,13 +523,8 @@ DLLEXPORT void STDCALL FPDF_Widget_Paste(FPDF_DOCUMENT document,
       pDocument->GetDocType() != XFA_DOCTYPE_Static)
     return;
 
-  CXFA_FFMenuHandler* pXFAMenuHander =
-      CPDFXFA_App::GetInstance()->GetXFAApp()->GetMenuHandler();
-  if (pXFAMenuHander == NULL)
-    return;
-
   CFX_WideString wstr = CFX_WideString::FromUTF16LE(wsText, size);
-  pXFAMenuHander->Paste((CXFA_FFWidget*)hWidget, wstr);
+  static_cast<CXFA_FFWidget*>(hWidget)->Paste(wstr);
 }
 
 DLLEXPORT void STDCALL
@@ -562,7 +533,7 @@ FPDF_Widget_ReplaceSpellCheckWord(FPDF_DOCUMENT document,
                                   float x,
                                   float y,
                                   FPDF_BYTESTRING bsText) {
-  if (NULL == hWidget || NULL == document)
+  if (!hWidget || !document)
     return;
 
   CPDFXFA_Document* pDocument = (CPDFXFA_Document*)document;
@@ -570,17 +541,11 @@ FPDF_Widget_ReplaceSpellCheckWord(FPDF_DOCUMENT document,
       pDocument->GetDocType() != XFA_DOCTYPE_Static)
     return;
 
-  CXFA_FFMenuHandler* pXFAMenuHander =
-      CPDFXFA_App::GetInstance()->GetXFAApp()->GetMenuHandler();
-  if (pXFAMenuHander == NULL)
-    return;
-
   CFX_PointF ptPopup;
   ptPopup.x = x;
   ptPopup.y = y;
   CFX_ByteStringC bs(bsText);
-  pXFAMenuHander->ReplaceSpellCheckWord(
-      reinterpret_cast<CXFA_FFWidget*>(hWidget), ptPopup, bs);
+  static_cast<CXFA_FFWidget*>(hWidget)->ReplaceSpellCheckWord(ptPopup, bs);
 }
 
 DLLEXPORT void STDCALL
@@ -597,17 +562,12 @@ FPDF_Widget_GetSpellCheckWords(FPDF_DOCUMENT document,
       pDocument->GetDocType() != XFA_DOCTYPE_Static)
     return;
 
-  CXFA_FFMenuHandler* pXFAMenuHander =
-      CPDFXFA_App::GetInstance()->GetXFAApp()->GetMenuHandler();
-  if (!pXFAMenuHander)
-    return;
-
   std::vector<CFX_ByteString>* sSuggestWords = new std::vector<CFX_ByteString>;
   CFX_PointF ptPopup;
   ptPopup.x = x;
   ptPopup.y = y;
-  pXFAMenuHander->GetSuggestWords(reinterpret_cast<CXFA_FFWidget*>(hWidget),
-                                  ptPopup, *sSuggestWords);
+  static_cast<CXFA_FFWidget*>(hWidget)
+      ->GetSuggestWords(ptPopup, *sSuggestWords);
   *stringHandle = ToFPDFStringHandle(sSuggestWords);
 }
 

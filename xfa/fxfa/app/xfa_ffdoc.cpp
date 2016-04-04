@@ -15,7 +15,6 @@
 #include "xfa/fgas/crt/fgas_algorithm.h"
 #include "xfa/fwl/core/ifwl_notedriver.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
-#include "xfa/fxfa/app/xfa_ffwidget.h"
 #include "xfa/fxfa/parser/xfa_docdata.h"
 #include "xfa/fxfa/parser/xfa_document_serialize.h"
 #include "xfa/fxfa/parser/xfa_parser.h"
@@ -24,6 +23,7 @@
 #include "xfa/include/fxfa/xfa_checksum.h"
 #include "xfa/include/fxfa/xfa_ffapp.h"
 #include "xfa/include/fxfa/xfa_ffdocview.h"
+#include "xfa/include/fxfa/xfa_ffwidget.h"
 #include "xfa/include/fxfa/xfa_fontmgr.h"
 
 CXFA_FFDoc::CXFA_FFDoc(CXFA_FFApp* pApp, IXFA_DocProvider* pDocProvider)

@@ -20,6 +20,7 @@
 #include "xfa/include/fxfa/xfa_ffdoc.h"
 #include "xfa/include/fxfa/xfa_ffdocview.h"
 #include "xfa/include/fxfa/xfa_ffpageview.h"
+#include "xfa/include/fxfa/xfa_ffwidget.h"
 
 #define IDS_XFA_Validate_Input                                          \
   "At least one required field was empty. Please fill in the required " \
@@ -104,22 +105,22 @@ FX_BOOL CPDFXFA_Document::LoadXFADoc() {
     return FALSE;
   }
 
-  pDocHandler->StartLoad(m_pXFADoc);
-  int iStatus = pDocHandler->DoLoad(m_pXFADoc, NULL);
+  m_pXFADoc->StartLoad();
+  int iStatus = m_pXFADoc->DoLoad(nullptr);
   if (iStatus != XFA_PARSESTATUS_Done) {
     CloseXFADoc(pDocHandler);
     SetLastError(FPDF_ERR_XFALOAD);
     return FALSE;
   }
-  pDocHandler->StopLoad(m_pXFADoc);
-  pDocHandler->SetJSERuntime(m_pXFADoc, m_pApp->GetJSERuntime());
+  m_pXFADoc->StopLoad();
+  m_pXFADoc->GetXFADoc()->InitScriptContext(m_pApp->GetJSERuntime());
 
-  if (pDocHandler->GetDocType(m_pXFADoc) == XFA_DOCTYPE_Dynamic)
+  if (m_pXFADoc->GetDocType() == XFA_DOCTYPE_Dynamic)
     m_iDocType = DOCTYPE_DYNAMIC_XFA;
   else
     m_iDocType = DOCTYPE_STATIC_XFA;
 
-  m_pXFADocView = pDocHandler->CreateDocView(m_pXFADoc, XFA_DOCVIEW_View);
+  m_pXFADocView = m_pXFADoc->CreateDocView(XFA_DOCVIEW_View);
   if (m_pXFADocView->StartLayout() < 0) {
     CloseXFADoc(pDocHandler);
     SetLastError(FPDF_ERR_XFALAYOUT);
@@ -275,12 +276,12 @@ void CPDFXFA_Document::InvalidateRect(CXFA_FFWidget* hWidget,
   if (!pWidgetHandler)
     return;
 
-  CXFA_FFPageView* pPageView = pWidgetHandler->GetPageView(hWidget);
+  CXFA_FFPageView* pPageView = hWidget->GetPageView();
   if (!pPageView)
     return;
 
   CFX_RectF rect;
-  pWidgetHandler->GetRect(hWidget, rect);
+  hWidget->GetRect(rect);
   InvalidateRect(pPageView, rect, dwFlags);
 }
 
@@ -300,7 +301,7 @@ void CPDFXFA_Document::DisplayCaret(CXFA_FFWidget* hWidget,
   if (!pWidgetHandler)
     return;
 
-  CXFA_FFPageView* pPageView = pWidgetHandler->GetPageView(hWidget);
+  CXFA_FFPageView* pPageView = hWidget->GetPageView();
   if (!pPageView)
     return;
 
@@ -325,28 +326,25 @@ FX_BOOL CPDFXFA_Document::GetPopupPos(CXFA_FFWidget* hWidget,
                                       FX_FLOAT fMaxPopup,
                                       const CFX_RectF& rtAnchor,
                                       CFX_RectF& rtPopup) {
-  if (NULL == hWidget) {
+  if (!hWidget)
     return FALSE;
-  }
-  CXFA_FFPageView* pXFAPageView =
-      m_pXFADocView->GetWidgetHandler()->GetPageView(hWidget);
-  if (NULL == pXFAPageView) {
+
+  CXFA_FFPageView* pXFAPageView = hWidget->GetPageView();
+  if (!pXFAPageView)
     return FALSE;
-  }
+
   CPDFXFA_Page* pPage = GetPage(pXFAPageView);
-  if (pPage == NULL)
+  if (!pPage)
     return FALSE;
 
-  CXFA_WidgetAcc* pWidgetAcc =
-      m_pXFADocView->GetWidgetHandler()->GetDataAcc(hWidget);
-
+  CXFA_WidgetAcc* pWidgetAcc = hWidget->GetDataAcc();
   int nRotate = 0;
 #ifdef PDF_ENABLE_XFA
   nRotate = pWidgetAcc->GetRotate();
 #endif
 
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
-  if (pEnv == NULL)
+  if (!pEnv)
     return FALSE;
   FS_RECTF pageViewRect;
   pEnv->FFI_GetPageViewRect(pPage, pageViewRect);
@@ -457,39 +455,34 @@ FX_BOOL CPDFXFA_Document::GetPopupPos(CXFA_FFWidget* hWidget,
 FX_BOOL CPDFXFA_Document::PopupMenu(CXFA_FFWidget* hWidget,
                                     CFX_PointF ptPopup,
                                     const CFX_RectF* pRectExclude) {
-  if (NULL == hWidget) {
+  if (!hWidget)
     return FALSE;
-  }
-  CXFA_FFPageView* pXFAPageView =
-      m_pXFADocView->GetWidgetHandler()->GetPageView(hWidget);
-  if (pXFAPageView == NULL)
-    return FALSE;
-  CPDFXFA_Page* pPage = GetPage(pXFAPageView);
 
-  if (pPage == NULL)
+  CXFA_FFPageView* pXFAPageView = hWidget->GetPageView();
+  if (!pXFAPageView)
+    return FALSE;
+
+  CPDFXFA_Page* pPage = GetPage(pXFAPageView);
+  if (!pPage)
     return FALSE;
 
   int menuFlag = 0;
 
-  CXFA_FFMenuHandler* pXFAMenuHander = m_pApp->GetXFAApp()->GetMenuHandler();
-  if (pXFAMenuHander->CanUndo(hWidget))
+  if (hWidget->CanUndo())
     menuFlag |= FXFA_MEMU_UNDO;
-  if (pXFAMenuHander->CanRedo(hWidget))
+  if (hWidget->CanRedo())
     menuFlag |= FXFA_MEMU_REDO;
-  if (pXFAMenuHander->CanPaste(hWidget))
+  if (hWidget->CanPaste())
     menuFlag |= FXFA_MEMU_PASTE;
-  if (pXFAMenuHander->CanCopy(hWidget))
+  if (hWidget->CanCopy())
     menuFlag |= FXFA_MEMU_COPY;
-  if (pXFAMenuHander->CanCut(hWidget))
+  if (hWidget->CanCut())
     menuFlag |= FXFA_MEMU_CUT;
-  if (pXFAMenuHander->CanSelectAll(hWidget))
+  if (hWidget->CanSelectAll())
     menuFlag |= FXFA_MEMU_SELECTALL;
 
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
-  if (pEnv == NULL)
-    return FALSE;
-
-  return pEnv->FFI_PopupMenu(pPage, hWidget, menuFlag, ptPopup, NULL);
+  return pEnv && pEnv->FFI_PopupMenu(pPage, hWidget, menuFlag, ptPopup, NULL);
 }
 
 void CPDFXFA_Document::PageViewEvent(CXFA_FFPageView* pPageView,
@@ -540,33 +533,30 @@ void CPDFXFA_Document::WidgetEvent(CXFA_FFWidget* hWidget,
   if (!pEnv)
     return;
 
-  CXFA_FFPageView* pPageView =
-      m_pXFADocView->GetWidgetHandler()->GetPageView(hWidget);
-  if (pPageView == NULL)
+  CXFA_FFPageView* pPageView = hWidget->GetPageView();
+  if (!pPageView)
     return;
 
   CPDFXFA_Page* pXFAPage = GetPage(pPageView);
-  if (pXFAPage == NULL)
+  if (!pXFAPage)
     return;
 
   CPDFSDK_PageView* pSdkPageView = m_pSDKDoc->GetPageView(pXFAPage);
   if (dwEvent == XFA_WIDGETEVENT_PostAdded) {
     pSdkPageView->AddAnnot(hWidget);
-
   } else if (dwEvent == XFA_WIDGETEVENT_PreRemoved) {
     CPDFSDK_Annot* pAnnot = pSdkPageView->GetAnnotByXFAWidget(hWidget);
-    if (pAnnot) {
+    if (pAnnot)
       pSdkPageView->DeleteAnnot(pAnnot);
-    }
   }
 }
 
 int32_t CPDFXFA_Document::CountPages(CXFA_FFDoc* hDoc) {
-  if (hDoc == m_pXFADoc && m_pSDKDoc) {
+  if (hDoc == m_pXFADoc && m_pSDKDoc)
     return GetPageCount();
-  }
   return 0;
 }
+
 int32_t CPDFXFA_Document::GetCurrentPage(CXFA_FFDoc* hDoc) {
   if (hDoc != m_pXFADoc || !m_pSDKDoc)
     return -1;
@@ -574,11 +564,12 @@ int32_t CPDFXFA_Document::GetCurrentPage(CXFA_FFDoc* hDoc) {
     return -1;
 
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
-  if (pEnv == NULL)
+  if (!pEnv)
     return -1;
 
   return pEnv->FFI_GetCurrentPageIndex(this);
 }
+
 void CPDFXFA_Document::SetCurrentPage(CXFA_FFDoc* hDoc, int32_t iCurPage) {
   if (hDoc != m_pXFADoc || !m_pSDKDoc || m_iDocType != DOCTYPE_DYNAMIC_XFA ||
       iCurPage < 0 || iCurPage >= m_pSDKDoc->GetPageCount()) {
@@ -662,14 +653,13 @@ void CPDFXFA_Document::ExportData(CXFA_FFDoc* hDoc,
 
   CFPDF_FileStream fileWrite(pFileHandler);
 
-  CXFA_FFDocHandler* pXFADocHander = m_pApp->GetXFAApp()->GetDocHandler();
   CFX_ByteString content;
   if (fileType == FXFA_SAVEAS_XML) {
     content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
     fileWrite.WriteBlock((const FX_CHAR*)content, fileWrite.GetSize(),
                          content.GetLength());
     CFX_WideStringC data(L"data");
-    if (pXFADocHander->SavePackage(m_pXFADocView->GetDoc(), data, &fileWrite)) {
+    if (m_pXFADocView->GetDoc()->SavePackage(data, &fileWrite)) {
       // Ignoring error.
     }
   } else if (fileType == FXFA_SAVEAS_XDP) {
@@ -702,11 +692,10 @@ void CPDFXFA_Document::ExportData(CXFA_FFDoc* hDoc,
         continue;
       if (pPrePDFObj->GetString() == "form") {
         CFX_WideStringC form(L"form");
-        pXFADocHander->SavePackage(m_pXFADocView->GetDoc(), form, &fileWrite);
+        m_pXFADocView->GetDoc()->SavePackage(form, &fileWrite);
       } else if (pPrePDFObj->GetString() == "datasets") {
         CFX_WideStringC datasets(L"datasets");
-        pXFADocHander->SavePackage(m_pXFADocView->GetDoc(), datasets,
-                                   &fileWrite);
+        m_pXFADocView->GetDoc()->SavePackage(datasets, &fileWrite);
       } else {
         if (i == size - 1) {
           CFX_WideString wPath = CFX_WideString::FromUTF16LE(
@@ -953,13 +942,12 @@ FX_BOOL CPDFXFA_Document::_ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
                                             int fileType,
                                             FPDF_DWORD encodeType,
                                             FPDF_DWORD flag) {
-  if (NULL == m_pXFADocView)
+  if (!m_pXFADocView)
     return FALSE;
-  CXFA_FFDocHandler* pDocHandler = m_pApp->GetXFAApp()->GetDocHandler();
-  CFX_ByteString content;
 
+  CFX_ByteString content;
   CPDFDoc_Environment* pEnv = m_pSDKDoc->GetEnv();
-  if (pEnv == NULL)
+  if (!pEnv)
     return FALSE;
 
   CFPDF_FileStream fileStream(pFileHandler);
@@ -969,7 +957,7 @@ FX_BOOL CPDFXFA_Document::_ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
     ws.FromLocal("data");
     CFX_ByteString content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
     fileStream.WriteBlock((const FX_CHAR*)content, 0, content.GetLength());
-    pDocHandler->SavePackage(m_pXFADoc, ws, &fileStream);
+    m_pXFADoc->SavePackage(ws, &fileStream);
   } else if (fileType == FXFA_SAVEAS_XDP) {
     if (flag == 0)
       flag = FXFA_CONFIG | FXFA_TEMPLATE | FXFA_LOCALESET | FXFA_DATASETS |
@@ -1030,11 +1018,11 @@ FX_BOOL CPDFXFA_Document::_ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
       if (pPrePDFObj->GetString() == "form") {
         CFX_WideString ws;
         ws.FromLocal("form");
-        pDocHandler->SavePackage(m_pXFADoc, ws, &fileStream);
+        m_pXFADoc->SavePackage(ws, &fileStream);
       } else if (pPrePDFObj->GetString() == "datasets") {
         CFX_WideString ws;
         ws.FromLocal("datasets");
-        pDocHandler->SavePackage(m_pXFADoc, ws, &fileStream);
+        m_pXFADoc->SavePackage(ws, &fileStream);
       } else {
         // PDF,creator.
       }

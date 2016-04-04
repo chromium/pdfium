@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "xfa/fxfa/app/xfa_ffwidget.h"
+#include "xfa/include/fxfa/xfa_ffwidget.h"
 
 #include <algorithm>
 

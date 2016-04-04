@@ -20,6 +20,7 @@
 #include "fpdfsdk/include/fpdfxfa/fpdfxfa_page.h"
 #include "fpdfsdk/include/fpdfxfa/fpdfxfa_util.h"
 #include "xfa/fxgraphics/include/cfx_graphics.h"
+#include "xfa/include/fxfa/xfa_ffwidget.h"
 #endif  // PDF_ENABLE_XFA
 
 CPDFSDK_AnnotHandlerMgr::CPDFSDK_AnnotHandlerMgr(CPDFDoc_Environment* pApp) {
@@ -785,15 +786,12 @@ CFX_FloatRect CPDFSDK_XFAAnnotHandler::GetViewBBox(CPDFSDK_PageView* pPageView,
                                                    CPDFSDK_Annot* pAnnot) {
   ASSERT(pAnnot);
 
-  CXFA_FFWidgetHandler* pWidgetHandler = GetXFAWidgetHandler(pAnnot);
   CFX_RectF rcBBox;
-  XFA_ELEMENT eType =
-      pWidgetHandler->GetDataAcc(pAnnot->GetXFAWidget())->GetUIType();
+  XFA_ELEMENT eType = pAnnot->GetXFAWidget()->GetDataAcc()->GetUIType();
   if (eType == XFA_ELEMENT_Signature)
-    pWidgetHandler->GetBBox(pAnnot->GetXFAWidget(), rcBBox,
-                            XFA_WIDGETSTATUS_Visible, TRUE);
+    pAnnot->GetXFAWidget()->GetBBox(rcBBox, XFA_WIDGETSTATUS_Visible, TRUE);
   else
-    pWidgetHandler->GetBBox(pAnnot->GetXFAWidget(), rcBBox, 0);
+    pAnnot->GetXFAWidget()->GetBBox(rcBBox, 0);
 
   CFX_FloatRect rcWidget(rcBBox.left, rcBBox.top, rcBBox.left + rcBBox.width,
                          rcBBox.top + rcBBox.height);
@@ -1004,7 +1002,7 @@ FX_BOOL CPDFSDK_XFAAnnotHandler::OnXFAChangedFocus(CPDFSDK_Annot* pOldAnnot,
     FX_BOOL bRet = TRUE;
     CXFA_FFWidget* hWidget = pNewAnnot ? pNewAnnot->GetXFAWidget() : NULL;
     if (hWidget) {
-      CXFA_FFPageView* pXFAPageView = pWidgetHandler->GetPageView(hWidget);
+      CXFA_FFPageView* pXFAPageView = hWidget->GetPageView();
       if (pXFAPageView) {
         bRet = pXFAPageView->GetDocView()->SetFocus(hWidget);
         if (pXFAPageView->GetDocView()->GetFocusWidget() == hWidget)

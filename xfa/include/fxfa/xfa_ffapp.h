@@ -19,7 +19,6 @@ class CXFA_DefFontMgr;
 class CXFA_FWLAdapterWidgetMgr;
 class CXFA_FWLTheme;
 class CXFA_FFDocHandler;
-class CXFA_FFMenuHandler;
 class CXFA_FontMgr;
 
 class CXFA_FileRead : public IFX_FileRead {
@@ -47,7 +46,6 @@ class CXFA_FFApp : public IFWL_AdapterNative {
   CXFA_FFDoc* CreateDoc(IXFA_DocProvider* pProvider, CPDF_Document* pPDFDoc);
   IXFA_AppProvider* GetAppProvider() { return m_pProvider; }
   void SetDefaultFontMgr(CXFA_DefFontMgr* pFontMgr);
-  CXFA_FFMenuHandler* GetMenuHandler();
 
   // IFWL_AdapterNative:
   IFWL_AdapterWidgetMgr* GetWidgetMgr(
@@ -74,7 +72,6 @@ class CXFA_FFApp : public IFWL_AdapterNative {
   CXFA_FWLAdapterWidgetMgr* m_pAdapterWidgetMgr;
   IFWL_WidgetMgrDelegate* m_pWidgetMgrDelegate;
   IFX_FontMgr* m_pFDEFontMgr;
-  CXFA_FFMenuHandler* m_pMenuHandler;
   CFWL_SDAdapterThreadMgr* m_pAdapterThreadMgr;
 };
 

@@ -11,7 +11,6 @@
 #include "xfa/fwl/core/ifwl_widgetmgrdelegate.h"
 #include "xfa/fwl/lightwidget/cfwl_edit.h"
 #include "xfa/fwl/lightwidget/cfwl_picturebox.h"
-#include "xfa/fxfa/app/xfa_ffwidget.h"
 #include "xfa/fxfa/app/xfa_fwltheme.h"
 #include "xfa/fxfa/app/xfa_textlayout.h"
 #include "xfa/fxgraphics/cfx_color.h"
@@ -20,6 +19,7 @@
 #include "xfa/include/fxfa/xfa_ffdoc.h"
 #include "xfa/include/fxfa/xfa_ffdocview.h"
 #include "xfa/include/fxfa/xfa_ffpageview.h"
+#include "xfa/include/fxfa/xfa_ffwidget.h"
 
 CXFA_FFField::CXFA_FFField(CXFA_FFPageView* pPageView, CXFA_WidgetAcc* pDataAcc)
     : CXFA_FFWidget(pPageView, pDataAcc), m_pNormalWidget(NULL) {

@@ -27,6 +27,7 @@
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/include/fpdfxfa/fpdfxfa_doc.h"
 #include "fpdfsdk/include/fpdfxfa/fpdfxfa_util.h"
+#include "xfa/include/fxfa/xfa_ffwidget.h"
 #endif  // PDF_ENABLE_XFA
 
 #define IsFloatZero(f) ((f) < 0.01 && (f) > -0.01)
@@ -189,14 +190,14 @@ FX_BOOL CPDFSDK_Widget::HasXFAAAction(PDFSDK_XFAAActionType eXFAAAT) {
       if ((eEventType == XFA_EVENT_Click || eEventType == XFA_EVENT_Change) &&
           GetFieldType() == FIELDTYPE_RADIOBUTTON) {
         if (CXFA_FFWidget* hGroupWidget = GetGroupMixXFAWidget()) {
-          CXFA_WidgetAcc* pAcc = pXFAWidgetHandler->GetDataAcc(hGroupWidget);
+          CXFA_WidgetAcc* pAcc = hGroupWidget->GetDataAcc();
           if (pXFAWidgetHandler->HasEvent(pAcc, eEventType))
             return TRUE;
         }
       }
 
       {
-        CXFA_WidgetAcc* pAcc = pXFAWidgetHandler->GetDataAcc(hWidget);
+        CXFA_WidgetAcc* pAcc = hWidget->GetDataAcc();
         return pXFAWidgetHandler->HasEvent(pAcc, eEventType);
       }
     }
@@ -236,7 +237,7 @@ FX_BOOL CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
         if ((eEventType == XFA_EVENT_Click || eEventType == XFA_EVENT_Change) &&
             GetFieldType() == FIELDTYPE_RADIOBUTTON) {
           if (CXFA_FFWidget* hGroupWidget = GetGroupMixXFAWidget()) {
-            CXFA_WidgetAcc* pAcc = pXFAWidgetHandler->GetDataAcc(hGroupWidget);
+            CXFA_WidgetAcc* pAcc = hGroupWidget->GetDataAcc();
             param.m_pTarget = pAcc;
             if (pXFAWidgetHandler->ProcessEvent(pAcc, &param) !=
                 XFA_EVENTERROR_Success) {
@@ -244,7 +245,7 @@ FX_BOOL CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
             }
           }
         }
-        CXFA_WidgetAcc* pAcc = pXFAWidgetHandler->GetDataAcc(hWidget);
+        CXFA_WidgetAcc* pAcc = hWidget->GetDataAcc();
         param.m_pTarget = pAcc;
         int32_t nRet = pXFAWidgetHandler->ProcessEvent(pAcc, &param);
 
@@ -261,48 +262,44 @@ FX_BOOL CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
 
 void CPDFSDK_Widget::Synchronize(FX_BOOL bSynchronizeElse) {
   if (CXFA_FFWidget* hWidget = GetMixXFAWidget()) {
-    if (CXFA_FFWidgetHandler* pXFAWidgetHandler = GetXFAWidgetHandler()) {
-      CPDF_FormField* pFormField = GetFormField();
-      if (CXFA_WidgetAcc* pWidgetAcc = pXFAWidgetHandler->GetDataAcc(hWidget)) {
-        switch (GetFieldType()) {
-          case FIELDTYPE_CHECKBOX:
-          case FIELDTYPE_RADIOBUTTON: {
-            CPDF_FormControl* pFormCtrl = GetFormControl();
-            XFA_CHECKSTATE eCheckState =
-                pFormCtrl->IsChecked() ? XFA_CHECKSTATE_On : XFA_CHECKSTATE_Off;
-            pWidgetAcc->SetCheckState(eCheckState);
-          } break;
-          case FIELDTYPE_TEXTFIELD:
-            pWidgetAcc->SetValue(pFormField->GetValue(), XFA_VALUEPICTURE_Edit);
-            break;
-          case FIELDTYPE_LISTBOX: {
-            pWidgetAcc->ClearAllSelections();
+    CPDF_FormField* pFormField = GetFormField();
+    if (CXFA_WidgetAcc* pWidgetAcc = hWidget->GetDataAcc()) {
+      switch (GetFieldType()) {
+        case FIELDTYPE_CHECKBOX:
+        case FIELDTYPE_RADIOBUTTON: {
+          CPDF_FormControl* pFormCtrl = GetFormControl();
+          XFA_CHECKSTATE eCheckState =
+              pFormCtrl->IsChecked() ? XFA_CHECKSTATE_On : XFA_CHECKSTATE_Off;
+          pWidgetAcc->SetCheckState(eCheckState);
+        } break;
+        case FIELDTYPE_TEXTFIELD:
+          pWidgetAcc->SetValue(pFormField->GetValue(), XFA_VALUEPICTURE_Edit);
+          break;
+        case FIELDTYPE_LISTBOX: {
+          pWidgetAcc->ClearAllSelections();
 
-            for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz;
-                 i++) {
-              int nIndex = pFormField->GetSelectedIndex(i);
-              if (nIndex > -1 && nIndex < pWidgetAcc->CountChoiceListItems())
-                pWidgetAcc->SetItemState(nIndex, TRUE, FALSE);
-            }
-          } break;
-          case FIELDTYPE_COMBOBOX: {
-            pWidgetAcc->ClearAllSelections();
-
-            for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz;
-                 i++) {
-              int nIndex = pFormField->GetSelectedIndex(i);
-              if (nIndex > -1 && nIndex < pWidgetAcc->CountChoiceListItems())
-                pWidgetAcc->SetItemState(nIndex, TRUE, FALSE);
-            }
+          for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz; i++) {
+            int nIndex = pFormField->GetSelectedIndex(i);
+            if (nIndex > -1 && nIndex < pWidgetAcc->CountChoiceListItems())
+              pWidgetAcc->SetItemState(nIndex, TRUE, FALSE);
           }
+        } break;
+        case FIELDTYPE_COMBOBOX: {
+          pWidgetAcc->ClearAllSelections();
 
-            pWidgetAcc->SetValue(pFormField->GetValue(), XFA_VALUEPICTURE_Edit);
-            break;
+          for (int i = 0, sz = pFormField->CountSelectedItems(); i < sz; i++) {
+            int nIndex = pFormField->GetSelectedIndex(i);
+            if (nIndex > -1 && nIndex < pWidgetAcc->CountChoiceListItems())
+              pWidgetAcc->SetItemState(nIndex, TRUE, FALSE);
+          }
         }
 
-        if (bSynchronizeElse)
-          pWidgetAcc->ProcessValueChanged();
+          pWidgetAcc->SetValue(pFormField->GetValue(), XFA_VALUEPICTURE_Edit);
+          break;
       }
+
+      if (bSynchronizeElse)
+        pWidgetAcc->ProcessValueChanged();
     }
   }
 }
@@ -340,71 +337,62 @@ void CPDFSDK_Widget::SynchronizeXFAValue(CXFA_FFDocView* pXFADocView,
                                          CPDF_FormField* pFormField,
                                          CPDF_FormControl* pFormControl) {
   ASSERT(hWidget);
+  ASSERT(pFormControl);
 
-  if (CXFA_FFWidgetHandler* pXFAWidgetHandler =
-          pXFADocView->GetWidgetHandler()) {
-    ASSERT(pFormControl);
+  switch (pFormField->GetFieldType()) {
+    case FIELDTYPE_CHECKBOX: {
+      if (CXFA_WidgetAcc* pWidgetAcc = hWidget->GetDataAcc()) {
+        pFormField->CheckControl(
+            pFormField->GetControlIndex(pFormControl),
+            pWidgetAcc->GetCheckState() == XFA_CHECKSTATE_On, true);
+      }
+    } break;
+    case FIELDTYPE_RADIOBUTTON: {
+      // TODO(weili): Check whether we need to handle checkbox and radio
+      // button differently, otherwise, merge these two cases.
+      if (CXFA_WidgetAcc* pWidgetAcc = hWidget->GetDataAcc()) {
+        pFormField->CheckControl(
+            pFormField->GetControlIndex(pFormControl),
+            pWidgetAcc->GetCheckState() == XFA_CHECKSTATE_On, true);
+      }
+    } break;
+    case FIELDTYPE_TEXTFIELD: {
+      if (CXFA_WidgetAcc* pWidgetAcc = hWidget->GetDataAcc()) {
+        CFX_WideString sValue;
+        pWidgetAcc->GetValue(sValue, XFA_VALUEPICTURE_Display);
+        pFormField->SetValue(sValue, TRUE);
+      }
+    } break;
+    case FIELDTYPE_LISTBOX: {
+      pFormField->ClearSelection(FALSE);
 
-    switch (pFormField->GetFieldType()) {
-      case FIELDTYPE_CHECKBOX: {
-        if (CXFA_WidgetAcc* pWidgetAcc =
-                pXFAWidgetHandler->GetDataAcc(hWidget)) {
-          pFormField->CheckControl(
-              pFormField->GetControlIndex(pFormControl),
-              pWidgetAcc->GetCheckState() == XFA_CHECKSTATE_On, true);
-        }
-      } break;
-      case FIELDTYPE_RADIOBUTTON: {
-        // TODO(weili): Check whether we need to handle checkbox and radio
-        // button differently, otherwise, merge these two cases.
-        if (CXFA_WidgetAcc* pWidgetAcc =
-                pXFAWidgetHandler->GetDataAcc(hWidget)) {
-          pFormField->CheckControl(
-              pFormField->GetControlIndex(pFormControl),
-              pWidgetAcc->GetCheckState() == XFA_CHECKSTATE_On, true);
-        }
-      } break;
-      case FIELDTYPE_TEXTFIELD: {
-        if (CXFA_WidgetAcc* pWidgetAcc =
-                pXFAWidgetHandler->GetDataAcc(hWidget)) {
-          CFX_WideString sValue;
-          pWidgetAcc->GetValue(sValue, XFA_VALUEPICTURE_Display);
-          pFormField->SetValue(sValue, TRUE);
-        }
-      } break;
-      case FIELDTYPE_LISTBOX: {
-        pFormField->ClearSelection(FALSE);
+      if (CXFA_WidgetAcc* pWidgetAcc = hWidget->GetDataAcc()) {
+        for (int i = 0, sz = pWidgetAcc->CountSelectedItems(); i < sz; i++) {
+          int nIndex = pWidgetAcc->GetSelectedItem(i);
 
-        if (CXFA_WidgetAcc* pWidgetAcc =
-                pXFAWidgetHandler->GetDataAcc(hWidget)) {
-          for (int i = 0, sz = pWidgetAcc->CountSelectedItems(); i < sz; i++) {
-            int nIndex = pWidgetAcc->GetSelectedItem(i);
-
-            if (nIndex > -1 && nIndex < pFormField->CountOptions()) {
-              pFormField->SetItemSelection(nIndex, TRUE, TRUE);
-            }
+          if (nIndex > -1 && nIndex < pFormField->CountOptions()) {
+            pFormField->SetItemSelection(nIndex, TRUE, TRUE);
           }
         }
-      } break;
-      case FIELDTYPE_COMBOBOX: {
-        pFormField->ClearSelection(FALSE);
+      }
+    } break;
+    case FIELDTYPE_COMBOBOX: {
+      pFormField->ClearSelection(FALSE);
 
-        if (CXFA_WidgetAcc* pWidgetAcc =
-                pXFAWidgetHandler->GetDataAcc(hWidget)) {
-          for (int i = 0, sz = pWidgetAcc->CountSelectedItems(); i < sz; i++) {
-            int nIndex = pWidgetAcc->GetSelectedItem(i);
+      if (CXFA_WidgetAcc* pWidgetAcc = hWidget->GetDataAcc()) {
+        for (int i = 0, sz = pWidgetAcc->CountSelectedItems(); i < sz; i++) {
+          int nIndex = pWidgetAcc->GetSelectedItem(i);
 
-            if (nIndex > -1 && nIndex < pFormField->CountOptions()) {
-              pFormField->SetItemSelection(nIndex, TRUE, TRUE);
-            }
+          if (nIndex > -1 && nIndex < pFormField->CountOptions()) {
+            pFormField->SetItemSelection(nIndex, TRUE, TRUE);
           }
-
-          CFX_WideString sValue;
-          pWidgetAcc->GetValue(sValue, XFA_VALUEPICTURE_Display);
-          pFormField->SetValue(sValue, TRUE);
         }
-      } break;
-    }
+
+        CFX_WideString sValue;
+        pWidgetAcc->GetValue(sValue, XFA_VALUEPICTURE_Display);
+        pFormField->SetValue(sValue, TRUE);
+      }
+    } break;
   }
 }
 
@@ -414,42 +402,35 @@ void CPDFSDK_Widget::SynchronizeXFAItems(CXFA_FFDocView* pXFADocView,
                                          CPDF_FormControl* pFormControl) {
   ASSERT(hWidget);
 
-  if (CXFA_FFWidgetHandler* pXFAWidgetHandler =
-          pXFADocView->GetWidgetHandler()) {
-    switch (pFormField->GetFieldType()) {
-      case FIELDTYPE_LISTBOX: {
-        pFormField->ClearSelection(FALSE);
-        pFormField->ClearOptions(TRUE);
+  switch (pFormField->GetFieldType()) {
+    case FIELDTYPE_LISTBOX: {
+      pFormField->ClearSelection(FALSE);
+      pFormField->ClearOptions(TRUE);
 
-        if (CXFA_WidgetAcc* pWidgetAcc =
-                pXFAWidgetHandler->GetDataAcc(hWidget)) {
-          for (int i = 0, sz = pWidgetAcc->CountChoiceListItems(); i < sz;
-               i++) {
-            CFX_WideString swText;
-            pWidgetAcc->GetChoiceListItem(swText, i);
+      if (CXFA_WidgetAcc* pWidgetAcc = hWidget->GetDataAcc()) {
+        for (int i = 0, sz = pWidgetAcc->CountChoiceListItems(); i < sz; i++) {
+          CFX_WideString swText;
+          pWidgetAcc->GetChoiceListItem(swText, i);
 
-            pFormField->InsertOption(swText, i, TRUE);
-          }
+          pFormField->InsertOption(swText, i, TRUE);
         }
-      } break;
-      case FIELDTYPE_COMBOBOX: {
-        pFormField->ClearSelection(FALSE);
-        pFormField->ClearOptions(FALSE);
+      }
+    } break;
+    case FIELDTYPE_COMBOBOX: {
+      pFormField->ClearSelection(FALSE);
+      pFormField->ClearOptions(FALSE);
 
-        if (CXFA_WidgetAcc* pWidgetAcc =
-                pXFAWidgetHandler->GetDataAcc(hWidget)) {
-          for (int i = 0, sz = pWidgetAcc->CountChoiceListItems(); i < sz;
-               i++) {
-            CFX_WideString swText;
-            pWidgetAcc->GetChoiceListItem(swText, i);
+      if (CXFA_WidgetAcc* pWidgetAcc = hWidget->GetDataAcc()) {
+        for (int i = 0, sz = pWidgetAcc->CountChoiceListItems(); i < sz; i++) {
+          CFX_WideString swText;
+          pWidgetAcc->GetChoiceListItem(swText, i);
 
-            pFormField->InsertOption(swText, i, FALSE);
-          }
+          pFormField->InsertOption(swText, i, FALSE);
         }
+      }
 
-        pFormField->SetValue(L"", TRUE);
-      } break;
-    }
+      pFormField->SetValue(L"", TRUE);
+    } break;
   }
 }
 #endif  // PDF_ENABLE_XFA
@@ -595,11 +576,9 @@ FX_FLOAT CPDFSDK_Widget::GetFontSize() const {
 int CPDFSDK_Widget::GetSelectedIndex(int nIndex) const {
 #ifdef PDF_ENABLE_XFA
   if (CXFA_FFWidget* hWidget = GetMixXFAWidget()) {
-    if (CXFA_FFWidgetHandler* pXFAWidgetHandler = GetXFAWidgetHandler()) {
-      if (CXFA_WidgetAcc* pWidgetAcc = pXFAWidgetHandler->GetDataAcc(hWidget)) {
-        if (nIndex < pWidgetAcc->CountSelectedItems())
-          return pWidgetAcc->GetSelectedItem(nIndex);
-      }
+    if (CXFA_WidgetAcc* pWidgetAcc = hWidget->GetDataAcc()) {
+      if (nIndex < pWidgetAcc->CountSelectedItems())
+        return pWidgetAcc->GetSelectedItem(nIndex);
     }
   }
 #endif  // PDF_ENABLE_XFA
@@ -610,13 +589,11 @@ int CPDFSDK_Widget::GetSelectedIndex(int nIndex) const {
 #ifdef PDF_ENABLE_XFA
 CFX_WideString CPDFSDK_Widget::GetValue(FX_BOOL bDisplay) const {
   if (CXFA_FFWidget* hWidget = GetMixXFAWidget()) {
-    if (CXFA_FFWidgetHandler* pXFAWidgetHandler = GetXFAWidgetHandler()) {
-      if (CXFA_WidgetAcc* pWidgetAcc = pXFAWidgetHandler->GetDataAcc(hWidget)) {
-        CFX_WideString sValue;
-        pWidgetAcc->GetValue(sValue, bDisplay ? XFA_VALUEPICTURE_Display
-                                              : XFA_VALUEPICTURE_Edit);
-        return sValue;
-      }
+    if (CXFA_WidgetAcc* pWidgetAcc = hWidget->GetDataAcc()) {
+      CFX_WideString sValue;
+      pWidgetAcc->GetValue(
+          sValue, bDisplay ? XFA_VALUEPICTURE_Display : XFA_VALUEPICTURE_Edit);
+      return sValue;
     }
   }
 #else
@@ -644,13 +621,11 @@ int CPDFSDK_Widget::CountOptions() const {
 FX_BOOL CPDFSDK_Widget::IsOptionSelected(int nIndex) const {
 #ifdef PDF_ENABLE_XFA
   if (CXFA_FFWidget* hWidget = GetMixXFAWidget()) {
-    if (CXFA_FFWidgetHandler* pXFAWidgetHandler = GetXFAWidgetHandler()) {
-      if (CXFA_WidgetAcc* pWidgetAcc = pXFAWidgetHandler->GetDataAcc(hWidget)) {
-        if (nIndex > -1 && nIndex < pWidgetAcc->CountChoiceListItems())
-          return pWidgetAcc->GetItemState(nIndex);
+    if (CXFA_WidgetAcc* pWidgetAcc = hWidget->GetDataAcc()) {
+      if (nIndex > -1 && nIndex < pWidgetAcc->CountChoiceListItems())
+        return pWidgetAcc->GetItemState(nIndex);
 
-        return FALSE;
-      }
+      return FALSE;
     }
   }
 #endif  // PDF_ENABLE_XFA
@@ -665,11 +640,9 @@ int CPDFSDK_Widget::GetTopVisibleIndex() const {
 
 bool CPDFSDK_Widget::IsChecked() const {
 #ifdef PDF_ENABLE_XFA
-  if (CXFA_FFWidgetHandler* pXFAWidgetHandler = GetXFAWidgetHandler()) {
-    if (CXFA_FFWidget* hWidget = GetMixXFAWidget()) {
-      if (CXFA_WidgetAcc* pWidgetAcc = pXFAWidgetHandler->GetDataAcc(hWidget))
-        return pWidgetAcc->GetCheckState() == XFA_CHECKSTATE_On;
-    }
+  if (CXFA_FFWidget* hWidget = GetMixXFAWidget()) {
+    if (CXFA_WidgetAcc* pWidgetAcc = hWidget->GetDataAcc())
+      return pWidgetAcc->GetCheckState() == XFA_CHECKSTATE_On;
   }
 #endif  // PDF_ENABLE_XFA
   CPDF_FormControl* pFormCtrl = GetFormControl();
@@ -1900,7 +1873,7 @@ FX_BOOL CPDFSDK_Widget::OnAAction(CPDF_AAction::AActionType type,
           param.m_wsNewText.Insert(data.nSelStart, data.sChange[i]);
         param.m_wsPrevText = data.sValue;
 
-        CXFA_WidgetAcc* pAcc = pXFAWidgetHandler->GetDataAcc(hWidget);
+        CXFA_WidgetAcc* pAcc = hWidget->GetDataAcc();
         param.m_pTarget = pAcc;
         int32_t nRet = pXFAWidgetHandler->ProcessEvent(pAcc, &param);
 
@@ -2001,15 +1974,8 @@ CFX_ByteString CPDFSDK_XFAWidget::GetType() const {
 }
 
 CFX_FloatRect CPDFSDK_XFAWidget::GetRect() const {
-  CPDFSDK_PageView* pPageView = GetPageView();
-  CPDFSDK_Document* pDocument = pPageView->GetSDKDocument();
-  CPDFXFA_Document* pDoc = pDocument->GetXFADocument();
-  CXFA_FFDocView* pDocView = pDoc->GetXFADocView();
-  CXFA_FFWidgetHandler* pWidgetHandler = pDocView->GetWidgetHandler();
-
   CFX_RectF rcBBox;
-  pWidgetHandler->GetRect(GetXFAWidget(), rcBBox);
-
+  GetXFAWidget()->GetRect(rcBBox);
   return CFX_FloatRect(rcBBox.left, rcBBox.top, rcBBox.left + rcBBox.width,
                        rcBBox.top + rcBBox.height);
 }

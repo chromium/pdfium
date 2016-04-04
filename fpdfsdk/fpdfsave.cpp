@@ -91,8 +91,6 @@ bool SaveXFADocumentData(CPDFXFA_Document* pDocument,
   if (!pXFADocView)
     return true;
 
-  CXFA_FFDocHandler* pXFADocHandler =
-      CPDFXFA_App::GetInstance()->GetXFAApp()->GetDocHandler();
   CPDF_Document* pPDFDocument = pDocument->GetPDFDoc();
   if (!pDocument)
     return false;
@@ -177,9 +175,8 @@ bool SaveXFADocumentData(CPDFXFA_Document* pDocument,
   // L"datasets"
   {
     ScopedFileStream pDsfileWrite(FX_CreateMemoryStream());
-    if (pXFADocHandler->SavePackage(pXFADocView->GetDoc(),
-                                    CFX_WideStringC(L"datasets"),
-                                    pDsfileWrite.get()) &&
+    if (pXFADocView->GetDoc()->SavePackage(CFX_WideStringC(L"datasets"),
+                                           pDsfileWrite.get()) &&
         pDsfileWrite->GetSize() > 0) {
       // Datasets
       pContext->UpdateChecksum(pDsfileWrite.get());
@@ -202,9 +199,8 @@ bool SaveXFADocumentData(CPDFXFA_Document* pDocument,
   // L"form"
   {
     ScopedFileStream pfileWrite(FX_CreateMemoryStream());
-    if (pXFADocHandler->SavePackage(pXFADocView->GetDoc(),
-                                    CFX_WideStringC(L"form"), pfileWrite.get(),
-                                    pContext.get()) &&
+    if (pXFADocView->GetDoc()->SavePackage(CFX_WideStringC(L"form"),
+                                           pfileWrite.get(), pContext.get()) &&
         pfileWrite->GetSize() > 0) {
       CPDF_Dictionary* pDataDict = new CPDF_Dictionary;
       if (iFormIndex != -1) {

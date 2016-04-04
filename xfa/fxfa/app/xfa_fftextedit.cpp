@@ -15,7 +15,6 @@
 #include "xfa/fwl/lightwidget/cfwl_datetimepicker.h"
 #include "xfa/fwl/lightwidget/cfwl_edit.h"
 #include "xfa/fxfa/app/xfa_fffield.h"
-#include "xfa/fxfa/app/xfa_ffwidget.h"
 #include "xfa/fxfa/app/xfa_fwladapter.h"
 #include "xfa/fxfa/app/xfa_textlayout.h"
 #include "xfa/fxfa/parser/xfa_localevalue.h"
@@ -23,6 +22,7 @@
 #include "xfa/include/fxfa/xfa_ffdoc.h"
 #include "xfa/include/fxfa/xfa_ffdocview.h"
 #include "xfa/include/fxfa/xfa_ffpageview.h"
+#include "xfa/include/fxfa/xfa_ffwidget.h"
 
 CXFA_FFTextEdit::CXFA_FFTextEdit(CXFA_FFPageView* pPageView,
                                  CXFA_WidgetAcc* pDataAcc)

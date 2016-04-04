@@ -73,7 +73,6 @@ CXFA_FFApp::CXFA_FFApp(IXFA_AppProvider* pProvider)
       m_pAdapterWidgetMgr(nullptr),
       m_pWidgetMgrDelegate(nullptr),
       m_pFDEFontMgr(nullptr),
-      m_pMenuHandler(nullptr),
       m_pAdapterThreadMgr(nullptr) {
   m_pFWLApp = IFWL_App::Create(this);
   FWL_SetApp(m_pFWLApp);
@@ -91,7 +90,7 @@ CXFA_FFApp::~CXFA_FFApp() {
     m_pFWLTheme->Release();
   delete m_pAdapterWidgetMgr;
   delete m_pAdapterThreadMgr;
-  delete m_pMenuHandler;
+
   CXFA_TimeZoneProvider::Destroy();
   delete m_pFontMgr;
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_WINDOWS_
@@ -101,12 +100,7 @@ CXFA_FFApp::~CXFA_FFApp() {
   if (m_pFDEFontMgr)
     m_pFDEFontMgr->Release();
 }
-CXFA_FFMenuHandler* CXFA_FFApp::GetMenuHandler() {
-  if (!m_pMenuHandler) {
-    m_pMenuHandler = new CXFA_FFMenuHandler;
-  }
-  return m_pMenuHandler;
-}
+
 CXFA_FFDocHandler* CXFA_FFApp::GetDocHandler() {
   if (!m_pDocHandler) {
     m_pDocHandler = new CXFA_FFDocHandler;
