@@ -505,6 +505,10 @@ struct PatternValue {
   FX_FLOAT m_Comps[MAX_PATTERN_COLORCOMPS];
 };
 
+CFX_ByteStringC PDF_FindKeyAbbreviationForTesting(const CFX_ByteStringC& abbr);
+CFX_ByteStringC PDF_FindValueAbbreviationForTesting(
+    const CFX_ByteStringC& abbr);
+
 void PDF_ReplaceAbbr(CPDF_Object* pObj);
 bool IsPathOperator(const uint8_t* buf, size_t len);
 

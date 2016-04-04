@@ -910,6 +910,7 @@
         'core/fxcrt/cfx_retain_ptr_unittest.cpp',
         'core/fpdfapi/fpdf_font/fpdf_font_cid_unittest.cpp',
         'core/fpdfapi/fpdf_font/fpdf_font_unittest.cpp',
+        'core/fpdfapi/fpdf_page/fpdf_page_parser_unittest.cpp',
         'core/fpdfapi/fpdf_page/fpdf_page_parser_old_unittest.cpp',
         'core/fpdfapi/fpdf_parser/cpdf_object_unittest.cpp',
         'core/fpdfapi/fpdf_parser/cpdf_parser_unittest.cpp',

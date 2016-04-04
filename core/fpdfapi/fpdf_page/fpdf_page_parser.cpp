@@ -41,42 +41,24 @@ const char kPathOperatorCubicBezier3 = 'y';
 const char kPathOperatorClosePath = 'h';
 const char kPathOperatorRectangle[] = "re";
 
-struct _FX_BSTR {
-  const FX_CHAR* m_Ptr;
-  int m_Size;
-};
-#define _FX_BSTRC(str) \
-  { str, sizeof(str) - 1 }
-
-struct PDF_AbbrPairs {
-  _FX_BSTR full_name;
-  _FX_BSTR abbr;
+struct PDF_AbbrPair {
+  const FX_CHAR* abbr;
+  const FX_CHAR* full_name;
 };
 
-const PDF_AbbrPairs PDF_InlineKeyAbbr[] = {
-    {_FX_BSTRC("BitsPerComponent"), _FX_BSTRC("BPC")},
-    {_FX_BSTRC("ColorSpace"), _FX_BSTRC("CS")},
-    {_FX_BSTRC("Decode"), _FX_BSTRC("D")},
-    {_FX_BSTRC("DecodeParms"), _FX_BSTRC("DP")},
-    {_FX_BSTRC("Filter"), _FX_BSTRC("F")},
-    {_FX_BSTRC("Height"), _FX_BSTRC("H")},
-    {_FX_BSTRC("ImageMask"), _FX_BSTRC("IM")},
-    {_FX_BSTRC("Interpolate"), _FX_BSTRC("I")},
-    {_FX_BSTRC("Width"), _FX_BSTRC("W")},
+const PDF_AbbrPair PDF_InlineKeyAbbr[] = {
+    {"BPC", "BitsPerComponent"}, {"CS", "ColorSpace"}, {"D", "Decode"},
+    {"DP", "DecodeParms"},       {"F", "Filter"},      {"H", "Height"},
+    {"IM", "ImageMask"},         {"I", "Interpolate"}, {"W", "Width"},
 };
 
-const PDF_AbbrPairs PDF_InlineValueAbbr[] = {
-    {_FX_BSTRC("DeviceGray"), _FX_BSTRC("G")},
-    {_FX_BSTRC("DeviceRGB"), _FX_BSTRC("RGB")},
-    {_FX_BSTRC("DeviceCMYK"), _FX_BSTRC("CMYK")},
-    {_FX_BSTRC("Indexed"), _FX_BSTRC("I")},
-    {_FX_BSTRC("ASCIIHexDecode"), _FX_BSTRC("AHx")},
-    {_FX_BSTRC("ASCII85Decode"), _FX_BSTRC("A85")},
-    {_FX_BSTRC("LZWDecode"), _FX_BSTRC("LZW")},
-    {_FX_BSTRC("FlateDecode"), _FX_BSTRC("Fl")},
-    {_FX_BSTRC("RunLengthDecode"), _FX_BSTRC("RL")},
-    {_FX_BSTRC("CCITTFaxDecode"), _FX_BSTRC("CCF")},
-    {_FX_BSTRC("DCTDecode"), _FX_BSTRC("DCT")},
+const PDF_AbbrPair PDF_InlineValueAbbr[] = {
+    {"G", "DeviceGray"},       {"RGB", "DeviceRGB"},
+    {"CMYK", "DeviceCMYK"},    {"I", "Indexed"},
+    {"AHx", "ASCIIHexDecode"}, {"A85", "ASCII85Decode"},
+    {"LZW", "LZWDecode"},      {"Fl", "FlateDecode"},
+    {"RL", "RunLengthDecode"}, {"CCF", "CCITTFaxDecode"},
+    {"DCT", "DCTDecode"},
 };
 
 struct AbbrReplacementOp {
@@ -98,20 +80,28 @@ class CPDF_StreamParserAutoClearer {
   CPDF_StreamParser** scoped_variable_;
 };
 
-CFX_ByteStringC PDF_FindFullName(const PDF_AbbrPairs* table,
+CFX_ByteStringC PDF_FindFullName(const PDF_AbbrPair* table,
                                  size_t count,
                                  const CFX_ByteStringC& abbr) {
-  for (size_t i = 0; i < count; ++i) {
-    if (abbr.GetLength() != table[i].abbr.m_Size)
-      continue;
-    if (memcmp(abbr.GetPtr(), table[i].abbr.m_Ptr, abbr.GetLength()))
-      continue;
-    return CFX_ByteStringC(table[i].full_name.m_Ptr, table[i].full_name.m_Size);
-  }
-  return CFX_ByteStringC();
+  auto it = std::find_if(
+      table, table + count,
+      [abbr](const PDF_AbbrPair& pair) { return pair.abbr == abbr; });
+  return it != table + count ? CFX_ByteStringC(it->full_name)
+                             : CFX_ByteStringC();
 }
 
 }  // namespace
+
+CFX_ByteStringC PDF_FindKeyAbbreviationForTesting(const CFX_ByteStringC& abbr) {
+  return PDF_FindFullName(PDF_InlineKeyAbbr, FX_ArraySize(PDF_InlineKeyAbbr),
+                          abbr);
+}
+
+CFX_ByteStringC PDF_FindValueAbbreviationForTesting(
+    const CFX_ByteStringC& abbr) {
+  return PDF_FindFullName(PDF_InlineValueAbbr,
+                          FX_ArraySize(PDF_InlineValueAbbr), abbr);
+}
 
 bool IsPathOperator(const uint8_t* buf, size_t len) {
   if (len == 1) {

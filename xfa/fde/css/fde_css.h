@@ -459,8 +459,7 @@ class IFDE_CSSStyleSheet : public IFX_Unknown {
   virtual IFDE_CSSRule* GetRule(int32_t index) = 0;
 };
 typedef CFX_ArrayTemplate<IFDE_CSSStyleSheet*> CFDE_CSSStyleSheetArray;
-#define FDE_CSSUSERSTYLESHEET (FX_BSTRC("#USERSHEET"))
-#define FDE_CSSUAGENTSTYLESHEET (FX_BSTRC("#AGENTSHEET"))
+
 class IFDE_CSSStyleSheetCache {
  public:
   static IFDE_CSSStyleSheetCache* Create();
