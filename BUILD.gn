@@ -217,8 +217,6 @@ static_library("fpdfdoc") {
     "core/fpdfdoc/doc_viewerPreferences.cpp",
     "core/fpdfdoc/doc_vt.cpp",
     "core/fpdfdoc/doc_vtmodule.cpp",
-    "core/fpdfdoc/include/ipdf_variabletext_provider.h",
-    "core/fpdfdoc/ipdf_variabletext_provider.cpp",
     "core/fpdfdoc/ipvt_fontmap.h",
     "core/fpdfdoc/pdf_vt.h",
     "core/fpdfdoc/tagged_int.h",

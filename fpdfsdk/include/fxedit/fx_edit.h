@@ -8,6 +8,7 @@
 #define FPDFSDK_INCLUDE_FXEDIT_FX_EDIT_H_
 
 #include "core/fxcrt/include/fx_basic.h"
+#include "core/include/fpdfdoc/fpdf_vt.h"
 #include "core/include/fxge/fx_dib.h"
 
 class CFX_RenderDevice;
@@ -24,8 +25,7 @@ class IFX_Edit_UndoItem;
 class IFX_List;
 class IFX_List_Notify;
 class IFX_SystemHandler;
-class IPDF_VariableText;
-class IPDF_VariableText_Provider;
+
 struct CPVT_Line;
 struct CPVT_SecProps;
 struct CPVT_Section;
@@ -187,7 +187,7 @@ class IFX_Edit {
   virtual void SetFontMap(IFX_Edit_FontMap* pFontMap) = 0;
   // if user don't like to use FontMap, implement VTProvider and set it
   // directly.
-  virtual void SetVTProvider(IPDF_VariableText_Provider* pProvider) = 0;
+  virtual void SetVTProvider(IPDF_VariableText::Provider* pProvider) = 0;
   // set a IFX_Edit_Notify pointer implemented by user.
   virtual void SetNotify(IFX_Edit_Notify* pNotify) = 0;
   virtual void SetOprNotify(IFX_Edit_OprNotify* pOprNotify) = 0;

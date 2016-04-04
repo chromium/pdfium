@@ -7,16 +7,16 @@
 #ifndef CORE_FPDFDOC_CPVT_PROVIDER_H_
 #define CORE_FPDFDOC_CPVT_PROVIDER_H_
 
-#include "core/fpdfdoc/include/ipdf_variabletext_provider.h"
 #include "core/fpdfdoc/ipvt_fontmap.h"
 #include "core/fxcrt/include/fx_system.h"
+#include "core/include/fpdfdoc/fpdf_vt.h"
 
-class CPVT_Provider : public IPDF_VariableText_Provider {
+class CPVT_Provider : public IPDF_VariableText::Provider {
  public:
   CPVT_Provider(IPVT_FontMap* pFontMap);
   ~CPVT_Provider() override;
 
-  // IPDF_VariableText_Provider
+  // IPDF_VariableText::Provider
   int32_t GetCharWidth(int32_t nFontIndex,
                        uint16_t word,
                        int32_t nWordStyle) override;

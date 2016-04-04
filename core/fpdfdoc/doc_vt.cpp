@@ -6,9 +6,9 @@
 
 #include <algorithm>
 
-#include "core/fpdfdoc/include/ipdf_variabletext_provider.h"
 #include "core/fpdfdoc/pdf_vt.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
+#include "core/include/fpdfdoc/fpdf_vt.h"
 #include "core/include/fpdfdoc/fpdf_vt.h"
 
 const uint8_t gFontSizeSteps[] = {4,  6,  8,   9,   10,  12,  14, 18, 20,
@@ -1643,15 +1643,15 @@ int32_t CPDF_VariableText::GetDefaultFontIndex() {
 FX_BOOL CPDF_VariableText::IsLatinWord(uint16_t word) {
   return m_pVTProvider ? m_pVTProvider->IsLatinWord(word) : FALSE;
 }
-IPDF_VariableText_Iterator* CPDF_VariableText::GetIterator() {
+IPDF_VariableText::Iterator* CPDF_VariableText::GetIterator() {
   if (!m_pVTIterator) {
     m_pVTIterator = new CPDF_VariableText_Iterator(this);
   }
   return m_pVTIterator;
 }
-IPDF_VariableText_Provider* CPDF_VariableText::SetProvider(
-    IPDF_VariableText_Provider* pProvider) {
-  IPDF_VariableText_Provider* pOld = m_pVTProvider;
+IPDF_VariableText::Provider* CPDF_VariableText::SetProvider(
+    IPDF_VariableText::Provider* pProvider) {
+  IPDF_VariableText::Provider* pOld = m_pVTProvider;
   m_pVTProvider = pProvider;
   return pOld;
 }

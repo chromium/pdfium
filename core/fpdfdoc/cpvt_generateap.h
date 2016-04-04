@@ -12,6 +12,7 @@
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
+#include "core/include/fpdfdoc/fpdf_vt.h"
 
 // border style
 #define PBS_SOLID 0
@@ -23,8 +24,8 @@
 
 class CPDF_Dictionary;
 class CPDF_Document;
-class IPDF_VariableText_Iterator;
 class IPVT_FontMap;
+
 struct CPVT_WordRange;
 
 FX_BOOL FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict);
@@ -38,7 +39,7 @@ class CPVT_GenerateAP {
   static FX_BOOL GenerateListBoxAP(CPDF_Document* pDoc,
                                    CPDF_Dictionary* pAnnotDict);
   static CFX_ByteString GenerateEditAP(IPVT_FontMap* pFontMap,
-                                       IPDF_VariableText_Iterator* pIterator,
+                                       IPDF_VariableText::Iterator* pIterator,
                                        const CFX_FloatPoint& ptOffset,
                                        FX_BOOL bContinuous,
                                        uint16_t SubWord = 0,

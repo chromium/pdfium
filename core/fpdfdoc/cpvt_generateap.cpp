@@ -499,7 +499,7 @@ FX_BOOL CPVT_GenerateAP::GenerateListBoxAP(CPDF_Document* pDoc,
 // Static.
 CFX_ByteString CPVT_GenerateAP::GenerateEditAP(
     IPVT_FontMap* pFontMap,
-    IPDF_VariableText_Iterator* pIterator,
+    IPDF_VariableText::Iterator* pIterator,
     const CFX_FloatPoint& ptOffset,
     FX_BOOL bContinuous,
     uint16_t SubWord,

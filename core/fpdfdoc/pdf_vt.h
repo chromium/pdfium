@@ -342,9 +342,9 @@ class CPDF_VariableText : public IPDF_VariableText, private CPDF_EditContainer {
   ~CPDF_VariableText() override;
 
   // IPDF_VariableText
-  IPDF_VariableText_Provider* SetProvider(
-      IPDF_VariableText_Provider* pProvider) override;
-  IPDF_VariableText_Iterator* GetIterator() override;
+  IPDF_VariableText::Provider* SetProvider(
+      IPDF_VariableText::Provider* pProvider) override;
+  IPDF_VariableText::Iterator* GetIterator() override;
   void SetPlateRect(const CFX_FloatRect& rect) override {
     CPDF_EditContainer::SetPlateRect(rect);
   }
@@ -521,16 +521,16 @@ class CPDF_VariableText : public IPDF_VariableText, private CPDF_EditContainer {
  private:
   FX_BOOL m_bInitial;
   FX_BOOL m_bRichText;
-  IPDF_VariableText_Provider* m_pVTProvider;
-  CPDF_VariableText_Iterator* m_pVTIterator;
+  IPDF_VariableText::Provider* m_pVTProvider;
+  CPDF_VariableText::Iterator* m_pVTIterator;
 };
 
-class CPDF_VariableText_Iterator : public IPDF_VariableText_Iterator {
+class CPDF_VariableText_Iterator : public IPDF_VariableText::Iterator {
  public:
   explicit CPDF_VariableText_Iterator(CPDF_VariableText* pVT);
   ~CPDF_VariableText_Iterator() override;
 
-  // IPDF_VariableText_Iterator
+  // IPDF_VariableText::Iterator
   FX_BOOL NextWord() override;
   FX_BOOL PrevWord() override;
   FX_BOOL NextLine() override;

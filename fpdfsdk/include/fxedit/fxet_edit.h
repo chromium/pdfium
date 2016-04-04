@@ -7,7 +7,6 @@
 #ifndef FPDFSDK_INCLUDE_FXEDIT_FXET_EDIT_H_
 #define FPDFSDK_INCLUDE_FXEDIT_FXET_EDIT_H_
 
-#include "core/fpdfdoc/include/ipdf_variabletext_provider.h"
 #include "core/include/fpdfdoc/fpdf_vt.h"
 #include "fpdfsdk/include/fxedit/fx_edit.h"
 
@@ -516,7 +515,7 @@ class CFX_Edit : public IFX_Edit {
 
   // IFX_Edit
   void SetFontMap(IFX_Edit_FontMap* pFontMap) override;
-  void SetVTProvider(IPDF_VariableText_Provider* pProvider) override;
+  void SetVTProvider(IPDF_VariableText::Provider* pProvider) override;
   void SetNotify(IFX_Edit_Notify* pNotify) override;
   void SetOprNotify(IFX_Edit_OprNotify* pOprNotify) override;
   IFX_Edit_Iterator* GetIterator() override;
@@ -755,7 +754,7 @@ class CFX_Edit : public IFX_Edit {
 
 class CFX_Edit_Iterator : public IFX_Edit_Iterator {
  public:
-  CFX_Edit_Iterator(CFX_Edit* pEdit, IPDF_VariableText_Iterator* pVTIterator);
+  CFX_Edit_Iterator(CFX_Edit* pEdit, IPDF_VariableText::Iterator* pVTIterator);
   ~CFX_Edit_Iterator() override;
 
   // IFX_Edit_Iterator
@@ -775,17 +774,17 @@ class CFX_Edit_Iterator : public IFX_Edit_Iterator {
 
  private:
   CFX_Edit* m_pEdit;
-  IPDF_VariableText_Iterator* m_pVTIterator;
+  IPDF_VariableText::Iterator* m_pVTIterator;
 };
 
-class CFX_Edit_Provider : public IPDF_VariableText_Provider {
+class CFX_Edit_Provider : public IPDF_VariableText::Provider {
  public:
   explicit CFX_Edit_Provider(IFX_Edit_FontMap* pFontMap);
   ~CFX_Edit_Provider() override;
 
   IFX_Edit_FontMap* GetFontMap();
 
-  // IPDF_VariableText_Provider:
+  // IPDF_VariableText::Provider:
   int32_t GetCharWidth(int32_t nFontIndex,
                        uint16_t word,
                        int32_t nWordStyle) override;
