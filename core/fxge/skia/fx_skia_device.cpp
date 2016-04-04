@@ -320,8 +320,7 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawDeviceText(int nChars,
                                              uint32_t color,
                                              int alpha_flag,
                                              void* pIccTransform) {
-  SkAutoTUnref<SkTypeface> typeface(SkTypeface::CreateFromStream(
-      new SkMemoryStream(pFont->GetFontData(), pFont->GetSize())));
+  CFX_TypeFace* typeface = pCache->GetDeviceCache(pFont);
   SkPaint paint;
   paint.setAntiAlias(true);
   paint.setColor(color);

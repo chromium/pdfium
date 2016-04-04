@@ -9,6 +9,11 @@
 #include "core/include/fxge/fx_freetype.h"
 #include "core/include/fxge/fx_ge.h"
 
+#ifdef _SKIA_SUPPORT_
+#include "third_party/skia/include/core/SkStream.h"
+#include "third_party/skia/include/core/SkTypeface.h"
+#endif
+
 #undef FX_GAMMA
 #undef FX_GAMMA_INVERSE
 #define FX_GAMMA(value) (value)
@@ -1198,6 +1203,20 @@ CFX_FaceCache* CFX_FontCache::GetCachedFace(CFX_Font* pFont) {
   return face_cache;
 }
 
+#ifdef _SKIA_SUPPORT_
+CFX_TypeFace* CFX_FontCache::GetDeviceCache(CFX_Font* pFont) {
+  return GetCachedFace(pFont)->GetDeviceCache(pFont);
+}
+
+CFX_TypeFace* CFX_FaceCache::GetDeviceCache(CFX_Font* pFont) {
+  if (!m_pTypeface) {
+    m_pTypeface = SkTypeface::CreateFromStream(
+        new SkMemoryStream(pFont->GetFontData(), pFont->GetSize()));
+  }
+  return m_pTypeface;
+}
+#endif
+
 void CFX_FontCache::ReleaseCachedFace(CFX_Font* pFont) {
   FXFT_Face internal_face = pFont->GetFace();
   const bool bExternal = !internal_face;
@@ -1237,7 +1256,14 @@ void CFX_FontCache::FreeCache(FX_BOOL bRelease) {
   }
 }
 
-CFX_FaceCache::CFX_FaceCache(FXFT_Face face) : m_Face(face) {}
+CFX_FaceCache::CFX_FaceCache(FXFT_Face face)
+    : m_Face(face)
+#ifdef _SKIA_SUPPORT_
+      ,
+      m_pTypeface(nullptr)
+#endif
+{
+}
 
 CFX_FaceCache::~CFX_FaceCache() {
   for (const auto& pair : m_SizeMap) {
@@ -1248,7 +1274,11 @@ CFX_FaceCache::~CFX_FaceCache() {
     delete pair.second;
   }
   m_PathMap.clear();
+#ifdef _SKIA_SUPPORT_
+  SkSafeUnref(m_pTypeface);
+#endif
 }
+
 #if _FXM_PLATFORM_ != _FXM_PLATFORM_APPLE_
 void CFX_FaceCache::InitPlatform() {}
 #endif

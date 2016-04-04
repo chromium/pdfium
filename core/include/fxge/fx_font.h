@@ -27,6 +27,12 @@ class CFX_SubstFont;
 class CTTFontDesc;
 class IFX_SystemFontInfo;
 
+#ifdef _SKIA_SUPPORT_
+class SkTypeface;
+
+using CFX_TypeFace = SkTypeface;
+#endif
+
 #define FXFONT_FIXED_PITCH 0x01
 #define FXFONT_SERIF 0x02
 #define FXFONT_SYMBOLIC 0x04
@@ -452,6 +458,9 @@ class CFX_FontCache {
   CFX_FaceCache* GetCachedFace(CFX_Font* pFont);
   void ReleaseCachedFace(CFX_Font* pFont);
   void FreeCache(FX_BOOL bRelease = FALSE);
+#ifdef _SKIA_SUPPORT_
+  CFX_TypeFace* GetDeviceCache(CFX_Font* pFont);
+#endif
 
  private:
   using CFX_FTCacheMap = std::map<FXFT_Face, CFX_CountedFaceCache*>;
@@ -490,6 +499,10 @@ class CFX_FaceCache {
                                     uint32_t glyph_index,
                                     int dest_width);
 
+#ifdef _SKIA_SUPPORT_
+  CFX_TypeFace* GetDeviceCache(CFX_Font* pFont);
+#endif
+
  private:
   CFX_GlyphBitmap* RenderGlyph(CFX_Font* pFont,
                                uint32_t glyph_index,
@@ -516,6 +529,9 @@ class CFX_FaceCache {
   std::map<CFX_ByteString, CFX_SizeGlyphCache*> m_SizeMap;
   std::map<uint32_t, CFX_PathData*> m_PathMap;
   CFX_DIBitmap* m_pBitmap;
+#ifdef _SKIA_SUPPORT_
+  CFX_TypeFace* m_pTypeface;
+#endif
 };
 
 struct FXTEXT_GLYPHPOS {
