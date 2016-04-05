@@ -50,6 +50,9 @@ def _CheckUnwantedDependencies(input_api, output_api):
     import checkdeps
     from cpp_checker import CppChecker
     from rules import Rule
+  except ImportError:
+    return [output_api.PresubmitError(
+        'Unable to run checkdeps, does pdfium/buildtools/checkdeps exist?')]
   finally:
     # Restore sys.path to what it was before.
     sys.path = original_sys_path
