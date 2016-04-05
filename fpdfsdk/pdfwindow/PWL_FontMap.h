@@ -7,6 +7,7 @@
 #ifndef FPDFSDK_PDFWINDOW_PWL_FONTMAP_H_
 #define FPDFSDK_PDFWINDOW_PWL_FONTMAP_H_
 
+#include "core/fpdfdoc/include/ipvt_fontmap.h"
 #include "fpdfsdk/include/fxedit/fx_edit.h"
 #include "public/fpdf_sysfontinfo.h"
 
@@ -48,12 +49,12 @@ struct CPWL_FontMap_Native {
 
 #endif
 
-class CPWL_FontMap : public IFX_Edit_FontMap {
+class CPWL_FontMap : public IPVT_FontMap {
  public:
   CPWL_FontMap(IFX_SystemHandler* pSystemHandler);
   ~CPWL_FontMap() override;
 
-  // IFX_Edit_FontMap
+  // IPVT_FontMap
   CPDF_Font* GetPDFFont(int32_t nFontIndex) override;
   CFX_ByteString GetPDFFontAlias(int32_t nFontIndex) override;
   int32_t GetWordFontIndex(uint16_t word,

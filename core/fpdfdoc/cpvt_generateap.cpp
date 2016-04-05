@@ -13,7 +13,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
 #include "core/fpdfdoc/cpvt_color.h"
 #include "core/fpdfdoc/cpvt_fontmap.h"
-#include "core/fpdfdoc/cpvt_provider.h"
+#include "core/fpdfdoc/include/cpvt_word.h"
 #include "core/fpdfdoc/pdf_vt.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
 
@@ -217,7 +217,7 @@ FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
       CPVT_FontMap map(
           pDoc, pStreamDict ? pStreamDict->GetDictBy("Resources") : nullptr,
           pDefFont, sFontName.Right(sFontName.GetLength() - 1));
-      CPVT_Provider prd(&map);
+      CPDF_VariableText::Provider prd(&map);
       CPDF_VariableText vt;
       vt.SetProvider(&prd);
       vt.SetPlateRect(rcBody);
@@ -276,7 +276,7 @@ FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
       CPVT_FontMap map(
           pDoc, pStreamDict ? pStreamDict->GetDictBy("Resources") : nullptr,
           pDefFont, sFontName.Right(sFontName.GetLength() - 1));
-      CPVT_Provider prd(&map);
+      CPDF_VariableText::Provider prd(&map);
       CPDF_VariableText vt;
       vt.SetProvider(&prd);
       CFX_FloatRect rcButton = rcBody;
@@ -344,7 +344,7 @@ FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
       CPVT_FontMap map(
           pDoc, pStreamDict ? pStreamDict->GetDictBy("Resources") : nullptr,
           pDefFont, sFontName.Right(sFontName.GetLength() - 1));
-      CPVT_Provider prd(&map);
+      CPDF_VariableText::Provider prd(&map);
       CPDF_Array* pOpts = FPDF_GetFieldAttr(pAnnotDict, "Opt")
                               ? FPDF_GetFieldAttr(pAnnotDict, "Opt")->GetArray()
                               : nullptr;
@@ -502,7 +502,7 @@ FX_BOOL CPVT_GenerateAP::GenerateListBoxAP(CPDF_Document* pDoc,
 // Static.
 CFX_ByteString CPVT_GenerateAP::GenerateEditAP(
     IPVT_FontMap* pFontMap,
-    IPDF_VariableText::Iterator* pIterator,
+    CPDF_VariableText::Iterator* pIterator,
     const CFX_FloatPoint& ptOffset,
     FX_BOOL bContinuous,
     uint16_t SubWord,

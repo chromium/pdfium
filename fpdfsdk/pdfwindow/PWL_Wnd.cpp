@@ -815,7 +815,7 @@ IPWL_Provider* CPWL_Wnd::GetProvider() const {
   return m_sPrivateParam.pProvider;
 }
 
-IFX_Edit_FontMap* CPWL_Wnd::GetFontMap() const {
+IPVT_FontMap* CPWL_Wnd::GetFontMap() const {
   return m_sPrivateParam.pFontMap;
 }
 

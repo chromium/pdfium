@@ -10,6 +10,7 @@
 #include "core/fpdfapi/fpdf_font/include/cpdf_fontencoding.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
+#include "core/fpdfdoc/include/ipvt_fontmap.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
 namespace {

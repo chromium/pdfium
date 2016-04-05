@@ -8,7 +8,9 @@
 
 #include <algorithm>
 
+#include "core/fpdfdoc/include/cpvt_word.h"
 #include "core/include/fxge/fx_ge.h"
+#include "fpdfsdk/include/fxedit/fx_edit.h"
 #include "fpdfsdk/pdfwindow/PWL_Icon.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
@@ -575,7 +577,7 @@ CFX_ByteString CPWL_Utils::GetSpellCheckAppStream(
 }
 
 CFX_ByteString CPWL_Utils::GetTextAppStream(const CFX_FloatRect& rcBBox,
-                                            IFX_Edit_FontMap* pFontMap,
+                                            IPVT_FontMap* pFontMap,
                                             const CFX_WideString& sText,
                                             int32_t nAlignmentH,
                                             int32_t nAlignmentV,
@@ -613,7 +615,7 @@ CFX_ByteString CPWL_Utils::GetTextAppStream(const CFX_FloatRect& rcBBox,
 }
 
 CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
-                                                  IFX_Edit_FontMap* pFontMap,
+                                                  IPVT_FontMap* pFontMap,
                                                   CPDF_Stream* pIconStream,
                                                   CPDF_IconFit& IconFit,
                                                   const CFX_WideString& sLabel,

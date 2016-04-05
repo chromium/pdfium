@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
+#include "core/fpdfdoc/include/cpvt_word.h"
 #include "core/fxcrt/include/fx_safe_types.h"
 #include "core/fxcrt/include/fx_xml.h"
 #include "core/include/fxge/fx_ge.h"
@@ -811,7 +812,7 @@ void CPWL_Edit::SetCharArray(int32_t nCharArray) {
     m_pEdit->SetTextOverflow(TRUE);
 
     if (HasFlag(PWS_AUTOFONTSIZE)) {
-      if (IFX_Edit_FontMap* pFontMap = GetFontMap()) {
+      if (IPVT_FontMap* pFontMap = GetFontMap()) {
         FX_FLOAT fFontSize = GetCharArrayAutoFontSize(
             pFontMap->GetPDFFont(0), GetClientRect(), nCharArray);
         if (fFontSize > 0.0f) {
@@ -978,7 +979,7 @@ FX_BOOL CPWL_Edit::OnChar(uint16_t nChar, uint32_t nFlag) {
   if (bExit)
     return FALSE;
 
-  if (IFX_Edit_FontMap* pFontMap = GetFontMap()) {
+  if (IPVT_FontMap* pFontMap = GetFontMap()) {
     int32_t nOldCharSet = GetCharSet();
     int32_t nNewCharSet = pFontMap->CharSetFromUnicode(nChar, DEFAULT_CHARSET);
     if (nOldCharSet != nNewCharSet) {

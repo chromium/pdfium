@@ -6,10 +6,12 @@
 
 #include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 #include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
+#include "core/fpdfdoc/include/cpvt_word.h"
+#include "core/fpdfdoc/include/ipvt_fontmap.h"
 #include "fpdfsdk/include/fxedit/fx_edit.h"
 #include "fpdfsdk/include/fxedit/fxet_edit.h"
 
-CFX_ByteString GetPDFWordString(IFX_Edit_FontMap* pFontMap,
+CFX_ByteString GetPDFWordString(IPVT_FontMap* pFontMap,
                                 int32_t nFontIndex,
                                 uint16_t Word,
                                 uint16_t SubWord) {
@@ -42,7 +44,7 @@ static CFX_ByteString GetWordRenderString(const CFX_ByteString& strWords) {
   return "";
 }
 
-static CFX_ByteString GetFontSetString(IFX_Edit_FontMap* pFontMap,
+static CFX_ByteString GetFontSetString(IPVT_FontMap* pFontMap,
                                        int32_t nFontIndex,
                                        FX_FLOAT fFontSize) {
   CFX_ByteTextBuf sRet;

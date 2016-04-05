@@ -18,7 +18,7 @@ class CPWL_ScrollBar;
 class CPWL_Timer;
 class CPWL_TimerHandler;
 class CPWL_Wnd;
-class IFX_Edit_FontMap;
+class IPVT_FontMap;
 class IFX_SystemHandler;
 class IPWL_Provider;
 class IPWL_SpellCheck;
@@ -230,7 +230,7 @@ struct PWL_CREATEPARAM {
 
   CFX_FloatRect rcRectWnd;            // required
   IFX_SystemHandler* pSystemHandler;  // required
-  IFX_Edit_FontMap* pFontMap;         // required for text window
+  IPVT_FontMap* pFontMap;             // required for text window
   IPWL_Provider* pProvider;           // required for self coordinate
   IPWL_FocusHandler* pFocusHandler;   // optional
   uint32_t dwFlags;                   // optional
@@ -366,7 +366,7 @@ class CPWL_Wnd : public CPWL_TimerHandler {
   FX_BOOL IsReadOnly() const;
   CPWL_ScrollBar* GetVScrollBar() const;
 
-  IFX_Edit_FontMap* GetFontMap() const;
+  IPVT_FontMap* GetFontMap() const;
   IPWL_Provider* GetProvider() const;
   IPWL_FocusHandler* GetFocusHandler() const;
 

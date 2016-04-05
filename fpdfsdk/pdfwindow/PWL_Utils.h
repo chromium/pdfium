@@ -7,11 +7,12 @@
 #ifndef FPDFSDK_PDFWINDOW_PWL_UTILS_H_
 #define FPDFSDK_PDFWINDOW_PWL_UTILS_H_
 
-#include "core/include/fpdfdoc/fpdf_vt.h"
-#include "fpdfsdk/include/fxedit/fx_edit.h"
+#include "core/fpdfdoc/include/cpvt_wordrange.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
 class CFX_PathData;
+class IFX_Edit;
+
 struct CPWL_Color;
 
 template <class T>
@@ -153,7 +154,7 @@ class CPWL_Utils {
                                                const CPWL_Color& color);
 
   static CFX_ByteString GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
-                                               IFX_Edit_FontMap* pFontMap,
+                                               IPVT_FontMap* pFontMap,
                                                CPDF_Stream* pIconStream,
                                                CPDF_IconFit& IconFit,
                                                const CFX_WideString& sLabel,
@@ -182,7 +183,7 @@ class CPWL_Utils {
       const CFX_FloatPoint& ptOffset,
       const CPVT_WordRange* pRange = NULL);
   static CFX_ByteString GetTextAppStream(const CFX_FloatRect& rcBBox,
-                                         IFX_Edit_FontMap* pFontMap,
+                                         IPVT_FontMap* pFontMap,
                                          const CFX_WideString& sText,
                                          int32_t nAlignmentH,
                                          int32_t nAlignmentV,

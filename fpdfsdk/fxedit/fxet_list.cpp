@@ -6,6 +6,7 @@
 
 #include "fpdfsdk/include/fxedit/fxet_list.h"
 
+#include "core/fpdfdoc/include/cpvt_word.h"
 #include "fpdfsdk/include/fxedit/fxet_edit.h"
 
 CFX_ListItem::CFX_ListItem()
@@ -22,7 +23,7 @@ CFX_ListItem::~CFX_ListItem() {
   IFX_Edit::DelEdit(m_pEdit);
 }
 
-void CFX_ListItem::SetFontMap(IFX_Edit_FontMap* pFontMap) {
+void CFX_ListItem::SetFontMap(IPVT_FontMap* pFontMap) {
   if (m_pEdit)
     m_pEdit->SetFontMap(pFontMap);
 }
@@ -111,7 +112,7 @@ void CFX_List::Empty() {
   m_aListItems.RemoveAll();
 }
 
-void CFX_List::SetFontMap(IFX_Edit_FontMap* pFontMap) {
+void CFX_List::SetFontMap(IPVT_FontMap* pFontMap) {
   m_pFontMap = pFontMap;
 }
 

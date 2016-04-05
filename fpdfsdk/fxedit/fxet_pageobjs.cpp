@@ -10,6 +10,8 @@
 #include "core/fpdfapi/fpdf_page/include/cpdf_textobject.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_textrenderer.h"
+#include "core/fpdfdoc/include/cpvt_word.h"
+#include "core/fpdfdoc/include/ipvt_fontmap.h"
 #include "core/include/fxge/fx_ge.h"
 #include "fpdfsdk/include/fx_systemhandler.h"
 #include "fpdfsdk/include/fxedit/fx_edit.h"
@@ -178,7 +180,7 @@ void IFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
   }
 
   if (IFX_Edit_Iterator* pIterator = pEdit->GetIterator()) {
-    if (IFX_Edit_FontMap* pFontMap = pEdit->GetFontMap()) {
+    if (IPVT_FontMap* pFontMap = pEdit->GetFontMap()) {
       if (pRange)
         pIterator->SetAt(pRange->BeginPos);
       else
@@ -299,7 +301,7 @@ void IFX_Edit::DrawRichEdit(CFX_RenderDevice* pDevice,
   }
 
   if (IFX_Edit_Iterator* pIterator = pEdit->GetIterator()) {
-    if (IFX_Edit_FontMap* pFontMap = pEdit->GetFontMap()) {
+    if (IPVT_FontMap* pFontMap = pEdit->GetFontMap()) {
       if (pRange)
         pIterator->SetAt(pRange->BeginPos);
       else
@@ -473,7 +475,7 @@ void IFX_Edit::GeneratePageObjects(
   ObjArray.RemoveAll();
 
   if (IFX_Edit_Iterator* pIterator = pEdit->GetIterator()) {
-    if (IFX_Edit_FontMap* pFontMap = pEdit->GetFontMap()) {
+    if (IPVT_FontMap* pFontMap = pEdit->GetFontMap()) {
       if (pRange)
         pIterator->SetAt(pRange->BeginPos);
       else
@@ -537,7 +539,7 @@ void IFX_Edit::GenerateRichPageObjects(
   ObjArray.RemoveAll();
 
   if (IFX_Edit_Iterator* pIterator = pEdit->GetIterator()) {
-    if (IFX_Edit_FontMap* pFontMap = pEdit->GetFontMap()) {
+    if (IPVT_FontMap* pFontMap = pEdit->GetFontMap()) {
       if (pRange)
         pIterator->SetAt(pRange->BeginPos);
       else

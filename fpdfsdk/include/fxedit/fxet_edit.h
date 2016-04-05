@@ -7,7 +7,8 @@
 #ifndef FPDFSDK_INCLUDE_FXEDIT_FXET_EDIT_H_
 #define FPDFSDK_INCLUDE_FXEDIT_FXET_EDIT_H_
 
-#include "core/include/fpdfdoc/fpdf_vt.h"
+#include "core/fpdfdoc/include/cpvt_secprops.h"
+#include "core/fpdfdoc/include/cpvt_wordprops.h"
 #include "fpdfsdk/include/fxedit/fx_edit.h"
 
 class CFX_Edit;
@@ -510,17 +511,17 @@ class CFX_Edit : public IFX_Edit {
   friend class CFXEU_InsertText;
 
  public:
-  explicit CFX_Edit(IPDF_VariableText* pVT);
+  explicit CFX_Edit(CPDF_VariableText* pVT);
   ~CFX_Edit() override;
 
   // IFX_Edit
-  void SetFontMap(IFX_Edit_FontMap* pFontMap) override;
-  void SetVTProvider(IPDF_VariableText::Provider* pProvider) override;
+  void SetFontMap(IPVT_FontMap* pFontMap) override;
+  void SetVTProvider(CPDF_VariableText::Provider* pProvider) override;
   void SetNotify(IFX_Edit_Notify* pNotify) override;
   void SetOprNotify(IFX_Edit_OprNotify* pOprNotify) override;
   IFX_Edit_Iterator* GetIterator() override;
-  IPDF_VariableText* GetVariableText() override;
-  IFX_Edit_FontMap* GetFontMap() override;
+  CPDF_VariableText* GetVariableText() override;
+  IPVT_FontMap* GetFontMap() override;
   void Initialize() override;
   void SetPlateRect(const CFX_FloatRect& rect, FX_BOOL bPaint = TRUE) override;
   void SetScrollPos(const CFX_FloatPoint& point) override;
@@ -544,7 +545,7 @@ class CFX_Edit : public IFX_Edit {
   FX_BOOL SetRichFontSize(FX_FLOAT fFontSize) override;
   FX_BOOL SetRichFontIndex(int32_t nFontIndex) override;
   FX_BOOL SetRichTextColor(FX_COLORREF dwColor) override;
-  FX_BOOL SetRichTextScript(int32_t nScriptType) override;
+  FX_BOOL SetRichTextScript(CPDF_VariableText::ScriptType nScriptType) override;
   FX_BOOL SetRichTextBold(FX_BOOL bBold = TRUE) override;
   FX_BOOL SetRichTextItalic(FX_BOOL bItalic = TRUE) override;
   FX_BOOL SetRichTextUnderline(FX_BOOL bUnderline = TRUE) override;
@@ -725,7 +726,7 @@ class CFX_Edit : public IFX_Edit {
   FX_FLOAT GetLineBottom(const CPVT_WordPlace& place) const;
 
  private:
-  IPDF_VariableText* m_pVT;
+  CPDF_VariableText* m_pVT;
   IFX_Edit_Notify* m_pNotify;
   IFX_Edit_OprNotify* m_pOprNotify;
   CFX_Edit_Provider* m_pVTProvide;
@@ -754,7 +755,7 @@ class CFX_Edit : public IFX_Edit {
 
 class CFX_Edit_Iterator : public IFX_Edit_Iterator {
  public:
-  CFX_Edit_Iterator(CFX_Edit* pEdit, IPDF_VariableText::Iterator* pVTIterator);
+  CFX_Edit_Iterator(CFX_Edit* pEdit, CPDF_VariableText::Iterator* pVTIterator);
   ~CFX_Edit_Iterator() override;
 
   // IFX_Edit_Iterator
@@ -774,17 +775,17 @@ class CFX_Edit_Iterator : public IFX_Edit_Iterator {
 
  private:
   CFX_Edit* m_pEdit;
-  IPDF_VariableText::Iterator* m_pVTIterator;
+  CPDF_VariableText::Iterator* m_pVTIterator;
 };
 
-class CFX_Edit_Provider : public IPDF_VariableText::Provider {
+class CFX_Edit_Provider : public CPDF_VariableText::Provider {
  public:
-  explicit CFX_Edit_Provider(IFX_Edit_FontMap* pFontMap);
+  explicit CFX_Edit_Provider(IPVT_FontMap* pFontMap);
   ~CFX_Edit_Provider() override;
 
-  IFX_Edit_FontMap* GetFontMap();
+  IPVT_FontMap* GetFontMap();
 
-  // IPDF_VariableText::Provider:
+  // CPDF_VariableText::Provider:
   int32_t GetCharWidth(int32_t nFontIndex,
                        uint16_t word,
                        int32_t nWordStyle) override;
@@ -797,7 +798,7 @@ class CFX_Edit_Provider : public IPDF_VariableText::Provider {
   FX_BOOL IsLatinWord(uint16_t word) override;
 
  private:
-  IFX_Edit_FontMap* m_pFontMap;
+  IPVT_FontMap* m_pFontMap;
 };
 
 #endif  // FPDFSDK_INCLUDE_FXEDIT_FXET_EDIT_H_

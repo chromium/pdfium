@@ -4,21 +4,17 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/fpdfdoc/include/cpdf_variabletext.h"
 #include "fpdfsdk/include/fxedit/fxet_edit.h"
 #include "fpdfsdk/include/fxedit/fxet_list.h"
 
 IFX_Edit* IFX_Edit::NewEdit() {
-  if (IPDF_VariableText* pVT = IPDF_VariableText::NewVariableText()) {
-    return new CFX_Edit(pVT);
-  }
-
-  return NULL;
+  return new CFX_Edit(new CPDF_VariableText());
 }
 
 void IFX_Edit::DelEdit(IFX_Edit* pEdit) {
-  IPDF_VariableText::DelVariableText(pEdit->GetVariableText());
-
-  delete (CFX_Edit*)pEdit;
+  delete pEdit->GetVariableText();
+  delete static_cast<CFX_Edit*>(pEdit);
 }
 
 IFX_List* IFX_List::NewList() {

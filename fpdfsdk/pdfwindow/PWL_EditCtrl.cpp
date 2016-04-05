@@ -6,6 +6,8 @@
 
 #include "fpdfsdk/pdfwindow/PWL_EditCtrl.h"
 
+#include "core/fpdfdoc/include/cpvt_section.h"
+#include "core/fpdfdoc/include/cpvt_word.h"
 #include "fpdfsdk/pdfwindow/PWL_Caret.h"
 #include "fpdfsdk/pdfwindow/PWL_FontMap.h"
 #include "fpdfsdk/pdfwindow/PWL_ScrollBar.h"
@@ -466,7 +468,7 @@ CPDF_Font* CPWL_EditCtrl::GetCaretFont() const {
     }
   }
 
-  if (IFX_Edit_FontMap* pFontMap = GetFontMap())
+  if (IPVT_FontMap* pFontMap = GetFontMap())
     return pFontMap->GetPDFFont(nFontIndex);
 
   return NULL;

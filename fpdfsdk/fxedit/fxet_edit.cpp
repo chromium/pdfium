@@ -9,11 +9,14 @@
 #include <algorithm>
 
 #include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
+#include "core/fpdfdoc/include/cpvt_section.h"
+#include "core/fpdfdoc/include/cpvt_word.h"
+#include "core/fpdfdoc/include/ipvt_fontmap.h"
 
 #define FX_EDIT_UNDO_MAXITEM 10000
 
 CFX_Edit_Iterator::CFX_Edit_Iterator(CFX_Edit* pEdit,
-                                     IPDF_VariableText::Iterator* pVTIterator)
+                                     CPDF_VariableText::Iterator* pVTIterator)
     : m_pEdit(pEdit), m_pVTIterator(pVTIterator) {}
 
 CFX_Edit_Iterator::~CFX_Edit_Iterator() {}
@@ -88,14 +91,14 @@ IFX_Edit* CFX_Edit_Iterator::GetEdit() const {
   return m_pEdit;
 }
 
-CFX_Edit_Provider::CFX_Edit_Provider(IFX_Edit_FontMap* pFontMap)
-    : m_pFontMap(pFontMap) {
+CFX_Edit_Provider::CFX_Edit_Provider(IPVT_FontMap* pFontMap)
+    : CPDF_VariableText::Provider(pFontMap), m_pFontMap(pFontMap) {
   ASSERT(m_pFontMap);
 }
 
 CFX_Edit_Provider::~CFX_Edit_Provider() {}
 
-IFX_Edit_FontMap* CFX_Edit_Provider::GetFontMap() {
+IPVT_FontMap* CFX_Edit_Provider::GetFontMap() {
   return m_pFontMap;
 }
 
@@ -739,7 +742,7 @@ void CFXEU_SetWordProps::Undo() {
   }
 }
 
-CFX_Edit::CFX_Edit(IPDF_VariableText* pVT)
+CFX_Edit::CFX_Edit(CPDF_VariableText* pVT)
     : m_pVT(pVT),
       m_pNotify(NULL),
       m_pOprNotify(NULL),
@@ -779,12 +782,12 @@ void CFX_Edit::Initialize() {
   SetCaretOrigin();
 }
 
-void CFX_Edit::SetFontMap(IFX_Edit_FontMap* pFontMap) {
+void CFX_Edit::SetFontMap(IPVT_FontMap* pFontMap) {
   delete m_pVTProvide;
   m_pVT->SetProvider(m_pVTProvide = new CFX_Edit_Provider(pFontMap));
 }
 
-void CFX_Edit::SetVTProvider(IPDF_VariableText::Provider* pProvider) {
+void CFX_Edit::SetVTProvider(CPDF_VariableText::Provider* pProvider) {
   m_pVT->SetProvider(pProvider);
 }
 
@@ -803,11 +806,11 @@ IFX_Edit_Iterator* CFX_Edit::GetIterator() {
   return m_pIterator;
 }
 
-IPDF_VariableText* CFX_Edit::GetVariableText() {
+CPDF_VariableText* CFX_Edit::GetVariableText() {
   return m_pVT;
 }
 
-IFX_Edit_FontMap* CFX_Edit::GetFontMap() {
+IPVT_FontMap* CFX_Edit::GetFontMap() {
   if (m_pVTProvide)
     return m_pVTProvide->GetFontMap();
 
@@ -978,7 +981,7 @@ CFX_WideString CFX_Edit::GetText() const {
   CFX_WideString swRet;
 
   if (m_pVT->IsValid()) {
-    if (IPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
+    if (CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
       FX_BOOL bRich = m_pVT->IsRichText();
 
       pIterator->SetAt(0);
@@ -1015,7 +1018,7 @@ CFX_WideString CFX_Edit::GetRangeText(const CPVT_WordRange& range) const {
   if (m_pVT->IsValid()) {
     FX_BOOL bRich = m_pVT->IsRichText();
 
-    if (IPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
+    if (CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
       CPVT_WordRange wrTemp = range;
       m_pVT->UpdateWordPlace(wrTemp.BeginPos);
       m_pVT->UpdateWordPlace(wrTemp.EndPos);
@@ -1060,7 +1063,7 @@ int32_t CFX_Edit::GetTotalWords() const {
 int32_t CFX_Edit::GetTotalLines() const {
   int32_t nLines = 0;
 
-  if (IPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
+  if (CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
     pIterator->SetAt(0);
     while (pIterator->NextLine())
       nLines++;
@@ -1120,7 +1123,7 @@ FX_BOOL CFX_Edit::SetRichTextColor(FX_COLORREF dwColor) {
   return SetRichTextProps(EP_WORDCOLOR, NULL, &WordProps);
 }
 
-FX_BOOL CFX_Edit::SetRichTextScript(int32_t nScriptType) {
+FX_BOOL CFX_Edit::SetRichTextScript(CPDF_VariableText::ScriptType nScriptType) {
   CPVT_WordProps WordProps;
   WordProps.nScriptType = nScriptType;
   return SetRichTextProps(EP_SCRIPTTYPE, NULL, &WordProps);
@@ -1190,7 +1193,7 @@ FX_BOOL CFX_Edit::SetRichTextProps(EDIT_PROPS_E eProps,
   FX_BOOL bSet = FALSE;
   FX_BOOL bSet1, bSet2;
   if (m_pVT->IsValid() && m_pVT->IsRichText()) {
-    if (IPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
+    if (CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
       CPVT_WordRange wrTemp = m_SelState.ConvertToWordRange();
 
       m_pVT->UpdateWordPlace(wrTemp.BeginPos);
@@ -1266,7 +1269,7 @@ FX_BOOL CFX_Edit::SetSecProps(EDIT_PROPS_E eProps,
                               const CPVT_WordRange& wr,
                               FX_BOOL bAddUndo) {
   if (m_pVT->IsValid() && m_pVT->IsRichText()) {
-    if (IPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
+    if (CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
       FX_BOOL bSet = FALSE;
       CPVT_Section secinfo;
       CPVT_Section OldSecinfo;
@@ -1445,7 +1448,7 @@ FX_BOOL CFX_Edit::SetWordProps(EDIT_PROPS_E eProps,
                                const CPVT_WordRange& wr,
                                FX_BOOL bAddUndo) {
   if (m_pVT->IsValid() && m_pVT->IsRichText()) {
-    if (IPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
+    if (CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
       FX_BOOL bSet = FALSE;
       CPVT_Word wordinfo;
       CPVT_Word OldWordinfo;
@@ -1461,7 +1464,7 @@ FX_BOOL CFX_Edit::SetWordProps(EDIT_PROPS_E eProps,
           switch (eProps) {
             case EP_FONTINDEX:
               if (wordinfo.WordProps.nFontIndex != pWordProps->nFontIndex) {
-                if (IFX_Edit_FontMap* pFontMap = GetFontMap()) {
+                if (IPVT_FontMap* pFontMap = GetFontMap()) {
                   wordinfo.WordProps.nFontIndex = pFontMap->GetWordFontIndex(
                       wordinfo.Word, wordinfo.nCharset, pWordProps->nFontIndex);
                 }
@@ -1919,7 +1922,7 @@ void CFX_Edit::ScrollToCaret() {
     CFX_FloatPoint ptHead(0, 0);
     CFX_FloatPoint ptFoot(0, 0);
 
-    if (IPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
+    if (CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
       pIterator->SetAt(m_wpCaret);
 
       CPVT_Word word;
@@ -1993,7 +1996,7 @@ void CFX_Edit::Refresh(REFRESH_PLAN_E ePlan,
 
 void CFX_Edit::RefreshPushLineRects(const CPVT_WordRange& wr) {
   if (m_pVT->IsValid()) {
-    if (IPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
+    if (CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
       CPVT_WordPlace wpBegin = wr.BeginPos;
       m_pVT->UpdateWordPlace(wpBegin);
       CPVT_WordPlace wpEnd = wr.EndPos;
@@ -2021,7 +2024,7 @@ void CFX_Edit::RefreshPushLineRects(const CPVT_WordRange& wr) {
 
 void CFX_Edit::RefreshPushRandomRects(const CPVT_WordRange& wr) {
   if (m_pVT->IsValid()) {
-    if (IPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
+    if (CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
       CPVT_WordRange wrTemp = wr;
 
       m_pVT->UpdateWordPlace(wrTemp.BeginPos);
@@ -2064,7 +2067,7 @@ void CFX_Edit::RefreshPushRandomRects(const CPVT_WordRange& wr) {
 }
 
 void CFX_Edit::RefreshWordRange(const CPVT_WordRange& wr) {
-  if (IPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
+  if (CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
     CPVT_WordRange wrTemp = wr;
 
     m_pVT->UpdateWordPlace(wrTemp.BeginPos);
@@ -2129,7 +2132,7 @@ void CFX_Edit::SetCaretInfo() {
     if (!m_bNotifyFlag) {
       CFX_FloatPoint ptHead(0.0f, 0.0f), ptFoot(0.0f, 0.0f);
 
-      if (IPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
+      if (CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
         pIterator->SetAt(m_wpCaret);
         CPVT_Word word;
         CPVT_Line line;
@@ -2164,7 +2167,7 @@ void CFX_Edit::SetCaretChange() {
     CPVT_SecProps SecProps;
     CPVT_WordProps WordProps;
 
-    if (IPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
+    if (CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
       pIterator->SetAt(m_wpCaret);
       CPVT_Word word;
       CPVT_Section section;
@@ -2547,7 +2550,7 @@ FX_BOOL CFX_Edit::Backspace(FX_BOOL bAddUndo, FX_BOOL bPaint) {
     CPVT_Word word;
 
     if (bAddUndo) {
-      if (IPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
+      if (CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
         pIterator->SetAt(m_wpCaret);
         pIterator->GetSection(section);
         pIterator->GetWord(word);
@@ -2610,7 +2613,7 @@ FX_BOOL CFX_Edit::Delete(FX_BOOL bAddUndo, FX_BOOL bPaint) {
     CPVT_Word word;
 
     if (bAddUndo) {
-      if (IPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
+      if (CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
         pIterator->SetAt(m_pVT->GetNextWordPlace(m_wpCaret));
         pIterator->GetSection(section);
         pIterator->GetWord(word);
@@ -2684,7 +2687,7 @@ FX_BOOL CFX_Edit::Clear(FX_BOOL bAddUndo, FX_BOOL bPaint) {
         if (m_pVT->IsRichText()) {
           BeginGroupUndo(L"");
 
-          if (IPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
+          if (CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
             pIterator->SetAt(range.EndPos);
 
             CPVT_Word wordinfo;
@@ -2817,7 +2820,7 @@ FX_BOOL CFX_Edit::Undo() {
 
 void CFX_Edit::SetCaretOrigin() {
   if (m_pVT->IsValid()) {
-    if (IPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
+    if (CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
       pIterator->SetAt(m_wpCaret);
       CPVT_Word word;
       CPVT_Line line;
@@ -2930,7 +2933,7 @@ void CFX_Edit::EnableOprNotify(FX_BOOL bNotify) {
 }
 
 FX_FLOAT CFX_Edit::GetLineTop(const CPVT_WordPlace& place) const {
-  if (IPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
+  if (CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
     CPVT_WordPlace wpOld = pIterator->GetAt();
 
     pIterator->SetAt(place);
@@ -2946,7 +2949,7 @@ FX_FLOAT CFX_Edit::GetLineTop(const CPVT_WordPlace& place) const {
 }
 
 FX_FLOAT CFX_Edit::GetLineBottom(const CPVT_WordPlace& place) const {
-  if (IPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
+  if (CPDF_VariableText::Iterator* pIterator = m_pVT->GetIterator()) {
     CPVT_WordPlace wpOld = pIterator->GetAt();
 
     pIterator->SetAt(place);
@@ -2998,7 +3001,7 @@ CPVT_WordPlace CFX_Edit::DoInsertText(const CPVT_WordPlace& place,
 }
 
 int32_t CFX_Edit::GetCharSetFromUnicode(uint16_t word, int32_t nOldCharset) {
-  if (IFX_Edit_FontMap* pFontMap = GetFontMap())
+  if (IPVT_FontMap* pFontMap = GetFontMap())
     return pFontMap->CharSetFromUnicode(word, nOldCharset);
   return nOldCharset;
 }

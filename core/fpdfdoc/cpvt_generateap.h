@@ -9,10 +9,10 @@
 
 #include "core/fpdfdoc/cpvt_color.h"
 #include "core/fpdfdoc/cpvt_dash.h"
+#include "core/fpdfdoc/include/cpdf_variabletext.h"
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
-#include "core/include/fpdfdoc/fpdf_vt.h"
 
 // border style
 #define PBS_SOLID 0
@@ -39,7 +39,7 @@ class CPVT_GenerateAP {
   static FX_BOOL GenerateListBoxAP(CPDF_Document* pDoc,
                                    CPDF_Dictionary* pAnnotDict);
   static CFX_ByteString GenerateEditAP(IPVT_FontMap* pFontMap,
-                                       IPDF_VariableText::Iterator* pIterator,
+                                       CPDF_VariableText::Iterator* pIterator,
                                        const CFX_FloatPoint& ptOffset,
                                        FX_BOOL bContinuous,
                                        uint16_t SubWord = 0,

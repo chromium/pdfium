@@ -118,7 +118,7 @@ class CFX_ListItem {
   CFX_ListItem();
   virtual ~CFX_ListItem();
 
-  void SetFontMap(IFX_Edit_FontMap* pFontMap);
+  void SetFontMap(IPVT_FontMap* pFontMap);
   IFX_Edit_Iterator* GetIterator() const;
   IFX_Edit* GetEdit() const;
 
@@ -210,7 +210,7 @@ class CFX_List : protected CFX_ListContainer, public IFX_List {
   ~CFX_List() override;
 
   // IFX_List:
-  void SetFontMap(IFX_Edit_FontMap* pFontMap) override;
+  void SetFontMap(IPVT_FontMap* pFontMap) override;
   void SetFontSize(FX_FLOAT fFontSize) override;
   CFX_FloatRect GetPlateRect() const override;
   CFX_FloatRect GetContentRect() const override;
@@ -240,7 +240,7 @@ class CFX_List : protected CFX_ListContainer, public IFX_List {
  private:
   CLST_ArrayTemplate<CFX_ListItem*> m_aListItems;
   FX_FLOAT m_fFontSize;
-  IFX_Edit_FontMap* m_pFontMap;
+  IPVT_FontMap* m_pFontMap;
   FX_BOOL m_bMultiple;
 };
 

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFDOC_IPVT_FONTMAP_H_
-#define CORE_FPDFDOC_IPVT_FONTMAP_H_
+#ifndef CORE_FPDFDOC_INCLUDE_IPVT_FONTMAP_H_
+#define CORE_FPDFDOC_INCLUDE_IPVT_FONTMAP_H_
 
 #include <stdint.h>
 
@@ -19,6 +19,11 @@ class IPVT_FontMap {
 
   virtual CPDF_Font* GetPDFFont(int32_t nFontIndex) = 0;
   virtual CFX_ByteString GetPDFFontAlias(int32_t nFontIndex) = 0;
+  virtual int32_t GetWordFontIndex(uint16_t word,
+                                   int32_t charset,
+                                   int32_t nFontIndex) = 0;
+  virtual int32_t CharCodeFromUnicode(int32_t nFontIndex, uint16_t word) = 0;
+  virtual int32_t CharSetFromUnicode(uint16_t word, int32_t nOldCharset) = 0;
 };
 
-#endif  // CORE_FPDFDOC_IPVT_FONTMAP_H_
+#endif  // CORE_FPDFDOC_INCLUDE_IPVT_FONTMAP_H_

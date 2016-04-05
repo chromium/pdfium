@@ -9,7 +9,6 @@
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_parser.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
-#include "core/include/fpdfdoc/fpdf_vt.h"
 #include "core/include/fxge/fx_ge.h"
 #include "core/include/fxge/fx_ge_win32.h"
 #include "public/fpdfview.h"
