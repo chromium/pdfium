@@ -188,15 +188,7 @@ void CPDF_ImageCacheEntry::Reset(const CFX_DIBitmap* pBitmap) {
   }
   CalcSize();
 }
-void CPDF_PageRenderCache::ClearImageData() {
-  for (const auto& it : m_ImageCache)
-    it.second->ClearImageData();
-}
-void CPDF_ImageCacheEntry::ClearImageData() {
-  if (m_pCachedBitmap && !m_pCachedBitmap->GetBuffer()) {
-    ((CPDF_DIBSource*)m_pCachedBitmap)->ClearImageData();
-  }
-}
+
 static uint32_t FPDF_ImageCache_EstimateImageSize(const CFX_DIBSource* pDIB) {
   return pDIB && pDIB->GetBuffer()
              ? (uint32_t)pDIB->GetHeight() * pDIB->GetPitch() +

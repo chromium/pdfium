@@ -30,55 +30,12 @@ CCodec_ModuleMgr::CCodec_ModuleMgr()
       m_pFlateModule(new CCodec_FlateModule) {
 }
 
-CCodec_ScanlineDecoder::ImageDataCache::ImageDataCache(int width,
-                                                       int height,
-                                                       uint32_t pitch)
-    : m_Width(width), m_Height(height), m_Pitch(pitch), m_nCachedLines(0) {}
-
-CCodec_ScanlineDecoder::ImageDataCache::~ImageDataCache() {}
-
-bool CCodec_ScanlineDecoder::ImageDataCache::AllocateCache() {
-  if (m_Pitch == 0 || m_Height < 0)
-    return false;
-
-  FX_SAFE_SIZE_T size = m_Pitch;
-  size *= m_Height;
-  if (!size.IsValid())
-    return false;
-
-  m_Data.reset(FX_TryAlloc(uint8_t, size.ValueOrDie()));
-  return IsValid();
-}
-
-void CCodec_ScanlineDecoder::ImageDataCache::AppendLine(const uint8_t* line) {
-  // If the callers adds more lines than there is room, fail.
-  if (m_Pitch == 0 || m_nCachedLines >= m_Height) {
-    NOTREACHED();
-    return;
-  }
-
-  size_t offset = m_Pitch;
-  FXSYS_memcpy(m_Data.get() + offset * m_nCachedLines, line, m_Pitch);
-  ++m_nCachedLines;
-}
-
-const uint8_t* CCodec_ScanlineDecoder::ImageDataCache::GetLine(int line) const {
-  if (m_Pitch == 0 || line < 0 || line >= m_nCachedLines)
-    return nullptr;
-
-  size_t offset = m_Pitch;
-  return m_Data.get() + offset * line;
-}
-
 CCodec_ScanlineDecoder::CCodec_ScanlineDecoder()
     : m_NextLine(-1), m_pLastScanline(nullptr) {}
 
 CCodec_ScanlineDecoder::~CCodec_ScanlineDecoder() {}
 
 const uint8_t* CCodec_ScanlineDecoder::GetScanline(int line) {
-  if (m_pDataCache && line < m_pDataCache->NumLines())
-    return m_pDataCache->GetLine(line);
-
   if (m_NextLine == line + 1)
     return m_pLastScanline;
 
@@ -97,9 +54,6 @@ const uint8_t* CCodec_ScanlineDecoder::GetScanline(int line) {
 }
 
 FX_BOOL CCodec_ScanlineDecoder::SkipToScanline(int line, IFX_Pause* pPause) {
-  if (m_pDataCache && line < m_pDataCache->NumLines())
-    return FALSE;
-
   if (m_NextLine == line || m_NextLine == line + 1)
     return FALSE;
 
@@ -119,31 +73,7 @@ FX_BOOL CCodec_ScanlineDecoder::SkipToScanline(int line, IFX_Pause* pPause) {
 }
 
 uint8_t* CCodec_ScanlineDecoder::ReadNextLine() {
-  uint8_t* pLine = v_GetNextLine();
-  if (!pLine)
-    return nullptr;
-
-  if (m_pDataCache && m_NextLine == m_pDataCache->NumLines())
-    m_pDataCache->AppendLine(pLine);
-  return pLine;
-}
-
-void CCodec_ScanlineDecoder::DownScale(int dest_width, int dest_height) {
-  dest_width = std::abs(dest_width);
-  dest_height = std::abs(dest_height);
-  v_DownScale(dest_width, dest_height);
-
-  if (m_pDataCache &&
-      m_pDataCache->IsSameDimensions(m_OutputWidth, m_OutputHeight)) {
-    return;
-  }
-
-  std::unique_ptr<ImageDataCache> cache(
-      new ImageDataCache(m_OutputWidth, m_OutputHeight, m_Pitch));
-  if (!cache->AllocateCache())
-    return;
-
-  m_pDataCache = std::move(cache);
+  return v_GetNextLine();
 }
 
 FX_BOOL CCodec_BasicModule::RunLengthEncode(const uint8_t* src_buf,
@@ -294,7 +224,6 @@ class CCodec_RLScanlineDecoder : public CCodec_ScanlineDecoder {
                  int bpc);
 
   // CCodec_ScanlineDecoder
-  void v_DownScale(int dest_width, int dest_height) override {}
   FX_BOOL v_Rewind() override;
   uint8_t* v_GetNextLine() override;
   uint32_t GetSrcOffset() override { return m_SrcOffset; }
@@ -364,8 +293,6 @@ FX_BOOL CCodec_RLScanlineDecoder::Create(const uint8_t* src_buf,
   m_OutputHeight = m_OrigHeight = height;
   m_nComps = nComps;
   m_bpc = bpc;
-  m_bColorTransformed = FALSE;
-  m_DownScale = 1;
   // Aligning the pitch to 4 bytes requires an integer overflow check.
   FX_SAFE_DWORD pitch = width;
   pitch *= nComps;

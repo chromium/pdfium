@@ -443,7 +443,7 @@ class CPDF_ImageCacheEntry {
  public:
   CPDF_ImageCacheEntry(CPDF_Document* pDoc, CPDF_Stream* pStream);
   ~CPDF_ImageCacheEntry();
-  void ClearImageData();
+
   void Reset(const CFX_DIBitmap* pBitmap);
   FX_BOOL GetCachedBitmap(CFX_DIBSource*& pBitmap,
                           CFX_DIBSource*& pMask,
@@ -521,11 +521,9 @@ class CPDF_DIBSource : public CFX_DIBSource {
                           FX_BOOL bFlipX,
                           int clip_left,
                           int clip_width) const override;
-  void SetDownSampleSize(int dest_width, int dest_height) override;
 
   CFX_DIBitmap* GetBitmap() const;
   void ReleaseBitmap(CFX_DIBitmap* pBitmap) const;
-  void ClearImageData();
   uint32_t GetMatteColor() const { return m_MatteColor; }
 
   int StartLoadDIBSource(CPDF_Document* pDoc,

@@ -613,7 +613,6 @@ class CCodec_FaxDecoder : public CCodec_ScanlineDecoder {
                  int Rows);
 
   // CCodec_ScanlineDecoder
-  void v_DownScale(int dest_width, int dest_height) override {}
   FX_BOOL v_Rewind() override;
   uint8_t* v_GetNextLine() override;
   uint32_t GetSrcOffset() override;
@@ -666,7 +665,6 @@ FX_BOOL CCodec_FaxDecoder::Create(const uint8_t* src_buf,
   m_SrcSize = src_size;
   m_nComps = 1;
   m_bpc = 1;
-  m_bColorTransformed = FALSE;
   return TRUE;
 }
 FX_BOOL CCodec_FaxDecoder::v_Rewind() {

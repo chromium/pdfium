@@ -47,59 +47,28 @@ class CCodec_ScanlineDecoder : public ICodec_ScanlineDecoder {
   ~CCodec_ScanlineDecoder() override;
 
   // ICodec_ScanlineDecoder
-  void DownScale(int dest_width, int dest_height) override;
   const uint8_t* GetScanline(int line) override;
   FX_BOOL SkipToScanline(int line, IFX_Pause* pPause) override;
   int GetWidth() override { return m_OutputWidth; }
   int GetHeight() override { return m_OutputHeight; }
   int CountComps() override { return m_nComps; }
   int GetBPC() override { return m_bpc; }
-  FX_BOOL IsColorTransformed() override { return m_bColorTransformed; }
-  void ClearImageData() override { m_pDataCache.reset(); }
 
  protected:
-  class ImageDataCache {
-   public:
-    ImageDataCache(int width, int height, uint32_t pitch);
-    ~ImageDataCache();
-
-    bool AllocateCache();
-    void AppendLine(const uint8_t* line);
-
-    int NumLines() const { return m_nCachedLines; }
-    const uint8_t* GetLine(int line) const;
-    bool IsSameDimensions(int width, int height) const {
-      return width == m_Width && height == m_Height;
-    }
-
-   private:
-    bool IsValid() const { return m_Data.get() != nullptr; }
-
-    const int m_Width;
-    const int m_Height;
-    const uint32_t m_Pitch;
-    int m_nCachedLines;
-    std::unique_ptr<uint8_t, FxFreeDeleter> m_Data;
-  };
-
   virtual FX_BOOL v_Rewind() = 0;
   virtual uint8_t* v_GetNextLine() = 0;
-  virtual void v_DownScale(int dest_width, int dest_height) = 0;
 
   uint8_t* ReadNextLine();
 
   int m_OrigWidth;
   int m_OrigHeight;
-  int m_DownScale;
   int m_OutputWidth;
   int m_OutputHeight;
   int m_nComps;
   int m_bpc;
   uint32_t m_Pitch;
-  FX_BOOL m_bColorTransformed;
   int m_NextLine;
   uint8_t* m_pLastScanline;
-  std::unique_ptr<ImageDataCache> m_pDataCache;
 };
 
 class CCodec_FaxModule : public ICodec_FaxModule {

@@ -1474,20 +1474,6 @@ FX_BOOL CPDF_DIBSource::TransMask() const {
          m_Family == PDFCS_DEVICECMYK;
 }
 
-void CPDF_DIBSource::SetDownSampleSize(int dest_width, int dest_height) {
-  if (m_pDecoder) {
-    m_pDecoder->DownScale(dest_width, dest_height);
-    m_Width = m_pDecoder->GetWidth();
-    m_Height = m_pDecoder->GetHeight();
-  }
-}
-
-void CPDF_DIBSource::ClearImageData() {
-  if (m_pDecoder) {
-    m_pDecoder->ClearImageData();
-  }
-}
-
 CPDF_ImageLoaderHandle::CPDF_ImageLoaderHandle() {
   m_pImageLoader = nullptr;
   m_pCache = nullptr;

@@ -181,7 +181,6 @@ class CFX_DIBSource {
                                   FX_BOOL bFlipX,
                                   int clip_left,
                                   int clip_width) const = 0;
-  virtual void SetDownSampleSize(int width, int height) {}
 
   int GetBPP() const { return m_bpp; }
 

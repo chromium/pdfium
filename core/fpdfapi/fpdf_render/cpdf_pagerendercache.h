@@ -28,7 +28,6 @@ class CPDF_PageRenderCache {
         m_nCacheSize(0),
         m_bCurFindCache(FALSE) {}
   ~CPDF_PageRenderCache();
-  void ClearImageData();
 
   uint32_t EstimateSize();
   void CacheOptimization(int32_t dwLimitCacheSize);

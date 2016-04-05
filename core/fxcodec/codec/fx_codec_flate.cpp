@@ -753,7 +753,6 @@ class CCodec_FlateScanlineDecoder : public CCodec_ScanlineDecoder {
   void Destroy() { delete this; }
 
   // CCodec_ScanlineDecoder
-  void v_DownScale(int dest_width, int dest_height) override {}
   FX_BOOL v_Rewind() override;
   uint8_t* v_GetNextLine() override;
   uint32_t GetSrcOffset() override;
@@ -806,7 +805,6 @@ void CCodec_FlateScanlineDecoder::Create(const uint8_t* src_buf,
   m_OutputHeight = m_OrigHeight = height;
   m_nComps = nComps;
   m_bpc = bpc;
-  m_bColorTransformed = FALSE;
   m_Pitch = (static_cast<uint32_t>(width) * nComps * bpc + 7) / 8;
   m_pScanline = FX_Alloc(uint8_t, m_Pitch);
   m_Predictor = 0;

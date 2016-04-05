@@ -118,8 +118,6 @@ class ICodec_ScanlineDecoder {
 
   virtual uint32_t GetSrcOffset() = 0;
 
-  virtual void DownScale(int dest_width, int dest_height) = 0;
-
   virtual const uint8_t* GetScanline(int line) = 0;
 
   virtual FX_BOOL SkipToScanline(int line, IFX_Pause* pPause) = 0;
@@ -131,10 +129,6 @@ class ICodec_ScanlineDecoder {
   virtual int CountComps() = 0;
 
   virtual int GetBPC() = 0;
-
-  virtual FX_BOOL IsColorTransformed() = 0;
-
-  virtual void ClearImageData() = 0;
 };
 
 class ICodec_FlateModule {

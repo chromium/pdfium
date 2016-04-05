@@ -321,7 +321,6 @@ class CCodec_JpegDecoder : public CCodec_ScanlineDecoder {
   void Destroy() { delete this; }
 
   // CCodec_ScanlineDecoder
-  void v_DownScale(int dest_width, int dest_height) override;
   FX_BOOL v_Rewind() override;
   uint8_t* v_GetNextLine() override;
   uint32_t GetSrcOffset() override;
@@ -346,7 +345,6 @@ class CCodec_JpegDecoder : public CCodec_ScanlineDecoder {
 
 CCodec_JpegDecoder::CCodec_JpegDecoder() {
   m_pScanlineBuf = NULL;
-  m_DownScale = 1;
   m_bStarted = FALSE;
   m_bInited = FALSE;
   FXSYS_memset(&cinfo, 0, sizeof(cinfo));
@@ -437,41 +435,10 @@ FX_BOOL CCodec_JpegDecoder::Create(const uint8_t* src_buf,
   m_pScanlineBuf = FX_Alloc(uint8_t, m_Pitch);
   m_nComps = cinfo.num_components;
   m_bpc = 8;
-  m_bColorTransformed = FALSE;
   m_bStarted = FALSE;
   return TRUE;
 }
-extern "C" {
-int32_t FX_GetDownsampleRatio(int32_t originWidth,
-                              int32_t originHeight,
-                              int32_t downsampleWidth,
-                              int32_t downsampleHeight) {
-  int iratio_w = originWidth / downsampleWidth;
-  int iratio_h = originHeight / downsampleHeight;
-  int ratio = (iratio_w > iratio_h) ? iratio_h : iratio_w;
-  if (ratio >= 8) {
-    return 8;
-  }
-  if (ratio >= 4) {
-    return 4;
-  }
-  if (ratio >= 2) {
-    return 2;
-  }
-  return 1;
-}
-}
-void CCodec_JpegDecoder::v_DownScale(int dest_width, int dest_height) {
-  int old_scale = m_DownScale;
-  m_DownScale =
-      FX_GetDownsampleRatio(m_OrigWidth, m_OrigHeight, dest_width, dest_height);
-  m_OutputWidth = (m_OrigWidth + m_DownScale - 1) / m_DownScale;
-  m_OutputHeight = (m_OrigHeight + m_DownScale - 1) / m_DownScale;
-  m_Pitch = (static_cast<uint32_t>(m_OutputWidth) * m_nComps + 3) / 4 * 4;
-  if (old_scale != m_DownScale) {
-    m_NextLine = -1;
-  }
-}
+
 FX_BOOL CCodec_JpegDecoder::v_Rewind() {
   if (m_bStarted) {
     jpeg_destroy_decompress(&cinfo);
@@ -482,9 +449,9 @@ FX_BOOL CCodec_JpegDecoder::v_Rewind() {
   if (setjmp(m_JmpBuf) == -1) {
     return FALSE;
   }
-  cinfo.scale_denom = m_nDefaultScaleDenom * m_DownScale;
-  m_OutputWidth = (m_OrigWidth + m_DownScale - 1) / m_DownScale;
-  m_OutputHeight = (m_OrigHeight + m_DownScale - 1) / m_DownScale;
+  cinfo.scale_denom = m_nDefaultScaleDenom;
+  m_OutputWidth = m_OrigWidth;
+  m_OutputHeight = m_OrigHeight;
   if (!jpeg_start_decompress(&cinfo)) {
     jpeg_destroy_decompress(&cinfo);
     return FALSE;
