@@ -389,7 +389,7 @@ static void XFA_DataExporter_RegenerateFormFile_Container(
   CFX_WideStringC wsElement;
   pNode->GetClassName(wsElement);
   pStream->WriteString(L"<", 1);
-  pStream->WriteString(wsElement.GetPtr(), wsElement.GetLength());
+  pStream->WriteString(wsElement.raw_str(), wsElement.GetLength());
   CFX_WideString wsOutput;
   XFA_SaveAttribute(pNode, XFA_ATTRIBUTE_Name, FX_WSTRC(L"name"), TRUE,
                     wsOutput);
@@ -418,7 +418,7 @@ static void XFA_DataExporter_RegenerateFormFile_Container(
       pChildNode = pChildNode->GetNodeItem(XFA_NODEITEM_NextSibling);
     }
     pStream->WriteString(L"</", 2);
-    pStream->WriteString(wsElement.GetPtr(), wsElement.GetLength());
+    pStream->WriteString(wsElement.raw_str(), wsElement.GetLength());
     pStream->WriteString(L"\n>", 2);
   } else {
     pStream->WriteString(L"\n/>", 3);

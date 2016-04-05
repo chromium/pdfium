@@ -1112,7 +1112,7 @@ int32_t CFX_TextStream::WriteString(const FX_WCHAR* pStr, int32_t iLength) {
       encoder.Input(*pStr++);
     }
     CFX_ByteStringC bsResult = encoder.GetResult();
-    m_pStreamImp->WriteData((const uint8_t*)bsResult.GetCStr(),
+    m_pStreamImp->WriteData((const uint8_t*)bsResult.c_str(),
                             bsResult.GetLength());
   }
   return iLength;

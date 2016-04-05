@@ -263,7 +263,7 @@ CFX_WideString ChangeObjName(const CFX_WideString& str) {
 FX_BOOL CJS_Runtime::GetHValueByName(const CFX_ByteStringC& utf8Name,
                                      FXJSE_HVALUE hValue) {
 #ifdef PDF_ENABLE_XFA
-  const FX_CHAR* name = utf8Name.GetCStr();
+  const FX_CHAR* name = utf8Name.c_str();
 
   v8::Locker lock(GetIsolate());
   v8::Isolate::Scope isolate_scope(GetIsolate());
@@ -300,7 +300,7 @@ FX_BOOL CJS_Runtime::SetHValueByName(const CFX_ByteStringC& utf8Name,
 #ifdef PDF_ENABLE_XFA
   if (utf8Name.IsEmpty() || hValue == NULL)
     return FALSE;
-  const FX_CHAR* name = utf8Name.GetCStr();
+  const FX_CHAR* name = utf8Name.c_str();
   v8::Isolate* pIsolate = GetIsolate();
   v8::Locker lock(pIsolate);
   v8::Isolate::Scope isolate_scope(pIsolate);

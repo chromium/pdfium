@@ -131,7 +131,7 @@ uint32_t CPDF_ToUnicodeMap::ReverseLookup(FX_WCHAR unicode) {
 
 // Static.
 uint32_t CPDF_ToUnicodeMap::StringToCode(const CFX_ByteStringC& str) {
-  const FX_CHAR* buf = str.GetCStr();
+  const FX_CHAR* buf = str.c_str();
   int len = str.GetLength();
   if (len == 0)
     return 0;
@@ -171,7 +171,7 @@ static CFX_WideString StringDataAdd(CFX_WideString str) {
 // Static.
 CFX_WideString CPDF_ToUnicodeMap::StringToWideString(
     const CFX_ByteStringC& str) {
-  const FX_CHAR* buf = str.GetCStr();
+  const FX_CHAR* buf = str.c_str();
   int len = str.GetLength();
   if (len == 0)
     return CFX_WideString();

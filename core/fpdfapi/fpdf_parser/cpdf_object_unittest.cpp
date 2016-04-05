@@ -34,7 +34,7 @@ void TestArrayAccessors(const CPDF_Array* arr,
                         CPDF_Dictionary* dict_val,
                         CPDF_Stream* stream_val) {
   EXPECT_STREQ(str_val, arr->GetStringAt(index).c_str());
-  EXPECT_STREQ(const_str_val, arr->GetConstStringAt(index).GetCStr());
+  EXPECT_STREQ(const_str_val, arr->GetConstStringAt(index).c_str());
   EXPECT_EQ(int_val, arr->GetIntegerAt(index));
   EXPECT_EQ(float_val, arr->GetNumberAt(index));
   EXPECT_EQ(float_val, arr->GetFloatAt(index));
@@ -207,10 +207,10 @@ TEST_F(PDFObjectsTest, GetConstString) {
   for (size_t i = 0; i < m_DirectObjs.size(); ++i) {
     if (!direct_obj_results[i]) {
       EXPECT_EQ(direct_obj_results[i],
-                m_DirectObjs[i]->GetConstString().GetCStr());
+                m_DirectObjs[i]->GetConstString().c_str());
     } else {
       EXPECT_STREQ(direct_obj_results[i],
-                   m_DirectObjs[i]->GetConstString().GetCStr());
+                   m_DirectObjs[i]->GetConstString().c_str());
     }
   }
   // Check indirect references.
@@ -218,10 +218,10 @@ TEST_F(PDFObjectsTest, GetConstString) {
                                         nullptr, nullptr, nullptr};
   for (size_t i = 0; i < m_RefObjs.size(); ++i) {
     if (!indirect_obj_results[i]) {
-      EXPECT_EQ(nullptr, m_RefObjs[i]->GetConstString().GetCStr());
+      EXPECT_EQ(nullptr, m_RefObjs[i]->GetConstString().c_str());
     } else {
       EXPECT_STREQ(indirect_obj_results[i],
-                   m_RefObjs[i]->GetConstString().GetCStr());
+                   m_RefObjs[i]->GetConstString().c_str());
     }
   }
 }
@@ -677,7 +677,7 @@ TEST(PDFArrayTest, GetTypeAt) {
                                     0, 0, 0, 0,     0,    0,     0};
     for (size_t i = 0; i < arr->GetCount(); ++i) {
       EXPECT_STREQ(expected_str[i], arr->GetStringAt(i).c_str());
-      EXPECT_STREQ(expected_cstr[i], arr->GetConstStringAt(i).GetCStr());
+      EXPECT_STREQ(expected_cstr[i], arr->GetConstStringAt(i).c_str());
       EXPECT_EQ(expected_int[i], arr->GetIntegerAt(i));
       EXPECT_EQ(expected_float[i], arr->GetNumberAt(i));
       EXPECT_EQ(expected_float[i], arr->GetFloatAt(i));

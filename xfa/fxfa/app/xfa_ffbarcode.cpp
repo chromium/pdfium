@@ -98,7 +98,7 @@ XFA_LPCBARCODETYPEENUMINFO XFA_GetBarcodeTypeByName(
   if (iLength == 0) {
     return NULL;
   }
-  uint32_t uHash = FX_HashCode_String_GetW(wsName.GetPtr(), iLength, TRUE);
+  uint32_t uHash = FX_HashCode_String_GetW(wsName.raw_str(), iLength, TRUE);
   int32_t iStart = 0, iEnd = g_iXFABarcodeTypeCount - 1;
   do {
     int32_t iMid = (iStart + iEnd) / 2;

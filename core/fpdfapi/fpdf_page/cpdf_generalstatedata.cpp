@@ -89,7 +89,7 @@ void CPDF_GeneralStateData::SetBlendMode(const CFX_ByteStringC& blend_mode) {
   if (blend_mode.GetLength() > 15) {
     return;
   }
-  FXSYS_memcpy(m_BlendMode, blend_mode.GetPtr(), blend_mode.GetLength());
+  FXSYS_memcpy(m_BlendMode, blend_mode.raw_str(), blend_mode.GetLength());
   m_BlendMode[blend_mode.GetLength()] = 0;
   m_BlendType = GetBlendTypeInternal(blend_mode);
 }

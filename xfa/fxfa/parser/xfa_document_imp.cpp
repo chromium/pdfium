@@ -96,7 +96,7 @@ CXFA_FFNotify* CXFA_Document::GetNotify() const {
 }
 CXFA_Object* CXFA_Document::GetXFAObject(const CFX_WideStringC& wsNodeName) {
   return GetXFAObject(
-      FX_HashCode_String_GetW(wsNodeName.GetPtr(), wsNodeName.GetLength()));
+      FX_HashCode_String_GetW(wsNodeName.raw_str(), wsNodeName.GetLength()));
 }
 CXFA_Object* CXFA_Document::GetXFAObject(uint32_t dwNodeNameHash) {
   switch (dwNodeNameHash) {
@@ -367,7 +367,7 @@ void CXFA_Document::DoProtoMerge() {
        pNode = sIterator.MoveToNext()) {
     CFX_WideStringC wsIDVal;
     if (pNode->TryCData(XFA_ATTRIBUTE_Id, wsIDVal) && !wsIDVal.IsEmpty()) {
-      mIDMap[FX_HashCode_String_GetW(wsIDVal.GetPtr(), wsIDVal.GetLength())] =
+      mIDMap[FX_HashCode_String_GetW(wsIDVal.raw_str(), wsIDVal.GetLength())] =
           pNode;
     }
     CFX_WideStringC wsUseVal;
@@ -429,7 +429,7 @@ void CXFA_Document::DoProtoMerge() {
       }
     } else if (!wsID.IsEmpty()) {
       if (!mIDMap.Lookup(
-              FX_HashCode_String_GetW(wsID.GetPtr(), wsID.GetLength()),
+              FX_HashCode_String_GetW(wsID.raw_str(), wsID.GetLength()),
               pProtoNode)) {
         continue;
       }

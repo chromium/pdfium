@@ -183,6 +183,6 @@ void CXFA_ChecksumContext::GetChecksum(CFX_ByteString& bsChecksum) {
 }
 void CXFA_ChecksumContext::Update(const CFX_ByteStringC& bsText) {
   if (m_pByteContext) {
-    CRYPT_SHA1Update(m_pByteContext, bsText.GetPtr(), bsText.GetLength());
+    CRYPT_SHA1Update(m_pByteContext, bsText.raw_str(), bsText.GetLength());
   }
 }

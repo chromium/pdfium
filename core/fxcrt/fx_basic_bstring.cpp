@@ -137,8 +137,7 @@ CFX_ByteString::CFX_ByteString(char ch) {
 
 CFX_ByteString::CFX_ByteString(const CFX_ByteStringC& stringSrc) {
   if (!stringSrc.IsEmpty()) {
-    m_pData.Reset(
-        StringData::Create(stringSrc.GetCStr(), stringSrc.GetLength()));
+    m_pData.Reset(StringData::Create(stringSrc.c_str(), stringSrc.GetLength()));
   }
 }
 
@@ -149,8 +148,8 @@ CFX_ByteString::CFX_ByteString(const CFX_ByteStringC& str1,
     return;
 
   m_pData.Reset(StringData::Create(nNewLen));
-  m_pData->CopyContents(str1.GetCStr(), str1.GetLength());
-  m_pData->CopyContentsAt(str1.GetLength(), str2.GetCStr(), str2.GetLength());
+  m_pData->CopyContents(str1.c_str(), str1.GetLength());
+  m_pData->CopyContentsAt(str1.GetLength(), str2.c_str(), str2.GetLength());
 }
 
 CFX_ByteString::~CFX_ByteString() {}
@@ -168,7 +167,7 @@ const CFX_ByteString& CFX_ByteString::operator=(const CFX_ByteStringC& str) {
   if (str.IsEmpty())
     clear();
   else
-    AssignCopy(str.GetCStr(), str.GetLength());
+    AssignCopy(str.c_str(), str.GetLength());
 
   return *this;
 }
@@ -216,7 +215,7 @@ const CFX_ByteString& CFX_ByteString::operator+=(const CFX_ByteString& str) {
 
 const CFX_ByteString& CFX_ByteString::operator+=(const CFX_ByteStringC& str) {
   if (!str.IsEmpty())
-    Concat(str.GetCStr(), str.GetLength());
+    Concat(str.c_str(), str.GetLength());
 
   return *this;
 }
@@ -237,7 +236,7 @@ bool CFX_ByteString::operator==(const CFX_ByteStringC& str) const {
     return str.IsEmpty();
 
   return m_pData->m_nDataLength == str.GetLength() &&
-         FXSYS_memcmp(m_pData->m_String, str.GetCStr(), str.GetLength()) == 0;
+         FXSYS_memcmp(m_pData->m_String, str.c_str(), str.GetLength()) == 0;
 }
 
 bool CFX_ByteString::operator==(const CFX_ByteString& other) const {
@@ -261,7 +260,7 @@ bool CFX_ByteString::EqualNoCase(const CFX_ByteStringC& str) const {
     return false;
 
   const uint8_t* pThis = (const uint8_t*)m_pData->m_String;
-  const uint8_t* pThat = str.GetPtr();
+  const uint8_t* pThat = str.raw_str();
   for (FX_STRSIZE i = 0; i < len; i++) {
     if ((*pThis) != (*pThat)) {
       uint8_t bThis = *pThis;
@@ -768,7 +767,7 @@ FX_STRSIZE CFX_ByteString::Find(const CFX_ByteStringC& pSub,
 
   const FX_CHAR* pStr =
       FX_strstr(m_pData->m_String + nStart, m_pData->m_nDataLength - nStart,
-                pSub.GetCStr(), pSub.GetLength());
+                pSub.c_str(), pSub.GetLength());
   return pStr ? (int)(pStr - m_pData->m_String) : -1;
 }
 
@@ -821,7 +820,7 @@ FX_STRSIZE CFX_ByteString::Replace(const CFX_ByteStringC& pOld,
   FX_CHAR* pEnd = m_pData->m_String + m_pData->m_nDataLength;
   while (1) {
     const FX_CHAR* pTarget = FX_strstr(pStart, (FX_STRSIZE)(pEnd - pStart),
-                                       pOld.GetCStr(), nSourceLen);
+                                       pOld.c_str(), nSourceLen);
     if (!pTarget)
       break;
 
@@ -844,10 +843,10 @@ FX_STRSIZE CFX_ByteString::Replace(const CFX_ByteStringC& pOld,
   FX_CHAR* pDest = pNewData->m_String;
   for (FX_STRSIZE i = 0; i < nCount; i++) {
     const FX_CHAR* pTarget = FX_strstr(pStart, (FX_STRSIZE)(pEnd - pStart),
-                                       pOld.GetCStr(), nSourceLen);
+                                       pOld.c_str(), nSourceLen);
     FXSYS_memcpy(pDest, pStart, pTarget - pStart);
     pDest += pTarget - pStart;
-    FXSYS_memcpy(pDest, pNew.GetCStr(), pNew.GetLength());
+    FXSYS_memcpy(pDest, pNew.c_str(), pNew.GetLength());
     pDest += pNew.GetLength();
     pStart = pTarget + nSourceLen;
   }

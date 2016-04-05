@@ -251,7 +251,7 @@ TEST(fxcrt, ByteStringOperatorNE) {
 
 TEST(fxcrt, ByteStringCNull) {
   CFX_ByteStringC null_string;
-  EXPECT_EQ(null_string.GetPtr(), nullptr);
+  EXPECT_EQ(null_string.raw_str(), nullptr);
   EXPECT_EQ(null_string.GetLength(), 0);
   EXPECT_TRUE(null_string.IsEmpty());
 
@@ -259,27 +259,27 @@ TEST(fxcrt, ByteStringCNull) {
   EXPECT_EQ(null_string, another_null_string);
 
   CFX_ByteStringC copied_null_string(null_string);
-  EXPECT_EQ(copied_null_string.GetPtr(), nullptr);
+  EXPECT_EQ(copied_null_string.raw_str(), nullptr);
   EXPECT_EQ(copied_null_string.GetLength(), 0);
   EXPECT_TRUE(copied_null_string.IsEmpty());
   EXPECT_EQ(null_string, copied_null_string);
 
   CFX_ByteStringC empty_string("");  // Pointer to NUL, not NULL pointer.
-  EXPECT_NE(empty_string.GetPtr(), nullptr);
+  EXPECT_NE(empty_string.raw_str(), nullptr);
   EXPECT_EQ(empty_string.GetLength(), 0);
   EXPECT_TRUE(empty_string.IsEmpty());
   EXPECT_EQ(null_string, empty_string);
 
   CFX_ByteStringC assigned_null_string("initially not NULL");
   assigned_null_string = null_string;
-  EXPECT_EQ(assigned_null_string.GetPtr(), nullptr);
+  EXPECT_EQ(assigned_null_string.raw_str(), nullptr);
   EXPECT_EQ(assigned_null_string.GetLength(), 0);
   EXPECT_TRUE(assigned_null_string.IsEmpty());
   EXPECT_EQ(null_string, assigned_null_string);
 
   CFX_ByteStringC assigned_nullptr_string("initially not NULL");
   assigned_nullptr_string = (const FX_CHAR*)nullptr;
-  EXPECT_EQ(assigned_nullptr_string.GetPtr(), nullptr);
+  EXPECT_EQ(assigned_nullptr_string.raw_str(), nullptr);
   EXPECT_EQ(assigned_nullptr_string.GetLength(), 0);
   EXPECT_TRUE(assigned_nullptr_string.IsEmpty());
   EXPECT_EQ(null_string, assigned_nullptr_string);

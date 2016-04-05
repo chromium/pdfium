@@ -23,9 +23,9 @@ void FX_XML_SplitQualifiedName(const CFX_ByteStringC& bsFullName,
   if (iStart >= bsFullName.GetLength()) {
     bsName = bsFullName;
   } else {
-    bsSpace = CFX_ByteStringC(bsFullName.GetCStr(), iStart);
+    bsSpace = CFX_ByteStringC(bsFullName.c_str(), iStart);
     iStart++;
-    bsName = CFX_ByteStringC(bsFullName.GetCStr() + iStart,
+    bsName = CFX_ByteStringC(bsFullName.c_str() + iStart,
                              bsFullName.GetLength() - iStart);
   }
 }

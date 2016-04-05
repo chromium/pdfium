@@ -12,7 +12,7 @@ CPDF_SimpleParser::CPDF_SimpleParser(const uint8_t* pData, uint32_t dwSize)
     : m_pData(pData), m_dwSize(dwSize), m_dwCurPos(0) {}
 
 CPDF_SimpleParser::CPDF_SimpleParser(const CFX_ByteStringC& str)
-    : m_pData(str.GetPtr()), m_dwSize(str.GetLength()), m_dwCurPos(0) {}
+    : m_pData(str.raw_str()), m_dwSize(str.GetLength()), m_dwCurPos(0) {}
 
 void CPDF_SimpleParser::ParseWord(const uint8_t*& pStart, uint32_t& dwSize) {
   pStart = nullptr;

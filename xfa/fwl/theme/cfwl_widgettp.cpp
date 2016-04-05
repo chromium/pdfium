@@ -736,7 +736,7 @@ FX_BOOL CFWL_FontData::LoadFont(const CFX_WideStringC& wsFontFamily,
     m_pFontMgr = IFX_FontMgr::Create(m_pFontSource);
 #endif
   }
-  m_pFont = IFX_Font::LoadFont(wsFontFamily.GetPtr(), dwFontStyles, dwCodePage,
+  m_pFont = IFX_Font::LoadFont(wsFontFamily.raw_str(), dwFontStyles, dwCodePage,
                                m_pFontMgr);
   return m_pFont != NULL;
 }

@@ -288,23 +288,23 @@ CFX_WideString CPDF_FileSpec::DecodeFileName(const CFX_WideStringC& filepath) {
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
   if (filepath.Left(sizeof("/Mac") - 1) == CFX_WideStringC(L"/Mac"))
-    return ChangeSlashToPlatform(filepath.GetPtr() + 1);
-  return ChangeSlashToPlatform(filepath.GetPtr());
+    return ChangeSlashToPlatform(filepath.raw_str() + 1);
+  return ChangeSlashToPlatform(filepath.raw_str());
 #elif _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
   if (filepath.GetAt(0) != '/')
-    return ChangeSlashToPlatform(filepath.GetPtr());
+    return ChangeSlashToPlatform(filepath.raw_str());
   if (filepath.GetAt(1) == '/')
-    return ChangeSlashToPlatform(filepath.GetPtr() + 1);
+    return ChangeSlashToPlatform(filepath.raw_str() + 1);
   if (filepath.GetAt(2) == '/') {
     CFX_WideString result;
     result += filepath.GetAt(1);
     result += ':';
-    result += ChangeSlashToPlatform(filepath.GetPtr() + 2);
+    result += ChangeSlashToPlatform(filepath.raw_str() + 2);
     return result;
   }
   CFX_WideString result;
   result += '\\';
-  result += ChangeSlashToPlatform(filepath.GetPtr());
+  result += ChangeSlashToPlatform(filepath.raw_str());
   return result;
 #else
   return filepath;
@@ -356,27 +356,27 @@ CFX_WideString CPDF_FileSpec::EncodeFileName(const CFX_WideStringC& filepath) {
     if (filepath.GetAt(2) != '\\') {
       result += '/';
     }
-    result += ChangeSlashToPDF(filepath.GetPtr() + 2);
+    result += ChangeSlashToPDF(filepath.raw_str() + 2);
     return result;
   }
   if (filepath.GetAt(0) == '\\' && filepath.GetAt(1) == '\\') {
-    return ChangeSlashToPDF(filepath.GetPtr() + 1);
+    return ChangeSlashToPDF(filepath.raw_str() + 1);
   }
   if (filepath.GetAt(0) == '\\') {
     CFX_WideString result;
     result = '/';
-    result += ChangeSlashToPDF(filepath.GetPtr());
+    result += ChangeSlashToPDF(filepath.raw_str());
     return result;
   }
-  return ChangeSlashToPDF(filepath.GetPtr());
+  return ChangeSlashToPDF(filepath.raw_str());
 #elif _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
   if (filepath.Left(sizeof("Mac") - 1) == FX_WSTRC(L"Mac")) {
     CFX_WideString result;
     result = '/';
-    result += ChangeSlashToPDF(filepath.GetPtr());
+    result += ChangeSlashToPDF(filepath.raw_str());
     return result;
   }
-  return ChangeSlashToPDF(filepath.GetPtr());
+  return ChangeSlashToPDF(filepath.raw_str());
 #else
   return filepath;
 #endif
@@ -513,5 +513,5 @@ int32_t CPDF_PageLabel::GetPageByLabel(const CFX_ByteStringC& bsLabel) const {
   return -1;
 }
 int32_t CPDF_PageLabel::GetPageByLabel(const CFX_WideStringC& wsLabel) const {
-  return GetPageByLabel(PDF_EncodeText(wsLabel.GetPtr()).AsByteStringC());
+  return GetPageByLabel(PDF_EncodeText(wsLabel.raw_str()).AsByteStringC());
 }

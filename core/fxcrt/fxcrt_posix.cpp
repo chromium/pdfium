@@ -40,7 +40,7 @@ FX_BOOL CFXCRT_FileAccess_Posix::Open(const CFX_ByteStringC& fileName,
   }
   int32_t nFlags, nMasks;
   FXCRT_Posix_GetFileMode(dwMode, nFlags, nMasks);
-  m_nFD = open(fileName.GetCStr(), nFlags, nMasks);
+  m_nFD = open(fileName.c_str(), nFlags, nMasks);
   return m_nFD > -1;
 }
 FX_BOOL CFXCRT_FileAccess_Posix::Open(const CFX_WideStringC& fileName,

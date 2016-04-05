@@ -165,7 +165,9 @@ CXFA_FMToken::CXFA_FMToken(uint32_t uLineNum)
 
 CXFA_FMLexer::CXFA_FMLexer(const CFX_WideStringC& wsFormCalc,
                            CXFA_FMErrorInfo* pErrorInfo)
-    : m_ptr(wsFormCalc.GetPtr()), m_uCurrentLine(1), m_pErrorInfo(pErrorInfo) {}
+    : m_ptr(wsFormCalc.raw_str()),
+      m_uCurrentLine(1),
+      m_pErrorInfo(pErrorInfo) {}
 
 CXFA_FMToken* CXFA_FMLexer::NextToken() {
   m_pToken.reset(Scan());
@@ -517,7 +519,7 @@ void CXFA_FMLexer::Comment(const FX_WCHAR* p, const FX_WCHAR*& pEnd) {
 
 XFA_FM_TOKEN CXFA_FMLexer::IsKeyword(const CFX_WideStringC& str) {
   int32_t iLength = str.GetLength();
-  uint32_t uHash = FX_HashCode_String_GetW(str.GetPtr(), iLength, TRUE);
+  uint32_t uHash = FX_HashCode_String_GetW(str.raw_str(), iLength, TRUE);
   int32_t iStart = KEYWORD_START, iEnd = KEYWORD_END;
   int32_t iMid = (iStart + iEnd) / 2;
   XFA_FMKeyword keyword;

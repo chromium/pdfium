@@ -1624,7 +1624,7 @@ void CFDE_TxtEdtEngine::DeleteSelect() {
 }
 IFDE_TxtEdtDoRecord* IFDE_TxtEdtDoRecord::Create(
     const CFX_ByteStringC& bsDoRecord) {
-  const FX_CHAR* lpBuf = bsDoRecord.GetCStr();
+  const FX_CHAR* lpBuf = bsDoRecord.c_str();
   int32_t nType = *((int32_t*)lpBuf);
   switch (nType) {
     case FDE_TXTEDT_DORECORD_INS:
@@ -1690,8 +1690,9 @@ void CFDE_TxtEdtDoRecord_Insert::Serialize(CFX_ByteString& bsDoRecord) const {
 }
 void CFDE_TxtEdtDoRecord_Insert::Deserialize(
     const CFX_ByteStringC& bsDoRecord) {
-  CFX_ArchiveLoader ArchiveLoader((const uint8_t*)bsDoRecord.GetCStr(),
-                                  bsDoRecord.GetLength());
+  CFX_ArchiveLoader ArchiveLoader(
+      reinterpret_cast<const uint8_t*>(bsDoRecord.c_str()),
+      bsDoRecord.GetLength());
   int32_t nType = 0;
   ArchiveLoader >> nType;
   FXSYS_assert(nType == FDE_TXTEDT_DORECORD_INS);
@@ -1766,8 +1767,9 @@ void CFDE_TxtEdtDoRecord_DeleteRange::Serialize(
 }
 void CFDE_TxtEdtDoRecord_DeleteRange::Deserialize(
     const CFX_ByteStringC& bsDoRecord) {
-  CFX_ArchiveLoader ArchiveLoader((const uint8_t*)bsDoRecord.GetCStr(),
-                                  bsDoRecord.GetLength());
+  CFX_ArchiveLoader ArchiveLoader(
+      reinterpret_cast<const uint8_t*>(bsDoRecord.c_str()),
+      bsDoRecord.GetLength());
   int32_t nType = 0;
   ArchiveLoader >> nType;
   FXSYS_assert(nType == FDE_TXTEDT_DORECORD_DEL);

@@ -2039,7 +2039,7 @@ FX_BOOL CXFA_FM2JSContext::Local2IsoDate(FXJSE_HOBJECT hThis,
     pLocale = widgetData.GetLocal();
   } else {
     pLocale = pMgr->GetLocaleByName(
-        CFX_WideString::FromUTF8(szLocale.GetCStr(), szLocale.GetLength()));
+        CFX_WideString::FromUTF8(szLocale.c_str(), szLocale.GetLength()));
   }
   if (!pLocale) {
     return FALSE;
@@ -2048,13 +2048,11 @@ FX_BOOL CXFA_FM2JSContext::Local2IsoDate(FXJSE_HOBJECT hThis,
   if (szFormat.IsEmpty()) {
     pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Default, wsFormat);
   } else {
-    wsFormat =
-        CFX_WideString::FromUTF8(szFormat.GetCStr(), szFormat.GetLength());
+    wsFormat = CFX_WideString::FromUTF8(szFormat.c_str(), szFormat.GetLength());
   }
   CXFA_LocaleValue widgetValue(
-      XFA_VT_DATE,
-      CFX_WideString::FromUTF8(szDate.GetCStr(), szDate.GetLength()), wsFormat,
-      pLocale, (CXFA_LocaleMgr*)pMgr);
+      XFA_VT_DATE, CFX_WideString::FromUTF8(szDate.c_str(), szDate.GetLength()),
+      wsFormat, pLocale, (CXFA_LocaleMgr*)pMgr);
   CFX_Unitime dt = widgetValue.GetDate();
   strIsoDate.Format("%4d-%02d-%02d", dt.GetYear(), dt.GetMonth(), dt.GetDay());
   return TRUE;
@@ -2079,7 +2077,7 @@ FX_BOOL CXFA_FM2JSContext::Local2IsoTime(FXJSE_HOBJECT hThis,
     pLocale = widgetData.GetLocal();
   } else {
     pLocale = pMgr->GetLocaleByName(
-        CFX_WideString::FromUTF8(szLocale.GetCStr(), szLocale.GetLength()));
+        CFX_WideString::FromUTF8(szLocale.c_str(), szLocale.GetLength()));
   }
   if (!pLocale) {
     return FALSE;
@@ -2088,15 +2086,13 @@ FX_BOOL CXFA_FM2JSContext::Local2IsoTime(FXJSE_HOBJECT hThis,
   if (szFormat.IsEmpty()) {
     pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Default, wsFormat);
   } else {
-    wsFormat =
-        CFX_WideString::FromUTF8(szFormat.GetCStr(), szFormat.GetLength());
+    wsFormat = CFX_WideString::FromUTF8(szFormat.c_str(), szFormat.GetLength());
   }
   wsFormat = FX_WSTRC(L"time{") + wsFormat;
   wsFormat += FX_WSTRC(L"}");
   CXFA_LocaleValue widgetValue(
-      XFA_VT_TIME,
-      CFX_WideString::FromUTF8(szTime.GetCStr(), szTime.GetLength()), wsFormat,
-      pLocale, (CXFA_LocaleMgr*)pMgr);
+      XFA_VT_TIME, CFX_WideString::FromUTF8(szTime.c_str(), szTime.GetLength()),
+      wsFormat, pLocale, (CXFA_LocaleMgr*)pMgr);
   CFX_Unitime utime = widgetValue.GetTime();
   strIsoTime.Format("%02d:%02d:%02d.%03d", utime.GetHour(), utime.GetMinute(),
                     utime.GetSecond(), utime.GetMillisecond());
@@ -2122,7 +2118,7 @@ FX_BOOL CXFA_FM2JSContext::IsoDate2Local(FXJSE_HOBJECT hThis,
     pLocale = widgetData.GetLocal();
   } else {
     pLocale = pMgr->GetLocaleByName(
-        CFX_WideString::FromUTF8(szLocale.GetCStr(), szLocale.GetLength()));
+        CFX_WideString::FromUTF8(szLocale.c_str(), szLocale.GetLength()));
   }
   if (!pLocale) {
     return FALSE;
@@ -2131,12 +2127,10 @@ FX_BOOL CXFA_FM2JSContext::IsoDate2Local(FXJSE_HOBJECT hThis,
   if (szFormat.IsEmpty()) {
     pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Default, wsFormat);
   } else {
-    wsFormat =
-        CFX_WideString::FromUTF8(szFormat.GetCStr(), szFormat.GetLength());
+    wsFormat = CFX_WideString::FromUTF8(szFormat.c_str(), szFormat.GetLength());
   }
   CXFA_LocaleValue widgetValue(
-      XFA_VT_DATE,
-      CFX_WideString::FromUTF8(szDate.GetCStr(), szDate.GetLength()),
+      XFA_VT_DATE, CFX_WideString::FromUTF8(szDate.c_str(), szDate.GetLength()),
       (CXFA_LocaleMgr*)pMgr);
   CFX_WideString wsRet;
   widgetValue.FormatPatterns(wsRet, wsFormat, pLocale,
@@ -2164,7 +2158,7 @@ FX_BOOL CXFA_FM2JSContext::IsoTime2Local(FXJSE_HOBJECT hThis,
     pLocale = widgetData.GetLocal();
   } else {
     pLocale = pMgr->GetLocaleByName(
-        CFX_WideString::FromUTF8(szLocale.GetCStr(), szLocale.GetLength()));
+        CFX_WideString::FromUTF8(szLocale.c_str(), szLocale.GetLength()));
   }
   if (!pLocale) {
     return FALSE;
@@ -2173,14 +2167,12 @@ FX_BOOL CXFA_FM2JSContext::IsoTime2Local(FXJSE_HOBJECT hThis,
   if (szFormat.IsEmpty()) {
     pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Default, wsFormat);
   } else {
-    wsFormat =
-        CFX_WideString::FromUTF8(szFormat.GetCStr(), szFormat.GetLength());
+    wsFormat = CFX_WideString::FromUTF8(szFormat.c_str(), szFormat.GetLength());
   }
   wsFormat = FX_WSTRC(L"time{") + wsFormat;
   wsFormat += FX_WSTRC(L"}");
   CXFA_LocaleValue widgetValue(
-      XFA_VT_TIME,
-      CFX_WideString::FromUTF8(szTime.GetCStr(), szTime.GetLength()),
+      XFA_VT_TIME, CFX_WideString::FromUTF8(szTime.c_str(), szTime.GetLength()),
       (CXFA_LocaleMgr*)pMgr);
   CFX_WideString wsRet;
   widgetValue.FormatPatterns(wsRet, wsFormat, pLocale,
@@ -2208,7 +2200,7 @@ FX_BOOL CXFA_FM2JSContext::GetGMTTime(FXJSE_HOBJECT hThis,
     pLocale = widgetData.GetLocal();
   } else {
     pLocale = pMgr->GetLocaleByName(
-        CFX_WideString::FromUTF8(szLocale.GetCStr(), szLocale.GetLength()));
+        CFX_WideString::FromUTF8(szLocale.c_str(), szLocale.GetLength()));
   }
   if (!pLocale) {
     return FALSE;
@@ -2217,14 +2209,12 @@ FX_BOOL CXFA_FM2JSContext::GetGMTTime(FXJSE_HOBJECT hThis,
   if (szFormat.IsEmpty()) {
     pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Default, wsFormat);
   } else {
-    wsFormat =
-        CFX_WideString::FromUTF8(szFormat.GetCStr(), szFormat.GetLength());
+    wsFormat = CFX_WideString::FromUTF8(szFormat.c_str(), szFormat.GetLength());
   }
   wsFormat = FX_WSTRC(L"time{") + wsFormat;
   wsFormat += FX_WSTRC(L"}");
   CXFA_LocaleValue widgetValue(
-      XFA_VT_TIME,
-      CFX_WideString::FromUTF8(szTime.GetCStr(), szTime.GetLength()),
+      XFA_VT_TIME, CFX_WideString::FromUTF8(szTime.c_str(), szTime.GetLength()),
       (CXFA_LocaleMgr*)pMgr);
   CFX_WideString wsRet;
   widgetValue.FormatPatterns(wsRet, wsFormat, pLocale,
@@ -2247,10 +2237,10 @@ int32_t CXFA_FM2JSContext::DateString2Num(const CFX_ByteStringC& szDateString) {
   int32_t iZoneHour = 0;
   int32_t iZoneMinute = 0;
   if (iLength <= 10) {
-    iRet = IsIsoDateFormat(szDateString.GetCStr(), iLength, iStyle, iYear,
-                           iMonth, iDay);
+    iRet = IsIsoDateFormat(szDateString.c_str(), iLength, iStyle, iYear, iMonth,
+                           iDay);
   } else {
-    iRet = IsIsoDateTimeFormat(szDateString.GetCStr(), iLength, iYear, iMonth,
+    iRet = IsIsoDateTimeFormat(szDateString.c_str(), iLength, iYear, iMonth,
                                iDay, iHour, iMinute, iSecond, iMillionSecond,
                                iZoneHour, iZoneMinute);
   }
@@ -2393,7 +2383,7 @@ void CXFA_FM2JSContext::GetLocalDateFormat(FXJSE_HOBJECT hThis,
     pLocale = widgetData.GetLocal();
   } else {
     pLocale = pMgr->GetLocaleByName(
-        CFX_WideString::FromUTF8(szLocalStr.GetCStr(), szLocalStr.GetLength()));
+        CFX_WideString::FromUTF8(szLocalStr.c_str(), szLocalStr.GetLength()));
   }
   if (!pLocale) {
     return;
@@ -2448,7 +2438,7 @@ void CXFA_FM2JSContext::GetLocalTimeFormat(FXJSE_HOBJECT hThis,
     pLocale = widgetData.GetLocal();
   } else {
     pLocale = pMgr->GetLocaleByName(
-        CFX_WideString::FromUTF8(szLocalStr.GetCStr(), szLocalStr.GetLength()));
+        CFX_WideString::FromUTF8(szLocalStr.c_str(), szLocalStr.GetLength()));
   }
   if (!pLocale) {
     return;
@@ -3751,7 +3741,7 @@ void CXFA_FM2JSContext::Decode(FXJSE_HOBJECT hThis,
 void CXFA_FM2JSContext::DecodeURL(const CFX_ByteStringC& szURLString,
                                   CFX_ByteTextBuf& szResultString) {
   CFX_WideString wsURLString =
-      CFX_WideString::FromUTF8(szURLString.GetCStr(), szURLString.GetLength());
+      CFX_WideString::FromUTF8(szURLString.c_str(), szURLString.GetLength());
   const FX_WCHAR* pData = wsURLString;
   int32_t iLen = wsURLString.GetLength();
   int32_t i = 0;
@@ -3806,8 +3796,8 @@ void CXFA_FM2JSContext::DecodeURL(const CFX_ByteStringC& szURLString,
 }
 void CXFA_FM2JSContext::DecodeHTML(const CFX_ByteStringC& szHTMLString,
                                    CFX_ByteTextBuf& szResultString) {
-  CFX_WideString wsHTMLString = CFX_WideString::FromUTF8(
-      szHTMLString.GetCStr(), szHTMLString.GetLength());
+  CFX_WideString wsHTMLString =
+      CFX_WideString::FromUTF8(szHTMLString.c_str(), szHTMLString.GetLength());
   FX_WCHAR strString[9];
   int32_t iStrIndex = 0;
   int32_t iLen = wsHTMLString.GetLength();
@@ -3882,7 +3872,7 @@ void CXFA_FM2JSContext::DecodeHTML(const CFX_ByteStringC& szHTMLString,
 void CXFA_FM2JSContext::DecodeXML(const CFX_ByteStringC& szXMLString,
                                   CFX_ByteTextBuf& szResultString) {
   CFX_WideString wsXMLString =
-      CFX_WideString::FromUTF8(szXMLString.GetCStr(), szXMLString.GetLength());
+      CFX_WideString::FromUTF8(szXMLString.c_str(), szXMLString.GetLength());
   FX_WCHAR strString[9];
   int32_t iStrIndex = 0;
   int32_t iLen = wsXMLString.GetLength();
@@ -4027,7 +4017,7 @@ void CXFA_FM2JSContext::Encode(FXJSE_HOBJECT hThis,
 void CXFA_FM2JSContext::EncodeURL(const CFX_ByteStringC& szURLString,
                                   CFX_ByteTextBuf& szResultBuf) {
   CFX_WideString wsURLString =
-      CFX_WideString::FromUTF8(szURLString.GetCStr(), szURLString.GetLength());
+      CFX_WideString::FromUTF8(szURLString.c_str(), szURLString.GetLength());
   CFX_WideTextBuf wsResultBuf;
   FX_WCHAR ch = 0;
   int32_t iLength = wsURLString.GetLength();
@@ -4134,7 +4124,7 @@ void CXFA_FM2JSContext::EncodeURL(const CFX_ByteStringC& szURLString,
 }
 void CXFA_FM2JSContext::EncodeHTML(const CFX_ByteStringC& szHTMLString,
                                    CFX_ByteTextBuf& szResultBuf) {
-  CFX_ByteString str = szHTMLString.GetCStr();
+  CFX_ByteString str = szHTMLString.c_str();
   CFX_WideString wsHTMLString = CFX_WideString::FromUTF8(str, str.GetLength());
   const FX_WCHAR* strCode = L"0123456789abcdef";
   FX_WCHAR strEncode[9];
@@ -4189,7 +4179,7 @@ void CXFA_FM2JSContext::EncodeHTML(const CFX_ByteStringC& szHTMLString,
 void CXFA_FM2JSContext::EncodeXML(const CFX_ByteStringC& szXMLString,
                                   CFX_ByteTextBuf& szResultBuf) {
   CFX_WideString wsXMLString =
-      CFX_WideString::FromUTF8(szXMLString.GetCStr(), szXMLString.GetLength());
+      CFX_WideString::FromUTF8(szXMLString.c_str(), szXMLString.GetLength());
   CFX_WideTextBuf wsResultBuf;
   enum {
     QUOT,
@@ -4271,7 +4261,7 @@ void CXFA_FM2JSContext::EncodeXML(const CFX_ByteStringC& szXMLString,
 FX_BOOL CXFA_FM2JSContext::HTMLSTR2Code(const CFX_WideStringC& pData,
                                         uint32_t& iCode) {
   int32_t iLength = pData.GetLength();
-  uint32_t uHash = FX_HashCode_String_GetW(pData.GetPtr(), iLength);
+  uint32_t uHash = FX_HashCode_String_GetW(pData.raw_str(), iLength);
   XFA_FMHtmlHashedReserveCode htmlhashedreservecode;
   int32_t iStart = 0,
           iEnd = (sizeof(reservesForDecode) / sizeof(reservesForDecode[0])) - 1;
@@ -4313,7 +4303,7 @@ FX_BOOL CXFA_FM2JSContext::HTMLCode2STR(uint32_t iCode,
 static FX_BOOL XFA_PATTERN_STRING_Type(const CFX_ByteStringC& szPattern,
                                        uint32_t& patternType) {
   CFX_WideString wsPattern =
-      CFX_WideString::FromUTF8(szPattern.GetCStr(), szPattern.GetLength());
+      CFX_WideString::FromUTF8(szPattern.c_str(), szPattern.GetLength());
   if (FX_WSTRC(L"datetime") == wsPattern.Left(8)) {
     patternType = XFA_VT_DATETIME;
     return TRUE;
@@ -5290,7 +5280,7 @@ void CXFA_FM2JSContext::TrillionUS(const CFX_ByteStringC& szData,
   CFX_ByteStringC pComm[] = {" Hundred ", " Thousand ", " Million ",
                              " Billion ", "Trillion"};
   int32_t iComm = 0;
-  const FX_CHAR* pData = szData.GetCStr();
+  const FX_CHAR* pData = szData.c_str();
   int32_t iLength = szData.GetLength();
   if (iLength > 12) {
     iComm = 4;
@@ -5376,7 +5366,7 @@ void CXFA_FM2JSContext::TrillionUS(const CFX_ByteStringC& szData,
 void CXFA_FM2JSContext::WordUS(const CFX_ByteStringC& szData,
                                int32_t iStyle,
                                CFX_ByteTextBuf& strBuf) {
-  const FX_CHAR* pData = szData.GetCStr();
+  const FX_CHAR* pData = szData.c_str();
   int32_t iLength = szData.GetLength();
   switch (iStyle) {
     case 0: {
@@ -6888,7 +6878,7 @@ FX_BOOL CXFA_FM2JSContext::GetObjectByName(
                      XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;
   int32_t iRet = pScriptContext->ResolveObjects(
       pScriptContext->GetThisObject(),
-      CFX_WideString::FromUTF8(szAccessorName.GetCStr(),
+      CFX_WideString::FromUTF8(szAccessorName.c_str(),
                                szAccessorName.GetLength()),
       resoveNodeRS, dwFlags);
   if (iRet >= 1 && resoveNodeRS.dwFlags == XFA_RESOVENODE_RSTYPE_Nodes) {
@@ -6905,7 +6895,7 @@ int32_t CXFA_FM2JSContext::ResolveObjects(FXJSE_HOBJECT hThis,
                                           FX_BOOL bdotAccessor,
                                           FX_BOOL bHasNoResolveName) {
   CFX_WideString wsSomExpression =
-      CFX_WideString::FromUTF8(bsSomExp.GetCStr(), bsSomExp.GetLength());
+      CFX_WideString::FromUTF8(bsSomExp.c_str(), bsSomExp.GetLength());
   int32_t iRet = -1;
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);

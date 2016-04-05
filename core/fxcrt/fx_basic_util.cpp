@@ -95,10 +95,10 @@ void CFX_PrivateData::ClearAll() {
   m_DataList.RemoveAll();
 }
 void FX_atonum(const CFX_ByteStringC& strc, FX_BOOL& bInteger, void* pData) {
-  if (!FXSYS_memchr(strc.GetPtr(), '.', strc.GetLength())) {
+  if (!FXSYS_memchr(strc.raw_str(), '.', strc.GetLength())) {
     bInteger = TRUE;
     int cc = 0, integer = 0;
-    const FX_CHAR* str = strc.GetCStr();
+    const FX_CHAR* str = strc.c_str();
     int len = strc.GetLength();
     FX_BOOL bNegative = FALSE;
     if (str[0] == '+') {
@@ -129,7 +129,7 @@ FX_FLOAT FX_atof(const CFX_ByteStringC& strc) {
   }
   int cc = 0;
   FX_BOOL bNegative = FALSE;
-  const FX_CHAR* str = strc.GetCStr();
+  const FX_CHAR* str = strc.c_str();
   int len = strc.GetLength();
   if (str[0] == '+') {
     cc++;

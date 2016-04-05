@@ -180,7 +180,7 @@ class CFXJSE_Value {
   V8_INLINE void SetString(const CFX_ByteStringC& szString) {
     CFXJSE_ScopeUtil_IsolateHandle scope(m_pIsolate);
     v8::Local<v8::Value> hValue = v8::String::NewFromUtf8(
-        m_pIsolate, reinterpret_cast<const char*>(szString.GetPtr()),
+        m_pIsolate, reinterpret_cast<const char*>(szString.raw_str()),
         v8::String::kNormalString, szString.GetLength());
     m_hValue.Reset(m_pIsolate, hValue);
   }

@@ -90,8 +90,10 @@ class CFX_ByteStringC {
 
   uint32_t GetID(FX_STRSIZE start_pos = 0) const;
 
-  const uint8_t* GetPtr() const { return m_Ptr; }
-  const FX_CHAR* GetCStr() const { return (const FX_CHAR*)m_Ptr; }
+  const uint8_t* raw_str() const { return m_Ptr; }
+  const FX_CHAR* c_str() const {
+    return reinterpret_cast<const FX_CHAR*>(m_Ptr);
+  }
 
   FX_STRSIZE GetLength() const { return m_Length; }
   bool IsEmpty() const { return m_Length == 0; }
@@ -178,7 +180,7 @@ class CFX_ByteString {
                    : nullptr;
   }
 
-  // Implicit conversiont to uint8_t* -- deprecated.
+  // Implicit conversion to uint8_t* -- deprecated.
   operator const uint8_t*() const {
     return m_pData ? reinterpret_cast<const uint8_t*>(m_pData->m_String)
                    : nullptr;
@@ -454,7 +456,7 @@ class CFX_WideStringC {
   bool operator!=(const wchar_t* ptr) const { return !(*this == ptr); }
   bool operator!=(const CFX_WideStringC& str) const { return !(*this == str); }
 
-  const FX_WCHAR* GetPtr() const { return m_Ptr; }
+  const FX_WCHAR* raw_str() const { return m_Ptr; }
 
   FX_STRSIZE GetLength() const { return m_Length; }
   bool IsEmpty() const { return m_Length == 0; }
@@ -752,7 +754,7 @@ inline bool operator!=(const CFX_WideStringC& lhs, const CFX_WideString& rhs) {
 
 CFX_ByteString FX_UTF8Encode(const FX_WCHAR* pwsStr, FX_STRSIZE len);
 inline CFX_ByteString FX_UTF8Encode(const CFX_WideStringC& wsStr) {
-  return FX_UTF8Encode(wsStr.GetPtr(), wsStr.GetLength());
+  return FX_UTF8Encode(wsStr.raw_str(), wsStr.GetLength());
 }
 inline CFX_ByteString FX_UTF8Encode(const CFX_WideString& wsStr) {
   return FX_UTF8Encode(wsStr.c_str(), wsStr.GetLength());
@@ -760,7 +762,7 @@ inline CFX_ByteString FX_UTF8Encode(const CFX_WideString& wsStr) {
 
 FX_FLOAT FX_atof(const CFX_ByteStringC& str);
 inline FX_FLOAT FX_atof(const CFX_WideStringC& wsStr) {
-  return FX_atof(FX_UTF8Encode(wsStr.GetPtr(), wsStr.GetLength()).c_str());
+  return FX_atof(FX_UTF8Encode(wsStr.raw_str(), wsStr.GetLength()).c_str());
 }
 void FX_atonum(const CFX_ByteStringC& str, FX_BOOL& bInteger, void* pData);
 FX_STRSIZE FX_ftoa(FX_FLOAT f, FX_CHAR* buf);

@@ -68,8 +68,8 @@ static FX_STRSIZE FX_Local_Find(const CFX_WideStringC& wsSymbols,
     return -1;
   }
   const FX_WCHAR* lpsz =
-      (const FX_WCHAR*)FXSYS_wcschr(wsSymbols.GetPtr() + nStart, ch);
-  return (lpsz == NULL) ? -1 : (FX_STRSIZE)(lpsz - wsSymbols.GetPtr());
+      (const FX_WCHAR*)FXSYS_wcschr(wsSymbols.raw_str() + nStart, ch);
+  return (lpsz == NULL) ? -1 : (FX_STRSIZE)(lpsz - wsSymbols.raw_str());
 }
 static const FX_WCHAR* const gs_LocalNumberSymbols[] = {
     L"decimal", L"grouping",       L"percent",      L"minus",
@@ -3855,7 +3855,7 @@ FX_BOOL FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
   uint8_t second = 0;
   uint16_t millisecond = 0;
   int cc_start = 0, cc = cc_start;
-  const FX_WCHAR* str = (const FX_WCHAR*)wsTime.GetPtr();
+  const FX_WCHAR* str = (const FX_WCHAR*)wsTime.raw_str();
   int len = wsTime.GetLength();
   while (cc < len && cc < 2) {
     if (!FX_IsDigit(str[cc])) {
@@ -4699,7 +4699,7 @@ CFX_Decimal::CFX_Decimal(FX_FLOAT val, uint8_t scale) {
   m_uFlags = FXMATH_DECIMAL_MAKEFLAGS(val < 0 && IsNotZero(), scale);
 }
 CFX_Decimal::CFX_Decimal(const CFX_WideStringC& strObj) {
-  const FX_WCHAR* str = strObj.GetPtr();
+  const FX_WCHAR* str = strObj.raw_str();
   const FX_WCHAR* strBound = str + strObj.GetLength();
   FX_BOOL pointmet = 0;
   FX_BOOL negmet = 0;

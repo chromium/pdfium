@@ -662,7 +662,7 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
       // Earlier version of PDF specification doesn't require EOL marker before
       // 'endstream' keyword. If keyword 'endstream' follows the bytes in
       // specified length, it signals the end of stream.
-      if (FXSYS_memcmp(m_WordBuffer, kEndStreamStr.GetPtr(),
+      if (FXSYS_memcmp(m_WordBuffer, kEndStreamStr.raw_str(),
                        kEndStreamStr.GetLength()) == 0) {
         bSearchForKeyword = FALSE;
       }
@@ -774,8 +774,8 @@ CPDF_Stream* CPDF_SyntaxParser::ReadStream(CPDF_Dictionary* pDict,
   int numMarkers = ReadEOLMarkers(m_Pos);
   if (m_WordSize == static_cast<unsigned int>(kEndObjStr.GetLength()) &&
       numMarkers != 0 &&
-      FXSYS_memcmp(m_WordBuffer, kEndObjStr.GetPtr(), kEndObjStr.GetLength()) ==
-          0) {
+      FXSYS_memcmp(m_WordBuffer, kEndObjStr.raw_str(),
+                   kEndObjStr.GetLength()) == 0) {
     m_Pos = streamStartPos;
   }
   return pStream;
@@ -849,7 +849,7 @@ FX_BOOL CPDF_SyntaxParser::SearchWord(const CFX_ByteStringC& tag,
   if (!bForward)
     offset = taglen - 1;
 
-  const uint8_t* tag_data = tag.GetPtr();
+  const uint8_t* tag_data = tag.raw_str();
   uint8_t byte;
   while (1) {
     if (bForward) {
@@ -921,7 +921,7 @@ int32_t CPDF_SyntaxParser::SearchMultiWord(const CFX_ByteStringC& tags,
     if (tags[i] == 0) {
       uint32_t len = i - start;
       max_len = std::max(len, max_len);
-      patterns[itag].m_pTag = tags.GetCStr() + start;
+      patterns[itag].m_pTag = tags.c_str() + start;
       patterns[itag].m_Len = len;
       patterns[itag].m_Offset = 0;
       start = i + 1;

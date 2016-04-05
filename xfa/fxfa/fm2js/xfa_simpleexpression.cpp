@@ -502,7 +502,7 @@ bool CXFA_FMCallExpression::IsBuildInFunc(CFX_WideTextBuf* funcName) {
 uint32_t CXFA_FMCallExpression::IsMethodWithObjParam(
     const CFX_WideStringC& methodName) {
   int32_t iLength = methodName.GetLength();
-  uint32_t uHash = FX_HashCode_String_GetW(methodName.GetPtr(), iLength);
+  uint32_t uHash = FX_HashCode_String_GetW(methodName.raw_str(), iLength);
   XFA_FMSOMMethod somMethodWithObjPara;
   uint32_t parameters = 0x00;
   int32_t iStart = 0,

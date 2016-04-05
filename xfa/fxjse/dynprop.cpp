@@ -61,7 +61,7 @@ static void FXJSE_DynPropGetterAdapter(const FXJSE_CLASS* lpClass,
           0, const_cast<FXJSE_CLASS*>(lpClass));
       hCallBackInfo->SetInternalField(
           1, v8::String::NewFromUtf8(
-                 pIsolate, reinterpret_cast<const char*>(szPropName.GetPtr()),
+                 pIsolate, reinterpret_cast<const char*>(szPropName.raw_str()),
                  v8::String::kNormalString, szPropName.GetLength()));
       lpValue->ForceSetValue(v8::Function::New(
           lpValue->GetIsolate(), FXJSE_DynPropGetterAdapter_MethodCallback,

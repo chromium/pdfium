@@ -1699,7 +1699,7 @@ void XFA_LocalFontNameToEnglishName(const CFX_WideStringC& wsLocalName,
     _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_ ||   \
     _FXM_PLATFORM_ == _FXM_PLATFORM_ANDROID_
   uint32_t dwLocalNameHash = FX_HashCode_String_GetW(
-      wsLocalName.GetPtr(), wsLocalName.GetLength(), TRUE);
+      wsLocalName.raw_str(), wsLocalName.GetLength(), TRUE);
   int32_t iStart = 0;
   int32_t iEnd = sizeof(g_XFAFontsMap) / sizeof(XFA_FONTINFO) - 1;
   int32_t iMid = 0;
@@ -1890,7 +1890,7 @@ IFX_Font* CXFA_PDFFontMgr::GetFont(const CFX_WideStringC& wsFontFamily,
                                    CPDF_Font** pPDFFont,
                                    FX_BOOL bStrictMatch) {
   uint32_t dwHashCode =
-      FX_HashCode_String_GetW(wsFontFamily.GetPtr(), wsFontFamily.GetLength());
+      FX_HashCode_String_GetW(wsFontFamily.raw_str(), wsFontFamily.GetLength());
   CFX_ByteString strKey;
   strKey.Format("%u%u", dwHashCode, dwFontStyles);
   auto it = m_FontMap.find(strKey);
@@ -2016,7 +2016,7 @@ IFX_Font* CXFA_FontMgr::GetFont(CXFA_FFDoc* hDoc,
                                 const CFX_WideStringC& wsFontFamily,
                                 uint32_t dwFontStyles,
                                 uint16_t wCodePage) {
-  uint32_t dwHash = FX_HashCode_String_GetW(wsFontFamily.GetPtr(),
+  uint32_t dwHash = FX_HashCode_String_GetW(wsFontFamily.raw_str(),
                                             wsFontFamily.GetLength(), FALSE);
   CFX_ByteString bsKey;
   bsKey.Format("%u%u%u", dwHash, dwFontStyles, wCodePage);

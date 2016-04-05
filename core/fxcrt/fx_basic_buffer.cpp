@@ -105,7 +105,7 @@ CFX_ByteStringC CFX_ByteTextBuf::GetByteString() const {
 }
 
 CFX_ByteTextBuf& CFX_ByteTextBuf::operator<<(const CFX_ByteStringC& lpsz) {
-  AppendBlock(lpsz.GetPtr(), lpsz.GetLength());
+  AppendBlock(lpsz.raw_str(), lpsz.GetLength());
   return *this;
 }
 
@@ -142,7 +142,7 @@ void CFX_WideTextBuf::AppendChar(FX_WCHAR ch) {
 }
 
 CFX_WideTextBuf& CFX_WideTextBuf::operator<<(const CFX_WideStringC& str) {
-  AppendBlock(str.GetPtr(), str.GetLength() * sizeof(FX_WCHAR));
+  AppendBlock(str.raw_str(), str.GetLength() * sizeof(FX_WCHAR));
   return *this;
 }
 
@@ -228,10 +228,10 @@ CFX_ArchiveSaver& CFX_ArchiveSaver::operator<<(const CFX_ByteStringC& bstr) {
   int len = bstr.GetLength();
   if (m_pStream) {
     m_pStream->WriteBlock(&len, sizeof(int));
-    m_pStream->WriteBlock(bstr.GetPtr(), len);
+    m_pStream->WriteBlock(bstr.raw_str(), len);
   } else {
     m_SavingBuf.AppendBlock(&len, sizeof(int));
-    m_SavingBuf.AppendBlock(bstr.GetPtr(), len);
+    m_SavingBuf.AppendBlock(bstr.raw_str(), len);
   }
   return *this;
 }
@@ -419,7 +419,7 @@ int32_t CFX_FileBufferArchive::AppendDWord(uint32_t i) {
 }
 
 int32_t CFX_FileBufferArchive::AppendString(const CFX_ByteStringC& lpsz) {
-  return AppendBlock(lpsz.GetPtr(), lpsz.GetLength());
+  return AppendBlock(lpsz.raw_str(), lpsz.GetLength());
 }
 
 void CFX_FileBufferArchive::AttachFile(IFX_StreamWrite* pFile) {
