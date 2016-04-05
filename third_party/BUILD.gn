@@ -252,11 +252,24 @@ source_set("jpeg") {
   ]
 }
 
+config("fx_libopenjpeg_warnings") {
+  visibility = [ ":*" ]
+  if (is_win) {
+    cflags = [
+      # Signed/unsigned comparisons.
+      "/wd4018",
+    ]
+  }
+}
+
 source_set("fx_libopenjpeg") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
     "//build/config/compiler:no_chromium_code",
     "//third_party/pdfium:pdfium_config",
+
+    # Must be after no_chromium_code for warning flags to be ordered correctly.
+    ":fx_libopenjpeg_warnings",
   ]
   sources = [
     "libopenjpeg20/bio.c",
