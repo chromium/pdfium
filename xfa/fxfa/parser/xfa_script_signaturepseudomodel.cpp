@@ -75,8 +75,9 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Sign(
     CFX_ByteString bsXMLIdent = pArguments->GetUTF8String(2);
     wsXMLIdent = CFX_WideString::FromUTF8(bsXMLIdent, bsXMLIdent.GetLength());
   }
-  FX_BOOL bSign = pNotify->GetDocProvider()->Sign(hDoc, pNodeList, wsExpression,
-                                                  wsXMLIdent);
+  FX_BOOL bSign = pNotify->GetDocProvider()->Sign(hDoc, pNodeList,
+                                                  wsExpression.AsWideStringC(),
+                                                  wsXMLIdent.AsWideStringC());
   FXJSE_HVALUE hValue = pArguments->GetReturnValue();
   if (hValue) {
     FXJSE_Value_SetBoolean(hValue, bSign);

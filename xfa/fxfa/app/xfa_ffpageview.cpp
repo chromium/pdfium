@@ -270,7 +270,7 @@ CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::GetTraverseWidget(
     if (pTraverse) {
       CFX_WideString wsTraverseWidgetName;
       if (pTraverse->GetAttribute(XFA_ATTRIBUTE_Ref, wsTraverseWidgetName)) {
-        return FindWidgetByName(wsTraverseWidgetName, pWidget);
+        return FindWidgetByName(wsTraverseWidgetName.AsWideStringC(), pWidget);
       }
     }
   }

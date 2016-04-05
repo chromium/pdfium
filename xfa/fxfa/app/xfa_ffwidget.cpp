@@ -944,7 +944,7 @@ FX_CHAR* XFA_Base64Encode(const uint8_t* buf, int32_t buf_len) {
   out[j] = '\0';
   return out;
 }
-FXCODEC_IMAGE_TYPE XFA_GetImageType(const CFX_WideStringC& wsType) {
+FXCODEC_IMAGE_TYPE XFA_GetImageType(const CFX_WideString& wsType) {
   CFX_WideString wsContentType(wsType);
   wsContentType.MakeLower();
   if (wsContentType == FX_WSTRC(L"image/jpg")) {
@@ -1003,7 +1003,7 @@ CFX_DIBitmap* XFA_LoadImageData(CXFA_FFDoc* pDoc,
     if (wsURL.Left(7) != FX_WSTRC(L"http://") &&
         wsURL.Left(6) != FX_WSTRC(L"ftp://")) {
       CFX_DIBitmap* pBitmap =
-          pDoc->GetPDFNamedImage(wsURL, iImageXDpi, iImageYDpi);
+          pDoc->GetPDFNamedImage(wsURL.AsWideStringC(), iImageXDpi, iImageYDpi);
       if (pBitmap) {
         bNameImage = TRUE;
         return pBitmap;

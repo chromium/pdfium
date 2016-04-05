@@ -423,7 +423,7 @@ FX_BOOL CFWL_EditImp::ReplaceSpellCheckWord(CFX_PointF pointf,
     pBuffer[i] = bsReplace[i];
   }
   wsDest.ReleaseBuffer(nDestLen);
-  Replace(nWordStart, nWordCount, wsDest);
+  Replace(nWordStart, nWordCount, wsDest.AsWideStringC());
   return TRUE;
 }
 void CFWL_EditImp::DrawSpellCheck(CFX_Graphics* pGraphics,

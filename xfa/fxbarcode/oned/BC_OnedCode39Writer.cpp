@@ -360,5 +360,6 @@ void CBC_OnedCode39Writer::RenderResult(const CFX_WideStringC& contents,
                                         int32_t& e) {
   CFX_WideString encodedCon = encodedContents(contents, e);
   BC_EXCEPTION_CHECK_ReturnVoid(e);
-  CBC_OneDimWriter::RenderResult(encodedCon, code, codeLength, isDevice, e);
+  CBC_OneDimWriter::RenderResult(encodedCon.AsWideStringC(), code, codeLength,
+                                 isDevice, e);
 }

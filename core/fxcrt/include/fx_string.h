@@ -431,8 +431,6 @@ class CFX_WideStringC {
     m_Length = src.m_Length;
   }
 
-  CFX_WideStringC(const CFX_WideString& src);
-
   CFX_WideStringC& operator=(const FX_WCHAR* src) {
     m_Ptr = src;
     m_Length = FXSYS_wcslen(src);
@@ -557,13 +555,20 @@ class CFX_WideString {
   static FX_STRSIZE WStringLength(const unsigned short* str);
 
   // Explicit conversion to C-style wide string.
+  // Note: |this| must outlive the use of the result.
   const FX_WCHAR* c_str() const { return m_pData ? m_pData->m_String : L""; }
 
   // Implicit conversion to C-style wide string -- deprecated.
+  // Note: |this| must outlive the use of the result.
   operator const FX_WCHAR*() const { return m_pData ? m_pData->m_String : L""; }
 
-  void Empty();
+  // Explicit conversion to CFX_WideStringC.
+  // Note: |this| must outlive the use of the result.
+  CFX_WideStringC AsWideStringC() const {
+    return CFX_WideStringC(c_str(), GetLength());
+  }
 
+  void Empty();
   bool IsEmpty() const { return !GetLength(); }
   FX_STRSIZE GetLength() const { return m_pData ? m_pData->m_nDataLength : 0; }
 
@@ -685,10 +690,7 @@ class CFX_WideString {
   StringData* m_pData;
   friend class fxcrt_WideStringConcatInPlace_Test;
 };
-inline CFX_WideStringC::CFX_WideStringC(const CFX_WideString& src) {
-  m_Ptr = src.c_str();
-  m_Length = src.GetLength();
-}
+
 inline CFX_WideStringC& CFX_WideStringC::operator=(const CFX_WideString& src) {
   m_Ptr = src.c_str();
   m_Length = src.GetLength();
@@ -715,29 +717,29 @@ inline CFX_WideString operator+(FX_WCHAR ch, const CFX_WideStringC& str2) {
 }
 inline CFX_WideString operator+(const CFX_WideString& str1,
                                 const CFX_WideString& str2) {
-  return CFX_WideString(str1, str2);
+  return CFX_WideString(str1.AsWideStringC(), str2.AsWideStringC());
 }
 inline CFX_WideString operator+(const CFX_WideString& str1, FX_WCHAR ch) {
-  return CFX_WideString(str1, CFX_WideStringC(ch));
+  return CFX_WideString(str1.AsWideStringC(), CFX_WideStringC(ch));
 }
 inline CFX_WideString operator+(FX_WCHAR ch, const CFX_WideString& str2) {
-  return CFX_WideString(ch, str2);
+  return CFX_WideString(ch, str2.AsWideStringC());
 }
 inline CFX_WideString operator+(const CFX_WideString& str1,
                                 const FX_WCHAR* str2) {
-  return CFX_WideString(str1, str2);
+  return CFX_WideString(str1.AsWideStringC(), str2);
 }
 inline CFX_WideString operator+(const FX_WCHAR* str1,
                                 const CFX_WideString& str2) {
-  return CFX_WideString(str1, str2);
+  return CFX_WideString(str1, str2.AsWideStringC());
 }
 inline CFX_WideString operator+(const CFX_WideString& str1,
                                 const CFX_WideStringC& str2) {
-  return CFX_WideString(str1, str2);
+  return CFX_WideString(str1.AsWideStringC(), str2);
 }
 inline CFX_WideString operator+(const CFX_WideStringC& str1,
                                 const CFX_WideString& str2) {
-  return CFX_WideString(str1, str2);
+  return CFX_WideString(str1, str2.AsWideStringC());
 }
 inline bool operator==(const wchar_t* lhs, const CFX_WideString& rhs) {
   return rhs == lhs;

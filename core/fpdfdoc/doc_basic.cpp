@@ -335,7 +335,7 @@ bool CPDF_FileSpec::GetFileName(CFX_WideString* csFileName) const {
   } else {
     return false;
   }
-  *csFileName = DecodeFileName(*csFileName);
+  *csFileName = DecodeFileName(csFileName->AsWideStringC());
   return true;
 }
 

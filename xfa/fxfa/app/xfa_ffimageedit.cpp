@@ -108,7 +108,8 @@ FX_BOOL CXFA_FFImageEdit::OnLButtonDown(uint32_t dwFlags,
   CFX_WideString wsFilter;
   pAppProvider->LoadString(XFA_IDS_ImageFilter, wsFilter);
   CFX_WideStringArray wsPathArray;
-  pAppProvider->ShowFileDialog(wsTitle, wsFilter, wsPathArray);
+  pAppProvider->ShowFileDialog(wsTitle.AsWideStringC(),
+                               wsFilter.AsWideStringC(), wsPathArray);
   int32_t iSize = wsPathArray.GetSize();
   if (iSize < 1) {
     return TRUE;
@@ -147,7 +148,8 @@ FX_BOOL CXFA_FFImageEdit::OnLButtonDown(uint32_t dwFlags,
     m_pDataAcc->SetImageEditImage(NULL);
     pFileRead->Release();
   }
-  m_pDataAcc->SetImageEdit(wsContentType, CFX_WideStringC(), wsImage);
+  m_pDataAcc->SetImageEdit(wsContentType.AsWideStringC(), CFX_WideStringC(),
+                           wsImage.AsWideStringC());
   m_pDataAcc->LoadImageEditImage();
   AddInvalidateRect();
   m_pDocView->SetChangeMark();

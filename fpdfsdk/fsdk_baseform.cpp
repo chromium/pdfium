@@ -64,7 +64,7 @@ CXFA_FFWidget* CPDFSDK_Widget::GetMixXFAWidget() const {
         }
 
         if (!sName.IsEmpty())
-          m_hMixXFAWidget = pDocView->GetWidgetByName(sName);
+          m_hMixXFAWidget = pDocView->GetWidgetByName(sName.AsWideStringC());
       }
     }
     return m_hMixXFAWidget;
@@ -80,7 +80,7 @@ CXFA_FFWidget* CPDFSDK_Widget::GetGroupMixXFAWidget() {
     if (CXFA_FFDocView* pDocView = pDoc->GetXFADocView()) {
       CFX_WideString sName = GetName();
       if (!sName.IsEmpty())
-        return pDocView->GetWidgetByName(sName);
+        return pDocView->GetWidgetByName(sName.AsWideStringC());
     }
   }
 
@@ -2448,7 +2448,7 @@ FX_BOOL CPDFSDK_InterForm::ExportFieldsToFDFTextBuf(
     bool bIncludeOrExclude,
     CFX_ByteTextBuf& textBuf) {
   std::unique_ptr<CFDF_Document> pFDF(m_pInterForm->ExportToFDF(
-      m_pDocument->GetPath(), fields, bIncludeOrExclude));
+      m_pDocument->GetPath().AsWideStringC(), fields, bIncludeOrExclude));
   return pFDF ? pFDF->WriteBuf(textBuf) : FALSE;
 }
 
@@ -2486,7 +2486,8 @@ FX_BOOL CPDFSDK_InterForm::SubmitForm(const CFX_WideString& sDestination,
 
   CPDFDoc_Environment* pEnv = m_pDocument->GetEnv();
   CFX_WideString wsPDFFilePath = m_pDocument->GetPath();
-  CFDF_Document* pFDFDoc = m_pInterForm->ExportToFDF(wsPDFFilePath);
+  CFDF_Document* pFDFDoc =
+      m_pInterForm->ExportToFDF(wsPDFFilePath.AsWideStringC());
   if (!pFDFDoc)
     return FALSE;
 
@@ -2515,7 +2516,8 @@ FX_BOOL CPDFSDK_InterForm::SubmitForm(const CFX_WideString& sDestination,
 }
 
 FX_BOOL CPDFSDK_InterForm::ExportFormToFDFTextBuf(CFX_ByteTextBuf& textBuf) {
-  CFDF_Document* pFDF = m_pInterForm->ExportToFDF(m_pDocument->GetPath());
+  CFDF_Document* pFDF =
+      m_pInterForm->ExportToFDF(m_pDocument->GetPath().AsWideStringC());
   if (!pFDF)
     return FALSE;
 

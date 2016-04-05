@@ -44,7 +44,7 @@ FX_BOOL CXFA_FFListBox::LoadWidget() {
   m_pDataAcc->GetChoiceListItems(wsLabelArray, FALSE);
   int32_t iItems = wsLabelArray.GetSize();
   for (int32_t i = 0; i < iItems; i++) {
-    pListBox->AddString(wsLabelArray[i]);
+    pListBox->AddString(wsLabelArray[i].AsWideStringC());
   }
   uint32_t dwExtendedStyle = FWL_STYLEEXT_LTB_ShowScrollBarFocus;
   if (m_pDataAcc->GetChoiceListOpen() == XFA_ATTRIBUTEENUM_MultiSelect) {
@@ -166,7 +166,7 @@ void CXFA_FFListBox::SetItemState(int32_t nIndex, FX_BOOL bSelected) {
 void CXFA_FFListBox::InsertItem(const CFX_WideStringC& wsLabel,
                                 int32_t nIndex) {
   CFX_WideString wsTemp(wsLabel);
-  ((CFWL_ListBox*)m_pNormalWidget)->AddString(wsTemp);
+  ((CFWL_ListBox*)m_pNormalWidget)->AddString(wsTemp.AsWideStringC());
   m_pNormalWidget->Update();
   AddInvalidateRect();
 }
@@ -240,7 +240,7 @@ FX_BOOL CXFA_FFComboBox::LoadWidget() {
   m_pDataAcc->GetChoiceListItems(wsLabelArray, FALSE);
   int32_t iItems = wsLabelArray.GetSize();
   for (int32_t i = 0; i < iItems; i++) {
-    pComboBox->AddString(wsLabelArray[i]);
+    pComboBox->AddString(wsLabelArray[i].AsWideStringC());
   }
   CFX_Int32Array iSelArray;
   m_pDataAcc->GetSelectedItems(iSelArray);
@@ -250,7 +250,7 @@ FX_BOOL CXFA_FFComboBox::LoadWidget() {
   } else {
     CFX_WideString wsText;
     m_pDataAcc->GetValue(wsText, XFA_VALUEPICTURE_Raw);
-    pComboBox->SetEditText(wsText);
+    pComboBox->SetEditText(wsText.AsWideStringC());
   }
   UpdateWidgetProperty();
   m_pNormalWidget->UnlockUpdate();
@@ -382,7 +382,7 @@ FX_BOOL CXFA_FFComboBox::UpdateFWLData() {
     CFX_WideString wsText;
     ((CFWL_ComboBox*)m_pNormalWidget)->SetCurSel(-1);
     m_pDataAcc->GetValue(wsText, XFA_VALUEPICTURE_Raw);
-    ((CFWL_ComboBox*)m_pNormalWidget)->SetEditText(wsText);
+    ((CFWL_ComboBox*)m_pNormalWidget)->SetEditText(wsText.AsWideStringC());
   }
   m_pNormalWidget->Update();
   return TRUE;

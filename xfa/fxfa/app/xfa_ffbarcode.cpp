@@ -167,7 +167,7 @@ void CXFA_FFBarcode::UpdateWidgetProperty() {
   CFWL_Barcode* pBarCodeWidget = (CFWL_Barcode*)m_pNormalWidget;
   CFX_WideString wsType = GetDataAcc()->GetBarcodeType();
   XFA_LPCBARCODETYPEENUMINFO pBarcodeTypeInfo =
-      XFA_GetBarcodeTypeByName(wsType);
+      XFA_GetBarcodeTypeByName(wsType.AsWideStringC());
   pBarCodeWidget->SetType(pBarcodeTypeInfo->eBCType);
   CXFA_WidgetAcc* pAcc = GetDataAcc();
   int32_t intVal;

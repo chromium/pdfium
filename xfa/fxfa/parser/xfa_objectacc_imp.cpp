@@ -477,7 +477,7 @@ FX_BOOL CXFA_Image::SetHref(const CFX_WideString& wsHref) {
   if (m_bDefValue) {
     return m_pNode->SetCData(XFA_ATTRIBUTE_Href, wsHref);
   }
-  return m_pNode->SetAttribute(XFA_ATTRIBUTE_Href, wsHref);
+  return m_pNode->SetAttribute(XFA_ATTRIBUTE_Href, wsHref.AsWideStringC());
 }
 FX_BOOL CXFA_Image::SetTransferEncoding(int32_t iTransferEncoding) {
   if (m_bDefValue) {
@@ -510,7 +510,8 @@ int32_t CXFA_Validate::GetFormatTest() {
 FX_BOOL CXFA_Validate::SetTestValue(int32_t iType,
                                     CFX_WideString& wsValue,
                                     XFA_ATTRIBUTEENUM eName) {
-  const XFA_ATTRIBUTEENUMINFO* pInfo = XFA_GetAttributeEnumByName(wsValue);
+  const XFA_ATTRIBUTEENUMINFO* pInfo =
+      XFA_GetAttributeEnumByName(wsValue.AsWideStringC());
   if (pInfo) {
     eName = pInfo->eName;
   }
@@ -1590,7 +1591,7 @@ void CXFA_WidgetData::SetItemState(int32_t nIndex,
       if (iSel < 0) {
         CFX_WideString wsSaveText = wsSaveTextArray[nIndex];
         CFX_WideString wsFormatText(wsSaveText);
-        GetFormatDataValue(wsSaveText, wsFormatText);
+        GetFormatDataValue(wsSaveText.AsWideStringC(), wsFormatText);
         m_pNode->SetContent(wsSaveText, wsFormatText, bNotify, bScriptModify,
                             bSyncData);
       }
@@ -1619,7 +1620,7 @@ void CXFA_WidgetData::SetSelectdItems(CFX_Int32Array& iSelArray,
   }
   CFX_WideString wsFormat(wsValue);
   if (GetChoiceListOpen() != XFA_ATTRIBUTEENUM_MultiSelect) {
-    GetFormatDataValue(wsValue, wsFormat);
+    GetFormatDataValue(wsValue.AsWideStringC(), wsFormat);
   }
   m_pNode->SetContent(wsValue, wsFormat, bNotify, bScriptModify, bSyncData);
 }
@@ -1656,19 +1657,19 @@ void CXFA_WidgetData::InsertItem(const CFX_WideString& wsLabel,
   if (iCount < 1) {
     CXFA_Node* pItems = m_pNode->CreateSamePacketNode(XFA_ELEMENT_Items);
     m_pNode->InsertChild(-1, pItems);
-    InsertListTextItem(pItems, wsLabel, nIndex);
+    InsertListTextItem(pItems, wsLabel.AsWideStringC(), nIndex);
     CXFA_Node* pSaveItems = m_pNode->CreateSamePacketNode(XFA_ELEMENT_Items);
     m_pNode->InsertChild(-1, pSaveItems);
     pSaveItems->SetBoolean(XFA_ATTRIBUTE_Save, TRUE);
-    InsertListTextItem(pSaveItems, wsNewValue, nIndex);
+    InsertListTextItem(pSaveItems, wsNewValue.AsWideStringC(), nIndex);
   } else if (iCount > 1) {
     for (int32_t i = 0; i < 2; i++) {
       CXFA_Node* pNode = listitems[i];
       FX_BOOL bHasSave = pNode->GetBoolean(XFA_ATTRIBUTE_Save);
       if (bHasSave) {
-        InsertListTextItem(pNode, wsNewValue, nIndex);
+        InsertListTextItem(pNode, wsNewValue.AsWideStringC(), nIndex);
       } else {
-        InsertListTextItem(pNode, wsLabel, nIndex);
+        InsertListTextItem(pNode, wsLabel.AsWideStringC(), nIndex);
       }
     }
   } else {
@@ -1685,12 +1686,12 @@ void CXFA_WidgetData::InsertItem(const CFX_WideString& wsLabel,
     while (pListNode) {
       CFX_WideString wsOldValue;
       pListNode->TryContent(wsOldValue);
-      InsertListTextItem(pSaveItems, wsOldValue, i);
+      InsertListTextItem(pSaveItems, wsOldValue.AsWideStringC(), i);
       i++;
       pListNode = pListNode->GetNodeItem(XFA_NODEITEM_NextSibling);
     }
-    InsertListTextItem(pNode, wsLabel, nIndex);
-    InsertListTextItem(pSaveItems, wsNewValue, nIndex);
+    InsertListTextItem(pNode, wsLabel.AsWideStringC(), nIndex);
+    InsertListTextItem(pSaveItems, wsNewValue.AsWideStringC(), nIndex);
   }
   if (!bNotify) {
     return;
@@ -2101,7 +2102,7 @@ CFX_WideString XFA_NumericLimit(const CFX_WideString& wsValue,
         iTread_++;
         if (iTread_ > iTread) {
           if (iTread != -1) {
-            CFX_Decimal wsDeci = CFX_Decimal(wsValue);
+            CFX_Decimal wsDeci = CFX_Decimal(wsValue.AsWideStringC());
             wsDeci.SetScale(iTread);
             wsRet = wsDeci;
           }
@@ -2276,8 +2277,8 @@ IFX_Locale* CXFA_WidgetData::GetLocal() {
     if (wsLocaleName == FX_WSTRC(L"ambient")) {
       pLocale = m_pNode->GetDocument()->GetLocalMgr()->GetDefLocale();
     } else {
-      pLocale =
-          m_pNode->GetDocument()->GetLocalMgr()->GetLocaleByName(wsLocaleName);
+      pLocale = m_pNode->GetDocument()->GetLocalMgr()->GetLocaleByName(
+          wsLocaleName.AsWideStringC());
     }
   }
   return pLocale;
@@ -2332,7 +2333,7 @@ FX_BOOL CXFA_WidgetData::GetValue(CFX_WideString& wsValue,
   wsValue = m_pNode->GetContent();
 
   if (eValueType == XFA_VALUEPICTURE_Display)
-    GetItemLabel(wsValue, wsValue);
+    GetItemLabel(wsValue.AsWideStringC(), wsValue);
 
   CFX_WideString wsPicture;
   GetPictureContent(wsPicture, eValueType);
@@ -2575,7 +2576,8 @@ void CXFA_WidgetData::SyncValue(const CFX_WideString& wsValue,
   CFX_WideString wsFormatValue(wsValue);
   CXFA_WidgetData* pContainerWidgetData = m_pNode->GetContainerWidgetData();
   if (pContainerWidgetData) {
-    pContainerWidgetData->GetFormatDataValue(wsValue, wsFormatValue);
+    pContainerWidgetData->GetFormatDataValue(wsValue.AsWideStringC(),
+                                             wsFormatValue);
   }
   m_pNode->SetContent(wsValue, wsFormatValue, bNotify);
 }

@@ -164,7 +164,7 @@ CFX_DIBitmap* XFA_LoadImageFromBuffer(IFX_FileRead* pImageFileRead,
                                       FXCODEC_IMAGE_TYPE type,
                                       int32_t& iImageXDpi,
                                       int32_t& iImageYDpi);
-FXCODEC_IMAGE_TYPE XFA_GetImageType(const CFX_WideStringC& wsType);
+FXCODEC_IMAGE_TYPE XFA_GetImageType(const CFX_WideString& wsType);
 FX_CHAR* XFA_Base64Encode(const uint8_t* buf, int32_t buf_len);
 void XFA_RectWidthoutMargin(CFX_RectF& rt,
                             const CXFA_Margin& mg,

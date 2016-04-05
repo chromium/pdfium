@@ -68,7 +68,8 @@ FX_BOOL CBC_Code39::Encode(const CFX_WideStringC& contents,
                       ->Encode(byteString, format, outWidth, outHeight, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   ((CBC_OneDimWriter*)m_pBCWriter)
-      ->RenderResult(renderContents, data, outWidth, isDevice, e);
+      ->RenderResult(renderContents.AsWideStringC(), data, outWidth, isDevice,
+                     e);
   FX_Free(data);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   return TRUE;
@@ -77,19 +78,21 @@ FX_BOOL CBC_Code39::Encode(const CFX_WideStringC& contents,
 FX_BOOL CBC_Code39::RenderDevice(CFX_RenderDevice* device,
                                  const CFX_Matrix* matirx,
                                  int32_t& e) {
-  CFX_WideString renderCon = ((CBC_OnedCode39Writer*)m_pBCWriter)
-                                 ->encodedContents(m_renderContents, e);
+  CFX_WideString renderCon =
+      ((CBC_OnedCode39Writer*)m_pBCWriter)
+          ->encodedContents(m_renderContents.AsWideStringC(), e);
   ((CBC_OneDimWriter*)m_pBCWriter)
-      ->RenderDeviceResult(device, matirx, renderCon, e);
+      ->RenderDeviceResult(device, matirx, renderCon.AsWideStringC(), e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   return TRUE;
 }
 
 FX_BOOL CBC_Code39::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
-  CFX_WideString renderCon = ((CBC_OnedCode39Writer*)m_pBCWriter)
-                                 ->encodedContents(m_renderContents, e);
+  CFX_WideString renderCon =
+      ((CBC_OnedCode39Writer*)m_pBCWriter)
+          ->encodedContents(m_renderContents.AsWideStringC(), e);
   ((CBC_OneDimWriter*)m_pBCWriter)
-      ->RenderBitmapResult(pOutBitmap, renderCon, e);
+      ->RenderBitmapResult(pOutBitmap, renderCon.AsWideStringC(), e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   return TRUE;
 }

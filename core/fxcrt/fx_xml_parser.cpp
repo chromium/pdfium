@@ -398,7 +398,8 @@ CXML_Element* CXML_Parser::ParseElement(CXML_Element* pParent,
       CFX_WideString attr_value;
       GetAttrValue(attr_value);
       pElement->m_AttrMap.SetAt(attr_space.AsByteStringC(),
-                                attr_name.AsByteStringC(), attr_value);
+                                attr_name.AsByteStringC(),
+                                attr_value.AsWideStringC());
     }
     m_nOffset = m_nBufferOffset + (FX_FILESIZE)m_dwIndex;
     if (m_dwIndex < m_dwBufferSize || IsEOF()) {
@@ -461,7 +462,7 @@ CXML_Element* CXML_Parser::ParseElement(CXML_Element* pParent,
             if (!bCDATA && !m_bSaveSpaceChars) {
               dataStr.TrimRight(L" \t\r\n");
             }
-            InsertContentSegment(bCDATA, dataStr, pElement);
+            InsertContentSegment(bCDATA, dataStr.AsWideStringC(), pElement);
             content.Clear();
             decoder.Clear();
             bCDATA = FALSE;
@@ -505,7 +506,7 @@ CXML_Element* CXML_Parser::ParseElement(CXML_Element* pParent,
   if (!m_bSaveSpaceChars) {
     dataStr.TrimRight(L" \t\r\n");
   }
-  InsertContentSegment(bCDATA, dataStr, pElement);
+  InsertContentSegment(bCDATA, dataStr.AsWideStringC(), pElement);
   content.Clear();
   decoder.Clear();
   bCDATA = FALSE;

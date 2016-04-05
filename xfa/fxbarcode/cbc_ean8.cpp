@@ -73,7 +73,8 @@ FX_BOOL CBC_EAN8::Encode(const CFX_WideStringC& contents,
                       ->Encode(byteString, format, outWidth, outHeight, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   ((CBC_OneDimWriter*)m_pBCWriter)
-      ->RenderResult(encodeContents, data, outWidth, isDevice, e);
+      ->RenderResult(encodeContents.AsWideStringC(), data, outWidth, isDevice,
+                     e);
   FX_Free(data);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   return TRUE;
@@ -83,14 +84,14 @@ FX_BOOL CBC_EAN8::RenderDevice(CFX_RenderDevice* device,
                                const CFX_Matrix* matirx,
                                int32_t& e) {
   ((CBC_OneDimWriter*)m_pBCWriter)
-      ->RenderDeviceResult(device, matirx, m_renderContents, e);
+      ->RenderDeviceResult(device, matirx, m_renderContents.AsWideStringC(), e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   return TRUE;
 }
 
 FX_BOOL CBC_EAN8::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
   ((CBC_OneDimWriter*)m_pBCWriter)
-      ->RenderBitmapResult(pOutBitmap, m_renderContents, e);
+      ->RenderBitmapResult(pOutBitmap, m_renderContents.AsWideStringC(), e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   return TRUE;
 }

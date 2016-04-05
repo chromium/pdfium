@@ -561,7 +561,8 @@ FX_POSITION CFX_FontSourceEnum_File::GetStartPosition(void* pUserData) {
 }
 IFX_FileAccess* CFX_FontSourceEnum_File::GetNext(FX_POSITION& pos,
                                                  void* pUserData) {
-  IFX_FileAccess* pAccess = FX_CreateDefaultFileAccess(m_wsNext);
+  IFX_FileAccess* pAccess =
+      FX_CreateDefaultFileAccess(m_wsNext.AsWideStringC());
   m_wsNext = GetNextFile().UTF8Decode();
   pos = 0 != m_wsNext.GetLength() ? pAccess : NULL;
   return (IFX_FileAccess*)pAccess;

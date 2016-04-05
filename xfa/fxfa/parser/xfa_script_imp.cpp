@@ -124,8 +124,8 @@ void CXFA_ScriptContext::GlobalPropertySetter(FXJSE_HOBJECT hObject,
   if (lpOrginalNode->GetObjectType() == XFA_OBJECTTYPE_VariablesThis) {
     pRefNode = ToNode(lpCurNode);
   }
-  if (lpScriptContext->QueryNodeByFlag(pRefNode, wsPropName, hValue, dwFlag,
-                                       TRUE)) {
+  if (lpScriptContext->QueryNodeByFlag(pRefNode, wsPropName.AsWideStringC(),
+                                       hValue, dwFlag, TRUE)) {
     return;
   }
   if (lpOrginalNode->GetObjectType() == XFA_OBJECTTYPE_VariablesThis) {
@@ -198,13 +198,13 @@ void CXFA_ScriptContext::GlobalPropertyGetter(FXJSE_HOBJECT hObject,
   if (pOrginalObject->GetObjectType() == XFA_OBJECTTYPE_VariablesThis) {
     pRefNode = ToNode(lpCurNode);
   }
-  if (lpScriptContext->QueryNodeByFlag(pRefNode, wsPropName, hValue, dwFlag,
-                                       FALSE)) {
+  if (lpScriptContext->QueryNodeByFlag(pRefNode, wsPropName.AsWideStringC(),
+                                       hValue, dwFlag, FALSE)) {
     return;
   }
   dwFlag = XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings;
-  if (lpScriptContext->QueryNodeByFlag(pRefNode, wsPropName, hValue, dwFlag,
-                                       FALSE)) {
+  if (lpScriptContext->QueryNodeByFlag(pRefNode, wsPropName.AsWideStringC(),
+                                       hValue, dwFlag, FALSE)) {
     return;
   }
   CXFA_Object* pScriptObject =
@@ -243,8 +243,8 @@ void CXFA_ScriptContext::NormalPropertyGetter(FXJSE_HOBJECT hObject,
   }
   uint32_t dwFlag = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
                     XFA_RESOLVENODE_Attributes;
-  FX_BOOL bRet = lpScriptContext->QueryNodeByFlag(ToNode(pObject), wsPropName,
-                                                  hValue, dwFlag, FALSE);
+  FX_BOOL bRet = lpScriptContext->QueryNodeByFlag(
+      ToNode(pObject), wsPropName.AsWideStringC(), hValue, dwFlag, FALSE);
   if (bRet) {
     return;
   }
@@ -252,8 +252,8 @@ void CXFA_ScriptContext::NormalPropertyGetter(FXJSE_HOBJECT hObject,
       (lpScriptContext->GetType() == XFA_SCRIPTLANGTYPE_Javascript &&
        !lpScriptContext->IsStrictScopeInJavaScript())) {
     dwFlag = XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings;
-    bRet = lpScriptContext->QueryNodeByFlag(ToNode(pObject), wsPropName, hValue,
-                                            dwFlag, FALSE);
+    bRet = lpScriptContext->QueryNodeByFlag(
+        ToNode(pObject), wsPropName.AsWideStringC(), hValue, dwFlag, FALSE);
   }
   if (bRet) {
     return;
@@ -281,8 +281,8 @@ void CXFA_ScriptContext::NormalPropertySetter(FXJSE_HOBJECT hObject,
   CXFA_Object* pObject = lpScriptContext->GetVariablesThis(pOrginalObject);
   CFX_WideString wsPropName = CFX_WideString::FromUTF8(
       (const FX_CHAR*)szPropName.raw_str(), szPropName.GetLength());
-  const XFA_SCRIPTATTRIBUTEINFO* lpAttributeInfo =
-      XFA_GetScriptAttributeByName(pObject->GetClassID(), wsPropName);
+  const XFA_SCRIPTATTRIBUTEINFO* lpAttributeInfo = XFA_GetScriptAttributeByName(
+      pObject->GetClassID(), wsPropName.AsWideStringC());
   if (lpAttributeInfo) {
     (pObject->*(lpAttributeInfo->lpfnCallback))(
         hValue, TRUE, (XFA_ATTRIBUTE)lpAttributeInfo->eAttribute);
@@ -293,17 +293,18 @@ void CXFA_ScriptContext::NormalPropertySetter(FXJSE_HOBJECT hObject,
       }
       CXFA_Node* pNode = ToNode(pObject);
       CXFA_Node* pPropOrChild = NULL;
-      const XFA_ELEMENTINFO* lpElementInfo = XFA_GetElementByName(wsPropName);
+      const XFA_ELEMENTINFO* lpElementInfo =
+          XFA_GetElementByName(wsPropName.AsWideStringC());
       if (lpElementInfo) {
         pPropOrChild = pNode->GetProperty(0, lpElementInfo->eName);
       } else {
-        pPropOrChild = pNode->GetFirstChildByName(wsPropName);
+        pPropOrChild = pNode->GetFirstChildByName(wsPropName.AsWideStringC());
       }
       if (pPropOrChild) {
         CFX_WideString wsDefaultName = FX_WSTRC(L"{default}");
         const XFA_SCRIPTATTRIBUTEINFO* lpAttributeInfo =
             XFA_GetScriptAttributeByName(pPropOrChild->GetClassID(),
-                                         wsDefaultName);
+                                         wsDefaultName.AsWideStringC());
         if (lpAttributeInfo) {
           (pPropOrChild->*(lpAttributeInfo->lpfnCallback))(
               hValue, TRUE, (XFA_ATTRIBUTE)lpAttributeInfo->eAttribute);
@@ -333,10 +334,11 @@ int32_t CXFA_ScriptContext::NormalPropTypeGetter(
   XFA_ELEMENT objElement = pObject->GetClassID();
   CFX_WideString wsPropName = CFX_WideString::FromUTF8(
       (const FX_CHAR*)szPropName.raw_str(), szPropName.GetLength());
-  if (XFA_GetMethodByName(objElement, wsPropName)) {
+  if (XFA_GetMethodByName(objElement, wsPropName.AsWideStringC())) {
     return FXJSE_ClassPropType_Method;
   }
-  if (bQueryIn && !XFA_GetScriptAttributeByName(objElement, wsPropName)) {
+  if (bQueryIn &&
+      !XFA_GetScriptAttributeByName(objElement, wsPropName.AsWideStringC())) {
     return FXJSE_ClassPropType_None;
   }
   return FXJSE_ClassPropType_Property;
@@ -355,7 +357,7 @@ int32_t CXFA_ScriptContext::GlobalPropTypeGetter(
   XFA_ELEMENT objElement = pObject->GetClassID();
   CFX_WideString wsPropName = CFX_WideString::FromUTF8(
       (const FX_CHAR*)szPropName.raw_str(), szPropName.GetLength());
-  if (XFA_GetMethodByName(objElement, wsPropName)) {
+  if (XFA_GetMethodByName(objElement, wsPropName.AsWideStringC())) {
     return FXJSE_ClassPropType_Method;
   }
   return FXJSE_ClassPropType_Property;
@@ -373,7 +375,7 @@ void CXFA_ScriptContext::NormalMethodCall(FXJSE_HOBJECT hThis,
   CFX_WideString wsFunName = CFX_WideString::FromUTF8(
       (const FX_CHAR*)szFuncName.raw_str(), szFuncName.GetLength());
   const XFA_METHODINFO* lpMethodInfo =
-      XFA_GetMethodByName(pObject->GetClassID(), wsFunName);
+      XFA_GetMethodByName(pObject->GetClassID(), wsFunName.AsWideStringC());
   if (NULL == lpMethodInfo) {
     return;
   }

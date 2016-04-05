@@ -117,7 +117,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_HWXY(
       measure.Set(rtRect.top, XFA_UNIT_Pt);
       break;
   }
-  XFA_UNIT unit = measure.GetUnit(wsUnit);
+  XFA_UNIT unit = measure.GetUnit(wsUnit.AsWideStringC());
   FX_FLOAT fValue = measure.ToUnit(unit);
   fValue = FXSYS_round(fValue * 1000) / 1000.0f;
   if (hValue) {

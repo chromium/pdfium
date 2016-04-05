@@ -317,29 +317,26 @@ void CXFA_TextParser::ParseTagInfo(CFDE_XMLNode* pXMLNode,
     tagProvider.m_bContent = TRUE;
   }
 }
+
 int32_t CXFA_TextParser::GetVAlgin(CXFA_TextProvider* pTextProvider) const {
-  int32_t iAlign = XFA_ATTRIBUTEENUM_Top;
   CXFA_Para para = pTextProvider->GetParaNode();
-  if (para) {
-    iAlign = para.GetVerticalAlign();
-  }
-  return iAlign;
+  return para ? para.GetVerticalAlign() : XFA_ATTRIBUTEENUM_Top;
 }
+
 FX_FLOAT CXFA_TextParser::GetTabInterval(IFDE_CSSComputedStyle* pStyle) const {
   CFX_WideString wsValue;
-  if (pStyle && pStyle->GetCustomStyle(FX_WSTRC(L"tab-interval"), wsValue)) {
-    CXFA_Measurement ms(wsValue);
-    return ms.ToUnit(XFA_UNIT_Pt);
-  }
+  if (pStyle && pStyle->GetCustomStyle(FX_WSTRC(L"tab-interval"), wsValue))
+    return CXFA_Measurement(wsValue.AsWideStringC()).ToUnit(XFA_UNIT_Pt);
   return 36;
 }
+
 int32_t CXFA_TextParser::CountTabs(IFDE_CSSComputedStyle* pStyle) const {
   CFX_WideString wsValue;
-  if (pStyle && pStyle->GetCustomStyle(FX_WSTRC(L"xfa-tab-count"), wsValue)) {
+  if (pStyle && pStyle->GetCustomStyle(FX_WSTRC(L"xfa-tab-count"), wsValue))
     return wsValue.GetInteger();
-  }
   return 0;
 }
+
 FX_BOOL CXFA_TextParser::IsSpaceRun(IFDE_CSSComputedStyle* pStyle) const {
   CFX_WideString wsValue;
   if (pStyle && pStyle->GetCustomStyle(FX_WSTRC(L"xfa-spacerun"), wsValue)) {

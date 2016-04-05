@@ -131,7 +131,8 @@ static void XFA_DataMerge_CreateDataBinding(CXFA_Node* pFormNode,
         CFDE_XMLElement* pXMLDataElement =
             static_cast<CFDE_XMLElement*>(pDataNode->GetXMLMappingNode());
         FXSYS_assert(pXMLDataElement);
-        pWidgetData->GetFormatDataValue(wsValue, wsFormatedValue);
+        pWidgetData->GetFormatDataValue(wsValue.AsWideStringC(),
+                                        wsFormatedValue);
         pDataNode->SetAttributeValue(wsValue, wsFormatedValue);
         pDataNode->SetCData(XFA_ATTRIBUTE_ContentType, wsContentType);
         if (!wsHref.IsEmpty()) {
@@ -160,7 +161,8 @@ static void XFA_DataMerge_CreateDataBinding(CXFA_Node* pFormNode,
                 ->SetString(FX_WSTRC(L"xfa:dataNode"), FX_WSTRC(L"dataGroup"));
           }
         } else if (!wsValue.IsEmpty()) {
-          pWidgetData->GetFormatDataValue(wsValue, wsFormatedValue);
+          pWidgetData->GetFormatDataValue(wsValue.AsWideStringC(),
+                                          wsFormatedValue);
           pDataNode->SetAttributeValue(wsValue, wsFormatedValue);
         }
         break;
@@ -169,7 +171,8 @@ static void XFA_DataMerge_CreateDataBinding(CXFA_Node* pFormNode,
         if (wsValue.IsEmpty()) {
           break;
         }
-        pWidgetData->GetFormatDataValue(wsValue, wsFormatedValue);
+        pWidgetData->GetFormatDataValue(wsValue.AsWideStringC(),
+                                        wsFormatedValue);
         pDataNode->SetAttributeValue(wsValue, wsFormatedValue);
         break;
       case XFA_ELEMENT_ExclGroup: {
@@ -239,7 +242,8 @@ static void XFA_DataMerge_CreateDataBinding(CXFA_Node* pFormNode,
         CFX_WideString wsOutput;
         pWidgetData->NormalizeNumStr(wsValue, wsOutput);
         wsValue = wsOutput;
-        pWidgetData->GetFormatDataValue(wsValue, wsFormatedValue);
+        pWidgetData->GetFormatDataValue(wsValue.AsWideStringC(),
+                                        wsFormatedValue);
         pDataNode->SetAttributeValue(wsValue, wsFormatedValue);
         CXFA_Node* pValue = pFormNode->GetProperty(0, XFA_ELEMENT_Value);
         XFA_DataMerge_FormValueNode_SetChildContent(pValue, wsValue,
@@ -250,7 +254,8 @@ static void XFA_DataMerge_CreateDataBinding(CXFA_Node* pFormNode,
         if (wsValue.IsEmpty()) {
           break;
         }
-        pWidgetData->GetFormatDataValue(wsValue, wsFormatedValue);
+        pWidgetData->GetFormatDataValue(wsValue.AsWideStringC(),
+                                        wsFormatedValue);
         pDataNode->SetAttributeValue(wsValue, wsFormatedValue);
         break;
     }
@@ -258,7 +263,8 @@ static void XFA_DataMerge_CreateDataBinding(CXFA_Node* pFormNode,
     CFX_WideString wsXMLValue;
     pDataNode->TryContent(wsXMLValue);
     CFX_WideString wsNormailizeValue;
-    pWidgetData->GetNormalizeDataValue(wsXMLValue, wsNormailizeValue);
+    pWidgetData->GetNormalizeDataValue(wsXMLValue.AsWideStringC(),
+                                       wsNormailizeValue);
     pDataNode->SetAttributeValue(wsNormailizeValue, wsXMLValue);
     switch (eUIType) {
       case XFA_ELEMENT_ImageEdit: {
@@ -312,8 +318,8 @@ static void XFA_DataMerge_CreateDataBinding(CXFA_Node* pFormNode,
             defValue.GetNode(), wsNormailizeValue, XFA_ELEMENT_Text);
         break;
       case XFA_ELEMENT_ExclGroup: {
-        pWidgetData->SetSelectedMemberByValue(wsNormailizeValue, bNotify, FALSE,
-                                              FALSE);
+        pWidgetData->SetSelectedMemberByValue(wsNormailizeValue.AsWideStringC(),
+                                              bNotify, FALSE, FALSE);
       } break;
       case XFA_ELEMENT_DateTimeEdit:
         XFA_DataMerge_FormValueNode_SetChildContent(

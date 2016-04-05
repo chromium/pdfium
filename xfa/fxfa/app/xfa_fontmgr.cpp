@@ -1765,7 +1765,8 @@ IFX_Font* CXFA_DefFontMgr::GetFont(CXFA_FFDoc* hDoc,
   IFX_FontMgr* pFDEFontMgr = hDoc->GetApp()->GetFDEFontMgr();
   IFX_Font* pFont = pFDEFontMgr->LoadFont(wsFontName, dwFontStyles, wCodePage);
   if (!pFont) {
-    const XFA_FONTINFO* pCurFont = XFA_GetFontINFOByFontName(wsFontName);
+    const XFA_FONTINFO* pCurFont =
+        XFA_GetFontINFOByFontName(wsFontName.AsWideStringC());
     if (pCurFont && pCurFont->pReplaceFont) {
       uint32_t dwStyle = 0;
       if (dwFontStyles & FX_FONTSTYLE_Bold) {
@@ -2029,7 +2030,8 @@ IFX_Font* CXFA_FontMgr::GetFont(CXFA_FFDoc* hDoc,
   CPDF_Font* pPDFFont = NULL;
   IFX_Font* pFont = NULL;
   if (pMgr) {
-    pFont = pMgr->GetFont(wsEnglishName, dwFontStyles, &pPDFFont);
+    pFont =
+        pMgr->GetFont(wsEnglishName.AsWideStringC(), dwFontStyles, &pPDFFont);
     if (pFont)
       return pFont;
   }
@@ -2038,7 +2040,8 @@ IFX_Font* CXFA_FontMgr::GetFont(CXFA_FFDoc* hDoc,
   }
   if (!pFont && pMgr) {
     pPDFFont = NULL;
-    pFont = pMgr->GetFont(wsEnglishName, dwFontStyles, &pPDFFont, FALSE);
+    pFont = pMgr->GetFont(wsEnglishName.AsWideStringC(), dwFontStyles,
+                          &pPDFFont, FALSE);
     if (pFont)
       return pFont;
   }

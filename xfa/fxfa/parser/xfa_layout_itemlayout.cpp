@@ -1388,7 +1388,7 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
         wsWidth = widths[i];
         wsWidth.TrimLeft(L' ');
         if (!wsWidth.IsEmpty()) {
-          CXFA_Measurement measure(wsWidth);
+          CXFA_Measurement measure(wsWidth.AsWideStringC());
           m_rgSpecifiedColumnWidths.Add(measure.ToUnit(XFA_UNIT_Pt));
         }
       }

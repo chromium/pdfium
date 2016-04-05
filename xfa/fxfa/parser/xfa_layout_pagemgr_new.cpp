@@ -297,7 +297,7 @@ static CXFA_Node* XFA_ResolveBreakTarget(CXFA_Node* pPageSetRoot,
     if (wsTargetExpr.GetAt(0) == '#') {
       CXFA_Node* pNode = pDocument->GetNodeByID(
           ToNode(pDocument->GetXFAObject(XFA_HASHCODE_Template)),
-          wsTargetExpr.Mid(1));
+          wsTargetExpr.Mid(1).AsWideStringC());
       if (pNode) {
         return pNode;
       }
@@ -309,7 +309,7 @@ static CXFA_Node* XFA_ResolveBreakTarget(CXFA_Node* pPageSetRoot,
       }
       XFA_RESOLVENODE_RS rs;
       int32_t iCount = pDocument->GetScriptContext()->ResolveObjects(
-          pPageSetRoot, wsProcessedTarget, rs,
+          pPageSetRoot, wsProcessedTarget.AsWideStringC(), rs,
           XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
               XFA_RESOLVENODE_Attributes | XFA_RESOLVENODE_Siblings |
               XFA_RESOLVENODE_Parent);

@@ -1132,7 +1132,7 @@ CXFA_LocaleMgr::CXFA_LocaleMgr(CXFA_Node* pLocaleSet, CFX_WideString wsDeflcid)
       pNodeLocale = pNodeLocale->GetNodeItem(XFA_NODEITEM_NextSibling);
     }
   }
-  m_pDefLocale = GetLocaleByName(wsDeflcid);
+  m_pDefLocale = GetLocaleByName(wsDeflcid.AsWideStringC());
 }
 CXFA_LocaleMgr::~CXFA_LocaleMgr() {
   int32_t iCount = m_LocaleArray.GetSize();
@@ -1266,7 +1266,7 @@ CFX_WideStringC CXFA_LocaleMgr::GetConfigLocaleName(CXFA_Node* pConfig) {
     }
     m_dwLocaleFlags |= 0x01;
   }
-  return m_wsConfigLocale;
+  return m_wsConfigLocale.AsWideStringC();
 }
 static CXFA_TimeZoneProvider* g_pProvider = NULL;
 
