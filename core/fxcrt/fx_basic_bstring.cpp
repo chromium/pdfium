@@ -11,7 +11,11 @@
 #include "core/fxcrt/include/fx_basic.h"
 #include "third_party/base/numerics/safe_math.h"
 
-static int _Buffer_itoa(char* buf, int i, uint32_t flags) {
+template class CFX_StringDataTemplate<FX_CHAR>;
+
+namespace {
+
+int Buffer_itoa(char* buf, int i, uint32_t flags) {
   if (i == 0) {
     buf[0] = '0';
     return 1;
@@ -44,76 +48,7 @@ static int _Buffer_itoa(char* buf, int i, uint32_t flags) {
   return len;
 }
 
-CFX_ByteString CFX_ByteString::FormatInteger(int i, uint32_t flags) {
-  char buf[32];
-  return CFX_ByteStringC(buf, _Buffer_itoa(buf, i, flags));
-}
-
-// static
-CFX_ByteString::StringData* CFX_ByteString::StringData::Create(
-    FX_STRSIZE nLen) {
-  FXSYS_assert(nLen > 0);
-
-  // Fixed portion of header plus a NUL char not included in m_nAllocLength.
-  // sizeof(FX_CHAR) is always 1, used for consistency with CFX_Widestring.
-  int overhead = offsetof(StringData, m_String) + sizeof(FX_CHAR);
-  pdfium::base::CheckedNumeric<int> nSize = nLen;
-  nSize += overhead;
-
-  // Now round to an 8-byte boundary. We'd expect that this is the minimum
-  // granularity of any of the underlying allocators, so there may be cases
-  // where we can save a re-alloc when adding a few characters to a string
-  // by using this otherwise wasted space.
-  nSize += 7;
-  int totalSize = nSize.ValueOrDie() & ~7;
-  int usableSize = totalSize - overhead;
-  FXSYS_assert(usableSize >= nLen);
-
-  void* pData = FX_Alloc(uint8_t, totalSize);
-  return new (pData) StringData(nLen, usableSize);
-}
-
-CFX_ByteString::StringData* CFX_ByteString::StringData::Create(
-    const StringData& other) {
-  StringData* result = Create(other.m_nDataLength);
-  result->CopyContents(other);
-  return result;
-}
-
-CFX_ByteString::StringData* CFX_ByteString::StringData::Create(
-    const FX_CHAR* pStr,
-    FX_STRSIZE nLen) {
-  StringData* result = Create(nLen);
-  result->CopyContents(pStr, nLen);
-  return result;
-}
-
-CFX_ByteString::StringData::StringData(FX_STRSIZE dataLen, FX_STRSIZE allocLen)
-    : m_nRefs(0), m_nDataLength(dataLen), m_nAllocLength(allocLen) {
-  FXSYS_assert(dataLen >= 0);
-  FXSYS_assert(dataLen <= allocLen);
-  m_String[dataLen] = 0;
-}
-
-void CFX_ByteString::StringData::CopyContents(const StringData& other) {
-  FXSYS_assert(other.m_nDataLength <= m_nAllocLength);
-  FXSYS_memcpy(m_String, other.m_String, other.m_nDataLength + 1);
-}
-
-void CFX_ByteString::StringData::CopyContents(const FX_CHAR* pStr,
-                                              FX_STRSIZE nLen) {
-  FXSYS_assert(nLen >= 0 && nLen <= m_nAllocLength);
-  FXSYS_memcpy(m_String, pStr, nLen);
-  m_String[nLen] = 0;
-}
-
-void CFX_ByteString::StringData::CopyContentsAt(FX_STRSIZE offset,
-                                                const FX_CHAR* pStr,
-                                                FX_STRSIZE nLen) {
-  FXSYS_assert(offset >= 0 && nLen >= 0 && offset + nLen <= m_nAllocLength);
-  FXSYS_memcpy(m_String + offset, pStr, nLen);
-  m_String[offset + nLen] = 0;
-}
+}  // namespace
 
 CFX_ByteString::CFX_ByteString(const FX_CHAR* pStr, FX_STRSIZE nLen) {
   if (nLen < 0)
@@ -450,6 +385,11 @@ void CFX_ByteString::AllocCopy(CFX_ByteString& dest,
 #define FORCE_ANSI 0x10000
 #define FORCE_UNICODE 0x20000
 #define FORCE_INT64 0x40000
+
+CFX_ByteString CFX_ByteString::FormatInteger(int i, uint32_t flags) {
+  char buf[32];
+  return CFX_ByteStringC(buf, Buffer_itoa(buf, i, flags));
+}
 
 void CFX_ByteString::FormatV(const FX_CHAR* pFormat, va_list argList) {
   va_list argListSave;

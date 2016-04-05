@@ -610,6 +610,7 @@
       'target_name': 'fxcrt',
       'type': 'static_library',
       'sources': [
+        'core/fxcrt/cfx_string_data_template.h',
         'core/fxcrt/extension.h',
         'core/fxcrt/fx_basic_array.cpp',
         'core/fxcrt/fx_basic_bstring.cpp',

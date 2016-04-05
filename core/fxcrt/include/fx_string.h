@@ -10,6 +10,7 @@
 #include <stdint.h>  // For intptr_t.
 #include <algorithm>
 
+#include "core/fxcrt/cfx_string_data_template.h"
 #include "core/fxcrt/include/cfx_retain_ptr.h"
 #include "core/fxcrt/include/fx_memory.h"
 #include "core/fxcrt/include/fx_system.h"
@@ -282,49 +283,7 @@ class CFX_ByteString {
   static CFX_ByteString FormatFloat(FX_FLOAT f, int precision = 0);
 
  protected:
-  class StringData {
-   public:
-    static StringData* Create(FX_STRSIZE nLen);
-    static StringData* Create(const StringData& other);
-    static StringData* Create(const FX_CHAR* pStr, FX_STRSIZE nLen);
-
-    void Retain() { ++m_nRefs; }
-    void Release() {
-      if (--m_nRefs <= 0)
-        FX_Free(this);
-    }
-
-    bool CanOperateInPlace(FX_STRSIZE nTotalLen) const {
-      return m_nRefs <= 1 && nTotalLen <= m_nAllocLength;
-    }
-
-    void CopyContents(const StringData& other);
-    void CopyContents(const FX_CHAR* pStr, FX_STRSIZE nLen);
-    void CopyContentsAt(FX_STRSIZE offset,
-                        const FX_CHAR* pStr,
-                        FX_STRSIZE nLen);
-
-    // To ensure ref counts do not overflow, consider the worst possible case:
-    // the entire address space contains nothing but pointers to this object.
-    // Since the count increments with each new pointer, the largest value is
-    // the number of pointers that can fit into the address space. The size of
-    // the address space itself is a good upper bound on it.
-    intptr_t m_nRefs;  // Would prefer ssize_t, but no windows support.
-
-    // |FX_STRSIZE| is currently typedef'd as |int|.
-    // TODO(palmer): It should be a |size_t|, or at least unsigned.
-    // These lengths do not include the terminating NUL, but the underlying
-    // buffer is sized to be capable of holding it.
-    FX_STRSIZE m_nDataLength;
-    FX_STRSIZE m_nAllocLength;
-
-    // Not really 1, variable size.
-    FX_CHAR m_String[1];
-
-   private:
-    StringData(FX_STRSIZE dataLen, FX_STRSIZE allocLen);
-    ~StringData() = delete;
-  };
+  using StringData = CFX_StringDataTemplate<FX_CHAR>;
 
   void ReallocBeforeWrite(FX_STRSIZE nNewLen);
   void AllocBeforeWrite(FX_STRSIZE nNewLen);
