@@ -651,7 +651,6 @@ bool CFX_FontMgr::GetBuiltinFont(size_t index,
 CFX_FontMapper::CFX_FontMapper(CFX_FontMgr* mgr)
     : m_bListLoaded(FALSE),
       m_pFontInfo(nullptr),
-      m_pFontEnumerator(nullptr),
       m_pFontMgr(mgr) {
   m_MMFaces[0] = nullptr;
   m_MMFaces[1] = nullptr;

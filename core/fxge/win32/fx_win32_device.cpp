@@ -147,9 +147,6 @@ static int CALLBACK FontEnumProc(const LOGFONTA* plf,
                                  uint32_t FontType,
                                  LPARAM lParam) {
   CFX_Win32FontInfo* pFontInfo = (CFX_Win32FontInfo*)lParam;
-  if (pFontInfo->m_pMapper->GetFontEnumerator()) {
-    pFontInfo->m_pMapper->GetFontEnumerator()->HitFont();
-  }
   pFontInfo->AddInstalledFont(plf, FontType);
   return 1;
 }
@@ -162,9 +159,6 @@ FX_BOOL CFX_Win32FontInfo::EnumFontList(CFX_FontMapper* pMapper) {
   lf.lfPitchAndFamily = 0;
   EnumFontFamiliesExA(m_hDC, &lf, (FONTENUMPROCA)FontEnumProc, (uintptr_t) this,
                       0);
-  if (pMapper->GetFontEnumerator()) {
-    pMapper->GetFontEnumerator()->Finish();
-  }
   return TRUE;
 }
 static const struct {

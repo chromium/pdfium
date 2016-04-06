@@ -287,16 +287,6 @@ class CFX_FontMgr {
   FXFT_Library m_FTLibrary;
 };
 
-class IFX_FontEnumerator {
- public:
-  virtual void HitFont() = 0;
-
-  virtual void Finish() = 0;
-
- protected:
-  virtual ~IFX_FontEnumerator() {}
-};
-
 class IFX_AdditionalFontEnum {
  public:
   virtual int CountFiles() = 0;
@@ -315,11 +305,7 @@ class CFX_FontMapper {
   IFX_SystemFontInfo* GetSystemFontInfo() { return m_pFontInfo; }
   void AddInstalledFont(const CFX_ByteString& name, int charset);
   void LoadInstalledFonts();
-  std::vector<CFX_ByteString> m_InstalledTTFonts;
-  void SetFontEnumerator(IFX_FontEnumerator* pFontEnumerator) {
-    m_pFontEnumerator = pFontEnumerator;
-  }
-  IFX_FontEnumerator* GetFontEnumerator() const { return m_pFontEnumerator; }
+
   FXFT_Face FindSubstFont(const CFX_ByteString& face_name,
                           FX_BOOL bTrueType,
                           uint32_t flags,
@@ -336,6 +322,8 @@ class CFX_FontMapper {
   FX_BOOL IsBuiltinFace(const FXFT_Face face) const;
   int GetFaceSize() const;
   CFX_ByteString GetFaceName(int index) const { return m_FaceArray[index]; }
+
+  std::vector<CFX_ByteString> m_InstalledTTFonts;
 
  private:
   static const size_t MM_FACE_COUNT = 2;
@@ -356,7 +344,6 @@ class CFX_FontMapper {
   std::vector<CFX_ByteString> m_FaceArray;
   IFX_SystemFontInfo* m_pFontInfo;
   FXFT_Face m_FoxitFaces[FOXIT_FACE_COUNT];
-  IFX_FontEnumerator* m_pFontEnumerator;
   CFX_FontMgr* const m_pFontMgr;
 };
 
