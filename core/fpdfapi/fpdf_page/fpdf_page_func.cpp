@@ -541,7 +541,7 @@ FX_BOOL CPDF_SampledFunc::v_Init(CPDF_Object* pObj) {
   m_pSampleStream = new CPDF_StreamAcc;
   m_pSampleStream->LoadAllData(pStream, FALSE);
   m_pEncodeInfo = FX_Alloc(SampleEncodeInfo, m_nInputs);
-  FX_SAFE_DWORD nTotalSampleBits = 1;
+  FX_SAFE_UINT32 nTotalSampleBits = 1;
   for (uint32_t i = 0; i < m_nInputs; i++) {
     m_pEncodeInfo[i].sizes = pSize ? pSize->GetIntegerAt(i) : 0;
     if (!pSize && i == 0)
@@ -560,7 +560,7 @@ FX_BOOL CPDF_SampledFunc::v_Init(CPDF_Object* pObj) {
   }
   nTotalSampleBits *= m_nBitsPerSample;
   nTotalSampleBits *= m_nOutputs;
-  FX_SAFE_DWORD nTotalSampleBytes = nTotalSampleBits;
+  FX_SAFE_UINT32 nTotalSampleBytes = nTotalSampleBits;
   nTotalSampleBytes += 7;
   nTotalSampleBytes /= 8;
   if (!nTotalSampleBytes.IsValid() || nTotalSampleBytes.ValueOrDie() == 0 ||

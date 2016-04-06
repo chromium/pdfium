@@ -11,7 +11,7 @@
 #include "core/fxcrt/include/fx_system.h"
 #include "third_party/base/numerics/safe_math.h"
 
-typedef pdfium::base::CheckedNumeric<uint32_t> FX_SAFE_DWORD;
+typedef pdfium::base::CheckedNumeric<uint32_t> FX_SAFE_UINT32;
 typedef pdfium::base::CheckedNumeric<int32_t> FX_SAFE_INT32;
 typedef pdfium::base::CheckedNumeric<size_t> FX_SAFE_SIZE_T;
 typedef pdfium::base::CheckedNumeric<FX_FILESIZE> FX_SAFE_FILESIZE;

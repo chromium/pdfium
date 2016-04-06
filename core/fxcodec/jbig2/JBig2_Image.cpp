@@ -216,7 +216,7 @@ void CJBig2_Image::expand(int32_t h, FX_BOOL v) {
   uint32_t dwH = pdfium::base::checked_cast<uint32_t>(h);
   uint32_t dwStride = pdfium::base::checked_cast<uint32_t>(m_nStride);
   uint32_t dwHeight = pdfium::base::checked_cast<uint32_t>(m_nHeight);
-  FX_SAFE_DWORD safeMemSize = dwH;
+  FX_SAFE_UINT32 safeMemSize = dwH;
   safeMemSize *= dwStride;
   if (!safeMemSize.IsValid()) {
     return;

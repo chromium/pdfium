@@ -294,7 +294,7 @@ FX_BOOL CCodec_RLScanlineDecoder::Create(const uint8_t* src_buf,
   m_nComps = nComps;
   m_bpc = bpc;
   // Aligning the pitch to 4 bytes requires an integer overflow check.
-  FX_SAFE_DWORD pitch = width;
+  FX_SAFE_UINT32 pitch = width;
   pitch *= nComps;
   pitch *= bpc;
   pitch += 31;

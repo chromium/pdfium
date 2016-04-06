@@ -159,12 +159,12 @@ typedef struct {
   uint32_t state[8];
   uint8_t buffer[64];
 } sha256_context;
-#define GET_FX_DWORD(n, b, i)                                           \
+#define GET_UINT32(n, b, i)                                             \
   {                                                                     \
     (n) = ((uint32_t)(b)[(i)] << 24) | ((uint32_t)(b)[(i) + 1] << 16) | \
           ((uint32_t)(b)[(i) + 2] << 8) | ((uint32_t)(b)[(i) + 3]);     \
   }
-#define PUT_FX_DWORD(n, b, i)            \
+#define PUT_UINT32(n, b, i)              \
   {                                      \
     (b)[(i)] = (uint8_t)((n) >> 24);     \
     (b)[(i) + 1] = (uint8_t)((n) >> 16); \
@@ -187,22 +187,22 @@ void CRYPT_SHA256Start(void* context) {
 static void sha256_process(sha256_context* ctx, const uint8_t data[64]) {
   uint32_t temp1, temp2, W[64];
   uint32_t A, B, C, D, E, F, G, H;
-  GET_FX_DWORD(W[0], data, 0);
-  GET_FX_DWORD(W[1], data, 4);
-  GET_FX_DWORD(W[2], data, 8);
-  GET_FX_DWORD(W[3], data, 12);
-  GET_FX_DWORD(W[4], data, 16);
-  GET_FX_DWORD(W[5], data, 20);
-  GET_FX_DWORD(W[6], data, 24);
-  GET_FX_DWORD(W[7], data, 28);
-  GET_FX_DWORD(W[8], data, 32);
-  GET_FX_DWORD(W[9], data, 36);
-  GET_FX_DWORD(W[10], data, 40);
-  GET_FX_DWORD(W[11], data, 44);
-  GET_FX_DWORD(W[12], data, 48);
-  GET_FX_DWORD(W[13], data, 52);
-  GET_FX_DWORD(W[14], data, 56);
-  GET_FX_DWORD(W[15], data, 60);
+  GET_UINT32(W[0], data, 0);
+  GET_UINT32(W[1], data, 4);
+  GET_UINT32(W[2], data, 8);
+  GET_UINT32(W[3], data, 12);
+  GET_UINT32(W[4], data, 16);
+  GET_UINT32(W[5], data, 20);
+  GET_UINT32(W[6], data, 24);
+  GET_UINT32(W[7], data, 28);
+  GET_UINT32(W[8], data, 32);
+  GET_UINT32(W[9], data, 36);
+  GET_UINT32(W[10], data, 40);
+  GET_UINT32(W[11], data, 44);
+  GET_UINT32(W[12], data, 48);
+  GET_UINT32(W[13], data, 52);
+  GET_UINT32(W[14], data, 56);
+  GET_UINT32(W[15], data, 60);
 #define SHR(x, n) ((x & 0xFFFFFFFF) >> n)
 #define ROTR(x, n) (SHR(x, n) | (x << (32 - n)))
 #define S0(x) (ROTR(x, 7) ^ ROTR(x, 18) ^ SHR(x, 3))
@@ -340,20 +340,20 @@ void CRYPT_SHA256Finish(void* context, uint8_t digest[32]) {
   uint8_t msglen[8];
   high = (ctx->total[0] >> 29) | (ctx->total[1] << 3);
   low = (ctx->total[0] << 3);
-  PUT_FX_DWORD(high, msglen, 0);
-  PUT_FX_DWORD(low, msglen, 4);
+  PUT_UINT32(high, msglen, 0);
+  PUT_UINT32(low, msglen, 4);
   last = ctx->total[0] & 0x3F;
   padn = (last < 56) ? (56 - last) : (120 - last);
   CRYPT_SHA256Update(ctx, sha256_padding, padn);
   CRYPT_SHA256Update(ctx, msglen, 8);
-  PUT_FX_DWORD(ctx->state[0], digest, 0);
-  PUT_FX_DWORD(ctx->state[1], digest, 4);
-  PUT_FX_DWORD(ctx->state[2], digest, 8);
-  PUT_FX_DWORD(ctx->state[3], digest, 12);
-  PUT_FX_DWORD(ctx->state[4], digest, 16);
-  PUT_FX_DWORD(ctx->state[5], digest, 20);
-  PUT_FX_DWORD(ctx->state[6], digest, 24);
-  PUT_FX_DWORD(ctx->state[7], digest, 28);
+  PUT_UINT32(ctx->state[0], digest, 0);
+  PUT_UINT32(ctx->state[1], digest, 4);
+  PUT_UINT32(ctx->state[2], digest, 8);
+  PUT_UINT32(ctx->state[3], digest, 12);
+  PUT_UINT32(ctx->state[4], digest, 16);
+  PUT_UINT32(ctx->state[5], digest, 20);
+  PUT_UINT32(ctx->state[6], digest, 24);
+  PUT_UINT32(ctx->state[7], digest, 28);
 }
 void CRYPT_SHA256Generate(const uint8_t* data,
                           uint32_t size,
@@ -468,7 +468,7 @@ static const FX_CHAR* constants[] = {
           ((uint64_t)(b)[(i) + 4] << 24) | ((uint64_t)(b)[(i) + 5] << 16) | \
           ((uint64_t)(b)[(i) + 6] << 8) | ((uint64_t)(b)[(i) + 7]);         \
   }
-#define PUT_FX_64DWORD(n, b, i)          \
+#define PUT_UINT64(n, b, i)              \
   {                                      \
     (b)[(i)] = (uint8_t)((n) >> 56);     \
     (b)[(i) + 1] = (uint8_t)((n) >> 48); \
@@ -582,18 +582,18 @@ void CRYPT_SHA384Finish(void* context, uint8_t digest[48]) {
   uint64_t high, low;
   high = (ctx->total[0] >> 29) | (ctx->total[1] << 3);
   low = (ctx->total[0] << 3);
-  PUT_FX_64DWORD(high, msglen, 0);
-  PUT_FX_64DWORD(low, msglen, 8);
+  PUT_UINT64(high, msglen, 0);
+  PUT_UINT64(low, msglen, 8);
   last = (uint32_t)ctx->total[0] & 0x7F;
   padn = (last < 112) ? (112 - last) : (240 - last);
   CRYPT_SHA384Update(ctx, sha384_padding, padn);
   CRYPT_SHA384Update(ctx, msglen, 16);
-  PUT_FX_64DWORD(ctx->state[0], digest, 0);
-  PUT_FX_64DWORD(ctx->state[1], digest, 8);
-  PUT_FX_64DWORD(ctx->state[2], digest, 16);
-  PUT_FX_64DWORD(ctx->state[3], digest, 24);
-  PUT_FX_64DWORD(ctx->state[4], digest, 32);
-  PUT_FX_64DWORD(ctx->state[5], digest, 40);
+  PUT_UINT64(ctx->state[0], digest, 0);
+  PUT_UINT64(ctx->state[1], digest, 8);
+  PUT_UINT64(ctx->state[2], digest, 16);
+  PUT_UINT64(ctx->state[3], digest, 24);
+  PUT_UINT64(ctx->state[4], digest, 32);
+  PUT_UINT64(ctx->state[5], digest, 40);
 }
 void CRYPT_SHA384Generate(const uint8_t* data,
                           uint32_t size,
@@ -629,20 +629,20 @@ void CRYPT_SHA512Finish(void* context, uint8_t digest[64]) {
   uint64_t high, low;
   high = (ctx->total[0] >> 29) | (ctx->total[1] << 3);
   low = (ctx->total[0] << 3);
-  PUT_FX_64DWORD(high, msglen, 0);
-  PUT_FX_64DWORD(low, msglen, 8);
+  PUT_UINT64(high, msglen, 0);
+  PUT_UINT64(low, msglen, 8);
   last = (uint32_t)ctx->total[0] & 0x7F;
   padn = (last < 112) ? (112 - last) : (240 - last);
   CRYPT_SHA512Update(ctx, sha384_padding, padn);
   CRYPT_SHA512Update(ctx, msglen, 16);
-  PUT_FX_64DWORD(ctx->state[0], digest, 0);
-  PUT_FX_64DWORD(ctx->state[1], digest, 8);
-  PUT_FX_64DWORD(ctx->state[2], digest, 16);
-  PUT_FX_64DWORD(ctx->state[3], digest, 24);
-  PUT_FX_64DWORD(ctx->state[4], digest, 32);
-  PUT_FX_64DWORD(ctx->state[5], digest, 40);
-  PUT_FX_64DWORD(ctx->state[6], digest, 48);
-  PUT_FX_64DWORD(ctx->state[7], digest, 56);
+  PUT_UINT64(ctx->state[0], digest, 0);
+  PUT_UINT64(ctx->state[1], digest, 8);
+  PUT_UINT64(ctx->state[2], digest, 16);
+  PUT_UINT64(ctx->state[3], digest, 24);
+  PUT_UINT64(ctx->state[4], digest, 32);
+  PUT_UINT64(ctx->state[5], digest, 40);
+  PUT_UINT64(ctx->state[6], digest, 48);
+  PUT_UINT64(ctx->state[7], digest, 56);
 }
 void CRYPT_SHA512Generate(const uint8_t* data,
                           uint32_t size,

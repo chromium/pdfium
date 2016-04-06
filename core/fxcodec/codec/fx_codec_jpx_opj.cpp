@@ -301,7 +301,7 @@ void sycc420_to_rgb(opj_image_t* img) {
   OPJ_UINT32 crw = img->comps[2].w;
   bool extw = sycc420_must_extend_cbcr(yw, cbw);
   bool exth = sycc420_must_extend_cbcr(yh, cbh);
-  FX_SAFE_DWORD safeSize = yw;
+  FX_SAFE_UINT32 safeSize = yw;
   safeSize *= yh;
   if (!safeSize.IsValid())
     return;

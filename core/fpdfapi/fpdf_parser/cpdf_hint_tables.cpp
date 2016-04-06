@@ -16,7 +16,7 @@
 namespace {
 
 bool CanReadFromBitStream(const CFX_BitStream* hStream,
-                          const FX_SAFE_DWORD& num_bits) {
+                          const FX_SAFE_UINT32& num_bits) {
   return num_bits.IsValid() &&
          hStream->BitsRemaining() >= num_bits.ValueOrDie();
 }
@@ -60,7 +60,7 @@ FX_BOOL CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
   // Item 2: The location of the first page's page object.
   uint32_t dwFirstObjLoc = hStream->GetBits(32);
   if (dwFirstObjLoc > static_cast<uint32_t>(nStreamOffset)) {
-    FX_SAFE_DWORD safeLoc = pdfium::base::checked_cast<uint32_t>(nStreamLen);
+    FX_SAFE_UINT32 safeLoc = pdfium::base::checked_cast<uint32_t>(nStreamLen);
     safeLoc += dwFirstObjLoc;
     if (!safeLoc.IsValid())
       return FALSE;
@@ -107,13 +107,13 @@ FX_BOOL CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
   if (nPages < 1)
     return FALSE;
 
-  FX_SAFE_DWORD required_bits = dwDeltaObjectsBits;
+  FX_SAFE_UINT32 required_bits = dwDeltaObjectsBits;
   required_bits *= pdfium::base::checked_cast<uint32_t>(nPages);
   if (!CanReadFromBitStream(hStream, required_bits))
     return FALSE;
 
   for (int i = 0; i < nPages; ++i) {
-    FX_SAFE_DWORD safeDeltaObj = hStream->GetBits(dwDeltaObjectsBits);
+    FX_SAFE_UINT32 safeDeltaObj = hStream->GetBits(dwDeltaObjectsBits);
     safeDeltaObj += dwObjLeastNum;
     if (!safeDeltaObj.IsValid())
       return FALSE;
@@ -128,7 +128,7 @@ FX_BOOL CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
 
   CFX_ArrayTemplate<uint32_t> dwPageLenArray;
   for (int i = 0; i < nPages; ++i) {
-    FX_SAFE_DWORD safePageLen = hStream->GetBits(dwDeltaPageLenBits);
+    FX_SAFE_UINT32 safePageLen = hStream->GetBits(dwDeltaPageLenBits);
     safePageLen += dwPageLeastLen;
     if (!safePageLen.IsValid())
       return FALSE;
@@ -191,7 +191,7 @@ FX_BOOL CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
   hStream->ByteAlign();
 
   for (int i = 0; i < nPages; i++) {
-    FX_SAFE_DWORD safeSize = m_dwNSharedObjsArray[i];
+    FX_SAFE_UINT32 safeSize = m_dwNSharedObjsArray[i];
     safeSize *= dwSharedNumeratorBits;
     if (!CanReadFromBitStream(hStream, safeSize))
       return FALSE;
@@ -200,7 +200,8 @@ FX_BOOL CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
   }
   hStream->ByteAlign();
 
-  FX_SAFE_DWORD safeTotalPageLen = pdfium::base::checked_cast<uint32_t>(nPages);
+  FX_SAFE_UINT32 safeTotalPageLen =
+      pdfium::base::checked_cast<uint32_t>(nPages);
   safeTotalPageLen *= dwDeltaPageLenBits;
   if (!CanReadFromBitStream(hStream, safeTotalPageLen))
     return FALSE;
@@ -220,7 +221,7 @@ FX_BOOL CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
   if (nStreamOffset < 0 || nStreamLen < 1)
     return FALSE;
 
-  FX_SAFE_DWORD bit_offset = offset;
+  FX_SAFE_UINT32 bit_offset = offset;
   bit_offset *= 8;
   if (!bit_offset.IsValid() || hStream->GetPos() > bit_offset.ValueOrDie())
     return FALSE;
@@ -263,14 +264,14 @@ FX_BOOL CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
 
   uint32_t dwPrevObjLen = 0;
   uint32_t dwCurObjLen = 0;
-  FX_SAFE_DWORD required_bits = dwSharedObjTotal;
+  FX_SAFE_UINT32 required_bits = dwSharedObjTotal;
   required_bits *= dwDeltaGroupLen;
   if (!CanReadFromBitStream(hStream, required_bits))
     return FALSE;
 
   for (uint32_t i = 0; i < dwSharedObjTotal; ++i) {
     dwPrevObjLen = dwCurObjLen;
-    FX_SAFE_DWORD safeObjLen = hStream->GetBits(dwDeltaGroupLen);
+    FX_SAFE_UINT32 safeObjLen = hStream->GetBits(dwDeltaGroupLen);
     safeObjLen += dwGroupLeastLen;
     if (!safeObjLen.IsValid())
       return FALSE;
@@ -281,7 +282,7 @@ FX_BOOL CPDF_HintTables::ReadSharedObjHintTable(CFX_BitStream* hStream,
       if (i == 0)
         m_szSharedObjOffsetArray.push_back(m_szFirstPageObjOffset);
     } else {
-      FX_SAFE_DWORD safeObjNum = dwFirstSharedObjNum;
+      FX_SAFE_UINT32 safeObjNum = dwFirstSharedObjNum;
       safeObjNum += i - m_nFirstPageSharedObjs;
       if (!safeObjNum.IsValid())
         return FALSE;

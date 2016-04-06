@@ -62,14 +62,14 @@ struct md5_context {
   uint32_t state[4];
   uint8_t buffer[64];
 };
-#define GET_FX_DWORD(n, b, i)                          \
+#define GET_UINT32(n, b, i)                            \
   {                                                    \
     (n) = (uint32_t)((uint8_t*)b)[(i)] |               \
           (((uint32_t)((uint8_t*)b)[(i) + 1]) << 8) |  \
           (((uint32_t)((uint8_t*)b)[(i) + 2]) << 16) | \
           (((uint32_t)((uint8_t*)b)[(i) + 3]) << 24);  \
   }
-#define PUT_FX_DWORD(n, b, i)                                 \
+#define PUT_UINT32(n, b, i)                                   \
   {                                                           \
     (((uint8_t*)b)[(i)]) = (uint8_t)(((n)) & 0xFF);           \
     (((uint8_t*)b)[(i) + 1]) = (uint8_t)(((n) >> 8) & 0xFF);  \
@@ -78,22 +78,22 @@ struct md5_context {
   }
 void md5_process(struct md5_context* ctx, const uint8_t data[64]) {
   uint32_t A, B, C, D, X[16];
-  GET_FX_DWORD(X[0], data, 0);
-  GET_FX_DWORD(X[1], data, 4);
-  GET_FX_DWORD(X[2], data, 8);
-  GET_FX_DWORD(X[3], data, 12);
-  GET_FX_DWORD(X[4], data, 16);
-  GET_FX_DWORD(X[5], data, 20);
-  GET_FX_DWORD(X[6], data, 24);
-  GET_FX_DWORD(X[7], data, 28);
-  GET_FX_DWORD(X[8], data, 32);
-  GET_FX_DWORD(X[9], data, 36);
-  GET_FX_DWORD(X[10], data, 40);
-  GET_FX_DWORD(X[11], data, 44);
-  GET_FX_DWORD(X[12], data, 48);
-  GET_FX_DWORD(X[13], data, 52);
-  GET_FX_DWORD(X[14], data, 56);
-  GET_FX_DWORD(X[15], data, 60);
+  GET_UINT32(X[0], data, 0);
+  GET_UINT32(X[1], data, 4);
+  GET_UINT32(X[2], data, 8);
+  GET_UINT32(X[3], data, 12);
+  GET_UINT32(X[4], data, 16);
+  GET_UINT32(X[5], data, 20);
+  GET_UINT32(X[6], data, 24);
+  GET_UINT32(X[7], data, 28);
+  GET_UINT32(X[8], data, 32);
+  GET_UINT32(X[9], data, 36);
+  GET_UINT32(X[10], data, 40);
+  GET_UINT32(X[11], data, 44);
+  GET_UINT32(X[12], data, 48);
+  GET_UINT32(X[13], data, 52);
+  GET_UINT32(X[14], data, 56);
+  GET_UINT32(X[15], data, 60);
 #define S(x, n) ((x << n) | ((x & 0xFFFFFFFF) >> (32 - n)))
 #define P(a, b, c, d, k, s, t)  \
   {                             \
@@ -226,16 +226,16 @@ void CRYPT_MD5Finish(void* pctx, uint8_t digest[16]) {
   struct md5_context* ctx = (struct md5_context*)pctx;
   uint32_t last, padn;
   uint8_t msglen[8];
-  PUT_FX_DWORD(ctx->total[0], msglen, 0);
-  PUT_FX_DWORD(ctx->total[1], msglen, 4);
+  PUT_UINT32(ctx->total[0], msglen, 0);
+  PUT_UINT32(ctx->total[1], msglen, 4);
   last = (ctx->total[0] >> 3) & 0x3F;
   padn = (last < 56) ? (56 - last) : (120 - last);
   CRYPT_MD5Update(ctx, md5_padding, padn);
   CRYPT_MD5Update(ctx, msglen, 8);
-  PUT_FX_DWORD(ctx->state[0], digest, 0);
-  PUT_FX_DWORD(ctx->state[1], digest, 4);
-  PUT_FX_DWORD(ctx->state[2], digest, 8);
-  PUT_FX_DWORD(ctx->state[3], digest, 12);
+  PUT_UINT32(ctx->state[0], digest, 0);
+  PUT_UINT32(ctx->state[1], digest, 4);
+  PUT_UINT32(ctx->state[2], digest, 8);
+  PUT_UINT32(ctx->state[3], digest, 12);
 }
 void CRYPT_MD5Generate(const uint8_t* input,
                        uint32_t length,

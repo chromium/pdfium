@@ -142,7 +142,7 @@ static void _JpegEncode(const CFX_DIBSource* pSource,
   uint32_t pitch = pSource->GetPitch();
   uint32_t width = pdfium::base::checked_cast<uint32_t>(pSource->GetWidth());
   uint32_t height = pdfium::base::checked_cast<uint32_t>(pSource->GetHeight());
-  FX_SAFE_DWORD safe_buf_len = width;
+  FX_SAFE_UINT32 safe_buf_len = width;
   safe_buf_len *= height;
   safe_buf_len *= nComponents;
   safe_buf_len += 1024;

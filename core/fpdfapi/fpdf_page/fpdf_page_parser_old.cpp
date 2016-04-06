@@ -797,7 +797,7 @@ void CPDF_ContentParser::Continue(IFX_Pause* pPause) {
     if (m_InternalStage == STAGE_GETCONTENT) {
       if (m_CurrentOffset == m_nStreams) {
         if (!m_StreamArray.empty()) {
-          FX_SAFE_DWORD safeSize = 0;
+          FX_SAFE_UINT32 safeSize = 0;
           for (const auto& stream : m_StreamArray) {
             safeSize += stream->GetSize();
             safeSize += 1;

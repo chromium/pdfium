@@ -1507,7 +1507,7 @@ IPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckLinearizedData(
     return DataAvailable;
 
   if (!m_bMainXRefLoadTried) {
-    FX_SAFE_DWORD data_size = m_dwFileLen;
+    FX_SAFE_UINT32 data_size = m_dwFileLen;
     data_size -= m_dwLastXRefOffset;
     if (!data_size.IsValid())
       return DataError;

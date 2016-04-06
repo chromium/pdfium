@@ -1012,7 +1012,7 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, FX_BOOL bMainXRef) {
   }
 
   CFX_ArrayTemplate<uint32_t> WidthArray;
-  FX_SAFE_DWORD dwAccWidth = 0;
+  FX_SAFE_UINT32 dwAccWidth = 0;
   for (uint32_t i = 0; i < pArray->GetCount(); i++) {
     WidthArray.Add(pArray->GetIntegerAt(i));
     dwAccWidth += WidthArray[i];
@@ -1039,7 +1039,7 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, FX_BOOL bMainXRef) {
         pdfium::base::checked_cast<uint32_t, int32_t>(startnum);
     uint32_t count =
         pdfium::base::checked_cast<uint32_t, int32_t>(arrIndex[i].second);
-    FX_SAFE_DWORD dwCaculatedSize = segindex;
+    FX_SAFE_UINT32 dwCaculatedSize = segindex;
     dwCaculatedSize += count;
     dwCaculatedSize *= totalWidth;
     if (!dwCaculatedSize.IsValid() ||
@@ -1048,7 +1048,7 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, FX_BOOL bMainXRef) {
     }
 
     const uint8_t* segstart = pData + segindex * totalWidth;
-    FX_SAFE_DWORD dwMaxObjNum = startnum;
+    FX_SAFE_UINT32 dwMaxObjNum = startnum;
     dwMaxObjNum += count;
     uint32_t dwV5Size = m_ObjectInfo.empty() ? 0 : GetLastObjNum() + 1;
     if (!dwMaxObjNum.IsValid() || dwMaxObjNum.ValueOrDie() > dwV5Size)

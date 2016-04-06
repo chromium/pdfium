@@ -931,7 +931,7 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
         }
         CFX_FixedBufGrow<FX_FLOAT, 8> float_array(comps);
         FX_FLOAT* pFloats = float_array;
-        FX_SAFE_DWORD num_floats = comps;
+        FX_SAFE_UINT32 num_floats = comps;
         num_floats *= sizeof(FX_FLOAT);
         if (!num_floats.IsValid()) {
           return NULL;
