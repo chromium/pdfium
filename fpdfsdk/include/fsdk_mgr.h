@@ -334,14 +334,14 @@ class CPDFDoc_Environment final {
       FPDF_WIDESTRING header =
           (FPDF_WIDESTRING)bsHeader.GetBuffer(bsHeader.GetLength());
 
-      FPDF_BSTR respone;
-      FPDF_BStr_Init(&respone);
+      FPDF_BSTR response;
+      FPDF_BStr_Init(&response);
       m_pInfo->FFI_PostRequestURL(m_pInfo, URL, data, contentType, encode,
-                                  header, &respone);
+                                  header, &response);
 
       CFX_WideString wsRet = CFX_WideString::FromUTF16LE(
-          (unsigned short*)respone.str, respone.len / sizeof(unsigned short));
-      FPDF_BStr_Clear(&respone);
+          (unsigned short*)response.str, response.len / sizeof(unsigned short));
+      FPDF_BStr_Clear(&response);
 
       return wsRet;
     }

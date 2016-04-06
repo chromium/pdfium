@@ -1044,7 +1044,7 @@ DLLEXPORT FPDF_DEST STDCALL FPDF_GetNamedDestByName(FPDF_DOCUMENT document,
 }
 
 #ifdef PDF_ENABLE_XFA
-FPDF_RESULT FPDF_BStr_Init(FPDF_BSTR* str) {
+DLLEXPORT FPDF_RESULT STDCALL FPDF_BStr_Init(FPDF_BSTR* str) {
   if (!str)
     return -1;
 
@@ -1052,7 +1052,9 @@ FPDF_RESULT FPDF_BStr_Init(FPDF_BSTR* str) {
   return 0;
 }
 
-FPDF_RESULT FPDF_BStr_Set(FPDF_BSTR* str, FPDF_LPCSTR bstr, int length) {
+DLLEXPORT FPDF_RESULT STDCALL FPDF_BStr_Set(FPDF_BSTR* str,
+                                            FPDF_LPCSTR bstr,
+                                            int length) {
   if (!str)
     return -1;
   if (!bstr || !length)
@@ -1084,7 +1086,7 @@ FPDF_RESULT FPDF_BStr_Set(FPDF_BSTR* str, FPDF_LPCSTR bstr, int length) {
   return 0;
 }
 
-FPDF_RESULT FPDF_BStr_Clear(FPDF_BSTR* str) {
+DLLEXPORT FPDF_RESULT STDCALL FPDF_BStr_Clear(FPDF_BSTR* str) {
   if (!str)
     return -1;
 
