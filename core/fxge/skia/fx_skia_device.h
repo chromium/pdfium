@@ -84,7 +84,7 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                     void* pIccTransform = NULL,
                     FX_BOOL bDEdge = FALSE) override;
 
-  CFX_DIBitmap* GetBackDrop() override { return m_pAggDriver->GetBackDrop(); }
+  CFX_DIBitmap* GetBackDrop() override { return m_pOriDevice; }
 
   FX_BOOL SetDIBits(const CFX_DIBSource* pBitmap,
                     uint32_t color,
@@ -133,17 +133,20 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                       int alpha,
                       FX_BOOL bAlphaMode) override;
 
-  virtual uint8_t* GetBuffer() const { return m_pAggDriver->GetBuffer(); }
+  virtual uint8_t* GetBuffer() const { return m_pBitmap->GetBuffer(); }
   void PaintStroke(SkPaint* spaint,
                    const CFX_GraphStateData* pGraphState,
                    const SkMatrix& matrix);
   SkPictureRecorder* GetRecorder() const { return m_pRecorder; }
 
  private:
-  CFX_AggDeviceDriver* m_pAggDriver;
+  CFX_DIBitmap* m_pBitmap;
+  CFX_DIBitmap* m_pOriDevice;
   SkCanvas* m_pCanvas;
   SkPictureRecorder* const m_pRecorder;
   int m_ditherBits;
+  FX_BOOL m_bRgbByteOrder;
+  FX_BOOL m_bGroupKnockout;
 };
 #endif  // defined(_SKIA_SUPPORT_)
 
