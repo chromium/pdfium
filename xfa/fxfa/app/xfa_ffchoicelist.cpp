@@ -77,7 +77,7 @@ FX_BOOL CXFA_FFListBox::CommitData() {
   for (int32_t i = 0; i < iSels; i++) {
     iSelArray.Add(pListBox->GetSelIndex(i));
   }
-  m_pDataAcc->SetSelectdItems(iSelArray, TRUE);
+  m_pDataAcc->SetSelectedItems(iSelArray, TRUE);
   return TRUE;
 }
 FX_BOOL CXFA_FFListBox::IsDataChanged() {

@@ -111,10 +111,10 @@ class CXFA_WidgetData : public CXFA_Data {
                     FX_BOOL bNotify = FALSE,
                     FX_BOOL bScriptModify = FALSE,
                     FX_BOOL bSyncData = TRUE);
-  void SetSelectdItems(CFX_Int32Array& iSelArray,
-                       FX_BOOL bNotify = FALSE,
-                       FX_BOOL bScriptModify = FALSE,
-                       FX_BOOL bSyncData = TRUE);
+  void SetSelectedItems(CFX_Int32Array& iSelArray,
+                        FX_BOOL bNotify = FALSE,
+                        FX_BOOL bScriptModify = FALSE,
+                        FX_BOOL bSyncData = TRUE);
   void ClearAllSelections();
   void InsertItem(const CFX_WideString& wsLabel,
                   const CFX_WideString& wsValue,

@@ -813,7 +813,7 @@ void CXFA_WidgetData::SetItemState(int32_t nIndex,
           break;
         }
       }
-      SetSelectdItems(iSelArray, bNotify, bScriptModify, bSyncData);
+      SetSelectedItems(iSelArray, bNotify, bScriptModify, bSyncData);
     }
   } else {
     if (bSelected) {
@@ -831,10 +831,10 @@ void CXFA_WidgetData::SetItemState(int32_t nIndex,
   }
 }
 
-void CXFA_WidgetData::SetSelectdItems(CFX_Int32Array& iSelArray,
-                                      FX_BOOL bNotify,
-                                      FX_BOOL bScriptModify,
-                                      FX_BOOL bSyncData) {
+void CXFA_WidgetData::SetSelectedItems(CFX_Int32Array& iSelArray,
+                                       FX_BOOL bNotify,
+                                       FX_BOOL bScriptModify,
+                                       FX_BOOL bSyncData) {
   CFX_WideString wsValue;
   int32_t iSize = iSelArray.GetSize();
   if (iSize >= 1) {
