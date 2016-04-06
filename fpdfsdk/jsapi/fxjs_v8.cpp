@@ -807,7 +807,7 @@ CFX_WideString FXJS_ToString(v8::Isolate* pIsolate,
     return L"";
   v8::Local<v8::Context> context = pIsolate->GetCurrentContext();
   v8::String::Utf8Value s(pValue->ToString(context).ToLocalChecked());
-  return CFX_WideString::FromUTF8(*s, s.length());
+  return CFX_WideString::FromUTF8(CFX_ByteStringC(*s, s.length()));
 }
 
 v8::Local<v8::Array> FXJS_ToArray(v8::Isolate* pIsolate,

@@ -165,7 +165,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_Title(
     FXJSE_Value_ToUTF8String(hValue, bsValue);
     pNotify->GetDocProvider()->SetTitle(
         hDoc,
-        CFX_WideString::FromUTF8(bsValue, bsValue.GetLength()).AsWideStringC());
+        CFX_WideString::FromUTF8(bsValue.AsByteStringC()).AsWideStringC());
     return;
   }
   CFX_WideString wsTitle;
@@ -291,7 +291,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_GotoURL(
   CFX_WideString wsURL;
   if (iLength >= 1) {
     CFX_ByteString bsURL = pArguments->GetUTF8String(0);
-    wsURL = CFX_WideString::FromUTF8(bsURL, bsURL.GetLength());
+    wsURL = CFX_WideString::FromUTF8(bsURL.AsByteStringC());
   }
   pNotify->GetDocProvider()->GotoURL(hDoc, wsURL.AsWideStringC());
 }
@@ -318,7 +318,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_OpenList(
       CFX_ByteString bsString;
       FXJSE_Value_ToUTF8String(hValue, bsString);
       CFX_WideString wsExpression =
-          CFX_WideString::FromUTF8(bsString, bsString.GetLength());
+          CFX_WideString::FromUTF8(bsString.AsByteStringC());
       CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
       if (!pScriptContext) {
         FXJSE_Value_Release(hValue);
@@ -371,16 +371,15 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_Response(
   FX_BOOL bMark = FALSE;
   if (iLength >= 1) {
     CFX_ByteString bsQuestion = pArguments->GetUTF8String(0);
-    wsQuestion = CFX_WideString::FromUTF8(bsQuestion, bsQuestion.GetLength());
+    wsQuestion = CFX_WideString::FromUTF8(bsQuestion.AsByteStringC());
   }
   if (iLength >= 2) {
     CFX_ByteString bsTitle = pArguments->GetUTF8String(1);
-    wsTitle = CFX_WideString::FromUTF8(bsTitle, bsTitle.GetLength());
+    wsTitle = CFX_WideString::FromUTF8(bsTitle.AsByteStringC());
   }
   if (iLength >= 3) {
     CFX_ByteString bsDefaultAnswer = pArguments->GetUTF8String(2);
-    wsDefaultAnswer =
-        CFX_WideString::FromUTF8(bsDefaultAnswer, bsDefaultAnswer.GetLength());
+    wsDefaultAnswer = CFX_WideString::FromUTF8(bsDefaultAnswer.AsByteStringC());
   }
   if (iLength >= 4) {
     bMark = pArguments->GetInt32(3) == 0 ? FALSE : TRUE;
@@ -444,8 +443,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_ResetData(
   CFX_WideString wsExpression;
   if (iLength >= 1) {
     CFX_ByteString bsExpression = pArguments->GetUTF8String(0);
-    wsExpression =
-        CFX_WideString::FromUTF8(bsExpression, bsExpression.GetLength());
+    wsExpression = CFX_WideString::FromUTF8(bsExpression.AsByteStringC());
   }
   if (wsExpression.IsEmpty()) {
     pNotify->ResetData();
@@ -523,7 +521,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_SetFocus(
       CFX_ByteString bsString;
       FXJSE_Value_ToUTF8String(hValue, bsString);
       CFX_WideString wsExpression =
-          CFX_WideString::FromUTF8(bsString, bsString.GetLength());
+          CFX_WideString::FromUTF8(bsString.AsByteStringC());
       CXFA_ScriptContext* pScriptContext = m_pDocument->GetScriptContext();
       if (!pScriptContext) {
         FXJSE_Value_Release(hValue);
@@ -633,7 +631,7 @@ FX_BOOL CScript_HostPseudoModel::Script_HostPseudoModel_ValidateArgsForMsg(
   } else {
     CFX_ByteString byMessage;
     FXJSE_Value_ToUTF8String(hValueArg, byMessage);
-    wsValue = CFX_WideString::FromUTF8(byMessage, byMessage.GetLength());
+    wsValue = CFX_WideString::FromUTF8(byMessage.AsByteStringC());
   }
   FXJSE_Value_Release(hValueArg);
   return TRUE;
@@ -733,7 +731,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_ImportData(
   CFX_WideString wsFilePath;
   if (iLength > 0) {
     CFX_ByteString bsFilePath = pArguments->GetUTF8String(0);
-    wsFilePath = CFX_WideString::FromUTF8(bsFilePath, bsFilePath.GetLength());
+    wsFilePath = CFX_WideString::FromUTF8(bsFilePath.AsByteStringC());
   }
   CXFA_FFDoc* hDoc = pNotify->GetHDOC();
   pNotify->GetDocProvider()->ImportData(hDoc, wsFilePath.AsWideStringC());
@@ -754,7 +752,7 @@ void CScript_HostPseudoModel::Script_HostPseudoModel_ExportData(
   FX_BOOL bXDP = TRUE;
   if (iLength >= 1) {
     CFX_ByteString bsFilePath = pArguments->GetUTF8String(0);
-    wsFilePath = CFX_WideString::FromUTF8(bsFilePath, bsFilePath.GetLength());
+    wsFilePath = CFX_WideString::FromUTF8(bsFilePath.AsByteStringC());
   }
   if (iLength >= 2) {
     bXDP = pArguments->GetInt32(1) == 0 ? FALSE : TRUE;

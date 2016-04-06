@@ -111,7 +111,7 @@ CFX_WideString CBC_Code39::Decode(CFX_DIBitmap* pBitmap, int32_t& e) {
   CBC_BinaryBitmap bitmap(&binarizer);
   CFX_ByteString str = m_pBCReader->Decode(&bitmap, 0, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FX_WSTRC(L""));
-  return CFX_WideString::FromUTF8(str, str.GetLength());
+  return CFX_WideString::FromUTF8(str.AsByteStringC());
 }
 
 FX_BOOL CBC_Code39::SetTextLocation(BC_TEXT_LOC location) {

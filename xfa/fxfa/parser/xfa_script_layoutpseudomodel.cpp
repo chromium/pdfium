@@ -74,7 +74,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_HWXY(
   if (iLength >= 2) {
     CFX_ByteString bsUnit = pArguments->GetUTF8String(1);
     if (!bsUnit.IsEmpty()) {
-      wsUnit = CFX_WideString::FromUTF8(bsUnit, bsUnit.GetLength());
+      wsUnit = CFX_WideString::FromUTF8(bsUnit.AsByteStringC());
     }
   }
   if (iLength >= 3) {
@@ -367,7 +367,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_PageContent(
   }
   if (iLength >= 2) {
     CFX_ByteString bsType = pArguments->GetUTF8String(1);
-    wsType = CFX_WideString::FromUTF8(bsType, bsType.GetLength());
+    wsType = CFX_WideString::FromUTF8(bsType.AsByteStringC());
   }
   if (iLength >= 3) {
     bOnPageArea = pArguments->GetInt32(2) == 0 ? FALSE : TRUE;

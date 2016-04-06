@@ -115,8 +115,7 @@ void CXFA_ScriptContext::GlobalPropertySetter(FXJSE_HOBJECT hObject,
   CXFA_ScriptContext* lpScriptContext =
       (CXFA_ScriptContext*)pDoc->GetScriptContext();
   CXFA_Object* lpCurNode = lpScriptContext->GetVariablesThis(lpOrginalNode);
-  CFX_WideString wsPropName = CFX_WideString::FromUTF8(
-      (const FX_CHAR*)szPropName.raw_str(), szPropName.GetLength());
+  CFX_WideString wsPropName = CFX_WideString::FromUTF8(szPropName);
   uint32_t dwFlag = XFA_RESOLVENODE_Parent | XFA_RESOLVENODE_Siblings |
                     XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
                     XFA_RESOLVENODE_Attributes;
@@ -174,8 +173,7 @@ void CXFA_ScriptContext::GlobalPropertyGetter(FXJSE_HOBJECT hObject,
   CXFA_ScriptContext* lpScriptContext =
       (CXFA_ScriptContext*)pDoc->GetScriptContext();
   CXFA_Object* lpCurNode = lpScriptContext->GetVariablesThis(pOrginalObject);
-  CFX_WideString wsPropName = CFX_WideString::FromUTF8(
-      (const FX_CHAR*)szPropName.raw_str(), szPropName.GetLength());
+  CFX_WideString wsPropName = CFX_WideString::FromUTF8(szPropName);
   if (lpScriptContext->GetType() == XFA_SCRIPTLANGTYPE_Formcalc) {
     if (szPropName == FOXIT_XFA_FM2JS_FORMCALC_RUNTIME) {
       XFA_FM2JS_GlobalPropertyGetter(lpScriptContext->m_hFM2JSContext, hValue);
@@ -230,8 +228,7 @@ void CXFA_ScriptContext::NormalPropertyGetter(FXJSE_HOBJECT hObject,
     FXJSE_Value_SetUndefined(hValue);
     return;
   }
-  CFX_WideString wsPropName = CFX_WideString::FromUTF8(
-      (const FX_CHAR*)szPropName.raw_str(), szPropName.GetLength());
+  CFX_WideString wsPropName = CFX_WideString::FromUTF8(szPropName);
   CXFA_ScriptContext* lpScriptContext =
       (CXFA_ScriptContext*)pOrginalObject->GetDocument()->GetScriptContext();
   CXFA_Object* pObject = lpScriptContext->GetVariablesThis(pOrginalObject);
@@ -279,8 +276,7 @@ void CXFA_ScriptContext::NormalPropertySetter(FXJSE_HOBJECT hObject,
   CXFA_ScriptContext* lpScriptContext =
       (CXFA_ScriptContext*)pOrginalObject->GetDocument()->GetScriptContext();
   CXFA_Object* pObject = lpScriptContext->GetVariablesThis(pOrginalObject);
-  CFX_WideString wsPropName = CFX_WideString::FromUTF8(
-      (const FX_CHAR*)szPropName.raw_str(), szPropName.GetLength());
+  CFX_WideString wsPropName = CFX_WideString::FromUTF8(szPropName);
   const XFA_SCRIPTATTRIBUTEINFO* lpAttributeInfo = XFA_GetScriptAttributeByName(
       pObject->GetClassID(), wsPropName.AsWideStringC());
   if (lpAttributeInfo) {
@@ -332,8 +328,7 @@ int32_t CXFA_ScriptContext::NormalPropTypeGetter(
       (CXFA_ScriptContext*)pObject->GetDocument()->GetScriptContext();
   pObject = lpScriptContext->GetVariablesThis(pObject);
   XFA_ELEMENT objElement = pObject->GetClassID();
-  CFX_WideString wsPropName = CFX_WideString::FromUTF8(
-      (const FX_CHAR*)szPropName.raw_str(), szPropName.GetLength());
+  CFX_WideString wsPropName = CFX_WideString::FromUTF8(szPropName);
   if (XFA_GetMethodByName(objElement, wsPropName.AsWideStringC())) {
     return FXJSE_ClassPropType_Method;
   }
@@ -355,8 +350,7 @@ int32_t CXFA_ScriptContext::GlobalPropTypeGetter(
       (CXFA_ScriptContext*)pObject->GetDocument()->GetScriptContext();
   pObject = lpScriptContext->GetVariablesThis(pObject);
   XFA_ELEMENT objElement = pObject->GetClassID();
-  CFX_WideString wsPropName = CFX_WideString::FromUTF8(
-      (const FX_CHAR*)szPropName.raw_str(), szPropName.GetLength());
+  CFX_WideString wsPropName = CFX_WideString::FromUTF8(szPropName);
   if (XFA_GetMethodByName(objElement, wsPropName.AsWideStringC())) {
     return FXJSE_ClassPropType_Method;
   }
@@ -372,8 +366,7 @@ void CXFA_ScriptContext::NormalMethodCall(FXJSE_HOBJECT hThis,
   CXFA_ScriptContext* lpScriptContext =
       (CXFA_ScriptContext*)pObject->GetDocument()->GetScriptContext();
   pObject = lpScriptContext->GetVariablesThis(pObject);
-  CFX_WideString wsFunName = CFX_WideString::FromUTF8(
-      (const FX_CHAR*)szFuncName.raw_str(), szFuncName.GetLength());
+  CFX_WideString wsFunName = CFX_WideString::FromUTF8(szFuncName);
   const XFA_METHODINFO* lpMethodInfo =
       XFA_GetMethodByName(pObject->GetClassID(), wsFunName.AsWideStringC());
   if (NULL == lpMethodInfo) {

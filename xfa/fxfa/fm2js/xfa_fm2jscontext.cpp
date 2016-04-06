@@ -1102,8 +1102,7 @@ void CXFA_FM2JSContext::IsoTime2Num(FXJSE_HOBJECT hThis,
         return;
       }
       CXFA_LocaleValue timeValue(
-          XFA_VT_TIME,
-          CFX_WideString::FromUTF8(szArgString, szArgString.GetLength()),
+          XFA_VT_TIME, CFX_WideString::FromUTF8(szArgString.AsByteStringC()),
           (CXFA_LocaleMgr*)pMgr);
       if (timeValue.IsValid()) {
         CFX_Unitime uniTime = timeValue.GetTime();
@@ -1589,21 +1588,19 @@ void CXFA_FM2JSContext::Time2Num(FXJSE_HOBJECT hThis,
         pLocale = widgetData.GetLocal();
       } else {
         pLocale = pMgr->GetLocaleByName(
-            CFX_WideString::FromUTF8(localString, localString.GetLength())
+            CFX_WideString::FromUTF8(localString.AsByteStringC())
                 .AsWideStringC());
       }
       CFX_WideString wsFormat;
       if (formatString.IsEmpty()) {
         pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Default, wsFormat);
       } else {
-        wsFormat =
-            CFX_WideString::FromUTF8(formatString, formatString.GetLength());
+        wsFormat = CFX_WideString::FromUTF8(formatString.AsByteStringC());
       }
       wsFormat = FX_WSTRC(L"time{") + wsFormat;
       wsFormat += FX_WSTRC(L"}");
       CXFA_LocaleValue timeValue(
-          XFA_VT_TIME,
-          CFX_WideString::FromUTF8(timeString, timeString.GetLength()),
+          XFA_VT_TIME, CFX_WideString::FromUTF8(timeString.AsByteStringC()),
           wsFormat, pLocale, (CXFA_LocaleMgr*)pMgr);
       if (timeValue.IsValid()) {
         CFX_Unitime uniTime = timeValue.GetTime();
@@ -2040,8 +2037,7 @@ FX_BOOL CXFA_FM2JSContext::Local2IsoDate(FXJSE_HOBJECT hThis,
     pLocale = widgetData.GetLocal();
   } else {
     pLocale = pMgr->GetLocaleByName(
-        CFX_WideString::FromUTF8(szLocale.c_str(), szLocale.GetLength())
-            .AsWideStringC());
+        CFX_WideString::FromUTF8(szLocale).AsWideStringC());
   }
   if (!pLocale) {
     return FALSE;
@@ -2050,11 +2046,10 @@ FX_BOOL CXFA_FM2JSContext::Local2IsoDate(FXJSE_HOBJECT hThis,
   if (szFormat.IsEmpty()) {
     pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Default, wsFormat);
   } else {
-    wsFormat = CFX_WideString::FromUTF8(szFormat.c_str(), szFormat.GetLength());
+    wsFormat = CFX_WideString::FromUTF8(szFormat);
   }
-  CXFA_LocaleValue widgetValue(
-      XFA_VT_DATE, CFX_WideString::FromUTF8(szDate.c_str(), szDate.GetLength()),
-      wsFormat, pLocale, (CXFA_LocaleMgr*)pMgr);
+  CXFA_LocaleValue widgetValue(XFA_VT_DATE, CFX_WideString::FromUTF8(szDate),
+                               wsFormat, pLocale, (CXFA_LocaleMgr*)pMgr);
   CFX_Unitime dt = widgetValue.GetDate();
   strIsoDate.Format("%4d-%02d-%02d", dt.GetYear(), dt.GetMonth(), dt.GetDay());
   return TRUE;
@@ -2079,8 +2074,7 @@ FX_BOOL CXFA_FM2JSContext::Local2IsoTime(FXJSE_HOBJECT hThis,
     pLocale = widgetData.GetLocal();
   } else {
     pLocale = pMgr->GetLocaleByName(
-        CFX_WideString::FromUTF8(szLocale.c_str(), szLocale.GetLength())
-            .AsWideStringC());
+        CFX_WideString::FromUTF8(szLocale).AsWideStringC());
   }
   if (!pLocale) {
     return FALSE;
@@ -2089,13 +2083,12 @@ FX_BOOL CXFA_FM2JSContext::Local2IsoTime(FXJSE_HOBJECT hThis,
   if (szFormat.IsEmpty()) {
     pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Default, wsFormat);
   } else {
-    wsFormat = CFX_WideString::FromUTF8(szFormat.c_str(), szFormat.GetLength());
+    wsFormat = CFX_WideString::FromUTF8(szFormat);
   }
   wsFormat = FX_WSTRC(L"time{") + wsFormat;
   wsFormat += FX_WSTRC(L"}");
-  CXFA_LocaleValue widgetValue(
-      XFA_VT_TIME, CFX_WideString::FromUTF8(szTime.c_str(), szTime.GetLength()),
-      wsFormat, pLocale, (CXFA_LocaleMgr*)pMgr);
+  CXFA_LocaleValue widgetValue(XFA_VT_TIME, CFX_WideString::FromUTF8(szTime),
+                               wsFormat, pLocale, (CXFA_LocaleMgr*)pMgr);
   CFX_Unitime utime = widgetValue.GetTime();
   strIsoTime.Format("%02d:%02d:%02d.%03d", utime.GetHour(), utime.GetMinute(),
                     utime.GetSecond(), utime.GetMillisecond());
@@ -2121,8 +2114,7 @@ FX_BOOL CXFA_FM2JSContext::IsoDate2Local(FXJSE_HOBJECT hThis,
     pLocale = widgetData.GetLocal();
   } else {
     pLocale = pMgr->GetLocaleByName(
-        CFX_WideString::FromUTF8(szLocale.c_str(), szLocale.GetLength())
-            .AsWideStringC());
+        CFX_WideString::FromUTF8(szLocale).AsWideStringC());
   }
   if (!pLocale) {
     return FALSE;
@@ -2131,11 +2123,10 @@ FX_BOOL CXFA_FM2JSContext::IsoDate2Local(FXJSE_HOBJECT hThis,
   if (szFormat.IsEmpty()) {
     pLocale->GetDatePattern(FX_LOCALEDATETIMESUBCATEGORY_Default, wsFormat);
   } else {
-    wsFormat = CFX_WideString::FromUTF8(szFormat.c_str(), szFormat.GetLength());
+    wsFormat = CFX_WideString::FromUTF8(szFormat);
   }
-  CXFA_LocaleValue widgetValue(
-      XFA_VT_DATE, CFX_WideString::FromUTF8(szDate.c_str(), szDate.GetLength()),
-      (CXFA_LocaleMgr*)pMgr);
+  CXFA_LocaleValue widgetValue(XFA_VT_DATE, CFX_WideString::FromUTF8(szDate),
+                               (CXFA_LocaleMgr*)pMgr);
   CFX_WideString wsRet;
   widgetValue.FormatPatterns(wsRet, wsFormat, pLocale,
                              XFA_VALUEPICTURE_Display);
@@ -2162,8 +2153,7 @@ FX_BOOL CXFA_FM2JSContext::IsoTime2Local(FXJSE_HOBJECT hThis,
     pLocale = widgetData.GetLocal();
   } else {
     pLocale = pMgr->GetLocaleByName(
-        CFX_WideString::FromUTF8(szLocale.c_str(), szLocale.GetLength())
-            .AsWideStringC());
+        CFX_WideString::FromUTF8(szLocale).AsWideStringC());
   }
   if (!pLocale) {
     return FALSE;
@@ -2172,13 +2162,12 @@ FX_BOOL CXFA_FM2JSContext::IsoTime2Local(FXJSE_HOBJECT hThis,
   if (szFormat.IsEmpty()) {
     pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Default, wsFormat);
   } else {
-    wsFormat = CFX_WideString::FromUTF8(szFormat.c_str(), szFormat.GetLength());
+    wsFormat = CFX_WideString::FromUTF8(szFormat);
   }
   wsFormat = FX_WSTRC(L"time{") + wsFormat;
   wsFormat += FX_WSTRC(L"}");
-  CXFA_LocaleValue widgetValue(
-      XFA_VT_TIME, CFX_WideString::FromUTF8(szTime.c_str(), szTime.GetLength()),
-      (CXFA_LocaleMgr*)pMgr);
+  CXFA_LocaleValue widgetValue(XFA_VT_TIME, CFX_WideString::FromUTF8(szTime),
+                               (CXFA_LocaleMgr*)pMgr);
   CFX_WideString wsRet;
   widgetValue.FormatPatterns(wsRet, wsFormat, pLocale,
                              XFA_VALUEPICTURE_Display);
@@ -2205,8 +2194,7 @@ FX_BOOL CXFA_FM2JSContext::GetGMTTime(FXJSE_HOBJECT hThis,
     pLocale = widgetData.GetLocal();
   } else {
     pLocale = pMgr->GetLocaleByName(
-        CFX_WideString::FromUTF8(szLocale.c_str(), szLocale.GetLength())
-            .AsWideStringC());
+        CFX_WideString::FromUTF8(szLocale).AsWideStringC());
   }
   if (!pLocale) {
     return FALSE;
@@ -2215,13 +2203,12 @@ FX_BOOL CXFA_FM2JSContext::GetGMTTime(FXJSE_HOBJECT hThis,
   if (szFormat.IsEmpty()) {
     pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Default, wsFormat);
   } else {
-    wsFormat = CFX_WideString::FromUTF8(szFormat.c_str(), szFormat.GetLength());
+    wsFormat = CFX_WideString::FromUTF8(szFormat);
   }
   wsFormat = FX_WSTRC(L"time{") + wsFormat;
   wsFormat += FX_WSTRC(L"}");
-  CXFA_LocaleValue widgetValue(
-      XFA_VT_TIME, CFX_WideString::FromUTF8(szTime.c_str(), szTime.GetLength()),
-      (CXFA_LocaleMgr*)pMgr);
+  CXFA_LocaleValue widgetValue(XFA_VT_TIME, CFX_WideString::FromUTF8(szTime),
+                               (CXFA_LocaleMgr*)pMgr);
   CFX_WideString wsRet;
   widgetValue.FormatPatterns(wsRet, wsFormat, pLocale,
                              XFA_VALUEPICTURE_Display);
@@ -2389,8 +2376,7 @@ void CXFA_FM2JSContext::GetLocalDateFormat(FXJSE_HOBJECT hThis,
     pLocale = widgetData.GetLocal();
   } else {
     pLocale = pMgr->GetLocaleByName(
-        CFX_WideString::FromUTF8(szLocalStr.c_str(), szLocalStr.GetLength())
-            .AsWideStringC());
+        CFX_WideString::FromUTF8(szLocalStr).AsWideStringC());
   }
   if (!pLocale) {
     return;
@@ -2445,8 +2431,7 @@ void CXFA_FM2JSContext::GetLocalTimeFormat(FXJSE_HOBJECT hThis,
     pLocale = widgetData.GetLocal();
   } else {
     pLocale = pMgr->GetLocaleByName(
-        CFX_WideString::FromUTF8(szLocalStr.c_str(), szLocalStr.GetLength())
-            .AsWideStringC());
+        CFX_WideString::FromUTF8(szLocalStr).AsWideStringC());
   }
   if (!pLocale) {
     return;
@@ -3265,10 +3250,10 @@ void CXFA_FM2JSContext::Eval(FXJSE_HOBJECT hThis,
       CFX_WideTextBuf wsJavaScriptBuf;
       CFX_WideString javaScript;
       CFX_WideString wsError;
-      XFA_FM2JS_Translate(CFX_WideString::FromUTF8(utf8ScriptString,
-                                                   utf8ScriptString.GetLength())
-                              .AsWideStringC(),
-                          wsJavaScriptBuf, wsError);
+      XFA_FM2JS_Translate(
+          CFX_WideString::FromUTF8(utf8ScriptString.AsByteStringC())
+              .AsWideStringC(),
+          wsJavaScriptBuf, wsError);
       FXJSE_HCONTEXT hContext = FXJSE_Context_Create(hruntime);
       FXJSE_HVALUE returnValue = FXJSE_Value_Create(hruntime);
       javaScript = wsJavaScriptBuf.GetWideString();
@@ -3389,7 +3374,7 @@ void CXFA_FM2JSContext::UnitType(FXJSE_HOBJECT hThis,
       };
       unitspanString.MakeLower();
       CFX_WideString wsTypeString =
-          CFX_WideString::FromUTF8(unitspanString, unitspanString.GetLength());
+          CFX_WideString::FromUTF8(unitspanString.AsByteStringC());
       const FX_WCHAR* pData = wsTypeString;
       int32_t u = 0;
       int32_t uLen = wsTypeString.GetLength();
@@ -3749,8 +3734,7 @@ void CXFA_FM2JSContext::Decode(FXJSE_HOBJECT hThis,
 }
 void CXFA_FM2JSContext::DecodeURL(const CFX_ByteStringC& szURLString,
                                   CFX_ByteTextBuf& szResultString) {
-  CFX_WideString wsURLString =
-      CFX_WideString::FromUTF8(szURLString.c_str(), szURLString.GetLength());
+  CFX_WideString wsURLString = CFX_WideString::FromUTF8(szURLString);
   const FX_WCHAR* pData = wsURLString;
   int32_t iLen = wsURLString.GetLength();
   int32_t i = 0;
@@ -3805,8 +3789,7 @@ void CXFA_FM2JSContext::DecodeURL(const CFX_ByteStringC& szURLString,
 }
 void CXFA_FM2JSContext::DecodeHTML(const CFX_ByteStringC& szHTMLString,
                                    CFX_ByteTextBuf& szResultString) {
-  CFX_WideString wsHTMLString =
-      CFX_WideString::FromUTF8(szHTMLString.c_str(), szHTMLString.GetLength());
+  CFX_WideString wsHTMLString = CFX_WideString::FromUTF8(szHTMLString);
   FX_WCHAR strString[9];
   int32_t iStrIndex = 0;
   int32_t iLen = wsHTMLString.GetLength();
@@ -3880,8 +3863,7 @@ void CXFA_FM2JSContext::DecodeHTML(const CFX_ByteStringC& szHTMLString,
 }
 void CXFA_FM2JSContext::DecodeXML(const CFX_ByteStringC& szXMLString,
                                   CFX_ByteTextBuf& szResultString) {
-  CFX_WideString wsXMLString =
-      CFX_WideString::FromUTF8(szXMLString.c_str(), szXMLString.GetLength());
+  CFX_WideString wsXMLString = CFX_WideString::FromUTF8(szXMLString);
   FX_WCHAR strString[9];
   int32_t iStrIndex = 0;
   int32_t iLen = wsXMLString.GetLength();
@@ -4025,8 +4007,7 @@ void CXFA_FM2JSContext::Encode(FXJSE_HOBJECT hThis,
 }
 void CXFA_FM2JSContext::EncodeURL(const CFX_ByteStringC& szURLString,
                                   CFX_ByteTextBuf& szResultBuf) {
-  CFX_WideString wsURLString =
-      CFX_WideString::FromUTF8(szURLString.c_str(), szURLString.GetLength());
+  CFX_WideString wsURLString = CFX_WideString::FromUTF8(szURLString);
   CFX_WideTextBuf wsResultBuf;
   FX_WCHAR ch = 0;
   int32_t iLength = wsURLString.GetLength();
@@ -4134,7 +4115,7 @@ void CXFA_FM2JSContext::EncodeURL(const CFX_ByteStringC& szURLString,
 void CXFA_FM2JSContext::EncodeHTML(const CFX_ByteStringC& szHTMLString,
                                    CFX_ByteTextBuf& szResultBuf) {
   CFX_ByteString str = szHTMLString.c_str();
-  CFX_WideString wsHTMLString = CFX_WideString::FromUTF8(str, str.GetLength());
+  CFX_WideString wsHTMLString = CFX_WideString::FromUTF8(str.AsByteStringC());
   const FX_WCHAR* strCode = L"0123456789abcdef";
   FX_WCHAR strEncode[9];
   strEncode[0] = '&';
@@ -4187,8 +4168,7 @@ void CXFA_FM2JSContext::EncodeHTML(const CFX_ByteStringC& szHTMLString,
 }
 void CXFA_FM2JSContext::EncodeXML(const CFX_ByteStringC& szXMLString,
                                   CFX_ByteTextBuf& szResultBuf) {
-  CFX_WideString wsXMLString =
-      CFX_WideString::FromUTF8(szXMLString.c_str(), szXMLString.GetLength());
+  CFX_WideString wsXMLString = CFX_WideString::FromUTF8(szXMLString);
   CFX_WideTextBuf wsResultBuf;
   enum {
     QUOT,
@@ -4311,8 +4291,7 @@ FX_BOOL CXFA_FM2JSContext::HTMLCode2STR(uint32_t iCode,
 }
 static FX_BOOL XFA_PATTERN_STRING_Type(const CFX_ByteStringC& szPattern,
                                        uint32_t& patternType) {
-  CFX_WideString wsPattern =
-      CFX_WideString::FromUTF8(szPattern.c_str(), szPattern.GetLength());
+  CFX_WideString wsPattern = CFX_WideString::FromUTF8(szPattern);
   if (FX_WSTRC(L"datetime") == wsPattern.Left(8)) {
     patternType = XFA_VT_DATETIME;
     return TRUE;
@@ -4417,9 +4396,8 @@ void CXFA_FM2JSContext::Format(FXJSE_HOBJECT hThis,
     FX_BOOL bCompelte =
         XFA_PATTERN_STRING_Type(szPattern.AsByteStringC(), patternType);
     CFX_WideString wsPattern =
-        CFX_WideString::FromUTF8(szPattern, szPattern.GetLength());
-    CFX_WideString wsValue =
-        CFX_WideString::FromUTF8(szValue, szValue.GetLength());
+        CFX_WideString::FromUTF8(szPattern.AsByteStringC());
+    CFX_WideString wsValue = CFX_WideString::FromUTF8(szValue.AsByteStringC());
     if (!bCompelte) {
       switch (patternType) {
         case XFA_VT_DATETIME: {
@@ -4552,7 +4530,7 @@ void CXFA_FM2JSContext::Lower(FXJSE_HOBJECT hThis,
       HValueToUTF8String(argOne, argString);
       CFX_WideTextBuf lowStringBuf;
       CFX_WideString wsArgString =
-          CFX_WideString::FromUTF8(argString, argString.GetLength());
+          CFX_WideString::FromUTF8(argString.AsByteStringC());
       const FX_WCHAR* pData = wsArgString;
       int32_t iLen = argString.GetLength();
       int32_t i = 0;
@@ -4633,9 +4611,9 @@ void CXFA_FM2JSContext::Parse(FXJSE_HOBJECT hThis,
       FX_BOOL bCompletePattern =
           XFA_PATTERN_STRING_Type(szPattern.AsByteStringC(), patternType);
       CFX_WideString wsPattern =
-          CFX_WideString::FromUTF8(szPattern, szPattern.GetLength());
+          CFX_WideString::FromUTF8(szPattern.AsByteStringC());
       CFX_WideString wsValue =
-          CFX_WideString::FromUTF8(szValue, szValue.GetLength());
+          CFX_WideString::FromUTF8(szValue.AsByteStringC());
       CFX_ByteString szParsedValue;
       if (bCompletePattern) {
         CXFA_LocaleValue localeValue(patternType, wsValue, wsPattern, pLocale,
@@ -5180,7 +5158,7 @@ void CXFA_FM2JSContext::Upper(FXJSE_HOBJECT hThis,
       HValueToUTF8String(argOne, argString);
       CFX_WideTextBuf upperStringBuf;
       CFX_WideString wsArgString =
-          CFX_WideString::FromUTF8(argString, argString.GetLength());
+          CFX_WideString::FromUTF8(argString.AsByteStringC());
       const FX_WCHAR* pData = wsArgString;
       int32_t iLen = wsArgString.GetLength();
       int32_t i = 0;
@@ -5490,8 +5468,7 @@ void CXFA_FM2JSContext::Get(FXJSE_HOBJECT hThis,
     CFX_ByteString urlString;
     HValueToUTF8String(argOne, urlString);
     IFX_FileRead* pFile = pAppProvider->DownloadURL(
-        CFX_WideString::FromUTF8(urlString, urlString.GetLength())
-            .AsWideStringC());
+        CFX_WideString::FromUTF8(urlString.AsByteStringC()).AsWideStringC());
     if (pFile) {
       int32_t size = pFile->GetSize();
       uint8_t* pData = FX_Alloc(uint8_t, size);
@@ -5551,14 +5528,11 @@ void CXFA_FM2JSContext::Post(FXJSE_HOBJECT hThis,
     }
     CFX_WideString decodedResponse;
     FX_BOOL bFlags = pAppProvider->PostRequestURL(
-        CFX_WideString::FromUTF8(bsURL, bsURL.GetLength()).AsWideStringC(),
-        CFX_WideString::FromUTF8(bsData, bsData.GetLength()).AsWideStringC(),
-        CFX_WideString::FromUTF8(bsContentType, bsContentType.GetLength())
-            .AsWideStringC(),
-        CFX_WideString::FromUTF8(bsEncode, bsEncode.GetLength())
-            .AsWideStringC(),
-        CFX_WideString::FromUTF8(bsHeader, bsHeader.GetLength())
-            .AsWideStringC(),
+        CFX_WideString::FromUTF8(bsURL.AsByteStringC()).AsWideStringC(),
+        CFX_WideString::FromUTF8(bsData.AsByteStringC()).AsWideStringC(),
+        CFX_WideString::FromUTF8(bsContentType.AsByteStringC()).AsWideStringC(),
+        CFX_WideString::FromUTF8(bsEncode.AsByteStringC()).AsWideStringC(),
+        CFX_WideString::FromUTF8(bsHeader.AsByteStringC()).AsWideStringC(),
         decodedResponse);
     FXJSE_Value_Release(argOne);
     FXJSE_Value_Release(argTwo);
@@ -5615,10 +5589,9 @@ void CXFA_FM2JSContext::Put(FXJSE_HOBJECT hThis,
       HValueToUTF8String(argThree, bsEncode);
     }
     FX_BOOL bFlags = pAppProvider->PutRequestURL(
-        CFX_WideString::FromUTF8(bsURL, bsURL.GetLength()).AsWideStringC(),
-        CFX_WideString::FromUTF8(bsData, bsData.GetLength()).AsWideStringC(),
-        CFX_WideString::FromUTF8(bsEncode, bsEncode.GetLength())
-            .AsWideStringC());
+        CFX_WideString::FromUTF8(bsURL.AsByteStringC()).AsWideStringC(),
+        CFX_WideString::FromUTF8(bsData.AsByteStringC()).AsWideStringC(),
+        CFX_WideString::FromUTF8(bsEncode.AsByteStringC()).AsWideStringC());
     FXJSE_Value_Release(argOne);
     FXJSE_Value_Release(argTwo);
     if (argc > 2) {
@@ -6181,9 +6154,9 @@ void CXFA_FM2JSContext::dot_accessor(FXJSE_HOBJECT hThis,
         FX_Free(rgValues);
       } else {
         CFX_WideString wsPropertyName =
-            CFX_WideString::FromUTF8(szName, szName.GetLength());
+            CFX_WideString::FromUTF8(szName.AsByteStringC());
         CFX_WideString wsSomExpression =
-            CFX_WideString::FromUTF8(szSomExp, szSomExp.GetLength());
+            CFX_WideString::FromUTF8(szSomExp.AsByteStringC());
         pContext->ThrowScriptErrorMessage(XFA_IDS_ACCESS_PROPERTY_IN_NOT_OBJECT,
                                           (const FX_WCHAR*)wsPropertyName,
                                           (const FX_WCHAR*)wsSomExpression);
@@ -6244,9 +6217,9 @@ void CXFA_FM2JSContext::dot_accessor(FXJSE_HOBJECT hThis,
         FX_Free(hResolveValues);
       } else {
         CFX_WideString wsPropertyName =
-            CFX_WideString::FromUTF8(szName, szName.GetLength());
+            CFX_WideString::FromUTF8(szName.AsByteStringC());
         CFX_WideString wsSomExpression =
-            CFX_WideString::FromUTF8(szSomExp, szSomExp.GetLength());
+            CFX_WideString::FromUTF8(szSomExp.AsByteStringC());
         pContext->ThrowScriptErrorMessage(XFA_IDS_ACCESS_PROPERTY_IN_NOT_OBJECT,
                                           (const FX_WCHAR*)wsPropertyName,
                                           (const FX_WCHAR*)wsSomExpression);
@@ -6329,9 +6302,9 @@ void CXFA_FM2JSContext::dotdot_accessor(FXJSE_HOBJECT hThis,
         FX_Free(rgValues);
       } else {
         CFX_WideString wsPropertyName =
-            CFX_WideString::FromUTF8(szName, szName.GetLength());
+            CFX_WideString::FromUTF8(szName.AsByteStringC());
         CFX_WideString wsSomExpression =
-            CFX_WideString::FromUTF8(szSomExp, szSomExp.GetLength());
+            CFX_WideString::FromUTF8(szSomExp.AsByteStringC());
         pContext->ThrowScriptErrorMessage(XFA_IDS_ACCESS_PROPERTY_IN_NOT_OBJECT,
                                           (const FX_WCHAR*)wsPropertyName,
                                           (const FX_WCHAR*)wsSomExpression);
@@ -6391,9 +6364,9 @@ void CXFA_FM2JSContext::dotdot_accessor(FXJSE_HOBJECT hThis,
         FX_Free(hResolveValues);
       } else {
         CFX_WideString wsPropertyName =
-            CFX_WideString::FromUTF8(szName, szName.GetLength());
+            CFX_WideString::FromUTF8(szName.AsByteStringC());
         CFX_WideString wsSomExpression =
-            CFX_WideString::FromUTF8(szSomExp, szSomExp.GetLength());
+            CFX_WideString::FromUTF8(szSomExp.AsByteStringC());
         pContext->ThrowScriptErrorMessage(XFA_IDS_ACCESS_PROPERTY_IN_NOT_OBJECT,
                                           (const FX_WCHAR*)wsPropertyName,
                                           (const FX_WCHAR*)wsSomExpression);
@@ -6421,7 +6394,7 @@ void CXFA_FM2JSContext::eval_translation(FXJSE_HOBJECT hThis,
       pContext->ThrowScriptErrorMessage(XFA_IDS_ARGUMENT_MISMATCH);
     } else {
       CFX_WideString scriptString =
-          CFX_WideString::FromUTF8(argString, argString.GetLength());
+          CFX_WideString::FromUTF8(argString.AsByteStringC());
       CFX_WideTextBuf wsJavaScriptBuf;
       CFX_WideString wsError;
       XFA_FM2JS_Translate(scriptString.AsWideStringC(), wsJavaScriptBuf,
@@ -6893,10 +6866,8 @@ FX_BOOL CXFA_FM2JSContext::GetObjectByName(
                      XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;
   int32_t iRet = pScriptContext->ResolveObjects(
       pScriptContext->GetThisObject(),
-      CFX_WideString::FromUTF8(szAccessorName.c_str(),
-                               szAccessorName.GetLength())
-          .AsWideStringC(),
-      resoveNodeRS, dwFlags);
+      CFX_WideString::FromUTF8(szAccessorName).AsWideStringC(), resoveNodeRS,
+      dwFlags);
   if (iRet >= 1 && resoveNodeRS.dwFlags == XFA_RESOVENODE_RSTYPE_Nodes) {
     FXJSE_Value_Set(accessorValue, pScriptContext->GetJSValueFromMap(
                                        resoveNodeRS.nodes.GetAt(0)));
@@ -6910,8 +6881,7 @@ int32_t CXFA_FM2JSContext::ResolveObjects(FXJSE_HOBJECT hThis,
                                           XFA_RESOLVENODE_RS& resoveNodeRS,
                                           FX_BOOL bdotAccessor,
                                           FX_BOOL bHasNoResolveName) {
-  CFX_WideString wsSomExpression =
-      CFX_WideString::FromUTF8(bsSomExp.c_str(), bsSomExp.GetLength());
+  CFX_WideString wsSomExpression = CFX_WideString::FromUTF8(bsSomExp);
   int32_t iRet = -1;
   CXFA_FM2JSContext* pContext =
       (CXFA_FM2JSContext*)FXJSE_Value_ToObject(hThis, NULL);

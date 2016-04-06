@@ -68,12 +68,11 @@ void CScript_SignaturePseudoModel::Script_SignaturePseudoModel_Sign(
   }
   if (iLength >= 2) {
     CFX_ByteString bsExpression = pArguments->GetUTF8String(1);
-    wsExpression =
-        CFX_WideString::FromUTF8(bsExpression, bsExpression.GetLength());
+    wsExpression = CFX_WideString::FromUTF8(bsExpression.AsByteStringC());
   }
   if (iLength >= 3) {
     CFX_ByteString bsXMLIdent = pArguments->GetUTF8String(2);
-    wsXMLIdent = CFX_WideString::FromUTF8(bsXMLIdent, bsXMLIdent.GetLength());
+    wsXMLIdent = CFX_WideString::FromUTF8(bsXMLIdent.AsByteStringC());
   }
   FX_BOOL bSign = pNotify->GetDocProvider()->Sign(hDoc, pNodeList,
                                                   wsExpression.AsWideStringC(),

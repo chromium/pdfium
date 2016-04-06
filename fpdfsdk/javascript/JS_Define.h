@@ -354,8 +354,8 @@ void JSSpecialPropQuery(const char*,
                         const v8::PropertyCallbackInfo<v8::Integer>& info) {
   v8::Isolate* isolate = info.GetIsolate();
   v8::String::Utf8Value utf8_value(property);
-  CFX_WideString propname =
-      CFX_WideString::FromUTF8(*utf8_value, utf8_value.length());
+  CFX_WideString propname = CFX_WideString::FromUTF8(
+      CFX_ByteStringC(*utf8_value, utf8_value.length()));
   CJS_Object* pJSObj =
       reinterpret_cast<CJS_Object*>(FXJS_GetPrivate(isolate, info.Holder()));
   Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
@@ -377,8 +377,8 @@ void JSSpecialPropGet(const char* class_name,
       reinterpret_cast<CJS_Object*>(FXJS_GetPrivate(isolate, info.Holder()));
   Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
   v8::String::Utf8Value utf8_value(property);
-  CFX_WideString propname =
-      CFX_WideString::FromUTF8(*utf8_value, utf8_value.length());
+  CFX_WideString propname = CFX_WideString::FromUTF8(
+      CFX_ByteStringC(*utf8_value, utf8_value.length()));
   CFX_WideString sError;
   CJS_PropValue value(pRuntime);
   value.StartGetting();
@@ -404,8 +404,8 @@ void JSSpecialPropPut(const char* class_name,
       reinterpret_cast<CJS_Object*>(FXJS_GetPrivate(isolate, info.Holder()));
   Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
   v8::String::Utf8Value utf8_value(property);
-  CFX_WideString propname =
-      CFX_WideString::FromUTF8(*utf8_value, utf8_value.length());
+  CFX_WideString propname = CFX_WideString::FromUTF8(
+      CFX_ByteStringC(*utf8_value, utf8_value.length()));
   CFX_WideString sError;
   CJS_PropValue PropValue(CJS_Value(pRuntime, value, CJS_Value::VT_unknown));
   PropValue.StartSetting();
@@ -427,8 +427,8 @@ void JSSpecialPropDel(const char* class_name,
       reinterpret_cast<CJS_Object*>(FXJS_GetPrivate(isolate, info.Holder()));
   Alt* pObj = reinterpret_cast<Alt*>(pJSObj->GetEmbedObject());
   v8::String::Utf8Value utf8_value(property);
-  CFX_WideString propname =
-      CFX_WideString::FromUTF8(*utf8_value, utf8_value.length());
+  CFX_WideString propname = CFX_WideString::FromUTF8(
+      CFX_ByteStringC(*utf8_value, utf8_value.length()));
   CFX_WideString sError;
   if (!pObj->DelProperty(pContext, propname.c_str(), sError)) {
     CFX_ByteString cbName;

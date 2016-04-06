@@ -696,7 +696,7 @@ int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
           CFX_ByteString bsString;
           FXJSE_Value_ToUTF8String(hRetValue, bsString);
           pEventParam->m_wsResult =
-              CFX_WideString::FromUTF8(bsString, bsString.GetLength());
+              CFX_WideString::FromUTF8(bsString.AsByteStringC());
         }
         iRet = XFA_EVENTERROR_Success;
       } else {

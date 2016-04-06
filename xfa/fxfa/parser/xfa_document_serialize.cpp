@@ -260,7 +260,7 @@ static void XFA_DataExporter_RegenerateFormFile_Changed(
         pTempStream->SetCodePage(FX_CODEPAGE_UTF8);
         pRichTextXML->SaveXMLNode(pTempStream);
         wsChildren += CFX_WideString::FromUTF8(
-            (const FX_CHAR*)pMemStream->GetBuffer(), pMemStream->GetSize());
+            CFX_ByteStringC(pMemStream->GetBuffer(), pMemStream->GetSize()));
         pTempStream->Release();
         pMemStream->Release();
       } else if (pRawValueNode->GetClassID() == XFA_ELEMENT_Sharpxml &&
@@ -434,8 +434,7 @@ void XFA_DataExporter_RegenerateFormFile(CXFA_Node* pNode,
     pStream->WriteString(s_pwsTagName, FXSYS_wcslen(s_pwsTagName));
     if (pChecksum) {
       static const FX_WCHAR* s_pwChecksum = L" checksum=\"";
-      CFX_WideString wsChecksum =
-          CFX_WideString::FromUTF8(pChecksum, FXSYS_strlen(pChecksum));
+      CFX_WideString wsChecksum = CFX_WideString::FromUTF8(pChecksum);
       pStream->WriteString(s_pwChecksum, FXSYS_wcslen(s_pwChecksum));
       pStream->WriteString((const FX_WCHAR*)wsChecksum, wsChecksum.GetLength());
       pStream->WriteString(L"\"", 1);

@@ -97,5 +97,5 @@ CFX_WideString CBC_QRCode::Decode(CFX_DIBitmap* pBitmap, int32_t& e) {
   CBC_BinaryBitmap bitmap(&binarizer);
   CFX_ByteString retStr = m_pBCReader->Decode(&bitmap, 0, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FX_WSTRC(L""));
-  return CFX_WideString::FromUTF8(retStr, retStr.GetLength());
+  return CFX_WideString::FromUTF8(retStr.AsByteStringC());
 }

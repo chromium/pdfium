@@ -372,13 +372,12 @@ CFX_WideString CFX_WideString::FromCodePage(const CFX_ByteString& str,
 }
 
 // static
-CFX_WideString CFX_WideString::FromUTF8(const char* str, FX_STRSIZE len) {
-  if (!str || 0 == len) {
+CFX_WideString CFX_WideString::FromUTF8(const CFX_ByteStringC& str) {
+  if (str.IsEmpty())
     return CFX_WideString();
-  }
 
   CFX_UTF8Decoder decoder;
-  for (FX_STRSIZE i = 0; i < len; i++) {
+  for (FX_STRSIZE i = 0; i < str.GetLength(); i++) {
     decoder.Input(str[i]);
   }
   return decoder.GetResult();

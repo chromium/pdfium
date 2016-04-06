@@ -784,8 +784,7 @@ FX_BOOL Document::info(IJS_Context* cc,
     for (const auto& it : *pDictionary) {
       const CFX_ByteString& bsKey = it.first;
       CPDF_Object* pValueObj = it.second;
-      CFX_WideString wsKey = CFX_WideString::FromUTF8(bsKey, bsKey.GetLength());
-
+      CFX_WideString wsKey = CFX_WideString::FromUTF8(bsKey.AsByteStringC());
       if (pValueObj->IsString() || pValueObj->IsName()) {
         FXJS_PutObjectString(isolate, pObj, wsKey.c_str(),
                              pValueObj->GetUnicodeText().c_str());
