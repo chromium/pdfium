@@ -7,9 +7,9 @@
 #ifndef CORE_FXCODEC_JBIG2_JBIG2_GRDPROC_H_
 #define CORE_FXCODEC_JBIG2_JBIG2_GRDPROC_H_
 
+#include "core/fxcodec/include/fx_codec_def.h"
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_system.h"
-#include "core/include/fxcodec/fx_codec_def.h"
 
 class CJBig2_ArithDecoder;
 class CJBig2_BitStream;

@@ -6,8 +6,8 @@
 
 #include "core/fxcodec/codec/fx_codec_progress.h"
 
+#include "core/fxcodec/include/fx_codec.h"
 #include "core/fxge/include/fx_dib.h"
-#include "core/include/fxcodec/fx_codec.h"
 
 void CFXCODEC_WeightTable::Calc(int dest_len,
                                 int dest_min,

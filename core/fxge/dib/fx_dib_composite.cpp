@@ -4,9 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "core/fxcodec/include/fx_codec.h"
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/include/fx_ge.h"
-#include "core/include/fxcodec/fx_codec.h"
 
 const uint8_t _color_sqrt[256] = {
     0x00, 0x03, 0x07, 0x0B, 0x0F, 0x12, 0x16, 0x19, 0x1D, 0x20, 0x23, 0x26,

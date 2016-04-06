@@ -8,10 +8,10 @@
 
 #include <algorithm>
 
+#include "core/fxcodec/include/fx_codec.h"
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/ge/fx_text_int.h"
 #include "core/fxge/include/fx_ge.h"
-#include "core/include/fxcodec/fx_codec.h"
 #include "third_party/agg23/agg_conv_dash.h"
 #include "third_party/agg23/agg_conv_stroke.h"
 #include "third_party/agg23/agg_curves.h"

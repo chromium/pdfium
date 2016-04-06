@@ -15,8 +15,8 @@
 #include "core/fpdfapi/fpdf_render/cpdf_pagerendercache.h"
 #include "core/fpdfapi/fpdf_render/render_int.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
+#include "core/fxcodec/include/fx_codec.h"
 #include "core/fxge/include/fx_dib.h"
-#include "core/include/fxcodec/fx_codec.h"
 
 CPDF_Image::CPDF_Image(CPDF_Document* pDoc)
     : m_pDIBSource(nullptr),

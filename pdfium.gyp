@@ -522,9 +522,9 @@
         'third_party/third_party.gyp:fx_zlib',
       ],
       'sources': [
-        'core/include/fxcodec/fx_codec.h',
-        'core/include/fxcodec/fx_codec_def.h',
-        'core/include/fxcodec/fx_codec_flate.h',
+        'core/fxcodec/include/fx_codec.h',
+        'core/fxcodec/include/fx_codec_def.h',
+        'core/fxcodec/include/fx_codec_flate.h',
         'core/fxcodec/codec/codec_int.h',
         'core/fxcodec/codec/fx_codec.cpp',
         'core/fxcodec/codec/fx_codec_fax.cpp',

@@ -7,7 +7,7 @@
 #include <list>
 
 #include "core/fxcodec/codec/codec_int.h"
-#include "core/include/fxcodec/fx_codec.h"
+#include "core/fxcodec/include/fx_codec.h"
 
 // Holds per-document JBig2 related data.
 class JBig2DocumentContext : public CFX_DestructObject {

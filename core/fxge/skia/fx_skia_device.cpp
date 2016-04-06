@@ -5,7 +5,7 @@
 #include "core/fxge/include/fx_ge.h"
 
 #if defined(_SKIA_SUPPORT_)
-#include "core/include/fxcodec/fx_codec.h"
+#include "core/fxcodec/include/fx_codec.h"
 
 #include "core/fpdfapi/fpdf_page/cpdf_shadingpattern.h"
 #include "core/fpdfapi/fpdf_page/pageint.h"

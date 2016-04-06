@@ -5,9 +5,9 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "core/fxcodec/codec/codec_int.h"
+#include "core/fxcodec/include/fx_codec.h"
 #include "core/fxcodec/lbmp/fx_bmp.h"
 #include "core/fxge/include/fx_dib.h"
-#include "core/include/fxcodec/fx_codec.h"
 struct FXBMP_Context {
   bmp_decompress_struct_p bmp_ptr;
   void* parent_ptr;

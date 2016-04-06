@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_INCLUDE_FXCODEC_FX_CODEC_H_
-#define CORE_INCLUDE_FXCODEC_FX_CODEC_H_
+#ifndef CORE_FXCODEC_INCLUDE_FX_CODEC_H_
+#define CORE_FXCODEC_INCLUDE_FX_CODEC_H_
 
 #include <map>
 #include <memory>
@@ -13,7 +13,7 @@
 
 #include "core/fxcrt/include/fx_basic.h"
 #include "core/fxcrt/include/fx_coordinates.h"  // For FX_RECT.
-#include "core/include/fxcodec/fx_codec_def.h"
+#include "core/fxcodec/include/fx_codec_def.h"
 
 class CFX_DIBSource;
 class CJPX_Decoder;
@@ -557,4 +557,4 @@ void FaxG4Decode(const uint8_t* src_buf,
                  int height,
                  int pitch);
 
-#endif  // CORE_INCLUDE_FXCODEC_FX_CODEC_H_
+#endif  // CORE_FXCODEC_INCLUDE_FX_CODEC_H_

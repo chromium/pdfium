@@ -7,7 +7,7 @@
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
 
 #include "core/fpdfapi/ipdf_rendermodule.h"
-#include "core/include/fxcodec/fx_codec.h"
+#include "core/fxcodec/include/fx_codec.h"
 
 namespace {
 

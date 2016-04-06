@@ -8,9 +8,9 @@
 
 #include <limits.h>
 
+#include "core/fxcodec/include/fx_codec.h"
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/include/fx_ge.h"
-#include "core/include/fxcodec/fx_codec.h"
 
 FX_BOOL ConvertBuffer(FXDIB_Format dest_format,
                       uint8_t* dest_buf,

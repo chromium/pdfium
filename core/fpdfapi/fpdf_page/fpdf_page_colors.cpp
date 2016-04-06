@@ -17,7 +17,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
-#include "core/include/fxcodec/fx_codec.h"
+#include "core/fxcodec/include/fx_codec.h"
 
 namespace {
 

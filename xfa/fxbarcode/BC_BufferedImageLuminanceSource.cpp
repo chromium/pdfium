@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-#include "core/include/fxcodec/fx_codec.h"
+#include "core/fxcodec/include/fx_codec.h"
 #include "xfa/fxbarcode/BC_BufferedImageLuminanceSource.h"
 #include "xfa/fxbarcode/BC_LuminanceSource.h"
 #include "xfa/fxbarcode/utils.h"

@@ -6,8 +6,8 @@
 
 #include "core/fxge/include/fx_ge.h"
 
+#include "core/fxcodec/include/fx_codec.h"
 #include "core/fxge/ge/fx_text_int.h"
-#include "core/include/fxcodec/fx_codec.h"
 
 struct PSGlyph {
   CFX_Font* m_pFont;

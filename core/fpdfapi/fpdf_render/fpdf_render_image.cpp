@@ -24,9 +24,9 @@
 #include "core/fpdfapi/fpdf_render/cpdf_pagerendercache.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_rendercontext.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
+#include "core/fxcodec/include/fx_codec.h"
 #include "core/fxcrt/include/fx_safe_types.h"
 #include "core/fxge/include/fx_ge.h"
-#include "core/include/fxcodec/fx_codec.h"
 
 FX_BOOL CPDF_RenderStatus::ProcessImage(const CPDF_ImageObject* pImageObj,
                                         const CFX_Matrix* pObj2Device) {
