@@ -16,7 +16,7 @@
 #include "fpdfsdk/include/fsdk_baseannot.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "xfa/include/fxfa/xfa_ffwidgethandler.h"
+#include "xfa/fxfa/include/xfa_ffwidgethandler.h"
 #endif  // PDF_ENABLE_XFA
 
 #if _FX_OS_ == _FX_ANDROID_

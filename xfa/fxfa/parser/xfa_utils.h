@@ -8,7 +8,7 @@
 #define XFA_FXFA_PARSER_XFA_UTILS_H_
 
 #include "xfa/fde/xml/fde_xml.h"
-#include "xfa/include/fxfa/fxfa_basic.h"
+#include "xfa/fxfa/include/fxfa_basic.h"
 
 class CFDE_XMLElement;
 class CFDE_XMLNode;

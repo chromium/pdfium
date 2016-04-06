@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_INCLUDE_FXFA_XFA_FFPAGEVIEW_H_
-#define XFA_INCLUDE_FXFA_XFA_FFPAGEVIEW_H_
+#ifndef XFA_FXFA_INCLUDE_XFA_FFPAGEVIEW_H_
+#define XFA_FXFA_INCLUDE_XFA_FFPAGEVIEW_H_
 
 #include "xfa/fxfa/parser/xfa_doclayout.h"
 
@@ -110,4 +110,4 @@ class CXFA_FFTabOrderPageWidgetIterator : public IXFA_WidgetIterator {
   FX_BOOL m_bIgnorerelevant;
 };
 
-#endif  // XFA_INCLUDE_FXFA_XFA_FFPAGEVIEW_H_
+#endif  // XFA_FXFA_INCLUDE_XFA_FFPAGEVIEW_H_

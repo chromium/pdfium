@@ -7,8 +7,8 @@
 #ifndef XFA_FXFA_APP_XFA_FFSUBFORM_H_
 #define XFA_FXFA_APP_XFA_FFSUBFORM_H_
 
-#include "xfa/include/fxfa/xfa_ffpageview.h"
-#include "xfa/include/fxfa/xfa_ffwidget.h"
+#include "xfa/fxfa/include/xfa_ffpageview.h"
+#include "xfa/fxfa/include/xfa_ffwidget.h"
 
 class CXFA_FFSubForm : public CXFA_FFWidget {
  public:

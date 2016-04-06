@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_INCLUDE_FXFA_XFA_FFAPP_H_
-#define XFA_INCLUDE_FXFA_XFA_FFAPP_H_
+#ifndef XFA_FXFA_INCLUDE_XFA_FFAPP_H_
+#define XFA_FXFA_INCLUDE_XFA_FFAPP_H_
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
@@ -13,7 +13,7 @@
 #include "xfa/fwl/core/fwl_sdadapterimp.h"
 #include "xfa/fwl/core/ifwl_adapternative.h"
 #include "xfa/fwl/core/ifwl_app.h"
-#include "xfa/include/fxfa/fxfa.h"
+#include "xfa/fxfa/include/fxfa.h"
 
 class CXFA_DefFontMgr;
 class CXFA_FWLAdapterWidgetMgr;
@@ -75,4 +75,4 @@ class CXFA_FFApp : public IFWL_AdapterNative {
   CFWL_SDAdapterThreadMgr* m_pAdapterThreadMgr;
 };
 
-#endif  // XFA_INCLUDE_FXFA_XFA_FFAPP_H_
+#endif  // XFA_FXFA_INCLUDE_XFA_FFAPP_H_

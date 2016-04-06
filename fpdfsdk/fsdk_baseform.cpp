@@ -27,7 +27,7 @@
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_doc.h"
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_util.h"
-#include "xfa/include/fxfa/xfa_ffwidget.h"
+#include "xfa/fxfa/include/xfa_ffwidget.h"
 #endif  // PDF_ENABLE_XFA
 
 CPDFSDK_Widget::CPDFSDK_Widget(CPDF_Annot* pAnnot,

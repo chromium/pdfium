@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_INCLUDE_FXFA_FXFA_WIDGET_H_
-#define XFA_INCLUDE_FXFA_FXFA_WIDGET_H_
+#ifndef XFA_FXFA_INCLUDE_FXFA_WIDGET_H_
+#define XFA_FXFA_INCLUDE_FXFA_WIDGET_H_
 
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxge/include/fx_dib.h"
@@ -125,4 +125,4 @@ class CXFA_WidgetAcc : public CXFA_WidgetData {
   uint32_t m_nRecursionDepth;
 };
 
-#endif  // XFA_INCLUDE_FXFA_FXFA_WIDGET_H_
+#endif  // XFA_FXFA_INCLUDE_FXFA_WIDGET_H_

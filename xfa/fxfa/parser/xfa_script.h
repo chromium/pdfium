@@ -7,7 +7,7 @@
 #ifndef XFA_FXFA_PARSER_XFA_SCRIPT_H_
 #define XFA_FXFA_PARSER_XFA_SCRIPT_H_
 
-#include "xfa/include/fxfa/fxfa.h"
+#include "xfa/fxfa/include/fxfa.h"
 
 #define XFA_RESOLVENODE_Children 0x0001
 #define XFA_RESOLVENODE_Attributes 0x0004

@@ -10,9 +10,9 @@
 #include <vector>
 
 #include "public/fpdfview.h"
-#include "xfa/include/fxfa/fxfa.h"
-#include "xfa/include/fxfa/xfa_ffdoc.h"
-#include "xfa/include/fxfa/xfa_ffdochandler.h"
+#include "xfa/fxfa/include/fxfa.h"
+#include "xfa/fxfa/include/xfa_ffdoc.h"
+#include "xfa/fxfa/include/xfa_ffdochandler.h"
 
 class CPDFXFA_App;
 class CPDFXFA_Document;

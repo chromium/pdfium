@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_INCLUDE_FXFA_XFA_FFDOCVIEW_H_
-#define XFA_INCLUDE_FXFA_XFA_FFDOCVIEW_H_
+#ifndef XFA_FXFA_INCLUDE_XFA_FFDOCVIEW_H_
+#define XFA_FXFA_INCLUDE_XFA_FFDOCVIEW_H_
 
-#include "xfa/include/fxfa/xfa_ffdoc.h"
+#include "xfa/fxfa/include/xfa_ffdoc.h"
 
 class CXFA_FFWidgetHandler;
 class CXFA_FFDoc;
@@ -169,4 +169,4 @@ class CXFA_WidgetAccIterator {
   CXFA_WidgetAcc* m_pCurWidgetAcc;
 };
 
-#endif  // XFA_INCLUDE_FXFA_XFA_FFDOCVIEW_H_
+#endif  // XFA_FXFA_INCLUDE_XFA_FFDOCVIEW_H_

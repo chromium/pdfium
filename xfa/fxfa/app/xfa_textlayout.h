@@ -11,8 +11,8 @@
 #include "xfa/fde/fde_brush.h"
 #include "xfa/fde/fde_renderdevice.h"
 #include "xfa/fgas/layout/fgas_rtfbreak.h"
+#include "xfa/fxfa/include/xfa_ffdoc.h"
 #include "xfa/fxfa/parser/xfa_object.h"
-#include "xfa/include/fxfa/xfa_ffdoc.h"
 
 #define XFA_LOADERCNTXTFLG_FILTERSPACE 0x001
 

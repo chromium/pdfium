@@ -6,10 +6,10 @@
 
 #include "xfa/fxfa/app/xfa_ffsubform.h"
 
-#include "xfa/include/fxfa/xfa_ffapp.h"
-#include "xfa/include/fxfa/xfa_ffdoc.h"
-#include "xfa/include/fxfa/xfa_ffpageview.h"
-#include "xfa/include/fxfa/xfa_ffwidget.h"
+#include "xfa/fxfa/include/xfa_ffapp.h"
+#include "xfa/fxfa/include/xfa_ffdoc.h"
+#include "xfa/fxfa/include/xfa_ffpageview.h"
+#include "xfa/fxfa/include/xfa_ffwidget.h"
 
 CXFA_FFSubForm::CXFA_FFSubForm(CXFA_FFPageView* pPageView,
                                CXFA_WidgetAcc* pDataAcc)

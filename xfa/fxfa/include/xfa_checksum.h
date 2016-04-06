@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_INCLUDE_FXFA_XFA_CHECKSUM_H_
-#define XFA_INCLUDE_FXFA_XFA_CHECKSUM_H_
+#ifndef XFA_FXFA_INCLUDE_XFA_CHECKSUM_H_
+#define XFA_FXFA_INCLUDE_XFA_CHECKSUM_H_
 
 #include "xfa/fgas/xml/fgas_sax.h"
-#include "xfa/include/fxfa/fxfa.h"
+#include "xfa/fxfa/include/fxfa.h"
 
 class CXFA_SAXReaderHandler;
 class CXFA_ChecksumContext;
@@ -71,4 +71,4 @@ class CXFA_ChecksumContext {
   CFX_ByteString m_bsChecksum;
 };
 
-#endif  // XFA_INCLUDE_FXFA_XFA_CHECKSUM_H_
+#endif  // XFA_FXFA_INCLUDE_XFA_CHECKSUM_H_

@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_INCLUDE_FXFA_FXFA_H_
-#define XFA_INCLUDE_FXFA_FXFA_H_
+#ifndef XFA_FXFA_INCLUDE_FXFA_H_
+#define XFA_FXFA_INCLUDE_FXFA_H_
 
 #include <vector>
 
-#include "xfa/include/fxfa/fxfa_basic.h"
-#include "xfa/include/fxfa/fxfa_widget.h"
+#include "xfa/fxfa/include/fxfa_basic.h"
+#include "xfa/fxfa/include/fxfa_widget.h"
 
 class CFX_Graphics;
 class CPDF_Document;
@@ -552,4 +552,4 @@ class IXFA_WidgetIterator {
   ~IXFA_WidgetIterator() {}
 };
 
-#endif  // XFA_INCLUDE_FXFA_FXFA_H_
+#endif  // XFA_FXFA_INCLUDE_FXFA_H_

@@ -4,15 +4,15 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_INCLUDE_FXFA_XFA_FONTMGR_H_
-#define XFA_INCLUDE_FXFA_XFA_FONTMGR_H_
+#ifndef XFA_FXFA_INCLUDE_XFA_FONTMGR_H_
+#define XFA_FXFA_INCLUDE_XFA_FONTMGR_H_
 
 #include <map>
 
 #include "core/fxcrt/include/fx_ext.h"
 #include "core/fxcrt/include/fx_system.h"
 #include "xfa/fgas/font/fgas_font.h"
-#include "xfa/include/fxfa/fxfa.h"
+#include "xfa/fxfa/include/fxfa.h"
 
 class CPDF_Font;
 
@@ -96,4 +96,4 @@ class CXFA_FontMgr {
   std::map<CFX_ByteString, IFX_Font*> m_FontMap;
 };
 
-#endif  //  XFA_INCLUDE_FXFA_XFA_FONTMGR_H_
+#endif  //  XFA_FXFA_INCLUDE_XFA_FONTMGR_H_

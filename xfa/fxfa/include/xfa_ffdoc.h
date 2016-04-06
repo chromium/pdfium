@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_INCLUDE_FXFA_XFA_FFDOC_H_
-#define XFA_INCLUDE_FXFA_XFA_FFDOC_H_
+#ifndef XFA_FXFA_INCLUDE_XFA_FFDOC_H_
+#define XFA_FXFA_INCLUDE_XFA_FFDOC_H_
 
+#include "xfa/fxfa/include/fxfa.h"
 #include "xfa/fxfa/parser/xfa_document.h"
-#include "xfa/include/fxfa/fxfa.h"
 
 class CXFA_ChecksumContext;
 class CXFA_FFApp;
@@ -62,4 +62,4 @@ class CXFA_FFDoc {
   FX_BOOL m_bOwnStream;
 };
 
-#endif  // XFA_INCLUDE_FXFA_XFA_FFDOC_H_
+#endif  // XFA_FXFA_INCLUDE_XFA_FFDOC_H_

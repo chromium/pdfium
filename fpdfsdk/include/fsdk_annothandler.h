@@ -14,10 +14,10 @@
 #include "core/fxcrt/include/fx_coordinates.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "xfa/include/fxfa/fxfa.h"
-#include "xfa/include/fxfa/xfa_ffdocview.h"
-#include "xfa/include/fxfa/xfa_ffpageview.h"
-#include "xfa/include/fxfa/xfa_ffwidgethandler.h"
+#include "xfa/fxfa/include/fxfa.h"
+#include "xfa/fxfa/include/xfa_ffdocview.h"
+#include "xfa/fxfa/include/xfa_ffpageview.h"
+#include "xfa/fxfa/include/xfa_ffwidgethandler.h"
 
 #define FSDK_XFAWIDGET_TYPENAME "XFAWidget"
 #endif  // PDF_ENABLE_XFA

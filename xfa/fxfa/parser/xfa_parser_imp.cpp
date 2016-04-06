@@ -9,6 +9,7 @@
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
 #include "xfa/fxfa/fm2js/xfa_fm2jsapi.h"
+#include "xfa/fxfa/include/xfa_checksum.h"
 #include "xfa/fxfa/parser/xfa_basic_imp.h"
 #include "xfa/fxfa/parser/xfa_docdata.h"
 #include "xfa/fxfa/parser/xfa_doclayout.h"
@@ -18,7 +19,6 @@
 #include "xfa/fxfa/parser/xfa_parser.h"
 #include "xfa/fxfa/parser/xfa_script.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
-#include "xfa/include/fxfa/xfa_checksum.h"
 
 IXFA_Parser* IXFA_Parser::Create(CXFA_Document* pFactory,
                                  FX_BOOL bDocumentParser) {

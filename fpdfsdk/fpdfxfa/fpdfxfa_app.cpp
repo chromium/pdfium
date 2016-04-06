@@ -11,8 +11,8 @@
 #include "fpdfsdk/include/fsdk_mgr.h"
 #include "public/fpdf_formfill.h"
 #include "xfa/fxbarcode/include/BC_Library.h"
-#include "xfa/include/fxfa/xfa_ffapp.h"
-#include "xfa/include/fxfa/xfa_fontmgr.h"
+#include "xfa/fxfa/include/xfa_ffapp.h"
+#include "xfa/fxfa/include/xfa_fontmgr.h"
 
 CPDFXFA_App* CPDFXFA_App::g_pApp = NULL;
 

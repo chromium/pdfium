@@ -9,7 +9,7 @@
 
 #include "core/fxcrt/include/fx_system.h"
 #include "core/fxge/include/fx_dib.h"
-#include "xfa/include/fxfa/fxfa_basic.h"
+#include "xfa/fxfa/include/fxfa_basic.h"
 
 class CXFA_Node;
 

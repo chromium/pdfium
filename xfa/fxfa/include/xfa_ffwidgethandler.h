@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef XFA_INCLUDE_FXFA_XFA_FFWIDGETHANDLER_H_
-#define XFA_INCLUDE_FXFA_XFA_FFWIDGETHANDLER_H_
+#ifndef XFA_FXFA_INCLUDE_XFA_FFWIDGETHANDLER_H_
+#define XFA_FXFA_INCLUDE_XFA_FFWIDGETHANDLER_H_
 
 #include <vector>
 
+#include "xfa/fxfa/include/fxfa.h"
 #include "xfa/fxfa/parser/xfa_document.h"
-#include "xfa/include/fxfa/fxfa.h"
 
 class CXFA_FFDocView;
 
@@ -124,4 +124,4 @@ class CXFA_FFWidgetHandler {
   CXFA_FFDocView* m_pDocView;
 };
 
-#endif  //  XFA_INCLUDE_FXFA_XFA_FFWIDGETHANDLER_H_
+#endif  //  XFA_FXFA_INCLUDE_XFA_FFWIDGETHANDLER_H_

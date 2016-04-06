@@ -7,7 +7,7 @@
 #ifndef FPDFSDK_FPDFXFA_INCLUDE_FPDFXFA_APP_H_
 #define FPDFSDK_FPDFXFA_INCLUDE_FPDFXFA_APP_H_
 
-#include "xfa/include/fxfa/fxfa.h"
+#include "xfa/fxfa/include/fxfa.h"
 
 class CPDFDoc_Environment;
 class IFXJS_Runtime;

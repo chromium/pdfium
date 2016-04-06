@@ -9,8 +9,8 @@
 
 #include "core/fxcrt/include/fx_system.h"
 #include "core/fxge/include/fx_dib.h"
+#include "xfa/fxfa/include/fxfa_basic.h"
 #include "xfa/fxfa/parser/cxfa_data.h"
-#include "xfa/include/fxfa/fxfa_basic.h"
 
 enum StrokeSameStyle {
   XFA_STROKE_SAMESTYLE_NoPresence = 1,
