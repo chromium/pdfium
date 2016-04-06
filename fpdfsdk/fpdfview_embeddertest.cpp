@@ -29,6 +29,36 @@ TEST_F(FPDFViewEmbeddertest, Document) {
   EXPECT_EQ(-1, FPDF_GetSecurityHandlerRevision(document()));
 }
 
+// See bug 465.
+TEST_F(FPDFViewEmbeddertest, EmptyDocument) {
+  EXPECT_TRUE(CreateEmptyDocument());
+
+  {
+    int version = 42;
+    EXPECT_FALSE(FPDF_GetFileVersion(document(), &version));
+    EXPECT_EQ(0, version);
+  }
+
+  {
+#ifndef PDF_ENABLE_XFA
+    const unsigned long kExpected = 0;
+#else
+    const unsigned long kExpected = static_cast<uint32_t>(-1);
+#endif
+    EXPECT_EQ(kExpected, FPDF_GetDocPermissions(document()));
+  }
+
+  EXPECT_EQ(-1, FPDF_GetSecurityHandlerRevision(document()));
+
+  EXPECT_EQ(0, FPDF_GetPageCount(document()));
+
+  EXPECT_TRUE(FPDF_VIEWERREF_GetPrintScaling(document()));
+  EXPECT_EQ(1, FPDF_VIEWERREF_GetNumCopies(document()));
+  EXPECT_EQ(DuplexUndefined, FPDF_VIEWERREF_GetDuplex(document()));
+
+  EXPECT_EQ(0, FPDF_CountNamedDests(document()));
+}
+
 TEST_F(FPDFViewEmbeddertest, Page) {
   EXPECT_TRUE(OpenDocument("about_blank.pdf"));
   FPDF_PAGE page = LoadPage(0);

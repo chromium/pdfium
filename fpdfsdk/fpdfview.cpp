@@ -463,7 +463,7 @@ DLLEXPORT FPDF_BOOL STDCALL FPDF_GetFileVersion(FPDF_DOCUMENT doc,
 // header).
 DLLEXPORT unsigned long STDCALL FPDF_GetDocPermissions(FPDF_DOCUMENT document) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc)
+  if (!pDoc || !pDoc->GetParser())
 #ifndef PDF_ENABLE_XFA
     return 0;
 #else   // PDF_ENABLE_XFA
@@ -476,7 +476,7 @@ DLLEXPORT unsigned long STDCALL FPDF_GetDocPermissions(FPDF_DOCUMENT document) {
 
 DLLEXPORT int STDCALL FPDF_GetSecurityHandlerRevision(FPDF_DOCUMENT document) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc)
+  if (!pDoc || !pDoc->GetParser())
     return -1;
 
   CPDF_Dictionary* pDict = pDoc->GetParser()->GetEncryptDict();
