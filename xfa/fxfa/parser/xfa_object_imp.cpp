@@ -12,6 +12,7 @@
 #include "xfa/fgas/crt/fgas_system.h"
 #include "xfa/fxfa/app/xfa_ffnotify.h"
 #include "xfa/fxfa/fm2js/xfa_fm2jsapi.h"
+#include "xfa/fxfa/parser/cxfa_occur.h"
 #include "xfa/fxfa/parser/xfa_basic_imp.h"
 #include "xfa/fxfa/parser/xfa_docdata.h"
 #include "xfa/fxfa/parser/xfa_doclayout.h"
@@ -2009,7 +2010,8 @@ void CXFA_Node::Script_Field_DefaultValue(FXJSE_HVALUE hValue,
       int32_t iFracDigits = 0;
       pWidgetData->GetLeadDigits(iLeadDigits);
       pWidgetData->GetFracDigits(iFracDigits);
-      wsNewText = XFA_NumericLimit(wsNewText, iLeadDigits, iFracDigits);
+      wsNewText =
+          pWidgetData->NumericLimit(wsNewText, iLeadDigits, iFracDigits);
     }
     CXFA_WidgetData* pContainerWidgetData = GetContainerWidgetData();
     CFX_WideString wsFormatText(wsNewText);

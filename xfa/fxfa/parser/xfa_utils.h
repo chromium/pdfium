@@ -14,6 +14,13 @@ class CFDE_XMLElement;
 class CFDE_XMLNode;
 class CXFA_LocaleValue;
 
+inline FX_BOOL XFA_IsSpace(FX_WCHAR c) {
+  return (c == 0x20) || (c == 0x0d) || (c == 0x0a) || (c == 0x09);
+}
+inline FX_BOOL XFA_IsDigit(FX_WCHAR c) {
+  return c >= '0' && c <= '9';
+}
+
 FX_BOOL XFA_FDEExtension_ResolveNamespaceQualifier(
     CFDE_XMLElement* pNode,
     const CFX_WideStringC& wsQualifier,
@@ -195,9 +202,6 @@ class CXFA_WidgetData;
 
 CXFA_Node* XFA_CreateUIChild(CXFA_Node* pNode, XFA_ELEMENT& eWidgetType);
 CXFA_LocaleValue XFA_GetLocaleValue(CXFA_WidgetData* pWidgetData);
-CFX_WideString XFA_NumericLimit(const CFX_WideString& wsValue,
-                                int32_t iLead,
-                                int32_t iTread);
 FX_DOUBLE XFA_WideStringToDouble(const CFX_WideString& wsStringVal);
 FX_DOUBLE XFA_ByteStringToDouble(const CFX_ByteStringC& szStringVal);
 int32_t XFA_MapRotation(int32_t nRotation);

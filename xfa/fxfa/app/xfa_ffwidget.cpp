@@ -11,6 +11,7 @@
 #include "core/fpdfapi/fpdf_page/include/cpdf_pageobjectholder.h"
 #include "core/include/fxcodec/fx_codec.h"
 #include "xfa/fxfa/app/xfa_textlayout.h"
+#include "xfa/fxfa/parser/cxfa_corner.h"
 #include "xfa/fxgraphics/cfx_color.h"
 #include "xfa/fxgraphics/cfx_path.h"
 #include "xfa/fxgraphics/cfx_pattern.h"

@@ -169,9 +169,6 @@ FX_CHAR* XFA_Base64Encode(const uint8_t* buf, int32_t buf_len);
 void XFA_RectWidthoutMargin(CFX_RectF& rt,
                             const CXFA_Margin& mg,
                             FX_BOOL bUI = FALSE);
-FX_FLOAT XFA_GetEdgeThickness(const CXFA_StrokeArray& strokes,
-                              FX_BOOL b3DStyle,
-                              int32_t nIndex);
 CXFA_FFWidget* XFA_GetWidgetFromLayoutItem(CXFA_LayoutItem* pLayoutItem);
 FX_BOOL XFA_IsCreateWidget(XFA_ELEMENT iType);
 #define XFA_DRAWBOX_ForceRound 1

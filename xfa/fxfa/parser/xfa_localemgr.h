@@ -10,7 +10,6 @@
 #include "xfa/fgas/localization/fgas_datetime.h"
 #include "xfa/fgas/localization/fgas_locale.h"
 #include "xfa/fxfa/parser/xfa_localemgr.h"
-#include "xfa/include/fxfa/fxfa_objectacc.h"
 
 class CXFA_Node;
 class IFX_Locale;

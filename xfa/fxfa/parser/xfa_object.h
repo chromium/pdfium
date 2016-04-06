@@ -87,6 +87,7 @@ class CXFA_Object {
   CXFA_Document* const m_pDocument;
   uint32_t m_uFlags;
 };
+using CXFA_ObjArray = CFX_ArrayTemplate<CXFA_Object*>;
 
 #define XFA_NODEFILTER_Children 0x01
 #define XFA_NODEFILTER_Properties 0x02

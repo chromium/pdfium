@@ -7,7 +7,15 @@
 #ifndef XFA_INCLUDE_FXFA_FXFA_WIDGET_H_
 #define XFA_INCLUDE_FXFA_FXFA_WIDGET_H_
 
-#include "xfa/include/fxfa/fxfa_objectacc.h"
+#include "core/fxcrt/include/fx_coordinates.h"
+#include "core/fxge/include/fx_dib.h"
+#include "xfa/fxfa/parser/cxfa_box.h"
+#include "xfa/fxfa/parser/cxfa_event.h"
+#include "xfa/fxfa/parser/cxfa_image.h"
+#include "xfa/fxfa/parser/cxfa_margin.h"
+#include "xfa/fxfa/parser/cxfa_script.h"
+#include "xfa/fxfa/parser/cxfa_value.h"
+#include "xfa/fxfa/parser/cxfa_widgetdata.h"
 
 class CXFA_Node;
 class CXFA_FFDocView;

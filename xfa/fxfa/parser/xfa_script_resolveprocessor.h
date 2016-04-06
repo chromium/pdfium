@@ -9,7 +9,6 @@
 
 #include "xfa/fxfa/parser/xfa_object.h"
 #include "xfa/fxfa/parser/xfa_script.h"
-#include "xfa/include/fxfa/fxfa_objectacc.h"
 
 class CXFA_NodeHelper;
 class CXFA_ScriptContext;
