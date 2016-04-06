@@ -11,17 +11,10 @@
 #include "fpdfsdk/pdfwindow/PWL_ListCtrl.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
-class IPWL_IconList_Notify;
 class CPWL_IconList_Item;
 class CPWL_IconList_Content;
 class CPWL_IconList;
 class CPWL_Label;
-
-class IPWL_IconList_Notify {
- public:
-  virtual ~IPWL_IconList_Notify() {}
-  virtual void OnNoteListSelChanged(int32_t nItemIndex) = 0;
-};
 
 class CPWL_IconList_Item : public CPWL_Wnd {
  public:
@@ -62,14 +55,11 @@ class CPWL_IconList_Content : public CPWL_ListCtrl {
 
   void SetSelect(int32_t nIndex);
   int32_t GetSelect() const;
-  void SetNotify(IPWL_IconList_Notify* pNotify);
-  void EnableNotify(FX_BOOL bNotify);
   void SetListData(int32_t nItemIndex, void* pData);
   void SetListIcon(int32_t nItemIndex, int32_t nIconIndex);
   void SetListString(int32_t nItemIndex, const CFX_WideString& str);
   void SetIconFillColor(const CPWL_Color& color);
   CFX_WideString GetListString(int32_t nItemIndex) const;
-  IPWL_IconList_Notify* GetNotify() const;
   void ScrollToItem(int32_t nItemIndex);
 
  protected:
@@ -86,8 +76,6 @@ class CPWL_IconList_Content : public CPWL_ListCtrl {
   int32_t FindItemIndex(const CFX_FloatPoint& point);
 
   int32_t m_nSelectIndex;
-  IPWL_IconList_Notify* m_pNotify;
-  FX_BOOL m_bEnableNotify;
   FX_BOOL m_bMouseDown;
   int32_t m_nListCount;
 };
@@ -100,8 +88,6 @@ class CPWL_IconList : public CPWL_Wnd {
   void SetSelect(int32_t nIndex);
   void SetTopItem(int32_t nIndex);
   int32_t GetSelect() const;
-  void SetNotify(IPWL_IconList_Notify* pNotify);
-  void EnableNotify(FX_BOOL bNotify);
   void SetListData(int32_t nItemIndex, void* pData);
   void SetListIcon(int32_t nItemIndex, int32_t nIconIndex);
   void SetListString(int32_t nItemIndex, const CFX_WideString& str);

@@ -129,8 +129,6 @@ void CPWL_IconList_Item::OnDisabled() {
 
 CPWL_IconList_Content::CPWL_IconList_Content(int32_t nListCount)
     : m_nSelectIndex(-1),
-      m_pNotify(NULL),
-      m_bEnableNotify(TRUE),
       m_bMouseDown(FALSE),
       m_nListCount(nListCount) {}
 
@@ -261,32 +259,16 @@ void CPWL_IconList_Content::ScrollToItem(int32_t nItemIndex) {
 }
 
 void CPWL_IconList_Content::SetSelect(int32_t nIndex) {
-  if (m_nSelectIndex != nIndex) {
-    SelectItem(m_nSelectIndex, FALSE);
-    SelectItem(nIndex, TRUE);
-    m_nSelectIndex = nIndex;
+  if (m_nSelectIndex == nIndex)
+    return;
 
-    if (IPWL_IconList_Notify* pNotify = GetNotify())
-      pNotify->OnNoteListSelChanged(nIndex);
-  }
+  SelectItem(m_nSelectIndex, FALSE);
+  SelectItem(nIndex, TRUE);
+  m_nSelectIndex = nIndex;
 }
 
 int32_t CPWL_IconList_Content::GetSelect() const {
   return m_nSelectIndex;
-}
-
-IPWL_IconList_Notify* CPWL_IconList_Content::GetNotify() const {
-  if (m_bEnableNotify)
-    return m_pNotify;
-  return NULL;
-}
-
-void CPWL_IconList_Content::SetNotify(IPWL_IconList_Notify* pNotify) {
-  m_pNotify = pNotify;
-}
-
-void CPWL_IconList_Content::EnableNotify(FX_BOOL bNotify) {
-  m_bEnableNotify = bNotify;
 }
 
 void CPWL_IconList_Content::SelectItem(int32_t nItemIndex, FX_BOOL bSelect) {
@@ -431,14 +413,6 @@ void CPWL_IconList::SetTopItem(int32_t nIndex) {
 
 int32_t CPWL_IconList::GetSelect() const {
   return m_pListContent->GetSelect();
-}
-
-void CPWL_IconList::SetNotify(IPWL_IconList_Notify* pNotify) {
-  m_pListContent->SetNotify(pNotify);
-}
-
-void CPWL_IconList::EnableNotify(FX_BOOL bNotify) {
-  m_pListContent->EnableNotify(bNotify);
 }
 
 void CPWL_IconList::SetListData(int32_t nItemIndex, void* pData) {
