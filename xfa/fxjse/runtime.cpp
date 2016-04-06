@@ -6,7 +6,7 @@
 
 #include "xfa/fxjse/runtime.h"
 
-#include "fpdfsdk/include/jsapi/fxjs_v8.h"
+#include "fpdfsdk/jsapi/include/fxjs_v8.h"
 #include "xfa/fxjse/scope_inline.h"
 
 // Duplicates fpdfsdk's cjs_runtime.h, but keeps XFA from depending on it.

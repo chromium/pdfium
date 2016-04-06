@@ -5,8 +5,8 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "core/fpdfdoc/include/cpdf_variabletext.h"
-#include "fpdfsdk/include/fxedit/fxet_edit.h"
-#include "fpdfsdk/include/fxedit/fxet_list.h"
+#include "fpdfsdk/fxedit/include/fxet_edit.h"
+#include "fpdfsdk/fxedit/include/fxet_list.h"
 
 IFX_Edit* IFX_Edit::NewEdit() {
   return new CFX_Edit(new CPDF_VariableText());

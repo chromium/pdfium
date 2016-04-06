@@ -4,12 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_FPDFXFA_FPDFXFA_UTIL_H_
-#define FPDFSDK_INCLUDE_FPDFXFA_FPDFXFA_UTIL_H_
+#ifndef FPDFSDK_FPDFXFA_INCLUDE_FPDFXFA_UTIL_H_
+#define FPDFSDK_FPDFXFA_INCLUDE_FPDFXFA_UTIL_H_
 
 #include <vector>
 
-#include "fpdfsdk/include/fpdfxfa/fpdfxfa_doc.h"
+#include "fpdfsdk/fpdfxfa/include/fpdfxfa_doc.h"
 #include "xfa/fwl/core/include/ifwl_adaptertimermgr.h"
 
 #define JS_STR_VIEWERTYPE_STANDARD L"Exchange"
@@ -44,4 +44,4 @@ struct CFWL_TimerInfo {
   IFWL_Timer* pTimer;
 };
 
-#endif  // FPDFSDK_INCLUDE_FPDFXFA_FPDFXFA_UTIL_H_
+#endif  // FPDFSDK_FPDFXFA_INCLUDE_FPDFXFA_UTIL_H_

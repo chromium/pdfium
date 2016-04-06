@@ -13,7 +13,6 @@
 #include "fpdfsdk/javascript/Document.h"
 #include "fpdfsdk/javascript/Field.h"
 #include "fpdfsdk/javascript/Icon.h"
-#include "fpdfsdk/javascript/cjs_context.h"
 #include "fpdfsdk/javascript/JS_Define.h"
 #include "fpdfsdk/javascript/JS_EventHandler.h"
 #include "fpdfsdk/javascript/JS_GlobalData.h"
@@ -21,6 +20,7 @@
 #include "fpdfsdk/javascript/JS_Value.h"
 #include "fpdfsdk/javascript/PublicMethods.h"
 #include "fpdfsdk/javascript/app.h"
+#include "fpdfsdk/javascript/cjs_context.h"
 #include "fpdfsdk/javascript/color.h"
 #include "fpdfsdk/javascript/console.h"
 #include "fpdfsdk/javascript/event.h"
@@ -30,7 +30,7 @@
 #include "third_party/base/stl_util.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/include/fpdfxfa/fpdfxfa_app.h"
+#include "fpdfsdk/fpdfxfa/include/fpdfxfa_app.h"
 #include "xfa/fxjse/value.h"
 #endif  // PDF_ENABLE_XFA
 

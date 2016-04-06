@@ -9,10 +9,10 @@
 
 #include <vector>
 
-#include "fpdfsdk/include/jsapi/fxjs_v8.h"
 #include "fpdfsdk/javascript/JS_Object.h"
 #include "fpdfsdk/javascript/JS_Value.h"
 #include "fpdfsdk/javascript/resource.h"
+#include "fpdfsdk/jsapi/include/fxjs_v8.h"
 
 struct JSConstSpec {
   const wchar_t* pName;

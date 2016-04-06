@@ -8,7 +8,7 @@
 #define FPDFSDK_PDFWINDOW_PWL_FONTMAP_H_
 
 #include "core/fpdfdoc/include/ipvt_fontmap.h"
-#include "fpdfsdk/include/fxedit/fx_edit.h"
+#include "fpdfsdk/fxedit/include/fx_edit.h"
 #include "public/fpdf_sysfontinfo.h"
 
 class CPDF_Document;

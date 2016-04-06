@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "fpdfsdk/include/fxedit/fxet_edit.h"
+#include "fpdfsdk/fxedit/include/fxet_edit.h"
 
 #include <algorithm>
 

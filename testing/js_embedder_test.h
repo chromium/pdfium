@@ -8,7 +8,7 @@
 #include <memory>
 #include <vector>
 
-#include "fpdfsdk/include/jsapi/fxjs_v8.h"
+#include "fpdfsdk/jsapi/include/fxjs_v8.h"
 #include "testing/embedder_test.h"
 
 class JSEmbedderTest : public EmbedderTest {

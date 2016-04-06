@@ -4,10 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef FPDFSDK_INCLUDE_FXEDIT_FXET_LIST_H_
-#define FPDFSDK_INCLUDE_FXEDIT_FXET_LIST_H_
+#ifndef FPDFSDK_FXEDIT_INCLUDE_FXET_LIST_H_
+#define FPDFSDK_FXEDIT_INCLUDE_FXET_LIST_H_
 
-#include "fpdfsdk/include/fxedit/fx_edit.h"
+#include "fpdfsdk/fxedit/include/fx_edit.h"
 
 class IFX_Edit;
 
@@ -340,4 +340,4 @@ class CFX_ListCtrl : public CFX_List {
   int32_t m_nCaretIndex;     // for multiple
 };
 
-#endif  // FPDFSDK_INCLUDE_FXEDIT_FXET_LIST_H_
+#endif  // FPDFSDK_FXEDIT_INCLUDE_FXET_LIST_H_

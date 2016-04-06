@@ -7,7 +7,7 @@
 #ifndef FPDFSDK_PDFWINDOW_PWL_LISTBOX_H_
 #define FPDFSDK_PDFWINDOW_PWL_LISTBOX_H_
 
-#include "fpdfsdk/include/fxedit/fx_edit.h"
+#include "fpdfsdk/fxedit/include/fx_edit.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
 class CPWL_List_Notify;

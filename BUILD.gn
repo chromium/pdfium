@@ -736,9 +736,9 @@ static_library("fxedit") {
     "fpdfsdk/fxedit/fxet_list.cpp",
     "fpdfsdk/fxedit/fxet_module.cpp",
     "fpdfsdk/fxedit/fxet_pageobjs.cpp",
-    "fpdfsdk/include/fxedit/fx_edit.h",
-    "fpdfsdk/include/fxedit/fxet_edit.h",
-    "fpdfsdk/include/fxedit/fxet_list.h",
+    "fpdfsdk/fxedit/include/fx_edit.h",
+    "fpdfsdk/fxedit/include/fxet_edit.h",
+    "fpdfsdk/fxedit/include/fxet_list.h",
   ]
   configs += [ ":pdfium_config" ]
 }
@@ -790,7 +790,6 @@ static_library("javascript") {
   ]
   if (pdf_enable_v8) {
     sources += [
-      "fpdfsdk/include/jsapi/fxjs_v8.h",
       "fpdfsdk/javascript/Consts.cpp",
       "fpdfsdk/javascript/Consts.h",
       "fpdfsdk/javascript/Document.cpp",
@@ -831,6 +830,7 @@ static_library("javascript") {
       "fpdfsdk/javascript/util.cpp",
       "fpdfsdk/javascript/util.h",
       "fpdfsdk/jsapi/fxjs_v8.cpp",
+      "fpdfsdk/jsapi/include/fxjs_v8.h",
     ]
     include_dirs = [
       "//v8",
@@ -877,10 +877,10 @@ if (pdf_enable_xfa) {
       "fpdfsdk/fpdfxfa/fpdfxfa_doc.cpp",
       "fpdfsdk/fpdfxfa/fpdfxfa_page.cpp",
       "fpdfsdk/fpdfxfa/fpdfxfa_util.cpp",
-      "fpdfsdk/include/fpdfxfa/fpdfxfa_app.h",
-      "fpdfsdk/include/fpdfxfa/fpdfxfa_doc.h",
-      "fpdfsdk/include/fpdfxfa/fpdfxfa_page.h",
-      "fpdfsdk/include/fpdfxfa/fpdfxfa_util.h",
+      "fpdfsdk/fpdfxfa/include/fpdfxfa_app.h",
+      "fpdfsdk/fpdfxfa/include/fpdfxfa_doc.h",
+      "fpdfsdk/fpdfxfa/include/fpdfxfa_page.h",
+      "fpdfsdk/fpdfxfa/include/fpdfxfa_util.h",
     ]
     deps = [
       ":xfa",

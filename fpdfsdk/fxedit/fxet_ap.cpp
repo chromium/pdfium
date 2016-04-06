@@ -8,8 +8,8 @@
 #include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
 #include "core/fpdfdoc/include/cpvt_word.h"
 #include "core/fpdfdoc/include/ipvt_fontmap.h"
-#include "fpdfsdk/include/fxedit/fx_edit.h"
-#include "fpdfsdk/include/fxedit/fxet_edit.h"
+#include "fpdfsdk/fxedit/include/fx_edit.h"
+#include "fpdfsdk/fxedit/include/fxet_edit.h"
 
 CFX_ByteString GetPDFWordString(IPVT_FontMap* pFontMap,
                                 int32_t nFontIndex,

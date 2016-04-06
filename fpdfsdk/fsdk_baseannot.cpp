@@ -16,7 +16,7 @@
 #include "fpdfsdk/include/fsdk_mgr.h"
 
 #ifdef PDF_ENABLE_XFA
-#include "fpdfsdk/include/fpdfxfa/fpdfxfa_doc.h"
+#include "fpdfsdk/fpdfxfa/include/fpdfxfa_doc.h"
 #endif  // PDF_ENABLE_XFA
 
 int gAfxGetTimeZoneInSeconds(int8_t tzhour, uint8_t tzminute) {

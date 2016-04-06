@@ -11,8 +11,8 @@
 // PDFium code should include this file rather than including V8 headers
 // directly.
 
-#ifndef FPDFSDK_INCLUDE_JSAPI_FXJS_V8_H_
-#define FPDFSDK_INCLUDE_JSAPI_FXJS_V8_H_
+#ifndef FPDFSDK_JSAPI_INCLUDE_FXJS_V8_H_
+#define FPDFSDK_JSAPI_INCLUDE_FXJS_V8_H_
 
 #include <v8-util.h>
 #include <v8.h>
@@ -114,7 +114,7 @@ class FXJS_PerIsolateData {
  protected:
 #ifndef PDF_ENABLE_XFA
   FXJS_PerIsolateData() : m_pDynamicObjsMap(nullptr) {}
-#else  // PDF_ENABLE_XFA
+#else   // PDF_ENABLE_XFA
   FXJS_PerIsolateData()
       : m_pFXJSERuntimeData(nullptr), m_pDynamicObjsMap(nullptr) {}
 #endif  // PDF_ENABLE_XFA
@@ -302,4 +302,4 @@ v8::Local<v8::Array> FXJS_ToArray(v8::Isolate* pIsolate,
                                   v8::Local<v8::Value> pValue);
 void FXJS_ValueCopy(v8::Local<v8::Value>& pTo, v8::Local<v8::Value> pFrom);
 
-#endif  // FPDFSDK_INCLUDE_JSAPI_FXJS_V8_H_
+#endif  // FPDFSDK_JSAPI_INCLUDE_FXJS_V8_H_
