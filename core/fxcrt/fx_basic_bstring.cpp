@@ -6,6 +6,7 @@
 
 #include <stddef.h>
 
+#include <algorithm>
 #include <cctype>
 
 #include "core/fxcrt/include/fx_basic.h"
@@ -46,6 +47,30 @@ int Buffer_itoa(char* buf, int i, uint32_t flags) {
     buf[ii] = buf1[ii + buf_pos + 1];
   }
   return len;
+}
+
+const FX_CHAR* FX_strstr(const FX_CHAR* haystack,
+                         int haystack_len,
+                         const FX_CHAR* needle,
+                         int needle_len) {
+  if (needle_len > haystack_len || needle_len == 0) {
+    return nullptr;
+  }
+  const FX_CHAR* end_ptr = haystack + haystack_len - needle_len;
+  while (haystack <= end_ptr) {
+    int i = 0;
+    while (1) {
+      if (haystack[i] != needle[i]) {
+        break;
+      }
+      i++;
+      if (i == needle_len) {
+        return haystack;
+      }
+    }
+    haystack++;
+  }
+  return nullptr;
 }
 
 }  // namespace
@@ -98,11 +123,12 @@ const CFX_ByteString& CFX_ByteString::operator=(const FX_CHAR* pStr) {
   return *this;
 }
 
-const CFX_ByteString& CFX_ByteString::operator=(const CFX_ByteStringC& str) {
-  if (str.IsEmpty())
+const CFX_ByteString& CFX_ByteString::operator=(
+    const CFX_ByteStringC& stringSrc) {
+  if (stringSrc.IsEmpty())
     clear();
   else
-    AssignCopy(str.c_str(), str.GetLength());
+    AssignCopy(stringSrc.c_str(), stringSrc.GetLength());
 
   return *this;
 }
@@ -317,9 +343,9 @@ FX_STRSIZE CFX_ByteString::Delete(FX_STRSIZE nIndex, FX_STRSIZE nCount) {
       return m_pData->m_nDataLength;
     }
     ReallocBeforeWrite(nOldLength);
-    int nBytesToCopy = nOldLength - mLength + 1;
+    int nCharsToCopy = nOldLength - mLength + 1;
     FXSYS_memmove(m_pData->m_String + nIndex, m_pData->m_String + mLength,
-                  nBytesToCopy);
+                  nCharsToCopy);
     m_pData->m_nDataLength = nOldLength - nCount;
   }
   return m_pData->m_nDataLength;
@@ -672,30 +698,6 @@ FX_STRSIZE CFX_ByteString::ReverseFind(FX_CHAR ch) const {
   return -1;
 }
 
-const FX_CHAR* FX_strstr(const FX_CHAR* str1,
-                         int len1,
-                         const FX_CHAR* str2,
-                         int len2) {
-  if (len2 > len1 || len2 == 0) {
-    return nullptr;
-  }
-  const FX_CHAR* end_ptr = str1 + len1 - len2;
-  while (str1 <= end_ptr) {
-    int i = 0;
-    while (1) {
-      if (str1[i] != str2[i]) {
-        break;
-      }
-      i++;
-      if (i == len2) {
-        return str1;
-      }
-    }
-    str1++;
-  }
-  return nullptr;
-}
-
 FX_STRSIZE CFX_ByteString::Find(const CFX_ByteStringC& pSub,
                                 FX_STRSIZE nStart) const {
   if (!m_pData)
@@ -848,6 +850,7 @@ int CFX_ByteString::Compare(const CFX_ByteStringC& str) const {
   }
   return 0;
 }
+
 void CFX_ByteString::TrimRight(const CFX_ByteStringC& pTargets) {
   if (!m_pData || pTargets.IsEmpty()) {
     return;
@@ -873,12 +876,15 @@ void CFX_ByteString::TrimRight(const CFX_ByteStringC& pTargets) {
     m_pData->m_nDataLength = pos;
   }
 }
+
 void CFX_ByteString::TrimRight(FX_CHAR chTarget) {
   TrimRight(CFX_ByteStringC(chTarget));
 }
+
 void CFX_ByteString::TrimRight() {
   TrimRight("\x09\x0a\x0b\x0c\x0d\x20");
 }
+
 void CFX_ByteString::TrimLeft(const CFX_ByteStringC& pTargets) {
   if (!m_pData || pTargets.IsEmpty())
     return;
@@ -906,12 +912,15 @@ void CFX_ByteString::TrimLeft(const CFX_ByteStringC& pTargets) {
     m_pData->m_nDataLength = nDataLength;
   }
 }
+
 void CFX_ByteString::TrimLeft(FX_CHAR chTarget) {
   TrimLeft(CFX_ByteStringC(chTarget));
 }
+
 void CFX_ByteString::TrimLeft() {
   TrimLeft("\x09\x0a\x0b\x0c\x0d\x20");
 }
+
 uint32_t CFX_ByteString::GetID(FX_STRSIZE start_pos) const {
   return CFX_ByteStringC(*this).GetID(start_pos);
 }

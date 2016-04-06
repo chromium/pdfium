@@ -192,7 +192,8 @@ FX_BOOL CFX_RenderDevice::DrawNormalText(int nChars,
       bool should_call_draw_device_text = true;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
       if ((text_flags & FXFONT_CIDFONT) ||
-          (pFont->GetPsName().Find(CFX_WideString::FromLocal("+ZJHL")) != -1) ||
+          (pFont->GetPsName().Find(
+               CFX_WideString::FromLocal("+ZJHL").AsWideStringC()) != -1) ||
           (pFont->GetPsName() == CFX_WideString::FromLocal("CNAAJI+cmex10"))) {
         should_call_draw_device_text = false;
       }

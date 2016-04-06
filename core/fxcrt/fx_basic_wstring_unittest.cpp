@@ -251,26 +251,26 @@ TEST(fxcrt, WideStringOperatorNE) {
 
 TEST(fxcrt, WideStringConcatInPlace) {
   CFX_WideString fred;
-  fred.ConcatInPlace(4, L"FRED");
+  fred.Concat(L"FRED", 4);
   EXPECT_EQ(L"FRED", fred);
 
-  fred.ConcatInPlace(2, L"DY");
+  fred.Concat(L"DY", 2);
   EXPECT_EQ(L"FREDDY", fred);
 
   fred.Delete(3, 3);
   EXPECT_EQ(L"FRE", fred);
 
-  fred.ConcatInPlace(1, L"D");
+  fred.Concat(L"D", 1);
   EXPECT_EQ(L"FRED", fred);
 
   CFX_WideString copy = fred;
-  fred.ConcatInPlace(2, L"DY");
+  fred.Concat(L"DY", 2);
   EXPECT_EQ(L"FREDDY", fred);
   EXPECT_EQ(L"FRED", copy);
 
   // Test invalid arguments.
   copy = fred;
-  fred.ConcatInPlace(-6, L"freddy");
+  fred.Concat(L"freddy", -6);
   CFX_WideString not_aliased(L"xxxxxx");
   EXPECT_EQ(L"FREDDY", fred);
   EXPECT_EQ(L"xxxxxx", not_aliased);

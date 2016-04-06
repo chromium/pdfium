@@ -482,16 +482,9 @@ class CFX_WideString {
  public:
   typedef FX_WCHAR value_type;
 
-  CFX_WideString() : m_pData(nullptr) {}
-
-  // Copy constructor.
-  CFX_WideString(const CFX_WideString& str);
-
-  // Move constructor.
-  CFX_WideString(CFX_WideString&& other) {
-    m_pData = other.m_pData;
-    other.m_pData = nullptr;
-  }
+  CFX_WideString() {}
+  CFX_WideString(const CFX_WideString& other) : m_pData(other.m_pData) {}
+  CFX_WideString(CFX_WideString&& other) { m_pData.Swap(other.m_pData); }
 
   CFX_WideString(const FX_WCHAR* ptr)
       : CFX_WideString(ptr, ptr ? FXSYS_wcslen(ptr) : 0) {}
@@ -527,9 +520,12 @@ class CFX_WideString {
     return CFX_WideStringC(c_str(), GetLength());
   }
 
-  void Empty();
-  bool IsEmpty() const { return !GetLength(); }
+  // Deprecated -- use clear().
+  void Empty() { m_pData.Reset(); }
+  void clear() { m_pData.Reset(); }
+
   FX_STRSIZE GetLength() const { return m_pData ? m_pData->m_nDataLength : 0; }
+  bool IsEmpty() const { return !GetLength(); }
 
   const CFX_WideString& operator=(const FX_WCHAR* str);
   const CFX_WideString& operator=(const CFX_WideString& stringSrc);
@@ -587,11 +583,11 @@ class CFX_WideString {
 
   void TrimRight();
   void TrimRight(FX_WCHAR chTarget);
-  void TrimRight(const FX_WCHAR* lpszTargets);
+  void TrimRight(const CFX_WideStringC& pTargets);
 
   void TrimLeft();
   void TrimLeft(FX_WCHAR chTarget);
-  void TrimLeft(const FX_WCHAR* lpszTargets);
+  void TrimLeft(const CFX_WideStringC& pTargets);
 
   void Reserve(FX_STRSIZE len);
   FX_WCHAR* GetBuffer(FX_STRSIZE len);
@@ -600,53 +596,26 @@ class CFX_WideString {
   int GetInteger() const;
   FX_FLOAT GetFloat() const;
 
-  FX_STRSIZE Find(const FX_WCHAR* lpszSub, FX_STRSIZE start = 0) const;
+  FX_STRSIZE Find(const CFX_WideStringC& pSub, FX_STRSIZE start = 0) const;
   FX_STRSIZE Find(FX_WCHAR ch, FX_STRSIZE start = 0) const;
-  FX_STRSIZE Replace(const FX_WCHAR* lpszOld, const FX_WCHAR* lpszNew);
+  FX_STRSIZE Replace(const CFX_WideStringC& pOld, const CFX_WideStringC& pNew);
   FX_STRSIZE Remove(FX_WCHAR ch);
 
   CFX_ByteString UTF8Encode() const;
   CFX_ByteString UTF16LE_Encode() const;
 
  protected:
-  class StringData {
-   public:
-    static StringData* Create(int nLen);
-    void Retain() { ++m_nRefs; }
-    void Release() {
-      if (--m_nRefs <= 0)
-        FX_Free(this);
-    }
+  using StringData = CFX_StringDataTemplate<FX_WCHAR>;
 
-    intptr_t m_nRefs;  // Would prefer ssize_t, but no windows support.
-    FX_STRSIZE m_nDataLength;
-    FX_STRSIZE m_nAllocLength;
-    FX_WCHAR m_String[1];
-
-   private:
-    StringData(FX_STRSIZE dataLen, FX_STRSIZE allocLen)
-        : m_nRefs(1), m_nDataLength(dataLen), m_nAllocLength(allocLen) {
-      FXSYS_assert(dataLen >= 0);
-      FXSYS_assert(allocLen >= 0);
-      FXSYS_assert(dataLen <= allocLen);
-      m_String[dataLen] = 0;
-    }
-    ~StringData() = delete;
-  };
-
-  void CopyBeforeWrite();
+  void ReallocBeforeWrite(FX_STRSIZE nLen);
   void AllocBeforeWrite(FX_STRSIZE nLen);
-  void ConcatInPlace(FX_STRSIZE nSrcLen, const FX_WCHAR* lpszSrcData);
-  void ConcatCopy(FX_STRSIZE nSrc1Len,
-                  const FX_WCHAR* lpszSrc1Data,
-                  FX_STRSIZE nSrc2Len,
-                  const FX_WCHAR* lpszSrc2Data);
-  void AssignCopy(FX_STRSIZE nSrcLen, const FX_WCHAR* lpszSrcData);
   void AllocCopy(CFX_WideString& dest,
                  FX_STRSIZE nCopyLen,
                  FX_STRSIZE nCopyIndex) const;
+  void AssignCopy(const FX_WCHAR* pSrcData, FX_STRSIZE nSrcLen);
+  void Concat(const FX_WCHAR* lpszSrcData, FX_STRSIZE nSrcLen);
 
-  StringData* m_pData;
+  CFX_RetainPtr<StringData> m_pData;
   friend class fxcrt_WideStringConcatInPlace_Test;
 };
 
