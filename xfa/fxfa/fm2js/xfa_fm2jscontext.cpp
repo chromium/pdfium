@@ -4270,7 +4270,7 @@ void CXFA_FM2JSContext::EncodeXML(const CFX_ByteStringC& szXMLString,
 FX_BOOL CXFA_FM2JSContext::HTMLSTR2Code(const CFX_WideStringC& pData,
                                         uint32_t& iCode) {
   int32_t iLength = pData.GetLength();
-  uint32_t uHash = FX_HashCode_String_GetW(pData.raw_str(), iLength);
+  uint32_t uHash = FX_HashCode_String_GetW(pData.c_str(), iLength);
   XFA_FMHtmlHashedReserveCode htmlhashedreservecode;
   int32_t iStart = 0,
           iEnd = (sizeof(reservesForDecode) / sizeof(reservesForDecode[0])) - 1;

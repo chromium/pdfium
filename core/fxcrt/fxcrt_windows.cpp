@@ -61,7 +61,7 @@ FX_BOOL CFXCRT_FileAccess_Win64::Open(const CFX_WideStringC& fileName,
   }
   uint32_t dwAccess, dwShare, dwCreation;
   FXCRT_Windows_GetFileMode(dwMode, dwAccess, dwShare, dwCreation);
-  m_hFile = ::CreateFileW((LPCWSTR)fileName.raw_str(), dwAccess, dwShare, NULL,
+  m_hFile = ::CreateFileW((LPCWSTR)fileName.c_str(), dwAccess, dwShare, NULL,
                           dwCreation, FILE_ATTRIBUTE_NORMAL, NULL);
   if (m_hFile == INVALID_HANDLE_VALUE) {
     m_hFile = NULL;

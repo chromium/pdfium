@@ -404,7 +404,7 @@ static CXFA_Node* XFA_DataMerge_FindGlobalDataNode(CXFA_Document* pDocument,
                                                    CXFA_Node* pDataScope,
                                                    XFA_ELEMENT eMatchNodeType) {
   uint32_t dwNameHash =
-      wsName.IsEmpty() ? 0 : FX_HashCode_String_GetW(wsName.raw_str(),
+      wsName.IsEmpty() ? 0 : FX_HashCode_String_GetW(wsName.c_str(),
                                                      wsName.GetLength());
   if (dwNameHash != 0) {
     CXFA_Node* pBounded = XFA_DataMerge_GetGlobalBinding(pDocument, dwNameHash);
@@ -424,7 +424,7 @@ static CXFA_Node* XFA_DataMerge_FindOnceDataNode(CXFA_Document* pDocument,
                                                  CXFA_Node* pDataScope,
                                                  XFA_ELEMENT eMatchNodeType) {
   uint32_t dwNameHash =
-      wsName.IsEmpty() ? 0 : FX_HashCode_String_GetW(wsName.raw_str(),
+      wsName.IsEmpty() ? 0 : FX_HashCode_String_GetW(wsName.c_str(),
                                                      wsName.GetLength());
   if (dwNameHash != 0) {
     for (CXFA_Node *pCurDataScope = pDataScope, *pLastDataScope = NULL;

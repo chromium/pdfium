@@ -738,7 +738,7 @@ void CPDFXFA_Document::GotoURL(CXFA_FFDoc* hDoc,
   if (pEnv == NULL)
     return;
 
-  CFX_WideStringC str(bsURL.raw_str());
+  CFX_WideStringC str(bsURL.c_str());
 
   pEnv->FFI_GotoURL(this, str, bAppend);
 }

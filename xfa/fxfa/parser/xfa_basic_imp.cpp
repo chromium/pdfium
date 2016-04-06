@@ -26,7 +26,7 @@ const XFA_PACKETINFO* XFA_GetPacketByName(const CFX_WideStringC& wsName) {
   if (iLength == 0) {
     return NULL;
   }
-  uint32_t uHash = FX_HashCode_String_GetW(wsName.raw_str(), iLength);
+  uint32_t uHash = FX_HashCode_String_GetW(wsName.c_str(), iLength);
   int32_t iStart = 0, iEnd = g_iXFAPacketCount - 1;
   do {
     int32_t iMid = (iStart + iEnd) / 2;
@@ -68,7 +68,7 @@ const XFA_ATTRIBUTEENUMINFO* XFA_GetAttributeEnumByName(
   if (iLength == 0) {
     return NULL;
   }
-  uint32_t uHash = FX_HashCode_String_GetW(wsName.raw_str(), iLength);
+  uint32_t uHash = FX_HashCode_String_GetW(wsName.c_str(), iLength);
   int32_t iStart = 0, iEnd = g_iXFAEnumCount - 1;
   do {
     int32_t iMid = (iStart + iEnd) / 2;
@@ -94,7 +94,7 @@ const XFA_ATTRIBUTEINFO* XFA_GetAttributeByName(const CFX_WideStringC& wsName) {
   if (iLength == 0) {
     return NULL;
   }
-  uint32_t uHash = FX_HashCode_String_GetW(wsName.raw_str(), iLength);
+  uint32_t uHash = FX_HashCode_String_GetW(wsName.c_str(), iLength);
   int32_t iStart = 0, iEnd = g_iXFAAttributeCount - 1;
   do {
     int32_t iMid = (iStart + iEnd) / 2;
@@ -195,7 +195,7 @@ const XFA_ELEMENTINFO* XFA_GetElementByName(const CFX_WideStringC& wsName) {
   if (iLength == 0) {
     return NULL;
   }
-  uint32_t uHash = FX_HashCode_String_GetW(wsName.raw_str(), iLength);
+  uint32_t uHash = FX_HashCode_String_GetW(wsName.c_str(), iLength);
   int32_t iStart = 0, iEnd = g_iXFAElementCount - 1;
   do {
     int32_t iMid = (iStart + iEnd) / 2;
@@ -380,7 +380,7 @@ const XFA_METHODINFO* XFA_GetMethodByName(XFA_ELEMENT eElement,
       iElementIndex = scriptIndex->wParentIndex;
       continue;
     }
-    uint32_t uHash = FX_HashCode_String_GetW(wsMethodName.raw_str(), iLength);
+    uint32_t uHash = FX_HashCode_String_GetW(wsMethodName.c_str(), iLength);
     int32_t iStart = scriptIndex->wMethodStart, iEnd = iStart + icount - 1;
     do {
       int32_t iMid = (iStart + iEnd) / 2;
@@ -412,8 +412,7 @@ const XFA_SCRIPTATTRIBUTEINFO* XFA_GetScriptAttributeByName(
       iElementIndex = scriptIndex->wParentIndex;
       continue;
     }
-    uint32_t uHash =
-        FX_HashCode_String_GetW(wsAttributeName.raw_str(), iLength);
+    uint32_t uHash = FX_HashCode_String_GetW(wsAttributeName.c_str(), iLength);
     int32_t iStart = scriptIndex->wAttributeStart, iEnd = iStart + icount - 1;
     do {
       int32_t iMid = (iStart + iEnd) / 2;
@@ -438,7 +437,7 @@ void CXFA_Measurement::Set(const CFX_WideStringC& wsMeasure) {
   }
   int32_t iUsedLen = 0;
   int32_t iOffset = (wsMeasure.GetAt(0) == L'=') ? 1 : 0;
-  FX_FLOAT fValue = FX_wcstof(wsMeasure.raw_str() + iOffset,
+  FX_FLOAT fValue = FX_wcstof(wsMeasure.c_str() + iOffset,
                               wsMeasure.GetLength() - iOffset, &iUsedLen);
   XFA_UNIT eUnit = GetUnit(wsMeasure.Mid(iOffset + iUsedLen));
   Set(fValue, eUnit);

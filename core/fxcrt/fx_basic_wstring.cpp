@@ -103,7 +103,7 @@ CFX_WideString::CFX_WideString(const CFX_WideStringC& str) {
   }
   m_pData = StringData::Create(str.GetLength());
   if (m_pData) {
-    FXSYS_memcpy(m_pData->m_String, str.raw_str(),
+    FXSYS_memcpy(m_pData->m_String, str.c_str(),
                  str.GetLength() * sizeof(FX_WCHAR));
   }
 }
@@ -116,9 +116,9 @@ CFX_WideString::CFX_WideString(const CFX_WideStringC& str1,
   }
   m_pData = StringData::Create(nNewLen);
   if (m_pData) {
-    FXSYS_memcpy(m_pData->m_String, str1.raw_str(),
+    FXSYS_memcpy(m_pData->m_String, str1.c_str(),
                  str1.GetLength() * sizeof(FX_WCHAR));
-    FXSYS_memcpy(m_pData->m_String + str1.GetLength(), str2.raw_str(),
+    FXSYS_memcpy(m_pData->m_String + str1.GetLength(), str2.c_str(),
                  str2.GetLength() * sizeof(FX_WCHAR));
   }
 }
@@ -151,7 +151,7 @@ const CFX_WideString& CFX_WideString::operator=(
   if (stringSrc.IsEmpty()) {
     Empty();
   } else {
-    AssignCopy(stringSrc.GetLength(), stringSrc.raw_str());
+    AssignCopy(stringSrc.GetLength(), stringSrc.c_str());
   }
   return *this;
 }
@@ -195,7 +195,7 @@ const CFX_WideString& CFX_WideString::operator+=(const CFX_WideStringC& str) {
   if (str.IsEmpty()) {
     return *this;
   }
-  ConcatInPlace(str.GetLength(), str.raw_str());
+  ConcatInPlace(str.GetLength(), str.c_str());
   return *this;
 }
 bool CFX_WideString::operator==(const wchar_t* ptr) const {
@@ -213,7 +213,7 @@ bool CFX_WideString::operator==(const CFX_WideStringC& str) const {
     return str.IsEmpty();
 
   return str.GetLength() == m_pData->m_nDataLength &&
-         wmemcmp(str.raw_str(), m_pData->m_String, m_pData->m_nDataLength) == 0;
+         wmemcmp(str.c_str(), m_pData->m_String, m_pData->m_nDataLength) == 0;
 }
 bool CFX_WideString::operator==(const CFX_WideString& other) const {
   if (IsEmpty())

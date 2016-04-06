@@ -437,7 +437,7 @@ void CFDE_CSSStyleSelector::ComputeStyle(
     do {
       pTag->GetNextAttribute(pos, wsAttri, wsValue);
       dwAttriHash =
-          FX_HashCode_String_GetW(wsAttri.raw_str(), wsAttri.GetLength(), TRUE);
+          FX_HashCode_String_GetW(wsAttri.c_str(), wsAttri.GetLength(), TRUE);
       static const uint32_t s_dwStyleHash =
           FX_HashCode_String_GetW(L"style", 5, TRUE);
       static const uint32_t s_dwAlignHash =
@@ -446,7 +446,7 @@ void CFDE_CSSStyleSelector::ComputeStyle(
         if (pDecl == NULL) {
           pDecl = FXTARGET_NewWith(m_pInlineStyleStore) CFDE_CSSDeclaration;
         }
-        AppendInlineStyle(pDecl, wsValue.raw_str(), wsValue.GetLength());
+        AppendInlineStyle(pDecl, wsValue.c_str(), wsValue.GetLength());
       } else if (dwAttriHash == s_dwAlignHash) {
         if (pDecl == NULL) {
           pDecl = FXTARGET_NewWith(m_pInlineStyleStore) CFDE_CSSDeclaration;
@@ -455,7 +455,7 @@ void CFDE_CSSStyleSelector::ComputeStyle(
         args.pStringCache = NULL;
         args.pStaticStore = m_pInlineStyleStore;
         args.pProperty = FDE_GetCSSPropertyByEnum(FDE_CSSPROPERTY_TextAlign);
-        pDecl->AddProperty(&args, wsValue.raw_str(), wsValue.GetLength());
+        pDecl->AddProperty(&args, wsValue.c_str(), wsValue.GetLength());
       }
     } while (pos != NULL);
     if (pDecl != NULL) {

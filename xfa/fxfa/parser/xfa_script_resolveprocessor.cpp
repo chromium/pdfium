@@ -538,7 +538,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_GetFilter(
   int32_t nConditionCount = 0;
   CFX_Int32Array stack;
   int32_t nType = -1;
-  const FX_WCHAR* pSrc = wsExpression.raw_str();
+  const FX_WCHAR* pSrc = wsExpression.c_str();
   FX_WCHAR wPrev = 0, wCur;
   FX_BOOL bIsCondition = FALSE;
   while (nStart < iLength) {

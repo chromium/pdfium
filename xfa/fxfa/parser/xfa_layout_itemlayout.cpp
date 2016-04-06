@@ -1380,7 +1380,7 @@ void CXFA_ItemLayoutProcessor::DoLayoutTableContainer(CXFA_Node* pLayoutNode) {
   CFX_WideStringC wsColumnWidths;
   if (pLayoutNode->TryCData(XFA_ATTRIBUTE_ColumnWidths, wsColumnWidths)) {
     CFX_WideStringArray widths;
-    if (FX_SeparateStringW(wsColumnWidths.raw_str(), wsColumnWidths.GetLength(),
+    if (FX_SeparateStringW(wsColumnWidths.c_str(), wsColumnWidths.GetLength(),
                            L' ', widths) > 0) {
       int32_t iCols = widths.GetSize();
       CFX_WideString wsWidth;

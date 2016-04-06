@@ -24,7 +24,7 @@ static FX_ARGB XFA_WStringToColor(const CFX_WideStringC& wsValue) {
     return 0xff000000;
   }
   int cc = 0;
-  const FX_WCHAR* str = wsValue.raw_str();
+  const FX_WCHAR* str = wsValue.c_str();
   int len = wsValue.GetLength();
   while (XFA_IsSpace(str[cc]) && cc < len) {
     cc++;
@@ -1239,7 +1239,7 @@ CXFA_Node* CXFA_WidgetData::SetSelectedMember(const CFX_WideStringC& wsName,
                                               FX_BOOL bNotify) {
   CXFA_Node* pSelectedMember = NULL;
   uint32_t nameHash =
-      FX_HashCode_String_GetW(wsName.raw_str(), wsName.GetLength());
+      FX_HashCode_String_GetW(wsName.c_str(), wsName.GetLength());
   for (CXFA_Node* pNode = ToNode(m_pNode->GetNodeItem(XFA_NODEITEM_FirstChild));
        pNode; pNode = pNode->GetNodeItem(XFA_NODEITEM_NextSibling)) {
     if (pNode->GetNameHash() == nameHash) {

@@ -96,7 +96,7 @@ FX_BOOL CXFA_ScriptContext::RunScript(XFA_SCRIPTLANGTYPE eScriptType,
     btScript =
         FX_UTF8Encode(wsJavaScript.GetBuffer(), wsJavaScript.GetLength());
   } else {
-    btScript = FX_UTF8Encode(wsScript.raw_str(), wsScript.GetLength());
+    btScript = FX_UTF8Encode(wsScript.c_str(), wsScript.GetLength());
   }
   CXFA_Object* pOriginalObject = m_pThisObject;
   m_pThisObject = pThisObject;
@@ -466,7 +466,7 @@ FX_BOOL CXFA_ScriptContext::RunVariablesScript(CXFA_Node* pScriptNode) {
       return FALSE;
     }
     CFX_ByteString btScript =
-        FX_UTF8Encode(wsScript.raw_str(), wsScript.GetLength());
+        FX_UTF8Encode(wsScript.c_str(), wsScript.GetLength());
     FXJSE_HVALUE hRetValue = FXJSE_Value_Create(m_hJsRuntime);
     CXFA_Node* pThisObject = pParent->GetNodeItem(XFA_NODEITEM_Parent);
     FXJSE_HCONTEXT hVariablesContext =

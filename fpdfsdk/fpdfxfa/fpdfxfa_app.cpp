@@ -169,7 +169,7 @@ int32_t CPDFXFA_App::MsgBox(const CFX_WideStringC& wsMessage,
       iButtonType |= 3;
       break;
   }
-  int32_t iRet = pEnv->JS_appAlert(wsMessage.raw_str(), wsTitle.raw_str(),
+  int32_t iRet = pEnv->JS_appAlert(wsMessage.c_str(), wsTitle.c_str(),
                                    iButtonType, iconType);
   switch (iRet) {
     case 1:
@@ -193,9 +193,9 @@ void CPDFXFA_App::Response(CFX_WideString& wsAnswer,
   if (pEnv) {
     int nLength = 2048;
     char* pBuff = new char[nLength];
-    nLength = pEnv->JS_appResponse(wsQuestion.raw_str(), wsTitle.raw_str(),
-                                   wsDefaultAnswer.raw_str(), NULL, bMark,
-                                   pBuff, nLength);
+    nLength = pEnv->JS_appResponse(wsQuestion.c_str(), wsTitle.c_str(),
+                                   wsDefaultAnswer.c_str(), NULL, bMark, pBuff,
+                                   nLength);
     if (nLength > 0) {
       nLength = nLength > 2046 ? 2046 : nLength;
       pBuff[nLength] = 0;
@@ -228,7 +228,7 @@ int32_t CPDFXFA_App::GetDocumentCountInBatch() {
 IFX_FileRead* CPDFXFA_App::DownloadURL(const CFX_WideStringC& wsURL) {
   CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
   if (pEnv) {
-    return pEnv->FFI_DownloadFromURL(wsURL.raw_str());
+    return pEnv->FFI_DownloadFromURL(wsURL.c_str());
   }
   return NULL;
 }
@@ -241,9 +241,9 @@ FX_BOOL CPDFXFA_App::PostRequestURL(const CFX_WideStringC& wsURL,
                                     CFX_WideString& wsResponse) {
   CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
   if (pEnv) {
-    wsResponse = pEnv->FFI_PostRequestURL(
-        wsURL.raw_str(), wsData.raw_str(), wsContentType.raw_str(),
-        wsEncode.raw_str(), wsHeader.raw_str());
+    wsResponse = pEnv->FFI_PostRequestURL(wsURL.c_str(), wsData.c_str(),
+                                          wsContentType.c_str(),
+                                          wsEncode.c_str(), wsHeader.c_str());
     return TRUE;
   }
   return FALSE;
@@ -254,8 +254,8 @@ FX_BOOL CPDFXFA_App::PutRequestURL(const CFX_WideStringC& wsURL,
                                    const CFX_WideStringC& wsEncode) {
   CPDFDoc_Environment* pEnv = m_pEnvList.GetAt(0);
   if (pEnv) {
-    return pEnv->FFI_PutRequestURL(wsURL.raw_str(), wsData.raw_str(),
-                                   wsEncode.raw_str());
+    return pEnv->FFI_PutRequestURL(wsURL.c_str(), wsData.c_str(),
+                                   wsEncode.c_str());
   }
   return FALSE;
 }
