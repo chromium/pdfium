@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "core/include/fpdfdoc/fpdf_doc.h"
+#include "core/fpdfdoc/include/fpdf_doc.h"
 
 #include <memory>
 #include <vector>

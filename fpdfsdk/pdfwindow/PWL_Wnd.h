@@ -9,8 +9,8 @@
 
 #include <vector>
 
+#include "core/fpdfdoc/include/fpdf_doc.h"
 #include "core/fxcrt/include/fx_basic.h"
-#include "core/include/fpdfdoc/fpdf_doc.h"
 #include "fpdfsdk/include/fx_systemhandler.h"
 
 class CPWL_MsgControl;

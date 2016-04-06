@@ -13,7 +13,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
 #include "core/fpdfdoc/doc_utils.h"
-#include "core/include/fpdfdoc/fpdf_doc.h"
+#include "core/fpdfdoc/include/fpdf_doc.h"
 #include "third_party/base/stl_util.h"
 
 namespace {

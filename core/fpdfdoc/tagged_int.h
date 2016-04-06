@@ -9,7 +9,7 @@
 
 #include <map>
 
-#include "core/include/fpdfdoc/fpdf_tagged.h"
+#include "core/fpdfdoc/include/fpdf_tagged.h"
 
 class CPDF_StructElementImpl;
 

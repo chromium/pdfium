@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/include/fpdfdoc/fpdf_doc.h"
+#include "core/fpdfdoc/include/fpdf_doc.h"
 
 #include <vector>
 

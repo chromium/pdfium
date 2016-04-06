@@ -232,11 +232,11 @@ static_library("fpdfdoc") {
     "core/fpdfdoc/include/cpvt_wordplace.h",
     "core/fpdfdoc/include/cpvt_wordprops.h",
     "core/fpdfdoc/include/cpvt_wordrange.h",
+    "core/fpdfdoc/include/fpdf_doc.h",
+    "core/fpdfdoc/include/fpdf_tagged.h",
     "core/fpdfdoc/ipvt_fontmap.h",
     "core/fpdfdoc/pdf_vt.h",
     "core/fpdfdoc/tagged_int.h",
-    "core/include/fpdfdoc/fpdf_doc.h",
-    "core/include/fpdfdoc/fpdf_tagged.h",
   ]
   configs += [ ":pdfium_config" ]
 }

@@ -12,8 +12,8 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_reference.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
 #include "core/fpdfdoc/doc_utils.h"
+#include "core/fpdfdoc/include/fpdf_tagged.h"
 #include "core/fpdfdoc/tagged_int.h"
-#include "core/include/fpdfdoc/fpdf_tagged.h"
 
 const int nMaxRecursion = 32;
 static FX_BOOL IsTagged(const CPDF_Document* pDoc) {

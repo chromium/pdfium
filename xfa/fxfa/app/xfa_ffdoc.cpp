@@ -8,9 +8,9 @@
 
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/fpdfdoc/include/fpdf_doc.h"
 #include "core/fxcrt/include/fx_ext.h"
 #include "core/fxcrt/include/fx_memory.h"
-#include "core/include/fpdfdoc/fpdf_doc.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fgas/crt/fgas_algorithm.h"
 #include "xfa/fwl/core/ifwl_notedriver.h"

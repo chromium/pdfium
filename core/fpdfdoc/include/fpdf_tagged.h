@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_INCLUDE_FPDFDOC_FPDF_TAGGED_H_
-#define CORE_INCLUDE_FPDFDOC_FPDF_TAGGED_H_
+#ifndef CORE_FPDFDOC_INCLUDE_FPDF_TAGGED_H_
+#define CORE_FPDFDOC_INCLUDE_FPDF_TAGGED_H_
 
 #include "core/fxge/include/fx_dib.h"
 
@@ -101,4 +101,4 @@ class CPDF_StructElement {
                          int subindex = -1) = 0;
 };
 
-#endif  // CORE_INCLUDE_FPDFDOC_FPDF_TAGGED_H_
+#endif  // CORE_FPDFDOC_INCLUDE_FPDF_TAGGED_H_

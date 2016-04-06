@@ -10,8 +10,8 @@
 #include <memory>
 #include <set>
 
+#include "core/fpdfdoc/include/fpdf_doc.h"
 #include "core/fxcrt/include/fx_string.h"
-#include "core/include/fpdfdoc/fpdf_doc.h"
 #include "fpdfsdk/include/fsdk_baseform.h"
 
 class CPDFSDK_Annot;

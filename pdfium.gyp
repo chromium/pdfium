@@ -219,8 +219,8 @@
       'target_name': 'fpdfdoc',
       'type': 'static_library',
       'sources': [
-        'core/include/fpdfdoc/fpdf_doc.h',
-        'core/include/fpdfdoc/fpdf_tagged.h',
+        'core/fpdfdoc/include/fpdf_doc.h',
+        'core/fpdfdoc/include/fpdf_tagged.h',
         'core/fpdfdoc/cpdf_variabletext.cpp',
         'core/fpdfdoc/cpvt_color.cpp',
         'core/fpdfdoc/cpvt_color.h',

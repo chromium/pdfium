@@ -13,8 +13,8 @@
 #include <ctime>
 #endif
 
+#include "core/fpdfdoc/include/fpdf_doc.h"
 #include "core/fxcrt/include/fx_basic.h"
-#include "core/include/fpdfdoc/fpdf_doc.h"
 #include "fpdfsdk/include/fsdk_define.h"
 #include "fpdfsdk/include/fx_systemhandler.h"
 

@@ -3,4 +3,5 @@ include_rules = [
   '+core/fpdfapi/fpdf_font/include',
   '+core/fpdfapi/fpdf_page/include',
   '+core/fpdfapi/fpdf_parser/include',
+  '+core/fpdfdoc/include',
 ]

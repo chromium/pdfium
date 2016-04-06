@@ -13,7 +13,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_reference.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
-#include "core/include/fpdfdoc/fpdf_doc.h"
+#include "core/fpdfdoc/include/fpdf_doc.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 

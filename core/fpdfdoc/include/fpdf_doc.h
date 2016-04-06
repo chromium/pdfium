@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_INCLUDE_FPDFDOC_FPDF_DOC_H_
-#define CORE_INCLUDE_FPDFDOC_FPDF_DOC_H_
+#ifndef CORE_FPDFDOC_INCLUDE_FPDF_DOC_H_
+#define CORE_FPDFDOC_INCLUDE_FPDF_DOC_H_
 
 #include <map>
 #include <memory>
@@ -724,9 +724,7 @@ class CPDF_FormField {
 
   int FindOptionValue(const CFX_WideString& csOptValue);
 
-  FX_BOOL CheckControl(int iControlIndex,
-                       bool bChecked,
-                       bool bNotify = false);
+  FX_BOOL CheckControl(int iControlIndex, bool bChecked, bool bNotify = false);
 
   int GetTopVisibleIndex();
 
@@ -1052,4 +1050,4 @@ class CPDF_ApSettings {
 
 CFX_WideString FILESPEC_EncodeFileName(const CFX_WideStringC& filepath);
 
-#endif  // CORE_INCLUDE_FPDFDOC_FPDF_DOC_H_
+#endif  // CORE_FPDFDOC_INCLUDE_FPDF_DOC_H_

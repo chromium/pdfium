@@ -12,7 +12,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
 #include "core/fpdfdoc/cpvt_generateap.h"
 #include "core/fpdfdoc/doc_utils.h"
-#include "core/include/fpdfdoc/fpdf_doc.h"
+#include "core/fpdfdoc/include/fpdf_doc.h"
 
 FX_BOOL PDF_FormField_IsUnison(CPDF_FormField* pField) {
   FX_BOOL bUnison = FALSE;

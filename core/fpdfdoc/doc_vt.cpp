@@ -9,8 +9,8 @@
 #include "core/fpdfdoc/cpvt_wordinfo.h"
 #include "core/fpdfdoc/csection.h"
 #include "core/fpdfdoc/include/cpdf_variabletext.h"
+#include "core/fpdfdoc/include/fpdf_doc.h"
 #include "core/fpdfdoc/pdf_vt.h"
-#include "core/include/fpdfdoc/fpdf_doc.h"
 
 CLine::CLine() {}
 CLine::~CLine() {}

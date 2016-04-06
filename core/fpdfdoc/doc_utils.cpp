@@ -12,8 +12,8 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_simple_parser.h"
 #include "core/fpdfdoc/doc_utils.h"
+#include "core/fpdfdoc/include/fpdf_doc.h"
 #include "core/fxge/include/fx_font.h"
-#include "core/include/fpdfdoc/fpdf_doc.h"
 
 namespace {
 

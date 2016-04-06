@@ -7,8 +7,8 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
+#include "core/fpdfdoc/include/fpdf_doc.h"
 #include "core/fxcrt/include/fx_xml.h"
-#include "core/include/fpdfdoc/fpdf_doc.h"
 
 CPDF_Metadata::CPDF_Metadata(CPDF_Document* pDoc) {
   CPDF_Dictionary* pRoot = pDoc->GetRoot();

@@ -13,8 +13,8 @@
 #include "core/fpdfapi/fpdf_render/include/cpdf_rendercontext.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
 #include "core/fpdfdoc/cpvt_generateap.h"
+#include "core/fpdfdoc/include/fpdf_doc.h"
 #include "core/fxge/include/fx_ge.h"
-#include "core/include/fpdfdoc/fpdf_doc.h"
 
 CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
     : m_pDocument(pPage->m_pDocument) {

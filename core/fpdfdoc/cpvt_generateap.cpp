@@ -14,8 +14,8 @@
 #include "core/fpdfdoc/cpvt_color.h"
 #include "core/fpdfdoc/cpvt_fontmap.h"
 #include "core/fpdfdoc/include/cpvt_word.h"
+#include "core/fpdfdoc/include/fpdf_doc.h"
 #include "core/fpdfdoc/pdf_vt.h"
-#include "core/include/fpdfdoc/fpdf_doc.h"
 
 namespace {
 
