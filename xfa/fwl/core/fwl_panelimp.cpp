@@ -13,7 +13,6 @@
 #include "xfa/fwl/core/fwl_widgetmgrimp.h"
 #include "xfa/fwl/core/ifwl_content.h"
 #include "xfa/fwl/core/ifwl_custompanel.h"
-#include "xfa/fwl/core/ifwl_grid.h"
 #include "xfa/fwl/core/ifwl_panel.h"
 #include "xfa/fwl/core/ifwl_proxy.h"
 
@@ -59,17 +58,10 @@ FWL_ERR CFWL_PanelImp::Update() {
   if (m_pContent) {
     CFX_RectF rtClient;
     GetClientRect(rtClient);
-    FWL_GRIDUNIT eWidth = FWL_GRIDUNIT_Fixed, eHeight = FWL_GRIDUNIT_Fixed;
     IFWL_WidgetMgr* pWidgetMgr = FWL_GetWidgetMgr();
     if (!pWidgetMgr)
       return FWL_ERR_Indefinite;
-    IFWL_Widget* pParent =
-        pWidgetMgr->GetWidget(GetInterface(), FWL_WGTRELATION_Parent);
-    if (pParent && pParent->GetClassID() == FWL_CLASSHASH_Grid) {
-      IFWL_Grid* pGrid = static_cast<IFWL_Grid*>(pParent);
-      pGrid->GetWidgetSize(GetInterface(), FWL_GRIDSIZE_Width, eWidth);
-      pGrid->GetWidgetSize(GetInterface(), FWL_GRIDSIZE_Height, eHeight);
-    }
+
     m_pContent->SetWidgetRect(rtClient);
     m_pContent->Update();
   }

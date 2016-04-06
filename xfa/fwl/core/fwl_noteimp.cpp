@@ -19,7 +19,6 @@
 #include "xfa/fwl/core/fwl_widgetmgrimp.h"
 #include "xfa/fwl/core/ifwl_adapterwidgetmgr.h"
 #include "xfa/fwl/core/ifwl_app.h"
-#include "xfa/fwl/core/ifwl_grid.h"
 #include "xfa/fwl/core/ifwl_tooltiptarget.h"
 
 CFWL_NoteLoop::CFWL_NoteLoop(CFWL_WidgetImp* pForm)
@@ -668,13 +667,12 @@ FX_BOOL CFWL_NoteDriver::DoWheel(CFWL_MsgMouseWheel* pMsg,
   CFWL_WidgetMgr* pWidgetMgr = static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
   if (!pWidgetMgr)
     return FALSE;
+
   IFWL_Widget* pDst =
       pWidgetMgr->GetWidgetAtPoint(pMessageForm, pMsg->m_fx, pMsg->m_fy);
   if (!pDst)
     return FALSE;
-  while (pDst && pDst->GetClassID() == FWL_CLASSHASH_Grid) {
-    pDst = pDst->GetParent();
-  }
+
   pMessageForm->TransformTo(pDst, pMsg->m_fx, pMsg->m_fy);
   pMsg->m_pDstTarget = pDst;
   return TRUE;
@@ -706,9 +704,6 @@ FX_BOOL CFWL_NoteDriver::DoMouseEx(CFWL_MsgMouse* pMsg,
   if (!pTarget) {
     pTarget =
         pWidgetMgr->GetWidgetAtPoint(pMessageForm, pMsg->m_fx, pMsg->m_fy);
-    while (pTarget && pTarget->GetClassID() == FWL_CLASSHASH_Grid) {
-      pTarget = pTarget->GetParent();
-    }
   }
   if (pTarget) {
     if (pMessageForm != pTarget) {
