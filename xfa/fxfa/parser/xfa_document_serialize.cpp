@@ -429,11 +429,11 @@ void XFA_DataExporter_RegenerateFormFile(CXFA_Node* pNode,
                                          const FX_CHAR* pChecksum,
                                          FX_BOOL bSaveXML) {
   if (pNode->GetObjectType() == XFA_OBJECTTYPE_ModelNode) {
-    static const FX_WCHAR* s_pwsTagName = L"<form";
-    static const FX_WCHAR* s_pwsClose = L"</form\n>";
+    static const FX_WCHAR s_pwsTagName[] = L"<form";
+    static const FX_WCHAR s_pwsClose[] = L"</form\n>";
     pStream->WriteString(s_pwsTagName, FXSYS_wcslen(s_pwsTagName));
     if (pChecksum) {
-      static const FX_WCHAR* s_pwChecksum = L" checksum=\"";
+      static const FX_WCHAR s_pwChecksum[] = L" checksum=\"";
       CFX_WideString wsChecksum = CFX_WideString::FromUTF8(pChecksum);
       pStream->WriteString(s_pwChecksum, FXSYS_wcslen(s_pwChecksum));
       pStream->WriteString((const FX_WCHAR*)wsChecksum, wsChecksum.GetLength());
@@ -497,14 +497,14 @@ FX_BOOL CXFA_DataExporter::Export(IFX_Stream* pStream,
   if (pNode->GetObjectType() == XFA_OBJECTTYPE_ModelNode) {
     switch (pNode->GetPacketID()) {
       case XFA_XDPPACKET_XDP: {
-        static const FX_WCHAR* s_pwsPreamble =
+        static const FX_WCHAR s_pwsPreamble[] =
             L"<xdp:xdp xmlns:xdp=\"http://ns.adobe.com/xdp/\">";
         pStream->WriteString(s_pwsPreamble, FXSYS_wcslen(s_pwsPreamble));
         for (CXFA_Node* pChild = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
              pChild; pChild = pChild->GetNodeItem(XFA_NODEITEM_NextSibling)) {
           Export(pStream, pChild, dwFlag, pChecksum);
         }
-        static const FX_WCHAR* s_pwsPostamble = L"</xdp:xdp\n>";
+        static const FX_WCHAR s_pwsPostamble[] = L"</xdp:xdp\n>";
         pStream->WriteString(s_pwsPostamble, FXSYS_wcslen(s_pwsPostamble));
       } break;
       case XFA_XDPPACKET_Datasets: {

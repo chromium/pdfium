@@ -11,7 +11,7 @@
 #include "xfa/fgas/crt/fgas_codepage.h"
 
 IFDE_CSSStyleSheet* IFDE_CSSStyleSheet::LoadHTMLStandardStyleSheet() {
-  static const FX_WCHAR* s_pStyle =
+  static const FX_WCHAR s_pStyle[] =
       L"html,address,blockquote,body,dd,div,dl,dt,fieldset,form,frame,frameset,"
       L"h1,h2,h3,h4,h5,h6,noframes,ol,p,ul,center,dir,hr,menu,pre{display:"
       L"block}"
