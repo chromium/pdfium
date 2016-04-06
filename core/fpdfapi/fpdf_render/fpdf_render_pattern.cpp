@@ -20,7 +20,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_rendercontext.h"
 #include "core/fpdfapi/fpdf_render/include/cpdf_renderoptions.h"
-#include "core/include/fxge/fx_ge.h"
+#include "core/fxge/include/fx_ge.h"
 
 #define SHADING_STEPS 256
 static void DrawAxialShading(CFX_DIBitmap* pBitmap,

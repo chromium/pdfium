@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_INCLUDE_FXGE_FPF_H_
-#define CORE_INCLUDE_FXGE_FPF_H_
+#ifndef CORE_FXGE_INCLUDE_FPF_H_
+#define CORE_FXGE_INCLUDE_FPF_H_
 
 #include "core/fxcrt/include/fx_coordinates.h"
 
@@ -67,4 +67,4 @@ class IFPF_FontMgr {
                                 uint32_t dwMatch = 0) = 0;
 };
 
-#endif  // CORE_INCLUDE_FXGE_FPF_H_
+#endif  // CORE_FXGE_INCLUDE_FPF_H_

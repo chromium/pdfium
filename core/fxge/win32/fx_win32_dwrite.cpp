@@ -4,13 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/include/fxge/fx_ge.h"
+#include "core/fxge/include/fx_ge.h"
 
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_DESKTOP_
 #include <dwrite.h>
 
+#include "core/fxge/include/fx_ge_win32.h"
 #include "core/fxge/win32/dwrite_int.h"
-#include "core/include/fxge/fx_ge_win32.h"
 
 typedef HRESULT(__stdcall* FuncType_DWriteCreateFactory)(
     __in DWRITE_FACTORY_TYPE,

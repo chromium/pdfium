@@ -6,8 +6,8 @@
 
 #include "core/fpdfapi/fpdf_font/include/cpdf_font.h"
 #include "core/fxge/ge/fx_text_int.h"
-#include "core/include/fxge/fx_freetype.h"
-#include "core/include/fxge/fx_ge.h"
+#include "core/fxge/include/fx_freetype.h"
+#include "core/fxge/include/fx_ge.h"
 
 #define EM_ADJUST(em, a) (em == 0 ? (a) : (a)*1000 / em)
 

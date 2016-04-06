@@ -7,7 +7,7 @@
 #ifndef XFA_INCLUDE_FXFA_FXFA_OBJECTACC_H_
 #define XFA_INCLUDE_FXFA_FXFA_OBJECTACC_H_
 
-#include "core/include/fxge/fx_dib.h"
+#include "core/fxge/include/fx_dib.h"
 #include "xfa/fxfa/parser/xfa_object.h"
 
 class CXFA_Node;

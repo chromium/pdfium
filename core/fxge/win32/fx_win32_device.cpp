@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/include/fxge/fx_ge.h"
+#include "core/fxge/include/fx_ge.h"
 
 #if _FX_OS_ == _FX_WIN32_DESKTOP_ || _FX_OS_ == _FX_WIN64_DESKTOP_
 #include <crtdbg.h>
@@ -12,11 +12,11 @@
 #include "core/fxge/agg/fx_agg_driver.h"
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/ge/fx_text_int.h"
+#include "core/fxge/include/fx_freetype.h"
+#include "core/fxge/include/fx_ge_win32.h"
 #include "core/fxge/win32/dwrite_int.h"
 #include "core/fxge/win32/win32_int.h"
 #include "core/include/fxcodec/fx_codec.h"
-#include "core/include/fxge/fx_freetype.h"
-#include "core/include/fxge/fx_ge_win32.h"
 #include "third_party/base/stl_util.h"
 
 class CFX_Win32FallbackFontInfo final : public CFX_FolderFontInfo {

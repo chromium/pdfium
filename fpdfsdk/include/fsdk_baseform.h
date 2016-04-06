@@ -11,8 +11,8 @@
 #include <vector>
 
 #include "core/fxcrt/include/fx_basic.h"
+#include "core/fxge/include/fx_dib.h"
 #include "core/include/fpdfdoc/fpdf_doc.h"
-#include "core/include/fxge/fx_dib.h"
 #include "fpdfsdk/include/fsdk_baseannot.h"
 
 #ifdef PDF_ENABLE_XFA

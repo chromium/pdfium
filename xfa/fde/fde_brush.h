@@ -8,7 +8,7 @@
 #define XFA_FDE_FDE_BRUSH_H_
 
 #include "core/fxcrt/include/fx_system.h"
-#include "core/include/fxge/fx_dib.h"
+#include "core/fxge/include/fx_dib.h"
 
 class IFDE_Image;
 

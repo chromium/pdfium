@@ -8,8 +8,8 @@
 #define XFA_FXGRAPHICS_INCLUDE_CFX_GRAPHICS_H_
 
 #include "core/fxcrt/include/fx_system.h"
-#include "core/include/fxge/fx_dib.h"
-#include "core/include/fxge/fx_ge.h"
+#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/include/fx_ge.h"
 
 class CFX_Color;
 class CFX_Path;

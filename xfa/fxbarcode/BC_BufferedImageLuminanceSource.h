@@ -9,7 +9,7 @@
 
 #include "core/fxcrt/include/fx_basic.h"
 #include "core/fxcrt/include/fx_string.h"
-#include "core/include/fxge/fx_dib.h"
+#include "core/fxge/include/fx_dib.h"
 #include "xfa/fxbarcode/BC_LuminanceSource.h"
 
 class CBC_BufferedImageLuminanceSource : public CBC_LuminanceSource {

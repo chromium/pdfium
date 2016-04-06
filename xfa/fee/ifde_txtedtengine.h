@@ -7,7 +7,7 @@
 #ifndef XFA_FEE_IFDE_TXTEDTENGINE_H_
 #define XFA_FEE_IFDE_TXTEDTENGINE_H_
 
-#include "core/include/fxge/fx_dib.h"
+#include "core/fxge/include/fx_dib.h"
 #include "xfa/fgas/font/fgas_font.h"
 
 class IFDE_TxtEdtPage;

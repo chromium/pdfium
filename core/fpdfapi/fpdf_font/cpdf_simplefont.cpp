@@ -9,7 +9,7 @@
 #include "core/fpdfapi/fpdf_font/font_int.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
-#include "core/include/fxge/fx_freetype.h"
+#include "core/fxge/include/fx_freetype.h"
 
 CPDF_SimpleFont::CPDF_SimpleFont()
     : m_pCharNames(nullptr), m_BaseEncoding(PDFFONT_ENCODING_BUILTIN) {

@@ -9,8 +9,8 @@
 
 #include <map>
 
-#include "core/include/fxge/fx_font.h"
-#include "core/include/fxge/fx_freetype.h"
+#include "core/fxge/include/fx_font.h"
+#include "core/fxge/include/fx_freetype.h"
 
 struct _CFX_UniqueKeyGen {
   void Generate(int count, ...);

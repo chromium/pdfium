@@ -16,7 +16,7 @@
 #include "core/fpdfapi/fpdf_render/render_int.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "core/fpdfapi/ipdf_rendermodule.h"
-#include "core/include/fxge/fx_font.h"
+#include "core/fxge/include/fx_font.h"
 #include "third_party/base/stl_util.h"
 
 namespace {

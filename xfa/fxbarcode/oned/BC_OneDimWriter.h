@@ -7,7 +7,7 @@
 #ifndef XFA_FXBARCODE_ONED_BC_ONEDIMWRITER_H_
 #define XFA_FXBARCODE_ONED_BC_ONEDIMWRITER_H_
 
-#include "core/include/fxge/fx_ge.h"
+#include "core/fxge/include/fx_ge.h"
 #include "xfa/fxbarcode/BC_Writer.h"
 #include "xfa/fxbarcode/include/BC_Library.h"
 

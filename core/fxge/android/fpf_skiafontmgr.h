@@ -14,8 +14,8 @@
 #include <map>
 #include <vector>
 
-#include "core/include/fxge/fpf.h"
-#include "core/include/fxge/fx_font.h"
+#include "core/fxge/include/fpf.h"
+#include "core/fxge/include/fx_font.h"
 
 #define FPF_SKIAFONTTYPE_Unknown 0
 #define FPF_SKIAFONTTYPE_Path 1

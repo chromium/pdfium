@@ -9,7 +9,7 @@
 #if _FX_OS_ == _FX_ANDROID_
 
 #include "core/fxge/android/fx_android_font.h"
-#include "core/include/fxge/fpf.h"
+#include "core/fxge/include/fpf.h"
 
 CFX_AndroidFontInfo::CFX_AndroidFontInfo() : m_pFontMgr(NULL) {}
 FX_BOOL CFX_AndroidFontInfo::Init(IFPF_FontMgr* pFontMgr) {

@@ -6,17 +6,17 @@
 
 #include "core/fpdfapi/fpdf_page/include/cpdf_image.h"
 
-#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
-#include "core/fpdfapi/include/cpdf_modulemgr.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
-#include "core/include/fxge/fx_dib.h"
-#include "core/fpdfapi/fpdf_page/pageint.h"
-#include "core/include/fxcodec/fx_codec.h"
-#include "core/fpdfapi/fpdf_parser/cpdf_boolean.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
 #include "core/fpdfapi/fpdf_page/include/cpdf_page.h"
+#include "core/fpdfapi/fpdf_page/pageint.h"
+#include "core/fpdfapi/fpdf_parser/cpdf_boolean.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
 #include "core/fpdfapi/fpdf_render/cpdf_pagerendercache.h"
 #include "core/fpdfapi/fpdf_render/render_int.h"
+#include "core/fpdfapi/include/cpdf_modulemgr.h"
+#include "core/fxge/include/fx_dib.h"
+#include "core/include/fxcodec/fx_codec.h"
 
 CPDF_Image::CPDF_Image(CPDF_Document* pDoc)
     : m_pDIBSource(nullptr),

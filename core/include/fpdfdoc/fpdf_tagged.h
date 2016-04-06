@@ -7,7 +7,7 @@
 #ifndef CORE_INCLUDE_FPDFDOC_FPDF_TAGGED_H_
 #define CORE_INCLUDE_FPDFDOC_FPDF_TAGGED_H_
 
-#include "core/include/fxge/fx_dib.h"
+#include "core/fxge/include/fx_dib.h"
 
 class CPDF_Document;
 class CPDF_StructElement;

@@ -11,7 +11,7 @@
 
 #if _FX_OS_ == _FX_ANDROID_
 
-#include "core/include/fxge/fx_font.h"
+#include "core/fxge/include/fx_font.h"
 
 class IFPF_FontMgr;
 

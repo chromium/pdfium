@@ -9,8 +9,8 @@
 
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_system.h"
-#include "core/include/fxge/fx_dib.h"
-#include "core/include/fxge/fx_ge.h"
+#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/include/fx_ge.h"
 #include "xfa/fde/fde_brush.h"
 #include "xfa/fde/fde_image.h"
 #include "xfa/fde/fde_path.h"

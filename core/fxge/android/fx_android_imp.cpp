@@ -9,8 +9,8 @@
 #if _FX_OS_ == _FX_ANDROID_
 
 #include "core/fxge/android/fx_android_font.h"
-#include "core/include/fxge/fpf.h"
-#include "core/include/fxge/fx_ge.h"
+#include "core/fxge/include/fpf.h"
+#include "core/fxge/include/fx_ge.h"
 
 void CFX_GEModule::InitPlatform() {
   IFPF_DeviceModule* pDeviceModule = FPF_GetDeviceModule();

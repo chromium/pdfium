@@ -7,7 +7,7 @@
 #ifndef XFA_FDE_CSS_FDE_CSS_H_
 #define XFA_FDE_CSS_FDE_CSS_H_
 
-#include "core/include/fxge/fx_dib.h"
+#include "core/fxge/include/fx_dib.h"
 #include "xfa/fgas/crt/fgas_stream.h"
 #include "xfa/fgas/crt/fgas_utils.h"
 #include "xfa/fgas/font/fgas_font.h"

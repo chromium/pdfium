@@ -8,7 +8,7 @@
 #define CORE_FPDFAPI_FPDF_PAGE_INCLUDE_CPDF_PATH_H_
 
 #include "core/fxcrt/include/fx_system.h"
-#include "core/include/fxge/fx_ge.h"
+#include "core/fxge/include/fx_ge.h"
 
 class CPDF_Path : public CFX_CountRef<CFX_PathData> {
  public:

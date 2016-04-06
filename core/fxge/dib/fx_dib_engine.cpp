@@ -7,8 +7,8 @@
 #include <limits.h>
 
 #include "core/fxge/dib/dib_int.h"
-#include "core/include/fxge/fx_dib.h"
-#include "core/include/fxge/fx_ge.h"
+#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/include/fx_ge.h"
 
 void CWeightTable::Calc(int dest_len,
                         int dest_min,

@@ -9,7 +9,7 @@
 
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
-#include "core/include/fxge/fx_font.h"
+#include "core/fxge/include/fx_font.h"
 
 #define PDFFONT_FIXEDPITCH 1
 #define PDFFONT_SERIF 2

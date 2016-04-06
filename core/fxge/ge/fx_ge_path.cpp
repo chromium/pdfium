@@ -5,7 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "core/fxcrt/include/fx_system.h"
-#include "core/include/fxge/fx_ge.h"
+#include "core/fxge/include/fx_ge.h"
 #include "third_party/base/numerics/safe_math.h"
 
 CFX_ClipRgn::CFX_ClipRgn(int width, int height) {

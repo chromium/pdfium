@@ -6,7 +6,7 @@
 
 #include "fpdfsdk/pdfwindow/PWL_Caret.h"
 
-#include "core/include/fxge/fx_ge.h"
+#include "core/fxge/include/fx_ge.h"
 #include "fpdfsdk/pdfwindow/PWL_Utils.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 

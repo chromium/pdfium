@@ -7,8 +7,8 @@
 #ifndef CORE_FXGE_WIN32_WIN32_INT_H_
 #define CORE_FXGE_WIN32_WIN32_INT_H_
 
+#include "core/fxge/include/fx_ge.h"
 #include "core/fxge/win32/dwrite_int.h"
-#include "core/include/fxge/fx_ge.h"
 
 struct WINDIB_Open_Args_;
 class CGdiplusExt {

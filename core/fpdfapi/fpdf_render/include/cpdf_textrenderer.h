@@ -10,7 +10,7 @@
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
-#include "core/include/fxge/fx_dib.h"
+#include "core/fxge/include/fx_dib.h"
 
 class CFX_RenderDevice;
 class CFX_GraphStateData;

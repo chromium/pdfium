@@ -9,7 +9,7 @@
 #include <algorithm>
 
 #include "core/fpdfdoc/include/cpvt_word.h"
-#include "core/include/fxge/fx_ge.h"
+#include "core/fxge/include/fx_ge.h"
 #include "fpdfsdk/include/fxedit/fx_edit.h"
 #include "fpdfsdk/pdfwindow/PWL_Icon.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"

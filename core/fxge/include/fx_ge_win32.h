@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_INCLUDE_FXGE_FX_GE_WIN32_H_
-#define CORE_INCLUDE_FXGE_FX_GE_WIN32_H_
+#ifndef CORE_FXGE_INCLUDE_FX_GE_WIN32_H_
+#define CORE_FXGE_INCLUDE_FX_GE_WIN32_H_
 
 #ifdef _WIN32
 #ifndef _WINDOWS_
@@ -95,4 +95,4 @@ class CFX_WinBitmapDevice : public CFX_RenderDevice {
 };
 #endif
 
-#endif  // CORE_INCLUDE_FXGE_FX_GE_WIN32_H_
+#endif  // CORE_FXGE_INCLUDE_FX_GE_WIN32_H_

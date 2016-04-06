@@ -8,7 +8,7 @@
 #define XFA_FGAS_LAYOUT_FGAS_RTFBREAK_H_
 
 #include "core/fxcrt/include/fx_ucd.h"
-#include "core/include/fxge/fx_ge.h"
+#include "core/fxge/include/fx_ge.h"
 #include "xfa/fgas/crt/fgas_memory.h"
 #include "xfa/fgas/crt/fgas_utils.h"
 #include "xfa/fgas/layout/fgas_textbreak.h"

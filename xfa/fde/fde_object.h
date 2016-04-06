@@ -9,7 +9,7 @@
 
 #include <cstdint>
 
-#include "core/include/fxge/fx_dib.h"
+#include "core/fxge/include/fx_dib.h"
 #include "xfa/fde/fde_brush.h"
 #include "xfa/fde/fde_pen.h"
 #include "xfa/fgas/crt/fgas_memory.h"

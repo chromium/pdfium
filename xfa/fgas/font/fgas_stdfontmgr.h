@@ -8,8 +8,8 @@
 #define XFA_FGAS_FONT_FGAS_STDFONTMGR_H_
 
 #include "core/fxcrt/include/fx_ext.h"
-#include "core/include/fxge/fx_freetype.h"
-#include "core/include/fxge/fx_ge.h"
+#include "core/fxge/include/fx_freetype.h"
+#include "core/fxge/include/fx_ge.h"
 #include "third_party/freetype/include/freetype/fttypes.h"
 #include "xfa/fgas/font/fgas_font.h"
 

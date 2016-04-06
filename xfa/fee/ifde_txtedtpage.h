@@ -7,7 +7,7 @@
 #ifndef XFA_FEE_IFDE_TXTEDTPAGE_H_
 #define XFA_FEE_IFDE_TXTEDTPAGE_H_
 
-#include "core/include/fxge/fx_ge.h"
+#include "core/fxge/include/fx_ge.h"
 #include "xfa/fde/fde_visualset.h"
 #include "xfa/fgas/layout/fgas_textbreak.h"
 

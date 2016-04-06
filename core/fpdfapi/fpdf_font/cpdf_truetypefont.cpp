@@ -8,7 +8,7 @@
 
 #include "core/fpdfapi/fpdf_font/font_int.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
-#include "core/include/fxge/fx_font.h"
+#include "core/fxge/include/fx_font.h"
 
 CPDF_TrueTypeFont::CPDF_TrueTypeFont() {}
 

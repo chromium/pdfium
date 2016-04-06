@@ -6,12 +6,12 @@
 
 #include "core/fpdfapi/fpdf_font/include/cpdf_fontencoding.h"
 
-#include "core/fpdfapi/fpdf_parser/include/cpdf_name.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
-#include "core/fpdfapi/fpdf_parser/include/cpdf_number.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
-#include "core/include/fxge/fx_freetype.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_name.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_number.h"
 #include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
+#include "core/fxge/include/fx_freetype.h"
 
 namespace {
 

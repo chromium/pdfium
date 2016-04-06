@@ -29,7 +29,7 @@
 #include "core/fpdfapi/fpdf_render/include/cpdf_textrenderer.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "core/fpdfapi/ipdf_rendermodule.h"
-#include "core/include/fxge/fx_ge.h"
+#include "core/fxge/include/fx_ge.h"
 
 CPDF_DocRenderData::CPDF_DocRenderData(CPDF_Document* pPDFDoc)
     : m_pPDFDoc(pPDFDoc), m_pFontCache(new CFX_FontCache) {}

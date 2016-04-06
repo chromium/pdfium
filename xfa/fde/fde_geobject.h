@@ -7,7 +7,7 @@
 #ifndef XFA_FDE_FDE_GEOBJECT_H_
 #define XFA_FDE_FDE_GEOBJECT_H_
 
-#include "core/include/fxge/fx_ge.h"
+#include "core/fxge/include/fx_ge.h"
 #include "xfa/fde/fde_path.h"
 #include "xfa/fgas/crt/fgas_memory.h"
 

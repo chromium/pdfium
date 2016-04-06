@@ -9,7 +9,7 @@
 
 #include "core/fpdfdoc/include/cpdf_variabletext.h"
 #include "core/fxcrt/include/fx_system.h"
-#include "core/include/fxge/fx_dib.h"
+#include "core/fxge/include/fx_dib.h"
 
 struct CPVT_WordProps {
   CPVT_WordProps()

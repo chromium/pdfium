@@ -14,7 +14,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/fpdf_parser/include/fpdf_parser_decode.h"
 #include "core/fpdfapi/fpdf_parser/ipdf_occontext.h"
-#include "core/include/fxge/fx_dib.h"
+#include "core/fxge/include/fx_dib.h"
 
 class CFDF_Document;
 class CFieldTree;

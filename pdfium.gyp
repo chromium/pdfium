@@ -669,13 +669,6 @@
         'third_party/third_party.gyp:fx_agg',
       ],
       'sources': [
-        'core/include/fxge/fpf.h',
-        'core/include/fxge/fx_dib.h',
-        'core/include/fxge/fx_font.h',
-        'core/include/fxge/fx_freetype.h',
-        'core/include/fxge/fx_ge.h',
-        'core/include/fxge/fx_ge_apple.h',
-        'core/include/fxge/fx_ge_win32.h',
         'core/fxge/agg/fx_agg_driver.h',
         'core/fxge/agg/fx_agg_driver.cpp',
         'core/fxge/android/fpf_skiafont.cpp',
@@ -724,6 +717,13 @@
         'core/fxge/ge/fx_ge_ps.cpp',
         'core/fxge/ge/fx_ge_text.cpp',
         'core/fxge/ge/fx_text_int.h',
+        'core/fxge/include/fpf.h',
+        'core/fxge/include/fx_dib.h',
+        'core/fxge/include/fx_font.h',
+        'core/fxge/include/fx_freetype.h',
+        'core/fxge/include/fx_ge.h',
+        'core/fxge/include/fx_ge_apple.h',
+        'core/fxge/include/fx_ge_win32.h',
       ],
       'variables': {
         'clang_warning_flags': [

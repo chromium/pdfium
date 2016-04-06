@@ -17,7 +17,7 @@
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "core/fxcrt/include/fx_ext.h"
-#include "core/include/fxge/fx_freetype.h"
+#include "core/fxge/include/fx_freetype.h"
 #include "third_party/base/stl_util.h"
 
 FX_BOOL FT_UseTTCharmap(FXFT_Face face, int platform_id, int encoding_id) {

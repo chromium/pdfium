@@ -9,7 +9,7 @@
 
 #if _FX_OS_ == _FX_ANDROID_
 
-#include "core/include/fxge/fpf.h"
+#include "core/fxge/include/fpf.h"
 
 class CFPF_SkiaFontMgr;
 

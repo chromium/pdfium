@@ -12,7 +12,7 @@
 #include "core/fpdfapi/fpdf_render/include/cpdf_textrenderer.h"
 #include "core/fpdfdoc/include/cpvt_word.h"
 #include "core/fpdfdoc/include/ipvt_fontmap.h"
-#include "core/include/fxge/fx_ge.h"
+#include "core/fxge/include/fx_ge.h"
 #include "fpdfsdk/include/fx_systemhandler.h"
 #include "fpdfsdk/include/fxedit/fx_edit.h"
 #include "fpdfsdk/include/fxedit/fxet_edit.h"

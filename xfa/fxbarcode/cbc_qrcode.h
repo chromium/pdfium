@@ -9,7 +9,7 @@
 
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
-#include "core/include/fxge/fx_dib.h"
+#include "core/fxge/include/fx_dib.h"
 #include "xfa/fxbarcode/cbc_codebase.h"
 
 class CBC_QRCode : public CBC_CodeBase {

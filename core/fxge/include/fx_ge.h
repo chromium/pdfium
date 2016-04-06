@@ -4,11 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_INCLUDE_FXGE_FX_GE_H_
-#define CORE_INCLUDE_FXGE_FX_GE_H_
+#ifndef CORE_FXGE_INCLUDE_FX_GE_H_
+#define CORE_FXGE_INCLUDE_FX_GE_H_
 
-#include "core/include/fxge/fx_dib.h"
-#include "core/include/fxge/fx_font.h"
+#include "core/fxge/include/fx_dib.h"
+#include "core/fxge/include/fx_font.h"
 
 class CFX_Font;
 class CFX_FontMgr;
@@ -730,4 +730,4 @@ class CFX_PSRenderer {
   void WritePSBinary(const uint8_t* data, int len);
 };
 
-#endif  // CORE_INCLUDE_FXGE_FX_GE_H_
+#endif  // CORE_FXGE_INCLUDE_FX_GE_H_

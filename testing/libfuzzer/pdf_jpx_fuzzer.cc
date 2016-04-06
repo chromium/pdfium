@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "core/fxcodec/codec/codec_int.h"
-#include "core/include/fxge/fx_dib.h"
+#include "core/fxge/include/fx_dib.h"
 
 CCodec_JpxModule g_module;
 

@@ -10,8 +10,8 @@
 
 #include "core/fxge/fontdata/chromefontdata/chromefontdata.h"
 #include "core/fxge/ge/fx_text_int.h"
-#include "core/include/fxge/fx_freetype.h"
-#include "core/include/fxge/fx_ge.h"
+#include "core/fxge/include/fx_freetype.h"
+#include "core/fxge/include/fx_ge.h"
 #include "third_party/base/stl_util.h"
 
 #define GET_TT_SHORT(w) (uint16_t)(((w)[0] << 8) | (w)[1])

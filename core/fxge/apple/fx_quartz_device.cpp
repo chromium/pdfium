@@ -8,12 +8,12 @@
 #include "core/fxge/agg/fx_agg_driver.h"
 #include "core/fxge/dib/dib_int.h"
 #include "core/fxge/ge/fx_text_int.h"
-#include "core/include/fxge/fx_freetype.h"
-#include "core/include/fxge/fx_ge.h"
+#include "core/fxge/include/fx_freetype.h"
+#include "core/fxge/include/fx_ge.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
 #include "core/fxge/apple/apple_int.h"
-#include "core/include/fxge/fx_ge_apple.h"
+#include "core/fxge/include/fx_ge_apple.h"
 #ifndef CGFLOAT_IS_DOUBLE
 #error Expected CGFLOAT_IS_DOUBLE to be defined by CoreGraphics headers
 #endif

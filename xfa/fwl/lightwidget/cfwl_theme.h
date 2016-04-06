@@ -12,7 +12,7 @@
 
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_system.h"
-#include "core/include/fxge/fx_dib.h"
+#include "core/fxge/include/fx_dib.h"
 #include "xfa/fwl/core/ifwl_themeprovider.h"
 
 class CFWL_WidgetTP;

@@ -9,7 +9,7 @@
 
 #include "core/fpdfdoc/include/cpdf_variabletext.h"
 #include "core/fxcrt/include/fx_basic.h"
-#include "core/include/fxge/fx_dib.h"
+#include "core/fxge/include/fx_dib.h"
 
 class CPDF_Font;
 class CPDF_PageObjectHolder;
