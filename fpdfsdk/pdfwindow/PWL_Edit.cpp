@@ -23,9 +23,7 @@
 #include "third_party/base/stl_util.h"
 
 CPWL_Edit::CPWL_Edit()
-    : m_pFillerNotify(NULL), m_pSpellCheck(NULL), m_bFocus(FALSE) {
-  m_pFormFiller = NULL;
-}
+    : m_pFillerNotify(nullptr), m_bFocus(FALSE), m_pFormFiller(nullptr) {}
 
 CPWL_Edit::~CPWL_Edit() {
   ASSERT(m_bFocus == FALSE);
@@ -247,10 +245,6 @@ void CPWL_Edit::SetParamByFlag() {
           GetClientRect(), 1.0f));  // +1 for caret beside border
     }
   }
-
-  if (HasFlag(PES_SPELLCHECK)) {
-    m_pSpellCheck = GetCreationParam().pSpellCheck;
-  }
 }
 
 void CPWL_Edit::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
@@ -356,16 +350,6 @@ void CPWL_Edit::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
           << CPWL_Utils::GetColorAppStream(GetTextColor()).AsByteStringC()
           << sEditAfter.AsByteStringC() << "ET\n";
 
-  if (HasFlag(PES_SPELLCHECK)) {
-    CFX_ByteString sSpellCheck = CPWL_Utils::GetSpellCheckAppStream(
-        m_pEdit, m_pSpellCheck, ptOffset, &wrVisible);
-    if (sSpellCheck.GetLength() > 0)
-      sText << CPWL_Utils::GetColorAppStream(CPWL_Color(COLORTYPE_RGB, 1, 0, 0),
-                                             FALSE)
-                   .AsByteStringC()
-            << sSpellCheck.AsByteStringC();
-  }
-
   if (sText.GetLength() > 0) {
     CFX_FloatRect rcClient = GetClientRect();
     sAppStream << "q\n/Tx BMC\n";
@@ -467,12 +451,6 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
       CPWL_Utils::PWLColorToFXColor(GetTextColor(), GetTransparency()),
       CPWL_Utils::PWLColorToFXColor(GetTextStrokeColor(), GetTransparency()),
       rcClip, CFX_FloatPoint(0.0f, 0.0f), pRange, pSysHandler, m_pFormFiller);
-
-  if (HasFlag(PES_SPELLCHECK)) {
-    CPWL_Utils::DrawEditSpellCheck(pDevice, pUser2Device, m_pEdit, rcClip,
-                                   CFX_FloatPoint(0.0f, 0.0f), pRange,
-                                   GetCreationParam().pSpellCheck);
-  }
 }
 
 FX_BOOL CPWL_Edit::OnLButtonDown(const CFX_FloatPoint& point, uint32_t nFlag) {
@@ -535,27 +513,6 @@ FX_BOOL CPWL_Edit::OnRButtonUp(const CFX_FloatPoint& point, uint32_t nFlag) {
 
   std::vector<CFX_ByteString> sSuggestWords;
   CFX_FloatPoint ptPopup = point;
-
-  if (!IsReadOnly()) {
-    if (HasFlag(PES_SPELLCHECK) && !swLatin.IsEmpty()) {
-      if (m_pSpellCheck) {
-        CFX_ByteString sLatin = CFX_ByteString::FromUnicode(swLatin);
-        if (!m_pSpellCheck->CheckWord(sLatin)) {
-          m_pSpellCheck->SuggestWords(sLatin, sSuggestWords);
-
-          int32_t nSuggest = pdfium::CollectionSize<int32_t>(sSuggestWords);
-          for (int32_t nWord = 0; nWord < nSuggest; nWord++) {
-            pSH->AppendMenuItem(hPopup, WM_PWLEDIT_SUGGEST + nWord,
-                                sSuggestWords[nWord].UTF8Decode());
-          }
-          if (nSuggest > 0)
-            pSH->AppendMenuItem(hPopup, 0, L"");
-
-          ptPopup = GetWordRightBottomPoint(wrLatin.EndPos);
-        }
-      }
-    }
-  }
 
   IPWL_Provider* pProvider = GetProvider();
 
@@ -862,13 +819,6 @@ FX_BOOL CPWL_Edit::IsVScrollBarVisible() const {
   }
 
   return FALSE;
-}
-
-void CPWL_Edit::EnableSpellCheck(FX_BOOL bEnabled) {
-  if (bEnabled)
-    AddFlag(PES_SPELLCHECK);
-  else
-    RemoveFlag(PES_SPELLCHECK);
 }
 
 FX_BOOL CPWL_Edit::OnKeyDown(uint16_t nChar, uint32_t nFlag) {

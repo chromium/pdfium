@@ -796,8 +796,6 @@
         'fpdfsdk/pdfwindow/PWL_ListBox.h',
         'fpdfsdk/pdfwindow/PWL_ListCtrl.cpp',
         'fpdfsdk/pdfwindow/PWL_ListCtrl.h',
-        'fpdfsdk/pdfwindow/PWL_Note.cpp',
-        'fpdfsdk/pdfwindow/PWL_Note.h',
         'fpdfsdk/pdfwindow/PWL_ScrollBar.cpp',
         'fpdfsdk/pdfwindow/PWL_ScrollBar.h',
         'fpdfsdk/pdfwindow/PWL_Signature.cpp',

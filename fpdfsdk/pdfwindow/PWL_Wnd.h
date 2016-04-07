@@ -21,7 +21,6 @@ class CPWL_Wnd;
 class IPVT_FontMap;
 class IFX_SystemHandler;
 class IPWL_Provider;
-class IPWL_SpellCheck;
 
 // window styles
 #define PWS_CHILD 0x80000000L
@@ -65,7 +64,6 @@ class IPWL_SpellCheck;
 #define PRES_MULTILINE 0x0001L
 #define PRES_AUTORETURN 0x0002L
 #define PRES_AUTOSCROLL 0x0004L
-#define PRES_SPELLCHECK 0x0008L
 #define PRES_UNDO 0x0100L
 #define PRES_MULTIPAGES 0x0200L
 #define PRES_TEXTOVERFLOW 0x0400L
@@ -168,14 +166,6 @@ inline bool operator!=(const CPWL_Color& c1, const CPWL_Color& c2) {
 #define PWL_CBBUTTON_TRIANGLE_HALFLEN 3.0f
 #define PWL_INVALIDATE_INFLATE 2
 
-class IPWL_SpellCheck {
- public:
-  virtual ~IPWL_SpellCheck() {}
-  virtual FX_BOOL CheckWord(const FX_CHAR* sWord) = 0;
-  virtual void SuggestWords(const FX_CHAR* sWord,
-                            std::vector<CFX_ByteString>& sSuggest) = 0;
-};
-
 class IPWL_Provider {
  public:
   virtual ~IPWL_Provider() {}
@@ -213,7 +203,6 @@ struct PWL_CREATEPARAM {
         dwFlags(0),
         sBackgroundColor(),
         hAttachedWnd(NULL),
-        pSpellCheck(NULL),
         nBorderStyle(PBS_SOLID),
         dwBorderWidth(1),
         sBorderColor(),
@@ -236,7 +225,6 @@ struct PWL_CREATEPARAM {
   uint32_t dwFlags;                   // optional
   CPWL_Color sBackgroundColor;        // optional
   FX_HWND hAttachedWnd;               // required for no-reader framework
-  IPWL_SpellCheck* pSpellCheck;       // required for spellchecking
   int32_t nBorderStyle;               // optional
   int32_t dwBorderWidth;              // optional
   CPWL_Color sBorderColor;            // optional

@@ -12,8 +12,6 @@
 #include "fpdfsdk/pdfwindow/PWL_EditCtrl.h"
 #include "fpdfsdk/pdfwindow/PWL_Wnd.h"
 
-class IPWL_SpellCheck;
-
 class IPWL_Filler_Notify {
  public:
   virtual ~IPWL_Filler_Notify() {}
@@ -81,8 +79,6 @@ class CPWL_Edit : public CPWL_EditCtrl, public IFX_Edit_OprNotify {
 
   void SetLineLeading(FX_FLOAT fLineLeading, FX_BOOL bPaint = TRUE);
 
-  void EnableSpellCheck(FX_BOOL bEnabled);
-
   FX_BOOL CanSelectAll() const;
   FX_BOOL CanClear() const;
   FX_BOOL CanCopy() const;
@@ -116,6 +112,9 @@ class CPWL_Edit : public CPWL_EditCtrl, public IFX_Edit_OprNotify {
                            CFX_ArrayTemplate<CPDF_TextObject*>& ObjArray);
   void GeneratePageObjects(CPDF_PageObjectHolder* pObjectHolder,
                            const CFX_FloatPoint& ptOffset);
+
+  FX_BOOL IsProceedtoOnChar(uint16_t nKeyCode, uint32_t nFlag);
+  void AttachFFLData(void* pData) { m_pFormFiller = pData; }
 
  protected:
   // IFX_Edit_OprNotify
@@ -152,20 +151,9 @@ class CPWL_Edit : public CPWL_EditCtrl, public IFX_Edit_OprNotify {
   CPVT_WordRange GetSameWordsRange(const CPVT_WordPlace& place,
                                    FX_BOOL bLatin,
                                    FX_BOOL bArabic) const;
-
- public:
-  FX_BOOL IsProceedtoOnChar(uint16_t nKeyCode, uint32_t nFlag);
-
- private:
   IPWL_Filler_Notify* m_pFillerNotify;
-  IPWL_SpellCheck* m_pSpellCheck;
   FX_BOOL m_bFocus;
   CFX_FloatRect m_rcOldWindow;
-
- public:
-  void AttachFFLData(void* pData) { m_pFormFiller = pData; }
-
- private:
   void* m_pFormFiller;
 };
 
