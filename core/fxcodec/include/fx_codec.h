@@ -23,7 +23,6 @@ class ICodec_BasicModule;
 class ICodec_FaxModule;
 class ICodec_FlateModule;
 class ICodec_IccModule;
-class ICodec_Jbig2Encoder;
 class ICodec_Jbig2Module;
 class ICodec_JpegModule;
 class ICodec_JpxModule;
@@ -448,10 +447,6 @@ class ICodec_ProgressiveDecoder {
   virtual FXCODEC_STATUS ContinueDecode(IFX_Pause* pPause = NULL) = 0;
 };
 #endif  // PDF_ENABLE_XFA
-class ICodec_Jbig2Encoder {
- public:
-  virtual ~ICodec_Jbig2Encoder() {}
-};
 
 class ICodec_IccModule {
  public:
