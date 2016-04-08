@@ -497,8 +497,8 @@ class CFX_WideString {
 
   ~CFX_WideString();
 
-  static CFX_WideString FromLocal(const CFX_ByteString& str);
-  static CFX_WideString FromCodePage(const CFX_ByteString& str,
+  static CFX_WideString FromLocal(const CFX_ByteStringC& str);
+  static CFX_WideString FromCodePage(const CFX_ByteStringC& str,
                                      uint16_t codepage);
 
   static CFX_WideString FromUTF8(const CFX_ByteStringC& str);

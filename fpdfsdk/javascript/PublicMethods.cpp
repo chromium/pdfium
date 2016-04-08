@@ -837,7 +837,7 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IJS_Context* cc,
   }
 
   // for processing currency string
-  Value = CFX_WideString::FromLocal(strValue);
+  Value = CFX_WideString::FromLocal(strValue.AsByteStringC());
   std::wstring strValue2 = Value.c_str();
 
   if (bCurrencyPrepend)
@@ -1120,7 +1120,7 @@ FX_BOOL CJS_PublicMethods::AFPercent_Format(
   if (iNegative)
     strValue = "-" + strValue;
   strValue += "%";
-  Value = CFX_WideString::FromLocal(strValue);
+  Value = CFX_WideString::FromLocal(strValue.AsByteStringC());
 #endif
   return TRUE;
 }

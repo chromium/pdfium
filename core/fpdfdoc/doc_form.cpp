@@ -35,12 +35,13 @@ CFX_WideString FPDFDOC_FDF_GetFieldValue(const CPDF_Dictionary& pFieldDict,
   const CFX_ByteString csBValue = pFieldDict.GetStringBy("V");
   for (const auto& encoding : g_fieldEncoding) {
     if (bsEncoding == encoding.m_name)
-      return CFX_WideString::FromCodePage(csBValue, encoding.m_codePage);
+      return CFX_WideString::FromCodePage(csBValue.AsByteStringC(),
+                                          encoding.m_codePage);
   }
   CFX_ByteString csTemp = csBValue.Left(2);
   if (csTemp == "\xFF\xFE" || csTemp == "\xFE\xFF")
     return PDF_DecodeText(csBValue);
-  return CFX_WideString::FromLocal(csBValue);
+  return CFX_WideString::FromLocal(csBValue.AsByteStringC());
 }
 
 }  // namespace

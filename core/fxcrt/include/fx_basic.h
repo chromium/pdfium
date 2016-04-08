@@ -186,10 +186,10 @@ class CFX_FileBufferArchive {
 class CFX_CharMap {
  public:
   static CFX_ByteString GetByteString(uint16_t codepage,
-                                      const CFX_WideString& wstr);
+                                      const CFX_WideStringC& wstr);
 
   static CFX_WideString GetWideString(uint16_t codepage,
-                                      const CFX_ByteString& bstr);
+                                      const CFX_ByteStringC& bstr);
 
   CFX_CharMap() = delete;
 };

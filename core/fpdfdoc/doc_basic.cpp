@@ -315,23 +315,27 @@ bool CPDF_FileSpec::GetFileName(CFX_WideString* csFileName) const {
   if (CPDF_Dictionary* pDict = m_pObj->AsDictionary()) {
     *csFileName = pDict->GetUnicodeTextBy("UF");
     if (csFileName->IsEmpty()) {
-      *csFileName = CFX_WideString::FromLocal(pDict->GetStringBy("F"));
+      *csFileName = CFX_WideString::FromLocal(pDict->GetConstStringBy("F"));
     }
     if (pDict->GetStringBy("FS") == "URL")
       return true;
     if (csFileName->IsEmpty()) {
       if (pDict->KeyExist("DOS")) {
-        *csFileName = CFX_WideString::FromLocal(pDict->GetStringBy("DOS"));
+        *csFileName = CFX_WideString::FromLocal(
+            pDict->GetStringBy("DOS").AsByteStringC());
       } else if (pDict->KeyExist("Mac")) {
-        *csFileName = CFX_WideString::FromLocal(pDict->GetStringBy("Mac"));
+        *csFileName = CFX_WideString::FromLocal(
+            pDict->GetStringBy("Mac").AsByteStringC());
       } else if (pDict->KeyExist("Unix")) {
-        *csFileName = CFX_WideString::FromLocal(pDict->GetStringBy("Unix"));
+        *csFileName = CFX_WideString::FromLocal(
+            pDict->GetStringBy("Unix").AsByteStringC());
       } else {
         return false;
       }
     }
   } else if (m_pObj->IsString()) {
-    *csFileName = CFX_WideString::FromLocal(m_pObj->GetString());
+    *csFileName =
+        CFX_WideString::FromLocal(m_pObj->GetString().AsByteStringC());
   } else {
     return false;
   }

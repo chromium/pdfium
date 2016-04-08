@@ -296,7 +296,7 @@ CFX_WideString CPDFDoc_Environment::JS_fieldBrowse() {
   if (nActualLen <= 0 || nActualLen > nRequiredLen)
     return CFX_WideString();
 
-  return CFX_WideString::FromLocal(CFX_ByteString(pBuff.get(), nActualLen));
+  return CFX_WideString::FromLocal(CFX_ByteStringC(pBuff.get(), nActualLen));
 }
 
 CFX_WideString CPDFDoc_Environment::JS_docGetFilePath() {
@@ -316,7 +316,7 @@ CFX_WideString CPDFDoc_Environment::JS_docGetFilePath() {
   if (nActualLen <= 0 || nActualLen > nRequiredLen)
     return CFX_WideString();
 
-  return CFX_WideString::FromLocal(CFX_ByteString(pBuff.get(), nActualLen));
+  return CFX_WideString::FromLocal(CFX_ByteStringC(pBuff.get(), nActualLen));
 }
 
 void CPDFDoc_Environment::JS_docSubmitForm(void* formData,
@@ -476,7 +476,7 @@ void CPDFSDK_Document::ProcJavascriptFun() {
     CPDF_Action jsAction = docJS.GetJSAction(i, csJSName);
     if (m_pEnv->GetActionHander())
       m_pEnv->GetActionHander()->DoAction_JavaScript(
-          jsAction, CFX_WideString::FromLocal(csJSName), this);
+          jsAction, CFX_WideString::FromLocal(csJSName.AsByteStringC()), this);
   }
 }
 

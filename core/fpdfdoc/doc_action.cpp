@@ -73,7 +73,8 @@ CFX_WideString CPDF_Action::GetFilePath() const {
     if (type == "Launch") {
       CPDF_Dictionary* pWinDict = m_pDict->GetDictBy("Win");
       if (pWinDict) {
-        return CFX_WideString::FromLocal(pWinDict->GetStringBy("F"));
+        return CFX_WideString::FromLocal(
+            pWinDict->GetStringBy("F").AsByteStringC());
       }
     }
     return path;
