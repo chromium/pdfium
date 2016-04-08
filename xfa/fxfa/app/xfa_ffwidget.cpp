@@ -997,7 +997,7 @@ CFX_DIBitmap* XFA_LoadImageData(CXFA_FFDoc* pDoc,
     } else {
       bsContent = CFX_ByteString::FromUnicode(wsImage);
       pImageFileRead = FX_CreateMemoryStream(
-          (uint8_t*)(const uint8_t*)bsContent, bsContent.GetLength());
+          const_cast<uint8_t*>(bsContent.raw_str()), bsContent.GetLength());
     }
   } else {
     CFX_WideString wsURL = wsHref;

@@ -140,7 +140,7 @@ FX_BOOL CXFA_FFImageEdit::OnLButtonDown(uint32_t dwFlags,
       pFileRead->ReadBlock(pImageBuffer, 0, nDataSize);
       bsBuf.ReleaseBuffer();
       if (!bsBuf.IsEmpty()) {
-        FX_CHAR* pData = XFA_Base64Encode(bsBuf, nDataSize);
+        FX_CHAR* pData = XFA_Base64Encode(bsBuf.raw_str(), nDataSize);
         wsImage = CFX_WideString::FromLocal(pData);
         FX_Free(pData);
       }

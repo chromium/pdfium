@@ -751,7 +751,7 @@ void CFX_FontMapper::AddInstalledFont(const CFX_ByteString& name, int charset) {
   if (name == m_LastFamily) {
     return;
   }
-  const uint8_t* ptr = name;
+  const uint8_t* ptr = name.raw_str();
   FX_BOOL bLocalized = FALSE;
   for (int i = 0; i < name.GetLength(); i++)
     if (ptr[i] > 0x80) {
@@ -1464,15 +1464,16 @@ void CFX_FolderFontInfo::ReportFace(const CFX_ByteString& path,
     return;
   }
   CFX_ByteString names =
-      FPDF_LoadTableFromTT(pFile, tables, nTables, 0x6e616d65);
+      FPDF_LoadTableFromTT(pFile, tables.raw_str(), nTables, 0x6e616d65);
   if (names.IsEmpty()) {
     return;
   }
-  CFX_ByteString facename = GetNameFromTT(names, names.GetLength(), 1);
+  CFX_ByteString facename =
+      GetNameFromTT(names.raw_str(), names.GetLength(), 1);
   if (facename.IsEmpty()) {
     return;
   }
-  CFX_ByteString style = GetNameFromTT(names, names.GetLength(), 2);
+  CFX_ByteString style = GetNameFromTT(names.raw_str(), names.GetLength(), 2);
   if (style != "Regular") {
     facename += " " + style;
   }
@@ -1481,9 +1482,10 @@ void CFX_FolderFontInfo::ReportFace(const CFX_ByteString& path,
 
   CFX_FontFaceInfo* pInfo =
       new CFX_FontFaceInfo(path, facename, tables, offset, filesize);
-  CFX_ByteString os2 = FPDF_LoadTableFromTT(pFile, tables, nTables, 0x4f532f32);
+  CFX_ByteString os2 =
+      FPDF_LoadTableFromTT(pFile, tables.raw_str(), nTables, 0x4f532f32);
   if (os2.GetLength() >= 86) {
-    const uint8_t* p = (const uint8_t*)os2 + 78;
+    const uint8_t* p = os2.raw_str() + 78;
     uint32_t codepages = GET_TT_LONG(p);
     if (codepages & (1 << 17)) {
       m_pMapper->AddInstalledFont(facename, FXFONT_SHIFTJIS_CHARSET);
@@ -1603,8 +1605,7 @@ uint32_t CFX_FolderFontInfo::GetFontData(void* hFont,
   } else {
     uint32_t nTables = pFont->m_FontTables.GetLength() / 16;
     for (uint32_t i = 0; i < nTables; i++) {
-      const uint8_t* p =
-          static_cast<const uint8_t*>(pFont->m_FontTables) + i * 16;
+      const uint8_t* p = pFont->m_FontTables.raw_str() + i * 16;
       if (GET_TT_LONG(p) == table) {
         offset = GET_TT_LONG(p + 8);
         datasize = GET_TT_LONG(p + 12);

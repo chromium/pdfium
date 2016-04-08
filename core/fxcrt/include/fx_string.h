@@ -180,12 +180,6 @@ class CFX_ByteString {
                    : nullptr;
   }
 
-  // Implicit conversion to uint8_t* -- deprecated.
-  operator const uint8_t*() const {
-    return m_pData ? reinterpret_cast<const uint8_t*>(m_pData->m_String)
-                   : nullptr;
-  }
-
   // Explicit conversion to CFX_ByteStringC.
   // Note: |this| must outlive the use of the result.
   CFX_ByteStringC AsStringC() const {
@@ -294,7 +288,7 @@ class CFX_ByteString {
 };
 
 inline CFX_ByteStringC& CFX_ByteStringC::operator=(const CFX_ByteString& src) {
-  m_Ptr = (const uint8_t*)src;
+  m_Ptr = src.raw_str();
   m_Length = src.GetLength();
   return *this;
 }

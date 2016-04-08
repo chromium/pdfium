@@ -2011,7 +2011,7 @@ void CPDF_Creator::InitID(FX_BOOL bDefault) {
       CPDF_StandardSecurityHandler handler;
       CFX_ByteString user_pass = m_pParser->GetPassword();
       uint32_t flag = PDF_ENCRYPT_CONTENT;
-      handler.OnCreate(m_pEncryptDict, m_pIDArray, (const uint8_t*)user_pass,
+      handler.OnCreate(m_pEncryptDict, m_pIDArray, user_pass.raw_str(),
                        user_pass.GetLength(), flag);
       if (m_bNewCrypto) {
         delete m_pCryptoHandler;

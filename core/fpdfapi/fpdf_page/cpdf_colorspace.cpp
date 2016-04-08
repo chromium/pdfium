@@ -1029,7 +1029,7 @@ FX_BOOL CPDF_IndexedCS::GetRGB(FX_FLOAT* pBuf,
   }
   CFX_FixedBufGrow<FX_FLOAT, 16> Comps(m_nBaseComponents);
   FX_FLOAT* comps = Comps;
-  const uint8_t* pTable = m_Table;
+  const uint8_t* pTable = m_Table.raw_str();
   for (int i = 0; i < m_nBaseComponents; i++) {
     comps[i] =
         m_pCompMinMax[i * 2] +
