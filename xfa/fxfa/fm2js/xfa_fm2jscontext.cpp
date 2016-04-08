@@ -315,8 +315,8 @@ void CXFA_FM2JSContext::Avg(FXJSE_HOBJECT hThis,
             FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(hruntime);
             for (int32_t j = 2; j < iLength; j++) {
               FXJSE_Value_GetObjectPropByIdx(argValue, j, jsObjectValue);
-              FXJSE_Value_GetObjectProp(
-                  jsObjectValue, propertyStr.AsByteStringC(), newPropertyValue);
+              FXJSE_Value_GetObjectProp(jsObjectValue, propertyStr.AsStringC(),
+                                        newPropertyValue);
               if (!FXJSE_Value_IsNull(newPropertyValue)) {
                 dSum += HValueToDouble(hThis, newPropertyValue);
                 uCount++;
@@ -398,8 +398,8 @@ void CXFA_FM2JSContext::Count(FXJSE_HOBJECT hThis,
           FXJSE_Value_ToUTF8String(propertyValue, propertyStr);
           for (int32_t i = 2; i < iLength; i++) {
             FXJSE_Value_GetObjectPropByIdx(argValue, i, jsObjectValue);
-            FXJSE_Value_GetObjectProp(
-                jsObjectValue, propertyStr.AsByteStringC(), newPropertyValue);
+            FXJSE_Value_GetObjectProp(jsObjectValue, propertyStr.AsStringC(),
+                                      newPropertyValue);
             uCount += (FXJSE_Value_IsNull(newPropertyValue) ? 0 : 1);
           }
         }
@@ -490,8 +490,8 @@ void CXFA_FM2JSContext::Max(FXJSE_HOBJECT hThis,
           FXJSE_Value_ToUTF8String(propertyValue, propertyStr);
           for (int32_t i = 2; i < iLength; i++) {
             FXJSE_Value_GetObjectPropByIdx(argValue, i, jsObjectValue);
-            FXJSE_Value_GetObjectProp(
-                jsObjectValue, propertyStr.AsByteStringC(), newPropertyValue);
+            FXJSE_Value_GetObjectProp(jsObjectValue, propertyStr.AsStringC(),
+                                      newPropertyValue);
             if (!FXJSE_Value_IsNull(newPropertyValue)) {
               uCount++;
               if (uCount == 1) {
@@ -593,8 +593,8 @@ void CXFA_FM2JSContext::Min(FXJSE_HOBJECT hThis,
           FXJSE_Value_ToUTF8String(propertyValue, propertyStr);
           for (int32_t i = 2; i < iLength; i++) {
             FXJSE_Value_GetObjectPropByIdx(argValue, i, jsObjectValue);
-            FXJSE_Value_GetObjectProp(
-                jsObjectValue, propertyStr.AsByteStringC(), newPropertyValue);
+            FXJSE_Value_GetObjectProp(jsObjectValue, propertyStr.AsStringC(),
+                                      newPropertyValue);
             if (!FXJSE_Value_IsNull(newPropertyValue)) {
               uCount++;
               if (uCount == 1) {
@@ -679,8 +679,8 @@ void CXFA_FM2JSContext::Mod(FXJSE_HOBJECT hThis,
             CFX_ByteString propertyStr;
             FXJSE_Value_ToUTF8String(propertyValue, propertyStr);
             FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(hruntime);
-            FXJSE_Value_GetObjectProp(
-                jsObjectValue, propertyStr.AsByteStringC(), newPropertyValue);
+            FXJSE_Value_GetObjectProp(jsObjectValue, propertyStr.AsStringC(),
+                                      newPropertyValue);
             dDividend = HValueToDouble(hThis, newPropertyValue);
             FXJSE_Value_Release(newPropertyValue);
           }
@@ -708,8 +708,8 @@ void CXFA_FM2JSContext::Mod(FXJSE_HOBJECT hThis,
             CFX_ByteString propertyStr;
             FXJSE_Value_ToUTF8String(propertyValue, propertyStr);
             FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(hruntime);
-            FXJSE_Value_GetObjectProp(
-                jsObjectValue, propertyStr.AsByteStringC(), newPropertyValue);
+            FXJSE_Value_GetObjectProp(jsObjectValue, propertyStr.AsStringC(),
+                                      newPropertyValue);
             dDividor = HValueToDouble(hThis, newPropertyValue);
             FXJSE_Value_Release(newPropertyValue);
           }
@@ -761,7 +761,7 @@ void CXFA_FM2JSContext::Round(FXJSE_HOBJECT hThis,
           CFX_ByteString propertyStr;
           FXJSE_Value_ToUTF8String(propertyValue, propertyStr);
           FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(hruntime);
-          FXJSE_Value_GetObjectProp(jsObjectValue, propertyStr.AsByteStringC(),
+          FXJSE_Value_GetObjectProp(jsObjectValue, propertyStr.AsStringC(),
                                     newPropertyValue);
           dValue = HValueToDouble(hThis, newPropertyValue);
           FXJSE_Value_Release(newPropertyValue);
@@ -774,7 +774,7 @@ void CXFA_FM2JSContext::Round(FXJSE_HOBJECT hThis,
       CFX_Decimal decimalValue((FX_FLOAT)dValue, uPrecision);
       CFX_WideString wsValue = decimalValue;
       FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                wsValue.UTF8Encode().AsByteStringC());
+                                wsValue.UTF8Encode().AsStringC());
     }
     FXJSE_Value_Release(argOne);
   } else if (argc == 2) {
@@ -795,7 +795,7 @@ void CXFA_FM2JSContext::Round(FXJSE_HOBJECT hThis,
           CFX_ByteString propertyStr;
           FXJSE_Value_ToUTF8String(propertyValue, propertyStr);
           FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(hruntime);
-          FXJSE_Value_GetObjectProp(jsObjectValue, propertyStr.AsByteStringC(),
+          FXJSE_Value_GetObjectProp(jsObjectValue, propertyStr.AsStringC(),
                                     newPropertyValue);
           dValue = HValueToDouble(hThis, newPropertyValue);
           FXJSE_Value_Release(newPropertyValue);
@@ -817,7 +817,7 @@ void CXFA_FM2JSContext::Round(FXJSE_HOBJECT hThis,
           CFX_ByteString propertyStr;
           FXJSE_Value_ToUTF8String(propertyValue, propertyStr);
           FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(hruntime);
-          FXJSE_Value_GetObjectProp(jsObjectValue, propertyStr.AsByteStringC(),
+          FXJSE_Value_GetObjectProp(jsObjectValue, propertyStr.AsStringC(),
                                     newPropertyValue);
           dPrecision = HValueToDouble(hThis, newPropertyValue);
           FXJSE_Value_Release(newPropertyValue);
@@ -837,7 +837,7 @@ void CXFA_FM2JSContext::Round(FXJSE_HOBJECT hThis,
       CFX_Decimal decimalValue((FX_FLOAT)dValue, uPrecision);
       CFX_WideString wsValue = decimalValue;
       FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                wsValue.UTF8Encode().AsByteStringC());
+                                wsValue.UTF8Encode().AsStringC());
     }
     FXJSE_Value_Release(argOne);
     FXJSE_Value_Release(argTwo);
@@ -886,8 +886,8 @@ void CXFA_FM2JSContext::Sum(FXJSE_HOBJECT hThis,
             FXJSE_Value_ToUTF8String(propertyValue, propertyStr);
             for (int32_t j = 2; j < iLength; j++) {
               FXJSE_Value_GetObjectPropByIdx(argValue, j, jsObjectValue);
-              FXJSE_Value_GetObjectProp(
-                  jsObjectValue, propertyStr.AsByteStringC(), newPropertyValue);
+              FXJSE_Value_GetObjectProp(jsObjectValue, propertyStr.AsStringC(),
+                                        newPropertyValue);
               if (!FXJSE_Value_IsNull(newPropertyValue)) {
                 dSum += HValueToDouble(hThis, newPropertyValue);
                 uCount++;
@@ -937,7 +937,7 @@ void CXFA_FM2JSContext::Date(FXJSE_HOBJECT hThis,
     bufferMon.Format("%02d", pTmStruct->tm_mon + 1);
     bufferDay.Format("%02d", pTmStruct->tm_mday);
     CFX_ByteString bufferCurrent = bufferYear + bufferMon + bufferDay;
-    int32_t dDays = DateString2Num(bufferCurrent.AsByteStringC());
+    int32_t dDays = DateString2Num(bufferCurrent.AsStringC());
     FXJSE_Value_SetInteger(args.GetReturnValue(), dDays);
   } else {
     CXFA_FM2JSContext* pContext =
@@ -981,12 +981,12 @@ void CXFA_FM2JSContext::Date2Num(FXJSE_HOBJECT hThis,
     }
     if (!bFlags) {
       CFX_ByteString szIsoDateString;
-      FX_BOOL bRet = Local2IsoDate(
-          hThis, dateString.AsByteStringC(), formatString.AsByteStringC(),
-          localString.AsByteStringC(), szIsoDateString);
+      FX_BOOL bRet =
+          Local2IsoDate(hThis, dateString.AsStringC(), formatString.AsStringC(),
+                        localString.AsStringC(), szIsoDateString);
       if (bRet) {
         FXJSE_Value_SetInteger(args.GetReturnValue(),
-                               DateString2Num(szIsoDateString.AsByteStringC()));
+                               DateString2Num(szIsoDateString.AsStringC()));
       } else {
         FXJSE_Value_SetInteger(args.GetReturnValue(), 0);
       }
@@ -1037,12 +1037,11 @@ void CXFA_FM2JSContext::DateFmt(FXJSE_HOBJECT hThis,
     }
     if (!bFlags) {
       CFX_ByteString formatStr;
-      GetStandardDateFormat(hThis, iStyle, szLocal.AsByteStringC(), formatStr);
+      GetStandardDateFormat(hThis, iStyle, szLocal.AsStringC(), formatStr);
       if (formatStr.IsEmpty()) {
         formatStr = "";
       }
-      FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                formatStr.AsByteStringC());
+      FXJSE_Value_SetUTF8String(args.GetReturnValue(), formatStr.AsStringC());
     } else {
       FXJSE_Value_SetNull(args.GetReturnValue());
     }
@@ -1069,7 +1068,7 @@ void CXFA_FM2JSContext::IsoDate2Num(FXJSE_HOBJECT hThis,
     } else {
       CFX_ByteString szArgString;
       HValueToUTF8String(argOne, szArgString);
-      int32_t dDays = DateString2Num(szArgString.AsByteStringC());
+      int32_t dDays = DateString2Num(szArgString.AsStringC());
       FXJSE_Value_SetInteger(args.GetReturnValue(), (int32_t)dDays);
     }
     FXJSE_Value_Release(argOne);
@@ -1102,7 +1101,7 @@ void CXFA_FM2JSContext::IsoTime2Num(FXJSE_HOBJECT hThis,
         return;
       }
       CXFA_LocaleValue timeValue(
-          XFA_VT_TIME, CFX_WideString::FromUTF8(szArgString.AsByteStringC()),
+          XFA_VT_TIME, CFX_WideString::FromUTF8(szArgString.AsStringC()),
           (CXFA_LocaleMgr*)pMgr);
       if (timeValue.IsValid()) {
         CFX_Unitime uniTime = timeValue.GetTime();
@@ -1167,13 +1166,11 @@ void CXFA_FM2JSContext::LocalDateFmt(FXJSE_HOBJECT hThis,
     }
     if (!bFlags) {
       CFX_ByteString formatStr;
-      GetLocalDateFormat(hThis, iStyle, szLocal.AsByteStringC(), formatStr,
-                         FALSE);
+      GetLocalDateFormat(hThis, iStyle, szLocal.AsStringC(), formatStr, FALSE);
       if (formatStr.IsEmpty()) {
         formatStr = "";
       }
-      FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                formatStr.AsByteStringC());
+      FXJSE_Value_SetUTF8String(args.GetReturnValue(), formatStr.AsStringC());
     } else {
       FXJSE_Value_SetNull(args.GetReturnValue());
     }
@@ -1220,13 +1217,11 @@ void CXFA_FM2JSContext::LocalTimeFmt(FXJSE_HOBJECT hThis,
     }
     if (!bFlags) {
       CFX_ByteString formatStr;
-      GetLocalTimeFormat(hThis, iStyle, szLocal.AsByteStringC(), formatStr,
-                         FALSE);
+      GetLocalTimeFormat(hThis, iStyle, szLocal.AsStringC(), formatStr, FALSE);
       if (formatStr.IsEmpty()) {
         formatStr = "";
       }
-      FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                formatStr.AsByteStringC());
+      FXJSE_Value_SetUTF8String(args.GetReturnValue(), formatStr.AsStringC());
     } else {
       FXJSE_Value_SetNull(args.GetReturnValue());
     }
@@ -1373,14 +1368,14 @@ void CXFA_FM2JSContext::Num2Date(FXJSE_HOBJECT hThis,
       CFX_ByteString szIsoDateString;
       szIsoDateString.Format("%d%02d%02d", iYear + i, iMonth, iDay);
       CFX_ByteString szLocalDateString;
-      IsoDate2Local(hThis, szIsoDateString.AsByteStringC(),
-                    formatString.AsByteStringC(), localString.AsByteStringC(),
+      IsoDate2Local(hThis, szIsoDateString.AsStringC(),
+                    formatString.AsStringC(), localString.AsStringC(),
                     szLocalDateString);
       if (szLocalDateString.IsEmpty()) {
         szLocalDateString = "";
       }
       FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                szLocalDateString.AsByteStringC());
+                                szLocalDateString.AsStringC());
     } else {
       FXJSE_Value_SetNull(args.GetReturnValue());
     }
@@ -1436,13 +1431,13 @@ void CXFA_FM2JSContext::Num2GMTime(FXJSE_HOBJECT hThis,
     }
     if (!bFlags) {
       CFX_ByteString szGMTTimeString;
-      Num2AllTime(hThis, iTime, formatString.AsByteStringC(),
-                  localString.AsByteStringC(), TRUE, szGMTTimeString);
+      Num2AllTime(hThis, iTime, formatString.AsStringC(),
+                  localString.AsStringC(), TRUE, szGMTTimeString);
       if (szGMTTimeString.IsEmpty()) {
         szGMTTimeString = "";
       }
       FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                szGMTTimeString.AsByteStringC());
+                                szGMTTimeString.AsStringC());
     } else {
       FXJSE_Value_SetNull(args.GetReturnValue());
     }
@@ -1498,13 +1493,13 @@ void CXFA_FM2JSContext::Num2Time(FXJSE_HOBJECT hThis,
     }
     if (!bFlags) {
       CFX_ByteString szLocalTimeString;
-      Num2AllTime(hThis, (int32_t)fTime, formatString.AsByteStringC(),
-                  localString.AsByteStringC(), FALSE, szLocalTimeString);
+      Num2AllTime(hThis, (int32_t)fTime, formatString.AsStringC(),
+                  localString.AsStringC(), FALSE, szLocalTimeString);
       if (szLocalTimeString.IsEmpty()) {
         szLocalTimeString = "";
       }
       FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                szLocalTimeString.AsByteStringC());
+                                szLocalTimeString.AsStringC());
     } else {
       FXJSE_Value_SetNull(args.GetReturnValue());
     }
@@ -1588,19 +1583,18 @@ void CXFA_FM2JSContext::Time2Num(FXJSE_HOBJECT hThis,
         pLocale = widgetData.GetLocal();
       } else {
         pLocale = pMgr->GetLocaleByName(
-            CFX_WideString::FromUTF8(localString.AsByteStringC())
-                .AsWideStringC());
+            CFX_WideString::FromUTF8(localString.AsStringC()).AsStringC());
       }
       CFX_WideString wsFormat;
       if (formatString.IsEmpty()) {
         pLocale->GetTimePattern(FX_LOCALEDATETIMESUBCATEGORY_Default, wsFormat);
       } else {
-        wsFormat = CFX_WideString::FromUTF8(formatString.AsByteStringC());
+        wsFormat = CFX_WideString::FromUTF8(formatString.AsStringC());
       }
       wsFormat = FX_WSTRC(L"time{") + wsFormat;
       wsFormat += FX_WSTRC(L"}");
       CXFA_LocaleValue timeValue(
-          XFA_VT_TIME, CFX_WideString::FromUTF8(timeString.AsByteStringC()),
+          XFA_VT_TIME, CFX_WideString::FromUTF8(timeString.AsStringC()),
           wsFormat, pLocale, (CXFA_LocaleMgr*)pMgr);
       if (timeValue.IsValid()) {
         CFX_Unitime uniTime = timeValue.GetTime();
@@ -1676,12 +1670,11 @@ void CXFA_FM2JSContext::TimeFmt(FXJSE_HOBJECT hThis,
     }
     if (!bFlags) {
       CFX_ByteString formatStr;
-      GetStandardTimeFormat(hThis, iStyle, szLocal.AsByteStringC(), formatStr);
+      GetStandardTimeFormat(hThis, iStyle, szLocal.AsStringC(), formatStr);
       if (formatStr.IsEmpty()) {
         formatStr = "";
       }
-      FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                formatStr.AsByteStringC());
+      FXJSE_Value_SetUTF8String(args.GetReturnValue(), formatStr.AsStringC());
     } else {
       FXJSE_Value_SetNull(args.GetReturnValue());
     }
@@ -2036,8 +2029,8 @@ FX_BOOL CXFA_FM2JSContext::Local2IsoDate(FXJSE_HOBJECT hThis,
     CXFA_WidgetData widgetData(pThisNode);
     pLocale = widgetData.GetLocal();
   } else {
-    pLocale = pMgr->GetLocaleByName(
-        CFX_WideString::FromUTF8(szLocale).AsWideStringC());
+    pLocale =
+        pMgr->GetLocaleByName(CFX_WideString::FromUTF8(szLocale).AsStringC());
   }
   if (!pLocale) {
     return FALSE;
@@ -2073,8 +2066,8 @@ FX_BOOL CXFA_FM2JSContext::Local2IsoTime(FXJSE_HOBJECT hThis,
     CXFA_WidgetData widgetData(pThisNode);
     pLocale = widgetData.GetLocal();
   } else {
-    pLocale = pMgr->GetLocaleByName(
-        CFX_WideString::FromUTF8(szLocale).AsWideStringC());
+    pLocale =
+        pMgr->GetLocaleByName(CFX_WideString::FromUTF8(szLocale).AsStringC());
   }
   if (!pLocale) {
     return FALSE;
@@ -2113,8 +2106,8 @@ FX_BOOL CXFA_FM2JSContext::IsoDate2Local(FXJSE_HOBJECT hThis,
     CXFA_WidgetData widgetData(pThisNode);
     pLocale = widgetData.GetLocal();
   } else {
-    pLocale = pMgr->GetLocaleByName(
-        CFX_WideString::FromUTF8(szLocale).AsWideStringC());
+    pLocale =
+        pMgr->GetLocaleByName(CFX_WideString::FromUTF8(szLocale).AsStringC());
   }
   if (!pLocale) {
     return FALSE;
@@ -2152,8 +2145,8 @@ FX_BOOL CXFA_FM2JSContext::IsoTime2Local(FXJSE_HOBJECT hThis,
     CXFA_WidgetData widgetData(pThisNode);
     pLocale = widgetData.GetLocal();
   } else {
-    pLocale = pMgr->GetLocaleByName(
-        CFX_WideString::FromUTF8(szLocale).AsWideStringC());
+    pLocale =
+        pMgr->GetLocaleByName(CFX_WideString::FromUTF8(szLocale).AsStringC());
   }
   if (!pLocale) {
     return FALSE;
@@ -2193,8 +2186,8 @@ FX_BOOL CXFA_FM2JSContext::GetGMTTime(FXJSE_HOBJECT hThis,
     CXFA_WidgetData widgetData(pThisNode);
     pLocale = widgetData.GetLocal();
   } else {
-    pLocale = pMgr->GetLocaleByName(
-        CFX_WideString::FromUTF8(szLocale).AsWideStringC());
+    pLocale =
+        pMgr->GetLocaleByName(CFX_WideString::FromUTF8(szLocale).AsStringC());
   }
   if (!pLocale) {
     return FALSE;
@@ -2375,8 +2368,8 @@ void CXFA_FM2JSContext::GetLocalDateFormat(FXJSE_HOBJECT hThis,
     CXFA_WidgetData widgetData(pThisNode);
     pLocale = widgetData.GetLocal();
   } else {
-    pLocale = pMgr->GetLocaleByName(
-        CFX_WideString::FromUTF8(szLocalStr).AsWideStringC());
+    pLocale =
+        pMgr->GetLocaleByName(CFX_WideString::FromUTF8(szLocalStr).AsStringC());
   }
   if (!pLocale) {
     return;
@@ -2430,8 +2423,8 @@ void CXFA_FM2JSContext::GetLocalTimeFormat(FXJSE_HOBJECT hThis,
     CXFA_WidgetData widgetData(pThisNode);
     pLocale = widgetData.GetLocal();
   } else {
-    pLocale = pMgr->GetLocaleByName(
-        CFX_WideString::FromUTF8(szLocalStr).AsWideStringC());
+    pLocale =
+        pMgr->GetLocaleByName(CFX_WideString::FromUTF8(szLocalStr).AsStringC());
   }
   if (!pLocale) {
     return;
@@ -2482,10 +2475,10 @@ void CXFA_FM2JSContext::Num2AllTime(FXJSE_HOBJECT hThis,
   CFX_ByteString strIsoTime;
   strIsoTime.Format("%02d:%02d:%02d", iHour, iMin, iSec);
   if (bGM) {
-    iRet = GetGMTTime(hThis, strIsoTime.AsByteStringC(), szFormat, szLocale,
-                      strTime);
+    iRet =
+        GetGMTTime(hThis, strIsoTime.AsStringC(), szFormat, szLocale, strTime);
   } else {
-    iRet = IsoTime2Local(hThis, strIsoTime.AsByteStringC(), szFormat, szLocale,
+    iRet = IsoTime2Local(hThis, strIsoTime.AsStringC(), szFormat, szLocale,
                          strTime);
   }
   if (!iRet) {
@@ -3070,13 +3063,13 @@ void CXFA_FM2JSContext::Choose(FXJSE_HOBJECT hThis,
             } else {
               CFX_ByteString propStr;
               FXJSE_Value_ToUTF8String(propertyValue, propStr);
-              FXJSE_Value_GetObjectProp(jsobjectValue, propStr.AsByteStringC(),
+              FXJSE_Value_GetObjectProp(jsobjectValue, propStr.AsStringC(),
                                         newProperty);
             }
             CFX_ByteString bsChoosed;
             HValueToUTF8String(newProperty, bsChoosed);
             FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                      bsChoosed.AsByteStringC());
+                                      bsChoosed.AsStringC());
             FXJSE_Value_Release(newProperty);
             FXJSE_Value_Release(jsobjectValue);
             FXJSE_Value_Release(propertyValue);
@@ -3088,7 +3081,7 @@ void CXFA_FM2JSContext::Choose(FXJSE_HOBJECT hThis,
             CFX_ByteString bsChoosed;
             HValueToUTF8String(argIndexValue, bsChoosed);
             FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                      bsChoosed.AsByteStringC());
+                                      bsChoosed.AsStringC());
             bFound = TRUE;
           }
         }
@@ -3200,8 +3193,8 @@ void CXFA_FM2JSContext::Within(FXJSE_HOBJECT hThis,
         HValueToUTF8String(argHeight, heightString);
         FXJSE_Value_SetInteger(
             args.GetReturnValue(),
-            ((oneString.Compare(lowString.AsByteStringC()) >= 0) &&
-             (oneString.Compare(heightString.AsByteStringC()) <= 0)));
+            ((oneString.Compare(lowString.AsStringC()) >= 0) &&
+             (oneString.Compare(heightString.AsStringC()) <= 0)));
       }
       FXJSE_Value_Release(argLow);
       FXJSE_Value_Release(argHeight);
@@ -3251,8 +3244,7 @@ void CXFA_FM2JSContext::Eval(FXJSE_HOBJECT hThis,
       CFX_WideString javaScript;
       CFX_WideString wsError;
       XFA_FM2JS_Translate(
-          CFX_WideString::FromUTF8(utf8ScriptString.AsByteStringC())
-              .AsWideStringC(),
+          CFX_WideString::FromUTF8(utf8ScriptString.AsStringC()).AsStringC(),
           wsJavaScriptBuf, wsError);
       FXJSE_HCONTEXT hContext = FXJSE_Context_Create(hruntime);
       FXJSE_HVALUE returnValue = FXJSE_Value_Create(hruntime);
@@ -3374,7 +3366,7 @@ void CXFA_FM2JSContext::UnitType(FXJSE_HOBJECT hThis,
       };
       unitspanString.MakeLower();
       CFX_WideString wsTypeString =
-          CFX_WideString::FromUTF8(unitspanString.AsByteStringC());
+          CFX_WideString::FromUTF8(unitspanString.AsStringC());
       const FX_WCHAR* pData = wsTypeString;
       int32_t u = 0;
       int32_t uLen = wsTypeString.GetLength();
@@ -3640,7 +3632,7 @@ void CXFA_FM2JSContext::At(FXJSE_HOBJECT hThis,
       } else {
         CFX_ByteString stringOne;
         HValueToUTF8String(argOne, stringOne);
-        FX_STRSIZE iPosition = stringOne.Find(stringTwo.AsByteStringC());
+        FX_STRSIZE iPosition = stringOne.Find(stringTwo.AsStringC());
         FXJSE_Value_SetInteger(args.GetReturnValue(), iPosition + 1);
       }
     }
@@ -3678,7 +3670,7 @@ void CXFA_FM2JSContext::Concat(FXJSE_HOBJECT hThis,
       FXJSE_Value_SetNull(args.GetReturnValue());
     } else {
       FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                resultString.AsByteStringC());
+                                resultString.AsStringC());
     }
   } else {
     pContext->ThrowScriptErrorMessage(XFA_IDS_INCORRECT_NUMBER_OF_METHOD,
@@ -3699,7 +3691,7 @@ void CXFA_FM2JSContext::Decode(FXJSE_HOBJECT hThis,
       CFX_ByteString toDecodeString;
       HValueToUTF8String(argOne, toDecodeString);
       CFX_ByteTextBuf resultBuf;
-      DecodeURL(toDecodeString.AsByteStringC(), resultBuf);
+      DecodeURL(toDecodeString.AsStringC(), resultBuf);
       FXJSE_Value_SetUTF8String(args.GetReturnValue(),
                                 resultBuf.GetByteString());
     }
@@ -3716,11 +3708,11 @@ void CXFA_FM2JSContext::Decode(FXJSE_HOBJECT hThis,
       HValueToUTF8String(argTwo, identifyString);
       CFX_ByteTextBuf resultBuf;
       if (identifyString.EqualNoCase("html")) {
-        DecodeHTML(toDecodeString.AsByteStringC(), resultBuf);
+        DecodeHTML(toDecodeString.AsStringC(), resultBuf);
       } else if (identifyString.EqualNoCase("xml")) {
-        DecodeXML(toDecodeString.AsByteStringC(), resultBuf);
+        DecodeXML(toDecodeString.AsStringC(), resultBuf);
       } else {
-        DecodeURL(toDecodeString.AsByteStringC(), resultBuf);
+        DecodeURL(toDecodeString.AsStringC(), resultBuf);
       }
       FXJSE_Value_SetUTF8String(args.GetReturnValue(),
                                 resultBuf.GetByteString());
@@ -3785,7 +3777,7 @@ void CXFA_FM2JSContext::DecodeURL(const CFX_ByteStringC& szURLString,
   szResultString.Clear();
   szResultString << FX_UTF8Encode(wsResultBuf.GetBuffer(),
                                   wsResultBuf.GetLength())
-                        .AsByteStringC();
+                        .AsStringC();
 }
 void CXFA_FM2JSContext::DecodeHTML(const CFX_ByteStringC& szHTMLString,
                                    CFX_ByteTextBuf& szResultString) {
@@ -3859,7 +3851,7 @@ void CXFA_FM2JSContext::DecodeHTML(const CFX_ByteStringC& szHTMLString,
   szResultString.Clear();
   szResultString << FX_UTF8Encode(wsResultBuf.GetBuffer(),
                                   wsResultBuf.GetLength())
-                        .AsByteStringC();
+                        .AsStringC();
 }
 void CXFA_FM2JSContext::DecodeXML(const CFX_ByteStringC& szXMLString,
                                   CFX_ByteTextBuf& szResultString) {
@@ -3956,7 +3948,7 @@ void CXFA_FM2JSContext::DecodeXML(const CFX_ByteStringC& szXMLString,
   wsXMLBuf.AppendChar(0);
   szResultString.Clear();
   szResultString << FX_UTF8Encode(wsXMLBuf.GetBuffer(), wsXMLBuf.GetLength())
-                        .AsByteStringC();
+                        .AsStringC();
 }
 void CXFA_FM2JSContext::Encode(FXJSE_HOBJECT hThis,
                                const CFX_ByteStringC& szFuncName,
@@ -3972,7 +3964,7 @@ void CXFA_FM2JSContext::Encode(FXJSE_HOBJECT hThis,
       CFX_ByteString toEncodeString;
       HValueToUTF8String(argOne, toEncodeString);
       CFX_ByteTextBuf resultBuf;
-      EncodeURL(toEncodeString.AsByteStringC(), resultBuf);
+      EncodeURL(toEncodeString.AsStringC(), resultBuf);
       FXJSE_Value_SetUTF8String(args.GetReturnValue(),
                                 resultBuf.GetByteString());
     }
@@ -3989,11 +3981,11 @@ void CXFA_FM2JSContext::Encode(FXJSE_HOBJECT hThis,
       HValueToUTF8String(argTwo, identifyString);
       CFX_ByteTextBuf resultBuf;
       if (identifyString.EqualNoCase("html")) {
-        EncodeHTML(toEncodeString.AsByteStringC(), resultBuf);
+        EncodeHTML(toEncodeString.AsStringC(), resultBuf);
       } else if (identifyString.EqualNoCase("xml")) {
-        EncodeXML(toEncodeString.AsByteStringC(), resultBuf);
+        EncodeXML(toEncodeString.AsStringC(), resultBuf);
       } else {
-        EncodeURL(toEncodeString.AsByteStringC(), resultBuf);
+        EncodeURL(toEncodeString.AsStringC(), resultBuf);
       }
       FXJSE_Value_SetUTF8String(args.GetReturnValue(),
                                 resultBuf.GetByteString());
@@ -4110,12 +4102,12 @@ void CXFA_FM2JSContext::EncodeURL(const CFX_ByteStringC& szURLString,
   wsResultBuf.AppendChar(0);
   szResultBuf.Clear();
   szResultBuf << FX_UTF8Encode(wsResultBuf.GetBuffer(), wsResultBuf.GetLength())
-                     .AsByteStringC();
+                     .AsStringC();
 }
 void CXFA_FM2JSContext::EncodeHTML(const CFX_ByteStringC& szHTMLString,
                                    CFX_ByteTextBuf& szResultBuf) {
   CFX_ByteString str = szHTMLString.c_str();
-  CFX_WideString wsHTMLString = CFX_WideString::FromUTF8(str.AsByteStringC());
+  CFX_WideString wsHTMLString = CFX_WideString::FromUTF8(str.AsStringC());
   const FX_WCHAR* strCode = L"0123456789abcdef";
   FX_WCHAR strEncode[9];
   strEncode[0] = '&';
@@ -4164,7 +4156,7 @@ void CXFA_FM2JSContext::EncodeHTML(const CFX_ByteStringC& szHTMLString,
   wsResultBuf.AppendChar(0);
   szResultBuf.Clear();
   szResultBuf << FX_UTF8Encode(wsResultBuf.GetBuffer(), wsResultBuf.GetLength())
-                     .AsByteStringC();
+                     .AsStringC();
 }
 void CXFA_FM2JSContext::EncodeXML(const CFX_ByteStringC& szXMLString,
                                   CFX_ByteTextBuf& szResultBuf) {
@@ -4245,7 +4237,7 @@ void CXFA_FM2JSContext::EncodeXML(const CFX_ByteStringC& szXMLString,
   wsResultBuf.AppendChar(0);
   szResultBuf.Clear();
   szResultBuf << FX_UTF8Encode(wsResultBuf.GetBuffer(), wsResultBuf.GetLength())
-                     .AsByteStringC();
+                     .AsStringC();
 }
 FX_BOOL CXFA_FM2JSContext::HTMLSTR2Code(const CFX_WideStringC& pData,
                                         uint32_t& iCode) {
@@ -4394,10 +4386,9 @@ void CXFA_FM2JSContext::Format(FXJSE_HOBJECT hThis,
     IFX_Locale* pLocale = widgetData.GetLocal();
     uint32_t patternType;
     FX_BOOL bCompelte =
-        XFA_PATTERN_STRING_Type(szPattern.AsByteStringC(), patternType);
-    CFX_WideString wsPattern =
-        CFX_WideString::FromUTF8(szPattern.AsByteStringC());
-    CFX_WideString wsValue = CFX_WideString::FromUTF8(szValue.AsByteStringC());
+        XFA_PATTERN_STRING_Type(szPattern.AsStringC(), patternType);
+    CFX_WideString wsPattern = CFX_WideString::FromUTF8(szPattern.AsStringC());
+    CFX_WideString wsValue = CFX_WideString::FromUTF8(szValue.AsStringC());
     if (!bCompelte) {
       switch (patternType) {
         case XFA_VT_DATETIME: {
@@ -4451,7 +4442,7 @@ void CXFA_FM2JSContext::Format(FXJSE_HOBJECT hThis,
                                    XFA_VALUEPICTURE_Display)) {
       FXJSE_Value_SetUTF8String(
           args.GetReturnValue(),
-          FX_UTF8Encode(wsRet, wsRet.GetLength()).AsByteStringC());
+          FX_UTF8Encode(wsRet, wsRet.GetLength()).AsStringC());
     } else {
       FXJSE_Value_SetUTF8String(args.GetReturnValue(), "");
     }
@@ -4484,7 +4475,7 @@ void CXFA_FM2JSContext::Left(FXJSE_HOBJECT hThis,
         count = 0;
       }
       FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                sourceString.Left(count).AsByteStringC());
+                                sourceString.Left(count).AsStringC());
     }
     FXJSE_Value_Release(argOne);
     FXJSE_Value_Release(argTwo);
@@ -4530,7 +4521,7 @@ void CXFA_FM2JSContext::Lower(FXJSE_HOBJECT hThis,
       HValueToUTF8String(argOne, argString);
       CFX_WideTextBuf lowStringBuf;
       CFX_WideString wsArgString =
-          CFX_WideString::FromUTF8(argString.AsByteStringC());
+          CFX_WideString::FromUTF8(argString.AsStringC());
       const FX_WCHAR* pData = wsArgString;
       int32_t iLen = argString.GetLength();
       int32_t i = 0;
@@ -4551,7 +4542,7 @@ void CXFA_FM2JSContext::Lower(FXJSE_HOBJECT hThis,
       FXJSE_Value_SetUTF8String(
           args.GetReturnValue(),
           FX_UTF8Encode(lowStringBuf.GetBuffer(), lowStringBuf.GetLength())
-              .AsByteStringC());
+              .AsStringC());
       if (argc == 2) {
         FXJSE_Value_Release(localeValue);
       }
@@ -4578,7 +4569,7 @@ void CXFA_FM2JSContext::Ltrim(FXJSE_HOBJECT hThis,
       HValueToUTF8String(argOne, sourceString);
       sourceString.TrimLeft();
       FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                sourceString.AsByteStringC());
+                                sourceString.AsStringC());
     }
     FXJSE_Value_Release(argOne);
   } else {
@@ -4609,11 +4600,10 @@ void CXFA_FM2JSContext::Parse(FXJSE_HOBJECT hThis,
       IFX_Locale* pLocale = widgetData.GetLocal();
       uint32_t patternType;
       FX_BOOL bCompletePattern =
-          XFA_PATTERN_STRING_Type(szPattern.AsByteStringC(), patternType);
+          XFA_PATTERN_STRING_Type(szPattern.AsStringC(), patternType);
       CFX_WideString wsPattern =
-          CFX_WideString::FromUTF8(szPattern.AsByteStringC());
-      CFX_WideString wsValue =
-          CFX_WideString::FromUTF8(szValue.AsByteStringC());
+          CFX_WideString::FromUTF8(szPattern.AsStringC());
+      CFX_WideString wsValue = CFX_WideString::FromUTF8(szValue.AsStringC());
       CFX_ByteString szParsedValue;
       if (bCompletePattern) {
         CXFA_LocaleValue localeValue(patternType, wsValue, wsPattern, pLocale,
@@ -4621,7 +4611,7 @@ void CXFA_FM2JSContext::Parse(FXJSE_HOBJECT hThis,
         if (localeValue.IsValid()) {
           szParsedValue = FX_UTF8Encode(localeValue.GetValue());
           FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                    szParsedValue.AsByteStringC());
+                                    szParsedValue.AsStringC());
         } else {
           FXJSE_Value_SetUTF8String(args.GetReturnValue(), "");
         }
@@ -4641,7 +4631,7 @@ void CXFA_FM2JSContext::Parse(FXJSE_HOBJECT hThis,
             if (localeValue.IsValid()) {
               szParsedValue = FX_UTF8Encode(localeValue.GetValue());
               FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                        szParsedValue.AsByteStringC());
+                                        szParsedValue.AsStringC());
             } else {
               FXJSE_Value_SetUTF8String(args.GetReturnValue(), "");
             }
@@ -4654,7 +4644,7 @@ void CXFA_FM2JSContext::Parse(FXJSE_HOBJECT hThis,
             if (localeValue.IsValid()) {
               szParsedValue = FX_UTF8Encode(localeValue.GetValue());
               FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                        szParsedValue.AsByteStringC());
+                                        szParsedValue.AsStringC());
             } else {
               FXJSE_Value_SetUTF8String(args.GetReturnValue(), "");
             }
@@ -4667,7 +4657,7 @@ void CXFA_FM2JSContext::Parse(FXJSE_HOBJECT hThis,
             if (localeValue.IsValid()) {
               szParsedValue = FX_UTF8Encode(localeValue.GetValue());
               FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                        szParsedValue.AsByteStringC());
+                                        szParsedValue.AsStringC());
             } else {
               FXJSE_Value_SetUTF8String(args.GetReturnValue(), "");
             }
@@ -4680,7 +4670,7 @@ void CXFA_FM2JSContext::Parse(FXJSE_HOBJECT hThis,
             if (localeValue.IsValid()) {
               szParsedValue = FX_UTF8Encode(localeValue.GetValue());
               FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                        szParsedValue.AsByteStringC());
+                                        szParsedValue.AsStringC());
             } else {
               FXJSE_Value_SetUTF8String(args.GetReturnValue(), "");
             }
@@ -4714,7 +4704,7 @@ void CXFA_FM2JSContext::Parse(FXJSE_HOBJECT hThis,
               if (localeValue.IsValid()) {
                 szParsedValue = FX_UTF8Encode(localeValue.GetValue());
                 FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                          szParsedValue.AsByteStringC());
+                                          szParsedValue.AsStringC());
               } else {
                 FXJSE_Value_SetUTF8String(args.GetReturnValue(), "");
               }
@@ -4771,7 +4761,7 @@ void CXFA_FM2JSContext::Replace(FXJSE_HOBJECT hThis,
           }
         }
         if (iFindIndex == iFindLen) {
-          resultString << threeString.AsByteStringC();
+          resultString << threeString.AsStringC();
           u += iFindLen - 1;
           iFindIndex = 0;
         } else {
@@ -4818,7 +4808,7 @@ void CXFA_FM2JSContext::Right(FXJSE_HOBJECT hThis,
         count = 0;
       }
       FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                sourceString.Right(count).AsByteStringC());
+                                sourceString.Right(count).AsStringC());
     }
     FXJSE_Value_Release(argOne);
     FXJSE_Value_Release(argTwo);
@@ -4841,7 +4831,7 @@ void CXFA_FM2JSContext::Rtrim(FXJSE_HOBJECT hThis,
       HValueToUTF8String(argOne, sourceString);
       sourceString.TrimRight();
       FXJSE_Value_SetUTF8String(args.GetReturnValue(),
-                                sourceString.AsByteStringC());
+                                sourceString.AsStringC());
     }
     FXJSE_Value_Release(argOne);
   } else {
@@ -5046,7 +5036,7 @@ void CXFA_FM2JSContext::Stuff(FXJSE_HOBJECT hThis,
       resultString.AppendChar(sourceString.GetAt(i));
       ++i;
     }
-    resultString << insertString.AsByteStringC();
+    resultString << insertString.AsStringC();
     i = iStart + iDelete;
     while (i < iLength) {
       resultString.AppendChar(sourceString.GetAt(i));
@@ -5100,9 +5090,8 @@ void CXFA_FM2JSContext::Substr(FXJSE_HOBJECT hThis,
           iCount = 0;
         }
         iStart -= 1;
-        FXJSE_Value_SetUTF8String(
-            args.GetReturnValue(),
-            szSourceStr.Mid(iStart, iCount).AsByteStringC());
+        FXJSE_Value_SetUTF8String(args.GetReturnValue(),
+                                  szSourceStr.Mid(iStart, iCount).AsStringC());
       }
     }
     FXJSE_Value_Release(stringValue);
@@ -5130,7 +5119,7 @@ void CXFA_FM2JSContext::Uuid(FXJSE_HOBJECT hThis,
     FX_GUID_CreateV4(&guid);
     CFX_ByteString bsUId;
     FX_GUID_ToString(&guid, bsUId, iNum);
-    FXJSE_Value_SetUTF8String(args.GetReturnValue(), bsUId.AsByteStringC());
+    FXJSE_Value_SetUTF8String(args.GetReturnValue(), bsUId.AsStringC());
     if (argc == 1) {
       FXJSE_Value_Release(argOne);
     }
@@ -5158,7 +5147,7 @@ void CXFA_FM2JSContext::Upper(FXJSE_HOBJECT hThis,
       HValueToUTF8String(argOne, argString);
       CFX_WideTextBuf upperStringBuf;
       CFX_WideString wsArgString =
-          CFX_WideString::FromUTF8(argString.AsByteStringC());
+          CFX_WideString::FromUTF8(argString.AsStringC());
       const FX_WCHAR* pData = wsArgString;
       int32_t iLen = wsArgString.GetLength();
       int32_t i = 0;
@@ -5179,7 +5168,7 @@ void CXFA_FM2JSContext::Upper(FXJSE_HOBJECT hThis,
       FXJSE_Value_SetUTF8String(
           args.GetReturnValue(),
           FX_UTF8Encode(upperStringBuf.GetBuffer(), upperStringBuf.GetLength())
-              .AsByteStringC());
+              .AsStringC());
       if (argc == 2) {
         FXJSE_Value_Release(localeValue);
       }
@@ -5232,7 +5221,7 @@ void CXFA_FM2JSContext::WordNum(FXJSE_HOBJECT hThis,
         CFX_ByteTextBuf resultBuf;
         CFX_ByteString numberString;
         numberString.Format("%.2f", fNumber);
-        WordUS(numberString.AsByteStringC(), iIdentifier, resultBuf);
+        WordUS(numberString.AsStringC(), iIdentifier, resultBuf);
         FXJSE_Value_SetUTF8String(args.GetReturnValue(),
                                   resultBuf.GetByteString());
       }
@@ -5468,7 +5457,7 @@ void CXFA_FM2JSContext::Get(FXJSE_HOBJECT hThis,
     CFX_ByteString urlString;
     HValueToUTF8String(argOne, urlString);
     IFX_FileRead* pFile = pAppProvider->DownloadURL(
-        CFX_WideString::FromUTF8(urlString.AsByteStringC()).AsWideStringC());
+        CFX_WideString::FromUTF8(urlString.AsStringC()).AsStringC());
     if (pFile) {
       int32_t size = pFile->GetSize();
       uint8_t* pData = FX_Alloc(uint8_t, size);
@@ -5528,11 +5517,11 @@ void CXFA_FM2JSContext::Post(FXJSE_HOBJECT hThis,
     }
     CFX_WideString decodedResponse;
     FX_BOOL bFlags = pAppProvider->PostRequestURL(
-        CFX_WideString::FromUTF8(bsURL.AsByteStringC()).AsWideStringC(),
-        CFX_WideString::FromUTF8(bsData.AsByteStringC()).AsWideStringC(),
-        CFX_WideString::FromUTF8(bsContentType.AsByteStringC()).AsWideStringC(),
-        CFX_WideString::FromUTF8(bsEncode.AsByteStringC()).AsWideStringC(),
-        CFX_WideString::FromUTF8(bsHeader.AsByteStringC()).AsWideStringC(),
+        CFX_WideString::FromUTF8(bsURL.AsStringC()).AsStringC(),
+        CFX_WideString::FromUTF8(bsData.AsStringC()).AsStringC(),
+        CFX_WideString::FromUTF8(bsContentType.AsStringC()).AsStringC(),
+        CFX_WideString::FromUTF8(bsEncode.AsStringC()).AsStringC(),
+        CFX_WideString::FromUTF8(bsHeader.AsStringC()).AsStringC(),
         decodedResponse);
     FXJSE_Value_Release(argOne);
     FXJSE_Value_Release(argTwo);
@@ -5549,7 +5538,7 @@ void CXFA_FM2JSContext::Post(FXJSE_HOBJECT hThis,
       FXJSE_Value_SetUTF8String(
           args.GetReturnValue(),
           FX_UTF8Encode(decodedResponse, decodedResponse.GetLength())
-              .AsByteStringC());
+              .AsStringC());
     } else {
       pContext->ThrowScriptErrorMessage(XFA_IDS_SERVER_DENY);
     }
@@ -5589,9 +5578,9 @@ void CXFA_FM2JSContext::Put(FXJSE_HOBJECT hThis,
       HValueToUTF8String(argThree, bsEncode);
     }
     FX_BOOL bFlags = pAppProvider->PutRequestURL(
-        CFX_WideString::FromUTF8(bsURL.AsByteStringC()).AsWideStringC(),
-        CFX_WideString::FromUTF8(bsData.AsByteStringC()).AsWideStringC(),
-        CFX_WideString::FromUTF8(bsEncode.AsByteStringC()).AsWideStringC());
+        CFX_WideString::FromUTF8(bsURL.AsStringC()).AsStringC(),
+        CFX_WideString::FromUTF8(bsData.AsStringC()).AsStringC(),
+        CFX_WideString::FromUTF8(bsEncode.AsStringC()).AsStringC());
     FXJSE_Value_Release(argOne);
     FXJSE_Value_Release(argTwo);
     if (argc > 2) {
@@ -5639,7 +5628,7 @@ void CXFA_FM2JSContext::assign_value_operator(FXJSE_HOBJECT hThis,
         FXJSE_Value_ToUTF8String(propertyValue, propertyStr);
         for (int32_t i = 2; i < iLeftLength; i++) {
           FXJSE_Value_GetObjectPropByIdx(lValue, i, jsObjectValue);
-          FXJSE_Value_SetObjectProp(jsObjectValue, propertyStr.AsByteStringC(),
+          FXJSE_Value_SetObjectProp(jsObjectValue, propertyStr.AsStringC(),
                                     rValue);
         }
       }
@@ -5825,7 +5814,7 @@ void CXFA_FM2JSContext::less_operator(FXJSE_HOBJECT hThis,
       FXJSE_Value_ToUTF8String(argSecond, secondOutput);
       FXJSE_Value_SetInteger(
           args.GetReturnValue(),
-          firstOutput.Compare(secondOutput.AsByteStringC()) == -1);
+          firstOutput.Compare(secondOutput.AsStringC()) == -1);
     } else {
       FX_DOUBLE first = HValueToDouble(hThis, argFirst);
       FX_DOUBLE second = HValueToDouble(hThis, argSecond);
@@ -5858,7 +5847,7 @@ void CXFA_FM2JSContext::lessequal_operator(FXJSE_HOBJECT hThis,
       FXJSE_Value_ToUTF8String(argSecond, secondOutput);
       FXJSE_Value_SetInteger(
           args.GetReturnValue(),
-          firstOutput.Compare(secondOutput.AsByteStringC()) != 1);
+          firstOutput.Compare(secondOutput.AsStringC()) != 1);
     } else {
       FX_DOUBLE first = HValueToDouble(hThis, argFirst);
       FX_DOUBLE second = HValueToDouble(hThis, argSecond);
@@ -5888,7 +5877,7 @@ void CXFA_FM2JSContext::greater_operator(FXJSE_HOBJECT hThis,
       FXJSE_Value_ToUTF8String(argSecond, secondOutput);
       FXJSE_Value_SetInteger(
           args.GetReturnValue(),
-          firstOutput.Compare(secondOutput.AsByteStringC()) == 1);
+          firstOutput.Compare(secondOutput.AsStringC()) == 1);
     } else {
       FX_DOUBLE first = HValueToDouble(hThis, argFirst);
       FX_DOUBLE second = HValueToDouble(hThis, argSecond);
@@ -5921,7 +5910,7 @@ void CXFA_FM2JSContext::greaterequal_operator(FXJSE_HOBJECT hThis,
       FXJSE_Value_ToUTF8String(argSecond, secondOutput);
       FXJSE_Value_SetInteger(
           args.GetReturnValue(),
-          firstOutput.Compare(secondOutput.AsByteStringC()) != -1);
+          firstOutput.Compare(secondOutput.AsStringC()) != -1);
     } else {
       FX_DOUBLE first = HValueToDouble(hThis, argFirst);
       FX_DOUBLE second = HValueToDouble(hThis, argSecond);
@@ -6101,8 +6090,8 @@ void CXFA_FM2JSContext::dot_accessor(FXJSE_HOBJECT hThis,
       iIndexValue = HValueToInteger(hThis, argIndex);
     }
     CFX_ByteString szSomExp;
-    GenerateSomExpression(szName.AsByteStringC(), iIndexFlags, iIndexValue,
-                          bIsStar, szSomExp);
+    GenerateSomExpression(szName.AsStringC(), iIndexFlags, iIndexValue, bIsStar,
+                          szSomExp);
     if (FXJSE_Value_IsArray(argAccessor)) {
       FXJSE_HVALUE hLengthValue = FXJSE_Value_Create(hruntime);
       FXJSE_Value_GetObjectProp(argAccessor, "length", hLengthValue);
@@ -6119,9 +6108,8 @@ void CXFA_FM2JSContext::dot_accessor(FXJSE_HOBJECT hThis,
       for (int32_t i = 2; i < iLength; i++) {
         FXJSE_Value_GetObjectPropByIdx(argAccessor, i, hJSObjValue);
         XFA_RESOLVENODE_RS resoveNodeRS;
-        int32_t iRet =
-            ResolveObjects(hThis, hJSObjValue, szSomExp.AsByteStringC(),
-                           resoveNodeRS, TRUE, szName.IsEmpty());
+        int32_t iRet = ResolveObjects(hThis, hJSObjValue, szSomExp.AsStringC(),
+                                      resoveNodeRS, TRUE, szName.IsEmpty());
         if (iRet > 0) {
           ParseResolveResult(hThis, resoveNodeRS, hJSObjValue,
                              hResolveValues[i - 2], iSizes[i - 2], bAttribute);
@@ -6136,7 +6124,7 @@ void CXFA_FM2JSContext::dot_accessor(FXJSE_HOBJECT hThis,
         }
         FXJSE_Value_SetInteger(rgValues[0], 1);
         if (bAttribute) {
-          FXJSE_Value_SetUTF8String(rgValues[1], szName.AsByteStringC());
+          FXJSE_Value_SetUTF8String(rgValues[1], szName.AsStringC());
         } else {
           FXJSE_Value_SetNull(rgValues[1]);
         }
@@ -6154,9 +6142,9 @@ void CXFA_FM2JSContext::dot_accessor(FXJSE_HOBJECT hThis,
         FX_Free(rgValues);
       } else {
         CFX_WideString wsPropertyName =
-            CFX_WideString::FromUTF8(szName.AsByteStringC());
+            CFX_WideString::FromUTF8(szName.AsStringC());
         CFX_WideString wsSomExpression =
-            CFX_WideString::FromUTF8(szSomExp.AsByteStringC());
+            CFX_WideString::FromUTF8(szSomExp.AsStringC());
         pContext->ThrowScriptErrorMessage(XFA_IDS_ACCESS_PROPERTY_IN_NOT_OBJECT,
                                           (const FX_WCHAR*)wsPropertyName,
                                           (const FX_WCHAR*)wsSomExpression);
@@ -6176,14 +6164,14 @@ void CXFA_FM2JSContext::dot_accessor(FXJSE_HOBJECT hThis,
       int32_t iRet = 0;
       if (FXJSE_Value_IsObject(argAccessor) ||
           (FXJSE_Value_IsNull(argAccessor) && bsAccessorName.IsEmpty())) {
-        iRet = ResolveObjects(hThis, argAccessor, szSomExp.AsByteStringC(),
+        iRet = ResolveObjects(hThis, argAccessor, szSomExp.AsStringC(),
                               resoveNodeRS, TRUE, szName.IsEmpty());
       } else if (!FXJSE_Value_IsObject(argAccessor) &&
                  !bsAccessorName.IsEmpty()) {
         FX_BOOL bGetObject =
-            GetObjectByName(hThis, argAccessor, bsAccessorName.AsByteStringC());
+            GetObjectByName(hThis, argAccessor, bsAccessorName.AsStringC());
         if (bGetObject) {
-          iRet = ResolveObjects(hThis, argAccessor, szSomExp.AsByteStringC(),
+          iRet = ResolveObjects(hThis, argAccessor, szSomExp.AsStringC(),
                                 resoveNodeRS, TRUE, szName.IsEmpty());
         }
       }
@@ -6199,7 +6187,7 @@ void CXFA_FM2JSContext::dot_accessor(FXJSE_HOBJECT hThis,
         }
         FXJSE_Value_SetInteger(rgValues[0], 1);
         if (bAttribute) {
-          FXJSE_Value_SetUTF8String(rgValues[1], szName.AsByteStringC());
+          FXJSE_Value_SetUTF8String(rgValues[1], szName.AsStringC());
         } else {
           FXJSE_Value_SetNull(rgValues[1]);
         }
@@ -6217,9 +6205,9 @@ void CXFA_FM2JSContext::dot_accessor(FXJSE_HOBJECT hThis,
         FX_Free(hResolveValues);
       } else {
         CFX_WideString wsPropertyName =
-            CFX_WideString::FromUTF8(szName.AsByteStringC());
+            CFX_WideString::FromUTF8(szName.AsStringC());
         CFX_WideString wsSomExpression =
-            CFX_WideString::FromUTF8(szSomExp.AsByteStringC());
+            CFX_WideString::FromUTF8(szSomExp.AsStringC());
         pContext->ThrowScriptErrorMessage(XFA_IDS_ACCESS_PROPERTY_IN_NOT_OBJECT,
                                           (const FX_WCHAR*)wsPropertyName,
                                           (const FX_WCHAR*)wsSomExpression);
@@ -6254,8 +6242,8 @@ void CXFA_FM2JSContext::dotdot_accessor(FXJSE_HOBJECT hThis,
       iIndexValue = HValueToInteger(hThis, argIndex);
     }
     CFX_ByteString szSomExp;
-    GenerateSomExpression(szName.AsByteStringC(), iIndexFlags, iIndexValue,
-                          bIsStar, szSomExp);
+    GenerateSomExpression(szName.AsStringC(), iIndexFlags, iIndexValue, bIsStar,
+                          szSomExp);
     if (FXJSE_Value_IsArray(argAccessor)) {
       FXJSE_HVALUE hLengthValue = FXJSE_Value_Create(hruntime);
       FXJSE_Value_GetObjectProp(argAccessor, "length", hLengthValue);
@@ -6268,8 +6256,8 @@ void CXFA_FM2JSContext::dotdot_accessor(FXJSE_HOBJECT hThis,
       for (int32_t i = 2; i < iLength; i++) {
         FXJSE_Value_GetObjectPropByIdx(argAccessor, i, hJSObjValue);
         XFA_RESOLVENODE_RS resoveNodeRS;
-        int32_t iRet = ResolveObjects(
-            hThis, hJSObjValue, szSomExp.AsByteStringC(), resoveNodeRS, FALSE);
+        int32_t iRet = ResolveObjects(hThis, hJSObjValue, szSomExp.AsStringC(),
+                                      resoveNodeRS, FALSE);
         if (iRet > 0) {
           ParseResolveResult(hThis, resoveNodeRS, hJSObjValue,
                              hResolveValues[i - 2], iSizes[i - 2], bAttribute);
@@ -6284,7 +6272,7 @@ void CXFA_FM2JSContext::dotdot_accessor(FXJSE_HOBJECT hThis,
         }
         FXJSE_Value_SetInteger(rgValues[0], 1);
         if (bAttribute) {
-          FXJSE_Value_SetUTF8String(rgValues[1], szName.AsByteStringC());
+          FXJSE_Value_SetUTF8String(rgValues[1], szName.AsStringC());
         } else {
           FXJSE_Value_SetNull(rgValues[1]);
         }
@@ -6302,9 +6290,9 @@ void CXFA_FM2JSContext::dotdot_accessor(FXJSE_HOBJECT hThis,
         FX_Free(rgValues);
       } else {
         CFX_WideString wsPropertyName =
-            CFX_WideString::FromUTF8(szName.AsByteStringC());
+            CFX_WideString::FromUTF8(szName.AsStringC());
         CFX_WideString wsSomExpression =
-            CFX_WideString::FromUTF8(szSomExp.AsByteStringC());
+            CFX_WideString::FromUTF8(szSomExp.AsStringC());
         pContext->ThrowScriptErrorMessage(XFA_IDS_ACCESS_PROPERTY_IN_NOT_OBJECT,
                                           (const FX_WCHAR*)wsPropertyName,
                                           (const FX_WCHAR*)wsSomExpression);
@@ -6323,14 +6311,14 @@ void CXFA_FM2JSContext::dotdot_accessor(FXJSE_HOBJECT hThis,
       int32_t iRet = 0;
       if (FXJSE_Value_IsObject(argAccessor) ||
           (FXJSE_Value_IsNull(argAccessor) && bsAccessorName.IsEmpty())) {
-        iRet = ResolveObjects(hThis, argAccessor, szSomExp.AsByteStringC(),
+        iRet = ResolveObjects(hThis, argAccessor, szSomExp.AsStringC(),
                               resoveNodeRS, FALSE);
       } else if (!FXJSE_Value_IsObject(argAccessor) &&
                  !bsAccessorName.IsEmpty()) {
         FX_BOOL bGetObject =
-            GetObjectByName(hThis, argAccessor, bsAccessorName.AsByteStringC());
+            GetObjectByName(hThis, argAccessor, bsAccessorName.AsStringC());
         if (bGetObject) {
-          iRet = ResolveObjects(hThis, argAccessor, szSomExp.AsByteStringC(),
+          iRet = ResolveObjects(hThis, argAccessor, szSomExp.AsStringC(),
                                 resoveNodeRS, FALSE);
         }
       }
@@ -6346,7 +6334,7 @@ void CXFA_FM2JSContext::dotdot_accessor(FXJSE_HOBJECT hThis,
         }
         FXJSE_Value_SetInteger(rgValues[0], 1);
         if (bAttribute) {
-          FXJSE_Value_SetUTF8String(rgValues[1], szName.AsByteStringC());
+          FXJSE_Value_SetUTF8String(rgValues[1], szName.AsStringC());
         } else {
           FXJSE_Value_SetNull(rgValues[1]);
         }
@@ -6364,9 +6352,9 @@ void CXFA_FM2JSContext::dotdot_accessor(FXJSE_HOBJECT hThis,
         FX_Free(hResolveValues);
       } else {
         CFX_WideString wsPropertyName =
-            CFX_WideString::FromUTF8(szName.AsByteStringC());
+            CFX_WideString::FromUTF8(szName.AsStringC());
         CFX_WideString wsSomExpression =
-            CFX_WideString::FromUTF8(szSomExp.AsByteStringC());
+            CFX_WideString::FromUTF8(szSomExp.AsStringC());
         pContext->ThrowScriptErrorMessage(XFA_IDS_ACCESS_PROPERTY_IN_NOT_OBJECT,
                                           (const FX_WCHAR*)wsPropertyName,
                                           (const FX_WCHAR*)wsSomExpression);
@@ -6394,16 +6382,15 @@ void CXFA_FM2JSContext::eval_translation(FXJSE_HOBJECT hThis,
       pContext->ThrowScriptErrorMessage(XFA_IDS_ARGUMENT_MISMATCH);
     } else {
       CFX_WideString scriptString =
-          CFX_WideString::FromUTF8(argString.AsByteStringC());
+          CFX_WideString::FromUTF8(argString.AsStringC());
       CFX_WideTextBuf wsJavaScriptBuf;
       CFX_WideString wsError;
-      XFA_FM2JS_Translate(scriptString.AsWideStringC(), wsJavaScriptBuf,
-                          wsError);
+      XFA_FM2JS_Translate(scriptString.AsStringC(), wsJavaScriptBuf, wsError);
       if (wsError.IsEmpty()) {
         CFX_WideString javaScript = wsJavaScriptBuf.GetWideString();
         FXJSE_Value_SetUTF8String(
             args.GetReturnValue(),
-            FX_UTF8Encode(javaScript, javaScript.GetLength()).AsByteStringC());
+            FX_UTF8Encode(javaScript, javaScript.GetLength()).AsStringC());
       } else {
         pContext->ThrowScriptErrorMessage(XFA_IDS_COMPILER_ERROR);
       }
@@ -6458,7 +6445,7 @@ void CXFA_FM2JSContext::get_fm_value(FXJSE_HOBJECT hThis,
       } else {
         CFX_ByteString propertyStr;
         FXJSE_Value_ToUTF8String(propertyValue, propertyStr);
-        FXJSE_Value_GetObjectProp(jsobjectValue, propertyStr.AsByteStringC(),
+        FXJSE_Value_GetObjectProp(jsobjectValue, propertyStr.AsStringC(),
                                   args.GetReturnValue());
       }
       FXJSE_Value_Release(propertyValue);
@@ -6627,7 +6614,7 @@ FXJSE_HVALUE CXFA_FM2JSContext::GetSimpleHValue(FXJSE_HOBJECT hThis,
       } else {
         CFX_ByteString propertyStr;
         FXJSE_Value_ToUTF8String(propertyValue, propertyStr);
-        FXJSE_Value_GetObjectProp(jsobjectValue, propertyStr.AsByteStringC(),
+        FXJSE_Value_GetObjectProp(jsobjectValue, propertyStr.AsStringC(),
                                   simpleValue);
       }
       FXJSE_Value_Release(propertyValue);
@@ -6671,7 +6658,7 @@ FX_BOOL CXFA_FM2JSContext::HValueIsNull(FXJSE_HOBJECT hThis, FXJSE_HVALUE arg) {
         CFX_ByteString propertyStr;
         FXJSE_Value_ToUTF8String(propertyValue, propertyStr);
         FXJSE_HVALUE newPropertyValue = FXJSE_Value_Create(hruntime);
-        FXJSE_Value_GetObjectProp(jsObjectValue, propertyStr.AsByteStringC(),
+        FXJSE_Value_GetObjectProp(jsObjectValue, propertyStr.AsStringC(),
                                   newPropertyValue);
         if (FXJSE_Value_IsNull(newPropertyValue)) {
           isNull = TRUE;
@@ -6778,8 +6765,7 @@ void CXFA_FM2JSContext::unfoldArgs(FXJSE_HOBJECT hThis,
           FXJSE_Value_ToUTF8String(propertyValue, propertyString);
           for (int32_t j = 2; j < iLength; j++) {
             FXJSE_Value_GetObjectPropByIdx(argsValue[i], j, jsObjectValue);
-            FXJSE_Value_GetObjectProp(jsObjectValue,
-                                      propertyString.AsByteStringC(),
+            FXJSE_Value_GetObjectProp(jsObjectValue, propertyString.AsStringC(),
                                       resultValues[index]);
             index++;
           }
@@ -6866,7 +6852,7 @@ FX_BOOL CXFA_FM2JSContext::GetObjectByName(
                      XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;
   int32_t iRet = pScriptContext->ResolveObjects(
       pScriptContext->GetThisObject(),
-      CFX_WideString::FromUTF8(szAccessorName).AsWideStringC(), resoveNodeRS,
+      CFX_WideString::FromUTF8(szAccessorName).AsStringC(), resoveNodeRS,
       dwFlags);
   if (iRet >= 1 && resoveNodeRS.dwFlags == XFA_RESOVENODE_RSTYPE_Nodes) {
     FXJSE_Value_Set(accessorValue, pScriptContext->GetJSValueFromMap(
@@ -6922,7 +6908,7 @@ int32_t CXFA_FM2JSContext::ResolveObjects(FXJSE_HOBJECT hThis,
     pNode = (CXFA_Object*)FXJSE_Value_ToObject(hRefValue, NULL);
     dFlags = XFA_RESOLVENODE_AnyChild;
   }
-  iRet = pScriptContext->ResolveObjects(pNode, wsSomExpression.AsWideStringC(),
+  iRet = pScriptContext->ResolveObjects(pNode, wsSomExpression.AsStringC(),
                                         resoveNodeRS, dFlags);
   return iRet;
 }
@@ -6987,7 +6973,7 @@ int32_t CXFA_FM2JSContext::HValueToInteger(FXJSE_HOBJECT hThis,
     } else {
       CFX_ByteString propertyStr;
       FXJSE_Value_ToUTF8String(propertyValue, propertyStr);
-      FXJSE_Value_GetObjectProp(jsobjectValue, propertyStr.AsByteStringC(),
+      FXJSE_Value_GetObjectProp(jsobjectValue, propertyStr.AsStringC(),
                                 newProperty);
     }
     iValue = HValueToInteger(hThis, newProperty);
@@ -7031,7 +7017,7 @@ FX_FLOAT CXFA_FM2JSContext::HValueToFloat(FXJSE_HOBJECT hThis,
     } else {
       CFX_ByteString propertyStr;
       FXJSE_Value_ToUTF8String(propertyValue, propertyStr);
-      FXJSE_Value_GetObjectProp(jsobjectValue, propertyStr.AsByteStringC(),
+      FXJSE_Value_GetObjectProp(jsobjectValue, propertyStr.AsStringC(),
                                 newProperty);
     }
     fRet = HValueToFloat(hThis, newProperty);
@@ -7046,7 +7032,7 @@ FX_FLOAT CXFA_FM2JSContext::HValueToFloat(FXJSE_HOBJECT hThis,
   } else if (FXJSE_Value_IsUTF8String(arg)) {
     CFX_ByteString bsOutput;
     FXJSE_Value_ToUTF8String(arg, bsOutput);
-    fRet = (FX_FLOAT)StringToDouble(bsOutput.AsByteStringC());
+    fRet = (FX_FLOAT)StringToDouble(bsOutput.AsStringC());
   } else if (FXJSE_Value_IsUndefined(arg)) {
     fRet = 0;
   } else {
@@ -7071,7 +7057,7 @@ FX_DOUBLE CXFA_FM2JSContext::HValueToDouble(FXJSE_HOBJECT hThis,
     } else {
       CFX_ByteString propertyStr;
       FXJSE_Value_ToUTF8String(propertyValue, propertyStr);
-      FXJSE_Value_GetObjectProp(jsobjectValue, propertyStr.AsByteStringC(),
+      FXJSE_Value_GetObjectProp(jsobjectValue, propertyStr.AsStringC(),
                                 newProperty);
     }
     dRet = HValueToDouble(hThis, newProperty);
@@ -7086,7 +7072,7 @@ FX_DOUBLE CXFA_FM2JSContext::HValueToDouble(FXJSE_HOBJECT hThis,
   } else if (FXJSE_Value_IsUTF8String(arg)) {
     CFX_ByteString bsOutput;
     FXJSE_Value_ToUTF8String(arg, bsOutput);
-    dRet = StringToDouble(bsOutput.AsByteStringC());
+    dRet = StringToDouble(bsOutput.AsStringC());
   } else if (FXJSE_Value_IsUndefined(arg)) {
     dRet = 0;
   } else {
@@ -7247,5 +7233,5 @@ void CXFA_FM2JSContext::ThrowScriptErrorMessage(int32_t iStringID, ...) {
   wsMessage.FormatV((const FX_WCHAR*)wsFormat, arg_ptr);
   va_end(arg_ptr);
   FXJSE_ThrowMessage(
-      "", FX_UTF8Encode(wsMessage, wsMessage.GetLength()).AsByteStringC());
+      "", FX_UTF8Encode(wsMessage, wsMessage.GetLength()).AsStringC());
 }

@@ -36,7 +36,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes(CXFA_ResolveNodesData& rnd) {
   if (!rnd.m_CurNode->IsNode()) {
     if (rnd.m_dwStyles & XFA_RESOLVENODE_Attributes) {
       return XFA_ResolveNodes_ForAttributeRs(rnd.m_CurNode, rnd,
-                                             rnd.m_wsName.AsWideStringC());
+                                             rnd.m_wsName.AsStringC());
     }
     return 0;
   }
@@ -71,7 +71,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes(CXFA_ResolveNodesData& rnd) {
       rnd.m_Nodes.Add(rnd.m_CurNode);
     } else if ((rnd.m_dwStyles & XFA_RESOLVENODE_Attributes) &&
                XFA_ResolveNodes_ForAttributeRs(rnd.m_CurNode, rnd,
-                                               rnd.m_wsName.AsWideStringC())) {
+                                               rnd.m_wsName.AsStringC())) {
       return 1;
     }
     if (rnd.m_Nodes.GetSize() > 0) {
@@ -169,7 +169,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_NumberSign(
   CFX_WideString wsName = rnd.m_wsName.Right(rnd.m_wsName.GetLength() - 1);
   CFX_WideString wsCondition = rnd.m_wsCondition;
   CXFA_Node* curNode = ToNode(rnd.m_CurNode);
-  if (XFA_ResolveNodes_ForAttributeRs(curNode, rnd, wsName.AsWideStringC())) {
+  if (XFA_ResolveNodes_ForAttributeRs(curNode, rnd, wsName.AsStringC())) {
     return 1;
   }
   CXFA_ResolveNodesData rndFind;
@@ -332,7 +332,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
     }
   }
   if (dwStyles & XFA_RESOLVENODE_Attributes) {
-    if (XFA_ResolveNodes_ForAttributeRs(curNode, rnd, wsName.AsWideStringC())) {
+    if (XFA_ResolveNodes_ForAttributeRs(curNode, rnd, wsName.AsStringC())) {
       return 1;
     }
   }
@@ -367,7 +367,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
       }
     } else {
       const XFA_ELEMENTINFO* pElement =
-          XFA_GetElementByName(wsName.AsWideStringC());
+          XFA_GetElementByName(wsName.AsStringC());
       if (pElement) {
         pProp = curNode->AsNode()->GetProperty(
             0, pElement->eName, pElement->eName != XFA_ELEMENT_PageSet);
@@ -713,8 +713,8 @@ void CXFA_ResolveProcessor::XFA_ResolveNode_DoPredicateFilter(
     CXFA_Object* node = findNodes[i];
     FX_BOOL bRet = FALSE;
     FXJSE_HVALUE pRetValue = FXJSE_Value_Create(rnd.m_pSC->GetRuntime());
-    bRet = pContext->RunScript(eLangType, wsExpression.AsWideStringC(),
-                               pRetValue, node);
+    bRet = pContext->RunScript(eLangType, wsExpression.AsStringC(), pRetValue,
+                               node);
     if (!bRet || !FXJSE_Value_ToBoolean(pRetValue)) {
       findNodes.RemoveAt(i);
     }

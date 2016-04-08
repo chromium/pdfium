@@ -42,7 +42,7 @@ void CPWL_Signature_Image::DrawThisAppearance(CFX_RenderDevice* pDevice,
 
 void CPWL_Signature_Image::GetThisAppearanceStream(
     CFX_ByteTextBuf& sAppStream) {
-  sAppStream << CPWL_Image::GetImageAppStream().AsByteStringC();
+  sAppStream << CPWL_Image::GetImageAppStream().AsStringC();
 }
 
 void CPWL_Signature_Image::GetScale(FX_FLOAT& fHScale, FX_FLOAT& fVScale) {

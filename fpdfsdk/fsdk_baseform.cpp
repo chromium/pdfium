@@ -64,7 +64,7 @@ CXFA_FFWidget* CPDFSDK_Widget::GetMixXFAWidget() const {
         }
 
         if (!sName.IsEmpty())
-          m_hMixXFAWidget = pDocView->GetWidgetByName(sName.AsWideStringC());
+          m_hMixXFAWidget = pDocView->GetWidgetByName(sName.AsStringC());
       }
     }
     return m_hMixXFAWidget;
@@ -80,7 +80,7 @@ CXFA_FFWidget* CPDFSDK_Widget::GetGroupMixXFAWidget() {
     if (CXFA_FFDocView* pDocView = pDoc->GetXFADocView()) {
       CFX_WideString sName = GetName();
       if (!sName.IsEmpty())
-        return pDocView->GetWidgetByName(sName.AsWideStringC());
+        return pDocView->GetWidgetByName(sName.AsStringC());
     }
   }
 
@@ -461,7 +461,7 @@ FX_BOOL CPDFSDK_Widget::IsWidgetAppearanceValid(
     case FIELDTYPE_CHECKBOX:
     case FIELDTYPE_RADIOBUTTON:
       if (CPDF_Dictionary* pSubDict = psub->AsDictionary()) {
-        return !!pSubDict->GetStreamBy(GetAppState().AsByteStringC());
+        return !!pSubDict->GetStreamBy(GetAppState().AsStringC());
       }
       return FALSE;
   }
@@ -1808,7 +1808,7 @@ void CPDFSDK_Widget::AddImageToAppearance(const CFX_ByteString& sAPType,
   ASSERT(pDoc);
 
   CPDF_Dictionary* pAPDict = m_pAnnot->GetAnnotDict()->GetDictBy("AP");
-  CPDF_Stream* pStream = pAPDict->GetStreamBy(sAPType.AsByteStringC());
+  CPDF_Stream* pStream = pAPDict->GetStreamBy(sAPType.AsStringC());
   CPDF_Dictionary* pStreamDict = pStream->GetDict();
   CFX_ByteString sImageAlias = "IMG";
 
@@ -1826,14 +1826,14 @@ void CPDFSDK_Widget::AddImageToAppearance(const CFX_ByteString& sAPType,
 
   if (pStreamResList) {
     CPDF_Dictionary* pXObject = new CPDF_Dictionary;
-    pXObject->SetAtReference(sImageAlias.AsByteStringC(), pDoc, pImage);
+    pXObject->SetAtReference(sImageAlias.AsStringC(), pDoc, pImage);
     pStreamResList->SetAt("XObject", pXObject);
   }
 }
 
 void CPDFSDK_Widget::RemoveAppearance(const CFX_ByteString& sAPType) {
   if (CPDF_Dictionary* pAPDict = m_pAnnot->GetAnnotDict()->GetDictBy("AP")) {
-    pAPDict->RemoveAt(sAPType.AsByteStringC());
+    pAPDict->RemoveAt(sAPType.AsStringC());
   }
 }
 
@@ -2448,7 +2448,7 @@ FX_BOOL CPDFSDK_InterForm::ExportFieldsToFDFTextBuf(
     bool bIncludeOrExclude,
     CFX_ByteTextBuf& textBuf) {
   std::unique_ptr<CFDF_Document> pFDF(m_pInterForm->ExportToFDF(
-      m_pDocument->GetPath().AsWideStringC(), fields, bIncludeOrExclude));
+      m_pDocument->GetPath().AsStringC(), fields, bIncludeOrExclude));
   return pFDF ? pFDF->WriteBuf(textBuf) : FALSE;
 }
 
@@ -2486,8 +2486,7 @@ FX_BOOL CPDFSDK_InterForm::SubmitForm(const CFX_WideString& sDestination,
 
   CPDFDoc_Environment* pEnv = m_pDocument->GetEnv();
   CFX_WideString wsPDFFilePath = m_pDocument->GetPath();
-  CFDF_Document* pFDFDoc =
-      m_pInterForm->ExportToFDF(wsPDFFilePath.AsWideStringC());
+  CFDF_Document* pFDFDoc = m_pInterForm->ExportToFDF(wsPDFFilePath.AsStringC());
   if (!pFDFDoc)
     return FALSE;
 
@@ -2517,7 +2516,7 @@ FX_BOOL CPDFSDK_InterForm::SubmitForm(const CFX_WideString& sDestination,
 
 FX_BOOL CPDFSDK_InterForm::ExportFormToFDFTextBuf(CFX_ByteTextBuf& textBuf) {
   CFDF_Document* pFDF =
-      m_pInterForm->ExportToFDF(m_pDocument->GetPath().AsWideStringC());
+      m_pInterForm->ExportToFDF(m_pDocument->GetPath().AsStringC());
   if (!pFDF)
     return FALSE;
 

@@ -35,13 +35,13 @@ CFX_WideString FPDFDOC_FDF_GetFieldValue(const CPDF_Dictionary& pFieldDict,
   const CFX_ByteString csBValue = pFieldDict.GetStringBy("V");
   for (const auto& encoding : g_fieldEncoding) {
     if (bsEncoding == encoding.m_name)
-      return CFX_WideString::FromCodePage(csBValue.AsByteStringC(),
+      return CFX_WideString::FromCodePage(csBValue.AsStringC(),
                                           encoding.m_codePage);
   }
   CFX_ByteString csTemp = csBValue.Left(2);
   if (csTemp == "\xFF\xFE" || csTemp == "\xFE\xFF")
     return PDF_DecodeText(csBValue);
-  return CFX_WideString::FromLocal(csBValue.AsByteStringC());
+  return CFX_WideString::FromLocal(csBValue.AsStringC());
 }
 
 }  // namespace
@@ -345,7 +345,7 @@ CFX_ByteString CPDF_InterForm::GenerateNewResourceName(
   CFX_ByteString bsNum;
   while (TRUE) {
     CFX_ByteString csKey = csTmp + bsNum;
-    if (!pDict->KeyExist(csKey.AsByteStringC())) {
+    if (!pDict->KeyExist(csKey.AsStringC())) {
       return csKey;
     }
     if (m < iCount) {

@@ -18,7 +18,7 @@ FX_BOOL CXFA_Validate::SetTestValue(int32_t iType,
                                     CFX_WideString& wsValue,
                                     XFA_ATTRIBUTEENUM eName) {
   const XFA_ATTRIBUTEENUMINFO* pInfo =
-      XFA_GetAttributeEnumByName(wsValue.AsWideStringC());
+      XFA_GetAttributeEnumByName(wsValue.AsStringC());
   if (pInfo)
     eName = pInfo->eName;
 

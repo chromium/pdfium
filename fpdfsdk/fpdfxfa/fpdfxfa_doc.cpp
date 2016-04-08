@@ -957,7 +957,7 @@ FX_BOOL CPDFXFA_Document::_ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
     ws.FromLocal("data");
     CFX_ByteString content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
     fileStream.WriteBlock((const FX_CHAR*)content, 0, content.GetLength());
-    m_pXFADoc->SavePackage(ws.AsWideStringC(), &fileStream);
+    m_pXFADoc->SavePackage(ws.AsStringC(), &fileStream);
   } else if (fileType == FXFA_SAVEAS_XDP) {
     if (flag == 0)
       flag = FXFA_CONFIG | FXFA_TEMPLATE | FXFA_LOCALESET | FXFA_DATASETS |
@@ -1018,11 +1018,11 @@ FX_BOOL CPDFXFA_Document::_ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
       if (pPrePDFObj->GetString() == "form") {
         CFX_WideString ws;
         ws.FromLocal("form");
-        m_pXFADoc->SavePackage(ws.AsWideStringC(), &fileStream);
+        m_pXFADoc->SavePackage(ws.AsStringC(), &fileStream);
       } else if (pPrePDFObj->GetString() == "datasets") {
         CFX_WideString ws;
         ws.FromLocal("datasets");
-        m_pXFADoc->SavePackage(ws.AsWideStringC(), &fileStream);
+        m_pXFADoc->SavePackage(ws.AsStringC(), &fileStream);
       } else {
         // PDF,creator.
       }

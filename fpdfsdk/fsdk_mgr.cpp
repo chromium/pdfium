@@ -186,7 +186,7 @@ FX_BOOL CFX_SystemHandler::FindNativeTrueTypeFont(
     pFontMapper->LoadInstalledFonts();
 
   for (const auto& font : pFontMapper->m_InstalledTTFonts) {
-    if (font.Compare(sFontFaceName.AsByteStringC()))
+    if (font.Compare(sFontFaceName.AsStringC()))
       return TRUE;
   }
 
@@ -476,7 +476,7 @@ void CPDFSDK_Document::ProcJavascriptFun() {
     CPDF_Action jsAction = docJS.GetJSAction(i, csJSName);
     if (m_pEnv->GetActionHander())
       m_pEnv->GetActionHander()->DoAction_JavaScript(
-          jsAction, CFX_WideString::FromLocal(csJSName.AsByteStringC()), this);
+          jsAction, CFX_WideString::FromLocal(csJSName.AsStringC()), this);
   }
 }
 

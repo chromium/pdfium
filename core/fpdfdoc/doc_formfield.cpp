@@ -1054,7 +1054,7 @@ void CPDF_FormField::LoadDA() {
   if (DA.IsEmpty()) {
     return;
   }
-  CPDF_SimpleParser syntax(DA.AsByteStringC());
+  CPDF_SimpleParser syntax(DA.AsStringC());
   syntax.FindTagParamFromStart("Tf", 2);
   CFX_ByteString font_name = syntax.GetWord();
   CPDF_Dictionary* pFontDict = NULL;
@@ -1062,7 +1062,7 @@ void CPDF_FormField::LoadDA() {
       m_pForm->m_pFormDict->GetDictBy("DR")->GetDictBy("Font"))
     pFontDict = m_pForm->m_pFormDict->GetDictBy("DR")
                     ->GetDictBy("Font")
-                    ->GetDictBy(font_name.AsByteStringC());
+                    ->GetDictBy(font_name.AsStringC());
 
   if (!pFontDict) {
     return;

@@ -45,7 +45,7 @@ FX_BOOL CFXCRT_FileAccess_Posix::Open(const CFX_ByteStringC& fileName,
 }
 FX_BOOL CFXCRT_FileAccess_Posix::Open(const CFX_WideStringC& fileName,
                                       uint32_t dwMode) {
-  return Open(FX_UTF8Encode(fileName).AsByteStringC(), dwMode);
+  return Open(FX_UTF8Encode(fileName).AsStringC(), dwMode);
 }
 void CFXCRT_FileAccess_Posix::Close() {
   if (m_nFD < 0) {

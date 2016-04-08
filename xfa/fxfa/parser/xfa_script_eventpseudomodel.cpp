@@ -32,9 +32,9 @@ void Script_EventPseudoModel_StringProperty(FXJSE_HVALUE hValue,
   if (bSetting) {
     CFX_ByteString bsValue;
     FXJSE_Value_ToUTF8String(hValue, bsValue);
-    wsValue = CFX_WideString::FromUTF8(bsValue.AsByteStringC());
+    wsValue = CFX_WideString::FromUTF8(bsValue.AsStringC());
   } else {
-    FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsValue).AsByteStringC());
+    FXJSE_Value_SetUTF8String(hValue, FX_UTF8Encode(wsValue).AsStringC());
   }
 }
 void Script_EventPseudoModel_InterProperty(FXJSE_HVALUE hValue,

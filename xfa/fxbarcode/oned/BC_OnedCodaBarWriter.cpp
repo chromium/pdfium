@@ -226,6 +226,6 @@ void CBC_OnedCodaBarWriter::RenderResult(const CFX_WideStringC& contents,
                                          int32_t codeLength,
                                          FX_BOOL isDevice,
                                          int32_t& e) {
-  CBC_OneDimWriter::RenderResult(encodedContents(contents).AsWideStringC(),
-                                 code, codeLength, isDevice, e);
+  CBC_OneDimWriter::RenderResult(encodedContents(contents).AsStringC(), code,
+                                 codeLength, isDevice, e);
 }

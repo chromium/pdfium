@@ -36,7 +36,7 @@ FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
   if (DA.IsEmpty())
     return FALSE;
 
-  CPDF_SimpleParser syntax(DA.AsByteStringC());
+  CPDF_SimpleParser syntax(DA.AsStringC());
   syntax.FindTagParamFromStart("Tf", 2);
   CFX_ByteString sFontName = syntax.GetWord();
   sFontName = PDF_NameDecode(sFontName);
@@ -54,12 +54,12 @@ FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
   }
   CPDF_Dictionary* pDRFontDict = pDRDict ? pDRDict->GetDictBy("Font") : nullptr;
   if (pDRFontDict) {
-    pFontDict = pDRFontDict->GetDictBy(sFontName.Mid(1).AsByteStringC());
+    pFontDict = pDRFontDict->GetDictBy(sFontName.Mid(1).AsStringC());
     if (!pFontDict && !bUseFormRes) {
       pDRDict = pFormDict->GetDictBy("DR");
       pDRFontDict = pDRDict->GetDictBy("Font");
       if (pDRFontDict)
-        pFontDict = pDRFontDict->GetDictBy(sFontName.Mid(1).AsByteStringC());
+        pFontDict = pDRFontDict->GetDictBy(sFontName.Mid(1).AsStringC());
     }
   }
   if (!pDRFontDict)
@@ -72,8 +72,7 @@ FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
     pFontDict->SetAtName("BaseFont", "Helvetica");
     pFontDict->SetAtName("Encoding", "WinAnsiEncoding");
     pDoc->AddIndirectObject(pFontDict);
-    pDRFontDict->SetAtReference(sFontName.Mid(1).AsByteStringC(), pDoc,
-                                pFontDict);
+    pDRFontDict->SetAtReference(sFontName.Mid(1).AsStringC(), pDoc, pFontDict);
   }
   CPDF_Font* pDefFont = pDoc->LoadFont(pFontDict);
   if (!pDefFont)
@@ -190,8 +189,8 @@ FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
         pStreamResFontList = new CPDF_Dictionary;
         pStreamResList->SetAt("Font", pStreamResFontList);
       }
-      if (!pStreamResFontList->KeyExist(sFontName.AsByteStringC()))
-        pStreamResFontList->SetAtReference(sFontName.AsByteStringC(), pDoc,
+      if (!pStreamResFontList->KeyExist(sFontName.AsStringC()))
+        pStreamResFontList->SetAtReference(sFontName.AsStringC(), pDoc,
                                            pFontDict);
     } else {
       pStreamDict->SetAt("Resources", pFormDict->GetDictBy("DR")->Clone());
@@ -437,8 +436,8 @@ FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
           pStreamResFontList = new CPDF_Dictionary;
           pStreamResList->SetAt("Font", pStreamResFontList);
         }
-        if (!pStreamResFontList->KeyExist(sFontName.AsByteStringC()))
-          pStreamResFontList->SetAtReference(sFontName.AsByteStringC(), pDoc,
+        if (!pStreamResFontList->KeyExist(sFontName.AsStringC()))
+          pStreamResFontList->SetAtReference(sFontName.AsStringC(), pDoc,
                                              pFontDict);
       } else {
         pStreamDict->SetAt("Resources", pFormDict->GetDictBy("DR")->Clone());

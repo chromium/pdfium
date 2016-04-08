@@ -17,13 +17,13 @@ void CBC_UtilCodingConvert::UnicodeToLocale(const CFX_WideString& src,
 
 void CBC_UtilCodingConvert::LocaleToUtf8(const CFX_ByteString& src,
                                          CFX_ByteString& dst) {
-  CFX_WideString unicode = CFX_WideString::FromLocal(src.AsByteStringC());
+  CFX_WideString unicode = CFX_WideString::FromLocal(src.AsStringC());
   dst = unicode.UTF8Encode();
 }
 
 void CBC_UtilCodingConvert::LocaleToUtf8(const CFX_ByteString& src,
                                          CFX_ByteArray& dst) {
-  CFX_WideString unicode = CFX_WideString::FromLocal(src.AsByteStringC());
+  CFX_WideString unicode = CFX_WideString::FromLocal(src.AsStringC());
   CFX_ByteString utf8 = unicode.UTF8Encode();
   for (int32_t i = 0; i < utf8.GetLength(); i++) {
     dst.Add(utf8[i]);
@@ -36,7 +36,7 @@ void CBC_UtilCodingConvert::Utf8ToLocale(const CFX_ByteArray& src,
   for (int32_t i = 0; i < src.GetSize(); i++) {
     utf8 += src[i];
   }
-  CFX_WideString unicode = CFX_WideString::FromUTF8(utf8.AsByteStringC());
+  CFX_WideString unicode = CFX_WideString::FromUTF8(utf8.AsStringC());
   dst = CFX_ByteString::FromUnicode(unicode);
 }
 

@@ -229,8 +229,8 @@ void CXFA_WidgetAcc::ResetData() {
         image.GetContentType(wsContentType);
         image.GetHref(wsHref);
       }
-      SetImageEdit(wsContentType.AsWideStringC(), wsHref.AsWideStringC(),
-                   wsValue.AsWideStringC());
+      SetImageEdit(wsContentType.AsStringC(), wsHref.AsStringC(),
+                   wsValue.AsStringC());
     } break;
     case XFA_ELEMENT_ExclGroup: {
       CXFA_Node* pNextChild = m_pNode->GetNodeItem(
@@ -412,13 +412,12 @@ void CXFA_WidgetAcc::ProcessScriptTestValidate(CXFA_Validate validate,
           GetValidateMessage(pAppProvider, wsScriptMsg, FALSE, bVersionFlag);
         }
         if (bVersionFlag) {
-          pAppProvider->MsgBox(wsScriptMsg.AsWideStringC(),
-                               wsTitle.AsWideStringC(), XFA_MBICON_Warning,
-                               XFA_MB_OK);
+          pAppProvider->MsgBox(wsScriptMsg.AsStringC(), wsTitle.AsStringC(),
+                               XFA_MBICON_Warning, XFA_MB_OK);
           return;
         }
-        if (pAppProvider->MsgBox(wsScriptMsg.AsWideStringC(),
-                                 wsTitle.AsWideStringC(), XFA_MBICON_Warning,
+        if (pAppProvider->MsgBox(wsScriptMsg.AsStringC(), wsTitle.AsStringC(),
+                                 XFA_MBICON_Warning,
                                  XFA_MB_YesNo) == XFA_IDYes) {
           GetNode()->SetFlag(XFA_NODEFLAG_UserInteractive, TRUE, FALSE);
         }
@@ -426,9 +425,8 @@ void CXFA_WidgetAcc::ProcessScriptTestValidate(CXFA_Validate validate,
         if (wsScriptMsg.IsEmpty()) {
           GetValidateMessage(pAppProvider, wsScriptMsg, TRUE, bVersionFlag);
         }
-        pAppProvider->MsgBox(wsScriptMsg.AsWideStringC(),
-                             wsTitle.AsWideStringC(), XFA_MBICON_Error,
-                             XFA_MB_OK);
+        pAppProvider->MsgBox(wsScriptMsg.AsStringC(), wsTitle.AsStringC(),
+                             XFA_MBICON_Error, XFA_MB_OK);
       }
     }
   }
@@ -461,9 +459,8 @@ int32_t CXFA_WidgetAcc::ProcessFormatTestValidate(CXFA_Validate validate,
         if (wsFormatMsg.IsEmpty()) {
           GetValidateMessage(pAppProvider, wsFormatMsg, TRUE, bVersionFlag);
         }
-        pAppProvider->MsgBox(wsFormatMsg.AsWideStringC(),
-                             wsTitle.AsWideStringC(), XFA_MBICON_Error,
-                             XFA_MB_OK);
+        pAppProvider->MsgBox(wsFormatMsg.AsStringC(), wsTitle.AsStringC(),
+                             XFA_MBICON_Error, XFA_MB_OK);
         return XFA_EVENTERROR_Success;
       }
       if (GetNode()->HasFlag(XFA_NODEFLAG_UserInteractive)) {
@@ -473,14 +470,12 @@ int32_t CXFA_WidgetAcc::ProcessFormatTestValidate(CXFA_Validate validate,
         GetValidateMessage(pAppProvider, wsFormatMsg, FALSE, bVersionFlag);
       }
       if (bVersionFlag) {
-        pAppProvider->MsgBox(wsFormatMsg.AsWideStringC(),
-                             wsTitle.AsWideStringC(), XFA_MBICON_Warning,
-                             XFA_MB_OK);
+        pAppProvider->MsgBox(wsFormatMsg.AsStringC(), wsTitle.AsStringC(),
+                             XFA_MBICON_Warning, XFA_MB_OK);
         return XFA_EVENTERROR_Success;
       }
-      if (pAppProvider->MsgBox(wsFormatMsg.AsWideStringC(),
-                               wsTitle.AsWideStringC(), XFA_MBICON_Warning,
-                               XFA_MB_YesNo) == XFA_IDYes) {
+      if (pAppProvider->MsgBox(wsFormatMsg.AsStringC(), wsTitle.AsStringC(),
+                               XFA_MBICON_Warning, XFA_MB_YesNo) == XFA_IDYes) {
         GetNode()->SetFlag(XFA_NODEFLAG_UserInteractive, TRUE, FALSE);
       }
       return XFA_EVENTERROR_Success;
@@ -535,7 +530,7 @@ int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_Validate validate,
         pAppProvider->LoadString(XFA_IDS_ValidateNullError, wsError);
         wsNullMsg.Format(wsError, (const FX_WCHAR*)wsCaptionName);
       }
-      pAppProvider->MsgBox(wsNullMsg.AsWideStringC(), wsTitle.AsWideStringC(),
+      pAppProvider->MsgBox(wsNullMsg.AsStringC(), wsTitle.AsStringC(),
                            XFA_MBICON_Status, XFA_MB_OK);
       return XFA_EVENTERROR_Error;
     }
@@ -550,9 +545,8 @@ int32_t CXFA_WidgetAcc::ProcessNullTestValidate(CXFA_Validate validate,
         wsNullMsg.Format(wsWarning, (const FX_WCHAR*)wsCaptionName,
                          (const FX_WCHAR*)wsCaptionName);
       }
-      if (pAppProvider->MsgBox(wsNullMsg.AsWideStringC(),
-                               wsTitle.AsWideStringC(), XFA_MBICON_Warning,
-                               XFA_MB_YesNo) == XFA_IDYes) {
+      if (pAppProvider->MsgBox(wsNullMsg.AsStringC(), wsTitle.AsStringC(),
+                               XFA_MBICON_Warning, XFA_MB_YesNo) == XFA_IDYes) {
         GetNode()->SetFlag(XFA_NODEFLAG_UserInteractive, TRUE, FALSE);
       }
       return XFA_EVENTERROR_Error;
@@ -684,7 +678,7 @@ int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
   ++m_nRecursionDepth;
   FX_BOOL bRet =
       pContext->RunScript((XFA_SCRIPTLANGTYPE)eScriptType,
-                          wsExpression.AsWideStringC(), hRetValue, m_pNode);
+                          wsExpression.AsStringC(), hRetValue, m_pNode);
   --m_nRecursionDepth;
   int32_t iRet = XFA_EVENTERROR_Error;
   if (bRet) {
@@ -696,7 +690,7 @@ int32_t CXFA_WidgetAcc::ExecuteScript(CXFA_Script script,
           CFX_ByteString bsString;
           FXJSE_Value_ToUTF8String(hRetValue, bsString);
           pEventParam->m_wsResult =
-              CFX_WideString::FromUTF8(bsString.AsByteStringC());
+              CFX_WideString::FromUTF8(bsString.AsStringC());
         }
         iRet = XFA_EVENTERROR_Success;
       } else {
@@ -1712,12 +1706,12 @@ FX_BOOL CXFA_TextProvider::GetEmbbedObj(FX_BOOL bURI,
     CXFA_Node* pIDNode = NULL;
     CXFA_WidgetAcc* pEmbAcc = NULL;
     if (pParent) {
-      pIDNode = pDocument->GetNodeByID(pParent, wsAttr.AsWideStringC());
+      pIDNode = pDocument->GetNodeByID(pParent, wsAttr.AsStringC());
     }
     if (!pIDNode) {
       pIDNode = pDocument->GetNodeByID(
           ToNode(pDocument->GetXFAObject(XFA_HASHCODE_Form)),
-          wsAttr.AsWideStringC());
+          wsAttr.AsStringC());
     }
     if (pIDNode) {
       pEmbAcc = (CXFA_WidgetAcc*)pIDNode->GetWidgetData();

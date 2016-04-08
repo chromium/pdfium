@@ -837,7 +837,7 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IJS_Context* cc,
   }
 
   // for processing currency string
-  Value = CFX_WideString::FromLocal(strValue.AsByteStringC());
+  Value = CFX_WideString::FromLocal(strValue.AsStringC());
   std::wstring strValue2 = Value.c_str();
 
   if (bCurrencyPrepend)
@@ -1120,7 +1120,7 @@ FX_BOOL CJS_PublicMethods::AFPercent_Format(
   if (iNegative)
     strValue = "-" + strValue;
   strValue += "%";
-  Value = CFX_WideString::FromLocal(strValue.AsByteStringC());
+  Value = CFX_WideString::FromLocal(strValue.AsStringC());
 #endif
   return TRUE;
 }
@@ -1219,11 +1219,11 @@ double CJS_PublicMethods::MakeInterDate(CFX_WideString strValue) {
   else if (sTemp.Compare(L"Dec") == 0)
     nMonth = 12;
 
-  int nDay = FX_atof(wsArray[2].AsWideStringC());
-  int nHour = FX_atof(wsArray[3].AsWideStringC());
-  int nMin = FX_atof(wsArray[4].AsWideStringC());
-  int nSec = FX_atof(wsArray[5].AsWideStringC());
-  int nYear = FX_atof(wsArray[7].AsWideStringC());
+  int nDay = FX_atof(wsArray[2].AsStringC());
+  int nHour = FX_atof(wsArray[3].AsStringC());
+  int nMin = FX_atof(wsArray[4].AsStringC());
+  int nSec = FX_atof(wsArray[5].AsStringC());
+  int nYear = FX_atof(wsArray[7].AsStringC());
   double dRet = JS_MakeDate(JS_MakeDay(nYear, nMonth - 1, nDay),
                             JS_MakeTime(nHour, nMin, nSec, 0));
   if (JS_PortIsNan(dRet))
@@ -1726,7 +1726,7 @@ FX_BOOL CJS_PublicMethods::AFSimple_Calculate(
             CFX_WideString trimmed = pFormField->GetValue();
             trimmed.TrimRight();
             trimmed.TrimLeft();
-            dTemp = FX_atof(trimmed.AsWideStringC());
+            dTemp = FX_atof(trimmed.AsStringC());
           } break;
           case FIELDTYPE_PUSHBUTTON: {
             dTemp = 0.0;
@@ -1740,7 +1740,7 @@ FX_BOOL CJS_PublicMethods::AFSimple_Calculate(
                   CFX_WideString trimmed = pFormCtrl->GetExportValue();
                   trimmed.TrimRight();
                   trimmed.TrimLeft();
-                  dTemp = FX_atof(trimmed.AsWideStringC());
+                  dTemp = FX_atof(trimmed.AsStringC());
                   break;
                 }
               }
@@ -1751,7 +1751,7 @@ FX_BOOL CJS_PublicMethods::AFSimple_Calculate(
               CFX_WideString trimmed = pFormField->GetValue();
               trimmed.TrimRight();
               trimmed.TrimLeft();
-              dTemp = FX_atof(trimmed.AsWideStringC());
+              dTemp = FX_atof(trimmed.AsStringC());
             }
           } break;
           default:

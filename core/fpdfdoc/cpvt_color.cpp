@@ -10,7 +10,7 @@
 
 // Static.
 CPVT_Color CPVT_Color::ParseColor(const CFX_ByteString& str) {
-  CPDF_SimpleParser syntax(str.AsByteStringC());
+  CPDF_SimpleParser syntax(str.AsStringC());
   if (syntax.FindTagParamFromStart("g", 1))
     return CPVT_Color(CPVT_Color::kGray, FX_atof(syntax.GetWord()));
 

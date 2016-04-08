@@ -368,8 +368,7 @@ FX_BOOL CXFA_NodeHelper::XFA_ResolveNodes_CreateNode(
     XFA_CreateNode_ForCondition(wsCondition);
   }
   if (bIsClassName) {
-    const XFA_ELEMENTINFO* lpElement =
-        XFA_GetElementByName(wsName.AsWideStringC());
+    const XFA_ELEMENTINFO* lpElement = XFA_GetElementByName(wsName.AsStringC());
     if (lpElement == NULL) {
       return FALSE;
     }
@@ -392,7 +391,7 @@ FX_BOOL CXFA_NodeHelper::XFA_ResolveNodes_CreateNode(
     for (int32_t iIndex = 0; iIndex < m_iCreateCount; iIndex++) {
       CXFA_Node* pNewNode = m_pCreateParent->CreateSamePacketNode(eClassType);
       if (pNewNode) {
-        pNewNode->SetAttribute(XFA_ATTRIBUTE_Name, wsName.AsWideStringC());
+        pNewNode->SetAttribute(XFA_ATTRIBUTE_Name, wsName.AsStringC());
         pNewNode->CreateXMLMappingNode();
         m_pCreateParent->InsertChild(pNewNode);
         if (iIndex == m_iCreateCount - 1) {

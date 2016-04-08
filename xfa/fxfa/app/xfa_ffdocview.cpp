@@ -163,7 +163,7 @@ void CXFA_FFDocView::ShowNullTestMsg() {
     }
     CFX_WideString wsTitle;
     pAppProvider->LoadString(XFA_IDS_AppName, wsTitle);
-    pAppProvider->MsgBox(wsMsg.AsWideStringC(), wsTitle.AsWideStringC(),
+    pAppProvider->MsgBox(wsMsg.AsStringC(), wsTitle.AsStringC(),
                          XFA_MBICON_Status, XFA_MB_OK);
   }
   m_arrNullTestMsg.RemoveAll();
@@ -518,7 +518,7 @@ CXFA_WidgetAcc* CXFA_FFDocView::GetWidgetAccByName(
   }
   XFA_RESOLVENODE_RS resoveNodeRS;
   int32_t iRet = pScriptContext->ResolveObjects(
-      refNode, wsExpression.AsWideStringC(), resoveNodeRS, dwStyle);
+      refNode, wsExpression.AsStringC(), resoveNodeRS, dwStyle);
   if (iRet < 1) {
     return NULL;
   }

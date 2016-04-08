@@ -347,11 +347,10 @@ uint8_t CFX_GEFont::GetCharSet() const {
 void CFX_GEFont::GetFamilyName(CFX_WideString& wsFamily) const {
   if (!m_pFont->GetSubstFont() ||
       m_pFont->GetSubstFont()->m_Family.GetLength() == 0) {
-    wsFamily =
-        CFX_WideString::FromLocal(m_pFont->GetFamilyName().AsByteStringC());
+    wsFamily = CFX_WideString::FromLocal(m_pFont->GetFamilyName().AsStringC());
   } else {
     wsFamily = CFX_WideString::FromLocal(
-        m_pFont->GetSubstFont()->m_Family.AsByteStringC());
+        m_pFont->GetSubstFont()->m_Family.AsStringC());
   }
 }
 void CFX_GEFont::GetPsName(CFX_WideString& wsName) const {

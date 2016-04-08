@@ -67,7 +67,7 @@ class CFX_ByteTextBuf : public CFX_BinaryBuf {
     return *this << CFX_ByteStringC(pStr);
   }
   CFX_ByteTextBuf& operator<<(const CFX_ByteString& str) {
-    return *this << str.AsByteStringC();
+    return *this << str.AsStringC();
   }
   CFX_ByteTextBuf& operator<<(const CFX_ByteStringC& lpsz);
   CFX_ByteTextBuf& operator<<(const CFX_ByteTextBuf& buf);

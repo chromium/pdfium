@@ -297,7 +297,7 @@ static void XFA_DataExporter_RegenerateFormFile_Changed(
         buf << FX_WSTRC(L" xmlns=\"\"\n>");
         for (int32_t i = 0; i < wsSelTextArray.GetSize(); i++) {
           buf << FX_WSTRC(L"<value\n>");
-          buf << XFA_ExportEncodeContent(wsSelTextArray[i].AsWideStringC());
+          buf << XFA_ExportEncodeContent(wsSelTextArray[i].AsStringC());
           buf << FX_WSTRC(L"</value\n>");
         }
         buf << FX_WSTRC(L"</");

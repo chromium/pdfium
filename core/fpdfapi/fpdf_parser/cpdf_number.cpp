@@ -47,7 +47,7 @@ const CPDF_Number* CPDF_Number::AsNumber() const {
 }
 
 void CPDF_Number::SetString(const CFX_ByteString& str) {
-  FX_atonum(str.AsByteStringC(), m_bInteger, &m_Integer);
+  FX_atonum(str.AsStringC(), m_bInteger, &m_Integer);
 }
 
 CFX_ByteString CPDF_Number::GetString() const {

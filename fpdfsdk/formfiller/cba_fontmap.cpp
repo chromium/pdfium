@@ -159,15 +159,15 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
   }
 
   // to avoid checkbox and radiobutton
-  CPDF_Object* pObject = pAPDict->GetObjectBy(m_sAPType.AsByteStringC());
+  CPDF_Object* pObject = pAPDict->GetObjectBy(m_sAPType.AsStringC());
   if (ToDictionary(pObject))
     return;
 
-  CPDF_Stream* pStream = pAPDict->GetStreamBy(m_sAPType.AsByteStringC());
+  CPDF_Stream* pStream = pAPDict->GetStreamBy(m_sAPType.AsStringC());
   if (!pStream) {
     pStream = new CPDF_Stream(NULL, 0, NULL);
     int32_t objnum = m_pDocument->AddIndirectObject(pStream);
-    pAPDict->SetAtReference(m_sAPType.AsByteStringC(), m_pDocument, objnum);
+    pAPDict->SetAtReference(m_sAPType.AsStringC(), m_pDocument, objnum);
   }
 
   CPDF_Dictionary* pStreamDict = pStream->GetDict();
@@ -191,8 +191,8 @@ void CBA_FontMap::AddFontToAnnotDict(CPDF_Font* pFont,
         int32_t objnum = m_pDocument->AddIndirectObject(pStreamResFontList);
         pStreamResList->SetAtReference("Font", m_pDocument, objnum);
       }
-      if (!pStreamResFontList->KeyExist(sAlias.AsByteStringC()))
-        pStreamResFontList->SetAtReference(sAlias.AsByteStringC(), m_pDocument,
+      if (!pStreamResFontList->KeyExist(sAlias.AsStringC()))
+        pStreamResFontList->SetAtReference(sAlias.AsStringC(), m_pDocument,
                                            pFont->GetFontDict());
     }
   }
@@ -221,14 +221,14 @@ CPDF_Font* CBA_FontMap::GetAnnotDefaultFont(CFX_ByteString& sAlias) {
   CPDF_Dictionary* pFontDict = NULL;
 
   if (!sDA.IsEmpty()) {
-    CPDF_SimpleParser syntax(sDA.AsByteStringC());
+    CPDF_SimpleParser syntax(sDA.AsStringC());
     syntax.FindTagParamFromStart("Tf", 2);
     CFX_ByteString sFontName = syntax.GetWord();
     sAlias = PDF_NameDecode(sFontName).Mid(1);
 
     if (CPDF_Dictionary* pDRDict = m_pAnnotDict->GetDictBy("DR"))
       if (CPDF_Dictionary* pDRFontDict = pDRDict->GetDictBy("Font"))
-        pFontDict = pDRFontDict->GetDictBy(sAlias.AsByteStringC());
+        pFontDict = pDRFontDict->GetDictBy(sAlias.AsStringC());
 
     if (!pFontDict)
       if (CPDF_Dictionary* pAPDict = m_pAnnotDict->GetDictBy("AP"))
@@ -237,14 +237,14 @@ CPDF_Font* CBA_FontMap::GetAnnotDefaultFont(CFX_ByteString& sAlias) {
                   pNormalDict->GetDictBy("Resources"))
             if (CPDF_Dictionary* pResFontDict =
                     pNormalResDict->GetDictBy("Font"))
-              pFontDict = pResFontDict->GetDictBy(sAlias.AsByteStringC());
+              pFontDict = pResFontDict->GetDictBy(sAlias.AsStringC());
 
     if (bWidget) {
       if (!pFontDict) {
         if (pAcroFormDict) {
           if (CPDF_Dictionary* pDRDict = pAcroFormDict->GetDictBy("DR"))
             if (CPDF_Dictionary* pDRFontDict = pDRDict->GetDictBy("Font"))
-              pFontDict = pDRFontDict->GetDictBy(sAlias.AsByteStringC());
+              pFontDict = pDRFontDict->GetDictBy(sAlias.AsStringC());
         }
       }
     }

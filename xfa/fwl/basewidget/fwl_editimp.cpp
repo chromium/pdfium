@@ -423,7 +423,7 @@ FX_BOOL CFWL_EditImp::ReplaceSpellCheckWord(CFX_PointF pointf,
     pBuffer[i] = bsReplace[i];
   }
   wsDest.ReleaseBuffer(nDestLen);
-  Replace(nWordStart, nWordCount, wsDest.AsWideStringC());
+  Replace(nWordStart, nWordCount, wsDest.AsStringC());
   return TRUE;
 }
 void CFWL_EditImp::DrawSpellCheck(CFX_Graphics* pGraphics,
@@ -734,14 +734,14 @@ FX_BOOL CFWL_EditImp::Undo() {
     return FALSE;
   }
   CFX_ByteString bsRecord = m_RecordArr[m_iCurRecord--];
-  return Undo(bsRecord.AsByteStringC());
+  return Undo(bsRecord.AsStringC());
 }
 FX_BOOL CFWL_EditImp::Redo() {
   if (!CanRedo()) {
     return FALSE;
   }
   CFX_ByteString bsRecord = m_RecordArr[++m_iCurRecord];
-  return Redo(bsRecord.AsByteStringC());
+  return Redo(bsRecord.AsStringC());
 }
 FX_BOOL CFWL_EditImp::CanUndo() {
   return m_iCurRecord >= 0;

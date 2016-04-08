@@ -201,7 +201,7 @@ void CXFA_FFTextEdit::ValidateNumberField(const CFX_WideString& wsText) {
       pAcc->GetNode()->GetSOMExpression(wsSomField);
       wsMessage.Format(wsError, (const FX_WCHAR*)wsText,
                        (const FX_WCHAR*)wsSomField);
-      pAppProvider->MsgBox(wsMessage.AsWideStringC(), wsTitle.AsWideStringC(),
+      pAppProvider->MsgBox(wsMessage.AsStringC(), wsTitle.AsStringC(),
                            XFA_MBICON_Error, XFA_MB_OK);
     }
   }
@@ -421,12 +421,12 @@ FWL_ERR CXFA_FFTextEdit::OnProcessEvent(CFWL_Event* pEvent) {
     case FWL_EVTHASH_EDT_CheckWord: {
       CFX_WideString wstr(L"FWL_EVENT_DTP_SelectChanged");
       CFWL_EvtEdtCheckWord* event = (CFWL_EvtEdtCheckWord*)pEvent;
-      event->bCheckWord = CheckWord(event->bsWord.AsByteStringC());
+      event->bCheckWord = CheckWord(event->bsWord.AsStringC());
       break;
     }
     case FWL_EVTHASH_EDT_GetSuggestWords: {
       CFWL_EvtEdtGetSuggestWords* event = (CFWL_EvtEdtGetSuggestWords*)pEvent;
-      event->bSuggestWords = GetSuggestWords(event->bsWord.AsByteStringC(),
+      event->bSuggestWords = GetSuggestWords(event->bsWord.AsStringC(),
                                              event->bsArraySuggestWords);
       break;
     }
@@ -594,7 +594,7 @@ FX_BOOL CXFA_FFDateTimeEdit::LoadWidget() {
   m_pNormalWidget->LockUpdate();
   CFX_WideString wsText;
   m_pDataAcc->GetValue(wsText, XFA_VALUEPICTURE_Display);
-  pWidget->SetEditText(wsText.AsWideStringC());
+  pWidget->SetEditText(wsText.AsStringC());
   if (CXFA_Value value = m_pDataAcc->GetFormValue()) {
     switch (value.GetChildValueClassID()) {
       case XFA_ELEMENT_Date: {
@@ -694,7 +694,7 @@ FX_BOOL CXFA_FFDateTimeEdit::UpdateFWLData() {
   }
   CFX_WideString wsText;
   m_pDataAcc->GetValue(wsText, eType);
-  ((CFWL_DateTimePicker*)m_pNormalWidget)->SetEditText(wsText.AsWideStringC());
+  ((CFWL_DateTimePicker*)m_pNormalWidget)->SetEditText(wsText.AsStringC());
   if (IsFocused() && !wsText.IsEmpty()) {
     CXFA_LocaleValue lcValue = XFA_GetLocaleValue(m_pDataAcc);
     CFX_Unitime date = lcValue.GetDate();
@@ -777,7 +777,7 @@ void CXFA_FFDateTimeEdit::OnSelectChanged(IFWL_Widget* pWidget,
   date.FormatPatterns(wsDate, wsPicture, m_pDataAcc->GetLocal(),
                       XFA_VALUEPICTURE_Edit);
   CFWL_DateTimePicker* pDateTime = (CFWL_DateTimePicker*)m_pNormalWidget;
-  pDateTime->SetEditText(wsDate.AsWideStringC());
+  pDateTime->SetEditText(wsDate.AsStringC());
   pDateTime->Update();
   GetDoc()->GetDocProvider()->SetFocusWidget(GetDoc(), NULL);
   CXFA_EventParam eParam;

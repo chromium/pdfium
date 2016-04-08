@@ -42,7 +42,7 @@ FX_BOOL CXFA_Image::SetContentType(const CFX_WideString& wsContentType) {
 FX_BOOL CXFA_Image::SetHref(const CFX_WideString& wsHref) {
   if (m_bDefValue)
     return m_pNode->SetCData(XFA_ATTRIBUTE_Href, wsHref);
-  return m_pNode->SetAttribute(XFA_ATTRIBUTE_Href, wsHref.AsWideStringC());
+  return m_pNode->SetAttribute(XFA_ATTRIBUTE_Href, wsHref.AsStringC());
 }
 
 FX_BOOL CXFA_Image::SetTransferEncoding(int32_t iTransferEncoding) {

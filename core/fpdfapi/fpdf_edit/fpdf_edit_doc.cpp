@@ -1124,7 +1124,7 @@ CPDF_Font* CPDF_Document::AddStandardFont(const FX_CHAR* font,
   CFX_ByteString name(font);
   if (PDF_GetStandardFontName(&name) < 0)
     return nullptr;
-  return GetPageData()->GetStandardFont(name.AsByteStringC(), pEncoding);
+  return GetPageData()->GetStandardFont(name.AsStringC(), pEncoding);
 }
 
 void CPDF_Document::DeletePage(int iPage) {

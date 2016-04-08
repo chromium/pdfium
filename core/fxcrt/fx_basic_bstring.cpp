@@ -810,7 +810,7 @@ CFX_ByteString CFX_ByteString::FromUnicode(const FX_WCHAR* str,
 
 // static
 CFX_ByteString CFX_ByteString::FromUnicode(const CFX_WideString& str) {
-  return CFX_CharMap::GetByteString(0, str.AsWideStringC());
+  return CFX_CharMap::GetByteString(0, str.AsStringC());
 }
 
 int CFX_ByteString::Compare(const CFX_ByteStringC& str) const {

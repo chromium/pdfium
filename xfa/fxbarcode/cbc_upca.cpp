@@ -76,8 +76,7 @@ FX_BOOL CBC_UPCA::Encode(const CFX_WideStringC& contents,
                       ->Encode(byteString, format, outWidth, outHeight, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   ((CBC_OneDimWriter*)m_pBCWriter)
-      ->RenderResult(encodeContents.AsWideStringC(), data, outWidth, isDevice,
-                     e);
+      ->RenderResult(encodeContents.AsStringC(), data, outWidth, isDevice, e);
   FX_Free(data);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   return TRUE;
@@ -87,14 +86,14 @@ FX_BOOL CBC_UPCA::RenderDevice(CFX_RenderDevice* device,
                                const CFX_Matrix* matirx,
                                int32_t& e) {
   ((CBC_OneDimWriter*)m_pBCWriter)
-      ->RenderDeviceResult(device, matirx, m_renderContents.AsWideStringC(), e);
+      ->RenderDeviceResult(device, matirx, m_renderContents.AsStringC(), e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   return TRUE;
 }
 
 FX_BOOL CBC_UPCA::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
   ((CBC_OneDimWriter*)m_pBCWriter)
-      ->RenderBitmapResult(pOutBitmap, m_renderContents.AsWideStringC(), e);
+      ->RenderBitmapResult(pOutBitmap, m_renderContents.AsStringC(), e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   return TRUE;
 }
@@ -113,5 +112,5 @@ CFX_WideString CBC_UPCA::Decode(CFX_DIBitmap* pBitmap, int32_t& e) {
   CBC_BinaryBitmap bitmap(&binarizer);
   CFX_ByteString str = m_pBCReader->Decode(&bitmap, 0, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FX_WSTRC(L""));
-  return CFX_WideString::FromUTF8(str.AsByteStringC());
+  return CFX_WideString::FromUTF8(str.AsStringC());
 }

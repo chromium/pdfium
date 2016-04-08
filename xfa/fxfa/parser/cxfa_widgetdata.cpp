@@ -820,7 +820,7 @@ void CXFA_WidgetData::SetItemState(int32_t nIndex,
       if (iSel < 0) {
         CFX_WideString wsSaveText = wsSaveTextArray[nIndex];
         CFX_WideString wsFormatText(wsSaveText);
-        GetFormatDataValue(wsSaveText.AsWideStringC(), wsFormatText);
+        GetFormatDataValue(wsSaveText.AsStringC(), wsFormatText);
         m_pNode->SetContent(wsSaveText, wsFormatText, bNotify, bScriptModify,
                             bSyncData);
       }
@@ -850,7 +850,7 @@ void CXFA_WidgetData::SetSelectedItems(CFX_Int32Array& iSelArray,
   }
   CFX_WideString wsFormat(wsValue);
   if (GetChoiceListOpen() != XFA_ATTRIBUTEENUM_MultiSelect)
-    GetFormatDataValue(wsValue.AsWideStringC(), wsFormat);
+    GetFormatDataValue(wsValue.AsStringC(), wsFormat);
 
   m_pNode->SetContent(wsValue, wsFormat, bNotify, bScriptModify, bSyncData);
 }
@@ -889,19 +889,19 @@ void CXFA_WidgetData::InsertItem(const CFX_WideString& wsLabel,
   if (iCount < 1) {
     CXFA_Node* pItems = m_pNode->CreateSamePacketNode(XFA_ELEMENT_Items);
     m_pNode->InsertChild(-1, pItems);
-    InsertListTextItem(pItems, wsLabel.AsWideStringC(), nIndex);
+    InsertListTextItem(pItems, wsLabel.AsStringC(), nIndex);
     CXFA_Node* pSaveItems = m_pNode->CreateSamePacketNode(XFA_ELEMENT_Items);
     m_pNode->InsertChild(-1, pSaveItems);
     pSaveItems->SetBoolean(XFA_ATTRIBUTE_Save, TRUE);
-    InsertListTextItem(pSaveItems, wsNewValue.AsWideStringC(), nIndex);
+    InsertListTextItem(pSaveItems, wsNewValue.AsStringC(), nIndex);
   } else if (iCount > 1) {
     for (int32_t i = 0; i < 2; i++) {
       CXFA_Node* pNode = listitems[i];
       FX_BOOL bHasSave = pNode->GetBoolean(XFA_ATTRIBUTE_Save);
       if (bHasSave)
-        InsertListTextItem(pNode, wsNewValue.AsWideStringC(), nIndex);
+        InsertListTextItem(pNode, wsNewValue.AsStringC(), nIndex);
       else
-        InsertListTextItem(pNode, wsLabel.AsWideStringC(), nIndex);
+        InsertListTextItem(pNode, wsLabel.AsStringC(), nIndex);
     }
   } else {
     CXFA_Node* pNode = listitems[0];
@@ -917,12 +917,12 @@ void CXFA_WidgetData::InsertItem(const CFX_WideString& wsLabel,
     while (pListNode) {
       CFX_WideString wsOldValue;
       pListNode->TryContent(wsOldValue);
-      InsertListTextItem(pSaveItems, wsOldValue.AsWideStringC(), i);
+      InsertListTextItem(pSaveItems, wsOldValue.AsStringC(), i);
       i++;
       pListNode = pListNode->GetNodeItem(XFA_NODEITEM_NextSibling);
     }
-    InsertListTextItem(pNode, wsLabel.AsWideStringC(), nIndex);
-    InsertListTextItem(pSaveItems, wsNewValue.AsWideStringC(), nIndex);
+    InsertListTextItem(pNode, wsLabel.AsStringC(), nIndex);
+    InsertListTextItem(pSaveItems, wsNewValue.AsStringC(), nIndex);
   }
   if (!bNotify)
     return;
@@ -1481,7 +1481,7 @@ IFX_Locale* CXFA_WidgetData::GetLocal() {
       pLocale = m_pNode->GetDocument()->GetLocalMgr()->GetDefLocale();
     } else {
       pLocale = m_pNode->GetDocument()->GetLocalMgr()->GetLocaleByName(
-          wsLocaleName.AsWideStringC());
+          wsLocaleName.AsStringC());
     }
   }
   return pLocale;
@@ -1492,7 +1492,7 @@ FX_BOOL CXFA_WidgetData::GetValue(CFX_WideString& wsValue,
   wsValue = m_pNode->GetContent();
 
   if (eValueType == XFA_VALUEPICTURE_Display)
-    GetItemLabel(wsValue.AsWideStringC(), wsValue);
+    GetItemLabel(wsValue.AsStringC(), wsValue);
 
   CFX_WideString wsPicture;
   GetPictureContent(wsPicture, eValueType);
@@ -1738,7 +1738,7 @@ void CXFA_WidgetData::SyncValue(const CFX_WideString& wsValue,
   CFX_WideString wsFormatValue(wsValue);
   CXFA_WidgetData* pContainerWidgetData = m_pNode->GetContainerWidgetData();
   if (pContainerWidgetData)
-    pContainerWidgetData->GetFormatDataValue(wsValue.AsWideStringC(),
+    pContainerWidgetData->GetFormatDataValue(wsValue.AsStringC(),
                                              wsFormatValue);
 
   m_pNode->SetContent(wsValue, wsFormatValue, bNotify);
@@ -1780,7 +1780,7 @@ CFX_WideString CXFA_WidgetData::NumericLimit(const CFX_WideString& wsValue,
         iTread_++;
         if (iTread_ > iTread) {
           if (iTread != -1) {
-            CFX_Decimal wsDeci = CFX_Decimal(wsValue.AsWideStringC());
+            CFX_Decimal wsDeci = CFX_Decimal(wsValue.AsStringC());
             wsDeci.SetScale(iTread);
             wsRet = wsDeci;
           }

@@ -188,7 +188,7 @@ class CFX_ByteString {
 
   // Explicit conversion to CFX_ByteStringC.
   // Note: |this| must outlive the use of the result.
-  CFX_ByteStringC AsByteStringC() const {
+  CFX_ByteStringC AsStringC() const {
     return CFX_ByteStringC(raw_str(), GetLength());
   }
 
@@ -332,29 +332,29 @@ inline CFX_ByteString operator+(FX_CHAR ch, const CFX_ByteStringC& str2) {
 }
 inline CFX_ByteString operator+(const CFX_ByteString& str1,
                                 const CFX_ByteString& str2) {
-  return CFX_ByteString(str1.AsByteStringC(), str2.AsByteStringC());
+  return CFX_ByteString(str1.AsStringC(), str2.AsStringC());
 }
 inline CFX_ByteString operator+(const CFX_ByteString& str1, FX_CHAR ch) {
-  return CFX_ByteString(str1.AsByteStringC(), CFX_ByteStringC(ch));
+  return CFX_ByteString(str1.AsStringC(), CFX_ByteStringC(ch));
 }
 inline CFX_ByteString operator+(FX_CHAR ch, const CFX_ByteString& str2) {
-  return CFX_ByteString(ch, str2.AsByteStringC());
+  return CFX_ByteString(ch, str2.AsStringC());
 }
 inline CFX_ByteString operator+(const CFX_ByteString& str1,
                                 const FX_CHAR* str2) {
-  return CFX_ByteString(str1.AsByteStringC(), str2);
+  return CFX_ByteString(str1.AsStringC(), str2);
 }
 inline CFX_ByteString operator+(const FX_CHAR* str1,
                                 const CFX_ByteString& str2) {
-  return CFX_ByteString(str1, str2.AsByteStringC());
+  return CFX_ByteString(str1, str2.AsStringC());
 }
 inline CFX_ByteString operator+(const CFX_ByteString& str1,
                                 const CFX_ByteStringC& str2) {
-  return CFX_ByteString(str1.AsByteStringC(), str2);
+  return CFX_ByteString(str1.AsStringC(), str2);
 }
 inline CFX_ByteString operator+(const CFX_ByteStringC& str1,
                                 const CFX_ByteString& str2) {
-  return CFX_ByteString(str1, str2.AsByteStringC());
+  return CFX_ByteString(str1, str2.AsStringC());
 }
 
 class CFX_WideStringC {
@@ -512,7 +512,7 @@ class CFX_WideString {
 
   // Explicit conversion to CFX_WideStringC.
   // Note: |this| must outlive the use of the result.
-  CFX_WideStringC AsWideStringC() const {
+  CFX_WideStringC AsStringC() const {
     return CFX_WideStringC(c_str(), GetLength());
   }
 
@@ -641,29 +641,29 @@ inline CFX_WideString operator+(FX_WCHAR ch, const CFX_WideStringC& str2) {
 }
 inline CFX_WideString operator+(const CFX_WideString& str1,
                                 const CFX_WideString& str2) {
-  return CFX_WideString(str1.AsWideStringC(), str2.AsWideStringC());
+  return CFX_WideString(str1.AsStringC(), str2.AsStringC());
 }
 inline CFX_WideString operator+(const CFX_WideString& str1, FX_WCHAR ch) {
-  return CFX_WideString(str1.AsWideStringC(), CFX_WideStringC(ch));
+  return CFX_WideString(str1.AsStringC(), CFX_WideStringC(ch));
 }
 inline CFX_WideString operator+(FX_WCHAR ch, const CFX_WideString& str2) {
-  return CFX_WideString(ch, str2.AsWideStringC());
+  return CFX_WideString(ch, str2.AsStringC());
 }
 inline CFX_WideString operator+(const CFX_WideString& str1,
                                 const FX_WCHAR* str2) {
-  return CFX_WideString(str1.AsWideStringC(), str2);
+  return CFX_WideString(str1.AsStringC(), str2);
 }
 inline CFX_WideString operator+(const FX_WCHAR* str1,
                                 const CFX_WideString& str2) {
-  return CFX_WideString(str1, str2.AsWideStringC());
+  return CFX_WideString(str1, str2.AsStringC());
 }
 inline CFX_WideString operator+(const CFX_WideString& str1,
                                 const CFX_WideStringC& str2) {
-  return CFX_WideString(str1.AsWideStringC(), str2);
+  return CFX_WideString(str1.AsStringC(), str2);
 }
 inline CFX_WideString operator+(const CFX_WideStringC& str1,
                                 const CFX_WideString& str2) {
-  return CFX_WideString(str1, str2.AsWideStringC());
+  return CFX_WideString(str1, str2.AsStringC());
 }
 inline bool operator==(const wchar_t* lhs, const CFX_WideString& rhs) {
   return rhs == lhs;

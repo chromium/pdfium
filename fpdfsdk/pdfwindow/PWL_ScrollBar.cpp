@@ -671,7 +671,7 @@ void CPWL_ScrollBar::GetThisAppearanceStream(CFX_ByteTextBuf& sAppStream) {
     sButton << "q\n";
     sButton << "0 w\n"
             << CPWL_Utils::GetColorAppStream(GetBackgroundColor(), TRUE)
-                   .AsByteStringC();
+                   .AsStringC();
     sButton << rectWnd.left << " " << rectWnd.bottom << " "
             << rectWnd.right - rectWnd.left << " "
             << rectWnd.top - rectWnd.bottom << " re b Q\n";

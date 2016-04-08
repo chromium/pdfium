@@ -822,7 +822,7 @@ void CFWL_FormImp::UpdateCaption() {
     return;
   CFX_WideString text;
   pData->GetCaption(m_pInterface, text);
-  pWidgetMgr->SetWidgetCaption_Native(m_pInterface, text.AsWideStringC());
+  pWidgetMgr->SetWidgetCaption_Native(m_pInterface, text.AsStringC());
 }
 void CFWL_FormImp::DoWidthLimit(FX_FLOAT& fLeft,
                                 FX_FLOAT& fWidth,

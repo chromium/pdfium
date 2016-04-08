@@ -90,13 +90,13 @@ static CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
   if (pLimits) {
     CFX_ByteString csLeft = pLimits->GetStringAt(0);
     CFX_ByteString csRight = pLimits->GetStringAt(1);
-    if (csLeft.Compare(csRight.AsByteStringC()) > 0) {
+    if (csLeft.Compare(csRight.AsStringC()) > 0) {
       CFX_ByteString csTmp = csRight;
       csRight = csLeft;
       csLeft = csTmp;
     }
-    if (csName.Compare(csLeft.AsByteStringC()) < 0 ||
-        csName.Compare(csRight.AsByteStringC()) > 0) {
+    if (csName.Compare(csLeft.AsStringC()) < 0 ||
+        csName.Compare(csRight.AsStringC()) > 0) {
       return NULL;
     }
   }
@@ -105,7 +105,7 @@ static CPDF_Object* SearchNameNode(CPDF_Dictionary* pNode,
     uint32_t dwCount = pNames->GetCount() / 2;
     for (uint32_t i = 0; i < dwCount; i++) {
       CFX_ByteString csValue = pNames->GetStringAt(i * 2);
-      int32_t iCompare = csValue.Compare(csName.AsByteStringC());
+      int32_t iCompare = csValue.Compare(csName.AsStringC());
       if (iCompare <= 0) {
         if (ppFind) {
           *ppFind = pNames;
@@ -321,25 +321,24 @@ bool CPDF_FileSpec::GetFileName(CFX_WideString* csFileName) const {
       return true;
     if (csFileName->IsEmpty()) {
       if (pDict->KeyExist("DOS")) {
-        *csFileName = CFX_WideString::FromLocal(
-            pDict->GetStringBy("DOS").AsByteStringC());
+        *csFileName =
+            CFX_WideString::FromLocal(pDict->GetStringBy("DOS").AsStringC());
       } else if (pDict->KeyExist("Mac")) {
-        *csFileName = CFX_WideString::FromLocal(
-            pDict->GetStringBy("Mac").AsByteStringC());
+        *csFileName =
+            CFX_WideString::FromLocal(pDict->GetStringBy("Mac").AsStringC());
       } else if (pDict->KeyExist("Unix")) {
-        *csFileName = CFX_WideString::FromLocal(
-            pDict->GetStringBy("Unix").AsByteStringC());
+        *csFileName =
+            CFX_WideString::FromLocal(pDict->GetStringBy("Unix").AsStringC());
       } else {
         return false;
       }
     }
   } else if (m_pObj->IsString()) {
-    *csFileName =
-        CFX_WideString::FromLocal(m_pObj->GetString().AsByteStringC());
+    *csFileName = CFX_WideString::FromLocal(m_pObj->GetString().AsStringC());
   } else {
     return false;
   }
-  *csFileName = DecodeFileName(csFileName->AsWideStringC());
+  *csFileName = DecodeFileName(csFileName->AsStringC());
   return true;
 }
 
@@ -505,7 +504,7 @@ int32_t CPDF_PageLabel::GetPageByLabel(const CFX_ByteStringC& bsLabel) const {
   CFX_ByteString bsOrig = bsLabel;
   for (int i = 0; i < nPages; i++) {
     bsLbl = PDF_EncodeText(GetLabel(i));
-    if (!bsLbl.Compare(bsOrig.AsByteStringC())) {
+    if (!bsLbl.Compare(bsOrig.AsStringC())) {
       return i;
     }
   }
@@ -517,5 +516,5 @@ int32_t CPDF_PageLabel::GetPageByLabel(const CFX_ByteStringC& bsLabel) const {
   return -1;
 }
 int32_t CPDF_PageLabel::GetPageByLabel(const CFX_WideStringC& wsLabel) const {
-  return GetPageByLabel(PDF_EncodeText(wsLabel.c_str()).AsByteStringC());
+  return GetPageByLabel(PDF_EncodeText(wsLabel.c_str()).AsStringC());
 }

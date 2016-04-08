@@ -454,7 +454,7 @@ IFX_SystemFontInfo* IFX_SystemFontInfo::CreateDefault(const char** pUnused) {
   if (path_len > 0 && path_len < MAX_PATH) {
     CFX_ByteString fonts_path(windows_path);
     fonts_path += "\\Fonts";
-    pInfoFallback->AddPath(fonts_path.AsByteStringC());
+    pInfoFallback->AddPath(fonts_path.AsStringC());
   }
   return pInfoFallback;
 }

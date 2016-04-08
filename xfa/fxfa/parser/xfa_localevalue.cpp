@@ -369,7 +369,7 @@ CFX_Unitime CXFA_LocaleValue::GetTime() const {
   if (m_bValid && m_dwType == XFA_VT_TIME) {
     CFX_Unitime dt(0);
     FXSYS_assert(m_pLocaleMgr);
-    FX_TimeFromCanonical(m_wsValue.AsWideStringC(), dt,
+    FX_TimeFromCanonical(m_wsValue.AsStringC(), dt,
                          m_pLocaleMgr->GetDefLocale());
     return dt;
   }
@@ -382,7 +382,7 @@ CFX_Unitime CXFA_LocaleValue::GetDateTime() const {
     FX_DateFromCanonical(m_wsValue.Left(index), dt);
     FXSYS_assert(m_pLocaleMgr);
     FX_TimeFromCanonical(
-        m_wsValue.Right(m_wsValue.GetLength() - index - 1).AsWideStringC(), dt,
+        m_wsValue.Right(m_wsValue.GetLength() - index - 1).AsStringC(), dt,
         m_pLocaleMgr->GetDefLocale());
     return dt;
   }

@@ -77,8 +77,7 @@ FX_BOOL CBC_Codabar::Encode(const CFX_WideStringC& contents,
                       ->Encode(byteString, format, outWidth, outHeight, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   ((CBC_OneDimWriter*)m_pBCWriter)
-      ->RenderResult(filtercontents.AsWideStringC(), data, outWidth, isDevice,
-                     e);
+      ->RenderResult(filtercontents.AsStringC(), data, outWidth, isDevice, e);
   FX_Free(data);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   return TRUE;
@@ -89,9 +88,9 @@ FX_BOOL CBC_Codabar::RenderDevice(CFX_RenderDevice* device,
                                   int32_t& e) {
   CFX_WideString renderCon =
       ((CBC_OnedCodaBarWriter*)m_pBCWriter)
-          ->encodedContents(m_renderContents.AsWideStringC());
+          ->encodedContents(m_renderContents.AsStringC());
   ((CBC_OneDimWriter*)m_pBCWriter)
-      ->RenderDeviceResult(device, matirx, renderCon.AsWideStringC(), e);
+      ->RenderDeviceResult(device, matirx, renderCon.AsStringC(), e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   return TRUE;
 }
@@ -99,9 +98,9 @@ FX_BOOL CBC_Codabar::RenderDevice(CFX_RenderDevice* device,
 FX_BOOL CBC_Codabar::RenderBitmap(CFX_DIBitmap*& pOutBitmap, int32_t& e) {
   CFX_WideString renderCon =
       ((CBC_OnedCodaBarWriter*)m_pBCWriter)
-          ->encodedContents(m_renderContents.AsWideStringC());
+          ->encodedContents(m_renderContents.AsStringC());
   ((CBC_OneDimWriter*)m_pBCWriter)
-      ->RenderBitmapResult(pOutBitmap, renderCon.AsWideStringC(), e);
+      ->RenderBitmapResult(pOutBitmap, renderCon.AsStringC(), e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FALSE);
   return TRUE;
 }
@@ -120,5 +119,5 @@ CFX_WideString CBC_Codabar::Decode(CFX_DIBitmap* pBitmap, int32_t& e) {
   CBC_BinaryBitmap bitmap(&binarizer);
   CFX_ByteString str = m_pBCReader->Decode(&bitmap, 0, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FX_WSTRC(L""));
-  return CFX_WideString::FromUTF8(str.AsByteStringC());
+  return CFX_WideString::FromUTF8(str.AsStringC());
 }

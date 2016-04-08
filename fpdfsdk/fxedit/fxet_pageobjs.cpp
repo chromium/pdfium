@@ -249,7 +249,7 @@ void IFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
 
             sTextBuf << GetPDFWordString(pFontMap, word.nFontIndex, word.Word,
                                          SubWord)
-                            .AsByteStringC();
+                            .AsStringC();
           } else {
             DrawTextString(
                 pDevice, CFX_FloatPoint(word.ptWord.x + ptOffset.x,
@@ -363,7 +363,7 @@ void IFX_Edit::DrawRichEdit(CFX_RenderDevice* pDevice,
 
           sTextBuf << GetPDFWordString(pFontMap, word.WordProps.nFontIndex,
                                        word.Word, 0)
-                          .AsByteStringC();
+                          .AsStringC();
 
           if (word.WordProps.nWordStyle & PVTWORD_STYLE_UNDERLINE) {
             CFX_PathData pathUnderline;
@@ -507,7 +507,7 @@ void IFX_Edit::GeneratePageObjects(
           }
 
           sTextBuf << GetPDFWordString(pFontMap, word.nFontIndex, word.Word, 0)
-                          .AsByteStringC();
+                          .AsStringC();
           oldplace = place;
         }
       }
@@ -580,7 +580,7 @@ void IFX_Edit::GenerateRichPageObjects(
 
           sTextBuf << GetPDFWordString(pFontMap, word.WordProps.nFontIndex,
                                        word.Word, 0)
-                          .AsByteStringC();
+                          .AsStringC();
 
           if (word.WordProps.nWordStyle & PVTWORD_STYLE_UNDERLINE) {
             CFX_FloatRect rcUnderline = GetUnderLineRect(word);

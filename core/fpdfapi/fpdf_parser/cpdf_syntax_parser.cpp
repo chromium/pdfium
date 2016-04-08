@@ -399,7 +399,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjectHolder* pObjList,
       }
     }
     m_Pos = SavedPos;
-    return new CPDF_Number(word.AsByteStringC());
+    return new CPDF_Number(word.AsStringC());
   }
 
   if (word == "true" || word == "false")
@@ -521,7 +521,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
         return new CPDF_Reference(pObjList, FXSYS_atoui(word));
     }
     m_Pos = SavedPos;
-    return new CPDF_Number(word.AsByteStringC());
+    return new CPDF_Number(word.AsStringC());
   }
 
   if (word == "true" || word == "false")

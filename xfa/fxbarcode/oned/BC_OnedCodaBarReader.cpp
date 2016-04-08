@@ -107,7 +107,7 @@ CFX_ByteString CBC_OnedCodaBarReader::DecodeRow(int32_t rowNumber,
   }
   if (result.GetLength() < 5) {
     int32_t index =
-        temp.Find(result.Mid(1, result.GetLength() - 1).AsByteStringC());
+        temp.Find(result.Mid(1, result.GetLength() - 1).AsStringC());
     if (index == len - (result.GetLength() - 1)) {
       e = BCExceptionNotFound;
       return "";

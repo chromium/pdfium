@@ -566,9 +566,9 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
     if (!key.IsEmpty()) {
       uint32_t dwObjNum = pObj ? pObj->GetObjNum() : 0;
       if (dwObjNum)
-        pDict->SetAtReference(key.AsByteStringC(), m_pDocument, dwObjNum);
+        pDict->SetAtReference(key.AsStringC(), m_pDocument, dwObjNum);
       else
-        pDict->SetAt(key.AsByteStringC(), pObj.release());
+        pDict->SetAt(key.AsStringC(), pObj.release());
     }
   }
   PDF_ReplaceAbbr(pDict);
@@ -721,8 +721,7 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
       pList = m_pPageResources->GetDictBy("XObject");
     if (!pList)
       return;
-    CPDF_Reference* pRes =
-        ToReference(pList->GetObjectBy(name.AsByteStringC()));
+    CPDF_Reference* pRes = ToReference(pList->GetObjectBy(name.AsStringC()));
     if (!pRes)
       return;
 
@@ -1258,7 +1257,7 @@ CPDF_Object* CPDF_StreamContentParser::FindResourceObj(
     if (!pList) {
       return NULL;
     }
-    CPDF_Object* pRes = pList->GetDirectObjectBy(name.AsByteStringC());
+    CPDF_Object* pRes = pList->GetDirectObjectBy(name.AsStringC());
     return pRes;
   }
   CPDF_Dictionary* pList = m_pResources->GetDictBy(type);
@@ -1270,10 +1269,10 @@ CPDF_Object* CPDF_StreamContentParser::FindResourceObj(
     if (!pList) {
       return NULL;
     }
-    CPDF_Object* pRes = pList->GetDirectObjectBy(name.AsByteStringC());
+    CPDF_Object* pRes = pList->GetDirectObjectBy(name.AsStringC());
     return pRes;
   }
-  CPDF_Object* pRes = pList->GetDirectObjectBy(name.AsByteStringC());
+  CPDF_Object* pRes = pList->GetDirectObjectBy(name.AsStringC());
   return pRes;
 }
 
@@ -1766,7 +1765,7 @@ void PDF_ReplaceAbbr(CPDF_Object* pObj) {
         CPDF_Object* value = it.second;
         CFX_ByteStringC fullname =
             PDF_FindFullName(PDF_InlineKeyAbbr, FX_ArraySize(PDF_InlineKeyAbbr),
-                             key.AsByteStringC());
+                             key.AsStringC());
         if (!fullname.IsEmpty()) {
           AbbrReplacementOp op;
           op.is_replace_key = true;
@@ -1780,7 +1779,7 @@ void PDF_ReplaceAbbr(CPDF_Object* pObj) {
           CFX_ByteString name = value->GetString();
           fullname = PDF_FindFullName(PDF_InlineValueAbbr,
                                       FX_ArraySize(PDF_InlineValueAbbr),
-                                      name.AsByteStringC());
+                                      name.AsStringC());
           if (!fullname.IsEmpty()) {
             AbbrReplacementOp op;
             op.is_replace_key = false;
@@ -1794,9 +1793,9 @@ void PDF_ReplaceAbbr(CPDF_Object* pObj) {
       }
       for (const auto& op : replacements) {
         if (op.is_replace_key)
-          pDict->ReplaceKey(op.key.AsByteStringC(), op.replacement);
+          pDict->ReplaceKey(op.key.AsStringC(), op.replacement);
         else
-          pDict->SetAtName(op.key.AsByteStringC(), op.replacement);
+          pDict->SetAtName(op.key.AsStringC(), op.replacement);
       }
       break;
     }
@@ -1808,7 +1807,7 @@ void PDF_ReplaceAbbr(CPDF_Object* pObj) {
           CFX_ByteString name = pElement->GetString();
           CFX_ByteStringC fullname = PDF_FindFullName(
               PDF_InlineValueAbbr, FX_ArraySize(PDF_InlineValueAbbr),
-              name.AsByteStringC());
+              name.AsStringC());
           if (!fullname.IsEmpty()) {
             pArray->SetAt(i, new CPDF_Name(fullname));
           }

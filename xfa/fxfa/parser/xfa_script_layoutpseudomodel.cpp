@@ -74,7 +74,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_HWXY(
   if (iLength >= 2) {
     CFX_ByteString bsUnit = pArguments->GetUTF8String(1);
     if (!bsUnit.IsEmpty()) {
-      wsUnit = CFX_WideString::FromUTF8(bsUnit.AsByteStringC());
+      wsUnit = CFX_WideString::FromUTF8(bsUnit.AsStringC());
     }
   }
   if (iLength >= 3) {
@@ -117,7 +117,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_HWXY(
       measure.Set(rtRect.top, XFA_UNIT_Pt);
       break;
   }
-  XFA_UNIT unit = measure.GetUnit(wsUnit.AsWideStringC());
+  XFA_UNIT unit = measure.GetUnit(wsUnit.AsStringC());
   FX_FLOAT fValue = measure.ToUnit(unit);
   fValue = FXSYS_round(fValue * 1000) / 1000.0f;
   if (hValue) {
@@ -367,7 +367,7 @@ void CScript_LayoutPseudoModel::Script_LayoutPseudoModel_PageContent(
   }
   if (iLength >= 2) {
     CFX_ByteString bsType = pArguments->GetUTF8String(1);
-    wsType = CFX_WideString::FromUTF8(bsType.AsByteStringC());
+    wsType = CFX_WideString::FromUTF8(bsType.AsStringC());
   }
   if (iLength >= 3) {
     bOnPageArea = pArguments->GetInt32(2) == 0 ? FALSE : TRUE;

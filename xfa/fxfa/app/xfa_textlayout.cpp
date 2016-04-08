@@ -326,7 +326,7 @@ int32_t CXFA_TextParser::GetVAlgin(CXFA_TextProvider* pTextProvider) const {
 FX_FLOAT CXFA_TextParser::GetTabInterval(IFDE_CSSComputedStyle* pStyle) const {
   CFX_WideString wsValue;
   if (pStyle && pStyle->GetCustomStyle(FX_WSTRC(L"tab-interval"), wsValue))
-    return CXFA_Measurement(wsValue.AsWideStringC()).ToUnit(XFA_UNIT_Pt);
+    return CXFA_Measurement(wsValue.AsStringC()).ToUnit(XFA_UNIT_Pt);
   return 36;
 }
 

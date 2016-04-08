@@ -27,7 +27,7 @@ class CXFA_CSSTagProvider : public IFDE_CSSTagProvider {
   virtual ~CXFA_CSSTagProvider();
 
   // Note: |this| must outlive the use of GetTagName()'s result.
-  virtual CFX_WideStringC GetTagName() { return m_wsTagName.AsWideStringC(); }
+  virtual CFX_WideStringC GetTagName() { return m_wsTagName.AsStringC(); }
   virtual FX_POSITION GetFirstAttribute() {
     return m_Attributes.GetStartPosition();
   }

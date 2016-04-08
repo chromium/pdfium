@@ -87,5 +87,5 @@ CFX_WideString CBC_PDF417I::Decode(CFX_DIBitmap* pBitmap, int32_t& e) {
   CBC_BinaryBitmap bitmap(&binarizer);
   CFX_ByteString bytestring = m_pBCReader->Decode(&bitmap, 0, e);
   BC_EXCEPTION_CHECK_ReturnValue(e, FX_WSTRC(L""));
-  return CFX_WideString::FromUTF8(bytestring.AsByteStringC());
+  return CFX_WideString::FromUTF8(bytestring.AsStringC());
 }

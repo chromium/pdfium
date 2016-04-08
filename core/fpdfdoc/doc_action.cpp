@@ -39,7 +39,7 @@ CPDF_Dest CPDF_Action::GetDest(CPDF_Document* pDoc) const {
   if (pDest->IsString() || pDest->IsName()) {
     CPDF_NameTree name_tree(pDoc, "Dests");
     return CPDF_Dest(
-        name_tree.LookupNamedDest(pDoc, pDest->GetString().AsByteStringC()));
+        name_tree.LookupNamedDest(pDoc, pDest->GetString().AsStringC()));
   }
   if (CPDF_Array* pArray = pDest->AsArray())
     return CPDF_Dest(pArray);
@@ -74,7 +74,7 @@ CFX_WideString CPDF_Action::GetFilePath() const {
       CPDF_Dictionary* pWinDict = m_pDict->GetDictBy("Win");
       if (pWinDict) {
         return CFX_WideString::FromLocal(
-            pWinDict->GetStringBy("F").AsByteStringC());
+            pWinDict->GetStringBy("F").AsStringC());
       }
     }
     return path;

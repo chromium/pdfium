@@ -54,7 +54,7 @@ int32_t PDF_CreatorAppendObject(const CPDF_Object* pObj,
       if (pFile->AppendString(" ") < 0) {
         return -1;
       }
-      if ((len = pFile->AppendString(pObj->GetString().AsByteStringC())) < 0) {
+      if ((len = pFile->AppendString(pObj->GetString().AsStringC())) < 0) {
         return -1;
       }
       offset += len + 1;
@@ -62,8 +62,8 @@ int32_t PDF_CreatorAppendObject(const CPDF_Object* pObj,
     case CPDF_Object::STRING: {
       CFX_ByteString str = pObj->GetString();
       FX_BOOL bHex = pObj->AsString()->IsHex();
-      if ((len = pFile->AppendString(
-               PDF_EncodeString(str, bHex).AsByteStringC())) < 0) {
+      if ((len = pFile->AppendString(PDF_EncodeString(str, bHex).AsStringC())) <
+          0) {
         return -1;
       }
       offset += len;
@@ -74,8 +74,7 @@ int32_t PDF_CreatorAppendObject(const CPDF_Object* pObj,
         return -1;
       }
       CFX_ByteString str = pObj->GetString();
-      if ((len = pFile->AppendString(PDF_NameEncode(str).AsByteStringC())) <
-          0) {
+      if ((len = pFile->AppendString(PDF_NameEncode(str).AsStringC())) < 0) {
         return -1;
       }
       offset += len + 1;
@@ -134,8 +133,7 @@ int32_t PDF_CreatorAppendObject(const CPDF_Object* pObj,
         if (pFile->AppendString("/") < 0) {
           return -1;
         }
-        if ((len = pFile->AppendString(PDF_NameEncode(key).AsByteStringC())) <
-            0) {
+        if ((len = pFile->AppendString(PDF_NameEncode(key).AsStringC())) < 0) {
           return -1;
         }
         offset += len + 1;
@@ -214,8 +212,7 @@ int32_t PDF_CreatorWriteTrailer(CPDF_Document* pDocument,
       if (pFile->AppendString(("/")) < 0) {
         return -1;
       }
-      if ((len = pFile->AppendString(PDF_NameEncode(key).AsByteStringC())) <
-          0) {
+      if ((len = pFile->AppendString(PDF_NameEncode(key).AsStringC())) < 0) {
         return -1;
       }
       offset += len + 1;
@@ -1118,7 +1115,7 @@ int32_t CPDF_Creator::WriteDirectObj(uint32_t objnum,
       if (m_File.AppendString(" ") < 0) {
         return -1;
       }
-      if ((len = m_File.AppendString(pObj->GetString().AsByteStringC())) < 0) {
+      if ((len = m_File.AppendString(pObj->GetString().AsStringC())) < 0) {
         return -1;
       }
       m_Offset += len + 1;
@@ -1128,7 +1125,7 @@ int32_t CPDF_Creator::WriteDirectObj(uint32_t objnum,
       FX_BOOL bHex = pObj->AsString()->IsHex();
       if (!m_pCryptoHandler || !bEncrypt) {
         CFX_ByteString content = PDF_EncodeString(str, bHex);
-        if ((len = m_File.AppendString(content.AsByteStringC())) < 0) {
+        if ((len = m_File.AppendString(content.AsStringC())) < 0) {
           return -1;
         }
         m_Offset += len;
@@ -1140,7 +1137,7 @@ int32_t CPDF_Creator::WriteDirectObj(uint32_t objnum,
       CFX_ByteString content = PDF_EncodeString(
           CFX_ByteString((const FX_CHAR*)encryptor.m_pData, encryptor.m_dwSize),
           bHex);
-      if ((len = m_File.AppendString(content.AsByteStringC())) < 0) {
+      if ((len = m_File.AppendString(content.AsStringC())) < 0) {
         return -1;
       }
       m_Offset += len;
@@ -1180,8 +1177,7 @@ int32_t CPDF_Creator::WriteDirectObj(uint32_t objnum,
         return -1;
       }
       CFX_ByteString str = pObj->GetString();
-      if ((len = m_File.AppendString(PDF_NameEncode(str).AsByteStringC())) <
-          0) {
+      if ((len = m_File.AppendString(PDF_NameEncode(str).AsStringC())) < 0) {
         return -1;
       }
       m_Offset += len + 1;
@@ -1245,8 +1241,7 @@ int32_t CPDF_Creator::WriteDirectObj(uint32_t objnum,
         if (m_File.AppendString("/") < 0) {
           return -1;
         }
-        if ((len = m_File.AppendString(PDF_NameEncode(key).AsByteStringC())) <
-            0) {
+        if ((len = m_File.AppendString(PDF_NameEncode(key).AsStringC())) < 0) {
           return -1;
         }
         m_Offset += len + 1;
@@ -1648,7 +1643,7 @@ int32_t CPDF_Creator::WriteDoc_Stage3(IFX_Pause* pPause) {
         str = m_ObjectOffset.GetPtrAt(1)
                   ? "xref\r\n"
                   : "xref\r\n0 1\r\n0000000000 65535 f\r\n";
-        if (m_File.AppendString(str.AsByteStringC()) < 0) {
+        if (m_File.AppendString(str.AsStringC()) < 0) {
           return -1;
         }
         m_Pos = (void*)(uintptr_t)1;
@@ -1777,7 +1772,7 @@ int32_t CPDF_Creator::WriteDoc_Stage4(IFX_Pause* pPause) {
         if (m_File.AppendString(("/")) < 0) {
           return -1;
         }
-        if (m_File.AppendString(PDF_NameEncode(key).AsByteStringC()) < 0) {
+        if (m_File.AppendString(PDF_NameEncode(key).AsStringC()) < 0) {
           return -1;
         }
         if (pValue->GetObjNum()) {

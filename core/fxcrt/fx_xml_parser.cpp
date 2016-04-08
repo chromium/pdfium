@@ -371,7 +371,7 @@ CXML_Element* CXML_Parser::ParseElement(CXML_Element* pParent,
   }
   CXML_Element* pElement = new CXML_Element;
   pElement->m_pParent = pParent;
-  pElement->SetTag(tag_space.AsByteStringC(), tag_name.AsByteStringC());
+  pElement->SetTag(tag_space.AsStringC(), tag_name.AsStringC());
   do {
     CFX_ByteString attr_space, attr_name;
     while (m_dwIndex < m_dwBufferSize) {
@@ -397,9 +397,8 @@ CXML_Element* CXML_Parser::ParseElement(CXML_Element* pParent,
       }
       CFX_WideString attr_value;
       GetAttrValue(attr_value);
-      pElement->m_AttrMap.SetAt(attr_space.AsByteStringC(),
-                                attr_name.AsByteStringC(),
-                                attr_value.AsWideStringC());
+      pElement->m_AttrMap.SetAt(attr_space.AsStringC(), attr_name.AsStringC(),
+                                attr_value.AsStringC());
     }
     m_nOffset = m_nBufferOffset + (FX_FILESIZE)m_dwIndex;
     if (m_dwIndex < m_dwBufferSize || IsEOF()) {
@@ -462,7 +461,7 @@ CXML_Element* CXML_Parser::ParseElement(CXML_Element* pParent,
             if (!bCDATA && !m_bSaveSpaceChars) {
               dataStr.TrimRight(L" \t\r\n");
             }
-            InsertContentSegment(bCDATA, dataStr.AsWideStringC(), pElement);
+            InsertContentSegment(bCDATA, dataStr.AsStringC(), pElement);
             content.Clear();
             decoder.Clear();
             bCDATA = FALSE;
@@ -506,7 +505,7 @@ CXML_Element* CXML_Parser::ParseElement(CXML_Element* pParent,
   if (!m_bSaveSpaceChars) {
     dataStr.TrimRight(L" \t\r\n");
   }
-  InsertContentSegment(bCDATA, dataStr.AsWideStringC(), pElement);
+  InsertContentSegment(bCDATA, dataStr.AsStringC(), pElement);
   content.Clear();
   decoder.Clear();
   bCDATA = FALSE;
@@ -602,7 +601,7 @@ CFX_ByteString CXML_Element::GetNamespace(FX_BOOL bQualified) const {
   if (bQualified) {
     return m_QSpaceName;
   }
-  return GetNamespaceURI(m_QSpaceName.AsByteStringC());
+  return GetNamespaceURI(m_QSpaceName.AsStringC());
 }
 CFX_ByteString CXML_Element::GetNamespaceURI(
     const CFX_ByteStringC& qName) const {

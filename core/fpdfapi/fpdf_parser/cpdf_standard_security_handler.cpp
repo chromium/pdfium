@@ -173,7 +173,7 @@ FX_BOOL CPDF_StandardSecurityHandler::LoadDict(CPDF_Dictionary* pEncryptDict) {
   if (stmf_name != strf_name) {
     return FALSE;
   }
-  if (!_LoadCryptInfo(pEncryptDict, strf_name.AsByteStringC(), m_Cipher,
+  if (!_LoadCryptInfo(pEncryptDict, strf_name.AsStringC(), m_Cipher,
                       m_KeyLen)) {
     return FALSE;
   }
@@ -196,8 +196,7 @@ FX_BOOL CPDF_StandardSecurityHandler::LoadDict(CPDF_Dictionary* pEncryptDict,
       return FALSE;
     }
   }
-  if (!_LoadCryptInfo(pEncryptDict, strf_name.AsByteStringC(), cipher,
-                      key_len)) {
+  if (!_LoadCryptInfo(pEncryptDict, strf_name.AsStringC(), cipher, key_len)) {
     return FALSE;
   }
   m_Cipher = cipher;

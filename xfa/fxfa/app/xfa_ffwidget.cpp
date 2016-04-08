@@ -1004,7 +1004,7 @@ CFX_DIBitmap* XFA_LoadImageData(CXFA_FFDoc* pDoc,
     if (wsURL.Left(7) != FX_WSTRC(L"http://") &&
         wsURL.Left(6) != FX_WSTRC(L"ftp://")) {
       CFX_DIBitmap* pBitmap =
-          pDoc->GetPDFNamedImage(wsURL.AsWideStringC(), iImageXDpi, iImageYDpi);
+          pDoc->GetPDFNamedImage(wsURL.AsStringC(), iImageXDpi, iImageYDpi);
       if (pBitmap) {
         bNameImage = TRUE;
         return pBitmap;

@@ -170,7 +170,7 @@ void CFWL_BarcodeImp::GenerateBarcodeImageCache() {
     m_pBarcodeEngine->SetTruncated(pData->GetTruncated());
   }
   int32_t errorCode = 0;
-  m_dwStatus = m_pBarcodeEngine->Encode(wsText.AsWideStringC(), TRUE, errorCode)
+  m_dwStatus = m_pBarcodeEngine->Encode(wsText.AsStringC(), TRUE, errorCode)
                    ? XFA_BCS_EncodeSuccess
                    : 0;
 }

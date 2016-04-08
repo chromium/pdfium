@@ -135,7 +135,7 @@ class PDFObjectsTest : public testing::Test {
           return false;
         for (CPDF_Dictionary::const_iterator it = dict1->begin();
              it != dict1->end(); ++it) {
-          if (!Equal(it->second, dict2->GetObjectBy(it->first.AsByteStringC())))
+          if (!Equal(it->second, dict2->GetObjectBy(it->first.AsStringC())))
             return false;
         }
         return true;
