@@ -141,20 +141,6 @@ const CFX_ByteString& CFX_ByteString::operator=(
   return *this;
 }
 
-const CFX_ByteString& CFX_ByteString::operator=(const CFX_BinaryBuf& buf) {
-  Load(buf.GetBuffer(), buf.GetSize());
-  return *this;
-}
-
-void CFX_ByteString::Load(const uint8_t* buf, FX_STRSIZE len) {
-  if (!len) {
-    clear();
-    return;
-  }
-
-  m_pData.Reset(StringData::Create(reinterpret_cast<const FX_CHAR*>(buf), len));
-}
-
 const CFX_ByteString& CFX_ByteString::operator+=(const FX_CHAR* pStr) {
   if (pStr)
     Concat(pStr, FXSYS_strlen(pStr));

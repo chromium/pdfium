@@ -20,9 +20,9 @@ void IPDF_CryptoHandler::Decrypt(uint32_t objnum,
                                  CFX_ByteString& str) {
   CFX_BinaryBuf dest_buf;
   void* context = DecryptStart(objnum, gennum);
-  DecryptStream(context, (const uint8_t*)str, str.GetLength(), dest_buf);
+  DecryptStream(context, str.raw_str(), str.GetLength(), dest_buf);
   DecryptFinish(context, dest_buf);
-  str = dest_buf;
+  str = CFX_ByteString(dest_buf.GetBuffer(), dest_buf.GetSize());
 }
 
 void CPDF_StandardCryptoHandler::CryptBlock(FX_BOOL bEncrypt,

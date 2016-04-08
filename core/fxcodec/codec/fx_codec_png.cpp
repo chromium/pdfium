@@ -82,9 +82,9 @@ static void _png_load_bmp_attribute(png_structp png_ptr,
       } else {
         buf = "Author";
         if (!FXSYS_memcmp(buf, text[i].key, std::min(len, FXSYS_strlen(buf)))) {
-          pAttribute->m_strAuthor.Empty();
-          pAttribute->m_strAuthor.Load((uint8_t*)text[i].text,
-                                       (FX_STRSIZE)text[i].text_length);
+          pAttribute->m_strAuthor =
+              CFX_ByteString(reinterpret_cast<uint8_t*>(text[i].text),
+                             static_cast<FX_STRSIZE>(text[i].text_length));
         }
       }
     }

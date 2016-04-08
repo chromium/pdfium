@@ -15,7 +15,6 @@
 #include "core/fxcrt/include/fx_memory.h"
 #include "core/fxcrt/include/fx_system.h"
 
-class CFX_BinaryBuf;
 class CFX_ByteString;
 class CFX_WideString;
 
@@ -218,9 +217,6 @@ class CFX_ByteString {
   const CFX_ByteString& operator=(const FX_CHAR* str);
   const CFX_ByteString& operator=(const CFX_ByteStringC& bstrc);
   const CFX_ByteString& operator=(const CFX_ByteString& stringSrc);
-  const CFX_ByteString& operator=(const CFX_BinaryBuf& buf);
-
-  void Load(const uint8_t* str, FX_STRSIZE len);
 
   const CFX_ByteString& operator+=(FX_CHAR ch);
   const CFX_ByteString& operator+=(const FX_CHAR* str);
