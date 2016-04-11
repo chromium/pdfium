@@ -14,16 +14,14 @@
 #include "xfa/fgas/font/fgas_font.h"
 
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
-int32_t FX_GetSimilarValue(FX_LPCFONTDESCRIPTOR pFont, uint32_t dwFontStyles);
-FX_LPCFONTDESCRIPTOR FX_DefFontMatcher(FX_LPFONTMATCHPARAMS pParams,
-                                       const CFX_FontDescriptors& fonts,
-                                       void* pUserData);
+int32_t FX_GetSimilarValue(FX_FONTDESCRIPTOR const* pFont,
+                           uint32_t dwFontStyles);
+FX_FONTDESCRIPTOR const* FX_DefFontMatcher(FX_LPFONTMATCHPARAMS pParams,
+                                           const CFX_FontDescriptors& fonts);
 
 class CFX_StdFontMgrImp : public IFX_FontMgr {
  public:
-  CFX_StdFontMgrImp(FX_LPEnumAllFonts pEnumerator,
-                    FX_LPMatchFont pMatcher,
-                    void* pUserData);
+  CFX_StdFontMgrImp(FX_LPEnumAllFonts pEnumerator);
   ~CFX_StdFontMgrImp();
   virtual void Release() { delete this; }
   virtual IFX_Font* GetDefFontByCodePage(uint16_t wCodePage,
@@ -55,7 +53,15 @@ class CFX_StdFontMgrImp : public IFX_FontMgr {
   virtual void RemoveFont(IFX_Font* pFont);
 
  protected:
-  FX_LPMatchFont m_pMatcher;
+  void RemoveFont(CFX_MapPtrToPtr& fontMap, IFX_Font* pFont);
+  FX_FONTDESCRIPTOR const* FindFont(const FX_WCHAR* pszFontFamily,
+                                    uint32_t dwFontStyles,
+                                    uint32_t dwMatchFlags,
+                                    uint16_t wCodePage,
+                                    uint32_t dwUSB = 999,
+                                    FX_WCHAR wUnicode = 0);
+  IFX_Font* GetFont(FX_FONTDESCRIPTOR const* pFD, uint32_t dwFontStyles);
+
   FX_LPEnumAllFonts m_pEnumerator;
   CFX_FontDescriptors m_FontFaces;
   CFX_PtrArray m_Fonts;
@@ -66,15 +72,6 @@ class CFX_StdFontMgrImp : public IFX_FontMgr {
   CFX_MapPtrToPtr m_FileFonts;
   CFX_MapPtrToPtr m_StreamFonts;
   CFX_MapPtrToPtr m_DeriveFonts;
-  void* m_pUserData;
-  void RemoveFont(CFX_MapPtrToPtr& fontMap, IFX_Font* pFont);
-  FX_LPCFONTDESCRIPTOR FindFont(const FX_WCHAR* pszFontFamily,
-                                uint32_t dwFontStyles,
-                                uint32_t dwMatchFlags,
-                                uint16_t wCodePage,
-                                uint32_t dwUSB = 999,
-                                FX_WCHAR wUnicode = 0);
-  IFX_Font* GetFont(FX_LPCFONTDESCRIPTOR pFD, uint32_t dwFontStyles);
 };
 uint32_t FX_GetGdiFontStyles(const LOGFONTW& lf);
 
@@ -133,8 +130,8 @@ class CFX_FontSourceEnum_File : public IFX_FontSourceEnum {
  public:
   CFX_FontSourceEnum_File();
   virtual void Release() { delete this; }
-  virtual FX_POSITION GetStartPosition(void* pUserData = NULL);
-  virtual IFX_FileAccess* GetNext(FX_POSITION& pos, void* pUserData = NULL);
+  virtual FX_POSITION GetStartPosition();
+  virtual IFX_FileAccess* GetNext(FX_POSITION& pos);
 
  private:
   CFX_ByteString GetNextFile();
@@ -155,9 +152,7 @@ typedef CFX_MapPtrTemplate<IFX_Font*, IFX_FileRead*> CFX_FonStreamtMap;
 
 class CFX_FontMgrImp : public IFX_FontMgr {
  public:
-  CFX_FontMgrImp(IFX_FontSourceEnum* pFontEnum,
-                 IFX_FontMgrDelegate* pDelegate = NULL,
-                 void* pUserData = NULL);
+  CFX_FontMgrImp(IFX_FontSourceEnum* pFontEnum);
   virtual void Release();
   virtual IFX_Font* GetDefFontByCodePage(uint16_t wCodePage,
                                          uint32_t dwFontStyles,
@@ -237,6 +232,7 @@ class CFX_FontMgrImp : public IFX_FontMgr {
                                  IFX_SystemFontInfo* pSystemFontInfo,
                                  uint32_t index);
   IFX_FileRead* CreateFontStream(const CFX_ByteString& bsFaceName);
+
   CFX_HashFontDescsMap m_Hash2CandidateList;
   CFX_HashFontsMap m_Hash2Fonts;
   CFX_HashFileMap m_Hash2FileAccess;
@@ -244,8 +240,6 @@ class CFX_FontMgrImp : public IFX_FontMgr {
   CFX_FonStreamtMap m_IFXFont2FileRead;
   CFX_UnicodeFontMap m_FailedUnicodes2NULL;
   IFX_FontSourceEnum* m_pFontSource;
-  IFX_FontMgrDelegate* m_pDelegate;
-  void* m_pUserData;
 };
 #endif
 

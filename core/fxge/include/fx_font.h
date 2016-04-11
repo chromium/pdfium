@@ -287,15 +287,6 @@ class CFX_FontMgr {
   FXFT_Library m_FTLibrary;
 };
 
-class IFX_AdditionalFontEnum {
- public:
-  virtual int CountFiles() = 0;
-  virtual IFX_FileStream* GetFontFile(int index) = 0;
-
- protected:
-  virtual ~IFX_AdditionalFontEnum() {}
-};
-
 class CFX_FontMapper {
  public:
   explicit CFX_FontMapper(CFX_FontMgr* mgr);

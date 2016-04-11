@@ -101,6 +101,7 @@ class IFX_Font {
   virtual void SetLogicalFontStyle(uint32_t dwLogFontStyle) = 0;
 #endif
 };
+
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 struct FX_FONTMATCHPARAMS {
   const FX_WCHAR* pwsFamily;
@@ -130,8 +131,7 @@ struct FX_FONTDESCRIPTOR {
   uint8_t uCharSet;
   FX_FONTSIGNATURE FontSignature;
 };
-typedef FX_FONTDESCRIPTOR* FX_LPFONTDESCRIPTOR;
-typedef FX_FONTDESCRIPTOR const* FX_LPCFONTDESCRIPTOR;
+
 typedef CFX_MassArrayTemplate<FX_FONTDESCRIPTOR> CFX_FontDescriptors;
 inline bool operator==(const FX_FONTDESCRIPTOR& left,
                        const FX_FONTDESCRIPTOR& right) {
@@ -145,19 +145,16 @@ inline bool operator==(const FX_FONTDESCRIPTOR& left,
 #define FX_FONTMATCHPARA_MacthFamily 0x02
 #define FX_FONTMATCHPARA_MacthUnicode 0x04
 typedef void (*FX_LPEnumAllFonts)(CFX_FontDescriptors& fonts,
-                                  void* pUserData,
                                   const FX_WCHAR* pwsFaceName,
                                   FX_WCHAR wUnicode);
 FX_LPEnumAllFonts FX_GetDefFontEnumerator();
-typedef FX_LPCFONTDESCRIPTOR (*FX_LPMatchFont)(FX_LPFONTMATCHPARAMS pParams,
-                                               const CFX_FontDescriptors& fonts,
-                                               void* pUserData);
+typedef FX_FONTDESCRIPTOR const* (*FX_LPMatchFont)(
+    FX_LPFONTMATCHPARAMS pParams,
+    const CFX_FontDescriptors& fonts);
 FX_LPMatchFont FX_GetDefFontMatchor();
 class IFX_FontMgr {
  public:
-  static IFX_FontMgr* Create(FX_LPEnumAllFonts pEnumerator,
-                             FX_LPMatchFont pMatcher = NULL,
-                             void* pUserData = NULL);
+  static IFX_FontMgr* Create(FX_LPEnumAllFonts pEnumerator);
   virtual ~IFX_FontMgr() {}
   virtual void Release() = 0;
   virtual IFX_Font* GetDefFontByCodePage(
@@ -192,44 +189,20 @@ class IFX_FontMgr {
   virtual void ClearFontCache() = 0;
   virtual void RemoveFont(IFX_Font* pFont) = 0;
 };
-#else
-class IFX_FontMgrDelegate {
- public:
-  virtual ~IFX_FontMgrDelegate() {}
-  virtual IFX_Font* GetDefFontByCodePage(
-      IFX_FontMgr* pFontMgr,
-      uint16_t wCodePage,
-      uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = NULL) = 0;
-  virtual IFX_Font* GetDefFontByCharset(
-      IFX_FontMgr* pFontMgr,
-      uint8_t nCharset,
-      uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = NULL) = 0;
-  virtual IFX_Font* GetDefFontByUnicode(
-      IFX_FontMgr* pFontMgr,
-      FX_WCHAR wUnicode,
-      uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = NULL) = 0;
-  virtual IFX_Font* GetDefFontByLanguage(
-      IFX_FontMgr* pFontMgr,
-      uint16_t wLanguage,
-      uint32_t dwFontStyles,
-      const FX_WCHAR* pszFontFamily = NULL) = 0;
-};
+
+#else   //  _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
+
 class IFX_FontSourceEnum {
  public:
   virtual ~IFX_FontSourceEnum() {}
   virtual void Release() = 0;
-  virtual FX_POSITION GetStartPosition(void* pUserData = NULL) = 0;
-  virtual IFX_FileAccess* GetNext(FX_POSITION& pos, void* pUserData = NULL) = 0;
+  virtual FX_POSITION GetStartPosition() = 0;
+  virtual IFX_FileAccess* GetNext(FX_POSITION& pos) = 0;
 };
 IFX_FontSourceEnum* FX_CreateDefaultFontSourceEnum();
 class IFX_FontMgr {
  public:
-  static IFX_FontMgr* Create(IFX_FontSourceEnum* pFontEnum,
-                             IFX_FontMgrDelegate* pDelegate = NULL,
-                             void* pUserData = NULL);
+  static IFX_FontMgr* Create(IFX_FontSourceEnum* pFontEnum);
   virtual ~IFX_FontMgr() {}
   virtual void Release() = 0;
   virtual IFX_Font* GetDefFontByCodePage(
@@ -280,6 +253,6 @@ class IFX_FontMgr {
   virtual void ClearFontCache() = 0;
   virtual void RemoveFont(IFX_Font* pFont) = 0;
 };
-#endif
+#endif  //  _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 
 #endif  // XFA_FGAS_FONT_FGAS_FONT_H_
