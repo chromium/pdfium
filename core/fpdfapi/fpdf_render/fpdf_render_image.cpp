@@ -417,7 +417,7 @@ FX_BOOL CPDF_ImageRenderer::StartRenderDIBSource() {
           m_Flags |= FXRENDER_IMAGE_LOSSY;
         }
       } else if (CPDF_Array* pArray = pFilters->AsArray()) {
-        for (uint32_t i = 0; i < pArray->GetCount(); i++) {
+        for (size_t i = 0; i < pArray->GetCount(); i++) {
           CFX_ByteStringC bsDecodeType = pArray->GetConstStringAt(i);
           if (bsDecodeType == "DCTDecode" || bsDecodeType == "JPXDecode") {
             m_Flags |= FXRENDER_IMAGE_LOSSY;
@@ -937,8 +937,8 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
           return NULL;
         }
         FXSYS_memset(pFloats, 0, num_floats.ValueOrDie());
-        int count = pBC->GetCount() > 8 ? 8 : pBC->GetCount();
-        for (int i = 0; i < count; i++) {
+        size_t count = pBC->GetCount() > 8 ? 8 : pBC->GetCount();
+        for (size_t i = 0; i < count; i++) {
           pFloats[i] = pBC->GetNumberAt(i);
         }
         pCS->GetRGB(pFloats, R, G, B);

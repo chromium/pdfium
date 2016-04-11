@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_ARRAY_H_
 #define CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_ARRAY_H_
 
+#include <vector>
+
 #include "core/fpdfapi/fpdf_parser/include/cpdf_indirect_object_holder.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_object.h"
 #include "core/fxcrt/include/fx_basic.h"
@@ -24,27 +26,27 @@ class CPDF_Array : public CPDF_Object {
   CPDF_Array* AsArray() override;
   const CPDF_Array* AsArray() const override;
 
-  uint32_t GetCount() const { return m_Objects.GetSize(); }
-  CPDF_Object* GetObjectAt(uint32_t index) const;
-  CPDF_Object* GetDirectObjectAt(uint32_t index) const;
-  CFX_ByteString GetStringAt(uint32_t index) const;
-  CFX_ByteStringC GetConstStringAt(uint32_t index) const;
-  int GetIntegerAt(uint32_t index) const;
-  FX_FLOAT GetNumberAt(uint32_t index) const;
-  CPDF_Dictionary* GetDictAt(uint32_t index) const;
-  CPDF_Stream* GetStreamAt(uint32_t index) const;
-  CPDF_Array* GetArrayAt(uint32_t index) const;
-  FX_FLOAT GetFloatAt(uint32_t index) const { return GetNumberAt(index); }
+  size_t GetCount() const { return m_Objects.size(); }
+  CPDF_Object* GetObjectAt(size_t index) const;
+  CPDF_Object* GetDirectObjectAt(size_t index) const;
+  CFX_ByteString GetStringAt(size_t index) const;
+  CFX_ByteStringC GetConstStringAt(size_t index) const;
+  int GetIntegerAt(size_t index) const;
+  FX_FLOAT GetNumberAt(size_t index) const;
+  CPDF_Dictionary* GetDictAt(size_t index) const;
+  CPDF_Stream* GetStreamAt(size_t index) const;
+  CPDF_Array* GetArrayAt(size_t index) const;
+  FX_FLOAT GetFloatAt(size_t index) const { return GetNumberAt(index); }
   CFX_Matrix GetMatrix();
   CFX_FloatRect GetRect();
 
-  void SetAt(uint32_t index,
+  void SetAt(size_t index,
              CPDF_Object* pObj,
              CPDF_IndirectObjectHolder* pObjs = nullptr);
-  void InsertAt(uint32_t index,
+  void InsertAt(size_t index,
                 CPDF_Object* pObj,
                 CPDF_IndirectObjectHolder* pObjs = nullptr);
-  void RemoveAt(uint32_t index, uint32_t nCount = 1);
+  void RemoveAt(size_t index, size_t nCount = 1);
 
   void Add(CPDF_Object* pObj, CPDF_IndirectObjectHolder* pObjs = nullptr);
   void AddNumber(FX_FLOAT f);
@@ -59,7 +61,7 @@ class CPDF_Array : public CPDF_Object {
  protected:
   ~CPDF_Array() override;
 
-  CFX_ArrayTemplate<CPDF_Object*> m_Objects;
+  std::vector<CPDF_Object*> m_Objects;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PARSER_INCLUDE_CPDF_ARRAY_H_

@@ -111,7 +111,6 @@ FX_BOOL CPDF_SimpleFont::LoadCommon() {
     LoadFontDescriptor(pFontDesc);
   }
   CPDF_Array* pWidthArray = m_pFontDict->GetArrayBy("Widths");
-  int width_start = 0, width_end = -1;
   m_bUseFontWidth = TRUE;
   if (pWidthArray) {
     m_bUseFontWidth = FALSE;
@@ -121,19 +120,15 @@ FX_BOOL CPDF_SimpleFont::LoadCommon() {
         m_CharWidth[i] = MissingWidth;
       }
     }
-    width_start = m_pFontDict->GetIntegerBy("FirstChar", 0);
-    width_end = m_pFontDict->GetIntegerBy("LastChar", 0);
-    if (width_start >= 0 && width_start <= 255) {
-      if (width_end <= 0 ||
-          width_end >= width_start + (int)pWidthArray->GetCount()) {
+    size_t width_start = m_pFontDict->GetIntegerBy("FirstChar", 0);
+    size_t width_end = m_pFontDict->GetIntegerBy("LastChar", 0);
+    if (width_start <= 255) {
+      if (width_end == 0 || width_end >= width_start + pWidthArray->GetCount())
         width_end = width_start + pWidthArray->GetCount() - 1;
-      }
-      if (width_end > 255) {
+      if (width_end > 255)
         width_end = 255;
-      }
-      for (int i = width_start; i <= width_end; i++) {
+      for (size_t i = width_start; i <= width_end; i++)
         m_CharWidth[i] = pWidthArray->GetIntegerAt(i - width_start);
-      }
     }
   }
   if (m_pFontFile) {

@@ -57,14 +57,12 @@ FX_BOOL CPDF_Type3Font::Load() {
   int StartChar = m_pFontDict->GetIntegerBy("FirstChar");
   CPDF_Array* pWidthArray = m_pFontDict->GetArrayBy("Widths");
   if (pWidthArray && (StartChar >= 0 && StartChar < 256)) {
-    uint32_t count = pWidthArray->GetCount();
-    if (count > 256) {
+    size_t count = pWidthArray->GetCount();
+    if (count > 256)
       count = 256;
-    }
-    if (StartChar + count > 256) {
+    if (StartChar + count > 256)
       count = 256 - StartChar;
-    }
-    for (uint32_t i = 0; i < count; i++) {
+    for (size_t i = 0; i < count; i++) {
       m_CharWidthL[StartChar + i] =
           FXSYS_round(pWidthArray->GetNumberAt(i) * xscale * 1000);
     }

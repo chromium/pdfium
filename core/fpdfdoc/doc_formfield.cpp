@@ -414,6 +414,7 @@ int CPDF_FormField::GetMaxLen() {
   }
   return 0;
 }
+
 int CPDF_FormField::CountSelectedItems() {
   CPDF_Object* pValue = FPDF_GetFieldAttr(m_pDict, "V");
   if (!pValue) {
@@ -428,6 +429,7 @@ int CPDF_FormField::CountSelectedItems() {
     return pArray->GetCount();
   return 0;
 }
+
 int CPDF_FormField::GetSelectedIndex(int index) {
   CPDF_Object* pValue = FPDF_GetFieldAttr(m_pDict, "V");
   if (!pValue) {
@@ -537,9 +539,9 @@ FX_BOOL CPDF_FormField::IsItemSelected(int index) {
       break;
     }
   }
-  for (uint32_t i = 0; i < pArray->GetCount(); i++)
+  for (int i = 0; i < static_cast<int>(pArray->GetCount()); i++)
     if (pArray->GetDirectObjectAt(i)->GetUnicodeText() == opt_value &&
-        (int)i == iPos) {
+        i == iPos) {
       return TRUE;
     }
   return FALSE;
@@ -887,6 +889,7 @@ FX_BOOL CPDF_FormField::SetCheckValue(const CFX_WideString& value,
   m_pForm->m_bUpdated = TRUE;
   return TRUE;
 }
+
 int CPDF_FormField::GetTopVisibleIndex() {
   CPDF_Object* pObj = FPDF_GetFieldAttr(m_pDict, "TI");
   if (!pObj) {
@@ -894,6 +897,7 @@ int CPDF_FormField::GetTopVisibleIndex() {
   }
   return pObj->GetInteger();
 }
+
 int CPDF_FormField::CountSelectedOptions() {
   CPDF_Object* pObj = FPDF_GetFieldAttr(m_pDict, "I");
   if (!pObj) {
@@ -903,8 +907,9 @@ int CPDF_FormField::CountSelectedOptions() {
   if (!pArray) {
     return 0;
   }
-  return (int)pArray->GetCount();
+  return static_cast<int>(pArray->GetCount());
 }
+
 int CPDF_FormField::GetSelectedOptionIndex(int index) {
   CPDF_Object* pObj = FPDF_GetFieldAttr(m_pDict, "I");
   if (!pObj) {
@@ -914,7 +919,7 @@ int CPDF_FormField::GetSelectedOptionIndex(int index) {
   if (!pArray) {
     return -1;
   }
-  int iCount = (int)pArray->GetCount();
+  int iCount = static_cast<int>(pArray->GetCount());
   if (iCount > 0 && index < iCount) {
     return pArray->GetIntegerAt(index);
   }
@@ -929,8 +934,8 @@ FX_BOOL CPDF_FormField::IsOptionSelected(int iOptIndex) {
   if (!pArray) {
     return FALSE;
   }
-  int iCount = (int)pArray->GetCount();
-  for (int i = 0; i < iCount; i++) {
+  size_t iCount = pArray->GetCount();
+  for (size_t i = 0; i < iCount; i++) {
     if (pArray->GetIntegerAt(i) == iOptIndex) {
       return TRUE;
     }
@@ -949,7 +954,7 @@ FX_BOOL CPDF_FormField::SelectOption(int iOptIndex,
     m_pDict->SetAt("I", pArray);
   }
   FX_BOOL bReturn = FALSE;
-  for (int i = 0; i < (int)pArray->GetCount(); i++) {
+  for (size_t i = 0; i < pArray->GetCount(); i++) {
     int iFind = pArray->GetIntegerAt(i);
     if (iFind == iOptIndex) {
       if (bSelected) {

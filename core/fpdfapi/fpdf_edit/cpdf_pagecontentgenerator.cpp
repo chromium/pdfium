@@ -129,11 +129,10 @@ void CPDF_PageContentGenerator::TransformContent(CFX_Matrix& matrix) {
 
   CFX_ByteTextBuf buf;
   if (CPDF_Array* pArray = pContent->AsArray()) {
-    int iCount = pArray->GetCount();
+    size_t iCount = pArray->GetCount();
     CPDF_StreamAcc** pContentArray = FX_Alloc(CPDF_StreamAcc*, iCount);
-    int size = 0;
-    int i = 0;
-    for (i = 0; i < iCount; ++i) {
+    size_t size = 0;
+    for (size_t i = 0; i < iCount; ++i) {
       pContent = pArray->GetObjectAt(i);
       CPDF_Stream* pStream = ToStream(pContent);
       if (!pStream)
@@ -146,7 +145,7 @@ void CPDF_PageContentGenerator::TransformContent(CFX_Matrix& matrix) {
     }
     int pos = 0;
     uint8_t* pBuf = FX_Alloc(uint8_t, size);
-    for (i = 0; i < iCount; ++i) {
+    for (size_t i = 0; i < iCount; ++i) {
       FXSYS_memcpy(pBuf + pos, pContentArray[i]->GetData(),
                    pContentArray[i]->GetSize());
       pos += pContentArray[i]->GetSize() + 1;

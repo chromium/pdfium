@@ -988,8 +988,7 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, FX_BOOL bMainXRef) {
   std::vector<std::pair<int32_t, int32_t>> arrIndex;
   CPDF_Array* pArray = pStream->GetDict()->GetArrayBy("Index");
   if (pArray) {
-    uint32_t nPairSize = pArray->GetCount() / 2;
-    for (uint32_t i = 0; i < nPairSize; i++) {
+    for (size_t i = 0; i < pArray->GetCount() / 2; i++) {
       CPDF_Object* pStartNumObj = pArray->GetObjectAt(i * 2);
       CPDF_Object* pCountObj = pArray->GetObjectAt(i * 2 + 1);
 
@@ -1013,7 +1012,7 @@ FX_BOOL CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, FX_BOOL bMainXRef) {
 
   CFX_ArrayTemplate<uint32_t> WidthArray;
   FX_SAFE_UINT32 dwAccWidth = 0;
-  for (uint32_t i = 0; i < pArray->GetCount(); i++) {
+  for (size_t i = 0; i < pArray->GetCount(); i++) {
     WidthArray.Add(pArray->GetIntegerAt(i));
     dwAccWidth += WidthArray[i];
   }

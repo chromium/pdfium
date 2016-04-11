@@ -14,8 +14,7 @@ static int32_t FPDFDOC_OCG_FindGroup(const CPDF_Object* pObject,
     return -1;
 
   if (const CPDF_Array* pArray = pObject->AsArray()) {
-    uint32_t dwCount = pArray->GetCount();
-    for (uint32_t i = 0; i < dwCount; i++) {
+    for (size_t i = 0; i < pArray->GetCount(); i++) {
       if (pArray->GetDictAt(i) == pGroupDict)
         return i;
     }
@@ -32,8 +31,7 @@ static FX_BOOL FPDFDOC_OCG_HasIntent(const CPDF_Dictionary* pDict,
   }
   CFX_ByteString bsIntent;
   if (CPDF_Array* pArray = pIntent->AsArray()) {
-    uint32_t dwCount = pArray->GetCount();
-    for (uint32_t i = 0; i < dwCount; i++) {
+    for (size_t i = 0; i < pArray->GetCount(); i++) {
       bsIntent = pArray->GetStringAt(i);
       if (bsIntent == "All" || bsIntent == csElement)
         return TRUE;
@@ -62,8 +60,7 @@ static CPDF_Dictionary* FPDFDOC_OCG_GetConfig(CPDF_Document* pDoc,
   CPDF_Array* pConfigs = pOCProperties->GetArrayBy("Configs");
   if (pConfigs) {
     CPDF_Dictionary* pFind;
-    int32_t iCount = pConfigs->GetCount();
-    for (int32_t i = 0; i < iCount; i++) {
+    for (size_t i = 0; i < pConfigs->GetCount(); i++) {
       pFind = pConfigs->GetDictAt(i);
       if (!pFind) {
         continue;
@@ -122,8 +119,7 @@ FX_BOOL CPDF_OCContext::LoadOCGStateFromConfig(const CFX_ByteStringC& csConfig,
   pArray = pConfig->GetArrayBy("AS");
   if (pArray) {
     CFX_ByteString csFind = csConfig + "State";
-    int32_t iCount = pArray->GetCount();
-    for (int32_t i = 0; i < iCount; i++) {
+    for (size_t i = 0; i < pArray->GetCount(); i++) {
       CPDF_Dictionary* pUsage = pArray->GetDictAt(i);
       if (!pUsage) {
         continue;
@@ -194,7 +190,6 @@ FX_BOOL CPDF_OCContext::GetOCGVE(CPDF_Array* pExpression,
   if (!pExpression) {
     return FALSE;
   }
-  int32_t iCount = pExpression->GetCount();
   CPDF_Object* pOCGObj;
   CFX_ByteString csOperator = pExpression->GetStringAt(0);
   if (csOperator == "Not") {
@@ -209,7 +204,7 @@ FX_BOOL CPDF_OCContext::GetOCGVE(CPDF_Array* pExpression,
   }
   if (csOperator == "Or" || csOperator == "And") {
     FX_BOOL bValue = FALSE;
-    for (int32_t i = 1; i < iCount; i++) {
+    for (size_t i = 1; i < pExpression->GetCount(); i++) {
       pOCGObj = pExpression->GetDirectObjectAt(1);
       if (!pOCGObj) {
         continue;
@@ -255,8 +250,7 @@ FX_BOOL CPDF_OCContext::LoadOCMDState(const CPDF_Dictionary* pOCMDDict,
   if (csP == "AllOn" || csP == "AllOff") {
     bState = TRUE;
   }
-  int32_t iCount = pArray->GetCount();
-  for (int32_t i = 0; i < iCount; i++) {
+  for (size_t i = 0; i < pArray->GetCount(); i++) {
     FX_BOOL bItem = TRUE;
     CPDF_Dictionary* pItemDict = pArray->GetDictAt(i);
     if (pItemDict)

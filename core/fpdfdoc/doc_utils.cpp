@@ -27,8 +27,7 @@ CPDF_Object* SearchNumberNode(const CPDF_Dictionary* pNode, int num) {
   }
   CPDF_Array* pNumbers = pNode->GetArrayBy("Nums");
   if (pNumbers) {
-    uint32_t dwCount = pNumbers->GetCount() / 2;
-    for (uint32_t i = 0; i < dwCount; i++) {
+    for (size_t i = 0; i < pNumbers->GetCount() / 2; i++) {
       int index = pNumbers->GetIntegerAt(i * 2);
       if (num == index) {
         return pNumbers->GetDirectObjectAt(i * 2 + 1);
@@ -43,7 +42,7 @@ CPDF_Object* SearchNumberNode(const CPDF_Dictionary* pNode, int num) {
   if (!pKids) {
     return NULL;
   }
-  for (uint32_t i = 0; i < pKids->GetCount(); i++) {
+  for (size_t i = 0; i < pKids->GetCount(); i++) {
     CPDF_Dictionary* pKid = pKids->GetDictAt(i);
     if (!pKid) {
       continue;

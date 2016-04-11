@@ -58,7 +58,7 @@ class CPDF_NameTree {
   CPDF_Array* LookupNamedDest(CPDF_Document* pDoc,
                               const CFX_ByteStringC& sName);
   int GetIndex(const CFX_ByteString& csName) const;
-  int GetCount() const;
+  size_t GetCount() const;
   CPDF_Dictionary* GetRoot() const { return m_pRoot; }
 
  protected:
@@ -154,9 +154,9 @@ class CPDF_ActionFields {
  public:
   explicit CPDF_ActionFields(const CPDF_Action* pAction) : m_pAction(pAction) {}
 
-  uint32_t GetFieldsCount() const;
+  size_t GetFieldsCount() const;
   std::vector<CPDF_Object*> GetAllFields() const;
-  CPDF_Object* GetField(uint32_t iIndex) const;
+  CPDF_Object* GetField(size_t iIndex) const;
 
  protected:
   const CPDF_Action* const m_pAction;
@@ -213,8 +213,8 @@ class CPDF_Action {
   FX_BOOL IsSynchronous() const { return m_pDict->GetBooleanBy("Synchronous"); }
   FX_BOOL IsRepeat() const { return m_pDict->GetBooleanBy("Repeat"); }
   FX_BOOL IsMixPlay() const { return m_pDict->GetBooleanBy("Mix"); }
-  uint32_t GetSubActionsCount() const;
-  CPDF_Action GetSubAction(uint32_t iIndex) const;
+  size_t GetSubActionsCount() const;
+  CPDF_Action GetSubAction(size_t iIndex) const;
 
  protected:
   CPDF_Dictionary* const m_pDict;

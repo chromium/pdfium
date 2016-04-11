@@ -1033,8 +1033,7 @@ static int InsertDeletePDFPage(CPDF_Document* pDoc,
   if (!pKidList) {
     return -1;
   }
-  int nKids = pKidList->GetCount();
-  for (int i = 0; i < nKids; i++) {
+  for (size_t i = 0; i < pKidList->GetCount(); i++) {
     CPDF_Dictionary* pKid = pKidList->GetDictAt(i);
     if (pKid->GetStringBy("Type") == "Page") {
       if (nPagesToGo == 0) {

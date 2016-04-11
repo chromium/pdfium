@@ -163,8 +163,7 @@ void CheckUnSupportError(CPDF_Document* pDoc, uint32_t err_code) {
         CPDF_Dictionary* pJSDict = pNameDict->GetDictBy("JavaScript");
         CPDF_Array* pArray = pJSDict ? pJSDict->GetArrayBy("Names") : NULL;
         if (pArray) {
-          int nCount = pArray->GetCount();
-          for (int i = 0; i < nCount; i++) {
+          for (size_t i = 0; i < pArray->GetCount(); i++) {
             CFX_ByteString cbStr = pArray->GetStringAt(i);
             if (cbStr.Compare("com.adobe.acrobat.SharedReview.Register") == 0) {
               FPDF_UnSupportError(FPDF_UNSP_DOC_SHAREDREVIEW);

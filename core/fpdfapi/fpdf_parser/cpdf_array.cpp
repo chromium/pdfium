@@ -15,11 +15,9 @@
 CPDF_Array::CPDF_Array() {}
 
 CPDF_Array::~CPDF_Array() {
-  int size = m_Objects.GetSize();
-  CPDF_Object** pList = m_Objects.GetData();
-  for (int i = 0; i < size; i++) {
-    if (pList[i])
-      pList[i]->Release();
+  for (auto& it : m_Objects) {
+    if (it)
+      it->Release();
   }
 }
 
@@ -48,15 +46,15 @@ const CPDF_Array* CPDF_Array::AsArray() const {
 CPDF_Object* CPDF_Array::Clone(FX_BOOL bDirect) const {
   CPDF_Array* pCopy = new CPDF_Array();
   for (size_t i = 0; i < GetCount(); i++) {
-    CPDF_Object* value = m_Objects.GetAt(i);
-    pCopy->m_Objects.Add(value->Clone(bDirect));
+    CPDF_Object* value = m_Objects.at(i);
+    pCopy->m_Objects.push_back(value->Clone(bDirect));
   }
   return pCopy;
 }
 
 CFX_FloatRect CPDF_Array::GetRect() {
   CFX_FloatRect rect;
-  if (!IsArray() || m_Objects.GetSize() != 4)
+  if (!IsArray() || m_Objects.size() != 4)
     return rect;
 
   rect.left = GetNumberAt(0);
@@ -68,7 +66,7 @@ CFX_FloatRect CPDF_Array::GetRect() {
 
 CFX_Matrix CPDF_Array::GetMatrix() {
   CFX_Matrix matrix;
-  if (!IsArray() || m_Objects.GetSize() != 6)
+  if (!IsArray() || m_Objects.size() != 6)
     return matrix;
 
   matrix.Set(GetNumberAt(0), GetNumberAt(1), GetNumberAt(2), GetNumberAt(3),
@@ -76,43 +74,43 @@ CFX_Matrix CPDF_Array::GetMatrix() {
   return matrix;
 }
 
-CPDF_Object* CPDF_Array::GetObjectAt(uint32_t i) const {
-  if (i >= (uint32_t)m_Objects.GetSize())
+CPDF_Object* CPDF_Array::GetObjectAt(size_t i) const {
+  if (i >= m_Objects.size())
     return nullptr;
-  return m_Objects.GetAt(i);
+  return m_Objects.at(i);
 }
 
-CPDF_Object* CPDF_Array::GetDirectObjectAt(uint32_t i) const {
-  if (i >= (uint32_t)m_Objects.GetSize())
+CPDF_Object* CPDF_Array::GetDirectObjectAt(size_t i) const {
+  if (i >= m_Objects.size())
     return nullptr;
-  return m_Objects.GetAt(i)->GetDirect();
+  return m_Objects.at(i)->GetDirect();
 }
 
-CFX_ByteString CPDF_Array::GetStringAt(uint32_t i) const {
-  if (i >= (uint32_t)m_Objects.GetSize())
+CFX_ByteString CPDF_Array::GetStringAt(size_t i) const {
+  if (i >= m_Objects.size())
     return CFX_ByteString();
-  return m_Objects.GetAt(i)->GetString();
+  return m_Objects.at(i)->GetString();
 }
 
-CFX_ByteStringC CPDF_Array::GetConstStringAt(uint32_t i) const {
-  if (i >= (uint32_t)m_Objects.GetSize())
+CFX_ByteStringC CPDF_Array::GetConstStringAt(size_t i) const {
+  if (i >= m_Objects.size())
     return CFX_ByteStringC();
-  return m_Objects.GetAt(i)->GetConstString();
+  return m_Objects.at(i)->GetConstString();
 }
 
-int CPDF_Array::GetIntegerAt(uint32_t i) const {
-  if (i >= (uint32_t)m_Objects.GetSize())
+int CPDF_Array::GetIntegerAt(size_t i) const {
+  if (i >= m_Objects.size())
     return 0;
-  return m_Objects.GetAt(i)->GetInteger();
+  return m_Objects.at(i)->GetInteger();
 }
 
-FX_FLOAT CPDF_Array::GetNumberAt(uint32_t i) const {
-  if (i >= (uint32_t)m_Objects.GetSize())
+FX_FLOAT CPDF_Array::GetNumberAt(size_t i) const {
+  if (i >= m_Objects.size())
     return 0;
-  return m_Objects.GetAt(i)->GetNumber();
+  return m_Objects.at(i)->GetNumber();
 }
 
-CPDF_Dictionary* CPDF_Array::GetDictAt(uint32_t i) const {
+CPDF_Dictionary* CPDF_Array::GetDictAt(size_t i) const {
   CPDF_Object* p = GetDirectObjectAt(i);
   if (!p)
     return NULL;
@@ -123,52 +121,59 @@ CPDF_Dictionary* CPDF_Array::GetDictAt(uint32_t i) const {
   return NULL;
 }
 
-CPDF_Stream* CPDF_Array::GetStreamAt(uint32_t i) const {
+CPDF_Stream* CPDF_Array::GetStreamAt(size_t i) const {
   return ToStream(GetDirectObjectAt(i));
 }
 
-CPDF_Array* CPDF_Array::GetArrayAt(uint32_t i) const {
+CPDF_Array* CPDF_Array::GetArrayAt(size_t i) const {
   return ToArray(GetDirectObjectAt(i));
 }
 
-void CPDF_Array::RemoveAt(uint32_t i, uint32_t nCount) {
-  if (i >= (uint32_t)m_Objects.GetSize())
+void CPDF_Array::RemoveAt(size_t i, size_t nCount) {
+  if (i >= m_Objects.size())
     return;
 
-  if (nCount <= 0 || nCount > m_Objects.GetSize() - i)
+  if (nCount <= 0 || nCount > m_Objects.size() - i)
     return;
 
-  for (uint32_t j = 0; j < nCount; ++j) {
-    if (CPDF_Object* p = m_Objects.GetAt(i + j))
+  for (size_t j = 0; j < nCount; ++j) {
+    if (CPDF_Object* p = m_Objects.at(i + j))
       p->Release();
   }
-  m_Objects.RemoveAt(i, nCount);
+  m_Objects.erase(m_Objects.begin() + i, m_Objects.begin() + i + nCount);
 }
 
-void CPDF_Array::SetAt(uint32_t i,
+void CPDF_Array::SetAt(size_t i,
                        CPDF_Object* pObj,
                        CPDF_IndirectObjectHolder* pObjs) {
   ASSERT(IsArray());
-  ASSERT(i < (uint32_t)m_Objects.GetSize());
-  if (i >= (uint32_t)m_Objects.GetSize())
+  ASSERT(i < m_Objects.size());
+  if (i >= m_Objects.size())
     return;
-  if (CPDF_Object* pOld = m_Objects.GetAt(i))
+  if (CPDF_Object* pOld = m_Objects.at(i))
     pOld->Release();
   if (pObj->GetObjNum()) {
     ASSERT(pObjs);
     pObj = new CPDF_Reference(pObjs, pObj->GetObjNum());
   }
-  m_Objects.SetAt(i, pObj);
+  m_Objects[i] = pObj;
 }
 
-void CPDF_Array::InsertAt(uint32_t index,
+void CPDF_Array::InsertAt(size_t index,
                           CPDF_Object* pObj,
                           CPDF_IndirectObjectHolder* pObjs) {
   if (pObj->GetObjNum()) {
     ASSERT(pObjs);
     pObj = new CPDF_Reference(pObjs, pObj->GetObjNum());
   }
-  m_Objects.InsertAt(index, pObj);
+  if (index >= m_Objects.size()) {
+    // Allocate space first.
+    m_Objects.resize(index + 1, nullptr);
+    m_Objects[index] = pObj;
+  } else {
+    // Directly insert.
+    m_Objects.insert(m_Objects.begin() + index, pObj);
+  }
 }
 
 void CPDF_Array::Add(CPDF_Object* pObj, CPDF_IndirectObjectHolder* pObjs) {
@@ -176,7 +181,7 @@ void CPDF_Array::Add(CPDF_Object* pObj, CPDF_IndirectObjectHolder* pObjs) {
     ASSERT(pObjs);
     pObj = new CPDF_Reference(pObjs, pObj->GetObjNum());
   }
-  m_Objects.Add(pObj);
+  m_Objects.push_back(pObj);
 }
 
 void CPDF_Array::AddName(const CFX_ByteString& str) {

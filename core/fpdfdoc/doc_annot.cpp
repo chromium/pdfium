@@ -29,7 +29,7 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
   CPDF_Dictionary* pAcroForm = pRoot->GetDictBy("AcroForm");
   FX_BOOL bRegenerateAP =
       pAcroForm && pAcroForm->GetBooleanBy("NeedAppearances");
-  for (uint32_t i = 0; i < pAnnots->GetCount(); ++i) {
+  for (size_t i = 0; i < pAnnots->GetCount(); ++i) {
     CPDF_Dictionary* pDict = ToDictionary(pAnnots->GetDirectObjectAt(i));
     if (!pDict)
       continue;
@@ -286,8 +286,8 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
         if (!pDashArray) {
           return;
         }
-        int nLen = pDashArray->GetCount();
-        int i = 0;
+        size_t nLen = pDashArray->GetCount();
+        size_t i = 0;
         for (; i < nLen; ++i) {
           CPDF_Object* pObj = pDashArray->GetDirectObjectAt(i);
           if (pObj && pObj->GetInteger()) {
@@ -323,13 +323,13 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
   graph_state.m_LineWidth = width;
   if (style_char == 'D') {
     if (pDashArray) {
-      uint32_t dash_count = pDashArray->GetCount();
+      size_t dash_count = pDashArray->GetCount();
       if (dash_count % 2) {
         dash_count++;
       }
       graph_state.m_DashArray = FX_Alloc(FX_FLOAT, dash_count);
       graph_state.m_DashCount = dash_count;
-      uint32_t i;
+      size_t i;
       for (i = 0; i < pDashArray->GetCount(); ++i) {
         graph_state.m_DashArray[i] = pDashArray->GetNumberAt(i);
       }

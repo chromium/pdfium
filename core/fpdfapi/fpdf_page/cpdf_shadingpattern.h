@@ -56,7 +56,7 @@ class CPDF_ShadingPattern : public CPDF_Pattern {
 
   CPDF_CountedColorSpace* m_pCountedCS;
   CPDF_Function* m_pFunctions[4];
-  int m_nFuncs;
+  size_t m_nFuncs;
 };
 
 #endif  // CORE_FPDFAPI_FPDF_PAGE_CPDF_SHADINGPATTERN_H_

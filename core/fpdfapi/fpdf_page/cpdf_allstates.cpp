@@ -46,10 +46,9 @@ void CPDF_AllStates::SetLineDash(CPDF_Array* pArray,
                                  FX_FLOAT scale) {
   CFX_GraphStateData* pData = m_GraphState.GetModify();
   pData->m_DashPhase = phase * scale;
-  pData->SetDashCount(pArray->GetCount());
-  for (uint32_t i = 0; i < pArray->GetCount(); i++) {
+  pData->SetDashCount(static_cast<int>(pArray->GetCount()));
+  for (size_t i = 0; i < pArray->GetCount(); i++)
     pData->m_DashArray[i] = pArray->GetNumberAt(i) * scale;
-  }
 }
 
 void CPDF_AllStates::ProcessExtGS(CPDF_Dictionary* pGS,

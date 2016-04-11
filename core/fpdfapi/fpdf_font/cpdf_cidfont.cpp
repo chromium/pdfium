@@ -817,8 +817,7 @@ void CPDF_CIDFont::LoadMetricsArray(CPDF_Array* pArray,
   int iCurElement = 0;
   int first_code = 0;
   int last_code = 0;
-  uint32_t count = pArray->GetCount();
-  for (uint32_t i = 0; i < count; i++) {
+  for (size_t i = 0; i < pArray->GetCount(); i++) {
     CPDF_Object* pObj = pArray->GetDirectObjectAt(i);
     if (!pObj)
       continue;
@@ -827,8 +826,7 @@ void CPDF_CIDFont::LoadMetricsArray(CPDF_Array* pArray,
       if (width_status != 1)
         return;
 
-      uint32_t count = pArray->GetCount();
-      for (uint32_t j = 0; j < count; j += nElements) {
+      for (size_t j = 0; j < pArray->GetCount(); j += nElements) {
         result.Add(first_code);
         result.Add(first_code);
         for (int k = 0; k < nElements; k++) {

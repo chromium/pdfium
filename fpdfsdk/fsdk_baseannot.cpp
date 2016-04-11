@@ -739,9 +739,8 @@ void CPDFSDK_BAAnnot::SetBorderDash(const CFX_IntArray& array) {
   }
 
   CPDF_Array* pArray = new CPDF_Array;
-  for (int i = 0, sz = array.GetSize(); i < sz; i++) {
+  for (size_t i = 0, sz = array.GetSize(); i < sz; i++)
     pArray->AddInteger(array[i]);
-  }
 
   pBSDict->SetAt("D", pArray);
 }
@@ -760,9 +759,8 @@ void CPDFSDK_BAAnnot::GetBorderDash(CFX_IntArray& array) const {
   }
 
   if (pDash) {
-    for (int i = 0, sz = pDash->GetCount(); i < sz; i++) {
+    for (size_t i = 0, sz = pDash->GetCount(); i < sz; i++)
       array.Add(pDash->GetIntegerAt(i));
-    }
   }
 }
 
@@ -780,7 +778,7 @@ void CPDFSDK_BAAnnot::RemoveColor() {
 
 FX_BOOL CPDFSDK_BAAnnot::GetColor(FX_COLORREF& color) const {
   if (CPDF_Array* pEntry = m_pAnnot->GetAnnotDict()->GetArrayBy("C")) {
-    int nCount = pEntry->GetCount();
+    size_t nCount = pEntry->GetCount();
     if (nCount == 1) {
       FX_FLOAT g = pEntry->GetNumberAt(0) * 255;
 

@@ -356,7 +356,7 @@ FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
       CFX_ByteTextBuf sBody;
       if (pOpts) {
         FX_FLOAT fy = rcBody.top;
-        for (int32_t i = nTop, sz = pOpts->GetCount(); i < sz; i++) {
+        for (size_t i = nTop, sz = pOpts->GetCount(); i < sz; i++) {
           if (IsFloatSmaller(fy, rcBody.bottom))
             break;
 
@@ -369,7 +369,7 @@ FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
 
             FX_BOOL bSelected = FALSE;
             if (pSels) {
-              for (uint32_t s = 0, ssz = pSels->GetCount(); s < ssz; s++) {
+              for (size_t s = 0, ssz = pSels->GetCount(); s < ssz; s++) {
                 if (i == pSels->GetIntegerAt(s)) {
                   bSelected = TRUE;
                   break;

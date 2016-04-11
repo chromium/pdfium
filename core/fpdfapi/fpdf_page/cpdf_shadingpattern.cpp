@@ -48,7 +48,7 @@ CPDF_ShadingPattern::CPDF_ShadingPattern(CPDF_Document* pDoc,
 }
 
 CPDF_ShadingPattern::~CPDF_ShadingPattern() {
-  for (int i = 0; i < m_nFuncs; ++i)
+  for (size_t i = 0; i < m_nFuncs; ++i)
     delete m_pFunctions[i];
 
   CPDF_ColorSpace* pCS = m_pCountedCS ? m_pCountedCS->get() : nullptr;
@@ -66,16 +66,16 @@ FX_BOOL CPDF_ShadingPattern::Load() {
     return FALSE;
 
   if (m_nFuncs) {
-    for (int i = 0; i < m_nFuncs; i++)
+    for (size_t i = 0; i < m_nFuncs; i++)
       delete m_pFunctions[i];
     m_nFuncs = 0;
   }
   CPDF_Object* pFunc = pShadingDict->GetDirectObjectBy("Function");
   if (pFunc) {
     if (CPDF_Array* pArray = pFunc->AsArray()) {
-      m_nFuncs = std::min<int>(pArray->GetCount(), 4);
+      m_nFuncs = std::min<size_t>(pArray->GetCount(), 4);
 
-      for (int i = 0; i < m_nFuncs; i++)
+      for (size_t i = 0; i < m_nFuncs; i++)
         m_pFunctions[i] = CPDF_Function::Load(pArray->GetDirectObjectAt(i));
     } else {
       m_pFunctions[0] = CPDF_Function::Load(pFunc);

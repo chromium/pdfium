@@ -70,7 +70,7 @@ void CPDF_StructTreeImpl::LoadDocTree() {
   if (!pArray)
     return;
 
-  for (uint32_t i = 0; i < pArray->GetCount(); i++) {
+  for (size_t i = 0; i < pArray->GetCount(); i++) {
     CPDF_Dictionary* pKid = pArray->GetDictAt(i);
     CPDF_StructElementImpl* pStructElementImpl =
         new CPDF_StructElementImpl(this, nullptr, pKid);

@@ -32,7 +32,7 @@ int CountPages(CPDF_Dictionary* pPages,
     return 0;
   }
   count = 0;
-  for (uint32_t i = 0; i < pKidList->GetCount(); i++) {
+  for (size_t i = 0; i < pKidList->GetCount(); i++) {
     CPDF_Dictionary* pKid = pKidList->GetDictAt(i);
     if (!pKid || pdfium::ContainsKey(*visited_pages, pKid)) {
       continue;
@@ -155,8 +155,7 @@ CPDF_Dictionary* CPDF_Document::_FindPDFPage(CPDF_Dictionary* pPages,
   if (level >= FX_MAX_PAGE_LEVEL) {
     return NULL;
   }
-  int nKids = pKidList->GetCount();
-  for (int i = 0; i < nKids; i++) {
+  for (size_t i = 0; i < pKidList->GetCount(); i++) {
     CPDF_Dictionary* pKid = pKidList->GetDictAt(i);
     if (!pKid) {
       nPagesToGo--;
@@ -228,23 +227,23 @@ int CPDF_Document::_FindPageIndex(CPDF_Dictionary* pNode,
     if (level >= FX_MAX_PAGE_LEVEL) {
       return -1;
     }
-    uint32_t count = pNode->GetIntegerBy("Count");
+    size_t count = pNode->GetIntegerBy("Count");
     if (count <= skip_count) {
       skip_count -= count;
       index += count;
       return -1;
     }
     if (count && count == pKidList->GetCount()) {
-      for (uint32_t i = 0; i < count; i++) {
+      for (size_t i = 0; i < count; i++) {
         if (CPDF_Reference* pKid = ToReference(pKidList->GetObjectAt(i))) {
           if (pKid->GetRefObjNum() == objnum) {
             m_PageList.SetAt(index + i, objnum);
-            return index + i;
+            return static_cast<int>(index + i);
           }
         }
       }
     }
-    for (uint32_t i = 0; i < pKidList->GetCount(); i++) {
+    for (size_t i = 0; i < pKidList->GetCount(); i++) {
       CPDF_Dictionary* pKid = pKidList->GetDictAt(i);
       if (!pKid) {
         continue;

@@ -101,7 +101,7 @@ CFX_ByteString CPDF_Action::GetURI(CPDF_Document* pDoc) const {
   }
   return csURI;
 }
-uint32_t CPDF_ActionFields::GetFieldsCount() const {
+size_t CPDF_ActionFields::GetFieldsCount() const {
   if (!m_pAction) {
     return 0;
   }
@@ -148,8 +148,7 @@ std::vector<CPDF_Object*> CPDF_ActionFields::GetAllFields() const {
   if (pFields->IsDictionary() || pFields->IsString()) {
     fields.push_back(pFields);
   } else if (CPDF_Array* pArray = pFields->AsArray()) {
-    uint32_t iCount = pArray->GetCount();
-    for (uint32_t i = 0; i < iCount; ++i) {
+    for (size_t i = 0; i < pArray->GetCount(); ++i) {
       CPDF_Object* pObj = pArray->GetDirectObjectAt(i);
       if (pObj) {
         fields.push_back(pObj);
@@ -159,7 +158,7 @@ std::vector<CPDF_Object*> CPDF_ActionFields::GetAllFields() const {
   return fields;
 }
 
-CPDF_Object* CPDF_ActionFields::GetField(uint32_t iIndex) const {
+CPDF_Object* CPDF_ActionFields::GetField(size_t iIndex) const {
   if (!m_pAction) {
     return NULL;
   }
@@ -233,7 +232,7 @@ int32_t CPDF_Action::GetOperationType() const {
   }
   return 0;
 }
-uint32_t CPDF_Action::GetSubActionsCount() const {
+size_t CPDF_Action::GetSubActionsCount() const {
   if (!m_pDict || !m_pDict->KeyExist("Next"))
     return 0;
 
@@ -246,7 +245,7 @@ uint32_t CPDF_Action::GetSubActionsCount() const {
     return pArray->GetCount();
   return 0;
 }
-CPDF_Action CPDF_Action::GetSubAction(uint32_t iIndex) const {
+CPDF_Action CPDF_Action::GetSubAction(size_t iIndex) const {
   if (!m_pDict || !m_pDict->KeyExist("Next")) {
     return CPDF_Action();
   }

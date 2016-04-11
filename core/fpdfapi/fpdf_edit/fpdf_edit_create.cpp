@@ -96,7 +96,7 @@ int32_t PDF_CreatorAppendObject(const CPDF_Object* pObj,
       }
       offset += 1;
       const CPDF_Array* p = pObj->AsArray();
-      for (uint32_t i = 0; i < p->GetCount(); i++) {
+      for (size_t i = 0; i < p->GetCount(); i++) {
         CPDF_Object* pElement = p->GetObjectAt(i);
         if (pElement->GetObjNum()) {
           if (pFile->AppendString(" ") < 0) {
@@ -1199,7 +1199,7 @@ int32_t CPDF_Creator::WriteDirectObj(uint32_t objnum,
       }
       m_Offset += 1;
       const CPDF_Array* p = pObj->AsArray();
-      for (uint32_t i = 0; i < p->GetCount(); i++) {
+      for (size_t i = 0; i < p->GetCount(); i++) {
         CPDF_Object* pElement = p->GetObjectAt(i);
         if (pElement->GetObjNum()) {
           if (m_File.AppendString(" ") < 0) {

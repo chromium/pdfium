@@ -1418,14 +1418,14 @@ void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
   if (!pArray) {
     return;
   }
-  int n = pArray->GetCount();
-  int nsegs = 0;
-  for (int i = 0; i < n; i++) {
+  size_t n = pArray->GetCount();
+  size_t nsegs = 0;
+  for (size_t i = 0; i < n; i++) {
     if (pArray->GetDirectObjectAt(i)->IsString())
       nsegs++;
   }
   if (nsegs == 0) {
-    for (int i = 0; i < n; i++) {
+    for (size_t i = 0; i < n; i++) {
       m_pCurStates->m_TextX -=
           (pArray->GetNumberAt(i) * m_pCurStates->m_TextState.GetFontSize()) /
           1000;
@@ -1434,9 +1434,9 @@ void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
   }
   CFX_ByteString* pStrs = new CFX_ByteString[nsegs];
   FX_FLOAT* pKerning = FX_Alloc(FX_FLOAT, nsegs);
-  int iSegment = 0;
+  size_t iSegment = 0;
   FX_FLOAT fInitKerning = 0;
-  for (int i = 0; i < n; i++) {
+  for (size_t i = 0; i < n; i++) {
     CPDF_Object* pObj = pArray->GetDirectObjectAt(i);
     if (pObj->IsString()) {
       CFX_ByteString str = pObj->GetString();
@@ -1801,7 +1801,7 @@ void PDF_ReplaceAbbr(CPDF_Object* pObj) {
     }
     case CPDF_Object::ARRAY: {
       CPDF_Array* pArray = pObj->AsArray();
-      for (uint32_t i = 0; i < pArray->GetCount(); i++) {
+      for (size_t i = 0; i < pArray->GetCount(); i++) {
         CPDF_Object* pElement = pArray->GetObjectAt(i);
         if (pElement->IsName()) {
           CFX_ByteString name = pElement->GetString();

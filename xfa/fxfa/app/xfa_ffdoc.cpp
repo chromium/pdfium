@@ -242,8 +242,7 @@ FX_BOOL CXFA_FFDoc::OpenDoc(CPDF_Document* pPDFDoc) {
   CFX_ArrayTemplate<CPDF_Stream*> xfaStreams;
   if (pElementXFA->IsArray()) {
     CPDF_Array* pXFAArray = (CPDF_Array*)pElementXFA;
-    uint32_t count = pXFAArray->GetCount() / 2;
-    for (uint32_t i = 0; i < count; i++) {
+    for (size_t i = 0; i < pXFAArray->GetCount() / 2; i++) {
       if (CPDF_Stream* pStream = pXFAArray->GetStreamAt(i * 2 + 1))
         xfaStreams.Add(pStream);
     }
@@ -351,8 +350,7 @@ CFX_DIBitmap* CXFA_FFDoc::GetPDFNamedImage(const CFX_WideStringC& wsName,
   CFX_ByteString bsName = PDF_EncodeText(wsName.c_str(), wsName.GetLength());
   CPDF_Object* pObject = nametree.LookupValue(bsName);
   if (!pObject) {
-    int32_t iCount = nametree.GetCount();
-    for (int32_t i = 0; i < iCount; i++) {
+    for (size_t i = 0; i < nametree.GetCount(); i++) {
       CFX_ByteString bsTemp;
       CPDF_Object* pTempObject = nametree.LookupValue(i, bsTemp);
       if (bsTemp == bsName) {

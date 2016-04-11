@@ -439,7 +439,7 @@ void CPDFSDK_ActionHandler::DoAction_GoTo(CPDFSDK_Document* pDocument,
   if (pMyArray) {
     pPosAry = new float[pMyArray->GetCount()];
     int j = 0;
-    for (int i = 2; i < (int)pMyArray->GetCount(); i++) {
+    for (size_t i = 2; i < pMyArray->GetCount(); i++) {
       pPosAry[j++] = pMyArray->GetFloatAt(i);
     }
     sizeOfAry = j;

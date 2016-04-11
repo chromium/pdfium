@@ -278,10 +278,8 @@ CPDF_InterForm::CPDF_InterForm(CPDF_Document* pDocument, FX_BOOL bGenerateAP)
   if (!pFields)
     return;
 
-  int count = pFields->GetCount();
-  for (int i = 0; i < count; i++) {
+  for (size_t i = 0; i < pFields->GetCount(); i++)
     LoadField(pFields->GetDictAt(i));
-  }
 }
 
 CPDF_InterForm::~CPDF_InterForm() {
@@ -704,8 +702,8 @@ CPDF_FormControl* CPDF_InterForm::GetControlAtPoint(CPDF_Page* pPage,
   if (!pAnnotList)
     return nullptr;
 
-  for (uint32_t i = pAnnotList->GetCount(); i > 0; --i) {
-    uint32_t annot_index = i - 1;
+  for (size_t i = pAnnotList->GetCount(); i > 0; --i) {
+    size_t annot_index = i - 1;
     CPDF_Dictionary* pAnnot = pAnnotList->GetDictAt(annot_index);
     if (!pAnnot)
       continue;
@@ -720,7 +718,7 @@ CPDF_FormControl* CPDF_InterForm::GetControlAtPoint(CPDF_Page* pPage,
       continue;
 
     if (z_order)
-      *z_order = annot_index;
+      *z_order = static_cast<int>(annot_index);
     return pControl;
   }
   return nullptr;
@@ -742,6 +740,7 @@ void CPDF_InterForm::NeedConstructAP(FX_BOOL bNeedAP) {
   m_pFormDict->SetAtBoolean("NeedAppearances", bNeedAP);
   m_bGenerateAP = bNeedAP;
 }
+
 int CPDF_InterForm::CountFieldsInCalculationOrder() {
   if (!m_pFormDict) {
     return 0;
@@ -749,6 +748,7 @@ int CPDF_InterForm::CountFieldsInCalculationOrder() {
   CPDF_Array* pArray = m_pFormDict->GetArrayBy("CO");
   return pArray ? pArray->GetCount() : 0;
 }
+
 CPDF_FormField* CPDF_InterForm::GetFieldInCalculationOrder(int index) {
   if (!m_pFormDict || index < 0) {
     return NULL;
@@ -771,7 +771,7 @@ int CPDF_InterForm::FindFieldInCalculationOrder(const CPDF_FormField* pField) {
   if (!pArray) {
     return -1;
   }
-  for (uint32_t i = 0; i < pArray->GetCount(); i++) {
+  for (size_t i = 0; i < pArray->GetCount(); i++) {
     CPDF_Object* pElement = pArray->GetDirectObjectAt(i);
     if (pElement == pField->m_pDict) {
       return i;
@@ -901,7 +901,7 @@ void CPDF_InterForm::LoadField(CPDF_Dictionary* pFieldDict, int nLevel) {
     return;
   }
   if (pFirstKid->KeyExist("T") || pFirstKid->KeyExist("Kids")) {
-    for (uint32_t i = 0; i < pKids->GetCount(); i++) {
+    for (size_t i = 0; i < pKids->GetCount(); i++) {
       CPDF_Dictionary* pChildDict = pKids->GetDictAt(i);
       if (pChildDict) {
         if (pChildDict->GetObjNum() != dwParentObjNum) {
@@ -925,8 +925,7 @@ void CPDF_InterForm::FixPageFields(const CPDF_Page* pPage) {
   if (!pAnnots) {
     return;
   }
-  int iAnnotCount = pAnnots->GetCount();
-  for (int i = 0; i < iAnnotCount; i++) {
+  for (size_t i = 0; i < pAnnots->GetCount(); i++) {
     CPDF_Dictionary* pAnnot = pAnnots->GetDictAt(i);
     if (pAnnot && pAnnot->GetStringBy("Subtype") == "Widget") {
       LoadField(pAnnot);
@@ -984,7 +983,7 @@ CPDF_FormField* CPDF_InterForm::AddTerminalField(CPDF_Dictionary* pFieldDict) {
       AddControl(pField, pFieldDict);
     }
   } else {
-    for (uint32_t i = 0; i < pKids->GetCount(); i++) {
+    for (size_t i = 0; i < pKids->GetCount(); i++) {
       CPDF_Dictionary* pKid = pKids->GetDictAt(i);
       if (!pKid) {
         continue;
@@ -1122,7 +1121,7 @@ void CPDF_InterForm::FDF_ImportField(CPDF_Dictionary* pFieldDict,
   name += pFieldDict->GetUnicodeTextBy("T");
   CPDF_Array* pKids = pFieldDict->GetArrayBy("Kids");
   if (pKids) {
-    for (uint32_t i = 0; i < pKids->GetCount(); i++) {
+    for (size_t i = 0; i < pKids->GetCount(); i++) {
       CPDF_Dictionary* pKid = pKids->GetDictAt(i);
       if (!pKid) {
         continue;
@@ -1194,7 +1193,7 @@ FX_BOOL CPDF_InterForm::ImportFromFDF(const CFDF_Document* pFDF,
       return FALSE;
     }
   }
-  for (uint32_t i = 0; i < pFields->GetCount(); i++) {
+  for (size_t i = 0; i < pFields->GetCount(); i++) {
     CPDF_Dictionary* pField = pFields->GetDictAt(i);
     if (!pField) {
       continue;
