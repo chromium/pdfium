@@ -931,9 +931,9 @@ FX_BOOL CPDF_Parser::RebuildCrossRef() {
     }
     pos += size;
 
-    // If the position has not changed at all in a loop iteration, then break
-    // out to prevent infinite looping.
-    if (pos == saved_pos)
+    // If the position has not changed at all or went backwards in a loop
+    // iteration, then break out to prevent infinite looping.
+    if (pos <= saved_pos)
       break;
   }
 
