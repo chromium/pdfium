@@ -841,7 +841,6 @@ void CFX_ByteString::TrimRight(const CFX_ByteStringC& pTargets) {
   if (!m_pData || pTargets.IsEmpty()) {
     return;
   }
-  ReallocBeforeWrite(m_pData->m_nDataLength);
   FX_STRSIZE pos = GetLength();
   if (pos < 1) {
     return;
@@ -858,6 +857,7 @@ void CFX_ByteString::TrimRight(const CFX_ByteStringC& pTargets) {
     pos--;
   }
   if (pos < m_pData->m_nDataLength) {
+    ReallocBeforeWrite(m_pData->m_nDataLength);
     m_pData->m_String[pos] = 0;
     m_pData->m_nDataLength = pos;
   }
@@ -879,7 +879,6 @@ void CFX_ByteString::TrimLeft(const CFX_ByteStringC& pTargets) {
   if (len < 1)
     return;
 
-  ReallocBeforeWrite(len);
   FX_STRSIZE pos = 0;
   while (pos < len) {
     FX_STRSIZE i = 0;
@@ -892,6 +891,7 @@ void CFX_ByteString::TrimLeft(const CFX_ByteStringC& pTargets) {
     pos++;
   }
   if (pos) {
+    ReallocBeforeWrite(len);
     FX_STRSIZE nDataLength = len - pos;
     FXSYS_memmove(m_pData->m_String, m_pData->m_String + pos,
                   (nDataLength + 1) * sizeof(FX_CHAR));

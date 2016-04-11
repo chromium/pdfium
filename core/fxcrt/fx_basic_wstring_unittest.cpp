@@ -472,6 +472,37 @@ TEST(fxcrt, WideStringTrimRight) {
   EXPECT_EQ(L"", empty);
 }
 
+TEST(fxcrt, WideStringTrimRightCopies) {
+  {
+    // With a single reference, no copy takes place.
+    CFX_WideString fred(L"  FRED  ");
+    const FX_WCHAR* old_buffer = fred.c_str();
+    fred.TrimRight();
+    EXPECT_EQ(L"  FRED", fred);
+    EXPECT_EQ(old_buffer, fred.c_str());
+  }
+  {
+    // With multiple references, we must copy.
+    CFX_WideString fred(L"  FRED  ");
+    CFX_WideString other_fred = fred;
+    const FX_WCHAR* old_buffer = fred.c_str();
+    fred.TrimRight();
+    EXPECT_EQ(L"  FRED", fred);
+    EXPECT_EQ(L"  FRED  ", other_fred);
+    EXPECT_NE(old_buffer, fred.c_str());
+  }
+  {
+    // With multiple references, but no modifications, no copy.
+    CFX_WideString fred(L"FRED");
+    CFX_WideString other_fred = fred;
+    const FX_WCHAR* old_buffer = fred.c_str();
+    fred.TrimRight();
+    EXPECT_EQ(L"FRED", fred);
+    EXPECT_EQ(L"FRED", other_fred);
+    EXPECT_EQ(old_buffer, fred.c_str());
+  }
+}
+
 TEST(fxcrt, WideStringTrimLeft) {
   CFX_WideString fred(L"  FRED  ");
   fred.TrimLeft();
@@ -498,6 +529,37 @@ TEST(fxcrt, WideStringTrimLeft) {
   EXPECT_EQ(L"", empty);
   empty.TrimLeft();
   EXPECT_EQ(L"", empty);
+}
+
+TEST(fxcrt, WideStringTrimLeftCopies) {
+  {
+    // With a single reference, no copy takes place.
+    CFX_WideString fred(L"  FRED  ");
+    const FX_WCHAR* old_buffer = fred.c_str();
+    fred.TrimLeft();
+    EXPECT_EQ(L"FRED  ", fred);
+    EXPECT_EQ(old_buffer, fred.c_str());
+  }
+  {
+    // With multiple references, we must copy.
+    CFX_WideString fred(L"  FRED  ");
+    CFX_WideString other_fred = fred;
+    const FX_WCHAR* old_buffer = fred.c_str();
+    fred.TrimLeft();
+    EXPECT_EQ(L"FRED  ", fred);
+    EXPECT_EQ(L"  FRED  ", other_fred);
+    EXPECT_NE(old_buffer, fred.c_str());
+  }
+  {
+    // With multiple references, but no modifications, no copy.
+    CFX_WideString fred(L"FRED");
+    CFX_WideString other_fred = fred;
+    const FX_WCHAR* old_buffer = fred.c_str();
+    fred.TrimLeft();
+    EXPECT_EQ(L"FRED", fred);
+    EXPECT_EQ(L"FRED", other_fred);
+    EXPECT_EQ(old_buffer, fred.c_str());
+  }
 }
 
 TEST(fxcrt, WideStringUTF16LE_Encode) {

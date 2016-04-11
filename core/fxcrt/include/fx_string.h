@@ -167,21 +167,21 @@ class CFX_ByteString {
   static CFX_ByteString FromUnicode(const CFX_WideString& str);
 
   // Explicit conversion to C-style string.
-  // Note: |this| must outlive the use of the result.
+  // Note: Any subsequent modification of |this| will invalidate the result.
   const FX_CHAR* c_str() const { return m_pData ? m_pData->m_String : ""; }
 
   // Implicit conversion to C-style string -- deprecated.
   operator const FX_CHAR*() const { return m_pData ? m_pData->m_String : ""; }
 
   // Explicit conversion to uint8_t*.
-  // Note: |this| must outlive the use of the result.
+  // Note: Any subsequent modification of |this| will invalidate the result.
   const uint8_t* raw_str() const {
     return m_pData ? reinterpret_cast<const uint8_t*>(m_pData->m_String)
                    : nullptr;
   }
 
   // Explicit conversion to CFX_ByteStringC.
-  // Note: |this| must outlive the use of the result.
+  // Note: Any subsequent modification of |this| will invalidate the result.
   CFX_ByteStringC AsStringC() const {
     return CFX_ByteStringC(raw_str(), GetLength());
   }
@@ -497,15 +497,15 @@ class CFX_WideString {
   static FX_STRSIZE WStringLength(const unsigned short* str);
 
   // Explicit conversion to C-style wide string.
-  // Note: |this| must outlive the use of the result.
+  // Note: Any subsequent modification of |this| will invalidate the result.
   const FX_WCHAR* c_str() const { return m_pData ? m_pData->m_String : L""; }
 
   // Implicit conversion to C-style wide string -- deprecated.
-  // Note: |this| must outlive the use of the result.
+  // Note: Any subsequent modification of |this| will invalidate the result.
   operator const FX_WCHAR*() const { return m_pData ? m_pData->m_String : L""; }
 
   // Explicit conversion to CFX_WideStringC.
-  // Note: |this| must outlive the use of the result.
+  // Note: Any subsequent modification of |this| will invalidate the result.
   CFX_WideStringC AsStringC() const {
     return CFX_WideStringC(c_str(), GetLength());
   }

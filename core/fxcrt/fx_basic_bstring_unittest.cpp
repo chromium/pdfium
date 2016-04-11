@@ -505,6 +505,37 @@ TEST(fxcrt, ByteStringTrimRight) {
   EXPECT_EQ("", empty);
 }
 
+TEST(fxcrt, ByteStringTrimRightCopies) {
+  {
+    // With a single reference, no copy takes place.
+    CFX_ByteString fred("  FRED  ");
+    const FX_CHAR* old_buffer = fred.c_str();
+    fred.TrimRight();
+    EXPECT_EQ("  FRED", fred);
+    EXPECT_EQ(old_buffer, fred.c_str());
+  }
+  {
+    // With multiple references, we must copy.
+    CFX_ByteString fred("  FRED  ");
+    CFX_ByteString other_fred = fred;
+    const FX_CHAR* old_buffer = fred.c_str();
+    fred.TrimRight();
+    EXPECT_EQ("  FRED", fred);
+    EXPECT_EQ("  FRED  ", other_fred);
+    EXPECT_NE(old_buffer, fred.c_str());
+  }
+  {
+    // With multiple references, but no modifications, no copy.
+    CFX_ByteString fred("FRED");
+    CFX_ByteString other_fred = fred;
+    const FX_CHAR* old_buffer = fred.c_str();
+    fred.TrimRight();
+    EXPECT_EQ("FRED", fred);
+    EXPECT_EQ("FRED", other_fred);
+    EXPECT_EQ(old_buffer, fred.c_str());
+  }
+}
+
 TEST(fxcrt, ByteStringTrimLeft) {
   CFX_ByteString fred("  FRED  ");
   fred.TrimLeft();
@@ -531,6 +562,37 @@ TEST(fxcrt, ByteStringTrimLeft) {
   EXPECT_EQ("", empty);
   empty.TrimLeft();
   EXPECT_EQ("", empty);
+}
+
+TEST(fxcrt, ByteStringTrimLeftCopies) {
+  {
+    // With a single reference, no copy takes place.
+    CFX_ByteString fred("  FRED  ");
+    const FX_CHAR* old_buffer = fred.c_str();
+    fred.TrimLeft();
+    EXPECT_EQ("FRED  ", fred);
+    EXPECT_EQ(old_buffer, fred.c_str());
+  }
+  {
+    // With multiple references, we must copy.
+    CFX_ByteString fred("  FRED  ");
+    CFX_ByteString other_fred = fred;
+    const FX_CHAR* old_buffer = fred.c_str();
+    fred.TrimLeft();
+    EXPECT_EQ("FRED  ", fred);
+    EXPECT_EQ("  FRED  ", other_fred);
+    EXPECT_NE(old_buffer, fred.c_str());
+  }
+  {
+    // With multiple references, but no modifications, no copy.
+    CFX_ByteString fred("FRED");
+    CFX_ByteString other_fred = fred;
+    const FX_CHAR* old_buffer = fred.c_str();
+    fred.TrimLeft();
+    EXPECT_EQ("FRED", fred);
+    EXPECT_EQ("FRED", other_fred);
+    EXPECT_EQ(old_buffer, fred.c_str());
+  }
 }
 
 TEST(fxcrt, ByteStringCNotNull) {
