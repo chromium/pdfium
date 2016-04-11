@@ -59,7 +59,7 @@ class JSGlobalAlternate : public CJS_EmbedObj {
   void UpdateGlobalPersistentVariables();
   void CommitGlobalPersisitentVariables(IJS_Context* cc);
   void DestroyGlobalPersisitentVariables();
-  FX_BOOL SetGlobalVariables(const FX_CHAR* propname,
+  FX_BOOL SetGlobalVariables(const CFX_ByteString& propname,
                              int nType,
                              double dData,
                              bool bData,

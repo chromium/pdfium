@@ -64,17 +64,16 @@ class CJS_GlobalData {
   static CJS_GlobalData* GetRetainedInstance(CPDFDoc_Environment* pApp);
   void Release();
 
-  void SetGlobalVariableNumber(const FX_CHAR* propname, double dData);
-  void SetGlobalVariableBoolean(const FX_CHAR* propname, bool bData);
-  void SetGlobalVariableString(const FX_CHAR* propname,
+  void SetGlobalVariableNumber(const CFX_ByteString& propname, double dData);
+  void SetGlobalVariableBoolean(const CFX_ByteString& propname, bool bData);
+  void SetGlobalVariableString(const CFX_ByteString& propname,
                                const CFX_ByteString& sData);
-  void SetGlobalVariableObject(const FX_CHAR* propname,
+  void SetGlobalVariableObject(const CFX_ByteString& propname,
                                const CJS_GlobalVariableArray& array);
-  void SetGlobalVariableNull(const FX_CHAR* propname);
-
-  FX_BOOL SetGlobalVariablePersistent(const FX_CHAR* propname,
+  void SetGlobalVariableNull(const CFX_ByteString& propname);
+  FX_BOOL SetGlobalVariablePersistent(const CFX_ByteString& propname,
                                       FX_BOOL bPersistent);
-  FX_BOOL DeleteGlobalVariable(const FX_CHAR* propname);
+  FX_BOOL DeleteGlobalVariable(const CFX_ByteString& propname);
 
   int32_t GetSize() const;
   CJS_GlobalData_Element* GetAt(int index) const;
@@ -93,9 +92,9 @@ class CJS_GlobalData {
   void LoadGlobalPersistentVariables();
   void SaveGlobalPersisitentVariables();
 
-  CJS_GlobalData_Element* GetGlobalVariable(const FX_CHAR* propname);
-  iterator FindGlobalVariable(const FX_CHAR* propname);
-  const_iterator FindGlobalVariable(const FX_CHAR* propname) const;
+  CJS_GlobalData_Element* GetGlobalVariable(const CFX_ByteString& sPropname);
+  iterator FindGlobalVariable(const CFX_ByteString& sPropname);
+  const_iterator FindGlobalVariable(const CFX_ByteString& sPropname) const;
 
   void LoadFileBuffer(const FX_WCHAR* sFilePath,
                       uint8_t*& pBuffer,

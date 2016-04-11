@@ -407,7 +407,7 @@ void JSGlobalAlternate::DestroyGlobalPersisitentVariables() {
   m_mapGlobal.clear();
 }
 
-FX_BOOL JSGlobalAlternate::SetGlobalVariables(const FX_CHAR* propname,
+FX_BOOL JSGlobalAlternate::SetGlobalVariables(const CFX_ByteString& propname,
                                               int nType,
                                               double dData,
                                               bool bData,
