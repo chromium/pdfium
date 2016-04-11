@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "core/fxcrt/include/fx_ext.h"
+#include "xfa/fde/css/fde_csscache.h"
 #include "xfa/fde/fde_pen.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fgas/crt/fgas_algorithm.h"
@@ -225,7 +226,7 @@ IFDE_CSSComputedStyle* CXFA_TextParser::ComputeStyle(
   if (tagProvider.m_bContent)
     return nullptr;
   IFDE_CSSComputedStyle* pStyle = CreateStyle(pParentStyle);
-  IFDE_CSSAccelerator* pCSSAccel = m_pSelector->InitAccelerator();
+  CFDE_CSSAccelerator* pCSSAccel = m_pSelector->InitAccelerator();
   pCSSAccel->OnEnterTag(&tagProvider);
   m_pSelector->ComputeStyle(&tagProvider, pContext->GetDecls(),
                             pContext->CountDecls(), pStyle);
@@ -262,7 +263,7 @@ void CXFA_TextParser::ParseRichText(CFDE_XMLNode* pXMLNode,
     FDE_CSSDISPLAY eDisplay = FDE_CSSDISPLAY_Inline;
     if (!tagProvider.m_bContent) {
       pNewStyle = CreateStyle(pParentStyle);
-      IFDE_CSSAccelerator* pCSSAccel = m_pSelector->InitAccelerator();
+      CFDE_CSSAccelerator* pCSSAccel = m_pSelector->InitAccelerator();
       pCSSAccel->OnEnterTag(&tagProvider);
       CFDE_CSSDeclarationArray DeclArray;
       int32_t iMatchedDecls =

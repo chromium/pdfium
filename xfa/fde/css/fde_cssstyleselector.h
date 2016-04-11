@@ -16,7 +16,8 @@
 #include "xfa/fgas/crt/fgas_memory.h"
 #include "xfa/fgas/crt/fgas_system.h"
 
-#define FDE_CSSUNIVERSALHASH ('*')
+class CFDE_CSSAccelerator;
+class CFDE_CSSComputedStyle;
 
 class FDE_CSSRuleData : public CFX_Target {
  public:
@@ -38,6 +39,7 @@ class CFDE_CSSRuleCollection : public CFX_Target {
         m_pPersudoRules(nullptr),
         m_iSelectors(0) {}
   ~CFDE_CSSRuleCollection() { Clear(); }
+
   void AddRulesFrom(const CFDE_CSSStyleSheetArray& sheets,
                     uint32_t dwMediaList,
                     IFX_FontMgr* pFontMgr);
@@ -64,6 +66,7 @@ class CFDE_CSSRuleCollection : public CFX_Target {
   }
   FDE_CSSRuleData* GetUniversalRuleData() { return m_pUniversalRules; }
   FDE_CSSRuleData* GetPersudoRuleData() { return m_pPersudoRules; }
+
   IFX_MEMAllocator* m_pStaticStore;
 
  protected:
@@ -85,8 +88,7 @@ class CFDE_CSSRuleCollection : public CFX_Target {
   FDE_CSSRuleData* m_pPersudoRules;
   int32_t m_iSelectors;
 };
-class CFDE_CSSAccelerator;
-class CFDE_CSSComputedStyle;
+
 class CFDE_CSSStyleSelector : public IFDE_CSSStyleSelector, public CFX_Target {
  public:
   CFDE_CSSStyleSelector();
@@ -103,7 +105,7 @@ class CFDE_CSSStyleSelector : public IFDE_CSSStyleSelector, public CFX_Target {
   virtual void SetStylePriority(FDE_CSSSTYLESHEETGROUP eType,
                                 FDE_CSSSTYLESHEETPRIORITY ePriority);
   virtual void UpdateStyleIndex(uint32_t dwMediaList);
-  virtual IFDE_CSSAccelerator* InitAccelerator();
+  virtual CFDE_CSSAccelerator* InitAccelerator();
   virtual IFDE_CSSComputedStyle* CreateComputedStyle(
       IFDE_CSSComputedStyle* pParentStyle);
   virtual int32_t MatchDeclarations(
@@ -176,6 +178,7 @@ class CFDE_CSSStyleSelector : public IFDE_CSSStyleSelector, public CFX_Target {
   FDE_CSSRUBYOVERHANG ToRubyOverhang(FDE_CSSPROPERTYVALUE eValue);
   FDE_CSSRUBYPOSITION ToRubyPosition(FDE_CSSPROPERTYVALUE eValue);
   FDE_CSSRUBYSPAN ToRubySpan(FDE_CSSPROPERTYVALUE eValue);
+
   IFX_FontMgr* m_pFontMgr;
   FX_FLOAT m_fDefFontSize;
   IFX_MEMAllocator* m_pRuleDataStore;
@@ -209,27 +212,33 @@ struct FDE_CSSCOUNTERDATA {
 
 class CFDE_CSSCounterStyle {
  public:
-  CFDE_CSSCounterStyle() : m_pCounterInc(NULL), m_pCounterReset(NULL) {}
+  CFDE_CSSCounterStyle() : m_pCounterInc(nullptr), m_pCounterReset(nullptr) {}
+
   void SetCounterIncrementList(IFDE_CSSValueList* pList) {
     m_pCounterInc = pList;
     m_bIndexDirty = TRUE;
   }
+
   void SetCounterResetList(IFDE_CSSValueList* pList) {
     m_pCounterReset = pList;
     m_bIndexDirty = TRUE;
   }
+
   int32_t CountCounters() {
     UpdateIndex();
     return m_arrCounterData.GetSize();
   }
+
   FX_BOOL GetCounterIncrement(int32_t index, int32_t& iValue) {
     UpdateIndex();
     return m_arrCounterData.ElementAt(index).GetCounterIncrement(iValue);
   }
+
   FX_BOOL GetCounterReset(int32_t index, int32_t& iValue) {
     UpdateIndex();
     return m_arrCounterData.ElementAt(index).GetCounterReset(iValue);
   }
+
   const FX_WCHAR* GetCounterIdentifier(int32_t index) {
     UpdateIndex();
     return m_arrCounterData.ElementAt(index).m_pszIdent;
@@ -239,11 +248,13 @@ class CFDE_CSSCounterStyle {
   void UpdateIndex();
   void DoUpdateIndex(IFDE_CSSValueList* pList);
   int32_t FindIndex(const FX_WCHAR* pszIdentifier);
+
   IFDE_CSSValueList* m_pCounterInc;
   IFDE_CSSValueList* m_pCounterReset;
   CFX_ArrayTemplate<FDE_CSSCOUNTERDATA> m_arrCounterData;
   FX_BOOL m_bIndexDirty;
 };
+
 class CFDE_CSSInheritedData {
  public:
   void Reset() {
@@ -259,6 +270,7 @@ class CFDE_CSSInheritedData {
     m_bTextEmphasisColorCurrent = TRUE;
     m_iOrphans = 2;
   }
+
   const FX_WCHAR* m_pszListStyleImage;
   FDE_CSSLENGTH m_LetterSpacing;
   FDE_CSSLENGTH m_WordSpacing;
@@ -292,6 +304,7 @@ class CFDE_CSSInheritedData {
   uint8_t m_eRubyOverhang : 2;
   uint8_t m_eRubyPosition : 2;
 };
+
 class CFDE_CSSNonInheritedData {
  public:
   void Reset() {
@@ -365,74 +378,57 @@ class CFDE_CSSNonInheritedData {
   uint32_t m_bColumnRuleColorSame : 1;
   uint32_t m_bHasTextCombineNumber : 1;
 };
+
 class CFDE_CSSComputedStyle : public IFDE_CSSComputedStyle,
-                              public IFDE_CSSFontStyle,
                               public IFDE_CSSBoundaryStyle,
+                              public IFDE_CSSFontStyle,
                               public IFDE_CSSPositionStyle,
                               public IFDE_CSSParagraphStyle,
-                              public IFDE_CSSBackgroundStyle,
-                              public IFDE_CSSVisualStyle,
-                              public IFDE_CSSListStyle,
-                              public IFDE_CSSMultiColumnStyle,
-                              public IFDE_CSSGeneratedContentStyle,
-                              public IFDE_CSSTableStyle,
-                              public IFDE_CSSRubyStyle,
                               public CFX_Target {
  public:
   CFDE_CSSComputedStyle(IFX_MEMAllocator* pAlloc)
       : m_dwRefCount(1), m_pAllocator(pAlloc) {}
+
   ~CFDE_CSSComputedStyle() {}
-  virtual uint32_t AddRef() { return ++m_dwRefCount; }
-  virtual uint32_t Release() {
+
+  // IFX_Unknown:
+  uint32_t AddRef() override { return ++m_dwRefCount; }
+
+  uint32_t Release() override {
     uint32_t dwRefCount = --m_dwRefCount;
     if (dwRefCount == 0) {
-      if (m_NonInheritedData.m_pCounterStyle != NULL) {
+      if (m_NonInheritedData.m_pCounterStyle)
         delete m_NonInheritedData.m_pCounterStyle;
-      }
+
       FXTARGET_DeleteWith(CFDE_CSSComputedStyle, m_pAllocator, this);
     }
     return dwRefCount;
   }
 
-  virtual void Reset() {
+  // IFDE_CSSComputedStyle:
+  void Reset() override {
     m_InheritedData.Reset();
     m_NonInheritedData.Reset();
   }
-  virtual IFDE_CSSFontStyle* GetFontStyles() const {
-    return (IFDE_CSSFontStyle * const) this;
+
+  IFDE_CSSFontStyle* GetFontStyles() override {
+    return static_cast<IFDE_CSSFontStyle*>(this);
   }
-  virtual IFDE_CSSBoundaryStyle* GetBoundaryStyles() const {
-    return (IFDE_CSSBoundaryStyle * const) this;
+
+  IFDE_CSSBoundaryStyle* GetBoundaryStyles() override {
+    return static_cast<IFDE_CSSBoundaryStyle*>(this);
   }
-  virtual IFDE_CSSPositionStyle* GetPositionStyles() const {
-    return (IFDE_CSSPositionStyle * const) this;
+
+  IFDE_CSSPositionStyle* GetPositionStyles() override {
+    return static_cast<IFDE_CSSPositionStyle*>(this);
   }
-  virtual IFDE_CSSParagraphStyle* GetParagraphStyles() const {
-    return (IFDE_CSSParagraphStyle * const) this;
+
+  IFDE_CSSParagraphStyle* GetParagraphStyles() override {
+    return static_cast<IFDE_CSSParagraphStyle*>(this);
   }
-  virtual IFDE_CSSBackgroundStyle* GetBackgroundStyles() const {
-    return (IFDE_CSSBackgroundStyle * const) this;
-  }
-  virtual IFDE_CSSVisualStyle* GetVisualStyles() const {
-    return (IFDE_CSSVisualStyle * const) this;
-  }
-  virtual IFDE_CSSListStyle* GetListStyles() const {
-    return (IFDE_CSSListStyle * const) this;
-  }
-  virtual IFDE_CSSTableStyle* GetTableStyle() const {
-    return (IFDE_CSSTableStyle * const) this;
-  }
-  virtual IFDE_CSSMultiColumnStyle* GetMultiColumnStyle() const {
-    return (IFDE_CSSMultiColumnStyle * const) this;
-  }
-  virtual IFDE_CSSGeneratedContentStyle* GetGeneratedContentStyle() const {
-    return (IFDE_CSSGeneratedContentStyle * const) this;
-  }
-  virtual IFDE_CSSRubyStyle* GetRubyStyle() const {
-    return (IFDE_CSSRubyStyle * const) this;
-  }
-  virtual FX_BOOL GetCustomStyle(const CFX_WideStringC& wsName,
-                                 CFX_WideString& wsValue) const {
+
+  FX_BOOL GetCustomStyle(const CFX_WideStringC& wsName,
+                         CFX_WideString& wsValue) const override {
     for (int32_t i = m_CustomProperties.GetSize() - 2; i > -1; i -= 2) {
       if (wsName == m_CustomProperties[i]) {
         wsValue = m_CustomProperties[i + 1];
@@ -441,455 +437,149 @@ class CFDE_CSSComputedStyle : public IFDE_CSSComputedStyle,
     }
     return FALSE;
   }
-  virtual FDE_CSSRUBYALIGN GetRubyAlign() const {
-    return (FDE_CSSRUBYALIGN)m_InheritedData.m_eRubyAlign;
-  }
-  virtual FDE_CSSRUBYPOSITION GetRubyPosition() const {
-    return (FDE_CSSRUBYPOSITION)m_InheritedData.m_eRubyPosition;
-  }
-  virtual FDE_CSSRUBYOVERHANG GetRubyOverhang() const {
-    return (FDE_CSSRUBYOVERHANG)m_InheritedData.m_eRubyOverhang;
-  }
-  virtual FDE_CSSRUBYSPAN GetRubySpanType() const {
-    return m_NonInheritedData.m_pRubySpan == NULL ? FDE_CSSRUBYSPAN_None
-                                                  : FDE_CSSRUBYSPAN_Attr;
-  }
-  virtual IFDE_CSSValue* GetRubySpanAttr() const {
-    return m_NonInheritedData.m_pRubySpan;
-  }
-  virtual FDE_CSSCAPTIONSIDE GetCaptionSide() const {
-    return (FDE_CSSCAPTIONSIDE)m_InheritedData.m_eCaptionSide;
-  }
-  virtual int32_t CountCounters() {
-    return (m_NonInheritedData.m_pCounterStyle == NULL)
-               ? 0
-               : m_NonInheritedData.m_pCounterStyle->CountCounters();
-  }
-  virtual const FX_WCHAR* GetCounterIdentifier(int32_t index) {
-    return m_NonInheritedData.m_pCounterStyle->GetCounterIdentifier(index);
-  }
-  virtual FX_BOOL GetCounterReset(int32_t index, int32_t& iValue) {
-    return m_NonInheritedData.m_pCounterStyle->GetCounterReset(index, iValue);
-  }
-  virtual FX_BOOL GetCounterIncrement(int32_t index, int32_t& iValue) {
-    return m_NonInheritedData.m_pCounterStyle->GetCounterIncrement(index,
-                                                                   iValue);
-  }
-  virtual IFDE_CSSValueList* GetContent() const {
-    return m_NonInheritedData.m_pContentList;
-  }
-  virtual int32_t CountQuotes() const {
-    return m_InheritedData.m_pQuotes == NULL
-               ? 0
-               : m_InheritedData.m_pQuotes->CountValues();
-  }
-  virtual const FX_WCHAR* GetQuotes(int32_t index) const {
-    FXSYS_assert(m_InheritedData.m_pQuotes != NULL &&
-                 m_InheritedData.m_pQuotes->CountValues() > index);
-    return ((IFDE_CSSPrimitiveValue*)(m_InheritedData.m_pQuotes->GetValue(
-                index)))
-        ->GetString(index);
-  }
-  virtual const FDE_CSSLENGTH& GetColumnCount() const {
-    return m_NonInheritedData.m_ColumnCount;
-  }
-  virtual const FDE_CSSLENGTH& GetColumnGap() const {
-    return m_NonInheritedData.m_ColumnGap;
-  }
-  virtual FX_ARGB GetColumnRuleColor() const {
-    return m_NonInheritedData.m_bColumnRuleColorSame
-               ? m_InheritedData.m_dwFontColor
-               : m_NonInheritedData.m_dwColumnRuleColor;
-  }
-  virtual FDE_CSSBORDERSTYLE GetColumnRuleStyle() const {
-    return (FDE_CSSBORDERSTYLE)m_NonInheritedData.m_eColumnRuleStyle;
-  }
-  virtual const FDE_CSSLENGTH& GetColumnRuleWidth() const {
-    return m_NonInheritedData.m_ColumnRuleWidth;
-  }
-  virtual const FDE_CSSLENGTH& GetColumnWidth() const {
-    return m_NonInheritedData.m_ColumnWidth;
-  }
-  virtual void SetColumnCount(const FDE_CSSLENGTH& columnCount) {
-    m_NonInheritedData.m_ColumnCount = columnCount;
-  }
-  virtual void SetColumnGap(const FDE_CSSLENGTH& columnGap) {
-    m_NonInheritedData.m_ColumnGap = columnGap;
-  }
-  virtual void SetColumnRuleColor(FX_ARGB dwColumnRuleColor) {
-    m_NonInheritedData.m_dwColumnRuleColor = dwColumnRuleColor,
-    m_NonInheritedData.m_bColumnRuleColorSame = FALSE;
-  }
-  virtual void SetColumnRuleStyle(FDE_CSSBORDERSTYLE eColumnRuleStyle) {
-    m_NonInheritedData.m_eColumnRuleStyle = eColumnRuleStyle;
-  }
-  virtual void SetColumnRuleWidth(const FDE_CSSLENGTH& columnRuleWidth) {
-    m_NonInheritedData.m_ColumnRuleWidth = columnRuleWidth;
-  }
-  virtual void SetColumnWidth(const FDE_CSSLENGTH& columnWidth) {
-    m_NonInheritedData.m_ColumnWidth = columnWidth;
-  }
-  virtual int32_t CountFontFamilies() const {
+
+  // IFDE_CSSFontStyle:
+  int32_t CountFontFamilies() const override {
     return m_InheritedData.m_pFontFamily
                ? m_InheritedData.m_pFontFamily->CountValues()
                : 0;
   }
-  virtual const FX_WCHAR* GetFontFamily(int32_t index) const {
-    return ((IFDE_CSSPrimitiveValue*)(m_InheritedData.m_pFontFamily->GetValue(
-                index)))
+
+  const FX_WCHAR* GetFontFamily(int32_t index) const override {
+    return (static_cast<IFDE_CSSPrimitiveValue*>(
+                m_InheritedData.m_pFontFamily->GetValue(index)))
         ->GetString(index);
   }
-  virtual uint16_t GetFontWeight() const {
+
+  uint16_t GetFontWeight() const override {
     return m_InheritedData.m_wFontWeight;
   }
-  virtual FDE_CSSFONTVARIANT GetFontVariant() const {
-    return (FDE_CSSFONTVARIANT)m_InheritedData.m_eFontVariant;
+
+  FDE_CSSFONTVARIANT GetFontVariant() const override {
+    return static_cast<FDE_CSSFONTVARIANT>(m_InheritedData.m_eFontVariant);
   }
-  virtual FDE_CSSFONTSTYLE GetFontStyle() const {
-    return (FDE_CSSFONTSTYLE)m_InheritedData.m_eFontStyle;
+
+  FDE_CSSFONTSTYLE GetFontStyle() const override {
+    return static_cast<FDE_CSSFONTSTYLE>(m_InheritedData.m_eFontStyle);
   }
-  virtual FX_FLOAT GetFontSize() const { return m_InheritedData.m_fFontSize; }
-  virtual FX_ARGB GetColor() const { return m_InheritedData.m_dwFontColor; }
-  virtual void SetFontWeight(uint16_t wFontWeight) {
+
+  FX_FLOAT GetFontSize() const override { return m_InheritedData.m_fFontSize; }
+
+  FX_ARGB GetColor() const override { return m_InheritedData.m_dwFontColor; }
+
+  void SetFontWeight(uint16_t wFontWeight) override {
     m_InheritedData.m_wFontWeight = wFontWeight;
   }
-  virtual void SetFontVariant(FDE_CSSFONTVARIANT eFontVariant) {
+
+  void SetFontVariant(FDE_CSSFONTVARIANT eFontVariant) override {
     m_InheritedData.m_eFontVariant = eFontVariant;
   }
-  virtual void SetFontStyle(FDE_CSSFONTSTYLE eFontStyle) {
+
+  void SetFontStyle(FDE_CSSFONTSTYLE eFontStyle) override {
     m_InheritedData.m_eFontStyle = eFontStyle;
   }
-  virtual void SetFontSize(FX_FLOAT fFontSize) {
+
+  void SetFontSize(FX_FLOAT fFontSize) override {
     m_InheritedData.m_fFontSize = fFontSize;
   }
-  virtual void SetColor(FX_ARGB dwFontColor) {
+
+  void SetColor(FX_ARGB dwFontColor) override {
     m_InheritedData.m_dwFontColor = dwFontColor;
   }
-  virtual FX_ARGB GetBorderLeftColor() const {
-    return m_NonInheritedData.m_dwBDRLeftColor;
-  }
-  virtual FX_ARGB GetBorderTopColor() const {
-    return m_NonInheritedData.m_dwBDRTopColor;
-  }
-  virtual FX_ARGB GetBorderRightColor() const {
-    return m_NonInheritedData.m_dwBDRRightColor;
-  }
-  virtual FX_ARGB GetBorderBottomColor() const {
-    return m_NonInheritedData.m_dwBDRBottomColor;
-  }
 
-  virtual FDE_CSSBORDERSTYLE GetBorderLeftStyle() const {
-    return (FDE_CSSBORDERSTYLE)m_NonInheritedData.m_eBDRLeftStyle;
-  }
-  virtual FDE_CSSBORDERSTYLE GetBorderTopStyle() const {
-    return (FDE_CSSBORDERSTYLE)m_NonInheritedData.m_eBDRTopStyle;
-  }
-  virtual FDE_CSSBORDERSTYLE GetBorderRightStyle() const {
-    return (FDE_CSSBORDERSTYLE)m_NonInheritedData.m_eBDRRightStyle;
-  }
-  virtual FDE_CSSBORDERSTYLE GetBorderBottomStyle() const {
-    return (FDE_CSSBORDERSTYLE)m_NonInheritedData.m_eBDRBottomStyle;
-  }
-
-  virtual const FDE_CSSRECT* GetBorderWidth() const {
+  // IFDE_CSSBoundaryStyle:
+  const FDE_CSSRECT* GetBorderWidth() const override {
     return m_NonInheritedData.m_bHasBorder ? &(m_NonInheritedData.m_BorderWidth)
-                                           : NULL;
+                                           : nullptr;
   }
-  virtual const FDE_CSSRECT* GetMarginWidth() const {
+
+  const FDE_CSSRECT* GetMarginWidth() const override {
     return m_NonInheritedData.m_bHasMargin ? &(m_NonInheritedData.m_MarginWidth)
-                                           : NULL;
+                                           : nullptr;
   }
-  virtual const FDE_CSSRECT* GetPaddingWidth() const {
+
+  const FDE_CSSRECT* GetPaddingWidth() const override {
     return m_NonInheritedData.m_bHasPadding
                ? &(m_NonInheritedData.m_PaddingWidth)
-               : NULL;
-  }
-  virtual void SetBorderLeftColor(FX_ARGB dwBorderColor) {
-    m_NonInheritedData.m_dwBDRLeftColor = dwBorderColor;
-  }
-  virtual void SetBorderTopColor(FX_ARGB dwBorderColor) {
-    m_NonInheritedData.m_dwBDRTopColor = dwBorderColor;
-  }
-  virtual void SetBorderRightColor(FX_ARGB dwBorderColor) {
-    m_NonInheritedData.m_dwBDRRightColor = dwBorderColor;
-  }
-  virtual void SetBorderBottomColor(FX_ARGB dwBorderColor) {
-    m_NonInheritedData.m_dwBDRBottomColor = dwBorderColor;
+               : nullptr;
   }
 
-  virtual void SetBorderLeftStyle(FDE_CSSBORDERSTYLE eBorderStyle) {
-    m_NonInheritedData.m_eBDRLeftStyle = eBorderStyle;
-  }
-  virtual void SetBorderTopStyle(FDE_CSSBORDERSTYLE eBorderStyle) {
-    m_NonInheritedData.m_eBDRTopStyle = eBorderStyle;
-  }
-  virtual void SetBorderRightStyle(FDE_CSSBORDERSTYLE eBorderStyle) {
-    m_NonInheritedData.m_eBDRRightStyle = eBorderStyle;
-  }
-  virtual void SetBorderBottomStyle(FDE_CSSBORDERSTYLE eBorderStyle) {
-    m_NonInheritedData.m_eBDRBottomStyle = eBorderStyle;
-  }
-
-  virtual void SetBorderWidth(const FDE_CSSRECT& rect) {
-    m_NonInheritedData.m_BorderWidth = rect;
-    m_NonInheritedData.m_bHasBorder = TRUE;
-  }
-  virtual void SetMarginWidth(const FDE_CSSRECT& rect) {
+  void SetMarginWidth(const FDE_CSSRECT& rect) override {
     m_NonInheritedData.m_MarginWidth = rect;
     m_NonInheritedData.m_bHasMargin = TRUE;
   }
-  virtual void SetPaddingWidth(const FDE_CSSRECT& rect) {
+
+  void SetPaddingWidth(const FDE_CSSRECT& rect) override {
     m_NonInheritedData.m_PaddingWidth = rect;
     m_NonInheritedData.m_bHasPadding = TRUE;
   }
-  virtual FDE_CSSDISPLAY GetDisplay() const {
-    return (FDE_CSSDISPLAY)m_NonInheritedData.m_eDisplay;
-  }
-  virtual const FDE_CSSSIZE& GetBoxSize() const {
-    return m_NonInheritedData.m_BoxSize;
-  }
-  virtual const FDE_CSSSIZE& GetMinBoxSize() const {
-    return m_NonInheritedData.m_MinBoxSize;
-  }
-  virtual const FDE_CSSSIZE& GetMaxBoxSize() const {
-    return m_NonInheritedData.m_MaxBoxSize;
-  }
-  virtual FDE_CSSFLOAT GetFloat() const {
-    return (FDE_CSSFLOAT)m_NonInheritedData.m_eFloat;
-  }
-  virtual FDE_CSSCLEAR GetClear() const {
-    return (FDE_CSSCLEAR)m_NonInheritedData.m_eClear;
-  }
-  virtual FDE_CSSPOSITION GetPosition() const {
-    return (FDE_CSSPOSITION)m_NonInheritedData.m_ePosition;
-  }
-  virtual FDE_CSSLENGTH GetTop() const { return m_NonInheritedData.m_Top; }
-  virtual FDE_CSSLENGTH GetBottom() const {
-    return m_NonInheritedData.m_Bottom;
-  }
-  virtual FDE_CSSLENGTH GetLeft() const { return m_NonInheritedData.m_Left; }
-  virtual FDE_CSSLENGTH GetRight() const { return m_NonInheritedData.m_Right; }
 
-  virtual void SetDisplay(FDE_CSSDISPLAY eDisplay) {
-    m_NonInheritedData.m_eDisplay = eDisplay;
+  // IFDE_CSSPositionStyle:
+  FDE_CSSDISPLAY GetDisplay() const override {
+    return static_cast<FDE_CSSDISPLAY>(m_NonInheritedData.m_eDisplay);
   }
-  virtual void SetBoxSize(const FDE_CSSSIZE& size) {
-    m_NonInheritedData.m_BoxSize = size;
-  }
-  virtual void SetMinBoxSize(const FDE_CSSSIZE& size) {
-    m_NonInheritedData.m_MinBoxSize = size;
-  }
-  virtual void SetMaxBoxSize(const FDE_CSSSIZE& size) {
-    m_NonInheritedData.m_MaxBoxSize = size;
-  }
-  virtual void SetFloat(FDE_CSSFLOAT eFloat) {
-    m_NonInheritedData.m_eFloat = eFloat;
-  }
-  virtual void SetClear(FDE_CSSCLEAR eClear) {
-    m_NonInheritedData.m_eClear = eClear;
-  }
-  virtual FX_FLOAT GetLineHeight() const {
+
+  // IFDE_CSSParagraphStyle:
+  FX_FLOAT GetLineHeight() const override {
     return m_InheritedData.m_fLineHeight;
   }
-  virtual FDE_CSSWHITESPACE GetWhiteSpace() const {
-    return (FDE_CSSWHITESPACE)m_InheritedData.m_eWhiteSpace;
-  }
-  virtual const FDE_CSSLENGTH& GetTextIndent() const {
+
+  const FDE_CSSLENGTH& GetTextIndent() const override {
     return m_InheritedData.m_TextIndent;
   }
-  virtual FDE_CSSTEXTALIGN GetTextAlign() const {
-    return (FDE_CSSTEXTALIGN)m_InheritedData.m_eTextAligh;
+
+  FDE_CSSTEXTALIGN GetTextAlign() const override {
+    return static_cast<FDE_CSSTEXTALIGN>(m_InheritedData.m_eTextAligh);
   }
-  virtual FDE_CSSVERTICALALIGN GetVerticalAlign() const {
-    return (FDE_CSSVERTICALALIGN)m_NonInheritedData.m_eVerticalAlign;
+
+  FDE_CSSVERTICALALIGN GetVerticalAlign() const override {
+    return static_cast<FDE_CSSVERTICALALIGN>(
+        m_NonInheritedData.m_eVerticalAlign);
   }
-  virtual FX_FLOAT GetNumberVerticalAlign() const {
+
+  FX_FLOAT GetNumberVerticalAlign() const override {
     return m_NonInheritedData.m_fVerticalAlign;
   }
-  virtual FDE_CSSTEXTTRANSFORM GetTextTransform() const {
-    return (FDE_CSSTEXTTRANSFORM)m_InheritedData.m_eTextTransform;
-  }
-  virtual uint32_t GetTextDecoration() const {
+
+  uint32_t GetTextDecoration() const override {
     return m_NonInheritedData.m_dwTextDecoration;
   }
-  virtual const FDE_CSSLENGTH& GetLetterSpacing() const {
+
+  const FDE_CSSLENGTH& GetLetterSpacing() const override {
     return m_InheritedData.m_LetterSpacing;
   }
-  virtual const FDE_CSSLENGTH& GetWordSpacing() const {
-    return m_InheritedData.m_WordSpacing;
-  }
-  virtual FDE_CSSWRITINGMODE GetWritingMode() const {
-    return (FDE_CSSWRITINGMODE)m_InheritedData.m_eWritingMode;
-  }
-  virtual FDE_CSSWORDBREAK GetWordBreak() const {
-    return (FDE_CSSWORDBREAK)m_InheritedData.m_eWordBreak;
-  }
-  virtual int32_t GetWidows() const { return m_InheritedData.m_iWidows; }
-  virtual FX_ARGB GetTextEmphasisColor() const {
-    return m_InheritedData.m_bTextEmphasisColorCurrent
-               ? m_InheritedData.m_dwFontColor
-               : m_InheritedData.m_dwTextEmphasisColor;
-  }
-  virtual FDE_CSSPAGEBREAK GetPageBreakBefore() const {
-    return (FDE_CSSPAGEBREAK)m_NonInheritedData.m_ePageBreakBefore;
-  }
-  virtual FDE_CSSPAGEBREAK GetPageBreakAfter() const {
-    return (FDE_CSSPAGEBREAK)m_NonInheritedData.m_ePageBreakAfter;
-  }
-  virtual FDE_CSSPAGEBREAK GetPageBreakInside() const {
-    return (FDE_CSSPAGEBREAK)m_NonInheritedData.m_ePageBreakInside;
-  }
-  virtual int32_t GetOrphans() const { return m_InheritedData.m_iOrphans; }
-  virtual FDE_CSSLINEBREAK GetLineBreak() const {
-    return (FDE_CSSLINEBREAK)m_InheritedData.m_eLineBreak;
-  }
-  virtual FDE_CSSTEXTEMPHASISMARK GetTextEmphasisMark() const;
-  virtual FDE_CSSTEXTEMPHASISFILL GetTextEmphasisFill() const {
-    return (FDE_CSSTEXTEMPHASISFILL)m_InheritedData.m_eTextEmphasisFill;
-  }
-  virtual const FX_WCHAR* GetTextEmphasisCustom() const {
-    FXSYS_assert(m_InheritedData.m_eTextEmphasisMark ==
-                 FDE_CSSTEXTEMPHASISMARK_Custom);
-    return m_InheritedData.m_pszTextEmphasisCustomMark;
-  }
-  virtual FDE_CSSTEXTCOMBINE GetTextCombineType() const {
-    return (FDE_CSSTEXTCOMBINE)m_NonInheritedData.m_eTextCombine;
-  }
-  virtual FX_BOOL HasTextCombineNumber() const {
-    return m_NonInheritedData.m_bHasTextCombineNumber;
-  }
-  virtual FX_FLOAT GetTextCombineNumber() const {
-    FXSYS_assert(m_NonInheritedData.m_eTextCombine ==
-                 FDE_CSSTEXTCOMBINE_Horizontal);
-    return m_NonInheritedData.m_fTextCombineNumber;
-  }
-  virtual void SetLineHeight(FX_FLOAT fLineHeight) {
+
+  void SetLineHeight(FX_FLOAT fLineHeight) override {
     m_InheritedData.m_fLineHeight = fLineHeight;
   }
-  virtual void SetWhiteSpace(FDE_CSSWHITESPACE eWhiteSpace) {
-    m_InheritedData.m_eWhiteSpace = eWhiteSpace;
-  }
-  virtual void SetTextIndent(const FDE_CSSLENGTH& textIndent) {
+
+  void SetTextIndent(const FDE_CSSLENGTH& textIndent) override {
     m_InheritedData.m_TextIndent = textIndent;
   }
-  virtual void SetTextAlign(FDE_CSSTEXTALIGN eTextAlign) {
+
+  void SetTextAlign(FDE_CSSTEXTALIGN eTextAlign) override {
     m_InheritedData.m_eTextAligh = eTextAlign;
   }
-  virtual void SetVerticalAlign(FDE_CSSVERTICALALIGN eVerticalAlign) {
-    m_NonInheritedData.m_eVerticalAlign = eVerticalAlign;
-  }
-  virtual void SetNumberVerticalAlign(FX_FLOAT fAlign) {
+
+  void SetNumberVerticalAlign(FX_FLOAT fAlign) override {
     m_NonInheritedData.m_eVerticalAlign = FDE_CSSVERTICALALIGN_Number,
     m_NonInheritedData.m_fVerticalAlign = fAlign;
   }
-  virtual void SetTextTransform(FDE_CSSTEXTTRANSFORM eTextTransform) {
-    m_InheritedData.m_eTextTransform = eTextTransform;
-  }
-  virtual void SetTextDecoration(uint32_t dwTextDecoration) {
+
+  void SetTextDecoration(uint32_t dwTextDecoration) override {
     m_NonInheritedData.m_dwTextDecoration = dwTextDecoration;
   }
-  virtual void SetLetterSpacing(const FDE_CSSLENGTH& letterSpacing) {
+
+  void SetLetterSpacing(const FDE_CSSLENGTH& letterSpacing) override {
     m_InheritedData.m_LetterSpacing = letterSpacing;
   }
-  virtual void SetWordSpacing(const FDE_CSSLENGTH& wordSpacing) {
-    m_InheritedData.m_WordSpacing = wordSpacing;
-  }
-  virtual void SetWritingMode(FDE_CSSWRITINGMODE eWritingMode) {
-    m_InheritedData.m_eWritingMode = eWritingMode;
-  }
-  virtual void SetWordBreak(FDE_CSSWORDBREAK eWordBreak) {
-    m_InheritedData.m_eWordBreak = eWordBreak;
-  }
-  virtual void SetWidows(int32_t iWidows) {
-    m_InheritedData.m_iWidows = iWidows;
-  }
-  virtual void SetTextEmphasisColor(FX_ARGB dwTextEmphasisColor) {
-    m_InheritedData.m_dwTextEmphasisColor = dwTextEmphasisColor,
-    m_InheritedData.m_bTextEmphasisColorCurrent = FALSE;
-  }
-  virtual void SetPageBreakBefore(FDE_CSSPAGEBREAK ePageBreakBefore) {
-    m_NonInheritedData.m_ePageBreakBefore = ePageBreakBefore;
-  }
-  virtual void SetPageBreakAfter(FDE_CSSPAGEBREAK ePageBreakAfter) {
-    m_NonInheritedData.m_ePageBreakAfter = ePageBreakAfter;
-  }
-  virtual void SetPageBreakInside(FDE_CSSPAGEBREAK ePageBreakInside) {
-    m_NonInheritedData.m_ePageBreakInside = ePageBreakInside;
-  }
-  virtual void SetOrphans(int32_t iOrphans) {
-    m_InheritedData.m_iOrphans = iOrphans;
-  }
-  virtual void SetLineBreak(FDE_CSSLINEBREAK eLineBreak) {
-    m_InheritedData.m_eLineBreak = eLineBreak;
-  }
-  virtual FX_ARGB GetBKGColor() const {
-    return m_NonInheritedData.m_dwBKGColor;
-  }
-  virtual const FX_WCHAR* GetBKGImage() const {
-    return m_NonInheritedData.m_pszBKGImage;
-  }
-  virtual const FDE_CSSPOINT& GetBKGPosition() const {
-    return m_NonInheritedData.m_BKGPosition;
-  }
-  virtual FDE_CSSBKGREPEAT GetBKGRepeat() const {
-    return (FDE_CSSBKGREPEAT)m_NonInheritedData.m_eBKGRepeat;
-  }
-  virtual FDE_CSSBKGATTACHMENT GetBKGAttachment() const {
-    return (FDE_CSSBKGATTACHMENT)m_NonInheritedData.m_eBKGAttachment;
-  }
-  virtual void SetBKGColor(FX_ARGB dwBKGColor) {
-    m_NonInheritedData.m_dwBKGColor = dwBKGColor;
-  }
-  virtual void SetBKGPosition(const FDE_CSSPOINT& bkgPosition) {
-    m_NonInheritedData.m_BKGPosition = bkgPosition;
-  }
-  virtual FDE_CSSVISIBILITY GetVisibility() const {
-    return (FDE_CSSVISIBILITY)m_InheritedData.m_eVisibility;
-  }
-  virtual FDE_CSSOVERFLOW GetOverflowX() const {
-    return (FDE_CSSOVERFLOW)m_NonInheritedData.m_eOverflowX;
-  }
-  virtual FDE_CSSOVERFLOW GetOverflowY() const {
-    return (FDE_CSSOVERFLOW)m_NonInheritedData.m_eOverflowY;
-  }
-  virtual int32_t CountCursorUrls() const {
-    return m_InheritedData.m_pCursorUris == NULL
-               ? 0
-               : m_InheritedData.m_pCursorUris->CountValues();
-  }
-  virtual const FX_WCHAR* GetCursorUrl(int32_t index) const {
-    FXSYS_assert(m_InheritedData.m_pCursorUris != NULL);
-    return ((IFDE_CSSPrimitiveValue*)(m_InheritedData.m_pCursorUris->GetValue(
-                index)))
-        ->GetString(index);
-  }
-  virtual FDE_CSSCURSOR GetCursorType() const {
-    return m_InheritedData.m_eCursor;
-  }
-  virtual void SetVisibility(FDE_CSSVISIBILITY eVisibility) {
-    m_InheritedData.m_eVisibility = eVisibility;
-  }
-  virtual FDE_CSSLISTSTYLETYPE GetListStyleType() const {
-    return (FDE_CSSLISTSTYLETYPE)m_NonInheritedData.m_eListStyleType;
-  }
-  virtual FDE_CSSLISTSTYLEPOSITION GetListStylePosition() const {
-    return (FDE_CSSLISTSTYLEPOSITION)m_NonInheritedData.m_eListStylePosition;
-  }
-  virtual const FX_WCHAR* GetListStyleImage() const {
-    return m_InheritedData.m_pszListStyleImage;
-  }
-  virtual void SetListStyleType(FDE_CSSLISTSTYLETYPE eListStyleType) {
-    m_NonInheritedData.m_eListStyleType = eListStyleType;
-  }
-  virtual void SetListStylePosition(
-      FDE_CSSLISTSTYLEPOSITION eListStylePosition) {
-    m_NonInheritedData.m_eListStylePosition = eListStylePosition;
-  }
+
   void AddCustomStyle(const CFX_WideString& wsName,
                       const CFX_WideString& wsValue) {
     m_CustomProperties.Add(wsName);
     m_CustomProperties.Add(wsValue);
   }
+
   uint32_t m_dwRefCount;
   IFX_MEMAllocator* m_pAllocator;
   CFDE_CSSInheritedData m_InheritedData;

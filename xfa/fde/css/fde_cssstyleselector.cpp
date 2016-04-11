@@ -11,6 +11,8 @@
 #include "xfa/fde/css/fde_csscache.h"
 #include "xfa/fde/css/fde_cssdeclaration.h"
 
+#define FDE_CSSUNIVERSALHASH ('*')
+
 int32_t CFDE_CSSCounterStyle::FindIndex(const FX_WCHAR* pszIdentifier) {
   int32_t iCount = m_arrCounterData.GetSize();
   for (int32_t i = 0; i < iCount; i++) {
@@ -74,15 +76,7 @@ void CFDE_CSSCounterStyle::UpdateIndex() {
   DoUpdateIndex(m_pCounterReset);
   m_bIndexDirty = FALSE;
 }
-FDE_CSSTEXTEMPHASISMARK CFDE_CSSComputedStyle::GetTextEmphasisMark() const {
-  if (m_InheritedData.m_eTextEmphasisMark != FDE_CSSTEXTEMPHASISMARK_Auto) {
-    return (FDE_CSSTEXTEMPHASISMARK)m_InheritedData.m_eTextEmphasisMark;
-  }
-  if (m_InheritedData.m_eWritingMode == FDE_CSSWRITINGMODE_HorizontalTb) {
-    return FDE_CSSTEXTEMPHASISMARK_Dot;
-  }
-  return FDE_CSSTEXTEMPHASISMARK_Sesame;
-}
+
 FDE_CSSRuleData::FDE_CSSRuleData(IFDE_CSSSelector* pSel,
                                  IFDE_CSSDeclaration* pDecl,
                                  uint32_t dwPos)
@@ -245,7 +239,7 @@ void CFDE_CSSStyleSelector::SetDefFontSize(FX_FLOAT fFontSize) {
   FXSYS_assert(fFontSize > 0);
   m_fDefFontSize = fFontSize;
 }
-IFDE_CSSAccelerator* CFDE_CSSStyleSelector::InitAccelerator() {
+CFDE_CSSAccelerator* CFDE_CSSStyleSelector::InitAccelerator() {
   if (m_pAccelerator == NULL) {
     m_pAccelerator = new CFDE_CSSAccelerator;
     FXSYS_assert(m_pAccelerator != NULL);

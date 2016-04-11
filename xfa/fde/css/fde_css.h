@@ -12,29 +12,22 @@
 #include "xfa/fgas/crt/fgas_utils.h"
 #include "xfa/fgas/font/fgas_font.h"
 
-class IFDE_CSSValue;
-class IFDE_CSSValueList;
+class CFDE_CSSAccelerator;
+class IFDE_CSSBoundaryStyle;
+class IFDE_CSSComputedStyle;
 class IFDE_CSSDeclaration;
-class IFDE_CSSSelector;
+class IFDE_CSSFontStyle;
+class IFDE_CSSParagraphStyle;
+class IFDE_CSSPositionStyle;
 class IFDE_CSSRule;
+class IFDE_CSSSelector;
+class IFDE_CSSStyleSelector;
 class IFDE_CSSStyleSheet;
 class IFDE_CSSStyleSheetCache;
 class IFDE_CSSSyntaxParser;
-class IFDE_CSSRubyStyle;
-class IFDE_CSSMultiColumnStyle;
-class IFDE_CSSGeneratedContentStyle;
-class IFDE_CSSFontStyle;
-class IFDE_CSSBoundaryStyle;
-class IFDE_CSSPositionStyle;
-class IFDE_CSSParagraphStyle;
-class IFDE_CSSBackgroundStyle;
-class IFDE_CSSListStyle;
-class IFDE_CSSTableStyle;
-class IFDE_CSSVisualStyle;
-class IFDE_CSSComputedStyle;
 class IFDE_CSSTagProvider;
-class IFDE_CSSAccelerator;
-class IFDE_CSSStyleSelector;
+class IFDE_CSSValue;
+class IFDE_CSSValueList;
 
 enum FDE_CSSVALUETYPE {
   FDE_CSSVALUETYPE_Primitive = 1,
@@ -824,45 +817,11 @@ enum FDE_CSSTEXTDECORATION {
   FDE_CSSTEXTDECORATION_Blink = 8,
   FDE_CSSTEXTDECORATION_Double = 16,
 };
-class IFDE_CSSRubyStyle {
- public:
-  virtual ~IFDE_CSSRubyStyle() {}
-  virtual FDE_CSSRUBYALIGN GetRubyAlign() const = 0;
-  virtual FDE_CSSRUBYOVERHANG GetRubyOverhang() const = 0;
-  virtual FDE_CSSRUBYPOSITION GetRubyPosition() const = 0;
-  virtual FDE_CSSRUBYSPAN GetRubySpanType() const = 0;
-  virtual IFDE_CSSValue* GetRubySpanAttr() const = 0;
-};
-class IFDE_CSSMultiColumnStyle {
- public:
-  virtual ~IFDE_CSSMultiColumnStyle() {}
-  virtual const FDE_CSSLENGTH& GetColumnCount() const = 0;
-  virtual const FDE_CSSLENGTH& GetColumnGap() const = 0;
-  virtual FX_ARGB GetColumnRuleColor() const = 0;
-  virtual FDE_CSSBORDERSTYLE GetColumnRuleStyle() const = 0;
-  virtual const FDE_CSSLENGTH& GetColumnRuleWidth() const = 0;
-  virtual const FDE_CSSLENGTH& GetColumnWidth() const = 0;
-  virtual void SetColumnCount(const FDE_CSSLENGTH& columnCount) = 0;
-  virtual void SetColumnGap(const FDE_CSSLENGTH& columnGap) = 0;
-  virtual void SetColumnRuleColor(FX_ARGB dwColumnRuleColor) = 0;
-  virtual void SetColumnRuleStyle(FDE_CSSBORDERSTYLE eColumnRuleStyle) = 0;
-  virtual void SetColumnRuleWidth(const FDE_CSSLENGTH& columnRuleWidth) = 0;
-  virtual void SetColumnWidth(const FDE_CSSLENGTH& columnWidth) = 0;
-};
-class IFDE_CSSGeneratedContentStyle {
- public:
-  virtual ~IFDE_CSSGeneratedContentStyle() {}
-  virtual int32_t CountCounters() = 0;
-  virtual const FX_WCHAR* GetCounterIdentifier(int32_t index) = 0;
-  virtual FX_BOOL GetCounterReset(int32_t index, int32_t& iValue) = 0;
-  virtual FX_BOOL GetCounterIncrement(int32_t index, int32_t& iValue) = 0;
-  virtual IFDE_CSSValueList* GetContent() const = 0;
-  virtual int32_t CountQuotes() const = 0;
-  virtual const FX_WCHAR* GetQuotes(int32_t index) const = 0;
-};
+
 class IFDE_CSSFontStyle {
  public:
   virtual ~IFDE_CSSFontStyle() {}
+
   virtual int32_t CountFontFamilies() const = 0;
   virtual const FX_WCHAR* GetFontFamily(int32_t index) const = 0;
   virtual uint16_t GetFontWeight() const = 0;
@@ -876,151 +835,50 @@ class IFDE_CSSFontStyle {
   virtual void SetFontSize(FX_FLOAT fFontSize) = 0;
   virtual void SetColor(FX_ARGB dwFontColor) = 0;
 };
+
 class IFDE_CSSBoundaryStyle {
  public:
   virtual ~IFDE_CSSBoundaryStyle() {}
-  virtual FX_ARGB GetBorderLeftColor() const = 0;
-  virtual FX_ARGB GetBorderTopColor() const = 0;
-  virtual FX_ARGB GetBorderRightColor() const = 0;
-  virtual FX_ARGB GetBorderBottomColor() const = 0;
-  virtual FDE_CSSBORDERSTYLE GetBorderLeftStyle() const = 0;
-  virtual FDE_CSSBORDERSTYLE GetBorderTopStyle() const = 0;
-  virtual FDE_CSSBORDERSTYLE GetBorderRightStyle() const = 0;
-  virtual FDE_CSSBORDERSTYLE GetBorderBottomStyle() const = 0;
+
   virtual const FDE_CSSRECT* GetBorderWidth() const = 0;
   virtual const FDE_CSSRECT* GetMarginWidth() const = 0;
   virtual const FDE_CSSRECT* GetPaddingWidth() const = 0;
-  virtual void SetBorderLeftColor(FX_ARGB dwBorderColor) = 0;
-  virtual void SetBorderTopColor(FX_ARGB dwBorderColor) = 0;
-  virtual void SetBorderRightColor(FX_ARGB dwBorderColor) = 0;
-  virtual void SetBorderBottomColor(FX_ARGB dwBorderColor) = 0;
-
-  virtual void SetBorderLeftStyle(FDE_CSSBORDERSTYLE eBorderStyle) = 0;
-  virtual void SetBorderTopStyle(FDE_CSSBORDERSTYLE eBorderStyle) = 0;
-  virtual void SetBorderRightStyle(FDE_CSSBORDERSTYLE eBorderStyle) = 0;
-  virtual void SetBorderBottomStyle(FDE_CSSBORDERSTYLE eBorderStyle) = 0;
-
-  virtual void SetBorderWidth(const FDE_CSSRECT& rect) = 0;
   virtual void SetMarginWidth(const FDE_CSSRECT& rect) = 0;
   virtual void SetPaddingWidth(const FDE_CSSRECT& rect) = 0;
 };
+
 class IFDE_CSSPositionStyle {
  public:
   virtual ~IFDE_CSSPositionStyle() {}
   virtual FDE_CSSDISPLAY GetDisplay() const = 0;
-  virtual const FDE_CSSSIZE& GetBoxSize() const = 0;
-  virtual const FDE_CSSSIZE& GetMinBoxSize() const = 0;
-  virtual const FDE_CSSSIZE& GetMaxBoxSize() const = 0;
-  virtual FDE_CSSFLOAT GetFloat() const = 0;
-  virtual FDE_CSSCLEAR GetClear() const = 0;
-  virtual FDE_CSSPOSITION GetPosition() const = 0;
-  virtual FDE_CSSLENGTH GetTop() const = 0;
-  virtual FDE_CSSLENGTH GetBottom() const = 0;
-  virtual FDE_CSSLENGTH GetLeft() const = 0;
-  virtual FDE_CSSLENGTH GetRight() const = 0;
-  virtual void SetDisplay(FDE_CSSDISPLAY eDisplay) = 0;
-  virtual void SetBoxSize(const FDE_CSSSIZE& boxSize) = 0;
-  virtual void SetMinBoxSize(const FDE_CSSSIZE& minBoxSize) = 0;
-  virtual void SetMaxBoxSize(const FDE_CSSSIZE& maxBoxSize) = 0;
-  virtual void SetFloat(FDE_CSSFLOAT eFloat) = 0;
-  virtual void SetClear(FDE_CSSCLEAR eClear) = 0;
 };
+
 class IFDE_CSSParagraphStyle {
  public:
   virtual ~IFDE_CSSParagraphStyle() {}
+
   virtual FX_FLOAT GetLineHeight() const = 0;
-  virtual FDE_CSSWHITESPACE GetWhiteSpace() const = 0;
   virtual const FDE_CSSLENGTH& GetTextIndent() const = 0;
   virtual FDE_CSSTEXTALIGN GetTextAlign() const = 0;
   virtual FDE_CSSVERTICALALIGN GetVerticalAlign() const = 0;
   virtual FX_FLOAT GetNumberVerticalAlign() const = 0;
-  virtual FDE_CSSTEXTTRANSFORM GetTextTransform() const = 0;
   virtual uint32_t GetTextDecoration() const = 0;
   virtual const FDE_CSSLENGTH& GetLetterSpacing() const = 0;
-  virtual const FDE_CSSLENGTH& GetWordSpacing() const = 0;
-  virtual FDE_CSSWRITINGMODE GetWritingMode() const = 0;
-  virtual FDE_CSSWORDBREAK GetWordBreak() const = 0;
-  virtual int32_t GetWidows() const = 0;
-  virtual FX_ARGB GetTextEmphasisColor() const = 0;
-  virtual FDE_CSSPAGEBREAK GetPageBreakBefore() const = 0;
-  virtual FDE_CSSPAGEBREAK GetPageBreakAfter() const = 0;
-  virtual FDE_CSSPAGEBREAK GetPageBreakInside() const = 0;
-  virtual int32_t GetOrphans() const = 0;
-  virtual FDE_CSSLINEBREAK GetLineBreak() const = 0;
-  virtual FDE_CSSTEXTEMPHASISMARK GetTextEmphasisMark() const = 0;
-  virtual FDE_CSSTEXTEMPHASISFILL GetTextEmphasisFill() const = 0;
-  virtual const FX_WCHAR* GetTextEmphasisCustom() const = 0;
-  virtual FDE_CSSTEXTCOMBINE GetTextCombineType() const = 0;
-  virtual FX_BOOL HasTextCombineNumber() const = 0;
-  virtual FX_FLOAT GetTextCombineNumber() const = 0;
   virtual void SetLineHeight(FX_FLOAT fLineHeight) = 0;
-  virtual void SetWhiteSpace(FDE_CSSWHITESPACE eWhiteSpace) = 0;
   virtual void SetTextIndent(const FDE_CSSLENGTH& textIndent) = 0;
   virtual void SetTextAlign(FDE_CSSTEXTALIGN eTextAlign) = 0;
-  virtual void SetVerticalAlign(FDE_CSSVERTICALALIGN eVerticalAlign) = 0;
   virtual void SetNumberVerticalAlign(FX_FLOAT fAlign) = 0;
-  virtual void SetTextTransform(FDE_CSSTEXTTRANSFORM eTextTransform) = 0;
   virtual void SetTextDecoration(uint32_t dwTextDecoration) = 0;
   virtual void SetLetterSpacing(const FDE_CSSLENGTH& letterSpacing) = 0;
-  virtual void SetWordSpacing(const FDE_CSSLENGTH& wordSpacing) = 0;
-  virtual void SetWritingMode(FDE_CSSWRITINGMODE eWritingMode) = 0;
-  virtual void SetWordBreak(FDE_CSSWORDBREAK eWordBreak) = 0;
-  virtual void SetWidows(int32_t iWidows) = 0;
-  virtual void SetTextEmphasisColor(FX_ARGB dwTextEmphasisColor) = 0;
-  virtual void SetPageBreakBefore(FDE_CSSPAGEBREAK ePageBreakBefore) = 0;
-  virtual void SetPageBreakAfter(FDE_CSSPAGEBREAK ePageBreakAfter) = 0;
-  virtual void SetPageBreakInside(FDE_CSSPAGEBREAK ePageBreakInside) = 0;
-  virtual void SetOrphans(int32_t iOrphans) = 0;
-  virtual void SetLineBreak(FDE_CSSLINEBREAK eLineBreak) = 0;
 };
-class IFDE_CSSBackgroundStyle {
- public:
-  virtual ~IFDE_CSSBackgroundStyle() {}
-  virtual FX_ARGB GetBKGColor() const = 0;
-  virtual const FX_WCHAR* GetBKGImage() const = 0;
-  virtual FDE_CSSBKGREPEAT GetBKGRepeat() const = 0;
-  virtual FDE_CSSBKGATTACHMENT GetBKGAttachment() const = 0;
-  virtual const FDE_CSSPOINT& GetBKGPosition() const = 0;
-  virtual void SetBKGColor(FX_ARGB dwBKGColor) = 0;
-  virtual void SetBKGPosition(const FDE_CSSPOINT& bkgPosition) = 0;
-};
-class IFDE_CSSListStyle {
- public:
-  virtual ~IFDE_CSSListStyle() {}
-  virtual FDE_CSSLISTSTYLETYPE GetListStyleType() const = 0;
-  virtual FDE_CSSLISTSTYLEPOSITION GetListStylePosition() const = 0;
-  virtual const FX_WCHAR* GetListStyleImage() const = 0;
-  virtual void SetListStyleType(FDE_CSSLISTSTYLETYPE eListStyleType) = 0;
-  virtual void SetListStylePosition(
-      FDE_CSSLISTSTYLEPOSITION eListStylePosition) = 0;
-};
-class IFDE_CSSTableStyle {
- public:
-  virtual ~IFDE_CSSTableStyle() {}
-  virtual FDE_CSSCAPTIONSIDE GetCaptionSide() const = 0;
-};
-class IFDE_CSSVisualStyle {
- public:
-  virtual ~IFDE_CSSVisualStyle() {}
-  virtual FDE_CSSVISIBILITY GetVisibility() const = 0;
-  virtual FDE_CSSOVERFLOW GetOverflowX() const = 0;
-  virtual FDE_CSSOVERFLOW GetOverflowY() const = 0;
-  virtual void SetVisibility(FDE_CSSVISIBILITY eVisibility) = 0;
-};
+
 class IFDE_CSSComputedStyle : public IFX_Unknown {
  public:
   virtual void Reset() = 0;
-  virtual IFDE_CSSFontStyle* GetFontStyles() const = 0;
-  virtual IFDE_CSSBoundaryStyle* GetBoundaryStyles() const = 0;
-  virtual IFDE_CSSPositionStyle* GetPositionStyles() const = 0;
-  virtual IFDE_CSSParagraphStyle* GetParagraphStyles() const = 0;
-  virtual IFDE_CSSBackgroundStyle* GetBackgroundStyles() const = 0;
-  virtual IFDE_CSSVisualStyle* GetVisualStyles() const = 0;
-  virtual IFDE_CSSListStyle* GetListStyles() const = 0;
-  virtual IFDE_CSSMultiColumnStyle* GetMultiColumnStyle() const = 0;
-  virtual IFDE_CSSTableStyle* GetTableStyle() const = 0;
-  virtual IFDE_CSSGeneratedContentStyle* GetGeneratedContentStyle() const = 0;
-  virtual IFDE_CSSRubyStyle* GetRubyStyle() const = 0;
+  virtual IFDE_CSSFontStyle* GetFontStyles() = 0;
+  virtual IFDE_CSSBoundaryStyle* GetBoundaryStyles() = 0;
+  virtual IFDE_CSSPositionStyle* GetPositionStyles() = 0;
+  virtual IFDE_CSSParagraphStyle* GetParagraphStyles() = 0;
   virtual FX_BOOL GetCustomStyle(const CFX_WideStringC& wsName,
                                  CFX_WideString& wsValue) const = 0;
 };
@@ -1045,12 +903,7 @@ class IFDE_CSSTagProvider {
                                 CFX_WideStringC& wsAttr,
                                 CFX_WideStringC& wsValue) = 0;
 };
-class IFDE_CSSAccelerator {
- public:
-  virtual ~IFDE_CSSAccelerator() {}
-  virtual void OnEnterTag(IFDE_CSSTagProvider* pTag) = 0;
-  virtual void OnLeaveTag(IFDE_CSSTagProvider* pTag) = 0;
-};
+
 class IFDE_CSSStyleSelector {
  public:
   static IFDE_CSSStyleSelector* Create();
@@ -1065,7 +918,7 @@ class IFDE_CSSStyleSelector {
   virtual void SetStylePriority(FDE_CSSSTYLESHEETGROUP eType,
                                 FDE_CSSSTYLESHEETPRIORITY ePriority) = 0;
   virtual void UpdateStyleIndex(uint32_t dwMediaList) = 0;
-  virtual IFDE_CSSAccelerator* InitAccelerator() = 0;
+  virtual CFDE_CSSAccelerator* InitAccelerator() = 0;
   virtual IFDE_CSSComputedStyle* CreateComputedStyle(
       IFDE_CSSComputedStyle* pParentStyle) = 0;
   virtual int32_t MatchDeclarations(

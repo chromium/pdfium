@@ -71,11 +71,13 @@ class FDE_CSSTagCache : public CFX_Target {
 };
 typedef CFX_ObjectStackTemplate<FDE_CSSTagCache> CFDE_CSSTagStack;
 
-class CFDE_CSSAccelerator : public IFDE_CSSAccelerator, public CFX_Target {
+class CFDE_CSSAccelerator : public CFX_Target {
  public:
-  virtual void OnEnterTag(IFDE_CSSTagProvider* pTag);
-  virtual void OnLeaveTag(IFDE_CSSTagProvider* pTag);
+  void OnEnterTag(IFDE_CSSTagProvider* pTag);
+  void OnLeaveTag(IFDE_CSSTagProvider* pTag);
+
   void Clear() { m_Stack.RemoveAll(); }
+
   FDE_CSSTagCache* GetTopElement() const { return m_Stack.GetTopElement(); }
 
  protected:
