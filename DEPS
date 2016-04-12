@@ -12,7 +12,7 @@ vars = {
   'pdfium_tests_revision': 'eb87214cb2088536e96aae517f3a281818fbf5b0',
   'skia_revision': '0a291c7b7eea1807bd58bdaa60c258fd0ebeb257',
   'trace_event_revision': 'd83d44b13d07c2fd0a40101a7deef9b93b841732',
-  'v8_revision': '3c3d7e7be80f45eeea0dc74a71d7552e2afc2985',
+  'v8_revision': '47bcec782b752ba411bd8bba6e390d1cc1c3226e',
 
 }
 
