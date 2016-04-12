@@ -8,7 +8,7 @@ vars = {
   'cygwin_revision': 'c89e446b273697fadf3a10ff1007a97c0b7de6df',
   'gmock_revision': '29763965ab52f24565299976b936d1265cb6a271',
   'gtest_revision': '8245545b6dc9c4703e6496d1efd19e975ad2b038',
-  'icu_revision': '8d342a405be5ae8aacb1e16f0bc31c3a4fbf26a2',
+  'icu_revision': 'c291cde264469b20ca969ce8832088acb21e0c48',
   'pdfium_tests_revision': 'eb87214cb2088536e96aae517f3a281818fbf5b0',
   'skia_revision': '0a291c7b7eea1807bd58bdaa60c258fd0ebeb257',
   'trace_event_revision': 'd83d44b13d07c2fd0a40101a7deef9b93b841732',
