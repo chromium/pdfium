@@ -1156,9 +1156,11 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
                                 PitchFamily);
       }
 
-      auto it = std::find_if(
-          m_FaceArray.begin(), m_FaceArray.end(),
-          [Charset](const FaceData& face) { return face.charset == Charset; });
+      auto it =
+          std::find_if(m_FaceArray.begin(), m_FaceArray.end(),
+                       [Charset](const FaceData& face) {
+                         return face.charset == static_cast<uint32_t>(Charset);
+                       });
       if (it == m_FaceArray.end()) {
         return UseInternalSubst(pSubstFont, iBaseFont, italic_angle, old_weight,
                                 PitchFamily);
