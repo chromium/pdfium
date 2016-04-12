@@ -52,20 +52,37 @@ END_JS_STATIC_GLOBAL_FUN()
 
 IMPLEMENT_JS_STATIC_GLOBAL_FUN(CJS_PublicMethods)
 
-static const FX_WCHAR* const months[] = {L"Jan", L"Feb", L"Mar", L"Apr",
-                                         L"May", L"Jun", L"Jul", L"Aug",
-                                         L"Sep", L"Oct", L"Nov", L"Dec"};
+namespace {
 
-static const FX_WCHAR* const fullmonths[] = {
-    L"January",   L"February", L"March",    L"April",
-    L"May",       L"June",     L"July",     L"August",
-    L"September", L"October",  L"November", L"December"};
+const FX_WCHAR* const months[] = {L"Jan", L"Feb", L"Mar", L"Apr",
+                                  L"May", L"Jun", L"Jul", L"Aug",
+                                  L"Sep", L"Oct", L"Nov", L"Dec"};
 
-bool CJS_PublicMethods::IsNumber(const FX_WCHAR* str) {
+const FX_WCHAR* const fullmonths[] = {L"January", L"February", L"March",
+                                      L"April",   L"May",      L"June",
+                                      L"July",    L"August",   L"September",
+                                      L"October", L"November", L"December"};
+
+CFX_ByteString StrTrim(const CFX_ByteString& pStr) {
+  CFX_ByteString result(pStr);
+  result.TrimLeft(' ');
+  result.TrimRight(' ');
+  return result;
+}
+
+CFX_WideString StrTrim(const CFX_WideString& pStr) {
+  CFX_WideString result(pStr);
+  result.TrimLeft(' ');
+  result.TrimRight(' ');
+  return result;
+}
+
+}  // namespace
+
+bool CJS_PublicMethods::IsNumber(const CFX_WideString& str) {
   CFX_WideString sTrim = StrTrim(str);
   const FX_WCHAR* pTrim = sTrim.c_str();
   const FX_WCHAR* p = pTrim;
-
   bool bDot = false;
   bool bKXJS = false;
 
@@ -136,48 +153,6 @@ double CJS_PublicMethods::AF_Simple(const FX_WCHAR* sFuction,
   return dValue1;
 }
 
-CFX_WideString CJS_PublicMethods::StrLTrim(const FX_WCHAR* pStr) {
-  while (*pStr && *pStr == L' ')
-    pStr++;
-
-  return pStr;
-}
-
-CFX_WideString CJS_PublicMethods::StrRTrim(const FX_WCHAR* pStr) {
-  const FX_WCHAR* p = pStr;
-  while (*p)
-    p++;
-  while (p > pStr && *(p - 1) == L' ')
-    p--;
-
-  return CFX_WideString(pStr, p - pStr);
-}
-
-CFX_WideString CJS_PublicMethods::StrTrim(const FX_WCHAR* pStr) {
-  return StrRTrim(StrLTrim(pStr).c_str());
-}
-
-CFX_ByteString CJS_PublicMethods::StrLTrim(const FX_CHAR* pStr) {
-  while (*pStr && *pStr == ' ')
-    pStr++;
-
-  return pStr;
-}
-
-CFX_ByteString CJS_PublicMethods::StrRTrim(const FX_CHAR* pStr) {
-  const FX_CHAR* p = pStr;
-  while (*p)
-    p++;
-  while (p > pStr && *(p - 1) == L' ')
-    p--;
-
-  return CFX_ByteString(pStr, p - pStr);
-}
-
-CFX_ByteString CJS_PublicMethods::StrTrim(const FX_CHAR* pStr) {
-  return StrRTrim(StrLTrim(pStr));
-}
-
 CJS_Array CJS_PublicMethods::AF_MakeArrayFromList(CJS_Runtime* pRuntime,
                                                   CJS_Value val) {
   CJS_Array StrArray(pRuntime);
@@ -195,7 +170,8 @@ CJS_Array CJS_PublicMethods::AF_MakeArrayFromList(CJS_Runtime* pRuntime,
   while (*p) {
     const char* pTemp = strchr(p, ch);
     if (!pTemp) {
-      StrArray.SetElement(nIndex, CJS_Value(pRuntime, StrTrim(p).c_str()));
+      StrArray.SetElement(nIndex,
+                          CJS_Value(pRuntime, StrTrim(CFX_ByteString(p))));
       break;
     }
 
@@ -203,7 +179,8 @@ CJS_Array CJS_PublicMethods::AF_MakeArrayFromList(CJS_Runtime* pRuntime,
     strncpy(pSub, p, pTemp - p);
     *(pSub + (pTemp - p)) = '\0';
 
-    StrArray.SetElement(nIndex, CJS_Value(pRuntime, StrTrim(pSub).c_str()));
+    StrArray.SetElement(nIndex,
+                        CJS_Value(pRuntime, StrTrim(CFX_ByteString(pSub))));
     delete[] pSub;
 
     nIndex++;
@@ -937,7 +914,7 @@ FX_BOOL CJS_PublicMethods::AFNumber_Keystroke(
 
   if (pEvent->WillCommit()) {
     CFX_WideString wstrChange = w_strChange;
-    CFX_WideString wstrValue = StrLTrim(w_strValue.c_str());
+    CFX_WideString wstrValue = StrTrim(w_strValue);
     if (wstrValue.IsEmpty())
       return TRUE;
 
@@ -1176,7 +1153,7 @@ FX_BOOL CJS_PublicMethods::AFDate_FormatEx(IJS_Context* cc,
   return TRUE;
 }
 
-double CJS_PublicMethods::MakeInterDate(CFX_WideString strValue) {
+double CJS_PublicMethods::MakeInterDate(const CFX_WideString& strValue) {
   std::vector<CFX_WideString> wsArray;
   CFX_WideString sTemp = L"";
   for (int i = 0; i < strValue.GetLength(); ++i) {

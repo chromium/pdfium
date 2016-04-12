@@ -146,17 +146,9 @@ class CJS_PublicMethods : public CJS_Object {
                                        const CFX_WideString& format);
   static double ParseNormalDate(const CFX_WideString& value,
                                 bool* bWrongFormat);
-  static double MakeInterDate(CFX_WideString strValue);
+  static double MakeInterDate(const CFX_WideString& value);
 
-  static CFX_WideString StrLTrim(const FX_WCHAR* pStr);
-  static CFX_WideString StrRTrim(const FX_WCHAR* pStr);
-  static CFX_WideString StrTrim(const FX_WCHAR* pStr);
-
-  static CFX_ByteString StrLTrim(const FX_CHAR* pStr);
-  static CFX_ByteString StrRTrim(const FX_CHAR* pStr);
-  static CFX_ByteString StrTrim(const FX_CHAR* pStr);
-
-  static bool IsNumber(const FX_WCHAR* string);
+  static bool IsNumber(const CFX_WideString& str);
 
   static bool maskSatisfied(wchar_t c_Change, wchar_t c_Mask);
   static bool isReservedMaskChar(wchar_t ch);
