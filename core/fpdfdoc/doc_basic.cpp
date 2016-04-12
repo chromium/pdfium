@@ -316,7 +316,8 @@ bool CPDF_FileSpec::GetFileName(CFX_WideString* csFileName) const {
   if (CPDF_Dictionary* pDict = m_pObj->AsDictionary()) {
     *csFileName = pDict->GetUnicodeTextBy("UF");
     if (csFileName->IsEmpty()) {
-      *csFileName = CFX_WideString::FromLocal(pDict->GetConstStringBy("F"));
+      *csFileName =
+          CFX_WideString::FromLocal(pDict->GetStringBy("F").AsStringC());
     }
     if (pDict->GetStringBy("FS") == "URL")
       return true;

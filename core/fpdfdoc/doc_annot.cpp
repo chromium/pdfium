@@ -43,7 +43,7 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
       pDict = pAnnots->GetDictAt(i);
     }
     m_AnnotList.push_back(new CPDF_Annot(pDict, this));
-    if (bRegenerateAP && pDict->GetConstStringBy("Subtype") == "Widget" &&
+    if (bRegenerateAP && pDict->GetStringBy("Subtype") == "Widget" &&
         CPDF_InterForm::UpdatingAPEnabled()) {
       FPDF_GenerateAP(m_pDocument, pDict);
     }
@@ -127,10 +127,12 @@ void CPDF_AnnotList::DisplayAnnots(CPDF_Page* pPage,
 CPDF_Annot::CPDF_Annot(CPDF_Dictionary* pDict, CPDF_AnnotList* pList)
     : m_pAnnotDict(pDict),
       m_pList(pList),
-      m_sSubtype(m_pAnnotDict->GetConstStringBy("Subtype")) {}
+      m_sSubtype(m_pAnnotDict->GetStringBy("Subtype")) {}
+
 CPDF_Annot::~CPDF_Annot() {
   ClearCachedAP();
 }
+
 void CPDF_Annot::ClearCachedAP() {
   for (const auto& pair : m_APMap) {
     delete pair.second;

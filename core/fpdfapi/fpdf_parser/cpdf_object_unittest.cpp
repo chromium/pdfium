@@ -34,7 +34,6 @@ void TestArrayAccessors(const CPDF_Array* arr,
                         CPDF_Dictionary* dict_val,
                         CPDF_Stream* stream_val) {
   EXPECT_STREQ(str_val, arr->GetStringAt(index).c_str());
-  EXPECT_STREQ(const_str_val, arr->GetConstStringAt(index).c_str());
   EXPECT_EQ(int_val, arr->GetIntegerAt(index));
   EXPECT_EQ(float_val, arr->GetNumberAt(index));
   EXPECT_EQ(float_val, arr->GetFloatAt(index));
@@ -196,33 +195,6 @@ TEST_F(PDFObjectsTest, GetString) {
                                         "",     "",     ""};
   for (size_t i = 0; i < m_RefObjs.size(); ++i) {
     EXPECT_STREQ(indirect_obj_results[i], m_RefObjs[i]->GetString().c_str());
-  }
-}
-
-TEST_F(PDFObjectsTest, GetConstString) {
-  const char* direct_obj_results[] = {
-      nullptr, nullptr, nullptr, nullptr, "A simple test", "\t\n",
-      "space", nullptr, nullptr, nullptr, nullptr};
-  // Check for direct objects.
-  for (size_t i = 0; i < m_DirectObjs.size(); ++i) {
-    if (!direct_obj_results[i]) {
-      EXPECT_EQ(direct_obj_results[i],
-                m_DirectObjs[i]->GetConstString().c_str());
-    } else {
-      EXPECT_STREQ(direct_obj_results[i],
-                   m_DirectObjs[i]->GetConstString().c_str());
-    }
-  }
-  // Check indirect references.
-  const char* indirect_obj_results[] = {nullptr, nullptr, "\t\n", "space",
-                                        nullptr, nullptr, nullptr};
-  for (size_t i = 0; i < m_RefObjs.size(); ++i) {
-    if (!indirect_obj_results[i]) {
-      EXPECT_EQ(nullptr, m_RefObjs[i]->GetConstString().c_str());
-    } else {
-      EXPECT_STREQ(indirect_obj_results[i],
-                   m_RefObjs[i]->GetConstString().c_str());
-    }
   }
 }
 
@@ -668,16 +640,12 @@ TEST(PDFArrayTest, GetTypeAt) {
     const char* const expected_str[] = {
         "true",          "false", "0",    "-1234", "2345", "0.05", "",
         "It is a test!", "NAME",  "test", "",      "",     "",     ""};
-    const char* const expected_cstr[] = {
-        nullptr,         nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-        "It is a test!", "NAME",  "test",  nullptr, nullptr, nullptr, nullptr};
     const int expected_int[] = {1, 0, 0, -1234, 2345, 0, 0,
                                 0, 0, 0, 0,     0,    0, 0};
     const float expected_float[] = {0, 0, 0, -1234, 2345, 0.05f, 0,
                                     0, 0, 0, 0,     0,    0,     0};
     for (size_t i = 0; i < arr->GetCount(); ++i) {
       EXPECT_STREQ(expected_str[i], arr->GetStringAt(i).c_str());
-      EXPECT_STREQ(expected_cstr[i], arr->GetConstStringAt(i).c_str());
       EXPECT_EQ(expected_int[i], arr->GetIntegerAt(i));
       EXPECT_EQ(expected_float[i], arr->GetNumberAt(i));
       EXPECT_EQ(expected_float[i], arr->GetFloatAt(i));

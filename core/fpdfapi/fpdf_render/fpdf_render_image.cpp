@@ -412,13 +412,13 @@ FX_BOOL CPDF_ImageRenderer::StartRenderDIBSource() {
             "Filter");
     if (pFilters) {
       if (pFilters->IsName()) {
-        CFX_ByteStringC bsDecodeType = pFilters->GetConstString();
+        CFX_ByteString bsDecodeType = pFilters->GetString();
         if (bsDecodeType == "DCTDecode" || bsDecodeType == "JPXDecode") {
           m_Flags |= FXRENDER_IMAGE_LOSSY;
         }
       } else if (CPDF_Array* pArray = pFilters->AsArray()) {
         for (size_t i = 0; i < pArray->GetCount(); i++) {
-          CFX_ByteStringC bsDecodeType = pArray->GetConstStringAt(i);
+          CFX_ByteString bsDecodeType = pArray->GetStringAt(i);
           if (bsDecodeType == "DCTDecode" || bsDecodeType == "JPXDecode") {
             m_Flags |= FXRENDER_IMAGE_LOSSY;
             break;
@@ -880,10 +880,6 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
   if (!pSMaskDict) {
     return NULL;
   }
-  int width = pClipRect->right - pClipRect->left;
-  int height = pClipRect->bottom - pClipRect->top;
-  FX_BOOL bLuminosity = FALSE;
-  bLuminosity = pSMaskDict->GetConstStringBy("S") != "Alpha";
   CPDF_Stream* pGroup = pSMaskDict->GetStreamBy("G");
   if (!pGroup) {
     return NULL;
@@ -895,10 +891,15 @@ CFX_DIBitmap* CPDF_RenderStatus::LoadSMask(CPDF_Dictionary* pSMaskDict,
 
   CFX_Matrix matrix = *pMatrix;
   matrix.TranslateI(-pClipRect->left, -pClipRect->top);
+
   CPDF_Form form(m_pContext->GetDocument(), m_pContext->GetPageResources(),
                  pGroup);
   form.ParseContent(NULL, NULL, NULL, NULL);
+
   CFX_FxgeDevice bitmap_device;
+  FX_BOOL bLuminosity = pSMaskDict->GetStringBy("S") != "Alpha";
+  int width = pClipRect->right - pClipRect->left;
+  int height = pClipRect->bottom - pClipRect->top;
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_APPLE_
   if (!bitmap_device.Create(width, height,
                             bLuminosity ? FXDIB_Rgb32 : FXDIB_8bppMask)) {

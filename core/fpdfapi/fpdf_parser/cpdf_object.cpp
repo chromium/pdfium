@@ -33,10 +33,6 @@ CFX_ByteString CPDF_Object::GetString() const {
   return CFX_ByteString();
 }
 
-CFX_ByteStringC CPDF_Object::GetConstString() const {
-  return CFX_ByteStringC();
-}
-
 CFX_WideString CPDF_Object::GetUnicodeText() const {
   return CFX_WideString();
 }

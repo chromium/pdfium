@@ -46,9 +46,6 @@ class CPDF_Object {
   void Release();
 
   virtual CFX_ByteString GetString() const;
-
-  // Note: |this| must outlive the use of |GetConstString|'s result.
-  virtual CFX_ByteStringC GetConstString() const;
   virtual CFX_WideString GetUnicodeText() const;
   virtual FX_FLOAT GetNumber() const;
   virtual int GetInteger() const;

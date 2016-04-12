@@ -350,11 +350,11 @@ FX_BOOL PDF_DataDecode(const uint8_t* src_buf,
       pParams = nullptr;
 
     for (size_t i = 0; i < pDecoders->GetCount(); i++) {
-      DecoderList.push_back(pDecoders->GetConstStringAt(i));
+      DecoderList.push_back(pDecoders->GetStringAt(i));
       ParamList.Add(pParams ? pParamsArray->GetDictAt(i) : nullptr);
     }
   } else {
-    DecoderList.push_back(pDecoder->GetConstString());
+    DecoderList.push_back(pDecoder->GetString());
     ParamList.Add(pParams ? pParams->GetDict() : nullptr);
   }
   uint8_t* last_buf = (uint8_t*)src_buf;

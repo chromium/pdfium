@@ -34,11 +34,8 @@ class CPDF_Dictionary : public CPDF_Object {
   CPDF_Object* GetObjectBy(const CFX_ByteStringC& key) const;
   CPDF_Object* GetDirectObjectBy(const CFX_ByteStringC& key) const;
   CFX_ByteString GetStringBy(const CFX_ByteStringC& key) const;
-  CFX_ByteStringC GetConstStringBy(const CFX_ByteStringC& key) const;
   CFX_ByteString GetStringBy(const CFX_ByteStringC& key,
                              const CFX_ByteStringC& default_str) const;
-  CFX_ByteStringC GetConstStringBy(const CFX_ByteStringC& key,
-                                   const CFX_ByteStringC& default_str) const;
   CFX_WideString GetUnicodeTextBy(const CFX_ByteStringC& key) const;
   int GetIntegerBy(const CFX_ByteStringC& key) const;
   int GetIntegerBy(const CFX_ByteStringC& key, int default_int) const;

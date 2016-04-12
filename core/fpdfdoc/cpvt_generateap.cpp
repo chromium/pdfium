@@ -451,7 +451,7 @@ FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
 }  // namespace
 
 FX_BOOL FPDF_GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
-  if (!pAnnotDict || pAnnotDict->GetConstStringBy("Subtype") != "Widget") {
+  if (!pAnnotDict || pAnnotDict->GetStringBy("Subtype") != "Widget") {
     return FALSE;
   }
   CFX_ByteString field_type = FPDF_GetFieldAttr(pAnnotDict, "FT")->GetString();

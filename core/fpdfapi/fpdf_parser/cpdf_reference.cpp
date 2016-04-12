@@ -22,11 +22,6 @@ CFX_ByteString CPDF_Reference::GetString() const {
   return obj ? obj->GetString() : CFX_ByteString();
 }
 
-CFX_ByteStringC CPDF_Reference::GetConstString() const {
-  CPDF_Object* obj = SafeGetDirect();
-  return obj ? obj->GetConstString() : CFX_ByteStringC();
-}
-
 FX_FLOAT CPDF_Reference::GetNumber() const {
   CPDF_Object* obj = SafeGetDirect();
   return obj ? obj->GetNumber() : 0;

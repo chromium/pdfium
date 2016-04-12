@@ -30,7 +30,6 @@ class CPDF_Array : public CPDF_Object {
   CPDF_Object* GetObjectAt(size_t index) const;
   CPDF_Object* GetDirectObjectAt(size_t index) const;
   CFX_ByteString GetStringAt(size_t index) const;
-  CFX_ByteStringC GetConstStringAt(size_t index) const;
   int GetIntegerAt(size_t index) const;
   FX_FLOAT GetNumberAt(size_t index) const;
   CPDF_Dictionary* GetDictAt(size_t index) const;

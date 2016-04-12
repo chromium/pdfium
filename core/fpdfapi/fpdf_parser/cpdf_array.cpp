@@ -92,12 +92,6 @@ CFX_ByteString CPDF_Array::GetStringAt(size_t i) const {
   return m_Objects.at(i)->GetString();
 }
 
-CFX_ByteStringC CPDF_Array::GetConstStringAt(size_t i) const {
-  if (i >= m_Objects.size())
-    return CFX_ByteStringC();
-  return m_Objects.at(i)->GetConstString();
-}
-
 int CPDF_Array::GetIntegerAt(size_t i) const {
   if (i >= m_Objects.size())
     return 0;

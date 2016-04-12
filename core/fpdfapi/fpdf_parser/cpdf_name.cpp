@@ -28,10 +28,6 @@ CFX_ByteString CPDF_Name::GetString() const {
   return m_Name;
 }
 
-CFX_ByteStringC CPDF_Name::GetConstString() const {
-  return m_Name.AsStringC();
-}
-
 void CPDF_Name::SetString(const CFX_ByteString& str) {
   m_Name = str;
 }

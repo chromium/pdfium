@@ -20,7 +20,6 @@ class CPDF_Reference : public CPDF_Object {
   CPDF_Object* Clone(FX_BOOL bDirect = FALSE) const override;
   CPDF_Object* GetDirect() const override;
   CFX_ByteString GetString() const override;
-  CFX_ByteStringC GetConstString() const override;
   FX_FLOAT GetNumber() const override;
   int GetInteger() const override;
   CPDF_Dictionary* GetDict() const override;

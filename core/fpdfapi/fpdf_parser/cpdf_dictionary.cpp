@@ -68,12 +68,6 @@ CFX_ByteString CPDF_Dictionary::GetStringBy(const CFX_ByteStringC& key) const {
   return p ? p->GetString() : CFX_ByteString();
 }
 
-CFX_ByteStringC CPDF_Dictionary::GetConstStringBy(
-    const CFX_ByteStringC& key) const {
-  CPDF_Object* p = GetObjectBy(key);
-  return p ? p->GetConstString() : CFX_ByteStringC();
-}
-
 CFX_WideString CPDF_Dictionary::GetUnicodeTextBy(
     const CFX_ByteStringC& key) const {
   CPDF_Object* p = GetObjectBy(key);
@@ -86,13 +80,6 @@ CFX_ByteString CPDF_Dictionary::GetStringBy(const CFX_ByteStringC& key,
                                             const CFX_ByteStringC& def) const {
   CPDF_Object* p = GetObjectBy(key);
   return p ? p->GetString() : CFX_ByteString(def);
-}
-
-CFX_ByteStringC CPDF_Dictionary::GetConstStringBy(
-    const CFX_ByteStringC& key,
-    const CFX_ByteStringC& def) const {
-  CPDF_Object* p = GetObjectBy(key);
-  return p ? p->GetConstString() : CFX_ByteStringC(def);
 }
 
 int CPDF_Dictionary::GetIntegerBy(const CFX_ByteStringC& key) const {
