@@ -44,7 +44,7 @@ CPDF_StreamParser::~CPDF_StreamParser() {
   }
 }
 
-uint32_t DecodeAllScanlines(ICodec_ScanlineDecoder* pDecoder,
+uint32_t DecodeAllScanlines(CCodec_ScanlineDecoder* pDecoder,
                             uint8_t*& dest_buf,
                             uint32_t& dest_size) {
   if (!pDecoder) {
@@ -73,7 +73,7 @@ uint32_t DecodeAllScanlines(ICodec_ScanlineDecoder* pDecoder,
   return srcoff;
 }
 
-ICodec_ScanlineDecoder* FPDFAPI_CreateFaxDecoder(
+CCodec_ScanlineDecoder* FPDFAPI_CreateFaxDecoder(
     const uint8_t* src_buf,
     uint32_t src_size,
     int width,
@@ -89,7 +89,7 @@ uint32_t PDF_DecodeInlineStream(const uint8_t* src_buf,
                                 uint8_t*& dest_buf,
                                 uint32_t& dest_size) {
   if (decoder == "CCITTFaxDecode" || decoder == "CCF") {
-    ICodec_ScanlineDecoder* pDecoder =
+    CCodec_ScanlineDecoder* pDecoder =
         FPDFAPI_CreateFaxDecoder(src_buf, limit, width, height, pParam);
     return DecodeAllScanlines(pDecoder, dest_buf, dest_size);
   }
@@ -108,7 +108,7 @@ uint32_t PDF_DecodeInlineStream(const uint8_t* src_buf,
                                     dest_size);
   }
   if (decoder == "DCTDecode" || decoder == "DCT") {
-    ICodec_ScanlineDecoder* pDecoder =
+    CCodec_ScanlineDecoder* pDecoder =
         CPDF_ModuleMgr::Get()->GetJpegModule()->CreateDecoder(
             src_buf, limit, width, height, 0,
             pParam ? pParam->GetIntegerBy("ColorTransform", 1) : 1);

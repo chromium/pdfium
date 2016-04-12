@@ -69,21 +69,22 @@ static FX_BOOL gif_get_record_position(gif_decompress_struct_p gif_ptr,
       pal_num, pal_ptr, delay_time, user_input, trans_index, disposal_method,
       interlace);
 }
-void* CCodec_GifModule::Start(void* pModule) {
-  FXGIF_Context* p = (FXGIF_Context*)FX_Alloc(uint8_t, sizeof(FXGIF_Context));
-  if (p == NULL) {
-    return NULL;
-  }
+
+FXGIF_Context* CCodec_GifModule::Start(void* pModule) {
+  FXGIF_Context* p = FX_Alloc(FXGIF_Context, 1);
+  if (!p)
+    return nullptr;
+
   FXSYS_memset(p, 0, sizeof(FXGIF_Context));
   p->m_AllocFunc = gif_alloc_func;
   p->m_FreeFunc = gif_free_func;
-  p->gif_ptr = NULL;
+  p->gif_ptr = nullptr;
   p->parent_ptr = (void*)this;
   p->child_ptr = pModule;
   p->gif_ptr = gif_create_decompress();
-  if (p->gif_ptr == NULL) {
+  if (!p->gif_ptr) {
     FX_Free(p);
-    return NULL;
+    return nullptr;
   }
   p->gif_ptr->context_ptr = (void*)p;
   p->gif_ptr->err_ptr = m_szLastError;
@@ -94,68 +95,66 @@ void* CCodec_GifModule::Start(void* pModule) {
   p->gif_ptr->gif_get_record_position_fn = gif_get_record_position;
   return p;
 }
-void CCodec_GifModule::Finish(void* pContext) {
-  FXGIF_Context* p = (FXGIF_Context*)pContext;
-  if (p) {
-    gif_destroy_decompress(&p->gif_ptr);
-    p->m_FreeFunc(p);
+
+void CCodec_GifModule::Finish(FXGIF_Context* ctx) {
+  if (ctx) {
+    gif_destroy_decompress(&ctx->gif_ptr);
+    ctx->m_FreeFunc(ctx);
   }
 }
-int32_t CCodec_GifModule::ReadHeader(void* pContext,
+
+int32_t CCodec_GifModule::ReadHeader(FXGIF_Context* ctx,
                                      int* width,
                                      int* height,
                                      int* pal_num,
                                      void** pal_pp,
                                      int* bg_index,
                                      CFX_DIBAttribute* pAttribute) {
-  FXGIF_Context* p = (FXGIF_Context*)pContext;
-  if (setjmp(p->gif_ptr->jmpbuf)) {
+  if (setjmp(ctx->gif_ptr->jmpbuf))
     return 0;
-  }
-  int32_t ret = gif_read_header(p->gif_ptr);
-  if (ret != 1) {
+
+  int32_t ret = gif_read_header(ctx->gif_ptr);
+  if (ret != 1)
     return ret;
-  }
-  if (pAttribute) {
-  }
-  *width = p->gif_ptr->width;
-  *height = p->gif_ptr->height;
-  *pal_num = p->gif_ptr->global_pal_num;
-  *pal_pp = p->gif_ptr->global_pal_ptr;
-  *bg_index = p->gif_ptr->bc_index;
+
+  *width = ctx->gif_ptr->width;
+  *height = ctx->gif_ptr->height;
+  *pal_num = ctx->gif_ptr->global_pal_num;
+  *pal_pp = ctx->gif_ptr->global_pal_ptr;
+  *bg_index = ctx->gif_ptr->bc_index;
   return 1;
 }
-int32_t CCodec_GifModule::LoadFrameInfo(void* pContext, int* frame_num) {
-  FXGIF_Context* p = (FXGIF_Context*)pContext;
-  if (setjmp(p->gif_ptr->jmpbuf)) {
+
+int32_t CCodec_GifModule::LoadFrameInfo(FXGIF_Context* ctx, int* frame_num) {
+  if (setjmp(ctx->gif_ptr->jmpbuf))
     return 0;
-  }
-  int32_t ret = gif_get_frame(p->gif_ptr);
-  if (ret != 1) {
+
+  int32_t ret = gif_get_frame(ctx->gif_ptr);
+  if (ret != 1)
     return ret;
-  }
-  *frame_num = gif_get_frame_num(p->gif_ptr);
+
+  *frame_num = gif_get_frame_num(ctx->gif_ptr);
   return 1;
 }
-int32_t CCodec_GifModule::LoadFrame(void* pContext,
+
+int32_t CCodec_GifModule::LoadFrame(FXGIF_Context* ctx,
                                     int frame_num,
                                     CFX_DIBAttribute* pAttribute) {
-  FXGIF_Context* p = (FXGIF_Context*)pContext;
-  if (setjmp(p->gif_ptr->jmpbuf)) {
+  if (setjmp(ctx->gif_ptr->jmpbuf))
     return 0;
-  }
-  int32_t ret = gif_load_frame(p->gif_ptr, frame_num);
+
+  int32_t ret = gif_load_frame(ctx->gif_ptr, frame_num);
   if (ret == 1) {
     if (pAttribute) {
       pAttribute->m_nGifLeft =
-          p->gif_ptr->img_ptr_arr_ptr->GetAt(frame_num)->image_info_ptr->left;
+          ctx->gif_ptr->img_ptr_arr_ptr->GetAt(frame_num)->image_info_ptr->left;
       pAttribute->m_nGifTop =
-          p->gif_ptr->img_ptr_arr_ptr->GetAt(frame_num)->image_info_ptr->top;
-      pAttribute->m_fAspectRatio = p->gif_ptr->pixel_aspect;
-      if (p->gif_ptr->cmt_data_ptr) {
+          ctx->gif_ptr->img_ptr_arr_ptr->GetAt(frame_num)->image_info_ptr->top;
+      pAttribute->m_fAspectRatio = ctx->gif_ptr->pixel_aspect;
+      if (ctx->gif_ptr->cmt_data_ptr) {
         const uint8_t* buf =
-            (const uint8_t*)p->gif_ptr->cmt_data_ptr->GetBuffer(0);
-        uint32_t len = p->gif_ptr->cmt_data_ptr->GetLength();
+            (const uint8_t*)ctx->gif_ptr->cmt_data_ptr->GetBuffer(0);
+        uint32_t len = ctx->gif_ptr->cmt_data_ptr->GetLength();
         if (len > 21) {
           uint8_t size = *buf++;
           if (size) {
@@ -174,14 +173,14 @@ int32_t CCodec_GifModule::LoadFrame(void* pContext,
   }
   return ret;
 }
-uint32_t CCodec_GifModule::GetAvailInput(void* pContext,
+
+uint32_t CCodec_GifModule::GetAvailInput(FXGIF_Context* ctx,
                                          uint8_t** avial_buf_ptr) {
-  FXGIF_Context* p = (FXGIF_Context*)pContext;
-  return gif_get_avail_input(p->gif_ptr, avial_buf_ptr);
+  return gif_get_avail_input(ctx->gif_ptr, avial_buf_ptr);
 }
-void CCodec_GifModule::Input(void* pContext,
+
+void CCodec_GifModule::Input(FXGIF_Context* ctx,
                              const uint8_t* src_buf,
                              uint32_t src_size) {
-  FXGIF_Context* p = (FXGIF_Context*)pContext;
-  gif_input_buffer(p->gif_ptr, (uint8_t*)src_buf, src_size);
+  gif_input_buffer(ctx->gif_ptr, (uint8_t*)src_buf, src_size);
 }

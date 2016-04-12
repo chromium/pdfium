@@ -41,24 +41,31 @@ void CPDF_ModuleMgr::SetPrivateData(void* module_id,
                                     PD_CALLBACK_FREEDATA callback) {
   m_privateData.SetPrivateData(module_id, pData, callback);
 }
+
 void* CPDF_ModuleMgr::GetPrivateData(void* module_id) {
   return m_privateData.GetPrivateData(module_id);
 }
-ICodec_FaxModule* CPDF_ModuleMgr::GetFaxModule() {
-  return m_pCodecModule ? m_pCodecModule->GetFaxModule() : NULL;
+
+CCodec_FaxModule* CPDF_ModuleMgr::GetFaxModule() {
+  return m_pCodecModule ? m_pCodecModule->GetFaxModule() : nullptr;
 }
-ICodec_JpegModule* CPDF_ModuleMgr::GetJpegModule() {
-  return m_pCodecModule ? m_pCodecModule->GetJpegModule() : NULL;
+
+CCodec_JpegModule* CPDF_ModuleMgr::GetJpegModule() {
+  return m_pCodecModule ? m_pCodecModule->GetJpegModule() : nullptr;
 }
-ICodec_JpxModule* CPDF_ModuleMgr::GetJpxModule() {
-  return m_pCodecModule ? m_pCodecModule->GetJpxModule() : NULL;
+
+CCodec_JpxModule* CPDF_ModuleMgr::GetJpxModule() {
+  return m_pCodecModule ? m_pCodecModule->GetJpxModule() : nullptr;
 }
-ICodec_Jbig2Module* CPDF_ModuleMgr::GetJbig2Module() {
-  return m_pCodecModule ? m_pCodecModule->GetJbig2Module() : NULL;
+
+CCodec_Jbig2Module* CPDF_ModuleMgr::GetJbig2Module() {
+  return m_pCodecModule ? m_pCodecModule->GetJbig2Module() : nullptr;
 }
-ICodec_IccModule* CPDF_ModuleMgr::GetIccModule() {
-  return m_pCodecModule ? m_pCodecModule->GetIccModule() : NULL;
+
+CCodec_IccModule* CPDF_ModuleMgr::GetIccModule() {
+  return m_pCodecModule ? m_pCodecModule->GetIccModule() : nullptr;
 }
-ICodec_FlateModule* CPDF_ModuleMgr::GetFlateModule() {
-  return m_pCodecModule ? m_pCodecModule->GetFlateModule() : NULL;
+
+CCodec_FlateModule* CPDF_ModuleMgr::GetFlateModule() {
+  return m_pCodecModule ? m_pCodecModule->GetFlateModule() : nullptr;
 }

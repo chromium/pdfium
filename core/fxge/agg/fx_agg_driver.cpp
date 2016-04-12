@@ -1106,7 +1106,7 @@ class CFX_Renderer {
     FX_BOOL bObjectCMYK = FXGETFLAG_COLORTYPE(alpha_flag);
     FX_BOOL bDeviceCMYK = pDevice->IsCmykImage();
     m_Alpha = bObjectCMYK ? FXGETFLAG_ALPHA_FILL(alpha_flag) : FXARGB_A(color);
-    ICodec_IccModule* pIccModule = NULL;
+    CCodec_IccModule* pIccModule = NULL;
     if (!CFX_GEModule::Get()->GetCodecModule() ||
         !CFX_GEModule::Get()->GetCodecModule()->GetIccModule()) {
       pIccTransform = NULL;
@@ -1529,7 +1529,7 @@ FX_BOOL _DibSetPixel(CFX_DIBitmap* pDevice,
   FX_BOOL bObjCMYK = FXGETFLAG_COLORTYPE(alpha_flag);
   int alpha = bObjCMYK ? FXGETFLAG_ALPHA_FILL(alpha_flag) : FXARGB_A(color);
   if (pIccTransform) {
-    ICodec_IccModule* pIccModule =
+    CCodec_IccModule* pIccModule =
         CFX_GEModule::Get()->GetCodecModule()->GetIccModule();
     color = bObjCMYK ? FXCMYK_TODIB(color) : FXARGB_TODIB(color);
     pIccModule->TranslateScanline(pIccTransform, (uint8_t*)&color,

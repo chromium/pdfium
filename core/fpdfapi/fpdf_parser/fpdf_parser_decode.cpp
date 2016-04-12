@@ -225,7 +225,7 @@ uint32_t RunLengthDecode(const uint8_t* src_buf,
   return ret;
 }
 
-ICodec_ScanlineDecoder* FPDFAPI_CreateFaxDecoder(
+CCodec_ScanlineDecoder* FPDFAPI_CreateFaxDecoder(
     const uint8_t* src_buf,
     uint32_t src_size,
     int width,
@@ -278,7 +278,7 @@ static FX_BOOL CheckFlateDecodeParams(int Colors,
   return TRUE;
 }
 
-ICodec_ScanlineDecoder* FPDFAPI_CreateFlateDecoder(
+CCodec_ScanlineDecoder* FPDFAPI_CreateFlateDecoder(
     const uint8_t* src_buf,
     uint32_t src_size,
     int width,

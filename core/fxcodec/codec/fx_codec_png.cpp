@@ -195,34 +195,36 @@ static void _png_get_row_func(png_structp png_ptr,
   }
   pModule->FillScanlineBufCompletedCallback(p->child_ptr, pass, row_num);
 }
-void* CCodec_PngModule::Start(void* pModule) {
+
+FXPNG_Context* CCodec_PngModule::Start(void* pModule) {
   FXPNG_Context* p = (FXPNG_Context*)FX_Alloc(uint8_t, sizeof(FXPNG_Context));
-  if (p == NULL) {
-    return NULL;
-  }
+  if (!p)
+    return nullptr;
+
   p->m_AllocFunc = _png_alloc_func;
   p->m_FreeFunc = _png_free_func;
-  p->png_ptr = NULL;
-  p->info_ptr = NULL;
+  p->png_ptr = nullptr;
+  p->info_ptr = nullptr;
   p->parent_ptr = (void*)this;
   p->child_ptr = pModule;
-  p->png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-  if (p->png_ptr == NULL) {
+  p->png_ptr =
+      png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+  if (!p->png_ptr) {
     FX_Free(p);
-    return NULL;
+    return nullptr;
   }
   p->info_ptr = png_create_info_struct(p->png_ptr);
-  if (p->info_ptr == NULL) {
-    png_destroy_read_struct(&(p->png_ptr), (png_infopp)NULL, (png_infopp)NULL);
+  if (!p->info_ptr) {
+    png_destroy_read_struct(&(p->png_ptr), nullptr, nullptr);
     FX_Free(p);
-    return NULL;
+    return nullptr;
   }
   if (setjmp(png_jmpbuf(p->png_ptr))) {
     if (p) {
-      png_destroy_read_struct(&(p->png_ptr), &(p->info_ptr), (png_infopp)NULL);
+      png_destroy_read_struct(&(p->png_ptr), &(p->info_ptr), nullptr);
       FX_Free(p);
     }
-    return NULL;
+    return nullptr;
   }
   png_set_progressive_read_fn(p->png_ptr, p, _png_get_header_func,
                               _png_get_row_func, _png_get_end_func);
@@ -230,25 +232,25 @@ void* CCodec_PngModule::Start(void* pModule) {
                    (png_error_ptr)_png_warning_data);
   return p;
 }
-void CCodec_PngModule::Finish(void* pContext) {
-  FXPNG_Context* p = (FXPNG_Context*)pContext;
-  if (p) {
-    png_destroy_read_struct(&(p->png_ptr), &(p->info_ptr), (png_infopp)NULL);
-    p->m_FreeFunc(p);
+
+void CCodec_PngModule::Finish(FXPNG_Context* ctx) {
+  if (ctx) {
+    png_destroy_read_struct(&(ctx->png_ptr), &(ctx->info_ptr), nullptr);
+    ctx->m_FreeFunc(ctx);
   }
 }
-FX_BOOL CCodec_PngModule::Input(void* pContext,
+
+FX_BOOL CCodec_PngModule::Input(FXPNG_Context* ctx,
                                 const uint8_t* src_buf,
                                 uint32_t src_size,
                                 CFX_DIBAttribute* pAttribute) {
-  FXPNG_Context* p = (FXPNG_Context*)pContext;
-  if (setjmp(png_jmpbuf(p->png_ptr))) {
+  if (setjmp(png_jmpbuf(ctx->png_ptr))) {
     if (pAttribute &&
         0 == FXSYS_strcmp(m_szLastError, "Read Header Callback Error")) {
-      _png_load_bmp_attribute(p->png_ptr, p->info_ptr, pAttribute);
+      _png_load_bmp_attribute(ctx->png_ptr, ctx->info_ptr, pAttribute);
     }
     return FALSE;
   }
-  png_process_data(p->png_ptr, p->info_ptr, (uint8_t*)src_buf, src_size);
+  png_process_data(ctx->png_ptr, ctx->info_ptr, (uint8_t*)src_buf, src_size);
   return TRUE;
 }

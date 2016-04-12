@@ -9,6 +9,26 @@
 #include "core/fxcodec/codec/codec_int.h"
 #include "core/fxcodec/include/fx_codec.h"
 
+namespace {
+
+class CCodec_Jbig2Context {
+ public:
+  CCodec_Jbig2Context();
+  ~CCodec_Jbig2Context() {}
+
+  uint32_t m_width;
+  uint32_t m_height;
+  CPDF_StreamAcc* m_pGlobalStream;
+  CPDF_StreamAcc* m_pSrcStream;
+  uint8_t* m_dest_buf;
+  uint32_t m_dest_pitch;
+  IFX_Pause* m_pPause;
+  CJBig2_Context* m_pContext;
+  CJBig2_Image* m_dest_image;
+};
+
+}  // namespace
+
 // Holds per-document JBig2 related data.
 class JBig2DocumentContext : public CFX_DestructObject {
  public:

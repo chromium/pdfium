@@ -490,7 +490,7 @@ FX_BOOL CFX_DIBitmap::TransferMask(int dest_left,
   uint8_t* color_p = (uint8_t*)&dst_color;
   if (pIccTransform && CFX_GEModule::Get()->GetCodecModule() &&
       CFX_GEModule::Get()->GetCodecModule()->GetIccModule()) {
-    ICodec_IccModule* pIccModule =
+    CCodec_IccModule* pIccModule =
         CFX_GEModule::Get()->GetCodecModule()->GetIccModule();
     pIccModule->TranslateScanline(pIccTransform, color_p, color_p, 1);
   } else {

@@ -476,7 +476,7 @@ uint8_t* CCodec_JpegDecoder::v_GetNextLine() {
 uint32_t CCodec_JpegDecoder::GetSrcOffset() {
   return (uint32_t)(m_SrcSize - src.bytes_in_buffer);
 }
-ICodec_ScanlineDecoder* CCodec_JpegModule::CreateDecoder(
+CCodec_ScanlineDecoder* CCodec_JpegModule::CreateDecoder(
     const uint8_t* src_buf,
     uint32_t src_size,
     int width,
@@ -551,7 +551,7 @@ static void* jpeg_alloc_func(unsigned int size) {
 static void jpeg_free_func(void* p) {
   FX_Free(p);
 }
-void* CCodec_JpegModule::Start() {
+FXJPEG_Context* CCodec_JpegModule::Start() {
   FXJPEG_Context* p = FX_Alloc(FXJPEG_Context, 1);
   p->m_AllocFunc = jpeg_alloc_func;
   p->m_FreeFunc = jpeg_free_func;
@@ -575,85 +575,83 @@ void* CCodec_JpegModule::Start() {
   p->m_SkipSize = 0;
   return p;
 }
-void CCodec_JpegModule::Finish(void* pContext) {
-  FXJPEG_Context* p = (FXJPEG_Context*)pContext;
-  jpeg_destroy_decompress(&p->m_Info);
-  p->m_FreeFunc(p);
+
+void CCodec_JpegModule::Finish(FXJPEG_Context* ctx) {
+  jpeg_destroy_decompress(&ctx->m_Info);
+  ctx->m_FreeFunc(ctx);
 }
-void CCodec_JpegModule::Input(void* pContext,
+
+void CCodec_JpegModule::Input(FXJPEG_Context* ctx,
                               const unsigned char* src_buf,
                               uint32_t src_size) {
-  FXJPEG_Context* p = (FXJPEG_Context*)pContext;
-  if (p->m_SkipSize) {
-    if (p->m_SkipSize > src_size) {
-      p->m_SrcMgr.bytes_in_buffer = 0;
-      p->m_SkipSize -= src_size;
+  if (ctx->m_SkipSize) {
+    if (ctx->m_SkipSize > src_size) {
+      ctx->m_SrcMgr.bytes_in_buffer = 0;
+      ctx->m_SkipSize -= src_size;
       return;
     }
-    src_size -= p->m_SkipSize;
-    src_buf += p->m_SkipSize;
-    p->m_SkipSize = 0;
+    src_size -= ctx->m_SkipSize;
+    src_buf += ctx->m_SkipSize;
+    ctx->m_SkipSize = 0;
   }
-  p->m_SrcMgr.next_input_byte = src_buf;
-  p->m_SrcMgr.bytes_in_buffer = src_size;
+  ctx->m_SrcMgr.next_input_byte = src_buf;
+  ctx->m_SrcMgr.bytes_in_buffer = src_size;
 }
 
 #ifdef PDF_ENABLE_XFA
-int CCodec_JpegModule::ReadHeader(void* pContext,
+int CCodec_JpegModule::ReadHeader(FXJPEG_Context* ctx,
                                   int* width,
                                   int* height,
                                   int* nComps,
                                   CFX_DIBAttribute* pAttribute) {
 #else   // PDF_ENABLE_XFA
-int CCodec_JpegModule::ReadHeader(void* pContext,
+int CCodec_JpegModule::ReadHeader(FXJPEG_Context* ctx,
                                   int* width,
                                   int* height,
                                   int* nComps) {
 #endif  // PDF_ENABLE_XFA
-  FXJPEG_Context* p = (FXJPEG_Context*)pContext;
-  if (setjmp(p->m_JumpMark) == -1) {
+  if (setjmp(ctx->m_JumpMark) == -1)
     return 1;
-  }
-  int ret = jpeg_read_header(&p->m_Info, true);
-  if (ret == JPEG_SUSPENDED) {
+
+  int ret = jpeg_read_header(&ctx->m_Info, true);
+  if (ret == JPEG_SUSPENDED)
     return 2;
-  }
-  if (ret != JPEG_HEADER_OK) {
+  if (ret != JPEG_HEADER_OK)
     return 1;
-  }
-  *width = p->m_Info.image_width;
-  *height = p->m_Info.image_height;
-  *nComps = p->m_Info.num_components;
+
+  *width = ctx->m_Info.image_width;
+  *height = ctx->m_Info.image_height;
+  *nComps = ctx->m_Info.num_components;
 #ifdef PDF_ENABLE_XFA
-  _JpegLoadAttribute(&p->m_Info, pAttribute);
+  _JpegLoadAttribute(&ctx->m_Info, pAttribute);
 #endif
   return 0;
 }
-int CCodec_JpegModule::StartScanline(void* pContext, int down_scale) {
-  FXJPEG_Context* p = (FXJPEG_Context*)pContext;
-  if (setjmp(p->m_JumpMark) == -1) {
+
+int CCodec_JpegModule::StartScanline(FXJPEG_Context* ctx, int down_scale) {
+  if (setjmp(ctx->m_JumpMark) == -1)
     return 0;
-  }
-  p->m_Info.scale_denom = down_scale;
-  return jpeg_start_decompress(&p->m_Info);
+
+  ctx->m_Info.scale_denom = down_scale;
+  return jpeg_start_decompress(&ctx->m_Info);
 }
-FX_BOOL CCodec_JpegModule::ReadScanline(void* pContext,
+
+FX_BOOL CCodec_JpegModule::ReadScanline(FXJPEG_Context* ctx,
                                         unsigned char* dest_buf) {
-  FXJPEG_Context* p = (FXJPEG_Context*)pContext;
-  if (setjmp(p->m_JumpMark) == -1) {
+  if (setjmp(ctx->m_JumpMark) == -1)
     return FALSE;
-  }
-  int nlines = jpeg_read_scanlines(&p->m_Info, &dest_buf, 1);
+
+  int nlines = jpeg_read_scanlines(&ctx->m_Info, &dest_buf, 1);
   return nlines == 1;
 }
-uint32_t CCodec_JpegModule::GetAvailInput(void* pContext,
+
+uint32_t CCodec_JpegModule::GetAvailInput(FXJPEG_Context* ctx,
                                           uint8_t** avail_buf_ptr) {
   if (avail_buf_ptr) {
     *avail_buf_ptr = NULL;
-    if (((FXJPEG_Context*)pContext)->m_SrcMgr.bytes_in_buffer > 0) {
-      *avail_buf_ptr =
-          (uint8_t*)((FXJPEG_Context*)pContext)->m_SrcMgr.next_input_byte;
+    if (ctx->m_SrcMgr.bytes_in_buffer > 0) {
+      *avail_buf_ptr = (uint8_t*)ctx->m_SrcMgr.next_input_byte;
     }
   }
-  return (uint32_t)((FXJPEG_Context*)pContext)->m_SrcMgr.bytes_in_buffer;
+  return (uint32_t)ctx->m_SrcMgr.bytes_in_buffer;
 }

@@ -866,7 +866,7 @@ FX_BOOL CPDF_ImageRenderer::Continue(IFX_Pause* pPause) {
   }
   return FALSE;
 }
-ICodec_ScanlineDecoder* FPDFAPI_CreateFlateDecoder(
+CCodec_ScanlineDecoder* FPDFAPI_CreateFlateDecoder(
     const uint8_t* src_buf,
     uint32_t src_size,
     int width,

@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "core/fpdfapi/fpdf_page/include/cpdf_pageobjectholder.h"
+#include "core/fxcodec/codec/include/ccodec_progressivedecoder.h"
 #include "core/fxcodec/include/fx_codec.h"
 #include "xfa/fxfa/app/xfa_textlayout.h"
 #include "xfa/fxfa/include/xfa_ffapp.h"
@@ -1057,7 +1058,7 @@ CFX_DIBitmap* XFA_LoadImageFromBuffer(IFX_FileRead* pImageFileRead,
   }
   CFX_DIBAttribute dibAttr;
   CFX_DIBitmap* pBitmap = NULL;
-  ICodec_ProgressiveDecoder* pProgressiveDecoder =
+  CCodec_ProgressiveDecoder* pProgressiveDecoder =
       pCodecMgr->CreateProgressiveDecoder();
   pProgressiveDecoder->LoadImageInfo(pImageFileRead, type, &dibAttr);
   switch (dibAttr.m_wDPIUnit) {

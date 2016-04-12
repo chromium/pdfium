@@ -897,7 +897,7 @@ uint32_t CCodec_FlateScanlineDecoder::GetSrcOffset() {
   return FPDFAPI_FlateGetTotalIn(m_pFlate);
 }
 
-ICodec_ScanlineDecoder* CCodec_FlateModule::CreateDecoder(
+CCodec_ScanlineDecoder* CCodec_FlateModule::CreateDecoder(
     const uint8_t* src_buf,
     uint32_t src_size,
     int width,

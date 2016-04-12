@@ -23,7 +23,7 @@ class CFX_GlyphBitmap;
 class CFX_ImageTransformer;
 class CPDF_ImageCacheEntry;
 class CPDF_ImageLoaderHandle;
-class ICodec_ScanlineDecoder;
+class CCodec_ScanlineDecoder;
 class CPDF_Type3Font;
 class CPDF_Type3Cache;
 class CPDF_Type3Char;
@@ -605,7 +605,7 @@ class CPDF_DIBSource : public CFX_DIBSource {
   uint8_t* m_pLineBuf;
   uint8_t* m_pMaskedLine;
   std::unique_ptr<CFX_DIBitmap> m_pCachedBitmap;
-  std::unique_ptr<ICodec_ScanlineDecoder> m_pDecoder;
+  std::unique_ptr<CCodec_ScanlineDecoder> m_pDecoder;
   void* m_pJbig2Context;
   CPDF_DIBSource* m_pMask;
   std::unique_ptr<CPDF_StreamAcc> m_pGlobalStream;

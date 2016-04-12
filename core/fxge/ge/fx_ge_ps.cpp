@@ -506,7 +506,7 @@ void CFX_PSRenderer::SetColor(uint32_t color,
   }
   FX_BOOL bCMYK = FALSE;
   if (pIccTransform) {
-    ICodec_IccModule* pIccModule =
+    CCodec_IccModule* pIccModule =
         CFX_GEModule::Get()->GetCodecModule()->GetIccModule();
     color = FXGETFLAG_COLORTYPE(alpha_flag) ? FXCMYK_TODIB(color)
                                             : FXARGB_TODIB(color);

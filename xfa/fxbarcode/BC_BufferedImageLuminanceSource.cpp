@@ -20,6 +20,7 @@
  * limitations under the License.
  */
 
+#include "core/fxcodec/codec/include/ccodec_progressivedecoder.h"
 #include "core/fxcodec/include/fx_codec.h"
 #include "xfa/fxbarcode/BC_BufferedImageLuminanceSource.h"
 #include "xfa/fxbarcode/BC_LuminanceSource.h"
@@ -29,17 +30,18 @@ class CBC_Pause : public IFX_Pause {
  public:
   virtual FX_BOOL NeedToPauseNow() { return TRUE; }
 };
+
 static CFX_DIBitmap* CreateDIBSource(IFX_FileRead* fileread) {
-  CFX_DIBitmap* bitmap = NULL;
-  CCodec_ModuleMgr* pCodecMgr = NULL;
-  ICodec_ProgressiveDecoder* pImageCodec = NULL;
+  CFX_DIBitmap* bitmap = nullptr;
+  CCodec_ModuleMgr* pCodecMgr = nullptr;
+  CCodec_ProgressiveDecoder* pImageCodec = nullptr;
   pCodecMgr = new CCodec_ModuleMgr();
   pImageCodec = pCodecMgr->CreateProgressiveDecoder();
   FXCODEC_STATUS status = FXCODEC_STATUS_DECODE_FINISH;
   status = pImageCodec->LoadImageInfo(fileread, FXCODEC_IMAGE_UNKNOWN, nullptr);
-  if (status != FXCODEC_STATUS_FRAME_READY) {
-    return NULL;
-  }
+  if (status != FXCODEC_STATUS_FRAME_READY)
+    return nullptr;
+
   bitmap = new CFX_DIBitmap;
   bitmap->Create(pImageCodec->GetWidth(), pImageCodec->GetHeight(), FXDIB_Argb);
   bitmap->Clear(FXARGB_MAKE(0xFF, 0xFF, 0xFF, 0xFF));
@@ -68,23 +70,24 @@ static CFX_DIBitmap* CreateDIBSource(IFX_FileRead* fileread) {
   }
   if (pImageCodec) {
     delete pImageCodec;
-    pImageCodec = NULL;
+    pImageCodec = nullptr;
   }
   delete pCodecMgr;
-  pCodecMgr = NULL;
+  pCodecMgr = nullptr;
   return bitmap;
 except:
   if (pImageCodec) {
     delete pImageCodec;
-    pImageCodec = NULL;
+    pImageCodec = nullptr;
   }
   delete pCodecMgr;
-  pCodecMgr = NULL;
+  pCodecMgr = nullptr;
   if (bitmap) {
     delete bitmap;
   }
-  return NULL;
+  return nullptr;
 }
+
 CBC_BufferedImageLuminanceSource::CBC_BufferedImageLuminanceSource(
     const CFX_WideString& filename)
     : CBC_LuminanceSource(0, 0), m_filename(filename) {
@@ -94,10 +97,11 @@ CBC_BufferedImageLuminanceSource::CBC_BufferedImageLuminanceSource(
   m_top = 0;
   m_left = 0;
 }
+
 void CBC_BufferedImageLuminanceSource::Init(int32_t& e) {
   IFX_FileRead* fileread = FX_CreateFileRead(m_filename);
   m_pBitmap = CreateDIBSource(fileread);
-  if (m_pBitmap == NULL) {
+  if (!m_pBitmap) {
     e = BCExceptionLoadFile;
     return;
   }
@@ -109,6 +113,7 @@ void CBC_BufferedImageLuminanceSource::Init(int32_t& e) {
   m_top = 0;
   m_left = 0;
 }
+
 CBC_BufferedImageLuminanceSource::CBC_BufferedImageLuminanceSource(
     CFX_DIBitmap* pBitmap)
     : CBC_LuminanceSource(0, 0) {
@@ -121,16 +126,17 @@ CBC_BufferedImageLuminanceSource::CBC_BufferedImageLuminanceSource(
   m_top = 0;
   m_left = 0;
 }
+
 CBC_BufferedImageLuminanceSource::~CBC_BufferedImageLuminanceSource() {
   delete m_pBitmap;
-  m_pBitmap = NULL;
 }
+
 CFX_ByteArray* CBC_BufferedImageLuminanceSource::GetRow(int32_t y,
                                                         CFX_ByteArray& row,
                                                         int32_t& e) {
   if (y < 0 || y >= m_height) {
     e = BCExceptionRequestedRowIsOutSizeTheImage;
-    return NULL;
+    return nullptr;
   }
   int32_t width = m_width;
   if (row.GetSize() == 0 || row.GetSize() < width) {
@@ -150,6 +156,7 @@ CFX_ByteArray* CBC_BufferedImageLuminanceSource::GetRow(int32_t y,
   }
   return &row;
 }
+
 CFX_ByteArray* CBC_BufferedImageLuminanceSource::GetMatrix() {
   CFX_ByteArray* matirx = new CFX_ByteArray();
   matirx->SetSize(m_bytesPerLine * m_height);

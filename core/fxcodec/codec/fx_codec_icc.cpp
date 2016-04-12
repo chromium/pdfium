@@ -251,41 +251,41 @@ void* CreateProfile_Gray(double gamma) {
   cmsFreeToneCurve(curve);
   return profile;
 }
-ICodec_IccModule::IccCS GetProfileCSFromHandle(void* pProfile) {
+CCodec_IccModule::IccCS GetProfileCSFromHandle(void* pProfile) {
   if (!pProfile) {
-    return ICodec_IccModule::IccCS_Unknown;
+    return CCodec_IccModule::IccCS_Unknown;
   }
   switch (cmsGetColorSpace(pProfile)) {
     case cmsSigXYZData:
-      return ICodec_IccModule::IccCS_XYZ;
+      return CCodec_IccModule::IccCS_XYZ;
     case cmsSigLabData:
-      return ICodec_IccModule::IccCS_Lab;
+      return CCodec_IccModule::IccCS_Lab;
     case cmsSigLuvData:
-      return ICodec_IccModule::IccCS_Luv;
+      return CCodec_IccModule::IccCS_Luv;
     case cmsSigYCbCrData:
-      return ICodec_IccModule::IccCS_YCbCr;
+      return CCodec_IccModule::IccCS_YCbCr;
     case cmsSigYxyData:
-      return ICodec_IccModule::IccCS_Yxy;
+      return CCodec_IccModule::IccCS_Yxy;
     case cmsSigRgbData:
-      return ICodec_IccModule::IccCS_Rgb;
+      return CCodec_IccModule::IccCS_Rgb;
     case cmsSigGrayData:
-      return ICodec_IccModule::IccCS_Gray;
+      return CCodec_IccModule::IccCS_Gray;
     case cmsSigHsvData:
-      return ICodec_IccModule::IccCS_Hsv;
+      return CCodec_IccModule::IccCS_Hsv;
     case cmsSigHlsData:
-      return ICodec_IccModule::IccCS_Hls;
+      return CCodec_IccModule::IccCS_Hls;
     case cmsSigCmykData:
-      return ICodec_IccModule::IccCS_Cmyk;
+      return CCodec_IccModule::IccCS_Cmyk;
     case cmsSigCmyData:
-      return ICodec_IccModule::IccCS_Cmy;
+      return CCodec_IccModule::IccCS_Cmy;
     default:
-      return ICodec_IccModule::IccCS_Unknown;
+      return CCodec_IccModule::IccCS_Unknown;
   }
 }
-ICodec_IccModule::IccCS CCodec_IccModule::GetProfileCS(
+CCodec_IccModule::IccCS CCodec_IccModule::GetProfileCS(
     const uint8_t* pProfileData,
     uint32_t dwProfileSize) {
-  ICodec_IccModule::IccCS cs;
+  CCodec_IccModule::IccCS cs;
   cmsHPROFILE hProfile =
       cmsOpenProfileFromMem((void*)pProfileData, dwProfileSize);
   if (!hProfile) {
@@ -297,11 +297,11 @@ ICodec_IccModule::IccCS CCodec_IccModule::GetProfileCS(
   }
   return cs;
 }
-ICodec_IccModule::IccCS CCodec_IccModule::GetProfileCS(IFX_FileRead* pFile) {
+CCodec_IccModule::IccCS CCodec_IccModule::GetProfileCS(IFX_FileRead* pFile) {
   if (!pFile) {
     return IccCS_Unknown;
   }
-  ICodec_IccModule::IccCS cs;
+  CCodec_IccModule::IccCS cs;
   uint32_t dwSize = (uint32_t)pFile->GetSize();
   uint8_t* pBuf = FX_Alloc(uint8_t, dwSize);
   pFile->ReadBlock(pBuf, 0, dwSize);
@@ -406,7 +406,7 @@ CFX_ByteStringKey& CFX_ByteStringKey::operator<<(uint32_t i) {
   AppendBlock(&i, sizeof(uint32_t));
   return *this;
 }
-void* CCodec_IccModule::CreateProfile(ICodec_IccModule::IccParam* pIccParam,
+void* CCodec_IccModule::CreateProfile(CCodec_IccModule::IccParam* pIccParam,
                                       Icc_CLASS ic,
                                       CFX_BinaryBuf* pTransformKey) {
   CFX_IccProfileCache* pCache = NULL;
@@ -469,9 +469,9 @@ void* CCodec_IccModule::CreateProfile(ICodec_IccModule::IccParam* pIccParam,
   return pCache->m_pProfile;
 }
 void* CCodec_IccModule::CreateTransform(
-    ICodec_IccModule::IccParam* pInputParam,
-    ICodec_IccModule::IccParam* pOutputParam,
-    ICodec_IccModule::IccParam* pProofParam,
+    CCodec_IccModule::IccParam* pInputParam,
+    CCodec_IccModule::IccParam* pOutputParam,
+    CCodec_IccModule::IccParam* pProofParam,
     uint32_t dwIntent,
     uint32_t dwFlag,
     uint32_t dwPrfIntent,

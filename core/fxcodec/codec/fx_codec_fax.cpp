@@ -810,7 +810,7 @@ FX_BOOL CCodec_FaxModule::Encode(const uint8_t* src_buf,
   encoder.Encode(dest_buf, dest_size);
   return TRUE;
 }
-ICodec_ScanlineDecoder* CCodec_FaxModule::CreateDecoder(
+CCodec_ScanlineDecoder* CCodec_FaxModule::CreateDecoder(
     const uint8_t* src_buf,
     uint32_t src_size,
     int width,

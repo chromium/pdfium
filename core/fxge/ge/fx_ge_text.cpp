@@ -158,7 +158,7 @@ void _Color2Argb(FX_ARGB& argb,
   }
   uint8_t bgra[4];
   if (pIccTransform) {
-    ICodec_IccModule* pIccModule =
+    CCodec_IccModule* pIccModule =
         CFX_GEModule::Get()->GetCodecModule()->GetIccModule();
     color = FXGETFLAG_COLORTYPE(alpha_flag) ? FXCMYK_TODIB(color)
                                             : FXARGB_TODIB(color);

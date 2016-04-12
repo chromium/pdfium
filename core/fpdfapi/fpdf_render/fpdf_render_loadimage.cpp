@@ -70,7 +70,7 @@ T ClampValue(T value, T max_value) {
 // Wrapper class to use with std::unique_ptr for CJPX_Decoder.
 class JpxBitMapContext {
  public:
-  explicit JpxBitMapContext(ICodec_JpxModule* jpx_module)
+  explicit JpxBitMapContext(CCodec_JpxModule* jpx_module)
       : jpx_module_(jpx_module), decoder_(nullptr) {}
 
   ~JpxBitMapContext() { jpx_module_->DestroyDecoder(decoder_); }
@@ -81,7 +81,7 @@ class JpxBitMapContext {
   CJPX_Decoder* decoder() { return decoder_; }
 
  private:
-  ICodec_JpxModule* const jpx_module_;  // Weak pointer.
+  CCodec_JpxModule* const jpx_module_;  // Weak pointer.
   CJPX_Decoder* decoder_;               // Decoder, owned.
 
   // Disallow evil constructors
@@ -129,7 +129,7 @@ CPDF_DIBSource::~CPDF_DIBSource() {
     m_pDocument->GetPageData()->ReleaseColorSpace(pCS->GetArray());
   }
   if (m_pJbig2Context) {
-    ICodec_Jbig2Module* pJbig2Module = CPDF_ModuleMgr::Get()->GetJbig2Module();
+    CCodec_Jbig2Module* pJbig2Module = CPDF_ModuleMgr::Get()->GetJbig2Module();
     pJbig2Module->DestroyJbig2Context(m_pJbig2Context);
   }
 }
@@ -344,7 +344,7 @@ int CPDF_DIBSource::ContinueLoadDIBSource(IFX_Pause* pPause) {
     if (decoder == "JPXDecode") {
       return 0;
     }
-    ICodec_Jbig2Module* pJbig2Module = CPDF_ModuleMgr::Get()->GetJbig2Module();
+    CCodec_Jbig2Module* pJbig2Module = CPDF_ModuleMgr::Get()->GetJbig2Module();
     if (!m_pJbig2Context) {
       m_pJbig2Context = pJbig2Module->CreateJbig2Context();
       if (m_pStreamAcc->GetImageParam()) {
@@ -527,14 +527,14 @@ DIB_COMP_DATA* CPDF_DIBSource::GetDecodeAndMaskArray(FX_BOOL& bDefaultDecode,
   return pCompData;
 }
 
-ICodec_ScanlineDecoder* FPDFAPI_CreateFaxDecoder(
+CCodec_ScanlineDecoder* FPDFAPI_CreateFaxDecoder(
     const uint8_t* src_buf,
     uint32_t src_size,
     int width,
     int height,
     const CPDF_Dictionary* pParams);
 
-ICodec_ScanlineDecoder* FPDFAPI_CreateFlateDecoder(
+CCodec_ScanlineDecoder* FPDFAPI_CreateFlateDecoder(
     const uint8_t* src_buf,
     uint32_t src_size,
     int width,
@@ -565,7 +565,7 @@ int CPDF_DIBSource::CreateDecoder() {
       FX_BOOL bTransform = FALSE;
       int comps;
       int bpc;
-      ICodec_JpegModule* pJpegModule = CPDF_ModuleMgr::Get()->GetJpegModule();
+      CCodec_JpegModule* pJpegModule = CPDF_ModuleMgr::Get()->GetJpegModule();
       if (pJpegModule->LoadInfo(src_data, src_size, m_Width, m_Height, comps,
                                 bpc, bTransform)) {
         if (m_nComponents != static_cast<uint32_t>(comps)) {
@@ -628,7 +628,7 @@ int CPDF_DIBSource::CreateDecoder() {
 }
 
 void CPDF_DIBSource::LoadJpxBitmap() {
-  ICodec_JpxModule* pJpxModule = CPDF_ModuleMgr::Get()->GetJpxModule();
+  CCodec_JpxModule* pJpxModule = CPDF_ModuleMgr::Get()->GetJpxModule();
   if (!pJpxModule)
     return;
 

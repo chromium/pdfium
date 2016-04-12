@@ -7,6 +7,7 @@
 #include "core/fxcodec/include/fx_codec.h"
 
 #include <cmath>
+#include <memory>
 #include <utility>
 
 #include "core/fxcodec/codec/codec_int.h"
@@ -397,18 +398,20 @@ void CCodec_RLScanlineDecoder::UpdateOperator(uint8_t used_bytes) {
   count -= used_bytes;
   m_Operator = 257 - count;
 }
-ICodec_ScanlineDecoder* CCodec_BasicModule::CreateRunLengthDecoder(
+
+CCodec_ScanlineDecoder* CCodec_BasicModule::CreateRunLengthDecoder(
     const uint8_t* src_buf,
     uint32_t src_size,
     int width,
     int height,
     int nComps,
     int bpc) {
-  CCodec_RLScanlineDecoder* pRLScanlineDecoder = new CCodec_RLScanlineDecoder;
+  std::unique_ptr<CCodec_RLScanlineDecoder> pRLScanlineDecoder(
+      new CCodec_RLScanlineDecoder);
   if (!pRLScanlineDecoder->Create(src_buf, src_size, width, height, nComps,
                                   bpc)) {
-    delete pRLScanlineDecoder;
-    return NULL;
+    return nullptr;
   }
-  return pRLScanlineDecoder;
+
+  return pRLScanlineDecoder.release();
 }

@@ -192,7 +192,7 @@ FX_BOOL ConvertBuffer_1bppPlt2Gray(uint8_t* dest_buf,
       bgr_ptr[4] = FXARGB_G(src_plt[1]);
       bgr_ptr[5] = FXARGB_R(src_plt[1]);
     }
-    ICodec_IccModule* pIccModule =
+    CCodec_IccModule* pIccModule =
         CFX_GEModule::Get()->GetCodecModule()->GetIccModule();
     pIccModule->TranslateScanline(pIccTransform, gray, (const uint8_t*)plt, 2);
   } else {
@@ -254,7 +254,7 @@ FX_BOOL ConvertBuffer_8bppPlt2Gray(uint8_t* dest_buf,
         *bgr_ptr++ = FXARGB_R(src_plt[i]);
       }
     }
-    ICodec_IccModule* pIccModule =
+    CCodec_IccModule* pIccModule =
         CFX_GEModule::Get()->GetCodecModule()->GetIccModule();
     pIccModule->TranslateScanline(pIccTransform, gray, (const uint8_t*)plt,
                                   256);
@@ -293,7 +293,7 @@ FX_BOOL ConvertBuffer_RgbOrCmyk2Gray(uint8_t* dest_buf,
                                      void* pIccTransform) {
   int Bpp = pSrcBitmap->GetBPP() / 8;
   if (pIccTransform) {
-    ICodec_IccModule* pIccModule =
+    CCodec_IccModule* pIccModule =
         CFX_GEModule::Get()->GetCodecModule()->GetIccModule();
     if (Bpp == 3 || pSrcBitmap->IsCmykImage()) {
       for (int row = 0; row < height; row++) {
@@ -401,7 +401,7 @@ FX_BOOL ConvertBuffer_Plt2PltRgb8(uint8_t* dest_buf,
       }
       bgr_ptr = (uint8_t*)plt;
     }
-    ICodec_IccModule* pIccModule =
+    CCodec_IccModule* pIccModule =
         CFX_GEModule::Get()->GetCodecModule()->GetIccModule();
     pIccModule->TranslateScanline(pIccTransform, (uint8_t*)plt,
                                   (const uint8_t*)plt, plt_size);
@@ -499,7 +499,7 @@ FX_BOOL ConvertBuffer_Rgb2PltRgb8(uint8_t* dest_buf,
       dest_buf, dest_pitch, width, height, pSrcBitmap, src_left, src_top,
       dst_plt);
   if (ret && pIccTransform) {
-    ICodec_IccModule* pIccModule =
+    CCodec_IccModule* pIccModule =
         CFX_GEModule::Get()->GetCodecModule()->GetIccModule();
     for (int i = 0; i < 256; i++) {
       FX_ARGB* plt = dst_plt + i;
@@ -589,7 +589,7 @@ FX_BOOL ConvertBuffer_1bppPlt2Rgb(FXDIB_Format dst_format,
     bgr_ptr[5] = FXARGB_R(src_plt[1]);
   }
   if (pIccTransform) {
-    ICodec_IccModule* pIccModule =
+    CCodec_IccModule* pIccModule =
         CFX_GEModule::Get()->GetCodecModule()->GetIccModule();
     pIccModule->TranslateScanline(pIccTransform, (uint8_t*)plt,
                                   (const uint8_t*)plt, 2);
@@ -650,7 +650,7 @@ FX_BOOL ConvertBuffer_8bppPlt2Rgb(FXDIB_Format dst_format,
         plt[i] = FXCMYK_TODIB(src_plt[i]);
       }
     }
-    ICodec_IccModule* pIccModule =
+    CCodec_IccModule* pIccModule =
         CFX_GEModule::Get()->GetCodecModule()->GetIccModule();
     pIccModule->TranslateScanline(pIccTransform, (uint8_t*)plt,
                                   (const uint8_t*)plt, 256);
@@ -688,7 +688,7 @@ FX_BOOL ConvertBuffer_24bppRgb2Rgb24(uint8_t* dest_buf,
                                      int src_top,
                                      void* pIccTransform) {
   if (pIccTransform) {
-    ICodec_IccModule* pIccModule =
+    CCodec_IccModule* pIccModule =
         CFX_GEModule::Get()->GetCodecModule()->GetIccModule();
     for (int row = 0; row < height; row++) {
       uint8_t* dest_scan = dest_buf + row * dest_pitch;
@@ -726,7 +726,7 @@ FX_BOOL ConvertBuffer_32bppRgb2Rgb24(uint8_t* dest_buf,
     }
   }
   if (pIccTransform) {
-    ICodec_IccModule* pIccModule =
+    CCodec_IccModule* pIccModule =
         CFX_GEModule::Get()->GetCodecModule()->GetIccModule();
     for (int row = 0; row < height; row++) {
       uint8_t* dest_scan = dest_buf + row * dest_pitch;
@@ -745,7 +745,7 @@ FX_BOOL ConvertBuffer_Rgb2Rgb32(uint8_t* dest_buf,
                                 void* pIccTransform) {
   int comps = pSrcBitmap->GetBPP() / 8;
   if (pIccTransform) {
-    ICodec_IccModule* pIccModule =
+    CCodec_IccModule* pIccModule =
         CFX_GEModule::Get()->GetCodecModule()->GetIccModule();
     for (int row = 0; row < height; row++) {
       uint8_t* dest_scan = dest_buf + row * dest_pitch;
@@ -782,7 +782,7 @@ FX_BOOL ConvertBuffer_32bppCmyk2Rgb32(uint8_t* dest_buf,
                                       int src_top,
                                       void* pIccTransform) {
   if (pIccTransform) {
-    ICodec_IccModule* pIccModule =
+    CCodec_IccModule* pIccModule =
         CFX_GEModule::Get()->GetCodecModule()->GetIccModule();
     for (int row = 0; row < height; row++) {
       uint8_t* dest_scan = dest_buf + row * dest_pitch;

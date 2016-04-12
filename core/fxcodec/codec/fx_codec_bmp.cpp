@@ -42,24 +42,25 @@ static FX_BOOL bmp_get_data_position(bmp_decompress_struct_p bmp_ptr,
   CCodec_BmpModule* pModule = (CCodec_BmpModule*)p->parent_ptr;
   return pModule->InputImagePositionBufCallback(p->child_ptr, rcd_pos);
 }
-void* CCodec_BmpModule::Start(void* pModule) {
-  FXBMP_Context* p = (FXBMP_Context*)FX_Alloc(uint8_t, sizeof(FXBMP_Context));
-  if (p == NULL) {
-    return NULL;
-  }
+
+FXBMP_Context* CCodec_BmpModule::Start(void* pModule) {
+  FXBMP_Context* p = FX_Alloc(FXBMP_Context, 1);
+  if (!p)
+    return nullptr;
+
   FXSYS_memset(p, 0, sizeof(FXBMP_Context));
-  if (p == NULL) {
-    return NULL;
-  }
+  if (!p)
+    return nullptr;
+
   p->m_AllocFunc = bmp_alloc_func;
   p->m_FreeFunc = bmp_free_func;
-  p->bmp_ptr = NULL;
+  p->bmp_ptr = nullptr;
   p->parent_ptr = (void*)this;
   p->child_ptr = pModule;
   p->bmp_ptr = bmp_create_decompress();
-  if (p->bmp_ptr == NULL) {
+  if (!p->bmp_ptr) {
     FX_Free(p);
-    return NULL;
+    return nullptr;
   }
   p->bmp_ptr->context_ptr = (void*)p;
   p->bmp_ptr->err_ptr = m_szLastError;
@@ -68,14 +69,14 @@ void* CCodec_BmpModule::Start(void* pModule) {
   p->bmp_ptr->bmp_get_data_position_fn = bmp_get_data_position;
   return p;
 }
-void CCodec_BmpModule::Finish(void* pContext) {
-  FXBMP_Context* p = (FXBMP_Context*)pContext;
-  if (p) {
-    bmp_destroy_decompress(&p->bmp_ptr);
-    p->m_FreeFunc(p);
+
+void CCodec_BmpModule::Finish(FXBMP_Context* ctx) {
+  if (ctx) {
+    bmp_destroy_decompress(&ctx->bmp_ptr);
+    ctx->m_FreeFunc(ctx);
   }
 }
-int32_t CCodec_BmpModule::ReadHeader(void* pContext,
+int32_t CCodec_BmpModule::ReadHeader(FXBMP_Context* ctx,
                                      int32_t* width,
                                      int32_t* height,
                                      FX_BOOL* tb_flag,
@@ -83,43 +84,41 @@ int32_t CCodec_BmpModule::ReadHeader(void* pContext,
                                      int32_t* pal_num,
                                      uint32_t** pal_pp,
                                      CFX_DIBAttribute* pAttribute) {
-  FXBMP_Context* p = (FXBMP_Context*)pContext;
-  if (setjmp(p->bmp_ptr->jmpbuf)) {
+  if (setjmp(ctx->bmp_ptr->jmpbuf)) {
     return 0;
   }
-  int32_t ret = bmp_read_header(p->bmp_ptr);
+  int32_t ret = bmp_read_header(ctx->bmp_ptr);
   if (ret != 1) {
     return ret;
   }
-  *width = p->bmp_ptr->width;
-  *height = p->bmp_ptr->height;
-  *tb_flag = p->bmp_ptr->imgTB_flag;
-  *components = p->bmp_ptr->components;
-  *pal_num = p->bmp_ptr->pal_num;
-  *pal_pp = p->bmp_ptr->pal_ptr;
+  *width = ctx->bmp_ptr->width;
+  *height = ctx->bmp_ptr->height;
+  *tb_flag = ctx->bmp_ptr->imgTB_flag;
+  *components = ctx->bmp_ptr->components;
+  *pal_num = ctx->bmp_ptr->pal_num;
+  *pal_pp = ctx->bmp_ptr->pal_ptr;
   if (pAttribute) {
     pAttribute->m_wDPIUnit = FXCODEC_RESUNIT_METER;
-    pAttribute->m_nXDPI = p->bmp_ptr->dpi_x;
-    pAttribute->m_nYDPI = p->bmp_ptr->dpi_y;
-    pAttribute->m_nBmpCompressType = p->bmp_ptr->compress_flag;
+    pAttribute->m_nXDPI = ctx->bmp_ptr->dpi_x;
+    pAttribute->m_nYDPI = ctx->bmp_ptr->dpi_y;
+    pAttribute->m_nBmpCompressType = ctx->bmp_ptr->compress_flag;
   }
   return 1;
 }
-int32_t CCodec_BmpModule::LoadImage(void* pContext) {
-  FXBMP_Context* p = (FXBMP_Context*)pContext;
-  if (setjmp(p->bmp_ptr->jmpbuf)) {
+
+int32_t CCodec_BmpModule::LoadImage(FXBMP_Context* ctx) {
+  if (setjmp(ctx->bmp_ptr->jmpbuf))
     return 0;
-  }
-  return bmp_decode_image(p->bmp_ptr);
+  return bmp_decode_image(ctx->bmp_ptr);
 }
-uint32_t CCodec_BmpModule::GetAvailInput(void* pContext,
+
+uint32_t CCodec_BmpModule::GetAvailInput(FXBMP_Context* ctx,
                                          uint8_t** avial_buf_ptr) {
-  FXBMP_Context* p = (FXBMP_Context*)pContext;
-  return bmp_get_avail_input(p->bmp_ptr, avial_buf_ptr);
+  return bmp_get_avail_input(ctx->bmp_ptr, avial_buf_ptr);
 }
-void CCodec_BmpModule::Input(void* pContext,
+
+void CCodec_BmpModule::Input(FXBMP_Context* ctx,
                              const uint8_t* src_buf,
                              uint32_t src_size) {
-  FXBMP_Context* p = (FXBMP_Context*)pContext;
-  bmp_input_buffer(p->bmp_ptr, (uint8_t*)src_buf, src_size);
+  bmp_input_buffer(ctx->bmp_ptr, (uint8_t*)src_buf, src_size);
 }

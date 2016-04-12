@@ -512,33 +512,35 @@ FX_BOOL CCodec_TiffContext::Decode(CFX_DIBitmap* pDIBitmap) {
   }
   return FALSE;
 }
-void* CCodec_TiffModule::CreateDecoder(IFX_FileRead* file_ptr) {
+
+CCodec_TiffContext* CCodec_TiffModule::CreateDecoder(IFX_FileRead* file_ptr) {
   CCodec_TiffContext* pDecoder = new CCodec_TiffContext;
   if (!pDecoder->InitDecoder(file_ptr)) {
     delete pDecoder;
-    return NULL;
+    return nullptr;
   }
   return pDecoder;
 }
-void CCodec_TiffModule::GetFrames(void* ctx, int32_t& frames) {
-  CCodec_TiffContext* pDecoder = (CCodec_TiffContext*)ctx;
-  pDecoder->GetFrames(frames);
+
+void CCodec_TiffModule::GetFrames(CCodec_TiffContext* ctx, int32_t& frames) {
+  ctx->GetFrames(frames);
 }
-FX_BOOL CCodec_TiffModule::LoadFrameInfo(void* ctx,
+
+FX_BOOL CCodec_TiffModule::LoadFrameInfo(CCodec_TiffContext* ctx,
                                          int32_t frame,
                                          uint32_t& width,
                                          uint32_t& height,
                                          uint32_t& comps,
                                          uint32_t& bpc,
                                          CFX_DIBAttribute* pAttribute) {
-  CCodec_TiffContext* pDecoder = (CCodec_TiffContext*)ctx;
-  return pDecoder->LoadFrameInfo(frame, width, height, comps, bpc, pAttribute);
+  return ctx->LoadFrameInfo(frame, width, height, comps, bpc, pAttribute);
 }
-FX_BOOL CCodec_TiffModule::Decode(void* ctx, class CFX_DIBitmap* pDIBitmap) {
-  CCodec_TiffContext* pDecoder = (CCodec_TiffContext*)ctx;
-  return pDecoder->Decode(pDIBitmap);
+
+FX_BOOL CCodec_TiffModule::Decode(CCodec_TiffContext* ctx,
+                                  class CFX_DIBitmap* pDIBitmap) {
+  return ctx->Decode(pDIBitmap);
 }
-void CCodec_TiffModule::DestroyDecoder(void* ctx) {
-  CCodec_TiffContext* pDecoder = (CCodec_TiffContext*)ctx;
-  delete pDecoder;
+
+void CCodec_TiffModule::DestroyDecoder(CCodec_TiffContext* ctx) {
+  delete ctx;
 }

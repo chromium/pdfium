@@ -863,12 +863,14 @@ FX_BOOL CPDF_ICCBasedCS::GetRGB(FX_FLOAT* pBuf,
     B = pBuf[2];
     return TRUE;
   }
-  ICodec_IccModule* pIccModule = CPDF_ModuleMgr::Get()->GetIccModule();
+  CCodec_IccModule* pIccModule = CPDF_ModuleMgr::Get()->GetIccModule();
   if (!m_pProfile->m_pTransform || !pIccModule) {
-    if (m_pAlterCS) {
+    if (m_pAlterCS)
       return m_pAlterCS->GetRGB(pBuf, R, G, B);
-    }
-    R = G = B = 0.0f;
+
+    R = 0.0f;
+    G = 0.0f;
+    B = 0.0f;
     return TRUE;
   }
   FX_FLOAT rgb[3];
