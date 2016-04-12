@@ -170,13 +170,10 @@ class CFX_PathData {
 class CFX_GraphStateData {
  public:
   CFX_GraphStateData();
-
   CFX_GraphStateData(const CFX_GraphStateData& src);
-
   ~CFX_GraphStateData();
 
   void Copy(const CFX_GraphStateData& src);
-
   void SetDashCount(int count);
 
   typedef enum { LineCapButt = 0, LineCapRound = 1, LineCapSquare = 2 } LineCap;

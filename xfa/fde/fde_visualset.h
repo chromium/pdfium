@@ -11,10 +11,9 @@
 #include "core/fxcrt/include/fx_system.h"
 #include "core/fxge/include/fx_dib.h"
 #include "core/fxge/include/fx_ge.h"
-#include "xfa/fde/fde_brush.h"
 #include "xfa/fde/fde_image.h"
+#include "xfa/fde/fde_object.h"
 #include "xfa/fde/fde_path.h"
-#include "xfa/fde/fde_pen.h"
 #include "xfa/fgas/font/fgas_font.h"
 
 enum FDE_VISUALOBJTYPE {
@@ -78,9 +77,9 @@ class IFDE_PathSet : public IFDE_VisualSet {
   virtual IFDE_Path* GetPath(FDE_HVISUALOBJ hPath) = 0;
   virtual int32_t GetFillMode(FDE_HVISUALOBJ hPath) = 0;
   virtual int32_t GetRenderMode(FDE_HVISUALOBJ hPath) = 0;
-  virtual IFDE_Pen* GetPen(FDE_HVISUALOBJ hPath) = 0;
+  virtual CFDE_Pen* GetPen(FDE_HVISUALOBJ hPath) = 0;
   virtual FX_FLOAT GetPenWidth(FDE_HVISUALOBJ hPath) = 0;
-  virtual IFDE_Brush* GetBrush(FDE_HVISUALOBJ hPath) = 0;
+  virtual CFDE_Brush* GetBrush(FDE_HVISUALOBJ hPath) = 0;
 };
 
 enum FDE_WIDGETOBJ {

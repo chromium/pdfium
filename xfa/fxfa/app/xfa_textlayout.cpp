@@ -11,7 +11,6 @@
 #include "core/fxcrt/include/fx_ext.h"
 #include "xfa/fde/css/fde_csscache.h"
 #include "xfa/fde/fde_object.h"
-#include "xfa/fde/fde_pen.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fgas/crt/fgas_algorithm.h"
 #include "xfa/fgas/crt/fgas_codepage.h"
@@ -1223,8 +1222,8 @@ FX_BOOL CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
   }
   FDE_HDEVICESTATE state = pDevice->SaveState();
   pDevice->SetClipRect(rtClip);
-  IFDE_SolidBrush* pSolidBrush = new CFDE_SolidBrush;
-  IFDE_Pen* pPen = new CFDE_Pen;
+  CFDE_Brush* pSolidBrush = new CFDE_Brush;
+  CFDE_Pen* pPen = new CFDE_Pen;
   FXSYS_assert(pDevice);
 
   if (m_pieceLines.GetSize() == 0) {
@@ -1271,8 +1270,8 @@ FX_BOOL CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
   }
   pDevice->RestoreState(state);
   FX_Free(pCharPos);
-  pSolidBrush->Release();
-  pPen->Release();
+  delete pSolidBrush;
+  delete pPen;
   pDevice->Release();
   return iPieceLines;
 }
@@ -1840,7 +1839,7 @@ void CXFA_TextLayout::AppendTextLine(uint32_t dwStatus,
   m_iLines++;
 }
 void CXFA_TextLayout::RenderString(IFDE_RenderDevice* pDevice,
-                                   IFDE_SolidBrush* pBrush,
+                                   CFDE_Brush* pBrush,
                                    CXFA_PieceLine* pPieceLine,
                                    int32_t iPiece,
                                    FXTEXT_CHARPOS* pCharPos,
@@ -1855,7 +1854,7 @@ void CXFA_TextLayout::RenderString(IFDE_RenderDevice* pDevice,
   pPieceLine->m_charCounts.Add(iCount);
 }
 void CXFA_TextLayout::RenderPath(IFDE_RenderDevice* pDevice,
-                                 IFDE_Pen* pPen,
+                                 CFDE_Pen* pPen,
                                  CXFA_PieceLine* pPieceLine,
                                  int32_t iPiece,
                                  FXTEXT_CHARPOS* pCharPos,

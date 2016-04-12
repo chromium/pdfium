@@ -24,7 +24,7 @@ class CFDE_RenderContext : public IFDE_RenderContext, public CFX_Target {
                               IFDE_CanvasSet* pCanvasSet,
                               const CFX_Matrix& tmDoc2Device);
   virtual FDE_RENDERSTATUS GetStatus() const { return m_eStatus; }
-  virtual FDE_RENDERSTATUS DoRender(IFX_Pause* pPause = NULL);
+  virtual FDE_RENDERSTATUS DoRender(IFX_Pause* pPause = nullptr);
   virtual void StopRender();
   void RenderPath(IFDE_PathSet* pPathSet, FDE_HVISUALOBJ hPath);
   void RenderText(IFDE_TextSet* pTextSet, FDE_HVISUALOBJ hText);
@@ -36,7 +36,7 @@ class CFDE_RenderContext : public IFDE_RenderContext, public CFX_Target {
  protected:
   FDE_RENDERSTATUS m_eStatus;
   IFDE_RenderDevice* m_pRenderDevice;
-  IFDE_SolidBrush* m_pSolidBrush;
+  CFDE_Brush* m_pBrush;
   CFX_Matrix m_Transform;
   FXTEXT_CHARPOS* m_pCharPos;
   int32_t m_iCharPosCount;
@@ -93,51 +93,52 @@ void FDE_GetPageMatrix(CFX_Matrix& pageMatrix,
   }
   pageMatrix = m;
 }
+
 IFDE_RenderContext* IFDE_RenderContext::Create() {
   return new CFDE_RenderContext;
 }
+
 CFDE_RenderContext::CFDE_RenderContext()
     : m_eStatus(FDE_RENDERSTATUS_Reset),
-      m_pRenderDevice(NULL),
-      m_pSolidBrush(NULL),
+      m_pRenderDevice(nullptr),
+      m_pBrush(nullptr),
       m_Transform(),
-      m_pCharPos(NULL),
+      m_pCharPos(nullptr),
       m_iCharPosCount(0),
-      m_pIterator(NULL) {
+      m_pIterator(nullptr) {
   m_Transform.SetIdentity();
 }
+
 CFDE_RenderContext::~CFDE_RenderContext() {
   StopRender();
 }
+
 FX_BOOL CFDE_RenderContext::StartRender(IFDE_RenderDevice* pRenderDevice,
                                         IFDE_CanvasSet* pCanvasSet,
                                         const CFX_Matrix& tmDoc2Device) {
-  if (m_pRenderDevice != NULL) {
+  if (m_pRenderDevice)
     return FALSE;
-  }
-  if (pRenderDevice == NULL) {
+  if (!pRenderDevice)
     return FALSE;
-  }
-  if (pCanvasSet == NULL) {
+  if (!pCanvasSet)
     return FALSE;
-  }
 
   m_eStatus = FDE_RENDERSTATUS_Paused;
   m_pRenderDevice = pRenderDevice;
   m_Transform = tmDoc2Device;
-  if (m_pIterator == NULL) {
+  if (!m_pIterator) {
     m_pIterator = IFDE_VisualSetIterator::Create();
-    FXSYS_assert(m_pIterator != NULL);
+    FXSYS_assert(m_pIterator);
   }
   return m_pIterator->AttachCanvas(pCanvasSet) && m_pIterator->FilterObjects();
 }
+
 FDE_RENDERSTATUS CFDE_RenderContext::DoRender(IFX_Pause* pPause) {
-  if (m_pRenderDevice == NULL) {
+  if (!m_pRenderDevice)
     return FDE_RENDERSTATUS_Failed;
-  }
-  if (m_pIterator == NULL) {
+  if (!m_pIterator)
     return FDE_RENDERSTATUS_Failed;
-  }
+
   FDE_RENDERSTATUS eStatus = FDE_RENDERSTATUS_Paused;
   CFX_Matrix rm;
   rm.SetReverse(m_Transform);
@@ -154,15 +155,15 @@ FDE_RENDERSTATUS CFDE_RenderContext::DoRender(IFX_Pause* pPause) {
   int32_t iCount = 0;
   while (TRUE) {
     hVisualObj = m_pIterator->GetNext(pVisualSet);
-    if (hVisualObj == NULL || pVisualSet == NULL) {
+    if (!hVisualObj || !pVisualSet) {
       eStatus = FDE_RENDERSTATUS_Done;
       break;
     }
     rtObj.Empty();
     pVisualSet->GetRect(hVisualObj, rtObj);
-    if (!rtDocClip.IntersectWith(rtObj)) {
+    if (!rtDocClip.IntersectWith(rtObj))
       continue;
-    }
+
     switch (pVisualSet->GetType()) {
       case FDE_VISUALOBJ_Text:
         RenderText((IFDE_TextSet*)pVisualSet, hVisualObj);
@@ -181,13 +182,14 @@ FDE_RENDERSTATUS CFDE_RenderContext::DoRender(IFX_Pause* pPause) {
       default:
         break;
     }
-    if (iCount >= 100 && pPause != NULL && pPause->NeedToPauseNow()) {
+    if (iCount >= 100 && pPause && pPause->NeedToPauseNow()) {
       eStatus = FDE_RENDERSTATUS_Paused;
       break;
     }
   }
   return m_eStatus = eStatus;
 }
+
 void CFDE_RenderContext::StopRender() {
   m_eStatus = FDE_RENDERSTATUS_Reset;
   m_pRenderDevice = nullptr;
@@ -196,87 +198,85 @@ void CFDE_RenderContext::StopRender() {
     m_pIterator->Release();
     m_pIterator = nullptr;
   }
-  if (m_pSolidBrush) {
-    m_pSolidBrush->Release();
-    m_pSolidBrush = nullptr;
+  if (m_pBrush) {
+    delete m_pBrush;
+    m_pBrush = nullptr;
   }
   FX_Free(m_pCharPos);
   m_pCharPos = nullptr;
   m_iCharPosCount = 0;
 }
+
 void CFDE_RenderContext::RenderText(IFDE_TextSet* pTextSet,
                                     FDE_HVISUALOBJ hText) {
-  FXSYS_assert(m_pRenderDevice != NULL);
-  FXSYS_assert(pTextSet != NULL && hText != NULL);
+  FXSYS_assert(m_pRenderDevice);
+  FXSYS_assert(pTextSet && hText);
+
   IFX_Font* pFont = pTextSet->GetFont(hText);
-  if (pFont == NULL) {
+  if (!pFont)
     return;
-  }
-  int32_t iCount = pTextSet->GetDisplayPos(hText, NULL, FALSE);
-  if (iCount < 1) {
+
+  int32_t iCount = pTextSet->GetDisplayPos(hText, nullptr, FALSE);
+  if (iCount < 1)
     return;
-  }
-  if (m_pSolidBrush == NULL) {
-    m_pSolidBrush = new CFDE_SolidBrush;
-    if (m_pSolidBrush == NULL) {
-      return;
-    }
-  }
-  if (m_pCharPos == NULL) {
+
+  if (!m_pBrush)
+    m_pBrush = new CFDE_Brush;
+
+  if (!m_pCharPos)
     m_pCharPos = FX_Alloc(FXTEXT_CHARPOS, iCount);
-  } else if (m_iCharPosCount < iCount) {
+  else if (m_iCharPosCount < iCount)
     m_pCharPos = FX_Realloc(FXTEXT_CHARPOS, m_pCharPos, iCount);
-  }
-  if (m_iCharPosCount < iCount) {
+
+  if (m_iCharPosCount < iCount)
     m_iCharPosCount = iCount;
-  }
+
   iCount = pTextSet->GetDisplayPos(hText, m_pCharPos, FALSE);
   FX_FLOAT fFontSize = pTextSet->GetFontSize(hText);
   FX_ARGB dwColor = pTextSet->GetFontColor(hText);
-  m_pSolidBrush->SetColor(dwColor);
+  m_pBrush->SetColor(dwColor);
   FDE_HDEVICESTATE hState;
   FX_BOOL bClip = ApplyClip(pTextSet, hText, hState);
-  m_pRenderDevice->DrawString(m_pSolidBrush, pFont, m_pCharPos, iCount,
-                              fFontSize, &m_Transform);
-  if (bClip) {
+  m_pRenderDevice->DrawString(m_pBrush, pFont, m_pCharPos, iCount, fFontSize,
+                              &m_Transform);
+  if (bClip)
     RestoreClip(hState);
-  }
 }
+
 void CFDE_RenderContext::RenderPath(IFDE_PathSet* pPathSet,
                                     FDE_HVISUALOBJ hPath) {
-  FXSYS_assert(m_pRenderDevice != NULL);
-  FXSYS_assert(pPathSet != NULL && hPath != NULL);
+  FXSYS_assert(m_pRenderDevice);
+  FXSYS_assert(pPathSet && hPath);
+
   IFDE_Path* pPath = pPathSet->GetPath(hPath);
-  if (pPath == NULL) {
+  if (!pPath)
     return;
-  }
+
   FDE_HDEVICESTATE hState;
   FX_BOOL bClip = ApplyClip(pPathSet, hPath, hState);
   int32_t iRenderMode = pPathSet->GetRenderMode(hPath);
   if (iRenderMode & FDE_PATHRENDER_Stroke) {
-    IFDE_Pen* pPen = pPathSet->GetPen(hPath);
+    CFDE_Pen* pPen = pPathSet->GetPen(hPath);
     FX_FLOAT fWidth = pPathSet->GetPenWidth(hPath);
-    if (pPen != NULL && fWidth > 0) {
+    if (pPen && fWidth > 0)
       m_pRenderDevice->DrawPath(pPen, fWidth, pPath, &m_Transform);
-    }
   }
   if (iRenderMode & FDE_PATHRENDER_Fill) {
-    IFDE_Brush* pBrush = pPathSet->GetBrush(hPath);
-    if (pBrush != NULL) {
+    CFDE_Brush* pBrush = pPathSet->GetBrush(hPath);
+    if (pBrush)
       m_pRenderDevice->FillPath(pBrush, pPath, &m_Transform);
-    }
   }
-  if (bClip) {
+  if (bClip)
     RestoreClip(hState);
-  }
 }
+
 FX_BOOL CFDE_RenderContext::ApplyClip(IFDE_VisualSet* pVisualSet,
                                       FDE_HVISUALOBJ hObj,
                                       FDE_HDEVICESTATE& hState) {
   CFX_RectF rtClip;
-  if (!pVisualSet->GetClip(hObj, rtClip)) {
+  if (!pVisualSet->GetClip(hObj, rtClip))
     return FALSE;
-  }
+
   CFX_RectF rtObj;
   pVisualSet->GetRect(hObj, rtObj);
   rtClip.Offset(rtObj.left, rtObj.top);
@@ -286,6 +286,7 @@ FX_BOOL CFDE_RenderContext::ApplyClip(IFDE_VisualSet* pVisualSet,
   hState = m_pRenderDevice->SaveState();
   return m_pRenderDevice->SetClipRect(rtClip);
 }
+
 void CFDE_RenderContext::RestoreClip(FDE_HDEVICESTATE hState) {
   m_pRenderDevice->RestoreState(hState);
 }

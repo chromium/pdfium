@@ -10,9 +10,7 @@
 
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_system.h"
-#include "xfa/fde/fde_brush.h"
 #include "xfa/fde/fde_object.h"
-#include "xfa/fde/fde_pen.h"
 #include "xfa/fde/fde_renderdevice.h"
 #include "xfa/fgas/crt/fgas_memory.h"
 #include "xfa/fgas/crt/fgas_utils.h"
@@ -145,7 +143,7 @@ class CFDE_TextOut : public IFDE_TextOut, public CFX_Target {
   int32_t GetCharRects(FDE_LPTTOPIECE pPiece);
 
   void ToTextRun(const FDE_LPTTOPIECE pPiece, FX_TXTRUN& tr);
-  void DrawLine(const FDE_LPTTOPIECE pPiece, IFDE_Pen*& pPen);
+  void DrawLine(const FDE_LPTTOPIECE pPiece, CFDE_Pen*& pPen);
 
   IFX_TxtBreak* m_pTxtBreak;
   IFX_Font* m_pFont;
@@ -951,9 +949,9 @@ void CFDE_TextOut::OnDraw(const CFX_RectF& rtClip) {
   if (iLines < 1) {
     return;
   }
-  IFDE_SolidBrush* pBrush = new CFDE_SolidBrush;
+  CFDE_Brush* pBrush = new CFDE_Brush;
   pBrush->SetColor(m_TxtColor);
-  IFDE_Pen* pPen = NULL;
+  CFDE_Pen* pPen = NULL;
   FDE_HDEVICESTATE hDev = m_pRenderDevice->SaveState();
   if (rtClip.Width() > 0.0f && rtClip.Height() > 0.0f) {
     m_pRenderDevice->SetClipRect(rtClip);
@@ -975,12 +973,8 @@ void CFDE_TextOut::OnDraw(const CFX_RectF& rtClip) {
     }
   }
   m_pRenderDevice->RestoreState(hDev);
-  if (pBrush) {
-    pBrush->Release();
-  }
-  if (pPen) {
-    pPen->Release();
-  }
+  delete pBrush;
+  delete pPen;
 }
 int32_t CFDE_TextOut::GetDisplayPos(FDE_LPTTOPIECE pPiece) {
   FX_TXTRUN tr;
@@ -1008,7 +1002,7 @@ void CFDE_TextOut::ToTextRun(const FDE_LPTTOPIECE pPiece, FX_TXTRUN& tr) {
   tr.wLineBreakChar = m_wParagraphBkChar;
   tr.pRect = &pPiece->rtPiece;
 }
-void CFDE_TextOut::DrawLine(const FDE_LPTTOPIECE pPiece, IFDE_Pen*& pPen) {
+void CFDE_TextOut::DrawLine(const FDE_LPTTOPIECE pPiece, CFDE_Pen*& pPen) {
   FX_BOOL bUnderLine = !!(m_dwStyles & FDE_TTOSTYLE_Underline);
   FX_BOOL bStrikeOut = !!(m_dwStyles & FDE_TTOSTYLE_Strikeout);
   FX_BOOL bHotKey = !!(m_dwStyles & FDE_TTOSTYLE_HotKey);

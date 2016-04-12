@@ -8,7 +8,6 @@
 #define XFA_FXFA_APP_XFA_TEXTLAYOUT_H_
 
 #include "xfa/fde/css/fde_css.h"
-#include "xfa/fde/fde_brush.h"
 #include "xfa/fde/fde_renderdevice.h"
 #include "xfa/fgas/layout/fgas_rtfbreak.h"
 #include "xfa/fxfa/include/xfa_ffdoc.h"
@@ -378,13 +377,13 @@ class CXFA_TextLayout {
   void ProcessText(CFX_WideString& wsText);
   void UpdateAlign(FX_FLOAT fHeight, FX_FLOAT fBottom);
   void RenderString(IFDE_RenderDevice* pDevice,
-                    IFDE_SolidBrush* pBrush,
+                    CFDE_Brush* pBrush,
                     CXFA_PieceLine* pPieceLine,
                     int32_t iPiece,
                     FXTEXT_CHARPOS* pCharPos,
                     const CFX_Matrix& tmDoc2Device);
   void RenderPath(IFDE_RenderDevice* pDevice,
-                  IFDE_Pen* pPen,
+                  CFDE_Pen* pPen,
                   CXFA_PieceLine* pPieceLine,
                   int32_t iPiece,
                   FXTEXT_CHARPOS* pCharPos,

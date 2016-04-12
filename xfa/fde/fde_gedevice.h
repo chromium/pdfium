@@ -33,77 +33,74 @@ class CFDE_FxgeDevice : public IFDE_RenderDevice, public CFX_Target {
                             const CFX_RectF& dstRect,
                             const CFX_Matrix* pImgMatrix = NULL,
                             const CFX_Matrix* pDevMatrix = NULL);
-  virtual FX_BOOL DrawString(IFDE_Brush* pBrush,
+  virtual FX_BOOL DrawString(CFDE_Brush* pBrush,
                              IFX_Font* pFont,
                              const FXTEXT_CHARPOS* pCharPos,
                              int32_t iCount,
                              FX_FLOAT fFontSize,
                              const CFX_Matrix* pMatrix = NULL);
-  virtual FX_BOOL DrawBezier(IFDE_Pen* pPen,
+  virtual FX_BOOL DrawBezier(CFDE_Pen* pPen,
                              FX_FLOAT fPenWidth,
                              const CFX_PointF& pt1,
                              const CFX_PointF& pt2,
                              const CFX_PointF& pt3,
                              const CFX_PointF& pt4,
                              const CFX_Matrix* pMatrix = NULL);
-  virtual FX_BOOL DrawCurve(IFDE_Pen* pPen,
+  virtual FX_BOOL DrawCurve(CFDE_Pen* pPen,
                             FX_FLOAT fPenWidth,
                             const CFX_PointsF& points,
                             FX_BOOL bClosed,
                             FX_FLOAT fTension = 0.5f,
                             const CFX_Matrix* pMatrix = NULL);
-  virtual FX_BOOL DrawEllipse(IFDE_Pen* pPen,
+  virtual FX_BOOL DrawEllipse(CFDE_Pen* pPen,
                               FX_FLOAT fPenWidth,
                               const CFX_RectF& rect,
                               const CFX_Matrix* pMatrix = NULL);
-  virtual FX_BOOL DrawLines(IFDE_Pen* pPen,
+  virtual FX_BOOL DrawLines(CFDE_Pen* pPen,
                             FX_FLOAT fPenWidth,
                             const CFX_PointsF& points,
                             const CFX_Matrix* pMatrix = NULL);
-  virtual FX_BOOL DrawLine(IFDE_Pen* pPen,
+  virtual FX_BOOL DrawLine(CFDE_Pen* pPen,
                            FX_FLOAT fPenWidth,
                            const CFX_PointF& pt1,
                            const CFX_PointF& pt2,
                            const CFX_Matrix* pMatrix = NULL);
-  virtual FX_BOOL DrawPath(IFDE_Pen* pPen,
+  virtual FX_BOOL DrawPath(CFDE_Pen* pPen,
                            FX_FLOAT fPenWidth,
                            const IFDE_Path* pPath,
                            const CFX_Matrix* pMatrix = NULL);
-  virtual FX_BOOL DrawPolygon(IFDE_Pen* pPen,
+  virtual FX_BOOL DrawPolygon(CFDE_Pen* pPen,
                               FX_FLOAT fPenWidth,
                               const CFX_PointsF& points,
                               const CFX_Matrix* pMatrix = NULL);
-  virtual FX_BOOL DrawRectangle(IFDE_Pen* pPen,
+  virtual FX_BOOL DrawRectangle(CFDE_Pen* pPen,
                                 FX_FLOAT fPenWidth,
                                 const CFX_RectF& rect,
                                 const CFX_Matrix* pMatrix = NULL);
-  virtual FX_BOOL FillClosedCurve(IFDE_Brush* pBrush,
+  virtual FX_BOOL FillClosedCurve(CFDE_Brush* pBrush,
                                   const CFX_PointsF& points,
                                   FX_FLOAT fTension = 0.5f,
                                   const CFX_Matrix* pMatrix = NULL);
-  virtual FX_BOOL FillEllipse(IFDE_Brush* pBrush,
+  virtual FX_BOOL FillEllipse(CFDE_Brush* pBrush,
                               const CFX_RectF& rect,
                               const CFX_Matrix* pMatrix = NULL);
-  virtual FX_BOOL FillPath(IFDE_Brush* pBrush,
+  virtual FX_BOOL FillPath(CFDE_Brush* pBrush,
                            const IFDE_Path* pPath,
                            const CFX_Matrix* pMatrix = NULL);
-  virtual FX_BOOL FillPolygon(IFDE_Brush* pBrush,
+  virtual FX_BOOL FillPolygon(CFDE_Brush* pBrush,
                               const CFX_PointsF& points,
                               const CFX_Matrix* pMatrix = NULL);
-  virtual FX_BOOL FillRectangle(IFDE_Brush* pBrush,
+  virtual FX_BOOL FillRectangle(CFDE_Brush* pBrush,
                                 const CFX_RectF& rect,
                                 const CFX_Matrix* pMatrix = NULL);
-  FX_BOOL FillSolidPath(IFDE_Brush* pBrush,
-                        const CFX_PathData* pPath,
-                        const CFX_Matrix* pMatrix);
 
-  FX_BOOL DrawSolidString(IFDE_Brush* pBrush,
+  FX_BOOL DrawSolidString(CFDE_Brush* pBrush,
                           IFX_Font* pFont,
                           const FXTEXT_CHARPOS* pCharPos,
                           int32_t iCount,
                           FX_FLOAT fFontSize,
                           const CFX_Matrix* pMatrix);
-  FX_BOOL DrawStringPath(IFDE_Brush* pBrush,
+  FX_BOOL DrawStringPath(CFDE_Brush* pBrush,
                          IFX_Font* pFont,
                          const FXTEXT_CHARPOS* pCharPos,
                          int32_t iCount,
@@ -111,7 +108,7 @@ class CFDE_FxgeDevice : public IFDE_RenderDevice, public CFX_Target {
                          const CFX_Matrix* pMatrix);
 
  protected:
-  FX_BOOL CreatePen(IFDE_Pen* pPen,
+  FX_BOOL CreatePen(CFDE_Pen* pPen,
                     FX_FLOAT fPenWidth,
                     CFX_GraphStateData& graphState);
 
