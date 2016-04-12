@@ -666,10 +666,10 @@
       'conditions': [
         ['pdf_enable_xfa==1', {
           'sources': [
-            'core/fxcrt/include/fx_arb.h',
             'core/fxcrt/fx_arabic.cpp',
-            'core/fxcrt/fx_arabic.h',
             'core/fxcrt/fx_basic_maps.cpp',
+            'core/fxcrt/include/fx_arabic.h',
+            'core/fxcrt/include/fx_arb.h',
           ],
         }],
       ],

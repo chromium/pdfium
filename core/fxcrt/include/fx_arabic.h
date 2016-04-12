@@ -4,29 +4,36 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXCRT_FX_ARABIC_H_
-#define CORE_FXCRT_FX_ARABIC_H_
+#ifndef CORE_FXCRT_INCLUDE_FX_ARABIC_H_
+#define CORE_FXCRT_INCLUDE_FX_ARABIC_H_
 
 #include "core/fxcrt/include/fx_arb.h"
 
-class CFX_ArabicChar : public IFX_ArabicChar {
- public:
-  virtual void Release() { delete this; }
-  virtual FX_BOOL IsArabicChar(FX_WCHAR wch) const;
-  virtual FX_BOOL IsArabicFormChar(FX_WCHAR wch) const;
+#define FX_BIDIMAXLEVEL 61
+#define FX_BidiDirection(a) (FX_IsOdd(a) ? FX_BIDICLASS_R : FX_BIDICLASS_L)
+#define FX_BidiGetDeferredType(a) (((a) >> 4) & 0x0F)
+#define FX_BidiGetResolvedType(a) ((a)&0x0F)
 
-  virtual FX_WCHAR GetFormChar(FX_WCHAR wch,
-                               FX_WCHAR prev = 0,
-                               FX_WCHAR next = 0) const;
-  virtual FX_WCHAR GetFormChar(const CFX_Char* cur,
-                               const CFX_Char* prev,
-                               const CFX_Char* next) const;
+class CFX_ArabicChar {
+ public:
+  void Release() { delete this; }
+
+  FX_BOOL IsArabicChar(FX_WCHAR wch) const;
+  FX_BOOL IsArabicFormChar(FX_WCHAR wch) const;
+
+  FX_WCHAR GetFormChar(FX_WCHAR wch,
+                       FX_WCHAR prev = 0,
+                       FX_WCHAR next = 0) const;
+  FX_WCHAR GetFormChar(const CFX_Char* cur,
+                       const CFX_Char* prev,
+                       const CFX_Char* next) const;
 
  protected:
   const FX_ARBFORMTABLE* ParseChar(const CFX_Char* pTC,
                                    FX_WCHAR& wChar,
                                    FX_CHARTYPE& eType) const;
 };
+
 void FX_BidiReverseString(CFX_WideString& wsText,
                           int32_t iStart,
                           int32_t iCount);
@@ -34,32 +41,9 @@ void FX_BidiSetDeferredRun(CFX_Int32Array& values,
                            int32_t iStart,
                            int32_t iCount,
                            int32_t iValue);
-#define FX_BCON FX_BIDICLASS_ON
-#define FX_BCL FX_BIDICLASS_L
-#define FX_BCR FX_BIDICLASS_R
-#define FX_BCAN FX_BIDICLASS_AN
-#define FX_BCEN FX_BIDICLASS_EN
-#define FX_BCAL FX_BIDICLASS_AL
-#define FX_BCNSM FX_BIDICLASS_NSM
-#define FX_BCCS FX_BIDICLASS_CS
-#define FX_BCES FX_BIDICLASS_ES
-#define FX_BCET FX_BIDICLASS_ET
-#define FX_BCBN FX_BIDICLASS_BN
-#define FX_BCS FX_BIDICLASS_S
-#define FX_BCWS FX_BIDICLASS_WS
-#define FX_BCB FX_BIDICLASS_B
-#define FX_BCRLO FX_BIDICLASS_RLO
-#define FX_BCRLE FX_BIDICLASS_RLE
-#define FX_BCLRO FX_BIDICLASS_LRO
-#define FX_BCLRE FX_BIDICLASS_LRE
-#define FX_BCPDF FX_BIDICLASS_PDF
-#define FX_BCN FX_BIDICLASS_N
 void FX_BidiClassify(const CFX_WideString& wsText,
                      CFX_Int32Array& classes,
                      FX_BOOL bWS = FALSE);
-#define FX_BIDIMAXLEVEL 61
-#define FX_BidiGreaterEven(a) (FX_IsOdd(a) ? ((a) + 1) : ((a) + 2))
-#define FX_BidiGreaterOdd(a) (FX_IsOdd(a) ? ((a) + 2) : ((a) + 1))
 int32_t FX_BidiResolveExplicit(int32_t iBaseLevel,
                                int32_t iDirection,
                                CFX_Int32Array& classes,
@@ -67,7 +51,7 @@ int32_t FX_BidiResolveExplicit(int32_t iBaseLevel,
                                int32_t iStart,
                                int32_t iCount,
                                int32_t iNest = 0);
-#define FX_BidiDirection(a) (FX_IsOdd(a) ? FX_BIDICLASS_R : FX_BIDICLASS_L)
+
 enum FX_BIDIWEAKSTATE {
   FX_BIDIWEAKSTATE_xa = 0,
   FX_BIDIWEAKSTATE_xr,
@@ -110,6 +94,7 @@ enum FX_BIDIWEAKSTATE {
 #define FX_BWSls FX_BIDIWEAKSTATE_ls
 #define FX_BWSret FX_BIDIWEAKSTATE_ret
 #define FX_BWSlet FX_BIDIWEAKSTATE_let
+
 enum FX_BIDIWEAKACTION {
   FX_BIDIWEAKACTION_IX = 0x100,
   FX_BIDIWEAKACTION_XX = 0x0F,
@@ -156,8 +141,7 @@ enum FX_BIDIWEAKACTION {
 #define FX_BWAxIL FX_BIDIWEAKACTION_xIL
 #define FX_BWAAxR FX_BIDIWEAKACTION_AxR
 #define FX_BWALxx FX_BIDIWEAKACTION_Lxx
-#define FX_BidiGetDeferredType(a) (((a) >> 4) & 0x0F)
-#define FX_BidiGetResolvedType(a) ((a)&0x0F)
+
 void FX_BidiResolveWeak(int32_t iBaseLevel,
                         CFX_Int32Array& classes,
                         CFX_Int32Array& levels);
@@ -208,4 +192,4 @@ void FX_BidiReorder(int32_t iBaseLevel,
                     CFX_WideString& wsText,
                     const CFX_Int32Array& levels);
 
-#endif  // CORE_FXCRT_FX_ARABIC_H_
+#endif  // CORE_FXCRT_INCLUDE_FX_ARABIC_H_

@@ -63,9 +63,9 @@ void CFDE_TxtEdtEngine::Release() {
   delete this;
 }
 void CFDE_TxtEdtEngine::SetEditParams(const FDE_TXTEDTPARAMS& params) {
-  if (m_pTextBreak == NULL) {
-    m_pTextBreak = IFX_TxtBreak::Create(FX_TXTBREAKPOLICY_None);
-  }
+  if (!m_pTextBreak)
+    m_pTextBreak = new CFX_TxtBreak(FX_TXTBREAKPOLICY_None);
+
   FXSYS_memcpy(&m_Param, &params, sizeof(FDE_TXTEDTPARAMS));
   m_wLineEnd = params.wLineBreakChar;
   m_bAutoLineEnd = (m_Param.nLineEnd == FDE_TXTEDIT_LINEEND_Auto);
@@ -721,7 +721,7 @@ IFDE_TxtEdtBuf* CFDE_TxtEdtEngine::GetTextBuf() const {
 int32_t CFDE_TxtEdtEngine::GetTextBufLength() const {
   return m_pTxtBuf->GetTextLength() - 1;
 }
-IFX_TxtBreak* CFDE_TxtEdtEngine::GetTextBreak() const {
+CFX_TxtBreak* CFDE_TxtEdtEngine::GetTextBreak() const {
   return m_pTextBreak;
 }
 int32_t CFDE_TxtEdtEngine::GetLineCount() const {

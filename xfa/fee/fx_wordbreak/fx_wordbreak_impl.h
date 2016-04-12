@@ -33,46 +33,5 @@ enum FX_WordBreakProp {
   FX_WordBreakProp_ExtendNumLet,
 };
 FX_WordBreakProp FX_GetWordBreakProperty(FX_WCHAR wcCodePoint);
-class CFX_CharIter : public IFX_CharIter {
- public:
-  CFX_CharIter(const CFX_WideString& wsText);
-  virtual void Release();
-  virtual FX_BOOL Next(FX_BOOL bPrev = FALSE);
-  virtual FX_WCHAR GetChar();
-  virtual void SetAt(int32_t nIndex);
-  virtual int32_t GetAt() const;
-  virtual FX_BOOL IsEOF(FX_BOOL bTail = TRUE) const;
-  virtual IFX_CharIter* Clone();
-
- protected:
-  ~CFX_CharIter();
-
- private:
-  const CFX_WideString& m_wsText;
-  int32_t m_nIndex;
-};
-class CFX_WordBreak : public IFX_WordBreak {
- public:
-  CFX_WordBreak();
-  virtual void Release();
-  virtual void Attach(IFX_CharIter* pIter);
-  virtual void Attach(const CFX_WideString& wsText);
-  virtual FX_BOOL Next(FX_BOOL bPrev);
-  virtual void SetAt(int32_t nIndex);
-  virtual int32_t GetWordPos() const;
-  virtual int32_t GetWordLength() const;
-  virtual void GetWord(CFX_WideString& wsWord) const;
-  virtual FX_BOOL IsEOF(FX_BOOL bTail) const;
-
- protected:
-  ~CFX_WordBreak();
-  FX_BOOL FindNextBreakPos(IFX_CharIter* pIter,
-                           FX_BOOL bPrev,
-                           FX_BOOL bFromNext = TRUE);
-
- private:
-  IFX_CharIter* m_pPreIter;
-  IFX_CharIter* m_pCurIter;
-};
 
 #endif  // XFA_FEE_FX_WORDBREAK_FX_WORDBREAK_IMPL_H_

@@ -382,34 +382,3 @@ void CFX_CTTGSUBTable::ParseSingleSubstFormat2(FT_Bytes raw,
     rec->Substitute[i] = GetUInt16(sp);
   }
 }
-FX_BOOL CFX_GSUBTable::GetVerticalGlyph(uint32_t glyphnum,
-                                        uint32_t* vglyphnum) {
-  return m_GsubImp.GetVerticalGlyph(glyphnum, vglyphnum);
-}
-// static
-IFX_GSUBTable* IFX_GSUBTable::Create(CFX_Font* pFont) {
-  if (!pFont) {
-    return NULL;
-  }
-  if (!pFont->GetSubData()) {
-    unsigned long length = 0;
-    int error = FXFT_Load_Sfnt_Table(
-        pFont->GetFace(), FT_MAKE_TAG('G', 'S', 'U', 'B'), 0, NULL, &length);
-    if (!error) {
-      pFont->SetSubData(FX_Alloc(uint8_t, length));
-    }
-    if (!pFont->GetSubData()) {
-      return NULL;
-    }
-  }
-  int error =
-      FXFT_Load_Sfnt_Table(pFont->GetFace(), FT_MAKE_TAG('G', 'S', 'U', 'B'), 0,
-                           pFont->GetSubData(), NULL);
-  if (!error && pFont->GetSubData()) {
-    std::unique_ptr<CFX_GSUBTable> pGsubTable(new CFX_GSUBTable);
-    if (pGsubTable->m_GsubImp.LoadGSUBTable((FT_Bytes)pFont->GetSubData())) {
-      return pGsubTable.release();
-    }
-  }
-  return NULL;
-}

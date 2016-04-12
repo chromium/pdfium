@@ -341,7 +341,7 @@ class CXFA_TextLayout {
  private:
   void GetTextDataNode();
   CFDE_XMLNode* GetXMLContainerNode();
-  IFX_RTFBreak* CreateBreak(FX_BOOL bDefault);
+  CFX_RTFBreak* CreateBreak(FX_BOOL bDefault);
   void InitBreak(FX_FLOAT fLineWidth);
   void InitBreak(IFDE_CSSComputedStyle* pStyle,
                  FDE_CSSDISPLAY eDisplay,
@@ -400,7 +400,7 @@ class CXFA_TextLayout {
   CXFA_Node* m_pTextDataNode;
   FX_BOOL m_bRichText;
   IFX_MEMAllocator* m_pAllocator;
-  IFX_RTFBreak* m_pBreak;
+  CFX_RTFBreak* m_pBreak;
   CXFA_LoaderContext* m_pLoader;
   int32_t m_iLines;
   FX_FLOAT m_fMaxWidth;

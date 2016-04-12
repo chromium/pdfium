@@ -31,7 +31,7 @@ void CFDE_TxtEdtParag::LoadParag() {
     ((int32_t*)m_lpData)[0]++;
     return;
   }
-  IFX_TxtBreak* pTxtBreak = m_pEngine->GetTextBreak();
+  CFX_TxtBreak* pTxtBreak = m_pEngine->GetTextBreak();
   IFDE_TxtEdtBuf* pTxtBuf = m_pEngine->GetTextBuf();
   const FDE_TXTEDTPARAMS* pParam = m_pEngine->GetEditParams();
   FX_WCHAR wcAlias = 0;
@@ -101,7 +101,7 @@ void CFDE_TxtEdtParag::UnloadParag() {
   }
 }
 void CFDE_TxtEdtParag::CalcLines() {
-  IFX_TxtBreak* pTxtBreak = m_pEngine->GetTextBreak();
+  CFX_TxtBreak* pTxtBreak = m_pEngine->GetTextBreak();
   IFDE_TxtEdtBuf* pTxtBuf = m_pEngine->GetTextBuf();
   IFX_CharIter* pIter = new CFDE_TxtEdtBufIter((CFDE_TxtEdtBuf*)pTxtBuf);
   int32_t nCount = 0;

@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxcrt/fx_arabic.h"
+#include "core/fxcrt/include/fx_arabic.h"
 #include "core/fxcrt/include/fx_ucd.h"
 
 namespace {
@@ -145,9 +145,6 @@ FX_WCHAR FX_GetArabicFromShaddaTable(FX_WCHAR shadda) {
   return shadda;
 }
 
-IFX_ArabicChar* IFX_ArabicChar::Create() {
-  return new CFX_ArabicChar;
-}
 FX_BOOL CFX_ArabicChar::IsArabicChar(FX_WCHAR wch) const {
   uint32_t dwRet =
       kTextLayoutCodeProperties[(uint16_t)wch] & FX_CHARTYPEBITSMASK;
@@ -438,10 +435,10 @@ const int32_t gc_FX_BidiNeutralStates[][5] = {
 };
 const int32_t gc_FX_BidiNeutralActions[][5] = {
     {FX_BNAIn, 0, 0, 0, 0},
-    {FX_BNAIn, 0, 0, 0, FX_BCL},
+    {FX_BNAIn, 0, 0, 0, FX_BIDICLASS_L},
     {FX_BNAIn, FX_BNAEn, FX_BNARn, FX_BNARn, FX_BNARn},
     {FX_BNAIn, FX_BNALn, FX_BNAEn, FX_BNAEn, FX_BNALnL},
-    {FX_BNAIn, 0, 0, 0, FX_BCL},
+    {FX_BNAIn, 0, 0, 0, FX_BIDICLASS_L},
     {FX_BNAIn, FX_BNAEn, FX_BNARn, FX_BNARn, FX_BNAEn},
 };
 int32_t FX_BidiGetDeferredNeutrals(int32_t iAction, int32_t iLevel) {

@@ -100,58 +100,6 @@ FX_BOOL FX_DateFromCanonical(const CFX_WideString& wsDate,
 FX_BOOL FX_TimeFromCanonical(const CFX_WideStringC& wsTime,
                              CFX_Unitime& datetime,
                              IFX_Locale* pLocale);
-class IFX_FormatString {
- public:
-  static IFX_FormatString* Create(IFX_LocaleMgr* pLocaleMgr, FX_BOOL bUseLCID);
-
-  virtual ~IFX_FormatString() {}
-  virtual void Release() = 0;
-  virtual void SplitFormatString(const CFX_WideString& wsFormatString,
-                                 CFX_WideStringArray& wsPatterns) = 0;
-  virtual FX_LOCALECATEGORY GetCategory(const CFX_WideString& wsPattern) = 0;
-  virtual uint16_t GetLCID(const CFX_WideString& wsPattern) = 0;
-  virtual CFX_WideString GetLocaleName(const CFX_WideString& wsPattern) = 0;
-  virtual FX_BOOL ParseText(const CFX_WideString& wsSrcText,
-                            const CFX_WideString& wsPattern,
-                            CFX_WideString& wsValue) = 0;
-  virtual FX_BOOL ParseNum(const CFX_WideString& wsSrcNum,
-                           const CFX_WideString& wsPattern,
-                           FX_FLOAT& fValue) = 0;
-  virtual FX_BOOL ParseNum(const CFX_WideString& wsSrcNum,
-                           const CFX_WideString& wsPattern,
-                           CFX_WideString& wsValue) = 0;
-  virtual FX_BOOL ParseDateTime(const CFX_WideString& wsSrcDateTime,
-                                const CFX_WideString& wsPattern,
-                                FX_DATETIMETYPE eDateTimeType,
-                                CFX_Unitime& dtValue) = 0;
-  virtual FX_BOOL ParseZero(const CFX_WideString& wsSrcText,
-                            const CFX_WideString& wsPattern) = 0;
-  virtual FX_BOOL ParseNull(const CFX_WideString& wsSrcText,
-                            const CFX_WideString& wsPattern) = 0;
-  virtual FX_BOOL FormatText(const CFX_WideString& wsSrcText,
-                             const CFX_WideString& wsPattern,
-                             CFX_WideString& wsOutput) = 0;
-  virtual FX_BOOL FormatNum(const CFX_WideString& wsSrcNum,
-                            const CFX_WideString& wsPattern,
-                            CFX_WideString& wsOutput) = 0;
-  virtual FX_BOOL FormatNum(FX_FLOAT fNum,
-                            const CFX_WideString& wsPattern,
-                            CFX_WideString& wsOutput) = 0;
-  virtual FX_BOOL FormatDateTime(const CFX_WideString& wsSrcDateTime,
-                                 const CFX_WideString& wsPattern,
-                                 CFX_WideString& wsOutput) = 0;
-  virtual FX_BOOL FormatDateTime(const CFX_WideString& wsSrcDateTime,
-                                 const CFX_WideString& wsPattern,
-                                 CFX_WideString& wsOutput,
-                                 FX_DATETIMETYPE eDateTimeType) = 0;
-  virtual FX_BOOL FormatDateTime(const CFX_Unitime& dt,
-                                 const CFX_WideString& wsPattern,
-                                 CFX_WideString& wsOutput) = 0;
-  virtual FX_BOOL FormatZero(const CFX_WideString& wsPattern,
-                             CFX_WideString& wsOutput) = 0;
-  virtual FX_BOOL FormatNull(const CFX_WideString& wsPattern,
-                             CFX_WideString& wsOutput) = 0;
-};
 class CFX_Decimal {
  public:
   CFX_Decimal();

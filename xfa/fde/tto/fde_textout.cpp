@@ -145,7 +145,7 @@ class CFDE_TextOut : public IFDE_TextOut, public CFX_Target {
   void ToTextRun(const FDE_LPTTOPIECE pPiece, FX_TXTRUN& tr);
   void DrawLine(const FDE_LPTTOPIECE pPiece, CFDE_Pen*& pPen);
 
-  IFX_TxtBreak* m_pTxtBreak;
+  CFX_TxtBreak* m_pTxtBreak;
   IFX_Font* m_pFont;
   FX_FLOAT m_fFontSize;
   FX_FLOAT m_fLineSpace;
@@ -209,8 +209,7 @@ CFDE_TextOut::CFDE_TextOut()
       m_pCharPos(NULL),
       m_iCharPosSize(0),
       m_pRenderDevice(NULL) {
-  m_pTxtBreak = IFX_TxtBreak::Create(FX_TXTBREAKPOLICY_None);
-  FXSYS_assert(m_pTxtBreak != NULL);
+  m_pTxtBreak = new CFX_TxtBreak(FX_TXTBREAKPOLICY_None);
   m_Matrix.SetIdentity();
   m_rtClip.Reset();
   m_rtLogicClip.Reset();

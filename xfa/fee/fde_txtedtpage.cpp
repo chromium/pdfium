@@ -76,7 +76,7 @@ int32_t CFDE_TxtEdtTextSet::GetDisplayPos(FDE_HVISUALOBJ hText,
   }
   CFDE_TxtEdtEngine* pEngine = (CFDE_TxtEdtEngine*)(m_pPage->GetEngine());
   const FDE_TXTEDTPARAMS* pTextParams = pEngine->GetEditParams();
-  IFX_TxtBreak* pBreak = pEngine->GetTextBreak();
+  CFX_TxtBreak* pBreak = pEngine->GetTextBreak();
   uint32_t dwLayoutStyle = pBreak->GetLayoutStyles();
   FX_TXTRUN tr;
   tr.pAccess = m_pPage;
@@ -368,7 +368,7 @@ int32_t CFDE_TxtEdtPage::SelectWord(const CFX_PointF& fPoint, int32_t& nCount) {
   if (nIndex < 0) {
     return -1;
   }
-  IFX_WordBreak* pIter = FX_WordBreak_Create();
+  CFX_WordBreak* pIter = new CFX_WordBreak;
   pIter->Attach(new CFDE_TxtEdtBufIter((CFDE_TxtEdtBuf*)pBuf));
   pIter->SetAt(nIndex);
   nCount = pIter->GetWordLength();
@@ -395,7 +395,7 @@ int32_t CFDE_TxtEdtPage::LoadPage(const CFX_RectF* pClipBox,
     wcAlias = m_pEditEngine->GetAliasChar();
   }
   m_pIter = new CFDE_TxtEdtBufIter((CFDE_TxtEdtBuf*)pBuf, wcAlias);
-  IFX_TxtBreak* pBreak = m_pEditEngine->GetTextBreak();
+  CFX_TxtBreak* pBreak = m_pEditEngine->GetTextBreak();
   pBreak->EndBreak(FX_TXTBREAK_ParagraphBreak);
   pBreak->ClearBreakPieces();
   int32_t nPageLineCount = m_pEditEngine->GetPageLineCount();

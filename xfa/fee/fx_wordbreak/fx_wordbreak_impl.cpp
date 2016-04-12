@@ -233,6 +233,3 @@ FX_BOOL CFX_WordBreak::FindNextBreakPos(IFX_CharIter* pIter,
   } while (!pIter->IsEOF(!bPrev));
   return TRUE;
 }
-IFX_WordBreak* FX_WordBreak_Create() {
-  return new CFX_WordBreak;
-}

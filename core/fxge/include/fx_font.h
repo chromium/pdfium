@@ -532,15 +532,6 @@ FX_RECT FXGE_GetGlyphsBBox(FXTEXT_GLYPHPOS* pGlyphAndPos,
                            FX_FLOAT retinaScaleX = 1.0f,
                            FX_FLOAT retinaScaleY = 1.0f);
 
-class IFX_GSUBTable {
- public:
-  static IFX_GSUBTable* Create(CFX_Font* pFont);
-  virtual FX_BOOL GetVerticalGlyph(uint32_t glyphnum, uint32_t* vglyphnum) = 0;
-
- protected:
-  virtual ~IFX_GSUBTable() {}
-};
-
 CFX_ByteString GetNameFromTT(const uint8_t* name_table,
                              uint32_t name_table_size,
                              uint32_t name);

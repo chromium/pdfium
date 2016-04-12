@@ -10,8 +10,9 @@
 #include "core/fxcrt/include/fx_string.h"
 #include "xfa/fee/ifde_txtedtbuf.h"
 #include "xfa/fee/ifde_txtedtengine.h"
+#include "xfa/fgas/layout/fgas_textbreak.h"
 
-class IFX_TxtBreak;
+class CFX_TxtBreak;
 class IFX_CharIter;
 class CFDE_TxtEdtParag;
 class CFDE_TxtEdtDoRecord_Insert;
@@ -105,7 +106,7 @@ class CFDE_TxtEdtEngine : public IFDE_TxtEdtEngine {
   virtual IFX_CharIter* CreateCharIter();
   IFDE_TxtEdtBuf* GetTextBuf() const;
   int32_t GetTextBufLength() const;
-  IFX_TxtBreak* GetTextBreak() const;
+  CFX_TxtBreak* GetTextBreak() const;
   int32_t GetLineCount() const;
   int32_t GetPageLineCount() const;
 
@@ -173,7 +174,7 @@ class CFDE_TxtEdtEngine : public IFDE_TxtEdtEngine {
   void DeleteSelect();
 
   IFDE_TxtEdtBuf* m_pTxtBuf;
-  IFX_TxtBreak* m_pTextBreak;
+  CFX_TxtBreak* m_pTextBreak;
   FDE_TXTEDTPARAMS m_Param;
   CFX_ArrayTemplate<IFDE_TxtEdtPage*> m_PagePtrArray;
   CFX_ArrayTemplate<CFDE_TxtEdtParag*> m_ParagPtrArray;

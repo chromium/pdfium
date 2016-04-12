@@ -10,8 +10,6 @@
 #include "core/fxcrt/include/fx_system.h"
 #include "core/fxcrt/include/fx_ucd.h"
 
-class IFX_ArabicChar;
-
 struct FX_ARBFORMTABLE {
   uint16_t wIsolated;
   uint16_t wFinal;
@@ -38,21 +36,6 @@ enum FX_ARBPOSITION {
   FX_ARBPOSITION_Final,
   FX_ARBPOSITION_Initial,
   FX_ARBPOSITION_Medial,
-};
-
-class IFX_ArabicChar {
- public:
-  static IFX_ArabicChar* Create();
-  virtual ~IFX_ArabicChar() {}
-  virtual void Release() = 0;
-  virtual FX_BOOL IsArabicChar(FX_WCHAR wch) const = 0;
-  virtual FX_BOOL IsArabicFormChar(FX_WCHAR wch) const = 0;
-  virtual FX_WCHAR GetFormChar(FX_WCHAR wch,
-                               FX_WCHAR prev = 0,
-                               FX_WCHAR next = 0) const = 0;
-  virtual FX_WCHAR GetFormChar(const CFX_Char* cur,
-                               const CFX_Char* prev,
-                               const CFX_Char* next) const = 0;
 };
 
 void FX_BidiLine(CFX_WideString& wsText, int32_t iBaseLevel = 0);

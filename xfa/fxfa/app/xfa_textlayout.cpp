@@ -736,12 +736,12 @@ CFDE_XMLNode* CXFA_TextLayout::GetXMLContainerNode() {
   }
   return pXMLContainer;
 }
-IFX_RTFBreak* CXFA_TextLayout::CreateBreak(FX_BOOL bDefault) {
+CFX_RTFBreak* CXFA_TextLayout::CreateBreak(FX_BOOL bDefault) {
   uint32_t dwStyle = FX_RTFLAYOUTSTYLE_ExpandTab;
   if (!bDefault) {
     dwStyle |= FX_RTFLAYOUTSTYLE_Pagination;
   }
-  IFX_RTFBreak* pBreak = IFX_RTFBreak::Create(0);
+  CFX_RTFBreak* pBreak = new CFX_RTFBreak(0);
   pBreak->SetLayoutStyles(dwStyle);
   pBreak->SetLineBreakChar(L'\n');
   pBreak->SetLineBreakTolerance(1);

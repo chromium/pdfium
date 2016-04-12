@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/xfa_localevalue.h"
 
+#include "xfa/fgas/localization/fgas_localeimp.h"
 #include "xfa/fxfa/fm2js/xfa_fm2jsapi.h"
 #include "xfa/fxfa/parser/xfa_docdata.h"
 #include "xfa/fxfa/parser/xfa_doclayout.h"
@@ -105,7 +106,10 @@ FX_BOOL CXFA_LocaleValue::ValidateValue(const CFX_WideString& wsValue,
   if (pLocale) {
     m_pLocaleMgr->SetDefLocale(pLocale);
   }
-  IFX_FormatString* pFormat = IFX_FormatString::Create(m_pLocaleMgr, FALSE);
+  CFX_FormatString* pFormat = nullptr;
+  if (m_pLocaleMgr)
+    pFormat = new CFX_FormatString(m_pLocaleMgr, FALSE);
+
   CFX_WideStringArray wsPatterns;
   pFormat->SplitFormatString(wsPattern, wsPatterns);
   FX_BOOL bRet = FALSE;
@@ -462,7 +466,11 @@ FX_BOOL CXFA_LocaleValue::FormatPatterns(CFX_WideString& wsResult,
                                          XFA_VALUEPICTURE eValueType) const {
   wsResult.Empty();
   FX_BOOL bRet = FALSE;
-  IFX_FormatString* pFormat = IFX_FormatString::Create(m_pLocaleMgr, FALSE);
+
+  CFX_FormatString* pFormat = nullptr;
+  if (m_pLocaleMgr)
+    pFormat = new CFX_FormatString(m_pLocaleMgr, FALSE);
+
   CFX_WideStringArray wsPatterns;
   pFormat->SplitFormatString(wsFormat, wsPatterns);
   int32_t iCount = wsPatterns.GetSize();
@@ -486,7 +494,11 @@ FX_BOOL CXFA_LocaleValue::FormatSinglePattern(
   }
   wsResult.Empty();
   FX_BOOL bRet = FALSE;
-  IFX_FormatString* pFormat = IFX_FormatString::Create(m_pLocaleMgr, FALSE);
+
+  CFX_FormatString* pFormat = nullptr;
+  if (m_pLocaleMgr)
+    pFormat = new CFX_FormatString(m_pLocaleMgr, FALSE);
+
   FX_LOCALECATEGORY eCategory = pFormat->GetCategory(wsFormat);
   eCategory = XFA_ValugeCategory(eCategory, m_dwType);
   switch (eCategory) {
@@ -793,7 +805,11 @@ FX_BOOL CXFA_LocaleValue::ParsePatternValue(const CFX_WideString& wsValue,
   if (pLocale) {
     m_pLocaleMgr->SetDefLocale(pLocale);
   }
-  IFX_FormatString* pFormat = IFX_FormatString::Create(m_pLocaleMgr, FALSE);
+
+  CFX_FormatString* pFormat = nullptr;
+  if (m_pLocaleMgr)
+    pFormat = new CFX_FormatString(m_pLocaleMgr, FALSE);
+
   CFX_WideStringArray wsPatterns;
   pFormat->SplitFormatString(wsPattern, wsPatterns);
   FX_BOOL bRet = FALSE;

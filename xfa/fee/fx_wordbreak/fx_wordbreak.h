@@ -9,22 +9,49 @@
 
 #include "core/fxcrt/include/fx_string.h"
 #include "core/fxcrt/include/fx_system.h"
+#include "xfa/fee/ifde_txtedtengine.h"
 
-class IFX_CharIter;
-
-class IFX_WordBreak {
+class CFX_CharIter : public IFX_CharIter {
  public:
-  virtual ~IFX_WordBreak() {}
-  virtual void Release() = 0;
-  virtual void Attach(IFX_CharIter* pIter) = 0;
-  virtual void Attach(const CFX_WideString& wsText) = 0;
-  virtual FX_BOOL Next(FX_BOOL bPrev) = 0;
-  virtual void SetAt(int32_t nIndex) = 0;
-  virtual int32_t GetWordPos() const = 0;
-  virtual int32_t GetWordLength() const = 0;
-  virtual void GetWord(CFX_WideString& wsWord) const = 0;
-  virtual FX_BOOL IsEOF(FX_BOOL bTail = TRUE) const = 0;
+  CFX_CharIter(const CFX_WideString& wsText);
+  virtual void Release();
+  virtual FX_BOOL Next(FX_BOOL bPrev = FALSE);
+  virtual FX_WCHAR GetChar();
+  virtual void SetAt(int32_t nIndex);
+  virtual int32_t GetAt() const;
+  virtual FX_BOOL IsEOF(FX_BOOL bTail = TRUE) const;
+  virtual IFX_CharIter* Clone();
+
+ protected:
+  ~CFX_CharIter();
+
+ private:
+  const CFX_WideString& m_wsText;
+  int32_t m_nIndex;
 };
-IFX_WordBreak* FX_WordBreak_Create();
+class CFX_WordBreak {
+ public:
+  CFX_WordBreak();
+
+  void Release();
+  void Attach(IFX_CharIter* pIter);
+  void Attach(const CFX_WideString& wsText);
+  FX_BOOL Next(FX_BOOL bPrev);
+  void SetAt(int32_t nIndex);
+  int32_t GetWordPos() const;
+  int32_t GetWordLength() const;
+  void GetWord(CFX_WideString& wsWord) const;
+  FX_BOOL IsEOF(FX_BOOL bTail) const;
+
+ protected:
+  ~CFX_WordBreak();
+  FX_BOOL FindNextBreakPos(IFX_CharIter* pIter,
+                           FX_BOOL bPrev,
+                           FX_BOOL bFromNext = TRUE);
+
+ private:
+  IFX_CharIter* m_pPreIter;
+  IFX_CharIter* m_pCurIter;
+};
 
 #endif  // XFA_FEE_FX_WORDBREAK_FX_WORDBREAK_H_

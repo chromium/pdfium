@@ -456,13 +456,6 @@ CFX_WideString CFX_LCNumeric::ToString(int32_t nTreading,
   return wsResult;
 }
 
-IFX_FormatString* IFX_FormatString::Create(IFX_LocaleMgr* pLocaleMgr,
-                                           FX_BOOL bUseLCID) {
-  if (!pLocaleMgr) {
-    return NULL;
-  }
-  return new CFX_FormatString(pLocaleMgr, bUseLCID);
-}
 CFX_FormatString::CFX_FormatString(IFX_LocaleMgr* pLocaleMgr, FX_BOOL bUseLCID)
     : m_pLocaleMgr(pLocaleMgr), m_bUseLCID(bUseLCID) {}
 CFX_FormatString::~CFX_FormatString() {}
