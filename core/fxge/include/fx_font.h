@@ -312,7 +312,9 @@ class CFX_FontMapper {
 #endif  // PDF_ENABLE_XFA
   FX_BOOL IsBuiltinFace(const FXFT_Face face) const;
   int GetFaceSize() const;
-  CFX_ByteString GetFaceName(int index) const { return m_FaceArray[index]; }
+  CFX_ByteString GetFaceName(int index) const {
+    return m_FaceArray[index].name;
+  }
 
   std::vector<CFX_ByteString> m_InstalledTTFonts;
 
@@ -328,11 +330,15 @@ class CFX_FontMapper {
                              int weight,
                              int picthfamily);
 
+  struct FaceData {
+    CFX_ByteString name;
+    uint32_t charset;
+  };
+
   FX_BOOL m_bListLoaded;
   FXFT_Face m_MMFaces[MM_FACE_COUNT];
   CFX_ByteString m_LastFamily;
-  CFX_ArrayTemplate<uint32_t> m_CharsetArray;
-  std::vector<CFX_ByteString> m_FaceArray;
+  std::vector<FaceData> m_FaceArray;
   IFX_SystemFontInfo* m_pFontInfo;
   FXFT_Face m_FoxitFaces[FOXIT_FACE_COUNT];
   CFX_FontMgr* const m_pFontMgr;
