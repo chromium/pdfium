@@ -258,7 +258,7 @@
         'core/fpdfdoc/include/cpvt_wordplace.h',
         'core/fpdfdoc/include/cpvt_wordprops.h',
         'core/fpdfdoc/include/cpvt_wordrange.h',
-        'core/fpdfdoc/ipvt_fontmap.h',
+        'core/fpdfdoc/include/ipvt_fontmap.h',
         'core/fpdfdoc/pdf_vt.h',
         'core/fpdfdoc/tagged_int.h',
       ],
@@ -953,6 +953,15 @@
           ],
           'sources': [
             'fpdfsdk/javascript/public_methods_unittest.cpp',
+          ],
+        }],
+        ['pdf_use_skia==1', {
+          'defines': ['PDF_ENABLE_SKIA'],
+          'dependencies': [
+            '<(DEPTH)/skia/skia.gyp:skia',
+          ],
+          'sources': [
+            'core/fxge/skia/fx_skia_device_unittest.cpp',
           ],
         }],
       ],

@@ -491,27 +491,39 @@ static uint32_t _GetBits32(const uint8_t* pData, int bitpos, int nbits) {
     }
   return result;
 }
-typedef struct {
-  FX_FLOAT encode_max, encode_min;
-  int sizes;
-} SampleEncodeInfo;
-typedef struct { FX_FLOAT decode_max, decode_min; } SampleDecodeInfo;
 
-class CPDF_SampledFunc : public CPDF_Function {
+class CPDF_PSFunc : public CPDF_Function {
  public:
-  CPDF_SampledFunc();
-  ~CPDF_SampledFunc() override;
-
+  CPDF_PSFunc() : CPDF_Function(Type::kType4PostScript) {}
   // CPDF_Function
   FX_BOOL v_Init(CPDF_Object* pObj) override;
   FX_BOOL v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const override;
 
-  SampleEncodeInfo* m_pEncodeInfo;
-  SampleDecodeInfo* m_pDecodeInfo;
-  uint32_t m_nBitsPerSample;
-  uint32_t m_SampleMax;
-  CPDF_StreamAcc* m_pSampleStream;
+ private:
+  CPDF_PSEngine m_PS;
 };
+
+FX_BOOL CPDF_PSFunc::v_Init(CPDF_Object* pObj) {
+  CPDF_StreamAcc acc;
+  acc.LoadAllData(pObj->AsStream(), FALSE);
+  return m_PS.Parse(reinterpret_cast<const FX_CHAR*>(acc.GetData()),
+                    acc.GetSize());
+}
+
+FX_BOOL CPDF_PSFunc::v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const {
+  CPDF_PSEngine& PS = const_cast<CPDF_PSEngine&>(m_PS);
+  PS.Reset();
+  for (uint32_t i = 0; i < m_nInputs; i++)
+    PS.Push(inputs[i]);
+  PS.Execute();
+  if (PS.GetStackSize() < m_nOutputs)
+    return FALSE;
+  for (uint32_t i = 0; i < m_nOutputs; i++)
+    results[m_nOutputs - i - 1] = PS.Pop();
+  return TRUE;
+}
+
+}  // namespace
 
 CPDF_SampledFunc::CPDF_SampledFunc() : CPDF_Function(Type::kType0Sampled) {
   m_pSampleStream = NULL;
@@ -524,6 +536,7 @@ CPDF_SampledFunc::~CPDF_SampledFunc() {
   FX_Free(m_pEncodeInfo);
   FX_Free(m_pDecodeInfo);
 }
+
 FX_BOOL CPDF_SampledFunc::v_Init(CPDF_Object* pObj) {
   CPDF_Stream* pStream = pObj->AsStream();
   if (!pStream)
@@ -579,13 +592,14 @@ FX_BOOL CPDF_SampledFunc::v_Init(CPDF_Object* pObj) {
   }
   return TRUE;
 }
+
 FX_BOOL CPDF_SampledFunc::v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const {
   int pos = 0;
   CFX_FixedBufGrow<FX_FLOAT, 16> encoded_input_buf(m_nInputs);
   FX_FLOAT* encoded_input = encoded_input_buf;
-  CFX_FixedBufGrow<int, 32> int_buf(m_nInputs * 2);
-  int* index = int_buf;
-  int* blocksize = index + m_nInputs;
+  CFX_FixedBufGrow<uint32_t, 32> int_buf(m_nInputs * 2);
+  uint32_t* index = int_buf;
+  uint32_t* blocksize = index + m_nInputs;
   for (uint32_t i = 0; i < m_nInputs; i++) {
     if (i == 0)
       blocksize[i] = 1;
@@ -594,11 +608,8 @@ FX_BOOL CPDF_SampledFunc::v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const {
     encoded_input[i] = PDF_Interpolate(
         inputs[i], m_pDomains[i * 2], m_pDomains[i * 2 + 1],
         m_pEncodeInfo[i].encode_min, m_pEncodeInfo[i].encode_max);
-    index[i] = (int)encoded_input[i];
-    if (index[i] < 0)
-      index[i] = 0;
-    else if (index[i] > m_pEncodeInfo[i].sizes - 1)
-      index[i] = m_pEncodeInfo[i].sizes - 1;
+    index[i] = std::min((uint32_t)std::max(0.f, encoded_input[i]),
+                        m_pEncodeInfo[i].sizes - 1);
     pos += index[i] * blocksize[i];
   }
   FX_SAFE_INT32 bits_to_output = m_nOutputs;
@@ -649,37 +660,6 @@ FX_BOOL CPDF_SampledFunc::v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const {
   }
   return TRUE;
 }
-
-class CPDF_PSFunc : public CPDF_Function {
- public:
-  // CPDF_Function
-  CPDF_PSFunc() : CPDF_Function(Type::kType4PostScript) {}
-  FX_BOOL v_Init(CPDF_Object* pObj) override;
-  FX_BOOL v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const override;
-
-  CPDF_PSEngine m_PS;
-};
-
-FX_BOOL CPDF_PSFunc::v_Init(CPDF_Object* pObj) {
-  CPDF_Stream* pStream = pObj->AsStream();
-  CPDF_StreamAcc acc;
-  acc.LoadAllData(pStream, FALSE);
-  return m_PS.Parse((const FX_CHAR*)acc.GetData(), acc.GetSize());
-}
-FX_BOOL CPDF_PSFunc::v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const {
-  CPDF_PSEngine& PS = (CPDF_PSEngine&)m_PS;
-  PS.Reset();
-  for (uint32_t i = 0; i < m_nInputs; i++)
-    PS.Push(inputs[i]);
-  PS.Execute();
-  if (PS.GetStackSize() < m_nOutputs)
-    return FALSE;
-  for (uint32_t i = 0; i < m_nOutputs; i++)
-    results[m_nOutputs - i - 1] = PS.Pop();
-  return TRUE;
-}
-
-}  // namespace
 
 CPDF_ExpIntFunc::CPDF_ExpIntFunc()
     : CPDF_Function(Type::kType2ExpotentialInterpolation) {

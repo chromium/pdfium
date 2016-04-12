@@ -393,6 +393,7 @@ class CPDF_Function {
   uint32_t CountInputs() const { return m_nInputs; }
   uint32_t CountOutputs() const { return m_nOutputs; }
   FX_FLOAT GetDomain(int i) const { return m_pDomains[i]; }
+  FX_FLOAT GetRange(int i) const { return m_pRanges[i]; }
   Type GetType() const { return m_Type; }
 
  protected:
@@ -421,6 +422,33 @@ class CPDF_ExpIntFunc : public CPDF_Function {
   FX_FLOAT m_Exponent;
   FX_FLOAT* m_pBeginValues;
   FX_FLOAT* m_pEndValues;
+};
+
+class CPDF_SampledFunc : public CPDF_Function {
+ public:
+  struct SampleEncodeInfo {
+    FX_FLOAT encode_max;
+    FX_FLOAT encode_min;
+    uint32_t sizes;
+  };
+
+  struct SampleDecodeInfo {
+    FX_FLOAT decode_max;
+    FX_FLOAT decode_min;
+  };
+
+  CPDF_SampledFunc();
+  ~CPDF_SampledFunc() override;
+
+  // CPDF_Function
+  FX_BOOL v_Init(CPDF_Object* pObj) override;
+  FX_BOOL v_Call(FX_FLOAT* inputs, FX_FLOAT* results) const override;
+
+  SampleEncodeInfo* m_pEncodeInfo;
+  SampleDecodeInfo* m_pDecodeInfo;
+  uint32_t m_nBitsPerSample;
+  uint32_t m_SampleMax;
+  CPDF_StreamAcc* m_pSampleStream;
 };
 
 class CPDF_StitchFunc : public CPDF_Function {

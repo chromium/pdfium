@@ -855,8 +855,8 @@ void CPDF_RenderStatus::DrawShading(CPDF_ShadingPattern* pPattern,
     clip_rect.Intersect(rect.GetOutterRect());
   }
   if (m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_SHADING &&
-      m_pDevice->GetDeviceDriver()->DrawShading(pPattern, pMatrix, alpha,
-                                                bAlphaMode)) {
+      m_pDevice->GetDeviceDriver()->DrawShading(pPattern, pMatrix, clip_rect,
+                                                alpha, bAlphaMode)) {
     return;
   }
   CPDF_DeviceBuffer buffer;

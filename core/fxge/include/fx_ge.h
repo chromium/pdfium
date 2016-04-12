@@ -603,8 +603,9 @@ class IFX_RenderDeviceDriver {
   virtual int GetDriverType() const { return 0; }
   virtual void ClearDriver() {}
 
-  virtual FX_BOOL DrawShading(CPDF_ShadingPattern* pPattern,
-                              CFX_Matrix* pMatrix,
+  virtual FX_BOOL DrawShading(const CPDF_ShadingPattern* pPattern,
+                              const CFX_Matrix* pMatrix,
+                              const FX_RECT& clip_rect,
                               int alpha,
                               FX_BOOL bAlphaMode) {
     return false;

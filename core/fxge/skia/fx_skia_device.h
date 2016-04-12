@@ -128,8 +128,9 @@ class CFX_SkiaDeviceDriver : public IFX_RenderDeviceDriver {
                          int alpha_flag = 0,
                          void* pIccTransform = NULL) override;
 
-  FX_BOOL DrawShading(CPDF_ShadingPattern* pPattern,
-                      CFX_Matrix* pMatrix,
+  FX_BOOL DrawShading(const CPDF_ShadingPattern* pPattern,
+                      const CFX_Matrix* pMatrix,
+                      const FX_RECT& clip_rect,
                       int alpha,
                       FX_BOOL bAlphaMode) override;
 

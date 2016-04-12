@@ -11,6 +11,7 @@
 #include "core/fpdfapi/fpdf_page/pageint.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
+#include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "core/fxge/skia/fx_skia_device.h"
 
 #include "third_party/skia/include/core/SkCanvas.h"
@@ -177,6 +178,90 @@ bool AddColors(const CPDF_Function* pFunc, SkTDArray<SkColor>* skColors) {
   return true;
 }
 
+uint32_t GetBits32(const uint8_t* pData, int bitpos, int nbits) {
+  ASSERT(0 < nbits && nbits <= 32);
+  const uint8_t* dataPtr = &pData[bitpos / 8];
+  int bitShift;
+  int bitMask;
+  int dstShift;
+  int bitCount = bitpos & 0x07;
+  if (nbits < 8 && nbits + bitCount <= 8) {
+    bitShift = 8 - nbits - bitCount;
+    bitMask = (1 << nbits) - 1;
+    dstShift = 0;
+  } else {
+    bitShift = 0;
+    int bitOffset = 8 - bitCount;
+    bitMask = (1 << SkTMin(bitOffset, nbits)) - 1;
+    dstShift = nbits - bitOffset;
+  }
+  uint32_t result = (uint32_t)(*dataPtr++ >> bitShift & bitMask) << dstShift;
+  while (dstShift >= 8) {
+    dstShift -= 8;
+    result |= *dataPtr++ << dstShift;
+  }
+  if (dstShift > 0) {
+    bitShift = 8 - dstShift;
+    bitMask = (1 << dstShift) - 1;
+    result |= *dataPtr++ >> bitShift & bitMask;
+  }
+  return result;
+}
+
+uint8_t FloatToByte(FX_FLOAT f) {
+  ASSERT(0 <= f && f <= 1);
+  return (uint8_t)(f * 255.99f);
+}
+
+bool AddSamples(const CPDF_Function* pFunc,
+                SkTDArray<SkColor>* skColors,
+                SkTDArray<SkScalar>* skPos) {
+  if (pFunc->CountInputs() != 1)
+    return false;
+  if (pFunc->CountOutputs() != 3)  // expect rgb
+    return false;
+  ASSERT(CPDF_Function::Type::kType0Sampled == pFunc->GetType());
+  const CPDF_SampledFunc* sampledFunc =
+      static_cast<const CPDF_SampledFunc*>(pFunc);
+  if (!sampledFunc->m_pEncodeInfo)
+    return false;
+  const CPDF_SampledFunc::SampleEncodeInfo& encodeInfo =
+      sampledFunc->m_pEncodeInfo[0];
+  if (encodeInfo.encode_min != 0)
+    return false;
+  if (encodeInfo.encode_max != encodeInfo.sizes - 1)
+    return false;
+  uint32_t sampleSize = sampledFunc->m_nBitsPerSample;
+  uint32_t sampleCount = encodeInfo.sizes;
+  if (sampleCount != 1 << sampleSize)
+    return false;
+  if (sampledFunc->m_pSampleStream->GetSize() <
+      sampleCount * 3 * sampleSize / 8) {
+    return false;
+  }
+  FX_FLOAT colorsMin[3];
+  FX_FLOAT colorsMax[3];
+  for (int i = 0; i < 3; ++i) {
+    colorsMin[i] = sampledFunc->GetRange(i * 2);
+    colorsMax[i] = sampledFunc->GetRange(i * 2 + 1);
+  }
+  const uint8_t* pSampleData = sampledFunc->m_pSampleStream->GetData();
+  for (uint32_t i = 0; i < sampleCount; ++i) {
+    FX_FLOAT floatColors[3];
+    for (uint32_t j = 0; j < 3; ++j) {
+      int sample = GetBits32(pSampleData, (i * 3 + j) * sampleSize, sampleSize);
+      FX_FLOAT interp = (FX_FLOAT)sample / (sampleCount - 1);
+      floatColors[j] = colorsMin[j] + (colorsMax[j] - colorsMin[j]) * interp;
+    }
+    SkColor color =
+        SkPackARGB32(0xFF, FloatToByte(floatColors[0]),
+                     FloatToByte(floatColors[1]), FloatToByte(floatColors[2]));
+    skColors->push(color);
+    skPos->push((FX_FLOAT)i / (sampleCount - 1));
+  }
+  return true;
+}
+
 bool AddStitching(const CPDF_Function* pFunc,
                   SkTDArray<SkColor>* skColors,
                   SkTDArray<SkScalar>* skPos) {
@@ -302,6 +387,99 @@ void RgbByteOrderTransferBitmap(CFX_DIBitmap* pBitmap,
   } else {
     ASSERT(FALSE);
   }
+}
+
+// see https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
+SkScalar LineSide(const SkPoint line[2], const SkPoint& pt) {
+  return (line[1].fY - line[0].fY) * pt.fX - (line[1].fX - line[0].fX) * pt.fY +
+         line[1].fX * line[0].fY - line[1].fY * line[0].fX;
+}
+
+SkPoint IntersectSides(const SkPoint& parallelPt,
+                       const SkVector& paraRay,
+                       const SkPoint& perpendicularPt) {
+  SkVector perpRay = {paraRay.fY, -paraRay.fX};
+  SkScalar denom = perpRay.fY * paraRay.fX - paraRay.fY * perpRay.fX;
+  if (!denom) {
+    SkPoint zeroPt = {0, 0};
+    return zeroPt;
+  }
+  SkVector ab0 = parallelPt - perpendicularPt;
+  SkScalar numerA = ab0.fY * perpRay.fX - perpRay.fY * ab0.fX;
+  numerA /= denom;
+  SkPoint result = {parallelPt.fX + paraRay.fX * numerA,
+                    parallelPt.fY + paraRay.fY * numerA};
+  return result;
+}
+
+void ClipAngledGradient(const SkPoint pts[2],
+                        SkPoint rectPts[4],
+                        bool clipStart,
+                        bool clipEnd,
+                        SkPath* clip) {
+  // find the corners furthest from the gradient perpendiculars
+  SkScalar minPerpDist = SK_ScalarMax;
+  SkScalar maxPerpDist = SK_ScalarMin;
+  int minPerpPtIndex = -1;
+  int maxPerpPtIndex = -1;
+  SkVector slope = pts[1] - pts[0];
+  SkPoint startPerp[2] = {pts[0], {pts[0].fX + slope.fY, pts[0].fY - slope.fX}};
+  SkPoint endPerp[2] = {pts[1], {pts[1].fX + slope.fY, pts[1].fY - slope.fX}};
+  for (int i = 0; i < 4; ++i) {
+    SkScalar sDist = LineSide(startPerp, rectPts[i]);
+    SkScalar eDist = LineSide(endPerp, rectPts[i]);
+    if (sDist * eDist <= 0)  // if the signs are different,
+      continue;              // the point is inside the gradient
+    if (sDist < 0) {
+      SkScalar smaller = SkTMin(sDist, eDist);
+      if (minPerpDist > smaller) {
+        minPerpDist = smaller;
+        minPerpPtIndex = i;
+      }
+    } else {
+      SkScalar larger = SkTMax(sDist, eDist);
+      if (maxPerpDist < larger) {
+        maxPerpDist = larger;
+        maxPerpPtIndex = i;
+      }
+    }
+  }
+  if (minPerpPtIndex < 0 && maxPerpPtIndex < 0)  // nothing's outside
+    return;
+  // determine if negative distances are before start or after end
+  SkPoint beforeStart = {pts[0].fX * 2 - pts[1].fX, pts[0].fY * 2 - pts[1].fY};
+  bool beforeNeg = LineSide(startPerp, beforeStart) < 0;
+  const SkPoint& startEdgePt =
+      clipStart ? pts[0] : beforeNeg ? rectPts[minPerpPtIndex]
+                                     : rectPts[maxPerpPtIndex];
+  const SkPoint& endEdgePt = clipEnd ? pts[1] : beforeNeg
+                                                    ? rectPts[maxPerpPtIndex]
+                                                    : rectPts[minPerpPtIndex];
+  // find the corners that bound the gradient
+  SkScalar minDist = SK_ScalarMax;
+  SkScalar maxDist = SK_ScalarMin;
+  int minBounds = -1;
+  int maxBounds = -1;
+  for (int i = 0; i < 4; ++i) {
+    SkScalar dist = LineSide(pts, rectPts[i]);
+    if (minDist > dist) {
+      minDist = dist;
+      minBounds = i;
+    }
+    if (maxDist < dist) {
+      maxDist = dist;
+      maxBounds = i;
+    }
+  }
+  ASSERT(minBounds >= 0);
+  ASSERT(maxBounds != minBounds && maxBounds >= 0);
+  // construct a clip parallel to the gradient that goes through
+  // rectPts[minBounds] and rectPts[maxBounds] and perpendicular to the
+  // gradient that goes through startEdgePt, endEdgePt.
+  clip->moveTo(IntersectSides(rectPts[minBounds], slope, startEdgePt));
+  clip->lineTo(IntersectSides(rectPts[minBounds], slope, endEdgePt));
+  clip->lineTo(IntersectSides(rectPts[maxBounds], slope, endEdgePt));
+  clip->lineTo(IntersectSides(rectPts[maxBounds], slope, startEdgePt));
 }
 
 }  // namespace
@@ -604,11 +782,17 @@ FX_BOOL CFX_SkiaDeviceDriver::FillRect(const FX_RECT* pRect,
   return TRUE;
 }
 
-FX_BOOL CFX_SkiaDeviceDriver::DrawShading(CPDF_ShadingPattern* pPattern,
-                                          CFX_Matrix* pMatrix,
+FX_BOOL CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
+                                          const CFX_Matrix* pMatrix,
+                                          const FX_RECT& clip_rect,
                                           int alpha,
                                           FX_BOOL bAlphaMode) {
-  CPDF_Function** pFuncs = pPattern->m_pFunctions;
+  if (kAxialShading != pPattern->m_ShadingType &&
+      kRadialShading != pPattern->m_ShadingType) {
+    // TODO(caryclark) more types
+    return false;
+  }
+  CPDF_Function* const* pFuncs = pPattern->m_pFunctions;
   int nFuncs = pPattern->m_nFuncs;
   if (nFuncs != 1)  // TODO(caryclark) remove this restriction
     return false;
@@ -616,23 +800,8 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawShading(CPDF_ShadingPattern* pPattern,
   CPDF_Array* pCoords = pDict->GetArrayBy("Coords");
   if (!pCoords)
     return true;
-  FX_FLOAT start_x = pCoords->GetNumberAt(0);
-  FX_FLOAT start_y = pCoords->GetNumberAt(1);
-  FX_FLOAT end_x = pCoords->GetNumberAt(2);
-  FX_FLOAT end_y = pCoords->GetNumberAt(3);
-  FX_FLOAT t_min = 0;
-  FX_FLOAT t_max = 1;
-  CPDF_Array* pArray = pDict->GetArrayBy("Domain");
-  if (pArray) {
-    t_min = pArray->GetNumberAt(0);
-    t_max = pArray->GetNumberAt(1);
-  }
-  FX_BOOL bStartExtend = FALSE, bEndExtend = FALSE;
-  pArray = pDict->GetArrayBy("Extend");
-  if (pArray) {
-    bStartExtend = pArray->GetIntegerAt(0);
-    bEndExtend = pArray->GetIntegerAt(1);
-  }
+  // TODO(caryclark) Respect Domain[0], Domain[1]. (Don't know what they do
+  // yet.)
   SkTDArray<SkColor> skColors;
   SkTDArray<SkScalar> skPos;
   for (int j = 0; j < nFuncs; j++) {
@@ -640,6 +809,14 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawShading(CPDF_ShadingPattern* pPattern,
     if (!pFunc)
       continue;
     switch (pFunc->GetType()) {
+      case CPDF_Function::Type::kType0Sampled:
+        /* TODO(caryclark)
+           Type 0 Sampled Functions in PostScript can also have an Order integer
+           in the dictionary. PDFium doesn't appear to check for this anywhere.
+         */
+        if (!AddSamples(pFunc, &skColors, &skPos))
+          return false;
+        break;
       case CPDF_Function::Type::kType2ExpotentialInterpolation:
         if (!AddColors(pFunc, &skColors))
           return false;
@@ -654,17 +831,89 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawShading(CPDF_ShadingPattern* pPattern,
         return false;
     }
   }
-  SkMatrix skMatrix = ToSkMatrix(*pMatrix);
-  SkPoint pts[] = {{start_x, start_y}, {end_x, end_y}};
+  CPDF_Array* pArray = pDict->GetArrayBy("Extend");
+  bool clipStart = !pArray || !pArray->GetIntegerAt(0);
+  bool clipEnd = !pArray || !pArray->GetIntegerAt(1);
   SkPaint paint;
   paint.setAntiAlias(true);
-  paint.setShader(SkGradientShader::MakeLinear(pts, skColors.begin(),
-                                               skPos.begin(), skColors.count(),
-                                               SkShader::kClamp_TileMode));
   paint.setAlpha(alpha);
+  SkMatrix skMatrix = ToSkMatrix(*pMatrix);
+  SkRect skRect = SkRect::MakeLTRB(clip_rect.left, clip_rect.top,
+                                   clip_rect.right, clip_rect.bottom);
+  SkPath skClip;
+  SkPath skPath;
+  if (kAxialShading == pPattern->m_ShadingType) {
+    FX_FLOAT start_x = pCoords->GetNumberAt(0);
+    FX_FLOAT start_y = pCoords->GetNumberAt(1);
+    FX_FLOAT end_x = pCoords->GetNumberAt(2);
+    FX_FLOAT end_y = pCoords->GetNumberAt(3);
+    SkPoint pts[] = {{start_x, start_y}, {end_x, end_y}};
+    skMatrix.mapPoints(pts, SK_ARRAY_COUNT(pts));
+    paint.setShader(SkGradientShader::MakeLinear(
+        pts, skColors.begin(), skPos.begin(), skColors.count(),
+        SkShader::kClamp_TileMode));
+    if (clipStart || clipEnd) {
+      // if the gradient is horizontal or vertical, modify the draw rectangle
+      if (pts[0].fX == pts[1].fX) {  // vertical
+        if (pts[0].fY > pts[1].fY) {
+          SkTSwap(pts[0].fY, pts[1].fY);
+          SkTSwap(clipStart, clipEnd);
+        }
+        if (clipStart)
+          skRect.fTop = SkTMax(skRect.fTop, pts[0].fY);
+        if (clipEnd)
+          skRect.fBottom = SkTMin(skRect.fBottom, pts[1].fY);
+      } else if (pts[0].fY == pts[1].fY) {  // horizontal
+        if (pts[0].fX > pts[1].fX) {
+          SkTSwap(pts[0].fX, pts[1].fX);
+          SkTSwap(clipStart, clipEnd);
+        }
+        if (clipStart)
+          skRect.fLeft = SkTMax(skRect.fLeft, pts[0].fX);
+        if (clipEnd)
+          skRect.fRight = SkTMin(skRect.fRight, pts[1].fX);
+      } else {  // if the gradient is angled and contained by the rect, clip
+        SkPoint rectPts[4] = {{skRect.fLeft, skRect.fTop},
+                              {skRect.fRight, skRect.fTop},
+                              {skRect.fRight, skRect.fBottom},
+                              {skRect.fLeft, skRect.fBottom}};
+        ClipAngledGradient(pts, rectPts, clipStart, clipEnd, &skClip);
+      }
+    }
+    skPath.addRect(skRect);
+    skMatrix.setIdentity();
+  } else {
+    ASSERT(kRadialShading == pPattern->m_ShadingType);
+    FX_FLOAT start_x = pCoords->GetNumberAt(0);
+    FX_FLOAT start_y = pCoords->GetNumberAt(1);
+    FX_FLOAT start_r = pCoords->GetNumberAt(2);
+    FX_FLOAT end_x = pCoords->GetNumberAt(3);
+    FX_FLOAT end_y = pCoords->GetNumberAt(4);
+    FX_FLOAT end_r = pCoords->GetNumberAt(5);
+    SkPoint pts[] = {{start_x, start_y}, {end_x, end_y}};
+
+    paint.setShader(SkGradientShader::MakeTwoPointConical(
+        pts[0], start_r, pts[1], end_r, skColors.begin(), skPos.begin(),
+        skColors.count(), SkShader::kClamp_TileMode));
+    if (clipStart || clipEnd) {
+      if (clipStart && start_r)
+        skClip.addCircle(pts[0].fX, pts[0].fY, start_r);
+      if (clipEnd)
+        skClip.addCircle(pts[1].fX, pts[1].fY, end_r, SkPath::kCCW_Direction);
+      else
+        skClip.setFillType(SkPath::kInverseWinding_FillType);
+      skClip.transform(skMatrix);
+    }
+    SkMatrix inverse;
+    skMatrix.invert(&inverse);
+    skPath.addRect(skRect);
+    skPath.transform(inverse);
+  }
   m_pCanvas->save();
+  if (!skClip.isEmpty())
+    m_pCanvas->clipPath(skClip);
   m_pCanvas->concat(skMatrix);
-  m_pCanvas->drawRect(SkRect::MakeWH(1, 1), paint);
+  m_pCanvas->drawPath(skPath, paint);
   m_pCanvas->restore();
   return true;
 }
