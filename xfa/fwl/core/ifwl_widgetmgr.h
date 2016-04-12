@@ -44,8 +44,5 @@ class IFWL_WidgetMgr {
 
 IFWL_WidgetMgr* FWL_GetWidgetMgr();
 FX_BOOL FWL_WidgetIsChild(IFWL_Widget* parent, IFWL_Widget* find);
-FWL_ERR FWL_WidgetMgrSnapshot(IFWL_Widget* pWidget,
-                              const CFX_WideString* saveFile,
-                              const CFX_Matrix* pMatrix = NULL);
 
 #endif  // XFA_FWL_CORE_IFWL_WIDGETMGR_H_

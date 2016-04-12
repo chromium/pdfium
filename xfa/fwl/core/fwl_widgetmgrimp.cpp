@@ -1007,56 +1007,6 @@ FX_BOOL CFWL_WidgetMgrDelegate::bUseOffscreenDirect(IFWL_Widget* pWidget) {
 #endif
   return pItem->iRedrawCounter == 0;
 }
-static void FWL_WriteBMP(CFX_DIBitmap* pBitmap, const FX_CHAR* filename) {
-  FILE* file = fopen(filename, "wb");
-  if (file == NULL) {
-    return;
-  }
-  int size = 14 + 40 + pBitmap->GetPitch() * pBitmap->GetHeight();
-  unsigned char buffer[40];
-  buffer[0] = 'B';
-  buffer[1] = 'M';
-  buffer[2] = (unsigned char)size;
-  buffer[3] = (unsigned char)(size >> 8);
-  buffer[4] = (unsigned char)(size >> 16);
-  buffer[5] = (unsigned char)(size >> 24);
-  buffer[6] = buffer[7] = buffer[8] = buffer[9] = 0;
-  buffer[10] = 54;
-  buffer[11] = buffer[12] = buffer[13] = 0;
-  fwrite(buffer, 14, 1, file);
-  memset(buffer, 0, 40);
-  buffer[0] = 40;
-  buffer[4] = (unsigned char)pBitmap->GetWidth();
-  buffer[5] = (unsigned char)(pBitmap->GetWidth() >> 8);
-  buffer[6] = (unsigned char)(pBitmap->GetWidth() >> 16);
-  buffer[7] = (unsigned char)(pBitmap->GetWidth() >> 24);
-  buffer[8] = (unsigned char)(-pBitmap->GetHeight());
-  buffer[9] = (unsigned char)((-pBitmap->GetHeight()) >> 8);
-  buffer[10] = (unsigned char)((-pBitmap->GetHeight()) >> 16);
-  buffer[11] = (unsigned char)((-pBitmap->GetHeight()) >> 24);
-  buffer[12] = 1;
-  buffer[14] = pBitmap->GetBPP();
-  fwrite(buffer, 40, 1, file);
-  for (int row = 0; row < pBitmap->GetHeight(); row++) {
-    uint8_t* scan_line = pBitmap->GetBuffer() + row * pBitmap->GetPitch();
-    fwrite(scan_line, pBitmap->GetPitch(), 1, file);
-  }
-  fclose(file);
-}
-FWL_ERR FWL_WidgetMgrSnapshot(IFWL_Widget* pWidget,
-                              const CFX_WideString* saveFile,
-                              const CFX_Matrix* pMatrix) {
-  CFX_RectF r;
-  pWidget->GetWidgetRect(r);
-  CFX_Graphics gs;
-  gs.Create((int32_t)r.width, (int32_t)r.height, FXDIB_Argb);
-  CFWL_WidgetMgr* widgetMgr = static_cast<CFWL_WidgetMgr*>(FWL_GetWidgetMgr());
-  CFWL_WidgetMgrDelegate* delegate = widgetMgr->GetDelegate();
-  delegate->OnDrawWidget(pWidget, &gs, pMatrix);
-  CFX_DIBitmap* dib = gs.GetRenderDevice()->GetBitmap();
-  FWL_WriteBMP(dib, saveFile->UTF8Encode());
-  return FWL_ERR_Succeeded;
-}
 FX_BOOL FWL_WidgetIsChild(IFWL_Widget* parent, IFWL_Widget* find) {
   if (!find) {
     return FALSE;
