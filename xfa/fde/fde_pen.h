@@ -9,12 +9,7 @@
 
 class IFDE_Pen;
 
-#define FDE_PENTYPE_Unknown FDE_BRUSHTYPE_Unknown
 #define FDE_PENTYPE_SolidColor FDE_BRUSHTYPE_Solid
-#define FDE_PENTYPE_HatchBrush FDE_BRUSHTYPE_Hatch
-#define FDE_PENTYPE_TextureBrush FDE_BRUSHTYPE_Texture
-#define FDE_PENTYPE_LinearGradient FDE_BRUSHTYPE_LinearGradient
-#define FDE_PENTYPE_MAX FDE_BRUSHTYPE_MAX
 
 #define FDE_DASHSTYLE_Solid 0
 #define FDE_DASHSTYLE_Dash 1
@@ -39,8 +34,8 @@ typedef CFX_ArrayTemplate<FDE_COMPOUNDPATTERN> CFDE_CompoundPatterns;
 
 class IFDE_Pen {
  public:
-  static IFDE_Pen* Create();
   virtual ~IFDE_Pen() {}
+
   virtual void Release() = 0;
   virtual int32_t GetType() const = 0;
   virtual FX_ARGB GetColor() const = 0;

@@ -96,15 +96,7 @@ class CFDE_FxgeDevice : public IFDE_RenderDevice, public CFX_Target {
   FX_BOOL FillSolidPath(IFDE_Brush* pBrush,
                         const CFX_PathData* pPath,
                         const CFX_Matrix* pMatrix);
-  FX_BOOL FillHatchPath(IFDE_Brush* pBrush,
-                        const CFX_PathData* pPath,
-                        const CFX_Matrix* pMatrix);
-  FX_BOOL FillTexturePath(IFDE_Brush* pBrush,
-                          const CFX_PathData* pPath,
-                          const CFX_Matrix* pMatrix);
-  FX_BOOL FillLinearGradientPath(IFDE_Brush* pBrush,
-                                 const CFX_PathData* pPath,
-                                 const CFX_Matrix* pMatrix);
+
   FX_BOOL DrawSolidString(IFDE_Brush* pBrush,
                           IFX_Font* pFont,
                           const FXTEXT_CHARPOS* pCharPos,
@@ -122,10 +114,7 @@ class CFDE_FxgeDevice : public IFDE_RenderDevice, public CFX_Target {
   FX_BOOL CreatePen(IFDE_Pen* pPen,
                     FX_FLOAT fPenWidth,
                     CFX_GraphStateData& graphState);
-  FX_BOOL WrapTexture(int32_t iWrapMode,
-                      const CFX_DIBitmap* pBitmap,
-                      const CFX_PathData* pPath,
-                      const CFX_Matrix* pMatrix);
+
   CFX_RenderDevice* m_pDevice;
   CFX_RectF m_rtClip;
   FX_BOOL m_bOwnerDevice;

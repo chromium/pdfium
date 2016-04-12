@@ -11,6 +11,7 @@
 #include "core/fxcrt/include/fx_coordinates.h"
 #include "core/fxcrt/include/fx_system.h"
 #include "xfa/fde/fde_brush.h"
+#include "xfa/fde/fde_object.h"
 #include "xfa/fde/fde_pen.h"
 #include "xfa/fde/fde_renderdevice.h"
 #include "xfa/fgas/crt/fgas_memory.h"
@@ -950,8 +951,7 @@ void CFDE_TextOut::OnDraw(const CFX_RectF& rtClip) {
   if (iLines < 1) {
     return;
   }
-  IFDE_SolidBrush* pBrush =
-      (IFDE_SolidBrush*)IFDE_Brush::Create(FDE_BRUSHTYPE_Solid);
+  IFDE_SolidBrush* pBrush = new CFDE_SolidBrush;
   pBrush->SetColor(m_TxtColor);
   IFDE_Pen* pPen = NULL;
   FDE_HDEVICESTATE hDev = m_pRenderDevice->SaveState();
@@ -1017,7 +1017,7 @@ void CFDE_TextOut::DrawLine(const FDE_LPTTOPIECE pPiece, IFDE_Pen*& pPen) {
     return;
   }
   if (pPen == NULL) {
-    pPen = IFDE_Pen::Create();
+    pPen = new CFDE_Pen;
     pPen->SetColor(m_TxtColor);
   }
   IFDE_Path* pPath = IFDE_Path::Create();

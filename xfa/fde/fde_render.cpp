@@ -6,6 +6,7 @@
 
 #include "xfa/fde/fde_render.h"
 
+#include "xfa/fde/fde_object.h"
 #include "xfa/fde/fde_renderdevice.h"
 #include "xfa/fgas/crt/fgas_memory.h"
 
@@ -216,7 +217,7 @@ void CFDE_RenderContext::RenderText(IFDE_TextSet* pTextSet,
     return;
   }
   if (m_pSolidBrush == NULL) {
-    m_pSolidBrush = (IFDE_SolidBrush*)IFDE_Brush::Create(FDE_BRUSHTYPE_Solid);
+    m_pSolidBrush = new CFDE_SolidBrush;
     if (m_pSolidBrush == NULL) {
       return;
     }

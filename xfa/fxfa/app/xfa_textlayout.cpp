@@ -10,6 +10,7 @@
 
 #include "core/fxcrt/include/fx_ext.h"
 #include "xfa/fde/css/fde_csscache.h"
+#include "xfa/fde/fde_object.h"
 #include "xfa/fde/fde_pen.h"
 #include "xfa/fde/xml/fde_xml_imp.h"
 #include "xfa/fgas/crt/fgas_algorithm.h"
@@ -1222,12 +1223,10 @@ FX_BOOL CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
   }
   FDE_HDEVICESTATE state = pDevice->SaveState();
   pDevice->SetClipRect(rtClip);
-  IFDE_SolidBrush* pSolidBrush =
-      (IFDE_SolidBrush*)IFDE_Brush::Create(FDE_BRUSHTYPE_Solid);
-  IFDE_Pen* pPen = IFDE_Pen::Create();
+  IFDE_SolidBrush* pSolidBrush = new CFDE_SolidBrush;
+  IFDE_Pen* pPen = new CFDE_Pen;
   FXSYS_assert(pDevice);
-  FXSYS_assert(pSolidBrush);
-  FXSYS_assert(pPen);
+
   if (m_pieceLines.GetSize() == 0) {
     int32_t iBlockCount = CountBlocks();
     for (int32_t i = 0; i < iBlockCount; i++) {

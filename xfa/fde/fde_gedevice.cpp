@@ -9,21 +9,10 @@
 #include <algorithm>
 
 #include "xfa/fde/fde_brush.h"
-#include "xfa/fde/fde_devbasic.h"
 #include "xfa/fde/fde_geobject.h"
 #include "xfa/fde/fde_image.h"
+#include "xfa/fde/fde_object.h"
 #include "xfa/fde/fde_pen.h"
-
-FX_BOOL FDE_GetStockHatchMask(int32_t iHatchStyle, CFX_DIBitmap& hatchMask) {
-  FDE_LPCHATCHDATA pData = FDE_DEVGetHatchData(iHatchStyle);
-  if (!pData) {
-    return FALSE;
-  }
-  hatchMask.Create(pData->iWidth, pData->iHeight, FXDIB_1bppMask);
-  FXSYS_memcpy(hatchMask.GetBuffer(), pData->MaskBits,
-               hatchMask.GetPitch() * pData->iHeight);
-  return TRUE;
-}
 
 IFDE_RenderDevice* IFDE_RenderDevice::Create(CFX_DIBitmap* pBitmap,
                                              FX_BOOL bRgbByteOrder) {
@@ -378,196 +367,26 @@ FX_BOOL CFDE_FxgeDevice::CreatePen(IFDE_Pen* pPen,
   }
   return TRUE;
 }
-typedef FX_BOOL (CFDE_FxgeDevice::*pfFillPath)(IFDE_Brush* pBrush,
-                                               const CFX_PathData* pPath,
-                                               const CFX_Matrix* pMatrix);
-static const pfFillPath gs_FillPath[] = {
-    &CFDE_FxgeDevice::FillSolidPath, &CFDE_FxgeDevice::FillHatchPath,
-    &CFDE_FxgeDevice::FillTexturePath, &CFDE_FxgeDevice::FillLinearGradientPath,
-};
+
 FX_BOOL CFDE_FxgeDevice::FillPath(IFDE_Brush* pBrush,
                                   const IFDE_Path* pPath,
                                   const CFX_Matrix* pMatrix) {
   CFDE_Path* pGePath = (CFDE_Path*)pPath;
-  if (pGePath == NULL) {
+  if (!pGePath)
     return FALSE;
-  }
-  if (pBrush == NULL) {
+
+  if (!pBrush)
     return FALSE;
-  }
-  int32_t iType = pBrush->GetType();
-  if (iType < 0 || iType > FDE_BRUSHTYPE_MAX) {
-    return FALSE;
-  }
-  return (this->*gs_FillPath[iType])(pBrush, &pGePath->m_Path, pMatrix);
+
+  return FillSolidPath(pBrush, &pGePath->m_Path, pMatrix);
 }
+
 FX_BOOL CFDE_FxgeDevice::FillSolidPath(IFDE_Brush* pBrush,
                                        const CFX_PathData* pPath,
                                        const CFX_Matrix* pMatrix) {
   FXSYS_assert(pPath && pBrush && pBrush->GetType() == FDE_BRUSHTYPE_Solid);
-  IFDE_SolidBrush* pSolidBrush = (IFDE_SolidBrush*)pBrush;
+
+  IFDE_SolidBrush* pSolidBrush = static_cast<IFDE_SolidBrush*>(pBrush);
   return m_pDevice->DrawPath(pPath, (const CFX_Matrix*)pMatrix, NULL,
                              pSolidBrush->GetColor(), 0, FXFILL_WINDING);
-}
-FX_BOOL CFDE_FxgeDevice::FillHatchPath(IFDE_Brush* pBrush,
-                                       const CFX_PathData* pPath,
-                                       const CFX_Matrix* pMatrix) {
-  FXSYS_assert(pPath && pBrush && pBrush->GetType() == FDE_BRUSHTYPE_Hatch);
-  IFDE_HatchBrush* pHatchBrush = (IFDE_HatchBrush*)pBrush;
-  int32_t iStyle = pHatchBrush->GetHatchStyle();
-  if (iStyle < FDE_HATCHSTYLE_Min || iStyle > FDE_HATCHSTYLE_Max) {
-    return FALSE;
-  }
-  CFX_DIBitmap mask;
-  if (!FDE_GetStockHatchMask(iStyle, mask)) {
-    return FALSE;
-  }
-  FX_ARGB dwForeColor = pHatchBrush->GetColor(TRUE);
-  FX_ARGB dwBackColor = pHatchBrush->GetColor(FALSE);
-  CFX_FloatRect rectf = pPath->GetBoundingBox();
-  if (pMatrix) {
-    rectf.Transform((const CFX_Matrix*)pMatrix);
-  }
-  FX_RECT rect(FXSYS_round(rectf.left), FXSYS_round(rectf.top),
-               FXSYS_round(rectf.right), FXSYS_round(rectf.bottom));
-  m_pDevice->SaveState();
-  m_pDevice->StartRendering();
-  m_pDevice->SetClip_PathFill(pPath, (const CFX_Matrix*)pMatrix,
-                              FXFILL_WINDING);
-  m_pDevice->FillRect(&rect, dwBackColor);
-  for (int32_t j = rect.bottom; j < rect.top; j += mask.GetHeight())
-    for (int32_t i = rect.left; i < rect.right; i += mask.GetWidth()) {
-      m_pDevice->SetBitMask(&mask, i, j, dwForeColor);
-    }
-  m_pDevice->EndRendering();
-  m_pDevice->RestoreState();
-  return TRUE;
-}
-FX_BOOL CFDE_FxgeDevice::FillTexturePath(IFDE_Brush* pBrush,
-                                         const CFX_PathData* pPath,
-                                         const CFX_Matrix* pMatrix) {
-  FXSYS_assert(pPath && pBrush && pBrush->GetType() == FDE_BRUSHTYPE_Texture);
-  IFDE_TextureBrush* pTextureBrush = static_cast<IFDE_TextureBrush*>(pBrush);
-  IFDE_Image* pImage = pTextureBrush->GetImage();
-  if (!pImage)
-    return FALSE;
-
-  CFX_Size size(pImage->GetImageWidth(), pImage->GetImageHeight());
-  CFX_DIBitmap bmp;
-  bmp.Create(size.x, size.y, FXDIB_Argb);
-  if (!pImage->StartLoadImage(&bmp, 0, 0, size.x, size.y, 0, 0, size.x,
-                              size.y)) {
-    return FALSE;
-  }
-  if (pImage->DoLoadImage() < 100) {
-    return FALSE;
-  }
-  pImage->StopLoadImage();
-  return WrapTexture(pTextureBrush->GetWrapMode(), &bmp, pPath, pMatrix);
-}
-FX_BOOL CFDE_FxgeDevice::WrapTexture(int32_t iWrapMode,
-                                     const CFX_DIBitmap* pBitmap,
-                                     const CFX_PathData* pPath,
-                                     const CFX_Matrix* pMatrix) {
-  CFX_FloatRect rectf = pPath->GetBoundingBox();
-  if (pMatrix) {
-    rectf.Transform((const CFX_Matrix*)pMatrix);
-  }
-  FX_RECT rect(FXSYS_round(rectf.left), FXSYS_round(rectf.top),
-               FXSYS_round(rectf.right), FXSYS_round(rectf.bottom));
-  rect.Normalize();
-  if (rect.IsEmpty()) {
-    return FALSE;
-  }
-  m_pDevice->SaveState();
-  m_pDevice->StartRendering();
-  m_pDevice->SetClip_PathFill(pPath, (const CFX_Matrix*)pMatrix,
-                              FXFILL_WINDING);
-  switch (iWrapMode) {
-    case FDE_WRAPMODE_Tile:
-    case FDE_WRAPMODE_TileFlipX:
-    case FDE_WRAPMODE_TileFlipY:
-    case FDE_WRAPMODE_TileFlipXY: {
-      FX_BOOL bFlipX = iWrapMode == FDE_WRAPMODE_TileFlipXY ||
-                       iWrapMode == FDE_WRAPMODE_TileFlipX;
-      FX_BOOL bFlipY = iWrapMode == FDE_WRAPMODE_TileFlipXY ||
-                       iWrapMode == FDE_WRAPMODE_TileFlipY;
-      const CFX_DIBitmap* pFlip[2][2];
-      pFlip[0][0] = pBitmap;
-      pFlip[0][1] = bFlipX ? pBitmap->FlipImage(TRUE, FALSE) : pBitmap;
-      pFlip[1][0] = bFlipY ? pBitmap->FlipImage(FALSE, TRUE) : pBitmap;
-      pFlip[1][1] =
-          (bFlipX || bFlipY) ? pBitmap->FlipImage(bFlipX, bFlipY) : pBitmap;
-      int32_t iCounterY = 0;
-      for (int32_t j = rect.top; j < rect.bottom; j += pBitmap->GetHeight()) {
-        int32_t indexY = iCounterY++ % 2;
-        int32_t iCounterX = 0;
-        for (int32_t i = rect.left; i < rect.right; i += pBitmap->GetWidth()) {
-          int32_t indexX = iCounterX++ % 2;
-          m_pDevice->SetDIBits(pFlip[indexY][indexX], i, j);
-        }
-      }
-      if (pFlip[0][1] != pFlip[0][0]) {
-        delete pFlip[0][1];
-      }
-      if (pFlip[1][0] != pFlip[0][0]) {
-        delete pFlip[1][0];
-      }
-      if (pFlip[1][1] != pFlip[0][0]) {
-        delete pFlip[1][1];
-      }
-    } break;
-    case FDE_WRAPMODE_Clamp: {
-      m_pDevice->SetDIBits(pBitmap, rect.left, rect.bottom);
-    } break;
-  }
-  m_pDevice->EndRendering();
-  m_pDevice->RestoreState();
-  return TRUE;
-}
-FX_BOOL CFDE_FxgeDevice::FillLinearGradientPath(IFDE_Brush* pBrush,
-                                                const CFX_PathData* pPath,
-                                                const CFX_Matrix* pMatrix) {
-  FXSYS_assert(pPath && pBrush &&
-               pBrush->GetType() == FDE_BRUSHTYPE_LinearGradient);
-  IFDE_LinearGradientBrush* pLinearBrush = (IFDE_LinearGradientBrush*)pBrush;
-  CFX_PointF pt0, pt1;
-  pLinearBrush->GetLinearPoints(pt0, pt1);
-  CFX_VectorF fDiagonal(pt0, pt1);
-  FX_FLOAT fTheta = FXSYS_atan2(fDiagonal.y, fDiagonal.x);
-  FX_FLOAT fLength = fDiagonal.Length();
-  FX_FLOAT fTotalX = fLength / FXSYS_cos(fTheta);
-  FX_FLOAT fTotalY = fLength / FXSYS_cos(FX_PI / 2 - fTheta);
-  FX_FLOAT fSteps = std::max(fTotalX, fTotalY);
-  FX_FLOAT dx = fTotalX / fSteps;
-  FX_FLOAT dy = fTotalY / fSteps;
-  FX_ARGB cr0, cr1;
-  pLinearBrush->GetLinearColors(cr0, cr1);
-  FX_FLOAT a0 = FXARGB_A(cr0);
-  FX_FLOAT r0 = FXARGB_R(cr0);
-  FX_FLOAT g0 = FXARGB_G(cr0);
-  FX_FLOAT b0 = FXARGB_B(cr0);
-  FX_FLOAT da = (FXARGB_A(cr1) - a0) / fSteps;
-  FX_FLOAT dr = (FXARGB_R(cr1) - r0) / fSteps;
-  FX_FLOAT dg = (FXARGB_G(cr1) - g0) / fSteps;
-  FX_FLOAT db = (FXARGB_B(cr1) - b0) / fSteps;
-  CFX_DIBitmap bmp;
-  bmp.Create(FXSYS_round(FXSYS_fabs(fDiagonal.x)),
-             FXSYS_round(FXSYS_fabs(fDiagonal.y)), FXDIB_Argb);
-  CFX_FxgeDevice dev;
-  dev.Attach(&bmp);
-  pt1 = pt0;
-  int32_t iSteps = FXSYS_round(FXSYS_ceil(fSteps));
-  while (--iSteps >= 0) {
-    cr0 = ArgbEncode(FXSYS_round(a0), FXSYS_round(r0), FXSYS_round(g0),
-                     FXSYS_round(b0));
-    dev.DrawCosmeticLine(pt0.x, pt0.y, pt1.x, pt1.y, cr0);
-    pt1.x += dx;
-    pt0.y += dy;
-    a0 += da;
-    r0 += dr;
-    g0 += dg;
-    b0 += db;
-  }
-  return WrapTexture(pLinearBrush->GetWrapMode(), &bmp, pPath, pMatrix);
 }
