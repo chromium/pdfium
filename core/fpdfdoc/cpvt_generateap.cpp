@@ -370,7 +370,8 @@ FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
             FX_BOOL bSelected = FALSE;
             if (pSels) {
               for (size_t s = 0, ssz = pSels->GetCount(); s < ssz; s++) {
-                if (i == pSels->GetIntegerAt(s)) {
+                int value = pSels->GetIntegerAt(s);
+                if (value >= 0 && i == static_cast<size_t>(value)) {
                   bSelected = TRUE;
                   break;
                 }
