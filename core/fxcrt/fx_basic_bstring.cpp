@@ -719,10 +719,22 @@ FX_STRSIZE CFX_ByteString::Remove(FX_CHAR chRemove) {
   if (!m_pData || m_pData->m_nDataLength < 1)
     return 0;
 
-  ReallocBeforeWrite(m_pData->m_nDataLength);
   FX_CHAR* pstrSource = m_pData->m_String;
-  FX_CHAR* pstrDest = m_pData->m_String;
   FX_CHAR* pstrEnd = m_pData->m_String + m_pData->m_nDataLength;
+  while (pstrSource < pstrEnd) {
+    if (*pstrSource == chRemove)
+      break;
+    pstrSource++;
+  }
+  if (pstrSource == pstrEnd)
+    return 0;
+
+  ptrdiff_t copied = pstrSource - m_pData->m_String;
+  ReallocBeforeWrite(m_pData->m_nDataLength);
+  pstrSource = m_pData->m_String + copied;
+  pstrEnd = m_pData->m_String + m_pData->m_nDataLength;
+
+  FX_CHAR* pstrDest = pstrSource;
   while (pstrSource < pstrEnd) {
     if (*pstrSource != chRemove) {
       *pstrDest = *pstrSource;
@@ -730,6 +742,7 @@ FX_STRSIZE CFX_ByteString::Remove(FX_CHAR chRemove) {
     }
     pstrSource++;
   }
+
   *pstrDest = 0;
   FX_STRSIZE nCount = (FX_STRSIZE)(pstrSource - pstrDest);
   m_pData->m_nDataLength -= nCount;

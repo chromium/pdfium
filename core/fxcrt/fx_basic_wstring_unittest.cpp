@@ -294,6 +294,35 @@ TEST(fxcrt, WideStringRemove) {
   EXPECT_EQ(L"", empty);
 }
 
+TEST(fxcrt, WideStringRemoveCopies) {
+  CFX_WideString freed(L"FREED");
+  const FX_WCHAR* old_buffer = freed.c_str();
+
+  // No change with single reference - no copy.
+  freed.Remove(L'Q');
+  EXPECT_EQ(L"FREED", freed);
+  EXPECT_EQ(old_buffer, freed.c_str());
+
+  // Change with single reference - no copy.
+  freed.Remove(L'E');
+  EXPECT_EQ(L"FRD", freed);
+  EXPECT_EQ(old_buffer, freed.c_str());
+
+  // No change with multiple references - no copy.
+  CFX_WideString shared(freed);
+  freed.Remove(L'Q');
+  EXPECT_EQ(L"FRD", freed);
+  EXPECT_EQ(old_buffer, freed.c_str());
+  EXPECT_EQ(old_buffer, shared.c_str());
+
+  // Change with multiple references -- must copy.
+  freed.Remove(L'D');
+  EXPECT_EQ(L"FR", freed);
+  EXPECT_NE(old_buffer, freed.c_str());
+  EXPECT_EQ(L"FRD", shared);
+  EXPECT_EQ(old_buffer, shared.c_str());
+}
+
 TEST(fxcrt, WideStringReplace) {
   CFX_WideString fred(L"FRED");
   fred.Replace(L"FR", L"BL");

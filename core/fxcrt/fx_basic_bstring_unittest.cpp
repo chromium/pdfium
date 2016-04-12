@@ -333,6 +333,35 @@ TEST(fxcrt, ByteStringRemove) {
   EXPECT_EQ("", empty);
 }
 
+TEST(fxcrt, ByteStringRemoveCopies) {
+  CFX_ByteString freed("FREED");
+  const FX_CHAR* old_buffer = freed.c_str();
+
+  // No change with single reference - no copy.
+  freed.Remove('Q');
+  EXPECT_EQ("FREED", freed);
+  EXPECT_EQ(old_buffer, freed.c_str());
+
+  // Change with single reference - no copy.
+  freed.Remove('E');
+  EXPECT_EQ("FRD", freed);
+  EXPECT_EQ(old_buffer, freed.c_str());
+
+  // No change with multiple references - no copy.
+  CFX_ByteString shared(freed);
+  freed.Remove('Q');
+  EXPECT_EQ("FRD", freed);
+  EXPECT_EQ(old_buffer, freed.c_str());
+  EXPECT_EQ(old_buffer, shared.c_str());
+
+  // Change with multiple references -- must copy.
+  freed.Remove('D');
+  EXPECT_EQ("FR", freed);
+  EXPECT_NE(old_buffer, freed.c_str());
+  EXPECT_EQ("FRD", shared);
+  EXPECT_EQ(old_buffer, shared.c_str());
+}
+
 TEST(fxcrt, ByteStringReplace) {
   CFX_ByteString fred("FRED");
   fred.Replace("FR", "BL");
