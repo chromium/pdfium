@@ -11,35 +11,35 @@
 
 #if _FX_OS_ == _FX_ANDROID_
 
-#include "core/fxge/include/fpf.h"
 #include "core/fxge/include/fx_font.h"
 
 class CFPF_SkiaFontDescriptor;
 class CFPF_SkiaFontMgr;
-class CFPF_SkiaFont : public IFPF_Font {
+
+typedef struct FPF_HFONT_ { void* pData; } * FPF_HFONT;
+
+class CFPF_SkiaFont {
  public:
   CFPF_SkiaFont();
-  ~CFPF_SkiaFont() override;
+  ~CFPF_SkiaFont();
 
-  // IFPF_Font
-  void Release() override;
-  IFPF_Font* Retain() override;
-  FPF_HFONT GetHandle() override;
-  CFX_ByteString GetFamilyName() override;
-  CFX_WideString GetPsName() override;
-  uint32_t GetFontStyle() const override { return m_dwStyle; }
-  uint8_t GetCharset() const override { return m_uCharset; }
-  int32_t GetGlyphIndex(FX_WCHAR wUnicode) override;
-  int32_t GetGlyphWidth(int32_t iGlyphIndex) override;
-  int32_t GetAscent() const override;
-  int32_t GetDescent() const override;
-  FX_BOOL GetGlyphBBox(int32_t iGlyphIndex, FX_RECT& rtBBox) override;
-  FX_BOOL GetBBox(FX_RECT& rtBBox) override;
-  int32_t GetHeight() const override;
-  int32_t GetItalicAngle() const override;
-  uint32_t GetFontData(uint32_t dwTable,
-                       uint8_t* pBuffer,
-                       uint32_t dwSize) override;
+  void Release();
+  CFPF_SkiaFont* Retain();
+
+  FPF_HFONT GetHandle();
+  CFX_ByteString GetFamilyName();
+  CFX_WideString GetPsName();
+  uint32_t GetFontStyle() const { return m_dwStyle; }
+  uint8_t GetCharset() const { return m_uCharset; }
+  int32_t GetGlyphIndex(FX_WCHAR wUnicode);
+  int32_t GetGlyphWidth(int32_t iGlyphIndex);
+  int32_t GetAscent() const;
+  int32_t GetDescent() const;
+  FX_BOOL GetGlyphBBox(int32_t iGlyphIndex, FX_RECT& rtBBox);
+  FX_BOOL GetBBox(FX_RECT& rtBBox);
+  int32_t GetHeight() const;
+  int32_t GetItalicAngle() const;
+  uint32_t GetFontData(uint32_t dwTable, uint8_t* pBuffer, uint32_t dwSize);
 
   FX_BOOL InitFont(CFPF_SkiaFontMgr* pFontMgr,
                    CFPF_SkiaFontDescriptor* pFontDes,
@@ -55,6 +55,7 @@ class CFPF_SkiaFont : public IFPF_Font {
   uint8_t m_uCharset;
   uint32_t m_dwRefCount;
 };
-#endif
+
+#endif  // _FX_OS_ == _FX_ANDROID_
 
 #endif  // CORE_FXGE_ANDROID_FPF_SKIAFONT_H_

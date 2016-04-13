@@ -13,7 +13,7 @@
 
 #include "core/fxge/include/fx_font.h"
 
-class IFPF_FontMgr;
+class CFPF_SkiaFontMgr;
 
 class CFX_AndroidFontInfo : public IFX_SystemFontInfo {
  public:
@@ -39,11 +39,12 @@ class CFX_AndroidFontInfo : public IFX_SystemFontInfo {
 
   virtual void DeleteFont(void* hFont);
   virtual void* RetainFont(void* hFont);
-  FX_BOOL Init(IFPF_FontMgr* pFontMgr);
+  FX_BOOL Init(CFPF_SkiaFontMgr* pFontMgr);
 
  protected:
-  IFPF_FontMgr* m_pFontMgr;
+  CFPF_SkiaFontMgr* m_pFontMgr;
 };
-#endif
+
+#endif  // _FX_OS_ == _FX_ANDROID_
 
 #endif  // CORE_FXGE_ANDROID_FX_ANDROID_FONT_H_

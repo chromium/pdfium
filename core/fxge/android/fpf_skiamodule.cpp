@@ -11,28 +11,36 @@
 #include "core/fxge/android/fpf_skiafontmgr.h"
 #include "core/fxge/android/fpf_skiamodule.h"
 
-static IFPF_DeviceModule* gs_pPFModule = NULL;
-IFPF_DeviceModule* FPF_GetDeviceModule() {
-  if (!gs_pPFModule) {
+namespace {
+
+CFPF_SkiaDeviceModule* gs_pPFModule = nullptr;
+
+}  // namespace
+
+CFPF_SkiaDeviceModule* CFPF_GetSkiaDeviceModule() {
+  if (!gs_pPFModule)
     gs_pPFModule = new CFPF_SkiaDeviceModule;
-  }
   return gs_pPFModule;
 }
+
 CFPF_SkiaDeviceModule::~CFPF_SkiaDeviceModule() {
   delete m_pFontMgr;
 }
+
 void CFPF_SkiaDeviceModule::Destroy() {
-  delete (CFPF_SkiaDeviceModule*)gs_pPFModule;
-  gs_pPFModule = NULL;
+  delete gs_pPFModule;
+  gs_pPFModule = nullptr;
 }
-IFPF_FontMgr* CFPF_SkiaDeviceModule::GetFontMgr() {
+
+CFPF_SkiaFontMgr* CFPF_SkiaDeviceModule::GetFontMgr() {
   if (!m_pFontMgr) {
     m_pFontMgr = new CFPF_SkiaFontMgr;
     if (!m_pFontMgr->InitFTLibrary()) {
       delete m_pFontMgr;
-      return NULL;
+      return nullptr;
     }
   }
-  return (IFPF_FontMgr*)m_pFontMgr;
+  return m_pFontMgr;
 }
-#endif
+
+#endif  // _FX_OS_ == _FX_ANDROID_

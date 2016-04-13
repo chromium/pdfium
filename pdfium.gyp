@@ -729,7 +729,6 @@
         'core/fxge/ge/fx_ge_ps.cpp',
         'core/fxge/ge/fx_ge_text.cpp',
         'core/fxge/ge/fx_text_int.h',
-        'core/fxge/include/fpf.h',
         'core/fxge/include/fx_dib.h',
         'core/fxge/include/fx_font.h',
         'core/fxge/include/fx_freetype.h',

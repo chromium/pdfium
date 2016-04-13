@@ -8,16 +8,16 @@
 
 #if _FX_OS_ == _FX_ANDROID_
 
+#include "core/fxge/android/fpf_skiamodule.h"
 #include "core/fxge/android/fx_android_font.h"
-#include "core/fxge/include/fpf.h"
 #include "core/fxge/include/fx_ge.h"
 
 void CFX_GEModule::InitPlatform() {
-  IFPF_DeviceModule* pDeviceModule = FPF_GetDeviceModule();
-  if (!pDeviceModule) {
+  CFPF_SkiaDeviceModule* pDeviceModule = CFPF_GetSkiaDeviceModule();
+  if (!pDeviceModule)
     return;
-  }
-  IFPF_FontMgr* pFontMgr = pDeviceModule->GetFontMgr();
+
+  CFPF_SkiaFontMgr* pFontMgr = pDeviceModule->GetFontMgr();
   if (pFontMgr) {
     CFX_AndroidFontInfo* pFontInfo = new CFX_AndroidFontInfo;
     pFontInfo->Init(pFontMgr);
@@ -25,10 +25,10 @@ void CFX_GEModule::InitPlatform() {
   }
   m_pPlatformData = pDeviceModule;
 }
+
 void CFX_GEModule::DestroyPlatform() {
-  if (m_pPlatformData) {
-    ((IFPF_DeviceModule*)m_pPlatformData)->Destroy();
-  }
+  if (m_pPlatformData)
+    static_cast<IFPF_DeviceModule*>(m_pPlatformData)->Destroy();
 }
 
-#endif
+#endif  // _FX_OS_ == _FX_ANDROID_

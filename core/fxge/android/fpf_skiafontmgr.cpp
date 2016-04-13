@@ -250,10 +250,10 @@ void CFPF_SkiaFontMgr::LoadSystemFonts() {
 void CFPF_SkiaFontMgr::LoadPrivateFont(IFX_FileRead* pFontFile) {}
 void CFPF_SkiaFontMgr::LoadPrivateFont(const CFX_ByteStringC& bsFileName) {}
 void CFPF_SkiaFontMgr::LoadPrivateFont(void* pBuffer, size_t szBuffer) {}
-IFPF_Font* CFPF_SkiaFontMgr::CreateFont(const CFX_ByteStringC& bsFamilyname,
-                                        uint8_t uCharset,
-                                        uint32_t dwStyle,
-                                        uint32_t dwMatch) {
+CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(const CFX_ByteStringC& bsFamilyname,
+                                            uint8_t uCharset,
+                                            uint32_t dwStyle,
+                                            uint32_t dwMatch) {
   uint32_t dwHash = FPF_SKIAGetFamilyHash(bsFamilyname, dwStyle, uCharset);
   auto it = m_FamilyFonts.find(dwHash);
   if (it != m_FamilyFonts.end() && it->second)

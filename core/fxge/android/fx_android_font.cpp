@@ -8,82 +8,86 @@
 
 #if _FX_OS_ == _FX_ANDROID_
 
+#include "core/fxge/android/fpf_skiafont.h"
+#include "core/fxge/android/fpf_skiafontmgr.h"
 #include "core/fxge/android/fx_android_font.h"
-#include "core/fxge/include/fpf.h"
 
 CFX_AndroidFontInfo::CFX_AndroidFontInfo() : m_pFontMgr(NULL) {}
-FX_BOOL CFX_AndroidFontInfo::Init(IFPF_FontMgr* pFontMgr) {
-  if (!pFontMgr) {
+FX_BOOL CFX_AndroidFontInfo::Init(CFPF_SkiaFontMgr* pFontMgr) {
+  if (!pFontMgr)
     return FALSE;
-  }
+
   pFontMgr->LoadSystemFonts();
   m_pFontMgr = pFontMgr;
   return TRUE;
 }
+
 FX_BOOL CFX_AndroidFontInfo::EnumFontList(CFX_FontMapper* pMapper) {
   return FALSE;
 }
+
 void* CFX_AndroidFontInfo::MapFont(int weight,
                                    FX_BOOL bItalic,
                                    int charset,
                                    int pitch_family,
                                    const FX_CHAR* face,
                                    int& iExact) {
-  if (!m_pFontMgr) {
-    return NULL;
-  }
+  if (!m_pFontMgr)
+    return nullptr;
+
   uint32_t dwStyle = 0;
-  if (weight >= 700) {
+  if (weight >= 700)
     dwStyle |= FXFONT_BOLD;
-  }
-  if (bItalic) {
+  if (bItalic)
     dwStyle |= FXFONT_ITALIC;
-  }
-  if (pitch_family & FXFONT_FF_FIXEDPITCH) {
+  if (pitch_family & FXFONT_FF_FIXEDPITCH)
     dwStyle |= FXFONT_FIXED_PITCH;
-  }
-  if (pitch_family & FXFONT_FF_SCRIPT) {
+  if (pitch_family & FXFONT_FF_SCRIPT)
     dwStyle |= FXFONT_SCRIPT;
-  }
-  if (pitch_family & FXFONT_FF_ROMAN) {
+  if (pitch_family & FXFONT_FF_ROMAN)
     dwStyle |= FXFONT_SERIF;
-  }
   return m_pFontMgr->CreateFont(face, charset, dwStyle,
                                 FPF_MATCHFONT_REPLACEANSI);
 }
+
 void* CFX_AndroidFontInfo::GetFont(const FX_CHAR* face) {
-  return NULL;
+  return nullptr;
 }
+
 uint32_t CFX_AndroidFontInfo::GetFontData(void* hFont,
                                           uint32_t table,
                                           uint8_t* buffer,
                                           uint32_t size) {
-  if (!hFont) {
+  if (!hFont)
     return 0;
-  }
-  return ((IFPF_Font*)hFont)->GetFontData(table, buffer, size);
+  return static_cast<CFPF_SkiaFont*>(hFont)->GetFontData(table, buffer, size);
 }
+
 FX_BOOL CFX_AndroidFontInfo::GetFaceName(void* hFont, CFX_ByteString& name) {
-  if (!hFont) {
+  if (!hFont)
     return FALSE;
-  }
-  name = ((IFPF_Font*)hFont)->GetFamilyName();
+
+  name = static_cast<CFPF_SkiaFont*>(hFont)->GetFamilyName();
   return TRUE;
 }
+
 FX_BOOL CFX_AndroidFontInfo::GetFontCharset(void* hFont, int& charset) {
-  if (!hFont) {
+  if (!hFont)
     return FALSE;
-  }
-  charset = ((IFPF_Font*)hFont)->GetCharset();
+
+  charset = static_cast<CFPF_SkiaFont*>(hFont)->GetCharset();
   return FALSE;
 }
+
 void CFX_AndroidFontInfo::DeleteFont(void* hFont) {
-  if (!hFont) {
+  if (!hFont)
     return;
-  }
-  ((IFPF_Font*)hFont)->Release();
+
+  static_cast<CFPF_SkiaFont*>(hFont)->Release();
 }
+
 void* CFX_AndroidFontInfo::RetainFont(void* hFont) {
-  return NULL;
+  return nullptr;
 }
-#endif
+
+#endif  // _FX_OS_ == _FX_ANDROID_
