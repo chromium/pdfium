@@ -7,6 +7,7 @@
 #include "xfa/fwl/basewidget/fwl_barcodeimp.h"
 
 #include "xfa/fwl/basewidget/fwl_editimp.h"
+#include "xfa/fwl/basewidget/fxmath_barcodeimp.h"
 #include "xfa/fwl/core/cfwl_themepart.h"
 #include "xfa/fwl/core/fwl_noteimp.h"
 #include "xfa/fwl/core/fwl_targetimp.h"
@@ -174,11 +175,18 @@ void CFWL_BarcodeImp::GenerateBarcodeImageCache() {
                    ? XFA_BCS_EncodeSuccess
                    : 0;
 }
+
 void CFWL_BarcodeImp::CreateBarcodeEngine() {
-  if ((m_pBarcodeEngine == NULL) && (m_type != BC_UNKNOWN)) {
-    m_pBarcodeEngine = FX_Barcode_Create(m_type);
+  if (m_pBarcodeEngine || m_type == BC_UNKNOWN)
+    return;
+
+  m_pBarcodeEngine = new CFX_Barcode;
+  if (!m_pBarcodeEngine->Create(m_type)) {
+    m_pBarcodeEngine->Release();
+    m_pBarcodeEngine = nullptr;
   }
 }
+
 void CFWL_BarcodeImp::ReleaseBarcodeEngine() {
   if (m_pBarcodeEngine) {
     m_pBarcodeEngine->Release();

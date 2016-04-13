@@ -10,10 +10,10 @@
 #include "xfa/fwl/basewidget/fwl_editimp.h"
 #include "xfa/fwl/basewidget/ifwl_barcode.h"
 #include "xfa/fwl/basewidget/ifwl_scrollbar.h"
-#include "xfa/fwl/basewidget/ifx_barcode.h"
 
 class CFWL_WidgetImpProperties;
 class CFWL_BarcodeImpDelegate;
+class CFX_Barcode;
 class IFWL_Widget;
 
 #define XFA_BCS_NeedUpdate 0x0001
@@ -23,26 +23,29 @@ class CFWL_BarcodeImp : public CFWL_EditImp {
  public:
   CFWL_BarcodeImp(const CFWL_WidgetImpProperties& properties,
                   IFWL_Widget* pOuter);
-  virtual ~CFWL_BarcodeImp();
-  virtual FWL_ERR GetClassName(CFX_WideString& wsClass) const;
-  virtual uint32_t GetClassID() const;
-  virtual FWL_ERR Initialize();
-  virtual FWL_ERR Finalize();
-  virtual FWL_ERR Update();
-  virtual FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
-                             const CFX_Matrix* pMatrix = NULL);
-  virtual FWL_ERR SetText(const CFX_WideString& wsText);
-  virtual void SetType(BC_TYPE type);
+  ~CFWL_BarcodeImp() override;
+
+  FWL_ERR GetClassName(CFX_WideString& wsClass) const override;
+  uint32_t GetClassID() const override;
+  FWL_ERR Initialize() override;
+  FWL_ERR Finalize() override;
+  FWL_ERR Update() override;
+  FWL_ERR DrawWidget(CFX_Graphics* pGraphics,
+                     const CFX_Matrix* pMatrix = nullptr) override;
+  FWL_ERR SetText(const CFX_WideString& wsText) override;
+  void SetType(BC_TYPE type);
   FX_BOOL IsProtectedType();
 
  protected:
+  friend class CFWL_BarcodeImpDelegate;
+
   void GenerateBarcodeImageCache();
   void CreateBarcodeEngine();
   void ReleaseBarcodeEngine();
-  IFX_Barcode* m_pBarcodeEngine;
+
+  CFX_Barcode* m_pBarcodeEngine;
   uint32_t m_dwStatus;
   BC_TYPE m_type;
-  friend class CFWL_BarcodeImpDelegate;
 };
 
 class CFWL_BarcodeImpDelegate : public CFWL_EditImpDelegate {

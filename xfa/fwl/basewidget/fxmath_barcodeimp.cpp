@@ -386,11 +386,3 @@ CFX_WideString CFX_Barcode::Decode(CFX_DIBitmap* pBitmap, int32_t& errorCode) {
   errorCode = BCExceptionUnSupportedBarcode;
   return CFX_WideString();
 }
-IFX_Barcode* FX_Barcode_Create(BC_TYPE type) {
-  CFX_Barcode* pBarcode = new CFX_Barcode;
-  if (pBarcode->Create(type)) {
-    return pBarcode;
-  }
-  pBarcode->Release();
-  return NULL;
-}

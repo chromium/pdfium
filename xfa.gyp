@@ -175,7 +175,6 @@
         "xfa/fwl/basewidget/ifwl_scrollbar.h",
         "xfa/fwl/basewidget/ifwl_spinbutton.h",
         "xfa/fwl/basewidget/ifwl_tooltip.h",
-        "xfa/fwl/basewidget/ifx_barcode.h",
         "xfa/fwl/core/cfwl_event.h",
         "xfa/fwl/core/cfwl_note.h",
         "xfa/fwl/core/cfwl_message.h",
