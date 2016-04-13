@@ -28,16 +28,14 @@ FX_BOOL CFDE_VisualSetIterator::AttachCanvas(IFDE_CanvasSet* pCanvas) {
   return m_CanvasStack.Push(canvas) == 0;
 }
 FX_BOOL CFDE_VisualSetIterator::FilterObjects(uint32_t dwObjects) {
-  if (m_CanvasStack.GetSize() == 0) {
+  if (m_CanvasStack.GetSize() == 0)
     return FALSE;
-  }
-  while (m_CanvasStack.GetSize() > 1) {
+
+  while (m_CanvasStack.GetSize() > 1)
     m_CanvasStack.Pop();
-  }
-  m_dwFilter = dwObjects & ~(uint32_t)FDE_VISUALOBJ_Widget;
-  if (dwObjects & FDE_VISUALOBJ_Widget) {
-    m_dwFilter |= 0xFF00;
-  }
+
+  m_dwFilter = dwObjects;
+
   FDE_CANVASITEM* pCanvas = m_CanvasStack.GetTopElement();
   FXSYS_assert(pCanvas != NULL && pCanvas->pCanvas != NULL);
   pCanvas->hPos = pCanvas->pCanvas->GetFirstPosition(NULL);
@@ -72,10 +70,7 @@ FDE_HVISUALOBJ CFDE_VisualSetIterator::GetNext(IFDE_VisualSet*& pVisualSet,
         m_CanvasStack.Push(canvas);
         break;
       }
-      uint32_t dwObj =
-          (eType == FDE_VISUALOBJ_Widget)
-              ? (uint32_t)((IFDE_WidgetSet*)pVisualSet)->GetWidgetType(hObj)
-              : (uint32_t)eType;
+      uint32_t dwObj = (uint32_t)eType;
       if ((m_dwFilter & dwObj) != 0) {
         if (ppCanvasSet) {
           *ppCanvasSet = pCanvas->pCanvas;

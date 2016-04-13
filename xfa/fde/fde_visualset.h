@@ -11,17 +11,14 @@
 #include "core/fxcrt/include/fx_system.h"
 #include "core/fxge/include/fx_dib.h"
 #include "core/fxge/include/fx_ge.h"
-#include "xfa/fde/fde_image.h"
 #include "xfa/fde/fde_object.h"
 #include "xfa/fde/fde_path.h"
+#include "xfa/fgas/crt/fgas_memory.h"
 #include "xfa/fgas/font/fgas_font.h"
 
 enum FDE_VISUALOBJTYPE {
   FDE_VISUALOBJ_Canvas = 0x00,
-  FDE_VISUALOBJ_Text = 0x01,
-  FDE_VISUALOBJ_Image = 0x02,
-  FDE_VISUALOBJ_Path = 0x04,
-  FDE_VISUALOBJ_Widget = 0x08,
+  FDE_VISUALOBJ_Text = 0x01
 };
 
 typedef struct FDE_HVISUALOBJ_ { void* pData; } const* FDE_HVISUALOBJ;
@@ -58,52 +55,6 @@ class IFDE_TextSet : public IFDE_VisualSet {
                                 CFX_WideString* pWSForms = NULL) = 0;
   virtual int32_t GetCharRects(FDE_HVISUALOBJ hText,
                                CFX_RectFArray& rtArray) = 0;
-};
-
-struct FDE_IMAGEFILTERPARAMS : public CFX_Target {
-  int32_t iFilterType;
-};
-
-class IFDE_ImageSet : public IFDE_VisualSet {
- public:
-  virtual IFDE_Image* GetImage(FDE_HVISUALOBJ hImage) = 0;
-  virtual FX_POSITION GetFirstFilterPosition(FDE_HVISUALOBJ hImage) = 0;
-  virtual const FDE_IMAGEFILTERPARAMS* GetNextFilter(FDE_HVISUALOBJ hImage,
-                                                     FX_POSITION& pos) = 0;
-};
-
-class IFDE_PathSet : public IFDE_VisualSet {
- public:
-  virtual IFDE_Path* GetPath(FDE_HVISUALOBJ hPath) = 0;
-  virtual int32_t GetFillMode(FDE_HVISUALOBJ hPath) = 0;
-  virtual int32_t GetRenderMode(FDE_HVISUALOBJ hPath) = 0;
-  virtual CFDE_Pen* GetPen(FDE_HVISUALOBJ hPath) = 0;
-  virtual FX_FLOAT GetPenWidth(FDE_HVISUALOBJ hPath) = 0;
-  virtual CFDE_Brush* GetBrush(FDE_HVISUALOBJ hPath) = 0;
-};
-
-enum FDE_WIDGETOBJ {
-  FDE_WIDGETOBJ_Unknown = 0x0000,
-  FDE_WIDGETOBJ_Anchor = 0x0100,
-  FDE_WIDGETOBJ_NamedDest = 0x0200,
-  FDE_WIDGETOBJ_HyperLink = 0x0400,
-};
-
-class IFDE_WidgetSet : public IFDE_VisualSet {
- public:
-  virtual FDE_WIDGETOBJ GetWidgetType(FDE_HVISUALOBJ hWidget) = 0;
-  virtual FX_FLOAT GetFloat(FDE_HVISUALOBJ hWidget,
-                            int32_t iParameter,
-                            FX_FLOAT fDefVal = 0.0f) = 0;
-  virtual int32_t GetInteger(FDE_HVISUALOBJ hWidget,
-                             int32_t iParameter,
-                             int32_t iDefVal = 0) = 0;
-  virtual FX_BOOL GetString(FDE_HVISUALOBJ hWidget,
-                            int32_t iParameter,
-                            CFX_WideString& wsValue) = 0;
-  virtual FX_BOOL GetRects(FDE_HVISUALOBJ hWidget,
-                           int32_t iParameter,
-                           CFX_RectFArray& rects) = 0;
 };
 
 class IFDE_VisualSetIterator {

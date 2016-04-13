@@ -66,7 +66,6 @@
         "xfa/fde/fde_gedevice.h",
         "xfa/fde/fde_geobject.cpp",
         "xfa/fde/fde_geobject.h",
-        "xfa/fde/fde_image.h",
         "xfa/fde/fde_iterator.cpp",
         "xfa/fde/fde_iterator.h",
         "xfa/fde/fde_object.h",

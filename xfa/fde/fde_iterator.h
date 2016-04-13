@@ -9,6 +9,7 @@
 
 #include "xfa/fde/fde_visualset.h"
 #include "xfa/fgas/crt/fgas_memory.h"
+#include "xfa/fgas/crt/fgas_utils.h"
 
 struct FDE_CANVASITEM {
   IFDE_CanvasSet* pCanvas;

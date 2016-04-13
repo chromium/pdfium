@@ -9,7 +9,6 @@
 #include <algorithm>
 
 #include "xfa/fde/fde_geobject.h"
-#include "xfa/fde/fde_image.h"
 #include "xfa/fde/fde_object.h"
 
 IFDE_RenderDevice* IFDE_RenderDevice::Create(CFX_DIBitmap* pBitmap,

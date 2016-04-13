@@ -26,7 +26,6 @@ class CFDE_RenderContext : public IFDE_RenderContext, public CFX_Target {
   virtual FDE_RENDERSTATUS GetStatus() const { return m_eStatus; }
   virtual FDE_RENDERSTATUS DoRender(IFX_Pause* pPause = nullptr);
   virtual void StopRender();
-  void RenderPath(IFDE_PathSet* pPathSet, FDE_HVISUALOBJ hPath);
   void RenderText(IFDE_TextSet* pTextSet, FDE_HVISUALOBJ hText);
   FX_BOOL ApplyClip(IFDE_VisualSet* pVisualSet,
                     FDE_HVISUALOBJ hObj,
@@ -169,13 +168,6 @@ FDE_RENDERSTATUS CFDE_RenderContext::DoRender(IFX_Pause* pPause) {
         RenderText((IFDE_TextSet*)pVisualSet, hVisualObj);
         iCount += 5;
         break;
-      case FDE_VISUALOBJ_Path:
-        RenderPath((IFDE_PathSet*)pVisualSet, hVisualObj);
-        iCount += 20;
-        break;
-      case FDE_VISUALOBJ_Widget:
-        iCount += 10;
-        break;
       case FDE_VISUALOBJ_Canvas:
         FXSYS_assert(FALSE);
         break;
@@ -239,33 +231,6 @@ void CFDE_RenderContext::RenderText(IFDE_TextSet* pTextSet,
   FX_BOOL bClip = ApplyClip(pTextSet, hText, hState);
   m_pRenderDevice->DrawString(m_pBrush, pFont, m_pCharPos, iCount, fFontSize,
                               &m_Transform);
-  if (bClip)
-    RestoreClip(hState);
-}
-
-void CFDE_RenderContext::RenderPath(IFDE_PathSet* pPathSet,
-                                    FDE_HVISUALOBJ hPath) {
-  FXSYS_assert(m_pRenderDevice);
-  FXSYS_assert(pPathSet && hPath);
-
-  IFDE_Path* pPath = pPathSet->GetPath(hPath);
-  if (!pPath)
-    return;
-
-  FDE_HDEVICESTATE hState;
-  FX_BOOL bClip = ApplyClip(pPathSet, hPath, hState);
-  int32_t iRenderMode = pPathSet->GetRenderMode(hPath);
-  if (iRenderMode & FDE_PATHRENDER_Stroke) {
-    CFDE_Pen* pPen = pPathSet->GetPen(hPath);
-    FX_FLOAT fWidth = pPathSet->GetPenWidth(hPath);
-    if (pPen && fWidth > 0)
-      m_pRenderDevice->DrawPath(pPen, fWidth, pPath, &m_Transform);
-  }
-  if (iRenderMode & FDE_PATHRENDER_Fill) {
-    CFDE_Brush* pBrush = pPathSet->GetBrush(hPath);
-    if (pBrush)
-      m_pRenderDevice->FillPath(pBrush, pPath, &m_Transform);
-  }
   if (bClip)
     RestoreClip(hState);
 }
