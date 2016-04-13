@@ -36,8 +36,6 @@ class IFWL_NoteDriver {
       uint32_t dwFilter = FWL_EVENT_ALL_MASK) = 0;
   virtual FWL_ERR UnregisterEventTarget(IFWL_Widget* pListener) = 0;
   virtual void ClearEventTargets(FX_BOOL bRemoveAll) = 0;
-  virtual int32_t GetQueueMaxSize() const = 0;
-  virtual FWL_ERR SetQueueMaxSize(const int32_t size) = 0;
   virtual IFWL_NoteThread* GetOwnerThread() const = 0;
   virtual FWL_ERR PushNoteLoop(IFWL_NoteLoop* pNoteLoop) = 0;
   virtual IFWL_NoteLoop* PopNoteLoop() = 0;
@@ -46,12 +44,5 @@ class IFWL_NoteDriver {
   virtual void SetGrab(IFWL_Widget* pGrab, FX_BOOL bSet) = 0;
   virtual FWL_ERR Run() = 0;
 };
-
-IFWL_Widget* FWL_GetCurrentThreadModalWidget(IFWL_NoteThread* pNoteThread);
-
-typedef FX_BOOL (*FWLMessageHookCallback)(CFWL_Message* msg, void* info);
-FWL_ERR FWL_SetHook(IFWL_NoteDriver* driver,
-                    FWLMessageHookCallback callback,
-                    void* info);
 
 #endif  // XFA_FWL_CORE_IFWL_NOTEDRIVER_H_

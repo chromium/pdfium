@@ -29,9 +29,4 @@ class IFWL_ToolTipTarget {
   virtual FWL_ERR GetToolTipPos(CFX_PointF& pt) { return FWL_ERR_Indefinite; }
 };
 
-FWL_ERR FWL_AddToolTipTarget(IFWL_ToolTipTarget* pTarget);
-FWL_ERR FWL_RemoveToolTipTarget(IFWL_ToolTipTarget* pTarget);
-FWL_ERR FWL_SetToolTipInitialDelay(int32_t iDelayTime);
-FWL_ERR FWL_SetToolTipAutoPopDelay(int32_t iDelayTime);
-
 #endif  // XFA_FWL_CORE_IFWL_TOOLTIPTARGET_H_

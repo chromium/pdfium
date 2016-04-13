@@ -1007,20 +1007,3 @@ FX_BOOL CFWL_WidgetMgrDelegate::bUseOffscreenDirect(IFWL_Widget* pWidget) {
 #endif
   return pItem->iRedrawCounter == 0;
 }
-FX_BOOL FWL_WidgetIsChild(IFWL_Widget* parent, IFWL_Widget* find) {
-  if (!find) {
-    return FALSE;
-  }
-  IFWL_Widget* child =
-      FWL_GetWidgetMgr()->GetWidget(parent, FWL_WGTRELATION_FirstChild);
-  while (child) {
-    if (child == find) {
-      return TRUE;
-    }
-    if (FWL_WidgetIsChild(child, find)) {
-      return TRUE;
-    }
-    child = FWL_GetWidgetMgr()->GetWidget(child, FWL_WGTRELATION_NextSibling);
-  }
-  return FALSE;
-}

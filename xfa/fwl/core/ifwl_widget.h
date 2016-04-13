@@ -58,12 +58,4 @@ class IFWL_Widget : public IFWL_Target {
   CFX_SizeF GetOffsetFromParent(IFWL_Widget* pParent);
 };
 
-typedef CFX_MapPtrTemplate<uint32_t, uint32_t> CFX_MapAccelerators;
-
-FWL_ERR FWL_Accelerator_SetApp(CFX_MapAccelerators* pMapAccel);
-FWL_ERR FWL_Accelerator_SetThread(CFX_MapAccelerators* pMapAccel);
-FWL_ERR FWL_Accelerator_SetForm(IFWL_Form* pFrom,
-                                CFX_MapAccelerators* pMapAccel);
-FWL_ERR FWL_EnabelWidget(IFWL_Widget* widget, FX_BOOL bEnable);
-
 #endif  // XFA_FWL_CORE_IFWL_WIDGET_H_

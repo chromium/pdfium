@@ -92,8 +92,6 @@ class CFWL_FormImp : public CFWL_PanelImp {
                               IFWL_ThemeProvider* pTheme);
   CFWL_WidgetImp* GetSubFocus();
   void SetSubFocus(CFWL_WidgetImp* pWidget);
-  CFX_MapAccelerators& GetAccelerator();
-  void SetAccelerator(CFX_MapAccelerators* pAccelerators);
 
  protected:
   void ShowChildWidget(IFWL_Widget* pParent);
@@ -136,7 +134,7 @@ class CFWL_FormImp : public CFWL_PanelImp {
                      FX_FLOAT fLimitMin,
                      FX_FLOAT fLimitMax,
                      FX_BOOL bTop);
-  CFX_MapAccelerators m_mapAccelerators;
+
   CFX_RectF m_rtRestore;
   CFX_RectF m_rtCaptionText;
   CFX_RectF m_rtRelative;

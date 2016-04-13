@@ -15,7 +15,6 @@ class CFWL_Message;
 class IFWL_NoteLoop {
  public:
   virtual ~IFWL_NoteLoop() {}
-  virtual FX_BOOL PreProcessMessage(CFWL_Message* pMessage) = 0;
   virtual FWL_ERR Idle(int32_t count) = 0;
 };
 

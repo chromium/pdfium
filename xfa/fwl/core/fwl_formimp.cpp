@@ -451,20 +451,7 @@ CFWL_WidgetImp* CFWL_FormImp::GetSubFocus() {
 void CFWL_FormImp::SetSubFocus(CFWL_WidgetImp* pWidget) {
   m_pSubFocus = pWidget;
 }
-CFX_MapAccelerators& CFWL_FormImp::GetAccelerator() {
-  return m_mapAccelerators;
-}
-void CFWL_FormImp::SetAccelerator(CFX_MapAccelerators* pAccelerators) {
-  if (!pAccelerators)
-    return;
-  m_mapAccelerators.RemoveAll();
-  uint32_t vrKey, rValue;
-  FX_POSITION pos = pAccelerators->GetStartPosition();
-  while (pos) {
-    pAccelerators->GetNextAssoc(pos, vrKey, rValue);
-    m_mapAccelerators.SetAt(vrKey, rValue);
-  }
-}
+
 void CFWL_FormImp::ShowChildWidget(IFWL_Widget* pParent) {
   IFWL_App* pApp = FWL_GetApp();
   if (!pApp)
@@ -1169,11 +1156,4 @@ void CFWL_FormImpDelegate::OnClose(CFWL_MsgClose* pMsg) {
   CFWL_EvtClose eClose;
   eClose.m_pSrcTarget = m_pOwner->m_pInterface;
   m_pOwner->DispatchEvent(&eClose);
-}
-FWL_ERR FWL_Accelerator_SetForm(IFWL_Form* pFrom,
-                                CFX_MapAccelerators* pMapAccel) {
-  CFWL_FormImp* pImp = static_cast<CFWL_FormImp*>(pFrom->GetImpl());
-  if (!pImp)
-    return FWL_ERR_Indefinite;
-  return FWL_ERR_Succeeded;
 }

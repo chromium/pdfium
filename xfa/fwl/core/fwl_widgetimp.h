@@ -138,6 +138,9 @@ class CFWL_WidgetImp : public CFWL_TargetImp {
   void NotifyDriver();
 
   FX_BOOL IsParent(IFWL_Widget* pParent);
+
+  friend class CFWL_WidgetImpDelegate;
+
   CFWL_WidgetMgr* m_pWidgetMgr;
   CFWL_NoteThreadImp* m_pOwnerThread;
   CFWL_WidgetImpProperties* m_pProperties;
@@ -147,10 +150,6 @@ class CFWL_WidgetImp : public CFWL_TargetImp {
   IFWL_Widget* m_pOuter;
   IFWL_Widget* m_pInterface;
   int32_t m_iLock;
-  friend class CFWL_WidgetImpDelegate;
-  friend void FWL_SetWidgetRect(IFWL_Widget* widget, const CFX_RectF& rect);
-  friend void FWL_SetWidgetStates(IFWL_Widget* widget, uint32_t dwStates);
-  friend void FWL_SetWidgetStyles(IFWL_Widget* widget, uint32_t dwStyles);
 };
 
 class CFWL_WidgetImpDelegate : public IFWL_WidgetDelegate {

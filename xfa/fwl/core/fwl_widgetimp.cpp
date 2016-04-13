@@ -1085,25 +1085,3 @@ IFWL_Custom::IFWL_Custom() {}
 FWL_ERR IFWL_Custom::SetProxy(IFWL_Proxy* pProxy) {
   return static_cast<CFWL_CustomImp*>(GetImpl())->SetProxy(pProxy);
 }
-void FWL_SetWidgetRect(IFWL_Widget* widget, const CFX_RectF& rect) {
-  static_cast<CFWL_WidgetImp*>(widget->GetImpl())->m_pProperties->m_rtWidget =
-      rect;
-}
-void FWL_SetWidgetStates(IFWL_Widget* widget, uint32_t dwStates) {
-  static_cast<CFWL_WidgetImp*>(widget->GetImpl())->m_pProperties->m_dwStates =
-      dwStates;
-}
-void FWL_SetWidgetStyles(IFWL_Widget* widget, uint32_t dwStyles) {
-  static_cast<CFWL_WidgetImp*>(widget->GetImpl())->m_pProperties->m_dwStyles =
-      dwStyles;
-}
-FWL_ERR FWL_EnabelWidget(IFWL_Widget* widget, FX_BOOL bEnable) {
-  widget->SetStates(FWL_WGTSTATE_Disabled, !bEnable);
-  IFWL_WidgetMgr* widgetMgr = FWL_GetWidgetMgr();
-  IFWL_Widget* child = widgetMgr->GetWidget(widget, FWL_WGTRELATION_FirstChild);
-  while (child) {
-    FWL_EnabelWidget(child, bEnable);
-    child = widgetMgr->GetWidget(child, FWL_WGTRELATION_NextSibling);
-  }
-  return FWL_ERR_Succeeded;
-}

@@ -28,17 +28,15 @@ class IFWL_ToolTipTarget;
 
 class CFWL_NoteLoop : public IFWL_NoteLoop {
  public:
-  CFWL_NoteLoop(CFWL_WidgetImp* pForm = NULL);
+  CFWL_NoteLoop(CFWL_WidgetImp* pForm = nullptr);
+  ~CFWL_NoteLoop() override {}
 
   // IFWL_NoteLoop:
-  ~CFWL_NoteLoop() override {}
-  FX_BOOL PreProcessMessage(CFWL_Message* pMessage) override;
   FWL_ERR Idle(int32_t count) override;
 
   CFWL_WidgetImp* GetForm();
   FX_BOOL ContinueModal();
   FWL_ERR EndModalLoop();
-  FX_BOOL TranslateAccelerator(CFWL_Message* pMessage);
   FWL_ERR SetMainForm(CFWL_WidgetImp* pForm);
 
  protected:
@@ -60,8 +58,6 @@ class CFWL_NoteDriver : public IFWL_NoteDriver {
                               uint32_t dwFilter = FWL_EVENT_ALL_MASK) override;
   FWL_ERR UnregisterEventTarget(IFWL_Widget* pListener) override;
   void ClearEventTargets(FX_BOOL bRemoveAll) override;
-  int32_t GetQueueMaxSize() const override;
-  FWL_ERR SetQueueMaxSize(const int32_t size) override;
   IFWL_NoteThread* GetOwnerThread() const override;
   FWL_ERR PushNoteLoop(IFWL_NoteLoop* pNoteLoop) override;
   IFWL_NoteLoop* PopNoteLoop() override;
@@ -81,7 +77,6 @@ class CFWL_NoteDriver : public IFWL_NoteDriver {
   FX_BOOL UnqueueMessage(CFWL_NoteLoop* pNoteLoop);
   CFWL_NoteLoop* GetTopLoop();
   int32_t CountLoop();
-  void SetHook(FWLMessageHookCallback callback, void* info);
   FX_BOOL ProcessMessage(CFWL_Message* pMessage);
 
  protected:
@@ -106,14 +101,11 @@ class CFWL_NoteDriver : public IFWL_NoteDriver {
   CFX_PtrArray m_noteLoopQueue;
   CFX_MapPtrToPtr m_eventTargets;
   int32_t m_sendEventCalled;
-  int32_t m_maxSize;
   FX_BOOL m_bFullScreen;
   IFWL_Widget* m_pHover;
   IFWL_Widget* m_pFocus;
   IFWL_Widget* m_pGrab;
   CFWL_NoteLoop* m_pNoteLoop;
-  FWLMessageHookCallback m_hook;
-  void* m_hookInfo;
 };
 
 typedef CFX_MapPtrTemplate<void*, uint32_t> CFWL_EventSource;
@@ -150,9 +142,6 @@ class CFWL_ToolTipContainer {
 
   FX_BOOL ProcessEnter(CFWL_EvtMouse* pEvt, IFWL_Widget* pOwner);
   FX_BOOL ProcessLeave(CFWL_EvtMouse* pEvt);
-
-  FX_ERR SetToolTipInitialDelay(int32_t iDelayTime);
-  FX_ERR SetToolTipAutoPopDelay(int32_t iDelayTime);
 
  protected:
   CFWL_ToolTipContainer();
