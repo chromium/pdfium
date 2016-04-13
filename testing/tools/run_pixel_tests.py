@@ -55,6 +55,9 @@ def main():
   parser = optparse.OptionParser()
   parser.add_option('--build-dir', default=os.path.join('out', 'Debug'),
                     help='relative path from the base source directory')
+  parser.add_option('-j', default=1,
+                    dest='num_workers', type='int',
+                    help='run NUM_WORKERS jobs in parallel (currently ignored)')
   parser.add_option('--wrapper', default='', dest="wrapper",
                     help='Dr. Memory wrapper for running test under Dr. Memory')
   options, args = parser.parse_args()
