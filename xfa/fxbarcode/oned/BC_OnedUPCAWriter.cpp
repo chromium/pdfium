@@ -70,9 +70,9 @@ int32_t CBC_OnedUPCAWriter::CalcChecksum(const CFX_ByteString& contents) {
   int32_t j = 1;
   for (int32_t i = contents.GetLength() - 1; i >= 0; i--) {
     if (j % 2) {
-      odd += FXSYS_atoi(contents.Mid(i, 1));
+      odd += FXSYS_atoi(contents.Mid(i, 1).c_str());
     } else {
-      even += FXSYS_atoi(contents.Mid(i, 1));
+      even += FXSYS_atoi(contents.Mid(i, 1).c_str());
     }
     j++;
   }

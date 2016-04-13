@@ -76,8 +76,8 @@ void CXFA_XMLLocale::GetNumbericSymbol(FX_LOCALENUMSYMBOL eType,
   if (!pElement) {
     return;
   }
-  GetPattern(pElement, CFX_ByteStringC((const FX_CHAR*)bsSymbols,
-                                       bsSymbols.GetLength() - 1),
+  GetPattern(pElement,
+             CFX_ByteStringC(bsSymbols.c_str(), bsSymbols.GetLength() - 1),
              wsName.AsStringC(), wsNumSymbol);
 }
 void CXFA_XMLLocale::GetDateTimeSymbols(CFX_WideString& wsDtSymbol) const {

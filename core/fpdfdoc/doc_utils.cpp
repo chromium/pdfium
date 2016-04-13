@@ -603,8 +603,8 @@ void AddInterFormFont(CPDF_Dictionary*& pFormDict,
     csNameTag = pFont->GetBaseFont();
   }
   csNameTag.Remove(' ');
-  csNameTag =
-      CPDF_InterForm::GenerateNewResourceName(pDR, "Font", 4, csNameTag);
+  csNameTag = CPDF_InterForm::GenerateNewResourceName(pDR, "Font", 4,
+                                                      csNameTag.c_str());
   pFonts->SetAtReference(csNameTag.AsStringC(), pDocument,
                          pFont->GetFontDict());
 }

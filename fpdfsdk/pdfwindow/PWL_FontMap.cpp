@@ -306,10 +306,10 @@ CPDF_Font* CPWL_FontMap::AddStandardFont(CPDF_Document* pDoc,
   CPDF_Font* pFont = NULL;
 
   if (sFontName == "ZapfDingbats") {
-    pFont = pDoc->AddStandardFont(sFontName, NULL);
+    pFont = pDoc->AddStandardFont(sFontName.c_str(), NULL);
   } else {
     CPDF_FontEncoding fe(PDFFONT_ENCODING_WINANSI);
-    pFont = pDoc->AddStandardFont(sFontName, &fe);
+    pFont = pDoc->AddStandardFont(sFontName.c_str(), &fe);
   }
 
   return pFont;

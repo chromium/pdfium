@@ -394,7 +394,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObject(CPDF_IndirectObjectHolder* pObjList,
     if (bIsNumber) {
       CFX_ByteString nextword2 = GetNextWord(nullptr);
       if (nextword2 == "R") {
-        uint32_t objnum = FXSYS_atoui(word);
+        uint32_t objnum = FXSYS_atoui(word.c_str());
         return new CPDF_Reference(pObjList, objnum);
       }
     }
@@ -518,7 +518,7 @@ CPDF_Object* CPDF_SyntaxParser::GetObjectByStrict(
     if (bIsNumber) {
       CFX_ByteString nextword2 = GetNextWord(nullptr);
       if (nextword2 == "R")
-        return new CPDF_Reference(pObjList, FXSYS_atoui(word));
+        return new CPDF_Reference(pObjList, FXSYS_atoui(word.c_str()));
     }
     m_Pos = SavedPos;
     return new CPDF_Number(word.AsStringC());

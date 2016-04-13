@@ -191,12 +191,13 @@ CPDF_Object* CPDF_PageOrganizer::PageDictGetInheritableTag(
   if (!pp)
     return nullptr;
 
-  if (pDict->KeyExist((const char*)nSrctag))
-    return pDict->GetObjectBy((const char*)nSrctag);
+  CFX_ByteStringC sSrcTag = nSrctag.AsStringC();
+  if (pDict->KeyExist(sSrcTag))
+    return pDict->GetObjectBy(sSrcTag);
 
   while (pp) {
-    if (pp->KeyExist((const char*)nSrctag))
-      return pp->GetObjectBy((const char*)nSrctag);
+    if (pp->KeyExist(sSrcTag))
+      return pp->GetObjectBy(sSrcTag);
     if (!pp->KeyExist("Parent"))
       break;
     pp = ToDictionary(pp->GetObjectBy("Parent")->GetDirect());
@@ -223,8 +224,9 @@ FX_BOOL CPDF_PageOrganizer::UpdateReference(CPDF_Object* pObj,
         const CFX_ByteString& key = it->first;
         CPDF_Object* pNextObj = it->second;
         ++it;
-        if (!FXSYS_strcmp(key, "Parent") || !FXSYS_strcmp(key, "Prev") ||
-            !FXSYS_strcmp(key, "First")) {
+        if (!FXSYS_strcmp(key.c_str(), "Parent") ||
+            !FXSYS_strcmp(key.c_str(), "Prev") ||
+            !FXSYS_strcmp(key.c_str(), "First")) {
           continue;
         }
         if (pNextObj) {
@@ -290,11 +292,11 @@ uint32_t CPDF_PageOrganizer::GetNewObjId(CPDF_Document* pDoc,
   if (CPDF_Dictionary* pDictClone = pClone->AsDictionary()) {
     if (pDictClone->KeyExist("Type")) {
       CFX_ByteString strType = pDictClone->GetStringBy("Type");
-      if (!FXSYS_stricmp(strType, "Pages")) {
+      if (!FXSYS_stricmp(strType.c_str(), "Pages")) {
         pDictClone->Release();
         return 4;
       }
-      if (!FXSYS_stricmp(strType, "Page")) {
+      if (!FXSYS_stricmp(strType.c_str(), "Page")) {
         pDictClone->Release();
         return 0;
       }
@@ -330,12 +332,12 @@ FPDF_BOOL ParserPageRangeString(CFX_ByteString rangstring,
       cbMidRange = rangstring.Mid(nStringFrom, nStringTo - nStringFrom);
       int nMid = cbMidRange.Find('-');
       if (nMid == -1) {
-        long lPageNum = atol(cbMidRange);
+        long lPageNum = atol(cbMidRange.c_str());
         if (lPageNum <= 0 || lPageNum > nCount)
           return FALSE;
         pageArray->push_back((uint16_t)lPageNum);
       } else {
-        int nStartPageNum = atol(cbMidRange.Mid(0, nMid));
+        int nStartPageNum = atol(cbMidRange.Mid(0, nMid).c_str());
         if (nStartPageNum == 0)
           return FALSE;
 
@@ -344,7 +346,7 @@ FPDF_BOOL ParserPageRangeString(CFX_ByteString rangstring,
         if (nEnd == 0)
           return FALSE;
 
-        int nEndPageNum = atol(cbMidRange.Mid(nMid, nEnd));
+        int nEndPageNum = atol(cbMidRange.Mid(nMid, nEnd).c_str());
         if (nStartPageNum < 0 || nStartPageNum > nEndPageNum ||
             nEndPageNum > nCount) {
           return FALSE;

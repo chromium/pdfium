@@ -991,7 +991,7 @@ CFX_DIBitmap* XFA_LoadImageData(CXFA_FFDoc* pDoc,
       CFX_ByteString bsData = wsImage.UTF8Encode();
       int32_t iLength = bsData.GetLength();
       pImageBuffer = FX_Alloc(uint8_t, iLength);
-      int32_t iRead = XFA_Base64Decode((const FX_CHAR*)bsData, pImageBuffer);
+      int32_t iRead = XFA_Base64Decode(bsData.c_str(), pImageBuffer);
       if (iRead > 0) {
         pImageFileRead = FX_CreateMemoryStream(pImageBuffer, iRead);
       }

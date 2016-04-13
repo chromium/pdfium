@@ -162,7 +162,7 @@ CJS_Array CJS_PublicMethods::AF_MakeArrayFromList(CJS_Runtime* pRuntime,
   }
   CFX_WideString wsStr = val.ToCFXWideString();
   CFX_ByteString t = CFX_ByteString::FromUnicode(wsStr);
-  const char* p = (const char*)t;
+  const char* p = t.c_str();
 
   int ch = ',';
   int nIndex = 0;
@@ -170,8 +170,8 @@ CJS_Array CJS_PublicMethods::AF_MakeArrayFromList(CJS_Runtime* pRuntime,
   while (*p) {
     const char* pTemp = strchr(p, ch);
     if (!pTemp) {
-      StrArray.SetElement(nIndex,
-                          CJS_Value(pRuntime, StrTrim(CFX_ByteString(p))));
+      StrArray.SetElement(
+          nIndex, CJS_Value(pRuntime, StrTrim(CFX_ByteString(p)).c_str()));
       break;
     }
 
@@ -179,8 +179,8 @@ CJS_Array CJS_PublicMethods::AF_MakeArrayFromList(CJS_Runtime* pRuntime,
     strncpy(pSub, p, pTemp - p);
     *(pSub + (pTemp - p)) = '\0';
 
-    StrArray.SetElement(nIndex,
-                        CJS_Value(pRuntime, StrTrim(CFX_ByteString(pSub))));
+    StrArray.SetElement(
+        nIndex, CJS_Value(pRuntime, StrTrim(CFX_ByteString(pSub)).c_str()));
     delete[] pSub;
 
     nIndex++;
@@ -756,7 +756,7 @@ FX_BOOL CJS_PublicMethods::AFNumber_Format(IJS_Context* cc,
 
   // for processing decimal places
   strValue.Replace(",", ".");
-  double dValue = atof(strValue);
+  double dValue = atof(strValue.c_str());
   if (iDec > 0)
     dValue += DOUBLE_CORRECT;
 
@@ -1040,7 +1040,7 @@ FX_BOOL CJS_PublicMethods::AFPercent_Format(
     iSepStyle = 0;
 
   // for processing decimal places
-  double dValue = atof(strValue);
+  double dValue = atof(strValue.c_str());
   dValue *= 100;
   if (iDec > 0)
     dValue += DOUBLE_CORRECT;
@@ -1778,7 +1778,8 @@ FX_BOOL CJS_PublicMethods::AFRange_Validate(
     return FALSE;
   if (pEvent->Value().IsEmpty())
     return TRUE;
-  double dEentValue = atof(CFX_ByteString::FromUnicode(pEvent->Value()));
+  double dEentValue =
+      atof(CFX_ByteString::FromUnicode(pEvent->Value()).c_str());
   FX_BOOL bGreaterThan = params[0].ToBool();
   double dGreaterThan = params[1].ToDouble();
   FX_BOOL bLessThan = params[2].ToBool();

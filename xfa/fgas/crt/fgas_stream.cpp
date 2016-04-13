@@ -420,7 +420,7 @@ FX_BOOL CFX_FileStreamImp::LoadFile(const FX_WCHAR* pszSrcFileName,
     }
   }
 #else
-  CFX_ByteString wsMode;
+  const FX_CHAR* wsMode = "rb";
   if (dwAccess & FX_STREAMACCESS_Write) {
     if (dwAccess & FX_STREAMACCESS_Append) {
       wsMode = "a+b";
@@ -429,18 +429,16 @@ FX_BOOL CFX_FileStreamImp::LoadFile(const FX_WCHAR* pszSrcFileName,
     } else {
       wsMode = "r+b";
     }
-  } else {
-    wsMode = "rb";
   }
   CFX_ByteString szFileName = CFX_ByteString::FromUnicode(pszSrcFileName);
-  m_hFile = FXSYS_fopen(szFileName, wsMode);
+  m_hFile = FXSYS_fopen(szFileName.c_str(), wsMode);
   if (m_hFile == NULL) {
     if (dwAccess & FX_STREAMACCESS_Write) {
       if (dwAccess & FX_STREAMACCESS_Create) {
-        m_hFile = FXSYS_fopen(szFileName, "w+b");
+        m_hFile = FXSYS_fopen(szFileName.c_str(), "w+b");
       }
       if (m_hFile == NULL) {
-        m_hFile = FXSYS_fopen(szFileName, "r+b");
+        m_hFile = FXSYS_fopen(szFileName.c_str(), "r+b");
         if (m_hFile == NULL) {
           return FALSE;
         }

@@ -39,7 +39,6 @@
 
 #ifndef _WIN32
 extern void SetLastError(int err);
-
 extern int GetLastError();
 #endif
 
@@ -655,7 +654,7 @@ void CPDFXFA_Document::ExportData(CXFA_FFDoc* hDoc,
   CFX_ByteString content;
   if (fileType == FXFA_SAVEAS_XML) {
     content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
-    fileWrite.WriteBlock((const FX_CHAR*)content, fileWrite.GetSize(),
+    fileWrite.WriteBlock(content.c_str(), fileWrite.GetSize(),
                          content.GetLength());
     CFX_WideStringC data(L"data");
     if (m_pXFADocView->GetDoc()->SavePackage(data, &fileWrite)) {
@@ -698,13 +697,13 @@ void CPDFXFA_Document::ExportData(CXFA_FFDoc* hDoc,
       } else {
         if (i == size - 1) {
           CFX_WideString wPath = CFX_WideString::FromUTF16LE(
-              (unsigned short*)(const FX_CHAR*)bs,
+              reinterpret_cast<const unsigned short*>(bs.c_str()),
               bs.GetLength() / sizeof(unsigned short));
           CFX_ByteString bPath = wPath.UTF8Encode();
-          CFX_ByteString szFormat =
+          const char* szFormat =
               "\n<pdf href=\"%s\" xmlns=\"http://ns.adobe.com/xdp/pdf/\"/>";
-          content.Format(szFormat, (char*)(const FX_CHAR*)bPath);
-          fileWrite.WriteBlock((const FX_CHAR*)content, fileWrite.GetSize(),
+          content.Format(szFormat, bPath.c_str());
+          fileWrite.WriteBlock(content.c_str(), fileWrite.GetSize(),
                                content.GetLength());
         }
 
@@ -954,8 +953,8 @@ FX_BOOL CPDFXFA_Document::_ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
   if (fileType == FXFA_SAVEAS_XML) {
     CFX_WideString ws;
     ws.FromLocal("data");
-    CFX_ByteString content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
-    fileStream.WriteBlock((const FX_CHAR*)content, 0, content.GetLength());
+    const char* content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n";
+    fileStream.WriteBlock(content, 0, strlen(content));
     m_pXFADoc->SavePackage(ws.AsStringC(), &fileStream);
   } else if (fileType == FXFA_SAVEAS_XDP) {
     if (flag == 0)

@@ -350,7 +350,7 @@ void* CFX_Win32FontInfo::MapFont(int weight,
   }
   HFONT hFont =
       ::CreateFontA(-10, 0, 0, 0, weight, bItalic, 0, 0, charset,
-                    OUT_TT_ONLY_PRECIS, 0, 0, subst_pitch_family, face);
+                    OUT_TT_ONLY_PRECIS, 0, 0, subst_pitch_family, face.c_str());
   char facebuf[100];
   HFONT hOldFont = (HFONT)::SelectObject(m_hDC, hFont);
   ::GetTextFaceA(m_hDC, 100, facebuf);
@@ -393,8 +393,9 @@ void* CFX_Win32FontInfo::MapFont(int weight,
       }
       break;
   }
-  hFont = ::CreateFontA(-10, 0, 0, 0, weight, bItalic, 0, 0, charset,
-                        OUT_TT_ONLY_PRECIS, 0, 0, subst_pitch_family, face);
+  hFont =
+      ::CreateFontA(-10, 0, 0, 0, weight, bItalic, 0, 0, charset,
+                    OUT_TT_ONLY_PRECIS, 0, 0, subst_pitch_family, face.c_str());
   return hFont;
 }
 void CFX_Win32FontInfo::DeleteFont(void* hFont) {

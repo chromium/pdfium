@@ -112,7 +112,7 @@ CFX_ByteString PDF_NameDecode(const CFX_ByteString& orig) {
   if (!FXSYS_memchr(orig.c_str(), '#', orig.GetLength())) {
     return orig;
   }
-  return PDF_NameDecode(CFX_ByteStringC(orig));
+  return PDF_NameDecode(orig.AsStringC());
 }
 
 CFX_ByteString PDF_NameEncode(const CFX_ByteString& orig) {

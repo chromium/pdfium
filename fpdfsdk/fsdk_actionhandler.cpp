@@ -470,7 +470,7 @@ void CPDFSDK_ActionHandler::DoAction_Named(CPDFSDK_Document* pDocument,
   ASSERT(action.GetDict());
 
   CFX_ByteString csName = action.GetNamedAction();
-  pDocument->GetEnv()->FFI_ExecuteNamedAction(csName);
+  pDocument->GetEnv()->FFI_ExecuteNamedAction(csName.c_str());
 }
 
 void CPDFSDK_ActionHandler::DoAction_SetOCGState(CPDFSDK_Document* pDocument,

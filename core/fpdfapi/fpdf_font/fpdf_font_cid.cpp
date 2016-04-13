@@ -304,7 +304,7 @@ CPDF_CMap* CPDF_CMapManager::GetPredefinedCMap(const CFX_ByteString& name,
 CPDF_CMap* CPDF_CMapManager::LoadPredefinedCMap(const CFX_ByteString& name,
                                                 FX_BOOL bPromptCJK) {
   CPDF_CMap* pCMap = new CPDF_CMap;
-  const FX_CHAR* pname = name;
+  const FX_CHAR* pname = name.c_str();
   if (*pname == '/') {
     pname++;
   }
@@ -315,7 +315,7 @@ CPDF_CMap* CPDF_CMapManager::LoadPredefinedCMap(const CFX_ByteString& name,
 void CPDF_CMapManager::ReloadAll() {
   for (const auto& pair : m_CMaps) {
     CPDF_CMap* pCMap = pair.second;
-    pCMap->LoadPredefined(this, pair.first, FALSE);
+    pCMap->LoadPredefined(this, pair.first.c_str(), FALSE);
   }
   for (size_t i = 0; i < FX_ArraySize(m_CID2UnicodeMaps); ++i) {
     if (CPDF_CID2UnicodeMap* pMap = m_CID2UnicodeMaps[i]) {

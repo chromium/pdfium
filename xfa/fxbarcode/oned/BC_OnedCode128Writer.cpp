@@ -211,7 +211,7 @@ int32_t CBC_OnedCode128Writer::Encode128C(const CFX_ByteString& contents,
       patternIndex = (int32_t)ch;
       position++;
     } else {
-      patternIndex = FXSYS_atoi(contents.Mid(position, 2));
+      patternIndex = FXSYS_atoi(contents.Mid(position, 2).c_str());
       if (contents.GetAt(position + 1) < '0' ||
           contents.GetAt(position + 1) > '9') {
         position += 1;

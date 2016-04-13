@@ -133,8 +133,8 @@ uint32_t FXSYS_GetModuleFileName(void* hModule, char* buf, uint32_t bufsize) {
 extern "C" {
 #endif
 FXSYS_FILE* FXSYS_wfopen(const FX_WCHAR* filename, const FX_WCHAR* mode) {
-  return FXSYS_fopen(CFX_ByteString::FromUnicode(filename),
-                     CFX_ByteString::FromUnicode(mode));
+  return FXSYS_fopen(CFX_ByteString::FromUnicode(filename).c_str(),
+                     CFX_ByteString::FromUnicode(mode).c_str());
 }
 char* FXSYS_strlwr(char* str) {
   if (!str) {

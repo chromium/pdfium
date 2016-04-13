@@ -412,9 +412,8 @@ FX_BOOL CXFA_FFDoc::SavePackage(const CFX_WideStringC& wsPackage,
     if (pCSContext) {
       pCSContext->GetChecksum(bsChecksum);
     }
-    bFlags = pExport->Export(pFile, pNode, 0, bsChecksum.GetLength()
-                                                  ? (const FX_CHAR*)bsChecksum
-                                                  : NULL);
+    bFlags = pExport->Export(
+        pFile, pNode, 0, bsChecksum.GetLength() ? bsChecksum.c_str() : NULL);
   } else {
     bFlags = pExport->Export(pFile);
   }

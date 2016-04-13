@@ -101,7 +101,8 @@ FX_BOOL CXFA_ScriptContext::RunScript(XFA_SCRIPTLANGTYPE eScriptType,
   CXFA_Object* pOriginalObject = m_pThisObject;
   m_pThisObject = pThisObject;
   FXJSE_HVALUE pValue = pThisObject ? GetJSValueFromMap(pThisObject) : NULL;
-  FX_BOOL bRet = FXJSE_ExecuteScript(m_hJsContext, btScript, hRetValue, pValue);
+  FX_BOOL bRet =
+      FXJSE_ExecuteScript(m_hJsContext, btScript.c_str(), hRetValue, pValue);
   m_pThisObject = pOriginalObject;
   m_eScriptType = eSaveType;
   return bRet;
@@ -466,7 +467,8 @@ FX_BOOL CXFA_ScriptContext::RunVariablesScript(CXFA_Node* pScriptNode) {
         CreateVariablesContext(pScriptNode, pThisObject);
     CXFA_Object* pOriginalObject = m_pThisObject;
     m_pThisObject = pThisObject;
-    FX_BOOL bRet = FXJSE_ExecuteScript(hVariablesContext, btScript, hRetValue);
+    FX_BOOL bRet =
+        FXJSE_ExecuteScript(hVariablesContext, btScript.c_str(), hRetValue);
     m_pThisObject = pOriginalObject;
     FXJSE_Value_Release(hRetValue);
     return bRet;

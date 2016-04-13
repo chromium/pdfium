@@ -637,7 +637,7 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
                                        FX_ARGB stroke_argb,
                                        const CFX_GraphStateData* pGraphState,
                                        const CPDF_RenderOptions* pOptions) {
-  int nChars = pFont->CountChar(str, str.GetLength());
+  int nChars = pFont->CountChar(str.c_str(), str.GetLength());
   if (nChars == 0) {
     return;
   }
@@ -646,7 +646,7 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
   uint32_t* pCharCodes;
   FX_FLOAT* pCharPos;
   if (nChars == 1) {
-    charcode = pFont->GetNextChar(str, str.GetLength(), offset);
+    charcode = pFont->GetNextChar(str.c_str(), str.GetLength(), offset);
     pCharCodes = (uint32_t*)(uintptr_t)charcode;
     pCharPos = NULL;
   } else {
@@ -654,7 +654,7 @@ void CPDF_TextRenderer::DrawTextString(CFX_RenderDevice* pDevice,
     pCharPos = FX_Alloc(FX_FLOAT, nChars - 1);
     FX_FLOAT cur_pos = 0;
     for (int i = 0; i < nChars; i++) {
-      pCharCodes[i] = pFont->GetNextChar(str, str.GetLength(), offset);
+      pCharCodes[i] = pFont->GetNextChar(str.c_str(), str.GetLength(), offset);
       if (i) {
         pCharPos[i - 1] = cur_pos;
       }

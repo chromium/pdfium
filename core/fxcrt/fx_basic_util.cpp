@@ -210,9 +210,9 @@ void* FX_OpenFolder(const FX_CHAR* path) {
 #if _FXM_PLATFORM_ == _FXM_PLATFORM_WINDOWS_
 #ifndef _WIN32_WCE
   CFindFileDataA* pData = new CFindFileDataA;
-  pData->m_Handle =
-      FindFirstFileExA(CFX_ByteString(path) + "/*.*", FindExInfoStandard,
-                       &pData->m_FindData, FindExSearchNameMatch, NULL, 0);
+  pData->m_Handle = FindFirstFileExA((CFX_ByteString(path) + "/*.*").c_str(),
+                                     FindExInfoStandard, &pData->m_FindData,
+                                     FindExSearchNameMatch, NULL, 0);
 #else
   CFindFileDataW* pData = new CFindFileDataW;
   pData->m_Handle = FindFirstFileW(CFX_WideString::FromLocal(path) + L"/*.*",
@@ -242,7 +242,7 @@ void* FX_OpenFolder(const FX_WCHAR* path) {
   pData->m_bEnd = FALSE;
   return pData;
 #else
-  DIR* dir = opendir(CFX_ByteString::FromUnicode(path));
+  DIR* dir = opendir(CFX_ByteString::FromUnicode(path).c_str());
   return dir;
 #endif
 }

@@ -633,11 +633,11 @@ FX_BOOL CPDF_InterForm::ValidateFieldName(const CPDF_FormControl* pControl,
 }
 int CPDF_InterForm::CompareFieldName(const CFX_ByteString& name1,
                                      const CFX_ByteString& name2) {
-  const FX_CHAR* ptr1 = name1;
-  const FX_CHAR* ptr2 = name2;
   if (name1.GetLength() == name2.GetLength()) {
     return name1 == name2 ? 1 : 0;
   }
+  const FX_CHAR* ptr1 = name1.c_str();
+  const FX_CHAR* ptr2 = name2.c_str();
   int i = 0;
   while (ptr1[i] == ptr2[i]) {
     i++;

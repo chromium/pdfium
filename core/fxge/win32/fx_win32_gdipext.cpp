@@ -686,7 +686,7 @@ void CGdiplusExt::Load() {
   strPlusPath += buf;
   strPlusPath += "\\";
   strPlusPath += "GDIPLUS.DLL";
-  m_hModule = LoadLibraryA(strPlusPath);
+  m_hModule = LoadLibraryA(strPlusPath.c_str());
   if (!m_hModule) {
     return;
   }

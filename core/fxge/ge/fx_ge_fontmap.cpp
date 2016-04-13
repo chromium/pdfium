@@ -758,11 +758,11 @@ void CFX_FontMapper::AddInstalledFont(const CFX_ByteString& name, int charset) {
   }
 
   if (bLocalized) {
-    void* hFont = m_pFontInfo->GetFont(name);
+    void* hFont = m_pFontInfo->GetFont(name.c_str());
     if (!hFont) {
       int iExact;
-      hFont =
-          m_pFontInfo->MapFont(0, 0, FXFONT_DEFAULT_CHARSET, 0, name, iExact);
+      hFont = m_pFontInfo->MapFont(0, 0, FXFONT_DEFAULT_CHARSET, 0,
+                                   name.c_str(), iExact);
       if (!hFont)
         return;
     }
@@ -796,7 +796,7 @@ CFX_ByteString CFX_FontMapper::MatchInstalledFonts(
   LoadInstalledFonts();
   int i;
   for (i = pdfium::CollectionSize<int>(m_InstalledTTFonts) - 1; i >= 0; i--) {
-    CFX_ByteString norm1 = TT_NormalizeName(m_InstalledTTFonts[i]);
+    CFX_ByteString norm1 = TT_NormalizeName(m_InstalledTTFonts[i].c_str());
     if (norm1 == norm_name) {
       break;
     }
@@ -972,7 +972,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
   }
   if (!style.IsEmpty()) {
     int nLen = style.GetLength();
-    const FX_CHAR* pStyle = style;
+    const FX_CHAR* pStyle = style.c_str();
     int i = 0;
     FX_BOOL bFirstItem = TRUE;
     CFX_ByteString buf;
@@ -1045,10 +1045,10 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
                             PitchFamily);
   }
   family = GetFontFamily(family, nStyle);
-  CFX_ByteString match = MatchInstalledFonts(TT_NormalizeName(family));
+  CFX_ByteString match = MatchInstalledFonts(TT_NormalizeName(family.c_str()));
   if (match.IsEmpty() && family != SubstName &&
       (!bHasComma && (!bHasHypen || (bHasHypen && !bStyleAvail)))) {
-    match = MatchInstalledFonts(TT_NormalizeName(SubstName));
+    match = MatchInstalledFonts(TT_NormalizeName(SubstName.c_str()));
   }
   if (match.IsEmpty() && iBaseFont >= 12) {
     if (!bCJK) {
@@ -1104,7 +1104,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
   }
   iExact = !match.IsEmpty();
   void* hFont = m_pFontInfo->MapFont(weight, bItalic, Charset, PitchFamily,
-                                     family, iExact);
+                                     family.c_str(), iExact);
   if (iExact) {
     pSubstFont->m_SubstFlags |= FXFONT_SUBST_EXACT;
   }
@@ -1123,7 +1123,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
       weight = old_weight;
     }
     if (!match.IsEmpty()) {
-      hFont = m_pFontInfo->GetFont(match);
+      hFont = m_pFontInfo->GetFont(match.c_str());
       if (!hFont) {
         return UseInternalSubst(pSubstFont, iBaseFont, italic_angle, old_weight,
                                 PitchFamily);
@@ -1165,7 +1165,7 @@ FXFT_Face CFX_FontMapper::FindSubstFont(const CFX_ByteString& name,
         return UseInternalSubst(pSubstFont, iBaseFont, italic_angle, old_weight,
                                 PitchFamily);
       }
-      hFont = m_pFontInfo->GetFont(it->name);
+      hFont = m_pFontInfo->GetFont(it->name.c_str());
     }
   }
   pSubstFont->m_ExtHandle = m_pFontInfo->RetainFont(hFont);
@@ -1381,7 +1381,7 @@ FX_BOOL CFX_FolderFontInfo::EnumFontList(CFX_FontMapper* pMapper) {
   return TRUE;
 }
 void CFX_FolderFontInfo::ScanPath(const CFX_ByteString& path) {
-  void* handle = FX_OpenFolder(path);
+  void* handle = FX_OpenFolder(path.c_str());
   if (!handle)
     return;
 
@@ -1412,7 +1412,7 @@ void CFX_FolderFontInfo::ScanPath(const CFX_ByteString& path) {
 }
 
 void CFX_FolderFontInfo::ScanFile(const CFX_ByteString& path) {
-  FXSYS_FILE* pFile = FXSYS_fopen(path, "rb");
+  FXSYS_FILE* pFile = FXSYS_fopen(path.c_str(), "rb");
   if (!pFile)
     return;
 
@@ -1616,7 +1616,7 @@ uint32_t CFX_FolderFontInfo::GetFontData(void* hFont,
   if (!datasize || size < datasize)
     return datasize;
 
-  FXSYS_FILE* pFile = FXSYS_fopen(pFont->m_FilePath, "rb");
+  FXSYS_FILE* pFile = FXSYS_fopen(pFont->m_FilePath.c_str(), "rb");
   if (!pFile)
     return 0;
 

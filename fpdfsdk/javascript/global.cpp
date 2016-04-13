@@ -414,7 +414,7 @@ FX_BOOL JSGlobalAlternate::SetGlobalVariables(const CFX_ByteString& propname,
                                               const CFX_ByteString& sData,
                                               v8::Local<v8::Object> pData,
                                               bool bDefaultPersistent) {
-  if (!propname)
+  if (propname.IsEmpty())
     return FALSE;
 
   auto it = m_mapGlobal.find(propname);

@@ -339,5 +339,5 @@ uint16_t FX_GetCodePageFormStringW(const FX_WCHAR* pStr, int32_t iLength) {
     *pBuf++ = (FX_CHAR)*pStr++;
   }
   csStr.ReleaseBuffer(iLength);
-  return FX_GetCodePageFromStringA(csStr, iLength);
+  return FX_GetCodePageFromStringA(csStr.c_str(), iLength);
 }

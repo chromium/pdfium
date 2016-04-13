@@ -73,7 +73,8 @@ FX_BOOL CPDF_Type3Font::Load() {
     LoadPDFEncoding(pEncoding, m_BaseEncoding, m_pCharNames, FALSE, FALSE);
     if (m_pCharNames) {
       for (int i = 0; i < 256; i++) {
-        m_Encoding.m_Unicodes[i] = PDF_UnicodeFromAdobeName(m_pCharNames[i]);
+        m_Encoding.m_Unicodes[i] =
+            PDF_UnicodeFromAdobeName(m_pCharNames[i].c_str());
         if (m_Encoding.m_Unicodes[i] == 0) {
           m_Encoding.m_Unicodes[i] = i;
         }

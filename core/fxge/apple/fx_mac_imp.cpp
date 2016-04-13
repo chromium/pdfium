@@ -64,7 +64,7 @@ void* CFX_MacFontInfo::MapFont(int weight,
       break;
     }
   if (iBaseFont < 12) {
-    return GetFont(face);
+    return GetFont(face.c_str());
   }
   auto it = m_FontList.find(face);
   if (it != m_FontList.end())

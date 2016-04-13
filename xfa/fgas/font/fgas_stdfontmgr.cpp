@@ -491,7 +491,8 @@ Restart:
     if (m_FolderPaths.GetSize() < 1) {
       return "";
     }
-    pCurHandle = FX_OpenFolder(m_FolderPaths[m_FolderPaths.GetSize() - 1]);
+    pCurHandle =
+        FX_OpenFolder(m_FolderPaths[m_FolderPaths.GetSize() - 1].c_str());
     FX_HandleParentPath hpp;
     hpp.pFileHandle = pCurHandle;
     hpp.bsParentPath = m_FolderPaths[m_FolderPaths.GetSize() - 1];
@@ -525,7 +526,7 @@ Restart:
       hpp.bsParentPath =
           m_FolderQueue.GetDataPtr(m_FolderQueue.GetSize() - 1)->bsParentPath +
           bsFolderSpearator + bsName;
-      hpp.pFileHandle = FX_OpenFolder(hpp.bsParentPath);
+      hpp.pFileHandle = FX_OpenFolder(hpp.bsParentPath.c_str());
       if (hpp.pFileHandle == NULL) {
         continue;
       }
@@ -701,7 +702,7 @@ IFX_Font* CFX_FontMgrImp::GetFontByCodePage(uint16_t wCodePage,
   CFX_ByteString bsHash;
   bsHash.Format("%d, %d", wCodePage, dwFontStyles);
   bsHash += CFX_WideString(pszFontFamily).UTF8Encode();
-  uint32_t dwHash = FX_HashCode_String_GetA(bsHash, bsHash.GetLength());
+  uint32_t dwHash = FX_HashCode_String_GetA(bsHash.c_str(), bsHash.GetLength());
 
   CFX_ArrayTemplate<IFX_Font*>* pFonts = nullptr;
   if (m_Hash2Fonts.Lookup(dwHash, pFonts)) {
@@ -758,7 +759,7 @@ IFX_Font* CFX_FontMgrImp::GetFontByUnicode(FX_WCHAR wUnicode,
   else
     bsHash.Format("%d, %d", wCodePage, dwFontStyles);
   bsHash += CFX_WideString(pszFontFamily).UTF8Encode();
-  uint32_t dwHash = FX_HashCode_String_GetA(bsHash, bsHash.GetLength());
+  uint32_t dwHash = FX_HashCode_String_GetA(bsHash.c_str(), bsHash.GetLength());
   CFX_ArrayTemplate<IFX_Font*>* pFonts = nullptr;
   if (m_Hash2Fonts.Lookup(dwHash, pFonts)) {
     if (!pFonts)
@@ -859,8 +860,7 @@ IFX_Font* CFX_FontMgrImp::LoadFont(const FX_WCHAR* pszFileName,
   CFX_ByteString bsHash;
   bsHash += CFX_WideString(pszFileName).UTF8Encode();
 
-  uint32_t dwHash =
-      FX_HashCode_String_GetA((const FX_CHAR*)bsHash, bsHash.GetLength());
+  uint32_t dwHash = FX_HashCode_String_GetA(bsHash.c_str(), bsHash.GetLength());
   IFX_FileAccess* pFontAccess = nullptr;
   if (!m_Hash2FileAccess.Lookup(dwHash, pFontAccess)) {
     pFontAccess = FX_CreateDefaultFileAccess(pszFileName);
@@ -894,7 +894,7 @@ IFX_Font* CFX_FontMgrImp::LoadFont(IFX_FileAccess* pFontAccess,
   if (bWantCache) {
     CFX_ByteString bsHash;
     bsHash.Format("%d, %d", (uintptr_t)pFontAccess, iFaceIndex);
-    dwHash = FX_HashCode_String_GetA(bsHash, bsHash.GetLength());
+    dwHash = FX_HashCode_String_GetA(bsHash.c_str(), bsHash.GetLength());
     if (m_FileAccess2IFXFont.Lookup(dwHash, pFont)) {
       if (pFont) {
         if (pFaceCount)
@@ -1032,8 +1032,9 @@ IFX_FileRead* CFX_FontMgrImp::CreateFontStream(
     IFX_SystemFontInfo* pSystemFontInfo,
     uint32_t index) {
   int iExact = 0;
-  void* hFont = pSystemFontInfo->MapFont(
-      0, 0, FXFONT_DEFAULT_CHARSET, 0, pFontMapper->GetFaceName(index), iExact);
+  void* hFont =
+      pSystemFontInfo->MapFont(0, 0, FXFONT_DEFAULT_CHARSET, 0,
+                               pFontMapper->GetFaceName(index).c_str(), iExact);
   if (!hFont)
     return nullptr;
 

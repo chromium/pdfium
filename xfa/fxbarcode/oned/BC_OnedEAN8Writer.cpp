@@ -76,9 +76,9 @@ int32_t CBC_OnedEAN8Writer::CalcChecksum(const CFX_ByteString& contents) {
   int32_t j = 1;
   for (int32_t i = contents.GetLength() - 1; i >= 0; i--) {
     if (j % 2) {
-      odd += FXSYS_atoi(contents.Mid(i, 1));
+      odd += FXSYS_atoi(contents.Mid(i, 1).c_str());
     } else {
-      even += FXSYS_atoi(contents.Mid(i, 1));
+      even += FXSYS_atoi(contents.Mid(i, 1).c_str());
     }
     j++;
   }
@@ -128,7 +128,7 @@ uint8_t* CBC_OnedEAN8Writer::Encode(const CFX_ByteString& contents,
   }
   int32_t i = 0;
   for (i = 0; i <= 3; i++) {
-    int32_t digit = FXSYS_atoi(contents.Mid(i, 1));
+    int32_t digit = FXSYS_atoi(contents.Mid(i, 1).c_str());
     pos += AppendPattern(result, pos, CBC_OneDimReader::L_PATTERNS[digit], 4, 0,
                          e);
     if (e != BCExceptionNO) {
@@ -142,7 +142,7 @@ uint8_t* CBC_OnedEAN8Writer::Encode(const CFX_ByteString& contents,
     return NULL;
   }
   for (i = 4; i <= 7; i++) {
-    int32_t digit = FXSYS_atoi(contents.Mid(i, 1));
+    int32_t digit = FXSYS_atoi(contents.Mid(i, 1).c_str());
     pos += AppendPattern(result, pos, CBC_OneDimReader::L_PATTERNS[digit], 4, 1,
                          e);
     if (e != BCExceptionNO) {

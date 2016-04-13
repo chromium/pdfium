@@ -241,8 +241,8 @@ static void FXJSE_Context_GlobalObjToString(
     CFX_ByteString szStringVal;
     szStringVal.Format("[object %s]", lpClass->name);
     info.GetReturnValue().Set(v8::String::NewFromUtf8(
-        info.GetIsolate(), (const FX_CHAR*)szStringVal,
-        v8::String::kNormalString, szStringVal.GetLength()));
+        info.GetIsolate(), szStringVal.c_str(), v8::String::kNormalString,
+        szStringVal.GetLength()));
   } else {
     v8::Local<v8::String> local_str =
         info.This()

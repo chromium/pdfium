@@ -142,7 +142,7 @@ void CPDF_TextObject::SetSegments(const CFX_ByteString* pStrs,
   CPDF_Font* pFont = m_TextState.GetFont();
   m_nChars = 0;
   for (int i = 0; i < nsegs; ++i) {
-    m_nChars += pFont->CountChar(pStrs[i], pStrs[i].GetLength());
+    m_nChars += pFont->CountChar(pStrs[i].c_str(), pStrs[i].GetLength());
   }
   m_nChars += nsegs - 1;
   if (m_nChars > 1) {
@@ -150,8 +150,9 @@ void CPDF_TextObject::SetSegments(const CFX_ByteString* pStrs,
     m_pCharPos = FX_Alloc(FX_FLOAT, m_nChars - 1);
     int index = 0;
     for (int i = 0; i < nsegs; ++i) {
-      const FX_CHAR* segment = pStrs[i];
-      int offset = 0, len = pStrs[i].GetLength();
+      const FX_CHAR* segment = pStrs[i].c_str();
+      int len = pStrs[i].GetLength();
+      int offset = 0;
       while (offset < len) {
         m_pCharCodes[index++] = pFont->GetNextChar(segment, len, offset);
       }
@@ -163,7 +164,7 @@ void CPDF_TextObject::SetSegments(const CFX_ByteString* pStrs,
   } else {
     int offset = 0;
     m_pCharCodes = (uint32_t*)(uintptr_t)pFont->GetNextChar(
-        pStrs[0], pStrs[0].GetLength(), offset);
+        pStrs[0].c_str(), pStrs[0].GetLength(), offset);
   }
 }
 

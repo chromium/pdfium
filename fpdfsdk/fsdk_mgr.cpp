@@ -840,7 +840,8 @@ CPDFSDK_Annot* CPDFSDK_PageView::AddAnnot(CXFA_FFWidget* pPDFAnnot) {
 #endif  // PDF_ENABLE_XFA
 
 CPDFSDK_Annot* CPDFSDK_PageView::AddAnnot(CPDF_Dictionary* pDict) {
-  return pDict ? AddAnnot(pDict->GetStringBy("Subtype"), pDict) : nullptr;
+  return pDict ? AddAnnot(pDict->GetStringBy("Subtype").c_str(), pDict)
+               : nullptr;
 }
 
 CPDFSDK_Annot* CPDFSDK_PageView::AddAnnot(const FX_CHAR* lpSubType,

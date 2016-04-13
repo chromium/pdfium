@@ -152,7 +152,7 @@ static unsigned long DefaultGetFaceName(struct _FPDF_SYSFONTINFO* pThis,
     return 0;
   if (name.GetLength() >= (long)buf_size)
     return name.GetLength() + 1;
-  FXSYS_strcpy(buffer, name);
+  FXSYS_strcpy(buffer, name.c_str());
   return name.GetLength() + 1;
 }
 

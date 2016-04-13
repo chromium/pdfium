@@ -3249,9 +3249,9 @@ void CXFA_FM2JSContext::Eval(FXJSE_HOBJECT hThis,
       FXJSE_HCONTEXT hContext = FXJSE_Context_Create(hruntime);
       FXJSE_HVALUE returnValue = FXJSE_Value_Create(hruntime);
       javaScript = wsJavaScriptBuf.GetWideString();
-      FXJSE_ExecuteScript(hContext,
-                          FX_UTF8Encode(javaScript, javaScript.GetLength()),
-                          returnValue);
+      FXJSE_ExecuteScript(
+          hContext, FX_UTF8Encode(javaScript, javaScript.GetLength()).c_str(),
+          returnValue);
       FXJSE_Value_Set(args.GetReturnValue(), returnValue);
       FXJSE_Value_Release(returnValue);
       FXJSE_Context_Release(hContext);
@@ -3470,7 +3470,7 @@ void CXFA_FM2JSContext::UnitValue(FXJSE_HOBJECT hThis,
       FXJSE_Value_SetNull(args.GetReturnValue());
     } else {
       HValueToUTF8String(unitspanValue, unitspanString);
-      const FX_CHAR* pData = unitspanString;
+      const FX_CHAR* pData = unitspanString.c_str();
       if (pData) {
         int32_t u = 0;
         while (*(pData + u) == 0x20 || *(pData + u) == 0x09 ||
@@ -3505,7 +3505,7 @@ void CXFA_FM2JSContext::UnitValue(FXJSE_HOBJECT hThis,
           unitValue = GetSimpleHValue(hThis, args, 1);
           CFX_ByteString unitTempString;
           HValueToUTF8String(unitValue, unitTempString);
-          const FX_CHAR* pData = unitTempString;
+          const FX_CHAR* pData = unitTempString.c_str();
           int32_t u = 0;
           while (*(pData + u) == ' ' || *(pData + u) == 0x09 ||
                  *(pData + u) == 0x0B || *(pData + u) == 0x0C ||
@@ -4904,8 +4904,8 @@ void CXFA_FM2JSContext::Str(FXJSE_HOBJECT hThis,
         formatStr += CFX_ByteString::FormatInteger(iPrecision);
       }
       formatStr += "f";
-      numberString.Format(formatStr, fNumber);
-      const FX_CHAR* pData = numberString;
+      numberString.Format(formatStr.c_str(), fNumber);
+      const FX_CHAR* pData = numberString.c_str();
       int32_t iLength = numberString.GetLength();
       int32_t u = 0;
       while (u < iLength) {
@@ -6990,7 +6990,7 @@ int32_t CXFA_FM2JSContext::HValueToInteger(FXJSE_HOBJECT hThis,
   } else if (FXJSE_Value_IsUTF8String(hValue)) {
     CFX_ByteString szValue;
     FXJSE_Value_ToUTF8String(hValue, szValue);
-    iValue = FXSYS_atoi(szValue);
+    iValue = FXSYS_atoi(szValue.c_str());
   } else {
     iValue = FXJSE_Value_ToInteger(hValue);
   }

@@ -921,7 +921,7 @@ void CFX_ByteString::TrimLeft() {
 }
 
 uint32_t CFX_ByteString::GetID(FX_STRSIZE start_pos) const {
-  return CFX_ByteStringC(*this).GetID(start_pos);
+  return AsStringC().GetID(start_pos);
 }
 uint32_t CFX_ByteStringC::GetID(FX_STRSIZE start_pos) const {
   if (m_Length == 0) {

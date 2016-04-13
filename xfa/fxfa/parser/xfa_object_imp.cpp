@@ -1730,7 +1730,7 @@ void CXFA_Node::Script_Boolean_Value(FXJSE_HVALUE hValue,
     if (!(FXJSE_Value_IsNull(hValue) || FXJSE_Value_IsUndefined(hValue))) {
       FXJSE_Value_ToUTF8String(hValue, newValue);
     }
-    int32_t iValue = FXSYS_atoi(newValue);
+    int32_t iValue = FXSYS_atoi(newValue.c_str());
     CFX_WideString wsNewValue = (iValue == 0) ? FX_WSTRC(L"0") : FX_WSTRC(L"1");
     CFX_WideString wsFormatValue(wsNewValue);
     CXFA_WidgetData* pContainerWidgetData = GetContainerWidgetData();

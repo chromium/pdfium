@@ -170,9 +170,6 @@ class CFX_ByteString {
   // Note: Any subsequent modification of |this| will invalidate the result.
   const FX_CHAR* c_str() const { return m_pData ? m_pData->m_String : ""; }
 
-  // Implicit conversion to C-style string -- deprecated.
-  operator const FX_CHAR*() const { return m_pData ? m_pData->m_String : ""; }
-
   // Explicit conversion to uint8_t*.
   // Note: Any subsequent modification of |this| will invalidate the result.
   const uint8_t* raw_str() const {

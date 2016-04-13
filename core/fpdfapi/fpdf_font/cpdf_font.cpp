@@ -485,7 +485,7 @@ const FX_CHAR* CPDF_Font::GetAdobeCharName(int iBaseEncoding,
 
   const FX_CHAR* name = nullptr;
   if (pCharNames)
-    name = pCharNames[charcode];
+    name = pCharNames[charcode].c_str();
   if ((!name || name[0] == 0) && iBaseEncoding)
     name = PDF_CharNameFromPredefinedCharSet(iBaseEncoding, charcode);
   return name && name[0] ? name : nullptr;

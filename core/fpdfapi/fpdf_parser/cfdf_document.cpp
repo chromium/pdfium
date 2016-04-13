@@ -53,7 +53,7 @@ void CFDF_Document::ParseStream(IFX_FileRead* pFile, FX_BOOL bOwnFile) {
     bool bNumber;
     CFX_ByteString word = parser.GetNextWord(&bNumber);
     if (bNumber) {
-      uint32_t objnum = FXSYS_atoui(word);
+      uint32_t objnum = FXSYS_atoui(word.c_str());
       word = parser.GetNextWord(&bNumber);
       if (!bNumber) {
         break;

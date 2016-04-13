@@ -792,7 +792,7 @@ CPDF_Object* CPDF_DataAvail::ParseIndirectObjectAt(
   if (!bIsNumber)
     return nullptr;
 
-  uint32_t parser_objnum = FXSYS_atoui(word);
+  uint32_t parser_objnum = FXSYS_atoui(word.c_str());
   if (objnum && parser_objnum != objnum)
     return nullptr;
 
@@ -800,7 +800,7 @@ CPDF_Object* CPDF_DataAvail::ParseIndirectObjectAt(
   if (!bIsNumber)
     return nullptr;
 
-  uint32_t gennum = FXSYS_atoui(word);
+  uint32_t gennum = FXSYS_atoui(word.c_str());
   if (m_syntaxParser.GetKeyword() != "obj") {
     m_syntaxParser.RestorePos(SavedPos);
     return nullptr;
@@ -849,7 +849,7 @@ FX_BOOL CPDF_DataAvail::IsLinearizedFile(uint8_t* pData, uint32_t dwLen) {
   if (!bNumber)
     return FALSE;
 
-  uint32_t objnum = FXSYS_atoui(wordObjNum);
+  uint32_t objnum = FXSYS_atoui(wordObjNum.c_str());
   if (m_pLinearized) {
     m_pLinearized->Release();
     m_pLinearized = nullptr;
@@ -901,7 +901,7 @@ FX_BOOL CPDF_DataAvail::CheckEnd(IPDF_DataAvail::DownloadHints* pHints) {
         return FALSE;
       }
 
-      m_dwXRefOffset = (FX_FILESIZE)FXSYS_atoi64(xrefpos_str);
+      m_dwXRefOffset = (FX_FILESIZE)FXSYS_atoi64(xrefpos_str.c_str());
       if (!m_dwXRefOffset || m_dwXRefOffset > m_dwFileLen) {
         m_docStatus = PDF_DATAAVAIL_LOADALLFILE;
         return TRUE;
@@ -943,7 +943,7 @@ int32_t CPDF_DataAvail::CheckCrossRefStream(
     if (!bNumber)
       return -1;
 
-    uint32_t objNum = FXSYS_atoui(objnum);
+    uint32_t objNum = FXSYS_atoui(objnum.c_str());
     CPDF_Object* pObj = m_parser.ParseIndirectObjectAt(nullptr, 0, objNum);
     if (!pObj) {
       m_Pos += m_parser.m_pSyntax->SavePos();

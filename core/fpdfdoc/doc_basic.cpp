@@ -511,7 +511,7 @@ int32_t CPDF_PageLabel::GetPageByLabel(const CFX_ByteStringC& bsLabel) const {
     }
   }
   bsLbl = bsOrig;
-  int nPage = FXSYS_atoi(bsLbl);
+  int nPage = FXSYS_atoi(bsLbl.c_str());
   if (nPage > 0 && nPage <= nPages) {
     return nPage;
   }
