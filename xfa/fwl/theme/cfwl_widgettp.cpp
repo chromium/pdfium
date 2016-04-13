@@ -220,7 +220,7 @@ FX_ERR CFWL_WidgetTP::FinalizeTTO() {
   }
   return FWL_ERR_Succeeded;
 }
-#ifdef THEME_XPSimilar
+
 void CFWL_WidgetTP::DrawEdge(CFX_Graphics* pGraphics,
                              uint32_t dwStyles,
                              const CFX_RectF* pRect,
@@ -247,34 +247,7 @@ void CFWL_WidgetTP::DrawEdge(CFX_Graphics* pGraphics,
   pGraphics->StrokePath(&path, pMatrix);
   pGraphics->RestoreGraphState();
 }
-#else
-void CFWL_WidgetTP::DrawEdge(CFX_Graphics* pGraphics,
-                             uint32_t dwStyles,
-                             const CFX_RectF* pRect,
-                             CFX_Matrix* pMatrix) {
-  if (!pGraphics)
-    return;
-  if (!pRect)
-    return;
-  FWLTHEME_EDGE eType;
-  FX_FLOAT fWidth;
-  switch (dwStyles & FWL_WGTSTYLE_EdgeMask) {
-    case FWL_WGTSTYLE_EdgeRaised: {
-      eType = FWLTHEME_EDGE_Raised, fWidth = FWLTHEME_CAPACITY_EdgeRaised;
-      break;
-    }
-    case FWL_WGTSTYLE_EdgeSunken: {
-      eType = FWLTHEME_EDGE_Sunken, fWidth = FWLTHEME_CAPACITY_EdgeSunken;
-      break;
-    }
-    case FWL_WGTSTYLE_EdgeFlat:
-    default: { return; }
-  }
-  Draw3DRect(pGraphics, eType, fWidth, pRect, FWLTHEME_COLOR_EDGELT1,
-             FWLTHEME_COLOR_EDGELT2, FWLTHEME_COLOR_EDGERB1,
-             FWLTHEME_COLOR_EDGERB2, pMatrix);
-}
-#endif
+
 void CFWL_WidgetTP::Draw3DRect(CFX_Graphics* pGraphics,
                                FWLTHEME_EDGE eType,
                                FX_FLOAT fWidth,
@@ -674,21 +647,6 @@ void CFWL_WidgetTP::DrawArrowBtn(CFX_Graphics* pGraphics,
       CFWL_ArrowData::GetInstance()->m_pColorData;
   DrawArrow(pGraphics, pRect, eDict, pColorData->clrSign[eState - 1], pMatrix);
 }
-FWLCOLOR CFWL_WidgetTP::BlendColor(FWLCOLOR srcColor,
-                                   FWLCOLOR renderColor,
-                                   uint8_t scale) {
-  FWLCOLOR dstColor;
-  uint8_t n = 255 - scale;
-  dstColor.a = (uint8_t)(
-      ((uint16_t)srcColor.a * n + (uint16_t)renderColor.a * scale) >> 8);
-  dstColor.r = (uint8_t)(
-      ((uint16_t)srcColor.r * n + (uint16_t)renderColor.r * scale) >> 8);
-  dstColor.g = (uint8_t)(
-      ((uint16_t)srcColor.g * n + (uint16_t)renderColor.g * scale) >> 8);
-  dstColor.b = (uint8_t)(
-      ((uint16_t)srcColor.b * n + (uint16_t)renderColor.b * scale) >> 8);
-  return dstColor;
-}
 CFWL_ArrowData::CFWL_ArrowData() : m_pColorData(NULL) {
   SetColorData(0);
 }
@@ -779,9 +737,7 @@ uint32_t FWL_GetThemeLayout(uint32_t dwThemeID) {
 uint32_t FWL_GetThemeColor(uint32_t dwThemeID) {
   return 0x0000ffff & dwThemeID;
 }
-uint32_t FWL_MakeThemeID(uint32_t dwLayout, uint32_t dwColor) {
-  return (dwLayout << 16) | (0x0000FFFF & dwColor);
-}
+
 CFWL_ArrowData* CFWL_ArrowData::m_pInstance = NULL;
 CFWL_ArrowData* CFWL_ArrowData::GetInstance() {
   if (!m_pInstance) {

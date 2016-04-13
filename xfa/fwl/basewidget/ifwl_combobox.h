@@ -50,13 +50,7 @@ class IFWL_ComboBox;
 #define FWL_PARTSTATE_CMB_Disabled (3L << 0)
 #define FWL_PARTSTATE_CMB_Selected (1L << 2)
 #define FWL_WGTCAPACITY_CMB_ComboFormHandler (FWL_WGTCAPACITY_MAX + 7)
-#define FWL_EVT_CMB_DropDown L"FWL_EVENT_CMB_PreDropDown"
-#define FWL_EVT_CMB_PostDropDown L"FWL_EVENT_CMB_PostDropDown"
-#define FWL_EVT_CMB_CloseUp L"FWL_EVENT_CMB_CloseUp"
-#define FWL_EVT_CMB_EditChanged L"FWL_EVENT_CMB_EditChanged"
-#define FWL_EVT_CMB_SelChanged L"FWL_EVENT_CMB_SelChanged"
-#define FWL_EVT_CMB_HoverChanged L"FWL_EVENT_CMB_HoverChanged"
-#define FWL_EVT_CMB_DrawItem L"FWL_EVENT_CMB_DrawItem"
+// TODO(dsinclair): Event hash is hash of string, cleanup. pdfium:474
 #define FWL_EVTHASH_CMB_PreDropDown 1357646798
 #define FWL_EVTHASH_CMB_PostDropDown 3677010285
 #define FWL_EVTHASH_CMB_CloseUp 2871271190
@@ -64,12 +58,6 @@ class IFWL_ComboBox;
 #define FWL_EVTHASH_CMB_SelChanged 2923227784
 #define FWL_EVTHASH_CMB_HoverChanged 944325448
 #define FWL_EVTHASH_CMB_DrawItem 917354551
-
-enum FWL_CMB_TEXTCHANGED {
-  FWL_CMB_TEXTCHANGED_Insert = 0,
-  FWL_CMB_TEXTCHANGED_Delete,
-  FWL_CMB_TEXTCHANGED_Replace,
-};
 
 BEGIN_FWL_EVENT_DEF(CFWL_EvtCmbPreDropDown, FWL_EVTHASH_CMB_PreDropDown)
 END_FWL_EVENT_DEF

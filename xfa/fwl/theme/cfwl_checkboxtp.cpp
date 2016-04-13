@@ -21,7 +21,6 @@
 #define CHECKBOX_COLOR_BOXLT2 (ArgbEncode(255, 113, 111, 100))
 #define CHECKBOX_COLOR_BOXRB1 (ArgbEncode(255, 241, 239, 226))
 #define CHECKBOX_COLOR_BOXRB2 (ArgbEncode(255, 255, 255, 255))
-#define CHECKBOX_FXGE_CoordinatesAdjust
 
 CFWL_CheckBoxTP::CFWL_CheckBoxTP() : m_pCheckPath(NULL) {
   m_pThemeData = new CKBThemeData;
@@ -134,20 +133,12 @@ void CFWL_CheckBoxTP::DrawBoxBk(IFWL_Widget* pWidget,
                         pRect->height - CHECKBOX_SIZE_SIGNMARGIN * 2);
     }
   } else {
-#ifdef CHECKBOX_FXGE_CoordinatesAdjust
     CFX_RectF rect(*pRect);
     rect.Deflate(0, 0, 1, 1);
     path.AddEllipse(rect);
-#else
-    path.AddEllipse(*pRect);
-#endif
     if (bClipSign) {
       fillMode = FXFILL_ALTERNATE;
-#ifdef CHECKBOX_FXGE_CoordinatesAdjust
       CFX_RectF rtClip(rect);
-#else
-      CFX_RectF rtClip(*pRect);
-#endif
       rtClip.Deflate(CHECKBOX_SIZE_SIGNMARGIN - 1,
                      CHECKBOX_SIZE_SIGNMARGIN - 1);
       path.AddEllipse(rtClip);

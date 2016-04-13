@@ -55,17 +55,6 @@ enum FWL_FORMSIZE {
   FWL_FORMSIZE_All,
 };
 
-enum FWL_COMMANDID {
-  FWL_COMMANDID_Close = 0,
-  FWL_COMMANDID_Ok,
-  FWL_COMMANDID_Cancel,
-  FWL_COMMANDID_Abort,
-  FWL_COMMANDID_Retry,
-  FWL_COMMANDID_Ignore,
-  FWL_COMMANDID_Yes,
-  FWL_COMMANDID_No,
-};
-
 class CFX_DIBitmap;
 class CFX_WideString;
 class CFX_Path;

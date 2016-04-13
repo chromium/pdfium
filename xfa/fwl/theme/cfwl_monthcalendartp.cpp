@@ -101,23 +101,15 @@ FX_BOOL CFWL_MonthCalendarTP::DrawBackground(CFWL_ThemeBackground* pParams) {
       break;
     }
     case FWL_PART_MCD_LBtn: {
-#ifdef THEME_XPSimilar
       FWLTHEME_STATE eState = GetState(pParams->m_dwStates);
       DrawArrowBtn(pParams->m_pGraphics, &pParams->m_rtPart,
                    FWLTHEME_DIRECTION_Left, eState, &pParams->m_matrix);
-#else
-      DrawLButton(pParams, &pParams->m_matrix);
-#endif
       break;
     }
     case FWL_PART_MCD_RBtn: {
-#ifdef THEME_XPSimilar
       FWLTHEME_STATE eState = GetState(pParams->m_dwStates);
       DrawArrowBtn(pParams->m_pGraphics, &pParams->m_rtPart,
                    FWLTHEME_DIRECTION_Right, eState, &pParams->m_matrix);
-#else
-      DrawRButton(pParams, &pParams->m_matrix);
-#endif
       break;
     }
     case FWL_PART_MCD_HSeparator: {

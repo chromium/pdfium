@@ -27,13 +27,10 @@
 class CFWL_ThreadImp;
 class IFWL_NoteDriver;
 
-typedef struct FWL_HTHREAD_ { void* pData; } * FWL_HTHREAD;
-
 class IFWL_Thread {
  public:
   // These call into polymorphic methods in the impl; no need to override.
   void Release();
-  FWL_ERR Run(FWL_HTHREAD hThread);
 
   CFWL_ThreadImp* GetImpl() const { return m_pImpl; }
   void SetImpl(CFWL_ThreadImp* pImpl) { m_pImpl = pImpl; }

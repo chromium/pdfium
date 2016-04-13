@@ -38,15 +38,11 @@
 #define FWL_PARTSTATE_DTP_Hovered (1L << 0)
 #define FWL_PARTSTATE_DTP_Pressed (2L << 0)
 #define FWL_PARTSTATE_DTP_Disabled (3L << 0)
-#define FWL_EVT_DTP_DropDown L"FWL_EVENT_DTP_DropDown"
+// TODO(dsinclair): Event hash is hash of string, cleanup. pdfium:474
 #define FWL_EVTHASH_DTP_DropDown 264728733
-#define FWL_EVT_DTP_CloseUp L"FWL_EVENT_DTP_CloseUp"
 #define FWL_EVTHASH_DTP_CloseUp 4280973803
-#define FWL_EVT_DTP_EditChanged L"FWL_EVENT_DTP_EditChanged"
 #define FWL_EVTHASH_DTP_EditChanged 4009610944
-#define FWL_EVT_DTP_HoverChanged L"FWL_EVENT_DTP_HoverChanged"
 #define FWL_EVTHASH_DTP_HoverChanged 686674750
-#define FWL_EVT_DTP_SelectChanged L"FWL_EVENT_DTP_SelectChanged"
 #define FWL_EVTHASH_DTP_SelectChanged 1589616858
 
 BEGIN_FWL_EVENT_DEF(CFWL_Event_DtpDropDown, FWL_EVTHASH_DTP_DropDown)

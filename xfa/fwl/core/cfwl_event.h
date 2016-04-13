@@ -13,19 +13,7 @@
 #include "xfa/fwl/core/cfwl_note.h"
 #include "xfa/fwl/core/fwl_error.h"
 
-#define FWL_EVT_Mouse L"FWL_EVENT_Mouse"
-#define FWL_EVT_MouseWheel L"FWL_EVENT_MouseWheel"
-#define FWL_EVT_Key L"FWL_EVENT_Key"
-#define FWL_EVT_SetFocus L"FWL_EVENT_SetFocus"
-#define FWL_EVT_KillFocus L"FWL_EVENT_KillFocus"
-#define FWL_EVT_Click L"FWL_EVENT_Click"
-#define FWL_EVT_Draw L"FWL_EVENT_Draw"
-#define FWL_EVT_Scroll L"FWL_EVENT_Scroll"
-#define FWL_EVT_Close L"FWL_EVENT_Close"
-#define FWL_EVT_ContextMenu L"FWL_EVENT_ContextMenu"
-#define FWL_EVT_MenuCommand L"FWL_EVENT_MenuCommand"
-#define FWL_EVT_SizeChanged L"FWL_EVENT_SizeChanged"
-
+// TODO(dsinclair): Event hash is hash of string, cleanup. pdfium:474
 #define FWL_EVTHASH_Mouse 1765258002
 #define FWL_EVTHASH_MouseWheel 3907114407
 #define FWL_EVTHASH_Key 2408354450

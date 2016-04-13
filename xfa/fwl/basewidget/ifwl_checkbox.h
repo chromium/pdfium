@@ -59,7 +59,8 @@
 #define FWL_PARTSTATE_CKB_Focused (1L << 4)
 #define FWL_PARTSTATE_CKB_Mask1 (3L << 0)
 #define FWL_PARTSTATE_CKB_Mask2 (3L << 2)
-#define FWL_EVT_CKB_CheckStateChanged L"FWL_EVENT_CKB_CheckStateChanged"
+
+// TODO(dsinclair): Event hash is hash of string, cleanup. pdfium:474
 #define FWL_EVTHASH_CKB_CheckStateChanged 2503252963
 
 BEGIN_FWL_EVENT_DEF(CFWL_EvtCkbCheckStateChanged,

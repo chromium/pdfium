@@ -57,17 +57,12 @@
 #define FWL_PARTSTATE_EDT_Normal (0L << 0)
 #define FWL_PARTSTATE_EDT_ReadOnly (1L << 0)
 #define FWL_PARTSTATE_EDT_Disable (2L << 0)
-#define FWL_EVT_EDT_TextChanged L"FWL_EVENT_EDT_TextChanged"
+// TODO(dsinclair): Event hash is hash of string, cleanup. pdfium:474
 #define FWL_EVTHASH_EDT_TextChanged 1064022132
-#define FWL_EVT_EDT_PreSelfAdaption L"FWL_EVENT_PreSelfAdaption"
 #define FWL_EVTHASH_EDT_PreSelfAdaption 1001979178
-#define FWL_EVT_EDT_Validate L"FWL_EVTHASH_EDT_Validate"
 #define FWL_EVTHASH_EDT_Validate 3373308608
-#define FWL_EVT_EDT_CheckWord L"FWL_EVTHASH_EDT_CheckWord"
 #define FWL_EVTHASH_EDT_CheckWord 2897181520
-#define FWL_EVT_EDT_GetSuggestWords L"FWL_EVTHASH_EDT_GetSuggestWords"
 #define FWL_EVTHASH_EDT_GetSuggestWords 315782791
-#define FWL_EVT_EDT_TextFull L"FWL_EVTHASH_EDT_TextFull"
 #define FWL_EVTHASH_EDT_TextFull 2158580174
 #define FWL_EDT_FIND_FLAGS_Prev (0L << 0)
 #define FWL_EDT_FIND_FLAGS_Next (1L << 0)

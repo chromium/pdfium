@@ -140,7 +140,6 @@ class CFWL_WidgetTP {
                     FWLTHEME_DIRECTION eDict,
                     FWLTHEME_STATE eState,
                     CFX_Matrix* pMatrix = NULL);
-  FWLCOLOR BlendColor(FWLCOLOR srcColor, FWLCOLOR renderColor, uint8_t scale);
   uint32_t m_dwRefCount;
   IFDE_TextOut* m_pTextOut;
   IFX_Font* m_pFDEFont;
@@ -154,7 +153,6 @@ FX_BOOL FWLTHEME_Init();
 void FWLTHEME_Release();
 uint32_t FWL_GetThemeLayout(uint32_t dwThemeID);
 uint32_t FWL_GetThemeColor(uint32_t dwThemeID);
-uint32_t FWL_MakeThemeID(uint32_t dwLayout, uint32_t dwColor);
 
 class CFWL_ArrowData {
  public:

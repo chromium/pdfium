@@ -151,25 +151,11 @@ FX_BOOL CFWL_SDAdapterWidgetMgr::GetPopupPos(IFWL_Widget* pWidget,
                                              CFX_RectF& rtPopup) {
   return FWL_ERR_Succeeded;
 }
+
 CFWL_SDAdapterThreadMgr::CFWL_SDAdapterThreadMgr() {}
+
 CFWL_SDAdapterThreadMgr::~CFWL_SDAdapterThreadMgr() {}
-FWL_ERR CFWL_SDAdapterThreadMgr::Start(IFWL_Thread* pThread,
-                                       FWL_HTHREAD& hThread,
-                                       FX_BOOL bSuspended) {
-  return FWL_ERR_Succeeded;
-}
-FWL_ERR CFWL_SDAdapterThreadMgr::Resume(FWL_HTHREAD hThread) {
-  return FWL_ERR_Succeeded;
-}
-FWL_ERR CFWL_SDAdapterThreadMgr::Suspend(FWL_HTHREAD hThread) {
-  return FWL_ERR_Succeeded;
-}
-FWL_ERR CFWL_SDAdapterThreadMgr::Kill(FWL_HTHREAD hThread, int32_t iExitCode) {
-  return FWL_ERR_Succeeded;
-}
-FWL_ERR CFWL_SDAdapterThreadMgr::Stop(FWL_HTHREAD hThread, int32_t iExitCode) {
-  return FWL_ERR_Succeeded;
-}
+
 IFWL_Thread* CFWL_SDAdapterThreadMgr::GetCurrentThread() {
   return FWL_GetApp();
 }

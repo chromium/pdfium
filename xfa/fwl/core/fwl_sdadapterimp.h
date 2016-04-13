@@ -76,13 +76,6 @@ class CFWL_SDAdapterThreadMgr : public IFWL_AdapterThreadMgr {
   ~CFWL_SDAdapterThreadMgr();
 
  public:
-  virtual FWL_ERR Start(IFWL_Thread* pThread,
-                        FWL_HTHREAD& hThread,
-                        FX_BOOL bSuspended = FALSE);
-  virtual FWL_ERR Resume(FWL_HTHREAD hThread);
-  virtual FWL_ERR Suspend(FWL_HTHREAD hThread);
-  virtual FWL_ERR Kill(FWL_HTHREAD hThread, int32_t iExitCode);
-  virtual FWL_ERR Stop(FWL_HTHREAD hThread, int32_t iExitCode);
   virtual IFWL_Thread* GetCurrentThread();
 };
 

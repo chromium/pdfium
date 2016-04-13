@@ -232,8 +232,6 @@
         "xfa/fwl/lightwidget/cfwl_app.h",
         "xfa/fwl/lightwidget/cfwl_barcode.cpp",
         "xfa/fwl/lightwidget/cfwl_barcode.h",
-        "xfa/fwl/lightwidget/cfwl_caret.cpp",
-        "xfa/fwl/lightwidget/cfwl_caret.h",
         "xfa/fwl/lightwidget/cfwl_checkbox.cpp",
         "xfa/fwl/lightwidget/cfwl_checkbox.h",
         "xfa/fwl/lightwidget/cfwl_combobox.cpp",

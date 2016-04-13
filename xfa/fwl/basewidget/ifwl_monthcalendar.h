@@ -97,8 +97,8 @@
 #define FWL_MCCAPACITY_December FWL_WGTCAPACITY_MAX + 23
 #define FWL_MCCAPACITY_Today FWL_WGTCAPACITY_MAX + 24
 #define FWL_EVENT_MCD_DATESELECTED L"FWL_EVENT_MCD_DateSelected"
-#define FWL_EVT_MCD_DateChanged L"FWL_EVENT_MCD_DateChanged"
 #define FWL_NOTEHASH_MCD_DATASELECTED 1085596932
+// TODO(dsinclair): Event hash is hash of string, cleanup. pdfium:474
 #define FWL_EVTHASH_MCD_DateChanged 54212227
 
 BEGIN_FWL_EVENT_DEF(CFWL_Event_McdDateSelected, FWL_NOTEHASH_MCD_DATASELECTED)

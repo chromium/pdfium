@@ -46,8 +46,7 @@
 #define FWL_WGTHITTEST_LTB_Item FWL_WGTHITTEST_MAX + 1
 #define FWL_WGTHITTEST_LTB_HScrollBar FWL_WGTHITTEST_MAX + 2
 #define FWL_WGTHITTEST_LTB_VScrollBar FWL_WGTHITTEST_MAX + 3
-#define FWL_EVT_LTB_SelChanged L"FWL_EVENT_LTB_SelChanged"
-#define FWL_EVT_LTB_DrawItem L"FWL_EVENT_LTB_DrawItem"
+// TODO(dsinclair): Event hash is hash of string, cleanup. pdfium:474
 #define FWL_EVTHASH_LTB_SelChanged 1701781688
 #define FWL_EVTHASH_LTB_DrawItem 1050853991
 

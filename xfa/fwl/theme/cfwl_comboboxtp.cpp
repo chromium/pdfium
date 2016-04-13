@@ -90,7 +90,7 @@ void* CFWL_ComboBoxTP::GetCapacity(CFWL_ThemePart* pThemePart,
   }
   return CFWL_WidgetTP::GetCapacity(pThemePart, dwCapacity);
 }
-#ifdef THEME_XPSimilar
+
 void CFWL_ComboBoxTP::DrawDropDownButton(CFWL_ThemeBackground* pParams,
                                          uint32_t dwStates,
                                          CFX_Matrix* pMatrix) {
@@ -117,44 +117,3 @@ void CFWL_ComboBoxTP::DrawDropDownButton(CFWL_ThemeBackground* pParams,
   DrawArrowBtn(pParams->m_pGraphics, &pParams->m_rtPart,
                FWLTHEME_DIRECTION_Down, eState, &pParams->m_matrix);
 }
-#else
-void CFWL_ComboBoxTP::DrawDropDownButton(CFWL_ThemeBackground* pParams,
-                                         uint32_t dwStates,
-                                         CFX_Matrix* pMatrix) {
-  FX_BOOL bPressed = ((pParams->m_dwStates & FWL_CMBPARTSTATE_Pressed) ==
-                      FWL_CMBPARTSTATE_Pressed);
-  FX_FLOAT fWidth = bPressed ? 1.0f : 2.0f;
-  FWLTHEME_EDGE eType = bPressed ? FWLTHEME_EDGE_Flat : FWLTHEME_EDGE_Raised;
-  Draw3DRect(pParams->m_pGraphics, eType, fWidth, &pParams->m_rtPart,
-             FWLTHEME_COLOR_EDGELT1, FWLTHEME_COLOR_EDGELT2,
-             FWLTHEME_COLOR_EDGERB1, FWLTHEME_COLOR_EDGERB2, pMatrix);
-  CFX_Path path;
-  path.Create();
-  path.AddRectangle(pParams->m_rtPart.left + fWidth,
-                    pParams->m_rtPart.top + fWidth,
-                    pParams->m_rtPart.width - 2 * fWidth,
-                    pParams->m_rtPart.height - 2 * fWidth);
-  pParams->m_pGraphics->SaveGraphState();
-  CFX_Color crFill(FWLTHEME_COLOR_Background);
-  pParams->m_pGraphics->SetFillColor(&crFill);
-  pParams->m_pGraphics->FillPath(&path, FXFILL_WINDING, &pParams->m_matrix);
-  pParams->m_pGraphics->RestoreGraphState();
-  FX_ARGB argbFill = ArgbEncode(255, 77, 97, 133);
-  switch (pParams->m_dwStates & 0x03) {
-    case FWL_CMBPARTSTATE_Normal: {
-    }
-    case FWL_CMBPARTSTATE_Hovered: {
-    }
-    case FWL_CMBPARTSTATE_Pressed: {
-      argbFill = 0xFF000000;
-      break;
-    }
-    case FWL_CMBPARTSTATE_Disabled: {
-      argbFill = 0xFFF0F0F0;
-      break;
-    }
-  }
-  DrawArrow(pParams->m_pGraphics, &pParams->m_rtPart, FWLTHEME_DIRECTION_Down,
-            argbFill, bPressed, &pParams->m_matrix);
-}
-#endif

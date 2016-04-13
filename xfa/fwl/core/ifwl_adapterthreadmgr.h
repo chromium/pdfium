@@ -14,13 +14,7 @@
 class IFWL_AdapterThreadMgr {
  public:
   virtual ~IFWL_AdapterThreadMgr() {}
-  virtual FWL_ERR Start(IFWL_Thread* pThread,
-                        FWL_HTHREAD& hThread,
-                        FX_BOOL bSuspended = FALSE) = 0;
-  virtual FWL_ERR Resume(FWL_HTHREAD hThread) = 0;
-  virtual FWL_ERR Suspend(FWL_HTHREAD hThread) = 0;
-  virtual FWL_ERR Kill(FWL_HTHREAD hThread, int32_t iExitCode) = 0;
-  virtual FWL_ERR Stop(FWL_HTHREAD hThread, int32_t iExitCode) = 0;
+
   virtual IFWL_Thread* GetCurrentThread() = 0;
 };
 

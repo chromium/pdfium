@@ -22,7 +22,7 @@
 #define FWL_PARTSTATE_SPB_Disabled (3L << 0)
 #define FWL_WGTHITTEST_SPB_UpButton (FWL_WGTHITTEST_MAX + 1)
 #define FWL_WGTHITTEST_SPB_DownButton (FWL_WGTHITTEST_MAX + 2)
-#define FWL_EVT_SPB_Click L"FWL_EVENT_SPB_Click"
+// TODO(dsinclair): Event hash is hash of string, cleanup. pdfium:474
 #define FWL_EVTHASH_SPB_Click 2927651187
 
 BEGIN_FWL_EVENT_DEF(CFWL_EvtSpbClick, FWL_EVTHASH_SPB_Click)

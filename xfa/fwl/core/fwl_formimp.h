@@ -55,22 +55,17 @@ class CFWL_SysBtn {
   CFX_RectF m_rtBtn;
   uint32_t m_dwState;
 };
+
 enum FORM_RESIZETYPE {
   FORM_RESIZETYPE_None = 0,
   FORM_RESIZETYPE_Cap,
-  FORM_RESIZETYPE_Left,
-  FORM_RESIZETYPE_Top,
-  FORM_RESIZETYPE_Right,
-  FORM_RESIZETYPE_Bottom,
-  FORM_RESIZETYPE_LeftTop,
-  FORM_RESIZETYPE_LeftBottom,
-  FORM_RESIZETYPE_RightTop,
-  FORM_RESIZETYPE_RightBottom
 };
+
 typedef struct RestoreResizeInfo {
   CFX_PointF m_ptStart;
   CFX_SizeF m_szStart;
 } RestoreInfo;
+
 class CFWL_FormImp : public CFWL_PanelImp {
  public:
   CFWL_FormImp(const CFWL_WidgetImpProperties& properties, IFWL_Widget* pOuter);

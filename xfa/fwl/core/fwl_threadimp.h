@@ -17,7 +17,6 @@ class CFWL_ThreadImp {
  public:
   virtual ~CFWL_ThreadImp() {}
   IFWL_Thread* GetInterface() const { return m_pIface; }
-  virtual FWL_ERR Run(FWL_HTHREAD hThread);
 
  protected:
   CFWL_ThreadImp(IFWL_Thread* pIface) : m_pIface(pIface) {}
@@ -31,7 +30,6 @@ class CFWL_NoteThreadImp : public CFWL_ThreadImp {
   CFWL_NoteThreadImp(IFWL_NoteThread* pIface);
   virtual ~CFWL_NoteThreadImp();
 
-  FWL_ERR Run(FWL_HTHREAD hThread) override;
   virtual IFWL_NoteDriver* GetNoteDriver();
 
  protected:
