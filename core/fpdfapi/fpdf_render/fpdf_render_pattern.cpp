@@ -653,7 +653,10 @@ struct CPDF_PatchDrawer {
     FX_BOOL bSmall = C1.Distance() < 2 && C2.Distance() < 2 &&
                      D1.Distance() < 2 && D2.Distance() < 2;
     Coon_Color div_colors[4];
-    int d_bottom, d_left, d_top, d_right;
+    int d_bottom = 0;
+    int d_left = 0;
+    int d_top = 0;
+    int d_right = 0;
     div_colors[0].BiInterpol(patch_colors, left, bottom, x_scale, y_scale);
     if (!bSmall) {
       div_colors[1].BiInterpol(patch_colors, left, bottom + 1, x_scale,

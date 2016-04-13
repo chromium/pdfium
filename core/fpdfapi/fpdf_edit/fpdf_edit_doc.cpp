@@ -354,7 +354,7 @@ CPDF_Font* CPDF_Document::AddWindowsFont(LOGFONTA* pLogFont,
     pFontDict = new CPDF_Dictionary;
     CFX_ByteString cmap;
     CFX_ByteString ordering;
-    int supplement;
+    int supplement = 0;
     CPDF_Array* pWidthArray = new CPDF_Array;
     switch (pLogFont->lfCharSet) {
       case CHINESEBIG5_CHARSET:

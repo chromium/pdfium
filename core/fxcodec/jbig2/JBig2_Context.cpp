@@ -1285,7 +1285,7 @@ JBig2HuffmanCode* CJBig2_Context::decodeSymbolIDHuffmanTable(
 
   std::unique_ptr<JBig2HuffmanCode, FxFreeDeleter> SBSYMCODES(
       FX_Alloc(JBig2HuffmanCode, SBNUMSYMS));
-  int32_t run;
+  int32_t run = 0;
   int32_t i = 0;
   while (i < (int)SBNUMSYMS) {
     size_t j;

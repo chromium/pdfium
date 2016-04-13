@@ -205,37 +205,6 @@ struct FX_DATETIME {
   } Time;
 };
 
-struct FX_DATETIMEZONE {
-  union {
-    struct {
-      union {
-        struct {
-          int32_t year;
-          uint8_t month;
-          uint8_t day;
-        };
-        FX_DATE date;
-      };
-      union {
-        struct {
-          uint8_t hour;
-          uint8_t minute;
-          uint8_t second;
-          uint16_t millisecond;
-        };
-        FX_TIME time;
-      };
-    };
-    FX_DATETIME dt;
-  };
-  union {
-    struct {
-      int8_t tzHour;
-      uint8_t tzMinute;
-    };
-    FX_TIMEZONE tz;
-  };
-};
 #if _FX_OS_ != _FX_ANDROID_
 #pragma pack(pop)
 #endif
