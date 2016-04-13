@@ -530,6 +530,7 @@ CXFA_WidgetAcc* CXFA_FFDocView::GetWidgetAccByName(
   }
   return NULL;
 }
+
 void CXFA_FFDocView::OnPageEvent(CXFA_ContainerLayoutItem* pSender,
                                  XFA_PAGEEVENT eEvent,
                                  int32_t iPageIndex) {
@@ -541,8 +542,8 @@ void CXFA_FFDocView::OnPageEvent(CXFA_ContainerLayoutItem* pSender,
   }
   m_pDoc->GetDocProvider()->PageViewEvent(pFFPageView,
                                           XFA_PAGEVIEWEVENT_PostAdded);
-  pFFPageView->LoadPageView();
 }
+
 void CXFA_FFDocView::LockUpdate() {
   m_iLock++;
 }

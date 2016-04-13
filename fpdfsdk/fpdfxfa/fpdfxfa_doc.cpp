@@ -4,12 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#include "fpdfsdk/fpdfxfa/include/fpdfxfa_doc.h"
+
 #include "core/fpdfapi/fpdf_parser/include/cpdf_array.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_document.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_stream_acc.h"
 #include "core/fpdfapi/fpdf_parser/include/cpdf_string.h"
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_app.h"
-#include "fpdfsdk/fpdfxfa/include/fpdfxfa_doc.h"
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_page.h"
 #include "fpdfsdk/fpdfxfa/include/fpdfxfa_util.h"
 #include "fpdfsdk/include/fsdk_define.h"
@@ -168,7 +169,7 @@ CPDFXFA_Page* CPDFXFA_Document::GetPage(int page_index) {
     return pPage;
   pPage = new CPDFXFA_Page(this, page_index);
   if (!pPage->LoadPage()) {
-    delete pPage;
+    pPage->Release();
     return nullptr;
   }
   m_XFAPageList.SetAt(page_index, pPage);
@@ -508,8 +509,6 @@ void CPDFXFA_Document::PageViewEvent(CXFA_FFPageView* pPageView,
       m_pSDKDoc->RemovePageView(pPage);
       CXFA_FFPageView* pXFAPageView = pXFADocView->GetPageView(iPageIter);
       pPage->SetXFAPageView(pXFAPageView);
-      if (pXFAPageView)
-        pXFAPageView->LoadPageView(nullptr);
     }
 
     int flag = (nNewCount < m_nPageCount) ? FXFA_PAGEVIEWEVENT_POSTREMOVED

@@ -7,6 +7,8 @@
 #ifndef FPDFSDK_FPDFXFA_INCLUDE_FPDFXFA_PAGE_H_
 #define FPDFSDK_FPDFXFA_INCLUDE_FPDFXFA_PAGE_H_
 
+#include <memory>
+
 #include "core/fpdfapi/fpdf_parser/include/cpdf_dictionary.h"
 #include "core/fpdfapi/include/cpdf_modulemgr.h"
 #include "core/fxcrt/include/fx_coordinates.h"
@@ -19,22 +21,23 @@ class CXFA_FFPageView;
 class CPDFXFA_Page {
  public:
   CPDFXFA_Page(CPDFXFA_Document* pDoc, int page_index);
-  ~CPDFXFA_Page();
 
-  void Release();
   void AddRef() { m_iRef++; }
+  void Release();
+
   FX_BOOL LoadPage();
   FX_BOOL LoadPDFPage(CPDF_Dictionary* pageDict);
-  CPDFXFA_Document* GetDocument() { return m_pDocument; }
-  int GetPageIndex() { return m_iPageIndex; }
-  CPDF_Page* GetPDFPage() { return m_pPDFPage; }
-  CXFA_FFPageView* GetXFAPageView() { return m_pXFAPageView; }
+  CPDFXFA_Document* GetDocument() const { return m_pDocument; }
+  int GetPageIndex() const { return m_iPageIndex; }
+  CPDF_Page* GetPDFPage() const { return m_pPDFPage.get(); }
+  CXFA_FFPageView* GetXFAPageView() const { return m_pXFAPageView; }
+
   void SetXFAPageView(CXFA_FFPageView* pPageView) {
     m_pXFAPageView = pPageView;
   }
 
-  FX_FLOAT GetPageWidth();
-  FX_FLOAT GetPageHeight();
+  FX_FLOAT GetPageWidth() const;
+  FX_FLOAT GetPageHeight() const;
 
   void DeviceToPage(int start_x,
                     int start_y,
@@ -63,14 +66,17 @@ class CPDFXFA_Page {
                         int iRotate) const;
 
  protected:
+  // Refcounted class.
+  ~CPDFXFA_Page();
+
   FX_BOOL LoadPDFPage();
   FX_BOOL LoadXFAPageView();
 
  private:
-  CPDF_Page* m_pPDFPage;
+  std::unique_ptr<CPDF_Page> m_pPDFPage;
   CXFA_FFPageView* m_pXFAPageView;
-  int m_iPageIndex;
-  CPDFXFA_Document* m_pDocument;
+  CPDFXFA_Document* const m_pDocument;
+  const int m_iPageIndex;
   int m_iRef;
 };
 

@@ -11,32 +11,28 @@
 
 class CXFA_FFWidget;
 class CXFA_FFDocView;
+
 class CXFA_FFPageView : public CXFA_ContainerLayoutItem {
  public:
   CXFA_FFPageView(CXFA_FFDocView* pDocView, CXFA_Node* pPageArea);
   ~CXFA_FFPageView() override;
 
-  CXFA_FFDocView* GetDocView();
-  int32_t GetPageViewIndex();
-  void GetPageViewRect(CFX_RectF& rtPage);
+  CXFA_FFDocView* GetDocView() const;
+  int32_t GetPageViewIndex() const;
+  void GetPageViewRect(CFX_RectF& rtPage) const;
   void GetDisplayMatrix(CFX_Matrix& mt,
                         const CFX_Rect& rtDisp,
-                        int32_t iRotate);
-  int32_t LoadPageView(IFX_Pause* pPause = NULL);
-  void UnloadPageView();
-  CXFA_FFWidget* GetWidgetByPos(FX_FLOAT fx, FX_FLOAT fy);
+                        int32_t iRotate) const;
   IXFA_WidgetIterator* CreateWidgetIterator(
       uint32_t dwTraverseWay = XFA_TRAVERSEWAY_Form,
       uint32_t dwWidgetFilter = XFA_WIDGETFILTER_Visible |
                                 XFA_WIDGETFILTER_Viewable |
                                 XFA_WIDGETFILTER_AllType);
 
-  FX_BOOL IsPageViewLoaded();
-
  protected:
-  CXFA_FFDocView* m_pDocView;
-  FX_BOOL m_bLoaded;
+  CXFA_FFDocView* const m_pDocView;
 };
+
 typedef CXFA_NodeIteratorTemplate<CXFA_LayoutItem,
                                   CXFA_TraverseStrategy_LayoutItem>
     CXFA_LayoutItemIterator;

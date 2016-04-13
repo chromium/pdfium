@@ -57,7 +57,7 @@ class CXFA_ContainerLayoutItem : public CXFA_LayoutItem {
 
   CXFA_LayoutProcessor* GetLayout() const;
   int32_t GetPageIndex() const;
-  void GetPageSize(CFX_SizeF& size);
+  void GetPageSize(CFX_SizeF& size) const;
   CXFA_Node* GetMasterPage() const;
 
   CXFA_Node* m_pOldSubform;

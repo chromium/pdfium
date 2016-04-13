@@ -180,7 +180,8 @@ int32_t CXFA_ContainerLayoutItem::GetPageIndex() const {
       ->GetLayoutPageMgr()
       ->GetPageIndex(this);
 }
-void CXFA_ContainerLayoutItem::GetPageSize(CFX_SizeF& size) {
+
+void CXFA_ContainerLayoutItem::GetPageSize(CFX_SizeF& size) const {
   size.clear();
   CXFA_Node* pMedium = m_pFormNode->GetFirstChildByClass(XFA_ELEMENT_Medium);
   if (!pMedium)
@@ -193,6 +194,7 @@ void CXFA_ContainerLayoutItem::GetPageSize(CFX_SizeF& size) {
     size = CFX_SizeF(size.y, size.x);
   }
 }
+
 CXFA_Node* CXFA_ContainerLayoutItem::GetMasterPage() const {
   return m_pFormNode;
 }

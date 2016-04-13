@@ -19,72 +19,33 @@
 #include "xfa/fxfa/include/xfa_ffwidget.h"
 
 CXFA_FFPageView::CXFA_FFPageView(CXFA_FFDocView* pDocView, CXFA_Node* pPageArea)
-    : CXFA_ContainerLayoutItem(pPageArea),
-      m_pDocView(pDocView),
-      m_bLoaded(FALSE) {}
+    : CXFA_ContainerLayoutItem(pPageArea), m_pDocView(pDocView) {}
+
 CXFA_FFPageView::~CXFA_FFPageView() {}
-CXFA_FFDocView* CXFA_FFPageView::GetDocView() {
+
+CXFA_FFDocView* CXFA_FFPageView::GetDocView() const {
   return m_pDocView;
 }
-int32_t CXFA_FFPageView::GetPageViewIndex() {
+
+int32_t CXFA_FFPageView::GetPageViewIndex() const {
   return GetPageIndex();
 }
-void CXFA_FFPageView::GetPageViewRect(CFX_RectF& rtPage) {
+
+void CXFA_FFPageView::GetPageViewRect(CFX_RectF& rtPage) const {
   CFX_SizeF sz;
   GetPageSize(sz);
   rtPage.Set(0, 0, sz);
 }
 void CXFA_FFPageView::GetDisplayMatrix(CFX_Matrix& mt,
                                        const CFX_Rect& rtDisp,
-                                       int32_t iRotate) {
+                                       int32_t iRotate) const {
   CFX_SizeF sz;
   GetPageSize(sz);
   CFX_RectF fdePage;
   fdePage.Set(0, 0, sz.x, sz.y);
   FDE_GetPageMatrix(mt, fdePage, rtDisp, iRotate, 0);
 }
-int32_t CXFA_FFPageView::LoadPageView(IFX_Pause* pPause) {
-  if (m_bLoaded) {
-    return 100;
-  }
-  m_bLoaded = TRUE;
-  return 100;
-}
-void CXFA_FFPageView::UnloadPageView() {
-  if (!m_bLoaded) {
-    return;
-  }
-}
-FX_BOOL CXFA_FFPageView::IsPageViewLoaded() {
-  return m_bLoaded;
-}
-CXFA_FFWidget* CXFA_FFPageView::GetWidgetByPos(FX_FLOAT fx, FX_FLOAT fy) {
-  if (!m_bLoaded) {
-    return nullptr;
-  }
-  IXFA_WidgetIterator* pIterator = CreateWidgetIterator();
-  CXFA_FFWidget* pWidget = nullptr;
-  while ((pWidget = static_cast<CXFA_FFWidget*>(pIterator->MoveToNext()))) {
-    if (!(pWidget->GetStatus() & XFA_WIDGETSTATUS_Visible)) {
-      continue;
-    }
-    CXFA_WidgetAcc* pAcc = pWidget->GetDataAcc();
-    int32_t type = pAcc->GetClassID();
-    if (type != XFA_ELEMENT_Field && type != XFA_ELEMENT_Draw) {
-      continue;
-    }
-    FX_FLOAT fWidgetx = fx;
-    FX_FLOAT fWidgety = fy;
-    pWidget->Rotate2Normal(fWidgetx, fWidgety);
-    uint32_t dwFlag = pWidget->OnHitTest(fWidgetx, fWidgety);
-    if ((FWL_WGTHITTEST_Client == dwFlag ||
-         FWL_WGTHITTEST_HyperLink == dwFlag)) {
-      break;
-    }
-  }
-  pIterator->Release();
-  return pWidget;
-}
+
 IXFA_WidgetIterator* CXFA_FFPageView::CreateWidgetIterator(
     uint32_t dwTraverseWay,
     uint32_t dwWidgetFilter) {
@@ -94,8 +55,9 @@ IXFA_WidgetIterator* CXFA_FFPageView::CreateWidgetIterator(
     case XFA_TRAVERSEWAY_Form:
       return new CXFA_FFPageWidgetIterator(this, dwWidgetFilter);
   }
-  return NULL;
+  return nullptr;
 }
+
 static FX_BOOL XFA_PageWidgetFilter(CXFA_FFWidget* pWidget,
                                     uint32_t dwFilter,
                                     FX_BOOL bTraversal,
