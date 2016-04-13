@@ -16,6 +16,9 @@
 
 class CPDF_Array : public CPDF_Object {
  public:
+  using iterator = std::vector<CPDF_Object*>::iterator;
+  using const_iterator = std::vector<CPDF_Object*>::const_iterator;
+
   CPDF_Array();
 
   // CPDF_Object.
@@ -56,6 +59,11 @@ class CPDF_Array : public CPDF_Object {
   void AddReference(CPDF_IndirectObjectHolder* pDoc, CPDF_Object* obj) {
     AddReference(pDoc, obj->GetObjNum());
   }
+
+  iterator begin() { return m_Objects.begin(); }
+  iterator end() { return m_Objects.end(); }
+  const_iterator begin() const { return m_Objects.begin(); }
+  const_iterator end() const { return m_Objects.end(); }
 
  protected:
   ~CPDF_Array() override;

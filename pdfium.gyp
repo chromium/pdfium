@@ -930,6 +930,7 @@
         'core/fpdfapi/fpdf_font/fpdf_font_unittest.cpp',
         'core/fpdfapi/fpdf_page/fpdf_page_parser_unittest.cpp',
         'core/fpdfapi/fpdf_page/fpdf_page_parser_old_unittest.cpp',
+        'core/fpdfapi/fpdf_parser/cpdf_array_unittest.cpp',
         'core/fpdfapi/fpdf_parser/cpdf_object_unittest.cpp',
         'core/fpdfapi/fpdf_parser/cpdf_parser_unittest.cpp',
         'core/fpdfapi/fpdf_parser/cpdf_simple_parser_unittest.cpp',
