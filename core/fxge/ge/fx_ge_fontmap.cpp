@@ -317,7 +317,7 @@ CFX_ByteString GetFontFamily(CFX_ByteString fontName, int nStyle) {
 CFX_ByteString ParseStyle(const FX_CHAR* pStyle, int iLen, int iIndex) {
   CFX_ByteTextBuf buf;
   if (!iLen || iLen <= iIndex) {
-    return buf.GetByteString();
+    return buf.AsStringC();
   }
   while (iIndex < iLen) {
     if (pStyle[iIndex] == ',') {
@@ -326,7 +326,7 @@ CFX_ByteString ParseStyle(const FX_CHAR* pStyle, int iLen, int iIndex) {
     buf.AppendChar(pStyle[iIndex]);
     ++iIndex;
   }
-  return buf.GetByteString();
+  return buf.AsStringC();
 }
 
 int32_t GetStyleType(const CFX_ByteString& bsStyle, FX_BOOL bRevert) {

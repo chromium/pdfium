@@ -58,7 +58,7 @@ class CFX_ByteTextBuf : public CFX_BinaryBuf {
  public:
   void AppendChar(int ch) { AppendByte((uint8_t)ch); }
   FX_STRSIZE GetLength() const { return m_DataSize; }
-  CFX_ByteStringC GetByteString() const;
+  CFX_ByteStringC AsStringC() const;
 
   CFX_ByteTextBuf& operator<<(int i);
   CFX_ByteTextBuf& operator<<(uint32_t i);
@@ -80,7 +80,7 @@ class CFX_WideTextBuf : public CFX_BinaryBuf {
   FX_WCHAR* GetBuffer() const {
     return reinterpret_cast<FX_WCHAR*>(m_pBuffer.get());
   }
-  CFX_WideStringC GetWideString() const;
+  CFX_WideStringC AsStringC() const;
 
   void Delete(int start_index, int count) {
     CFX_BinaryBuf::Delete(start_index * sizeof(FX_WCHAR),
@@ -206,7 +206,7 @@ class CFX_UTF8Decoder {
 
   void ClearStatus() { m_PendingBytes = 0; }
 
-  CFX_WideStringC GetResult() const { return m_Buffer.GetWideString(); }
+  CFX_WideStringC GetResult() const { return m_Buffer.AsStringC(); }
 
  protected:
   int m_PendingBytes;
@@ -222,7 +222,7 @@ class CFX_UTF8Encoder {
 
   void Input(FX_WCHAR unicode);
   void AppendStr(const CFX_ByteStringC& str) { m_Buffer << str; }
-  CFX_ByteStringC GetResult() const { return m_Buffer.GetByteString(); }
+  CFX_ByteStringC GetResult() const { return m_Buffer.AsStringC(); }
 
  protected:
   CFX_ByteTextBuf m_Buffer;

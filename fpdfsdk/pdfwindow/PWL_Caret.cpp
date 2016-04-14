@@ -95,7 +95,7 @@ CFX_ByteString CPWL_Caret::GetCaretAppearanceStream(
     const CFX_FloatPoint& ptOffset) {
   CFX_ByteTextBuf sCaret;
   GetCaretApp(sCaret, ptOffset);
-  return sCaret.GetByteString();
+  return sCaret.AsStringC();
 }
 
 void CPWL_Caret::TimerProc() {

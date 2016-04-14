@@ -708,7 +708,7 @@ CFX_ByteString CPWL_Edit::GetTextAppearanceStream(
          << sEdit.AsStringC() << "ET\n";
   }
 
-  return sRet.GetByteString();
+  return sRet.AsStringC();
 }
 
 CFX_ByteString CPWL_Edit::GetCaretAppearanceStream(

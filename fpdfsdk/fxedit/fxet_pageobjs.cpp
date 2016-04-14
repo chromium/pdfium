@@ -234,11 +234,11 @@ void IFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
             if (place.LineCmp(oldplace) != 0 || word.nFontIndex != nFontIndex ||
                 crOldFill != crCurFill) {
               if (sTextBuf.GetLength() > 0) {
-                DrawTextString(pDevice, CFX_FloatPoint(ptBT.x + ptOffset.x,
-                                                       ptBT.y + ptOffset.y),
-                               pFontMap->GetPDFFont(nFontIndex), fFontSize,
-                               pUser2Device, sTextBuf.GetByteString(),
-                               crOldFill, crTextStroke, nHorzScale);
+                DrawTextString(
+                    pDevice,
+                    CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
+                    pFontMap->GetPDFFont(nFontIndex), fFontSize, pUser2Device,
+                    sTextBuf.AsStringC(), crOldFill, crTextStroke, nHorzScale);
 
                 sTextBuf.Clear();
               }
@@ -266,7 +266,7 @@ void IFX_Edit::DrawEdit(CFX_RenderDevice* pDevice,
         DrawTextString(
             pDevice, CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
             pFontMap->GetPDFFont(nFontIndex), fFontSize, pUser2Device,
-            sTextBuf.GetByteString(), crOldFill, crTextStroke, nHorzScale);
+            sTextBuf.AsStringC(), crOldFill, crTextStroke, nHorzScale);
       }
     }
   }
@@ -348,11 +348,11 @@ void IFX_Edit::DrawRichEdit(CFX_RenderDevice* pDevice,
               FXSYS_memcmp(&word.WordProps, &wp, sizeof(CPVT_WordProps)) != 0 ||
               crOld != crCurText) {
             if (sTextBuf.GetLength() > 0) {
-              DrawTextString(pDevice, CFX_FloatPoint(ptBT.x + ptOffset.x,
-                                                     ptBT.y + ptOffset.y),
-                             pFontMap->GetPDFFont(wp.nFontIndex), wp.fFontSize,
-                             pUser2Device, sTextBuf.GetByteString(), crOld, 0,
-                             wp.nHorzScale);
+              DrawTextString(
+                  pDevice,
+                  CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
+                  pFontMap->GetPDFFont(wp.nFontIndex), wp.fFontSize,
+                  pUser2Device, sTextBuf.AsStringC(), crOld, 0, wp.nHorzScale);
 
               sTextBuf.Clear();
             }
@@ -393,7 +393,7 @@ void IFX_Edit::DrawRichEdit(CFX_RenderDevice* pDevice,
         DrawTextString(
             pDevice, CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
             pFontMap->GetPDFFont(wp.nFontIndex), wp.fFontSize, pUser2Device,
-            sTextBuf.GetByteString(), crOld, 0, wp.nHorzScale);
+            sTextBuf.AsStringC(), crOld, 0, wp.nHorzScale);
       }
     }
   }
@@ -497,7 +497,7 @@ void IFX_Edit::GeneratePageObjects(
                   pObjectHolder, crText, pFontMap->GetPDFFont(nOldFontIndex),
                   fFontSize, 0.0f, 100,
                   CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
-                  sTextBuf.GetByteString()));
+                  sTextBuf.AsStringC()));
 
               sTextBuf.Clear();
             }
@@ -517,7 +517,7 @@ void IFX_Edit::GeneratePageObjects(
             pObjectHolder, crText, pFontMap->GetPDFFont(nOldFontIndex),
             fFontSize, 0.0f, 100,
             CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
-            sTextBuf.GetByteString()));
+            sTextBuf.AsStringC()));
       }
     }
   }
@@ -568,7 +568,7 @@ void IFX_Edit::GenerateRichPageObjects(
                   pObjectHolder, crOld, pFontMap->GetPDFFont(wp.nFontIndex),
                   wp.fFontSize, wp.fCharSpace, wp.nHorzScale,
                   CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
-                  sTextBuf.GetByteString()));
+                  sTextBuf.AsStringC()));
 
               sTextBuf.Clear();
             }
@@ -611,7 +611,7 @@ void IFX_Edit::GenerateRichPageObjects(
             pObjectHolder, crOld, pFontMap->GetPDFFont(wp.nFontIndex),
             wp.fFontSize, wp.fCharSpace, wp.nHorzScale,
             CFX_FloatPoint(ptBT.x + ptOffset.x, ptBT.y + ptOffset.y),
-            sTextBuf.GetByteString()));
+            sTextBuf.AsStringC()));
       }
     }
   }

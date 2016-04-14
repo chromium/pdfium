@@ -512,8 +512,7 @@ CFX_WideString CPDF_TextPage::GetPageText(int start, int nCount) const {
 
   if (nCount == -1) {
     nCount = pdfium::CollectionSize<int>(m_CharList) - start;
-    return m_TextBuf.GetWideString().Mid(start,
-                                         m_TextBuf.GetWideString().GetLength());
+    return m_TextBuf.AsStringC().Mid(start, m_TextBuf.AsStringC().GetLength());
   }
   if (nCount <= 0 || m_CharList.empty()) {
     return L"";
@@ -550,7 +549,7 @@ CFX_WideString CPDF_TextPage::GetPageText(int start, int nCount) const {
   if (nCount <= 0) {
     return L"";
   }
-  return m_TextBuf.GetWideString().Mid(startindex, nCount);
+  return m_TextBuf.AsStringC().Mid(startindex, nCount);
 }
 
 int CPDF_TextPage::CountRects(int start, int nCount) {
@@ -987,7 +986,7 @@ void CPDF_TextPage::CloseTempLine() {
   if (m_TempCharList.empty())
     return;
 
-  CFX_WideString str = m_TempTextBuf.GetWideString();
+  CFX_WideString str = m_TempTextBuf.AsStringC();
   FX_BOOL bPrevSpace = FALSE;
   for (int i = 0; i < str.GetLength(); i++) {
     if (str.GetAt(i) != ' ') {
@@ -1353,8 +1352,8 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
         }
       }
       while (m_TempTextBuf.GetSize() > 0 &&
-             m_TempTextBuf.GetWideString().GetAt(m_TempTextBuf.GetLength() -
-                                                 1) == 0x20) {
+             m_TempTextBuf.AsStringC().GetAt(m_TempTextBuf.GetLength() - 1) ==
+                 0x20) {
         m_TempTextBuf.Delete(m_TempTextBuf.GetLength() - 1, 1);
         m_TempCharList.pop_back();
       }
@@ -1395,9 +1394,9 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
     charinfo.m_OriginY = 0;
     pTextObj->GetItemInfo(i, &item);
     if (item.m_CharCode == (uint32_t)-1) {
-      CFX_WideString str = m_TempTextBuf.GetWideString();
+      CFX_WideString str = m_TempTextBuf.AsStringC();
       if (str.IsEmpty()) {
-        str = m_TextBuf.GetWideString();
+        str = m_TextBuf.AsStringC();
       }
       if (str.IsEmpty() || str.GetAt(str.GetLength() - 1) == TEXT_BLANK_CHAR) {
         continue;
@@ -1531,7 +1530,7 @@ void CPDF_TextPage::ProcessTextObject(PDFTEXT_Obj Obj) {
           m_TempCharList.push_back(charinfo);
         }
       } else if (i == 0) {
-        CFX_WideString str = m_TempTextBuf.GetWideString();
+        CFX_WideString str = m_TempTextBuf.AsStringC();
         if (!str.IsEmpty() &&
             str.GetAt(str.GetLength() - 1) == TEXT_BLANK_CHAR) {
           m_TempTextBuf.Delete(m_TempTextBuf.GetLength() - 1, 1);
@@ -1574,9 +1573,9 @@ int32_t CPDF_TextPage::GetTextObjectWritingMode(
   return m_TextlineDir;
 }
 FX_BOOL CPDF_TextPage::IsHyphen(FX_WCHAR curChar) {
-  CFX_WideString strCurText = m_TempTextBuf.GetWideString();
+  CFX_WideString strCurText = m_TempTextBuf.AsStringC();
   if (strCurText.GetLength() == 0) {
-    strCurText = m_TextBuf.GetWideString();
+    strCurText = m_TextBuf.AsStringC();
   }
   FX_STRSIZE nCount = strCurText.GetLength();
   int nIndex = nCount - 1;

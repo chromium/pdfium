@@ -1410,7 +1410,7 @@ void CPDFSDK_Widget::ResetAppearance_ComboBox(const FX_WCHAR* sValue) {
   sBody << CPWL_Utils::GetDropButtonAppStream(rcButton);
 
   CFX_ByteString sAP = GetBackgroundAppStream() + GetBorderAppStream() +
-                       sLines.GetByteString() + sBody.GetByteString();
+                       sLines.AsStringC() + sBody.AsStringC();
 
   WriteAppearance("N", GetRotatedRect(), GetMatrix(), sAP);
 }
@@ -1499,7 +1499,7 @@ void CPDFSDK_Widget::ResetAppearance_ListBox() {
   }
 
   CFX_ByteString sAP = GetBackgroundAppStream() + GetBorderAppStream() +
-                       sLines.GetByteString() + sBody.GetByteString();
+                       sLines.AsStringC() + sBody.AsStringC();
 
   WriteAppearance("N", GetRotatedRect(), GetMatrix(), sAP);
 }
@@ -1648,7 +1648,7 @@ void CPDFSDK_Widget::ResetAppearance_TextField(const FX_WCHAR* sValue) {
   }
 
   CFX_ByteString sAP = GetBackgroundAppStream() + GetBorderAppStream() +
-                       sLines.GetByteString() + sBody.GetByteString();
+                       sLines.AsStringC() + sBody.AsStringC();
   WriteAppearance("N", GetRotatedRect(), GetMatrix(), sAP);
 }
 

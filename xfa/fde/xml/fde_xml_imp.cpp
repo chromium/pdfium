@@ -819,7 +819,7 @@ void CFDE_XMLElement::GetTextData(CFX_WideString& wsText) const {
     }
     pChild = pChild->m_pNext;
   }
-  wsText = buffer.GetWideString();
+  wsText = buffer.AsStringC();
 }
 void CFDE_XMLElement::SetTextData(const CFX_WideString& wsText) {
   if (wsText.GetLength() < 1) {

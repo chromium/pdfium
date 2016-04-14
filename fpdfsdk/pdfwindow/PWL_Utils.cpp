@@ -44,7 +44,7 @@ CFX_ByteString CPWL_Utils::GetAppStreamFromArray(const CPWL_PathData* pPathData,
     }
   }
 
-  return csAP.GetByteString();
+  return csAP.AsStringC();
 }
 
 void CPWL_Utils::GetPathDataFromArray(CFX_PathData& path,
@@ -185,7 +185,7 @@ CFX_ByteString CPWL_Utils::GetAP_Check(const CFX_FloatRect& crBBox) {
          << pts[nNext][0].y << " c\n";
   }
 
-  return csAP.GetByteString();
+  return csAP.AsStringC();
 }
 
 CFX_ByteString CPWL_Utils::GetAP_Circle(const CFX_FloatRect& crBBox) {
@@ -227,7 +227,7 @@ CFX_ByteString CPWL_Utils::GetAP_Circle(const CFX_FloatRect& crBBox) {
   csAP << pt4.x - px * FX_BEZIER << " " << pt4.y << " " << pt1.x << " "
        << pt1.y - py * FX_BEZIER << " " << pt1.x << " " << pt1.y << " c\n";
 
-  return csAP.GetByteString();
+  return csAP.AsStringC();
 }
 
 CFX_ByteString CPWL_Utils::GetAP_Cross(const CFX_FloatRect& crBBox) {
@@ -238,7 +238,7 @@ CFX_ByteString CPWL_Utils::GetAP_Cross(const CFX_FloatRect& crBBox) {
   csAP << crBBox.left << " " << crBBox.bottom << " m\n";
   csAP << crBBox.right << " " << crBBox.top << " l\n";
 
-  return csAP.GetByteString();
+  return csAP.AsStringC();
 }
 
 CFX_ByteString CPWL_Utils::GetAP_Diamond(const CFX_FloatRect& crBBox) {
@@ -258,7 +258,7 @@ CFX_ByteString CPWL_Utils::GetAP_Diamond(const CFX_FloatRect& crBBox) {
   csAP << pt4.x << " " << pt4.y << " l\n";
   csAP << pt1.x << " " << pt1.y << " l\n";
 
-  return csAP.GetByteString();
+  return csAP.AsStringC();
 }
 
 CFX_ByteString CPWL_Utils::GetAP_Square(const CFX_FloatRect& crBBox) {
@@ -270,7 +270,7 @@ CFX_ByteString CPWL_Utils::GetAP_Square(const CFX_FloatRect& crBBox) {
   csAP << crBBox.left << " " << crBBox.bottom << " l\n";
   csAP << crBBox.left << " " << crBBox.top << " l\n";
 
-  return csAP.GetByteString();
+  return csAP.AsStringC();
 }
 
 CFX_ByteString CPWL_Utils::GetAP_Star(const CFX_FloatRect& crBBox) {
@@ -302,7 +302,7 @@ CFX_ByteString CPWL_Utils::GetAP_Star(const CFX_FloatRect& crBBox) {
     csAP << px[nNext] << " " << py[nNext] << " l\n";
   }
 
-  return csAP.GetByteString();
+  return csAP.AsStringC();
 }
 
 CFX_ByteString CPWL_Utils::GetAP_HalfCircle(const CFX_FloatRect& crBBox,
@@ -337,7 +337,7 @@ CFX_ByteString CPWL_Utils::GetAP_HalfCircle(const CFX_FloatRect& crBBox,
   csAP << pt2.x + px * FX_BEZIER << " " << pt2.y << " " << pt3.x << " "
        << pt3.y + py * FX_BEZIER << " " << pt3.x << " " << pt3.y << " c\n";
 
-  return csAP.GetByteString();
+  return csAP.AsStringC();
 }
 
 CFX_FloatRect CPWL_Utils::InflateRect(const CFX_FloatRect& rcRect,
@@ -387,7 +387,7 @@ CFX_ByteString CPWL_Utils::GetRectFillAppStream(const CFX_FloatRect& rect,
                << " re f\nQ\n";
   }
 
-  return sAppStream.GetByteString();
+  return sAppStream.AsStringC();
 }
 
 CFX_ByteString CPWL_Utils::GetCircleFillAppStream(const CFX_FloatRect& rect,
@@ -399,7 +399,7 @@ CFX_ByteString CPWL_Utils::GetCircleFillAppStream(const CFX_FloatRect& rect,
     sAppStream << "q\n" << sColor << CPWL_Utils::GetAP_Circle(rect) << "f\nQ\n";
   }
 
-  return sAppStream.GetByteString();
+  return sAppStream.AsStringC();
 }
 
 CFX_FloatRect CPWL_Utils::GetCenterSquare(const CFX_FloatRect& rect) {
@@ -465,7 +465,7 @@ CFX_ByteString CPWL_Utils::GetTextAppStream(const CFX_FloatRect& rcBBox,
     IFX_Edit::DelEdit(pEdit);
   }
 
-  return sRet.GetByteString();
+  return sRet.AsStringC();
 }
 
 CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
@@ -690,7 +690,7 @@ CFX_ByteString CPWL_Utils::GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
       sAppStream << sTemp << "Q\n";
     }
 
-    return sAppStream.GetByteString();
+    return sAppStream.AsStringC();
   }
 
   return "";
@@ -717,7 +717,7 @@ CFX_ByteString CPWL_Utils::GetColorAppStream(const CPWL_Color& color,
       break;
   }
 
-  return sColorStream.GetByteString();
+  return sColorStream.AsStringC();
 }
 
 CFX_ByteString CPWL_Utils::GetBorderAppStream(const CFX_FloatRect& rect,
@@ -833,7 +833,7 @@ CFX_ByteString CPWL_Utils::GetBorderAppStream(const CFX_FloatRect& rect,
     sAppStream << "Q\n";
   }
 
-  return sAppStream.GetByteString();
+  return sAppStream.AsStringC();
 }
 
 CFX_ByteString CPWL_Utils::GetCircleBorderAppStream(
@@ -932,7 +932,7 @@ CFX_ByteString CPWL_Utils::GetCircleBorderAppStream(
     sAppStream << "Q\n";
   }
 
-  return sAppStream.GetByteString();
+  return sAppStream.AsStringC();
 }
 
 CPWL_Color CPWL_Utils::SubstractColor(const CPWL_Color& sColor,
@@ -991,7 +991,7 @@ CFX_ByteString CPWL_Utils::GetAppStream_Check(const CFX_FloatRect& rcBBox,
   CFX_ByteTextBuf sAP;
   sAP << "q\n" << CPWL_Utils::GetColorAppStream(crText, TRUE)
       << CPWL_Utils::GetAP_Check(rcBBox) << "f\nQ\n";
-  return sAP.GetByteString();
+  return sAP.AsStringC();
 }
 
 CFX_ByteString CPWL_Utils::GetAppStream_Circle(const CFX_FloatRect& rcBBox,
@@ -999,7 +999,7 @@ CFX_ByteString CPWL_Utils::GetAppStream_Circle(const CFX_FloatRect& rcBBox,
   CFX_ByteTextBuf sAP;
   sAP << "q\n" << CPWL_Utils::GetColorAppStream(crText, TRUE)
       << CPWL_Utils::GetAP_Circle(rcBBox) << "f\nQ\n";
-  return sAP.GetByteString();
+  return sAP.AsStringC();
 }
 
 CFX_ByteString CPWL_Utils::GetAppStream_Cross(const CFX_FloatRect& rcBBox,
@@ -1007,7 +1007,7 @@ CFX_ByteString CPWL_Utils::GetAppStream_Cross(const CFX_FloatRect& rcBBox,
   CFX_ByteTextBuf sAP;
   sAP << "q\n" << CPWL_Utils::GetColorAppStream(crText, FALSE)
       << CPWL_Utils::GetAP_Cross(rcBBox) << "S\nQ\n";
-  return sAP.GetByteString();
+  return sAP.AsStringC();
 }
 
 CFX_ByteString CPWL_Utils::GetAppStream_Diamond(const CFX_FloatRect& rcBBox,
@@ -1015,7 +1015,7 @@ CFX_ByteString CPWL_Utils::GetAppStream_Diamond(const CFX_FloatRect& rcBBox,
   CFX_ByteTextBuf sAP;
   sAP << "q\n1 w\n" << CPWL_Utils::GetColorAppStream(crText, TRUE)
       << CPWL_Utils::GetAP_Diamond(rcBBox) << "f\nQ\n";
-  return sAP.GetByteString();
+  return sAP.AsStringC();
 }
 
 CFX_ByteString CPWL_Utils::GetAppStream_Square(const CFX_FloatRect& rcBBox,
@@ -1023,7 +1023,7 @@ CFX_ByteString CPWL_Utils::GetAppStream_Square(const CFX_FloatRect& rcBBox,
   CFX_ByteTextBuf sAP;
   sAP << "q\n" << CPWL_Utils::GetColorAppStream(crText, TRUE)
       << CPWL_Utils::GetAP_Square(rcBBox) << "f\nQ\n";
-  return sAP.GetByteString();
+  return sAP.AsStringC();
 }
 
 CFX_ByteString CPWL_Utils::GetAppStream_Star(const CFX_FloatRect& rcBBox,
@@ -1031,7 +1031,7 @@ CFX_ByteString CPWL_Utils::GetAppStream_Star(const CFX_FloatRect& rcBBox,
   CFX_ByteTextBuf sAP;
   sAP << "q\n" << CPWL_Utils::GetColorAppStream(crText, TRUE)
       << CPWL_Utils::GetAP_Star(rcBBox) << "f\nQ\n";
-  return sAP.GetByteString();
+  return sAP.AsStringC();
 }
 
 CFX_ByteString CPWL_Utils::GetCheckBoxAppStream(const CFX_FloatRect& rcBBox,
@@ -1110,7 +1110,7 @@ CFX_ByteString CPWL_Utils::GetDropButtonAppStream(const CFX_FloatRect& rcBBox) {
     }
   }
 
-  return sAppStream.GetByteString();
+  return sAppStream.AsStringC();
 }
 
 void CPWL_Utils::ConvertCMYK2GRAY(FX_FLOAT dC,

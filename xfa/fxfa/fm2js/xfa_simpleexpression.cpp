@@ -237,7 +237,7 @@ void CXFA_FMAssignExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
   CFX_WideTextBuf tempExp1;
   m_pExp1->ToJavaScript(tempExp1);
   if (m_pExp1->GetOperatorToken() == TOKidentifier &&
-      tempExp1.GetWideString() != FX_WSTRC(L"this")) {
+      tempExp1.AsStringC() != FX_WSTRC(L"this")) {
     javascript << FX_WSTRC(L"else\n{\n");
     javascript << tempExp1;
     javascript << FX_WSTRC(L" = ");
@@ -267,7 +267,7 @@ void CXFA_FMAssignExpression::ToImpliedReturnJS(CFX_WideTextBuf& javascript) {
   CFX_WideTextBuf tempExp1;
   m_pExp1->ToJavaScript(tempExp1);
   if (m_pExp1->GetOperatorToken() == TOKidentifier &&
-      tempExp1.GetWideString() != FX_WSTRC(L"this")) {
+      tempExp1.AsStringC() != FX_WSTRC(L"this")) {
     javascript << FX_WSTRC(L"else\n{\n");
     javascript << RUNTIMEFUNCTIONRETURNVALUE;
     javascript << FX_WSTRC(L" = ");
@@ -530,7 +530,7 @@ void CXFA_FMCallExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
     javascript << funcName;
     javascript << FX_WSTRC(L"(");
     if (m_pArguments) {
-      uint32_t methodPara = IsMethodWithObjParam(funcName.GetWideString());
+      uint32_t methodPara = IsMethodWithObjParam(funcName.AsStringC());
       if (methodPara > 0) {
         for (int i = 0; i < m_pArguments->GetSize(); ++i) {
           if ((methodPara & (0x01 << i)) > 0) {
@@ -568,12 +568,12 @@ void CXFA_FMCallExpression::ToJavaScript(CFX_WideTextBuf& javascript) {
     bool isEvalFunc = false;
     bool isExistsFunc = false;
     if (IsBuildInFunc(&funcName)) {
-      if (funcName.GetWideString() == FX_WSTRC(L"Eval")) {
+      if (funcName.AsStringC() == FX_WSTRC(L"Eval")) {
         isEvalFunc = true;
         javascript << FX_WSTRC(L"eval.call(this, ");
         javascript << gs_lpStrExpFuncName[CALL];
         javascript << FX_WSTRC(L"Translate");
-      } else if (funcName.GetWideString() == FX_WSTRC(L"Exists")) {
+      } else if (funcName.AsStringC() == FX_WSTRC(L"Exists")) {
         isExistsFunc = true;
         javascript << gs_lpStrExpFuncName[CALL];
         javascript << funcName;

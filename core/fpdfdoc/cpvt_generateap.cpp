@@ -418,7 +418,7 @@ FX_BOOL GenerateWidgetAP(CPDF_Document* pDoc,
                    << "q\n";
         sAppStream << rcBody.left << " " << rcBody.bottom << " "
                    << rcBody.Width() << " " << rcBody.Height() << " re\nW\nn\n";
-        sAppStream << sBody.GetByteString() << "Q\nEMC\n";
+        sAppStream << sBody.AsStringC() << "Q\nEMC\n";
       }
     } break;
   }
@@ -523,7 +523,7 @@ CFX_ByteString CPVT_GenerateAP::GenerateEditAP(
       if (bContinuous) {
         if (place.LineCmp(oldplace) != 0) {
           if (sWords.GetSize() > 0) {
-            sLineStream << GetWordRenderString(sWords.GetByteString());
+            sLineStream << GetWordRenderString(sWords.AsStringC());
             sEditStream << sLineStream;
             sLineStream.Clear();
             sWords.Clear();
@@ -548,7 +548,7 @@ CFX_ByteString CPVT_GenerateAP::GenerateEditAP(
         if (pIterator->GetWord(word)) {
           if (word.nFontIndex != nCurFontIndex) {
             if (sWords.GetSize() > 0) {
-              sLineStream << GetWordRenderString(sWords.GetByteString());
+              sLineStream << GetWordRenderString(sWords.AsStringC());
               sWords.Clear();
             }
             sLineStream << GetFontSetString(pFontMap, word.nFontIndex,
@@ -580,12 +580,12 @@ CFX_ByteString CPVT_GenerateAP::GenerateEditAP(
       }
     }
     if (sWords.GetSize() > 0) {
-      sLineStream << GetWordRenderString(sWords.GetByteString());
+      sLineStream << GetWordRenderString(sWords.AsStringC());
       sEditStream << sLineStream;
       sWords.Clear();
     }
   }
-  return sEditStream.GetByteString();
+  return sEditStream.AsStringC();
 }
 
 // Static.
@@ -693,7 +693,7 @@ CFX_ByteString CPVT_GenerateAP::GenerateBorderAP(
         break;
     }
   }
-  return sAppStream.GetByteString();
+  return sAppStream.AsStringC();
 }
 
 // Static.
@@ -718,7 +718,7 @@ CFX_ByteString CPVT_GenerateAP::GenerateColorAP(const CPVT_Color& color,
     case CPVT_Color::kTransparent:
       break;
   }
-  return sColorStream.GetByteString();
+  return sColorStream.AsStringC();
 }
 
 // Static.
@@ -766,5 +766,5 @@ CFX_ByteString CPVT_GenerateAP::GetFontSetString(IPVT_FontMap* pFontMap,
     if (sFontAlias.GetLength() > 0 && fFontSize > 0)
       sRet << "/" << sFontAlias << " " << fFontSize << " Tf\n";
   }
-  return sRet.GetByteString();
+  return sRet.AsStringC();
 }

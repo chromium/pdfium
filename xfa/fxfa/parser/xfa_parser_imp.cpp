@@ -1248,7 +1248,7 @@ void CXFA_SimpleParser::ParseDataValue(CXFA_Node* pXFANode,
     } else {
       bMarkAsCompound = TRUE;
       if (pXMLCurValueNode) {
-        CFX_WideStringC wsCurValue = wsCurValueTextBuf.GetWideString();
+        CFX_WideStringC wsCurValue = wsCurValueTextBuf.AsStringC();
         if (!wsCurValue.IsEmpty()) {
           CXFA_Node* pXFAChild =
               m_pFactory->CreateNode(ePacketID, XFA_ELEMENT_DataValue);
@@ -1282,7 +1282,7 @@ void CXFA_SimpleParser::ParseDataValue(CXFA_Node* pXFANode,
     }
   }
   if (pXMLCurValueNode) {
-    CFX_WideStringC wsCurValue = wsCurValueTextBuf.GetWideString();
+    CFX_WideStringC wsCurValue = wsCurValueTextBuf.AsStringC();
     if (!wsCurValue.IsEmpty()) {
       if (bMarkAsCompound) {
         CXFA_Node* pXFAChild =
@@ -1301,7 +1301,7 @@ void CXFA_SimpleParser::ParseDataValue(CXFA_Node* pXFANode,
     }
     pXMLCurValueNode = nullptr;
   }
-  CFX_WideStringC wsNodeValue = wsValueTextBuf.GetWideString();
+  CFX_WideStringC wsNodeValue = wsValueTextBuf.AsStringC();
   pXFANode->SetCData(XFA_ATTRIBUTE_Value, wsNodeValue);
 }
 

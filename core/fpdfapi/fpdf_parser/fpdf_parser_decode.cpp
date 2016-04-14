@@ -530,7 +530,7 @@ CFX_ByteString PDF_EncodeString(const CFX_ByteString& src, FX_BOOL bHex) {
       result.AppendChar("0123456789ABCDEF"[src[i] % 16]);
     }
     result.AppendChar('>');
-    return result.GetByteString();
+    return result.AsStringC();
   }
   result.AppendChar('(');
   for (int i = 0; i < srclen; i++) {
@@ -547,7 +547,7 @@ CFX_ByteString PDF_EncodeString(const CFX_ByteString& src, FX_BOOL bHex) {
     result.AppendChar(ch);
   }
   result.AppendChar(')');
-  return result.GetByteString();
+  return result.AsStringC();
 }
 
 void FlateEncode(const uint8_t* src_buf,

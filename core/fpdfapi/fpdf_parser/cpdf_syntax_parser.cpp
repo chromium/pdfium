@@ -218,7 +218,7 @@ CFX_ByteString CPDF_SyntaxParser::ReadString() {
       case 0:
         if (ch == ')') {
           if (parlevel == 0) {
-            return buf.GetByteString();
+            return buf.AsStringC();
           }
           parlevel--;
           buf.AppendChar(')');
@@ -291,7 +291,7 @@ CFX_ByteString CPDF_SyntaxParser::ReadString() {
   }
 
   GetNextChar(ch);
-  return buf.GetByteString();
+  return buf.AsStringC();
 }
 
 CFX_ByteString CPDF_SyntaxParser::ReadHexString() {
@@ -323,7 +323,7 @@ CFX_ByteString CPDF_SyntaxParser::ReadHexString() {
   if (!bFirst)
     buf.AppendByte(code);
 
-  return buf.GetByteString();
+  return buf.AsStringC();
 }
 
 void CPDF_SyntaxParser::ToNextLine() {

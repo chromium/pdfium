@@ -132,7 +132,7 @@ void CXML_Parser::GetName(CFX_ByteString& space, CFX_ByteString& name) {
     while (m_dwIndex < m_dwBufferSize) {
       ch = m_pBuffer[m_dwIndex];
       if (ch == ':') {
-        space = buf.GetByteString();
+        space = buf.AsStringC();
         buf.Clear();
       } else if (g_FXCRT_XML_IsNameChar(ch)) {
         buf.AppendChar(ch);
@@ -146,7 +146,7 @@ void CXML_Parser::GetName(CFX_ByteString& space, CFX_ByteString& name) {
       break;
     }
   } while (ReadNextBlock());
-  name = buf.GetByteString();
+  name = buf.AsStringC();
 }
 void CXML_Parser::SkipLiterals(const CFX_ByteStringC& str) {
   m_nOffset = m_nBufferOffset + (FX_FILESIZE)m_dwIndex;
@@ -202,7 +202,7 @@ uint32_t CXML_Parser::GetCharRef() {
         case 1:
           m_dwIndex++;
           if (ch == ';') {
-            CFX_ByteStringC ref = buf.GetByteString();
+            CFX_ByteStringC ref = buf.AsStringC();
             if (ref == "gt") {
               code = '>';
             } else if (ref == "lt") {
@@ -457,7 +457,7 @@ CXML_Element* CXML_Parser::ParseElement(CXML_Element* pParent,
             iState = 10;
           } else {
             content << decoder.GetResult();
-            CFX_WideString dataStr = content.GetWideString();
+            CFX_WideString dataStr = content.AsStringC();
             if (!bCDATA && !m_bSaveSpaceChars) {
               dataStr.TrimRight(L" \t\r\n");
             }
@@ -501,7 +501,7 @@ CXML_Element* CXML_Parser::ParseElement(CXML_Element* pParent,
     }
   } while (ReadNextBlock());
   content << decoder.GetResult();
-  CFX_WideString dataStr = content.GetWideString();
+  CFX_WideString dataStr = content.AsStringC();
   if (!m_bSaveSpaceChars) {
     dataStr.TrimRight(L" \t\r\n");
   }

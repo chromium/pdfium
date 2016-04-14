@@ -562,7 +562,7 @@ CFX_ByteString CPDF_StreamParser::ReadString() {
             if (buf.GetLength() > MAX_STRING_LENGTH) {
               return CFX_ByteString(buf.GetBuffer(), MAX_STRING_LENGTH);
             }
-            return buf.GetByteString();
+            return buf.AsStringC();
           }
           parlevel--;
           buf.AppendChar(')');
@@ -641,7 +641,7 @@ CFX_ByteString CPDF_StreamParser::ReadString() {
   if (buf.GetLength() > MAX_STRING_LENGTH) {
     return CFX_ByteString(buf.GetBuffer(), MAX_STRING_LENGTH);
   }
-  return buf.GetByteString();
+  return buf.AsStringC();
 }
 
 CFX_ByteString CPDF_StreamParser::ReadHexString() {
@@ -675,7 +675,7 @@ CFX_ByteString CPDF_StreamParser::ReadHexString() {
   if (buf.GetLength() > MAX_STRING_LENGTH)
     return CFX_ByteString(buf.GetBuffer(), MAX_STRING_LENGTH);
 
-  return buf.GetByteString();
+  return buf.AsStringC();
 }
 
 bool CPDF_StreamParser::PositionIsInBounds() const {

@@ -132,7 +132,7 @@ CFX_ByteString CPWL_Label::GetTextAppearanceStream(
          << sEdit.AsStringC() << "ET\n";
   }
 
-  return sRet.GetByteString();
+  return sRet.AsStringC();
 }
 
 CFX_WideString CPWL_Label::GetText() const {

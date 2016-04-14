@@ -100,7 +100,7 @@ void CFX_BinaryBuf::InsertBlock(FX_STRSIZE pos,
   m_DataSize += size;
 }
 
-CFX_ByteStringC CFX_ByteTextBuf::GetByteString() const {
+CFX_ByteStringC CFX_ByteTextBuf::AsStringC() const {
   return CFX_ByteStringC(m_pBuffer.get(), m_DataSize);
 }
 
@@ -186,8 +186,8 @@ CFX_WideTextBuf& CFX_WideTextBuf::operator<<(const CFX_WideTextBuf& buf) {
   return *this;
 }
 
-CFX_WideStringC CFX_WideTextBuf::GetWideString() const {
-  return CFX_WideStringC((const FX_WCHAR*)m_pBuffer.get(),
+CFX_WideStringC CFX_WideTextBuf::AsStringC() const {
+  return CFX_WideStringC(reinterpret_cast<const FX_WCHAR*>(m_pBuffer.get()),
                          m_DataSize / sizeof(FX_WCHAR));
 }
 

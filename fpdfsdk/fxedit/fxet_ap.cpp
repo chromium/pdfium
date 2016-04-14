@@ -56,7 +56,7 @@ static CFX_ByteString GetFontSetString(IPVT_FontMap* pFontMap,
       sRet << "/" << sFontAlias << " " << fFontSize << " Tf\n";
   }
 
-  return sRet.GetByteString();
+  return sRet.AsStringC();
 }
 
 CFX_ByteString IFX_Edit::GetEditAppearanceStream(
@@ -87,7 +87,7 @@ CFX_ByteString IFX_Edit::GetEditAppearanceStream(
       if (bContinuous) {
         if (place.LineCmp(oldplace) != 0) {
           if (sWords.GetSize() > 0) {
-            sEditStream << GetWordRenderString(sWords.GetByteString());
+            sEditStream << GetWordRenderString(sWords.AsStringC());
             sWords.Clear();
           }
 
@@ -114,7 +114,7 @@ CFX_ByteString IFX_Edit::GetEditAppearanceStream(
         if (pIterator->GetWord(word)) {
           if (word.nFontIndex != nCurFontIndex) {
             if (sWords.GetSize() > 0) {
-              sEditStream << GetWordRenderString(sWords.GetByteString());
+              sEditStream << GetWordRenderString(sWords.AsStringC());
               sWords.Clear();
             }
             sEditStream << GetFontSetString(pEdit->GetFontMap(),
@@ -152,7 +152,7 @@ CFX_ByteString IFX_Edit::GetEditAppearanceStream(
     }
 
     if (sWords.GetSize() > 0) {
-      sEditStream << GetWordRenderString(sWords.GetByteString());
+      sEditStream << GetWordRenderString(sWords.AsStringC());
       sWords.Clear();
     }
   }
@@ -172,7 +172,7 @@ CFX_ByteString IFX_Edit::GetEditAppearanceStream(
     sAppStream << sEditStream;
   }
 
-  return sAppStream.GetByteString();
+  return sAppStream.AsStringC();
 }
 
 CFX_ByteString IFX_Edit::GetSelectAppearanceStream(
@@ -202,5 +202,5 @@ CFX_ByteString IFX_Edit::GetSelectAppearanceStream(
     }
   }
 
-  return sRet.GetByteString();
+  return sRet.AsStringC();
 }

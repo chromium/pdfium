@@ -94,7 +94,7 @@ CFX_WideString XFA_ExportEncodeAttribute(const CFX_WideString& str) {
         textBuf.AppendChar(str[i]);
     }
   }
-  return textBuf.GetWideString();
+  return textBuf.AsStringC();
 }
 CFX_WideString XFA_ExportEncodeContent(const CFX_WideStringC& str) {
   CFX_WideTextBuf textBuf;
@@ -124,7 +124,7 @@ CFX_WideString XFA_ExportEncodeContent(const CFX_WideStringC& str) {
       textBuf.AppendChar(str.GetAt(i));
     }
   }
-  return textBuf.GetWideString();
+  return textBuf.AsStringC();
 }
 static void XFA_SaveAttribute(CXFA_Node* pNode,
                               XFA_ATTRIBUTE eName,
@@ -303,7 +303,7 @@ static void XFA_DataExporter_RegenerateFormFile_Changed(
         buf << FX_WSTRC(L"</");
         buf << bodyTagName;
         buf << FX_WSTRC(L"\n>");
-        wsChildren += buf.GetWideString();
+        wsChildren += buf.AsStringC();
         buf.Clear();
       } else {
         CFX_WideStringC wsValue = pRawValueNode->GetCData(XFA_ATTRIBUTE_Value);
@@ -330,7 +330,7 @@ static void XFA_DataExporter_RegenerateFormFile_Changed(
       while (pChildNode) {
         XFA_DataExporter_RegenerateFormFile_Changed(pChildNode, newBuf,
                                                     bSaveXML);
-        wsChildren += newBuf.GetWideString();
+        wsChildren += newBuf.AsStringC();
         newBuf.Clear();
         pChildNode = pChildNode->GetNodeItem(XFA_NODEITEM_NextSibling);
       }
@@ -342,7 +342,7 @@ static void XFA_DataExporter_RegenerateFormFile_Changed(
         while (pChildNode) {
           XFA_DataExporter_RegenerateFormFile_Changed(pChildNode, newBuf,
                                                       bSaveXML);
-          wsChildren += newBuf.GetWideString();
+          wsChildren += newBuf.AsStringC();
           newBuf.Clear();
           pChildNode = pChildNode->GetNodeItem(XFA_NODEITEM_NextSibling);
         }
