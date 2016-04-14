@@ -133,9 +133,9 @@ class CXFA_WidgetData : public CXFA_Data {
                             XFA_VALUEPICTURE ePicture);
   IFX_Locale* GetLocal();
   FX_BOOL GetValue(CFX_WideString& wsValue, XFA_VALUEPICTURE eValueType);
-  FX_BOOL GetNormalizeDataValue(const CFX_WideStringC& wsValue,
+  FX_BOOL GetNormalizeDataValue(const CFX_WideString& wsValue,
                                 CFX_WideString& wsNormalizeValue);
-  FX_BOOL GetFormatDataValue(const CFX_WideStringC& wsValue,
+  FX_BOOL GetFormatDataValue(const CFX_WideString& wsValue,
                              CFX_WideString& wsFormatedValue);
   void NormalizeNumStr(const CFX_WideString& wsValue, CFX_WideString& wsOutput);
   CFX_WideString GetBarcodeType();

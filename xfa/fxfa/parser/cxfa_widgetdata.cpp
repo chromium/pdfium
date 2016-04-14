@@ -820,7 +820,7 @@ void CXFA_WidgetData::SetItemState(int32_t nIndex,
       if (iSel < 0) {
         CFX_WideString wsSaveText = wsSaveTextArray[nIndex];
         CFX_WideString wsFormatText(wsSaveText);
-        GetFormatDataValue(wsSaveText.AsStringC(), wsFormatText);
+        GetFormatDataValue(wsSaveText, wsFormatText);
         m_pNode->SetContent(wsSaveText, wsFormatText, bNotify, bScriptModify,
                             bSyncData);
       }
@@ -850,7 +850,7 @@ void CXFA_WidgetData::SetSelectedItems(CFX_Int32Array& iSelArray,
   }
   CFX_WideString wsFormat(wsValue);
   if (GetChoiceListOpen() != XFA_ATTRIBUTEENUM_MultiSelect)
-    GetFormatDataValue(wsValue.AsStringC(), wsFormat);
+    GetFormatDataValue(wsValue, wsFormat);
 
   m_pNode->SetContent(wsValue, wsFormat, bNotify, bScriptModify, bSyncData);
 }
@@ -1559,7 +1559,7 @@ FX_BOOL CXFA_WidgetData::GetValue(CFX_WideString& wsValue,
 }
 
 FX_BOOL CXFA_WidgetData::GetNormalizeDataValue(
-    const CFX_WideStringC& wsValue,
+    const CFX_WideString& wsValue,
     CFX_WideString& wsNormalizeValue) {
   wsNormalizeValue = wsValue;
   if (wsValue.IsEmpty())
@@ -1583,7 +1583,7 @@ FX_BOOL CXFA_WidgetData::GetNormalizeDataValue(
   return FALSE;
 }
 
-FX_BOOL CXFA_WidgetData::GetFormatDataValue(const CFX_WideStringC& wsValue,
+FX_BOOL CXFA_WidgetData::GetFormatDataValue(const CFX_WideString& wsValue,
                                             CFX_WideString& wsFormatedValue) {
   wsFormatedValue = wsValue;
   if (wsValue.IsEmpty())
@@ -1738,8 +1738,7 @@ void CXFA_WidgetData::SyncValue(const CFX_WideString& wsValue,
   CFX_WideString wsFormatValue(wsValue);
   CXFA_WidgetData* pContainerWidgetData = m_pNode->GetContainerWidgetData();
   if (pContainerWidgetData)
-    pContainerWidgetData->GetFormatDataValue(wsValue.AsStringC(),
-                                             wsFormatValue);
+    pContainerWidgetData->GetFormatDataValue(wsValue, wsFormatValue);
 
   m_pNode->SetContent(wsValue, wsFormatValue, bNotify);
 }

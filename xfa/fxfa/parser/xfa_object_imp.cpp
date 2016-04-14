@@ -1688,8 +1688,7 @@ void CXFA_Node::Script_Som_DefaultValue(FXJSE_HVALUE hValue,
       pContainerWidgetData = GetContainerWidgetData();
     }
     if (pContainerWidgetData) {
-      pContainerWidgetData->GetFormatDataValue(wsNewValue.AsStringC(),
-                                               wsFormatValue);
+      pContainerWidgetData->GetFormatDataValue(wsNewValue, wsFormatValue);
     }
     SetScriptContent(wsNewValue, wsFormatValue, TRUE, TRUE);
   } else {
@@ -1738,8 +1737,7 @@ void CXFA_Node::Script_Boolean_Value(FXJSE_HVALUE hValue,
     CFX_WideString wsFormatValue(wsNewValue);
     CXFA_WidgetData* pContainerWidgetData = GetContainerWidgetData();
     if (pContainerWidgetData) {
-      pContainerWidgetData->GetFormatDataValue(wsNewValue.AsStringC(),
-                                               wsFormatValue);
+      pContainerWidgetData->GetFormatDataValue(wsNewValue, wsFormatValue);
     }
     SetScriptContent(wsNewValue, wsFormatValue, TRUE, TRUE);
   } else {
@@ -1999,8 +1997,7 @@ void CXFA_Node::Script_Field_DefaultValue(FXJSE_HVALUE hValue,
     CXFA_WidgetData* pContainerWidgetData = GetContainerWidgetData();
     CFX_WideString wsFormatText(wsNewText);
     if (pContainerWidgetData) {
-      pContainerWidgetData->GetFormatDataValue(wsNewText.AsStringC(),
-                                               wsFormatText);
+      pContainerWidgetData->GetFormatDataValue(wsNewText, wsFormatText);
     }
     SetScriptContent(wsNewText, wsFormatText, TRUE, TRUE);
   } else {
@@ -5220,7 +5217,7 @@ void CXFA_Node::MoveBufferMapData(CXFA_Node* pDstModule, void* pKey) {
     CFX_WideString wsFormatValue(wsValue);
     CXFA_WidgetData* pWidgetData = pDstModule->GetContainerWidgetData();
     if (pWidgetData) {
-      pWidgetData->GetFormatDataValue(wsValue.AsStringC(), wsFormatValue);
+      pWidgetData->GetFormatDataValue(wsValue, wsFormatValue);
     }
     pDstModule->SetScriptContent(wsValue, wsFormatValue, TRUE, TRUE);
   }
