@@ -723,7 +723,11 @@ FX_BOOL CFX_SkiaDeviceDriver::DrawPath(
   SkIRect rect;
   rect.set(0, 0, GetDeviceCaps(FXDC_PIXEL_WIDTH),
            GetDeviceCaps(FXDC_PIXEL_HEIGHT));
-  SkMatrix skMatrix = ToSkMatrix(*pObject2Device);
+  SkMatrix skMatrix;
+  if (pObject2Device)
+    skMatrix = ToSkMatrix(*pObject2Device);
+  else
+    skMatrix.setIdentity();
   SkPaint skPaint;
   skPaint.setAntiAlias(true);
   int stroke_alpha = FXGETFLAG_COLORTYPE(alpha_flag)
@@ -933,7 +937,7 @@ FX_BOOL CFX_SkiaDeviceDriver::GetDIBits(CFX_DIBitmap* pBitmap,
                                         int top,
                                         void* pIccTransform,
                                         FX_BOOL bDEdge) {
-  if (!m_pBitmap->GetBuffer())
+  if (!m_pBitmap || !m_pBitmap->GetBuffer())
     return TRUE;
   if (bDEdge) {
     if (m_bRgbByteOrder) {
@@ -982,7 +986,7 @@ FX_BOOL CFX_SkiaDeviceDriver::SetDIBits(const CFX_DIBSource* pBitmap,
                                         int blend_type,
                                         int alpha_flag,
                                         void* pIccTransform) {
-  if (!m_pBitmap->GetBuffer())
+  if (!m_pBitmap || !m_pBitmap->GetBuffer())
     return TRUE;
   if (pBitmap->IsAlphaMask()) {
     return m_pBitmap->CompositeMask(
@@ -1065,6 +1069,9 @@ FX_BOOL CFX_SkiaDeviceDriver::StartDIBits(const CFX_DIBSource* pSource,
       rowBytes = width;
       colorType = SkColorType::kGray_8_SkColorType;
     } break;
+    case 8:
+      colorType = SkColorType::kGray_8_SkColorType;
+      break;
     case 24: {
       dst32Storage.reset(FX_Alloc2D(uint32_t, width, height));
       uint32_t* dst32Pixels = dst32Storage.get();
