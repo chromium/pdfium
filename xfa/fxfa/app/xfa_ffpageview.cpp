@@ -232,14 +232,14 @@ CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::GetTraverseWidget(
     if (pTraverse) {
       CFX_WideString wsTraverseWidgetName;
       if (pTraverse->GetAttribute(XFA_ATTRIBUTE_Ref, wsTraverseWidgetName)) {
-        return FindWidgetByName(wsTraverseWidgetName.AsStringC(), pWidget);
+        return FindWidgetByName(wsTraverseWidgetName, pWidget);
       }
     }
   }
   return NULL;
 }
 CXFA_FFWidget* CXFA_FFTabOrderPageWidgetIterator::FindWidgetByName(
-    const CFX_WideStringC& wsWidgetName,
+    const CFX_WideString& wsWidgetName,
     CXFA_FFWidget* pRefWidget) {
   return pRefWidget->GetDocView()->GetWidgetByName(wsWidgetName, pRefWidget);
 }

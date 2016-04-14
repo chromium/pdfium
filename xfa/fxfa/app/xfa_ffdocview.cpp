@@ -491,25 +491,25 @@ int32_t CXFA_FFDocView::ExecEventActivityByDeepFirst(CXFA_Node* pFormNode,
   iRet |= XFA_ProcessEvent(this, pWidgetAcc, &eParam);
   return iRet;
 }
-CXFA_FFWidget* CXFA_FFDocView::GetWidgetByName(const CFX_WideStringC& wsName,
+
+CXFA_FFWidget* CXFA_FFDocView::GetWidgetByName(const CFX_WideString& wsName,
                                                CXFA_FFWidget* pRefWidget) {
-  CXFA_WidgetAcc* pRefAcc = pRefWidget ? pRefWidget->GetDataAcc() : NULL;
-  if (CXFA_WidgetAcc* pAcc = GetWidgetAccByName(wsName, pRefAcc)) {
-    return pAcc->GetNextWidget(NULL);
-  }
-  return NULL;
+  CXFA_WidgetAcc* pRefAcc = pRefWidget ? pRefWidget->GetDataAcc() : nullptr;
+  CXFA_WidgetAcc* pAcc = GetWidgetAccByName(wsName, pRefAcc);
+  return pAcc ? pAcc->GetNextWidget(nullptr) : nullptr;
 }
+
 CXFA_WidgetAcc* CXFA_FFDocView::GetWidgetAccByName(
-    const CFX_WideStringC& wsName,
+    const CFX_WideString& wsName,
     CXFA_WidgetAcc* pRefWidgetAcc) {
   CFX_WideString wsExpression;
   uint32_t dwStyle = XFA_RESOLVENODE_Children | XFA_RESOLVENODE_Properties |
                      XFA_RESOLVENODE_Siblings | XFA_RESOLVENODE_Parent;
   CXFA_ScriptContext* pScriptContext = m_pDoc->GetXFADoc()->GetScriptContext();
   if (!pScriptContext) {
-    return NULL;
+    return nullptr;
   }
-  CXFA_Node* refNode = NULL;
+  CXFA_Node* refNode = nullptr;
   if (pRefWidgetAcc) {
     refNode = pRefWidgetAcc->GetNode();
     wsExpression = wsName;
@@ -520,7 +520,7 @@ CXFA_WidgetAcc* CXFA_FFDocView::GetWidgetAccByName(
   int32_t iRet = pScriptContext->ResolveObjects(
       refNode, wsExpression.AsStringC(), resoveNodeRS, dwStyle);
   if (iRet < 1) {
-    return NULL;
+    return nullptr;
   }
   if (resoveNodeRS.dwFlags == XFA_RESOVENODE_RSTYPE_Nodes) {
     CXFA_Node* pNode = resoveNodeRS.nodes[0]->AsNode();
@@ -528,7 +528,7 @@ CXFA_WidgetAcc* CXFA_FFDocView::GetWidgetAccByName(
       return (CXFA_WidgetAcc*)pNode->GetWidgetData();
     }
   }
-  return NULL;
+  return nullptr;
 }
 
 void CXFA_FFDocView::OnPageEvent(CXFA_ContainerLayoutItem* pSender,

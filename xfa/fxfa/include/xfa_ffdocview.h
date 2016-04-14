@@ -38,16 +38,16 @@ class CXFA_FFDocView {
 
   CXFA_FFDoc* GetDoc() { return m_pDoc; }
   int32_t StartLayout(int32_t iStartPage = 0);
-  int32_t DoLayout(IFX_Pause* pPause = NULL);
+  int32_t DoLayout(IFX_Pause* pPause = nullptr);
   void StopLayout();
   int32_t GetLayoutStatus();
   void UpdateDocView();
   int32_t CountPageViews();
   CXFA_FFPageView* GetPageView(int32_t nIndex);
 
-  void ResetWidgetData(CXFA_WidgetAcc* pWidgetAcc = NULL);
+  void ResetWidgetData(CXFA_WidgetAcc* pWidgetAcc = nullptr);
   int32_t ProcessWidgetEvent(CXFA_EventParam* pParam,
-                             CXFA_WidgetAcc* pWidgetAcc = NULL);
+                             CXFA_WidgetAcc* pWidgetAcc = nullptr);
   CXFA_FFWidgetHandler* GetWidgetHandler();
   IXFA_WidgetIterator* CreateWidgetIterator();
   CXFA_WidgetAccIterator* CreateWidgetAccIterator(
@@ -55,10 +55,10 @@ class CXFA_FFDocView {
   CXFA_FFWidget* GetFocusWidget();
   void KillFocus();
   FX_BOOL SetFocus(CXFA_FFWidget* hWidget);
-  CXFA_FFWidget* GetWidgetByName(const CFX_WideStringC& wsName,
-                                 CXFA_FFWidget* pRefWidget = NULL);
-  CXFA_WidgetAcc* GetWidgetAccByName(const CFX_WideStringC& wsName,
-                                     CXFA_WidgetAcc* pRefWidgetAcc = NULL);
+  CXFA_FFWidget* GetWidgetByName(const CFX_WideString& wsName,
+                                 CXFA_FFWidget* pRefWidget = nullptr);
+  CXFA_WidgetAcc* GetWidgetAccByName(const CFX_WideString& wsName,
+                                     CXFA_WidgetAcc* pRefWidgetAcc = nullptr);
   CXFA_LayoutProcessor* GetXFALayout() const;
   void OnPageEvent(CXFA_ContainerLayoutItem* pSender,
                    XFA_PAGEEVENT eEvent,
@@ -95,7 +95,7 @@ class CXFA_FFDocView {
                                        XFA_EVENTTYPE eEventType,
                                        FX_BOOL bIsFormReady = FALSE,
                                        FX_BOOL bRecursive = TRUE,
-                                       CXFA_Node* pExclude = NULL);
+                                       CXFA_Node* pExclude = nullptr);
   FX_BOOL m_bLayoutEvent;
   CFX_WideStringArray m_arrNullTestMsg;
   CXFA_FFWidget* m_pListFocusWidget;
