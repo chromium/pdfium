@@ -2185,7 +2185,7 @@ void CPDF_TextPageFind::ExtractFindWhat(const CFX_WideString& findwhat) {
         }
         m_csFindWhatArray.push_back(curStr);
         if (pos == csWord.GetLength() - 1) {
-          csWord.Empty();
+          csWord.clear();
           break;
         }
         csWord = csWord.Right(csWord.GetLength() - pos - 1);
@@ -2258,7 +2258,7 @@ FX_BOOL CPDF_TextPageFind::ExtractSubString(CFX_WideString& rString,
   while (iSubString--) {
     lpszFullString = FXSYS_wcschr(lpszFullString, chSep);
     if (!lpszFullString) {
-      rString.Empty();
+      rString.clear();
       return FALSE;
     }
     lpszFullString++;
@@ -2278,7 +2278,7 @@ FX_BOOL CPDF_TextPageFind::ExtractSubString(CFX_WideString& rString,
 
 CFX_WideString CPDF_TextPageFind::MakeReverse(const CFX_WideString& str) {
   CFX_WideString str2;
-  str2.Empty();
+  str2.clear();
   int nlen = str.GetLength();
   for (int i = nlen - 1; i >= 0; i--) {
     str2 += str.GetAt(i);

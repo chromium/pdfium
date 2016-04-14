@@ -160,7 +160,7 @@ int32_t CCodec_GifModule::LoadFrame(FXGIF_Context* ctx,
           if (size) {
             pAttribute->m_strAuthor = CFX_ByteString(buf, size);
           } else {
-            pAttribute->m_strAuthor.Empty();
+            pAttribute->m_strAuthor.clear();
           }
           buf += size;
           size = *buf++;

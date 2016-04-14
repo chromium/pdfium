@@ -1247,7 +1247,7 @@ void CXFA_LocaleMgr::SetDefLocale(IFX_Locale* pLocale) {
 }
 CFX_WideStringC CXFA_LocaleMgr::GetConfigLocaleName(CXFA_Node* pConfig) {
   if (!(m_dwLocaleFlags & 0x01)) {
-    m_wsConfigLocale.Empty();
+    m_wsConfigLocale.clear();
     if (pConfig) {
       CXFA_Node* pChildfConfig =
           pConfig->GetFirstChildByClass(XFA_ELEMENT_Acrobat);

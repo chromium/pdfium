@@ -647,7 +647,7 @@ int32_t gif_decode_extension(gif_decompress_struct_p gif_ptr) {
         gif_ptr->skip_size = skip_size_org;
         return 2;
       }
-      gif_ptr->cmt_data_ptr->Empty();
+      gif_ptr->cmt_data_ptr->clear();
       while (*data_size_ptr != GIF_BLOCK_TERMINAL) {
         uint8_t data_size = *data_size_ptr;
         if (gif_read_data(gif_ptr, &data_ptr, *data_size_ptr) == NULL ||

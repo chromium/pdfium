@@ -290,7 +290,7 @@ CFX_ArchiveLoader& CFX_ArchiveLoader::operator>>(CFX_ByteString& str) {
   }
   int len;
   operator>>(len);
-  str.Empty();
+  str.clear();
   if (len <= 0 || m_LoadingPos + len > m_LoadingSize) {
     return *this;
   }

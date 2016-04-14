@@ -150,7 +150,7 @@ class IXFA_AppProvider {
   virtual void GetAppType(CFX_WideString& wsAppType) = 0;
   virtual void SetFoxitAppType(const CFX_WideStringC& wsFoxitAppType) {}
   virtual void GetFoxitAppType(CFX_WideString& wsFoxitAppType) {
-    wsFoxitAppType.Empty();
+    wsFoxitAppType.clear();
   }
 
   /**
@@ -174,7 +174,7 @@ class IXFA_AppProvider {
    */
   virtual void GetVersion(CFX_WideString& wsVersion) = 0;
   virtual void GetFoxitVersion(CFX_WideString& wsFoxitVersion) {
-    wsFoxitVersion.Empty();
+    wsFoxitVersion.clear();
   }
 
   /**
@@ -182,7 +182,7 @@ class IXFA_AppProvider {
    */
   virtual void GetAppName(CFX_WideString& wsName) = 0;
   virtual void GetFoxitAppName(CFX_WideString& wsFoxitName) {
-    wsFoxitName.Empty();
+    wsFoxitName.clear();
   }
 
   /**
@@ -436,25 +436,25 @@ class CXFA_EventParam {
   CXFA_EventParam() {
     m_pTarget = NULL;
     m_eType = XFA_EVENT_Unknown;
-    m_wsResult.Empty();
+    m_wsResult.clear();
     Reset();
   }
   void Reset() {
-    m_wsChange.Empty();
+    m_wsChange.clear();
     m_iCommitKey = 0;
-    m_wsFullText.Empty();
+    m_wsFullText.clear();
     m_bKeyDown = FALSE;
     m_bModifier = FALSE;
-    m_wsNewContentType.Empty();
-    m_wsNewText.Empty();
-    m_wsPrevContentType.Empty();
-    m_wsPrevText.Empty();
+    m_wsNewContentType.clear();
+    m_wsNewText.clear();
+    m_wsPrevContentType.clear();
+    m_wsPrevText.clear();
     m_bReenter = FALSE;
     m_iSelEnd = 0;
     m_iSelStart = 0;
     m_bShift = FALSE;
-    m_wsSoapFaultCode.Empty();
-    m_wsSoapFaultString.Empty();
+    m_wsSoapFaultCode.clear();
+    m_wsSoapFaultString.clear();
     m_bIsFormReady = FALSE;
     m_iValidateActivities = XFA_VALIDATE_preSubmit;
   }

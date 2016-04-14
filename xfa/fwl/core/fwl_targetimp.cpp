@@ -27,7 +27,7 @@ IFWL_Target::~IFWL_Target() {
 CFWL_TargetImp::CFWL_TargetImp() {}
 CFWL_TargetImp::~CFWL_TargetImp() {}
 FWL_ERR CFWL_TargetImp::GetClassName(CFX_WideString& wsClass) const {
-  wsClass.Empty();
+  wsClass.clear();
   return FWL_ERR_Succeeded;
 }
 uint32_t CFWL_TargetImp::GetClassID() const {

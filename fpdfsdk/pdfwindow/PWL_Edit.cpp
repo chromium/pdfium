@@ -46,7 +46,7 @@ void CPWL_Edit::SetText(const FX_WCHAR* csText) {
       int32_t nCount = pXML->CountChildren();
       FX_BOOL bFirst = TRUE;
 
-      swText.Empty();
+      swText.clear();
 
       for (int32_t i = 0; i < nCount; i++) {
         if (CXML_Element* pSubElement = pXML->GetElement(i)) {

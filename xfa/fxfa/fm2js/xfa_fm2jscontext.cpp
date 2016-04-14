@@ -4127,7 +4127,7 @@ void CXFA_FM2JSContext::EncodeHTML(const CFX_ByteStringC& szHTMLString,
   CFX_WideString htmlReserve;
   while (i < iLen) {
     ch = *(pData + i);
-    htmlReserve.Empty();
+    htmlReserve.clear();
     if (HTMLCode2STR(ch, htmlReserve)) {
       wsResultBuf.AppendChar(L'&');
       wsResultBuf << htmlReserve;

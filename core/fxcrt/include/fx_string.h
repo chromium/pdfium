@@ -159,8 +159,6 @@ class CFX_ByteString {
 
   ~CFX_ByteString();
 
-  // Deprecated -- use clear().
-  void Empty() { m_pData.Reset(); }
   void clear() { m_pData.Reset(); }
 
   static CFX_ByteString FromUnicode(const FX_WCHAR* ptr, FX_STRSIZE len = -1);
@@ -503,8 +501,6 @@ class CFX_WideString {
     return CFX_WideStringC(c_str(), GetLength());
   }
 
-  // Deprecated -- use clear().
-  void Empty() { m_pData.Reset(); }
   void clear() { m_pData.Reset(); }
 
   FX_STRSIZE GetLength() const { return m_pData ? m_pData->m_nDataLength : 0; }

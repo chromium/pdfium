@@ -4468,7 +4468,7 @@ CXFA_Node* CXFA_Node::GetModelNode() {
   }
 }
 FX_BOOL CXFA_Node::TryNamespace(CFX_WideString& wsNamespace) {
-  wsNamespace.Empty();
+  wsNamespace.clear();
   if (GetObjectType() == XFA_OBJECTTYPE_ModelNode ||
       GetClassID() == XFA_ELEMENT_Packet) {
     CFDE_XMLNode* pXMLNode = GetXMLMappingNode();

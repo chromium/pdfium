@@ -261,7 +261,7 @@ void CXFA_NodeHelper::XFA_GetNameExpression(CXFA_Node* refNode,
                                             CFX_WideString& wsName,
                                             FX_BOOL bIsAllPath,
                                             XFA_LOGIC_TYPE eLogicType) {
-  wsName.Empty();
+  wsName.clear();
   if (bIsAllPath) {
     XFA_GetNameExpression(refNode, wsName, FALSE, eLogicType);
     CFX_WideString wsParent;

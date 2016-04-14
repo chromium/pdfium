@@ -517,7 +517,7 @@ FX_FLOAT CXFA_TextParser::GetLineHeight(CXFA_TextProvider* pTextProvider,
 FX_BOOL CXFA_TextParser::GetEmbbedObj(CXFA_TextProvider* pTextProvider,
                                       CFDE_XMLNode* pXMLNode,
                                       CFX_WideString& wsValue) {
-  wsValue.Empty();
+  wsValue.clear();
   if (pXMLNode == NULL) {
     return FALSE;
   }
@@ -543,7 +543,7 @@ FX_BOOL CXFA_TextParser::GetEmbbedObj(CXFA_TextProvider* pTextProvider,
     if (!bURI && ws != FX_WSTRC(L"som")) {
       return FALSE;
     }
-    ws.Empty();
+    ws.clear();
     pElement->GetString(FX_WSTRC(L"xfa:embedMode").c_str(), ws);
     if (ws.IsEmpty()) {
       ws = L"formatted";
@@ -645,7 +645,7 @@ FX_BOOL CXFA_TextParser::GetTabstops(
           CXFA_Measurement ms(CFX_WideStringC(pTabStops + iLast, iCur - iLast));
           FX_FLOAT fPos = ms.ToUnit(XFA_UNIT_Pt);
           pTabstopContext->Append(dwHashCode, fPos);
-          wsAlign.Empty();
+          wsAlign.clear();
           eStatus = XFA_TABSTOPSSTATUS_None;
         }
         iCur++;
@@ -888,7 +888,7 @@ void CXFA_TextLayout::InitBreak(IFDE_CSSComputedStyle* pStyle,
 }
 int32_t CXFA_TextLayout::GetText(CFX_WideString& wsText) {
   GetTextDataNode();
-  wsText.Empty();
+  wsText.clear();
   if (m_bRichText) {
   } else {
     wsText = m_pTextDataNode->GetContent();

@@ -290,7 +290,7 @@ static void XFA_DataMerge_CreateDataBinding(CXFA_Node* pFormNode,
           pDataNode->GetNodeList(items);
           int32_t iCounts = items.GetSize();
           if (iCounts > 0) {
-            wsNormailizeValue.Empty();
+            wsNormailizeValue.clear();
             CFX_WideString wsItem;
             for (int32_t i = 0; i < iCounts; i++) {
               items[i]->TryContent(wsItem);

@@ -20,7 +20,7 @@ int32_t XFA_FM2JS_Translate(const CFX_WideStringC& wsFormcalc,
                             CFX_WideString& wsError) {
   if (wsFormcalc.IsEmpty()) {
     wsJavascript.Clear();
-    wsError.Empty();
+    wsError.clear();
     return 0;
   }
   int32_t status = 0;

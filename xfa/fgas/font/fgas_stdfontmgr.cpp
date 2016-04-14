@@ -1380,7 +1380,7 @@ void CFX_FontMgrImp::GetNames(const uint8_t* name_table,
     uint16_t nPlatformID = GetUInt16(lpNameRecord + j * 12 + 0);
     uint16_t nNameLength = GetUInt16(lpNameRecord + j * 12 + 8);
     uint16_t nNameOffset = GetUInt16(lpNameRecord + j * 12 + 10);
-    wsFamily.Empty();
+    wsFamily.clear();
     if (nPlatformID != 1) {
       for (uint16_t k = 0; k < nNameLength / 2; k++) {
         FX_WCHAR wcTemp = GetUInt16(lpStr + nNameOffset + k * 2);

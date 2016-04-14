@@ -262,7 +262,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
       rndFind.m_CurNode = pVariablesNode;
       XFA_ResolveNodes_SetStylesForChild(dwStyles, rndFind);
       CFX_WideString wsSaveCondition = rndFind.m_wsCondition;
-      rndFind.m_wsCondition.Empty();
+      rndFind.m_wsCondition.clear();
       XFA_ResolveNodes_Normal(rndFind);
       rndFind.m_wsCondition = wsSaveCondition;
       if (rndFind.m_Nodes.GetSize() > 0) {
@@ -300,7 +300,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
         }
         rndFind.m_CurNode = child;
         CFX_WideString wsSaveCondition = rndFind.m_wsCondition;
-        rndFind.m_wsCondition.Empty();
+        rndFind.m_wsCondition.clear();
         XFA_ResolveNodes_Normal(rndFind);
         rndFind.m_wsCondition = wsSaveCondition;
         if (rndFind.m_Nodes.GetSize() > 0) {
@@ -444,7 +444,7 @@ int32_t CXFA_ResolveProcessor::XFA_ResolveNodes_Normal(
       if (bInnerSearch) {
         rndFind.m_CurNode = child;
         CFX_WideString wsOriginCondition = rndFind.m_wsCondition;
-        rndFind.m_wsCondition.Empty();
+        rndFind.m_wsCondition.clear();
         uint32_t dwOriginStyle = rndFind.m_dwStyles;
         rndFind.m_dwStyles = dwOriginStyle | XFA_RESOLVENODE_ALL;
         XFA_ResolveNodes_Normal(rndFind);

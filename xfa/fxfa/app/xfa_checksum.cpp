@@ -134,7 +134,7 @@ FX_BOOL CXFA_ChecksumContext::StartChecksum() {
   FinishChecksum();
   m_pByteContext = FX_Alloc(uint8_t, 128);
   CRYPT_SHA1Start(m_pByteContext);
-  m_bsChecksum.Empty();
+  m_bsChecksum.clear();
   m_pSAXReader = FX_SAXReader_Create();
   return m_pSAXReader != NULL;
 }

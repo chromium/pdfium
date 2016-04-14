@@ -217,7 +217,7 @@ FX_BOOL XFA_FDEExtension_ResolveNamespaceQualifier(
       return TRUE;
     }
   }
-  wsNamespaceURI.Empty();
+  wsNamespaceURI.clear();
   return bRet;
 }
 static inline void XFA_FDEExtension_GetElementTagNamespaceURI(
@@ -227,7 +227,7 @@ static inline void XFA_FDEExtension_GetElementTagNamespaceURI(
   pElement->GetNamespacePrefix(wsNodeStr);
   if (!XFA_FDEExtension_ResolveNamespaceQualifier(
           pElement, wsNodeStr.AsStringC(), wsNamespaceURI)) {
-    wsNamespaceURI.Empty();
+    wsNamespaceURI.clear();
   }
 }
 static FX_BOOL XFA_FDEExtension_MatchNodeName(
@@ -285,7 +285,7 @@ static FX_BOOL XFA_FDEExtension_ResolveAttribute(
   }
   if (!XFA_FDEExtension_ResolveNamespaceQualifier(
           pElement, wsNSPrefix.AsStringC(), wsNamespaceURI)) {
-    wsNamespaceURI.Empty();
+    wsNamespaceURI.clear();
     return FALSE;
   }
   return TRUE;
@@ -1318,7 +1318,7 @@ void CXFA_SimpleParser::ParseInstruction(CXFA_Node* pXFANode,
     if (pXMLInstruction->GetData(0, wsData) &&
         (pXFANode->GetDocument()->RecognizeXFAVersionNumber(wsData) !=
          XFA_VERSION_UNKNOWN)) {
-      wsData.Empty();
+      wsData.clear();
       if (pXMLInstruction->GetData(1, wsData) &&
           wsData == FX_WSTRC(L"v2.7-scripting:1")) {
         pXFANode->GetDocument()->SetFlag(XFA_DOCFLAG_Scripting, TRUE);
@@ -1419,8 +1419,8 @@ CXFA_XMLParser::~CXFA_XMLParser() {
     m_pParser->Release();
   }
   m_NodeStack.RemoveAll();
-  m_ws1.Empty();
-  m_ws2.Empty();
+  m_ws1.clear();
+  m_ws2.clear();
 }
 int32_t CXFA_XMLParser::DoParser(IFX_Pause* pPause) {
   if (m_syntaxParserResult == FDE_XmlSyntaxResult::Error)
@@ -1485,7 +1485,7 @@ int32_t CXFA_XMLParser::DoParser(IFX_Pause* pPause) {
         } else {
           m_pChild = NULL;
         }
-        m_ws1.Empty();
+        m_ws1.clear();
         break;
       case FDE_XmlSyntaxResult::TagName:
         m_pParser->GetTagName(m_ws1);
@@ -1520,7 +1520,7 @@ int32_t CXFA_XMLParser::DoParser(IFX_Pause* pPause) {
             static_cast<CFDE_XMLElement*>(m_pChild)->SetString(m_ws1, m_ws2);
           }
         }
-        m_ws1.Empty();
+        m_ws1.clear();
         break;
       case FDE_XmlSyntaxResult::Text:
         m_pParser->GetTextData(m_ws1);
@@ -1546,7 +1546,7 @@ int32_t CXFA_XMLParser::DoParser(IFX_Pause* pPause) {
           m_pParser->GetTargetData(m_ws1);
           static_cast<CFDE_XMLInstruction*>(m_pChild)->AppendData(m_ws1);
         }
-        m_ws1.Empty();
+        m_ws1.clear();
         break;
       default:
         break;

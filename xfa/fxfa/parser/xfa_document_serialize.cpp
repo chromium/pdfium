@@ -189,7 +189,7 @@ FX_BOOL XFA_DataExporter_ContentNodeNeedtoExport(CXFA_Node* pContentNode) {
 static void XFA_DataExporter_RecognizeXFAVersionNumber(
     CXFA_Node* pTemplateRoot,
     CFX_WideString& wsVersionNumber) {
-  wsVersionNumber.Empty();
+  wsVersionNumber.clear();
   if (!pTemplateRoot) {
     return;
   }
@@ -336,7 +336,7 @@ static void XFA_DataExporter_RegenerateFormFile_Changed(
       }
       if (!bSaveXML && !wsChildren.IsEmpty() &&
           pNode->GetClassID() == XFA_ELEMENT_Items) {
-        wsChildren.Empty();
+        wsChildren.clear();
         bSaveXML = TRUE;
         CXFA_Node* pChildNode = pNode->GetNodeItem(XFA_NODEITEM_FirstChild);
         while (pChildNode) {

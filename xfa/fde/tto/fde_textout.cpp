@@ -571,7 +571,7 @@ void CFDE_TextOut::DrawText(const FX_WCHAR* pwsStr,
   }
   m_pTxtBreak->SetLineWidth(fLineWidth);
   m_ttoLines.RemoveAll(TRUE);
-  m_wsText.Empty();
+  m_wsText.clear();
   LoadText(pwsStr, iLength, rect);
   if (m_dwStyles & FDE_TTOSTYLE_Ellipsis) {
     ReplaceWidthEllipsis();

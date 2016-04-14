@@ -765,7 +765,7 @@ IFX_Locale* CFX_FormatString::GetNumericFormat(const CFX_WideString& wsPattern,
               break;
             }
           }
-          wsSubCategory.Empty();
+          wsSubCategory.clear();
           if (!pLocale) {
             pLocale = m_pLocaleMgr->GetDefLocale();
           }
@@ -838,7 +838,7 @@ static FX_BOOL FX_GetNumericDotIndex(const CFX_WideString& wsNum,
 FX_BOOL CFX_FormatString::ParseText(const CFX_WideString& wsSrcText,
                                     const CFX_WideString& wsPattern,
                                     CFX_WideString& wsValue) {
-  wsValue.Empty();
+  wsValue.clear();
   if (wsSrcText.IsEmpty() || wsPattern.IsEmpty()) {
     return FALSE;
   }
@@ -1663,7 +1663,7 @@ void FX_ParseNumString(const CFX_WideString& wsNum, CFX_WideString& wsResult) {
 FX_BOOL CFX_FormatString::ParseNum(const CFX_WideString& wsSrcNum,
                                    const CFX_WideString& wsPattern,
                                    CFX_WideString& wsValue) {
-  wsValue.Empty();
+  wsValue.clear();
   if (wsSrcNum.IsEmpty() || wsPattern.IsEmpty()) {
     return FALSE;
   }
@@ -2242,7 +2242,7 @@ FX_DATETIMETYPE CFX_FormatString::GetDateTimeFormat(
             default:
               break;
           }
-          wsTempPattern.Empty();
+          wsTempPattern.clear();
           continue;
         }
         ccf++;
@@ -2255,7 +2255,7 @@ FX_DATETIMETYPE CFX_FormatString::GetDateTimeFormat(
         } else if (eCategory == FX_LOCALECATEGORY_Date) {
           wsDatePattern = wsTempPattern;
         }
-        wsTempPattern.Empty();
+        wsTempPattern.clear();
       }
     } else {
       wsTempPattern += pStr[ccf];
@@ -2273,7 +2273,7 @@ FX_DATETIMETYPE CFX_FormatString::GetDateTimeFormat(
     pLocale = m_pLocaleMgr->GetDefLocale();
   }
   if (!iFindCategory) {
-    wsTimePattern.Empty();
+    wsTimePattern.clear();
     wsDatePattern = wsPattern;
   }
   return (FX_DATETIMETYPE)iFindCategory;
@@ -3123,7 +3123,7 @@ FX_BOOL CFX_FormatString::FormatStrNum(const CFX_WideStringC& wsInputNum,
   }
   if (cc >= 0) {
     int nPos = dot_index % 3;
-    wsOutput.Empty();
+    wsOutput.clear();
     for (int32_t i = 0; i < dot_index; i++) {
       if (i % 3 == nPos && i != 0) {
         wsOutput += wsGroupSymbol;
@@ -3540,7 +3540,7 @@ FX_BOOL CFX_FormatString::FormatLCNumeric(CFX_LCNumeric& lcNum,
   }
   if (cc >= 0) {
     int nPos = dot_index % 3;
-    wsOutput.Empty();
+    wsOutput.clear();
     for (int32_t i = 0; i < dot_index; i++) {
       if (i % 3 == nPos && i != 0) {
         wsOutput += wsGroupSymbol;
@@ -4254,7 +4254,7 @@ FX_BOOL CFX_FormatString::FormatDateTime(const CFX_WideString& wsSrcDateTime,
   if (eCategory == FX_DATETIMETYPE_Unknown) {
     if (eDateTimeType == FX_DATETIMETYPE_Time) {
       wsTimePattern = wsDatePattern;
-      wsDatePattern.Empty();
+      wsDatePattern.clear();
     }
     eCategory = eDateTimeType;
   }

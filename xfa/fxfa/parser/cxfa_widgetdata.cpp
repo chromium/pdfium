@@ -413,7 +413,7 @@ void CXFA_WidgetData::SetCheckState(XFA_CHECKSTATE eCheckState,
         if (pItemchild)
           wsChildValue = pItemchild->GetContent();
         else
-          wsChildValue.Empty();
+          wsChildValue.clear();
       }
       CXFA_WidgetData ch(pChild);
       ch.SyncValue(wsChildValue, bNotify);
@@ -504,7 +504,7 @@ void CXFA_WidgetData::SetSelectedMemberByValue(const CFX_WideStringC& wsValue,
       if (pItemchild)
         wsChildValue = pItemchild->GetContent();
       else
-        wsChildValue.Empty();
+        wsChildValue.clear();
     } else {
       wsExclGroup = wsValue;
     }
@@ -606,7 +606,7 @@ int32_t CXFA_WidgetData::CountChoiceListItems(FX_BOOL bSaveValue) {
 FX_BOOL CXFA_WidgetData::GetChoiceListItem(CFX_WideString& wsText,
                                            int32_t nIndex,
                                            FX_BOOL bSaveValue) {
-  wsText.Empty();
+  wsText.clear();
   CXFA_NodeArray pItemsArray;
   CXFA_Node* pItems = NULL;
   int32_t iCount = 0;
@@ -1507,7 +1507,7 @@ FX_BOOL CXFA_WidgetData::GetValue(CFX_WideString& wsValue,
         int32_t iSelItemIndex = GetSelectedItem(0);
         if (iSelItemIndex >= 0) {
           GetChoiceListItem(wsValue, iSelItemIndex);
-          wsPicture.Empty();
+          wsPicture.clear();
         }
       }
     } break;
@@ -1709,7 +1709,7 @@ void CXFA_WidgetData::FormatNumStr(const CFX_WideString& wsValue,
   int32_t cc = dot_index - 1;
   if (cc >= 0) {
     int nPos = dot_index % 3;
-    wsOutput.Empty();
+    wsOutput.clear();
     for (int32_t i = 0; i < dot_index; i++) {
       if (i % 3 == nPos && i != 0)
         wsOutput += wsGroupSymbol;

@@ -268,7 +268,7 @@ void* CXFA_FWLTheme::GetCapacity(CFWL_ThemePart* pThemePart,
     if (CXFA_FFWidget* pWidget =
             XFA_ThemeGetOuterWidget(pThemePart->m_pWidget)) {
       IXFA_AppProvider* pAppProvider = pWidget->GetAppProvider();
-      m_wsResource.Empty();
+      m_wsResource.clear();
       pAppProvider->LoadString(
           XFA_IDS_StringWeekDay_Sun + dwCapacity - FWL_WGTCAPACITY_MAX - 5,
           m_wsResource);

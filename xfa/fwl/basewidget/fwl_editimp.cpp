@@ -459,7 +459,7 @@ void CFWL_EditImp::DrawSpellCheck(CFX_Graphics* pGraphics,
         AddSpellCheckObj(pathSpell, nStart, sLatinWord.GetLength(), fOffSetX,
                          fOffSetY);
       }
-      sLatinWord.Empty();
+      sLatinWord.clear();
     }
   }
   checkWordEvent.bsWord = sLatinWord;
@@ -661,14 +661,14 @@ FX_BOOL CFWL_EditImp::Copy(CFX_WideString& wsCopy) {
   if (nCount == 0) {
     return FALSE;
   }
-  wsCopy.Empty();
+  wsCopy.clear();
   CFX_WideString wsTemp;
   int32_t nStart, nLength;
   for (int32_t i = 0; i < nCount; i++) {
     nLength = m_pEdtEngine->GetSelRange(i, nStart);
     m_pEdtEngine->GetText(wsTemp, nStart, nLength);
     wsCopy += wsTemp;
-    wsTemp.Empty();
+    wsTemp.clear();
   }
   return TRUE;
 }
@@ -679,14 +679,14 @@ FX_BOOL CFWL_EditImp::Cut(CFX_WideString& wsCut) {
   if (nCount == 0) {
     return FALSE;
   }
-  wsCut.Empty();
+  wsCut.clear();
   CFX_WideString wsTemp;
   int32_t nStart, nLength;
   for (int32_t i = 0; i < nCount; i++) {
     nLength = m_pEdtEngine->GetSelRange(i, nStart);
     m_pEdtEngine->GetText(wsTemp, nStart, nLength);
     wsCut += wsTemp;
-    wsTemp.Empty();
+    wsTemp.clear();
   }
   m_pEdtEngine->Delete(0);
   return TRUE;

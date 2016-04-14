@@ -142,7 +142,7 @@ FX_BOOL CXFA_LocaleValue::ValidateValue(const CFX_WideString& wsValue,
       }
       case FX_LOCALECATEGORY_Text:
         bRet = pFormat->ParseText(wsValue, wsFormat, wsOutput);
-        wsOutput.Empty();
+        wsOutput.clear();
         if (!bRet) {
           bRet = pFormat->FormatText(wsValue, wsFormat, wsOutput);
         }
@@ -464,7 +464,7 @@ FX_BOOL CXFA_LocaleValue::FormatPatterns(CFX_WideString& wsResult,
                                          const CFX_WideString& wsFormat,
                                          IFX_Locale* pLocale,
                                          XFA_VALUEPICTURE eValueType) const {
-  wsResult.Empty();
+  wsResult.clear();
   FX_BOOL bRet = FALSE;
 
   CFX_FormatString* pFormat = nullptr;
@@ -492,7 +492,7 @@ FX_BOOL CXFA_LocaleValue::FormatSinglePattern(
   if (pLocale) {
     m_pLocaleMgr->SetDefLocale(pLocale);
   }
-  wsResult.Empty();
+  wsResult.clear();
   FX_BOOL bRet = FALSE;
 
   CFX_FormatString* pFormat = nullptr;
@@ -822,7 +822,7 @@ FX_BOOL CXFA_LocaleValue::ParsePatternValue(const CFX_WideString& wsValue,
       case FX_LOCALECATEGORY_Null:
         bRet = pFormat->ParseNull(wsValue, wsFormat);
         if (bRet) {
-          m_wsValue.Empty();
+          m_wsValue.clear();
         }
         break;
       case FX_LOCALECATEGORY_Zero:
